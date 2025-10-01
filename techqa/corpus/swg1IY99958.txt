@@ -1,0 +1,175 @@
+Title: IBM IY99958: TCR WITH CHANGED PARAMETERS WILL NOT RELOAD THE DATA - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ENVIRONMENT
+   TCR 120
+   BIRT 2.2.1
+   
+   PROBLEM DESCRIPTION
+   A TCR report will not reload the data as a refresh, it needs to
+   be regenerated.
+   
+   RECREATION STEPS
+   For example, with a report that queries the TDW and gets date,
+   backup_name, status Let's say it generates a report for the
+   last 7 days, each row is one day, so there are 7 rows.
+   Then change the parameter to 30 days, the change won't take
+   effect.
+   Then close the report and generate the same report with 30 days,
+   it will still only show 7 days (7 rows).
+   
+   There is presently a known bug in the BIRT side but not for TCR
+   
+    - https://bugs.eclipse.org/bugs/show_bug.cgi?id=208511 [https://bugs.eclipse.org/bugs/show_bug.cgi?id=208511]
+   
+   The bug was resolved in BIRT 2.2.3 but TCR does not support this
+   version.
+   
+   Even when accessing the DB and actually changing the status from
+   bad to good, the changes are not reflected in the report in TCR.
+   
+   Similar scenario in BIRT, only after exiting BIRT and starting
+   it again, the report will run with the new parameters.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WORKAROUND
+   
+   Because TCR is embedding BIRT, that work-around will work also
+   for TCR.
+   
+   From https://bugs.eclipse.org/bugs/show_bug.cgi?id=208511 [https://bugs.eclipse.org/bugs/show_bug.cgi?id=208511]
+   
+   This fix worked in the lab environment perfectly well.
+   
+   Here are the steps on how to apply the patch:
+   
+   1. Stop TCR server (<BASE>/products/tcr/bin/stopTCRserver.cmd)
+   
+   2. Backup and remove the file
+   org.eclipse.birt.report.data.adapter_2.2.1.r22x_v20070919.jar in
+   <BASE>/products/tcr/lib/birt-runtime-2_2_1/ReportEngine/plugins
+   
+   3. Copy in the same directory the new patch from BIRT( file
+   called
+   org.eclipse.birt.report.data.adapter_2.2.2.r22x_v20071229.jar).
+   
+   4. Restart the server (
+   <BASE>/products/tcr/bin/startTCRserver.cmd)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  TCR report execution with changed parameters will not reload the
+   data. Cross tables cache issue in BIRT. When using cross tables,
+   due to efficiency, BIRT caches the query. This is why if the
+   datasource is changed, it is not reflected in the report output.
+   The new fix disables the cache.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Official fix for this defect is included in the Interim Fix 6
+   for IBM Tivoli Common Reporting 1.2.0.1. More information about
+   the interim fix can be found in the following location:
+   http://www.ibm.com/support/docview.wss?uid=swg24026217 [http://www.ibm.com/support/docview.wss?uid=swg24026217]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY99958
+   
+   
+ * REPORTED COMPONENT NAME
+   TIVOLI COMMON R
+   
+   
+ * REPORTED COMPONENT ID
+   5724T6900
+   
+   
+ * REPORTED RELEASE
+   120
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-27
+   
+   
+ * CLOSED DATE
+   2010-03-24
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIVOLI COMMON R
+   
+   
+ * FIXED COMPONENT ID
+   5724T6900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R120 PSY
+   UP

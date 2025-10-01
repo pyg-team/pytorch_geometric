@@ -1,0 +1,32 @@
+Title: IBM Detailed System Requirements for Version 11.3 of the IBM InfoSphere Optim for z/OS native solutions - United States
+
+Text:
+ DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ This document provides information about prerequisites for using IBM InfoSphere Optim for z/OS native solutions, features, and components. 
+
+CONTENT
+Complete documentation is available on line at: 
+https://www-01.ibm.com/support/knowledgecenter/SSC623_11.3.0/com.ibm.nex.optsol.doc/tdm_z_11_3_welcome.html [https://www-01.ibm.com/support/knowledgecenter/SSC623_11.3.0/com.ibm.nex.optsol.doc/tdm_z_11_3_welcome.html]
+
+
+ * When documentation refers to COBOL, the level of COBOL is Enterprise COBOL for z/OS 5.1, 5655-W32
+
+ * DFSORT is used in functions such as ARCHIVE INDEX creation. In order for DFSORT to process large amounts of data, APAR PM77027 / PTF UK83743 is required.
+
+
+Prerequisites 
+ * A minimum TSO region size of 32M is recommended. If a lower region size is used, processing large numbers of objects may limit product functions and cause "out of storage" conditions. 
+ * For sites planning to use the data privacy providers, ensure a TSO region size of 220 MB. 
+ * These default LE processing options are recommended: 
+   HEAP(...,ANYWHERE,...) and ANYHEAP(...,ANYWHERE,...).
+   
+   Using HEAP/ANYHEAP(...,BELOW,...) may limit product functions and cause "out of storage" conditions.
+
+ * During installation, an attempt is made to obtain the DB2 release value of the target DB2 subsystem through the DSNREXX interface. Therefore the DSNREXX plan must be bound and accessible to the install process in the target DB2 subsystem. Also, the DSNREXX load module must be made available through the TSO logon procedure (STEPLIB or ISPLLIB), the system link list, or the link pack area. If the installer fails to obtain the DB2 release information using DSNREXX, it will attempt to load DSNHDECP to obtain the release value. Note: The release value determined through DSNHDECP may be an incorrect value if the DB2 load library it is obtained from reflects a different DB2 subsystem. In this case Optim will prompt the person installing the product to verify the release. 
+
+
+Database and Platform Considerations Version Support Level DB2 for z/OS 10.1 Supported DB2 for z/OS 11.1 Supported DB2 for z/OS 12.1 Toleration IMS 11 Supported IMS 12 Supported IMS 13 Supported IMS 14 Supported z/OS 1.12 Supported z/OS 1.13 Supported z/OS 2.1 Supported z/OS 2.2 Supported 
+
+Note: DB2 for z/OS 10.1 is out of support. Therefore, support of it being used with Optim for z/OS 11.3 will be limited.

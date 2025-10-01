@@ -1,0 +1,33 @@
+Title: IBM TX database adapter trace not working using the database adapter -T option - United States
+
+Text:
+WTX ITX Database Adapter Trace log TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM WebSphere Transformation Extender (WTX) / IBM Transformation Extender (ITX) database adapter trace is not being produced, when only a location (directory path) and not a combined directory path and filename is specified. 
+
+SYMPTOM
+Database trace location not working with the Database Adapter.
+
+
+CAUSE
+Using a database override in an IBM Transformation Extender (ITX) map and specifying the location of the ITX database trace log but not specifying the filename.
+
+ENVIRONMENT
+Using a database override in an IBM Transformation Extender (ITX) map and specifying the location of the ITX database trace log.
+
+For example : 
+RUN(submap, "-AEU=. -TIO=. -OD1 '-MDQ foo.mdq -Q query -D mydb -T=/path'")
+
+DIAGNOSING THE PROBLEM
+The location of the Database Trace log was specified but the filename of the database trace log was not specified.
+
+RESOLVING THE PROBLEM
+Whilst other traces such as the Audit Log and the Input / Output content trace will accept just a location, you need to specify '/path/filename' not just the '/path' for any Adapter trace log.
+
+
+
+
+
+For example :
+RUN(submap, "-AEU=. -TIO=. -OD1 '-MDQ foo.mdq -Q query -D mydb -T /path/dbtrace.mtr'")

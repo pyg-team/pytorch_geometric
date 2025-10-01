@@ -1,0 +1,29 @@
+Title: IBM What is the Windows user's password policy for Controller-on-Cloud? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is the Windows user's password policy for Controller on Cloud? 
+
+CAUSE
+Superuser gets the following error when trying to create a new user:
+[/support/docview.wss?uid=swg22002688&aid=1] [/support/docview.wss?uid=swg22002688&aid=1]
+Error code 800708c5: User account cannot be created- Error in setting password, The password does not meet the password policy requirements. Check the minimum length, password complexity and password history requirements.
+
+
+ANSWER
+The basic password rules are: 
+
+ * You cannot reuse the last 8 passwords 
+ * Password must be reset every 90 days 
+ * Password must exist at least one day (i.e. once changed, it cannot be changed again for 24 hours) 
+ * Password must be at least 20 characters in length.
+
+
+
+For the complexity rules, those are specific to Microsoft. To summarise:  * The password does not contain three or more characters from the user's account name. 
+ * The password contains characters from three of the following four categories:  * English uppercase characters (A through Z) 
+    * English lowercase characters (a through z) 
+    * Base 10 digits (0 through 9) 
+    * Non-alphabetic characters (for example, !, $, #, %)

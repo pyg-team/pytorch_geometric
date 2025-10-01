@@ -1,0 +1,78 @@
+Title: IBM Tivoli Integrated Portal Upgrade failed Propagating TIP Roles, - United States
+
+Text:
+TIPL2INST; propagateTIPRoles; TIP upgrade; propagatePolicyToJACCProvider; WebSphere TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If WebSphere Global security is disabled, the WebSphere propagatePolicyToJACCProvider script will fail, causing the TIP Post configuration step to fail. 
+
+SYMPTOM
+TIP 2.2.0.7 upgrade fails: 
+
+Installation Complete. FAILURE: The overall installation fails. Check 
+/root/TIPFPInstaller-00.log 
+
+
+CAUSE
+WebSphere global security was disabled, causing the propagateJACCprovider script to fail.
+
+
+ENVIRONMENT
+This could happen with any TIP 2.2.x upgrade.
+
+
+
+DIAGNOSING THE PROBLEM
+Exceptions in the below log files show the error propagating TIP Roles: 
+
+TIPFPInstaller.log 
+
+======================================================================
+2015-08-31 18:02:02.278-04:00 : INFO : check_step_00005_TIPCorePostConfig_flags: (from AntRuntime.execute)
+2015-08-31 18:02:02.377-04:00 : INFO : step_00005_TIPCorePostConfig: (from AntRuntime.execute)
+2015-08-31 18:02:02.377-04:00 : FINE : PlanStepEventOccurred(Started target 'step_00005_TIPCorePostConfig') (from com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.eventOccurred) 
+
+ 
+
+<TIP_HOME>/_uninst/TIP2207/plan/install/MachinePlan_localhost/logs/[INSTALL...]MachinePlan_localhost.log 
+
+============================================================================
+[echo] /opt/IBM/TIP/bin/wsadmin.sh -lang jython -profileName TIPProfile -username xxxx -password xxxx -f /opt/IBM/TIP/profiles/TIPProfile/bin/propagateTIPRoles.py
+com.ibm.ac.coi.api.exception.WrappedException: An exception was received during the processing of MachinePlan: localhost. See the Exception Stack Trace for more information.
+at com.ibm.ac.coi.impl.MachinePlanImpl.process(MachinePlanImpl.java:241)
+Caused by: /opt/IBM/TIP/_uninst/TIPInstall2207/plan/install/MachinePlan_localhost/00005_TIPCorePostConfig/TIPCorePostConfig.xml:422: An exception was thrown when propagating TIP roles. 
+
+
+
+<TIP_HOME>/profiles/TIPProfile/logs/wsadmin.traceout 
+
+============================================================================
+[9/2/15 10:55:04:079 EDT] 00000000 AbstractShell A WASX7091I: Executing script: "/opt/IBM/TIP/profiles/TIPProfile/bin/propagateTIPRoles.py"
+
+[9/2/15 10:55:43:870 EDT] 00000000 AbstractShell E WASX7120E: Diagnostic information from exception with text "com.ibm.websphere.management.cmdframework.CommandException: RuntimeException thrown in RequiredModelMBean while trying to invoke operation propagatePolicyToJACCProvider
+" follows:
+com.ibm.websphere.management.cmdframework.CommandException: RuntimeException thrown in RequiredModelMBean while trying to invoke operation propagatePolicyToJACCProvider 
+
+at com.ibm.ws.security.admintask.PropagatePolicyToJACCProvider.afterStepsExecuted(PropagatePolicyToJACCProvider.java:128)
+at com.ibm.websphere.management.cmdframework.provider.AbstractTaskCommand.executeReal(AbstractTaskCommand.java:855)
+
+
+<TIP_HOME>/logs/propagateTIPRoles.out:
+============================================================================ 
+
+WASX7209I: Connected to process "server1" on node TIPNode using SOAP connector; The type of process is: UnManagedProcess
+an exception was thrown when assign jacc provider
+propagateChecking=false
+
+
+
+
+RESOLVING THE PROBLEM
+Access WebSphere admin console, go to Security -> Global Security. If "Administrative security" 
+
+and "Application security" are disabled, please enable them, you can also leave "Java 2 Security" 
+
+disabled. 
+
+After enabling the Global Security, you can retry the TIP 2.2.x upgrade.
+[/support/docview.wss?uid=swg21965862&aid=1] [/support/docview.wss?uid=swg21965862&aid=1]

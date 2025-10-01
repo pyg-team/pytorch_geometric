@@ -1,0 +1,21 @@
+Title: IBM WebSphere DataPower Transaction Times - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Can you please help us in understanding transaction timing on DataPower? 
+
+CAUSE
+Understanding of mean transaction times
+
+ANSWER
+You can navigate to Transaction times on DataPower through the WebGUI from Status->Connection->Transaction Times. The times are transaction mean times, which is a moving average based on their overall latency. The timer starts when the service is identified. 
+
+There is some slight overhead that is not accounted for; such as when data is buffered in the driver before being sent out on the network. In almost all cases this overhead would be very small; less than 1 millisecond.
+
+The time can also vary based on the configuration; for example, with a Web Service Proxy, the entire message needs to be read first, to figure out which WSP should operate on the request.
+
+Here is a screen-shot that displays transaction times:
+
+[/support/docview.wss?uid=swg21568419&aid=1] [/support/docview.wss?uid=swg21568419&aid=1]

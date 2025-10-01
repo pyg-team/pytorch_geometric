@@ -1,0 +1,26 @@
+Title: IBM How can I configure the searchForOne operation of the Content Foundation Content Platform Engine CE_Operations component with a search template that has an is like condition on a sting property? - United States
+
+Text:
+Case Manager; Component Manager; search; wildcard; CPE TECHNOTE (FAQ)
+
+QUESTION
+ How can I configure the searchForOne operation of the Content Foundation Content Platform Engine CE_Operations component with a search template that has an is like condition on a sting property? 
+
+CAUSE
+The wildcard character % has to be used before and after the search value input parameter. Otherwise, the search template will not find the expected Content Engine documents.
+
+ANSWER
+Use the % wildcard character before and after the search value input parameter. 
+
+For example, in the following search template, we search on the Document Title property with an is like condition (click on the image to enlarge it): 
+
+[/support/docview.wss?uid=swg21686400&aid=1] [/support/docview.wss?uid=swg21686400&aid=1] 
+
+The xml contents of the search template contains the following (click on the image to enlarge it): 
+
+[/support/docview.wss?uid=swg21686400&aid=2] [/support/docview.wss?uid=swg21686400&aid=2] 
+
+The searchForOne operation can be configured similar to the following to find the expected documents (click on the image to enlarge it):
+[/support/docview.wss?uid=swg21686400&aid=3] [/support/docview.wss?uid=swg21686400&aid=3]
+Note: In the example above, ProcessType is a string type workflow data field, which has the string value you want to search on. Refer to the link below if you need help in determining search template item IDs
+http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.pe.user.doc/bpfwd026.htm [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.pe.user.doc/bpfwd026.htm?lang=en]

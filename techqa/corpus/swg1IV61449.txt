@@ -1,0 +1,191 @@
+Title: IBM IV61449: IMS SERVER IS NOT RESPONDING HUNG THREADS AND FAILED TO GET A TICKET FOR GETPUBLICATTRIBUTESBYBAG NOTED IN THE LOGS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  We are currently having a production outage of IBM Security
+   Access Manager for Enterprise Single Sign-On 8.2.  In the
+   Systemout.log we have noticed two reoccurring errors:
+   
+   faultString: java.io.IOException: Async IO operation failed
+   (1), reason: RC: 55  The specified network resource or device
+   is no longer available.
+   
+   ThreadMonitor W   WSVR0605W: Thread "TCPChannel.DCS : 1"
+   (00000013) has been active for 744306 milliseconds and may be
+   hung.  There is/are 47 thread(s) in total in the server that
+   may be hung.
+   
+   We rebooted the 2 production servers to see if that would clear
+   up the issues, and it only did temporarily, then the number of
+   threads hung grew again and the application is now
+   unresponsive.  Attaching logs
+   
+   Customer has upgraded from 8.1 to 8.2 about 4 weeks ago.
+   There were recently profile changes made and uploaded to the
+   IMS Server.
+   
+   We are seeing a couple different errors in the logs
+   1. Deadlocks in SQL Server. These show as exceptions and hung
+   threads reading from SQL Server.
+   
+   2. Web services socket read errors:
+   java.io.IOException: Async IO operation failed (1), reason: RC:
+   55  The specified network resource or device is no longer
+   available.
+   
+   After learning that the issue first came up after a profile or
+   profiles had been uploaded this morning we checked the config
+   files for the download throttling server and there was no entry
+   for this.
+   Following a profile upload and discovering the client did not
+   have throttling entris in the ims.xml file the following
+   entries were made.
+   
+   <encentuate.ims.service.downloadService.maxThread>
+   <value xml:lang="en">10</value>
+   
+   </encentuate.ims.service.downloadService.maxThread>
+   >>> 10 is the recommended value
+   
+   <encentuate.ims.service.downloadService.timeout.seconds>
+   <value xml:lang="en">30</value>
+   
+   Cluster was stopped and restarted, we monitored the system for
+   10 minutes and IMS response appeared to be normal.
+   
+   IMS Server had been responding normal following this until 4/22
+   when they noticed IMS Server was not responding again.
+   At 6:43 we see [4/22/14 6:43:05:057 EDT] 00000066 DownloadServi
+   W   Failed to get a ticket for getPublicAttributesByBag
+   6:50 am on 4.22 lasting until 7:02 where 44 threads may have
+   been hung.  This cleared up at 7:02 and the IMS Server had
+   resumed normal operations.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Uploading existing access profiles (one profile at a time; for
+   each profile):
+   a) make a copy of the final copy of the access profile (.eas
+   file)
+   b) open the copy of the access profile from step (a) in Access
+   Studio
+   c) go to [View] > [Authentication Services], right-click on
+   each of the authentication services(which (exists) had
+   previously already been uploaded to IMS) and delete them
+   d) go to [View] > [AccessProfiles], right click on the profile
+   and select "Upload to IMS"
+   e) remove the copy of the access profile from step (a) (.eas
+   file)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Enhancement made to Access Studio.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  iFix provided to customer.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV61449
+   
+   
+ * REPORTED COMPONENT NAME
+   TAM ESSO IM SVR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V6700
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-11
+   
+   
+ * CLOSED DATE
+   2014-07-30
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TAM ESSO IM SVR
+   
+   
+ * FIXED COMPONENT ID
+   5724V6700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSY
+   UP

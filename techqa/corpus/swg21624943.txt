@@ -1,0 +1,36 @@
+Title: IBM SAP Agent - ABAP Transport failed with exit code 12 - United States
+
+Text:
+5724B97SOTR; ITCAM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Import of ABAP transports for ITCAM monitoring agent for SAP, fails with return code "12" during activation of Dictionary objects. 
+
+CAUSE
+The SAP agent transports are being renamed when importing using SAP Transport Management System (STMS) user interface.
+
+DIAGNOSING THE PROBLEM
+Review the transport import logs located at <SAP_HOME>/trans/logs. The logs are named ITM* (for example, ITMA00103U..<instance>). Following messages are seen in the log:
+
+
+
+Transfer order does not exist
+No object to be deleted and activated exists 
+...
+ACTIVATION OF DD-OBJECTS
+...
+exit code : "12" 
+
+
+RESOLVING THE PROBLEM
+To resolve the issue, use one of the following options: 
+
+1. Import the SAP agent transports using the "tp addtobuffer" command as described in the SAP agent user guide. 
+
+2. Use SAP STMS user interface, but do not rename the files.
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for Applications

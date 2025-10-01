@@ -1,0 +1,172 @@
+Title: IBM PM80453: Thread deadlock in CriteriaBuilder. - United States
+
+Text:
+  A FIX IS AVAILABLE
+8.5.0.2: WebSphere Application Server V8.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24034672]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The CriteriaBuilder blocks when multiple threads work on
+   constructing predicate expressions.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server                                      *
+   *                  Liberty Profile                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CriteriaBuilder predicate construction  *
+   *                      deadlocks in multi-core VM due to a     *
+   *                      static initializer.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The CriteriaBuilder blocks when multiple threads work on
+   constructing predicate expressions.  The following
+   deadlocked/hung threads are flagged in system
+   logs implicating CriteriaBuilder code:
+   WTRN0124I: When the timeout occurred the thread with which the
+   transaction is, or was most recently, associated was
+   Thread[WebContainer : 2,5,
+   java.lang.Object.wait(Native Method)
+   java.lang.Object.wait(Object.java:167)
+   java.lang.J9VMInternals.initialize(J9VMInternals.java:265)
+   org.apache.openjpa.persistence.criteria.
+   CriteriaBuilderImpl.conjunction(CriteriaBuilderImpl.java:186)
+   java.lang.Object.wait(Native Method)
+   java.lang.Object.wait(Object.java:167)
+   java.lang.J9VMInternals.initialize(J9VMInternals.java:265)
+   java.lang.J9VMInternals.initialize(J9VMInternals.java:195)
+   java.lang.J9VMInternals.initialize(J9VMInternals.java:195)
+   org.apache.openjpa.persistence.criteria.
+   CriteriaBuilderImpl.lessThan(CriteriaBuilderImpl.java:367)
+   WTRN0124I: When the timeout occurred the thread with which the
+   transaction is, or was most recently, associated was
+   Thread[DefaultWorkManager.Alarm Pool :
+   0,5,DefaultWorkManager: WAS
+   java.lang.Object.wait(Native Method)
+   java.lang.Object.wait(Object.java:167)
+   java.lang.J9VMInternals.initialize(J9VMInternals.java:265)
+   java.lang.J9VMInternals.initialize(J9VMInternals.java:195)
+   org.apache.openjpa.persistence.criteria.
+   PredicateImpl.(PredicateImpl.java:49)
+   java.lang.J9VMInternals.initializeImpl(Native Method)
+   java.lang.J9VMInternals.initialize(J9VMInternals.java:228)
+   java.lang.J9VMInternals.initialize(J9VMInternals.java:195)
+   org.apache.openjpa.persistence.criteria.
+   CriteriaBuilderImpl.conjunction(CriteriaBuilderImpl.java:186)
+   This can occur when many threads are attempting to use
+   CriteriaBuilder at the same time. The threads hang due to the
+   use of static initialization in the construction of classes
+   used by CriteriaBuilder.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  With this fix, code has been added to OpenJPA to add proper
+   sychronization when constructing CriteriaBuilder predicates.
+   
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 8.5.0.2. Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM80453
+   
+   
+ * REPORTED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0814
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-11
+   
+   
+ * CLOSED DATE
+   2013-03-28
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM79327 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM79327]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * FIXED COMPONENT ID
+   5724J0814
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

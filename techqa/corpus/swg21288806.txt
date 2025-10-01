@@ -1,0 +1,83 @@
+Title: IBM java.sql.SQLException with SQL State XJ040 Error Code 40000 starting a Derby database - United States
+
+Text:
+was app server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You notice the following exception when trying to create a database table in a Derby database: 
+java.sql.SQLException: Failed to start database 
+'/dataconv/IBM/WebSphere/AppServer/profiles/dataconvdev/databases/EJBTimers/server1/EJBTimerDB'
+with an accompanying DSRA0010E: SQL State = XJ040, Error Code = 40,000 and a root exception similar to this one
+SQL Exception: Page Page(18,Container(0, 848)) is at version 
+6,298, the log file contains change version 7,612, either there are log 
+records of this page missing, or this page did not get written out to 
+disk properly. 
+
+This latter SQLException indicates that a problem occurred writing records out to the database. 
+
+SYMPTOM
+When trying to create a database table in a Derby database, the following errors are logged. 
+
+[11/15/07 8:50:05:709 PST] 00000014 EJBContainerI E WSVR0040E: 
+addEjbModule failed for processors.jar 
+[class com.ibm.ws.runtime.component.DeployedEJBModuleImpl] 
+com.ibm.websphere.csi.EJBContainerException: EJB Timer Service not started 
+at com.ibm.ws.runtime.component.EJBContainerImpl.getSchedulerInstance (EJBContainerImpl.java:2394)
+...
+Caused by: 
+com.ibm.ws.scheduler.exception.SchedulerDataStoreException: 
+com.ibm.ws.extensionhelper.exception.UnableToInitializeException: 
+java.sql.SQLException: Failed to start database 
+'/dataconv/IBM/WebSphere/AppServer/profiles/dataconvdev/databases/EJBTim
+ers/server1/EJBTimerDB', 
+see the next exception for details.
+DSRA0010E: SQL State = XJ040, Error Code = 40,000 
+at com.ibm.ws.scheduler.WASSchedulerCfgHelper.createTables (WASSchedulerCfgHelper.java:542) at com.ibm.ws.runtime.component.EJBContainerImpl.createTimerTables(EJBContainerImpl.java:2604) at com.ibm.ws.runtime.component.EJBContainerImpl.getSchedulerInstance(EJBContainerImpl.java:2335) Caused by: 
+com.ibm.ws.extensionhelper.exception.UnableToInitializeException: 
+java.sql.SQLException: Failed to start database '/datacon 
+Caused by: java.sql.SQLException: Failed to start database 
+'/dataconv/IBM/WebSphere/AppServer/profiles/dataconvdev/databases/EJBTimers/server1/EJBTimerDB', 
+see the next exception for details.DSRA0010E: 
+SQL State = XJ040, Error Code = 40,000 
+at org.apache.derby.impl.jdbc.Util.newEmbedSQLException(Unknown Source) 
+at org.apache.derby.impl.jdbc.Util.newEmbedSQLException(Unknown Source) 
+at org.apache.derby.impl.jdbc.Util.generateCsSQLException(Unknown Source) 
+at org.apache.derby.impl.jdbc.EmbedConnection.newSQLException(Unknown 
+Source) 
+at org.apache.derby.impl.jdbc.EmbedConnection.bootDatabase(Unknown Source) 
+at org.apache.derby.impl.jdbc.EmbedConnection.<init>(Unknown Source) 
+at org.apache.derby.impl.jdbc.EmbedConnection30.<init>(Unknown Source) 
+at org.apache.derby.jdbc.Driver30.getNewEmbedConnection(Unknown Source)
+
+Caused by: SQL Exception: Page Page(18,Container(0, 848)) is at version 
+6,298, the log file contains change version 7,612, either there are log 
+records of this page missing, or this page did not get written out to 
+disk properly. 
+at org.apache.derby.impl.jdbc.Util.generateCsSQLException(Unknown Source) 
+... 43 more 
+
+
+CAUSE
+The cause of the problem is that the database was in an inconsistent state due to a previous database write failing to complete, which led to the stored database getting corrupted. Derby uses file system space to store the tables and the stored database was corrupted. One possible cause for this error is that two different processes had the database table open concurrently and wrote at the same time.
+
+
+ENVIRONMENT
+This is a problem that occurs using a Derby database with WebSphere Application Server.
+
+
+
+DIAGNOSING THE PROBLEM
+The key symptom to look for is an exception similar to this one 
+
+SQL Exception: Page Page(18,Container(0, 848)) is at version 6,298, the log file contains change version 7,612, either there are log records of this page missing, or this page did not get written out to 
+disk properly. 
+
+
+RESOLVING THE PROBLEM
+More than likely, it will be necessary to drop and recreate the database table that is corrupted. There are instructions in the WebSphere Application Server product documentation for dropping and creating the Scheduler database tables [http://publib.boulder.ibm.com/infocenter/wasinfo/v8r0/index.jsp?topic=/com.ibm.websphere.base.doc/info/aes/scheduler/ref/rsch_tablefunc.html]. It is possible that deleting records from the database will restore the database to a consistent state, this would require enabling the Scheduler MustGather and RRA traces to seek to determine which jobs are causing the DB exception.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server for z/OS z/OS 6.1, 6.0

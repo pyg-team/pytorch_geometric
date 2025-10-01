@@ -1,0 +1,23 @@
+Title: IBM Rational Rhapsody integration with Neutrino QNX - United States
+
+Text:
+neutrino qnx; integration; whitepaper WHITE PAPER
+
+ABSTRACT
+The document explains the concepts used in setting up the integration and provides step by step guidance in installing the adapters, rebuilding IBM Rational Rhapsody framework for QNX, setting up communication between host and target and finally testing the setup using a “Hello World” example. 
+
+CONTENT
+The purpose of this document is to describe the integration between IBM Rational Rhapsody and Neutrino QNX. 
+
+The document explains the concepts used in setting up the integration and provides step by step guidance in performing installation of QNX on VMWare as host, installing the adapters to rebuild IBM Rational Rhapsody framework followed with a small “Hello World” example.
+
+Adapters are a set of .cpp/.h files which implements the system call specific to the environment along with the makefile required to build the IBM Rational Rhapsody framework.
+
+This document also explains how to install QNX on a VMWare image if you do not have a Target.
+
+
+Rhapsody_Integration_with_QNX.pdf [/support/docview.wss?uid=swg27018398&aid=2] [/support/docview.wss?uid=swg27018398&aid=1] 
+
+
+ORIGINAL PUBLICATION DATE
+2010/3/26

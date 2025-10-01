@@ -1,0 +1,89 @@
+Title: IBM After upgraded ILMT or SUA to v9.2.2.0 on Windows successfully, clicking on Update Schema button failed with "Database error" message. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ After upgraded ILMT or SUA to v9.2.2.0 on Windows successfully, clicking on Update Schema button failed with "Database error" message. 
+
+CAUSE
+Clicking on Update Schema button failed with this error below:
+[/support/docview.wss?uid=swg21975723&aid=1] [/support/docview.wss?uid=swg21975723&aid=1]
+
+
+If continue clicking on Update Schema button again a few more times, a new error might appear as shown below.
+
+
+[/support/docview.wss?uid=swg21975723&aid=2] [/support/docview.wss?uid=swg21975723&aid=2]
+
+Checking the TEMADB database, the sam.schema.migrations table does exist and it does have all migration task records. This error might have anything to do with the initial error above. It can be ignored for now.
+
+
+
+[/support/docview.wss?uid=swg21975723&aid=3] [/support/docview.wss?uid=swg21975723&aid=3]
+
+
+The tema.log in DEBUG mode did not really capture any details related to such error.
+
+
+[1/8/16 14:28:09:506 UTC] 0000190e com.ibm.ws.webcontainer.webapp I SRVE0292I: Servlet Message - [tema]:.[DEBUG] (0.000000s) SELECT TOP (1) schema_name() AS [v]
+
+[1/8/16 14:28:09:787 UTC] 0000190e com.ibm.ws.webcontainer.webapp I SRVE0292I: Servlet Message - [tema]:.[DEBUG] (0.000000s) SELECT TOP (1) * FROM [schema_migrations]
+
+[1/8/16 14:28:09:803 UTC] 0000190e com.ibm.ws.webcontainer.webapp I SRVE0292I: Servlet Message - [tema]:.[DEBUG] (0.000000s) SELECT [filename] FROM [schema_migrations] ORDER BY [filename]
+
+[1/8/16 14:28:09:865 UTC] 0000190e com.ibm.ws.webcontainer.webapp I SRVE0292I: Servlet Message - [tema]:.[DEBUG] (0.000000s) IF @@LANGID!=0 SET LANGUAGE us_english
+
+[1/8/16 14:28:09:896 UTC] 0000190e com.ibm.ws.webcontainer.webapp I SRVE0292I: Servlet Message - [tema]:.[DEBUG] (0.000000s) IF @@LANGID!=0 SET LANGUAGE us_english
+
+[1/8/16 14:28:09:896 UTC] 0000190e com.ibm.ws.webcontainer.webapp I SRVE0292I: Servlet Message - [tema]:.[DEBUG] (0.000000s) SELECT CAST(SERVERPROPERTY('ProductVersion') AS varchar)
+
+[1/8/16 14:28:09:932 UTC] 0000190e com.ibm.ws.webcontainer.webapp I SRVE0292I: Servlet Message - [tema]:.[DEBUG] (0.000000s) SELECT TOP (1) schema_name() AS [v]
+
+[1/8/16 14:28:10:162 UTC] 0000190e com.ibm.ws.webcontainer.webapp I SRVE0292I: Servlet Message - [tema]:.[DEBUG] (0.016000s) SELECT TOP (1) * FROM [schema_migrations]
+
+[1/8/16 14:28:10:162 UTC] 0000190e com.ibm.ws.webcontainer.webapp I SRVE0292I: Servlet Message - [tema]:.[DEBUG] (0.000000s) SELECT [filename] FROM [schema_migrations] ORDER BY [filename]
+
+[1/8/16 14:28:10:630 UTC] 0000190e com.ibm.ws.webcontainer.webapp I SRVE0292I: Servlet Message - [tema]:.[DEBUG] (0.000000s) IF @@LANGID!=0 SET LANGUAGE us_english
+
+[1/8/16 14:28:10:895 UTC] 0000190e com.ibm.ws.webcontainer.webapp I SRVE0292I: Servlet Message - [tema]:.[DEBUG] (0.000000s) IF @@LANGID!=0 SET LANGUAGE us_english
+
+[1/8/16 14:28:10:911 UTC] 0000190e com.ibm.ws.webcontainer.webapp I SRVE0292I: Servlet Message - [tema]:.[DEBUG] (0.016000s) SELECT CAST(SERVERPROPERTY('ProductVersion') AS varchar)
+
+[1/8/16 14:28:10:926 UTC] 0000190e com.ibm.ws.webcontainer.webapp I SRVE0292I: Servlet Message - [tema]:.[DEBUG] (0.000000s) SELECT TOP (1) schema_name() AS [v]
+
+[1/8/16 14:28:12:502 UTC] 0000190e com.ibm.ws.webcontainer.webapp I SRVE0292I: Servlet Message - [tema]:.[DEBUG] (0.016000s) SELECT TOP (1) * FROM [schema_migrations]
+
+[1/8/16 14:28:12:502 UTC] 0000190e com.ibm.ws.webcontainer.webapp I SRVE0292I: Servlet Message - [tema]:.[DEBUG] (0.000000s) SELECT [filename] FROM [schema_migrations] ORDER BY [filename]
+
+[1/8/16 14:28:12:892 UTC] 0000190e com.ibm.ws.webcontainer.webapp I SRVE0292I: Servlet Message - [tema]:.[DEBUG] (0.000000s) IF @@LANGID!=0 SET LANGUAGE us_english
+
+[1/8/16 14:28:13:019 UTC] 0000190e com.ibm.ws.webcontainer.webapp I SRVE0292I: Servlet Message - [tema]:.[INFO] Rendered C:/Program Files/ibm/LMT/wlp/usr/servers/server1/apps/tema.war/WEB-INF/app/views/setup/update.html.rb (6471.0ms)
+
+[1/8/16 14:28:13:051 UTC] 0000190e com.ibm.ws.webcontainer.webapp I SRVE0292I: Servlet Message - [tema]:.[INFO] Completed 200 OK in 31251ms (Views: 6490.0ms)
+
+
+
+ANSWER
+APAR IV80370 opened to address this issue. Workaround is to perform the following steps to address the issue: 
+
+ 
+
+1) Restart the ILMT or SUA Server service first . 
+
+2) Clear the web browser cache. 
+
+3) Enter the following URL link instead
+
+[/support/docview.wss?uid=swg21975723&amp;aid=4] 
+replace hostname with ILMT or SUA server hostname. 
+
+It will redirect to Schema Update page URL link as shown below.
+
+[/support/docview.wss?uid=swg21975723&amp;aid=5]
+
+4) Should see the Schema Update page again. Click on Schema Update button and it should be starting to update the schema. 
+
+5) If still seeing the error, reboot the ILMT or SUA server (Operating System) completely and re-do the above steps starting from step 2.
+
+6) If still seeing the error, open a PMR for IBM Support Team for further assistance including the tema.log attached to a PMR.

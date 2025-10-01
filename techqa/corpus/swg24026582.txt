@@ -1,0 +1,76 @@
+Title: IBM PM10331; 6.1.0.29: after applying 6.1.0.29 connections to WebSphere MQ fail - United States
+
+Text:
+PM10331; PM10331; PM10331 DOWNLOADABLE FILES
+
+ABSTRACT
+ After applying fix pack 6.1.0.29, XA Connections made to IBM WebSphere MQ fail with JMSSecurityException MQRC 2035 (MQRC_ NOT_AUTHORIZED) 
+
+DOWNLOAD DESCRIPTION
+PM10331 resolves the following problem:
+
+ERROR DESCRIPTION: 
+After applying fix pack 6.1.0.29, XA Connections to WebSphere MQ fail with a JMSSecurityException indicating that the Queue Manager (QM) has rejected a connection request made by the WebSphere Application Server process user. 
+
+LOCAL FIX: 
+Either configure an authentication alias with user credentials that do have authority to connect to the QM (note there is no authentication of that user without additional configuration) or set the MCAUSER of the SVRCONN channel at the QM to a user that has sufficient authority to perform the actions required by the Application Server application. 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+All users of IBM WebSphere Application Server 6.1 with WebSphere MQ
+
+PROBLEM DESCRIPTION:
+After applying fix pack 6.1.0.29, XA, connections made to WebSphere MQ fail with the following exception:
+
+
+
+
+
+JMSSecurityException MQRC 2035 (MQRC_NOT_AUTHORIZED)
+
+RECOMMENDATION:
+None
+
+WebSphere MQ APAR IZ17062 included in WebSphere MQ fixpack 6.0.2.8 is delivered to WebSphere Application Server in fix pack 6.1.0.29. IZ17062 causes client mode XA Connections, that have no username and password specified either on the createConnection() call or via an authentication alias set on the Connection Factory, to have the user of the WebSphere Application Server process passed to the QM.
+
+If the QM has not had security configured the default behavior is to accept connections with no user credentials specified, but to reject any specified user credentials that do not have authority. Thus, the effect of IZ17062 is that the user of the WebSphere Application Server process is passed to the QM, and if that user either does not exist on the QM server or does not have authority to connect, then the connection attempt is rejected with MQRC 2035.
+
+XA Connections are not typically created by JMS applications, but rather on their behalf, so this problem can affect Message Driven Beans or any other JMS application running in an EJB for example.
+
+Another possible problem after applying 6.1.0.29 is an AccessControlException when attempting to create an XA Connection and Java 2 Security is enabled. The stack will show that the WebSphere MQ client is attempting to get the user of the Java process.
+
+Note this problem also exists in all versions of WebSphere Application Server 7.x. PM09742 resolves this problem in V7 and is targeted for 7.0.0.13.
+
+PROBLEM CONCLUSION: 
+This APAR delivers WebSphere MQ APAR IZ72486 which restores the original behavior; if no user is specified then no user is sent to the QM. 
+
+This APAR also resolves the AccessControlException problem. 
+
+
+The fix for this APAR is currently targeted for inclusion in 
+fix pack 6.1.0.31. Please refer to the Recommended Updates 
+page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+Please download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PM10331/readme.txt] US English 9491 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 6.1.0.29-WS-WAS-IFPM10331 4/13/2010 US English 1243729 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=6.1.0.29-WS-WAS-IFPM10331&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PM10331/6.1.0.29-WS-WAS-IFPM10331.pak] DD 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24026582&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24026582&aid=2]Problems (APARS) fixed
+PM10331

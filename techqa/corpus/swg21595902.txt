@@ -1,0 +1,39 @@
+Title: IBM Changing Portal's default verboseGC behavior for better problem determination results. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Starting with Portal 7.0, by default, the VerboseGC data is now no longer in the same file as the rest of the JVM's native messages. This can lead to a more complicated PD process.
+
+RESOLVING THE PROBLEM
+Troubleshooting memory issues is a task that all Portal sysadmins need to face at some point in their careers. One of the most important tools to help you with this prospect is the verbose garbage collection (GC) capability built into the SDK that the Portal product runs on. VerboseGC data can tell you about allocation request failures, SDK memory consumption, and general JVM health. Starting with Portal version 7.0, this important tool is turned on by default out of the box. You now no longer need to enable it in order to start collecting this important information. 
+
+VerboseGC data is written by default to the native_stderr.log (or on Solaris, the native_stdout.log) file It is a text file that is (relatively) easy to read. Compared to the size of other traces and memory diagnostic artifacts (such as a heapdump or core file), it is small in size. However, concern was raised about the amount of data that could be written to the file, particularly over a time frame of months. Therefore, it decided that the safest way of avoiding large file creation was to write the verboseGC data to a non-standard file location that could be controlled in terms of size, and historical retention. 
+
+If you look at your JVM command line arguments, you will see that a new parameter has been added like this:
+
+-Xverbosegclog:/opt/WebSphere/AppServer7/profiles/wp_profile/logs/verbosegc.%Y%m%d.%H%M%S.%pid.txt,20,10000 
+
+This helped make sure that setting verboseGC on would not lead to hundreds of megabytes of data being created. 
+
+One of the consequences of this change was the verboseGC data is not written into the same file as the rest of that JVM's important messages, such as heapdump or javacore generation messages, or native memory exhaustion messages. Since the verboseGC provides highly detailed time stamps, the combined dataset proves to be extremely worthwhile. 
+
+Therefore, it is VERY HIGHLY RECOMMENDED by the Portal support team that your remove the -Xverbosegclog parameter for each of your Portal JVM. Please be aware that over the period of weeks and months, the size of the native*.log file might grow to large sizes. However, this should occur slowly, and large files can be archived or erased when the Portal JVM are being recycled. 
+
+To remove this parameter from your Portal system, please follow these steps:
+
+
+ * In the administrative console, clickServers>Server Types>WebSphere application servers>server_name. Then, under Server Infrastructure, clickJava™ and process management>Process definition. 
+ * SelectJava Virtual Machine. 
+ * Specify values for the JVM settings as needed and clickOK. 
+   (It will be found in the Generic JVM arguments and will look like this:
+   ${SERVER_LOG_ROOT}/verbosegc.%Y%m%d.%H%M%S.%pid.txt,20,10000) 
+ * ClickSaveon the console task bar. 
+ * Restart the application server.
+
+
+
+
+ * 
+ *

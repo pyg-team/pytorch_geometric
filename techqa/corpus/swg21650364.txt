@@ -1,0 +1,60 @@
+Title: IBM Old server name for DB2 data source still being used to connect to database - United States
+
+Text:
+websphere client reroute ACR DB2 old hostname host name application server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After changing the Server name in a data source configured with DB2 Automatic Client Reroute (ACR) in IBM WebSphere Application Server, any attempts to connect to the database using the data source (through the application or the Test Connection function in the administrative console) may fail with the following error due to the previous Server name continuing to be used::
+
+java.net.NoRouteToHostException: No route to host
+
+
+SYMPTOM
+The Server name for a DB2 ACR configured data source is updated using IBM WebSphere Application Server. However, when the application tries to connect to the database or the Test Connection button in the administrative console is used, the connection fails with the following exception:
+
+DSRA8201W: DataSource Configuration: DSRA8040I: Failed to connect to the DataSource. Encountered java.sql.SQLException: [jcc][t4][2043][11550][3.65.77] Exception java.net.NoRouteToHostException: Error opening socket to server mydb2server1.mycompany.com/192.168.1.1 on port 50,000 with message: No route to host. ERRORCODE=-4499, SQLSTATE=08001 DSRA0010E: SQL State = 08001, Error Code = -4,499.
+java.sql.SQLException: [jcc][t4][2043][11550][3.65.77] Exception java.net.NoRouteToHostException: Error opening socket to server mydb2server1.mycompany.com/192.168.1.1 on port 50,000 with message: No route to host. ERRORCODE=-4499, SQLSTATE=08001 DSRA0010E: SQL State = 08001, Error Code = -4,499
+at com.ibm.db2.jcc.am.cd.a(cd.java:321)
+at com.ibm.db2.jcc.am.cd.a(cd.java:359)
+at com.ibm.db2.jcc.t4.vb.a(vb.java:435)
+at com.ibm.db2.jcc.t4.vb.<init>(vb.java:93)
+at com.ibm.db2.jcc.t4.a.b(a.java:365)
+at com.ibm.db2.jcc.t4.b.newAgent_(b.java:2038)
+at com.ibm.db2.jcc.am.Connection.initConnection(Connection.java:726)
+......
+Caused by: java.net.NoRouteToHostException: No route to host
+at java.net.PlainSocketImpl.doConnect(PlainSocketImpl.java:381)
+at java.net.PlainSocketImpl.connectToAddress(PlainSocketImpl.java:243)
+at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:230)
+at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:377)
+at java.net.Socket.connect(Socket.java:539)
+...
+
+
+CAUSE
+The problem occurs when the optional persistence option for DB2 ACR is enabled with the "Client reroute server list JNDI name" property. With this option enabled, the alternate server information will persist across Java Virtual Machines (JVMs). The alternate server information will not be lost when the application server is restarted and attempts to connect to the database. However, the server information is not updated when the Server name for the data source is changed.
+
+DIAGNOSING THE PROBLEM
+In IBM WebSphere Application Server connection pool tracing there will be a similar entry captured:
+
+primaryServerName: mydb2server1.mycompany.com
+primaryPortNumber: 50000
+alternateServerName: [mydb2server2.mycompany.com]
+alternatePortNumber: [50000] 
+
+RESOLVING THE PROBLEM
+To resolve the problem, you must either delete the data source or use the unbind feature for the client reroute server list to delete the JNDI binding from the application server's JNDI name space without deleting the data source.
+
+To delete the JNDI binding for the client reroute server list:
+
+
+
+
+
+ 1. Select Unbind client reroute list from JNDI. 
+ 2. Click OK. 
+ 3. Save the configuration. 
+ 4. Click Test connection for the data source. 
+ 5. Deselect Unbind client reroute list from JNDI. 
+ 6. Click OK. 
+ 7. Save the configuration.

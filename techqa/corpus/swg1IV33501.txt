@@ -1,0 +1,239 @@
+Title: IBM IV33501: WMQ 7.1 CLIENT FAILS TO CONNECT TO WMQ SERVER USING SSL WITH ERROR 2399 - MQRC_SSL_PEER_NAME_ERROR - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.5 Fix Pack 7.5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24035286]
+Fix Pack 7.1.0.3 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035405]
+WebSphere MQ v7.5.0.2 Hypervisor for RHEL [http://www-01.ibm.com/support/docview.wss?uid=swg24036533]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WMQ 7.1 Client application tries to connect to a queue manager
+   gets the exception "'2399' ('MQRC_SSL_PEER_NAME_ERROR')".
+   The same configuration works with WMQ 6.0 java client.
+   Client Error:
+   at
+   com.ibm.msg.client.wmq.common.internal.Reason.reasonToException(
+   Reason.java:580)
+   at
+   com.ibm.msg.client.wmq.common.internal.Reason.createException(Re
+   ason.java:216)
+   at
+   com.ibm.msg.client.wmq.internal.WMQSession.connect(WMQSession.ja
+   va:374)
+   at
+   com.ibm.msg.client.wmq.internal.WMQSession.<init>(WMQSession.jav
+   a:282)
+   at
+   com.ibm.msg.client.wmq.internal.WMQConnection.createSession(WMQC
+   onnection.java:878)
+   at
+   com.ibm.msg.client.jms.internal.JmsConnectionImplcreateSession(J
+   msConnectionImpl.java:582)
+   at
+   com.ibm.msg.client.jms.internal.JmsQueueConnectionImpl.createQue
+   ueSession(JmsQueueConnectionImpl.java:143)
+   at
+   com.ibm.mq.jms.MQQueueConnection.createQueueSession(MQQueueConne
+   ction.java:135)
+   ...
+   Caused by: com.ibm.mq.jmqi.JmqiException:
+   CC=2;RC=2399;AMQ9204:Connection to host 'XXXXXX(1434)'
+   rejected.
+   [1=com.ibm.mq.jmqi.JmqiException[CC=2;RC=2399;AMQ9640: SSL
+   invalid peer name, channel '?',attribute 'EMAILADDRESS (x2)'.
+   [5=EMAILADDRESS
+   (x2)]],3=XXXXXX(1434),5=RemotePeerName.setValue]
+   at
+   com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:
+   2049)
+   at
+   com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:
+   1331)
+   at
+   com.ibm.msg.client.wmq.internal.WMQSession.connect(WMQSession.ja
+   va:330)
+   ...
+   Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2399;AMQ9640:
+   SSL invalid peer name, channel '?', attribute 'EMAILADDRESS
+   (x2)'.[5=EMAILADDRESS (x2)]
+   at
+   com.ibm.mq.jmqi.remote.util.RemotePeerName.setValue(RemotePeerNa
+   me.java:383)
+   at
+   com.ibm.mq.jmqi.remote.util.RemotePeerName.parseDN(RemotePeerNam
+   e.java:207)
+   at
+   com.ibm.mq.jmqi.remote.util.RemotePeerName.<init>(RemotePeerName
+   .java:92)
+   at
+   com.ibm.mq.jmqi.remote.impl.RemoteTCPConnection.protocolConnect(
+   RemoteTCPConnection.java:1172)
+   at com.ibm.mq.jmqi.remote.impl.RemoteConnection.connect
+   (RemoteConnection.java:688)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of:
+   
+   - The WebSphere MQ V7 classes for Java.
+   - The WebSphere MQ V7 classes for JMS.
+   - The WebSphere MQ V7 Resource Adapter.
+   - The WebSphere MQ V7 OSGi bundles.
+   - The WebSphere Application Server V7 WebSphere MQ messaging
+   provider.
+   - The WebSphere Application Server V8 WebSphere MQ messaging
+   provider.
+   - The WebSphere Application Server V8.5 WebSphere MQ messaging
+   provider.
+   - The WebSphere Application Server V6.1 WebSphere MQ messaging
+   provider who have configured the WebSphere variable
+   MQ_INSTALL_ROOT to point to a WebSphere MQ V7 installation.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   In WebSphere MQ version 7.1, the EMAILADDRESS could be specified
+   in certificates being used to secure channel connections was
+   increased. The WebSphere MQ classes for Java and JMS clients did
+   not recognise this attributes correctly, so any attempt to use
+   certificates with these attributes caused the error seen above.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The distinguished name attribute "EMAILADDRESS" can now be
+   specified in certificates used to secure connections from
+   WebSphere MQ Java and JMS clients to queue managers.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.3
+   --------           --------------------
+   Windows            7.1.0.3
+   AIX                7.1.0.3
+   HP-UX (Itanium)    7.1.0.3
+   Solaris (SPARC)    7.1.0.3
+   Solaris (x86-64)   7.1.0.3
+   iSeries            7.1.0.3
+   Linux (x86)        7.1.0.3
+   Linux (x86-64)     7.1.0.3
+   Linux (zSeries)    7.1.0.3
+   Linux (Power)      7.1.0.3
+   
+   Platform           v7.5
+   --------           --------------------
+   Multiplatforms     7.5.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV33501
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7224
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-12-14
+   
+   
+ * CLOSED DATE
+   2013-03-26
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7224
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

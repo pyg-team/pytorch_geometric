@@ -1,0 +1,51 @@
+Title: IBM DSRA0080E error thrown and JVM is terminated with the message: HMGR0130I - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere Application Server (WAS) Message Engine (ME) was started and all of sudden your application is unable to send the messages to the BUS.
+
+In the SystemOut.log initially the error DSRA0080E is reported from the message data store component followed by J2CA0056I. Each of these messages is repeated several times. This sequence is then followed by message codes CWSIS1546I and CWSIS1538I, which indicate that the lock on the database has been lost and repeated attempts are being made to recover the lock. Finally the application server JVM is terminated by HA manager to avoid any possible data loss. Message HMGR0130I appears before it terminates the JVM. The application server is terminated in a orderly way. 
+
+SYMPTOM
+In the SystemOut.log: 
+
+DSRA0080E: An exception was received by the Data Store Adapter. See original exception message: com.ibm.db2.jcc.b.SqlException: invalid operation: connection closed at com.ibm.db2.jcc.b.o.yb(o.java(Compiled Code))
+
+ConnectionEve A J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adaptor for resource jdbc/JDBCDataSource. The exception which was WebSphere Application Server V6: Default Messaging Provider Problem Determination received is com.ibm.websphere.ce.cm.StaleConnectionException: A communication error has been detected. Communication protocol being used: UWReply.fill(). Communication API being used: recvBuff(). Location where the error was detected: ReasonCode=71. Communication function detecting the error: *. Protocol specific error codes(s) TCP/IP SOCKETS
+[...] 00000038 MCWrapper E J2CA0081E: Method cleanup failed while trying to execute
+method cleanup on ManagedConnection WSRdbManagedConnectionImpl@5915eba0 from resource No longer available. Caught exception: com.ibm.ws.exception.WsException: DSRA1130E: A fatal connection error occurred on another connection while this connection was active. This connection cannot be reset to a usable state. 
+
+ CWSIS1546I: The messaging engine, ME_UUID=<ME_UUID>, INC_UUID=<INC_UUID>, has lost an existing lock or failed to gain an initial lock on the data store.
+
+CWSIS1538I: The messaging engine, ME_UUID=<ME_UUID>, INC_UUID=<INC_UUID>, is attempting to obtain an exclusive lock on the data store.
+
+CWSID0046E: Messaging engine <ME_NAME> detected an error and cannot continue to run in this server.
+
+HMGR0130I: The local member of group WSAF_SIB_BUS=<BUS_NAME>, WSAF_SIB_MESSAGING_ENGINE=<ME_NAME>,type=WSAF_SIB has indicated that is it not alive. The JVM will be terminated.
+
+SystemOut O Panic:component requested panic from isAlive
+::
+ServerCollabo A WSVR0024I: Server <server_name> stopped
+
+
+CAUSE
+These errors occurred due to network errors or connectivity issues with the database. These errors could have also occurred if there were any other problems with the database or if the database is closed. Fix these errors to resolve the problem and restart the application server.
+
+In WebSphere Application server 7.0 and 8.0 we have introduced a custom property: sib.msgstore.jdbcFailoverOnDBConnectionLoss on a messaging engine. The default value in version 7.0 is set to true which means: The high availability manager stops the messaging engine and its hosting application server when the next core group service isAlive check takes place (the default value is 120 seconds). If a node agent is monitoring the server, and you have enabled automatic restart in the monitoring policy for the server, the server restarts. The messaging engine starts when an appropriate server is available. You can set this value to FALSE and it will not to terminate the JVM. In this case it behaves the same as version 6.0 default behavior as mentioned below. 
+
+In WAS V8.5.5, when a database connectivity failure occurs the messaging engine instance is stopped gracefully and failed over to the standby instance. So the other applications running within the server continue to run.
+
+
+RELATED INFORMATION
+ sib.msgstore.jdbcFailoverOnDBConnectionLoss custom prop [https://www.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.base.doc/ae/rjj_custom_props.html]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere MQ Configuration Business Integration WebSphere Process Server Business Integration WebSphere Service Registry and Repository Business Integration IBM Business Process Manager Standard Business Integration WebSphere Enterprise Service Bus Business Integration WebSphere Partner Gateway - Express 
+PRODUCT ALIAS/SYNONYM
+ WebSphere Application Server WAS SIB SIBUS SI BUS

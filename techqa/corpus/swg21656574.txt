@@ -1,0 +1,40 @@
+Title: IBM Impact troubleshooting tips using ServerName:ServerSerial - United States
+
+Text:
+Impact; Troubleshoot; Techniques; ServerName; ServerSerial TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What is the best way to know if an event has been processed by Impact and When 
+
+SYMPTOM
+Impact seems slow processing events and the policylogger log files don't show any information about which events are being processed
+
+
+CAUSE
+Impact processes many events in parallel on different threads. Finding out when each event is processed and by which policy can be troublesome.
+
+ENVIRONMENT
+Impact in a busy environment
+
+DIAGNOSING THE PROBLEM
+The log files don't show enough information about the events being processed in each instant
+
+RESOLVING THE PROBLEM
+A way of finding this information is to have log statements at the beginning and at the end of the policy with the ServerName, ServerSerial and PolicyName to know when a policy acting upon an event starts and finishes (the PolicyName comes by default in the lines of the PolicyLogger preceding the Thread's Name and Number)
+
+
+
+
+
+Log ("Starting Policy PolicyName for Event with ServerName"+@ServerName+" and ServerSerial "+@ServerSerial); 
+
+ 
+
+Log ("Finishing Policy PolicyName for Event with ServerName"+@ServerName+" and ServerSerial "+@ServerSerial); 
+
+ 
+
+
+06 Nov 2013 11:10:34,835: [Enrichment][MessageProcessor-Dog#6]Parser log: Starting Policy Enrichment for Event with ServerName NCOMS and ServerSerial 123456
+
+06 Nov 2013 11:10:35,046: [Enrichment][MessageProcessor-Dog#6]Parser log: Finishing Policy Enrichment for Event with ServerName NCOMS and ServerSerial 123456

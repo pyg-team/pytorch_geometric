@@ -1,0 +1,154 @@
+Title: IBM IY95965: THE APPLICATION SUPPORT FOR A PRODUCT CANNOT BE REMOVED FROM THE TEPS AND TEMS ON WINDOWS/LINUX/UNIX PLATFORMS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Application Support for a product cannot be removed
+   from the TEPS and TEMS on Linux/UNIX environment.
+   
+   Uninstall of ITCAM for RTT TEMA when TEMS, TEPS, TEMA and
+   RTT Management server are on the same system leaves TEMS and
+   TEPS support installed. When you attempt to reinstall the TEMA
+   and supporting files, it will not allow you to re-install the
+   TEMS/TEPS support as it thinks it is already installed.
+   
+   Steps to reproduce.
+   Windows 2003 Server (probable broke on all OS).
+   1. Install ITM 6.1 (we are using FP3, but I have seen it wih
+   FP05 also)
+   2. Install ITCAM RTT MS (this can probable be on another box but
+   you need one somewhere to point the RTT TEMA to, Patch to at
+   least FP02).
+   
+   3. Install ITCAm for RTT TEMA, TEPS, TEMS and Desktop Support on
+   ITM server.
+   
+   4. Apply ITCAM for RTT TEMA FP02 and TEPS, TEMS and Desktop
+   Support on ITM server.
+   
+   5. Uninstall ITCAM for RTT TEMA and TEPS, TEMS and Desktop
+   Support on ITM server.
+   
+   6. run the KinCinfo.exe and you will note that the T2 support is
+   still on the ITM server.
+   .
+   ITM 6.3 release does NOT support programmatic
+   removal of application support.
+   .
+   This is explained in the Installation Guide
+   in section:
+   Appendix H: Uninstalling IBM Tivoli Monitoring
+     Uninstalling an individual IBM Tivoli Monitoring Agent
+       or component.
+   .
+   DCF technote 1296601 instructions apply to
+   6.23 and 6.3 releases.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Question
+   How can I remove Application Support for a specific product?
+   
+   Cause
+   Programmatic Application Support removal is not supported by any
+   ITM based product.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  APAR IY95965 describes a procedure that, when executed, removes
+   Application Support for a specific Product Code. The APAR
+   applies to IBM Tivoli Monitoring releases ITM 6.1 and ITM 6.2.
+   To remove Application Support, follow one of the attached
+   procedures. The attached document files explain in detail how to
+   remove Application Support from TEMS, TEPS, TEPW (browser
+   client) and TEPD (desktop client).
+   See Technote for complete details:
+   http://www-1.ibm.com/support/docview.wss?uid=swg21296601 [http://www-1.ibm.com/support/docview.wss?uid=swg21296601]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY95965
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-03-12
+   
+   
+ * CLOSED DATE
+   2008-02-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

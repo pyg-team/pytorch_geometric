@@ -1,0 +1,161 @@
+Title: IBM OA28843: ABILITY TO STOP MONITORING MQ EVENTS WITHOUT RECYCLING THE AGENT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When MQ events are being monitored by the agent as a result of
+   EVENTS(REMOVE) specified in the SET GROUP or SET MANAGER
+   command, the agent will have exclusive access to the event
+   queues. It will not release the exclusive access until the agent
+   is recycled. The customer sometimes need manipulate directly the
+   messages in the event queues, but doesn't want stop the agent.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IBM Tivoli OMEGAMON XE for Messaging:    *
+   *                 WebSphere MQ Monitoring users.               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The MQ Monitoring agent cannot stop     *
+   *                      monitoring events without shutting      *
+   *                      down the agent.                         *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   The MQ Monitoring agent has exclusive access to the event
+   queues when EVENTS(REMOVE) is specified for the SET GROUP
+   or the SET MANAGER commands. Customer cannot perform any
+   maintenance operations against the event queues without
+   shutting down the agent.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  The program logic is enhanced to accept a dynamically issued
+   SET GROUP or SET MANAGER command with EVENTS(NO) parameter
+   specified. The agent will stop monitoring the events at the
+   next sampling interval. The event monitoring can be resumed
+   by dynamically issue the SET GROUP or SET MANAGER command with
+   an EVENTS parameter other than EVENTS(NO).
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA28843
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG XE WEBSPHM
+   
+   
+ * REPORTED COMPONENT ID
+   5608A1100
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-04-30
+   
+   
+ * CLOSED DATE
+   2009-05-20
+   
+   
+ * LAST MODIFIED DATE
+   2009-07-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  KMQAMQS2
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG XE WEBSPHM
+   
+   
+ * FIXED COMPONENT ID
+   5608A1100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY UA47554 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA47554]
+   UP09/06/15 P F906
+   
+   
+ * R601 PSY UA47555 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA47555]
+   UP09/06/15 P F906
+   
+   
+ * R700 PSY UA47556 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA47556]
+   UP09/06/15 P F906
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

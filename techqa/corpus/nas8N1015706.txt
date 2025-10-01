@@ -1,0 +1,90 @@
+Title: IBM HMC Console Takeover and Recovery Feature - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes using the IBM i console recovery feature with HMC console and the benefits of using it in place of shared consoles. 
+
+RESOLVING THE PROBLEM
+What is Console recovery? 
+
+Console takeover and recovery is a special set of functions included in IBM i to enhance 5250 console. The main benefit for a console type of HMC is the Recovery feature. Recoveryis the process of regaining control of the job running on the console after a problem with the console was encountered or the active console was disconnected. The recovery process may be to the same console device or a different console device and may be facilitated by additional work to enable a device using a different connectivity such as LAN console. 
+
+The default value is off. IBM support recommends console recovery be enabled for any production partition.
+
+A common example of recovery is its use in long running console tasks such as restricted state backups. With recovery enabled, a user can start a backup from their console session. They can then disconnect the console (shut down their PC), relocate, then reconnect later to check the progress. Recovery will keep the console session, along with the running backup, active while the console is disconnected. It then allows the user to resume the job later.
+
+
+Using Console recovery in place of shared consoles
+
+Administrators may wish to use console recovery in place of (or with) HMC shared 5250 consoles. IBM support recommends using it with dedicated consoles. Many users use HMC shared consoles as a limited type of "recovery". They start one shared session on the local HMC to keep the running console job (such as backup) active, should the remote shared console session disconnect. Console recovery provides the same protection as shared consoles with two additional benefits as follows:
+
+1. It works at the IBM i layer.
+That implies that even if the HMC is rebooted, encounters an error, or is powered off, the recovery feature will still keep the active job running.
+
+2. No need to start local shared consoles
+You do not have to open local shared consoles after every HMC reboot. This is especially beneficial for remote or "lights out" data centers where there is no or limited access to the local HMC.
+
+When the function is enabled for a partition with HMC 5250 console type, the HMC 5250 console will present an additional dedicated service tool logon panel each time the console connects. The user will need a dedicated service tools log on (with the take-over console privilege) to resume an existing console session. 
+
+For additional information on the console recovery feature, you should refer to the following URL: http://www.ibm.com/support/knowledgecenter/ssw_ibm_i_72/rzajr/rzajrconsoletakeoverandrecover.htm?lang=en [http://www.ibm.com/support/knowledgecenter/ssw_ibm_i_72/rzajr/rzajrconsoletakeoverandrecover.htm?lang=en]
+
+The following sections cover additional topics: 
+
+o Checking the Takeover Setting - Checking or changing the current recovery settings. o Console Recovery - Sample screens of the log on and recovery panels. o Taking over an existing dedicated console - Explains how to take control of or "move" an existing console session to a different PC or workstation. Checking the Takeover Setting o Access Dedicated Service Tools (DST) or System Service Tools (SST) o SST: <skip this step>
+DST: Select Option "5. Work with DST environment" o SST: Select Option "8. Work with service tools user IDs and Devices"
+DST: Select Option "2. System devices" o SST: Select Option "3. Select console"
+DST: Select Option "6. Select console" o Check the value for console takeover field as shown below. Change the value to "2" to prevent the takeover screen from appearing.
+"Allow console to be taken over by another
+console . . . . . . . . . . . . . . . . 1 1=Yes, 2=No" [/support/docview.wss?uid=nas8N1015706&amp;aid=1] Select Console screen [/support/docview.wss?uid=nas8N1015706&aid=2] [/support/docview.wss?uid=nas8N1015706&aid=2] 
+For information on other console-related settings, you should refer to document N1018613, New System Setup - Beyond the Basic Console Connection [http://www-01.ibm.com/support/docview.wss?uid=nas8N1018613] . 
+
+Console Recovery 
+
+When console takeover is enabled, the following takeover screens are shown each time the HMC console connects to the partition. The exceptions are immediately after an IPL or console restart which will go directly to an IBM i OS logon. 
+
+Screen 1 Dedicate Service Tools (DST) Sign on 
+The "ATTENTION: This device can become the "console" message and indicates that this is a DST takeover/recovery screen as opposed to a normal DST sign-on. 
+The user must sign on with a valid DST user profile and password that has the "takeover console" privilege. 
+
+Note: If the optional "F18" function is enabled, the user has the option to bypass the console recovery and resume at the IBM i OS login. This option ends any running console job. 
+
+Dedicated Service Tools (DST) Sign On screen [/support/docview.wss?uid=nas8N1015706&aid=3] [/support/docview.wss?uid=nas8N1015706&aid=3] 
+
+Optional Console Information Status panel 
+Depending on the console configuration settings, IBM i release and PTF level, and last console connection, the console may either immediately resume the active/running session or present an additional console information status panel. 
+
+If the console information status panel is displayed, the user must press F10 to "take over" the console: 
+
+Console Information Status screen [/support/docview.wss?uid=nas8N1015706&aid=4] [/support/docview.wss?uid=nas8N1015706&aid=4] 
+
+Console Takeover Screen 2 
+On the Takeover console connection from another user panel, reply 1=Yes and press Enter to resume the active console job/session: 
+
+Takeover Console Connection From Another User screen [/support/docview.wss?uid=nas8N1015706&aid=5] [/support/docview.wss?uid=nas8N1015706&aid=5] 
+
+
+Taking over an existing dedicated console 
+Taking control of an active console job from another device or user using HMC dedicated consoles is different than with LAN console. For HMC console, you must first disconnect the active user and then use the recovery option to recover the running job. 
+
+1. Use Option 3=Show Details to view the active console (status "Connected"): 
+Remote 5250 Console Partition Selection screen [/support/docview.wss?uid=nas8N1015706&aid=6] [/support/docview.wss?uid=nas8N1015706&aid=6] 
+
+2. Disconnect active user 
+You can see the HMC user ID that has the current console and their IP address. Use Option 1 to disconnect them: 
+Remote 5250 Console Session Details [/support/docview.wss?uid=nas8N1015706&aid=7] [/support/docview.wss?uid=nas8N1015706&aid=7] 
+
+The remote user will receive a 0046 disconnect message informing them that they have been disconnected: 
+Remote 5250 Console System Selection screen [/support/docview.wss?uid=nas8N1015706&aid=8] [/support/docview.wss?uid=nas8N1015706&aid=8] 
+
+
+3. Connect dedicated 
+After the disconnect completes the user that did the disconnect is returned to the partition selection panel. Enter 1 (dedicated) or 2 (shared) under the Option column to connect: 
+[/support/docview.wss?uid=nas8N1015706&aid=9] [/support/docview.wss?uid=nas8N1015706&aid=9] 
+
+Enter your service tool user/password, and continue with the recovery login described above: 
+Dedicated Service Tools (DST) Sign On [/support/docview.wss?uid=nas8N1015706&aid=10] [/support/docview.wss?uid=nas8N1015706&aid=10]  
+
+HISTORICAL NUMBER
+ 367515335

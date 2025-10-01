@@ -1,0 +1,130 @@
+Title: IBM PK96418: Agent misassigns environment values in 64 bit Windows - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Build Forge agent assigns the value of environment variable Prog
+   ramFiles(x86) to environment variable ProgramFiles . The agent d
+   oes not even display ProgramFiles(x86).
+   
+   Steps to Reproduce:
+   
+   1. Install the Build Forge agent on Windows Server 2003 64-BIT
+   2. Telnet to the agent using the following:
+   
+   telnet ?host? ?port?
+   cmd exec
+   exec set pro
+   root c:\build
+   tag build_1
+   dir /
+   timeout 300
+   username ?user?
+   password ?password?
+   go
+   
+   Result: ProgramFiles(x86) does not show in the list  and Program
+   Files has the value of ProgramFiles(x86)  assigned to it.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  The reason the agent does not report this is that it is not
+   the agent that sets it; this value is by the Windows shell.
+   The agent does nothing more here than launch the shell that
+   it is configured to launch.
+   
+   If you want it to use a different shell, then that change
+   can be made, as documented, by altering the "shell" option
+   in bfagent.conf to point at the one that is preferred.
+   Alternatively, the step itself can override the shell by
+   specifying an alternate shell using a #! line, using the
+   same syntax that would be used for UNIX systems.  For
+   example:
+      #!C:\Perl\bin\perl.exe
+      print "Hello, from $$^X\n";
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK96418
+   
+   
+ * REPORTED COMPONENT NAME
+   BUILD FORGE EE
+   
+   
+ * REPORTED COMPONENT ID
+   5724S2701
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-16
+   
+   
+ * CLOSED DATE
+   2009-11-17
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

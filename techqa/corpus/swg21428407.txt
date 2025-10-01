@@ -1,0 +1,111 @@
+Title: IBM What adjustments can I make to FileNet Content Engine (CE ) Automatic Upgrade - United States
+
+Text:
+Automatic upgrade; JVM properties; com.filenet.engine.upgrade; autoupgrade TECHNOTE (FAQ)
+
+QUESTION
+ Now that upgrades are handled automatically via the deployment of the new Content Engine, how can I adjust that behavior to meet my customer's needs or troubleshooting issues? 
+
+ANSWER
+Starting with the Content Engine 4.5.1 release, upgrades of existing Content Engine servers from release 4.0.1 and beyond are handled by the new Automatic Upgrade facility which is built directly into the Content Engine server. This represents a dramatic change from how upgrades were previously handled, but also significantly reduces the issues inherent in deployment and invocation of an external application.
+This article discusses aspects of tuning and troubleshooting Automatic Upgrade, but first covers its default behaviors and general operation.
+
+
+
+
+Domain Upgrades
+Upon deployment of a new Content Engine ear file, the server will check to see if the P8 domain’s version information stored in the GCD database matches the value compiled into the server code. If the versions do not match, the Automatic Upgrade facility will determine what steps are necessary to upgrade the P8 domain from the old version to the expected version. It does this prior to attempting to load any object stores. Status of the domain upgrade phase can be monitored via the AutomaticUpgradeStatus servlet located at http://CEserver:port/FileNet/AutomaticUpgradeStatus. 
+
+P8 domain upgrades are typically performed in a single phase – where a phase is defined to be a transactional unit. Therefore, if there are multiple servers simultaneously deploying the updated Content Engine ear file, the server first detecting the need to upgrade the P8 domain will block the other servers from continuing. Upon its completion, the upgrading server will remove the lock and the other servers will determine that no upgrade steps are warranted and continue with their startup sequences.
+
+
+
+
+Object Store Upgrades
+The Content Engine server then enters the cycle where object stores are loaded. Just as with the P8 domain, the object store load will be attempted and will fail with an appropriate exception indicating that an upgrade is necessary and could be in progress. The task attempting the load will catch this exception and enter the first phase of upgrading an object store. Unlike P8 domain upgrades, object store upgrades consist of several phases (again defined as transactional units) and, by default, there is one background task dedicated to performing upgrades on a given server. If there are multiple servers involved, the other servers will attempt to upgrade the object store, but will be blocked on that object store until the first server has completed the current object store upgrade phase. Once that phase has completed, the next server will acquire the lock and perform the next phase of the object store’s upgrade. As you can see, this means that in multi-server configurations, the upgrade of a given object store can take place on different servers. Since the upgrade status servlet is tied to a specific server, this also implies that a servlet window should be opened against each server deployed with the new ear file. 
+
+Once all the phases of an object store’s upgrade are complete, the object store will be made available for general use. Until that time, access via end-user applications (e.g., FileNet Enterprise Manager) will be prevented – although the list of object stores can be obtained and operations against the P8 domain can be performed.
+
+
+
+
+Asynchronous Tasks
+In certain situations, some aspects of an upgrade must be completed in an asynchronous manner. These situations typically involve having to modify the rows of a table, which can take a very long time depending on the table’s size. In these cases, an asynchronous upgrade task will be started and will run until the appropriate steps have been completed while the server is generally available for application use. Once again, this status can be monitored using the aforementioned servlet.
+
+
+
+
+Tuning Options
+The default behaviors built into the Automatic Upgrade framework are generally sufficient. However, there are times when more flexibility is warranted or desired. This section describes the various capabilities that can be optionally configured. In all cases, the tunings take place in the form of JVM properties. Since JVM properties are set differently depending on the hosting application server, please refer to the applicable documentation for your application server.
+
+
+
+
+Number of Upgrader Tasks
+In multi-object store configurations (typically consisting of 5 or more object stores), it is desirable to increase the throughput of the upgrade by allowing for a degree of parallelism such that multiple object stores are upgraded simultaneously. This can be accomplished by configuring the number of tasks dedicated to performing upgrade phases via the following property: 
+
+com.filenet.engine.upgrade.MaxUpgraderTasks=numTasks 
+
+where numTasks is an integer denoting the number of tasks (or threads) to start. A recommended value for numTasks would be something between 3 and 10 where numTasks does not exceed the number of object stores divided by 3. Therefore, in a 15 object store configuration, a recommended value for numTasks would be 5. It is not recommended to set this value higher than 10. 
+
+Also, please keep in mind that a degree of parallelism is inherently introduced by having the updated ear file deployed on multiple servers.
+
+
+
+
+Upgrading Specific Object Stores
+Again, in multi-object store configurations, it may be desirable to upgrade one or two object stores to try things out first. This can be accomplished using the following JVM property, which consists of different formats; a comma-separated list of object store names or a file reference: 
+
+com.filenet.engine.upgrade.ObjectStores=os1,os2 
+
+or 
+
+com.filenet.engine.upgrade.ObjectStores=file 
+
+where file is the name of a text file located in the application server’s working directory (which can be easily located on the PingPage at http://CEserver:port/FileNet/Engine). Each line in the text file contains exactly one object store name. In either case (comma-separated list or file reference), the symbolic name of the object store must be specified. 
+
+Another use of this option would be to assign the upgrades of specific object stores to specific servers in multi-server configurations where each server is configured with a different JVM property value. This would provide greater control from a status monitoring perspective via the servlet.
+
+
+
+
+Troubleshooting Options
+In rare situations, it may be necessary to perform troubleshooting steps during an object store’s upgrade. This section lists options that might come into play during those moments. These options should be used only under the advisement of IBM support personnel.
+
+
+
+
+Using an Object Store during its Upgrade
+By default, an object store is not usable until the synchronous phases of its upgrade have been completed. This is true for both user applications as well as background tasks (although the CE server does permit some background tasks to run during object store upgrades since they are essential for its success). 
+
+One example of when it would be necessary to run FileNet Enterprise Manager against an object store in the process of its upgrade would be if any metadata created on behalf of a previously installed system AddOn had been removed prior to the upgrade. In this case, a failure will occur repeatedly during the UpgradeAddOn installation phase until the missing metadata has been imported. However, the missing metadata cannot be imported since user applications are prevented. To get around this and allow user applications to run against upgrading object stores, the following JVM property can be set: 
+
+com.filenet.engine.upgrade.UsersCanUseObjectStore=true 
+
+Likewise, should it be deemed necessary that certain background tasks be enabled during upgrades, they too can be allowed access via the following: 
+
+com.filenet.engine.upgrade.TasksCanUseObjectStore=true
+
+
+
+
+Tuning Transaction Timeouts
+Transaction timeouts used during automatic upgrades are set programmatically and generally do not adhere to the JTA timeout value configured within the application server. The reason for this is to allow for a self-correcting experience such that if a phase times out, that phase will be retried with a slightly longer transaction timeout. This will continue until the maximum timeout value has been reached - in which case the JTA timeout value is used. 
+
+Here are the various JVM properties that manage the transaction timeout aspects of automatic upgrade – along with their default values and descriptions. The unit of all values is seconds. 
+
+This value represents the initial timeout value to be used at the start of each phase. 
+
+com.filenet.engine.upgrade.TransactionTimeout=180 
+
+This value represents the minimum timeout value to be used by tasks managing their own timeouts. 
+
+com.filenet.engine.minServerManagedTimeout=180 
+
+This value represents the maximum timeout value to be used by tasks managing their own timeouts. If the upgrade phase still fails after using this value, automatic upgrade will defer to the JTA value configured in the application server. 
+
+com.filenet.engine.maxServerManagedTimeout=900 
+
+This value represents the increment by which to increase the previous transaction timeout value. It originates from the idea that a transaction timeout issue will be retried 5 times and (900 – 180)/5 = 144 – although upgrade failures are retried indefinitely. 
+
+com.filenet.engine.recommendedTimeoutIncrement=144

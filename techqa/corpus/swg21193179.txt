@@ -1,0 +1,53 @@
+Title: IBM Storage agent compatibility with Tivoli Storage Manager servers - United States
+
+Text:
+LAN-Free; lanfree; storage agent; V5.3; V5.2; interoperability; DEVTYPE=FILE; file; VALIDATE LANFREE; compatibility; sta TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ LAN-free functions require interoperability between storage agents and servers. Requirements for interoperability have caused confusion about what is supported for storage agent levels and a given server. This technote provides background information about interoperability requirements. 
+
+CAUSE
+Enhanced support for interoperability between storage agents and servers began with the server V5.2 release. A chronological summary of the changes to LAN-free interoperability support follows: 
+
+1) For V5.1, the storage agents and servers were required to be at the same version, release, fix level, and modification level. 
+
+2) With V5.2, support was added to allow a V5.2 server to allow connections from lower fix-level storage agents than the server. Eventually this support allowed for a server to support "n-2" fix levels for the storage agent. The "n-2" indicated support for fix-levels up to 2 below the current server level. For example, a 5.2.4 server supports storage agents at 5.2.4, 5.2.3, and 5.2.2. 
+
+3) With V5.3 and later server releases, the server not only allows connections from lower fix-level storage agents at the same version and release, but also those from the previous release. For example, a V5.3.0 server allows connection by 5.2 storage agents at fix level 3 (5.2.3) or above.
+
+While the evolution of this support has provided customers flexibility for managing their LAN-free environments in terms of when storage agents need to be upgraded relative to a given server, it has caused confusion in terms of what is supported.
+
+
+RESOLVING THE PROBLEM
+Please note that the information in this document is superseded by the following document: 
+
+ 
+
+http://www.ibm.com/support/docview.wss?uid=swg21302789 [http://www.ibm.com/support/docview.wss?uid=swg21302789] 
+
+The original information for this technote is as follows:
+
+The following are the interoperability guidelines for the storage agent and server.
+
+1) Fixes for LAN-free problems reported are provided only at the latest fix-level being delivered for a given release of the product. For example, if a program error (APAR) is identified in a 5.2.3 storage agent, that fix is only provided in the latest 5.2 fix level, or it might be fixed in a future release depending on the complexity and scope of the error. The determination for where an error is fixed is at the discretion of IBM. In any case, the fix is never provided in an older fix-level of the product.
+
+2) A server never supports an "up-level" storage agent. For example, a 5.2.7 server does not support a 5.2.8 storage agent. Similarly, a 5.2.7 server also does not support a 5.3.1 storage agent. A storage agent is considered to be "up-level" if it is at a higher version, release, or fix-level.
+
+3) For storage agents and servers at the same version and release, Tivoli Storage Manager development tests and certifies a given server fix level using only the matching storage agent for that fix level, and storage agents at one (n-1) and two (n-2) fix levels below the server. For example, a 5.3.3 server is tested and certified with storage agents at the following fix levels: 5.3.3, 5.3.2, and 5.3.1.
+
+4) Tivoli Storage Manager allows cross-release interoperability between storage agents and servers. An example of a cross-release environment is a 5.3.2 server supporting 5.2.8 storage agents. In a cross-release environment, Tivoli Storage Manager development tests only the latest server using the most recent fix-level for the storage agent at the preceding release. For example, when V5.3.3 was released, the server was tested using 5.2 storage agents at the most recent fix level available at that time. 
+
+Note: Tivoli Storage Manager storage agents might work in configurations other than what is described in the preceding interoperability guidelines. The guidelines are intended to illustrate what is being tested and certified by IBM. If a problem arises with the LAN-free support, consider first whether storage agents should be upgraded to match what was tested by IBM.
+
+If any restrictions arise for storage agent and server interoperability, the restrictions will be documented in the server readme. Similarly any restrictions that arise will be updated and documented in this article.
+
+RELATED INFORMATION
+ Current interoperable combinations [http://www.ibm.com/support/docview.wss?uid=swg21302789]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ADSM
+TSM
+Tivoli Storage Manager

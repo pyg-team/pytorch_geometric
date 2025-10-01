@@ -1,0 +1,209 @@
+Title: IBM IZ33564: ERROR ON MULTIPLE MANUAL PM GENERATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Steps to reproduce:
+   
+   1) You create a new PM with calendar frequency of 10 days
+   2) you populate the field PM.PLUSASTARTDATE with the date of
+   today, and thePM.NEXTDATE (next due date) with the date of
+   today.
+   2 bis)on the frequency tab of the PM check the first sentence
+   something like 'Use starting WO information to calculate next
+   date' - Sorry I have a french version in front of me.... So you
+   have to do that before
+   3) you change the status of PM to active
+   4) select action / generate WO
+   5) In the dialog box, chose : generate WO for the next 30 days,
+   use frequency criteria - checked, and click OK
+   6) Maximo should generate 3 Workorders
+   Once WO generated, one more time play
+   7) Select action / generate WO
+   8- In the dialog box, chose : generate WO for the next 60 days,
+   use frequency criteria - checked, and click OK
+   9) Maximo should generate 3 new WO. Unfortunately, we receive a
+   message like ' A workorder has already been generated' and
+   nothing is generated.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Transportation 6.3 users                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Steps to reproduce:                     *
+   *                                                              *
+   *                      1) You create a new PM with calendar    *
+   *                      frequency of 10 days                    *
+   *                                                              *
+   *                      2) you populate the field               *
+   *                      PM.PLUSASTARTDATE with the date of      *
+   *                                                              *
+   *                      today, and thePM.NEXTDATE (next due     *
+   *                      date) with the date of                  *
+   *                                                              *
+   *                      today.                                  *
+   *                                                              *
+   *                      2 bis)on the frequency tab of the PM    *
+   *                      check the first sentence                *
+   *                                                              *
+   *                      something like 'Use starting WO         *
+   *                      information to calculate next           *
+   *                                                              *
+   *                      date' - Sorry I have a french version   *
+   *                      in front of me.... So you               *
+   *                                                              *
+   *                      have to do that before                  *
+   *                                                              *
+   *                      3) you change the status of PM to       *
+   *                      active                                  *
+   *                                                              *
+   *                      4) select action / generate WO          *
+   *                                                              *
+   *                      5) In the dialog box, chose : generate  *
+   *                      WO for the next 30 days,                *
+   *                                                              *
+   *                      use frequency criteria - checked, and   *
+   *                      click OK                                *
+   *                                                              *
+   *                      6) Maximo should generate 3 Workorders  *
+   *                                                              *
+   *                      Once WO generated, one more time play   *
+   *                                                              *
+   *                      7) Select action / generate WO          *
+   *                                                              *
+   *                      8- In the dialog box, chose : generate  *
+   *                      WO for the next 60 days,                *
+   *                                                              *
+   *                      use frequency criteria - checked, and   *
+   *                      click OK                                *
+   *                                                              *
+   *                      9) Maximo should generate 3 new WO.     *
+   *                      Unfortunately, we receive a             *
+   *                                                              *
+   *                      message like ' A workorder has already  *
+   *                      been generated' and                     *
+   *                                                              *
+   *                      nothing is generated.                   *
+   *                                                              *
+   *                      LOCAL FIX:                              *
+   *                                                              *
+   *                      none                                    *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   ERROR ON MULTIPLE MANUAL PM GENERATION
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  One source file had to be changed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ33564
+   
+   
+ * REPORTED COMPONENT NAME
+   ASSETS
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46AS
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-29
+   
+   
+ * CLOSED DATE
+   2008-10-02
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ASSETS
+   
+   
+ * FIXED COMPONENT ID
+   5724R46AS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R621 PSY
+   UP

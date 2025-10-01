@@ -1,0 +1,320 @@
+Title: IBM LO40715: PRINT JOB DOES NOT APPEAR IN PRINTER QUEUE ANYMORE AFTER UPGRADI NG TO NOTES CLIENT 6.5.5 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  10/31/2006 - New update from German support team.  Reassigned
+   this SPR to
+   Shobha who is the new printing owner.
+   
+   
+   OK, here is how to reproduce the issue.
+   
+   remember the problem does occur since 6.55 (I have verified with
+   6.53 there is
+   now issue @ all).
+   Problem:
+   The problem occurs only if during logon (not necessary it can
+   run later too,
+   but has to run before Notes client start) the printer assignment
+   changes. It is
+   fact and that seems to be a Microsoft issue too, but it can be
+   discovered with
+   6.55 only ! If someone tries to change the printer assignment
+   and Notes at the
+   same time reads the default printer ( have a look into
+   wmisc/printini.c
+   PrinterInit) indirect via a WIN.INI mapping from the registry
+   (the key is:
+   HKLM\Software\Microsoft\Windows
+   NT\CurrentVersion\Windows\Device), then it can
+   occur that there is garbage in the registry key.
+   
+   Now finally how to reproduce:
+   Install 6.55 and run setup with an arbitrary user
+   Install a network default printer
+   Now modify the registry in such a case: If the original Device
+   string (see
+   above) is "\\hera2003\Canon i560,winspool,Ne00:" then change it
+   into
+   "\\hera2003\Canon i560 test, test". It is important to have the
+   first part
+   "\\hera2003\Canon i560" stays the same as this is used to select
+   the printer in
+   our printer box.
+   Now start Notes please and print something without changing
+   anything in the
+   printer box. In my example you will get a file in the Notes
+   program directory
+   with a name "i560 test". If you do the same with 6.53 it prints
+   correctly into
+   the printer queue Ne00:
+   
+   Customer wants to have that 6.55 will behave like 6.51 - 6.54
+   (these are the
+   version customer reported it works). It looks like that we read
+   the default
+   printer in 6.51 - 6.54 later from another location too, like the
+   HKCU or
+   similar.
+   
+   Customer requesting a Client fix, if you need additional
+   information please
+   approach me via Sametime or Email I will try to fill any
+   remaining gaps asap.
+   
+   
+   
+   Problem:
+   Customer migrated from Notes Client 6.5.1 + 6.5.3 German to
+   Notes Client 6.5.5
+   German.
+   
+   
+   After Migration, several Clients are not able to print to
+   network
+   printers as their printjob don't appear in the printer queue
+   anymore.
+   
+   
+   But they can print in other Applications (Office, Acrobat
+   Reader) without any
+   problems.
+   
+   
+   The problem is not reproducible at will and only 10% (7000
+   Users) of the Users
+   are affected.
+   Downgrading the Notes Version to 6.5.4, 6.5.3 or 6.5.1 alwaays
+   solves  our
+   printing problems an we must reinstall Notes 6.5.5 twice to
+   
+   reproduce the problem again.
+   
+   ENVIRONMENT
+   Notes Client 6.5.5 German
+   Windows XP
+   Using Network printing
+   
+   Steps to Reproduce:
+   
+   For reproducing the printer problem, you nead at least those
+   three
+   components:
+   
+   - A Windows2003 based Domain Controller
+   
+   - A Windows XP Workstation with Notes 6.5.5
+   
+   - A network printer connected via LAN-Interface to te network
+   and used via its
+   TCP/IP-Adress (not directly connected to the DC or
+   Workstation)
+   Configure an active directory and create a user without special
+   privileges to
+   the windows system and assign the network printer via
+   active directory to the user. Configure the printer as default
+   printer for the
+   user Login with the created user and open an arbitrary database
+   and start
+   printing to the assigned standard printer. This will not work.
+   We reproduced it
+   with HP and Lexmark printers, so we think, the type of
+   printer doesn't matter and the problem will also occur with
+   other
+   printers.
+   
+   
+   
+   
+   Troubleshooting by customer:
+   
+   
+   Customer analysed the problem with the Microsoft support without
+   
+   solution.
+   
+   Microsoft suspected that maybe Notes 6.5.5 would change some
+   system dlls
+   whcih causes the problem.
+   
+   
+   
+   Here our actual knowledge about the problem:
+   
+   
+   
+   - The (windows) administrator can always print
+   
+   - Only personal assigned network printer are effected, local
+   printers
+   (directly connected to the PC) and computer assigned network
+   printers
+   are running fine
+   
+   - The problem occurs on 10% our clients (approximately 7.000)
+   
+   - Compressing the desktop6.ndk doesn't help
+   
+   - After changing the printer, it works until next start of the
+   PC (it's only
+   necessary to change the printer in the print dialog from the
+   
+   standard printer to file or another printer and changing back to
+    standard
+   printer)
+   
+   - Hotfix539 doesn't help
+   ----
+   We changed the driver for the Optra-Printer to version 7.4.1
+   (newest
+   version by Lexmark). The problem resists.
+   ------
+   Unfortunately, changing rights was not reproducable after
+   reinstalling Notes
+   6.5.5. It affects all network printers assigned to the user (in
+   
+   our test environment, we have a HP and a lexmark printer)
+   
+   We'ra now following the hint with the printer queue, but we
+   don't have much
+   hope, becaus all other programs are printing (tested with
+   notepad,
+   WordPro, Adobe PDF and word)
+   
+   
+   
+   We tested the problem today again and found out, that all
+   network printers are
+   affected (even those, that are assigned to the
+   workstation). The tests today showed, that in case of the
+   printing  problem, a
+   file is created. The filename is the one of the printer
+   Queue. We traced this behavior with filemon and found out, that
+   the  file is
+   not created, when notes prints. I attached 4 files
+   
+   - test2.log => Shows the behaviour, when the problem occurs and
+   shows
+   the creation of the mentioned file
+   
+   - test3.log => Shows what heppend, when you chenge the printer
+   (to
+   other printer and back to standard printer) without printing
+   
+   - test4.log shows the behaviour, when the print runs fine and
+   you can
+   see, that the file is not created
+   
+   - optra S 1650 (MS) is an example of the file created, when the
+   problem
+   occurs
+   -------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This problem was resolved as: No Plans To Fix in this Codestream
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# SHEZ6T7JP5.
+   This problem was resolved as: No Plans To Fix in this
+    Codestream
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO40715
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES/DOMINO 7X
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   802
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-21
+   
+   
+ * CLOSED DATE
+   2009-05-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R802 PSN
+   UP

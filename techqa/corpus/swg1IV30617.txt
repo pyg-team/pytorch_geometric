@@ -1,0 +1,177 @@
+Title: IBM IV30617: AD004001 FDCs are missing - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.5 Fix Pack 7.5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24035286]
+Fix Pack 7.1.0.3 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035405]
+WebSphere MQ V7.0 Fix Pack 7.0.1.11 [http://www-01.ibm.com/support/docview.wss?uid=swg24035750]
+WebSphere MQ v7.5.0.2 Hypervisor for RHEL [http://www-01.ibm.com/support/docview.wss?uid=swg24036533]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  AD004001 FDCs give the name of the operating system file
+   affected by the error happening at the time.  The FDC had been
+   removed but is being restored under this APAR.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   In a problem scenario when something is going wrong in the file
+   system, these FDCs are needed, for IBM Support to help the
+   customer.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The AD004001 FDC had been removed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The AD004001 FDC is restored.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.11
+   --------           --------------------
+   Windows            7.0.1.11
+   AIX                7.0.1.11
+   HP-UX (PA-RISC)    7.0.1.11
+   HP-UX (Itanium)    7.0.1.11
+   Solaris (SPARC)    7.0.1.11
+   Solaris (x86-64)   7.0.1.11
+   iSeries            7.0.1.10
+   Linux (x86)        7.0.1.11
+   Linux (x86-64)     7.0.1.11
+   Linux (zSeries)    7.0.1.11
+   Linux (Power)      7.0.1.11
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.3
+   --------           --------------------
+   Windows            7.1.0.3
+   AIX                7.1.0.3
+   HP-UX (Itanium)    7.1.0.3
+   Solaris (SPARC)    7.1.0.3
+   Solaris (x86-64)   7.1.0.3
+   iSeries            7.1.0.3
+   Linux (x86)        7.1.0.3
+   Linux (x86-64)     7.1.0.3
+   Linux (zSeries)    7.1.0.3
+   Linux (Power)      7.1.0.3
+   
+   Platform           v7.5
+   --------           --------------------
+   Multiplatforms     7.5.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV30617
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7221
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-22
+   
+   
+ * CLOSED DATE
+   2013-01-18
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7221
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

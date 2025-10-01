@@ -1,0 +1,184 @@
+Title: IBM PM45198: SESSION SERIALIZATION FAILURE CAUSE BY "COM.IBM.WORKPLACE.WCM.API.ACCESSCONNECTORIMPL" - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Session persistence and/or Tivoli Performance Viewer's attempt
+   to serialize session data may fail with the following
+   exceptions:
+   
+   [5/16/11 15:05:05:755 CEST] 0000004b WASSession    E
+   
+   SessionContextMBeanAdapter
+   findAttCausingNotSerializableException
+   Miscellaneous data: Attribute
+   "PC_Z5_28GH3E58MNUBC0IETJL6342026000000_WCM_SYSTEM_WORKSPACE" is
+   declared to be serializable but is found to generate exception
+   "java.io
+   NotSerializableException" with message
+   "com.ibm.workplace.wcm.api.
+   AccessConnectorImpl".  Fix the application so that the attribute
+   "PC_Z5_28GH3E58MNUBC0IETJL6342026000000_WCM_SYSTEM_WORKSPACE" is
+   correctly serializable at runtime.
+   
+   [5/16/11 15:05:05:765 CEST] 0000004b WASSession    E
+   SessionContextMBeanAdapter
+   findAttCausingNotSerializableException
+   Miscellaneous data: Attribute "USER_WORKSPACE_KEY" is declared
+   to be
+   serializable but is found to generate exception "java.io.
+   NotSerializableException" with message
+   "com.ibm.workplace.wcm.api.
+   AccessConnectorImpl".  Fix the application so that the attribute
+   "USER_WORKSPACE_KEY" is correctly serializable at runtime.
+   
+   [5/16/11 14:57:57:230 CEST] 0000004b WASSession    E
+   SessionContextMBeanAdapter
+   findAttCausingNotSerializableException
+   Miscellaneous data: Attribute
+   "PC_Z5_6D28VDIJQPF430IGCLGA8P2KS5016687_System_wcmWorkspace" is
+   declared
+   to be serializable but is found to generate exception
+   "java.io.NotSerializableException" with message
+   "com.ibm.workplace.wcm.api.AccessConnectorImpl".  Fix the
+   application so
+   that the attribute
+   "PC_Z5_6D28VDIJQPF430IGCLGA8P2KS5016687_System_wcmWorkspace" is
+   correctly serializable at runtime.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disable session persistence and / or Tivoli Performance Viewer.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Session serialization failure caused due to
+   com.ibm.workplace.wcm.api.AccessConnectorImpl
+   
+   Session persistence and Tivoli Performance Viewer's attempt to
+   serialize session data may fail with the following exception:
+   WASSession    1 SessionContextMBeanAdapter getSessionsInfo
+   Failed serializing session data for app
+   default_host/wps/PA_WCMLocalRendering
+   WASSession    E SessionContextMBeanAdapter
+   findAttCausingNotSerializableException Miscellaneous data:
+   Attribute "PC_Z5_6D28VDIJQPF430IGCLGA8P2KS5016687_System_wcmWork
+   space" is declared to be serializable but is found to generate
+   exception "java.io.NotSerializableException" with message
+   "com.ibm.workplace.wcm.api.AccessConnectorImpl".  Fix the
+   application so that the attribute
+   "PC_Z5_6D28VDIJQPF430IGCLGA8P2KS5016687_System_wcmWorkspace" is
+   correctly serializable at runtime.
+   WASSessionCor 1 SessionContextMBeanAdapter
+   findAttCausingNotSerializableException Exception is:
+   java.io.NotSerializableException:
+   com.ibm.workplace.wcm.api.AccessConnectorImpl
+    at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream
+   .java:1184)
+    at java.io.ObjectOutputStream.defaultWriteFields(ObjectOutputSt
+   ream.java:1537)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was updated to correct this behavior.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM45198
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-08
+   
+   
+ * CLOSED DATE
+   2011-08-10
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

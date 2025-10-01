@@ -1,0 +1,31 @@
+Title: IBM Operational Decision Manager V8.5.1.0: Interim Fix 78 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This iFix supersedes previous iFixes for this product or component. 
+
+DOWNLOAD DESCRIPTION
+The following list shows the components in Operational Decision Manager that are directly affected by this interim fix:
+
+
+ * Decision Center 
+ * Rule Execution Server
+
+
+This iFix supersedes previous iFixes for this product or component. 
+
+SEE ALSO
+Operational Decision Manager Interim Fixes [http://www.ibm.com/support/docview.wss?uid=swg21640630] 
+
+] INSTALLATION INSTRUCTIONS
+Follow the instructions in the readme.
+
+URL LANGUAGE SIZE(Bytes) Readme [http://download4.boulder.ibm.com/sar/CMA/WSA/07c7s/0/Readme.html] English 1775 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 8.5.1.0-WS-ODM-IF078 06-Dec-17 Language Independent 10120000 FC [https://www-945.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm%2FWebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=All&platform=All&function=fixId&fixids=8.5.1.0-WS-ODM-IF078&includeRequisites=1&includeSupersedes=] [ ] DD

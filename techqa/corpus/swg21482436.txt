@@ -1,0 +1,42 @@
+Title: IBM SPSS Client error:Failed to create the Java VM. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have installed Statistics and licensed it without any problems. When I launch the program, I receive the following error message and I can not use Statistics.
+
+SPSS Client error:
+Failed to create the Java VM.
+
+What's happening? 
+
+RESOLVING THE PROBLEM
+This error can come about for many reasons, among them a corrupt or incomplete installation due to insufficient privileges or an interfering or blocking application. 
+
+The following steps will assist you to install the product. 
+
+1. Uninstall SPSS Statistics
+2. Go to Start->Run and type "msconfig".
+3. On the "General" tab, choose "Diagnostic Startup - load basic devices and services only"
+4. Click the "Services" tab.
+5. Check "Windows Installer" and click OK.
+6. Reboot the machine normally and install SPSS Statistics.
+7. Reboot the machine and insure that SPSS Statistics is functioning correctly in this diagnostic mode. 
+8. Go to Start->Run and type "msconfig".
+9. On the "General" tab, choose "Normal Startup-load all device drivers and services" 
+10. Click OK.
+11. Reboot the machine and verify SPSS Statistics is now running correctly in your full environment.
+
+If this problem persists, a firewall or anti-virus program might be blocking Statistics. Not running as an administrator, or lack of permissions might also produce this error. Please provide Local Admin rights or at least Full Control permissions in the Statistics installation directory to the user encountering this problem. 
+
+Finally, this error may be coming about from a literal lack of resources. As a Java application, SPSS Statistics will be dependent upon the amount of available, contiguous RAM for the Java heap. Please install enough RAM such that the minimum required amount documented for your version of SPSS Statistics shows as 'free' or 'available' when you launch the product. 
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 80431

@@ -1,0 +1,44 @@
+Title: IBM DWC performance suffers after a reboot of the TWS Master host - United States
+
+Text:
+tdwc; performance; dufner; hadr; connection TECHNOTE (FAQ)
+
+QUESTION
+ What could cause the Dynamic Workload Console (DWC) plan tasks to hang and never return with either results or an error? 
+
+ANSWER
+The probable causes for DWC performance issues after the Master has been rebooted include: 
+
+1. A failure to start WebSphere applications after the reboot 
+
+ * 
+ * 
+
+
+2. A failure by WebSphere to connect to its datasource object  * 
+ * 
+
+
+b. Inspect WebSphere's logs for connection failures and for ThreadMonitor entries showing hangs.  
+
+NOTE: It has been observed that if DB2 has the HADR feature enabled and a controlled start of DB2 and its HADR feature has not been performed then the Tivoli Workload Scheduler (TWS) database cannot accept connection attempts. The HADR startup procedure follows:
+
+On the standby node:
+db2 start hadr on db TWS as standby
+
+On the primary node:
+db2 start hadr on db TWS as primary
+
+Confirm HADR's status:
+db2pd -db TWS –hadr
+- or -
+db2 get snapshot for db on TWS" 
+
+RELATED INFORMATION
+ Location of WebSphere log files [http://www-01.ibm.com/support/docview.wss?uid=swg21234101]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TDWC

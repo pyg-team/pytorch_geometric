@@ -1,0 +1,72 @@
+Title: IBM Content Search Services indexing thread control for Content Platform Engine 5.2 Feature Pack 2 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Administrators can now control the indexing work load for each Content Platform Engine instance and IBM Content Search Services server. 
+
+CONTENT
+Administrators can control the indexing work load by specifying the following items:
+
+
+- The maximum number of index worker threads that each Content Platform Engine instance starts.
+- The maximum number of concurrent index batches that an IBM Content Search Services server is to be sent. 
+
+
+Maximum worker threads for indexing
+
+The maximum worker threads that are used for each Content Platform Engine server instance is adjustable in the administration console. 
+
+To view or change the setting for the maximum number of worker threads: 
+
+1. Access the subsystem tab at the domain level in the administration console: 
+a. In the domain navigation pane, click the name of the domain (the top-level item). 
+b. Click the Text Search Subsystem tab. 
+
+2. Access the subsystem tab at the site level: 
+a. In the domain navigation pane, expand the Global Configuration > Administration > Sites folder and click the site that contains the index area. 
+b. In the details pane, click the Text Search Subsystem tab. 
+
+This release changes the meaning of the Maximum worker threads for indexing property: it now controls the number of worker threads for each Content Platform Engine instance rather than for each index area. Given this change in meaning, you might need to adjust the current value of this property to avoid slower indexing throughput. The new default value for this property is 8. Your current property value might be lower than this value especially if you have multiple index areas.
+
+For FileNet P8 5.2 Feature Pack 2, some Java virtual machine parameters are deprecated. These parameters control the number of index worker threads for each Content Platform Engine instance. Specifying the deprecated parameters results in an informational log message in the error and trace log files. The log message looks like the following example:
+
+JVM argument -Dcom.filenet.cbr.maxIndexingWorkers=20 or -Dcom.filenet.cbr.maxIndexingWorkersEachCSSServer=15 is deprecated and should be removed 
+
+Content Platform Engine automatically scales the number of worker threads based on index server status to avoid overloading IBM Content Search Services with incoming work. This automatic scaling uses the value of the Maximum worker threads property as a base value in accordance with the following calculation:
+
+Maximum workers per CPE instance = base value * (running CSS servers / configured CSS servers)
+
+In this calculation, CPE instance refers to a Content Platform Engine instance, and server refers to an IBM Content Search Services index server. Configured CSS servers include all registered index servers that have a status of either UNAVAILABLE OR ENABLED (that is, any status other than DISABLED). Running CSS servers include all configured servers that have a status of ENABLED. For example, suppose that you register four index servers with Content Platform Engine, enable them, and set the base value to 20. In the normal situation, all configured servers are running, and the calculated maximum number of worker threads is the same as the base value: 20 * (4 / 4) = 20. Otherwise, if not all configured servers are running, the calculated maximum is some fraction of the base value. For instance, if only three index servers are running, the calculated maximum is 15: 20 * (3 / 4) = 15. 
+
+Maximum concurrent index batches 
+
+The Maximum concurrent index batches property is part of the Text Search Server definition. This property provides an administrator with a way to control the concurrent indexing work load for each IBM Content Search Services server. 
+
+To set the value for this property: 
+
+1. In the domain navigation pane of the administration console, click the Global Configuration > Administration > Text Search Servers folder. 
+
+2. In the details pane, click the name of the IBM Content Search Services server. 
+
+The value of the Maximum concurrent index batches property represents the configured capacity for IBM Content Search Services as a whole. Therefore, the number of concurrent batches that a Content Platform Engine instance can send to IBM Content Search Services is given by the following formula:
+
+concurrent batches per CPE instance = (property value / CPE instances with indexing enabled)
+
+In this calculation, CPE instances with indexing enabled includes all Content Platform Engine instances that are configured with indexing enabled. For information about enabling or disabling indexing, see Setting the server hierarchy level for the subsystem dispatcher [http://pic.dhe.ibm.com/infocenter/iconf/v5r2m0/topic/com.ibm.p8.ce.admin.tasks.doc/cbr/csscbr_subsystemlevel_setting.htm] (IBM Content Foundation) or Setting the server hierarchy level for the subsystem dispatcher [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.ce.admin.tasks.doc/cbr/csscbr_subsystemlevel_setting.htm] (IBM FileNet P8). The property value is the value of the Maximum concurrent index batches property. For example, suppose that the property value is 12 and the number of instances with indexing enabled is 2: 12 / 2 = 6 maximum concurrent batches per Content Platform Engine instance. 
+
+The calculation does not take into account Content Platform Engine instances that are not running. If one of the instances stops running (because the instance is shut down, for example), IBM Content Search Services operates at less than the configured capacity. In the previous example, if one of the Content Platform Engines instances stops running, the remaining instance still sends a maximum of six concurrent batches. The result is that IBM Content Search Services operates at 50% capacity. To keep IBM Content Search Services running at full capacity, disable indexing for any Content Platform Engine instance that might not resume running soon.
+
+Tuning Guidelines 
+
+It is not necessary for the number of maximum worker threads for indexing to be equal to the number of concurrent batches. Given sufficient computing resources, having more worker threads across all of the Content Platform Engine instances than the number of concurrent batches is healthy.
+
+When the number of index worker threads is sufficiently greater than the number of concurrent batches, it can cause some delay in processing. The best way to determine whether this case applies is to use the IBM System Dashboard for Enterprise Content Management. Navigate to the object store counters and look under “CBR -> Indexing Batch” and view the “Indexing Wait Duration Avg ms” entry. Some periodic delay is not an issue, but if there is a consistent delay, the system might benefit if you do one of the following actions: add an IBM Content Search Services server or increase the value of the Maximum concurrent index batches setting. 
+
+It is also possible that the total number of indexing threads across all Content Platform Engine instances is lower than total concurrent batches. In this case, if the Content Platform engine servers can handle the load, the number of indexing worker threads can be increased. For example, say that the configuration consists of the following items:
+
+- Two Content Platform Engine instances with the maximum worker threads set to 4 
+- Two IBM Content Search Services servers with maximum concurrent index batches set to 12 
+
+In this example, there is a total of eight indexing worker threads (two servers * four threads each). Also, there is a total of 24 concurrent batches that can run (two servers * 12 concurrent batches). Given sufficient computing resources, the number of indexing worker threads could easily be increased to 12, thereby at least matching the highest number of concurrent batches.

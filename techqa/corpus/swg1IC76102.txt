@@ -1,0 +1,159 @@
+Title: IBM IC76102: CLIENT GUI DOES NOT SHOW VSTOR BACKUPS IF THERE ARE VCB BACKUPS WITH THE SAME VM NAME - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using the IBM Tivoli Storage Manager Client GUI to restore a
+   virtual machine with "Restore VM" option, the restore window
+   does not display information about all VSTOR backups for virtual
+   machines that were taken. This can happen if there are both, VCB
+   and VSTOR backups for the same virtual machine stored on the
+   Tivoli Storage Manager server using the same proxy node name.
+   The VCB backups are displayed properly.
+   
+   Platforms and versions affected:
+   Tivoli Storage Manager client 6.2
+   
+   Initial Impact:
+   Low
+   
+   Additional Keywords:
+   tsm client vstor vcb zz62 vm vstorage
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the dsmc command line interface to restore the desired
+   machines.
+   If the VCB backups are no longer required, delete them using the
+   steps from DCF 1418136. Please note that for 6.2 VCB backup, the
+   'delete group' command needs to be used.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Backup-archive client version 6.2 running    *
+   *                 on all Microsoft Windows platforms.          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See ERROR DESCRIPTION                   *
+   ****************************************************************
+   * RECOMMENDATION: Apply fixing level when available. This      *
+   *                 problem is currently projected to be fixed   *
+   *                 in level 6.2.4. Note that until the fixing   *
+   *                 level is available, this information is      *
+   *                 subject to change at the discretion of IBM.  *
+   ****************************************************************
+   The problem occurs because initial data from Java GUI query is
+   being modified during VCB VM processing, so subsequent VSTOR VM
+   processing uses incorrect data.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem has been fixed so that it no longer occurs.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC76102
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMCL
+   
+   
+ * REPORTED RELEASE
+   62W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-03
+   
+   
+ * CLOSED DATE
+   2011-07-11
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  DSMJ
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMCL
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R62W PSY
+   UP

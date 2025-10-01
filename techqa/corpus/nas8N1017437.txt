@@ -1,0 +1,36 @@
+Title: IBM Using the STRPCCMD Command to View or Edit HTML Files - United States
+
+Text:
+PC5250 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Can OS/400 STRPCCMD CL command be used to display HTML and HTM files in a Web browser on a PC running a IBM i Access 5250 emulation session? Can STRPCCMD open these same files in edit mode? 
+
+RESOLVING THE PROBLEM
+Can OS/400 STRPCCMD CL command be used to display HTML and HTM files in a Web browser on a PC running an IBM i Access 5250 emulation session? Can STRPCCMD open these same files in edit mode? 
+
+The STRPCCMD command can be used to display HTML and HTM files on a PC running an IBM i Access 5250 emulation session. STRPCCMD can also be used to open these files in edit mode.
+
+Syntax:
+
+STRPCCMD PCCMD('"Drive:\Path\ApplicationName" Drive:\Path\FileName')
+
+Examples
+
+Opening an Internet URL in Internet Explorer:
+STRPCCMD PCCMD('"C:\Program Files\Internet Explorer\IEXPLORE.EXE" http://www.as400.ibm.com' [http://www.as400.ibm.com'])
+
+Opening an HTML file located on the PC hard drive, for display in Internet Explorer:
+STRPCCMD PCCMD('"C:\Program Files\Internet Explorer\IEXPLORE.EXE" C:\My HTML.HTM')
+
+Opening an HTML file located on the PC hard drive, so that it can be edited:
+STRPCCMD PCCMD('"C:\WINNT\SYSTEM32\NOTEPAD.EXE" C:\My Documents\My HTML.HTM') 
+
+Note: The STRPCO CL command must be issued from the 5250 emulation session before running the STRPCCMD CL command.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 
+HISTORICAL NUMBER
+ 22854900

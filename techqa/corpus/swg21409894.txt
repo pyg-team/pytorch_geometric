@@ -1,0 +1,26 @@
+Title: IBM Detailed System Requirements for ITCAM for SOA - United States
+
+Text:
+CAMSOAALL CAMSOAENV prerequisite prereq support platform itcam detailed system requirements hardware software "itcam for SOA" SOA DSRDoc TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ The list below identifies the supported releases of ITCAM for SOA from which you can select specific detailed system requirements. 
+
+ANSWER
+Note that your entitlement to support, if any, is dependent upon your license and/or maintenance agreements for ITCAM for SOA and is limited to your use of the relevant prerequisite with a supported ITCAM for SOA product.
+
+
+
+
+ * ITCAM for SOA 7.2 Software and Hardware Prerequisites [http://www-01.ibm.com/support/knowledgecenter/SS3JRN_7.2.1/com.ibm.itcamfapps_soa.doc_7201/soa_install_guide/software_and_hardware_prerequisites.html?lang=en] [http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?topic=/com.ibm.itcamsoa.doc/kd4inmst26.htm] Supported Operating System building site [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity/osForProduct.html]
+   
+   1. Click above link 
+   2. Enter/choose following text for each -  *  Full or partial product name : SOA 7.2 
+    *  Search Results : Tivoli Composite Application Manager for SOA 
+    *  Version : 7.2
+   
+   
+   3. Click "Submit" to get report. Required Hardware [http://www-01.ibm.com/support/knowledgecenter/SS3JRN_7.2.1/com.ibm.itcamfapps_soa.doc_7201/soa_install_guide/required_hardware.html?lang=en] Required Software [http://www-01.ibm.com/support/knowledgecenter/SS3JRN_7.2.1/com.ibm.itcamfapps_soa.doc_7201/soa_install_guide/required_software.html?lang=en]

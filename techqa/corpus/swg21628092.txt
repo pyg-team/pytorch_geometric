@@ -1,0 +1,20 @@
+Title: IBM Installation Manager does not work if symbolic links are used for Installation Manager of installed product locations - United States
+
+Text:
+RN1.5; RN1.5.1; RN1.5.0.1; RN1.5.2; RN1.5.3; RN1.6; RN1.6.1; RN1.6.2; RN1.6.3; RN1.6.3.1; RN1.7; RN1.7.1; RN1.7.2; SRX; 1628092; RATLC02668456; IPL; Symlink TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You install IBM Installation Manager by using symbolic links at the root level for the agent data location or the installation location or for both locations and after a system change or system restart you cannot start Installation Manager or you cannot use Installation Manager to update or uninstall products. 
+
+CAUSE
+When you install Installation Manager, the values for the agent data directory, the Installation Manager binaries, and the installation directories for products are stored internally as absolute paths with all the symbolic links resolved. If a symbolic link is used as part of the path for any of these directories or binaries, the symbolic link is replaced with its target value.
+Similarly, when a product is installed with Installation Manager, the values for the installation location and shared resources directory are stored internally as absolute paths with all symbolic links resolved. 
+
+If the symbolic links change their values, the absolute path names for directories that are used by Installation Manager might change. When the Installation Manager starts, it will initialize itself using the data in the agent data location. However, the stored values for the paths to the agent data directory, Installation Manager binaries, or product installation locations do not point to the new locations. Installation Manager might fail to start, or might be unable to update or uninstall products that are installed.
+
+
+RESOLVING THE PROBLEM
+When choosing locations for the agent data directory, the Installation Manager binaries, shared resources directory, and the installation directories for products, do not use paths that include symbolic links. 
+
+
+If Installation Manager is using paths that no longer exist, create the old paths manually and mount the affected file systems at the original locations that are used by Installation Manager. Verify that the user IDs for Installation Manager have read access to each level of the recreated paths.

@@ -1,0 +1,240 @@
+Title: IBM IZ94288: CHANGE CONDITION CODE DOES NOT UPDATE GL IN ISSUE & TRF APP - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  steps to replicate in 7.1.1.7 fixpack
+   
+   1. go to app designer, bring up inventor application,
+   2. go to the condition code section
+   3. add a new text box,
+   4. object = INVCOST
+   5. attribute = CONTROLACC
+   6. add GLNAVIGATOR to the lookup
+   7. add another text box
+   8. add a new text box
+   9. object = INVCOST
+   10. attribute = GLACCOUNT
+   11. add GLNAVIGATOR to the lookup
+   
+   
+   12. go to database configuration
+   13. actions menu, gl account configuration
+   14. untick required checkbox for the first two components. click
+   OK
+   15. turn on admin mode, run db config
+   
+   16. go to the chart of accounts app, go to actions menu,
+   validation options
+   17. UNTICK Validate GL Component Combinations?
+   18. TICK Require Valid GL Account for All Transactions, click OK
+   19. Go to actions menu, GL components maintenance
+   20. click the ELEMENT (i.e. the 4th component)
+   21. click New Row button, gl component value = INVENTORY
+   22. click New Row button, gl component value = INVCOST
+   23. Go to actions menu, update database, Overwrite All Accounts,
+   click OK
+   
+   24. Go to item master app
+   25. Create an Item called test3
+   26. add it to the CENTRAL Storeroom (under actions menu),
+   standard cost = 0
+   current balance = 0
+   issue unit and order unit are both EACH, click OK
+   27. change status  to ACTIVE, tick Roll New Status to
+   Organizations
+   and Inventory in the status change dialog box
+   
+   28. tick condition enabled checkbox
+   29. put in cond code and rate
+   click New Row
+   condition code = 9/16 with condition rate = 100%
+   click New Row
+   condition code = 11/32 with condition rate = 60%
+   
+   go to inventory app, bring up item test3
+   
+   go to the inventory costs section
+   
+   go to the inventory costs section
+   expand condition code 9/16
+   invcost CONTROLACC = 6600-800-800
+   invcost glaccount = ????-???-000-invcost
+   
+   condition code = 11/32
+   invcost CONTROLACC = 6800-200-200
+   invcost GLACCOUNT = ????-???-000-invcost
+   
+   go to inventory balances section
+   add condition code 9/16, current balance = 1
+   add condition code 11/32, current balance = 1
+   
+   Issues & transfer app, bring up CENTRAL storeroom
+   click New row
+   item = test3
+   enter 9/16 in the condition code field
+   gl debit ????-???-000-invcost
+   gl credit 6600-800-800
+   
+   change storeroom to PKG
+   change cond code to 11/32, both GL debit and credit stayed the
+   same
+   
+   enter a work order e.g.
+   the GL didn't get updated
+   
+   
+    *****************
+   client needs GL merge to take place in issues and transfer app
+   note from Julio:
+   The GLAccount fields should not be fully qualified or you won't
+   know if the
+   merge is working.  I left the first 2 components with "?".  Only
+   the
+   components specified on the GLAccount should override those on
+   the WO when
+   the merge occurs.  If the GLAccount on the InvCost is fully
+   qualified, it
+   will completely override the GLAccount on the WO.
+   *****************
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: maximo                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CHANGE CONDITION CODE DOES NOT UPDATE   *
+   *                      GL IN ISSUE & TRF APP                   *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   CHANGE CONDITION CODE DOES NOT UPDATE GL IN ISSUE & TRF APP
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  <This is fixed in code.>
+   
+   
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | REL 7.1.1.9 - BS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ94288
+   
+   
+ * REPORTED COMPONENT NAME
+   INVENTORY
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46IN
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-02
+   
+   
+ * CLOSED DATE
+   2011-02-22
+   
+   
+ * LAST MODIFIED DATE
+   2011-02-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INVENTORY
+   
+   
+ * FIXED COMPONENT ID
+   5724R46IN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

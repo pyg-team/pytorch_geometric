@@ -1,0 +1,77 @@
+Title: IBM Security Bulletin:  Multiple vulnerabilities in IBM Java SDK affect IBM WebSphere MQ Telemetry 7.0.1   - CVE-2014-4263, CVE-2014-4244, CVE-2015-0410, CVE-2014-6593 - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Potential Security Exposure with IBM WebSphere MQ Telemetry 7.0.1
+
+
+There are multiple vulnerabilities in IBM® Runtime Environment Java™ Technology Edition Version 5, that is used by IBM WebSphere MQ Telemetry 7.0.1. These issues were disclosed as part of the IBM Java SDK updates between July 2014 and January 2015. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2014-4263 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-4263]
+DESCRIPTION: The JSSE component's Diffie-Hellman key exchange implementation is vulnerable to a man-in-the middle attack. The fix adds a new check to prevent the attack. 
+This issue affects any application that uses the JSSE implementation of Diffie-Helman key exchange, either directly or via protocols such as SSL or TLS. The vulnerability applies to both client and server usage.
+CVSS Base Score: 4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/94606 [https://exchange.xforce.ibmcloud.com/vulnerabilities/94606] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:P/I:P/A:N)
+
+
+CVEID: CVE-2014-4244 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-4244]
+DESCRIPTION: If an attacker can observe local variables (temperature, RF, sound), they can deduce the RSA private key based on changes in those variables. The fix introduces "dead" computations (aka blinding) to foil these attacks.This issue affects applications which use the RSA encryption algorithm, but it is only exploitable by a local user with direct access to the environment on which the JRE is running.
+CVSS Base Score: 4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/94605 [https://exchange.xforce.ibmcloud.com/vulnerabilities/94605] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+
+
+CVEID: CVE-2015-0410 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0410]
+DESCRIPTION: An unspecified vulnerability related to the Security component could allow a remote attacker to cause a denial of service.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/100151 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100151] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+
+
+CVEID: CVE-2014-6593 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6593]
+DESCRIPTION: An unspecified vulnerability related to the JSSE component has partial confidentiality impact, partial integrity impact, and no availability impact.
+CVSS Base Score: 4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/100153 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100153] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:P/I:P/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM WebSphere MQ Telemetry 7.0.1
+
+REMEDIATION/FIXES
+A fix for the IBM WebSphere MQ Telemetry 7.0.1 is available from IBM by requesting IT04335 from IBM Support. 
+
+WORKAROUNDS AND MITIGATIONS
+None known 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+IBM Java SDK Security Bulletin [http://www-01.ibm.com/support/docview.wss?uid=swg21695474] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 12 Sept 2014: Original Version Published
+26 Sept 2014: Removed unnecessary reference to MQ
+09 March 2015: Added two new Java vulnerabilities
+16 March 2015: Updated format to match template 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21700432]

@@ -1,0 +1,109 @@
+Title: IBM 1.0.1.9: WebSphere Application Server V7 Feature Pack for SCA Fix Pack 1.0.1.9 - United States
+
+Text:
+SCA; Feature Pack for SCA; SCA Feature Pack Fix Pack 1.0.1.9 DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM WebSphere Application Server V7 Feature Pack for Service Component Architecture (SCA) Fix Pack 9 for distributed platforms, also known as SCA Feature Pack Fix Pack 1.0.1.9 
+
+DOWNLOAD DESCRIPTION
+SCA Feature Pack Fix Pack 1.0.1.9 is now available for your download through FTP and DD links by going to the Download Package section of this document. The ZIP files in the download package section below can be used for setting up local repository to install SCA Fix Pack 1.0.1.9 using IBM Installation Manager.
+
+WebSphere Application Server feature packs are a mechanism for providing major new application server function between product releases. By delivering new functions and support for industry standards between product releases, you can more quickly explore and implement new technologies within your business applications in today's rapidly changing business environments. 
+
+IBM® WebSphere® Application Server V7 Feature Pack for SCA [http://www.ibm.com/software/webservers/appserv/was/featurepacks/sca/] delivers critical technology that enables adoption of key Service-Oriented Architecture (SOA) principles. As part of the larger SOA Foundation, which straddles all of IBM software brands, this offering delivers an integrated, open implementation of Service Component Architecture (SCA), a technology specified by IBM and other industry leaders through the Open SOA Collaboration (OSOA). For More details, visit the Information Center for SCA Feature Pack. [http://publib.boulder.ibm.com/infocenter/wasinfo/fep/index.jsp?topic=/com.ibm.websphere.soafep.multiplatform.doc/info/ae/ae/csca_overview.html]
+
+
+Download Package 
+
+Download Language Download options SCA V1.0.1.9 local repository US English FTP [ftp://public.dhe.ibm.com/software/websphere/downloads/sca/service/1.0/fixpacks/sca.1.0.1.9.fp.zip] WAS 7.0 local import repository US English FTP [ftp://public.dhe.ibm.com/software/websphere/downloads/was/import/was.7.0.import.zip] SCA V1.0 local import repository US English FTP [ftp://public.dhe.ibm.com/software/websphere/downloads/sca/import/sca.1.0.import.zip] 
+Change History  * 10 Dec 2010: Published for SCA Fix Pack 9 (1.0.1.9)
+
+
+PREREQUISITES
+ 
+
+ 1. If you are going to use IBM Installation Manager to import an existing WebSphere Application Server Version 7.0 installation that contains Version 1.0.0.x of the Feature Pack for SCA and then update it to Version 1.0.1.0, first use the Update Installer to remove any fixes that have been applied to the 1.0.0.x level using the Update Installer.
+    
+    
+ 2. Install WebSphere Application Server Version 7.0.0.7 or later.
+    
+    
+ 3. Install IBM Installation Manager. You can download and unpack a compressed file containing the IBM Installation Manager appropriate for your operating system from the IBM Installation Manager Web site [http://www.ibm.com/support/docview.wss?uid=swg24023498]. You can then install IBM Installation Manager on your local system and use it to import WebSphere Application Server Version 7.0 as well as to install the feature pack from the Web-based repositories.
+    
+    
+ 4. If you are using local repository for your installation, IBM Installation Manager must point to SCA local import repository in order to apply any future maintenance. It is available for download from the Download package section of this document.
+    
+    
+ 5. The operating system requirements for a feature pack are the same as for the application server installation. However, you need to ensure that you have enough free disk space to install the feature pack onto the application server installation.
+
+
+URL LANGUAGE SIZE(Bytes) Detailed System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27006921] US English 100 IBM Installation Manager [http://www.ibm.com/support/docview.wss?uid=swg24023498] US English 100 
+INSTALLATION INSTRUCTIONS
+Perform the following tasks to install Feature Pack for SCA Version 1.0.1.9 on WebSphere Application Server Version 7.0.0.7 or later:
+
+
+ 1. Install WebSphere Application Server V7.0. 
+    
+    
+ 2. Install WebSphere Application Server Fix Pack 7.0.0.7 [http://www.ibm.com/support/docview.wss?uid=swg24024582] or later using the Update Installer [http://www.ibm.com/support/docview.wss?uid=swg24020212]. 
+    
+    
+ 3. Install IBM Installation Manager. You can download and unpack a compressed file containing the IBM Installation Manager appropriate for your operating system from the IBM Installation Manager Web site [http://www.ibm.com/support/docview.wss?uid=swg24023498]. Start IBM Installation Manager.
+    
+    
+ 4. Import WebSphere Application Server into Installation Manager. Make sure to stop all servers and applications on the WebSphere Application Server installation that is being imported. 
+    
+    
+ 5. Install Feature Pack for SCA Version 1.0.1 using IBM Installation Manager. This can be done by using either Web-based Repository or Local Repository. Whenever possible, you should use the remote Web-based repositories so that you are accessing the most up-to-date WebSphere Application Server base-product import and feature pack installation files. The feature-pack version of Installation Manager is preconfigured to use both the local repositories (if they are set up) and the remote repositories.
+    
+    
+ 6. Install SCA Fix Pack 1.0.1.9 using Update option on IBM Installation Manager main page. This can also be done by using either Web-based Repository or Local Repository.
+
+
+For detailed instructions on installing the feature pack on distributed operating systems using the GUI as well as instructions on using remote Web-based repositories and local repositories, you can visit Installing the feature pack on distributed operating systems using the GUI [http://publib.boulder.ibm.com/infocenter/wasinfo/fep/index.jsp?topic=/com.ibm.websphere.installation.soafepnd.doc/info/ae/ae/tins_installfp.html] Link. 
+
+Related Links 
+Download location for WebSphere Application Server Fix Pack 7.0.0.7 [http://www.ibm.com/support/docview.wss?uid=swg24024582] 
+Download location for IBM Installation Manager [http://www.ibm.com/support/docview.wss?uid=swg24023498] 
+Download location for IBM Update Installer 7.0 for WebSphere [http://www.ibm.com/support/docview.wss?uid=swg24020212] 
+
+Installing the SDO feature 
+The Feature Pack for SCA Version 1.0.1.0 and later has an optional feature--the Service Data Objects (SDO) feature. You can use IBM Installation Manager to install this feature. 
+
+Before you can install the SDO feature, you must have the Feature Pack for SCA Version 1.0.1.0 or later and the Feature Pack for XML [http://www.ibm.com/software/webservers/appserv/was/featurepacks/xml/] installed on your system. Make sure that your Installation Manager preferences are pointing to the appropriate Web-based or local repositories containing the Feature Pack for SCA Version 1.0.1.0 or later product. 
+Perform this procedure to use IBM Installation Manager to install SDO feature:  1. Stop all servers and applications on the WebSphere Application Server installation that is being modified. 
+    
+    
+ 2. Start IBM Installation Manager. 
+    
+    
+ 3. Click Modify. 
+    
+    
+ 4. Select the package group to modify. 
+    
+    
+ 5. Click Next. Note: If you are prompted to authenticate, use the IBM ID and password that you registered with on the program Web site.
+    
+    
+ 6. Expand IBM WebSphere Application Server V7 Feature Pack for Service Component Architecture (SCA). 
+    
+    
+ 7. Check the Service Data Objects checkbox to install the SDO feature. Note: This feature is optional, but it is selected by default. If you leave the SDO feature selected, you are required to install IBM WebSphere Application Server Version 7.0 Feature Pack for XML if it is not already installed. 
+
+
+If you continue the installation with the SDO feature selected and the Feature Pack for XML is not installed, you will receive an error message. If you install the SDO feature, you must use the manageProfiles command or the Profile Management Tool to augment an existing profile or create a new profile when this modification is finished to enable the functionality provided by the feature. 
+
+For details on problems fixed in Fix Pack 9, refer to the Fix list for SCA Feature Pack 1.0.1 [http://www.ibm.com/support/docview.wss?uid=swg27017704]document. 
+
+URL LANGUAGE SIZE(Bytes) Fix List for SCA Feature Pack 1.0.1 [http://www.ibm.com/support/docview.wss?uid=swg27017704] US English 100 
+
+
+
+
+
+TECHNICAL SUPPORT
+ Contact 1-800-IBM-SERV (U.S. only) or visit the WebSphere Application Server Support site [http://www.ibm.com/software/webservers/appserv/was/support/]. 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server AIX, HP-UX, Linux, Solaris, Windows 7.0

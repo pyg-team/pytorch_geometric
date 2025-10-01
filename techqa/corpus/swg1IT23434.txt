@@ -1,0 +1,210 @@
+Title: IBM IT23434: Incorrect use of regular expression logical 'OR' in MFT resourcemonitor wildcard pattern matcher - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In versions of IBM MQ Managed File Transfer (MFT) prior to the
+   inclusion of the code change associated with APAR IT10001 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT10001]:
+   
+     http://www.ibm.com/support/docview.wss?uid=swg1IT10001 [http://www.ibm.com/support/docview.wss?uid=swg1IT10001]
+   
+   a 'VERTICAL LINE' character "|" (U+007C) could be specified as
+   part of a wildcard pattern matcher for a IBM MQ-MFT resource
+   monitor and it would be interpreted as the regular expression
+   'OR' logical operator.  The character would not be interpreted
+   literally as a 'VERTICAL LINE' character within the pattern.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use a regular expression pattern matcher for resource monitors
+   that require more comprehensive file name matching beyond that
+   provided by the documented Managed File Transfer wildcard
+   characters, on the following page in the Knowledge Center:
+   
+   https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.
+   ibm.wmqfte.doc/wildcards.htm [https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.wmqfte.doc/wildcards.htm]
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This behaviour is present in the following versions of MQ:
+   
+     - WebSphere MQ Managed File Transfer from WebSphere MQ 7.5.0.6
+     - IBM MQ Managed File Transfer from IBM MQ 8.0.0.4
+     - IBM MQ Managed File Transfer from IBM MQ 9.0.0.0
+   
+   who have configured a resource monitor with a wildcard pattern
+   matcher that includes the 'VERTICAL LINE' character with the
+   intention this would be interpreted as a regular expression 'OR'
+   logical operator.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   In versions of MQ Managed File Transfer that did not include the
+   fix for APAR IT10001 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT10001], which includes:
+   
+   - Version 7.5 prior to 7.5.0.6
+   - Version 8.0 prior to 8.0.0.4
+   
+   a resource monitor wildcard file matching pattern could be
+   specified that included a logical OR condition using the
+   vertical bar character "|".
+   
+   For example, using the wildcard pattern of:
+   
+       "*txt|*xml"
+   
+   with these versions would have matched all files with names that
+   ended in either 'txt' or 'xml'.
+   
+   
+   In MQ Managed File Transfer versions that includes the fix for
+   APAR IT10001 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT10001]:
+   
+   - Version 7.5.0.6 or later
+   - Version 8.0.0.4 or later
+   - Version 9.0 GA
+   
+   when the 'VERTICAL LINE' character, "|" (U+007C), is specified
+   within a resource monitor wildcard file matching pattern it is
+   treated as part of the filename and does not provide the regular
+   expression OR condition.
+   
+   As such, the wildcard pattern of:
+   
+       "*txt|*xml"
+   
+   matches files with names that contain the string "txt|" and end
+   in "xml".
+   
+   
+   The code change associated with APAR IT10001 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT10001] permits wildcard
+   pattern matching to match file names that include the 'VERTICAL
+   LINE' character, which was not possible prior to that APAR.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code change associated with APAR IT10001 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT10001] corrected the
+   behaviour of the MQ MFT resource monitor wildcard pattern
+   matching such that only the asterisk, "*", and question mark,
+   "?" characters are interpreted as having a special meaning.
+   This aligns the product behaviour with the product
+   documentation, as documented in the following Knowledge Center
+   page:
+   
+   https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.
+   ibm.wmqfte.doc/wildcards.htm [https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.wmqfte.doc/wildcards.htm]
+   
+   This permits filenames which contain the 'VERTICAL LINE'
+   character to be matched correctly using wildcard matching.
+   
+   Note that this change of behaviour with respect to the use of
+   the 'VERTICAL LINE' character, introduced under APAR IT1001, is
+   the intentional change and not a product defect.   The 'VERTICAL
+   LINE' character should not have been interpreted as logical 'OR'
+   operator when used with wildcard pattern matching.  To use a
+   filename pattern matcher with a logical 'OR' operator, you must
+   use a regular expression matcher instead of a wildcard pattern
+   matcher, which follows the standards as documented by the Java
+   regular expression documentation.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Intended change of behaviour in IT10001 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT10001]
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT23434
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ BASE M/P
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7261
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-12-08
+   
+   
+ * CLOSED DATE
+   2018-02-15
+   
+   
+ * LAST MODIFIED DATE
+   2018-02-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

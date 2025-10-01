@@ -1,0 +1,48 @@
+Title: IBM Dialog box does not launch within IBM SPSS Statistics - United States
+
+Text:
+Dialog box frequency options not launch missing hang TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Due to the use of dual monitors we have lost the ability to see the certain dialog boxes in SPSS. It has happened to Frequencies ,Custom Tables, and other analyses. We have tried running a repair on the current installation, but this has not corrected the problem. Is there anything else we can try? 
+
+SYMPTOM
+Missing Frequencies dialog box. 
+
+
+CAUSE
+Perhaps this dialog box was "misplaced" by moving it between the two monitors in my dual monitor set up. 
+
+ENVIRONMENT
+Windows operating system. SPSS Statistics 21.
+
+RESOLVING THE PROBLEM
+To try and correct this, launch SPSS and go to Window->reset dialog sizes and positions. Click the OK button. Try your analysis again. Does it work? If not, then try these steps below 
+
+
+
+
+Make the following changes to the registry key. 
+
+Please first choose Start->Run and type: regedit
+This will open up the Registry Editor. Once this has been opened, simply go to this key: 
+
+HKEY_CURRENT_USER\Software\JavaSoft\Prefs\com\ibm\/S/P/S/S\/Statistics\21.0\ui\ 
+
+or 
+
+HKEY_CURRENT_USER\Software\JavaSoft\Prefs\com\ibm\/S/P/S/S\/Statistics\22.0\ui\
+
+click on /W/I/N/D/O/W_/I/N/F/O_/P/R/E/F/S
+
+Double click on the key labelled:
+
+/W/I/N/D/O/W_/S/I/Z/E_/L/O/C/A/T/I/O/N
+
+Under Value Data, delete the value and click OK. 
+
+Close the registry editor.
+
+Relaunch SPSS
+
+The dialog box will be reset to the default position.

@@ -1,0 +1,148 @@
+Title: IBM PI63891: DOORS CHANGE TO FOLDER ACCESS RIGHTS NOT APPLIED IMMEDIATELY - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational DOORS and Rational DOORS Web Access Fix Pack 7 (9.6.1.7) for 9.6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042304]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Scenario where users access controls are changed whilst they
+   have a DOORS session running and the change requires a DOORS
+   refresh to be implemented.
+   
+   Steps to reproduce:
+   1. Create  userA
+   2. Login as user A and create a project or folder and create a
+   module under it.
+   3. Close the module but user A userA keeps the module displayed
+   in the right pane and folder selected in the left pane.
+   4. Login as other admin user.
+   5. Open the Project/FOLDER property and unselect "inherit from
+   parent" option.
+       Add userA with R access to the project/folder .
+   6. As userA open the module in exclusive edit mode in  the same
+   DOORS session. UserA can open with exclusive edit mode, even
+   though the user does not write permission any more.
+   userA can edit attributes and successfully save the changes.
+   
+   
+   If userA selects F5 and performs a refresh the access controls
+   should be updated and the next time userA tries to open the
+   module they receive message: "You have insufficient access
+   rights to open this module for edit" Options to open read only
+   or cancel.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All DOORS users may be affected                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * DOORS CHANGE TO FOLDER ACCESS RIGHTS NOT APPLIED IMMEDIATELY *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been resolved in DOORS 9.6.1.7
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI63891
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * REPORTED COMPONENT ID
+   5724V61DR
+   
+   
+ * REPORTED RELEASE
+   960
+   
+   
+ * STATUS
+   CLOSED UR3
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-09
+   
+   
+ * CLOSED DATE
+   2016-12-20
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * FIXED COMPONENT ID
+   5724V61DR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R961 PSY
+   UP

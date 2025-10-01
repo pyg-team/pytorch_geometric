@@ -1,0 +1,17 @@
+Title: IBM Source of summarized data calculations - United States
+
+Text:
+spa bsydebug TECHNOTE (FAQ)
+
+QUESTION
+ Does summarized data for one period require that all shorter summarized periods be summarized also? For example, does the summarization of Weekly data require summarization of Daily data, or does it use the raw data directly? 
+
+ANSWER
+The Summarization and Pruning Agent uses the raw data to summarize at each level.
+As an example, consider the Weekly summarized data for a UNIX OS Agent named "Sandra:KUX", and a Summarization and Pruning (S&P) agent that runs once per day at the default of 2 AM. On the first day of the week, the S&P runs and summarizes 2 hours worth of data from the raw data table "Disk" into the Weekly summarized data table "Disk_W" for the Sandra:KUX node. Two hours isn't very representative of what the full week's data will be, but the S&P places data into Disk_W anyway to indicate the current weekly summarized values.
+
+The WAREHOUSEMARKER table shows the Timestamp of the last record used for a node from the raw table for the various levels of aggregation configured. On the second day, the S&P looks at WAREHOUSEMARKER for the record with originnode='Sandra:KUX' and object='Disk' to see what the MARKERWRITETIME is set to. Because the last record it summarized was over 24 hours prior (at ~1:55 AM or 2:00 AM the previous day), it takes all records that have been inserted into the Disk table since then for Sandra:KUX and incorporates them into the work it had already done by using the SAMPLES column in the target Disk_W table. It does some basic math to "unwind" the values it had already inserted. An example of this would be multiplying the stored value of an average type of column by the value in the SAMPLES column for Sandra:KUX to get the sum of all the previously sampled raw data; it then adds the last days values to that sum, adjusts the SAMPLES column value by increasing it by the number of newly discovered records from the raw table, and performs the average calculation again. It thus ends up just updating the same record in Disk_W. 
+
+It updates the one record in Disk_W for Sandra:KUX each successive day until it gets to 2 AM on the first day of the next week; at that time it realizes a new week has started. So to complete the previous week's Weekly summarized data, it again uses the raw data from the 2:00 AM --> 11:59 PM on the seventh day and updates the weekly record for the last time with that newly incorporated data. Then it starts doing the calculations for the first two hours of the new week (midnight --> 2 AM on first day). 
+
+The only aggregation level where it doesn't insert or update a record until the full aggregation period has completed is the Hourly level. With Hourly, the S&P first determines whether the hour is complete for the node in question and then it summarizes the data from the raw table into the hourly table just one time. Thus with Hourly, no UPDATEs are ever done on the hourly table, only INSERTs.

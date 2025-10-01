@@ -1,0 +1,31 @@
+Title: IBM Why am I seeing a "An attempt to invoke fork() within the engine is detected but is permitted to continue" message in the db2diag.log? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why am I seeing a "An attempt to invoke fork() within the engine is detected but is permitted to continue" message in the db2diag.log? 
+
+CAUSE
+For example:
+FUNCTION: DB2 UDB, oper system services, sqloAtForkPrepareHandler, probe:200
+DATA #1 : Codepath, 8 bytes
+3
+MESSAGE : An attempt to invoke fork() within the engine is detected but
+is permitted to continue.
+DATA #2 : String, 0 bytes
+Object not dumped: Address: 0x0000000000000000 Size: 0 Reason: Address 
+is NULL
+
+
+
+ANSWER
+The most common reason is if dbm cfg parameter Group Plugin (GROUP_PLUGIN) = third-party plug-in name, is being used then this will generated the above Event MESSAGE: 
+
+
+The above MESSAGE is a Event MESSAGE and it can be ignored. 
+
+But if you feel you still need to address this issue, you will need to contact the third-party vendor for further assistance since it is their plug-in you are using. 
+
+RELATED INFORMATION
+ Restrictions for developing security plug-in libraries [https://www.ibm.com/support/knowledgecenter/SSEPGG_10.1.0/com.ibm.db2.luw.admin.sec.doc/doc/r0012006.html]

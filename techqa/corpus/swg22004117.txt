@@ -1,0 +1,35 @@
+Title: IBM Migration of a virtual DataPower SOA appliance to a virtual DataPower Gateway - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why are there no scrypt4 firmware images on Fix Central to upgrade a virtual XG or XI to version 7.6.? 
+
+ANSWER
+To upgrade a virtual XG45 or XI52 to version 7.6, you must first run a migration tool from Fix Central to convert the virtual XG45 or XI52 to a virtual DataPower Gateway. You can convert these virtual products to a virtual DataPower Gateway at any time. 
+
+You can obtain the migration tools from IBM Fix Central. Search with the text string Migration. 
+
+ * Use xg-virtual_migration to convert a virtual XG45 to a virtual DataPower Gateway. 
+ * Use xi-virtual_migration to convert a virtual XI52 to a virtual DataPower Gateway.
+
+
+You can obtain the appropriate modules to activate from IBM Passport Advantage. I you previously purchased a module for your virtual XG45 or XI52, you entitled to the activator tool for the DataPower Gateway. Beyond this entitlement, you also have the following entitlements based on product.  * If you purchased the Data Integration Module for XG45, you are entitled to the Integration Module. 
+ * If you purchased XI52, you are entitled to the Integration Module.
+
+
+Attention: Before you start the process, create a full system backup not a secure-backup package. If the system reboots between the processing of the migration tool and the processing of your final activation tool, you might lose part of your persisted configuration. If a reboot happens, you can use this backup to restore your last persisted configuration. 
+
+The end-end-to-end migration process is as follows.  1. Download the migration tool from IBM Fix Central. 
+ 2. Run the migration tool. 
+ 3. Download appropriate modules from IBM Passport Advantage for feature parity. 
+ 4. Run the activators from the CLI with the following command.
+    # boot image -f accept-license activator 
+ 5. Download a 7.1.0.17, 7.2.0.16, 7.5.0.8, 7.5.1.7, 7.5.2.7, 7.6.0.0 or later firmware image from IBM Fix Central. 
+ 6. Upgrade the firmware to from the CLI with the following command.
+    # boot image -f accept-license firmware
+
+
+After the conversion, the reported product changes as follows.  * XG45 (5275-J90) is a DataPower Gateway (5275-T09) 
+ * XI52 (5275-J91) is a DataPower Gateway (5275-T09)

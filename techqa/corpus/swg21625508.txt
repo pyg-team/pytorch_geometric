@@ -1,0 +1,90 @@
+Title: IBM Answers to 5 Common Support Questions - United States
+
+Text:
+SR Service Request How to FAQ TECHNOTE (FAQ)
+
+QUESTION
+ Answers to 5 Common IBM Security Support Questions 
+
+ANSWER
+ 
+
+[/support/docview.wss?uid=swg21625508&amp;aid=1] Where can I find troubleshooting information on my products? 
+
+[/support/docview.wss?uid=swg21625508&amp;aid=2] How can I be assured IBM Support understands my problem? 
+
+[/support/docview.wss?uid=swg21625508&amp;aid=3] What is the escalation process? 
+
+[/support/docview.wss?uid=swg21625508&amp;aid=4] What steps can I take to be proactive and avoid problems in the future? 
+
+[/support/docview.wss?uid=swg21625508&amp;aid=5] Where can I find out more about how IBM Electronic Support can make my life easier? 
+
+
+
+
+Where can I find troubleshooting information on my products? 
+The IBM Support Portal is the one stop shop for finding relevant information about your products. The IBM Support Portal provides powerful features that make it fast and easy to find the exact information or tool you need. 
+• Select your IBM products and the task at hand for direct access to all pertinent resources.
+• Browse featured support links that guide you to the most critical, useful information and tools.
+• Filter the results of a simple text search with one click to pinpoint the most appropriate documents.
+• Personalize the pages to include exactly the type of information you need, arranged most effectively for you. 
+
+
+IBM Support Portal Homepage [http://www.ibm.com/support]
+
+
+Return to top of page
+
+
+
+How can I be assured IBM Support understands my problem? 
+You can use the IBM Service Request Application to open, update, monitor your service requests (formally called Problem Management Records - PMRs) on-line and to report problems on nearly all IBM supported software products. This will allow you the ability to bypass the basic set of questions allowing your problem to be directed to the proper product support team. The product support team will contact you via your preferred communication channel (email, phone, etc). The IBM preferred method for opening a severity 1 issue after hours is via phone support in addition to submitting it electronically. 
+With IBM Service Request you can: 
+
+
+• Describe software issue and environment in problem submission form (eliminates call center contact).
+• Monitor/update existing requests – view a list of all service requests associated with customer numbers for support contracts.
+• Attach multiple files to service requests.
+• Receive notification when your service request has been updated by IBM Support. 
+
+
+Getting started with IBM Service Request [http://www.ibm.com/software/support/servicerequest/quick_start.html] | Service Request How-to Video [http://www.youtube.com/watch?v=nJhPpSG_Xq8&list=UUqaYCdZwPqkU05X-xUiG7lw&index=18]
+
+
+Return to top of page
+
+
+
+What is the escalation process? 
+If at any point in our service process, you feel we are not meeting our commitments, you may call our attention to this problem by doing one or all of the 
+following: 
+
+• Be certain to explain the business impact of your problem to the service representative. 
+• Ask IBM Support to raise the Severity Level of the problem 
+• Call and ask to speak to the person’s manager - Escalations to an IBM manager will receive prompt attention and management focus. 
+• Call and ask for a “Duty Manager” - The Duty Manager or field manager will work with our technical staff to ensure your request is being handled 
+appropriately. 
+• Escalate by opening a Complaint or nominate as a Critical Situation or (“Crit Sit”), if warranted. 
+Details on how to do each of the above can be found in the IBM Support Handbook [http://www.ibm.com/support/customercare/sas/f/handbook/home.html]. IBM directory of worldwide contacts [http://www.ibm.com/planetwide/]
+
+
+Return to top of page
+
+
+
+What steps can I take to be proactive and avoid problems in the future? 
+We know it’s hard to stay informed. That’s why we have a system that will email you when new fixes or alerts come out. With My Notifications you can receive daily or weekly announcements through email, custom Web pages and RSS feeds. These customizable communications can contain important news, new or updated support content, publications, hints and tips, technical notes, product flashes (alerts) and downloads and drivers. The tool allows you to customize and categorize the products you want to monitor. You can also select any of the available delivery methods to suit your support needs. 
+
+My Notifications How-to Video [http://www.youtube.com/watch?v=oAErcqSeB04] 
+Return to top of page
+
+
+
+Where can I find out more about how IBM Electronic Support can make my life easier? 
+What a great question! Additional information including documentation, tutorial videos and social channels can be found at the IBM Electronic Support homepage [http://www.ibm.com/support/electronicsupport/]. 
+Return to top of page
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM RealSecure Server Sensor for AIX Security IBM Security QRadar Log Manager Security IBM Security QRadar Network Anomaly Detection Security IBM Security QRadar Risk Manager Security IBM Security QRadar SIEM Security IBM Security Virtual Server Protection for VMware Security IBM Security zSecure Admin Security IBM Security zSecure Administration Security IBM Security zSecure Audit Security IBM Security zSecure Command Verifier Security IBM Security zSecure Compliance and Administration Security IBM Security zSecure Visual Security Internet Scanner Software Security PGP Corporation Encryption Software and Support Security Rational Policy Tester Security Rational Software Analyzer Security Proventia Desktop Endpoint Security Security Proventia Network Enterprise Scanner Security Proventia Network Multi-Function Security Security IBM Security SiteProtector System Security Proventia Virtualized Network Security Platform Security Proventia Network Mail Filter

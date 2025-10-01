@@ -1,0 +1,175 @@
+Title: IBM PQ43643: ABEND 0C1 IN EQQGSDIC TRYING TO LOAD EQQDDHDL - United States
+
+Text:
+AIX z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ABEND 0C1 IN EQQGSDIC TRYING TO LOAD EQQDDHDL FOLLOWED BY
+   MESSAGE:  CSV002I REQUESTS FOR MODULE EQQDDHDL EXCEED MAXIMUM
+   USE COUNT
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users.                                   *
+   *                 FUNCTION=PIF                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An Abend0C1 occurred in EQQGSDIC trying *
+   *                      to load EQQDDHDL  followed  by  message *
+   *                      CSV002I  REQUESTS  FOR  MODULE EQQDDHDL *
+   *                      EXCEED MAXIMUM USE COUNT                *
+   ****************************************************************
+   * RECOMMENDATION: APPLY THE PTF FIXING THIS APAR               *
+   ****************************************************************
+   The following message had been issued at customer  site using
+   PIF programs:
+   CSV002I REQUESTS FOR MODULE EQQDDHDL EXCEED MAXIMUM USE COUNT
+   In consequence the GS-Task terminated  every  4  minutes. The
+   related message was
+   EQQG004E AN ABEND OCCURRED IN GENERAL SERVICE SUBTASK, IT  IS
+            RESTARTED AT CLEANUP.
+   After the controller had been cancelled, the problem has gone.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Abend  0C1  occurred  in the module EQQGSDIC (base level)
+   on offset X'104' trying  to load (SVC 8) the module EQQDDHDL.
+   The  problem  occurred  because  the  module EQQGSDIC deletes
+   wrongly the module EQQDDHDL  previously loaded. Now, EQQGSDIC
+   has been changed in  order  to  delete  properly  the  module
+   EQQDDHDL. Moreover,  the  EQQYTOPX  of  OPC  2.1.0  has  been
+   corrected so that it doesn't call the GSDIC module if the GUI
+   is not used.
+   102Y
+   202Y
+   302Y
+   EQQGSDIC
+   EQQYTOPX
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ43643
+   
+   
+ * REPORTED COMPONENT NAME
+   TME 10 OPC V2 R
+   
+   
+ * REPORTED COMPONENT ID
+   5697OPC01
+   
+   
+ * REPORTED RELEASE
+   102
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2000-11-21
+   
+   
+ * CLOSED DATE
+   2000-11-22
+   
+   
+ * LAST MODIFIED DATE
+   2001-02-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ48944 UQ48945 UQ48951
+   
+   
+
+MODULES/MACROS
+ *  EQQGSDIC EQQYTOPX
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TME 10 OPC V2 R
+   
+   
+ * FIXED COMPONENT ID
+   5697OPC01
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R102 PSY UQ48944 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ48944]
+   UP01/01/09 P F101
+   
+   
+ * R202 PSY UQ48945 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ48945]
+   UP01/01/09 P F101
+   
+   
+ * R302 PSY UQ48951 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ48951]
+   UP01/01/09 P F101
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,222 @@
+Title: IBM SQL1051N when doing redirected restore when using DB2 with TSAMP - United States
+
+Text:
+Redirected restore; TSAMP; SQL1051N; Add dependency failed; SQLSTATE=57019; REDIRECT; restore TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running a redirected restore command on a DB2 system with Tivoli System Automation for Multiplatforms (TSAMP), you may receive an SQL1051N error if you are using paths that are not already in use by DB2. 
+
+SYMPTOM
+If you execute a redirected restore and specify path(s) that are not already in use, you may see an SQL1051N error. For example, if you executed this command: 
+
+RESTORE DATABASE EVENT USE TSM OPEN 1 SESSIONS TAKEN AT 20140601065200 
+ON '/dev1/eventdata' DBPATH ON '/dev1/eventdata' INTO NEWDB LOGTARGET 
+'/dev1/EventHoldlogs' NEWLOGPATH '/dev2/eventlog' REDIRECT 
+
+And '/dev1' is not already being used by DB2, then the SQL1051N error may be a result:
+
+SQL1051N The path "/dev1/eventdata/db2inst1/NODE0000" does not exist or is not valid. SQLSTATE=57019 
+
+You can see that it created these directories under '/dev1/eventdata':
+
+[db2inst1@mysystem sqldbdir]$ pwd 
+/dev1/eventdata/db2inst1/NODE0000/sqldbdir 
+[db2inst1@mysystem sqldbdir]$ ls 
+sqldbbak sqldbdir sqldbins 
+
+So it does not make sense that it is missing or invalid. Looking in the db2diag.log, you will see messages like this:
+
+2014-06-01-11.14.27.115172-240 E162464E528 LEVEL: Info 
+PID : 16165 TID : 140221131777792 PROC : db2sysc 0 
+INSTANCE: db2inst1 NODE : 000 DB : EVENT 
+APPHDL : 0-1059 APPID: *N0.db2inst1.140601151424 
+AUTHID : DB2INST1 HOSTNAME: mysystem 
+EDUID : 1194 EDUNAME: db2agent (EVENT) 0 
+FUNCTION: DB2 UDB, database utilities, sqluxGetDegreeParallelism, probe:542 
+DATA #1 : <preformatted> 
+Autonomic backup/restore - using parallelism = 2. 
+
+2014-06-01-11.14.27.121296-240 I162993E1124 LEVEL: Warning 
+PID : 17808 TID : 140013154871040 PROC : db2acd 0 
+INSTANCE: db2inst1 NODE : 000 
+HOSTNAME: mysystem 
+FUNCTION: DB2 UDB, Health Monitor, HmonMainCB::prepDBForFirstPlugin, probe:70 
+MESSAGE : Failed to verify and create policy for database "EVENT ". rc = 90000505 
+DATA #1 : Hexdump, 136 bytes 
+0x00007F575A5C02E0 : 5351 4C43 4120 2020 8800 0000 F5FB FFFF SQLCA ........ 
+0x00007F575A5C02F0 : 0700 4442 3248 4D4F 4E20 2020 2020 2020 ..DB2HMON 
+0x00007F575A5C0300 : 2020 2020 2020 2020 2020 2020 2020 2020 
+0x00007F575A5C0310 : 2020 2020 2020 2020 2020 2020 2020 2020 
+0x00007F575A5C0320 : 2020 2020 2020 2020 2020 2020 2020 2020 
+0x00007F575A5C0330 : 2020 2020 2020 2020 5351 4C45 444F 5344 SQLEDOSD 
+0x00007F575A5C0340 : 0000 0000 0000 0000 0000 0000 0000 0000 ................ 
+0x00007F575A5C0350 : 0000 0000 0000 0000 2020 2020 2020 2020 ........ 
+0x00007F575A5C0360 : 2020 2035 3730 3139 57019
+
+2014-06-01-11.14.27.231537-240 E164118E472 LEVEL: Event 
+PID : 16165 TID : 140268858763008 PROC : db2sysc 0 
+INSTANCE: db2inst1 NODE : 000 
+HOSTNAME: mysystem 
+EDUID : 13 EDUNAME: db2castructevent 0 
+FUNCTION: DB2 UDB, Shared Data Structure Abstraction Layer for CF, sqleRocmNotifEdu::ROCM_UpdateCaStateFlagsForSecond, probe:8582 
+MESSAGE : ADM7531I A CF changed state. CF: "129". New state: "PEER". 
+CHANGE : CF 
+
+2014-06-01-11.14.29.767758-240 E164591E445 LEVEL: Error 
+PID : 15054 TID : 140097810073376 PROC : db2havend 
+(db2ha) 
+INSTANCE: db2inst1 NODE : 000 
+HOSTNAME: mysystem 
+FUNCTION: DB2 UDB, high avail services, db2haAddResourceGroup, probe:210
+MESSAGE : Create a new resource group definition failed. 
+DATA #1 : DB2HA Cluster Error Code, PD_TYPE_DB2HA_CLUSTER_ERROR_CODE, 4 bytes 
+error: Add dependency failed 
+
+2014-06-01-11.14.29.768032-240 E165037E937 LEVEL: Error 
+PID : 16165 TID : 140221131777792 PROC : db2sysc 0 
+INSTANCE: db2inst1 NODE : 000 DB : EVENT 
+APPHDL : 0-1059 APPID: *N0.db2inst1.140601151424 
+AUTHID : DB2INST1 HOSTNAME: mysystem 
+EDUID : 1194 EDUNAME: db2agent (EVENT) 0 
+FUNCTION: DB2 UDB, high avail services, sqlhaAddResourceGroup2, probe:300 
+MESSAGE : ECF=0x90000545=-1879046843=ECF_SQLHA_CREATE_DEPENDENCY_FAILED 
+Add dependency failed 
+DATA #1 : String, 35 bytes 
+Error during vendor call invocation 
+DATA #2 : unsigned integer, 4 bytes 
+14 
+DATA #3 : String, 13 bytes 
+db2mnt-dev1-rg 
+DATA #4 : unsigned integer, 4 bytes 
+2 
+DATA #5 : unsigned integer, 8 bytes 
+1 
+DATA #6 : signed integer, 4 bytes 
+309 
+DATA #7 : String, 96 bytes 
+Line # : 6867---2621-309 Command not allowed as daemon does not have a valid license. 
+; FFDC ID: 
+
+2014-06-01-11.14.29.768229-240 E165975E595 LEVEL: Error 
+PID : 16165 TID : 140221131777792 PROC : db2sysc 0 
+INSTANCE: db2inst1 NODE : 000 DB : EVENT 
+APPHDL : 0-1059 APPID: *N0.db2inst1.140601151424 
+AUTHID : DB2INST1 HOSTNAME: mysystem 
+EDUID : 1194 EDUNAME: db2agent (EVENT) 0 
+FUNCTION: DB2 UDB, high avail services, sqlhaAddResourceGroup2, 
+probe:310 
+MESSAGE : ECF=0x90000545=-1879046843=ECF_SQLHA_CREATE_DEPENDENCY_FAILED 
+Add dependency failed 
+DATA #1 : String, 11 bytes 
+mysystem 
+
+2014-06-01-11.14.29.768359-240 E166571E773 LEVEL: Error 
+PID : 16165 TID : 140221131777792 PROC : db2sysc 0 
+INSTANCE: db2inst1 NODE : 000 DB : EVENT 
+APPHDL : 0-1059 APPID: *N0.db2inst1.140601151424 
+AUTHID : DB2INST1 HOSTNAME: mysystem 
+EDUID : 1194 EDUNAME: db2agent (EVENT) 0 
+FUNCTION: <0>, <0>, <0>, probe:1476 
+RETCODE : ECF=0x90000545=-1879046843=ECF_SQLHA_CREATE_DEPENDENCY_FAILED 
+Add dependency failed 
+DATA #1 : String, 65 bytes 
+libsqlha: sqlhaAddResourceGroup() call error from wrapper library 
+DATA #2 : String, 96 bytes 
+Line # : 6867---2621-309 Command not allowed as daemon does not have a valid license. 
+; FFDC ID: 
+DATA #3 : signed integer, 4 bytes 
+309 
+
+2014-06-01-11.14.29.768495-240 I167345E570 LEVEL: Error 
+PID : 16165 TID : 140221131777792 PROC : db2sysc 0 
+INSTANCE: db2inst1 NODE : 000 DB : EVENT 
+APPHDL : 0-1059 APPID: *N0.db2inst1.140601151424 
+AUTHID : DB2INST1 HOSTNAME: mysystem 
+EDUID : 1194 EDUNAME: db2agent (EVENT) 0 
+FUNCTION: DB2 UDB, high avail services, 
+sqlhaCreateConcurrentMountInternal, probe:10620 
+RETCODE : ECF=0x90000545=-1879046843=ECF_SQLHA_CREATE_DEPENDENCY_FAILED 
+Add dependency failed 
+
+2014-06-01-11.14.29.770919-240 I167916E468 LEVEL: Warning 
+PID : 16165 TID : 140221131777792 PROC : db2sysc 0 
+INSTANCE: db2inst1 NODE : 000 DB : EVENT 
+APPHDL : 0-1059 APPID: *N0.db2inst1.140601151424 
+AUTHID : DB2INST1 HOSTNAME: mysystem 
+EDUID : 1194 EDUNAME: db2agent (EVENT) 0 
+FUNCTION: DB2 UDB, high avail services, 
+sqlhaCreateConcurrentMountInternal, probe:10761 
+
+2014-06-01-11.14.29.804151-240 E168385E559 LEVEL: Error 
+PID : 16165 TID : 140221131777792 PROC : db2sysc 0 
+INSTANCE: db2inst1 NODE : 000 DB : EVENT 
+APPHDL : 0-1059 APPID: *N0.db2inst1.140601151424 
+AUTHID : DB2INST1 HOSTNAME: mysystem 
+EDUID : 1194 EDUNAME: db2agent (EVENT) 0 
+FUNCTION: DB2 UDB, high avail services, sqlhaCreateClusterObject, 
+probe:2892 
+RETCODE : ECF=0x90000545=-1879046843=ECF_SQLHA_CREATE_DEPENDENCY_FAILED 
+Add dependency failed 
+
+2014-06-01-11.14.29.804279-240 E168945E550 LEVEL: Error 
+PID : 16165 TID : 140221131777792 PROC : db2sysc 0 
+INSTANCE: db2inst1 NODE : 000 DB : EVENT 
+APPHDL : 0-1059 APPID: *N0.db2inst1.140601151424 
+AUTHID : DB2INST1 HOSTNAME: mysystem 
+EDUID : 1194 EDUNAME: db2agent (EVENT) 0 
+FUNCTION: DB2 UDB, high avail services, sqlhaCreateMount, probe:9610 
+RETCODE : ZRC=0x827300C3=-2106392381=HA_ZRC_CREATE_DEPENDENCY_FAILED 
+"Add dependency failed" 
+
+2014-06-01-11.14.29.804398-240 I169496E506 LEVEL: Error 
+PID : 16165 TID : 140221131777792 PROC : db2sysc 0 
+INSTANCE: db2inst1 NODE : 000 DB : EVENT 
+APPHDL : 0-1059 APPID: *N0.db2inst1.140601151424 
+AUTHID : DB2INST1 HOSTNAME: mysystem 
+EDUID : 1194 EDUNAME: db2agent (EVENT) 0 
+FUNCTION: DB2 UDB, database utilities, sqludValidateNewLogPathIsValid, 
+probe:3591 
+MESSAGE : NEWLOGPATH specified is not usable. 
+
+2014-06-01-11.14.29.816261-240 E170003E468 LEVEL: Severe 
+PID : 16165 TID : 140221131777792 PROC : db2sysc 0 
+INSTANCE: db2inst1 NODE : 000 DB : EVENT 
+APPHDL : 0-1059 APPID: *N0.db2inst1.140601151424 
+AUTHID : DB2INST1 HOSTNAME: mysystem 
+EDUID : 1194 EDUNAME: db2agent (EVENT) 0 
+FUNCTION: DB2 UDB, database utilities, sqludrsa, probe:860 
+MESSAGE : Restore Terminated. 
+
+
+CAUSE
+The reason that this is happening is that DB2 tries to create a new resource group for the new path via TSAMP, and cannot because the TSAMP license is expired or not installed. Since the resource group cannot be created, DB2 cannot use the path, and therefore the SQL1051N error is returned.
+
+
+
+RESOLVING THE PROBLEM
+The solution is to update/add the TSAMP license. Use the samlicm command as root to install the license. The license must be installed on all servers/nodes running TSAMP in the cluster.
+
+
+samlicm -i /path/to/file/sam32.lic 
+
+The license file sam32.lic is the valid license for any TSAMP versions beginnging with "3.2", for example, the same license file is appropriate for TSAMP 3.2.0.0 as well as 3.2.2.7. 
+
+Once the license file is installed with the samlicm command you must restart the cluster/domain for the new license file to be recognized by TSAMP. Another option would be to find and kill the IBM.RecoveryRM process on each server in the cluster, simply find the PID and "kill" it, do not use "kill -9" or any other flag, just "kill " on every node in the cluster. 
+
+Verification of a valid license: 
+
+The samlicm command is used to test and return information on your TSAMP license. 
+
+Use the following command syntax to verify that the license is valid: 
+
+samlicm -s 
+
+This will report what type of license you have and the expiration of any valid or try and buy license. 
+
+samlicm -t; echo $? 
+
+This tests the license, this syntax only provides a return code so you must issue the command with the "; echo $?" after or after issuing the command then issue "echo $?" to see the return code. A value of 0 means you have a valid license, any other value means that your license is either expired or a try and buy license. 
+
+samlicm -p; echo $? 
+
+This will echo a RC of 0 for a valid license, any other return is an expired or try and buy license.

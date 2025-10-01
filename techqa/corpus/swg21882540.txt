@@ -1,0 +1,50 @@
+Title: IBM Security Bulletin: Vulnerability in RC4 stream cipher affects IBM Tivoli Provisioning Manager (CVE-2015-2808) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The RC4 “Bar Mitzvah” Attack for SSL/TLS affects IBM Tivoli Provisioning Manager. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-2808 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2808]
+DESCRIPTION: The RC4 algorithm, as used in the TLS protocol and SSL protocol, could allow a remote attacker to obtain sensitive information. An attacker could exploit this vulnerability to remotely expose account credentials without requiring an active man-in-the-middle session. Successful exploitation could allow an attacker to retrieve credit card data or other sensitive information. This vulnerability is commonly referred to as "Bar Mitzvah Attack".
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/101851 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101851] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Tivoli Provisioning Manager: 7.2 and earlier
+
+REMEDIATION/FIXES
+To remediate Tivoli Provisioning Manager server, please refer to How to disable RC4 stream cipher in IBM Tivoli Provisioning Manager server [http://www.ibm.com/support/docview.wss?uid=swg21882537]
+To remediate Tivoli Common Agents, please apply the remediation fix indicated below:
+
+
+
+Product VRMF APAR Remediation/First Fix Tivoli Provisioning Manager 7.1 7.1.1-TIV-TPM-IF00013 none 7.1.1.0-TIV-TPM-JRE50SR16FP10 [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Tivoli+Provisioning+Manager&release=7.1.1.0&platform=All&function=fixId&fixids=7.1.1.0-TIV-TPM-*JRE50SR16FP10] Tivoli Provisioning Manager 7.2 7.2.2.0-TIV-TPM-IF00003 none 7.2.2.0-TIV-TPM-JRE60SR16FP3 [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Tivoli+Provisioning+Manager&release=7.2.2.0&platform=All&function=fixId&fixids=7.2.2.0-TIV-TPM-*JRE60SR16FP3] 
+For out of support versions, contact IBM customer support for assistance. 
+
+To remediate IBM WebSphere Application Server, please consult the security bulletin Security Bulletin: Vulnerability in RC4 stream cipher affects WebSphere Application Server (CVE-2015-2808) [http://www.ibm.com/support/docview.wss?uid=swg21701503] for vulnerability details and information about fixes. 
+
+You should verify applying this configuration change does not cause any compatibility issues. Not disabling the RC4 stream cipher will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the RC4 stream cipher and take appropriate mitigation and remediation actions. 
+WORKAROUNDS AND MITIGATIONS
+None 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 17 April 2015: Original Version Published
+22 April 2015: Tivoli Common Agent endpoints remediation fix added
+22 June 2015: Tivoli Common Agent endpoints for version 7.1.1 remediation fix added 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

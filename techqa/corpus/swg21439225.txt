@@ -1,0 +1,75 @@
+Title: IBM Rational Developer for i 7.5.x Fails To Update After Updating IBM Installation Manager to version 1.4 - United States
+
+Text:
+1439225 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to resolve problems that can occur when updating IBM Rational Developer for i with IBM Installation Manager version 1.4. 
+
+SYMPTOM
+When trying to update Rational Developer for i 7.5 an error is seen that says updating of the product is not allowed due to incompatibility with other packages and that feature SE.1.com.ibm.xtt.rad.feature [0.0.0] could not be found.This problem may also be seen when try to update another product in the same package group as Rational Developer for i 7.5. This document describes workaounds that can be used to alleviate the error. 
+
+ * 
+ * Updating IBM Rational Developer for i to 7.5.0.x is not allowed; it is
+   not compatible with the other packages. 
+   In installation context "com.ibm.sdp.eclipse.ide":
+   Software being installed: com.ibm.assembly.rdi.main 
+   7.5.0.20100416_1135 (SE.1.com.ibm.assembly.rdi.main 7.5.0.20100416_1135)
+   Missing requirement: com.ibm.assembly.rdi.main 7.5.0.20100416_1135
+   (SE.1.com.ibm.assembly.rdi.main 7.5.0.20100416_1135) requires 
+   'SE.1.com.ibm.xtt.rad.feature [0.0.0]' but it could not be found
+
+
+CAUSE
+There is a conflict between IBM Installation Manager 1.4 and Rational Developer for i 7.5.x.
+
+
+
+RESOLVING THE PROBLEM
+The preferred solution to this is to move to the current IBM i development tools now call "Rational Developer for Power Systems Software" version 7.6.Rational Developer for Power Systems version 7.6 is a drop-in replacement for Rational Developer for i and it will work with the new IBM Installation Manager. As well RDp 7.6 contains all the latest fixes and enhancements. You can download RDp 7.6 from this link [http://www-01.ibm.com/software/rational/products/rdp/.].
+
+It is understood that there may be some instances where it is not desirable or not possible to upgrade from Rational Developer for i for whatever reason.In these cases the following procedures could be used.Please read the instructions carefully to decide which is the best option procedure in your particular environment.
+
+
+The proper way to resolve this problem is to remove and reinstall all IBM Installation Manager installed products as outlined below. 
+
+
+ 1.  Use the IBM Installation Manager to uninstall all products previously installed by IBM Installation Manager 
+ 2.  Use Windows Add/Remove programs to uninstall IBM Installation Manager 
+ 3.  Download IBM Installation Manager 1.3.4.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026310] 
+ 4.  Unpack the zip to a temporary location and run the setup.exe file to install IBM Installation Manager 1.3.4.1. 
+ 5.  Start IBM Installation Manager 1.3.4.1 and go to File->Preferences. 
+ 6.  In the Preference dialogue select Updates in the tree view on the left. 
+ 7.  On the preference panel on the right make sure that the check box for "Search for Installation Manager updates" is NOT checked. 
+ 8.  Click Apply, then click OK. 
+ 9.  If Rational Developer for i-SOA is being used then install Rational Business Developer (RBD) 7.5 
+ 10. Install Rational Developer for i 7.5 
+ 11. Update Rational Developer for i (and RBD if installed in the same package group) to the current service level. 
+ 12. Reinstall any other desired products
+
+
+Caution : The following work-around requires some Windows knowledge and is not generally recommended but can be used in cases where IBM Installation Manager 1.4 (or later) has not yet been used to update the installed products.If IBM Installation Manager 1.4 has been used to install or update products then the following may or may not work.In that case it may damage the install and the proper recovery procedure outlined above would have to be used. 
+
+ 
+
+ 1.  With IBM Installation Manager 1.4 or newer installed in directory "<install-directory>Installation Manager"rename the "Installation Manager" subdirectory to "Installation Manager-orig".On most machines <install-directory> is "C:\Program Files\IBM". 
+ 2.  Download IBM Installation Manager 1.3.4.1 from http://www-01.ibm.com/support/docview.wss?uid=swg24026310 [http://www-01.ibm.com/support/docview.wss?uid=swg24026310] 
+ 3.  Unpack the zip to a temporary location and run the setup.exe file to install IBM Installation Manager 1.3.4.1. 
+ 4.  Start IBM Installation Manager 1.3.4.1 and go to File->Preferences. 
+ 5.  In the Preference dialogue select Updates in the tree view on the left. 
+ 6.  On the preference panel on the right make sure that the check box for "Search for Installation Manager updates" is NOT checked. 
+ 7.  Click Apply, then click OK. 
+ 8.  Now click the update button and update Rational Developer for i to 7.5.0.5 as well as anything else that needs to be updated in the same package group. 
+ 9.  When the update is complete close IBM Installation Manager 1.3.4.1 
+ 10. At this point you will likely wish to download and re-install the latest IBM Installation Manager or allow IBM Installation Manager 1.3.4.1 to update to the current level
+
+
+RELATED INFORMATION
+#IBM Installation Manager 1.3.4.1 [http://www.ibm.com/support/docview.wss?uid=swg24026310]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Developer for Power Systems Software Installation Windows 7.6 Software Development IBM Installation Manager Update Windows 1.4

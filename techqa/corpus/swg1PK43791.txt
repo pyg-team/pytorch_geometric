@@ -1,0 +1,194 @@
+Title: IBM PK43791: EXPORTING WCS EAR FAILS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  1.Version (with iFixes and TestFixes).
+   Rational Application Developer 7.0.0.2
+   2.Problem Description. Things that you have tried to resolve.
+   Reproduced problem, checked that customer is using the same dire
+   ctory for source and output folder.
+   3.Are you able to reproduce? If yes, provide the exact steps? Ar
+   e the test-case/related files attached to the ER?
+   a) Import the attached Project Interchange
+   b) Export as RAR file
+   Result:
+   !SUBENTRY 1 org.eclipse.wst.common.frameworks 4 0 2007-04-23 11:
+   56:43.046
+   !MESSAGE Extended Operation failure: org.eclipse.jst.j2ee.intern
+   al.jca.archive.operations.ConnectorComponentExportOperation
+   !STACK 0
+   org.eclipse.core.commands.ExecutionException: Error exporting
+    at org.eclipse.jst.j2ee.internal.archive.operations.J2EEArtifac
+   tExportOperation.execute(Unknown Source)
+    at org.eclipse.wst.common.frameworks.internal.datamodel.DataMod
+   elPausibleOperationImpl$1.run(Unknown Source)
+    at org.eclipse.core.internal.resources.Workspace.run(Unknown So
+   urce)
+    at org.eclipse.wst.common.frameworks.internal.datamodel.DataMod
+   elPausibleOperationImpl.runOperation(Unknown Source)
+    at org.eclipse.wst.common.frameworks.internal.datamodel.DataMod
+   elPausibleOperationImpl.runOperation(Unknown Source)
+    at org.eclipse.wst.common.frameworks.internal.datamodel.DataMod
+   elPausibleOperationImpl.doExecute(Unknown Source)
+    at org.eclipse.wst.common.frameworks.internal.datamodel.DataMod
+   elPausibleOperationImpl.executeImpl(Unknown Source)
+    at org.eclipse.wst.common.frameworks.internal.datamodel.DataMod
+   elPausibleOperationImpl.cacheThreadAndContinue(Unknown Source)
+    at org.eclipse.wst.common.frameworks.internal.datamodel.DataMod
+   elPausibleOperationImpl.execute(Unknown Source)
+    at org.eclipse.wst.common.frameworks.internal.datamodel.ui.Data
+   ModelWizard$1$CatchThrowableRunnableWithProgress.run(Unknown Sou
+   rce)
+    at org.eclipse.jface.operation.ModalContext$ModalContextThread.
+   run(Unknown Source)
+   Caused by: org.eclipse.jst.j2ee.commonarchivecore.internal.excep
+   tion.SaveFailureException: de/dsv/mokka/test/connector/DemoConne
+   ction.class
+    at org.eclipse.jst.j2ee.commonarchivecore.internal.strategy.Zip
+   StreamSaveStrategyImpl.save(Unknown Source)
+    at org.eclipse.jst.j2ee.commonarchivecore.internal.strategy.Sav
+   eStrategyImpl.save(Unknown Source)
+    at org.eclipse.jst.j2ee.commonarchivecore.internal.strategy.Sav
+   eStrategyImpl.saveFiles(Unknown Source)
+    at org.eclipse.jst.j2ee.commonarchivecore.internal.strategy.Sav
+   eStrategyImpl.save(Unknown Source)
+    at org.eclipse.jst.j2ee.commonarchivecore.internal.impl.Archive
+   Impl.save(Unknown Source)
+    at org.eclipse.jst.j2ee.commonarchivecore.internal.strategy.Sav
+   eStrategyImpl.save(Unknown Source)
+    at org.eclipse.jst.j2ee.commonarchivecore.internal.strategy.Zip
+   StreamSaveStrategyImpl.save(Unknown Source)
+    at org.eclipse.jst.j2ee.commonarchivecore.internal.strategy.Sav
+   eStrategyImpl.save(Unknown Source)
+    at org.eclipse.jst.j2ee.commonarchivecore.internal.strategy.Sav
+   eStrategyImpl.saveFiles(Unknown Source)
+    at org.eclipse.jst.j2ee.commonarchivecore.internal.strategy.Sav
+   eStrategyImpl.save(Unknown Source)
+    at org.eclipse.jst.j2ee.commonarchivecore.internal.impl.Archive
+   Impl.save(Unknown Source)
+    at org.eclipse.jst.j2ee.commonarchivecore.internal.impl.ModuleF
+   ileImpl.save(Unknown Source)
+    at org.eclipse.jst.j2ee.commonarchivecore.internal.impl.Archive
+   Impl.saveAsNoReopen(Unknown Source)
+    at org.eclipse.jst.j2ee.internal.jca.archive.operations.Connect
+   orComponentExportOperation.export(Unknown Source)
+    ... 11 more
+   Caused by: java.util.zip.ZipException: duplicate entry: de/dsv/m
+   okka/test/connector/DemoConnection.class
+    at java.util.zip.ZipOutputStream.putNextEntry(Unknown Source)
+    ... 25 more
+   4.Does the customer have a work around? If yes, provide details.
+   He is using an ant script to the export to a .rar file.
+   Import into WAS works so the structure is correct.
+   5.Is it happening on just one machine? If so, what is unique abo
+   ut this machine or workspace.
+   No, also on mine.
+   6.What is expected from development?
+   Fix the issue as stated in this defect./
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Getting an error whil exporting an Ear or Rar file.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix delivered in Rational Application Developer V7.0.0.3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK43791
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEV V6 WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-04-23
+   
+   
+ * CLOSED DATE
+   2007-07-09
+   
+   
+ * LAST MODIFIED DATE
+   2007-07-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEV V6 WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSN
+   UP

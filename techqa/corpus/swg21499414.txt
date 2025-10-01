@@ -1,0 +1,36 @@
+Title: IBM [32-bit] ObjectServer Serial considerations - United States
+
+Text:
+ObjectServer; Object Server; Serial; ServerSerial; bi-directional; uni-directional; odbc gateway; reporter gateway; oracle gateway; audit gateway; gateway; nco_g_oracle; nco_g_odbc; nco_g_jdbc TECHNOTE (FAQ)
+
+QUESTION
+ ObjectServer Serial maximum value for 32-bit Object Servers 
+
+CAUSE
+32-bit limitations
+
+ANSWER
+The Serial field is defined using the INCR data type. 
+
+For Netcool/OMNIbus v7.3;
+INCR is a 32-bit unsigned auto-incrementing INTEGER that can only be updated by the system
+INTEGER: is a 32-bit signed integer
+
+The range of integer values that can be stored in 32 bits are 0 through to 4294967295 or -2,147,483,648 through 2147483647 using two's complement encoding. 
+
+Therefore:-
+1 day = 60*60*24 = 86,400 seconds
+The maximum number of days is therefore, given one event a second;
+4294967295 / 86,400 seconds = 49,710 days => 49,710 / 365 = 136 years
+
+However INCR has a maximum value of 2147483647, which implies the following for a system with an event rate of one event a second;
+2147483647 / 86,400 seconds = 24,855 days
+24,855 / 365 = 68 years
+
+The conclusion is that for the ObjectServer Serial to wrap in a year the event rate needs to be 68 events a second.
+
+The impact of the ObjectServer Serial wrapping does not affect the ObjectServer itself, provided events are cleared within the period before the ObjectServer Serial wraps. In large multi-tiered systems, the risk of this occurring increases, since the event rate increases, the more events are handled at the Aggregation layer.
+
+The other impact is on gates and historical databases, which use the Serial, or more precisely the ServerSerial to store data. Therefore it is important to understand the transient real-time nature of the ObjectServer data, and to archive and manage the historical and ObjectServer data accordingly.
+
+A 64-bit Object Server will last 4 billion times longer than a 32-bit Object Server, before Serial wraps.

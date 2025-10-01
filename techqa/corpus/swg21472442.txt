@@ -1,0 +1,50 @@
+Title: IBM Resolving "The transaction log for the database is full" error - United States
+
+Text:
+db2; TPAEDB2 TECHNOTE (FAQ)
+
+QUESTION
+ How to resolve DB2 SQLCODE=-964 
+
+CAUSE
+When running the Maximo upgrade you receive the following: 
+The transaction log for the database is full. SQLCODE=-964, SQLSTATE=57011, DRIVER=3.53.70
+at psdi.dbmanage.ScriptRun.run(Unknown Source)
+at psdi.tools.UpdateDB.runDbcFileInfo(Unknown Source)
+at psdi.tools.UpdateDB.runScripts(Unknown Source)
+at psdi.tools.UpdateDB.startProcess(Unknown Source)
+at psdi.tools.UpdateDB.startProcess(Unknown Source)
+at psdi.tools.UpdateDB.loadScriptInfo(Unknown Source)
+at psdi.tools.UpdateDB.main(Unknown Source) 
+
+
+ANSWER
+Please follow the steps below: 
+
+
+1) Run db2 command GET DB CFG 
+2) Determine the current values for LOGFILSIZ, LOGPRIMARY, LOGSECOND fields.
+3) Increase any or all of the them to satisfy the upgrade process.
+Make sure you have enough disk space before increasing these.
+
+from the Command Window :
+
+Increase the size of the transaction log files, for example:
+
+db2 connect to maximo 
+db2 update db cfg using LOGFILSIZ 5000 
+db2 connect reset
+
+Increase the number of primary logs, for example:
+
+db2 connect to maximo 
+db2 update db cfg using LOGPRIMARY 50 
+db2 connect reset
+
+Increase the number of secondary logs, for example: 
+
+db2 connect to maximo 
+db2 update db cfg using LOGSECOND 50 
+db2 connect reset
+
+4) Stop and restart the database to put these into effect by running the db2 commands DB2STOP then DB2START.

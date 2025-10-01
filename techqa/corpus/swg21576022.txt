@@ -1,0 +1,68 @@
+Title: IBM DRDA wrapper returns SQL0901N "Index column name not
+found - search 1" while create nickname for DB2 for IBM i - United States
+
+Text:
+SQL0901N; index on expression; index using expression TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to create nickname for a remote table from DB2 on IBM iSeries (IBM i) resulted in SQL0901N error with Reason "Index column name not found - search 1" 
+
+SYMPTOM
+ 
+
+db2 => CREATE NICKNAME MYNICKNAME FOR <SERVER NAME>.<SCHEMA>.<REMOTE TABLE NAME>
+DB21034E The command was processed as an SQL statement because it was not a
+valid Command Line Processor command. During SQL processing it returned:
+SQL0901N The SQL statement failed because of a non-severe system error.
+Subsequent SQL statements can be processed. (Reason "Index column name not
+found - search 1".) SQLSTATE=58004
+
+
+db2diag.log output:
+
+2011-12-20-15.50.48.413805-360 I1647585E793 LEVEL: Error
+PID : 9505 TID : 46945187916096PROC : db2sysc
+INSTANCE: DB2INST1 NODE : 000 DB : FDB3
+APPHDL : 0-7 APPID: *LOCAL.DB2INST1.111220214313
+AUTHID : DB2INST1
+EDUID : 18 EDUNAME: db2agent (TESTDB)
+FUNCTION: DB2 UDB, catalog services, sqlrl_create_nickname_index, probe:181
+MESSAGE : Index column name not found - search 1
+DATA #1 : String, 9 bytes
+Nickname:
+DATA #2 : String, 4 bytes
+MYNICKNAME
+DATA #3 : String, 22 bytes
+Current column number:
+DATA #4 : signed integer, 8 bytes
+0
+DATA #5 : String, 24 bytes
+Number of index columns:
+DATA #6 : signed integer, 8 bytes
+1
+DATA #7 : String, 26 bytes
+Current index column name:
+DATA #8 : String, 10 bytes
+IXCOL00001
+
+CAUSE
+The error happens because DB2 LUW does not support indexes using expressions, as a result Federation Server cannot find a counterpart object on DB2 for the index using expressions on data source DB2 for IBM i
+
+
+
+ENVIRONMENT
+Federated Server on Linux/Unix/Windows 
+
+Data Source server: DB2 for IBM i V6R1 or later
+
+
+DIAGNOSING THE PROBLEM
+You can find the remote table on DB2 for IBM i has one or more indexes using expressions. DB2 for IBM i starts to support building an Index Using Expressions from V6R1.
+
+
+
+RESOLVING THE PROBLEM
+To create nickname for a remote table which contains indexes using expressions, you have two options: 
+
+1. Create a view for the table, then create nickname for the view instead of the table itself.
+2. Remove the indexes using expressions from data source server before creating nickname.

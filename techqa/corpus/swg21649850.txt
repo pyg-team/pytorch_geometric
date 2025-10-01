@@ -1,0 +1,18 @@
+Title: IBM Why don't I see any DB2 related RACF information from panel RE.D? - United States
+
+Text:
+zCollect; CKFCOLL; zSecure TECHNOTE (FAQ)
+
+QUESTION
+ When I query DB2 V9 information from RE.D, for example R for region, I expect to see the exit names listed and RACF related information displayed but I see neither. What could be the reason? 
+
+CAUSE
+Prior to DB2 V10, the exit names are fixed and cannot be customized, therefore zSecure decides not to display them. With DB2 V10 and above you will see the names listed:
+Authorization exit module DSN3@ATH Access control module DSNX@XAC
+Signon exit module DSN3@SGN 
+
+One reason no RACF related information is displayed is because the zSecure Collect job could not access the DB2 security related exits. If CKFCOLL parameters DASD=NO, IO=NO and PDS=NO are coded or implied then no DB2 information will be seen.
+
+
+ANSWER
+Use CKFCOLL parms DASD=NO, IO=YES, PDS=YES as a minimum to allow the DB2 exit PDS to be read without having to access ALL DASD.

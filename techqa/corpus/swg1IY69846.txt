@@ -1,0 +1,142 @@
+Title: IBM IY69846: THE CUSTOMER HAS A PROBLEM TO CONNECT THEIR CLUSTERING SQL SERVER BY OUR SQLSERVER AGENT. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer has a problem to connect their Clustering SQL
+   Server by our SQLServer agent.
+   
+   
+   BCBS-IL installed MSCS on their server and SQL Server Monitoring
+   Agent. They had two problem.
+   
+   1. They setup the named instance same as their hostname.
+   And when they ran sqlserver monitoring agent, it couldn't
+   connect to their server. It was trying to connect their server
+   by host name even though their COLL_CLUSTER and COLL_SERVERID
+   env were correct.
+   
+   
+   Because KOQ_NAMED_INSTANCE setby 0, it caused the problem.
+   Modify 'kddixdcl.cpp' and sent new kddirex.dll (
+   newkddirex.zip ). It fixed their problem.
+   
+   2. Another machine also setup MSCS but this time, they setup the
+   virtual server for their default server.
+   
+   That case, agent should make a connect only by hostname but it
+   wasn't considered before. Sent a new fix kddirex.dll
+   
+   Made a new PTF and sent to customer ( kddirex0331.zip )
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  kddirex0331.zip ( kddirex.dll )
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   See APAR Description.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   Fixed in Patch kddirex0331.zip
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY69846
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEGAMN XE FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724K2800
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-04-01
+   
+   
+ * CLOSED DATE
+   2005-07-19
+   
+   
+ * LAST MODIFIED DATE
+   2005-07-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEGAMN XE FOR
+   
+   
+ * FIXED COMPONENT ID
+   5724K2800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSN
+   UP

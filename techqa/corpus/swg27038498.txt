@@ -1,0 +1,53 @@
+Title: IBM Using a Teradata database with InfoSphere Streams ODBC operators - United States
+
+Text:
+InfoSphere Streams; database toolkit; teradata and database toolkit; teradata; odbc operators RELEASE NOTES
+
+ABSTRACT
+ When you use the ODBC operators provided by the Database Toolkit in your InfoSphere Streams applications to connect to a Teradata database, you must specify additional database-specific configuration information. 
+
+CONTENT
+InfoSphere Streams applications can use the ODBC operators provided by the Database Toolkit to connect to external databases such as Teradata by using the DataDirect ODBC driver for Teradata, which is packaged with the Teradata ODBC driver. 
+
+Before you can use the ODBC operators in your Streams applications, you must specify the environment variables for compiling Streams applications and for running ODBC operators with a Teradata database. You must also create an odbc.ini file.
+
+Important: On IBM POWER7 systems that are running Red Hat Enterprise Linux Version 6 (RHEL 6), a Teradata database is not supported.
+
+Procedure
+
+1. To compile SPL applications that connect to a Teradata database, set the STREAMS_ADAPTERS_ODBC_UNIX_OTHER environment variable:
+export STREAMS_ADAPTERS_ODBC_UNIX_OTHER=1
+This environment variable tells the compiler the database that you want to connect to. 
+
+Important: 
+
+ * Use the -x-DODBC64 option when invoking the sc compiler because InfoSphere Streams uses the DataDirect ODBC driver for Teradata, which is packaged with the Teradata ODBC driver, instead of the UnixODBC driver. 
+
+ * The following example shows how to add this option to the makefile:
+   SPLC_FLAGS ?= -x-DODBC64 -a -z -t $(STREAMS_INSTALL)/toolkits/com.ibm.streams.db
+
+
+2. Set the following environment variables based on where the database client library is installed: 
+export STREAMS_ADAPTERS_ODBC_INCPATH=/opt/teradata/client/14.00/odbc_64/include 
+export STREAMS_ADAPTERS_ODBC_LIBPATH=usr/lib64 
+
+3. Create an odbc.ini file with the following information on the machine that runs the processing elements (PEs) that contain the ODBC operators. 
+
+Note: In the following example, ODBC is the data source name and must match the name that is used in the connections.xml file. 
+
+[ODBC] 
+InstallDir=/opt/teradata/client/ODBC_64 
+
+[ODBC Data Sources] 
+tdtest=tdata.so 
+
+[tdtest] 
+Driver=/opt/teradata/client/ODBC_64/lib/tdata.so 
+DBCName=myServerNameOrIPAddress 
+
+
+4. At runtime, set the following environment variable: 
+export ODBCINI=<absolute_path_of_the_odbc.ini file> 
+
+RELATED INFORMATION
+ InfoSphere Streams and Database Toolkit documentation [http://www.ibm.com/support/docview.wss?uid=swg27038538]

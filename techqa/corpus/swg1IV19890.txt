@@ -1,0 +1,167 @@
+Title: IBM IV19890: CANNOT SEARCH USERS IN ACCESS ADMIN - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the AccessAdmin you can search for TAM E-SSO users.
+   
+   When using the wildcard (*), I can see all available users.  But
+   when
+   we want to search for a specific user, you could search by
+   "Enterprise
+   user name".  So when I want to search my own account, I type in
+   the
+   search field:  (AD account ID)
+   But when I want to search on e.i.  the Last name of a user, in
+   my case then the following message is shown:  No results were
+   found matching your search criteria.
+   
+   
+   Also when using a wildcard in the search field when searching
+   for Name
+   (first last), Last name or E-mail address, the same error
+   message is
+   shown and no users are shown.
+   
+   This makes searching for users very difficult.
+   I have noticed this issue is IMS 8.1 related for all my
+   installed
+   environments.  In IMS 8.2 (for other customer), I do not have
+   these
+   issues.
+   
+   Administrator guide is straight forward,
+   1. Select AccessAdmin  &#65529; Search users.
+   2. Enter the subject of your search in the Search for field.
+      To find partially matching results, enter characters
+      followed by an asterisk (*).
+      For example, to find all users whose enterprise user name
+      begin with the letter "i", enter i* in the Search for field.
+   3. Select a search criteria from the Search by list.
+   4. Click Search. The search results are displayed, containing
+      all the matches or partial matches.
+   
+   Steps to Duplicate:
+   
+   Desired Behavior: Should be able to search Users
+   
+   Environment:
+   TAM E-SSO v8.1 FP4 installed on Windows 2008 R2
+   MS SQL 2008 R2
+   IBM WAS 7.0.0.17
+   
+   RTC 31439
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  User search in AccessAdmin did not return the expected results
+   when wildcards ('*') were used.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem has been addressed in an IMS 8.1 iFix. The code
+   change will be included in future IMS 8.1 fix packs.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV19890
+   
+   
+ * REPORTED COMPONENT NAME
+   TAM ESSO IM SVR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V6700
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-04-19
+   
+   
+ * CLOSED DATE
+   2012-05-22
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TAM ESSO IM SVR
+   
+   
+ * FIXED COMPONENT ID
+   5724V6700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY
+   UP

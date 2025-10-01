@@ -1,0 +1,149 @@
+Title: IBM IZ98704: T6 TRACE-ROBOTIC.LOG SERVICEABILITY ISSSUE FOR RPT SAP GUI PBACK - United States
+
+Text:
+  READMES ARE AVAILABLE
+IBM Tivoli Composite Application Manager for Transactions Response Time 7.2 Fix Pack 3 README 7.2.0.0-TIV-CAMRT-FP0003 [http://www-01.ibm.com/support/docview.wss?uid=isg400000682]
+IBM Tivoli Composite Application Manager for Transactions Response Time 7.3.0.1 Interim Fix 20 README 7.3.0.1-TIV-CAMRT-IF0020 [http://www-01.ibm.com/support/docview.wss?uid=isg400001541]
+IBM Tivoli Composite Application Manager for Transactions Response Time 7.3 Fix Pack 1 README 7.3.0.0-TIV-CAMRT-FP0001 [http://www-01.ibm.com/support/docview.wss?uid=isg400001238]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using ITCAM for Tx V7.3 (beta2) RRT T6 agent on Windows 2003
+   64bit R2, environment, RPT SAP GUI script playback always fails
+   with TEP "robotic script playback status" workspace showing
+   "last run status" = failed, without any detailed explanation
+   why.
+   Moreover, the BWM/logs/trace-robotic.log default tracing simply
+   states :
+   - Checking for SAP registry key existance
+   - return value = sapClientPresent=|false|
+   - SAP Client not present on box or a reboot was not done after
+   it was installed
+   - Robotic script playback service init() failed
+   -  Could not playback profile RPT SAP playbacks, robotic script
+   <script name>.zip. Failed to find the SAP
+   client on the system
+   - Unknown index value: 1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None, I think the default tracing should be more explicit and
+   describe where in the Windows registry (or where exactly on the
+   system) the T6 is checking the presence of SAP GUI client.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   problem fixed in 7.2 fixpack 3 .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  logs updated to reflect better status messages.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ98704
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM TRANSACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724S79RR
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-12
+   
+   
+ * CLOSED DATE
+   2011-07-12
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM TRANSACT
+   
+   
+ * FIXED COMPONENT ID
+   5724S79RR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP
+   
+   
+ * R730 PSY
+   UP
+   
+   
+ * R710 PSN
+   UP

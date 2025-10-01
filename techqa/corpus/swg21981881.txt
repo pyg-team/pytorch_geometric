@@ -1,0 +1,23 @@
+Title: IBM Configuring logging for Atlas Extensions in Atlas 6.0.3.3 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure logging for Atlas Extensions in Atlas 6.0.3.3? 
+
+CAUSE
+Atlas Extensions log files are not being generated
+
+ANSWER
+In Atlas 6.0.3.3, the Atlas Extensions logging configuration has moved to log4j.properties file. 
+
+ 1. Navigate to <Atlas_Install_folder>/Atlas/Properties folder 
+ 2. Edit log4.properties file 
+ 3. Update the path Information for the following three properties  1. log4j.appender.MATTER_APPENDER.File=matter_adapter.log 
+     2. log4j.appender.PERSON_APPENDER.File=person_adapter.log 
+     3. log4j.appender.ORG_UNIT_APPENDER.File=org_unit_adapter.log
+    
+    
+ 4. Save the file 
+ 5. Restart Atlas application server

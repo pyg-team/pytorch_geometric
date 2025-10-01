@@ -1,0 +1,43 @@
+Title: IBM General concepts SQL efficiency - United States
+
+Text:
+netcool; impact; netcool/impact; nci; sql; efficiency; event; reader; eventreader; broker; eventbroker; filter; filters; get; by; getby; key; getbykey; getbyfilter; select TECHNOTE (FAQ)
+
+QUESTION
+ Simple guidelines for improving the efficacy of SQL filters 
+
+ANSWER
+In the use of SQL select statements simple general rules of SQL efficiency can be applied i.e.:
+Query integer fields in preference to character fields both in general and in the order of selection. So, where possible, use an integer field Filter like:
+
+
+
+ * 
+
+
+in preference to a character field Filter like: 
+
+ * 
+
+
+and, when using multiple fields in a Filter, query the integer field(s) first like: 
+
+ * 
+
+
+Use direct comparisons prior to range or wild-card comparisons, for example: 
+
+ * 
+
+
+Query fields in an order that would reduce the size of the result set the most the earliest. This advice also holds true within Policy design. For example one can even apply the general rules of SQL efficiency (Integers before Strings etc) to the conditions of If and While control structures: 
+
+ * 
+
+
+is more efficient than: 
+
+ * 
+
+
+and within GetBy and DirectSQL against DataTypes and DataSources. Small and seemingly insignificant enhancements can pay off when multiplied by the large number of events one could expect Impact to process.

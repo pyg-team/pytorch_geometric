@@ -1,0 +1,20 @@
+Title: IBM Is WebSphere Transformation Extender 8.4.1.x compatible with AIX 7.2 - United States
+
+Text:
+AIX compatible 7.2 tested TECHNOTE (FAQ)
+
+QUESTION
+ Is WebSphere Transformation Extender 8.4.1.x compatible with AIX 7.2 
+
+CAUSE
+AIX 7.2 was released after the General availability date of WTX 8.4.1.x.
+
+ANSWER
+AIX 7.2 was released after the General availability date of WTX 8.4.1.x so WTX 8.4.1.x was not tested using AIX 7, however IBM expects no issues when using this configuration..
+
+WTX 8.4.1.x was tested using AIX 7.1. 
+
+Detailed system requirements for WTX 8.4.1.x on AIX can be found using the following link. 
+
+
+http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1322000014740&osPlatform=AIX#! [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1322000014740&osPlatform=AIX#!]

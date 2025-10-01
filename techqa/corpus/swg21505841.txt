@@ -1,0 +1,70 @@
+Title: IBM Can the Microsoft SQL Server database exist on a separate computer from the Tivoli Endpoint Manager (TEM) Server? - United States
+
+Text:
+odbc guide TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The following will guide you through Remote Database setup and configuration. 
+
+RESOLVING THE PROBLEM
+
+
+You can setup a remote database for the TEM Server using the graphical user interface during the initial installer Setup process. The following guide will describe how you can manually set and check database authentication, TEM services, and ODBC connections. 
+
+You must decide how you want your TEM Application services to authenticate and connect to the remote database. There are three server authentication options: the first two are flavors of NT and the third is SQL. Because it is more secure, IBM recommends NT Authentication. 
+
+USING NT AUTHENTICATION WITH DOMAIN USERS OR USER GROUPS 
+When using this technique, the TEM Server uses the specified domain user or a member of the specified user group to access the database. To authenticate your TEM Server using Domain Users/User Groups, follow these steps: 
+
+ 1. Create a service account user or user group in your Active Directory domain. For an NT user group, add authorized domain users to this group. 
+ 2. Use Microsoft SQL Server Management Studio under Security > Logins, create a login for the domain service account user or user group, with a default database of BFEnterprise, and give this login System Admin (sa) authority. 
+    **System Admin authority is required in order for operator account creation, product upgrades, and other Administrative processes. 
+ 3. On the TEM Server, change the LogOn settings for the BES FillDB, GatherDB, Web Reports Server, and RootServer services to the domain user or member of the user group created above
+ 4. Restart the service. 
+
+USING SQL AUTHENTICATION 
+When using this technique the TEM Server has settings as registry values for SQL authentication including a login name and password. Be aware that the password for this account is stored in clear-text under the HKLM branch of the registry on the TEM Server. To authenticate your TEM Server using SQL Authentication, follow these steps: 
+
+ 1. Choose a single login name (for example, 'besserverlogin'), and a single password. 
+ 2. Use Microsoft SQL Server Management Studio under Security > Logins to create a login with this name. Chose SQL Server Authentication as the authentication option and specify the password. Change the default database to BFEnterprise and grant it System Admin (sa) authority. 
+    **System Admin authority is required in order for operator account creation, product upgrades, and other Administrative processes. 
+ 3. On the TEM Server, add the following String values under the following keys HKEY_LOCAL_MACHINE\SOFTWARE\BigFix\Enterprise Server\Database
+    HKEY_LOCAL_MACHINE\SOFTWARE\BigFix\Enterprise Server\FillAggregateDB
+    HKEY_LOCAL_MACHINE\SOFTWARE\BigFix\Enterprise
+    Server\FillAggregateDB\RemoteDatabases\DBINSTANCENAME
+    **Note: For 64bit installations see the following:
+    HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\BigFix\Enterprise Server\.
+    
+    User = [login name] 
+    Password = [password] 
+    
+    
+ 4. Restart the BigFix FillDB service. 
+
+ODBC CONNECTIONS
+The ODBC connections for the deployment should also refer to the remote database name rather than 'local' for bes_bfenterprise, bes_EntepriseServer, LocalBESReportingServer, and enterprise_setup. The authentication type also needs to be modified accordingly in the ODBC connections for the TEM Server.
+
+Please see the following detailed ODBC Guide: 
+www.ibm.com/developerworks/mydeveloperworks/wikis/home/wiki/Tivoli%20Endpoint%20Manager/page/Database%20ODBC%20Configuration?lang=en [https://www.ibm.com/developerworks/mydeveloperworks/wikis/home/wiki/Tivoli%20Endpoint%20Manager/page/Database%20ODBC%20Configuration?lang=en]
+
+Please see the following important links for Remote Database installations: 
+
+ * How do I upgrade the BES Server component if I am using a remote database? 
+   http://www-01.ibm.com/support/docview.wss?uid=swg21506063 [http://www-01.ibm.com/support/docview.wss?uid=swg21506063]
+ * How do I migrate my remote BigFix database to another remote server machine? 
+   http://www-01.ibm.com/support/docview.wss?uid=swg21506207 [http://www-01.ibm.com/support/docview.wss?uid=swg21506207]
+ * What are the privileges required by the BigFix components/users? 
+   http://www-01.ibm.com/support/docview.wss?uid=swg21506066 [http://www-01.ibm.com/support/docview.wss?uid=swg21506066]
+ * Why am I getting this error "Database Error: The database is not initialized" when accessing the BigFix console? 
+   If you are running a Remote Database environment you can initialize the database by copying the BESAdmin to the remote database and running the BESAdmin tool. You will also need your site credentials and once you open the tool it will initialize the database. *Note: there will not be any messages or user interface during the initialization. 
+   
+   
+ * Can I use BES Admin on a computer that is not the BigFix Server? 
+   http://www-01.ibm.com/support/docview.wss?uid=swg21505918 [http://www-01.ibm.com/support/docview.wss?uid=swg21505918]
+ * How do I configure the BES NMAP Unmanaged Asset Importer to work with a remote database? 
+   http://www-01.ibm.com/support/docview.wss?uid=swg21506256 [http://www-01.ibm.com/support/docview.wss?uid=swg21506256]
+
+ 
+
+HISTORICAL NUMBER
+ 215

@@ -1,0 +1,178 @@
+Title: IBM PK58563: WCM-ANONYMOUS ACCESS GIVES BLANK PAGE, NOT 404 ERROR - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Summary: Anonymous users are confronted with a
+   blank page when rendering expired content they
+   don't have access to.
+   
+   Problem:
+   When an anonymous user attempts to render an expired content
+   item they don't have read access to
+   via the WCM servlet, a blank page is presented to the user. This
+   is incorrect - a 404 Error page should be presented.
+   
+   
+   
+   Analysis:
+   The content item to be rendered is retrieved using system level
+   access. In order to determine
+   if it is published, a method isPublished() in WorkflowUtils is
+   called.
+   This attempts to retrieve the WorkflowControl and
+   SecurityControl on the content item and will fail because the
+   anonymous user
+   does not have access to the content item.
+   The code implicitly then assumes that because the item does not
+   have a workflow control and SecurityControl, it is published
+   and that everyone has read access to it which is incorrect.
+   
+   
+   Solution:
+   
+   The content has already been retrieved with system level access.
+   To check whether its is published,
+   we simply check it on the content that has been retrieved as
+   aforementioned.
+   This will reveal that it is expired and will trigger an
+   exception which will cause a HTTP response code of
+   404 to be returned to the client.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Users Affected: All Java Edition LWWCM users
+   
+   Problem Decsription:
+   When an anonymous user attempts to render an expired content
+   item they don't have read access to
+   via the WCM servlet, a blank page is presented to the user. This
+   is incorrect - a 404 Error page should be presented.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The content item to be rendered is retrieved using system level
+   access. In order to determine
+   if it is published, a method isPublished() in WorkflowUtils is
+   called.
+   This attempts to retrieve the WorkflowControl and
+   SecurityControl on the content item and will fail because the
+   anonymous user
+   does not have access to the content item.
+   The code implicitly then assumes that because the item does not
+   have a workflow control and SecurityControl, it is published
+   and that everyone has read access to it which is incorrect.
+   
+    The content has already been retrieved with system level
+   access.
+   To check whether its is published,
+   we simply check it on the content that has been retrieved as
+   aforementioned.
+   This will reveal that it is expired and will trigger an
+   exception which will cause a HTTP response code of
+   404 to be returned to the client.
+   
+   This fix applies to WCM release 6012
+   
+   An interim fix for this APAR is available from Fix Central at:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?brandid=2&productid=Workplace%20Web%20Content%20Management&fix [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?brandid=2&productid=Workplace%20Web%20Content%20Management&fix]
+   es=6.0.1.2-WCM-PK58563
+   
+   You will need to cut/paste the entire URL into a browser to
+   resolve the address.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK58563
+   
+   
+ * REPORTED COMPONENT NAME
+   WRKPLC WEB CON
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   60F
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-12-21
+   
+   
+ * CLOSED DATE
+   2008-03-13
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WRKPLC WEB CON
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY
+   UP

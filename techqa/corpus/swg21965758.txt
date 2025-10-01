@@ -1,0 +1,78 @@
+Title: IBM The SystemOut.log begins throwing errors, EJPFD0016E and EJPSB0067E during Portal startup - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The SystemOut.log shows the following during Portal startup... 
+
+8/27/15 13:07:56:645 EDT] 0000000d Servlet E
+com.ibm.wps.engine.Servlet init EJPFD0016E: Initialization of service
+failed.
+
+com.ibm.wps.ac.AuthorizationModelException: EJPSB0067E: The System
+ResourceType APPLICATION_ROLE was not found in the datastore.
+at
+com.ibm.wps.ac.impl.PACEnvironment.retrieveResourceTypes(PACEnvironment.
+java:308)
+at com.ibm.wps.ac.impl.PACEnvironment.init(PACEnvironment.java:133)
+at
+com.ibm.wps.ac.impl.PACEnvironment.<init>(PACEnvironment.java:120)
+at
+com.ibm.wps.ac.impl.AccessControlDataManagementServiceImpl.reinit(Access
+ControlDataManagementServiceImpl.java:894)
+at
+com.ibm.wps.ac.impl.AccessControlDataManagementServiceImpl.init(AccessCo
+ntrolDataManagementServiceImpl.java:526)
+at
+com.ibm.wps.services.ServiceManager.createService(ServiceManager.java:36
+2)
+at
+com.ibm.wps.services.ServiceManager.initInternal(ServiceManager.java:261
+)
+
+...
+
+[8/27/15 13:07:56:706 EDT] 0000000d FfdcProvider W
+com.ibm.ws.ffdc.impl.FfdcProvider logIncident FFDC1003I: FFDC Incident
+emitted on
+/usr/WebSphere/AppServer/profiles/WebSphere_Portal/logs/ffdc/Web
+Sphere_Portal_1e178547_15.08.27_13.07.56.6544266436235770038080.txt
+com.ibm.ws.webcontainer.servlet.ServletInstance.init 259
+[8/27/15 13:07:56:708 EDT] 0000000d webapp E
+com.ibm.ws.webcontainer.webapp.WebApp commonInitializationFinally
+SRVE0266E: Error occured while initializing servlets: {0}
+javax.servlet.UnavailableException:
+Initialization of one or more services failed.
+at com.ibm.wps.engine.Servlet.init(Servlet.java:1104)
+at
+com.ibm.ws.cache.servlet.ServletWrapper.init(ServletWrapper.java:238)
+at
+com.ibm.ws.webcontainer.servlet.ServletWrapper.init(ServletWrapper.java:
+342)
+
+...
+
+Caused by: com.ibm.wps.ac.AuthorizationModelException: EJPSB0067E: The
+System ResourceType APPLICATION_ROLE was not found in the datastore.
+at
+com.ibm.wps.ac.impl.PACEnvironment.retrieveResourceTypes(PACEnvironment.
+java:308)
+at com.ibm.wps.ac.impl.PACEnvironment.init(PACEnvironment.java:133)
+at
+com.ibm.wps.ac.impl.PACEnvironment.<init>(PACEnvironment.java:120)
+
+
+CAUSE
+In this case the problem was caused by some development activity corrupting the Portal database.
+
+
+
+ENVIRONMENT
+Portal 8.0 
+
+AIX
+
+
+RESOLVING THE PROBLEM
+In this case, the problem was resolved by restoring the Portal database from a backup that was taken just before the problem began. After the database was restored the Portal environment started without errors.

@@ -1,0 +1,41 @@
+Title: IBM How to change hostname for an existing installation of Impact 7.1 - United States
+
+Text:
+Impact; change; hostname TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to change hostname for an existing installation of Impact 7.1 Environment? 
+
+RESOLVING THE PROBLEM
+Step1 : Stop both Impact and GUI server.
+Step2 : Update hostname on Impact host.
+Step3 : In a Netcool/Impact split installation, you can have an Impact
+Server server and a separate GUI Server server. If you need to change
+the host name of the Impact Server server, enter the following command:
+On the Impact Server server, run the nci_changehost script by entering
+the command :$IMPACT_HOME/install/tools/nci_changehost
+
+In a Netcool/Impact combined installation both the Impact Server and
+the GUI Server are installed into the same home directory in the same
+server. If you need to change the Impact Server host name, enter the
+following command: On the server run the nci_changehost script, by
+running the command : $IMPACT_HOME/install/tools/nci_changehost
+newhostname.server.com impactadminps
+
+https://www.ibm.com/support/knowledgecenter/SSSHYH_7.1.0.6/com.ibm.netcoolimpact.doc/admin/changing_hostname_of_installation.html [https://www.ibm.com/support/knowledgecenter/SSSHYH_7.1.0.6/com.ibm.netcoolimpact.doc/admin/changing_hostname_of_installation.html]
+
+Step4: Update following files with your new hostname:
+
+/opt/IBM/tivoli/impact/etc/NCI_wsadmin.props
+/opt/IBM/tivoli/impact/etc/nameserver.props
+/opt/IBM/tivoli/impact/etc/NCI_ImpactDB.ds
+
+/opt/IBM/tivoli/impact/install/build.properties
+/opt/IBM/tivoli/impact/install/buildimpact.properties
+/opt/IBM/tivoli/impact/install/buildgui.properties
+
+/opt/IBM/tivoli/impact/wlp/usr/servers/NCI/apps/nameserver.war/WEB-INF/w
+eb.xml
+
+Step5 :Then start Impact Server and GUI server, and you need to do SSO
+config again if SSO was configed.

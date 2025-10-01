@@ -1,0 +1,33 @@
+Title: IBM How to create .PFX and .PEM files when using independent certificates - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to create .PFX and .PEM files when setting up TM1 Server to run in secure mode using SSL (for using independent certificates)? 
+
+ANSWER
+This is supplemental info to:
+TM1 Operations Guide > Running TM1 in Secure Mode using SSL > Using Independent Certificates
+
+Following are Instructions on how to generate .PFX (and .PEM) files
+
+In order to generate a .PFX file, you would do this from/on a machine that has imported the CA certificate.
+From the Windows Control Panel -> Internet Options -> Click the "Content" tab and click the "Certificates" button -> highlight the CA certificate that is planned on being used -> select Export, and ensure you choose Private Key, as this is what is part of the ..PFX file. On the Next screen, check the two top options, and then finish. This should have the complete CA cert path in the .PFX, then you can continue on to steps included below for generating the .PEM file from the .PFX file.. 
+The above is an example from Microsoft's certificate tool, if you are using another Certificate services tool, or product, then you would need to look into that tool's documentation/help to see how you would extract a PFX. 
+
+The pfx is usually a windows format, but the OpenSSL tool can be used to convert it into a PEM or some other format. OpenSSL is not distributed with our product (TM1), however it is an open source tool you can get on the internet.
+Example: openssl pkcs12 -in XXX.pfx -out XXX.pem
+
+Once a .PEM file is created, you can then use the importssl.exe tool which is installed in our ssl directory to import the certificate and it's CRL certificate into the window's trust store. (This is easier than using the Microsoft windows certificate snap in.)
+Example: importsslcert -ca <certificate> [-crl <crl_certificate>]
+
+For later versions of TM1, to import the certificate into the Window's trust store you can use ThirdPartyCertifcateTool.bat.
+This is located in the <TM1Root>/bin/ directory.
+
+An example of its use is
+ThirdPartyCertificateTool.bat -java:local -i -s -r signCertificate.cer -D "c:\Program Files\ibm\cognos\tm1_64\configuration\signkeypair" -p password -t ca.cer
+
+
+RELATED INFORMATION
+#Importing third-party CA SSL certificates in 10.2.2 [http://www-01.ibm.com/support/knowledgecenter/SS9RXT_10.2.2/com.ibm.swg.ba.cognos.tm1_inst.10.2.2.1.doc/t_tm1_configuringcognostm1applicationstousessl.html]

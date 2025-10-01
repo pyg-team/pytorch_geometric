@@ -1,0 +1,302 @@
+Title: IBM How to configure Fluid Query Connector to access data in SAP Hana on Cloud ? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I configure Fluid Query Connector to access the data in SAP Hana on Cloud? So that I can select the data from our Netezza/PDA (PureData System For Analytics). 
+
+ANSWER
+The following steps indicate how to configure FluidQuery connector, and it's prerequisites to communicate with SAP HANA. 
+
+ 
+
+This requires the use of a SAP HANA Cloud Platform Tools. Do NOT install SAP HANA Cloud Platform Tools on the Netezza hosts as some of the RPMs it requires may compromise the integrity of the NPS environment. 
+
+ 
+
+The SAP HANA tools should also comes with the JDBC driver (ngdbc.jar), this is required for Fluid Query to communicate with the SAP HANA on Cloud. 
+
+ 
+
+This technote did not cover how to setup the SAP HANA Cloud Platform Tools. 
+
+ 
+
+Tips, 
+
+Find the right SAP Development tool to install (neo-java-web-sdk-2.51.4.zip / neo-java-web-sdk-3.5.4.zip) and the right version of java development kit (at least 1.8); before proceeding. 
+
+ 
+
+In order to demonstrate how to do this, I have setup a test account in SAP HANA on Cloud, and is using ‘open-db-tunnel’ method, with restriction of only 24 hours. There are other more “Persistence Service” that can setup a permanent tunnel, but you may have to consult SAP HANA on that. 
+
+ 
+
+For “OPEN-DB-TUNNEL”method, perform the following verification: 
+
+(Take note of the given username, password, and schema name of the following output:) 
+
+ 
+
+root@1d4d40280799:/tmp/test# /HCP/SDK/tools/neo.sh open-db-tunnel -h hanatrial.ondemand.com -u cfkoh@yahoo.com -a p1942083248trial -i testdb 
+
+ 
+
+SAP HANA Cloud Platform Console Client 
+
+ 
+
+ 
+
+Password for your user: 
+
+ 
+
+Opening tunnel... 
+
+ 
+
+Tunnel opened. 
+
+ 
+
+Use these properties to connect to your schema: 
+
+ Host name : localhost 
+
+ Database type : HANA 
+
+ JDBC Url : jdbc:sap://localhost:30015/?currentschema=NEO_0NQOQ4M8CSSFDD5QVHIEVN3M0 
+
+ Instance number : 00 
+
+ User : DEV_BMV08IO644P0SRWFIYTX1LDO2 
+
+ Password : Xd3aL4LBgCfNtnd 
+
+ Schema name : NEO_0NQOQ4M8CSSFDD5QVHIEVN3M0 
+
+ 
+
+This tunnel will close automatically in 24 hours on Jun 29, 2016 at 10:53 PM or when you close the shell. 
+
+Press ENTER to close the tunnel now. 
+
+ 
+
+(Note also the default port JDBC tunnel will be opened on 30015,) 
+
+ 
+
+Here are the step-by-step guide (7 steps in total), to configure fluid query for SAP HANA in Netezza/PDA appliance. 
+
+ 
+
+The fluid query software should have already install; if not already done, please follow the fluid query user guide on how to install fluid query in your appliance. 
+
+ 
+
+# Step 1 – login as ‘nz’ and copy the SAP HANA Jdbc driver to this path: 
+
+cp ngdbc.jar /nz/export/ae/products/fluidquery/libs/generic/ 
+
+ 
+
+# Step 2 - set the enviornment 
+
+export IFQ=/nz/export/ae/products/fluidquery/ 
+
+export IFQ_TOOLS=/nz/export/ae/products/fluidquery/fqSupportTools/sqlline 
+
+export CLASSPATH="$IFQ_TOOLS/sqlline-1_0_2.jar:$IFQ_TOOLS/jline-1.0.jar:$IFQ/libs/generic/ngdbc.jar" 
+
+ 
+
+# Step 3 - Run the following test to make sure that the jdbc connnection worked: 
+
+ 
+
+[nz@nc040076 test]$ java sqlline.SqlLine 
+
+sqlline version 1.0.2 by Marc Prud'hommeaux 
+
+sqlline> !connect jdbc:sap://localhost:30015/ 
+
+Connecting to jdbc:sap://localhost:30015/ 
+
+Enter username for jdbc:sap://localhost:30015/: DEV_BMV08IO644P0SRWFIYTX1LDO2 
+
+Enter password for jdbc:sap://localhost:30015/: *************** 
+
+Connected to: HDB (version 1.00.97.03.1443520413) 
+
+Driver: HDB (version 1.111.03-78bf6c853bb568fec93819498b2ec152c51cc958) 
+
+Autocommit status: true 
+
+Transaction isolation: TRANSACTION_REPEATABLE_READ 
+
+0: jdbc:sap://localhost:30015/> select * from NEO_0NQOQ4M8CSSFDD5QVHIEVN3M0.org; 
+
++-----------+-----------------+----------+------------+----------------+ 
+
+| DEPTNUMB | DEPTNAME | MANAGER | DIVISION | LOCATION | 
+
++-----------+-----------------+----------+------------+----------------+ 
+
+| 10 | HEAD OFFICE | 160 | CORPORATE | NEW YORK | 
+
+| 15 | NEW ENGLAND | 50 | EASTERN | BOSTON | 
+
+| 20 | MID ATLANTIC | 10 | EASTERN | WASHINGTON | 
+
+| 38 | SOUTH ATLANTIC | 30 | EASTERN | ATLANTA | 
+
+| 42 | GREAT LAKES | 100 | MIDWEST | CHICAGO | 
+
+| 51 | PLAINS | 140 | MIDWEST | DALLAS | 
+
+| 66 | PACIFIC | 270 | WESTERN | SAN FRANCISCO | 
+
+| 84 | MOUNTAIN | 290 | WESTERN | DENVER | 
+
++-----------+-----------------+----------+------------+----------------+ 
+
+8 rows selected (14.68 seconds) 
+
+0: jdbc:sap://localhost:30015/> !scan 
+
+scan complete in 353ms 
+
+2 driver classes found 
+
+Compliant Version Driver Class 
+
+yes 1.111 com.sap.db.jdbc.Driver 
+
+yes 2.1 sun.jdbc.odbc.JdbcOdbcDriver 
+
+0: jdbc:sap://localhost:30015/> Closing: com.sap.db.jdbc.trace.Connection 
+
+ 
+
+Do Not continue if you are unable to see the data from SAP HANA using the JDBC generic test above in step 3. If java is not found in your environment, please try :
+
+/nz/kit/share/ibm-java-x86_64-80/jre/bin/java sqlline.SqlLine 
+
+ 
+
+# Step 4 – Prepare an generic XML, stored it in the $IFQ/conf/ directory 
+
+ 
+
+[nz@nc040076 test]$ cat test_sap_hana1.xml 
+
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<connection> 
+
+<driverClass>com.sap.db.jdbc.Driver</driverClass> 
+
+<classPath>/nz/export/ae/products/fluidquery/libs/generic/</classPath> 
+
+<connectionURL>jdbc:sap://${HOSTNAME}:30015/</connectionURL> 
+
+<jdbc-properties> 
+
+<property> 
+
+<name>user</name> 
+
+<value>${USERNAME}</value> 
+
+</property> 
+
+<property> 
+
+<name>password</name> 
+
+<value>${PASSWORD}</value> 
+
+</property> 
+
+</jdbc-properties> 
+
+</connection> 
+
+ [nz@nc040076 test]$ cp test_sap_hana1.xml /nz/export/ae/products/fluidquery/conf/ 
+
+ 
+
+# Step 5 – Run Configuration (note that I stored the config in “test_sap_hana_1”) 
+
+ 
+
+ [nz@nc040076 test]$ $IFQ/fqConfigure.sh --provider generic --service generic --connectionXmlPath $IFQ/conf/test_sap_hana1.xml --config test_sap_hana_1 --username DEV_BMV08IO644P0SRWFIYTX1LDO2 --password Xd3aL4LBgCfNtnd --hostname localhost 
+
+Connection configuration success. 
+
+ 
+
+# Step 6 – Register it for us in an exsiting database (CF) using the same config “test_sap_hana_1” 
+
+ 
+
+[nz@nc040076 test]$ $IFQ/fqRegister.sh --db CF --config test_sap_hana_1 --udtf test_sap_hana_read 
+
+Functions and credentials are successfully registered in database "CF". 
+
+ 
+
+(note that I uses ‘—udtf’ to change to a different UDF name, if this is not specific, the default name will be fqread() ) 
+
+ 
+
+# Step 7 – Run a test and see you can see the result using ‘nzsql cf’ 
+
+ 
+
+[nz@nc040076 test]$ nzsql CF 
+
+Welcome to nzsql, the IBM Netezza SQL interactive terminal. 
+
+ 
+
+Type: \h for help with SQL commands 
+
+ \? for help on internal slash commands 
+
+ \g or terminate with semicolon to execute query 
+
+ \q to quit 
+
+ 
+
+CF.ADMIN(ADMIN)=> select * from table with final (test_sap_hana_read('','','select * from NEO_0NQOQ4M8CSSFDD5QVHIEVN3M0.org')); 
+
+ DEPTNUMB | DEPTNAME | MANAGER | DIVISION | LOCATION 
+
+----------+----------------+---------+-----------+--------------- 
+
+ 10 | HEAD OFFICE | 160 | CORPORATE | NEW YORK 
+
+ 15 | NEW ENGLAND | 50 | EASTERN | BOSTON 
+
+ 20 | MID ATLANTIC | 10 | EASTERN | WASHINGTON 
+
+ 38 | SOUTH ATLANTIC | 30 | EASTERN | ATLANTA 
+
+ 42 | GREAT LAKES | 100 | MIDWEST | CHICAGO 
+
+ 51 | PLAINS | 140 | MIDWEST | DALLAS 
+
+ 66 | PACIFIC | 270 | WESTERN | SAN FRANCISCO 
+
+ 84 | MOUNTAIN | 290 | WESTERN | DENVER 
+
+(8 rows) 
+
+ 
+
+CF.ADMIN(ADMIN)=>

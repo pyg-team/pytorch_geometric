@@ -1,0 +1,199 @@
+Title: IBM JR39063: THE ISSUE HAS TO DO WITH MISSING CONTEXT SWITCHING LOGIC IN V7 NATIVE CONTAINER. - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Enterprise Service Bus V7.0.0 Fix Pack 4 (7.0.0.4) [http://www-01.ibm.com/support/docview.wss?uid=swg24030312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Mediation Module fails to write a message to a Queue. the
+   following
+   error is is thrown javax.naming.NameNotFoundException: Name
+   comp/env/sca not found in  context  java: .
+   Please refer to previously opened PMR: 65806. This Issue was
+   never
+   resolved. 65806 was referring to a migrated project from WID
+   6.1.2 to
+   WID 7.0.0.3.
+   We have rebuilt the entire module from Scratch using same
+   interface
+   names. But the error persists.
+   
+   one JNDI LookUp issue when mediation flow executed on  WID 7003.
+   
+   ----------------------------------------------------------------
+   When invocation is from a custom EJB module via standalone
+   reference to
+   a SCA module (web module), SCA needs to switching the component
+   meatdata
+   context as well as the classloader to that of the target SCA
+   module.
+   Otherwise you run into a situation that JNDI lookup of resources
+   defined
+   in the Web module is not visible.
+   ----------------------------------------------------------------
+   
+   ----------------------------------------------------------------
+   [2/24/11 13:57:25:046 CST] 0000004b RuntimeServic <
+   
+   com.ibm.ws.sibx.scax.mediation.engine.RuntimeServicesImpl
+   performLookup
+   RETURN javax.naming.NameNotFoundException: Name comp/env/sca not
+   found
+   in context "java:".
+   [2/24/11 13:57:25:171 CST] 0000004b FfdcProvider  W
+   com.ibm.ws.ffdc.impl.FfdcProvider logIncident FFDC1003I: FFDC
+   Incident
+   emitted on
+   D:\IBM\WID7_WTE\runtimes\bi_v7\profiles\qwps\logs\ffdc\server1_4
+   7554755_
+   11.02.24_13.57.25.0466607988967159214808.txt
+   com.ibm.ws.sibx.scax.mediation.engine.RuntimeServicesImpl.getDat
+   aSourceF
+   orProperty 1:160:1.20
+   [2/24/11 13:57:25:171 CST] 0000004b RuntimeServic 3
+   com.ibm.ws.sibx.scax.mediation.engine.RuntimeServicesImpl
+   getDataSourceForProperty Local JNDI lookup failed. Reverting to
+   global
+   JNDI lookup.
+   [2/24/11 13:57:25:171 CST] 0000004b RuntimeServic 3   Tracing
+   exception:
+   javax.naming.NameNotFoundException: Name comp/env/sca not found
+   in
+   context "java:".
+    at
+   com.ibm.ws.naming.ipbase.NameSpace.getParentCtxInternal(NameSpac
+   e.java:1
+   837)
+   ----------------------------------------------------------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  (1) Switch to J2EE perspective inWID.
+   (2) Find Deployment Descriptor for Enovia_BOMDataServiceWeb.
+   (3) Open it and click reference. You can see two references
+   there.
+   (4) Go to Deployment Descriptor for BOMSyncPreProcessListener.
+   (5) Create the same two references (in step3) in the Deployment
+   Descriptor for BOMSyncPreProcessListener.
+   (6) Save all.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Customer who use the EJB bean to invoke     *
+   *                  WPS by using stand alone reference          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When using EJB bean to invoke WPS       *
+   *                      component in the following process      *
+   *                      the NameNotFoundException may thrown    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Context switch haven't been done when calling WPS from EJB
+   bean by using stand alone reference
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Context switch will be added in the code path
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR39063
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-06
+   
+   
+ * CLOSED DATE
+   2011-04-06
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM58532 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM58532] PM58597
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

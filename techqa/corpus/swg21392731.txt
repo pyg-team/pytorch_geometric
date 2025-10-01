@@ -1,0 +1,43 @@
+Title: IBM Installation Manager might display a warning message during the feature pack uninstallation process - United States
+
+Text:
+CEAFPRnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you uninstall an IBM WebSphere Application Server Version 7.0 feature pack using IBM Installation Manager, the following message is displayed when data repositories are undefined, lost, nonexistent, or not valid:
+
+Installation Manager is unable to connect to a repository that contains data to perform synchronization checking. You must configure repository connections and ensure that you can access the network or repository media to keep imported packages synchronized.
+
+If this warning message displays when you are uninstalling a feature pack, you can continue with the uninstallation; however, it is possible that the imported base product might become unsynchronized and the installation might become corrupted when repositories are not valid or do not exist. 
+
+
+CAUSE
+Uninstalling an IBM WebSphere Application Server Version 7.0 feature pack using Installation Manager requires that the data repositories remain valid and available. This requirement ensures that the imported WebSphere Application Server base package remains synchronized with Installation Manager during the uninstallation process for the feature pack.
+
+DIAGNOSING THE PROBLEM
+A warning message is displayed by Installation Manager to alert you when repositories are not available or connected. A similar warning message might display after you add or modify data repository connection preferences in Installation Manager. 
+
+RESOLVING THE PROBLEM
+If Installation Manager detects missing data repositories, or fails to connect to repositories during the uninstallation process for a feature pack, complete the following actions: 
+
+ 1. Click Cancel to end the uninstallation task.
+    
+    
+ 2. Select File > Preferences > Repositories and add the appropriate data repositories that you can connect to successfully.
+    
+    
+ 3. Exit Installation Manager.
+    
+    
+ 4. Restart Installation Manager. 
+    
+    
+ 5. Uninstall the feature pack.
+
+RELATED INFORMATION
+ Feature Pack for CEA Releas Notes [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=v700cea&product=was-nd-mp&topic=relnotes]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development IBM Installation Manager Install AIX, HP-UX, Linux, Solaris, Windows 1.3.1 All Editions

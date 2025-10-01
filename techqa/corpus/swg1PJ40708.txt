@@ -1,0 +1,164 @@
+Title: IBM PJ40708: CONTINUABLE QUERIES DROP THE CEMP_PARTITION_DATE COMPARISON WHEN CURRENT QUERY FAILS TO RETURN THE FULL PAGE SIZE OF RESULTS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Continuable queries drop the cemp_partition_date comparison
+   when the current query fails to return the full page size of
+   results.
+   
+   CBR queries submitted without a specific SQL ORDER BY clause
+   will by default be configured to run as continuable queries to
+   improve performance. If date partitioning was configured at
+   index time, the number of CBR indexes searched will further be
+   reduced to only the indexes which contain data which matches
+   the values of the partionable properties specified in the query.
+   
+   A problem can occur if the PAGESIZE setting (on the object
+   store) is less than the FULLTEXTROWLIMIT (set either on the
+   object store or overridden in the client API query).  Once any
+   of the continuable query iterations produces a resultset
+   rowcount less than the fulltextrowlimit, the subsequent
+   queries will no longer use the partitionable query values to
+   limit the search results.  This may be caused by an index
+   being searched having fewer results than the
+   FULLTEXTROWLIMIT or the total results being reduced by
+   the Content Engine security filtering which restricts the user
+   issuing the query only to objects they have permissions to
+   view.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Anyone running CBR continuable query with date partitioning. *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * While running CBR continuable query with date partitioning,  *
+   * the date partition criteria is removed from the query before *
+   * issuing the join query between CBR hits and repository data. *
+   * The date partition criteria is used to select collections to *
+   * search. If the join query produces results less than the     *
+   * page size specified on either the query itself or the object *
+   * store, query needs to be re-issued in attempt to fill the    *
+   * page. The reasons for the join producing less results than   *
+   * the page size could be either full text row limit specified  *
+   * on the query is less than the page size or security          *
+   * filtering that Content Engine applies on the rows returned   *
+   * from the repository or some other property criteria          *
+   * specified on the query that limits the number of rows that   *
+   * can be returned.                                             *
+   * This re-issued query doesn't take into consideration the     *
+   * date partition criteria specified resulting in search issued *
+   * against all the collections producing wrong results.         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 4.5.1-P8CE-FP008 or later versions.               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Content Engine 4.5.1-P8CE-FP008 or later versions now correctly
+   applies the date partition criteria.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ40708
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   451
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-29
+   
+   
+ * CLOSED DATE
+   2014-04-21
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PJ40705 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ40705]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R451 PSY
+   UP

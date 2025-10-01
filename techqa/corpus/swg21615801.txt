@@ -1,0 +1,54 @@
+Title: IBM Rule Execution Server on WebLogic unable to load ruleset after period of inactivity - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An error occurs when Rule Execution Server hosted on WebLogic attempts to retrieve the ruleset from the database after a long time without any request. 
+
+SYMPTOM
+An error like the following one shows in the log (here the database used is DB2):
+
+/MyRuleApp/MyRules 1.368 - The interaction ruleEngine.loadUptodateRuleset has failed ilog.rules.res.xu.ruleset.impl.IlrRulesetArchiveInformationException: Cannot retrieve ruleset information: /MyRuleApp/MyRules, error code: XU.ERROR.10059 
+
+ at ilog.rules.res.xu.util.IlrResourceExceptionHelper.createRulesetInformationException(IlrResourceExceptionHelper.java:248)
+...
+Caused by: ilog.rules.res.persistence.IlrDAOException: DAO.ERROR.1027 - Failed to retrieve the canonical ruleset path using "/RegulatoryRuleApp/RegulatoryRules".
+at ilog.rules.res.persistence.impl.jdbc.IlrGenericRepositoryDAO.getCanonicalRulesetPath(IlrGenericRepositoryDAO.java:294)
+... 
+Caused by: com.ibm.db2.jcc.am.SqlNonTransientConnectionException: [jcc][t4][10335][10366][3.62.56] Invalid operation: Connection is closed. ERRORCODE=-4470, SQLSTATE=08003
+at com.ibm.db2.jcc.am.fd.a(fd.java:666)
+...
+
+CAUSE
+As the root cause of the above stack trace indicates in the case of DB2, the error is due to a database connection that is not available anymore: "Invalid operation: Connection is closed."
+
+
+
+ENVIRONMENT
+We have seen such issue occur when the application is running on a WebLogic server behind a firewall that had been set up to terminate idle database connections by default. 
+
+The issue could similarly occur for other JRules/WODM/ODM modules (Rule Team Server/Decision Center or the event runtime), as for any Java EE application that runs on the server and uses a JDBC connection. The same solution applies in all cases for the corresponding data source. 
+
+
+You might encounter similar situations with WebSphere Application Server: see technote JRules module fails to access database with StaleConnectionException [http://www.ibm.com/support/docview.wss?uid=swg21496354].
+
+
+RESOLVING THE PROBLEM
+In the WebLogic administration console, go to Services -> JDBC -> Data Sources-> <Rule Execution Server data source> -> Connection Pool and take the following actions: 
+
+ * Enable "Test Connections On Reserve". 
+ * Set a "Test Frequency" in seconds. 
+ * Set a "Test Table Name". 
+ * Set a value for the "Seconds to Trust an Idle Pool Connection" property.
+
+RELATED INFORMATION
+#WebLogic Administration Console Online Help [http://docs.oracle.com/cd/E23943_01/apirefs.1111/e13952/pagehelp/JDBCjdbcdatasourcesjdbcdatasourceconfigconnectionpooltitle.html]
+JRules fails to access DB with StaleConnectionException [http://www.ibm.com/support/docview.wss?uid=swg21496354]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager General Platform Independent 8.5, 8.0, 7.5

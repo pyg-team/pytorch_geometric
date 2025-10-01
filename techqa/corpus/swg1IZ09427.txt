@@ -1,0 +1,150 @@
+Title: IBM IZ09427: CO_P_ALCATEL_5620_LOGFILE NOT SENDING PROBE WATCH MESSAGES WHEN GOING DOWN UNDER PA - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The manner in which the probe is shut down is what is causing
+   the lack of probe watch messages. When the probe is started
+   and not put in the background, stop the probe with Ctrl+C, you
+   will get the probe watch message "Going Down". As far as I know,
+   Ctrl+C is the same as kill -2 (interrupt).
+   .
+   However, if you just kill the PID you gets no messages and the
+   log file terminates abruptly. W
+   .
+   The reason no probe watch messages are found for the probe for
+   stopping under PA is probably due to the fact that PA uses a
+   kill also.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of the probe                       *
+   *                 nco-p-alcatel-5620-logfile                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Probe not sending Probe Watch  messages *
+   *                      Going Down... when going down under PA  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Probe not sending Probe Watch  messages  Going Down... when
+   going down under PA
+   
+   Now Probe is sending Probe Watch  messages  Going Down... while
+   going down under PA,
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Problem for this APAR/NBS is fixed.
+   
+   Date of Release: 30/11/2007 Fix Pack Name:
+   nco-p-alcatel-5620-logfile-2_1
+   
+   Date of Release: 09/30/08 Fix Pack Name:
+   nco-p-alcatel-5620-logfile-2_1
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ09427
+   
+   
+ * REPORTED COMPONENT NAME
+   ALCATEL 5620 LO
+   
+   
+ * REPORTED COMPONENT ID
+   5724P17AL
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-11-27
+   
+   
+ * CLOSED DATE
+   2008-01-10
+   
+   
+ * LAST MODIFIED DATE
+   2008-01-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

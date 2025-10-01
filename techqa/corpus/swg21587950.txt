@@ -1,0 +1,37 @@
+Title: IBM WebSphere Application Server web server plugin for z/OS does not support over 32,767 open file descriptors - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM WebSphere Application Server web server plugin for z/OS has a limit of 32,767 file descriptors that can be open concurrently, such as all open files, directories, and sockets. This applies to both the IBM HTTP Server for z/OS V5.3 plug-in and the IBM HTTP Server (powered by Apache) plug-in. 
+
+SYMPTOM
+The plugin log will show this error message if a file descriptor over 32,767 is used: 
+
+ws_common: websphereGetStream: Maximum allowed socket limit reached, socket xxxxx 
+
+where xxxxx is over 32,767 
+
+ 
+
+Note, the fix in APAR PM59542 [http://www.ibm.com/support/docview.wss?uid=swg1PM59542] needs to be installed, otherwise there is a limit of 2,047 file descriptors that can be used. If the fix is not applied, the plugin log will show 
+
+
+ERROR: ws_common: websphereGetStream: Failed to connect; OS err= 121
+ERROR: ws_common: websphereExecute: Failed to create the stream
+ERROR: ws_server: serverSetFailoverStatus: Marking server down
+ERROR: ws_common: websphereHandleRequest: Failed to execute the transaction to 'server' on host 'host'; will try another one
+
+This can cause the plugin to believe the back end server is down and it routes the request to another back end server. This causes loss of session affinity.
+
+
+DIAGNOSING THE PROBLEM
+Use the following command to display the z/OS UNIX System Services limit, high-water marks, and current usage for an individual process.
+D OMVS,L,PID=http_server_pid 
+
+Look at MAXFILEPROC. Ensure the current usage and high-water marks are below 32,767 (or 2,047 if the fix for PM59542 [http://www.ibm.com/support/docview.wss?uid=swg1PM59542] is not installed.
+
+
+RESOLVING THE PROBLEM
+Load balance the HTTP requests between HTTP Servers to reduce the number of file descriptors per server.

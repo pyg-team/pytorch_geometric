@@ -1,0 +1,162 @@
+Title: IBM IY95029: SUF CAN'T TELL IF THE LISTENER ON A PORT IS A TEMS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ENVIRONMENT:
+   
+   ITM 6.1 with TEC event synchronization (SUF) installed
+   
+   PROBLEM DESCRIPTION:
+   
+   The SUF running on the TEC server is
+   supposed to first try port 3661 and then try 1920.  The problem
+   is that
+   the SUF cannot currently distinguish the difference between a
+   listener
+   on 3661 that is an agent, and a listener on 3661 that is a TEMS.
+   Thus,
+   on a system with both an agent and a TEMS, SSL must be disabled
+   for
+   everything (both TEMS and agent) before the SUF will try 1920.
+   If the
+   SSL is only disabled for the TEMS, the agent will still be
+   listening on
+   3661 and the SUF cannot tell it's an agent.  Thus, the SUF
+   breaks.
+   
+   RECREATION STEPS:
+   
+   Install a TEMS and another ITM component (such as an agent) on a
+   system.  Disable SSL on the TEMS (insert ip.ssl use:n in the
+   KDC_FAMILIES or KDE_TRANSPORT variable) but leave it running on
+   the agent.  The SUF will have problems connecting to 3661 but
+   will not try any other ports.
+   
+   RELATED FILES/OUTPUT:
+   
+   n/a
+   
+   APPROVER: scb
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The Situation Update Forwarder does not fail over to non-SSL
+   when SSL is disabled on the TEMS.
+   
+   Additional Information:
+   The SUF running on the TEC server is supposed to first try port
+   3661 (SSL) and then try 1920 (non-SSL).  The problem is that the
+   SUF does not currently distinguish the difference between a
+   listener on 3661 that is an agent and a listener on 3661 that is
+   a TEMS.  The SUF fail over logic was expecting no response to
+   the SSL request.  In this scenario, SSL was disabled on the TEMS
+   but not on the agent.  Therefore, when the SUF got a negative
+   response to the SSL request it did not attempt to fail over to
+   non-SSL.
+   
+   This APAR is being closed FIN with concurrence from the
+   submitting customer. This means that a Solution to this APAR is
+   expected to be delivered from IBM in a release(if any) to be
+   available within the next 24 months.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  As a workaround, you could disable SSL on all listeners and then
+   the SUF would properly fail over to non-SSL.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY95029
+   
+   
+ * REPORTED COMPONENT NAME
+   TEC GUI INTEGRA
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04TG
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-02-16
+   
+   
+ * CLOSED DATE
+   2007-03-14
+   
+   
+ * LAST MODIFIED DATE
+   2007-03-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSN
+   UP

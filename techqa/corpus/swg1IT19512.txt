@@ -1,0 +1,180 @@
+Title: IBM IT19512: Incomplete documentation for reverting MQ Appliance firmware - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An additional step for rolling back an MQ Appliance firmware
+   from 9.x to 8.x is missing from the MQ Knowledge Center. When
+   rolling back the firmware, it is necessary to remove the 'no
+   force-mode' attribute from each physical ethernet interface
+   stanza found within the config:autoconfig.cfg folder. Failure
+   to remove this attribute will result in a 'Notice: startup
+   config contains errors.' warning on reboot.
+   
+   When a user login to the MQ appliance after downgrade the
+   following message with a Notice at the end will be displayed.
+   
+   ------------------------------------------------------------
+   login as:
+   Warrior002
+   Unauthorized access prohibited.
+   login: admin
+   Password: ********
+   
+   Welcome to IBM MQ Appliance M2000A console configuration.
+   Copyright IBM Corporation 1999-2017
+   
+   Version: MQ00.8.0.0.6 build 111111mq on Jun 1, 2017 10:52:24 AM
+   Serial number: XXX
+   
+   Notice: startup config contains errors.
+   ------------------------------------------------------------
+   
+   The startup-errors log file contains the following error
+   messages:
+   
+   Mon Jun 05 2017 13:51:14 [0x81000001][cli][error] : *** Unknown
+   command or macro
+   Mon Jun 05 2017 13:51:14 [0x81000223][cli][error] :
+   (startup-config:51):   no force-mode
+   Mon Jun 05 2017 13:51:15 [0x81000001][cli][error] : *** Unknown
+   command or macro
+   Mon Jun 05 2017 13:51:15 [0x81000223][cli][error] :
+   (startup-config:82):   no force-mode
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Remove the 'no force-mode' attribute from each physical
+   ethernet interface stanza found within the
+   config:autoconfig.cfg folder after the downgrade from 9.x.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users downgrading/switching MQ appliance from MQ 90x to MQ 8.0
+   and referencing the section "Reverting to the previous level of
+   firmware" in the MQ infocenter.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When downgrading/switching MQ appliance to previous level or
+   older level might result in startup config errors if the
+   autoconfig contains any new attribute added at higher MQ
+   applinace level, but not present at lower MQ level. The problem
+   can be resolved  by executing the command "write memory" after
+   rebooting the MQ appliance and then rebooting the MQ appliance
+   again. MQ knowledge center needs to be modified to add these
+   additional steps.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following sections of the MQ Appliance knowledge center will
+   be updated to describe the necessary steps to downgrade the
+   firmware:
+   
+   
+   Topic URL MQ 8.0 :
+   https://www.ibm.com/support/knowledgecenter/en/SS5K6E_1.0.0/com.
+   ibm.mqa.doc/upgrading/up00002_.htm [https://www.ibm.com/support/knowledgecenter/en/SS5K6E_1.0.0/com.ibm.mqa.doc/upgrading/up00002_.htm]
+   Topic URL MQ 9.0.x :
+   https://www.ibm.com/support/knowledgecenter/en/SS5K6E_9.0.0/com.
+   ibm.mqa.doc/upgrading/up00002_.htm [https://www.ibm.com/support/knowledgecenter/en/SS5K6E_9.0.0/com.ibm.mqa.doc/upgrading/up00002_.htm]
+   
+   Note that queue managers which have been started on a later
+   major firmware version will not be eligible to run with an
+   earlier version, even if the firmware is reverted.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT19512
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ APPL M20
+   
+   
+ * REPORTED COMPONENT ID
+   5725S1400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-02
+   
+   
+ * CLOSED DATE
+   2017-06-08
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

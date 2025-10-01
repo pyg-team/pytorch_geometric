@@ -1,0 +1,216 @@
+Title: IBM Open Mic Webcast Replay: Using IBM Service Request (SR) - 04 April 2012  (audio replay + slide presentation) - United States
+
+Text:
+STEwebcastDocument; lste_webcast; Open Mic; STE; support technical exchange; IBM service request; SR; PMRs; electronic service request; Q&A; transcript; call; audio; open mike; jericho; tracy mathews; replay; webcast WEBCAST
+
+ABSTRACT
+ IBM hosted an Open Mic webcast on 04 April 2012. The topic was "Using IBM Service Request (SR)," taking you through the details of using SR to submit your electronic service requests (aka PMRs). 
+
+CONTENT
+ 
+
+For more information about our Open Mic webcasts, visit the IBM Collaboration Solutions Support Open Mics [http://www.ibm.com/software/lotus/support/lotus-open-mics/] page.
+
+
+
+Date & Time 
+Date:04 April 2012 
+Time:11:00 AM EDT (15:00 UTC, or GMT -4), for 60 minutes 
+Forum link: To ask a question in advance or after the event, add a response document to this forum post [http://www.lotus.com/ldd/nd85forum.nsf/DateAllThreadedWeb/85c9a69c3932752f852579ce0018f0c0?OpenDocument]. 
+
+Slide presentation (PDF) 
+IBM Service Request Open Mic (04 April 2012).pdf [/support/docview.wss?uid=swg27024345&aid=2] IBM Service Request Open Mic (04 April 2012).pdf [/support/docview.wss?uid=swg27024345&aid=1] 
+
+Audio Recording (MP3) 
+Size: 9MB, Duration: 51 min 30 sec 
+
+ftp://public.dhe.ibm.com/software/lotus/demos/support/IBM_SR_OpenMic_04042012.mp3 [ftp://public.dhe.ibm.com/software/lotus/demos/support/IBM_SR_OpenMic_04042012.mp3] 
+
+Click the link to play the recording. Right-click and select Save As to save to your local system for playback later. 
+
+Q&A Transcript 
+
+
+
+
+
+Q. Is the SR a new tool? 
+
+A. No, SR is not new. It has been around for a about 7 years, but many customers are not aware of having the ability to submit their PMRs online through SR. Hence, today's Open Mic session to help spread the word. 
+
+
+
+Q. What is an ICN? 
+
+A. IBM Customer Number. If you currently call in your problems via the phone, it's the number they ask you for to locate your contract. 
+
+
+
+
+Q. If this presentation is given again, I suggest explaining each acronym (for those who have the slides and not on the conference). 
+
+A. Good idea. 
+
+
+
+
+Q. When I request Reader access, how do I determine who the approvers are? I need to contact them when my request is taking too long to be processed. 
+
+A: Requesting Reader access must be done directly via your Site Technical Contact (STC). There is no automated capability for requesting Reader access (see related item on determining who your STC is below). 
+
+
+
+
+Q. I have opened four PMRs with the SR tool on behalf of customers and have some direct feedback. Is there someone I can speak with / share a screen? 
+
+A. You can submit your information here, a forum post, so we can be sure to follow up with you: The SR Open Mic forum post: 
+
+http://www.lotus.com/ldd/nd85forum.nsf/DateAllThreadedWeb/85c9a69c3932752f852579ce0018f0c0?OpenDocument [http://www.lotus.com/ldd/nd85forum.nsf/DateAllThreadedWeb/85c9a69c3932752f852579ce0018f0c0?OpenDocument] 
+
+A. You will also be able to ask questions live here today when Tracy is done speaking. 
+
+
+
+
+Q. I have to skip this Open Mic due to some current problems here, but I have a suggestion for the SR team: Would it be possible to add a "Customer environment" field in the user profile? It's quite tiresome to always state again that we have so-and-so many servers running this version and that. This normally doesn't change from PMR to PMR, but is always relevant, so it would be great if we could put this into the SR profile. 
+
+I agree 
+
+Ditto - especially for Accelerated Value Program (AVP) customers 
+
+A. We are working on a solution for storing environment information, and more information will be available later in the year. 
+
+Q. Will there be a notice via NDI or something when that is in place? 
+
+A. Not sure; would be good to submit that in the forum. 
+
+
+
+
+Q. Will phone PMRs end up in the case list or only SRs submitted via the portal? 
+
+A. Phone PMRs can be located in the search link and from the Home page in SR. Go to "Open a new software service request" to get into SR, and the left-hand navigator IBM Service Request to reach the home page. Select a customer number toward the bottom of the page and that will give you all SR/PMRs that are associated with the ICN, regardless of how they were opened or by whom. 
+
+
+
+
+Q. Regarding "interested users"... is it possible to have all four of our Administrators automatically appear? 
+
+A. Currently, there is no ability to have interested users automatically added to every PMR. 
+
+
+
+
+A. I am able to open a new PMR for our customers; however, there is no option to create a new SR for IBM Business Partners online. I can only manage PMRs that have been opened. So, is there any option to create a new PMR online for IBM BPs? 
+
+Q. BP's must register through IBM Partner World and then, under User Administration, they need to request access/linking to their customer's ICN. The STC of the ICN needs to approve this. I also believe there is a bug in SR regarding that action, so they may need to contact SRHelpdesk@us.ibm.com for further assistance. 
+
+
+
+
+Q. Is there any way to find out who your STC is, if you don't know? 
+
+A. For customers to locate the STC's, they should contact their local eCare team, who can assist with that information. Below are the eCare email addresses for each region:. 
+ * US/LATAM/Canada - PAOnline@us.ibm.com 
+
+ * Asia Pacific - ecareap@sg.ibm.com
+
+ * Japan - paonline@jp.ibm.com 
+
+ * Europe/Middle East/Africa - paonline@ie.ibm.com
+
+
+Customer can also call directly, and here is the URL where all phone numbers can be found for the countries: 
+
+https://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare_emea.html [https://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare_emea.html] 
+
+
+
+
+Q. How can I review PMR's that were closed through SR? 
+
+A.Through the search feature of SR, you can search for both open and closed PMRs. 
+
+
+
+
+FYI: Note you can run the product's automated log collector mechanism and use the "attach file" feature of SR to attach the automated log collection to the SR record. Having a detailed problem description as well as a full automated log collection provided with the initial SR request can speed problem resolution. 
+
+
+
+
+Q. We really would benefit from including the phone PMRs. Any hope of this? 
+
+A., "Search All Service Requests" will include those submitted via the phone. Of course, we would prefer that you use SR for submitting all of your PMRs! All PMRs associated with an ICN--- regardless of who created them and by what method they were created---are available in SR. Search from left-hand navigator, or select an ICN from the Home page. 
+
+
+
+
+Q. What's the difference between a source and target ICN? 
+
+A. If your company has multiple ICN's, you can copy callers from one to another. Source would be the one that currently has users listed under it. 
+
+
+
+
+Q. Is there a link to submit feedback on the tool itself? 
+
+A. You can submit feedback via the SR Help Desk, srhelpdesk@us.ibm.com, (link is also provided at the end, and is in the slides, which you can download). 
+
+
+
+
+FYI: Just a reminder, these slides are included in an attached PDF in this document. There is a references page at the end of the presentation with live links to all sorts of Help and Feedback resources: 
+
+http://www.ibm.com/support/docview.wss?uid=swg27024345 [http://www.ibm.com/support/docview.wss?uid=swg27024345] 
+
+
+
+
+Q. Does this tool include hardware issues for IBM hardware? 
+
+A. SR is currently in the process of being extended to include Hardware problems. We hope that will be available early next year. 
+
+
+
+
+Q. I see phone PMRs under "Other support tools" separate from the online SR PMRs. It would be nice to have them merged; that said, I won't be opening by phone anymore, now that SR is here. 
+
+A. Thank you. We are always updating the user interface, and can take your suggestion to show all PMRs in a single list. Although I'm sure there are some good reasons for doing it the way we do currently. 
+
+
+
+
+Q. On one of the slides the email for the Help Desk is srehelp @us.ibm.com, but on another slide it's srhelpdesk. Which is correct? 
+
+A. They both work, sorry for the oversight, both will get you to the same place. 
+
+
+
+
+Q. Is it possible to automatically be able to add interested parties to every PMR? 
+
+A. No, it's not. The interested users are basically controlled for each service request, it's not controlled via your profile at all. 
+
+Q. Maybe we can add it for a future release? 
+
+A. Absolutely. 
+
+
+
+
+Q. How can I review PMRs that have been closed via SR? 
+
+A. You can see all your PMRs through the search functionality on the Home page, at the bottom, you can look for specific PMRs, keywords, or all the PMRs associated with your ICN. When you do a full search against an ICN, you'll see all your and your colleagues', etc, and it will show closed PMRs for 28 days. Once past 28 days, it goes into Archive mode, and archived PMRs can be viewed under the Advanced Search feature. 
+
+
+
+
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Messaging Applications IBM Notes Not Applicable Messaging Applications IBM Notes Traveler Not Applicable Organizational Productivity- Portals & Collaboration IBM Connections Not Applicable Organizational Productivity- Portals & Collaboration IBM Sametime Not Applicable Organizational Productivity- Portals & Collaboration Lotus Quickr Not Applicable Organizational Productivity- Portals & Collaboration WebSphere Portal Not Applicable

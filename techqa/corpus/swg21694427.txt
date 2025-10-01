@@ -1,0 +1,118 @@
+Title: IBM What is the best way to clone the IBM Urban Code Deploy server and database for testing upgrades? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is the best way to clone the IBM Urban Code Deploy (UCD) server and database for testing upgrades? 
+
+CAUSE
+Cloning of the IBM Urban Code Deploy (UCD) server for upgrade testing purposes is strongly recommended and must be done with a manual process.
+
+ANSWER
+Step 1 - Open a pre-emptive guidance PMR with UCD support 
+
+If there is not already a PMR created for your upgrade process, it is suggested that one be opened. The PMR will serve as a Q/A forum for questions not answered here, or that need more clarification, a means to seek further assistance, and as a place holder for any emergencies that may arise from this procedure. 
+
+ 
+
+Step 2 – Clone the UCD database and file system to a new instance for upgrade testing 
+
+The goal of this process is to provide you with a testing environment that matches the production environment as closely as possible, using the most efficient methods. 
+
+ 
+
+Cloning the database: 
+
+To clone the database, consult with your database administrators to determine the specific steps to be taken to accomplish this. The main factor that will determine this will be your database type. Your DBA should know the specific steps to accomplish this. Basically, you will want to take a backup of the existing database and restore it to a new database that can be accessed from the newly cloned UCD server machine. If more assistance is needed than your DBA can provide, please use your PMR to seek that assistance. 
+
+ 
+
+Cloning the file system:
+
+
+Method 1 – Cloning the VM 
+
+The following steps should be followed to utilize method 1 to clone the file system and database: 
+
+ 
+
+1. Stop the production server 
+
+2. Stop the Production VM 
+
+3. Clone the production VM 
+
+4. Clone the database 
+
+5. Start the production VM 
+
+7. Start production server 
+
+8. Start the clone VM 
+
+9. Modify the appropriate property values in the clone’s installed.properties 
+
+10. Start the clone server 
+
+11. Change the external agent and user URL 
+
+ 
+
+This method allows you to discount many considerations since those considerations will match the production server exactly, but depends on your production server being hosted on a VM. If your production server had mounted content, then you can either copy the mounted content directly to the new file system, or create a duplicate mounted directory connecting it in the same fashion as your production server. The easiest way to change the external agent and user URL to the appropriate value for the cloned machine is to change the external agent and user url in the cloned server’s settings>system settings link after starting the server and connecting it using the machine’s IP address. Handling agent JMS connections will also need to be accounted for, and will be covered in the next consideration since the modification to fix this is in the same location as number 7. To account for 7 and the second half of 6, you will need to modify the clone’s intalled.properties. 
+
+ 
+
+The following properties will need to be modified to the value that is appropriate for the cloned server: 
+
+ * hibernate.connection.url – the escaped value of the url of the cloned database 
+ * hibernate.connection.username – the value of the username used to access the cloned database 
+ * hibernate.connection.password – The password of the user used to access the cloned database (note: this will be stored in plaintext until the cloned server is started, and will be encrypted afterward) 
+ * server.external.web.url – the escaped value of the url of the cloned server
+
+
+Method 2 – Install a new server and copy some production file system components over to the clone 
+
+The following steps should be followed to utilize method 2 to clone the file system and database: 
+
+ 
+
+1. Create the clone’s host machine 
+
+2. Install the same version of Java to it that the production host uses 
+
+3. Stop the production server 
+
+4. Clone the database 
+
+5. Start the production server 
+
+6. Place the JDBC driver .jar in the installer’s lib/ext directory 
+
+7. Run the UCD installer, choosing not to install the database 
+
+8. Replace or exchange the clone’s encryption.keystore with production’s 
+
+9. Replace the clone’s var directory with production’s 
+
+10. Start the clone 
+
+11. Change the external agent and user URL 
+
+ 
+
+Here, you install a new server to the clone destination. You will want to be sure that the JDBC driver .jar has been placed in the installer’s lib/ext directory. Run the same UCD version installer on the clone machine that you run in production. The installer will prompt you for the JVM and user/agent connection information for the new machine. Assuming the database has already been cloned and is up and running, you can skip the database installation portion and just provide the JDBC connection information for the newly cloned database. To handle the differences in encryption keys, you can either simply replace the clone’s encryption.keystore with the production one, also copying the encryption.keystore.alias property from the production server’s installed.properties to the cloned server’s installed.properties file, or you can exchange the two using the method detailed here: 
+
+ 
+
+http://www.ibm.com/support/knowledgecenter/SS4GSP_6.1.0/com.ibm.udeploy.install.doc/topics/ssl_mutual_authServers.html [http://www-01.ibm.com/support/knowledgecenter/SS4GSP_6.1.0/com.ibm.udeploy.install.doc/topics/ssl_mutual_authServers.html] 
+
+ 
+
+Replace the clone’s [UCDserver]/var directory with production’s. This will copy things like the artifact repository and plugins. The easiest way to change the external agent and user URL to the appropriate value for the cloned machine is to change the external agent and user url in the cloned server’s settings>system settings link after starting the server and connecting it using the machine’s IP address. 
+
+ 
+
+A special note on versions 4.8.1 and below: 
+
+These versions did not use an encryption.keystore file to encrypt data. Instructions pertaining to this file on these versions can be disregarded.

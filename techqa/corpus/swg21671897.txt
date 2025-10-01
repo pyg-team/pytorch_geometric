@@ -1,0 +1,90 @@
+Title: IBM Collect troubleshooting data for IBM Integration Designer performance problems - United States
+
+Text:
+iid; ibm integration designer; mustgather; troubleshooting; troubleshoot; performance TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are having performance problems with IBM Integration Designer, such as crashes, out of memory issues and unresponsiveness. You would like to know what documentation you must collect (MustGather) so that the IBM Integration Designer Support team can diagnose your problem. If you gather this documentation before contacting support it will expedite the troubleshooting process, and save you time. 
+
+DIAGNOSING THE PROBLEM
+ 
+
+You can use the following techniques to try diagnose and resolve the issues yourself:
+
+
+ * Have you tried to disable as many background tasks as possible BEFORE launching IBM Integration Designer? Some background applications such as custom security processes have OS-level hooks that alter IBM Integration Designer's process memory and cause problems. This technique is a good exercise to determine if one of the background tasks is causing the issue. 
+ * Since background applications can conceivably hook into the native stack, try increasing the stack size and testing in intervals. The stack size can be changed using the -Xss option in the <IID_install_root>\eclipse.inifile. 
+ * Try launching IBM Integration Designer with a console window to see if anything output to stdout/stderr at the time of the problem. This can be done by changing the -vm argument in <IID_Install_root>/eclipse.ini to point to *\java.exe instead of *\javaw.exe. Make sure to give the resulting command prompt window plenty of buffer (e.g. 9000) before the error occurs (right-click on the command prompt window header, Properties->Layout).
+
+
+RESOLVING THE PROBLEM
+ 
+
+If the suggestions in the Diagnosing the problem section do not help, collect the data described below for the specific problem you encountered and provide it to the IBM Support to help you troubleshoot the problem. 
+
+ 
+
+For freeze and unresponsiveness problems, provide the javacore files. Java™core is good for thread analysis and can help in identifying which classes are involved in deadlocks and waiting threads. 
+
+For instructions, see Steps to collect the Javacore files.
+
+For crashes or out of memory problems, provide the heap dumps and verbosegc logs.
+
+Heap dump is good for identifying classes that are holding onto objects in the heap leading to excessive memory usage. The Memory Dump Diagnostics for Java (MDDJ) tool can be used to analyze heap dumps. Details can be found under “Analyzing the Memory Dumps” in this developerWorks article: [http://www.ibm.com/developerworks/websphere/library/techarticles/0606_poddar/0606_poddar.html]
+http://www.ibm.com/developerworks/websphere/library/techarticles/0606_poddar/0606_poddar.html [http://www.ibm.com/developerworks/websphere/library/techarticles/0606_poddar/0606_poddar.html]
+
+For instructions, see Steps to collect the heapdump#verbosegc.
+
+Verbosegc log is a good compliment to heap dump analysis. It is good for tracking memory usage over a given time period, and helps in understanding the machine’s memory situation. 
+
+For instructions, see Steps to collect the verbose GC log#verbosegc. 
+
+
+
+Steps to collect the Javacore files  1. Open eclipse.ini file for IID and remove “w” from javaw.exe (to D:\wid61\jdk\jre\bin\java.exe). Save the file. 
+ 2. Launch IID. A command window titled “.\eclipse.exe” will be displayed when IID is being launched. (See Figure 1) 
+ 3. When IID freezes or becomes unresponsive, hit <CTRL> + <BRK> to generate the core dump. The core dump file will be created in IID's root directory named javacore.* 
+ 4. Take at least three core dumps (i.e. repeat step 3 for at least 3 times) with at least 30 seconds apart.
+
+
+Figure 1 
+
+
+[/support/docview.wss?uid=swg21671897&aid=1] [/support/docview.wss?uid=swg21671897&aid=1]
+
+
+
+
+[/support/docview.wss?uid=swg21671897&amp;aid=2] Back to Top 
+
+Steps to collect the heap dump  1. Take heap dumps as the memory is increasing. In most cases, If IBM Integration Designer crashes, it will automatically create the heapdump and the javacore files in IBM Integration Designer's home directory. 
+ 2. Open eclipse.ini file for IBM Integration Designer and remove “w” from javaw.exe to java.exe. Save the file. 
+ 3. Set two environment variables as follow:  * Open the command prompt and type set IBM_HEAP_DUMP=true. Then hit <ENTER>. 
+     * Then type set IBM_HEAPDUMP=true. Then hit <ENTER>. 
+     * Type “set” again at the same command prompt and look for the two new variables. Make sure they have been set to “true”
+    
+    
+ 4. Launch IBM Integration Designer from same command prompt. A command window titled ".\eclipse.exe” will be displayed. (See Figure 2) 
+ 5. When IBM Integration Designer crashes, check IBM Integration Designer's home directory for the javacore.* and heapdump.* files generated during the crash. If the files were not generated somehow but the Java process is still running in the background, hit <CTRL>+<BRK> to generate the core dump and the heap dump. The files named javacore.* and heapdump.* will be created in IBM Integration Designer's home directory.
+
+
+
+Figure 2 
+
+[/support/docview.wss?uid=swg21671897&aid=3] [/support/docview.wss?uid=swg21671897&aid=3] 
+
+
+[/support/docview.wss?uid=swg21671897&amp;aid=4] Back to Top 
+
+Steps to collect the verbose GC log 
+In eclipse.ini, add the following two lines (must be on separate lines):  * -verbosegc 
+ * -Xverbosegclog:<logFilePath> 
+   (For instance, -Xverbosegclog:d:\MyLogs\verbosegc20080101.txt)
+   
+   
+
+Note: Ensure that d:\MyLogs directory exists; otherwise text file won’t be created. The text file should be created when IBM Integration Designer is launched. It is always a good idea to confirm this before continuing. 
+
+
+
+[/support/docview.wss?uid=swg21671897&amp;aid=5] Back to Top

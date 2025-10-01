@@ -1,0 +1,64 @@
+Title: IBM Unable to login with SDK Java application if password contains an ampersand - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using the sample Logon class from the directory <C8>/sdk/java/Security results in the error "CM-REQ-4342 The Client did something wrong." if the password contains an ampersand (&), i.e. 
+
+Username: testuser
+Password: this&that 
+
+SYMPTOM
+On Client side: 
+
+CM-REQ-4342 The Client did something wrong.
+
+On Server side (cogserver.log):
+CM-REQ-4003 Content Manager is unable to process this request because the necessary security information is missing. Add the required security credentials and resend.
+The reference to entity "this" must end with the ';' delimiter.
+
+
+
+CAUSE
+In XML the ampersand character is an reserved character and has to be encoded to work properly. In addition the '<' character has to be encoded too.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+Encode the special characters before calling the logon() method.
+
+Example:
+
+In the file <C8>\sdk\java\Security\Logon.java search for following section:
+
+StringBuffer credentialXML = new StringBuffer();
+credentialXML.append("<credential>"); 
+credentialXML.append("<namespace>");
+credentialXML.append(namespaceIDs[i]);
+credentialXML.append("</namespace>");
+credentialXML.append("<username>");
+credentialXML.append(userID);
+credentialXML.append("</username>");
+credentialXML.append("<password>");
+credentialXML.append(password);
+credentialXML.append("</password>");
+credentialXML.append("</credential>");
+
+Before add this block:
+
+password = password.replaceAll("&", "&amp;");
+password = password.replaceAll("<", "&lt;");
+
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Business Analytics Cognos ReportNet ReportNet 
+HISTORICAL NUMBER
+ 1031893

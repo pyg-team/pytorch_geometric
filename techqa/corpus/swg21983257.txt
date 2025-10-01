@@ -1,0 +1,102 @@
+Title: IBM Programs that are included in the Rational Development and Test Environment for z Systems V9.5 offering - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ In addition to the z Systems emulator, what programs are included in the Rational Development and Test Environment for z Systems V9.5 offering? 
+
+ANSWER
+
+
+There are supporting programs and additional programs in the offering media. Note that some bundled products have important usage restrictions. Please see the product license for terms and conditions on the use of these programs with Rational Development and Test Environment for z Systems V9.5. 
+
+The following are Supporting Programs: 
+
+Rational Integration Tester V8.7 (Component: Rational Test Control Panel v8.7) 
+
+
+========================================================================================================================= 
+*** z/OS 2.1 Software Distribution Application Developers Controlled Distribution for Rational Development and Test Environment for z Systems August 2015 Edition *** 
+========================================================================================================================= 
+DB2 10 for z/OS V10.1 
+IMS Transaction and Database Servers V12.1 
+IBM Data Interfile Transfer, Testing, and Operations Utility for MVS, VSE, VM (DITTO) 1.3 
+IBM Encryption Facility for z/OS, V1.2 
+IBM 31-bit SDK for z/OS, Java Technology Edition V6.0.0 
+IBM 31-bit SDK for z/OS, Java Technology Edition V6.0.1 
+IBM 64-Bit SDK for z/OS Java Technology Edition V6.0.0 
+IBM WebSphere MQ for z/OS v8.0 
+CICS Transaction Server for z/OS V4.2 
+IBM Tivoli OMEGAMON XE for DB2 Performance Expert on z/OS, V5.1 
+IBM 31-bit SDK for z/OS, Java Technology Edition V7.0.0 
+IBM 64-Bit SDK for z/OS Java Technology Edition V7.0.0 
+WebSphere Application Server for z/OS V8.0.0 
+WebSphere Application Server for z/OS V8.5.0 
+CICS Transaction Server for z/OS V5.1 
+IBM Compiler for REXX on zSeries 1.4.0 
+IBM Library for REXX on zSeries 1.4.0 
+IBM Tivoli NetView for z/OS V6.2 
+IBM Tivoli Management Services on z/OS V6.2.3 
+IBM Tivoli OMEGAMON XE on z/OS V5.1 
+IBM Tivoli OMEGAMON XE for IMS on z/OS V5.1 
+IBM Tivoli OMEGAMON XE for CICS on z/OS V5.1 
+RATIONAL COBOL RUNTIME 6.0.1 
+IBM Enterprise COBOL for z/OS V5.2 
+IBM z/OS Management Facility V2.1 
+DB2 11 for z/OS V11.1 
+IMS Transaction and Database Servers V13.1 
+IBM z/OS V2.1 
+IBM DB2 Administration Tool for z/OS V11.1 
+IBM DB2 Object Comparison Tool for z/OS, V11.1 
+IBM XML Toolkit for z/OS, V1.10 
+IBM Print Services Facility for z/OS V4.5 
+IBM Ported Tools for z/OS V1.3: OpenSSH V1.3.0, Xvfb for z/OS V1.1.0, IBM HTTP Server V8.5 
+IBM Debug Tool for z/OS , V13.1 
+IBM Fault Analyzer for z/OS , V13.1 
+IBM File Manager for z/OS , V13.1 
+IBM 64-Bit SDK for z/OS Java Technology Edition V6.0.1 
+IBM IMS Enterprise Suite for z/OS, V3.1.1 
+IBM DB2 Utilities Suite for z/OS, V10.1 
+IBM 31-bit SDK for z/OS, Java Technology Edition V7.1.0 
+IBM 64-Bit SDK for z/OS Java Technology Edition V7.1.0 
+IBM Enterprise PL/I for z/OS V4.5 
+IBM DB2 Utilities Suite for z/OS, V11.1 
+CICS Transaction Server for z/OS V5.2 
+CICS Transaction Gateway for z/OS V9.1 
+CICS VSAM Recovery for z/OS V5.1.0 
+CICS VSAM Recovery for z/OS V5.2.0 
+CICS Deployment Assistant for z/OS V5.1.0 
+CICS Deployment Assistant for z/OS V5.2.0 
+IBM CICS TS Feature Pack for Dynamic Scripting V2.0 
+IBM CICS TS Feature Pack for Mobile Extensions V1.0 
+IBM CICS TS Feature Pack for Security Token Extensions V1.0 
+IBM CICS TS Feature Pack for Modern Batch V1.0 
+VS FORTRAN Version 2 
+IBM DB2 Accessories Suite for z/OS V3.2 
+IBM Tivoli OMEGAMON XE for Messaging for z/OS V7.1 
+System Automation for z/OS 3.5.0 
+IBM Tivoli Workload Scheduler for z/OS V9.2 
+Rational Developer for System z V9.1.1 (z/OS Rational Developer for z System component, z/OS Rational Developer for System z Host Utilities) 
+IBM 31-bit SDK for z/OS, Java Technology Edition V8.0.0 
+IBM 64-Bit SDK for z/OS Java Technology Edition V8.0.0 
+IBM UrbanCode Deploy for z/OS V6.1.1 
+IBM Rational Team Concert V6.0.0 (z/OS Common components, z/OS Build agent, z/OS Build System Toolkit, and z/OS Rational Developer for System z subset) 
+
+
+For a more detailed listing on the z/OS 2.1 distribution, see Appendix A of the z/OS Application Developers Controlled Distribution for Rational Development and Test Environment for z Systems (SC27-8716). 
+
+The following are Supporting Programs included only with Rational Development and Test Environment for z Systems with Parallel Sysplex V9.5:
+
+========================================
+*** z/VM 6.3 Distribution ***
+========================================
+IBM Directory Maintenance Facility for z/VM, function level 630
+IBM Performance Toolkit for VM, function level 630
+IBM RACF Security Server for z/VM, function level 630
+IBM Remote Spooling Communications Subsystem Networking for z/VM, function level 630
+IBM z/VM, version 6 release 3
+
+
+
+This information could include technical inaccuracies or typographical errors. Changes are periodically made to the information herein; these changes will be incorporated in new editions of the publication. IBM may make improvements and/or changes in the product(s) and/or the program(s) described in this publication at any time without notice.

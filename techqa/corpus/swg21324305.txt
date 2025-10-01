@@ -1,0 +1,43 @@
+Title: IBM How to increase the limit of the number of Child CR's that can be attached/associated to a Parent CR? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to increase the limit of the number of Child CR's that can be attached/associated to a Parent CR? 
+
+ANSWER
+
+
+In Telelogic Change, there is a limit to the number of Child CR's that can be added to a Parent CR. By default this limit is 100.
+
+A message similar to the following example will appear on the CR Submit form if this limit is exceeded when a Child CR is added to a Parent CR.
+
+"The query limit of 100 was exceeded for this report format. The query found 105 results, please refine your query, select a new report format or contact your administrator to change the query limit for the report you ran."
+
+
+
+Solution:
+
+This query limit can be increased by making changes to your user_framework.cfg configuration file: 
+
+The user_framework.cfg file is located in the <CS_HOME>/cs_app/webapps/synergy/WEB-INF/wsconfig directory
+
+The relevant parameters available in user_framework.cfg file are 
+
+1. Related Change Requests Control Def 
+
+2. Related Change Requests Control Read-only Def 
+
+3. Related Change Requests Control Skinny Def
+
+
+
+By default, The MAX_QUERY values for these parameters are set to 100.
+
+You can increase the MAX_QUERY value, save the changes and then restart jetty or Load Configuration data from the Admin login.
+
+You can then associate additional Child CRs to the Parent CR subject to the values set for the parameters listed above. 
+
+HISTORICAL NUMBER
+ 40166

@@ -1,0 +1,157 @@
+Title: IBM Documentation corrections for the Planning and Installing IBM Content Manager for z/OS Version 8.4.3 Guide - United States
+
+Text:
+ PRODUCT README
+
+ABSTRACT
+ This technical support document contains significant corrections for the Planning and Installing IBM Content Manager for z/OS 8.4.3 and later documentation that could affect product installation or configuration. 
+
+CONTENT
+Documentation corrections
+
+
+ICMACLPrivExit [http://pic.dhe.ibm.com/infocenter/cmgmt/v8r4m0/topic/com.ibm.installingcmzos.doc/dcmiz049.htm]
+You can use the ICMACLPrivExit exit routine to determine whether the user has the authority to perform the requested function.
+Should be read as:
+You can use the ICMACLPrivExit exit routine to determine if a user has the authorization to perform functions on specific items.
+
+ICMGenPrivExit [http://pic.dhe.ibm.com/infocenter/cmgmt/v8r4m0/topic/com.ibm.installingcmzos.doc/dcmiz050.htm]
+You can use the ICMGenPrivExit exit routine to determine if a user has the authorization to perform functions on specific items.
+Should be read as:
+You can use the ICMGenPrivExit exit routine to determine whether the user has the authority to perform the requested function.
+
+The resource manager asynchronous replication process [http://pic.dhe.ibm.com/infocenter/cmgmt/v8r4m0/topic/com.ibm.installingcmzos.doc/dcmiz108.htm]
+The following statement regarding the replication of already stored objects is true only for IBM Content Manager Enterprise Edition. The IMPORTREPLICA utility is not available for the z/OS edition of IBM Content Manager:
+
+
+ * 
+
+
+Installing and configuring the z/OS eClient [http://pic.dhe.ibm.com/infocenter/cmgmt/v8r4m0/topic/com.ibm.installingcmzos.doc/dcmiz005.htm] 
+The following restriction no longer applies: 
+ * Restriction:
+ * 
+ * 
+ * 
+ * applet
+ * 
+
+
+The restriction should instead read: 
+ * Restriction:
+ * 
+
+
+Optional: Installing and configuring the IBM Content Manager for z/OS high-volume batch utilities [http://pic.dhe.ibm.com/infocenter/cmgmt/v8r4m0/topic/com.ibm.installingcmzos.doc/dcmiz095.htm] 
+For the ICMMBLJ2 sample JCL file, the description should read: "Runs ICMPBL04 program to perform UPDATE, DELETE, MOVE, and LINK functions." 
+
+Replacing symbolic variables with ISPF variables [http://pic.dhe.ibm.com/infocenter/cmgmt/v8r4m0/topic/com.ibm.installingcmzos.doc/dcmiz101.htm] 
+"Run the macro" should be "Run the clist" instead. Also, the following sentence applies to the toolkit component too: 
+ * 
+ * and toolkit
+ * 
+ * and SICMSAMP
+ * 
+
+
+Running the Job Configuration tool [http://pic.dhe.ibm.com/infocenter/cmgmt/v8r4m0/topic/com.ibm.installingcmzos.doc/dcmiz042.htm] 
+Clarification to the second introductory sentence: 
+ * 
+ * by executing the clist: ex 'hlq.SICMCLI1(ICMCOPY)'
+ * 
+
+
+Under Performing preinstallation steps [http://pic.dhe.ibm.com/infocenter/cmgmt/v8r4m0/topic/com.ibm.installingcmzos.doc/dcmiz010.htm] section, Toolkit installation steps before you execute cmcfglsi utility topic is included 
+
+You need to follow the Toolkit installation steps before execute cmcfglsi utility. 
+
+Before you execute cmcfglsi utility: 
+
+1. SMP/E install the Toolkit component 
+
+2. Modify and submit the .sicmsamp(ICMCONFG) member 
+
+3. Modify the .profile of the TSO user ID used for issuing this command. An example of the .profile as shown below:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+4. Use TSO user ID to log on TSO or telnet and issue cmcfglsi under the Toolkit home directory/config directory. 
+
+Building component table views and default item types [http://pic.dhe.ibm.com/infocenter/cmgmt/v8r4m0/topic/com.ibm.installingcmzos.doc/dcmiz046.htm] 
+
+Ignore the statement:  * 
+
+
+Read as:  * 
+ *  Run it from the workstation where the system administration client is installed, or Run it from UNIX System Services under z/OS. You must have the IBM® Content Manager for z/OS Toolkit installed" 
+
+
+Building component table views [http://pic.dhe.ibm.com/infocenter/cmgmt/v8r4m0/topic/com.ibm.installingcmzos.doc/dcmiz003.htm] 
+
+Ignore the text:  * 
+ * 
+ * 
+ * 
+ *   1. On the workstation on which the Version 8.4.3 system administration client is installed, navigate to the %IBMCMROOT%\config directory. 
+    2. Run the command: cmcfglsi -t comptypes."
+   
+   
+
+
+Read as:  * 
+ * 
+ * 
+ * 
+ *   1. On the workstation on which the system administration client is installed, or under UNIX System Services on z/OS®, navigate to the %IBMCMROOT%\config directory. 
+    2. Run the command: cmcfglsi -t comptypes."
+   
+   
+
+
+Defining default item types [http://pic.dhe.ibm.com/infocenter/cmgmt/v8r4m0/index.jsp?topic=%2Fcom.ibm.installingcmzos.doc%2Fdcmiz093.htm] 
+
+Ignore the following:  * 
+ * 
+ * 
+ * 
+ *   1. On the workstation on which the Version 8.4.3 system administration client is installed, navigate to the %IBMCMROOT%\config directory. 
+    2. Run the command: cmcfglsi -t predefs."
+   
+   
+
+
+Read as:  * 
+ * 
+ * 
+ * 
+ *   1. On the workstation on which the system administration client is installed, or under UNIX Systems Services on z/OS®, navigate to the %IBMCMROOT%\config directory. 
+    2. Run the command: cmcfglsi -t predefs."
+   
+   
+
+RELATED INFORMATION
+ IBM Content Manager information center [http://pic.dhe.ibm.com/infocenter/cmgmt/v8r4m0/]
+Corrections for Installing IBM Content Manager EE 8.4.3 [http://www.ibm.com/support/docview.wss?uid=swg27022339]

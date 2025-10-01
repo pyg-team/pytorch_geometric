@@ -1,0 +1,26 @@
+Title: IBM BMT-MD-6001: Connection to the data source failed .... - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to connect to a IBM Cognos Finance Data Source in Framework Manager 
+
+SYMPTOM
+BMT-MD-6001: Connection to the data source failed because a valid connection string was not specified.
+
+RESOLVING THE PROBLEM
+Ensure that that the appropriate Cognos Access Manager Server service is started.
+
+Depending on the version of Cognos Finance, a different Cognos Access Manager Server is valid.
+
+Cognos Finance 7.3 - Cognos Access Manager Server (cer4)
+Cognos Finance 7.4 - Cognos Access Manager Server (cer5)
+
+Steps:1. Services Control Panel, stop the incorrect Cognos Access Manager Server service 
+2. Services Control Panel, start the valid Cognos Access Manager Server service 
+3. Framework Manager, Model, run Metadata Wizard, Data Sources, select the appropriate data source and connect 
+
+Cross Reference information Segment Product Component Platform Version Edition Business Analytics Cognos Finance Finance 
+HISTORICAL NUMBER
+ 1030000

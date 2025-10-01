@@ -1,0 +1,33 @@
+Title: IBM Group search returns short names - United States
+
+Text:
+distinguished name; group search TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to search for groups in IBM Websphere Application Server (WAS) 'Security role/user mapping' interface results in only short names of the groups being displayed, rather than full distinguished names. 
+
+CAUSE
+Attributes groupsDisplayName and groupSecurityName are set to 'cn'.
+
+ENVIRONMENT
+WAS server using federated repositories as authentication method.
+
+RESOLVING THE PROBLEM
+Procedure:
+
+
+
+
+ 1. Navigate to the WAS Console in the web browser.
+    
+    
+ 2. Navigate to Security > Global Security > Federated repositories and click Configure.
+    
+    
+ 3. Click User repository attribute mapping.
+    
+    
+ 4. Change the value of groupsDisplayName and groupSecurityName to 'uniqueName'.
+    
+    
+ 5. Accept and save to master configuration.

@@ -1,0 +1,46 @@
+Title: IBM Finding Information for ITCAM for Transactions - United States
+
+Text:
+CSILandingPage; SupportLandingPage; 71AMCON-PLAN; 71WRT-PLAN; 71TT-PLAN; 71RRT-PLAN; 71ISM-PLAN NEWS
+
+ABSTRACT
+ Help finding information related to ITCAM for Transactions.
+Step One: Select an agent
+Step Two: Select the type of resource needed 
+Step Three: Explore the links available for the topic selected 
+
+CONTENT
+Each of these items provides a link to Finding Information for the set of agents included in this package.
+
+
+TAB NAVIGATION
+ * ITCAM for Transactions [http://www.ibm.com/support/docview.wss?uid=swg21655543]
+ * Internet Service Monitoring is [http://www.ibm.com/support/docview.wss?uid=swg21656197]
+ * Application Management Console t3 [http://www.ibm.com/support/docview.wss?uid=swg21655741]
+ * Robotic Response Time t6 [https://www.ibm.com/support/docview.wss?uid=swg21656198]
+ * Web Response Time t5 [http://www.ibm.com/support/docview.wss?uid=swg21656200]
+ * Transaction Tracking to tu [http://www.ibm.com/support/docview.wss?uid=swg21656201]
+ * CICS Data Collector t7 [http://www.ibm.com/support/docview.wss?uid=swg21656204]
+ * MQ Tracking th [http://www.ibm.com/support/docview.wss?uid=swg21551419#th]
+ * Message Broker DC k3 [http://www.ibm.com/support/docview.wss?uid=swg21655543]
+ * Client Response Time t4 [http://www.ibm.com/support/docview.wss?uid=swg21656192]
+
+[Gathering Agent Specific Information [/support/docview.wss?uid=swg21655543&amp;aid=1] Do you want to find a fix? 
+FixCentral [http://www.ibm.com/support/fixcentral/] is the IBM repository for updates to be applied to the agents listed above. If you are directed to apply a fix or you believe your agent is not at the current level, visit FixCentral for the available updates. 
+[http://www-933.ibm.com/support/fixcentral/] [/support/docview.wss?uid=swg21655543&amp;aid=2] Do you need additional information for an agent? 
+Connect with experts in the SmartCloud Monitoring Community [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Monitoring/page/Home]. Search the [http://www.ibm.com/developerworks/wikis/display/maximo/Maximo+Asset+Management]blogs [https://www.ibm.com/developerworks/community/blogs/home/tags/itm?lang=en] and the forum [https://www.ibm.com/developerworks/community/forums/html/category?id=33333333-0000-0000-0000-000000000507]. Watch videos at IBM Education Assistant [http://www.ibm.com/software/info/education/assistant/index.shtml]or Tivoli Media Gallery [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Composite%20Application%20Manager/page/Media%20Gallery%20for%20ITCAM%20for%20Transactions].
+[/support/docview.wss?uid=swg21655543&amp;aid=3] [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Composite%20Application%20Manager/page/ITCAM%20for%20Transactions]
+Documentation Central [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Composite%20Application%20Manager/page/ITCAM%20for%20Transactions] provides easy access to the information you need for each available release of ITCAM.
+[/support/docview.wss?uid=swg21655543&amp;aid=4] Do you need more information about SmartCloud products? 
+The Knowledge Center [http://www-01.ibm.com/support/knowledgecenter/#!/SS5MD2/welcome] provides a broader range of software documentation. 
+[/support/docview.wss?uid=swg21655543&amp;aid=5] Have you used the IBM Support Portal to find what you need? 
+IBM Support Portal [http://www.ibm.com/support/electronicsupport/] helps you customize the IBM support pages to find the information you need. 
+[http://www.ibm.com/support/electronicsupport/] RELATED INFORMATION
+ Collecting Data for APM and APMUI [http://www.ibm.com/support/docview.wss?uid=swg21627054]
+Gateway to APM Support Resources [http://www.ibm.com/support/docview.wss?uid=swg21646900]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itcamft

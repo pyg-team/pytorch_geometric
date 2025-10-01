@@ -1,0 +1,17 @@
+Title: IBM DataPower Web Service Proxy Local Endpoint Handler disappears when updates are made on the remote WSDL - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The WSP Local Endpoint Handler seems to disappear or gets un-configured on the WebSphere DataPower WebGUI after certain updates are made on the remote WSDL 
+
+SYMPTOM
+After certain updates are made on the remote WSDL, the WSP Local Endpoint Handler seems to disappear or get un-configured on WebGUI.
+
+
+DIAGNOSING THE PROBLEM
+If the WSDL cannot compile, the endpoint handler will not be displayed on the WebGUI; however, it should still be there in the configuration.
+
+RESOLVING THE PROBLEM
+Check at CLI outputs after executing the show wsm-endpoint command and the objects should be there. If the WSDL is then fixed and refreshed again, the endpoint handler should reappear on the WebGUI.

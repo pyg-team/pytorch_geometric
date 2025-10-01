@@ -1,0 +1,49 @@
+Title: IBM Installation instructions for WebSphere Cast Iron Cloud integration Version 6 Fix Packs - United States
+
+Text:
+ PRODUCT README
+
+ABSTRACT
+ Installation instructions for WebSphere DataPower Cast Iron XH40 Appliance, WebSphere Cast Iron Hypervisor and WebSphere Cast Iron Studio Version 6 Fix Packs 
+
+CONTENT
+Upgrade WebSphere Cast Iron Hypervisor or WebSphere DataPower Cast Iron XH40 Appliance (.scrypt2 or .vcrypt2 file) 
+
+This upgrade process does not destroy user data.
+Note: When upgrading, any 3rd party connector libraries used are preserved, so you do not need to reinstall the libraries after you upgrade.
+
+The upgrade process for both WebSphere DataPower Cast Iron XH40 Appliance and WebSphere Cast Iron Hypervisor is the same but the firmware file you require is different:
+
+
+
+Appliance File Extension WebSphere DataPower Cast Iron XH40 Appliance .scrypt2 WebSphere Cast Iron Hypervisor .vcrypt2 
+You can complete the upgrade by using the Web Management Console (WMC) or the Command Line Interface (CLI). 
+ * Using the WMC
+ *   1. Download the fix pack from Fix Central and copy to a location where you can access it. 
+    2. Using the WMC, log in to the appliance that you want to upgrade. 
+    3. Select System -> Upgrade. The Upgrade page displays. 
+    4. Click the Upgrade Operating System link. The Upgrade Wizard launches. 
+    5. Click Browse to locate the upgrade file. 
+    6. Click Upgrade. The appliance uploads the firmware file and starts the upgrade process. When the upgrade is complete, the appliance automatically reboots. 
+    7. When the reboot is complete, the WMC login page displays. If the page does not display, click your browser's refresh button. 
+       
+   
+   
+ * Using the CLI
+ * 
+ * 
+ * 
+ * Upgrading firmware when WMC is not started. 
+ * 
+
+
+Fresh Install of WebSphere Cast Iron Hypervisor - VMWare (.ova file) 
+Installation of the .ova file will result in a new installation of the WebSphere Cast Iron Hypervisor Edition at the fix pack level. 
+Note: this is not an upgrade and no data will be maintained. In order to install a new image, refer to the Installation Guide shipped with your original product. 
+
+Fresh Install of WebSphere Cast Iron Hypervisor - Xen (.tar file): 
+Installation of the .tar file will result in a new installation of the WebSphere Cast Iron Hypervisor Edition at the fix pack level. 
+Note that this is not an upgrade and no data will be maintained. In order to install a new image, refer to the Installation Guide shipped with your original product. 
+
+WebSphere Cast Iron Studio 
+In order to install a new fix pack of WebSphere Cast Iron Studio, you should first uninstall the existing version. Then launch a fresh installation by executing the file downloaded from Fix Central.

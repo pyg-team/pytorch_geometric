@@ -1,0 +1,235 @@
+Title: IBM PI94101: ABEND0C4 RUNNING SYSPROC.ADMIN_INFO_SQL WHEN THE INPUT SQL HAS ENDING COMMENT MARKER "*/" MISSING - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ADMIN_INFO_SQL abends when a delimited string contains the
+   characters /* without an ending */ in SYSIBM.SYSROUTINES.TEXT of
+   an SQL function.
+   The abend is 0C4.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  ensure there is ending "*/" for character string that
+   contains "/*"
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Db2 11 for z/OS and Db2 12 for z/OS                      *
+   * customers who use the Db2-supplied                           *
+   * stored procedure SYSPROC.ADMIN_INFO_SQL                      *
+   * or the batch program DSNADMSB to collect                     *
+   * Db2 environmental service data either                        *
+   * directly or via any of the following                         *
+   * tools:                                                       *
+   * o Query Environment Capture feature of                       *
+   * Data Studio                                                  *
+   * o Query Environment Capture feature of                       *
+   * Optim Query Workload Tuner                                   *
+   * o Capture Query Environment feature of                       *
+   * Data Server Manager                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The following problems may occur                             *
+   * when running the batch program                               *
+   * DSNADMSB or the Db2-supplied                                 *
+   * stored procedure                                             *
+   * SYSPROC.ADMIN_INFO_SQL:                                      *
+   * (1) When generating the CREATE                               *
+   * routine DDL from the                                         *
+   * SYSIBM.SYSROUTINES.TEXT column,                              *
+   * ADMIN_INFO_SQL may fail as follows:                          *
+   * o Abends when a forward slash followed                       *
+   * by an asterisk is found within a                             *
+   * delimited string in                                          *
+   * SYSIBM.SYSROUTINES.TEXT                                      *
+   * o Omits the character immediately                            *
+   * following a bracketed comment                                *
+   * in SYSIBM.SYSROUTINES.TEXT                                   *
+   *                                                              *
+   * (2) When generating the CREATE TABLE                         *
+   * DDL, ADMIN_INFO_SQL may truncate the                         *
+   * PRIMARY KEY clause as follows:                               *
+   * CREATE TABLE ... (                                           *
+   * "COL1" ...                                                   *
+   * ,"COL2" ...                                                  *
+   * ,"COL3" ...                                                  *
+   * ,"COL4" ...                                                  *
+   * ,"COL5" ...                                                  *
+   * ,"COL6" ...                                                  *
+   * , PRIMARY KEY ("COL1",                                       *
+   * "COL2",                                                      *
+   * )                                                            *
+   * IN DB1.TS1                                                   *
+   * ...                                                          *
+   * where the closing ) and columns in the                       *
+   * primary key are missing.                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * APPLY PTF                                                    *
+   ****************************************************************
+   (1) When generating the CREATE routine DDL from the
+   SYSIBM.SYSROUTINES.TEXT column of a routine,
+   ADMIN_INFO_SQL may fail as follows:
+   o Abends when a forward slash followed by an asterisk
+   is found in a delimited string in
+   SYSIBM.SYSROUTINES.TEXT, because ADMIN_INFO_SQL
+   erroneously handles the forward slash followed by an
+   asterisk as the beginning of a bracketed comment and
+   fails to find the bracketed comment closing marker.
+   o Omits the character immediately following a bracketed
+   comment.
+   (2) When generating the CREATE TABLE DDL, ADMIN_INFO_SQL
+   generates a truncated PRIMARY KEY clause, as described
+   in the Problem Description of this APAR.
+   
+   ADMIN_INFO_SQL uses a counter to track the number of
+   columns examined so far in an index. However, it does
+   not reset this counter to 0 after it finishes processing
+   an index and starts processing the next index of the
+   same table. Therefore, if an indexed table has a primary
+   key and one other index, and it processes the other index
+   first before processing the primary key, the PRIMARY KEY
+   clause will be truncated with missing columns, because
+   the counter would indicate prematurely that all the
+   PRIMARY KEY columns have been examined.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  To address the issues described in the Problem Description
+   section of this APAR, DSNADMSB and ADMIN_INFO_SQL are
+   modified as follows:
+   (1) When generating the CREATE routine DDL from the
+       SYSIBM.SYSROUTINES.TEXT column of a routine:
+       o A forward slash followed by an asterisk in a delimited
+         string is not considered the beginning of a bracketed
+         comment.
+       o The character immediately following a bracketed comment
+         is not omitted.
+   (2) When generating the PRIMARY KEY clause of a CREATE TABLE
+       DDL, the counter used to track the number of columns
+       examined so far in an index is reset to zero when all
+       the columns in the index are examined.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI94101
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   B10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-02-21
+   
+   
+ * CLOSED DATE
+   2018-04-26
+   
+   
+ * LAST MODIFIED DATE
+   2018-06-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI55475 UI55477
+   
+   
+
+MODULES/MACROS
+ *  DSN@DMSS DSNADMSS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RC10 PSY UI55475 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI55475]
+   UP18/05/12 P F805 ¢
+   
+   
+ * RB10 PSY UI55477 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI55477]
+   UP18/05/12 P F805 ¢
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

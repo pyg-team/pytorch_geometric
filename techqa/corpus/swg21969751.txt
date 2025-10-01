@@ -1,0 +1,97 @@
+Title: IBM Steps to prepare Notes/Domino for Uruguay Update for Daylight Saving Time 2015 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+How do you prevent Lotus Notes client and Lotus Domino server from adjusting daylight saving time in Uruguay for 2015?
+
+SYMPTOM
+ Calendar entries are off by one hour
+
+
+RESOLVING THE PROBLEM
+This document provides details about the steps necessary to prevent Lotus Notes client and Lotus Domino server from adjusting for daylight saving time in Uruguay this October. The Daylight Saving time for Uruguay will not switch this year but was previously scheduled to begin on October 4, 1015. 
+
+Steps to take 
+1. Operating system 
+
+Apply any necessary operating system patches to obtain the updated time zone rules. It is recommended that you follow the installation guidelines provided by the operating system vendor. Some operating systems might allow you to directly modify system settings to affect changes in the updated time zone rules. Updating the operating system is an integral part of these instructions and must be done prior to running any corrective agents. 
+
+The Standard Notes 8.x and 8.5.x clients versions have a dependancy on ICU4J data and core JVM time zone data that must be patched before existing calendar entries will appear at the correct times even after a workstation operating system is updated. 
+
+The Notes client or Domino server should be shut down while the operating system patch or update is being applied. Before restarting the Notes client or Domino server, it is important to follow the instructions below in order for Notes and Domino to work as expected. It is suggested that in cases where a patch is being installed using an automatic distribution procedure, the procedure should be designed to instruct users to exit Notes/Domino before the patch is installed, if required the system should be rebooted after the patch is installed, and then Notes/Domino can be restarted. The following undesired behaviors can occur if the above steps are not followed: 
+ * If the Windows operating system is not restarted after the patch is installed, Notes/Domino will return the old time zone information for time zones other than the current time zone.
+
+ * There have been reported cases where the Notes time zone setting is set to an unexpected value when the patch has been installed using an automatic distribution roll-out while the Notes client is running.
+
+
+After applying the operating system (OS) patch, some systems may need to be restarted. Refer to the following table based on manufacturer's recommendation: 
+
+IBM AIX or Sun Solaris You are required to restart the OS. Microsoft Windows You are required to restart the OS. Linux It is recommended that you restart the OS. i5/OS An OS restart is not required. 
+2. All Notes and Domino - Java/JVM 
+
+You should update the time zone data that Java uses to ensure that Java code and Java applets that perform date or time calculations function as expected. An update is only You can use the IBM Java Time Zone Update Utility (JTZU) tool to do this. The JTZU tool is available here: 
+
+http://www.ibm.com/developerworks/java/jdk/dst/jtzu.html [http://www.ibm.com/developerworks/java/jdk/dst/jtzu.html] 
+
+For information relating to the JTZU tool, please refer to document linked below 
+
+Title: Using the IBM Time Zone Update Utility for Java (JTZU) with Lotus software products 
+Doc #: 1249964 
+URL: http://www.ibm.com/support/docview.wss?uid=swg21249964 [http://www.ibm.com/support/docview.wss?uid=swg21249964] 
+
+3. Additional requirements and steps specific to operating systems 
+
+Note that in Notes/Domino 6.0 and later, the notes.ini parameter DSTLaw cannot be used to control the DST rules that Notes/Domino obeys (with the exception of Domino for IBM i). In these releases, the DST rule functionality works in conjunction with the operating system DST rule settings, and the DSTLaw parameter is reset to the current operating system rules when Domino is started. 
+
+Microsoft Windows 
+
+On Windows operating systems, be sure that the parameter, "UseNotesTimeZone=1", is either removed from the notes.ini or modified so that the parameter is set to 0 (zero). For details on setting up custom fields in a Desktop Policy, refer to Document #1196837, "Using a Desktop Policy to set notes.ini and Location parameters" [http://www.ibm.com/support/docview.wss?rs=463&uid=swg21196837]. 
+
+IBM i (formerly IBM i5/OS) 
+
+Domino running on IBM i (System i) does not read time zone information from the operating system and relies on the DST, TimeZone, and DSTLaw notes.ini parameters for this information. The following parameter should be present in the notes.ini for a Domino server located in Montevideo. Adjustments will need to be : 
+
+Timezone=-3 
+DST=0 
+
+Note: The DSTLaw parameter can be removed from the notes.ini. The Timezone offset that Domino uses is the negative of what is displayed on the Windows operating system. For example for Montevideo, the display value on the operating system is: 
+
+(UTC-03:00) Montevideo 
+
+This correlates to TimeZone= -3 in the notes.ini. 
+
+It is still suggested that you apply any available i5/OS operating system updates for the revised DST rule changes to ensure that the operating systems and other applications function as expected. 
+
+Non-Windows clients and UNIX/Linux servers Mac (8.0.1+, 8.5+) and Linux (8.0.2+, 8.5+) Notes clients rely on the operating system for all time zone rules. 
+
+UNIX and Linux Domino releases rely on two sources for time zone information: 
+
+- For the server's current time zone, time zone data is determined using the standard C library. This is used to populate the DST, TimeZone, and DSTLaw notes.ini parameters. Although it differs from platform to platform, the C standard library is often dependant on the Olson time zone data present on the system. Refer to your operating system vendor for specific details. 
+
+4. All Notes clients
+
+Starting with the Standard Notes 8 client, the calendar grid relies on Java time zone data stored inside of the Expeditor/Eclipse framework. The ICU4J Expeditor plugin and the core JVM shipped with the Notes Client must be updated for calendar entries to appear correctly after the operating system time zone rules have been updated. 
+
+
+
+
+
+Steps and behavior relative to Calendaring and Scheduling, and Resource Reservation functionality 
+Systems updated to the new Daylight Saving Time rules For all time zones, any existing calendar entry that falls outside the previous DST period will appear one hour off after the client operating system has been patched with the updated time zone rules. 
+
+
+Actions to take
+First, update your Notes Client and Domino Servers as noted above to apply the changed time zone rules for Uruguay. The sooner this is accomplished, the fewer entries will need updating later on.
+
+Once the systems have been updated, you will want to reschedule the affected calendar entries. Entries can either be manually rescheduled, or rescheduled using agents that IBM provides.
+
+How to manually reschedule Calendaring and Scheduling or Resource Reservation entries 
+It is possible to highlight an entry and reschedule it manually using the action button Owner Actions --> Reschedule. 
+
+Agents to assist with making updates to Calendar entries and Resource Reservations 
+
+IBM Lotus software has prepared a set of LotusScript agents that will update any existing Notes calendar entries and resource reservations to conform to the time zone rules. 
+
+The following document contains the agents, operating instructions, and specific details on the agents function: Agents for updating Calendaring and Scheduling entries and Resource Reservation entries for Uruguay Time Zone changes for 2015http://www-01.ibm.com/support/docview.wss?uid=swg21969839 [http://www-01.ibm.com/support/docview.wss?uid=swg21969839]

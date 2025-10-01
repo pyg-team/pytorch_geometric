@@ -1,0 +1,82 @@
+Title: IBM SAS_CONTROLLER_MEMERR : Host SAS Adapter exceeded memory correctable errors - United States
+
+Text:
+raid host idaa controller TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ System initiates a Host SAS Adapter exceeded memory correctable errors event because SAS controller needs attention due to SAS_CONTROLLER_MEMERR 
+
+SYMPTOM
+A - Notice alert if affected system uses IDAA: 
+
+DSNX881I ... HARDWARE NEEDS ATTENTION. HOST = <HOST> HARDWARE TYPE = SAS CONTROLLER HARDWARE ID = <HWID>
+LOCATION = <UPPER|LOWER> HOST* SAS CONTROLLER 
+
+B- Recieve email Alerts for SAS controller:
+
+NPS system nzhost - SAS Controller 1045 Needs attention. 
+System initiated. 
+
+location:lower host, SAS Controller 
+error string:Host SAS Adapter exceeded memory correctable errors threshold 
+memory correctable errors value: 6 threshold: 5 
+devSerial:XXXXXXXXXXXX 
+event source:System initiated 
+
+
+CAUSE
+Current RAID Controller FW Package Build: 24.2.1-0027
+
+Field Support Policy - N3001-001
+All N3001-001 models should arrive to the customer’s site with FDT 4.2.1 loaded, and with RAID controller version 24.2.1-0054 installed. If FDT’s sys_rev_check shows a lower RAID version installed, use FDT Support Tools to install the 24.2.1-0054 RAID patch.
+
+Field Support Policy - N3001-010 or larger
+All N3001-010 or larger models should arrive to the customer’s site with FDT 4.2.0.x loaded, and with RAID controller version 24.2.1-0027 installed. This is acceptable and no further action is required. Only in cases where ECC errors are presented post install should FDT 4.2.0.2 be loaded to deliver the 24.2.1-0054 RAID patch via FDT’s Service Tools
+
+
+
+ENVIRONMENT
+N3001-001 / MT 3561 with server MT 5460
+N3001-010 / MT 3567 and larger with server MT 8752 
+
+
+
+DIAGNOSING THE PROBLEM
+1 - Confirm HW issues:
+
+[nz@nzhost ~]$ nzhw -issues
+Description HW ID Location Role State Security
+------------- ----- -------------------------- ------ ------- --------
+SASController 1031 rack1.host1.SASController0 Active Warning N/A
+
+2 - Confirm messages in /nz/kit/log/sysmgr/sysmgr.log: 
+
+[nz@nzhost ~]$ grep 1031 /nz/kit/log/sysmgr/sysmgr.*
+/nz/kit/log/sysmgr/sysmgr.log:2016-09-24 00:30:24.840200 UTC (20525) Info: Changing state for '[SASController hwid=1031 sn="XXXXXXXXXXXX " Parent=1005]' reason is SAS_CONTROLLER_MEMERR
+/nz/kit/log/sysmgr/sysmgr.log:2016-09-24 00:30:24.849970 UTC (20525) Info: NZ-01524: the state of SASController [SASController hwid=1031 sn="XXXXXXXXXXXX " Parent=1005] changed from 'ok' to 'warning' 
+
+3 - Confirm messages in /nz/kit/log/eventmgr/eventmgr.log:
+[root@nzhost ~]# grep 1031 /nz/kit/log/eventmgr/eventmgr.*
+2016-09-24 00:30:24.872008 UTC (20541) Info: received & processing event type = hwNeedsAttention, event args = 'hwId=1031, hwType=SAS Controller, location=upper host, SAS Controller, devSerial=XXXXXXXXXXXX , eventSource=system, errString=Host SAS Adapter exceeded memory correctable errors threshold
+2016-09-24 00:30:24.879085 UTC (20541) Info: invoking cmd notifier, cmd = '/nz/dwa/active/cmd/bin/dwa-sendMessage -d "24-Sep-16, 00:30:24 UTC" -t 19 -l Warning -m "Hardware needs attention. Host = nzhost Hardware type = SAS Controller Hardware ID = 1031 Location = upper host, SAS Controller" -msg ""'
+2016-09-24 00:30:24.937641 UTC (20541) Info: invoking cmd notifier, cmd = '/nz/kit/bin/adm/nzcallhome -msg "--event hwNeedsAttention --hwId 1031 --hwType SAS Controller" -bodyText ""eventSrc=System initiated,eventTS=24-Sep-16, 00:30:24 UTC,detailText=eventType: hwNeedsAttention\neventTimestamp: 24-Sep-16, 00:30:24 UTC\neventArgs: hwId=1031, hwType=SAS Controller, location=upper host, SAS Controller, devSerial=XXXXXXXXXXXX , eventSource=system, errString=Host SAS Adapter exceeded memory correctable errors threshold
+
+4 - Confirm SAS Controller firmware version: 
+
+[root@nzhost ~]# /opt/MegaRAID/MegaCli/MegaCli64 -AdpAllInfo -aALL | grep -i 'product name' -A 3
+Product Name : ServeRAID M5210e
+Serial No : Y012BG47N02M
+FW Package Build: 24.2.1-0027
+
+
+RESOLVING THE PROBLEM
+Upgrade RAID Controller Firmware using FDT Support Tools as per README published along with tools. Three hours outage is needed along with iMM access or onsite support since each host will be rebooted at least 3 times.
+
+http://www.ibm.com/support/fixcentral [http://www.ibm.com/support/fixcentral] 
+Select Product >> 
+Product Group = Information Management 
+Select From Information Management = IBM Netezza Tools 
+Installed Version = FDTSUPPORT_<version>
+Platform = Linux >> Continue >> Browse for fixes >> Continue >> fix 
+pack: <version>-IM-Netezza-FDTSUPPTOOLS-fp109949 > 
+nz-FDTSupport-<version>.tar.gz (1.02 GB)

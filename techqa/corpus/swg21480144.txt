@@ -1,0 +1,27 @@
+Title: IBM "Error SPSS marker set font is not installed" when creating Interactive graph - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm trying to create an interactive graph but get the following error "Error SPSS marker set font is not installed". What does this error mean? 
+
+RESOLVING THE PROBLEM
+SPSS Marker Set is a font type SPSS for Windows installs and uses. For example, various symbols in an interactive scatterplot are from the SPSS Marker Set. Typically the error message means that SPSS Marker Set is not installed, or it is not properly registered. 
+
+To correct the problem, please try the following steps: 
+
+- Put the SPSS CD-ROM in the CD-ROM drive. 
+- Go to Start->Settings->Control Panel, double-click on Fonts. 
+- Go to File->Install New Font. Browse to the CD-ROM drive. Go to the SPSS folder on the CD-ROM, and the FONTS folder below the SPSS folder. Select SPSS Marker Set (TrueType). Click OK. (If you alread have theSPSS Marker Set font in the control panel, delete it and install the font from the SPSS CD-Rom)
+
+Now try to make the same interactive graph. The problem should not happen any more
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 45920

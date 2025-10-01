@@ -1,0 +1,190 @@
+Title: IBM JR46358: NNSTAT METHOD 1 OR 0 REPORTS SQL1227N RC=3 WHEN IT TRIES TO UPDATE HIGH2KEY TO SINGLE BLANK FOR AN INTEGER COLUMN - United States
+
+Text:
+  FIXES ARE AVAILABLE
+DB2 Version 9.7 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036646]
+DB2 Version 9.7 Fix Pack 9a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037559]
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  NNSTAT with method 1(or 0) reports SQL1227N RC=3 when it tries
+   to update HIGH2KEY/LOW2KEY to a single blank for a numerical
+   column:
+   
+   SQL1227N  The catalog statistic " " for column "HIGH2KEY" is out
+   of range for its target column, has an invalid format, or is
+   inconsistent in relation to some other statistic. Reason Code =
+   "3".
+   
+   The same error may happen to all numerical data type columns,
+   such as integer, float, decimal and double columns. The problem
+   only happens when DB2_COMPATIBILITY_VECTOR=ORA.
+   
+   REPRODUCE:
+   connect to fdbora;
+   drop server serv1;
+   create server serv1 type oracle version '11g' wrapper net8
+   options(node 'ora11gr2',VARCHAR_NO_TRAILING_BLANKS 'Y');
+   create user mapping for db2inst1 server serv1
+   options(remote_authid '<user name>',remote_password
+   '<password>');
+   set passthru serv1;
+   drop table test;
+   create table test(c1 number(6), c2  number(25), c3
+   number(38,12));
+   insert into test values(null,null,11.1);
+   insert into test values(null,1,22.2);
+   insert into test values(null,2,33.3);
+   insert into test values(null,3,44.4);
+   set passthru reset;
+   create nickname mt for  serv1."<user name>"."TEST";
+   call
+   sysproc.nnstat('SERV1','DB2INST1','MT',NULL,NULL,1,'/home/db2ins
+   t1/nnstat1.log::DIAG',?);
+   
+   In above case, the nicknames COLCARDs will be:
+   --------------------
+     C1's COLCARD = 0
+     C2's COLCARD = 3
+     C3's COLCARD = 4
+   --------------------
+   And if statistic data haven't been ran for the source table on
+   the Oracle server, all columns will have COLCARD = -1.
+   
+   Also, in a database created with DB2_COMPATIBILITY_VECTOR=ORA,
+   if COLCARD <= 3 , CREATE NICKNAME statement(NNSTAT with method 1
+    collects statistic data from remote data source by creating a
+   nickname)gets HIGH2KEY/LOW2KEY as a single blank ' '(0x20) for a
+    column with numerical data type.
+   
+   When NNSTAT tries to update HIGH2KEY/LOW2KEY to a single
+   blank(the HIGH2KEY/LOW2KEY value collected by creating the
+   nickname), the error happens. In this case, the column is an
+   numeric, and db2 need to convert the HIGH2KEY/LOW2KEY
+   string(single blank) to a native integer to interpret it
+   natively.  The conversion returns an error because single blank
+   is not a number:
+   
+   update SYSSTAT.COLUMNS SET (COLCARD, HIGH2KEY, LOW2KEY) = (3, '
+   ',' ') where TABNAME='MT' and COLNAME = 'C2'
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use method 2 instead.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * User who using NNSTAT                                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to V97fp9                                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR46358
+   
+   
+ * REPORTED COMPONENT NAME
+   WS FA UTILITIES
+   
+   
+ * REPORTED COMPONENT ID
+   5724N9716
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-15
+   
+   
+ * CLOSED DATE
+   2013-12-16
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC95248 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC95248] IC96260 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC96260]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS FA UTILITIES
+   
+   
+ * FIXED COMPONENT ID
+   5724N9716
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSN
+   UP
+   
+   
+ * R970 PSY
+   UP

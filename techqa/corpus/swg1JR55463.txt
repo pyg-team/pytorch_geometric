@@ -1,0 +1,135 @@
+Title: IBM JR55463: DOC APAR: STATEMENT ABOUT DIFFERENT JDBC JAR FILES FOR DISTINCTIVE JDK - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Knowlege Center Topic: Switching the edition of Java used in
+   IBM BPM
+   
+   Link:
+   www-01.ibm.com/support/knowledgecenter/SSFPJS_8.5.6/com.ibm.wbpm
+   .imuc.doc/topics/tswitchjavaversion.html?lang=en
+   
+   At step d. iv, there is statement in parentheses ' (where
+   jdbc_driver_jar is either ojdbc6.jar for Java 6 or ojdbc7.jar
+   for Java 7.1 or Java 7.0)'
+   
+   According to Oracle's documentation below, we could see that
+   for Oracle 11gR2, ojdbc6.jar should be used for both JDK 7 and
+   JDK 6.
+   
+   
+   http://www.oracle.com/technetwork/database/enterprise-edition/jd [http://www.oracle.com/technetwork/database/enterprise-edition/jd]
+   bc-faq-090281.html#01_01
+   
+   
+   If that is the case, for Oracle 11gR2, no matter, what JDK
+   customer choose from JDK7 and JDK 6, they should both use
+   ojdbc6.jar when choosing jdbc jar files.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  - With Oracle 11g R1 only Java 6 is supported
+   - With Oracle 11g R2 Java 6 and Java 7 are supported, both using
+   the ojdbc6.jar JDBC driver
+   - With Oracle 12c R1 Java 6 is supported with the ojdbc6.jar
+   driver, and Java 7 is supported with the ojdbc7.jar driver.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The content will be updated the next time the documentation is
+   refreshed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR55463
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-03
+   
+   
+ * CLOSED DATE
+   2016-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,33 @@
+Title: IBM Troubleshooting importing an .erwin file into IBM Rational Data Architect - United States
+
+Text:
+rda; import; erwin; error; troubleshooting; troubleshoot; importing; rational data architect; .erwin; 1259707 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote provides troubleshooting information for common errors and problems reported when attempting to import an ERwin model into IBM® Rational® Data Architect. 
+
+RESOLVING THE PROBLEM
+ The following are common issues encountered when importing an ERwin model into RDA. 
+
+ 1. The Next button in the Import Wizard is disabled.
+    To resolve this, confirm that you have the MetaIntegration path to your environment path variable.
+    For more information and instructions on how to enable the path, please see the release notes or technote 1251152.
+    
+    
+ 2. An error is reported by the Import Wizard.
+    
+    
+ 3. Make sure that:
+    a. You have ERwin installed on the workstation where you are performing the import.
+    b. Be sure that the import notation selected is not IDEF1X, since at this time RDA does not support this format. There is an enhancement request, RATLC00501015, for this functionality.
+    
+    
+ 4. A syntax or notation error is reported during the ERwin model import:
+    This can typically be corrected by validating the ERwin model to correct any errors.
+    
+    
+ 5. Confirm the version of ERwin model that is being imported. Try importing as a 3.x, 4.x or 7.x instead.
+    Note: In some cases, a 3.x import will be successful over 4.x.Export the model file from ERwin to an .xml and import the xml format into RDA.
+    
+    
+ 6. Export the model file from ERwin to an .xml and import the xml format into RDA.

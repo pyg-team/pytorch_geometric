@@ -1,0 +1,201 @@
+Title: IBM About relocation hyperlinks and HyperSlinks - United States
+
+Text:
+1123438; hyperslink; relocate; vob; rmhlink; mkhlink; ClearCase; Relocate; AIX; HP-UX; Linux; Solaris; Windows; 7.1; 7.0.1; 7.0.0.1; 7.0; 2003.06.16; 2003.06.15; 2003.06.14; 2003.06.13; 2003.06.12; 2003.06.10; 2003.06.01; 2003.06.00; relocationvob TECHNOTE (FAQ)
+
+QUESTION
+ What are the hyperlinks and hyperslinks that are created as a result of running an IBM® Rational® ClearCase® relocate command? 
+
+ANSWER
+ 
+
+Overview 
+
+The relocate command moves elements, including directory trees, from one VOB to another. 
+
+ 
+
+RelocationVOB Hyperlink 
+
+When you relocate elements, then perform a cleartool describe of the VOB you will always find at least one hyperlink. This is the RelocationVOB hyperlink. The RelocationVOB hyperlink points from the target VOB that the objects have been relocated back to the source VOBs in which the objects were originally located. 
+
+ 
+
+HyperSlink 
+
+The other type of hyperlink created from a relocate operation is a HyperSlink which is attached to specific elements. These hyperlinks occur only between VOB objects. 
+
+Review IBM Rational ClearCase Command Reference on the topic of relocate [http://publib.boulder.ibm.com/infocenter/cchelp/v7r0m1/topic/com.ibm.rational.clearcase.cc_ref.doc/topics/ct_relocate.htm](cleartool man relocate) for more information. 
+
+ 
+
+Locating Relocation Hyperlinks or HyperSlinks 
+
+The information below provides examples of the commands that can be used to identify the relocation hyperlinks: 
+
+ * Here is the element to be relocated from the source VOB, named source, to the target VOB, named target:
+   
+   M:\def1\source>cleartool ls -l r2.txt
+   version r2.txt@@\main\1 Rule: element * \main\LATEST
+   
+   
+ * A describe of the source VOB shows that there are no existing relocation hyperlinks:
+   
+   M:\def1\source>cleartool describe -l vob:.
+   versioned object base "\source"
+   created 2007-11-16T10:47:29-05 by User1 (User1.user@myhost)
+   VOB family feature level: 5
+   VOB storage host:pathname myhost:C:\data-stuff\clearcase_storage\vobs\source.vbs"
+   VOB storage global pathname "\\myhost\data\clearcase_storage\vobs\source.vbs"
+   database schema version: 54
+   modification by remote privileged user: allowed
+   VOB ownership:
+   owner DOMAIN1\User1
+   group DOMAIN1\user
+   Attributes:
+   FeatureLevel = 5
+   
+   
+ * The relocation of a single element is performed:
+   
+   M:\def1\source>cleartool relocate r2.txt ..\target
+   Logfile is "relocate.log.2007-12-03T153632-05".
+   Selected "r2.txt".
+   Do you want to relocate these objects? [no] y
+   Checked out "." from version "\main\8".
+   Checked out "M:\def1\target" from version "\main\7".
+   Locking selected objects
+   Locked "r2.txt"
+   Recreating selected objects
+   Created "r2.txt"
+   updated branch "\main"
+   updated version "\main\0"
+   created version "\main\1"
+   Cataloging new objects
+   cataloged "M:\def1\target\.@@\main\CHECKEDOUT.100\r2.txt"
+   cataloged symbolic link "M:\def1\source\.@@\main\7\r2.txt" -> "../target/r2.txt"
+   cataloged symbolic link "M:\def1\source\.@@\main\8\r2.txt" -> "../target/r2.txt"
+   Removing original objects
+   removed "r2.txt"
+   Checked in "M:\def1\source\." version "\main\9".
+   Checked in "M:\def1\target\." version "\main\8".
+   
+   
+ * This is the describe of the original source VOB which now shows the RelocationVOB hyperlink that was created as a result of the above relocate command:
+   
+   M:\def1\target>cleartool describe -l vob:\source
+   versioned object base "\source"
+   created 2007-11-16T10:47:29-05 by User1 (User1.user@myhost)
+   VOB family feature level: 5
+   VOB storage host:pathname 
+   myhost:C:\data-stuff\clearcase_storage\vobs\source.vbs"
+   VOB storage global pathname 
+   \\myhost\data\clearcase_storage\vobs\source.vbs"
+   database schema version: 54
+   modification by remote privileged user: allowed
+   VOB ownership:
+   owner DOMAIN1\User1
+   group DOMAIN1\user
+   VOB holds objects from the following views:
+   myhost:C:\data-stuff\clearcase_storage\views\def1.vws [uuid 
+   3dd4586.12774a7b.b4db.5a:b0:83:e1:9c:43]
+   Attributes:
+   FeatureLevel = 5
+   Hyperlinks:
+   RelocationVOB@101@\target <- vob:\target
+   
+   
+ * This is the describe of the target VOB which now shows the RelocationVOB hyperlink that was created as a result of the above relocate command:
+   
+   M:\def1\source>cleartool describe -l vob:\target
+   versioned object base "\target"
+   created 2007-11-16T10:48:05-05 by User1 (User1.user@myhost)
+   VOB family feature level: 5
+   VOB storage host:pathname 
+   myhost:C:\data-stuff\clearcase_storage\vobs\target.vbs"
+   VOB storage global pathname "\\myhost\data\clearcase_storage\vobs\target.vbs"
+   database schema version: 54
+   modification by remote privileged user: allowed
+   VOB ownership:
+   owner DOMAIN1\User1
+   group DOMAIN1\user
+   Attributes:
+   FeatureLevel = 5
+   Hyperlinks:
+   RelocationVOB@101@\target -> vob:\source
+   
+   
+ * The following find [http://publib.boulder.ibm.com/infocenter/cchelp/v7r0m1/topic/com.ibm.rational.clearcase.cc_ref.doc/topics/ct_find.htm]command can be used to find all the HyperSlinks on elements if they exist:
+   
+   M:\def1\target>cleartool find -avobs -element "{hltype(HyperSlink)}" -print
+   M:\def1\target\r2.txt@@
+   M:\def1\myvob\rel-dir@@
+   M:\def1\myvob\rel-dir4@@
+   M:\def1\myvob\r1.txt@@
+   
+   The above output shows that only one hyperlink of type HyperSlink was returned for our target VOB "target" from our example above and also includes elements relocated to other VOBs.
+   
+   UNIX example:
+   % cleartool find -avobs -element "{hltype(HyperSlink)}" -print
+   /export/home/stevek/vobs/skk_A_vob/include_skk/include@@
+   
+   
+ * A describe of the r2.txt@@ element yields the following:
+   
+   Note: The describe commands used in the examples below have to be performed against the element object (denoted by the use of the @@ extended namespace suffix [http://publib.boulder.ibm.com/infocenter/cchelp/v7r0m1/topic/com.ibm.rational.clearcase.hlp.doc/cc_main/c_about_ext_namespace.htm]). 
+   
+   M:\def1\target>cleartool describe -l r2.txt@@
+   file element "r2.txt@@"
+   created 2007-12-03T13:57:58-05 by User1 (User1.user@myhost)
+   element type: text_file
+   Protection:
+   User : DOMAIN1\User1 : r--
+   Group: DOMAIN1\user : r--
+   Other: : r--
+   source pool: sdft cleartext pool: cdft
+   Hyperlinks:
+   HyperSlink@151@\source <- M:\def1\source\.@@\main\7\r2.txt
+   
+   So, file element r2.txt in the above example is linked to version 7 of the root directory of the source VOB.
+   
+   UNIX example:
+   cleartool describe -l /export/home/stevek/vobs/skk_A_vob/include_skk/include@@
+   directory element "/export/home/stevek/vobs/skk_A_vob/include_skk/include@@"
+   created 2008-02-12T12:49:44-05:00 by Steven k (stevek.user@myhost)
+   element type: directory
+   Protection:
+   User : stevek : rwx
+   Group: user : r-x
+   Other: : r-x
+   source pool: sdft cleartext pool: cdft derived pool: ddft
+   Hyperlinks:
+   HyperSlink@74@/export/home/stevek/vobs/skk_vob <- /export/home/stevek/vobs/
+   skk_vob/design/models/functional/psite@@/main/1/include
+   
+ * History of the source directory version shows the relocation event that took place:
+   
+   M:\def1\source>cleartool lshistory -l -minor .@@\main\7
+   2007-12-03T15:36:35-05 User1 (User1.user@myhost)
+   make hyperlink "HyperSlink" on symbolic link "r2.txt" -> ../target/r2.txt
+   "Attached hyperlink "HyperSlink@151@\source"."
+   2007-12-03T15:36:32-05 User1 (User1.user@myhost)
+   create symbolic link "r2.txt" -> ../target/r2.txt
+   "Relocation from \source to \target.
+   VOB(9457bd00.cee74a62.bd9a.b4:57:f2:d1:5f:4b) -> VOB(ac230d3b.fe0d4010.b911.cf:97:8c:31:9a:33)"
+   
+   UNIXexample:
+   The following example shows the history of the relocated directory element. From the output we can see the relocation of the 2 file elements that were contained within the relocated directory.
+   
+   cleartool lshistory -l -minor include@@/main/1
+   2008-02-12T13:06:43-05:00 Steven k (stevek.user@myhost)
+   relocate file element "include/bar.o@@"
+   "Relocation from /export/home/stevek/vobs/skk_vob to /export/home/stevek/vobs
+   /skk_A_vob.
+   VOB(37d76c5d.d99311dc.8455.00:01:80:c6:61:38) -> VOB(6b276db7.d99311dc.8457.0
+   0:01:80:c6:61:38)"
+   2008-02-12T13:06:43-05:00 Steven k (stevek.user@myhost)
+   relocate file element "include/foo.o@@"
+   "Relocation from /export/home/stevek/vobs/skk_vob to /export/home/stevek/vobs
+   /skk_A_vob.
+   VOB(37d76c5d.d99311dc.8455.00:01:80:c6:61:38) -> VOB(6b276db7.d99311dc.8457.0
+   0:01:80:c6:61:38)"

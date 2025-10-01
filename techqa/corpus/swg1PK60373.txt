@@ -1,0 +1,141 @@
+Title: IBM PK60373: WHEN AUGMENTING THE ND PROFILE AT THE COMMAND LINE, IF A USER PASSES -PROFILEPATH ARGUMENT, THE PROFILE AUGMENTATION WILL FAIL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When augmenting the ND profile at the command line, if a user
+   passes -profilePath argument, the profile augmentation will fail
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of WebSphere Application Server   *
+   *                  V6.1 Feature Pack for Web Services          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Profile Augmentation Fails when         *
+   *                      Augmenting the Network Deployment       *
+   *                      Profile with the -profilePath Argument  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When you specify the -profilePath argument during profile
+   augmentation, the profile augmentation fails with a
+   java.lang.IllegalArgumentException.
+   
+   There is a profilePathNotFound flag that is erroneously set
+   when the -profilePath argument is used, which causes one of
+   the ant tasks to not run one of the python scripts that should
+   have created a log file.  Then the ant task attempts to set
+   the wsadmin.output to the contents of the missing log file,
+   which results in the java.lang.IllegalArgumentException.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The ant task was updated to no longer set the
+   profilePathNotFound flag, and subsequently no longer check
+   for that flag when determining whether to run the python
+   script that results in creating the log file.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 6.1.0.17 for the Feature Pack for web services.
+   Please refer to the Recommended Updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK60373
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSERVIC FEATU
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0850
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-02-01
+   
+   
+ * CLOSED DATE
+   2008-05-21
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSERVIC FEATU
+   
+   
+ * FIXED COMPONENT ID
+   5724J0850
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

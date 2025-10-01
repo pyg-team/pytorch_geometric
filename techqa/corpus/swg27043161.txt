@@ -1,0 +1,43 @@
+Title: IBM Enabling logging for Daeja ViewONE viewers - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ You can enable logging for Daeja ViewONE Professional and Daeja ViewONE Virtual from the IBM Content Navigator administration tool. If you know that a problem occurs for a specific feature, you can target your logging to that feature. 
+
+CONTENT
+About this task 
+
+You can use logging to troubleshoot problems with Daeja ViewONE Professional and Daeja ViewONE Virtual. If you have enabled the server modules for document streaming or permanent redaction, you can also use logging to troubleshoot problems with those modules. 
+
+You can enable different types of logging: 
+
+ *  Enable trace logging if you want to troubleshoot general issues with the viewer or module. Enable network logging if you want to determine where delays occur with the viewer or module or to troubleshoot errors with your server connection, MIME types, or file length. Enable annotations logging if you want to troubleshoot issues with creating, saving, or loading annotations in the viewer.
+   
+
+For DaejaViewONE Professional, the logging information is written to the Java console on the client machine:  *  On Windows systems, you can access the Java console from the Control Panel. On Mac OS systems, you can access the Java console from the System Preferences. 
+
+
+For Daeja ViewONE Virtual, Document Streaming Server Module, and Permanent Redaction Server Module, you must specify the fully qualified path and name of the log file where you want to store logging information. install_dir is the directory where IBM Content Navigator is installed:  *  Daeja ViewONE Vitual logging: 
+   install_dir\config\virtual.log Document Streaming Server Module logging: 
+   install_dir\config\streamer.log Permanent Redaction Server Module logging: 
+   install_dir\config\redactofile.log 
+
+
+Note: You can use the keyword <stdout> for a log file name. The Daeja logs will be routed to the application server's STDOUT location. For example, WebSphere application server redirects STDOUT messages to the SystemOut.log file by default. 
+
+Important: If you remove the log file name, you disable logging for the viewer or module. If you do not specify a location for the log file, the log file is not created. 
+
+
+Procedure 
+To configure logging for Daeja ViewONE viewers and modules:  1. Open the IBM Content Navigator administration tool and click Settings. 
+ 2. Click the Logging tab. In the Daeja ViewONE logging section, enable the types of logging information that you want to view:  * For Daeja ViewONE Professional logging, enable trace, network, or annotations logging. 
+     * For Daeja ViewONE Virtual logging, enable trace, network, or annotations logging, and specify the name of the log file where you want to store the logging information. 
+     * For Document Streaming Server Module logging, enable trace or network logging, and specify the name of the log file where you want to store the logging information. 
+     * For Permanent Redaction Server Module logging, enable trace or network logging, and specify the name of the log file where you want to store the logging information.
+    
+    
+ 3. Save your changes. 
+ 4. Optional: If you need to set other parameters for logging, click Settings > Daeja ViewONE, click the applicable tab, and use Additional Settings to specify the parameter and value. For more information about parameters and valid values, see IBM Daeja ViewONE Parameters Reference Manual [http://www.ibm.com/support/knowledgecenter/SSTPHR_4.1.5/com.ibm.viewone.configuring/dvoco000.htm]. 
+ 5. Restart the IBM Content Navigator server for the logging changes to take effect.

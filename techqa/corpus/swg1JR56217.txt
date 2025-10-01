@@ -1,0 +1,219 @@
+Title: IBM JR56217: Unable to connect to an MQ server with authentication enabled - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.0.0.9-WS-WCServer-IFJR56217 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Commerce&fixids=7.0.0.9-WS-WCServer-IFJR56217&source=SAR]
+7.0.0.9-WS-WCDeveloper-IFJR56217 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Commerce&fixids=7.0.0.9-WS-WCDeveloper-IFJR56217&source=SAR]
+WebSphere Commerce Version 8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042578]
+JR57861 - Mandatory cumulative Interim Fix 5 for WebSphere Commerce Version 7 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24043761]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When configuring WebSphere Commerce to connect to a WebSphere MQ
+   server that has authentication enabled, you might receive an
+   error similar to the following:
+   
+   [6/27/16 16:08:18:089 CDT] 00000035 CommerceSrvr  E
+   com.ibm.commerce.messaging.listener.TransportAdapterSerialDispat
+   cher process() CMN9907E: A resource exception occurred during
+   processing: "Messaging system cannot establish a JMS Session for
+    QueueConnectionFactory
+   com.ibm.ejs.jms.JMSQueueConnectionFactoryHandle@2e932e93
+   ...
+   ...
+   Caused by: com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ call
+    failed with compcode '2' ('MQCC_FAILED') reason '2059'
+   ('MQRC_Q_MGR_NOT_AVAILABLE').
+   	at
+   com.ibm.msg.client.wmq.common.internal.Reason.createException(Re
+   ason.java:223)
+   	... 33 more
+   Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2059;AMQ9204:
+   Connection to host 'myhost.com(1445)' rejected.
+   [1=com.ibm.mq.jmqi.JmqiException[CC=2;RC=2059;AMQ9213: A
+   communications error for  occurred.
+   [1=java.net.ConnectException[Connection
+   refused],3=myhost.com]],3=myhost.com(1445),5=RemoteTCPConnection
+   .connnectUsingLocalAddress]
+   	at
+   com.ibm.mq.jmqi.remote.internal.RemoteFAP.jmqiConnect(RemoteFAP.
+   java:2147)
+   	at
+   com.ibm.mq.jmqi.remote.internal.RemoteFAP.jmqiConnect(RemoteFAP.
+   java:1305)
+   	at
+   com.ibm.msg.client.wmq.internal.WMQConnection.<init>(WMQConnecti
+   on.java:372)
+   	... 32 more
+   
+   
+   
+   Logs on the MQ server might contain an error similar to the
+   following:
+   
+   AMQ5540: Application 'WebSphere MQ Client for Java' did not
+   supply a user ID and password.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   WebSphere Commerce Version 7 and Version 8 administrators
+   integrating with WebSphere MQ.
+   
+   PROBLEM ABSTRACT:
+   Unable to connect to an MQ server with authentication enabled
+   
+   BUSINESS IMPACT:
+   Site administrators cannot configure WebSphere Commerce with MQ.
+   
+   RECOMMENDATION:
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added business logic to enable the capability to connect to a
+   secured WebSphere MQ Server by using a user defined username and
+    password.
+   
+   To use this fix with the Serial and Parallel MQ Listeners,
+   complete the following steps:
+   
+   1. Use the wcs_encrypt to encrypt the secured WebSphere MQ
+   server.
+   
+   2. Update wc-server.xml file with the following new section:
+       <Inbound>
+         <InboundSerialConnector
+           TimeToReconnect="600"
+           default="true"
+           enabled="true" id="1" name="Listener for WebSphere MQ
+   (JMS Inbound) - Serial">
+   ...
+             <EditableProperty
+               Admin="userName"
+               display="false"
+               editable="Yes"
+               name="setUser" value="<MQ user name>"/>
+             <EditableProperty
+               Admin="password"
+               display="false"
+               editable="Yes"
+               encrypt="Yes"
+               name="setPassword" value="<MQ user encrypted
+   password>"/>
+   
+   3. Restart the server and these settings will take effect.
+   
+   To enable sending outbound messages to be sent to the secured
+   WebSphere MQ server, complete the following steps:
+   
+   1. Logon to WebSphere Commerce Administration console and
+   configure the message type according to Knowledge Center page:
+   
+   http://www.ibm.com/support/knowledgecenter/SSZLC2_8.0.0/com.ibm.
+   commerce.admin.doc/tasks/tcvsastrn.htm [http://www.ibm.com/support/knowledgecenter/SSZLC2_8.0.0/com.ibm.commerce.admin.doc/tasks/tcvsastrn.htm]
+   
+   2. Add the WebSphere MQ user name and password on the last page
+   and save the setting.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56217
+   
+   
+ * REPORTED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * REPORTED COMPONENT ID
+   5724I3800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / New Function / Installability / 
+   
+   
+ * 
+    Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-28
+   
+   
+ * CLOSED DATE
+   2016-07-18
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * FIXED COMPONENT ID
+   5724I3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

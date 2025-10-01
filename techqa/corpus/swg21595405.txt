@@ -1,0 +1,39 @@
+Title: IBM Original wasadmin user cannot see Sametime System Console information/option - United States
+
+Text:
+login; logging; log in; was; console; wasadmin; cannot see; can't see; cannot view; Sametime; System; information; option; bottom; left pane; role; assign; all users TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When logging into the IBM WebSphere Application Server console via a browser, the original wasadmin user cannot see the IBM Sametime System Console information / option at the bottom of the left pane.
+
+CAUSE
+This problem is usually caused by a role mapping issue in the WebSphere Application Server deployment manager (Dmgr).
+On the Dmgr Console page --> Users and Groups --> Administrative User Roles, the wasadmin user is typically listed twice, once as the "Role: Primary administrative Username" and the second time as "Role: All Authenticated Users." 
+
+If the wasadmin does not have the role of All Authenticated Users, this is why he/she cannot see the Sametime System Console settings at the bottom of the page.
+
+
+RESOLVING THE PROBLEM
+To fix the problem: 
+
+
+1. In the Sametime System Console, open a command prompt and enter the following:
+
+
+ * C:\IBM\WebSphere\AppServer\profiles\STSCAppProfile\bin>wsadmin -lang jython
+ * 
+
+2. Type the wasadmin user name and password when prompted. 
+
+3. When you get a command prompt, type the following:  * 
+ * wsadmin>AdminTask.mapUsersToAdminRole('[-userids ["wasadmin"] -roleName "All Authenticated Users"]')
+ * 
+ * 
+ * 
+ * 
+
+4. Then type wsadmin>AdminConfig.save(). 
+
+5. Once complete, restart the deployment manager, node, and SSC. 
+
+The wasadmin user should now be able to see the Sametime System Console options when logging out and back into the console.

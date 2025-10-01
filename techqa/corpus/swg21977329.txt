@@ -1,0 +1,29 @@
+Title: IBM The WTX Map node plugin is not present in the IIB Toolkit V10.0 after installing ITX for Integration Servers V9.0 - United States
+
+Text:
+WTX IIB ITX Toolkit WTX node TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The WTX Map node plugin is not present in the IBM Integration Bus (IIB) Toolkit V10.0 after installing the IBM Transformation Extender (ITX) for Integration Servers V9.0.
+
+
+SYMPTOM
+The WTX Map node is not present after Installing IBM Integration Bus (IIB) V10.0 with IBM Transformation Extender (ITX) for Integration Servers V9.0.
+
+
+
+CAUSE
+In IBM Transformation Extender (ITX) 9.0, the Design Studio integrates with the IIB Toolkit without the need to install IBM Transformation Extender for Integration Servers run time on the design time computer.
+
+ENVIRONMENT
+Installing IIB Toolkit V10 with ITX Design Studio V9.0 and ITX for Integration Servers V9.0 to use the ITX Map node plugin to run ITX maps.
+
+DIAGNOSING THE PROBLEM
+The WTX Map node is not present in the IIB Toolkit after installing the following.
+
+IBM Integration Bus (IIB) V10.0
+IBM Transformation Extender Design Studio (ITX) V9.0
+IBM Transformation Extender for Integration Servers V9.0
+
+RESOLVING THE PROBLEM
+Follow the steps to 'Integrate the ITX Design Studio perspective with IBM Integration Bus Toolkit to use the WTX map node in the Toolkit' that is documented in the Release notes for IBM Transformation Extender for Integration Servers, V9.0.0 [http://www.ibm.com/support/docview.wss?uid=swg27047429].

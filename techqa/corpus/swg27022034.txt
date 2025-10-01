@@ -1,0 +1,74 @@
+Title: IBM Content Manager OnDemand for z/OS V9.0 publication library - United States
+
+Text:
+Content Manager OnDemand for z/OS V9.0; publication library; cmod for z/OS 9.0; cmod documentation; zos docs PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains links to the most important and most frequently used documents for IBM® Content Manager OnDemand for z/OS® Version 9.0. In this document, you can find links to the Content Manager OnDemand Information Center and product system requirements. You can also access documentation for other versions of Content Manager OnDemand for z/OS and information centers for related products. 
+
+CONTENT
+ 
+
+LINKS TO CONTENT MANAGER ONDEMAND FOR Z/OS LIBRARIES AND THEIR CORRESPONDING DOCUMENTS
+ *  Version 9.5 [http://www.ibm.com/support/docview.wss?rs=86&uid=swg27041744] 
+ *  Version 9.0 [http://www.ibm.com/support/docview.wss?rs=86&uid=swg27022034] - selected tab, 
+
+ANCHOR LINKS
+ * What's new?
+ * Maintenance
+ * Getting started
+ * Product documentation
+ * Related libraries
+ * Community
+
+
+
+
+
+WHAT'S NEW?
+Learn about new features and changes that were introduced in the current release of Content Manager OnDemand for z/OS. 
+
+Document Format V9.0 announcement [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/4/872/ENUSAP12-0274/index.html&lang=en&request_locale=en] HTML What's new in Content Manager OnDemand for z/OS [http://www.ibm.com/support/knowledgecenter/SSEPCD_9.0.0/com.ibm.ondemand.doc/od90new.htm] HTML Back to top
+
+
+GETTING STARTED
+Learn how to download and install the product and get an overview of important product concepts.
+
+Document Format Hardware and software requirements [http://www.ibm.com/support/docview.wss?rs=897&uid=swg27021456] HTML Information Roadmap [http://www.ibm.com/support/docview.wss?rs=897&uid=swg27009157] HTML Back to top
+
+
+
+
+
+
+
+PRODUCT DOCUMENTATION
+Access the documentation that is delivered with the product in multiple formats and languages.
+
+
+INFORMATION CENTER
+All of the information that is in the PDF documentation is included in the information center, where you can easily search across all documentation. In the information center, the documentation will be displayed in your language (if it has been translated into that language) based on your browser locale setting. The information center is updated more often than the PDF documentation.
+
+Document Format Content Manager OnDemand Information Center [http://publib.boulder.ibm.com/infocenter/cmod/v9r0m0/index.jsp] HTML Back to top
+
+
+PDF DOCUMENTATION 
+
+
+BRAZILIAN PORTUGUESE
+Introduction and Planning Guide (S517-0105-00) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=S517-0105-00] PDF ENGLISH
+Administration Guide (SC19-3364-00) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3364-00] PDF Configuration Guide (SC19-3363-00) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3363-00] PDF Indexing Reference (SC19-3368-00) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3368-00] PDF Introduction and Planning Guide (SC19-3365-00) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3365-00] PDF Messages and Codes Guide (SC19-3356-00) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3356-00] PDF OnDemand Distribution Facility Guide (GC19-3343-00) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=GC19-3343-00] PDF OnDemand Web Enablement Implementation Guide (SC19-3353-00) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3353-00] PDF JAPANESE
+Administration Guide (SA88-4870-00) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SA88-4870-00] PDF Indexing Reference (SA88-4871-00) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SA88-4871-00] PDF Configuration Guide (SA88-4869-00) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SA88-4869-00] PDF Introduction and Planning Guide (SA88-4872-00) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SA88-4872-00] PDF OnDemand Distribution Facility Installation and Reference Guide (GA88-4873-00) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=GA88-4873-00] PDF SPANISH
+Introduction and Planning Guide (SC11-8144-00) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC11-8144-00] PDF Back to top
+
+
+RELATED LIBRARIES
+Access the documentation for prerequisite and corequisite products.
+
+Document Format IBM Web Interface for Content Management Version 1.0.4 Information Center [http://publib.boulder.ibm.com/infocenter/cmod/v8r4m1/index.jsp?topic=/com.ibm.ciwbi.doc/cdnwo000.htm] HTML IBM Content Integrator Version 8.5 Information Center [http://publib.boulder.ibm.com/infocenter/ce/v8r5/index.jsp] HTML Back to top
+
+
+COMMUNITY
+Share your experiences, expertise, and feedback with other product users and IBM.
+
+Document Format OnDemand User's Group [http://www.odusergroup.org/] HTML Code sample exchange site [https://www.ibm.com/developerworks/mydeveloperworks/?categoryID=24] HTML Back to top

@@ -1,0 +1,154 @@
+Title: IBM IC78628: TAM CONFIGURATION PROPERTY IGNORED IN DATAPOWER FIRMWARE VERSIONS 3.8.1.0 AND LATER. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A DataPower Tivoli Access Manager (TAM) object supports the use
+   of SSL connections to the TAM registry server.  The
+   cryptographic material to complete this connection is provided
+   to the DataPower TAM object in a keystore database (kdb) file.
+   If the TAM registry server requires authentication of a client
+   through certificate authentication, the kdb file  must contain a
+   valid certificate.
+   
+   If the required client certificate in the kdb file is not the
+   default certificate, the label of the required certificate must
+   also be provided so that the TAM object can use the correct
+   certificate to authenticate to the TAM registry server.
+   
+   This configuration property is called "ldap-ssl-key-file-dn"
+   from the command line, "LDAPSSLKeyFileLabel" for use through the
+   XML Management Interface, and "Registry Server SSL Key File
+   Label" in the WebGUI.
+   
+   This configuration property is ignored in DataPower versions
+   3.8.1.0 and later no matter where it is set (command line,
+   WebGUI, SOAP request through XML management interface, or
+   configuration import).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Affected is the use of TAM feature.
+   
+   If the required client certificate in the kdb file is not the
+   default certificate, the needed specification of the required
+   certificate label does not take effect.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is available in 3.8.1.16, 3.8.2.7, 4.0.1.4,
+   4.0.2.1 and XE82 1.0.0.2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Refrain from using TAM user registry SSL client authentication
+   certificates that are not the default certificate in their
+   keystore file.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC78628
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-15
+   
+   
+ * CLOSED DATE
+   2011-09-21
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R381 PSY
+   UP
+   
+   
+ * R382 PSY
+   UP
+   
+   
+ * R401 PSY
+   UP

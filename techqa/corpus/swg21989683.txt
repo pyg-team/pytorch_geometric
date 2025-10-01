@@ -1,0 +1,39 @@
+Title: IBM Case Analyzer cubes processing job generatesThe operation has been cancelled due to memory pressure errors - United States
+
+Text:
+process TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Case Analyzer cubes processing job generatesThe operation has been cancelled due to memory pressure errors 
+
+SYMPTOM
+Sample error message: 
+
+VMAE - Case Analyzer - Cube processing failed for store VMAE. Excepton:
+java.lang.Exception: Server: The operation has been cancelled due to
+memory pressure.
+Errors in the OLAP storage engine: An error occurred while the 'Quarter
+attribute 2' attribute of the 'Time - Work Item Processing Time'
+dimension from the 'VMAE' database was being processed.
+Errors in the OLAP storage engine: The process operation ended because
+the number of errors encountered during processing reached the defined
+limit of allowable errors for the operation.
+Internal error: The operation terminated unsuccessfully.
+
+
+ENVIRONMENT
+Case Analyzer 5.2.1, Microsoft® SQL 2012
+
+
+RESOLVING THE PROBLEM
+The operation has been cancelled due to memory pressure error is an error message generate by the Microsoft® Analysis Services server. The Microsoft® Analysis Services server has to be tuned, so that it has sufficient memory to handle the cubes processing job. 
+
+On the other hand, the cubes processing job's memory requirement increases with Case Analyzer data size, which may grow over time. There are best practices to keep the Case Analyzer data size from growing out of control: 
+
+. 
+
+ 1. Ensure that the Case Analyzer pruning job is scheduled to run daily. 
+ 2. Ensure that the size of the Case Analyzer dimension tables are under control. You can check the sizes of tables that have names starting with D_DM in the Case Analyzer store database.
+
+
+. If there are large dimensions, consider running the Case Analyzer compression wizard. Evaluate if the large dimension is a truly required component in the Case Analyzer store. OLAP reporting does not favor large dimension sizes in general. If a dimension is growing out of control, that may be a sign that the dimension is not an ideal candidate for generating OLAP reports.

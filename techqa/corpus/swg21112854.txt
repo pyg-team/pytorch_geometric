@@ -1,0 +1,40 @@
+Title: IBM Reversion considerations for IBM Informix Dynamic Server 9.40 - United States
+
+Text:
+9.4; 9.40; revert; reversion; IDS; large; chunks; chunk; Big Chunk TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Reversion considerations for IBM Informix Dynamic Server 9.40 
+
+RESOLVING THE PROBLEM
+New features implemented in IBM Informix Dynamic Server 9.40 have imposed necessary considerations regarding potential reversions from this engine version.
+The implementation of the new large chunk feature introduced 3 modes of large chunk support in which the server may be running. These modes are commonly referred to as large chunks unsupported mode, mixed mode and large chunk mode.
+
+In large chunks unsupported mode, any attempts to add a large chunk, a large offset or more than 2047 chunks is prohibited. This mode allows testing of the 9.40 server apart from the large chunk capability without compromising the ability to revert to a previous version of IDS. 
+
+In mixed mode, large chunks are supported and writes to these chunks are executed in a new page format. Old page format is still used for small chunks. If a large chunk is added to a space, then reversion will not be possible until the space is dropped. Dropping the chunk itself will not satisfy requirements for reversion. The following message is reported when trying to revert under these conditions:
+
+
+
+ * Reversion to pre 9.4 not allowed with system having large chunks or having space that have ever had a large chunk
+ * 
+
+
+Beginning with mixed mode, the implementation of the feature enabling large chunks relaxed the instance limit of 2047 chunks to 32766 chunks. A reversion cannot be attempted if any chunk exists that has a chunk number greater than 2047. The following message is reported when trying to revert and a chunk number greater than 2047 exists: 
+
+ * Reversion to pre 9.4 not allowed with system having 
+ * 
+ * chunks with chunk number greater than 2047
+ * 
+
+
+In large chunk mode, all writes to any chunks are executed in the new page format and reversion can no longer be attempted. The following message is reported when trying to revert while in this mode: 
+
+ * Reversion to pre 9.4 not allowed when system is in 
+ * 
+ * Exclusive Big Chunk Mode
+
+
+IBM Informix Dynamic Server 9.40 has allowed the ability for chunk reserved page extents to be allocated from non-root chunks in the root dbspace. Since prior versions of IBM Informix Dynamic Servers do not allow the chunk reserved pages to be allocated from non-root chunks of the root dbspace, it is necessary for the server to put all the chunk reserved pages back into the primary root chunk. A database administrator needs to ensure the root chunk has enough space for this procedure. An alternative method would be to drop those chunks listed in the reserved pages located in non-root chunks of the root dbspace. The following message is reported when trying to revert and extended chunk reserved pages exist in non-root chunks of the root dbspace such that 12 pages of contiguous free pages in the root chunk of the root dbspace are necessary for reversion: 
+
+ * Fail to put chunk reserve page extent into root chunk because not enough continuous space is available in root chunk. 12 space is required.

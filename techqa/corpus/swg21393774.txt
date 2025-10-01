@@ -1,0 +1,40 @@
+Title: IBM Resource manager - "Too many open files" error message - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What is the possible cause for the error message "Too many open files" on the resource manager? 
+
+SYMPTOM
+Documents are not storing on the resource manager and a set of error messages similar to the following are found in the resource manager log file. 
+
+ICMRM:ERROR 2008-09-11 16:52:56.122000 context: [WebContainer : 310] - java.io.FileNotFoundException: /lbosf01/lbosdata/00001/42/L1.A1001001A08I11A95134B84725.V1 (Too many open files) - getInputStream(FileSystem.java:311)
+java.io.FileNotFoundException: /lbosf01/lbosdata/00001/42/L1.A1001001A08I11A95134B84725.V1 (Too many open files)
+
+ICMRM:ERROR 2008-09-11 16:52:56.124000 context: [WebContainer : 310] - com.ibm.mm.icmrm.exceptions.RMIOException: /lbosf01/lbosdata/00001/42/L1.A1001001A08I11A95134B84725.V1 (Too many open files) - retrieveObject(RMDatastore.java:1145)
+com.ibm.mm.icmrm.exceptions.RMIOException: /lbosf01/lbosdata/00001/42/L1.A1001001A08I11A95134B84725.V1 (Too many open files)
+
+ICMRM:ERROR 2008-09-11 16:52:56.117000 context: [WebContainer : 295] - java.io.IOException: The process file table is full. - getOutputStream(FileSystem.java:166)
+java.io.IOException: The process file table is full.
+at java.io.File.createNewFile(File.java:876)
+
+
+CAUSE
+They key to determining if this document applies to your situation is the third error that contains the text "The process file table is full."
+
+This error indicates that the WebSphere Application Server that the resource manager application is deployed on does not have a large enough thread pool defined for the WebContainer to support the number of concurrent users storing and retrieving from the resource manager.
+
+
+RESOLVING THE PROBLEM
+Increase the WebContainer thread pool maximum size to a number large enough to accommodate your workload. 
+
+For example, on WebSphere Application Server 6.1: 
+
+1. Log on to the WebSphere Application Server administration console at the following path: 
+
+ * 
+ * http://rmhostname:9060/ibm/console
+
+
+2. Navigate to Servers > Application Servers > server1 > Thread Pools > WebContainer and increase the Maximum Size = xxxxx threads.

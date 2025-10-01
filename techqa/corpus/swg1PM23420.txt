@@ -1,0 +1,164 @@
+Title: IBM PM23420: CLASSCASTEXEPTION RENDERING URLCMPNT TAG FROM LOCAL RENDERING PORTLET WITH SERVLET CACHING ENABLED - United States
+
+Text:
+  A FIX IS AVAILABLE
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When WebSphere Portal server is configured to use Servlet
+   caching, and a URLCmpnt tag is rendered from
+   the WCM Local Rendering Portlet, a classcastexception is
+   thrown.
+   
+   For example:
+   [9/20/10 16:05:01:234 IST] 00000044 Cmpnt         W
+   IWKPC1085X:
+   Exception while rendering inlined component type: class
+   com.aptrix.pluto.cmpnt.WCMURLCmpnt - Exception:
+   java.lang.ClassCastException:
+   com.ibm.ws.cache.servlet.CacheProxyResponse incompatible with
+   org.apache.jetspeed.portlet.PortletResponse
+   java.lang.ClassCastException:
+   com.ibm.ws.cache.servlet.CacheProxyResponse incompatible with
+   org.apache.jetspeed.portlet.PortletResponse
+   at
+   com.aptrix.pluto.cmpnt.WCMURLCmpnt.resolveLocally(WCMURLCmpnt
+   .ja
+   va:636)
+   at
+   com.aptrix.pluto.cmpnt.WCMURLCmpnt.getTargetCmpnt(WCMURLCmpnt
+   .ja
+   va:333)
+   at
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When WebSphere Portal server is configured to use Servlet
+   caching, and a URLCmpnt tag is rendered from
+   the WCM Local Rendering Portlet, a classcastexception is
+   thrown.
+   
+   For example:
+   [9/20/10 16:05:01:234 IST] 00000044 Cmpnt         W
+   IWKPC1085X:
+   Exception while rendering inlined component type: class
+   com.aptrix.pluto.cmpnt.WCMURLCmpnt - Exception:
+   java.lang.ClassCastException:
+   com.ibm.ws.cache.servlet.CacheProxyResponse incompatible with
+   org.apache.jetspeed.portlet.PortletResponse
+   java.lang.ClassCastException:
+   com.ibm.ws.cache.servlet.CacheProxyResponse incompatible with
+   org.apache.jetspeed.portlet.PortletResponse
+   at
+   com.aptrix.pluto.cmpnt.WCMURLCmpnt.resolveLocally(WCMURLCmpnt
+   .ja
+   va:636)
+   at
+   com.aptrix.pluto.cmpnt.WCMURLCmpnt.getTargetCmpnt(WCMURLCmpnt
+   .ja
+   va:333)
+   at
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WCM Changed to resolve the issue
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM23420
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   61C
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-28
+   
+   
+ * CLOSED DATE
+   2011-01-26
+   
+   
+ * LAST MODIFIED DATE
+   2011-01-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R615 PSY
+   UP

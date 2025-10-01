@@ -1,0 +1,96 @@
+Title: IBM How to install multiple instances of WebSphere Transformation Extender on a UNIX platform - United States
+
+Text:
+Install multiple multiple Launcher Command multiple launchers command server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You would like to run more than one WebSphere® Transformation Extender (WTX) Launcher on a UNIX® or Linux® platform.
+
+You would like to run both the WTX Command Server and Launcher at the same time on a UNIX or Linux platform.
+
+You would like to run multiple WTX Command Servers at the same time on a UNIX or Linux platform, or run a combination of multiple Launchers and Command Servers. 
+
+RESOLVING THE PROBLEM
+Improper installation or configuration of multiple instances of WTX can cause a number of problems. These can include shared memory corruption, the Launcher being unable to start, or the Launcher producing a core upon startup. 
+
+These instructions are split into two sections. The first section details the adminstration steps that need to be taken before running WTX. The second section details the steps the individual users for each installation need to take to configure the product.
+
+
+ * Administration instructions
+ * User instructions
+
+
+
+
+
+
+ 
+
+Administration Instructions  1. Create the temporary directories and change permissions to the directories.  1. Create directory for the installation files. If you are installing separate Launcher and Command Server instances, create an installation directory for each. You can delete all directories created in this step after the installation is complete.  1. Place the installation archive (*.tar) file in the appropriate directory. 
+         2. Extract the installation files from the archive (*.tar) file. 
+         3. Change permissions on the installation files to allow anyone to execute them.
+        
+        
+     2. Create a directory for the installation process to create temporary files and set the permissions to allow anyone to read, write, and execute. Only one directory is needed as it will be re-used by each install. This directory may be deleted after the installation is complete.
+    
+    
+ 2. Create a different user for each installation. You will use a different user during each installation process. The user associated which each installation is the user that should run the Command Server or Launcher. 
+ 3. Install the application.  1. Log in to the system as the user you have selected for the installation. You can also use the substitute user identity (su) command to log in. 
+     2. Create the installation directory for the product you are going to install. 
+     3. Run the installation script.  * When you are prompted to enter a temporary working directory, type in the directory you created in step 1,b. 
+         * When you are prompted to enter the installation directory, type in the appropriate directory you created in step 3,b.
+        
+        
+     4. Verify the installation.  1. Change directory to the installation directory. 
+         2. Run the setup script located in this directory >. ./setup 
+         3. Change directory to <install_directory>/examples/general/map/sinkmap. 
+         4. Run the example map via the Command Server. The installation is verified if the map runs successfully and creates a trace file and audit log in the directory. > dstx sinkmap.mmc -AE 
+        
+        
+    
+    
+ 4. Repeat step 3 for each instance of the application you would like installed. 
+ 5. Create a UNIX profile script (.profile file) that can be shared by the users created in step 2. At minimum, the profile script should set the user environment to include the following.  * paths for any library the user will need to access (for example, if an Oracle Database is used in a map, the Oracle Database libraries must be in the path) 
+     * paths and other environment variables needed to run the correct version of Java® (see your installation documentation for the correct version) 
+     * paths and other environment variables needed to run a system debugger (dbx or gdb are recommended) 
+     * paths and other environment variables needed to run an X Window system 
+     * you may also want to add the setup script provided with the WTX installation to the end of the profile script (see step 3,d,i and 3,d,ii)
+    
+    
+
+ * Note:
+ * 
+
+
+Back to top
+
+
+
+User Instructions  1. Log in as the user for the instance you would like to configure. 
+ 2. Change directory to the installation directory. 
+ 3. Optional: If your profile script does not set the WTX environment, you must run the setup script. 
+ 4. Run the Launcher Adminstration tool script at the command line. > launcheradmin.sh 
+ 5. You must configure the ports for each individual Launcher. Make sure that you use different ports for each instance of the Launcher.  1. Select the General tab. 
+     2. Set the Connection > Listening Ports. Do not use the default Listening Ports if more than one Launcher will be used. Each Launcher requires three listening ports (defined port, defined port + 1, and defined port - 1). If you choose 5015 for the first port, 5014 and 5016 are also used. 
+     3. Set the Connection > Port Range. Each separate launcher process requires three ports. Set the range according to how many separate systems you will run in this Launcher installation. 
+    
+    
+ 6. You must give access rights to all users that need to control the Launcher and any systems running within it.  1. Select the Access tab. 
+     2. Click Add. 
+     3. Type in the User Name. 
+     4. Type in the Login Name (network or system account). 
+     5. Type in the Password. 
+     6. Specify the three acess rights - Start/Stop, Pause/Resume, and Monitor. 
+     7. Repeat a-f for each user that needs access to this instance of the Launcher.
+    
+    
+ 7. Repeat steps 1-6 for each Launcher instance.
+
+
+Back to top
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ Ascential DataStage TX Mercator

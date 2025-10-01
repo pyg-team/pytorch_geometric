@@ -1,0 +1,28 @@
+Title: IBM Setting up multiple Rule Execution Server eXecution Unit  (XU) in one cell - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is the JMX_XU_QUERY_PART web configuration parameter and how does it help me? 
+
+ANSWER
+It is often asked if having multiple management consoles and/or datasources is possible when only one XU resource adaptor is deployed at the node level in WAS (or with an equivalent topology with other J2EE servers). Consider having one node and several application servers under this node. If, for instance, these application servers are for the different stages of application development, it would be necessary to have different management consoles to match these five development stages. 
+
+ After deploying the XU resource adaptor (jrules-bres-xu-<app_server>.rar) at the node level, it is then possible to create one XU connection factory for each server and specify a dedicated datasource. You can also install a Rule Execution Server console in each server to manage the XU and the datasource. 
+
+ The default behavior of the Rule Execution Server management console is to manage all XUs in the same cell. So you need to restrict each console so that it only manages the XUs on the same server. To do this, you change the name of the XU in the plugins property in the ra.xml (replace xuName=default with xuName=xu_cfXXX). You can also do this using the administration console of your J2EE server. Then in the web.xml of the Rule Execution Server console web application, use the specific context parameter JMX_XU_QUERY_PART to specify that the console need only notify this XU: 
+
+ jrules-bres-management- .ear!/jrules-bres-management.war!/WEB-INF/web xml 
+
+ <context-param> 
+
+<param-name>JMX_XU_QUERY_PART</param-name>
+<param-value>xuName=xu_cfXXX</param-value>
+
+
+</context-param>  
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0, 7.5 Enterprise 
+HISTORICAL NUMBER
+ jrules/FAQ/362

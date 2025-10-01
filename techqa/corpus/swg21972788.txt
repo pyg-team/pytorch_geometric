@@ -1,0 +1,66 @@
+Title: IBM WebSphere Application Server or IBM Business Process Manager upgrade might fail with 'The system cannot find the path specified' errors - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An upgrade of WebSphere Application Server or IBM Business Process Manager (BPM) might fail with 'The system cannot find the path specified' errors on systems where any of the following previously installed IBM BPM interim fixes have been uninstalled:
+- Interim fix JR52393 on IBM BPM V8.0.0.0, V8.0.1.0, V8.0.1.1, V8.0.1.2, V8.0.1.3, V8.5.0.0, V8.5.0.1, V8.5.5.0, V8.5.6.0
+- Interim fix JR50026 on IBM BPM V8.0.1.2
+- Interim fix JR50538 on IBM BPM V8.5.5.0
+- Interim fix JR49893 on IBM BPM V8.5.0.1
+The interim fixes might have been uninstalled during an upgrade of IBM BPM or for other maintenance reasons. 
+
+SYMPTOM
+IBM Installation Manager displays an error message similar to the following message when applying a fix pack update or uninstalling interim fixes: 
+
+ The following errors were generated while uninstalling. 
+<BPM_install_root>/properties/patches/backup/<ifix_id>.jar.operations_<time_stamps>.zip
+(The system cannot find the path specified.)
+
+[/support/docview.wss?uid=swg21972788&aid=1] [/support/docview.wss?uid=swg21972788&aid=1]
+
+You might also see an error message similar to the following message:
+No such file or directory 
+
+
+CAUSE
+When any of the IBM BPM interim fixes listed in the preceding section are uninstalled, they remove backup files that are needed to uninstall interim fixes. Because IBM BPM or WebSphere Application Server upgrades uninstall all related interim fixes, the upgrade process can fail.
+
+Note: If these interim fixes that cause the errors are removed as part of an IBM BPM upgrade, all IBM BPM interim fixes are removed safely, but the upgrade can cause issues for uninstalling interim fixes of other products such as WebSphere Application Server.
+
+
+RESOLVING THE PROBLEM
+Choose one of the following options to resolve the problem: 
+
+
+If the IBM BPM interim fixes that cause the errors are still installed on the system, complete the following steps: 
+Note: If you have already upgraded IBM BPM or removed the interim fixes but have a backup of the required directory, then start directly with step 3. Also, remove any other interim fixes that you installed between taking and restoring the backup before you start step 3, and reinstall them after completing the steps. 
+
+ 1. Create a copy of the <BPM_install_root>/properties/patches/backup directory. 
+ 2. Upgrade your IBM BPM or uninstall the IBM BPM interim fixes that cause the errors by using Installation Manager. This deletes the<BPM_install_root>/properties/patches/backup directory from your system. 
+ 3. Restore the original content of the backup directory from the saved copy.
+    Note: Optionally, you can remove any orphaned files or directories from the<BPM_install_root>/properties/patches/backup directory that reference the interim fixes removed during step 2. 
+ 4. Proceed with the WebSphere Application Server or IBM BPM upgrade by following the upgrade instructions provided for them.
+
+
+If the IBM BPM interim fixes that cause the errors were removed when you upgraded IBM BPM to a later version: 
+Note: If all other interim fixes were removed at the same time as all IBM BPM interim fixes during an upgrade, then only non-IBM BPM interim fixes and upgrades are affected by the issue.  1. Uninstall all WebSphere Application Server interim fixes by using Installation Manager and take note of the identifiers of the fixes. Although the process completes with errors, the interim fixes are removed from the Installation Manager repository.
+    Note: At this point the code for the interim fixes is not removed; only their Installation Manager repository entries are removed. Also, you do not have a fully valid installation because of the errors. 
+ 2. Optional: Upgrade WebSphere Application Server. 
+ 3. Reinstall any interim fixes that were not included in the WebSphere Application Server upgrade. 
+    Note: This is required to keep the installation binaries and the Installation Manager data synchronized. These impacted interim fixes from step 1 should be removed only when you upgrade the product.
+    If you roll back to a previous version of IBM BPM, then you must reinstall any interim fixes that still existed after the backup directory was deleted to keep the installation binaries synchronized. 
+
+
+If you directly uninstalled one of the IBM BPM interim fixes that causes errors by using Installation Manager:  1. Uninstall all interim fixes on the system by using Installation Manager. Take note of the identifiers of the fixes including those that were removed after you uninstalled the interim fix that causes errors. Although the process completes with errors, the interim fixes are removed from the Installation Manager repository.
+    Note: At this point the code for the interim fixes is not removed; only their Installation Manager repository entries are removed. Also, you do not have a fully valid installation because of the errors. 
+ 2. Optional: Perform any needed IBM BPM or WebSphere Application Server upgrades. 
+ 3. Reinstall any interim fixes that were not included in the upgrades and were removed after you uninstalled the interim fix that causes errors. 
+    Note: This is required to get the installation binaries synchronized with the Installation Manager data. These impacted interim fixes from step 1 should be removed only when you upgrade the product. 
+    If you roll back to a previous version of IBM BPM, then you must reinstall any interim fixes that still existed after the backup directory was deleted to keep the installation binaries synchronized. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Upgrade AIX, Linux, Solaris, Windows 8.5.6, 8.5.5, 8.5.0.2, 8.5.0.1, 8.5, 8.0.1.3, 8.0.1.2, 8.0.1.1, 8.0.1, 8.0 Business Integration IBM Business Process Manager Express Upgrade Linux, Windows 8.5.6, 8.5.5, 8.5.0.2, 8.5.0.1, 8.5, 8.0.1.3, 8.0.1.2, 8.0.1.1, 8.0.1, 8.0

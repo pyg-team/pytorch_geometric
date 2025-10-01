@@ -1,0 +1,203 @@
+Title: IBM IV47866: WEBSPHERE MQ V7, QUEUE MANAGER ENDS UNEXPECTEDLY WITH AN FDC WITH PROBE ID HL214091 FROM AMQZMUC0. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix Pack 7.1.0.5 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24037553]
+Fix Pack 7.1.0.6 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038863]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A WebSphere MQ v7 queue manager ends unexpectedly with FDCs
+   being created. The first FDC has Probe Id HL214091 from process
+   amqzmuc0. The FDC has:
+    :
+    Probe Id          :- HL214091
+    Application Name  :- MQM
+    Component         :- mllWriteLogPages
+    SCCS Info         :- lib/logger/amqherr0.c, 1.21.2.1
+    :
+    Build Type        :- IKAP - (Production)
+    Effective UserID  :- yyyy (mqm)
+    Real UserID       :- yyyy (mqm)
+    Program Name      :- amqzmuc0
+    Addressing mode   :- 64-bit
+    LANG              :- en_US
+    Process           :- processid
+    Thread            :- threadid
+    QueueManager      :- queuemanager name
+    UserApp           :- FALSE
+    :
+    Major Errorcode   :- hrcE_MQLP_NOSPACE
+    Minor Errorcode   :- OK
+    Probe Type        :- INCORROUT
+    Probe Severity    :- 2
+    Probe Description :- AMQ6125: An internal WebSphere MQ error
+                         has occurred.
+    FDCSequenceNumber :- 0
+    .
+    MQM Function Stack
+    zmuThreadMain
+    zmuLogIOTask
+    mqlpgasn
+    mllLoopWhilstDataToWrite
+    mllWriteLogPages
+    xcsFFST
+    .
+    MQM Trace History
+    :
+    -} WriteBuffers rc=hrcE_MQLP_NOSPACE
+    :
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   It is unknown what causes this very rare problem and so it is
+   not possible to identify who may be affected.
+   
+   Platforms affected:
+   Windows,All Unix
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The MQ logger has mis-counted the log space in use. It is
+   unclear why that has occurred. An extensive code investigation
+   has revealed that FDC reporting can be improved; additional
+   checks can be put in place to try and catch the problem earlier;
+   and there are some issues in error handling cases of the logic
+   involved.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following changes have been made :-
+   
+   1) Improved reporting of FDCs that report count inconsistencies:
+   the FDC that was reported, failed to provide the "log bytes in
+   use" value.
+   
+   2) Additional checking to try and catch any count discrepancy
+   earlier. The complex nature of the log space reservation makes
+   it difficult, if not impossible, to catch a discrepancy right at
+   the point it occurs. However, the earlier we can catch it the
+   more likely we are to get some further clues as to what may have
+   gone wrong.
+   
+   3) Correction of logic problems discovered in the error handling
+   cases, that could potentially give rise to incorrect log space
+   accounting.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.1       7.1.0.6
+   v7.5       7.5.0.5
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV47866
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7221
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-04
+   
+   
+ * CLOSED DATE
+   2013-12-19
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7221
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

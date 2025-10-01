@@ -1,0 +1,145 @@
+Title: IBM IC44817: ADMINISTRATION CENTER - LIB W/O DRIVES ARE NOT DISPLAYED IN THE HEALTH MONITOR STORAGE DEVICE TABLE. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Library types external and shared do not have drives
+   definitions.  The storage device status table in the Health
+   Monitor does not show any status for these libraries.
+   
+   How to get there:
+   Open the Health Monitor, select a server, select View Health
+   Details action and click go. Click on the Storage Device Status
+   twistie.  External libraries and shared libraries should be in
+   the table.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of the TSM V5.3.0 Administration       *
+   *                 Center.                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See Error Description                   *
+   ****************************************************************
+   * RECOMMENDATION: Apply fixing level when available. This      *
+   *                 problem is currently projected to be fixed   *
+   *                 in level 5.3.1. Note that this is subject to *
+   *                 change at the discretion of IBM.             *
+   ****************************************************************
+   The Storage Device Status table in the Detailed
+   Health Information panel does not show status
+   for libraries without any drives defined.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem has been fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC44817
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER 510
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   53H
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-02-11
+   
+   
+ * CLOSED DATE
+   2005-02-14
+   
+   
+ * LAST MODIFIED DATE
+   2005-02-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R53A PSY
+   UP
+   
+   
+ * R53H PSY
+   UP
+   
+   
+ * R53L PSY
+   UP
+   
+   
+ * R53S PSY
+   UP
+   
+   
+ * R53W PSY
+   UP
+   
+   
+ * R53Z PSY
+   UP

@@ -1,0 +1,98 @@
+Title: IBM Resizing JSF Components - United States
+
+Text:
+RAD; JSF; component; resize; v6; design tab; stylesheet; properties; PMR 71662 L6Q 000; RSA; 1220090 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Most JavaServerFaces™ (JSF) components cannot be directly resized from the design view of the Page Designer within IBM Rational® and WebSphere® Studio Development tools. 
+
+CAUSE
+For many components, you cannot simply click and drag in the design view. These components require that the properties of the component and/or the application's stylesheets be modified directly. 
+
+HTML supports multiple sizing models. For example, you can specify the width and height of most components in inches, pixels, centimetres, points, ems, exs, percentages, etc.
+
+
+RESOLVING THE PROBLEM
+All JSF components can be resized by altering their properties and/or the stylesheets for the project. More precise guidelines for resizing the most common components are given below: 
+
+ 
+
+ * Data Table (h:dataTable): Attributes: width, style, styleClass.
+   
+   The width property accepts pixels or percentages, while styles support more options.
+   
+   The border property allows you to specify, in pixel, the size of the border around the entire table. Additional properties such as cellpadding and cellspacing allow you to adjust the characteristics of the interaction between the different cells of the table.
+   
+   It should also be noted that the font size, style and width of the individual columns can be configured using the columnClasses attribute to indicate stylesheet classes to be used or they can be specified in the column properties panel. 
+   
+    
+   
+   
+ * Command - Button (hx:commandExButton):
+   Attributes: style, styleClass.
+
+
+ * Check Box (h:selectBooleanCheckbox) and Combo Box (h:selectOneMenu):
+   Attributes: style, styleClass.
+
+
+
+ * Command - Hyperlink (h:commandLink):
+   Attributes: style, styleClass.
+   
+   The attributes of a hyperlink are specified in the same way you would specify the font information of any text in your jsp file. You can use html tags or stylesheet classes.
+
+
+
+ * Input (h:inputText) and Input - Password (h:inputSecret):
+   Attributes: size, style, styleClass.
+   
+   The width of an input box can be set using the size attribute. This attribute specifies roughly the number of characters wide the box will appear on the page. It is a rough approximation since most fonts do not have uniform character widths. The height of the box is determined solely by the font information.
+
+
+
+ * Input - Text Area (h:inputTextarea):
+   Attributes: cols, rows, style, styleClass.
+   
+   The height and width of a text area are defined by the cols and rows attributes respectively. These values are proportional to the font information just like for an Input or an Input - Password component (see above).
+
+
+ * Rich Text Area (r:inputRichText):
+   Attributes: height, width, style, styleClass.
+   
+   The height and width properties accepts pixels or percentages, while styles support more options.
+
+
+ * Check Box Group (h:selectManyCheckbox), Radio Button Group (h:selectOneRadio):
+   Attributes: layout, style, styleClass.
+
+
+ * List Box - Single and Multiple Select (h:selectOneListbox and h:selectManyListbox):
+   Attributes: size, style, styleClass.
+   
+   The number of rows can also be specified by the size attribute. Note that the height property of a style or styleClass overrides the value of the size attribute.
+
+
+ * Output (h:outputText) and Output - Formatted Text (h:outputFormat):
+   Attributes: height, width, style, styleClass.
+   
+   The output element's size can be dictated simply by the font characteristics of the text contained in the output. This information can be given in the specified style or styleClass or by standard html tags surrounding the output component. Note that if both are specified, the styleClass overrides the HTML font characteristics.
+   
+   If the height and width properties are specified, the element is drawn using the indicated dimensions (and the text is truncated if needs be).
+
+
+ * Image (hx:graphicImageEx):
+   Attributes: height, width, style, styleClass.
+   
+   If no attributes are given, the size of this component is determined by the dimensions of the image that is displayed.
+
+
+
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Web Development Multi-Platform V6.0, V6.0.0.1, v6.0.1.0 All Editions Software Development Rational Web Developer for WebSphere Software Web Development Multi-Platform v6.0, v6.0.0.1, v6.0.1.0 All Editions Software Development WebSphere Studio Application Developer Web Development and design Linux, Windows 5.1.2 All Editions

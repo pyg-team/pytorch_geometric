@@ -1,0 +1,43 @@
+Title: IBM Update on plans for Notes and Domino 8.0.x maintenance release - United States
+
+Text:
+8.0.3; 8.03; 803; cancelled; canceled; ND8; ND8.x; ND8x; EOS date; EOL date; end of life date; end of service date; support for; Maintenance Release information; last planned Maintenance release; last planned MR; final release; last release; upgrade from 8.0.2 to 8.5; upgrade from 8.0.2 to 8.5.1; upgrade path; upgrade to 8.5.1; upgrade to 851; 8.0.3 maintenance release; maintenance update on lotus notes and domino 8.0.x; 8.0 eol; 8.0.x eol; 8.x eol NEWS
+
+ABSTRACT
+ Update on plans for Notes and Domino 8.0.x maintenance release. 
+
+CONTENT
+ 
+
+** Latest Updates **  * IBM has announced April 30, 2015 as the End of Support (EOS) date for the 8.0.x version of IBM Notes, Domino, and Enterprise Integrator. 
+   - Announcement 914-082: "Software Withdrawal: IBM Notes and Domino V8.0.x, and IBM Enterprise Integrator V8.0.x [http://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS914-082]" 
+ * For upgrade resources, go to: 
+   - technote 1623106: Upgrade Central: Planning your upgrade to IBM Notes and Domino 9.0.x [http://www.ibm.com/support/docview.wss?uid=swg21623106] 
+
+
+
+
+
+
+Release 8.0.2 was the last maintenance release in the Notes and Domino 8.0.x code stream.  
+
+Customers looking for Notes/Domino should move to the latest 9.0.1 release and fixpack level.
+
+
+The IBM Notes, iNotes, Domino Designer, and Domino 9.0.1 product line is the recommended, progression from 8.0.2. It offers a smooth upgrade path to gain [http://www-10.lotus.com/ldd/r5fixlist.nsf]new and enhanced functionality and fixes [http://www-10.lotus.com/ldd/r5fixlist.nsf], All with minimal or no new end user training required. Customers' existing business applications continue to work with 9.0.1, while the highly productive and integrated application development environment available for customers to enhance existing or build new applications using the Eclipse-based Domino Designer [http://www.ibm.com/software/lotus/products/dominodesigner/eclipse.html] product. With 9.0.1 customers can also realize total cost of ownership savings through lower administration costs (Notes ID vault and Domino Configuration Tuner), reduced disk usage (Domino Attachment and Object Service), and server consolidation.
+
+As with all IBM software products, 9.0.1 will be supported for a minimum of 5 years with a fee-based option for an additional 3 years. This is well beyond the minimum support cycle for 8.0 which was eligible for end of support September 2012 (2014 with 2 year fee-based extension option). 
+
+For 8.5.x service plans, please refer to Technote 1611954 [http://www-01.ibm.com/support/docview.wss?uid=swg21611954]
+
+RELATED INFORMATION
+ IBM Software Support Lifecycle [http://www.ibm.com/software/support/lifecycle/]
+Notes/Domino Update Status page [http://www.lotus.com/ldd/r5fixlist.nsf/progress/$first?OpenDocument]
+Upgrade Cookbook [http://www.lotus.com/ldd/dominowiki.nsf/dx/UC1_TableofContents.htm]
+Statement regarding Domino Access for Microsoft Outlook [http://www.ibm.com/support/docview.wss?uid=swg21388654]
+Download options for Notes/Domino 8.0.2 Fix Packs [http://www.ibm.com/support/docview.wss?uid=swg24026644]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Messaging Applications IBM Domino Designer Not Applicable 8.0 Messaging Applications IBM Domino Not Applicable 8.0 Messaging Applications IBM iNotes Not Applicable Information Management Lotus Enterprise Integration

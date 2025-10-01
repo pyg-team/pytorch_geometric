@@ -1,0 +1,38 @@
+Title: IBM Open Mic Replay: WebSphere DataPower Appliances Configuration and Troubleshooting - United States
+
+Text:
+wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; DataPower; configure; troubleshoot WEBCAST
+
+ABSTRACT
+ This Open Mic session provides customers with an open forum to ask a panel of experts on general WebSphere DataPower appliance questions regarding configuration and troubleshooting. 
+
+CONTENT
+Open Mic sessions are conducted in a question and answer format. The table below provides a time index (minutes:seconds) to the recording and describes the questions or topics discussed. You can fast forward to any question using the time index, a table containing the panel of experts is also included. 
+
+To play or download the audio of this Open Mic session, see the Audio Section of this document.
+
+See the Related Information Section of this document for a list of documents referenced during the presentation.
+
+
+Open Mic session
+15 June 2010 - 11:00 a.m. - 12:00 p.m. EDT
+
+
+Time Questions asked 00:00 Silence 00:00 General introduction 04:24 Technical introduction 05:30 Can we differentiate between the various DataPower FTP configurations? 10:34 What are the key RAS aids that can be used in troubleshooting the DataPower appliances? 14:04 Can we please get a brief overview of the DataPower Web Service Proxy service? 21:31 Since DataPower is a powerful networking device, what are the best ways to troubleshoot networking issues? 25:38 Can you please explain the SQL Data Source object in DataPower and how it is used? 28:59 How does DataPower employ secure connections with its various services? 30:51 We've had difficulty getting developers or power users consistent access to their domains between the GUI and CLI. What is the best way to do that using on-board users and groups? 36:48 If a user belongs to more than one group, will there be any problems? 38:46 If there is a parse in the response of the backend service, is there any way to capture the message? 40:48 How do I configure DataPower to verify a user certificate in LDAP? 42:14 When DataPower gets authentication error, how do I configure it so it returns HTTP error code 401? 45:23 I am trying to use DataPower's URLOpen to do a FTP PUT, but when I follow the example document, I always end up getting a GET not a PUT, what should I do? 49:45 Is Informix supported at this time? 50:20 In the last example where you were going through the users, when you created the user profile for Maryjo, on that screen did you restrict the domain at all, or did you leave that blank? 51:50 Closing remarks 52:16 End of Call 
+Panel of Experts: 
+
+Moses Allotey-pappoe DataPower L2 Support Engineer Jessie Hsieh DataPower L2 Support Engineer Paul Megani DataPower L2 Support Engineer Dominic Micale DataPower L2 Support Engineer Carol Miller DataPower L2 Support Engineer Andrew Simmering DataPower L2 Support Engineer Alfred Williamson DataPower L2 Support Engineer 
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]WSTE-06152010-OpenMic-DataPowerConfigurationAndTroubleshooting-Megani.pdf [/support/docview.wss?uid=swg27018800&aid=2] WSTE-06152010-OpenMic-DataPowerConfigurationAndTroubleshooting-Megani.pdf [/support/docview.wss?uid=swg27018800&aid=1]
+
+[http://www.ibm.com/i/v14/icons/sout.gif] Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]Click on Download Audio [ftp://public.dhe.ibm.com/software/websphere/techexchange/Jun-15-2010-Megani.mp3] to play the recording of this 52 minutes conference call (6.0MB - MP3 format). Right-click and select Save As to store the file on your local computer for later playback. Remember that you can fast forward to any question using the time index.
+
+
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchange [http://www.ibm.com/software/websphere/webcast]

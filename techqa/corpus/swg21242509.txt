@@ -1,0 +1,113 @@
+Title: IBM Setting up HIGH AVAILABILITY DATA REPLICATION (HDR) on a single installation of IBM Informix Dynamic Server on Windows - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I set up HDR on a single installation of IBM Informix Dynamic Server (IDS) on Windows for testing purposes?
+
+
+ANSWER
+
+INTRODUCTION
+
+The following instructions tell you how to set up a quick testing environment for IDS High Availability Data Replication (HDR). 
+
+
+BEFORE YOU BEGIN
+
+Relative paths are used for all chunks so all oninit, onspaces, and ontape commands must be run in the directory where the chunks are located for that specific instance. 
+
+
+STEPS
+
+1. Use instmgr.exe to create two instances named hdr1 and hdr2 and skip the initialization step in instmgr. This will create the required registry entries for hdr1 and hdr2. It will also create the onconfig files named ONCONFIG.hdr1 and ONCONFIG.hdr2 in $INFORMIXDIR\etc for hdr1 and hdr2. 
+
+
+
+ * hdr1
+ * DBSERVERNAME for the primary server in the HDR pair 
+   
+ * 
+ * hdr2
+ * DBSERVERNAME for the secondary server in the HDR pair 
+
+
+
+2. Create a directory hdr1 in %INFORMIXDIR%. 
+
+3. Create a file named rootdbs in directory %INFORMIXDIR%\hdr1 for the primary server. 
+
+4. Create a file named rootdbs in %INFORMIXDIR%\bin for the secondary server. 
+
+5. Create two files named data and logs in %INFORMIXDIR%\hdr1 for the configuration parameters TAPEDEV and LTAPEDEV. 
+
+6. Edit %INFORMIXDIR%\etc\ONCONFIG.hdr1 and %INFORMIXDIR%\etc\ONCONFIG.hdr2 to change the following configuration parameters: 
+
+
+Set this parameter... ...to this value ROOTPATH .\rootdbs TAPEDEV informixdir \hdr1\data LTAPEDEV informixdir \hdr1\logs 
+ * informixdir
+ * The directory in which IDS is installed. This will be the same value that the environment variable INFORMIXDIR is set to. 
+
+
+
+7. Start instance hdr1 by executing the following commands in a Command Prompt window: 
+ * cd %INFORMIXDIR%
+ * 
+ * hdr1.bat
+ * 
+ * cd hdr1
+ * 
+ * oninit -ivy
+
+
+
+8. Create the stores_demo database with unbuffered logging by executing the following command: 
+ * dbaccessdemo7 -log
+ * 
+
+
+9. Take a level zero archive by executing the following command: 
+ * ontape -s -L 0
+ * 
+
+
+10. Make instance hdr1 the primary of the HDR pair by executing the following command: 
+ * onmode -d primary hdr2
+
+
+
+11. Set the environment for instance hdr2 by executing the following commands in another Command Prompt window: 
+ * cd %INFORMIXDIR%
+ * 
+ * hdr2.bat
+ * 
+ * 
+
+12. Do a physical restore of the archive you took in step 9 by executing the following commands:  * 
+ * cd %INFORMIXDIR%\bin
+ * 
+ * ontape -p
+ * 
+ * 
+ * 
+ *  To this question from ontape... ...give this answer. Continue restore? (y/n) yes Do you want to back up the logs? (y/n) no Restore a level 1 archive (y/n) no 
+ * 
+ * 
+
+Wait for the restore to complete. 
+
+13. Make instance hdr2 the secondary of the HDR pair by executing the following command: 
+ * onmode -d secondary hdr1
+
+
+
+The primary and the secondary servers should be online now. 
+
+
+Note: If you do not want to create the root chunk in %INFORMIXDIR%\bin for the secondary server, you can set the value of the configuration parameter ROOTPATH to ../rootdbs in ONCONFIG.hdr1 and ONCONFIG.hdr2 and create the file rootdbs in the parent directory for the primary server and in %INFORMIXDIR% for the secondary server. 
+
+
+Verifying HDR 
+
+To verify HDR setup, insert a row into the customer table in the stores_demo database of instance hdr1. If that row appears in the instance hdr2 then HDR is working.

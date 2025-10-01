@@ -1,0 +1,173 @@
+Title: IBM IT06163: CLARIFY KNOWLEDGE CENTER INFORMATION ON MULTI-INSTANCE BROKER FAILOVER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The IBM Knowledge Center for IBM Integration Bus does not
+   describe possible scenarios of failover for multi-instance
+   brokers and
+   multi-instance queue managers. It is not clear when the failover
+   occurs.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of IBM Integration Bus and multi-instance broker
+   failover.
+   
+   
+   Platforms affected:
+   z/OS, MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The IBM Knowledge Center for IBM Integration Bus does not
+   describe possible scenarios of failover for multi-instance
+   brokers and
+   multi-instance queue managers. It is not clear when the failover
+   occurs.
+   
+   There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0. For details
+   visit
+   http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.e
+   tools.mft.doc/bb23814_.htm [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/bb23814_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  IBM Integration Bus Knowledge Center will be updated with a new
+   topic referenced from:
+   http://www-01.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.i
+   bm.etools.mft.doc/be13650_.htm [http://www-01.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/be13650_.htm]
+   
+   New Topic: Failing over a multi-instance broker and queue
+   manager.
+   
+   An active broker instance fails over when its associated active
+   multi-instance queue manager terminates unexpectedly, or stops
+   in a controlled manner. The action of stopping an active broker
+   instance on an active multi-instance queue manager does not by
+   itself cause a standby broker instance to become active.
+   
+   Failover scenarios
+   
+   1. Controlled failover
+   
+   Stop active queue manager with the endmqm command, switching
+   over to a standby instance
+   
+   endmqm -s
+   
+   As the active instance of queue manager goes down, the passive
+   instance comes up.
+   
+   2. Immediate failover
+   
+   Stop active queue manager process with the 'kill' command on
+   Unix, or end process using Windows Task Manager on Windows
+   
+   kill -9
+   
+   The standby instance of the queue manager will become active.
+   
+   3. Shutting down the server
+   
+   Reboot the server, on which the active instance of queue manager
+   is running
+   
+   The passive instance of the queue manager will become active
+   
+   ---------------
+   
+   A link from
+   http://www-01.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.i
+   bm.etools.mft.doc/be13750_.htm [http://www-01.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/be13750_.htm] will be added to the topic above
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT06163
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION BUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0530
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-12-18
+   
+   
+ * CLOSED DATE
+   2015-01-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

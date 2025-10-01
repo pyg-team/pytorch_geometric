@@ -1,0 +1,149 @@
+Title: IBM JR36308: MODERATOR HANGS WHILE PROCESSING EVENTS (EVENTPROCESSING AND    FRAGMENTREADINESS THREADS) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  While processing events, threads in the moderator may hang,
+   resulting in stoppage of event processing and event consumption.
+   When this occurs, a message (shown with partial stack trace)
+   similar to the following will be written to SystemOut.log:
+   
+   
+   00000018 ThreadMonitor W   WSVR0605W: Thread
+   "WorkManager.wbm_Moderator_EventProcessing : 1"
+   (00000044) has been active for 763703 milliseconds and may be
+   hung.  There is/are 7 thread(s) in total in the server that may
+   be hung.
+    at java.lang.Object.wait(Native Method)
+    at java.lang.Object.wait(Object.java:196)
+    at
+   com.ibm.ws.util.BoundedBuffer.waitPut_(BoundedBuffer.java:214)
+    at com.ibm.ws.util.BoundedBuffer.put(BoundedBuffer.java:324)
+    at com.ibm.ws.util.ThreadPool.execute(ThreadPool.java:1242)
+    at com.ibm.ws.util.ThreadPool.execute(ThreadPool.java:1093)
+    at
+   com.ibm.ws.asynchbeans.WorkItemImpl$PoolExecuteProxy.run(WorkIte
+   mImpl.java:198)
+    at
+   com.ibm.ws.asynchbeans.WorkItemImpl.executeOnPool(WorkItemImpl.j
+   ava:212)
+    at
+   com.ibm.ws.asynchbeans.WorkManagerImpl.queueWorkItemForDispatch(
+   WorkManagerImpl.java:433)
+    at
+   com.ibm.ws.asynchbeans.WorkManagerImpl.startWork(WorkManagerImpl
+   .java:350)
+    at
+   com.ibm.ws.asynchbeans.WorkManagerImpl.startWork(WorkManagerImpl
+   .java:518)
+    at
+   com.ibm.ws.asynchbeans.WorkManagerImpl.startWork(WorkManagerImpl
+   .java:533)
+    at
+   com.ibm.wbimonitor.server.moderator.util.FragmentCacheImpl.start
+   WaitingWorkForRootInstanceID(FragmentCacheImpl.java:287)
+    at
+   com.ibm.wbimonitor.server.moderator.serialmt.FragmentProcessorIm
+   pl.processFragment(FragmentProcessorImpl.java:247)
+    at
+   com.ibm.wbimonitor.server.moderator.serialmt.FragmentProcessorIm
+   pl.run(FragmentProcessorImpl.java:97)
+   
+   
+   A similar message / stack trace with thread name
+   "WorkManager.wbm_Moderator_FragmentReadiness" may also
+   appear in SystemOut.log.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This problem exists in WebSphere Business Monitor Version 6.2.
+   It will be resolved in WebSphere Business Monitor V6.2 Fix Pack
+   3 (6.2.0.3).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR36308
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB BUS MONITOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724M2400
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-20
+   
+   
+ * CLOSED DATE
+   2010-05-24
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSN
+   UP

@@ -1,0 +1,86 @@
+Title: IBM MQ '2085' Exceptions in WAS SystemOut.log when using MQ as a JMS Provider in Clustered Configurations - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When the user tries to deploy an event project, they see the following 
+errors - "Caused by: com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ call failed 
+with compcode '2' ('MQCC_FAILED') reason '2085' 
+('MQRC_UNKNOWN_OBJECT_NAME') in WAS SystemOut.log. 
+
+
+SYMPTOM
+After running the configure_MQ_JMS_messaging.py script on WAS side and also the MQJMS_PSQ.mqsc on MQ side, they are able to start the server. However, when they try to deploy an event project, they see 
+
+errors - Caused by: com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ call failed 
+with compcode '2' ('MQCC_FAILED') reason '2085' 
+('MQRC_UNKNOWN_OBJECT_NAME'). Another error message similar to the following is also seen:
+
+[9/19/11 14:57:26:860 CDT] 0000002a ActivationSpe E J2CA0138E: The 
+Message Endpoint activation failed for ActivationSpec jca/wbe_history 
+(com.ibm.mq.connector.inbound.ActivationSpecImpl) and MDB application 
+wberuntimeear#wberuntime.jar#HistoryModule due to the following 
+exception: com.ibm.mq.connector.DetailedResourceException 
+
+
+CAUSE
+The exception indicates an attempt to access a queue on an MQ queue manager. The queue, does not exist on that queue manager. To verify, run runmqsc command on the system where the queue manager is running:
+
+runmqsc QMGR_NAME dis q(<queue name>) all
+
+
+
+ENVIRONMENT
+WebSphere Business Events using MQ as a JMS provider on clusters.
+
+
+
+DIAGNOSING THE PROBLEM
+1. Check SystemOut log for your running WAS profile and see if the errors exist. 
+
+ 2. Check to see that the proper Activation Specs exist for eventQueue, durableEventQueue, and historyModuleQueue within WAS configuration.
+
+
+
+RESOLVING THE PROBLEM
+If you are using WebSphere® MQ as the JMS provider, create three WebSphere MQ queues: 
+
+ 
+
+ 1. Identify the queue names for the queues to be created. Open the queue definitions found under the WebSphere Application Server administrative console under Resources > JMS > Queues and identify the MQ queue names specified in the definitions. By default, these queue names are 'eventQueue', 'durableEventQueue', and 'historyModuleQueue'.
+    
+    
+ 2. Create a MQ runmqsc command script file containing:
+    
+    ** Create event queue
+    DEFINE QLOCAL('eventQueue') REPLACE +
+    DESCR('event queue') +
+    * Non-persistent messages
+    DEFPSIST(NO)
+    
+    ** Create durable event queue
+    DEFINE QLOCAL('durableEventQueue') REPLACE +
+    DESCR('durable event queue') +
+    * Persistent messages OK
+    DEFPSIST(YES)
+    
+    ** Create history module queue
+    DEFINE QLOCAL('historyModuleQueue') REPLACE +
+    DESCR('history module queue') +
+    * Persistent messages OK
+    DEFPSIST(NO)
+    
+    and replace the parameters for QLOCAL() with the right queue names.
+    
+    
+    
+ 3. Run
+    
+    runmqsc queue-manager-name < <your script file>
+    
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Business Events Usability AIX, HP-UX, Linux, Solaris, Windows, z/OS 7.0.1.1, 7.0.1 Edition Independent

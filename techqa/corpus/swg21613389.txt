@@ -1,0 +1,144 @@
+Title: IBM Extremely long COLLECT run times in a PR/SM capped environment - United States
+
+Text:
+569510100 TDS Decision Support Performance capping capped capacity prsm slow long elapsed clock DRLPLC TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ COLLECTS run excessively long in an environment using capping and SMS compressed data. 
+
+CAUSE
+capping used without hiperdispatch(yes) in IEAOPTxx
+
+DIAGNOSING THE PROBLEM
+Very long clock times are seen for COLLECT jobs when the input SMF data is compressed. The capping for a multiple-way processor (a 10-way in the customer example) was set to a fraction of a single processor (34 MSU/hour in the customer example). If non-compressed data was collected, the problem did not occur, and if compressed data was collected in a non-capped environment the problem did not occur. Analysis of RMF data was done and a re-create was done on a 5-way processor. In order to get the same elapsed time results, it was necessary to reduce the capping on the 5-way processor to about half that used on the 10-way processor- which means that the available CPU per processor was about the same (about 3.5 MSU/hour). 
+
+RESOLVING THE PROBLEM
+The problem seen was a side-effect of the partition dispatching algorithm (with HIPERDISPATCH unavailable) where the I/O interrupt rate is reduced by the data compression such that an interrupt is unlikely to occur during the dispatch time slice. Using compressed data does require additional CPU resources even though it greatly decreases the amount of I/O that must be done. A workload like a TDS for z/OS collect runs more efficiently in an uncapped environment or with fewer processors (one or two) which are capped-- assuming that the the total MSU available to the partition remains constant. In addition if the hardware in use allows it, running with HIPERDISPATCH(YES) set will cause fewer processors to be used. The problem details follows, and some excerpts from the z/OS manuals regarding hiperdispatch. 
+
+
+PROBLEM DETAILS 
+
+
+The customer complaint involved having very high elapsed times (on a 
+z10 machine) for TDSz jobs that read compressed data compared to the 
+elapsed times for jobs that read the uncompressed data. The customer 
+ran in a 10 logical CP LPAR that was hard capped to use no more than 
+about 40% of a single CP. 
+. 
+1) The elapsed time of the compressed job takes longer to complete 
+than the uncompressed job, in spite of the fact that the 
+compressed job is reading about 1/6 the number of bytes, and 
+2) The compressed job is not able to use the full capped LPAR 
+capacity, but the uncompressed job is able to use the full LPAR 
+capacity. We believe that the difference in behavior that is 
+being observed is due to the difference in the number of I/O 
+interrupts between the compressed and uncompressed job and the way 
+that PR/SM manages the capped capacity. 
+. 
+When a job is executing and it ends its CPU time slice, it will 
+likely be dispatched on the same CP as before when work is ready to 
+run again. Since PR/SM manages capped capacity on a single-CP basis, 
+that means that the LPAR cap is divided among all online logical 
+processors and that capacity that has not been used by one processor 
+cannot be used by another logical processor. In that situation, the 
+job will be restricted by the single-CP cap, and won't be dispatched 
+to other logical CPs. But, when a job is executing and it generates 
+an I/O interrupt, then the dispatch will likely occur to a different 
+logical CP than the one that the job had been running on, and that 
+means that the new dispatch would not be restricted by the logical 
+cap of the initial job dispatch and will have another CP's logical 
+cap of capacity available. In our case, what we see is that the 
+uncompressed job is able to more efficiently get dispatched over the 
+multiple logical CPs, and the elapsed time looks better. In the 
+customer case, with 10 logical CPs, this would be more of an issue, 
+and we would expect the difference between compressed and 
+uncompressed elapsed times to be greater. 
+
+Overall, there are 2 recommendations that we would make:
+. 
+1) Remove the cap on the partition. This allows the partition to 
+expand past its weighted capacity if the processor is not 
+CPU-constrained, but restricts the LPAR capacity to its weight for 
+those times when the processor is CPU-constrained. This will 
+allow efficient use of the LPAR's capacity without affecting 
+high-priority work, and it is the most important change that 
+should be made. 
+. 
+2) Decrease the number of logical CPs down to 1 or 2. There are two 
+possible ways of doing this: 
+
+- Configure only 1 or 2 logical processors online. This allows 
+LPAR to allocate the available capacity more efficiently to 
+high-priority work. It would also have the effect of 
+restricting the available capacity of the LPAR if it was able to 
+expand past its weighted capacity. 
+. 
+- Leave two (or even more) logical processors online and turn on 
+hiperdispatch for this partition. This would more efficiently 
+dispatch work to the logical CPs in the partition. 
+. 
+Note: Before turning on HIPERDISPATCH the following APARs should be
+reviewed:
+
+OA35989 - IN HIPERDISPATCH, PROCESSORS ARE NOT UNPARKED 
+
+OA35860 - PROCESSORS MAY BE UNPARKED WHEN THERE IS NO FREE CAPACITY 
+AVAILABLE ON THE CEC 
+
+OA35428 - NEW FUNCTION: CICS RESPONSE TIME MANAGEMENT ENHANCEMENT 
+
+OA36459 - IMPRECISE CAPACITY CALCULATIONS FOR VM AND VL PROCESSORS 
+
+OA39368 - SYSTEM HANG AT IPL GOING INTO HIPERDISPATCH. 
+HIPER R760 PSY UA66321 UP12/09/05 
+. 
+OA39897 - ABEND0C9 IN IRACPADJ HBB7780 + X'4C2' AFTER MESSAGE IRA863E 
+
+ 
+
+ 
+
+Excerpts from z/OS manuals: 
+
+
+z/OS V1R12.0 MVS Planning: Workload Management"
+
+3.6 HiperDispatch Mode
+
+
+HiperDispatch mode is enabled by specifying a new parameter, HIPERDISPATCH=YES, in the IEAOPTxx member of SYS1.PARMLIB. This parameter can be changed dynamically with the use of the SET OPT command. The default is HIPERDISPATCH=NO which maintains the existing mode of dispatching and allows installations explicit control of the migration to this new mode. It is recommended that installations use HiperDispatch to take advantage of the processing benefits with System z10 when the z/OS support is installed. 
+
+For further information about the HIPERDISPATCH parameter, refer to z/OS [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/DOCNUM/SA22-7591/CCONTENTS?#FIRSTHIT] MVS Initialization and Tuning Guide [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/DOCNUM/SA22-7591/CCONTENTS?#FIRSTHIT]. 
+
+ 
+
+ 
+
+z/OS V1R13.0 MVS Planning: Workload Management"
+
+3.6.3 Setting of the HiperDispatch Mode in SYS1.PARMLIB
+
+| On z10 on any z/OS release, HiperDispatch disabled is the default. 
+| However, customers are encouraged to run with HiperDispatch enabled on z10 
+| to take advantage of the processing benefits. 
+
+
+| Beginning with z/OS V1R13 on IBM zEnterprise 196 (z196), HiperDispatch 
+| enabled is the default. With z/OS V1R13 running on a z196, z/OS partitions 
+| with share greater than 1.5 physical processors will typically experience 
+| improved processor efficiency with HiperDispatch enabled. z/OS partitions 
+| with share less than 1.5 physical processors typically do not receive a 
+| detectable performance improvement with HiperDispatch enabled, but IBM 
+| recommends running those LPARs with HiperDispatch enabled when the 
+| performance improvement is greater than or equal to HiperDispatch 
+| disabled 
+
+from Planning Considerations for HiperDispatch Mode V2 
+
+
+HiperDispatch can lead to improved efficiencies in both the hardware and software in the following two manners:
+1) Work may be dispatched across fewer logical processors therefore reducing the “multiprocessor
+(MP) effects” and lowering the interference among multiple partitions.
+2) Specific z/OS tasks may be dispatched to a small subset of logical processors which PR/SM will tie to the same physical processors thus improving the hardware cache reuse and locality of reference characteristics such as reducing the rate of cross-book communication. 
+
+.

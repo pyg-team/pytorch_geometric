@@ -1,0 +1,194 @@
+Title: IBM IV65363: BMXAA0122E - CANNOT MOVE ROTATING ASSET FROM AN INVENTORY LOCATION. ISSUE OR TRANSFER THE ROTATING ASSET FROM ANINVE - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Steps to reproduce the error"
+   1) Open the Assets application.
+   
+   2) In the List tab, filter to show records with a rotating
+   item, that are in a location that is of type STOREROOM. (In the
+   demo database, we can use Location HARDWARE and Rotating Item
+   D600)
+   
+   3) Click the Move/Modify Assets button. Note that in the
+   Move/Modify Assets window, there are no values entered for To
+   Location, To GL Account, To Parent, or To Bin.
+   
+   4) Navigate to the Attributes tab. Open the Modify All subtab.
+   Enter an attribute that is applicable for all listed assets, as
+   well as a new specification value for that attribute. (In the
+   example given in the demo database, we use Attibute RAMSIZE and
+   Numeric Value 1024). Click OK.
+   
+   5) The error BMXAA0122E - Cannot move rotating asset from an
+   inventory location. Issue or transfer the rotating asset from
+   an inventory location is displayed. This is a valid error if we
+   were moving the asset, but the To Location field is null, per
+   step 1. Users should be able to apply specification data
+   without receiving this error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Maximo users                                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When modifying attributes in the Move/Modify Assets dialog,  *
+   * error "BMXAA0122E - Cannot move rotating asset from an       *
+   * inventory location. Issue or transfer the rotating asset     *
+   * from an inventory location" is displayed.  The error does    *
+   * not make sense since the assets are not actually changing    *
+   * locations.                                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply latest fix pack.                                       *
+   ****************************************************************
+   Steps to reproduce the error"
+   1) Open the Assets application.
+   
+   2) In the List tab, filter to show records with a rotating
+   item, that are in a location that is of type STOREROOM. (In the
+   demo database, we can use Location HARDWARE and Rotating Item
+   D600)
+   
+   3) Click the Move/Modify Assets button. Note that in the
+   Move/Modify Assets window, there are no values entered for To
+   Location, To GL Account, To Parent, or To Bin.
+   
+   4) Navigate to the Attributes tab. Open the Modify All subtab.
+   Enter an attribute that is applicable for all listed assets, as
+   well as a new specification value for that attribute. (In the
+   example given in the demo database, we use Attibute RAMSIZE and
+   Numeric Value 1024). Click OK.
+   
+   5) The error "BMXAA0122E - Cannot move rotating asset from an
+   inventory location. Issue or transfer the rotating asset from an
+   inventory location" is displayed.
+   
+   This is a valid error if we were moving the asset, but the To
+   Location field is null, per
+   step 1. Users should be able to apply specification data without
+   receiving this error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code fix implemented so that users can apply new specification
+   attribute values in the Move/Modify Assets dialog without
+   receiving the erroneous "BMXAA0122E - Cannot move rotating asset
+   from an inventory location. Issue or transfer the rotating asset
+   from an inventory location" message.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   	| release\fix pack\interim fix for Release 7.5.0.8 of Base
+   Services
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV65363
+   
+   
+ * REPORTED COMPONENT NAME
+   WORK & MTRL APP
+   
+   
+ * REPORTED COMPONENT ID
+   TIVOWRKMM
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-09-29
+   
+   
+ * CLOSED DATE
+   2014-10-20
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORK & MTRL APP
+   
+   
+ * FIXED COMPONENT ID
+   TIVOWRKMM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

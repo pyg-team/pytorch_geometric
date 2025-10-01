@@ -1,0 +1,35 @@
+Title: IBM What is the maximum number of Clients that a Relay can handle? - United States
+
+Text:
+1742; googlebigfix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Best practice for number of TEM Clients that a TEM Relay should have reporting to it. 
+
+RESOLVING THE PROBLEM
+The standard best practice recommendation is that each Relay can support up to 1000 Clients. This recommendation maximizes the speed and responsiveness of BigFix Clients while ensuring that any individual Relay (which are typically on shared computers with other duties) will not experience too much load. 
+
+For Linux and Windows based relays, it is possible to support up to 5000 Clients. This so called “high scale” relay configuration is based upon specific infrastructure and capacity planning recommendations and is described in detail in the BigFix Capacity Planning guide (URL [http://www-01.ibm.com/support/docview.wss?uid=swg27048326]). 
+
+Tests do confirm that the Relays can support high average and peak workloads, with a high degree of reliability. It should be noted there are several downsides as the number of Clients per Relay increase: 
+
+· Client responsiveness will decrease because the Relay will not be able to service all Clients simultaneously. This may result in slower action response times and file distribution times. 
+
+· Relay infrastructure will become less fault-resistant due to the fact that if a Relay fails (for any reason), the remaining Relays will have many more Clients failing over. 
+
+· Relay CPU and overall resource usage will increase as a Relay has to handle more Clients. 
+
+· If Relays are handling too many Clients, it often means that many Clients are connecting over (potentially slow) WAN connections, which is sub-optimal for network bandwidth. 
+
+· If a Relay is handling many Clients, it may no longer be a good candidate for a shared server. 
+
+· When a relay is under high peak load, from the Console operator’s view, it would appear that the Clients were not responsive and seemed to report their results sporadically. 
+
+· Note that Clients will write connection and timeout errors to the Client logs when they are unable to connect to a Relay. Persistent connection and timeout issues likely indicate changes should be made to the Relay topology and configuration. 
+
+Important: If you are considering using a Relay to handle significant amounts of Clients above the recommended values, please contact Professional Services for assistance configuring your deployment and Relays to better handle the high load.
+
+
+
+HISTORICAL NUMBER
+ 1742

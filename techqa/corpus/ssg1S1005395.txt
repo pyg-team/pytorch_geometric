@@ -1,0 +1,62 @@
+Title: IBM Upgrading an encrypted 840 or V840 Storage Enclosure to 1.2.x.x (R2) - United States
+
+Text:
+rekey re-key encryption upgrade CCL PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ How to upgrade an 840 or V840 to Rlease 2 firmware that was encrypted at a lower firmware level, and has not been Re-Keyed since installation.
+
+
+CONTENT
+
+Description
+
+Encrypted 840 systems and V840 storage controllers being upgraded to firmware release 1.2.0.11 or later from 1.1.3.x (R1 SP3) may require a re-key operation before the upgrade can begin. 
+
+If the array was created at the 1.1.3.x (R1 SP3) firmware level or if a manual re-key operation has been preformed at the 1.1.3.x firmware level, the system can be upgraded without an additional re-key.
+
+If the array was created prior to release 1.1.3.2 and no re-key operation has been performed, a re-key must be done before the R2 upgrade can begin.
+
+Note: Re-key of a system running firmware release 1.1.3.7 or 1.1.3.8 may require the use of a special utility that must be obtained from IBM Support. If you are re-keying a system that is on one of those releases, contact IBM Support.
+
+Systems Affected
+
+The following systems are affected if the encryption feature has been enabled prior to 1.1.3.2.
+
+
+ * 9840-AE1 FlashSystem 840 
+ * 9843-AE1 FlashSystem 840 
+ * 9846-AE1 FlashSystem V840 storage controller 
+ * 9848-AE1 FlashSystem V840 storage controller
+
+
+
+Determining if a rekey is required 
+
+The Software Upgrade Test Utility that is run prior to any upgrade will test to determine if a re-key is required. If a re-key is required the upgrade test tool will report an error. You can determine if the system will require a re-key in one of two ways outside of the upgrade tool. 
+ 1. Inspect the USB stick containing the encryption keys. If files start with "encryptionkey_", OR
+    
+ 2. Use the CLI command "lsencryption" If the UUID displayed starts with "encryptionkey_*", 
+    
+    then the re-key will not be required.
+
+
+For example: 
+
+encryptionkey_0000020063660020_0000000000000003_Cluster_10.50.50.21 
+
+The Upgrade Test Utility will confirm this. The array can be re-keyed as many times as desired. 
+
+NOTE: The "lsencryption" command does not display keys on the USB stick if they are in the old format used before release 1.1.3.2. You must inspect the files stored on the USB stick in order to see the keys. Keys in the old format have the form <serial_number>.key. For example: 
+ * 1310123.key
+
+
+
+Performing the re-key operation 
+
+It is recommended that the re-key operation be done with the assistance of IBM support. Contact IBM Support in order to obtain written instructions and (if needed) the special utility needed to enable re-key on firmware release 1.1.3.7 or 1.1.3.8. 
+
+Upgrading to firmware release 1.2.x.x 
+
+After the system is at firmware release 1.1.3.x and has been re-keyed, the system can be upgraded to 1.2.x.x (R2). 
+[/support/docview.wss?uid=ssg1S1005395&aid=2]Customer_Encryption_Rekey_1.4.pdf [/support/docview.wss?uid=ssg1S1005395&aid=1]

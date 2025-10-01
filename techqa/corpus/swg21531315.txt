@@ -1,0 +1,34 @@
+Title: IBM DB connection pooling in Yantra 7x agent/app server - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DB connection pooling in Yantra 7x agent/app server 
+
+SYMPTOM
+In the Yantra 7x web application deployed on an application server, the number of DB connections in the pool (min/max) etc. are controlled via exposed properties in the application server.
+
+The Yantra 7x agent/integration servers however manage their own DB connection pooling. Is there an optimization done based on the number of services etc? Or is this is a fixed min/max number that are not exposed? Wanted to understand this better, since this might have an impact on how many time-triggered transactions we might want to have in a single agent/integration server.
+
+
+RESOLVING THE PROBLEM
+The logic/process followed for connection pool managing in the agent/integration servers is as follows:
+
+1) On startup, the agent/integration server establishes # of connections = (sum of # of threads across all criteria/services within a given instance/JVM of that service/agent). So, if you started the schedule agent with 3 threads, it would establish 3 DB connections right off the bat. 
+2) An additional connection "may" be established for the trigger.
+3) An additional connection can be established for the statistics persistence.
+
+In the yfs.properties, we expose a couple of parameters for the connection pool reap time etc. These come into play only if a connection in the pool within the agent JVM has been idle for more than a certain period of time.
+
+So, in the worst case scenario, for the above example, you could briefly have 5 DB connections but, for the most part you will have 3.
+
+
+
+HISTORICAL NUMBER
+ PRI49567 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact

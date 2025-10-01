@@ -1,0 +1,48 @@
+Title: IBM ptsstatus takes 48 seconds to produce output, replication is slow. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Replication is very sluggish and ptsstatus takes 48sec to produce output. 
+
+CAUSE
+DNS server issue affects Informix service, see: 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg2125002 [http://www-01.ibm.com/support/docview.wss?uid=swg2125002]
+
+By design Informix tool, dbaccess (and other client applications) always doing DNS lookup while connecting to a database, even after found out the hostname or IP address in the local host file. This behavior sometimes caused slow connection, if you have problem related to DNS.
+
+
+DIAGNOSING THE PROBLEM
+To diagnose the problem use the nslookup command:
+
+nslookup <PTS host name>
+
+If the output from this command does not complete or error is seen, the implication is that the DNS is not returning values quickly enough or can not find entry for <PTS host name>. 
+
+
+
+RESOLVING THE PROBLEM
+1. Engage DNS administrator to fix the issue or configure a valid DNS server DNS. Ensure that the reverse-lookup zone is populated for all clients that connect to the IDS server. 
+
+
+
+OR
+
+
+2. If you prefer to not use DNS, for example by including the host names and IP addresses of all machines in the local hosts file /etc/hosts, then change the PTS host name in the /opt/ibm/nzpts/database/etc/sqlhosts file to it's IP address (valid address of any interface) and keep sure the service name in the sqlhosts file is set to port number.
+
+Original file content:
+ptsserver onsoctcp localhost 9088 b=16384
+ptsserver_shm onipcshm on_hostname on_servername
+
+Modified file content:
+ptsserver onsoctcp 10.11.12.13 9088 b=16384
+ptsserver_shm onipcshm 10.11.12.13 on_servername
+
+When done, restart the PTS service as root user:
+service ptsd stop
+service ptsdbd stop
+service ptsdbd start
+service ptsd start

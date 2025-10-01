@@ -1,0 +1,47 @@
+Title: IBM How to configure Controller to use Active Directory authentication with Cognos Analytics - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Customer would like their end users to logon to Controller by using their Windows (domain / active directory) username and password. How can they achieve this?
+
+NOTE: This Technote only relates to when using Cognos Analytics as the authentication mechanism.
+- If using Cognos BI, then see separate IBM Technote #1380097. 
+
+CAUSE
+Customer would like to use Cognos (CAM) authentication, using a Cognos Analytics (CA) server as the security namespace source.
+
+ANSWER
+In general, the steps to enable Active Directory authentication are the same for using 'Cognos Analytics' as they are when using 'Cognos BI'. 
+
+ * Therefore, in general you can use the same instructions as written in the separate IBM Technote #1380097.
+
+
+However, there are the following differences: 
+
+========================================= 
+(1) If you intend to enable Single Sign On (SSO = where users are not prompted for their Windows usernames/passwords) then you will need to install and configure the 'Optional Gateway' component for Cognos Analytics.  * TIP: For more information, see separate IBM Technote #2002465.
+
+========================================= 
+
+(2) By default, Cognos Analytics does not automatically include the roles 'Controller Users' or 'Controller Administrators'  * Therefore you must manually create these missing security roles.
+
+
+Steps 
+1. Launch Cognos Connection  * TIP: By default, this is here: http://<servername>:9300/bi/v1/disp?b_action=cogadmin
+
+
+2. Click tab 'Security' 
+3. Click on the 'New Role' button: 
+[/support/docview.wss?uid=swg22012534&aid=1] [/support/docview.wss?uid=swg22012534&aid=1] 
+
+4. Create a role called: Controller Administrators 
+[/support/docview.wss?uid=swg22012534&aid=2] [/support/docview.wss?uid=swg22012534&aid=2] 
+5. Click Next, Finish 
+
+6. Create a role called: Controller Users 
+7. Click Next, Finish 
+========================================= RELATED INFORMATION
+ 1380097 - How to configure Controller to use Active Dir [http://www.ibm.com/support/docview.wss?uid=swg21380097]
+2002465 - How to configure SSO (single sign on) for Con [http://www.ibm.com/support/docview.wss?uid=swg22002465]

@@ -1,0 +1,23 @@
+Title: IBM 1300W Power Supply comes up in 900W Mode - United States
+
+Text:
+PDU; PSU; 1300W; 900W; Power; Power Sequence TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Some PDUs have a slower ramp up time and it can result in that a 1300W PSU comes up in 900W mode. Especially if the rack is powered up as unit with all shelves powering up at once. This article explains the theory and remedy if such problems occur. 
+
+CAUSE
+The PSU samples the AC input to see if it is connected to 240V AC or 110V AC for a short period of time when power is first turned on and detected. If the sampled voltage is less than 185 V when the sampling period ends, the PSU will enter 900W mode. This is regardless of whether the voltage rises to the high line eventually. The PSU will also remember this output unless it is given enough time to reset.
+
+RESOLVING THE PROBLEM
+The work around is to power the PDU first and if the rack has many systems, power one shelf at a time by plugging in one PSU power cord at a time 
+
+1) Unplug the AC power
+2) remove the PSU, and wait for a minimum of 1 minute.
+3) Insert the PSU back into the system
+4) install the AC line cord.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Flash Storage IBM FlashSystem 900 Flash Storage IBM FlashSystem V840 Flash Storage IBM FlashSystem V9000

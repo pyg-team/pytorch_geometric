@@ -1,0 +1,108 @@
+Title: IBM MustGather: Read first for FileNet Content Engine - United States
+
+Text:
+Must Gather; MustGather; Troubleshooting; triage TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer-provided background information (also known as MustGather data) helps in problem determination and saves time when resolving Problem Management Records (PMRs). This technote provides a description of the background information IBM® Support will need. 
+
+ENVIRONMENT
+WebSphere, WebLogic, and JBoss on all supported operating systems
+
+RESOLVING THE PROBLEM
+ 
+
+Gathering General Information 
+Collecting and providing the following information will assist IBM in finding a solution: 
+ 1. The error and related stack trace, in full, of the problem being reported. Stack traces should include any nested exceptions ("Caused by").
+    
+    
+ 2. A description of the problem with:
+     1. The detailed steps required to reproduce the problem. 
+     2. A brief explanation of what the expected results were. 
+     3. A description, if applicable, of any work-arounds that are available. 
+     4. How frequently the problem occurs. 
+     5. How long has been the problem occurred. 
+     6. What has changed to the system since it was working (Fix Pack, configuration change, server relocation, etc).
+        
+        
+    
+    
+ 3. All of the information displayed on the Content Platform Engine Startup Context page (also known as the ping page). You can access this page from any client with a an internet browser installed using the following link:
+    
+    http://server:port/FileNet/Engine
+    
+    where server is the host name of the server where Content Platform Engine is deployed and port is the HTTP port that is used by the application server where Content Platform Engine is deployed (the default port numbers are 9080 for WebSphere, 7001 for WebLogic, 8080 for JBoss). In a load-balanced environment, server is the name of one of the servers in the farm, not the virtual address of a load balancer.
+    
+    
+ 4. The FileNet Content Engine error log files. The error files are located in a subdirectory called FileNet/server_instance_name under the current working directory of the deployed application. By default the error log file is named p8_server_error.log.
+    
+    For WebSphere Application Server, an example log file location is install_root/profiles/profile_name/FileNet/server_Instance_name/p8_server_error.log. 
+    
+    For Oracle WebLogic Server, an example log file location is bea/user_projects/domains/my_domain/FileNet/AdminServer/p8_server_error.log. 
+    
+    For JBoss, an example log file location is jboss_install/jboss-as/bin/FileNet/server_instance_name/p8_server_error.log. 
+    
+    In cluster environments, there is a log file on each server.
+    
+ 5. The application server trace log files. For cluster environments, provide the log files from each server. Each server stores log files as follows:
+     1. WebSphere - all files in the following directories:
+        
+        install_root/profiles/<profile-name>/logs/<server-name>
+        install_root/profiles/<profile-name>/logs/ffdc
+        
+        
+     2. WebLogic 
+        
+        install_root/user_projects/domains/<domain-name>/servers/<server-name>/logs
+        
+        
+     3. JBoss
+        
+        install_root/server/<server-name>/log
+        
+        
+    
+    
+ 6. The specific version of application server (WebSphere, WebLogic, or JBoss) being used including any fix packs that have been applied.
+    
+    
+ 7. The specific database version being used including any fix packs that have been applied.
+    
+    
+ 8. A brief description of configuration specifics that will help us understand what may make this environment unique, such as, Network deployments/Clustering, or Single Sign On.
+    
+    
+ 9. A brief description of the client program as follows:
+    
+    Is this a custom application? 
+    Does it run in an application server? 
+    Is it another IBM product or based on one such as Workplace or Records Manager?
+    
+    
+
+Gathering component-specific information 
+Search for MustGather documents and see if one matches your symptom or the part of the product with which you are experiencing problems, follow the instructions in the associated MustGather document: 
+View all MustGather documents [http://www.ibm.com/support/search.wss?rs=3278&tc=SSNVNV&q=MustGatherDocument] 
+
+The following MustGather documents have been provided for your convenience: 
+
+ * Security Authorization [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg21308295]
+   
+ * Document Storage [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg21313968]
+   
+ * Database [http://www-01.ibm.com/support/docview.wss?uid=swg21313976]
+   
+ * Content Based Retrieval: Content Search Services [https://www-304.ibm.com/support/docview.wss?rs=3278&uid=swg21472995]
+   
+ * Content Based Retrieval: Legacy Content Search Engine [https://www-304.ibm.com/support/docview.wss?uid=swg21313995]
+   
+ * LDAP [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg21314043] [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg21314053]
+   
+ * Search [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg21313990]
+   
+ * Performance [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg21391007] 
+
+RELATED INFORMATION
+ Enabling Content Engine Server tracing [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21308282]
+Verifying the Content Platform Engine server status [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.common.admin.doc/startup_shutdown/verify_cpe_status.htm?lang=en]

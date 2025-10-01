@@ -1,0 +1,239 @@
+Title: IBM IT00326: WMQ V7.X EXPLORER IS NOT ABLE TO CONFIGURE A CIPHER SPECIFICATION SUPPORTED BY GSKIT V8 FOR A V7.0.1 QUEUE MANAGER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.5 Fix Pack 7.5.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038252]
+Fix Pack 7.1.0.6 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038863]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere MQ fix pack V7.0.1.4 and later code levels include
+   Global Security Kit (GSKit) Version 8, in addition to GSKit
+   Version 7 (which is installed by default).
+   GSKit V8 is provided as an alternative security package to
+   enable customers to configure stronger encryption settings
+   (Cipher Specifications), for their channels, that were not
+   supported at the GSKit V7 code level.
+   However, even though the GSKit V8 packages have been installed
+   and configured correctly, the WebSphere MQ Explorer at the
+   V7.0.1.4 and later, V7.1.0.x, and V7.5.0.x code levels does not
+   allow an MQ administrator to configure the GSKit V8 Cipher
+   Specifications.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the WebSphere MQ runmqsc command line utility to configure
+   your channel with the GSKit V8 Cipher Specification
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the 7.0.1, 7.1 or 7.5 WebSphere MQ
+   Explorer who are connecting to a 7.0.1 queue manager which is
+   configured to use GSKit 8, and wish to configure one of the
+   following additional CipherSpecs provided by this GSKit level on
+   a channel definition:
+   
+   TLS_RSA_WITH_AES_256_CBC_SHA256
+   TLS_RSA_WITH_AES_128_CBC_SHA256
+   TLS_RSA_WITH_NULL_SHA256
+   
+   
+   Platforms affected:
+   Windows, Linux on x86, Linux on x86-64
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   WebSphere MQ Explorer contains metadata which defines the set of
+   valid property values for WebSphere MQ object definitions, based
+   on the version of the queue manager that MQ Explorer is
+   connecting to.
+   
+   The metadata defining set of valid CipherSpec values for channel
+   definitions was extended in 7.0.1.4 to include the following
+   addtional CipherSpecs on Windows and Unix queue managers:
+   
+   TLS_RSA_WITH_AES_256_CBC_SHA256
+   TLS_RSA_WITH_AES_128_CBC_SHA256
+   TLS_RSA_WITH_NULL_SHA256
+   
+   Subsequently, IC88494 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC88494] added additional metadata to allow a
+   7.0.1.10 or higher MQ Explorer to configure additional
+   CipherSpecs on a channel definition when connected to 7.1 or
+   higher queue managers. This change incorrectly caused Explorer
+   to fail to show the three CipherSpecs listed above in the list
+   of available CipherSpecs for a channel definition when connected
+   to a 7.0.1 queue manager.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ Explorer has been updated to allow the
+   configuration of the following CipherSpecs on a channel
+   definition when connected to a version 7.0.1 queue manager:
+   
+   TLS_RSA_WITH_AES_256_CBC_SHA256
+   TLS_RSA_WITH_AES_128_CBC_SHA256
+   TLS_RSA_WITH_NULL_SHA256
+   
+   These CipherSpecs require GSKit 8 to be configured on the queue
+   manager. Attempting to set these CipherSpecs for a channel
+   definition on a version 7.0.1 queue manager which is using GSKit
+   7 will cause MQ Explorer to display an AMQ4126 error.
+   
+   It should be noted that WebSphere MQ Explorer version 7.0.1 does
+   not support the use of these three CipherSpecs for its
+   communications with the queue manager over a ServerConnection
+   channel.
+   
+   | MDVREGR 7.0.1-WS-MQ-AixPPC64-FP0010 |
+   | MDVREGR 7.0.1-WS-MQ-HpuxIA64-FP0010 |
+   | MDVREGR 7.0.1-WS-MQ-HpuxPaRISC64-FP0010 |
+   | MDVREGR 7.0.1-WS-MQ-LinuxIA32-FP0010 |
+   | MDVREGR 7.0.1-WS-MQ-LinuxPPC64-FP0010 |
+   | MDVREGR 7.0.1-WS-MQ-LinuxS390X-FP0010 |
+   | MDVREGR 7.0.1-WS-MQ-LinuxX64-FP0010 |
+   | MDVREGR 7.0.1-WS-MQ-SolarisSparc64-FP0010 |
+   | MDVREGR 7.0.1-WS-MQ-SolarisX64-FP0010 |
+   | MDVREGR 7.0.1-WS-MQ-Windows-FP0010 |
+   
+   | MDVREGR 7.0.1-WS-MQ-AixPPC64-FP0011 |
+   | MDVREGR 7.0.1-WS-MQ-HpuxIA64-FP0011 |
+   | MDVREGR 7.0.1-WS-MQ-HpuxPaRISC64-FP0011 |
+   | MDVREGR 7.0.1-WS-MQ-LinuxIA32-FP0011 |
+   | MDVREGR 7.0.1-WS-MQ-LinuxPPC64-FP0011 |
+   | MDVREGR 7.0.1-WS-MQ-LinuxS390X-FP0011 |
+   | MDVREGR 7.0.1-WS-MQ-LinuxX64-FP0011 |
+   | MDVREGR 7.0.1-WS-MQ-SolarisSparc64-FP0011 |
+   | MDVREGR 7.0.1-WS-MQ-SolarisX64-FP0011 |
+   | MDVREGR 7.0.1-WS-MQ-Windows-FP0011 |
+   
+   | MDVREGR 7.0.1-WS-MQ-AixPPC64-FP0012 |
+   | MDVREGR 7.0.1-WS-MQ-HpuxIA64-FP0012 |
+   | MDVREGR 7.0.1-WS-MQ-HpuxPaRISC64-FP0012 |
+   | MDVREGR 7.0.1-WS-MQ-LinuxIA32-FP0012 |
+   | MDVREGR 7.0.1-WS-MQ-LinuxPPC64-FP0012 |
+   | MDVREGR 7.0.1-WS-MQ-LinuxS390X-FP0012 |
+   | MDVREGR 7.0.1-WS-MQ-LinuxX64-FP0012 |
+   | MDVREGR 7.0.1-WS-MQ-SolarisSparc64-FP0012 |
+   | MDVREGR 7.0.1-WS-MQ-SolarisX64-FP0012 |
+   | MDVREGR 7.0.1-WS-MQ-Windows-FP0012 |
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.0       7.0.1.13
+   v7.1       7.1.0.6
+   v7.5       7.5.0.4
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT00326
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-14
+   
+   
+ * CLOSED DATE
+   2014-03-28
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

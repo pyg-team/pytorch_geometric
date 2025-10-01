@@ -1,0 +1,24 @@
+Title: IBM Where can I find WDI Data Formats for SAP IDocs? - United States
+
+Text:
+SAP SAP/R3 IDOC IDOCS layout ADF DF data format export import files file eif TECHNOTE (FAQ)
+
+QUESTION
+ Does WebSphere Data Interchange provide Application Data Formats (ADFs) for SAP IDoc layouts that can be downloaded and imported into WDI? 
+
+ANSWER
+While WDI does not provide IDOC Data Format layouts, there are two tools which may help: 
+
+ 
+
+1) "Installing the SAP IDOCs Utility for WebSphere Data Interchange" 
+
+https://www-304.ibm.com/support/docview.wss?uid=swg27006775 [https://www-304.ibm.com/support/docview.wss?uid=swg27006775] 
+
+Note: This is an "as is" tool provided by the field. It is not part of the Licensed Program Product, WebSphere Data Interchange. While the tool was written for WDI 3.2.1, and since the result of the tool is an .eif file, WDI 3.3 accepts WDI 3.2.1 exports. 
+
+ 
+
+2) Alternatively, if you have IDOC layouts in a COBOL copybook format, then you can use the WDI Client feature for Importing COBOL Copybooks. 
+
+Note: Search for "Importing COBOL Copybooks" under WDI Client Help for details.

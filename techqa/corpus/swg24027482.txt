@@ -1,0 +1,164 @@
+Title: IBM Tivoli Netcool/OMNIbus 7.3.0 Fix Pack 4, 7.3.0-TIV-NCOMNIbus-FP0004 - United States
+
+Text:
+OMNIbus 730; FP0004; OMNIbus 7.3.0; 7.3.0.4 DOWNLOADABLE FILES
+
+ABSTRACT
+ This fix pack is a cumulative fix release and addresses some APARs and internally found issues since the release of OMNIbus 7.3.0 Fix Pack 3. 
+
+DOWNLOAD DESCRIPTION
+This is a cumulative fix pack for Tivoli Netcool/OMNIbus version 7.3.0. 
+
+
+7.3.0-TIV-NCOMNIbus-FP0004 Fixes
+====================================
+
+IZ80783
+When probe failover is enabled, and a slave probe is running on
+Windows, the number of handles as seen in the Windows Task
+Manager grows continuously. This problem has been fixed.
+
+
+IZ80678
+Alerts with a Manager of GatewayWatch were previously missing
+data in the ServerName and Tally columns of the ObjectServer.
+This problem has been fixed.
+
+
+IZ75736
+An encrypted PA.Password shows in clear text in the Administrator
+GUI. Also, if any value is changed in the Administrator GUI,
+encrypted passwords get written out in decrypted form. This
+problem has been resolved.
+
+
+IZ84694
+Installation of a 7.3 probe on Windows may fail.
+
+
+IZ84890
+The object server core dumps when starting up due to bad trigger
+syntax. This problem has been resolved.
+
+
+IZ78509
+Fields containing single quotes can cause tools to fail from the
+Windows Event List. This problem has been resolved.
+
+
+IZ85473
+OMNIbus fix pack installations were failing due to Java out of
+memory errors. This problem has been resolved.
+
+
+IZ86656
+OMNIbus 7.3 is now supported on AIX 7.1.
+
+
+IZ84650
+The recorded profiling times may be incorrect on a busy system.
+The profiling timer was not being suspended when the Object
+Server was busy with other tasks. This problem has been
+resolved.
+
+
+IZ86876
+When running the 'uninstall' program for a gateway or probe, the
+uninstaller would be removed but the gateway or probe would
+remain installed. This has been fixed.
+
+
+IZ83743
+Japanese character strings are truncated when displayed in the
+bottom portion of the Windows event list. This problem has been
+resolved.
+
+
+IZ81420
+When a group is deleted via the Administrator, the tool access
+data associated with that group is not removed. This caused
+nco_confpack export to fail. The tool access data associated
+with the group is now removed. However, if the Administrator is
+not used to delete the group - if the group is deleted using the
+SQL interface, with 'drop group <group_name>' - the tool access
+data will not be removed, and the nco_confpack export will still
+fail.
+
+
+IZ84304
+Reduced memory required for storing large multi-column lookup
+tables.
+Increased performance of lookup tables with large numbers of
+entries.
+
+
+IZ86660
+If a tool that required a prompt was launched, it would be
+executed when the prompt window is closed with the 'X' or using
+Alt+F4. The new and correct behavior will be for the tool
+execution to be aborted.
+
+
+IZ89203
+Probes on Windows failed to locate rules files given by relative
+paths on the command line. This has now been fixed.
+
+
+IZ69192
+Probes on Windows could create log file pools instead of writing
+to a single log file. This has been fixed.
+
+
+IZ88264
+Updates were made to the default rules file provided for
+integration with Tivoli Application Dependency Discovery
+Manager (TADDM).
+NOTE: Applying the fix pack will overwrite the current rules
+file at NCHOME/omnibus/extensions/taddm/tivoli_eif_taddm.rules
+without prompting the end user.
+
+PREREQUISITES
+This fix pack installs on any GA Release (including previous GA fixpacks) of Tivoli Netcool/OMNIbus 7.3.0.
+
+INSTALLATION INSTRUCTIONS
+Installation
+============
+
+UNIX
+----
+
+IMPORTANT: Before installing this fix, ensure that all Tivoli Network
+Managment applications on your computer have been shutdown.
+
+Extract the contents of 7.3.0-TIV-NCOMNIbus-<arch>-FP0004.tar
+in to a temporary directory, replacing the <arch> placeholder with the
+string identifying your platform.
+
+From within the directory enter the following command to install this fix
+interactively.
+
+./install.bin
+
+Windows
+-------
+
+IMPORTANT: Before installing this fix, ensure that all Tivoli Network
+Managment applications on your computer have been shutdown.
+
+Extract the contents of 7.3.0-TIV-NCOMNIbus-win32-FP0004.zip
+in to a temporary directory.
+
+To install this fix interactively double click install.exe.
+
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 7.3.0-TIV-NCOMNIbus-AIX-FP0004 12/31/2010 US English 173813760 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.3.0-TIV-NCOMNIbus-AIX-FP0004&product=ibm%2FTivoli%2FTivoli%20Netcool%20OMNIbus&source=dbluesearch] [ ] 7.3.0-TIV-NCOMNIbus-HPUX-FP0004 12/31/2010 US English 180572160 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.3.0-TIV-NCOMNIbus-HPUX-FP0004&product=ibm%2FTivoli%2FTivoli%20Netcool%20OMNIbus&source=dbluesearch] [ ] 7.3.0-TIV-NCOMNIbus-HPUXIA-FP0004 12/31/2010 US English 193351680 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.3.0-TIV-NCOMNIbus-HPUXIA-FP0004&product=ibm%2FTivoli%2FTivoli%20Netcool%20OMNIbus&source=dbluesearch] [ ] 7.3.0-TIV-NCOMNIbus-Linux-FP0004 12/31/2010 US English 172175360 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.3.0-TIV-NCOMNIbus-Linux-FP0004&product=ibm%2FTivoli%2FTivoli%20Netcool%20OMNIbus&source=dbluesearch] [ ] 7.3.0-TIV-NCOMNIbus-ZLinux-FP0004 12/31/2010 US English 198799360 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.3.0-TIV-NCOMNIbus-ZLinux-FP0004&product=ibm%2FTivoli%2FTivoli%20Netcool%20OMNIbus&source=dbluesearch] [ ] 7.3.0-TIV-NCOMNIbus-Solaris-FP0004 12/31/2010 US English 181193216 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.3.0-TIV-NCOMNIbus-Solaris-FP0004&product=ibm%2FTivoli%2FTivoli%20Netcool%20OMNIbus&source=dbluesearch] [ ] 7.3.0-TIV-NCOMNIbus-Windows-FP0004 12/31/2010 US English 211791005 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.3.0-TIV-NCOMNIbus-Windows-FP0004&product=ibm%2FTivoli%2FTivoli%20Netcool%20OMNIbus&source=dbluesearch] [ ] 
+PRODUCT ALIAS/SYNONYM
+ OMNIbus 
+
+ [/support/docview.wss?uid=swg24027482&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24027482&aid=2]Problems (APARS) fixed
+IZ80783, IZ80678, IZ75736, IZ84694, IZ84890, IZ78509, IZ85473, IZ86656, IZ84650, IZ86876, IZ83743, IZ81420, IZ84304, IZ86660, IZ89203, IZ69192, IZ88264, IZ37272, IZ60407, IZ62951, IZ62720, IZ67228, IZ63491, IZ55799, IZ65930, IZ65261, IZ65536, IZ65290, IZ35655, IZ74616, IZ60269, IZ62580, IZ63926, IZ66216, IZ66645, IZ66738, IZ68706, IZ70481, IZ70653, IZ66383, IZ69057, IZ71966, IZ70104, IZ67525, IZ69099, IZ65925, IZ68862, IZ72292, IZ75578, IZ75853, IZ75955, IZ70187, IZ76225, IZ76040, IZ77352, IZ78305, IZ79684, IZ80143, IZ77515, IZ81037, IZ82721

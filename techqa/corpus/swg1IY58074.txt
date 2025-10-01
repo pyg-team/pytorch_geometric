@@ -1,0 +1,137 @@
+Title: IBM IY58074: Webseal memory leak - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Webseal with TAM/AWS 4.1-0011LA on W2K has memory leak issue.
+   Received email from Chris C (GC lab engineer) who was on site.
+   
+   "During the test I've noticed that the memory usage of WebSEAL
+   was increasing by 4 - 8 KB per second. We were doing about 20 -
+   30 transactions per sec.
+   
+   In the production system, I've noticed that the WebSEAL's memory
+   usage has grown to close to 700MB over approximately 4 - 5 hour
+   period.
+   
+   The leak was observed in a system with FP11 + an interim fix
+   released by L3 (as per PMR). I did not get chance to test the
+   leak with just FP11. However, they said that they observed
+   similar leak when they ran same test with FP11 prior to my
+   arrival onsite.
+   
+   Also the customer was reluctant to do further testing with FP11
+   because of constant crashes. In the limited tests that we were
+   able to do, we established that the crash would occur only when
+   io-buffer-size was changed. These crashes weren't due to memory
+   exhaustion. The io-buffer-size that they tried were 64KB, 124KB
+   and 256 KB. They wanted to test the performance at various
+   io-buffer-size because of an earlier recommendation from IBM
+   support. FP9 would not crash when same values were used for
+   io-buffer-size.
+   
+   I did ping HK again about running another test just with FP11
+   but he says that it's unlikely that the customer will be willing
+   to do so now that they have a stable system."
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *   This issue has been unreproducible in both the
+   L2 and L3 lab environment.  To continue further analysis, we wil
+   l need system_status, senddata, and core files.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY58074
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0811
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-06-17
+   
+   
+ * CLOSED DATE
+   2004-07-12
+   
+   
+ * LAST MODIFIED DATE
+   2004-07-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * FIXED COMPONENT ID
+   5724C0811
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R410 PSN
+   UP

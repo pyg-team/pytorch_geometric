@@ -1,0 +1,37 @@
+Title: IBM Rational Team Concert terminated. Exit code=8096 - United States
+
+Text:
+exit; code; 8096; crash; crashes; RTC; RSA; java virtual machine; Work item 166607 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why opening workitem using IBM Rational Team Concert integrated with Rational Software Architect crashes with the error "JVM terminated. Exit code=8096" . It also provides instructions to resolve the issue. 
+
+SYMPTOM
+Rational Team Concert crashes with the following JVM terminated error message: 
+
+JVM terminated. Exit code=8096 
+
+[/support/docview.wss?uid=swg21501371&amp;aid=1]
+
+CAUSE
+There are many possible factors that could contribute to the crash the JVM exit code=8096 error message. 
+
+One of possible causes might be a bug in the Intel Graphic Card driver for Windows XP Service Pack 3
+
+
+ENVIRONMENT
+Rational Team Concert version 3.0 and 3.0.1 integrated with Rational Software Architect 
+
+ * Intel(R) Q45/Q43 Express Chipset 
+ * Windows XP Service Pack 3
+
+RESOLVING THE PROBLEM
+Upgrade your graphic card driver to the latest one. If upgrading the driver does not fix the issue, contact Rational support..
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Not Applicable Windows 8.0, 8.0.1, 8.0.2, 8.0.3

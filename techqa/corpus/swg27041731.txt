@@ -1,0 +1,13 @@
+Title: IBM Integration Bus troubleshooting - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ If you are having problems with your message flow applications, use the techniques described in this section to help diagnose and solve the problems. 
+
+CONTENT
+Refer to the Troubleshooting and support [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bu03830_.htm] section for techniques that you can use to diagnose problems with IBM Integration Bus.
+
+RELATED INFORMATION
+ IBM Integration Bus: Troubleshooting and support [http://www-01.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bu03830_.htm]

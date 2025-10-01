@@ -1,0 +1,77 @@
+Title: IBM How to resolve corruption on a DAOS enabled database - United States
+
+Text:
+DbMarkCorrupt; Btree; Truncated; Damaged TECHNOTE (FAQ)
+
+QUESTION
+When DAOS has been enabled in your Domino environment there are additional considerations when dealing with Domino databases. This document will address how to handle database corruption on a DAOS enabled database. Specifically, the following questions will be answered: 
+
+ * Can I run database utilities against a DAOS enabled database? 
+ * When should the fixup -d parameter be used? 
+ * What sequence of things should I try to resolve corruption against a DAOS enabled database? 
+ * What is the proper procedure to resolve "The database <data\mail\mailfilename.nsf> has the incorrect DAOS object count, you should run fixup on this database. Using this database in this condition will cause the DAOS catalog to go into the 'Needs Resync' state" errors? 
+ * How do I send a corrupt database into Lotus Support for review?
+
+ANSWER
+Can I run database utilities against a DAOS enabled database? 
+
+Fixup, updall and compact can all be run against a DAOS enabled database. Because DAOS requires transaction logging in order to run fixup you must use the -j parameter. For example: 
+
+load (n)fixup -j mail/File_Name.nsf 
+
+ 
+
+When should the fixup -d parameter be used? 
+
+The -d parameter was first introduced in Domino 8.5.0 and can be used with DAOS enabled database. The purpose of the parameter is to delete any document that is referencing a .nlo file that does not exist. A deletion stub will not be created. Thus, if a valid replica exists, running fixup -j -d followed by a replication will replace all of the deleted documents. Careful consideration should be made before running fixup with the -d parameter. 
+
+
+What sequence of things should I try to resolve corruption against a DAOS enabled database? 
+
+ * First try running normal maintenance against the database. (Fixup –j, Updall –r, Compact –c) 
+ * Refresh/Replace the design of the corrupt database with the correct template. 
+ * If the previous two steps fail, check for valid (up to date) replicas of the corrupt database. If a valid replica is found, try Fixup –j –d and then replicate any deleted documents back into the database. 
+ * If Fixup –j –d fails, but a valid replica exists, delete the corrupt database and create a new replica. 
+ * If all else fails, delete the corrupt database and restore from backup [http://www-01.ibm.com/support/docview.wss?uid=swg21420019].
+
+
+What is the proper procedure to resolve "The database <data\mail\mailfilename.nsf> has the incorrect DAOS object count, you should run fixup on this database. Using this database in this condition will cause the DAOS catalog to go into the 'Needs Resync' state" errors? 
+
+This error is typically reported during a DAOS catalog resync, but can be reported at other times. It is recommended that if you are seeing this error in your Domino server logs to schedule a time to run a fixup -j against all databases reporting this error prior to attempting additional DAOS catalog resyncs. Each database in this state will cause the resync to fail. If you have a large number of databases to fixup when searching your log (log.nsf), it is recommended to create an indirect file. [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/Indirect-files-maintenance] After all databases reporting this error have been fixed, resync the DAOS catalog. 
+
+ 
+
+How do I send a corrupt database into Lotus Support for review? 
+
+The answer to this question depends on where the corruption lives that needs to be investigated. 
+
+ 
+
+DAOS code not involved: 
+
+If DAOS code isn't specifically involved than the fact that DAOS is involved can be ignored. Depending on the situation you may be asked for a "New replica", "New copy" or an OS-level copy of the database reporting the problem. 
+
+ 
+
+DAOS code involved: 
+
+If DAOS is involved and Lotus Support must replicate your DAOS environment, the following items are required (all copies would be OS-level copies): 
+
+- Copy of the database involved 
+
+- Copy of the .nlo file referenced in the error or all .nlo files referenced by the database. To get a list of all .nlo files referenced within a database use the "tell daosmgr listnlo [http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/topic/com.ibm.help.domino.admin85.doc/H_DAOS_MANAGER_TELL_COMMANDS_DETAILS.html]" command. 
+
+- Copy of names.nsf from the server 
+
+- Copy of the server.id file 
+
+- Copy of an id file that can access the the Domino server & a password 
+
+- Copy of daos.cfg file from the server 
+
+- Copy of daoscat.nsf from the server
+
+RELATED INFORMATION
+ Indirect Files [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/Indirect-files-maintenance]
+DAOS manager tell commands [http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/topic/com.ibm.help.domino.admin85.doc/H_DAOS_MANAGER_TELL_COMMANDS_DETAILS.html]
+Restoring a DAOS enabled database on IBM i [http://www-01.ibm.com/support/docview.wss?uid=swg21420019]

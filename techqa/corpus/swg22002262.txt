@@ -1,0 +1,82 @@
+Title: IBM How to Troubleshoot a TM1 Application Server Hang - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you have encountered a scenerio where your TM1 Application Server is unresponsive and you beleive that it may be hung - the first action that must be taken is to verify if the server is truly hung. This is an important step as there may be a long running process affecting subsequent processes/user actions, or a TM1 Server contention issue. 
+
+To rule out a long running process or a contention issue, use TM1Top or Operations Console to view the Active Threads on the TM1 Server. If you see threads that are active (the run time continues to count up), then the TM1 Server is not truly hung and the investigation needs to start with understanding the specific user interactions occurring at this time.
+
+Otherwise, the steps in this document cover the collection of the details IBM Support will require in order to assist in diagnosing the problem.
+
+
+
+RESOLVING THE PROBLEM
+In the event of a TM1 Application Server hang, the following should be collected: 
+
+ 1.  Basic description of the problem.  * What was it that the user was doing when the perceived hang occurred? 
+      * Was it limited to just one user, or all users? 
+      *  Did the problem resolve after a period of time, or is it still unresponsive?
+     
+     
+ 2.  Screenshots of the cogbootstrap.exe -> java.exe from Task Manager / Process Explorer  * Collect 3 screenshots, 30 seconds apart. This will allow us to have a quick glance at resources at the time of the Hang.
+     
+     
+ 3.  Process Explorer Hang DMP of the cogbootstrap.exe -> java.exe process (Full Dump)  * See: http://www.ibm.com/support/docview.wss?uid=swg22002261 [http://www.ibm.com/support/docview.wss?uid=swg22002261]
+     
+     
+ 4.  Entire \tm1_64\logs\ directory  * From the TM1 Application Server 
+      * The primary log file is tm1_messages.log
+     
+     
+ 5.  GarbageCollection Log file  * Found in \tm1_64\bin64\ as verbosegc_TIMESTAMP.log 
+      * See: http://www-01.ibm.com/support/docview.wss?uid=swg22002245 [http://www-01.ibm.com/support/docview.wss?uid=swg22002245]
+     
+     
+ 6.  Any recent javacore* files  * Found in \tm1_64\bin64\ directory
+     
+     
+ 7.  Any recent *.hpd files  * Found in \tm1_64\bin64\ directory
+     
+     
+ 8.  tm1web.log  * Found in \tm1_64\webapps\tm1web\WEB-INF\logs\
+     
+     
+ 9.  pmpsvc.log  * Found in \tm1_64\webapps\pmpsvc\WEB-INF \logs\
+     
+     
+ 10. tm1server.log  * Location defined in the affected server's tm1s.cfg file(s)
+     
+     
+ 11. tm1top.log  * Location defined by TM1Top or OpsConsole
+     
+     
+ 12. tm1s.cfg  * Typically resides in or near your TM1 Data directory
+     
+     
+ 13. cmplst.txt  * Found in \tm1_64\
+     
+     
+
+
+
+After the above has been collected, the following actions can be taken to better understand the problem that has occurred: 
+
+ * Look at the screenshots/live view of Task Manager / Process Explorer  * Is the offending java process consuming CPU? 
+    * Does the CPU% taken fluctuate up or down, even if only by a percent or two? 
+    * Is there any movement in the Memory Usage? 
+    * If CPU% or Memory Usage is fluctuating, even if the movement is marginal, the server may not be ‘hung’. 
+      
+   
+   
+ * Depending on the type of issue, you may need to look in different places. The TM1 Application Server may only appear hung if it is waiting on the TM1 Server to process requests. Before doing much else, look at the TM1 Threads via TM1Top / Operations Console for the TM1 Server(s) that the TM1 Application Server integrates with.  * Is there any activity on the server? Perhaps there is a process/chore running, which is preventing subsequent actions/requests/logons from running. 
+    * Are any locks/waits found in the tm1top.log? If so, it is very likely that the Application Server has not hung, and that the Application Server is waiting on the TM1 Server to finish its requests. We will want to highlight the name of the chore/process/action that may be running. 
+    * If it is not clear why the locks are being created and it has not already been enabled, the following tm1s-log.properties entries will allow further details to be written to the tm1server.log upon the next occurrence of the problem:  * log4j.logger.TM1.Lock.Exception=DEBUG
+      
+      
+    * For additional resources regarding Lock Contention see: https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Wc8dd794ce663_464f_89d9_5472bde75168/page/Lock%20Contention%20Management [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Wc8dd794ce663_464f_89d9_5472bde75168/page/Lock%20Contention%20Management]
+      
+   
+   
+ * Is there anything valuable in the tm1server, tm1_messages, tm1web, or pmpsvc logs?  * What you would want to look for, is any sort of logging/actions being written to the log for the duration of the hang. If anything is being written to the log, it is very unlikely that the process is truly hung and may be busy with another request or encountering a specific error.

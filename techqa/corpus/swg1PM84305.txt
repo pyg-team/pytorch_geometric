@@ -1,0 +1,214 @@
+Title: IBM PM84305: OUTOFMEMORYERROR CAUSED BY MEMORY LEAK IN CACHING THE WRAPPER FOR URIS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.5.5.1: WebSphere Application Server V8.5.5 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035935]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+8.5.5.2: WebSphere Application Server V8.5.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037250]
+7.0.0.33: WebSphere Application Server V7.0 Fix Pack 33 [http://www-01.ibm.com/support/docview.wss?uid=swg24037573]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.5.5.3: WebSphere Application Server V8.5.5 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038133]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Caching the wrapper for the URI is a performance enhancement.
+   It will save the server from repeatedly process and create the
+   necessary resources when serving the same request/URI several
+   times.
+   However, when an application creates unique requests for the
+   same static content, excess memory may be consumed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM WebSphere Application Server version    *
+   *                  8.0 and 8.5                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An OutOfMemoryError (OOM) can occur     *
+   *                      when requesting static content.         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Under a very specific design, an application can cause the
+   server to run out of memory when serving a lot of unique
+   static content. The heapdump shows a large amount of memory is
+   held by:
+   com.ibm.ws.webcontainer.webapp.WebAppImpl
+   com.ibm.wsspi.webcontainer.util.URIMapper
+   com.ibm.wsspi.webcontainer.util.URIMatcher
+   com.ibm.ws.util.ClauseNode
+   com.ibm.ws.util.ClauseTable
+   The memory is occupied by the caching of the static content.
+   This is mainly for performance reason. When an application is
+   designed such that every request for the same static content
+   is unique, it consumes more memory to cache the requests.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebContainer code was modified to accommodate those
+   special applications by disabling static caching.
+   
+   A new WebContainer customer property needs to be set to enable
+   the behavior provided by this APAR:
+   
+   com.ibm.ws.webcontainer.disableStaticMappingCache
+   
+   The following value can be specified for this property:
+   
+       * - disable static caching for all deployed applications
+   
+       A comma delimited list of specific applications that will
+   have the disable static caching
+   
+   The following examples illustrate how to specify these two
+   settings:
+   
+   com.ibm.ws.webcontainer.disableStaticMappingCache=*
+   
+   com.ibm.ws.webcontainer.disableStaticMappingCache=SpecialApp,Rar
+   eApp
+   
+   Please refer to the following technote for instructions on
+   enabling WebContainer custom properties:
+   http://www.ibm.com/support/docview.wss?rss=180&uid=swg21284395 [http://www.ibm.com/support/docview.wss?rss=180&uid=swg21284395]
+   
+   Alternatively, a context parameter can be set in the web.xml
+   to disable static caching for the application.
+   
+   <context-param>
+     <param-name>
+   com.ibm.ws.webcontainer.DISABLE_STATIC_MAPPING_CACHE</param-name
+   >
+     <param-value>true</param-value>
+   </context-param>
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 7.0.0.33, 8.0.0.7 and  8.5.5.1. Please refer to the
+   recommended updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM84305
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-07
+   
+   
+ * CLOSED DATE
+   2013-04-29
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM91196 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM91196]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

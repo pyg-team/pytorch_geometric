@@ -1,0 +1,63 @@
+Title: IBM Hyper-Scale Manager v5.2 - Manage all your XIV, A9000 and A9000R, and Spectrum Accelerate systems from one advanced Management application, for up to 144 Storage Systems - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ The XIV GUI next generation - join the community!
+
+Want to be part of the next generation XIV GUI? Have you heard the rumors? We’ve renovated the way you manage Storage! And we’re here to tell you how. 
+
+CONTENT
+Why is the next generation Hyper-Scale Manager GUI better than your current XIV GUI?
+The development and breakthrough design was done in the last 3 years together with almost 80 customers around the world. They gave insights, ideas and helped us shape this new product to a better state. We listened to you and still listening to your feedback to make it even better! 
+
+What do we offer you in Storage Management? 
+
+ * Reduced Management TCO - lower the number of clicks and time it takes for each operation to complete. Faster and easier than what you’ve seen before. 
+ * Web - stop maintaining JAVA on your client desktops. No need to upgrade your clients. Only one server, multiple web browsers with no plugins. 
+ * Cognitive and analytics - our new application “learns” your habits and behaviors and suggests where to go next. At first, you’ll be amazed, and then you’ll find it extremely helpful in minimizing activities. 
+ * Trending/forecasting – now embedded inside the UI, host/pool/system capacity trends are obtained by the application and forecasts are displayed including exact dates to reach thresholds. 
+ * Top and current performance metrics are embedded seamlessly. 
+ * And there’s a lot more. Watch the new Tips & Tricks for 5.2 here: https://youtu.be/Wywvwr6xqQU [https://youtu.be/Wywvwr6xqQU]
+
+
+How can you get access to your next generation GUI? 
+
+Simple. 
+
+1. Download the package. 
+
+· XIV customers: Link [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=Enterprise%20Storage%20Servers&product=ibm/Storage_Disk/XIV+Storage+System+%282810,+2812%29&release=11.6&platform=All&function=all] 
+
+2. Put the package on a Redhat/CentOS/SuSE OS (VM or physical host) 
+
+3. Run the install command 
+
+4. Point your Firefox/Chrome to the server. You will be guided for the first steps. 
+
+Getting Started 
+
+Want to learn more? Watch the video, created to show you the amazing transformation we made in Storage Management: https://www.youtube.com/watch?v=uR3YpsiVlfI [https://www.youtube.com/watch?v=uR3YpsiVlfI] 
+
+Getting Started video: https://youtu.be/nYFk7zUFJqA [https://youtu.be/nYFk7zUFJqA] 
+
+How to provision with the new IBM Hyper-Scale Manager? [https://www.youtube.com/watch?v=H29HLzu8Zqk&t=111s]https://www.youtube.com/watch?v=EOrbpXvbvIk [https://www.youtube.com/watch?v=EOrbpXvbvIk] 
+
+How to troubleshoot with the new IBM Hyper-Scale Manager? [https://www.youtube.com/watch?v=WjP1rOwbci0&t=106s]https://youtu.be/z_eoCyMGGLQ [https://youtu.be/z_eoCyMGGLQ] 
+
+A blog post detailing the advantages and how to reduce costs with the new IBM Hyper-Scale Manager: http://ibm.co/2flgNdL [http://ibm.co/2flgNdL].
+
+Customers are loving it! Here are some quotes:
+
+"I was just super impressed with how much work you guys have done [on the new FlashSystem management interface] and how much easier to use it is…I think it's just like night and day." - Richard Myers, Sr. Network Engineer, APWU Health Plan
+
+"Wow, that is a huge time saver- being able to click on a volume and see its mappings and performance data on same screen"
+
+" I love the google type ahead feature so I can just start typing and find what I am looking for -- that is huge with all of our systems and hosts!! "
+
+".....Their Storage Admin was mesmerized by the GUI! In fact, as Andrew explains in the video, Storage Admins can now do in 1 or 2 clicks what it took 7, 8 or 9 clicks to do previously. They were hooked!...."
+
+"The next generation taking the ease of use to new level" 
+
+"After working 3 days with this GUI, I will definitely go with the new one over the old. It makes the work more effective and much simpler."

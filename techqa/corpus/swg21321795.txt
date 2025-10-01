@@ -1,0 +1,165 @@
+Title: IBM Installation Manager data collector available through IBM Support Assistant - United States
+
+Text:
+isa NEWS
+
+ABSTRACT
+ This document describes how to use the IBM Installation Manager Collector that is available as part of IBM Installation Manager add-on for IBM Support Assistant . This collector is also made available for Rational desktop product plug-ins for IBM Support Assistant . The collectors provides an automated way for customers to provide information for our Rational support team 
+
+CONTENT
+IBM Support Assistant (ISA) is a cross-product extensible client application that increases your capacity for self-help by making it easier to access support resources. Additionally, provides capability for automated data collection for you to gather the necessary data for the support team for initial diagnosis of your problem. 
+
+You can now automate data collection for problems you have with IBM Installation Manager on both Windows and Linux platforms. 
+
+
+
+
+
+
+
+
+
+[http://www.ibm.com/i/v14/icons/d.gif] [/target/url/]Prerequisites [http://www.ibm.com/i/v14/icons/d.gif] [/target/url/]Installation Instructions [http://www.ibm.com/i/v14/icons/d.gif] [/target/url/]Using ISA Collector [http://www.ibm.com/i/v14/icons/d.gif] [/target/url/]Details: IBM Installation Manager Collector 
+
+
+
+
+Prerequisites IBM Support Assistant V4.0.x (Workbench) or above.
+
+http://www.ibm.com/software/support/isa/ [http://www.ibm.com/software/support/isa/] 
+
+
+
+[http://www.ibm.com/i/v14/icons/u_bold.gif] Back to top 
+
+
+Installation Instructions 
+
+To install the IBM Support Assistant plug-in for IBM Installation Manager 1.x: 
+
+ 1. Start IBM Support Assistant 
+ 2. Select Update > Find new > Product Add-ons from the menu. 
+ 3. Expand the Others 
+ 4. Select IBM Installation Manager 1.x and click Next. 
+ 5. Click Next again. 
+ 6. Select I accept the terms in the license agreements and click Next. 
+ 7. Click Finish. 
+ 8. Click Finish again and click Yes to restart ISA. 
+
+
+If you've already IBM Installation Manager 1.1 add-on installed previously, you can pick up the updates: 
+ 1. Start IBM Support Assistant 
+ 2. Select Update > Find Updates to Add-ons from the menu. 
+ 3. Select IBM Installation Manager 1.x and click Next. 
+ 4. Select I accept the terms in the license agreements and click Next. 
+ 5. Click Finish. 
+ 6. Click Finish again and click Yes to restart ISA.
+
+
+Please note that this collector is also reused in various add-ons to ISA and ISALite. 
+
+ * Rational Application Developer for WebSphere Software 7.x , 8.0 
+ * Rational Asset Manager 7.1 
+ * Rational ClearCase 7.1 
+ * Rational ClearQuest 7.1 
+ * Rational Functional Tester 7.0, 
+ * Rational Manual Tester 7.0 
+ * Rational Performance Tester 7.0, 8.x 
+ * Rational Project Conductor 1.0 
+ * Rational Requirements Composer 2.x 
+ * Rational Software Analyzer 7.0 
+ * Rational Software Architect 7.0 
+ * Rational Software Architect for WebSphere Software 7.5 
+ * Rational Software Architect Standard Edition 7.5 
+ * Rational Software Modeler 7.x 
+ * Rational Systems Developer 7.0 
+ * Rational Team Concert 1.0 
+ * Rational Team Concert 2.0 - ISALite only
+
+
+These are products that leverages IBM Installation Manager. 
+
+[http://www.ibm.com/i/v14/icons/u_bold.gif] Back to top 
+
+
+
+Using ISA collector 
+
+Once ISA is started with IBM Installation Manager add-on installed, click on Analyze Problem. Expand IBM Installation Manager 1.x , and you should see IBM Installation Manager Collector. Select the collector and click on Add. This will add the collector to the Collector Queue to be run. See below. 
+
+[/support/docview.wss?uid=swg21321795&aid=1] [/support/docview.wss?uid=swg21321795&aid=1]
+
+Click on Collect All to start the collection. 
+
+If you have multiple products added, each of these collectors will run in sequence per the Collector Queue. You can click on View Details to get more information on the progress of each of these collectors collector. More information can be found in ISA product help system at Help > Help Contents. 
+
+For a more in-depth understanding of the various methods on deploying the IBM Support Assistant collectors see: Collecting diagnostic information using the IBM Support Assistant. 
+http://www.ibm.com/developerworks/websphere/techjournal/0809_supauth/0809_supauth.html [http://www.ibm.com/developerworks/websphere/techjournal/0809_supauth/0809_supauth.html]
+
+
+
+
+[http://www.ibm.com/i/v14/icons/u_bold.gif] Back to top 
+
+
+
+
+IBM Installation Manager Collector 
+
+Use this collector for general IBM Installation Manager issues. This can be used to collect information when running into install issues on products that leverages IBM Installation Manager as an install platform. 
+
+What are the information being collected? 
+
+This collector gathers the following information: 
+
+ * Collects collector execution information. 
+ * Determine where IBM Installation Manager is installed. 
+ * Determine location of IBM Installation Manager Application data , as defined in <install_path>/eclipse/configuration/config.ini 
+ * Collects all contents in the Application data directory, excluding:  * Image files (*.jpg, *.gif, *.bmp) 
+    * lock files (*.lck , *.lock) 
+    * archive files (*.jar, *.zip, *.tar) 
+    * */bundles/* are also ignored.
+   
+   
+ * Collect osgi data if available under <install_path>/eclipse/configuration/org.eclipse.osgi/ 
+ * Windows: Collects ciclogs at <user home>/Local Settings/Temp/ciclogs*/*.xml 
+ * Linux: Collects: ${user.home}/.ibm/InstallationManager. This is stored into IM/USER_HOME/_ibm_InstallationManager if available.
+
+
+The information collected is used for initial assessment of the problem regarding to installation issues. 
+
+Walk thru for the IBM Installation Manager Collector. 
+
+This collector will first inform you what data is being collected. When click OK, it will then proceed to collect these. 
+[/support/docview.wss?uid=swg21321795&aid=2] [/support/docview.wss?uid=swg21321795&aid=2] 
+
+ 
+
+Data Upload 
+
+When the collector is completed, it will request feedback about ISA or ISA Lite. Select Yes, to provide feedback. Select No to continue. You'll also be provided with data upload options. This will allow you to send the collected data to IBM or another location via FTP or HTTPS. 
+
+ 
+
+IMPORTANT: To upload information to IBM, you'll need to have a PMR number. This is obtained when you work with our support team. If you do not have a PMR number, but do have support contract, you can leverage the Software Support page to open a service request and included the collected data with the service request. 
+
+ * 
+ * https://www.ibm.com/support/servicerequest/
+
+
+The upload options are: 
+
+ * Send the Logs to IBM using secure transfer (HTTPS). You'll need an PMR number to transfer the data to IBM. This sends the collected data to IBM Support team through the HTTPS protocol. 
+ * FTP the Logs to IBM Support (not encrypted). You'll need an PMR number to transfer the data to IBM. This sends the collected data to IBM Support team through the FTP protocol. This is a less secure option. 
+ * FTP the Logs to a Different Location (not encrypted) This allows you to send the collected data to another location via FTP. You'll need to provide the target FTP location and appropriate authentication to access it. 
+ * Do Not FTP the Logs. Do nothing. 
+
+
+Click OK to continue. If you choose options other than 4 above, you will need to fill in additional information required to complete the upload.  
+
+When the collector completes, the .zip file is created at the location specified in Output File name. You can use any unzip tool to extract the files to examine the content of collected data
+
+
+RELATED INFORMATION
+#IBM Support Assistant [http://www.ibm.com/software/support/isa/]
+Collecting diagnostic information using the IBM Support [http://www.ibm.com/developerworks/websphere/techjournal/0809_supauth/0809_supauth.html]

@@ -1,0 +1,26 @@
+Title: IBM Changing the font color for acknowledged events - United States
+
+Text:
+ael; omnibus; tip; color; acknowledged TECHNOTE (FAQ)
+
+QUESTION
+ How can I change the font color for an event after it has been acknowledged? 
+
+ANSWER
+To set the color of the font for an event that has been acknowledged for all new users:
+1. Do one of the following actions:
+
+a) To change the font color for all new users, edit the file:
+webgui_home_dir/etc/system/userdefaults.props
+
+b) To change the font color for an existing user, edit the file:
+webgui_home_dir/etc/configstore/ncwUserPreferences/username.nova
+
+Replace username with the user ID of the user.
+
+2. Locate the property ael_user_properties_acknowledge_font_color and change its value to the name of the required color.
+
+3. Save the file.
+
+4. If you have changed the userdefaults.props file, restart the server.
+If you changed the font color for an existing user, the change takes effect next time they log in.

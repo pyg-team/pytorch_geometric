@@ -1,0 +1,71 @@
+Title: IBM MustGather: Collecting Data for Tivoli Widget Library in JazzSM/DASH - United States
+
+Text:
+twl; dash; tivoli widget library; TIPL2; TIPL2FAQ; DASHL2; DASHL2FAQ; enable tracing TECHNOTE (FAQ)
+
+QUESTION
+ This technical note covers the procedure for collecting troubleshooting data for IBM Tivoli Widget Library (TWL) specifically in DASH for JazzSM. 
+
+CAUSE
+Note: This document covers the TWL widget mustgather collection procedures specifically for Jazz for Service Management/DASH. For support of TWL widgets in any other product besides JazzSM/DASH, consult that product's documentation.
+
+You can use trace logging to assist in monitoring and diagnosing problems. Since trace logs can be quite verbose and include many unrelated errors, resetting the logs and then reproducing the problem issue can reduce the time required for log analysis for specific issues.
+
+ANSWER
+Steps to enable tracing. 
+
+
+Enable trace logging: 
+
+ 1. Log into the DASH. After logging in navigate to Console Settings [/support/docview.wss?uid=swg21671904&amp;aid=1] > Websphere Administrative Console. 
+ 2. Navigate to Troubleshooting -> Logs & Trace 
+ 3. Click on the Server1 -> Select Diagnostic Trace Service. Increase the Maximum Number of Historical Files from 1 to 10. 
+ 4. Click Apply, then select Change Log Detail Levels. 
+ 5. Click on Runtime tab to enable tracing for the TWL widget/process that is currently running. Enabling tracing from the Runtime tab will keep tracing active until the next time the DASH server process is stopped. To make tracing persistent even after stopping and restarting the DASH server process click the Configuration tab instead. 
+ 6. Clear the trace string in the Groups box and replace it with the following:
+    
+    com.ibm.tivoli.rest.*=all:com.ibm.tivoli.rest=finest:com.ibm.usmi.*=all:com.ibm.sysmgmt.utils=all 
+    
+    For the Connection manager (data provider related issues) you will want to enable all for the following components:
+    
+    *=info: com.ibm.isclite.rest.*=all:com.ibm.tivoli.conmgr.*=all 
+    
+    
+ 7. Click on the Apply button. 
+ 8. If you enabled tracing from the Configuration tab in step 4, then click the "Save" link that appears at the top of the page. ("Save to master configuration")
+
+
+Once tracing is enabled, reproduce the TWL issue and gather the following details to attach them to the associated Problem Management Record (PMR): 
+
+ 1. Steps to reproduce the issue (with the functionality used in the widget - for example: filter; dynamic update, eventing, etc) 
+ 2. Take screenshots of the failing widgets or page with error. 
+ 3. Note the widgets affected (such as List, Table, Gauge, etc) 
+ 4. Data provider details - name of the data provider, version, data source and data sets being used for the widget 
+ 5. JazzSM and Browser version used to reproduce the issue 
+ 6. Note the timeline estimates that the issue was reproduced so that the issue can pinpoint issues with the trace log entries. 
+ 7. Enable Firefox Firebug/console output of any browser to capture client side debugging -- this is useful to observe response and request which are being sent to the server 
+    
+    Step to capture Firefox Firebug log can be found here [http://www-01.ibm.com/support/docview.wss?uid=swg21671912] [http://www-01.ibm.com/support/docview.wss?uid=swg21671904]
+    
+
+
+Run the log collector program to collect logs using steps below:
+
+
+ 1. Change the directory to <JazzInstallHome>/ui/bin 
+ 2. Run the following command:
+    
+    ./consoleLogCollector.sh or .bat 
+    
+    Send us the console_logs.zip file located in <JazzInstallHome>/logs directory
+
+
+Please also provide the DASH system info:
+<JazzInstallHome>/ui/bin/consolecli.sh SystemInfo --outputFile <output file>
+
+Upload the resulting output file to the PMR.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ DASH

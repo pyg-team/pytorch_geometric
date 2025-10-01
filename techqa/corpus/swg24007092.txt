@@ -1,0 +1,99 @@
+Title: IBM IA94:  IBM Message Service Client (XMS) for C/C++ - United States
+
+Text:
+ia94; WESB 6.1.2’ and ‘WPS 6.1.2’; ia94; websphere; mq; message; broker; integration; multi; language; service' XMS 2.0; IBM Message Service Client for C/C++ 2.0; 2.0.1 DOWNLOADABLE FILES
+
+ABSTRACT
+ The IBM Message Service Client for C/C++ offers C/C++ users an Application Programming Interface (API) that is consistent with the Java™ Message Service (JMS) API. 
+
+DOWNLOAD DESCRIPTION
+The IBM Message Service Client for C/C++ ("XMS C/C++") renders the Java Message Service (JMS) API in the C/C++ languages. It brings the benefits of JMS -- a standard, abstracted messaging API for pub/sub and point-to-point messaging, as well as externally administered objects - to the non-Java world. 
+
+Applications created in this way can be used to exchange messages between other Message Service Client applications, JMS applications or native WebSphere MQ applications and can easily be migrated between WebSphere MQ, WebSphere Business Integration Message Brokers and WebSphere Application Server messaging environments with little or no rework.
+
+Possible Uses
+The XMS Clients create new integration possibilities by extending WebSphere messaging to customers who have, for example, standardized on C/C++ as their client platform, or who want to use messaging to integrate with new .NET or J2EE applications.
+
+Skill Level Required
+To use this SupportPac you need the following skills, knowledge, and experience: 
+» C or C++ application programming skills. 
+» A working knowledge of the operating system that you are using. 
+» Experience in using TCP/IP as a communications protocol. 
+» Some knowledge of the concepts and terminology associated with the WebSphere Messaging products with which you intend to communicate
+» Some knowledge of the Java Message Service Specification, Version 1.1
+
+New in this Release
+
+
+• Support added for Visual Studio 2015 - Windows only refresh.
+
+Support on additional platforms
+XMS is supported on additional flavours of Windows, Linux, AIX and Solaris operating systems. Please refer to the readme for the complete list of platforms supported.
+
+XMS 2.0.3 will continue to be in support for Linux, AIX and Solaris operating systems.
+
+In addition, several fixes have been applied to resolve issues highlighted from continued testing and customer feedback.
+
+Details
+Author: WebSphere Messaging Clients Project Team, Bangalore
+Category: 3
+Released: 28May04 (as Cat2)
+Last Updated: 31Jan18
+Current Version: 2.0.4
+»Please note that the version number shown in the right-hand pane is the version of the IBM MQ or IBM Integration Bus product that this SupportPac applies to. The date is the last web page refresh.
+
+To view the complete portfolio of IBM MQ SupportPacs please visit the WebSphere MQ SupportPacs homepage. [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27007205]
+
+PREREQUISITES
+This SupportPac requires that ONE of the following servers is available:
+
+- RTT 
+IBM WebSphere Message Broker 6.1 with Fix Pack 10 onwards
+
+- WMQ 
+IBM WebSphere MQ 7.1.0 (See Note 2)
+IBM WebSphere MQ 7.5 (See Note 3)
+IBM WebSphere MQ 8.0
+
+- WPM 
+IBM WebSphere Application Server 6.1.0.39 onwards
+IBM WebSphere Process Server 6 onwards
+IBM WebSphere ESB 6 onwards
+IBM WebSphere Application Server 7.0.0.19 onwards
+IBM WebSphere Application Server 8.0.0.1 onwards
+
+NOTE 1: If using WebSphere MQ, the machine used to run the XMS application must be installed with the WebSphere MQ Client 7.1.0.0 or later (these libraries are pre-installed on machines with a local queue manager of an appropriate level). These support 'client' mode connections to v7.1 queue managers or 'bindings' mode connection to local queue managers. With MQ multiple version installation capabilities, it is also possible to use the XMS in ‘bindings’ mode with MQ v7.1.0 libraries. To use multiple MQ installations and XMS on that, please reference XMS and MQ v7.1 documentation [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm.mq.doc/zi00860_.htm]
+
+
+NOTE 2: If XMS is used with WebSphere MQ v7.1.0.0 then please apply the latest Fix pack [http://www-01.ibm.com/support/docview.wss?uid=swg27006037#7100)].
+
+NOTE 3: When using XMS with WebSphere MQ v7.5, then please apply the latest Fix pack [http://www-01.ibm.com/support/docview.wss?uid=swg27006037#7500].
+
+URL LANGUAGE SIZE(Bytes) WebSphere MQ V7.5 Clients (MQC75) [http://www-304.ibm.com/support/docview.wss?uid=swg24032744] US English 111 
+INSTALLATION INSTRUCTIONS
+To install the SupportPac, please follow the instructions in the accompanying readme.txt file.
+
+The documentation for this SupportPac is available in two formats.
+The ia94.pdf file should be viewed using Acrobat® Reader®, available from http://www.adobe.com/products/acrobat/readstep2.html [http://www.adobe.com/products/acrobat/readstep2.html]
+The ia94.doc.zip file contains HTML which can be viewed either standalone or within an Eclipse environment. Please see ia94.doc.readme.html for more details of using the documentation in this format.
+
+The product installer downloads are divided into five types, according to the license agreement under which the product will be used. Please review the following table to help select the required package. Please note, restrictions exist for the use of the product under each license. For example, products licensed for IBM WebSphere Process Server and IBM WebSphere ESB are only supported for use with those products. Please see the full terms of the license for further details.
+
+IBM WebSphere Process Server for distributed OS - WPS License
+IBM WebSphere Process Server for z/OS - WPS z/OS License
+IBM WebSphere ESB for distributed OS - WESB License
+IBM WebSphere ESB for z/OS - WESB z/OS License
+All other servers - Standard License
+
+
+URL LANGUAGE SIZE(Bytes) ia94.readme.txt [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/ia94.readme.txt] US English 23514 ia94.pdf [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/ia94.pdf] US English 2090763 ia94.doc.zip [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/ia94.doc.zip] US English 969160 ia94.doc.readme.html [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/ia94.doc.readme.html ] US English 3001 
+DOWNLOAD PACKAGE
+Please download the drivers below with fixes for the following APARs (IV55981,IV52603,IV52601,IV52608,IV52607).
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options ia94 v2.0.4 31 Jan 2018 US English 111 HTTPS [https://www-01.ibm.com/marketing/iwm/iwm/web/reg/signup.do?source=imsccc&S_PKG=winonly] ia94 v2.0.3 17 Sep 2013 US English 58000000 HTTPS [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?lang=en_US&source=imsccc] Latest fixes 11 Sep 2014 US English 111 HTTP [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+MQ&release=All&platform=All&function=fixId&fixids=*ia94*&includeSupersedes=0] 
+TECHNICAL SUPPORT
+ Technical Support for the IBM WebSphere Message Service Client for C/C++ SupportPac is supplied under the standard terms and conditions provided by the International Program License Agreement. Please read the IPLA and LI files that accompany the SupportPac, to ensure you understand the conditions under which the SupportPac is provided. 
+
+If you encounter what you believe to be a defect with the SupportPac you may request Program Services, by reporting the problem via the same defect reporting channel you use for the WebSphere MQ product. This requires an active service agreement for the WebSphere MQ product. The End of Service date for this SupportPac is the same as the WebSphere MQ v7.1 product.

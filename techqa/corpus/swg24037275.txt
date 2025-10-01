@@ -1,0 +1,129 @@
+Title: IBM Prerequisite Scanner Version 1.2.0.10 Interim Fix 1 for UNIX Readme - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ These notes describe the interim fix, including how to download and install it, any 
+prerequisites or co-requisites, issues fixed, and any known issues. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+Product/Component release: IBM Prerequisite Scanner Version 1.2.0.10 Update name: 1.2.0.10-iFix0001 FIX ID: 1.2.0.10-Tivoli-PRS-Unix-IF0001 Published date: 28 March 2014 Last modified date: 28 March 2014 
+Table of Contents Sections Description Problems fixed This section provides a list of the defects (APARs) resolved in this interim fix. Download iFix This section provides instructions and links to download the interim fix from IBM Fix Central. Prerequisites and co-requisites This section provides important information about any prerequisites to have installed in your target environment before you install the interim fix. Impact assessment This section provides information related to the impact of this interim fix to allow you to assess how your environment might be affected. Installation instructions This section provides the installation instructions to install this interim fix in your environment, including any tasks to do before and after the interim fix installation. Known problems This section provides a list of any known problems (open APARs or defects) identified at the time of this interim fix release. 
+Problems fixed APAR Summary IV58161
+PMR 78419,017,649
+
+Scan returns FAIL results for prerequisite properties incorrectly added to a set of configuration files in Fix Pack 10
+
+
+Download iFix You can download the interim fix from Fix Central.
+
+ 1.  In the target environment that has Prerequisite Scanner, create a temporary directory for interim fixes, referred to as the PRS_iFixes_Home directory. 
+     
+     
+ 2.  Download the interim fix compressed file, 1.2.0.10-Tivoli-PRS-Unix-IF0001, from IBM Fix Central as follows: 
+ 3.  Open your web browser. Ensure that you sign into IBM.com or IBM Support Portal; enter the following URL:
+     Fix Central landing page [http://www.ibm.com/support/fixcentral/] (http://www.ibm.com/support/fixcentral/) 
+ 4.  In the Product selector field, start typing Prerequisite Scanner; then select Prerequisite Scanner from the returned result list.
+ 5.  Verify that 1.2.0.10 is selected in the Installed Version list.
+ 6.  From the Platform list, select the platform on which you want to install the interim fix.
+ 7.  Click Continue. The Identify Fixes page opens.
+ 8.  Use the default option, Browse for fixes; click Continue.
+ 9.  On the Select fixes page, select the 1.2.0.10-Tivoli-PRS-Unix-IF0001 compressed file; click Continue.Note: If you have not yet signed into IBM.com, you are now prompted to sign in or register.
+     
+     
+ 10. On the Download option page, select one of the following download options; click Continue.  * Download using Download Director
+      * Download using your browser
+     
+     
+ 11. Review the terms and conditions, and click I agree.
+ 12. Follow the online instructions for your chosen download option, and download the interim fix.
+ 13. Extract the compressed file contents to the PRS_iFixes_Home/1.2.0.10-Tivoli-PRS-Unix-IF0001 directory. Note: On UNIX systems, you must specify the 1.2.0.10-Tivoli-PRS-Unix-IF0001 directory during the extraction process.
+     
+     
+
+Back to top
+
+Prerequisites and co-requisites You must have the following prerequisites installed in your target environment:
+
+ * Prerequisite Scanner Version 1.2.0.10
+   
+   
+
+Impact Assessment  * Recommended [javascript:void()]
+
+This interim fix provides a critical fix to resolve the APAR. Back to top
+
+Installation instructions  * 
+ *  - [http://www.ibm.com/i/c.gif] BEFORE INSTALLATION
+   Make a back up of the following configuration file in the ips_root/Unix_Linux directory, where ips_root refers to the path to the root directory of Prerequisite Scanner:
+   
+    * ADE_01040000.cfg
+    * AMA_07000000.cfg
+    * AMP_07000000.cfg
+    * AMW_07000000.cfg 
+    * BSM_06010100.cfg
+    * CDB_06220000.cfg
+    * DSH_03010002.cfg
+   
+   Move the backed up files to another directory that is not in the ips_root directory.
+   
+   
+   
+ * 
+ *  - [http://www.ibm.com/i/c.gif] INSTALLING THE IFIX
+   Copy the following configuration file from the PRS_iFixes_Home/1.2.0.10-Tivoli-PRS-Unix-IF0001/Unix_Linux to the ips_root/Unix_Linux directory:
+   
+    * ADE_01040000.cfg
+    * AMA_07000000.cfg
+    * AMP_07000000.cfg
+    * AMW_07000000.cfg 
+    * BSM_06010100.cfg
+    * CDB_06220000.cfg
+    * DSH_03010002.cfg
+   
+   
+   You can then run Prerequisite Scanner to check your target environment for the hardware and software prerequisites of the offering being installed.
+   
+   
+ * 
+ *  - [http://www.ibm.com/i/c.gif] UNINSTALLING THE IFIX
+   You can uninstall the interim fix at any time. Overwrite the configuration files in the ips_root/Unix_Linux directory with the files that you backed up, as outlined in the Before installation section.
+   
+   
+   
+
+Back to top
+
+Known problems Issue Description  There are no known issues with this interim fix. 
+
+Back to top
+
+Copyright TRADEMARKS
+IBM, the IBM logo, and ibm.com are trademarks or registered trademarks of International Business Machines Corp., registered in many jurisdictions worldwide. Other product and service names might be trademarks of IBM or other companies. A current list of IBM trademarks is available on the web at “Copyright and trademark information” at http://www.ibm.com/legal/copytrade.shtml [http://www.ibm.com/legal/copytrade.shtml].
+
+Adobe, Acrobat, PostScript and all Adobe-based trademarks are either registered trademarks or trademarks of Adobe Systems Incorporated in the United States, other countries, or both.
+
+IT Infrastructure Library is a registered trademark of the Central Computer and Telecommunications Agency which is now part of the Office of Government Commerce. 
+
+Intel, Intel logo, Intel Inside, Intel Inside logo, Intel Centrino, Intel Centrino logo, Celeron, Intel Xeon, Intel SpeedStep, Itanium, and Pentium are trademarks or registered trademarks of Intel Corporation or its subsidiaries in the United States and other countries. 
+
+Linux is a trademark of Linus Torvalds in the United States, other countries, or both.
+
+Microsoft, Windows, Windows NT, and the Windows logo are trademarks of Microsoft Corporation in the United States, other countries, or both.
+
+ITIL is a registered trademark, and a registered community trademark of The Minister for the Cabinet Office, and is registered in the U.S. Patent and Trademark Office. 
+
+UNIX is a registered trademark of The Open Group in the United States and other countries.
+
+Java and all Java-based trademarks and logos are trademarks or registered trademarks of Oracle and/or its affiliates. 
+
+Cell Broadband Engine is a trademark of Sony Computer Entertainment, Inc. in the United States, other countries, or both and is used under license therefrom.
+
+Linear Tape-Open, LTO, the LTO Logo, Ultrium, and the Ultrium logo are trademarks of HP, IBM Corp. and Quantum in the U.S. and other countries.
+
+Other company, product, and service names may be trademarks or service marks of others.
+
+(C) Copyright International Business Machine Corp. 2009, 2014 US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.

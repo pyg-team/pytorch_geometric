@@ -1,0 +1,132 @@
+Title: IBM IY99662: NEED TO ADD /T AFTER TIME IN INST_PREREQ_ITMPATCH.BAT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring for Databases:Sybase Server Agent 6.1.0-TIV-ITM_SYB-LA0006 [http://www-01.ibm.com/support/docview.wss?uid=swg24021335]
+IBM Tivoli Monitoring for Databases:Sybase Server Agent 6.1.0-TIV-ITM_SYB-IF0008 [http://www-01.ibm.com/support/docview.wss?uid=swg24029755]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Need to add /t after time in inst_prereq_itmpatch.bat
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Silent installation was interrupted by inst_prereq_itmpatch.exe.
+   bat Silent Installation can be resolved after putting /t in
+   "inst_prereq_itmpatch.exe.bat"
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR has been fixed and delivered in a limited availability
+   fix 6.1.0-TIV-ITM_SYB-LA0003. This maintenance delivery
+   vehicle is a limited availability patch and therefore is in a
+   "hidden directory." Level 2 Support can provide down load
+   instructions to you. Contact level 2 support at:
+   
+   http://www.ibm.com/software/sysmgmt/products/support/Contact_L2
+   Support.html [http://www.ibm.com/software/sysmgmt/products/support/Contact_L2Support.html]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY99662
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMA
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04TE
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-06-06
+   
+   
+ * CLOSED DATE
+   2007-08-01
+   
+   
+ * LAST MODIFIED DATE
+   2007-08-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON SYBASE
+   
+   
+ * FIXED COMPONENT ID
+   5724B96SO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

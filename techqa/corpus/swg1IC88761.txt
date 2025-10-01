@@ -1,0 +1,175 @@
+Title: IBM IC88761: HOW CAN WE DYNAMICALLY UPDATE SYSTEM CERTIFICATES WHERE WE KEEP THE CERTIFICATE NAME AND ALSO THE SYSTEM CERTIFICATE ID? - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Certificateificate management: Some services and adapters use
+   system certificate ID, others use the system certificate name.
+   This means that when the system certificate expires and a new
+   one must be created, there is no simple way of updating
+   all adapters to use the correct certificate. It should be
+   standardized across all SI adapters that they use the system
+   certificate name value.
+   For example CDSA and HTTP Server/FTP Server adapter use the
+   certificate Name. However, FTP and Http client
+   adapter/Begin Session services
+   use the certificate ID. Managing the certificates via
+   HSM will not work as the object ID is still
+   updated when the new certificate is imported into SI.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  STRRTC - 350322
+   LM / LM
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected: ALL
+   Problem Description:
+   Currently the only way to update the System Certificate is to
+   delete and create a new system certificate with same name.
+   But this creates a new object id instead of using the same.
+   Ideally, the same object id should be updated with new
+   certificate details.
+   Problem Summary:
+   Currently, to update the certificate, user has to delete the
+   existing certificate and then create a new certificate with same
+   certificate name.
+   Instead, update the existing certificate without deleting it by
+   providing an upload option in case of key certificate and pkcs.
+   In case of self signed certificate, the individual fields will
+   be
+   editable.
+   Platform Affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  With the fix, when user edits a system certificate, he/she has
+   to choose among Self Signed, Key or PKCS 12 certificate.
+   Providing an upload option in case of key certificate and pkcs.
+   In case of self signed certificate the individual fields will be
+   editable.
+   > Update the system certificate from UI -
+   (Exception: In self signed edit - "Set Certificate Signing Bit"
+   field could not retain its older value as same is not saved in
+   certificate or database,
+   this value is only used to generate the certificate and is not
+   known once the certificate is created. Hence, this value could
+   not retain its older value.
+   In Key cert and PKCS cert - password and file uploads are not
+   retained as per the practice.)
+   On click of edit link from certificate search result screen,
+       Take the user to a new screen which asks to chose among
+   three options:
+                      o Self Signed Certificate
+                      o Key Certificate
+                      o PKCS12 Certificate
+   Once the user chooses one of the above, the wizard will take
+   care of showing the respective screens to edit the fields (self
+   signed)
+   or upload the .txt file (key cert) or upload .pfx file (pkcs12).
+   Once user clicks finish, the same objective id will be updated.
+   Delivered in:
+   5020500
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC88761
+   
+   
+ * REPORTED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * REPORTED COMPONENT ID
+   5725D0600
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-30
+   
+   
+ * CLOSED DATE
+   2012-12-10
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * FIXED COMPONENT ID
+   5725D0600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R524 PSY
+   UP

@@ -1,0 +1,39 @@
+Title: IBM BIA01006 error when installing IBM WebSphere Business Integration Adapters with Adapter Framework 2.6.x - United States
+
+Text:
+CrossWorlds.jar; BIA01006; Adapter Framework TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When installing WebSphere Business Integration Adapters on top of Adapter Framework 2.6.x, you may need to create an empty file to circumvent the error: "BIA01006: The directory you selected does not contain a compatible version of the adapter framework". 
+
+CAUSE
+The WBI Adapters installation verifies whether the following file is present on the file system: 
+
+ * 
+ * 
+ * adapter framework 2.6 install location
+ * 
+
+
+The installation fails if the file is missing. As of Adapter Framework Version 2.6.x, this .jar file is present only when the Adapter Framework Toolset is being installed. 
+ENVIRONMENT
+Problem observed with WebSphere Business Integration Adapter for Ariba(R) Buyer 3.2, -for mySAP 6.0.9 and -for SWIFT 1.9 but applies to other adapters as well.
+
+
+
+DIAGNOSING THE PROBLEM
+The installer of the WBI adapter will throw the following exception: 
+
+
+[/support/docview.wss?uid=swg21231755&amp;aid=1]
+
+
+RESOLVING THE PROBLEM
+ 
+
+1.Verify whether the CrossWorlds.jar file resides in the directory <AF 2.6 install location>\lib\. 
+
+2. If there is no CrossWorlds.jar in the directory, create an empty file named CrossWorlds.jar and save it in this location. 
+
+3. Re-run the WBI adapter installation process, for example with the UNIX command: 
+"./setupAIX.bin -W unsupportedPlatform.active=false".

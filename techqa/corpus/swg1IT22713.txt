@@ -1,0 +1,220 @@
+Title: IBM IT22713: Using the Java OSGi redistributable client a JMSCC0091 exceptionis thrown when starting an application. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The below Exception is thrown when trying to start an
+   application that uses the IBM MQ classes for Java OSGi
+   Redistributable client:
+   
+   detailMessage     "JMSCC0091: The provider factory for
+   connection type
+   'com.ibm.msg.client.wmq' could not be loaded."
+   linkedException  CSIException
+        detailMessage             "A Messaging Provider component
+   was not
+   found."
+   The connection is unable to be successfully established.
+   
+   Additionally, when using IBM MQ classes for Java to connect to a
+   queue manager using the Java OSGi Redistributable client, the
+   following Exception would be returned:
+   
+   java.lang.ClassNotFoundException:
+   javax.transaction.xa.XAException not found by
+   com.ibm.mq.osgi.allclient
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of:
+   
+   - The IBM MQ v8.0 OSGi bundle
+   com.ibm.mq.osgi.allclient_<version_number>.jar
+   
+   who use IBM MQ classes for JMS to connect to a queue manager.
+   
+   And users of:
+   
+   - The IBM MQ v8.0 OSGi bundle
+   com.ibm.mq.osgi.allclient_<version_number>.jar
+   - The IBM MQ v9.0 OSGi bundle
+   com.ibm.mq.osgi.allclient_<version_number>.jar
+   
+   who use IBM MQ classes for Java to connect to a queue manager.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The problem occurred when an application used the
+   com.ibm.mq.osgi.allclient_<version_number>.jar OSGi bundle and
+   attempted to establish a connection to a queue manager. At this
+   point, an exception would be generated indicating that the
+   internal com.ibm.msg.client.wmqcomponent could not be loaded, an
+   example of this exception for JMS applications is shown below:
+   
+   detailMessage     "JMSCC0091: The provider factory for
+   connection type
+   'com.ibm.msg.client.wmq' could not be loaded."
+   linkedException  CSIException
+        detailMessage             "A Messaging Provider component
+   was not found."
+   The connection is unable to be successfully established.
+   
+   This was due to the fact that the OSGi bundle
+   com.ibm.mq.osgi.allclient_<version_number>.jar only registered a
+   single internal component to the MQ messaging provider component
+   manager and therefore did not register all of the components
+   required to run classes for Java and classes for JMS
+   applications. Consequently, when there was an attempt to get an
+   instance of the internal com.ibm.msg.client.wmq component for
+   JMS applications to use, this failed, as the component had not
+   been loaded.
+   
+   Additionally, if IBM MQ classes for Java were used to establish
+   a connection to a queue manager, the following exception would
+   be generated:
+   
+   java.lang.ClassNotFoundException:
+   javax.transaction.xa.XAException not found by
+   com.ibm.mq.osgi.allclient
+   
+   This was due to the fact that the OSGi bundle
+   com.ibm.mq.osgi.allclient_<version_number>.jar did not import
+   all packages required to run classes for Java applications.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The com.ibm.mq.osgi.allclient_<version_number>.jar OSGi bundle
+   has now been updated so that it now registers all the internal
+   components, and imports all packages, required to run classes
+   for Java and classes for JMS applications with the MQ messaging
+   provider component manager.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.9
+   v9.0 CD    9.0.5
+   v9.0 LTS   9.0.0.4
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT22713
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ BASE MP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-09
+   
+   
+ * CLOSED DATE
+   2018-01-29
+   
+   
+ * LAST MODIFIED DATE
+   2018-01-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM MQ BASE MP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS

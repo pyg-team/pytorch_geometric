@@ -1,0 +1,153 @@
+Title: IBM PM72959: Forwarding of http requests from IHS to WAS is not working - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Software Architect 8.5.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24033646]
+Rational Software Architect for WebSphere Software 8.5.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24033647]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   - Microsoft Windows XP SP3/ Windows 7
+       - IBM Rational Software Architect (RSA) v8.5
+       - IBM Tivoli Service Automation Manager (TSAM) v7.2.2
+   
+       - IBM Deployment Planning and Automation for the Cloud v2.0
+   
+       - IBM Rational Build Forge 7.1.3.2 with Rational Automation
+   Framework (RAF) v3.0.0.3
+   
+   Description of problem:
+   When IHS is modeled as the front end to a backend WAS
+   Application Server and automation is executed and
+   IHS Server is created and a corresponding WAS Web Server is
+   created in the WAS console but the communication
+   between the WAS console and the IHS server will not work because
+   the IHS Administration Server is not started during the
+   automation process.
+   The IHS Administration server must be started as part of the
+   automation in order for the communication between IHS and WAS to
+   work correctly.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When IHS is modeled as the front end to a backend WAS
+   Application Server and automation is executed and IHS Server
+   is created and a corresponding WAS Web Server is created in
+   the WAS console but the communication between the WAS
+   console and the IHS server will not work because the IHS
+   Administration Server is not started during the automation
+   process.  The IHS Administration server must be started as
+   part of the automation in order for the communication
+   between IHS and WAS to work correctly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Updated IHS automation to start the IHS admin server to
+   enable http requests correctly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM72959
+   
+   
+ * REPORTED COMPONENT NAME
+   SW ARCHITECT WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724I7001
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-14
+   
+   
+ * CLOSED DATE
+   2012-12-04
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SW ARCHITECT WI
+   
+   
+ * FIXED COMPONENT ID
+   5724I7001
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSN
+   UP

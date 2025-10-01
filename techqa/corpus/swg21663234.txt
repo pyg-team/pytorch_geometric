@@ -1,0 +1,42 @@
+Title: IBM "Error code 45 - the account is locked for update" when users with restrictions (on forms) try to load data (e.g. via an import spec), especially after upgrade - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Restricted users (those with a security group on their forms) try to import data (with an import specification). These users receive an error message.
+
+Typically this worked before a recent upgrade (of Controller). 
+
+SYMPTOM
+Error code 45 - the account is locked for update.
+
+
+CAUSE
+Change in functionality in Controller (from version 10.1.2163 onwards). 
+
+More Details:
+There has been a deliberate change in the security for 'import data' and 'export from excel' (fExpVal). 
+
+ * Specifically, the user must have 'write' access (not just read access) to the accounts they are importing to.
+
+ENVIRONMENT
+This behaviour is often seen after customers upgrade from an earlier version (10.1.2159 or older) to a later version (10.1.2163 or later) of Controller
+
+
+
+RESOLVING THE PROBLEM
+Fix: 
+
+There are several methods to fix the problem: 
+
+1. Remove the relevant 'form security group' from the 'bad' users 
+
+2. Import the values using an administrative (unrestricted) user account (e.g. ADM) 
+
+3. Modify the security permissions (on the form) for the accounts that are to be imported, so that the users have write access to them 
+
+ * TIP: It may also be necessary to use submissions (so that some data can be locked once loaded).
+
+RELATED INFORMATION
+#1692442 - Excel link spreadsheet values are zero (0) af [http://www.ibm.com/support/docview.wss?uid=swg21692442]

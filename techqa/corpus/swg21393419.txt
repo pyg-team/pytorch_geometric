@@ -1,0 +1,247 @@
+Title: IBM How to generate EJB 3.0 Client Stub classes in Rational Application Developer - United States
+
+Text:
+RAD; EJB; ant; stub; client stub; class TECHNOTE (FAQ)
+
+QUESTION
+ How can you generate EJB 3.0 Client Stub classes in IBM Rational Application Developer? 
+
+CAUSE
+In the new specification for EJB 3.0, the stub classes that were generated for previous EJB versions are no longer needed. Instead of requiring the stub classes, the application server itself takes responsibility for keeping track of the Enterprise Java Beans and how to instantiate them when required. 
+
+Usually this is sufficient. However, there are some cases where the stub classes are still required such as: 
+
+ * interfacing to an application server which does not support EJB 3, such as older versions of IBM WebSphere Application Server 
+ * interfacing with non-WebSphere based application servers 
+ * accessing the EJB using a Java client application, for example, a JUnit test case or a Java/Swing front end.
+
+ANSWER
+ANSWER 
+
+In these cases, you can run the createEJBStubs script provided by your IBM WebSphere Application Server installation. This script generates the appropriate stub classes in your EJB Jar or Enterprise Archive (EAR) file. There is no menu to invoke this script within Rational Application Developer. 
+
+However, you can automate the running of the script by using an ANT build file to call it automatically. Here is an example script that you can use:
+
+<?xml version="1.0" encoding="UTF-8"?> 
+
+ 
+
+<project basedir="." default="createstubs"> 
+
+ 
+
+ <property name="src.dir" value="ejbModule" /> 
+
+ <property file="build.properties" /> 
+
+ 
+
+ <!-- get property locationName using this --> 
+
+ <target name="config"> 
+
+ <echo message="${project.name}" /> 
+
+ <getProjectData projectName="${project.name}" /> 
+
+ </target> 
+
+ 
+
+ <target name="detect-os"> 
+
+ <condition property="is.windows" value="true"> 
+
+ <os family="windows" /> 
+
+ </condition> 
+
+ <condition property="is.unix" value="true"> 
+
+ <os family="unix" /> 
+
+ </condition> 
+
+ <condition property="suffix" value="bat"> 
+
+ <isset property="is.windows" /> 
+
+ </condition> 
+
+ <condition property="suffix" value="sh"> 
+
+ <isset property="is.unix" /> 
+
+ </condition> 
+
+ </target> 
+
+ 
+
+ <target name="build" depends="config"> 
+
+ <!-- create the EJB jar --> 
+
+ <ejbExport ejbProjectName="${project.name}" 
+
+ ejbExportFile="${locationName}/${project.name}_EJB.jar" exportSource="true" 
+
+ overwrite="true" /> 
+
+ </target> 
+
+ 
+
+ <target name="createstubs" depends="config, build, detect-os"> 
+
+ <exec executable="${was.home}/bin/createEJBStubs.${suffix}"> 
+
+ <arg line="${locationName}/${project.name}_EJB.jar" /> 
+
+ </exec> 
+
+ <unzip src="${locationName}/${project.name}_EJB.jar" dest="${extract.dir}"> 
+
+ <patternset> 
+
+ <include name="**/*_Stub.class" /> 
+
+ </patternset> 
+
+ </unzip> 
+
+ <copy todir="${src.dir}" verbose="true"> 
+
+ <fileset dir="${extract.dir}"> 
+
+ <patternset> 
+
+ <include name="**/*_Stub.class" /> 
+
+ </patternset> 
+
+ </fileset> 
+
+ </copy> 
+
+ <eclipse.refreshLocal resource="${project.name}" depth="infinite" /> 
+
+ <delete dir="${extract.dir}"> 
+
+ </delete> 
+
+ 
+
+ 
+
+ </target> 
+
+ 
+
+ <target name="clean"> 
+
+ <delete file="${project.name}_EJB.jar" /> 
+
+ </target> 
+
+ 
+
+</project> 
+
+
+In thebuild.properties file, you will need to set: 
+
+
+- was.home parameter equal to the installation directory of your WebSphere Application Server instance in the build.properties file. 
+
+- project.name parameter equal to name of the project 
+
+- extract.dir parameter equal to the directory where the jar file can be temporarily extracted. 
+
+
+Example:
+
+was.home=C:/Program Files/IBM/SDP/runtimes/base_v7 
+
+project.name=CreateEJB3Stubs 
+
+extract.dir=C:/temp/CreateEJB3Stubs 
+
+
+The build.properties file should be in the directory where the ant build script is located. 
+
+Note that you will need to have the EJB 3.0 feature pack installed if you are using WebSphere Application Server v6.1. (WebSphere Application Server v7 has native support for EJB 3.0. It does not require a feature pack.)
+
+Once the script has run, an EJB-JAR file will be created in your project's root directory. You can then deploy this JAR to your application server and continue to work as normal. Because the script does not allow the generation of source code, you will not be able to alter the stub class(es) that it creates.
+
+The script also copies the generated stub classes into the original project, so that they are present if you deploy the project directly from Rational Application Developer to WebSphere Application Server for testing. 
+
+The attached project interchange file CreateEJB3Stubs.zip contains a small sample EJB v3 project configured for WebSphere Application Server v7.0. 
+
+CreateEJB3Stubs.zip [/support/docview.wss?uid=swg21393419&aid=2]CreateEJB3Stubs.zip [/support/docview.wss?uid=swg21393419&aid=1]
+
+
+In order to run the ANT script, do the following:
+
+
+ 1. Right-click on the build.xml file in the Project/Enterprise Explorer window
+    
+    
+ 2. Select Run As > Ant Build...
+    
+    
+ 3. Configure the JRE to Run in the same JRE as the workspace (See screenshot)
+    
+    
+ 4. Click Run
+
+
+Your run configuration will be saved and you can access it again by selecting Run > External Tools from the main menu. 
+
+[/support/docview.wss?uid=swg21393419&aid=3] [/support/docview.wss?uid=swg21393419&aid=3] 
+
+Starting with Rational Application Developer v8.5.1, a new ANT Task is available: 
+
+Task Name: 
+
+Task Name generateEJB3Stubs Parameters Attribute Description Required projectName Name of project to be built. The project can either be an EJB project or an EAR project. Yes failOnError Whether or not the Ant build should fail if there is an error. No, default is true 
+Here is an example ANT script using this new task: 
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="createstubs">
+<target name="createstubs" >
+<generateEJB3Stubs projectname="CreateEJB3Stubs" />
+</target>
+</project>
+
+
+This is considerably simpler than the previous approach. The result is that the stub class is added to the source folder of the project. The typical output is as follows: 
+
+
+createstubs:
+[generateEJB3Stubs] Generating stubs for EJB 3 bean remote interfaces defined in the EJB project: 'CreateEJB3Stubs'. (Begin)
+[generateEJB3Stubs] ... subtask: Retrieving the list of remote interfaces...
+[generateEJB3Stubs] ... background task: Java annotation indexing: Waiting for Java search (Begin)
+[generateEJB3Stubs] ... subtask: Building the project 'CreateEJB3Stubs'.
+[generateEJB3Stubs] ... background task: Building workspace (Begin)
+[generateEJB3Stubs] ... background task: Building workspace (Done)
+[generateEJB3Stubs] ... subtask: Generating stub class 'ejb._SimpleSessionRemote_Stub' to the output folder: 'C:\myworkspace\CreateEJB3Stubs\ejbModule'.
+[generateEJB3Stubs] ... subtask: Refreshing '/CreateEJB3Stubs'.
+BUILD SUCCESSFUL
+Total time: 1 second
+
+
+The instructions to run such script are the same as for the previous example. In this case no properties file is required. You will need to update the name of the project inside the generateEJB3Stubs task. 
+
+RELATED INFORMATION
+#Create stubs command [http://publib.boulder.ibm.com/infocenter/wasinfo/v6r1/index.jsp?topic=/com.ibm.websphere.ejbfep.multiplatform.doc/info/ae/ae/rejb_3stubscmd.html]
+RFE: Menu item to run createEJBStubs [http://www.ibm.com/developerworks/support/rational/rfe/execute?use_case=viewChangeRequest&CR_ID=2617]
+RFE: Automate generation of EJB Stubs [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=7618]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect for WebSphere Software Server Tooling Linux, Windows 7.5, 7.5.1, 7.5.2, 7.5.3, 7.5.4, 7.5.5, 7.5.5.1, 7.5.5.2, 7.5.5.3, 7.5.5.4, 7.5.5.5, 8.0, 8.0.1, 8.0.2, 8.0.3, 8.0.4, 8.0.4.1, 8.0.4.2, 8.5, 8.5.1

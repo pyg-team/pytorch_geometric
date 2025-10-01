@@ -1,0 +1,44 @@
+Title: IBM List eligible rules for each task of a ruleflow at runtime - United States
+
+Text:
+IlrTool; agenda; eligible; engine; instance; ruleflow; rules; ruletask; task TECHNOTE (FAQ)
+
+QUESTION
+ How to obtain the eligible rules for each task of a ruleflow using the API 
+
+ANSWER
+This applies only to a rule task in the default algorithm where the ordering is dynamic. Only then are the matched rules added to an agenda and executed; the agenda is not used for any other task definition, literal or sorted ordering, or for sequential tasks.
+Using an IlrTool: there is a way through the API to get the list of rule instances in the agenda, using an ilog.rules.engine.IlrTool. In your implementation of the IlrTool interface you would use the method notifyAddInstance to be notified when a rule instance is inserted in the agenda and build the list you need.
+
+Note that execution will take place at the same time and cannot be controlled. To connect your tool to the engine, all you need to do is to call IlrContext.connectTool( new YourTool() ); before you execute the rules. 
+
+
+Using a rule: there is also a way to access the agenda from IRL. In a task, you can create a rule with a high priority and no conditions, as shown below. This would give you the list of the rules within the agenda when it is executed:
+
+when
+{ 
+
+ * ilog.rules.engine.IlrContext () from ?context ;
+
+} 
+then 
+{  * out.println("here are the rules:");
+ * 
+ * java.util.Enumeration ?var1 = ?context.enumerateInstances();
+ * 
+ * while (?var1.hasMoreElements())
+ * 
+ * {
+ *  System.out.println( "name " + ((ilog.rules.engine.IlrRuleInstance)?var1.nextElement()).ruleName ); 
+ * }
+
+} RELATED INFORMATION
+ IlrTool API documentation [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5/topic/com.ibm.wodm.dserver.rules.ref.res/html/api/html/ilog/rules/engine/IlrTool.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0, 7.5 
+HISTORICAL NUMBER
+ jrules/FAQ/168

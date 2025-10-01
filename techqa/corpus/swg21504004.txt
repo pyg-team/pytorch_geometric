@@ -1,0 +1,45 @@
+Title: IBM /IBMMON/AUTH profile and IBMMON_AGENT userid not created - United States
+
+Text:
+5724B97SOTR; IBMMON/AUTH profile IBMMON_AGENT missing does not connect transport SAP created ITM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While installing and configuring MySAP agent, although the transport import phase completed succesfully, both IBMMON/AUTH profile and IBMMON_AGENT userid do not get created on the target SAP system. So the agent cannot connect with SAP. 
+
+CAUSE
+The profile and userid are necessary for the agent to properly establish a connection with the monitored SAP system.
+There are two possible reasons why the profile and the userid don't get created although the transport import task completed succesfully:
+
+1) you are using Central User Administration (CUA) to manage SAP user and password 
+2) The Client ID used for the IMPORT command does not match the one used by the MySAP agent to connect to the SAP system
+
+
+
+DIAGNOSING THE PROBLEM
+You can check the transport import log files (for version 6.2 they are called ITMH620_000xxx.<SID> or ITMI620_000xxx.<SID>, for version 7.1 they are called ITMH710_000xxx.<SID> or ITMI710_000xxx.<SID> and are usually located under <SAP_dir>\trans\logs) to find out, in the header section, which was the Client ID you specified during the IMPORT phase: 
+
+
+4 ETW000 ================== STEP 1 =====================
+4 ETW000 date&time : 30.06.2010 - 13:05:06
+4 ETW000 function : IMPORT
+4 ETW000 data file : /usr/sap/trans/data/R620_00035U.ITM
+4 ETW000 Continuation : /usr/sap/trans/data/R620_00035U_#.ITM
+4 ETW000 buffersync : YES
+4 ETW000 client : 000
+
+If the client specified here does not match the one specified while configuring the agent, this is the reason why the agent does not connect and you don't find the profile and the userid in the client used by the MySAP agent for connecting to the SAP system.
+
+
+
+RESOLVING THE PROBLEM
+If there is a client mismatch, you need to import again the transport using the correct client. 
+
+Please make sure that the same client is specified during the IMPORT of the transport and during the agent configuration. 
+
+On the other hand, if you are using the Central User Administration (CUA) to manage the SAP user and password, you need to create manually the IBMMON/AUTH profile and the IBMMON_AGENT userid taking the steps provided at page 50 in the MySAP Agent Best Practice document, that you can download from this link:
+http://www-01.ibm.com/support/docview.wss?uid=swg21636393 [http://www-01.ibm.com/support/docview.wss?uid=swg21636393]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Tivoli Monitoring MySAP Agent V6.2 V7.1.x

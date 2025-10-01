@@ -1,0 +1,186 @@
+Title: IBM PI33944: MICROSOFT WINDOWS SERVICE NOT USED WHEN STARTING SERVER FROM COMMAND-LINE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the WASService.exe or wasservicehelper.bat command is used
+   to create a Microsoft Windows service, and the name specified
+   for the service includes a blank space, the service will not
+   be used when starting the server via the command line.
+   
+   For instance, if a service for the dmgr server is created with
+   "Deployment Manager" specified as the service name, then the
+   service will not be used when using the startManager.bat or the
+   startServer.bat commands.
+   
+   The following error will be seen in the cmd window and in the
+   startServer.log file:
+   
+   ADMU7713E:  WASService command for server dmgr failed.
+   Unexpected exit code 3 from running
+   C:\IBM\WebSphere\AppServer\bin\WASService.exe -status Manager
+   
+   The dmgr server will start, but it will not be connected to the
+   Microsoft Windows service.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There are two workarounds:
+   
+   1) Start the windows service from the windows service manager.
+   
+   2) Do not include a blank space in the service name.  (ie,
+   specify "DeploymentManager" rather than "Deployment Manager".
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server, Network Deployment edition,         *
+   *                  version 8.5.5 on Microsoft Windows          *
+   *                  operating sytems.                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Windows Services panel is not           *
+   *                      displaying                              *
+   *                      correct service status when naming      *
+   *                      the service with two or more words.     *
+   ****************************************************************
+   * RECOMMENDATION:  Apply the Fix Pack that contains this       *
+   *                  APAR.                                       *
+   ****************************************************************
+   When the WASService.exe or wasservicehelper.bat command is used
+   to create a Windows service, and the name specified for the
+   service includes a blank space, the Windows Services Panel
+   will not detect that the process has started if we start the
+   server process from the command line.
+   For instance, if a service for the deployment manager is
+   created with "Deployment Manager" specified as the service
+   name, then the service will not be used when using the
+   startManager.bat or the startServer.bat commands.
+   The following error will be seen in the cmd window and in the
+   startServer.log file:
+   ADMU7713E:  WASService command for server dmgr failed.
+   Unexpected exit code 3 from running
+   C:\IBM\WebSphere\AppServer\bin\WASService.exe -status Manager
+   The deployment manager server will start, but it will not be
+   connected to the Windows service.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was updated to fix this issue.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.6.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI33944
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-02-02
+   
+   
+ * CLOSED DATE
+   2015-03-23
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

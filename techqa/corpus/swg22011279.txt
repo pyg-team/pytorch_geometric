@@ -1,0 +1,34 @@
+Title: IBM PureData System for Analytics subordinate node and table statistics - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ This technote explains possible options to maintains updated statistics on the subordinate node. 
+
+CAUSE
+Performance tuning
+
+ANSWER
+By default subordinate node perform automatic 'generate statistics' tasks after data insert queries. This is to avoid maintenance tasks, however it may add extra load and delay at the time when it is desired to run replicated inserts as fast as possible. 
+
+There is a possibility to disable automatic 'generate statistics' queries, but in such case a manual maintenance is required and 'generate statistics' queries still needs to be run during a less busy period. 
+
+
+Steps:
+
+We can avoid automatic 'generate statistics' tasks by turning off host.autoGenStatsOnReplSub on subordinate. To do so open /nz/data.1.0/config/system.cfg in text edidtor and add / edit below line: 
+
+host.autoGenStatsOnReplSub=0
+
+Database has to be restarted to apply changes.
+
+
+Note:
+
+Do not confuse this technote with another one which explains how to stop running replicated 'generate statistics' from master node: http://www-01.ibm.com/support/docview.wss?uid=swg21996540 [http://www-01.ibm.com/support/docview.wss?uid=swg21996540]
+
+Steps explained in this technote won't disable replicated 'generate statistics' queries from master node, such queries will still run. It disables only 'generate statistics' queries which are subordinate node only specific and tuns on subordinate node only, as a part of auto-maintenance tasks (to keep statistics on subordinate node up to date).
+
+RELATED INFORMATION
+ how to disable genstats/groom on subordinate machines i [http://www-01.ibm.com/support/docview.wss?uid=swg21996540]

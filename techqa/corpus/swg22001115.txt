@@ -1,0 +1,97 @@
+Title: IBM TLS Connection from ISBI to IBM MQ fails with 'RSA premaster secret error' if FIPS Mode is activated - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Trying to establish a TLS connection between IBM Sterling B2B Integrator (ISBI) WebSphere MQ Suite Services and a Queue Manager on IBM MQ fails if FIPS mode is enabled with errors:
+ERRORDTL com.ibm.mq.MQException: MQJE001: Completion Code '2', Reason '2397' 
+Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2397;AMQ9204: Connection to host '<hostname>(<port>)' rejected. 
+Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2397;AMQ9771: SSL handshake failed. 
+Caused by: javax.net.ssl.SSLKeyException: RSA premaster secret error 
+Caused by: java.lang.IndexOutOfBoundsException 
+
+SYMPTOM
+Having FIPS mode deactivated a TLS secured connection between ISBI and MQ works fine.
+Activating FIPS mode and opening the TLS secured connection results in the following errors in current WebSphereMQSuite.log.D<date>.T<time>:
+ERROR <WSMQAsyncRcv-<adaptername>.<id>--<id> MQException during MQCONN: CC=2 RC=2397 
+ERROR MQJE001: Completion Code '2', Reason '2397'. 
+ERRORDTL com.ibm.mq.MQException: MQJE001: Completion Code '2', Reason '2397'. 
+at com.ibm.mq.MQManagedConnectionJ11.<init>(MQManagedConnectionJ11.java:251)
+at com.ibm.mq.MQClientManagedConnectionFactoryJ11._createManagedConnection(MQClientManagedConnectionFactoryJ11.java:450)
+at com.ibm.mq.MQClientManagedConnectionFactoryJ11.createManagedConnection(MQClientManagedConnectionFactoryJ11.java:487)
+at com.ibm.mq.StoredManagedConnection.<init>(StoredManagedConnection.java:96)
+at com.ibm.mq.MQSimpleConnectionManager.allocateConnection(MQSimpleConnectionManager.java:194)
+at com.ibm.mq.MQQueueManagerFactory.obtainBaseMQQueueManager(MQQueueManagerFactory.java:767)
+at com.ibm.mq.MQQueueManagerFactory.procure(MQQueueManagerFactory.java:715)
+at com.ibm.mq.MQQueueManagerFactory.constructQueueManager(MQQueueManagerFactory.java:678)
+at com.ibm.mq.MQQueueManagerFactory.createQueueManager(MQQueueManagerFactory.java:148)
+at com.ibm.mq.MQQueueManager.<init>(MQQueueManager.java:675)
+at com.sterlingcommerce.woodstock.services.wsmqSuite.WSMQSession.openConnection(WSMQSession.java:314)
+at com.sterlingcommerce.woodstock.services.wsmqSuite.WSMQSession.openSession(WSMQSession.java:292)
+at com.sterlingcommerce.woodstock.services.wsmqSuite.WSMQAsyncRcv$1.run(WSMQAsyncRcv.java:160)
+Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2397;AMQ9204: Connection to host '<hostname>(<port>)' rejected. [1=com.ibm.mq.jmqi.JmqiException[CC=2;RC=2397;AMQ9771: SSL handshake failed. [1=javax.net.ssl.SSLKeyException[RSA premaster secret error],3=<hostname>/<ip>:<port> (<hostname>),4=SSLSocket.startHandshake,5=default]],3=<hostname>(<port>),5=RemoteTCPConnection.protocolConnect]
+at com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:2299)
+at com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:1287)
+at com.ibm.mq.ese.jmqi.InterceptedJmqiImpl.jmqiConnect(InterceptedJmqiImpl.java:376)
+at com.ibm.mq.ese.jmqi.ESEJMQI.jmqiConnect(ESEJMQI.java:560)
+at com.ibm.mq.MQSESSION.MQCONNX_j(MQSESSION.java:916)
+at com.ibm.mq.MQManagedConnectionJ11.<init>(MQManagedConnectionJ11.java:237)
+... 12 more
+Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2397;AMQ9771: SSL handshake failed. [1=javax.net.ssl.SSLKeyException[RSA premaster secret error],3=<hostname>/<ip>:<port> (<hostname>),4=SSLSocket.startHandshake,5=default]
+at com.ibm.mq.jmqi.remote.impl.RemoteTCPConnection.protocolConnect(RemoteTCPConnection.java:1328)
+at com.ibm.mq.jmqi.remote.impl.RemoteConnection.connect(RemoteConnection.java:847)
+at com.ibm.mq.jmqi.remote.impl.RemoteConnectionSpecification.getSessionFromNewConnection(RemoteConnectionSpecification.java:409)
+at com.ibm.mq.jmqi.remote.impl.RemoteConnectionSpecification.getSession(RemoteConnectionSpecification.java:305)
+at com.ibm.mq.jmqi.remote.impl.RemoteConnectionPool.getSession(RemoteConnectionPool.java:146)
+at com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:1734)
+... 17 more
+Caused by: javax.net.ssl.SSLKeyException: RSA premaster secret error
+at com.ibm.jsse2.z.<init>(z.java:80)
+at com.ibm.jsse2.bb.a(bb.java:81)
+at com.ibm.jsse2.bb.a(bb.java:586)
+at com.ibm.jsse2.ab.t(ab.java:20)
+at com.ibm.jsse2.ab.a(ab.java:41)
+at com.ibm.jsse2.qc.a(qc.java:438)
+at com.ibm.jsse2.qc.h(qc.java:720)
+at com.ibm.jsse2.qc.a(qc.java:739)
+at com.ibm.jsse2.qc.startHandshake(qc.java:551)
+at com.ibm.mq.jmqi.remote.impl.RemoteTCPConnection$6.run(RemoteTCPConnection.java:1297)
+at com.ibm.mq.jmqi.remote.impl.RemoteTCPConnection$6.run(RemoteTCPConnection.java:1289)
+at java.security.AccessController.doPrivileged(AccessController.java:364)
+at com.ibm.mq.jmqi.remote.impl.RemoteTCPConnection.protocolConnect(RemoteTCPConnection.java:1289)
+... 22 more
+Caused by: java.lang.IndexOutOfBoundsException
+at java.nio.ByteBuffer.wrap(ByteBuffer.java:371)
+at com.ibm.crypto.fips.provider.HASHDRBG.b(Unknown Source)
+at com.ibm.crypto.fips.provider.HASHDRBG.engineSetSeed(Unknown Source)
+at java.security.SecureRandom.setSeed(SecureRandom.java:419)
+at com.ibm.crypto.fips.provider.RSA.a(Unknown Source)
+at com.ibm.crypto.fips.provider.RSA.b(Unknown Source)
+at com.ibm.crypto.fips.provider.RSA.engineDoFinal(Unknown Source)
+at com.ibm.crypto.fips.provider.RSA.b(Unknown Source)
+at com.ibm.crypto.fips.provider.RSA.engineWrap(Unknown Source)
+at com.ibm.crypto.fips.provider.RSASSL.engineWrap(Unknown Source)
+at javax.crypto.Cipher.wrap(Unknown Source)
+at com.ibm.jsse2.z.<init>(z.java:21)
+... 34 more
+
+
+CAUSE
+Unsupported Java version.
+
+
+ENVIRONMENT
+Happened on an ISBI 5.2.6.2 running on IBM Java 1.7.0 SR9.
+
+DIAGNOSING THE PROBLEM
+Check the current WebSphereMQSuite.log.D<date>.T<time> for the stacktrace listed in the symptom section above.
+Doublecheck if the Java version you use is supported.
+
+RESOLVING THE PROBLEM
+Upgrade the JDK to a supported Java version.
+For ISBI 5.2.6.2 running on IBM Java 1.7.0 SR9 FP10 (or later) the error does not happen and a TLS secured connection can be established between ISBI and MQ even if FIPS mode is activated.
+
+RELATED INFORMATION
+ ISBI Upgrading JDK and JCE [ftp://ftp.software.ibm.com/software/iea/content/com.ibm.iea.sb2bi/sb2bi/5.2.4/content/sb2bi_gwsUpgradeJDK_final.pdf]
+ISBI 5.2.6 detailed system requirements [http://www-01.ibm.com/support/docview.wss?uid=swg27043950]

@@ -1,0 +1,155 @@
+Title: IBM JR48890: IN PROCESS PORTAL, INTERMITTENTLY CANNOT LAUNCH OR VIEW ACTIONS FOR A TASK (Backport Fix of JR44650) - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Process Portal performs too many DB operations when checking
+   user authorization for process instances.
+   
+   In Process Portal, the following behavior may occur
+   intermittently, for a given task:
+   
+   1) The task cannot be launched (clicking on the task only shows
+   the task details and business data).
+   
+   2) The Actions dropdown menu for the task is not displayed.
+   
+   Please notice that this iFix is a backport iFix of JR44650 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR44650]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Refreshing the browser page has been observed to resolve this
+   issue when observed, but not every time.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Excessive DB trips to check whether user can view instance in
+   process
+   
+   PROBLEM DETAILED DESCRIPTION:
+   Process Portal performs too many DB operations when checking
+   user authorization for process instances.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Reduce API calls that lead to DB access in the code path of the
+   process instance actions.
+   
+   FIX AVAILABILITY:
+   iFix for 8.0.1.0 is/will be available on Fix Central; search for
+   APAR JR48890 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   iFix for 8.0.1.1 is/will be available on Fix Central; search for
+   APAR JR48890 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   iFix for 8.0.1.2 is/will be available on Fix Central; search for
+   APAR JR48890 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   Fix is also targetted for inclusion in next fixpack for
+   BPM 8.0.1
+   
+   When obtaining any of the above fixes, be sure to download the
+   accompanying readme, for itself, and any prerequisite fixes, and
+   review them thorougly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR48890
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-19
+   
+   
+ * CLOSED DATE
+   2014-02-19
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

@@ -1,0 +1,144 @@
+Title: IBM PM76054: WRONG SUMMARY ROW FOR COLUMN PERCENT USED GOOD - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  "wrong Summary row for column Percent Used Good". Summary
+   should contain average (or weighted average) instead of summ.
+   
+   Users affected:
+   All
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Can add a condition to a situation, excluding summary rows:
+   Thread Pool Name != [Summary]
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of ITCAM for WebSphere 7.1
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Wrong summary row in the column
+   * PercentUsedGood of table Thread Pools.
+   ****************************************************************
+   * RECOMMENDATION: Update KYN agent to version 7.1.0.3 IF5
+   * or newer.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Summary row contained summ of the values from the column
+   PercentUsedGood, fixed version contains maximum value, what
+   is more appropriate.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+           | interim fix | 7.1.0.3-TIV-ITCAMAD-IF0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM76054
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS TEM
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92WD
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-29
+   
+   
+ * CLOSED DATE
+   2013-02-01
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS TEM
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92WD
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

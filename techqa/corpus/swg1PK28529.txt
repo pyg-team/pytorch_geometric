@@ -1,0 +1,132 @@
+Title: IBM PK28529: THE ENTIRE COMMAND MAY NEED TO BE ENCLOSED IN QUOTES WHEN CODING A RULE THAT REQUIRES SPECIAL CHARACTERS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Load Balancer Administration Guide does not document that on
+   a windows system the entire command may need to be enclosed in
+   quotes when entering a dscontrol command in a DOS command prompt
+   for adding a rule that requires special characters. Normally
+   only the keywork would need to be enclosed in double quotes.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  TITLE : Contect rule (pattern) syntax update
+   PROBLEM : Appendix B of the Administration Guide
+   refers to syntax to be used for special characters.
+   This syntax does not always work for the windows
+   operating system.
+   CAUSE : Different syntax is needed depending on if the
+   command is issued within the dscontrol shell (you've typed
+   dscontrol<enter> and then the command or the command is
+   issued from a configuration file) or if the command is
+   entered the windows shell (dscontrol rule add ..).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  SOLUTION:
+      1) This same syntax is applicable for any "rule
+   add" command; whether using cbrcontrol or dscontrol.
+      2) If the command is being entered from the dscontrol shell,
+   cbrcontrol shell, or a configuration file, the special
+   characters
+   are encased in quotes as the Administration Guide documents.
+   Example (from configuration file):
+      cbrcontrol rule add 10.1.203.4:80:cbr_prod_rule_ek type
+   content
+      pattern "uri=/nipoek/*"
+      3) If you are entering the same the same command from the
+   windows
+   problem, you must encase the entire command in quotes instead of
+   just the special characters:
+      cbrcontrol "rule add 10.1.203.4:80:cbr_prod_rule_ek type
+   content
+      pattern uri=/nipoek/*"
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK28529
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS LOAD BALAN
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8811
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-07-21
+   
+   
+ * CLOSED DATE
+   2006-07-21
+   
+   
+ * LAST MODIFIED DATE
+   2006-07-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

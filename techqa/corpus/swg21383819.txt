@@ -1,0 +1,47 @@
+Title: IBM Applying ClearCase or ClearQuest fix pack 7.1.0.1 or 7.1.0.2 reports error: zip com.ibm.rational.team.write.runonce.key 1.0.0.v200810242053 does not exist in <repository>\disk1\InstallerImage_win32\native\ - United States
+
+Text:
+CC; reports error: zip com.ibm.rational.team.write.runonce.key; reports error: zip com; ibm; rational; team; write; runonce; key; 7.1.0.1; 7; 1; 0 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+This technote explains how to resolve an error, zip com.ibm.rational.team.write.runonce.key 1.0.0.v200810242053 does not exist in, that can occur when applying IBM Rational ClearCase (CC) or ClearQuest (CQ) fix pack 7.1.0.1 or 7.1.0.2 
+
+SYMPTOM
+
+Error message reported when installing a fix pack for ClearCase or ClearQuest. 
+
+ zip com.ibm.rational.team.write.runonce.key 1.0.0.v200810242053 does not exist in <repository>\disk1\InstallerImage32\native\..." 
+
+ 
+
+Example:
+Problem Occurred
+
+Failed to find all installation files
+
+zip com.ibm.rational.team.write.runonce.key 1.0.0.v200810242053 not found
+'zip com.ibm.rational.team.write.runonce.key 1.0.0.v200810242053' not found in E:\Inst\7.1.0.1-RATL-RCQ-WIN-FP01.
+'zip com.ibm.rational.team.write.runonce.key 1.0.0.v200810242053' not found in E:\Inst\7.1.0.1-RATL-RCC-WIN-FP01.
+'zip com.ibm.rational.team.write.runonce.key 1.0.0.v200810242053 does not exist in I:\Development\Rational\CC WIN 7.1\disk1\InstallerImage_win32 (at I:\Development\Rational\CC WIN 7.1\disk1\InstallerImage_win32\native\...
+'zip com.ibm.rational.team.write.runonce.key 1.0.0.v200810242053 does not exist in I:\Development\Rational\CQ WIN 7.1\disk1\InstallerImage_win32 (at I:\Development\Rational\CQ WIN 7.1\disk1\InstallerImage_win32\native\...
+
+[/support/docview.wss?uid=swg21383819&aid=1] [/support/docview.wss?uid=swg21383819&aid=1]
+
+CAUSE
+ 
+
+One known cause is that the repository link for 7.1, 7.1.0.1 or 7.1.0.2 is pointing to \disk1\InstallerImage_win32\ (which is the Installation Manager repository location that is shipped inside the CC repository) and not to \disk1\ (which is the root ClearCase repository). 
+
+[/support/docview.wss?uid=swg21383819&aid=2] [/support/docview.wss?uid=swg21383819&aid=2]
+
+This may also occur if you are trying to apply an update to one product when you have multiple products installed. For example, when updating ClearQuest with a testfix where ClearCase is also installed which may also need to have the ClearCase testfix available as well.
+
+RESOLVING THE PROBLEM
+ 
+
+Modify the repository location to point at the \disk1 directory. It is also possible to add an additional repository pointing to this location (making one repository for Installation Manager and one for ClearCase). 
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational ClearQuest Installation AIX, HP-UX, Linux, Solaris, Windows 7.1, 7.1.0.1

@@ -1,0 +1,31 @@
+Title: IBM Server upgrade from V6.3 to V7.1 fails with an "Access is denied" error - United States
+
+Text:
+tsm supdates630 srelnotes630 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The process of upgrading an IBM Tivoli Storage Manager V6.3 server to V7.1 fails during the prerequisite check. Although the correct user ID is used for the upgrade, an "Access is denied" error is logged. 
+
+SYMPTOM
+The IBM Installation Manager log shows the following errors: 
+
+
+ERROR: com.tivoli.dsm.prereq.utils.OSUtils.(82) : An Exception was thrown while trying to get operating system information
+ERROR: com.tivoli.dsm.prereq.utils.OSUtils.(83) : CTGRI0039E An error occurred while attempting to execute a Visual Basic script. The following error information was returned: | CScript Error: Loading script "C:\Users\TSM\AppData\Local\Temp\2\rxa838185643685531610.vbs" failed (Access is denied. ).
+
+
+
+DIAGNOSING THE PROBLEM
+Run a simple Visual Basic (VB) script with the same user ID. Open a Windows command prompt and run the following commands:
+
+echo Wscript.echo "hello" > %temp%\test.vbs 
+cscript %temp%\test.vbs 
+erase %temp%\test.vbs 
+
+In this case, the script failed to run.
+
+
+RESOLVING THE PROBLEM
+In this case, an antivirus program was flagging the creation of the VB script because the script was created and accessed in a temporary folder in the user's profile path. This condition prevented the installation from running. 
+
+To resolve the issue, configure the antivirus program so that it does not block the VB script during the Tivoli Storage Manager installation or upgrade process.

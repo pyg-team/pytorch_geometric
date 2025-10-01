@@ -1,0 +1,198 @@
+Title: IBM IZ83646: UPGRADE OF BASE MEDIA (TEMS,TEPS,WPA,S&P) WILL NOT OCCUR AS INSTALLER THINKS IT NEEDS THE NEW AGENT COMPATIBILITY PACKAGE. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem description:
+   
+   On a Windows 64-bit machine with the Agent Compatibility Package
+   installed, upgrade of anything on the ITM 6.2.2 FP1 base CD to
+   ITM 6.2.2 FP2 base CD causes the 6.2.2 FP2 base upgrade to fail.
+   The message issued states that the Agent Compatibility Package
+   must be upgraded first, before the base CD can be upgraded. If
+   OK is pressed this error continues until the install is
+   cancelled.
+   
+   The upgrade of base components (TEMS, TEPS, TEP Desktop, WPA,
+   S&P) do not require the Agent Compatibility Pack and should not
+   ask for it during an upgrade.
+   
+   
+   Environment:
+   
+   Windows 64-bit only where ITM 6.2.2 FP1 base components are
+   installed with the 64-bit Windows OS Agent and the Agent
+   Compatibility Pack.
+   
+   
+   Recreate Instructions:
+   
+   Must be done on a Windows 64-bit machine.
+   1. Install ITM 6.2.2 FP1 TEMS for example as an RTEMS.
+   2. Install the Windows 64-bit OS Agent and the Compatibility
+   Pack.
+   3. Attempt to upgrade the TEMS from 6.2.2 FP1 to 6.2.2 FP2. The
+   upgrade will loop with a message that the compatibility pack is
+   at 6.2.2 FP1 and it is required to be at 6.2.2 FP2. The loop
+   continues until the install is cancelled.  To function properly,
+   the upgrade of TEMS should be accepted and processed without
+   requesting the compatibility pack.
+   
+   
+   Related files and output:
+   
+   During install, a pop-up will appear containing the following
+   message:
+   
+   "The Agent Compatability Package in version 06220200 is required
+   but unavailable."
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the 6.2.2 FP2 agent media to upgrade the 64-bit Windows OS
+   agent and Agent Compatibility Package first, then upgrade the
+   base components.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Upgrade from IBM Tivoli Monitoring 6.2.2 FP1 to IBM Tivoli
+   Monitoring 6.2.2 FP2 any base component where IBM Tivoli
+   Monitoring 6.2.2 FP1 64-bit Windows Agent is installed causes
+   the install to loop until the customer cancels the install.  The
+   message issued states the Agent compatibility package must be
+   upgraded first, before the base CD can be upgraded. If OK is
+   pressed this error continues to appear until the install is
+   cancelled.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was changed to add extra messages that direct the
+   customer to run the Agent CD upgrade first to IBM Tivoli
+   Monitoring 6.2.2 FP2 so the compatibility pack can be upgraded,
+   then to rerun this install.  The compatibility pack is required
+   by the Agent framework, which will be upgraded by the base
+   install, but the compatibility pack is only available on the
+   Agent CD so the Agents must be upgraded first.  The Agent
+   install will upgrade both the Agent framework and compatibility
+   pack.
+   
+   The install now aborts after the error is explained and does not
+   loop.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.2.2-TIV-ITM-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Cancel the install and run the Agent upgrade first.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ83646
+   
+   
+ * REPORTED COMPONENT NAME
+   TEPS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04PS
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-26
+   
+   
+ * CLOSED DATE
+   2010-10-11
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

@@ -1,0 +1,60 @@
+Title: IBM Utility: Feature Pack for EJB 3.0 for WebSphere Application Server V6.1 - United States
+
+Text:
+Feature Pack; EJB FLASH (ALERT)
+
+ABSTRACT
+ IBM® WebSphere® Application Server Feature Packs are optionally installable product extensions that offer targeted, incremental new features. 
+
+CONTENT
+WebSphere Application Server V6.1 Feature Pack for EJB 3.0 delivers several new technologies, including EJB 3.0 and Java™ Persistence API (JPA), which are key technologies of Java Platform, Enterprise Edition 5 (Java EE 5). This feature pack includes production support with Application Server V6.1. 
+
+Easy to Develop
+The EJB 3.0 specification simplifies the development of business logic for enterprise applications. EJB 3.0 simplifies development by allowing developers to program EJB components as POJOs with Java business interfaces. 
+
+Annotations now provide component metadata, so it is no longer necessary to create XML deployment descriptors. 
+
+Associated with the EJB 3.0 specification is the JPA specification. The Feature Pack for EJB 3.0 includes an implementation of this as well. JPA simplifies the entity persistence model by leveraging many of the features in open-source persistence frameworks. JPA uses a simple, yet robust, object relational mapping layer over the top of typical Java Database Connectivity (JDBC) resource usage patterns. This architecture uses simple JavaBeans classes (POJO) to represent relational database content, which enables developers to use basic resource access patterns to fetch and store state in the database. 
+
+Easy to Test
+It is also now possible to easily test outside the container using typical JUnit test patterns. This increases the rapid development productivity by reducing the time for the edit-compile-deploy-debug cycles currently associated with Java Enterprise Edition applications. 
+
+Persistence testing has also been simplified. It is now possible to test outside of the container environment either without the database (using just simple POJO classes that represent state) or with the database (for example, allowing testing of queries, relationships, and inheritance). 
+
+Configurable and Extensible
+JPA persistence support can be configured and extended to meet a variety of needs including, but not limited to: 
+
+ * Pessimistic or optimistic locking 
+ * Large query result sets 
+ * Caching 
+ * XML type mapping 
+ * Batch updates
+
+
+Hardware Prerequisites 
+Any hardware that supports Application Server V6.1 or higher Software Prerequisites 
+WebSphere Application Server V6.1
+
+
+Feature Pack for EJB 3.0 version 6.1
+WebSphere Application Server Feature Pack for EJB 3.0 [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?&source=swg-wasfpejb3] 
+
+ 
+
+Mandatory ++APAR for IBM WebSphere Application Server V6.1 Feature Pack for EJB 3.0 on z/OS [http://www.ibm.com/support/docview.wss?rs=404&uid=swg21288940] 
+
+ 
+
+PK56653; 6.1.0.13: Enable application update via RAD to EJB 3.0 Feature pack [http://www.ibm.com/support/docview.wss?rs=180&uid=swg24017666] 
+
+
+Information Center
+WebSphere Application Server Feature Pack for EJB 3.0 [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=v610ejb&product=was-base-dist] 
+
+Feature Packs by Version
+Access Feature Packs by version [http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg27008534]as they become available
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server for z/OS z/OS 6.1 Feature Pack for EJB 3.0 Application Servers WebSphere Application Server for z/OS z/OS 6.1

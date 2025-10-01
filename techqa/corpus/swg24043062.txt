@@ -1,0 +1,60 @@
+Title: IBM Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2016.12 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This download is Version 8.5.7 Cumulative Fix 2016.12 (V8.5.7 CF2016.12) for the IBM Business Process Manager products. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+TAB NAVIGATION
+ * Fix list [http://www.ibm.com/support/docview.wss?uid=swg27049215]
+ * What's new [http://www.ibm.com/support/docview.wss?uid=swg27048992]
+ * Downloading the cumulative fix [http://www.ibm.com/support/docview.wss?uid=swg24043062]- selected tab,
+ * Installing the cumulative fix [http://www.ibm.com/support/docview.wss?uid=swg27048950]
+ * Upgrading profiles from V8.5.x [http://www.ibm.com/support/docview.wss?uid=swg27048949]
+ * Post-upgrade tasks [http://www.ibm.com/support/docview.wss?uid=swg27049143]
+
+The download link in the Change History section links to the download package required to install V8.5.7 CF2016.12 for the following products on all applicable operating systems: 
+
+ * IBM Business Process Manager Standard 
+ * IBM Business Process Manager Advanced 
+ * IBM Business Process Manager Advanced - Process Server 
+ * IBM Business Process Manager Express
+
+
+After you download the package, see the Installation Instructions. 
+Note: This page includes only the downloads for the IBM BPM V8.5.7 cumulative fix. For other downloads that might be needed for the upgrade, see Downloading the repositories to the local system [http://www.ibm.com/support/docview.wss?uid=swg27048950#download]. 
+If you have Internet access on the system where you are installing the cumulative fix, you do not need to manually download the download packages. IBM Installation Manager will find the cumulative fix in the live repository. 
+
+A separate download is not available for IBM Process Designer. You can update IBM Process Designer from the Process Center after installing the appropriate refresh pack. INSTALLATION INSTRUCTIONS
+The following links contain the installation and upgrade instructions for the cumulative fix. Read these documents before you install the fix.
+
+
+
+URL LANGUAGE SIZE(Bytes) Installing the cumulative fix [http://www.ibm.com/support/docview.wss?uid=swg27048950] English 140000 Upgrading profiles from V8.5.x [http://www.ibm.com/support/docview.wss?uid=swg27048949] English 150000 Post-upgrade tasks [http://www.ibm.com/support/docview.wss?uid=swg27049143] English 110000 Process Federation Server [http://www.ibm.com/support/docview.wss?uid=swg24043116] English 100000 
+DOWNLOAD PACKAGE
+IBM Business Process Manager V8.5.7 Cumulative Fix 2016.12
+
+
+HOW CRITICAL IS THIS FIX?
+Recommended
+
+
+
+CHANGE HISTORY
+Third cumulative fix for the IBM Business Process Manager Version 8.5.7 products
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] IBM BPM 857 CF2016.12 16 Dec 2016 English 2250613038 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%2FWebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Standard&release=All&platform=All&function=fixId&fixids=bpm.8570.cf2016.12.delta.repository&includeSupersedes=0&source=fc] [ ] 
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard General AIX, Linux, Solaris, Windows 8.5.7.CF201612, 8.5.7 Business Integration IBM Business Process Manager Express General Linux, Windows 8.5.7.CF201612, 8.5.7 
+PRODUCT ALIAS/SYNONYM
+ BPM 
+
+
+ [/support/docview.wss?uid=swg24043062&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24043062&aid=2]Problems (APARS) fixed
+JR56159, JR56369, JR56388, JR56427, JR56536, JR56539, JR56543, JR56544, JR56556, JR56566, JR56578, JR56593, JR56608, JR56617, JR56622, JR56623, JR56627, JR56629, JR56643, JR56647, JR56649, JR56655, JR56661, JR56663, JR56679, JR56681, JR56691, JR56696, JR56705, JR56707, JR56709, JR56710, JR56711, JR56714, JR56717, JR56721, JR56722, JR56724, JR56726, JR56729, JR56736, JR56740, JR56742, JR56743, JR56744, JR56752, JR56761, JR56763, JR56765, JR56769, JR56772, JR56777, JR56780, JR56782, JR56785, JR56789, JR56793, JR56801, JR56802, JR56806, JR56813, JR56821, JR56824, JR56833, JR56844, JR56845, JR56846, JR56851, JR56855, JR56860, JR56864, JR56869, JR56879, JR56881, JR56883, JR56884, JR56887, JR56891, JR56893, JR56897, JR56901, JR56909, JR56923, JR56936, JR56941, JR56952, JR56955, JR56961, JR56974, JR56976, JR56981, JR56991, JR56993, JR56997, JR57000, JR57002, JR57023, JR57038, JR57040, JR57041, JR57054, JR57055, JR57056, JR57057, JR57059, JR57062, JR57068, JR57084, JR57094

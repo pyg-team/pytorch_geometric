@@ -1,0 +1,292 @@
+Title: IBM PK80280: FP7003XP PSN VCT REGR:DB2 SETUP SCRIPTS OF CEI FVT ON EZWAS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I have installed Base 7003 on ezwas zos machine
+   Product Directory        /WebSphere/Base/AppServer
+   Version Directory
+   /WebSphere/Base/AppServer/properties/version
+   DTD Directory
+   /WebSphere/Base/AppServer/properties/version/dtd
+   Log Directory            /WebSphere/Base/AppServer/logs
+   TMP Directory            /tmp
+   
+   Product List
+   ------------------------------------------------------------
+   ND                       installed
+   
+   Installed Product
+   ------------------------------------------------------------
+   Name                     IBM WebSphere Application Server for
+   z/OS
+   Version                  7.0.0.3
+   ID                       ND
+   Build Level              cf030849.25
+   Build Date               12/10/08
+   Architecture             System z
+   
+   
+   I was configuring the CEI using the document
+   http://rtpgsa.ibm.com/projects/w/was6lqa/vekumari/ [http://rtpgsa.ibm.com/projects/w/was6lqa/vekumari/]
+   FP7003/zos_CEIBASE/Configure%20DB2%20on%20the%20z.doc
+   
+   After I ran the converttoDataset.sh from the dbscripts created.
+   
+   I tried the SQL proccessing using SPUFI that is given in the
+   document for CEI(CRDDL1)
+   I was seeing these errors
+   
+   ********************************* Top of Data **************
+   ---------+---------+---------+---------+---------+---------+
+   ------------------------------------------------------------
+   
+   -- Licensed Materials-Property of IBM
+   
+   -- (C)Copyright IBM Corp 2004
+   
+   -- All rights reserved
+   
+   -- US Government Users Restricted Rights
+   
+   -- Use, duplication, or disclosure restricted
+   
+   -- by GSA ADP Schedule Contract with IBM Corp
+   
+   ------------------------------------------------------------
+   
+   
+   
+   -- tablespace for static configuration tables. Only a small
+   amount
+   -- of data is loaded into the tables when the CEI application
+   is
+   -- installed and the values are static. Since the values are
+   static,
+   -- the FREEPAGE and PCTFREE values are set to 0.
+   
+   -- Three rows of cei_t_cbe_map table fit per 4K page while
+   only one
+   -- row of the cei_t_properties table fit per page.
+   
+   CREATE TABLESPACE CEICFG
+   
+     IN event
+   
+     USING STOGROUP sysdeflt
+   
+     PRIQTY 50
+   
+     SECQTY 5
+   
+     FREEPAGE 0
+   
+     PCTFREE 0
+   
+     BUFFERPOOL BP9
+   
+     LOCKSIZE PAGE
+   
+     COMPRESS YES
+   
+     CCSID UNICODE;
+   
+   ---------+---------+---------+---------+---------+---------+
+   DSNT408I SQLCODE = -204, ERROR:  EVENT IS AN UNDEFINED NAME
+   
+   DSNT418I SQLSTATE   = 42704 SQLSTATE RETURN CODE
+   
+   DSNT415I SQLERRP    = DSNXISUB SQL PROCEDURE DETECTING ERROR
+   
+   DSNT416I SQLERRD    = 25 0  0  -1  0  0 SQL DIAGNOSTIC
+   INFORMATION
+   DSNT416I SQLERRD    = X'00000019'  X'00000000'  X'00000000'
+   X'FFFFFFFF'
+            X'00000000'  X'00000000' SQL DIAGNOSTIC INFORMATION
+   
+   ---------+---------+---------+---------+---------+---------+
+   DSNE618I ROLLBACK PERFORMED, SQLCODE IS 0
+   
+    Command ===>
+   Scroll ===> PAGE
+   
+   
+   The event database is not gettting created using these
+   scripts.
+   
+   When i tried to manually run the cr_event_db2zos.sh using the
+   USER61 and kri1shna. it does not work.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere Application Server    *
+   *                 V6.1 for z/OS Common Event Infrastructure    *
+   *                 that configures it to use DB2 z/OS           *
+   *                 database as repository for the events.       *
+   *                                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When the user performs the              *
+   *                      configuration of Common Event           *
+   *                      Infrastructure to use the DB2 z/OS      *
+   *                      database the process consists in two    *
+   *                      phases. First step is to execute the    *
+   *                      configuration AdminTask and the         *
+   *                      second one is to execute the            *
+   *                      generated database configuration        *
+   *                      scripts via zOS DataSet tools. The      *
+   *                      last step fails due to the fact         *
+   *                      that the database is not created. The   *
+   *                      converted DataSet does not execute      *
+   *                      the database creation step.             *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The execution of the serialized DataSet containing the
+   database objects creation/configuration scripts fails at
+   the step of tablespaces creation step:
+   DSNT408I SQLCODE = -204, ERROR:  EVENT IS AN UNDEFINED NAME
+   
+   DSNT418I SQLSTATE   = 42704 SQLSTATE RETURN CODE
+   
+   DSNT415I SQLERRP    = DSNXISUB SQL PROCEDURE DETECTING ERROR
+   
+   DSNT416I SQLERRD    = 25 0  0  -1  0  0 SQL DIAGNOSTIC
+   INFORMATION
+   DSNT416I SQLERRD    = X'00000019'  X'00000000'  X'00000000'
+   X'FFFFFFFF'
+            X'00000000'  X'00000000' SQL DIAGNOSTIC INFORMATION
+   This is due to the fact that the database creation is not
+   performed at a previous step as it should be.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The database/database objects creation scripts were corrected
+   by separating the database creation step from the tablespaces
+   creation step and the code responsible with database creation
+   has been changed in order to comply with the scripts modified
+   content.
+   
+   APAR PK80280 is currently targeted for inclusion in Service
+   Level (Fix Pack) 6.1.0.23 of WebSphere Application Server V6.1
+   for z/OS.
+   
+   Please refer to URL:
+   //www.ibm.com/support/docview.wss?rs=404&uid=swg27006970
+   for Fix Pack availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK80280
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-09
+   
+   
+ * CLOSED DATE
+   2009-02-26
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK78381 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK78381]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  BBGUBINF BBOUBINF
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY UK44403 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK44403]
+   UP09/03/21 P F903
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,135 @@
+Title: IBM IV47780: ENABLE SELF DESCRIBING AGENT SUPPORT FOR DATA PROVIDER - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 2 (6.3.0-TIV-ITM-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24035402]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Enable the Dashboard Data Provider to dynamically load
+   application support files that are delivered to the TEPS over
+   the Self Describing Agent communications channel.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Enable self-decribing agnet (SDA) support for Dashboard Data
+   Provider.
+   
+   
+   The Dashboard Data Provider installed with the Tivoli Enterprise
+   Portal Server required a restart before recognizing new support
+   files were installed via the Self Describing Agent feature of
+   IBM Tivoli Monitoring.
+   
+   This enhancement enables the data provider to automatically pick
+   up the new application support files without requiring a restart
+   of the portal server.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  See problem summary.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+      | fix pack | 6.3.0-TIV-ITM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV47780
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM DATA PROVID
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04DP
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-03
+   
+   
+ * CLOSED DATE
+   2013-09-12
+   
+   
+ * LAST MODIFIED DATE
+   2013-09-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM DATA PROVID
+   
+   
+ * FIXED COMPONENT ID
+   5724C04DP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

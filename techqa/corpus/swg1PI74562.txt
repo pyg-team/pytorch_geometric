@@ -1,0 +1,273 @@
+Title: IBM PI74562: DEPENDENT FIELD IS NOT DISPLAYED WHEN CONTROLLING FIELD IS ALSO A DEPENDENT FIELD - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Dependent field is not displayed when controlling field is also
+   a dependent field
+   
+   Workaround:
+   None
+   
+   Prerequisites:
+   OpenPages 7.2.0.2 with Solutions
+   
+   Set OpenPagesAdministrator to use OpenPages Modules7.2.0 Master
+   Profile
+   1.	Log in to OpenPages as OpenPagesAdministrator
+   2.	Go to Administration > Users, Groups and Domains
+   3.	Click on OpenPagesAdministrator
+   4.	Click on Edit button in User Information pane
+   5.	Select OpenPages Modules 7.2.0 Master in the Profile field
+   and click Save button
+   6.	Log out of application
+   
+   Create new Business Entity , Process , Risk and Control object
+   hierarchy
+   1.	Log in to OpenPages as OpenPagesAdministrator
+   2.	Click on Add New link on upper right of page and click
+   Business Entity
+   3.	Under the General Tab, enter TestEntity in the BusinessEntity
+   name field and click Save button
+   4.	Click on Add New link on upper right of page and click
+   Process
+   5.	Under Select Parents, click the Search tab and enter
+   TestEntity in the Search field
+   6.	Select TestEntity in the Search Results and click Next button
+   
+   7.	Enter Process1 in the name field and fill in all required
+   fields and click Save button
+                      8. Click on Add New link on upper right of
+   page and click Risk
+                        9. Under Select Parents, click the Search
+   tab and enter Process1 in the Search field
+                       10. Select Process1 in the Search Results
+   and click Next button
+                       11. Enter Risk1 in the name field and fill
+   in all required fields and click Save button
+                       12. Click on Add New link on upper right of
+   page and click Control
+                       13. Under Select Parents, click the Search
+   tab and enter Process1 in the Search field
+                       14. Select Process1 in the Search Results
+   and click Next button
+                       15. Enter Control001 in the name field and
+   fill in all required fields and click Save button
+   
+   
+   
+   Set up Field Dependencies for Control Object type
+   1.	On top menu select Administration > Object Types  and click
+   on SOXControl
+   2.	Under Field Dependencies check the box adjacent to Who
+   Performs Control  (Editable behavior)  and click the
+   Enable/Disable button to disable it
+   3.	Click the Add button under Field Dependencies
+   4.	Select Who Performs Control in the Dependent field and
+   check Required for the Dependent Field Behavior
+   5.	Select Classification as the Controlling Field and select
+   Key Control Activity and Not Determined for the Controlling
+   values.
+   6.	Click the Add button and select Does Owner Perform in the
+   Controlling Field and select No for the Controlling Value
+   7.	Click Add button and then click Finish button
+   8.	Click the Add button under Field Dependencies
+   9.	Select Does Owner Perform in the Dependent field and check
+   Visible for the Dependent Field Behavior
+   10.	Select Classification as the Controlling Field and select
+   Key Control Activity and Not Determined for the Controlling
+   values.
+   11.	Click Add button and then click Finish button
+   12.	Click the Add button under Field Dependencies
+   13.	Select Does Owner Perform in the Dependent field and check
+   Editable for the Dependent Field Behavior
+   14.	Select Classification as the Controlling Field and select
+   Key Control Activity  for the Controlling values.
+   15.	Click Add button and then click Finish button
+   
+   
+   
+   
+   
+   
+   Steps To Reproduce:
+   
+   1.	On top menu , click Assessments > Controls
+   2.	Enter Control001 in the Filter prompt and hit ENTER
+   3.	Click on Control001 in the Filter List View to access its
+   detail page
+   4.	Click Actions > Edit this Control
+   5.	Navigate to Classification field and select Key Control
+   Activity as the value which makes the Does the Control Owner
+   Perform the Control field editable.
+   6.	Modify the Does the Control Owner Perform the Control field
+   to No
+   7.	Confirm that the Who Performs Control field is not
+   displayed.  It should have appeared to the right of the Does
+   Owner Perform field.
+   
+   
+   
+   
+   
+   8.	Hit Save button and confirm that the Who Performs Control is
+   required warning appears on top of page and that the Who
+   erform Control field now appears.
+   
+   
+   
+   
+   
+   
+   Expected Results:
+   
+   The Who Performs Control field should have been displayed in
+   Step 7 in Steps to Reproduce since the visible behavior
+   field dependency was met.
+   
+   
+   Actual Results:
+   
+   The dependent field is not displayed
+   
+   
+   
+   Error Message:
+   None
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * OpenPages Users                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * DEPENDENT FIELD IS NOT DISPLAYED WHEN CONTROLLING FIELD IS   *
+   * ALSOA DEPENDENT FIELD                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customers should download OpenPages 7.2 FP4 from Passport    *
+   * Advantage. See the following document for details on         *
+   * obtaining OpenPages 7.2 FP4:                                 *
+   * http://www.ibm.com/support/docview.wss?uid=swg24043211       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  We had to make a change in our code to add a function.   Which
+   does the usual thing if no editable dependencies are present
+   (that is, just find the nodes with the specified ids).  Then if
+   there are no dependencies the code goes through the new function
+   to get the set of nodes it would have gotten already; and if
+   there are dependencies it will check for the "_edit" nodes first
+   and return those if found.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI74562
+   
+   
+ * REPORTED COMPONENT NAME
+   OPENPAGES GRC
+   
+   
+ * REPORTED COMPONENT ID
+   5725D5100
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-09
+   
+   
+ * CLOSED DATE
+   2017-01-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OPENPAGES GRC
+   
+   
+ * FIXED COMPONENT ID
+   5725D5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

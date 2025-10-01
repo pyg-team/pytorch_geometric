@@ -1,0 +1,76 @@
+Title: IBM DataStage jobs using a DB2 client may hang upon job failure on Windows platform - United States
+
+Text:
+Datastage jobs do not run hung stuck blocked TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In IBM InfoSphere Datastage, on the Microsoft Windows operating system, parallel jobs that use a DB2 client (for example. ODBC, DB2 Common Connector) might hang after a job aborts. 
+
+SYMPTOM
+The problem occurs in parallel jobs containing stages that make connections with DB2 clients, such as the ODBC Connector, DB2 Connector, etc. When one of these jobs aborts, either manually or via other means, subsequent attempts to run other DataStage jobs may result in a hanging state. Microsoft features such as Task Manager and the Windows command shell remain responsive during in this situation. Only programs associated with MKS Toolkit exhibit the hanging behavior. 
+
+When a new job is started, the job remains in a 'Ready' state even though, within Director, jobs are in a running state. Running a basic Orchestrate (osh) program on the command line does not result in returned output (it does not even initialize).
+
+Examining the process list shows that the job that first aborted still has remaining processes pending - including osh. The process list shows that a job is still running. Examining the dump from windbg of the hanging process shows a stack list including a db2sys!sqlostartsession DLL call.
+
+
+CAUSE
+The hanging jobs are caused by MKS Toolkit being unable to release internal locks that it establishes during the abort process. The DB2 client does not return control to the calling Parallel job, which can then return control back to MKS Toolkit to release the locks. MKS Toolkit does not allow any further Parallel jobs to run until its internal locks are cleared.
+
+
+ENVIRONMENT
+Note that, starting starting with Information Server 9.1, the MKS toolkit was no longer used to support the Parallel Engine runtime code. The issue described in this tech note only occurs on Windows releases before Information Server 9.1 .
+
+
+
+DIAGNOSING THE PROBLEM
+Complete the following steps to verify the problem. 
+
+ * Check to see if you can start an MKS Shell 1. Try to run the MKS korn shell. The command is ksh.exe. It is usually in 
+   
+   
+
+C:\Program Files (x86)\MKS Toolkit\mksnt 
+
+If the ksh.exe command does open a window and create a command prompt, the system is probably 
+hung due to the locking problem 
+ * Check to see if you can run a new osh from the command line 1. Open a windows command shell. 
+   
+   2. Set up the environment to run osh 
+   
+   3. Run this command:
+   
+   
+
+
+osh "generator -schema record(s:string) | peek"  If the command does not return, then the system has a locking problem 
+
+ 
+
+ * Look for the DB2 call in a stack trace 1. Determine if the job that aborted contain calls to DB2 via ODBC or DB2 CC stage(s). 
+   
+   2. Determine if there are active processes related to the job (osh, nutsrv4). 
+   
+   3. Run "windbg" (Windows Debugger) on those active process and show the stack trace.
+   
+   
+
+
+Determine if the stack contains a call to "db2sys!sqlostartsession".  
+
+If all of the above steps are true, it is likely the provided solution resolves the issue.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Open up DB2 client for db2copy1 on the server that appears to be locked. Example: 
+    click Start -> All Programs -> IBM-DB2 -> DB2copy1 -> command line tools ->db2 command window
+    
+ 2. Run the following command:
+    
+    db2set DB2NOEXITLIST=yes
+    
+    This command causes the DB2 client to exit whether or not a connection issues exist during a shutdown.
+    
+ 3. Restart your IIS server software (either via reboot, or shutdown then restart IIS, ASB Agent, and DataStage) to ensure that the modification is complete.

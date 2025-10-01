@@ -1,0 +1,27 @@
+Title: IBM Netcool/Impact 6.1.1 and Tivoli Business Service Manager 6.1.1 are not compatible with Dashboard Application Services Hub CP5. - United States
+
+Text:
+ FLASH (ALERT)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+ABSTRACT
+ ActiveMQ jars upgrade in DASH CP5 will not work with TBSM 6.1.1 and Netcool/Impact 6.1.1 UI Data Providers.
+
+
+CONTENT
+ 
+
+Tivoli Business Service Manager 6.1.1 and Tivoli Netcool/Impact 6.1.* use IBM Java v6. IBM SDK v6 has been announce End Of Service Sept 2017. https://developer.ibm.com/javasdk/support/lifecycle/ [https://developer.ibm.com/javasdk/support/lifecycle/] 
+
+ 
+
+Note: There is no update to Netcool/Impact 6.1.1 or Tivoli Business Service Manager 6.1.1 which is compatible with Dashboard Application Services Hub CP5. These UI Data Providers, at version 6.1.1, are not compatible with DASH CP5. The following symptoms are visible when viewing widgets on DASH 3.1.3 CP5 connected to Netcool/Impact, or TBSM, 6.1.1 UI Data Provider: 
+
+ * Extra tab on Topology Widget 
+ * Intermittently the Topology Widget is blank 
+ * Topology layout only changes when a Custom Layout is selected
+
+
+DASH CP5 upgrade is not recommended in 6.1.1 UI Data Providers environment.

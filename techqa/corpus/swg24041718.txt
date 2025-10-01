@@ -1,0 +1,90 @@
+Title: IBM Download IBM Tivoli Netcool Configuration Manager Version 6.4.2 - United States
+
+Text:
+Netcool; Configuration Manager; Netcool Configuration Manager 6.4.2 DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM Tivoli Netcool Configuration Manager Version 6.4.2 installation images from the IBM Passport Advantage Online website. 
+
+DOWNLOAD DESCRIPTION
+
+
+ IBM Tivoli Netcool Configuration Manager delivers real-time, centralized management and monitoring of network resource configuration and policy-based compliance. 
+
+For more information about Netcool Configuration Manager, see the Netcool Configuration Manager Knowledge Center [http://www-01.ibm.com/support/knowledgecenter/SS7UH9/welcome].
+
+For information about the available installation options for Netcool Configuration Manager, see the Installation [http://www-01.ibm.com/support/knowledgecenter/SS7UH9_6.4.1/ncm/wip/install/concept/ncm_ins_installingncm.dita] topic.
+
+Downloading and assembling the product:
+
+ 1. Go to the Find Downloads and Media [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] page on the IBM Passport Advantage Online website. You must log in with an IBM ID to continue.
+ 2. Under Download finder options, select the Find by part number search option.
+ 3. Search for each downloadable image by part number (part numbers are listed in this document).
+ 4. Download all of the parts that you need.
+ 5. Unpack each of the parts into a single temporary directory on your system.
+ 6. Open the Quick Start image and follow the instructions in the Quick Start Guide to install the base components.
+
+
+
+IBM TIVOLI NETCOOL CONFIGURATION MANAGER BASE (EASSEMBLY CRYY1ML)
+CN92UEN - Netcool Configuration Manager Base Version 6.4.2 QuickStart Guide (English)
+
+CN92VEN - Netcool Configuration Manager Base Version 6.4.2 for AIX (English)
+
+CN92WEN - IBM Tivoli Netcool Configuration Manager Base Version 6.4.2 for Linux (English)
+
+DB2 10.5 ENTERPRISE SERVER EDITION FOR TIVOLI NETCOOL/OMNIBUS, NETWORK MANAGER AND NETCOOL CONFIGURATION MANAGER (EASSEMBLY CRYY2ML)
+CIW3PML - IBM DB2 Server 10.5 for Linux on 32-bit AMD and Intel systems (x86)
+
+CIXV0ML - IBM DB2 Server 10.5 for Linux on AMD64 and Intel EM64T systems (x64)
+
+CIW3RML - IBM DB2 Server 10.5 for Linux on POWER (System i and System p) systems
+
+CIW3SML - IBM DB2 Server 10.5 for Linux on System z
+
+CIW3TML - IBM DB2 Server 10.5 for AIX
+
+CIW3UML - IBM DB2 Server 10.5 for HP-UX on HP Integrity Itanium-based systems
+
+CIW3VML - IBM DB2 Server 10.5 for Solaris on UltraSPARC systems
+
+CIW3WML - IBM DB2 Server 10.5 for Solaris on x64 systems
+
+CIW3XML - IBM DB2 Server 10.5 for Windows on 32-bit AMD and Intel systems (x86)
+
+CIW3YML - IBM DB2 Server 10.5 for Windows on AMD64 and Intel EM64T systems (x64)
+
+CIPH4ML - IBM DB2 Enterprise Server Edition 10.5 - Restricted Use - Quick Start and Activation for Linux, UNIX and Windows
+
+JAZZ FOR SERVICE MANAGEMENT 1.1.2.1 FOR TIVOLI NETCOOL/OMNIBUS, NETWORK MANAGER AND NETCOOL CONFIGURATION MANAGER (EASSEMBLY CRYY3ML)
+CN6W9ML - Jazz for Service Management 1.1.2.1 for AIX, 64-bit (Multilingual)
+
+CN6WAML - Jazz for Service Management 1.1.2.1 for Linux, 64-bit (Multilingual)
+
+CN6WBML - Jazz for Service Management 1.1.2.1 for Linux on System z, 64-bit (Multilingual)
+
+CN6WCML - Jazz for Service Management 1.1.2.1 for Windows, 64-bit (Multilingual)
+
+CN6WDML - IBM Tivoli Common Reporting 3.1.2.1 for AIX, 64-bit (Multilingual)
+
+CN6WEML - IBM Tivoli Common Reporting 3.1.2.1 for Linux, 64-bit (Multilingual)
+
+CN6WGML - IBM Tivoli Common Reporting 3.1.2.1 for Linux on System z (Multilingual)
+
+CN6WFML - IBM Tivoli Common Reporting 3.1.2.1 for Windows (Multilingual)
+
+CN6WLML - IBM Tivoli Common Reporting 3.1.2.1 IBM Cognos Framework Manager for Windows (Multilingual)
+
+WEBSPHERE APPLICATION SERVER 8.5.5.7 AND SDK JAVA 7 FOR TIVOLI NETCOOL/OMNIBUS, NETWORK MANAGER AND NETCOOL CONFIGURATION MANAGER (EASSEMBLY CRYY4ML)
+CN92XEN - IBM WebSphere Application Server 8.5.5.7 and SDK Java (TM) Technology Edition V7.0 for AIX, 64-bit (Multilingual)
+
+CN92YEN - IBM WebSphere Application Server 8.5.5.7 and SDK Java (TM) Technology Edition V7.0 for Linux, 64-bit (Multilingual)
+
+CN92ZEN - IBM WebSphere Application Server 8.5.5.7 and SDK Java (TM) Technology Edition V7.0 for Linux on System z, 64-bit (Multilingual)
+
+CN930EN - IBM WebSphere Application Server 8.5.5.7 and SDK Java (TM) Technology Edition V7.0 for Windows, 64-bit (Multilingual)
+
+
+
+PRODUCT ALIAS/SYNONYM
+ NCM NCM 6.4.2 ITNCM ITNCM 6.4.2

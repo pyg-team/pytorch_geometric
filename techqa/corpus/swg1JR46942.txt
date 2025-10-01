@@ -1,0 +1,129 @@
+Title: IBM JR46942: THE MIGRATION OF WPS 6.1.2.3 TO BPM 7.5.1.1 FAILS WHILE TAKING THE SNAPSHOT OF THE DEPLOYMNT MANAGER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.0.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035701]
+Version 8.5.0 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035702]
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The migration of WPS 6.1.2.3 to BPM 7.5.1.1 fails while taking
+   the snapshot of the deploymnt manager
+   The problem is caused by the jndiname for BPC in WPS 6.1 named
+   "jndi/BPEDB_<Cluster_Name>", while migration looks for
+   "jndi/BPEDB", so it failed to find the jndiname for BPC data
+   source. It's changed to "jndi/BPEDB" since WPS 6.2.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Business Process Manager Version 7.5x       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Failed to take                          *
+   *                      the snapshot of the deploymnt manager   *
+   *                      during migration from WPS6123 to        *
+   *                      BPM7511                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The problem is caused by the jndiname for BPC in WPS 6.1 named
+   "jndi/BPEDB_<Cluster_Name>", while migration looks for
+   "jndi/BPEDB". which has been fixed in Business Process Manager
+   8x
+   "jndi/BPEDB"
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR46942
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-14
+   
+   
+ * CLOSED DATE
+   2013-07-25
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

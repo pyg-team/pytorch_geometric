@@ -1,0 +1,28 @@
+Title: IBM How can I tell which Case Foundation Process Engine event log is generating data in Case Foundation Case Analyzer? - United States
+
+Text:
+quarantined; data source transfer process publishing TECHNOTE (FAQ)
+
+QUESTION
+ I know what event logs I have on the Process Engine or Content Platform Engine Workflow System. But I do not know which of these event logs are responsible for new data in the Case Analyzer database. How can I tell which of the Process Engine or Content Platform Engine Workflow System events logs generated data in the Case Analyzer database recently? 
+
+ANSWER
+ 
+
+ 1. Open the X_PAPEEventState table in the Case Analyzer database. You can see steps how to do this and information about the X_PAPEEventState table records in tech note 1384041 [https://www-304.ibm.com/support/docview.wss?uid=swg21384041]. 
+ 2. See the values in the MostRecentTimeStamp column. This is the time stamp of the latest event received from the Process Engine or Content Platform Engine Workflow System event log that corresponds to the X_PAPEEventState table record. The recent values in the MostRecentTimeStamp column indicate the Process Engine or Content Platform Engine Workflow System event logs where the Cases Analyzer has recently received data from.
+
+
+Additional optional steps: 
+
+ 
+
+ 1. You can follow the Process Engine or Content Platform Engine Workflow System steps in tech note 1384041 [https://www-304.ibm.com/support/docview.wss?uid=swg21384041] to find out the names of the physical tables in the Process Engine or Content Platform Engine Workflow System database. Please note that the MostRecentTimeStampNum column in the X_PAPEEventState table have the UNIX time stamps that correspond to the MostRecentTimeStamp column values. Those UNIX time stamps are used in the F_Timestamp field of the VWLOG tables in the Process Engine or Content Platform Engine Workflow System database. 
+ 2. When Case Analyzer quarantines some events, their event time stamp may not be recorded in the X_PAPEEventState table. You can monitor the record counts in the Process Engine or Content Platform Engine Workflow System VWLOG tables to see which ones increase. If the VWLOG record count increases but the corresponding MostRecentTimeStamp value in the X_PAPEEventState table does not increase, then it is possible the those events are getting quarantined by Case Analyzer. For example, you can run the following query on table VWLOG1_113 to count the records:
+    
+    SELECT count(*) from f_sw.VWLOG1_113;
+    
+    Note : Replace the table name VWLOG1_113 in the above example with the actual table name on your system.
+
+RELATED INFORMATION
+ Technote 1384041 [g01zciwas003.ahe.pok.ibm.com/support/dcf/preview.wss?host=g01zcidbs003.ahe.pok.ibm.com&db=support/swg/dmgtech.nsf&unid=D2C1A1EE932F8812852575A2006D64B9&taxOC=SSCQTT3&MD=2009/04/24 13:04:16&sid=]

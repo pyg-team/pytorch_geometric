@@ -1,0 +1,16 @@
+Title: IBM What is the number of db connections used by purger/plc and how can you monitor them? - United States
+
+Text:
+db connection PLC PERF DB plc monitor TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What is the number of db connections used by purger/plc and how can you monitor them? 
+
+RESOLVING THE PROBLEM
+What is the number of db connections used by purger/plc and how can you monitor them?1) plc has a pool of maximum 20 possible DB connections (all closed at the beginning). The plc itself doesn't use any of these connections, but each time a data loader starts up, it checks out a connection from plc and keeps it while the data loading is taking place. Once the load is complete, the loader returns the connection to plc, which will close it.
+
+2) the maximum number of active connections at any one moment from plc loaders should not be more than the # of EGO loaders + # of SOAM loaders = 4+2 = 6 connections for Symphony 3.13) plc takes care to make sure that connections are closed after use. No connections are kept open if they are not being used.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum Symphony

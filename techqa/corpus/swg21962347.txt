@@ -1,0 +1,74 @@
+Title: IBM 【セキュリティ情報】 IBM WebSphere MQ Internet PassthruのDiffie-Hellman (DH) 暗号の脆弱性 (CVE-2015-4000) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Diffie-Hellman (DH) 暗号を使用した TLSプロトコルに脆弱性が発見されました。(通称 Logjam)
+TLS接続を行うIBM WebSphere MQ Internet Pass-Thru (MQIPT) に影響があります。
+TLS 接続を使用する場合、中間者攻撃により TLS 接続が暗号強度の低い輸出グレードの 512 ビット暗号に格下げされる問題があります。その結果、通信内容の盗聴や改ざんをされる可能性があります。
+
+
+VULNERABILITY DETAILS
+脆弱性の詳細
+CVEID: CVE-2015-4000 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-4000]
+DESCRIPTION: The TLS protocol could allow a remote attacker to obtain sensitive information, caused by the failure to properly convey a DHE_EXPORT ciphersuite choice. An attacker could exploit this vulnerability using man-in-the-middle techniques to force a downgrade to 512-bit export-grade cipher. Successful exploitation could allow an attacker to recover the session key as well as modify the contents of the traffic. This vulnerability is commonly referred to as "Logjam".
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103294 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103294] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+影響のある製品・バージョン： 
+
+次の製品に影響があります。 
+
+・IBM WebSphere MQ Internet Pass-Thru (MQIPT) : SupportPac MS81 
+
+2.1.0.2 以前のIBM WebSphere MQ Internet Pass-Thru (MQIPT) のすべてのバージョンで影響のある暗号スイートが使用されています。
+
+REMEDIATION/FIXES
+修正策： 
+
+
+IBM WebSphere MQ Internet Pass-Thru 2.1.0.2 [http://www.ibm.com/support/docview.wss?uid=swg24006386] 以降のリリースにアップグレードしてください。
+
+WORKAROUNDS AND MITIGATIONS
+回避策/軽減策： 
+
+なし
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+参照情報： 
+
+[IBMサイト] 
+この文書は、米国 IBM 社の資料を翻訳した参考文書です。翻訳元の文書は、以下のリンクよりご参照ください。 
+Security Bulletin: Vulnerability in Diffie-Hellman ciphers affects IBM WebSphere MQ Internet Passthru (CVE-2015-4000) [http://www.ibm.com/support/docview.wss?uid=swg21959745] 
+
+公開済みのフィックスパックについては、以下のサイトよりご利用いただけます。 
+Recommended fixes for WebSphere MQ [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27006037] 
+
+フィックス・パックの公開予定については、以下のサイトよりご確認いただけます。 
+WebSphere MQ planned maintenance release dates [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27006309] 
+
+[CVSS情報] 
+独立行政法人 情報処理推進機構: 共通脆弱性評価システムCVSS概説 [http://www.ipa.go.jp/security/vuln/CVSS.html] 
+JVN iPedia: CVSS計算ソフトウェア日本語版 [http://jvndb.jvn.jp/cvss/ja.html] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] . 
+関連情報： 
+. 
+[お問合せ先] 
+技術的な内容に関して、サービス契約のあるお客様はIBMサービス・ラインにお問い合わせください。 
+IBM サービス・ライン [http://www.ibm.com/jp/news/20070420001.html] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+関連情報
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21959745]

@@ -1,0 +1,55 @@
+Title: IBM WAS v6.1.x fails to start with error ADMU7704E: Failed while trying to start the Windows Service - United States
+
+Text:
+server start; windows service; ADMU7704 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to start IBM WebSphere Application Server (WAS) v6.1.x through Rational Application Developer for WebSphere Software (RAD) v7.0.x results in the error ADMU7704E: Failed while trying to start the Windows Service associated with server. 
+
+SYMPTOM
+Complete error while starting WebSphere Application Server (WAS) v6.1.x: 
+
+
+ADMU7704E: Failed while trying to start the Windows Service associated with server: server1;
+probable error executing WASService.exe: Starting Service: [service name]
+Timed out waiting for service to respond to command, after 60 seconds.Failed to start service, or
+timed out while waiting for start to complete. Check the logs for details.
+
+
+
+
+CAUSE
+The server was configured as a Windows Service.
+
+
+
+RESOLVING THE PROBLEM
+If this was unintentional, create a new server profile that does not run the application as a Windows Service. 
+
+
+Steps describing how to do this can be found in the Related URL section.
+
+Alternatively, you can do the following:
+
+
+ 1. Open Windows Services Control Panel (Start > Settings > Control Panel > Administrative Tools > Services).
+    
+    
+ 2. Look for the service name of WAS V6.1:
+    
+    "IBM WebSphere Application Server V6.1 - [service_name]".
+    
+    
+ 3. Open a command window and go to [RAD_Installation]\runtimes\base_v61\bin
+    
+    
+ 4. Run the command:
+    
+    WASService.exe -remove [service_name]
+    
+    You should see a message "Successfully removed service". 
+
+
+Restart RAD and you should now be able to successfully start your WASv6.1.x server. 
+RELATED INFORMATION
+#Create WAS v6.1 Profile [http://www.ibm.com/support/docview.wss?uid=swg21263551]

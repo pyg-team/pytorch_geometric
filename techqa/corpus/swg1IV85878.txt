@@ -1,0 +1,151 @@
+Title: IBM IV85878: JAVA MTOSI COLLECTOR FAILS TO COMPLETE DISCOVERY OF HUAWEI U2000 IPCORE IPRAN EMS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+4.2.0-TIV-NOIHD-Linux-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-NOIHD-Linux-FP0001&source=SAR]
+4.2.0-TIV-ITNMIP-Linux-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-Linux-FP0001&source=SAR]
+4.2.0_README_FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0_README_FP0001&source=SAR]
+4.2.0-TIV-NOIHD-AIX-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-NOIHD-AIX-FP0001&source=SAR]
+4.2.0-TIV-ITNMIP-AIX-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-AIX-FP0001&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Java MTOSI Collector fails to complete discovery of Huawei U2000
+   with SOAP/MTOSI Northbound interface. The target EMS for
+   integration is Huawei U2000 with SOAP/MTOSI Web Service NBI.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Collector discovery using Java MTOSI Collector against       *
+   * Huawei MTOSI SOAP xml NBI on Huawei EMS failed to return     *
+   * data to ITNM on 4.2 Linux and AIX platforms                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Java MTOSI collector failed to discover Huawei EMS via MTOSI *
+   * SOAP xml NBI                                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * | fix pack | 4.2-ITNMIP-FP0001                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The issue arises from missing collector properties in properties
+   file, missing parameters and logic flow in Java MTOSI collector
+   code observed during a Customer's ITNM 4.2 deployment
+   activities.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV85878
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PREC DISCOVY
+   
+   
+ * REPORTED COMPONENT ID
+   5724O52DS
+   
+   
+ * REPORTED RELEASE
+   420
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-21
+   
+   
+ * CLOSED DATE
+   2016-09-26
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/PREC DISCOVY
+   
+   
+ * FIXED COMPONENT ID
+   5724O52DS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R420 PSN
+   UP
+   
+   
+ * R420 PSY
+   UP

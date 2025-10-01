@@ -1,0 +1,18 @@
+Title: IBM What Information Server clients count toward the "Concurrent User Connections" license limit - United States
+
+Text:
+Concurrent User Connections; product license; concurrent user licenses TECHNOTE (FAQ)
+
+QUESTION
+ Is there a way to determine if a DataStage client (dsjob, dscmdexport, Designer, Director, Administrator, etc) uses one of the concurrent user licenses owned by the customer? 
+
+ANSWER
+There is no report that lists precisely "how many licenses are consumed", but alternately this can be determined by looking at the available information. 
+
+The simplest way of doing this is by checking the "Active Sessions" list under "Session Management" in the Information Server Web Console. Once a client connection is established a new active session will appear on the list. Looking on the "Address" tab at how many different hostnames are currently connected to the server tells you the number of concurrent user connections.
+
+Each host listed counts as one single user client connection. When someone disconnects, the session will persist for a little bit until it times out. It should time-out even after a client crash.
+
+Alternatively, if user would like to see how many concurrent connections done on a period, it may be interesting to check the ISauditLog*.log files under WebSphere\AppServer\profiles\InfoSphere\logs directory as it contains information about who logged in and out of the system.
+
+Also note that all DataStage client (dsjob, dscmdexport, Designer, Director, Administrator, etc) sessions coming from one client machine will always count as one concurrent user connection.

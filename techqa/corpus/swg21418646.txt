@@ -1,0 +1,100 @@
+Title: IBM Ruleset updates and programmatic notification of RES eXecution Unit - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to programmatically notify a RES eXecution Unit of a ruleset update ? 
+
+ANSWER
+RES supports hot-deployment of rulesets and automatic notifications to eXecution Units are normally handled by the RES management console. In particular for all supported JEE cluster setups, the notification sent by the console reaches all the eXecution Units in the cluster. However there are situations that may mandate a programmatic notification of the eXecution Unit(s) when a ruleset update occurs: 
+
+ * the RES management console is not deployed 
+ * RES eXecution Units are deployed on several Tomcat servers
+
+
+Here are two options to programmatically notify the eXecution Units that a ruleset update occured: 
+
+1) Use a RES management session to invalidate a ruleset. This interaction between an IlrManagementSession and a XU is always local to a given JVM. See in the JRules API documentation:  * In JRules 6.x: 
+   ilog.rules.bres.session.IlrManagementSession.invalidate(String rulesetPath) 
+ * In JRules 7.x: 
+   ilog.rules.res.session.IlrManagementSession.invalidate(IlrPath rulesetPath)
+
+
+2) *** Disclaimer: this second option is not covered in the documentation and is not guaranteed to work in future releases. *** 
+Use the JMX API and interact with the XU Management MBean. This notifies only one targeted XU at a time, and not all the XUs in a cluster as is the case when the RES console processes an update. This interaction can be initiated locally or from a remote client application. For example the code snippets below present a client application for Websphere and for JBoss that can be used to initiate such a notification : 
+// --------- Websphere Client Application ----------
+
+import java.util.Properties;
+import java.util.Set;
+import javax.management.ObjectName;
+import com.ibm.websphere.management.AdminClient;
+import com.ibm.websphere.management.AdminClientFactory;
+
+public class WebsphereClient {
+
+public static void main(String[] args) throws Throwable {
+Properties props = new Properties();
+props.setProperty(
+AdminClient.CONNECTOR_HOST, "localhost");
+props.setProperty(
+AdminClient.CONNECTOR_PORT, "8880");
+props.setProperty(
+AdminClient.CONNECTOR_TYPE, AdminClient.CONNECTOR_TYPE_SOAP);
+props.setProperty(
+AdminClient.CONNECTOR_SECURITY_ENABLED, "true");
+props.setProperty(
+AdminClient.USERNAME, "admin");
+props.setProperty(
+AdminClient.PASSWORD, "admin");
+AdminClient connection = 
+AdminClientFactory.createAdminClient(props);
+ObjectName queryObjectName = 
+new ObjectName("WebSphere:type=IlrXUManagement,*");
+Set xuNames = 
+connection.queryNames(queryObjectName, null);
+ObjectName objectName = 
+(ObjectName) xuNames.iterator().next();
+connection.invoke(
+objectName,
+"notifyRulesetArchiveChanged",
+new Object[] { "/SampleRulesRuleApp/1.0/SampleRules/1.0" },
+new String[] { "java.lang.String" });
+}
+}
+
+
+
+
+// ------------- JBoss Client Application --------------
+
+import java.util.Set;
+import javax.management.ObjectName;
+import javax.naming.InitialContext;
+import org.jboss.jmx.adaptor.rmi.RMIAdaptor;
+
+public class JBossClient {
+
+public static void main(String[] args) throws Throwable {
+InitialContext ic = new InitialContext();
+RMIAdaptor connection = 
+(RMIAdaptor) ic.lookup("jmx/invoker/RMIAdaptor");
+ObjectName queryObjectName = 
+new ObjectName("BRES:type=IlrXUManagement,*");
+Set xuNames = 
+connection.queryNames(queryObjectName,null);
+ObjectName objectName = 
+(ObjectName) xuNames.iterator().next();
+connection.invoke(
+objectName, 
+"notifyRulesetArchiveChanged",
+new Object[] { "/SampleRulesRuleApp/1.0/SampleRules/1.0" },
+new String[] { "java.lang.String" });
+}
+}
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.0.1, 8.0, 7.5 Enterprise

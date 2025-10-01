@@ -1,0 +1,259 @@
+Title: IBM IY94773: TITLE:UNABLE TO CREATE A ITIM ACCOUNT EVEN THOUGH THE ORG ROLE SET - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  *****************************************************
+   Title:Unable to create a ITIM account even though the Org Role
+   set
+   that has the person listed under Person list of Org Dynmic Role.
+   
+   
+   
+   Problem Description:
+   
+   
+   
+   The requirment is as follows:
+   1. We have two kinds of Oranisation roles for our TIM Deployment
+   -
+   Students and Staff.
+   2. Requirment here is - a TIM person can either be of the
+   following
+   role(s)
+    a. Staff
+    b. Student
+    c. Student and a Staff (indicates that the Person has a Student
+   role
+   first and then later we add the Staff role)
+    d. Staff and a Student indicates that the Person has a Staff
+   role first
+   and then later we add the Student role)\
+   
+   TEST CASES - Evertime we create a TIM person, we have the
+   following
+   types of accounts to be provisioned for the TIM Person
+      Case A. When a TIM person is created with a role as staff,
+   then the
+   following account is provisioned automatically:
+     i. TIM Account. (TIM Account service is a hosted service)
+         The provisioning Policies are Automatic.
+         The ERUID used for the above Staff Accounts are same and
+   is of
+   type "sXXXXXX"
+   
+       Case  B. When a TIM person is created with a role as
+   Student, then
+   the following account is provisioned automatically:
+     i. TIM Account. (TIM Account service is a normal TIM service)
+         The provisioning Policies are Automatic.
+         The ERUID used for the above Student Accounts are same and
+   is of
+   type "pXXXXXX"
+   
+       Case C. We create a TIM Person with Staff role and this the
+   following account is provisioned automatically
+     i. TIM Account. (TIM Account service is a hosted service)
+         The ERUID used for the above Staff Accounts are same and
+   is of
+   type "sXXXXXX"
+         Now, we add the Student role to this TIM Person, and thus
+   the
+   following account should be provisioned automatically for this
+   person:
+     i. TIM Account. (TIM Account service is a normal TIM service)
+        The ERUID used for the above Student Accounts are same and
+   is of
+   type "pXXXXXX"
+        Now, in this case, we see that the TIM Account for the
+   Student is
+   not created.
+       Case D. We create a TIM Person with Student role and this
+   the
+   following account is provisioned automatically
+     i. TIM Account. (TIM Account service is a normal TIM service)
+           The ERUID used for the above Student Accounts are same
+   and is of
+   type "pXXXXXX"
+           Now, we add the Staff role to this TIM Person, and thus
+   the
+   following account should be provisioned automatically for this
+   person:
+     i. TIM Account. (TIM Account service is a hosted service)
+            The ERUID used for the above Staff Accounts are same
+   and is of
+   type "sXXXXXX"
+            Now, in this case, we see that the TIM Account for the
+   Staff
+   and Student is created properly.
+   
+   Org Role set to dynamic
+   
+   Staff role is
+   (&(&(spStaffStatus=Active)(spStaffCategory=FT))(pager-1))
+   
+   and
+   
+   
+   
+   
+   
+   Customr Recreate: yes
+   L2 Support Recreate: yes
+   
+   Desired Behavior:
+   
+   Able to create a ITIM account even though the Org Role set
+   that has the person listed under Person list of Org Dynmic Role.
+   
+   
+   Steps Duplicate:
+   
+       Case C. We create a TIM Person with Staff role and this the
+   following account is provisioned automatically
+     i. TIM Account. (TIM Account service is a hosted service)
+         The ERUID used for the above Staff Accounts are same and
+   is of
+   type "sXXXXXX"
+         Now, we add the Student role to this TIM Person, and thus
+   the
+   following account should be provisioned automatically for this
+   person:
+     i. TIM Account. (TIM Account service is a normal TIM service)
+        The ERUID used for the above Student Accounts are same and
+   is of
+   type "pXXXXXX"
+        Now, in this case, we see that the TIM Account for the
+   Student is
+   not created.
+   
+   Environment:
+   ITIM ver 4.6 FP21 IF24 on Win2003
+   DB2 ver 8.1.8 on Win2003
+   TDS ver 6.0 on Win2003
+   
+   and also tested on IF 34
+   ******************************************************
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   Users affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   This fix for this APAR is contained in the
+   following maintenance packages:
+   | Interim Fix | 4.6.0-TIV-TIM-IF0039
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY94773
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM TIV ID MGR
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3403
+   
+   
+ * REPORTED RELEASE
+   460
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-02-12
+   
+   
+ * CLOSED DATE
+   2007-03-09
+   
+   
+ * LAST MODIFIED DATE
+   2007-03-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     SERVER
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM TIV ID MGR
+   
+   
+ * FIXED COMPONENT ID
+   5724C3403
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R460 PSY
+   UP

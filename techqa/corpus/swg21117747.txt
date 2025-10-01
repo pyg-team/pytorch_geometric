@@ -1,0 +1,119 @@
+Title: IBM Code Page usage and conversions for the ClearQuest database vendors - United States
+
+Text:
+codepage; db2; oracle; sql server; sql anywhere; ms access; 167217701; 1117747 TECHNOTE (FAQ)
+
+QUESTION
+ What are the Code Page usage and conventions for IBM® Rational® ClearQuest® database vendors? 
+
+ANSWER
+ 
+
+Microsoft® SQL Server:
+
+In SQL Server 2000, the code page is determined by the locale setting for the Microsoft® Windows® operating system. This code page setting then determines how database text data is encoded for all databases on that one system. Given that code page, its possible to set a compatible collation sequence when installing Microsoft SQL Server. The collation sequence determines how new databases sort and compare text data. Once the collation sequence is set for a given database, it cannot be changed. Its possible to change the system-wide collation sequence after Microsoft SQL Server is installed, but a rebuild and reload of all databases on that system would be required. In practice, this means that the collation sequence should be set correctly during the initial install of Microsoft SQL Server. 
+
+A good reference to the topic of code pages is SQL Server Books On-line. In particular, see the following books:
+
+Installing SQL Server 
+
+ * Collation Options for International Support 
+ * Using SQL Collations 
+ * Collation Settings in Setup 
+ * Windows Collation Designators 
+ * Upgrading Character Set, Sort Order, and Collation 
+ * Changing Collation Settings After Installing
+
+
+SQL Server Architecture  * Collations 
+ * SQL Server Collation Fundamentals
+
+
+Creating and Maintaining Databases  * Unicode Data
+
+
+Accessing and Changing Relational Data  * Using Unicode Data
+
+
+
+Oracle 
+The database code page can be set for each Instance of the database. It is set when the database is created. To change the code page, it is generally necessary to unload and reload the data to get it converted to the new code page. It appears that it is possible to reload the data into the same database after changing the character set with an ALTER DATABASE statement. 
+
+Oracle has a tool that can be run on a database to determine the impact of converting the character data in the data-base to a new code page. The tool, called the "Character Set Scanner Utility," will tell if a conversion will work, and if not, why it will not work.
+
+
+IBM DB2®:
+
+In DB2, the character encoding can be set for each database individually. It appears that the value is determined from the Windows operating system code page value in the registry or in environment variable DB2CODEPAGE. On Unix, it is determined from the locale setting. The code page of the client system determines what code page translations to make between the client and the DB2 database. The following Web pages describe DB2's use of Unicode and its interaction with 
+local code pages:
+
+
+Finding the code page for a specific table: 
+
+How do I find the code page that a specific DB2 table is using? [http://www-1.ibm.com/support/docview.wss?rs=71&context=SWB30&q=character+set&uid=swg21008610&loc=en_US&cs=utf-8&lang=en]
+
+DB2 Information Center [http://www-306.ibm.com/software/data/db2/udb/support/?target=mainFrame&fn=c0007868.htm]
+
+Once there, use the Index to look up "character conversion" under "C". Then click on the links you are interested in. These are useful: 
+
+ * Converting from Shift-JIS to Unicode 
+ * National Language Support and Application Development Considerations 
+ * Supported Code Page Conversions 
+ * Character conversion 
+ * Supported territory codes and code pages 
+ * Applications Connected to Unicode Databases 
+ * ODBC Unicode Applications
+
+
+Look up "code pages" under "C". These are useful links:  * Derivation of Code Page Values 
+ * Character conversion 
+ * Code page considerations 
+ * Supported territory codes and code pages 
+ * Application Development in Unequal Code Page Situations
+
+
+Also look up "Unicode" under "U". These are useful links there:  * Unicode implementation in DB2 
+ * Creating a Unicode database 
+ * Unicode handling of data types 
+ * Unicode character encoding 
+ * When Code Page Conversion Occurs 
+ * Unicode and ASCII encoding schemes on z/OS
+
+
+
+SQL Anywhere 8 (ClearQuest 2003.06.15 and earlier) 
+
+In SQL Anywhere 8, the collation sequence is specified on creation of the database. SQL Anywhere provides automatic translation between the code page of the client system and the character encoding in the database. In the database, it supports OEM code pages, ANSI code pages, and Unicode encoding. By default, SQL Anywhere determines a default collation from the code page of the operating system, but this default can be overridden.  
+Once the collation, and hence the character encoding, is set for a database, it cannot be changed. The only why to change it is to build a new database with the desired new encoding and collation, to unload the data from the old database, and to reload the data into the new database. The idea is to unload the data without translation and then load it into the new database with translation to the desired target encoding.
+
+A good reference to all this is SQL Anywhere On-line Books. See the following books:
+
+Adaptive Server Anywhere SQL Reference Manual 
+
+ * CREATE DATABASE statement
+
+
+Adaptive Server Anywhere Database Administration Guide  * Introduction to Character Sets in Software  * Code pages
+   
+   
+ * Understanding locales  * Understanding the locale language 
+    * Understanding the locale character set
+   
+   
+ * Understanding collations 
+ * International Languages and Character Sets  * Using the Default Collation 
+    * International Language and Character Set Tasks 
+    * Configuring your character set environment 
+    * Creating a database with a named collation 
+    * Changing a database from one collation to another 
+    * Starting a database server using character set translation
+   
+   
+
+
+
+
+
+
+HISTORICAL NUMBER
+ 167217701

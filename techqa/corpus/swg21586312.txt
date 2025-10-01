@@ -1,0 +1,33 @@
+Title: IBM Omnibus upgrade fails due to DE directory change or hostname change - United States
+
+Text:
+wrong; deployment; engine; installation; fail; host ; name ; change TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User may get below error:
+You are updating an instance of Netcool/OMNIbus that was installed using the Tivoli Deployment Engine (DE) located at different directory than you are using now. 
+
+SYMPTOM
+Following screen shot shows exact message with the exception of directory names. 
+
+You are updating an instance of Netcool/OMNIbus that was installed using the Tivoli Deployment Engine (DE) located at "/home/netcool/.acsi_oldhost". However you are now using the DE located at "/home/netcool/.acsi_newhost". 
+
+
+[/support/docview.wss?uid=swg21586312&aid=1] [/support/docview.wss?uid=swg21586312&aid=1]
+
+
+DIAGNOSING THE PROBLEM
+Netcool/Omnibus stores DE path in the following file. If the path of DE being used does not match the value of the DEHOME property this file then DE will display above message. Take a look into this file and resolve the discrepancy.
+
+$NCHOME/omnibus/platform/<ARCH>/install/install.properties.
+
+
+RESOLVING THE PROBLEM
+If host name is changed then certain files need to be updated in DE to reflect new host name and DE installation directory. Following Technote explains how to change host name in DE:
+https://developer.ibm.com/answers/questions/310024/what-is-the-procedure-to-change-hostname-for-deplo.html [https://developer.ibm.com/answers/questions/310024/what-is-the-procedure-to-change-hostname-for-deplo.html] 
+
+The following file is Netcool/Omnibus specific. To resolve above Error/Warning message update DEHOME property in this file to reflect the new DE directory:
+
+$NCHOME/omnibus/platform/<ARCH>/install/install.properties.
+
+After making above change try installation again.

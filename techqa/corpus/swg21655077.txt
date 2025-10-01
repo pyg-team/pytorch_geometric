@@ -1,0 +1,21 @@
+Title: IBM DataPower uses Default Public key when SFTP Front Side Handler receives request for preferred SSH key type not included in SFTP Front Side Handler - United States
+
+Text:
+RSA; DSA; DataPower; Key; fingerprint; SFTP; FSH; SSH; Front; side; handler TECHNOTE (FAQ)
+
+QUESTION
+ Why am I receiving a public key fingerprint of type DSS to my SSH client from DataPower when my SFTP front side handler is configured with an RSA key type or vice versa? Is there anything I can do to workaround this? 
+
+CAUSE
+If an SSH client has a preferred key type specified and the SFTP front side handler is not configured with that key type, DataPower returns its default SSH public key of that key type. 
+
+For example, if the SSH client's preferred key type is RSA and the SFTP front side handler is configured with only a DSA key, DataPower returns its default RSA key as it is the client's preferred key type.
+
+
+ANSWER
+It is likely the case that DataPower is trying to honor the client's preferred key type and since the SFTP front side handler is not configured with a public key of the requested type, DataPower returns its default key of this type. 
+
+
+These default keys (both DSA and RSA) are meant for SSH CLI access and are unique to each appliance. 
+
+If you would like to receive the key type which you have configured on the SFTP front side handler, you need to configure your SSH client to change its preference for key type if this is configurable by the client.

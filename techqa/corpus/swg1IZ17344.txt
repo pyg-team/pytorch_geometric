@@ -1,0 +1,155 @@
+Title: IBM IZ17344: S&P REQUIRES THAT PORT 15001 BE OPEN BETWEEN IT AND TEPS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Nowhere in any of the documentation does it explicitly show that
+   port 15001 is also required for communication between the
+   Summarization and Pruning Agent (S&P) and the TEPS.  In a few
+   places in the 6.1 and 6.2 Installation and Setup Guides it shows
+   that port 15001 is used by the TEPS, however it doesn't even
+   state that the use of this port is for CORBA requests.
+   Regardless, since the S&P's configuration GUI requires customers
+   to place port 1920 (for the TEPS' embedded Web Server) as the
+   destination port for the TEPS, it follows that a reasonable
+   customer would assume that the S&P only talks to the TEPS over
+   port 1920.  In fact, after testing S&P --> TEPS connections on
+   both 6.1 and 6.2, port 15001 is used as well.  Thus, any
+   customers requiring specific firewall ports be opened will never
+   open 15001 between their S&P and the TEPS, and thus can spend
+   many man hours trying to determine why the communication isn't
+   successful.
+   
+   The obvious places to add this information are:
+   
+   ITM 6.1 Installation and Setup Guide
+   1) Chapter 10 -- Additional Tivoli Enterprise Portal
+   configuration
+   2) Appendix C -- Firewalls
+   3) End of Chapters 13, 14 and 15 -- TDW solution using DB2,
+   MSSQL and Oracle, respectively
+   4) Chapter 16 (Tivoli Data Warehouse colutions: common
+   procedures), within the first section, "Configuring the
+   Summarization and Pruning agent (JDBC connection)", step 9 on
+   page 179 needs to have 1920 listed as the default port as well
+   as a note speaking to 15001 as also required in the case of the
+   firewall separating the S&P agent and the TEPS.
+   
+   
+   ITM 6.2 Installation and Setup Guide
+   All the same places as mentioned above for the 6.1 guide, except
+   one additional place:  Chapter 12 in the new 6.2 guide has a
+   section entitled "Firewall considerations for the Tivoli Data
+   Warehouse".  A note should be placed in the appropriate place in
+   this section which clarifies the need for 15001 for S&P --> TEPS
+   communication.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  the obvious -- open 15001 for TCP comms in firewall separating
+   S&P and TEPS
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Nowhere in any of the documentation does it explicitly show
+   that port 15001 is also required for communication between the
+   Summarization and Pruning Agent (S&P) and the TEPS.  In a few
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Information was added to the 6.2 Installaion and Setup Guide
+   explaining the use of port 15001. Multiple chapters were updated
+   to include the information about port 15001.
+   
+   The documentation should be available with the release of 6.2
+   Fix Pack 1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ17344
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMA
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04TE
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-10
+   
+   
+ * CLOSED DATE
+   2008-03-26
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,17 @@
+Title: IBM Kenexa Prove It! Skills: Repeat Question/Next Question Prompt - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Repeat Question/Next Question Box Appears in the Microsoft Assessment 
+
+RESOLVING THE PROBLEM
+Our Microsoft assessments are designed to produce the Repeat Question/Next Question option, after completing the task. Whether you have answered the question correctly, you will receive this prompt to move to the next question. 
+
+If you do not feel that you could answer the question in full, please click repeat question. The assessment will require you to answer the question in a specific way. You will not be able to scroll up and down or open drop down menus that don’t directly correlate to the question.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Talent Management Solutions IBM Kenexa Prove It! on Cloud Talent Management Solutions IBM Kenexa Prove It! Skills

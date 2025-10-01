@@ -1,0 +1,15 @@
+Title: IBM Using Microsoft App-V (Internet Explorer) with OpenPages. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Does OpenPages support the use of Internet Explorer via Microsoft App-V? 
+
+ANSWER
+The OpenPages application itself is not supported for deployment under App-V. However it is possible to deploy and use Internet Explorer via App-V to users, provided it is the correct IE version. 
+
+Those customers looking to enable Internet Explorer via App-V for their user base should consider the following:
+
+
+ *  IBM/OpenPages do not provide any support or advice for App-V. IBM/OpenPages have not carried out any QA testing of App-V and as a result, cannot confirm if any such configuration will work as expected. For any issues arising with the use of IE/App-V that require an IBM-led investigation, the customer will be expected to reproduce the use case with a non-virtualized instance of Internet Explorer outside of App-V, before it is considered for contractual Support.

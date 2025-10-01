@@ -1,0 +1,13 @@
+Title: IBM Why does the transmission error is not recorded in Atlas for invalid email address ? - United States
+
+Text:
+atlas TECHNOTE (FAQ)
+
+QUESTION
+ Why does the transmission error is not recorded in Atlas for invalid email address ? 
+
+CAUSE
+You notice a matter exception is generated with the bounced back email for the corresponding notice even though Atlas did not flag transmission error.
+
+ANSWER
+When a SMTP server is setup to accept all the emails , both valid and invalid and does not flag an error at transmission time , there is no mechanism in Atlas to record as an error under Notices Sent tab in the Hold Notice if it is not flagged as error during transmission time.

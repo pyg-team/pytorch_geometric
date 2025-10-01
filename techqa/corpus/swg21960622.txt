@@ -1,0 +1,34 @@
+Title: IBM Loging into GlassBox web console results in "authentication failed due to Bad credentials" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempting to login to the GlassBox web console of IBM Security AppScan Standard fails with "authentication failed due to Bad credentials" error. 
+
+SYMPTOM
+GlassBox is correctly installed on the target application server, and it can connect to AppScan Standard without a problem. It allows the scan correctly. 
+However, when a login is attempted using the http://<hostname>:<port>/GBootStrap/ URL, it goes back into the login screen. 
+
+The glassbox log report the following: 
+
+[64500@rldeva3] | 06/01/2015 13:13:11 | INFO : [GBootStrap] validateAuthentication - throwing exception 'Bad credentials'
+[64500@rldeva3] | 06/01/2015 13:13:11 | DEBUG: [GBootStrap] AuthenticationFilter - authentication failed due to Bad credentials
+
+
+CAUSE
+Application Server uses the httpOnly flag with GlassBox agent on the session cookie (JESSIONID), however GlassBox web UI does not work correctly when the httpOnly flag is activated.
+
+
+
+RESOLVING THE PROBLEM
+Glassbox API page is used only for debugging and troubleshooting, then you need to deactivate the 
+
+HttpOnly flag for session management in your Application Server settings.
+The change must be only temporary since it could expose the applications to security exposures.
+Here is how to proceed for Websphere Application Server v8.x and higher: 
+Application Servers > (Server Name) > Session management > click on "Enable cookies" and clear the checkbox for "Set session cookies to HTTPOnly to help prevent cross-site scripting attacks"
+The same parameter can be changed in TomCat 7.x by editing CATALINA_BASE/conf/context.xml and set useHttpOnly="false".
+
+RELATED INFORMATION
+ Video: How to install Glass Box agent [https://www.youtube.com/watch?v=9nZR0q9oMmE]

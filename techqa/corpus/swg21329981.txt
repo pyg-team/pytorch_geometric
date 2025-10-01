@@ -1,0 +1,27 @@
+Title: IBM Error message says that task failed to run on Scheduler DataServicesScheduler - United States
+
+Text:
+mon62relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In WebSphere Business Monitor, you see an error similar to the following when you start a server in an ND environment:
+
+
+[12/4/08 6:20:22:108 EST] 00000048 AlarmListener E SCHD0063E: A task with ID 1 failed to run on Scheduler DataServicesScheduler (sched/wbm/DataServicesScheduler) because of an exception: com.ibm.ws.scheduler.exception.TaskException: SCHD0137E: Unable to create EJB instance for TaskHandler: java.rmi.RemoteException: CORBA TRANSIENT 0x49421042 Maybe; nested exception is: 
+org.omg.CORBA.TRANSIENT: SIGNAL_RETRY vmcid: 0x49421000 minor code: 42 completed: Maybe SCHD0140I: EJB information: Host: bpm04.torolab.ibm.com (9.26.160.126), Port: 9,102, J2EE component: IBM_WBM_DATA_SERVICES#DataServicesSchedulerEJB.jar#ModelRootTaskHandler
+
+
+CAUSE
+A Data Services Scheduler erroneously gets created at the cell level for the deployment manager and federated server profiles. These servers then try to run the scheduler upon startup, but they cannot find a local IBM_WBM_DATA_SERVICES EAR file and therefore return the error. In ND, the Data Services Scheduler should get created after profiles are created at the cluster or server scope, using the WebSphere Business Monitor configuration tool in the administrative console (Servers > WebSphere Business Monitor configuration). The WebSphere Business Monitor configuration tool will create both the Data Services Scheduler resource and the IBM_WBM_DATA_SERVICES EAR file at the same cluster or server scope.
+[/support/docview.wss?uid=swg21329981&amp;aid=1]
+
+
+RESOLVING THE PROBLEM
+No action is required. 
+
+
+However, the errors can be confusing, and so can the duplicate Data Services Scheduler resource at the cell level. It is recommended that you remove the duplicate cell-level scheduler resource.
+
+
+To remove the resource, open the administrative console and select Resources > Schedulers. Select the cell scope. Select the DataServicesScheduler resource at the cell scope and click Delete.
+[/support/docview.wss?uid=swg21329981&amp;aid=2]

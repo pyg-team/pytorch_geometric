@@ -1,0 +1,36 @@
+Title: IBM Content Navigator known issue: In a SPNEGO/Kerberos Single sign-on environment, IBM Content Navigator the Log Out option is enabled - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ In a SPNEGO/Kerberos single sign-on (SSO) environment, your IBM Content Navigator session shows the Log Out option as enabled when you select the drop-down menu on the user name. However, the option should be disabled. 
+
+CONTENT
+IBM Content Navigator disables the Log Out option under SSO environments. However, under some SSO environments or desktop load scenarios, such as SPNEGO/Kerberos on a WebLogic Application Server, IBM Content Navigator enables the Log Out option.
+
+
+
+
+If the Log Out option is enabled but does not work correctly in your SSO environment, you can remove the Log Out option by customizing the banner user session context menu that is used by your desktop configuration. 
+
+To remove the Log Out option: 
+
+ 1.  In the administration tool, select Menus. 
+ 2.  Enter "User" in the Name contains filter field. 
+ 3.  Select the Default banner user session context menu and click Copy. 
+ 4.  Enter a name for the new menu such as "Banner user session context menu - no Log Out option". 
+ 5.  Remove the Log Out from the Selected list. 
+ 6.  Save the new menu. 
+ 7.  Open the Desktops configuration, then open your desktop configuration. 
+ 8.  Select the Menus tab and scroll to the Feature Context Menus section. 
+ 9.  Select the new menu that you created for the Banner user session context menu menu type. 
+ 10. Save your desktop. 
+
+
+The change to the menus takes effect when the modified desktop is reloaded. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Case Manager AIX, Linux, Linux on System z, Windows 5.2.1.0

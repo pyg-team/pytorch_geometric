@@ -1,0 +1,40 @@
+Title: IBM Configuring CORBA probe timeouts to improve behaviour - United States
+
+Text:
+nco_p_nokia_netact_3gpp; visibroker; Nokia; CORBA; corba timeout; corba timeouts; timeout; timeouts; Visibroker; RTT; rtt; connection TECHNOTE (FAQ)
+
+QUESTION
+ 
+CORBA timeouts : Nokia NetAct 3GPP CORBA probe : Can timeouts be set? 
+
+ANSWER
+
+This example is for the nco_p_nokia_netact_3gpp probe.
+
+The interaction between probe and the Nokia ems can cause problems, it is best to request a support ticket should you experience any difficulties in the probes configuration.
+
+In order to allow the Visibroker CORBA software to timeout, the following additional timeouts can be added to the probes script. 
+
+For example:
+
+cd $OMNIHOME/probes 
+rm nco_p_nokia_netact_3gpp 
+cp nco_jprobe nco_p_nokia_netact_3gpp 
+vi nco_p_nokia_netact_3gpp 
+exec $OMNIHOME/probes/$ARCH/nco_p_nonnative java \
+$NCO_JPROBE_JAVA_FLAGS \
+-cp $CLASSPATH $NCO_JPROBE_JAVA_XFLAGS \
+-Dvbroker.orb.qos.relativeRTT=180000 \
+-Dvbroker.orb.qos.connectionTimeout=180000 \
+-DORBtcpTimeout=180000 \
+-DOMNIHOME="$OMNIHOME" $PROGRAM "$@" 
+
+The above example is for a timeout of 180 seconds. 
+
+For a five minute (300s) timeout the specific Visibroker property settings would be:
+
+-Dvbroker.orb.qos.relativeRTT=300000 \
+-Dvbroker.orb.qos.connectionTimeout=300000 \
+-DORBtcpTimeout=300000 \
+
+Additional configuration of the Nokia ems and operating system may be required depending upon the environment and version being used.

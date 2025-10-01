@@ -1,0 +1,99 @@
+Title: IBM Where do I start with Diagnosis of Generally Slow Performance on Informix Servers? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Your IBM Informix server is processing queries more slowly than expected. You want to determine what is slowing the instance. Were do you start your analysis? 
+
+ANSWER
+Preconditions 
+
+ * This performance problem is not limited to one query or a class of queries.
+   
+ * The database statistics (UPDATE STATISTICS) were collected with appropriate performance considerations and are current.
+   
+ * The performance is a problem for both network connections to the server and shared memory connections.
+
+
+ 
+
+Recommended Approach 
+
+ 
+
+Informix servers provides a number of commands, the onstats, for reporting system status. You can generally start your analysis using seven of the commands. Examination of the data often leads to further analysis and resolution. The recommended commands are: 
+
+ 
+
+ * onstat -m
+   
+   Message log. The message log contains warning and error messages. The onstat -m only reports recent updates to the log file. You may want to look at earlier log entries.
+   
+   
+ * onstat -u 
+   
+   User thread status. Look for user threads waiting on a resource. You will see a wait indicator in the first position of the flags field. The address of the resource is in thewait field. The specific wait flag, the type of resource, and cross references follow:
+   
+   B - wait on buffer - match the wait address to a buffer in onstat -b 
+   
+   C - wait on checkpoint - examine onstat -g ckp and onstat -g con
+   
+   G - wait on write to log buffer - match the wait address to a log buffer in onstat -l
+   
+   L - wait on lock - match the wait address to the address of a lock in onstat -k 
+   
+   S - wait on latch - match the wait address to a latch (mutex) in onstat -lmx and onstat -wmx
+   
+   Y - wait on condition - listed in onstat -g con and do not typically reflect performance problems to the extent that they help with diagnosis
+   
+   There are several other flags but they are rarely observed. 
+   
+   The first field of the onstat -u output, address, maps to the rstcb field of the onstat -g ath output for thread identification. The sessid field is the session id (SID). You can learn more about resources allocated to a session and its activity with onstat -g ses <SID>.
+   
+   Collect onstat -u several times in rapid succession. If the waiters persist over a measurable clock time, then the chances are very good that the waits reflect a processing problem that affects performance. Some waiters are normal but they should disappear quickly. Keep in mind that lock waits are programmed.
+   
+   The last two fields of onstat -u, nreads and nwrites, can be useful indicators of thread activity.
+   
+   
+ * onstat -p
+   
+   Server statistics. The single most important performance statistic in this output is the read cache rate (the first %cached field). Your goal for an OLTP system is to have a read cache rate above 95 percent during normal processing. Try for a rate above 99 percent. Increase the cache rate by adding buffers, which are configured using the BUFFERPOOL configuration parameter. Make sure that you have plenty of system memory (onstat -g osi) when increasing the Informix server memory allocation. Increasing the server memory footprint can indirectly slow the instance by increasing paging/swapping at the OS side. You can use a sysmaster query (see Related Information below) to help determine if you have configured too many buffers.
+   
+   Other statistics, like bufwaits (waiting for buffer), seqscans (sequential scans), and the read aheads should be considered. In the case of read aheads, the sum of ixda-RA, idx-RA, and da-RA should be close to the value of RA-pgsused as an indicator of effective read-ahead configuration.
+   
+   Many of the same statistics are viewed on a partnum level with onstat -g ppf.
+   
+   Consider collecting and retaining onstat -p outputs at regular intervals for comparison. Note that cumulative statistics are zeroed with onstat -z if you want to observe statistics over a limited time interval.
+   
+   
+ * onstat -g rea 
+   
+   Ready queue. Reports threads ready to execute at one moment in time. These threads are prepared for execution but lack cpu resource. If the number remains above the number of cpu virtual processors (onstat -g glo) through repetitions of onstat -g rea, then your system is likely limited by processing power. Look for inefficient queries and non-server processing on the machine. See onstat -g glo output for cpu use integrated over time and onstat -g osi for system resources.
+   
+   
+ * onstat -g act 
+   
+   Active threads. You will usually see poll threads and listen threads in this queue. Look for threads doing query-related work, like sqlexec and I/O threads. If none show up or they are rare, then work is not getting to the processors.
+   
+   
+ * onstat -g ioq
+   
+   I/O request queues. The statistic to monitor is the maxlen column. This is the maximum length of a queue after the engine was brought online or onstat -z was executed. If the number is too large, then at some point the I/O requests were not serviced fast enough. Try executing onstat -z and checking to see how long it takes for large maxlen values to return. 
+   
+   For informix aio monitor the gfd (global file descriptor) queues. The maxlen should not be greater than 25. The system uses gfd 0, 1, and 2 (stdin, stdout, stderr), so the informix chunks start with gfd 3 (chunk 1).
+   
+   If you are using kaio monitor the kio queues. The maxlen values should not exceed 32. There will be one kio queue for each cpu virtual processor.
+   
+   Recommendations for maxlen with DIRECT_IO enabled have not been determined, but are not expected to be larger than 32. 
+   
+   
+ * onstat -g seg
+   
+   Shared memory allocations. The shared memory configuration parameters should be tuned so that the server dynamically allocates at most two virtual segments during normal processing.
+   
+   
+
+RELATED INFORMATION
+#The onstats. [http://publib.boulder.ibm.com/infocenter/idshelp/v117/topic/com.ibm.adref.doc/ids_adr_1063.htm]
+How do I know if buffers are overallocated? [https://www.ibm.com/support/docview.wss?uid=swg21499158]

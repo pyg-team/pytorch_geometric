@@ -1,0 +1,21 @@
+Title: IBM Oracle DB detect deadlock and see deadlock exception in SystemOut.log - United States
+
+Text:
+deadlock TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Occasionally, customer will see following exception in Metrics WAS SystemOut.log file: 
+
+PMGR6022E: Error using adapter to create or execute an Interaction.
+
+com.ibm.ws.ejbpersistence.utilpm.PersistenceManagerException: PMGR6022E: Error using adapter to create or execute an Interaction.
+
+Caused by: java.sql.SQLException: ORA-00060: deadlock detected while waiting for resource
+DSRA0010E: SQL State = 61000, Error Code = 60
+
+CNTR0019E: EJB threw an unexpected (non-declared) exception during invocation of method "create". Exception data: com.ibm.ejs.container.CreateFailureException: ; nested exception is: 
+com.ibm.ws.exception.WsEJBException: nested exception is: com.ibm.ws.ejbpersistence.utilpm.PersistenceManagerException: PMGR6022E: Error using adapter to create or execute an Interaction.
+
+And the Oracle Database detected DEADLOCK (ORA-00060 ).
+
+There is no data lose and no action needed for this case.

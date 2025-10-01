@@ -1,0 +1,50 @@
+Title: IBM TSAAM OC logon results in EEZJ0030E & DSRA8100E, SQLSTATE=08001 - United States
+
+Text:
+tsa; tsaam; ERRORCODE=-4499; -4400; -4; 499; SVCENAME TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Logging into the Operations Console fails with the following error:
+EEZJ0030E The end-to-end automation manager is not fully initialized and refuses to accept requests. The following subcomponents are not yet initialized: [WatchdogBean, DB2] 
+
+SYMPTOM
+Within the WAS SystemOut.log: 
+
+[9/11/13 15:48:22:354 EDT] 0000002b ConcreteBeanC E PMGR1013E: Exception occured when verifying current backend id DB2UDBNT_V91_1: javax.resource.spi.ResourceAllocationException: DSRA8100E: Unable to get a XAConnection from the DataSource.
+
+
+CAUSE
+Caused by: com.ibm.websphere.ce.cm.StaleConnectionException: [jcc][t4][2043][11550][3.64.114] Exception java.net.ConnectException: Error opening socket to server mytsaamhost02/10.20.30.40 on port 50,551 with message: A remote host refused an attempted connect operation.. ERRORCODE=-4499, SQLSTATE=08001DSRA0010E: SQL State = 08001, Error Code = -4,499
+
+
+DIAGNOSING THE PROBLEM
+Check the DB2 server is running on the server specified in the error message, in the case of the error above, that would be mytsaamhost02/10.20.30.40. 
+
+Check the DB2 server is listening on the port specified in the error message, in this example, port 50551, by using 'netstat -an|grep 50551'
+
+
+RESOLVING THE PROBLEM
+WAS and TSAAM need to be configured to use the hostname (or IP) and port number where the DB2 Server is running. The port number that DB2 is to accept connections on should be defined in the /etc/services file, associated with a DB2 Services Name, for example : 
+
+db2c_dbinst1 50550/tcp 
+
+=> relative to the error message, this would be the root cause, since this /etc/services suggest that DB2 would be listening on port 50550 and not 50551. 
+
+ 
+
+Check the DB2 manager's configuration to ensure the service name matches the port number or vice versa : 
+
+# db2 get dbm cfg |grep SVCENAME
+TCP/IP Service name (SVCENAME) = db2c_dbinst1 
+
+ 
+
+Assuming the configuration checks out, make sure DB2 is started and listening on the appropriate port: 
+
+As instance owner: db2start 
+
+As root: netstat -an |grep <port#> 
+
+ 
+
+Don't forget to check the configuration on the other DB2 server in the case where your TSAAM environment is setup in a HA manner.

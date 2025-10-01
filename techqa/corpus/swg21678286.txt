@@ -1,0 +1,33 @@
+Title: IBM Inconsistent time between guest and host operating systems for WebSphere Application Server on virtual environments - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A time drift can occur between guest and host operating systems on virtual environments. This will cause unexpected errors in the WebSphere logs. 
+
+SYMPTOM
+CWOBB1002W, HMGR0152W, and WSVR0605W can be seen in the WebSphere logs based on the severity of the time drift. They should accompany each other. 
+
+BBF_ClockJerk=CWOBB1002W: The local machine clock has jumped backwards at least {0} milliseconds: a reading of {1} ({2}) was followed, some time later, by a reading of {3} ({4}).
+
+HMGR0152W: CPU Starvation detected. Current thread scheduling delay is {1} seconds. 
+
+WSVR0605W: Thread "{1}" (00000442) has been active for {2} milliseconds and may be hung. There is/are {3} thread(s) in total in the server that may be hung. 
+
+
+
+CAUSE
+The guest operating system on virtual environments does not have access to the physical clock. The guest OS will calculate an estimated time, which can cause time drifts during heavy load. 
+
+
+RESOLVING THE PROBLEM
+Synchronize the time between guest and host operating systems. VMware has the toolbox utility that can accomplish this: 
+
+
+http://pubs.vmware.com/vsphere-50/index.jsp?topic=%2Fcom.vmware.vmtools.install.doc%2FGUID-C0D8326A-B6E7-4E61-8470-6C173FDDF656.html [http://pubs.vmware.com/vsphere-50/index.jsp?topic=%2Fcom.vmware.vmtools.install.doc%2FGUID-C0D8326A-B6E7-4E61-8470-6C173FDDF656.html] 
+
+ 
+
+RELATED INFORMATION
+ Configure Time Synchronization Between Guest and Host [http://pubs.vmware.com/vsphere-50/index.jsp?topic=%2Fcom.vmware.vmtools.install.doc%2FGUID-C0D8326A-B6E7-4E61-8470-6C173FDDF656.html]

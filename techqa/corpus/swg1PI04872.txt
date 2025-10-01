@@ -1,0 +1,149 @@
+Title: IBM PI04872: WCM USES ITS OWN DEFAULT TRANSACTION TIMEOUT INSTEAD OF CONFIGURABLE SERVER-BASED TIMEOUT - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WCM uses a default transaction timeout of 120 seconds even when
+   the value is changed in the server.  Need a fix to configure
+   the default transaction timeout value used by WCM.
+   
+   The transaction timeout can be experienced, for example, when
+   deleting a virtual portal via the UI:
+   
+   TimeoutManage I WTRN0006W: Transaction
+   PA_MageVirtualPortals#MgeVirtualPortals
+   .war#ManageVirtualPortals
+   <transaction ID#> has timed out after 120 seconds.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To avoid the timeout in the virtual portal case, utilize the
+   ConfigEngine task to delete the virtual portal instead of the
+   UI.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  WCM uses a default transaction timeout of 120 seconds even when
+   the value is changed in the server.  Need a fix to configure
+   the default transaction timeout value used by WCM.
+   The transaction timeout can be experienced, for example, when
+   deleting a virtual portal via the UI:
+   TimeoutManage I WTRN0006W: Transaction
+   PA_MageVirtualPortals#MgeVirtualPortals
+   .war#ManageVirtualPortals
+   &lt;transaction ID#&gt; has timed out after 120 seconds.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 09 (PM98649 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM98649]) for Portal
+   8.0.0.1 available from Fix Central:
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PM98649
+   Note: In order to leverage the code fix, you must add (or
+   update if already exists) the following custom property to the
+   WCM_WCMConfigService Resource Environment Provider:
+   Name: wcm.transaction.timeout
+   Value: 600 (for example)
+   Restart server to take effect.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI04872
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-26
+   
+   
+ * CLOSED DATE
+   2014-01-09
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

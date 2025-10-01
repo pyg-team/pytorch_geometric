@@ -1,0 +1,225 @@
+Title: IBM Rational ClearQuest CQTool known issues - United States
+
+Text:
+ClearQuest; blank password; Severity choice list; edit_record; CQCLI help; -h/elp; find_record; delete_query; import_quer; eex tip; invalid cqcli command null; PATH; 27734; 27733; 27727; 27725; 27718; 27729; 27835; 27994 TECHNOTE (FAQ)
+
+QUESTION
+ What are the known issues regarding the IBM Rational ClearQuest CQTool? 
+
+ANSWER
+The following list of issues and their known solutions have been consolidated and listed below:
+1. CQTOOL login fails if examples with blank password "" as the last parameter 
+
+ * 
+ * Incorrect command
+ * 
+   
+   CQTOOL login -s Local -d MYDB -u tom -p ""
+   
+   
+   
+ * Correct command 
+ * 
+   
+   CQTOOL login -d MYDB -u tom -p "" -s Local
+   
+   
+
+
+
+2. Non-regression cqtool does not give the 'Severity' choice list when submit a defect on command line 
+
+ * 
+ * 
+ * Component: Command Line Interface
+   
+   Reproduce step:
+   1. cqtool submit -type Defect 
+   2. The command line will prompt you to input "headline", input and click Enter
+   3. The command line should prompt for the "Severity ", but when you input "?" it will error and exit the command. 
+ *  Expected result (when you input "?", it will present the choice list)
+   Value required for field Severity [SHORT_STRING] (? to see list): Actual result (when you input "?", it will error and exit the command)
+   Value required for field Severity: 
+   
+   If you use the command, it errors with:
+   
+   
+   
+   cqtool> submit -headline "hellocaty" -severity 3
+   Sep 14, 2011 12:35:53 AM null null
+   SEVERE: CRVAP0065E Not all properties were successfully updated.
+   Sep 14, 2011 12:35:53 AM com.ibm.rational.stp.cs.internal.util.StpExceptionImpl log
+   SEVERE: CRVSV0571I Exception reason code: conflict 
+   Sep 14, 2011 12:35:53 AM com.ibm.rational.stp.cs.internal.util.StpExceptionImpl log
+   
+   
+ * 
+ * Solution
+ * 
+
+
+
+3. cqtool edit_record: edit the record with CLI, and assign, it error 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Missing value for option <-action> 
+   
+   Possible values are:
+   Assign
+   Close
+   Duplicate
+   Postpone
+   Modify
+   Delete
+   Import
+   
+ * When assign is entered, the following error is encountered: 
+ * Enter the action name: Assign
+   
+   
+   Sep 14, 2011 12:46:56 AM null null
+   SEVERE: CRVAP0075E After completion of the 'CqAdapterPropPatch' operation, not all resources were delivered as requested.
+   Sep 14, 2011 12:46:56 AM com.ibm.rational.stp.cs.internal.util.StpExceptionImpl log
+   SEVERE: CRVSV0571I Exception reason code: partial-results 
+   Sep 14, 2011 12:46:56 AM com.ibm.rational.stp.cs.internal.util.StpExceptionImpl log
+   SEVERE: CRVAP0075E After completion of the 'CqAdapterPropPatch' operation, not all resources were delivered as requested.
+   
+   
+ * Solution: This is still under investigation with Development
+
+
+
+4. CQCLI help system does not work 
+
+ * 
+ * 
+ *  CQTOOL (Displays all the supported sub commands by CQCLI Tool) CQTOOL –help (Displays the CQTOOL usage information) To know the usage information a command says edit_record use the following command: CQTOOL>edit_record –h (Displays the manual page of edit_record sub command)
+   
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * WORKAROUND
+ * 
+ *  7.1.2 CQTool Command Reference in the Help Info Center:
+   http://pic.dhe.ibm.com/infocenter/cqhelp/v7r1m2/index.jsp?topic=%2Fcom.ibm.rational.clearquest.cqtool.doc%2Ftopics%2Fcqtool_cmd_ref_container.htm [http://pic.dhe.ibm.com/infocenter/cqhelp/v7r1m2/index.jsp?topic=%2Fcom.ibm.rational.clearquest.cqtool.doc%2Ftopics%2Fcqtool_cmd_ref_container.htm] 8.0 CQTool Command Reference in the Help Info Center:
+   http://pic.dhe.ibm.com/infocenter/cqhelp/v8r0m0/index.jsp?topic=%2Fcom.ibm.rational.clearquest.cqtool.doc%2Ftopics%2Fcqtool_cmd_ref_container.htm [http://pic.dhe.ibm.com/infocenter/cqhelp/v8r0m0/index.jsp?topic=%2Fcom.ibm.rational.clearquest.cqtool.doc%2Ftopics%2Fcqtool_cmd_ref_container.htm] 8.0.1 CQTool Command Reference in the Help Info Center: http://pic.dhe.ibm.com/infocenter/cqhelp/v8r0m1/index.jsp?topic=%2Fcom.ibm.rational.clearquest.cqtool.doc%2Ftopics%2Fcqtool_cmd_ref_container.htm [http://pic.dhe.ibm.com/infocenter/cqhelp/v8r0m1/index.jsp?topic=%2Fcom.ibm.rational.clearquest.cqtool.doc%2Ftopics%2Fcqtool_cmd_ref_container.htm] 
+
+
+5. Error when use delete_query command (though query is deleted) 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 2. When you delete the query, it errors. But, when you login, you can see the query has been deleted. (If you execute with -force it still errors.) 
+ * 
+   cqtool> delete_query "Personal Queries/myquery"
+   Are you sure you want to delete? (yes/no):yes
+   
+   Error: 
+   
+   Sep 14, 2011 1:56:03 AM null null
+   SEVERE: CRVAP0002E Resource not found: cq.query:Personal Queries/myquery@ter207821/SAMPL.
+   Sep 14, 2011 1:56:03 AM com.ibm.rational.stp.cs.internal.util.StpExceptionImpl log
+   SEVERE: CRVSV0571I Exception reason code: not-found 
+   Sep 14, 2011 1:56:03 AM com.ibm.rational.stp.cs.internal.util.StpExceptionImpl log
+   SEVERE: CRVAP0002E Resource not found: cq.query:Personal Queries/myquery@ter207821/SAMPL.
+   
+   
+ * OR 
+ * cqcli error: An exception occured
+   (CRVAP0002E Resource not found: cq.query:Personal Queries/myquery@database/SAMPL.)
+   
+ * Solution: This defect is currently No Plan To Fix
+
+
+
+6. eex tip error when successfully run import_query command 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+   Sep 14, 2011 7:29:26 AM null null
+   SEVERE: CRVAP0002E Resource not found: cq.query:Personal Queries/mq@ter207821/SAMPL.
+   Sep 14, 2011 7:29:26 AM com.ibm.rational.stp.cs.internal.util.StpExceptionImpl log
+   SEVERE: CRVSV0571I Exception reason code: not-found 
+   
+ * 
+ * 
+ * Solution: This defect is currently No Plan To Fix
+
+
+ 
+
+7. "cqcli error : invalid cqcli command null" when running cqtool 
+
+ * 
+ * 
+ * 
+ * The fix for this is to remove/correct any invalid syntax or delete/overwrite corrupted characters with correct syntax. 
+ * WORKAROUND: The initial contents of this file can be restored by overwriting/pasting the file content with following text: "add=add_attachment"
+
+
+
+8. cqtool does not start on Microsoft Windows if gsk8\lib dir is at the end of the PATH 
+
+ * 
+ * 
+ * 
+   
+   Could not load library "gsk8iccs"
+   
+   
+   
+ * Possible Cause:CQTOOL searches the PATH for the GSK8 libraries but if GSK8 is the last element in the PATH it will not be recognized
+   
+ * WORKAROUND: Add a semi-colon ";" to the end of the PATH using one of the following methods: 
+ *  Append a semicolon to the PATH at the command prompt, for example: set "PATH=%PATH%;" Append a semicolon to the system PATH or the user PATH, see http://support.microsoft.com/kb/310519 [http://support.microsoft.com/kb/310519] 
+ * 
+ * Possible Cause: You need to run the command line as administrator. 
+ * WORKAROUND: Open the command line "As Administrator" before running CQTOOL.

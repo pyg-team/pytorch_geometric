@@ -1,0 +1,172 @@
+Title: IBM IZ43323: SAP CTGDIK222E ISSUE - WARNING ON ACCOUNT CREATION WHEN ROLE IS PRESENT (SAP NETWEAVER) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CTGDIK222E issue
+   When I create a sap account with role info, it will create the
+   account
+   but give the warning (If I create the account without role info,
+   it will
+   success without warning):
+   COMPONENT AddUserNonCua: WARNING
+   com.ibm.tivoli.tim.sapnw.user.FunctionExecutionException:
+   com.ibm.tivoli.tim.sapnw.rfc.SapR3RfcFCException: CTGDIK222E
+   Trouble
+   invoking 'BAPI_USER_ACTGROUPS_ASSIGN'. The function has been
+   retried
+   apos;'0' times. The message is: 'NUMBER_GET_NEXT AENDBELEG
+   INTERVAL_MISSING'.  ; SapNWAdd
+   
+   Customr Recreate: yes
+   L2 Support Recreate: n/a
+   
+   Desired Behavior: able to create a SAP account successufully.
+   Steps Duplicate:
+   1. Create a SAP account.
+   Environment:
+   
+   TIM: 4.6 FP79 (Build 5828)
+   TDI: 6.1.1 FP3
+   Enabled HR info link extension and password extension.
+   Solution:
+   We have been able to recreate this customers problem to here
+   locally
+   within the lab. Can you please convert this PMR into an APAR and
+   send me
+   the APAR number.
+   
+   There is a work around that I would like the customer to test.
+   Can they
+   please replace their advanced mapping to the following:
+   
+   xsl/sapnw_bapi_user_change_licensedata.xsl
+   xsl/sapnw_bapi_user_actgroups_assign.xsl
+   xsl/sapnw_bapi_user_profiles_assign.xslxsl/sapnw_tivsecty_bapi_u
+   ser_sso
+   prop_pwd.xsl
+   
+   Notice that the sso_prop_pwd.xsl has been placed at the end of
+   the list.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  FunctionException assigning groups in nonCUA en
+   vironment.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix will ship in March 31, 2009 version of t
+   he SAP (Netweaver) adapter v5.0.3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ43323
+   
+   
+ * REPORTED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C34AG
+   
+   
+ * REPORTED RELEASE
+   460
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-05
+   
+   
+ * CLOSED DATE
+   2009-03-12
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  AGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * FIXED COMPONENT ID
+   5724C34AG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

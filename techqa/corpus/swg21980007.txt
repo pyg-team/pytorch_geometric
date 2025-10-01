@@ -1,0 +1,46 @@
+Title: IBM How to migrate RRT 7.20  to 7.4 under ITM 6.30? - United States
+
+Text:
+RRT 7.2; Response Time 7.4; RPT 8.6; ITM 6.3; migration; 71AMCON-PLAN; 71RRT-RPTPLAN; 71RRT-RPTINS; 71RRT-RPTCONF TECHNOTE (FAQ)
+
+QUESTION
+ After you complete the migration from ITM V6.22.x to V6.30.x, can you continue to run the T3 and T6 agents in this environment at V7.20.x until you upgrade the agents to V7.4? 
+
+ANSWER
+ 
+No, this configuration is not supported. 
+
+Consider the following factors: 
+
+1) Support for ITCAM for Transactions V7.2 ended April 30, 2015. 
+
+2) The latest statement of ITM prerequisites shows that ITCAM for Transactions V7.2.x supports ITM 6.2.3. There is no support statement for ITM 6.3. 
+
+3) Response Time V7.2 FP02 supports RPT 8.1.1, but this version of RPT is no longer supported. RPT 8.2 goes out of support in April 2016. Response Time V7.4 supports RPT 8.3 and 8.6. RPT 8.6.2 is recommended. 
+
+
+Upgrade Process Recommendations: 
+
+Verify that your existing scripts run under RPT 8.6 and Response Time 7.4 in an ITM 6.30.x environment. Response Time 7.4 FP01 is the recommended minimum maintenance level, and RPT 8.6.2 is the recommended Rational Performance Tester version. You also need to install the latest version of Rational Integration Support (also known as the ITCAM plugin) in your RPT and/or RFT workbenches. Check the 7.4.0.1-TIV-CAMRT-IF0001 listed in the Transactions 7.4 - Interim Fixes and Fixpacks in Related URLs below.
+
+If you simply point your V7.2 T3 and T6 agents to the new ITM 6.3 environment, that approach is not supported. 
+
+Instead, install a fresh copy of the V7.4 response-time agents in your new ITM 6.3 environment. Install a fresh copy of RPT 8.6.2 for the purpose of migrating and testing your existing scripts. 
+
+Export your existing scripts from your old RPT workbench and import the scripts into the new RPT workbench. Use the export/import Test > Test Assets with Dependencies option. 
+
+Run a test (also known as a performance test) in RPT workbench to compile the scripts to the RPT 8.6.x maintenance level. Check the RPT Test Log to verify that the scripts recompiled without error. Export the recompiled scripts to the V7.4 AMC (Application Management Console). Create new profiles to define a playback schedule and distribute the playbacks to new V7.4 T6 agents. Select zero retries for the script playbacks. 
+
+Deploy a few scripts at a time and monitor the results before deploying another set of scripts. 
+
+RELATED INFORMATION
+ ITCAM for Transactions Software Compatibility [http://www.ibm.com/support/knowledgecenter/SS5MD2_7.2.0.2/com.ibm.itcamt.doc_7.2.0.2/Prerequisites/en_US/HTML/SoftwareRT.html]
+RPT RFT Support Matrix [https://www.ibm.com/developerworks/community/wikis/home?#!/wiki/Tivoli Composite Application Manager/page/ITCAM RPT RFT Robot Support Matrix]
+Transactions 7.4 - Interim Fixes and Fixpacks [http://www.ibm.com/support/docview.wss?uid=swg21663324]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfT
+T7.4

@@ -1,0 +1,188 @@
+Title: IBM PK87785: WHEN USING SSL WITH CICS IF THE DEFAULT CERTIFICATE USED HAS A PRIVATE KEY LENGTH OF GREATER THAN 1024 CICS ABENDS DFHXS0002. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a CICS region is configured to use SSL and the default
+   certificate in the keyring used by the CICS region has a private
+   key length greater than 1024 then CICS display message
+   
+   DFHXS0002  xxxxxxxxx A severe error (code X'0109') has occurred
+   in module DFHXSDM.
+   
+   and then abend U1800.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Create the default certificate to be used by the CICS/SSL
+   connection to have a private key length of 1024 or less.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: DFHXS0002  A severe error               *
+   *                      (code X'0109') has occurred in module   *
+   *                      DFHXSDM.                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A keyring was created where the default certificate had a
+   private key size greater than 1024 bytes, this was then
+   specified as the KEYRING parameter in the CICS System
+   Initialisation Table (the SIT). During CICS initialisation
+   msgDFHXS0002 was issued and CICS abended with U1800.
+   This is because DFHXSIS does not supply a large enough
+   buffer on the IRRSDL00 call to RACF which is used to obtain
+   the certificate and the private key.
+   The same problem will occur if a TCPIPSERVICE or a
+   CORBASERVER is defined specifying a certificate with a private
+   key greater than 1024 bytes in length. In CICS TS 3.1 the
+   IRRSDL00 calls are made in DFHXSEJ for TCPIPSERVICE and
+   DFHXSCT for CORBASERVER. In CICS TS 3.2 both resource types
+   are processed by DFHXSCT. In all cases, supplying a buffer that
+   is not large enough results in msgDFHXS0002 being issued.
+   
+   Additional keywords: msgDFHXS0002 XS0002 U1800 SSL 0109
+   GET-PARMS-FAILED 0908 0B08 IRRSDL00_ERROR INQUIRE_CERTIFICATE
+   INQUIRE_DISTINGUISHED_NAME
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHXSIS and DFHXSCT have been changed to pass a buffer of
+   length 4096 on the IRRSDL00 call for CICS TS 3.1 and
+   CICS TS 3.2.
+   DFHXSEJ has also been changed to pass a buffer of length
+   4096 on the IRRSDL00 call for CICS TS 3.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *              *********
+               * HIPER *
+               *********
+   FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK87785
+   
+   
+ * REPORTED COMPONENT NAME
+   CICSTS V3 Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655M1500
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-02
+   
+   
+ * CLOSED DATE
+   2009-07-27
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PK89833 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK89833] UK48704 UK48713
+   
+   
+
+MODULES/MACROS
+ *     DESXSCT  DESXSEJ  DESXSIS  DFHXSCT  DFHXSEJ
+   DFHXSIS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICSTS V3 Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5655M1500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY UK48704 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK48704]
+   UP09/07/31 P F907
+   
+   
+ * R500 PSY UK48713 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK48713]
+   UP09/07/31 P F907
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

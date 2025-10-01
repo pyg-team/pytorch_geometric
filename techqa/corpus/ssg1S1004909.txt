@@ -1,0 +1,37 @@
+Title: IBM Security Bulletin: IBM FlashSystem 710, 720, 810, and 820 systems and RamSan 710, 720, 810, and 820  systems are not affected by the Bash vulnerabilities (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278)
+Flash - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM FlashSystem 710, 720, 810, and 820 systems and RamSan 710, 720, 810, and 820 systems are not vulnerable to the Bash vulnerabilities that have been referred to as “Bash Bug” or “Shellshock” and the two memory corruption vulnerabilities. 
+
+VULNERABILITY DETAILS
+IBM FlashSystem 710, 720, 810, and 820 systems and RamSan 710, 720, 810, and 820 systems are in all editions and all platforms NOT vulnerable to the Bash vulnerabilities (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278).
+IBM recommends that you review your entire environment to identify vulnerable releases of Bash including your Operating Systems and take appropriate mitigation and remediation actions. Please contact your Operating System provider for more information.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ September 30, 2014: original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Flash Storage IBM FlashSystem 720 Platform Independent Version Independent Flash Storage IBM FlashSystem 810 Platform Independent Version Independent Flash Storage IBM FlashSystem 820 Platform Independent Version Independent Flash Storage RamSan-710 Platform Independent Version Independent Flash Storage RamSan-720 Platform Independent Version Independent Flash Storage RamSan-810 Platform Independent Version Independent Flash Storage RamSan-820 Platform Independent Version Independent

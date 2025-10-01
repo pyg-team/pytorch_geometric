@@ -1,0 +1,25 @@
+Title: IBM "Invalid operation: result set is closed" error with Data Server Driver for JDBC - United States
+
+Text:
+IBM Data Server Driver JDBC Invalid operation resultset result set closed 4470 allowNextOnExhaustedResultSet TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading the JDBC driver from the Legacy JDBC Type 2 driver (db2java.zip) to the Data Server Driver for JDBC (db2jcc.jar) the following error now occurs "Invalid operation: result set is closed. ERRORCODE=-4470, SQLSTATE=null" 
+
+SYMPTOM
+com.ibm.db2.jcc.am.SqlException: [jcc][t4][10120] [10898][4.11.77] Invalid operation: result set is closed. ERRORCODE=-4470, SQLSTATE=null 
+
+
+CAUSE
+The IBM Data Server Driver for JDBC and SQLJ automatically closes the cursor when all rows have been retrieved from a ResultSet. When ResultSet.next is executed after the cursor is closed the SQLException is thrown. This behavior differs from the DB2 JDBC Type 2 drive where the cursor is not automatically closed upon retrieving all rows from a ResultSet.
+
+RESOLVING THE PROBLEM
+Ensure the connection has not been closed prematurely. Modify the application code to avoid calling ResultSet.next after all rows have been retrieved. Alternatively, it is possible to workaround the issue by enabling the allowNextOnExhaustedResultSet datasource property. With the allowNextOnExhaustedResultSet property set to DB2BaseDataSource.YES (1), and a forward-only cursor is positioned after the last row of a result set, a call to ResultSet.next returns false instead of throwing an SQLException.
+
+
+
+[/support/docview.wss?uid=swg21461670&aid=1] [/support/docview.wss?uid=swg21461670&aid=1] 
+For further discussion on this topic, visit this developerWorks forum thread: 
+https://www.ibm.com/developerworks/community/forums/html/topic?id=8426a3ac-fe02-47b7-b23a-cd7308ec2a1d [https://www.ibm.com/developerworks/community/forums/html/topic?id=8426a3ac-fe02-47b7-b23a-cd7308ec2a1d] RELATED INFORMATION
+#JDBC and SQLJ support has been enhanced [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.wn.doc/doc/c0051316.html]
+JDBC differences between drivers [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_rjvjcdif.html]

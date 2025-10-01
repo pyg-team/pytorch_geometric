@@ -1,0 +1,95 @@
+Title: IBM 8.0.1: IBM Integration Designer V8.0 Refresh Pack 1 for Linux - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and assemble IBM Integration Designer V8.0.1 for Linux platform. 
+
+DOWNLOAD DESCRIPTION
+
+
+TAB NAVIGATION
+ * Linux [http://www.ibm.com/support/docview.wss?uid=swg24033848]- selected tab,
+ * Windows [http://www.ibm.com/support/docview.wss?uid=swg24033847]
+ * Known issues [http://www.ibm.com/support/docview.wss?uid=swg27036682]
+
+
+
+
+
+[http://www.ibm.com/i/c.gif] IBM Integration Designer V8.0 Refresh Pack1 contains updates for the following: 
+ * Adapter
+ * Assembly
+ * Business Process
+ * Business Object
+ * Integration Test Client
+ * Mediation Flow
+ * Process Center
+ * Project Build
+ * XML Mapping
+
+
+Operating systems:  * Linux on Intel  * Red Hat Enterprise Linux (RHEL) 5 WS
+    * Red Hat Enterprise Linux (RHEL) 6 WS
+    * Red Hat Enterprise Linux (RHEL) 5 Desktop
+    * Red Hat Enterprise Linux (RHEL) 6 Desktop
+    * SuSE Linux Enterprise Server 10
+    * SuSE Linux Enterprise Server 11
+    * SuSE Linux Enterprise Desktop 10
+    * SuSE Linux Enterprise Desktop 11
+   
+   
+
+[http://www.ibm.com/i/c.gif] 
+
+
+
+To access a wide variety of technical resources for this product, see the IBM Integration Designer information center. [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=wbpm801&product=ibpm&topic=ctechprodovr] [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/topic/com.ibm.wbit.help.mainwelcome.doc/topics/welcome.html] 
+
+PREREQUISITES
+Prior to applying this refresh pack, you must have IBM Integration Designer 8.0 or higher installed. Also, ensure that you have the IBM Installation Manager [http://www.ibm.com/support/docview.wss?uid=swg24032641] 1.6 or higher installed.
+
+URL LANGUAGE SIZE(Bytes) Detail System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27022441] English 72342 
+INSTALLATION INSTRUCTIONS
+It is recommended that you install the refresh pack directly from the IBM update server; however, it is also available for download. You might want to download and install the refresh pack in the following situations: 
+
+
+ * You have a slow or unstable Internet connection and want to use a download manager that can resume the download. 
+ * 
+ * You have difficulty accessing the live IBM update servers from behind a firewall. 
+ * 
+ * You prefer to download the refresh pack and install it later. 
+
+
+If you choose to download the fix, then perform the following steps: 
+ 1. Download Refresh Pack 1 disk 1 (iid801_disk1.zip). 
+ 2. 
+ 3. Extract the Refresh pack to a temporary directory, such as C:\temp\. 
+ 4. 
+ 5. For installation instructions, click on the link below.
+
+
+For installation instructions of IBM Business Process Manager V8.0 Refresh Pack 1 [http://www.ibm.com/support/docview.wss?uid=swg24033777], please refer to this link [http://www.ibm.com/support/docview.wss?uid=swg27036335]. 
+
+For installation instructions for IBM Integration Designer V8.0 Refresh Pack 1, please refer to the link in the table below. URL LANGUAGE SIZE(Bytes) Installation instructions [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r0m1/index.jsp?topic=%2Fcom.ibm.wbpm.wid.imuc.doc%2Ftopics%2Ftins_updating.html] English 3158 
+DOWNLOAD PACKAGE
+
+
+
+
+HOW CRITICAL IS THIS FIX?
+Recommended
+
+
+
+PROBLEMS SOLVED
+IBM Integration Designer V8.0 Refresh Pack 1 provides new fixes and cumulative fixes from previous IBM Integration Designer V8.0 release. For details, see the Fix list for IBM Integration Designer V8.0 Refresh Pack 1. [http://www.ibm.com/support/docview.wss?rs=2308&uid=swg27035776]
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Refresh Pack 1 disk 1 16 Nov 2012 English 711403772 FC [http://www.ibm.com/support/fixcentral/quickorder?source=dbluesearch&product=ibm/WebSphere/IBM+Integration+Designer&release=All&platform=All&function=fixId&fixids=IID-8.0-Refresh-Pack-001-MultiOS] [ ] 
+ [/support/docview.wss?uid=swg24033848&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24033848&aid=2]Problems (APARS) fixed
+JR44268, JR43514 , JR43832, JR43730, JR41293 , JR43784 , JR44117 , JR43092, JR43606 , JR42000 , JR43261, JR43763 , JR42341 , JR43921

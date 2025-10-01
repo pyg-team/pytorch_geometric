@@ -1,0 +1,161 @@
+Title: IBM PI08628: [wi 294811] Error creating unique index MARKERS.UNIQUE_MARKER during repotools addTables - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Getting error running the -addTables command during upgrade from
+   402 to 405
+   2013-12-15 02:35:54,942 CRJAZ0577E The following SQL query did
+   not execute properly on the server:
+   CREATE UNIQUE INDEX MARKERS.UNIQUE_MARKER ON MARKERS.MARKER(URI,
+   USER_COL)
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException: DB2
+   SQL Error: SQLCODE=-603, SQLSTATE=23515, SQLERRMC=null,
+   DRIVER=4.14.121
+    at com.ibm.db2.jcc.am.ed.a(ed.java:673)
+   ...
+   Caused by:
+   com.ibm.team.repository.service.internal.db.util.JdbcDB$2:
+   CRJAZ0577E The following SQL query did not execute properly on
+   the server:
+   CREATE UNIQUE INDEX MARKERS.UNIQUE_MARKER ON MARKERS.MARKER(URI,
+   USER_COL)
+   ...
+   Caused by:
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException: DB2
+   SQL Error: SQLCODE=-603, SQLSTATE=23515, SQLERRMC=null,
+   DRIVER=4.14.121
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Getting error running the -addTables command during upgrade
+   from 402 to 405
+   2013-12-15 02:35:54,942 CRJAZ0577E The following SQL query
+   did not execute properly on the server:
+   CREATE UNIQUE INDEX MARKERS.UNIQUE_MARKER ON
+   MARKERS.MARKER(URI, USER_COL)
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException:
+   DB2 SQL Error: SQLCODE=-603, SQLSTATE=23515, SQLERRMC=null,
+   DRIVER=4.14.121
+    at com.ibm.db2.jcc.am.ed.a(ed.java:673)
+   ...
+   Caused by:
+   com.ibm.team.repository.service.internal.db.util.JdbcDB$2:
+   CRJAZ0577E The following SQL query did not execute properly
+   on the server:
+   CREATE UNIQUE INDEX MARKERS.UNIQUE_MARKER ON
+   MARKERS.MARKER(URI, USER_COL)
+   ...
+   Caused by:
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException:
+   DB2 SQL Error: SQLCODE=-603, SQLSTATE=23515, SQLERRMC=null,
+   DRIVER=4.14.121
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code changed to handle NULL user entries.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI08628
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * REPORTED COMPONENT ID
+   5724V0400
+   
+   
+ * REPORTED RELEASE
+   405
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-23
+   
+   
+ * CLOSED DATE
+   2014-02-28
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * FIXED COMPONENT ID
+   5724V0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R405 PSN
+   UP

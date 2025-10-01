@@ -1,0 +1,36 @@
+Title: IBM What is Passport Advantage, and how do I access it? - United States
+
+Text:
+passportadvantage; passport; advantage; fixcentral; fix; central; entitlement TECHNOTE (FAQ)
+
+QUESTION
+ What is Passport Advantage, and how do I access it? 
+
+ANSWER
+Passport Advantage and Passport Advantage Express are simple, comprehensive IBM offerings that cover software license acquisition including Fixed Term Licenses and Software Subscription and Support product upgrades and technical support under a single, common set of agreements, processes and tools.
+Passport Advantage is designed for larger enterprises, while Passport Advantage Express, a transaction-based offering, is designed to meet the needs of medium-sized businesses.
+
+Proof Of Entitlement - Email
+New IBM customers will receive a "proof of entitlement" email with an attached document containing important information related to your IBM purchase, such as Site number, IBM Customer Number (ICN), purchase product list, support coverage, etc. This email is sent to the elected Primary Contact at your site. Users will need the Site number to perform the self-nomination process below. 
+
+Passport Advantage Online provides IBM Initiate Master Data Service (MDS) customers with the ability to download new full versions of the MDS software. In order to request access to Passport Advantage (this action is known as self-nomination), please follow the steps below:
+
+
+ *  Go to IBM Passport Advantage, http://www.ibm.com/software/howtobuy/passportadvantage [http://www.ibm.com/software/howtobuy/passportadvantage] Click "Customer Sign in" link to the right. Sign in with your Web ID or register for one and then sign in. Enter your your Site ID. Select "No" if you are not the Primary contact. Click "Submit". 
+
+Your request will be sent to your site's Primary Contact for approval. 
+
+Primary Contact's authorization process  *  The site Primary Contact will receive an automated email from IBM indicating that a new user wishes to have access to the Passport Advantage system. They will then login to Passport Advantage and visit the Account Management area. They will choose the Manage Access option. This area allows them to manage the permissions for users within their site, approving or rejecting permission requests and configuring access to different options. 
+
+
+Users who performed the self-nomination steps will receive an email when the Primary has approved their request, and they can then access the software downloads area. 
+
+Tutorials for Passport Advantage in various languages (Adobe Flash required) can be found here: http://www.ibm.com/software/lotus/passportadvantage/passporttutorial.html [http://www.ibm.com/software/lotus/passportadvantage/passporttutorial.html] 
+
+If you require any assistance with the registration or approval process, please contact the IBM Passport Advantage Support Team at (US) 1-800-978-2246, or via email at paonline@us.ibm.com [paonline@us.ibm.com]. 
+
+A list of worldwide contact numbers can also be found here: http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html] 
+
+If you have any questions related to your entitlements, contract or IBM Customer Number (ICN), please contact the IBM Client Care Team at tsmail@us.ibm.com [tsmail@us.ibm.com]. 
+
+Please download and view the attached presentation for more information. This presentation contains example screenshots and references to an example IBM product (SPSS). However, most of the presentation is generic and certainly suitable for use/reference by all customers. PassportAdvantage Customer Experience 8-30-11.ppt [/support/docview.wss?uid=swg21566554&aid=2]PassportAdvantage Customer Experience 8-30-11.ppt [/support/docview.wss?uid=swg21566554&aid=1]

@@ -1,0 +1,181 @@
+Title: IBM PN60374: PERFORMANCE DEGREDATION AND LOOP IN WA WHEN AN OPERATION IS MISSING A SUBMIT EVENT. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  OPC/ESA suffered poor performance and eventually stopped
+   submitting jobs.
+   An operation had been submitted, transmitted to a test system
+   and then the occurrance was manually completed.  The CP was
+   extended and the application was added again for the next day.
+   
+   When the operation was sent to the test system an A1 was in the
+   tracklog on that system.  This tracker was stopped and then
+   another test tracker was started.
+   The initiators were started and the job ran (while this second
+   tracker was active).  Once testing had completed, the second
+   tracker was stoped and the production tracker started.  Events
+   from the second tracker were then copied to an events dataset
+   (they dont want to send test events back to the production
+   system) so all A2 A3J and A3P's were cleared for the operation.
+   This meant that all that was sent back to the production system
+   was the A1.
+   .
+   So, when the occurance reached it's planned start time it was in
+   the ready list for the workstation with a status of * and a
+   jobnumber from the previous days job.
+   .
+   The system then went into a slowdown and eventually stopped
+   submitting. The diagnosis manual indicates that if there is a
+   missing submit event, OPC/ESA will try and submit the operation
+   with the missing event first.
+   .
+   QUELEN was set at a high value (100) so nothing else was getting
+   in.  Once the operation was manually EXed, all other work was
+   able to be submitted.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All                                          *
+   *                 FUNCTION=WA                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A loop in workstation analyser.  This   *
+   *                      could happen if a job submitted outside *
+   *                      OPC/ESA was tracked against an          *
+   *                      operation with the SUBMIT=YES option    *
+   *                      set.                                    *
+   ****************************************************************
+   * RECOMMENDATION: Install the PTF.                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been changed to detect that a job with submit=yes
+   -- but the actual job is submitted outside and remains in jes
+   input queue or is purged from the system -- will not cause a
+   loop.
+   202Y
+   212Y
+   EQQEMEVH
+   EQQWAFWI
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+                  * HIPER *
+                  *********
+   The apar fix IN60374 for JSPC202 has been sent to customer and
+   is available on request from the C/T.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PN60374
+   
+   
+ * REPORTED COMPONENT NAME
+   OPC/ESA
+   
+   
+ * REPORTED COMPONENT ID
+   569500701
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   1994-07-28
+   
+   
+ * CLOSED DATE
+   1994-08-18
+   
+   
+ * LAST MODIFIED DATE
+   1994-11-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UN66307 UN66308
+   
+   
+
+MODULES/MACROS
+ *  EQQEMEVH EQQWAFWI
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OPC/ESA
+   
+   
+ * FIXED COMPONENT ID
+   569500701
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R202 PSY UN66307
+   UP94/08/22 P F408 Ž
+   
+   
+ * R212 PSY UN66308
+   UP94/08/22 P F408 Ž

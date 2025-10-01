@@ -1,0 +1,40 @@
+Title: IBM Backup and Restore Manager for z/VM Considerations for a z/VM Single System Image (SSI) Environment - United States
+
+Text:
+Backup; Restore; SSI; Single System Image; z/VM V6.2 TECHNOTE (FAQ)
+
+QUESTION
+ How should I configure IBM Backup and Restore Manager for z/VM to run in a z/VM environment that supports SSI and Live Guest Relocation (LGR)? 
+
+ANSWER
+There are several things to consider when using Backup and Restore Manager for z/VM on multiple systems that are being managed in a z/VM V6.2 (or later) Single System Image cluster. 
+
+ 1. Backup and Restore Manager for z/VM must be configured and running on each LPAR (or member) of the cluster. This is required so that file level backups and restores can be done for multiconfiguration user IDs.
+    
+    Specifically:  * The installation user ID 5697J06x can be a single configuration user, so you only need to install the code once. 
+     * The administrator user ID BKRADMIN can be a single configuration user, so you can administer the product from one user ID on any member of the cluster. 
+     * All Backup Manager service machines (BKRBKUP, BKRCATLG, and BKRWRKnn) must be multiconfiguration (IDENTITY) users and thus configured on each member of the cluster. 
+     * Sample directory entries are available for 5697J06x, BKRADMIN, BKRBKUP, BKRCATLG, and BKRWRKnn  *  If you are installing Backup and Restore Manager for the first time and are installing V1.3, use the samples that are shipped with the product. If you are installing Backup and Restore Manager V1.3 over an existing V1.2 installation:  *  Use the sample directory entry that is shipped with V1.3 for the user ID 5697J06C. For your existing Backup and Restore Manager user IDs, follow the instructions in the Program Directory for Backup and Restore Manager V1.3 for migrating your installation from V1.2 to V1.3. It contains details for updates to these other directory entries.
+             
+          
+          
+       
+       
+    
+    
+ 2. If you would like to have only one catalog of all data backed up for all members of the cluster, the Shared File System (SFS) server you define for the Backup and Restore Manager catalog must be a single configuration user. This is the recommended approach, since:  * It allows an administrator (while logged onto any member of the cluster) to find backup data for any user in the cluster. 
+     * It allows single configuration users to find their own backup data while logged on to any member of the cluster - they don't have to know which member of the cluster actually performed the backup. 
+     * A sample directory entry for an SFS server (e.g. BKRSVSFS) is available in the presentation "Getting [http://www.ibm.com/software/products/en/backup-restore-manager-for-zvm]Started with IBM Backup and Restore Manager for z/VM on z/VM V6.2 or V6.3" [http://www.ibm.com/software/products/en/backup-restore-manager-for-zvm], which is available on the Resources tab of the Backup and Restore Manager website.
+    
+    
+ 3. If you have only one Backup Manager catalog for all members of the cluster (per item 2 above), then Backup Manager expiration processing is required on only one member of the cluster. When EXPIRE (PREVIEW or EXPIRE (PURGE is issued to BKRCATLG on any member of the cluster, it will interrogate the expiration date of all backup jobs in the catalog - including those created from other members of the cluster. Therefore the EXPIRE (PURGE command must only be issued on one member of the cluster. 
+ 4. IBM recommends defining separate backup jobs for single configuration users and multiconfiguration (IDENTITY) users. As a guideline, IBM recommends the following at a minimum:  * For the single configuration users, create one backup job and always run this job from the same member of the cluster. If you run the job from multiple members, you'll just be backing up the same data twice, since the data for single configuration users is the same across the entire cluster. 
+     * For the multiconfiguration (IDENTITY) users, create one backup job on each member of the cluster. The INCLUDE and EXCLUDE statements in the job can be the same (since the job is backing up the same set of multiconfiguration users). However, you must use a unique job name on each member of the cluster, and always run the member specific job on that member’s backup server. This ensures you can determine which instance of a multiconfiguration user owns the backup data you are viewing in (and restoring from) the backup catalog.
+    
+    
+ 5. If you are backing up to tape (instead of disk) and are using Tape Manager for z/VM to manage the tape environment, you must configure Tape Manager to have a single tape catalog that is shared throughout the SSI cluster. I.e. Tape Manager must be running in a shared catalog environment. More information is available on configuring Tape Manager [http://www-01.ibm.com/support/docview.wss?uid=swg21969624] to share a single catalog across multiple LPARs [http://www.ibm.com/support/search.wss?q=SSI&tc=SSMR3B] [http://www.ibm.com/support/docview.wss?uid=swg21613690] [http://www-01.ibm.com/support/docview.wss?uid=swg21615659].
+
+
+For detailed, step-by-step instructions for installing and configuring Backup and Restore Manager for z/VM in a z/VM V6.2 or z/VM V6.3 SSI cluster, refer to: 
+
+ *  T [http://www.ibm.com/software/products/en/backup-restore-manager-for-zvm]he presentation "Getting [http://www.ibm.com/software/products/en/backup-restore-manager-for-zvm]Started with IBM Backup and Restore Manager for z/VM V1.3 on z/VM V6.2 or V6.3" [http://www.ibm.com/software/products/en/backup-restore-manager-for-zvm], which is available on the Resources tab of the Backup and Restore Manager website

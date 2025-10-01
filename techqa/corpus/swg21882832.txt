@@ -1,0 +1,67 @@
+Title: IBM ODBC Driver : Checking the database connection - United States
+
+Text:
+nco_g_odbc; bind; bind23; ODBCINI; odbc.ini; connection TECHNOTE (FAQ)
+
+QUESTION
+ ODBC Gateway : How can you check the ODBCINI file works? 
+
+CAUSE
+
+The ODBC Gateway log messages can be hard to understand due to the volume of messages written in production environments.
+
+The latest test fix ODBC libraries include the bind23 binary for testing connections defined in the ODBCINI file.
+
+
+ANSWER
+ 
+
+Note: It is recommended that you upgrade to the JDBC Gateway as the ODBC drivers are no longer maintained 
+
+If you are using the current GA product, the latest ODBC Gateway and libraries can be requested from IBM Netcool support. 
+
+ 
+
+Define a test ODBCINI file and database connection:
+You can test an ODBCINI file using the bind command provided with the ODBC library package:
+e.g.
+export ODBCINI
+ODBCINI=/tmp/odbc.ini
+
+vi /tmp/odbc.ini
+[ODBC Data Sources]
+DB2=DataDirect 5.3 DB2 Wire Protocol
+
+[ODBC]
+IANAAppCodePage=4
+InstallDir=/opt/IBM/tivoli/netcool/omnibus/platform/aix5
+Trace=0
+TraceFile=/opt/IBM/tivoli/netcool/omnibus/log/G_ODBC.odbctrace.out
+TraceDll=/opt/IBM/tivoli/netcool/omnibus/platform/aix5/lib/odbctrac.so
+
+[DB2]
+Driver=/opt/IBM/tivoli/netcool/omnibus/platform/aix5/lib/BMdb223.so
+Description=DataDirect 5.3 DB2 Wire Protocol
+#Database applies to DB2 UDB only
+Database=ODBCGW
+IpAddress=orion.sbank.uk.ibm.com
+TcpPort=50000
+#
+AuthenticationMethod=0
+#EOF
+
+Set the environment for using the bind command and run the bind23 command:
+LIBPATH=/opt/IBM/tivoli/netcool/omnibus/platform/aix5/lib
+export LIBPATH
+cd $LIBPATH 
+./bind23 DB2
+User Name: reporter
+Password:
+SecurityMechanism: '0'
+Creating packages ...Packages created and bound.
+
+
+
+RELATED INFORMATION
+ ODBC Gateway product status [http://www-01.ibm.com/support/docview.wss?uid=swg21641166]
+Support's guide to the JDBC Gateway [http://www-01.ibm.com/support/docview.wss?uid=swg21608681]

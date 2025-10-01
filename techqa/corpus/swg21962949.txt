@@ -1,0 +1,31 @@
+Title: IBM FileNet P8 Content Manager error E_DOMAIN_UPGRADE_NOT_SUPPORTED during upgrade - United States
+
+Text:
+CPE FNRCE0084E E_DOMAIN_UPGRADE_NOT_SUPPORTED TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempt to upgrade P8 Content Engine from version 4.5.1 to 5.2.0.3 returned E_DOMAIN_UPGRADE_NOT_SUPPORTED error during database upgrade. 
+
+SYMPTOM
+The p8_server_error.log file contained the following error: 
+
+ * 
+ * 2015-06-08T12:37:57.064 B604B69D ENG FNRCE0084E - ERROR TaskManager$RootTask:RootTask serial=1 running with error , with message The domain cannot be upgraded because its version (5.2.1.0.71) is not associated with a supported release. Upgrade this domain first to a supported release, then upgrade again to this release.
+   com.filenet.api.exception.EngineRuntimeException: FNRCE0084E: E_DOMAIN_UPGRADE_NOT_SUPPORTED: The domain cannot be upgraded because its version (5.2.1.0.71) is not associated with a supported release. Upgrade this domain first to a supported release, then upgrade again to this release
+ * 
+
+
+CAUSE
+The GCD database was at a higher version than the installed version of P8. This occurred on a test system where there were copies of the database from the 4.5.1 system, 5.2.0 system and 5.2.1 system. The wrong backup of the GCD database was restored from the 5.2.1 system with the object store database from the 4.5.1 system causing the error during the upgrade.
+
+ENVIRONMENT
+P8 CPE 5.2.0.3
+WebSphere 8.5
+Oracle 11g
+
+
+
+RESOLVING THE PROBLEM
+The GCD database needs to be at the same or lower version than the installed version of P8, otherwise the E_DOMAIN_UPGRADE_NOT_SUPPORTED will be returned.
+
+Restore both the GCD and Object Store databases that are at a lower version than the upgrade version (in this case, use the databases from the 4.5.1 system to upgrade it to 5.2.0.3).

@@ -1,0 +1,241 @@
+Title: IBM PM86249: An OutOfMemoryError might occur if the workspace contains a Dojo library and the links indexer is enabled - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Application Developer for WebSphere Software 9.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034833]
+Rational Software Architect 9.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034297]
+Rational Software Architect for WebSphere Software 9.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034298]
+Rational Software Architect 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24035434]
+Rational Software Architect for WebSphere Software 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24035436]
+Rational Application Developer for WebSphere Software 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24035720]
+8.5.0.1: IBM Integration Designer V8.5.0 Fix Pack 1 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24035812]
+8.5.0.1: IBM Integration Designer V8.5.0 Fix Pack 1 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24035814]
+Rational Software Architect Fix Pack 1 (8.5.5.1) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24036832]
+Rational Software Architect for WebSphere Software Fix Pack 1 (8.5.5.1) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24036833]
+Rational Application Developer for WebSphere Software Fix Pack 1 (8.5.5.1) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24037967]
+8.0.1.3: IBM Integration Designer V8.0.1 Fix Pack 3 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24037889]
+8.0.1.3: IBM Integration Designer V8.0.1 Fix Pack 3 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037890]
+Rational Software Architect Fix Pack 2 (8.5.5.2) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24038307]
+Rational Software Architect for WebSphere Software Fix Pack 2 (8.5.5.2) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24038308]
+Rational Software Architect Fix Pack 3 (8.5.5.3) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039397]
+Rational Software Architect for WebSphere Software Fix Pack 3 (8.5.5.3) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039398]
+Rational Application Developer for WebSphere Software Fix Pack 2 (8.5.5.2) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039443]
+Rational Software Architect Fix Pack 4 (8.5.5.4) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041240]
+Rational Software Architect for WebSphere Software Fix Pack 4 (8.5.5.4) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041241]
+Rational Application Developer for WebSphere Software Fix Pack 3 (8.5.5.3) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract:
+   
+   Attempts to index a web project which contains a large number of
+   dojo targets might cause an OutOfMemoryError.
+   
+   Problem:
+   
+   If you have web project with many dojo targets and the links
+   indexer enabled then the product may run out of available
+   memory.
+   
+   In the resulting javacore file you will seen the following:
+   
+   XMTHREADINFO      'Link and References Indexing-0'
+   J9VMThread:0x08DFCC00, j9thread_t:0x00FD87B4,
+   java/lang/Thread:0x82D62078, state:R, prio=2
+   3XMTHREADINFO1            (native thread ID:0xE68, native
+   priority:0x2, native policy:UNKNOWN)
+   3XMTHREADINFO3           Java callstack:
+   4XESTACKTRACE                at java/util/Arrays.copyOf(Bytecode
+   PC:8(Compiled Code))
+   4XESTACKTRACE                at java/util/Arrays.copyOf(Bytecode
+   PC:6(Compiled Code))
+   4XESTACKTRACE                at
+   java/util/ArrayList.grow(Bytecode PC:38(Compiled Code))
+   4XESTACKTRACE                at
+   java/util/ArrayList.ensureCapacityInternal(Bytecode
+   PC:22(Compiled Code))
+   4XESTACKTRACE                at java/util/ArrayList.add(Bytecode
+   PC:7(Compiled Code))
+   4XESTACKTRACE                at
+   com/ibm/etools/references/internal/bplustree/db/ExtentManager$Wr
+   iteBack.addFuture(ExtentManager.java:365(Compiled
+   Code))
+   5XESTACKTRACE                   (entered lock:
+   com/ibm/etools/references/internal/bplustree/db/ExtentManager$Re
+   cordComparator@0x83E20CE8,
+   entry count: 1)
+   4XESTACKTRACE                at
+   com/ibm/etools/references/internal/bplustree/db/ExtentManager$AR
+   CRecordCache.removeFromCache(ExtentManager.java:219(Compiled
+   Code
+   
+   
+   1STGCHTYPE     GC History
+   3STHSTTYPE     17:06:18:156169565 GMT j9mm.101 -
+   J9AllocateIndexableObject() returning NULL! 186909528 bytes
+   requested for object of class 077CFA00 from memory space
+   'Generational' id=00354868
+   3STHSTTYPE     17:06:18:156134782 GMT j9mm.134 -   Allocation
+   failure end: newspace=44324592/53018624
+   oldspace=124483824/1400897536 loa=0/0
+   3STHSTTYPE     17:06:18:156132411 GMT j9mm.470 -   Allocation
+   failure cycle end: newspace=44324592/53018624
+   oldspace=124483824/1400897536 loa=0/0
+   3STHSTTYPE     17:06:18:156102766 GMT j9mm.475 -   GlobalGC end:
+   workstackoverflow=0 overflowcount=0
+   
+   Local fix:
+   
+   1.  Turn off the Links Indexer:
+   
+   Go to menu Window ? Preferences ? Web ? Links.
+   Click the New ... button and add '*'.  A yellow box will appear
+   telling you it has been disabled.
+   
+   Note: If you have Struts or JSF projects then disabling the
+   links indexer will limit the tooling (Wizards and Editors depend
+   on it).
+   
+   Turn off indexing of derived resources.  Go to menu Window ?
+   Preferences ? Web ? Links and check the box to ignore derived
+   resources.
+   
+   2. Reduce the content in the workspace
+   
+   3. If you have Dojo files included in the projects.
+   
+   First export the Dojo files to a temp directory in your file
+   system and then delete all Dojo files from the projects in the
+   workspace.  Run the indexer to completion and then install the
+   Dojo facet back after indexing is complete.
+   
+   To install the Dojo facet:
+     -- Right click the project and go to the project facets
+   section.
+     -- Select the Dojo Toolkit facet under web 2.0.
+     -- Select the link for 'Further configuration available..'
+     -- In the Modify faceted Project select the 'Change these
+   setup options' button.
+     -- In the Dojo Project Setup Options, select the first choice
+   'Copy Dojo into this project. It will be deployed from here'
+   option.
+     -- Select Next and enable the 'On Disk' option.  Point the
+   install location to where the temporary location to the Dojo
+   files.
+     -- Select Finish.
+   
+   This will install it properly and exclude it as desired from all
+   validation.  Now the indexer will index the Dojo files in a
+   separate pass.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The link indexer was indexing files which should not have been
+   included in the index.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A whitelist was put in place to ensure the indexer only
+   inspects files that need inspecting and prunes the search space
+   significantly.
+   The fix for this APAR is included in Rational Application
+   Developer v8.5.5.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM86249
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-03
+   
+   
+ * CLOSED DATE
+   2013-10-15
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

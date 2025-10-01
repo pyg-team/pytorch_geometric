@@ -1,0 +1,37 @@
+Title: IBM Error Code 10061: Connection refused - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have installed IBM SPSS Statistics 19 on Windows XP. I am unable to launch the Help Menu. It will not open from the dialog window or from the Help->Topics Menu. My version of Internet Explorer is 7.0.
+
+I get the following error page:
+
+Explanation: The Web server refused the connection.
+
+Try the following: 
+Refresh page:
+Check Spelling:
+Access from a link:
+Contact website:
+If you are still not able to view the requested page, try contacting your administrator or Help Desk.
+
+Technical Information (for support personnel)
+Error Code 10061: Connection refused
+Background: The server you are attempting to access has refused the connection with the gateway. This usually results from trying to connect to a service that is inactive on the server.
+Date: 9/24/2010 time:
+Server: (name of server)
+Source: Remote server 
+
+RESOLVING THE PROBLEM
+This message is a web connection error. Your access to the internet is likely being controlled and limited by a firewall or internet security. Please contact your technology support group and show the error that you have received.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 91486

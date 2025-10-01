@@ -1,0 +1,34 @@
+Title: IBM After starting IBM Content Collector services, P8 connector service starts but stops. - United States
+
+Text:
+ICC; p8; access; privileges TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After starting IBM Content Collector (ICC) services, P8 connector service starts but stops immediately. 
+
+SYMPTOM
+ICC P8 connector log has the following error.
+-----------------------
+Failed to add the XIT update annotation class to the object store. Please try adding this class to the object store by running the ICCComplianceInstaller found in the ctms folder located in the IBM Content Collector installation directory before proceeding with collection
+----------------------------
+
+
+CAUSE
+Not having proper permissions to create objects in P8 Object Store will cause this issue.
+
+ENVIRONMENT
+ICC 4.0.1 SMTP Connector with P8 5.1
+
+DIAGNOSING THE PROBLEM
+Enable highest level of tracing for ICC P8 Connector and look for the connection which is causing the error.
+
+RESOLVING THE PROBLEM
+
+
+
+
+
+
+Remove the problem P8 connection from ICC Configuration Manager (or) 
+
+Give the proper privileges to create document class to the user which is configured for the P8 connection.

@@ -1,0 +1,22 @@
+Title: IBM Extra disk space is required to install or add IBM WebSphere Application Server Version 6.1 Feature Pack for Web Services feature - United States
+
+Text:
+Rational Software Architect; Rational Application Developer; Websphere Application Server; 7.0.0.3; 7.0.0.4; 7.0.0.5; RN7.0.0.4 ; RN7.0.0.5; 1284491 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When installing the IBM WebSphere Application Server Version 6.1 Feature Pack for Web Services feature , the required disk space estimation shown in Installation Manager is not accurate. The installation might fail due to insufficient disk space even though Installation Manager showed that there was sufficient disk space available on the computer.
+
+
+SYMPTOM
+If you are installing the IBM WebSphere Application Server Version 6.1 Feature Pack for Web Services feature and you have less than 2.5 GB free space after the installation completes (according to the disk space requirements in Installation Manager), then the installation will fail. A feature install failure message is found in the Installation Manager log. 
+
+A possible symptom could be:
+ERROR MESSAGE: 
+Modification failed. 
+Error during "install" phase: 
+Error executing "C:\Program Files\IBM\SDP70\image\WAS61\WAS\was61install.bat" operation (status=-1). 
+See agent output log for more information: C:\Documents and Settings\All Users\Application Data\IBM\Installation Manager\logs\native\20081231_0933.log 
+
+
+RESOLVING THE PROBLEM
+When installing the IBM WebSphere Application Server Version 6.1 Feature Pack for Web Services feature, make sure that you have at least 1.5 GB additional disk space than the total free disk space requirement shown in Installation Manager.

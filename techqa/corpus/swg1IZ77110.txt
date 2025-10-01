@@ -1,0 +1,157 @@
+Title: IBM IZ77110: SERVICE REQUEST IS NOT BEING CREATED FROM SERVICE CATALOG ORDER WHEN GLACCOUNT IS SPECIFIED IN THE ORDER. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A service request is not being created from a service catalog
+   order when a GLACCOUNT is specified on the order.
+   
+   The error message is:
+      BMXAA4198E - Organization needed for GL attribute GLACCOUNT
+   on object {1}.
+   
+   However, the GL account that was specified is active in the
+   Chart of Accounts for the Organization.
+   
+   The error only occurs if a GLACOCUNT is entered.  But it
+   consistently gets the error if it is entered regardless of
+   catalog request/order.  Without a GLACCOUNT, the SR is created.
+   
+   
+   REPLICATION STEPS (per OOB env)
+   
+   
+   1. Modify an OOB offering to have Requisition Processing in the
+   Offerings app set to 'Catalog Order Approved', and Fulfillment
+   Modality under Fulfillment Options app set to "Service Request"
+   2. Log in as PMSCSRUUSR and fill out associated fields and add
+   offering to cart.
+   3. Specify a GL clearing account in the "GL Debit Account" field
+   of the section 'Charge Information' in the shopping cart
+   4. Submit the shopping cart
+   5. Log out and log in as PMSCSRUMUSR and approve the catalog
+   request.
+   6. You will get a popup that says that the Catalog Request has
+   been approved.
+   7. Log out and log back in as maxadmin, go to 'View Catalog
+   Requests', select the associated Catalog Request, and go the the
+   History tab. You will see that there is an approved Catalog
+   Request, approved Catalog Order, etc, but NO SR has been
+   created.
+   
+   Repeat steps 1-6 but omit step 3, that is, DO NOT specify a GL
+   Debit Account. Then in step 7, you will also see a SR has been
+   created after the Catalog Order is approved.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  SERVICE REQUEST IS NOT BEING CREATED FROM SERVICE CATALOG ORDER
+   WHEN GLACCOUNT IS SPECIFIED IN THE ORDER.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix related to this APAR will be release on TSRM 7.1.0.7
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ77110
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV SERVICE CAT
+   
+   
+ * REPORTED COMPONENT ID
+   5724S85C0
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-08
+   
+   
+ * CLOSED DATE
+   2010-07-19
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV SERVICE CAT
+   
+   
+ * FIXED COMPONENT ID
+   5724S85C0
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

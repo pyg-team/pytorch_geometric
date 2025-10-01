@@ -1,0 +1,185 @@
+Title: IBM Adding entitlements to an integrated version of IBM Daeja ViewONE, V4.1 or later - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I add entitlements to the IBM Daeja ViewONE, V4.1 or later, that is integrated in IBM Content Navigator, IBM FileNet Application Engine, IBM FileNet Workplace XT, or IBM Production Imaging Edition? 
+
+CAUSE
+An integrated version of the IBM Daeja ViewONE is installed with a predefined set of entitlements. Certain features, such as the ability to permanently redact documents, might not be enabled. You can manually add entitlements to use these additional features.
+
+ANSWER
+You can add entitlements to IBM Daeja ViewONE Professional Edition and IBM Daeja ViewONE Virtual Edition by using the IBM Daeja ViewONE Entitlement tool. 
+
+The additional entitlements available for the IBM Daeja ViewONE Professional Edition are: 
+
+ * IBM Daeja ViewONE Professional Permanent Redaction Server Module 
+ * IBM Daeja ViewONE Professional Module for Microsoft Office
+
+
+The additional entitlements available for the IBM Daeja ViewONE Virtual Edition are:  * IBM Daeja ViewONE Virtual Permanent Redaction Server Module 
+ * IBM Daeja ViewONE Virtual Module for Microsoft Office
+
+
+Important: If you use both Daeja ViewONE Professional and Daeja ViewONE Virtual, you can use the new IBM Daeja ViewONE Virtual and Professional Modules for Microsoft Office offering. 
+This offering provides an easier and more cost effective way to buy the module. The installation program is updated to support this offering. For more details on the new offering refer to the Software Announcement [http://www.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/4/897/ENUS215-134/index.html]. 
+
+Prerequisites  1. Ensure that you have IBM entitlements for the IBM Daeja ViewONE modules that you want to add. 
+ 2. Download the IBM Daeja ViewONE Entitlement Tool from Fix Central [http://www.ibm.com/support/fixcentral].  1. Log in to Fix Central. 
+     2. From the Product Group list, select Enterprise Content Manager. 
+     3. From the Select from Enterprise Content Manager list, select any IBM Daeja ViewONE edition. 
+     4. From the Installed Version list, select All. 
+     5. From the Platform list, select All and then click Continue. 
+     6. Select Browse for fixes and click Continue. 
+     7. On the Select fixes page, select DaejaViewONEEntitlementTool and click Continue to download the software.
+    
+    
+ 3. Ensure that the following requirements are met:
+
+ * IBM Content Navigator
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * IBM FileNet Application Engine, IBM FileNet Workplace XT and IBM Production Imaging Edition
+ * 
+ * 
+ * 
+ * 
+ * 
+ * http://www.ibm.com/support/docview.wss?uid=swg21685397
+ * 
+ * 
+ * 
+ * 
+
+
+Instructions 
+The instructions in this document use the following conventions: 
+ *  <navigator_install_path> refers to the installation location of IBM Content Navigator <workplaceXT_install_path> refers to the installation location of IBM FileNet Workplace XT <workplace_install_path> refers to the installation location of IBM FileNet Application Engine (Workplace) <pie_install_path> refers to the installation location of IBM Production Imaging Edition 
+
+
+1. Back up the configuration files.  * 
+ * 
+ *  IBM Content Navigator
+   <navigator_install_path>\configure\explodedformat\navigator\applets\iviewpro\FnJavaV1Files\lic.v1
+   <navigator_install_path>\configure\explodedformat\navigator\WEB-INF\lic-server.v1
+   <navigator_install_path>\configure\explodedformat\navigator\WEB-INF\lic-server-virtual.v1 
+ *  IBM FileNet Application Engine
+   <workplace_install_path>\FileNet\AE\Workplace\FnJavaV1Files\lic.v1 
+ *  IBM FileNet Workplace XT
+   <workplaceXT_install_path>\FileNet\WebClient\WorkplaceXT\FnJavaV1Files\lic.v1 
+ *  IBM Production Imaging Edition
+   <pie_install_path>\FileNet\WebClient\WorkplaceXT\iviewpro\FnJavaV1Files\lic.v1
+   <pie_install_path>\FileNet\WebClient\WorkplaceXT\WEB-INF\lic-server.v1
+   
+   
+
+2. Add entitlements  *  Create a new directory and copy the daeja_viewone_entitlement.jar file to this directory. In a command shell, change to the created directory and run the IBM Daeja ViewONE Entitlement tool on each configuration file by using the following command syntax. The full commands for each entitlement are shown later.
+   
+   java -jar daeja_viewone_entitlement.jar in=<absolute_location_of_config_file> entitlement=<entitlements> -force
+   
+   You can add more than one entitlement at a time by specifying a comma-separated list of entitlement names to the command as follows:
+   
+   java -jar daeja_viewone_entitlement.jar in=<absolute_location_of_config_file > entitlement=office,redaction -force 
+
+
+ * Alternatively, add entitlements by specifying a properties file that contains the additional entitlements by using the following command syntax: 
+   
+   java -jar daeja_viewone_entitlement.jar in=<absolute_location_of_config_file> modules=<absolute_path_of_entitlement_properties_file> -force 
+
+
+ * The properties file contains key-value pairs for each entitlement you want to add. For example, you can create a file called entitlement.properties that contains the following key-value pairs to add the Microsoft Office module and the Permanent Redaction module: 
+   
+   office=true 
+   redaction=true 
+
+ *  
+   The IBM Daeja ViewONE Entitlement tool updates the configuration files with the entitlements. 
+
+
+ *  Adding entitlements to IBM Daeja ViewONE Professional Edition.
+   
+   For the IBM Daeja ViewONE Professional Edition, you can add entitlements for the Permanent Redaction module and the Microsoft Office module.
+    * Adding the "IBM Daeja ViewONE Professional Permanent Redaction Server Module" entitlement.
+   
+    * 
+    * 
+    * 
+    * 
+    * 
+    *  IBM Content Navigator
+      java -jar daeja_viewone_entitlement.jar in=<navigator_install_path>\configure\explodedformat\navigator\applets\iviewpro\FnJavaV1Files\lic.v1 entitlement=redaction -force
+      
+      java -jar daeja_viewone_entitlement.jar in=<navigator_install_path>\configure\explodedformat\navigator\WEB-INF\lic-server.v1 entitlement=redaction -force 
+    *  IBM Production Imaging Edition
+      java -jar daeja_viewone_entitlement.jar in=<pie_install_path>\FileNet\WebClient\WorkplaceXT\iviewpro\FnJavaV1Files\lic.v1 entitlement=redaction -force
+      
+      java -jar daeja_viewone_entitlement.jar in=<pie_install_path>\FileNet\WebClient\WorkplaceXT\WEB-INF\lic-server.v1 entitlement=redaction -force 
+    * Adding the "IBM Daeja ViewONE Professional Module for Microsoft Office" entitlement.
+      
+      Run the following commands:
+       * IBM Content Navigator
+         java -jar daeja_viewone_entitlement.jar in=<navigator_install_path>\configure\explodedformat\navigator\applets\iviewpro\FnJavaV1Files\lic.v1 entitlement=office -force
+         
+         java -jar daeja_viewone_entitlement.jar in=<navigator_install_path>\configure\explodedformat\navigator\WEB-INF\lic-server.v1 entitlement=office -force
+      
+       * IBM FileNet Application Engine
+         java -jar daeja_viewone_entitlement.jar in=<workplace_install_path>\FileNet\AE\Workplace\FnJavaV1Files\lic.v1 entitlement=office -force
+      
+       * IBM FileNet Workplace XT
+         java -jar daeja_viewone_entitlement.jar in=<workplaceXT_install_path>\FileNet\WebClient\WorkplaceXT\FnJavaV1Files\lic.v1 entitlement=office -force
+      
+       * IBM Production Imaging Edition
+         java -jar daeja_viewone_entitlement.jar in=<pie_install_path>\FileNet\WebClient\WorkplaceXT\iviewpro\FnJavaV1Files\lic.v1 entitlement=office -force
+         
+         java -jar daeja_viewone_entitlement.jar in=<pie_install_path>\FileNet\WebClient\WorkplaceXT\WEB-INF\lic-server.v1 entitlement=office -force
+      
+      
+   
+   
+ *  Adding entitlements to IBM Daeja ViewONE Virtual Edition. 
+ * For the IBM Daeja ViewONE Virtual Edition, you can add the entitlement for the Microsoft Office module and the Permanent Redaction module. 
+    * Adding the "IBM Daeja ViewONE Virtual Module for Microsoft Office" entitlement.
+   
+    * 
+    * 
+    * 
+    * 
+    * 
+    *  IBM Content Navigator
+      java -jar daeja_viewone_entitlement.jar in=<navigator_install_path>\configure\explodedformat\navigator\WEB-INF\lic-server-virtual.v1 entitlement=office -force 
+   
+   
+    * Adding the "IBM Daeja ViewONE Virtual Permanent Redaction Server Module" entitlement.
+   
+    * 
+    * 
+    * 
+    * For IBM Content Navigator V2.0.3 FP5, redaction of email documents is not supported.
+    * 
+    * 
+    * 
+    * 
+    * 
+    *  IBM Content Navigator
+      java -jar daeja_viewone_entitlement.jar in=<navigator_install_path>\configure\explodedformat\navigator\WEB-INF\lic-server-virtual.v1 entitlement=redaction -force 
+   
+   
+ * 
+ * 3. Redeploy the application
+ * After you add the entitlements to the configuration files, redeploy IBM Content Navigator, IBM FileNet Application Engine, IBM FileNet Workplace XT, or IBM Production Imaging Edition according to the instructions for your web application server. 
+ * 
+
+Important: 
+The changes you make are removed if you install a new fix pack for IBM Content Navigator, IBM FileNet Application Engine, IBM FileNet Workplace XT, or IBM Production Imaging Edition. After installing a fix pack, you must follow these instructions to add the entitlements again. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Daeja ViewONE

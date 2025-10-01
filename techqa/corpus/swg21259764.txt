@@ -1,0 +1,41 @@
+Title: IBM Correlating TPROF output to a specific thread in the IBM SDK javacore - United States
+
+Text:
+javacore; tprof mapping; high cpu; 100% cpu; MustGatherDocument; must gather; 1.5; sdk; WAS CE; WAS CE; WAS CE; WASCE; WASCE; WASCE; JBoss; JBoss; JBoss; Glassfish; Glassfish; Glassfish; App Server; App Server; WebSphere CE; WebSphere CE; WebSphere CE; WebSphere Community Edition; WebSphere Community Edition; WebSphere Community Edition; IBM CE; IBM CE; IBM CE; Open Source; Open Source; Open Source TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Correlating TPROF output to a specific thread in the IBM 1.5.0 SDK and 1.6.0 SDK javacores 
+
+RESOLVING THE PROBLEM
+
+Collecting tprof output and javacores is recommended when high CPU usage is observed in the Application Server's Java process. The data from these commands can be used to track the Java thread which is consuming high CPU. WebSphere Application Server Community Edition V1.1 onwards supports IBM Software Development Kit (SDK) 1.5.0 and WebSphere Application Server Community Edition V2.1.1.1 onwards supports IBM Software Development Kit (SDK) 1.6.0.
+
+
+In IBM SDK 1.5.0 or 1.6.0, javacore generation can be enabled for user signals by setting the -Xdump parameter as below:
+
+-Xdump:java:events=user
+
+Run the commands shown below to gather output illustrated in the example following the command usage:
+
+tprof
+tprof -skex sleep 60
+
+javacore
+kill -3 [PID of server's java process]
+
+Locate the PID using the highest CPU from tprof output. See sample output below: 
+
+Process PID TID Total Kernel User Shared Others ====== === === ==== ===== ==== ====== ===== wait 12294 12295 18.87 18.87 0.00 0.00 0.00 java 540856 2404399 11.45 0.49 0.00 10.96 0.00 
+The value under the Total column indicates the CPU usage in ascending order. In this example, java process with PID 540856 uses the highest CPU among the processes other than "wait". 
+Note the TID (thread ID) for the PID 540856; this will give the TID of the thread involved in High CPU usage. In this example, TID=2404399.
+
+Convert "2404399" into Hexadecimal and you will get "24B02F". Look for "24B02F" in the javacore. the (hexadecimal) "native ID" in the javacore corresponds directly to the TID in tprof output:
+
+
+3XMTHREADINFO "JIT Compilation Thread" (TID:0x00000001124B3B00, sys_thread_t:0x0000000110017810, state:CW, native ID:0x000000000024B02F) prio=11 
+Review the stack trace for the thread and identify the code involved in high CPU
+
+
+RELATED INFORMATION
+#TPROF command in AIX [http://publib.boulder.ibm.com/infocenter/pseries/v5r3/index.jsp?topic=/com.ibm.aix.cmds/doc/aixcmds5/tprof.htm]
+Mustgather: Required settings to Generate Javadumps [http://www.ibm.com/support/docview.wss?uid=swg21222439]

@@ -1,0 +1,42 @@
+Title: IBM Error using a Lookup function in a Procedure Node - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Invoking a Lookup statement using a WHERE clause returns an error. The same SQL works outside of DecisionStream/Data Manager. 
+
+SYMPTOM
+DS-DBMS-E400: UDA driver reported the following on connection '<connection name>':
+UDA-SQL-0115 Inappropriate SQL request.
+UDA-SQL-0564 [Microsoft OLE DB Provider for SQL Server]Deferred prepare could not be completed.
+UDA-SQL-0564 [Microsoft OLE DB Provider for SQL Server]Statement(s) could not be prepared. (SQLSTATE=42000, SQLERRORCODE=8180)
+UDA-SQL-0564 [Microsoft OLE DB Provider for SQL Server]Invalid column name '<n>'. (SQLSTATE=42S22, SQLERRORCODE=207)
+
+where <n> is not a column name, but the value specified in the WHERE clause.
+
+CAUSE
+This error is the result of an incorrectly parsed SQL statement being passed by the UDA layer.
+
+ENVIRONMENT
+SQL Server
+
+RESOLVING THE PROBLEM
+Ensure that the condition of the where clause is enclosed in two single quotes, rather than double quotes. For example:
+
+Lookup('<connection>','select * from <table> where <column> like ''<n>''')
+
+Steps:  1. Right-click on the Procedure node and select Properties.
+ 2. Click on the Action tab.
+ 3. Make the necessary edits to the statement.
+ 4. Click OK.
+
+RELATED INFORMATION
+# [\] Function and Scripting Reference Guide: Function Reference-->Control Functions-->Sql 
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Framework Manager 
+HISTORICAL NUMBER
+ 1033061

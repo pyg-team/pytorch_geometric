@@ -1,0 +1,36 @@
+Title: IBM DFHCE3500 during ACF2 signon process after upgrading to CICS TS 5.1 - United States
+
+Text:
+DFHCE3500 MSGDFHCE3500 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Sign-on terminates and you receive message DFHCE3500 Unable to interpret keyword data when signing onto a CICS Transaction Server for z/OS (CICS TS). This occurs when signing on for the first time after upgrading to CICS TS V5.1. You are using the CA ACF2 signon program. 
+
+SYMPTOM
+DFHCE3500 [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.1.0/com.ibm.cics.ts.messages.doc/DFHCE/DFHCE3500.html?lang=en] Unable to interpret keyword data. Sign-on is terminated.
+
+
+CAUSE
+Group DFHCOMPF was added to the end of the startup GROUPLIST [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.1.0/com.ibm.cics.ts.doc/dfha2/parameters/dfha2_grplist.html?lang=en]. This caused the ACF2 definition for transaction CESN to be overridden with the supplied CICS definition within group DFHCOMPF. As a result, ACF2 signon information was unrecognized by the CICS supplied CESN transaction.
+
+DIAGNOSING THE PROBLEM
+You can enter the following CICS commands to help you determine if the incorrect transaction definition for CESN is defined in any groups within your CICS region: 
+
+
+ 1. CEMT INQUIRE TRANSACTION(CESN) to display the program CESN is pointing to within your CICS region. IBM CICS programs all start with "DFH". 
+ 2. CEDA DISPLAY TRANSACTION(CESN) GROUP(*) to display all the groups containing a definition for CESN. 
+ 3. CEDA DISPLAY LIST(*) G(xxxxxxxx) where xxxxxxxx is the group name(s) returned in the previous command, to display all the group lists containing the group. 
+
+RESOLVING THE PROBLEM
+Clear the screen, enter transaction CESN, and fill in userid and password on the CICS supplied signon screen. Reference CA Support Request 21827851-01 for additional details.
+
+To prevent this from occurring in the future, remove the group containing the IBM supplied CESN transaction definition from your GRPLIST. Or, put the ACF2 group after the IBM supplied group.
+
+RELATED INFORMATION
+#The CEDA DISPLAY command [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.2.0/com.ibm.cics.ts.resourcedefinition.doc/ceda/commands/dfha4_display.html?lang=en]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

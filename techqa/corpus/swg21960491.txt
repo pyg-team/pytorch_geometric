@@ -1,0 +1,50 @@
+Title: IBM Security Bulletin: IBM WebSphere MQ Explorer does not protect credentials (CVE-2015-1967) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM WebSphere MQ Explorer can be configured to send userid and password credentials to a remote queue manager for authentication. When compatibility mode is unchecked in MQ Explorer, the password should be sent in a protected form in the absence of any transport level security, such as TLS.
+
+An error in the MQ Explorer implementation in IBM WebSphere MQ 8.0.0.2 and earlier maintenance always causes compatibility mode to be used and password credentials to be sent in cleartext. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-1967 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1967]
+DESCRIPTION: IBM WebSphere MQ could allow authentication credentials to pass in plaintext, even when the server is configured to protect passwords. An attacker could obtain this information using man in the middle techniques.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103583 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103583] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM WebSphere MQ 8.0.0.2 and earlier maintenance levels
+
+REMEDIATION/FIXES
+The error in MQ Explorer is corrected in fix pack 8.0.0.3 [https://www-304.ibm.com/support/docview.wss?uid=swg27043086#8003]
+
+WORKAROUNDS AND MITIGATIONS
+IBM strongly recommends using transport level security on the channel connection between MQ Explorer and remote queue managers by configuring a channel CipherSpec. 
+
+A channel that is configured to use a non-NULL CipherSpec will not only protect any password credentials, but all data exchanged between MQ Explorer and the queue manager.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 23 June 2015: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21962364]

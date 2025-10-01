@@ -1,0 +1,67 @@
+Title: IBM Linux OS and UNIX Log agents won't start on RHEL 5.8 - United States
+
+Text:
+LZ Agent; KCIIN0198E; errorcode 12; status=12; Cannot allocate; 5724C04LN TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Linux OS will not start after installation and UNIX Log Agent fails with memory allocation errors. 
+
+SYMPTOM
+After installing the Linux OSA (LZ) agent on Redhat 5.8 the agent would fail to start and showed this error:
+KCIIN0198E Unable to start agent. Please, check log file.
+
+These messages appear in *lz_klzagent*-##.logs:
+(52EBED7F.000C-1:klzmain.cpp,188,"StartCollectionThreads") Error
+creating updateDiskUsageStatistics thread - errorcode -1080533876
+(52EBED7F.000D-1:klzmain.cpp,211,"StartCollectionThreads") Error
+creating UpdateStatItem thread - errorcode 12
+
+
+AND
+
+
+52EBED80.0091-1:kraaevxp.cpp,390,"CreateEventExporterDispatcher")
+*EV-INFO: Unable to create event exporter dispatcher thread status=12
+(52EBED80.0092-1:khdxprts.cpp,1700,"KHD_stopStatusMgr")
+CTExporterStatus object is unavailable!
+(52EBED80.0093-1:kscqueue.cpp,189,"stop") Successfully stopped Audit
+worker thread
+(52EBED80.0094-1:klzmain.cpp,108,"stop_exit") *** Linux Agent shutting
+down ***
+
+The UNIX Log (UL) Agent shows these messages in the log *ul_kulagent_*-01.log and the Candle Installation log:
+Error starting manager thread. Return code = 12; Cannot allocate memory. Use the return code and message to investigate the failure. Agent is terminating.
+
+
+CAUSE
+This problem was traced to the version of ksh being used on the customer's systems.
+
+
+ENVIRONMENT
+ITM 06.23.01.00
+Redhat 5.8 
+lz Monitoring Agent for Linux OS li6263 06.23.01.00
+ul Monitoring Agent for UNIX Logs li6263 06.23.01.00
+
+
+
+DIAGNOSING THE PROBLEM
+According to the customer's PDCollect, their system is running: pdksh-5.2.14-1 which is strange for Red Hat 5.x because the available versions are:
+pdksh-5.2.14-36.el5
+pdksh-5.2.14-37.el5
+pdksh-5.2.14-37.el5_8.1
+
+We found pdksh-5.2.14-1 using rpmfind.net and were able to recreate the problem. We did not see the problem with the RHEL provided levels listed above.
+
+The default KSH for RHEL 5 is not pdksh-5.2.14-1 and it should be running with something similar to:
+ksh-20100621-18.el5_10.1
+
+The following technote explains that the old reference to pdksh no longer applies for RHEL 5 (SLES 10) and later releases:
+http://www-01.ibm.com/support/docview.wss?uid=swg21418524 [http://www-01.ibm.com/support/docview.wss?uid=swg21418524] 
+
+
+The key is not needing to use pdksh as of RHEL 5.x and SLES 10 per the referenced technote which was written for this very issue.
+
+
+RESOLVING THE PROBLEM
+By adding ksh-20100621-18.el5 to their system the problem with both agents was resolved.

@@ -1,0 +1,142 @@
+Title: IBM IV36779: USE OF LARGE PAGES BY DEFAULT ON LINUX X-86 PLATFORMS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: N/A
+   .
+   Stack Trace: N/A
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  On certain platforms and processors, the JVM now starts with
+   large pages enabled by default for both the JIT code cache and
+   the Java object heap, instead of the default operating system
+   page size.
+   The following sizes apply to Linux:
+       Linux on x86 and AMD64/EM64T: 2 MB large pages
+   Note: These changes do not apply to Linux on IBM POWER?
+   platforms.
+   If the operating system is not configured for the large page
+   size, or if the correct hardware is not available, the JVM uses
+   the default operating system page size instead.
+   You can configure the large page size using the -Xlp command.
+   For more information about the -Xlp command, see JVM
+   command-line options.
+   Note: The use of large pages by default is not enabled on
+   WebSphere Real Time for Real Time Linux, V3 service refresh 4.
+   Use of large pages by default applies only to WebSphere Real
+   Time for Linux, V3 service refresh 4.
+   Please refer to technotes:
+     http://www-01.ibm.com/support/docview.wss?uid=swg21625477 [http://www-01.ibm.com/support/docview.wss?uid=swg21625477]
+   (WRT-V3 SR4)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   WRT-V3 SR4
+   .
+   N/A
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV36779
+   
+   
+ * REPORTED COMPONENT NAME
+   WRT VM
+   
+   
+ * REPORTED COMPONENT ID
+   5724R0403
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-14
+   
+   
+ * CLOSED DATE
+   2013-03-02
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WRT VM
+   
+   
+ * FIXED COMPONENT ID
+   5724R0403
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R300 PSY
+   UP

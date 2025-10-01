@@ -1,0 +1,15 @@
+Title: IBM WebSphere DataPower is not affected by the Bash vulnerabilities (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278)
+Flash (Alert) - United States
+
+Text:
+CVE-2014-6271 CVE-2014-7169 DataPower Bash FLASH (ALERT)
+
+ABSTRACT
+ DataPower is not vulnerable to the Bash vulnerabilities that have been referred to as “Bash Bug” or “Shellshock” and the two memory corruption vulnerabilities. 
+
+CONTENT
+DataPower does not use Bash anywhere. Hence it is not impacted by any of the Bash vulnerabilities. 
+
+In particular, DataPower in all editions and all platforms is NOT vulnerable to the Bash vulnerabilities: CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278. 
+
+IBM recommends that you review your entire environment to identify vulnerable releases of Bash and take appropriate mitigation and remediation actions.

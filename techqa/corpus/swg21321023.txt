@@ -1,0 +1,35 @@
+Title: IBM No JMS Producers available.  Increase the size of the producer pool - United States
+
+Text:
+message engine; MEA; JMS data store; TPAEINTEGRATION TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If there is a configuration problem where the application can not connect to the JMS queue resources, message in the logs may indicate that no JMS producers are available and suggests that you increase the size of the producer pool 
+
+SYMPTOM
+The application can not connect to the JMS queue resources and therefore messages are not read from or written to the JMS queue.
+
+
+RESOLVING THE PROBLEM
+The error message "No JMS Producers available. Increase the size of the producer pool" is only a result of a previous error and is not the cause of the problem. 
+
+To troubleshoot the problem, the best way to find the cause is to restart the application server and then look for error messages in the application server log that occur prior to this message. 
+
+This error can happen for several reasons, such as incorrect connection factory type being created in WebSphere, or missing jms queue resources, or misspelling of the JNDI names of the JMS resources. 
+
+In WebSphere, this can also indicate that the JMS resources were created at a different scope that is not visible to the application server that is having the problem. 
+
+In WebLogic, this error can indicate that the JMS Server is targeted to a server that is different from the application server that is throwing the error and therefore this application server does not have visibility of the JMS resources. 
+
+ 
+
+The following logs can help identify the problem: 
+
+WebSphere - the systemout.log for the application server after the server has been restarted, including the entire WebSphere startup sequence. 
+
+WebLogic - the application server's config.xml and the application server log after the server has been restarted. This log is named the same as your application server, i.e. MAXIMOSERVER.log.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Maximo Enterprise Adapter

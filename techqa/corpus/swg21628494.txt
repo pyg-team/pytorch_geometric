@@ -1,0 +1,63 @@
+Title: IBM "No such file or directory" at installation Rational Method Composer on IBM Open Linux - United States
+
+Text:
+Installing Rational Method Composer on a Standard IBM Open Linux client results in error "No such file or directory"; Standard Linux Open Client; launchpad.sh file TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to install IBM Rational Method Composer (RMC) from the launchpad program on a Standard IBM Open Linux client result in the error "No such file or directory".
+
+
+SYMPTOM
+Steps to Reproduce:
+
+
+
+
+ 1. Highlight the launchpad.sh file located in the root directory of the RMC package.
+    
+    
+ 2. Run the launchpad.sh file.
+    
+    
+    
+    
+
+
+Expected Result: The installation procedure opens a dialog window to prompt to install Rational Method Composer.  
+
+Actual Result: Installation fails with the following error: 
+
+ 
+
+$ ./launchpad.sh 
+cp: cannot stat `/home/user_name/DownloadDirector/disk1/launchpad/lib': No such file or directory 
+cp: cannot stat `/home/user_name/DownloadDirector/disk1/launchpad/../jre': No such file or directory 
+/usr/bin/less 
+$ 
+
+
+ 
+
+For more information on how to Install RMC from the launchpad program, see the following document in the Informatgion Center 7.5: Installing from the launchpad program [http://pic.dhe.ibm.com/infocenter/rmchelp/v7r5m2/index.jsp?topic=%2Fcom.ibm.rmc.install.doc%2Ftopics%2Ft_start_install_launchpad.html].
+
+CAUSE
+Rational Method Composer does not support Standard IBM Linux Open Client.
+
+
+
+ENVIRONMENT
+RMC Installation on Standard IBM Linux Open Client..
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+WORKAROUND
+
+Install Rational Method Composer in a supported operation system. 
+
+ 
+
+In the following link you can find all the operation system that RMC supports.
+Software Product Compatibility Reports [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity/index.html]

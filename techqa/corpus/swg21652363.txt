@@ -1,0 +1,42 @@
+Title: IBM How do I configure an additional instance of IDS with NoSQL support? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure an additional instance of Informix Dynamic Server with NoSQL support? 
+
+ANSWER
+It may be desirable to have for example, both production and development/QA instances of IDS with NoSQL support enabled. The initial instance must be created during the installation. Additional instances can be created with the following steps: 
+
+ 1. Make the necessary sqlhosts file changes and if applicable /etc/services entries.  * Make a copy of either the sqlhosts file to the new file or just make a second copy of the entries within the file. Modify the entries appropriately. 
+     * Make the necessary changes to the /etc/services file.
+    
+    
+ 2. Create a new onconfig file and make the appropriate changes to it including new DBSERVERNAME and DBSERVERALIASES values from step #1. A good practice is to copy the first instance's onconfig file and make changes. 
+ 3. Modify the environment:  * Change INFORMIXSERVER to be the value of DBSERVERNAME set in the previous steps. 
+     * Change ONCONFIG to the name configured in step #2. 
+     * Change INFORMIXSQLHOSTS if a new sqlhosts file was created in step #1.
+    
+    
+ 4. A new NoSQL scheduler initialization file must be created in $INFORMIXDIR/etc/sysadmin. This file is used at instance initialization (oninit -i) to set up NoSQL. It follows this naming convention: sch_init_<DBSERVERNAME>.sql. This must be changed accordingly to configure another instance with NoSQL support. Copy this file to a new file with the appropriate DBSERVERNAME value and make the following changes to it:  * LET json_listener = <filename>:  * <filename> defaults to "jsonListener.properties" 
+        * Copy the original file to a new file with a different name and set the new name (<filename>) here. 
+        * See step #5 below for configuration changes in this file.
+       
+       
+     * EXECUTE FUNCTION ifx_setup_system(<chunk_storage_path>):  * <chunk_storage_path> defaults to $INFORMIXDIR/storage 
+        * Change this to a new storage directory that you created for the new instance.
+       
+       
+    
+    
+ 5. Make a copy of the jsonListener.properties file and change the following:  * listener.port=#: set the port number that the new JSON listener process(es) will use for incoming requests 
+     * Localhost:#: set to the port number of the "lo_..." DBSERVERNAME connection 
+     * INFORMIXSERVER=?: set to "lo_..." DBSERVERNAME connection 
+    
+    
+ 6. Finally, initialize the instance with "oninit -i."
+
+RELATED INFORMATION
+ I have the IDS 12.10.xC2+ product. How do I install an [http://www.ibm.com/support/docview.wss?uid=swg21652276]
+I installed IDS 12.10.xC2+ and selected the JSON Client [http://www.ibm.com/support/docview.wss?uid=swg21652242]

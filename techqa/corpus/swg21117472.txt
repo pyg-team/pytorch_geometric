@@ -1,0 +1,113 @@
+Title: IBM Unable to decode packet header unknown packet version - United States
+
+Text:
+multitool: Error: Unable to decode packet header unknown packet version 4; ClearCase; MultiSite; mkreplica -import; packet header; unknown packet version 4; multitool: Error: Unable to decode packet header unknown packet version 6; 1117472 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why attempts to replicate between sites that are at different IBM® Rational® ClearCase MultiSite® releases results in the error unable to decode packet header unknown packet version and provides details to resolve the issue. 
+
+SYMPTOM
+ 
+
+SCENARIO 1 
+
+Attempts to import a replica creation packet results in the following error:
+
+multitool: Error: Unable to decode packet header unknown packet version 4 
+
+ 
+
+SCENARIO 2 
+
+Attempts to list out the details of a replica creation packet at the receiving site results in the following error:
+
+
+G:\...\var\shipping\ms_ship\incoming>multitool lspacket
+multitool: Error: Unable to decode packet header: unknown packet version 6
+
+CAUSE
+ 
+
+The replica creation packet (in both of the above scenarios) was created on a machine that is at a higher ClearCase MultiSite version than the receiving host: 
+
+ * In scenario 1, the importing host is at ClearCase MultiSite 2002.05.00, but the exporting host is running ClearCase MultiSite 2003.06.00.
+   
+   
+ * In the second, the receiving is at ClearCase MultiSite 2003.06.00, but the sending is running ClearCase MultiSite 7.0.
+   
+
+
+There are compatibility restrictions on creating replicas. 
+
+A VOB replica cannot be imported on a host that is at a previous version if the VOB was created on a host running a higher version. 
+
+You can replicate a VOB to a host running an earlier version of ClearCase MultiSite only if the feature level of the VOB is supported by the Rational ClearCase release on the target host. 
+
+This is detailed further in IBM Rational ClearCase MultiSite Installation and Upgrade Guide under Compatibility issues across MultiSite versions.
+
+
+RESOLVING THE PROBLEM
+
+Option 1: 
+
+Upgrade the receiving MultiSite server to put it at the same version as the sending host. 
+
+Upgrading ClearCase will cause all new VOBs that get created on the host to be at the feature level of that version. 
+
+For example, the new feature level for version 2003.06.00 is 4, and the feature level for version 7.0 is 5, which means that new VOBs created under those versions will be set to its feature level, respectively. 
+
+Note: The upgrade does not require that the feature level of all VOBs on the machine be changed, but if you upgrade to ClearCase 7.0 [http://www-1.ibm.com/support/docview.wss?rs=984&uid=swg24012293], then any existing VOBs (at schema 53) will need to be upgraded to schema 54, see technote 1201579 [http://www-1.ibm.com/support/docview.wss?&rs=984&uid=swg21201579] for more details. 
+
+
+
+
+Option 2: 
+
+Create the replica on the machine running the earlier version and import the replica creation packet on the higher version machine to share replicas between versions. 
+
+ 
+
+1. Remove the replica created from the higher version site (multitool rmreplica)
+
+Note: There is no fall out from removing the replica without transferring mastership because it has not been successfully imported yet.
+
+
+
+2. Delete the packet from the incoming bay that had already been sent to the lower version site.
+
+
+
+3. Create a new VOB at the lower version site (cleartool mkvob).
+
+
+
+4. If needed, migrate the data from the original VOB (using clearexport_ccase or relocate) into the new replicated VOB.
+
+Note: If using UCM, only clearfsimport can be used.
+
+
+
+5. Create a replica creation packet (multitool mkreplica -export) and send it to the higher version site.
+
+
+
+6. Import the replication packet at the higher version site (multitool mkreplica -import) 
+
+ 
+
+ 
+
+Documentation 
+
+Hardcopy can be ordered from the IBM Publications Center [http://www.ibm.com/shop/publications/order] 
+
+On-line documentation can be found:
+
+2003.06: 
+
+HTML [ftp://public.dhe.ibm.com/software/rational/docs/v2003/cc_family/ccase/doc/index.html] PDF LINKS [ftp://public.dhe.ibm.com/software/rational/docs/documentation/manuals/clearcase.jsp]
+
+
+7.0: On-line ClearCase version 7.0 documentation [http://www-1.ibm.com/support/docview.wss?&rs=984&uid=swg21239261]
+
+Distributed Documentation: Windows®: C:\Program Files\Rational\ClearCase\doc\books UNIX® and Linux®: /opt/rational/clearcase/doc/books

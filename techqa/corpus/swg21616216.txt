@@ -1,0 +1,110 @@
+Title: IBM How do I capture network traces when troubleshooting FileNet P8 Platform problems? - United States
+
+Text:
+network trace; network capture; packet trace tools TECHNOTE (FAQ)
+
+QUESTION
+ When IBM Support asks me to capture network traces along with IBM FileNet P8 server logs, how do I capture the network traces? What tools do I use, and what format should I provide to IBM Support? 
+
+CAUSE
+There are a lot of options and methods for capturing network traces and this request from IBM Support can be confusing and cause delays in the troubleshooting process when not understood.
+
+ANSWER
+If IBM Support has requested that you provide a network trace or a coordinated set of network traces, please provide the following: 
+
+Network Topology: 
+
+A graphic or narrative disclosing the system name/IBM FileNet P8 function for all network nodes involved in the network trace data. This data should include: Where any firewall or other security enforcement devices are located in the topology Where any Load Balancers and/or NAT (Network Address Translation) devices are in the topology and the IP addresses on both sides of the device* A list of all IP addresses and system names for all network nodes involved in the network trace data  
+
+*: Any device that changes either the port number or the IP address and the port number (a socket) can make tracking a network frame from one node to another very difficult or even impossible. Knowing the configured IP addresses on both sides of the device greatly increases the ability to analyze the network traffic. 
+
+ 
+
+How to perform the network capture and additional trace/log capture: 
+
+Unless otherwise specified by IBM Support, do not use any capture filtering. Using "all-in/all-out" capturing ensures the data contains everything "on the wire" Setup the capture tool on all IBM FileNet P8 nodes specified by IBM Support (i.e., an IBM FileNet Process Engine (PE) server and an IBM FileNet AE/WorkplaceXT server) Setup any additional tracing/logging mechanisms (i.e., fnlog4j or IBM FileNet Content Engine tracing) Start all tracing/logging mechanisms Start the network trace capture(s) at least 10 or 20 seconds prior to reproducing the issue Record the time(s) when the issue is reproduced (It's a good idea to reproduce the issue two or three times during the capture) Stop the network trace capture(s) a few seconds after reproducing the issue Stop all additional tracing/logging mechanisms Gather and upload the resulting trace files and logs to EcuRep (reminder: EcuRep has a 2 GB limit on file size, so you may need to compress the files for the upload)  
+
+ 
+
+ 
+
+Specific details: 
+
+The remainder of this Technote will provide specific information to help you with understanding network trace capturing. 
+
+The preferred network trace analysis tool used by IBM FileNet P8 Support is Wireshark(R). This tool uses the file format called ".pcap" by default, but it will import most file formats from other network trace capturing tools. 
+
+ 
+
+ 
+
+ 
+
+What network capture tools can I use? 
+
+You may use your preferred network capture tool, as long as it generates a ".pcap" file or a file format supported by Wireshark. 
+
+A list of those formats is available on the Wireshark.org website, in the File Format Reference section. 
+
+ * 
+
+
+For tools commonly available in an IBM FileNet P8 environment, please refer to Technote 1175744 Using packet trace tools iptrace, snoop, tcpdump, wireshark, and nettl [http://www-01.ibm.com/support/docview.wss?uid=swg21175744] 
+
+This Technote gives details on various trace capture tools for the supported Operating Systems used in an IBM FileNet P8 environment. 
+
+ 
+
+ 
+
+ 
+
+How long should the capture run? 
+
+The minimal amount of time for capturing network activity should be 4 to 5 minutes. A trace of less than 2 minutes is generally not usable for data analysis for a number of reasons. For example, a network connection can take from several seconds to some minutes for complete closure of the connect. It is common for network traces to have broken connection issues in the first several seconds due to this. A trace of only a few seconds could be unusable because of this. 
+
+ 
+
+ 
+
+ 
+
+Where do I setup the network capture? 
+
+The IBM FileNet P8 servers on which the network capture is taken will generally be specified by IBM Support when the request for data is made. This will be based upon the specifics involved in the issue. 
+
+For example, if an IBM FileNet Process Engine (PE) server is failing to connect to the remote database server, a coordinated capture will likely be specified on the PE server and on the remote database server. 
+
+It is very important that a coordinated trace capture be performed and provided as specified by the IBM Support Engineer. Getting data from only one of the specified servers may yield no ability to diagnose the issue and require the request for a coordinated capture to be repeated, thus prolonging the troubleshooting process. 
+
+ 
+
+ 
+
+ 
+
+What if the issue is intermittent or not easily reproducible? 
+
+Non-reproducible, intermittent issues are always difficult to capture by their very nature. The only practical methodology for this situation is to leave the trace running with some sort of automatic stop configured, an overwrite buffer configured, or with multiple output files being written. The ability to use this method depends upon many factors, such as the amount of available hard disk space, the available system memory (RAM), the network capture tool being used, etc. 
+
+In the case of Wireshark, the capture options have the ability to specify multiple files, each of a size you configure (500 MB, for example), or of a length of time (i.e., every 10 minutes), and/or stop the capture after a configured number of files created. 
+
+The Wireshark capture options also include stopping the capture after a configured number of packets, configured amount of data (i.e., 5 GB), and/or after a configured amount of time (i.e., 30 minutes). 
+
+Using those options, one can typically setup a capture that, for example, writes to a new file every time the existing file hits 1 GB in size. Assuming the server has only 15 GB of available HDD space, the capture can be automatically stopped after, say, 12 files are produced, resulting in 12 GB of the available hard disk space being consumed. 
+
+If the issue was reproduced during the time the 12 network trace files were captured, then only the trace files that were generating during the time frame of interest need to be uploaded to IBM EcuRep. 
+
+ 
+
+ 
+
+ 
+
+What about other IBM FileNet P8 system logs? 
+
+IBM Support will almost always request numerous server logs and/or trace files (fnlog4f, for example) to be provided along with the network trace files. This is very important for the analysis of the network traces, since a typical network trace, even a short 5 minute trace, will have thousands of frames, most of which having nothing to do with the troubleshooting. The coordinated data can eliminate hours of network analysis by enabling a focused concentration on a point of interest in the trace data (an error's timestamp, for example). 
+
+Also critical to the data analysis effort is that all provided data be taken during the same time frame, which covers when the issue is reproduced. 
+
+For example, providing a PE server's system log for Tuesday, a network trace from that PE server captured between 1:00 PM and 2:00 PM on Wednesday and a network trace from an AE server captured between 3:00 PM and 3:10 PM on Wednesday will likely provide no diagnostic data and require IBM Support to request the coordinated data once again.

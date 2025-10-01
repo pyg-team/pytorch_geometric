@@ -1,0 +1,165 @@
+Title: IBM PM70736: SSO (SINGLE SIGN ON) AUTHENTICATION DOESN'T WORK IN 1-WAY TRUST MULTIPLE DOMAIN ENVIRONMENT. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This issue has been reported in IBM SPSS Collaboration and
+   Deployment Services 5.0 GA, but still occurs after applying C&DS
+   5.0 FixPack 1 and FixPack 2.
+   
+   In a trusted multiple domain environment where IBM SPSS Client
+   applications (such as SPSS Modeler Desktop and SPSS Deployment
+   Manager) are installed on one domain (USERDomain) and IBM SPSS
+   Server applications (such as SPSS Modeler Server and SPSS
+   Collaboration and Deployment Services [C&DS] Server) are on
+   another domain (APPDomain), connecting to C&DS server from
+   Deployment Manager client using SSO authentication fails.
+   
+   This should not occur and C&DS client should successfully
+   connect to C&DS Server with SSO.
+   
+   Our domain environment setup has been configured as a 1-way
+   External Trust Relationship and we have verified C&DS server SSO
+   setup in one domain (APPDomain) works fine.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue has been reported to the IBM SPSS Collaboration and
+   Deployment Services development team and will be addressed in
+   the next Fix Pack. Please refer to the Fix Pack schedule at
+   http://www.ibm.com/support/docview.wss?uid=swg21599157 for
+   information on upcoming Fix Packs.
+   
+   Within the IBM SPSS C&DS code, we set two system property for
+   realm and KDC (Kerberos Key Distribution Centre). If you need
+   cross-realm authentication, you need to also specify a krb5.conf
+   file and specify the cross realm information there. But IBM JDK
+   does not read the krb5.conf file if KDC and realm property was
+   set. This is a bug within the IBM JDK. If this bug did not
+   exist, customers would have been able to add the system property
+   to the Modeler jvm.cfg file and cross realm authentication would
+   be working for Java client without any code change. This will
+   require a code change within the IBM SPSS C&DS application to
+   temporarily resolve this issue. The ultimate fix would be made
+   on the IBM Java to successfully read the krb5.conf' file.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * This affects all users of IBM SPSS C&DS using Single Sign On *
+   * in a multi-domain environment.                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * SSO (SINGLE SIGN ON) AUTHENTICATION DOESN'T WORK IN 1-WAY    *
+   * TRUST MULTIPLE DOMAIN ENVIRONMENT.                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM SPSS C&DS 6.0 Fix Pack 2 and IBM SPSS  *
+   * C&DS 7.0 to resolve this issue.                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been addressed in IBM SPSS C&DS 6.0 Fix Pack 2
+   and IBM SPSS C&DS 7.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM70736
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS CADS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A72CD
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-12
+   
+   
+ * CLOSED DATE
+   2013-11-05
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS CADS
+   
+   
+ * FIXED COMPONENT ID
+   5725A72CD
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

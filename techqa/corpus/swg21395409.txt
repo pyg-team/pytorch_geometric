@@ -1,0 +1,26 @@
+Title: IBM Why I am not able print all selected documents using DB2 Document Manager Print/Plot Service? - United States
+
+Text:
+DM; print; network TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have configured DB2 Document Manager Print/Plot service with a network printer. When I select and submit multiple documents to print using DB2 Document Manager desktop, not all documents are getting printed but only some. 
+
+SYMPTOM
+You can only print single document at a time but not multiple documents.
+
+
+CAUSE
+If you have configured the network shared printer with "Standard TCP/IP" and the printer is not connected directly to the DB2 Document Manager server , you will see this behavior with Print/Plot Service.
+
+ENVIRONMENT
+Windows
+
+RESOLVING THE PROBLEM
+Use following one of the option to resolve the issue.
+
+
+
+
+ * Install and configure the printer directly to DB2 Document Manager Server and use "Local Port" for the printer settings. 
+ * Install and configure DB2 Document Manager Print/Plot service on the network printer server.

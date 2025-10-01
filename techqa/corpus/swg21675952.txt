@@ -1,0 +1,49 @@
+Title: IBM syslog-ng setup for TSAMP/RSCT specific messages - United States
+
+Text:
+tsa; tsamp; syslog; syslog-ng.conf TECHNOTE (FAQ)
+
+QUESTION
+ Sending all TSAMP and RSCT related messages to their own syslog file ? 
+
+ANSWER
+Below is an example of capturing all RSCT (cluster software), TSAMP (automation software), and optionally DB2 policy scripts messages into a single log file.
+The syslog-ng configuration is contained with the "/etc/syslog-ng/syslog-ng.conf" file. Edit this file, as the root user. 
+
+There are 3 basic stanzas needed:
+1) Filters 
+2) Destinations 
+3) Log definition which is a combination of filters and the log destination 
+
+Unlike Mail, News, and Cron, there is no pre-defined "facility" that represents TSAMP, RSCT, or the various automation script vendors (eg DB2). So the first step would be to define new filters using the program names or a match to some regular expression(s). For RSCT and TSAMP, the following should be sufficient : 
+
+filter f_rsct { program("hatsd") or program("cthats") or program("cthags") or program("ConfigRM") or program("StorageRM"); };
+filter f_tsamp { program("RecoveryRM") or program("GblResRM") or program("TestRM") or program("samtb_net"); };
+
+
+To catch the DB2/HADR automation scripts, you could use a "match" filter like the following : 
+filter f_db2scripts { match("db2") or match("hadr"); };
+
+Note: the "match" filter is a regular expression, so you could be much more elaborate than my example above, by combining both "match" stanzas into a single regular expression. 
+
+Next create your destination (this is the name and location of your log file) : 
+destination cluster { file("/var/log/cluster.log"); }; 
+
+Create the new log file is the correct directory (as root user) using the touch command:
+touch /var/log/cluster.log
+
+Lastly, define the log definitions (associates the filters to a log destination): 
+log { source(src); filter(f_rsct); destination(cluster); }; 
+log { source(src); filter(f_tsamp); destination(cluster); }; 
+log { source(src); filter(f_db2scripts); destination(cluster); }; 
+
+You would like need to stop and restart the syslog-ng daemon after any changes to the syslog-ng.conf file : 
+
+#/etc/init.d/syslog stop
+Shutting down syslog services done
+
+#/etc/init.d/syslog start
+Starting syslog services done
+
+
+Sometimes there is value in having other message sources intermixed with the RSCT/TSAMP log messages. For example, it can be important to see messages related to the network interfaces, messages that show shutdown, reboot, startup of the host, and possibly even messages that show filesystem problems. So you may choose to add additional filters to include some of these extra items.

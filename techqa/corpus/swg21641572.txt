@@ -1,0 +1,26 @@
+Title: IBM ITCAM4tx: nco_m_icmp ICMP monitor fails to startup when not run as "root" - United States
+
+Text:
+71ISM-PLAN; 71ISM-CONF; 71ISM-GEN; 71ISM-TS TECHNOTE (FAQ)
+
+QUESTION
+ Using ITCAM FOR Tx with ISM agent, 07.30.00.00, the agent fails to start nco_m_icmp monitor, with message in logs: "This monitor requires root privileges to run". Is it possible to run nco_m_icmp or nco_m_dhcp for example as "non-root" account on Linux system? 
+
+CAUSE
+Some ISM monitors (DHCP, ICMP, TRANSX) must be run as 'root' account because they are using and need specific privileged OS calls. 
+
+There iss another technote that suggested:
+For nco_p_ping executable (Tivoli Netcool/Omnibus), setting a setuid is sufficient to run it as a "non-root" user id. 
+-rwsr-xr-x 1 root admin 82916 Apr 22 2010 nco_p_ping 
+
+But nco_p_ping is a probe, and not a monitor. 
+
+For ICMP or DHCP monitor for example, using only setuid command is not sufficient. When trying to start ICMP nco monitor, you get in icmp.log file the following message : "Error: This monitor requires root privileges to run"
+
+ANSWER
+It was confirmed by the development labs that ICMP and DHCP monitors must be run as root because of the type of sockets they create.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMFT ISM internet services monitor

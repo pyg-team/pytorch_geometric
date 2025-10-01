@@ -1,0 +1,35 @@
+Title: IBM In a new installation of FileNet Workplace XT 1.1.5.2, a session timeout occurs when logging in for the first time - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When logging into Workplace XT, a session timeout error occurs. 
+
+CAUSE
+The tag requiresSSL in the security.xml in was set to true.
+
+ENVIRONMENT
+WebSphere 8.x
+
+DIAGNOSING THE PROBLEM
+Review the security configuration on the IBM WebSphere Application Server for the FileNet Workplace XT application. Check the setting requiresSSL to see whether it has been set to true or false. 
+
+
+RESOLVING THE PROBLEM
+The WebSphere Application Server's security.xml can be reviewed for this specific label requiresSSL. Review the value for the "requiresSSL" and ensure it is set to false.
+
+
+
+
+ 1. Make a backup of the security.xml file: <was profile root>/config/cells/cellname/security.xml 
+    
+    
+ 2. Edit the security.xml file by searching for requiresSSL=. 
+    
+    <singleSignon xmi:id="SingleSignon_1" requiresSSL="false" domainName="example.org" enabled="true"/>
+    
+ 3. Save the security.xml file
+    
+    
+ 4. Restart the WebSphere Application Server.

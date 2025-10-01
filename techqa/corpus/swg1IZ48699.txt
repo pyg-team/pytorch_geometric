@@ -1,0 +1,138 @@
+Title: IBM IZ48699: USERID CASE NOW HONORED IN TEP SERVER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If Security Validation is enabled through a UNIX/Linux TEMS and
+   the userids are defined in UPPERCASE at the TEPS, but the userid
+   is defined in lower case at the TEMS.
+   
+   After upgrading from ITM 6.1 to ITM 6.2, all usernames defined
+   in UPPERCASE will not be able to login at the TEPS.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disable security validation at the HUB TEMS.
+   
+   Login to the TEPS can change all userids case to match the case
+   as defined at the HUB TEMS.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  After upgrading from ITM 6.1 to ITM 6.2, all usernames defined
+   in UPPERCASE will not be able to login at the TEPS.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Text has been added to the ITM 6.2.2 Troubleshooting Guide in
+   Chapter 4 on page 65 specifying the following:
+   
+   After upgrade from v6.1 to v6.2, all usernames defined in
+   uppercase are not be able to login at the portal server.
+   
+   If security validation is enabled through a UNIX or Linux
+   monitoring server and the User IDs are defined in uppercase at
+   the portal server, but the User ID is
+   defined in lower case at the monitoring server, this problem
+   occurs.
+   Disable security validation at the hub monitoring server.
+   Logging into the portal server changes all the User IDs? cases
+   to match the case as defined at the hub monitoring server.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ48699
+   
+   
+ * REPORTED COMPONENT NAME
+   TEPS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04PS
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-04-10
+   
+   
+ * CLOSED DATE
+   2009-06-22
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEMS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,46 @@
+Title: IBM Why am I getting a "DSNT408I SQLCODE = -204, ERROR: ROOT.ARSAG IS AN UNDEFINED NAME" error message in IBM® Content Manager OnDemand for z/OS® ? - United States
+
+Text:
+DSNT408I; ARS0013E; SQLCODE=-204; ROOT.ARSAG TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why am I getting a "DSNT408I SQLCODE = -204, ERROR: ROOT.ARSAG IS AN UNDEFINED NAME" error message ? I see the following errors in my z/OS® ARSSOCKD joblog when I try to start it:
+
+ARS0013E ARSSOCKD DB ERROR: {DB2 FOR OS/390}{ODBC DRIVER}{DSN08015} 662 
+DSNT408I SQLCODE = -204, ERROR: ROOT.ARSAG IS AN UNDEFINED NAME
+DSNT418I SQLSTATE = 42704 SQLSTATE RETURN CODE
+DSNT415I SQLERRP = DSNXOTL SQL PROCEDURE DETECTING ERROR DSNT416I SQLERRD = -500 0 0 -1 0 0 SQL DIAGNOSTIC INFORMATION DSNT416I SQLERRD = X'FFFFFE0C' X'00000000' X'00000000' X'FFFFFFFF' X'00000000' X'00000000' SQL DIAGNOSTIC INFORMATION -- SQLSTATE =42S02, SQLCODE=-204, FILE=ARSAG.C, LINE=4070 
+IEF404I ARSSOCK1 - ENDED 
+
+SYMPTOM
+"DSNT408I SQLCODE = -204, ERROR: ROOT.ARSAG IS AN UNDEFINED NAME" error message
+
+
+CAUSE
+The symbolic link /usr/lpp/ars/config pointed to the wrong directory location for the ars.cfg and ars.ini files. 
+
+ENVIRONMENT
+z/OS OnDemand
+
+DIAGNOSING THE PROBLEM
+Locate the "DSNT408I SQLCODE = -204, ERROR: ROOT.ARSAG IS AN UNDEFINED NAME" error message.
+
+RESOLVING THE PROBLEM
+The ars.cfg or ars.ini file is not being found correctly upon job startup. Or, the DB2 instance is not defined correctly. OnDemand is using the default of ROOT as a result. 
+
+
+
+
+ * Verify the following items:  * your symbolic link from /usr/lpp/ars/V8R4Mn/config for V8.4 or /usr/ars/lpp/config for V7.1 is pointing to the actual directory location of the ars.cfg and ars.ini files. A sample command for setting up this symbolic link is: ln -s /etc/ars /usr/lpp/ars/V8R4M1/config. 
+    * the correct DB2 instance in the ARSSOCKD startup JCL is specified: the default is ARCHIVE if you do not specify the PARM in the ARSSOCKD JCL 
+    * the DB2 instance definition exists in the ars.ini file 
+    * the directory specified for the ars.cfg file is correct in the ars.ini file and under the DB2 instance definition that is being used 
+    * the ars.cfg and ars.ini files exist in the pointed to directory 
+    * the /etc/ars directory has the correct permissions of 755
+   
+   
+ * Correct any item that is inaccurate. 
+ * Stop (if needed) and restart ARSSOCKD.
+
+
+For this specific customer's example, the symbolic link /usr/lpp/ars/config pointed to a wrong directory location for the ars.cfg and ars.ini files.

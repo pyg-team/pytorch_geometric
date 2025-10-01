@@ -1,0 +1,109 @@
+Title: IBM ITCAM z/OS Data Collector unable to connect to server - United States
+
+Text:
+CAMADALL TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ITCAM for WebSphere data collector on z/OS not connecting to managing server when Healthcenter is also configured 
+
+SYMPTOM
+See these errors in the WebSphere JOBLOG
+
+java.rmi.ServerException: RemoteException occurred in server thread; 
+nested exception is: 
+java.rmi.UnmarshalException: error unmarshalling arguments; 
+nested exception is: 
+java.lang.ClassNotFoundException: com.cyanea.probe.ControllerAVMData 
+
+
+CAUSE
+WebSphere Healthcenter 
+
+Xhealthcenter -Dcom.ibm.java.diagnostics.healthcenter.agent.
+transport=jrmp 
+
+ENVIRONMENT
+z/OS
+
+DIAGNOSING THE PROBLEM
+Determine if there are healthcenter java arguments in the generic jvm arguments server.xml file
+
+RESOLVING THE PROBLEM
+Four options to choose from depending on your environment. 
+
+
+
+
+
+1. See the instructions in below link 
+
+http://www-01.ibm.com/support/knowledgecenter/api/content/nl/en-us/SS3KLZ/com.ibm.java.diagnostics.healthcenter.doc/topics/enablingagentlate.html [http://www-01.ibm.com/support/knowledgecenter/api/content/nl/en-us/SS3KLZ/com.ibm.java.diagnostics.healthcenter.doc/topics/enablingagentlate.html] 
+
+2. Make the following changes to the ITCAM Managing Server 
+
+A. Go to the ITCAM Managing server machine and edit the following file: 
+
+/opt/IBM/itcam/WebSphere/MS/bin/wdctl.sh 
+
+B. Add the value of the codebase as a variable to this file somewhere in 
+the beginning: 
+
+RMI_CODEBASE="file:///opt/IBM/itcam/WebSphere/MS/lib7.1/ppe.probe.jar [file:///opt/IBM/itcam/WebSphere/MS/lib7.1/ppe.probe.jar] 
+file:///opt/IBM/itcam/WebSphere/MS/lib/ppe.probe-intf.jar [file:///opt/IBM/itcam/WebSphere/MS/lib/ppe.probe-intf.jar] 
+file:///opt/IBM/itcam/WebSphere/MS/lib7.1/ppe.was_8.jar [file:///opt/IBM/itcam/WebSphere/MS/lib7.1/ppe.was_8.jar] 
+file:///opt/IBM/itcam/WebSphere/MS/lib7.1/ppe.was_7.jar [file:///opt/IBM/itcam/WebSphere/MS/lib7.1/ppe.was_7.jar] 
+file:///opt/IBM/itcam/WebSphere/MS/lib7.1/ppe.probe-bootstrap.jar [file:///opt/IBM/itcam/WebSphere/MS/lib7.1/ppe.probe-bootstrap.jar]" 
+
+(all in a single line with file URLs separated by a space and enclosed 
+in double quotes). 
+
+C. A bit further down in the file where the kernel process is started 
+using " $JAVA_HOME/bin/$JAVA_CMD 
+...com.cyanea.kernel.util.KernelManager..." add the following Java 
+system parameter along with the list of other system parameters present: 
+
+-Djava.rmi.server.codebase="$RMI_CODEBASE" \ 
+
+For example: 
+
+-Dkernel.codebase.libpath=${CYANEA_HOME_OS}/lib \ 
+-Dkernel.codebase.port=${PORT_KERNEL_CODEBASE} \ 
+-Djava.rmi.server.codebase="$RMI_CODEBASE" \ 
+-Djava.rmi.server.useCodebaseOnly=false \ 
+
+D. Restart the Managing server using ./am-stop.sh and ./am-start.sh. 
+
+E. Restart the WebSphere JVMs without the java.rmi.server.codebase Java 
+system property set in "Custom Properties" of the WebSphere admin 
+console. Verify if the Managing server connection is successful without 
+the "java.lang.ClassNotFoundException: 
+com.cyanea.probe.ControllerAVMData" during unmarshalling the arguments. 
+
+ 
+
+3. This workaround is to add the java.rmi.server.codebase to the Java system 
+properties of WebSphere's servant: 
+
+A. Launch the admin console and go to Application Servers -> 
+(server name) -> Process Definition -> Servant -> Java Virtual Machine 
+-> Custom properties. 
+
+B. Add a new property: 
+Name: java.rmi.server.codebase 
+
+Value: The same value present in java.rmi.server.codebase property in 
+<DC_HOME>/runtime/<server>/dc.java.properties file. If the ITCAM 
+Managing server was installed at the default location, this value would 
+be: 
+
+file:///opt/IBM/itcam/WebSphere/MS/lib7.1/ppe.probe.jaf [file:///opt/IBM/itcam/WebSphere/MS/lib7.1/ppe.probe.jaf] 
+file:///opt/IBM/itcam/WebSphere/MS/lib/ppe.probe-intf.jar [file:///opt/IBM/itcam/WebSphere/MS/lib/ppe.probe-intf.jar] 
+file:///opt/IBM/itcam/WebSphere/MS/lib7.1/ppe.was_8.jar [file:///opt/IBM/itcam/WebSphere/MS/lib7.1/ppe.was_8.jar] 
+file:///opt/IBM/itcam/WebSphere/MS/lib7.1/ppe.was_7.jar [file:///opt/IBM/itcam/WebSphere/MS/lib7.1/ppe.was_7.jar] 
+file:///opt/IBM/itcam/WebSphere/MS/lib7.1/ppe.probe-bootstrap.jar [file:///opt/IBM/itcam/WebSphere/MS/lib7.1/ppe.probe-bootstrap.jar] 
+
+(all file URLs in one line separated by a space) 
+
+C. Save the settings and restart the application server. Check to make 
+sure the ClassNotFoundException is not thrown and the server is shown in 
+the Managing server console.

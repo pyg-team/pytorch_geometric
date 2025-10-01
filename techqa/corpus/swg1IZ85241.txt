@@ -1,0 +1,129 @@
+Title: IBM IZ85241: NEGATIVE VALUES FOR "BYTES RECEIVED /SEC" AND "BYTES TRANSMITTED/ SEC" - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On Linux the Monitoring Agent for Linux OS shows negative values
+   for a couple of attributes in the Network Attribute Group. This
+   problem is due to an internal overflow in data manipulation.
+   
+   
+   Environment: The Monitoring Agent for Linux OS 6.2.1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  On Linux the Monitoring Agent for Linux OS shows negative values
+   
+   for a couple of attributes in the Network Attribute Group. This
+   problem is due to an internal overflow in data manipulation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is included in the following maintenance
+   vehicle:
+        | fix pack | 6.2.1-TIV-ITM-FP0004
+        | fix pack | 6.2.2-TIV-ITM-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ85241
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04LN
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-17
+   
+   
+ * CLOSED DATE
+   2010-10-13
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * FIXED COMPONENT ID
+   5724C04LN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R621 PSY
+   UP

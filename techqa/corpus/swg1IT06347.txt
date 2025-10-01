@@ -1,0 +1,178 @@
+Title: IBM IT06347: In BLU environment, a statement with GROUP BY clause might receive SQL0955C error due to memory overshoot. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In BLU environment on some rare occasions, SQL statement
+   execution with GROUP BY clause might receive a SQL0955C error
+   because of memory overshoot. Further indications of this APAR
+   will be entries similar to the following In db2diag.log
+   
+   YYYY-MM-DD-22.58.30.951778-240 I262070A728          LEVEL:
+   Warning
+   PID     : 15335616             TID : 75311          KTID :
+   79757509
+   PROC    : db2sysc
+   INSTANCE: sample              NODE : 000           DB   : BLUDB
+   APPHDL  : 0-643                APPID: *LOCAL.sample.YYMMDD025700
+   AUTHID  : TESTDBM              HOSTNAME: testhost
+   EDUID   : 75311                EDUNAME: db2agntcol (BLUDB)
+   FUNCTION: DB2 UDB, CDE Aggregation,
+   LookupGroupingHashTableEvaluator::shutdown, probe:384
+   MESSAGE : Shutting down group by infrastructure at the end of
+   STQ
+   DATA #1 : Object [PD_TYPE_FUNC_NAME] not dumped
+   Address: 0x0000000000000000 Size: 0 Reason: Address is NULL
+   DATA #2 : File name, 36 bytes
+   LookupGroupingHashTableEvaluator.cpp
+   
+   YYYY-MM-DD-22.58.30.952903-240 I262799A703          LEVEL:
+   Warning
+   PID     : 15335616             TID : 75311          KTID :
+   79757509
+   PROC    : db2sysc
+   INSTANCE: sample              NODE : 000           DB   : BLUDB
+   APPHDL  : 0-643                APPID: *LOCAL.sample.YYMMDD025700
+   AUTHID  : TESTDBM              HOSTNAME: testhost
+   EDUID   : 75311                EDUNAME: db2agntcol (BLUDB)
+   FUNCTION: DB2 UDB, CDE query runtime,
+   QueryResultInfo::shutdownGroupBy, probe:224
+   MESSAGE : Shutting down group by infrastructure at the end of
+   STQ
+   DATA #1 : Object [PD_TYPE_FUNC_NAME] not dumped
+   Address: 0x0000000000000000 Size: 0 Reason: Address is NULL
+   DATA #2 : File name, 19 bytes
+   QueryResultInfo.cpp
+   
+   YYYY-MM-DD-22.58.31.127460-240 I263503A610          LEVEL: Event
+   PID     : 15335616             TID : 75311          KTID :
+   79757509
+   PROC    : db2sysc
+   INSTANCE: sample              NODE : 000           DB   : BLUDB
+   APPHDL  : 0-643                APPID: *LOCAL.sample.YYMMDD025700
+   AUTHID  : TESTDBM              HOSTNAME: testhost
+   EDUID   : 75311                EDUNAME: db2agntcol (BLUDB)
+   FUNCTION: DB2 UDB, sort/list services,
+   sqlsCheckSortOvershootUndershootHelper, probe:5966
+   DATA #1 : <preformatted>
+   SQLS_MEMCONSUMER_CDE_AGG_DISTINCT sort heap usage overshot
+   reservedHWM(4K): 10 inUseHWM(4K): 275566
+   
+   
+   You can confirm hitting this APAR by searching db2diag.log for
+   entries with SQLS_MEMCONSUMER_CDE_AGG_DISTINCT overshoot.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Specific to BLU environment                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 Version 10.5 Fix Pack 5                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in DB2 Version 10.5 Fix Pack 5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT06347
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-07
+   
+   
+ * CLOSED DATE
+   2015-02-03
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA50 PSN
+   UP

@@ -1,0 +1,138 @@
+Title: IBM DB2 Perl Database Interface for LUW - United States
+
+Text:
+perl; dbd; dbi; cpan; db2; dbd::db2; driver; activestate TECHNOTE (FAQ)
+
+QUESTION
+ How can my application written in Perl access my IBM DB2 Version 9.5 and above database for LUW? 
+
+ANSWER
+
+
+Perl applications can access IBM DB2 data servers via the Perl DBI driver for DB2, DBD::DB2 [http://search.cpan.org/~ibmtordb2/]. 
+This document provides step-by-step instructions to install the DBD::DB2 Perl module and access data from DB2 data server.
+
+
+SETTING UP THE DBD::DB2 ENVIRONMENT TO ACCESS DATA IN IBM DB2 DATA SERVERS
+PRE-REQUISITES
+ * Linux: Perl version 5.8 or above
+ * Windows: ActivePerl version 5.8 or above
+ * DBI version 1.53 and above
+ * IBM DB2 client version 9 fp2 and above
+
+GETTING PRE-REQUISITES
+ * Perl: Download the latest perl for your respective platform from http://www.perl.org/get.html [http://www.perl.org/get.html] and install Perl
+ * 
+ * DBI: Install the DBI module issuing the following command 
+   
+   Perl 5.6: cpan install DBI
+   
+   Perl 5.10: cpan DBI
+   
+   On windows with Activestate perl you can install the binary version by issuing the following command
+   
+   ppm install DBI 
+ * 
+ *  Note: Installing DBI requires internet access so it can download additional files. 
+ * DB2 Client: DB2 client version v9fp2 or above is needed.  * If connecting to DB2 database server on a remote machine you will need to install the IBM Data Server Driver package (DS Driver) available at http://www.ibm.com/software/data/support/data-server-clients/index.html [http://www.ibm.com/software/data/support/data-server-clients/index.html]. More on DS Driver can be read at Infocentre [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=%2Fcom.ibm.swg.im.dbclient.install.doc%2Fdoc%2Fc0023452.html]
+    * If connecting to a database on local machine you will not need to install the DB2 client separately.
+   
+   Note: In further sections when referring to the installation location of the DB2 client,  * In case of DS Driver this will be the directory where you have untarred the odbc_cli driver in the package. for eg: $HOME/dsdriver/odbc_cli_driver/linuxamd64/clidriver
+    * In case of other type of DB2 clients this will be the location where DB2 is installed. For eg: /opt/ibm/db2/v97 
+   
+   
+
+INSTALLING DBD::DB2 DRIVER
+WINDOWS - ACTIVESTATE PERL
+Install the binary version of DBD::DB2 module by issuing the following commands 
+
+ *  32-bit ppm install http://www.bribes.org/perl/ppm/DBD-DB2.ppd 
+ *  64-bit ppm install http://www.bribes.org/perl/ppm64/DBD-DB2.ppd 
+
+LINUX - CPAN INSTALLATION
+As for any cpan module issue the cpan command specifying DBD::DB2 as the module name, after setting the necessary environment variables as below  * $ export DB2_HOME=<location where db2 is installed>
+ * $ export DB2LIB=<location where db2 is installed>/lib[64/32]
+    * Based on your perl is 32-bit or 64-bit set the DB2LIB accordingly to lib32 or lib64 respectively
+    * Example, assuming DB2 is installed in /opt/ibm/db2/v105 and we are using 64-bit Perl use: 
+      $ export DB2_HOME=/opt/ibm/db2/v105 
+      $ export DB2LIB=/opt/ibm/db2/v105/lib64 
+      
+    * If you are using DS Driver then make sure you have selected and untarred the correct libraries (32 or 64 bit ) as per you perl's architecture and set DB2LIB to the lib directory
+   
+   
+ * $ cpan DBD::DB2
+
+Refer to the section Architectural consideration for setting Environment variables for details on architectural considerations to note while setting necessary environment variables for successful installation and running of the perl DBD::DB2 driver INSTALLATION FROM SOURCE - APPLICABLE TO ALL PLATFORMS
+PRE-REQUISITES
+C compiler  * Windows: MingW compiler and the dmake utility or the VC compiler
+   
+ * Linux: gcc compiler
+   
+ * AIX:xlc compiler
+
+DOWNLOADING THE SOURCE
+Download the latest DBD::DB2 driver source from http://search.cpan.org/~ibmtordb2/ [http://search.cpan.org/~ibmtordb2/] COMPILING AND INSTALLING THE DRIVER
+Untar the archive and issue the following commands 
+ * $ export DB2_HOME=<location where db2 is installed>
+ * $ export DB2LIB=<location where db2 is installed>/lib[64/32]
+    * Based on your perl is 32-bit or 64-bit set the DB2LIB accordingly to lib32 or lib64 respectively
+    * If you are using DS Driver then make sure you have selected and untarred the correct libraries (32 or 64 bit ) as per you perl's architecture and set DB2LIB to the lib directory
+   
+   
+ * $ perl Makefile.PL
+ * $ make
+ * $ make install 
+   
+   Note:  * If on Windows platform, the make command will respectively be dmake or nmake based on using MingW or the VC compiler
+    * Refer section Architectural consideration for setting Environment variables for details on architectural considerations
+    * Root access may be required for the make install command
+   
+   
+
+
+With this the perl environment to access data in DB2 is ready. 
+
+
+ARCHITECTURAL CONSIDERATION FOR SETTING ENVIRONMENT VARIABLES 
+Depending on the architecture (32-bit or 64-bit) for which your Perl is compiled and installed you will need to accordingly set the environment variables DB2LIB and LD_LIBRARY_PATH or LIBPATH variables to the 32-bit or 64-bit library of DB2 client. 
+In case of these variables not being set correctly 
+ * During compilation you will see an error message complaining cannot link to the db2 library due to architecture mismatch
+ * During Run-time you will see an error complaining cannot load module DB2.so due to wrong ELF class
+
+To know your Perl's architecture run the following command 
+
+perl -V 
+
+If the variable use64bitall, under the info on Platform, is define then your perl is 64-bit else if it is undef your perl is 32-bit 
+
+
+RUNNING A SAMPLE PERL SCRIPT TO CONNECT TO DB2
+
+For any Perl script to connect to DB2 you need to ensure that the DBD::DB2 driver can access the DB2 CLI driver libdb2.so, which is part of your DB2 client. Failing to do so will result in a missing libraries - libdb2.so.1 or db2cli.ddl error when you run your program. You do this by adding the folder where the libdb2.so/ db2cli.dll file resides to the LD_LIBRARY_PATH or LIBPATH or PATH environment variable on Linux or AIX or Windows platform respectively for the userid under which program will be run. For eg: export LD_LIBRARY_PATH=<location where db2 is installed>/lib64> 
+
+Refer to the section Architectural consideration for setting Environment variables for details on architectural considerations to note while setting necessary environment variables for successful installation and running of the perl DBD::DB2 driver 
+
+Refer to Infocentre [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/topic/com.ibm.db2.luw.apdv.perl.doc/doc/c0006696.html] for a sample Perl script that connects to sample database and fetches results from the Employee table 
+
+
+LATEST RELEASE OF DBD::DB2
+
+The latest release of DBD::DB2 is 1.85 [http://search.cpan.org/CPAN/authors/id/I/IB/IBMTORDB2/DBD-DB2-1.85.tar.gz] 
+
+
+
+DOWNLOAD DETAILS FOR GETTING DB2
+
+ *  Download DB2 Express-C V9.7 for free [http://www.ibm.com/i/v16/icons/dn.gif]DB2 Express-C [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=swg-db2expressc&S_CMP=ECDDWW01&S_TACT=ACDB206 ] 
+ *  Getting started with DB2 Express-C [http://www.ibm.com/i/v16/icons/dn.gif]Getting Started [http://www.ibm.com/developerworks/wikis/display/DB2/FREE+Book-+Getting+Started+with+DB2+Express-C] 
+ * 
+ * Hints
+ * For help running Perl with DB2 UDB Version 8 64-bit for AIX 5.2, refer to this technote [http://www-1.ibm.com/support/docview.wss?rs=71&context=SSEPGG&uid=swg21181032&loc=en_US&cs=utf-8&lang=en] 
+ *  
+   [/support/docview.wss?uid=swg21297335&aid=1] [/support/docview.wss?uid=swg21297335&aid=1] 
+   For further discussion on this topic, visit this developerWorks forum thread: 
+   https://www.ibm.com/developerworks/community/forums/html/topic?id=4e1d8e00-4e07-4476-95f1-3c05ea1e11e3 [https://www.ibm.com/developerworks/community/forums/html/topic?id=4e1d8e00-4e07-4476-95f1-3c05ea1e11e3] 
+   
+
+RELATED INFORMATION
+ Additional Sample Perl Programs [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.apdv.samptop.doc/doc/r0011927.html?lang=en]

@@ -1,0 +1,33 @@
+Title: IBM Tivoli Integrated Portal (TIP) 2.2 Fixpack15 (TIP 2.2.0.15) installation failure over Tivoli Common Reporting (TCR) 2.1.x - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TIP 2.2.0.15 installation fails with the documented TIP installation procedure, if TCR server is not stopped prior to invoking the TIP Fixpack installation 
+
+RESOLVING THE PROBLEM
+The installation failure occurs if TCR server is still running when the TIP installer attempts to upgrade the existing Java used by TIP/TCR. In order to overcome this installation failure, Customers need to ensure that the TCR server is properly shut down prior to the TIP Fixpack installation. 
+
+The following step by step instructions will help installing the TIP 2.2.0.15 Fixpack successfully
+
+1. Download 2.2.0-TIV-TIP-PLATFORM-FP0015.zip
+2. Extract 2.2.0-TIV-TIP-PLATFORM-FP0015.zip into a temporary folder.
+3. Go to TCR 2.1.1 installed path i.e <TCR installed path>/tipv2Components/TCRComponent/bin and
+stop TCR Server by executing file stopTCRserver.sh/bat
+4. Go to <2.2.0-TIV-TIP-PLATFORM-FP0015 extracted location>/cdimage.fixpack 
+5. Edit the sample_response.txt file with the following properties and its appropriate values.
+IAGLOBAL_TIP_HOME = <TCR installed path>/tipv2
+IAGLOBAL_WASUserID=<TCR/TIP user name>
+IAGLOBAL_WASPassword=<TCR/TIP password>
+6. Start the upgrade by executing the following command 
+install.sh/bat -i silent -f <path of sample_response.txt> 
+7. On a successful upgrade stop TCR server by invoking "stopTCRserver.<sh/bat>" which is available in the path <TCR installed path>/tipv2Components/TCRComponent/bin 
+8. Start TCR Server by executing the command "startTCRserver.<sh/bat>" which is available in the path
+<TCR installed path>/tipv2Components/TCRComponent/bin
+9. Confirm the successful upgrade by the following the below instructions -
+a) Open web browser and access url “https://hosntame:port/ibm/console” 
+b) log into TIP/TCR.
+c) TIP version shows as 2.2.0.15 as per below image.
+
+[/support/docview.wss?uid=swg21686901&amp;aid=1]

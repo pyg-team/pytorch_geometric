@@ -1,0 +1,28 @@
+Title: IBM "Failed to type application of operator unicode_value(symbol)"  when using the unicode_value() function in Clementine 10.1 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am using the function unicode_value(field1) in a derive node within Clementine 10.1. When I execute the stream I am getting the following error.
+
+Failed to type application of operator unicode_value(symbol)
+
+I have another derive node that uses the function unicode_char(122) and this works fine producing a new field with a 'z', why is this error occuring on my other derive node? 
+
+RESOLVING THE PROBLEM
+The derive node using unicode_char(122) is correctly running the function against a specified numeric. The unicode_value() function works the same way. It is looking for a single character as argument not a variable.
+
+An example of a proper unicode_value() function would be unicode_value(`z`). 
+
+unicode_char(NUM) CHAR Returns the character with Unicode value NUM. 
+unicode_value(CHAR) NUM Returns the Unicode value of CHAR
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 67255

@@ -1,0 +1,121 @@
+Title: IBM IC74315: ACCESS POLICY NOT WORKING AS EXPECTED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  XI50.3.8.1.6
+   
+   Problem Description:
+   
+   The "commit" functionality of the WebGUI, when using
+   group-defined users, does not work to make and save changes.
+   DP does NOT allow you to create WSP from Control Panel / WSP.
+   The same is true for XMLFW service.
+   This behavior can be reproduced on 3.8.1 and 3.8.0. The problem
+   does not exist in 3.7.3.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Affected DataPower customers are those using the Web Service
+   Proxy with limited permissions.
+   
+   The button to create a new local endpoint handler on the Web
+   Service Proxy is disabled when correct permissions are set.
+   
+   This button is being incorrectly disabled.  The individual
+   permissions for each type of local endpoint handler should
+   control the options displayed when clicking the button.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix will be available in next major releases
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC74315
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   380
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-08
+   
+   
+ * CLOSED DATE
+   2011-02-18
+   
+   
+ * LAST MODIFIED DATE
+   2011-02-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R382 PSN
+   UP

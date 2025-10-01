@@ -1,0 +1,14 @@
+Title: IBM Out of Memory exceptions when running P8 Maintenance task - United States
+
+Text:
+icc; maintenance; p8 TECHNOTE (FAQ)
+
+QUESTION
+ When running IBM Content Collector (ICC) P8 maintenance task to cleanup annotations , Why the maintenance task fails with Out of memory exception ?
+
+
+CAUSE
+This has been identified as a product defect under APAR HE12449.
+
+ANSWER
+Install or upgrade ICC version to 4.0.1.2-IBM-ICC-FP002 to resolve this issue.

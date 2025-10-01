@@ -1,0 +1,43 @@
+Title: IBM What the IBM TRIRIGA Form link from Navigation Item with queries does and disabling it - United States
+
+Text:
+TRICONFIG; form; button; navigation; builder; disable; RFE TECHNOTE (FAQ)
+
+QUESTION
+ What does the IBM TRIRIGA Form link from Navigation Item with queries do? Can it be disabled? 
+
+CAUSE
+I see the Form links on my IBM TRIRIGA pages as follows:
+
+
+[/support/docview.wss?uid=swg21999011&aid=1] [/support/docview.wss?uid=swg21999011&aid=1] 
+
+ 
+
+[/support/docview.wss?uid=swg21999011&aid=2] [/support/docview.wss?uid=swg21999011&aid=2]
+
+
+What is it for?
+
+Can it be disabled?
+
+
+
+ANSWER
+The form button allows you to display forms (from the form builder form section) for selected records, this could be an HTML form or a BIRT form for example. For instance, if using Home -> Portfolio -> People -> Employees page, making a selection of records and clicking on the Forms link, there might be no report form assigned to that specific Navigation Item, therefore you get an empty window. There is no way to remove that Form link on OOB As-delivered as per design. If you have this set up properly on Navigation Item, the records will be returned on a separate window using the form you have specified. 
+
+You need to select records before clicking on the Form link, otherwise the following error message will show up: 
+
+ 
+
+[/support/docview.wss?uid=swg21999011&aid=3] [/support/docview.wss?uid=swg21999011&aid=3]
+
+
+You set the form you want to use for the Form link on the Navigation Item Editor tool: 
+
+ 
+
+[/support/docview.wss?uid=swg21999011&amp;aid=4]
+
+
+There is no way to remove these Form links as per current design for 3.3, 3.4, 3.5.0, 3.5.1 and 3.5.2. Although this seems to be a good opportunity for enhancement of our product, this needs to be addressed as a Request for Enhancement (RFE) for discussions about incorporating this in future releases of the product. To open a RFE record, access: IBM RFE Community - https://www.ibm.com/developerworks/rfe/ [https://www.ibm.com/developerworks/rfe/]

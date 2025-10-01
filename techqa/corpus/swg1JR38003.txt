@@ -1,0 +1,132 @@
+Title: IBM JR38003: SIEBEL ADAPTER 7.0 WITH WEBSPHERE MESSAGE BROKER HAS CONNECTION TIMEOUT ISSUES AFTER BEING IDLE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is running Siebel 7.0 adapter with Websphere Message
+   Broker. Customer saw this error after Siebel adapter was idle:
+   
+   
+   10/13/10 10:59:32:041 CST] 00000041 SystemOut     O Adding
+   argvalue :
+   
+   1-33830078
+   [10/13/10 10:59:32:760 CST] 00000041 SystemOut     O The
+   connection pool
+   is empty and no connection could be created.(SBL-JCA-00310)
+   The connection pool is empty and no connection could be
+   created.(SBL-JCA-00310)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Known defect in WMB 6.1
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Customer found that Siebel adapter reported "connection pool
+   empty" error while idle adapter for a specific of time.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem has been found and fixed on 6.1. Merged the fix to
+   7.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR38003
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS ADAPT SIEB
+   
+   
+ * REPORTED COMPONENT ID
+   5724L8000
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-15
+   
+   
+ * CLOSED DATE
+   2010-11-24
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS ADAPT SIEB
+   
+   
+ * FIXED COMPONENT ID
+   5724L8000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,154 @@
+Title: IBM Managing symbolic links in ClearCase interop - United States
+
+Text:
+1148732; 1123041; symbolic link; symlink; resolve; cleartool; update; relative; absolute path; 1118146 TECHNOTE (FAQ)
+
+QUESTION
+ How should you create symbolic links (symlinks) in an IBM® Rational® ClearCase® interoperation environment with Microsoft® Windows® and UNIX® or Linux®? 
+
+ANSWER
+ 
+
+To create ClearCase VOB symbolic links for use on UNIX or Linux and Windows, use a relative path with forward slashes, /.
+
+
+Although the Windows command line commonly uses backslashes, \, as the path delimiter, ClearCase on Windows will understand both types of slashes. Where as path delimiters on UNIX (and Linux) are required to be forward slashes. 
+
+
+Example for using relative paths:
+
+
+cleartool ln -slink -nc ../../some_file.txt 
+
+
+This link can be accessed from both Windows and UNIX (or Linux) views. 
+
+ 
+
+Note: For a cross-VOB symbolic link to work, the VOB tags should match in UNIX or Linux and in Windows such that the relative path is exactly the same.
+
+
+
+
+
+Symbolic links created with backslashes cannot be loaded in snapshot views on UNIX or Linux  
+
+Example: 
+
+A symbolic link created in a (UNIX or Windows) VOB by a Windows client which links to another VOB tag on Windows cannot be loaded by a UNIX snapshot view if the path delimiter is a backslash, \. 
+
+
+Windows (creating link link_nt)
+=============================================
+C:\view1\vob2>cleartool ls
+link.c@@\main\1 Rule: \main\LATEST
+lost+found@@\main\0 Rule: \main\LATEST
+
+C:\view1\vob2>type link.c
+This file is link.c
+
+C:\view1\vob2>cd ..\vob1
+
+C:\view1\vob1>cleartool ln -s ..\vob2\link.c link_nt
+Loading "vob1\link_nt" (31 bytes).
+Link created: "link_nt".
+
+C:\view1\vob1>cleartool ls
+dog.c@@\main\1 Rule: \main\LATEST
+lost+found@@\main\0 Rule: \main\LATEST
+link_nt --> ..\vob2\link.c
+
+C:\view1\vob1>type link_nt
+This file is link.c
+
+
+UNIX/Linux (cannot update)
+=============================================
+
+#cleartool update
+Making dir "vob1".
+Processing dir "vob1".
+Processing dir "vob1/lost+found".
+End dir "vob1/lost+found".
+...cleartool: Error: Unable to resolve VOB symlink "vob1/link_nt" -> "..\vob2
+\link.c"
+component "..\vob2\link.c": No such file or directory.
+cleartool: Error: Unable to load "link_nt".
+cleartool: Error: Errors were encountered in loading "/vob1".
+
+#cleartool ls
+dog.c@@/main/1 Rule: <rule info unavailable>
+lost+found@@/main/0 Rule: <rule info unavailable>
+link_nt --> ..\vob2\link.c [not loaded]
+
+
+ Back to top 
+
+
+
+
+How to change a VOB symbolic link path 
+
+The only way to revise a VOB symbolic link to a relative path is to create a new symbolic link: 
+
+Note: You cannot edit (revise) a VOB symbolic link if it has been created using an absolute path to utilize a relative path. 
+ 1. Check out the directory 
+    
+ 2. Remove the old VOB link using the cleartool rmelem command
+    
+ 3. Create a new link with the same name 
+    
+    Example:
+    cleartool ln -slink -nc ../../same_file_name.txt
+    
+ 4. Check in the directory
+    
+
+
+Notes:  1. It is recommended that you use relative VOB symbolic links instead of absolute symbolic links. The absolute VOB symbolic link requires you to use absolute path names from the view-tag level, for example, \view-tag\VOB-tag\filename. Hence, they are valid only in the view in which they were created.
+    
+    
+ 2. Symbolic links that point to files outside the ClearCase MVFS [http://www-1.ibm.com/support/docview.wss?&rs=984&uid=swg21230196] are not supported by the Windows operating system (as opposed to the UNIX and Linux operating systems), and must be created with relative paths as opposed to absolute paths. Although the cleartool ln command will create the link, the link will not appear in a standard directory listing; it will only be displayed by the cleartool ls command.
+    
+    This is true for all symbolic links that do not point to a valid MVFS path name.
+
+
+ Back to top 
+
+
+
+
+Documentation  * Hardcopy can be ordered from the IBM Publications Center [http://www.ibm.com/shop/publications/order].
+   
+   
+ * On-line documentation can be found:
+   
+   7.0:
+   ClearCase 7.0 Information Center [http://publib.boulder.ibm.com/infocenter/cchelp/v7r0m0/index.jsp]
+   
+   Note: The on-line ClearCase version 7.0 documentation can be found in the IBM Publication Center [http://www.elink.ibmlink.ibm.com/public/applications/publications/cgibin/pbi.cgi] and has been organized for you in technote 1239261 [http://www.ibm.com/support/docview.wss?rs=984&uid=swg21239261].
+   
+   
+ * Distributed Documentation
+   
+   UNIX and Linux: /opt/rational/clearcase/doc/books
+   
+   Windows: C:\Program Files\Rational\ClearCase\doc\books
+
+
+ Back to top 
+
+
+RELATED INFORMATION
+#About checking out Symbolic Link (symlink) Targets [http://www.ibm.com/support/docview.wss?uid=swg21146295]
+About creating Symbolic Links (symlinks) from the GUI [http://www.ibm.com/support/docview.wss?uid=swg21146557]
+Removing Symbolic and Hard Links in ClearCase [http://www.ibm.com/support/docview.wss?uid=swg21148781]
+About creating Symbolic Links from command line [http://www.ibm.com/support/docview.wss?uid=swg21260645]
+Managing symbolic links in ClearCase interop [http://www.ibm.com/support/docview.wss?uid=swg21118146]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase VOB Software Development Rational ClearCase Interop

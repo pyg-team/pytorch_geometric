@@ -1,0 +1,135 @@
+Title: IBM TNPM Wireless : Summary_admin error - United States
+
+Text:
+TNPMW summary_admin TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote documents steps if summary admin command fails to connect to DB 
+
+SYMPTOM
+Any operation of summary admin fails with error : 
+
+com.vallent.pm.summaryservice.exception.SummaryServiceException: Unable to export summary for interval: daily. Reason:findExDefSummaries(): null 
+
+. 
+
+Caused by: 
+
+com.vallent.pm.summaryservice.exception.SummaryServiceException: Unable to export summary for interval: daily. Reason:findExDefSummaries(): null
+
+
+CAUSE
+The stack trace indicates the command could not fetch details of summary from DB
+
+
+ENVIRONMENT
+TNPM version 1.3.1 , 1.3.2 ,1.4
+
+
+
+DIAGNOSING THE PROBLEM
+Check the console output from summary admin , the stack trace will indicate null pointer exception form oracle jdbc 
+
+
+
+RESOLVING THE PROBLEM
+Ensure that Connection to DB works from application server through sqlplus as virtuo user. 
+
+Below is the error from summary_admin command :
+
+
+virtuo@tnpminlnx.domain.co.in: summary_admin -l
+Buildfile: /appl/virtuo/admin/summariser/build.xml
+
+copyright-info:
+[echo] Licensed Materials - Property of IBM
+[echo] 5724W86
+[echo] (C) Copyright IBM Corp. 2004, 2009 All Rights Reserved.
+
+init:
+
+listSummary:
+
+BUILD FAILED
+/appl/virtuo/admin/summariser/build.xml:174: Unable to list summaries. Reason: com.vallent.pm.summaryservice.exception.SummaryServiceException: Unable to export summary for interval: daily. Reason:findExDefSummaries(): null
+
+Total time: 2 seconds
+virtuo@tnpminlnx0317.persistent.co.in:
+
+
+14:54:40,546 [main] ERROR @.ant - Build finished with error. {0}
+/appl/virtuo/admin/summariser/build.xml:174: Unable to list summaries. Reason: com.vallent.pm.summaryservice.exception.SummaryServiceException: Unable to export summary for interval: daily. Reason:findExDefSummaries(): null
+at com.vallent.pm.summaryservice.cli.ListSummariesCLICommand.execute(ListSummariesCLICommand.java:79)
+at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)
+at sun.reflect.GeneratedMethodAccessor7.invoke(Unknown Source)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:106)
+at org.apache.tools.ant.Task.perform(Task.java:348)
+at org.apache.tools.ant.Target.execute(Target.java:357)
+at org.apache.tools.ant.Target.performTasks(Target.java:385)
+at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1337)
+at org.apache.tools.ant.Project.executeTarget(Project.java:1306)
+at org.apache.tools.ant.helper.DefaultExecutor.executeTargets(DefaultExecutor.java:41)
+at org.apache.tools.ant.Project.executeTargets(Project.java:1189)
+at org.apache.tools.ant.Main.runBuild(Main.java:758)
+at org.apache.tools.ant.Main.startAnt(Main.java:217)
+at org.apache.tools.ant.launch.Launcher.run(Launcher.java:257)
+at org.apache.tools.ant.launch.Launcher.main(Launcher.java:104)
+Caused by:
+com.vallent.pm.summaryservice.exception.SummaryServiceException: Unable to export summary for interval: daily. Reason:findExDefSummaries(): null
+at com.vallent.pm.summaryservice.tasks.cli.ListSummariesCLITask.execute(ListSummariesCLITask.java:56)
+at com.vallent.pm.summaryservice.cli.ListSummariesCLICommand.execute(ListSummariesCLICommand.java:62)
+... 16 more
+Caused by:
+com.vallent.pm.summaryservice.exception.SummaryServiceException: Unable to export summary for interval: daily. Reason:findExDefSummaries(): null
+at com.vallent.pm.summaryservice.SummaryCfgService.exportSummareisIntv(SummaryCfgService.java:1139)
+at com.vallent.pm.summaryservice.SummaryExportHelper.exportAllSummaries(SummaryExportHelper.java:93)
+at com.vallent.pm.summaryservice.SummaryCfgService.exportAllSummaries(SummaryCfgService.java:1310)
+at com.vallent.pm.summaryservice.SummaryCfgService.listSummaries(SummaryCfgService.java:827)
+at com.vallent.pm.summaryservice.controller.SummaryServiceManager.ListSummaries(SummaryServiceManager.java:440)
+at com.vallent.pm.summaryservice.controller.SummaryServiceManager.execute(SummaryServiceManager.java:124)
+at com.vallent.pm.summaryservice.tasks.cli.ListSummariesCLITask.execute(ListSummariesCLITask.java:52)
+... 17 more
+Caused by:
+com.vallent.pm.summaryservice.dao.exception.SummaryServiceDAOException: findExDefSummaries(): null
+at com.vallent.pm.summaryservice.dao.SummaryExportDefHistoryDAO.findExDefSummaries(SummaryExportDefHistoryDAO.java:194)
+at com.vallent.pm.summaryservice.SummaryCfgService.exportSummareisIntv(SummaryCfgService.java:1096)
+... 23 more
+Caused by:
+java.lang.NullPointerException
+at oracle.jdbc.driver.NamedTypeAccessor.getOracleObject(NamedTypeAccessor.java:302)
+at oracle.jdbc.driver.NamedTypeAccessor.getOPAQUE(NamedTypeAccessor.java:378)
+at oracle.jdbc.driver.OracleResultSetImpl.getOPAQUE(OracleResultSetImpl.java:2006)
+at com.vallent.pm.summaryservice.dao.SummaryExportDefHistoryDAO.findExDefSummaries(SummaryExportDefHistoryDAO.java:110)
+... 24 more
+
+The error indicates that summary engine could not connect to DB using jdbc driver.
+Consult your server Admin or DBA about any changes in java or upgrade of JDBC.
+Ensure below jar files are there in your server :
+
+ls -lrt /appl/oracle/product/11.2.0/db_1/jdbc/lib/ojdbc6.jar
+-rw-r--r-- 1 oracle oinstall 2714016 Aug 23 2011 /appl/oracle/product/11.2.0/db_1/jdbc/lib/ojdbc6.jar
+
+ls -lrt /appl/virtuo/as/server/default/lib/oraclejdbc.jar
+-rw-r----- 1 virtuo virtuo 2152051 Mar 28 2012 /appl/virtuo/as/server/default/lib/oraclejdbc.jar
+
+ls -lrt /appl/virtuo/lib/tp/oraclejdbc.jar
+-rw-r----- 1 virtuo virtuo 2152051 Nov 4 15:26 /appl/virtuo/lib/tp/oraclejdbc.jar
+
+cksum /appl/oracle/product/11.2.0/db_1/jdbc/lib/ojdbc6.jar
+3745107363 2714016 /appl/oracle/product/11.2.0/db_1/jdbc/lib/ojdbc6.jar
+
+cksum /appl/virtuo/as/server/default/lib/oraclejdbc.jar
+1191362468 2152051 /appl/virtuo/as/server/default/lib/oraclejdbc.jar
+
+cksum /appl/virtuo/lib/tp/oraclejdbc.jar
+1191362468 2152051 /appl/virtuo/lib/tp/oraclejdbc.jar
+
+If jdbc driver has been upgraded then you need to revert it , or if there is different version of jar in one of the above paths, then replace it with correct from other paths . Before doing this take copy / backup of existing jar or consult Support team or your administrator.
+This issue can also occur if some different / non-supported version of oracle (additional patch or new version ) has been installed on the server, in such case you may need to revert or rollback to the stable version.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TNPM wireless

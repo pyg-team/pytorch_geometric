@@ -1,0 +1,263 @@
+Title: IBM IT22218: MQ-JMS client using automatic client reconnect cannot requeue a poison message after a multi-instance QMgr failover - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using the automatic client reconnection feature, the MQ
+   classes for JMS will attempt to reinstate any connection and
+   object handles that were closed, for example, due to broken
+   network connections or failover of a multi-instance queue
+   manager.
+   
+   If this reconnection has occurred, followed by a JMS
+   MessageListener attempting to consume a poison message, such
+   that the backout count of the message was greater than the
+   backout threshold defined on the queue from which it was
+   consumed, then the MQ classes for JMS poison message handling
+   logic would be invoked which would be expected to move the
+   poison message to the backout or dead-letter queue.
+   
+   However, the requeue operation would fail, and the following
+   exception would be written to the mqjms.log file:
+   
+   com.ibm.msg.client.wmq.internal.WMQPoison
+   The dead letter queue could not be written to because of
+   exception
+   Message :   javax.jms.JMSException:
+   JMSCS0006: An internal problem occurred. Diagnostic information
+   for service was written to '<PATH_TO_FDC>\JMSCC0002.FDC'. Please
+   terminate the application as the product is in an inconsistent
+   internal state.
+   Stack :
+   com.ibm.msg.client.commonservices.trace.Trace.ffst
+   com.ibm.msg.client.wmq.internal.WMQPoison.checkJmqiCallSuccess
+   com.ibm.msg.client.wmq.internal.WMQPoison.put
+   com.ibm.msg.client.wmq.internal.WMQPoison.deadletter
+   com.ibm.msg.client.wmq.internal.WMQPoison.handlePoisonMessage
+   com.ibm.msg.client.wmq.internal.WMQPoison.handlePoisonMessage
+   com.ibm.msg.client.wmq.internal.WMQPoison.handlePoisonMessage
+   com.ibm.msg.client.wmq.internal.WMQAsyncConsumerShadow.poisonous
+   com.ibm.msg.client.wmq.internal.WMQAsyncConsumerShadow.consumer
+   com.ibm.mq.jmqi.remote.impl.RemoteProxyQueue.driveConsumer
+   com.ibm.mq.jmqi.remote.impl.RemoteProxyQueue.deliverMsgs
+   com.ibm.mq.jmqi.remote.impl.RemoteDispatchThread.deliverMsgsReco
+   nnectable
+   com.ibm.mq.jmqi.remote.impl.RemoteDispatchThread.deliverMsgs
+   com.ibm.mq.jmqi.remote.impl.RemoteDispatchThread.run
+   
+   
+   The FFDC file generated will contain content similar to that
+   below:
+   
+     Product          :- IBM MQ classes for JMS
+     Source Class     :- WMQPoison
+     Source Method    :- checkJmqiCallSuccess
+     ProbeID          :- XN00S004
+   
+   Stack trace to show the location of the FFST call
+   FFST Location  :-  java.lang.Exception
+   at
+   com.ibm.msg.client.commonservices.trace.Trace.getCurrentPosition
+   at
+   com.ibm.msg.client.commonservices.trace.Trace.createFFSTString
+   at com.ibm.msg.client.commonservices.trace.Trace.ffstInternal
+   at com.ibm.msg.client.commonservices.trace.Trace.ffstat
+   at
+   com.ibm.msg.client.wmq.internal.WMQPoison.checkJmqiCallSuccess
+   at com.ibm.msg.client.wmq.internal.WMQPoison.put
+   at com.ibm.msg.client.wmq.internal.WMQPoison.backoutRequeue
+   at com.ibm.msg.client.wmq.internal.WMQPoison.handlePoisonMessage
+   at com.ibm.msg.client.wmq.internal.WMQPoison.handlePoisonMessage
+   at com.ibm.msg.client.wmq.internal.WMQPoison.handlePoisonMessage
+   at
+   com.ibm.msg.client.wmq.internal.WMQAsyncConsumerShadow.poisonous
+   at
+   com.ibm.msg.client.wmq.internal.WMQAsyncConsumerShadow.consumer
+   at com.ibm.mq.jmqi.remote.impl.RemoteProxyQueue.driveConsumer
+   at com.ibm.mq.jmqi.remote.impl.RemoteProxyQueue.deliverMsgs
+   at
+   com.ibm.mq.jmqi.remote.impl.RemoteDispatchThread.deliverMsgsReco
+   nnectable
+   at com.ibm.mq.jmqi.remote.impl.RemoteDispatchThread.deliverMsgs
+   at com.ibm.mq.jmqi.remote.impl.RemoteDispatchThread.run
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects applications which use the IBM MQ classes for
+   JMS that do the following:
+   
+   (a) Consumes messages from queues.
+   
+   (b) Has configured the application to use the automatic client
+   reconnect function with CLIENT transport mode, and have had a
+   network event such that the IBM MQ classes for JMS have
+   reconnected to the queue manager.
+   
+   (c) Has enabled the poison message handling functionality by
+   setting the backout threshold (BOTHRESH) property on the
+   application's input queue to a value greater than 0.
+   
+   (d) Is attempting to consume a poison message from the queue
+   which requires moving to the backout queue.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When using the MQ classes for JMS, queues are opened with an
+   internal option that instructs the queue manager to cache
+   identity and origin context information for messages that are
+   consumed using the object handle created when the queue is
+   opened.
+   
+   In the case where there was a connection failure between the
+   application and the queue manager such that automatic client
+   reconnect function was invoked, then object handles that were
+   reestablished were not reopened with the same internal options
+   to cache identity and origin context information for consumed
+   messages with the recreated object handle.
+   
+   If the MQ classes for JMS application then consumed a poison
+   message, the poison message handling logic would attempt to
+   requeue the message to the backout requeue queue or, failing
+   that, the dead-letter queue.  To move the poison message to the
+   backout requeue or dead-letter queue, the MQ classes for JMS
+   would use the put message option:
+   
+     MQPMO_PASS_ALL_CONTEXT
+   
+   However, because the object handle that was recreated by the
+   automatic client reconnect function did not use the option to
+   save context and identity information, the queue manager fails
+   the requeue of the message with the MQ reason code 2097
+   ('MQRC_CONTEXT_HANDLE_ERROR').
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQ classes for JMS automatic client reconnect function has
+   been updated such that any internal options used initially when
+   a queue was initially opened are also used when the automatic
+   client reconnect function recreates them following a connection
+   failure.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v9.0 CD    9.0.4
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT22218
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ BASE M/P
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7261
+   
+   
+ * REPORTED RELEASE
+   903
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-30
+   
+   
+ * CLOSED DATE
+   2017-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM MQ BASE M/P
+   
+   
+ * FIXED COMPONENT ID
+   5724H7261
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R903 PSY
+   UP

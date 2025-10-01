@@ -1,0 +1,36 @@
+Title: IBM InfoSphere Content Collector WebSphere Application Server can use only Oracle ojdbc6.jar driver - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The embedded WebSphere Application Server that is installed with IBM InfoSphere Content Collector can use only the Oracle ojdbc6.jar JDBC driver to connect to an Oracle data store. 
+
+SYMPTOM
+Errors like the following are logged: 
+
+J2CA0036E: An exception occurred while invoking method setDataSourceProperties on com.ibm.ws.rsadapter.spi.WSManagedConnectionFactoryImpl used by resource jdbc/afuConfigurationDatabase : com.ibm.ws.exception.WsException: DSRA0023E: The DataSource implementation class "oracle.jdbc.xa.client.OracleXADataSource" could not be found.
+
+
+CAUSE
+You can specify the directory of the JDBC driver in the IBM InfoSphere Content Collector Configuration Manager. However, you cannot specify a specific JDBC driver file. 
+
+If you connect to an Oracle data store, Content Collector uses the value of the WebSphere environment variable ORACLE_JDBC_DRIVER_PATH to locate the Oracle JDBC driver and assumes that the driver file name is ojdbc6.jar. If ojdbc6.jar is not found, the Content Collector WebApplications service cannot connect to the Oracle data store. Various connectivity errors are logged.
+
+
+DIAGNOSING THE PROBLEM
+Check the resources.xmlfile in the directory 
+
+<ContentCollector>\AFUWeb\profiles\<profile name>\config\cells\<CellName>\nodes\<nodename>
+
+Resolve the problem as mentioned below if it contains the following class path element:
+<classpath>${ORACLE_JDBC_DRIVER_PATH}/ojdbc6.jar</classpath>
+Do not modify the resources.xml file.
+
+
+RESOLVING THE PROBLEM
+To resolve the problem: 
+
+ 1. Create a copy of the Oracle JDBC driver that is installed on the IBM InfoSphere Content Collector system in the same location where the current driver resides (for example, copy ojdbc14.jar for Oracle 10g). 
+ 2. Rename the copy as ojdbc6.jar. 
+ 3. Restart the IBM InfoSphere Content Collector WebApplications service.

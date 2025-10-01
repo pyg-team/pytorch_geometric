@@ -1,0 +1,130 @@
+Title: IBM HD53726: ASD \ CLASH \ EVEN IF XML IS EXPORTED BY CLASH COMMAND, GEOMETR Y IS NOT DISPLAYED IN WIREFRAME MODE. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ASD \ Clash \ Even if XML is exported by clash
+   command, geometry is not displayed in wireframe
+   mode.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ASD \ Clash \ Even if XML is exported by clash command, geometr
+   y is not displayed in wireframe mode.
+   ASD \ Clash \ Even if XML is exported by clash
+   command, geometry is not displayed in wireframe
+   mode.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS MODIFICATION WILL BE INCLUDED IN CATIA
+   DOCUMENTATION DELIVERED WITH CATIA
+   VERSION 5 RELEASE 18.
+   NOTE THAT DOCUMENTATION WILL ALSO BE
+   INCLUDED IN V5R17SP02.
+   .
+   The different mode of visualization offered in
+   CATIA cannot be supported when we make
+   an xml export.
+   .
+   Documentation Reference:
+   DMU Space Analysis User's Guide / Basic Tasks /
+   Exporting Clash Results & Geometry in XML Format
+   .
+   MODIFICATION:
+   The following note has been added in DMU Space
+   Analysis User's guide-
+   Under Important Warnings section:
+   Wireframe visualization mode is not retrieved in
+   the picture of the XML file.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD53726
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   516
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-06-08
+   
+   
+ * CLOSED DATE
+   2006-07-27
+   
+   
+ * LAST MODIFIED DATE
+   2006-07-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

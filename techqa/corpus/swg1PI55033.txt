@@ -1,0 +1,168 @@
+Title: IBM PI55033: IMPORT *.XLSX FILE ON SPSS STATISTICS 23 FAILS ERROR. COMMAND NAME: GET DATA >(2063) ERROR READING INFORMATION FOR SHEET. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are importing a sheet from an Excel *.xlsx workbook into
+   SPSS Statistics 23.0 FP2.  This is a multi-sheet workbook where
+   the sheet names are in Japanese text.  Upon executing the GET
+   DATA command, you see this error:
+   
+   >Error.  Command name: GET DATA
+   >(2063) Error reading information for sheet.
+   >* Sheet Name: "<Japanese text here>"
+   >Execution of this command stops.
+   EXECUTE.
+   
+   The error message gives the impression that it is the Sheet name
+   that is the problem.  However, changing it to something mundane
+   (like "Sheet1") does not resolve the issue.
+   
+   Workarounds thus far have been to save as *.xls instead of
+   *.xlsx, OR restrict the workbook file to just this sheet.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue will be addressed in the next Fix Pack. Please
+   refer to the Fix Pack schedule at
+   http://www.ibm.com/support/docview.wss?uid=swg21599157 for
+   information on upcoming Fix Packs.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of IBM SPSS Statistics 23.0                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * IMPORT *.XLSX FILE ON SPSS STATISTICS 23 FAILS ERROR.        *
+   * COMMAND                                                      *
+   * NAME: GET DATA >(2063) ERROR READING INFORMATION FOR SHEET.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been addressed for IBM SPSS Statistics 23.0   *
+   * FP3 and 24.0.  Please upgrade to IBM SPSS Statistics 23.0    *
+   * FP3 or 24.0.                                                 *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been addressed for IBM SPSS Statistics 23.0 FP3
+   and 24.0.  Please upgrade to IBM SPSS Statistics 23.0 FP3 or
+   24.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI55033
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   N00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-07
+   
+   
+ * CLOSED DATE
+   2016-05-10
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RN00 PSN
+   UP
+   
+   
+ * RN00 PSY
+   UP
+   
+   
+ * RO00 PSN
+   UP
+   
+   
+ * RO00 PSY
+   UP

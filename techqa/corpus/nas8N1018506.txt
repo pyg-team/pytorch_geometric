@@ -1,0 +1,42 @@
+Title: IBM How to use DCM to create a certificate issued by VeriSign or another Internet Certificate Authority. - United States
+
+Text:
+CERT; DIGCERT; SSL TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides instructions for creating a server certificate issued by an external Certificate Authority. 
+
+RESOLVING THE PROBLEM
+Note: Refer to the following document if this is a new configuration and there is no *SYSTEM store: 
+
+How to create the *SYSTEM store in DCM Database 'DCF Technotes (IBM i)', View 'Products', Document 'How to Create the *SYSTEM Store in DCM' [http://www-01.ibm.com/support/icons/doclink.gif] [http://www-01.ibm.com/support/docview.wss?uid=nas8N1010320]
+
+
+1. In your browser address bar, type the following (where systemname is the IBM i system name or IP address).
+
+http://systemname:2001/QIBM/ICSS/Cert/Admin/qycucm1.ndm/main0
+
+
+2. Click Select Certificate Store located in the left pane and select *SYSTEM, Click Continue, enter the password, Click Continue:
+Select Certificate Store [/support/docview.wss?uid=nas8N1018506&aid=1] [/support/docview.wss?uid=nas8N1018506&aid=1]
+
+3. On the Left navigation, select Fast Path, then select Work with server and client certificates:
+Fast Path [/support/docview.wss?uid=nas8N1018506&aid=2] [/support/docview.wss?uid=nas8N1018506&aid=2]
+4. Click the Create button at the bottom of this page and, when asked, select VeriSign or other Internet Certificate Authority (CA):
+Verisign or other CA [/support/docview.wss?uid=nas8N1018506&aid=3] [/support/docview.wss?uid=nas8N1018506&aid=3]
+5. Fill out the next page with your information and click Continue. If this certificate is being used for a Web server, make sure the common name is the URL host name for your site. The label can be any descriptive name you choose:
+Create certificate [/support/docview.wss?uid=nas8N1018506&aid=4] [/support/docview.wss?uid=nas8N1018506&aid=4]
+6. Copy the certificate signing request (also known as a CSR) and send this to your certificate issuer to sign, making sure you get all the data and dashes. Click OK.
+Request Created [/support/docview.wss?uid=nas8N1018506&aid=5] [/support/docview.wss?uid=nas8N1018506&aid=5]
+7. Once you have the new certificate from the issuer, upload the file using FTP or a mapped drive to any directory in the IFS (but not in QDLS). Next, go back into DCM>Fast Path>Work with server and client certificates, and click Import. Then type the path to the certificate that was uploaded earlier in this step.
+Note: If you get an error that the issuer is not trusted or not in the store, you may need to import the Certificate Authority (CA) certificate first and then come back and import the server certificate. For steps on importing a CA, refer to Rochester Support Center knowledgebase document New, How to Import a CA Certificate into Digital Certificate Manager: Database 'DCF Technotes (IBM i)', View 'Products', Document 'How to Import a CA Certificate into Digital Certificate Manager' [http://www-01.ibm.com/support/icons/doclink.gif] [http://www-01.ibm.com/support/docview.wss?uid=nas8N1012543].
+Import [/support/docview.wss?uid=nas8N1018506&aid=6] [/support/docview.wss?uid=nas8N1018506&aid=6]
+8. Assign the new certificate to whatever applications you would like to secure. Note: Some applications may need to be restarted for the change to take affect:
+Select Applications [/support/docview.wss?uid=nas8N1018506&aid=7] [/support/docview.wss?uid=nas8N1018506&aid=7]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 548869787

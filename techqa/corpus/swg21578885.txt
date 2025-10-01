@@ -1,0 +1,114 @@
+Title: IBM Tracing the JDBC connection between Information Server's Services tier and Xmeta - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After changing the XMETA password, and using the script AppServerAdmin.sh to update the new XMETA password to the InfoSphere Information Server Application. TheWebSphere Applicaiton Server fails to start up 
+
+SYMPTOM
+After the XMETA db user password was reset, WebSphere Application Server would not start-up. It fails with the error message "ORA-01017 invalid username/password".
+Note: XMETA database is created on Oracle Server 
+
+
+CAUSE
+XMETA's new password is invalid, or that value has not been properly sync into InfoSphere Information Server application
+
+ENVIRONMENT
+Unix Server (AIX), Information Server Engine and Domain tier are installed in one box, and Repository tier (Oracle) is installed in another. 
+
+DIAGNOSING THE PROBLEM
+Use Oracle SQLPlus to verify the XMETA connection by calling same username/password, 
+
+
+
+
+SQLPLus is working fine.
+
+
+RESOLVING THE PROBLEM
+Develop a Java Connectivity program to investigate connectivity between WAS and the XMETA: 
+
+1. Create sample application "DSConnTest.java" 
+
+=================Start Code=================== 
+
+DSConnTest.java 
+
+-------------------- 
+
+import java.sql.Connection; 
+
+import java.sql.DriverManager; 
+
+import java.sql.SQLException; 
+
+public class DSConnTest { 
+
+ public static void main(String[] args) { 
+
+ try { 
+
+ Class.forName("com.ibm.isf.jdbc.oracle.OracleDriver").newInstance(); 
+
+ Connection con = DriverManager.getConnection("jdbc:ibm:oracle://metadev:1521;SID=xmeta","user","password"); //In this statement place the appropriate SID,user and password 
+
+ System.out.println("-------"+con); 
+
+ } catch (Exception e) { 
+
+ e.printStackTrace(); 
+
+ } 
+
+ } 
+
+} 
+
+===================End Code================== 
+
+ 
+
+Save the above code to the DBConnTest.java file and change the user and password according to the customer's values. 
+
+a) Place the java file at <IS_HOME>\ASBServer\apps\lib 
+
+b) Go to the folder mentioned in step (a) and run this command to compile it: 
+
+ <WS_HOME>/java/bin/javac DSConnTest.java 
+
+c) Add the database related ISoracle.jar to the classpath <making sure the classpath and filename are as the below example> 
+
+ex: 
+
+CLASSPATH=.:/opt/IBM/InformationServer/ISALite/tools/prereqcheck/utilities/jdbc/ISoracle.jar:/opt/IBM/InformationServer/ISALite/tools/prereqcheck/utilities/jdbc/ISutil.jar:/opt/IBM/InformationServer/ISALite/tools/prereqcheck/utilities/jdbc/ISbase.jar 
+
+export CLASSPATH 
+
+ 
+
+d) Now run the java program as <WS_HOME>/java/bin/java DSConnTest 
+
+ex: 
+
+/opt/IBM/InformationServer/ASBServer/apps/lib# /opt/IBM/WebSphere/AppServer/java/bin/java DSConnTest 
+
+ 
+
+Output of DSConnTest = -------com.ibm.isf.jdbc.oracle.OracleConnection@72ae72ae 
+
+(Output of this sort confirms that the database is up and available for use.) 
+
+ 
+
+NOTES: This program will only confirm that the availability of the database and the URL but not the datasource connection. If the above test is successful then we will need to focus only on the WAS to XMeta configuration setttings. 
+
+If the above test fails with same failure as before (ORA-01017) then there are network or database issues within the server's environment or network. 
+
+ 
+
+2. With step one completed to verify the connectivity and that the new XMeta username/password combination works, we need to execute <IS_Home>/ASBServer/bin to execute the following script using the root user account. 
+
+ AppServerAdmin.sh -db -user <db-user-id> -password <db-user-pwd> 
+
+ DirectoryAdmin.sh -user -userid <db-user-id> -password <db-user-pwd>

@@ -1,0 +1,156 @@
+Title: IBM PK69477: THE NEW CICS WMQ ADAPTOR WILL ALLOW MORE THREADS THAN EXPECTED FOR WMQ. A FORMULA IS NEEDED TO CALULATE THE MQ CTHREAD NUMBER. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With the new CICS/MQ adaptor, customers may start to receive
+   CSQV428I +xxxx CURRENT THREAD LIMIT OF yyyy EXCEEDED messages.
+   With the older MQ adaptor, there were only 8 MQ threads/TCBs in
+   the system, and the MQ cthread count for that region would be 9,
+   8 for the MQ TCBs + 1.  Now with the new CICS/MQ adaptor, tasks
+   now access MQ through the L8 TCBs.  This allows more than 8 TCBs
+   / threads for the region, and MQ may runout of cthreads.
+     A new formula for recalculating the number of MQ cthreads is
+   needs.  Perhaps something like (1 + maxopentcbs) per region.
+   Also it would be good note that once a transaction is on an
+   L8/L9 TCB it will use that particular TCB as a platform to
+   access both DB2 and WMQ.
+     There is a need for the CICS TS Migration Guide to
+   document this.
+   Additional Information: kixrevctc
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: There is no documentation to advise     *
+   *                      customers that they may need to         *
+   *                      increase the value of the WMQ           *
+   *                      CTHREAD parameter when migrating        *
+   *                      to CICS Transaction Server Version 3.2. *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   After migrating to CICS Transaction Server Version 3.2 message
+   'CSQV428I +MQP2 CURRENT THREAD LIMIT OF 1500 EXCEEDED. CREATE
+   THREAD FOR JOB CICSHA2K DEFERRED'
+   is received because the WMQ CTHREAD parameter has not been set
+   to a high enough value.
+   There is no information in the CICS Transaction Server for z/OS
+   Migration from CICS TS Version 3.1. manual to indicate this
+   needs to be done.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The CICS Transaction Server for z/OS Version 3 Release 2
+   Migration from CICS TS Version 3.1. manual, GC34-6858-01,
+   Migration from CICS TS Version 2.3. manual, GC34-6857-01,
+   will be changed.
+   
+   A new bullet will be added to section 'Migration for the
+   CICS-WebSphere MQ connection' as follows:
+   
+   The CTHREAD parameter is a WMQ subsystem tuning parameter
+   that specifies the total number of threads that can connect
+   to a queue manager. This includes batch, TSO, IMS and CICS.
+   Prior to CICS Transaction Server Version 3.2, each CICS
+   region took up nine of the threads specified here, plus one
+   thread for each task initiator (CKTI). This is because the
+   original CICS-WMQ attachment mechanism utilized a pool of eight
+   subtask TCBs. In CICS Transaction Server Version 3.2, there is
+   no such hard-coded number of TCBs used for the CICS-WMQ
+   attachment; TCBs are allocated from the OTE pool of L8 TCBs,
+   subject to availability and the limitation set by MAXOPENTCBS.
+   Therefore, to account for the extra threads of work resulting
+   from CICS Transaction Server Version 3.2, the CTHREAD parameter
+   may need to be increased to a higher value.
+   These parameters are set by the WMQ SET SYSTEM command.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK69477
+   
+   
+ * REPORTED COMPONENT NAME
+   CICSTS V3 Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655M1500
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-23
+   
+   
+ * CLOSED DATE
+   2008-10-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced GC34685801 GC34685701 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

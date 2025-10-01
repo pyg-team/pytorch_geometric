@@ -1,0 +1,131 @@
+Title: IBM Update instructions for the IBM Process Designer V7.5.1 Fix Packs - United States
+
+Text:
+7.5.1.1 Installation Instructions; 7.5.1.2 Installation Instructions; install; 7.5.1.1 fix pack; 7.5.1.2 fix pack PRODUCT README
+
+ABSTRACT
+ This document provides instructions for updating IBM Process Designer for V7.5.1 Fix Packs. 
+
+CONTENT
+
+
+ * Download for IBM Business Process Manager products [http://www.ibm.com/support/docview.wss?uid=swg24033036]
+
+
+
+Table of Contents
+
+ * Updating IBM Process Designer
+ * About this task
+ * Procedure
+ * Results
+ * Reference
+ * Trademarks and service marks
+
+
+© Copyright International Business Machines Corporation 2012, 2014. All rights reserved. 
+US Government Users Restricted Rights – Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. 
+
+
+
+
+
+
+
+
+Updating IBM Process Designer
+
+After you update your Process Center with a fix pack, refresh pack, or interim fix, you must update the Process Designer to the same level. To update, download the Process Designer file again from the upgraded Process Center and run the installation. When you install an IBM Process Designer Version 7.5.1 fix pack and use the existing IBM Process Designer V7.5.0, 7.5.0 Fix Pack 1 or 7.5.1 location, the Process Designer is upgraded to the new Version 7.5.1 fix pack level by installing fixes and changes. Alternately, you can uninstall the existing IBM Process Designer version and reinstall the downloaded IBM Process Designer Version 7.5.1 fix pack version from the updated Process Center.
+
+About this task
+
+When you install the fix pack, refresh pack, or interim fix, to the Process Center, the IBM Process Designer.zip file is also updated. Download and install the updated IBM Process Designer to the directory where you have already installed IBM Process Designer.
+
+Procedure 
+
+
+ 1. Open the Process Center.
+    
+    
+ 2. Click the IBM Process Designer Download option. When you are prompted, save the IBM Process Designer.zip file to your file system. This file contains everything that you need to install and run IBM Process Designer. Depending on your network connection, the download might take several minutes to complete.
+    
+    
+ 3. Extract the contents of the IBM Process Designer.zip file to a temporary directory on your file system.
+    
+    
+ 4. Open a command window and change to the directory where you extracted the contents of the IBM Process Designer.zip file. 
+    
+    
+    Important: If you are running the Microsoft Windows 7, Windows Vista, or Windows Server 2008 operating systems, start your command prompt by right-clicking and selecting Run as administrator.
+    
+    
+ 5. Run one of the following commands to install or upgrade the Process Designer. If you are not an administrative user or if you want to install to your own user name without administrative privileges, install using the nonadmin command ( installProcessDesigner_nonadmin.bat). If you are upgrading, make sure that you use the same user ID that you had used to originally install IBM Process Designer. The following examples show how to install to a default location or to a different location: 
+    
+    
+
+ * 
+ *  installProcessDesigner_admin.bat installProcessDesigner_nonadmin.bat
+   
+ * 
+ * 
+ *  installProcessDesigner_admin.bat installLocation installProcessDesigner_nonadmin.bat installLocation
+   
+ * 
+ * 
+ *  installProcessDesigner_admin.bat D:\IBM\PD installProcessDesigner_admin.bat "D:\Process Designer\"
+   
+   
+
+Results 
+IBM Process Designer is updated. Only the fixes or changes are applied. 
+
+
+Installation messages are recorded in the %TEMP% \IBMProcessDesignerInstall.log file, where the %TEMP% variable is typically set to C:\Documents and Settings\ current_user_name \Local Settings\Temp. 
+
+
+Back to top
+
+
+
+Reference
+
+
+
+You can find additional information on any of these topics in the IBM Business Process Manager [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5mx/index.jsp] [http://www.ibm.com/software/integration/wsesb/library/] Information Center.
+
+For further information on the update strategy or obtaining updates, see the support page for your product.
+
+IBM Business Process Manager Express Support page [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Express]
+IBM Business Process Manager Standard Support page [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Standard]
+IBM Business Process Manager Advanced Support page [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Advanced]
+IBM Business Process Manager Advanced Process Server Support page [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Advanced]
+
+
+Back to top
+
+
+
+
+
+
+
+
+
+Trademarks and service marks 
+
+For trademark attribution, visit the IBM Terms of Use [http://www.ibm.com/legal] Web site. 
+
+
+Back to top
+
+
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2012/9/21 
+
+PRODUCT ALIAS/SYNONYM
+ BPM
+IBM Process Designer

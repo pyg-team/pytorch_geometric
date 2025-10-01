@@ -1,0 +1,143 @@
+Title: IBM JR37178: USER HAS NO DATASTAGE CREDENTIALS TO ACCESS THE PROJECT AFTER   IFT 812 INSTALL FOR FASTTRACK - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Apparently when we installed the v8.1 instances of Datastage on
+   zulu1, jazz1, and charger1 using the non-standard port numbers,
+   it made FastTrack think that no one was credentialed to create a
+   datastage job from a mapping specification. The bug is outlined
+   in the following link:
+   http://www-01.ibm.com/support/docview.wss?rs=14&uid=swg1JR34893 [http://www-01.ibm.com/support/docview.wss?rs=14&uid=swg1JR34893]
+    the thing is, this patch (JR34893 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR34893]) is no longer available for
+   download because it was supposed to be included with the
+   FastTrack 8.1.2 update (reference:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21410979), [http://www-01.ibm.com/support/docview.wss?uid=swg21410979),]
+   which we have installed. Yet, the problem still exists. We have
+   made the configuration changes that the above link requires on
+   nova1 but to no avail. The problem exists on both hosts, zed1
+   and nova1, and occurs no matter who the user is (myself,
+   Geoffrey, and dsadm all get the same error).
+   
+   FT 812 AIX
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  ----------------------------------------------------------------
+   ----------------
+   ** Sep 01 2010 10:44:29 EDT - Diane Everitt/Worcester/IBM@IBMUS
+   - deveritt@us.ibm.com **
+   ----------------------------------------------------------------
+   ----------------
+   
+   
+   Customer update received:
+   
+   
+   We transferred over the DStagewrapper.sh script and executed it
+   against XMETA on test... querying XMETA not only showed KARMA3
+   still registered, but we were also able to run the
+   -deleteproject command to purge it from the database.
+   
+   After doing this, we were able to log on to FastTrack and
+   generate a job successfully. So the root issue of this PMR is
+   now solved. The cause all along was the incomplete unregistering
+   of KARMA3, and the resolution was to delete the corresponding
+   entries from XMETA.
+   
+   If you have no follow-up questions I believe you can close this
+   PMR!
+   
+   Thank you for the hint about the projects not being cleared from
+   the repository during the unregister node (didn't know that)...
+   
+   You may close the CRM.
+   
+   Thank you,
+   Diane
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR37178
+   
+   
+ * REPORTED COMPONENT NAME
+   INFO SRVR FASTT
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36FT
+   
+   
+ * REPORTED RELEASE
+   811
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-09
+   
+   
+ * CLOSED DATE
+   2010-10-13
+   
+   
+ * LAST MODIFIED DATE
+   2010-10-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

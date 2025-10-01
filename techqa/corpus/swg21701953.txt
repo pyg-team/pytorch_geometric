@@ -1,0 +1,13 @@
+Title: IBM Enabling weak cipher suites for Rational Host On-Demand is NOT recommended
+Flash (Alert) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ With the recent attention to RC4 “Bar Mitzvah” Attack for SSL/TLS, this is a reminder to NOT enable weak or export-level cipher suites for Rational Host On-Demand. 
+
+CONTENT
+Rational Host On-Demand by default disables the RC4 stream cipher. If you enabled the RC4 stream cipher you are exposed to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the RC4 stream cipher and take appropriate mitigation and remediation actions.
+- FIPS mode is enabled for secure connections by default. DO NOT disable it.
+- If you are using JSSE, DO NOT enable RC4 stream ciphers using the 'JSSECustomCiphers' parameter.

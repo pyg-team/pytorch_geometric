@@ -1,0 +1,51 @@
+Title: IBM The KVM region server installation fails for IBM SmartCloud Orchestrator or IBM Cloud Orchestrator - United States
+
+Text:
+repo; ports; deployment; regions; SCOrch TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A "Connection refused" error occurs and the deployment of a KVM region server fails in a remote lab environment. 
+
+SYMPTOM
+The following error occurs: 
+
+[ERROR] Connection refused - Connection refused - Connection refused
+connecting to 10.38.33.102:4000 for /environments/cs_deploy_context, giving up
+
+Refer to /var/log/smartcloud/deploy.log for more details.
+
+
+CAUSE
+The remote lab environment is unable to reach Central Server 1 on port 4000.
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, ensure that the Chef Repository service is started and listening on port 4000 on Central Server 1. For example:
+[root@cs-1 smartcloud]# netstat -an |grep 4000 
+tcp 0 0 0.0.0.0:4000 0.0.0.0:* LISTEN 
+
+[root@cs-1 smartcloud]# lsof -P |grep 4000 
+repo_srv. 1722 root 3u IPv4 15540 0t0 TCP *:4000 (LISTEN) 
+
+
+You can also use simple shell networking commands like ping, traceroute, and telnet to verify connections from the remote lab back to Central Server 1.
+
+The following example shows whether SSH connection is working from the remote lab to Central Server 1:
+[root@remotelab /]# ssh root@central-srv01
+root@central-srv01's password:
+Last login: ...
+[root@central-srv01~]#
+
+The following example tests the telnet connection on port 4000 and shows that it is blocked:
+[root@remotelab/]# telnet central-srv014000
+Trying 10.38.33.102...
+telnet: connect to address 10.38.33.102: Connection refused
+
+[root@remotelab/]# telnet 10.38.33.1024000
+Trying 10.38.33.102...
+telnet: connect to address 10.38.33.102: Connection refused
+
+In this example, a firewall rule was blocking port 4000 on a switch at the remote lab.
+
+RELATED INFORMATION
+#Installation fails because the chef-server is down [http://www.ibm.com/support/knowledgecenter/SS4KMC_2.3.0/com.ibm.sco.doc_2.3/ts/ts_installfailchefserverdown.html]

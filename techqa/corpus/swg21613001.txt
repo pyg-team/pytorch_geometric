@@ -1,0 +1,116 @@
+Title: IBM Configuring file content extraction tools for IBM Connections Search - United States
+
+Text:
+stellent file content conversion extraction TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+IBM Connections uses the Stellent (Oracle Outside In Technology) Export utility to extract text from documents of various types. The extracted text is added to the Search index allowing users to find documents based on the content. 
+
+When the Stellent utility is not configured correctly, file content will not be extracted or indexed. Therefore, search results within IBM Connections will not contain any matches on file content. For any content extraction issues, follow the steps in this tech note. 
+
+
+RESOLVING THE PROBLEM
+ 1 Stellent installation 
+
+Ensure that the following IBM Connections post-installation task has been carried out:
+http://www-10.lotus.com/ldd/lcwiki.nsf/dx/Copying_Search_conversion_tools_to_local_nodes_ic40 [http://www-10.lotus.com/ldd/lcwiki.nsf/dx/Copying_Search_conversion_tools_to_local_nodes_ic40]
+
+
+ 2 Running the exporter in isolation from IBM Connections 
+
+To verify that the exporter is working correctly, you can run it on the command line in isolation from IBM Connections. To run the exporter executable on the command line, execute the following as the user that the Search WebSphere Application Server is running under: 
+
+1. Change directory to the Stellent binary location. For example: 
+
+ $ cd /opt/IBM/Connections/data/local/search/stellent/dcs/oiexport
+
+2. Run the exporter command.
+The exporter command has the following syntax: 
+
+ exporter inputpath=<path_to_input_file>
+outputpath=<path_to_extracted_text_output>
+outputid=FI_SEARCHTEXT
+
+For example,
+$ ./exporter inputpath=/root/translation.pdf \ outputpath=/root/testStellent.txt outputid=FI_SEARCHTEXT
+
+If the text extraction worked successfully, you will see the following output: 
+
+Export complete
+
+However, if you see a message like the one below, continue to step 3:
+
+./exporter: error while loading shared libraries: libsc_ex.so: cannot open shared object file: No such file or directory 
+
+
+ 3 Operating System Environment Variables 
+
+Ensure that the operating system environment variables LD_LIBRARY_PATH and PATH are set correctly in Section 1. Both variables should contain the Stellent installation directory. To get the current values of the environment variables, run the following commands as the user that the Search WebSphere Application Server is running under:
+
+$ echo $LD_LIBRARY_PATH
+$ echo $PATH
+
+To verify that the Stellent exporter executable can be found through the PATH environment variable, run the following command:
+
+$ which exporter
+
+The output of this command should contain the full path to the exporter executable. For example:
+
+/opt/IBM/Connections/data/local/search/stellent/dcs/oiexport/exporter
+
+
+ 4 WebSphere Environment 
+
+Using the WebSphere Application Server administration console, ensure that the WebSphere environment variable FILE_CONTENT_CONVERSION points to the exporter executable. 
+
+For example: /opt/IBM/Connections/data/local/search/stellent/dcs/oiexport/exporter
+
+
+ 5 File Permissions 
+
+Ensure that the user that the Search WebSphere Application Server is running under has sufficient privileges. They should have read/write/execute permissions on the exporter executable and read/write permissions on the other files in the Stellent installation directory.
+
+
+ 6 Library compatibility 
+
+Verify that the libraries deployed with Stellent are compatible with your platform.
+
+For example, on a 64 bit Linux system:
+$ uname -a
+Linux host1 2.6.18-308.11.1.el5 #1 SMP Fri Jun 15 15:41:53 EDT 2012 x86_64 x86_64 x86_64 GNU/Linux
+
+$ cd /opt/IBM/Connections/data/local/search/stellent/dcs/oiexport
+$ file libsc_ex.so
+libsc_ex.so: ELF 64-bit LSB shared object, AMD x86-64, version 1 (SYSV), not stripped
+
+(Note that your Stellent installation may contain 32 bit libraries though you are running on 64 bit platform. This is not an issue, provided that the 32 bit compatible libraries are on the LD_LIBRARY_PATH or can be found on the shared library search path).
+
+
+ 7 Shared library dependencies 
+
+The Stellent exporter executable has a number of dependencies on both the shared libraries packaged with Stellent and on shared libraries installed on your system. To verify that all the required shared libraries can be found, use the 'ldd' command on the exporter executable as follows:
+
+$ ldd -v exporter
+
+Check the output of this command for any shared libraries marked as '=> not found'. 
+
+ Stellent shared library not found 
+
+If a Stellent shared library can't be found, then check that the setting of your LD_LIBRARY_PATH operating system environment variable contains the Stellent installation directory. 
+
+ System shared library not found 
+
+If a system shared library can't be found, then you are missing a prerequisite library.
+NOTE: It is still possible to pick up libraries from locations other than those included in the LD_LIBRARY_PATH operating system environment variable, as long as they can be found elsewhere on the system's default search path. 
+
+In addition to libc.so.6, Stellent is dependent upon the following libraries: 
+libstdc++.so.5
+libgcc_s.so.1 
+
+For Red Hat Enterprise Linux 6.0 and later, it is possible that you are missing the package compat-libstdc++-33 . This package contains libstdc++.so.5.
+
+
+
+
+ * 
+ *

@@ -1,0 +1,43 @@
+Title: IBM Query Performance Is Different When Using Database Host Server - United States
+
+Text:
+ODBC; OLEDB TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The performance of the same query can vary between interactive IBM SQL/400 and a client using the database host server. This document lists some of the key differences and ways to minimize those differences. 
+
+RESOLVING THE PROBLEM
+Note: This information applies to any client that uses the IBM OS/400 or IBM i5/OS database server. This includes IBM iSeries Access for Windows ODBC, OLEDB, .Net data provider, data transfer as well as IBM AS/400 Toolbox for Java JDBC. 
+
+A common question is why a particular SQL query takes a different amount of time to run through ODBC (or JDBC or OLEDB) than it does in interactive IBM SQL/400. Sometimes the change in run time can be very dramatic -- a query may go from running in a minute or two to taking over a day (or vice versa).
+
+The query optimizer uses a multitude of statistics and environment settings to decide on an access plan. It may also decide to use a previously cached access plan. This document discusses the most common differences between the environment of the database server job (QZDAxxINIT jobs) and other OS/400 or i5/OS jobs.
+
+If the query has not been tuned properly (with the correct indexes, for example), the optimizer may default to a nonoptimal plan. The most important decision criteria used by the query optimizer is the statistics gathered on the data for the query in question. This information is gathered mostly through the use of existing indexes and keys on the files used in the query. If an extreme difference in performance occurs, use one of the query performance tools to properly tune the query. Refer to information on the Operations Navigator SQL Performance Monitor, the DB Monitor tool, and debug job logs for further tuning information.
+
+Job Environment Factors That Affect Optimization
+
+
+
+OPTIMIZE FOR n ROWS The one factor that usually accounts for the difference in query run times is the number of rows the query is optimized for. As Rochester Support Center knowledgebase document N1017918, Query Optimization Parameters Used by the Database Server describes, the database server will default to optimizing for all rows if the statement is stored in and run from an SQL Extended Dynamic package. If not, it defaults to *FIRSTIO. Interactive SQL defaults to optimizing for first row (*FIRSTIO). To link to N1017918 immediately, click here Database 'DCF Technotes (IBM i)', View 'Products', Document 'Query Optimization Parameters Used by the Database Server' [http://www-01.ibm.com/support/icons/doclink.gif] [http://www-01.ibm.com/support/docview.wss?uid=nas8N1017918]. 
+
+You can experiment with this parameter in either environment by adding the "OPTIMIZE FOR 1 ROWS" or "OPTIMIZE FOR ALL ROWS" clause to the end of the SQL statement. Note that *FIRSTIO is not as strong as the "OPTIMIZE FOR 1 ROW" clause. *FIRSTIO is similar to adding an OPTIMIZE FOR (3% * NumberOfEstimatedRecords), which is a larger number than optimize for 1 row.
+
+Optimizing for one row will force the use of an index where optimizing for all rows may favor arrival sequence. If the query is properly tuned, using the optimization that reflects the actual number of rows fetched will result in the best implementation for most queries. However, a poorly tuned query will often severely degrade in performance when optimized for all rows. 
+
+If the statement is run from a extended dynamic package and the application fetches only the first few rows you should add the OPTIMIZE FOR 1 ROW clause to the query. If your application does fetch all rows and optimizing for 1 row significantly outperforms optimizing for all rows you should tune the query (see above).
+
+Assuming Extended dynamic support is enabled and functional, see Rochester Support Center knowledgebase document N1010027, ODBC and JDBC Toolbox: Statements Placed in an Extended Dynamic Package for information on what types of statements ODBC and JDBC store in a package. To link to N1010027 immediately, click here Database 'DCF Technotes (IBM i)', View 'Products', Document 'ODBC and JDBC Toolbox: Statements Placed in an Extended Dynamic Package' [http://www-01.ibm.com/support/icons/doclink.gif] [http://www-01.ibm.com/support/docview.wss?uid=nas8N1010027]. 
+
+Note that Client Access OLEDB and Client Access Data Transfer do not use extended dynamic support. All queries run through Client Access Data Transfer (OS/400 R440 and later) are optimized for all rows. ALWCPYDTA This value cannot be changed. The database server job always uses *OPTIMIZE. QAQQINI Always check the job log for the message CPI4339 - Query options retrieved file QAQQINI in library xyz. This file allows you to force certain query optimization parameters. A common mistake is to apply a QAQQINI file against particular types of jobs and then forget to remove it. MEMORY POOL SIZE The amount of available memory in the pool can alter the access plan. The default settings for the database server jobs (in subsystem QSERVER) are to run in *BASE where interactive SQL will run in *INTERACT. MAX ACTIVE JOBS This parameter is associated with the memory pool. See above. CACHED Accessed Plans Access plans can be cached in SQL packages or in the system-wide statement cache. An access plan should be recalculated when a job runs the query for the first time if the statistics for the query have significantly changed. Note that the access plan is not recalculated when a pseudo closed cursor is re-opened (successive opens for the same cursor for the same job).
+
+You can determine if a cached access plan was used from either a DBMON or a "debug" job log. The debug job log will show the message, Using existing access plan without change, for the first run of the SQL statement (rather than showing the usual messages explaining why the access plan was chosen). If the cached access plan came from an extended dynamic package, the package name is recorded in the DBMON. Use of an existing access plan for the first run of a statement with no corresponding extended dynamic package implies that the system-wide statement cache was used.
+
+To force the access plan to be recalculated, you can delete the extended dynamic package used by the application. Currently (R440), there is no way to clear the system-wide statement cache except with an IPL. Communication Performance Problems The Client Access ODBC driver has an option to enable prefetch. When this option is checked, data is returned (or fetched) along with the error information (SQLCA) of the SQL statement's run. If there is a problem with the network, the fetch may be very slow. Because the response to the run is included with the data, the user perceives this as a slow running of the query. A communication trace will show excessive resends of the data or very slow transmit rates. Refer to Rochester Support Center knowledgebase document N1010115, Client Access ODBC Application or Data Transfer Appears to Hang over TCP/IP for further information. To link to N1010115 immediately, click here Database 'DCF Technotes (IBM i)', View 'Products', Document 'Client Access ODBC Application or Data Transfer Appears to Hang over TCP/IP' [http://www-01.ibm.com/support/icons/doclink.gif] [http://www-01.ibm.com/support/docview.wss?uid=nas8N1010115]. Ignore Decimal Data Error Selecting this option can prevent the optimizer from using certain indexes. 
+
+This option is on by default for Client Access Data Transfer (it can be disabled in the Format Options section). 
+
+Client Access ODBC, OLEDB and toolbox JDBC always set this option to off (or "Do not ignore data decimal errors"). ODBC has an undocumented diagnostic option that can allow IBM service to enable the option for specific data sources; however, this option is very seldom used. 
+
+HISTORICAL NUMBER
+ 20112100

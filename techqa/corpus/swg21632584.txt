@@ -1,0 +1,27 @@
+Title: IBM Extended agent for Oracle SQL statements display - United States
+
+Text:
+5724V09ORTR; rz TECHNOTE (FAQ)
+
+QUESTION
+ Does Extended agent for Oracle database display SQL statements in Tivoli Enterprise Portal (TEP)? 
+
+ANSWER
+The attribute group RDB SQL TEXT contains the SQL Text attribute to deliver the SQL statement text, up to 4000 characters in length. 
+
+SQL statement text is displayed in TEP in the linked workspaces from the Session and Top SQL workspaces:
+
+1) Select the Session workspace from the TEP navigator. Use workspace link SQL Text from a row in the Session Detail table view to display SQL Text workspace.
+
+[/support/docview.wss?uid=swg21632584&aid=1] [/support/docview.wss?uid=swg21632584&aid=1]
+
+[/support/docview.wss?uid=swg21632584&aid=2] [/support/docview.wss?uid=swg21632584&aid=2]
+
+2) Select Top SQL workspace in TEP navigator. Follow workspace link "SQL Text and Execution Plan" from Top SQL By Elapsed Time table view to display SQL Text.
+
+[/support/docview.wss?uid=swg21632584&aid=3] [/support/docview.wss?uid=swg21632584&aid=3]
+
+[/support/docview.wss?uid=swg21632584&aid=4] [/support/docview.wss?uid=swg21632584&aid=4]
+
+RELATED INFORMATION
+ Attributes in each attribute group [http://www.ibm.com/support/knowledgecenter/SS3JRN_7.2.0/com.ibm.itcama.doc_7.1/oracleextended/fac_attributes_descriptions.html]

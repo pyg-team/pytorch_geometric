@@ -1,0 +1,146 @@
+Title: IBM PQ86369: At times, Internet Explorer 6 doesn't send the body or Expect 10 0-continue in an HTTP 1.1 POST request. Violates RFC 2616 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  At times, Internet Explorer 6 doesn't send the body or Expect
+   100-continue in an HTTP 1.1 POST request, but the browser waits
+   to receive a 100-continue.  This is a violation of RFC 2616.
+   
+   In detail:
+    1)  The client (browser) does not send the EXPECT 100-continue
+   header in the POST.
+   
+    2) The client does not send the body in a POST request, but
+   expects to receive 100-continue. This is a violation of the
+    RFC 2616 spec.
+   
+   
+   If Internet Explorer is made to do 1) or 2) at all times, then
+   our application will always be able to handle POST requests from
+   IE 6.
+   
+   This behavior causes the session to be in "deadlock" because
+   the proxy is waiting on the entire POST request (including body)
+   from the client and the client is waiting for the proxy to send
+   a responnse (100-continue).
+   
+   To resolve this problem, the proxy needs an additional directive
+   that causes it to forward responses to client when the entire
+   post request is not yet received.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  100-Continue not sent to client to keep connection alive.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  To enable the polling of client and server-side connections for
+   POST
+   requests, please add the following directive in ibmproxy.conf.
+   
+    Polling100Continue on
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ86369
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS CACHING PRO
+   
+   
+ * REPORTED COMPONENT ID
+   5630A3610
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-03-19
+   
+   
+ * CLOSED DATE
+   2004-04-14
+   
+   
+ * LAST MODIFIED DATE
+   2004-04-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     DEFSRXXX
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

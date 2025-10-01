@@ -1,0 +1,253 @@
+Title: IBM TNPM Wireless 131 to 132 Upgrade TDS issue - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This technote addresses issues related to TDS during TNPM wireless upgrade from 131 to 132 
+
+CONTENT
+Product : Tivoli Netcool Performance Manager for Wireless 
+
+Release : 1.3.1 
+
+Platform: Solaris; Linux 
+
+Team : PSL L2 
+
+ 
+
+Abstract 
+
+This technote addresses issues related to TDS during TNPM upgrade from 131 to 132 
+
+Symptom 
+
+Issue is faced while upgrading form 1.3.1 to 1.3.2 in the step "Migrating TDS instance from version 6.2" it fails, and the only error message is: 
+
+GLPDBM020I Starting the pre-migration tasks. 
+
+-ksh: line 1: db2: not found 
+
+GLPDBM011E The DB2 start database manager command failed. 
+
+GLPDBM085I The db2 migration tool did not run successfully. Check the 
+
+log file, '/var/idsldap/V6.3/idsdbmigr.log' for details. 
+
+[Tue Feb 25 19:32:27 BRT 2014]: ERROR: Failed to migrate TDS instance 
+
+Cause 
+
+The upgrade script has failed to start the DB2 instance as when it tries to list the DB directory db2cli.log shows that there is problem with DB2 directory : 
+
+2014-02-26-10:53:59.native retcode = -1031; state = "58031"; message = "SQL1031N The database directory cannot be found on the indicated file system. 
+
+The DB2 command it tries to execute is 
+
+su - $DB2_INSTNAME -c "db2 list db directory" >>$IDSDBMIGR_LOG 
+
+Resolution
+
+1. TDS migration / upgrade failed form 6.2 to 6.3
+
+GLPDBM020I Starting the pre-migration tasks. 
+-ksh: line 1: db2: not found 
+GLPDBM011E The DB2 start database manager command failed. 
+GLPDBM085I The db2 migration tool did not run successfully. Check the 
+log file, '/var/idsldap/V6.3/idsdbmigr.log' for details. 
+[Mon Jul 29 14:25:08 CEST 2013]: ERROR: Failed to migrate TDS instance 
+
+
+The processes before the DB2 are successful . 
+We could see the below failure : 
+FAILURE: 1 
+GYMWI0002E No domain name configured 
+You must set up a domain name on the server and ensure the fully 
+qualified hostname is valid 
+Could you please try again once setting a fully qualified hostname and 
+then try reinstalling it again. 
+PFB the command to remove TDS: 
+/var/install/sbin/tds_install -base <target directory> -product virtuo 
+-remove 
+Please remove the earlier TDS and then try reinstalling- Rollback
+PFB the steps for rollback :
+- Stop TDS using command service tdsna stop. 
+- Raplace current directories /appl/ldap, /opt/ibm/ldap, 
+/export/home/virtuo/idsinst with backed up verion. 
+- Delete /opt/ibm/tdsdb2V9.7 
+- Run TDS installer with set domainname
+
+Please always keep a backup ready just in case. 
+
+CAUTION: Never remove the TDS directory by using delete command (rm -rf)
+which is created after running the scripts. 
+
+If removal of TDS doesn’t work then move further else try migration again.
+It might happen that 6.3 is not removed correctly and 6.2 is not usable thus the rollback failed.
+From "idsilist -a" output I can see TDS instance "idsinst" version is 6.3 now. 
+Following error is observed from the logs: 
+
+GLPCTL092E Unable to run the command on directory server instance 
+'idsinst'. The command can only be run on directory server instances at 
+version '6.2'. 
+GLPDBB004W The program did not complete successfully. View earlier 
+error messages for information about the exact error. 
+This means that you are using 6.2 commands to operate on 6.3 instance. 
+Please use 6.3 commands to operate on "idsinst" instance. 
+(/opt/ibm/ldap/V6.3/)
+
+The problem after what ever process was used to back out is, we are left with TDS 6.2 installed with a database instance that thinks it has been migrated to TDS 6.3. 
+The procedures used to this point were not provided by TDS. So I am trying to get you back to some usable state. 
+Try set this instance back to V6.2 and see if we can get tds up and running. 
+
+But we need to know if we can connect to the database before we proceed. 
+Make a copy of these 2 files. 
+
+idsinstances.ldif 
+ibmslapd.conf 
+
+edit the 2 files 
+
+make idsinstances.ldif look like this 
+charset: ISO-8859-1 
+version: 1 
+dn: CN=IDS INSTANCES 
+cn: IDS INSTANCES 
+objectClass: TOP 
+objectClass: CONTAINER 
+dn: cn=idsinst, CN=IDS INSTANCES 
+cn: idsinst 
+ids-instanceDesc: LDAP instance idsinst for IBM TN 
+ids-instanceLocation: /appl/ldap 
+ids-instanceVersion: 6.2 
+objectClass: TOP 
+objectClass: ids-instance 
+
+and in the ibmslapd.conf file. 
+change these lines 
+
+# IBM Directory Server Configuration File Version 6.3 for Linux 
+# special file trying to change back to 6.2 
+# See the "Configuration Schema" appendix in the 
+# IBM Directory Server Version 6.3 Installation and 
+ibm-slapdVersion: 6.2 
+save these 2 files. 
+Try to start the tds instance. 
+check it is running, with idsldapsearch . 
+then before you migrate again, 
+run idsdbback -I idsinst -k <a_backup directory> 
+make a copy of all the files under idsslapd-idsinst\ 
+also run idsdb2ldif -I idsinst -o \path.idsinst_out.ldif 
+then you can try your migration again.
+
+In short below are the steps to be followed :
+
+Please try below steps 
+
+
+
+1. Remove 6.3 again 
+
+2. Make sure current version are pointed to 6.2 in 
+/opt/ibm/ldap/idsinstinfo 
+
+3. Backup /data/appl/ldap/idsslapd-idsinst 
+
+4. Copy 6.2 files back to original folder. 
+
+cp /data/appl/ldap/idsslapd-idsinst/etc/BackupV6.2/etc/* 
+/data/appl/ldap/idsslapd-idsinst/etc/ 
+
+5. Rerun upgrade. 
+
+/var/install/sbin/tds_install -base /appl -product virtuo -version 6.3 
+-upgrade 
+
+
+2. TDS migration was succesfull from 6.2 to 6.3, but DB2 could not be started
+Issue is faced while upgrading form 1.3.1 to 1.3.2 in the step "Migrating TDS instance from version 6.2" it fails, and the only error message is: 
+GLPDBM020I Starting the pre-migration tasks. 
+-ksh: line 1: db2: not found 
+GLPDBM011E The DB2 start database manager command failed. 
+GLPDBM085I The db2 migration tool did not run successfully. Check the 
+log file, '/var/idsldap/V6.3/idsdbmigr.log' for details. 
+[Tue Feb 25 19:32:27 BRT 2014]: ERROR: Failed to migrate TDS instance 
+The upgrade script has failed to start the DB2 instance as when it tries to list the DB directory 
+
+db2cli.log shows that there is problem with DB2 directory :
+2014-02-26-10:53:59.native retcode = -1031; state = "58031"; message = "SQL1031N The database directory cannot be found on the indicated file system. 
+The DB2 command it tries to execute is 
+su - $DB2_INSTNAME -c "db2 list db directory" >>$IDSDBMIGR_LOG 
+You need to check in idsdbmigr.log and locate below error :
+GLPDBM020I Starting the pre-migration tasks.
+GLPDBM011E The DB2 start database manager command failed.
+GLPDBM085I The db2 migration tool did not run successfully. Check the log file, '/var/idsldap/V6.3/idsdbmigr.log' for details.
+
+Also check dependency checker output for any errors and try to reslve if there is any error with host name or domain name.
+Check the TDS install log, log 51706.999.631.tdsinstall1279 , If TDS was migrated successfully then issue is with DB2 .
+GLPMIG027I Successfully migrated the directory server instance, 'idsinst', to version '6.3'.
+But DB2 is throwing the error :
+GLPDBM020I Starting the pre-migration tasks.
+-ksh: line 1: db2: not found
+GLPDBM011E The DB2 start database manager command failed.
+GLPDBM085I The db2 migration tool did not run successfully. Check the log file, '/var/idsldap/V6.3/idsdbmigr.log' for details.
+[Tue Feb 25 19:32:27 BRT 2014]: ERROR: Failed to migrate TDS instance
+
+Get the current state of TDS form below commands : 
+
+1) Run the following commands as your instance owner (idsinst): 
+
+db2level 
+db2 connect to idsdb 
+
+Do both these show that the DB2 instance and the database are at 9.7? 
+
+2) start the server (as root): 
+
+/opt/ibm/ldap/V6.3/sbin/ibmslapd -I idsinst -n 
+
+Does the server start? Check for errors in the following logs: 
+
+/data/appl/ldap/idsslapd-idsinst/logs/ibmslapd.log 
+/data/appl/ldap/idsslapd-idsinst/logs/db2cli.log 
+
+Send these logs & output of the commands to us. 
+
+3) also as root run the following: 
+
+/opt/ibm/ldap/V6.3/sbin/idsilist -a 
+
+The above commands will show TDS version , if server can start and other thingd.
+If it shows TDS version as 6.2, it means that TDS has not been migrated.
+
+Try to list lists the DS instance and check if it shows version as 6.3.
+It means TDS is migrated but DB2 has failed.
+If TDS has failed, you need to rollback or remove it.
+
+The db2cli.log shows that there is problem with DB2 directory.
+2014-02-26-10:53:59.native retcode = -1031; state = "58031"; message = "SQL1031N The database directory cannot be found on the indicated file system. 
+SQLSTATE=58031
+The install script / has function in first line as prepare_db2_start_dbm
+# list database directory
+su - $DB2_INSTNAME -c "db2 list db directory" >>$IDSDBMIGR_LOG
+The idsinst user must have the DB2 environment sourced in its shell. This should be done automatically when TDS/DB2 is installed. Normally the following lines are contained in the .profile of the idsinst user: 
+
+# The following three lines have been added by IBM DB2 instance utilities.
+if [ -f /export/home/idsinst/sqllib/db2profile ]; then
+. /export/home/idsinst/sqllib/db2profile
+fi
+
+You can check the below file :
+
+cat /home/idsinst/sqllib/db2profile
+
+This assumes the idsinst user's shell is ksh - this should be the case if the setup_users script was used to create the user.
+So maybe these lines are missing or have been removed, or the user's default shell has been changed. In any case, the user profile will have to be set up to ensure that the db2profile is sourced automatically.
+
+Add the 3 lines in the script and try migrating TDS again.
+
+
+PMR 
+51706,999,631 
+25261,707,707

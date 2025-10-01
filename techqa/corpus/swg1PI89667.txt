@@ -1,0 +1,199 @@
+Title: IBM PI89667: MQ Z/OS: Even with SPLCAP set to OFF, a client connection receives reason 2085 for SYSTEM.PROTECTION.POLICY.QUEUE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere MQ 7.5 and above integrates the Advanced Message
+   Security (AMS) feature into the base product.  The code will
+   check for the existence of SYSTEM.PROTECTION.POLICY.QUEUE
+   unless SPLCAP is set to off.
+   
+   Even with SPLCAP set to off on the z/OS queue manager,
+   SYSTEM.ADMIN.QMGR.EVENT is filling with events for MQ reason
+   2085 MQRC_UNKNOWN_OBJECT_NAME if SYSTEM.PROTECTION.POLICY.QUEUE
+   has not been defined using CSQ4INSM.
+   
+   The error occurs when the SVRCONN is using shared conversations
+   (SHARECNV > 1). The initial connection correctly returns "not
+   supported" to the client. However this value is not being
+   inherited by subsequent connections sharing the same channel,
+   causing them to return "unknown" instead and leading to the
+   unexpected accesses to SYSTEM.PROTECTION.POLICY.QUEUE.
+   
+   In a trace of a JMS client, initially there is
+     getQmgrSplCapability() getter [NOT_SUPPORTED]
+   but then later there is
+     getQmgrSplCapability() getter [UNKNOWN]
+   
+   Additional Symptom(s) Search Keyword(s):
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Options to choose from include:
+   - Define SYSTEM.PROTECTION.POLICY.QUEUE using CSQ4INSM in
+     SCSQPROC.
+   
+   - Set the environment variable AMQ_DISABLE_CLIENT_AMS on the
+     client as described at
+     http://www.ibm.com/support/docview.wss?uid=swg21623002 [http://www.ibm.com/support/docview.wss?uid=swg21623002]
+   
+     Either:
+     1) Create and set the environment variable
+        AMQ_DISABLE_CLIENT_AMS to TRUE in the environment where
+        the MQ client is running.
+   
+     OR
+   
+     2) Set com.ibm.mq.cfg.AMQ_DISABLE_CLIENT_AMS to TRUE in the
+        mqclient.ini file
+   
+   - Set SHARECNV=0 on the SVRCONN definition. Be aware that this
+     will disable some features of shared conversations as
+     described at
+   https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_8.0.0/com.
+   ibm.mq.mig.doc/q001660_.htm [https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_8.0.0/com.ibm.mq.mig.doc/q001660_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of IBM MQ for z/OS Version 9       *
+   *                 Release 0 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Unexpected MQRC_UNKNOWN_OBJECT event    *
+   *                      messages are generated for              *
+   *                      SYSTEM.PROTECTION.POLICY.QUEUE when a   *
+   *                      client connects to a queue manager with *
+   *                      SPLCAP NO.                              *
+   ****************************************************************
+   When connecting to a queue manager, during the initial channel
+   negotiation the queue manager informs the client whether SPLCAP
+   is enabled or not.
+   When subsequent connections are made from the same client, and
+   SHARECNV>1, this information is not correctly set, and so the
+   client attempts to open SYSTEM.PROTECTION.POLICY.QUEUE
+   unnecessarily.
+   If the queue manager has local events (LOCALEV) enabled, and
+   this queue does not exist, this leads to the event messages
+   being generated.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  rriCopySess is changed to correctly propagate the SPLCAP setting
+   to subsequent conversations sharing the same channel.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI89667
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ Z/OS V9
+   
+   
+ * REPORTED COMPONENT ID
+   5655MQ900
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-11-01
+   
+   
+ * CLOSED DATE
+   2017-11-20
+   
+   
+ * LAST MODIFIED DATE
+   2018-01-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI88458 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI88458]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI52025
+   
+   
+
+MODULES/MACROS
+ *  CSQXRMSS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM MQ Z/OS V9
+   
+   
+ * FIXED COMPONENT ID
+   5655MQ900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI52025 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI52025]
+   UP17/12/16 P F712
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

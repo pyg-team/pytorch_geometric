@@ -1,0 +1,77 @@
+Title: IBM QRadar: How does coalescing work in QRadar? - United States
+
+Text:
+event coalescing; log source coalescing; event payloads; compliance; event data lost; enable coalescing; disable coalescing TECHNOTE (FAQ)
+
+QUESTION
+ How does event coalescing work for log sources in QRadar? What data is kept and what is lost when events are coalesced? How are events displayed with coalescing enabled? 
+
+ANSWER
+Event Coalescing helps improve performance, and reduce storage impacts, when a large burst of events is received, that match a specific criteria. For example the multitude of similar events that can be created during a Denial Of Service attack, could be converted from hundreds of thousands of events into only a few dozen records, while maintaining the count of the number of actual events received. 
+
+
+
+HOW DOES COALESCING WORK?
+
+Event data received by QRadar is processed in to normalized fields, along with the original payload. When Coalescing is enabled the following five properties are evaluated: 
+ * QID 
+ * Source IP 
+ * Destination IP 
+ * Destination port 
+ * Username 
+
+Event coalescing starts after three events have been found with matching properties within a 10 second period. 
+Additional events that occur within the 10 second period are coalesced together, with a count of the events noted. For each record containing coalesced events, only the payload of the first event is retained. 
+
+For example, if 104 events are seen within a 10 second period, where the QID, Source IP, Destination IP, Destination port, and Username are all the same, the log activity tab will display four records, for that 10 second period. 
+
+The initial three records will display each of the individual events with their event payloads intact. 
+The fourth record will contain the event payload of the fourth event, however, the remaining 100 events that arrive within that 10 second period, are coalesced. 
+Since there were 101 coalesced events, the information for the fourth record displays an event count of 101. 
+The fourth record will contain the event payload of the fourth event, however, the remaining 100 events that arrive within that 10 second period, are coalesced. 
+Coalescing will continue for each 10 second period that consecutively follows, where all values for the criteria match. 
+
+Rules that trigger based on event counts evaluate both non-coalesced and coalesced events. This ensures that rules properly count when event coalescing is enabled. 
+
+
+SYSTEMWIDE EVENT COALESCING SETTINGS
+QRadar provides the ability to disable c oalescing if there is a requirement to retain all event payloads. This can be done either at system level, or per log source basis. 
+
+Procedure: 
+
+To disable coalescing at the system level: 
+ 1. on the Admin tab, click the System Settings icon. 
+ 2. Click Advanced. 
+ 3. Under the System Settings heading, find the Coalescing Events setting. 
+ 4. To disable Coalescing Events for all log sources, select No, 
+ 5. Click Save, and close the window. 
+ 6. From the Admin tab click Deploy Changes. 
+
+
+
+
+[/support/docview.wss?uid=swg21622709&aid=1] [/support/docview.wss?uid=swg21622709&aid=1] 
+<h2 style="color:#008abf;">Per Log Source Event Coalescing</h2>] 
+Coalescing on a per log source basis can be done at the time of creation or when editing the settings of an existing log source. 
+
+Procedure: 
+
+To disable Coalescing for an existing log source: 
+ 1. from the Admin tab, Under the Data Sources, and then Events headings, click the Log Sources icon. 
+ 2. Double click the row containing the log source that you would like to edit. 
+ 3. Clear the Coalescing Events check box. 
+
+
+[/support/docview.wss?uid=swg21622709&amp;aid=2] 
+
+WHAT TYPES OF LOG SOURCES SHOULD I CONSIDER DISABLING COALESCING?
+
+Log sources for DNS systems, Proxy Servers, Anti-Virus systems, Windows servers and Endpoints can be good candidates for turning coalescing off. These log sources often include additional event payload information beyond QRadar's normalized fields which can be unique to the event payload that an administrator would want captured and searchable for an investigation. 
+
+
+
+
+Where do you find more information? 
+
+
+[/support/docview.wss?uid=swg21622709&aid=3] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21622709&aid=4] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21622709&aid=5] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21622709&aid=6] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21622709&aid=7] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21622709&aid=8] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21622709&aid=9] [http://ibm.biz/SuptRegQuikStart]

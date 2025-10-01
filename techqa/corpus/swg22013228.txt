@@ -1,0 +1,46 @@
+Title: IBM Receiving error BMXAA5861E when importing flat file to Maximo - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Due to below error, flat file importing was failed.
+BMXAA5861E - Mandatory keys are missing - unable to create xml from flat structure. 
+[/support/docview.wss?uid=swg22013228&aid=1] [/support/docview.wss?uid=swg22013228&aid=1]
+
+CAUSE
+When Maximo Integration Framework processing imported data to Maximo table, it need validate the key to understand whether it should UPDATE existed record or CREATE a new record. 
+
+By default, the key used by MIF for the parent object is the attributes associated with the primarykeycolseq values defined via Database Configuration application. 
+
+ 
+
+Below is an example for JOBPLAN object. Key is combined with 'JPNUM','ORGID','SITEID' and 'PLUSCREVNUM' fields.
+[/support/docview.wss?uid=swg22013228&aid=2] [/support/docview.wss?uid=swg22013228&aid=2]
+
+
+If MIF couldn't retrieve the key info from imported data file for some reason, error 'BMXAA5681E' would be detected and import operation would be failed. 
+
+
+DIAGNOSING THE PROBLEM
+You could enable 'DEBUG' log level of 'Integration' root logger to check what key MIF is looking at and what's the key's value being retrieved(see below) 
+
+
+[/support/docview.wss?uid=swg22013228&aid=3] [/support/docview.wss?uid=swg22013228&aid=3]
+
+If the key value not being provided in the import data file, you would see below log messages:
+
+[/support/docview.wss?uid=swg22013228&aid=4] [/support/docview.wss?uid=swg22013228&aid=4]
+
+
+RESOLVING THE PROBLEM
+To solve this error, either including the key value in the data file or switching to the right key which's suitable to your environment. 
+
+On object structure details tab, checking available values for 'Alternate Key' field. 
+
+Check the details of per key via Database Configuration application and explicitly select the right key for your environment. 
+
+Save the change then retry data import operation. 
+
+
+[/support/docview.wss?uid=swg22013228&aid=5] [/support/docview.wss?uid=swg22013228&aid=5]

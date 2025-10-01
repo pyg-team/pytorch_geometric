@@ -1,0 +1,44 @@
+Title: IBM db2iupgrade command can take a long to complete and may appear hung - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When an upgrade to a newer version of DB2 is ongoing but takes a long time here is an easy way to check for the progression 
+
+SYMPTOM
+The upgrade taking a long time which can lead to think it is hung
+
+
+CAUSE
+The reason why the upgrade slowness can be observed is out of the scope of this technical note. 
+
+However, in some cases and depending on what db2diag.log file is showing, this can be a normal behaviour.
+
+
+DIAGNOSING THE PROBLEM
+Looking at the db2diag.log it can be noticed that process 'db2ckupgrade64_exe' is seeing regular addition of entries. 
+
+This should serve as a proof of progression taking place. Other entries from another process like 'db2sysc' would do as well. This means the engine is in the middle of some tasks that were very likely initiated by the upgrade process itself. 
+
+When there are entries added to the db2diag.log file, this is safe to think all is working as expected and we just should wait for the upgrade to complete. 
+
+This should take more or less time depending on what is needed to be upgraded. If databases are big and what they contain.
+
+
+
+RESOLVING THE PROBLEM
+Let's have a look at one specific example of this kind of situation where the upgrade seems to be slow. 
+
+Part of an entry in the db2diag.log file, there can be seen the following information added by the 'db2ckupgrade64_exe' process :
+DB2CKUPGRADE: Begin: sqlemCkTableLoadPending 
+
+There can be a long time before something else is appended to the log file. This is an example of the engine working in the background which may lead to think nothing is happening anymore. 
+
+For this specific example, a quick search points to this technical note and provides an explanation :
+http://www-01.ibm.com/support/docview.wss?uid=swg21649699 [http://www-01.ibm.com/support/docview.wss?uid=swg21649699]
+There may be other situations similar to this one with other warning messages that are completely normal behaviour.
+
+RELATED INFORMATION
+ The db2ckupgrade or db2iupgrade tools take a long time [http://www-01.ibm.com/support/docview.wss?uid=swg21649699]
+DB2 v10.5 APAR IC94507 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC94507]

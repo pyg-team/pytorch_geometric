@@ -1,0 +1,138 @@
+Title: IBM JR48007: UPDATE/DELETE OPERATION FAILS WHEN AN USER DEFINED TYPE COLUMN IS PART OF THE KEY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  UPDATE/DELETE operation on the target fails when a distinct user
+   defined type is part of the key/unique index.
+   Database operation failed.
+   A SQL exception has occurred. The SQL error code is '-401'. The
+   SQL state is: 42818. The error message is:
+   DB2 SQL Error: SQLCODE=-401, SQLSTATE=42818, SQLERRMC==,
+   DRIVER=3.65.77
+   
+   A SQL exception has occurred. The SQL error code is '-727'. The
+   SQL state is: 56098. The error message is:
+   DB2 SQL Error: SQLCODE=-727, SQLSTATE=56098,
+   SQLERRMC=2;-401;42818;=, DRIVER=3.65.77
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Avoid using user defined type in the key/unique index.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ISCDC 6.5.2 for DB2 LUW stops with the following
+   error if the table has a column with user defined type:
+   
+   A SQL exception has occurred. The SQL error code is '-401'. The
+   SQL state is: 42818. The error message is:
+   DB2 SQL Error: SQLCODE=-401, SQLSTATE=42818, SQLERRMC==,
+   DRIVER=3.65.77
+   
+   A SQL exception has occurred. The SQL error code is '-727'. The
+   SQL state is: 56098. The error message is:
+   DB2 SQL Error: SQLCODE=-727, SQLSTATE=56098,
+   SQLERRMC=2;-401;42818;=, DRIVER=3.65.77
+   
+   This issue affects users running ISCDC 6.5.2 for DB2 LUW.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  As a workaround please modify the advance JDBC parameters in
+   the configuration tool and set it to:
+   
+   progressiveStreaming=2;currentFunctionPath="SYSIBM","SYSFUN","SY
+   SPROC","SYSIBMADM","<SCHEMA>"
+   
+   where "<SCHEMA>" is schema the user defined type is created.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR48007
+   
+   
+ * REPORTED COMPONENT NAME
+   IS CDC DB2
+   
+   
+ * REPORTED COMPONENT ID
+   5724U7002
+   
+   
+ * REPORTED RELEASE
+   652
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-04
+   
+   
+ * CLOSED DATE
+   2013-10-11
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    JR47715
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

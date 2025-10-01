@@ -1,0 +1,31 @@
+Title: IBM SPSS Statistics: No concurrent licenses found after a Java update was performed - United States
+
+Text:
+SPSS Statistics network license manager; sentinel; java; error WlmAdmin lservrc TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You use concurrent (network) licenses for IBM SPSS Statistics software. The License Manager is installed on a windows operating system and was running fine. The Concurrent Licensing Administrative Tool (WlmAdmin) showed all licenses.
+
+However, after installing Oracle Java Update 8 on the Windows machine, the WlmAdmin does not show any Licenses anymore, although the License file lservrc lists all license codes correctly.
+
+When trying to activate the licenses again, by using the Licenseactivator.exe in a command prompt, the following error appears:
+
+Sentinel Licenseactivator error:
+LaunchAnywhere Error: Windows error 2 occured while loading the Java VM 
+
+CAUSE
+Windows cannot find Java
+
+RESOLVING THE PROBLEM
+Check the System Variable "Path" as following: 
+
+1. From the Windows Start menu, right-click the Computer icon and select Properties.
+2. Click the Advanced System Settings link in the left side.
+3. In the System Properties window, click on the Advanced tab, then click the Environment Variables button near the bottom of that tab.
+4. In the Environment Variables window, highlight the Path variable in the "System variables" section and click the Edit button.
+Add or modify the path lines with the paths : "C:\ProgramFiles\Java\jre1.8.0_72\bin" (You may cross check the right path in your Program files\Java directory and use the recent one)
+*Please note that each different directory is separated with a semicolon (;) so you just need to add a semicolon (;) after the existing path.
+5. Relaunch the licenseactivator by CMD (command line install) to re-add your licenses.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

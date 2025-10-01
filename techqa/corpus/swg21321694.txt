@@ -1,0 +1,92 @@
+Title: IBM Starting and stopping the MXServer and NodeAgent processes - United States
+
+Text:
+MXServer; NodeAgent; "MXServer and NodeAgent processes"; start; stop; srm71relnotes SRM TSRM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Creating JMS activation specifications for continuous inbound queues might not take effect. 
+
+SYMPTOM
+The reader of the Service Request Manager 7.1 information center (and Installation Guide (PDF)) is not told which specific processes to stop and restart when creating JMS activation specifications for continuous inbound queues.
+
+
+RESOLVING THE PROBLEM
+ 
+
+The following information is updated for the Service Request Manager 7.1 information center (and Installation Guide (PDF)):
+
+
+The information in the Service Request Manager 7.1 information center for "Creating JMS activation specification for continuous inbound queue (CQIN)" (under "Advanced installation topics", then "Installing base services with middleware configuration", then "Manually configuring JMS queues", then "Creating JMS activation specification for continuous inbound queue (CQIN)") (also see page 192 of the Installation Guide (PDF)), steps 7 and 8 are updated to correctly read:
+
+
+7. Stop the MXServer and Node Agent processes.
+
+(instead of "Ensure to stop all IBM-related processes and daemons.")
+
+See the below topics for specific information to stop these services.
+
+
+8. Restart the MXServer and Node Agent processes for the update to take effect.
+
+(instead of "You must now restart these processes for the update to take effect..")
+
+For information on how to start these services, see "Starting middleware on Windows" in the Service Request Manager 7.1 information center under "Installing", then "Installing the product", then "Installing middleware", then "Starting middleware on Windows" (Installation Guide (PDF) page 62) (or "Starting middleware on AIX and Linux" (Installation Guide (PDF) page 63)). 
+
+
+-----------------------------------------------------------------------------------------------
+
+
+Stopping middleware on Windows 
+
+To stop the Node Agent or MXServer process, complete the following steps, as needed:
+
+
+ 1. Log in as a user with administrative permissions. 
+ 2. Stop the desired servers by executing the following scripts:
+
+
+Stop Node 
+
+<WAS_HOME>\profiles\ctgAppSvr01\bin\stopNode.bat 
+
+At the Login at Target Server screen in the User Identity and User Password fields, enter the user and password of the administrative user able to stop the Node Agent service (server). 
+
+After positive validation of the credentials, the Node Agent service will be stopped. 
+
+
+Stop MXServer 
+
+<WAS_HOME>\profiles\ctgAppSrv01\bin\stopServer.bat MXServer -username <username> -password <password> 
+
+If the username and password are not specified in the command line, for example: 
+<WAS_HOME>\profiles\ctgAppSrv01\bin\stopServer.bat MXServer 
+then at the Login at Target Server screen in the User Identity and User Password fields, enter the user and password of the administrative user able to stop the MXServer service (server). 
+
+
+
+Stopping middleware on AIX and Linux 
+
+To stop the Node Agent or MXServer process, complete the following steps, as needed: 
+ 1. Log in as a user with administrative permissions. 
+ 2. Stop the desired servers by executing the following scripts:
+
+
+Stop Node 
+
+<WAS_HOME>/profiles/ctgAppSrv01/bin/startNode.sh 
+
+
+Stop MXServer 
+
+<WAS_HOME>/profiles/ctgAppSrv01/bin/startServer.sh MXServer -username <username> -password <password> 
+
+
+----------------------------------------------------------------------------------------------- 
+
+
+Additional information about starting and stopping services can be found on the WebSphere Information Center at: 
+ftp://public.dhe.ibm.com/software/webserver/appserv/library/v61/wasv610base_admin.pdf [ftp://public.dhe.ibm.com/software/webserver/appserv/library/v61/wasv610base_admin.pdf] . 
+ 
+
+PRODUCT ALIAS/SYNONYM
+ SRM TSRM

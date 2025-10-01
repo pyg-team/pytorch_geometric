@@ -1,0 +1,136 @@
+Title: IBM Upgrade to Portal CF12 fails with errors ADMA5069E and CWLAA1031E and IWAE0037E - United States
+
+Text:
+ADMA5069E; CWLAA1031E; IWAE0037E; upgrade; temp; dmgr TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The CONFIG-WP-PTF-CF task fails during the sub-task commit-admin-changes with error ADMA5069E in the ConfigTrace.log and errors CWLAA1031E and IWAE0037E in the DMGR SystemOut.log
+
+SYMPTOM
+From ConfigTrace.log....
+
+Target started: commit-admin-changes
+
+....
+
+[wsadmin] ADMA5069E: The installation of application
+wp.vwat.servlet.ear failed. This application was in the middle of a
+full update and therefore is uninstalled from the configuration
+session. Discard your current configuration session immediately to
+recover the application. Do not save changes to the WebSphere
+Application Server configuration repository. The application is not
+uninstalled from this repository. Until the current configuration
+session is discarded you do not see this application in the current
+session.
+
+[wsadmin] WASX7017E: Exception received while running file
+"/opt/IBM/Portal/WebSphere1/wp_profile/ConfigEngine/config/work/was/curJ
+aclScript.jacl"; exception information:
+com.ibm.ws.scripting.ScriptingException: WASX7418E: Application update
+for wp.vwat.servlet.ear failed: see previous messages for details.
+
+[wsadmin] WASX7341W: No "save" was performed before the interactive
+scripting session exited; configuration changes will not be saved.
+
+/opt/IBM/Portal/WebSphere1/ConfigEngine/config/includes/apply_PTF.xml:59
+: Java returned: 105
+
+From DMGR SystemOut.log...
+
+[8/12/14 19:20:10:323 EDT] 000003e6 IscTaskProvid E IscTaskProvider
+provideServerInstallExtentions CWLAA1031E:
+Exception=org.eclipse.jst.j2ee.commonarchivecore.internal.exception.Open
+FailureException: IWAE0037E Could not open
+/tmp/app3220663507744617089.ear
+[8/12/14 19:20:10:347 EDT] 000003e6 InstallSchedu I ADMA5069E: The
+installation of application wp.vwat.servlet.ear failed. This
+application was in the middle of a full update and therefore is
+uninstalled from the configuration session. Discard your current
+configuration session immediately to recover the application. Do not
+save changes to the WebSphere Application Server configuration
+repository. The application is not uninstalled from this repository.
+Until the current configuration session is discarded you do not see
+this application in the current session.
+
+
+
+
+CAUSE
+Corrupt temp directories...
+
+dmgr_profile/wstemp
+dmgr_profile/temp
+
+ENVIRONMENT
+AIX
+Portal 8001
+
+DIAGNOSING THE PROBLEM
+Review the ConfigTrace.log reveals the following error message...
+
+Target started: commit-admin-changes
+
+....
+
+[wsadmin] ADMA5069E: The installation of application
+wp.vwat.servlet.ear failed. This application was in the middle of a
+full update and therefore is uninstalled from the configuration
+session. Discard your current configuration session immediately to
+recover the application. Do not save changes to the WebSphere
+Application Server configuration repository. The application is not
+uninstalled from this repository. Until the current configuration
+session is discarded you do not see this application in the current
+session.
+
+[wsadmin] WASX7017E: Exception received while running file
+"/opt/IBM/Portal/WebSphere1/wp_profile/ConfigEngine/config/work/was/curJ
+aclScript.jacl"; exception information:
+com.ibm.ws.scripting.ScriptingException: WASX7418E: Application update
+for wp.vwat.servlet.ear failed: see previous messages for details.
+
+[wsadmin] WASX7341W: No "save" was performed before the interactive
+scripting session exited; configuration changes will not be saved.
+
+/opt/IBM/Portal/WebSphere1/ConfigEngine/config/includes/apply_PTF.xml:59
+: Java returned: 105
+
+Review the DMGR SystemOut.log at the same timestamp shows the following error message...
+
+[8/12/14 19:20:10:323 EDT] 000003e6 IscTaskProvid E IscTaskProvider
+provideServerInstallExtentions CWLAA1031E:
+Exception=org.eclipse.jst.j2ee.commonarchivecore.internal.exception.Open
+FailureException: IWAE0037E Could not open
+/tmp/app3220663507744617089.ear
+[8/12/14 19:20:10:347 EDT] 000003e6 InstallSchedu I ADMA5069E: The
+installation of application wp.vwat.servlet.ear failed. This
+application was in the middle of a full update and therefore is
+uninstalled from the configuration session. Discard your current
+configuration session immediately to recover the application. Do not
+save changes to the WebSphere Application Server configuration
+repository. The application is not uninstalled from this repository.
+Until the current configuration session is discarded you do not see
+this application in the current session.
+
+Specifically important is the following...
+
+CWLAA1031E:
+Exception=org.eclipse.jst.j2ee.commonarchivecore.internal.exception.Open
+FailureException: IWAE0037E Could not open
+/tmp/app3220663507744617089.ear
+
+
+
+RESOLVING THE PROBLEM
+- Shut-down the DMGR
+- Clear out the contents of the following directories:
+
+dmgr_profile/wstemp
+dmgr_profile/temp
+
+- Restart the DMGR.
+- Re-attempt the upgrade
+
+
+
+
+This can also occur when the DMGR is running as a non-root user. If so, please stop and re-start the DMGR as root and attempt the upgrade again.

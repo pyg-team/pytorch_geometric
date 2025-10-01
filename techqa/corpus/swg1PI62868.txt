@@ -1,0 +1,170 @@
+Title: IBM PI62868: ATTEMPTS TO START A WAS SERVER PROFILE FROM RAD V9.5.x RESULTS IN SSLHANDSHAKEEXCEPTION WHEN 'TLSV1.2' PROTOCOL IS ENABLED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Application Developer for WebSphere Software 9.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24043200]
+Rational Agent Controller Service Release 9.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24043464]
+Rational Application Developer for WebSphere Software Fix Pack 3 (9.5.0.3) for 9.5.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24043859]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You may encounter an error when attempting to start a WAS server
+   from within RAD v9.5.0.1 after you have enabled 'TLSv1.2'
+   protocol within the WAS server profile's Administrative Console
+   (Security > SSL certificate and key management > SSL
+   configurations > NodeDefaultSSLSettings > Quality of protection
+   (QoP) settings).  When the server profile is configured to
+   accept TLSv1.2 communications protocol only, the following
+   exception may occur upon subsequent restart of the WAS server
+   profile:
+   
+   
+   [1/13/16 14:47:17:943 EST] 00000086 SSLHandshakeE E   SSLC0008E:
+   Unable
+   to initialize SSL connection.  Unauthorized access was denied or
+   security settings have expired.  Exception is javax.net.ssl.
+   SSLHandshakeException: Client requested protocol TLSv1 not
+   enabled or
+   not supported
+   ...
+   Caused by: javax.net.ssl.SSLHandshakeException: Client requested
+   protocol TLSv1 not enabled or not supported
+       at com.ibm.jsse2.p.a(p.java:36)
+       at com.ibm.jsse2.SSLEngineImpl.a(SSLEngineImpl.java:72)
+       at com.ibm.jsse2.lb.a(lb.java:44)
+       at com.ibm.jsse2.lb.a(lb.java:460)
+       at com.ibm.jsse2.nb.a(nb.java:455)
+       at com.ibm.jsse2.nb.a(nb.java:618)
+       at com.ibm.jsse2.lb.t(lb.java:241)
+       at com.ibm.jsse2.lb$1.run(lb$1.java:1)
+       at
+   java.security.AccessController.doPrivileged(AccessController.
+   java:452)
+       at com.ibm.jsse2.lb$c_.run(lb$c_.java:8)
+       at
+   com.ibm.ws.ssl.channel.impl.SSLUtils.handleHandshake(SSLUtils.
+   java:834)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Please contact RAD Support to obtain a test fix for this issue.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of Websphere Application Server tools              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Attempts to start a Websphere Application Server profile     *
+   * from RAD 9.5.x results in SSLHandshakeException when TLS 1.2 *
+   * protocol is enabled                                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is included in Rational Application
+   Developer version 9.5.0.3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI62868
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-20
+   
+   
+ * CLOSED DATE
+   2017-08-11
+   
+   
+ * LAST MODIFIED DATE
+   2017-08-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSY
+   UP

@@ -1,0 +1,17 @@
+Title: IBM NullPointerException error occurs when running a BIRT report that has a large volume of data - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A NullPointerException error occurs when running a Atlas BIRT report that has a large volume of data within the Atlas Reports application 
+
+SYMPTOM
+In the BIRT report viewer within the Atlas Reports application a java.lang.NullPointerException occurs when running a report that has a large volume of data. If the same report is run for a smaller set of data it renders successfully.
+
+
+CAUSE
+The version of BIRT 2.5.1 used by the Atlas 6.0.3 and older versions of Atlas has a defect in the BIRT reporting engine.
+
+RESOLVING THE PROBLEM
+The Atlas Reports application from the Atlas 6.0.3 FP2 version contains an updated version of the BIRT 4.2.1 reporting engine. The defect is resolved and the customer will need to upgrade to take advantage of the newer version of BIRT.

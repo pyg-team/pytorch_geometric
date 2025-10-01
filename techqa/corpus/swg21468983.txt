@@ -1,0 +1,172 @@
+Title: IBM Collecting data for: Tivoli Integrated Portal (TIP) - Installation failure - United States
+
+Text:
+TIPL2; TIPL2INST; TIPL2MUSTG; Tivoli Integrated Portal; install; installation failure; failed; Deployment Engine; MustGatherReadFirstDocument; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ For every problem, collecting data can aid in problem determination and save time resolving Problem Management Records (PMRs), particularly if the data is gathered before opening the PMR with IBM® Support. 
+
+RESOLVING THE PROBLEM
+Collecting Must Gather data early, even before opening the PMR, helps IBM® Support quickly determine if: 
+
+
+
+
+ * Symptoms match known problems (rediscovery). 
+ * There is a non-defect problem that can be identified and resolved. 
+ * There is a defect that identifies a workaround to reduce severity. 
+ * Locating root cause can speed up a development code fix.
+
+
+Must Gather table of contents: 
+[http://www.ibm.com/i/v14/rules/dotted_blue_rule_443.gif]  
+
+[/support/docview.wss?uid=swg21468983&amp;aid=1] Gathering General Information [/support/docview.wss?uid=swg21468983&amp;aid=2] Gathering Component Specific Information [/support/docview.wss?uid=swg21468983&amp;aid=3] Submitting Information to IBM Support [/support/docview.wss?uid=swg21468983&amp;aid=4] On-line Self-Help Resources [/support/docview.wss?uid=swg21468983&amp;aid=5] Related Information [http://www.ibm.com/i/v14/rules/dotted_blue_rule_443.gif] 
+
+Gathering general information 
+Entering general information into an electronically opened PMR using IBM Service Request (SR) [http://www-306.ibm.com/software/sysmgmt/products/support/probsub.html] eliminates the delay in resolving your problem that results from the time needed to collect and provide the information. 
+#top 
+Back to top 
+
+Gathering Component Specific Information 
+
+
+Provide the following items for analysis of a TIP installation failure: 
+
+Environment Data: 
+
+Update the PMR with the output of the following: 
+
+A clear, specific problem description, including specific usage information and error scenario on how to recreate the problem you encountered. 
+
+
+Product Information and Logs : 
+Refer to the section below that applies to the platform and installation user for your environment. 
+
+[/support/docview.wss?uid=swg21468983&amp;aid=6] 
+Collect the output of the following commands: 
+C:\Program Files\IBM\Common\acsi\bin\de_version.cmd 
+C:\Program Files\IBM\Common\acsi\bin\listIU.cmd 
+C:\Program Files\IBM\Common\acsi\bin\de_lsrootiu.cmd 
+
+Collect the following files: 
+Check for the existence of the TIP fix pack failure collector file under the TIP installation directory. The file name will be similar to: 
+
+22_FPxx_logs.zip 
+
+For example, for TIP 2.2 fix pack 7, the file name would be "22_FP7_logs.zip" 
+
+If the above file does not exist, manually collect the files as follows: 
+
+ 1. The product installation log from the installation user's home directory. The log name is typically named similar to "IA-TIPInstall-00.log". The log name may include the name of the product which is installing TIP. Also grab the similarly named uninstall log from the same directory if one was created.
+    
+    
+ 2. Zip the contents of the Deployment Engine (DE) logs directory and upload the zip file to the PMR.
+    
+    C:\Program Files\IBM\Common\.acsi\logs
+    
+    
+ 3. Zip the contents of the TIP logs and eWAS server logs directories and upload them to the PMR.
+    
+    <TIP HOME>\logs
+    <TIP HOME>\profiles\TIPProfile\logs\
+    
+    where <TIP HOME> is the installation directory for Tivoli Integrated Portal.
+    
+    
+ 4. Zip the contents of the Common Object Installer (COI) _uninst directory and upload the zip the PMR.
+    
+    <TIP HOME>\_uninst
+    
+    
+ 5. Zip the contents of the WAS Update Installer directory (UPDI) if it exists:
+    
+    <INSTALL USER HOME>\updilogs
+
+
+
+
+[/support/docview.wss?uid=swg21468983&amp;aid=7] 
+For root install :
+Collect the output of the following commands: 
+/usr/ibm/common/acsi/bin/de_version 
+/usr/ibm/common/acsi/bin/listIU.sh 
+/usr/ibm/common/acsi/bin/de_lsrootiu.sh 
+
+Collect the following files:  1. The product installation log from /root. The log name is typically named similar to "IA-TIPInstall-00.log". The log name may include the name of the product which is installing TIP. Also grab the similarly named uninstall log from the same directory if one was created.
+    
+    
+ 2. Zip the contents of the Deployment Engine (DE) logs directory and upload the zip file to the PMR.
+    
+    /usr/ibm/common/acsi/logs
+    
+    
+ 3. Zip the contents of the TIP logs and eWAS server logs directories and upload them to the PMR.
+    
+    <TIP HOME>/logs
+    <TIP HOME>/profiles/TIPProfile/logs/
+    
+    where <TIP HOME> is the installation directory for Tivoli Integrated Portal.
+    
+    
+ 4. Zip the contents of the Common Object Installer (COI) _uninst directory and upload the zip the PMR. 
+    <TIP HOME>/_uninst 
+    
+ 5. Zip the contents of the WAS Update Installer directory (UPDI) if it exists:
+    
+    <INSTALL USER HOME>/updilogs
+
+
+
+Non-root install : 
+Collect the output of the following commands: 
+<Install User's HOME>/.acsi_<install_username>/bin/de_version 
+<Install User's HOME>/.acsi_<install_username>/bin/listIU.sh 
+<Install User's HOME>/.acsi_<install_username>/bin/de_lsrootiu.sh 
+
+Where <Install User's HOME> is the home directory for the OS user used to install TIP, and <install_username> is the OS user ID used to install TIP. 
+
+Collect the following files:  1. The product installation log from the installation user's home directory. The log name is typically named similar to "IA-TIPInstall-00.log". The log name may include the name of the product which is installing TIP. Also grab the similarly named uninstall log from the same directory if one was created.
+    
+    
+ 2. Zip the contents of the Deployment Engine (DE) logs directory and upload the zip file to the PMR.
+    
+    <Install User's HOME>/.acsi_<install_username>/logs
+    
+    
+ 3. Zip the contents of the TIP logs and eWAS server logs directories and upload them to the PMR.
+    
+    <TIP HOME>/logs
+    <TIP HOME>/profiles/TIPProfile/logs/
+    
+    where <TIP HOME> is the installation directory for Tivoli Integrated Portal.
+    
+    
+ 4. Zip the contents of the Common Object Installer (COI) _uninst directory and upload the zip the PMR.
+    
+    <TIP HOME>/_uninst 
+    
+ 5. Zip the contents of the WAS Update Installer directory (UPDI) if it exists:
+    
+    <INSTALL USER HOME>/updilogs
+
+#top 
+Back to top 
+
+Submitting Information to IBM Support 
+If using SR [http://www-306.ibm.com/software/sysmgmt/products/support/probsub.html], update the PMR to indicate that data has been sent. 
+#top 
+Back to top 
+
+Online Self-Help Resources  * Utilize the IBM Service Request (SR) [http://www-306.ibm.com/software/sysmgmt/products/support/probsub.html] tool to access the Tivoli Storage Manager Support team, when requiring assistance from IBM. 
+ * Install and use the IBM Support Toolbar [http://www-306.ibm.com/software/support/toolbar/]. This is a stand-alone application that allows you to easily search IBM.com for all types of software support content, plus organizes the major areas of not only Software support, but the individual brand support sites into a concise application.#top
+
+
+Back to top 
+
+Related Information [http://www-306.ibm.com/software/support/exchangeinfo.html?ibmsst=allSupport]  * Exchanging information with IBM Technical Support [http://www-306.ibm.com/software/support/exchangeinfo.html?ibmsst=allSupport] 
+
+Back to top 
+
+RELATED INFORMATION
+ Mustgather Read first for Deployment Engine (DE) [http://www-01.ibm.com/support/docview.wss?uid=swg21439183]

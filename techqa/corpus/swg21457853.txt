@@ -1,0 +1,90 @@
+Title: IBM Integrating a WebSphere Portal 7.0 or 8.0 cluster environment with OmniFind Enterprise Edition - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Support for WebSphere Portal 7.0 became available with OmniFind Enterprise Edition Version 9.1 Fix Pack 1, and support for WebSphere Portal 8.0 became available with Fix Pack 4. What steps are required to install the search portlet in a WebSphere Portal 7.0 or 8.0 cluster environment? 
+
+ANSWER
+If you install OmniFind Enterprise Edition Version 9.1 Fix Pack 1, support is extended to WebSphere Portal 7.0 and Lotus Quickr 8.5. If you install OmniFind Enterprise Edition Version 9.1 Fix Pack 4, support is extended to WebSphere Portal 8.0. The following table replaces the WebSphere Portal support matrix in Running the WebSphere Portal integration scripts [http://publib.boulder.ibm.com/infocenter/discover/v9r1m0/topic/com.ibm.discovery.es.ad.doc/iiysaitinst6.htm]: 
+
+Supported versions 
+Required JAR file Setup script Install option Functions WebSphere Portal 
+8.0
+(requires fix pack 4) es.wp80.install.jar wp80_install.bat
+wp80_install.sh [/support/docview.wss?uid=swg21457853&amp;aid=1] Sets up a portlet for searching search collections. Also supports Search bar and Search Center integrations. WebSphere Portal 
+7.0
+(requires fix pack 1) es.wp70.install.jar wp70_install.bat
+wp70_install.sh [/support/docview.wss?uid=swg21457853&amp;aid=1] Sets up a portlet for searching search collections. Also supports Search bar and Search Center integrations. WebSphere Portal 6.1.0.3 and 6.1.5 es.wp61.install.jar wp61_install.bat
+wp61_install.sh [/support/docview.wss?uid=swg21457853&amp;aid=1] Sets up portlets for searching classic search collections and search collections. Also supports Search bar and Search Center integrations. Lotus Quickr for WebSphere Portal
+8.5
+(requires fix pack 1) es.wp61.install.jar wp61_install.bat
+wp61_install.sh -InstallType quickr Sets up a portlet for searching Lotus Quickr sources. Lotus Quickr for WebSphere Portal
+V8.0 and V8.1 es.qkr80.install.jar qkr80_install.bat
+qkr80_install.sh [/support/docview.wss?uid=swg21457853&amp;aid=1] Sets up a portlet for searching Lotus Quickr sources. 
+
+To install the search portlet in a WebSphere Portal 7.0 or 8.0 cluster environment, you must modify scripts that are provided with OmniFind Enterprise Edition before you run them. Do the following steps to set up the integration: 
+
+1. Create a Seed list crawler to crawl WebSphere Portal sites. 
+
+2. Extract and edit files on both WebSphere Portal nodes (primary and secondary). 
+
+On Windows:  1. Extract files in %ES_INSTALL_ROOT%\bin\es.wp70.install.jar (or es.wp80.install.jar) and edit the wp70_cluster_install.bat file (or wp80_cluster_install.bat file). 
+ 2. Edit lines 169 - 170: Replace "InstallSearchPortlet6.xml" with "InstallSearchPortlet7.xml" (or "InstallSearchPortlet8.xml"). There are two occurrences.
+    
+    
+
+On AIX, Linux, and Solaris:  1. Extract files in $ES_INSTALL_ROOT/bin/es.wp70.install.jar (or es.wp80.install.jar) and edit the wp70_cluster_install.sh file (or wp80_cluster_install.sh file). 
+ 2. Edit lines 186 - 200: Replace "InstallSearchPortlet6.xml" with "InstallSearchPortlet7.xml" (or "InstallSearchPortlet8.xml"). There are four occurrences.
+
+
+3. Run the wp70_cluster_copyFiles script (or wp80_cluster_copyFiles script ) on both WebSphere Portal nodes. For example, enter the following command if you use WebSphere Portal 7.0 on Windows: 
+
+wp70_cluster_copyFiles.bat -WPSDir "C:\\IBM\\WebSphere\\PortalServer" -WPSProfileDir "C:\\IBM\\WebSphere\\wp_profile" 
+
+
+4. On the primary WebSphere Portal node, run the wp70_cluster_install script (or wp80_cluster_install script). For example, enter the following command if you use WebSphere Portal 7.0 on Windows: 
+
+wp70_cluster_install.bat -WPSClusterName "PortalCluster" -WPSProfileDir "C:\\IBM\\WebSphere\\wp_profile" -WASDir "C:\\IBM\\WebSphere\\AppServer" -WASUser wpsadmin -WASPassword wpsadmin -WPSDir "C:\\IBM\\WebSphere\\PortalServer" -WPSUser wpsadmin -WPSPassword wpsadmin -WPSHost "wps1.ibm.com:10039" –webServerName webserver1 –webServerNodeName wps2.ibm.com 
+
+
+5. Log in to the primary WebSphere Portal node and set up the OmniFind Enterprise Edition search portlet. 
+
+
+6. Configure the WebSphere Portal Search Center. For assistance, see Configuring the WebSphere Portal Search Center [http://publib.boulder.ibm.com/infocenter/discover/v9r1m0/topic/com.ibm.discovery.es.ad.doc/iiysaitsearchcenter6.htm]. 
+
+
+7. Configure the WebSphere Portal Search Bar to use the OmniFind Enterprise Edition search portlet. For assistance, see Configuring the WebSphere Portal Search Bar [http://publib.boulder.ibm.com/infocenter/discover/v9r1m0/topic/com.ibm.discovery.es.ad.doc/iiysaitsearchbar6.htm]. 
+
+Attention: Step 3 in this procedure is incorrect for WebSphere Portal 7.0 and WebSphere Portal 8.0, which do not include the Enhanced_Theme.ear file in the installedApps/ cell_name directory. 
+
+WebSphere Portal 7.0: 
+The default theme in WebSphere Portal 7 is called wp.mashup.cc.theme.ear (also known as PageBuilder2) at this default location: 
+
+WPS_INSTALL_ROOT/theme/wp.mashup.cc.theme/installedApps/wp.mashup.cc.theme.ear/ 
+PageBuilder2.war/themes/html/PageBuilder2 
+
+The file that contains the code stanza to be modified is search.jsp. 
+
+WebSphere Portal 8.0: 
+The default theme in WebSphere Portal 8 is called Portal 8.0 at this default location: 
+
+WPS_INSTALL_ROOT/theme/wp.theme.modules/webapp/installedApps/ThemeModules.ear/ThemeModules.war/themes/html 
+
+The file that contains the code stanza to be modified is dynamicSpots/modules/search/search.jsp. 
+
+
+Troubleshooting: The Search bar might not work on the secondary mode. This issue is caused by the wp70_cluster_copyFiles script not copying the portalSearchBar.jsp file into the correct directory. 
+
+Assume that the wp_profile/installedApps includes these three directories: 
+
+examplehost1Cell01 - ND node 
+examplehost2 - Primary node 
+examplehost3Node01 - Secondary node 
+
+The examplehost3Node01 directory contains files and icons for search bar and search center integrations. A workaround for this issue is:  1. Copy the wps.ear directory from examplehost3Node01 into the examplehost2 directory (overwriting existing files). 
+ 2. Restart the WebSphere Portal server.
+
+RELATED INFORMATION
+ Integration with WebSphere Portal [http://www.ibm.com/support/docview.wss?uid=swg27023985]

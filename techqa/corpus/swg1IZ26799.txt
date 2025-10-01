@@ -1,0 +1,240 @@
+Title: IBM IZ26799: RESTORE FAILS WITH SQL0956C OUT OF MEMORY ERRORS IN DBHEAP ON   SOME PLATFORMS - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+DB2 Version 9.1 Fix Pack 7 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24022678]
+DB2 Version 9.1 Fix Pack 7a for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24024113]
+DB2 Version 9.1 Fix Pack 8 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24024502]
+DB2 Version 9.1 Fix Pack 9 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24026384]
+DB2 Version 9.1 Fix Pack 10 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24029027]
+DB2 Version 9.1 Fix Pack 11 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24031281]
+DB2 Version 9.1 Fix Pack 12 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033023]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  RESTORE utility may fail with SQL0956C "Not enough storage is
+   available in the database heap to process the statement." when
+   restoring a database without replacing an existing one, for
+   example when restoring the database onto a new server, or after
+   dropping the existing database.
+   
+   This issue occurs due to an out of memory condition in the
+   DBHEAP, and the error will occur on platforms such as Linux or
+   Solaris which does not support dynamic resizing of the database
+   shared memory set. On platforms such as AIX, you will see a
+   warning message in the db2diag.log (sqloMemLogPoolConditions,
+   probe:30) , but it won't result in a fatal error preventing the
+   restore to complete. On these platforms, this issue can safely
+   be ignored.
+   .
+   When this problem occurs the following entry will be logged in
+   the db2diag.log from the coordinator agent performing the
+   RESTORE:
+   .
+   2008-06-20-07.21.57.475020-420 E48270A686         LEVEL: Warning
+   PID     : 27694                TID  : 1           PROC :
+   db2agent (SAMPLE) 0
+   INSTANCE: db2inst1             NODE : 000         DB   : SAMPLE
+   APPHDL  : 0-8                  APPID: *LOCAL.db2inst1.XXXXXXXXXX
+   AUTHID  : DB2INST1
+   FUNCTION: DB2 UDB, SQO Memory Management,
+   sqloMemLogPoolConditions, probe:30
+   DATA #1 : <preformatted>
+   Out of memory failure for Database Heap (DBHEAP) on node 0.
+   Requested block size           : 140640472 bytes.
+   Physical heap size             : 3932160 bytes.
+   Configured heap size           : 8978432 bytes.
+   Unreserved memory used by heap : 0 bytes.
+   Unreserved memory left in set  : 115933184 bytes.
+   
+   2008-06-20-07.21.57.482083-420 I48957A515         LEVEL: Severe
+   PID     : 27694                TID  : 1           PROC :
+   db2agent (SAMPLE) 0
+   INSTANCE: db2inst1             NODE : 000         DB   : SAMPLE
+   APPHDL  : 0-8                  APPID: *LOCAL.db2inst1.XXXXXXXXXX
+   AUTHID  : DB2INST1
+   FUNCTION: DB2 UDB, data protection services, sqlpgint,
+   probe:1550
+   RETCODE : ZRC=0x8B0F0002=-1961951230=SQLO_NOMEM_DBH
+             "No memory available in 'Database Heap'"
+             DIA8302C No memory available in the database heap.
+   
+   2008-06-20-07.21.57.498496-420 I49473A528         LEVEL: Error
+   PID     : 27694                TID  : 1           PROC :
+   db2agent (SAMPLE) 0
+   INSTANCE: db2inst1             NODE : 000         DB   : SAMPLE
+   APPHDL  : 0-8                  APPID: *LOCAL.db2inst1.XXXXXXXXXX
+   AUTHID  : DB2INST1
+   FUNCTION: DB2 UDB, data protection services,
+   sqlpRestartDPSbyRestore, probe:300
+   RETCODE : ZRC=0x8B0F0002=-1961951230=SQLO_NOMEM_DBH
+             "No memory available in 'Database Heap'"
+             DIA8302C No memory available in the database heap.
+   [...]
+   2008-06-20-07.21.57.511296-420 E50504A881         LEVEL: Severe
+   PID     : 27694                TID  : 1           PROC :
+   db2agent (SAMPLE) 0
+   INSTANCE: db2inst1             NODE : 000         DB   : SAMPLE
+   APPHDL  : 0-8                  APPID: *LOCAL.db2inst1.XXXXXXXXXX
+   AUTHID  : DB2INST1
+   FUNCTION: DB2 UDB, database utilities, sqludProcessLFH,
+   probe:1190
+   MESSAGE : SQL0956C  Not enough storage is available in the
+   database heap to process the statement.
+   
+   [...]
+   2008-06-20-07.21.57.692807-420 E51386A374         LEVEL: Severe
+   PID     : 27694                TID  : 1           PROC :
+   db2agent (SAMPLE) 0
+   INSTANCE: db2inst1             NODE : 000         DB   : SAMPLE
+   APPHDL  : 0-8                  APPID: *LOCAL.db2inst1.XXXXXXXXXX
+   AUTHID  : DB2INST1
+   FUNCTION: DB2 UDB, database utilities, sqludrsa, probe:901
+   MESSAGE : Restore Terminated.
+   .
+   This particular issue occurs while trying to allocate a memory
+   block for the log buffer from the existing DBHEAP, which is
+   failing because the DBHEAP has an insufficient size.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The workaround is the following:
+   .
+   - Create a dummy database on the target system at the same
+   database directory location where you want to restore the
+   database.
+   - Update the database configuration values DBHEAP and LOGBUFSZ
+   to the original values (as they are in the database being
+   restored).
+   - Issue a RESTORE with REPLACE EXISTING option.
+   .
+   This will result in reusing as initial values the database
+   configuration of the dummy database which will be replaced later
+   on during the RESTORE by the target image database
+   configuration.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected=All DB2 platforms except AIX and Windows
+   Problem Description=Restore failing with SQL0956C out of dbheap
+   on some platforms
+   Problem Summary=Restore failing with SQL0956C out of dbheap on
+   some platforms
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem was first fixed in V9.1 Fixpak 7
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ26799
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE SOL
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4102
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-11
+   
+   
+ * CLOSED DATE
+   2009-05-05
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IZ26817 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ26817]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE SOL
+   
+   
+ * FIXED COMPONENT ID
+   5765F4102
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSN
+   UP
+   
+   
+ * R820 PSN
+   UP
+   
+   
+ * R910 PSN
+   UP
+   
+   
+ * R950 PSN
+   UP

@@ -1,0 +1,23 @@
+Title: IBM Configuring an object store for email archiving without content-based retrieval during initial configuration - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The IBM FileNet P8 object store that is configured for email archiving and compliance during the IBM Content Collector initial configuration must be enabled for content-based retrieval by default. If you do not want the object store to be enabled for content-based retrieval (CBR), you should still run the initial configuration to create the IBM Content Collector configuration database, and then configure the object store without CBR separately using the IBM Content Collector setup tools. 
+
+CONTENT
+After you installed IBM Content Collector, you should run the Initial Configuration wizard to configure your source systems, target repository, and to create the Content Collector configuration database. When you select IBM FileNet P8 as your target repository for email archiving and compliance, the initial configuration expects the object store that you select to configure for IBM Content Collector to be enabled for content-based retrieval (CBR). The initial configuration does not provide an option to disable text search (CBR). 
+
+If you do not want to enable the object store for CBR, because, for example, your only scenario is processing email in a business process management scenario, select the object store that is not enabled for CBR during the initial configuration. The FileNet P8 configuration fails, which you can ignore. Thereafter, by using the Content Collector setup tools, you can configure the object store again, and this time disable text search on the object store.
+
+Disabling text search implies that you cannot search the archived document content. This means that you cannot search document content using IBM Content Collector Email Search or any other eDiscovery application. If you archive document content to repository attributes, bear in mind that these attributes usually have a fixed size and that input is truncated if the size limit is exceeded. 
+
+To configure an object without CBR during the initial configuration, perform the following steps: 
+
+ 1. Select and configure your email source systems. 
+ 2. Define the FileNet P8 task user and select the object store that you created without enabling CBR. 
+ 3. Configure the IBM Content Collector configuration database. 
+ 4. Start the initial configuration. The FileNet P8 configuration will fail. The object store cannot be configured for IBM Content Collector because the object was not enabled for CBR. Ignore this error. 
+ 5. Open the IBM Content Collector Configuration Manager and select Tools->Setup Tools->P8 Repository Configuration. 
+ 6. On the FileNet P8 Task Configuration page, select the object store you created without CBR and disable text search.

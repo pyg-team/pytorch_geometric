@@ -1,0 +1,18 @@
+Title: IBM SPSS Collaboration and Deployment Services 4.0 FP4 Fix List - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ A comprehensive list of defect corrections for fix packs of SPSS Collaboration and Deployment Services 4.0. Details of the fixes are listed below. If you have questions about a particular defect, please contact Customer Support.
+
+Note: A particular list may contain a combination of APAR references and internal defect numbers. This was necessitated to provide a complete list of corrected defects as we continue to transition our internal defects to APARs. Items with a PK or PM reference are APARs and are searchable on IBM.COM. If you have questions about a particular defect, please contact Customer Support. 
+
+CONTENT
+ 
+
+SPSS COLLABORATION AND DEPLOYMENT SERVICES 4.0 FP4
+ * 4.0 FP4 [http://www.ibm.com/support/docview.wss?uid=swg27021269]- selected tab,
+
+Issues corrected since SPSS Collaboration and Deployment Services 4.0 Release Number Description ECM00149497 Interative report, with BIRT script to enable multiselect, fails to run in C&DS. ECM00144093 Unable to turn off Resoure Locking option. ECM00146362 Folder security not applied properly during iterative run of reports. ECM00135791 Running a BIRT report in Deployment Portal is resulting in an 'Array index out of bounds' error. ECM00136282 BIRT report against Enterprise View Datasource fails when being run in Deployment Portal. ECM00127403 Running out of memory when attempting to delete artifacts from the Submitted hierarchy. ECM00135328 BIRT Report bulit against SPSS Collaboration and Deployment Services data source fails when run through Deployment Portal. ECM00128877 Polish (diacritic) characters display incorrectly in Layer headings of C&DS published Olap cubes. ECM00129170 Incorrect sort order of Layer values in Olap cubes published to the repository. ECM00127024 JDE Query not working through Deployment Manager. ECM00136947 Job still in Running status even though the only job step completed successfully. ECM00135070 Iteration instances are remaining in a queued state because of a 30 minute limit - causing job step to fail. ECM00129782 Unable to give permissions to output files when created by an Enterprise Server PC. ECM00128345 Cannot run BIRT report with a parameter via Deployment Portal. ECM00126510 CADS 4.0 does not support chart images in SVG format with BIRT reports. ECM00126149 Running a job step containing a Statistics Syntax file that contains Japanese variable name in sav file stored in Repository fails. ECM00123821 When pivoting a spw file within Deployment Portal, the value is displayed instead of the variable name for the label. ECM00127028 Unable to open Real Time DPD after migrating from PES 3.5 to CADS 4.0. ECM00126148 Running a SPSS syntax job in a simplified Chinese CADS server hangs and results in a Statistics Server error. ECM00123025 Receiving a 'Multiple Claimers for Directory' error when applying a package with Package Manager. ECM00119844 Error message for failing Statistics Syntax job step is incorrect. ECM00121165 Job steps, running against a Remote Process Server (RPS), are failing within an environment locked down via a firewall. ECM00121647 Having the 'Credential passwords must be encrypted’ option selected is preventing JDBC connections from BIRT and PEV. ECM00121243 Receiving error with Statistics custom table (spw file) within PEB when the last element is moved into Layers. RELATED INFORMATION
+ Downloading SPSS C&DS 4.0 Fix Pack 4 [http://www.ibm.com/support/docview.wss?uid=swg24029406]

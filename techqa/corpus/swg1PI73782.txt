@@ -1,0 +1,182 @@
+Title: IBM PI73782: Customization of log Filenames and paths affected by WAS variable SERVER_LOG_ROOT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+9.0.0.3: WebSphere Application Server traditional V9.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24043338]
+9.0.0.4: WebSphere Application Server traditional V9.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24043693]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+9.0.0.5: WebSphere Application Server traditional V9.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24044067]
+9.0.0.6: WebSphere Application Server traditional V9.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24044242]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+9.0.0.7: WebSphere Application Server traditional V9.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24044620]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer wants to customize log output path and filenames
+   for
+   dynamic clusters. Configuring WAS ND 8.5 on Linux RHEL 7.
+   Trying to configure the dynamic cluster template for JVM log
+   files to customize path/structure of where the log files for
+   each JVM will be wriiten to and filename.  Customer created
+   variables to put in the path to allow it not to interfere
+   with
+   other JVMs location.  Each time a save and synch is done, it
+   throws the WAS variable ${SERVER_LOG_ROOT} in the beginning
+   of
+   the variable path. Needed for developers, to give them
+   limited
+   access to the logs directories,  to store them all in one
+   place
+   or one main directory, and separate them out there by
+   different
+   names. In dynamic cluster template, it allows to change the
+   location of the System out and System Err. Can put custom
+   variable names in there to separate out the logging from
+   other
+   vertical cluster members.  When saved, System Err handles it
+   fine and keeps it.  The System Out File Name continues to
+   force
+   in a ${SERVER_LOG_ROOT} variable in front of the custom
+   location.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  use "" for SERVER_LOG_ROOT - unconfirmed
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server WAS ND edition- Virtual              *
+   *                  Enterprise/IM Component                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Log Filenames and paths affected by WAS *
+   *                      variable SERVER_LOG_ROOT                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Dynamic clusters rely upon a server template that propagates out
+   to each cluster member. However, when log files are written
+   collisions must be avoided so that each server can write to its
+   own log file. If you attempted to set the log files for a
+   dynamic cluster member to an absolute path, the page would
+   detect this and append ${SERVER_LOG_ROOT} to the start of your
+   path. This ensured collisions were avoided, but made it
+   impossible to redirect the log files to the custom locations.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  After this fix, if you specify an absolute path, which does not
+   contain either the ${SERVER_LOG_ROOT} or the ${WAS_SERVER_NAME}
+   variable it will add ${WAS_SERVER_NAME} to the start of
+   SystemOut.log or SystemErr.log. This will prevent the collisions
+   from each member of the dynamic cluster writing file. If you use
+   either ${SERVER_LOG_ROOT} or put the server name variable
+   ${WAS_SERVER_NAME} in the path given it will assume you have
+   properly accounted for collisions and do nothing.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 8.5.5.11.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI73782
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-12-14
+   
+   
+ * CLOSED DATE
+   2017-01-11
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

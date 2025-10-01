@@ -1,0 +1,205 @@
+Title: IBM PM67368: EXPORT TO EXCEL VIA ODBC INTO AN EXISTING XLSX FILE: NO DATA IS EXPORTED - ONLY VARIABLE NAMES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You work with IBM SPSS Statistics 20.0.0.1 and would like to
+   export SPSS data into a new table of an existing *.XLSX Excel
+   2007 and later file. You use the File - Export to database
+   Wizard to accomplish this and select both the Excel ODBC and the
+   workbook you would like to export to. After definition of the
+   new table (sheet) name for the existing Excel file you paste the
+   SAVE TRANSLATE syntax .
+   On the syntax all looks fine and you notice a subcommand:
+    /SQL='DROP TABLE SPSS_TEMP'
+   
+   The export is executed but when you open the *.XLSX file you
+   notice two new tables in the Excel file:
+   - An empty SPSS_TEMP table, where you have expected this to be
+   dropped due to the SQL subcommand.
+   - The second table is the desired table.
+   However, in this second table only the variable names from SPSS
+   are imported but no data cell values.
+   
+   This issue was reported to IBM SPSS Development.
+   
+   As a workaround paste the syntax on the database export wizard
+   and modify it as on the example below.
+   (a) Remove all lines that begin with /SQL=
+   (b) Change the table name in /TABLE='SPSS_TEMP' to the real name
+   of the target table for the data.
+   
+   For example when you export accidents.sav from the samples
+   folder to excel the pasted syntax look like the one below:
+   
+   SAVE TRANSLATE /TYPE=ODBC
+     /CONNECT='DSN=Excel
+   Files;DBQ=xxx\new.xlsx;DriverId=1046;MaxBufferSize=2048;PageTime
+   out=5;'
+     /ENCRYPTED
+     /MISSING=IGNORE
+     /SQL='CREATE TABLE `full` (agecat number , gender number ,
+   accid number , pop number )'
+     /REPLACE
+     /TABLE='SPSS_TEMP'
+     /KEEP=agecat, gender, accid, pop
+     /SQL='INSERT INTO `full` (agecat, gender, accid, pop) SELECT
+   agecat, gender, accid, pop FROM '+
+       'SPSS_TEMP'
+     /SQL='DROP TABLE SPSS_TEMP.
+   
+   The changed syntax creates only the new sheet 'full' with all
+   data an no temporary SPSS_TEMP table:
+   
+   SAVE TRANSLATE /TYPE=ODBC
+     /CONNECT='DSN=Excel
+   Files;DBQ=xxx\new.xlsx;DriverId=1046;MaxBufferSize=2048;PageTime
+   out=5;'
+     /ENCRYPTED
+     /MISSING=IGNORE
+     /REPLACE
+     /TABLE='full'
+     /KEEP=agecat, gender, accid, pop.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users exporting data to existing XLSX files                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * You work with IBM SPSS Statistics 20.0.0.1 and would like to *
+   * export SPSS data into a new table of an existing *.XLSX      *
+   * Excel                                                        *
+   * 2007 and later file. You use the File - Export to database   *
+   * Wizard to accomplish this and select both the Excel ODBC and *
+   * the                                                          *
+   * workbook you would like to export to. After definition of    *
+   * the                                                          *
+   * new table (sheet) name for the existing Excel file you paste *
+   * the                                                          *
+   * SAVE TRANSLATE syntax .                                      *
+   * On the syntax all looks fine and you notice a subcommand:    *
+   * /SQL='DROP TABLE SPSS_TEMP'                                  *
+   *                                                              *
+   * The export is executed but when you open the *.XLSX file you *
+   * notice two new tables in the Excel file:                     *
+   * - An empty SPSS_TEMP table, where you have expected this to  *
+   * be                                                           *
+   * dropped due to the SQL subcommand.                           *
+   * - The second table is the desired table.                     *
+   * However, in this second table only the variable names from   *
+   * SPSS                                                         *
+   * are imported but no data cell values.                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been addressed in IBM SPSS Statistics 20      *
+   * Fixpack 2 (20.0.0.2)                                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been addressed in IBM SPSS Statistics 20 Fixpack
+   2 (20.0.0.2)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM67368
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   K00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-21
+   
+   
+ * CLOSED DATE
+   2013-01-10
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RK00 PSN
+   UP
+   
+   
+ * RK00 PSY
+   UP

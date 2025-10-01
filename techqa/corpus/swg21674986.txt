@@ -1,0 +1,51 @@
+Title: IBM Saving reports on file systems - United States
+
+Text:
+file system directory folder output report save tcr birt cognos tcr TECHNOTE (FAQ)
+
+QUESTION
+ How can I have output of reports produced directly on a specific directory of TCR system? 
+
+ANSWER
+The report outputs are saved within the Cognos Content Store by default for both BIRT and Cognos.
+There are anyway two procedures to configure Cognos Engine to produce the reports directly on the file system.
+
+The first one allows to work at report level, but it is valid only for Cognos reports.
+It means, you can decide which is the report that can be saved in the Cognos content store and the reports that will be saved on the file system.
+
+The second procedure configures Cognos to save all the executed reports on the file system instead, and this works also for BIRT reports. 
+
+The first procedure is described here:
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21342666 [http://www-01.ibm.com/support/docview.wss?uid=swg21342666]
+
+
+The second procedure is the following:
+
+1) Start IBM Cognos Configuration
+2) Click Data Access and then Content Manager
+3) Select True for "Save report output to a file system"
+[/support/docview.wss?uid=swg21674986&aid=1] [/support/docview.wss?uid=swg21674986&aid=1]
+
+4) Save and exit from Cognos Configuration.
+Restart TCR.
+
+5) On TCR GUI, select Launch---> Administration.
+6) Select System and from the All Server drop down menu, select Services and then Content Manager
+
+[/support/docview.wss?uid=swg21674986&aid=2] [/support/docview.wss?uid=swg21674986&aid=2]
+
+7) From ContentManagerService drop down menu, select "Set Properties"
+
+[/support/docview.wss?uid=swg21674986&aid=3] [/support/docview.wss?uid=swg21674986&aid=3]
+
+8) Select Settings tab and then click Edit on "Advanced Settings" row.
+9) Put the parameter name: "CM.OUTPUTLOCATION" in the Parameter column and a fully qualified path in the Value column.
+This is the directory where the reports will be saved.
+10) Click OK and run your reports.
+They will be now saved on the File System under the path you specified on step 9.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Tivoli Common Reporting V2.x V3.x

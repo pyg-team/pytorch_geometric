@@ -1,0 +1,298 @@
+Title: IBM PI19806: EXTERNALIZE THE LE RETURN CODE PASSED TO DFHSJIN WHEN THE DFHSJ0120 MESSAGE IS ISSUED - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR is for the creation of a message to externalize the
+   LE return code that is passed back to DFHSJIN when the
+   DFHSJ0120 is issued in order to assist in problem determination.
+   
+   For example, a customer received a DFHSJ0210 saying the
+   ENCLAVE_INIT_FAILED when  starting a JVMServer.  Analyzing the
+   LOGREC showed that there was  not enough LSQA for the linkage
+   stack for the task. There is a LE return code passed to DFHSJIN
+   when an ENCLAVE_INIT_FAILED is incurred that points to why it
+   failed and could have helped solve the issued faster.
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   Additional Symptom(s) Search Keyword(s): KIXREVxxx , DFHSJ0210
+   , DFHSJIN
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Externalizing the LE return code        *
+   *                      passed back to DFHSJIN when the         *
+   *                      DFHSJ0210 is issued saying              *
+   *                      ENCLAVE_INIT_FAILED.                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A JVM server is being started in CICS. DFHSJIN will create an
+   LE enclave with CELQPIPI call. As there was not enough region
+   storage available, LE enclave initialise fails. The return
+   code of CELQPIPI call is passed back to DFHSJIN. DFHSJIN issues
+   message DFHSJ0210 saying ENCLAVE_INIT_FAILED to indicate the
+   JVMServer failed to initialise. But DFHSJIN does not make
+   CELQPIPI return code available that will indicate why LE
+   enclave initialise fails.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHSJIN has been changed to add a new message DFHSJ0216 to
+   externalise the LE CELQPIPI return code. This will be issued
+   before message DFHSJ0210.
+   
+   In CICS Transaction Server for z/OS Version 5 Release 1
+   CICS Messages and Codes Vol 2, GC34-2862-00:
+   
+   The user response for message DFHSJ0210, in the
+   ENCLAVE_INIT_FAILED section, should be updated as below:
+   
+   To determine the cause of the problem check SYSPRINT, or the
+   CICS log, for error messages that are output by the Language
+   Environment. It is likely that either the SDFJAUTH PDSE
+   has not been included in the APF authorized STEPLIB
+   concatenation, or there is not enough storage available
+   to Language Environment. Additional information may be
+   available in message DFHSJ0216.
+   
+   Add message DFHSJ0216 as below:
+   
+   DFHSJ0216 Date time applid jvmserver A call to CELQPIPI with
+   function code INIT_SUB has failed. (Return code - rc ).
+   
+   Explanation: The CICS-JVM interface attempted to initialize a
+   Language Environment enclave using the pre-initialized
+   interface. This failed with return code rc.
+   System Action: CICS was unable to initialize a Language
+   Environment enclave and returns an error to the calling
+   module.
+   
+   User Response:
+   Ensure that the OMVS segment has been set up for the userid
+   that the CICS region runs under.
+   Ensure that the OMVS RACF (or equivalent) segment has been
+   defined for the userid that the CICS region runs under.
+   Review the STDERR log for any messages that may have been
+   issued prior to the failure. The location of the STDERR file
+   is defined in the JVM profile.
+   Look at SYSOUT or CESE destination for Language Environment
+   messages. Look in z/OS Language Environment Programming Guide
+   for the CELQPIPI function and find the explanation
+   of the return code (Register 15) for that function.
+   Ensure that the SDFJAUTH PDSE is included in the APF
+   authorized STEPLIB concatenation and that SCEERUN2 and
+   SCEERUN are in the RPL concatenation.
+   If the problem persists you may need to contact your
+   IBM support representative.
+   
+   
+   In CICS Transaction Server for z/OS Version 5 Release 2
+   CICS Messages and Codes Vol 2, GC34-7284-00:
+   
+   The user response for message DFHSJ0210, in the
+   ENCLAVE_INIT_FAILED section, should be updated as below:
+   
+   To determine the cause of the problem check SYSPRINT, or the
+   CICS log, for error messages that are output by the Language
+   Environment. It is likely that either the SDFJAUTH PDSE
+   has not been included in the APF authorized STEPLIB
+   concatenation, or there is not enough storage available
+   to Language Environment. Additional information may be
+   available in message DFHSJ0216.
+   
+   Add message DFHSJ0216 as below:
+   
+   DFHSJ0216 Date time applid jvmserver A call to CELQPIPI with
+   function code INIT_SUB has failed. (Return code - rc ).
+   
+   Explanation: The CICS-JVM interface attempted to initialize a
+   Language Environment enclave using the pre-initialized
+   interface. This failed with return code rc.
+   
+   System Action: CICS was unable to initialize a Language
+   Environment enclave and returns an error to the calling
+   module.
+   
+   User Response:
+   Ensure that the OMVS segment has been set up for the userid
+   that the CICS region runs under.
+   Ensure that the OMVS RACF (or equivalent) segment has been
+   defined for the userid that the CICS region runs under.
+   Review the STDERR log for any messages that may have been
+   issued prior to the failure. The location of the STDERR file
+   is defined in the JVM profile.
+   Look at SYSOUT or CESE destination for Language Environment
+   messages. Look in z/OS Language Environment Programming Guide
+   for the CELQPIPI function and find the explanation
+   of the return code (Register 15) for that function.
+   Ensure that the SDFJAUTH PDSE is included in the APF authorized
+   STEPLIB concatenation and that SCEERUN2 and SCEERUN are in the
+   RPL concatenation.
+   If the problem persists you may need to contact your IBM
+   support representative.
+   
+   Module: DFHSJIN
+   
+   Message inserts:
+   1. Date
+   2. time
+   3. applid
+   4. jvmserver
+   5. rc
+   Destination: CSMT.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  &#158;**** PE14/10/13 FIX IN ERROR. SEE APAR PI26828 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI26828]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI19806
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-11
+   
+   
+ * CLOSED DATE
+   2014-09-26
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI21826 UI21827 UI21828 UI21829
+   
+   
+
+MODULES/MACROS
+ *  DFHSJSC
+   
+   
+    
+   
+   
+
+Publications Referenced GC34286200 GC34728400 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY UI21826 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI21826]
+   UP14/10/08 P F410
+   
+   
+ * R803 PSY UI21827 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI21827]
+   UP14/10/08 P F410
+   
+   
+ * R900 PSY UI21828 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI21828]
+   UP14/10/08 P F410
+   
+   
+ * R903 PSY UI21829 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI21829]
+   UP14/10/08 P F410
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

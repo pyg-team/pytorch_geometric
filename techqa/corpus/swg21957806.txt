@@ -1,0 +1,19 @@
+Title: IBM Unable to upgrade Jazz for Service Management (JazzSM) v1.x to v1.1.2 through IBM Installation Manager (IIM) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Unable to upgrade existing JazzSM v1.x to v1.1.2 because of error "DB2 database instance is not configured on the local computer" 
+
+CAUSE
+JazzSM creates an entry in its history files with DB2 installed path if DB2 was installed through JazzSM launchpad. 
+Later if DB2 is reinstalled outside of JazzSM launchpad in different path then this new path won't be updated in history files. Now since the old DB2 path in history file is invalid, IIM fails while upgrading Registry and Reporting services with error "DB2 database instance is not configured on the local computer"
+
+
+ANSWER
+To overcome this issue please follow below steps 
+
+ 1. Close IIM 
+ 2. Rename the folder <User_Home_Directory>/jazzsm_launchpad/history to <User_Home_Directory>/jazzsm_launchpad/history_bak 
+ 3. Re launch IIM and proceed with the installation.

@@ -1,0 +1,104 @@
+Title: IBM Migrating reports from TCR 2.1.1 to JazzSM TCR through the Cognos UI - United States
+
+Text:
+DASHL2; TCR; Tivoli Common Reporting; Cognos; preupgrade; migrate; export; import TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to move reports (export/import) reports between TCR 2.1.1 and JazzSM TCR using the Cognos UI? 
+
+ANSWER
+ 
+
+Export directly from the TCR 2.1.1 Cognos UI:  * 
+ * 
+ * 
+ * Reporting 
+ * 
+ * Common Reporting
+ * 
+ * 
+ * Launch 
+ * 
+ * Administration
+ * 
+ * 
+ * Configuration 
+ * 
+ * 
+ * 
+ * Content Administration 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Name
+ * 
+ * Next
+ * 
+ * 
+ * 
+ * Select the entire content store
+ * 
+ * Do NOT 
+ * 
+ * Include user account information
+ * 
+ * Next
+ * 
+ * 
+ * 
+ * Next 
+ * 
+ * Remember this password!
+ * 
+ * 
+ * Next.
+ * 
+ * 
+ * Save and run once
+ * 
+ * Finish.
+ * 
+ * 
+ * 
+ * 
+ * 
+
+Import directly into the TCR 3.1.2 Cognos UI:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Common Reporting
+ * 
+ * 
+ * Launch 
+ * 
+ * Administration
+ * 
+ * 
+ * Configuration 
+ * 
+ * 
+ * 
+ * Content Administration 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Next 
+ * 
+ * Finish 
+ * 
+ * 
+
+BIRT reports must be copied manually from the TCR 2.1.1 server to the JazzSM TCR server. To do that:  *  On the TCR 2.1.1 server tar/zip the <TIP Home>/../tipv2Components/TCRComponent/data directory. On the JazzSM/TCR server, make a backup of the <JazzSM Home>/reporting/data directory. Copy the tar/zip file from step 1 to the <JazzSM Home>/reporting/ and unpack it. Allow it to replace the contents of the existing data directory. 
+
+
+No restart of JazzSM is required after the Cognos or BIRT procedures above.

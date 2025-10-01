@@ -1,0 +1,171 @@
+Title: IBM IV55707: THINCLIENT FAILURE WHILE DOING ORB INITIALIZATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: In Thin Client , ORB initialization is failing.
+   May be seen while creating initialContext.lookup.
+   orbtrc files ( ORB ffdc may get created )
+   with following message -
+   Caused by: org.omg.CORBA.INTERNAL: Unknown subcontract type:0
+   vmcid: IBM minor code: 59E completed: No
+      at
+   com.ibm.rmi.SubcontractRegistry.getServerSubcontract(Subcontract
+   Registry.java:246)
+      at
+   com.ibm.rmi.corba.ORB.initializePrereqPlugins(ORB.java:600)
+      at com.ibm.rmi.corba.ORB.orbParameters(ORB.java:1345)
+      at com.ibm.rmi.corba.ORB.set_parameters(ORB.java:1271)
+      at com.ibm.CORBA.iiop.ORB.set_parameters(ORB.java:1694)
+      at org.omg.CORBA.ORB.init(ORB.java:374)
+   .
+   Stack Trace: at
+   com.ibm.ws.naming.util.Helpers.getOrb(Helpers.java:400)
+      at
+   com.ibm.ws.naming.util.WsnInitCtxFactory.getInitialContextIntern
+   al(WsnInitCtxFactory.java:462)
+      at
+   com.ibm.ws.naming.util.WsnInitCtx.getContext(WsnInitCtx.java:128
+   )
+      at
+   com.ibm.ws.naming.util.WsnInitCtx.getContextIfNull(WsnInitCtx.ja
+   va:765)
+      at
+   com.ibm.ws.naming.util.WsnInitCtx.lookup(WsnInitCtx.java:164)
+      at
+   com.ibm.ws.naming.util.WsnInitCtx.lookup(WsnInitCtx.java:179)
+      at
+   javax.naming.InitialContext.lookup(InitialContext.java:436)
+      at thinrcpejb2test.TestThinEJB2.init(TestThinEJB2.java:116)
+      at
+   thinrcpejb2test.MainClient.doCalculation(MainClient.java:94)
+      at thinrcpejb2test.Application.start(Application.java:18)
+   and
+   Caused by: org.omg.CORBA.INTERNAL: Unknown subcontract type:0
+   vmcid: IBM minor code: 59E completed: No
+      at
+   com.ibm.rmi.SubcontractRegistry.getServerSubcontract(Subcontract
+   Registry.java:246)
+      at
+   com.ibm.rmi.corba.ORB.initializePrereqPlugins(ORB.java:600)
+      at com.ibm.rmi.corba.ORB.orbParameters(ORB.java:1345)
+      at com.ibm.rmi.corba.ORB.set_parameters(ORB.java:1271)
+      at com.ibm.CORBA.iiop.ORB.set_parameters(ORB.java:1694)
+      at org.omg.CORBA.ORB.init(ORB.java:374)
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ThinClient failure while doing ORB initialization
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR will be fixed in the following Java Releases:
+      6 R1 SR8       (6.1.8.0)
+      5.0  SR16 FP6  (5.0.16.6)
+      7 R1 SR1       (7.1.1.0)
+      7    SR7       (7.0.7.0)
+      6    SR16      (6.0.16.0)
+   .
+   Due to wrong class loader is being used to load ORB and another
+   class loader is used to initialize the fields of the orb
+   instance, there is miss- match and ClassCastException is thrown
+   while initializing the fields of the ORB instance.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV55707
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA 5 ORB
+   
+   
+ * REPORTED COMPONENT ID
+   620500123
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-02-20
+   
+   
+ * CLOSED DATE
+   2014-03-01
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IX90137 [http://www-01.ibm.com/support/docview.wss?uid=swg1IX90137]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA 5 ORB
+   
+   
+ * FIXED COMPONENT ID
+   620500123
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

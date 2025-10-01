@@ -1,0 +1,16 @@
+Title: IBM End of Support (EOS) for FileNet P8 Workplace and Workplace XT - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When do FileNet Application Engine (AE/Workplace) and WorkplaceXT reach end of support (EOS)? 
+
+CAUSE
+FileNet AE/Workplace and Workplace XT are/were bundled, tested and supported with products such as FileNet Content Manager and Content Platform Engine so their End of Support is tied to the bundle they are sold with.
+
+ANSWER
+To determine End of Support for Workplace and Workplace XT clients, check the Support Lifecycle page on the IBM Support Portal. Look for the product the client was sold with, such as FileNet Content Engine, FileNet Content Manager, or FileNet Business Process Manager. When the bundle reaches end of support so will Workplace and Workplace XT.
+
+RELATED INFORMATION
+ IBM Software support lifecycle [http://www.ibm.com/software/support/lifecycle/]

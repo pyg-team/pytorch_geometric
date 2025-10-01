@@ -1,0 +1,35 @@
+Title: IBM DFHAP0001 DFHRM0001 0C4 in CA module during CICS startup - United States
+
+Text:
+abendS0C4 abend0C4 S0C4 0C4 DFHAP0001 AP0001 msgDFHAP0001 DFHRM0001 RM0001 msgDFHRM0001 DFHRMXN4 startup initialization initialisation Computer Associates CA-SAF; CA SAF; TOPSECRET CSXM SURROGATE 5655M1500 R650 650 R500 500 HCI6500 5655-M15 5655M15 kixinfo retention32 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your CICS Transaction Server for z/OS (CICS TS) V3.2 region abends during startup with message DFHRM0001 or DFHAP0001 due to an abend 0C4 in program SAFRT001. 
+
+SYMPTOM
+The messages for this CICS job prior to the abend indicate CA Top Secret initialization was in progress:
+
+TSS6088I - TSS/CICS Core Manager Subtask is Active
+TSS6089I - TSS/CICS Program Manager Subtask is Active
+DFHAP0001 [http://publib.boulder.ibm.com/infocenter/cicsts/v3r2/index.jsp?topic=/com.ibm.cics.ts.messages.doc/cics_mc/dfhap/AP0001.html] An abend (code ---/AKEA [http://publib.boulder.ibm.com/infocenter/cicsts/v3r2/index.jsp?topic=/com.ibm.cics.ts.messages.doc/cics_mc/AKxx_abend_codes/AKEA.html]) has occurred at offset X'FFFF' in module DFHAPDM.
+
+Instead of the DFHAP0001 message you might see something like:
+
+DFHRM0001 [http://publib.boulder.ibm.com/infocenter/cicsts/v3r2/index.jsp?topic=/com.ibm.cics.ts.messages.doc/cics_mc/dfhrm/RM0001.html] An abend (code ---/AKEA) has occurred at offset X'01D6' in module DFHRMXN4.
+
+
+DIAGNOSING THE PROBLEM
+The dump shows that an abend0C4 occurred during an INITIALISE_DOMAIN call to DFHAPDM to initialize the AP domain. The abendS0C4 occurs in CA module SAFRT001 on a MVC instruction (D208 1000 3000) due to the contents of Register 3. Reg3 is pointing to the last 8 bytes of a page. These 8 bytes contain the word SURROGAT:
+
+C3C1D2E2 D7C9D5E3 E2E4D9D9 D6C7C1E3 | CAKSPINTSURROGAT |
+35CCE000.:35CCEFFF. LENGTH(X'1000')--Storage not available
+
+The failing instruction is trying to move 9 bytes, and the ninth byte falls into the next page which is not available, causing the abend0C4.
+
+RESOLVING THE PROBLEM
+Apply CA fix CIT8673. Contact [/support/docview.wss?uid=swg21410576&amp;aid=1]CA [http://www.ca.com/] if you need additional assistance.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

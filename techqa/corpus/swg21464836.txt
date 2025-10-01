@@ -1,0 +1,57 @@
+Title: IBM (参考) 正しくない providerURL が原因で、クラスター環境にて ConfigEngine の wp-add-property タスクが失敗する - United States
+
+Text:
+ 技術情報(FAQS)
+
+質問
+ConfigEngine.bat/ConfigEngine.sh の wp-add-property タスクを実行し、LDAP 属性を追加しようとしたところ、以下のエラーメッセージでタスクが失敗しました。 
+
+
+[wplc-add-property] [datetime] Looking up EJB: corbaloc:iiop:localhost:10031...
+[wplc-add-property] [datetime] security.LoadSCI
+[wplc-add-property] [datetime] security.GettingConfig
+[wplc-add-property] [datetime] security.AuthTarget
+[wplc-add-property] [datetime] security.ClientCSI
+[wplc-add-property] [datetime] Cannot find EJB: ejb/com/ibm/websphere/wim/ejb/WIMServiceHome
+[wplc-add-property] javax.naming.NameNotFoundException: Context: theCell/clusters/theCluster, name: ejb/com/ibm/websphere/wim/ejb/WIMServiceHome: First component in name websphere/wim/ejb/WIMServiceHome not found. [Root exception is org.omg.CosNaming.NamingContextPackage.NotFound: IDL:omg.org/CosNaming/NamingContext/NotFound:1.0]
+
+
+原因
+正しくない la.providerURL が設定されているためです。
+
+
+回答
+ 
+
+スタンドアロンもしくは統合セキュリティー環境において、新しい LDAP 属性を加える際、ConfigEngine の wp-la-install-ear タスクを実行した後に、wp-add-property タスクを実行する必要があります。また、その際には wkplc.properties に含まれる以下のパラメータが必要です。
+
+la.providerURL
+la.propertyName
+la.entityTypes
+la.dataType
+la.multiValued
+repositoryId
+
+クラスター環境においては、la.providerURL はデフォルトの値ではなく、正しい値を入力する必要があります。WebSphere Application Server の管理コンソールもしくは <dmgr_profile>/config/cells/<セル名>/nodes/<ノード名> の下にある serverindex.xml から Deployment Manager の BOOTSTRAP ポート番号が確認できます。
+
+デフォルトでは、ポート番号は 9809 となっています。
+
+そのため、次の値のように変更する必要があります。
+
+（変更前）
+la.providerURL=corbaloc:iiop:localhost:10031
+
+（変更後）
+la.providerURL=corbaloc:iiop:dmgr.example.com:9809
+
+
+関連文書
+原文：
+(英文)「Incorrect providerURL causes ConfigEngine.bat wp-add-property task to fail in cluseter」(Technote #1358381) [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21358381]
+
+この文書は、米国 IBM 社の資料を翻訳した参考文書です。日本語環境での検証は行っておりませんのでご注意ください。翻訳元の文書は、関連文書のリンクよりご参照ください。
+
+
+
+HISTORICAL NUMBER
+ 733070

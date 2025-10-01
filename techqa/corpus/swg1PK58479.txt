@@ -1,0 +1,232 @@
+Title: IBM PK58479: FILENOTFOUNDEXCEPTION WITH THE MESSAGE "TOO MANY OPEN FILES". - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24020073]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24021203]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Descriptions:
+   
+   Jvm was not able to start because of too many open file error.
+   Error:
+   [10/22/07 10:25:02:892 EDT] 0000000a ModuleManifes E
+   UTLS0002E: The shared library AlertFwk_LIB contains a classpath
+   entry which does not resolve to a valid jar file, the library
+   jar file is expected to be found.
+   ...
+    (Too many open files)
+         at java.io.FileInputStream.open(Native Method)
+         at
+   java.io.FileInputStream.<init>(FileInputStream.java:129)
+         at java.io.FileInputStream.<init>(FileInputStream.java:89)
+   
+   ...
+   Cause:The application server opens all shared libraries jars in
+   order to implement installed optional package support.
+   
+   It appears that there is a bug in this code that prevents it
+   from closing jar files when it opens them for scanning.  As a
+   result, these jar files are only closed when garbage collection
+   occurs, which could cause too many open file error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local fix:N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: IBM WebSphere Application Server versions    *
+   *                 6.0.2 and 6.1 users with very many shared    *
+   *                 library jar files.                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Unexpected FileNotFoundExceptions       *
+   *                      will be thrown during server startup    *
+   *                      with the message: Too many open files   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   All shared library jar files are opened during server startup
+   in order to implement installed optional package support, but
+   the jar files are not explicitly closed after they are
+   inspected. Consequently, the jar files are only closed when
+   the garbage collector finalizes them, which might not occur
+   before other files need to be opened.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Shared library jar files are always explicitly closed after
+   they are inspected for installed optional package metadata.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 6.0.2.27 and 6.1.0.17.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK58479
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-12-19
+   
+   
+ * CLOSED DATE
+   2008-01-09
+   
+   
+ * LAST MODIFIED DATE
+   2008-01-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP
+   
+   
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

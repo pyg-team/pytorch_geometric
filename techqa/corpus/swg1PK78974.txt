@@ -1,0 +1,137 @@
+Title: IBM PK78974: Web client session handling causes inconsistent database connect ions - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  For the resolution of defect RATLC01250951(ALM: Can not use CQWe
+   b with multi user accounts on IE7.0 at the same time) and RATLC0
+   1250949 (ALM: Via Firefox, multiuser can not use CQWeb(Falcon) a
+   t the same time), since this is a browser issue within the lates
+   t browser version and CQ can do nothing to avoid, so it is neede
+   d to add it to the release notes to let users know.
+   
+   - taken from RATLC01279216
+   
+   Here is an overview:
+   
+   - schema with two production databases (A and B)
+   - user has login access to both
+   - user opens browser window(bw) 1 to CQWeb, logs into db A
+   - user opens bw 2 to CQWeb, is automatically logged into db A
+   - user logs out of db A in bw2, logs into db B
+   
+   at this point, if the user goes back into bw1 in db A, they can
+   still create records for db A, and any queries already defined w
+   ill return results from db A.  However, if the user defines a ne
+   w query, they will get results from db B, from which they can ac
+   cess and modify records of that db.  This behavior can be seen i
+   n both internet explorer and firefox.  I know it sounds a little
+    crazy, but overall the definition of the behavior of the 7.1 we
+   b interface is now unclear.  With the RCP or Windows clients, a
+   user can open up multiple client instances and be logged into tw
+   o databases at the same time without this issue occurring.  In t
+   he 7.0.x web interface, the user had a dropdown selection to sel
+   ect the database they are currently working with, so logging out
+    and back in is not required to switch.  If a user tried to open
+    two separate windows connected to different databases under the
+    same schema, any action in either session automatically require
+   s them to log back into that database.
+   
+   I understand that this goes a little overboard, but this is what
+    the client is concerned with.  I can't see the behavior I am de
+   scribing above for 7.1 as working as designed, but that would be
+    an engineering call.  I have attached a few screenshots of a we
+   b session showing query results of different databases under the
+    same session.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This is not a product problem because the behavior is determined
+    by browser.
+   This APAR is a duplicate of PK80330 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK80330]
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK78974
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARQUEST UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3601
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED DUA
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-20
+   
+   
+ * CLOSED DATE
+   2009-02-18
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

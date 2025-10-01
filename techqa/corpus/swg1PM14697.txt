@@ -1,0 +1,198 @@
+Title: IBM PM14697: ENFORCE THAT JAVAX.XML.PARSERS.DOCUMENTBUILDERFACTORY IS        PROPERLY SET AT RUNTIME - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.1-TIV-ITCAMAD-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24027898]
+7.1.0.2-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP2 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24029067]
+7.1.0.2-TIV-ITCAMAD-IF0006: ITCAM for Application Diagnostics V7.1 FP2 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24031010]
+7.1.0.2-TIV-ITCAMAD-IF0007: ITCAM for Application Diagnostics V7.1 FP2 IF7 [http://www-01.ibm.com/support/docview.wss?uid=swg24031710]
+7.1.0.2-TIV-ITCAMAD-IF0010: ITCAM for Application Diagnostics V7.1 FP2 IF10 [http://www-01.ibm.com/support/docview.wss?uid=swg24032110]
+7.1.0-TIV-ITCAMAD-FP0003: ITCAM for Application Diagnostics V7.1 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032604]
+7.1.0.3-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP3 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032985]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Views are missing in TEP for ITCAM for Application Diagnostics
+   7.1. The following error is displayed:
+   
+   javax.xml.parsers.FactoryConfigurationError:Provider
+   org.apache.xerces.jaxp.DocumentBuilderFactoryImpl not found
+   
+   The exception is happening because the verion of Java being used
+   (SUN JRE 1.5) isn't setting up the property
+   javax.xml.parsers.DocumentBuilderFactory.
+   
+   The property defaults to its IBM value instead of the Sun value,
+   which is what is causing the problem.
+   
+   We need to modify the code to enforce that
+   javax.xml.parsers.DocumentBuilderFactory is properly set at
+   runtime.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  In the meantime, please try the following workaround in file
+   /tivoli/ibm/itm6.2/aix536/cw/kwj_tepui.jar.jnlp
+   
+     <resources>
+       <j2se version="1.5+" />
+       <property name="javax.xml.parsers.DocumentBuilderFactory"
+   value="com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFa
+   ctoryImp
+   "/>
+       <jar href="classes/kwj_tepui.jar"/>
+     </resources>
+   
+   
+   Please note that this workaround will only work with TEP
+   WebStart clients using Sun's JVM.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   *
+   * Users using Sun JVM for Java WebStart to connect to Tivoli
+   * Enterprise Portal Server (TEPS) to view AD 7.1 monitoring
+   * data through the WebSphere agent.
+   *
+   ****************************************************************
+   *
+   * PROBLEM DESCRIPTION:
+   *
+   * Failure due to incorrect XML parser factory for Sun JVM is
+   * thrown:
+   *
+   * javax.xml.parsers.FactoryConfigurationError:Provider
+   * org.apache.xerces.jaxp.DocumentBuilderFactoryImpl not found
+   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contianed in the following maintenance
+   package:
+   
+     | interim fix | 7.1.0.1-TIV-ITCAMAD_WS-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  In /tivoli/ibm/itm6.2/aix536/cw/kwj_tepui.jar.jnlp file set the
+   following when using Sun JVM:
+   
+    <resources>
+       <j2se version="1.5+" />
+       <property name="javax.xml.parsers.DocumentBuilderFactory"
+   
+   value="com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFa
+   ctoryImpl                               "/>
+       <jar href="classes/kwj_tepui.jar"/>
+    </resources>
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM14697
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS DIS T
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62TM
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-18
+   
+   
+ * CLOSED DATE
+   2010-09-01
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS DIS T
+   
+   
+ * FIXED COMPONENT ID
+   5724L62TM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

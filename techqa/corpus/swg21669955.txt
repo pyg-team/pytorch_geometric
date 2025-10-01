@@ -1,0 +1,33 @@
+Title: IBM Configuration to avoid Windows systems with fake uuid to be merged - United States
+
+Text:
+fake UUID unexpected merge TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ Several Windows computer systems have same UUID. Is there a way to configure TADDM in order to avoid unexpected merges when discovering them? 
+
+CAUSE
+In the standard TADDM configuration, Windows computer systems having the same UUID are considered as the same target and are merged. 
+
+ANSWER
+By default, TADDM consider the following UUIDs as fake UUIDs, so avoiding unexpected merges: 
+
+ * 
+ * 
+ * - all the UUIDs identified by a string containing only 'f', 'F' and '-' characters
+
+
+Anyway, it is possible to configure TADDM in order to choose a different set of fake UUIDs by setting the following property: 
+com.collation.windows.UUIDToBeIgnoredRegex
+
+In case you have only one possible fake UUID value, set it to this value. For instance, in case the fake UUID is 00020003-0004-0005-0006-000700080009 the property will be configured as:
+
+com.collation.windows.UUIDToBeIgnoredRegex=00020003-0004-0005-0006-000700080009
+
+In case you have a set of fake UUIDs 
+(for instance, the value above and 0345FA1A-FD1A-05F4-1AFD-F4051FFFE503 as well), you can configure the property by putting the fake UUIDs in sequence, separated by '|', then enclosing the string in brackets with a leading '^'. In our example the configuration will be:
+
+com.collation.windows.UUIDToBeIgnoredRegex=^(00020003-0004-0005-0006-000700080009|0345FA1A-FD1A-05F4-1AFD-F4051FFFE503)

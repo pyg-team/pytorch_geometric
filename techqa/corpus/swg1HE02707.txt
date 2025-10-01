@@ -1,0 +1,221 @@
+Title: IBM HE02707: AFTER UPGRADING SMARTEAM GATEWAY TO V5R20 SP4 IT NO LONGER GENER ATES XML FILES WHEN PERFORMING DEFINED FUNCTIONS ON ITEMS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the previous R19 (and the current R20 environment) there
+   is no need to install the Bizztalk adapters or the IBM
+   Webspehere Integration since they are not being used for this
+   gateway configuration.
+   After upgrading to v5R20 sp4 I started the process of
+   installing SmarTeam Gateway Server. During the installation
+   process on the Gateway Server I am unable to install the
+   Gateway client. When I attempt to install the Gateway client
+   I receive the following message ??? The Installation didn???t
+   detect an installation of IBM WebSpehere Business Integration
+   on the local machine??? and am unable to proceed with the
+   client installation on the Gateway server.
+   Then, from the Client workstation running SmarTeam editor
+   with the Gateway client installed, and the database
+   connection set to Gateway. When a new Item is created there
+   is not an xml file generated in the c:\Gateway-Polling
+   location, and there are no error messages generated that
+   indicate what the problem maybe.
+   1. The error I am receiving happens on ANY operation for
+   Items that I have defined in the Gateway Integration Manager.
+   This would include;
+   ??? Adding an Item
+   ??? Updating an Item
+   ??? Life Cycle operation on an Item
+   ??? Item Promotions
+   2. The Problem that I am having is that the XML files for any
+   of the above operations are not being generated from SmarTeam
+   Gateway.
+   3. Yes, I have attached a screen shot of the error message
+   from the Gateway server. This error happens each time any
+   conditions is met in the Gateway Operation Mapping. I believe
+   that this is a problem with the inability to install the
+   Gateway client on the Gateway server. Each time you attempt
+   to install the Gateway client on the Gateway server you
+   receive the error message stating ???No IBM WebShere Business
+   Integration Detected on the local machine??? when this error
+   happens the installation process cannot continue.
+   4. I have also generated the required Schema selecting only
+   the classes I have defined in the Gateway Integration
+   mapping, and yes I did set the schema to XDR (XML
+   Data-Reduced)
+   So the first question would be - Is IBM WebShere Business
+   Integration now required for Gateway in R20?
+   If not, why can the VAR not install the Gateway Client on the
+   Gateway Server?
+   Why are the XML files not being generated in the defined
+   E:\Gateway-Polling\input directory?
+   You can see all relevant screenshots and Gateway setup info
+   contained in the DOC attached to this SR.  Also included in
+   the DOC are the installation error and the Event Viewer error
+   generated when the VAR manually tried to push an XML file.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  empty
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In the previous R19 (and the current R20 environment) there
+   is no need to install the Bizztalk adapters or the IBM
+   Webspehere Integration since they are not being used for this
+   gateway configuration.
+   After upgrading to v5R20 sp4 I started the process of
+   installing SmarTeam Gateway Server. During the installation
+   process on the Gateway Server I am unable to install the
+   Gateway client. When I attempt to install the Gateway client
+   I receive the following message ??? The Installation didn???t
+   detect an installation of IBM WebSpehere Business Integration
+   on the local machine??? and am unable to proceed with the
+   client installation on the Gateway server.
+   Then, from the Client workstation running SmarTeam editor
+   with the Gateway client installed, and the database
+   connection set to Gateway. When a new Item is created there
+   is not an xml file generated in the c:\Gateway-Polling
+   location, and there are no error messages generated that
+   indicate what the problem maybe.
+   1. The error I am receiving happens on ANY operation for
+   Items that I have defined in the Gateway Integration Manager.
+   This would include;
+   ??? Adding an Item
+   ??? Updating an Item
+   ??? Life Cycle operation on an Item
+   ??? Item Promotions
+   2. The Problem that I am having is that the XML files for any
+   of the above operations are not being generated from SmarTeam
+   Gateway.
+   3. Yes, I have attached a screen shot of the error message
+   from the Gateway server. This error happens each time any
+   conditions is met in the Gateway Operation Mapping. I believe
+   that this is a problem with the inability to install the
+   Gateway client on the Gateway server. Each time you attempt
+   to install the Gateway client on the Gateway server you
+   receive the error message stating ???No IBM WebShere Business
+   Integration Detected on the local machine??? when this error
+   happens the installation process cannot continue.
+   4. I have also generated the required Schema selecting only
+   the classes I have defined in the Gateway Integration
+   mapping, and yes I did set the schema to XDR (XML
+   Data-Reduced)
+   So the first question would be - Is IBM WebShere Business
+   Integration now required for Gateway in R20?
+   If not, why can the VAR not install the Gateway Client on the
+   Gateway Server?
+   Why are the XML files not being generated in the defined
+   E:\Gateway-Polling\input directory?
+   You can see all relevant screenshots and Gateway setup info
+   contained in the DOC attached to this SR.  Also included in
+   the DOC are the installation error and the Event Viewer error
+   generated when the VAR manually tried to push an XML file.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  NOTE THAT THIS PROBLEM WILL BE FIXED ON V5R20 SP6.
+   Additional Closure Information:
+   Issue fixed in ENOVIA SmarTeam with change from MSxml library
+   to MSxml3 to support the MSxml3 format.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE02707
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-12-14
+   
+   
+ * CLOSED DATE
+   2011-03-20
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569199970
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSN
+   UP

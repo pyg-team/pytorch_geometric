@@ -1,0 +1,136 @@
+Title: IBM JR52650: ORA-01795 exception in calculation framework for items that are linked more than 1000 times - United States
+
+Text:
+  FIXES ARE AVAILABLE
+JR53438 - Mandatory cumulative Interim Fix for WebSphere Commerce Version 7 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24040267]
+JR55049 - Mandatory cumulative Interim Fix #3 for WebSphere Commerce Version 7 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041706]
+JR57861 - Mandatory cumulative Interim Fix 5 for WebSphere Commerce Version 7 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24043761]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You encounter the following exception when trying to use the
+   calculation framework to calculate VAT tax for items that are
+   linked to more than 1000 products:
+   
+   java.sql.SQLSyntaxErrorException: ORA-01795: maximum number of
+   expressions in a list is 1000
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   WebSphere Commerce V7 users who have items that are linked more
+   than 1000 times.
+   
+   PROBLEM ABSTRACT:
+   ORA-01795 exception in calculation framework for items that are
+   linked more than 1000 times
+   
+   BUSINESS IMPACT:
+   Calculation framework fails to calculate shipping or tax
+   amounts.
+   
+   RECOMMENDATION:
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Split the SQL query into sub queries if the number of
+   expressions in IN clause is bigger than 1000.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR52650
+   
+   
+ * REPORTED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * REPORTED COMPONENT ID
+   5724I3800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-24
+   
+   
+ * CLOSED DATE
+   2015-03-10
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * FIXED COMPONENT ID
+   5724I3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

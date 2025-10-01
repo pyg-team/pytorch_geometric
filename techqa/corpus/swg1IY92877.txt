@@ -1,0 +1,286 @@
+Title: IBM IY92877: ERROR PRODUCED IF VARIABLE ASSIGNED FROM ORGNODE IS NOT TYPE CAST PRIOR TO HIBERNATION IN POLICY. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A client has an issue with Oracle 9i data typing when it comes
+   to the
+   Hibernate() function.
+   
+   Netcool/Impact 3.1 build 509
+   
+   When they capture the data from an OrgNode field from a Get
+   against the
+   DataType the Hibernate() function fails with the error:
+   
+   An exception occurred while executing Policy
+   PMR_04692_019_866_Policy.
+   Please examine server.log for more details or check the Policy.
+   The
+   exception was: Exception in policy: PMR_04692_019_866_Policy at
+   line 65.
+   null
+   
+   The field type in the Oracle db was NUMBER, the Impact DataType
+   of this
+   was FLOAT (I assume their own edit of it) and the issue only
+   occurred when
+   a value was assigned to a variable from the OrgNode; the Policy
+   had no
+   issue with the value in the OrgNode.
+   
+   My testing finds this issue occurs with an Oracle db field type
+   of FLOAT &
+   Impact DataType FLOAT and Oracle db field type of NUMBER &
+   Impact DataType
+   INTEGER.  The test Policy is:
+   
+   PN="PMR_04692_019_866_Policy_";
+   ID="ID"+Random(101)+"_";
+   ANN="Start";
+   Log(1,PN+ID+ANN);
+   
+   ANN="GetByFilter";
+   Log(2,PN+ID+ANN);
+   MyDataType="PMR_04692_019_866_Oracle_Floater_DT";
+   MyFilter="NAME='Fred'";
+   Log(3,PN+ID+ANN+": MyDataType: "+MyDataType);
+   Log(3,PN+ID+ANN+": MyFilter: "+MyFilter);
+   MyRecord=GetByFilter(MyDataType, MyFilter, false);
+   Log(3,PN+ID+ANN+": MyRecord: "+MyRecord);
+   
+   ANN="Length";
+   Log(2,PN+ID+ANN);
+   MyRecordNum=Length(MyRecord);
+   Log(3,PN+ID+ANN+": MyRecordNum: "+MyRecordNum);
+   
+   ANN="Test";
+   Log(2,PN+ID+ANN);
+   If(MyRecordNum > 0)
+   {
+   //             MyTestValue=MyRecord[0].SALARY;
+   //             MyTestValue=Float(MyRecord[0].SALARY);
+                   MyTestValue=MyRecord[0].AGE;
+   //             MyTestValue=Float(MyRecord[0].AGE);
+   //             MyTestValue=Int(MyRecord[0].AGE);
+                   Log(3,PN+ID+ANN+": MyTestValue: "+MyTestValue);
+   }
+   
+   ANN="Hibernate";
+   Log(2,PN+ID+ANN);
+   MyActionKey="MyActionKey_"+@Serial+"_"+ID+Random(1001);
+   MyReason="I said so";
+   MySeconds=20;
+   Log(3,PN+ID+ANN+": MyActionKey: "+MyActionKey);
+   Log(3,PN+ID+ANN+": MyReason: "+MyReason);
+   Log(3,PN+ID+ANN+": MySeconds: "+MySeconds);
+   Hibernate(MyActionKey, MyReason, MySeconds);
+   
+   ANN="RemoveHibernation";
+   Log(2,PN+ID+ANN);
+   RemoveHibernation(MyActionKey);
+   
+   ANN="End";
+   Log(1,PN+ID+ANN);
+   
+   Ok, it?s excessive on the logging? habitual from
+   troubleshooting.  The
+   DataType PMR_04692_019_866_Oracle_Floater_DT uses an Oracle
+   table I
+   created:
+   
+   SQL> CREATE TABLE "FLOATER"
+     2  ( "NAME" VARCHAR2(40),
+     3  "SALARY" FLOAT,
+     4  "AGE" NUMBER(3)
+     5  )
+     6  ;
+   
+   Table created.
+   
+   SQL> desc floater
+    Name                                                      Null?
+   Type
+    -----------------------------------------      --------
+   ----------------------------
+    NAME                VARCHAR2(40)
+    SALARY              FLOAT(126)
+    AGE                  NUMBER(3)
+   
+   I populated this with the data:
+   
+   SQL> select * from floater;
+   
+   NAME                                                      SALARY
+   AGE
+   ----------------------------------------        ----------
+   ----------
+   Fred
+   12345.67
+   18
+   
+   A further test against the NAME field proved that this issue
+   does not
+   apply to VARCHAR/STRING fields.  The
+   PMR_04692_019_866_Oracle_Floater_DT
+   DataType .type file reads:
+   
+   #This file was written by Impact Server.
+   #Thu Nov 02 10:01:00 GMT 2006
+   PMR_04692_019_866_Oracle_Floater_DT.SQL.TIMEINTERVLAFORDATATYPES
+   TATS=0
+   PMR_04692_019_866_Oracle_Floater_DT.SQL.INCLUDE_ROOT=true
+   PMR_04692_019_866_Oracle_Floater_DT.SQL.CACHEINVALIDATION=0
+   PMR_04692_019_866_Oracle_Floater_DT.SQL.DATASOURCENUM=3
+   PMR_04692_019_866_Oracle_Floater_DT.SQL.USERPARAMETERS=\
+   WITHDEFAULTS{{'NAME', STRING, 'NAME', 'NAME', 'NAME', 'true',
+   '', '',
+   FALSE, FALSE}, {'SALARY', FLOAT, 'SALARY', 'SALARY', 'SALARY',
+   'true', '',
+   '', FALSE, FALSE}, {'AGE', INTEGER, 'AGE', 'AGE', 'AGE', 'true',
+   '', '',
+   FALSE, FALSE}}
+   PMR_04692_019_866_Oracle_Floater_DT.SQL.QUERYCACHESIZE=0
+   PMR_04692_019_866_Oracle_Floater_DT.SQL.CACHESIZE=0
+   PMR_04692_019_866_Oracle_Floater_DT.SQL.DISPLAYNAMEFIELD=NAME
+   PMR_04692_019_866_Oracle_Floater_DT.SQL.TABLENAME=SYSTEM.FLOATER
+   PMR_04692_019_866_Oracle_Floater_DT.SQL.COUNTCACHEINVALIDATION=0
+   PMR_04692_019_866_Oracle_Floater_DT.SQL.ENABLED=true
+   PMR_04692_019_866_Oracle_Floater_DT.SQL.QUERYINTERVALFORDATATYPE
+   STATS=0
+   PMR_04692_019_866_Oracle_Floater_DT.SQL.ORDERBY=
+   PMR_04692_019_866_Oracle_Floater_DT.SQL.KEYFIELDS.1=NAME
+   PMR_04692_019_866_Oracle_Floater_DT.SQL.QUERYCACHEINVALIDATION=0
+   PMR_04692_019_866_Oracle_Floater_DT.SQL.DYNAMICLINKINFOSET={}
+   PMR_04692_019_866_Oracle_Floater_DT.SQL.RESTRICTWHERECLAUSE=
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Type casting the variable prior to Hibernation resolves the
+   issue and found to be incidentally fixed in build 523+
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Impact users                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Impact hibernations can not handle      *
+   *                      variable that originated as Oracle      *
+   *                      NUMBER types                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   A null pointer would be thrown a the policy state was saved.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Oracle NUMBER types can now be handled
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY92877
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-12-15
+   
+   
+ * CLOSED DATE
+   2007-04-02
+   
+   
+ * LAST MODIFIED DATE
+   2007-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     PARSER
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY
+   UP

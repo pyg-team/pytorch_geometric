@@ -1,0 +1,34 @@
+Title: IBM LCMS Premier Frequently Asked Questions - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The following list includes frequently asked questions (FAQ) about LCMS premier to help you troubleshoot potential problems and enhance how you use the product. 
+
+CONTENT
+ 
+
+ * After upgrading the LCMS, why are all my assessments scores zero? [http://www.ibm.com/support/docview.wss?uid=swg21689290] 
+ * Does Evolution LCMS support CMI data tracking? [http://www.ibm.com/support/docview.wss?uid=swg21689286] 
+ * Dragging & dropping objects from the authoring tool pallet does not insert the object into the treeview pane [http://www.ibm.com/support/docview.wss?uid=swg21689294]. 
+ * How do I locate my LCMS log file? [http://www.ibm.com/support/docview.wss?uid=swg21689295] 
+ * How do I publish from LCMS 2012 to LMS 2011 using pens? [http://www.ibm.com/support/docview.wss?uid=swg21689283] 
+ * How do I use Prescription in an Evolution LCMS assessment? [http://www.ibm.com/support/docview.wss?uid=swg21689287] 
+ * I cannot find the version number on my application. How do I find out what it is? [http://www.ibm.com/support/docview.wss?uid=swg21689297] 
+ * Is it possible to save an assessment and resume at a later stage? [http://www.ibm.com/support/docview.wss?uid=swg21689288] 
+ * Is the Firefox browser supported for the LCMS? [http://www.ibm.com/support/docview.wss?uid=swg21689293] 
+ * My Evolution LCMS PDF export is failing, is there any troubleshoting guide ? [http://www.ibm.com/support/docview.wss?uid=swg21689282] 
+ * When I try to Import/Export content, the task status says 'Requested' [http://www.ibm.com/support/docview.wss?uid=swg21689296] 
+ * Why do I get a "HTTP 404 - File not found" when I attempt to connect to my LCMS site? [http://www.ibm.com/support/docview.wss?uid=swg21689284] 
+ * Why doesn't my content expand to the full width of the content frame after I've increased the width of the LO viewer? [http://www.ibm.com/support/docview.wss?uid=swg21689285] 
+ * Why do users have to login to the LCMS twice to get into the application? [http://www.ibm.com/support/docview.wss?uid=swg21690050] 
+ * How do I move a Theme to another LCMS Premier site ? [http://www.ibm.com/support/docview.wss?uid=swg21984123] 
+ * How do I upload a Viewer into LCMS Web Authoring ? [http://www.ibm.com/support/docview.wss?uid=swg21984127] 
+ * How do I Download a Viewer to the LCMS Premier Learning Portal ? [http://www.ibm.com/support/docview.wss?uid=swg21984129] 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Smarter Workforce IBM Kenexa LCMS Premier Smarter Workforce IBM Kenexa LCMS Premier on Cloud

@@ -1,0 +1,183 @@
+Title: IBM PI56364: MESSAGES STUCK ON SYSTEM.QSG.TRANSMIT.QUEUE AFTER CSQM065E (MQRC=2124 FOLLOWED BY ABEND 5C6-00D40050 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer is running WebSphere MQ for z/OS V8 with a 6-way
+   QSG. They performed a CF Link failure scenario removing a CF
+   from the entire PLEX. The 3 simplex structures with the MQ QSG
+   were successfully recovered however they noticed that messages
+   were stuck on the SYSTEM.QSG.TRANSMIT.QUEUE.
+   .
+   The customer disabled the IGQ agent with all 6 qmgrs in the QSG
+   and was able to successfully run workloads.
+   .
+   The customer receieved the following in CSQ1 MSTR log:
+   09.59.30 CSQM065E +CSQ1 CSQMIGQA MQCMIT failed, MQRC=2124
+                     (MQRC_OUTCOME_PENDING)
+   09.59.30 CSQY291E CSQWDSDM SDUMPX FAILED, RC=00000208,
+            CSQ1,ABN=5C6-00D40050,LOC=CSQMLPLM.CSQMIGQA+00002E70
+   .
+   CSQM_ABEND_IGQA_ERROR ('00D40050'x), An unexpected error has
+   been encountered by the IGQ Agent. It is possible that the IGQ
+   agent has encountered an unexpected return code after issuing an
+   MQ API call.
+   .
+   The change reviewed the customer doc and the messages on
+   SYSTEM.QSG.TRANSMIT.QUEUE are for CSQ1. The IGQ Agent on CSQ1
+   issued CSQM065E, MQCMIT failed, MQRC=2124 and then abended with
+   5C6-00D40050. We are raising this APAR so that the Change Team
+   can investigate a change to the IGQ Agent to handle the MQCMIT
+   returing MQRC 2124, MQRC_OUTCOME_PENDING.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 8 *
+   *                 Release 0 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: IGQ messages stuck on                   *
+   *                      SYSTEM.QSG.TRANSMIT.QUEUE after         *
+   *                      MSGCSQ065E.                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Intra-group queuing IGQ is enabled with messages being PUT to
+   the SYSTEM.QSG.TRANSMIT.QUEUE by the sending QMGR, and removed
+   from it by the IGQ agent csqmigqa on the receiving QMGR.
+   When connectivity to the CF is lost the IGQ agent is unable to
+   complete COMMIT processing for a batch of messages, the MQCMIT
+   returning with MQRC=2124 (MQRC_OUTCOME_PENDING). This is not an
+   error as connectivity to the CF may be restored later allowing
+   the COMMIT to complete, however csqmigqa treats it as such,
+   issuing message CSQM065E and ABENDing with ABEND 5C6-00D40050
+   (CSQM_ABEND_IGQA_ERROR) 'An unexpected error has been
+   encountered by the IGQ agent'.
+   As the IGQ agent has ABENDed it is no longer available to GET
+   messages from the SYSTEM.QSG.TRANSMIT.QUEUE causing them to
+   build-up.
+   
+   Additional keywords: CSQM065 MSGCSQ065 5C6 00D40050
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  IGQ agent processing has been updated to correctly handle reason
+   code MQRC_OUTCOME_PENDING returned during COMMIT processing, so
+   that it no longer results in an error message and ABEND.
+   000Y
+   CSQMIGQA
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI56364
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * REPORTED COMPONENT ID
+   5655W9700
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-01
+   
+   
+ * CLOSED DATE
+   2016-05-27
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI38233
+   
+   
+
+MODULES/MACROS
+ *  CSQMIGQA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * FIXED COMPONENT ID
+   5655W9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI38233 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI38233]
+   UP16/07/06 P F607
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

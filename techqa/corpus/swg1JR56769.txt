@@ -1,0 +1,144 @@
+Title: IBM JR56769: DOC - INFORMATION MISSING ABOUT DOCUMENT DATA TYPE LIMITATIONS WITH THE SQL CONNECTOR - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2016.12.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.12.delta.repository&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2016.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043062]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM Process Designer, the SQL Connector panel displays the
+   following information:
+   
+   Standard JDBC Types: ARRAY, BIGINT, BINARY, BIT, BLOB, BOOLEAN,
+   CHAR, CLOB, DATALINK, DATE, DECIMAL, DISTINCT, DOUBLE, FLOAT,
+   INTEGER, AVA_OBJECT,         LONGVARBINARY....
+   
+   However, even though all these types are technically available,
+   IBM Business Process Manager (BPM) does not transform complex
+   IBM BPM types (such as TWObjects) to standard JDBC types that
+   the database can process. Therefore, the SQL Connector code can
+   handle only simple types.
+   
+   The limitation information is missing from the documentation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the Java integration feature to invoke custom Java code
+   using JDBC java interfaces to call stored procedures.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Information about this limitation will be added to the
+   SQLParameter variable types description in an upcoming IBM BPM
+   V8.5.7 cumulative fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56769
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-04
+   
+   
+ * CLOSED DATE
+   2016-10-19
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

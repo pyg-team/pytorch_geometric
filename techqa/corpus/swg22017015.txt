@@ -1,0 +1,31 @@
+Title: IBM In Filenet P8 system, we find that subscriptions are not firing and workflow is not launched. How to solve this issue? - United States
+
+Text:
+Event; Subscription TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ We found that subscriptions are not firing and workflow is not launched. Yet there is no relative information in trace file, how to solve it? 
+
+CAUSE
+The root cause is huge backlogs in queueitem table which block normal subscription.
+
+ANSWER
+If user want to trigger the subscription for all of P8 objects, user need to clean the current records in queueitem tables, please refer to the detailed steps below: 
+
+1. Shutdown CPE WAS JVMs to ensure there's no activities performed from application side.
+2. Backup Objectstore database, at least the queueitem table.
+3. Try to remove all of the records and only keep one control line.
+
+NOTE: 
+a. “DequeueHost" specifies the host name of the server responsible for dequeuing the item. Note that a retried queue item might have a different DequeueHost value for each retry, depending on which server actually processed the queue item.
+b. "lease_expiry_date" is a datetime value that indicates that a server is processing async events in the QueueItem table; this mechanism is used to ensure that only one server is processing a particular item at any given time.
+c. Also there's a control line in queueitem table with "lease_expiry_date" equals "2999-04-26 00:00:00.0", please do not delete this row.
+
+4. Start your CPE WAS JVMs again.
+
+NOTE: 
+a. Please do not trigger huge backlog for subscription at one time again to avoid user encounter the same situation.
+b. Before user perform the above action, please check what is the current backlog on queueitem tables, since it has been processed some days. If there's no more records in queue items table, no need to perform the database operation.

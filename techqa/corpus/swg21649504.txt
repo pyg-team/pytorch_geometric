@@ -1,0 +1,131 @@
+Title: IBM db2haicu may fail with 'Error getting info for NIC'. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ 
+$ db2haicu
+Welcome to the DB2 High Availability Instance Configuration Utility (db2haicu).
+
+You can find detailed diagnostic information in the DB2 server diagnostic log file called db2diag.log. Also, you can use the utility called db2pd to query the status of the cluster domains you create.
+
+For more information about configuring your clustered environment using db2haicu, see the topic called 'DB2 High Availability Instance Configuration Utility (db2haicu)' in the DB2 Information Center.
+
+db2haicu determined the current DB2 database manager instance is 'db2inst1'. The cluster configuration that follows will apply to this instance.
+
+db2haicu is collecting information on your current setup. This step may take some time as db2haicu will need to activate all databases for the instance to discover all paths ...
+When you use db2haicu to configure your clustered environment, you create cluster domains. For more information, see the topic 'Creating a cluster domain with db2haicu' in the DB2 Information Center. db2haicu is searching the current machine for an existing active cluster domain ...
+db2haicu did not find a cluster domain on this machine. db2haicu will now query the system for information about cluster nodes to create a new cluster domain ...
+
+db2haicu did not find a cluster domain on this machine. To continue configuring your clustered environment for high availability, you must create a cluster domain; otherwise, db2haicu will exit.
+
+Create a domain and continue? [1]
+1. Yes
+2. No
+1
+Create a unique name for the new domain:
+ha_linux
+Nodes must now be added to the new domain.
+How many cluster nodes will the domain 'ha_linux' contain?
+2
+Enter the host name of a machine to add to the domain:
+blackhawkdon01
+Enter the host name of a machine to add to the domain:
+blackhawkdon02
+db2haicu can now create a new domain containing the 2 machines that you specified. If you choose not to create a domain now, db2haicu will exit.
+
+Create the domain now? [1]
+1. Yes
+2. No
+1
+Creating domain 'ha_linux' in the cluster ...
+Creating domain 'ha_linux' in the cluster was successful.
+You can now configure a quorum device for the domain. For more information, see the topic "Quorum devices" in the DB2 Information Center. If you do not configure a quorum device for the domain, then a human operator will have to manually intervene if subsets of machines in the cluster lose connectivity.
+
+Configure a quorum device for the domain called 'ha_linux'? [1]
+1. Yes
+2. No
+1
+The following is a list of supported quorum device types:
+1. Network Quorum
+Enter the number corresponding to the quorum device type to be used: [1]
+1
+Specify the network address of the quorum device:
+172.17.4.1
+Configuring quorum device for domain 'ha_linux' ...
+Configuring quorum device for domain 'ha_linux' was successful.
+Query failed. Refer to db2diag.log and the DB2 Information Center for details.
+----------------------------------------------------------------------------------------------------------------
+
+
+In db2diag.log you can see "Query object attributes failed" error saying that there is a problem retrieving the details for the network interface usb0.
+
+-----------------------------------------------------------------------------------------------------
+2013-09-05-15.12.16.548214-240 E114275E738 LEVEL: Error
+PID : 1028 TID : 140737047783200 PROC : db2haicu
+INSTANCE: db2inst1 NODE : 000
+HOSTNAME: blackhawkdon02
+FUNCTION: DB2 UDB, high avail services, sqlhaGetObjectAttribute2, probe:1200
+MESSAGE : ECF=0x90000554=-1879046828=ECF_SQLHA_QUERY_FAILED
+Query object attributes failed
+DATA #1 : String, 35 bytes
+Error during vendor call invocation
+DATA #2 : unsigned integer, 4 bytes
+8
+DATA #3 : unsigned integer, 4 bytes
+5
+DATA #4 : String, 4 bytes
+usb0
+DATA #5 : unsigned integer, 4 bytes
+4
+DATA #6 : unsigned integer, 8 bytes
+1
+DATA #7 : signed integer, 4 bytes
+262152
+DATA #8 : String, 45 bytes
+Line # : 2325---2610-407 No resources found.
+
+2013-09-05-15.12.16.574573-240 E116274E416 LEVEL: Error 
+PID : 1028 TID : 140737047783200 PROC : db2haicu 
+INSTANCE: db2inst1 NODE : 000 
+HOSTNAME: blackhawkdon02
+FUNCTION: DB2 UDB, high avail services, sqlhaUIListAllNICsInClus,probe:200
+RETCODE : ECF=0x90000554=-1879046828=ECF_SQLHA_QUERY_FAILED 
+Query object attributes failed 
+MESSAGE : Error getting info for NIC. 
+-----------------------------------------------------------------------------------------------------
+
+
+Check the Network Interface resource class by executing command:
+
+lsrsrc -A b IBM.NetworkInterface
+
+-----> lsrsrc -t -Ab IBM.NetworkInterface OpState NodeNameList Name IPAddress SubnetMask Subnet CommGroup HeartbeatActive <-----
+Resource Persistent and Dynamic Attributes for IBM.NetworkInterface
+OpState NodeNameList Name IPAddress SubnetMask Subnet CommGroup HeartbeatActive<
+1 {"blackhawkdon01.cidc.cummins.com"} "eth2" "fe80::6eae:8bff:fe3e:376c" "/64" "fe80::/64" "" 1<<<<<<<<<<<<<<<
+2 {"blackhawkdon01.cidc.cummins.com"} "usb0" "fe80::6cae:8bff:fe3e:3769" "/64" "fe80::/64" "" 1<<<<<<<<<<<<<<<
+2 {"blackhawkdon02.cidc.cummins.com"} "usb0" "fe80::40f2:e9ff:fe26:86d1" "/64" "fe80::/64" "" 1<<<<<<<<<<<<<<<
+1 {"blackhawkdon02.cidc.cummins.com"} "eth2" "fe80::42f2:e9ff:fe26:86d4" "/64" "fe80::/64" "" 1<<<<<<<<<<<<<<<
+1 {"blackhawkdon01.cidc.cummins.com"} "eth1" "fe80::6eae:8bff:fe3e:376b" "/64" "fe80::/64" "" 1<<<<<<<<<<<<<<<
+1 {"blackhawkdon01.cidc.cummins.com"} "eth0" "172.17.5.101" "255.255.252.0" "172.17.4.0" "CG1" 1<<<<<<<<<<<<<<<
+1 {"blackhawkdon02.cidc.cummins.com"} "eth0" "fe80::42f2:e9ff:fe26:86d2" "/64" "fe80::/64" "" 1<<<<<<<<<<<<<<<
+1 {"blackhawkdon01.cidc.cummins.com"} "eth0" "fe80::6eae:8bff:fe3e:376a" "/64" "fe80::/64" "" 1<<<<<<<<<<<<<<<
+1 {"blackhawkdon02.cidc.cummins.com"} "eth1" "fe80::42f2:e9ff:fe26:86d3" "/64" "fe80::/64" "" 1<<<<<<<<<<<<<<<
+1 {"blackhawkdon02.cidc.cummins.com"} "eth0" "172.17.5.102" "255.255.252.0" "172.17.4.0" "CG1" 1<<<<<<<<<<<<<<<
+1 {"blackhawkdon02.cidc.cummins.com"} "eth2" "192.168.25.122" "255.255.255.252" "192.168.25.120" "CG2" 1<<<<<<<<<<<<<<<
+1 {"blackhawkdon01.cidc.cummins.com"} "eth1" "192.168.192.100" "255.255.252.0" "192.168.192.0" "CG3" 1<<<<<<<<<<<<<<<
+1 {"blackhawkdon01.cidc.cummins.com"} "eth2" "192.168.25.121" "255.255.255.252" "192.168.25.120" "CG2" 1<<<<<<<<<<<<<<<
+1 {"blackhawkdon02.cidc.cummins.com"} "eth1" "192.168.192.101" "255.255.252.0" "192.168.192.0" "CG3" 1<<<<<<<<<<<<<<<
+
+
+From above output you can see that the three interfaces eth0, eth1 and eth2 on both nodes are configured with an IPVersion 4 address. However the interface usb0 has only an IPVersion 6 address configured. Currently, db2haicu only supports IPVersion 4 NIC. So during the setup, it will enumerate the NIC list and get its IPAddress in IPVersion 4 format, however, for usb0 there is none. 
+
+To fix the above issue you will need to configure an IPVersion 4 addresses for the interface usb0.
+If interface usb0 is not used then you can simply disable it.
+
+
+
+
+ANSWER

@@ -1,0 +1,192 @@
+Title: IBM PI83951: DFHSJ1007 W JVMSERVER IS BEING DISABLED AND RESTARTED BY CICS BECAUSE IT IS IN AN INCONSISTENT STATE. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DFHSJ1007 JVMSERVER is being disabled and restarted by CICS
+   because it is in an inconsistent state.
+   JVMserver goes into inconsistent state and does not respond to
+   CEMT SET JVM(JVMNAME)  disable/enable/purge/forcepurge. At this
+   point the JVMServer is hung and tasks involved are in a
+   deadlock.
+   Previous joblog messages show the following abend:
+   DFHSJ0001 An abend (code ---/AKEA) has occurred at offset
+             X'0C82' in module DFHSJIN
+   
+   
+   Additional Symptom(s) Search Keyword(s): KIXREVCTC
+   added new trace point 0B22
+   tid_sjjs_statscol_error
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: JVMSERVER cannot be re-enabled due to   *
+   *                      hung task holding SJGLOBAL.             *
+   ****************************************************************
+   A request is made to collect statistics about an enabled
+   JVMSERVER.  This causes a call to be made into the JVM server to
+   execute Java code.
+   
+   Whilst the Java code is executing the JVMSERVER is disabled.
+   The logic to disable a JVMSERVER will not wait for the task
+   collecting statistics to complete, so it is possible for the JVM
+   to be destroyed before the Java code collecting statistics
+   finishes.  If this occurs the task collecting statistics will
+   hang indefinitely.
+   
+   If execution of the statistics request went through DFHSJST, the
+   hung task will hold the SJGLOBAL lock which will prevent
+   JVMSERVER resource actions, such as the re-enabling of the
+   disabled JVMSERVER.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHSJJS has been modified so that disabling of a JVMSERVER will
+   wait if statistics collection is in progress.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  ×**** PE18/03/21 FIX IN ERROR. SEE APAR PI95527 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI95527]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI83951
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-07-03
+   
+   
+ * CLOSED DATE
+   2018-02-13
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI53821 UI53822 UI53823 UI53824 UI53825 UI53826
+   
+   
+
+MODULES/MACROS
+ *  DFHAPJVM DFHAXIS2 DFHCDJNI DFHSJBD  DFHSJDM  DFHSJDS  DFHSJDUF
+   DFHSJIN  DFHSJIS  DFHSJJS  DFHSJL   DFHSJRL  DFHSJSC  DFHSJST
+   DFHSJTH  DFHSJTRI DFHSJXM  DFJ@H356 DFJ@H360 DFJ@H427 DFJ@H467
+   DFJ@H468 DFJDTCOE DFJOUTRE DFJWLPPL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI53825 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI53825]
+   UP18/02/14 P F802 ¢
+   
+   
+ * R00D PSY UI53826 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI53826]
+   UP18/02/14 P F802 ¢
+   
+   
+ * R100 PSY UI53823 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI53823]
+   UP18/02/15 P F802 ¢
+   
+   
+ * R10D PSY UI53824 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI53824]
+   UP18/02/15 P F802 ¢
+   
+   
+ * R900 PSY UI53821 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI53821]
+   UP18/02/23 P F802 ¢
+   
+   
+ * R903 PSY UI53822 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI53822]
+   UP18/03/01 P F802 ¢
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,33 @@
+Title: IBM Failure in IBM Installation Manager during iFix installation - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While trying to install an iFix for IBM Sterling B2B Integrator an error occures in the IBM Installation Manager (IIM).
+
+<error>
+Error during &quot;install&quot; phase:
+</error>
+<error>
+&#10;&#10;java.io.IOException: Cannot run program &quot;
+/opt/app/media/SI52_install/jdk1.7.9.30/bin/java&quot;: error=2,
+No such file or directory
+</error>
+
+does not exist, so do not know where this has come from.
+
+
+CAUSE
+The cause of this error is from the installation of the base product and the used folders for the JDK directory. And this folder had been deleted after the base install had been installed.
+
+RESOLVING THE PROBLEM
+The issue can be resolved by changing the IIM configuration files installed.xml and installRegistry.xml. 
+
+search for the entry user.sb.JVM_LOC, this will have the mentioned path from the error message (like "/opt/app/media/SI52_install/jdk1.7.9.30/bin/java"). 
+
+You need to change this to point to an existing JDK folder that can be used. 
+
+As an example would be to recover the install media JDK folder to a fixed directory or 
+
+point to the SI path jdk folder instead.

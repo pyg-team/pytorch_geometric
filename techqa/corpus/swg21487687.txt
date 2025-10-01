@@ -1,0 +1,37 @@
+Title: IBM MIXED triggers Assert error and crash - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have encountered program crashes and unexplained assertion errors while trying to run a a linear mixed-model analysis (MIXED command) in Statistics 18.0. I know my data is structured properly, with a single row for each data point and with no duplication of the combinations of repeated (within-subject) factor levels within the cases for each subject. However, I get a processor crash and "program terminating" message whenever I try to run the analysisit. Immediately following the log of the MIXED command in the output viewer is the message:
+
+" _ASSERT(qfirst) failed in mxceff "
+
+This message is followed by some messages regarding resources used and the following termination message:
+
+"Warnings
+Undefined error #91 - Cannot open text file "C:\Program Files\SPSSInc\PASWStatistics18\lang\en\spss.err": No such file or directory
+This is an error from which Statistics cannot recover.
+The Statistics run will terminate now."
+
+
+A colleague has run the same analysis with the same data set on his own computer and not encountered the error. What does the message mean and why is the crash triggered on my computer? 
+
+RESOLVING THE PROBLEM
+A program defect was filed with SPSS Development. Technical Support was unable to replicate the crash. SPSS Development was able to trigger ASSERT_ warnings with program crashes by renaming the spss.err file that was mentioned in the later part of your error messages. They have made program changes to avoid such crashes in the future. However, they were unable to replicate the error in the context of running the customer's MIXED syntax on the customer's data. 
+
+The customer has since reported that all of the computers involved in these crashes had Iolo System Mechanic Professional installed. Subsequent runs of the same analysis on computers without System Mechanic ran without error messages or crashes. Users that experience system crashes with the message:
+
+_ASSERT(qfirst) failed in mxceff
+
+should examine the computer to see if Iolo System Mechanic is installed. If so, try the analysis on a computer without System Mechanic.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 91124

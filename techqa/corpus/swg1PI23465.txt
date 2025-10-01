@@ -1,0 +1,171 @@
+Title: IBM PI23465: AT STARTUP SOME BUNDLES ARE DISABLED AND YOU RECEIVE ERROR MESSAGE DFHSJ1101 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are running transaction server 5.1 using the Liberty
+   JVM server with CICS Bundles.  Once in a while, after a
+   cold start of the region, these bundles get installed
+   in a disabled state and you receive the following message:
+   .
+   DFHSJ1101  An attempt to enable the xxx bundle with
+              symbolic name <name.app>, version 1.0.0 in
+              JVM server <jvmserver> has failed with
+              reason code EXCEPTION_FROM_JVMSERVER.
+   .
+   This is caused by a timing issue involving CICS
+   transactions CJSR and CRLR during startup, which is
+   why it is an intermittent problem.
+   Additional Symptom(s) Search Keyword(s): KIXREVEPH
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS Users                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Bundles with Liberty bundle parts can   *
+   *                      become disabled if the JVMSERVER is     *
+   *                      slow to startup.                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   During CICS startup a JVMSERVER and CICS BUNDLE with Liberty
+   bundle parts is installed.  The JVMSERVER startup is slower
+   than normal and this leads to CICS attempting to enable the
+   CICS BUNDLE before the JVMSERVER is enabled.  The enabling
+   of the BUNDLE fails and it becomes disabled, error message
+   DFHSJ1101 is output to the log.
+   
+   Additional Keywords: SJ1101,MSGDFHSJ1101
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHSJBD has been updated so that as for CICS BUNDLES with OSGI
+   bundle parts, if the JVMSERVER is still enabling the BUNDLES
+   are queued for later processing when the JVMSERVER has finished
+   enabling.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI23465
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-07
+   
+   
+ * CLOSED DATE
+   2014-11-13
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI23003 UI23004
+   
+   
+
+MODULES/MACROS
+ *  DFHSJBD  DFHSJJS  DFHSJRL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY UI23003 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI23003]
+   UP14/11/21 P F411
+   
+   
+ * R900 PSY UI23004 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI23004]
+   UP14/11/21 P F411
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

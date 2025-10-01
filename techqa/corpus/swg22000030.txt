@@ -1,0 +1,99 @@
+Title: IBM Pure Data System for Analytics Maintenance tasks for Clients - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ IBM Pure Data System for Analytics Maintenance tasks for Clients 
+
+ANSWER
+ 
+There are several maintenance tasks that are required to keep your IBM PureData System for Analytics appliance running smoothly. Until now, IBM support has occasionally been engaged to assist in the completion of some of these simpler tasks. IBM has prepared documentation to assist clients in completing these simple tasks independently, without the need to engage IBM support. Effective March 15, 2017 should any of the following tasks be requested, IBM Support will refer clients to appropriate documentation to assist in completion of the task. Please note that IBM Support will continue to be available via PMR to assist, should a client encounter any issues the the execution of these tasks. Below you will find a summary of the tasks and reference to documentation on how each task can be completed. 
+
+
+1. Performing Netezza Platform Software (NPS) Upgrade pre-checks
+http://www.ibm.com/support/docview.wss?uid=swg21981703 [http://www.ibm.com/support/docview.wss?uid=swg21981703]
+
+2. Performing Netezza Platform Software (NPS) Upgrade
+http://www-01.ibm.com/support/docview.wss?uid=swg21984053 [http://www-01.ibm.com/support/docview.wss?uid=swg21984053]
+
+3. Upgrading Netezzza Performance portal
+http://www.ibm.com/support/docview.wss?uid=swg21993142 [http://www.ibm.com/support/docview.wss?uid=swg21993142]
+
+4. Installing IBM Netezza Analytics (INZA) for PureData System for Analytics
+http://www.ibm.com/support/docview.wss?uid=swg21993139 [http://www.ibm.com/support/docview.wss?uid=swg21993139]
+
+5. Fail an unhealthy Snippet Processing Unit (SPU / S-blade) in a PureData Systems for Analytics environment (after unhealthy SPU identified by Support)
+http://www-01.ibm.com/support/docview.wss?uid=swg21993339 [http://www-01.ibm.com/support/docview.wss?uid=swg21993339]
+
+6. How to Migrate Cluster Resources - IBM PureData System for Analytics
+http://www-01.ibm.com/support/docview.wss?uid=swg21998695 [http://www-01.ibm.com/support/docview.wss?uid=swg21998695]
+
+7. Install Software Extension Toolkit for PureData System for Analytics
+http://www.ibm.com/support/docview.wss?uid=swg21993115 [http://www.ibm.com/support/docview.wss?uid=swg21993115]
+
+8. PureData System for Analytics NZSTART/NZSTOP commands
+http://www-01.ibm.com/support/docview.wss?uid=swg21993095 [http://www-01.ibm.com/support/docview.wss?uid=swg21993095]
+
+9. Installing Software Support Toolkit for PureData System for Analytics
+http://www.ibm.com/support/docview.wss?uid=swg21993100 [http://www.ibm.com/support/docview.wss?uid=swg21993100]
+
+10. Installing Hardware Support Toolkit for PureData System for Analytics
+http://www.ibm.com/support/docview.wss?uid=swg21992284 [http://www.ibm.com/support/docview.wss?uid=swg21992284]
+
+11. Performing PureData System for Analytics Full (FDT, HPF, RHEL, Security Patches) Upgrade pre-checks
+http://www.ibm.com/support/docview.wss?uid=swg21627193 [http://www.ibm.com/support/docview.wss?uid=swg21627193]
+
+12. Use nz_check_disk_scan_speed for diagnosing performance issue on PureData System for Analytics
+http://www-01.ibm.com/support/docview.wss?uid=swg21993527 [http://www-01.ibm.com/support/docview.wss?uid=swg21993527] 
+
+13. Configure LDAP Authentication on PureData System for Analytics
+http://www-01.ibm.com/support/docview.wss?uid=swg21993218 [http://www-01.ibm.com/support/docview.wss?uid=swg21993218] 
+
+14. Configure Serial-Over-LAN on PureData System for Analytics
+http://www-01.ibm.com/support/docview.wss?uid=swg21975954 [http://www-01.ibm.com/support/docview.wss?uid=swg21975954] 
+
+15. Add SAN storage to PureData System for Analytics
+http://www-01.ibm.com/support/docview.wss?uid=swg21700900 [http://www-01.ibm.com/support/docview.wss?uid=swg21700900] 
+
+16. Power down the PureData for Analytics appliance
+http://www.ibm.com/support/docview.wss?uid=swg21992578 [http://www.ibm.com/support/docview.wss?uid=swg21992578] 
+
+17. Power ON the PureData for Analytics appliance 
+http://www.ibm.com/support/docview.wss?uid=swg22005650 [http://www.ibm.com/support/docview.wss?uid=swg22005650]
+
+18. Configure callHome on PureData System for Analytics
+http://www-01.ibm.com/support/docview.wss?uid=swg21993177 [http://www-01.ibm.com/support/docview.wss?uid=swg21993177] 
+
+19. PureData System for Analytics - Query History Data Collection
+http://www-01.ibm.com/support/docview.wss?uid=swg21993395 [http://www-01.ibm.com/support/docview.wss?uid=swg21993395] 
+
+20. Updating System Registry on PureData System for Analytics
+http://www-01.ibm.com/support/docview.wss?uid=swg21684987 [http://www-01.ibm.com/support/docview.wss?uid=swg21684987] 
+
+21. Fail a JBOD hard drive for replacement in PureData System for Analytics
+http://www-01.ibm.com/support/docview.wss?uid=swg21994871 [http://www-01.ibm.com/support/docview.wss?uid=swg21994871] 
+
+22. Run Groom for PureData System for Analytics
+http://www-01.ibm.com/support/docview.wss?uid=swg21992666 [http://www-01.ibm.com/support/docview.wss?uid=swg21992666] 
+
+23. Perform PureData System for Analytics PDA_OS_Upgrade
+http://www.ibm.com/support/docview.wss?uid=swg21993145 [http://www.ibm.com/support/docview.wss?uid=swg21993145] 
+
+24. Install FDT support tools for PureData System for Analytics
+http://www.ibm.com/support/docview.wss?uid=swg21992289 [http://www.ibm.com/support/docview.wss?uid=swg21992289] 
+
+25. Enable schema support for PureData System for Analytics
+http://www.ibm.com/support/docview.wss?uid=swg21993112 [http://www.ibm.com/support/docview.wss?uid=swg21993112] 
+
+26. PureData System for Analytics Enhanced cryptography support
+http://www.ibm.com/support/docview.wss?uid=swg21993508 [http://www.ibm.com/support/docview.wss?uid=swg21993508] 
+
+27. Reboot host server of PureData System for Analytics appliance
+http://www-01.ibm.com/support/docview.wss?uid=swg21517071 [http://www-01.ibm.com/support/docview.wss?uid=swg21517071] 
+
+28. PureData System for Analytics Netezza Monitoring Script
+http://www-01.ibm.com/support/docview.wss?uid=swg21992097 [http://www-01.ibm.com/support/docview.wss?uid=swg21992097] 
+
+29. PureData for Analytics REBALANCE command
+[http://www-01.ibm.com/support/docview.wss?uid=swg22002382]http://www-01.ibm.com/support/docview.wss?uid=swg22002382 [http://www-01.ibm.com/support/docview.wss?uid=swg22002382]

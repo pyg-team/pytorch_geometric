@@ -1,0 +1,25 @@
+Title: IBM Details and Options for L1 Discovery - United States
+
+Text:
+discovery stackscan password root passwd TECHNOTE (FAQ)
+
+QUESTION
+ What kind of access and credentials do I need for L1 discovery? 
+
+ANSWER
+The StackScanSensor uses a command called "nmap" which accesses the Operating System's kernel to scan the targets in your scope. It won't run without root authority, hence the requirement for sudo. This requirement is only for the TADDM server, where nmap runs. Assuming you have nmap installed and are willing to run it with sudo, you'd get an "OS Confidence" for each IP that we scan -- i.e. "Solaris" and "80%" meaning "we're 80% confident this is Solaris, but we can't tell for sure because we didn't log in.
+
+Without StackScan, you can run the "PingSensor" -- it will do the java equivalent of a ping and create an "IP Device" ("we know something with this IP is here, but we don't know what it is") in TADDM's DB & UI. 
+
+(StackScan may produce data without nmap access -- you are welcome to try. It will error out, but it may also create some "configuration items" in TADDM anyway.)
+
+You can always clone the existing L1 profile and enable or disable sensors as you wish. (Be careful -- some are pre-reqs of others, but for a Level 1 scan you wouldn't have much enabled.)
+
+You may also consider turning on the SNMPMib2Sensor, if you have SNMP access to devices. (You would have to enter the public string in the access list.) That may be more access then you want to start with, however.
+
+You do not need target machine access for any of the above. An L2 scan will give you hardware & OS level details, but a L3 would be required for application details. L2 will require access list entries for computer system access, and L3 will require access list entries for applications (i.e. DB2, Oracle, WAS, Weblogic...)
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TADDM

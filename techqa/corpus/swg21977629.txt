@@ -1,0 +1,34 @@
+Title: IBM Can't deploy entry template by using IBM Content Navigator Deployment Manager 2.0.3 - United States
+
+Text:
+entry template; content navigator; deployment manager TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ We are trying to use deployment manager to deploy about 30 entry templates. 
+We got an error when we try to convert assets. 
+
+2016-01-14 16:48:31,545 ERROR [ModalContext] 
+com.filenet.deployment.common.Executor - Unable to convert the assets. 
+39 items processed: 38 succeeded, 1 failed. 
+2016-01-14 16:48:31,545 
+ERROR [ModalContext] com.filenet.deployment.common.Executor - Mapping 
+error encountered while processing the following object - Class: 
+CmXTFolderPreferences, Id: {E8DAC8A8-1C30-4154-B55A-95E24F2F599F} 
+Unable to process content of <ContentTransfer> element -- content is 
+not XML. 
+2016-01-14 16:48:31,545 ERROR [main] 
+com.filenet.deployment.rcp.Plugin - Convert Assets - 52APPDEV2-52SYSDEV 
+Unable to convert the assets. 39 items processed: 38 succeeded, 1 
+failed. Mapping error encountered while processing the following object 
+- Class: CmXTFolderPreferences, Id: 
+{E8DAC8A8-1C30-4154-B55A-95E24F2F599F} Unable to process content of 
+<ContentTransfer> element -- content is not XML. 
+
+RESOLVING THE PROBLEM
+This is the current designed behavior for entry templates created in IBM Content Navigator. IBM Content Navigator created templates are new in ICN 2.0.3. Therefore, the current behavior only transfers the entry template without converting/mapping it's content as the customer would like. 
+
+ 
+If you has WorkplaceXT you can use WorkplaceXT created entry templates as a workaround until functionality is added for ICN created entry templates.

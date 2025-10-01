@@ -1,0 +1,38 @@
+Title: IBM There was error executing the command 'SPSS Statistics\setup.exe', or nothing happens at all. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I inserted the CD into my DVD/CD ROM Drive and clicked on the SPSS Statistics link or I navigate to the DVD/CD ROM Drive and click on the Setup.exe executable.
+The following Windows Pop-Up Error dialog box entitled 'setup' was displayed.
+"There was error executing the command 'SPSS Statistics\setup.exe'."
+---OR---
+Nothing at all happens. The computers DVD/CD ROM drive is unable to read the disc. It could be damaged or corrupt. 
+
+RESOLVING THE PROBLEM
+Do you have the 'Original' CD-ROM media or is your a copy?
+It is possible the setup files where not in the 'SPSS Statistics' folder on the duplicated CD-ROM.
+Please check with your IT department to get another copy of the Software Media or use the Original Disc.
+If this is the original disc then the Media may be corrupt or unable to be read by the DVD/CD ROM Drive. Please either contact IBM Client Care or your sales representative, for a CD-ROM replacement. 
+
+You can contact Customer Client Care via E-Mail at Client Care (tsmail@us.ibm.com) 
+
+--OR-- 
+
+The IBM Sales Department:
+1) Software and Services Inquiry Form that you can access on our web site.
+http://www.spss.com/inquiry.cfm [http://www.spss.com/inquiry.cfm] 
+2) E-Mail
+salesbox@us.ibm.com
+3) Phone
+800.543.2185
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 89145

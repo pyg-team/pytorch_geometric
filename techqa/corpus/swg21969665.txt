@@ -1,0 +1,28 @@
+Title: IBM Does ODWEK have "Copy Document Pages to file" function like CMOD Windows Client? - United States
+
+Text:
+API usage TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Does IBM Content Manager OnDemand (CMOD) Web Enablement Kit (ODWEK) have "Copy Document Pages to file" function like CMOD Windows Client? 
+
+RESOLVING THE PROBLEM
+ODWEK does not offer directly the functionality you are looking for mainly because we are an API and the functionality you are looking for is more of a GUI function.
+
+However, we do offer some options to sending your document output to a file for example using method ODHit.retrieve() which uses the ODConstant.NATIVE, or PLUGIN, or ODConstant.PDF. If you want to retrieve large documents by segment you can use the ODHit.retrieveSegment() method.
+
+We also offer the following additional APIs:
+
+ODHit.getResources()/ODHit.getResources(filename)
+Retrieve the AFP resources for the current hit which is either returned to the caller in a ByteArray or written out to the file specified.
+
+ODHit.getDocument()
+Retrieve the document for this ODHit. The document will be retrieved uncompressed and in its native format. Conversion is not provided. See ODServer/ODHit.retrieve() if you require conversion processing. If the current ODHit is for a large object document, only the first segment is returned. See ODHit.getDocument(filename,allsegs) or ODHit.retrieveSegment() for large document handling.
+
+ODHit.getDocument(String Filename, Bool allsegs)
+Retrieve the document for this ODHit. The document will be retrieved uncompressed and in its native format. Conversion is not provided. See ODServer/ODHit.retrieve() if you require conversion processing. If allsegs = true, then all segments of a large object document will be written to the file specified. If allsegs = false, then only the first segment will be retrieved and written to file.
+
+You might also want to take a look at IBM Content Navigator which offers similar functionality.
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21971648]

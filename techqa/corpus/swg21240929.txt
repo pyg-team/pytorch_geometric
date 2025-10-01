@@ -1,0 +1,46 @@
+Title: IBM Crystal Reports XI FAQ - as related to integration with Rational Application Developer - United States
+
+Text:
+crystal; CR; crystal reports integration with RAD; RSA; WAS; CR XI; CR v10; using crystal reports; 1240929 TECHNOTE (FAQ)
+
+QUESTION
+ What are the Frequently Asked Questions (FAQ) regarding Crystal Reports XI integration with IBM Rational Application Developer for WebSphere Software (RAD)? 
+
+ANSWER
+FAQ - RAD and Crystal Reports XI 
+
+ 1. Does RAD support Crystal Reports XI?
+    Yes and No. Currently only the Crystal Reports XI runtime is supported when RAD is updated to RAD 6.0.1.1 iFix001. The ActiveX control based Crystal Reports Embedded Designer in RAD will remain at Crystal Reports 10.
+    Since Crystal Reports XI runtime is supported, the runtime Java™ Reporting Component (JRC) libraries that are used to render the reports at run time will be updated to Crystal Reports XI level.
+    
+    
+ 2. Where can I obtain the Crystal Report XI jar files?
+    The Crystal Reports XI jar files come pre-packaged with RAD 6.0.1. They are located in:
+    C:\Program Files\Common Files\Business Objects\3.0
+    If the RAD 6.0.1 update is applied, you will obtain these files automatically.
+    
+    
+ 3. Is it necessary to execute both the JRC and Crystal Enterprise Server to run Crystal Reports?
+    No, you would only need to run the Crystal Enterprise Server if you
+    have the full version of Crystal Enterprise Edition install and are hosting your reports on it instead of using your regular Application Server. Otherwise only running the JRC is sufficient.
+    
+    
+ 4. Is there any documentation available on how to integrate Crystal Reports XI with RAD?  * No documentation is required for getting Crystal Reports XI support. It is included into the product automatically if you are at RAD 6.0.1.1 iFix001 level. 
+     * No documentation is required for getting Crystal Reports 10 support, if you are at the RAD 6.0.1.1 iFix001 level.
+       
+       
+    
+    
+ 5. Are there any tutorials or sample applications for the Crystal Reports tooling in RAD?
+    A beginners Crystal Reports tutorial can be found at this IBM developerworks site:
+    http://www-128.ibm.com/developerworks/rational/library/06/0418_bajaj/ [http://www-128.ibm.com/developerworks/rational/library/06/0418_bajaj/]
+    
+    For learning about known issues, just search for "crystal reports" on our support sitehttp://www-306.ibm.com/software/awdtools/developer/application/support/index.html [http://www-306.ibm.com/software/awdtools/developer/application/support/index.html]
+    
+    
+ 6. Does Crystal Reports XI need separate licences to install and run? 
+    There is no need for any separate licenses to use Crystal Reports XI in RAD. You need only a RAD license and RAD provides the Crystal reports tooling as a plug-in, so if you are using a licensed RAD installation, you should be able to develop your web applications using the embedded crystal reports designer. You can then deploy these applications to your licensed production server without requiring any additional licenses for Crystal Reports from Business Objects.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Crystal Reports Linux, Windows 6.0, 6.0.0.1, 6.0.1.1

@@ -1,0 +1,130 @@
+Title: IBM PI50442: DOC V8.0: INCORRECT WGET SYNTAX TO RETRIEVE WEBDAV RESOURCES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  AFFECTED URLs:
+   Portal 8.0 -
+   http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.0.0/deplo
+   y/dep_cir.dita?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.0.0/deploy/dep_cir.dita?lang=en]
+   Portal Express 8.0 -
+   http://www-01.ibm.com/support/knowledgecenter/SSYJ99_8.0.0/deplo
+   y/dep_cir.dita?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSYJ99_8.0.0/deploy/dep_cir.dita?lang=en]
+   .
+   TEXT READS:
+   wget -user portal_admin -password
+   portal_admin_password -output-document
+   SampleDir/SampleBase/components/SampleBase.shared/content/webdav
+   /themes.zip
+   http://yourhost:port/wps/mycontenthandler/dav/fs-type1/?mime-typ
+   e=application/zip [http://yourhost:port/wps/mycontenthandler/dav/fs-type1/?mime-type=application/zip]
+   .
+   TEXT READS (IF APPLICABLE):
+   wget -user portal_admin -password
+   portal_admin_password -output-document
+   SampleDir/SampleBase/components/SampleBase.shared/content/webdav
+   /themes.zip
+   http://yourhost:port/wps/mycontenthandler/dav/fs-type1/?mime-typ
+   e=application/zip [http://yourhost:port/wps/mycontenthandler/dav/fs-type1/?mime-type=application/zip]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Refer to the above.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This is planned to be changed in the product documentation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is planned to be changed in the product documentation.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI50442
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-10-13
+   
+   
+ * CLOSED DATE
+   2015-11-02
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,129 @@
+Title: IBM PK80093: Clearquest 7.1 import tool fails to import attachments if the im port file doesn't have 'Description' field in the header - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Clearquest 7.1 import tool fails to import attachments if the im
+   port file doesn't have 'Description' field in the import file. T
+   his is a common scenario if  importing data/attachments from ano
+   ther tool. Import tool says that it completed successfully, but
+   the attachments are not imported.
+   
+   Workaround:
+   Add 'Description' as a header to the attachments import  file an
+   d  add a double quote with a space in it  on every row thereafte
+   r.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The ClearQuest 7.1 import tool fails to import attachments
+   if the import file does not have the "Description" field in
+   the import file.  This is a common scenario if importing
+   data and attachments from another tool.  The Import tool
+   says that it completed successfully, but the attachments are
+   not imported.
+   
+   The solution is to determine if the Description column is
+   null and if so, set the empty string as the default value.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available in ClearQuest 7.1.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK80093
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3600
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-05
+   
+   
+ * CLOSED DATE
+   2009-12-15
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724G3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSN
+   UP

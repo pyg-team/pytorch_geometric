@@ -1,0 +1,205 @@
+Title: IBM PM00293: SQLCODE305N WHILE SCHEDULING ADMIN_COMMAND_DB2 PROCEDURE USING  THE DB2 ADMINSISTRATION SCHEDULER - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  schduing an DB2 command via SP SYSPROC.ADMIN_COMMAND_DB2 using
+   the DB2 administrative scheduler task add procedure
+   SYSPROC.ADMIN_TASK_ADD return SQLCODE305N:
+   
+   (TTHD000&#65517;P&#65529;) "SYSPROC"."ADMIN_COMMAND_DB2"
+   
+   call stored procedure, SQLCODE = -305
+   DSNT408I SQLCODE = -305, ERROR:  THE NULL VALUE
+   CANNOT BE ASSIGNED TO OUTPUT HOST VARIABLE NUMBER 12
+   BECAUSE NO INDICATOR ARIABLE IS SPECIFIED
+   DSNT418I SQLSTATE   = 22002 SQLSTATE RETURN CODE
+   DSNT415I SQLERRP    = DSNXROHB SQL PROCEDURE DETECTING ERROR
+   DSNT416I SQLERRD = -115 0 0 -1 0 0 SQL DIAGNOSTIC INFORMATION
+   DSNT416I SQLERRD    = X'FFFFFF8D'  X'00000000' X'00000000'
+                         X'FFFFFFFF'  X'00000000' X'00000000' SQL
+   ---
+   Parameter 14 (Message) of ADMIN_COMMAND_DB2 is set via:
+   cs.setString(14, "SELECT '-STA RLIMIT', 11 ,'STA','DB1I', 0, 0,
+   0, 0, 0, 0, 0, 'Message'  FROM SYSIBM.SYSDUMMY1");
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  cs.setString(14, "SELECT '-STA RLIMIT', 11 ,'STA','DB1I', 0, 0,
+   0, 0, 0, 0, 0, CAST(NULL AS VARCHAR(1331))  FROM
+   SYSIBM.SYSDUMMY1"); is working well.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All DB2 for z/OS V8 and DB2 9 for z/OS users *
+   *                 of the DB2 scheduler for administrative      *
+   *                 tasks                                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When a stored procedure executed by     *
+   *                      the DB2 scheduler returns a null value  *
+   *                      in a non-nullable output parameter,     *
+   *                      the stored procedure terminates with    *
+   *                      SQLCODE -305.                           *
+   ****************************************************************
+   * RECOMMENDATION: Install this PTF.                            *
+   ****************************************************************
+   Before executing a stored procedure task, the DB2 scheduler
+   executes the SQL SELECT statement indicated in the task to get
+   the parameter values of the stored procedure, and then calls
+   the stored procedure with these values. The parameter values are
+   typed and indicate whether the parameter is nullable or not.
+   For each output parameter, the task creator has to provide a
+   dummy input value that matches the type of the output parameter.
+   If a dummy null value is specified, the output parameter type
+   is nullable, and the stored procedure is allowed to store a
+   null value into this output parameter. Otherwise, the output
+   parameter type is non-nullable, and if the stored procedure
+   tries to store a null value into the output parameter,
+   SQLCODE -305 is returned and the stored procedure terminates
+   in error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This PTF modifies the scheduler to analyze the signature of the
+   stored procedure, locate the output parameters, and set the type
+   of the dummy input values to nullable for each output parameter.
+   This allows the stored procedure to return a null value in any
+   of its output parameters without terminating in error with
+   SQLCODE -305.
+   
+   Moreover, the scheduler is modified to allocate the maximum
+   size for each output parameter, as indicated in the DB2 catalog
+   table SYSIBM.SYSPARMS, overriding the size of the dummy value
+   given by the task creator for the corresponding output
+   parameter. This prevents the output parameter values returned by
+   the stored procedure from being truncated to the corresponding
+   dummy value size.
+   
+   Finally, if tracing is turned on in the scheduler, the output
+   parameter values returned by the stored procedure are written
+   into the trace.
+   
+   Additional Search Keywords
+     SQLCODE305 SQLCODE305N
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM00293
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-03
+   
+   
+ * CLOSED DATE
+   2009-12-21
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK53045 UK53046
+   
+   
+
+MODULES/MACROS
+ *  DSN@6THP DSNA6THP
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY UK53045 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK53045]
+   UP10/01/06 P F001
+   
+   
+ * R910 PSY UK53046 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK53046]
+   UP10/01/06 P F001
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

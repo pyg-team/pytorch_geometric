@@ -1,0 +1,434 @@
+Title: IBM WebSphere Adapter for JD Edwards, Version 7.5 system requirements - United States
+
+Text:
+DSRDoc; DetailedSystemRequirementsDocument PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This techdoc lists the system requirements for IBM WebSphere Adapter for JD Edwards, version 7.5. 
+
+CONTENT
+The information provided here describes the minimum product levels you need installed before opening a problem report with the WebSphere Adapters support team. Because other products frequently ship fixes, updates, and new releases, it is not possible to test every configuration. In general, you can install and run updates to supported products if those updates are compatible with later versions. This statement does not apply to enterprise information system (EIS) product versions and their dependencies. Specific cases where this statement is not applicable are indicated where relevant. 
+
+Supported JD Edwards versions  * EnterpriseOne Tools 8.97, 8.98 ( JD Edwards Adapter Inbound, Outbound operations) 
+ * EnterpriseOne Tools 9.1 ( JD Edwards Adapter from Version 7.5.0.2 onwards) 
+ * EnterpriseOne Tools 9.1.4 ( JD Edwards Adapter from Version 7.5.0.5_IF06 onwards)
+
+Note : For v9.1.4,the JDE user login password and security password should be same. Otherwise, there may be a chance of hitting the login issues while using the real time events and XML list query
+
+Note: The adapter is compatible with any version of JD Edwards EnterpriseOne that works with the supported versions of EnterpriseOne Tools.
+EnterpriseOne Tools 8.9 SP1, 8.9 SP2, 8.93, 8.94, 8.95, 8.96 are supported only for application design, development, and testing; there is no support for production use. Those versions are deprecated because Oracle does not support them. Supported databases All databases supported by the products listed in the Software requirements section.  
+
+HARDWARE / SOFTWARE REQUIREMENTS
+TAB NAVIGATION
+ *  AIX - selected tab, 
+ *  HP 
+ *  IBM i 
+ *  Linux 
+ *  Solaris 
+ *  Windows 
+
+TAB NAVIGATION
+ *  AIX 
+
+
+
+
+OUTLINE
+ * Hardware Requirements  *  Media Drive 
+    *  Memory 
+    *  Processor 
+    *  System z 
+   
+   
+ * Software Requirements  *  Operating System 
+    *  Application Servers 
+    *  Connectors 
+    *  Development Tools 
+   
+   
+ * Optional Supported Software  *  License Use Management 
+    *  Support Assistant 
+    *  Virtualization 
+   
+   
+
+
+
+
+Hardware Requirements Group Applicable OS Notes Media Drive All Applicable AIX OS  DVD/CD-ROM Drive
+
+Memory All Applicable AIX OS  Minimum 1GB physical memory; 2GB recommended
+
+Processor All Applicable AIX OS  IBM POWER family of processors
+
+System z All Applicable AIX OS  System z processor
+
+ Back to top 
+
+Operating Systems Operating System Attributes Notes AIX Platform listing of supported OS AIX 5.3 TL7 POWER System Bitness: 64 Bit Tolerate, 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: POWER System AIX 5.3 TL9 POWER System Bitness: 64 Bit Tolerate, 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: POWER System AIX 6.1 TL1 POWER System Bitness: 64 Bit Tolerate, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: POWER System AIX 6.1 TL2 POWER System Bitness: 64 Bit Tolerate, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: POWER System AIX 6.1 TL4 POWER System Bitness: 64 Bit Tolerate, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: POWER System AIX 7.1 POWER System Bitness: 64 Bit Tolerate, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: POWER System  Back to top 
+
+Software Requirements Group Product Applicable OS Notes Application Servers IBM Business Process Manager Advanced 7.5 and future releases, mod levels and fix packs (overview) [http://www.ibm.com/software/integration/business-process-manager/advanced/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Advanced] All Applicable AIX OS See Note #1 IBM Business Process Manager Advanced 7.5 and future releases, mod levels and fix packs (overview) [http://www.ibm.com/software/integration/business-process-manager/advanced/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Advanced] All Applicable AIX OS See Note #3 WebSphere Application Server 7.0.0.17 (overview) [http://www.ibm.com/software/webservers/appserv/was/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable AIX OS See Note #1 WebSphere Application Server 8.0 (overview) [http://www.ibm.com/software/webservers/appserv/was/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable AIX OS See Note #1 WebSphere Application Server for z/OS 8.0 (overview) [http://www.ibm.com/software/webservers/appserv/zos_os390/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable AIX OS See Note #1 WebSphere Application Server Network Deployment 8.0 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/network/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable AIX OS See Note #1 Connectors WebSphere Enterprise Service Bus 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/wsesb/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Enterprise_Service_Bus] All Applicable AIX OS See Note #1 WebSphere Enterprise Service Bus 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/wsesb/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Enterprise_Service_Bus] All Applicable AIX OS See Note #3 WebSphere Enterprise Service Bus for z/OS 7.5 and future fix packs All Applicable AIX OS See Note #1 WebSphere Enterprise Service Bus for z/OS 7.5 and future fix packs All Applicable AIX OS See Note #3 Development Tools IBM Integration Designer 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/integration-designer/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Integration_Designer] All Applicable AIX OS See Note #1 IBM Integration Designer 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/integration-designer/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Integration_Designer] All Applicable AIX OS See Note #3 Rational Application Developer for WebSphere Software 8.0.3 and future fix packs (overview) [http://www.ibm.com/software/products/us/en/application] (support) [http://www.ibm.com/software/awdtools/developer/application/support/index.html] All Applicable AIX OS  Back to top 
+
+Optional Supported Software Group Product Applicable OS Notes License Use Management Tivoli License Compliance Manager 2.3 (overview) [http://www.ibm.com/software/tivoli/products/license-mgr/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliLicenseManager.html] All Applicable AIX OS Tivoli License Compliance Manager 2.3 (overview) [http://www.ibm.com/software/tivoli/products/license-mgr/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliLicenseManager.html] All Applicable AIX OS Support Assistant IBM Support Assistant 4.1 (overview) [http://www-306.ibm.com/software/support/isa/] (support) [http://www.ibm.com/software/awdtools/isa/support/] All Applicable AIX OS IBM Support Assistant 4.1 (overview) [http://www-306.ibm.com/software/support/isa/] (support) [http://www.ibm.com/software/awdtools/isa/support/] All Applicable AIX OS Virtualization IBM PowerVM Hypervisor (LPAR, DPAR, Micro-Partition) any supported version All Applicable AIX OS See Note #2 IBM PowerVM Hypervisor (LPAR, DPAR, Micro-Partition) any supported version All Applicable AIX OS See Note #2 WPAR: Product installed in System Workload Partition AIX 6.1 AIX 6.1 TL1 POWER System  Specifically AIX 6.1 TL4 SP2 or higher
+
+WPAR: Product installed in System Workload Partition AIX 6.1 AIX 6.1 TL1 POWER System  Added on 8/17: In Alignment with WPS 7.x support statement
+
+WPAR: Product installed in System Workload Partition AIX 7.1 All Applicable AIX OS  Back to top 
+
+
+
+
+TAB NAVIGATION
+ *  HP-UX 
+
+
+
+
+OUTLINE
+ * Hardware Requirements  *  Media Drive 
+    *  Memory 
+    *  Processor 
+    *  System z 
+   
+   
+ * Software Requirements  *  Operating System 
+    *  Application Servers 
+    *  Connectors 
+    *  Development Tools 
+   
+   
+ * Optional Supported Software  *  License Use Management 
+    *  Support Assistant 
+    *  Virtualization 
+   
+   
+
+
+
+
+Hardware Requirements Group Applicable OS Notes Media Drive All Applicable HP OS  DVD/CD-ROM Drive
+
+Memory All Applicable HP OS  Minimum 1GB physical memory; 2GB recommended
+
+Processor All Applicable HP OS  Intel Itanium 2 processor
+
+System z All Applicable HP OS  System z processor
+
+ Back to top 
+
+Operating Systems Operating System Attributes Notes HP Platform listing of supported OS HP-UX 11i v2 IA64 Bitness: 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: IA64 HP-UX 11i v2 PA-RISC Bitness: 64 Bit Tolerate
+Deployment Role: Server
+Hardware platform: PA-RISC HP-UX 11i v3 IA64 Bitness: 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: IA64 HP-UX 11i v3 PA-RISC Bitness: 64 Bit Tolerate
+Deployment Role: Server
+Hardware platform: PA-RISC  Back to top 
+
+Software Requirements Group Product Applicable OS Notes Application Servers IBM Business Process Manager Advanced 7.5 and future releases, mod levels and fix packs (overview) [http://www.ibm.com/software/integration/business-process-manager/advanced/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Advanced] All Applicable HP OS See Note #1 IBM Business Process Manager Advanced 7.5 and future releases, mod levels and fix packs (overview) [http://www.ibm.com/software/integration/business-process-manager/advanced/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Advanced] All Applicable HP OS See Note #3 WebSphere Application Server 7.0.0.17 (overview) [http://www.ibm.com/software/webservers/appserv/was/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable HP OS See Note #1 WebSphere Application Server 8.0 (overview) [http://www.ibm.com/software/webservers/appserv/was/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable HP OS See Note #1 WebSphere Application Server for z/OS 8.0 (overview) [http://www.ibm.com/software/webservers/appserv/zos_os390/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable HP OS See Note #1 WebSphere Application Server Network Deployment 8.0 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/network/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable HP OS See Note #1 Connectors WebSphere Enterprise Service Bus 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/wsesb/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Enterprise_Service_Bus] All Applicable HP OS See Note #1 WebSphere Enterprise Service Bus 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/wsesb/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Enterprise_Service_Bus] All Applicable HP OS See Note #3 WebSphere Enterprise Service Bus for z/OS 7.5 and future fix packs All Applicable HP OS See Note #1 WebSphere Enterprise Service Bus for z/OS 7.5 and future fix packs All Applicable HP OS See Note #3 Development Tools IBM Integration Designer 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/integration-designer/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Integration_Designer] All Applicable HP OS See Note #1 IBM Integration Designer 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/integration-designer/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Integration_Designer] All Applicable HP OS See Note #3 Rational Application Developer for WebSphere Software 8.0.3 and future fix packs (overview) [http://www.ibm.com/software/products/us/en/application] (support) [http://www.ibm.com/software/awdtools/developer/application/support/index.html] All Applicable HP OS  Back to top 
+
+Optional Supported Software Group Product Applicable OS Notes License Use Management Tivoli License Compliance Manager 2.3 (overview) [http://www.ibm.com/software/tivoli/products/license-mgr/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliLicenseManager.html] All Applicable HP OS Tivoli License Compliance Manager 2.3 (overview) [http://www.ibm.com/software/tivoli/products/license-mgr/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliLicenseManager.html] All Applicable HP OS Support Assistant IBM Support Assistant 4.1 (overview) [http://www-306.ibm.com/software/support/isa/] (support) [http://www.ibm.com/software/awdtools/isa/support/] All Applicable HP OS IBM Support Assistant 4.1 (overview) [http://www-306.ibm.com/software/support/isa/] (support) [http://www.ibm.com/software/awdtools/isa/support/] All Applicable HP OS Virtualization WPAR: Product installed in System Workload Partition AIX 7.1 All Applicable HP OS  Back to top 
+
+
+
+
+TAB NAVIGATION
+ *  IBM i 
+
+
+
+
+OUTLINE
+ * Hardware Requirements  *  Media Drive 
+    *  Memory 
+    *  Processor 
+    *  System z 
+   
+   
+ * Software Requirements  *  Operating System 
+    *  Application Servers 
+    *  Connectors 
+    *  Development Tools 
+   
+   
+ * Optional Supported Software  *  License Use Management 
+    *  Support Assistant 
+    *  Virtualization 
+   
+   
+
+
+
+
+Hardware Requirements Group Applicable OS Notes Media Drive All Applicable IBM i OS  DVD/CD-ROM Drive
+
+Memory All Applicable IBM i OS  Minimum 1GB physical memory; 2GB recommended
+
+Processor All Applicable IBM i OS  Any system from the IBM POWER5 family of processors or later; one processing unit or more
+
+System z All Applicable IBM i OS  System z processor
+
+ Back to top 
+
+Operating Systems Operating System Attributes Notes IBM i Platform listing of supported OS IBM i 5.4 POWER System Bitness: 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: POWER System IBM i 6.1 POWER System Bitness: 64 Bit Tolerate, 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: POWER System IBM i 7.1 POWER System Bitness: 64 Bit Tolerate, 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: POWER System  Back to top 
+
+Software Requirements Group Product Applicable OS Notes Application Servers IBM Business Process Manager Advanced 7.5 and future releases, mod levels and fix packs (overview) [http://www.ibm.com/software/integration/business-process-manager/advanced/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Advanced] All Applicable IBM i OS See Note #1 IBM Business Process Manager Advanced 7.5 and future releases, mod levels and fix packs (overview) [http://www.ibm.com/software/integration/business-process-manager/advanced/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Advanced] All Applicable IBM i OS See Note #3 WebSphere Application Server 7.0.0.17 (overview) [http://www.ibm.com/software/webservers/appserv/was/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable IBM i OS See Note #1 WebSphere Application Server 8.0 (overview) [http://www.ibm.com/software/webservers/appserv/was/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable IBM i OS See Note #1 WebSphere Application Server for z/OS 8.0 (overview) [http://www.ibm.com/software/webservers/appserv/zos_os390/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable IBM i OS See Note #1 WebSphere Application Server Network Deployment 8.0 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/network/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable IBM i OS See Note #1 Connectors WebSphere Enterprise Service Bus 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/wsesb/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Enterprise_Service_Bus] All Applicable IBM i OS See Note #1 WebSphere Enterprise Service Bus 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/wsesb/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Enterprise_Service_Bus] All Applicable IBM i OS See Note #3 WebSphere Enterprise Service Bus for z/OS 7.5 and future fix packs All Applicable IBM i OS See Note #1 WebSphere Enterprise Service Bus for z/OS 7.5 and future fix packs All Applicable IBM i OS See Note #3 Development Tools IBM Integration Designer 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/integration-designer/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Integration_Designer] All Applicable IBM i OS See Note #1 IBM Integration Designer 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/integration-designer/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Integration_Designer] All Applicable IBM i OS See Note #3 Rational Application Developer for WebSphere Software 8.0.3 and future fix packs (overview) [http://www.ibm.com/software/products/us/en/application] (support) [http://www.ibm.com/software/awdtools/developer/application/support/index.html] All Applicable IBM i OS  Back to top 
+
+Optional Supported Software Group Product Applicable OS Notes License Use Management Tivoli License Compliance Manager 2.3 (overview) [http://www.ibm.com/software/tivoli/products/license-mgr/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliLicenseManager.html] All Applicable IBM i OS Tivoli License Compliance Manager 2.3 (overview) [http://www.ibm.com/software/tivoli/products/license-mgr/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliLicenseManager.html] All Applicable IBM i OS Support Assistant IBM Support Assistant 4.1 (overview) [http://www-306.ibm.com/software/support/isa/] (support) [http://www.ibm.com/software/awdtools/isa/support/] All Applicable IBM i OS IBM Support Assistant 4.1 (overview) [http://www-306.ibm.com/software/support/isa/] (support) [http://www.ibm.com/software/awdtools/isa/support/] All Applicable IBM i OS Virtualization WPAR: Product installed in System Workload Partition AIX 7.1 All Applicable IBM i OS  Back to top 
+
+
+
+
+TAB NAVIGATION
+ *  Red Hat Enterprise Linux (RHEL) 
+
+
+
+
+OUTLINE
+ * Hardware Requirements  *  Media Drive 
+    *  Memory 
+    *  Processor 
+    *  System z 
+   
+   
+ * Software Requirements  *  Operating System 
+    *  Application Servers 
+    *  Connectors 
+    *  Development Tools 
+   
+   
+ * Optional Supported Software  *  License Use Management 
+    *  Support Assistant 
+    *  Virtualization 
+   
+   
+
+
+
+
+Hardware Requirements Group Applicable OS Notes Media Drive All Applicable Linux OS  DVD/CD-ROM Drive
+
+Memory All Applicable Linux OS  Minimum 1GB physical memory; 2GB recommended
+
+Processor Red Hat Enterprise Linux (RHEL) 5.0 Update 6 Advanced Platform x86-64  Intel Pentium at 3GHz for single core system, 2.4GHz for dual cores or more; Intel EM64T or AMD opteron.
+
+System z All Applicable Linux OS  System z processor
+
+ Back to top 
+
+Operating Systems Operating System Attributes Notes Linux Platform listing of supported OS Red Hat Enterprise Linux (RHEL) 4.0 Update 6 AS/ES x86-32 Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-32 Red Hat Enterprise Linux (RHEL) 5.0 Update 1 Advanced Platform x86-64 Bitness: 64 Bit Tolerate, 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: x86-64  Back to top 
+
+Software Requirements Group Product Applicable OS Notes Application Servers IBM Business Process Manager Advanced 7.5 and future releases, mod levels and fix packs (overview) [http://www.ibm.com/software/integration/business-process-manager/advanced/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Advanced] All Applicable Linux OS See Note #1 IBM Business Process Manager Advanced 7.5 and future releases, mod levels and fix packs (overview) [http://www.ibm.com/software/integration/business-process-manager/advanced/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Advanced] All Applicable Linux OS See Note #3 WebSphere Application Server 7.0.0.17 (overview) [http://www.ibm.com/software/webservers/appserv/was/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable Linux OS See Note #1 WebSphere Application Server 8.0 (overview) [http://www.ibm.com/software/webservers/appserv/was/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable Linux OS See Note #1 WebSphere Application Server for z/OS 8.0 (overview) [http://www.ibm.com/software/webservers/appserv/zos_os390/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable Linux OS See Note #1 WebSphere Application Server Network Deployment 8.0 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/network/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable Linux OS See Note #1 Connectors WebSphere Enterprise Service Bus 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/wsesb/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Enterprise_Service_Bus] All Applicable Linux OS See Note #1 WebSphere Enterprise Service Bus 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/wsesb/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Enterprise_Service_Bus] All Applicable Linux OS See Note #3 WebSphere Enterprise Service Bus for z/OS 7.5 and future fix packs All Applicable Linux OS See Note #1 WebSphere Enterprise Service Bus for z/OS 7.5 and future fix packs All Applicable Linux OS See Note #3 Development Tools IBM Integration Designer 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/integration-designer/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Integration_Designer] All Applicable Linux OS See Note #1 IBM Integration Designer 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/integration-designer/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Integration_Designer] All Applicable Linux OS See Note #3 Rational Application Developer for WebSphere Software 8.0.3 and future fix packs (overview) [http://www.ibm.com/software/products/us/en/application] (support) [http://www.ibm.com/software/awdtools/developer/application/support/index.html] All Applicable Linux OS  Back to top 
+
+Optional Supported Software Group Product Applicable OS Notes License Use Management Tivoli License Compliance Manager 2.3 (overview) [http://www.ibm.com/software/tivoli/products/license-mgr/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliLicenseManager.html] All Applicable Linux OS Tivoli License Compliance Manager 2.3 (overview) [http://www.ibm.com/software/tivoli/products/license-mgr/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliLicenseManager.html] All Applicable Linux OS Support Assistant IBM Support Assistant 4.1 (overview) [http://www-306.ibm.com/software/support/isa/] (support) [http://www.ibm.com/software/awdtools/isa/support/] All Applicable Linux OS IBM Support Assistant 4.1 (overview) [http://www-306.ibm.com/software/support/isa/] (support) [http://www.ibm.com/software/awdtools/isa/support/] All Applicable Linux OS Virtualization IBM PR/SM any version All Applicable Linux OS  Adapters will provide support in alignment with WPS support statement
+
+IBM PR/SM any version All Applicable Linux OS See Note #2 Red Hat KVM as delivered with Red Hat Enterprise Linux (RHEL) 5.4 All Applicable Linux OS  In Alignment with WPS 7.x support statement
+
+Red Hat KVM as delivered with Red Hat Enterprise Linux (RHEL) 5.4 All Applicable Linux OS  In Alignment with WPS 7.x support statement
+
+Red Hat KVM as delivered with Red Hat Enterprise Linux (RHEL) 5.5 All Applicable Linux OS  In Alignment with WPS 7.x support statement
+
+Red Hat KVM as delivered with Red Hat Enterprise Linux (RHEL) 5.5 All Applicable Linux OS VMware ESX 4.0 Red Hat Enterprise Linux (RHEL) 4.0 Update 6 AS/ES x86-32,
+Red Hat Enterprise Linux (RHEL) 5.0 Update 1 Advanced Platform x86-64  Adapters will provide support in alignment with WPS support statement
+
+VMware ESX 4.0 All Applicable Linux OS  Applicable to Linux on x86-32 and x86-64
+
+VMware ESXi 4.0 All Applicable Linux OS  Applicable to Linux on x86-32 and x86-64
+
+VMware ESXi 4.0 Red Hat Enterprise Linux (RHEL) 4.0 Update 6 AS/ES x86-32,
+Red Hat Enterprise Linux (RHEL) 5.0 Update 1 Advanced Platform x86-64  Adapters will provide support in alignment with WPS support statement
+
+WPAR: Product installed in System Workload Partition AIX 7.1 All Applicable Linux OS z/VM 6.1 (overview) [http://www.vm.ibm.com/] All Applicable Linux OS z/VM 6.1 (overview) [http://www.vm.ibm.com/] All Applicable Linux OS See Note #2  Back to top 
+
+
+
+
+TAB NAVIGATION
+ *  Solaris 
+
+
+
+
+OUTLINE
+ * Hardware Requirements  *  Media Drive 
+    *  Memory 
+    *  Processor 
+    *  System z 
+   
+   
+ * Software Requirements  *  Operating System 
+    *  Application Servers 
+    *  Connectors 
+    *  Development Tools 
+   
+   
+ * Optional Supported Software  *  License Use Management 
+    *  Support Assistant 
+    *  Virtualization 
+   
+   
+
+
+
+
+Hardware Requirements Group Applicable OS Notes Media Drive All Applicable Solaris OS  DVD/CD-ROM Drive
+
+Memory All Applicable Solaris OS  Minimum 1GB physical memory; 2GB recommended
+
+Processor All Applicable Solaris OS  Sun Solaris operating environment compatible SPARC at 440Mhz or later
+
+System z All Applicable Solaris OS  System z processor
+
+ Back to top 
+
+Operating Systems Operating System Attributes Notes Solaris Platform listing of supported OS Solaris 10 SPARC Bitness: 64 Bit Tolerate, 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: SPARC Solaris 9 SPARC Bitness: 64 Bit Tolerate, 32 Bit
+Deployment Role: Server
+Hardware platform: SPARC  Back to top 
+
+Software Requirements Group Product Applicable OS Notes Application Servers IBM Business Process Manager Advanced 7.5 and future releases, mod levels and fix packs (overview) [http://www.ibm.com/software/integration/business-process-manager/advanced/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Advanced] All Applicable Solaris OS See Note #1 IBM Business Process Manager Advanced 7.5 and future releases, mod levels and fix packs (overview) [http://www.ibm.com/software/integration/business-process-manager/advanced/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Advanced] All Applicable Solaris OS See Note #3 WebSphere Application Server 7.0.0.17 (overview) [http://www.ibm.com/software/webservers/appserv/was/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable Solaris OS See Note #1 WebSphere Application Server 8.0 (overview) [http://www.ibm.com/software/webservers/appserv/was/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable Solaris OS See Note #1 WebSphere Application Server for z/OS 8.0 (overview) [http://www.ibm.com/software/webservers/appserv/zos_os390/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable Solaris OS See Note #1 WebSphere Application Server Network Deployment 8.0 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/network/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable Solaris OS See Note #1 Connectors WebSphere Enterprise Service Bus 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/wsesb/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Enterprise_Service_Bus] All Applicable Solaris OS See Note #1 WebSphere Enterprise Service Bus 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/wsesb/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Enterprise_Service_Bus] All Applicable Solaris OS See Note #3 WebSphere Enterprise Service Bus for z/OS 7.5 and future fix packs All Applicable Solaris OS See Note #1 WebSphere Enterprise Service Bus for z/OS 7.5 and future fix packs All Applicable Solaris OS See Note #3 Development Tools IBM Integration Designer 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/integration-designer/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Integration_Designer] All Applicable Solaris OS See Note #1 IBM Integration Designer 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/integration-designer/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Integration_Designer] All Applicable Solaris OS See Note #3 Rational Application Developer for WebSphere Software 8.0.3 and future fix packs (overview) [http://www.ibm.com/software/products/us/en/application] (support) [http://www.ibm.com/software/awdtools/developer/application/support/index.html] All Applicable Solaris OS  Back to top 
+
+Optional Supported Software Group Product Applicable OS Notes License Use Management Tivoli License Compliance Manager 2.3 (overview) [http://www.ibm.com/software/tivoli/products/license-mgr/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliLicenseManager.html] All Applicable Solaris OS Tivoli License Compliance Manager 2.3 (overview) [http://www.ibm.com/software/tivoli/products/license-mgr/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliLicenseManager.html] All Applicable Solaris OS Support Assistant IBM Support Assistant 4.1 (overview) [http://www-306.ibm.com/software/support/isa/] (support) [http://www.ibm.com/software/awdtools/isa/support/] All Applicable Solaris OS IBM Support Assistant 4.1 (overview) [http://www-306.ibm.com/software/support/isa/] (support) [http://www.ibm.com/software/awdtools/isa/support/] All Applicable Solaris OS Virtualization WPAR: Product installed in System Workload Partition AIX 7.1 All Applicable Solaris OS  Back to top 
+
+
+
+
+TAB NAVIGATION
+ *  Windows Server 2003 
+ *  Windows Server 2008 
+ *  Windows 7* 
+
+
+
+
+Note*: The Support for Windows 7 has been added under release v7.5.0.2 OUTLINE
+ * Hardware Requirements  *  Media Drive 
+    *  Memory 
+    *  Processor 
+    *  System z 
+   
+   
+ * Software Requirements  *  Operating System 
+    *  Application Servers 
+    *  Connectors 
+    *  Development Tools 
+   
+   
+ * Optional Supported Software  *  License Use Management 
+    *  Support Assistant 
+    *  Virtualization 
+   
+   
+
+
+
+
+Hardware Requirements Group Applicable OS Notes Media Drive All Applicable Windows OS  DVD/CD-ROM Drive
+
+Memory All Applicable Windows OS  Minimum 1GB physical memory; 2GB recommended
+
+Processor All Applicable Windows OS  Intel Pentium at 3GHz for single core system, 2.4GHz for dual cores or more; Intel EM64T or AMD opteron.
+
+System z All Applicable Windows OS  System z processor
+
+ Back to top 
+
+Operating Systems Operating System Attributes Notes Windows Platform listing of supported OS Windows Server 2003 R2 SP2 Datacenter Edition x86-32 Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-32 Windows Server 2003 R2 SP2 Enterprise Edition x86-32 Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-32 Windows Server 2003 R2 SP2 Standard Edition x86-32 Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-32 Windows Server 2003 SP1 Datacenter Edition x86-32 Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-32 Windows Server 2003 SP1 Enterprise Edition x86-32 Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-32 Windows Server 2003 SP1 Standard Edition x86-32 Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-32 Windows Server 2003 SP2 Datacenter Edition x86-32 Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-32 Windows Server 2003 SP2 Enterprise Edition x86-32 Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-32 Windows Server 2008 Datacenter Edition x86-64 Bitness: 64 Bit Tolerate, 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: x86-64 Windows Server 2008 Enterprise Edition x86-64 Bitness: 64 Bit Tolerate, 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: x86-64 Windows Server 2008 R2 Datacenter Edition x86-64 Bitness: 64 Bit Tolerate, 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: x86-64 Windows Server 2008 R2 Enterprise Edition x86-64 Bitness: 64 Bit Tolerate, 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: x86-64 Windows Server 2008 R2 Standard Edition x86-64 Bitness: 64 Bit Tolerate, 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: x86-64 Windows Server 2008 Standard Edition x86-64 Bitness: 64 Bit Tolerate, 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: x86-64 Windows 7 Enterprise x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Windows 7 Enterprise x86-64 Bitness: 64 Bit Tolerate
+Deployment Role: Desktop
+Hardware platform: x86-64 Windows 7 Professional x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Windows 7 Professional x86-64 Bitness: 64 Bit Tolerate
+Deployment Role: Desktop
+Hardware platform: x86-64 Windows 7 Ultimate x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Windows 7 Ultimate x86-64 Bitness: 64 Bit Tolerate
+Deployment Role: Desktop
+Hardware platform: x86-64  Back to top 
+
+Software Requirements Group Product Applicable OS Notes Application Servers IBM Business Process Manager Advanced 7.5 and future releases, mod levels and fix packs (overview) [http://www.ibm.com/software/integration/business-process-manager/advanced/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Advanced] All Applicable Windows OS See Note #1 IBM Business Process Manager Advanced 7.5 and future releases, mod levels and fix packs (overview) [http://www.ibm.com/software/integration/business-process-manager/advanced/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Advanced] All Applicable Windows OS See Note #3 WebSphere Application Server 7.0.0.17 (overview) [http://www.ibm.com/software/webservers/appserv/was/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable Windows OS See Note #1 WebSphere Application Server 8.0 (overview) [http://www.ibm.com/software/webservers/appserv/was/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable Windows OS See Note #1 WebSphere Application Server for z/OS 8.0 (overview) [http://www.ibm.com/software/webservers/appserv/zos_os390/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable Windows OS See Note #1 WebSphere Application Server Network Deployment 8.0 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/network/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable Windows OS See Note #1 Connectors WebSphere Enterprise Service Bus 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/wsesb/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Enterprise_Service_Bus] All Applicable Windows OS See Note #1 WebSphere Enterprise Service Bus 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/wsesb/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Enterprise_Service_Bus] All Applicable Windows OS See Note #3 WebSphere Enterprise Service Bus for z/OS 7.5 and future fix packs All Applicable Windows OS See Note #1 WebSphere Enterprise Service Bus for z/OS 7.5 and future fix packs All Applicable Windows OS See Note #3 Development Tools IBM Integration Designer 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/integration-designer/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Integration_Designer] All Applicable Windows OS See Note #1 IBM Integration Designer 7.5 and future fix packs (overview) [http://www.ibm.com/software/integration/integration-designer/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Integration_Designer] All Applicable Windows OS See Note #3 Rational Application Developer for WebSphere Software 8.0.3 and future fix packs (overview) [http://www.ibm.com/software/products/us/en/application] (support) [http://www.ibm.com/software/awdtools/developer/application/support/index.html] All Applicable Windows OS  Back to top 
+
+Optional Supported Software Group Product Applicable OS Notes License Use Management Tivoli License Compliance Manager 2.3 (overview) [http://www.ibm.com/software/tivoli/products/license-mgr/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliLicenseManager.html] All Applicable Windows OS Tivoli License Compliance Manager 2.3 (overview) [http://www.ibm.com/software/tivoli/products/license-mgr/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliLicenseManager.html] All Applicable Windows OS Support Assistant IBM Support Assistant 4.1 (overview) [http://www-306.ibm.com/software/support/isa/] (support) [http://www.ibm.com/software/awdtools/isa/support/] All Applicable Windows OS IBM Support Assistant 4.1 (overview) [http://www-306.ibm.com/software/support/isa/] (support) [http://www.ibm.com/software/awdtools/isa/support/] All Applicable Windows OS Virtualization Red Hat KVM as delivered with Red Hat Enterprise Linux (RHEL) 5.4 All Applicable Windows OS  In Alignment with WPS 7.x support statement
+
+Red Hat KVM as delivered with Red Hat Enterprise Linux (RHEL) 5.4 All Applicable Windows OS  In Alignment with WPS 7.x support statement
+
+Red Hat KVM as delivered with Red Hat Enterprise Linux (RHEL) 5.5 All Applicable Windows OS  In Alignment with WPS 7.x support statement
+
+Red Hat KVM as delivered with Red Hat Enterprise Linux (RHEL) 5.5 All Applicable Windows OS VMware ESX 4.0 All Applicable Windows OS  Adapters will provide support in alignment with WPS support statement
+
+VMware ESX 4.0 All Applicable Windows OS  Applicable to Linux on x86-32 and x86-64
+
+VMware ESXi 4.0 All Applicable Windows OS  Applicable to Linux on x86-32 and x86-64
+
+VMware ESXi 4.0 All Applicable Windows OS  Adapters will provide support in alignment with WPS support statement
+
+WPAR: Product installed in System Workload Partition AIX 7.1 All Applicable Windows OS  Back to top 
+
+
+
+
+NOTES
+ *  Note #1:  For tooling purposes, the adapter code can be obtained from the Rational Application Developer product.
+   For runtime purposes, a stand-alone adapter PID must be purchased for use on WebSphere Application Server. To obtain a stand-alone adapter PID, go to Passport Advantage [http://www.ibm.com/software/passportadvantage] and use Product ID (PID) Code 5724-T75.
+   
+   This adapter is supported only for development and unit testing on the operating systems supported by the tooling products. This adapter is supported only for deployment and production on the operating systems supported by the runtime server products. To ensure compatibility, always consult the system requirements supported by these complementary products.
+   
+   
+ *  Note #2:  Adapters will provide support in alignment with WPS support statement
+   
+   
+ *  Note #3:  This adapter is supported only for development and unit testing on the operating systems supported by the tooling products. This adapter is supported only for deployment and production on the operating systems supported by the runtime server products. To ensure compatibility, always consult the system requirements supported by these complementary products.

@@ -1,0 +1,91 @@
+Title: IBM MustGather: Debugging SSL handshake failures with WebSphere DataPower SOA Appliance - United States
+
+Text:
+ssl; must gather; handshake; hand; shake; failure; error; crypto; certificate; key; pair; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ Are DataPower failures related to SSL connection changes, and what options are available to debug these failures? 
+
+RESOLVING THE PROBLEM
+The following information describes the documentation that IBM support needs to investigate this problem scenario. Two debugging options are included to assist you in solving the problem. If you require further assistance, please gather as much information listed in this document as possible. Gathering all this information places IBM Support in a much better position, with a higher probability of debugging the problem in less time. 
+
+
+
+
+
+
+Section 1. Collecting information on the Problem 
+Section 2. Debugging Options 
+Section 3. Preparing to contact IBM Support 
+Section 4. Contacting IBM Support and sending your MustGather information to IBM support 
+
+
+
+Section 1. Collecting information on the Problem:
+
+Begin by collecting the following documentation that will help to resolve the problem:
+
+
+ 1. Details of the certificates. For example, what SSL Proxy Profile or Crypto Profile within the DataPower device is using the certificates? View the certificate details and use something such as the serial or the Common name to help identify the certificate. 
+ 2. An export of the domain. Although it does not contain the certificates, it contains place holders and SSL crypto object configuration. 
+ 3. A packet trace collected at the time of the handshake failure. 
+ 4. A debug level log from the domain where the SSL service is being used.
+
+
+This information may be all that is required to resolve the issue. 
+
+
+Section 2. Debugging options:
+
+Select one or more of the following debugging options. 
+ * In most cases the packet trace can prove very useful to determine in which step of the SSL handshake the failure occurs.
+   
+ * OpenSSL is an open source solution that contains three very useful tools:
+    1. s_client: With this tool, you can dump all SSL handshake information from the client connecting to the DataPower SSL profile, and possibly see where the handshake fails or at what step.
+       Example (to connect to an SSL port using s_client):
+       openssl s_client -connect hostnameorip:port
+       other options can be used as needed.
+       
+    2. s_server: If DataPower is the client, you may point to an s_server to test the handshake. An example of a basic listener would be:
+       openssl s_server -accept 124 -www
+       This will enable a listener on port 124 of the local workstation running it, for DataPower to connect to.
+       
+    3. openssl verify certificatename can be run to check or display the contents of a certificate, either to confirm the proper field values or to simply double-check the certificate being used by an endpoint of the SSL connection.
+   
+   
+
+
+The primary uses of the s_client and s_server tools are to test or eliminate the variables in the problem. For example, if a client is unable to connect to DataPower over SSL, use s_client to connect. If s_client is able to connect, then you are likely dealing with client-specific behavior or an SSL setting as the possible cause. Also, testing the validity of the certificates in this way is very useful even when the certificates appear to be valid. 
+
+If you need further help, please gather all the items listed in the "Collecting information on the Problem" section. Then contact IBM Support with that information. 
+
+
+Section 3. Preparing to contact IBM Support 
+
+1. Obtain the serial number of the appliance which experienced the problem. This is needed for IBM entitlement processing, before a PMR can be created. 
+
+2. Locate the serial number of the appliance. From the WebGUI, select Status > System > Version Information, locate tag on the case of the appliance, or from the CLI use Show System 
+
+3. Locate the firmware version of the appliance. From the WebGUI, select Status > System > Version Information or from the CLI use Show Version 
+
+4. Have your IBM customer number ready. 
+
+5. Determine a time for IBM remote support to call you to walk through these steps. 
+
+6. Determine the severity of your problem based on the Severity Levels table found in the following technote: " WebSphere DataPower Extended Maintenance and Support Services [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21254180#severity.]". 
+
+7. Prepare to describe how the problem affects your business operations. 
+
+8. Determine which telephone number IBM should use to contact you concerning this problem report. 
+
+
+Section 4. Contacting IBM Support and sending your MustGather information to IBM support 
+
+1. Reference our technote for information on Contacting IBM WebSphere DataPower SOA Appliance Support [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21236322]. 
+
+2. After you have contacted IBM Support, a PMR number will be assigned. 
+ * Reply to the email, or attach to the PMR, via the SR tool, the information in the preceding sections. 
+ * Do not send any proprietary or confidential information from your company.

@@ -1,0 +1,157 @@
+Title: IBM SE25823: MQM400 CUMULATIVE MDV 60200 (WMQ v6.0 JAVA/JMS CLIENT) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Collective service delivery for WebSphere MQ v6.0
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Collective service MDV 6.0.2.0 for WebSphere MQ v6.0
+   Details of problems fixed for the WMQ server product (5724H72)
+   are included in APAR SE25822 [http://www-01.ibm.com/support/docview.wss?uid=swg1SE25822].
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Collective service MDV 6.0.2.0 for WebSphere MQ v6.0
+   - which contains fixes for all the problems listed below:
+   
+   IY83778 [http://www-01.ibm.com/support/docview.wss?uid=swg1IY83778] - MESSAGES DO NOT GET ROLLED BACK IN POINT TO POINT    .
+             DOMAIN WHEN EXCEPTIONS OCCURS IN MDB                 .
+   IY82889 - WHEN USING CROSS DOMAIN CONNECTION FACTORY DEFINITIONS
+             IN WAS V6 THE TCPIP CONNECTION IS NOT RELEASED DURING.
+             THE CLEANUP.                                         .
+   IY82241 - IF A CORRELID HAS BEEN SET AS TEXT, RETRIEVING IT AS .
+             BYTES RETURNS NULL.                                  .
+   IY81774 - WEBSPHERE MQ AS JMS PROVIDER NOT ADHERING TO JMS     .
+             SPECIFICATIONS AS PER SECTION "4.3.8                 .
+             EXCEPTIONLISTENER".                                  .
+   IY81628 - MQJMS2005 REASON CODE 2102 WHEN 2035                 .
+             MQRC_NOT_AUTHORIZED OCCURRED                         .
+   IY80410 - MQJMS2013 ERROR WHEN CONNECTING TO WEBSPHERE MQ IN   .
+             BINDINGS MODE                                        .
+   IC50265 - JAVA.LANG.NOSUCHMETHODERROR: APPEND" WHEN PROCESSING .
+             JMS STREAM MESSAGES WITH WMQ 6.0.1.1 AND WAS 5.0.2.  .
+   IC50156 - NEED ONE CERTIFICATE TO AUTHENTICATE MULTIPLE CLIENTS.
+   IC49093 - WMQ JAVA CLIENT CHANGE IN THE RESPONSE EXPECTED FROM A
+             NEGOTIATION CALL WHICH OCCURRED AROUND FAP 4         .
+   IC48908 - CHANNEL NAME CHANGED BY EXIT IS NOT PICKED UP WHEN   .
+             USING THE MQ EXPLORER.                               .
+   IC48775 - MQ JAVA CLASSES WHEN RUN AS A CLIENT FAIL TO NEGOTIATE
+             TO AN MQ SERVER RUNNING PRE-FAP 4 LEVEL, AND         .
+             INCORRECTLY USE HBINT VALUE.                         .
+   IC48555 - JMS PUB/SUB CLEANUP UTILITY FAILS WITH 2009 IN SSL   .
+             ENVIRONMENT                                          .
+   IC48478 - MQJMS3023 IN PUB SUB APPLICATION AFTER QUIESCING AND .
+             RESTARTING THE QUEUE MANAGER.                        .
+   IC48241 - MESSAGES RECEIVED USING MESSAGELISTENER WITH DURABLE .
+             SUBSCRIBERS ARE GETTING BACKED OUT ONCE THE          .
+             APPLICATION ENDS                                     .
+   103599  - NULLPOINTEREXCEPTION WHEN CONNECTING AN MQ JMS CLIENT.
+             TO WAS V6 RUNNING PLATFORM MESSAGING                 .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SE25823
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA CLIENT ISE
+   
+   
+ * REPORTED COMPONENT ID
+   5724L2600
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-05-25
+   
+   
+ * CLOSED DATE
+   2006-05-25
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    SI24240
+   
+   
+
+MODULES/MACROS
+ *  RCHMGR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA CLIENT ISE
+   
+   
+ * FIXED COMPONENT ID
+   5724L2600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY SI47908
+   UP12/12/10 I 1000

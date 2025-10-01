@@ -1,0 +1,142 @@
+Title: IBM IZ67229: PREDICTIVE EVENTING JAR FILE (FOR NCO_CONFPACK IMPORT) DOES NOT CONTAIN NEW MENU ITEMS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Two tools, "Show Critical Events Threshold" and "Show Prediction
+   Confidence", are included in the predictive eventing package but
+   the tools do not appear in any menus.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The following menu items can be created using
+   nco_config/Administrator to allow the imported tools to be run.
+   
+   TAB MENU > Add Item Type: Tools
+   TOOL: Show Critical Events Threshold
+   TITLE: Show Critical Events Threshold
+   
+   TAB MENU > Add Item Type: Tools
+   TOOL: Show Prediction Confidence
+   TITLE: Show Prediction Confidence
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   sers of nco_confpack
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Predictive eventing jar file (for nco_confpack import) does not
+   contain new Menu items.
+   ****************************************************************
+   RECOMMENDATION:
+   Apply the maintenance packages listed in the Problem Conclusion.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Add menu items to jar package.
+   The fix for this APAR is contained in the following maintenance
+   packages:
+        | fix pack | 7.3.0-TIV-NCOMNIbus-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ67229
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-21
+   
+   
+ * CLOSED DATE
+   2010-01-28
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * FIXED COMPONENT ID
+   5724O4800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R730 PSY
+   UP

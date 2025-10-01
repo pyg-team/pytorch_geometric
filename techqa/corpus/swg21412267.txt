@@ -1,0 +1,87 @@
+Title: IBM Security enhancements to iNotes may require additional configuration measures if hot fix is deployed - United States
+
+Text:
+8.5.1 FixPack 2 ; DWA 8.0.2 HotFix 229.281 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+If you have configured your iNotes deployment so that the client machines access your iNotes servers through an HTTP Proxy or the iNotes Server is protected by a Reverse Proxy and any one of the following is true, you may need to take additional configuration steps after deploying 8.0.2 cumulative Hotfix 229.281 or 8.5.1 Fix Pack 1 or later in order to preserve iNotes functionality. 
+
+ * Your environment contains more than one second-level DNS domain, e.g. *.ibm.com and *. lotus.com 
+ * The HTTP Proxy is in one domain and the iNotes servers are in another, e.g. proxy.ibm.com, and mail.lotus.com 
+ * The HTTP Proxy strips the Referer HTTP header from requests, e.g. Proxy does an HTTP rewrite
+
+SYMPTOM
+Potential symptoms after the deploying the security enhancements: 
+
+ 
+
+ * Users are seeing iNotes failures and there are iNotes Security messages on the server console/in the server log. 
+ * Users cannot access iNotes functionality through a proxy. They get errors during many operations. 
+ * The server log contains iNotes security errors.
+
+
+If any of these symptoms are occurring, 1) configuration changes need to be made to your system or 2) there is a real attempt to compromise your system. Review the server logs looking for the words "iNotes XSS security." See the table below for examples of such errors. 
+
+
+Issue Post request is blocked due to an unexpected Referer Header - No Referer Whitelist exists / Strict or Lenient option. Client display [/support/docview.wss?uid=swg21412267&amp;aid=1] Server console display 11/13/2009 11:49:15.73 AM [02E4:000B-0F40] XSS:> Referer Check Error: Request originated from a different domain: baddomain. 
+Bad Request: /mail/<file name>/($Inbox)/$new/?EditDocument&Form=h_PageUI&PresetFields=s_ViewName;(%24Inbox),s_NotesForm;Journ
+11/13/2009 11:49:15 AM iNotes XSS Security: Referer Check Error: Unauthorizeddomain www.baddomain.com attempted to issue an iNotes command. Request not processed. Issue Post request is blocked due to nonexistent Referer Header - No Referer Whitelist exists / Strict option. Lotus iNotes console display [/support/docview.wss?uid=swg21412267&aid=2] [/support/docview.wss?uid=swg21412267&aid=2] Server console display 11/13/2009 12:26:45 PM iNotes XSS Security: Referer Check Error: No referer value exists when it is required to ensure that iNotes commands are not issued without the user's knowledge. Request not processed.
+11/13/2009 12:26:45 PM Unknown Command Exception [/mail/<file name>/($Inbox)/$new/?EditDocument&Form= h_PageUI&ui=classic&PresetFields= s_NotesForm;Memo] CN=<User Name>/O=<Org> 
+CAUSE
+If you are experiencing errors such as those listed in the Symptoms section above, you may require additional configuration steps required as a result of the security enhancements deployed in the hotfix/fixpack, or the errors are the result of an attack by from an unauthorized Web site.
+
+
+ENVIRONMENT
+Domino servers running Lotus iNotes
+
+
+
+DIAGNOSING THE PROBLEM
+If your environment contains multiple DNS domains, and the unauthorized domain reported in the Server Console Display (e.g. www.baddomain.com, as shown in the table above) is actually one of the domains in your environment, then it is likely that there is a configuration issue. 
+
+
+If none of the configurations described in the Problem section above applies to you, then your server may have been the target of a Cross-Site Request Forgery attack. If that is true, the information in the error message may be able to help you identify the attacker and/or the user account that was targeted. For example, in the following error message, the mail file targetmail.nsf was the target of the blocked request. The request is likely to have originated by a page loaded from the site www.baddomain.com.
+
+11/13/2009 11:49:15.73 AM [02E4:000B-0F40] XSS:> Referer Check Error: Request originated from a different domain: baddomain. 
+Bad Request: /mail/targetmail.nsf/($Inbox)/$new/?EditDocument&Form=h_PageUI&PresetFields=s_ViewName;(%24Inbox),s_NotesForm;Journ
+11/13/2009 11:49:15 AM iNotes XSS Security: Referer Check Error: Unauthorizeddomain www.baddomain.com attempted to issue an iNotes command. Request not processed
+
+If you have determined that you have been the target of an attack, take appropriate measures to respond to the situation. For information about these types of attacks, see Cross-Site Request Forgery [http://www.owasp.org/index.php/Cross-Site_Request_Forgery] page from OWASP.
+
+
+RESOLVING THE PROBLEM
+If the Referer value is invalid or removed by a proxy server, or if it references a different second-level HTTP domain than that of the iNotes server, then you need to change your configuration. Use the table below and the scenarios provided in this section to determine the relevant Notes.ini setting you may need to add, based on your configuration. 
+
+
+Note that the Domino console command set config can be used to modify these settings and avoid a restart of the entire Domino server. After setting the value just restart Domino HTTP task and the setting will take effect. For example:
+
+
+ * 
+ * 
+ * 
+
+
+Values Behavior iNotes_WA_Security_RefererCheck=value 0 Referer header checking is disabled 1 Strict Referer header checking is enabled (default) - Post requests must have a Referer header. If a whitelists exists, the Referer header must match an entry there. If no whitelist exists (default), the Referer header must match the server's domain. 2 Lenient Referer checking is enabled - Post requests are not required to have a Referer header. If a Referer header does exist and if a whitelists exists, the Referer header must match an entry on the whitelist. If a Referer header does exist and no whitelist exists, the Referer header must match the server's domain. iNotes_WA_Security_RefererWhitelist=domain <domain> Explicitly defines Referer headers that will be accepted, for example domain1.com. 
+Scenario 1: Your environment contains more than one second-level DNS domain, or a proxy server in one domain proxies access to iNotes servers in a different domain 
+If a proxy server in domain *.ibm.com proxies access to iNotes servers in *.lotus.com, iNotes needs to be configured to treat both ibm.com and lotus.com as valid/trusted domains. Consider taking this step if you have multiple domains even if you do not have a proxy in place at the time you install this update, to avoid potential problems later. To do this, change the iNotes_WA_Security_RefererWhitelist setting in the Domino server's notes.ini file to list all of the domains. If this setting has a value, it overrides any defaults. For example: 
+
+iNotes_WA_Security_RefererWhitelist=ibm.com,lotus.com 
+
+This tells the Domino server to accept iNotes commands with HTTP Referer values containing both ibm.com and lotus.com. Note that wildcards are not supported in the list of domains, the comparison looks for an exact match. 
+
+Scenario 2: A proxy server strips off HTTP Referer Headers 
+If you have a proxy configured to remove Referer headers from incoming requests you have two main options: 
+ * If the proxy can be reconfigured to leave the Referer header value on the request, make that change. Additional configuration changes to iNotes might be necessary if any of the other situations listed in this document apply. 
+ * If Referer headers are purposefully removed for some internal policy reason and this behavior must be retained, then do one of the following:  * Configure the Referer check to do lenient checking (allow empty values as well as valid ones) by using iNotes_WA_Security_RefererCheck=2. 
+    * Disable the HTTP Referer check by using iNotes_WA_Security_RefererCheck=0. Note that by disabling this check you increase the likelihood that malicious third parties and/or compromised Web sites could successfully attack your Domino iNotes server.
+   
+   
+
+RELATED INFORMATION
+ Lotus Notes/Domino 8.5.1 Fix Pack 1 Release Notice [http://www-10.lotus.com/ldd%5Cr5fixlist.nsf/WhatsNew/925d2850d5226740852576ab006ba028?OpenDocument]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21603279]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Messaging Applications Lotus Domino Web Access 8.0.2

@@ -1,0 +1,52 @@
+Title: IBM Watson Explorer Version 10.0 system requirements - United States
+
+Text:
+DSRdoc prereqs DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ The following table provides links to high-level or detailed system requirements that are sorted by type, operating system, or component. 
+
+CONTENT
+ # 
+
+Open the detailed system requirements to see complete descriptions of hardware requirements, supported operating systems, prerequisites, and optional supported software.
+
+The detailed reports provide information about the minimum product and maintenance levels that must be installed before opening a problem report with IBM Software Support for IBM Watson Explorer.
+
+Requirements by type Shows a high-level list of supported hardware and software.
+Requirements by platform Provides detailed lists of hardware requirements, supported operating systems, operating system restrictions, prerequisites, optional supported software, and component-level details.
+
+Links in the following tables provide information specific to the Foundational Components, Analytical Components, and Content Analytics Studio. You can specify filters and generate reports to include or exclude different types of requirements. To specify report filters while you view system requirements, expand Report filters, click Edit, select the components that you want to learn about, and then click Apply. The following example produces a report that contains information about the web browsers that are supported by the Foundational Components and Analytical Components. 
+
+[/support/docview.wss?uid=swg27042947&aid=1] [/support/docview.wss?uid=swg27042947&aid=1] 
+
+[/support/docview.wss?uid=swg27042947&aid=2] [/support/docview.wss?uid=swg27042947&aid=2]
+
+
+
+
+
+System Requirements for Foundational Components By type(High-level)
+
+By platform(Detail)
+
+Operating Systems [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=1394468413203&osPlatforms=Linux|Windows&duComponentIds=S003] Hardware [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/hardwareReqsForProduct?deliverableId=1394468413203&osPlatforms=Linux|Windows&duComponentIds=S003] Prerequisite Software [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/prereqsForProduct?deliverableId=1394468413203&osPlatforms=Linux|Windows&duComponentIds=S003&mandatoryCapIds=13|16] Supported Software [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/prereqsForProduct?deliverableId=1394468413203&osPlatforms=Linux|Windows&duComponentIds=S003&optionalCapIds=30|22|221|132|20|26] Click the Supported Software tab to learn about supported data sources, Java, and web browsers. Linux [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=1394468413203&osPlatforms=Linux&duComponentIds=S003] Windows [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=1394468413203&osPlatforms=Windows&duComponentIds=S003] 
+System Requirements for Analytical Components By type(High-level)
+
+By platform(Detail)
+
+Related requirements Operating Systems [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=1394468413203&osPlatforms=AIX|Linux|Windows&duComponentIds=S001] Hardware [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/hardwareReqsForProduct?deliverableId=1394468413203&osPlatforms=AIX|Linux|Windows&duComponentIds=S001] Supported Software [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/prereqsForProduct?deliverableId=1394468413203&osPlatforms=AIX|Linux|Windows&duComponentIds=S001&optionalCapIds=30|22|221|132|20|26] Click the Supported Software tab to learn about supported data sources, Java, LDAP servers, application servers, and web browsers. AIX [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=1394468413203&osPlatforms=AIX&duComponentIds=S001] Linux [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=1394468413203&osPlatforms=Linux&duComponentIds=S001] Windows [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=1394468413203&osPlatforms=Windows&duComponentIds=S001] IBM Cognos Business Intelligence requirements [http://www.ibm.com/support/docview.wss?uid=swg27037784] IBM Content Classification requirements [http://www.ibm.com/support/docview.wss?uid=swg27020838] IBM Content Integrator requirements [http://www.ibm.com/support/docview.wss?uid=swg27016931] IBM FileNet P8 requirements [http://www.ibm.com/support/docview.wss?uid=swg27013654] 
+System Requirements for Content Analytics Studio By type(High-level)
+
+By platform(Detail)
+
+Operating Systems [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=1394468413203&osPlatforms=AIX|Linux|Windows&duComponentIds=S002] Hardware [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/hardwareReqsForProduct?deliverableId=1394468413203&osPlatforms=Windows&duComponentIds=S002] Windows [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=1394468413203&osPlatforms=Windows&duComponentIds=S002] 
+
+
+Compatibility reports are available for all software products: 
+See the IBM software product compatibility reports [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity/softwareReqsForProduct.html] for information about supported operating systems, system requirements, and optional supported software for any IBM product. 
+RELATED INFORMATION
+ IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SS8NLW_10.0.0/]
+IBM Software Support Life Cycle [http://www.ibm.com/software/support/lifecycle/]
+IBM Support Portal [http://www.ibm.com/support/entry/portal/product/watson_group/watson_explorer]
+Upgrading to Version 10 [http://www.ibm.com/support/docview.wss?uid=swg27042941]

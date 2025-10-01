@@ -1,0 +1,163 @@
+Title: IBM SiteProtector - Fastpath Template to be used for documentation collection - United States
+
+Text:
+SiteProtector; fastpath template; troubleshooting TECHNOTE (FAQ)
+
+QUESTION
+ What logging and other documentation is needed for the SiteProtector problem determination process? 
+
+ANSWER
+The following is useful information needed for troubleshooting purposes when opening a Problem Management Record (PMR) for SiteProtector.
+
+SiteProtector Call Logging
+
+1. We need to know the exact version of SiteProtector being used:
+
+
+ *  Look in the console in the Agent View, under the Model column for SiteProtector Core. Go to the right under the Version column. This is the version of SiteProtector. 
+   
+   Example: 3.1.1 This means you are using SiteProtector 3.1.1. 
+
+
+2. Error Message (if any). 
+ *  text of the message and where it happened or screenshot of error message. 
+
+
+3. What is the status of the SiteProtector components? 
+
+To check the status of components, look in the Console. In the upper right, go to Agent View and look at the Status column. 
+
+
+[/support/docview.wss?uid=swg21447905&aid=1] [/support/docview.wss?uid=swg21447905&aid=1] 
+
+The components for SiteProtector are listed below:
+ *  SiteProtector Database Event Collector SiteProtector Core (SiteProtector Core is made up of Application Server and the Sensor Controller. These are services that start at the Windows Startup.) Deployment Manager (Removed at version 3.0 and up) Agent Manager Xpress Update Server 
+
+
+Statuses are as follows:
+ *  Active Offline Not Responding Active With Errors Error
+   
+ * Note:
+ * 
+ * Technote 1959323 - Description of common statuses seen in SiteProtector
+
+
+If components are anything other than Active:
+ *  Right click the component and select Properties. In the left pane of the console, go to Agent Details. The Sensor Status should give you a message as to the reason for the status. This message will help us to determine the cause of the issue. 
+
+
+Scenarios:
+ *  If the SiteProtector Database is in error status or there are any other SiteProtector Database issues, get a DBServerInfo. (See instructions in the Logging section.)
+   If the Event Collector is offline, gather Event Collector logs and a DBServerInfo. (See instructions in the Logging section.)
+   If the Event Collector is not responding, gather Event Collector logs and Sensor Controller logs. (See instructions in the Logging section.)
+   If the Agent Manager is Offline, gather Agent Manager logs, Event Collector logs and a DBServerInfo. (See above for Event Collector logs and DBServerInfo).
+   If the Agent Manager is not responding, gather Agent Manager logs and Sensor Controller logs. (See instructions in the Logging section.)
+   If The Sensor Controller Service does not start, gather Sensor Controller Logs. (See instructions in the Logging section.)
+   If The Application Server Service does not start, gather Application Server Logs. (See instructions in the Logging section.)
+   If unable to log into the console, check that ports 3996-3999 are open using the netstat command. If ports are open, gather console trace logs. (See instructions in the Logging section.) 
+   If an update to the console fails, it will create logs to the following directories and roll back to original state:  *  \consoleXPU\[XPUname]\setup.log consoleXPU\[XPU Name]\_LOGS\XPU_Install.log
+      
+   
+   If an update applying XPUs fails, gather the UpdateServer.log files located in:  *  PF\ISS\SiteProtector\Application Server\webserver\Apache2\htdocs\XPU\ 
+   
+   
+
+
+Licensing:
+
+There are two license types currently in use by SiteProtector: 
+
+ * Agent\Module
+   
+ *   *  Requires a separate license key for each IBM Security Solutions order 
+    *  Licenses are installed as Agent/Module licenses in the console 
+      
+      
+   
+   
+ * OneTrust
+   
+ *   *  OneTrust licensing requires a single token 
+    *  Proventia Enterprise Scanner and X-Press Update Server use this license. 
+    *  SiteProtector needs its OneTrust Token to perform updates.
+      
+      
+   
+   Notes: 
+    * For more information about OneTrust Tokens see Technote 1435290 - Proventia OneTrust Licensing [http://www.ibm.com/support/docview.wss?uid=swg21435290]
+      
+    * For more information about Agent/Module licenses see IBM Knowledge Center - Agent/module licensing [http://www.ibm.com/support/knowledgecenter/SSETBF_3.1.1/com.ibm.siteprotector.doc/concepts/sp_lic_agent_module_licensing.htm?lang=en].
+   
+   
+
+
+Health Statuses of the components are:
+ *  Healthy Warning Unhealthy 
+   
+   
+ * If the component shows an Unhealthy or Warning status:
+   
+ *   * Right click the component and go to Properties -> In the left pane of the console, select Health Summary, then look for the red Unhealthy messages or the yellow Warning messages. These messages will also have suggested remedies and options to troubleshoot the issue.
+   
+   
+
+
+Logging: 
+
+The directions are as follows: 
+
+The Application Server and Sensor Controller logging can be turned up by going to the Tools menu and select System Logs, then Set Server Logging Level. This will produce a window that looks like the following: 
+
+[/support/docview.wss?uid=swg21447905&amp;aid=2] 
+
+Set the logging level to DEBUG and click OK. Reproduce the issue you are trying to capture and the download the logs needed. 
+
+Most logs can be downloaded from the console. Go to the Tools menu. Select System Logs, then Download System Logs. You will see a window that looks like this: 
+
+[/support/docview.wss?uid=swg21447905&aid=3] [/support/docview.wss?uid=swg21447905&aid=3] 
+
+You can see the different logs available for the different components here. You can choose to download the files, or compress them first then download them. You can also download configuration files by changing the Choose Source Type, drop down to Server Configuration Files. 
+
+The logs and configuration files for the components can be uploaded to the PMR after it is created using the following link. 
+
+The HTTP/HTTPS uploader supports files up to 2 GB in size and is located at the following location: 
+
+http://www.ecurep.ibm.com/app/upload [http://www.ecurep.ibm.com/app/upload] 
+
+The FTP site supports files up to 100 GB in size. Instructions for uploading via the FTP site can be found at the following location: 
+
+http://www-05.ibm.com/de/support/ecurep/index.html [http://www-05.ibm.com/de/support/ecurep/index.html] 
+
+
+The following are instructions to gather the logs if you do not have access to the console: 
+
+
+DBServerInfo 
+
+To assist in generating and providing DBServerInfo logs see Technote 1436109 - Running the SiteProtector DBServerInfo script [https://www.ibm.com/support/docview.wss?uid=swg21436109]. 
+
+Event Collector logs: 
+
+To assist in generating and providing Event Collector logs see Technote 1697782 - SiteProtector Event Collector debug logs [http://www.ibm.com/support/docview.wss?uid=swg21697782]. 
+
+Application Server Logging: 
+
+To assist in generating and providing Application Server logs see Technote 1679804 - SiteProtector Application Server manual debug logs [http://www.ibm.com/support/docview.wss?uid=swg21679804]. 
+
+Sensor Controller logging: 
+
+To assist in generating and providing Sensor Controller logs see Technote 1697052 - SiteProtector Sensor Controller debug logging [http://www.ibm.com/support/docview.wss?uid=swg21697052]. 
+
+Console Traces: 
+
+To assist in generating and providing SiteProtector Console Trace logs see Technote 1689014 - SiteProtector Console debug logs [http://www.ibm.com/support/docview.wss?uid=swg21689014]. 
+
+Agent Manager logs: 
+
+To assist in generating and providing Agent Manager logs see Technote 1697171 - SiteProtector Agent Manager debug logs [https://www.ibm.com/support/docview.wss?uid=swg21697171]. 
+
+
+
+
+
+[/support/docview.wss?uid=swg21447905&aid=4] [https://ibm.biz/BdHdjw] [/support/docview.wss?uid=swg21447905&aid=5] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21447905&aid=6] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21447905&aid=7] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21447905&aid=8] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21447905&aid=9] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21447905&aid=10] [http://ibm.biz/ContactSecSupport]

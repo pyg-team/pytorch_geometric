@@ -1,0 +1,49 @@
+Title: IBM Error: 0509-022 Cannot load module librcl_ibmratl.so - United States
+
+Text:
+0509-022; com.urbancode.ds.subsys.deploy.license.LicenseService; rcl_ibmratl ; com.ibm.rcl.ibmratl.LicenseConfigurationException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM UrbanCode Deploy Server cannot load Rational License Server library: librcl_ibmratl.so. 
+
+SYMPTOM
+Here is the full error message: 
+
+
+com.urbancode.ds.subsys.deploy.license.LicenseService - Unable to connect to RCL server: null 
+2014-09-26 11:44:05,806 ERROR main com.urbancode.ds.rcl.RCLManager - Error connecting to RCL server 
+com.ibm.rcl.ibmratl.LicenseConfigurationException: java.lang.UnsatisfiedLinkError: rcl_ibmratl (0509-022 Cannot load module 
+/<UCD Server PATH>/lib/rcl/aix/64/librcl_ibmratl.so. 0509-026 System error: Cannot run a file that does not have a valid format.) 
+null
+
+
+
+CAUSE
+The issue can occur with one of these scenarios:
+
+1. You have a 32 bit environment, but the 64 bit librcl_ibmratl.so is set in the java.library.path
+
+2. You have a 64 bit AIX environment, but you use 32 bit JVM. 
+
+
+RESOLVING THE PROBLEM
+To resolve the issue, you can use these steps 
+
+ 
+
+ 1. Stop the UCD server
+    
+    
+ 2. Open <UCD Server PATH>/bin/set_env file with a text editor
+    
+    
+ 3. Change the following fields:
+    
+    java.library.path=\"/<UCD Server PATH>/lib/rcl/aix/<32 or 64>\"
+    JAVA_HOME="<JVM_<32 or 64>_PATH>"
+    
+    
+ 4. Save the file
+    
+    
+ 5. Start the UCD server

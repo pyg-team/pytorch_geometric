@@ -1,0 +1,32 @@
+Title: IBM Welcome to WebSphere Cast Iron Cloud integration (Cloud, Appliance, and Virtual Appliance) Support - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ Information on support for the WebSphere Cast Iron Cloud integration products including the Cloud, Appliance, and Virtual Appliance. 
+
+CONTENT
+Welcome to WebSphere Cast Iron Support. This technote provides links to more information that can help you avoid opening service requests with IBM Support. Use the documents referenced here to answer questions about your appliance or virtual appliance and shorten the time to resolution if you need to open a service request. 
+
+
+Useful links: 
+
+ * Use this Cast Iron Support site [http://www-01.ibm.com/software/info/cloud-integration/castiron/support/] to access self-help tools and resources. 
+ * Ask questions, find answers and engage with the community via the dW Answers forum. [https://developer.ibm.com/answers/topics/castiron/] 
+ * Use this link [http://www.ibm.com/developerworks/views/websphere/libraryview.jsp?site_id=1&contentarea_by=WebSphere&sort_by=Date&sort_order=2&start=1&end=42&topic_by=-1&product_by=-1&type_by=All%20WebSphere%20Types&show_abstract=true&search_by=Cast%20iron&industry_by=-1&series_title_by=] to access a list of Cast Iron technical articles on developerWorks. 
+ * Use the Live Chat feature to engage with Cast Iron Support. More information here. [https://developer.ibm.com/answers/questions/175744/what-is-the-quickest-way-to-get-help-from-ibm-webs/] [http://www.ibm.com/support/docview.wss?uid=swg21454982] 
+ * MustGather - Collecting data: WebSphere Cast Iron problem determination [http://www.ibm.com/support/docview.wss?uid=swg21454982] 
+ * WebSphere Cast Iron Cloud integration fix packs [http://www.ibm.com/support/docview.wss?uid=swg21631488]- links to more information on how to access supported product versions. 
+ * See these YouTube videos [https://www.youtube.com/playlist?list=PL_4RxtD-BL5sa3Re5XMsVasPyjwkq-p7j] about Cast Iron that are available on the IBM SupportTV channel 
+ * Use this link to access product documentation for WebSphere Cast Iron. [http://www.ibm.com/support/docview.wss?uid=swg27039859] [http://www.ibm.com/support/docview.wss?uid=swg27024965] 
+ * Keep informed about the latest support information with My Notifications [http://www.ibm.com/software/support/einfo.html], or click the My Notifications link (in the top tool bar "Other" tab) from our WebSphere Cast Iron support portal [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Cast_iron_Cloud_integration]. The Cast Iron products are listed in My Notifications under Software > WebSphere 
+ * Redbooks Knowledge Collection [http://www.ibm.com/support/docview.wss?uid=swg27040556] - use this document for quick access to IBM Redbooks related to WebSphere Cast Iron. 
+ * Appliance Support Handbook [http://www-304.ibm.com/webapp/set2/sas/f/applhandbook/home.html] [http://www-01.ibm.com/software/support/servicerequest/quick_start.html] [http://www.ibm.com/developerworks/forums/category.jspa?categoryID=305]
+
+
+
+PRODUCT ALIAS/SYNONYM
+ Cast Iron Solution
+Cast Iron Operating System
+Cast Iron Studio

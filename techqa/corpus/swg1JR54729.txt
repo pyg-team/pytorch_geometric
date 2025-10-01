@@ -1,0 +1,224 @@
+Title: IBM JR54729: YOU CANNOT CREATE AN INPUT VARIABLE ON AN IMPLEMENTATION IN PROCESS DESIGNER - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you use IBM Process Designer and edit an implementation,
+   you cannot add an input variable, only an output variable. You
+   can click the Input button, but you cannot enter any details.
+   
+   In the ae.log file, you see the following ClassCastException:
+   
+   org.eclipse.core.commands.ExecutionException: While executing
+   the operation, an exception occurred at
+   org.eclipse.core.commands.operations.DefaultOperationHistory.exe
+   cute(DefaultOperationHistory.java:519) at
+   com.lombardisoftware.client.ae.widgets.TWAbstractEditor.performO
+   peration (TWAbstractEditor.java:351)
+   at
+   com.lombardisoftware.client.ae.widgets.TWAbstractEditor.performO
+   peration (TWAbstractEditor.java:374)
+   at
+   com.lombardisoftware.client.ae.forms.externalactivity.ExternalAc
+   tivityEditor.addRemoveParameter(ExternalActivityEditor.java:214)
+   at
+   com.lombardisoftware.client.ae.forms.externalactivity.ExternalAc
+   tivityEditor$11.widgetSelected(ExternalActivityEditor.java:366)
+   at
+   org.eclipse.swt.widgets.TypedListener.handleEvent(TypedListener.
+   java:234)
+   at
+   org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:84)
+   at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1053)
+   at
+   org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:4
+   066)
+   at
+   org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:365
+   7)
+   at
+   org.eclipse.ui.internal.Workbench.runEventLoop(Workbench.java:26
+   29)
+   at org.eclipse.ui.internal.Workbench.runUI(Workbench.java:2593)
+   at
+   org.eclipse.ui.internal.Workbench.access$4(Workbench.java:2427)
+   at org.eclipse.ui.internal.Workbench$7.run(Workbench.java:670)
+   at
+   org.eclipse.core.databinding.observable.Realm.runWithDefault(Rea
+   lm.java:332)
+   at
+   org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbenc
+   h.java:663)
+   at
+   org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:
+   149)
+   at
+   teamworks.ae.product.TWApplication.start(TWApplication.java:64)
+   at
+   org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseApp
+   Handle.java:196)
+   at
+   org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.run
+   Application(EclipseAppLauncher.java:110)
+   at
+   org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.sta
+   rt(EclipseAppLauncher.java:79)
+   at
+   org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStart
+   er.java:369)
+   at
+   org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStart
+   er.java:179)
+   at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+   at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:60)
+   at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:37)
+   at java.lang.reflect.Method.invoke(Method.java:611)
+   at
+   org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:619)
+   at org.eclipse.equinox.launcher.Main.basicRun(Main.java:574)
+   at org.eclipse.equinox.launcher.Main.run(Main.java:1407)
+   at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
+   
+   Caused by: java.lang.ClassCastException:
+   com.lombardisoftware.client.persistence.ExternalActivityParamete
+   r
+   incompatible with
+   com.lombardisoftware.client.delegate.common.Sequence
+   at
+   com.lombardisoftware.core.SequenceComparator.getNextSequenceNumb
+   er(SequenceComparator.java:44)
+   at
+   com.lombardisoftware.client.ae.forms.externalactivity.AddRemoveP
+   arameterOperation.getObjectForAdd(AddRemoveParameterOperation.ja
+   va:98)
+   at
+   com.lombardisoftware.client.ae.forms.externalactivity.AddRemoveP
+   arameterOperation.getObjectForAdd(AddRemoveParameterOperation.ja
+   va:19)
+   at
+   com.lombardisoftware.client.ae.forms.externalactivity.AddRemoveO
+   peration.execute(AddRemoveOperation.java:53)
+   at
+   org.eclipse.core.commands.operations.DefaultOperationHistory.exe
+   cute(DefaultOperationHistory.java:511)
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be incorporated into an IBM BPM V8.5.6.0 cumulative
+   fix that allows you to add an input variable on an
+   implementation.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR54729
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-11-12
+   
+   
+ * CLOSED DATE
+   2016-01-19
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R856 PSY
+   UP

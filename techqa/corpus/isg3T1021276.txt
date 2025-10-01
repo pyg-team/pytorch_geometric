@@ -1,0 +1,11 @@
+Title: IBM General Parallel File System (GPFS) for GPFS Storage Server (GSS) is not affected by the Bash vulnerabilities (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ GPFS for GSS is not vulnerable to the Bash vulnerabilities that have been referred to as “Bash Bug” or “Shellshock” and the two memory corruption vulnerabilities. 
+
+CONTENT
+GPFS for GSS in all editions and all platforms is NOT vulnerable to the Bash vulnerabilities (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278).
+Remediation: No action required.

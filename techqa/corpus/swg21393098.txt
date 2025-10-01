@@ -1,0 +1,20 @@
+Title: IBM Not able to update user preference setting in FileNet Content Manager Workplace due to error message Cannot update preferences document. - United States
+
+Text:
+BadReferenceException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempt to set default search template for user fails with error saying "Cannot update preferences document...Requested item not found". When searching or browsing, the user's individual preference file cannot be found in the Preferences folder of the bootstrap object store. 
+
+SYMPTOM
+Error stack from P8 Workplace shows "Cannot update preferences document...in object store "<bootstrap object store name>"...OMFC/Document/GetProperties//E_OBJECT_NOT_FOUND."
+
+
+CAUSE
+All users must have a user preferences file to log on to Workplace. The first time a user logs on to Workplace, a user preference file is created and filed in the Preferences folder of the object store that Workplace is bootstrapped to. In this case, users in question did not have the correct permission on the Preferences folder within the bootstrap object store. All users of Workplace should have "Add to folder" permission on the Preferences folder of the object store the AE is bootstrapped to.
+
+DIAGNOSING THE PROBLEM
+Discovered that the users in question did have preferences files in the bootstrap object store (or else they would not have been able to log on) but the preferences files were unfiled so Workplace could not find them when trying to update those preferences files after the user initially logged on.
+
+RESOLVING THE PROBLEM
+Ensure that all users logging on to Workplace have "Add to folder" permission on the Security tab of the Preferences folder in P8 Enterprise Manager.

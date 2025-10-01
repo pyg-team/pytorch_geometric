@@ -1,0 +1,176 @@
+Title: IBM PI95059: PERFORMANCE DEGRADATION WHEN USING LARGE BUFFERPOOLS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Performance degradation with large buffer pools.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Db2 for z/OS V12 users.                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * For very large buffer pools, page                            *
+   * hashing and buffer reuse may not be                          *
+   * as efficient as they could be.  Also,                        *
+   * pool expansion and contraction can be                        *
+   * slow and/or disruptive due to the                            *
+   * processing of long control block                             *
+   * chains.                                                      *
+   *                                                              *
+   * For buffer pools defined as                                  *
+   * PGSTEAL(NONE), Db2 will not utilize                          *
+   * 2G page frames even if the FRAMESIZE                         *
+   * attribute is set to 2G, but there is                         *
+   * no indication of this given to the                           *
+   * user.                                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply corrective PTF when available                          *
+   ****************************************************************
+   With very large buffer pools, the current page hashing
+   algorithm may spread pages efficiently, resulting in some
+   longer chains.  Additionally, utilities such as RECOVER may
+   hit many unnecessary data cache misses by using a larger
+   set of page buffers than they really need.
+   
+   Db2 needs to issue an informational message to inform the
+   user that the FRAMESIZE(2G) option isn't honored for a
+   PGSTEAL(NONE) buffer pool.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The page hashing algorithm has been adjusted to work better for
+   large buffer pools.
+   
+   The page reuse logic for certain utilities has been modified to
+   reduce the number of page buffers accessed.
+   
+   Code has been reworked to resolve issues with long control
+   block chains when expanding or contracting a large pool.
+   
+   The new DSNB548I message will be issued when allocating a
+   buffer pool which has FRAMESIZE(2G) and PGSTEAL(NONE)
+   specified.  The message will also be issued when an
+   ALTER BUFFERPOOL command changes either attribute, with
+   the result being FRAMESIZE(2G) PGSTEAL(NONE).
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI95059
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   C10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-03-12
+   
+   
+ * CLOSED DATE
+   2018-05-25
+   
+   
+ * LAST MODIFIED DATE
+   2018-07-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI55970
+   
+   
+
+MODULES/MACROS
+ *  DSNB5SCM DSNB1ABP DSNB1ABS DSNWDFBM DSNB1GWB DSNB1GET DSNB5COM
+   DSNB1PPP DSNB1GRA DSNFCDIR DSNB1CBP DSNB1CPP DSNB1BVP DSNWDFTS
+   DSNB1OPS DSNB1PLK DSNB5RAP DSNB1OPP DSNB1PPG DSNFBDIR DSNB1REL
+   DSNB1RRR DSNB1CFC DSNB1RWI DSNB1FBS DSNB1LRR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RC10 PSY UI55970 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI55970]
+   UP18/06/14 P F806
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

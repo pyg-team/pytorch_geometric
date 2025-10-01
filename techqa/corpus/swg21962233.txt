@@ -1,0 +1,69 @@
+Title: IBM Install of any service under Jazz for Service Management (JazzSM) fails when the server has an incorrect/unsupported hostname - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ JazzSM offers several services i.e: DASH, Reporting, etc, these services have a dependancy on Websphere Application Server (WAS). The failed install errors out with the following error message: 
+
+CTGFI3001E: Failed WebSphere Creation Profile action. Check product logs directory for more information.
+
+NOTE: We are going to assume the failing service is DASH (Visualization Service) 
+
+SYMPTOM
+Once the Must Gather logs are collected for the failed install: 
+
+1) Under - JazzSM_PD_data/Launchpad_data/jazzsm_launchpad/logs/log_dash.xml
+
+<result>
+<error>
+Error during "install" phase:
+
+</error>
+<error>
+CTGFI3001E: Failed WebSphere Creation Profile action. Check product logs directory for more information.
+
+/opt/IBM/JazzSM/install/fsconfig.xml:163: The following error occurred while executing this line:
+/opt/IBM/JazzSM/install/was/create_was_profile.xml:23: The following error occurred while executing this line:
+/opt/IBM/JazzSM/install/was/create_was_profile.xml:71: The following error occurred while executing this line:
+/opt/IBM/JazzSM/install/was/create_was_profile.xml:108: The following error occurred while executing this line:
+/opt/IBM/JazzSM/install/was/create_was_profile.xml:174: CTGFI3001E: Failed WebSphere Creation Profile action. Check product logs directory for more information.
+
+2) After reviewing the WAS logs:
+Under - JazzSM_PD_data/WAS_logs/was_home_logs/logs/manageprofiles/JazzSMProfile_create.log
+
+<message>Current command line is: { "-profilePath" ,"/opt/IBM/JazzSM/profile" ,"-enableService" ,"false" ,"-nodeName" ,"JazzSMNode01" ,"-applyPerfTuningSetting" ,"standard" ,"-winserviceCheck" ,"false" ,"-portsFile" ,"/opt/IBM/JazzSM/var/JazzSMProfile_portDef.properties" ,"-serverName" ,"server1" ,"-profileName" ,"JazzSMProfile" ,"-create" ,"-cellName" ,"JazzSMNode01Cell" ,"-isDeveloperServer" ,"-enableAdminSecurity" ,"true" ,"-adminUserName" ,"smadmin" ,"-hostName" ,"HOST_NAME.XYZ.COM" ,"-isDefault" ,"-adminPassword" ,"********" ,"-templatePath" ,"/opt/IBM/WebSphere/AppServer/profileTemplates/default" ,"-omitAction" ,"samplesInstallAndConfig" ," defaultAppDeployAndConfig" }</message>
+<message>Does hostnameValidator run: true</message>
+<message>Class to launch for /opt/IBM/WebSphere/AppServer/profileTemplates/default/validators/hostnameValidator.ijc is: com.ibm.ws.profile.validators.HostNameValidator</message>
+<message>Executing validator:com.ibm.ws.profile.validators.HostNameValidator</message>
+<message>Returning error message:{0} is not a properly formed host name.</message>
+<message>Result of executing /opt/IBM/WebSphere/AppServer/profileTemplates/default/validators/hostnameValidator.ijc was: false</message>
+<message>Does hostnameValidator run: true</message>
+<message>Argument hostName passed validation? false</message>
+<message>Does hostnameValidator run: true</message>
+
+
+CAUSE
+Unsupported hostname for the server on which WAS profile is being created
+
+
+ENVIRONMENT
+Current scenario: JazzSM 1.1.0.1 install on AIX 6.1 
+
+NOTE: However this applies to any JazzSM install on any platform.
+
+
+DIAGNOSING THE PROBLEM
+Check the restrictions for hostname in the WAS user guide: 
+
+http://www-01.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.base.doc/ae/rins_hostname.html [http://www-01.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.base.doc/ae/rins_hostname.html]
+
+
+RESOLVING THE PROBLEM
+Once the underscore (_) was removed from the hostname and changed to HOSTNAME.XYZ.COM the issue was resolved. The installation should complete without any problems.
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Components Jazz for Service Management Platform Independent

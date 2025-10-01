@@ -1,0 +1,286 @@
+Title: IBM PM52109: EXEC CICS START COMMANDS WHICH SPECIFY AND EXPLICIT TIME IN THE FUTURE START IMMEDIATELY, AFTER Z/OS SYSTEM CLOCK IS MOVED BACK. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Immediately following the setting backward by 1 hour of the
+   z/OS system clock (in support of a change from Daylight Saving
+   Time to Standard Time) EXEC CICS START commands that specify
+   an explicit time (using the TIME parameter) that is less than
+   1 hour into the future beyond EIBTIME, will start immediately.
+   .
+   Here is a trace entry that shows this happening:
+   .
+   START TRANSID('FIC2' AT X'800523E0') TIME(32500 AT X'298417D8')
+   TASK-62996 TCB-QR /008F81A0 RET-80082436 TIME-04:24:10
+   4-0000  0032410C 0111310F E3D9D5F1 0062996C
+     0010  00000000 00000000 0000000E 06000000
+   .
+   The above trace entry shows pieces of an AP E160 trace entry
+   that is produced when Trace Component EI is set to level 1-2.
+   It shows an EXEC CICS START command.   Data Area 4 traces the
+   EIB.  The 1st word of that, 0032410C, is EIBTIME. This EIBTIME
+   is 03:24:10. The TIME-04:24:10 in the 2nd line shows that at
+   least part of CICS considers the time to be 04:24:10.  And the
+   TIME(32500) on the 1st line shows that the EXEC CICS START
+   command is specifying a time of 03:25:00.
+   .
+   At time of this START command z/OS considered the local time
+   to be 03:24:10 .  But parts of CICS, since no EXEC CICS or
+   CEMT PERFORM RESET has been done following the setting backwards
+   of the system clock, think the local time is 04:24:10.  So
+   while the TIME parameter of 03:25:00 is in the future with
+   respect to EIBTIME and, therefore, the application program, it
+   is in the past with respect to part of CICS.  That is why the
+   START is actioned immediately.
+   .
+   Prior to some recent CICS APARs, in this interval between a
+   setting backwards by 1 hour of the system clock, and an EXEC
+   CICS or CEMT PERFORM RESET, EIBTIME would not contain the
+   changed z/OS local time.  Instead it would continue to be set
+   by CICS as if the system clock change had not happened.  So
+   in the example above prior to the recent CICS APARs, even though
+   the changed z/OS local time is 03:24:10, the trace entry time
+   would be 4:24:10 and EIBTIME would be 4:24:10 and therefore the
+   TIME specified on the START would be 4:25:00.
+   .
+   CICS/TS 3.2 APAR PK48346 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK48346] changed CICS so that EIBTIME is
+   updated with the up-to-the-second correct z/OS local time
+   following an EXEC CICS ASKTIME.
+   .
+   CICS/TS 3.2 APAR PM26742 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM26742] and CICS/TS 4.1 APAR PM26726 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM26726] changed
+   CICS so that EIBTIME is updated with the up-to-the-second
+   correct z/OS local time from the beginning of the task, without
+   an EXEC CICS ASKTIME having to be issued.
+   .
+   Let's say that at local time 2AM, the z/OS system clock is
+   changed backwards so that the new local time is 1AM.  Without
+   PM26742 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM26742] or PM26726 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM26726] applied, at 1:59:59 (prior to the change)
+   a new task's EIBTIME would be setup as 01:59:59.  And then
+   2 seconds later (after the change and the new local time is
+   01:00:01), a new task's EIBTIME would be setup as 02:00:01.
+   .
+   But with either of those APARs applied, at 1:59:59 (prior to the
+   change) a new task's EIBTIME would be setup as 01:59:59.  And
+   then 2 seconds later (after the change and the new local time
+   is 01:00:01), a new task's EIBTIME would be setup as 01:00:01.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do CEMT PERFORM RESET as quickly as possible following the
+   z/os sytem clock time change.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All.                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Tasks started by a START command where  *
+   *                      the START TIME is in the future start   *
+   *                      immediately.                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In the reported problem, a daylight saving change ( clock back
+   one hour ) was made to an MVS clock. However no PERFORM RESET
+   was issued by a CICS task ( running on the same MVS ) to resync
+   the MVS clock and the CICS clock held in CSA field CSATODP. The
+   recommendation is this is done immediately. As a consequence,
+   the CICS system became overloaded with work.
+   
+   A task obtained its initial time from EIBTIME. It then issued a
+   START command to run itself again in one minutes time. EIBTIME
+   is initialized by an MVS TIME macro within DFHAPIN and would
+   have reflected the changed MVS time so the START command would
+   have been for just under an hour in the past, ( rather than one
+   minute ahead ). However, Interval Control ( DFHICP ) uses the
+   CICS clock ( CSATODP ) and so did not reflect the change to the
+   MVS time because no RESETTIME had been issued. As a consequence,
+   the STARTED task started immediately and the process repeated
+   itself. The task was a heavy user of statistics and caused a
+   spike of work to SMF.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CICS task attach logic has been amended such that if a new
+   AUTORESETTIME parameter of IMMEDIATE is coded then the CICS
+   internal clock ( in CSATODP ) will get reset immediately when
+   DFHAPIN detects a mismatch between the MVS and CSATODP times.
+   
+   The following documentation change will be made:
+   
+   The CICS Transaction Server for z/OS Version 4 Release 1 System
+   Definition Guide (SC34-6999-02 ) will be updated, the
+   description for AUTORESETTIME will have an additional option
+   of IMMEDIATE added, as a consequence, it will now read as
+   follows:
+                                                                  .
+   AUTORESETTIME
+    The AUTORESETTIME parameter specifies the action CICS should
+    take for automatic time changes.
+    AUTORESETTIME={IMMEDIATE|NO|YES}
+                             --
+      Valid values are as follows:
+      IMMEDIATE
+           CICS will issue a PERFORM RESET command to
+           synchronize the CICS time-of-day with the system
+           time-of-day if, at the next task attach, the CICS
+           time-of-day differs from the system time-of-day.
+   
+      NO   CICS issues message DFHAP1500 to indicate that a CEMT
+      --   PERFORM RESET command is required to synchronize the
+           CICS time-of-day with the system time-of-day.
+                                                                  .
+      YES  CICS issues a PERFORM RESET command to synchronize
+           the CICS time-of-day with the system time-of-day
+           if, at the next local midnight, the CICS time-of-day
+           differs from the system time-of-day by more than
+           30 minutes; for example, setting clocks forward or
+           back to adjust for summer and winter time.
+                                                                  .
+   
+   
+   The CICS Transaction Server for z/OS Version 4 Release 1, Data
+   Areas manual (GC34-7014-03 ) will be updated, as follows:
+   
+   The CSA will have 2 new fields added to byte CSAICIND thus:
+   
+   .... 1... CSAICIMM      IMMEDIATE specified on AUTORESETTIME
+   .... .1.. CSAICRIP      Reset in progress
+   
+   
+   Dsect TCADY ( the System TCA ) will have a new field added to
+   byte TCAAPFLG thus:
+   
+   .... 1... TCATSUSP      DFHAPIN suspend
+   
+   
+   Dsect SIT ( System Initialization Table ) will have a new field
+   added to byte SITMISC thus:
+   
+   ..1. .... SITICARI      AUTORESETTIME=IMMEDIATE
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM52109
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-11
+   
+   
+ * CLOSED DATE
+   2012-03-20
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM52172 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM52172] PM60040 UK77263 PM61466 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM61466]
+   
+   
+
+MODULES/MACROS
+ *     DESPAIN  DFHAPIN  DFHAPTIM DFHCSAD  DFHCSAPS
+   DFHPAIN  DFHPASY  DFHPASYA DFHPASYM DFHPASYT DFHSIA1  DFHSIT
+   DFHSIT$$ DFHSITPS DFHSIT6$ DFHTCA   DFHTCAPS
+   
+   
+    
+   
+   
+
+Publications Referenced SC34699902 GC34701403 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY UK77263 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK77263]
+   UP12/04/03 P F204
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

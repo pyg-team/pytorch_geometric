@@ -1,0 +1,24 @@
+Title: IBM PHP and Dynamic Scripting in CICS TS - United States
+
+Text:
+5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 5655-Y04 5655Y04 kixinfo PRODUCT LIFECYCLE
+
+ABSTRACT
+ You are looking for information about PHP (a recursive acronym for "PHP: Hypertext Preprocessor") and Dynamic Scripting in CICS Transaction Server for z/OS (CICS TS). 
+
+CONTENT
+IBM introduced the CICS TS Feature Pack for Dynamic Scripting in June 2010 (V1.0 for CICS TS V4.1), enhancing it again to support CICS TS V4.2 in September 2011 (V1.1 for CICS TS V4.2). These offerings are based on the IBM sponsored Project Zero/WebSphere sMash technology that is not being updated to support Java™ 7. CICS TS V5.1 prerequisites Java 7, therefore versions 1.0 and 1.1 of the CICS TS Feature Pack for Dynamic Scripting are not supported in CICS TS V5.1.
+
+Through the delivery of the CICS TS Feature Pack for Dynamic Scripting, IBM has seen substantial interest in using PHP with CICS to add value to, and augment, CICS deployments.
+
+Version 1.0 for CICS TS V4.1, and Version 1.1 for CICS TS V4.2 of the CICS Transaction Server Feature Pack for Dynamic Scripting [http://www.ibm.com/software/htp/cics/scripting/] provide an excellent production environment for PHP applications running in CICS TS V4.1 and CICS TS V4.2. For future compatibility reasons, Groovy-based scripting and extensive use of Project Zero/WebSphere sMash extensions should not be used. However, IBM encourages you to continue to explore the value that PHP in CICS can bring to your infrastructure.
+
+IBM made the following statement of general direction in US Announcement letter 213-177 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS213-177#h2-sodx]: 
+
+ * IBM intends to deliver a new version of the IBM CICS Transaction Server (CICS TS) Feature Pack for Dynamic Scripting. This new version of the feature pack will add PHP support to CICS TS V5.1. Existing releases of this Feature Pack already provide PHP support for CICS TS V4.1 and CICS TS V4.2.
+   
+
+IBM announced the CICS TS Feature Pack for Dynamic Scripting V2.0 on 13 August 2013, with a general availability (GA) date of 16 August 2013. Version 2.0 is for use with CICS TS for z/OS V5.1 and V5.2. See Announcement letter for CICS TS Feature Pack for Dynamic Scripting 2.0 [http://www.ibm.com/support/docview.wss?uid=swg21645605] and the US Announcement letter 213-323 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS213-323] for more information. Also see the CICS Dynamic Scripting web page [http://www.ibm.com/software/htp/cics/scripting/].  
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

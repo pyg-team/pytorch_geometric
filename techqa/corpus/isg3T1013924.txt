@@ -1,0 +1,22 @@
+Title: IBM Where can I find the daemon error logs? - United States
+
+Text:
+daemon error logs location TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Where can I find the daemon error logs? 
+
+RESOLVING THE PROBLEM
+Where can I find the daemon error logs?
+
+ DAEMON ERROR LOG FILES 
+ Daemon error log files are stored in the directory defined by LSF_LOGDIR in lsf.conf. 
+
+LSF base system daemon log files LSF batch system daemon log files lim.log.hostname 
+mbatchd.log.hostname 
+res.log.hostname 
+sbatchd.log.hostname 
+pim.log.hostname 
+mbschd.log.hostname  
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

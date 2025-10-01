@@ -1,0 +1,100 @@
+Title: IBM Datacap Version 9.1.2 Release Notes - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ This Release Notes page contains information about IBM Datacap Version 9.1.2, and changes to the product. 
+
+CONTENT
+IBM Datacap is a complete solution for document and data capture. Datacap scans, classifies, recognizes, validates, verifies, and exports data and document images quickly, accurately, and cost effectively.
+
+
+---------------------------------------------------------------------------------------------------------------
+Announcement
+---------------------------------------------------------------------------------------------------------------
+In the IBM Datacap 9.1.2 product announcement, learn about new features and changes that were introduced in IBM Datacap 9.1.2, including the following information:
+
+
+ * Detailed product description, including a description of new functionality 
+ * Product-positioning statement 
+ * Packaging and ordering details 
+ * International compatibility information
+
+--------------------------------------------------------------------------------------------------------------- 
+System Requirements 
+--------------------------------------------------------------------------------------------------------------- 
+For information about hardware and software prerequisites, see IBM Datacap 9.1.2 System Requirements [https://www.ibm.com/support/knowledgecenter/en/SSZRWV_9.1.2/com.ibm.dc.install.doc/sw_comp_reports.htm]. 
+
+--------------------------------------------------------------------------------------------------------------- 
+What's New in IBM Datacap 9.1.2 
+--------------------------------------------------------------------------------------------------------------- 
+The following list is also available in the IBM Datacap 9.1.2 Knowledge Center [https://www.ibm.com/support/knowledgecenter/en/SSZRWV_9.1.2/com.ibm.datacaptoc.doc/dc_highlights_912.htm] . [https://www.ibm.com/support/knowledgecenter/en/SSZRWV_9.1.1/com.ibm.datacaptoc.doc/dc_whats_new.htm] 
+
+High Speed Scan and Index Client 
+The High Speed Scan and Index (" HSSI") Client is a new IBM Datacap Navigator plug-in that is targeted for high-speed scanning and indexing scenarios. This client offers improved performance as well as enhanced accessibility and usability features and simplifies the end-user actions. 
+
+Important:  * The features listed below are available only in the new Datacap Navigator plug-in that supports High Speed Scan and Index ("HSSI") Client. These features are not available in the regular Datacap Navigator. 
+ * Only one Datacap Navigator plug-in can be installed on an instance of IBM Content Navigator.
+
+
+
+Performance Improvements  * Asynchronous upload is available as the default option in the Speed Scan Client. During upload, users do not need to wait until the upload is completed to proceed to the next task. The jobs in the queue for Asynchronous upload are auto-recoverable and the upload is resumed from the point of failure when user logs back in the application. 
+ *  Improved the performance by reducing the time for pages to be scanned and displayed in the Datacap application.
+
+
+
+Enhanced support for Daeja ViewONE Virtual document viewer 
+Implementation of Daeja ViewONE Virtual as the document viewer in Datacap Navigator provides the following features:  * Improved Thumbnail view in the Speed Scan client to allow Zoom capability to the thumbnails. 
+ * Improved tabbing focus in the viewer. 
+ * Persistent thumbnail views and size when the viewer window is detached and reattached. 
+ * Ability to manage the scanned images from a single Actions view. This feature has two benefits:  *  Less number of Actions required from the user. Improved memory consumption by the Scan Client. 
+   
+   
+
+Enhancements to Panel Designer
+These features enable Datacap Administrator to perform the following actions: 
+
+ * Define a look-up button and map the task profile that is defined in Datacap Studio for performing REST/SOAP/Database services look-up. 
+ * Ability to customize the tab order and define Hot Key for look-up button.
+
+
+Enhancements to Usability
+These features enable the users to perform the following actions: 
+
+ * Limited tab cycle between Batch Structure and Field panel in the Index client to improve productivity. 
+ * Added View History button in the Speed Scan and Speed Index clients for ease of reference of the batch history. 
+ * The Speed Scan Client scanner properties reflect the default values in the task settings, or the custom scanner settings if the selected scan source has custom settings. 
+ * The values displayed in the Speed Scan Client UI during scan are the same values used to perform the scan for all the scan operators. 
+ * Added a confirmation dialog when user closes the clients.
+
+
+Centralized Scanner Setting 
+
+ * Datacap Administrator can now define a group of users that is allowed to update the Scanner Settings in the Speed Scan Client. 
+ * Datacap Administrator can set the Scanner Settings to be visible in the Speed Scan task. 
+ * Datacap Administrator can also set the Scanner Settings to be editable in the Speed Scan task. 
+ * Support for extended paper size.
+
+
+
+Customized Hot Key support 
+Using the IBM Content Navigator Administration console, the Datacap Administrator can now assign Hot key values to the Menu buttons defined in the Datacap application. 
+
+
+Added new actions in the WebService action library 
+The following two new actions are added to enhance the support for SOAP in the WebService action library:  * WsSoapSetEnvelope: This action sets the SOAP envelope information. 
+ * WsSoapGetValues: This action returns one or more values from a SOAP web service.
+
+
+
+RELATED INFORMATION
+ Datacap 9.1.2 Publication Library [http://www.ibm.com/support/docview.wss?uid=swg27050227]
+Datacap 9.1.2 Download Document [http://www.ibm.com/support/docview.wss?uid=swg24044019]
+Datacap 9.1.2 Knowledge Center [https://www.ibm.com/support/knowledgecenter/en/SSZRWV_9.1.2/com.ibm.datacaptoc.doc/datacap_9.1.2.htm]
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2017/9/29

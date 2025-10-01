@@ -1,0 +1,161 @@
+Title: IBM JR48631: DATA RULES, COLUMN ANALYSIS JOB FAIL DUE TO COMMUNICATION ERROR DETECTED ON DB2 Z/OS SOURCE DATABASE. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Download Governance Rollup 1 for Information Server Version 11.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041824]
+Download Governance Rollup 3 for Information Server Version 11.5.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042423]
+Download Governance Rollup 4 for Information Server Version 11.5.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042628]
+IBM InfoSphere Information Server, Version 11.5.0.1 (Fix Pack 1) [http://www-01.ibm.com/support/docview.wss?uid=swg24041893]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Data Rules, Column Analysis job fail due to communication error
+   detected on DB2 z/OS source database.
+   
+   Following messages can be seen in DataStage job log:
+   
+   Item #: 139
+      Event ID: 138
+      Timestamp: 2013-04-23 22:13:12
+      Type: Fatal
+      User Name: dsadm
+      Message Id: IIS-CONN-DB2-00693
+      Message: pxbridge(0): SQLEndTran(SQL_COMMIT) reported:
+   SQLSTATE = 08007: Native Error Code = -30,081: Msg = [IBM][CLI
+   Driver] SQL30081N  A communication error has been detected.
+   Communication protocol being used: "TCP/IP".  Communication API
+   being used: "SOCKETS".  Location where the error was detected:
+   "172.xx.xxx.xxx".  Communication function detecting the error:
+   "send".  Protocol specific error code(s): "32", "*", "0".
+   SQLSTATE=08001 (CC_DB2Connection::commit, file
+   CC_DB2Connection.cpp, line 1,491)
+   
+      Item #: 140
+      Event ID: 139
+      Timestamp: 2013-04-23 22:13:12
+      Type: Fatal
+      User Name: dsadm
+      Message Id: IIS-CONN-DB2-00695
+      Message: pxbridge(0): SQLEndTran(SQL_ROLLBACK) reported:
+   SQLSTATE = 08003: Native Error Code = -99,999: Msg = [IBM][CLI
+   Driver] CLI0106E  Connection is closed. SQLSTATE=08003
+   (CC_DB2Connection::rollback, file CC_DB2Connection.cpp, line
+   1,516)
+   
+      Item #: 141
+      Event ID: 140
+      Timestamp: 2013-04-23 22:13:13
+      Type: Fatal
+      User Name: dsadm
+      Message Id: IIS-CONN-NGBR-00076
+      Message: main_program: Fatal Error: Operator(PXBridgeOp)
+   terminated abnormally due to fatal error in the function postRun
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The local fix for this problem is by setting the DB2 connector
+   property KeepConductorConnectionAlive=No in DataStage jobs.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Column analysis fails  using db2 connector  on  source with
+   large data
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR48631
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS INFORM ANAL
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36IA
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-26
+   
+   
+ * CLOSED DATE
+   2014-11-04
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP
+   
+   
+ * R870 PSY
+   UP
+   
+   
+ * R910 PSY
+   UP

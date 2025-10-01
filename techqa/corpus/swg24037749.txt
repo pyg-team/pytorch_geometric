@@ -1,0 +1,43 @@
+Title: IBM Downloading the components of version 11.3 of the InfoSphere Optim solutions for use on supported Linux platforms - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document lists the downloads for the components of version 11.3 of the IBM® InfoSphere® Optim™ solutions on the Passport Advantage® website. 
+
+DOWNLOAD DESCRIPTION
+You must install and configure a workstation on a Microsoft Windows computer before installing Optim components on any other operating system. 
+
+For the latest guidelines on how to perform an installation in your environment, refer to Optim Data Growth Solution or the Optim Test Data Management Solution [http://www.ibm.com/support/knowledgecenter/SSMLQ4_11.3.0/] in Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSMLNW_11.3.0/].
+
+Contents
+
+
+ * Downloading from Passport Advantage 
+ * Tips for downloading this product 
+ * Download and DVD part numbers 
+ * Trial edition license 
+ * System i and Teradata 2.5 data sources
+
+
+
+Downloading from Passport Advantage 
+
+After proof of entitlement, download any or all of the images listed here. To obtain the download images: 
+ 1. Navigate to the Find Downloads and Media web page on the IBM Passport Advantage website. 
+ 2. Under Download finder options, select the Find by part number search option. 
+ 3. Search for each downloadable image by download name. 
+ 4. Download all required parts. You must create a temporary directory for each download. 
+ 5. Use a file extracting utility that supports large file extractions to extract each of the parts into a single, temporary directory on your system. 
+ 6. Follow the installation instructions in the image you downloaded.
+
+
+
+Download and DVD part numbers 
+
+Operating system Download part number DVD part number Windows CN595EN C6KU1EN Supported Linux platforms CN598EN C6KU4EN 
+System i and Teradata 2.5 data sources 
+
+Optim is packaged with IBM InfoSphere Federation Server. To process data on System i or Teradata 2.5, you must install Federation Server on the Optim server. To obtain the downloads for Federation Server, see the Federation Server download document [http://www.ibm.com/support/docview.wss?rs=3551&uid=swg24035029]. PREREQUISITES
+Detailed system requirements for Optim 11.3:

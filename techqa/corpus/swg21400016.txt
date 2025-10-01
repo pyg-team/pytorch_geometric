@@ -1,0 +1,24 @@
+Title: IBM Removing symmetry from my mixed integer program - United States
+
+Text:
+symmetry TECHNOTE (FAQ)
+
+QUESTION
+ How can I eliminate symmetry for my mixed integer program? 
+
+ANSWER
+Symmetry can occur when a model contains groups of integer variables that are all quite similar. When the CPLEX branch and cut algorithm encounters one such variable at a fractional value and branches on it, the algorithm can simply transfer the fractional value of the branching variable to another variable in the group. For example, suppose we have 5 trucks with identical capacities and costs in our model, and xij corresponds to a binary decision variable for assigning truck i to route j for i = 1,...,5. If x1j = .5 and xij = 0 for i = 2,...,5 in the initial LP relaxation of the CPLEX MIP algorithm, then branching down on x1j will probably result in a solution of x2j = .5 and xij = 0 for i = 1,3,4,5 in the next LP subproblem. No useful branching has happened; the fractional value has simply moved from one truck to another identical one, and the process could repeat itself 3 more times in this model. However, since the trucks are identical in terms of the characteristics being modelled, we really don't care which truck gets assigned first. So, we might as well add a constraint that orders the assignment of these trucks: 
+
+ x1j >= x2j >= x3j >= x4j >= x5j 
+
+ This constraint won't tighten the bound on the best possible integer solution, but it will make sure that truck i is always dispatched before truck i+1, thus preventing unnecessary branches that would arise by swapping identical trucks. 
+
+ Symmetry breaking constraints like the one described here are the easiest way to remove performance problems of this type. However, in some cases, you may need actually to reformulate the model to remove symmetry. For a discussion of model reformulation to avoid symmetry, read this file Rethinking Mixed Integer Model Formulations.doc [/support/docview.wss?uid=swg21400016&aid=2] Rethinking Mixed Integer Model Formulations.doc [/support/docview.wss?uid=swg21400016&aid=1]or click here [http://portal.acm.org/citation.cfm?id=970083] for an article about this topic. 
+
+ Starting with version 8.0, CPLEX includes a symmetry detection parameter to automatically detect certain types of symmetry in MIP models, including the symmetry in the trucking example above. Additional symmetry detection capabilities, controlled by higher values of this parameter, were added with more recent versions. If you suspect symmetry is a source of slow performance for your MIP, try setting this parameter to its highest value. If that doesn't yield the desired performance improvements, then consider the addition of symmetry breaking constraints or alternate model formulation approaches described in this technote. 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce IBM ILOG CPLEX Optimization Studio General AIX, HP-UX, Linux, Solaris, Windows, Mac OS 12.2 All Editions 
+HISTORICAL NUMBER
+ cplex/FAQ/99

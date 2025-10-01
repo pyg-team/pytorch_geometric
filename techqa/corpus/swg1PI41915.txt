@@ -1,0 +1,167 @@
+Title: IBM PI41915: SILENT INSTALLATION OF RELEASE 23 ON MACINTOSH 10.10.3 DISPLAYS ERROR MESSAGE ON TERMINAL ABOUT LIBRARY IAMAC - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You would like to perform a silent installation of release 23 on
+   Macintosh Yosemite 10.10.3 with either single user (authorized
+   user) license or for network (concurrent user) license
+   
+   Therefore, you Download SPSSSC_23.0_MAC_OS_SILENT_ML.dmg to a
+   Mac 10.10.3 desktop
+   Open the DMG file as administrator and extract the content of
+   the DMG file to a folder or desktop
+   After extraction you see 2 files:
+   
+   SPSS_Statistics_Installer.bin and installer.properties
+   
+   Open installer.properties file and edit it for your needs, for
+   example when you would like to perform a silent installtion for
+   single user license you need to set the AUTHCODE parameter and
+   enable row single=1
+   
+   You save the edited installer.properties file into the same
+   folder as SPSS_Statistics_Installer.bin
+   Then, open Terminal.app and CD to the folder where you saved
+   both files
+   Run below command to start the silent installation
+   
+   sudo ./SPSS_Statistics_Installer.bin -f ./installer.properties
+   
+   The installer starts to launch but then gives an error about
+   IAMac below.
+   
+   *************
+   SPSSs-iMac:desktop SPSS$ sudo ./SPSS_Statistics_Installer.bin -f
+   ./installer.properties
+   Password:
+   Preparing to install...
+   Extracting the installation resources from the installer
+   archive...
+   Configuring the installer for this system's environment...
+   Launching installer...
+   
+   Trying to load library IAMac
+   Error trying to load library no IAMac in java.library.path
+   ************
+   
+   This was reported to IBM SPSS development.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This error message on console can be ignored. It does not affect
+   the installation.
+   After you see this error on Terminal, if you wait a bit you see
+   that silent installations for either single user or network
+   license will proceed successfully on 10.10.3 Yosemite and the
+   program SPSS 23 will run fine after installation.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * This issue has been addressed in IBM SPSS Statistics 24      *
+   * release. Please upgrade to latest version.                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * This issue has been addressed in IBM SPSS Statistics 24      *
+   * release. Please upgrade to latest version.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been addressed in IBM SPSS Statistics 24      *
+   * release. Please upgrade to latest version.                   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI41915
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   N00
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-05-28
+   
+   
+ * CLOSED DATE
+   2016-03-22
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RO00 PSN
+   UP
+   
+   
+ * RO00 PSY
+   UP

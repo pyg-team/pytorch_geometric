@@ -1,0 +1,90 @@
+Title: IBM Adding Portal 8 Server in RAD 9.0.1 results in "The Application Server installation directory is not correct" error - United States
+
+Text:
+adapter TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to add a Portal 8 Server using IBM Rational Application Developer for WebSphere Software (RAD) 9.0.1 results in the error "The Application Server installation directory is not correct" when specifying Portal and WebSphere Application Server (WAS) installation locations to create runtime. 
+
+SYMPTOM
+Steps to reproduce: 
+
+ 1. Open the Servers view In RAD 9.0.1 (or later) 
+ 2. Right click and select New > Server 
+ 3. Select WebSphere Portal v8.0 Server > Next > choose the Portal installation directory > choose the WAS installation directory
+
+
+At the top of the window, you should now see the error: 
+
+The Application Server installation directory is not correct
+
+
+CAUSE
+Potential causes include:
+
+
+ * You have not selected the WebSphere Portal Server 8.0 on WebSphere Application Server 8.5 adapter. 
+   
+   Note: You may have mistakenly selected the WebSphere Portal 8.0 Server adapter or you may not even have the WebSphere Portal Server 8.0 on WebSphere Application Server 8.5 adapter available to choose from in RAD.
+   
+   
+ * You are not providing the right installation directory for your Portal or WAS server
+   
+   
+ * The WAS server you are pointing to which is to be used with Portal 8 is not compatible with Portal.
+   
+   Note: You must be using a WAS ND server
+
+DIAGNOSING THE PROBLEM
+Check the following in your environment: 
+
+ * Ensure you have the WebSphere Portal Server 8.0 on WebSphere Application Server 8.5 adapter and not the WebSphere Portal 8.0 adapter.
+   
+   
+ * Ensure the installation directories for the Portal and the WAS instances you are trying to add are correct
+   
+   
+ * Verify which Portal version and which WAS version you are using and make sure the combination is supported
+
+RESOLVING THE PROBLEM
+Choose the solution based on your particular issue: 
+
+ 
+
+Incorrect adapter version: 
+
+Update RAD with the correct adapter version. 
+
+
+If you do not see the correct adapter available: 
+
+ 1. Close RAD 
+ 2. Open IBM Installation Manager 
+ 3. Click Modify > Select the RAD 9.0.1 package group > Next > Next. 
+    You should now be on the feature selection page. 
+ 4. Under the Server tools section, ensure to have the Development tools and the Remote server stub installed for the Portal version and WAS version you are looking to install
+    
+    For example: If you are looking to install Portal 8 with WAS 8.5.x, ensure you have the Development tools and the Remote server stub also installed for the WebSphere Portal Server 8.0 on WebSphere Application Server 8.5 option 
+ 5. Click Next > Modify
+    
+
+
+Incorrect installation directory: 
+
+Enter the correct installation directories for the Portal and the WAS instances you are trying to add. 
+
+ 
+
+Note: 
+
+The default installation directory for WebSphere Portal Server 8.0 is at C:\Program Files (x86)\ibm\WebSphere\PortalServer 
+
+The default installation directory for WebSphere Application Server 8.5 is at C:\Program Files (x86)\ibm\WebSphere\AppServer 
+
+ 
+
+ 
+
+Incorrect Portal / WAS compatibility: 
+
+Update your system with the supported Portal version for the version of WAS you are using.

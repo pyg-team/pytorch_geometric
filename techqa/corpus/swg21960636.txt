@@ -1,0 +1,53 @@
+Title: IBM Portal upgrade to 8001 CF15 fails during the CONFIG-WP-PTF-CF task with errors, EJPXA0001E and EJQHJ0003E and message, "IBM Web Content
+Manager is not available." - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+While attempting to upgrade Portal from 8001 CF09 to CF15 the CONFIG-WP-PTF-CF task fails with errors, EJPXA0001E and EJQHJ0003E and message, "IBM Web Content
+Manager is not available."
+
+SYMPTOM
+The ConfigTrace.log shows the following... 
+
+<message id="EJPXA0001E">EJPXA0001E: An error occurred while processing
+the XML configuration request.</message>
+[xmlaccess] <message>EJQHJ0003E: Exception com.ibm.workplace.
+wcm.api.exceptions.ServiceNotAvailableException: IBM Web Content
+Manager is not available. occurred.</message>
+[xmlaccess] <stacktrace><![CDATA[
+[xmlaccess] com.ibm.wps.command.xml.XmlCommandException: EJPXA0001E: An
+error occurred while processing the XML configuration request.
+[xmlaccess] at com.ibm.wps.command.xml.items.
+ContentNodeItem$XmlPageAdministrationEventListener.deleted
+(ContentNodeItem.java:2649)
+[xmlaccess] at com.ibm.wps.command.xml.items.ContentNodeItem.delete
+(ContentNodeItem.java:2007)
+[xmlaccess] at com.ibm.wps.command.xml.ConfigItem.doUpdate
+(ConfigItem.java:600
+
+
+CAUSE
+In this case the root cause was due to the fact that the connect.businesslogic.module entry in WCM_WCMConfigService had only "librarydelete" listed. 
+
+ 
+
+Replaced that with the following:
+web,mail,default,ajpe,federatedproxy,ajpecatselect,memberfixer,workflowe
+nablement,itemdispatcher,plutouploadfile,plutodownloadfile,synd,subs,syn
+dication,refreshallitems,unlocklibrary,custom,data,clearversions,findlar
+geresources,clearhistory,reseteventlog,profileenablement,exportcachesett
+ings
+
+Because these entries were missing it made WCM unaccessible and the result was the message "IBM Web Content Manager is not available." being thrown when the CF config task attempted to access WCM via xmlaccess
+
+
+ENVIRONMENT
+Portal 8001 Cluster 
+
+Linux
+
+
+RESOLVING THE PROBLEM
+Review the connect.businesslogic module in the WCM_WCMConfigService service via the WAS Admin Console and save the changes. Restart the servers and if clustered ensure these changes are synced to the problem node.

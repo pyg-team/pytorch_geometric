@@ -1,0 +1,28 @@
+Title: IBM Export failure with DB2 SQLCOODE=-2216 for IBM Social Media Analytics - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Export fails in the middle of database loading. Configuration status UI shows Loading data to the database failed with DBLoaderException: DB2 SQL Error: SQLCODE=-2216, SQLSTATE=01H52, SQLERRMC=-668 
+
+CAUSE
+Loading data to SMA database includes large set of INSERT operation, this could cause disk I/O bandwidth issue causing DB2 server page cleaning operation behind INSERT operation, hence running out of bufferpool.
+
+DIAGNOSING THE PROBLEM
+The following error entry or similar is seen in dataloader.log on datanode: 
+
+2014-03-11 19:28:17,981 [pro00015-11032014143616801-loader] ERROR - SQLException: DB2 SQL Error: SQLCODE=-1218, SQLSTATE=57011, SQLERRMC=4097, DRIVER=3.63.75
+2014-03-11 19:28:17,983 [pro00015-11032014143616801-loader] ERROR - DB2 error message: There are no pages currently available in bufferpool "4097".. SQLCODE=-1218, SQLSTATE=57011, DRIVER=3.63.75
+
+
+RESOLVING THE PROBLEM
+1. Logon to Datanode as db2 instance user, db2inst1 by default 
+
+2. db2set DB2_USE_ALTERNATE_PAGE_CLEANING = ON 
+
+3. Ensure DBHEAP is set to AUTOMATIC: db2 get dbm cfg for <project id> | grep DBHEAP 
+
+4. Restart DB2 server: db2stop/db2start 
+
+5. Run SMA Export job again.

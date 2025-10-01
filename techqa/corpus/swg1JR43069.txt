@@ -1,0 +1,161 @@
+Title: IBM JR43069: "INVALID ARGUMENT" ERROR IN BUSINESS SPACE WITH INSTANCES WIDGET AND ANOTHER MAXIMIZED WIDGET ON SAME PAGE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Business Monitor V7.5.1 Fix Pack 1 (7.5.1.1) [http://www-01.ibm.com/support/docview.wss?uid=swg24033020]
+IBM Business Monitor V8.0 Refresh Pack 1 (8.0.1) [http://www-01.ibm.com/support/docview.wss?uid=swg24033765]
+IBM Business Monitor V8.0.1 Fix Pack 1 (8.0.1.1) [http://www-01.ibm.com/support/docview.wss?uid=swg24034357]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With an Instances widget and at least one other widget on the
+   same page in Business Space, if a widget besides the Instances
+   widget is in the maximized state at the time the page is loaded,
+   the page fails to render properly; a red 'X' icon is displayed
+   at the top of the page, with the following error (displayable
+   by clicking on the 'X'):
+   
+   com.ibm.bspace.common.util.widget.BSpaceGeneralHelper; Method:
+   onSizeChanged() Error Details: Invalid argument.
+   
+   The error above has been observed with Internet Explorer as the
+   browser.  With Firefox as the browser, the red 'X' / error may
+   not occur, but the Instances widget may not be displayed at all.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  For a user that is experiencing the issue, the data for the
+   user can be removed from the table BSP_USER_DATA_T in the
+   Business Space database.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of WebSphere Business Monitor         *
+   *                  Version 7.0, and users of IBM Business      *
+   *                  Monitor Version 7.5 and Version 8.0.        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: With an Instances widget and at least   *
+   *                      one other widget on the                 *
+   *                      same page in Business Space, if a       *
+   *                      widget besides the Instances            *
+   *                      widget is in the maximized state at     *
+   *                      the time the page is loaded,            *
+   *                      the page fails to render properly; a    *
+   *                      red 'X' icon is displayed               *
+   *                      at the top of the page, with the        *
+   *                      following error (displayable            *
+   *                      by clicking on the 'X'):                *
+   *                      com.ibm.bspace.common.util.widget.BSpac *
+   *                      eGeneralHelper; Method:                 *
+   *                      onSizeChanged() Error Details:          *
+   *                      Invalid argument.                       *
+   *                      The error above has been observed       *
+   *                      with Internet Explorer as the           *
+   *                      browser.  With Firefox as the           *
+   *                      browser, the red 'X' / error may        *
+   *                      not occur, but the Instances widget     *
+   *                      may not be displayed at all.            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In the onSizeChanged() method for the Instances widget, a
+   minimum width for the widget was not established, resulting in
+   the error.
+   This problem will be fixed in future maintenance releases on
+   all applicable versions.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR43069
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB BUS MONITOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724M2400
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-12
+   
+   
+ * CLOSED DATE
+   2012-09-04
+   
+   
+ * LAST MODIFIED DATE
+   2012-09-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R750 PSY
+   UP

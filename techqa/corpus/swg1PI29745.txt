@@ -1,0 +1,133 @@
+Title: IBM PI29745: CODE NOT GENERATED FOR 'ACTION ON EXIT' FOR A STATE WITH ENTRYEXIT POINT. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract:
+   Code not generated for 'Action on Exit' for a state with
+   EntryExit point.
+   
+   Error Description:
+   1] Create a statechart with state having EntryExit point.
+   2] Call an operation in Action on Exit in the state.
+   3] Generate the code and observe that the Action on Exit is
+   missing.
+   
+   Attached a sample model for reference.
+   
+   Local Fix:
+   To call the operation in the transition or in Action on Entry.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Code not generated for 'Action on Exit' for a state with
+   EntryExit point.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in version 8.1.2.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI29745
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   811
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-17
+   
+   
+ * CLOSED DATE
+   2015-02-24
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R811 PSN
+   UP

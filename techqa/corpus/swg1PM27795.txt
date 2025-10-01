@@ -1,0 +1,227 @@
+Title: IBM PM27795: EYUXD1017I MESSAGE LOOP IF CMAS NOT AVAILABLE OR IF SET FEEDBACKVERBOSE REQUESTED - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are attempting to run the CICS Transaction Server for z/OS
+   Discovery Library Adapter program EYU9XDDA.  In the SYSPRINT
+   output you may see the following messages repeated over and over
+   
+   .
+   EYUXD1017I I mm/dd/yyyy hh:mm:ss  API command(FEEDBACK) for
+      object(                ) returned RESPONSE(INVALIDPARM)
+      REASON(THREAD).
+   EYUXD1017I I mm/dd/yyyy hh:mm:ss  API command(FEEDBACK) for
+      object(                ) returned RESPONSE(INVALIDPARM)
+      REASON(THREAD).
+   EYUXD1017I I mm/dd/yyyy hh:mm:ss  API command(FEEDBACK) for
+      object(                ) returned RESPONSE(INVALIDPARM)
+      REASON(THREAD).
+   ... and so on
+   .
+   This can happen if the CMAS you are trying to connect to in the
+     SET CMAS xxxxxxxx
+   command is not running or not available at the time, or if you
+   have specified
+     SET FEEDBACK VERBOSE
+   for diagnostic purposes.
+   .
+   If left running long enough, the job may abend with an S878.
+   .
+   Additional Symptoms and Keywords
+   DLA EYU9XDDA XDDA
+   KIXREVRBD
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Ensure CMAS is running, and/or use SET FEEDBACK QUIET
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICSPlex SM V4R1M0 Users                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:    You are attempting to run the CICS   *
+   *                      Transaction Server for z/OS Discovery   *
+   *                      Library Adapter program EYU9XDDA.  You  *
+   *                      might see the following message issued  *
+   *                      over and over in the SYSPRINT file:     *
+   *                      .                                       *
+   *                      EYUXD1017I I mm/dd/yyyy hh:mm:ss  API   *
+   *                         command(FEEDBACK) for                *
+   *                         object(                ) returned    *
+   *                         RESPONSE(INVALIDPARM) REASON(THREAD) *
+   *                      .                                       *
+   *                      If not cancelled, the job will abend    *
+   *                      with an S878.  This will happen if the  *
+   *                      CMAS named in the                       *
+   *                                                              *
+   *                        SET CMAS xxxxxxxx                     *
+   *                                                              *
+   *                      command is not running at the time, or  *
+   *                      if you have specified                   *
+   *                                                              *
+   *                        SET FEEDBACK VERBOSE                  *
+   *                                                              *
+   *                      for diagnostic purposes.                *
+   *                                                              *
+   *                         An extraneous character appears at   *
+   *                      the end of each line written to the     *
+   *                      SYSPRINT file.                          *
+   ****************************************************************
+   * RECOMMENDATION: After applying the PTF that resolves this    *
+   *                 APAR, the CICS Transaction Server for z/OS   *
+   *                 Discovery Library Adapter program EYU9XDDA   *
+   *                 must be rerun from a library to which this   *
+   *                 fix is applied.                              *
+   ****************************************************************
+      When you specify SET FEEDBACK VERBOSE in the command input
+   file for program EYU9XDDA, detailed diagnostic information will
+   be written to the SYSPRINT file.  This includes FEEDBACK data
+   for any API command which returns any response other than OK,
+   including NODATA.  However the thread token and result token
+   passed to the CPSM API FEEDBACK command were not initialized,
+   so the FEEDBACK command returns a RESPONSE of INVALIDPARM and
+   a REASON of THREAD.  The error analysis subroutine is called
+   recursively to analyze the failure of the FEEDBACK command,
+   causing FEEDBACK to be called again.  This results in the ob-
+   served cascade of EYUXD1017I messages.
+      The logical record length of the SYSPRINT file was 133 bytes
+   but the message staging buffer was defined to be 132 bytes long.
+   This caused the character following the buffer in storage to be
+   appended to each message written to SYSPRINT.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *     Module EYU9XDDA was modified to insure that the proper
+   thread and result set tokens are available to the FEEDBACK
+   command.  In addition, FEEDBACK will not be called for an API
+   response of NODATA since the resulting FEEDBACK data provides
+   no useful information.
+      Include file EYUBXDDA (DLA Common Subroutines and Variables)
+   was modified to increase the size of the staging buffer for the
+   SYSPRINT file to 133 bytes.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM27795
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   60M
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-30
+   
+   
+ * CLOSED DATE
+   2010-12-03
+   
+   
+ * LAST MODIFIED DATE
+   2011-01-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK62787
+   
+   
+
+MODULES/MACROS
+ *     EYUBXDDA EYU9XDDA EYU9XDD0 EYU9XDD1 EYU9XDD2
+   EYU9XDD3
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60M PSY UK62787 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK62787]
+   UP10/12/07 P F012
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

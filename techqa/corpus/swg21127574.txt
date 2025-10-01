@@ -1,0 +1,141 @@
+Title: IBM MustGather: Performance, Hang, or High CPU Issues on HP-UX - United States
+
+Text:
+MustGather; MustGather; MustGather; MustGatherDocument; wasrun; hang; hpux; hewlett; packard TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+You are experiencing performance degradation, hang, no response, hung threads, CPU starvation, high CPU utilization, deadlocks, timeouts, or network problems, but are unsure what to collect. This MustGather will assist you in collecting critical data when IBM WebSphere Application Server is experiencing performance or high CPU issues on the HP-UX platform. 
+
+RESOLVING THE PROBLEM
+
+
+You are experiencing performance degradation, hang, no response, hung threads, CPU starvation, high CPU utilization, deadlocks, timeouts, or network problems, but are unsure what to collect. This MustGather will assist you in collecting critical data when IBM WebSphere Application Server is experiencing performance or high CPU issues on the HP-UX platform.
+
+COLLECTING DATA MANUALLY
+
+Required data: 
+VerboseGC data is critical to diagnosing performance or high CPU issues. This can be enabled on production systems since it has a negligible impact on performance (< 2% which is attributed to file i/o). If you have not already done so, enable verboseGC [http://www.ibm.com/support/docview.wss?uid=swg21114927]. 
+
+For high CPU issues only, ensure that HP GlancePlus is installed on your system. Upgrade to the latest version of GlancePlus to ensure compatibility. Directions to install GlancePlus: http://www8.hp.com/us/en/software-solutions/glanceplus-server-diagnostic-tool/ [http://www8.hp.com/us/en/software-solutions/glanceplus-server-diagnostic-tool/] 
+
+
+At the time of the problem, run the attached scripts in two separate command line windows at the same time. Data will be generated in the current directory. 
+
+./hpux_performance.sh [PID] 
+[PID] represents the process ID of the Java™ Virtual Machine (JVM). 
+A number of files will be generated with the *.out file extension in the script's current directory. 
+
+
+For high CPU issues only: 
+
+./hpux_glance.sh 
+This script will output every 25 seconds for 13 intervals. Use the -g [PATH_TO_GLANCE] argument if glance cannot automatically be found. 
+
+The file hpux_glance.out will be generated in the script's current directory. 
+[/support/docview.wss?uid=swg21127574&aid=2] [/support/docview.wss?uid=swg21127574&aid=1] [/support/docview.wss?uid=swg21127574&aid=4] [/support/docview.wss?uid=swg21127574&aid=3] 
+
+
+
+
+
+
+
+Collecting files: 
+
+Collect the following files:  * Everything in the server logs directory:
+   
+   <profile_root>/logs/server_name/* 
+   
+ * The server.xml file located in this directory:
+   
+   <profile_root>/config/cells/cell_name/nodes/node_name/servers/server_name/server.xml 
+   
+ * All files in the directory where the scripts were run.
+
+
+Send the results to IBM Support [http://www.ibm.com/support/docview.wss?uid=swg21153852] 
+
+
+
+
+
+
+
+
+Frequently asked questions (FAQs): 
+ * Where are the javacores? What are thread dumps?
+   Javacores are not generated on HP-UX. Thread dumps are produced instead in the server log native_stdout.log. 
+   
+   
+ * How do I determine the PID of the JVM?
+   Navigate to <profile_root>/logs/<server_name>/ and look for a file with the *.pid extension. This contains the process ID of your running server. 
+   
+   
+ * How can I determine which threads are exhibiting high CPU?
+   The technote Correlating High CPU on HP-UX with output from hpux_glance.sh [http://www.ibm.com/support/docview.wss?uid=swg21367002] teaches you to analyze high CPU from the data provided in this MustGather.
+   
+   
+
+
+
+
+
+
+
+If asked to do so: 
+
+In advanced situations, you might need to collect additional data. Only collect the following data if asked to do so by IBM Support. 
+
+System core 
+Capturing a system core is also possible using the gdb debugger. Ensure that the gdb is installed. 
+
+echo "dumpcore\nq" > cmd.txt
+gdb --command=cmd.txt-batch [JVM Path][PID] 
+Where, 
+[JVM Path] is the path to the java executable running. 
+[PID] is the PID of the running JVM. 
+
+If run correctly, a core file will be produced in the process’s working directory with the name core.[PID]. Rename this core file if additional ones are generated. 
+
+On HP-UX 11.31, the command gcore performs the same action: 
+
+gcore [PID of JVM] 
+The core files need to be processed before they are sent to IBM Support. Please follow the steps listed in the Crash on HP MustGather [http://www.ibm.com/support/docview.wss?uid=swg21255218]. 
+
+
+
+
+
+
+
+Related information 
+Exchanging information with IBM Technical Support [http://www.ibm.com/support/docview.wss?uid=swg21153852] 
+Steps to get support for WebSphere Application Server [http://www.ibm.com/developerworks/websphere/support/appserver_support.html] 
+MustGather: Read first for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg21145599] 
+Troubleshooting guide for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg27005324] 
+Correlating High CPU on HP-UX with output from hpux_glance.sh [http://www.ibm.com/support/docview.wss?uid=swg21367002] 
+
+EXCHANGING DATA WITH IBM SUPPORT
+To diagnose or identify a problem, it is sometimes necessary to provide Technical Support with data and information from your system. In addition, Technical Support might also need to provide you with tools or utilities to be used in problem determination. You can submit files using one of following methods to help speed problem diagnosis: 
+
+ * IBM Support Assistant (ISA) 
+ * Service Request (SR)
+ * E-mail 
+ * FTP to the Enhanced Customer Data Repository (ECuRep)
+
+
+
+
+Instructions for exchanging information with IBM Support [http://www.ibm.com/support/docview.wss?uid=swg21153852]
+
+READ FIRST AND RELATED MUSTGATHERS
+MustGather: Read first for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg21145599]
+
+
+
+
+ Crash problem [http://www.ibm.com/support/search.wss?tc=SSCYP8L&q=MustGatherDocument] Out of Memory Problem [http://www.ibm.com/support/search.wss?tc=SSCMPCY&q=MustGatherDocument] 
+
+RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]

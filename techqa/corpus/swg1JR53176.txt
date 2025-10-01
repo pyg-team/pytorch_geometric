@@ -1,0 +1,192 @@
+Title: IBM JR53176: DBUPGRADE FAILS ON STANDALONE PROFILE WHEN UPGRADING FROM 8.5.0.1 TO 8.5.5 - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.5.6.0-WS-BPM-IFJR53176 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.6.0-WS-BPM-IFJR53176&source=SAR]
+8.5.5.0-WS-BPM-IFJR53176 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPM-IFJR53176&source=SAR]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DBUpgrade Fails with the following error when upgrading an
+   Advanced
+   Standalone Profile from 8.5.0.1 to 8.5.5:
+   
+   Apr 9, 2015 4:41:17 PM SEVERE:
+   com.lombardisoftware.ant.LoadDEInfoTask.execute - Failed to
+   load DE
+   information.
+   java.lang.NullPointerException
+    at
+   com.ibm.bpm.migration.utils.BPMMigrationDEHelper.getDmgrName(BPM
+   Migratio
+   nDEHelper.java:515)
+    at
+   com.lombardisoftware.ant.LoadDEInfoTask.execute(LoadDEInfoTask.j
+   ava:230)
+    at
+   org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:
+   288)
+    at sun.reflect.GeneratedMethodAccessor7.invoke(Unknown Source)
+    at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   Accessor
+   Impl.java:37)
+    at java.lang.reflect.Method.invoke(Method.java:611)
+    at
+   org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtil
+   s.java:1
+   06)
+    at org.apache.tools.ant.Task.perform(Task.java:348)
+    at org.apache.tools.ant.Target.execute(Target.java:357)
+    at org.apache.tools.ant.Target.performTasks(Target.java:385)
+    at
+   org.apache.tools.ant.Project.executeSortedTargets(Project.java:1
+   337)
+    at
+   org.apache.tools.ant.Project.executeTarget(Project.java:1306)
+    at
+   org.apache.tools.ant.helper.DefaultExecutor.executeTargets(Defau
+   ltExecut
+   or.java:41)
+    at
+   org.apache.tools.ant.Project.executeTargets(Project.java:1189)
+    at org.apache.tools.ant.Main.runBuild(Main.java:758)
+    at org.apache.tools.ant.Main.startAnt(Main.java:217)
+    at org.apache.tools.ant.Main.start(Main.java:179)
+    at org.apache.tools.ant.Main.main(Main.java:268)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround for the problem is to add the following information
+   in the
+   StandAlone.Properties file
+   
+   bpm.de.sourceInfo.versionInfo=8.5.0.0
+   bpm.de.sourceInfo.productType=Advanced
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When you run the DBUpgrade command and the profile type is
+   stand-alone, the command doesn't load the deployment environment
+   and you receive a java.lang.NullPointException
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.5.0 so that the deployment
+   environment loads when you run the DBUpgrade command even if the
+   profile type is stand-alone.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR53176:
+   
+   1. Select IBM Business Process Manager from the product
+   selector, the installed version to the fix pack level, and your
+   platform, and then click Continue
+   2. Select APAR or SPR, enter JR53176, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR53176
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-21
+   
+   
+ * CLOSED DATE
+   2015-07-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

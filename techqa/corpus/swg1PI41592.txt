@@ -1,0 +1,154 @@
+Title: IBM PI41592: CACHE BECOMES INSENSITIVE TO SESSION COMMAND BLOCK WHEN FILTER ADDED TO DATA ITEM IN REPORT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When session command blocks are used for a particular data
+   source connection, certain reports may incorrectly return
+   cache'd data rather than querying the data source.
+   
+   The "Cache is sensitive to connection command blocks" governor
+   in the Framework manager package may be checked however certain
+   conditions in reports may cause the cache to become insensitive
+   to differences in the command block. This may lead to a
+   situation where stale incorrect data from a past run may be
+   produced to the user.
+   
+   Cache'd data may be presented in either Report Studio or Cognos
+   Workspace
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Either of the following:
+   1. Turn "Use Local Cache" for the queries in report studio to
+   "No"
+   2. Uncheck "Allow usage of local cache" governor in Framework
+   Manager package to turn off cache globally
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See error description.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM Cognos Business Intelligence 10.2.2 Fix Pack  *
+   * 2                                                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code Fix
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  A fix for this APAR is targeted for IBM Cognos Business
+   Intelligence 10.2.2 Fix Pack 2
+   
+   The Fix Pack Release Schedule can be found at
+   www-01.ibm.com/software/analytics/cognos/support/fixpacks.html
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI41592
+   
+   
+ * REPORTED COMPONENT NAME
+   COG ADMINISTRAT
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12AD
+   
+   
+ * REPORTED RELEASE
+   A22
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-21
+   
+   
+ * CLOSED DATE
+   2015-07-16
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI41855 PI41858 PI41861 PI42009 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI42009] PI42109 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI42109]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   COG ADMINISTRAT
+   
+   
+ * FIXED COMPONENT ID
+   5724W12AD
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA22 PSN
+   UP

@@ -1,0 +1,24 @@
+Title: IBM Collecting a PureData Systems for Analytics Health Check Report using nzhealthcheck - United States
+
+Text:
+healthcheck; netezza; puredata; analytic TECHNOTE (FAQ)
+
+QUESTION
+ How to properly collect a PureData Systems for Analytics Health Check Report using nzhealthcheck? 
+
+ANSWER
+You can run nzhealthcheck as nz in two modes: 
+
+ * 
+ * 
+ * /nz/kit/bin/adm/nzhealthcheck
+   
+   2 - Standalone Mode: (Takes a bit longer and needs root password) 
+ * /nz/support/contrib/bin/adm/nzhealthcheck/nzhealthcheck -S
+   Enter root password or ctl-D when prompted
+   
+
+
+System Health Check Report stored in a file with more in-depth explanations: /nz/kit.<nsp version>/log/nzhealthcheck/Netezza_System_Health_Check_Report_<date>_<time>.txt
+
+Please attach Health Check Report to a PMR accordingly if you need assistance troubleshooting any reported issues.

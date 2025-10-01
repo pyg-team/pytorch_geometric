@@ -1,0 +1,80 @@
+Title: IBM Windows OS agent offline and will not start - United States
+
+Text:
+dllbusy; exebusy; NT Agent; offline; dll is missing TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ NT agent will not start, error shows missing dll 
+
+SYMPTOM
+NT agent will not start and you are unable to run a PDCollect or kincinfo due to message 
+kbb.dll is missing from your computer.
+
+A search for kbb.dll returns hits with the name kbb.dllbusy
+
+
+CAUSE
+This issue was traced to a failed installation where the dll files were renamed for the installation but not returned to the correct name after the install failed.
+
+
+The problem has been addressed in APAR IV59978 and a solution is available in 
+IBM Tivoli Monitoring 6.3.0 Fix Pack 4 (6.3.0-TIV-ITM-FP0004) 
+
+Refer to: http://www-01.ibm.com/support/docview.wss?uid=swg24037653 [http://www-01.ibm.com/support/docview.wss?uid=swg24037653]
+
+
+ENVIRONMENT
+Win2008;6.1-SP1
+NT agent 6.30 FP3
+
+
+
+DIAGNOSING THE PROBLEM
+Errors will be found in the following logs 
+Abort IBM Tivoli Monitoring YYYYMMDD HHMM.log
+Abort IBM Tivoli Monitoring YYYYMMDD HHMM.trc
+IBM Tivoli Monitoring YYYYMMDD HHMM.log
+
+The errors include
+
+06-11-2015 04:15:41: File
+D:\IBM\ITM\TMAITM6\app\RPT\runtimes\7.5.501.v20120710_1500_44696537\bridge2java.dll renamed to D:\IBM\ITM\TMAITM6\app\RPT\runtimes\7.5.501.v20120710_1500_44696537\bridge2java.dllbusy
+06-11-2015 04:15:41: File
+D:\IBM\ITM\TMAITM6\app\RPT\runtimes\7.5.501.v20120710_1500_44696537\citrix.jar is locked.
+06-11-2015 04:15:41: File
+D:\IBM\ITM\TMAITM6\app\RPT\runtimes\7.5.501.v20120710_1500_44696537\citrix.jar could not be renamed, errors may occur.
+06-11-2015 04:15:41: File
+D:\IBM\ITM\TMAITM6\app\RPT\runtimes\7.5.501.v20120710_1500_44696537\com.ibm.icu_4.2.1.v20100412.jar is locked.
+06-11-2015 04:15:41: File
+D:\IBM\ITM\TMAITM6\app\RPT\runtimes\7.5.501.v20120710_1500_44696537\com.ibm.icu_4.2.1.v20100412.jar could not be renamed, errors may occur.
+06-11-2015 04:15:41: File
+D:\IBM\ITM\TMAITM6\app\RPT\runtimes\7.5.501.v20120710_1500_44696537\com.
+ibm.mq.commonservices.jar is locked.
+06-11-2015 04:15:41: File
+D:\IBM\ITM\TMAITM6\app\RPT\runtimes\7.5.501.v20120710_1500_44696537\com.
+ibm.mq.commonservices.jar could not be renamed, errors may occur.
+
+AND
+
+07-16-2015 13:33:39: File D:\IBM\ITM\InstallITM\kbb.dll is locked.
+07-16-2015 13:33:39: File D:\IBM\ITM\InstallITM\kbb.dll renamed to D:\IBM\ITM\InstallITM\kbb.dllbusy
+07-16-2015 13:33:40: File D:\IBM\ITM\TMAITM6\app\RPT\runtimes\7.5.501.v20120710_1500_44696537\activation.jar is locked.
+07-16-2015 13:33:40: File
+D:\IBM\ITM\TMAITM6\app\RPT\runtimes\7.5.501.v20120710_1500_44696537\activation.jar could not be renamed, errors may occur.
+07-16-2015 13:33:40: File
+D:\IBM\ITM\TMAITM6\app\RPT\runtimes\7.5.501.v20120710_1500_44696537\axiom-api-1.2.11.jar is locked.
+07-16-2015 13:33:40: File
+D:\IBM\ITM\TMAITM6\app\RPT\runtimes\7.5.501.v20120710_1500_44696537\axiom-api-1.2.11.jar could not be renamed, errors may occur.
+
+
+
+RESOLVING THE PROBLEM
+Apply APAR IV59978
+
+A solution is available in:
+IBM Tivoli Monitoring 6.3.0 Fix Pack 4 (6.3.0-TIV-ITM-FP0004) 
+
+Refer to: http://www-01.ibm.com/support/docview.wss?uid=swg24037653 [http://www-01.ibm.com/support/docview.wss?uid=swg24037653]
+
+This work around helped in some cases. Search for all *.dllbusy and *.exebusy files and rename them
+back to normal. Restart the NT agent.

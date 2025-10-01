@@ -1,0 +1,180 @@
+Title: IBM IC67920: PROXY GATEWAY CONFIGURATION STORE DOES NOT ALLOW SOAP 1.2       ENDPOINTS TO BE REGISTERED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere Enterprise Service Bus V7.0.0 Fix Pack 3 (7.0.0.3) [http://www-01.ibm.com/support/docview.wss?uid=swg24027661]
+WebSphere Enterprise Service Bus V7.0.0 Fix Pack 4 (7.0.0.4) [http://www-01.ibm.com/support/docview.wss?uid=swg24030312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When deploying a proxy gateway and creating virtual service
+   within a proxy group a WSDL is used. If this WSDL only included
+   SOAP 1.2 endpoints the WSDL will not be processed and the
+   following error will be seen:
+   CWSXM6008W:  A request to read the WSDL document
+   http://localhost:9080/ServicesWeb/OrderV2_OrderHttpService/WEB-I [http://localhost:9080/ServicesWeb/OrderV2_OrderHttpService/WEB-I]
+   NF/wsdl/Test_OrderV2.wsdl failed to find any services.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of WebSphere Integration Developer     *
+   *                 v7.0.0.1 using a Proxy Gateway Pattern to    *
+   *                 generate a Proxy Gateway mediation and       *
+   *                 adding a SOAP 1.2 import. Once the module    *
+   *                 is deployed to WebSphere Enterprise          *
+   *                 Service Bus v7.0.0.1, virtual services for   *
+   *                 the proxy gateway can be configured using    *
+   *                 BusinessSpace by pointing to the WSDL        *
+   *                 provided by a service endpoint. However,     *
+   *                 BusinessSpace fails to recognise SOAP 1.2    *
+   *                 services.                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Services with WSDL containing SOAP      *
+   *                      1.2 cannot be used to create a          *
+   *                      virtual service via BusinessSpace.      *
+   ****************************************************************
+   * RECOMMENDATION: If you encounter this problem, you are       *
+   *                 advised to install the code fix which is     *
+   *                 associated with this APAR.                   *
+   ****************************************************************
+   Users can define a proxy gateway and add SOAP 1.2 imports via
+   a WebSphere Integration Developer Proxy Gateway Pattern. When
+   the proxy gateway module is deployed to WebSphere Enterprise
+   Service Bus or WebSphere Process Server, BusinessSpace is used
+   to define the services (as virtual services) that the proxy
+   gateway will access.  To do this BusinessSpace allows you to
+   point at a service endpoint WSDL description (e.g.
+   http://hostname/endpointname?wsdl) which it then processes.
+   However, services containing WSDL that is based on SOAP 1.2
+   fail to be read correctly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product code was modified to correct this issue.
+   
+   There are no known side effects associated with this code
+   change.
+   
+   The fix was targeted to be included in the following fix packs:
+   
+        v7.0.0 Fix Pack 3 (7.0.0.3)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC67920
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724I8200
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-16
+   
+   
+ * CLOSED DATE
+   2010-05-10
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724I8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSN
+   UP
+   
+   
+ * R200 PSN
+   UP
+   
+   
+ * R300 PSN
+   UP
+   
+   
+ * R612 PSN
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R700 PSY
+   UP

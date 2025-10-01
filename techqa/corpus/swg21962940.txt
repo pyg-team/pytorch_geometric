@@ -1,0 +1,38 @@
+Title: IBM Upgrading to Cognos BI 10.2.2 shows strange rendering issues in Cognos Connection using IE 11 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Cognos does not seem to work with Internet Explorer 11.0.20 (KB3058515) after upgrading to Cognos BI 10.2.2. 
+
+SYMPTOM
+The old version was uninstalled, the 10.2.2 version was installed in the same folder structure (cleanly) and the webserver configurations were only minorly altered for missing settings like handler mappings in IIS.
+
+Since completing the upgrade and using the same browser as the one used to connect to the old environment a link (has a label Skip to main content ) is displayed at the top left part of the Cognos Web Portal page and the Home ICON, My Area Options ICON, and Launch Options drop-down are not functioning (sort of disabled) 
+
+
+CAUSE
+Browser caching is causing access to old files to occur which are not compatible with Cognos BI 10.2.2.
+
+ENVIRONMENT
+Cognos BI 10.2.2, any platform, any distribution.
+
+RESOLVING THE PROBLEM
+Refresh the page by pressing F5 (or ctrl-F5) on the keyboard.
+
+
+
+
+
+In some cases it may be noticed that loading Report Studio or Workspace Advanced leads to a missing background image. To correct this clear the browser cache in IE 11: 
+
+1) Go to Tools > Internet Options 
+
+2) In the Browsing History section click on the Settings... button then click on the View Files button 
+
+3) Sort by website, anything that has to do with the Cognos BI website should be deleted. 
+
+4) Click OK twice to exit the options 
+
+5) Close the browser and access the Cognos BI website again.

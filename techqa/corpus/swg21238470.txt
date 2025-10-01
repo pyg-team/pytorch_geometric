@@ -1,0 +1,44 @@
+Title: IBM java.lang.ClassCastException error occurs during a JNDI lookup of a queue connection factory - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In WebSphere® Application Server, the following exception might occur when an application attempts to do a Java™ Naming and Directory Interface (JNDI) lookup of a queue connection factory that is defined under the WebSphere MQ Java Message Service (JMS) provider:
+
+
+java.lang.ClassCastException: com/ibm/ejs/jms/JMSConnectionFactoryHandle incompatible with javax/jms/QueueConnectionFactory
+
+
+CAUSE
+The ClassCastException occurs when a queue connection factory is defined as a WebSphere MQ Connection Factory instead of a WebSphere MQ Queue Connection Factory. 
+
+The application code is similar to the following example: 
+
+
+javax.jms.QueueConnectionFactory myQCF = null;
+InitialContext ic = null;
+//... setup InitialContext here ...
+try 
+{ 
+myQCF = (QueueConnectionFactory)ic.lookup("jms/myQCF");
+} 
+catch(Throwable e) 
+{ 
+e.printStackTrace(); 
+} 
+
+
+
+
+
+
+RESOLVING THE PROBLEM
+You can resolve the problem using one of the following methods: 
+
+ * Define the queue connection factory as a WebSphere MQ Queue Connection Factory. 
+ * Use a javax.jms.ConnectionFactory object in the application code rather than a javax.jms.QueueConnectionFactory object.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

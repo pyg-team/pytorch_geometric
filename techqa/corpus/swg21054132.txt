@@ -1,0 +1,22 @@
+Title: IBM How can I restore the previous configuration when I migrate to a new version of WebSphere MQ Workflow? Where can I find the installation profile "fmcrc" after the software has been removed? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When WebSphere MQ Workflow for AIX is uninstalled, a copy of the installation profile "/usr/lpp/fmc/fmcrc" is created so that any changes you made to your old version are available when you install and configure a new version of Workflow. 
+
+RESOLVING THE PROBLEM
+If you are installing a new WebSphere MQ Workflow version, to be able to use the previous configurations, you need a copy of the previous installation profile. The installation profile is located in /usr/lpp/fmc/. During the deinstallation it will be deleted, but before this is done, it is saved with a unique name in the ConfigurationRootDirectory (usually /var/fmc/).
+Please note that the configurations themselves (usually located in /var/fmc/cfgs/...) are not touched.
+
+For example, (taken out of smit.log):
++--------------------------------------------------------------+
+Pre-deinstall Verification...
++--------------------------------------------------------------+
+Verifying selections...Found an installation profile at /usr/lpp/fmc/fmcrc.
+The file will be backuped to /var/fmc/fmcrc.install-backup.19098
+Done. Now continuing with deinstall...
+done
+
+To use your previous settings, after installing the new software level create the new installation profile as usual using the command "fmczinsx -o env ..." and use the backup copy as a reference for any additional changes.

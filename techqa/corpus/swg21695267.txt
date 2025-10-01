@@ -1,0 +1,40 @@
+Title: IBM SmartCloud Orcestrator and IBM Cloud Orchestrator communication with VMware - United States
+
+Text:
+vSphere; vCenter; ESX; hosts; OPS; comms TECHNOTE (FAQ)
+
+QUESTION
+ How does IBM SmartCloud Orcestrator and IBM Cloud Orchestrator communicate with VMware? 
+
+CAUSE
+VMware administrators often have questions about how OpenStack connects and communicates with the visualized infrastructure.
+
+ANSWER
+ 
+
+ * Do the products communicate with vCenter or the hosts or both?
+   The products communicate with vCenter only.
+   
+   
+ * Do the products have their own connection or do they use the OpenStack VMware driver?
+   The products use the Cloud Manager Openstack VMware driver, which is an enhancement over the basic driver that comes with Openstack. There are efforts underway to merge the IBM enhancements back into OpenStack.
+   
+   
+ * If the products use OpenStack for communication, do they also use other OpenStack components like Cinder for virtual machine disks and Neutron for virtual machine networking?
+   Root disks are built by Nova; all other disks are handled by the Cinder service. Neutron for Networking is recommended, but you can also use the Nova network.
+   
+   
+ * Do the products work with VMware standard switches or do they require distributed switches?
+   They work with both types of switched. Note: Matching is done by name.
+   
+   
+ * Can the products grab IP addresses from InfoBlox or do you need to set IP reservation pools inside the products?
+   This capability is not configured out-of-the-box. However, this capability is not specifically related to any hypervisor.
+   
+   
+ * Can we associate a network range (VLAN) with a specific cluster? 
+   It should be possible.
+   
+   
+ * If the products use OpenStack, do they use the default naming scheme (32 character UUID) or do you have control of the name?
+   Yes, you have control over the name.

@@ -1,0 +1,48 @@
+Title: IBM Duplicate TPM Server Object in the DCM - United States
+
+Text:
+TPM; TSAM; saps; sap; credentials; cred; duplicate; removal; hostname TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to provision a new server result in various missing SAP related errors when using IBM Tivoli Provisioning Manager. 
+
+SYMPTOM
+You are using TPM to provision virtual machines in a TSAM environment and suddenly you are finding that provisioning attempts fail with errors indicating SAP mismatches: 
+
+COPTDM106E The system cannot find compatible SAPs between the device IDs 12345 and 67890 for the operation File transferal. 
+
+COPDEX203E The system cannot find a command execution credential for the data model object 67890 with the credentials key default.
+
+
+CAUSE
+The root cause is that a duplicate TPM server object exists in the DCM. When you attempt to delete this duplicate object you receive a pop-up warning:
+COPJEE576E The provisioning server cannot be deleted.
+
+
+ENVIRONMENT
+Probably a TSAM environment, or any TPM environment which is using virtualization discovery with a hypervisor which contains the TPM server in the discovered cluster.
+
+
+
+DIAGNOSING THE PROBLEM
+Check your Provisioning Computers application for a duplicate TPM hostname (long name and short name) DCM entry.
+
+
+
+RESOLVING THE PROBLEM
+If you find a duplicate server object with the name of the TPM server, it is important to identify which is the original and which is the duplicate. By default, during installation of the TPM server, an object representing the TPM server will be created in the DCM and will contain numerous credentials (SAPs). About 12 total, ranging from loopback host and SSH server, to FTP, telnet and RXA. 
+
+Once you have identified the 'real' TPM server object then you need to work on removal of the duplicate object: 
+
+1. rename the duplicate to a bogus name like: deleteMe.server. 
+
+2. stop and start all of the TPM services (TPM engines and WebSphere). 
+
+3. access the Provisioning Computers and delete the offending object which was renamed, eg 'deleteMe.server'. You should no longer receive the COPJEE576E warning message. 
+
+4. test the provisioning process and ensure that you no longer receive the missing SAP messages.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Service Automation Manager Windows, AIX, Linux 7.2.0.1, 7.2.1, 7.2.2 Systems and Asset Management IBM Service Delivery Manager Not Applicable AIX, Linux, Windows 7.2.2, 7.2.4

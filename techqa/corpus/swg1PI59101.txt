@@ -1,0 +1,240 @@
+Title: IBM PI59101: SCANNING A JAVA/JSP F4F APP IN 9.0.3 RESULTING IN JAVA.LANG.ASSERTIONERROR EXCEPTION. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+AppScanSource-Windows-9.0.3.4-fixpack [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FAppScan+Source+Edition&fixids=AppScanSource-Windows-9.0.3.4-fixpack&source=SAR]
+AppScanSource-Mac-OSX-9.0.3.4-fixpack [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FAppScan+Source+Edition&fixids=AppScanSource-Mac-OSX-9.0.3.4-fixpack&source=SAR]
+AppScanSource-Linux-9.0.3.4-fixpack [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FAppScan+Source+Edition&fixids=AppScanSource-Linux-9.0.3.4-fixpack&source=SAR]
+IBM AppScan Source Fix Pack 4 for version 9.0.3 at Fix Central [http://www-01.ibm.com/support/docview.wss?uid=swg24042813]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  What's expected:
+   Scanning of a Java/Jsp application and Framework analysis is
+   expected to complete successfully with findings.
+   
+   What's noticed:
+   F4F scan of Java/JSP app is resulting in an
+   java.lang.AssertionError and other error messages like:
+   
+   02/19/16 17:27:07 Error(30082) from Log4jLogger.cpp(128)
+   java.lang.AssertionError
+   at
+   com.ibm.appscan.frameworks.analyzers.javaee.taglibs.SpringBindIn
+   fo.getBindPath(SpringBindInfo.java:73) at
+   com.ibm.appscan.frameworks.analyzers.javaee.taglibs.SpringBindIn
+   fo.getFact(SpringBindInfo.java:42) at
+   com.ibm.appscan.frameworks.analyzers.javaee.taglibs.TagLibraryDe
+   fs.getAllFactNumbers(TagLibraryDefs.java:85) at
+   com.ibm.appscan.frameworks.analyzers.javaee.taglibs.TagLibraryDe
+   fs.<init>(TagLibraryDefs.java:62) at
+   com.ibm.appscan.frameworks.analyzers.javaee.taglibs.TagLibraryDe
+   fs.make(TagLibraryDefs.java:41) at
+   com.ibm.appscan.frameworks.analyzers.javaee.jsp.JasperInfo.getTa
+   gLibDefInfo(JasperInfo.java:149) at
+   com.ibm.appscan.frameworks.analyzers.javaee.jsp.JSPFile.findAcce
+   ssPathsInELExpressions(JSPFile.java:96) at
+   com.ibm.appscan.frameworks.analyzers.javaee.jsp.JSPFile.<init>(J
+   SPFile.java:76) at
+   com.ibm.appscan.frameworks.analyzers.javaee.jsp.JSPAnalyzer.coll
+   ectAllJSPFiles(JSPAnalyzer.java:96) at
+   com.ibm.appscan.frameworks.analyzers.javaee.jsp.JSPAnalyzer.coll
+   ectAllJSPFiles(JSPAnalyzer.java:111) at
+   com.ibm.appscan.frameworks.analyzers.javaee.jsp.JSPAnalyzer.coll
+   ectAllJSPFiles(JSPAnalyzer.java:111) at
+   com.ibm.appscan.frameworks.analyzers.javaee.jsp.JSPAnalyzer.coll
+   ectAllJSPFiles(JSPAnalyzer.java:113) at
+   com.ibm.appscan.frameworks.analyzers.javaee.jsp.JSPAnalyzer.<ini
+   t>(JSPAnalyzer.java:68) at
+   com.ibm.appscan.frameworks.analyzers.javaee.CoreJavaEEFrameworkH
+   andler.getFrameworkInfo(CoreJavaEEFrameworkHandler.java:53) at
+   com.ibm.appscan.frameworks.java.WAFLSpecGen.getWAFLSpecForJavaEE
+   App(WAFLSpecGen.java:144) at
+   com.ibm.appscan.frameworks.java.WAFLSpecGen.getWAFLSpecAndCHAFor
+   JavaEEApp(WAFLSpecGen.java:120) at
+   com.ibm.appscan.frameworks.java.JavaFrameworkInfoGenerator.gener
+   ateFrameworkInfo(JavaFrameworkInfoGenerator.java:28) at
+   com.ibm.appscan.frameworks.FrameworksCLI$HandlerJarsGenerator.ge
+   nerateFrameworkInfo(FrameworksCLI.java:80) at
+   com.ibm.appscan.frameworks.FrameworkGeneratorHarness.run(Framewo
+   rkGeneratorHarness.java:29) at
+   com.ibm.appscan.frameworks.FrameworksCLI.runMain(FrameworksCLI.j
+   ava:59) at
+   com.ibm.appscan.frameworks.FrameworksCLI.main(FrameworksCLI.java
+   :37)
+   
+   
+   could not handle EL expression
+   ${(externalpayee.fromAccount.accountStatusId eq '2' and
+   externalpayee.fromAccount.accountApprovalMethod eq '1' and
+   externalpayee.fromAccount.cdStatus eq '3') or
+   (externalpayee.fromAccount.accountStatusId eq '2' and
+   externalpayee.fromAccount.accountApprovalMethod eq '1' and
+   externalpayee.fromAccount.cdStatus eq '5')}
+   
+   02/19/16 17:27:06 Debug(30082) from Log4jLogger.cpp(145)
+   2016-02-19 17:26:45,993 DEBUG
+   com.ibm.appscan.frameworks.analyzers.javaee.taglibs.CForEach
+   Info
+   com.ibm.appscan.frameworks.analyzers.javaee.taglibs.CForEachInfo
+   .getFact(CForEachInfo.java:47) failed for c:forEach usage in
+   Node: < Application,
+   Lmyfi_002dcb_002ewar/WEB_002dINF/jsp/movemoney/feesCutoffLimitsE
+   xternal_jsp,
+   _jspx_meth_c_005fforEach_005f0(Ljavax/servlet/jsp/tagext/JspTag;
+   Ljavax/servlet/jsp/PageContext;)Z > Context: Everywhere
+   
+   
+   399. [Moderate] class
+   com.ibm.wala.ipa.cha.ClassHierarchy$ClassExclusion :
+   <Extension,Lorg/apache/portals/bridges/struts/config/AbstractCon
+   figComponent$SetParentRule> No superclass found for
+   <Extension,Lorg/apache/portals/bridges/struts/config/AbstractCon
+   figComponent$SetParentRule> Superclass name
+   Lorg/apache/commons/digester/Rule
+   
+   573. [SEVERE] class
+   com.ibm.wala.classLoader.BytecodeClass$ClassNotFoundWarning :
+   Lantlr/ASTVisitor 574. [SEVERE] class
+   com.ibm.wala.classLoader.BytecodeClass$ClassNotFoundWarning :
+   Lcom/ecyrd/jspwiki/auth/authorize/GroupDatabase
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users scanning their Java/JSP code using IBM Security        *
+   * AppScan Source automation feature up to versions v9.0.3.3 on *
+   * all supported operating systems.                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When scanning a Java/JSP based application using IBM         *
+   * Security AppScan Source results in failure with assertion    *
+   * errors.                                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The issue of assertions during the application scan is taken
+   care of in 9.0.3.4 release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI59101
+   
+   
+ * REPORTED COMPONENT NAME
+   SEC APPSCAN SRC
+   
+   
+ * REPORTED COMPONENT ID
+   5724Z3400
+   
+   
+ * REPORTED RELEASE
+   903
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-14
+   
+   
+ * CLOSED DATE
+   2016-09-28
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SEC APPSCAN SRC
+   
+   
+ * FIXED COMPONENT ID
+   5724Z3400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R870 PSY
+   UP
+   
+   
+ * R880 PSY
+   UP
+   
+   
+ * R900 PSY
+   UP
+   
+   
+ * R901 PSY
+   UP
+   
+   
+ * R902 PSY
+   UP
+   
+   
+ * R903 PSY
+   UP

@@ -1,0 +1,18 @@
+Title: IBM DOCTYPE is not provided in the search results list of DB2 Content Manager for iSeries - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I list the document type for each document that is shown in a search results list in DB2® Content Manager for iSeries™? Prior to using DB2 Content Manager for iSeries, I used Workfolder Application Facility (WAF) for several years.
+
+When I was on WAF, I had a file cabinet that, when searched, would list the various different document types, as defined when scanned by IWPM. Now on DB2 Content Manager for iSeries, when I do a search of those exact same documents, I receive a list of the documents that meet the search in that index class (the old WAF file cabinet), but I am not told what the document type is. 
+
+ANSWER
+To see the old WAF document type when doing a DB2 Content Manager for iSeries search in the IBM® Content Manager Client, you must write a program that will read the file that contains the document type for this document ID and update the value in the file that is used for searching: 
+
+ 1. Read the EKD0310 file for the document type (DOCTYP field) of the document ID in question. 
+ 2. Write this value using the SimLibOpenItemAttr, SimLibWriteAttr, SimLibSaveAttr and SimLibCloseAttr APIs. This will update one of the key fields for this document's index class (such as Key Data 8, if that has not been used), so that this information is available to the user. 
+
+
+DB2 Content Manager for iSeries queries the EKD0312 file when a search is performed from the Content Manager Client, and doctype is currently not included as a resulting field. This function is not automated, so you must write a program.

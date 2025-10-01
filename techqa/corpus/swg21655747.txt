@@ -1,0 +1,49 @@
+Title: IBM A "IBM WebSphere Application Server V7 Feature Pack for XML cannot be installed" message is seen during an upgrade for WebSphere Process Server (WPS) - United States
+
+Text:
+Feature Pack for XML cannot be installed; uninstalled; response file; installed.xml TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are using the imcl IBM Installation Manager command line tool to upgrade WebSphere Process Server from, for example V7.0.0 Fix Pack 3 to Fix Pack 5. During the upgrade process, the imcl tool issues a message stating that the Feature Pack for XML cannot be installed. However, the WebSphere Process Server upgrade documentation does not state that you must uninstall this feature pack. 
+
+SYMPTOM
+You can see the following error message in the Installation Manager log file: 
+
+<entry num='236' time='1379320874365' elapsed='02:36.37' level='ERROR' thread='main'>
+<logger>com.ibm.cic.agent.core.Agent</logger>
+<class>com.ibm.cic.agent.internal.application.HeadlessApplication</class>
+<method>run</method>
+<message>IBM WebSphere Application Server V7 Feature Pack for XML cannot be installed because another version of the package is installed to the package group. 
+The following package must be uninstalled before installing the selected installation package. Package: IBM WebSphere Application Server V7 Feature Pack for XML
+</message>
+</entry>
+
+
+DIAGNOSING THE PROBLEM
+This problem is caused by a mismatch between the profile ID in the response file and in the Installation Manager installed.xml file. 
+For example, in the Installation Manager installed.xml file, the WebSphere Application Server ID has the following name: 
+'IBM WebSphere Application Server - ND': 
+<location id='IBM WebSphere Application Server - ND' kind='product' path='/wps7/ProcServer'>
+
+In response file, you specify the profile ID as: 
+'IBM WebSphere Application Server - ND - WPS':
+<profile installLocation='/wps7/ProcServer' id='IBM WebSphere Application Server - ND - WPS'>
+
+The previous mismatched information causes the exceptions to occur.
+
+The id field, which is listed as IBM WebSphere Application Server - ND, identifies the specific WebSphere Application Server installation to Installation Manager. You can change this value to anything you prefer. However, make sure that you use the same value further down in the response file while importing the WebSphere Application Server location and updating other packages.
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, renamed the profile ID in the response file. Make sure this profile ID value matches the ID that is defined in the Installation Manager installed.xml file. In the previous example, modify the response file to make the id field match the value in the installed.xml file. For example: 
+
+<profile installLocation='/wps7/ProcServer' id='IBM WebSphere Application Server - ND'>
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21656539]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WPS

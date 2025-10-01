@@ -1,0 +1,134 @@
+Title: IBM IT06738: RESULTSET.GETCLOB() RETURNS ERRORCODE -4220 IF LENGTH OF CLOB DATA IS MORE THAN 1MB, PROGRESSIVE STREAMING ENABLED. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Applications using DB2 JCC Driver & non IBM JRE/JDK  like Oracle
+   JRE and trying to retrieve CLOB data from the Query ResultSet
+   gets SqlDataException, if the CLOB data length is more than 1MB
+   and Progressive Streaming is enabled or registry variable
+   DB2_RESTRICT_DDF set to FALSE.
+   
+   Applications would receive the following exception.
+   
+   com.ibm.db2.jcc.am.SqlDataException:
+   [jcc][10275][12043][4.15.82] Unsupported ccsid, encoding, or
+   locale: "GBK". ERRORCODE=-4220, SQLSTATE=22021
+           at com.ibm.db2.jcc.am.fd.a(fd.java:688)
+           at com.ibm.db2.jcc.am.fd.a(fd.java:60)
+           at com.ibm.db2.jcc.am.fd.a(fd.java:103)
+           at com.ibm.db2.jcc.am.oe.<init>(oe.java:104)
+           at com.ibm.db2.jcc.t4.c.b(c.java:1752)
+           at com.ibm.db2.jcc.am.jc.a(jc.java:995)
+           at com.ibm.db2.jcc.am.jc.U(jc.java:2103)
+           at
+   com.ibm.db2.jcc.am.ResultSet.getClob(ResultSet.java:1357)
+           at
+   com.ibm.db2.jcc.am.ResultSet.getClob(ResultSet.java:1746)
+           at test.jdbc.Test1.getClob(Test1.java:44)
+           at test.jdbc.Test1.main(Test1.java:55)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1) set "db2set DB2_RESTRICT_DDF=TRUE"  registry variable on
+   server
+   or
+   2) Use IBM JRE/JDK  to execute java application
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This is currently a limitation
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  See LOCAL FIX
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT06738
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 DATA SRVR D
+   
+   
+ * REPORTED COMPONENT ID
+   DB2DSDRVR
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-01-28
+   
+   
+ * CLOSED DATE
+   2017-05-25
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

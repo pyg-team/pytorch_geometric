@@ -1,0 +1,17 @@
+Title: IBM Configuring TRIRIGA to use TLSv1.1 or TLSv1.2 or SSL - United States
+
+Text:
+TRIINSTALL; TRISECURITY; #supiwms; #jalynch; TRICONFIG TECHNOTE (FAQ)
+
+QUESTION
+ Does TRIRIGA support TLSv1.1 or TLSv1.2 or SSL? If yes, what steps do I need to take to make TRIRIGA use one of these protocols? 
+
+ANSWER
+TLS and SSL, from a TRIRIGA perspective, are supported by certificate technology for security and use HTTPS URLs. TRIRIGA works with HTTPS: 
+http://www-01.ibm.com/support/docview.wss?uid=swg21685881 [http://www-01.ibm.com/support/docview.wss?uid=swg21685881] 
+
+As a result, TRIRIGA can be used with TLS and SSL, regardless of the version. 
+
+There is no TLS or SSL configuration necessary within TRIRIGA. If TLSv1.1 or TLSv1.2 or SSL is properly configured through your application server and web server, TRIRIGA can be used with it. 
+
+TLS / SSL are security configurations using certificate installs that exist outside of TRIRIGA. The TRIRIGA support team cannot assist with environmental configurations of these technologies. Clients should work with their Application Server (WebSphere, WebLogic) vendors as well as other infrastructure-related technologies (Web Servers, Load Balancers, etc) to properly configure these.

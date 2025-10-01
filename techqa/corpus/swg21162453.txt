@@ -1,0 +1,32 @@
+Title: IBM Questions related to shared and unshared database connections - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ A series of questions and answers related to shared and unshared database connections. 
+
+ANSWER
+1. What are shareable connections and unshareable connections? 
+
+IBM WebSphere Application Server differentiates between physical Java™ Database Connectivity (JDBC) connections to the database and logical connection handles obtained by Java programs by using the getConnection() methods on the data source. In WebSphere Application Server, connections can be shareable or unshareable. A shareable connection is a handle to a physical connection that can be referenced by other logical handles. If a program requests a shareable connection on a datasource that has already established a physical connection, a handle to the existing connection is returned, whenever the connection characteristics match in terms of security, isolation level, and so on, rather than creating a new physical connection. If a program requests an unshareable connection, a new physical connection is created, even if there are connections already established that match the request. 
+
+
+2. Why would you use an unshareable connection? 
+
+Access to a resource marked as unshareable simply means that there is a 1 to 1 relationship between the connection handle a component is using and the managed connection the handle is associated with. This implies that every call to getConnection returns a connection handle, or ManagedConnection, solely for use by the requesting user. Typically, users must select unshareable if they might potentially do things with the connection that could impact other applications sharing the connection, such as change the isolation level. 
+
+
+3. What are the implications of using shareable vs. unshareable connections? 
+
+Shareable connections optimize system resources as they result in the creation of fewer physical connections. However, the characteristics of a shareable connection (for example, isolation level) cannot be modified once the connection is established. Unshareable connections can be changed at the transaction boundaries, but they tend to result in a larger number of physical connections being established. 
+
+
+4. What determines the type of connection or shareability obtained by a program?
+
+Shareability is a parameter that can be defined in the datasource bindings, or resource-ref bindings. It is important, therefore, that programmers use indirect Java Naming Directory Interface (JNDI) lookups to access a datasource because the bindings determine whether the connection is shareable or not.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

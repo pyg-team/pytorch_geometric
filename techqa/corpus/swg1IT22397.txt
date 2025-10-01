@@ -1,0 +1,236 @@
+Title: IBM IT22397: Configuration event messages for CHLAUTH commands contain incorrect information - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using IBM MQ, if a channel authorization record is created with
+   runmqsc, such as:
+   
+     SET CHLAUTH(CL1) TYPE(ADDRESSMAP) ADDRESS(1.1.1.1) +
+     USERSRC(CHANNEL) action(add)
+   
+   Then a configuration event message will be generated on the
+   queue
+   SYSTEM.ADMIN.CONFIG.EVENT and
+   it will show the attributes from the SET CHLAUTH command
+   that was used.
+   
+   If another channel authorization record with a different
+   IP address is created, such as:
+   
+     SET CHLAUTH(CL2) TYPE(ADDRESSMAP) ADDRESS(2.2.2.2) +
+     USERSRC(CHANNEL) action(add)
+   
+   Then the corresponding "create object" event message shows the
+   IP
+   address from the first record to be defined, which is incorrect:
+   
+     Connection Name                : 1.1.1.1
+   
+   A SET CHLAUTH command using ACTION(REMOVE) on the second
+   ADDRESSMAP
+   CHLAUTH definition results in configuration change before and
+   after
+   events being generated but they incorrectly contain the details
+   from the first
+   ADDRESSMAP definition.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of configuration events may be affected by this issue
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   A logic error meant that when configuration events were enabled
+   then events that were created in response to changes to CHLAUTH
+   records contained incorrect information.  The problem could be
+   seen across all CHLAUTH types and applied to CHLAUTH actions
+   ADD/REPLACE/REMOVE/REMOVEALL.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The CHLAUTH configuration event behaviour has been corrected.
+   The new behaviour now matches the intended design:
+   
+   For CHLAUTH TYPE ADDRESSMAP/QMGRMAP/SSLPEERMAP/USERMAP:
+   
+   ACTION(ADD)
+   One MQRC_CONFIG_CREATE_OBJECT event is created
+   The event contains attributes of the new record
+   
+   ACTION(REPLACE)
+   Two MQRC_CONFIG_CHANGE_OBJECT events are created
+   The first event contains the record attributes before the change
+   The second event contains the record attributes after the change
+   
+   ACTION(REMOVE)
+   One MQRC_CONFIG_DELETE_OBJECT event is created for each record
+   that is removed
+   The event contains the attributes of each record that is removed
+   
+   ACTION(REMOVEALL)
+   The behaviour is the same as for ACTION(REMOVE), but all records
+   are removed
+   
+   =================
+   
+   For CHLAUTH TYPE BLOCKADDR/BLOCKUSER:
+   
+   ACTION(ADD)
+   If no record exists:
+   One MQRC_CONFIG_CREATE_OBJECT event is created
+   The event contains attributes of the new record
+   
+   If a record does already exist:
+   Two MQRC_CONFIG_CHANGE_OBJECT events are created
+   The first event contains the record attributes before the change
+   The second event contains the record attributes after the change
+   
+   ACTION(REPLACE)
+   Two MQRC_CONFIG_CHANGE_OBJECT events are created
+   The first event contains the record attributes before the change
+   The second event contains the record attributes after the change
+   
+   ACTION(REMOVE)
+   If the REMOVE action removes all elements of the ADDRLIST or
+   USERLIST attribute:
+   
+   One MQRC_CONFIG_DELETE_OBJECT event is created
+   The event contains the attributes of the record before it is
+   removed
+   
+   If the REMOVE action does not remove all elements of the
+   ADDRLIST or USERLIST attribute:
+   
+   Two MQRC_CONFIG_CHANGE_OBJECT events are created
+   The first event contains the record attributes before the delete
+   The second event contains the record attributes after the delete
+   
+   ACTION(REMOVEALL)
+   One MQRC_CONFIG_DELETE_OBJECT event is created
+   The event contains the attributes of the record before it is
+   removed
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.9
+   v9.0 CD    9.0.5
+   v9.0 LTS   9.0.0.4
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT22397
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-14
+   
+   
+ * CLOSED DATE
+   2018-01-26
+   
+   
+ * LAST MODIFIED DATE
+   2018-01-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI92983
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS

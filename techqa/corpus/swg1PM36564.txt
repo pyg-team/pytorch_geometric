@@ -1,0 +1,173 @@
+Title: IBM PM36564: WHEN A COLUMN IS GROUPED WHICH CONTAINS ELEMENTS THAT ONLY DIFFER IN THE CASE OF THE CHARACTERS, THE SUBTOTAL IS WRONG. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the query subject if of type "SQL", the Subtotal is false
+   because it is considering "test" = "TEST"?If, in the database,
+   we rename TEST to TEST3, the result is correct.??However,
+   changing the query property ?processing? to ?database only? will
+   solve the situation but not possible for all report's.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See error description.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Force the local processing's sorting to consider case        *
+   * sensitivity in the datasource.                               *
+   * To do so, edit the data source connection and enter the      *
+   * following in the 'Collation Sequence' field :                *
+   *                                                              *
+   * default,level=TERTIARY                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem revolves around the fact that they are using the 'L
+   atin1_General_CI_AS' collation on their database and the 'Latin1
+   _General_CS_AS' collation on the 'kenmerk' column. This column i
+   s used for grouping in the sample report. We do support column s
+   pecific collation on the Classic query stack, so the problem doe
+   s not lie there. Rather the problem is that our product does not
+    support the 'Latin1_General_XX_XX' collations. What this means
+   is that we do not understand the definition of these collations
+   so whenever local processing is required, we cannot push alphanu
+   merical sorting to the database since this would return unpredic
+   table results.
+   
+   There are two possible scenarios that can happen whenever we do
+   not support a collation:
+       1- The entire query can be sent to the database. Then we do
+   not worry about what collation is set to since the database will
+    take care of everything.
+       2 - Part of the query needs to be processed locally. Now thi
+   s is when we need to be more careful. Most sorting on alphanumer
+   ical columns needs to be performed locally. The reason for this
+   is we don't know how the results will be sorted by the database
+   and will result in an unpredictable final result set. For this r
+   eason most sorting is performed locally using the run locale to
+   determine which collation to use locally from the operating syst
+   em.
+   
+   In this testcase, when the report is set to 'Database Only' proc
+   essing, the entire query is pushed to the database and the case
+   insensitive collation on the 'kenmerk' column is honoured by the
+    database.
+   When the report is set to 'Limited Local', we process part of th
+   e query locally. Since the collation is not supported, we do the
+    sorting locally based on the run locale. This local sorting is
+   case insensitive so the end results are different than when the
+   query is sent entirely to the database.
+   
+   The proper solution would be to use collations we do support, li
+   ke 'SQL_Latin_General_CP1_CI_AS' and  'SQL_Latin_General_CP1_CS_
+   AS'. However this might not be a feasible option for the client.
+    Another option would be to change all their reports to 'Databas
+   e Only' processing. I understand that they've already done that
+   and that for some reports this is not possible. I would need to
+   see these reports to know if we can make it run with 'Database O
+   nly' processing.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM36564
+   
+   
+ * REPORTED COMPONENT NAME
+   COG8 BI REPORT
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12RS
+   
+   
+ * REPORTED RELEASE
+   841
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-08
+   
+   
+ * CLOSED DATE
+   2011-09-02
+   
+   
+ * LAST MODIFIED DATE
+   2011-09-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   COG8 BI REPORT
+   
+   
+ * FIXED COMPONENT ID
+   5724W12RS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R841 PSN
+   UP

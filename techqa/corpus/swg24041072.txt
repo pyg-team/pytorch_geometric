@@ -1,0 +1,114 @@
+Title: IBM 9.1.1.2: UI32127, UI32128, UI32129 and UI32130 PTFs for Rational Developer for System z Host Utilities - United States
+
+Text:
+ptf; fixpack; fix pack; fixpacks; fix; service pack; fixes; upgrade DOWNLOADABLE FILES
+
+ABSTRACT
+ Fix for IBM Rational Developer for System z 9.1.1.2 Host Utilities (FMID HAKG910). 
+
+DOWNLOAD DESCRIPTION
+Updates to the Rational Developer for System z Code Review and Code Coverage are addressed by applying PTFs UI32127, UI32128, UI32129 and UI32130 and can be found in the PTF Fix List section below. These PTFs supersede Rational Developer for System z 9.1.1.1 and can be applied to either 9.1.0.0, 9.1.1.0 or 9.1.1.1.
+
+
+
+
+ 
+
+Table of Contents Sections Description  * Download package
+
+The Download package section provides the direct link to obtain the download package for installation in your environment.
+
+ * Installation instructions
+
+The Installation instructions section provides the installation instructions necessary to apply this release into your environment.
+
+Supporting Documentation Document Description  * Program Directory [http://www.ibm.com/e-business/linkweb/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=GI13-2864-02]
+
+Click to open the Program Directory.
+
+ * Host Configuration Guide [http://www.ibm.com/e-business/linkweb/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC23-7658-12]
+
+Click to open the Host Configuration Guide.
+
+ * IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSQ2R2/rdz_welcome.html]
+
+IBM Knowledge Center provides an entry point to product documentation. You can view, browse, and search online information related to the product.
+
+ * Documentation Library [http://www.ibm.com/software/rational/products/developer/systemz/library/]
+
+Click to review the documentation library.
+
+ * Fix List [http://www.ibm.com/support/docview.wss?uid=swg27036693]
+
+Click to review a complete list of the defects (APARs) resolved in this release including a list of resolved defects for the entire version family.
+
+ * Client component [http://www.ibm.com/support/docview.wss?uid=swg24040962]
+
+Click to review the download information for the Rational Developer for System z client component. 
+
+INSTALLATION INSTRUCTIONS
+ 
+
+URL LANGUAGE SIZE(Bytes) Installation Instructions UI32127 [ftp://public.dhe.ibm.com/ps/products/wsed/fixes/UI32127/ibm.hakg910.ui32127.instructions.html] English 11434 Installation Instructions UI32128 [ftp://public.dhe.ibm.com/ps/products/wsed/fixes/UI32128/ibm.hakg910.ui32128.instructions.html] English 7097 Installation Instructions UI32129 [ftp://public.dhe.ibm.com/ps/products/wsed/fixes/UI32129/ibm.hakg910.ui32129.instructions.html] English 7097 Installation Instruction UI32130 [ftp://public.dhe.ibm.com/ps/products/wsed/fixes/UI32130/ibm.hakg910.ui32130.instructions.html] English 7097 
+DOWNLOAD PACKAGE
+ 
+
+ 
+
+ 1. Click the FC link below.
+ 2. Click fix packs: 9.1.1.2-RATIONAL-RDz-zOS-UI32127_fp01, 9.1.1.2-RATIONAL-RDz-zOS-UI32128_fp01, 9.1.1.2-RATIONAL-RDz-zOS-UI32129_fp01 and 9.1.1.2-RATIONAL-RDz-zOS-UI32130_fp01 
+ 3. Download and extract ibm.hakg910.ui32127.zip, ibm.hakg910.ui32128.zip, ibm.hakg910.ui32129.zip and ibm.hakg910.ui32130.zip 
+ 4. Follow the instructions provided in ibm.hakg910.ui32127.instructions.html, ibm.hakg910.ui32128.instructions.html, ibm.hakg910.ui32129.instructions.html and ibm.hakg910.ui32130.instructions.html 
+
+
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] PTFs UI32127 UI32128 UI32129 and UI32130 19 Oct 2015 English 31064640 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7ERational&product=ibm/Rational/Rational+Developer+for+System+z&release=9.1.1.0&platform=All&function=all&source=fc] [ ] 
+TECHNICAL SUPPORT
+ 
+
+TAB NAVIGATION
+ * General Support Information- selected tab,
+ * Support Resources [http://www.ibm.com/support/docview.wss?uid=swg27020747]- selected tab,
+
+
+
+
+IBM Rational Software Support Communities 
+
+ * Visit the IBM Support Portal [http://www.ibm.com/support/entry/portal/Overview/Software/Rational/product] to configure your support portal experience and review FAQs, lists of known problems, fixes, and a wealth of important support information.
+   
+   
+ * Visit developerWorks [http://www.ibm.com/developerworks/rational/] to access an online collection of tutorials, sample code, standards, forums and other resources provided by experts at IBM to assist software developers using Rational tools including access to the IBM RFE Community [http://www.ibm.com/developerworks/rfe/].
+   
+   
+ * Visit the Jazz Community [http://jazz.net/] if you use a Rational product created using the Jazz platform to interact directly with the Jazz development team and other community members, download product trials and betas and track developement progress. 
+
+
+
+
+HELPFUL HINTS FOR OBTAINING TECHNICAL ASSISTANCE:
+Before you contact IBM Rational Software Support, gather the background information that you need to describe the problem. When you describe a problem to an IBM software support specialist, be as specific as possible and include all relevant background information so that the specialist can help you solve the problem efficiently. To save time, know the answers to these questions: 
+
+ * What software versions were you running when the problem occurred? 
+ * Do you have logs, traces, or messages that are related to the problem? 
+ * Can you reproduce the problem? If so, what steps do you take to reproduce it? 
+ * Is there a workaround for the problem? If so, be prepared to describe the workaround. 
+
+If you have helpful information to diagnose or identify the problem on your system, you can provide this data by following the instructions to exchange information with IBM Technical Support [http://www.ibm.com/software/support/exchangeinfo.html]. 
+
+ 
+
+Follow IBM Rational Client Support on Twitter [http://twitter.com/rationalsupport] | Facebook [http://facebook.com/rationalsupport] | YouTube [http://www.youtube.com/ibmrationalsupport] | devWorks Blog [https://www.ibm.com/developerworks/mydeveloperworks/blogs/nfrsblog/?lang=en]
+
+
+
+
+ Back to top 
+
+ [/support/docview.wss?uid=swg24041072&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24041072&aid=2]Problems (APARS) fixed
+PI41042, PI50521, PI50523, PI50524, PI31454, PI36761, PI36767, PI36778

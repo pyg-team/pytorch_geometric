@@ -1,0 +1,21 @@
+Title: IBM Can I get utility code that performs deletes from FAF, based on the output file that provides details about objects deleted from OAM? - United States
+
+Text:
+FAF related; OAM Related TECHNOTE (FAQ)
+
+QUESTION
+ Object Access Method (OAM) has cleanup logic that can run every night. There is sample code that produces a report or an output file that provides details about the images deleted or removed. I know this data can be, and is, used to keep FAF tables synchronized with OAM. Where can I get the code to do this? 
+
+ANSWER
+To access a utility to delete the ImagePlus® Folder Application Facility (FAF) entries, refer to the following instructions, modules, and copybooks: 
+
+DLTEXUTL SCRIPT 
+DLTEX010 COBOL
+DLTEX02X COBOL
+DLTEX020 COBOL
+DLTEX030 COBOL
+DLTTXPRM COPY 
+DLTTX010 COPY
+DLTTX020 COPY 
+
+If you do not have them, contact IBM® through an electronic technical response (ETR) or a problem management record (PMR) and request that they be sent to you.

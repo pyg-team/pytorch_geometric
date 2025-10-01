@@ -1,0 +1,44 @@
+Title: IBM SPSS Tables and unweighted statistics for weighted data - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am running SPSS Tables with weighted data. Is there any way to get unweighted statistics on my weighted data? 
+
+RESOLVING THE PROBLEM
+You may request unweighted counts in your tables through either the Summary Statistics dialog box or by the UCOUNT statistic in the CTABLES command syntax. 
+
+More generally, unweighted statistics can be requested in the CTABLES syntax command by adding the letter "U" (capitalization not necessary) to the front of a statistics keyword that would otherwise 
+produce a weighted statistic. From the CTABLES chapter of the Command Syntax Reference, which is available from the SPSS Statistics Help menu: 
+"For unweighted summaries, prefix U to a function name, as in UCOUNT." 
+
+Suppose that you wish to produce a cross-tabulation of the variables SEXRACE and JOBCAT and that the data is weighted. For each cell in the table, you want the weighted count and percent, followed by the unweighted count and percent. 
+In the Custom Tables dialog, you can choose the Count, Column N %, and Unweighted Count. The first two statistics will be weighted. If you choose the Paste button, rather than the OK button, then the following command would be pasted to the syntax window. 
+
+* Custom Tables.
+CTABLES
+/VLABELS VARIABLES=sexrace jobcat DISPLAY=NAME
+/TABLE sexrace [C][COUNT F40.0, COLPCT.COUNT PCT40.1, UCOUNT F40.0] BY jobcat [C]
+/CATEGORIES VARIABLES=sexrace ORDER=A KEY=VALUE EMPTY=INCLUDE TOTAL=YES POSITION=AFTER
+/CATEGORIES VARIABLES=jobcat ORDER=A KEY=VALUE EMPTY=INCLUDE.
+
+You can add the unweighted column percent by copying "COLPCT.COUNT PCT40.1" in the table subcommand, pasting it at the end of the summary functions and adding "U" to the front of the function, as follows:
+
+* Custom Tables with UCOLPCT.COUNT PCT40.1 added to /TABLE subcommand.
+CTABLES
+/VLABELS VARIABLES=sexrace jobcat DISPLAY=NAME
+/TABLE sexrace [COUNT F40.0, COLPCT.COUNT PCT40.1, UCOUNT F40.0, UCOLPCT.COUNT PCT40.1] BY jobcat
+/CATEGORIES VARIABLES=sexrace ORDER=A KEY=VALUE EMPTY=INCLUDE TOTAL=YES POSITION=AFTER
+/CATEGORIES VARIABLES=jobcat ORDER=A KEY=VALUE EMPTY=INCLUDE. 
+
+This command will produce the 4 desired summary statistics for each cell in the table.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 17318

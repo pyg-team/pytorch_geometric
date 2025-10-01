@@ -1,0 +1,168 @@
+Title: IBM IZ73700: REMOTE DEPLOY UPDATEAGENT TO ANY WINDOWS RELEASE WITHOUT A VALID C: DRIVE FAILS. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description:
+   
+   When using Remote Deploy to "upgradeagent" the NT agent on an
+   endpoint where there is no valid C: Drive, the remote deploy
+   will fail stating the C:\IBM\ITM is an invalid directory. The
+   Remote Deploy install is not recognizing that the product is
+   already installed on another drive so it tests path C:\IBM\ITM.
+   On a machine that does not have a C: drive this test will fail.
+   
+   Recreate Instructions:
+   
+   To recreate this problem a machine without a C: drive is
+   required.  Windows can be installed on a NON C: drive, but if
+   the C: drive exists the test will pass and the agent will be
+   installed on the NON C: drive. However, if the C: Drive does
+   not exist, the test will fail and the agent will not upgrade
+   when it should.
+   
+   Environment:
+   
+   Windows any version where Remote Deploy is being used to
+   upgrade the NT agent on the endpoint where ITM is installed on
+   a NON C: drive and the C: drive does not exist. This failure
+   may also occur for any agent upgraded with the "tacmd
+   updateagent" command or by requesting an upgrade to an agent
+   through TEPS.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix:
+   
+   In the Depot of the deploy machine, edit the
+   NT_Silent_Install.txt file and change the Install Directory
+   from C:\IBM\ITM to the location of where ITM is really
+   installed. This will allow the test for the NON C: drive to
+   pass and the NT agent will be upgraded.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Windows silent install (including Remote Deploy) may fail if the
+   install directory inside the silent install file points to a
+   drive that does not exist on the target system.  This occurs if
+   Windows is not installed on the C: drive and the C: drive does
+   not exist for the target system.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Changed test to verify that the IBM Tivoli Monitoring registry
+   key and values exist.  If registry key
+   HKLM\Software\Candle\Omegamon exists and it has a Directory
+   value present then we know IBM Tivoli Monitoring has been
+   installed and the install does not need to test for a valid
+   install directory.
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+       | fix pack | 6.2.1-TIV-ITM-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ73700
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-30
+   
+   
+ * CLOSED DATE
+   2010-04-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R621 PSY
+   UP

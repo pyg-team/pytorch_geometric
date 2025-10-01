@@ -1,0 +1,38 @@
+Title: IBM Open report in Excel Fails - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to export an IWR report in Internet Explorer 5.5 to Excel.
+
+Error Message - 
+
+The Report Request Failed.
+The report entry does not exist.
+Unable to refresh Report Entry(<newsitem id>) 
+
+RESOLVING THE PROBLEM
+I. Ensure that the MIME settings have been defined for Excel. This can be done by simply opening a browser session and dragging and dropping an .xls file in the browser.
+
+II. Select the 'Browse in same window' option to allow the report to be opened in Excel.
+
+To set this property follow these steps - 
+
+1. On the desktop, double-click My Computer.
+
+2. From the View menu, click Options, and then click the File Types tab. 
+
+3. Select Microsoft Excel Worksheet.
+
+4. Click Advanced.
+
+5. Select the "Browse in same window" check box.
+
+The report should open through Excel now.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Query Studio Business Analytics Cognos ReportNet ReportNet Business Analytics Cognos Series 7 Impromptu Web Reports 
+HISTORICAL NUMBER
+ 117868

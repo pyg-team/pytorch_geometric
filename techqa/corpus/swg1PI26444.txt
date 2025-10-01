@@ -1,0 +1,152 @@
+Title: IBM PI26444: BIGSQL V3 QUERIES FROM WEB CONSOLE UI FAILS IF LOCAL HOST IS NOT BIGSQL SERVER HOST - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Running BigSQL V3 queries from web console UI failed if web
+   console is not on the same host as BigSQL server.
+   
+   You may receive the following errors:
+   
+   bigsql.BigSQLQuery - Connect to database failed
+   [jcc][t4][2043][11550][4.17.36] Exception
+   java.net.ConnectException: Error opening socket to server
+   <hostname> on port 51,000 with message: Connection refused.
+   ERRORCODE=-4499, SQLSTATE=08001
+   com.ibm.db2.jcc.am.DisconnectNonTransientConnectionException:
+   [jcc][t4][2043][11550][4.17.36] Exception
+   java.net.ConnectException: Error opening socket to server
+   <hostname> on port 51,000 with message: Connection refused.
+   ERRORCODE=-4499, SQLSTATE=08001
+   at com.ibm.db2.jcc.am.hd.a(hd.java:328)
+   at com.ibm.db2.jcc.am.hd.a(hd.java:408)
+   at com.ibm.db2.jcc.t4.zb.a(zb.java:440)
+   at com.ibm.db2.jcc.t4.zb.<init>(zb.java:96)
+   at com.ibm.db2.jcc.t4.a.b(a.java:353)
+   at com.ibm.db2.jcc.t4.b.newAgent_(b.java:2048)
+   at
+   com.ibm.db2.jcc.am.Connection.initConnection(Connection.java:766
+   )
+   at com.ibm.db2.jcc.am.Connection.<init>(Connection.java:712)
+   at com.ibm.db2.jcc.t4.b.<init>(b.java:333)
+   at
+   com.ibm.db2.jcc.DB2SimpleDataSource.getConnection(DB2SimpleDataS
+   ource.java:233)
+   at
+   com.ibm.db2.jcc.DB2SimpleDataSource.getConnection(DB2SimpleDataS
+   ource.java:199)
+   
+   But running queries for BigSQL V1 works in web console and
+   using the JSqsh shell, both BigSQL 3 and BigSQL1 work fine.
+   
+   RTC defect 70591 created to track this issue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  See problem description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem is fixed in Version 3.0.0.1 and later fix packs.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI26444
+   
+   
+ * REPORTED COMPONENT NAME
+   INFO BIGINSIGHT
+   
+   
+ * REPORTED COMPONENT ID
+   5725C0900
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-24
+   
+   
+ * CLOSED DATE
+   2015-01-08
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INFO BIGINSIGHT
+   
+   
+ * FIXED COMPONENT ID
+   5725C0900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R301 PSY
+   UP

@@ -1,0 +1,30 @@
+Title: IBM Content Scan Job does not crawl targeted website - United States
+
+Text:
+1385986; regexp; server and domains; servers; domains; HEAD; HEAD request; site coverage; no pages found; zero pages scanned; no pages; zero; ASE; appscan enterprise; policy tester; PT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When I run a Content Scan Job, no pages are scanned and upon examining the traffic log, only a HEAD request to the starting URL is present. 
+
+SYMPTOM
+The scan job does not find any pages, only a HEAD request to the starting URL is in the traffic log.
+
+
+CAUSE
+There is a domain defined with a regular expression that matches the domain you are scanning
+
+RESOLVING THE PROBLEM
+In the product, go to the Administration tab and bring up the list of Servers and Domains. Ensure that there is not a domain defined with a regular expression that matches the domain you are scanning.
+
+
+For example, if you are scanning: 
+
+www12.domain.com 
+
+and you see a domain defined as: 
+
+"regexp:www[0-9]?[0-9]?\.domain.com" 
+
+remove this entry from the list. 
+
+If the regular expression in the list is matched first, than subsequent matched domains are seen as 'external' and only have HEAD requests sent to them.

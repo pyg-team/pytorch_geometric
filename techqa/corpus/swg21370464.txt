@@ -1,0 +1,46 @@
+Title: IBM Parsed whitespace in the IBM Integration Bus or WebSphere Message Broker XMLNSC domain - United States
+
+Text:
+xml parser whitespace white space TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM Integration Bus (IIB) or WebSphere Message Broker (WMB) XMLNSC parser claims to not parse whitespace into the message tree but you see parsed whitespace (such as '/n' '/t' or ' ') in your message tree within the XMLNSC domain? 
+
+CAUSE
+The input message does not conform to XML specification with regards to empty elements and white space.
+
+RESOLVING THE PROBLEM
+According to specification, an empty element can either be represented as:
+
+<element></element>
+
+or
+
+<element/>
+
+
+If your message shows an empty element as:
+
+<element>
+</element>
+
+then the XMLNSC parser [http://www.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/com.ibm.etools.mft.doc/ad21074_.htm], as well as XML specification, regard this element as non-empty, containing the new line character '/n'. IIB or WMB then sees this character as valid text for the message. Thus, you will see a '/n' in the message tree for the fieldvalue of this element. Similarly, if the element is indented with either spaces or tabs, those characters will be visible as well.
+
+
+It should be noted that this structure will cause all non-empty, childless, elements to display whitespace characters, even if it does contain other text, as in the following example:
+
+<element>
+value
+</element>
+
+This will appear as '/nvalue/n' in an XMLNSC message tree.
+
+RELATED INFORMATION
+#XML Specification at www.w3.org [http://www.w3.org/TR/REC-xml/]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Bus Application Development AIX, HP-UX, Linux, Solaris, Windows, z/OS 9.0 All Editions 
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

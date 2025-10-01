@@ -1,0 +1,197 @@
+Title: IBM PK11695: BUG IN THE MESSAGE TEXT FOR CSOMESSAGE.UNKNOWN_SECURITY_ERROR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A customer is currently still using VAGen but in the process of
+   migrating to WDz/EGL  He ran into a problem using the VAGen
+   support and and found a workaround for it.  He wants to make
+   sure that he doesn't run into the same problem with the EGL
+   support.
+   
+   Here are the details the customer provided:
+   
+   Platform/operating system: Windows XP SP2
+   WD4z 6.0 (RAD 6.0.0.1)
+   WAS 5.1 Test Environment inside RAD
+   VisualAge Generator "runtime files" from Fix pack 5 (hpt.jar,
+   vgjwgs. jar, hptGateway.jar)
+   
+   When I develop a logon-check class following the directions
+   given in the document "User Authentication for VisualAge
+   Generator Gateway Servlet", I have problems to show an error
+   page when the authentication process failed because of "system
+   reasons" e.g. CICS not being available.  I try to throw a
+   CSOException(LogonChecker.UNKNOWN_SECURITY_ERROR, new  Object[]
+   { "CICS not available" }).
+   
+   Instead of seeing an error page, I get an empty blank page. When
+   producing errors for "invalid userid" or "invalid password"
+   everything works fine.
+   Aafter changing LogonChecker.UNKNOWN_SECURITY_ERROR into
+   CSOMessage.UNKNOWN_SECURITY_ERROR, I get the CSOERRORUIR.jsp to
+   show up but the page only says:
+   
+   CSO8004E Gateway recieved an unknow security error
+   
+   When I try to produce an error of my own (with more detailed
+   information), it doesn't work. I had a look at the
+   GatewayServlet code and it appear that there is
+   only processing for certain error messages (CSO8000E, CSO8004E,
+   CSO8002E ...). I tried and added the following code:
+   
+   else {
+      throw new GatewayException(csoexception.getMessage());
+   }
+   
+   after the test for the CSO8004E message and then my message
+   shows up on the page. This does what I would like it to do, but
+   I don't like running modified IBM code. I would appreciate
+   getting feedback from the LAB saying that either they plan to
+   support this feature or they reject the idea. When a new version
+   of the VAG GatewayServlet is release (e.g. with the new EGL Web
+   Transactions), I don't want to have to change the IBM source
+   code again.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Feedback from dev Alex L
+   "EGL users should be able to throw a CSOException(
+   CSOMessage.UNKNOWN_SECURITY_ERROR, new Object[] { "Text1",
+   "Text2" } ) in the customized user authentication class.
+   Currently there is a bug in the message text for
+   CSOMessage.UNKNOWN_SECURITY_ERROR which ignores message inserts
+   (up to 2) specified.
+   
+   EGL 601 Web Transaction is a straight port of VAGen Web
+   Transaction and shows the same symtom.  The fix should be
+   available in the next ifix003.
+   
+   Alternatively,  users can use:  CSOException(
+   CSOMessage.EXCEPTION_CAUGHT, new Object[] { "Text1", "Text2" } )
+   to construct their own error message to get around the problem
+   for now.
+   
+   Alex.
+   "
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  User would like to customize a CSO message to provide  more info
+   rmation when a CSOMessage.UNKNOWN_SECURITY  (message number CSO8
+   004E) exception occurs.
+   The message currently does not support
+   inserts.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CSO8004E message text is nodified to include 2 inserts to allow
+   users to specify customized information for the message.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK11695
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEV V6 WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-09-12
+   
+   
+ * CLOSED DATE
+   2006-02-01
+   
+   
+ * LAST MODIFIED DATE
+   2006-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  na
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEV V6 WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP

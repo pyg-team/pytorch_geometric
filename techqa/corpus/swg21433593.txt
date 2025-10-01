@@ -1,0 +1,119 @@
+Title: IBM "GSK_ERROR_BAD_CERT" error in IBM Web Server Plug-in V7.0 (and later) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The web server plug-in is unable to connect to the WebSphere Application Server (WAS) application server using SSL (HTTPS). 
+
+SYMPTOM
+The following error is logged in the plug-in log file: 
+
+Failed in r_gsk_secure_soc_init: GSK_ERROR_BAD_CERT(gsk rc = 414)
+
+
+CAUSE
+The cause of this problem is that the plug-in keystore does not have the correct SSL signer certificate to match with the SSL personal certificate from the WebSphere Application Server node.
+
+
+ENVIRONMENT
+Note, this technote applies to WebSphere Application Server V7.0 (and later). If you are having the "GSK_ERROR_BAD_CERT" with a previous version of WebSphere Application Server, see the following technote instead: GSK_ERROR_BAD_CERT error configuring SSL between Plug-in and Application Server V6.1 [http://www.ibm.com/support/docview.wss?uid=swg21264477].
+
+
+
+RESOLVING THE PROBLEM
+It is possible that the Plug-in keystore (plugin-key.kdb) on the WebSphere Application Server side, may already contain the necessary SSL signer certificates. If so, you can resolve this error by simply copying that plugin-key.kdb file to the web server system, and restarting the web server. In that case, please skip down, and start at step 20 below. 
+
+
+Often the Plug-in keystore (plugin-key.kdb) on the WebSphere Application Server side does NOT contain the necessary SSL signer certificates yet, so you need to find the correct signer certificate from the WebSphere Node and add it as a Signer certificate to the Plug-in CMS keystore, then copy the plugin-key.kdb file to the web server system.
+
+NOTE: The plug-in keystore must contain the Signer Certificates for every WebSphere Node in the cell. So, if your cell has multiple WebSphere Nodes, you will need to repeat steps 1-19 for each one.
+
+Here are the exact steps to use in the WebSphere Application Server administrative console:
+
+
+ 1.  In the WebSphere Application Server administrative console, go to Security > SSL certificate and key management > Manage endpoint security configurations.
+     
+     
+ 2.  Click on the WebSphere Application Server node (NodeDefaultSSLSettings).
+     
+     
+ 3.  Click on Key stores and certificates on the right side.
+     
+     
+ 4.  Click on NodeDefaultKeyStore.
+     
+     
+ 5.  Click on Personal certificates on the right side.
+     
+     
+ 6.  You will see a chained certificate. The personal certificate is the first one in the chain. The signer certificate is the second one in the chain. Look at the CN in the signer certificate. Also look at the serial number of the signer certificate.
+     
+     [/support/docview.wss?uid=swg21433593&aid=1] [/support/docview.wss?uid=swg21433593&aid=1]
+     
+     Note: That is the exact signer certificate that you need to use.
+     
+     
+ 7.  Go back to the Key stores and certificates page.
+     
+     
+ 8.  Click on NodeDefaultTrustStore.
+     
+     
+ 9.  Click on Signer certificates on the right side.
+     
+     
+ 10. Find the signer certificate with the match CN and serial number from above, and check the box next to it. Click Extract.
+     
+     [/support/docview.wss?uid=swg21433593&aid=2] [/support/docview.wss?uid=swg21433593&aid=2]
+     
+     
+ 11. Enter a temporary path and filename (for example: /tmp/nodeRootSigner.arm). Click OK.
+     
+     
+ 12. Go back to the Manage endpoint security configurations page.
+     
+     
+ 13. Find the node which contains the web server definition. You will need to look inside the node and look inside the servers folder to find the web server (for example: webserver1). Click on the web server name.
+     
+     
+ 14. Click on Key stores and certificates on the right side.
+     
+     
+ 15. Click on CMSKeyStore (this is a link to the plugin-key.kdb file).
+     
+     
+ 16. Click on Signer certificates.
+     
+     
+ 17. Click Add.
+     
+     
+ 18. Enter an Alias like "NodeRootSigner", and enter the path and filename from step 7 (for example: /tmp/nodeRootSigner.arm). Click OK.
+     
+     [/support/docview.wss?uid=swg21433593&amp;aid=3]
+     
+     
+ 19. Click the Save link to save the changes.
+     
+     
+ 20. Now go to Servers > Server Types > Web servers.
+     
+     
+ 21. Click on the web server name in the list (for example: webserver1).
+     
+     
+ 22. Click on Plug-in properties.
+     
+     
+ 23. Click Copy to Web server key store directory. If the button is disabled, you will need to locate the plugin-key.kdb file on the deployment manager system, and copy it to the web server system into the Plugins/config/web_server directory. Where "webserver" is the name of the web server (for example: webserver1).
+     
+     [/support/docview.wss?uid=swg21433593&aid=4] [/support/docview.wss?uid=swg21433593&aid=4]
+     
+     Note: If the "Copy to Web server key store directory" button is not enabled (greyed out) it means that the web server definition does not have a Plug-in CMS keystore file. To avoid this problem, install the latest WAS fixpacks [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27004980] before creating the web server definition in WAS.
+     
+     
+ 24. Stop and restart the web server, and test to ensure that the HTTPS connection between the web server plug-in and the WebSphere Application Server application server is able to connect successfully now.
+
+RELATED INFORMATION
+ Video showing the steps [https://www.youtube.com/embed/jPOrYE5tAhM]

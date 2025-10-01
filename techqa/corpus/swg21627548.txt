@@ -1,0 +1,78 @@
+Title: IBM Rehosting Administration Services when the host name is changed - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When DB2, Registry Services, Administration Services, and Administration Services UI are deployed on the same server, how to rehost Administration Services when the host name is changed? 
+
+ANSWER
+
+
+To rehost Administration Services, perform the following steps:
+
+
+
+ 1.  Update the new host name in WebSphere Application Server profile. Administration Services is deployed on WebSphere Application Server full profile, perform the steps as described in Changing host names [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/topic/com.ibm.websphere.base.iseries.doc/ae/tagt_hostname.html].
+    
+    If Administration Services is deployed on WebSphere Application Server liberty profile, perform the following steps:
+    
+     1. Edit the bootstrap.properties file located in the JazzSM_ Home\servers\JazzSM_liberty\ directory, and update the default.host property with the new host name value.
+     2. Edit the server.xml file located in the WAS_Liberty_Home\wlp\templates\servers\defaultServer\ directory and update the http Endpoint element's host attribute with the new host name value.
+    
+    
+ 2. Reconfigure the JDBC data source used by Registry Services as follows:  1. In the WebSphere administrative console, select Resources > JDBC > Data sources > frs_datasource > Custom properties. 
+     2. Select the Show all data source properties check box.
+     3. Update data source serverName with the new value. For more information about how to update data source properties, see WebSphere Application Server data source properties. [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.express.doc/info/exp/ae/udat_jdbcdatasorprops.html]
+    
+    
+ 3. Reconfigure the host name in DB2. For more information, see http://www-01.ibm.com/support/docview.wss?uid=swg21258834 [http://www-01.ibm.com/support/docview.wss?uid=swg21258834]. Note: This step is not required when DB2 has been set up on a remote server.
+    
+    
+ 4.  Update the following properties with the new host name value in the CLI.properties file, which is located in the Registry_Home\etc directory.
+     * ds.jdbc.url
+     * ds.jdbc.connectionUrl
+     * ds.jdbc.host
+     * appserver.host
+    
+    
+ 5. Set the public URL of Registry Services to use the new host name in existing reference links.
+    Example:
+    frs.bat config -set public.url=https://NewHostName:16311
+    
+    Notes: 
+    
+     * Before you run this command, ensure that the values for the following properties in the CLI.properties file that is in the Registry_home\etc directory are correct: database user ID (ds.jdbc.user) and database password (ds.jdbc.password).
+     * This step is not required when Registry Services database has been set up on a remote server, and unless the host name of the server on which Registry Services is hosted has changed.
+    
+    
+ 6. Run remapURL Registry Services CLI command for the Provider Registry and Resource Registry. 
+    Examples:
+    frs.bat|sh remapUrl -registryType provider -patternRule https://OldHostName:16311 -replacementValue https://NewHostName:16311
+    
+    frs.bat|sh remapUrl -registryType resource -patternRule https://OldHostName:16311 -replacementValue https://NewHostName:16311
+    
+    Note: Before you run this command, ensure that the values for the following WebSphere Application Server properties in the CLI.properties file that is in the Registry_home\etc directory are correct: application user ID (appserver.user) and password (appserver.password).
+    
+    
+ 7. Update the host name in the serviceProvider.properties file that is located in the JazzSM_Home/admin/etc/ConfigServiceProvider/conf/ directory. 
+ 8. Update the host name in the adminservicesgui.properties file that is located in the JazzSM_Home/admin_ui/etc/AdminServicesGUI/conf/ directory. 
+ 9. Restart the application server.  1. Stop the server. Go to the /profile/bin directory and run stopServer.bat
+        Example:
+        On Windows systems: stopServer.bat server_name 
+        
+        On UNIX systems: ./stopServer.sh server_name
+        
+        
+     2. Start the server. Go to the /profile/bin directory, and run startServer.bat
+        Example:
+        On Windows systems: startServer.bat server_name
+        
+        On UNIX systems: ./startServer.sh server_name 
+        
+        
+    
+    
+
+RELATED INFORMATION
+#Information center [http://pic.dhe.ibm.com/infocenter/tivihelp/v3r1/topic/com.ibm.psc.doc_1.1.0/psc_ic-homepage.html]

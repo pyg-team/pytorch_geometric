@@ -1,0 +1,19 @@
+Title: IBM Error Message: "Dependent module libMAD.so could not be loaded" when using the C++ api - United States
+
+Text:
+50170000000OPH9AAO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Getting the following error when running C++ API search:
+exec(): 0509-036 Cannot load program htlInitiateAPI because of the following errors: 
+0509-150 Dependent module libMAD.so could not be loaded. 
+0509-022 Cannot load module libMAD.so. 
+0509-026 System error: A file or directory in the path name does not exist 
+
+RESOLVING THE PROBLEM
+Running the ldd command on the libMAD.so will list all dependent libraries. Be sure that all the dependent libraries exist and they are in the LIBPATH or LD_LIBRARY_PATH variable with the proper permissions.
+
+
+
+HISTORICAL NUMBER
+ 809

@@ -1,0 +1,182 @@
+Title: IBM IV86305: LOCATION HIERARCHY LOADS ALL HIERARCHY CAUSING OOM - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Location hierarchy loads all hierarchy elements at server
+   startup causing OOM when the table has too many records.
+   ERROR DESCRIPTION:
+   OOM error happens when location hierarchy table is accessed
+   using MIF/REST api - like the Object structure MXAPIOPERLOC
+   or
+   MXOPERLOC
+   or when the Location hierarchy cache gets loaded, either when
+   coming out of admin mode ot even sometimes at startup of the
+   maximo server.
+   
+   PROBLEM:
+   Maximo has started to cache location hierarchy data for better
+   performance on location hierarchy tree control. As part of that
+   the cache loaded all data hierarchy data in memory which cause
+   this issue. The fix changes the loading to on demand and bounds
+   it to only 1000 hierarchy records (configurable) at any time.
+   PERFORMANCE ISSUE:
+   Without this fix, if the customer has a large enough location
+   hierarchy table, it is possible to cause memory issues which
+   would have eventually cause some performance degradation.
+   However if the fix is applied, the memory issue should go away
+   (as its now limited to only 1000 records by default and loads
+   on demand - not at startup and this functionality kicks in only
+   when using the REST/JSON api).
+   STEPS TO REPRODUCE:
+   As described in the "error description" this issue will
+   manifest itself only when the location hierarchy table size is
+   beyond a certain limit - say 20K records. Put the system in
+   admin mode and then bring it out of it, this causes all cache
+   to get reloaded and that is when this OOM should come up. It
+   may also come up when a MIF call is done to query all operloc
+   records from the OS MXOPERLOC.
+   CURRENT ERRONEOUS RESULT:
+   Currently with a large enough location hierarchy table,
+   customers would see OOM errors at startup or while coming out
+   of admin mode or when making a MIF GET call to the object
+   structure MXOPERLOC or MXAPIOPERLOC.
+   EXPECTED RESULT:
+   Applying this fix should solve the OOM issue.
+   ADDITIONAL INFO:
+   NONE
+   ENVIRONMENT (SYSTEM INFO):
+   Any maximo system 7604 and above.
+   LOCAL FIX:
+   None
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Maximo Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * LOCATION HIERARCHY LOADS ALL HIERARCHY CAUSING OOM           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to latest release                                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  OOM no longer happens due to Location Hierarchy
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   	 | release\fix pack | Fix Pack Release 7.6.0.6
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV86305
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO SYSTEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46AV
+   
+   
+ * REPORTED RELEASE
+   760
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-29
+   
+   
+ * CLOSED DATE
+   2016-08-25
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO SYSTEMS
+   
+   
+ * FIXED COMPONENT ID
+   5724R46AV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R760 PSY
+   UP

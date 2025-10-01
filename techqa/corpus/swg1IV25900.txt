@@ -1,0 +1,192 @@
+Title: IBM IV25900: JAVA.LANG.OUTOFMEMORYERROR. IMPACT NOT PROCESSING EVENTS. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.1.0-TIV-BSM-FP0004-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-zlinux&source=SAR]
+6.1.0-TIV-BSM-FP0004-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-windows&source=SAR]
+6.1.0-TIV-BSM-FP0004-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-solaris&source=SAR]
+6.1.0-TIV-BSM-FP0004-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-linux&source=SAR]
+6.1.0-TIV-BSM-FP0004-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-aix&source=SAR]
+6.1.0-TIV-NCI-FP0004-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-zlinux&source=SAR]
+6.1.0-TIV-NCI-FP0004-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-windows&source=SAR]
+6.1.0-TIV-NCI-FP0004-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-solaris&source=SAR]
+6.1.0-TIV-NCI-FP0004-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-aix&source=SAR]
+6.1.0-TIV-NCI-FP0004-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-linux&source=SAR]
+6.1.0-TIV-NCI-FP0003-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-zlinux&source=SAR]
+6.1.0-TIV-NCI-FP0003-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-windows&source=SAR]
+6.1.0-TIV-NCI-FP0003-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-solaris&source=SAR]
+6.1.0-TIV-NCI-FP0003-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-linux&source=SAR]
+6.1.0-TIV-NCI-FP0003-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-aix&source=SAR]
+6.1.0-TIV-BSM-FP0003-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-solaris&source=SAR]
+6.1.0-TIV-BSM-FP0003-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-aix&source=SAR]
+6.1.0-TIV-BSM-FP0003-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-zlinux&source=SAR]
+6.1.0-TIV-BSM-FP0003-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-windows&source=SAR]
+6.1.0-TIV-BSM-FP0003-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-linux&source=SAR]
+5.1.1-TIV-NCI-FP0003-Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=5.1.1-TIV-NCI-FP0003-Linux&source=SAR]
+5.1.1-TIV-NCI-FP0003-HPUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=5.1.1-TIV-NCI-FP0003-HPUX&source=SAR]
+5.1.1-TIV-NCI-FP0003-win [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=5.1.1-TIV-NCI-FP0003-win&source=SAR]
+5.1.1-TIV-NCI-FP0003-Solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=5.1.1-TIV-NCI-FP0003-Solaris&source=SAR]
+5.1.1-TIV-NCI-FP0003-Linuxs390 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=5.1.1-TIV-NCI-FP0003-Linuxs390&source=SAR]
+5.1.1-TIV-NCI-FP0003-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=5.1.1-TIV-NCI-FP0003-aix&source=SAR]
+IBM Tivoli Netcool/Impact V5.1.1 Fix Pack 2 (5.1.1-TIV-NCI-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24031659]
+IBM Tivoli Business Service Manager V6.1.0 Fix Pack 2(6.1.0-TIV-BSM-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24032540]
+IBM Tivoli Netcool/Impact V6.1.0 Fix Pack 2(6.1.0-TIV-NCI-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24032739]
+IBM Tivoli Netcool/Impact V5.1.1 Fix Pack 3 (5.1.1-TIV-NCI-FP0003) [http://www-01.ibm.com/support/docview.wss?uid=swg24036880]
+IBM Tivoli Netcool/Impact V6.1.0 Fix Pack 4(6.1.0-TIV-NCI-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24042500]
+IBM Tivoli Business Service Manager V6.1.0 Fix Pack 4(6.1.0-TIV-BSM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24042501]
+IBM Tivoli Netcool/Impact V6.1.0 Fix Pack 4(6.1.0-TIV-NCI-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24042516]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  product: Netcool/Impact 6.1.0
+   
+   abstract: Impact stops processing events :
+             java.lang.OutOfMemoryError
+   
+   problem: Impact hung logs show error message like this:
+   
+    ERROR [ImpactServerManagedBean] Failed to
+    register/unregister policy
+    java.lang.OutOfMemoryError
+   
+   appears that the OutOfMemory is from a backup of events.
+   When Impact process events it grabs a batch of events and
+   process them. When the events are processed batch is
+   checkpointed. Each batch can be run at the same time, but they
+   have to be checkpointed in order and can't be checkpointed
+   before the previous batch.
+   The logs seem to show one batch is not finishing.
+   This causes the hang. batches after this one can't be
+   checkpointed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When processing events Impact server will stop processing    *
+   * events and generate an OutOfMemory Exception                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * None                                                         *
+   ****************************************************************
+   The .state file in the impact/etc directory is now longer being
+   updated.  This means that impact is no longer processing events.
+   After a while, Impact will start having OutOfMemory errors.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  |Fix Pack|6.1.0.0-TIV-NCI-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV25900
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2012-08-09
+   
+   
+ * CLOSED DATE
+   2012-08-31
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UNKNOWN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP
+   
+   
+ * R511 PSY
+   UP

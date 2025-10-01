@@ -1,0 +1,118 @@
+Title: IBM Unable to login to InfoSphere Information Server Websphere Application Server (WAS) Administration Console. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere Application Server (WAS) admin user is unable to login to WAS admin console, and cannot stop WAS using MetadataServer.sh script when xmeta repository is hosted on a remote Oracle server.
+
+
+SYMPTOM
+Oracle 1012 errors are logged in SystemOut and SystemErr logs.
+
+
+CAUSE
+The typical cause of this issue is the connection from WAS to Xmeta database on remote Oracle server is broken. 
+
+Reasons for the broken connection are that the network or database is periodically killing any existing idle connections. This results in a connection being at the WebSphere Application Server end that is terminated at the XMETA repository end.
+
+
+ENVIRONMENT
+Xmeta repository is hosted on a remote Oracle server.
+
+
+
+DIAGNOSING THE PROBLEM
+Similar stack trace and log entries can be found in stopServer.log , SystemOut.log and SystemErr.log when attempting to stop WAS. 
+
+
+
+stopServer.log:
+00000000 AdminTool A ADMU0111E: Program exiting with error: javax.management.JMRuntimeException: ADMN0022E: Access is denied for the stop operation on Server MBean because of insufficient or empty credentials.
+at com.ibm.ws.management.connector.soap.SOAPConnectorClient.handleAdminFault(SOAPConnectorClient.java:935)
+at com.ibm.ws.management.connector.soap.SOAPConnectorClient.invokeTemplateOnce(SOAPConnectorClient.java:903)
+at com.ibm.ws.management.connector.soap.SOAPConnectorClient.invokeTemplate(SOAPConnectorClient.java:669)
+at com.ibm.ws.management.connector.soap.SOAPConnectorClient.invokeTemplate(SOAPConnectorClient.java:659)
+at com.ibm.ws.management.connector.soap.SOAPConnectorClient.invoke(SOAPConnectorClient.java:645)
+at com.ibm.ws.management.connector.soap.SOAPConnectorClient.invoke(SOAPConnectorClient.java:467)
+at $Proxy0.invoke(Unknown Source)
+...
+
+
+00000000 AdminTool A ADMU4113E: Verify that username and password information is correct. If running tool from the command line, pass in the correct -username and -password. Alternatively, update the <conntype>.client.props file.
+
+
+
+SystemOut.log:
+00000032 ReflectiveMet E Error invoking repository method 
+executeQuery, caused by: Error when executing query:
+* SQLException during execution of sql-statement:
+* sql statement was 'SELECT A2.password_xmeta FROM ASCLModel_Userb1c497ce A0 INNER JOIN 
+ASCLModelUserCredentlsb1c497ce A1 ON A0.has_UserCredentials_xmeta = A1.xmeta_repos_object_id_xmeta 
+INNER JOIN ASCLModel_Credentialb1c497ce A2 ON A1.asb_Credential_xmeta = 
+A2.xmeta_repos_object_id_xmeta INNER JOIN ASCLModel_Directoryb1c497ce A3 ON A0.of_Directory_xmeta = 
+A3.xmeta_repos_object_id_xmeta WHERE A0.principalId_xmeta = ? AND A3.name_xmeta = ?'
+* Exception message is [[IBM][Oracle JDBC Driver][Oracle]ORA-01012: not logged on
+]
+* Vendor error code [1012]
+* SQL state code [HY000]
+* Target class is 'ASCLModel.xmetagen.User'
+* PK of the target object is [_xmeta_repos_object_id]
+* 2 values performed in statement: 
+* [jdbcType=VARCHAR, value=wasadmin][jdbcType=VARCHAR, value=Security Directory]
+com.ascential.xmeta.query.QueryException: Error when executing query:
+
+* SQLException during execution of sql-statement:
+* sql statement was 'SELECT A2.password_xmeta FROM ASCLModel_Userb1c497ce A0 INNER JOIN 
+ASCLModelUserCredentlsb1c497ce A1 ON A0.has_UserCredentials_xmeta = A1.xmeta_repos_object_id_xmeta 
+INNER JOIN ASCLModel_Credentialb1c497ce A2 ON A1.asb_Credential_xmeta = 
+A2.xmeta_repos_object_id_xmeta INNER JOIN ASCLModel_Directoryb1c497ce A3 ON A0.of_Directory_xmeta = 
+A3.xmeta_repos_object_id_xmeta WHERE A0.principalId_xmeta = ? AND A3.name_xmeta = ?'
+* Exception message is [[IBM][Oracle JDBC Driver][Oracle]ORA-01012: not logged on
+]
+* Vendor error code [1012]
+* SQL state code [HY000]
+* Target class is 'ASCLModel.xmetagen.User'
+* PK of the target object is [_xmeta_repos_object_id]
+* 2 values performed in statement: 
+* [jdbcType=VARCHAR, value=wasadmin][jdbcType=VARCHAR, value=Security Directory]
+at org.apache.ojb.broker.util.ExceptionHelper.generateException(Unknown Source)
+at org.apache.ojb.broker.util.ExceptionHelper.generateException(Unknown Source)
+at org.apache.ojb.broker.accesslayer.JdbcAccessImpl.executeSQL(Unknown Source)
+at com.ascential.xmeta.persistence.orm.query.impl.sql.util.impl.ojb.OjbSqlExecuter.executeQuery(OjbSqlExecuter.java:98)
+... 48 more
+Caused by: java.sql.SQLException: [IBM][Oracle JDBC Driver][Oracle]ORA-01012: not logged on
+
+at com.ibm.isf.jdbc.oraclebase.dda4.b(Unknown Source)
+at com.ibm.isf.jdbc.oraclebase.dda4.a(Unknown Source)
+at com.ibm.isf.jdbc.oraclebase.dda3.b(Unknown Source)
+at com.ibm.isf.jdbc.oraclebase.dda3.a(Unknown Source)
+at com.ibm.isf.jdbc.oracle.ddk.p(Unknown Source)
+at com.ibm.isf.jdbc.oraclebase.dddf.v(Unknown Source)
+at com.ibm.isf.jdbc.oraclebase.dddf.u(Unknown Source)
+at com.ibm.isf.jdbc.oraclebase.ddb_.executeQuery(Unknown Source)
+
+00000032 SystemOut O [org.apache.ojb.broker.accesslayer.ConnectionManagerImpl] ERROR: Rollback on the underlying connection failed
+00000032 SystemOut O [IBM][Oracle JDBC Driver][Oracle]ORA-01012: not logged on
+
+00000032 OjbObjectPers E Failed to commit Transaction
+org.apache.ojb.broker.TransactionNotInProgressException: PersistenceBroker is NOT in transaction, can't commit
+
+
+SystemErr.log:
+00000032 SystemErr R 2013-07-17 15:04:26,402 Error [ISF-SECURITY-REPO] [0014] Error trying to query user "wasadmin": [Error when executing query:
+
+
+RESOLVING THE PROBLEM
+Contact Oracle DBA to review the Oracle error code 1012 to find the exact root cause for xmeta user getting disconnected from Oracle server. 
+
+
+Request Oracle DBA to increase the idle time-out settings from 15 to 99999 and bounced Oracle server that hosted XMETA repository.
+
+DBA restart Oracle Server. 
+
+WAS admin user restarts WAS services; then, user login to WAS console is successful.
+
+
+RELATED INFORMATION
+#Technote 1641109 [http://www.ibm.com/support/docview.wss?uid=swg21641109]

@@ -1,0 +1,18 @@
+Title: IBM Migrating from a TIP 2.1 32-bit install to a TIP 2.2 64-bit install - United States
+
+Text:
+TIPL2; TIPL2CONF; TIPL2INST; tivoli integrated portal; migration; 32-bit; 64-bit TECHNOTE (FAQ)
+
+QUESTION
+ What is the procedure to migrate a Tivoli Integrated Portal 2.1 installation from 32-bit to a TIP 2.2 64-bit installation? 
+
+ANSWER
+There is no way to change an existing TIP 32-bit install to 64-bit. However, user defined documents from a 32-bit installation can be exported and then imported into a 64-bit install. For example you could do the following: 
+
+ 1. Export user defined objects from the TIP 2.1 system.
+    http://pic.dhe.ibm.com/infocenter/tivihelp/v15r1/topic/com.ibm.tip.doc_2.1/ctip_export_import.html [http://pic.dhe.ibm.com/infocenter/tivihelp/v15r1/topic/com.ibm.tip.doc_2.1/ctip_export_import.html]
+    
+ 2. Install the TIP 2.2 64-bit base as a separate installation.
+    
+ 3. Import the 2.1 export into the newly installed TIP 2.2 64-bit instance.
+    http://pic.dhe.ibm.com/infocenter/tivihelp/v15r1/topic/com.ibm.tip.doc/ctip_export_import.html [http://pic.dhe.ibm.com/infocenter/tivihelp/v15r1/topic/com.ibm.tip.doc/ctip_export_import.html]

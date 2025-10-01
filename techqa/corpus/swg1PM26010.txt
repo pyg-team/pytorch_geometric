@@ -1,0 +1,243 @@
+Title: IBM PM26010: WTRN0006W DUE TO TRANSACTION TIMEOUT OCCURS USING TIGHTLY COUPLED TXS WITH DB2 DUE TO LOCK TIMEOUT; CAN'T SET TMLCS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.0.0.19: WebSphere Application Server V7.0 Fix Pack 19 [http://www-01.ibm.com/support/docview.wss?uid=swg24030660]
+7.0.0.21: WebSphere Application Server V7.0 Fix Pack 21 [http://www-01.ibm.com/support/docview.wss?uid=swg24031366]
+7.0.0.23: WebSphere Application Server V7.0 Fix Pack 23 [http://www-01.ibm.com/support/docview.wss?uid=swg24032493]
+7.0.0.25: WebSphere Application Server V7.0 Fix Pack 25 [http://www-01.ibm.com/support/docview.wss?uid=swg24033267]
+7.0.0.27: WebSphere Application Server V7.0 Fix Pack 27 [http://www-01.ibm.com/support/docview.wss?uid=swg24033882]
+7.0.0.29: WebSphere Application Server V7.0 Fix Pack 29 [http://www-01.ibm.com/support/docview.wss?uid=swg24034966]
+7.0.0.31: WebSphere Application Server V7.0 Fix Pack 31 [http://www-01.ibm.com/support/docview.wss?uid=swg24036768]
+7.0.0.27: Java SDK 1.6 SR13 FP2 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035324]
+7.0.0.33: WebSphere Application Server V7.0 Fix Pack 33 [http://www-01.ibm.com/support/docview.wss?uid=swg24037573]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM DB2 added a feature to set accept an XA flag on an
+   xa.start() operation to specify that the tx should be loosely
+   coupled.  This was added with the DB2 APAR PK78198 which
+   was released in their driver, JCC 3.6.93.  The APAR which
+   introduced this flag is DB2 z/OS V8 APAR PK47713.  The APAR
+   PK78198 is a full driver which contains this APAR.
+   http://www-01.ibm.com/support/docview.wss?uid=isg1PK78198 [http://www-01.ibm.com/support/docview.wss?uid=isg1PK78198]
+   .
+      The reason for this flag is to prevent a LOCK timeout
+   that can occur with tightly-coupled transactions.
+   A tightly-coupled transaction occurs in a scenario like this:
+      two EJB method calls are made in the same transaction
+   that access the same DB2 db on Z/OS. The transactions are queued
+   but the second goes in timeout.
+   .
+      The exception that is thrown with the Type-4 XA Connectivity
+   Driver is an SQLException that has an SQLCODE911 (-911); this is
+   thrown when two different WAS servers/JVMs each running under
+   the same global transaction using the same  database on z/OS
+   tries to update the same row in a table.  This results in a
+   deadlock condition, causing the transaction to rollback.
+   .
+      DB2 introduced a new XA flag, TMLCS (Loosely Coupled), which
+   can be used to enable sharing of locks on the DB2 for XA
+   branches that have same global transaction ID but different
+   branch qualifier.  The flag is documented here.
+   public class DB2XAResource
+   {
+      public static final int TMLCS = 8388606; // 0x00800000
+   }
+   .
+      The new XA flag TMLCS can be passed as one of the valid
+   
+   flags to javax.transaction.xa.start() API.
+   
+   public class DB2XAResource
+   {
+      public static final int TMLCS = 8388606; // 0x00800000
+   }
+   .
+      When DB2 is used with WebSphere Application Server and the
+   J2EE application uses a tightly-coupled tx, the way this is
+   manifested is with a transaction timeout.
+   [21/07/10 9.50.55:184 CEST] 00000005 TimeoutManage
+   I   WTRN0006W: Transaction
+   EJBTwoObjectsEAR#EJBTwoObjects.jar
+   
+   [21/07/10 9.50.55:186 CEST] 00000005 TimeoutManage I
+    WTRN0124I: When the timeout occurred the thread with which the
+   transaction is, or was most recently, associated was Thread
+   [WebContainer : 2,5,main]. The stack trace of this thread
+   when the timeout occurred was:
+    com.ibm.db2.jcc.uw.UWReply.recvBuff(Native Method)
+    com.ibm.db2.jcc.uw.UWReply.b(UWReply.java:75)
+    com.ibm.db2.jcc.t4.cb.c(cb.java:249)
+    com.ibm.db2.jcc.t4.cb.c(cb.java:360)
+   .
+      The DB2 feature cannot be readily used by WebSphere
+   Application Server.  One may try to manage one's own transaction
+   using a UserTransaction fora servlet or using Bean Managed
+   Transactions, and try to pass the xa flag indicated.  But this
+   is not always possible.  And the API changed is not intended for
+   use with user-developed applications.
+   .
+      What is needed is a way to set this parameter from the
+   Application Server via a data source custom property or java
+   property.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  One may try to use a UserTransaction or BMT EJB to have the
+   control of the xa.start command to try to set this flag.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V6.1 and V7.0 who use DB2.           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: By Default DB2 supports Loosely         *
+   *                      coupled Transactions and Transaction    *
+   *                      branches does not share locks, causing  *
+   *                      deadlocks.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   There was  no property to support Loosely coupled
+   Transactions to Share locks on DB2.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added code to support the Looselycoupled transactions in Db2
+   to Share Locks.
+   The custom property  transactionBranchesLooselyCoupled=false
+   should be set on DataSource.
+   From the administrative console you can set the custom property
+   in the following path :
+   JDBC providers -> <Driver Provider name> -> Data sources >
+   <DataSource name> -> Custom properties
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 6.1.0.39 and 7.1.1.17.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM26010
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-05
+   
+   
+ * CLOSED DATE
+   2011-05-03
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

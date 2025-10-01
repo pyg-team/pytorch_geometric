@@ -1,0 +1,106 @@
+Title: IBM Security Bulletin: Vulnerabilities in Oracle Outside In Technology affect IBM WebSphere Portal (CVE-2017-10051, CVE-2017-10141, CVE-2017-10196) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Oracle Outside In Technology is used by and contained in IBM WebSphere Portal. A fix is available for security vulnerabilities in Oracle Outside In Technology that affect IBM WebSphere Portal (CVE-2017-10051, CVE-2017-10141, CVE-2017-10196). 
+
+VULNERABILITY DETAILS
+ 
+
+CVEID: CVE-2017-10196 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10196]
+DESCRIPTION: An unspecified vulnerability in Oracle Fusion Middleware related to the Outside In Technology Outside In Filters component could allow an unauthenticated attacker to cause no confidentiality impact, low integrity impact, and high availability impact.
+CVSS Base Score: 8.2
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/128936 [https://exchange.xforce.ibmcloud.com/vulnerabilities/128936] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:H) 
+
+CVEID: CVE-2017-10141 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10141]
+DESCRIPTION: An unspecified vulnerability in Oracle Fusion Middleware related to the Outside In Technology Outside In Filters component could allow an unauthenticated attacker to cause no confidentiality impact, low integrity impact, and high availability impact.
+CVSS Base Score: 8.2
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/128897 [https://exchange.xforce.ibmcloud.com/vulnerabilities/128897] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:H)
+
+CVEID: CVE-2017-10051 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10051]
+DESCRIPTION: An unspecified vulnerability in Oracle Fusion Middleware related to the Outside In Technology Outside In Filters component could allow an authenticated attacker to cause a denial of service resulting in a high availability impact using unknown attack vectors.
+CVSS Base Score: 5.7
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/133916 [https://exchange.xforce.ibmcloud.com/vulnerabilities/133916] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:A/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H) 
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+ 
+
+Affected Product Affected Versions IBM WebSphere Portal 9.0.0.0 - 9.0.0.0 CF14 IBM WebSphere Portal 8.5.0.0 - 8.5.0.0 CF14 IBM WebSphere Portal 8.0.0.0 - 8.0.0.1 CF22 IBM WebSphere Portal 7.0.0.0 - 7.0.0.2 CF30 For unsupported versions IBM recommends upgrading to a fixed, supported version of the product. 
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APARs Fix IBM WebSphere Portal 9.0 PI84847  * Upgrade to Cumulative Fix 14 (CF14) and then apply the Interim Fix PI84847 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=All&platform=All&function=aparId&apars=PI84847].
+
+--or--  * Upgrade to Cumulative Fix 15 (CF15), targeted for 4Q 2017.
+
+(Combined Cumulative Fixes for WebSphere Portal 9.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037786] [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]) IBM WebSphere Portal 8.5 PI84847  * Upgrade to Cumulative Fix 14 (CF14) and then apply the Interim Fix PI84847 [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8.5.0.0&platform=All&function=aparId&apars=PI84847].
+
+--or--  * Upgrade to Cumulative Fix 15 (CF15), targeted for 4Q 2017.
+
+(Combined Cumulative Fixes for WebSphere Portal 8.5.0.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037786] [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]) IBM WebSphere Portal 8.0.0 through 8.0.0.1 PI84847  * Upgrade to Fix Pack 8.0.0.1 with Cumulative Fix 22 (CF22) and then apply the Interim Fix PI84847 [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8.0.0.1&platform=All&function=aparId&apars=PI84847].
+
+(Combined Cumulative Fixes for WebSphere Portal 8.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]) IBM WebSphere Portal 7.0.0 through 7.0.0.2 PI84847  * Upgrade to Fix Pack 7.0.0.2 with Cumulative Fix 30 (CF30) and then apply the Interim Fix PI84847 [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=7.0.0.2&platform=All&function=aparId&apars=PI84847].
+
+(Combined Cumulative fixes for WebSphere Portal 7.0.0.2 [http://www.ibm.com/support/docview.wss?uid=swg24029452]) 
+WORKAROUNDS AND MITIGATIONS
+As a workaround until the fix has been applied, you can disable the conversion of documents by removing the convertor entries in the file convertors.xml.
+
+Please follow the steps below to implement the workaround:
+1. Stop the IBM WebSphere Portal Server.
+2. Find convertors.xml in <portal_server_root>/wp_profile/PortalServer/dcs
+3. Backup this file to restore it after the fix has been applied.
+4. Remove all <input> and<output> entries inside all<convertor> tags in the convertors.xml file as shown in the following example.
+
+Find all sections like this:
+<convertor>
+<input>application/vnd.openxmlformats-officedocument.wordprocessingml.document</input>
+<input>application/msword</input>
+<input>application/vnd.lotus-wordpro</input>
+<input>application/html</input>
+<input>application/rtf</input>
+...
+<output>application/vnd.ibm-odcrte.zip</output>
+...
+<property name="class" value="com.ibm.wps.odc.convert.text.Stellent2RTE"/>
+</convertor>
+
+and change them like this:
+<convertor>
+<property name="class" value="com.ibm.wps.odc.convert.text.Stellent2RTE"/>
+</convertor>
+
+5. Restart the IBM WebSphere Portal Server. 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 30 October 2017: Original Version Published
+7 November 2017: CVE-2017-10051 included 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

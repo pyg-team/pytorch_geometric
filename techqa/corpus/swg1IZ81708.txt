@@ -1,0 +1,190 @@
+Title: IBM IZ81708: USING DOMAIN NAME USERNAME CAUSES NO DATA - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  APAR Type:            Field
+   
+   Approver Initials:    mw
+   Severity:             2
+   Reported Release:     622
+   Compid:               5724L92VI VMware VI Agent
+   ABSTRACT:             Using domain name username causes no data
+   
+   PROBLEM DESCRIPTION:
+   
+   When configuring the agent, if the "Data Source User ID" under
+   the Data Source tab is a domain name that contains a backslash
+   (e.g. "domain\user"), the data provider will receive an
+   exception and no data will be sent.
+   
+   The kvm_data_provider_<instance>_0.log will contain messages
+   similar to:
+   
+   2010-07-29 11:49:22 10 SEVERE:
+   FactoryInterfaceController$3.uncaughtException: Uncaught
+   exception in thread 1.
+   java.lang.Object: Illegal/unsupported escape squence near index
+   21
+   ([^\\]*\\)?DomainName\Username$
+                         ^
+   Stack trace:
+           java.util.regex.Pattern.error(Pattern.java:1686)
+           java.util.regex.Pattern.escape(Pattern.java:2157)
+           java.util.regex.Pattern.atom(Pattern.java:1899)
+           java.util.regex.Pattern.sequence(Pattern.java:1830)
+           java.util.regex.Pattern.expr(Pattern.java:1723)
+           java.util.regex.Pattern.compile(Pattern.java:1433)
+           java.util.regex.Pattern.<init>(Pattern.java:1160)
+           java.util.regex.Pattern.compile(Pattern.java:844)
+   
+   com.ibm.tivoli.monitoring.agent.kvm.vmware.PermissionManager.<in
+   it>(PermissionManager.java:64)
+   
+   com.ibm.tivoli.monitoring.agent.kvm.vmware.DataSource.start(Data
+   Source.java:205)
+   
+   com.ibm.tivoli.monitoring.agent.kvm.itm.DataProvider.addDataSour
+   ce(DataProvider.java:265)
+   
+   com.ibm.tivoli.monitoring.agent.kvm.itm.FactoryInterfaceControll
+   er.setupDataProvider(FactoryInterfaceController.java:668)
+   
+   com.ibm.tivoli.monitoring.agent.kvm.itm.FactoryInterfaceControll
+   er.serviceRequests(FactoryInterfaceController.java:569)
+   
+   com.ibm.tivoli.monitoring.agent.kvm.itm.FactoryInterfaceControll
+   er.main(FactoryInterfaceController.java:911)
+   
+   
+   RECREATE INSTRUCTIONS:
+   
+   Configure the agent and use a domain name (e.g. "domain\user")
+   in the "Data Source User ID" field of the Data Source tab.
+   Start the agent and see that no data is displayed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   *****
+   * USERS AFFECTED: Users with Domain names for vCenter log in.
+   ****************************************************************
+   *****
+   * PROBLEM DESCRIPTION: When configuring the agent, if the
+   * "Data Source User ID" under the Data Source tab is a domain
+   * name that contains a backslash (for example,
+   * "domain\user"), the data provider receives an exception and
+   * no data is sent.
+   *
+   ****************************************************************
+   *****
+   * RECOMMENDATION: Apply 6.2.2-TIV-ITM_VMWVI-IF0001.
+   ****************************************************************
+   *****
+   Interim Fix 6.2.2-TIV-ITM_VMWVI-IF0001 resolves the problem by
+   handling the special character '\' in the domain name.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   
+      | interim fix | 6.2.2-TIV-ITM_VMWVI-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ81708
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF VMWARE VI
+   
+   
+ * REPORTED COMPONENT ID
+   5724L92VI
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-06
+   
+   
+ * CLOSED DATE
+   2010-09-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMF VMWARE VI
+   
+   
+ * FIXED COMPONENT ID
+   5724L92VI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

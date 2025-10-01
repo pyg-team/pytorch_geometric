@@ -1,0 +1,78 @@
+Title: IBM Open Mic on Features of SmartCloud Notes in Hosted and Hybrid Environments - United States
+
+Text:
+smartcloud notes features WEBCAST
+
+ABSTRACT
+ Open Mic on Features of SmartCloud Notes in Hosted and Hybrid Environments 
+
+CONTENT
+Open Mic on Features of SmartCloud Notes in Hosted and Hybrid Environments 
+
+ 
+Date: Thursday, June 18th 2015 | Time: At 12:00 PM IST
+
+
+IBM support arranged an Open Mic on topic "'Features of SmartCloud Notes in Hosted and Hybrid Environments'" on 18th June 2015. 
+
+The questions asked by customers during this Open Mic are also included with answers. 
+
+You can find the PDF presentation and mp4 recording at the end of the page. 
+
+
+Questions & Answers :- 1:- Can you share link that has feature differences between on-premise domino and Smartcloud Notes ?
+Answer:- Please find below wiki links
+
+http://www-10.lotus.com/ldd/bhwiki.nsf/dx/Differences_between_LotusLive_Notes_web_and_Lotus_iNotes_%28formerly_DWA%29 [http://www-10.lotus.com/ldd/bhwiki.nsf/dx/Differences_between_LotusLive_Notes_web_and_Lotus_iNotes_%28formerly_DWA%29]
+
+http://www-10.lotus.com/ldd/bhwiki.nsf/dx/Features_differences_in_Lotus_Notes_when_used_with_the_LotusLive_Notes_service [http://www-10.lotus.com/ldd/bhwiki.nsf/dx/Features_differences_in_Lotus_Notes_when_used_with_the_LotusLive_Notes_service]
+
+http://www-10.lotus.com/ldd/bhwiki.nsf/dx/Administration_differences_between_the_LotusLive_Notes_service_and_on-premises_Domino [http://www-10.lotus.com/ldd/bhwiki.nsf/dx/Administration_differences_between_the_LotusLive_Notes_service_and_on-premises_Domino]
+
+2:- Can we use cloud ip addresses to configure on-premise firewall ?
+Answer:- It is recommended to use FQDN of smartcloud notes. Customer can contact support if they want to know ip address ranges of cloud.
+
+http://www-01.ibm.com/support/knowledgecenter/SSPS94/hybrid/topics/cfg_hy_prepare_firewall_inbound_t.dita?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSPS94/hybrid/topics/cfg_hy_prepare_firewall_inbound_t.dita?lang=en]
+
+http://www-01.ibm.com/support/knowledgecenter/SSPS94/hybrid/topics/cfg_hy_prepare_firewall_outbound_t.dita?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSPS94/hybrid/topics/cfg_hy_prepare_firewall_outbound_t.dita?lang=en]
+
+3:- Can customer copy their existing on-premise antispam settings to cloud ? 
+Answer:- No , Cloud uses its own antispam settings however customer can configure deny / allow list in Email Filters UI.
+
+4:- Can on-premise directory gateway / mail gateway server that connect to cloud can hosted on same server?
+Answer:- Yes you can use same on-premise server for on-premise mail gateway and directory gateway. Ideally it is always better to split the functionality across two servers
+
+5:- Can on-premise passthru need to be domino clustered ?
+Answer:- No , if you want to install primary and secondary passthru then they you can have them installed as individual server. We connect to on-premise primary passthru by its ip address and if it is not reachable we try to reach secondary passthru
+
+6:- If customer change on-premise directory server / passthru server , how cloud recognized new server name or ip ?
+Answer:- After change to directory server name or ip for on-premise servers , you need to run Domain configuration tool , that will update the new server name to cloud server at the next dirsync replication.
+
+7:- If a user forgot to logout from computer. How to force logout of the account ? 
+Answer:- The idle session timeout value is not controlled by domino in Smart Cloud Notes and it is controlled by front end [ BSS ]. There is no way to force a user to log out from the admin UI Idle session timeout is 18 hours
+
+8:- In a hybrid environment, how do we handle the certificates of users that are moved to cloud? Do the users in Cloud still needs to recertify ?
+Answer:- You can recertify at on-premise
+
+9:- Valid email was tagged as SPAM/Quarantined in Smartcloud, how to check the reports and release the Quarantined message in SmartCloud ? 
+Answer:- You need to raise a PMR and support can troubleshoot if antispam software incorrectly tag your valid message as a spam
+
+10:- If there are scheduled maintenance(similar to below notification), what will happen to the 
+Client's SCN access if the Client has 24/7 Operations? How the Clustered Server in SCN will work ?
+Answer:- When scheduled maintenance announced , we also describe the services that impacted. 
+Usually window is of 4 hours on weekend night hours
+
+11:- Just in case the DR is necessary to use(this is for AP Region), are there any configurations that require changes in the Client's Environment to use the DR or is it automatic?
+Answer:- No changes required on client side, you will be flipped automatically. firewall setting at your on-premise are advised to use cloud FQDN instead of ip.
+
+12:- In the Service Only Environment, in our case as Business Partner, is it possible to use one Admin/Business Partner ID for two different SmartCloud Organization?
+Answer:- No
+
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]Features of SmartCloud Notes in Hosted and Hybrid Environments-openmic.pdf [/support/docview.wss?uid=swg27046105&aid=2]Features of SmartCloud Notes in Hosted and Hybrid Environments-openmic.pdf [/support/docview.wss?uid=swg27046105&aid=1]
+
+
+
+MULTIMEDIA
+[http://www.ibm.com/i/v16/icons/video.gif]openmic-Features of SmartCloud Notes in Hosted and Hybrid Environments-openmic.mp4 [/support/docview.wss?uid=swg27046105&aid=4]openmic-Features of SmartCloud Notes in Hosted and Hybrid Environments-openmic.mp4 [/support/docview.wss?uid=swg27046105&aid=3]

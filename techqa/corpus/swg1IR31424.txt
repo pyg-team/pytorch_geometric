@@ -1,0 +1,134 @@
+Title: IBM IR31424: AE IR28065 ** GROUP 0 GLOBAL BATCHES WHICH COMPLETE WILL CAUSE OTHER BATCHES OF NON 0 GLOBAL GROUPS TO END PREMATURELY. - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  1. Set up an event with 3 global batches, one batch with
+   group 0 (primary ID), one batch with group 3 and one
+      batch with group 5.
+   2. Ensure all are active on the system, then change event
+      controls to the current date and end the batch.
+   3. Check PM and you will see that all 3 batches prematurely
+      end.  No errors are logged.
+   4. APAR IR28065 must be on to see this failure.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  GROUP 0 GLOBAL BATCHES BROUGHT TO COMPLETION WILL CAUSE OTHER
+   BATCHES OF NON 0 GLOBAL GROUPS TO END PREMATURELY.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ADDED CODE TO MODULE EALPGLOP.J86 TO CHECK FOR GL 0 GLOBAL
+   BEFORE REMOVING.
+   HOW TO RECREATE THE PROBLEM:
+   1. Set up an event with 3 global batches, one batch with
+      group 0 (primary ID), one batch with group 3 and one
+      batch with group 5.
+   2. Ensure all are active on the system, then change event
+      controls to the current date and end the batch.
+   3. Check PM and you will see that all 3 batches prematurely
+      end.  No errors are logged.
+   4. Apar IR28065 must be on to see failure.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IR31424
+   
+   
+ * REPORTED COMPONENT NAME
+   4680-4690 GEN S
+   
+   
+ * REPORTED COMPONENT ID
+   569654600
+   
+   
+ * REPORTED RELEASE
+   121
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   1996-01-11
+   
+   
+ * CLOSED DATE
+   1996-01-17
+   
+   
+ * LAST MODIFIED DATE
+   1996-05-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IR31423
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     EALPGLOP EALPMBAC EALPMBRC EALPMBAL EALPMBRL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   4680-4690 GEN S
+   
+   
+ * FIXED COMPONENT ID
+   569654600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R121 PSY UR45535
+   UP96/05/24 P 9601

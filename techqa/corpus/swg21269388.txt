@@ -1,0 +1,108 @@
+Title: IBM Connection performance in partitioned database environments and agent hopping with db2agentg - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ This document describes what happens when you connect to a partition in a multiple partition database environment. Specifically, it describes how connection hopping works depending on which partition you choose as the coordinating partition. 
+
+CAUSE
+When an application connects to the database, you will get a single coordinating db2agent that will coordinate the application connection on the database server. All application communication to the database server will flow into this coordinator agent.
+
+If you are using the DB2® Database Partitioning Feature (DPF) of DB2 Enterprise Server Edition (ESE) and you have multiple database partitions, the coordinating partition is the partition where you will acquire the db2agent to coordinate the application connection.
+
+When work is done in this application, you will also have various sub-agents on other database partitions that communicate with each other via the Fast Communication Manager (FCM), but that is beyond the scope of this document. 
+
+The partition that will coordinate the application connection is specified by: 
+
+ * The DB2NODE environment variable. For example:
+   export DB2NODE=partition_number 
+ * A CLP command line statement. For example:
+   db2 set client connectdb_partitionnum partition_number 
+ * The CLI connection attribute SQL_ATTR_CONNECT_NODE, which is specified using the CLI function SQLSetConnectAttr().
+
+If none of these are done, the application will default to connect to the first logical partition on the host that you are connecting to. 
+
+Background Information 
+The database server listens for incoming connections using two listeners, the db2ipccm (local connection listener) and the db2tcpcm (remote connection listener). 
+
+In partitioned database environments, there is a local connection listener on each logical partition. You will also have the remote listener (db2tcpcm), but the remote listeners only exist on the first logical partition on the given host. 
+
+Note: You can have more than one remote connection listener on each physical host.; the db2start logic looks at the number of CPUs on the host and decides how many listeners to give you. You can also override this using the DB2 registry variable DB2TCPCONNMGRS. 
+
+Frequently Asked Questions 
+ 1. What happens if you are on physical host "A" locally, but you try to connect to a partition on physical host "B"? Is this still a local connection?
+    
+ 2. What happens if you are on a remote host, and you set the coordinating partition to be a different partition than the first one where the remote listener is located?
+    
+
+The answer to the above two questions is that DB2 will "hop" the connection to the correct partition. The concept of agent hopping is best explained through the use of examples (below). 
+
+Agent Hopping: 
+If you configure the application to specify a coordinating partition that is not the first logical partition on the host, DB2 will need to send the client communication to the correct partition. 
+
+The way this works is that instead of giving a single db2agent to coordinate that application connection, DB2 needs to hop the connection to the correct partition, and it does this by creating a db2agentg or gateway agent . Then, by way of the gateway agent, the connection will be hopped to the correct partition where you will get the normal coordinating agent for the application connection. 
+
+Every single client-server communication for this application needs follow the flow of this connection 
+hopping communication path. That's why it's important to choose a good coordinator partition if the application wants to see good performance!! 
+
+Examples: 
+
+Consider a db2nodes.cfg layout like this: 
+
+1 hostA 0
+2 hostA 1
+3 hostB 0
+4 hostB 1
+
+
+Example 1: Local client application on hostA, connecting to partition 1 
+This is a best (fast) case. 
+The local client talks to the db2ipccm that is listening locally for a shared memory connection, and then the db2ipccm will give the application a db2agent on partition 1 as the coordinator agent, which will communicate locally with the application. 
+
+Example 2: Local client application on hostA, connecting to partition 2 
+This is also a best (fast) case. 
+There exists a local connection listener on partition 2, so the db2ipccm on partition 2 will give you a db2agent on partition 2 to coordinate the application connection using the local communication path. 
+
+Example 3: Local client application is on hostA, connecting to partition 3 
+Since the database is catalogged locally, it has access to the db2nodes.cfg and so it knows that it can reach partition 3 directly via the db2tcpcm on partition 3. 
+The local client talks to the partition 3 db2tcpcm which will give you a db2agent on partition 3 to coordinate the connection using TCP/IP. 
+
+Example 4: Local client application is on hostA, connecting to partition 4 
+In this case, since DB2 only has a remote listener db2tcpcm on the first logical partition on hostB (partition 3), the db2tcpcm will create a db2agentg on partition 3 to do a local hop to partition 4. 
+The db2ipccm on partition 4 will give you the coordinating agent to service the connection. 
+
+Example 5: Remote client application catalogued against the database on hostA, connecting to partition 1 
+The client talks to remote listener db2tcpcm on partition 1 directly. 
+This gives a db2agent to coordinate this connection using TCP/IP. 
+
+Example 6: Remote client application catalogued against the database on hostA, connecting to partition 2 
+In this case, since DB2 only has a remote listener db2tcpcm on the first logical partition on hostA (partition 0), the db2tcpcm will create a db2agentg to do a local hop to partition 2. 
+On partition 2, the db2ipccm will give a db2agent to coordinate the application connection. 
+
+Example 7: Remote client application catalogued against the database on hostA, connecting to partition 3 
+In this case, the application first talks to the db2tcpcm on partition 1. This will give you a db2agentg that will do a remote hop to partition 3. 
+The db2tcpcm on partition 3 will provide the db2agent to coordinate the connection. 
+
+Example 8: Remote client application catalogued against the database on hostA, connecting to partition 4 
+Given the nodes layout for this example, this is the worst case scenario. 
+The application talks to the db2tcpcm on partition 1 which gives you a db2agentg to perform a remote hop to partition 3. (Recall there are only db2tcpcm on the first logical partition of hostB). 
+The db2tcpcm on partition 3 gives you another db2agentg to do a second hop, this time a local hop, to 
+partition 4. 
+The db2ipccm on partition 4 gives you the coordinating agent to service the connection. 
+ANSWER
+In general, the best scenarios where connection performance is concerned are as follows (from fastest to slowest): 
+
+ 1. direct local connection 
+ 2. direct TCP/IP connection 
+ 3. local hop 
+ 4. remote hop
+
+
+When more hopping occurs, more work needs to be done to communicate between client and server. 
+
+ 
+
+Note: This is a generalization because there are other factors that can also impact connection performance, such as network performance.
+
+In general, you should minimize connection hopping and set your coordinating partition to be the first logical partition on the host that you catalog the database on (for example, partition 1 in this example). There might be some database design and application design reasons why you do want to coordinate application connections from different partitions, however. For example, you might have a table that only exists on certain partitions and you want to coordinate the application on those partitions to avoid FCM overhead.

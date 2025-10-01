@@ -1,0 +1,84 @@
+Title: IBM SQLCODE = -443 using ODPP with routine OPTIMMASK - United States
+
+Text:
+ODPPTRCL; -443; OPTIMMASK; UDF; ODPP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you attempt to use routine OPTIMMASK to mask a DB2 table on demand via ODPP UDF processing, you may encounter the following error:
+
+
+
+SELECT CREDIT_CARD, 
+
+DSNSYSA.OPTIMMASK(CREDIT_CARD, 
+
+'PRO=CCN,FLDDEF1=(NAME=CREDIT_CARD,LENGTH=16,DT=CHAR,CP=37)') 
+
+FROM OPTIM.CCN; 
+
+---------+---------+---------+---------+---------+---------+---------+-- 
+
+------ 
+
+CREDIT_CARD 
+
+---------+---------+---------+---------+---------+---------+---------+-- 
+
+------ 
+
+DSNE610I NUMBER OF ROWS DISPLAYED IS 0 
+
+DSNT408I SQLCODE = -443, ERROR: ROUTINE OPTIMMASK (SPECIFIC NAME 
+
+OPTIMMASKOSTR) HAS RETURNED AN ERROR SQLSTATE WITH DIAGNOSTIC 
+
+TEXT 
+
+DSNT418I SQLSTATE = F270F SQLSTATE RETURN CODE 
+
+DSNT415I SQLERRP = DSNXRRTN SQL PROCEDURE DETECTING ERROR 
+
+DSNT416I SQLERRD = -818 0 0 -1 0 0 SQL DIAGNOSTIC INFORMATION 
+
+DSNT416I SQLERRD = X'FFFFFCCE' X'00000000' X'00000000' X'FFFFFFFF' 
+
+X'00000000' X'00000000' SQL DIAGNOSTIC INFORMATION 
+
+DSNE610I NUMBER OF ROWS DISPLAYED IS 0 
+
+DSNT408I SQLCODE = -443, ERROR: ROUTINE OPTIMMASK (SPECIFIC NAME 
+
+OPTIMMASKOSTR) HAS RETURNED AN ERROR SQLSTATE WITH DIAGNOSTIC 
+
+TEXT 
+
+
+
+DSNT418I SQLSTATE = F270F SQLSTATE RETURN CODE 
+
+DSNT415I SQLERRP = DSNXRCUF SQL PROCEDURE DETECTING ERROR 
+
+DSNT416I SQLERRD = -818 0 0 -1 0 0 SQL DIAGNOSTIC INFORMATION 
+
+DSNT416I SQLERRD = X'FFFFFCCE' X'00000000' X'00000000' X'FFFFFFFF' 
+
+X'00000000' X'00000000' SQL DIAGNOSTIC INFORMATION 
+
+---------+---------+---------+---------+---------+---------+---------+-- 
+
+---- 
+
+DSNE618I ROLLBACK PERFORMED, SQLCODE IS 0 
+
+______________ 
+
+
+
+CAUSE
+This error can occur if the user does not have read/write access to the directory where Optim trace files are written (pointed to by ODPPTRCL in the ENVVARS file).
+
+DIAGNOSING THE PROBLEM
+Review the output from the ODPP UDF execution. If the output shows a SQLSTATE of F270F, and SQLERRD of -818, then the directory permissions of the directory pointed to by ODPPTRCL should be checked.
+
+RESOLVING THE PROBLEM
+Change the directory permissions of the directory pointed to by ODPPTRCL.

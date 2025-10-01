@@ -1,0 +1,134 @@
+Title: IBM IJ00987: DOCUMENTATION FOR LOG-RELEVANT CONFIGURATION PARAMETERS IS INCOMPLETE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Documentation for log-relevant configuration parameters is
+   incomplete.
+   The "details" and its meaning is not explained.
+   https://www.ibm.com/support/knowledgecenter/SSPREK_9.0.2.1/com.i [https://www.ibm.com/support/knowledgecenter/SSPREK_9.0.2.1/com.i]
+   bm.isam.doc/admin/t ask/tsk_rsyslog_forwarder.html
+   Not yet opened
+   1. Configure the remote syslog server settings as needed.
+   Adding a remote syslog server definition
+   a. Click Add.
+   b. Specify the details for the remote syslog server.
+   c. Click Save.
+   Specifying the log sources for a remote log server
+   d. Select the remote syslog server to send logs to.
+   e. Click Sources.
+   f. Click Add to add a log source.
+   g. Specify the details for the log source and then click OK.
+   What is exactly behind ?runtime Trace? and ?runtime messages?,
+   what is
+   the ?TAG? for and why should I choose a facility from the about
+   25
+   standard ones and a severity? Where are the used?
+   (With enough try and error it is possible to understand how it
+   works.
+   But this should be documented instead)
+   The documentation could have a bit more 'meat' to it.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Incomplete documentation for log relevant configuration
+   parameters
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for this problem will be avaialble from version 9.0.4.0 of
+   the appliance.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ00987
+   
+   
+ * REPORTED COMPONENT NAME
+   SAM WEB FIRMWAR
+   
+   
+ * REPORTED COMPONENT ID
+   5724C87SW
+   
+   
+ * REPORTED RELEASE
+   902
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-25
+   
+   
+ * CLOSED DATE
+   2017-10-26
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,26 @@
+Title: IBM AIX Sensor failure copying fileinfo script - United States
+
+Text:
+"-t -v" techtia aix SSHSCP.remoteConnect whinham 5724n5500 TECHNOTE (FAQ)
+
+QUESTION
+ Why does the scp fail on some AIX targets? 
+
+CAUSE
+Errors in AIX Sensor log are: 
+CTJTP0317E An error occurs when copying the /opt/IBM/cmdb/dist/bin/fileinfo.sh file to destination : 10.1.1.2:coll/bin/fileinfo.myhost.sh.
+
+CTJTP1127E The copy command fails for the following target: java.io.EOFException: SSHSCP1: premature EOF.
+
+Caused by: com.collation.platform.session.SessionClientException: CTJTP1127E The copy command fails for the following target: java.io.IOException: SSHSCP.remoteConnect, failed to run: scp -t -v coll/bin/fileinfo.myhost.sh
+
+
+ANSWER
+This can occur if the target is running a pre-5.1.1 version of Techtia SSH which does not support "-t -v" 
+
+The solution is to upgrade to Techtia 5.1.1 or later or use a supported version of openssh.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TADDM

@@ -1,0 +1,138 @@
+Title: IBM PM69581: 403 AUTHORIZATION ERROR MAY OCCUR FOR LDAP REGISTRY USER WHEN ON LY ITS GROUP IS AUTHORIZED. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.0.1: WebSphere Application Server V8.5 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24033606]
+8.5.0.2: WebSphere Application Server V8.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24034672]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The error message CWWKS9104A may appear in the log, and a 403
+   authorization error may be displayed by the application when an
+   LDAP registry user attempts to access a protected resource, and
+   only the user's group is authorized.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty Profile using LDAP           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Unable to access a protected resource   *
+   *                      where user is a member of an            *
+   *                      authorized group.                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Users who are part of a group that is authorized to access a
+   protected resource cannot access that resource unless the user
+   itself is authorized to the role.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code to cache the LDAP user's group information was
+   corrected.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.0.1. Please refer to the Recommended Updates page
+   for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM69581
+   
+   
+ * REPORTED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0814
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-25
+   
+   
+ * CLOSED DATE
+   2012-09-19
+   
+   
+ * LAST MODIFIED DATE
+   2012-09-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * FIXED COMPONENT ID
+   5724J0814
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

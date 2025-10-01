@@ -1,0 +1,156 @@
+Title: IBM PK76203: NullPointerException in BundleLoader when Application Client lau nches a multithreaded application - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Application Developer for WebSphere Software, Version 7.5.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022010]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When launching an Application Client configuration from  Rationa
+   l Application Developer or Rational Software Architect for WebSp
+   here 7 or 7.5, targeting WebSphere Application Server v. 6.1 or
+   7, you may get a NullPointerException in an OSGI BundleLoader me
+   thod, even if the same Application Client can be launched succes
+   fully using the launchClient.bat batch file provided by WebSpher
+   e Application Server. This only occurs when the Application Clie
+   nt launches a multithreaded application, and typically happens i
+   f you are invoking a framework such as JUnit or Swing.
+    You see errors like the following in the Console:
+   
+   WSCL0014I: Invoking the Application Client class com.ibm.support
+   .Main
+   java.lang.NullPointerException
+    at org.eclipse.osgi.framework.internal.core.BundleLoader.findDy
+   namicSource(BundleLoader.java:874)
+    at org.eclipse.osgi.framework.internal.core.BundleLoader.findCl
+   ass(BundleLoader.java:391)
+    at org.eclipse.osgi.framework.internal.core.BundleLoader.findCl
+   ass(BundleLoader.java:347)
+    at org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader.loa
+   dClass(DefaultClassLoader.java:83)
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:623)
+    at com.ibm.ws.bootstrap.ExtClassLoader.loadClass(ExtClassLoader
+   .java:87)
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:597)
+    at com.ibm.support.Main.run(Main.java:18)
+   
+   Workarounds:
+   
+   A. Make the main thread wait for termination of all other user t
+   hreads.
+   B. Launch the Application Client using launchClient.bat, provide
+   d that you have already upgraded WebSphere Application Server v6
+   .1 to version 6.1.0.9 or higher.
+   C. Use the VM Argument-Dosgi.noShutdown=true in the Application
+   Client launch configuration, Arguments tab and make sure that yo
+   ur application invokes System.exit.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  A multi-threaded application client fails to run
+   successfully within Rational Application Developer.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for WebSphere Application Server APAR PK77677 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK77677] has
+   been integrated into the Application Client launcher for
+   Rational Application Developer v7.5.2 to correct this error.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK76203
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-11-21
+   
+   
+ * CLOSED DATE
+   2009-04-02
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSN
+   UP

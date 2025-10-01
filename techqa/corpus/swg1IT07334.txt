@@ -1,0 +1,131 @@
+Title: IBM IT07334: JCC DRIVER THROWS AN EXCEPTION: UNSUPPORTED CCSID, ENCODING, OR LOCALE: "CP1047". ERRORCODE=-4220, SQLSTATE=22021 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  JCC driver throws an exception: Unsupported ccsid, encoding, or
+   locale: "Cp1047". ERRORCODE=-4220, SQLSTATE=22021
+   That happens when querying data with CCSID 1047.
+   The same doesn't happen with JCC driver 3.50.152 (which comes
+   with DB2 9.5 GA)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of IBM Data Server Driver for JDBC and SQLJ        *
+   * shipped with DB2 10.1 releases earlier than DB2 10.1 Fixpack *
+   * 6                                                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Refer error description                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 10.1 Fixpack 6                                *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Upgrade to DB2 10.1 Fixpack 6
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT07334
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 DATA SRVR D
+   
+   
+ * REPORTED COMPONENT ID
+   DB2DSDRVR
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-02-27
+   
+   
+ * CLOSED DATE
+   2017-01-06
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 DATA SRVR D
+   
+   
+ * FIXED COMPONENT ID
+   DB2DSDRVR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY
+   UP

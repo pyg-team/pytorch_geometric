@@ -1,0 +1,183 @@
+Title: IBM IT06775: WEBSPHERE MQ JAVA/JMS CLIENT CIPHERSUITE TO CIPERSPEC MAPPING MAY HAVE MULTIPLE CHOICES - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  To configure a WebSphere MQ classes for Java/JMS application to
+   connect to a queue manager over a secure socket, the application
+   selects a specific CipherSuite to use.
+   
+   However the specific CipherSuites which was selected maps to
+   multiple CipherSpecs. The WebSphere MQ classes for Java/JMS API
+   provides no mechanism by which the specific CipherSpec which is
+   negotiated between the application and queue manager can be
+   chosen.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This affect users of WebSphere MQ classes for Java/JMS, at
+   versions 7.0.1, 7.1 and 7.5 trying to use the following
+   CipherSuite -> CipherSpec mappings:
+   
+   CipherSuite CipherSpec
+   ----------- ----------
+   SSL_RSA_WITH_3DES_EDE_CBC_SHA TLS_RSA_WITH_3DES_EDE_CBC_SHA
+   SSL_RSA_WITH_DES_CBC_SHA TLS_RSA_WITH_DES_CBC_SHA
+   SSL_RSA_WITH_RC4_128_SHA TLS_RSA_WITH_RC4_128_SHA256
+   
+   when the JVM is not operating in FIPS mode.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The CipherSuites in the list above can each be used to map with
+   2 different queue manager CipherSpecs - one which utilises the
+   SSLv3 protocol, and one the TLS protocol.
+   
+   The WebSphere MQ Classes for Java/JMS configuration only
+   permitted the mapping to the CipherSpec which utilised the TLS
+   mapping if the JVM FIPS mode was enabled, despite this not being
+   a prerequisite for these ciphers.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ classes for Java/JMS have been updated, such
+   that the TLS usage mapping for the above
+   CipherSuites/CipherSpecs can now be used if the JVM property:
+   
+       com.ibm.mq.cfg.preferTLS
+   
+   is set to true.
+   
+   
+   For example, to set this property for the application
+   "MyApplication" started from the command line, you would use the
+   following syntax:
+   
+   java -Dcom.ibm.mq.cfg.preferTLS=true MyApplication
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.0       7.0.1.13
+   v7.1       7.1.0.7
+   v7.5       7.5.0.5
+   v8.0       8.0.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT06775
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-27
+   
+   
+ * CLOSED DATE
+   2015-04-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

@@ -1,0 +1,106 @@
+Title: IBM Download IBM Content Navigator Version 2.0.3 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and install the IBM Content Navigator Version 2.0.3 components by using Passport Advantage Online. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+IBM Content Navigator is a web client that provides users with a web interface for working with content from multiple content servers. It helps companies provide managed access to large volumes of electronic data. IBM Content Navigator enables users to search for and work with documents that are stored in content servers that are located around the world from a web browser. IBM Content Navigator works with the following desktop clients:
+
+
+ * IBM Content Navigator for Microsoft Office - an optional component of IBM Content Navigator that enables users to access content from within Microsoft Office applications. 
+ * IBM Content Navigator Sync Client - an optional component of IBM Content Navigator that enables users to sync content between their workstation and the web client. (Available only on FileNet P8 systems.)
+
+
+In addition, IBM Content Navigator Version 2.0.3 also distributes Microsoft SharePoint Web Parts for the Browse, Search, and Work features. The Web Parts enable users to access documents stored in an IBM FileNet P8 repository from Microsoft SharePoint. 
+
+The IBM Content Navigator software package also includes the following applications: 
+ * IBM CMIS for Content Manager 
+ * IBM CMIS for Content Manager OnDemand 
+ * IBM CMIS for FileNet Content Manager 
+ * IBM FileNet Collaboration Services
+
+
+SPACE REQUIREMENTS
+On the application server, IBM Content Navigator will require a minimum of:
+
+
+ * Disk space:  * For a standalone configuration: 4 GB on the drive on which you plan to install IBM Content Navigator. 
+    * For a cluster configuration: 6 GB on the drive on which you plan to install IBM Content Navigator.
+   
+   
+ * Temp space: The self-extractor checks for free disk space that is three times the size of the installer where the temp directory is located. For example, if the installer is 10MB, and the temp directory is set to C:\temp, the installers will look for 30MB of free space on the C: drive. 
+ * JVM Memory: 1 GB
+
+
+DOWNLOADING THE PRODUCT
+To download IBM Content Navigator or its components: 
+
+ 1. From a browser, navigate to the Find Downloads and Media [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] page on the IBM Passport Advantage Online Web site. You must log on to continue. For more information about downloading software from the Passport Advantage Online Web site, see http://www.ibm.com/support/docview.wss?uid=swg21622147 [http://www.ibm.com/support/docview.wss?uid=swg21622147]. 
+ 2. Select the Find by part number search option under Download finder options. 
+ 3. Search for the part number of the image that you want to download. See the list of part numbers for more information. 
+ 4. Unpack the part into a single, temporary directory on your system. 
+ 5. Follow the instructions in Planning, Installing, and Configuring IBM Content Navigator [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.installingeuc.doc/eucao000.htm] to install the product. 
+    
+
+
+Download the appropriate driver for your environment. 
+
+IBM Content Navigator (including IBM CMIS and IBM FileNet Collaboration Services):  * AIX: CN0PSML 
+ * Linux: CN0PTML 
+ * Linux for System z: CN0PUML 
+ * Windows: CN0PVML
+
+
+Optional components:  * IBM Content Navigator for Microsoft Office (Windows only): CN0PWML 
+ * IBM Content Navigator for Microsoft SharePoint (Windows only): CN0PXML 
+ * IBM Content Navigator Sync (Windows only): CN0PYML 
+ * IBM Content Navigator includes a limited license for IBM Content Analytics with Enterprise Search:  * AIX: CIYP0ML 
+    * Linux: CIYN9ML 
+    * Linux for System z: CIYP1ML 
+    * Windows: CIYN6ML
+   
+   
+ * IBM Worklight Consumer Edition:  * IBM Worklight Consumer Edition V6.2 zip of Installation Manager Repository for IBM Worklight Server (Multiplatforms, English): CIYM6ML 
+    * IBM Worklight Consumer Edition V6.2 zip of Eclipse Update for IBM Worklight Studio (Multiplatforms, English): CIYM7ML 
+    * IBM Worklight Consumer Edition V6.2 zip of Eclipse Update Site for Mobile Test Workbench Worklight (Multiplatforms, English): CIYM8EN 
+    * IBM Worklight Consumer Edition V6.2 zip of Command Line Interface for IBM Worklight Developers (Multiplatforms, English): CIZ7FEN 
+    * IBM Mobile Application Platform Pattern V6.2 zip of Pure Systems Pattern for IBM Worklight Server (Multiplatforms, English): CIYN0EN
+   
+   
+ * IBM QuickFile Version 1.1 Vmware English: CIL7MEN 
+   
+
+PREREQUISITES
+To install IBM Content Navigator 2.0.3, you must install the required software on the server where you plan to install IBM Content Navigator.
+
+
+URL LANGUAGE SIZE(Bytes) Hardware and software requirements - AIX [http://www.ibm.com/support/docview.wss?uid=swg27042879] English 10000 Hardware and software requirements - Linux [http://www.ibm.com/support/docview.wss?uid=swg27042879] English 10000 Hardware and software requirements - Linux on System z [http://www.ibm.com/support/docview.wss?uid=swg27042879] English 10000 Hardware and software requirements - Windows [http://www.ibm.com/support/docview.wss?uid=swg27042879] English 10000 
+INSTALLATION INSTRUCTIONS
+You can find instructions for installing IBM Content Navigator in IBM Knowledge Center: 
+
+
+URL LANGUAGE SIZE(Bytes) Installing IBM Content Navigator [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.installingeuc.doc/eucao000.htm] English 10000 
+DOWNLOAD PACKAGE
+ 
+
+Download Release Date Language Size Format IBM Passport Advantage Online [http://www-01.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] September 2014 English 10000 HTTP PROBLEMS SOLVED
+For a list of the APARs that were fixed in IBM Content Navigator, Version 2.0.3, see Fix list for IBM Content Navigator, Version 2.0.3 [http://www.ibm.com/support/docview.wss?uid=swg27039667].
+
+
+
+KNOWN SIDE EFFECTS
+For a list of the known problems that are associated with IBM Content Navigator, Version 2.0.3 see IBM Content Navigator, Version 2.0.3 known problems, issues, and limitations [http://www.ibm.com/support/docview.wss?uid=swg27042459].
+
+
+
+CHANGE HISTORY
+ 
+
+History Date Change Release September 2014 Created for IBM Content Navigator 2.0.3 
+ [/support/docview.wss?uid=swg24038160&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24038160&aid=2]Problems (APARS) fixed
+IO18192, IO18403, IO18624, IO18710, IO18948, IO19036, IO19210, IO19278 , IO19287, IO19322, IO19424, IO19431, IO19448, IO19470, IO19499, IO19500, IO19510, IO19516, IO19527, IO19534, IO19543, IO19605, IO19606, IO19615, IO19619, IO19620, IO19643, IO19655, IO19662, IO19667, IO19676, IO19676, IO19680, IO19685, IO19691, IO19697, IO19706, IO19783, IO19793, IO19803, IO19827, IO19830, IO19843, IO19854, IO19855, IO19868, IO19869, IO19881, IO19902, IO19912, IO19929, IO19933, IO19933, IO19953, IO19960, IO19973, IO19974, IO19976, IO19989, IO19999, IO20025, IO20030, IO20037, IO20039, IO20096, IO20110, IO20123, IO20136, IO20150, IO20166, IO20169, IO20171, IO20178, IO20181, IO20188, IO20194, IO20218, IO20225, IO20290, IO20296, IO20299, IO20300, IO20306, IO20307, IO20342, IO20397, IO20403, IO20414, IO20426, IO20437, IO20438, IO20446, IO20448, IO20450, IO20453, IO20461, IO20474, IO20477, IO20484, IO20511, IO20517, IO20521, IO20536, IO20541, IO20591, IO20599, IO20603, IO20606, IO20610, IO20623, IO20634, IO20649, IO20657, IO20661, IO20670, IO20702, IO20758, IO20764, IO20771, IO20796, IO20797, IO20814, IO20816, IO20824, IO20826, IO20843, IO20846, IO20860, IO20868, IO20872, IO20876, IO20878, IO20882, IO20884, IO20888, IO20891, IO20897, IO20901, IO20909, IO20913, IO20914, IO20923, IO20928, IO20936, IO20955, IO20964, IO20968, IO20978, IO20983, IO20990, IO20996, IO20998, IO20999, IO21022, IO21025, IO21049, IO21050, IO21077, IO21086, IO21093, IO21104, IO21137, IO21154, IO21211, IO21228, IO21229, IO21230, IO21242, IO21243, IO21244, IO21249, IO21287, IO21291, IO21297, IO21301, IO21303, IO21316, IO21331, IO21332, IO21338, IO21348, IO21353, IO21391, IO21423, IO21425, IO21426, IO21433, IO21452, IO21474, IO21486, IO21487, IO21499, IO21529, IO21533, IO21551, IO21578, IO21633, IO21643, IO21646, IO21668, IO21686, IO21729, IO21781, IO21789, IO21859 , IO21867, IO21870, IO21874, IO21948, IT01220, PJ41544, PJ41826

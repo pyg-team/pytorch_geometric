@@ -1,0 +1,40 @@
+Title: IBM Instructions for installing IBM InfoSphere Information Server 11.7.0.0. Service Pack 1 - United States
+
+Text:
+ FIX README
+
+ABSTRACT
+ This readme document contains guidance for the installation of 11.7.0.0 Service Pack 1 upgrade package available on Fix Central. 
+
+CONTENT
+The steps below are PRE-REQUISITES and must be installed in the order presented:
+
+If you have not already done so install IBM InfoSphere Information Server 11.7.0.0.
+
+For customers performing a full suite installation found on Passport Advantage, the download document can be found here:
+AIX http://www.ibm.com/support/docview.wss?uid=swg24044347 [http://www.ibm.com/support/docview.wss?uid=swg24044347]
+Linux https://www.ibm.com/support/docview.wss?uid=swg24044366 [https://www.ibm.com/support/docview.wss?uid=swg24044366]
+Windows https://www.ibm.com/support/docview.wss?uid=swg24044353 [https://www.ibm.com/support/docview.wss?uid=swg24044353] 
+
+Service Pack 1 is comprised of separate files for each platform supported by IBM InfoSphere Information Server 11.7.0.0.
+They are as follows:
+servicepack_11.7_SP1_aix64_11700.tar.gz
+servicepack_11.7_SP1_linux64_11700.tar.gz
+servicepack_11.7_SP1_zlinux_11700.tar.gz
+servicepack_11.7_SP1_win_11700.zip
+
+Each file above contains the following: 
+
+ * A service pack installation in the form of an ISPKG pertaining to the supported platform noted in the tar file name. 
+ * README.txt found in every tar file which contains a link to this tech note. 
+ * A separate patch file (patch_JR58900_UG_11700.zip) to fix APAR JR58900 found in every tar file.
+
+
+The ISPKG can be applied using the guidance on how to install fix packs found here: 
+http://www-01.ibm.com/support/docview.wss?uid=swg27050613 [http://www-01.ibm.com/support/docview.wss?uid=swg27050613] 
+
+The patch file (patch_JR58900_UG_11700.zip) should be moved to the Enterprise Search server and unzipped. The zip file contains a Readme.txt with specific instructions on how to apply patch_JR58900_UG_11700. 
+
+
+For a list of issues addressed in this service pack see: 
+http://www.ibm.com/support/docview.wss?uid=swg22013265 [http://www.ibm.com/support/docview.wss?uid=swg22013265]

@@ -1,0 +1,31 @@
+Title: IBM CICS PA Export to DB2 table of statistic HDB fails with S04E - United States
+
+Text:
+5655U8700 R310 5655-U87 5655U87 FMID H24D310 J24D31E J24D31C J24D31K 5655U8701 5724B5601 5724B5604 R950 R320 H24D320 J24D32E J24D32C J24D32K R950 5655Y2300 5655Y2301 R510 R51C R51E R51K R51S 5655-Y23 5655Y23 H24D510 J24D51E J24D51K J24D51C J24D51S cpsmpddb TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to export a statistic Historical Databse (HDB) created with CICS Transaction Server for z/OS (CICS TS) V3.1 data to a DB2 table created with CICS Performance Analyzer for z/OS (CICS PA) V3.2 results in a job ABEND=S04E U0000 REASON=00E40323. 
+
+SYMPTOM
+DSNU335I INPUT FIELD 'CICS_BELOW_INUSE' NOT ENTIRELY WITHIN INPUT RECORD
+DSNU302I (RE)LOAD PHASE STATISTICS - NUMBER OF INPUT RECORDS PROCESSED=24
+DSNU017I UTILITY DATA BASE SERVICES MEMORY EXECUTION ABENDED, REASON=X'00E40323'
+ABENDS04E [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/iea2h7b0/2.69] ABEND04E
+
+
+CAUSE
+DB2 tables created by CICS PA 3.2 are for the version of CICS Transaction Server current at the time. In this case CICS TS 4.1 was the most current version available.
+
+Your tables might have been created some time ago, possibly even before you bought CICS PA 3.2, and are now being reused. The DB2 tables created by CICS PA 3.2 are for the version of CICS TS current at the time; in this case CICS TS 4.1.
+
+RESOLVING THE PROBLEM
+To create DB2 tables with correct attributes for CICS TS 3.1 statistic HDB you would need to modify the table create JCL before you can load CICS TS 3.1 data into them.
+
+One suggestion is that you remove the fields that are not in the HDB table and adjust the offset as well. Or you can use CICS PA 1.4 (for matching CICS TS 3.1 data) to generate the Load data JCL.
+
+CICS PA is backward compatible, but not for creating DB2 DDL or Load data JCL. CICS PA is working correctly, but development is aware of this issue.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICSPA CICS PA

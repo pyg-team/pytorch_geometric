@@ -1,0 +1,191 @@
+Title: IBM JR41989: HIGH CPU USAGE AT RUNTIME ON A CLUSTERED ENVIRONMENT - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 7.5.1 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24033036]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Description&#65496;
+   The node agents make multiple calls to the Dmgr to poll the BLA
+   status causing excessive CPU usage. The fix is to make those
+   calls locals instead of polling the dmgr.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix&#65496;
+   n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users Business Process Manager release  *
+   *                  7.5.                                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The users might notice the CPU usage    *
+   *                      on deployment manager spikes up.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The Proces Center console finds the current status of each
+   snapshot deployed in order to show available actions. These
+   status queries were made to deployment manager and hence the
+   CPU usage spiked up. The server logs may show warning about
+   hung threads.
+   ThreadMonitor W   WSVR0605W: Thread "ORB.thread.pool : 22"
+   (00000686) has been active for 661185 milliseconds and may be
+   hung.  There is/are 3 thread(s) in total in the server that
+   may be hung.
+   at java.lang.Object.wait(Native Method)
+   at java.lang.Object.wait(Object.java:167)
+   at
+   com.ibm.ws.management.async.client.ADTSemaphore.waitForOpEvent(A
+   DTSemaphore.java:100)
+   at
+   com.ibm.websphere.management.async.client.AsyncCommandClient.pro
+   cessCommandParameters(AsyncCommandClient.java:179)
+   at
+   com.ibm.bpm.fds.core.deploy.CmdExecutor$2.run(CmdExecutor.java:2
+   81)
+   at
+   com.ibm.bpm.fds.core.deploy.CmdExecutor$2.run(CmdExecutor.java:2
+   75)
+   at
+   java.security.AccessController.doPrivileged(AccessController.jav
+   a:251)
+   at
+   com.ibm.bpm.fds.core.deploy.CmdExecutor.execute(CmdExecutor.java
+   :235)
+   at
+   com.ibm.bpm.fds.core.deploy.DeploymentHelper.getStatus(Deploymen
+   tHelper.java:321)
+   at
+   com.ibm.bpm.fds.core.deploy.BLADeploymentManager.verifyStarted(B
+   LADeploymentManager.java:847)
+   at
+   com.ibm.bpm.pal.statemachine.StateMachine.getStateForAdvancedCon
+   tainer(StateMachine.java:376)
+   at
+   com.ibm.bpm.pal.statemachine.StateMachine.getState(StateMachine.
+   java:302)
+   at
+   com.ibm.bpm.pal.action.BaseActionsImpl.getStateAndPossibleAction
+   s(BaseActionsImpl.java:85)
+   at
+   com.ibm.bpm.pal.action.TipActionsImpl.getStateAndPossibleActions
+   (TipActionsImpl.java:47)
+   at
+   com.lombardisoftware.server.ejb.palservices.PALServicesCore.getS
+   tate(PALServicesCore.java:52)
+   at sun.reflect.GeneratedMethodAccessor285.invoke(Unknown
+   Source)
+   at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:37)
+   at java.lang.reflect.Method.invoke(Method.java:611)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The status of the snapshots deployed is found from local
+   server instead of deployment manager.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR41989
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-20
+   
+   
+ * CLOSED DATE
+   2012-04-09
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

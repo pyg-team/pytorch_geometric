@@ -1,0 +1,15 @@
+Title: IBM Why do I get error when I try to restore v8.2 backup the second time on v9? - United States
+
+Text:
+Restore db from v8.2 has already run successfully. Can not run it again. guardium TECHNOTE (FAQ)
+
+QUESTION
+ Why do I get error when I try to restore v8.2 backup the second time on v9?
+
+Example:
+tilizazo.lele.com> restore db-from-prev-version 
+Restore db from v8.2 has already run successfully. Can not run it again. 
+Err 
+
+ANSWER
+It's working as designed. We only allow restore of v8.2 backup one time per v9 appliance.

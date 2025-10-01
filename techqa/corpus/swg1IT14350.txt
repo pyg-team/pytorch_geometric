@@ -1,0 +1,138 @@
+Title: IBM IT14350: LARGE NUMBER OF INITITAL CONNECTIONS ON DATAPOWER MQ-QM OBJECT CAUSES MQRC 2195 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix packs for DataPower Gateway version 7.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039783]
+Fix packs for DataPower Gateway version 7.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041543]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With a large initial-connection value to DataPower mq-qm
+   object, MQ reason code 2195 would be seen in the system log
+   when mq-qm object is transitioning to the up state. Users might
+   end up in the state of high CPU usage when mq-qm keeps shutting
+   down the connection pool for failed connections and
+   establishing new ones.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Configure DataPower mq-qm object initial-connections setting to
+   a lower value, new connections will be established whenever
+   needed.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When creating a large number of MQ connections, mq-qm may report
+   MQRC 2195.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is available in 7.2.0.6 and 7.5.0.0
+   
+   For a list of the latest fix packs available, please see:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21237631 [http://www-01.ibm.com/support/docview.wss?uid=swg21237631]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT14350
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-16
+   
+   
+ * CLOSED DATE
+   2016-05-13
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP
+   
+   
+ * R750 PSY
+   UP

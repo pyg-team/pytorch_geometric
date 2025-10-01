@@ -1,0 +1,64 @@
+Title: IBM Detailed System Requirements for IBM InfoSphere Optim Data Privacy Enterprise Edition, IBM InfoSphere Optim Data Privacy Work Group Edition, IBM InfoSphere Optim Data Privacy for Hadoop, and IBM InfoSphere Optim Data Privacy for Data Warehouse Appliances - United States
+
+Text:
+ DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ The IBM® InfoSphere® Optim™ Data Privacy Enterprise Edition, IBM InfoSphere Optim Data Privacy Work Group Edition, IBM InfoSphere Optim Data Privacy for Hadoop, and IBM InfoSphere Optim Data Privacy for Data Warehousing consist of a number of components. The system requirements for the components are compiled in this document. 
+
+CONTENT
+
+
+In general, all data privacy products support these data sources [http://www.ibm.com/support/docview.wss?&uid=swg27041700#sources]. Use the following links to view the detailed system requirements for each component and product. All data privacy products include the following components:
+
+ Workstation and server [http://www.ibm.com/support/docview.wss?&uid=swg27043068]
+
+ Designer [http://www.ibm.com/support/docview.wss?&uid=swg27043069]
+
+ Web applications [http://www.ibm.com/support/docview.wss?&uid=swg27043070]
+
+Use the following links to view additional requirements by product:
+
+ * IBM InfoSphere Optim Data Privacy Enterprise Edition
+ * IBM InfoSphere Optim Data Privacy Workgroup Edition
+ * IBM InfoSphere Optim Data Privacy for Data Warehouse Appliances
+ * IBM InfoSphere Optim Data Privacy for Hadoop
+
+IBM INFOSPHERE OPTIM DATA PRIVACY ENTERPRISE EDITION
+ * IBM InfoSphere Federation Server v10.5 [http://www.ibm.com/support/docview.wss?&uid=swg27040515]
+ *  Guardium Data Redaction v2.5.1 [http://www.ibm.com/support/docview.wss?uid=swg27023386]
+ * IBM Infosphere Discovery v4.6.2 [http://www.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html]
+ *  IBM InfoSphere Information Governance Catalog v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27042343]
+ *  Optim Masking on Demand v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27043142]
+ * IBM InfoSphere Optim Data Privacy Enterprise Edition for Oracle Applications:
+ *  IBM InfoSphere Optim Test Data Management Solution for JD Edwards v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27041911] IBM InfoSphere Optim Test Data Management Solution for Oracle E-Business v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27041901] IBM InfoSphere Optim Test Data Management Solution for PeopleSoft Enterprise v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27041962] IBM InfoSphere Optim Test Data Management Solution for Siebel CRM 11.3 [http://www.ibm.com/support/docview.wss?uid=swg27041753] 
+ * IBM InfoSphere Optim Data Privacy Enterprise Edition Guardium Data Usage Analyzer:
+ *  InfoSphere Guardium Collector Software Appliance 9.1 [http://www.ibm.com/support/docview.wss?&uid=swg27039049] InfoSphere Guardium Standard Activity Monitor for Databases 9.1 [http://www.ibm.com/support/docview.wss?&uid=swg27039049] 
+
+IBM INFOSPHERE OPTIM DATA PRIVACY WORKGROUP EDITION
+ * IBM InfoSphere Federation Server v10.5 [http://www.ibm.com/support/docview.wss?&uid=swg27040515]
+ *  Guardium Data Redaction v2.5.1 [http://www.ibm.com/support/docview.wss?uid=swg27023386]
+ *  Optim Masking on Demand v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27043142]
+ * IBM InfoSphere Optim Data Privacy Workgroup Edition for Oracle Applications:  *  IBM InfoSphere Optim Test Data Management Solution for JD Edwards v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27041911]
+    *  IBM InfoSphere Optim Test Data Management Solution for Oracle E-Business v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27041901]
+    *  IBM InfoSphere Optim Test Data Management Solution for PeopleSoft Enterprise v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27041962]
+    *  IBM InfoSphere Optim Test Data Management Solution for Siebel CRM 11.3 [http://www.ibm.com/support/docview.wss?uid=swg27041753]
+   
+   
+
+IBM INFOSPHERE OPTIM DATA PRIVACY FOR DATA WAREHOUSE APPLIANCES
+ * IBM InfoSphere Federation Server v10.5 [http://www.ibm.com/support/docview.wss?&uid=swg27040515]
+ *  Guardium Data Redaction v2.5.1 [http://www.ibm.com/support/docview.wss?uid=swg27023386]
+ * IBM Infosphere Discovery v4.6.2 [http://www.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html]
+ *  IBM InfoSphere Information Governance Catalog v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27042343]
+ *  Optim Masking on Demand v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27043142]
+ *  InfoSphere Guardium Standard Activity Monitor for Hadoop [http://www.ibm.com/support/docview.wss?uid=swg27039049]
+ * InfoSphere Guardium Collector Software Appliance 9.1 [http://www.ibm.com/support/docview.wss?&uid=swg27039049]
+
+IBM INFOSPHERE OPTIM DATA PRIVACY FOR HADOOP
+ * IBM InfoSphere Federation Server v10.5 [http://www.ibm.com/support/docview.wss?&uid=swg27040515]
+ *  Guardium Data Redaction v2.5.1 [http://www.ibm.com/support/docview.wss?uid=swg27023386]
+ * IBM Infosphere Discovery v4.6.2 [http://www.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html]
+ *  IBM InfoSphere Information Governance Catalog v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27042343]
+ *  Optim Masking on Demand v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27043142]
+ *  InfoSphere Guardium Standard Activity Monitor for Hadoop [http://www.ibm.com/support/docview.wss?uid=swg27039049]

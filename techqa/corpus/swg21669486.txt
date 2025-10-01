@@ -1,0 +1,52 @@
+Title: IBM Updated resources are not synchronized between the cluster nodes in Sterling B2B Integrator - United States
+
+Text:
+cluster; nodes; resources; synchronize; HOST_ADDR; HOST_NAME TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Business Processes (BPs) and Maps are not updated when these are imported in clustered environment 
+
+SYMPTOM
+A scenario in which this problem will occur is as follows: 
+
+While exporting business process from staging to production environment, say a two node cluster, it would appear that the process has been updated, and is set as default version and running the BP is successful. The secondary node will have the right default version as well. When the process runs on primary node it will execute the right version but on secondary it is seen to execute older version. The same behavior can occur with maps. 
+
+
+CAUSE
+Refresh cache among the cluster nodes is not happening. Each node in the cluster requests the other node to refresh its cache when an update is made. 
+
+HOST_ADDR and HOST_NAME parameters referenced in the jgroups_cluster.properties.in
+file needs to be updated in the sandbox.cfg file with the correct values. If the above parameters are not set in the sandbox.cfg file, then Sterling B2B Integrator (SBI) might take incorrect or old values if any, and cause communication problems between the nodes
+
+
+
+RESOLVING THE PROBLEM
+To resolve the issue, first verify sandbox.cfg file for the HOST_ADDR and HOST_NAME values 
+
+If these parameters does not exist, then follow the below steps:
+
+1. Shutdown both nodes of the cluster.
+
+2. Update below variables in <SBI_installdir>/properties/sandbox.cfg file on each of the nodes :
+
+
+ * HOST_NAME=<ip_address> 
+ * 
+ * HOST_ADDR=<ip_address> 
+
+
+3. Execute <SBI_installdir> /bin/setupfiles.sh on both nodes 
+
+4. Further, execute the following commands 
+
+On first node:  * <SBI_installdir>/bin/run.sh 
+
+
+On second node, after first node completes: 
+ * <SBI_installdir>
+ * 
+
+
+Once both nodes are up and running, check the status from the console.Users can then try running the updated BP and check if the second node picks up the updated version. 
+
+Note: It is recommended to make a back up the sandbox.cfg file before making any changes

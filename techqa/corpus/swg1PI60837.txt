@@ -1,0 +1,237 @@
+Title: IBM PI60837: A StackOverflowError can occur when com.ibm.ws.el.reuseEvaluatio nContext is set to true - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+16.0.0.2: WebSphere Application Server Liberty 16.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24042163]
+16.0.0.3: WebSphere Application Server Liberty 16.0.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24042657]
+16.0.0.4: WebSphere Application Server Liberty 16.0.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24042990]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+17.0.0.1: WebSphere Application Server Liberty 17.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043339]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A StackOverflowError will occur when a JSF view containing a
+   composite component is accessed when the JVM custom property
+   'com.ibm.ws.el.reuseEvaluationContext' is set to true. The
+   JVM custom property was added with APAR PM10631 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM10631].
+   
+   PM10631 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM10631] enhances memory performance by reusing the same
+   EvaluationContext on a per-thread basis instead of creating
+   a new EvaluationContext object when evaluating expressions.
+   This could cause issues when JSF composite components are
+   used because the EvaluationContext might try to reference
+   itself.
+   
+   A request made to /<context-root>/test.xhtml should result
+   in a StackOverflowError similar to:
+   ?Caused by: java.lang.StackOverflowError
+   at
+   org.apache.el.lang.EvaluationContext.setPropertyResolved(Eva
+   luationContext.java:85)
+   at
+   org.apache.el.lang.EvaluationContext.setPropertyResolved(Eva
+   luationContext.java:85)
+   at
+   org.apache.el.lang.EvaluationContext.setPropertyResolved(Eva
+   luationContext.java:85)
+   ...
+   at
+   org.apache.el.lang.EvaluationContext.setPropertyResolved(Eva
+   luationContext.java:85)
+   at
+   org.apache.el.parser.AstIdentifier.getValue(AstIdentifier.ja
+   va:70)
+   at org.apache.el.parser.AstValue.getTarget(AstValue.java:97)
+   at org.apache.el.parser.AstValue.getType(AstValue.java:85)
+   at
+   org.apache.el.ValueExpressionImpl.getType(ValueExpressionImp
+   l.java:232)
+   at
+   org.apache.webbeans.el.WrappedValueExpression.getType(Wrappe
+   dValueExpression.java:59)
+   at
+   org.apache.myfaces.view.facelets.el.TagValueExpression.getTy
+   pe(TagValueExpression.java:69)
+   at
+   org.apache.myfaces.el.unified.resolver.CompositeComponentELR
+   esolver.getType(CompositeComponentELResolver.java:100)
+   at
+   javax.el.CompositeELResolver.getType(CompositeELResolver.jav
+   a:119)
+   at
+   org.apache.myfaces.el.unified.resolver.FacesCompositeELResol
+   ver.getType(FacesCompositeELResolver.java:122)
+   at org.apache.el.parser.AstValue.getType(AstValue.java:87)
+   at
+   org.apache.el.ValueExpressionImpl.getType(ValueExpressionImp
+   l.java:232)
+   at
+   org.apache.webbeans.el.WrappedValueExpression.getType(Wrappe
+   dValueExpression.java:59)
+   at
+   org.apache.myfaces.view.facelets.el.TagValueExpression.getTy
+   pe(TagValueExpression.java:69)
+   at
+   org.apache.myfaces.view.facelets.el.LocationValueExpression.
+   getType(LocationValueExpression.java:75)
+   at
+   org.apache.myfaces.shared_impl.renderkit._SharedRendererUtil
+   s.findUIOutputConverter(_SharedRendererUtils.java:77)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty - Expression Language (EL)   *
+   *                  2.2                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A java.lang.StackOverflowError can      *
+   *                      occur when evaluating EL expressions    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When the JVM custom property
+   'com.ibm.ws.el.reuseEvaluationContext' is set to true, it is
+   possible for an org.apache.el.lang.EvaluationContext object to
+   reference itself. This can result in a
+   java.lang.StackOverflowError,
+   
+   A stack trace similar to the following should be seen in the
+   logs:
+   Caused by: java.lang.StackOverflowError
+   at
+   org.apache.el.lang.EvaluationContext.setPropertyResolved(Evaluat
+   ionContext.java:85)
+    at
+   org.apache.el.lang.EvaluationContext.setPropertyResolved(Evaluat
+   ionContext.java:85)
+    at
+   org.apache.el.lang.EvaluationContext.setPropertyResolved(Evaluat
+   ionContext.java:85)
+   ...
+   at
+   org.apache.el.lang.EvaluationContext.setPropertyResolved(Evaluat
+   ionContext.java:85)
+   at
+   org.apache.el.parser.AstIdentifier.getValue(AstIdentifier.java:7
+   0)
+   at org.apache.el.parser.AstValue.getTarget(AstValue.java:97)
+   at org.apache.el.parser.AstValue.getType(AstValue.java:85)
+   at
+   org.apache.el.ValueExpressionImpl.getType(ValueExpressionImpl.ja
+   va:232)
+   at
+   org.apache.webbeans.el.WrappedValueExpression.getType(WrappedVal
+   ueExpression.java:59)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  EL 2.2 was updated to prevent an EvaluationContext object from
+   referencing itself.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 16.0.0.2.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI60837
+   
+   
+ * REPORTED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0814
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-14
+   
+   
+ * CLOSED DATE
+   2016-05-11
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * FIXED COMPONENT ID
+   5724J0814
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

@@ -1,0 +1,34 @@
+Title: IBM Changing the plugin-cfg.xml file dynamically without having to restart the 
+Web server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If the Web server and plug-in are on a UNIX system and you change the log level (for example, change the log level from Error to Trace or from Trace to Error) in the plugin-cfg.xml file, this change is not picked up dynamically. You must restart the Web server to pick up the changes. 
+
+The following errors are in the <Plugin_Home>/logs/http_plugin.log file:
+
+If you restart the Web server, the changes are picked up. 
+
+SYMPTOM
+ERROR: ws_config_parser:handleLogEnd: Failed to open log file 
+'/opt/IBM/WebSphere/Plugin/logs/sunwebserver/http_plugin.log', OS Err:13
+
+
+CAUSE
+When the Web server restarts, the parent process has the root access and it can load the plug-in configuration file. The child process, started with user ID nobody, does not have enough authority to the log file.
+
+RESOLVING THE PROBLEM
+Give permission to the http_plugin.log file; for example: 
+
+# chmod 766 http_plugin.log
+
+Or, give the chown to the same user as a child process of httpd; for example: 
+
+# chown myuser http_plugin.log
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server for z/OS Plug-in z/OS Application Servers Runtimes for Java Technology Java SDK

@@ -1,0 +1,37 @@
+Title: IBM How to make the transfer rate of secure copy (scp) faster - United States
+
+Text:
+scp transfer rate faster arcfour cipher TECHNOTE (FAQ)
+
+QUESTION
+ How to make the transfer rate of secure copy (scp) faster 
+
+ANSWER
+ 
+
+You can select the cipher to use for encrypting the data transfer using secure copy (scp).
+
+The cipher, arcfour, appears to be the option that delivers the fastest transfer rate.
+
+
+examples:
+
+$ scp -c arcfour 200M_testfile nz@au1:/nzscratch
+nz@au1's password: 
+200M_testfile 100% 200MB 11.9MB/s 00:16
+
+$ scp -c aes128-ctr 200M_testfile nz@au1:/nzscratch
+nz@au1's password: 
+200M_testfile 100% 200MB 8.7MB/s 00:23
+
+$ scp -c arcfour256 200M_testfile nz@au1:/nzscratch
+nz@au1's password: 
+200M_testfile 100% 200MB 10.5MB/s 00:19
+
+$ scp -c arcfour128 200M_testfile nz@au1:/nzscratch
+nz@au1's password: 
+200M_testfile 100% 200MB 11.8MB/s 00:17 
+
+$ scp -c blowfish-cbc 200M_testfile nz@au1:/nzscratch
+nz@au1's password: 
+200M_testfile 100% 200MB 11.1MB/s 00:18

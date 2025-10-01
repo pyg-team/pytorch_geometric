@@ -1,0 +1,215 @@
+Title: IBM IZ76659: E-SIGNATURE (E-SIG) AUTHENTICATION INVALID WHEN LDAP IS ENABLED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  E-Signature (E-Sig) authentication invalid when LDAP is enabled
+   
+   1) Log into Maximo on a LDAP enabled system.
+   2) Go to database configuration - Select Action - Manage
+   Admin Mode - Turn on Admin Mode - E-Sig prompt.  Enter the
+   username/password used to login.  Error message appears
+   BMXAA3840E - The electronic signature entered is not valid for
+   the user currently signed in to the application!
+   
+   Property mxe.convertloginid=1.  Loginid values in Maximo are
+   stored in uppercase.  Loginid values in the repository are
+   stored in uppercase and app server is set to ignore case when
+   authenticating.  The user is able to initially log in to Maximo
+   using uppercase (and any case wouild work as well).  The ESig
+   dialog is preloaded with uppercase loginid (which is correct
+   because this is the value from the database), but this is not
+   considered valid.  This is because the ESignature class is not
+   considering the mxe.convertloginid property when comparing the
+   loginid to the principal.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Maximo                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: E-Signature (E-Sig) authentication      *
+   *                      invalid when LDAP is enabled            *
+   *                                                              *
+   *                      1) Log into Maximo on a LDAP enabled    *
+   *                      system.                                 *
+   *                                                              *
+   *                      2) Go to database configuration -       *
+   *                      Select Action - Manage                  *
+   *                                                              *
+   *                      Admin Mode - Turn on Admin Mode - E-Sig *
+   *                      prompt.  Enter the                      *
+   *                                                              *
+   *                      username/password used to login.  Error *
+   *                      message appears                         *
+   *                                                              *
+   *                      BMXAA3840E - The electronic signature   *
+   *                      entered is not valid for                *
+   *                                                              *
+   *                      the user currently signed in to the     *
+   *                      application!                            *
+   *                                                              *
+   *                      Property mxe.convertloginid=1.  Loginid *
+   *                      values in Maximo are                    *
+   *                                                              *
+   *                      stored in uppercase.  Loginid values in *
+   *                      the repository are                      *
+   *                                                              *
+   *                      stored in uppercase and app server is   *
+   *                      set to ignore case when                 *
+   *                                                              *
+   *                      authenticating.  The user is able to    *
+   *                      initially log in to Maximo              *
+   *                                                              *
+   *                      using uppercase (and any case wouild    *
+   *                      work as well).  The ESig                *
+   *                                                              *
+   *                      dialog is preloaded with uppercase      *
+   *                      loginid (which is correct               *
+   *                                                              *
+   *                      because this is the value from the      *
+   *                      database), but this is not              *
+   *                                                              *
+   *                      considered valid.  This is because the  *
+   *                      ESignature class is not                 *
+   *                                                              *
+   *                      considering the mxe.convertloginid      *
+   *                      property when comparing the             *
+   *                                                              *
+   *                      loginid to the principal.               *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   E-SIGNATURE (E-SIG) AUTHENTICATION INVALID WHEN LDAP IS ENABLED
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The verify needed to check if the system property
+   mxe.convertloginid was set to 1 and is it is, uppercase the
+   principal's name when checking if it matched the userid from
+   the eqig dialog (np object).
+   
+   
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | REL 7.1.1.8 - BS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ76659
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO SYS CONF
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46S1
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-28
+   
+   
+ * CLOSED DATE
+   2010-07-26
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO SYS CONF
+   
+   
+ * FIXED COMPONENT ID
+   5724R46S1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

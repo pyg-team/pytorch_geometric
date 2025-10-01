@@ -1,0 +1,46 @@
+Title: IBM ITCAM for J2EE V6.2 TEMA, Fix Pack 4, 6.2.0-TIV-ITCAM_J2EE_TEMA-FP004 - United States
+
+Text:
+J2EE FP4 6.2 TEMA DOWNLOADABLE FILES
+
+ABSTRACT
+ 6.2.0-TIV-ITCAM_J2EE_TEMA-FP004
+
+IBM Tivoli Composite Application Manager (ITCAM) for Web Resources for J2EE V6.2, TEMA Fix Pack 4
+
+Updated 2009/02/04 
+
+DOWNLOAD DESCRIPTION
+This is a cumulative fix pack for IBM Tivoli Composite Application Manager for Web Resources for J2EE V6.2, TEMA.
+
+
+
+Fix pack 4 consists of the following files:
+
+Fix pack file name Platform 6.2.0-TIV-ITCAM_J2EE_TEMA-AIX_Solaris-FP004.tar AIX, Solaris 6.2.0-TIV-ITCAM_J2EE_TEMA-HPUX-FP004.tar HP-UX 6.2.0-TIV-ITCAM_J2EE_TEMA-Linux-FP004.tar Linux 6.2.0-TIV-ITCAM_J2EE_TEMA-Windows-FP004.zip Windows PREREQUISITES
+
+
+URL Description 6.1.0-TIV-ITCAMfJ2EE_MP-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24021857] ITCAM for J2EE V6.1 Data Collector Fix Pack 4 INSTALLATION INSTRUCTIONS
+Based on the platform of your local host computer, download and extract the necessary fix pack files to a temporary location on your computer. 
+
+- On Windows computers, launch the installation wizard by double-clicking the setup.exe file in the \WINDOWS subdirectory in the patch directory that you specified above.
+
+- On Linux and UNIX computers, run the following command from the command line:
+cd patch_dir
+./install.sh
+
+Installation needs to be repeated on each computer that contains the agent, hub TEMS, remote TEMS and TEPS.
+
+From the component list, select only the components that you have previously installed for upgrade.
+
+URL LANGUAGE SIZE(Bytes) 6.2.0-TIV-ITCAM_J2EE_TEMA-FP004.README [ftp://public.dhe.ibm.com/software/tivoli_support/patches/patches_6.2.0/6.2.0-TIV-ITCAM_J2EE_TEMA-FP004/6.2.0-TIV-ITCAM_J2EE_TEMA-FP004.README] English 8059 
+DOWNLOAD PACKAGE
+
+
+CHANGE HISTORY
+
+
+Created/Revised by Date of Creation/Update Summary of Changes SV 2009/02/02 Document Created SV 2009/02/04 Add APARs PK72472,PK73868 to "Problems Fixed" section. Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] AIX_Solaris 2/2/2009 English 505968640 FTP [ftp://public.dhe.ibm.com/software/tivoli_support/patches/patches_6.2.0/6.2.0-TIV-ITCAM_J2EE_TEMA-FP004/6.2.0-TIV-ITCAM_J2EE_TEMA-AIX_Solaris-FP004.tar] DD HP-UX 2/2/2009 English 379064320 FTP [ftp://public.dhe.ibm.com/software/tivoli_support/patches/patches_6.2.0/6.2.0-TIV-ITCAM_J2EE_TEMA-FP004/6.2.0-TIV-ITCAM_J2EE_TEMA-HPUX-FP004.tar] DD Linux 2/2/2009 English 650885120 FTP [ftp://public.dhe.ibm.com/software/tivoli_support/patches/patches_6.2.0/6.2.0-TIV-ITCAM_J2EE_TEMA-FP004/6.2.0-TIV-ITCAM_J2EE_TEMA-Linux-FP004.tar] DD Windows 2/2/2009 English 142604756 FTP [ftp://public.dhe.ibm.com/software/tivoli_support/patches/patches_6.2.0/6.2.0-TIV-ITCAM_J2EE_TEMA-FP004/6.2.0-TIV-ITCAM_J2EE_TEMA-Windows-FP004.zip] DD 
+ [/support/docview.wss?uid=swg24022071&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24022071&aid=2]Problems (APARS) fixed
+IZ08944, PK59561, PK63601, PK64101, PK64104, PK67911, PK72472, PK73868, PK75868, PK77620, 178175, Solx86-64_Port

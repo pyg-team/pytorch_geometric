@@ -1,0 +1,132 @@
+Title: IBM LO39948: SHORTCUT KEY ALT-A DOESN'T ALWAYS WORK IN NOTES 8 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I reproduced it most of the time in 8.0.2 and 8.0.2 FP1
+   When using shortcut keys to navigate mail in Notes,  seeing
+   inconsistent behavior.
+   STEPS:
+   - In Notes mail, use the enter key to open a new message (that
+   hasn't been opened yet).
+   - I was able to reproduce this just by sending a new email to
+   myself.
+   - with message open, hit Alt-A keys.   This should highlight the
+   Actions menu and show the drop down.
+   RESULT:  the word "Actions" in the menu is highlighted but it
+   does not show the drop down list.   Even using the arrow down
+   key will not show the list.  Tried using the mouse at this point
+   and that too will not shot the list.
+   
+   Close the message and reopen with the same actions.   Now Alt A
+   will show the correct drop down choices.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  close and reopen the message.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This problem was resolved as: No Plans to Fix Ever
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem was resolved as: No Plans to Fix Ever
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO39948
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES/DOMINO 7X
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   802
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-04-24
+   
+   
+ * CLOSED DATE
+   2009-05-07
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

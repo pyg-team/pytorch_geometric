@@ -1,0 +1,49 @@
+Title: IBM Fix Pack Install Issues with Tivoli Netcool/Impact v7.1.0 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ 
+A problem has been discovered in Tivoli Netcool/Impact Fix Packs installs, from Fix Pack 6 through to Fix Pack 9. 
+
+The problem is fixed by APAR IV97414 : INSTALL OF FIX PACK 9 FAILS DUE TO TIMING ISSUE WITH INSTALLER SHUTDOWN OF IMPACTSERVER
+
+
+
+SYMPTOM
+The issue is an intermittent timing issue and may or may not occur during the install. If the issue does occur, the Fix Pack install will fail, and the install will roll back. 
+
+The failure happens when the Fix Pack installer is attempting to shutdown either the Impact Back end or Impact UI server. The impact/bin/server stop <server name> command is failing with "error 2: file not found". This can be seen in the log files in the native directory for Installation Manager.
+
+
+CAUSE
+The cause is a double call to impact/bin/server with only a 30 second delay between the calls.
+
+
+
+DIAGNOSING THE PROBLEM
+Check the logs in the native directory of Installation Manager. Look for "error 2: file not found".
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+To resolve the issue APAR IV97414 has been included in 7.1.0-TIV-NCI-FP0009 and the download files for FP9 have been updated. If you are installing FP9, please ensure to get the latest files. See link for downloads: https://www-01.ibm.com/support/docview.wss?uid=swg24043378 [https://www-01.ibm.com/support/docview.wss?uid=swg24043378] 
+
+ 
+
+7.1.0-TIV-NCI-FP0010, due on 29th June 2017, will include IV97414. 
+
+ 
+
+7.1.0-TIV-NCI-FP0006, 7.1.0-TIV-NCI-FP0007 and 7.1.0-TIV-NCI-FP0008 have not been refreshed and do not include the fix. It is not recommended to upgrade to these levels as they are out of date now. 
+
+ 
+
+Besides the fix for IV97414, additional health checks are run by the 7.1.0-TIV-NCI-FP0010 installer. These checks make sure the system network and permissions are correct, before running the install. This is automatically done by 7.1.0-TIV-NCI-FP0010. However, the checks can be run manually before any Tivoli Netcool/Impact Fix Pack, and this is recommended. Health Check Utility Files are available in Fix Central at this location: 
+http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=impact_server_health_check&source=SAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=impact_server_health_check&source=SAR]

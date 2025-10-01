@@ -1,0 +1,206 @@
+Title: IBM PureData for Operational Analytics – Upgrading TSAMP 4.1.0.1 and RSCT 3.2.0.0 - United States
+
+Text:
+ FIX README
+
+ABSTRACT
+ PDOA v1.1 GA and v1.0 FP4 comes with TSAMP 4.1.0.1 and RSCT version 3.2.0.0 (3.2.0.4). This combination may present some TSAMP instability and resources hang 
+
+CONTENT
+ 
+
+Important: 
+
+Upgrade Management and all core domains to RSCT 3.2.0.9 and TSAMP 4.1.0.2 
+
+ 
+
+Download
+
+
+
+Note: TSAMP 4.1.0.2 includes RSCT 3.2.0.9; therefore you can skip downloading RSCT 3.2.0.9. The instructions to download and install RSCT are optional, they are only here in the event you are installing RSCT only. 
+
+ 
+
+TSAMP 4.1.0.2 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * http://www-01.ibm.com/support/docview.wss?uid=swg27039236
+
+
+RSCT 3.2.0.9: 
+
+ * 
+ * 
+ * URL: http://www.ibm.com/support/docview.wss?uid=isg1fileset753774238 [http://www.ibm.com/support/docview.wss?uid=isg1fileset753774238]
+   
+
+
+=> make sure to check the box to include all co and pre-requisites.  
+
+
+INSTALLATION
+
+Note: By default in a PDOA's cluster the management nodes are the nodes with host names ending in "01" and "03". Some times by customer's request this could change.
+
+1- Check HA Configuration Status and take a backup
+
+1.1- Check HA configuration by running as "root" on one of the management nodes and one of the core nodes 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+1.2- Backup the HA policies by running the following command as "root" on one of the management node and one of the core node  * 
+ * 
+
+
+2- Stop All the Warehouse Tools, Performance Monitor and the core instance and all domains (MGT and cores)  * 
+ * 
+ * 
+ * 
+
+
+2.1- Stop the core instance  * 
+ * 
+
+
+2.2- Stop all domains  * 
+ * 
+ * 
+ * 
+
+
+3- Optional: If any of the following iFixes are installed TSAMP iFix4101 or RSCT IV74148 
+
+3.1 List the iFixes installed  * 
+ * 
+
+
+3.2 Remove the iFix from all nodes where it is installed. (If needed)  * 
+ * 
+ * 
+ * 
+
+
+
+4- Install T SAMP 4.1.0.2 
+
+4.1- Uncompress and untar file 4.1.0-TIV-SAMP-AIX-FP0002.tar.Z  * 
+ * full_path_extract_dir
+ * 
+
+
+4.2- Check prerequisites for TSAMP 4.1.0.2  * 
+ * 
+
+
+4.3- If all prerequisites are met, install TSAMP 4.1.0.2  * 
+ * 
+
+
+Note: Step #5 can be skipped as the installation of TSAMP 4.1.0.2 install RSCT 3.2.0.9 
+
+5- (Can be skipped to #6) Install/Upgrade RSCT to 3.2.0.9  * 
+   pkg_files_path
+ * 
+ * 
+ * log_dir_path
+ * 
+
+
+5.1 Install RSCT 3.2.0.9 on all core nodes by executing  * 
+ * 
+
+
+6- Check the installed TSAMP and RSCT version  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+7- Start all core domains  * 
+ * 
+ * 
+ * 
+
+
+
+8- Complete TSAMP and RSCT migration (in each domain). Run the following command on one node in each domain (i.e. on all standbys nodes)  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * list_of_node_per_domain=$list_of_node_per_domain$node, 
+   dsh -n $node date 
+ * 
+ * 
+ * 
+ * list_of_node_per_domain
+ *  
+ * 
+ * 
+
+
+8.1- Complete TSAMP migration  * 
+ * 
+ * 
+ * 
+
+8.2- Complete RSCT migration 
+ * 
+ * 
+ * 
+ * 
+
+9- Recycle all domains (clear all resources after migration)  * 
+ * 
+ *  
+   $ hadomain -mgmt stop 
+   $ hadomain -core stop 
+ * 
+ * 
+ *  
+   $ hadomain -mgmt start 
+   $ hadomain -core start 
+ * 
+ * 
+ *  
+   TSAMP version 
+   
+   $ dsh -n $list_of_node_per_domain 'lssrc -ls IBM.RecoveryRM | grep -i VN'| dshbak 
+   
+   RSCT version 
+   
+   $ hadomain -mgmt status 
+   $ hadomain -core status 
+
+
+10- Start All the Warehouse Tools, Performance Monitor and the core instance and all domains (MGT and cores)  * 
+ * 
+ * 
+ * 
+
+
+10.1- Start the core instance  * 
+ *

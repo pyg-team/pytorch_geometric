@@ -1,0 +1,253 @@
+Title: IBM Instructions for manually updating the GSKit within a WebSphere MQ V7.1 and V7.5 installation - United States
+
+Text:
+ FIX README
+
+ABSTRACT
+ This document describes the manual process necessary to update the GSKit component of WebSphere MQ outside of regular fix pack installations. 
+
+CONTENT
+Updating the GSKit component of WebSphere MQ V7.1 and V7.5 outside of the Fix Pack mechanism is a manual process. 
+
+The command line syntax for the installation procedure is different for each platform. The installation steps need to be performed by a userid on the system which has sufficient authority to modify the WebSphere MQ installation, for example the root user. 
+
+ 
+
+Installation 
+
+ 
+
+The following instructions use the convention that ${MQ_INSTALLATION_PATH} and %MQ_INSTALLATION_PATH% are the root directory location of the WebSphere MQ installation. The default value for this installation path is "/opt/mqm" on Linux, HP-UX and Solaris. It is "/usr/mqm" on AIX, and "C:\Program Files\IBM\WebSphere MQ" on Windows.
+
+
+
+
+ 1. Download the updated GSKit package from the IBM Support website.
+    
+    
+    
+ 2. Optional: Make a note of the version of GSKit which your installation is currently using. This is used to verify that this GSKit update has been successful.
+    
+    The installed GSKit version is determined on WebSphere MQ V7.1 and V7.5 by using the 'dspmqver' binary, included within the bin directory of the product. The command takes the argument: '-p64' to display only the GSKit version information.
+    
+    On a 64-bit platform, this will return both 32 and 64-bit packages. For example, running the command on a Linux (x86-64) 7.1.0.0 installation returns the output:
+    
+    $ /opt/mqm/bin/dspmqver -p64
+    Name: IBM Global Security Kit for WebSphere MQ
+    Version: 8.0.14.12
+    Build Type: Production
+    Mode: 32-bit
+    
+    Name: IBM Global Security Kit for WebSphere MQ
+    Version: 8.0.14.12
+    Build Type: Production
+    Mode: 64-bit
+    
+    
+    
+ 3. Expand the compressed download file into a temporary local directory.
+    
+    This can be achieved on the various platforms using the following commands:
+    
+     * AIX:
+       cd ${LOCAL_DIR}
+       zcat 7-WS-MQ-AixPPC64-ICXXXXX.tar.Z | tar -xf -
+       
+       
+     * Linux:
+       cd ${LOCAL_DIR}
+       tar -zxf 7-WS-MQ-Linux${arch}-ICXXXXX.tar.gz
+       
+       where ${arch} is the system architecture, such as "IA32" (x86 32-bit), "X64" (x86 64-bit), "PPC64" (Linux 64-bit pSeries) or "S390X" (Linux 64-bit zSeries).
+       
+       
+     * HP-UX:
+       cd ${LOCAL_DIR}
+       zcat 7-WS-MQ-HpuxIA64-ICXXXXX.tar.Z | tar -xf -
+       
+       
+     * Solaris:
+       cd ${LOCAL_DIR}
+       zcat 7-WS-MQ-Solaris${arch}-ICXXXXX.tar.Z | tar -xf -
+       
+       where ${arch} is the system architecture, such as "Sparc64" or "X64".
+       
+       
+     * Windows:
+       Extract the contents of the downloaded zip file:
+       7-WS-MQ-Windows-ICXXXXX.zip
+       
+       
+    
+    
+    
+    where ${LOCAL_DIR} is an empty, temporary local directory with sufficient space to unpack the downloaded compressed tar file.
+    The value ICXXXXX is to be replaced with the name of the APAR which the updated GSKit package is shipped under, for example IC87061.
+    
+    
+    
+    
+    
+ 4. Stop all WebSphere MQ activity associated with the installation which is to be updated, including closing the WebSphere MQ Explorer if open.
+    
+    
+    
+ 5. Backup the existing GSKit installation by renaming the existing gskit8 directory:
+    
+     * AIX, Linux, HP-UX, Solaris:
+       cd ${MQ_INSTALLATION_PATH}
+       mv gskit8 gskit8.original
+       mkdir gskit8
+       cd gskit8
+       
+       
+     * Windows:
+       Either use the Windows Explorer to rename the directory, or the command lines:
+       
+       cd "%MQ_INSTALLATION_PATH%"
+       rename gskit8 gskit8.orig
+       mkdir gskit8
+       
+    
+    
+    
+    
+ 6. Copy the GSKit files to the WebSphere MQ installation from the unpacked download directory:
+    
+     * AIX, Linux, HP-UX, Solaris:
+       cp ${LOCAL_DIR}/gsk* ${MQ_INSTALLATION_PATH}/gskit8
+       
+       For a default location installation, there will now be two gsk files on 32-bit platforms, and four gsk files on 64-bit platforms. For example, on HP-UX the files now present in the "/opt/mqm/gskit8" directory are:
+       
+       $ ls /opt/mqm/gskit8
+       gskcrypt32.tar.Z
+       gskcrypt64.tar.Z
+       gskssl32.tar.Z
+       gskssl64.tar.Z
+       
+       
+     * Windows:
+       Use the Windows Explorer to copy the contents of the extracted .zip file into the "gskit8" subdirectory of the WebSphere MQ installation directory. In the default installation location, this is the directory:
+       
+       C:\Program Files\IBM\WebSphere MQ\gskit8
+       
+    
+    
+    
+    
+    
+ 7. Extract all these compressed GSKit files into this directory. If prompted that the extract will overwrite existing files, accept the overwrite. It does not matter in which order the extracts are performed, all the files which are overwritten are duplicate files between the different compressed file archives.
+    
+    This can be achieved with the commands:
+    
+     * Linux (x86 32-bit):
+       cd ${MQ_INSTALLATION_PATH}/gskit8
+       tar -zxf gskcrypt32.tar.gz
+       tar -zxf gskssl32.tar.gz
+       
+       
+     * Linux (zSeries):
+       cd ${MQ_INSTALLATION_PATH}/gskit8
+       tar -zxf gskcrypt31.tar.gz
+       tar -zxf gskssl31.tar.gz
+       tar -zxf gskcrypt64.tar.gz
+       tar -zxf gskssl64.tar.gz
+       
+       
+     * Linux (x86 64-bit, pSeries):
+       cd ${MQ_INSTALLATION_PATH}/gskit8
+       tar -zxf gskcrypt32.tar.gz
+       tar -zxf gskssl32.tar.gz
+       tar -zxf gskcrypt64.tar.gz
+       tar -zxf gskssl64.tar.gz
+       
+       
+     * AIX, HP-UX, Solaris:
+       cd ${MQ_INSTALLATION_PATH}/gskit8
+       zcat gskcrypt32.tar.Z | tar -xf -
+       zcat gskcrypt64.tar.Z | tar -xf -
+       zcat gskssl32.tar.Z | tar -xf -
+       zcat gskssl64.tar.Z | tar -xf -
+       
+       
+     * Windows:
+       Use the Windows Explorer to copy the contents of the extracted .zip file into the "gskit8" subdirectory of the WebSphere MQ installation directory. In the default installation location, this is the directory:
+       
+       C:\Program Files\IBM\WebSphere MQ\gskit8
+       
+       Note that if you use the Windows Explorer 'extract all' facility, the files will be extracted to a folder name which matches the zip file name. You will then need to move the files in this new folder up a level, to match the folder structure of the folder which you backed up in step 5. 
+       
+    
+    
+    
+    
+ 8. Update the file permissions to match the original installation:
+    
+     * AIX, Linux, HP-UX, Solaris:
+       
+       chown -h -R mqm:mqm ${MQ_INSTALLATION_PATH}/gskit8 
+       chmod -R u-w,g-w,o-w ${MQ_INSTALLATION_PATH}/gskit8 
+       
+       
+     * Windows:
+       This step is not required on Windows.
+    
+    
+    
+    The directory structure of this gskit8 directory should now resemble the original directory which was moved in step 5 above.
+    
+    
+    
+ 9. Optional: Verify that the update has been successful by re-running the 'dspmqver -p64' command which was run in step 2.
+    
+    For example, after installing the GSKit v8.0.14.22 update which was delivered under APAR IC87061, the output from Linux (86-64) is as follows:
+    
+    $ /opt/mqm/bin/dspmqver -p64
+    Name: IBM Global Security Kit for WebSphere MQ
+    Version: 8.0.14.22
+    Build Type: Production
+    Mode: 32-bit
+    
+    Name: IBM Global Security Kit for WebSphere MQ
+    Version: 8.0.14.22
+    Build Type: Production
+    Mode: 64-bit
+    
+    
+    
+    
+    
+
+
+Uninstallation To ensure that the eventual uninstallation of WebSphere MQ from the system does not leave files behind, before applying a fix pack to this installation these updated GSKit files should be removed.
+
+This is achieved by deleting the gskit directory, and moving the backed up directory back into its original location:
+
+
+ 1. Stop all WebSphere MQ activity associated with the installation which is to be updated.
+    
+    
+ 2.   * AIX, Linux, HP-UX, Solaris:
+       
+       rm -rf ${MQ_INSTALLATION_PATH}/gskit8
+       mv ${MQ_INSTALLATION_PATH/gskit8.original
+       ${MQ_INSTALLATION_PATH}/gskit8
+       
+       
+     * Windows:
+       Either delete the "gskit8" directory using the Windows Explorer, and then rename the backed up original version, or use the command line commands:
+       
+       rmdir /s "%MQ_INSTALLATION_PATH%\gskit8"
+       rename "%MQ_INSTALL_PATH%\gskit8.original"
+       "%MQ_INSTALL_PATH%\gskit8"
+       
+    
+    
+    
+    
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

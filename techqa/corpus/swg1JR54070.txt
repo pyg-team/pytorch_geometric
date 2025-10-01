@@ -1,0 +1,164 @@
+Title: IBM JR54070: MULTIPLE VULNERABILITIES IN IBM SDK FOR JAVA SHIPPED WITH IBM PROCESS DESIGNER - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8560.cf1.delta.repository.2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.2&source=SAR]
+bpm.8560.cf1.delta.repository.1 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.1&source=SAR]
+8.5.5.0-WS-BPMPCPD-IFJR54070 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPMPCPD-IFJR54070&source=SAR]
+8.5.0.1-WS-BPMPCPD-IFJR54070 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.0.1-WS-BPMPCPD-IFJR54070&source=SAR]
+8.0.1.3-WS-BPMPC-IFJR54070 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.3-WS-BPMPC-IFJR54070&source=SAR]
+7.5.1.2-WS-BPMPC-IFJR54070 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=7.5.1.2-WS-BPMPC-IFJR54070&source=SAR]
+WLE-7.2.0.5-HotFix-JR54070 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Lombardi+Edition&fixids=WLE-7.2.0.5-HotFix-JR54070&source=SAR]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There are multiple vulnerabilities in IBM (R) SDK Java (TM)
+   Technology Edition, which IBM WebSphere Application Server uses
+   under IBM Business Process Manager (BPM) and IBM WebSphere
+   Lombardi Edition.  These issues were disclosed as part of the
+   IBM SDK Java (TM) Technology Edition updates in April 2015. For
+   more information, see "Security Bulletin: Multiple
+   vulnerabilities in IBM SDK Java (TM) Technology Edition affect
+   IBM Business Process Manager and WebSphere Lombardi Edition
+   April 2015 CPU" (http://www.ibm.com/support/docview.wss?uid=swg2
+   1959306).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for the latest fix pack/cumulative fix of all
+   supported releases of IBM BPM and WebSphere Lombardi Edition.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR54070:
+   
+       1. Select IBM Business Process Manager with your edition or
+   IBM WebSphere Lombardi Edition from the product selector, the
+   installed version to the fix pack level, and your platform, and
+   then click Continue.
+       2. Select APAR or SPR, enter JR54070, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR54070
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-08-20
+   
+   
+ * CLOSED DATE
+   2015-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP
+   
+   
+ * R801 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP
+   
+   
+ * R855 PSY
+   UP
+   
+   
+ * R856 PSY
+   UP

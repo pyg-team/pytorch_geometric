@@ -1,0 +1,27 @@
+Title: IBM Sending large files through a Service on a Websphere DataPower Appliance - United States
+
+Text:
+large file size; 100 MB file ; XML Manager ; XML Bytes Scanned TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How can I send large files through any service on Websphere DataPower appliance? 
+
+RESOLVING THE PROBLEM
+Note: Sending large files through DataPower is best when streaming is enabled. Review the Service Developer documents and Optimizing Through Streaming document available on our product documentation site [http://www.ibm.com/support/docview.wss?uid=swg21377654]for more information about service streaming, service level monitoring policies and other service features. 
+
+To send a large file through the DataPower appliance, make sure that the XML Manager used by the service is enabled to handle that large a file: 
+
+ 1. Using the WebGUI, expand the Services tab and select to edit or create the service with the large file requirement. 
+ 2. In the XML Manager field, press the button "..." (this is available in the Main tab of the XML Firewall and Multi-Protocol Gateway, in the Web Service Proxy it is located in the Proxy Settings tab). 
+ 3. Select the XML Parser tab. Modify the value in the XML Bytes Scanned field from "4194304" which is the default to "104857600" or any value greater than the size of your file.
+
+
+
+[/support/docview.wss?uid=swg21328671&aid=1] [/support/docview.wss?uid=swg21328671&aid=1] 5. Apply the changes. 
+
+Note: With any large file handling by the DataPower device, the chance of exhausting resources or consuming all available memory is possible. The device may log "Failed to allocate resources". Other conditions such as the device throttling and reloading may occur.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower XML Security Gateway XS40 Firmware 3.8, 3.7.3, 3.7.2, 3.7.1 Edition Independent Business Integration WebSphere DataPower SOA Appliances General Firmware 3.8, 3.7.3, 3.7.2, 3.7.1 Edition Independent

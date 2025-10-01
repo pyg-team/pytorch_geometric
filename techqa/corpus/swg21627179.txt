@@ -1,0 +1,53 @@
+Title: IBM CDM - Cannot login due to Unknown server error - United States
+
+Text:
+Login Error; Authentication TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Users cannot login to CDM due to an "Unknown server error"; checking logs shows a "Ibm.CognosDM.Services.WebHost.Global - (null) Could not impersonate the data sources user ? ? ? " error. 
+
+SYMPTOM
+When trying to log in, you will see an "Unknown server error" in the login screen; further checking the AllErrors log, the following error will be present : 
+
+[11] FATAL Ibm.CognosDM.Services.WebHost.Global - (null) Could not impersonate the data sources user ? ? ? Ibm.CognosDM.DataSources.DataSourceUnavailableException: Could not impersonate the data sources user ---> Ibm.CognosDM.Windows.Impersonation.ImpersonationException: Cannot login using the provided credentials
+at Ibm.CognosDM.Windows.Impersonation.ImpersonationUtil.LogonUser(WindowsCredentials credentials, LogonType logonType, LogonProvider logonProvider)
+at Ibm.CognosDM.Windows.Impersonation.ImpersonationUtil.GetImpersonationContext(WindowsCredentials credentials, LogonType logonType, LogonProvider logonProvider)
+at Ibm.CognosDM.Windows.Impersonation.ImpersonationUtil.ImpersonateExecutionContext(WindowsCredentials credentials, LogonType logonType, LogonProvider logonProvider, Action codeToExecute)
+at Ibm.CognosDM.BusinessLogic.ExternalData.DataSources.DataSourceImpersonator.RunUnderWindowsCredentials[T](Func`1 func)
+--- End of inner exception stack trace ---
+at Ibm.CognosDM.BusinessLogic.ExternalData.DataSources.DataSourceImpersonator.RunUnderWindowsCredentials[T](Func`1 func)
+at Ibm.CognosDM.BusinessLogic.Cache.ExpirationPolicies.EefExpirationPolicy.Initialize(CacheItemPolicy cacheItemPolicy, Object[] dynamicParameters)
+at Ibm.CognosDM.Cache.CacheZone.MemoryCacheZoneManager.InitializeExpirations(CacheItem cacheItem)
+at Ibm.CognosDM.Cache.CacheZone.MemoryCacheZoneManager.Add(String key, Object value, CacheItemPolicy policy)
+at Ibm.CognosDM.Cache.DualCache.LoadMemoryCacheFromPersistentCache(String zone)
+at Ibm.CognosDM.Cache.DualCache.Start()
+at Ibm.CognosDM.Services.WebHost.Global.Application_Start(Object sender, EventArgs e)
+
+
+CAUSE
+This is caused by an incorrect username/password for the data sources user.
+
+
+ENVIRONMENT
+CDM 10.2.x
+
+
+
+DIAGNOSING THE PROBLEM
+Try to log in with any user - the error above will be generated.
+
+
+
+RESOLVING THE PROBLEM
+Edit the configuration file (located in your <CDM install folder>\Config folder) and check that the username and password for the data sources user (DataSourcesCredentials) are correct. 
+
+
+CDM 10.2.0, the appropriate configuration file is CDM.config
+CDM10.2.1 +, the appropriate configuration file is Credentials.config
+
+<WindowsAuthentication>
+<DataSourcesCredentials enabled="true" userName="username" password="password" />
+<ActiveDirectoryImportCredentials enabled="true" userName="username" password="" />
+</WindowsAuthentication>
+
+After changing the credentials to the correct values, restart IIS and try to log in to CDM again.

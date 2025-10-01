@@ -1,0 +1,165 @@
+Title: IBM PI28475: REORG SHRLEVEL CHANGE FAILS WITH RC00E400D0 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  REORG SHRLEVEL CHANGE is executed with a user defined mapping
+   table that uses the old 6 byte LRSN. When CCSID conversion is
+   involved for creating the correct format mapping table, messages
+   MSGDSNU2900I & MSGDSNU299I are issued, and the job fails with
+   RC00E400D0 when the UTILD contains special characters.
+   
+   DSNU2900I ssid 266 10:46:56.36 DSNURMAP - MAPPING TABLE IS
+   SPECIFIED WITH A NON-EXPANDED LRSN COLUMN
+   DSNU299I  ssid 266 10:46:56.41 DSNUGLDX - CHARACTER
+   CONVERSION FROM CCSID 273 TO CCSID 1208
+                          FAILED WITH ERROR CODE 00000008 FOR
+   'UNKNOWN'
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Define mapping table with new 10 digit LRSNs
+   or do not use special characters in UTILID.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All DB2 11 for z/OS users of online REORG    *
+   *                 utility.                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: ABEND04E RC00E400D0 and MSGDSNU299I     *
+   *                      occurred when a REORG SHRLEVEL CHANGE   *
+   *                      created a mapping table implicitly      *
+   *                      with special characters in the          *
+   *                      utility identifier (UID).               *
+   ****************************************************************
+   * RECOMMENDATION: Apply corrective PTF when available.         *
+   ****************************************************************
+   A REORG SHRLEVEL CHANGE running with a special character in the
+   UID abended with ABEND04E RC00E400D0 after issuing the message
+   DSNU299I - CHARACTER CONVERSION FROM CCSID n TO CCSID 1208
+   FAILED WITH ERROR CODE 00000008 FOR 'UNKNOWN'.
+   It happened because of an internal conversion error when
+   generating the mapping table and index name from the UID.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The REORG code has been modified to correct this conversion
+   error.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI28475
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   B10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-27
+   
+   
+ * CLOSED DATE
+   2015-01-05
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI24203
+   
+   
+
+MODULES/MACROS
+ *  DSNURMAP DSNURMPC DSNURORG
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB10 PSY UI24203 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI24203]
+   UP15/01/21 P F501
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

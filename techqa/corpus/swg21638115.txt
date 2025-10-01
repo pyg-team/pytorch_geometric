@@ -1,0 +1,49 @@
+Title: IBM Cannot compare numeric and date fields via Browser on upgrading to Domino Version 9 - United States
+
+Text:
+"Domino 9 web search"; "search via browser"; "Less Than character"; "Greater Than Character"; "web search not returning"; "Full Text message: Quotation usage error"; "GTR search error for"; "Quotation usage error.: Query is not understandable" TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+On upgrading to Domino 9 users find that they can not compare numeric and date fields within their database when searching via a browser.
+These searches work on Domino 8.5.3 via the browser and on Domino 9 through a Notes client.
+
+SYMPTOM
+Some queries that work in 8.5.3 are returning 0 results in Domino 9 or are failing with a Full Text Message: Quotation usage error as follows
+
+Query
+http://server1/test.nsf/websear?SearchView&Query=FIELD+Date_kp [http://server1/test.nsf/websear?SearchView&Query=FIELD+Date_kp]>25.04.2013
+
+Fails Output on Domino 9 console
+
+09:33:00 Full Text message: Quotation usage error.
+09:33:00 GTR search error for "/data/test.ft/ftgi":Quotation usage error.: Query is not understandable
+09:33:00 HTTP Web Server: Application Exception -HTTP Missing resource string
+[/test.nsf/websear?SearchView&Query=FIELD+Date_kp-gt25.0 4.2013] Anonymous
+
+The same query in 8.5.3 returns the number of documents expected from the database.
+
+Query
+http://server1/test.nsf/websear?SearchView&Query=FIELD+Date_kp [http://server1/test.nsf/websear?SearchView&Query=FIELD+Date_kp]>=25.04.2013
+
+On Domino 9 returns 0 documents but no error. On version 8.5.3 it returns a number of documents as expected.
+
+
+CAUSE
+APAR LO75345 was tracking this issue but Domino 9 is actually working as designed.
+
+As of Domino 9 it was decided to 'scrub' out the Less Than ( < ) and Greater Than ( > ) characters from an incoming query string when passing the characters to the search function.
+
+ENVIRONMENT
+Linux, Windows
+
+RESOLVING THE PROBLEM
+If the Less Than (<) or Greater Than (>) characters are required, the scrubbing out of the characters from the incoming query string can be overwritten by adding the following parameter to the server's notes.ini file 
+
+HTTP_QUERY_STRING_SCRUB=0
+
+Then issuing the commands Tell HTTP Quit and Load HTTP on the server console. 
+
+
+Please note simply restarting or refreshing the HTTP task by issuing the command Tell HTTP Restart or Tell HTTP Refresh will not work.
+
+Once the parameter is set the queries will work correctly from a browser.

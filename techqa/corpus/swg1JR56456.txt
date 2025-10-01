@@ -1,0 +1,167 @@
+Title: IBM JR56456: SAVED SEARCH DOESN'T SHOW BUSINESS DATA ALIASES AS COLUMN NAMES FOR SEARCHES MIGRATED FROM IBM BPM V7.5.1.2 TO V8.5.7 - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2016.09.delta.repository.2of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.2of2&source=SAR]
+bpm.8570.cf2016.09.delta.repository.1of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.1of2&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2016.09 [http://www-01.ibm.com/support/docview.wss?uid=swg24042580]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  While you migrate from IBM Business Process Manager (BPM)
+   V7.5.1.2 to IBM BPM V8.5.7, you might use a feature in the
+   V7.5.1.2 saved search definition to change the column name
+   for business data (which is exposed for the search). This
+   feature was available only in V7.5.1.2. Since IBM BPM
+   V8.x, the column name has based on the alias definition
+   for the business variable. Nevertheless, the customized
+   column name (as it is saved within a product XML file)
+   works in the runtime environment of IBM Process Portal and
+   it is shown on the Heritage Process Portal. However, the
+   customized column name is not displayed on the Process
+   Portal in IBM BPM V8.5.7.
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be included in IBM BPM V8.5.7.0 cumulative fix
+   2016.09 that uses the REST API that Heritage Process Portal used
+   to get the missing data for Process Portal, shows the aliases
+   defined in V7.5.1.2, and keeps the current behavior for saved
+   search created on recent IBM BPM versions.
+   
+   With this fix applied, the aliases that you created for business
+   data column on saved searches are displayed; however, you cannot
+   create new saved searches with aliases for business data
+   columns. Plus, if you modify a saved search with aliases for
+   business data columns, those aliases are overwritten with the
+   name of the column.
+   
+   To determine whether the cumulative fix is available and
+   download it if it is, complete the following steps on Fix
+   Central:
+   
+   1. On the Select product tab, select WebSphere as the product
+   group, IBM Business Process Manager with your edition from the
+   WebSphere options, All as the installed version, and All as the
+   platform, and then click Continue.
+   2. In the Text field, enter "cumulative fix?, and click
+   Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56456
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-26
+   
+   
+ * CLOSED DATE
+   2016-09-19
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

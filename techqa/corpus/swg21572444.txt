@@ -1,0 +1,42 @@
+Title: IBM A socket write error occurs during application deployment with WebSphere Process Server (WPS) - United States
+
+Text:
+JDBC connection pool driver ; sqlserver TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During application deployment, socket connection errors, DSRA exceptions from the database, 100% CPU, and hanging threads can occur with WebSphere Process Server. 
+
+SYMPTOM
+As code is deployed to a server, the server can create a socket write error to WPSDB for an XA transaction. The log files are then filled with hanging threads and the server begins consuming 100% of CPU resources, which causes the server to becomes non-responsive. You must stop and restart the server. 
+
+An example of this issue is when you use the Microsoft SQL Server JDBC Driver 2.0 while Java™ database connectivity (JDBC) Driver 3.0 is currently available and recommended for use.
+
+
+CAUSE
+Examine the log files and look for DSRAxxxxE exceptions that point to features that are not implemented. With an incorrect level of the JDBC driver, some features might not be supported, which can cause resource issues.
+
+When a connection error occurs, the connection pool manager tries to destroy the connection. This process involves cleaning up JDBC objects that are associated with the connection and a call to JDBC driver. If the JDBC driver is at an incorrect version level, some missing features might cause socket write exceptions, DSRAxxxE exceptions, hangs, high CPU, and so on. 
+
+
+DIAGNOSING THE PROBLEM
+You might see messages that are similar to the following text: 
+
+
+[9/23/11 18:21:33:179 CDT] 00000012 ConnectionEve A J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adapter for resource
+
+jdbc/com.ibm.ws.sib/esbnode.server1-CEI.esbcell.BUS. The exception is:
+com.microsoft.sqlserver.jdbc.SQLServerException: Software caused connection abort: recv failed 
+
+[9/23/11 18:21:33:195 CDT] 00000012 WSRdbManagedC W DSRA1300E: Feature is not implemented: javax.sql.PooledConnection.removeStatementEventListener 
+
+
+RESOLVING THE PROBLEM
+Refer to the WebSphere Application Server detailed system requirements [http://www.ibm.com/support/docview.wss?uid=swg27012421] page and verify that the JDBC driver level. Use a later driver, if possible
+
+
+
+HISTORICAL NUMBER
+ 52587370000 
+
+PRODUCT ALIAS/SYNONYM
+ WPS

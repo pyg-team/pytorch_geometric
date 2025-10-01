@@ -1,0 +1,139 @@
+Title: IBM IV66560: IN ITIM SSUI, ON CHANGE PASSWORD PAGE, THE OK BUTTON IS NOT DISABLED AFTER FIRST CLICK. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description:
+   In ITIM SSUI Change Password page, since the submit button
+   ("OK") is not disabled on time, many requests can get submitted
+   if the user clicks on the OK button repeatedly, which is
+   causing CTGIMV405E error on UI.
+   
+   Steps to duplicate :
+   Try to Change Password in ITIM SSUI with quick repeated clicks
+   on OK button.
+   
+   Desired Behavior :
+   Prevent proceeding the second and further requests, regardless
+   of requests being successful or not, by disabling submit button
+   ("OK") for subsequent clicks.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   User's affected: Customer's observing the "OK"
+   button not being disabled afte the first click on the change pas
+   sword page.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   The fix for this APAR is contained in the
+   following maintenance delivery vehicle:
+   | Interim Fix | 5.1.0.15-ISS-TIM-IF0056
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV66560
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM TIV IDENT M
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3405
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-05
+   
+   
+ * CLOSED DATE
+   2014-12-24
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IV73746 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV73746] IV73977
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM TIV IDENT M
+   
+   
+ * FIXED COMPONENT ID
+   5724C3405
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSN
+   UP

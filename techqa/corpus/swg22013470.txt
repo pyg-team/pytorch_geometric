@@ -1,0 +1,78 @@
+Title: IBM Theory and design of the Tag Relay custom function suite for Integration Tester - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How does the Tag Relay custom function suite work? 
+
+CAUSE
+Integration Tester users may wish to understand how the Tag Relay custom function suite works if considering implementing similar mechanisms. 
+
+ANSWER
+The Tag Relay custom function suite makes its functionality available via three mechanisms: 
+
+ *  A set of custom functions, usable from Legacy Script and ECMAScript. A pair of custom built interface classes which provides methods accessible from dynamic scripting languages, such as Groovy and Jython. A set of Java 8 functional interfaces which provide methods accessible from stricter scripting languages, such as Scala (but which could also be used from languages such as Groovy or Jython). 
+
+(Note that although the Java 8 functional interfaces have been used here there is no use of Lambda or functional programming. i.e. None of the methods we will call accepts a Lambda as an argument.) Why has the custom function interface been provided? 
+
+The custom function interface allows access from Legacy Script. This is the only way Legacy Script can access the store. Without it we would be forced to use ECMAScript to populate and clean up the store. It is significantly slower to invoke ECMAScript than Legacy Script and this overhead is undesirable, particularly when doing service virtualization. 
+
+The presence of the custom function also provides us with a place for code within an OSGi module. The OSGi module can declare it's use of other OSGi modules and this gives us clean access to the classes which are used to call and run custom functions. It also means that when calling a custom function the wrapper objects we create are created with the same class loader that would have been used if the custom function had been called from Legacy Script. 
+
+Why have the custom built interface classes been provided? 
+
+These allow access from dynamic scripting languages. These interfaces are themselves within the custom function interface OSGi module and so they are not available to the scripting language. However in a dynamic scripting language the methods of an object can be discovered at runtime and so access to the interfaces is not needed. 
+
+These interfaces allow us to provide access to the tag values and custom function calls via sensible names such as.getFactory(),.getStore(),.put()and.call()which makes the code in the scripting language clean and simple to follow. 
+
+Why have the Java 8 functional interfaces been used? 
+
+The custom built interfaces are not accessible to any of the scripting languages. (Groovy and Jython can call the methods of the interfaces without needing to access the interfaces.) Scala, for example, would need access to these interfaces to access those methods (without using reflection). 
+
+The solution is to make use of interfaces which are available in the standard Java libraries to expose the same functionality. Because those interfaces are available to all code they can be used in all locations. 
+
+Using the pre-defined interfaces (introduced in Java 8) means we must cast our classes to those interfaces, and that we have to use the method names defined in those interfaces. 
+
+Why did we not put the custom built interfaces in the base package? 
+
+It might seem that by moving the custom built interfaces to the base package the interface would be available to both the OSGi module containing the custom functions and to the scripting languages. 
+
+A problem however arises when we attempt to create a concrete class which implements that interface in the OSGi module whilst defining the interface in the base package (loaded at JVM startup fromlib/ext). Because the interface and the class have different class loaders access exceptions are caused within the JVM. 
+
+Again that could be 'solved' by moving the implementation classes to the base package (where the interfaces would also be). However that would cause a dependency problem between an Integration Tester project and a JAR inlib/ext. In time that could lead to a problem on a customer site where one Integration Tester project needed the library updated, and another was not ready for the update. 
+
+The current design makes the library inlib/extso lightweight that it is anticipated that it will never need to be updated. (All the code is in the custom function JAR which can be updated separately with each Integration Tester project.) 
+
+About class loaders 
+
+A JVM ships with three class loaders: 
+
+ * The bootstrap class loader loads code fromjre/lib(and does not concern us here). 
+ * The extension class loader loads code fromjre/lib/extincluding our base JAR and the JARs for the scripting libraries. 
+ * The system class loader loads the rest of the classes (unless more class loaders are provided by the programs run).
+
+
+However there are some more class loaders in our scenario. OSGi class loaders 
+
+Integration Tester is an OSGi application based on the Eclipse framework. (OSGi is a specification. The Eclipse framework is an implementation of the OSGi specification.) OSGi defines bundles which are JAR files or folders which contain details (inMETA-INF/MANIFEST.MF) a version number for the bundle and details of which other bundles this bundle depends upon and (optionally) which version of the bundle is required. 
+
+For every bundle that it loads the OSGi implementation will create a new class loader instance. The classes in the bundle will be loaded with this class loader. 
+
+Inside the JVM it is entirely possible to load two classes which have the same fully qualified name, as long as they are loaded by different class loaders. 
+
+Scripting Language class loaders 
+
+In addition scripting languages can define and instantiate their own class loader. If JVM objects are created directly within those scripts they will then have been created with the scripting language class loader. 
+
+Scala, Groovy and Jython all have their own class loader instance. 
+
+How do these class loaders impact our solution 
+
+The design adopted attempts to minimise the impact of these various class loaders by basing all the code which instantiates objects inside the OSGi module (which is to say that the scripting language never needs to create any objects for the Tag Relay custom function suite). 
+
+The design does permit objects instantiated by the scripting language to be placed into the Tag Store, meaning that these objects can persist beyond the end of the execution of the script.
+
+Related Articles
+
+See the Third party languages and Integration Tester article index [http://www-01.ibm.com/support/docview.wss?uid=swg22013388]

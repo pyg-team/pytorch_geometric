@@ -1,0 +1,149 @@
+Title: IBM Collect troubleshooting data for performance problems in IBM Business Process Manager (BPM) - United States
+
+Text:
+mustgather; troubleshoot; troubleshooting; bpm; performance TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are having a performance problem with the IBM Business Process Manager products. 
+You would like to know what documentation you must collect (MustGather) so that the IBM Business Process Manager Support team can diagnose your problem. If you gather this documentation before contacting support it will expedite the troubleshooting process, and save you time. 
+
+DIAGNOSING THE PROBLEM
+Note: Before collecting the troubleshooting data, take a look at the knowledge collection [http://www.ibm.com/support/docview.wss?uid=swg27037045], which lists the known performance problems in the IBM Business Process Manager product. If that page does not help, provide the following MustGather data:
+
+GENERAL TUNING VERSUS SPECIFIC ISSUES
+
+IBM technical support is only for specific product issues and questions. If you need assistance with general tuning, environment health checks or application tuning then you may want to look into engaging IBM Services. We also have this Performance tuning Redbooks which provides guidance on the many aspects of BPM performance tuning. 
+"IBM Business Process Manager V8.5 Performance Tuning and Best Practices" [http://www.redbooks.ibm.com/Redbooks.nsf/RedbookAbstracts/SG248216.html]
+
+
+If you have a specific product issue or question related to product behavior then we can assist with that via technical support. We will need a detailed use case for the issue, the delay times you are seeing or your question and why you consider this a product performance issue. 
+
+
+OVERVIEW OF PERFORMANCE DIAGNOSTIC INFORMATION
+Gather the following information and files. See the steps below for more detailed information: 
+
+ * Detailed problem description including use case, questions, and concerns. 
+ * Detailed environment description and topology 
+ * Profile /logs directory 
+ * Profile /config directory 
+ * verbose gc logging 
+ * Java™cores during the delay timeframe 
+ * Feedback on whether any OS or Database resource is being exhausted. 
+ * (As needed) PI or TWX export of the application involved in the delay. 
+ * (As needed) Tracing specific to the product area of the problem 
+ * (As needed) Logging of the http traffic involved in the issue
+
+DETAILED PERFORMANCE DIAGNOSTIC INFORMATION
+The following information provide detailed steps to gather each type of information that may be required for performance issues. When capturing a set of data ensure that it is complete and covers the timeframe of the occurrence that you point out. 
+
+1: Detailed problem description. 
+
+ * 
+ * 
+ * 
+ *  What product use case or application path has performance issues? 
+   For example login to process portal, starting a task, startup of BPM server What delay times in seconds are you seeing? Why do you consider this a product performance issue? Was there at time the same scenario did not have a performance concern? 
+ * 
+ *  Does this always occur for a particular action? 
+   If not, how often does it occur? Is it specific to a particular application or piece of an application? Was there any change before the issue started to occur? 
+   For example a configuration change, new application deployed, or load increased. Is there anything you have found which helps work around the issue? If the related action is not known, how often does the issue occur? 
+   Do you notice any similarities like high user load, particular time of day, or other common factors? How does this impact your business? 
+   
+
+2: Detailed environment description and topology  * 
+ * 
+ * versionInfo -maintenancePackages
+ * 
+ * 
+ *  Description the topology of the environment including clusters and nodes used. Provide details about the database and other third party products involved in the behavior. Are there multiple networks involved in the communications? 
+   If so, do they span large distances (BPM and database server not collocated) ? If browser related, do you see the same behavior in Internet Explorer, Firefox, and Chrome? 
+
+3: Profile /logs directory  * 
+ * 
+ * 
+ * 
+ * 
+
+4: Profile /config directory  * 
+ * 
+ * 
+ * CellName
+ * 
+ * 
+ * 
+
+5: Enable verbose GC  * 
+ * 
+ * 
+ * "Enabling VerboseGC"
+ * 
+ * Process Designer Mustgather
+ * 
+ * 
+ * 
+
+6: Generate javacores during the issue.  * 
+ * 
+ * 
+ * generating javacores for Windows
+ * 
+ * 
+ * 
+
+7: Review the system resources  * 
+ * See this reference document for running BPM in a virtual environment.
+ * 
+ * 
+
+8: PI or TWX export of the application  * 
+ * 
+ * 
+ *  Project Interchange(PI) export
+ * 
+ * 
+ * 
+ * TWX export
+ * 
+ * 
+ * 
+
+9: Tracing specific to the product area of the problem  * 
+ * various product MustGathers
+ * 
+ * 
+ * 
+ * 
+ * 
+
+10: Logging of the HTTP traffic.  * 
+ * captured via browser plugins
+ * 
+
+
+This covers general information useful for most performance issues. Although each issue could require additional information specific to an area or problem. Component specific mustgathers [http://www-01.ibm.com/support/docview.wss?uid=swg21569731] can be reviewed for more details on data to collect for a particular area. Performance issue may also require multiple collections of data as the issue is narrowed down. 
+WHAT TO DO NEXT
+ 1. Review the logs and traces at the time of the problem to try to determine the source of the problem.
+    
+    
+ 2. Use IBM Support Assistant [http://www.ibm.com/software/support/isa/] to search for known problems in the product documentation, forums, and Technotes.
+    
+    
+ 3. If you cannot find related problems or cannot solve the problem, send the information you have collected to IBM by following the instructions in Exchanging Information with IBM Technical Support [http://www.ibm.com/software/support/exchangeinfo.html].
+    
+    
+
+RELATED INFORMATION
+ BPM - Performance Tuning and Best Practices [http://www.redbooks.ibm.com/Redbooks.nsf/RedbookAbstracts/SG248216.html]
+How to resolve memory issues in BPM? [http://www.ibm.com/support/docview.wss?uid=swg21499538]
+Configure Java logging (WebSphere Application Server) [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/ttrb_configjavalog.html]
+Search: WebSphere Application Server - Perf MustGather [http://www.ibm.com/support/search.wss?tc=SSCMPB9+SSCMP9J&q=MustGatherDocument]
+Search: WebSphere Application Server OOM MustGather [http://www.ibm.com/support/search.wss?tc=SSCMPCY&q=MustGatherDocument]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Lombardi Edition General Linux, Windows 7.2, 7.1 Business Integration IBM Business Process Manager Express Performance Linux, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Standard Performance AIX, Linux, Solaris, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM BPM Advanced Pattern on Red Hat Enterprise Linux Server Performance Linux Red Hat - xSeries 8.0.1, 8.0 Business Integration IBM Business Process Manager Advanced Pattern on AIX Performance AIX 8.0.1 
+PRODUCT ALIAS/SYNONYM
+ BPM

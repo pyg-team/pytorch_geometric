@@ -1,0 +1,88 @@
+Title: IBM Attempting Save Space by Deleting Large Data Base Files in the QSPL Library - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides information on the situation where data base files in the QSPL library take up large amounts of disk space or DASD. 
+
+RESOLVING THE PROBLEM
+ 
+
+Caution: Do not, under any circumstances, delete any of the files or members in the QSPL library to free up DASD. Each i5/OS spooled file is stored in a database member in one of the files in the QSPL library. Therefore, deleting members or entire files will likely result in spooled files being deleted from the system, but without any control over which spooled files are deleted.
+
+Also, the deleted spooled files will continue to be listed in an output queue until the next IPL, or until the Start Spool Reclaim (STRSPLRCL) command is run. However, the deleted spooled files will not accessible and there will be no way to recover the deleted spooled files without a recent backup (provided the backup includes spooled file data). 
+This document was last updated on 30 January 2014. 
+
+
+
+
+
+
+
+Do Not Delete Database Files in the QSPL Library 
+
+The best way to explain the large spooled files in the QSPL library is through the metaphor of a library. When you are looking at an output queue, the spooled files you see can be thought of as index cards in a card catalog. They do not contain any real data but point to where the book is located. The spooling database files, typically named Q00512Nnnn and Q04079Nnnn, are the bookcases. If you were to remove some bookcases in a library without taking out the appropriate cards from the card catalog, you would have made more space on the floor, but the resulting confusion would be make the library unusable. Similarly, when these files are deleted from QSPL, the system will not know where to find the spooled files it thinks it has. 
+
+A better way to reduce the size of these files is to delete any unwanted spooled files, and then do one of the following: 
+
+o If the system value for QRCLSPLSTG is not *NONE and not *NOMAX, let the operating system clean up the extra unused database members. o If you have recurring jobs that generate a large number of spooled files on a regular basis, such as weekly reports, invoices, or checks, then wait until the day after the next set of jobs has run, then run the Reclaim Spool Storage (RCLSPLSTG) command with the Days until file expires (DAYS) parameter set to the number of days between cycles plus 1. For example, for a weekly or 7-day cycle the command would be:
+
+RCLSPLSTG DAYS(8) o If you do not have recurring jobs that generate a large number of spooled files, or if a large number of spooled files is generated most every day, then wait one day and then run the Reclaim Spool Storage (RCLSPLSTG) command with the Days until file expires (DAYS) parameter set to 1. For example:
+
+RCLSPLSTG DAYS(1) Note: o With each of these options, the operating system will eventually clean up the extra unused database members while allowing a pool of available members to be utilized by spool, which will lessen system performance impacts. o Never set the system value QRCLSPLSTG to DAYS(*NONE) unless directed to by IBM i5/OS development. o Never use "RCLSPLSTG DAYS(*NONE)" unless directed to by IBM i5/OS development. 
+For more information on reclaiming spool storage, refer to the Reclaim Spooled File Storage Experience Report, which is available through the following document: 
+
+N1014361: Reclaim Spooled File Storage Experience Report [http://www-01.ibm.com/support/docview.wss?uid=nas8N1014361] 
+
+
+Finding Unwanted Spooled Files 
+
+There are several ways to find unwanted spooled files: 
+
+o Run the WRKOUTQ OUTQ(*ALL) to see all the output queues on the system and how many spooled files they contain. o Run the WRKOUTQ QEZJOBLOG to see the joblogs on the system, which usually can be deleted if the system is running normally and no joblogs are needed to solve a problem. o You can use iSeries Navigator and sort on the Date Created to find old spooled files. 
+In addition, the QRCLSPLSTG (Reclaim spool storage) system value can be to set the number of days a spooled file member remains in the QSPL data base before it is automatically reclaimed. By default, the system waits 8 days before it reclaims space used by a deleted spooled file so that the rest of the system can use it. If you clear out a large output queue or delete a large number of spooled files, run the RCLSPLSTG DAYS(*NONE) command to reclaim the space immediately. It is not recommended, however, to change the QRCLSPLSTG system value to *NONE because that will result in the system formatting and reformatting space for spooled files continually. 
+
+
+Suggestions for Reducing the Amount of DASD Used to Store Spooled Files 
+
+For other suggestions on reducing the amount of disk space or DASD used to store spooled files in the QSPL library, please refer to the following document: 
+
+N1019109: QSPL Storage Cleanup Tips [http://www-01.ibm.com/support/docview.wss?uid=nas8N1019109] 
+
+
+If Database Files in the QSPL Library Have Already Been Deleted 
+
+If spooling database file has already been deleted, you have lost all spooled file data that file contained. There is no way to recover the spooled files, and no way to tell what was lost. The spooled files are not stored in the database files based on the output queue. Therefore, the loss will likely be spread throughout many or all output queues. 
+
+The best thing to do in this situation is to end all of your writers, end the QSPL subsystem, and run the Start Spool Reclaim ( STRSPLRCL) command. The STRSPLRCL command can be used to repair output queues and spooled files that are left in unrecoverable states. 
+
+The STRSPLRCL command can be run for a single output queue, a set of output queues using a generic name (such as PRT*) or for all output queues in the auxiliary storage pool (ASP) defined by the ASP group (ASPGRP) parameter. For example: 
+
+STRSPLRCL OUTQ(library-name/outq-name) ASPGRP(*) 
+
+However, in this case it would be best to run the STRSPLRCL command for all output queues in the auxiliary storage pool (ASP). For example: 
+
+STRSPLRCL OUTQ(*ALL/*ALL) ASPGRP(*) 
+
+Until the STRSPLRCL command is run, or an IPL is performed, it may look as though your spooled files are still there; however, if you display or try to work with a spooled file for which the database file has been deleted, an error is issued. 
+
+When the reclaim function is complete, message CPC3309 "Cleanup of output queue &1 in library &2 on Auxiliary Storage Pool (ASP) &3 is complete" is sent to the History Log (QHST) and the QSYSOPR message queue by each spool maintenance job. 
+
+Note: If this does not resolve this issue, then rebuild the QSPL indexes during the next IPL using the instructions in the following document: 
+
+N1010237: Procedure to Re-Create QSPL Indexes [http://www-01.ibm.com/support/docview.wss?uid=nas8N1010237] 
+
+
+Information Concerning Older Versions of 8.5 OS or OS/400 
+
+The Start Spool Reclaim ( STRSPLRCL) command is only available in 6.1 i5/OS and above. If running 5.4 i5/OS or an earlier version of i5/OS or OS/400, you can instead end all of your writers, end the QSPL subsystem, and then call the QSPFIXUP program. For example: 
+
+CALL QSPFIXUP 
+
+The QSPFIXUP program will look through all the spooled files in the internal index and will delete all the spooled file entries for which the associated database file has been deleted. If you do not run this, an IPL will perform the same operation automatically. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 372081033

@@ -1,0 +1,27 @@
+Title: IBM (-43075) Unable to open file /opt/informix/etc/sm_versions No such file or directory - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+You run an onbar backup but see these errors in the onbar activity log (bar_act.log):
+2011-03-20 19:55:18 256 254 (-43075) Unable to open file /opt/informix/etc/sm_versions.
+No such file or directory
+2011-03-20 19:55:18 256 254 /opt/informix/bin/onbar_d complete, returning 142 (0x8e) 
+
+CAUSE
+ 
+
+INFORMIXDIR/etc/sm_versions does not exist.
+
+
+RESOLVING THE PROBLEM
+ 
+
+1. Copy INFORMIXDIR/etc/sm_versions.std to INFORMIXDIR/etc/sm_versions.
+2. Rerun your onbar backup command.
+
+Please navigate to this page for onbar setup instructions:
+
+www.ibm.com/support/docview.wss?uid=swg21323246

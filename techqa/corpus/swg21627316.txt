@@ -1,0 +1,34 @@
+Title: IBM Portal fails to render in web browser after 8001 upgrade - United States
+
+Text:
+EJCBC0009E; 8001; PM83551; search.jsp; themeModules TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After installing the 8001 fixpack for WebSphere Portal, you are unable to render WebSphere Portal in a web browser. 
+
+SYMPTOM
+In the SystemOut.log, the following error can be seen:
+
+=================
+[2/21/13 6:46:37:809 EST] 00000042 servlet E com.ibm.ws.webcontainer.servlet.ServletWrapper service SRVE0014E: Uncaught service() exception root cause /themes/html/Default.jsp: com.ibm.websphere.servlet.error.ServletErrorReport: com.ibm.wps.resolver.data.exceptions.URIProcessingIOException: EJCBD0021E: The URI [dav:fs-type1/themes/Portal8.0/theme.html] and parameters [[&#39;themeURI&#39;=[&#39;dav:fs-type1/themes/Portal8.0/theme.html&#39;], &#39;mime-type&#39;=[&#39;text/html&#39;]]] could not be processed: [EJCBD0021E: The URI [dav:fs-type1/themes/Portal8.0/nls/theme_en.html] and parameters [[&#39;themeURI&#39;=[&#39;dav:fs-type1/themes/Portal8.0/theme.html&#39;], &#39;mime-type&#39;=[&#39;text/html&#39;]]] could not be processed: [EJCBD0021E: The URI [mvc:res:/wps/themeModules/themes/html/dynamicSpots/modules/search/search.jsp,smartphone@,tablet@] and parameters []] could not be processed: [EJCBD0021E: The URI [res:/wps/themeModules/themes/html/dynamicSpots/modules/search/search.jsp] and parameters [[&#39;vary&#39;=[&#39;User-Agent&#39;]]] could not be processed: [EJCBC0009E: The entity [/wps/themeModules/themes/html/dynamicSpots/modules/search/search.jsp] could not be be found.]]]]
+at org.apache.jasper.runtime.PageContextImpl.handlePageException(PageContextImpl.java:693)
+at com.ibm._jsp._Default._jspService(_Default.java:1159)
+at com.ibm.ws.jsp.runtime.HttpJspBase.service(HttpJspBase.java:99)
+
+=================
+
+
+CAUSE
+This happens if you have changed the context root to something other than /wps prior to upgrading WebSphere_Portal . A property is set incorrectly in the upgrade that references the original /wps context root. This has been identified as a product defect under APAR PM83551. This APAR is included in CF4 for WebSphere Portal 8001.
+
+RESOLVING THE PROBLEM
+To prevent this problem from occurring, you can install the 8001 fixpack and cumulative fix 4 (or higher) at the same time. Check the 'Related URL' section for the most recent Portal cumulative fixes.
+
+If you have already hit this problem though, applying Cumulative Fix 4 will NOT resolve it. CF4 only prevents it from happening in the first place. You can resolve it by running this ConfigEngine script:
+
+Windows: ConfigEngine.bat action-modify-servlet-path-wp.theme.modules/webapp -DWasPassword=<password>
+
+Linux/UNIX: ./ConfigEngine.sh action-modify-servlet-path-wp.theme.modules/webapp -DWasPassword=<password>
+
+RELATED INFORMATION
+#Recommended Updates for WebSphere Portal and IBM Web Co [http://www-01.ibm.com/support/docview.wss?uid=swg24031246]

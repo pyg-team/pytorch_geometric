@@ -1,0 +1,23 @@
+Title: IBM CNTR0075E: EJBDeploy script needed for custom EJB modules during service deploy - United States
+
+Text:
+CNTR0075E: ejbdeploy; service deploy TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During service deploy, changes in version 7 of WebSphere Process Server require you to also run ejbDeploy script if you have a custom EJB module. 
+
+SYMPTOM
+After creating the EAR file using the serviceDeploy script, when you try to start your application, you will receive an error stating that the Enterprise Java™ Bean (EJB) class is not found. 
+
+CNTR0075E: The user-provided class "XXXXX" needed by the EnterpriseBean could not be found or loaded.
+
+
+CAUSE
+During service deploy, changes in version 7 of WebSphere Process Server require you to also run ejbDeploy script if you have a custom EJB module. ServiceDeploy no longer runs ejbDeploy before exporting the EAR file. In many cases, running ejbDeploy is no longer needed, and this change was made as a performance decision. For archive files that have custom EJB modules, you can run ejbDeploy from the command line on the EAR file that is exported from serviceDeploy in order to save time during application installation. 
+
+
+RESOLVING THE PROBLEM
+After creating the EAR file, you need to run the ejbDeploy(bat|sh) script. Specify the Java™ compliance level; Java compliance level default is set at 1.4.
+
+RELATED INFORMATION
+#serviceDeploy best practices and changes in Version 7 [http://www.ibm.com/support/docview.wss?uid=swg21438243]

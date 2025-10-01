@@ -1,0 +1,23 @@
+Title: IBM Installing Modeler gives 1152:  Error extracting <path to user temp storage> to the temporary location - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What causes an 1152 error during extraction of Modeler self extracting executable? 
+
+CAUSE
+When an IBM SPSS compressed image is launched, files compressed within it are extracted to the temporary location assigned to the signed in user i.e. /Documents and settings/... or /users.
+The possibility of these files downloaded improperly exists. You can use a tool such
+as MD5 to verify the file content or simply attempt downloading a second time and test.
+
+Other possible causes of this error:
+- Available space within the temporary location noted by the installer.
+- Ability to write in the temporary location noted by the installer.
+
+
+ANSWER
+Transfer the files again, resolved the issue. 
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]

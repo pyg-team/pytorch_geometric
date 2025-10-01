@@ -1,0 +1,63 @@
+Title: IBM Reset Maximo User Password - United States
+
+Text:
+TPAEUI; password; maxadmin TECHNOTE (FAQ)
+
+QUESTION
+ How can a user's password be reset when you cannot log into Maximo 
+
+ANSWER
+If you are using Maximo security, user authentication done in Maximo, the user password can be updated. If you cannot login as an administrative user to change passwords via the Users application the password in the maxuser table can be set to a password you know so you can login and change passwords via the Users application. 
+
+From a Maximo environment you can login as an administrative user, connect to the database for that environment with a SQL tool. 
+
+Run the following SQL to get show the encrypted password: 
+
+Select userid, password from maxuser where userid = '<user>' 
+
+For example: Select userid, password from maxuser where userid = 'MAXADMIN' 
+
+The output: 
+USERID PASSWORD 
+--------- -------------------------------- 
+MAXADMIN 10fe6f4650b2acb49a2121d7e6133e64 
+
+Copy the encrypted password and run update statements in the database for the environment you cannot log into. 
+
+The syntax for each database platform is different. 
+For Oracle:
+UPDATE maxuser
+SET PASSWORD = '<value>'
+WHERE userid = '<user>'
+
+For SQL Server:
+UPDATE maxuser
+SET PASSWORD = 0x<value>
+WHERE userid = '<user>'
+
+For DB2:
+UPDATE maxuser
+SET PASSWORD = x'<value>'
+WHERE userid = '<user>'
+
+From the example above the update statements to set the maxadmin password to maxadmin would be:
+Oracle:
+UPDATE maxuser
+SET PASSWORD = '10fe6f4650b2acb49a2121d7e6133e64'
+WHERE userid = 'MAXADMIN'
+
+SQL Server:
+UPDATE maxuser
+SET PASSWORD = 0x10fe6f4650b2acb49a2121d7e6133e64
+WHERE userid = 'MAXADMIN'
+
+DB2:
+UPDATE maxuser
+SET PASSWORD =x'10fe6f4650b2acb49a2121d7e6133e64'
+WHERE userid = 'MAXADMIN'
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Maximo Asset Management Essentials Systems and Asset Management Control Desk Systems and Asset Management Tivoli Asset Management for IT Systems and Asset Management Tivoli Change and Configuration Management Database Systems and Asset Management Tivoli Service Request Manager

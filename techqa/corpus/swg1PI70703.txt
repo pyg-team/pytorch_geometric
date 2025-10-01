@@ -1,0 +1,223 @@
+Title: IBM PI70703: Dimensions Source Config: StringUtils Class Not Found - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Invalid import package name given for StringUtils. Creates class
+   definition not found error.
+   
+   Sample Error:
+   java.lang.reflect.InvocationTargetException
+   	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+   	at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:95)
+   	at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:55)
+   	at java.lang.reflect.Method.invoke(Method.java:507)
+   	at com.urbancode.air.plugin.Main.execute(Main.java:115)
+   	at com.urbancode.air.plugin.Main.main(Main.java:33)
+   Caused by: java.lang.NoClassDefFoundError:
+   com.urbancode.air.plugin.ant.org.apache.commons.lang.StringUtils
+   	at
+   com.urbancode.air.plugin.command.ImportVersion.execute(ImportVer
+   sion.java:105)
+   	... 6 more
+   Caused by: java.lang.ClassNotFoundException:
+   com.urbancode.air.plugin.ant.org.apache.commons.lang.StringUtils
+   	at java.net.URLClassLoader.findClass(URLClassLoader.java:607)
+   	at java.lang.ClassLoader.loadClassHelper(ClassLoader.java:797)
+   	at java.lang.ClassLoader.loadClass(ClassLoader.java:771)
+   	at
+   sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:325)
+   	at java.lang.ClassLoader.loadClass(ClassLoader.java:752)
+   	... 7 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  String Utils was incorrectly imported. The correct import
+   package is now referenced.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users with version 5 of the Dimensions plugin and trying to  *
+   * import a version.                                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Recent updates to an internal package caused restructured    *
+   * the directory structure and caused a package to no longer    *
+   * exist.                                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Update to version 6+ of the Dimensions Source Configuration  *
+   * plugin.                                                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI70703
+   
+   
+ * REPORTED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * REPORTED COMPONENT ID
+   5725M5400
+   
+   
+ * REPORTED RELEASE
+   612
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-14
+   
+   
+ * CLOSED DATE
+   2016-12-08
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP
+   
+   
+ * R600 PSY
+   UP
+   
+   
+ * R601 PSN
+   UP
+   
+   
+ * R601 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R610 PSY
+   UP
+   
+   
+ * R611 PSN
+   UP
+   
+   
+ * R611 PSY
+   UP
+   
+   
+ * R612 PSN
+   UP
+   
+   
+ * R612 PSY
+   UP
+   
+   
+ * R613 PSN
+   UP
+   
+   
+ * R613 PSY
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R620 PSY
+   UP
+   
+   
+ * R621 PSN
+   UP
+   
+   
+ * R621 PSY
+   UP
+   
+   
+ * R622 PSN
+   UP
+   
+   
+ * R622 PSY
+   UP
+   
+   
+ * R623 PSN
+   UP
+   
+   
+ * R623 PSY
+   UP

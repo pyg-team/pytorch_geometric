@@ -1,0 +1,216 @@
+Title: IBM IT20528: FSALERT FILE INCORRECTLY NAMED WHEN SETTING AN ALERT WHICH RESULTS IN THE ERROR MESSAGE: "ERROR SCANNING ALERT DIRECTORY" - United States
+
+Text:
+z/os SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Incorrect named fsalert file leads to the error message being
+   displayed in db2diag.log: "Error scanning alert directory for
+   host"
+   
+   The following entries can appear in the db2diag.log.
+   
+   -- MEMBER 0 --
+   2015-09-12-04.55.28.205451-240 I12541254E873         LEVEL:
+   Error
+   PID     : 22877                TID : 47278889474624  PROC :
+   db2rocme 0 [db2sdin]
+   INSTANCE: db2sdin              NODE : 000
+   HOSTNAME: srvdb2pd1.tjms.jus.br
+   FUNCTION: DB2 UDB, high avail services, sqlhaIsFsAlertSet,
+   probe:1843
+   MESSAGE : ZRC=0x80000043=-2147483581=SQLZ_RC_INVPARM
+             "Gen. purpose validation error.  Invalid input."
+   DATA #1 : String, 39 bytes
+   Error scanning alert directory for host
+   DATA #2 : String, 21 bytes
+   srvdb2pd1.tjms.jus.br
+   DATA #3 : String, 56 bytes
+   /db2sd_20141122012550/db2sdin/sqllib_shared/ctrlha/alert
+   DATA #4 : String, 30 bytes
+   .srvdb2pd1.tjms.jus.br.fsalert
+   DATA #5 : String, 0 bytes
+   Object not dumped: Address: 0x00007FFF386786F0 Size: 0 Reason:
+   Zero-length data
+   DATA #6 : String, 0 bytes
+   Object not dumped: Address: 0x00007FFF386776F0 Size: 0 Reason:
+   Zero-length data
+   
+   2015-09-12-04.55.29.968913-240 I12542128E851         LEVEL:
+   Error
+   PID     : 22594                TID : 139769442588448 PROC :
+   db2instance
+   INSTANCE: db2sdin              NODE : 000
+   HOSTNAME: srvdb2pd1.tjms.jus.br
+   FUNCTION: DB2 UDB, high avail services, sqlhaIsFsAlertSet,
+   probe:1843
+   MESSAGE : ZRC=0x80000043=-2147483581=SQLZ_RC_INVPARM
+             "Gen. purpose validation error.  Invalid input."
+   DATA #1 : String, 39 bytes
+   Error scanning alert directory for host
+   DATA #2 : String, 9 bytes
+   srvdb2pd2
+   DATA #3 : String, 56 bytes
+   /db2sd_20141122012550/db2sdin/sqllib_shared/ctrlha/alert
+   DATA #4 : String, 30 bytes
+   .srvdb2pd1.tjms.jus.br.fsalert
+   DATA #5 : String, 0 bytes
+   Object not dumped: Address: 0x00007FFF82FD6930 Size: 0 Reason:
+   Zero-length data
+   DATA #6 : String, 0 bytes
+   Object not dumped: Address: 0x00007FFF82FD5930 Size: 0 Reason:
+   Zero-length data
+   
+   -- MEMBER 1 --
+   2015-09-12-04.42.37.534461-240 I28749053E873         LEVEL:
+   Error
+   PID     : 4466                 TID : 47963939781184  PROC :
+   db2rocme 0 [db2sdin]
+   INSTANCE: db2sdin              NODE : 000
+   HOSTNAME: srvdb2pd2.tjms.jus.br
+   FUNCTION: DB2 UDB, high avail services, sqlhaIsFsAlertSet,
+   probe:1843
+   MESSAGE : ZRC=0x80000043=-2147483581=SQLZ_RC_INVPARM
+             "Gen. purpose validation error.  Invalid input."
+   DATA #1 : String, 39 bytes
+   Error scanning alert directory for host
+   DATA #2 : String, 21 bytes
+   srvdb2pd2.tjms.jus.br
+   DATA #3 : String, 56 bytes
+   /db2sd_20141122012550/db2sdin/sqllib_shared/ctrlha/alert
+   DATA #4 : String, 30 bytes
+   .srvdb2pd1.tjms.jus.br.fsalert
+   DATA #5 : String, 0 bytes
+   Object not dumped: Address: 0x00007FFF10C25370 Size: 0 Reason:
+   Zero-length data
+   DATA #6 : String, 0 bytes
+   Object not dumped: Address: 0x00007FFF10C24370 Size: 0 Reason:
+   Zero-length data
+   
+   The error occurs because the hostname retrieved from the
+   db2nodes.cfg file is not shortened i.e. the domain name is not
+   removed when creating a fsalert file. This needs to be fixed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  It can be safely ignored if a local fix is not available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 10.5 Fix Pack 5                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in DB2 10.5 Fix Pack 5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT20528
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-05-09
+   
+   
+ * CLOSED DATE
+   2017-05-09
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IT12801
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA50 PSN
+   UP

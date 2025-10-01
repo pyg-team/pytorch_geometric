@@ -1,0 +1,171 @@
+Title: IBM PK76399: This APAR is for any problem fixed by the HourGlass Fix ACCUM58 - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description Problem ID Problem Fix ID
+   1.  Abend running HGSAMPLE batch or HGCCVR4 online test
+   programs
+   2.  0C4 abend at offset x?23A? in HGRRC01
+   3.  HGCUSTOM terminates with RC=16 but no explanation
+   
+   4.  AD2R Abends and date/time doesn?t roll over at midnight
+   5.  Abend S000/U0023 during HGSCDS file conversion
+   6.  S0C4 abend in HGSCHED
+   7.  Problems setting up HourGlass in IDMS CV environment
+   8.  HGSC initialization messages disappear from the screen
+   9.  HGRRC01B error message during IMS
+   9.  HGRRC01B error message during IMS initialization
+   10. CICS U2000 abend in HGCCGX4
+   11. Macro errors occur assembling HGGETDT
+   12. Support for DB2 v8
+   13. Display VSAM Reason and Return Codes in Messages
+   14. HGSC ? Unable to display saved settings
+   15. Intermittent System Date from CICS
+   16. DB2 Timestamp incorrect output
+   17. Support for z/OS Binder and Program Objects
+   18. HGLV05E error starting HourGlass with temporary password.
+   19. Support for C++/LE370 z/OS 1.6 level.
+   20. S0C4 between x?2C2? and x?2EA? in HGFRONT
+   21. Various CICS and DB2 problems
+   22. HGOFF hangs after applying fix H520S250
+   23. Loop: BMC MAINVIEW CICS transaction JNL2 or FIC2 runs
+   continuously if HG is active
+   24. Duplicate time values returned
+   25. Audit records not written for HGCC or user transactions
+   26. MESSAGE: HGXT01E NO UNUSED TASK SLOTS
+   27. Loop in IDMS programs after upgrade to IDMS v16
+   28. PF8 won?t scroll in HGSC if more than 18 entries
+   29. Incorrect date value returned
+   30. 0C4 in HGLSPC due to I/O disabled time request
+   31. Expand module HGFRONT csect ELIG.
+   32. Schedule start date set to System IPL date.
+   33. "HGXT01E NO UNUSED TASK SLOTS" issued from CICS region
+   34. 0C8 abend in HGIMSLI near offset x'66A'
+   35. 0C4 abend in module HGLSPC
+   36. Loop in IDMS programs after upgrade to IDMS v16
+   37. Expand Module HGFRONT csect HGEXCLD
+   38. CICS TS 1.3/DB2 program does not consistently get altered
+   date/time
+   39. CICS abend in module HGXPCF
+   40. 0C4 abend in HGRRC01 in IMS region
+   41. Startup with trial password fails with HGLV05E
+   42. Abend S0C7 abends due to invalid EIB date/time
+   43. Support for DB2 v9
+   44. Abend S0C7 in CICS region with BMC Super-Optimizer
+   45. Various errors after application of CICS TS fix PK34836 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK34836]
+   46. Bypass License Password checking
+   CF57821A
+   CF57821B
+   PK69159 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK69159]
+   PK69513 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK69513]
+   PK70166 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK70166]
+   PK70227 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK70227]
+   PK70711 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK70711]
+   PK70989 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK70989]
+   PK71957 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK71957]
+   PK74771 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK74771]
+   PK75237 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK75237]
+   PK75244 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK75244]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  These problems were fixed with patch H520ACCUM58.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Use this APAR to track any HG problems fix by H520ACCUM58
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Use this APAR to track any HG problems fix by H520ACCUM58
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK76399
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM HOURGLASS
+   
+   
+ * REPORTED COMPONENT ID
+   5655U4200
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-11-25
+   
+   
+ * CLOSED DATE
+   2008-11-25
+   
+   
+ * LAST MODIFIED DATE
+   2009-01-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK67648 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK67648]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PK88481 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK88481]
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

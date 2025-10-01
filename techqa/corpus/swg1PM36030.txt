@@ -1,0 +1,159 @@
+Title: IBM PM36030: WBIFN V310 EIAS SERVICE CANNOT START IF MQ V7.0.1 IS INSTALLED - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  EIAS service cannot start if MQ V7.0.1 is installed
+   indicated by DNFE3344E error event and MQ reason code 2033
+   where DNF_EI_LRT Enhanced InterAct Service cannot access the
+   WebSphere MQ queue DNF_EI_CMD1
+   
+   Note:
+   WebSphere Bi for FN PTF UK67301 for APAR PM36030 provides a
+   circumvention for problem reported in WebSphere MQ APAR PM24788 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM24788].
+   WebSphere MQ PTF UK66975 fixes APAR PM24788 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM24788].
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local fix is availabe, the APAR will be provided with PTF
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: WBIFN V310 EIAS SERVICE CANNOT START    *
+   *                      IF MQ V7.0.1 IS INSTALLED               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Formerly, when EIAS was used with MQ V7.0.1, the EIAS service
+   could not start. DNFE3344E error event with reason code 2033
+   was issued, indicating that OUTBOUND DNF_EI_LRT EIAS service
+   could not access the WebSphere MQ queue DNF_EI_CMD1 due to an
+   exception.
+   Now, the MQ exception MQRC_NO_MSG_AVAILABLE is caught by
+   WBIFN and retries accessing DNF_EI_CMD1 queueafter 300
+   milliseconds.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WBIFN V310 EIAS SERVICE CANNOT START IF MQ V7.0.1 IS INSTALLED.
+   This problem has been solved.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM36030
+   
+   
+ * REPORTED COMPONENT NAME
+   SN FIN, SN IA,
+   
+   
+ * REPORTED COMPONENT ID
+   5655FIN01
+   
+   
+ * REPORTED RELEASE
+   31E
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-04
+   
+   
+ * CLOSED DATE
+   2011-05-04
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM36182 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM36182] UK67301
+   
+   
+
+MODULES/MACROS
+ *  DNF00179 DNF00180
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SN FIN, SN IA,
+   
+   
+ * FIXED COMPONENT ID
+   5655FIN01
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R31E PSY UK67301 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK67301]
+   UP11/05/05 P F105
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,12 @@
+Title: IBM Acknowledge tool does not update events - United States
+
+Text:
+acknowledge; acknowledge tool; Acknowledged; ael; webgui; state_change; state change; StateChange TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Events are not updated when the default acknowledge tool is executed in the Web GUI AEL. 
+
+RESOLVING THE PROBLEM
+While it is possible that this problem could be caused by delays to event forwarding in a multi-tiered Netcool/OMNIbus architecture, the most likely cause of this behaviour is the state_change trigger. 
+
+ Normally, when an event is updated within Netcool/OMNIbus the StateChange field is updated to the current time by the Netcool/OMNIbus state_change trigger. WebGUI uses this field to determine whether to refresh the status of an event currently being displayed in the AEL, so if the trigger is disabled the status of the event in WebGUI will not be updated, even though the acknowledgement flag has been set in the ObjectServer.

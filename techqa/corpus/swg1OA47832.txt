@@ -1,0 +1,216 @@
+Title: IBM OA47832: CUSTOMIZER ABENDS WHEN THE TRAPPED MESSAGE CONTAINS '$$' OR '$.'SEQUENCES. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer has several times a day a dump CODE = 878-18 on unknown
+   module. There is no impact on the STC and work continue with no
+   interfere.
+   
+   IEA705I ERROR DURING FREEMAIN SYS CODE = 878-18 TEPUMPT TEPUMPT
+   00
+   IEA705I 00F5C400 009BBE88 009BBE88 00000100 00000000 335DC338
+   IEA995I SYMPTOM DUMP OUTPUT  775
+   SYSTEM COMPLETION CODE=878  REASON CODE=00000018
+    TIME=10.00.15  SEQ=41508  CPU=0000  ASID=0188
+    PSW AT TIME OF ERROR  070C1000   815709C6  ILC 2  INTC 0D
+      NO ACTIVE MODULE FOUND
+      NAME=UNKNOWN
+      DATA AT PSW  015709C0 - 00181610  0A0D98DC  D0088910
+      GR 0: 84000000   1: 84878000
+         2: 00000004   3: 00000001
+         4: 00000000   5: 00000005
+         6: 00000007   7: 00000878
+         8: 00000018   9: E2E9E7F7
+         A: 335DC338   B: 00000878
+         C: 8157098E   D: 7FF17008
+         E: B35D0068   F: 00000018
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Tivoli Event Pump users.                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A series of 878, 0C1, 0C4 abends occur  *
+   *                      when the trapped message contains '$$'  *
+   *                      or '$.' in its body. In some cases      *
+   *                      Tivoli Event Pump for z/OS STC stops    *
+   *                      the operation and doesn't respond to    *
+   *                      STOP command.                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A series of 878, 0C1, 0C4 abends occur when the trapped message
+   contains '$$' or '$.' in its body.
+   
+   IEA705I ERROR DURING FREEMAIN SYS CODE = 878-18 TEPUMPT TEPUMPT
+   IEA995I SYMPTOM DUMP OUTPUT  110
+   IEA705I 00F58400 009BCD20 009BCD20 00000100 00000000 335D2340
+   SYSTEM COMPLETION CODE=878  REASON CODE=00000018
+    TIME=17.51.47  SEQ=60831  CPU=0000  ASID=0193
+    PSW AT TIME OF ERROR  070C1000   815709C6  ILC 2  INTC 0D
+      NO ACTIVE MODULE FOUND
+      NAME=UNKNOWN
+      DATA AT PSW  015709C0 - 00181610  0A0D98DC  D0088910
+      GR 0: 84000000   1: 84878000
+         2: 00000004   3: 00000001
+         4: 00000000   5: 00000005
+         6: 00000007   7: 00000878
+         8: 00000018   9: E8EBE795
+         A: 335D2340   B: 00000878
+         C: 8157098E   D: 7FF17008
+         E: B35CF068   F: 00000018
+    END OF SYMPTOM DUMP
+   
+   IEA995I SYMPTOM DUMP OUTPUT  057
+   SYSTEM COMPLETION CODE=0C4  REASON CODE=00000010
+    TIME=09.54.42  SEQ=00283  CPU=0000  ASID=004C
+    PSW AT TIME OF ERROR  078D1000   8EB38040  ILC 6  INTC 10
+      ACTIVE LOAD MODULE          ADDRESS=0EB37650  OFFSET=000009F0
+      NAME=GTMCTMON
+      DATA AT PSW  0EB3803A - F14C41F0  9150D203  F004100C
+      GR 0: 40C9C7D5   1: C1C2D3E5
+         2: 000003BD   3: 0EB39FEC
+         4: 0000007D   5: 000004E5
+         6: 0EB68B18   7: 8E60B7C0
+         8: 0DA068F8   9: 0EB39E20
+         A: 0DA064C0   B: 8EB37650
+         C: 0DAB816C   D: 0E60B814
+         E: 00000311   F: 0EB39F70
+    END OF SYMPTOM DUMP
+   IEA995I SYMPTOM DUMP OUTPUT  972
+   SYSTEM COMPLETION CODE=0C4  REASON CODE=00000010
+    TIME=15.31.36  SEQ=07811  CPU=0000  ASID=0188
+    PSW AT TIME OF ERROR  078D2000   B26E2B28  ILC 6  INTC 10
+      ACTIVE LOAD MODULE          ADDRESS=326D7CA0  OFFSET=0000AE88
+      NAME=GTMAOPC9
+      DATA AT PSW  326E2B22 - B05A47F0  B082D507  F014E000
+      GR 0: 0000002D   1: 33BB70F8
+         2: 325578F0   3: 00000000
+   
+   In some cases Tivoli Event Pump for z/OS STC stops the operation
+   and doesn't respond to STOP command. Above abends occur in
+   different modules such as GTMAOPC9, GTMCTMON, GMTJLMON,
+   GTMAOPD2.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Tivoli Event Pump for z/OS rewrites its own system areas when
+   the trapped message contains '$$' or '$.' sequences. The problem
+   is applicable only for ZEVENT traps. Playback error probability
+   is quite low. The issue was fixed in the APAR.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA47832
+   
+   
+ * REPORTED COMPONENT NAME
+   EVENT PUMP FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5698B3400
+   
+   
+ * REPORTED RELEASE
+   422
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-12
+   
+   
+ * CLOSED DATE
+   2015-06-02
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA77565
+   
+   
+
+MODULES/MACROS
+ *  GPZAOPC1
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   EVENT PUMP FOR
+   
+   
+ * FIXED COMPONENT ID
+   5698B3400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R422 PSY UA77565 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA77565]
+   UP15/06/04 P F506
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

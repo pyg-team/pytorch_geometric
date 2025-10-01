@@ -1,0 +1,72 @@
+Title: IBM Announcement Letter for WebSphere Transformation Extender v8.4.1 - United States
+
+Text:
+Announcement Letters; announcements NEWS
+
+ABSTRACT
+ General Availability of IBM WebSphere Transformation Extender version 8.4.1 is 31 May 2013 for electronic availability and 14 June 2013 for media availability. 
+
+New in IBM WebSphere Transformation Extender V8.4.1:
+
+
+ * Platform: Support for Linux on POWER systems and new IBM WebSphere Transformation Extender with Launcher Hypervisor Edition for AIX
+ * Integration: IBM Sterling Connect:Direct adapter
+ * Design Studio: Eclipse based COBOL copybook importer; visual mapping of XSLT; new XPATH, XSLT, and XVALIDATE functions; Java™ API for creating and modifying maps and type trees; automapping capability; large XML namespaces support
+
+
+
+CONTENT
+IBM WebSphere Transformation Extender delivers the data transformation and validation required in your IT infrastructure. 
+
+Summary of new technical features in IBM WebSphere Transformation Extender V8.4.1 base editions
+
+General 
+
+ * Support for Linux on POWER systems 
+ * Support for mixed content and xsi:type in native XML 
+ * Support for excess trailing spaces 
+ * Improved diagnostics when using native XML in maps 
+ * Enhanced serviceability 
+ * Removed the following obsolete support: 
+ * Red Hat Enterprise Linux AS V4 for Intel™ 
+ * Red Hat Enterprise Linux AS V4 for IBM System z® 
+ * SUSE Linux Enterprise Server 10 for Intel 
+ * SUSE Linux Enterprise Server 10 for IBM System z 
+ * IBM AIX V5.3 
+ * Solaris 9 
+ * Platform API on distributed platforms
+
+
+Design Studio  * Includes Eclipse based COBOL copybook importer 
+ * Includes a new Graphical Data Mapper for visual mapping of XSLT 
+ * Includes JSON importer 
+ * Delivers new XPATH, XSLT, and XVALIDATE functions 
+ * Has new Java API that enables users to create and modify maps and type trees from a Java program 
+ * Adds automapping capability 
+ * Is able to handle large XML namespaces 
+ * Is able to select a root in order to build just that one construct as the root of the tree when using Native Schema or the Xerces importer
+
+
+Connectivity  * Adds new IBM Sterling Connect:Direct adapter 
+ * Adds new Java Architecture for XML Binding (JAXB) adapter 
+ * Adds HL7 MLLP Adapter 
+ * Supports currency for: 
+ * IBM DB2® 10.1 
+ * IBM Informix® V11.7 
+ * IBM WebSphere Message Broker ( IBM Integration Bus 9.0) 
+ * IBM Sterling B2B Integrator V5.2.4 
+ * Microsoft™ SQL Server 2012 
+ * Sybase SQL Server 15.7
+
+
+IBM WebSphere Transformation Extender with Launcher enhancements:  * IBM WebSphere Transformation Extender with Launcher Hypervisor Edition for AIX 
+
+
+WebSphere Transformation Extender for Integration Servers  * Integration with IBM WebSphere Message Broker V8.0, IBM WebSphere Business Process Manager Advanced V8.0, and IBM Sterling B2B Integrator V5.2.4 
+ * Removes the following obsolete support: 
+ * IBM WebSphere Enterprise Service Bus (integration replaced by Business Process Manager Advanced)
+
+
+For more information, see the US Announcement Letter for WebSphere Transformation Extender [http://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS213-142] [http://www-1.ibm.com/support/docview.wss?rs=1083&context=SSGMGV&uid=swg21257210]. Information for other country announcement letters is located here [http://www.ibm.com/common/ssi/index.wss]. 
+
+To determine what the newest release of IBM WebSphere Transformation Extender is and if the release you are running is still supported see the IBM Software Support Lifecycle Page for WebSphere Transformation Extender [http://www.ibm.com/software/support/lifecycleapp/PLCDetail.wss?synkey=V609477V50090C20-L870504N79564G16-K522132L40227S70&synkey=V609477V50090C20-L870504N79564G16-S115266D13541G83&synkey=V609477V50090C20-L870504N79564G16-Q852526Q07834M79&synkey=V609477V50090C20-L870504N79564G16-J929070W75805M39&synkey=V609477V50090C20-L870504N79564G16-M862627I11441Y07&ibm-view=View+details].

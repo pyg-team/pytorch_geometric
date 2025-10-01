@@ -1,0 +1,172 @@
+Title: IBM PK53931: DATABASE TRANSFER ON PORTAL EXP FROM DB2 EXPRESS USING TYPE 2   DRIVERS TO DB2 UDB USING TYPE 4 DRIVERS DOESNT WORK AS EXPECTED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When moving from DB2 Express (configured using Type 2 drivers
+   out of the box) to another external DB2 server (using Type 4
+   drivers) the sync and designer domains are not moved by default,
+   therefore those datasources still exist under the DB2 JDBC
+   Provider.  Because datasources still exist the DB2 JDBC Provider
+   never gets rebuilt with the Type 4 properties and therefore
+   causes startup problems after a successful database-transfer.
+   
+   CLI0626E  getXAConnection() through the net driver is not
+   supported in
+   this version of DB2 JDBC 2.0 driver.DSRA0010E: SQL State = null,
+   Error
+   Code = 0DSRA0010E: SQL State = null, Error Code = 0
+   
+   The potential defect here is that the wpconfig_dbtype.properties
+   should have a section for DB2 Express, just like it does for
+   CloudScape (out of the box) on multiplatform:
+   
+   ################################################################
+   ###############
+   # Cloudscape Properties
+   ################################################################
+   ###############
+   
+   # DbDriver: The name of class SqlProcessor will use to import
+   SQL files
+   cloudscape.DbDriver=com.ibm.db2j.jdbc.DB2jDriver
+   
+   # DbLibrary: The directory and name of the zip/jar file
+   containing JDBC driver class
+   # Please use the system specific file separator names, e.g. for
+   windows semicolon and for unix colon.
+   cloudscape.DbLibrary=C:/WebSphere/AppServer/cloudscape/lib/db2j.
+   jar
+   
+   # JdbcProviderName: The name of jdbc provider to be used
+   cloudscape.JdbcProviderName=wpdbJDBC_cloudscape
+   
+   ################################################################
+   ###############
+   # END: Cloudscape Properties
+   ################################################################
+   ###############
+   
+   
+   Basically the config tasks are not architected to be able to
+   reconfigure the existing DB2 JDBC Provider.  In Portal Server
+   MP, this approach is NOT to reconfigure the existing JDBC
+   Provider, but rather it builds a completely new Provider
+   specific to the external database.  This approach is not used
+   for Portal Express and DB2 Express.
+   
+   Also, since the sync and designer domains are used for other
+   components and not by default Portal, maybe it should be
+   considered to create those datasources under a separate JDBC
+   Provider.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  drop the sync and designer datasources from the JDBC Provider
+   before running the database-transfer task.  This will allow the
+   database-transfer to be able to drop the JDBC Provider and
+   rebuild it with the correct Type 4 values
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  L3 Update - Discussed with Portal Express test lead, Charles S.
+   This has been
+   fixed in the Portal Express 6.1 release.  They tested
+   successfully 6.1
+   Portal express Type 2 dbtransfer to DB2 v8.2 Type 4 .
+   Request we close this PMR and
+   APAR as fixed in future release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  L3 addressed as fixed in next release
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK53931
+   
+   
+ * REPORTED COMPONENT NAME
+   PORTAL EXPRESS
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7700
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-02
+   
+   
+ * CLOSED DATE
+   2008-03-27
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

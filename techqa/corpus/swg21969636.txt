@@ -1,0 +1,52 @@
+Title: IBM After executing the tacmd pdcollect, the Tivoli Enterprise Monitoring Server (TEMS) configuration file ms.config is modified - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ tacmd pdcollect command modifies the TEMS configuration file ms.config resulting missing some of the latest configuration 
+
+SYMPTOM
+The TEMS configuration file ms.config file rolled back to older backup version
+
+
+CAUSE
+The problem is, the older pdcollect gathers *.config files roughly as follows:
+
+find $CANDLEHOME -name *.config -exec cp {} /tmp...
+
+
+and the find command encounters files like this:
+
+./config/$hostname_ms_HUB_$temsname.config->/opt/IBM/ITM/config/ms.config
+./config/ms.config
+./backup/backups/20150126-201520/config/$hostname_ms_HUB_$temsname.config
+
+As a result, three cp commands are invoked:
+
+a) The current $hostname_ms_HUB_$temsname.config is copied to the temp location. The source is a softlink to ms.config, and so the result is another softlink pointing to ms.config.
+
+b) ms.config is copied as-is to the temp location.
+
+c) An old backup of $hostname_ms_HUB_$temsname.config is copied to the temp location. However, because the first copy above created a softlink, this copy is an actual copy... and it replaces the original ms.config with an old one. 
+
+where 
+
+$hostname is the hostname of the TEMS server 
+
+$temsname is the node name of the TEMS 
+
+$CANDLEHOME is the IBM Tivoli monitoring install location
+
+
+RESOLVING THE PROBLEM
+It is a known issue and it is fixed in the 6.30.05.00 version as part of IV67523. That APAR was specifically opened for implementation of CANDLEDATA, while testing that new function, we discovered and fixed a number of directory scanning problems in pdcollect. Those fixes come into play both in systems with regular homogeneous CANDLEHOME and those with the new CANDLEHOME + CANDLEDATA implementation.
+
+The code was changed in IV67523 so that only CANDLEHOME/config is searched when gathering for config files. 
+
+
+The issue arises only if the customer configuration uses softlink to point back to ms.config configuration file. if the customer configuration uses $hostname_ms_$temsname.config file then there is no issue. 
+
+ 
+
+Alternative work around is, verify the time stamp of the ms.config configuration file after executing the tacmd pdcollect command and copy back the original version of ms.config file if the ms.config file is modified

@@ -1,0 +1,234 @@
+Title: IBM How to configure and gather T6 RPT trace logs - United States
+
+Text:
+RPT; RPT HTTP; T6; trace options; trace logs; troubleshooting; 71RRT-RPTTS; CBE; ARM TECHNOTE (FAQ)
+
+QUESTION
+ How can you configure the T6 agent to generate trace logs for resolving RPT script issues? 
+
+ANSWER
+The following instructions are designed to guide you through the process of configuring trace logging levels and so you can collect the trace logs that help Support troubleshoot RPT script issues.
+Tivoli Common Logs Directory
+
+The Tivoli Common Logs directory location varies with operating system platform and T6 maintenance level. In this technote, we use the symbolic name <TivoliCommonLogs> to refer to the Tivoli Common Logs pathname.
+
+Unix/Linux: On Unix/Linux platforms, the default location of the Tivoli Common Logs directory is:
+
+/var/ibm/tivoli/common/BWM/logs
+
+Windows: The following is the default Tivoli Common Logs directory on the Windows platform for ITCAM for Transactions V7 installations prior to V7.3 FP01:
+
+C:\Program Files\IBM\tivoli\common\BWM\logs
+
+Starting in ITCAM for Transactions 7.3 FP01, the Tivoli Common Logs directory location depends on the value of the %ALLUSERSPROFILE% system variable.
+
+Identifying the RPT Runtime Package
+
+1) Log onto the T3 (Application Management Console) host.
+
+2) Navigate to ITM_HOME\kt1depot\T3\RPT (Windows), ITM_HOME/kt1depot/T3/RPT (Unix/Linux).
+
+3) Open <script-name>.zip, where script-name is the name of your RPT script. The next steps are Windows centric:
+
+4) In the ZIP file, right-click <script-name>.properties. 
+
+5) Select the 'View with NOTEPAD.EXE' command.
+
+6) The runtime version is identified in the 'runtimeVersion' property. For example:
+
+runtimeVersion=7.2.154.v20090225_2153_26737781
+
+Configure, Generate, and Collect Trace Logs
+
+1) Stop the T6 agent. 
+
+2) Delete the following log files on the T6 host: 
+
+
+ * Delete the following logs under the <TivoliCommonLogs> directory:
+   
+   trace-robotic*.log 
+   msg-robotic*.log 
+ * Delete all of the logs under the <TivoliCommonLogs>\RPT\<rpt-runtime-version> directory.
+   
+
+3) Edit the following logging properties files on the T6 host -- after first making a backup copy: 
+
+a. On the T6 host, make a backup copy of the t6-logging.properties file: 
+
+Windows: ITM_HOME\TMAITM6\t6-logging.properties. 
+Unix/Linux: ITM_HOME/config/t6-logging.properties 
+
+Edit t6-logging.properties. Set the following trace entries in the 'RPT' section to DEBUG_MAX. Set the corresponding logging levels to 'true'. 
+
+# RPT Playback Controller TRACE 
+BWM.trc.rpt.pc.level=DEBUG_MAX 
+BWM.trc.rpt.pc.logging=true 
+
+# RPT Playback Manager TRACE 
+BWM.trc.rpt.pm.level=DEBUG_MAX 
+BWM.trc.rpt.pm.logging=true 
+
+# RPT Test TRACE 
+BWM.trc.rpt.rpttest.level=DEBUG_MAX 
+BWM.trc.rpt.rpttest.logging=true 
+
+# RPT Event TRACE 
+BWM.trc.rpt.event.level=DEBUG_MAX 
+BWM.trc.rpt.event.logging=true 
+
+# RPT UTIL TRACE 
+BWM.trc.rpt.util.level=DEBUG_MAX 
+BWM.trc.rpt.util.logging=true 
+
+# RPT Managed JVM TRACE 
+BWM.trc.rpt.managed.level=DEBUG_MAX 
+BWM.trc.rpt.managed.logging=true 
+
+b. On the T6 host, make a backup copy of itcamrt-logging.properties. 
+
+Windows: ITM_HOME\TMAITM6\app\RPT\config\itcamrt-logging.properties 
+Unix/Linux: ITM_HOME/tmaitm6/app/RPT/config/itcamrt-logging.properties 
+
+Edit itcamrt-logging.properties. Set the following trace entries in the 'RPT' section to DEBUG_MAX. Set the corresponding logging levels to 'true'. 
+
+# RPT Playback Controller TRACE 
+BWM.trc.rpt.pc.level=DEBUG_MAX 
+BWM.trc.rpt.pc.logging=true 
+
+# RPT Utility TRACE 
+BWM.trc.rpt.util.level=DEBUG_MAX 
+BWM.trc.rpt.util.logging=true 
+
+# RPT Managed JVM TRACE 
+BWM.trc.rpt.managed.level=DEBUG_MAX 
+BWM.trc.rpt.managed.logging=true 
+
+# RPT Playback Manager TRACE 
+BWM.trc.rpt.pm.level=DEBUG_MAX 
+BWM.trc.rpt.pm.logging=true 
+
+# RPT Test TRACE 
+BWM.trc.rpt.rpttest.level=DEBUG_MAX 
+BWM.trc.rpt.rpttest.logging=true 
+
+# RPT External TRACE 
+BWM.trc.rpt.external.level=DEBUG_MAX 
+BWM.trc.rpt.external.logging=true 
+
+# RPT Event TRACE 
+BWM.trc.rpt.event.level=DEBUG_MAX 
+BWM.trc.rpt.event.logging=true 
+
+CommonBaseEvent Logs 
+
+The RPT playback engine generates the Common Base Event (CBE) log files when you set the following properties in this itcamrt-logging.properties file. You can generate the CBE logs, without generating additional trace logging, by setting only these properties in the itcamrt-logging.properties file. 
+
+BWM.trc.rpt.pc.level=DEBUG_MAX 
+BWM.trc.rpt.pc.logging=true 
+
+The RPT playback engine generates the CBE log files in the following directory: 
+
+Windows: ITM_HOME\TMAITM6\app\RPT\runtimes\<rpt-runtime-version> 
+Unix/Linux: ITM_HOME/tmaitm6/app/RPT/runtimes/<rpt-runtime-version> 
+
+where <rpt-runtime-version> is the version number of the RPT Runtime package. The CBE log files use the filename pattern CommonBaseEvents##.log. These files show any errors that are not in the execution history log files (see step 6c). 
+
+c. Set the following properties to DEBUG_MAX in the itcamrt-logging.properties file. Also set the logging parameters to 'true' in this parameter group. 
+
+Windows: ITM_HOME\TMAITM6\app\RPT\config\itcamrt-logging.properties 
+Unix/Linux: ITM_HOME/tmaitm6/app/RPT/config/itcamrt-logging.properties 
+
+#----------------------------------------------- 
+# RPT 
+#----------------------------------------------- 
+# RPT Playback Controller TRACE 
+BWM.trc.rptHistory.pc.level=DEBUG_MAX 
+BWM.trc.rptHistory.pc.logging=true 
+BWM.trc.rptHistory.listenerNames=BWM.handler.file.trc.rptHistory 
+
+# RPT Playback Controller MSG 
+BWM.msg.rptHistory.pc.level=DEBUG_MAX 
+BWM.msg.rptHistory.pc.logging=true 
+BWM.msg.rptHistory.listenerNames=BWM.handler.file.msg.rptHistory 
+
+# RPT Event TRACE 
+BWM.trc.rptHistory.action.level=DEBUG_MAX 
+BWM.trc.rptHistory.action.logging=true 
+# RPT Event MSG 
+#BWM.msg.rptHistory.action.level=DEBUG_MAX 
+BWM.msg.rptHistory.action.level=ALL 
+BWM.msg.rptHistory.action.logging=true 
+#======================================================================= 
+# END FILE tmtp-logging.properties 
+#======================================================================= 
+
+4) On the T6 host, make a backup copy of the Robotic Response Time Agent environment configuration file. 
+
+Windows: ITM_HOME\TMAITM6\kt6env 
+Unix/Linux: ITM_HOME/config/t6.ini 
+
+ARM Data Files 
+
+Add the following entry to the end of the environment configuration file: 
+
+ARM_KEEP_DATA_FILES=Y 
+
+This option retains the ARM data files under the following directory until you remove the ARM_KEEP_DATA_FILES=Y option and restart the T6 agent. 
+
+Windows: ITM_HOME\TMAITM6\arm\log\kt6\delete 
+Unix/Linux: ITM_HOME/tmaitm6/arm/log/kt6/delete 
+
+ARM logging is enabled by setting the following trace entries in the 'ARM Debug Logging' section of the t6-logging.properties file. 
+
+Windows: ITM_HOME\TMAITM6\t6-logging.properties. 
+Unix/Linux: ITM_HOME/config/t6-logging.properties 
+
+Make a backup copy of the t6-logging.properties file before changing these trace entries. 
+
+BWM.trc.arm.debug.level=DEBUG_MAX 
+BWM.trc.arm.debug.logging=true 
+
+These trace entries generate <hostname>_t6arm_*.log files in the following directory: 
+
+Windows: ITM_HOME\TMAITM6\logs 
+Unix/Linux: ITM_HOME/logs 
+
+5) Restart the T6 agent and reproduce the issue. 
+
+6) Add the following logs to a ZIP file and upload the ZIP file to the PMR on ecurep. Select the ZIP options to recurse subdirectories and include pathnames. 
+
+a. Collect the following logs from the <TivoliCommonLogs> directory: 
+
+trace-robotic*.log 
+msg-robotic*.log 
+T6-SystemOut.log 
+T6-SystemErr.log 
+
+b. Collect all of the logs from <TivoliCommonLogs>\RPT\<rpt-runtime-version>. These files include trace-rpt*.log. 
+
+c. Collect the execution history (msg-rptHistory*.log) files in the <TivoliCommonLogs>\[application name[\[script name]directory. These execution history logs include the events that occurred when the script ran. 
+
+d. Collect the CommonBaseEvent*.log files located under ITM_HOME\TMAITM6\app\RPT\runtimes\<rpt-runtime-version> where <rpt-runtime-version> is the version number of the RPT Runtime. These files include errors that are not in the execution history log files. 
+
+e. Collect the *.dat ARM data files from the ITM_HOME\TMAITM6\arm\log\kt6\delete directory. 
+
+f. Collect a copy of the current T6 trace logs: 
+
+Windows: ITM_HOME\TMAITM6\logs\<hostname>_t6_*.log 
+Unix/Linux: ITM_HOME/logs/<hostname>_t6_*.log 
+
+7) On the hub TEMS host, and on the T6 host where this script is running, generate a cinfo report. If the T6 agent reports to a remote TEMS, provide a cinfo report on the remote TEMS also. Submit the reports as text files. Name the reports line htems-cinfo.txt, rtems-cinfo.txt, and t6-cinfo.txt. Note that the command names and parameters are different for Windows and Unix/Linux. 
+
+Windows: ITM_HOME\InstallITM\kincinfo -t > outfle.txt 
+Unix/Linux: ITM_HOME/bin/cinfo -i > outfle.txt 
+
+8) Provide the name of the script that is not behaving correctly. 
+
+9) Provide a screenshot of the Help > About dialog in the RPT workbench you used to create the script. 
+
+10) IBM Support may ask for additional logs, depending on the issue. RELATED INFORMATION
+ Analyzing CommonBaseEvent logs [http://www.ibm.com/support/docview.wss?uid=swg21421064]
+Tivoli Common Logs Directory on Windows Platform [http://www.ibm.com/support/docview.wss?uid=swg21624328]
+Generating and collecting CBE logs for RPT scripts [http://www.ibm.com/support/docview.wss?uid=swg21671985]
+Collecting data for RRT [http://www.ibm.com/support/docview.wss?uid=swg21326667]

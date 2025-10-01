@@ -1,0 +1,60 @@
+Title: IBM NullPointerException causes application deployment to fail - United States
+
+Text:
+NullPointerException ; MapResRefToEJBHelper; MapResRefToEJB; ekjb-jar.xml ; Resource Reference TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Enterprise application fails to deploy due to the following exception in the administrative console:
+
+AppDeploymentException: [ADMA0093E: Unexpected exception occurred while completing task MapResRefToEJB. Please check server machines FFDC for more information.] java.lang.NullPointerException 
+
+CAUSE
+The ResourceRef ID defined in the ibm-ejb-jar-bnd.xmi must match the Resource-Ref ID in the ejb-jar.xml file.
+
+Sample resRefBindings in ibm-ejb-jar-bnd.xmi:
+
+
+
+<resRefBindings xmi:id="ResourceRefBinding_1092423966789" jndiName="jms/TM2OrderResponseConnectionFactory">
+<bindingResourceRef href="META-INF/ejb-jar.xml#ResourceRef_1092427065578"/>
+</resRefBindings>
+<resRefBindings xmi:id="ResourceRefBinding_1092423966790" jndiName="jms/TM2OrderResponseQueue">
+<bindingResourceRef href="META-INF/ejb-jar.xml#ResourceRef_1092427065579"/>
+</resRefBindings> 
+In the preceding example you can see resource reference ResourceRef_1092427065578 and ResourceRef_1092427065579. Both the Resource Ref IDs are missing from the ejb-jar.xml file. 
+
+The following example shows how the Resource reference should look in both the ejb-jar.xml and ibm-ejb-jar-bnd.xmi files. 
+
+In ibm-ejb-jar-bnd.xmi file: 
+
+<resRefBindings xmi:id="ResourceRefBinding_1092664658007" jndiName="jdbc/tm2/db2_t">
+<bindingResourceRef href="META-INF/ejb-jar.xml#ResourceRef_1092664658007"/>
+</resRefBindings> 
+In ejb-jar.xml file: 
+
+<resource-ref id="ResourceRef_1092664658007">
+<description></description>
+<res-ref-name>jdbc/tm2/db2_t</res-ref-name>
+<res-type>javax.sql.DataSource</res-type>
+<res-auth>Application</res-auth>
+<res-sharing-scope>Shareable</res-sharing-scope>
+</resource-ref> 
+Note: Reference the attached SystemErr.log file for complete stack trace. 
+RESOLVING THE PROBLEM
+ 
+
+ 1. Expand the EAR using earexpander, which is located in the following directory:
+    
+    install_root/bin/earexpander.sh. 
+    
+ 2. Remove the unmatching Resource Ref in the ibm-ejb-jar-bnd.xmi file or define the matching Resource Ref in ejb-jar.xml file. 
+    
+    
+ 3. Use earexpander to collapse the EAR.
+    
+    
+ 4. Redeploy the EAR.
+
+SystemErr.txt [/support/docview.wss?uid=swg21178192&aid=2] [/support/docview.wss?uid=swg21178192&aid=1]
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

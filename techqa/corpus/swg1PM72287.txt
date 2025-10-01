@@ -1,0 +1,175 @@
+Title: IBM PM72287: STATISTICS SYNTAX FILE IN C&DS JOB FAILING SPORADICALLY WHEN ATTEMPTING TO WRITE BACK TO THE REPOSITORY. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Since there were no official Statistics 20FP1 Adapters for C&DS
+   5.0, we have proceeded to install the Statistics Adapter 20FP1
+   for C&DS 4.2.1 and to change the install folder to C&DS 5.0.
+   
+   When executing a simple Stats syntax job, C&DS reports sporadic
+   failed executions. There are times when job is successfully run,
+   however, there were more reports where it is failed.
+   
+   The cds.log file produces the following message:
+   21:50:42,736 ERROR [SPSSBPkgClient] RemoteStatisticSyntaxCommand
+   failed with ErrorCode:1, ConnectionId:25
+   
+   Customer expects to the job to be successfully run all the time
+   with no errors.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This has been reported to the IBM SPSS Statistics development
+   team for investigation.
+   
+   The issue seems to lie with the password used for the
+   repository. When jobs are submitted, we prepare the REPOSITORY
+   CONNECT syntax with an encrypted password. This encrypted
+   password generated for each job submission based on the
+   repository password. Some times this encrypted password contains
+   '+' symbol. Statistics syntax treats '+' for joining two syntax
+   lines and when this job finds this invalid symbol probably job
+   fails. This job only fails sporadically because we do the
+   encrypt every time when we submit the job and only few times
+   this symbol is used.
+   
+   Work around could be disable the repository settings in the job
+   step and then prepend the REPOSITORY CONNECT within the syntax.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * This problem occurs on all users of IBM SPSS Statistics 20   *
+   * and Statistics 21.                                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * STATISTICS SYNTAX FILE IN C&DS JOB FAILING SPORADICALLY WHEN *
+   * ATTEMPTING TO WRITE BACK TO THE REPOSITORY.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM SPSS Statistics 20 Fix Pack 2 and      *
+   * Statistics 21 Fix Pack 1.                                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been addressed in IBM SPSS Statistics 20 Fix Pack
+   2 and Statistics 21 Fix Pack 1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM72287
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   K00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-05
+   
+   
+ * CLOSED DATE
+   2013-03-14
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RK00 PSN
+   UP
+   
+   
+ * RK00 PSY
+   UP
+   
+   
+ * RL00 PSN
+   UP
+   
+   
+ * RL00 PSY
+   UP

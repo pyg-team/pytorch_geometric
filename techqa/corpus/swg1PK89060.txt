@@ -1,0 +1,144 @@
+Title: IBM PK89060: 'INCLUDE IN NEXT LOAD' OPTION NOT WORKING FOR REF UNITS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Quintus #225183
+   
+   With a model loaded, if I select an
+   element in the browser and 'Edit Unit...' to deselect the option
+   'Include in next load', the item still loads every way I have
+   tried to
+   reload the model. I've tried reloading the model from the Files
+   menu and
+   selecting the name of the recently opened project, and I've
+   tried using
+   the Open button and selecting the project with various options
+   including
+   'Restore Last Session'. In all cases, the unit I did not want to
+   load,
+   seems to load and the 'Include in next load' option is always
+   returned
+   to being checked.
+   Of course, if I just manually unload the unit first things work
+   ok using
+   these various methods to reload the model but if I want to
+   momentarily
+   keep a unit loaded but set it so that it will not load the next
+   time
+   (which I thought was the intent of this option), I can't seem to
+   get
+   that to work. I am using Rhapsody 7.4.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  "Include in next load" check box (on Unit Information
+   window) not working for reference units.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in version 7.5.0.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK89060
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   740
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-16
+   
+   
+ * CLOSED DATE
+   2009-12-04
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R740 PSN
+   UP

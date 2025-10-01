@@ -1,0 +1,24 @@
+Title: IBM Messaging Engine encountering DB2 Exception 'SQLCODE: -443'  while Starting - United States
+
+Text:
+Messaging Engine not started; SQLCODE: -443; J2CA0056I TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The messaging engine encountered an exception while starting. Below is the exception in bcgmas log files.
+
+Exception:
+com.ibm.ws.sib.msgstore.PersistenceException: CWSIS1501E: The data source has produced an unexpected exception: com.ibm.db2.jcc.a.SqlException: DB2 SQL error: SQLCODE: -443, SQLSTATE: 38553, SQLERRMC: 
+SYSIBM.SQLTABLES;TABLES;SYSIBM:CLI:-805[5/23/07 19:12:25:280 IST] 00000021 ConnectionEve A
+J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adapter for
+resource datasources/bcgMASDS. 
+
+RESOLVING THE PROBLEM
+For Solution refer to
+http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp?topic=/com.ibm.etools.mft.doc/au16620_.htm [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp?topic=/com.ibm.etools.mft.doc/au16620_.htm]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Partner Gateway Advanced Edition AIX, HP Itanium, Linux, Linux iSeries, Linux pSeries, Solaris, Windows 6.1.0.1 
+PRODUCT ALIAS/SYNONYM
+ WPG

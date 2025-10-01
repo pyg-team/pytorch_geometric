@@ -1,0 +1,11 @@
+Title: IBM PI86338: MESSAGE CSV002I REQUESTS FOR MODULE EQQJVXIT EXCEED MAXIMUM USE COUNT RECEIVED WHEN RUNNING A TRIAL PLAN ( EQQDNTOP ) - United States
+
+Text:
+What is this document:
+This document has the abstract of a technical article that is available to authorized users after you have logged on. Please use the link to actual document below to access the full document. You will be asked to log on if you are not already logged in. After log in, if you do not have the right authorization for this document, there will be instructions on what to do next.
+
+abstract text
+When running a trial plan for a long period (example 168 hours ) such that more than 32k occurences of an E2E script using
+
+link to actual document
+http://www.ibm.com/support/docview.wss?uid=swg1PI86338 [http://www.ibm.com/support/docview.wss?uid=swg1PI86338]

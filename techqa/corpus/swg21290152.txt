@@ -1,0 +1,32 @@
+Title: IBM Throttle Events from ITM to TEC - United States
+
+Text:
+TEC ITM EIF BufferFlushRate MaxPacketSize BufEvtMaxSize Event Flood Throttle TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The EventSendThreshold keyword is only available to the TEC Gateway so it cannot be used by ITM when sending events. 
+
+RESOLVING THE PROBLEM
+The following keywords are available in the EIF and therefore could be used by ITM to throttle the events being sent to TEC: 
+
+BufferFlushRate=events_per_minute 
+Specifies the number of events that are sent per minute. Once the adapter has recovered the lost connection, and there are events in the buffer, the events are sent at this rate per minute. The default value is 0 ; consequently all events are sent in one burst. 
+This keyword is optional. 
+
+MaxPacketSize=bytes 
+Specifies the number of bytes to be sent at the rate specified by the BufferFlushRate keyword. The default value is zero (0), where one event is sent at a time. 
+This keyword is optional. 
+BufEvtMaxSize=kilobytes
+Specifies the maximum size of the event cache file. The default is 4096 kilobytes. Once the cache file reaches the maximum size, events will be lost. Increase the BufEvtMaxSize to prevent loss of events during an outage.
+
+The parameters need to be added to the EIF configuration file (om_tec.config).
+On Windows, the EIF config file is in %install_dir%/CMS/TECLIB.
+On Unix/Linux platforms, in $install_dir/tables/cmsname/TECLIB.
+The Hub TEMS needs to be recycled to pick up the new EIF configuration. 
+
+The verbiage in the manual does not make it clear that events are buffered and flushed regardless of the state of the connection. Verified by testing, the BufferFlushRate can be used to control the rate of events to TEC at any time (i.e. planned and unplanned Hub TEMS outages). 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Tivoli Monitoring Version 6

@@ -1,0 +1,44 @@
+Title: IBM Cannot access link to report: RSV-BBP-0022 The absolute affinity request 'asynchWait_Request' failed, the requested session does not exist. - United States
+
+Text:
+cache cached IE link favourites favorites hyperlink URL error TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to access a previously saved link to a report in Cognos Connection, the user receives the following error:
+
+RSV-BBP-0022 The absolute affinity request 'asynchWait_Request' failed, the requested session does not exist.
+
+DPR-ERR-2082 An error has occurred. Please contact your administrator. The complete error has been logged by CAF with SecureErrorID: 
+
+SYMPTOM
+A user cannot access a previously saved link to a report when using Internet Explorer. The user can access the link using a different web browser (such as Firefox), or on another machine.
+
+CAUSE
+Internet Explorer is using a cached version of the page rather than the most recent version.
+
+ENVIRONMENT
+Operating System: Windows
+
+
+Web Browser: Internet Explorer
+
+
+DIAGNOSING THE PROBLEM
+The link to a report may have worked previously but now is no longer working (the session has expired). Other users can access this link with no issues, or the user can access the same link using a different browser.
+
+
+
+RESOLVING THE PROBLEM
+Set the browser settings to check for newer versions of stored pages on every visit to the page. 
+
+Steps: 
+
+1. Open Internet Explorer 
+
+2. Go to Tools -> Internet Options... 
+
+3. In the General tab, under Temporary Internet Files, click on Settings... 
+
+4. Select 'Every visit to the Page' for Check for newer versions of stored pages, then click OK. 
+
+5. Close and re-open the browser and try accessing the link again.

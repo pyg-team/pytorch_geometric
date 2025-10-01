@@ -1,0 +1,19 @@
+Title: IBM Server Error Message when running BIRT Reports after upgrading to Atlas 6.0.3.3 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why do we get server error message when running BIRT reports after upgrading to Atlas 6.0.3.3? 
+
+CAUSE
+This happens when the BIRT Reports is running in Standalone mode and happens due to a new configuration - report.standalone.userid
+
+ANSWER
+ 
+
+ 1. Navigate to Atlas Properties Folder 
+ 2. Edit AtlasReportConfig.properties 
+ 3. Uncomment the property #report.standalone.userid=1 
+ 4. Save the change 
+ 5. Restart both Atlas and Atlas Reports application server instances

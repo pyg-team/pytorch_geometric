@@ -1,0 +1,255 @@
+Title: IBM JR52256: YOU RECEIVE A NAMENOTFOUNDEXCEPTION WHEN USING MQ BINDING TO PROCESS ONE-WAY INVOCATION - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8560.cf1.delta.repository.2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.2&source=SAR]
+bpm.8560.cf1.delta.repository.1 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.1&source=SAR]
+8.5.6.0-WS-BPM-IFJR52256 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Advanced&fixids=8.5.6.0-WS-BPM-IFJR52256-ADV&source=SAR]
+8.5.5.0-WS-BPM-IFJR52256 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Advanced&fixids=8.5.5.0-WS-BPM-IFJR52256-ADV&source=SAR]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you use an MQ binding in the SCA module, and the MQ
+   binding processes the one-way invocation, and you enable the
+   event monitor trace or connect to IBM Business Monitor, the
+   process might fail.
+   
+   You see the following error in the logs and FFDC:
+   
+   javax.naming.NameNotFoundException: Name
+   "comp/env/sca/resource/export/YourMQExportName_MQ_CALLBACK_D"
+   not found in context "java:".
+    at
+   com.ibm.ws.naming.ipbase.NameSpace.lookupInternal(NameSpace.java
+   :1228)
+    at
+   com.ibm.ws.naming.ipbase.NameSpace.lookup(NameSpace.java:1141)
+    at
+   com.ibm.ws.naming.urlbase.UrlContextImpl.lookupExt(UrlContextImp
+   l.java:1436)
+    at
+   com.ibm.ws.naming.java.javaURLContextImpl.lookupExt(javaURLConte
+   xtImpl.java:477)
+    at
+   com.ibm.ws.naming.java.javaURLContextRoot.lookupExt(javaURLConte
+   xtRoot.java:485)
+    at
+   com.ibm.ws.naming.java.javaURLContextRoot.lookup(javaURLContextR
+   oot.java:370)
+    at
+   org.apache.aries.jndi.DelegateContext.lookup(DelegateContext.jav
+   a:161)
+    at javax.naming.InitialContext.lookup(InitialContext.java:436)
+    at
+   com.ibm.ws.sca.internal.mq.util.MQEndpointUtils.localLookup(MQEn
+   dpointUtils.java:173)
+    at
+   com.ibm.ws.sca.internal.mq.util.MQEndpointUtils.lookupDestinatio
+   n(MQEndpointUtils.java:150)
+    at
+   com.ibm.wsspi.sca.mq.inbound.MQInboundImpl.getDestination(MQInbo
+   undImpl.java:974)
+    at
+   com.ibm.wsspi.sca.mq.inbound.MQInboundImpl.getCallbackDestinatio
+   n(MQInboundImpl.java:901)
+    at
+   com.ibm.wsspi.sca.mq.inbound.MQInboundImpl.onMessage(MQInboundIm
+   pl.java:587)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  -
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM Business Process Manager (BPM) Advanced *
+   *                  IBM BPM Express                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When you use an MQ binding in the SCA   *
+   *                      module, and the MQ binding processes    *
+   *                      the one-way invocation, and you         *
+   *                      enable the event monitor trace or       *
+   *                      connect to IBM Business Monitor, the    *
+   *                      process might fail.                     *
+   *                      You see the following error in the      *
+   *                      logs and FFDC:                          *
+   *                      javax.naming.NameNotFoundException:     *
+   *                      Name                                    *
+   *                      "comp/env/sca/resource/export/YourMQExp *
+   *                      ortName_MQ_CALLBACK_D" not found in     *
+   *                      context "java:".                        *
+   *                      at                                      *
+   *                      com.ibm.ws.naming.ipbase.NameSpace.look *
+   *                      upInternal(NameSpace.java:1228)         *
+   *                      at                                      *
+   *                      com.ibm.ws.naming.ipbase.NameSpace.look *
+   *                      up(NameSpace.java:1141)                 *
+   *                      at                                      *
+   *                      com.ibm.ws.naming.urlbase.UrlContextImp *
+   *                      l.lookupExt(UrlContextImpl.java:1436)   *
+   *                      at                                      *
+   *                      com.ibm.ws.naming.java.javaURLContextIm *
+   *                      pl.lookupExt(javaURLContextImpl.java:47 *
+   *                      7)                                      *
+   *                      at                                      *
+   *                      com.ibm.ws.naming.java.javaURLContextRo *
+   *                      ot.lookupExt(javaURLContextRoot.java:48 *
+   *                      5)                                      *
+   *                      at                                      *
+   *                      com.ibm.ws.naming.java.javaURLContextRo *
+   *                      ot.lookup(javaURLContextRoot.java:370)  *
+   *                      at                                      *
+   *                      org.apache.aries.jndi.DelegateContext.l *
+   *                      ookup(DelegateContext.java:161)         *
+   *                      at                                      *
+   *                      javax.naming.InitialContext.lookup(Init *
+   *                      ialContext.java:436)                    *
+   *                      at                                      *
+   *                      com.ibm.ws.sca.internal.mq.util.MQEndpo *
+   *                      intUtils.localLookup(MQEndpointUtils.ja *
+   *                      va:173)                                 *
+   *                      at                                      *
+   *                      com.ibm.ws.sca.internal.mq.util.MQEndpo *
+   *                      intUtils.lookupDestination(MQEndpointUt *
+   *                      ils.java:150)                           *
+   *                      at                                      *
+   *                      com.ibm.wsspi.sca.mq.inbound.MQInboundI *
+   *                      mpl.getDestination(MQInboundImpl.java:9 *
+   *                      74)                                     *
+   *                      at                                      *
+   *                      com.ibm.wsspi.sca.mq.inbound.MQInboundI *
+   *                      mpl.getCallbackDestination(MQInboundImp *
+   *                      l.java:901)                             *
+   *                      at                                      *
+   *                      com.ibm.wsspi.sca.mq.inbound.MQInboundI *
+   *                      mpl.onMessage(MQInboundImpl.java:587)   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In an MQ binding, if the operation is a one-way invocation,
+   the call back destination doesn &#162;&#226;&#130;&#172;&#226;&#132;&#162;t exist. When
+   MQInboundImpl.getCallbackDestination() is called to get the
+   call back destination, javax.naming.NameNotFoundException
+   occurs.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.5.0 that does not call
+   MQInboundImpl.getCallbackDestination() if the operation is a
+   one-way invocation.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR52256:
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select APAR or SPR, enter JR52256, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR52256
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-08
+   
+   
+ * CLOSED DATE
+   2015-03-08
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

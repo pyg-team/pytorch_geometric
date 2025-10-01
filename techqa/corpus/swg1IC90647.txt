@@ -1,0 +1,140 @@
+Title: IBM IC90647: PATTERN TYPE NAME CONTAINING HYPHEN CHARACTER CAUSES FAILURE OF COMMAND LINE INTERFACE COMMANDS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The CLI command deployer.patterntypes.list fails with a
+   ValueError when a custom patterntype contains a  hyphen in its
+   name:
+   
+   Traceback (most recent call last):
+     File "<stdin>", line 1, in <module>
+     File "C:\Misc_Software\IPAS CLI\pure.cli\lib\1.0.0.3-
+   201212082031550\deployer\resources\resource.py", line 554, in
+   __str
+       return repr(self)
+     File "C:\Misc_Software\IPAS CLI\pure.cli\lib\1.0.0.3-
+   201212082031550\deployer\resources\resource.py", line 544, in
+   __repr
+       return utils.utos(unicode(self))
+     File "C:\Misc_Software\IPAS CLI\pure.cli\lib\1.0.0.3-
+   201212082031550\deployer\resources\resource.py", line 561, in
+   __unicode
+       return prettify.prettify(self._list())
+     File "C:\Misc_Software\IPAS CLI\pure.cli\lib\1.0.0.3-
+   201212082031550\deployer\resources\patterntype.py", line 99, in
+   _list
+       return super(PatternTypes, self)._list(filter)
+     File "C:\Misc_Software\IPAS CLI\pure.cli\lib\1.0.0.3-
+   201212082031550\deployer\resources\restresource.py", line 413,
+   in _list
+       return [
+   RESTResource.resourceForURI(self._uriForResource(json),
+   json) for json in http.get('%s%s' % (self.uri, filt)) ]
+     File "C:\Misc_Software\IPAS CLI\pure.cli\lib\1.0.0.3-
+   201212082031550\deployer\resources\restresource.py", line 59, in
+   resourceForURI
+       raise ValueError(uri)
+   ValueError: /resources/patternTypes/wasce-user09.ptype/1.0
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The name attribute of the pattern type was not being parsed
+   correctly in the command line interface. The regular expression
+   used for parsing the name needed to be fixed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC90647
+   
+   
+ * REPORTED COMPONENT NAME
+   PUREAPP SYS W15
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-05
+   
+   
+ * CLOSED DATE
+   2013-06-22
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSY
+   UP
+   
+   
+ * R100 PSN
+   UP
+   
+   
+ * RESP PSN
+   UP

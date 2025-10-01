@@ -1,0 +1,86 @@
+Title: IBM Error: The System is locked. Please contact your System Administrator. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User launches Controller client. User logs on (authenticates). An error appears.
+
+Typically all users are affected. Nobody can logon.
+- However, in some scenarios, some users can successfully logon. 
+
+SYMPTOM
+[/support/docview.wss?uid=swg21397458&aid=1] [/support/docview.wss?uid=swg21397458&aid=1] 
+
+The System is locked. Please contact your System Administrator.
+
+
+CAUSE
+There are several scenarios where this error has been seen:
+
+
+ * Scenario #1 - (Most likely) An administrator has locked the system inside 'Manage Active Users':
+
+[/support/docview.wss?uid=swg21397458&aid=2] [/support/docview.wss?uid=swg21397458&aid=2] 
+ * Scenario #2 - The service 'IBM Cognos Controller User Manager' has stopped
+
+ * Scenario #3 - The service 'IBM Cognos Controller User Manager' is running, but has a problem (and requires a restart)
+
+ * Scenario #4 - The problem only affects one/some 'bad' user(s)  * In this scenario, the 'bad' user's session has crashed unexpectedly recently, causing the service 'IBM Cognos Controller User Manager' to get confused.
+   
+   
+
+RESOLVING THE PROBLEM
+Scenario #1 
+
+ 
+
+Fix: 
+
+Ask the system administrator to logon to Controller, and unlock the system. 
+
+ 
+
+ * 
+ * Steps:
+ * 1. Logon as the user who locked the system (for example 'ADM') 
+ * 2. Click 'Maintain - User - Manage Active Users' 
+ * 3. Click on the 'lock' symbol (to unlock):
+   [/support/docview.wss?uid=swg21397458&amp;aid=3]
+
+
+Workaround: If you do not know who locked the system, then you can reset the system by restarting the Windows service 'IBM Cognos Controller User Manager'. 
+
+ 
+
+Scenario #2 
+
+Start service 'IBM Cognos Controller User Manager'. 
+
+ 
+
+Scenario #3 
+
+Restart service 'IBM Cognos Controller User Manager'. 
+
+ 
+
+Steps: 
+
+1. Logon to the Controller application server 
+
+2. Click 'Start - Administrative Tools' 
+
+3. Open 'Services' 
+
+4. Highlight the service 'IBM Cognos Controller User Manager' 
+
+5. Press 'Restart Service' icon: 
+
+[/support/docview.wss?uid=swg21397458&aid=4] [/support/docview.wss?uid=swg21397458&aid=4] 
+
+ 
+
+Scenario #4 
+
+Obtain some downtime (ask all users who are in the system to exit Controller). Afterwards, restart service 'IBM Cognos Controller User Manager'.

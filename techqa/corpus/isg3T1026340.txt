@@ -1,0 +1,44 @@
+Title: IBM How can I limit the number of slots a user can use in a queue? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I limit the number of slots a user can use in a queue? 
+
+ANSWER
+1. Write an executable file called esub.test under $LSF_SERVERDIR. 
+
+# more esub.test 
+
+#!/bin/sh 
+
+. $LSB_SUB_PARM_FILE 
+
+# Redirect stderr to stdout so echo can be used for error messages 
+
+exec 1>&2 
+
+USER=`whoami` 
+
+if [ $USER = "userA" -a $LSB_SUB_QUEUE = "queue1" -a 
+
+"$LSB_SUB_NUM_PROCESSORS" -ge "4" ]; then 
+
+echo "Job is rejected." 
+
+exit $LSB_SUB_ABORT_VALUE 
+
+fi 
+
+2. Add the line below to the $LSF_ENVDIR/lsf.conf file. 
+
+LSB_ESUB_METHOD="test" 
+
+Note: If LSB_ESUB_METHOD already exists, add "test" after the existing values. For example, LSB_ESUB_METHOD="dce fluent test". 
+
+3. Reconfigure LIM and restart MBATCHD to apply the changes with commands shown below. 
+
+# lsadmin reconfig 
+
+# badmin mbdrestart

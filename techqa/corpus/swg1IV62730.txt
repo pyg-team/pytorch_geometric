@@ -1,0 +1,195 @@
+Title: IBM IV62730: SITUATION FAILS TO START WHEN ORIGIN NODE IS - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 5 (6.3.0-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24039236]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Specifiying the Origin Node attribute for an availability
+   situation
+   causes the situation to fail to start.
+   
+   Messages like the following are issued to the HUB's RAS1 trace
+   log:
+   
+   (53C9A243.0000-1E20:ko4rulfa.cpp,121,"NodeFactory::createNode")
+   Error:
+   Unknown attribute <ManagedSystem.*ORIGINNODE> at position <99>
+   (53C9A243.0001-1E20:ko4rulex.cpp,1125,"PredParser::createNode")
+   Error:
+   Failed to create new node rc <1133>
+   (53C9A243.0002-1E20:ko4rulex.cpp,726,"PredParser::build") Error:
+   Failed
+   to process situation formula rc <1133>
+   (53C9A243.0003-1E20:ko4rulex.cpp,728,"PredParser::build")
+   ..Situation:
+   <MS_Offline>
+   (53C9A243.0004-1E20:ko4rulex.cpp,729,"PredParser::build") ..PDT:
+   <*IF *VALUE ManagedSystem.Status *EQ *OFFLINE *AND *VALUE
+   ManagedSystem.Reason *NE 'FA' *AND *VALUE
+   ManagedSystem.*ORIGINNODE *NE
+   Chibi>
+   (53C9A243.0005-1E20:ko4sitma.cpp,929,"IBInterface::lodge")
+   warning:
+   Situation <MS_Offline> contains unknown attributes
+   (53C9A243.0006-1E20:ko4ibstr.cpp,686,"IBStream::op_ls_req") IB
+   Err: 1133
+   (53C9A243.0007-1E20:ko4sit.cpp,869,"Situation::slice") Sit
+   MS_Offline:
+   Unable to lodge - giving up.
+   (53C9A243.0008-1E20:ko4sit.cpp,887,"Situation::slice") Situation
+   <MS_Offline> suspended waiting for attribute refresh
+   
+   RECREATE INSTRUCTIONS:
+   Access the situation editor from the TEP and select the product
+   provided
+   MS_Offline situation.
+   
+   Click on the Add conditions button from the Formula tab.  The
+   Select
+   condition window will display Orgin Node within the Attribute
+   item pane.
+   
+   Select the Origin Node attribute item and specify a value.
+   
+   Attempt to (re)start the situation and the messages mentioned
+   above will
+   be issued to the HUB's RAS1 trace log.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The Name attribute item contains the same value Origin Node
+   attribute so it can be used equivalently.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Availability type situation(s) fails to start when the Orgin
+   Node attribute is specified.
+   
+   
+   The following message is issued to the HUB monitoring server
+   operations/MSG2 log when the Origin Node attribute is specified
+   for an availability type situation:
+   
+   mm/dd/yy hh:mm:ss KO41052    Monitoring for enterprise situation
+   MS_Offline paused due to unresolved attributes.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The dockib file has been changed to not externalize the Origin
+   Node attribute when authoring or modifying an availability type
+   situation.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.3.0-TIV-ITM-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  The Name attribute item contains the same value Origin Node
+   attribute so it can be used equivalently.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV62730
+   
+   
+ * REPORTED COMPONENT NAME
+   TEPS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04PS
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-22
+   
+   
+ * CLOSED DATE
+   2015-01-21
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEPS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04PS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

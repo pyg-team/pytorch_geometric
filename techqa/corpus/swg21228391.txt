@@ -1,0 +1,43 @@
+Title: IBM AMQ9218 when starting the WMQ listener over a designated port (less than 1024) - United States
+
+Text:
+Linux AMQ9218 TCP/IP listener program bind port number less than 1024 lower lessthan under 1024 amq9218 1024 amq9218 1024 amq9218 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you attempt to start the WebSphere MQ (WMQ) listener over a port that you have designated, you receive the following error:
+
+AMQ9218: The TCP/IP listener program could not bind to port number xxx
+
+where 'xxx' is a number less than 1024. 
+
+CAUSE
+The designated port is less than 1024. All ports less than 1024 on UNIX are reserved for applications running under root.
+
+RESOLVING THE PROBLEM
+Designate a port greater than 1023. 
+
+If you still want to use runmqlsr, then you will have to use a port number in the permitted range for non-root users (a number greater then 1023). 
+
+Note for Linux users:
+As an alternative, use the Linux listener xinetd, which is capable of listening on port numbers less than 1024. 
+Full instructions for setting up xinetd for WebSphere MQ can be found in the online documentation:
+
+WebSphere MQ 7.5.0 > WebSphere MQ > Reference > Configuration reference > Example configuration information for all platforms > Example configuration - IBM WebSphere MQ for Linux > 
+Establishing a TCP connection on Linux [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.mq.ref.con.doc/q081020_.htm?lang=en] 
+
+ 
+
+Additional information
+A trace of the listener will show that the call to bind() to the port has ended with error 13, EACCES. 
+The description of this error returned from bind() in the Linux documentation is: 
+
+ 
+EACCES The address is protected, and the user is not the super-user. 
+
+
+Although runmqlsr may be started by root, the application is set-user-ID and set-group-id to mqm:mqm, and so the limitation on the port number less then 1024 applies. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ MQ

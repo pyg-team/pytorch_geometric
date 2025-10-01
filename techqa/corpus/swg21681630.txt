@@ -1,0 +1,24 @@
+Title: IBM The SOA KD4.dc.properties file does not get created successfully. - United States
+
+Text:
+CAMADALL SOA D4 KD4.dc.properties file not created TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ The SOA KD4.dc.properties file does not get created successfully. 
+
+ANSWER
+If you integrated the ITCAM for AD / WebSphere Data Collector with ITCAM for SOA for applications servers within a profile, and restart the DC and agent, the KD4.dc.properties file will be created in the $ITM_SOA_HOME/KD4/config directory.
+
+If the KD4.dc.properties file is not created successfully, you have to check several things:
+* check the permissions of the user during the configuration, it must be able to write into the directory
+* check the ulimit parameters on the system
+* check the WebSphere DC integration with the SOA DC. Look in the logs directory for any errors in the configuration.
+* restart the DC and agent, look in the agent logs for any errors during startup.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM for SOA

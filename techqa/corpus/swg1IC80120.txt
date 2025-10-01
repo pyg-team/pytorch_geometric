@@ -1,0 +1,175 @@
+Title: IBM IC80120: VMHOST OPTION OF DOMAIN STATEMENT NEEDS CLARIFICATION IN THE INSTALLATION AND USERS GUIDE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Tivoli Storage Manager for Virtual Environments Installation
+   and Users Guide 6.3 needs to be updated to include a description
+   of the VMHOST option of the DOMAIN paramter. In addition, the
+   description of the same option in the Tivoli Storage Manager
+   Backup Archive Client Installation and Users Guide 6.2 and 6.3
+   needs to be updated because the current description can be
+   misleading.
+   
+   The following description is currently documented:
+   
+   ---
+   vmhost=hostname
+   Process all virtual machines that are defined to the Virtual
+   Center or to the ESX server that is specified on the VMCHOST
+   option. The virtual machines also must be running on the ESX
+   server that is specified by the host name. Host
+   name can include multiple ESX servers separated by commas.
+   Allows for automatic inclusion of newly added virtual machines.
+   ---
+   
+   The above description is misleading as it is not clearly stated
+   that this option is not desgined to control which ESX server a
+   snapshot should be taken from, in case the VCenter contains a
+   number of ESX servers. In fact, that can only be configured on
+   VMware side within the VCenter.
+   
+   
+   Platforms and versions affected:
+   Tivoli Storage Manager for Virtual Environment 6.2 and 6.3
+   
+   Initial Impact:
+   Low
+   
+   Additional Keywords:
+   tsm vm vmware virtual machine center zztsm63 zz62 zztsm62
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Tivoli Storage Manager for Virtual       *
+   *                 Environments 6.2 and 6.3 users.              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Tivoli Storage Manager for          *
+   *                      Virtual Environments Installation       *
+   *                      and Users Guides (6.2, 6.3) are         *
+   *                      missing a description of the vmhost     *
+   *                      option for the domain.vmfile and        *
+   *                      domain.vmfull parameter. This prevents  *
+   *                      customers from understanding that the   *
+   *                      vmhost option is not designed to        *
+   *                      control the ESX server from which a     *
+   *                      snapshot is taken.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The vmhost option is not designed to control the ESX server
+   from which
+   a snapshot is taken is missing from the Tivoli Storage Manager
+   for Virtual Environments Installation
+   and Users Guides (6.2, 6.3).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Solution/fix is available in DCF TechNote 7022413. In
+   addition, the vmhost description
+   will be included in the next available release of the TSM for
+   VE Installation
+   and User's Guide.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC80120
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM FOR VE
+   
+   
+ * REPORTED COMPONENT ID
+   5725A4400
+   
+   
+ * REPORTED RELEASE
+   62W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-02
+   
+   
+ * CLOSED DATE
+   2012-03-13
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM FOR VE DP V
+   
+   
+ * FIXED COMPONENT ID
+   5725TVEVM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R62W PSY
+   UP
+   
+   
+ * R63L PSY
+   UP

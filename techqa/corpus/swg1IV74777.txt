@@ -1,0 +1,181 @@
+Title: IBM IV74777: ISC BLANK SCREEN/LOOPING/REDIRECT ISSUES WHEN BEHIND WEBSEAL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ISIM WebSEAL/SSO documentation needs to be updated to avoid
+   issues with ISC:
+   
+   When ISC is accessed via WebSEAL junction, clicking on the
+   badges on the home page appear to redirect back to the hompage
+   or a blank screen is displayed.
+   Configuring the WebSEAL junction as transparent resolves these
+   issues...but another issue arose:
+   Clicking on Request Access, then selecting a User and finally
+   clicking on an Access badge to request, would result in the
+   following errors and the User is sent to the ISC login screen:
+   
+   CTGIMW005E An application error or communication error
+   occurred. If the
+   problem persists, contact your system administrator.
+   
+   WebSphere SystemOut.log contains the following:
+   [3/19/15 10:51:53:347 PDT] 00000126 SystemUsersSe W   CSRFToken
+   header
+   is missing or not valid on HTTP POST request for
+   '/access/assignments';
+   possible cross-site request forgery attack in progress
+   [3/19/15 10:51:53:626 PDT] 000000fd WASSessionCor E
+   SessionContext
+   checkSecurity SESN0008E: A user authenticated as anonymous has
+   attempted to access a session owned by gthrasher.
+   [3/19/15 10:51:53:626 PDT] 000000fd WASSessionCor E
+   SessionContext
+   checkSecurity SESN0008E: A user authenticated as anonymous has
+   attempted to access a session owned by gthrasher
+   
+   Steps to duplicate:
+   
+   1. create webseal junction to protect ISC (/itim/ui) per our
+   documentation (e.g. server task default-webseald-tam60-server
+   create -b supply -t tcp -s -j -e ut8_uri -c iv_user -p 9080 -h
+   ITIMServer /isimisc )
+   ...follow the rest of the steps we document in:
+   http://www-01.ibm.com/support/knowledgecenter/SSRMWJ_6.0.0.3/com [http://www-01.ibm.com/support/knowledgecenter/SSRMWJ_6.0.0.3/com]
+   .ibm.isim.doc_6.0.0.3/securing/cpt/cpt_ic_security_sing_tai_ovie
+   w.htm
+   
+   2. attempt to access the ISC via the webseal junction.
+   
+   Homepage will either be blank or will display...but clicking on
+   Request Access will loop back to the Homepage.
+   
+   3.  reconfigure the junction as a transparent junction (same
+   command as above, but remove the -j option).
+   
+   4. access ISC via the transparent junction
+   5. click Request Access (should work now)
+   6. click on a User badge
+   7. click on an Access to request for the User...
+   this should fail with the errors above and redirect to the ISC
+   login screen.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Blank/looping Homescreen:
+   Define the WebSEAL junction as per our documentation but
+   without the -j option (this will create a "transparent
+   junction")
+   
+   Error/redirect to ISC login, when clicking Access for User:
+   
+   Add the following stanza to the webseald.conf file (where
+   'juntionname' is the name of the junction protecting ISC):
+   
+   [junction:/junctionname]
+   validate-backend-domain-cookies = no
+   allow-backend-domain-cookies = yes
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This issue is not recreatable by L2 or L3 staff following the
+   latest Knowledge Center instructions published for configuring a
+   transparent path junction in 6.0.0-ISS-SIM-FP0006.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV74777
+   
+   
+ * REPORTED COMPONENT NAME
+   SEC IDENTITY MG
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3406
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-02
+   
+   
+ * CLOSED DATE
+   2015-12-18
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SEC IDENTITY MG
+   
+   
+ * FIXED COMPONENT ID
+   5724C3406
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

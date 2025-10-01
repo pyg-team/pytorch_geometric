@@ -1,0 +1,40 @@
+Title: IBM ERROR: ORA-00904, when query uses "Contains" filter with an Oracle 10g database - United States
+
+Text:
+1319591; CQ; ClearQuest; Oracle; 10g; Query; filter; contains; ORA-00904; invalid identifier; databata; DBMS_LOB; publlic; execute; privileges; grant TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why ORA-00904 errors occur when using IBM® Rational® ClearQuest® queries with a "Contains" filter on an Oracle 10g database. 
+
+SYMPTOM
+When creating a query with the Query Wizard, and one of the filters is "Contains", the following error occurs when running the query: 
+
+
+[DataDirect][ODBC Oracle Wire Protocol driver][Oracle]ORA-00904: <field name>: invalid identifier
+
+
+The <field name> variable denotes the column name that Oracle is declaring as not valid. 
+
+This problem often occurs after migrating to Oracle 10g from an earlier version, typically when the databases were previously LONG data types. ClearQuest databases on Oracle 10g with ClearQuest 7.0.x can only be character large object (CLOB) data types.
+
+
+
+CAUSE
+The DBMS_LOB package in the Oracle 10g database does not provide "PUBLIC" execute privileges. The act of querying on CLOB multiline fields with a "Contains" filter requires this package..
+
+
+
+RESOLVING THE PROBLEM
+Have the Oracle database administrator (DBA) grant "PUBLIC" execute privileges to the DBMS_LOB package. Alternatively, the DBA can grant execute privileges to the database accounts used for ClearQuest. 
+
+ 
+
+
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational ClearQuest Database Configuration/Connectivity - Oracle

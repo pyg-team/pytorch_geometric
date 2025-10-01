@@ -1,0 +1,29 @@
+Title: IBM Cannot add a delegate with the error message "Error creating AdminP request, please contact your administrator." - United States
+
+Text:
+"Error creating AdminP request; please contact your administrator"; admip request; delegation error TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+You are getting the following error message when trying to add a
+delegate to the Access & Delegation list.
+
+"Error creating AdminP request", please contact your administrator." 
+
+[/support/docview.wss?uid=swg21997777&amp;aid=1]
+
+
+
+CAUSE
+The Access Control List (ACL) entries of the admin4.nsf is incorrect and leaving only Default in the list or the Default is set to "No Access".
+
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, copy the ACL entries of another database, such as the events4.nsf, to the admin4.nsf and make sure that the Default access is set to Author. 
+
+In one case, the admin4.nsf is unusually large in size and you need to run compact against the database to resolve the issue.
+
+RELATED INFORMATION
+ Unable to change Delegation Profile from local mail dat [http://www-01.ibm.com/support/docview.wss?uid=swg21097742]
+Adding a delegate to your calendar fails with the error [http://www.ibm.com/support/docview.wss?uid=swg21423147]
+With Designer Access to your Mail File You Cannot Make [http://www.ibm.com/support/docview.wss?uid=swg21094039]

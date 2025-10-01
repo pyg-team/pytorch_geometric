@@ -1,0 +1,141 @@
+Title: IBM PI41248: COM.PRESENCE.CONNECT.CONNECTOR.HTTP.HTTPHEADER IS NOT SERIALIZABLE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  com.presence.connect.connector.http.HttpHeader is not
+   serializable. Lot of below exceptions in log.
+   
+   [3/17/15 15:52:15:099 CET] 00000005 CacheEntry    E   DYNA0052E:
+   The cached object can not be replicated or saved to disk.
+   CacheID={CACHEID=2385f20047fc8680b80cbbd6fd1665b9, MOD=*,
+   REQUESTURI=http://<portal server>:<portal port>
+   /wps/wcm/myconnect/2385f20047fc8680b80cbbd6fd1665b9/*.gif}
+   ClassName=com.presence.connect.connector.http.HttpResponse
+   Type=cache-value
+   Exception=java.io.NotSerializableException:
+   com.presence.connect.connector.http.HttpHeader
+   
+   [3/17/15 15:52:15:100 CET] 00000005 CacheEntry    E   DYNA0052E:
+   The cached object can not be replicated or saved to disk.
+   CacheID={CACHEID=65687725-4fe2-440f-b25a-52f1e888671c, MOD=*,
+   REQUESTURI=http://<portal server>:<portal port>
+   /wps/wcm/myconnect/65687725-4fe2-440f-b25a-52f1e888671c/*.jpg}
+   ClassName=com.presence.connect.connector.http.HttpResponse
+   Type=cache-value
+   Exception=java.io.NotSerializableException:
+   com.presence.connect.connector.http.HttpHeader
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Code fix is planned to be part of CF18 for Portal 8.0.0.1.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Make com.presence.connect.connector.http.HttpHeader
+   serializable.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI41248
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-18
+   
+   
+ * CLOSED DATE
+   2015-05-22
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

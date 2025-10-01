@@ -1,0 +1,131 @@
+Title: IBM JR51074: GREENPLUM CONNECTOR INTERMITTENTLY FAILS WITH A TIMEOUT ERROR FROM GPFDIST. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running multiple Greenplum Connector jobs at the same time
+   one or more jobs may intermittently fail with the following
+   error:
+   
+    [SQLCODE=HY000][Native=56,966,976] [IBM(DataDirectOEM)] [ODBC
+   Greenplum Wire Protocol driver][Greenplum] http response code
+   408 from gpfdist HTTP/1.0 408 time out
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When running multiple Greenplum Connector jobs at the same time
+   one or more jobs may intermittently fail with the following
+   error:
+   [SQLCODE=HY000][Native=56,966,976] [IBM(DataDirectOEM)] [ODBC
+   Greenplum Wire Protocol river] Greenplum] http response code 408
+   from gpfdist HTTP/1.0 408 time out
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  There will be no patch delivered under this APAR. Instead the
+   code changes in this APAR will be delivered as part of patch
+   JR50094v3.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Use the ODBC Connector.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR51074
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36DS
+   
+   
+ * REPORTED RELEASE
+   912
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-19
+   
+   
+ * CLOSED DATE
+   2014-11-15
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * FIXED COMPONENT ID
+   5724Q36DS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R912 PSY
+   UP

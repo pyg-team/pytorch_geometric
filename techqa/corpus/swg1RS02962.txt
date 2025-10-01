@@ -1,0 +1,167 @@
+Title: IBM RS02962: NPE WHEN RUNNING TEST SUITE ON A DECISION SERVICE BASED ON XSD - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Executing a  Test scenario fails with an error saying 'An error
+   has occurred while deploying the XOM to Rule Execution
+   Server...'
+   whereas there is no XOM to deploy (project is based on XSD)
+   and in the log, we can see the following information:
+   --
+   01-Dec-2017 17:15:03.918 WARNING [SSP Prepare Archive Thread]
+   ilog.rules.teamserver.ejb.service.validation.IlrTestingUtil.
+   updateFailedTestReport [Report - 2017-12-01_05-15-01-621]
+   nullilog.rules.teamserver.model.IlrXOMDeploymentException: An
+   error has occurred while deploying the XOM to Rule Execution
+   Server 'Execution Server'. If the Rule Execution Server is not
+   deployed on the same server and port as the Decision Runner,
+   the RES_URL init parameter of the Decision Runner web
+   application must be set to the URL of the Rule Execution Server.
+    Contact your administrator.
+       at ilog.rules.teamserver.model.decisionservice.
+   TestingXOMDeployManager.deployXOM(TestingXOMDeployManager.java:
+   107)
+       at ilog.rules.teamserver.model.IlrModelUtil.
+   getXomUrisPropValue(IlrModelUtil.java:1288)
+       at ilog.rules.teamserver.ejb.service.validation.
+   IlrTestSuiteService.prepareRun(IlrTestSuiteService.java:315)
+       at ilog.rules.teamserver.ejb.service.validation.
+   IlrTestSuiteService.asynchronousPrepare(IlrTestSuiteService.
+   java:204)
+       at ilog.rules.teamserver.ejb.service.validation.
+   PrepareArchiveThreadService.run(PrepareArchiveThreadService.
+   java:57)
+       at com.google.common.util.concurrent.
+   AbstractExecutionThreadService$1$2.run(
+   AbstractExecutionThreadService.java:66)
+       at com.google.common.util.concurrent.Callables$4.run(
+   Callables.java:122)
+       at java.lang.Thread.run(Thread.java:745)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Uncheck the option "enable XOM management" in Decision Center
+   from the Decision Service properties.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Decision Center always tries to collect xom information for the
+   project being deployed. When no XOM is deployed then this
+   exception may  happen
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  the code is fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02962
+   
+   
+ * REPORTED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6903
+   
+   
+ * REPORTED RELEASE
+   890
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-12-07
+   
+   
+ * CLOSED DATE
+   2017-12-26
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * FIXED COMPONENT ID
+   5725B6903
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R890 PSY
+   UP

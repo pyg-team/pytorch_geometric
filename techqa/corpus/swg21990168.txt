@@ -1,0 +1,72 @@
+Title: IBM Spectrum Protect Server installation or upgrade fails on Linux RedHat servers - United States
+
+Text:
+installation upgrade IBM Spectrum Operating system supported linux RedHat TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Spectrum Protect Server installation or upgrade on Linux RedHat servers may fail with an error that the operating system is not supported. 
+
+SYMPTOM
+On Linux RedHat servers, the IBM Spectrum Protect server installation or upgrade may fail with the following error (example is taken from an upgrade to version 7.1.6.0): 
+
+=====> IBM Installation Manager> Update> Packages> Prerequisites 
+
+Validation results: 
+
+* [ERROR] IBM Tivoli Storage Manager server 7.1.6.20160608_2027 contains validation errors. 
+1. ERROR: The operating system where you are installing the product is not supported. For more information, seehttp://www.ibm.com/software/tivoli/products/storage-mgr/platforms.html [http://www.ibm.com/software/tivoli/products/storage-mgr/platforms.html]. 
+*
+
+As a result, the process exits and the operation is unsuccessful.
+
+
+CAUSE
+Looking at the logs gathered from the failed operation, it is possible to find that the operation is failing because the installation process is unable to get correct output from a specific Linux RedHat command.
+
+During the installation, the installation process queries the operating system to check for the exact version on which the installation is occurring. The command used is:
+
+rpm -qa --queryformat '%{RELEASE}\n' redhat-release* | grep \\. 
+
+Within the logs (upgrade_log.txt or install_log.txt) it is possible to see that the mentioned command does not return any output and as designed the process is exiting with the error:
+*
+Information : : INFO: 
+com.tivoli.dsm.server.install.utils.CmdUtils.issueShellCommandInternal(9 
+37) : Command: rpm -qa --queryformat '%{RELEASE}\n' redhat-release* | 
+grep \\. 
+Information : : INFO: 
+com.tivoli.dsm.server.install.utils.CmdUtils.issueShellCommandInternal(1 
+001) : stdout: <----MISSING OUTPUT 
+230. 2016-07-26T10:13:06+01:00 : Information : : INFO: 
+com.tivoli.dsm.server.install.utils.CmdUtils.issueShellCommandInternal(1 
+002) : stderr: 
+231. 2016-07-26T10:13:06+01:00 : Information : : INFO: 
+com.tivoli.dsm.server.install.utils.CmdUtils.issueShellCommandInternal(1 
+003) : RC: 1 
+232. 2016-07-26T10:13:06+01:00 : Information : : INFO: 
+com.tivoli.dsm.prereq.oscheck.OSCheck.validateRHEL(387) : Version string 
+before parsed for version: 
+236. 2016-07-26T10:13:06+01:00 : Error : : ERROR: 
+com.tivoli.dsm.prereq.oscheck.OSCheck.validate(175) : This OS is not 
+supported: Linux
+
+
+DIAGNOSING THE PROBLEM
+Open a command prompt and as root run the command: 
+
+
+rpm -qa --queryformat '%{RELEASE}\n' redhat-release* | grep \\. 
+
+and verify if it returns the expected output or not.
+
+A correct output should look like:
+
+[root@rh64tsm71 Desktop]# rpm -qa --queryformat '%{RELEASE}\n' redhat-release* |grep \\. 6.7.0.3.el6
+
+
+RESOLVING THE PROBLEM
+If the mentioned command does not return the expected output, contact the system administrator for finding the cause of the behavior. 
+
+Usually, this is caused by the missing of some specific OS patches on the system or obsolete packages that need to be upgraded.
+
+RELATED INFORMATION
+ Collecting data for v7 Server installation problems [http://www-01.ibm.com/support/docview.wss?uid=swg21664161]

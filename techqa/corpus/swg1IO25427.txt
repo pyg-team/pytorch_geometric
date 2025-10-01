@@ -1,0 +1,11 @@
+Title: IBM IO25427: THERE IS NO OPTION TO CHECK BATCH INTEGRITY ON THE CLICK OF SUBMIT DURING DATACAP NAVIGATOR VERIFY TASK (VERIFY.JS) - United States
+
+Text:
+What is this document:
+This document has the abstract of a technical article that is available to authorized users after you have logged on. Please use the link to actual document below to access the full document. You will be asked to log on if you are not already logged in. After log in, if you do not have the right authorization for this document, there will be instructions on what to do next.
+
+abstract text
+There is no option to check batch integrity on the click of Submit during Datacap Navigator Verify Task (Verify.js)
+
+link to actual document
+http://www.ibm.com/support/docview.wss?uid=swg1IO25427 [http://www.ibm.com/support/docview.wss?uid=swg1IO25427]

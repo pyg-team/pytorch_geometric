@@ -1,0 +1,137 @@
+Title: IBM MQJMS2013 (V6) JMSWMQ2013 (V7 and later) invalid security authentication (RC 2035) - United States
+
+Text:
+mqminfo permissions sec auth TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are running WebSphere MQ and your MQ JMS application fails with security authentication errors. 
+
+SYMPTOM
+MQRC 2035 MQRC_NOT_AUTHORIZED 
+
+MQRC 2063 MQRC_SECURITY_ERROR 
+
+MQ V6:
+MQJMS2013: invalid security authentication supplied for MQQueueManager. 
+
+MQ V7 and later:
+JMSWMQ2013: The security authentication was not valid that was supplied for QueueManager 'x' with connection mode 'Client' (or 'Bindings') and host name 'y.com'. Please check if the supplied username and password are correct on the QueueManager you are connecting to.
+
+
+CAUSE
+The MQJMS2013 exception shown in the WebSphere Application Server logs is generated due to a return code 2035 from the MQ queue manager: MQRC_NOT_AUTHORIZED
+
+This return code is generated because of these possible conditions:
+
+a) The userid that is used to start the JVM (WebSphere Application Server) has not been defined in the host where the MQ queue manager is located.
+... or ...
+
+b) The userid is defined, but it does not have the proper authority to work with the queue manager.
+... or ...
+
+c) MQ 7.1 or later: Channel authentication records: the user has been defined and:
+c.1) is a member of the MQ Administration group, but the default channel authentication records do not allow an MQ Administrator to do a remote login.
+c.2) There are no channel authentication records that allow the non-administrator user to access the queue manager.
+... or ...
+
+d) MQ V8: user did not specify password, and queue manager error log shows 
+AMQ5540: Application 'Sphere MQ\bin64\amqsputc.exe' did not supply a user ID
+and password
+AMQ5541: The failed authentication check was caused by the queue manager
+CONNAUTH CHCKCLNT(REQDADM) configuration.
+
+
+
+
+RESOLVING THE PROBLEM
++++ If you notice this problem when migrating from WAS 7.0 or 8.0, to WAS 8.5: 
+
+
+The following technote explains a change of behavior regarding security that affects WAS 8.5 (which includes MQ JMS 7.1) with respect to WAS 7.0 and 8.0 (which include MQ JMS 7.0).
+.
+Changes in the default user identifier between WebSphere MQ V7.0.1 classes for JMS and WebSphere MQ V7.1 classes for JMS [http://www.ibm.com/support/docview.wss?uid=swg21662193] 
+. 
++ begin quote 
+. 
+- When using WebSphere Application Server v7.0 and v8.0, no user identifier value (blank) is passed to the queue manager. 
+. 
+- When using WebSphere Application Server V8.5, a non-blank user identifier value is passed to the queue manager. 
+.
++ end quote 
+
+
+ 
+
++++ Specifically when using MQ 7.1 or later queue managers: 
+
+Consult the following technote:
+
+WMQ 7.1 or later queue manager - RC 2035 MQRC_NOT_AUTHORIZED when using client connection as an MQ Administrator [http://www.ibm.com/support/docview.wss?uid=swg21577137]
+
++++ Specifically when using MQ 8.0 or later queue managers:
+
+MQ 8.0: errors AMQ5540 and AMQ5541, application did not supply a user ID and password, 2035 MQRC_NOT_AUTHORIZED [http://www.ibm.com/support/docview.wss?uid=swg21680930] 
+
+
++++ General 
+
+Determine the user ID the application is being run under, and then ensure that the user ID is in a group that has sufficient authority on the server where the MQ queue manager is running. 
+
+After adding the userid into the group that has sufficient authority, issue the runmqsc command: 
+
+REFRESH SECURITY(*) 
+
+
+WebSphere Application Server JMS Trace (trace.log)
+Some possible return codes in the WebSphere Application Server stack trace could include the following MQ return codes:
+
+MQJE001: An MQException occurred: Completion Code 2, Reason 2035
+The return code 2035 means "MQRC_NOT_AUTHORIZED"
+
+MQJE001: An MQException occurred: Completion Code 2, Reason 2063
+The return code 2063 means "MQRC_SECURITY_ERROR"
+
+If it is not obvious which user ID is being used to authenticate with the Queue Manager, then you will need to enable the tracing both for the JMS client (and WebSphere Application Server, if you are using it) and the MQ server. See section 'Related URLs'.
+
+For example, the trace.log for the JMS client could have strings such as these:
+com.ibm.mq.jms.MQQueueConnectionFactory connecting as user: JohnDoe
+com.ibm.mq.jms.MQQueueConnection Setting username = JohnDoe
+com.ibm.mq.MQv6InternalCommunications userID = 'JohnDoe '
+com.ibm.mq.MQv6InternalCommunications UID :JOHNDOE
+
+MQ server trace:
+It is very likely that one of the MQ trace files (*.FMT) will have the following string indicating that the value (username) is not a user ID in the system.
+
+UnknownPrincipal(johndoe)
+
+Also, in case that the userid does exist, another possible cause is that the user does not have all the proper authorizations, thus, check for the following phrase in the trace:
+
+The following requested permissions are unauthorized: xxx
+
+Related technotes for problem determination:
+
+By default, the userid that causes this reason code 2035 (MQRC_NOT_AUTHORIZED) is not shown in the MQ Queue Manager error logs or in the FDC files. The reason is that a rogue application could try to connect thousands of times, and there would be thousands of entries in the logs and thousands of FDC files.
+
+There are 2 environment variables that can be used with the MQ queue manager in order to show in the MQ Queue Manager error logs and in the FDCs the userid that is causing the reason code 2035. You will need to setup one or both environment variables and then restart the queue managers (these variables are only read during a startup).
+
+For additional information see the following technotes and APAR:
+MQS_REPORT_NOAUTH environment variable can be used to better diagnose return code 2035 (MQRC_NOT_AUTHORIZED) [http://www.ibm.com/support/docview.wss?uid=swg21299319]
+
+Using MQSAUTHERRORS to generate FDC files related to RC 2035 (MQRC_NOT_AUTHORIZED) [http://www.ibm.com/support/docview.wss?uid=swg21377578]
+
+IZ49302: THE WEBSPHERE MQ JAVA MESSAGE SERVICE CLIENT MUST TREAT "" FOR A USERID THE SAME AS NULL WHEN CREATING CONNECTIONS [http://www.ibm.com/support/docview.wss?uid=swg1IZ49302]
+
+
+RELATED INFORMATION
+ MustGather - MQ Getting Traces [http://www.ibm.com/support/docview.wss?&uid=swg21174924]
+Enabling Application Server trace [http://www.ibm.com/support/docview.wss?&uid=swg21199176]
+A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21651526]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Java Message Service (JMS) 8.5, 8.0, 7.0 
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

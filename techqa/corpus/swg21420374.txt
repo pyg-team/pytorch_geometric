@@ -1,0 +1,69 @@
+Title: IBM Granting authority to replication objects on the System i for an user to run Datapropagator Apply - United States
+
+Text:
+AS400; DPROP; DPROP400; SQL0551; SQL0551N; SQL0443; SQL0443N TECHNOTE (FAQ)
+
+QUESTION
+ How to grant authority to replication objects on the System i for an user to run Datapropagator Apply ? 
+
+ANSWER
+The authority to replication objects on the System i could be granted using the QDP4/GRTDPRAUT and the GRTOBJAUT commands. 
+The link below discusses the authorization requirements for the Apply program on System i -
+
+http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.swg.im.iis.db.repl.sqlrepl.doc/topics/iiyrsautapply.html [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.swg.im.iis.db.repl.sqlrepl.doc/topics/iiyrsautapply.html]
+
+The commands have to be run by an user with *ALLOBJ authority.
+
+The GRTDPRAUT AUT(*APPLY) command and the authorizations granted to the replication objects are described in the following section -
+
+http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.swg.im.iis.db.repl.iseries.doc/topics/iiyrsisegrtdpraut.html [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.swg.im.iis.db.repl.iseries.doc/topics/iiyrsisegrtdpraut.html]
+
+
+In addition to the above if the userid running Capture is different from the id running Apply you will also need *CHANGE authority on the IBMSNAP_PRUNE_SET table and the indexes such as IBMSNAP_PRUNE_SETX, 
+IBMSNAP_PRUNCNTLX
+IBMSNAP_PRUNCNTLX1
+IBMSNAP_PRUNCNTLX2
+IBMSNAP_PRUNCNTLX3
+that is not listed in the link above.
+
+Hence it is necessary to manually grant this authority using the GRTOBJAUT command.
+
+The steps involved will be similar to -
+1) Determine the system names for the Table or Index 
+
+Run the command WRKOBJ OBJ(<schema>/IBMSN*) and find the system names corresponding to the SQL names IBMSNAP_PRUNE_SET and IBMSNAP_PRUNE_SETX,IBMSNAP_PRUNCNTLX, IBMSNAP_PRUNCNTLX1, IBMSNAP_PRUNCNTLX2, IBMSNAP_PRUNCNTLX3
+
+For example -
+WRKOBJ OBJ(ASN/IBMSN*) will list all objects starting with IBMSN.
+IBMSN00019 *FILE ASN PF IBMSNAP_PRUNE_SET 
+IBMSN00020 *FILE ASN LF IBMSNAP_PRUNE_SETX 
+From it find the system names of interest - IBMSN00019 and IBMSN00020.
+
+If needed the index on the table can also be found using the DSPDBR command on the base table.
+
+2) Then use the GRTOBJAUT command to grant the necessary authorization.
+
+GRTOBJAUT OBJ(<schema>/<systemname>) OBJTYPE(*ALL) USER(<userid>) AUT(*CHANGE) 
+
+For example -
+GRTOBJAUT OBJ(ASN/IBMSN00019) OBJTYPE(*ALL) USER(APPUSER) AUT(*CHANGE) 
+GRTOBJAUT OBJ(ASN/IBMSN00020) OBJTYPE(*ALL) USER(APPUSER) AUT(*CHANGE) 
+
+
+Please note that the commands above grant authority to existing objects on the System i only. So some additional objects will require authorizations to be granted using the GRTOBJAUT command after replication is started.
+
+The section below describes two such cases 
+
+a) SQL packages are required to be created on all the remote servers the Apply program will connect to. This is done every time a PTF is applied for replication or a Fixpack applied on workstations running Apply.
+
+The SQL packages of type *SQLPKG will be created in the ASN library if the Apply runs on the System i and in the library NULLID if Apply runs on a Z-os or LUW platform.
+
+Usually these packages are created with *PUBLIC authority but if it is required to restrict the authority then *CHANGE authority could be granted to them using the GRTOBJAUT command.
+
+b) The table with the SQL name format of IBMSNAP_SIGNAL_jrnlib_jrnname is created for each journal that a source table is journalled to by the System i Capture when it initially starts up .
+
+http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.swg.im.iis.db.repl.sqlrepl.doc/topics/iiyrsctbsignal.html [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.swg.im.iis.db.repl.sqlrepl.doc/topics/iiyrsctbsignal.html]
+
+So *CHANGE authorization for this table and its index should be granted using the GRTOBJAUT command after it is created.
+
+Not having sufficient authority will cause MSGSQL0551 or MSGSQL0443 errors when running Apply.

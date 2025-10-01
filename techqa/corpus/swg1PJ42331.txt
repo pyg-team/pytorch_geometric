@@ -1,0 +1,152 @@
+Title: IBM PJ42331: ACCE CREATE WIZARD UNABLE TO DISPLAY EXISTING OBJECT NAMES IN INTERNET EXPLORER 10 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In ACCE, when creating a new object, the wizard begins a new tab
+   in the UI but never completes populating the list of existing
+   items.
+   If you toggle to another tab and then click back in the wizard,
+   more
+   of the UI objects are displayed but the list of existing object
+   names
+   still remains unpopulated.  The UI does not work properly to add
+   a
+   new object.
+   
+   This only occurs on Internet Explorer 10 and 11 on ACCE for
+   Content
+   Platform Engine 5.2.0.3.
+   
+   Steps to Reproduce:
+   1    Select any Object Store
+   2    Select Data Design
+   3    Select Property Templates
+   4    Select New
+   5    A new tab will open up to allow you create a new Property
+   Template.
+        5.a   This tab shows up blank.
+   6    Now if you select one of the other Tabs that are currently
+   displayed and then go back to the New Property Template tab it
+   will display more of the objects but will still not work to add
+   a new object.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Customers using Content Engine 5.2.0.3 ACCE and IE 10 or 11. *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Unable to create a new Property Template in ACCE when using  *
+   * IE 10 or IE 11.                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.2.0.3-P8CPE-IF003 or later                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  5.2.0.3-P8CPE-IF003 and later will resolve the problem.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ42331
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-09
+   
+   
+ * CLOSED DATE
+   2014-09-08
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY
+   UP

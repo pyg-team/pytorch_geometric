@@ -1,0 +1,135 @@
+Title: IBM IO20943: Filtering in limited Monitor view through Operations shortcut not working as designed - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+IBM Datacap Taskmaster Capture 8.1 Fix Pack 3 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FDatacap+Taskmaster+Capture&fixids=8.1.0.3-Datacap-Taskmaster-WIN-FP003&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using the limited Job Monitor view displayed by an Operations
+   shortcut in Taskmaster Web, it is possible to view and (attempt
+   to) run batches associated with job-task pairings not defined in
+   the shortcut's permissions.
+   
+   Changing a non-status filter will show both pending and hold
+   batches for a shortcut whose mode is Manual for Hold.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * windows user                                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * apply fix pack 3                                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  apply fix pack 3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO20943
+   
+   
+ * REPORTED COMPONENT NAME
+   DATACAP TASKMST
+   
+   
+ * REPORTED COMPONENT ID
+   5725C1500
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-31
+   
+   
+ * CLOSED DATE
+   2015-05-03
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATACAP TASKMST
+   
+   
+ * FIXED COMPONENT ID
+   5725C1500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY
+   UP

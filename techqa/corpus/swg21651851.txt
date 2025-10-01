@@ -1,0 +1,69 @@
+Title: IBM Managed web server versus Unmanaged web server - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is the difference between a MANAGED web server, and an UNMANAGED web server? 
+
+ANSWER
+There are several types of web servers that can be used with IBM WebSphere Application Server (WAS), including Apache HTTP Server, Microsoft IIS web server, Sun Java System web server, and others. However those non-IBM web servers can NOT be controlled by IBM WebSphere Application Server (WAS). 
+
+Only the IBM HTTP Server (IHS) web server can be controlled by IBM WebSphere Application Server (WAS). It is specifically in regards to the IBM HTTP Server (IHS) web server that we have the concept of "managed" versus "unmanaged". 
+
+ 
+
+A managed IHS web server, is one that is installed on the same system as a WAS node agent, and is controlled by that WAS node agent. 
+
+WAS Admin ---commands--> WAS node agent ---controls--> IHS web server 
+
+ 
+
+An unmanaged IHS web server, is one that is installed on a system that does not have any WAS node agent, so it must use the IBM HTTP Server Administration Server to be controlled from WAS. 
+
+WAS Admin ---commands--> IHS Admin server ---controls--> IHS web server 
+
+ 
+
+As you can see, it is possible to use WAS Admin console to control the IHS web server in both cases. "Managed" means that the commands go from WAS Admin to a WAS node agent which controls the IHS web server on that system. Whereas, "unmanaged" means that the commands go from WAS Admin to an IHS Admin server which controls the IHS web server on that system. 
+
+ 
+
+For example, IHS installed on a stand-alone WAS server (no node agent), can be controlled by WAS only if the IHS Admin Server is configured and running. This is an "unmanaged" scenario. In version 8.0 and later, the Plug-in Configuration Tool (PCT) refers to this as "local_standalone [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/topic/com.ibm.websphere.nd.doc/info/ae/ae/tins_pctcl_using.html]" config type. 
+
+ 
+
+Another example, IHS installed on a WAS node that is federated to a WAS cell, and under the control of a WAS deployment manager, can be controlled by the WAS deployment manager, sending commands through the WAS node agent on the IHS system. This is a "managed" scenario. In version 8.0 and later, the Plug-in Configuration Tool (PCT) refers to this as "local_distributed [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/topic/com.ibm.websphere.nd.doc/info/ae/ae/tins_pctcl_using.html]" config type. 
+
+ 
+
+What about IHS installed on the WAS deployment manager system itself? 
+
+If there is also a federated WAS node on that same system, you can use that WAS node agent to control the IHS web server in a "managed" scenario. (local_distributed) 
+
+If there is not any federated WAS node on that same system, you will need to use IHS Admin Server to control the IHS web server in an "unmanged" scenario. (local_standalone) 
+
+ 
+
+If the IHS web server is installed on a separate system that does not have any WAS, and you want to control it remotely from the WAS Admin Console on another system, this would be an "unmanaged" scenario, so you will need to use the IHS Admin Server on the IHS system. In version 8.0 and later, the Plug-in Configuration Tool (PCT) refers to this as "remote [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/topic/com.ibm.websphere.nd.doc/info/ae/ae/tins_pctcl_using.html]" config type. 
+
+WAS Admin ---commands across network---> IHS Admin server ---controls--> IHS web server 
+
+ 
+
+For detailed instructions on how to configure IHS, Plug-in, or IHS Admin server, please see the links in the Related Information section below...
+
+RELATED INFORMATION
+#IHS 8.5 local on WAS system [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/topic/com.ibm.websphere.base.doc/ae/tins_webplugins_local.html]
+IHS 8.5 on a remote system [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/topic/com.ibm.websphere.nd.multiplatform.doc/ae/tins_webplugins_remotesa.html]
+IHS 8.0 local on WAS system [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/topic/com.ibm.websphere.nd.doc/info/ae/ae/tins_webplugins_local.html]
+IHS 8.0 on a remote system [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/topic/com.ibm.websphere.nd.doc/info/ae/ae/tins_webplugins_remotesa.html]
+IHS 7.0 local on WAS system [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.nd.doc/info/ae/ae/tins_webplugins_local.html]
+IHS 7.0 on a remote system [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.nd.doc/info/ae/ae/tins_webplugins_remotesa.html]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server

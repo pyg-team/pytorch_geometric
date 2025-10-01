@@ -1,0 +1,43 @@
+Title: IBM Security Bulletin: GNU C library (glibc) vulnerability affects IBM XIV Storage System Gen3 (CVE-2015-0235) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ GNU C library (glibc) vulnerability that has been referred to as GHOST affects IBM XIV Storage System Gen3. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-0235 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0235] 
+
+The gethostbyname functions of the GNU C Library (glibc) are vulnerable to a buffer overflow. By sending a specially crafted, but valid hostname argument, a remote attacker could overflow a buffer and execute arbitrary code on the system with the privileges of the targeted process or cause the process to crash. The impact of an attack depends on the implementation details of the targeted application or operating system. This issue is being referred to as the "Ghost" vulnerability.
+
+
+
+
+CVSS Base Score: 7.6
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/100386 [http://xforce.iss.net/xforce/xfdb/100386%20] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:C/I:C/A:C)
+
+AFFECTED PRODUCTS AND VERSIONS
+XIV Storage System Gen3, versions 11.5.1 and earlier.
+
+REMEDIATION/FIXES
+This issue is fixed in the following versions: 
+
+ * 11.4.2.c 
+ * 11.5.1.a
+
+
+IBM recommends that you review your entire environment to identify vulnerable releases of glibc including your Operating Systems and take appropriate mitigation and remediation actions. Please contact your Operating System provider for more information. GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

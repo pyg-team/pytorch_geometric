@@ -1,0 +1,34 @@
+Title: IBM BigFix Server unable to gather site content from sync.bigfix.com (error: Unexpected HTTP response: 404) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Identifying a block between the BigFix Server and IBM BigFix's sync.bigfix.com content servers. 
+
+SYMPTOM
+Error messages similar to the following in the BESRelay.log on the BigFix server: 
+
+ * 
+ * 
+ * http://sync.bigfix.com/cgi-bin/bfgather/bessupport?Time=1452540085:
+ * 
+ * 
+ * 
+ * 
+ * Error messages similar to the following in the GatherDB.log on the BigFix server:
+   Mon, 11 Jan 2016 14:43:22 -0500 -- Unexpected exception during gather of site BES Support: Unexpected HTTP response: 404
+
+
+Note: If the BES Support cannot gather for the first time the entire console is empty of its UI elements. 
+CAUSE
+ 
+
+ 1. There is most likely an Intrusion Prevention System (IPS) between the BigFix server and our content sites at sync.bigfix.com that is dropping the download because it is detecting something in the download (one of the sites files) as being malicious. If you do not have an IPS between the BigFix server and the sync.bigfix.com servers; it may be the firewall or proxy appliance that is causing the issue. 
+ 2. Another cause might be that Internet Explorer Enhanced Security Configuration is enabled for Administrators on the BigFix Windows server machine.
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Check with the firewall/proxy/IPS/network admin and ask them to check the logs for dropped packets or downloads and to adjust the rules to allow the BES Support site content through. 
+ 2. Try turning off Internet Explorer Enhanced Security Configuration [https://blogs.technet.microsoft.com/chenley/2011/03/10/how-to-turn-off-internet-explorer-enhanced-security-configuration/] for Administrators to see if this resolves the issue.

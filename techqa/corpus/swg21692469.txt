@@ -1,0 +1,44 @@
+Title: IBM {CreditCard} macro does not return documents when executing search - United States
+
+Text:
+Full-text macro; macro; macros; full text; index; {CreditCard}; Credit Card; numbers; search TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When executing a search using the {CreditCard} macro no documents are returned even when known credit card numbers are part of document content that has been harvested and added to the full text index. 
+
+SYMPTOM
+Content containing credit card numbers will not be discovered during search preview and Infoset creation when using the Full-text {CreditCard} macro.
+
+
+CAUSE
+By default the Full Text settings under the Data Server System configuration -> Full-text settings are configured with the Do not include numbers in full-text index option radio button selected. With this option selected no credit card numbers are added to the full text index during harvesting and index loading and updating.
+
+ENVIRONMENT
+Data Server System configuration -> Full-text settings 
+
+DIAGNOSING THE PROBLEM
+Evaluate the configuration settings under the Data Server System configuration -> Full-text settings and ensure that numbers are included in full-text indexes.
+
+RESOLVING THE PROBLEM
+In order to get the {CreditCard} macro to identify and find documents that have these values in them it is necessary to alter the Data Server System configuration -> Full-text setting. Select the radio button for Include all numbers in full-text index or the radio button for the Include numbers in full-text index but limit them by: option. 
+
+
+
+
+ 
+Once the option is selected click the OK button. Be sure to restart all services on the Data Server using the service deepfiler restart command or use the Restart Services button on the Dashboard -> Controller details page. 
+
+A full harvest and index load on the previously harvested documents will need to be run in order to capture the credit card number content skipped during the original harvest. 
+
+You should then be able to navigate to the AppStack Data Workbench and use the {CreditCard} macro to identify the applicable documents. 
+
+Please also be aware that it is necessary to have the volume configured as a full text enabled volume so that a full text index is created for the appropriate volume(s) from which you are harvesting the content.
+
+RELATED INFORMATION
+ Full-text macros [http://www-01.ibm.com/support/knowledgecenter/SSEHPS_7.6.0/working/cpt/cpt_append1_full-textmacros.dita]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management eDiscovery Identification and Collection StoredIQ Platform CentOS, Platform Independent, Ubuntu 7.5.1, 7.5.0.2, 7.5.0.1, 7.5 All Editions Enterprise Content Management Policy Assessment and Compliance StoredIQ Platform Platform Independent 7.5.1, 7.5.0.2, 7.5.0.1, 7.5 All Editions Enterprise Content Management Unstructured Data Identification and Mgmt Not Applicable Platform Independent 7.5.1, 7.5.0.2, 7.5.0.1, 7.5 All Editions

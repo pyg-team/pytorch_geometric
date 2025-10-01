@@ -1,0 +1,102 @@
+Title: IBM Capture failed statements - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Capture failed statements using statement event monitor in db2 for Linux Unix Windows 
+
+CAUSE
+There may be many applications connected to the database where application log is not accessible readily
+
+DIAGNOSING THE PROBLEM
+In the database snapshot command - db2 get snapshot for database on <db_name>, there is monitor element for failed statement, failed_sql_stmts.
+
+RESOLVING THE PROBLEM
+Example 
+
+db2 get snapshot for database on sample | grep -i failed
+Failed statement operations = 1
+
+$ db2 select FAILED_SQL_STMTS from SYSIBMADM.SNAPDB
+FAILED_SQL_STMTS
+--------------------
+1
+
+1 record(s) selected.
+
+You can use statement event monitor to capture the SQL statement that is failing.
+
+steps - 
+
+1. connect to database
+$ db2 connect to sample
+
+2. Check existing event monitors and its state
+$ db2 "select nodenum,substr(evmonname,1,30) evmonname, case when event_mon_state(evmonname) = 0 then 'inactive' when event_mon_state(evmonname) = 1 then 'active' end state from syscat.eventmonitors"
+
+NODENUM EVMONNAME STATE
+------- ------------------------------ --------
+0 DB2DETAILDEADLOCK active
+
+3. Create statement event monitor 
+$ db2 "create event monitor mon_stmt for statements write to file '/home/db2inst1/'"
+
+4. Activate event monitor
+$ db2 set event monitor mon_stmt state=1
+
+5. Try 2 statements one for successful execution and one for fail.
+$ db2 "select * from sysibm.sysdummy1"
+
+IBMREQD
+-------
+Y
+
+1 record(s) selected.
+
+$ db2 "select * from sysibm.sysdm1"
+SQL0204N "SYSIBM.SYSDM1" is an undefined name. SQLSTATE=42704
+
+6. Check failed statement counter from database snapshot and application snapshot.
+$ db2 get snapshot for database on sample | grep -i failed
+Failed statement operations = 2
+
+$ db2 get snapshot for application agentid 7 | grep -i failed
+Failed statement operations = 1
+
+7. Deactivate event monitor
+$ db2 set event monitor mon_stmt state=0
+
+8. Generate statement event monitor data
+$ db2evmon -db sample -evm mon_stmt > mon_stmt.out
+
+9. Check file mon_stmt.out for sqlcode value 0 (zero) for successful statement and negative value for failed SQL statements.
+Example - 
+
+8) Statement Event ...
+Appl Handle: 7
+.
+.
+Text : select * from sysibm.sysdummy1
+. 
+.
+SQLCA:
+sqlcode: 0
+sqlstate: 00000
+.
+.
+10) Statement Event ...
+Appl Handle: 7
+.
+.
+Text : select * from sysibm.sysdm1
+.
+.
+SQLCA:
+sqlcode: -204
+sqlstate: 42704
+
+Message: SQL0204N "SYSIBM.SYSDM1" is an undefined name. SQLSTATE=42704
+
+9. Finally drop event monitor
+db2 drop event monitor mon_stmt

@@ -1,0 +1,193 @@
+Title: IBM IZ64934: INCORRECT PERMISSIONS ON FILE JAVAWS WHEN INSTALLED BY WMQ V6 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+WebSphere MQ V6, Fix Pack 6.0.2.9 [http://www-01.ibm.com/support/docview.wss?uid=swg24025669]
+WebSphere MQ V6.0 for iSeries Fix Pack 6.0.2.9 [http://www-01.ibm.com/support/docview.wss?uid=swg24025670]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the GSKit JRE is installed along with WebSphere MQ version
+   6, the permissions on the file "javaws" may be set to be world
+   writeable.
+   
+   These permissions are not desirable in an environment where
+   security policy restricts world-writeable files.
+   
+   -rwxrwxrwx /opt/mqm/ssl/jre/javaws/javaws
+   
+   ADDITIONAL KEYWORDS: read write execute Java 777 555
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually change the permissions of
+   /opt/mqm/ssl/jre/javaws/javaws to be -r-xr-xr-x
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users installing 6.0.2.8 or earlier 6.0.2.x versions of MQ and
+   have opted to install the GSKit JRE
+   
+   Platforms affected:
+   All Unix
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The JRE that MQ uses to create the GSKit installation package
+   contained files which had world-writeable permissions.
+   
+   MQ did not override the permissions of the JRE files that are
+   packaged with the product which meant that it was possible
+   that some of the files may have had permissions which were set
+   in such a way as to have caused them to fail a security audit.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The file permissions have been corrected and future
+   WebSphere MQ fix packs will not ship world-writeable files
+   in the GSKit JRE.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.9
+   --------           --------------------
+   AIX                U828012
+   HP-UX (PA-RISC)    U827381
+   HP-UX (Itanium)    U827383
+   Solaris (SPARC)    U827693
+   Solaris (x86-64)   U828055
+   Linux (x86)        U827380
+   Linux (x86-64)     U827694
+   Linux (zSeries)    U827590
+   Linux (Power)      U827382
+   Linux (s390x)      U827695
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.2
+   --------           --------------------
+   AIX                U829807
+   HP-UX (PA-RISC)    U829678
+   HP-UX (Itanium)    U829681
+   Solaris (SPARC)    U829806
+   Solaris (x86-64)   U829680
+   Linux (x86)        U829677
+   Linux (x86-64)     U829676
+   Linux (zSeries)    U829682
+   Linux (Power)      U829679
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ64934
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7204
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-11
+   
+   
+ * CLOSED DATE
+   2010-01-11
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86 V6
+   
+   
+ * FIXED COMPONENT ID
+   5724H7204
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY
+   UP

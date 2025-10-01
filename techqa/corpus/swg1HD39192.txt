@@ -1,0 +1,248 @@
+Title: IBM HD39192: LDAP AUTHENTICATION DOES NOT WORK - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  LDAP authentication DOES NOT WORK
+   Client OS and level: Windows XP
+   Server OS and level: Windows 2003 server
+   Database and level: Oracle 9i
+   Scenario:
+   1. Please find below HotLine call: USA (HL) -
+   0015073
+   2. Once we have imported the users, we can not
+   authenticate them using LDAP authentication. (We
+   were able to import one by one - not a good
+   solution for the long term, but in order to see
+   that it did not authenticate we imported one at
+   a time.)
+   Following is our user dump from LDAP:
+   Unable to authenticate using LDAP using this
+   test account:
+   dn:
+   motguid=SMARTM,ou=people,ou=intranet,dc=motor
+   ola,
+   dc=com
+   motGUID: SMARTM
+   motCoreID: SMARTM
+   displayName: Smarteam Admin-SMARTM
+   objectClass: top
+   objectClass: person
+   objectClass: organizationalPerson
+   objectClass: inetOrgPerson
+   objectClass: motIntranetPerson
+   objectClass: motapplications
+   objectClass: motaccount
+   telephoneNumber: 8475235219
+   motDirectoryStatus: A
+   motSupervisorID: 10133452
+   motEmploymentActivity: A
+   motCommerceID: 12017853
+   motCommonNames: Admin Smarteam-SMARTM
+   cn: Admin Smarteam
+   cn: Admin Smarteam-SMARTM
+   sn: Smarteam
+   motDisplayFirstName: Admin
+   motDisplayLastName: Smarteam
+   givenName: Admin
+   motDirAccountType: A
+   uid: SMARTM
+   Using the default attribute mapping the username
+   in Smarteam appears as "Admin Smarteam, Admin
+   Smarteam-SMARTM" if I recall, and trying to
+   login as "SMARTM" with LDAP Authentication using
+   search attribute of cn or motguid does not
+   work. We have tried multiple combinations.
+   Scenario for LDAP issue 33967:
+   1. Have SUN LDAP in the enterprise
+   2. Import users from LDAP to ST via the ST LDAP
+   Import Utility
+   3. Change Authentication of ST to authenticate
+   through LDAP
+   4. Try to log in as you do using all other customer
+   applications with your UID
+   5. Get an error message: Can not authenticate
+   user can not be found in DB.
+   Thanks 05/05/05
+   Baruch
+   there is already BUG for this issue:BID-72285
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  LDAP authentication DOES NOT WORK
+   LDAP authentication DOES NOT WORK
+   Client OS and level: Windows XP
+   Server OS and level: Windows 2003 server
+   Database and level: Oracle 9i
+   Scenario:
+   1. Please find below HotLine call: USA (HL) -
+   0015073
+   2. Once we have imported the users, we can not
+   authenticate them using LDAP authentication. (We
+   were able to import one by one - not a good
+   solution for the long term, but in order to see
+   that it did not authenticate we imported one at
+   a time.)
+   Following is our user dump from LDAP:
+   Unable to authenticate using LDAP using this
+   test account:
+   dn:
+   motguid=SMARTM,ou=people,ou=intranet,dc=motor
+   ola,
+   dc=com
+   motGUID: SMARTM
+   motCoreID: SMARTM
+   displayName: Smarteam Admin-SMARTM
+   objectClass: top
+   objectClass: person
+   objectClass: organizationalPerson
+   objectClass: inetOrgPerson
+   objectClass: motIntranetPerson
+   objectClass: motapplications
+   objectClass: motaccount
+   telephoneNumber: 8475235219
+   motDirectoryStatus: A
+   motSupervisorID: 10133452
+   motEmploymentActivity: A
+   motCommerceID: 12017853
+   motCommonNames: Admin Smarteam-SMARTM
+   cn: Admin Smarteam
+   cn: Admin Smarteam-SMARTM
+   sn: Smarteam
+   motDisplayFirstName: Admin
+   motDisplayLastName: Smarteam
+   givenName: Admin
+   motDirAccountType: A
+   uid: SMARTM
+   Using the default attribute mapping the username
+   in Smarteam appears as "Admin Smarteam, Admin
+   Smarteam-SMARTM" if I recall, and trying to
+   login as "SMARTM" with LDAP Authentication using
+   search attribute of cn or motguid does not
+   work. We have tried multiple combinations.
+   Scenario for LDAP issue 33967:
+   1. Have SUN LDAP in the enterprise
+   2. Import users from LDAP to ST via the ST LDAP
+   Import Utility
+   3. Change Authentication of ST to authenticate
+   through LDAP
+   4. Try to log in as you do using all other Motorola
+   application with your UID
+   5. Get an error message: Can not authenticate
+   user can not be found in DB.
+   Thanks 05/05/05
+   Baruch
+   there is already BUG for this issue:BID-72285
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Default TEXTAREA value goes here
+   .
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD39192
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   514
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-05-05
+   
+   
+ * CLOSED DATE
+   2009-04-06
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R516 PSN
+   UP
+   
+   
+ * R514 PSN SP51407
+   UP05/07/05 N 1000
+   
+   
+ * R517 PSN
+   UP
+   
+   
+ * R515 PSN
+   UP
+   
+   
+ * R518 PSN
+   UP

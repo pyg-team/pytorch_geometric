@@ -1,0 +1,95 @@
+Title: IBM MustGather: Out of Memory errors with WebSphere Application Server on Solaris  - Heap Leak - United States
+
+Text:
+MustGather; MustGather; MustGather; outofmemory; OOM; leak; memory; sun; solaris; outofmemoryerror; autopd; auto pd; MustGatherDocument; wasrun TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting data for Out of Memory errors with IBM® WebSphere® Application Server on the Solaris platform. Gathering this MustGather information before calling IBM Support will help familiarize you with the troubleshooting process and save you time. 
+
+RESOLVING THE PROBLEM
+An Out of Memory error is generally indicated when a java.lang.OutofMemoryError is thrown. 
+
+Out of Memory (heap leak) specific MustGather information
+Debugging the Java virtual machine (JVM) that is running out of Java heap.
+
+If you suspect a memory leak in the Java™ heap, the first step is to eliminate any misconfiguration or tuning as a potential cause:  1. Increase the Maximum Java Heap Value (-Xmx) and test again.
+    
+    
+ 2. Follow instructions for Enabling verbosegc in WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21114927]
+    Ensure that the heap generations (NEW and PERM) are sized appropriately. Default values for MaxPermSize (Permanent Region) are often insufficient for applications. The Permanent Region holds class data and other very long lived resources. MaxPermSize (default 64MB) should be set to a quarter of max heap. 
+    For example: 
+    -XX:MaxPermSize=128m (32bit)
+    -XX:MaxPermSize=512m (64bit)
+    
+    MaxNewSize, the Young generation is intended for short-lived objects where Java objects are created and age, from where they are collected without a Full garbage collection (GC) cycle. Young Generation (default 32MB) of the heap should be set to a quarter of max heap size. 
+    
+    For example:
+    -XX:MaxNewSize=128m (32bit)
+    -XX:MaxNewSize=512m (64bit)
+    
+    
+ 3. Run in HotSpot Server mode (-server). Running in HotSpot client mode halves the size of the Permanent Region and therefore increases the stress on this part of the heap in the Sun JVM. 
+    
+    
+    
+    
+ 4. Disable System GCs. Another way applications can interact with garbage collection (GC) is by invoking GCs explicitly, such as through the System.gc call. These calls force major collection, and inhibit scalability on large systems. 
+    
+    -XX:+DisableExplicitGC
+    
+    
+ 5. Switch to the Alternate Threading Library. The Solaris 8 operating environment supports an alternate version of libthread that binds threads to LWPs directly; this might help avoid starvation of the finalization thread. To try this, set the environment variable LD_LIBRARY_PATH to include /usr/lib/lwp before launching the JVM.
+    
+    
+ 6. Stop the WebSphere application Server and recycle the logs
+    
+    
+ 7. Restart the application server.
+    
+    
+ 8. Run the application until java.lang.OutOfMemory exceptions occur.
+
+
+
+If making configuration changes does not resolve the problem, and a Java heap leak is still present, collect Heapdumps, following instructions in Getting Heapdumps on Solaris platform [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21242314] 
+
+Note: Heapdumps can be analyzed using the IBM-developed HeapAnalyzer tool [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21190608]. 
+
+Collect the following information:  * For WebSphere V6.0 through V8.x: 
+ * All files in the following directory: 
+   
+   install_root/profiles/profile_name/logs/server_name
+   
+ * A copy of server.xml located in the following directory: 
+   
+   install_root/profiles/profile_name/config/cells/cell_name/nodes/node_name/servers/server_name
+   
+ * For WebSphere Application Server V5.1: 
+ * Include all of the files from the following directory:
+   
+   install_root/logs/server_name
+   
+ * A copy of server.xml located in the following directory:
+   
+   install_root/config/cells/cell_name/nodes/node_name/servers/server_name
+   
+
+Follow instructions for Submitting diagnostic information to IBM Technical Support for problem determination [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852]. 
+
+For a listing of all technotes, downloads, and educational materials specific to the Out of Memory component, search the WebSphere Application Server support site [http://www.ibm.com/software/webservers/appserv/was/support/]. 
+
+Related information [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852] 
+Submitting information to IBM support [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852] 
+Steps to getting support for WebSphere Application Server [http://www.ibm.com/developerworks/websphere/support/appserver_support.html] 
+MustGather: Read first for WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21145599] 
+Troubleshooting guide for WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27005324] 
+Java HotSpot VM Options [http://java.sun.com/docs/hotspot/VMOptions.html] 
+MustGather: Out of Memory errors on Solaris - Native Leak [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21104470] RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK Application Servers WebSphere Application Server - Express Java SDK Solaris 6.1, 6.0, 5.1

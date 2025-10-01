@@ -1,0 +1,129 @@
+Title: IBM PK73731: SYNDICATION DOES NOT RESTART GRACEFULLY AFTER A CRASH OF THE SYNDICATOR - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After a syndicator crashes, it may be necessary to rebuild the
+   subscriber in order for subsequent syndication to proceed
+   correctly.
+   There should be some message that a prior syndication did not
+   complete correctly.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Rebuild the syndicator after the subscriber does not run to a
+   successful completion.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If the syndicator becomes unresponsive during syndication the
+   syndicator/subscriber pair can become out of sync.  This forces
+   the need to perform a rebuild as an update in this state will
+   not resync the servers.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  ensure WCM is stopped prior to server shutdown.  Perform a
+   rebuild if this condition is encounered.
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  This has been addressed in a future PTF
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK73731
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   60G
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-13
+   
+   
+ * CLOSED DATE
+   2008-10-31
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     WCM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R60H PSY
+   UP

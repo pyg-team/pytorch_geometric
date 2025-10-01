@@ -1,0 +1,19 @@
+Title: IBM I am getting the error 'Download Mirror Request failed", what do I do? - United States
+
+Text:
+212; actionsite; googlebigfix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This error can be caused by various conditions. A known cause of the error is if the actionsite you are trying to propagate is too large. 
+
+RESOLVING THE PROBLEM
+This error can be caused by various conditions. A known cause of the error is if the actionsite you are trying to propagate is too large. 
+
+To verify the size of the actionsite you are trying to propagate, take a look at the folder "C:\Documents and Settings\Administrator\Local Settings\Application Data\BigFix\Enterprise Console\BES_bfenterprise\Sites". If the size of this folder is greater than 12 MB, the actionsite may be too large and you may have to stop some of your open actions in order to propagate the actionsite.
+
+If the size of the ActionSite folder is smaller than 12 MB, please contact IBM Support for troubleshooting assistance.
+
+ 
+
+HISTORICAL NUMBER
+ 212

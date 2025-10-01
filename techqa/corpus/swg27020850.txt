@@ -1,0 +1,69 @@
+Title: IBM Datacap Taskmaster Capture Version 8.0.1 publication library - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains links to the most important and most frequently used documents for IBM Datacap Taskmaster Capture Version 8.0.1. In this document, you can also find links to the system requirements and release notes documents. 
+
+CONTENT
+ 
+
+LINKS TO IBM DATACAP TASKMASTER CAPTURE LIBRARY DOCUMENTS
+ *  Version 8.0 [http://www.ibm.com/support/docview.wss?rs=86&uid=swg27020296] 
+ * 
+ * 
+ *  Version 8.0.1 [http://www.ibm.com/support/docview.wss?rs=86&uid=swg27020850] - selected tab, 
+ *  Version 8.1.0 [http://www.ibm.com/support/docview.wss?&uid=swg27035774] 
+ *  Version 9.0 [http://www.ibm.com/support/docview.wss?&uid=swg27043856] 
+ *  Version 9.0.1 [http://www.ibm.com/support/docview.wss?&uid=swg27047298] 
+
+ANCHOR LINKS
+ * What's new?
+ * Maintenance
+ * Getting started
+ * Product documentation
+ * 
+ * 
+ * Community
+
+
+
+
+
+WHAT'S NEW?
+Learn about new features and changes that were introduced in the current release of IBM Datacap Taskmaster Capture. 
+
+Document Format IBM Datacap Taskmaster Capture announcement [http://www-01.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS211-017] HTML IBM Datacap Taskmaster Capture Version 8.0.1 Release Notes [http://www.ibm.com/support/docview.wss?uid=swg27020806] HTML Back to top
+
+
+MAINTENANCE
+Access links to maintenance updates for IBM Datacap Taskmaster Capture Version 8.0.1.
+
+Document Format IBM Datacap Taskmaster Capture Version 8.0.1 Fix Pack 1 Readme file [http://www.ibm.com/support/docview.wss?&uid=swg27021511] PDF IBM Datacap Taskmaster Capture Version 8.0.1 Fix Pack 1 Download document [http://www.ibm.com/support/docview.wss?&uid=swg24029923] HTML IBM Datacap Taskmaster Capture Version 8.0.1 Fix Pack 2 Readme file [http://www.ibm.com/support/docview.wss?&uid=swg27022960] PDF IBM Datacap Taskmaster Capture Version 8.0.1 Fix Pack 2 Download document [http://www.ibm.com/support/docview.wss?&uid=swg24030869] HTML IBM Datacap Taskmaster Capture Version 8.0.1 Fix Pack 3 Readme file [http://www.ibm.com/support/docview.wss?&uid=swg27023632] PDF IBM Datacap Taskmaster Capture Version 8.0.1 Fix Pack 3 Download document [http://www.ibm.com/support/docview.wss?&uid=swg24031481] HTML IBM Datacap Taskmaster Capture Version 8.0.1 Fix Pack 4 Readme file [http://www.ibm.com/support/docview.wss?&uid=swg27036655] PDF IBM Datacap Taskmaster Capture Version 8.0.1 Fix Pack 4 Download document [http://www.ibm.com/support/docview.wss?&uid=swg24034251] HTML IBM Datacap Taskmaster Capture Version 8.0.1 Fix Pack 5 Readme file [http://www.ibm.com/support/docview.wss?&uid=swg27041848] PDF IBM Datacap Taskmaster Capture Version 8.0.1 Fix Pack 5 Download document [http://www.ibm.com/support/docview.wss?&uid=swg24037390] HTML Back to top
+
+
+GETTING STARTED
+Learn how to download and install the product.
+
+Document Format IBM Datacap Taskmaster Capture Version 8.0.1 product download document [http://www.ibm.com/support/docview.wss?uid=swg24030354 ] HTML Parascript (R) FieldScript (R) for IBM Datacap Taskmaster Capture Version 8.0.1 product download document [http://www.ibm.com/support/docview.wss?uid=swg24031674 ] HTML Hardware and software requirements [http://www.ibm.com/support/docview.wss?uid=swg27038288] HTML IBM Datacap Taskmaster Capture Version 8.0.1 Release Notes [http://www.ibm.com/support/docview.wss?uid=swg27020806] HTML Back to top
+
+
+
+
+
+PRODUCT DOCUMENTATION
+Access the documentation that is delivered with the product.
+
+
+PDF DOCUMENTATION 
+
+
+ENGLISH
+IBM Datacap Taskmaster Capture Version 8.0.1 Installation and Configuration Guide (GC19-3232-01) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=GC19-3232-01] PDF Parascript (R) FieldScript (R) for IBM Datacap Taskmaster Capture Version 8.0.1 Guide (GC19-3374-00) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=GC19-3374-00] PDF Application Development using IBM Datacap Taskmaster Capture (SC1-3251-01) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3251-01] PDF Application Development using Taskmaster Capture - Sample Documents [http://www.ibm.com/support/docview.wss?uid=swg27021049] HTML IBM Datacap Taskmaster Capture Creating Custom RV2 Reports Guide (SC19-3252-00) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3252-00] PDF IBM Datacap Taskmaster Capture Creating Custom DotEdit Panels Guide (SC19-3254-00) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3254-00] PDF IBM Datacap Taskmaster Capture Custom Actions Development Guide (SC19-3253-00) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3253-00] PDF Custom Actions Development Guide - Sample Projects [http://www.ibm.com/support/docview.wss?uid=swg27021107] HTML Back to top
+
+
+COMMUNITY
+Share your experiences, expertise, and feedback with other product users and IBM.
+
+Document Format Back to top

@@ -1,0 +1,161 @@
+Title: IBM LI75512: CMVC 200467 - CORRECT PROBLEM WHERE OFFER FINDER COULD          NOT FETCH OFFER AMONG OVER 1000 PRICE LISTS WITH ORACLE - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.0.0-WS-WCServer-FP009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Commerce&fixids=7.0.0-WS-WCServer-FP009&source=SAR]
+WebSphere Commerce Version 7.0.0.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24028745]
+WebSphere Commerce Version 6.0.0.11 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24029232]
+WebSphere Commerce Version 7.0.0.4 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24030849]
+WebSphere Commerce Version 7.0.0.3 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24030272]
+WebSphere Commerce Version 7.0.0.5 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24031380]
+WebSphere Commerce Version 7.0.0.6 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24032871]
+WebSphere Commerce Version 7.0.0.7 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24034686]
+WebSphere Commerce Version 7.0.0.8 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24037075]
+WebSphere Commerce Version 7.0.0.9 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24038826]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM WebSphere Commerce, the SQL statement in finder
+   findEffectiveOffersByTimestampCatentriesPredicateOffersStoreAndP
+   riceLists contains an IN condition clause, and when more than
+   1000 price list IDs are built in the IN clause, the following
+   ORA-01795 exception would be thrown as the maximum number of
+   expressions in the query allowed by Oracle is 1000.
+   
+   ExceptionUtil E   CNTR0019E: EJB threw an unexpected
+   (non-declared) exception during invocation of method
+   "findEffectiveOffersByTimestampCatentriesPredicateOffersStoreAnd
+   PriceLists". Exception data:
+   com.ibm.ejs.persistence.EJSPersistenceException: find failed:;
+   nested exception is:
+    java.sql.SQLException: ORA-01795: maximum number of expressions
+   in a list is 1000
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   WebSphere Commerce users on v6.0 and v7.0 who have shoppers
+   entitled to more than 1000 price lists.
+   
+   PROBLEM ABSTRACT:
+   The SQL statement in finder
+   findEffectiveOffersByTimestampCatentriesPredicateOffersStoreAndP
+   riceLists contains an IN condition clause, which causes
+   ORA-01795 exception when more than 1000 price list identifiers
+   are in the IN clause.
+   
+   BUSINESS IMPACT:
+   Exception would be thrown when retrieving price from more than
+   1000 price lists.
+   
+   RECOMMENDATION:
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Installing Interim Fix LI75512 resolves the issue and WebSphere
+   Commerce will allow the price to be fetched from more than 1000
+   price lists.
+   
+   -------------------------------------------------------------
+   The latest available maintenance information can be obtained
+   from the Recommended Fixes for WebSphere Commerce technote:
+   http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296 [http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LI75512
+   
+   
+ * REPORTED COMPONENT NAME
+   WC BUS ED ILINU
+   
+   
+ * REPORTED COMPONENT ID
+   5724I3804
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-21
+   
+   
+ * CLOSED DATE
+   2010-08-24
+   
+   
+ * LAST MODIFIED DATE
+   2010-08-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WC BUS ED ILINU
+   
+   
+ * FIXED COMPONENT ID
+   5724I3804
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

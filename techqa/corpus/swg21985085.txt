@@ -1,0 +1,30 @@
+Title: IBM Shared libraries in Jazz for Service Management Version 1.1.3.0 - United States
+
+Text:
+jazzsm1130relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Shared libraries in Jazz for Service Management Version 1.1.3.0 
+
+CAUSE
+Jazz for Service Management Version 1.1.3.0 supports Websphere Application Server Version 8.5.5.9. But this version of Websphere Application Server removed several JAR files that were used by previous versions of Jazz for Service Management like HttpClient.jar and HttpCore.jar. 
+
+Dashboard Application Services Hub is dependent on these libraries for REST (Representational State Transfer) communication. Therefore, the Jazz for Service Management install scripts are modified to add the required JAR files as Jazz for Service Management shared libraries. 
+
+
+RESOLVING THE PROBLEM
+The following are the shared libraries that are generated in Jazz for Service Management Version 1.1.3.0: 
+
+C:/program files/IBM/JazzSM/profile/lib
+or
+/opt/IBM/JazzSM/profile/lib 
+
+The lib folder contains the following libraries: 
+
+ * httpClient-4.3.6.jar 
+ * hitpCore-4.3.3.jar 
+ * ibm-wink-jaxrs-1.0.0.jar 
+ * slf4j-api -1.5.11.jar 
+ * slf4j-log4j12-1.5.11.jar
+
+Also refer to the attached image. [/support/docview.wss?uid=swg21985085&aid=2]libraries.gif [/support/docview.wss?uid=swg21985085&aid=1]

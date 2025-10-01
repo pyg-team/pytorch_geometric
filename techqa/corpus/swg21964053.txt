@@ -1,0 +1,26 @@
+Title: IBM Collecting tcpdump traces for L2 Support - United States
+
+Text:
+tcpdump; bigfix; iptrace TECHNOTE (FAQ)
+
+QUESTION
+ Support wants tcpdump in binary format. How do I do that? 
+
+ANSWER
+the tcpdump is normally in text format. This means it is hard to review with a good trace program. 
+
+The way to format it so it can be reviewed in a program like Wireshark is to use the following syntax :
+
+tcpdump -ni eth0 -s0 -w /var/tmp/capture.pcap
+
+For AIX you can use the following link to see how to collect an iptrace file for the same reason. 
+
+AIX iptrace [http://www-01.ibm.com/support/docview.wss?uid=swg21175744] 
+
+1. Start the trace. 
+
+2. Recreate the issue. 
+
+3. Stop the trace 
+
+4. Send in the trace file for L2 Support to review.

@@ -1,0 +1,136 @@
+Title: IBM PI41411: SUPPORT ORACLE JDK 1.8 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Support Oracle JDK 1.8
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * IBM MobileFirst Platform developers using Java 8 to develop  *
+   * MobileFirst applications                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Attemping to use Java 8 to develop MobileFirst applications  *
+   * would result in a number of issues, including:               *
+   *                                                              *
+   * * The MobileFirst Platform Foundation test server will not   *
+   * start correctly                                              *
+   * * The MobileFirst Platform Foundation Command Line Interface *
+   * installer will not run on OSX                                *
+   * * MobileFirst Platform Foundation Command Line Interface     *
+   * commands such as "build" and "deploy" may fail               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * -                                                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  MobileFirst Platform Foundation Studio, Command Line Interface,
+   and test server have been updated to support Java 8. ANT has
+   also been upgraded to 1.9.4.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI41411
+   
+   
+ * REPORTED COMPONENT NAME
+   WL/MFPF ENTERPR
+   
+   
+ * REPORTED COMPONENT ID
+   5725I4300
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-19
+   
+   
+ * CLOSED DATE
+   2015-07-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WL/MFPF ENTERPR
+   
+   
+ * FIXED COMPONENT ID
+   5725I4300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

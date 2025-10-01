@@ -1,0 +1,147 @@
+Title: IBM IV74120: WATCHDOG ON WINDOWS CRASHES IF MONITORING MSSQL AGENT WITH INSTANCE NAME GREATER THAN 8 CHARACTERS. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 6 (6.3.0-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24040390]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Windows OS agent crashes if monitoring the MSSQL Agent (koq)
+   which has an instance name greater than 8 characters.
+   
+   When tracing is set to (UNIT:KCA ALL), the RAS1 log file,
+   <hostname>_nt_kntcma_<nnnnnnnn-nn>.log will have the following
+   lines at the bottom:
+   
+   (557AF067.02C9-BFC:kcacmdw.cpp,1611,"openApplication")   PID
+   <nnnn>, Application <KOQAGENT.EXE>
+   (557AF067.02CA-BFC:kcactrl.cpp,3404,"getManagedEndpointProcess")
+   Entry
+   (557AF067.02CB-BFC:kcactrl.cpp,3451,"getManagedEndpointProcess")
+   Exit
+   (557AF067.02CC-BFC:kcacmdw.cpp,1692,"openApplication") Process
+   name passed in uinstProcName=KOQAGENT.EXE, trimmed-dot=KOQAGENT
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The Monitoring Agent for Windows OS agent crashes if Watchdog is
+    monitoring the MSSQL Agent (koq) which has an instance name
+   greater than 8 characters.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been updated address the condition where the instance
+   name is longer than the process name.
+   
+   The problem could also occur when Watchdog is monitoring a
+   different agent, but it must be a multi-instance agent where the
+   instance name is not part of the process name.   For example
+   Watchdog does not have a problem with the Linux Agentless agent
+   as it has a process name which includes the instance name:
+   kr4agent_<instance name>.exe.  The MSSQL agent has the process
+   name as koqagent.exe (the instance name is not part of the
+   process name).
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.3.0-TIV-ITM-FP0006
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV74120
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040W
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-06-14
+   
+   
+ * CLOSED DATE
+   2015-08-11
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * FIXED COMPONENT ID
+   5724C040W
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

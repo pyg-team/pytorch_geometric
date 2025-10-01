@@ -1,0 +1,26 @@
+Title: IBM Cognos Disclosure Management System Environments - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document describes the system environments supported by IBM Cognos Disclosure Management. 
+
+CONTENT
+To view supported system environments, click the product version in the following table.
+
+
+
+
+IBM COGNOS DISCLOSURE MANAGEMENT
+Click a link to view a report for your product. 
+
+Product version  * 10.2 [http://www.ibm.com/support/docview.wss?uid=swg27036739] 
+ * 10.2.1 [http://www.ibm.com/support/docview.wss?uid=swg27037955] 
+ * 10.2.2 [http://www.ibm.com/support/docview.wss?uid=swg27039747] 
+ * 10.2.3 [http://www.ibm.com/support/docview.wss?uid=swg27041819] 
+ * 10.2.4 [http://www.ibm.com/support/docview.wss?uid=swg27044965] 
+ * 10.2.5 [http://www.ibm.com/support/docview.wss?uid=swg27047022] 
+ * 10.2.6 [http://www.ibm.com/support/docview.wss?uid=swg27048200] 
+ * 10.2.7 [http://www.ibm.com/support/docview.wss?uid=swg27049150] 
+ * 10.3 [http://www.ibm.com/support/docview.wss?uid=swg27049931]

@@ -1,0 +1,68 @@
+Title: IBM EJB WIMServiceHome cannot be found even after .ear file is installed successfully - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The ConfigEngine wp-add-property fails with the following error:
+
+Cannot find EJB: ejb/com/ibm/websphere/wim/ejb/WIMServiceHome
+[wplc-add-property] javax.naming.ServiceUnavailableException: A communication failure occurred while attempting to obtain an initial context with the provider URL: "corbaloc:iiop:<host name>:<port number>". 
+
+
+CAUSE
+In a cluster, the .ear file must be installed on the Deployment Manager (DMGR). For more information, refer to Document #1358381 [http://www.ibm.com/support/docview.wss?rs=899&uid=swg21358381]. If originally installed elsewhere, subsequent attempts to install it on the DMGR will appear to succeed but attempts to add properties (ConfigEngine task, wp-add-property) continue to fail with a "Cannot find EJB" message similar to the one above.
+
+ENVIRONMENT
+Clustered WebSphere Portal
+
+DIAGNOSING THE PROBLEM
+ 
+
+-- Confirm that any bootstrap address information in the URL is correct and that the target name server is running. A bootstrap address with no port specification defaults to port 2809. Possible causes other than an incorrect bootstrap address or unavailable name server include the network environment and workstation network configuration. [Root exception is org.omg.CORBA.TRANSIENT: java.net.UnknownHostException: <host name>:host=<host name>,port=9809 vmcid: IBM minor code: E02 completed: No]
+
+-- Check the results of the wp-la-install-ear file in the ConfigTrace.log to determine if the .ear file was already installed:
+
+
+ * Command line arguments: ... wp-la-install-ear
+ * 
+ * ...
+ * 
+ * Target started: wp-la-install-ear
+ * 
+ * 
+ * wp-la-install-ear:
+ * 
+ * ...
+ * 
+ * [wplc-create-ear]
+ * 
+ * earfile="/prod/sys/Portal61/WebSphere/AppServer/systemApps/wim.ear/wimejb.jar"
+ * 
+ * [wplc-create-ear] null
+ *  [wsadmin] WASX7209I: Connected to process "dmgr" on node <node name> using SOAP connector; The type of process is: DeploymentManager 
+   [wsadmin] 'dmgr(cells/<cell name>/nodes/<node name>/servers/dmgr|server.xml#Server_1)' 
+   [wsadmin] Enterprise application WIMSYSTEM already exists. 
+   ... 
+ * BUILD SUCCESSFUL
+
+
+-- Inspect the serverindex.xml files to confirm that the .ear file is installed on a non-DMGR node in the cluster: 
+ * 
+ *  <serverEntries serverDisplayName="dmgr" serverName="dmgr" serverType="DEPLOYMENT_MANAGER" xmi:id="ServerEntry_1"> 
+ * <deployedApplications>
+ * 
+ * ...
+ * (contains no references to WIMSYSTEM.ear) 
+   
+ * 
+ *  <serverEntries serverName="WebSphere_Portal" serverType="APPLICATION_SERVER" 
+ * ...
+ * 
+ * <deployedApplications>WIMSYSTEM.ear/deployments/WIMSYSTEM</deployedApplcations>
+
+RESOLVING THE PROBLEM
+You must first uninstall the WIMSYSTEM enterprise application from the WebSphere_Portal server (using the WebSphere Administrative console). Then follow the steps in Document #1358381 [http://www.ibm.com/support/docview.wss?rs=899&uid=swg21358381] to install the .ear file on the DMGR.
+
+RELATED INFORMATION
+ Incorrect providerURL causes wp-add-property failure [http://www.ibm.com/support/docview.wss?uid=swg21358381]

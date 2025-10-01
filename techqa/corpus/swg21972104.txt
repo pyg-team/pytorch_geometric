@@ -1,0 +1,56 @@
+Title: IBM FlashCopy Manager for VMware restore fails with FMM9201E - United States
+
+Text:
+FCM; VM; openstack TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The mount operation in FlashCopy Manager for VMware restore fails with FMM9201E. 
+
+SYMPTOM
+FlashCopy Manager for VMware backup is successful with warning: 
+
+ * 
+ * 
+ * 
+
+It complains that the second disk is not in the working directory of the virtual machine. The problem occurs when trying to restore this virtual machine backup. Because two disks are on different directories, the restore fails during the mount operation. When mounting the backup, the first disk is mounted on new datastore FCMvol_temp_xxxxxxxxxx: 
+
+Disk label: disk1 
+Disk size: 16.000 GB 
+Disk hw key: 2000 
+Disk type: 1 
+Disk mode: persistent 
+Parent datastore type: VMFS 
+Disk file hierarchy: 
+[FCMvol_temp_xxxxxxxxxx] test_vm01/disk1_vm01-000001.vmdk 
+[FCMvol_temp_xxxxxxxxxx] test_vm01/disk1_vm01.vmdk 
+
+However, the second disk still uses the same path: 
+
+Disk label: disk2 
+Disk size: 0 Bytes 
+Disk hw key: 2001 
+Disk type: 1 
+Disk mode: persistent 
+Parent datastore type: VMFS 
+Disk file hierarchy: 
+[FCMvol_temp] disk2_vm01_1/disk2_vm01_1-000001.vmdk 
+
+So the mount fails in this call: 
+ * 
+
+
+CAUSE
+This is an IBM Cloud Orchestrator (ICO) deployment which uses OpenStack Icehouse VMware VMDK Driver. One particular configuration of ICO is each virtual machine has at least two disks on separate folders under a single datastore. For example, virtual machine test_vm01 has first disk is [FCMvol_temp] disk1_vm01/disk1_vm01, while its second disk is [FCMvol_temp] disk2_vm01_1/disk2_vm01_1.vmdk. The disk2_vm01_1 disk is a special requirement for ICO deployment and is a mandatory vmdk.
+
+RESOLVING THE PROBLEM
+FlashCopy Manager for VMware does not currently support OpenStack environments. The available option to back up such an environment is to use in-guest backups of the virtual machines. In addition, Tivoli Storage Manager for Virtual Environments is another option to protect OpenStack.
+
+RELATED INFORMATION
+ Protecting OpenStack with Tivoli Storage Manager for Vi [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Storage%20Manager/page/Protecting%20OpenStack%20with%20Tivoli%20Storage%20Manager%20for%20Virtual%20Environments]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TSM FCM

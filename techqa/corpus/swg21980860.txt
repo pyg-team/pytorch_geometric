@@ -1,0 +1,56 @@
+Title: IBM RDz TSO EXIT IKJEESX0 TERMINATES with RC04 - United States
+
+Text:
+IKJEESX0 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Rational Developer for z Systems (RDz) using TSO Send command may result in the error IKJ79154I for TSO EXIT IKJEESX0, RC 04
+
+
+SYMPTOM
+Issuing the TSO SEND command in a batch job may terminate with this message: 
+
+IKJ79154I INSTALLATION EXIT IKJEESX0 REQUESTED TERMINATION. 
+IKJ79154I REASON CODE X'00000004'. 
+
+
+CAUSE
+The RDz TSO Send command will invoke a TSO exit, IKJEESX0 (FEKEESX0) that will terminate with a reason code of 4 if you have not coded a facility class for the FEK.CMD.SEND and FEK.CMD.SEND.CLEAR.
+
+The exit provided by RDz checks to see if the user has the authority to issue the TSO Send command by executing the RACROUTE macro:
+
+
+RACROUTE REQUEST=AUTH,CLASS=(R5),ENTITYX=(rEntityBL), *
+WORKA=(R0),RELEASE=2.2,ATTR=READ,LOG=NOSTAT, *
+MF=(E,AUTHCHK) 
+
+
+
+
+RESOLVING THE PROBLEM
+Code the appropriate security definitions for FEK.CMD.SEND and FEK.CMD.SEND.CLEAR. 
+
+Below is an example from the Knowledge Center > Configuring > Host Configuration Guide that will allow everyone to send messages, and only users able to issue operator commands to clear the message buffer: 
+
+ 
+
+
+RDEFINE FACILITY (FEK.CMD.SEND.**) UACC(READ) -
+DATA('z/OS EXPLORER - SEND COMMAND') 
+
+
+RDEFINE FACILITY (FEK.CMD.SEND.CLEAR.**) UACC(NONE) -
+DATA('z/OS EXPLORER - CLEAR SEND BUFFER') 
+
+
+PERMIT FEK.CMD.SEND.CLEAR.** CLASS(FACILITY) -
+ID(STCRSE) ACCESS(READ) 
+
+
+SETROPTS RACLIST(FACILITY) REFRESH 
+
+
+
+RELATED INFORMATION
+ RDz V9.5 Knowledge Center Host Configuration Guide [http://www.ibm.com/support/knowledgecenter/SSQ2R2_9.5.0/com.ibm.guide.hostconfig.doc/topics/sendmsg.html?lang=en]
+zOS Explorer 3.0 Knowledge Center Host configuration Gu [http://www.ibm.com/support/knowledgecenter/SSBDYH_3.0.0/com.ibm.zexpl.config.hostconfig.doc/topics/sendmsg.html?lang=en]

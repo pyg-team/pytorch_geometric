@@ -1,0 +1,24 @@
+Title: IBM CVE-2002-0510 vulnerability on Security Network IPS sensors - United States
+
+Text:
+GX; CVE TECHNOTE (FAQ)
+
+QUESTION
+ Is the Security Network IPS (GX) appliance vulnerable to the issue described in CVE-2002-0510? 
+
+CAUSE
+CVE-2002-0510 describes a UDP vulnerability in the 2.4.x Linux kernel. You can find more information on this vulnerability in the following locations: 
+
+ *  [https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2002-0510]https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2002-0510 [https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2002-0510] 
+ *  [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2002-0510]http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2002-0510 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2002-0510] 
+ *  [https://exchange.xforce.ibmcloud.com/vulnerabilities/8588]https://exchange.xforce.ibmcloud.com/vulnerabilities/8588 [https://exchange.xforce.ibmcloud.com/vulnerabilities/8588]
+
+ANSWER
+The GX uses the 2.6.x Linux kernel and is not vulnerable to this issue. 
+
+ 
+
+
+
+
+[/support/docview.wss?uid=swg21959378&aid=1] [http://ibm.biz/KC-SNIPS] [/support/docview.wss?uid=swg21959378&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21959378&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21959378&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21959378&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21959378&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21959378&aid=7] [http://ibm.biz/ContactSecSupport]

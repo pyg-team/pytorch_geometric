@@ -1,0 +1,61 @@
+Title: IBM FileNet P8 Platform Version 5.2 documentation updates for installable information center - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document provides updates for your installed IBM® FileNet® P8 Platform V5.2 information center. These updates have already been applied to the ibm.com information center. 
+
+DOWNLOAD DESCRIPTION
+The documentation update files available from this document include updates from several documentation refreshes as well as several security patches.
+
+
+29 November 2013 update:
+
+The update includes: 
+
+ * Documentation for IBM Enterprise Records Version 5.1.2, available as a separate download (p8docs520_ier512_11_29_2013.zip).
+
+
+25 October 2013 update: 
+
+The update includes:  * Updated IBM System Dashboard for Enterprise Content Management documentation. 
+ * Updates for new and changed functionality included in Content Engine Platform 5.2.0.1 and 5.2.0.2 fix packs. 
+ * Fixes for known documentation issues and other errors.
+
+
+3 April 2013 update: 
+
+The update provides translated documentation for IBM FileNet Workplace XT, IBM FileNet Integration for Microsoft Office, and IBM FileNet Connector for Microsoft SharePoint. 
+
+20 January 2014 update:  * Fix for cross-site scripting vulnerability in the IBM FileNet P8 Platform Documentation Installable Info Center (see the security bulletin at http://www.ibm.com/support/docview.wss?uid=swg21662360 [http://www.ibm.com/support/docview.wss?uid=swg21662360] for more information) 
+
+INSTALLATION INSTRUCTIONS
+To install the documentation updates or the cross-site scripting vulnerability fix, extract the files from your information center WAR file and add the new plug-ins to the information center structure. Re-create the WAR file, clear the information center cache, and redeploy your information center. 
+
+Security patch installation: 
+
+ 1. Expand the existing p8docs.war file to a working directory. 
+ 2. Download the security patch using the link below. 
+ 3. Unzip the security patch and copy the resulting files to the directory where you expanded p8docs.war. 
+ 4. Re-create the p8docs.war file. 
+ 5. Replace the original p8docs.war file with the one you created in the previous step.
+
+
+URL LANGUAGE SIZE(Bytes) Updating the information center [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/index.jsp?topic=/com.ibm.p8toc.doc/updatingwar.htm] English 100 Preventing errors on JBoss [http://www.ibm.com/support/docview.wss?rs=86&uid=swg27020336] English 100 
+DOWNLOAD PACKAGE
+The documentation updates are available as a compressed file. You must have FTP access available in order to download the file. Note that the file might take a while to download. 
+
+
+Download the p8docs520_ier512_11_29_2013.zip [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/p8doc/52x/p8docs520_ier512_11_29_2013.zip] [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/p8doc/52x/p8docs520_refresh_10_25_2013.zip] 
+
+Download the p8docs520_refresh_10_25_2013.zip [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/p8doc/52x/p8docs520_refresh_10_25_2013.zip] 
+
+Download the p8docs520_refresh_04_03_2013.zip [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/p8doc/52x/p8docs520_refresh_04_03_2013.zip] 
+
+Download the p8docs520_xss_vulnerability_01_20_2014.zip [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/p8doc/52x/p8docs520_xss_vulnerability_01_20_2014.zip] 
+
+
+
+
+Download the security_patch_iehs_3.4.2.v20121022-1748.zip [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/p8doc/51x/security_patch_iehs_3.4.2.v20121022-1748.zip] [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/p8doc/51x/security_patch_iehs_3.4.2.v20121022-1748.zip]

@@ -1,0 +1,161 @@
+Title: IBM PM48242: TRAILING SPACES REMOVED FROM PASSWORD PHRASES SENT TO CICS FROM CICS TG OVER IPIC - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CICS TG sends a request to CICS using IPIC.  A userid and
+   password phrase are supplied.  The password phrase contains
+   trailing blanks.  These blanks are being incorrectly removed
+   by CICS before the password phrase is validated.  This leads to
+   the password phrase being rejected by the ESM.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Message DFHXS1201 is issued when        *
+   *                      requests sent to CICS have a password   *
+   *                      phase that has trailing blanks.         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   CICS Transaction Gateway sends a request including user id and
+   password phrase to CICS using IPIC. The password phrase
+   contains trailing blanks. DFHUSAD calls DFHXSAD
+   add_user_with_password to process this request. CICS Transaction
+   Gateway masks the password before it sends to CICS, so
+   DFHXSAD calls DFHXSUT to unmask the password before calling
+   RACF to verify the password. After unmasking the password, any
+   trailing blanks are truncated. Truncating the blanks is correct
+   for passwords but not for password phrases.
+   Then RACF validation of the password phrase fails.
+   
+   Additional keywords: MSGDFHXS1201, XS1201
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHXSUT has been changed to check the length of the password.
+   Trailing blanks are only truncated when it is a password and
+   not when it is a password phrase.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM48242
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-20
+   
+   
+ * CLOSED DATE
+   2011-11-22
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK74100
+   
+   
+
+MODULES/MACROS
+ *     DFHXSAD  DFHXSPW
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY UK74100 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK74100]
+   UP11/11/29 P F111
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

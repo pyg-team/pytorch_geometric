@@ -1,0 +1,28 @@
+Title: IBM Problems connecting IBM SPSS Statistics installation to License Manager - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am trying to connect an IBM SPSS Statistics client to a Sentinel License Manager but am having 
+
+problems with the connection. In checking the WlmAdmin, I see that the License Manager is licensed properly, but the client does not seem to be able to obtain a license. 
+
+
+Could there be a problem with the Hostname value found in the client's spssprod.inf file? 
+
+CAUSE
+Hostname in use instead of IP address in DaemonHost value in client spssprod.inf file.
+
+ENVIRONMENT
+Windows 7, Windows 8, Windows 10
+
+DIAGNOSING THE PROBLEM
+. 
+
+RESOLVING THE PROBLEM
+Try changing this value from the Hostname to the IP address instead. We suggest IP instead of Hostname as this will eliminate any reliance on the DNS server. If the DNS configuration is not set up properly (ie: hostname directing to a different IP address), using the IP address will still work
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]

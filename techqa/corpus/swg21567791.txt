@@ -1,0 +1,28 @@
+Title: IBM IDs used to Access the TCORE and SDMS databases - United States
+
+Text:
+CAMSOASEC CAMSOAALL sdms tcore userid TECHNOTE (FAQ)
+
+QUESTION
+ How do you know what IDs are used by TEP to access the TCORE and SDMS databases? 
+
+ANSWER
+The two IDs referenced in the security.xml file are the IDs used to configure the SDMS and TCORE databases. (The OAL is in reference to TCORE.)
+The IDs are located in the files below on the TEPS machine. 
+
+For Windows: 
+<ITM_HOME>\CNPSJ\profiles\ITMProfile\config\cells\ITMCell\security.xml 
+
+For Unix: 
+<ITM_HOME>/<platform>/cq/profiles/ITMProfile/config/cells/ITMCell/security.xml 
+
+The entries in the xml file look like this: 
+<authDataEntries xmi:id="JAASAuthData_1317172331734" 
+alias="ITMNode/kd4Alias" userId="db2admin" password="{xor}OzY7OzM6bj4=" 
+description="kd4-alias" /> 
+<authDataEntries xmi:id="JAASAuthData_1317172416968" 
+alias="OALJdbcAuth" userId="db2admin" 
+password="{xor}Zm4uOA0cNDRrLzBmMjoSCxIMGR4sOGJi" />
+
+
+While you can change the IDs here, you have to use the ConfigSDMS.sh script to change the passwords.

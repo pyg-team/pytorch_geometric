@@ -1,0 +1,228 @@
+Title: IBM PM38853: MODIFY COMMANDS MAY NOT PRODUCE WTO CONSOLE OUTPUT IF JAVA TRACE IS OFF OR WARNING OR ABOVE. E.G: DAEMONREGS, DISPLAY,THREADS - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+8.0.0.1: WebSphere Application Server V8.0 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24030916]
+7.0.0.21: WebSphere Application Server V7.0 Fix Pack 21 [http://www-01.ibm.com/support/docview.wss?uid=swg24031366]
+8.0.0.2: WebSphere Application Server V8.0 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031368]
+8.0.0.3: WebSphere Application Server V8.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032315]
+7.0.0.23: WebSphere Application Server V7.0 Fix Pack 23 [http://www-01.ibm.com/support/docview.wss?uid=swg24032493]
+8.0.0.4: WebSphere Application Server V8.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033190]
+7.0.0.25: WebSphere Application Server V7.0 Fix Pack 25 [http://www-01.ibm.com/support/docview.wss?uid=swg24033267]
+8.0.0.5: WebSphere Application Server V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033754]
+7.0.0.27: WebSphere Application Server V7.0 Fix Pack 27 [http://www-01.ibm.com/support/docview.wss?uid=swg24033882]
+8.0.0.6: WebSphere Application Server V8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034673]
+7.0.0.29: WebSphere Application Server V7.0 Fix Pack 29 [http://www-01.ibm.com/support/docview.wss?uid=swg24034966]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+7.0.0.31: WebSphere Application Server V7.0 Fix Pack 31 [http://www-01.ibm.com/support/docview.wss?uid=swg24036768]
+7.0.0.27: Java SDK 1.6 SR13 FP2 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035324]
+7.0.0.33: WebSphere Application Server V7.0 Fix Pack 33 [http://www-01.ibm.com/support/docview.wss?uid=swg24037573]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Certain MODIFY Commands in WebSphere for z/OS will not produce
+   output if the Java trace level is set to OFF, or WARNING or
+   above (SEVERE, ERROR) for the respective component of the MODIFY
+   command.
+   
+   For example, F <CR>,DISPLAY,ADAPTER,DAEMONRGES does not produce
+   output if OLA trace level is set to OFF, WARNING, ERROR or
+   SEVERE. If OLA trace level is set to INFO or below (such as ALL,
+   FINER, FINEST etc), then output is produced.
+   
+   Below is an example from Master Console. In this example OLA=all
+   produced valid output for DAEMONREGS, but setting TRACEINIT
+   produced no output because initial Java trace setting was
+   *=info.
+   
+   F BBOS001,TRACEJAVA='OLA=all'
+   BBOO0211I MODIFY COMMAND TRACEJAVA='OLA=all' COMPLETED
+   SUCCESSFULLY
+   F BBOS001,DISPLAY,ADAPTER,DAEMONRGES
+   BBOA0007I: SHOWING REGISTRATIONS FOR DAEMON GROUP:
+   BBOA0003I: Name         Jobname  SWT TL Min  Max  Act  State
+   BBOA0004I: OLACB03W     OLABATCW 000 00 0001 0010 0001 00
+   BBOO0188I END OF OUTPUT FOR COMMAND DISPLAY,ADAPTER,DAEMONRGES
+   F BBOS001,TRACEINIT
+   BBOO0211I MODIFY COMMAND TRACEINIT COMPLETED SUCCESSFULLY
+   F BBOS001,DISPLAY,ADAPTER,DAEMONRGES
+   BBOO0188I END OF OUTPUT FOR COMMAND DISPLAY,ADAPTER,DAEMONRGES
+   
+   Another example is: F <CR>,DISPLAY,THREADS. Notice that with
+   *=info valid output is produced but with *=warning no output is
+   produced.
+   
+   - SY1  f bbos001,tracejava='*=info'
+   SY1  BBOO0211I MODIFY COMMAND TRACEJAVA='*=info' COMPLETED
+   SUCCESSFULLY
+   - SY1  f bbos001,display,threads
+     SY1  BBOJ0111I:  REQUEST   ASID JW TO RE DISPATCH TIME
+     SY1  BBOO0188I END OF OUTPUT FOR COMMAND DISPLAY,THREADS
+   00- SY1  f bbos001,display,threads  <-- Submitted work in Admin
+   Console
+     SY1  BBOJ0111I:  REQUEST   ASID JW TO RE DISPATCH TIME
+     SY1  BBOJ0112I: fffffcbf 0X003D  N  N  N 2011/05/10
+   17:15:38.776124
+     SY1  BBOO0188I END OF OUTPUT FOR COMMAND DISPLAY,THREADS
+   ...
+   - SY1  f bbos001,tracejava='*=warning'
+     SY1  BBOO0211I MODIFY COMMAND TRACEJAVA='*=warning' COMPLETED
+   SUCCESSFULLY
+   - SY1  f bbos001,display,threads
+     SY1  BBOO0188I END OF OUTPUT FOR COMMAND DISPLAY,THREADS
+   00- SY1  f bbos001,display,threads  <-- Submitted work in Admin
+   Console
+     SY1  BBOO0188I END OF OUTPUT FOR COMMAND DISPLAY,THREADS
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V7.0 and 8.0                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Responses to the MVS operator command   *
+   *                      MODIFY DISPLAY,ADAPTER are not          *
+   *                      displayed if the Java trace level is    *
+   *                      excluding INFO messages.                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Responses to the MVS operator command MODIFY DISPLAY,ADAPTER
+   and MODIFY DISPLAY,THREADS are issued as INFO messages and are
+   subject to the same filtering as other messages issued by
+   WebSphere Application Server for z/OS.  Since these messages
+   are responses to operator commands, they should be issued
+   regardless of the trace filtering.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code was added to display responses to the
+   MODIFY DISPLAY,ADAPTER and MODIFY DISPLAY,THREADS commands
+   regardless of the Java trace filtering settings.
+   
+   APAR PM38853 is currently targeted for inclusion in
+   Service Level 7.0.0.21 and 8.0.0.1 of WebSphere
+   Application Server.
+   
+   Please refer to URL:
+   //www.ibm.com/support/docview.wss?rs=404&uid=swg27006970
+   for Fix Pack availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM38853
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-10
+   
+   
+ * CLOSED DATE
+   2011-07-08
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY UK74996 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK74996]
+   UP12/01/18 P 1201
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

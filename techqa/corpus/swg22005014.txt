@@ -1,0 +1,19 @@
+Title: IBM Can different clients (eg: TMWeb, Datacap Navigator, DCDesktop, etc..) be used in the same task with IBM Datacap product? - United States
+
+Text:
+datacap navigator; tmweb web; mix and match client. TECHNOTE (FAQ)
+
+QUESTION
+ Can different clients (eg: TMWeb, Datacap Navigator, DCDesktop, etc..) be used in the same task with IBM Datacap product? 
+
+ANSWER
+It is not recommended to use different clients to run the same task such as Verify, Classify tasks. This is especially true for TMWeb and Datacap Navigator as these two products are built with different underlying technologies and customization won't be compatible between two clients. For example: A custom verify panel is created and mapped for a Verify task in Datacap Navigator. Then a verify-pending batch is launched from TMWeb client will generate an error because it cannot launch the custom panel created with Datacap Navigator. 
+
+It is recommended that users should use the same client to process batches in the same job. If there is a business need to use multiple clients then create separate job for each client.
+
+
+
+HISTORICAL NUMBER
+ 34851
+082
+000

@@ -1,0 +1,43 @@
+Title: IBM Online awareness does not work when connected to an Active Directory LDAP server - United States
+
+Text:
+ldap; online awareness; offline; sametime; buddy list; contact list; active directory; AD TECHNOTE (FAQ)
+
+QUESTION
+You have configured your IBM® Lotus® Sametime® server to connect to a Microsoft® Active Directory (Lightweight Directory Access Protocol (LDAP)) server. You see the following problems: 
+
+ * Online awareness for some users does not work. 
+ * A user's name appears multiple times in the same contact list. 
+
+ANSWER
+If you have configured the Sametime server to connect to an Active Directory (LDAP) server, you must also configure the "Attribute of a person entry that defines the internal ID of the Sametime user" parameter in the Configuration database (stconfig.nsf) of the Sametime server. This parameter must specify the "DistinguishedName" directory attribute.
+
+This parameter is not documented Sametime documentation prior to 8.5, so you must perform an additional procedure if you are following the instructions in the Sametime documentation that explain how to set up a connection to an LDAP server.
+
+For example, to configure a Sametime server to connect to an Active Directory LDAP server:
+
+
+ 1. Review the release note titled "Setting up an LDAP connection to an Active Directory server" in the "Things You Need to Know" section of the Sametime 6.5.1 Release Notes to ensure Active Directory is configured to work with Sametime.
+    
+ 2. Perform all procedures discussed in the "Setting up an LDAP connection" section of the "Using LDAP with the Sametime server" chapter of the Lotus Sametime Administrator's Guide to enable the Sametime server to connect to the LDAP server. Then use the following steps to configure the additional parameter in the stconfig.nsf database.
+    
+ 3. Use a Notes client to open the stconfig.nsf database on the Sametime server. 
+    
+ 4. Open the "LDAPServer" document in the stconfig.nsf database.
+    
+ 5. In the "Attribute of a person entry that defines the internal ID of the Sametime user" field, enter the value "DistinguishedName" and save the document.
+    
+ 6. Close the stconfig.nsf database and restart the Sametime server.
+
+
+Configuring the server in this way ensures that the Sametime server authentication and search operations always return the value stored for a user in the "DistinguishedName" attribute of the user's person entry in the Active Directory. 
+
+Explanation 
+
+To function properly, the Sametime server LDAP directory search and authentication operations must return an internal userID when a user authenticates or adds another user to a Contact List. Sametime requires this userID to be precisely the same string (an exact case-sensitive and space-sensitive match) each time it is returned. 
+
+If the "Attribute of a person entry that defines the internal ID of the Sametime user" field is left blank, the Sametime authentication and search operations use the full DN of the user's person entry (not the DistinguishedName attribute) as the userID. Active Directory does not guarantee that the DN will always be returned in the same case-sensitive and space sensitive format. 
+
+For example, a user can log in to the server using the lower case distinguished name "cn=john smith,cn=users,dc=ad,dc=com." If another user adds John Smith to a Contact list using the upper case distinguished name "CN=JOHN SMITH,CN=USERS,DC=AD,DC=COM", awareness on John Smith will not work. This problem occurs because Active Directory does not enforce case-sensitivity when returning the DN. Active Directory returns the DN using the same case and spacing that was entered by the user when authenticating to the server or adding the user to the Contact List. Since the Sametime server requires that the internal userID be precisely the same each time it is returned, it assumes that the lower-case John Smith and the upper-case John Smith are different users and awareness does not function properly. This issue may cause John Smith's display name to appear more than once in a user's Contact list. 
+
+Active Directory guarantees that the DistinguishedName attribute is always returned in the same case-sensitive format so these awareness problems do not occur if the DistinguishedName attribute is used as the internal userID of the Sametime user instead of the DN.

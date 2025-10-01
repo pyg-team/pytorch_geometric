@@ -1,0 +1,177 @@
+Title: IBM IC48495: THIS OPERATION IS PERMITTED ONLY WHEN THE ENTITY IS IN AN EDITAB LE STATE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ClearQuest 2003.06.15.734.000
+   SQL Server 2000
+   Client OS: MS Windows 2000, XP SP1
+   Hooks written in Perl
+   The control-buttons Apply and Revert are activated in the form
+   (which they shouldn't do), when the tab Log is in the front.
+   This tab
+   contains the field Note_Entry, which was modified during the
+   action FollowUp. After pushing the button Apply the following
+   error-message pops
+   up:
+   ---------------------------
+   Rational ClearQuest
+   ---------------------------
+   ERROR! This operation is permitted only when the entity is in an
+   editable state (that is, when an AdActionDef of the appropriate
+   type is being applied).
+   ---------------------------
+   OK
+   ---------------------------
+   and after pushing the button Revert the complete record window
+   will be closed by ClearQuest.
+   Steps to reproduce issue:
+   - Reproduce databases and follow the steps outlined above
+   - Log in to ClearQuest Designer and check out the IPIS_WM schema
+   - Set the Test database to be IPTS2
+   - Test Work
+   - Run the All Defects query
+   - On IPTS200000155, select the Log Tab
+   - Go to Actions -> FollowUp
+   - The following dialog appears which is:
+   ---------------------------
+   IPIS Info
+   ---------------------------
+   Added followup Defect IPTS200000396 to parent Defect
+   IPTS200000155.
+   ---------------------------
+   OK
+   ---------------------------
+   - This is expected behaviour, but the Apply and Revert buttons
+   are active. They are supposed to be greyed out.
+   - When you click on Apply, you get this error:
+   ---------------------------
+   Rational ClearQuest
+   ---------------------------
+   ERROR! This operation is permitted only when the entity is in an
+   editable state (that is, when an AdActionDef of the appropriate
+   type is being applied).
+   ---------------------------
+   OK
+   ---------------------------
+   - When you click on Revert, the record closes completely
+   Observations:
+   - If the Log Tab isn't selected, it behaves as desired
+   - If you move to the next record even though the Apply and
+   Revert buttons are enabled, and then move back to IPTS200000155,
+   the Apply and Revert button will be disabled.
+   - Removing the "New Progress Note" from the form makes this
+   issue go away, but this is not acceptable for the customer as
+   this field is mandatory for other actions.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  After execution of a record_script alias action hook the
+   fields
+   of a record become editable, once modified an attempt
+   to commit
+   to the database generates an error that the record
+   is not in edi
+   table state.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 2003.06.16-2007A and 7.0.0.1-IFIX01.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC48495
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL CLRQUEST V
+   
+   
+ * REPORTED COMPONENT ID
+   5724F2000
+   
+   
+ * REPORTED RELEASE
+   ALL
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-02-02
+   
+   
+ * CLOSED DATE
+   2007-04-02
+   
+   
+ * LAST MODIFIED DATE
+   2007-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL CLRQUEST V
+   
+   
+ * FIXED COMPONENT ID
+   5724F2000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RALL PSN
+   UP

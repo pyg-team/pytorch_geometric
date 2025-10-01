@@ -1,0 +1,45 @@
+Title: IBM CWSIT0019E and CWSIT0103E errors: No suitable messaging engine is available errors returned to application even though Messaging Engine is running - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CWSIA0241E, CWSIT0019E and CWSIT0103E errors are returned to client . These errors are seen in the SystemOut.log even though WebSphere Application Server Messaging Engine (ME) is running in one of the messaging cluster servers. 
+
+SYMPTOM
+javax.jms.JMSException: CWSIA0241E: An exception was
+received during the call to the method
+JmsManagedConnectionFactoryImpl.createConnection:
+com.ibm.websphere.sib.exception.SIResourceException: CWSIT0019E: Nosuitable messaging engine is available on bus
+<BUS_NAME> that matched the specified connection
+properties {multicastInterface=none, connectionProximity=Bus,
+targetSignificance=Preferred, subscriptionProtocol=Unicast,
+targetType=BusMember, busName=<BUS_NAME>}. Reason for
+failure: CWSIT0103E: No messaging engine was found that matched the following parameters: bus=<BUS_NAME>, targetGroup=null,targetType=BusMember, targetSignificance=Preferred,
+transportChain=InboundSecureMessaging, proximity=Bus..
+
+
+CAUSE
+In case of WebSphere Application Server cluster(s) it is the responsibility of the Work Load Management component (WLM) and HA manager to find the JVM where the requested ME is running. The default value of sib.trm.linger property is 3 seconds. If the ME is up and running and WLM still throws the CWSIT0019E and CWSIT0103E errors after a 3 second delay, this indicates the ME lingered for 3 seconds waiting for WLM to search for data about the messaging engine that was running. If WLM is not able to find the running ME it throws these errors. In some cases these errors may occur if the environment is heavily loaded or if the network response time is slow. In these instances it might be necessary to increase the sib.trm.linger delay, to account for it taking longer than 3 seconds for the WLM data to propagate.
+
+RESOLVING THE PROBLEM
+Tune the sib.trm.linger property value in the sib.properties file to set the messaging engine lookup delay so that the WLM waits for a longer period of time before returning an error. Please refer to information below on how to set this property in the sib.properties. 
+
+1)<WAS_HOME>/properties : The properties declared under this location would be applicable to all the profiles in that installation.
+
+2)<PROFILE_ROOT>/properties : The properties declared here are applicable for all the servers on this profile
+
+If a property is defined at both <PROFILE_ROOT>/properties and <WAS_HOME>/properties, then the property defined at <PROFILE_ROOT>/properties would take precedence.
+
+After resetting the property you must restart the server.
+
+RELATED INFORMATION
+ How to set the properties in sib.properties file [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.base.doc/info/aes/ae/tjs0100_.html]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere MQ Service Integration Technologies /SIB AIX, HP-UX, Linux, Linux on Power, Solaris, Windows, UNIX, Linux Red Hat - xSeries, Linux Red Hat - zSeries 7.5, 7.1, 7.0, 6.0 All Editions Business Integration WebSphere Enterprise Service Bus SIBus AIX, HP-UX, Linux, Linux pSeries, Solaris, Windows 7.0 Business Integration WebSphere Process Server SIB (service integration bus) AIX, HP-UX, Linux, Linux zSeries, Solaris, Windows 7.0, 6.0 Business Integration WebSphere Service Registry and Repository Service Discovery AIX, HP-UX, Linux, Linux pSeries, Linux/x86, Solaris, Windows 8.0, 7.0, 6.0 Standard 
+PRODUCT ALIAS/SYNONYM
+ WebSphere Application Server WAS SIB SIBUS SI BUS

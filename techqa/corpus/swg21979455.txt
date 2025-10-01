@@ -1,0 +1,38 @@
+Title: IBM Security Bulletin: Multiple security vulnerabilities has been identified in Websphere Application Server embedded in Tivoli Integrated Portal shipped with Tivoli Network Manager IP Edition (CVE-2015-7450) (CVE-2015-2017) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM WebSphere Application Server is embedded in Tivoli Integrated Portal shipped as a component of Tivoli Network Manager IP Edition 3.8, 3.9, 4.1, 4.1.1 and 4.2. Information about a security vulnerability affecting IBM WebSphere Application Server has been published in a security bulletin. 
+
+VULNERABILITY DETAILS
+Please consult the below security bulletins 
+
+ * 
+ * Security Bulletin: Vulnerability in Apache Commons affects IBM WebSphere Application Server (CVE-2015-7450)
+ * 
+ * Security Bulletin: HTTP response splitting attack in WebSphere Application Server (CVE-2015-2017)
+ * 
+ * 
+ * 
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+
+Principal Product and Version(s) Affected Supporting Product and Version IBM Tivoli Network Manager 3.8 Bundled the TIP version 1.1.1.x, which bundles IBM WebSphere version 6.1.0.x. IBM Tivoli Network Manager 3.9 Bundled the TIP version 2.1.0.x, which bundles IBM WebSphere version 7.0.0.x. IBM Tivoli Network Manager 4.1 and 4.1.1 Bundled the TIP version 2.2.0.x, which bundles IBM WebSphere version 7.0.0.x. IBM Tivoli Network Manager 4.2 IBM Tivoli Network Manager 4.2 requires to install IBM Websphere Application Server Version 8.5.5.5 or later version separately. Users are recommended to apply IBM WebSphere version 8.5.5.5 Security Interim Fixes.. GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

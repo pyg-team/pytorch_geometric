@@ -1,0 +1,26 @@
+Title: IBM Commonly used ITCAM for Applications V7.2 part numbers for Distributed Data Collectors and TEMA. - United States
+
+Text:
+ITCAM part numbers ITCAM72 ITCAMfApp Applications passport advantage TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ I need to download some ITCAM for Applications V7.2 images from Passport Advantage. Where do I find the part numbers for this product? 
+
+ANSWER
+Here are the commonly used part numbers to search for when downloading ITCAM for Applications v7.2 DC or TEMA images from Passport Advantage. [http://www-01.ibm.com/software/lotus/passportadvantage/]
+Note: ITCAM for Applications V7.2 is officially called "IBM Tivoli Composite Application Manager for Applications v7.2."
+
+Previous versions were called ITCAM for AD V7.1 or ITCAM for WAS v7.1, officially called "IBM Tivoli Composite Application Manager for Application Diagnostics v7.1."
+
+These are for the US English images unless otherwise noted. If you are looking for non-US English images please do your search on Passport Advantage for the right image to download for your specific language.
+
+For ITCAM for Applications v7.2 DC/Agent for WebSphere App Servers, here are the part numbers: 
+
+Operating System / Image Part Number Size Date Posted Documentation (Multiplatform, Multilingual) CIDE0ML 112 MB Nov-16-2012 Quick Start Guide (Multilingual) CIB82ML 0.5 MB Nov-16-2012 TCR Reports - Windows - English CIC89EN 31 MB Nov-16-2012 TCR Reports - Unix - English CIC8FEN 56 MB Nov-16-2012 DC for WAS V7.2 Env. Checking Utility CIC86EN 19 MB Nov-16-2012 AIX CIC7YEN 509 MB Nov-16-2012 Linux on x86 CIC7ZEN 534 MB Nov-16-2012 Linux on zSeries CIC80EN 409 MB Nov-16-2012 Linux on pSeries CIC81EN 362 MB Nov-16-2012 Windows CIC82EN 254 MB Nov-16-2012 Solaris CIC83EN 640 MB Nov-16-2012 HP-UX CIC84EN 489 MB Nov-16-2012 Support Files (Multiplatform) CIC85EN 136 MB Nov-16-2012 Language Support (Multiplatform, Multilingual) CIC87ML 71 MB Nov-16-2012 
+(Note: If you're looking for ITCAM for AD V7.1 part numbers, see this link [http://www-01.ibm.com/support/docview.wss?uid=swg21417959].)  
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM for Applications ITCAMfApp

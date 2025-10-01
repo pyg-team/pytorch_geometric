@@ -1,0 +1,31 @@
+Title: IBM Version 7.1x Report Application Toolbar Access - Browser View, Direct Print and Direct Print with Attachments - United States
+
+Text:
+BIRT; Direct Printing; Direct Printing with Attachments; V7; Browser View; DP; DPA; BV; TPAEREP TECHNOTE (FAQ)
+
+QUESTION
+ How do I enable Report Toolbar Access? 
+
+ANSWER
+Your users may require that they can access their most commonly used reports very quickly. From within any selected application, they may want to access their reports with a minimum number of clicks, and in certain scenarios be directly printed to the user’s default printer. 
+Historically, this functionality has often been called Quick Link, Direct Print or Attach Docs Printing. In V7, this functionality has been enhanced to be more flexible and configurable, and is commonly referred to as Report Toolbar access. Its overall functionality is to enable your users to print or view their reports with a minimal number of clicks.
+
+Report Toolbar Access can be configured in three different ways. These are Browser View (BV), Direct Print (DP) and Direct Print with Attachments (DPA). A single report can be configured for any one of these, or any combination of these options. 
+
+This document will describe each of these three items in detail, including the prerequisites for the BIRT Reports that utilize them.
+
+Note: This document is specific for the Version 7.1x Releases. For details on this functionality for Version 7.5 Releases, click [http://www-304.ibm.com/support/docview.wss?uid=swg21498665]here [http://www.ibm.com/support/docview.wss?uid=swg21498665]
+
+For more details on other reporting features, access the Maximo Report Wiki Pages here [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Maximo%20Asset%20Management/page/Reporting]
+or the Maximo Report Reference Materials located here [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Maximo%20Asset%20Management/page/Reporting%20Documentation]
+
+Revision History:
+
+January 2014 - Updated formatting. Added note 5 on page 15 on url requirements of attachments
+
+April 2012 - - Updated Direct Print with Attachments Troubleshooting information, Note B, on page 23
+
+V71_report toolbar access_direct print and related info_rev7.pdf [/support/docview.wss?uid=swg21370440&aid=2]V71_report toolbar access_direct print and related info_rev7.pdf [/support/docview.wss?uid=swg21370440&aid=1] 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management for IT All Systems and Asset Management Maximo Asset Management Essentials All

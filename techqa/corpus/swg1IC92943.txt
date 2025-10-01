@@ -1,0 +1,169 @@
+Title: IBM IC92943: TPC CANNOT COLLECT PERFORMANCE DATA FOR SVC OR V7000 RUNNING IN A COUNTRY WHICH HAVE STOPPED/STARTED TO USE DAYLIGHT SAVING TIME - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following errors are displayed in the performance data log:
+   2013-04-25 18:00:30.048+0400 HWNPM4302E New performance data is
+   not yet available for the device. Statistics with timestamps
+   later than 04/25/2013 17:56:37:000 MSK) could not be found.
+   2013-04-25 18:00:30.063+0400 HWNPM2052E No performance data was
+   collected from device SVC-2145-xxxxxxxxxxxxxx-IBM
+   (0000000123456789) for the current collection interval due to an
+   error. The previous polling interval with data was at
+   (17:56:37,null).
+   
+   The performance data collection for SVC or V7000 is not possible
+   even if both TPC server and storage subsystem are running in the
+   same Time Zone.
+   The error comes from the way the storage subsystem and JVM are
+   treating the time zones.
+   The problem occurs when the machines are running in a
+   country/time zone which has stopped/started to use the Daylight
+   Saving Time (DST).
+   The IBM java embedded in TPC doesn't contain the last Time Zone
+   changes.
+   
+   For example:
+   Europe/Moscow (GMT+3) and Asia/Novosibirsk (GMT+7) were using
+   DST in the past.
+   - Europe/Moscow (GMT+3) - The JVM add +1h to the current time.
+   - Asia/Novosibirsk (GMT+7) - The JVM reduce -1h to the current
+   time.
+   
+   Affected Releases:
+   All TPC versions
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the IBM Time Zone Update Utility for Java to update the java
+   embedded in TPC.
+   https://www.ibm.com/developerworks/java/jdk/dst/jtzu.html [https://www.ibm.com/developerworks/java/jdk/dst/jtzu.html]
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * TPC users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The performance data collection for SVC or V7000 is not      *
+   * possible even if both TPC server and storage subsystem are   *
+   * running in the same Time Zone. The error comes from the way  *
+   * the storage subsystem and JVM are treating the time zones.   *
+   * The problem occurs when the machines are running in a        *
+   * country/time zone which has stopped/started to use the       *
+   * Daylight Saving Time (DST). The IBM java embedded in TPC     *
+   * doesn't contain the last Time Zone changes.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * To resolve this, use the IBM Time Zone Update Utility for    *
+   * Java                                                         *
+   * https://www.ibm.com/developerworks/java/jdk/dst/jtzu.html.   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following entry will be added to all TPC 5.1.x limitations
+   and known issues technotes.  It will also be included in future
+   troubleshooting documentation.
+   
+   Changing to or from daylight savings time can prevent
+   performance data collection (IC92943)
+   
+   Changing to or from daylight savings time can prevent Tivoli
+   Storage Productivity Center from collecting performance data on
+   storage systems.  This is caused by the JVM and the storage
+   subsystems handling the time changes differently.  To resolve
+   this, use the IBM Time Zone Update Utility for Java
+   https://www.ibm.com/developerworks/java/jdk/dst/jtzu.html. [https://www.ibm.com/developerworks/java/jdk/dst/jtzu.html.]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC92943
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPC00
+   
+   
+ * REPORTED RELEASE
+   511
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-10
+   
+   
+ * CLOSED DATE
+   2013-07-31
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

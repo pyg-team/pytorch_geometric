@@ -1,0 +1,161 @@
+Title: IBM JR55983: DEPLOYING BPEL PROCESSES WITH COMPLEX WSDL INTERFACES MIGHT BE SLOW - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2016.09.delta.repository.2of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.2of2&source=SAR]
+bpm.8570.cf2016.09.delta.repository.1of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.1of2&source=SAR]
+8.5.5.0-WS-BPM-IFJR55983 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Advanced&fixids=8.5.5.0-WS-BPM-IFJR55983&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2016.09 [http://www-01.ibm.com/support/docview.wss?uid=swg24042580]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  It can be very slow to compare BPEL processes that use complex
+   WSDL interfaces while deploying to IBM Process Server or see the
+   differences in the Process Migration Specification editor in
+   IBM Integration Designer.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The BPEL process comparison component, which the Process
+   Migration Specification editor uses and which is used during
+   deployment, compares all WSDL references. In turn, each
+   reference triggers a comparison of the target WSDL file, which
+   causes multiple unnecessary comparisons of the same file.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available that updates the BPEL comparison component to
+   cache comparison results for a given WSDL file, thereby
+   eliminating multiple comparisons of the same resource.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR55983:
+   
+   1. Select IBM BPM Business Process Manager with your edition
+     from the product selector, the installed version to the fix
+     pack level, and your platform and then click Continue.
+   
+   2. Select APAR or SPR, enter JR55983, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   A fix will also be included in an upcoming IBM Business Process
+   Manager (BPM) V8.5 cumulative maintenance vehicle.
+   
+   To determine whether the cumulative fix is available and
+   download it if it is, complete the following steps on Fix
+   Central:
+   
+   1. On the Select product tab, select WebSphere as the product
+     group, IBM Business Process Manager with your edition from the
+     WebSphere options, All as the installed version, and All as
+     the platform, and then click Continue.
+   
+   2. In the Text field, enter "cumulative fix?, and click
+     Continue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR55983
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-24
+   
+   
+ * CLOSED DATE
+   2016-08-18
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP
+   
+   
+ * R857 PSY
+   UP

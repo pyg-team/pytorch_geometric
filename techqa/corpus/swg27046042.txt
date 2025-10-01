@@ -1,0 +1,23 @@
+Title: IBM Where can I find information about installing IBM Planning Analytics? - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Installation information for IBM Planning Analytics is available on IBM Knowledge Center. 
+
+CONTENT
+IBM Planning Analytics 2.0 
+
+For installation information, follow these steps: 
+
+ 1. Go to IBM Planning Analytics 2.0.0 documentation [https://www.ibm.com/support/knowledgecenter/SSD29G_2.0.0] on IBM Knowledge Center. 
+ 2. Click "Planning Analytics Installation and Configuration (Local only) (2.0.0)"
+
+IBM Cognos TM1 10.2.2 
+
+If you are installing IBM Cognos TM1 10.2.2, see the following documents: 
+
+ * TM1 Getting Started Installation Guide 10.2.2 [http://www-01.ibm.com/support/knowledgecenter/SS9RXT_10.2.2/com.ibm.swg.ba.cognos.tm1_gs_inst.10.2.2.doc/c_tm1_gs_inst_intro.html] 
+ * IBM Cognos TM1 Installation and Configuration Guide 10.2.2.3 [http://www-01.ibm.com/support/knowledgecenter/SS9RXT_10.2.2/com.ibm.swg.ba.cognos.tm1_inst.10.2.2.3.doc/c_tm1_inst_intro.html?cp=SS9RXT_10.2.2&lang=en] 
+ * Changes to IBM Cognos TM1 configuration parameters since 10.2.2 [http://www.ibm.com/support/knowledgecenter/SSD29G_1.0.0/com.ibm.swg.ba.cognos.tm1_cloud_mg.10.3.0.doc/c_tm1_cloud_faq.html?lang=en]

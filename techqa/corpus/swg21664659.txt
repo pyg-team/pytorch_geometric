@@ -1,0 +1,34 @@
+Title: IBM Way to reduce the tablespace high water mark in Purescale - United States
+
+Text:
+db2dart /LHWM HWM HIGH WATER MARK TECHNOTE (FAQ)
+
+QUESTION
+ How to reduce the tablespace High Water Mark in Purescale 
+
+CAUSE
+The current way of reducing tablespace High Water Mark with ALTER TABLESPACE LOWER HIGH WATER MARK don't work in Purescale.
+db2 "alter tablespace MY_TBSP LOWER HIGH WATER MARK";
+DB21034E The command was processed as an SQL statement because it was
+not a valid Command Line Processor command. During SQL processing it
+returned:
+SQL1419N The statement, clause, command, API, or function is not
+supported in a DB2 pureScale environment. Reason code = "11". SQLSTATE=56038
+
+
+ANSWER
+In Purescale alter tablespace LOWER HIGH WATER MARK is not supported.
+
+So, the alternate way with db2dart and reorg needs to be used to reduce the high water mark. 
+
+First, following db2dart option needs to be run to get the possible right reorg syntax,
+db2dart <db-name> /LHWM /TSI <tbsp-id> /NP 0 
+
+That will provide a customized reorg syntax in the .RPT file the db2dart will create. 
+
+That reorg command have to be run to try to reduce the tablespace high water mark. 
+
+If no reorg syntax is suggested by db2dart /LHWM then it means the high water mark cannot be reduced due to some internal reasons. One possible reason being a DB2's control page falls on the high water mark boundary. In that case, the only way to reduce the high water mark is to rebuild the tablespace.
+
+RELATED INFORMATION
+ db2dart /LHWM [http://pic.dhe.ibm.com/infocenter/db2luw/v10r1/topic/com.ibm.db2.luw.admin.cmd.doc/doc/r0003477.html]

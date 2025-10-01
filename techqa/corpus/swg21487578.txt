@@ -1,0 +1,17 @@
+Title: IBM Importing data into Statistics from Excel *.xls and/or *.xlsx file(s) results in some missing Excel columns (variables) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to import data from Excel file (*.xls, *.xlsx) using any method (File->Open->Data, File->Open Database->New Query) some variables (Excel columns) are not imported. 
+
+RESOLVING THE PROBLEM
+The ability of the Statistics family of program to import data from Microsoft products can be adversely changes to Microsoft products introduced during Microsoft product updates. Should you encounter a problem with importing from Excel to the Statistics program, the use of the *.csv file format as an intermediary file can be helpful.
+
+Within Excel, use File->Save As. From the 'File of Type' drop-down box, select 'CSV' or '*.csv' appropriate to your operating system (Windows = MS-DOS, Macintosh = Macintosh). Save the file normally. Open the Statistics program. Select File->Read Text Data. Step through the Wizard providing responses appropriate to your data (select the 'Help' button available on each window for further assistance). When complete, your data should import normally, with no loss of either variable information or data
+
+
+
+HISTORICAL NUMBER
+ 90965

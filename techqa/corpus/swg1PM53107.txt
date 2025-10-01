@@ -1,0 +1,203 @@
+Title: IBM PM53107: WMQ: STARTUP OF A SHARED CHANNEL HANGS. OTHER ATTEMPTS TO START IT GET CSQX478E CHANNEL IS ACTIVE, CONNECTION TAG IN - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Description&#65496;
+   The reported environment was:
+   All the LPARs in a Queue Sharing Group (QSG) were IPL'd.
+   Afterwards, the MSTR and CHIN jobs all started and appeared to
+   be working. However, shared inbound channels had problems. Any
+   connection coming in using the QSG VIPA name hung if it was
+   sent to the first queue manager up. If it was sent to one of
+   the other QSG members first, it worked.  In the hang scenario,
+   if the others queue managers then tried to start the shared
+   channel, they got
+   CSQX478E CSQXRCTL Channel <channel_name) is active  on
+   <qmgr_id>, connection tag in use
+   .
+   Once the first queue manager up was stopped, everything worked
+   fine. The queue manager was then restarted and worked fine also.
+   .
+   The channel hang was due to a deadlock. A channel was
+   waiting for the XSCS semaphore as requested by routine
+   rriInitSess. The DPRO that was holding the XSCS semaphore was
+   waiting for the XSTA semaphore, requested by routine
+   rriAddStatusEntry. The XSTA semaphore was held by a DPRO that
+   was waiting to be dispatched on a particular dispatcher TCB.
+   The DPRO running on that dispatcher TCB was currently in a
+   WAIT, in CSQXLOCT, waiting for a conversion table to be loaded
+   by the CSQXSUPR TCB. However, the CSQXSUPR TCB was in routine
+   riiCheckChannels waiting for the XSTA semaphore. So, there was
+   a deadly embrace.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix&#65496;
+   Restart the channel initiator or entire queue manager that is
+   suffering the deadlock.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 0 Modification 1.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Deadlock occurs between supervisor TCB  *
+   *                      and dispatcher TCB. Channel initiator   *
+   *                      commands are not processed and channels *
+   *                      on the affected dispatcher will hang.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A timing window exists where it's possible for a channel to
+   obtain the XSTA channel status table semaphore and yield control
+   to another channel process on the same dispatcher TCB, which
+   then requests a load of a data conversion table be performed by
+   the supervisor TCB. The supervisor TCB is unable to process this
+   load request as it is attempting to obtain the XSTA semaphore
+   held by the first channel in order to process any channels in
+   retry.
+   
+   Because the channel requesting the load of the conversion table
+   does not correctly yield control back to the dispatcher code,
+   the first channel is not given an opportunity to execute and
+   therefore is unable to release its semaphore. This results in a
+   deadly embrace between the dispatcher and supervisor TCBs.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When waiting for a data conversion table to be loaded, a channel
+   process will now correctly issue a dispatcher wait rather than
+   an MVS wait to ensure that other channels running on the same
+   dispatcher TCB are able to release any semaphores they are
+   holding.
+   010Y
+   CSQDLOCT
+   CSQXCNVT
+   CSQXLOCT
+   CSQXSPRT
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  &#158;**** PE12/07/25 FIX IN ERROR. SEE APAR PM69566 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM69566]  FOR DESCRIPTION
+   &#158;**** PE13/05/07 FIX IN ERROR. SEE APAR PM81886 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM81886]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM53107
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   010
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-29
+   
+   
+ * CLOSED DATE
+   2012-02-28
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM58956 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM58956] UK76598
+   
+   
+
+MODULES/MACROS
+ *  CSQDLOCT CSQXCNVT CSQXLOCT CSQXSPRT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R010 PSY UK76598 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK76598]
+   UP12/04/11 P F204
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,213 @@
+Title: IBM SE19791: MQM400-CHANNEL PAIR REMAINS IN RETRYING/BINDING STATUS AFTER A NETWORK CHANGE AND DOES NOT RECOVER. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 12 (CSD12) [http://www-01.ibm.com/support/docview.wss?uid=swg24011423]
+WebSphere MQ V6.0 for iSeries Refresh Pack 6.0.1.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24010895]
+WebSphere MQ V6.0 Refresh Pack 6.0.2.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24013482]
+WebSphere MQ V5.3 for iSeries - Fix Pack 12 (CSD12) [http://www-01.ibm.com/support/docview.wss?uid=swg24011422]
+WebSphere MQ V6.0 Refresh Pack 6.0.1.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24010812]
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 13 (CSD13) [http://www-01.ibm.com/support/docview.wss?uid=swg24014128]
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 14 (CSD14) [http://www-01.ibm.com/support/docview.wss?uid=swg24017668]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MQ channels go into a Retrying/Binding state after a network
+   outage and do not recover.
+   The receiver AMQCRSTA job does not show a start channel message
+   id in it's job log(AMQ9002).
+   The AMQCRSTA jobs get SIGKILLS which can be seen in the job
+   logs. These end but then new AMQCRSTA jobs startup which
+   experience the same problem i.e. they fail to start and are
+   eventually killed (SIGKILL). New jobs then start and the whole
+   process repeats over and over again.
+   
+   To recover one has to end the AMQCRSTA job, and stop and start
+   the sender on the Windows server.
+   
+   The Trace shows the following characteristic function
+   calls/trace statements:
+   005 .....> rriAdoptMCA
+   006 ......> rrxStopChannel
+   007      Stop Phase:1 Pass:0
+   007      Stop Phase:2 Pass:1 and so on until...
+   007      Stop Phase:5 Pass:0
+   007 .......> rriStopChannel
+   008 ........> cccJobKill
+   009 .........> xcsKillProgram
+   008 ........< cccJobKill rc=OK
+   007 .......< rriStopChannel rc=OK and finally out of AdoptMCA
+   005 .....< rriAdoptMCA rc=OK and then into ccxSend
+   004 ....> ccxSend
+   005 .....> cciTcpSend
+   006 ......> send and then into a loop in xcsSleep
+   005 .....< cciTcpSend rc=OK
+   005      Waiting to be killed
+   005 .....> xcsSleep
+   005 .....< xcsSleep rc=OK
+   005      Waiting to be killed
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Restart channels manaually.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   User's using non-threaded receiver channels(AMQCRSTA) with
+   AdoptNewMCA tuning parameters.
+   
+   Platforms affected:
+    All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The problem was caused because of the KillPending flag in the
+   status table being set when case SP_KILL_CHANNEL && Running.
+   This flag was not being cleared after the channel was killed.
+   Thus new receiver jobs starting had this flag set and were
+   waiting to be killed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Flag initialization and clearing of the flag and some
+   additional checking have been introduced to prevent this
+   problem.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v5.3
+   Platform           Fix Pack 11
+   --------           --------------------
+   Windows            U200236
+   AIX                U802047
+   HP-UX (PA-RISC)    U802131
+   Solaris (SPARC)    U802142
+   iSeries            SI18375
+   Linux (x86)        U802143
+   Linux (zSeries)    U802146
+   Linux (Power)      Not applicable
+   
+                      v6.0
+   Platform           Refresh Pack 6.0.1.0
+   --------           --------------------
+   Windows            U200243
+   AIX                U803805
+   HP-UX (PA-RISC)    U803943
+   Solaris (SPARC)    U803944
+   iSeries            SI17318
+   Linux (x86)        U803945
+   Linux (zSeries)    U803946
+   Linux (Power)      U803947
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SE19791
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB MQ FOR ISER
+   
+   
+ * REPORTED COMPONENT ID
+   5724B4106
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-04-05
+   
+   
+ * CLOSED DATE
+   2005-04-12
+   
+   
+ * LAST MODIFIED DATE
+   2007-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB MQ FOR ISER
+   
+   
+ * FIXED COMPONENT ID
+   5724B4106
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY SI18375
+   UP05/09/01 I 1000

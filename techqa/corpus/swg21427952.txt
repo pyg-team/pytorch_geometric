@@ -1,0 +1,45 @@
+Title: IBM How to enlarge the text font size in IBM Rational DOORS Web Access - United States
+
+Text:
+zoom; font; size; increase; decrease; customize; adjust; Doors web access; DWA TECHNOTE (FAQ)
+
+QUESTION
+ How do you enlarge the font size in IBM Rational DOORS Web Access? 
+
+CAUSE
+Rational DOORS Web Access does not provide the ability to customize the font size of text in objects. This is left to be handled from the browser
+
+ANSWER
+To enlarge the size of the text in Rational DOORS Web Access browser you can use the following methods: in Internet Explorer 7 and 8, Firefox v2.x and v3.x web browsers, select one of the following methods to zoom in or out of the application 
+
+ * Press the Ctrl button and the + or - button to increase or decrease the zoom 
+   
+ * Press the Ctrl button and then scroll the mouse wheel to increase or decrease the zoom 
+ * Select Zoom in or Zoom out in Internet Explorer or Firefox View > Zoom menu 
+
+
+In Internet Explorer 6, there are two solutions: 
+
+ * Download a free tool named ZoomIt [http://technet.microsoft.com/sv-se/sysinternals/bb897434(en-us).aspx] 
+   its use is similar to Internet Explorer Zoom function 
+   
+ * Ignore font sizes specified on Web page 1. Click Tools > Internet Options
+   
+   
+   2. Click Accessibility button in the lower right of the Internet Options dialog box
+   
+   
+   3. Check the box labeled Ignore font sizes specified on Web page
+   
+   
+   4. Click View > Text Size
+   select the text size that best meets your needs 
+   
+   
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Rational DOORS

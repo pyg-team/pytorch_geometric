@@ -1,0 +1,99 @@
+Title: IBM Downloading IBM Cognos 8 Analytic Applications 8.4.2 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This page describes how to download IBM® Cognos® 8 Analytic Applications 8.4.2. 
+
+DOWNLOAD DESCRIPTION
+IBM Cognos 8 Analytic Applications includes: 
+
+ * IBM Cognos 8 Business Intelligence Reporting 
+ * IBM Cognos 8 Adaptive Application Framework 
+ * IBM Cognos 8 Analytic Application Content for use with various enterprise resource planning (ERP) systems, including:  * Workforce Performance  * Workforce Performance 
+       * Talent Analytics
+      
+      
+    * Financial Performance  * General Ledger Analytics 
+       * Payables Analytics 
+       * Receivables Analytics
+      
+      
+    * Customer Performance  * Sales Analytics
+      
+      
+    * Supply Chain Performance  * Procurement Analytics
+      
+      
+    * Banking Risk Performance  * Credit Risk
+      
+      
+   
+   
+
+
+For information about installing your product, see the Quick Start Guide (part number: CZE1SEN) available for download from the IBM Passport Advantage® Web Site [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER], or see the installation documentation available at the IBM Cognos 8 Analytic Applications Information Center [http://publib.boulder.ibm.com/infocenter/caapps/v8r4m0/index.jsp]. 
+
+To download a product, go to the IBM Passport Advantage Web Site [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER]. 
+
+Select the product(s) using one of these options:  1. Find by search text using the product names as shown below. 
+ 2. Find by part number if you know the eAssembly Part Number (for example, from your order) 
+ 3. Find by categories:
+
+ * Select Brand = “Information Management” 
+ * Select Family Name = “C8 Analytic Apps” 
+ * Select Platform = for example, Windows®
+
+
+Downloading and assembling the product 
+ 1. Download all of the parts that you need. 
+ 2. Unpack each part into its own directory on your system.
+
+
+The required and optional parts for each product are listed, and described in detail. There is an option to download each licensed eAssembly. Each eAssembly contains all of the required and optional downloads needed for a particular product and platform combination. 
+
+The following parts are common for all IBM Cognos 8 Analytic Application products: 
+
+Parts and Platforms Details Part number IBM Cognos Adaptive Application Framework 8.4.2 Windows English Required CZVB4EN IBM Cognos Adaptive Application Framework Runtime 8.4.2 Windows English Optional CZVB5EN IBM Cognos Adaptive Application Framework Runtime 8.4.2 HP-UX PA-RISC English Required for HP-UX PA-RISC CZVB6EN IBM Cognos Adaptive Application Framework Runtime 8.4.2 HP-UX Itanium English Required for HP-UX Itanium CZVB7EN IBM Cognos Adaptive Application Framework Runtime 8.4.2 Sun Solaris English Required for Sun Solaris CZVB8EN IBM Cognos Adaptive Application Framework Runtime 8.4.2 AIX English Required for AIX CZVB9EN IBM Cognos Adaptive Application Framework Runtime 8.4.2 Linux x86 English Required for Linux x86 CZVC0EN IBM Cognos 8 Analytic Applications Quick Start Guide 8.4.2 English Required CZE1SEN 
+
+The following parts are available for IBM Cognos 8 Workforce Performance: 
+
+Parts and Platforms Details Part number IBM Cognos 8 Workforce Performance 8.4.2 for Oracle E-Business Suite Windows English Required for Oracle E-Business Suite CZE1FEN IBM Cognos 8 Workforce Performance 8.4.2 for PeopleSoft Windows English Required for PeopleSoft CZE1GEN IBM Cognos 8 Workforce Performance 8.4.2 for SAP Windows English Required for SAP CZE1HEN 
+
+The following parts are available for IBM Cognos 8 Workforce Performance Talent Analytics: 
+
+Parts and Platforms Details Part number IBM Cognos 8 Workforce Performance Talent Analytics 8.4.2 Windows English Required CZE1IEN 
+
+The following parts are available for IBM Cognos 8 Financial Performance General Ledger Analytics: 
+
+Parts and Platforms Details Part number IBM Cognos 8 Financial Performance General Ledger Analytics 8.4.2 for Oracle E-Business Suite Windows English Required for Oracle E-Business Suite CZE18EN IBM Cognos 8 Financial Performance General Ledger Analytics 8.4.2 for JD Edwards Windows English Required for JD Edwards CZE16EN 
+
+The following parts are available for IBM Cognos 8 Financial Performance Payables Analytics: 
+
+Parts and Platforms Details Part number IBM Cognos 8 Financial Performance Payables Analytics 8.4.2 for Oracle E-Business Suite Windows English Required for Oracle E-Business Suite CZE1AEN IBM Cognos 8 Financial Performance Payables Analytics 8.4.2 for JD Edwards Windows English Required for JD Edwards CZE17EN 
+
+The following parts are available for IBM Cognos 8 Financial Performance Receivables Analytics: 
+
+Parts and Platforms Details Part number IBM Cognos 8 Financial Performance Receivables Analytics 8.4.2 for Oracle E-Business Suite Windows English Required for Oracle E-Business Suite CZE19EN IBM Cognos 8 Financial Performance Receivables Analytics 8.4.2 for JD Edwards Windows English Required for JD Edwards CZE15EN 
+
+The following parts are available for IBM Cognos 8 Customer Performance Sales Analytics: 
+
+Parts and Platforms Details Part number IBM Cognos 8 Customer Performance Sales Analytics 8.4.2 for Oracle E-Business Suite Windows English Required for Oracle E-Business Suite CZE1CEN IBM Cognos 8 Customer Performance Sales Analytics 8.4.2 for JD Edwards Windows English Required for JD Edwards CZE1BEN 
+
+The following parts are available for IBM Cognos 8 Supply Chain Performance Procurement Analytics: 
+
+Parts and Platforms Details Part number IBM Cognos 8 Supply Chain Performance Procurement Analytics 8.4.2 for Oracle E-Business Suite Windows English Required for Oracle E-Business Suite CZE1EEN IBM Cognos 8 Supply Chain Performance Procurement Analytics 8.4.2 for JD Edwards Windows English Required for JD Edwards CZE1DEN 
+
+The following parts are available for IBM Cognos 8 Banking Risk Performance Credit Risk: 
+
+Parts and Platforms Details Part number IBM Cognos 8 Banking Risk Performance Credit Risk 8.4.2 Windows English Required CZE1JEN 
+
+The following parts are available if you do not already have a required version of IBM Cognos 8 Business Intelligence installed in your environment. These parts are common for all IBM Cognos 8 Analytic Application products. 
+
+Parts and Platforms Details Part number IBM Cognos 8 Business Intelligence Reporting 32-bit 8.4.1 Windows Multilingual Required if you do not have a required version of IBM Cognos 8 for Windows CZAG1ML IBM Cognos 8 Business Intelligence Reporting 32-bit 8.4.1 HP-UX PA-RISC Multilingual Required if you do not have a required version of IBM Cognos 8 for HP-UX PA-RISC CZAG3ML IBM Cognos 8 Business Intelligence Reporting 32-bit 8.4.1 HP-UX Itanium Multilingual Required if you do not have a required version of IBM Cognos 8 for HP-UX Itanium CZAG5ML IBM Cognos 8 Business Intelligence Reporting 32-bit 8.4.1 AIX Multilingual Required if you do not have a required version of IBM Cognos 8 for AIX CZAG7ML IBM Cognos 8 Business Intelligence Reporting 32-bit 8.4.1 Sun Solaris Multilingual Required if you do not have a required version of IBM Cognos 8 for Sun Solaris CZAG9ML IBM Cognos 8 Business Intelligence Reporting 32-bit 8.4.1 Linux x86 Multilingual Required if you do not have a required version of IBM Cognos 8 for Linux CZAH1ML IBM Cognos 8 Business Intelligence Modeling 8.4.1 Windows English Required if you do not have a required version of IBM Cognos 8 CZAJ7EN IBM Cognos 8 Business Intelligence Samples 8.4.1 Multiplatform Multilingual Optional CZAJ9ML IBM Cognos 8 Supplementary Languages Documentation 8.4.1 Multiplatform Multilingual Optional CZAK0ML DOWNLOAD PACKAGE
+
+
+
+
+What is Fix Central (FC)? [http://www-304.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html]

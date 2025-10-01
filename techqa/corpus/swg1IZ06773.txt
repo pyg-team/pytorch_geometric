@@ -1,0 +1,161 @@
+Title: IBM IZ06773: COMBINED SQL LOGGING & APPEND THREAD NAME IN POLICYLOGGER GENERATES 5000 50M TRANSBLOCKRUNNER LOG FILES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The combined use of the PolicyLogger options:
+   
+   SQL Logging
+   
+   and:
+   
+   Append Thread Name
+   
+   causes the generation of separate TransBlockRunner log files.
+   Although this is not a problem in itself, the default behaviour
+   in Impact 3.1 is to produce numerically incremented log files of
+   the format:
+   
+   <servername>_policylogger_TransBlockRunner <id>.log.<n>
+   
+   where <servername> is the ImpactServer name, <id> is some
+   incremented identification value from 0 to 500 and <n> is the
+   log file rollover number from 1 to 10.  The <id> value seems to
+   spawn in normal iterative fashion, but at random intervals - not
+   log file rollover values or a regular time interval.  Each of
+   these files then has the capability to rollover and iterate the
+   <n> value accordingly.  The end result being a full file system.
+   
+   The properties:
+   
+   impact.server.logging.maxlogfiles
+   
+   and:
+   
+   impact.eventreader.maxlogsizebytes
+   
+   seem to have no effect upon these log files.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Don't use a combination of these options in the PolicyLogger.
+   OR:
+   Upgrade to Impact 4.x where this adverse behaviour is not
+   present.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Steps to replicate
+   1) Configure Impact Policy Logger to Append PolicyName and
+   ThreadName
+   2) Create a policy to Insert/Update a table in a database
+   3) Attach the Policy to an EventReader to run it frequently
+   4) Let the EventReader run for long time
+   5) Check $IMPACT_HOME/log/ and observer large number of log
+   files as follow:
+   <servername>_policylogger_TransBlockRunner <id>.log.<n>
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   Fixed in Fix Pack 5
+   3.1.0-TIV-NCI-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ06773
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-18
+   
+   
+ * CLOSED DATE
+   2007-11-30
+   
+   
+ * LAST MODIFIED DATE
+   2007-12-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY
+   UP

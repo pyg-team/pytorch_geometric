@@ -1,0 +1,105 @@
+Title: IBM Collecting a thread dump on AIX. - United States
+
+Text:
+ITDS; TDS; IBM Tivoli Directory Server; thread dump; core file; hung server; hang; crash; dumpthreads TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If the ITDS server appears hung or has generated a core file, it is important to collect a thread dump in order to identify the reason for the hang or crash condition. 
+
+RESOLVING THE PROBLEM
+
+Purpose: Gather ibmslapd (or any) processes thread stacks. Usually used when the ibmslapd server process is hung but it can also be used for other processes as well. 
+
+Requirements: 
+
+ * 
+ * 
+ * ulimit -c unlimited for the process we are collecting the thread dump for 
+ * The dumpthreads.sh script should be copied to the system and must have execute permission.
+
+
+Usage: dumpthreads.sh [ PID | program corefile ]  
+
+To verify you have the bos.adt.debug installed on your system, issue the following command: 
+
+# lslpp -l | grep bos.adt.debug
+
+**Note: if this package is not installed, you can install from the AIX operating system media.
+
+
+1) To get a thread dump from a hung server: 
+
+In the case of a hung process, you will want to collect multiple thread dumps in succession. Typically 2-3 thread dumps about a minute apart is helpful. This will show whether or not the processes' threads are truly hung or if there is progress being made. 
+
+1.1) Find the process ID (PID) of the ibmslapd server 
+
+From a command prompt, type: 
+
+# ps -ef | grep slapd 
+
+**Note: if you are trying to collect a thread dump from a process other than ibmslapd, you will need to grep for that process. 
+
+ 
+
+1.2) Collect the thread dump 
+
+From a command prompt, invoke the dumpthreads.sh script with the process ID. 
+
+# <path>/dumpthreads.sh PID > /tmp/threaddump1.out 
+
+where PID is the process ID obtained in step 1.1 
+
+e.g.: Assuming dumpthreads.sh is in /tmp folder 
+
+# /tmp/dumpthreads.sh 12345 > /tmp/threaddump1.out 
+
+Repeat the above command multiple times at one minute intervals redirecting the output into different files. 
+
+ 
+
+2) To get a thread dump from a core file: 
+
+Unlike a process hang condition as described above, collecting a thread dump from a core file is a single collection. From the thread dump we are trying to identify the signature of the core file so that we can attempt to identify root cause. 
+
+Usage: 
+
+# <path>/dumpthreads.sh PROGRAM CORE > /tmp/threaddump.out 
+
+where PROGRAM is the fully qualified path to the ibmslapd executable or the executable which generated the core, 
+
+and CORE is the generated core file. 
+
+ibmslapd executable PROGRAM locations: 
+
+ITDS 6.3: /opt/IBM/ldap/V6.3/sbin/64/ibmslapd
+ITDS 6.2: /opt/IBM/ldap/V6.2/sbin/64/ibmslapd
+ITDS 6.1: /opt/IBM/ldap/V6.1/sbin/64/ibmslapd
+ITDS 6.0: /opt/IBM/ldap/V6.0/sbin/64/ibmslapd
+ITDS 5.2: /usr/ldap/bin/ibmslapd 
+
+Other Examples of executable program locations: 
+
+ITDS 6.3: /opt/IBM/ldap/V6.3/sbin/64/bulkload
+ITDS 6.2: /opt/IBM/ldap/V6.2/sbin/64/ldif2db
+ITDS 6.1: /opt/IBM/ldap/V6.1/sbin/64/db2ldif
+ITDS 6.0: /opt/IBM/ldap/V6.0/sbin/64/bulkload 
+
+CORE file locations: 
+
+ITDS 6.x: <Location>/idsslapd-<instanceName>/workdir/
+ITDS 5.2: Location from where ibmslapd process is started. 
+
+Verify the the program which generated the CORE:
+# file core
+core: AIX core file fulldump 64-bit, ibmslapd 
+
+Run the dumpthreads script to collect the threads dump into a file:
+e.g.: Assuming the dumpthreads.sh is kept in /tmp 
+
+# cd <path_where_core_file_is_present> 
+
+# /tmp/dumpthreads.sh /opt/IBM/ldap/V6.3/sbin/64/ibmslapd core > /tmp/threaddump.out 
+
+Note: if you have restarted ibmslapd then the core file will be renamed to something like core._2011-11-22-12_12_06. Use this file name in place of core when extracting thread dumps.
+
+dumpthreads.sh -> dumpthreads.sh [/support/docview.wss?uid=swg21268413&aid=2]dumpthreads.sh [/support/docview.wss?uid=swg21268413&aid=1]

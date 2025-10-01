@@ -1,0 +1,125 @@
+Title: IBM z/OS V1R11 Communications Server: IP Messages:
+Volume 3 (EZY) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Publication updates for z/OS V1R11 Communications Server: IP Messages:
+Volume 3 (EZY) 
+
+RESOLVING THE PROBLEM
+
+=================================
+Message EZY1289E has changed as follows:
+
+EZY1289I mm/dd/yy hh:mm:ss CICS LISTENER TRANSACTION tran taskno TERMINATING
+Explanation: The Listener is ending. This can be a normal shutdown situation or a failure related to the Listener socket. If it is the latter, a previous message described the failure. 
+In the message text:
+mm/dd/yy 
+The date (month/day/year) of the message.
+hh:mm:ss 
+The time (hours:minutes:seconds) of the message. 
+tran 
+The listener transaction ID.
+taskno 
+The CICS task number assigned to the listener transaction ID.
+Example: EZY1289I 02/19/09 13:51:39 CICS/SOCKETS LISTENER TRANSACTION CSKM TERMINATING
+System action: The Listener ends. 
+Operator response: None. 
+User response: None. 
+System programmer response: None. 
+Problem determination: Not applicable.
+Module: EZACIC02 
+Source: z/OS Communications Server TCP/IP: CICS Listener
+Routing code: 1 
+Descriptor code: 2 
+Automation: This message is sent to the system console and to the CICS transient data queue that is specified by the IP CICS Sockets ERRORTD configuration option. 
+=================================
+Message EZY1302I has changed as follows:
+
+EZY1302I mm/dd/yy hh:mm:ss READ TIMEOUT PARTNER INET ADDR = inetaddress PORT = portnumber LISTENER TRANID = tran_id TASKID = task_id 
+Explanation: The initial message from the client did not arrive within the read timeout value specified for this Listener in the CICS Sockets configuration file.
+In the message text:
+mm/dd/yy
+The date (month/day/year) of the message. 
+hh:mm:ss 
+The time (hours:minutes:seconds) of the message. 
+inetaddress 
+The internet address of the connecting client. 
+portnumber 
+The connecting client’s port number. 
+tran_id
+The name of the listener's transaction. 
+task_id
+The task number of the listener's transaction.
+Example: EZY1302I 02/24/09 16:13:16 READ TIMEOUT PARTNER INET ADDR=9.42.105.102 PORT= 1030 LISTENER TRANID= CSKM TASKID= 0000085L
+System action: The Listener closes the connection socket and does not attempt to start a server transaction. 
+Operator response: Determine the cause of the delay and correct it. 
+System programmer response: None. 
+Problem determination: Not applicable.
+Module: EZACIC02 
+Source: z/OS Communications Server TCP/IP: LISTENER
+Routing code: 10 
+Descriptor code: 12 
+Automation: This message is sent to the CICS transient data queue that is specified by the IP CICS Sockets ERRORTD configuration option. 
+===================================
+Message EZY1343I has changed as follows:
+
+EZY1343I mm/dd/yy hh:mm:ss CICS/SOCKETS INTERFACE IMMEDIATELY DISABLED TERM=term TRAN=tran
+Explanation: A request for immediate termination of the CICS socket interface has been successfully completed. 
+In the message text:
+mm/dd/yy
+The date (month/day/year) of the message.
+hh:mm:ss 
+The time (hours:minutes:seconds) of the message. 
+term 
+The terminal ID from which the command to end the CICS socket interface was issued.
+tran 
+The transaction ID that is ending the CICS socket interface.
+Example: EZY1343I 02/19/09 13:52:50 CICS/SOCKETS INTERFACE IMMEDIATELY DISABLED. TERM= TRAN=EZAP
+System action: The CICS socket interface ends. 
+Operator response: None. 
+System programmer response: None. 
+Problem determination: Not applicable.
+Module: EZACIC22 
+Source: z/OS Communications Server TCP/IP: CICS socket interface termination
+Routing code: 1 
+Descriptor code: 2 
+Automation: This message is sent to the system console and to the CICS transient data queue that is specified by the IP CICS Sockets ERRORTD configuration option.
+=================================
+Message EZY1344I has changed as follows:
+
+EZY1344I mm/dd/yy hh:mm:ss CICS/SOCKETS INTERFACE QUIESCENTLY DISABLED TERM=term TRAN=tran
+Explanation: A request for deferred ending of the CICS socket interface has been successfully completed. 
+In the message text:
+mm/dd/yy 
+The date (month/day/year) of the message.
+hh:mm:ss 
+The time (hours:minutes:seconds) of the message. 
+term 
+The terminal ID from which the command to end the CICS socket interface was issued.
+tran 
+The transaction ID that is ending the CICS socket interface.
+Example: EZY1344I 02/19/09 13:52:21 CICS/SOCKETS INTERFACE QUIESCENTLY DISABLED. TERM= TRAN=EZAP
+System action: The CICS socket interface ends. 
+Operator response: None. 
+System programmer response: None. 
+Problem determination: Not applicable.
+Module: EZACIC22 
+Source: z/OS Communications Server TCP/IP: CICS socket interface termination
+Routing code: 1 
+Descriptor code: 2 
+Automation: This message is sent to the system console and to the CICS transient data queue that is specified by the IP CICS Sockets ERRORTD configuration option. 
+================================
+Message EZY1937I, the system programmer response has changed as follows:
+
+System Programmer Response: Check that the identified subsystem is created and initialized during system initialization. For information about starting the VMCF and TNF subsystems, see Step 3: Configure VMCF and TNF [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/F1A1B391/1.2.24.5?DT=20100121150057] in z/OS Communications Server: IP Configuration Guide [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/F1A1B391/CCONTENTS?DT=20100121150057]. Check for previous operator messages that might indicate why the particular subsystem failed to initialize. See the appropriate System Messages book for information about possible error messages from subsystem processing. A programming error is the most probable cause of the problem if subsystem processing error messages occur. If the problem cannot be remedied by modifications to subsystem definitions, gather all available documentation, and contact the IBM Software Support Center.
+===================================
+Message EZY1951I, the system programmer response has changed as follows:
+
+System Programmer Response: Verify that the Termination Notification Facility (TNF) subsystem is active. For information about starting TNF, see Step 3: Configure VMCF and TNF [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/F1A1B391/1.2.24.5?DT=20100121150057] in z/OS Communications Server: IP Configuration Guide [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/F1A1B391/CCONTENTS?DT=20100121150057]. Check for previous operator messages that might indicate why the TNF subsystem failed to initialize. See the appropriate System Messages book for information about possible error messages from subsystem processing. A programming error is the most probable cause of the problem if subsystem processing error messages occur. If the problem cannot be remedied by modifications to subsystem definitions, gather all available documentation, and contact the IBM Software Support Center.
+======================================
+Message EZY2640I, the explanation has changed as follows:
+
+This message indicates which FTP.DATA file is being used for the configurable parameters. name will either be "DD:SYSFTPD", indicating that the SYSFTP DD statement was used for the FTP.DATA file, or it will be the actual name of the file being used. See the z/OS Communications Server: IP Configuration Reference [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/F1A1B491/CCONTENTS?DT=20100128125810] for information about the FTP.DATA file search order.

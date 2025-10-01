@@ -1,0 +1,146 @@
+Title: IBM PI24815: ONDEVICEUNSUBSCRIBE IS METHOD IS NOT BEING EXECUTED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Within a Worklight application a user can subscribe to
+   notifications or unsubscribe.
+   This events are handled by a Worklight adapter that register or
+   delete users subscriptions in the database.
+   But in case the application is uninstalled without
+   unsubscribing, the user subscription  will remain the the
+   database  .
+   additional Keywords :
+   subscribe ,unsubscribe ,Push,GCM,onDeviceUnsubscribe
+   
+   
+   Worklight Versions Affected:
+   6.x
+   Initial Impact:
+   LOW
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No Local fix provided
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Administrators.                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Unsubscribe callback is not called after unsubscription by   *
+   * the framework.                                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * -                                                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed by having a copy of subscription data before deletion.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI24815
+   
+   
+ * REPORTED COMPONENT NAME
+   MOBILE AP FD PA
+   
+   
+ * REPORTED COMPONENT ID
+   5725G2400
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-01
+   
+   
+ * CLOSED DATE
+   2015-03-20
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MOBILE AP FD PA
+   
+   
+ * FIXED COMPONENT ID
+   5725G2400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

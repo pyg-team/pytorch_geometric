@@ -1,0 +1,171 @@
+Title: IBM MustGather: WebSphere Application Server Community Edition 100% CPU on Windows - United States
+
+Text:
+mustgather; MustGather; Windows; 100% cpu; cpu; high cpu; ce; wasce; community edition; MustGatherDocument; WAS CE; WAS CE; WAS CE; WASCE; WASCE; WASCE; JBoss; JBoss; JBoss; Glassfish; Glassfish; Glassfish; App Server; App Server; WebSphere CE; WebSphere CE; WebSphere CE; WebSphere Community Edition; WebSphere Community Edition; WebSphere Community Edition; IBM CE; IBM CE; IBM CE; Open Source; Open Source; Open Source TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+MustGather for problems with WebSphere Application Server Community Edition 100% CPU on the Microsoft Windows operating system. Gathering this information before calling IBM support will help familiarize you with the troubleshooting process and save your time.
+
+
+RESOLVING THE PROBLEM
+ 
+
+This document details the MustGather data to be collected for WebSphere Application Server Community Edition when 100% CPU usage is observed with IBM Java 1.5 or IBM Java 1.6 on the Windows operating system. 
+
+The first section of the document covers the necessary setup required prior to collection of the MustGather. The latter part covers the MustGather collection steps.
+
+Setup for 100% CPU on Windows
+
+1. Ensure javacore.txt generation is enabled 
+
+
+The Javadump (javacore) is a useful file to provide information about the general state of the Java runtime and the applications running on it. In order to ensure this is generated the relevant settings must be in place. Although they are set by default it is possible that the default setting has been changed so it is important to check that the correct settings are in place. 
+
+Check that the JVM is set to produce a javadump file when a user signal (SIGQUIT) occurs, by adding the following 
+command line option: 
+
+java -Xdump:what 
+which shows the options which are set, such as: 
+
+
+dumpFn=doJavaDump events=gpf+user+abort filter= label=c:\sdk\jre\bin\javacore.%Y%m%d.%H%M%S.%pid.txt range=1..0 priority=10 request=exclusive 
+The above values are the default settings. At least events=user must be in place to generate javadumps on a user signal. 
+Options can be changed and/or set using the command line option: 
+
+-Xdump:java[:=,...] 
+So, for example, to set the ability to generate javadump files on user signals you would use: 
+
+-Xdump:java:events=user 
+2. Enable verbose GC logging 
+
+Verbose GC logging gives an insight into the actions that the Garbage Collector is taking. This allows an application to be monitored and better tuned for performance, in addition to being vital for diagnosing problems. 
+
+Verbose GC logging is not enabled by default, and can be done by one of the following ways. 
+ * 
+ * 
+ * 
+ *  -Xverbosegclog:[DIR_PATH][FILE_NAME] 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  -Xverbosegclog:[DIR_PATH][FILE_NAME],X,Y 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+The parameter needs to be set in the setenv.bat located under <WAS CE Installation Directory>/bin. 
+
+Edit setenv.bat, locate "set JAVA_OPTS=" line and append the parameter to the existing list 
+For example: 
+set JAVA_OPTS=-Xms32m -Xmx256m -Xverbosegclog:C:\temp\verbose-ouput.xml 
+
+3. Enable CPU profiling, process size monitoring and paging usage 
+
+PerfMon is a tool supplied along with the Windows operating system that is capable of monitoring a wide variety of counters for a process. The information below shows how to enable monitoring for the various data types useful in debugging. 
+
+The PerfMon tool is packaged as part of the Windows operating system and can be used to monitor a wide variety of counters, including those related to the process size and virtual address space usage. 
+
+Launch PerfMon 
+PerfMon can usually be started by typing perfmon on the command line. 
+Alternatively, PerfMon can be activated using the following: 
+Control Panel -> Administrative Tools -> Performance 
+
+Activating PerfMon Logging  1. Expand Performance logs and alerts 
+ 2. Right-click on Counter Logs and select New Log Settings. 
+ 3. Enter a name for the log and select the OK button. 
+ 4. This causes any output to immediately start logging to the log file specified above. 
+
+
+Monitoring the Process Size 
+Monitoring the process size makes it possible to collect the memory usage statistics, which might be helpful in cases where GC threads are involved in high CPU usage. 
+
+The following instructions allow the process size to be monitored. 
+ 1. Select the + button on the toolbar. 
+ 2. Select the Process performance object 
+ 3. Select Virtual Bytes from the counters list 
+ 4. Select the instance for the Java process to monitor 
+ 5. Select Add and then Close
+
+
+Monitoring the CPU Usage 
+It is often useful to be able to monitor the CPU usage of a Java application, or indeed for the machine on which the Java application is running, to be able to determine performance problems. 
+
+The information below will allow you to monitor and log information on CPU usage. 
+
+1. Select the + button on the toolbar. 
+2. Select the Thread performance object 
+3. Select the following counters from the list: 
+% Processor Time 
+ID Process 
+ID Thread 
+4. Select the instance of the Java process to monitor 
+5. Ensure that you select all of the Java threads 
+6. Select Add and then Close 
+
+Monitoring the Paging Usage 
+It is often useful to be able to monitor the paging usage on a machine, as this will have a direct effect on the performance of a Java application working on that machine. The information below will allow you to monitor and log information on paging usage. 
+ 1. Select the + button on the toolbar. 
+ 2. Select the Memory performance object 
+ 3. Select the Pages/sec counter 
+ 4. Select Add and then Close 
+ 5. Stopping PerfMon Logging
+
+
+In order to stop logging and obtain the log file, the following needs to be done: 
+ 1. Right-click Log Name in the counter window 
+ 2. Click Stop 
+
+The log file is referenced in the Log File Name column. 
+
+MustGather Collection 
+
+Having ensured that Windows is properly setup for MustGather collection, follow these steps to collect the data files: 
+
+1. Take a snapshot of the network activity using the following command: 
+
+netstat -an > netstat_before.out 
+2. Generate three javacore.txt files, taken two minutes apart from the time of 100% CPU usage 
+
+This can be done by one of the following:  * using Ctrl - Break in the server's console window 
+ * using kill -3 command if MKS Toolkit is installed on Windows
+
+
+3. Take a second snapshot of network activity: 
+
+netstat -an > netstat_after.out 
+4. Collect the verbose GC output 
+
+5. Collect the CPU monitoring output 
+
+6. Collect the process size monitoring 
+
+7. Collect the paging size usage monitoring 
+
+8. Additional Information  * Recent changes to the server before the 100% CPU usage 
+ * Brief description of the applications running while 100% CPU usage 
+ * Collect general information of the server as discussed here [http://www-1.ibm.com/support/docview.wss?uid=swg21231419#generalMustGather]
+
+
+These data files should then be submitted to IBM Support 
+RELATED INFORMATION
+#Submitting diagnostic data to IBM Support [http://www.ibm.com/support/docview.wss?uid=swg21153852]
+Sendsignal.exe tool for Windows [http://www.latenighthacking.com/projects/2003/sendSignal/]

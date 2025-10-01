@@ -1,0 +1,38 @@
+Title: IBM WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.4 - United States
+
+Text:
+Refresh Pack refresh pack Fix Pack fix pack WMQ maintenance fixes recommended updates csd fixpac csd 5.3.1 5.3.1.4 5.3 NonStop Tandem DOWNLOADABLE FILES
+
+ABSTRACT
+ This is Fix Pack 5.3.1.4 for WebSphere MQ for HP NonStop Server v5.3.1 
+
+DOWNLOAD DESCRIPTION
+Fix pack 5.3.1.4 is the fourth cumulative fix pack maintenance for WebSphere MQ V5.3.1 for HP NonStop Server (PTF IP22981) which shipped in March 2007. 
+
+
+
+This fix pack is cumulative and includes all service performed on 5.3.1 since the original release.
+
+The link in the download section below links to a download for fix pack 5.3.1.4 for WebSphere MQ V5.3.1 for HP NonStop Server. You will be asked to register before being presented with a set of downloadable files.
+
+PREREQUISITES
+Install this fix pack on top of WebSphere MQ V5.3.1 for HP NonStop Server - at any maintenance level.
+
+The links below give the supported environments for WebSphere MQ V5.3.1 for HP NonStop Server.
+
+URL LANGUAGE SIZE(Bytes) System Requirements; WebSphere MQ HP NSS 5.3 Integrity [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006797] English 9999 System Requirements; WebSphere MQ HP NSS 5.3 S-Series [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006796] English 9999 
+INSTALLATION INSTRUCTIONS
+Below is the link to the latest fix pack readme. The readme includes installation instructions. The readme also includes a summary of the problems which have new fixes in this fix pack.
+
+URL LANGUAGE SIZE(Bytes) Readme for 5.3.1.4 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27013662] English 9999 Fix list for 5.3.1.4 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27009174] English 9999 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options Fix Pack 5.3.1.4 03/10/2008 US English 9999 HTTPS [https://www.ibm.com/services/forms/preLogin.do?source=wsmqcsd] 
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ MQSeries WMQ 
+
+ [/support/docview.wss?uid=swg24020584&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24020584&aid=2]Problems (APARS) fixed
+IC57020, IC57231, IC57420, IC57432, IC57488, IC57501, IC57524, IC57627, IC57712, IC57719, IC57744, IC57876, IC55404

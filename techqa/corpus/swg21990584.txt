@@ -1,0 +1,13 @@
+Title: IBM Ordering the data fields in IBM FileNet Process Designer v5.2.1 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why do data fields get alpabetically arranged when a workflow is launched using IBM Content Navigator (ICN) or Workplace XT, no matter how they were ordered in Process Designer? 
+
+CAUSE
+This is working by design and not considered a defect.
+
+ANSWER
+The data fields can be arranged in any order within Process Designer. However, ICN or Workplace XT step processor sorts the step parameters in alphabetical order during runtime, ignoring the order that was set in Process Designer.

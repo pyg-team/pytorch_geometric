@@ -1,0 +1,16 @@
+Title: IBM In Atlas ,Duplicate (Early) Auto Reminder are sent - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Atlas sends duplicate auto reminders after the upgrade to 6032 iFix5. 
+
+CAUSE
+This is because of the defect within Atlas .It will be fixed in a future atlas release 
+
+ENVIRONMENT
+Atlas 6032
+
+RESOLVING THE PROBLEM
+The solution is to manually identify all the hold notices with incorrect auto reminder date and update the auto next date field in database to reflect the correct next auto reminder date. If any assistance is required , Please contact IBM Support team.

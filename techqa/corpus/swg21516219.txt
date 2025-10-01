@@ -1,0 +1,162 @@
+Title: IBM SAP authorization requirements for IBM InfoSphere Information Server Pack for SAP Applications 7.0 - United States
+
+Text:
+packr37rn TECHNOTE (FAQ)
+
+QUESTION
+ What SAP authorizations do I need to use IBM InfoSphere Information Server Pack for SAP Applications 7.0? 
+
+ANSWER
+ The following predefinedauthorization profiles are shipped with the product and can be deployed on the SAP system using a transport request: 
+
+ * Z_DS_PROFILE is the "runtime" profile and contains the authorizations that allow you to run Pack for SAP Applications jobs. 
+ * Z-DS_LOAD is the "design" profile and contains the authorizations that allow you to design and run Pack for SAP Applications jobs.
+
+
+These authorization profiles contain the required SAP authorizations to use the ABAP, BAPI, and IDoc stage functionality. Authorizations required for the Rapid Modeler are not part of these authorization profiles. For information about how to adjust the design-time profile for the use with the Rapid Modeler, refer to section Additional authorizations for Rapid Modeler below. The Pack also requires the following SAP-defined profiles: 
+
+ * S_IDOC_ALL and B_ALE_ALL to use the IDoc stage 
+ * The authorization profile for any BAPI that you called by using the BAPI stage 
+ * S_TMW_CREATE to use the CTS functionality in the ABAP Extract stage 
+
+To load ABAP programs into SAP using CTS requests, the SAP user must be registered as a developer. To register a new user, perform the following steps: 
+
+ 1. Log on to the SAP Online Support System (OSS) and select the appropriate SAP installation number. 
+ 2. Go to Register > Register Developer and enter the SAP user name. 
+ 3. Save the 20 character access key you receive from OSS. 
+ 4. Create a dummy ABAP program using the SAP GUI. 
+ 5. When the system prompts you for a developer key, enter the key you saved. The system will confirm the key and register the user as a developer.
+
+
+Creating the authorization profiles manually 
+
+If needed, you can create the SAP authorization profiles manually as follows: 
+Z_DS_PROFILE contains the following SAP authorizations:
+
+
+
+Authorization
+object Description Authorization S_RFC_ADM Administration for RFC Destination Z:DS_RFC_ADM S_RFC Authorization check for RFC access Z:DS_RFC S_DATASET Authorization for file access Z:DS_DATASET S_CPIC Calls from ABAP programs Z:DS_CPIC S_TABU_DIS Table maintenance (using standard tools, such as SM30) Z:DS_TABU_DI S_BTCH_JOB Background Processing: Operations on Background Jobs Z:DS_BJOB S_XMI_PROD Authorization for external management interfaces (XMI) Z:DS_XMI S_ADMI_FCD System Authorizations Z:DS_ADMIFCD S_DEVELOP ABAP workbench Z:DS_RUN 
+Z-DS_LOAD contains the following SAP authorizations: Authorization
+object Description Authorization S_RFC_ADM Administration for RFC Destination Z:DS_RFC_ADM S_RFC Authorization check for RFC access Z:DS_RFC S_DATASET Authorization for file access Z:DS_DATASET S_CPIC Calls from ABAP programs Z:DS_CPIC S_TABU_DIS Table maintenance (using standard tools, such as SM30) Z:DS_TABU_DI S_BTCH_JOB Background Processing: Operations on Background Jobs Z:DS_BJOB S_XMI_PROD Authorization for external management interfaces (XMI) Z:DS_XMI S_ADMI_FCD System Authorizations Z:DS_ADMIFCD S_DEVELOP ABAP workbench Z:DS_LOAD S_CTS_ADMI Administration Functions in Change and Transport System Z:DS_CTS_AD S_TRANSPRT Transport Organizer Z:DS_TRANSP 1. Create an authorization profile containing the above mentioned authorization objects listed in the tables in your SAP system (SAP transaction SU02) . 
+
+ * 
+ * Note: 
+ * 
+ * XXX.
+
+
+2. Assign the runtime profile to the users that run Pack for SAP Applications jobs and the design profile to users that create and configure the jobs. 
+Configuring the required authorizations
+
+
+RFC authorization 
+
+Define the following authorization: 
+
+ * Authorization: Z:DS_RFC 
+ * Text: Authorization check for RFC access 
+ * Class: AAAB - cross-application authorization objects 
+ * Object: S_RFC - authorization check for RFC access Field Description Value ACTVT Activity 16 RFC_NAME Name of RFC to be protected Z*, Y*, SYSU, SYST, SXMI, 
+   SXBP, SWOR, SUSO, SPFL, SEM5, SDTX, SDIFRUNTIME, SALF, RFC1, QOWK, ERFC, EDIN, EDIMEXT, CMON, CADR, ARFC RFC_TYPE Type of RFC object to be protected FUGR 
+
+Authorization for file access Define the following authorization: 
+
+ * Authorization: Z:DS_DATASET (you can use the standard authorization S_DATASET_AL) 
+ * Text: Authorization for file access 
+ * Class: BC_A - Basis: Administration 
+ * Object: S_DATASET - Authorization for file access Field Description Value ACTVT Activity 34 PROGRAM ABAP program name Y*, Z* FILENAME Physical file name * 
+
+ABAP program authorization Define the following authorization: 
+
+ * Authorization: Z:DS_CPIC (you can use the standard authorization S_SAPCPIC) 
+ * Text: CPI-C calls from ABAP programs 
+ * Class: BC_A - Basis: Administration 
+ * Object: S_CPIC - CPIC call from ABAP programs Field Description Value ACTVT Activity 37 PROGRAM ABAP program name Y*, Z* CPICDEST Symbolic destination ' ' ABAPFORM Name of an ABAP FORM routine CPIC 
+
+Table display authorization Define the following authorization: 
+
+ * Authorization. Z:DS_TABU_DI (you can use the standard authorization S_TABU_SHOW) 
+ * Text: Table Maintenance 
+ * Class: BC_A - Basis: Administration 
+ * Object: S_TABU_DIS - table maintenance (using standard tools, such as SM30) Field Description Value ACTVT Activity 03 DISBERCLS Table Authorization group * 
+
+Background processing: Operations on background jobs Define the following authorization: 
+
+ * Authorization: Z:DS_BJOB 
+ * Text: Background Processing: Operations on Background Jobs 
+ * Class: BC_A - Basis: Administration 
+ * Object: S_BTCH_JOB - Background Processing: Operations on Background Jobs Field Description Value JOBACTION Job operations RELE JOBGROUP Summary of jobs for a group * 
+
+Authorization for external management interfaces Define the following authorization: 
+
+ * Authorization: Z:DS_XMI 
+ * Text: Authorization for external management interfaces 
+ * Class: BC_A - Basis: Administration 
+ * Object: S_XMI_PROD - Authorization for external management interfaces Field Description Value INTERFACE Interface ID XBP EXTPROD XMI logging: Program name external management tool DATASTAGE EXTCOMPANY XMI logging: Company name external management tool IBM Corp. 
+
+For security reasons, the Program name and Company name fields are mandatory and are case sensitive. Authorization RFC Destination Administration 
+
+Define the following authorization: 
+
+ * Authorization: Z:DS_RFC_ADM 
+ * Text: Administration for RFC Destination 
+ * Class: AAAB Cross Application Authorization Objects 
+ * Object: S_RFC_ADM - Administration for RFC Destination Field Description Value ACTVT Activity * ICF_VALUE Internet Communication Framework Values * RFCDEST Logical Destination (Specified in Function Call) * RFCTYPE Type of Entry in RFCDES T 
+
+RFC Administration Define the following authorization: 
+
+ * Authorization: Z:DS_ADMIFCD 
+ * Text: RFC Administration 
+ * Class: BC_A Basis: Administration 
+ * Object: S_ADMI_FCD – System Authorizations Field Description Value S_ADMI_FCD System administration function NADM 
+
+CTS administration authorizations Define the following authorization: 
+
+ * Authorization: Z:DS_CTS_AD (you can use the standard authorization S_TMW_PROJ) 
+ * Text: CTS Administration 
+ * Class: BC_A - Basis: Administration 
+ * Object: S_CTS_ADMI – Administration Functions Change and Transport System Field Description Value CTS_ADMFCT Administration Tasks for Change and Transport System PROJ 
+
+Transport Organizer authorizations Define the following authorization: 
+
+ * Authorization: Z:DS_TRANSP (you can use the standard authorization S_TMW_NEW) 
+ * Text: Transport Organizer 
+ * Class: BC_C – Basis: Development Environment 
+ * Object: S_TRANSPRT – Transport Organizer Field Description Value ACTVT Activity 01, 02, 03, 90 TTYPE Request Type (Change and Transport System) CUST, DTRA, MOVE, PIEC, TASK, TRAN 
+
+Z:DS_RUN authorization Define the following authorization: 
+
+ * Authorization. Z:DS_RUN 
+ * Text: ABAP Workbench authorization 
+ * Class: BC_C – Basis - development environment 
+ * Object: S_DEVELOP – ABAP Workbench Field Description Value ACTVT Activity 03, 16 DEVCLASS Package * OBJTYPE Object type PROG OBJNAME Object name * P_GROUP Not used * 
+
+
+Note: The SAP Administrator can customize the values of the field as required. For example, you can set the DEVCLASS and OBJNAME to fine tune the authorization checks when the ABAP program is run by a ABAP Extract job. Z:DS_LOAD authorization 
+
+Define the following authorization: 
+
+ * Authorization: Z:DS_LOAD 
+ * Text: ABAP Workbench authorization for IBM® InfoSphere™ DataStage® 
+ * Class: BC_C – Basis - development environment 
+ * Object: S_DEVELOP – ABAP Workbench Field Description Value ACTVT Activity 01, 02, 03, 06, 16 DEVCLASS Package * OBJTYPE Object type PROG OBJNAME Object name * P_GROUP Not used * 
+
+The SAP Administrator can customize the values of the field as required. For example, you can set the DEVCLASS and OBJNAME to fine-tune the authorization checks when the ABAP program is run by an ABAP Extract job.  
+
+ 
+
+Additional authorizations for Rapid Modeler
+
+To extract table metadata, modify the following authorization in the design-time profile Z-DS_LOAD: 
+
+
+
+Authorization
+object Description Authorization S_RFC Authorization check for RFC access Z:DS_RFC 
+Add the function group SDTB (field RFC_NAME) to the existing authorization Z:DS_RFC: 
+
+Field Description Value ACTVT Activity 16 RFC_NAME Name of RFC to be protected SDTB RFC_TYPE Type of RFC object to be protected FUGR 
+To extract IDoc metadata, no additional authorizations are required. 
+
+Make sure that the design profile Z-DS_LOAD and the SAP-defined profile S_IDOC_ALL are assigned to the user.

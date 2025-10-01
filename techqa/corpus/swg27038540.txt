@@ -1,0 +1,87 @@
+Title: IBM Release Notes - IBM SPSS Statistics 22 - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ Release Notes - IBM SPSS Statistics 22 
+
+CONTENT
+Release notes - IBM SPSS Statistics 22.0
+
+
+
+
+IBM® SPSS® Statistics 22.0 is now available. Compatibility and other issues are addressed. 
+
+Contents 
+
+ * Description 
+ * System requirements and installation 
+ * Known issues
+
+Description IBM SPSS Statistics is the world’s leading statistical software used to solve business and research problems by means of ad-hoc analysis, hypothesis testing, and predictive analytics. Organizations use IBM SPSS Statistics to understand data, analyze trends, forecast and plan to validate assumptions and drive accurate conclusions. 
+
+System requirements and installation 
+
+For information on system requirements and installation, see the installation documents [http://www.ibm.com/support/docview.wss?uid=swg27038407]. 
+
+For information on downloading the product, see the Download Document [http://www.ibm.com/support/docview.wss?uid=swg24034898] . 
+
+Known issues 
+
+At time of publication, the following issues were known. 
+
+Issue: HP/UX is no longer a supported platform. 
+
+Issue: Under some conditions, OUTPUT MODIFY for a Correlations table on Mac OS can cause the application to terminate. 
+Solution: Turn off Unicode mode in Options>Language or run the command SET UNICODE NO. If you encounter this issue, contact support at www.ibm.com/support. 
+
+Issue: Running in distributed mode connected to a UNIX server, you cannot save files with non-western characters. 
+Solution: Use only western characters for file names. 
+
+Issue: Using the SAV data file driver, you cannot open encrypted SAV files on UNIX operating systems. 
+
+Issue: Oracle WebLogic cannot connect to the SPSS Statistics server using the REST API. 
+
+Issue: Running in distributed mode connected to a Windows server using an IP6 address, the Production Facility fails to submit jobs to the server. 
+Solution: Use a Windows server using an IP4 address. 
+
+Issue: The Java programmability extension does not run on Mac OS. 
+
+Issue: The Java API does not handle time values correctly. (Date and datetime values are handled correctly.) 
+Solution: If you encounter this issue, contact support at www.ibm.com/support. 
+
+Issue: Under some conditions, in distributed mode on a Linux client connected to a Windows server, SHOW ALL can cause the application to terminate. 
+
+Issue: When installing in a language other than English, some characters on the Python license agreement screen may not be displayed correctly. 
+
+Issue: Under some conditions with large data sources, syntax jobs that use CREATE with split-file processing and also use CASESTOVARS and VARSTOCASES may fail to run to completion. 
+
+Issue: Exporting data to an Oracle 11gR2 database will fail if a datetime or time data type is used. 
+Solution: Export datetime and time values as strings. For datetime, you can also export the values as timestamps. If you encounter this issue, contact support at www.ibm.com/support. 
+
+Issue: Cannot set up redundant license on non-Windows license managers with WlmAdmin tool running on Japanese Windows.
+Solution: To set up the redundant license, use the command line tool rlftool on the non-Windows system on which you installed the license manager. For information about using the rfltool tool, see the SafeNet documentation that is installed with the license manager administrator on Windows. 
+
+Issue: Using the server resilience feature, the server and client may not detect the disconnect at the same time when it occurs and may take several minutes before it is acknowledged. Once the connection is reestablished, the client and server may take up to two minutes or more before processing resumes. 
+
+Issue: In a Python script, very long lines of syntax can be truncated on spss.Submit. 
+Solution: Install and use the textwrap Python module. For more information, go to: www.ibm.com/developerworks/spssdevcentral [%E2%80%9Dhttp://www.ibm.com/developerworks/spssdevcentral%E2%80%9D] 
+
+Issue: When installing on Mac OS 10.8, the installation steps are not available in Japanese, Korean, Simplified Chinese, Traditional Chinese, or Russian. 
+
+Issue: On Mac OS 10.8, running a production facility job in distributed mode with server network resilience turned on, you cannot retrieve output from the production facility job. 
+Solution: Turn off server resilience. 
+
+ * Stop the Statistics Server process. 
+ * In the Statistics install directory, make sure that you have the security clearance in the operating system to read/write the file statisticsd.conf. 
+ * Open the file statisticsd.conf in a text editor. 
+ * Change 
+   <reconnect-timeout desc="The timeout in minutes that the server uses to drop disconnected clients (default: 100)." value="100"/> 
+   to
+   <reconnect-timeout desc="The timeout in minutes that the server uses to drop disconnected clients (default: 100)." value="0"/> 
+ * Save and close the file. 
+ * Re-start the Statistics Server process.
+
+Note that you have to be an admin on the machine to do all this.

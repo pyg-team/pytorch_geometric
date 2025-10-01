@@ -1,0 +1,23 @@
+Title: IBM Content Analytics SharePoint crawler stops working - United States
+
+Text:
+OEE; ICA TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have a SharePoint crawler configured in my IBM Content Analytics with Enterprise Search (ICA) deployment.
+This crawler has been working just fine for some time and then suddenly started encountering this error:
+The specified space "Home (<SharePoint_server_domain>)" could not be found in the space "server farm" 
+
+SYMPTOM
+If you try creating a new crawler against the same SharePoint server, it will work without problem.
+
+
+CAUSE
+Something was likely changed in the SharePoint Central Administration to the Alternate Access Mappings. 
+
+When you first create a SharePoint crawler, ICA records the SharePoint URL. And this URL is the unique URL sent by the SharePoint server directly (the name that it recognizes for itself). 
+If this URL is changed in any way, the unique ID saved on the ICA crawler configuration will no longer match and you will start to get the error message shown above when running the crawler.
+
+
+RESOLVING THE PROBLEM
+Create a new crawler pointing at the same SharePoint server.

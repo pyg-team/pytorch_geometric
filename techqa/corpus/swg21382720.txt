@@ -1,0 +1,66 @@
+Title: IBM How to implement LDAP failover with WebSphere Portal? - United States
+
+Text:
+failover; LDAP failover; CWWIM4520E; ldap; standalone; federated; replica TECHNOTE (FAQ)
+
+QUESTION
+ How can you implement LDAP failover for IBM WebSphere Portal version 6.1 and later so that a replica LDAP server can be leveraged for cases in which your primary LDAP server is unavailable? 
+
+ANSWER
+
+Use the following steps for cases in which you configure security to a standalone LDAP:
+
+
+ * 
+ * Configuring multiple LDAP servers for user registry failover
+ * 
+ * 
+ * In addition to following the steps documented in the above link, you must follow the steps below to ensure that the Virtual Member Manager (VMM) component used by WebSphere Portal is aware of the replica LDAP servers. 
+   
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  <config:connections host="yourldaphost" port="389"/> 
+   
+ * 
+ *  <config:connections host="yourldapfailoverhost" port="389"/> 
+   
+ * 
+ * connectionPool="false"
+ * 
+ * 
+
+
+Use the following steps for cases in which you configure security to a federated repositories LDAP: 
+ * 
+ * 
+ * 
+ * 
+ * Secure administration, applications, and infrastructure --> Federated repositories --> Manage repositories --> repository name
+ * 
+ * 
+ * 
+ * 
+ *  Failover server used when primary is not available 
+   
+ * 
+ * 
+ * 
+ * 
+ * connectionPoo
+ * 
+ * false
+ * 
+ * For a stand-alone portal, use <wp_profile>/config/cells/<cell>/wim/config/wimconfig.xml. 
+   For a portal cluster, use <DMgr_profile>/config/cells/<cell>/wim/config/wimconfig.xml
+   
+   6. Save the changes and restart all servers.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products AIX, HP-UX, IBM i, Linux, Solaris, Windows, z/OS 7.0, 6.1

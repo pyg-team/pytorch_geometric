@@ -1,0 +1,24 @@
+Title: IBM Fatal error in trace file when using WebSphere Transformation Extender for Integration Servers Version 8.3.0.0 with WTX Map Primitive for WESB "Map in project" - United States
+
+Text:
+33012; CQ33012; WTX00033012; WTX Map Primitive TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ With IBM® WebSphere® Transformation Extender (WTX) for Integration Servers Version 8.3.0.0 running on a platform other than a Microsoft® Windows® system, when using the WTX Map Primitive for WESB with "Map in project," a fatal error is written to the trace file upon triggering the message flow. 
+
+SYMPTOM
+The following fatal error is written to the trace file upon triggering the message flow: 
+
+WTXMapPrimiti 1 WTXMapPrimitive init DTXIS0004F: WTX Fatal error message: Fatal Error: Failed to locate project JAR file
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, install 8.3.0.1 or newer service pack.
+
+
+To work around the problem, specify the WTX Map Primitive by using "External map" or "Dynamic map" on non-Windows platforms.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Mercator Ascential DataStage TX

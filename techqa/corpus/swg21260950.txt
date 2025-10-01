@@ -1,0 +1,32 @@
+Title: IBM Lotus EasySync Pro 4.2.5 has been released - United States
+
+Text:
+latest release; 4.2.5; What is new; new release; iphone; 1003; error 1003; batchwrite error; batchwrite; batch write; 4.2.4; passport advantage; online; purchase; get; buy; purchasing; buying; windows mobile 6; wm6 TECHNOTE (FAQ)
+
+QUESTION
+Product Development announces the latest release of Lotus EasySync Pro® 4.2.5. For information about what is new in this application and what has been fixed in this release, refer to Document #1260810 [http://www.ibm.com/support/docview.wss?rs=899&uid=swg21260810], "Announcing EasySync Pro release 4.2.5 and fix list." 
+
+EasySync Pro 4.2.5 supports Windows Mobile 6.0 (refer to Document #1220175 [http://www.ibm.com/support/docview.wss?rs=899&uid=swg21220175], "Does EasySync Pro support Windows Mobile and Smartphone platforms"). [http://www.ibm.com/support/docview.wss?rs=899&uid=swg21220175]
+
+
+ANSWER
+Special note: Trial versions of Lotus EasySync Pro for testing purposes are not available. Upgrades for IBM Software are received as part of Passport Advantage Software Maintenance. A period of Software Maintenance is included with each new IBM distributed software license (and Fixed Term License) obtained through Passport Advantage and Passport Advantage Express. When the initial period of Software Maintenance expires, the Software Maintenance must be renewed for continued access to product upgrades and technical support. Customers with existing Passport Advantage Software Maintenance can download the upgrade from Passport Advantage Online [https://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/LoginPage].
+
+Passport Advantage additional information:
+The following links provide additional information about Passport Advantage: 
+
+-- About Passport Advantage [http://www.ibm.com/software/lotus/passportadvantage/] (including Passport Advantage for larger enterprises and Passport Advantage Express for smaller enterprises) 
+-- About Software Maintenance [http://www.ibm.com/software/lotus/passportadvantage/softwaremaintenance.html] 
+-- Software Maintenance Renewal [http://www.ibm.com/software/lotus/passportadvantage/software_maintenance_renewal.html?OpenDocument] 
+-- Software Maintenance Automatic Renewal FAQs [ftp://public.dhe.ibm.com/software/passportadvantage/Brochures_Quickguides_FAQs/FAQ_for_Customers_Fixed_Term_Licenses_and_Automatic_Renewals.pdf] 
+-- Contact Passport Advantage [http://www.ibm.com/software/lotus/passportadvantage/contactus.html]
+
+About Version 4.2.5:
+Version 4.2.5 was done as a "silent slip-stream" to version 4.2.4 and was therefore never officially announced on the IBM.com Offering Information web site [http://www-01.ibm.com/common/ssi/index.wss]. The only announcement for this new version is the one put out by Lotus Product Development. 
+
+To obtain 4.2.5:
+To make a new purchase of EasySync Pro, use the 4.2.4 option on the IBM.com Software Catalog Online, and then use the one year Software Maintenance included with that purchase to download the 4.2.5 upgrade from Passport Advantage Online.
+
+RELATED INFORMATION
+ Announcing EasySync Pro release 4.2.5 and fix list [http://www.ibm.com/support/docview.wss?uid=swg21260810]
+Does EasySync Pro support Windows Mobile and Smartphone [http://www.ibm.com/support/docview.wss?uid=swg21220175]

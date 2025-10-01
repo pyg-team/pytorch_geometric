@@ -1,0 +1,123 @@
+Title: IBM WebSphere Application Server Service Integration Bus messaging engine throws
+java.io.StreamCorruptedException - United States
+
+Text:
+CWSIP0002E CWSIS1002E CWSOM1004E PermanentIOException StreamCorruptedException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have a log rotation script that makes use of the copytruncate utility in UNIX to rotate the WebSphere Application Server Service Integration Bus messaging engine filestore files. You executed the script while the messaging engine was running and encountered java.io.StreamCorruptedException
+
+
+SYMPTOM
+The following errors are logged in the SystemOut.log 
+
+CWSIP0002E: An internal messaging error occurred in com.ibm.ws.sib.processor.impl.
+ConsumerDispatcher, 1:748:1.280.6.1,com.ibm.ws.sib.msgstore.RollbackException: 
+CWSIS1002E: An unexpected exception was caught during transaction completion. 
+Exception:com.ibm.ws.sib.msgstore.PersistenceException: Exception caught 
+inserting item into object store: CWSOM1004E: ObjectManager caught IOException=
+java.io.StreamCorruptedException: invalid stream header:00000000(java.io.
+IOException).
+
+FFDCS are produced with the following stack:
+[7/9/15 8:42:13:263 BST] FFDC
+Exception:com.ibm.ws.sib.mfp.MessageRestoreFailedException
+SourceId:com.ibm.ws.sib.mfp.impl.JsMessageFactoryImpl.restore
+ProbeId:373
+com.ibm.ws.sib.mfp.MessageRestoreFailedException: CWSIF0002E: A null or
+empty DataSlice List was passed to the message restore.
+at com.ibm.ws.sib.mfp.impl.JsMessageFactoryImpl.restoreJsMessage(JsMessage
+FactoryImpl.java:419)
+at com.ibm.ws.sib.processor.impl.store.items.MessageItem.restore(MessageItem
+.java:554)
+at com.ibm.ws.sib.msgstore.cache.links.AbstractItemLink._restoreItem(Abstract
+ItemLink.java:744)
+at com.ibm.ws.sib.msgstore.cache.links.AbstractItemLink.getItem(AbstractItem
+Link.java:2123)
+at com.ibm.ws.sib.msgstore.cache.links.AbstractItemLink.matches(AbstractItem
+Link.java:2883)
+at com.ibm.ws.sib.msgstore.list.Subcursor.next(Subcursor.java:264)
+at com.ibm.ws.sib.msgstore.list.PrioritizedCursor.next(PrioritizedCursor.
+java:254)
+at com.ibm.ws.sib.msgstore.cache.links.AbstractItemLink.getItem(AbstractItem
+Link.java:2123)
+at com.ibm.ws.sib.msgstore.cache.links.AbstractItemLink.matches(AbstractItem
+Link.java:2883)
+at com.ibm.ws.sib.msgstore.list.Subcursor.next(Subcursor.java:264)
+at com.ibm.ws.sib.msgstore.list.PrioritizedCursor.next(PrioritizedCursor.
+java:254)
+at com.ibm.ws.sib.processor.impl.JSBrowseCursor.next(JSBrowseCursor.java:98)
+at com.ibm.ws.sib.processor.impl.BrowserSessionImpl.next(BrowserSession
+Impl.java:257)
+at com.ibm.ws.sib.comms.server.clientsupport.CATBrowseConsumer.getNext
+Message(CATBrowseConsumer.java:427)
+..........
+Exception:com.ibm.ws.sib.msgstore.PersistenceException
+SourceId:com.ibm.ws.sib.msgstore.transactions.AutoCommitTransaction.addWork 
+ProbeId:1:247:1.10
+Reporter:com.ibm.ws.sib.msgstore.transactions.MSAutoCommitTransaction@3caa3caa
+com.ibm.ws.sib.msgstore.PersistenceException: Exception caught inserting item 
+into object store: CWSOM1004E: ObjectManager caught
+IOException=java.io.StreamCorruptedException: invalid stream header:
+00000000(java.io.IOException).
+at com.ibm.ws.sib.msgstore.persistence.objectManager.BatchingContextImpl.
+insert(BatchingContextImpl.java:232)
+at com.ibm.ws.sib.msgstore.task.AddTask.persist(AddTask.java:371)
+at com.ibm.ws.sib.msgstore.persistence.objectManager.PersistentMessage
+StoreImpl.commit(PersistentMessageStoreImpl.java:1596)
+............
+at com.ibm.ws.sib.processor.impl.ConsumerDispatcher.storeMessage(Consumer
+Dispatcher.java:723)
+at com.ibm.ws.sib.processor.impl.ConsumerDispatcher.internalPut(Consumer
+Dispatcher.java:1518)
+at com.ibm.ws.sib.processor.impl.ConsumerDispatcher.put(ConsumerDispatcher.
+java:915)
+............
+Caused by: com.ibm.ws.objectManager.PermanentIOException: CWSOM1004E:
+ObjectManager caught IOException=java.io.StreamCorruptedException:
+invalid stream header: 00000000(java.io.IOException).
+at com.ibm.ws.objectManager.ManagedObject.restoreSerializedDefault(Managed
+Object.java:537)
+at com.ibm.ws.objectManager.ManagedObject.restoreFromSerializedBytes(Managed
+Object.java:321)
+at com.ibm.ws.objectManager.SingleFileObjectStore.get(SingleFileObjectStore
+.java:533)
+at com.ibm.ws.objectManager.Token.getManagedObject(Token.java:161)
+at com.ibm.ws.sib.msgstore.persistence.objectManager.PersistableImpl.add
+ToStore(PersistableImpl.java:432)
+at com.ibm.ws.sib.msgstore.persistence.objectManager.PersistableImpl.addTo
+Store(PersistableImpl.java:263)
+at com.ibm.ws.sib.msgstore.persistence.objectManager.BatchingContextImpl.
+insert(BatchingContextImpl.java:195)
+... 19 more
+Caused by: java.io.StreamCorruptedException: invalid stream header:
+00000000
+at java.io.ObjectInputStream.readStreamHeader(ObjectInputStream.java:797)
+at java.io.ObjectInputStream.<init>(ObjectInputStream.java:294)
+at com.ibm.ws.objectManager.ManagedObjectInputStream.<init>(ManagedObject
+InputStream.java:46)
+at com.ibm.ws.objectManager.ManagedObject.restoreSerializedDefault(Managed
+Object.java:524)
+
+
+CAUSE
+The exception occurs because there is a token on a queue for which there is no message in the store. This happens if the store is truncated while it is running, or if copies are made while it is running and then those copies are restored. The only supported manual manipulation of these files is to effectively delete them, while the server is shutdown. When the server starts, either the files should not exist, or they should exist and be in the same state that they were in when the server shut down. There is an interdependence between them so copies taken at different times while the messaging engine is running, or merged together from different copies, will result in errors.
+There is no way to truncate the filestore files other than deleting them. The copytruncate option will probably make use of cat /dev/null > <file> or similar, rather than simply deleting the file. Copying /dev/null or equivalent is not supported and they must be deleted in their entirety. It is precisely this case that can lead to the stream being corrupted. The in memory state knows that message data lies at a certain offset in the file, but when that data is read, null bytes are returned (following the truncate), resulting in the StreamCorruptedException which was seen.
+
+In order to be supported, the server must first be stopped, then the logs must be effectively deleted. Obviously it is good to archive them somewhere first, but instead of replacing the files with some truncated version, the files should simply not exist when the server is restarted.
+
+
+RESOLVING THE PROBLEM
+Delete and recreate the filestore files. Here are the steps: 
+
+1. Delete all the 3 filestore files: Log+Permanent Store file+Temporary Store file
+2. Restart the messaging cluster or the server that hosts the messaging engine
+This should create a new filestore for the messaging engine
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere MQ Service Integration Technologies /SIB AIX, HP-UX, Linux, Solaris, Windows 7.5, 7.1, 7.0.1, 7.0 Business Integration WebSphere Enterprise Service Bus SIBus AIX, HP-UX, Linux, Solaris, Windows 7.0 Business Integration WebSphere Process Server SIB (service integration bus) AIX, HP-UX, Linux, Solaris, Windows 7.0 Business Integration WebSphere Service Registry and Repository Not Applicable AIX, HP-UX, Linux, Solaris, Windows 8.0, 7.5, 7.0 
+PRODUCT ALIAS/SYNONYM
+ WebSphere Application Server WAS SIB SIBUS SI BUS

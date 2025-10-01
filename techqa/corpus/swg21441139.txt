@@ -1,0 +1,37 @@
+Title: IBM Silent unattended removal of the AccessAgent - United States
+
+Text:
+AccessAgent uninstall remove install force reboot quiet silent; Agent; Access Agent TECHNOTE (FAQ)
+
+QUESTION
+ How can I remove the AccessAgent from a system without any user interaction? 
+
+ANSWER
+ 
+
+You will need to modify the following settings in the SetupHlp.ini.
+
+
+;Whether to suppress all prompts and write to log. <1|0> (default: 0)
+;Required for GPO installation
+InstallTypeGpo=1
+
+To suppress a reboot 
+;Whether to trigger a machine reboot after setup. <1|0> (default: 1)
+RebootEnabled=0
+
+
+Using the standard msiexec command and switches you can create a package to run on systems that you would like the Access Agent uninstalled without rebooting the system. 
+
+ 
+
+Example of the command would be 
+
+msiexec /uninstall "ISAM ESSO AccessAgent" /quiet /norestart 
+
+or if you would like the system rebooted after the uninstall 
+
+msiexec /uninstall "ISAM ESSO AccessAgent" /quiet 
+
+
+Note: The Access Agent will not be logged off or removed from the system until the system is rebooted.

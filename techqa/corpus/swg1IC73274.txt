@@ -1,0 +1,133 @@
+Title: IBM IC73274: AMS V7 USING WMQ CLIENT V6 GENERATES ERROR 126: INTERCEPTOR COULD NOT LOAD THE WEBSPHERE MQ CLIENT LIBRARY - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere MQ Advanced Message Security V7.0.1 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24029612]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere MQ (WMQ) Advanced Messaging Security (AMS) v7.0.1
+   generates errors when used with WMQ v6 client. WMQ v7 Client
+   is successful. AMS loads mqic.dll. It should load mqic32.dll
+   if the client is running WMQ v6.
+   Log file shows
+   DRQDM2004E   The IBM WebSphere MQ Advanced Message Security C
+   client interceptor could not load the WebSphere MQ client
+   library. The error message was: error code 126.
+   AMS trace shows
+   Client interceptor initialization failed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  WebSphere MQ Advanced Message Security (MQAMS) v7.0.1 generates
+   errors when used with WMQ v6 client on Ms Windows as MQAMS
+   attempts to load mqic.dll instead of mqic32.dll.
+   Log file shows:
+   DRQDM2004E   The IBM WebSphere MQ Advanced Message Security C
+   client interceptor could not load the WebSphere MQ client
+   library. The error message was: error code 126.
+   Trace shows:
+   Client interceptor initialization failed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR will be contained in the fix pack 1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC73274
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ ADV MSG SEC
+   
+   
+ * REPORTED COMPONENT ID
+   5724Z9400
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-12-14
+   
+   
+ * CLOSED DATE
+   2010-12-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ ADV MSG SEC
+   
+   
+ * FIXED COMPONENT ID
+   5724Z9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSN
+   UP

@@ -1,0 +1,45 @@
+Title: IBM How do I know which Connect:Direct z/OS Secure+ cipher suites are available to me? - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ How do I know which Connect:Direct z/OS Secure+ cipher suites are available to me? 
+
+ANSWER
+
+
+In the Connect:Direct initialization parameters code 'DEBUG=8C0000AE'. Trace DD R0000001 will be dynamically allocated and cipher suite information, such as that in the following example, will be written to the DD:
+
+"Locally available cipher suites are(0504352F0A090306020100)"
+
+05 SSL_RSA_WITH_RC4_128_SHA
+04 SSL_RSA_WITH_RC4_128_MD5
+35 SSL_RSA_AES_256_SHA
+2F SSL_RSA_AES_128_SHA
+0A SSL_RSA_WITH_3DES_EDE_CBC_SHA
+09 SSL_RSA_WITH_DES_CBC_SHA
+03 SSL_RSA_EXPORT_WITH_RC4_40_MD5
+06 SSL_RSA_EXPORT_WITH_RC2_CBC_40_MD5
+02 SSL_RSA_WITH_NULL_SHA
+01 SSL_RSA_WITH_NULL_MD5
+
+NOTE: Be sure to go to the ADMIN, MODIFY screen in the IUI and turn off the tracing to avoid JES spool filling up with trace data. 
+
+ 
+
+HISTORICAL NUMBER
+ PRI3342 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+
+
+Connect:Direct for z/OS All Releases
+
+
+How do I know which Connect:Direct z/OS Secure+ cipher suites are available to me?

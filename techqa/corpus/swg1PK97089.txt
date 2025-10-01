@@ -1,0 +1,133 @@
+Title: IBM PK97089: CPS PORTLETS PERFORMANCE VERY POOR WHEN USED IN 3rd PARTY PORTAL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CPS Portlets Performance Very Poor When Used in 3rd party portal
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users who are using the report viewer portlet in 3rd party   *
+   * portals.                                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Viewing reports in 3rd party portals does not benefit from   *
+   * the browser cache when the report viewer portlet is visited  *
+   * again in the same browser session. This affects the          *
+   * perfromance of the viewer portlet because the browser will   *
+   * always request all the required resources even if they're    *
+   * cached.                                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM Cognos 8 Business Intelligence 8.4.1 FP1      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When running reports in 3rd party portals, the viewer portlet
+   uses the "meta" tag to redirect the request to the viewer.
+   This seems to causes IE to always issue a request to
+   validate/retrieve resources when those are loaded by the Viewer.
+   Changing the way we do the redirect to use a javascript function
+   instead gets around this issue and IE will not request the
+   cached resources.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK97089
+   
+   
+ * REPORTED COMPONENT NAME
+   COG8 BI COG CON
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12CC
+   
+   
+ * REPORTED RELEASE
+   840
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-24
+   
+   
+ * CLOSED DATE
+   2010-04-14
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   COG8 BI COG CON
+   
+   
+ * FIXED COMPONENT ID
+   5724W12CC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R841 PSN
+   UP

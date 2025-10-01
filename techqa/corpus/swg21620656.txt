@@ -1,0 +1,57 @@
+Title: IBM A CWLLG2229E BPDInstance is not found exception is seen after upgrading to IBM Business Process Manager (BPM) V8.0 - United States
+
+Text:
+migration; CWLLG2229E; BPDInstance; missing TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You migrate the Process Server database to IBM Business Process Manager Version 8.0 from a previous version. After migrating, you find multiple "CWLLG2229E: BPDInstance with ID BPDInstance.XXXX not found" exceptions in the SystemOut.log file when you start the server for the first time. 
+
+SYMPTOM
+You see exceptions in the SystemOut.log file that are similar to the following text: 
+
+9/20/12 9:21:21:928 CDT] 00000091 wle E CWLLG2229E: An exception occurred in an EJB call. Error: BPDInstance with ID BPDInstance.11213 not found.
+com.lombardisoftware.core.TeamWorksException: BPDInstance with ID BPDInstance.11213 not found.
+at com.lombardisoftware.server.ejb.persistence.CommonDAO.assertNotNull(CommonDAO.java:70)
+at com.lombardisoftware.server.ejb.persistence.CommonDAO.assertMapNotNull(CommonDAO.java:50)
+at com.lombardisoftware.server.ejb.persistence.dao.UnversionedPODAO.findByPrimaryKey(UnversionedPODAO.java:429)
+at com.lombardisoftware.server.ejb.persistence.DefaultHandler.findByPrimaryKey(DefaultHandler.java:118)
+at com.lombardisoftware.server.ejb.persistence.PersistenceServicesCore$2.call(PersistenceServicesCore.java:116)
+at com.lombardisoftware.server.ejb.persistence.PersistenceServicesCore$2.call(PersistenceServicesCore.java:114)
+at com.lombardisoftware.server.ejb.persistence.versioning.BranchManager.readAccess(BranchManager.java:168)
+at com.lombardisoftware.server.ejb.persistence.PersistenceServicesCore.findByPrimaryKey(PersistenceServicesCore.java:114)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+
+
+CAUSE
+The IBM Business Process Manager 8.0 version code has been enhanced to check for any orphaned tasks from the database. It cleans up these tasks if IBM Business Process Manager instances do not exist for the task.
+
+
+ENVIRONMENT
+This issue occurs when you migrate a Process Server database to IBM Business Process Manger Version 8.0 and later from previous versions of WebSphere Lombardi Edition Version 7.x.
+
+
+
+DIAGNOSING THE PROBLEM
+Check the pre-migration backup database for existing tasks that do not have any business process definition (BPD) instances. For example: 
+
+ 1. Search the LSW_EM_task for the missing BPD Instance ID (bpdid).
+    
+    
+ 2. Check the LSW_BPD_INSTANCE tables to see if the instances exist.
+
+RESOLVING THE PROBLEM
+The IBM Business Process Manager Version 8.0 code cleans up orphaned tasks if the business process definition instance does not exist. After the tasks are cleaned up, you will not see these exceptions again. This action is automatic; you do not need to take any action. 
+
+
+If you do not see the exceptions after you restart the Java™ virtual machine (JVM), you can ignore the associated exceptions and FFDC logs that existed prior to the JVM restart.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Migration AIX, Linux, Solaris, Windows 8.0.1, 8.0 
+PRODUCT ALIAS/SYNONYM
+ BPM
+Lombardi

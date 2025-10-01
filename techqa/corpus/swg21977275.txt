@@ -1,0 +1,33 @@
+Title: IBM Using IBM Datacap Navigator 9.0, why can't I update the station values? - United States
+
+Text:
+SQL; Oracle TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The application was converted from Datacap 8.0.1 and the applications are working correctly. The Datacap sample applications that use the Access database work properly. Only the custom applications using SQL Server cannot change the Station values. The problem exists in both TMWeb and Datacap Navigator. 
+
+SYMPTOM
+The application hangs.
+
+
+CAUSE
+The datetime fields in the database are either corrupted or are not defined correctly.
+
+RESOLVING THE PROBLEM
+The problem was due to incorrect, improper or corrupt date entries in the columns sta_loginTime and sta_logoutTime of the Station table in the Admin database. 
+
+ 
+The solution is to add a current date with a date format similar to 2015-01-01 01:00:00.000, to all the stations in columns sta_loginTime and sta_logoutTime. 
+
+To populate the sta_loginTime and sta_logoutTime columns, a script similar to this can be run: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Please note that this script is provided as an example only. No warranty or guarantee is provided. Please be sure to test thoroughly before using.

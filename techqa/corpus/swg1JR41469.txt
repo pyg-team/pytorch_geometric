@@ -1,0 +1,206 @@
+Title: IBM JR41469: UNABLE TO DISPLAY WEB PROCESS INSPECTOR ON DB2/ZOS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  BPM Advanced 7.5.1 ( z Linux)
+   DB2 Z/OS 10
+   
+   Following the upgrade of BPM Advanced 7.5.0.1 to BPM Advanced
+   7.5.1 the
+   following error is thrown when a user logs in to ProcessAdmin
+   and goes to the "Process Inspector" tab.
+   
+   bad SQL grammar [select count (distinct instanceId) from
+   (select i.bpd_instance_id as instanceId from lsw_task t inner
+   join lsw_bpd_instance i on t.bpd_instance_id =
+   i.bpd_instance_id left join
+   lsw_bpd_status_codes istatus on i.execution_status =
+   istatus.status_id
+   where ( ( i.last_modified_datetime > to_date ('2011-12-06
+   17:00:00',
+   'YYYY-MM-DD HH24:MI:SS') AND istatus.name = 'Completed' ) )
+   union all
+   select i.bpd_instance_id as instanceId from lsw_task t inner
+   join
+   lsw_bpd_instance i on t.bpd_instance_id = i.bpd_instance_id left
+   join
+   lsw_bpd_status_codes istatus on i.execution_status =
+   istatus.status_id
+   where ( ( i.last_modified_datetime > to_date ('2011-12-06
+   17:00:00',
+   'YYYY-MM-DD HH24:MI:SS') AND istatus.name = 'Terminated' ) ) )
+   ];
+   nested exception is
+   com.ibm.websphere.ce.cm.StaleConnectionException:
+   DB2 SQL Error: SQLCODE=-104, SQLSTATE=42601, SQLERRMC=<EMPTY>;
+   CORRELATION NAME, DRIVER=3.62.56
+   
+   com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error:
+   SQLCODE=-
+   104, SQLSTATE=42601, SQLERRMC=<EMPTY>;CORRELATION NAME,
+   DRIVER=3.62.56
+   
+   Upon tracing the jdbc/TeamWorksDB data source (attached:
+   pstrace_xads_5) it can be seen that the sql statement that is
+   being
+   executed does not have a CORRELATION NAME.
+   
+   When the statement is executed outside of BPM and a CORRELATION
+   NAME is
+   added to the end of the statement (as acti) it executes without
+   issue.
+   
+   When a similiar trace is executed in a DIFFERENT 7.5.1
+   environment
+   (that has a distributed DB2 instead of DB2 Z/OS) the issue does
+   not
+   occur and the statement that is executed has "as acti" on the
+   end.
+   
+   It seems that the SQL statement is being incorrectly built for
+   DB2 ZOS.
+   We have also tried this in a DB2 Z/OS 9 environment, and the
+   issue
+   occurs there also.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of BPM on DB2 z/OS                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Following the upgrade of BPM Advanced   *
+   *                      7.5.0.1 to BPM Advanced                 *
+   *                      7.5.1 error is thrown                   *
+   *                      when a user logs in to ProcessAdmin     *
+   *                      and goes to the "Process Inspector"     *
+   *                      tab.                                    *
+   ****************************************************************
+   * RECOMMENDATION:  Install ifix if using DB2 z/OS              *
+   ****************************************************************
+   Following the upgrade of BPM Advanced
+   7.5.0.1 to BPM Advanced
+   7.5.1 error is thrown
+   when a user logs in to ProcessAdmin
+   and goes to the "Process Inspector"
+   tab.
+   com.ibm.websphere.ce.cm.StaleConnectionException:
+   DB2 SQL Error: SQLCODE=-104, SQLSTATE=42601, SQLERRMC=<EMPTY>;
+   CORRELATION NAME, DRIVER=3.62.56
+   com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error:
+   SQLCODE=-
+   104, SQLSTATE=42601, SQLERRMC=<EMPTY>;CORRELATION NAME,
+   DRIVER=3.62.56
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is available as a part of the JR42012 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR42012] ifix package
+   (http://www-01.ibm.com/support/docview.wss?uid=swg1JR42012)
+   and needs to be installed as follows:
+   - Install JR42012 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR42012] on both Process Designer and Process
+   Center/Server using IM
+   - On Process Center/Server run bpmprofileUpgrade as outlined in
+   http://www-01.ibm.com/support/docview.wss?uid=swg27022245#recove [http://www-01.ibm.com/support/docview.wss?uid=swg27022245#recove]
+   rFailure
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR41469
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-13
+   
+   
+ * CLOSED DATE
+   2012-01-16
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP
+   
+   
+ * R751 PSY
+   UP

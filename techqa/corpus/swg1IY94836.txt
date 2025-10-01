@@ -1,0 +1,159 @@
+Title: IBM IY94836: Event Type : AlarmPropagationList parsed incorrectly - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The probe receives sometimes an event of type
+   "AlarmPropagationList", and this appears to be a kind of
+   container for other alarms.
+   
+   
+   At the moment, the probe creates one alert for it, and the inner
+   alarms are created as tokens.
+   
+   Lingxian (alcatel canada) need to confirm fix
+   
+   CUSTOMERS OBSERVATION:
+   alarm-97 and alarm-249 are presented in the event list.
+   
+   Please ensure that this APAR resolves this problem.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Avoid using this event type.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: ALL                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Event Type : AlarmPropagationList       *
+   *                      parsed incorrectly                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Current behaviour: the probe is missing incoming events,
+   because it creates one OS alert per AlarmPropagationEventList
+   received from the SAM server. Required behaviour: the
+   AlarmPropagationEventList is in fact a container, which stores
+   several alarms. So, there should be one OS alert per contained
+   alarm.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Release date: 30/09/2007
+   
+   Date of Release: 09/30/07 Fix Pack Name:
+   probe-nco-p-alcatel-5620-sam-v4-0_1
+   
+   
+   
+   
+   
+   
+   Due to installation problems of the target system
+   by the test
+   department the GA release of the fix for thsi APAR will not be
+   available until the end of Q1 2008. A testfix is available
+   through L2
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY94836
+   
+   
+ * REPORTED COMPONENT NAME
+   ALCATEL 5620 SA
+   
+   
+ * REPORTED COMPONENT ID
+   5724P17AS
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-02-14
+   
+   
+ * CLOSED DATE
+   2007-05-08
+   
+   
+ * LAST MODIFIED DATE
+   2007-11-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

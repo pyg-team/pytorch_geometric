@@ -1,0 +1,38 @@
+Title: IBM Restriction: You cannot insert workflows to solution packages by using Process Designer - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ When using IBM Case Manager V5.0, if a workflow is inserted into a solution package by using the Process Designer the solution is corrupted when it is opened and saved in Case Builder. This imports the workflow into a case type XPDL which results in data loss.
+
+Inserting a workflow by using Process Designer is not supported in IBM Case Manager V5.0. 
+
+CONTENT
+If a workflow is inserted into a solution package and then that solution is opened in Case Builder and saved, the solution will become corrupted. 
+If you do insert a workflow by using Process Designer, when you open the solution in Case Builder and go to the Step Editor to view or edit tasks, the map is completely empty. After you save the solution, any task in the case type where the workflow was inserted becomes corrupted and you cannot recover it. 
+
+How to add and use workflows in solutions in V5.0
+For example, workflows can be used in a task if you use the System Steps "Create" or "WaitForCondition". They can also be used for Process Orchestration by using Web Services system steps.
+
+To use non-case management assets (workflows) in a solution: 
+
+ 1. Add the workflow using Process Designer (if the workflow is stored locally or in the repository)  1. Open the workflow in Process Designer 
+     2. Validate, Transfer, and save to the Design object store (IBM Case Manager/Solutions/your solution folder)
+    
+    
+
+
+Note:The workflows must be transferred for the Create, WaitForCondition and Web Services system steps to be configured and function correctly. 
+
+(Sample use) Using System steps to access workflows: 
+You can use the workflow in a step in a task, for example "Create" or "WaitForCondition" system functions:  1. Open the solution in Process Designer (File/Solution/Edit/solution definition) 
+ 2. In the task map, add a "System" step which accesses another workflow, for example, "Create" or "WaitForCondition". 
+ 3. Configure the "Create" or "WaitForCondition" step to use the workflow that you added to your solution folder.
+
+
+The "Create" system function is used to launch a workflow of a specific workflow definition. You can optionally assign values to the "Use the data fields" in either the current work item or the newly created work item. 
+
+With the "WaitForCondition" system function, a work item waits for another work item that meets a specified condition. 
+
+To deploy any solutions to production that contain non-case management assets, see the “ Preparing for Solution Deployment [http://publib.boulder.ibm.com/infocenter/casemgmt/v5r0m0/topic/com.ibm.casemgmt.installing.doc/acmde010.htm]” and “ Copying additional assets to production [http://publib.boulder.ibm.com/infocenter/casemgmt/v5r0m0/topic/com.ibm.casemgmt.installing.doc/acmde012.htm]” sections in the IBM Case Manager Information Center.

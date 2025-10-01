@@ -1,0 +1,217 @@
+Title: IBM PK71355: VIRTUAL MEMBER MANAGER FEDERATION ADAPTER NOT WORKING IF        UNIQUENAME NOT YET IN DATABASE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+PK71355; 6.1.0.19: Virtual Member Manager Federation Adapter Not Working [http://www-01.ibm.com/support/docview.wss?uid=swg24020439]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With a freshly migrated WebSphere Member Manager(WMM) to
+   Virtual Member Manager (VMM) multiple-ldap setup, virtual
+   member manager (VMM) does not find the user correctly
+   specified extID if the extID is the "virtual extID" not the
+   LDAP extID.  After the user was queried in an alternative way
+   (e.g.  with LDAP extID or uniqueName), the lookup works.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of WebSphere Application Server   *
+   *                  v6.1 who use federated repositories         *
+   *                  (virtual member manager).                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: After migration, there is an            *
+   *                      EntityNotFoundException thrown when     *
+   *                      getting an attribute with extId in      *
+   *                      EntryMapping repository.                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In EntryMapping repository, the extId is different with
+   uniqueId. When trying to get an entity with extId, virtual
+   member manager incorrectly takes the uniqueId in the
+   EntryMapping repository as the extId to get attributes in
+   LDAP, which causes EntityNotFoundException.
+   
+   [8/30/08 1:05:48:032 EST] 0000004b exception     1
+   com.ibm.ws.wim.adapter.ldap.LdapConnection
+   getAttributesByExtId CWWIM4001E The
+   'a54886d0-6f30-11dd-a4da-892848acde1c' entity was not found.
+   [8/30/08 1:05:48:032 EST] 0000004b exception     1
+   com.ibm.ws.wim.adapter.ldap.LdapConnection getAttributesByExtId
+   
+   com.ibm.websphere.wim.exception.EntityNotFoundException:
+   CWWIM4001E The 'a54886d0-6f30-11dd-a4da-892848acde1c' entity
+   was not found.
+    at
+   com.ibm.ws.wim.adapter.ldap.LdapConnection.getAttributesByExtId(
+   LdapConnection.java:2088)
+    at
+   com.ibm.ws.wim.adapter.ldap.LdapConnection.getEntityByIdentifier
+   (LdapConnection.java:2305)
+    at
+   com.ibm.ws.wim.adapter.ldap.LdapConnection.getEntityByIdentifier
+   (LdapConnection.java:2227)
+    at
+   com.ibm.ws.wim.adapter.ldap.LdapAdapter.get(LdapAdapter.java:134
+   8)
+    at
+   com.ibm.ws.wim.ProfileManager.retrieveEntityFromRepository(Profi
+   leManager.java:2431)
+    at
+   com.ibm.ws.wim.ProfileManager.retrieveEntity(ProfileManager.java
+   :2577)
+    at
+   com.ibm.ws.wim.ProfileManager.getImpl(ProfileManager.java:1345)
+    at
+   com.ibm.ws.wim.ProfileManager.genericProfileManagerMethod(Profil
+   eManager.java:283)
+    at com.ibm.ws.wim.ProfileManager.get
+   (ProfileManager.java:332)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem has been fixed. After Federation repositoy
+   migration from WebSphere Member Manager (WMM) to Virtual
+   Member Manager (VMM), there is no EntityNotFoundException
+   when getting entity with extId.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 6.1.0.23 and 7.0.0.3.  Please refer to the Recommended
+   Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK71355
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   61A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-08-31
+   
+   
+ * CLOSED DATE
+   2008-09-10
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

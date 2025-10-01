@@ -1,0 +1,173 @@
+Title: IBM PM59183: 302 RESPONSES ARE NOT BEING LOGGED BY THE ODR / PROXY WHEN THE REDIRECT IS DONE IN THE ODR / PROXY - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.0.0.4: WebSphere Application Server V8.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033190]
+7.0.0.25: WebSphere Application Server V7.0 Fix Pack 25 [http://www-01.ibm.com/support/docview.wss?uid=swg24033267]
+8.5.0.1: WebSphere Application Server V8.5 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24033606]
+8.0.0.5: WebSphere Application Server V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033754]
+7.0.0.27: WebSphere Application Server V7.0 Fix Pack 27 [http://www-01.ibm.com/support/docview.wss?uid=swg24033882]
+8.5.0.2: WebSphere Application Server V8.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24034672]
+8.0.0.6: WebSphere Application Server V8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034673]
+7.0.0.29: WebSphere Application Server V7.0 Fix Pack 29 [http://www-01.ibm.com/support/docview.wss?uid=swg24034966]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+7.0.0.31: WebSphere Application Server V7.0 Fix Pack 31 [http://www-01.ibm.com/support/docview.wss?uid=swg24036768]
+7.0.0.27: Java SDK 1.6 SR13 FP2 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035324]
+7.0.0.33: WebSphere Application Server V7.0 Fix Pack 33 [http://www-01.ibm.com/support/docview.wss?uid=swg24037573]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the On-Demand Router (ODR) / Proxy tier routing rules can be
+   configured to redirect requests without the initial request
+   ever making it to the back end tier.  when this occurs the 302
+   response is not logged.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Proxy Server or  *
+   *                  On-Demand Router (ODR)                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Local redirect, HTTP Response Code      *
+   *                      302, responses are not logged in the    *
+   *                      local access log, local.log.            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When the Proxy/ODR are configured to return a redirect
+   response, response code 302, those responses are not being
+   logged in the local access log, local.log.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been changed to correctly write an entry in the
+   local.log for redirect responses that are returned directly
+   from the Proxy/ODR server.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 7.0.0.25 and 8.0.0.4.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM59183
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-28
+   
+   
+ * CLOSED DATE
+   2012-04-13
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP

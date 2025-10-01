@@ -1,0 +1,55 @@
+Title: IBM MQ Installation Scenarios for Server, Client, Explorer, Redistributable for Linux and Windows - United States
+
+Text:
+ WHITE PAPER
+
+ABSTRACT
+ The objective of this techdoc is to show different installation scenarios for MQ 8.0 and 9.0 for Linux x86 64-bit and Windows, including installing all components, only the client, only MQ Explorer, using redistributable files. 
+
+CONTENT
+Starting with MQ 7.1 it is possible to have multiple installations of MQ coexisting in the same box, for example, MQ 7.1 and 7.5. 
+
+Starting with MQ 8.0 it is possible to install a subset of files from the MQ client and to package a smaller subset of MQ files with your application for redistribution.
+
+Starting with MQ 9.0 there are 2 delivery models:
+- Long Term Support, which has installation and fix packs that are handled the same as in MQ 8.0 (but with the exception that no function will be added). The Fix Packs will be named 9.0.0.z (such as 9.0.0.1)
+- and Continuous Delivery, in which new function will be added. The releases will be named 9.0.x (such as 9.0.1, 9.0.2)
+Note: At the time of writing this techdoc, MQ 9.0 has only installation images for LTS and not for CD. Thus, no discussion on the new model is being made now, and it is planned to be discussed later, after the first CD release is made.
+
+There are several installation images that can be downloaded and installed, but sometimes it is not very clear in which cases a certain installation image should be used and how to apply the proper maintenance.
+
+In this presentation, I would like to discuss the main scenarios that we usually encounter, from very general to very specific, from a single version of MQ installed in the box, to multiple versions coexisting in the same box.
+
+The focus of this talk is on Windows and on Linux x86 64-bit, but the principles apply too to AIX, HP-UX, Solaris and other Linux architectures.
+
+The scenarios are explored in depth for MQ 8.0.0.2 (rebased - full product) and MQ Fix Pack 8.0.0.4, but the principles apply to MQ 9.0 and other Fix Packs.
+
+Here are the scenarios (each one in its own Chapter)
+
+1: Install all the components (queue manager, client, Explorer, AMS, MFT, Telemetry)
+
+2: (Continuation of Scenario 1) Install a Fix Pack on top of an existing MQ installation
+
+3: Install ONLY the MQ client
+
+4: (Continuation of Scenario 3) Install the Fix Pack of the MQ client 
+
+5: Install ONLY the MQ Explorer via SupportPac MS0T
+
+6: Install ONLY the MQ code for a standalone Java/JMS client application (using formal install process).
+You do not want to install the full MQ client.
+
+7: Install ONLY the MQ code for a Java/JMS client application that is running under a J2EE application
+
+8: You need to redistribute MQ runtime libraries with your application.
+
+
+
+File name: Installation scenarios for MQ 8.0 and 9.0 in Linux and Windows.pdf 
+
+
+Installation scenarios for MQ 8.0 and 9.0 in Linux and Windows.pdf [/support/docview.wss?uid=swg27048266&aid=2]Installation scenarios for MQ 8.0 and 9.0 in Linux and Windows.pdf [/support/docview.wss?uid=swg27048266&aid=1]
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM MQ

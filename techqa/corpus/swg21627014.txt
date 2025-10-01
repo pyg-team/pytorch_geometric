@@ -1,0 +1,49 @@
+Title: IBM Signature is changed from rich text to plain text after upgrading mail template - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After upgrading your mail template, the signature you set in preferences is changed from rich text to plain text.
+
+SYMPTOM
+If user has ever used Signatures with the 8.5.1 mail template, upgrading to any build after that release can revert to a signature that was in place prior to using 8.5.1.
+
+
+CAUSE
+This issue occurs when the user has a plain text or HTML/image File signature in an older release (such as R6 or R7), then they upgrade mail to 8.5.1. In 8.5.1, there was only one signature type available (Rich Text). When the user then upgrades mail to 8.52 or higher release, the signature reverses back to the plain text or HTML/image File which was used in much earlier release.
+
+RESOLVING THE PROBLEM
+To fix this for 8.5.1 users, create an agent using the following lotusscript code. Run it once on the affected mail file. 
+
+Sub Initialize
+
+%REM
+This agent dode will do the following:
+(1) determine if profile has Signature_Rich item
+(2) determine if the rich text signature has any data in it.
+
+If both of the above are true, it will: (3) Change signature option to "3" and save the profile note.
+%END REM
+
+Dim session As New notessession
+
+Dim db As notesdatabase
+Set db = session.currentdatabase
+
+Dim profile As notesdocument
+Set profile = db.getprofiledocument("CalendarProfile")
+
+If profile.hasitem("Signature_Rich") Then
+Dim rtitem As NotesRichTextItem 
+Set rtitem = profile.getfirstitem("Signature_Rich")
+Dim itemLength As Long
+itemlength = rtitem.valuelength
+
+If itemLength > 102 Then 'if > 102 in length, then rich text signature has data in it
+Call profile.replaceitemvalue("SignatureOption", "3")
+Call profile.save(True,False)
+End If
+End If
+
+End Sub

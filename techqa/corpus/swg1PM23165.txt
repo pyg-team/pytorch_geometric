@@ -1,0 +1,178 @@
+Title: IBM PM23165: ABNED04E ABEND 00E40002 REASON CODE WHEN RUNNING DB2 UTILITY WITH DB2 SORT. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  For example.
+   Running DB2 Utility (REORG) utilizing DB2 Sort.
+   The DB2 Sort libraries are STEPLIBed in the REORG job as follows
+   
+   //STEPLIB DD  DSN=DSN910.SDSNEXIT,DISP=SHR
+   //        DD  DSN=DSN910.SDSNLOAD,DISP=SHR
+   //        DD  DSN=SYSADM.DBSORT11.SCNKLINK,DISP=SHR
+   //        DD  DSN=SYSADM.DBSORT11.SCNKLPA,DISP=SHR
+   
+   The ABEND msgs returned in the job are as follows:
+   
+    IEA995I SYMPTOM DUMP OUTPUT  180
+    SYSTEM COMPLETION CODE=04E  REASON CODE=00E40002
+     TIME=14.20.17  SEQ=00039  CPU=0000  ASID=002D
+     PSW AT TIME OF ERROR  078D1000   80007202  ILC 2  INTC 0D
+       ACTIVE LOAD MODULE           ADDRESS=00007000  OFFSET=000
+       NAME=DSNUTILB
+       DATA AT PSW  000071FC - 00181610  0A0DA7E5  02A850F0
+       AR/GR 0: 978A1C66/84000000   1: 00000000/8404E000
+             2: 00000000/00000002   3: 00000000/0000007C
+             4: 00000000/00007BEC   5: 00000000/00006970
+             6: 00000000/006C8FE0   7: 00000000/00000008
+             8: 00000000/00006A8C   9: 00000000/00007C22
+             A: 00000000/00000004   B: 00000000/80007100
+             C: 00000000/00006B08   D: 00000000/00006B08
+             E: 00000000/800071EA   F: 00000000/00E40002
+     END OF SYMPTOM DUMP
+    IEF450I DB2SORTX STEP1 - ABEND=S04E U0000 REASON=00E40002
+    SMF000I  DB2SORTX    STEP1       DSNUTILB    004E
+   
+   We found under these conditions, the DB2 Sort libraries were not
+   APF authorized (as required).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  APF authorize DB2 Sort libraries.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of DB2 Sort.                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Running DB2 Utility (REORG) utilizing D *
+   *                      The DB2 Sort libraries are STEPLIBed    *
+   *                      in the REORG job as follows             *
+   *                      //STEPLIB DD  DSN=DSN910.SDSNEXIT,      *
+   *                      DISP=SHR                                *
+   *                      //        DD  DSN=DSN910.SDSNLOAD,      *
+   *                      DISP=SHR                                *
+   *                      //        DD  DSN=SYSADM.DBSORT11.SCNK  *
+   *                      LINK,DISP=SHR                           *
+   *                      //        DD  DSN=SYSADM.DBSORT11.SCNK  *
+   *                      LPA,DISP=SHR                            *
+   *                      The ABEND msgs returned in the job are  *
+   *                       as follows:                            *
+   *                       IEA995I SYMPTOM DUMP OUTPUT  180       *
+   *                       SYSTEM COMPLETION CODE=04E  REASON     *
+   *                       CODE=00E40002                          *
+   *                        TIME=14.20.17  SEQ=00039  CPU=0000    *
+   *                        ASID=002D                             *
+   *                        PSW AT TIME OF ERROR  078D1000        *
+   *                         80007202  ILC 2  INTC 0D             *
+   *                      We found under these conditions, the    *
+   *                      DB2 Sort libraries were not APF         *
+   *                      authorized (as required).               *
+   ****************************************************************
+   * RECOMMENDATION: Fixed in V1.2.0.                             *
+   ****************************************************************
+   Fixed in V1.2.0.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Unable to reproduce.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM23165
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 SORT FOR Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5655W4200
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED UR3
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-23
+   
+   
+ * CLOSED DATE
+   2012-05-07
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 SORT FOR Z/
+   
+   
+ * FIXED COMPONENT ID
+   5655W4200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSN
+   UP

@@ -1,0 +1,146 @@
+Title: IBM Transaction Document: IBM z Systems Trial Program: Cloud Service for Program Evaluation - United States
+
+Text:
+Transaction Document; TD; zTrial; IBM z Systems Trial Program; Z Trial NEWS
+
+ABSTRACT
+ This Transaction Document is for use with IBM z Systems Trial Program. It defines the Evaluation Period, Programs for Evaluation, and Enabling Software for the Program. 
+
+CONTENT
+ 
+
+1. Content and Data Protection 
+
+Client agrees that the Cloud Service is not intended to be used to process any personal data, and Client therefore agrees not to input any content which includes personal data. 
+
+ 
+
+2. Evaluation Period 
+
+You may use the Cloud Service for an Evaluation Period of 3 working days from initial provisioning, or until IBM withdraws or terminates it, whichever occurs first. 
+
+ 
+
+3. IBM Programs for Evaluation 
+
+The Cloud Service may provide the following IBM software programs for evaluation: 
+
+ * IBM Application Discovery and Delivery Intelligence V5 
+ * IBM CICS Transaction Server for z/OS V5.4 
+ * IBM Cloud Provisioning & Management for z/OS V2.2 
+ * IBM Db2 Administration Solution Pack for z/OS V3.1 
+ * IBM Db2 Utilities Solution Pack for z/OS V4.1 
+ * IBM Dependency Based Build (DBB) V1.0 
+ * IBM IMS 14 (using IMS Explorer for Development) 
+ * IBM OMEGAMON for JVM on z/OS V5.4 
+ * IBM Operational Decision Manager for z/OS V8.9 
+ * IBM z/OS Connect Enterprise Edition V3
+
+
+4. Enabling Software 
+
+The Cloud Service may include the following enabling software: 
+
+ 
+
+Microsoft Windows client: 
+
+IBM CICS Explorer 5.4.8 
+
+IBM CICS Explorer SDK 5.3.0 
+
+IBM Developer for z Systems 14.0.0 
+
+IBM Explorer for z/OS 3.0.1 
+
+IBM IMS Enterprise Suite Explorer for Development 3.2.1 
+
+IBM Installation Manager 1.8.6 
+
+IBM Rational Integration Tester 9.0.1 
+
+IBM Rational Team Concert Client 6.0.3 
+
+IBM Rational Team Concert Integration for z Systems 14.0.0 
+
+IBM z/OS Connect EE API Editor 2.0.4 
+
+ 
+
+Linux server: 
+
+IBM Application Delivery Intelligence 1.0.3 
+
+IBM Installation Manager 1.8.6 
+
+IBM Rational Team Concert 6.0.3 
+
+IBM UrbanCode 6.2.1 
+
+IBM UrbanCode Deploy 6.2.3 
+
+IBM z Systems Development and Test Environment 10.0 
+
+ 
+
+z/OS: 
+
+IBM CICS Transaction Server for z/OS V5.3 
+
+IBM COBOL 5.2 
+
+IBM Compiler for REXX 1.4 
+
+IBM Data Interfile Transfer, Testing and Operations (DITTO) Utility for ESA 
+
+IBM Data Server Manager 
+
+IBM Developer for System z 14.0.0 z/OS components 
+
+IBM Db2 Administration Tool for z/OS 
+
+IBM Db2 Automation Tool for z/OS 
+
+IBM Db2 Object Comparison Tool for z/OS 
+
+IBM Db2 Utility Suite for z/OS 
+
+IBM Db2 for z/OS Query Management Facility 11 
+
+IBM Db2 for z/OS 11 
+
+IBM Enterprise PL/I 4.5 
+
+IBM Explorer for z/OS (Aqua) V3.1 
+
+IBM HTTP Server 9.0 
+
+IBM IMS 14.1 
+
+IBM Java Software Developers Kit for z/OS 7.1, 8.0 
+
+IBM Optim Test Data Management for z/OS 11.3 
+
+IBM Rational COBOL Runtime 6.0.1 (EGL) 
+
+IBM Rational Team Concert 6.0.3 z/OS components 
+
+IBM Tools Customizer for z/OS 
+
+IBM UrbanCode Deploy 6.2.3 z/OS Agent 
+
+IBM WebSphere Application Server for z/OS V8.0, V8.5, 17.0.0.4 Liberty 
+
+IBM XL C++ 2.1 
+
+IBM z/OS 2.2, including sub-features 
+
+IBM z/OS 2.2 Management Facility 
+
+IBM z/OS Connect Enterprise Edition V3 
+
+IBM z/OS Provisioning Toolkit V1 
+
+_______________________________________________________________________________________ 
+
+Last updated: 2018-05-14

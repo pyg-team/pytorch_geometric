@@ -1,0 +1,93 @@
+Title: IBM Information about the coalescer on QRadar Network Security and Security Network IPS sensors - United States
+
+Text:
+ACE; consolidation; PAM; coalesced; proventia TECHNOTE (FAQ)
+
+QUESTION
+ What is the coalescer and how does it work on QRadar Network Security (XGS) and Security Network IPS (GX) appliances? 
+
+ANSWER
+
+
+QUICK LINKS
+ * About the coalescer 
+ * Configuration options 
+ * Fine tuning start and end time for coalesced events 
+ * Common observations 
+ * Important information in coalesced events 
+ * Example
+
+
+ABOUT THE COALESCER
+The coalescer is a feature in Protocol Analysis Module (PAM) that tries to match and record similar events that happen more or less at the same time before the events get sent to SiteProtector. This is done to help reduce space that is occupied in the database, to reduce excess network activity, and to avoid the SiteProtector Console and SiteProtector Database from being flooded with repetitive events and becoming unstable. 
+
+By default, if the coalescer processes more than one attack event with similar properties over an interval of 60 seconds, the events are combined and an update on this continuous attack is sent once per 60 seconds until no new related attacks are reported. 
+
+
+CONFIGURATION OPTIONS FOR THE COALESCER
+Generally, tuning of the coalescer is not recommended unless specifically working with X-Force on an issue. However, there are a few parameters that can be used. 
+
+It is possible to disable the coalescer by using the following tuning parameter: 
+
+For XGS 
+Key: alpsd.pam.coalescer 
+Value: false 
+
+For GX 
+Name: np.coalescer 
+Value: false 
+
+Important: This is not recommended unless directly requested by Technical Support. In cases where it is needed, it should only be disabled for a short time to look into an issue. Once finished, be sure to re-enable the coalescer to avoid any negative side effects. 
+
+
+FINE TUNING START AND END TIME FOR COALESCED EVENTS
+The behavior is determined by the tuning parameters pam.coalescer.starttimeupdate and pam.coalescer.cumulativecount. The default behavior is to never update a coalescer entry's initial start time, and the end-time is the time of the coalesced event that is most recently received in the reporting interval pam.coalescer.deltatime. The coalescer entry is purged after the pam.coalescer.deltatime seconds of no activity. By default, the count represents the number of events that are detected and coalesced over the reporting interval. 
+ * pam.coalescer.starttimeupdate - By default, this is set to false. If you configure the value to true, the coalescer sets the start-time of an ongoing event to the start time of the reporting interval. A value of false preserves the original event's start time.
+   
+ * pam.coalescer.cumulativecount - By default, this is set to false. If configured with false, the coalescer reports the count of only those events that are detected over the previous reporting interval, determined by deltatime (mentioned below). If the parameter is set to true, the coalescer reports the cumulative event count since the initial event in the new cumulative-count field.
+   
+ * pam.coalescer.deltatime - This parameter specifies the reporting interval. The coalescer holds an event that has been flagged for an update for this interval. The default value for this parameter is 60 (seconds).
+
+
+COMMON AND KNOWN OBSERVATIONS WHEN COALESCING IS ENABLED
+You might see some events being reported with a source IP address of 0.0.0.0. This can happen for two reasons: 
+ 1. The sensor thinks that the IP address is spoofed. 
+ 2. The sensor consolidates multiple events of the same kind, with different IPs, but very similar to one another.
+
+For more information about the 0.0.0.0 IP that is reported, the coalescer must be disabled to get the individual IPs. See the tuning parameter under What configuration options are available for the coalescer? above for information on how to do this. 
+
+Another common issue that is seen with the coalescer is two events getting generated for the same signature. When a signature fires, PAM includes the details of the traffic that caused it to fire in the event data. Certain events, such as scans and sweeps, can delay the collection of this data due to the nature of the traffic. If PAM is still in the process of collecting all of the event details, the event shows as having a Detected status. Once the collection of information is complete, the event shows as having a Blocked status. 
+
+In most cases, the two events are combined before being sent to SiteProtector. However, in situations where there was a delay or timeout while waiting for the rest of the information, users might see both the Detected and Blocked events in the SiteProtector Console. This is not indicative of a problem. 
+
+
+IMPORTANT INFORMATION IN COALESCED EVENTS
+The coalescer sometimes attaches more text attributes to events to signal unusual conditions surrounding the processing of the event. Below is list of the common coalescer-info values: 
+ * coalescer-info:Event updates never arrived. The coalescer forwarded an event while still expecting more information for that event. This typically occurs because the updates take too long to arrive or the coalescer's internal queue of pending events fills.
+   
+ * coalescer-info:Update arrived without matching event. An update to an event arrived, but the event did not exist within the coalescer's queue of pending events. This usually happens because the original event timed out before the updates arrived. It can also result from the coalescer queue filling.
+   
+ * coalescer-info:Full coalescer queue. A new event arrived in the coalescer when the coalescer's internal queue was full. The coalescer forcibly emits an event to make room for the new one.
+   
+ * coalescer-info:Forwarded due to age. The coalescer forwarded this event because it spent too long in the coalescer's internal queue without receiving more updates.
+   
+ * start-time The time when the coalescer saw the first coalesced event.
+   
+ * end-time The time of the most recent coalesced event.
+   
+ * Event Count The total number of events that are detected and coalesced over the reporting interval.
+
+
+EXAMPLE
+[/support/docview.wss?uid=swg21962049&aid=1] [/support/docview.wss?uid=swg21962049&aid=1] 
+
+In this example, HSRP_Suspicious_Priority is being coalesced. Looking at the end-time column, you can see it is creating a new event each minute. However, the start-time is always showing the same time, as this is when the coalesced event first began. This is an ongoing event that started nearly a month earlier. As the source IP is different for the coalesced events in each 60 second interval, the Source IP column is showing as 0.0.0.0. 
+
+
+
+
+[/support/docview.wss?uid=swg21962049&aid=2] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21962049&aid=3] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21962049&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21962049&aid=5] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21962049&aid=6] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21962049&aid=7] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21962049&aid=8] [http://ibm.biz/ContactSecSupport] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Network Intrusion Prevention System Protocol Analysis Module (PAM) Firmware Version Independent Security IBM Security Network Protection Protocol Analysis Module (PAM) Firmware Version Independent

@@ -1,0 +1,99 @@
+Title: IBM When attempting to apply CF15 the CONFIG-WP-PTF-CF task hangs with the following warning, ADMA0245W - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The ConfigTrace.log contains the following... 
+
+Executing final configuration for consolidated config
+[wplc-consolidate-wsadmin] Task parameters:
+[wplc-consolidate-wsadmin] Global attributes:
+true
+[wsadmin] WASX7209I: Connected to process "dmgr" on node
+SLICWSDMT1CellManager01 using SOAP connector; The type of process is:
+DeploymentManager
+[wsadmin] AppName WCM_EXTENSION
+[wsadmin] Ear File C:/Program Files
+(x86)/IBM/WebSphere/PortalServer/ap/wp.ap.wcmextension/installableApps/w
+p.wcmextension.ear
+[wsadmin] Install Options -update -appname "WCM_EXTENSION"
+[wsadmin] WASX7327I: Contents of was.policy file:
+[wsadmin] /// Licensed Materials - Property of IBM
+
+....
+
+[wsadmin] grant codeBase "file:$ [file://$]{ejbComponent}" {
+[wsadmin] permission java.security.AllPermission;
+[wsadmin] };
+[wsadmin] ADMA0245W: EJBDeploy feature is not installed. Cannot
+execute "deploy enterprise beans" option.
+[wsadmin] ADMA5016I: Installation of wcm started.
+
+The SystemOut.log had the following errors...during wcm startup...
+
+[2/25/15 19:03:19:311 MST] 00000041 EJBMDOrchestr E CNTR0075E: The
+user-provided class
+"com.ibm.workplace.wcm.util.scheduler.ejb.EJSRemoteStatelessEJBScheduler
+_27162c8e" needed by the EnterpriseBean could not be found or loaded.
+[2/25/15 19:03:19:327 MST] 00000041 FfdcProvider W
+com.ibm.ws.ffdc.impl.FfdcProvider logIncident FFDC1003I: FFDC Incident
+emitted on C:\Program Files
+(x86)\IBM\WebSphere\wp_profile\logs\ffdc\WebSphere_Portal_ea65a12a_15.02
+.25_19.03.19.3116164318862410729156.txt
+com.ibm.ws.ejbcontainer.runtime.AbstractEJBRuntime.initializeDeferredEJB
+3233
+[2/25/15 19:03:19:327 MST] 00000041 AbstractEJBRu E WSVR0068E:
+Attempt to start EnterpriseBean wcm#WCM_EJBs.jar#EJBScheduler failed
+with exception: com.ibm.ejs.container.EJBConfigurationException: Bean
+class could not be found or loaded
+at
+com.ibm.ws.metadata.ejb.EJBMDOrchestrator.loadGeneratedImplementationCla
+sses(EJBMDOrchestrator.java:5598)
+at
+com.ibm.ws.metadata.ejb.EJBMDOrchestrator.finishBMDInitWithReferenceCont
+ext(EJBMDOrchestrator.java:1269)
+at
+com.ibm.ws.ejbcontainer.runtime.AbstractEJBRuntime.finishBMDInit(Abstrac
+tEJBRuntime.java:2555)
+
+...
+
+Caused by: java.lang.ClassNotFoundException:
+com.ibm.workplace.wcm.util.scheduler.ejb.EJSRemoteStatelessEJBScheduler_
+3f72cb90
+at java.net.URLClassLoader.findClass(URLClassLoader.java:434)
+at
+com.ibm.ws.bootstrap.ExtClassLoader.findClass(ExtClassLoader.java:230)
+at java.lang.ClassLoader.loadClassHelper(ClassLoader.java:703)
+at java.lang.ClassLoader.loadClass(ClassLoader.java:682)
+
+
+SYMPTOM
+In this case, the config task CONFIG-WP-PTF-CF just hung here... 
+
+
+[wsadmin] ADMA0245W: EJBDeploy feature is not installed. Cannot execute
+"deploy enterprise beans" option.
+[wsadmin] ADMA5016I: Installation of wcm started.
+
+Eventually the process had to be killed.
+
+
+CAUSE
+The problem is due to EJBDeploy being missing from the DMGR.
+
+
+
+
+ENVIRONMENT
+Portal 8001 
+
+Windows
+
+
+RESOLVING THE PROBLEM
+Please ensure EJBDeploy is installed on all nodes including the 
+
+deployment manager and then retry the CF15 install again.
+This will resolve the missing class errors from WCM ejb.

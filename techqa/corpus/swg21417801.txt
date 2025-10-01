@@ -1,0 +1,57 @@
+Title: IBM NNM API : Tracing HP-OV events from the source to the probe - United States
+
+Text:
+nco_p_nnm7; nco_p_nnm8; hp-ov; missing; miss; lost; trace; debug; debugging TECHNOTE (FAQ)
+
+QUESTION
+ NNM Probe events are missing from the probe logs; how do you trace events from HP-OV? 
+
+ANSWER
+ 
+
+The Netcool/OMNIbus NNM probe is designed for use with the HP-OV system and uses the NNM API to communicate with the HP-OV PMD process. The probe is only able to process events that are sent to it, via the HP-OV PMD process. It is therefore important to trace any events that are missed through the entire system, from the event source, through the HP-OV system to the probe itself. 
+
+i.e. 
+
+TRAP-SOURCE -> [ OVTRAPD -> ECS -> PMD ] -> NNM Probe 
+
+ 
+
+In order to debug the event stream you would need use a mix of debugging tools; 
+
+ * Use snoop/tcpdump/wireshark tcp traffic between the device and the ovtrapd process on the HP-OV server 
+ * Trace the HP-OV PMD process 
+ * Enable debugging and the 'OVAPIDebug' property in the probe, and set the NNMfilter to receive all NNM events
+
+
+HP-OV PMD Tracing 
+To enable a trace on the HP-OV system use:
+
+pmdmgr -SOV_EVENT\;T0xffffffff -T 100000001
+
+To disable tracing use;
+
+pmdmgr -SOV_EVENT\;T0xf
+
+Logging information is sent to $OV_LOG as "pmd{TEXT}";
+e.g.
+ls -lt OV_LOG/pmd*
+
+
+Probe Properties
+MessageLevel : "debug"
+MaxLogFileSize : 104857600
+OVAPIDebug : 1
+NNMfilter : "{ALL}.*"
+
+Where ALL is ( RAW + CORR )
+
+The meaning of the three main filters is;
+RAW - All events received by the event subsystem, excluding those originating from the ECS engine
+COR{stream_name} - All events coming from the named event stream
+ALL - All events received by the event subsystem, including those originating from the ECS engine 
+
+
+
+RELATED INFORMATION
+ NNM7 probe : SNMPMode : Processing SNMPv1 or SNMPv2c al [http://www-01.ibm.com/support/docview.wss?uid=swg21649852]

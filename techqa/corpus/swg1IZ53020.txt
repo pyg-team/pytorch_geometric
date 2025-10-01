@@ -1,0 +1,190 @@
+Title: IBM IZ53020: ERROR WHEN GETTING ACCESS PLAN GRAPH FOR REFRESH STATEMENTS IN  DATA STUDIO - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+DB2 Version 9.5 Fix Pack 5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24025421]
+DB2 Version 9.5 Fix Pack 6a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027747]
+DB2 Version 9.5 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028731]
+DB2 Version 9.5 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24030302]
+DB2 Version 9.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032087]
+DB2 Version 9.5 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033308]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Run Access Path Graph in Data Studio for the REFRESH statement
+   gives an error message:
+   
+        Failed to collect explain data for the query access plan
+   from the target data server wtih SQLSTATE 01H55. This error is
+   caused by: db2luw20459E: SQLCODE 20459 SQLSTATE 01H55, SQL20458W
+   
+   or
+        SQL0462W  Routine "SYSPROC.EXPLAIN_SQL" (specific name
+   "EXPLAIN_SQL") has returned a warning SQLSTATE, with diagnostic
+   text "".  SQLSTATE=01H55
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the explain facility to get the access plan. For
+   example,ues EXPLAIN PLAN FOR statement to populate explain
+   tables with explain data, and then format the plan with
+   db2exfmt.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Data Studio                                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The LUW DB2 version is v9.5.2.                               *
+   *                                                              *
+   * There is one question about DB2 LUW Stored                   *
+   * Procedure(EXPLAIN_SQL) which Data Studio Optimization Expert *
+   * 2.2 is using to explain SQL statement.The testcase(including *
+   * DDL) is as follows:                                          *
+   *                                                              *
+   * Step1:  Execute these following DDLs with your own           *
+   * schema:                                                      *
+   * 1)create table db2admin.testtable(c1 int,c2 int);            *
+   * 2)create table db2admin.mqt_test as  (select *               *
+   * from db2admin.testtable) data initially deferred refresh     *
+   * deferred enable query optimization MAINTAINED BY             *
+   * SYSTEM;                                                      *
+   * Step2:  Run Access Path Graph in Data Studio Optimization    *
+   * Expert 2.2 for this SQL "refresh table db2admin.mqt_test"    *
+   * for the first time,it will pop up the error message:         *
+   *                                                              *
+   * "Failed to collect explain data for the query                *
+   * access plan from the target data server wtih SQLSTATE 01H55. *
+   * This error is caused by:                                     *
+   * db2luw20459E: SQLCODE 20459 SQLSTATE 01H55, SQL20458W The    *
+   * procedure SYSPROC.EXPLAIN_SQL has encountered an internal    *
+   * error.  Error: Error formatting the explain into XML, Pos=0; *
+   * Line=23942;)                                                 *
+   *                                                              *
+   *                                                              *
+   * Step3: Launch Access Path Graph in Data Studio               *
+   * Optimization Expert 2.2 for another SQL "select * from       *
+   * db2admin.testtable".It works and we can get the expected     *
+   * APG.                                                         *
+   * Step4: Launch Access Path Graph in Data Studio               *
+   * Optimization Expert 2.2 for the same SQL "refresh table      *
+   * db2admin.mqt_test" again(for the second time).But now it     *
+   * also works,we can also get the same APG as the above SQL's   *
+   * APG. So why can we can execute Stored Procedure(EXPLAIN_SQL) *
+   * for this "REFRESH..." SQL successfully at this time after    *
+   * calling it for another SQL? We expect we can get the same    *
+   * error message as the above snapshot.                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * delivered in V95fp5 and following releases                   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  delivered in V95fp5 and following releases
+   
+   Now it's able to collect explain data for the query access plan
+   from the target data server wtih SQLSTATE 01H55
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ53020
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4100
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-11
+   
+   
+ * CLOSED DATE
+   2010-02-16
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * FIXED COMPONENT ID
+   5765F4100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSY
+   UP

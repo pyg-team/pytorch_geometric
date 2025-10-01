@@ -1,0 +1,145 @@
+Title: IBM PI89379: PORTAL REMOTE SEARCH WILL NOT INSTALL ON WAS 9 - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.5.0.0 and V9.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  We intend to support Remote Search with WAS 9, but the
+   installer currently does not work.
+   Fortunately, unlike the Portal Server install, you can install
+   Remote Search + the latest CF at the same time. Thus we are
+   able to fix the problem in CF15.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Prior to CF15, the only workaround is for the customer to
+   install Remote Search + CF14 in silent mode.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 15 (PI83476 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI83476]) for Portal
+   8.5.0.0 / 9.0.0.0 available from Fix Central:
+   
+   https://www-945.ibm.com/support/fixcentral/swg/selectFixes?paren
+   t=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=A [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=A]
+   ll&platform=All&function=aparId&apars=PI83476
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  To install Portal Remote Search into a WAS v9 profile, point IBM
+   Installation Manager to the repositories for (1) Portal Remote
+   Search v8.5 GM image and (2) Portal Remote Search Cumulative Fix
+   15. The installer will then recognize WAS v9 as a valid target
+   for installation. You can either install Portal Remote Search
+   into an existing WAS installation or install WAS and Portal
+   Remote Search at the same time.
+   Installing Portal Remote Search into a WAS v8.5.5 profile
+   still works as well.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI89379
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-25
+   
+   
+ * CLOSED DATE
+   2017-12-22
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP
+   
+   
+ * R900 PSY
+   UP

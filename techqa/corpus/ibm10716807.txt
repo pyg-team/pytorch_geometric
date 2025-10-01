@@ -1,0 +1,52 @@
+Title: IBM TWSProfile can not be fully started up and generates javacores after WAS security disabled - United States
+
+Text:
+tws;iws;off TROUBLESHOOTING
+
+PROBLEM
+We disabled the TWSProfile WAS security using following method, after that the engine connection failed from DWC.
+
+<WAS_INSTALL_DIR>/bin/> wsadmin -conntype NONE
+wsadmin> securityoff
+wsadmin> exit
+Restart the servers.
+
+SYMPTOM
+From DWC, if we want to monitor jobs/workstations, get following error:
+
+AWSJCO005E WebSphere Application Server has given the following error: Context: TWSNodeCell/nodes/TWSNode/servers/server1, name: SecurityServer: First component in name SecurityServer not found..
+
+From MDM SystemOut.log:
+
+[7/9/18 18:36:00:719 PDT] 0000007d ConnException E AWSJSY401E The Symphony plan operation "null" could not be completed because an internal error has occurred while accessing the Symphony plan. The internal error message is: "java.lang.NullPointerException". 
+
+[7/9/18 18:36:01:437 PDT] 00000094 SymphonyModul E AWSJSY501E Incorrect data was detected while performing the Symphony plan operation "null". The internal error message is: "AWSBIO002E The supplied parameter "CPU-NAME" does not have a valid length.". It identifies the incorrect data and the problem. 
+
+CAUSE
+TWSProfile WAS security is disabled.
+
+DIAGNOSING THE PROBLEM
+Javacores are generated each time we want to enable TWSProfile security from WAC (https://<MDM IP>:31124/ibm/console/logon.jsp), hence enable security from WAC can not be done. By checking the javacore, we can see it relates to the following Windows component:
+
+HEXCPMODULE Module: C:\Windows\system32\msvcrt.dll
+
+NOTE: For UNIX/Linux, the javacore content can be different.
+
+When tried to use wsadmin to enable security again from command line, it always failed with following error even after several restart of WAS:
+
+WASX7015E: Exception running command: "securityon user twsuser password ***** "; exception information:com.ibm.ws.scripting.ScriptingException: AdminControl service not available
+
+RESOLVING THE PROBLEM
+Enable the TWSProfile WAS security by doing following:
+
+Backup and modify the TWAHOME/WAS/TWSProfile/config/cells/TWSNodeCell/security.xml
+
+the second line from:
+
+<security:Security xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:orb.securityprotocol="http://www.ibm.com/websphere/appserver/schemas/5.0/orb.securityprotocol.xmi" xmlns:security="http://www.ibm.com/websphere/appserver/schemas/5.0/security.xmi" xmi:id="Security_1" useLocalSecurityServer="true" useDomainQualifiedUserNames="false" enabled="false" cacheTimeout="600" issuePermissionWarning="true" allowAllPermissionForApplication="false" activeProtocol="CSI" enforceJava2Security="false" enableJava2SecRuntimeFiltering="false" enforceFineGrainedJCASecurity="false" appEnabled="true" allowBasicAuth="false" activeAuthMechanism="LTPA_1" activeUserRegistry="WIMUserRegistry_1" defaultSSLSettings="SSLConfig_1268732041984" adminPreferredAuthMech="RSAToken_1">
+
+change to:
+
+<security:Security xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:orb.securityprotocol="http://www.ibm.com/websphere/appserver/schemas/5.0/orb.securityprotocol.xmi" xmlns:security="http://www.ibm.com/websphere/appserver/schemas/5.0/security.xmi" xmi:id="Security_1" useLocalSecurityServer="true" useDomainQualifiedUserNames="false" enabled="true" cacheTimeout="600" issuePermissionWarning="true" allowAllPermissionForApplication="false" activeProtocol="CSI" enforceJava2Security="false" enableJava2SecRuntimeFiltering="false" enforceFineGrainedJCASecurity="false" appEnabled="true" allowBasicAuth="false" activeAuthMechanism="LTPA_1" activeUserRegistry="WIMUserRegistry_1" defaultSSLSettings="SSLConfig_1268732041984" adminPreferredAuthMech="RSAToken_1">
+
+Restart WAS for MDM (TWSProfile) and DWC (JazzSM).

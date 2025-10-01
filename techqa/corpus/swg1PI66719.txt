@@ -1,0 +1,149 @@
+Title: IBM PI66719: REFRESHED 24 GA MEDIA INSTALLER CAUSE ERROR 88 WITH SENTINEL LM 8.6.1 AND SPSS 24 INSTALLED ON SAME VIRTUAL SERVER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You have installed IBM SPSS Statistics 24 64 bit Client on a
+   Windows 2012
+   Virtual Server using VMWare. The SPSS Client installer file was
+   downloaded after 23. June 2016 from Passport Advantage. You
+   installed Statistics 24 as network installation.
+   Sentinel License manager is installed on the same Win2012
+   server.
+   However, when you run echoid.exe or licenseactivator.exe to
+   license Sentinel License manager installtion it can happen you
+   get error [88]:
+   
+   "Sentinel RMS development Kit: Error[88]: Operating in
+   stand-alone mode using terminal client. This is not allowed by
+   the vendor"
+   
+   These steps can be done to replicate:
+   
+   1. Launch Windows 2012 and add Remote Desktop Services (all
+   features except the VM one).
+   2. Install Sentinel RMS license manager 8.6.1 (Concurrent
+   Licensing Tools) as shipped with Statsistics 24. To run
+   echoid.exe works.
+   3. Then install Statistics 24 (download after 23. June) on the
+   same server.  Echoid.exe or licenseactivator.exe works from
+   console session but fails from remote desktop session.
+   4. Confirm echoid.exe (and licenseactivator) in license manager
+   installation directory also does not work from remote session.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This was reported to IBM SPSS Development. The issue is only
+   seen on Windows 64 bit with Statistics 24 64 bit. The issue is
+   solved with a new 64 bit installer file posted on passport
+   advantage on August 1 2016. Please download from part number
+   CNE2AML (Posted August 17 2016, download size 896 MB and install
+   this version on the VM Server)
+   IBM SPSS Statistics Client 64-bit 24.0 Microsoft Windows
+   Multilingual (CNE75ML)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * This affects all users of SPSS Statistics 24.0 using a       *
+   * Concurrent License Manager.                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * REFRESHED 24 GA MEDIA INSTALLER CAUSE ERROR 88 WITH SENTINEL *
+   * LM 8.6.1 AND SPSS 24 INSTALLED ON SAME VIRTUAL SERVER        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM SPSS Statistics 25.0 to resolve this   *
+   * issue.                                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI66719
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   O00
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-29
+   
+   
+ * CLOSED DATE
+   2017-08-09
+   
+   
+ * LAST MODIFIED DATE
+   2017-08-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RO00 PSY
+   UP

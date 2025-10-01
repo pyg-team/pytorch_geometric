@@ -1,0 +1,135 @@
+Title: IBM PJ38992: CHOICE LISTS CANNOT CONTAIN MORE THAN 1000 ENTRIES IF CONTENT ENGINE USES ORACLE DATABASE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the Content Engine (CE) uses an Oracle database, users cannot
+   delete more than 1,000 entries from at the same time.  If a user
+   attempts to delete more than 1,000 entries, they will get the
+   following error in the CE logs:
+   
+   "An error occurred accessing the database. ErrorCode:
+   1,795,Message: 'ORA-01795: maximum number of expressions in a
+   list is 1000"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * This issue affects users attempting to delete elements from  *
+   * a Choice List consisting of 1000+ elements.  The ChoiceList  *
+   * must have midnodes within it (multiple hierarchy levels).    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When user attempts to delete an element from a CVL           *
+   * containing 5000+ elements, error: ORA-01795 is thrown.       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 4.5.1.6-P8CE-ALL-TF011 or an appropriate FixPack. *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When recursively processing the deletion of MIDNODE choices, the
+   IN clauses must be capped at 1000 items.  This change breaks the
+   clauses down to chunks of 950 and is done that way on all
+   platforms (not just for Oracle) is fixed in test fix
+   4.5.1.6-P8CE-ALL-TF011.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ38992
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   451
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-13
+   
+   
+ * CLOSED DATE
+   2011-11-01
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PJ38993
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R451 PSY
+   UP

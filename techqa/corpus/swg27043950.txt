@@ -1,0 +1,46 @@
+Title: IBM Detailed hardware and software requirements for Sterling B2B Integrator V5.2.6 (or later) and Global Mailbox, and Sterling File Gateway V2.2.6 (or later) - United States
+
+Text:
+ DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ This document contains system requirements for Sterling B2B Integrator and Global Mailbox, and Sterling File Gateway for all available platforms. 
+
+CONTENT
+The detailed system requirements information is available through the Software Product Compatibility Reports [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity/index.jsp] (SPCR) web site. This web site provides you with the ability to dynamically generate operating system, prerequisite, server virtualization environment, translation, end of service, and detailed system requirements reports for your specific product, release, and operating system. For your convenience, they have been generated and the links provided here for the latest release of Sterling B2B Integrator V5.2.6 (includes Sterling File Gateway V2.2.6) and Global Mailbox.
+
+
+In addition to the system requirements reports, an additional document, System Requirements Supplement, is provided. This guide provides additional, detailed information on downloading JDKs, and other information that is not included in the detailed system requirements reports. You should use this supplemental document in conjunction with the reports to determine your system's operating requirements for running Sterling B2B Integrator and Sterling File Gateway.
+
+System Requirements Supplement (V5.2.6 or later) [http://www.ibm.com/support/knowledgecenter/SS3JSW_5.2.0/com.ibm.help.sys_rqmts_supplement.doc/supp_sys_rqmts_overview.html]
+
+Select a link below based on your operating system to see the corresponding detailed system requirements report.
+
+Note: SPCR defaults to showing you system requirements for the latest release (for example, V5.2.6.3). If you need to view a previous release (for example, V5.2.6.0 or V5.2.6.1), select that version from the drop-down list at the top of the SPCR report results page, under Available Reports.
+
+
+TAB NAVIGATION
+ * SB2Bi V5.2.6- selected tab,
+ * Global Mailbox- selected tab,
+
+
+Operating System  * AIX [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=38792B703C8911E6B85EC53D03B14E5E&osPlatforms=AIX&duComponentIds=D003|D002|S001|S005|S004|S006&mandatoryCapIds=30|125|9|13|25|184|26]
+ * HP [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=38792B703C8911E6B85EC53D03B14E5E&osPlatforms=HP&duComponentIds=D003|D002|S001|S005|S004|S006&mandatoryCapIds=30|125|9|13|25|184|26]
+ * IBM i [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=38792B703C8911E6B85EC53D03B14E5E&osPlatforms=IBM%20i&duComponentIds=D003|D002|S001|S005|S004|S006&mandatoryCapIds=30|125|9|13|25|184|26]
+ * Linux [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=38792B703C8911E6B85EC53D03B14E5E&osPlatforms=Linux&duComponentIds=D003|D002|S001|S005|S004|S006&mandatoryCapIds=30|125|9|13|25|184|26]
+ * Solaris [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=38792B703C8911E6B85EC53D03B14E5E&osPlatforms=Solaris&duComponentIds=D003|D002|S001|S005|S004|S006&mandatoryCapIds=30|125|9|13|25|184|26]
+ * Windows [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=38792B703C8911E6B85EC53D03B14E5E&osPlatforms=Windows&duComponentIds=D003|D002|S001|S005|S004|S006&mandatoryCapIds=30|125|9|13|25|184|26]
+
+
+
+Operating System  * Linux [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=3F8014F0EC0F11E38B73BF6573FF9933&osPlatforms=Linux&duComponentIds=S005|S004|S006&mandatoryCapIds=30|125|9|13|25|184|26]
+ * Windows [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=3F8014F0EC0F11E38B73BF6573FF9933&osPlatforms=Windows&duComponentIds=S005|S004|S006&mandatoryCapIds=30|125|9|13|25|184|26]
+ * AIX [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=38792B703C8911E6B85EC53D03B14E5E&osPlatforms=AIX&duComponentIds=D003|D002|S001|S005|S004|S006&mandatoryCapIds=30|125|9|13|25|184|26]
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling File Gateway

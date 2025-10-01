@@ -1,0 +1,63 @@
+Title: IBM Running OCR recognition on source files other than TIFF in IBM Datacap Taskmaster Capture - United States
+
+Text:
+OCR TIF PDF DOC DOCX XSL XSLX blank TECHNOTE (FAQ)
+
+QUESTION
+ OCR actions can be used only against valid TIFF images that have at least some recognizable information. So how can I process source files such as PDF, DOC, DOCX, XLS, XLSX, or blank pages when OCR is required? 
+
+ANSWER
+If there are source files, such as PDF, DOC, DOCS, XLS, or XLSX, or blank pages that will need recognition performed on them, they will first need to be converted to TIFFs before running any OCR library actions. Then, any of the three following options can be followed. Where PDF is referred to, it can apply to any type where recognition is to be avoided. 
+
+ * Remove the source PDF from the XML. That way the OCR rules will not reference the new PDF indicated in the XML. 
+ * If the PDF must eventually be reused, such as for export:  1. Copy, and then Delete the source PDF. That way there is no other PDF in the batch folder when the OCR actions process the files. 
+    2. Point to the original PDF during export, to avoid creating a new PDF.
+   
+   
+ * Where recognition is being performed at the document or page level, first set the PDF to a different page type which does not have a recognition rule attached to it.
+
+
+
+For the removal of the original PDF file from the XML, there is not a really simple way to do it (e.g. a single action), but there is a way to do it without any customization. Here are details on one method to implement the above. 
+
+At a high level, set the DCO status to 75 on the PDFs as part of the conversion, then check for pages with a 75 Status and assign them to a specific Page Type during PageID. Then in a different rule, call the DeleteChildType action and specify the Page Type specified earlier. 
+
+Basic steps are:  1. Create a new Page Type at the Batch level (e.g. the same level as the Other page). Name it something like ToDelete. 
+ 2. In the PageID rule where the function that does FindFingerPrint exists, add a new function that calls ChkDCOStatus("75") and SetPageType("ToDelete"). This should be the first function in the rule, followed by the fingerprinting function. 
+ 3. Create a new rule in the PageID ruleset and call the DeleteChildType("ToDelete") action. Assign the rule to the Close tag of the batch.
+
+
+This will not physically delete the files, but rather just remove them from the XML file so they are not processed. To actually delete the physical files, actions can be added from the FileIO action library to handle the actual deletion, as shown in the next step below. 
+[/support/docview.wss?uid=swg21663541&aid=1] [/support/docview.wss?uid=swg21663541&aid=1] 
+If desired, the source file/s can be deleted after which the TIFFs can be converted back to PDF at export time. 
+
+At a high level, if a copy of the source file needs to be kept before deleting it, a folder can be created, or its existence checked for with the IsDirectoryPresent action. Then copy the source file via the CopyFile action. After converting the source file to TIFF, run the DeleteFile action to get rid of the source file. Once this has been performed, the resulting TIFFs can be converted to a PDF file using the RecognizeDocToPDF action. 
+
+ 
+
+Basic steps are: 
+
+ 1. After VScan or Scanning has been performed, and the source file is physically residing in the batch, run IsDirectoryPresent action to check or create a folder to maintain a copy of the source file. Ideally,a custom smart parameter can be created in the Taskmaster Application Manager containing the needed path, so that it can be referenced in the IsDirectoryPresent action.
+    Example: IsDirectoryPresent(“@APPVAR\values\gen\PDFcopy+\+@BATCHID”,True,True)[/support/docview.wss?uid=swg21663541&amp;aid=2] 
+ 2. Run the CopyFile action to copy the source file to the created/available directory.
+    Example: CopyFile(“@VAR(IMAGEFILE)”,“@APPVAR\values\gen\PDFcopy+\+@BATCHID+\+@BATCHID+.pdf”,True)
+    In this example the current source file is indicated by @VAR(IMAGEFILE), which will look for the IMAGEFILE variable (eg. Tm000001.pdf) in the VSCAN.XML. The smart parameter is converted and the file is copied to C:\Datacap\PDF_A_Convert\PDFcopy, plus creating a folder with the current batch name (20140028.001) in that path, and naming the PDF file the same as the batch (20140028.001.pdf). So the complete path and file that are created are C:\Datacap\PDF_A_Convert\PDFcopy\20140028.001\20140028.001.pdf. 
+ 3. Convert the source PDF file to TIFF/s via the PDFDocumentToImage action. 
+ 4. Once the source PDF file is converted to TIFFs, the PDF can then be removed from the batch folder via DeleteFile(“@APPPATH(runtime)+\+@BATCHID+\+.pdf”). Here, with @APPPATH the batch folder path (C:\Datacap\PDF_A_Convert\batches) is combined with the current batch folder name (@BATCHID) to locate and remove all current PDFs in this folder, which consist of the original source file.
+
+
+The screenshot shows an example of an application that will make a copy and physically delete the source file prior to converting the TIFFs to PDF, so as to avoid recognition errors. 
+
+[/support/docview.wss?uid=swg21663541&aid=3] [/support/docview.wss?uid=swg21663541&aid=3] 
+
+ 
+
+The method used to do a direct export of the source PDF file is dependent on how everything is structured in the DCO up to the Export step. Here are some ways this might be accomplished.
+
+
+ * In the sample PDF_A_Convert application, there are no document and page types. Everything is lumped under Document and Other. Since the Rule executes against all pages, the rrCompare action at the beginning filters the pages so that only PDF pages are exported.
+
+
+[/support/docview.wss?uid=swg21663541&aid=4] [/support/docview.wss?uid=swg21663541&aid=4] 
+ * The screenshot above is taken from a modified TravelDocs application, which has a more typical document structure. In this type of application, there would be a PageID ruleset, which classifies the original PDF as a different page type than what the subsequent TIFFs are. In this example, Rental Agreements are exported because the export rule is tied to that page type. For the customer's application, the rule would be tied to the PDF page type and to no other pages, so the PDF would export and not the underlying TIFFs. There would be no need for the rrCompare for this method or a need to convert the TIFFs back to a new PDF. 
+ * Another method, not shown here, works for situations where the original PDF image, though existing in the batch, does not exist in the DCO as an actual page. This solution works on the fact that the FNP8_Upload gets the filename to upload from the IMAGEFILE property. Changing that property to point to the PDF will cause the PDF to be uploaded instead.

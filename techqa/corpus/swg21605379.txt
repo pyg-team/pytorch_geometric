@@ -1,0 +1,32 @@
+Title: IBM License Requirements for Rational Integration Tester, Rational Performance Test Server and Rational Test Virtualization Server - United States
+
+Text:
+RIT; Rational Integration Tester; Rational Performance Test Server; Rational Test Virtualization Server; License TECHNOTE (FAQ)
+
+QUESTION
+ What licenses are required to work with IBM Rational Integration Tester, IBM Rational Performance Test Server and IBM Rational Test Virtualization Server? 
+
+CAUSE
+You would like to know what licenses you need to procure in order to work with Rational Test Workbench.
+
+ANSWER
+Rational Integration Tester (RIT), formerly known as Green Hat Tester, is a legacy Green Hat product .
+
+
+Note: The licenses used by Green Hat Tester no longer work with Rational Integration Tester. 
+
+ 
+
+Rational Integration Tester does not have a separate license as it is a component of the Rational Test Workbench (RTW). 
+
+ 
+
+The Rational Test Workbench licenses include the following features: 
+
+ * IBM Rational Integration Tester v8.0 Activation Kit 
+ * IBM Rational Performance Tester RTW PVU Support v8.0 Activation Kit 
+ * IBM Rational Test Workbench Floating License Key
+   
+
+
+Rational Performance Test Server, Rational Test Virtualization Server are Processor Value Unit (PVU) based and do not need license feature.

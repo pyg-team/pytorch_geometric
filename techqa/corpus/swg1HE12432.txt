@@ -1,0 +1,134 @@
+Title: IBM HE12432: UNEXPECTED ERROR IS THROWN IN ATLAS WHEN YOU CLICK EDIT WHILE METRICS TAB IS SELECTED IN THE MATTER DASHBOARD - United States
+
+Text:
+  A FIX IS AVAILABLE
+Download IBM Atlas Policy Suite Version 6.0.3 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24041515]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An error  with the message "ICWPA1001E An unexpected error
+   occurred" is thrown in Atlas when you click edit while
+   metrics tab is selected in the Matter Dashboard
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the exceptions and scheduled events tabs to edit the matter
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When a user opens a matter and clicks on the Metrics tab and
+   then clicks on the Edit link (to edit the matter), they recieve
+   the error below.
+   
+   ICWPA1001E An unexpected error occurred.
+   An unexpected error occurred.
+   Contact your system administrator.
+   
+   This only happens when you are clicking on the Edit link from
+   the Metrics tab. Does not happen from the other 2 tabs at the
+   Dashboard.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix is available now from FixCentral in 6.0.3.3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12432
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   603
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-11-18
+   
+   
+ * CLOSED DATE
+   2016-01-05
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R603 PSY
+   UP

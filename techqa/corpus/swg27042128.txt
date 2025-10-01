@@ -1,0 +1,86 @@
+Title: IBM Content Foundation V5.2.1 publication library - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This page provides links to the documentation that supports IBM Content Foundation and related ECM products. 
+
+CONTENT
+ 
+
+LINKS TO IBM CONTENT FOUNDATION PUBLICATION LIBRARY
+ *  Version 5.2 [http://www.ibm.com/support/docview.wss?uid=swg27038301] - selected tab, 
+ * 
+ *  Version 5.2.1 [http://www.ibm.com/support/docview.wss?uid=swg27042128] - selected tab, 
+ *  Version 5.5.0 [http://www.ibm.com/support/docview.wss?uid=swg27050532] - selected tab, 
+
+ANCHOR LINKS
+ * What's new?
+ * 
+ * Getting started
+ * Product documentation
+ * 
+ * Developer samples
+ * Related libraries
+ * Community
+
+
+
+
+
+WHAT'S NEW?
+Learn about new features and changes that were introduced in the current release of IBM Content Foundation. 
+
+Document Format What's new in IBM Content Foundation V5.2.1? [http://www.ibm.com/support/knowledgecenter/SSGLW6_5.2.1/com.ibm.p8.relnotes.doc/wn_icf.htm] HTML Back to top
+
+
+GETTING STARTED
+Learn how to download and install the product and get an overview of important product concepts.
+
+Document Format IBM Content Foundation V5.2.1 download document [http://www.ibm.com/support/docview.wss?uid=swg24037470] HTML Single-server installation of IBM Content Foundation V5.2.1 [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg24038305] HTML System requirements [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg27038265] HTML FileNet P8 Fix Pack Compatibility Matrices [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg27014734] HTML Back to top
+
+
+
+
+
+
+
+PRODUCT DOCUMENTATION
+Access the documentation that is delivered with the product in multiple formats and languages.
+
+
+IBM KNOWLEDGE CENTER
+All of the product documentation is included in IBM Knowledge Center, where you can easily search across all documentation. The documentation will display in your language (if it has been translated into that language) based on your browser locale setting. IBM Knowledge Center is updated more often than the PDF documentation.
+
+Document Format IBM Content Foundation documentation [http://www.ibm.com/support/knowledgecenter/SSGLW6_5.2.1/] HTML Back to top
+
+
+PDF DOCUMENTATION 
+PDFs are available in the IBM Publications Center. If you encounter a link error, search for the document in the Publication Center. Click Search for publications, and enter the 10-digit document number in the Publication number field.
+
+ENGLISH
+Plan and Prepare Your Environment for IBM Content Foundation, V5.2.1 (GC19-4082-04) [http://publibfi.dhe.ibm.com/epubs/pdf/c1940824.pdf] 3/2016 IBM Content Foundation Installation Guide, V5.2.1 (GC19-4083-04) [http://publibfi.dhe.ibm.com/epubs/pdf/c1940834.pdf] 3/2016 IBM Content Foundation Security Guide, V5.2.1 (GC19-4084-04) [http://publibfi.dhe.ibm.com/epubs/pdf/c1940844.pdf] 3/2016 BRAZILIAN PORTUGUESE
+Plan and Prepare Your Environment for IBM Content Foundation, V5.2.1 (G517-1471-04) [http://publibfi.dhe.ibm.com/epubs/pdf/51714714.pdf] 3/2016 IBM Content Foundation Installation Guide, V5.2.1 (G517-1470-04) [http://publibfi.dhe.ibm.com/epubs/pdf/51714704.pdf] 3/2016 CHINESE SIMPLIFIED
+Plan and Prepare Your Environment for IBM Content Foundation, V5.2.1 (G151-2028-04) [http://publibfi.dhe.ibm.com/epubs/pdf/15120284.pdf] 3/2016 IBM Content Foundation Installation Guide, V5.2.1 (G151-2027-04) [http://publibfi.dhe.ibm.com/epubs/pdf/15120274.pdf] 3/2016 FRENCH
+Plan and Prepare Your Environment for IBM Content Foundation, V5.2.1 (GC11-7375-04) [http://publibfi.dhe.ibm.com/epubs/pdf/c1173754.pdf] 3/2016 IBM Content Foundation Installation Guide, V5.2.1 (GC11-7374-04) [http://publibfi.dhe.ibm.com/epubs/pdf/c1173744.pdf] 3/2016 GERMAN
+Plan and Prepare Your Environment for IBM Content Foundation, V5.2.1 (GC12-4925-04) [http://publibfi.dhe.ibm.com/epubs/pdf/c1249254.pdf] 3/2016 IBM Content Foundation Installation Guide, V5.2.1 (GC12-4924-04) [http://publibfi.dhe.ibm.com/epubs/pdf/c1249244.pdf] 3/2016 SPANISH
+Plan and Prepare Your Environment for IBM Content Foundation, V5.2.1 (GC11-8409-04) [http://publibfi.dhe.ibm.com/epubs/pdf/c1184094.pdf] 3/2016 IBM Content Foundation Installation Guide, V5.2.1 (GC11-8408-04) [http://publibfi.dhe.ibm.com/epubs/pdf/c1184084.pdf] 3/2016 Back to top
+
+
+DEVELOPER SAMPLES
+Access the available developer code samples that work with IBM Content Foundation.
+
+Document Format FileNet Content Engine Java API Bulk Loader Sample Code [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg24028787] HTML FileNet Content Engine Java API Demo Sample Code [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg24028788] HTML FileNet Content Engine Java API Folder Browser Sample Code [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg24028789] HTML FileNet Content Engine .NET API Bulk Loader Sample Code [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg24028790] HTML FileNet Content Engine .NET API Demo Sample Code [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg24028791] HTML FileNet Content Engine .NET API Folder Browser Sample Code [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg24028792] HTML FileNet P8 DITA Publishing Sample Code [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg24028795] HTML FileNet Content Engine Web Service – C-sharp Sample Code [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg24028793] HTML FileNet Content Engine Web Service – IBM RAD v.7.5.x Java Sample Code [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg24033279] HTML FileNet P8 Process Engine: Developer Files [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg24029066] HTML FileNet Process Engine Web Service C-sharp Sample Code (supports .NET 4.0, Visual Studio 2010, and WSE 3.0) [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg24028682] HTML Back to top
+
+
+RELATED LIBRARIES
+Access the documentation for products that work with IBM Content Foundation.
+
+Document Format IBM Content Navigator [http://www.ibm.com/support/docview.wss?uid=swg27041953] HTML IBM CMIS for FileNet Content Manager [http://www.ibm.com/support/docview.wss?uid=swg27020097] HTML IBM Case Foundation: Case Analyzer [http://www.ibm.com/support/docview.wss?rs=3350&uid=swg27010372] HTML IBM FileNet Collaboration Services (GC19-3991-00) [http://www.ibm.com/e-business/linkweb/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=GC19-3991-00] PDF Back to top
+
+
+COMMUNITY
+Share your experiences, expertise, and feedback with other product users and IBM.
+
+Document Format IBM Enterprise Content Management Application Center [https://www.ibm.com/developerworks/groups/ecmappcenter] HTML IBM Enterprise Content Management on LinkedIn [http://www.linkedin.com/groups/IBM-Enterprise-Content-Management-1754167] HTML IBM ECM Support on Twitter [http://twitter.com/ibmecmsupport] HTML IBM ECM on Facebook [http://www.facebook.com/ecm.ibm] HTML Back to top

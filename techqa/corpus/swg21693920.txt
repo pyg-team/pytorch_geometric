@@ -1,0 +1,42 @@
+Title: IBM Network Protection (XGS) firmware update fails to install - United States
+
+Text:
+firmware; update; xgs; failed; LMI; operator TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to install a firmware update, the update will fail with errors. 
+
+SYMPTOM
+The sensor will display error messages like the following in the LMI: 
+
+An attempt by the LMI operator, admin, to install firmware update version 5.3.0.5 has failed.
+
+The LUM logs for the sensor displays errors like the following:
+
+UpdateMgr.cpp:4936:<UpdateMgr, UpdateProcessorTrace> OpenPackage: Specified file = '/var/spool/updates/ISNP_5.3.0.5_20150326-1135.pkg'
+UpdateMgr.cpp:4936:<UpdateMgr, UpdateProcessorTrace> OpenPackage: Specified work directory = '/var/spool/updates/XPU4P7VKx'
+UpdateMgr.cpp:4936:<UpdateMgr, UpdateProcessorTrace> ensure_work_directory: Work directory exists. Dir = '/var/spool/updates/XPU4P7VKx'
+UpdateMgr.cpp:4936:<UpdateMgr, UpdateProcessorTrace> CheckPkgFormat: New format update package = '/var/spool/updates/ISNP_5.3.0.5_20150326-1135.pkg'
+UpdateMgr.cpp:4936:<UpdateMgr, UpdateProcessorTrace> OpenPackage: Mounting package.
+2015/04/21 15:50:01.854 T:140394629166848 [ERROR]UpdateMgr.cpp:4924:OpenPackage: Error mounting update package.
+UpdateMgr.cpp:4936:<UpdateMgr, UpdateProcessorTrace> OpenPackage: Leaving method. Ret = The parameter is invalid. [ID=0xc7210003]
+UpdateMgr.cpp:1449:<UpdateMgr, discover_local_updates> Unable to open the update package (/var/spool/updates/ISNP_5.3.0.5_20150326-1135.pkg). Message: 'The parameter is invalid. [ID=0xc7210003]'
+
+
+CAUSE
+The LUM (License and Update Module) service erroneously attempts to install a previously uploaded XPU update as if it were the firmware update. This situation has only been observed to occur in an environment where all device updates are manually uploaded to the appliance using the LMI (Local Management Interface), and both a new XPU update and new Firmware update exist on the device simultaneously.
+
+
+RESOLVING THE PROBLEM
+The interim fixpack, 5.X-ISS-XGS-All-Models-Hotfix-IF0001.fixpack, can be used to resolve this device state. Installing this fixpack file will remove all manually uploaded packages from the device file system. This interim fix is only needed if you have experienced firmware upgrade failure because you have previously manually uploaded firmware and pam xpu update files to the appliance. This interim fix can be used for all versions of firmware 5.x. 
+
+Once this fixpack has been installed/executed, you can reupload the update package to the XGS IPS appliance and install the update normally. 
+
+Note: This fix is not publically available, so you need to contact IBM Security Support [http://www.ibm.com/support/customercare/sas/f/handbook/contacts.html] in order to obtain this fixpack.
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21693920&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21693920&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21693920&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21693920&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21693920&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21693920&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21693920&aid=7] [http://ibm.biz/ContactSecSupport]

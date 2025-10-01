@@ -1,0 +1,105 @@
+Title: IBM Creating a new currency on a staging server and running staging prop leads to FK violation on storeent, curformat, curlist, curconvert. - United States
+
+Text:
+stagingprop new currency TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to create a new currency on the staging server without creating certain tables on the production server and running stagingprop using WebSphere Commerce v7 will result in FK violations in the stagingprop log, such as:
+
+FK violation on storeent: 
+
+<DIAGNOSTIC> | STGRFNBR| storeent_id
+
+DB2 SQL Error: SQLCODE=-530, SQLSTATE=23503, SQLERRMC=DB2INST1.STOREENT.F_789, DRIVER=4.15.100 | 22267880| 10153
+
+FK violation on curformat:
+
+<DIAGNOSTIC> | STGRFNBR| storeent_id| numbrusg_id| setccurr
+
+DB2 SQL Error: SQLCODE=-530, SQLSTATE=23503, SQLERRMC=DB2INST1.CURFORMAT.F_294, DRIVER=4.15.100 | 22267467| -1| -1|MXN
+
+DB2 SQL Error: SQLCODE=-530, SQLSTATE=23503, SQLERRMC=DB2INST1.CURFORMAT.F_294, DRIVER=4.15.100 | 22267468| -1| -4|MXN
+
+DB2 SQL Error: SQLCODE=-530, SQLSTATE=23503, SQLERRMC=DB2INST1.CURFORMAT.F_294, DRIVER=4.15.100 | 22267469| -1| -5|MXN
+
+FK violation on curlist:
+
+<DIAGNOSTIC> | STGRFNBR| storeent_id|currstr
+
+DB2 SQL Error: SQLCODE=-530, SQLSTATE=23503, SQLERRMC=DB2INST1.CURLIST.F_295, DRIVER=4.15.100 | 22267878| 10153|MXN
+
+FK violation on curconvert:
+
+<DIAGNOSTIC> | STGRFNBR| curconvert_id
+
+DB2 SQL Error: SQLCODE=-530, SQLSTATE=23503, SQLERRMC=DB2INST1.CURCONVERT.F_284, DRIVER=4.15.100 
+| 22267471| -12
+
+
+
+and cause the stagingprop to fail. 
+
+SYMPTOM
+In stagingprop log, you will see FK violations, in addition to the following:
+
+20150412-070831| <Error> The SQL batch update failed.
+<SQLException> [jcc][t4][102][10040][4.15.100] Batch failure. The batch was submitted, but at least one exception occurred on an individual member of the batch.
+Use getNextException() to retrieve the exceptions for specific batched elements. ERRORCODE=-4229, SQLSTATE=null
+SQLState: null
+Vendor Error Code: -4229
+Chained SQLException #1: Error for batch element #1: DB2 SQL Error: SQLCODE=-530, SQLSTATE=23503, SQLERRMC=DB2INST1.STOREENT.F_789, DRIVER=4.15.100
+Stack trace:
+com.ibm.db2.jcc.am.BatchUpdateException: [jcc][t4][102][10040][4.15.100] Batch failure. The batch was submitted, but at least one exception occurred on an individual member of the batch.
+Use getNextException() to retrieve the exceptions for specific batched elements. ERRORCODE=-4229, SQLSTATE=null
+at com.ibm.db2.jcc.am.fd.a(fd.java:424)
+at com.ibm.db2.jcc.am.Agent.endBatchedReadChain(Agent.java:401)
+at com.ibm.db2.jcc.am.ro.a(ro.java:5195)
+at com.ibm.db2.jcc.am.ro.c(ro.java:4782)
+at com.ibm.db2.jcc.am.ro.executeBatch(ro.java:3007)
+at com.ibm.commerce.staging.StagingProp.executeUpdate(StagingProp.java:3259)
+at com.ibm.commerce.staging.StagingProp.rePropagateNonCyclicRows(StagingProp.java:4527)
+at com.ibm.commerce.staging.StagingProp.postPropagationErrorHandling(StagingProp.java:4843)
+at com.ibm.commerce.staging.StagingProp.propagateRows(StagingProp.java:2766)
+at com.ibm.commerce.staging.StagingProp.transactRows(StagingProp.java:2012)
+at com.ibm.commerce.staging.StagingProp.propagateFromStaglog(StagingProp.java:1715)
+at com.ibm.commerce.staging.StagingProp.propagate(StagingProp.java:1821)
+at com.ibm.commerce.staging.StagingProp.execute(StagingProp.java:816)
+at com.ibm.commerce.staging.StagingProp.main(StagingProp.java:746)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:48)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+at java.lang.reflect.Method.invoke(Method.java:600)
+at com.ibm.ws.bootstrap.WSLauncher.main(WSLauncher.java:267)
+20150412-070831| <warning> Operation: U; Execution failed on proceeding records:
+<RESULT>| STGRFNBR| storeent_id
+-3| 22267510| 10153
+20150412-070831| <Error> The command will not retry due to the nature of the error.
+20150412-070831| <Error> The command failed to complete the propagation job.
+
+
+CAUSE
+Not all currency tables are staging enabled. 
+Enabled: curformat, curfmtdesc, curconvert is staging enabled.
+
+Not-enabled: setcurr, setcurrdsc.
+
+However, setcurr is a parent table to storeent, and when the record being referred to in the storeent is picked up by stagingprop to be propagated and it can't find that value in setcurr on production environment, it fails.
+
+ENVIRONMENT
+Confirmed on FP7 FEP6
+
+DIAGNOSING THE PROBLEM
+New currency was recently added on staging environment, but not on production environment.
+
+RESOLVING THE PROBLEM
+Enable currency on staging environment:
+
+
+
+
+
+http://www-01.ibm.com/support/knowledgecenter/SSZLC2_7.0.0/com.ibm.commerce.developer.doc/tasks/tgbaddnewcurwc.htm [http://www-01.ibm.com/support/knowledgecenter/SSZLC2_7.0.0/com.ibm.commerce.developer.doc/tasks/tgbaddnewcurwc.htm] 
+
+Then repeat steps 1 and 2 above on your production environment. 
+
+Finally, run stagingprop (this will automatically propagate the database information you entered in step 3 to 5 to your production server).

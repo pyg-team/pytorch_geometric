@@ -1,0 +1,23 @@
+Title: IBM Kenxa Assess on Cloud: User Roles - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Below is the list of the user roles, and each of their functions. 
+
+CONTENT
+Super User - This role has the basic functions to administer assessments but also the higher level functions such as creating batches, managing users and branding, and configuring trial tests.
+
+
+General User - This user can essentially administer tests and view results. 
+
+Results Only User - This role only has access to view results. 
+
+Branding Only User - This role only has access to edit branding. 
+
+User Management Role User - This role only has access to manage users. 
+
+Reset Sessions Only User - This role can only Reset Sessions. It is intended to be paired with another role so a client can limit who has access to reset sessions. Must be used as an add on role. 
+
+Create Sessions Only User - This role can create sessions but cannot view results or perform any higher level tasks.

@@ -1,0 +1,22 @@
+Title: IBM Using a DLL built with IBM Rational Rhapsody - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I use a DLL built with IBM Rational Rhapsody? 
+
+ANSWER
+If you wish to call a DLL built with Rational Rhapsody from a program external to Rhapsody, then you will need to make sure that you initialize the Rhapsody framework in order to successfully start and run a statechart in the DLL. 
+
+To do this: 
+
+ 1. Make sure that you have copied the framework dll (MSoxfdll.dll) from Rhapsody (Share\LangCpp\Lib) to your EXE project directory. 
+ 2. Then you will need to execute OXF::start(); 
+
+
+One way to do this would be to just copy the contents of main() from the Rhapsody generated main file to your current project main file. 
+
+
+HISTORICAL NUMBER
+ 10530

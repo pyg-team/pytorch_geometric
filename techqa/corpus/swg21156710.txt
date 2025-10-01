@@ -1,0 +1,44 @@
+Title: IBM Host On-Demand considerations when upgrading OS/400 - United States
+
+Text:
+iSeries installation tips; iSeries upgrade help; OS/400; IBM i5; Host On-Demand; 1156710 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Tips to ensure minimal impact to your IBM Host On-Demand Server when upgrading OS/400 or migrating to an IBM i5 server. 
+
+RESOLVING THE PROBLEM
+If your Host On-Demand Server is installed on i5/OS, and you plan on upgrading OS/400 or migrating to a server running a more current level of OS/400, here are a few tips to ensure minimal impact to your Host On-Demand Server. 
+Host On-Demand prerequisites
+On the new iSeries server or newly upgraded OS/400, be sure to verify the Host On-Demand Licensed Program Product prerequisites are applied. Reference the Planning, Installing, and Configuring Host On-Demand guide for details. See section titled "iSeries platform" listed under section "Requirements, then Server requirements".
+
+Java Group PTFs
+In each case, remember to apply the Java Group PTFs applicable to the newer OS/400 Version Release. If upgrading OS/400, this should be done after completing the operating system upgrade. If you are unsure of the PTF identifier for the newer release, visit the iSeries Support Preventative Service Planning - PSP Web site for JAVA PTF GROUP listings: 
+
+http://www-912.ibm.com/s_dir/sline003.nsf/GroupPTFs?OpenView&view=GroupPTFs [http://www-912.ibm.com/s_dir/sline003.nsf/GroupPTFs?OpenView&view=GroupPTFs]
+
+Current lists are: 
+
+SF99562: 610 JAVA PTF GROUP
+SF99291: 540 JAVA PTF GROUP
+SF99269: 530 JAVA PTF GROUP
+
+
+JDK additions
+Review the installed licensed program product OPTIONS for "IBM Developer Kit for Java". This information can be displayed via the "Display Software Resources" iSeries server command (DSPSFWRSC) or via the "Work with Licensed Programs" menu (GO LICPGM). The "Product Option" column provides information on installed optional parts for that licensed program. If a newer JDK is now installed, the Host On-Demand Server uses it by default. If this is not desired, modify the "Java Options" parameter in the Service Manager configuration to point to the JDK level of choice. You can complete the following from the Host On-Demand Main Menu (GO HOD):
+
+
+ 1. Select option 3: End Host On-Demand Service Manager (ENDHODSVM) 
+ 2. Next, select option 1: Configure HOD Service Manager (CHGHODSVM) 
+ 3. Page down to the "Java Options" parameter and add the desired JDK value to the PROP parameter: (java.version ''n.n''). Where n.n = 1.1.8, 1.2, 1.3 etc. Note: The '' is not a double quote mark, but rather two single quotes. The Java options field should now be similar to the following: 
+    
+    Java options . . . . . . . . . . > 'OPTIMIZE(10) PROP((java.version ''n.n'') (os400.verify.checks.disable 3)) OPTION(*VERBOSE)'
+    
+ 4. Select option 2: Start the Host On-Demand Service Manager (STRHODSVM)
+    
+    
+    
+
+ 
+
+HISTORICAL NUMBER
+ 91810

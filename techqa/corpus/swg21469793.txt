@@ -1,0 +1,107 @@
+Title: IBM WebSphere Commerce fails to start when JMS web service fails to connect to MQ - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you have customized WebSphere Commerce to include JMS web services (component services), WebSphere Commerce fails to start if MQ is not running or unresponsive. 
+
+SYMPTOM
+When MQ is down, WebSphere Commerce fails to start.
+
+
+CAUSE
+When the JMS web service becomes part of WebSphere Commerce, the WebSphere Commerce EAR will load the module and the module will try to connect to MQ. If MQ is not running, the module will fail. The failure of loading the module will cause failure in loading the whole WebSphere Commerce EAR.
+
+DIAGNOSING THE PROBLEM
+When starting WebSphere Commerce, you observe the following error:
+
+
+[2/17/11 18:24:55:100 EST] 00000013 ActivationSpe E J2CA0138E: The Message Endpoint activation failed for ActivationSpec MemberServicesAS (com.ibm.mq.connector.inbound.ActivationSpecImpl) and MDB application WC_dummy#MemberServicesJMSInterface.jar#WebServicesJMSRouter due to the following exception: javax.resource.spi.ResourceAdapterInternalException: com.ibm.msg.client.jms.DetailedIllegalStateException: JMSWMQ0018: Failed to connect to queue manager 'DUMMYQ01' with connection mode 'Client' and host name 'DUMMY(1415)'. Check the queue manager is started and if running in client mode, check there is a listener running. Please see the linked exception for more information. 
+
+ at com.ibm.mq.connector.ResourceAdapterConnectionPool. 
+
+createNewPoolEntryNoWrapper 
+
+(ResourceAdapterConnectionPool.java:593) 
+
+ at com.ibm.mq.connector.ResourceAdapterConnectionPool.allocateConnection 
+
+(ResourceAdapterConnectionPool.java:330) 
+
+ at com.ibm.mq.connector.ResourceAdapterImpl.endpointActivation 
+
+(ResourceAdapterImpl.java:453) 
+
+ at com.ibm.ejs.j2c.ActivationSpecWrapperImpl.activateUnderRAClassLoaderContext 
+
+(ActivationSpecWrapperImpl.java:631) 
+
+ at com.ibm.ejs.j2c.ActivationSpecWrapperImpl.activateEndpoint 
+
+(ActivationSpecWrapperImpl.java:338) 
+
+ at com.ibm.ejs.j2c.RAWrapperImpl.activateEndpoint 
+
+(RAWrapperImpl.java:1084) 
+
+ at com.ibm.ejs.j2c.RALifeCycleManagerImpl.activateEndpoint 
+
+(RALifeCycleManagerImpl.java:1717) 
+
+ at com.ibm.ejs.container.MessageEndpointFactoryImpl.activateEndpoint 
+
+(MessageEndpointFactoryImpl.java:280) 
+
+ at com.ibm.ws.runtime.component.EJBContainerImpl.startModule 
+
+(EJBContainerImpl.java:2860) 
+
+ at com.ibm.ws.runtime.component.EJBContainerImpl.start 
+
+(EJBContainerImpl.java:3826) 
+
+ ... 
+
+ at com.ibm.mq.jmqi.remote.internal.RemoteFAP.jmqiConnect 
+
+(RemoteFAP.java:1599) 
+
+ ... 32 more 
+
+Caused by: java.net.ConnectException: Connection refused: connect 
+
+ at java.net.PlainSocketImpl.socketConnect(Native Method) 
+
+ at java.net.PlainSocketImpl.doConnect(PlainSocketImpl.java:352) 
+
+ at java.net.PlainSocketImpl.connectToAddress(PlainSocketImpl.java:214) 
+
+ at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:201) 
+
+ at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:378) 
+
+ at java.net.Socket.connect(Socket.java:528) 
+
+ at java.net.Socket.connect(Socket.java:477) 
+
+ at com.ibm.mq.jmqi.remote.internal.RemoteTCPConnection$5.run 
+
+(RemoteTCPConnection.java:650) 
+
+ at java.security.AccessController.doPrivileged 
+
+(AccessController.java:202) 
+
+ at com.ibm.mq.jmqi.remote.internal.RemoteTCPConnection.connnectUsingLocalAddress 
+
+(RemoteTCPConnection.java:643) 
+
+ ... 36 more
+
+
+RESOLVING THE PROBLEM
+Installing WebSphere Application Server fix IZ76343 [http://www-304.ibm.com/support/docview.wss?uid=swg1IZ76343] allows JMS web service project continue to load when MQ is not available, thus allowing WebSphere Commerce to load successfully. It also has reconnect mechanism so that the JMS web service module will connect to MQ at a later time.
+
+RELATED INFORMATION
+ APAR IZ76343 [http://www.ibm.com/support/docview.wss?uid=swg1IZ76343]

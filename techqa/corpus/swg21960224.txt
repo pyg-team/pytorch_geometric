@@ -1,0 +1,71 @@
+Title: IBM Single Sign-On (SSO) support with IBM Rational Asset Manager on WebSphere Application Server - United States
+
+Text:
+RAM; RTC; CLM; sso; saml; tai; secure auth; interceptor; WAS; websphere; rfe; enhancement; security TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Rational Asset Manager (RAM) 7.5.2.2 CCM connection "interceptor" error encountered with WebSphere Application Server (WAS) v8.5.5 and LTPA TAI SSO configured 
+
+
+SYMPTOM
+When trying to access RAM :https://{some host}.com:9443/ram/admin/repository/configuration.faces
+, the following error message was observed:. 
+
+The IBM Rational Team Concert server is down.
+CRJAZ0098I The
+"com.ibm.team.repository.common.internal.IRepositoryRemoteService{/ramc
+cm/service/com.ibm.team.repository.common.internal.IRepositoryRemoteSer
+vice}"
+service failed. The server returned the HTTP error 302 with error text
+"Found".
+
+
+CAUSE
+RAM 7.5.2.2 (and earlier) does not support SSO with Interceptor (e.g. trust association interceptor(TAI).) and SecureAuth is not supported. There is also no support for SAML. Also, Rational Team Concert ( RTC) does not support Interceptors.
+
+
+RESOLVING THE PROBLEM
+
+Rational Asset Manager (RAM) does not contain any implementation for Single sign-on (SSO). Authentication depends on WebSphere Application Server (WAS). If WAS authenticates a user, RAM also believes that the user is authenticated. Therefore, any SSO Support needs to come from WAS and not RAM. RAM has not tested SAML, other TAI based, and other SSO scenarios that are supported by WAS. 
+
+ 
+
+RAM supports basic SSO described in the RAM 7.5.2 Knowledge center (KC) topic below:
+- Setting up single sign-on with LTPA between two servers [http://www-01.ibm.com/support/knowledgecenter/SSUS84_7.5.2/com.ibm.ram.web.doc/topics/t_single_sign_on.html?lang=en]
+
+The following word document has additional WAS server setup information for a single Rational Asset Manager (RAM) WAS server with the internal and external RTC server scenarios. It is provided "as is". It shows RAM with the internal RTC server has basic SSO by default, and provides more detail on the above RAM 7.5.2 KC topic in the context of a separate external RTC server used with a RAM server that are in the same domain. As always, these steps are best performed in a test environment, before considering this option in production.
+
+<<SSO with RAM 7.5.2.x and RTC 4.0.1-4.0.7.doc>> 
+
+SSO with RAM 7.5.2.x and RTC 4.0.1-4.0.7.doc [/support/docview.wss?uid=swg21960224&aid=2]SSO with RAM 7.5.2.x and RTC 4.0.1-4.0.7.doc [/support/docview.wss?uid=swg21960224&aid=1] 
+
+IBM WAS Support should be engaged for assistance in configuring Security. 
+
+ 
+
+For your information and not a commitment, there is an IBM internal future RAM 7.5.2.5+ enhancement under consideration 
+
+ 
+
+You will need the proper jazz.net ID to view the Work Item below.
+
+- Support for SAML with WAS instead of directly calling LDAP
+https://jazz.net/jazz02/web/projects/Rational%20Asset%20Manager#action=com.ibm.team.workitem.viewWorkItem&id=139014 [https://jazz.net/jazz02/web/projects/Rational%20Asset%20Manager#action=com.ibm.team.workitem.viewWorkItem&id=139014]
+
+
+Starting in the Rational solution for RTC/CLM v6.0.1, Jazz Authorization Server supports SAML web browser SSO in the Liberty profile, as documented in this CLM KC topic:
+- Managing users on Jazz Authorization Server
+-- Enabling SAML as an identity provider
+https://jazz.net/help-dev/clm/index.jsp?re=1&topic=/com.ibm.jazz.install.doc/topics/t_jsasso_jas_user_mgmt.html&scope=null [https://jazz.net/help-dev/clm/index.jsp?re=1&topic=/com.ibm.jazz.install.doc/topics/t_jsasso_jas_user_mgmt.html&scope=null]
+
+
+This demonstrates that any enhancement for RAM is also dependant on the RTC version that is supported and its supported features.
+
+
+RAM users are encouraged to submit a product Request For Enhancent (RFE) for any SSO or other enhancement (even if it is the same as the above RAM enhancement that is under consideration).This can be done at the 
+- IBM RFE Community
+"http://www.ibm.com/developerworks/rfe/ [http://www.ibm.com/developerworks/rfe/]"
+If you select Rational, it will take you to:
+http://www.ibm.com/developerworks/rfe/?BRAND_ID=1 [http://www.ibm.com/developerworks/rfe/?BRAND_ID=1] 
+
+This would provide useful client feedback and help with prioritizing what features are needed.

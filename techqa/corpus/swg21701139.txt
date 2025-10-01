@@ -1,0 +1,83 @@
+Title: IBM QRadar: Outpost24 VA Scanner integration - United States
+
+Text:
+Outpost Outpost24 Java Cryptography Extension Unlimited Strength Jurisdiction Policy Vulnerability FIX README
+
+ABSTRACT
+ Integrating the Outpost24 VA scanner when it is configured to use the internally created CA certificate and server certificate involves a few extra steps.
+
+
+
+
+
+
+CONTENT
+Outpost24 will create two certificates:
+
+
+ *  A CA certificate thus: dn=C=SE, ST=Some-State, O=Outpost24 AB, CN=HIAB A server SSL certificate thus: dn=C=SE, ST= , O=Outpost24 AB, CN=HIAB
+   
+   These certificates need to be in the proper directories and might require additional software as the HIAB certificates are generated at 2048-bytes. 
+   
+   
+
+Troubleshooting 1: Server certificate not recognized If you see the error in the /var/log/qradar.error log:
+
+
+
+[Failed] Runtime error: Error getting URL stream from API :: java.security.cert.CertificateException: Server certificate not recognized
+
+
+
+Resolution 1
+When this message occurs, you will need to get the PEM export of the CA certificate from the Outpost24 itself. The easiest way do to this is to connect to the scanner and then download the certificate to a PEM file. This certificate should be copied to the /opt/qradar/conf/trusted_certificates directory on the Managed Host that is connecting to Outpost24.
+
+
+ 
+
+Troubleshooting 2: Public Key of more than 2048 bits
+If you then see this error in the /var/log/qradar.error log: 
+
+
+[Failed] Runtime error: Error getting URL stream from API :: RSA premaster secret error :: NOTE - If using a certificate with an RSA Public Key of more than 2048 bits (such as the default Outpost 24 certificate) please ensure the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files have been installed - please refer to product documentation for details.
+
+
+
+Resolution 2
+Then the documentation referred to is the section entitled "Installing the unrestricted Java Cryptography Extension" which can be found in the QRadar Vulnerability Assessment Configuration Guide.
+
+For QRadar 7.2.4 this means placing the two downloaded files, local.policy.jar and US_export_policy.jar into the /opt/ibm/java-x86_64-70/jre/lib/security directory (ensuring you save the previous versions). These files must reside on the QRadar appliance that is managing and connecting to the Outpost24 scanner. If you are unsure, the files can be copied to both the Console appliance and all managed hosts. That way in the future, any other connections that require encryption greater thant 512 bytes will have the required files. 
+
+For a forum discussion on this topic, see: https://www.ibm.com/developerworks/community/forums/html/topic?id=b5ef876b-2636-4e79-8fa2-55fd35558cc3 [https://www.ibm.com/developerworks/community/forums/html/topic?id=b5ef876b-2636-4e79-8fa2-55fd35558cc3].
+
+
+What to do next
+After you resolve the JCE issue with the policy files, you need to restart services on the proper QRadar appliance.
+
+
+ * 
+ * Procedure
+ *  Using SSH, log in to the QRadar Console. Optional. If a managed host is connecting to the Output24 scanner, open an SSH session to the managed host. To restart services, type: /opt/qradar/init/vis restart vis0 
+   
+   Note: The service vis0 is the Console's vis service. Managed hosts will have a vis service named vis1, vis2, etc. for each appliance. After services restart, you can schedule a scan for the Outpost24 scanner to verify scan results are imported. 
+
+ 
+
+ 
+
+ 
+
+ 
+
+------
+Where do you find more information? 
+
+
+
+
+[/support/docview.wss?uid=swg21701139&aid=1] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21701139&aid=2] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21701139&aid=3] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21701139&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21701139&aid=5] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21701139&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21701139&aid=7] [http://ibm.biz/SuptRegQuikStart] 
+
+
+RELATED INFORMATION
+ Forum discussion: Outpot24 certificates and configurati [https://www.ibm.com/developerworks/community/forums/html/topic?id=b5ef876b-2636-4e79-8fa2-55fd35558cc3]
+Vulnerability Assessment Configuration Guide (PDF) [ftp://ftp.software.ibm.com/software/security/products/qradar/documents/iTeam_addendum/b_vuln.pdf]

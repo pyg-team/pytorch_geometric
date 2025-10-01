@@ -1,0 +1,24 @@
+Title: IBM Managing Server Capacity Sizing - United States
+
+Text:
+managing server; capacity sizing; tuning; performance; CAMADMSALL CAMADMSPERF TECHNOTE (FAQ)
+
+QUESTION
+ Are there additional recommendations about the correct sizing of a Managing Server installation? 
+
+ANSWER
+If you have more than 200 Datacollectors connected to the same Managing Server, you may need to consider the following important things: 
+
+1) Each MS component uses its own JVM, which consumes not only RAM but also CPU. 
+
+2) On a 32-bit Operating System you cannot increase the Max Heap Size to higher values (e.g. 2 GB), otherwise you will get out of native heap errors and related JVM crashes. 
+
+Based on above points, especially in Production Environments, you should use the following as an initial MS sizing estimate:
+
+- One physical CPU core per MS component instance (for PS, AA, Kernel)
+- One physical CPU core for VE
+- 1+ GB of physical memory per MS component instance (for PS, AA, Kernel)
+- 1+ GB of physical memory for VE
+- A dedicated database server for OCTIGATE db
+
+Also, if you expect to have 10 or more concurrent users of VE (to access ITCAM monitoring or debug data, or generating PAR reports), additional CPU and memory should be allocated for VE. You could install VE on a dedicated machine to achieve this.

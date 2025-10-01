@@ -1,0 +1,152 @@
+Title: IBM PM95794: RQM Test case view in test suite execution console bug - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Quality Manager 4.0.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24036451]
+Rational Quality Manager 4.0.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24036959]
+Rational Quality Manager 4.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24037764]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  APAR Based on existing Jazz defect WI
+   https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manage
+   r#action=com.ibm.team.workitem.viewWorkItem&id=93727 [https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manager#action=com.ibm.team.workitem.viewWorkItem&id=93727]
+   
+   
+   When a Test Suite Execution Console contains many Test Cases,
+   the RQM User Interface (UI) can behave erratically. This is seen
+   when the Test Suite Execution Console display is set up to show
+   more Test Cases than will fit in the user?s browser window.
+   
+   This is one way to reproduce:
+   1. Create many testcases (500) and associate them to a test
+   suite
+   2. Execute the test suite in paralel
+   3. In the Test Suite Execution Console you'll have a Table
+   showing the test cases. Set it to 75 items per page.
+   4. You will have pages 1 - 7. And page 1 will be shown. Click on
+   any other page (e.g. page 2).
+   5. Every 10 seconds the view will be refreshed. Click on any
+   other page (e.g page 5) before a refresh is complete.
+     The easiest way to know if a refresh is not complete yet is by
+   using FireBug's Net tab.
+      You will see a new GET pagedSearchResult request, followed by
+   2 other requests (GET executionResultGroupStatusDTO, POST
+   _compactRendering).
+      Wait until you see a pagedSearchResult kicks off and before
+   it finishes click on the other page
+   
+   Expected
+     View shows page 5
+   
+   Actual
+     View shows page 1.
+   Sometimes it jumps between page 1 and latest page (Page 2)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Unexpected behavior when navigating test cases in a Test Suite
+   Execution Console.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 4.0.5.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM95794
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL QUALITY MG
+   
+   
+ * REPORTED COMPONENT ID
+   5724V1000
+   
+   
+ * REPORTED RELEASE
+   402
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-26
+   
+   
+ * CLOSED DATE
+   2013-12-10
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL QUALITY MG
+   
+   
+ * FIXED COMPONENT ID
+   5724V1000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R405 PSY
+   UP

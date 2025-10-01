@@ -1,0 +1,78 @@
+Title: IBM Improve Performance of Decision Center and Rule Team Server (RTS) - United States
+
+Text:
+performance; RTS; JRules; Rule Team Server; WODM; improvement; Decision Center TECHNOTE (FAQ)
+
+QUESTION
+ How can I improve the performance of Operational Decision Management (ODM) Decision Center and WebSphere ILOG Rule Team Server (RTS)? 
+
+ANSWER
+ 
+
+This document addresses how to improve the performance when working with ODM Decision Center or Rule Team Server (RTS) . For the purposes of this document, we will use RTS to refer to both entities, unless explicitly stated otherwise.
+
+You can incorporate the following recommendations, if applicable to your environment: 
+
+Installation  * Separate your installations of Rule Execution Server (RES) and RTS. A high RES execution load will negatively impact RTS performance. Check if you been seeing heavier than normal RES execution loads during the period of poor RTS performance. 
+ * If possible, migrate to v7.1.1.4 [http://www.ibm.com/support/docview.wss?uid=swg21591798] or later [http://www.ibm.com/support/docview.wss?uid=swg21589725], since certain performance improvements, especially for ruleset extraction and editing, have been incorporated. This would require all the other components (such as RES, Rule Studio, Decision Server, Rule Designer, Decision Validation Services) to be migrated to the same version. (If you face compile errors in RTS after migrating, refer to this technote [http://www.ibm.com/support/docview.wss?uid=swg21586358].) 
+ * Dedicate enough processing resources (CPUs) to RTS. Deploy RTS to a cluster [http://www.ibm.com/support/docview.wss?uid=swg21400812] on your application server, to improve performance and scalability. 
+ * Make sure you provide adequate heap size to RTS. It is normal to set a maximum heap size of 1024MB (using the JVM argument -Xmx). For large projects this value can be higher. Also make sure you have set the initial heap size to a reasonable amount (such as 512MB), using the JVM argument -Xms. 
+ * Estimate the database capacity [http://www.ibm.com/support/docview.wss?uid=swg21430461] that should be allocated to RTS. 
+ * Make sure that the link between the application server and the database has low latency (check ping round trip times between servers), sufficient bandwidth, and that the datasource is set up for effective connection pooling. See Decision Center performance and Tomcat datasource [http://www.ibm.com/support/docview.wss?uid=swg21623876] for an illustration of how the datasource configuration can negatively affect performance.
+
+
+Startup and Indexing  * In ODM, by default the Business Console Solr Indexing happens at every start of the application server. The JVM hosting the Business Console may require an increase in maximum heap memory depending on the number of rule artifacts to be indexed per baseline. It is possible to avoid indexing to happen at every start of the application server by specifying a search.SolrEmbeddedDataDir value as per the documentation:http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/topic/com.ibm.odm.distrib.config.was/shared_config_topics/con_dcbc_solr_parameters.html [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/topic/com.ibm.odm.distrib.config.was/shared_config_topics/con_dcbc_solr_parameters.html]
+
+
+
+Logging In  * Reduce the delay when logging into RTS [http://www.ibm.com/support/docview.wss?uid=swg21450448] for the first time after the application server has been restarted.
+
+
+Browsing  * If using v7.1.x or later, improve the responsiveness while browsing artifacts [http://www.ibm.com/support/docview.wss?uid=swg21585248]. 
+ * When browsing rules in v7.1.1.0 and prior, eliminate long pauses [http://www.ibm.com/support/docview.wss?uid=swg21439425] that may occur after a period of inactivity.
+
+
+Editing  * If you have a large project, we recommend you break the project down into multiple projects which are dependent on one another. This will reduce the size of the project currently being edited, and hence reduce the amount of resources required. 
+ * Reduce the size of the Business Object Model (BOM) by removing members, classes and verbalizations that are not used. You can also split the BOM into multiple smaller BOMs, and use categories. 
+ * Reduce the size of large Decision Tables by splitting them into multiple smaller tables. There is no hard set limit and only experience with a specific application and setup can show what is a practical maximum, but it is typically recommended to have no more than a few hundred rows per Decision Table (i.e 300-400). 
+ * Turn off Symmetry, Overlap and Gap checking for Decision Tables. Navigate to the decision table and edit it. In the view "Step 2: Table", click on the icon with a magnifying glass above the decision table, with the tooltip "Edit table properties". In the Table Properties editor, uncheck the Symmetry, Overlap and Gap checks. Note that these checks will no longer be enforced while editing decision tables. 
+ * Edit Decision Tables using the Edit all table [http://pic.dhe.ibm.com/infocenter/dmanager/v7r5/index.jsp?topic=%2Fcom.ibm.dcenter.bu.rules%2FContent%2FBusiness_Rules%2F_pubskel%2FInfocenter_Primary%2Fps_DCBU_DCenter_Rules2524.html] mode, In this mode there is no round trip to the server to validate input (as is normally the case with the default Decision Table editor) until the changes are committed using the submit button. 
+ * Disable Rule analysis checks by unchecking Project > Edit Project options > Enable rule analysis.
+
+
+Synchronization  * Improve the performance during synchronization [http://www.ibm.com/support/docview.wss?uid=swg21425548] with Rule Studio or Rule Designer. 
+ * Improve the performance of publishing and updating RuleDocs [http://www.ibm.com/support/docview.wss?uid=swg21623688].
+
+
+Managing Baselines  * Improve the response time of Manage Baselines [http://www.ibm.com/support/docview.wss?uid=swg21501448].
+
+
+Ruleset Extraction  * Improve the time taken to extract rulesets [http://www.ibm.com/support/docview.wss?uid=swg21590218] and generate RuleApp archives.
+
+
+Decision Validation Services (DVS) tests  * Improve the response time of DVS tests [http://www.ibm.com/support/docview.wss?uid=swg21588859] conducted from RTS.
+
+
+Database Maintenance  * The RTS database can become burdened with old records. Archive the RTS database (v7.1 and earlier [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=%2Fcom.ibm.websphere.ilog.jrules.doc%2FContent%2FBusiness_Rules%2FDocumentation%2F_pubskel%2FJRules%2Fps_JRules_Global1623.html], and ODM [http://publib.boulder.ibm.com/infocenter/dmanager/v7r5/index.jsp?topic=%2Fcom.ibm.dcenter.customizing%2FContent%2FBusiness_Rules%2F_pubskel%2FInfocenter_Primary%2Fps_DC_Customizing3220.html]), to avoid performance problems.
+
+
+In addition, refer to the following documents:  * Improving Rule Team Server performance [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=%2Fcom.ibm.websphere.ilog.jrules.doc%2FContent%2FBusiness_Rules%2FDocumentation%2F_pubskel%2FJRules%2Fps_JRules_Global205.html]. 
+ * Improving the performance of Decision Center [http://publib.boulder.ibm.com/infocenter/dmanager/v7r5/index.jsp?topic=%2Fcom.ibm.dcenter.overview%2FContent%2FBusiness_Rules%2F_pubskel%2FInfocenter_Primary%2Fps_DC_Overview2884.html]. 
+ * Enhancing the performance of Rule Team Server in the redpaper Proven Practices for Enhancing Performance: A Q&A for IBM WebSphere ILOG BRMS 7.1 [http://www.redbooks.ibm.com/redpapers/pdfs/redp4775.pdf]. 
+ * Memory and Performance issues while using Rule Team Server [http://www.ibm.com/support/docview.wss?uid=swg21430582]
+
+
+If the above recommendations do not help, contact IBM support with the following information:  * Environment details including the application server, JDK, database and operating system. 
+ * RTS server logs, including FFDC logs if working with WebSphere Application Server. 
+ * The typical behavior of RTS users: Are they mostly viewing or editing? Is there a lot of ruleset generation going on simultaneously while editing? 
+ * The typical load on RTS, including the number of simultaneous users and number of rulesets being generated 
+
+RELATED INFORMATION
+ Improve Performance of Rules Execution [http://www.ibm.com/support/docview.wss?uid=swg21589513]
+Improve Performance of Rule Studio and Rule Designer [http://www.ibm.com/support/docview.wss?uid=swg21589514]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere ILOG Rule Team Server Performance Platform Independent 7.1, 7.0, 6.7, 6.6

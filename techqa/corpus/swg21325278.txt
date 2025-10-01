@@ -1,0 +1,73 @@
+Title: IBM How can I start a Synergy session from within a batch file on a Windows client? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I start a Synergy session from within a batch file on a Windows client? 
+
+ANSWER
+
+
+To start a session from a batch file, you need to be sure that CCM_HOME is set correctly and that %CCM_HOME%\bin is in your path. Also, you may want to start in nogui and quiet mode and set CCM_ADDR to point to your session. In the example below, you must set the correct value for CCM_HOME and insert the username of the user who is trying to start the session. The batch file below takes the database path and the password of this user as parameters. >  @echo off 
+
+REM 
+REM This batch file requires two parameters: UNC path to the database 
+REM and the password for the user 
+REM e.g. <batch> < \\server\directory\database [file://\\server\directory\database] > <password> 
+REM 
+REM Verify parameters 
+REM  if "x%2"=="x" goto ErrorUsage 
+if not "x%3"=="x" goto ErrorUsage 
+
+ REM 
+REM Set and verify ccm_home 
+
+set CCM_HOME=<path to CM installation here> 
+set PATH=%CCM_HOME%\bin;%PATH% 
+if "x%CCM_HOME%"=="x" goto ErrorBadEnv 
+if not exist "%CCM_HOME%" goto ErrorBadEnv 
+
+REM 
+REM Verify CM database path 
+REM 
+set CurrentLibPath=%1\lib 
+set database=%1 
+set passwd=%2 
+
+ :OK 
+echo Starting Synergy database '%1'... 
+
+ :StartSession 
+
+ set CCM_ADDR= 
+
+FOR /F "delims==" %%i IN ('%CCM_HOME%\bin\ccm start -d %database% -pw %passwd% -q -nogui -r ccm_admin -n <insert username here> -m') DO set CCM_ADDR=%%i 
+if not defined CCM_ADDR echo "Cannot start session on database %database%" 
+if not defined CCM_ADDR goto done 
+
+REM run your commands, e.g. 
+ccm query -t project 
+REM stop your session 
+ccm stop 
+REM 
+REM We're done 
+echo Synergy session on database '%1' has been stopped 
+goto done 
+
+ :ErrorUsage 
+echo Usage: %0 UNC-dbpath password 
+goto done 
+
+ :ErrorBadEnv 
+echo ERROR: You must set the environment variable 'CCM_HOME' to a valid CM runarea. 
+goto done 
+
+ :done 
+REM complete 
+
+
+5.0, 5.1, 5.1cs, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5NACM00701AnswerProduct versionPartner ContentInternal ContentCategoryReference IDAuthor 
+
+HISTORICAL NUMBER
+ KB5919

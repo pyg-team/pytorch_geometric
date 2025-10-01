@@ -1,0 +1,56 @@
+Title: IBM "Standard Error 5... (0x800A005B) Object Variable or With block variable not set" when running AdHoc report for more than one period, logged on as restricted user - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User clicks "Reports - Ad Hoc". User makes selections, including more than one period. User tries to run report, but receives an error message.
+NOTE:
+* Report works OK for Administrative user but not a restricted user
+* Report works for restricted user when only one period used in report. 
+
+SYMPTOM
+Information 
+
+Standard Error
+Number: 5
+Source: FrangoDirect.ReportAdHocD.AdHocCRN#ControllerProxyClient....
+Description: System.......
+....COMException (0x800A005B): Object variable or With block variable not set
+at FrReportB.ReportAdHocClass.....
+<....>
+[OK] 
+
+ 
+[/support/docview.wss?uid=swg21585320&aid=1] [/support/docview.wss?uid=swg21585320&aid=1]
+
+CAUSE
+Code production issue (defect #COGCQ00648854) in Controller.
+
+
+
+RESOLVING THE PROBLEM
+Fix: 
+
+Upgrade to a later version of Controller, which contains a fix for this defect. 
+
+ * TIP: To be notified when this version is released, subscribe to APAR PM54638
+
+
+Workaround: 
+
+Modify the file "...\server\excluded_methods.conf" on the application server, to add the line: FrReportB.ReportAdHoc.AdHoc 
+
+ 
+
+Steps 
+
+ 1. Logon to the Controller application server as a Windows administrator 
+ 2. Navigate to the "...\c10\server" folder. TIP: By default, this is located here: C:\Program Files (x86)\IBM\cognos\c10\server 
+ 3. Open the file "excluded_methods.conf" inside NOTEPAD.EXE 
+ 4. Add the line "FrReportB.ReportAdHoc.AdHoc" 
+ 5. Save and close.
+
+[/support/docview.wss?uid=swg21585320&aid=2] [/support/docview.wss?uid=swg21585320&aid=2] 
+RELATED INFORMATION
+#APAR PM54638 - AD HOC REPORT AN ERROR MESSAGE APPEARS T [http://www-01.ibm.com/support/docview.wss?uid=swg1PM54638]

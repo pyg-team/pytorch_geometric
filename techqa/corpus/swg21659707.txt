@@ -1,0 +1,19 @@
+Title: IBM APARs opened against IBM Tivoli Monitoring (ITM) V63 FP2 - United States
+
+Text:
+itm623 v623 problems iv50910 iv50167 iv51394 iv51064 itm630 itm63 fp2 FLASH (ALERT)
+
+ABSTRACT
+ The following APAR'S are known issues with IBM Tivoli Monitoring (ITM) V630 FP2: 
+
+CONTENT
+ 
+
+Problem Fixed in APAR Opening the Tivoli Enterprise Portal (TEP) Workflow editor shows not situations. IV50910 Msg Slot customization may crash TEMS or cause missing data in the forwarded event after upgrade to ITM V63 FP2. IV50167 TEP Java Webstart (JWS) client does not start with Java 7 U45 IV51394 Missing situations for process attribute trigger false alert. IV51064 Situations with UNTIL 'SIT' clause will not open. IV52123 
+
+Failed to validate expired certificate affecting all TEP browser TEP webstart [http://www.ibm.com/support/docview.wss?uid=swg21269613] 
+
+ * Interim Fix: IBM Tivoli Monitoring: Linux(R) OS Agent 6.3.0.2-TIV-ITM_LINUX-IF0001 
+
+
+http://www.ibm.com/support/docview.wss?uid=swg24036423 [http://www-01.ibm.com/support/docview.wss?uid=swg24036423]

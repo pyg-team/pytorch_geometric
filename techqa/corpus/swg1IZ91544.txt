@@ -1,0 +1,173 @@
+Title: IBM IZ91544: MESSAGE DATA CORRUPTION OCCURS WHEN SENDING RFH2 MESSAGES FROM MQ V7.0 TO V6.0 QUEUE MANAGERS. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24029055]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24029788]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When sending RFH2 messages from WebSphere MQ v7.0 to v6.0
+   queue managers the data may become corrupt if the any of the
+   NameValueLength fields, that describe the length of the RFH2
+   folders, are not a multiple of 4.
+   
+   The symptoms of the problem are that one or more of the head
+   characters of the message data, and/or the NameValueLength
+   field of one or more RFH2 folders contains spurious space
+   characters.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users who send RFH2 messages from a WebSphere MQ v7.0 queue
+   manager to a v6.0 queue manager which happen to contain one or
+   more folders with a length which is not a multiple of 4 bytes.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The documentation for WebSphere MQ v6.0 specifically required
+   applications to ensure that the length of folders, described
+   by the NameValueLength field, were a multiple of 4 bytes.
+   
+   This requirement was relaxed as WebSphere MQ v7.0 tries to pad
+   out folders so that they end up being a length which is a
+   multiple of 4 when being transferred to a back-level queue
+   manager. A coding error caused the padding operation to
+   potentially overwrite folder and message data.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was changed so that the operation to pad the folders
+   to a multiple of 4 bytes will not overwrite any following
+   bytes with spaces.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.5
+   --------           --------------------
+   Windows            U200324
+   AIX                U839183
+   HP-UX (PA-RISC)    U839621
+   HP-UX (Itanium)    U839626
+   Solaris (SPARC)    U839622
+   Solaris (x86-64)   U839628
+   iSeries            tbc_p700_0_1_5
+   Linux (x86)        U839623
+   Linux (x86-64)     U839627
+   Linux (zSeries)    U839624
+   Linux (Power)      U839625
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ91544
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7221
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-01-04
+   
+   
+ * CLOSED DATE
+   2011-03-09
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7221
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

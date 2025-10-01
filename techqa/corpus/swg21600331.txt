@@ -1,0 +1,43 @@
+Title: IBM How to change the feature level of a VOB family with "one-way synchronization" - United States
+
+Text:
+chflevel; -master; feature level; vob; vob family; replica; RATLC01348557 TECHNOTE (FAQ)
+
+QUESTION
+ How do you change the feature level of an IBM Rational ClearCase VOB family with "one-way synchronization" configured with MultiSite? 
+
+CAUSE
+Generally on IBM Rational ClearCase MultiSite, each VOB replica should be self-mastering to allow control of feature-level settings. 
+This creates a problem however when some replicas are restricted from sending update packets, such as with inter-organizational VOB sharing.
+
+This technote advises how the situation should be handled.
+
+
+ANSWER
+When a replica is restricted from sending update packets, it should NOT be self-mastering. 
+
+This particular type of VOB should be mastered by a replica that can send updates to the whole VOB family. 
+
+When a site is upgraded and ready to raise the VOB replica feature-level, the cleartool chflevel command MUST be run at the replica which has mastership of the replica being modified. 
+
+Since the command attempts to verify the software level of the replica server it generally expects to be run AT the site being modified. 
+Note: This restriction can be avoided by adding the -master switch with the chflevel command:
+
+
+-master 
+Allow "chflevel -replica" to succeed when specifying a replica that is not the local replica, but is mastered by the local replica.
+
+Example:
+
+At the local site (original), which has mastership over the remote replica, do:
+
+original > cleartool chflevel -replica 6 original@/vobs/test_vob
+original > cleartool chflevel -replica 6 -master test@/vobs/test_vob
+original > cleartool chflevel -family 6 vob:/vobs/test_vob
+original > multitool syncreplica -export -fship test@/vobs/test_vob
+
+Then, at the remote site (test) which cannot send update packets, do:
+
+test > multitool syncreplica -import -receive
+
+After this run cleartool describe of the VOB and its replicas at any site should show the feature level has been raised to 6.

@@ -1,0 +1,113 @@
+Title: IBM IC98230: USER-CERT RBM AUTHENTICATION METHOD INCORRECTLY ESCAPES NON-ASCII CHARACTERS IN CERTIFICATE DN - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fix packs for DataPower Gateway version 7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038524]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using RBM authentication method 'user cert' and the
+   certificate DN contains non-ASCII characters, those characters
+   will be returned incorrectly as escaped characters.
+   
+   As an example when the output is UTF-8, the two-byte
+   character LATIN SMALL LETTER E WITH ACUTE (&#65410;) will
+   incorrectly appear as eight one-byte characters:
+   \xC3\xA9
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The user was observing an issue when logging into the webgui via
+    user cert. When logging in if their certificate contained
+   special characters, these would be escaped out in the dn which
+   is passed to LDAP. This was due to an issue in the RBM mapping
+   credentials process.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC98230
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-10
+   
+   
+ * CLOSED DATE
+   2014-02-17
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

@@ -1,0 +1,111 @@
+Title: IBM 【セキュリティ情報】”WebSphere Message Broker v8 HVE”  “IBM Integration Bus V9 HVE”のBashの脆弱性  (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, CVE-2014-6278) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ "Bash Bug" もしくは "Shellshock"と呼ばれるBashの脆弱性と２つのメモリー破壊の脆弱性がBash に存在します。WebSphere Message Broker Hypervisor Edition V8 または、IBM Integration Bus Hypervisor Edition V9 を使用されている場合、対応が必要です。
+
+
+VULNERABILITY DETAILS
+WebSphere Message Broker Hypervisor Edition V8 もしくは、IBM Integration Bus Hypervisor Edition V9を使用されている場合、 "Bash Bug" もしくは "Shellshock"と呼ばれるBashの脆弱性と２つのメモリー破壊の脆弱性に対する対応が必要です。
+CVE-ID: CVE-2014-6271 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6271]
+内容：GNU bash の環境変数の処理に脆弱性があります。外部からの入力が、GNUbash の環境変数に設定される環境において、遠隔の第三者によって任意のコードが実行される可能性があります。
+
+CVSS Base Score: 10.0
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/96153 [https://exchange.xforce.ibmcloud.com/vulnerabilities/96153] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:C/I:C/A:C)
+
+CVE-ID: CVE-2014-7169 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7169]
+内容：GNU bash の環境変数の処理に脆弱性があります。外部からの入力が、GNUbash の環境変数に設定される環境において、遠隔の攻撃者によって任意のコードが実行される可能性があります。
+この脆弱性は、CVE-2014-6271 に対する修正が不十分だったことに起因します。
+
+CVSS Base Score: 10.0
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/96209 [https://exchange.xforce.ibmcloud.com/vulnerabilities/96209] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:C/I:C/A:C)
+
+CVE-ID: CVE-2014-7186 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7186]
+内容：GNU bash の redir_stackのハンドリング中に、攻撃者がサービス妨害(配列の領域へのアクセス)を引き起こし、システム上で任意のコードを実行される可能性があります。
+システム上で任意のコードを実行などサービス妨害を引き起こすために、攻撃者はこの脆弱性を利用することができます。
+
+CVSS Base Score: 4.6
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/96237 [https://exchange.xforce.ibmcloud.com/vulnerabilities/96237] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:L/Au:N/C:P/I:P/A:P)
+
+CVE-ID: CVE-2014-7187 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7187]
+内容：GNU bash の redir_stackのハンドリング中に、攻撃者がサービス妨害(一つずれエラー (Off-by-One error))を引き起こし、システム上で任意のコードを実行される可能性があります。
+システム上で任意のコードを実行などサービス妨害を引き起こすために、攻撃者はこの脆弱性を利用することができます。
+
+CVSS Base Score: 4.6
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/96238 [https://exchange.xforce.ibmcloud.com/vulnerabilities/96238] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:L/Au:N/C:P/I:P/A:P)
+
+CVE-ID: CVE-2014-6277 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6277]
+内容：GNU Bashは遠隔の攻撃者によりシステム上で任意のコードを実行される脆弱性があります。
+環境変数の値をパースすることに関連した不完全な修正に起因します。
+攻撃者は、システム上で任意のコードを実行するか、サービス妨害を引き起こすためにApache HTTP ServerでForceCommand機能をOpenSSH sshd、mod_cgiとmod_cgidモジュールに関係する攻撃ベクトルを用いたこの脆弱性を利用することができます。
+
+CVSS Base Score: 10.0
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/96686 [https://exchange.xforce.ibmcloud.com/vulnerabilities/96686] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:C/I:C/A:C)
+
+CVE-ID: CVE-2014-6278 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6278]
+内容：GNU Bashは遠隔の攻撃者によりシステム上で任意のコードを実行される脆弱性があります。
+システム上で任意のコードを実行するか、サービス妨害を引き起こすために、攻撃者はこの脆弱性を利用することができす。
+この脆弱性は、CVE-2014-6271、CVE-2014-7169、および CVE-2014-6277 に対する修正が不十分だったことに起因します。
+
+CVSS Base Score: 10.0
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/96687 [https://exchange.xforce.ibmcloud.com/vulnerabilities/96687] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:C/I:C/A:C)
+
+AFFECTED PRODUCTS AND VERSIONS
+次の製品、バージョンを使用されている場合、対応が必要です。 
+
+ * WebSphere Message Broker Hypervisor Edition V8 
+ * IBM Integration Bus Hypervisor Edition V9 
+
+REMEDIATION/FIXES
+ OSに組み込まれているBashのリリースを確認いただき、Bashの脆弱性に対する修正を入手し、導入してください。 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+[IBMサイト] 
+この文書は、米国 IBM 社の資料を翻訳した参考文書です。翻訳元の文書は、以下のリンクよりご参照ください。 
+Security Bulletin: Vulnerabilities in Bash affect ”WebSphere Message Broker v8 HVE” and “IBM Integration Bus V9 HVE” (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, CVE-2014-6278) [http://www.ibm.com/support/docview.wss?uid=swg21685673] 
+
+公開済みのフィックスパックについては、以下のサイトよりご利用いただけます。 
+Recommended fixes for IBM Integration Bus and WebSphere Message Broker [http://www-01.ibm.com/support/docview.wss?uid=swg27006041] 
+
+フィックス・パックの公開予定については、以下のサイトよりご確認いただけます。 
+IBM Integration Bus and WebSphere Message Broker planned maintenance release dates [http://www-01.ibm.com/support/docview.wss?uid=swg27006308] 
+
+[CVSS情報] 
+独立行政法人 情報処理推進機構: 共通脆弱性評価システムCVSS概説 [http://www.ipa.go.jp/security/vuln/CVSS.html] 
+JVN iPedia: CVSS計算ソフトウェア日本語版 [http://jvndb.jvn.jp/cvss/ja.html] 
+
+Subscribe to Security Bulletins [http://www.ibm.com/support/mynotifications/] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+【お問合せ先】 
+技術的な内容に関して、サービス契約のあるお客様はIBMサービス・ラインにお問い合わせください。 
+IBM サービス・ライン [http://www.ibm.com/jp/news/20070420001.html] 
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+関連情報
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21685673]

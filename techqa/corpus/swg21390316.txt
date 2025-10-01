@@ -1,0 +1,35 @@
+Title: IBM Setup for using the Oracle OCI driver with database connections - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In some cases, you might have to perform some setup before you can connect to an Oracle database by using the Oracle OCI Default driver. 
+
+SYMPTOM
+You might see the following error: java.lang.UnsatisfiedLinkError: ocijdbc10 (Library is already loaded in another ClassLoader).
+
+
+CAUSE
+The PATH environment variable and jar list are not set up correctly.
+
+RESOLVING THE PROBLEM
+Ensure that the PATH environment variable is set as indicated below. Set the JAR list as indicated when you create the connection to the Oracle database. 
+
+Oracle 11 - Oracle 11 OCI Driver Default: 
+
+ * PATH contains$ORACLE_HOME\bin 
+ * Jar list contains$ORACLE_HOME\jdbc\lib\ojdbc6.jar or $ORACLE_HOME\jdbc\lib\ojdbc5.jar
+
+
+Oracle 10 - Oracle 10 OCI Driver Default:  * PATH contains$ORACLE_HOME 
+ * Jar list contains$ORACLE_HOME\classes12.jar or $ORACLE_HOME\ojdbc14.jar
+
+
+Be sure to remove other JAR list entries that point to other versions or copies of the JAR files. Stop and restart the product after you change the PATH environment variable. RELATED INFORMATION
+# 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Data Architect General Information Linux, Windows 7.5.2

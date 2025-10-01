@@ -1,0 +1,202 @@
+Title: IBM IT21751: DB2 EDU MIGHT TRAP IN SQMFASTWRITER::INITFASTWRITER() DURING THETAKEOVER IN HADR ENVIRONMENT AFTER SQLO_NOMEM_DBH ERROR - United States
+
+Text:
+z/os SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In HADR environments with DBHEAP constrained at fairly low
+   level,
+   DB2 fast writer EDUs (required for event monitor infrastructure)
+   might fail to initialize properly during the takeover. As the
+   result following messages will be logged to db2diag.log:
+   
+   2016-07-14-15.12.34.936413+120 E230488573E619        LEVEL:
+   Error
+   PID     : 6210                 TID : 140684346517248 PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000            DB   :
+   SAMPLE
+   HOSTNAME: hostname
+   EDUID   : 100                  EDUNAME: db2hadrs.0.0 (SAMPLE) 0
+   FUNCTION: DB2 UDB, database monitor,
+   sqmFastWriterQueueMgr::initFastWriterQueueMgr, probe:20
+   MESSAGE : ZRC=0x8B0F0002=-1961951230=SQLO_NOMEM_DBH
+             "No memory available in 'Database Heap'"
+             DIA8302C No memory available in the database heap.
+   DATA #1 : String, 42 bytes
+   Error occured initializing fast writer mgr
+   
+   2016-07-14-15.12.34.936726+120 I230489193E548        LEVEL:
+   Severe
+   PID     : 6210                 TID : 140684346517248 PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000            DB   :
+   SAMPLE
+   HOSTNAME: hostname
+   EDUID   : 100                  EDUNAME: db2hadrs.0.0 (SAMPLE) 0
+   FUNCTION: DB2 UDB, database monitor,
+   sqmFastWriterManager::initFastWriterManager, probe:20
+   MESSAGE : ZRC=0x8B0F0002=-1961951230=SQLO_NOMEM_DBH
+             "No memory available in 'Database Heap'"
+             DIA8302C No memory available in the database heap.
+   
+   and one of the fast writer EDUs might trap with SEGV:
+   
+   2016-07-14-15.12.39.058618+120 I230500996E613        LEVEL:
+   Error
+   PID     : 6210                 TID : 140684287796992 PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000            DB   :
+   ICMPLSDB
+   APPHDL  : 0-25                 APPID:
+   10.237.113.40.42823.160714131238
+   AUTHID  : ICMCONCT             HOSTNAME: ulxxpcmls2
+   EDUID   : 103                  EDUNAME: db2agent (ICMPLSDB) 0
+   FUNCTION: DB2 UDB, base sys utilities, sqleagnt_sigsegvh,
+   probe:1
+   MESSAGE : Error in agent servicing application with coor_node:
+   DATA #1 : Hexdump, 2 bytes
+   0x00007FF39CC0F6B2 : 0000
+   
+   with following functions on the top of the stack:
+   
+   sqmFastWriter::initFastWriter
+   sqmFastWriterManager::startupWriters
+   sqeLocalDatabase::StartBackgroundAgents
+   sqeApplication::InitEngineComponents
+   sqeApplication::AppStartUsing
+   sqeApplication::AppLocalStart
+   sqlelostWrp
+   
+   
+   The trap will be sustained, that is, will not bring down DB2
+   engine, but to recover one will have to follow the steps from
+   "Recovering from sustained traps" Knowledge Center chapter. Most
+   importantly, after such a trap regular TAKEOVER will fail
+   because PRIMARY will not be able to force off trapped EDU, so
+   TAKEOVER BY FORCE must be used.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use higher value or AUTOMATIC setting for DBHEAP:
+   $ db2 update db cfg for <db_name> using DBHEAP AUTOMATIC
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to Db2 11.1 Mod 2 Fix Pack 2 or higher               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in Db2 11.1 Mod 2 Fix Pack 2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT21751
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   B10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-03
+   
+   
+ * CLOSED DATE
+   2017-10-24
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IT16512 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT16512]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB10 PSN
+   UP

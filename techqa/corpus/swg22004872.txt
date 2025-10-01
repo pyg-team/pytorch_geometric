@@ -1,0 +1,129 @@
+Title: IBM Case Manager(ICM) ConfigCMOS Task fails - United States
+
+Text:
+ICM configCMOS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading IBM Case Manager (ICM) to 5.3 and then running the configCMOS 
+
+task for any Object Store, it can fail with the following error: see symptom. 
+
+SYMPTOM
+The required case management folders could not be created for the object 
+
+store." + "Parameter name is either null or has an invalid value.
+
+
+CAUSE
+A document from the Connection Definition class can cause this if the document is missing a value.
+
+
+ENVIRONMENT
+ENV: Case Manager 5.3
+OS: Linux
+
+
+
+DIAGNOSING THE PROBLEM
+Go to the Connections Definitions folder inside inside of FileNet Content Engine Administrative 
+
+Console for Content Engine (ACCE) , to see if any of the documents inside this folder are missing a 
+
+ value, such as the 'Document Name' value. 
+
+In order to find these documents, please follow these steps; 
+
+
+1. Open ACCE, click on Object Store. 
+
+
+2. Go To Browse Folder. 
+
+
+3. Root Folder. 
+
+
+4. IBM Case Manager Folder. 
+
+
+5. Audit Configuration. 
+
+
+6. Connection Definitions. 
+
+
+7. Click on Contents Tab.
+
+
+RESOLVING THE PROBLEM
+You can either delete or change the class of the Document from Connection Definition to just a 
+
+standard Document Class. 
+
+
+Here are the steps to search and change the class for the relevant document.
+
+1. Start the IBM Administrative Console for Content Platform Engine (ACCE) 
+
+
+http://<hostname>:<port>/acce. 
+
+
+2. Open up the Object Stores folder. 
+
+
+3. Click on the relevant design object store(DOS) to open new tab for the DOS. 
+
+
+4. Click on the Search at the bottom of the left pane to open the Saved Searches tab. 
+
+
+5. Click on "New Object Store Search" button to open New Object Store Search tab. 
+
+
+6. From the Simple View tab; 
+
+
+6a. Select "Connection Definition" for the Class. 
+
+
+6b. You can also add criteria where "Date Created" is "Less or Equal" to "Time the Erroneous 
+
+Document was created" - Date is shown under the Date Created Column, under the Contents Tab, in 
+
+the Connections Definitions folder in ACCE. 
+
+
+6c. Click Run. 
+
+
+7. Click on the relevant document to open new tab, the name should have the GUID of the erroneous 
+
+document in the Connections Definitions folder in ACCE. 
+
+
+8. Click the Actions drop down and select "Change Class". 
+
+
+9. Select "Document" from the Class list drop down. 
+
+
+10. Select "Change the class of all versions". 
+
+
+11. Click Ok.
+
+You also can simply delete the file instead of changing it's class. 
+
+ 
+
+In that case, after step 7, do the following; 
+
+
+- Click the Actions drop down and select "Delete". 
+
+
+- Click Ok. 
+
+
+This should resolve the issue and you should be able to run the task.

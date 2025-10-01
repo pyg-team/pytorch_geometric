@@ -1,0 +1,38 @@
+Title: IBM WebSphere MQ for iSeries - 12 Step / Cold Start Procedure Warning - United States
+
+Text:
+AS400 MQSeries MQ cold start TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You want to know if there any problems with performing a Cold Start on WebSphere MQ for iSeries. 
+
+RESOLVING THE PROBLEM
+
+In the past, some customers have experienced problems starting their queue managers on iSeries. These problems have manifested themselves as failures in the Start Message Queue Manager(STRMQM) command, or as apparent 'hangs' while running STRMQM (in fact this is more likely to be STRMQM running extremely slowly. A problem in this area was fixed with CSD06 in v5.2). 
+
+To recover from these problems, the queue manager is often restarted using a procedure referred to as the '12-step' or 'cold start' procedure. This procedure involves deleting the existing AMQAJRN journal and journal receivers for the queue manager, and creating new empty journals and journal receivers. 
+
+Performing a ‘cold start’ is not best practice. When MQ journals and journal receivers are deleted it must be understood that there is some danger that MQ messages could be lost or duplicated. An explanation of why follows: 
+
+Normal start-up processing involves reconciling the data in the AMQAJRN journal with the data in the IFS queue files. When a queue manager is restarted using the ‘cold start’ procedure, there is no journal data to replay, so MQ cannot perform its normal start-up processing. 
+
+The start-up reconciliation is necessary because MQ uses a technique called 'write-ahead' logging. This means that whenever WMQ puts or gets persistent messages, the put or get is recorded in two ways:
+
+1. With a forced disk write to the AMQAJRN Journal, meaning that WMQ waits for the OS/400 to confirm that the disk has been physically updated.
+
+2. With a lazy write to the queue. MQ caches some data in memory, and writes some data to the IFS queue file with an OS/400 unforced write. The unforced write will be stored in OS/400 file system buffers and written to disk at the operating system's convenience. 
+
+The journal data on disk is therefore the master copy of MQ data and is always more up to date than the queue file data. In normal circumstances when MQ is shut down and restarted, STRMQM processing ensures that the data in the queue files is bought up to date with the data in the journals.
+
+If a queue manager or system terminates abnormally, then information about messages may exist in the journal, but not in the queue files. Deleting the journal as part of a 'cold start' obviously deletes the only copy of these messages. Thus, the cold start, by deleting the journals and bypassing any STRMQM reconciliation, could lead to loss, duplication or corruption of data.
+
+Because the data in the journal receivers is so important to the recovery of MQ data, we strongly recommend that the journal receivers are stored on RAID protected disk, and that the cold start is avoided wherever possible. 
+
+IBM is committed to improving the performance of the MQ start-up procedure, which will make the cold start procedure unnecessary. However, it may be that IBM cannot investigate some start-up problems because customers use the cold start procedure to restart the queue manager, without reporting the problem to IBM support. 
+
+These start-up problems will continue to occur unless IBM can get good diagnostic information about the problems in order to fix them. IBM would therefore request that in these circumstances, the queue manager data (queue manager library and IFS) is saved, and a STRMQM command is run with MQ trace (TRCMQM) turned on prior to taking the 12-step cold start procedure. The resulting data will give IBM the best possible chance of finding and fixing STRMQM problems.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ IBMMQ WMQ MQ

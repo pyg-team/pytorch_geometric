@@ -1,0 +1,27 @@
+Title: IBM Collection of WebSphere Adapters and WBI Adapters technotes - United States
+
+Text:
+ PRODUCT README
+
+ABSTRACT
+ This technical document contains a list of available WebSphere Adapters and WBI Adapters technical notes, technical documentation and important flash messages. These technical notes, technical documents and flashes, contain information related to the areas of configuration settings, known problems along with their solutions and frequently asked questions on usage of various Adapter releases. 
+
+CONTENT
+Below is a comprehensive list of currently available documents for IBM WebSphere Adapters and WebSphere Business Integration Adapters.
+
+
+
+
+
+
+WebSphere Adapters
+
+
+
+WebSphere Adapter for Toolkit WebSphere Adapter for IBM i [http://www-01.ibm.com/support/docview.wss?uid=swg27024032] WebSphere Adapter for Oracle E-Business Suite [http://www.ibm.com/support/docview.wss?uid=swg27020209] WebSphere Adapter for Email [http://www-01.ibm.com/support/docview.wss?uid=swg27024034] WebSphere Adapter for JDBC [http://www.ibm.com/support/docview.wss?uid=swg27020191] WebSphere Adapter for PeopleSoft Enterprise [http://www-01.ibm.com/support/docview.wss?uid=swg27024035] WebSphere Adapter for Flat Files [http://www-01.ibm.com/support/docview.wss?uid=swg27024018] WebSphere Adapter for JD Edwards EnterpriseOne [http://www-01.ibm.com/support/docview.wss?uid=swg27024044] WebSphere Adapter for SAP Software [http://www-01.ibm.com/support/docview.wss?uid=swg27024045] WebSphere Adapter for FTP [http://www-01.ibm.com/support/docview.wss?uid=swg27024026]WebSphere Adapter for Siebel Business Applications [http://www-01.ibm.com/support/docview.wss?uid=swg27024042] WebSphere Adapter for Lotus Domino [http://www-01.ibm.com/support/docview.wss?uid=swg27024027] 
+
+WebSphere Business Integration (WBI) Adapters
+
+
+
+WBI Adaper for Ariba buyers WBI Adaper for Healthcare Data Protocols WBI Adaper for SAP Exchange Infrastructure WBI Adaper for COM WBI Adaper for Http WBI Adaper for Siebel Business Applications WBI Adaper for Corba WBI Adaper for I2 WBI Adaper for SWIFT WBI Adaper for Data Handler for complex data WBI Adaper for ISeries [http://www-01.ibm.com/support/docview.wss?uid=swg27024553] WBI Adaper for TCP/IP WBI Adaper for Data Handler EDI WBI Adaper for JD Edwards [http://www-01.ibm.com/support/docview.wss?uid=swg27024551] WBI Adaper for Webservices WBI Adapter for XML WBI Adaper for JDBC [http://www.ibm.com/support/docview.wss?uid=swg27020213] WBI Adaper for WebSphere MQ Series WBI Adaper for Development kit WBI Adaper for JMS WBI Adaper for MQ Workflow WBI Adaper for Email WBI Adaper for JText WBI Adaper for XML Adapter WBI Adaper for Enterprise Java Bean WBI Adaper for Lotus Domino [/support/docview.wss?uid=swg27019993&amp;aid=1] WBI Adaper for Exchange WBI Adaper for WBI Message Broker [/support/docview.wss?uid=swg27019993&amp;aid=1] WBI Adaper for Fix WBI Adaper for MySAP.com [http://www-01.ibm.com/support/docview.wss?uid=swg27024544] [/support/docview.wss?uid=swg27019993&amp;aid=1] [/support/docview.wss?uid=swg27019993&amp;aid=1] WBI Adaper for Peoplesoft [http://www-01.ibm.com/support/docview.wss?uid=swg27024546] [/support/docview.wss?uid=swg27019993&amp;aid=1]

@@ -1,0 +1,16 @@
+Title: IBM Troubleshooting access-path-related performance problems - United States
+
+Text:
+new2005; access path performance issues; STATS; SA; Stats Advisor; Statistics Advisor; Visual Explain; VE; V8; FTP; Service SQL; Service TECHNOTE (FAQ)
+
+QUESTION
+ How can I troubleshoot access-path-related performance problems? 
+
+CAUSE
+A high percentage of access path performance issues and access path performance regressions can be resolved simply by making sure that you have a complete, current, and accurate set of statistics from the RUNSTATS utility. Even when the access path regression was triggered by a change in the DB2 maintenance level, in many cases, the underlying root cause is still inadequate statistics. The result is an unstable access path that is vulnerable to change.
+
+ANSWER
+To troubleshoot access path related performance problems, complete the following steps: 
+
+ 1. Investigate the access path problem by using tools such as the statistics advisor, which is available with products such as IBM Data Server Manager, Db2 Query Workload Tuner for z/OS, and IBM Data Studio. Always use the statistics advisor before contacting IBM Software Support. For more information, see Investigating access path problems [https://www.ibm.com/support/knowledgecenter/SSEPEK_12.0.0/perf/src/tpc/db2z_investigateaccesspaths.html]. 
+ 2. If you are unable to resolve the problem, collect service SQL documentation for the problem, as described in Collecting data for access path performance problems [https://www.ibm.com/support/knowledgecenter/SSEPEK_12.0.0/trbshoot/src/tpc/db2z_cd4accesspath.html] and Collecting Service SQL documentation [https://www.ibm.com/support/knowledgecenter/SSEPEK_12.0.0/trbshoot/src/tpc/db2z_collectservicesql.html].

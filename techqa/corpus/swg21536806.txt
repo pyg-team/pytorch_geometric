@@ -1,0 +1,47 @@
+Title: IBM Outbound processing errors 0509-036 0509-150 0509-022 0509-026 libdbt12d.a (shr.o) cannot load program sortidoc, GENTRAN:Server for UNIX (5719) - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Outbound processing errors 0509-036 0509-150 0509-022 0509-026 libdbt12d.a (shr.o) cannot load program sortidoc, GENTRAN:Server for UNIX (5719) 
+
+SYMPTOM
+Error: exec(): 0509-036 Cannot load program sortidoc because of the following errors: 0509-150 Dependent module libdbt12d.a(shr.o) could not be loaded. 
+0509-022 Cannot load module libdbt12d.a(shr.o). 
+0509-026 System error: A file or directory in the path name does not exist.
+
+
+RESOLVING THE PROBLEM
+1. Check to see if LIB_PATH (if on AIX) environment variable or SHLIB_PATH (on HP
+or SUN) environment variable is set to ${EDI_ROOT}/lib.
+2. Make sure it is set to the environment in which user is running translation.
+If not, export it for now and have the path, ${EDI_ROOT}/lib added to .profile
+later:
+export LIB_PATH=${EDI_ROOT}/lib 
+or: 
+export SHLIB_PATH=${EDI_ROOT}/lib 
+
+LIB_PATH (or SHLIB_PATH) is the path to shared libraries. This path is 
+necessary for any application that uses shared libraries to run on the UNIX 
+box.
+3. stopserver 
+4. stoprpcs.sh 
+5. startserver
+6. startrpc.sh
+
+ 
+
+HISTORICAL NUMBER
+ PRI2891 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+GENTRAN:Server for UNIX 
+Sending purchase orders through outbound SAP 
+flow. 
+5719

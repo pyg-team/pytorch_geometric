@@ -1,0 +1,26 @@
+Title: IBM OpenPages Login Page Not coming up Cleanly - United States
+
+Text:
+OpenPages Login Page ERROR strings displayed TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The login page for OpenPages is displayed, but with strings that appear on the page start with "ERROR:en_US:" and contain what appears to be 2 oriental characters. 
+
+CAUSE
+The database did not allow any login to occur during the startup of OpenPages.
+
+RESOLVING THE PROBLEM
+The database connection string is located in the aurora.properties file which can be found in <OPENPAGES_HOME>|aurora|conf in the following parameter string: 
+
+database.URL=
+
+
+ 1. Using sqlplus on the OpenPages Application Server, log into the database as the OPENPAGES user. 
+ 2. If login is successful, restart all of the OpenPages services. 
+ 3. If the login is not successful:
+
+ * Work with the DBA to restart the database listener. 
+ * Using SQL*Plus on the OpenPages Application Server, log into the database as the OPENPAGES user. 
+ * If login is successful, restart all of the OpenPages services. 
+ * If the login is not successful, work with the DBA to determine why login sessions cannot be created. 
+ * Once the OPENPAGES user can successfully log into the database from the OpenPages Application Server, restart all of the OpenPages services.

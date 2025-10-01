@@ -1,0 +1,57 @@
+Title: IBM Security Bulletin: A security vulnerability in Node.js affects the IBM Business Process Manager (BPM) configuration editor (CVE-2014-5256) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM Business Process Manager V8.5.5 provides a standalone tool for editing configuration properties files that is called the "IBM BPM Configuration editor." This editor is based on open source Node.js technology. A security vulnerability has been reported for Node.js. 
+
+VULNERABILITY DETAILS
+Note: The IBM BPM Configuration editor is an optional stand-alone tool. It can be extracted and started explicitly as described in the Configuring your environment graphically with the IBM BPM Configuration editor [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.doc/topics/tmig_edit_adv_win.html] topic within the product documentation.
+CVE ID: CVE-2014-5256 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=cve-2014-5256]
+CVE-2014-5256
+CVSS Base Score: 5.0
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/95057 [https://exchange.xforce.ibmcloud.com/vulnerabilities/95057] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+
+Node.js is vulnerable to a denial of service that is caused by a memory corruption error. By sending an overly long JSON string, a remote attacker might exploit this vulnerability to cause a segmentation fault.
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+ * IBM Business Process Manager Standard V8.5.5.0 
+ * IBM Business Process Manager Express V8.5.5.0 
+ * IBM Business Process Manager Advanced V8.5.5.0
+
+REMEDIATION/FIXES
+Install the interim fix for APAR JR51163 [http://www.ibm.com/support/docview.wss?uid=swg1JR51163] [http://www.ibm.com/support/docview.wss?uid=swg1JR50215] as appropriate for your current IBM Business Process Manager version. 
+
+ * IBM Business Process Manager Express [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Express&release=All&platform=All&function=aparId&apars=JR51163] 
+ * IBM Business Process Manager Standard [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Standard&release=All&platform=All&function=aparId&apars=JR51163] 
+ * IBM Business Process Manager Advanced [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Advanced&release=All&platform=All&function=aparId&apars=JR51163]
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 29 September 2014: original document published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Security AIX, Linux, Linux zSeries, Solaris, Windows 8.5.5 Business Integration IBM Business Process Manager Express Security Linux, Linux zSeries, Windows 8.5.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

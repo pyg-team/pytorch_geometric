@@ -1,0 +1,44 @@
+Title: IBM Download: Optim Test Data Management Solution for JD Edwards Applications v11.3 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download the JD Edwards portion of the IBM® InfoSphere® Optim™ Test Data Management Solution for Oracle Applications 11.3. 
+
+DOWNLOAD DESCRIPTION
+You can download the JD Edwards portion of the 11.3 Optim Test Data Management Solution for Oracle Applications using the Passport Advantage website.
+
+
+Using the IBM InfoSphere Optim Test Data Management Solution for JD Edwards Applications, you can optimize and automate the processes used to create and manage data in non-production environments such as testing, development, and training. Developers and quality assurance testers can create realistic, "right-sized" JD Edwards test databases and compare before and after test results with speed and accuracy. The solution saves valuable processing time and provides consistency and reduced costs throughout the application lifecycle.
+
+PREREQUISITES
+You must install the IBM InfoSphere Optim Solution v11.3 before you install the solution for JD Edwards.
+
+For information about hardware and software requirements for the Optim TDM solution for JD Edwards, see the Detailed System Requirements at http://www.ibm.com/support/docview.wss?rs=3473&uid=swg27041911 [http://www.ibm.com/support/docview.wss?rs=3473&uid=swg27041911].
+
+INSTALLATION INSTRUCTIONS
+For general installation instructions, see the Quick Start Guide. For detailed instructions, see the Optim Test Data Management Solution for JD Edwards EnterpriseOne Installation and Configuration Guide. Both documents are included in the download package.
+
+DOWNLOAD PACKAGE
+
+
+IBM InfoSphere Optim supports processing across a combination of platforms and database management systems, but requires a 32-bit DBMS client to connect to a data source.
+
+After proof of entitlement, you are allowed to download any or all of the images listed here. To obtain the download images:
+
+ 1. Navigate to the Find Downloads and Media [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?P0=DOWNLOAD_FIND_BY_PART_AND_DESCRIPTION] Web page on the IBM Passport Advantage Web site.
+ 2. Under Download finder options, select the Find by part number search option.
+ 3. Search for each downloadable image by download name.
+ 4. Download all required parts.
+ 5. Use a file extracting utility that supports large file extractions to extract each of the parts into a single, temporary directory on your system.
+ 6. Follow the instructions in the Quick Start Guide to install the product.
+
+[http://www.ibm.com/i/c.gif] Download for the solution for JD Edwards EnterpriseOne
+
+Download Description CN024EN.zip 
+
+Download for the solution for JD Edwards Applications v11.3 
+
+TECHNICAL SUPPORT
+ http://www.ibm.com/software/data/data-management/optim/support/ [http://www.ibm.com/software/data/data-management/optim/support/]

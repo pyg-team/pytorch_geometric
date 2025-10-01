@@ -1,0 +1,47 @@
+Title: IBM Restarting the application server can cause delays opening RTS for the first time - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The first login to Rule Team Server (RTS) after a server bounce encounters a 15 minute delay before the RTS Homepage is loaded. 
+
+
+CAUSE
+It can happen when RTS is on a machine behind the firewall in a secured intranet environment. 
+
+This is due to the connection attempt to the Online Help page on the external publib.boulder.ibm.com domain, triggered from OnlineHelpDescriptor.readURL. 
+
+When the server has no internet access or it is blocked by a firewall, this connection could take 15 minutes before failing. 
+
+When the connection is slow or not working at all, RTS keeps trying for about 15
+minutes to connect to the Online Help page on http://publib.boulder.ibm.com [http://publib.boulder.ibm.com]
+
+
+DIAGNOSING THE PROBLEM
+No relevant entries will be showed in the log file but in the javacore would typically shows entries like these ones: 
+
+
+at java/net/PlainSocketImpl.socketConnect(Native Method) 
+at java/net/PlainSocketImpl.doConnect (PlainSocketImpl.java:391) 
+at java/net/PlainSocketImpl.connectToAddress (PlainSocketImpl.java:252) 
+at java/net/PlainSocketImpl.connect 
+....
+
+
+RESOLVING THE PROBLEM
+Deactivate the firewall while RTS starts up or give RTS enough permission to pass though it so that it will be able to connect to the Online Help site. 
+
+
+Another option is to manually redirect the request to localhost. For example if you are under Linux you would add the following entry to the/etc/hosts file:
+
+127.0.0.1 publib.boulder.ibm.com 
+
+RELATED INFORMATION
+#Improve Performance of RTS and Decision Center [http://www.ibm.com/support/docview.wss?uid=swg21584855]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0, 7.5

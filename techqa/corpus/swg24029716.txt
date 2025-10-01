@@ -1,0 +1,42 @@
+Title: IBM WebSphere ILOG Decision Validation Services V7.1.1.3 Fix Pack - United States
+
+Text:
+Decision Validation Services DOWNLOADABLE FILES
+
+ABSTRACT
+ This cumulative fix pack updates Decision Validation Services V7.1.1 (7.1.1 or 7.1.1.1) to V7.1.1.3. 
+
+DOWNLOAD DESCRIPTION
+
+
+ This cumulative fix pack updates Decision Validation Services V7.1.1 (7.1.1 or 7.1.1.1) to V7.1.1.3. 
+
+ The fix pack is not compatible with Decision Validation Services V7.0.x and V7.1.0. Update to 7.1.1 to be able to apply this fix pack. 
+
+ This fix pack is entitled. Only customers with Decision Validation Services V7.1.1 can download this fix pack. 
+
+PREREQUISITES
+WebSphere ILOG Decision Validation Services V7.1.1, WebSphere ILOG JRules V7.1.1.3, and WebSphere ILOG Rule Team Server V7.1.1.3
+
+INSTALLATION INSTRUCTIONS
+
+
+Download and execute the fix pack installer.
+
+Note: In upgrading to V7.1.1.3, the Decision Validation Services V7.1.1.3 installer displays the following message asking whether you want to overwrite an existing file. To fully install V7.1.1.3, click Yes to All to overwrite the file:
+
+[/support/docview.wss?uid=swg24029716&amp;aid=1] Problems fixed with V7.1.1.3: Fix List for IBM Operational Decision Manager [http://www-01.ibm.com/support/docview.wss?uid=swg27023767].
+
+DOWNLOAD PACKAGE
+WebSphere ILOG Decision Validation Services V7.1.1.3
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Decision Validation Services 5/13/2011 Language Independent 1300000000 FC [http://www.ibm.com/support/fixcentral] HTTP [http://www.ibm.com/support/docview.wss?uid=swg24029802] 
+TECHNICAL SUPPORT
+ Passport Advantage Online support: http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html 
+
+PRODUCT ALIAS/SYNONYM
+ DVS 
+
+ [/support/docview.wss?uid=swg24029716&aid=2]Problems (APARS) fixed [/support/docview.wss?uid=swg24029716&aid=3]Problems (APARS) fixed
+RS00459, RS00545

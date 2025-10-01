@@ -1,0 +1,153 @@
+Title: IBM JR51223: FILE DESCRIPTOR LEAKS ON BPM.LOCK FILE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 6 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24039185]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you use IBM Business Process Manager (BPM), you might
+   receive the following error messages in the log files:
+   
+   
+   java.net.SocketException: Too many open files
+   
+   java.io.IOException: Signals that an I/O exception of some sort
+   has occurred.  Reason:  Too many open files
+   
+   Java? virtual machine (JVM) is trying to get a handle on the
+   ?IBM/BPM/profiles/<profileName>/searchIndex/artifact/<clusterNam
+   e>\bpm.lock file.
+   
+   Depending on what IBM BPM was trying to do at the time, various
+   other error messages might occur that are related to too many
+   files being open in the JVM.
+   
+   PRODUCTS AFFECTED:
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  File descriptor leaks on the bpm.lock file causes an error about
+    there being too many files open.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.0.1 and V8.5.5.0 that
+   ensures only one cluster member has write access to the index
+   directory at a time.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR51223:
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select APAR or SPR, enter JR51223, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR51223
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-09
+   
+   
+ * CLOSED DATE
+   2014-10-08
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

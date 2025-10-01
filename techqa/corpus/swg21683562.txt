@@ -1,0 +1,41 @@
+Title: IBM Warehouse Proxy Agent fails to insert data into DB2 database tables. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Warehouse Proxy Agent (WPA) fails to insert data into various tables while writing errors to the Warehouse Proxy Agent logs.
+
+Errors seen in the WPA logs ($CANDLEHOME/logs/<hostname>_hd_5*.log):
++5408697C.1D61 Caused by: com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-551, SQLSTATE=42501, SQLERRMC=ITMUSER;INSERT;ITMUSER.KLZ_CPU, DRIVER=3.63.123
++5408697C.2982 Caused by: com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-551, SQLSTATE=42501, SQLERRMC=ITMUSER;INSERT;ITMUSER.KLZ_Sockets_Status, DRIVER=3.63.123
+
+
+CAUSE
+The DB2 error indicates the user does not have the INSERT privilege to add data to the tables. 
+
+SQL0551N "<authorization-ID>" does not have the privilege to perform operation "<operation>" on object "<name>". SQLSTATE=42501
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+A DB2 DBA can resolve this problem by granting the INSERT privilege to the userid for the Table listed in the WPA log.
+
+ex: 
+Error in WPA log shows: 
+
++5408697C.2982 Caused by: com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-551, SQLSTATE=42501, SQLERRMC=ITMUSER;INSERT;ITMUSER.KLZ_Sockets_Status, DRIVER=3.63.123 
+
+ 
+
+The error indicates the DB2 user ITMUSER does not have the INSERT privilege for the table ITMUSER.KLZ_Sockets_Status. 
+
+ 
+
+A DB2 DBA would resolve this problem using this statement:
+db2 "GRANT INSERT ON TABLE ITMUSER.KLZ_Sockets_Status TO USER itmuser"
+
+RELATED INFORMATION
+ DB2 SQLCODE: -551 or SQL0551N [http://www-01.ibm.com/support/docview.wss?uid=swg21381783]

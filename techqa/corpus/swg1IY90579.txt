@@ -1,0 +1,149 @@
+Title: IBM IY90579: CLOSE BUTTON FOR NCO_EVENT41 DOES NOT WORK - IT JUST KEEPS ASKIN G IF YOU WANT TO SAVE AND WONT CLOSE THE WINDOW. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Specific Binary: NCOEvent.exe
+   Last Modified By:
+   Version: 3.6
+   Component:
+   Product Group: Desktop
+   Product: Netcool/OMNIBUS
+   Prority: Med
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of the Windows EventList.              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 1) click on subevent list to open a     *
+   *                      filter.. 2) modify the filter, then     *
+   *                      click apply. and then close , it will   *
+   *                      close the gui as normal 3)repeat the    *
+   *                      test for the second instance - , Then   *
+   *                      modify the filter, and click close. -   *
+   *                      4) The save dialog Pops up. Press save  *
+   *                                                              *
+   *                      The save dialog box does not close      *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   1) click on subevent list to open a filter.. 2) modify the
+   filter, then  click apply. and then close , it will close the
+   gui as normal 3)repeat the test for the second instance - ,
+   Then modify the filter, and click close. - 4) The save dialog
+   Pops up. Press save
+   
+   The save dialog box does not close
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Save dialog box closes after pressing save button.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY90579
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   350
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-10-12
+   
+   
+ * CLOSED DATE
+   2006-11-06
+   
+   
+ * LAST MODIFIED DATE
+   2006-11-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * FIXED COMPONENT ID
+   5724O4800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

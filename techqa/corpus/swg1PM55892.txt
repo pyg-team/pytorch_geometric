@@ -1,0 +1,256 @@
+Title: IBM PM55892: PORTAL 7X MIGRATION FAILS DURING UPGRADE-PROFILE TASK WITH WASX7444E - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This issue is generally seen when one try to migrated their
+   cluster 61x portal server to 7x.
+   
+   After completing the Dmgr migration, while executing the
+   upgrade-profile task on the node it fails with following :
+   
+   action-update-sessionbeanfailover:
+   
+   [mkdir] Created dir:
+   /opt/IBM/WebSphere/APP/WP7/wp_profile/ConfigEngine/config/work/w
+   
+   as/wcm
+   [copy] Copying 17 files to
+   /opt/IBM/WebSphere/APP/WP7/wp_profile/ConfigEngine/config/work/w
+   
+   as/wcm
+   [wsadmin] WASX7209I: Connected to process "dmgr" on node
+   DMGRPNA using
+   SOAP connector;  The type of process is: DeploymentManager
+   [wsadmin] WASX7017E: Exception received while running file
+   "/opt/IBM/WebSphere/APP/WP7/wp_profile/ConfigEngine/config/work/
+   
+   was/wcm/
+   ChangeSessionBeanFailoverSettings.py"; exception information:
+   com.ibm.ws.scripting.ScriptingException: WASX7444E: Invalid
+   parameter
+   value "" for parameter "config id" on command "showAttribute"
+   ........
+   ........
+   /opt/IBM/WebSphere/APP/WP7/PortalServer/wcm/prereq
+   .wcm/config/in
+   cludes/p
+   rereq.wcm_cfg.xml:2546: The following error occurred while
+   executing
+   this line:
+   /opt/IBM/WebSphere/APP/WP7/PortalServer/wcm/prereq
+   .wcm/config/in
+   cludes/p
+   rereq.wcm_cfg.xml:2573: Java returned: 105
+   at
+   org.apache.tools.ant.ProjectHelper
+   .addLocationToBuildException(P
+   rojectHe
+   lper.java:539)
+   at org.apache.tools.ant.taskdefs.Ant.execute(Ant.java:384)
+   ........
+   ........
+   Caused by:
+   /opt/IBM/WebSphere/APP/WP7/PortalServer/wcm/prereq
+   .wcm/config/in
+   cludes/m
+   ig_cfg.xml:815: The following error occurred while executing
+   this line:
+   /opt/IBM/WebSphere/APP/WP7/PortalServer/wcm/prereq
+   .wcm/config/in
+   cludes/p
+   rereq.wcm_cfg.xml:2546: The following error occurred while
+   executing
+   this line:
+   /opt/IBM/WebSphere/APP/WP7/PortalServer/wcm/prereq
+   .wcm/config/in
+   cludes/p
+   rereq.wcm_cfg.xml:2573: Java returned: 105
+   at
+   org.apache.tools.ant.ProjectHelper
+   .addLocationToBuildException(P
+   rojectHe
+   lper.java:539)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This issue is generally seen when one try to migrated their
+   cluster 61x portal server to 7x.
+   
+   After completing the Dmgr migration, while executing the
+   upgrade-profile task on the node it fails with following :
+   
+   action-update-sessionbeanfailover:
+   
+   [mkdir] Created dir:
+   /opt/IBM/WebSphere/APP/WP7/wp_profile/ConfigEngine/config/work/w
+   
+   as/wcm
+   [copy] Copying 17 files to
+   /opt/IBM/WebSphere/APP/WP7/wp_profile/ConfigEngine/config/work/w
+   
+   as/wcm
+   [wsadmin] WASX7209I: Connected to process "dmgr" on node
+   DMGRPNA using
+   SOAP connector;  The type of process is: DeploymentManager
+   [wsadmin] WASX7017E: Exception received while running file
+   "/opt/IBM/WebSphere/APP/WP7/wp_profile/ConfigEngine/config/work/
+   
+   was/wcm/
+   ChangeSessionBeanFailoverSettings.py"; exception information:
+   com.ibm.ws.scripting.ScriptingException: WASX7444E: Invalid
+   parameter
+   value "" for parameter "config id" on command "showAttribute"
+   ........
+   ........
+   /opt/IBM/WebSphere/APP/WP7/PortalServer/wcm/prereq
+   .wcm/config/in
+   cludes/p
+   rereq.wcm_cfg.xml:2546: The following error occurred while
+   executing
+   this line:
+   /opt/IBM/WebSphere/APP/WP7/PortalServer/wcm/prereq
+   .wcm/config/in
+   cludes/p
+   rereq.wcm_cfg.xml:2573: Java returned: 105
+   at
+   org.apache.tools.ant.ProjectHelper
+   .addLocationToBuildException(P
+   rojectHe
+   lper.java:539)
+   at org.apache.tools.ant.taskdefs.Ant.execute(Ant.java:384)
+   ........
+   ........
+   Caused by:
+   /opt/IBM/WebSphere/APP/WP7/PortalServer/wcm/prereq
+   .wcm/config/in
+   cludes/m
+   ig_cfg.xml:815: The following error occurred while executing
+   this line:
+   /opt/IBM/WebSphere/APP/WP7/PortalServer/wcm/prereq
+   .wcm/config/in
+   cludes/p
+   rereq.wcm_cfg.xml:2546: The following error occurred while
+   executing
+   this line:
+   /opt/IBM/WebSphere/APP/WP7/PortalServer/wcm/prereq
+   .wcm/config/in
+   cludes/p
+   rereq.wcm_cfg.xml:2573: Java returned: 105
+   at
+   org.apache.tools.ant.ProjectHelper
+   .addLocationToBuildException(P
+   rojectHe
+   lper.java:539)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been updated to prevent this failure.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM55892
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-12
+   
+   
+ * CLOSED DATE
+   2012-06-13
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

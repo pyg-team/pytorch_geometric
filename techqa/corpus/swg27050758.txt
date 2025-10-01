@@ -1,0 +1,48 @@
+Title: IBM Configuring for viewing IBM Content Manager OnDemand objects with IBM Content Navigator - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ If you use IBM® Content Manager OnDemand as repository, you can view archived documents. 
+
+CONTENT
+To view IBM Content Manager OnDemand objects with IBM Content Navigator, you must change the instance configuration. If the default viewer map of IBM Content Navigator, which associates each MIME type with a specific viewer, does not fit your needs, you must also define a custom viewer map.
+
+
+Before you begin 
+
+See Planning for secure viewing of IBM Content Manager OnDemand objects with IBM Content Navigator [http://www.ibm.com/support/docview.wss?uid=swg27050757] 
+
+About this task 
+
+In your basic instance configuration, you configured the logical IBM Content Manager OnDemand archives that contain the objects that are to be viewed. 
+
+To complete the configuration of your environment for viewing IBM Content Manager OnDemand objects with IBM Content Navigator, you must change the instance configuration. 
+
+For an overview of the document viewers that are supported by IBM Content Navigator and for information about how to configure the document viewers, see the [http://www.ibm.com/support/knowledgecenter/SSEUEX/welcome]IBM Content Navigator product documentation [http://www.ibm.com/support/knowledgecenter/SSEUEX/welcome]. 
+
+Procedure
+
+1. In Configuration Feature, take these steps: 
+
+a. Open the instance configuration that you want to change.
+
+b. Go to Logical Archives > Logical IBM Content Manager OnDemand Archive id.
+
+c. Complete the Viewing with IBM Content Navigator section.
+
+d. Repeat steps 1.b and 1.c for each logical archive that contains objects that are to be viewed with IBM Content Navigator.
+
+Important: If you want to use a common user for viewing, ensure that the URL of IBM Content Navigator contains the fully qualified host name. In addition, the cookie domain must be equal to, or a subset of, this URL.
+
+e. If you specified HTTPS as protocol in the URL of IBM Content Navigator, enable SSL support for the IBM Content Navigator server. Use your web application server administration tools for this task.
+
+f. If you specified HTTPS and a common user, complete this task: [http://www.ibm.com/support/knowledgecenter/SSEUEX/welcome]Configuring the client authentication [https://www.ibm.com/support/knowledgecenter/en/SSRW2R_4.0.0/doc/c_srv_conn_icn_client_auth.html]. The certificate that you create on the web application server that hosts IBM Content Navigator must be issued for the host name that you specified in the URL of IBM Content Navigator.
+
+2.If the default viewer map does not fit your needs, define a custom viewer map in IBM Content Navigator. For details, see [http://www.ibm.com/support/knowledgecenter/SSEUEX/welcome]Configuring viewers used to display documents in the web client [https://www.ibm.com/support/knowledgecenter/SSEUEX_3.0.2/com.ibm.installingeuc.doc/eucco011.htm].
+
+Results
+In a server configuration profile, you find the following specifications that relate to the viewing of objects with IBM Content Navigator: 
+
+[/support/docview.wss?uid=swg27050758&aid=1] [/support/docview.wss?uid=swg27050758&aid=1]

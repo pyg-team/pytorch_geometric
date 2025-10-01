@@ -1,0 +1,103 @@
+Title: IBM PM75594: REPORT IN A WIDGET IS NOT FILTERED WITH A PROMPT IN ANOTHER WIDGET USING GO MOBILE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The report from widget 1 is filtered by prompt parameter of the
+   same name as the prompt parameter in the prompt referenced by
+   widget 2.  This combination works fine via cognos viewer.
+   However when rendered via go mobile the paramter value selected
+   in widget 2 is not used to filter the data in widget 1.??
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Our current support for Cognos Workspace is limited to viewing o
+   nly certain use cases. We are planning on improving and enhancin
+   g support for workspaces as well as reports through Cognos Mobil
+   e, however at this time the product is working as designed.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM75594
+   
+   
+ * REPORTED COMPONENT NAME
+   COG MOBILE
+   
+   
+ * REPORTED COMPONENT ID
+   5724W20GM
+   
+   
+ * REPORTED RELEASE
+   A11
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-22
+   
+   
+ * CLOSED DATE
+   2012-12-11
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

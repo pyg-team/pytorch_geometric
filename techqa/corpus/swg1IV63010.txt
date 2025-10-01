@@ -1,0 +1,144 @@
+Title: IBM IV63010: TACMD COMMANDS THROW UNSUPPORTEDENCODINGEXCEPTION IN JA_JP LOCALE - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 5 (6.3.0-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24039236]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Ja_JP locale of AIX, run tacmd listworkspaces throw
+   java.io.UnsupportedEncodingException:
+       at sun.io.Converters.getConverterClass(Converters.java:318)
+       at sun.io.Converters.newConverter(Converters.java:371)
+     The workspaces can be listed but some with blank name.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Run the command in a terminal of LANG=C
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  tacmd commands throw UnsupportedEncodingException on Ja_JP
+   locale.
+   
+   
+   On Ja_JP locale on AIX, running tacmd listworkspaces throws the
+   following exception:
+   
+   java.io.UnsupportedEncodingException
+   at sun.io.Converters.getConverterClass(Converters.java:318)
+   at sun.io.Converters.newConverter(Converters.java:371)
+   The workspaces are listed, but some have a blank name.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been changed to support the Ja_JP locale and others
+    locale with the ICU standard for all the tacmd commands that
+   interact with the portal server.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+      | fix pack | 6.3.0-TIV-ITM-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV63010
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-29
+   
+   
+ * CLOSED DATE
+   2015-06-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEMS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

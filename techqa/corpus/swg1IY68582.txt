@@ -1,0 +1,232 @@
+Title: IBM IY68582: 14879 UNABLE TO INSTALL SAP ON SOLARIS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  *********************************************
+   Problem Description:
+   Unable to install the ITIM SAP Agent profile
+   on a Solaris box.
+   
+   
+   
+   Customer Recreate:
+   Customer got this error on Solaris machine trying to
+   install the SAP Agent profile.
+   
+   
+   
+   Desired Behavior:
+   The Agent should install properly without producing
+   a core dump or a java exception.
+   
+   Steps to Duplicate:
+   - 1/2 -
+   Install the TIM SAP Agent Profile on a Solaris 5.9 machine
+   Following is the error taken from the Solaris 5.9:
+   # SAPProfileSetup_solaris.bin -is:javaconsole -console
+   InstallShield Wizard
+   
+   Initializing InstallShield Wizard...
+   
+   Searching for Java(tm) Virtual Machine...
+   ...................................
+   ....................................
+   ......................
+   ----------------------------------------------------------------
+   --------
+   -------
+   Welcome to the InstallShield Wizard for Tivoli Identity Manager
+   SAP
+   Agent
+   Profile
+   
+   The InstallShield Wizard will install Tivoli Identity Manager
+   SAP Agent
+   Profile
+   on your computer.
+   To continue, choose Next.
+   
+   Tivoli Identity Manager SAP Agent Profile
+   IBM
+   
+   
+   
+   Press 1 for Next, 3 to Cancel or 4 to Redisplay [1]
+   
+   ----------------------------------------------------------------
+   --------
+   -------
+   (Feb 28, 2005 11:30:27 AM), Setup.product.install,
+   com.installshield.wizard.console.ConsoleWizardUI, err,
+   java.lang.Incom
+   assChangeError
+   java.lang.IncompatibleClassChangeError
+           at
+   com.ibm.itim.agents.installShield.GeneralDestinationPanel.consol
+   eInterac
+   tion(GeneralDestinationPanel.java:208)
+           at
+   com.installshield.wizardx.panels.ExtendedWizardPanelConsoleImpl.
+   entered(
+   ExtendedWizardPanelConsoleImpl.java:55
+           at
+   com.installshield.wizard.console.ConsoleWizardUI.currentBeanChan
+   ged(Cons
+   oleWizardUI.java:222)
+           at
+   com.installshield.wizard.StandardWizardListener.currentBeanChang
+   ed(Stand
+   ardWizardListener.java:100)
+           at
+   com.installshield.wizard.Wizard$RunThread.run(Wizard.java:1564)
+   (Feb 28, 2005 11:30:28 AM), Setup.product.install,
+   com.installshield.wizard.console.ConsoleWizardUI, err, could not
+   displ
+   message panel -- exiting wizard
+   
+   ----------------------------------------------------------------
+   --------
+   ------------------
+   
+   - 2/2 -
+   Install the TIM SAP Agent Profile on a Solaris 5.8 machine
+   Following is the error taken from the Solaris 5.8:
+   # ./SAPProfileSetup_solaris.bin -is:javaconsole -console
+   InstallShield Wizard
+   
+   Initializing InstallShield Wizard...
+   
+   Searching for Java(tm) Virtual Machine...
+   ...................................
+   ....................................
+   ......................
+   Exception in thread "main" java.lang.NoClassDefFoundError:
+    run
+   
+   Segmentation Fault - core dumped
+   
+   
+   Environment: Agent-SAP-Win-4.5.7, SAP Agent profile installed on
+   a
+   Solaris (5.8 or 5.9) machine
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  14879
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   Fix shipped in SAP for Win v4.5.8
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   Fix shipped in SAP for Win v4.5.8
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY68582
+   
+   
+ * REPORTED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C34AG
+   
+   
+ * REPORTED RELEASE
+   451
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-03-01
+   
+   
+ * CLOSED DATE
+   2005-04-22
+   
+   
+ * LAST MODIFIED DATE
+   2005-04-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     AGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * FIXED COMPONENT ID
+   5724C34AG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R450 PSY
+   UP

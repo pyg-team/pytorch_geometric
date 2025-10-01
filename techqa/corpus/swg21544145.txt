@@ -1,0 +1,35 @@
+Title: IBM Service threw an exception INVALID_CHARACTER_ERR: An invalid or illegal XML character is specified. (SCI71700) - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Service threw an exception INVALID_CHARACTER_ERR: An invalid or illegal XML character is specified. (SCI71700) 
+
+SYMPTOM
+Service threw an exception INVALID_CHARACTER_ERR: An invalid or illegal XML character is specified.
+
+
+CAUSE
+Sender ID contains a comma, which is valid for that field, but causes Gentran 
+Integration Suite to error.
+
+RESOLVING THE PROBLEM
+Install patch 14 or later.
+
+ 
+
+HISTORICAL NUMBER
+ PRI20064 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Gentran Integration Suite, Release 3.1 
+EDIDeenvelope Service 
+Sender 
+ID contains a comma 
+SCI71700

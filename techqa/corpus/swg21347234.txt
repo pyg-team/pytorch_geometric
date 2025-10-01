@@ -1,0 +1,111 @@
+Title: IBM ** Troubleshooting ** unable to log in to Controller due to error '--Exception has been thrown by the target of an invocation' - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User launches Controller. User selects database. User enters username/password. User receives error message, and Controller closes. 
+
+SYMPTOM
+Screen message for all Scenarios: 
+
+ 
+--Exception has been thrown by the target of an invocation.
+OK
+
+Scenario #3
+On the SQL server, there may be many occurrences of the following error:
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * http://go.microsoft.com/fwlink/events.asp
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+CAUSE
+There are many different potential causes for the '--Exception has been thrown by the target of an invocation' error. This Technote shall only deal with the scenarios where the error is seen during the logon-to-Controller process. 
+
+ 
+In this case, the error is caused by a problem when reading/writing to the TEMPDB database. During logon, Controller will read/write to/from tables inside the temporary storage area of its database server. For example, if using Microsoft SQL, it will be reading/writing to/from the TEMPDB database. 
+
+There are several reasons why this process may fail:
+
+
+ * Scenario #1 - Database Server is out of memory or storage space (e.g. temp storage space)  * Often this is caused by the transaction log being full
+   
+   
+ * Scenario #2 - The temporary database (e.g. TEMPDB) has a different collation from the database which holds the application data (the application repository database)  * For more information, see separate IBM Technote #1345692
+   
+   
+ * Scenario #3 - Security/network connection issue, causing SQL database logins to fail. 
+ * Scenario #4 - End user's Windows account has a problem (for example is locked out)  * For more information, see separate IBM Technote #1347252
+   
+   
+ * Scenario #5 - Invalid Oracle database due to missing stored procedures  * For more information, see separate IBM Technote #1420562
+   
+   
+
+RESOLVING THE PROBLEM
+Scenario #1 
+
+## Microsoft SQL Server: 
+
+ * Ensure SQL server's hard drives are not full 
+ * Ensure that the Controller application repository database (e.g. 'ControllerLive') is set to 'unrestricted growth' for both its data (MDF) and log (LDF) files 
+ * Ensure that the TEMPDB database is set to 'unrestricted growth' for both its data (MDF) and log (LDF) files 
+ * If necessary, obtain a short period of downtime, and reboot the SQL server in order to free up RAM memory. 
+
+TIP: You may find that shrinking the LDF (log) files and/or moving the LDF files to new hard disk(s) helps. 
+
+## Oracle:  * Ensure Oracle server's hard drives are not full 
+ * Ensure that the Controller application repository database's 'default' tablespace(s) are configured to grow automatically 
+ * Ensure that the Controller application repository database's TEMP tablespace(s) are configured to grow automatically 
+ * If necessary, obtain a short period of downtime, and reboot the Oracle server in order to free up RAM memory. 
+
+TIP: Check your error logs for entries such as 'ORA-04031'. This would suggest that the 'SGA private memory' has been exhausted. Fragmentation of shared pool memory is a common problem and ORA-04031 is commonly a result of such fragmentation. Application programmers usually get this error while attempting to load a big package or while executing a very large procedure and there is not sufficient contiguous free memory available in the shared pool. This may be due to fragmentation of the shared pool memory or insufficient memory in the shared pool. Possible remedies: Use the dbms_shared_pool package to pin large packages. Attempt to reduce the use of shared memory. Increase the initialisation parameter 'SHARED_POOL_SIZE'. 
+RELATED INFORMATION
+#1347252 - Error 'Exception has been thrown by the targe [http://www.ibm.com/support/docview.wss?uid=swg21347252]
+1420562 - Error 'Exception has been thrown by the targe [http://www.ibm.com/support/docview.wss?uid=swg21420562]
+1345692 - Unable to connect: Exception has been thrown [http://www.ibm.com/support/docview.wss?uid=swg21345692]
+
+
+
+
+HISTORICAL NUMBER
+ 1033964

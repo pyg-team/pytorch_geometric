@@ -1,0 +1,257 @@
+Title: IBM IC52313: KEYNOTFOUNDEXCEPTION WHEN USING THE FAILED EVENT MANAGER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a global transactional mediation flow component
+   is used  in conjunction with the Failed Event Manager,
+   you may observe a KeyNotFoundException exception when
+   you put the message back into the flow from the failed
+   event manager.  You may also notice that this behaviour
+   is intermittent in occurance, sometimes the operation will
+   succeed and others the KeyNotFoundException will be
+    thrown and the mediation flow component will not
+   process the message.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of WebSphere Process Server v6.0.1 and *
+   *                 v6.0.2, where the application in use         *
+   *                 contains a Mediation Flow Component which    *
+   *                 is to be used in conjunction with the        *
+   *                 Failed Event Manager.                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When a Mediation Flow Component         *
+   *                      contains business logic which is        *
+   *                      intended to cause a message flow to     *
+   *                      fail under certain response flow        *
+   *                      conditions, a KeyNotFoundException      *
+   *                      exception is sometimes thrown by the    *
+   *                      runtime server.  If the Failed Event    *
+   *                      Manager is then used to re-inject       *
+   *                      the message into the Mediation Flow     *
+   *                      Component, this KeyNotFoundException    *
+   *                      is seen again and flow processing       *
+   *                      stops.                                  *
+   ****************************************************************
+   * RECOMMENDATION: If you experience this problem, you are      *
+   *                 advised to install the fix pack which        *
+   *                 contains the code fix associated with this   *
+   *                 APAR.  It was targetted to be included       *
+   *                 within v6.0.2 Fix Pack 2 (v6.0.2.2).         *
+   ****************************************************************
+   Consider the following scenario:
+   
+   An application which includes a Mediation Flow Component is
+   deployed to a server which is to process a two-way (request-
+   response) message flow.  The response is returned from a
+   service provider, and contains data which will cause the
+   business logic contained within the Mediation Flow Component
+   to fail.  For example, an XSLT primitive might be configured
+   to operate on a data field which is in an unexpected format
+   within the response message.  The subsequent processing which
+   the XSLT primitive performs on the response message results
+   in a exception being thrown.
+   
+   If the component is set to transactionally repeat the
+   operation the default number of times (5), the server logs
+   may show this exception message up to 5 times.  However, you
+   may notice in some cases it is replaced with a
+   KeyNotFoundException exception, which will be of the form:
+   
+   com.ibm.websphere.sca.ServiceRuntimeException: caused by:
+   com.ibm.wsspi.sibx.mediation.flow.action.FlowActionException:
+   com.ibm.wsspi.sibx.context.KeyNotFoundException: CWSXM0054E:
+   Key _xyzxyzxyzxyzxyz not found in context store when locating
+   correlation information for module MyModule
+   
+   If you are using the Failed Event Manager, after these 5
+   retry attempts, the message will appear in the Failed Event
+   Manager giving you the option to correct the business
+   logical problem with the response message.  However, when you
+   re-inject the corrected message back into the Mediation Flow
+   Component, you will continue to see the above
+   KeyNotFoundException rather than see the message flow process
+   the response flow.
+   
+   
+   There are two problems here which are preventing the
+   intended operation of the Mediation Flow Component with the
+   Failed Event Manager:
+   
+   The first is that when the flow fails and the transaction
+   rollback occurs, there is a race condition which on certain
+   systems results in the retry process attempt occuring
+   before the contextStore destination has been repopulated
+   with context information needed to process the response.
+   This is cause of the intermittent KeyNotFoundException
+   which is sometimes seen on each retry attempt.
+   
+   Secondly, the contextStore destination is set to allow a
+   maximum of 5 rollbacks in a transactional attempt.  The
+   result of this is that assuming the race condition stated
+   above did not cause any of the rollback count increments
+   to be missed on the contextStore, when the message is
+   reinjected into the flow the maximum retry count has
+   already been reached which prevented the final rollback
+   from repopulating the contextStore before the Failed
+   Event Manager took ownership of the repsonse message.
+   Hence the KeyNotFoundException is seen when the response
+   message is reinjected into the flow.
+   
+   The fix associated with this APAR does two things:
+   (a) Corrects the race condition which occurs on rollback
+   (b) Increases the maximum retry attempt of the ContextStore
+   to 100.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  There are no known side effects associated with this code fix.
+   It should be noted that if you intend to reinject a response
+   message into a Mediation Flow Component more than 19 times
+   (when using the default 5 retries), the KeyNotFoundException
+   will be seen again.
+   
+   If this is of serious concern, you can manually change the
+   number of retries through the admin console.  To do this, open
+   the Administration Console and following this proceedure:
+   
+   (1) Start the admin console
+   
+   (2) Select "Service Integration -> Buses"  on the left hand
+       side.
+   
+   (3) Select the bus "SCA.SYSTEM.esbCell.Bus".
+   
+   (4) On the right hand side, select "Destinations" under the
+       'Destination resources' heading.  This will bring up a
+       list of all of your installations current destinations.
+   
+   (5) Locate the context store destination for the application
+       which contains the Mediation Flow Component.  This will
+       have a name of the following form:
+   
+       sca/contextStore/<MODULE_NAME>
+   
+       Click on this destination to bring up its configuration
+       details.
+   
+   (6) You should now see a configuration panel for the context
+       store destination.  Scroll down to the
+       'Exception destination' box, and inspect the
+       "Maximum failed deliveries" entry.
+   
+   Before this fix has been applied to the system, this value
+   will read "5".  After, it will read "100".  If you need to
+   reinject the same response message more than 19 times,
+   increase this value.
+   
+   
+   NOTE: This value is set when an application is installed
+   on the server.  Therefore for the second part of this fix to
+   take effect, you will need to reinstall the application.
+   Alternatively, you can update the value manually using the
+   proceedure described above.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC52313
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724I8200
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-03-30
+   
+   
+ * CLOSED DATE
+   2007-05-09
+   
+   
+ * LAST MODIFIED DATE
+   2007-05-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724I8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP
+   
+   
+ * R200 PSY
+   UP

@@ -1,0 +1,41 @@
+Title: IBM Notes SQL 8.5 not working with MSSQL 2008 - United States
+
+Text:
+linked server; Microsoft SQL Server 2008; Notes SQL. TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After upgrading to NotesSQL 8.5 and Microsoft SQL Server 2008, NotesSQL connections fail to function.
+
+SYMPTOM
+A hang may occur, or you may see one of the following errors: 
+
+OLE DB provider "MSDASQL" for linked server "DOMINOINTERNALDIRECTORY" returned message "[Microsoft][ODBC Driver Manager] Driver's SQLAllocHandle on SQL_HANDLE_DBC failed". 
+
+Msg 7303, Level 16, State 1, Line 2 
+
+Cannot initialize the data source object of OLE DB provider "MSDASQL" for linked server "DOMINOINTERNALDIRECTORY".
+
+CAUSE
+There was a problem with the Notes SQL 8.5 version with Linked Servers which was fixed in 8.5.1. The SPR for this is DWHL7WVLZ3.
+
+
+
+ENVIRONMENT
+Windows, Notes SQL 8.5, MS SQL Server 2008
+
+
+
+DIAGNOSING THE PROBLEM
+First confirm that the Notes SQL ODBC driver can be used with other products such as Excel or Odbctest. That will prove that the problem is limited to the MSSQL 2008 linked server.
+
+
+
+RESOLVING THE PROBLEM
+Install the Notes SQL 8.5.1 version.
+
+
+
+
+
+ * 
+ *

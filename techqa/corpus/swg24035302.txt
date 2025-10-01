@@ -1,0 +1,48 @@
+Title: IBM Supporting ITCAM for AD Managing Server 7.1 on WebSphere Application Server Version 8.0 and above - United States
+
+Text:
+MS Support for WAS Version 8.5; Install Managing Server 7.1 on WebSphere Application Server v8.5 DOWNLOADABLE FILES
+
+ABSTRACT
+ Install ITCAM for AD Managing Server 7.1 on WebSphere Application Server Version 8.0 and above 
+
+DOWNLOAD DESCRIPTION
+This is a fix to support the ITCAM for AD Managing Server 7.1 installation on WebSphere Application Server Version 8.0 and above. The current installer finishes successfully but it fails to create the VE Application, JDBC Drivers and Resource Adapters. If you try to access the VE browser after the installation, it will display the following errors: 
+
+Error Page Exception
+SRVE0260E: The server cannot use the error page specified for your application to handle the Original Exception printed below.
+Original Exception: 
+Error Message: java.io.FileNotFoundException: Unable to open properties file ve.properties
+Error Code: 404
+Target Servlet: LandingServlet
+Error Stack: 
+java.io.FileNotFoundException: Unable to open properties file ve.properties 
+at com.cyanea.common.util.FileUtil.getProperties(FileUtil.java:114) 
+at com.cyanea.common.util.FileUtil.getProperties(FileUtil.java:56) 
+at com.cyanea.ve.common.BaseServlet.doInit(BaseServlet.java:219) 
+at com.cyanea.ve.common.OctigateServlet.doInit(OctigateServlet.java:86) 
+at com.cyanea.ve.common.BaseServlet.service(BaseServlet.java:145) 
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:668) 
+at com.ibm ..................... 
+
+INSTALLATION INSTRUCTIONS
+Unzip the following package and copy the 5 scripts to <MS Image location>insttmp directory before running the installer. 
+Note: If you have already made an attempt to install it, then please uninstall the Managing Sever first, replace the files and then re-install it.
+
+ITCAMfADMS7.1ScriptsforWAS8.0Support.zip [/support/docview.wss?uid=swg24035302&aid=2]ITCAMfADMS7.1ScriptsforWAS8.0Support.zip [/support/docview.wss?uid=swg24035302&aid=1]
+
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfAD 7.1
+ITCAMAD 7.1
+ITCAMfAD
+ITCAMAD
+ITCAM for AD
+ITCAM for AD 7.1 
+
+ [/support/docview.wss?uid=swg24035302&aid=3]Problems (APARS) fixed [/support/docview.wss?uid=swg24035302&aid=4]Problems (APARS) fixed
+213844

@@ -1,0 +1,252 @@
+Title: IBM PK50713: CRASH WHILE GENERATING JAVACORE AFTER AN OUT OF MEMORY CONDITION ON Z/OS - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: ABEND0C4 happened in clClassName2String during
+   generating javacore.
+   .
+   Stack Trace: TCB 8ba160 caa 31918bc8
+   Dsa        Entry      Offset     Function
+   ---        -----      ------     --------
+   3b85a020   7cb3fe10   8000007e   clClassName2String
+   3b85a0a0   7cd161e0   000000e6   methodPc2String_notrav
+   3b85a240   7ccd7c28   000001c6   xeInternalPrintStackTrace
+   3b85a680   7cd2b348   00000616   xmDumpThreadsHelper
+   3b85af60   7c925bb0   000000d6   sysThreadEnumerateOver
+   3b85afe0   7cd2bc18   00000a76   xmDumpRoutine
+   3b85b8e0   7cba8478   00000906   dgGenerateJavacore
+   3b85c4e0   7cb9f310   00000f30   dgDumpHandler
+   3b85d3c0   7cc88cf8   00001596   manageAllocFailure
+   3b85d4a0   7cc08320   000003ec   lockedHeapAlloc
+   3b85d560   7cc09078   00000182   jitLockedHeapAlloc
+   3b85d5e0   307886e8   00001058
+   org/apache/soap/Utils.cleanString(Ljava/lang/String;)Ljava/lang/
+   String;<OSB>recompiled<CSB>
+   3b85d7a0   2e255138   00001a82
+   com/ibm/ws/management/connector/soap/GenericSerializer.marshall(
+   Ljava/lang/String;Ljava/lang/Class;Ljava/lang/Object;Ljava/lang/
+   Object;Ljava/io/Writer;Lorg/apache/soap/util/xml/NSStack;Lorg/ap
+   ache/soap/util/xml/XMLJavaMappingRegistry;Lorg/apache/soap/rpc/S
+   OAPContext;)V
+   3b85da60   2e1f12d0   00000e64
+   org/apache/soap/encoding/soapenc/ParameterSerializer.marshall(Lj
+   ava/lang/String;Ljava/lang/Class;Ljava/lang/Object;Ljava/lang/Ob
+   ject;Ljava/io/Writer;Lorg/apache/soap/util/xml/NSStack;Lorg/apac
+   he/soap/util/xml/XMLJavaMappingRegistry;Lorg/apache/soap/rpc/SOA
+   PContext;)V
+   3b85dc20   2e694240   00000326
+   org/apache/soap/rpc/RPCMessage.serializeParams(Ljava/util/Vector
+   ;Ljava/lang/String;Ljava/io/Writer;Lorg/apache/soap/util/xml/NSS
+   tack;Lorg/apache/soap/util/xml/XMLJavaMappingRegistry;Lorg/apach
+   e/soap/rpc/SOAPContext;)V<OSB>recompiled<CSB>
+   3b85dd80   2e132b00   0000505c
+   org/apache/soap/rpc/RPCMessage.marshall(Ljava/lang/String;Ljava/
+   lang/Class;Ljava/lang/Object;Ljava/lang/Object;Ljava/io/Writer;L
+   org/apache/soap/util/xml/NSStack;Lorg/apache/soap/util/xml/XMLJa
+   vaMappingRegistry;Lorg/apache/soap/rpc/SOAPContext;)V
+   3b85e120   2e22eca0   00000b1a
+   org/apache/soap/Body.marshall(Ljava/lang/String;Ljava/io/Writer;
+   Lorg/apache/soap/util/xml/NSStack;Lorg/apache/soap/util/xml/XMLJ
+   avaMappingRegistry;Lorg/apache/soap/rpc/SOAPContext;)V<OSB>recom
+   piled<CSB>
+   3b85e380   2e0c0d70   000008e0
+   org/apache/soap/Envelope.marshall(Ljava/io/Writer;Lorg/apache/so
+   ap/util/xml/XMLJavaMappingRegistry;Lorg/apache/soap/rpc/SOAPCont
+   ext;)V
+   3b85e5a0   2e17fc90   0000010a
+   org/apache/soap/transport/http/SOAPHTTPConnection.send(Ljava/net
+   /URL;Ljava/lang/String;Ljava/util/Hashtable;Lorg/apache/soap/Env
+   elope;Lorg/apache/soap/encoding/SOAPMappingRegistry;Lorg/apache/
+   soap/rpc/SOAPContext;)V
+   3b85e780   2e171e68   0000019e
+   org/apache/soap/rpc/Call.invoke(Ljava/net/URL;Ljava/lang/String;
+   )Lorg/apache/soap/rpc/Response;
+   3b85e8c0   2e16f7a0   00000190
+   com/ibm/ws/management/connector/soap/SOAPConnectorClient$4.run()
+   Ljava/lang/Object;
+   3b85e9e0   2e245100   0000004a
+   com/ibm/ws/security/util/AccessController.doPrivileged(Ljava/sec
+   urity/PrivilegedExceptionAction;)Ljava/lang/Object;
+   3b85eae0   2e195430   0000031c
+   com/ibm/ws/management/connector/soap/SOAPConnectorClient.invokeT
+   emplate(Ljava/lang/String;Ljava/util/Vector;Z)Ljava/lang/Object;
+   3b85ec40   3bfb5ba0   00000790
+   com/ibm/ws/management/connector/soap/SOAPConnectorClient.invoke(
+   Ljavax/management/ObjectName;Ljava/lang/String;<OSB>Ljava/lang/O
+   bject;<OSB>Ljava/lang/String;)Ljava/lang/Object;
+   3b85ede0   2e1a1cd0   0000017a
+   com/ibm/ws/management/connector/soap/SOAPConnectorClient.invoke(
+   Ljava/lang/Object;Ljava/lang/reflect/Method;<OSB>Ljava/lang/Obje
+   ct;)Ljava/lang/Object;
+   3b85ef20   2e199138   000000c6
+   $Proxy39.invoke(Ljavax/management/ObjectName;Ljava/lang/String;<
+   OSB>Ljava/lang/Object;<OSB>Ljava/lang/String;)Ljava/lang/Object;
+   3b85f040   2e1a0e80   00000066
+   com/ibm/ws/management/AdminClientImpl.invoke(Ljavax/management/O
+   bjectName;Ljava/lang/String;<OSB>Ljava/lang/Object;<OSB>Ljava/la
+   ng/String;)Ljava/lang/Object;
+   3b85f160   3bfbf630   00000158
+   com/ibm/ws/management/event/PushUpstreamServerSender.handleNotif
+   ications(<OSB>Ljavax/management/Notification;)V
+   3b85f2a0   2e19aca8   00000046
+   com/ibm/ws/management/event/PushRemoteSender.pushNotifications(<
+   OSB>Ljavax/management/Notification;)Z
+   3b85f3a0   3bfab198   00000122
+   com/ibm/ws/management/event/AbstractPushRemoteSender.alarm(Ljava
+   /lang/Object;)V
+   3b85f580   2fd6b028   0000004e
+   com/ibm/ejs/util/am/_Alarm.run()V
+   3b85f680   2fa44958   00000278
+   com/ibm/ws/util/ThreadPool$Worker.run()V<OSB>recompiled<CSB>
+   3b85f840   7c200868   000002bc   INVFRMMI
+   3b85fd60   7c5e52e0   00000030   c_invokerFromMMI
+   3b85fde0   7ccf9630   0000026e   mmipSelectInvokeJavaMethod
+   3b85fea0   7ccec408   00005ca8   mmipExecuteJava
+   3b8602c0   7cd0aba8   00000526   xeRunDynamicMethod
+   3b8603c0   7cac4928   00000072   threadRT0
+   3b860440   7cd22928   000002ee   xmExecuteThread
+   3b860600   7cd15580   0000001c   threadStart
+   3b860680   7c92d9b0   000002fa   ThreadUtils_Shell
+   3b860720   1d9c58a0   00000952   CEEVROND
+   7e610ee0   0000edf8   0000090e   CEEOPCMM
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disable JAVADUMP for out of memory dump processing, i.e. when
+   specifying JAVA_DUMP_OPTS environment variable don't have
+   JAVADUMP specified for ONOUTOFMEMORY condition. Also can export
+   environment variable IBM_JAVADUMP_OUTOFMEMORY=FALSE
+   Note that since Java SDK 1.4.2 SR8, JAVADUMP for out of memory
+   dump processing is off by default
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Crash while generating javacore after an out of memory condition
+   on z/OS. This was due to javacore not handling exiting threads
+   correctly when attempting to output their Java stack.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   1.4.2 SR10
+   .
+   Fixed javacore generation to detect exiting threads, and output
+   "(Java stack unavailable - thread is exiting)" instead of their
+   Java stack (which would actually be empty).
+   .
+   To obtain the fix:
+   Install build 20070825 or later
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK50713
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA(1.3/1.4 CO
+   
+   
+ * REPORTED COMPONENT ID
+   5648C9800
+   
+   
+ * REPORTED RELEASE
+   42A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2007-08-09
+   
+   
+ * CLOSED DATE
+   2007-08-28
+   
+   
+ * LAST MODIFIED DATE
+   2007-08-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA(1.3/1.4 CO
+   
+   
+ * FIXED COMPONENT ID
+   5648C9800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R42A PSN
+   UP
+   
+   
+ * R42L PSN
+   UP
+   
+   
+ * R42W PSN
+   UP
+   
+   
+ * R420 PSN
+   UP

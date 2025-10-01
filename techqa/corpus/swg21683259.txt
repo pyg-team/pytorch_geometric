@@ -1,0 +1,46 @@
+Title: IBM ClearQuest query results may be different when using Oracle 12c when using wildcards in a text query - United States
+
+Text:
+RN8.0.1.5; wildcard; Oracle; stopword; stoplist TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Support for Oracle 12c Release 1 (12c R1) begins with IBM Rational ClearQuest releases 8.0.1.5 and there is a behavior change in Oracle 12c R1 related to wildcards and stopwords in the Oracle Text query function, thus this change may cause the ClearQuest query results to be different on Oracle 12c R1 that with earlier versions of Oracle. 
+
+SYMPTOM
+Query results may be different in Oracle 12c than in Oracle 11g and previous versions.
+
+
+CAUSE
+There is a behavior change for wildcards and stopwords in Oracle 12c R1, but this change is not described in Oracle's official release notes. 
+
+Here are the details:
+
+In Oracle 11g or earlier versions, the "%" wildcard does not match values containing stopwords in some situations. Normally stopwords are meaningless words such as "of", "to", "in", etc.
+
+For example, a query using "%{Hello}" will not return rows with "of" or "to", because they are stopwords.
+
+>select id, description from defect where contains(description,'%{Hello}') > 0;
+
+ID DESCRIPTION
+SAMPL00000001 This is Ethan! Hello!
+
+
+After "of" and "to" are removed from the stoplist, and the indexes are rebuilt, the rows with "of" or "to" in front of "Hello" will appear:
+
+>select id, description from defect where contains(description,'%{Hello}') > 0;
+
+ID DESCRIPTION
+SAMPL00000001 This is Ethan! Hello!
+SAMPL00000002 This is of Ethan! Hello!
+SAMPL00000003 This is to Ethan! Hello!
+
+
+In Oracle 12c R1, the pattern "%{Hello}" will match values that have "of" or "to" in front of "Hello". This result is more reasonable, given the specification that the "%" wildcard matches zero or more characters.
+
+To make Oracle 11g or earlier versions work the same as Oracle 12c R1, words would have to be removed from the stoplist. Those words would then be indexed, which in turn would increase the size of the index, possibly leading to a downgrade in performance, particularly for a large database.
+
+
+RESOLVING THE PROBLEM
+Once a ClearQuest database server is upgraded to Oracle 12c R1, there is no longer any need to remove some stopwords from the stoplist to get the expected query result. 
+
+The Oracle DBA should understand this change in Oracle 12c R1, and consider its impact on ClearQuest queries and how that will impact ClearQuest users.

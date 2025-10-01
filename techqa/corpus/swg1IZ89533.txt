@@ -1,0 +1,167 @@
+Title: IBM IZ89533: GL ACCOUNT FIELD IS NOT REFRESHED WHEN CHANGE TO DIFFERENT LOCATION THAT HAS NO GL ACCT. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem: GL Account field is not refreshed when change to
+   different
+   location that has no GL Acct.
+   
+   Replicated the problem in 6.2.5 and 6.2.6.
+   
+   1. Create a workorder
+   2. Select a location which has a glaccount
+   3. Change location to one that has no gl account
+   Glaccount field is not refreshed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: maximo users                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: GL ACCOUNT FIELD IS NOT REFRESHED WHEN  *
+   *                      CHANGE TO DIFFERENT  LOCATION THAT HAS  *
+   *                      NO GL ACCT.                             *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   GL ACCOUNT FIELD IS NOT REFRESHED WHEN CHANGE TO DIFFERENT
+   LOCATION THAT HAS NO GL ACCT.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  <This is fixed as how it works in REL 7. A yes/no message will
+   be popped up when a new location is entered:
+   
+   The location and asset combination you have entered would
+   default a different GL account than is currently specified on
+   the work order. Would you like to update the work orders GL
+   account based on the new asset/location.combination? Clicking
+   Cancel will return you with no changes.
+   
+   .>
+   
+   
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | REL 6.2.8
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ89533
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO ADMIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46A1
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-21
+   
+   
+ * CLOSED DATE
+   2010-12-06
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO ADMIN
+   
+   
+ * FIXED COMPONENT ID
+   5724R46A1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

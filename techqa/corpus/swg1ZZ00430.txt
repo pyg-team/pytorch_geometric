@@ -1,0 +1,138 @@
+Title: IBM ZZ00430: OPENSTACK AND VM POWER OFF - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  OpenStack is designed to power off any VM which is
+   listed as powered off via it's database, if a VM is
+   powered on OUTSIDE the Openstack interface the next
+   sync state will find the VM in an incorrect state
+   and power it off.
+   .
+   IBM is working to disable this feature of OpenStack.
+   .
+   This was documented for IBM products that consume openstack such
+   as PowerVC and ICM:
+   .
+   http://www-01.ibm.com/support/docview.wss?uid=nas8N1020558
+   http://www-01.ibm.com/support/docview.wss?uid=nas8N1020669 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1020558http://www-01.ibm.com/support/docview.wss?uid=nas8N1020669]
+   .
+   Workaround:
+   Update the nova.conf file, add :
+   .
+   sync_power_state_interval=-1
+   .
+   restart the OpenStack host OS (the Regin Server OS).
+   .
+   We need to document this on ICO.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ***********************************************************
+   * USERS AFFECTED: All users of IBM Cloud Orchestrator 2.4
+   ***********************************************************
+   * PROBLEM DESCRIPTION:
+     OpenStack powers off VMs that are powered on
+     outside the OpenStack interface
+   ***********************************************************
+   * RECOMMENDATION:
+     Review the next update of the IBM Knowledge Center for
+     IBM Cloud Orchestrator V2.4 Fix Pack 4 when available
+   ***********************************************************
+   
+   The documentation changes can also be found in the
+   Conclusion section below.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following section in IBM Cloud Orchestrator
+   Knowledge Center has been updated:
+   "Configuring OpenStack"
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00430
+   
+   
+ * REPORTED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2800
+   
+   
+ * REPORTED RELEASE
+   240
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-06-19
+   
+   
+ * CLOSED DATE
+   2016-03-29
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

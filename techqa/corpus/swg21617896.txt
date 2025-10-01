@@ -1,0 +1,32 @@
+Title: IBM Extended agent for Oracle - Multiple listener status alerts are received - United States
+
+Text:
+5724V09ORTR IBM Tivoli ITCAM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If more than one instances of ITCAM Extended agent for Oracle database are running on one host, multiple listener status situation alerts for the same listener event are generated. 
+
+CAUSE
+In Extended agent for Oracle V6.3.1, the listener monitoring is managed on a separate thread and listeners are not part of instance monitoring as was the case in Oracle agent V6.2.1. 
+
+RESOLVING THE PROBLEM
+Following solutions can be used to resolve this problem:
+
+
+1) One instance of Extended agent for Oracle can monitor multiple Oracle instances. It is recommended to use one agent instance to monitor all of the Oracle instances. If only one agent instance is running on a host, a single alert will be generated for a listener status event. 
+
+ 
+2) If multiple instances of Extended agent for Oracle must be started, then consider following solutions: 
+
+ * 
+ * 
+ * Edit file install_dir/config/rz_<agent_instance>.config and set following variable and restart the agent instance: This will prevent the listener status monitoring on those instances. 
+   KRZ_LISTENER_PING_INTERVAL=0 
+ * Option 2) Configure each agent instance to monitor specific listeners, use one of the following options: 
+ *  i) Leaving the original Oracle listener.ora in ORACLE_HOME intact, create another listener.ora file in a different directory. Add the relevant listener definitions in the new listener.ora for the agent instance. Next set KRZ_TNS_PATHS variable in the agent configuration file to the full path of directory containing the new listener.ora file. 
+ * The agent instance configuration file is named <host>_rz_<instance>.cfg, and is located in install_dir/config/ directory. Restart the agent instance after makinf changes to the configuration file. This will cause the agent instance to monitor listeners defined in the new listener.ora file. For each agent instance create a separate directory with corresponding listener.ora file and edit its configuration file for KRZ_TNS_PATHS variable . 
+ * For example, if you have an agent instance orcl on host1, you can create a listener.ora with listener definitions for that instance, and place that file in /opt/IBM/ITM/config/orcl directory. Next edit the host1_rz_orcl.cfg and change the KRZ_TNS_PATHS to the full path of the directory containing listener.ora as follows:
+   INSTANCE=orcl [ SECTION=customdefault [ ] SECTION=default [ { KRZ_ORACLE_HOME=/opt/oracle/product/11.2.0/dbhome_1 } ... 
+   SECTION=advanced [ { KRZ_TNS_PATHS=/opt/IBM/ITM/config/orcl } ...} ] SECTION=customsummary [ ]]
+   
+ *  ii) Alternately create separate situations to monitor specific listeners for each agent instance using formula with the Listener Name and Listener Status attributes of KRZ_AGENT_LISTENER attribute group. Distribute this situation to the specific agent instance.

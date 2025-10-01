@@ -1,0 +1,28 @@
+Title: IBM Support Resources for Tivoli Netcool OMNIbus (Gateways) - United States
+
+Text:
+Gateway Support landing page; OMNIbus gateways; support resources RECOMMENDED RESOURCES
+
+ABSTRACT
+ Consider this the home page for the support of the OMNIbus product. Each button below will take you to a collection of information, documents, or links that have been identified as most relevant to the given category. 
+
+CONTENT
+ 
+
+TAB NAVIGATION
+ * Hot Links [http://www.ibm.com/support/docview.wss?uid=swg27039575]
+ * OMNIbus Core [http://www.ibm.com/support/docview.wss?uid=swg27042320]
+ * Web GUI [http://www.ibm.com/support/docview.wss?uid=swg27042323]
+ * Gateways
+ * Probes [http://www.ibm.com/support/docview.wss?uid=swg27042331]
+ * More [http://www.ibm.com/support/docview.wss?uid=swg27042386]
+
+
+PLANNING
+IBM Education Assistant video giving an overview for gateways OMNIbus 8.1 Sizing Guide with recommendations on CPU Cores and RAM for Gateway Servers in the IBM Knowledge Center List of Available Tivoli Netcool OMNIbus Gateway Integrations on the Developerworks Wiki Additional OMNIbus Integration Modules on IBM Integrated Service Management Library 
+INSTALLATION AND MIGRATION
+Installing a Probe or Gateway on OMNIbus 7.3.0, 7.3.1, 7.4.0 or 8.1 from the IBM Knowledge Center IBM Education Assistant video on OMNIbus v7.3.0-v7.4.0 Deployment Engine installer Backup and Restore IBM Education Assistant video Example JDBC Gateway installation with Omnibus 7.3.1 on UNIX 
+CONFIGURATION AND ADMINISTRATION
+OMNIbus 8.1 Common Features available for Gateways in IBM Knowledge Center Individual Gateway Guides detail properties and functionality for each Integrations Gateway in IBM Knowledge Center. Omnibus 8.1 Object Server Gateways Reference. For installation and example architecture scenario configuation of Object Server gateways, see OMNIbus Core. Support's guide white paper to Historical Reporting Gateways Support's Guide white paper to the JDBC Gateway Support's Guide white paper to the MessageBus Integration (XML Gateway) Support's Guide white paper to the SNMP Gateway Netcool Support YouTube Videos for the Remedy Gateway IBM Netcool/OMNIbus JDBC Gateway High Availability Software Implementation on Developerworks Wiki 
+TROUBLESHOOTING
+IBM Education Assistant videodoes on Probe and Gateway Key Performance Indicators Post questions to the OMNIbus User's Forum Information to collect when opening a problem ticket with IBM Support for Integration Gateways. Information to collect when opening a problem ticket with IBM Support for OMNIbus Unidirectional Object Server Gateways. Information to collect when opening a problem ticket with IBM Support for OMNIbus Bidirectional Object Server Gateways.

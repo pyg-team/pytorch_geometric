@@ -1,0 +1,44 @@
+Title: IBM SiteProtector Migration Utility failure when using a non-default SQL port - United States
+
+Text:
+migration; utility; sql; server; port; default; 1433; Iss_GetAllComponentWithRoleID; instance; communication failure TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The SiteProtector Migration Utility can fail when using a non-default SQL port. 
+
+SYMPTOM
+The migration utility might fail with the following error: 
+
+Could not find stored procedure 'Iss_GetAllComponentWithRoleID'
+
+The server specified exists but there was a communication failure while connecting. This can happen when connecting to an instanced server without specifying the instance.
+
+
+RESOLVING THE PROBLEM
+If your SQL installation is using a port other than 1433, you must change the SQL Client TCP/IP settings to reflect this different port value on the server where the Migration Utility is being used. This can be accomplished by running the SQL Server Client Network Utility.
+
+
+ 1. Close the SiteProtector Migration utility.
+    
+ 2. Run the following program: \%systemroot%\system32\cliconfg.exe
+    
+ 3. Under the General tab, select TCP/IP and click Enable.
+    
+ 4. Click Properties....
+    
+ 5. Change the port value to the custom port on which the SQL Server is listening.
+    
+ 6. Click OK to leave the TCP/IP Properties... dialog and click OK again to close the SQL Server Client Network Utility.
+    
+ 7. Run the SiteProtector Migration Utility.
+
+Note: When running the Migration Utility, you must enter the name or IP address for the SQL Server followed by a backslash and the instance name for the database. If you do not use instances, the default instance name of MSSQLServer must be used. For example, if the database is located on a server with an IP address of 192.168.0.1 and no instances, you would enter: 192.168.0.1\MSSQLServer 
+
+
+
+
+[/support/docview.wss?uid=swg21435908&aid=1] [https://ibm.biz/BdHdjw] [/support/docview.wss?uid=swg21435908&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21435908&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21435908&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21435908&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21435908&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21435908&aid=7] [http://ibm.biz/ContactSecSupport] 
+
+
+HISTORICAL NUMBER
+ 4303

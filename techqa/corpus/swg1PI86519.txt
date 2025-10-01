@@ -1,0 +1,11 @@
+Title: IBM PI86519: DC CONFIGURATION TOOL INCORRECTLY SETTING HOSTNAME FOR WSADMIN FROM PROPERTY COM.IBM.WS.SCRIPTING.HOST - United States
+
+Text:
+What is this document:
+This document has the abstract of a technical article that is available to authorized users after you have logged on. Please use the link to actual document below to access the full document. You will be asked to log on if you are not already logged in. After log in, if you do not have the right authorization for this document, there will be instructions on what to do next.
+
+abstract text
+The configuration of ITCAM WAS DC 7.2.0.0.14 does not complete successfully in some specific WAS environments (e.g. with
+
+link to actual document
+http://www.ibm.com/support/docview.wss?uid=swg1PI86519 [http://www.ibm.com/support/docview.wss?uid=swg1PI86519]

@@ -1,0 +1,143 @@
+Title: IBM Troubleshooting Guide for Configuring Apache Tomcat to run as a Windows Service with Jazz Team Server - United States
+
+Text:
+Tomcat; Windows Service; Jazz Team Server; RTC; Apache Tomcat; Auto run; TroubleshootingDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to configure Apache Tomcat to run as a windows service with IBM Rational Team Concert results in the inability to run the application server as a service. 
+
+SYMPTOM
+Unable to correctly configure Apache Tomcat to run as a Windows service and need help diagnosing the problem as well as a solution.
+
+
+ENVIRONMENT
+Jazz Team Server on Windows
+
+RESOLVING THE PROBLEM
+The following are common problems which may occur when trying to run Apache Tomcat as a Windows service when using it with Jazz Team Server.
+
+
+Note: This tech note provides instructions for the default directory of Jazz Team Server Deployments. If you installed Jazz team Server into a custom directory, please adjust your paths accordingly based on your actual root directory. 
+
+ 
+
+Problem: When I navigate to the C:\Program Files\IBM\JazzTeamServer\server\tomcat\bin\service.bat directory and execute the service.bat file, nothing happens. 
+
+Solution: The service.bat file must be executed from the command prompt by entering service.bat install when in the correct directory listing in command prompt. 
+
+ 
+
+Problem: I cannot find the teamserver.properties file to edit it. 
+
+Solution: For RTC v1.0, the teamserver.properties file can be found in C:\Program Files\IBM\JazzTeamServer\server, however for RTC 2.0, it is located in C:\Program Files\IBM\JazzTeamServer\server\conf\jazz 
+
+ 
+
+If you are using Derby as the backing database for your Jazz Repository, edit teamserver.properties to make the DB location an absolute path. E.g., change the value of db.jdbc.location to C:/Program Files/IBM/JazzTeamServer/server/repositoryDB. 
+
+ 
+
+Make sure that the WorkItem text index is specified with a fully qualified location. Edit teamserver.properties to change the value of com.ibm.team.fulltext.indexLocation to a fully qualified location. E.g. change the value to C:/Program Files/IBM/JazzTeamServer/server/workitemindex 
+
+ 
+
+Problem: There is no folder called ‘workitemindex’ in the C:\Program Files\IBM\JazzTeamServer\server\ directory. 
+
+Solution: The folder ‘workitemindex’ will be dynamically created once a workitem has been created and saved in Rational Team Concert. 
+
+ 
+
+Problem: I am unable to edit the Java Options properties to configure Apache Tomcat. 
+
+Solution: Execute C:\Program Files\IBM\JazzTeamServer\server\tomcat\bin\tomcat5w.exe to configure the service. 
+
+On the 'Java' tab, uncheck 'Use default': 
+
+
+● If you are using RTC 1.0, RQM 1.0 or RRC 1.0:
+Change the 'Java Virtual Machine' path to be C:\Program Files\IBM\JazzTeamServer\server\win32\ibm-java2-i386-50\jre\bin\j9vm.
+Add these lines at the bottom the 'Java Options' text field with this content (Also check the server.startup.bat file for additional environment settings that are not included here) -Dcom.ibm.team.server.configURL=file:///c:/jazz/server/teamserver.properties
+-Dcom.ibm.team.repository.provision.profile=file:///c:/jazz/server/provision_profiles
+-Dlog4j.configuration=file:///c:/jazz/server/log4j.properties 
+
+
+[/support/docview.wss?uid=swg21394195&amp;aid=1] 
+
+● If you are using RTC 2.0, RQM 2.0 or RRC 2.0:
+Change the 'Java Virtual Machine' path to be C:\Program Files\IBM\JazzTeamServer\server\jre\bin\j9vm\
+Add these lines at the bottom the 'Java Options' text field with this content (Also check the server.startup.bat file for additional environment settings that are not included here):
+-Dcatalina.base=C:\Program Files\IBM\JazzTeamServer\server\tomcat
+-Dcatalina.home=C:\Program Files\IBM\JazzTeamServer\server\tomcat
+-Djava.endorsed.dirs=C:\Program Files\IBM\JazzTeamServer\server\tomcat\common\endorsed
+-Djava.io.tmpdir=C:\Program Files\IBM\JazzTeamServer\server\tomcat\temp
+-DJAZZ_HOME=file:///C:/Program Files/IBM/JazzTeamServer/server/conf
+-Djava.awt.headless=true
+-Dorg.eclipse.emf.ecore.plugin.EcorePlugin.doNotLoadResourcesPlugin=true
+-Dcom.ibm.team.repository.tempDir=%TEMP% 
+
+[/support/docview.wss?uid=swg21394195&amp;aid=2] 
+
+If you are using an Oracle Database 
+-DORACLE_JDBC=[path to directory containing Oracle JDBC driver jar] 
+
+If you are using a SQL Server Database 
+-DSQLSERVER_JDBC=[path to directory containing SQL Server JDBC driver jar] 
+
+● Change the "Maximum memory pool" size to be 700.
+Under the 'Startup' and 'Shutdown' tabs, make sure the 'Mode' setting is 'jvm', and the working path is set to the following directory C:\Program Files\IBM\JazzTeamServer\server.
+Under the 'General' tab you can change the 'Startup type' to be 'Automatic' to allow the service to start on its own. 
+
+Under the ‘Logging’ tab, enter C:\Program Files\IBM\JazzTeamServer\server\tomcat\logs as the log path.
+
+
+Problem: I have followed all the steps but am still not able to run Apache Tomcat as a Windows Service. 
+
+Solution: Sometimes the properties in Apache Tomcat revert back to Manual Startup on its own. This can be solved by doing the following: 
+
+· Type sc config tomcat5 start= auto into the command prompt. 
+
+· Go to start > run and type in services.msc. This will open up the Services window. From this window, navigate to Apache Tomcat, under Services, right click on it and click on Properties. 
+[/support/docview.wss?uid=swg21394195&aid=3] [/support/docview.wss?uid=swg21394195&aid=3] 
+
+ 
+
+ 
+
+This will bring up the Apache Tomcat Service Properties window. On the General tab, make sure that startup type is set to Automatic, then click ok. 
+
+
+[/support/docview.wss?uid=swg21394195&amp;aid=4] 
+
+ 
+
+ 
+
+How do I test that my configuration worked? 
+
+There are many ways to test that your configuration works. The most effective way is after restarting your computer, open up Rational Team Concert in your Mozilla Firefox or Internet Explorer browser (..<servername>:<port>/jazz ). If the configuration is correct, the Jazz Team Server web user interface should be present. 
+
+ 
+
+[/support/docview.wss?uid=swg21394195&aid=5] [/support/docview.wss?uid=swg21394195&aid=5]
+
+
+ 
+
+If the Jazz Team server Web UI is unable to load, make sure there are no other services running on port 9443. This can be done by opening the command prompt and running the command, netstat –an to see the open/listening ports. If 0.0.0.0:9443 is found in the list, it means that there is currently a process running on that port, and you will need to stop that service before Tomcat can be run. 
+
+ 
+
+You can also test your configuration by doing the following (it is not necessary to perform all the following checks, one is sufficient): 
+
+· The configuration can also be checked by going into the Task Manager, under the Processes tab. Tomcat5.exe should be running as a process. 
+
+· Go to Start > Run and type in services.msc to open the Services window. Look for Apache Tomcat, in the name column. Beside the service name is a description of that service and service status. In the status column, it should say ‘Started’ for Apache Tomcat. This can also be checked by right clicking on Apache Tomcat and clicking on ‘Properties’. Under the General Tab, it should say ‘Service Status: Started’.
+
+RELATED INFORMATION
+#TN0010: Running Jazz Team Server in Tomcat as a Windows [http://jazz.net/library/technote/72]
+
+
+ 
+
+HISTORICAL NUMBER
+ 54935 033 000

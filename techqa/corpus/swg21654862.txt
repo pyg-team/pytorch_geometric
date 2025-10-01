@@ -1,0 +1,23 @@
+Title: IBM When try to save changes on domain level, "Update sequence number mismatch" error is encountered - United States
+
+Text:
+USN; mismatch; Health page; Domain; GCD; update TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When we try to save any changes on domain level via FileNet Enterprise Manager or Administration Console for Content Platform Engine (ACCE), e.g. trace options, indexing, it displays "The object {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX} of class Domain was not changed or deleted because it was modified one or more times in the repository since the application retrieved it. Update sequence number mismatch;" 
+
+SYMPTOM
+If we saves the change within 15 seconds, then the change can be saved successfully. Otherwise, we need to discard the changes ans try to save again.
+
+
+CAUSE
+P8 Health page is being requested too frequently. In order for P8 Health page to check for errors, it's reading and then saving the domain name. Each page request will increase the USN. As a result, when try to save the changes on FEM or ACCE, the USN is already out-sync. This is new in CE 5.2.
+
+DIAGNOSING THE PROBLEM
+Enable CE trace with API subsystem, look for anything like below. 
+
+2013-10-30T07:48:17.860 717E717E API FNRCE0000D - DEBUG <executeChangesRequest clientCaller="com.filenet.engine.health.model.GlobalConfigurationDatabaseHealth.Initialize(GlobalConfigurationDatabaseHealth.java:106)" refresh="true" correlationId="0" updateSequenceNumber="460008" rid="1">\n <pendingAction type="Update" rid="2"/>\n <objectReference type="GlobalIdentity" classIdentity="Domain"
+
+
+RESOLVING THE PROBLEM
+Stop requesting P8 Health Page frequently. CE ping page can be used to ensure the environment is up and running properly.

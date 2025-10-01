@@ -1,0 +1,141 @@
+Title: IBM PI67550: PRODUCT INSTALLATION FAILS ON LIBERTY BASE EDITION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using Installation Manager to install MobileFirst Platform
+   Foundation V8 on the BASE version of Liberty, if it is selected
+   to install Application Center during the installation, the
+   installation will fail with an error message that says "Liberty
+   edtion BASE is not supported".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If the MobileFirst application to be deployed on the server
+   does not require any features that present in Liberty BASE but
+   not in Liberty Core, the installation can be completed by
+   installing on the Liberty Core instead of BASE.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users using MFP 8.0 installation on Liberty BASE version.    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When using IM to install MFP 8.0 on Liberty Base version. It *
+   * fails with error  "Liberty edition BASE is not supported".   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * -                                                            *
+   ****************************************************************
+   -
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Liberty BASE inclusion was causing error in MFP
+   installation, hence only Liberty Core was supported. Later on
+   discussion with OM and architects of WAS it was decided taht we
+   cant stop support for Liberty BASE. It has to continue. Hence
+   the code was modified to add support to Libert BASE in 8.0 and
+   also handle the error which were getting previously.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI67550
+   
+   
+ * REPORTED COMPONENT NAME
+   MOBILE1ST PLATF
+   
+   
+ * REPORTED COMPONENT ID
+   5725I4301
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-12
+   
+   
+ * CLOSED DATE
+   2016-11-29
+   
+   
+ * LAST MODIFIED DATE
+   2016-11-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MOBILE1ST PLATF
+   
+   
+ * FIXED COMPONENT ID
+   5725I4301
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

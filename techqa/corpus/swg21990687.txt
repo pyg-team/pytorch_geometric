@@ -1,0 +1,80 @@
+Title: IBM CLOUD: Data Studio connection setup for BigSQL - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to configure Data Studio to connect to BIG SQL on the IBM Bluemix cloud. 
+
+ANSWER
+Before you begin, download the newest DataStudio client. This will avoid potential known issues, ensure that you have a new JRE as well as provide a much improved gui to aid in setting up an SSL connection.
+https://www.ibm.com/developerworks/downloads/im/data/ [https://www.ibm.com/developerworks/downloads/im/data/] 
+
+ 
+
+1. After installing Data Studio, you must proceed with updating your java policy file as the shipped policy file cannot accommodate the RSA key length (4096) which is currently used on IBM Bluemix clusters. If you do NOT update your policy file and attempt to TEST a connection to BigSQL on cloud, you will receive an error similar to below. Follow this technote to update your java policy file for your Data Studio installation. 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21663373 [http://www-01.ibm.com/support/docview.wss?uid=swg21663373] 
+
+ 
+
+Error: 
+
+RSA premaster secret error. ERRORCODE=-4499, SQLSTATE=08001 
+
+[/support/docview.wss?uid=swg21990687&aid=1] [/support/docview.wss?uid=swg21990687&aid=1] 
+
+ 
+
+2. With Data Studio properly installed, we must now acquire your cloud certificate in order to create a keystore for use in Data Studio. Depending on your browser, the steps may vary slightly. Browse to your Ambari web interface and click the lock icon in the address bar and choose 'More Information' to view the certificate. 
+
+[/support/docview.wss?uid=swg21990687&aid=2] [/support/docview.wss?uid=swg21990687&aid=2] 
+
+ 
+
+ 
+
+3. Export your certificate. After the certificate is exported, move it to the bin directory of the jre included with your Data Studio installation. In my case: 
+
+C:\Program Files\IBM\DS4.1.2\jdk\jre\bin\bic4103.crt 
+
+[/support/docview.wss?uid=swg21990687&amp;aid=3] 
+
+4. Use Keytool to create a keystore (bic4103-keystore.jks) containing the certificate which you exported from Ambari. Keytool.exe is included with the Data Studio java; open a cmd prompt and navigate to the directory which contains keytool.exe. Below is my path – note that for simplicity I paced the certificate (bic4103.crt) from step 3 in the same location as keytool.exe 
+
+
+C:\Program Files\IBM\DS4.1.2\jdk\jre\bin>keytool -import -trustcacerts -alias biginsights -file bic4103.crt -keystore bic4103-keystore.jks -storepass arbitraryPassword -noprompt 
+
+Certificate was added to keystore 
+
+ 
+
+5. The basic connection information can be acquired from Ambari. Click on ‘BigInsights – Big SQL’, then hoover over ‘Big SQL Head’ to determine the host/server. Port 51000 is the port used. 
+
+[/support/docview.wss?uid=swg21990687&amp;aid=4] 
+
+ 
+
+6. Enter the connection information into Data Studio, similar to below. Be sure to select the highlighted ‘JDBC driver’ shown below. 
+
+ 
+
+Database= bigsql 
+
+Host= IP or resolvable hostname from step5 
+
+Port= 51000 
+
+User name= biadmin 
+
+Truststore location= path of jks from step4 
+
+Truststore password= password from step4 
+
+ 
+
+[/support/docview.wss?uid=swg21990687&amp;aid=5]
+
+RELATED INFORMATION
+ update policy file [http://www-01.ibm.com/support/docview.wss?uid=swg21663373]
+Data Studio download [https://www.ibm.com/developerworks/downloads/im/data/]

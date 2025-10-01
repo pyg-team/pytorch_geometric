@@ -1,0 +1,21 @@
+Title: IBM While deploying the project, Receiving error: -java.net.UnknownHostException - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While deploying the project, Receiving error: -java.net.UnknownHostException 
+
+RESOLVING THE PROBLEM
+The appliance data IP was set up on the Internet but not the intranet and therefore was not able to access the DNS server within the DMZ. As a result, the appliance was unable to resolve the hostnames.
+To fix this issue, the data IP was moved to the DMZ where it can now access the DNS server, and thus resolve the hostnames.
+
+
+
+HISTORICAL NUMBER
+ 00000612 
+
+PRODUCT ALIAS/SYNONYM
+ Cast Iron Solution
+Cast Iron Operating System
+Cast Iron Studio

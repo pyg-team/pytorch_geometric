@@ -1,0 +1,200 @@
+Title: IBM IV72089: EMPTY HISTORICAL SUMMARIZED LINUX OS WORKSPACES - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 6 (6.3.0-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24040390]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem:
+   Historical Summarized Performance, Historical Summarized
+   Capacity and Historical Summarized Availability workspaces are
+   still based on data warehouse tables of various superseded
+   attribute groups. If customer has enabled only historical data
+   collections on the corresponding new attribute groups no data
+   can show up in these out of the box workspaces.
+   
+   Affected Platforms / Versions:
+   Linux OS agent versions since 6.2.1, no dependency on OS
+   platforms/versions.
+   
+   Diagnostics:
+   The following message appears at the bottom of several views in
+   the Historical Summarized workspaces that can be accessed from
+   the "Linux Systems" navigation node:
+   
+   KFWITM217E Request error: [IBM][CLI Driver][DB2/LINUXZ64]
+   SQL0204N "ITMUSER.Linux_Network_MV" is an undefined name.
+   SQLSTATE=42704,GENERIC SQLSTATE: 42S02, ERR: -204 SQLExecDirect
+   rc=-1: SQL_ERROR
+   
+   Initial Impact:
+   Low, this is only an issue with product provided out of the box
+   workspaces.
+   
+   Additional Keywords:
+   Linux_Network_MV,Linux_VM_Stats_MV,Linux_CPU_MV,Linux_Disk_Usage
+   _Trends_MV,Linux_Disk_IO_MV,Linux_Process_MV
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Define custom queries and custom workspaces that gather
+   historical summarized data from the new tables. New tables are
+   named KLZ_* instead of Linux_*
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Empty Historical Summarized built-in workspaces.
+   
+   
+   All of the views in the Historical Summarized Performance,
+   Historical Summarized Capacity and Historical Summarized
+   Availability workspaces of the Monitoring Agent for Linux OS may
+   display empty because of the following error:
+    KFWITM217E Request error: [IBM][CLI Driver][DB2/LINUXZ64]
+   SQL0204N "ITMUSER.Linux_***_MV" is an undefined name.
+   SQLSTATE=42704,GENERIC SQLSTATE: 42S02, ERR: -204SQLExecDirect
+   rc=-1: SQL_ERROR
+   This occurs because these views are still based on data
+   warehouse tables of various attribute groups that are superseded
+   since 6.21, and customer has historical data collections enabled
+   only on the corresponding new tables.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  All the queries used by these workspace views have switched from
+    the superseded Linux_***_MV tables to their corresponding new
+   KLZ_***_MV tables.
+   
+   The fix for this APAR will be contained in the following
+   maintenance packages:
+   
+   | FixPack    | 6.3.0-TIV-ITM-FP0006
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Define custom queries and workspaces that are copies of the
+   built-in ones, but pointing to the new KLZ_***_MV tables
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV72089
+   
+   
+ * REPORTED COMPONENT NAME
+   TEPS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04PS
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-13
+   
+   
+ * CLOSED DATE
+   2015-08-06
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * FIXED COMPONENT ID
+   5724C04LN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R621 PSN
+   UP
+   
+   
+ * R622 PSN
+   UP
+   
+   
+ * R623 PSN
+   UP

@@ -1,0 +1,19 @@
+Title: IBM License features needed to work with Rational Rhapsody - United States
+
+Text:
+License features; RPSysArch; RPSysDesign; rhapsody_lang_pack; RhapsodyArchitect; edition TECHNOTE (FAQ)
+
+QUESTION
+ What are the license features required to work with different editions of IBM Rational Rhapsody? 
+
+CAUSE
+You would like to know the license features needed to invoke different editions of Rational Rhapsody
+
+ANSWER
+The different editions of Rational Rhapsody and the license features required to run them are as follows:
+
+
+ * IBM Rational Rhapsody Architect for System Engineers: RPSysArch 
+ * IBM Rational Rhapsody Designer for System Engineers: RPSysDesign 
+ * IBM Rational Rhapsody Architect for Software: RhapsodyArchitect 
+ * IBM Rational Rhapsody Developer Edition: rhapsody_lang_pack

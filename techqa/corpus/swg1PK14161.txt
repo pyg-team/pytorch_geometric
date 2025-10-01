@@ -1,0 +1,170 @@
+Title: IBM PK14161: VisualizeExisting Java type doesnt work well when another source type with the same signature has already been visualized - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  VISUALIZATION: CANNOT ADD IMPLEMENTS RELATIONSHIP IF SUPPLIER
+   INTERFACE EXISTS MORE THAN ONCE IN THE REFERENCED PROJECTS
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Even if you add the implements relationship manually to
+   Class1.java, and attempt to use
+   Filters->Show/Hide Relationships
+   you will not be able to show the relationship on the diagram
+   
+   Additionally, if you delete both views from the diagram, and
+   drop them again, the relationship
+   will not be added to the diagram, even if the Implements exists
+   in the code.
+   
+   However, you can detect if the problem will occurr by doing the
+   following:
+   
+   1. select the visualized class
+   
+   2. select the implements tool
+   
+   3. Click on the class and then drag the connector towards the
+   white space on the diagram
+   
+   4. You will see a menu with the choices:
+   
+   Create Java Implementation To New Java Interface
+   Create Java Implementation to Existing Element
+   
+   5. Choose the second option
+   
+   6. Type the Interface name
+   
+   7. If you find multiple exact matches, then you will most likely
+   have this problem.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When the workspace contains a type with the same qualified
+   name
+   as a type defined in one of the referenced libraries
+   (ex. java.l
+   ang.String), creating a relationship where the
+   target is this "c
+   lone" type causes problems. This is because
+   the qualified name i
+   s resolved to the type found first based
+   on the build class path
+    order.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix delivered - cancel the operation as soon as we
+   realize that the type being used to create the relationship
+   is not the type selected by the user. We also bring up an
+   error message indicating the problem and providing the user
+   a possible fix.
+   "Could not create the relationship because the target type
+   could not be resolved properly.
+   Check the order of project dependencies in Java Build Path
+   preferences to ensure that other projects/libraries
+   containing a type with the same qualified name are placed
+   lower than the project/library containing the selected
+   target type."
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK14161
+   
+   
+ * REPORTED COMPONENT NAME
+   SW ARCHITECT V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724I7001
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-10-27
+   
+   
+ * CLOSED DATE
+   2006-12-06
+   
+   
+ * LAST MODIFIED DATE
+   2006-12-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SW ARCHITECT V6
+   
+   
+ * FIXED COMPONENT ID
+   5724I7001
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP

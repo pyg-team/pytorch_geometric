@@ -1,0 +1,234 @@
+Title: IBM PI37515: RATIONAL DEVELOPER FOR SYSTEM Z V9.1.0 - SOFTWARE ANALYZER DOES NOT SUPPORT 'ABBREVIATED COMBINED RELATION CONDITIONS' IN COBOL - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Developer for System z Fix Pack 1 (9.1.1.2) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24040962]
+Rational Developer for System z Fix Pack 1 (9.1.1.3) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24041789]
+Rational Developer for System z Interim Fix 1 for 9.1.1.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24042181]
+Rational Developer for System z Fix Pack 1 (9.1.1.4) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24042820]
+Rational Developer for System z Fix Pack 1 (9.1.1.5) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24043244]
+Rational Developer for System z Fix Pack 1 (9.1.1.6) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24044103]
+Rational Developer for System z Fix Pack 1 (9.1.1.7) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24044796]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When performing Software Analysis on program source for its
+   compliance with the 'Abbreviated Combined Relation Conditions'
+   rules, the user will observe this error message "CRRZV0204E An
+   exception was thrown during the translation of the following
+   statement to the Cobol Application Model" in the workspace .log
+   file. In the case of the example statement below, the same error
+   message may be repeated several times for the same statement.
+   
+   
+              IF TESTFELD-4 NOT = SPACE
+                        AND NOT = '01.01.0001'
+                        AND NOT = LOW-VALUE THEN
+                 CONTINUE
+              END-IF
+   
+   
+   This exception may be observed .log:
+   
+   !MESSAGE CRRZV0204E An exception was thrown during the
+   translation of
+   the following statement to the Cobol Application Model:
+   
+   IF TESTFELD-4 NOT = SPACE
+                        AND NOT = '01.01.0001'
+                        AND NOT = LOW-VALUE THEN
+                 CONTINUE
+              END-IF
+   !STACK 0
+   java.lang.UnsupportedOperationException
+   at
+   com.ibm.etools.cobol.application.model.cobol.ast.factory.Express
+   ionFacto
+   ry.createExprConditional(Unknown Source)
+   at
+   com.ibm.etools.cobol.application.model.cobol.ast.factory.Express
+   ionFacto
+   ry.createExprConditional(Unknown Source)
+   at
+   com.ibm.etools.cobol.application.model.cobol.ast.factory.Express
+   ionFacto
+   ry.createVariableReferencesForIfStatement(Unknown Source)
+   at
+   com.ibm.etools.cobol.application.model.cobol.ast.factory.Stateme
+   ntFactor
+   y.createIfStatement(Unknown Source)
+   at
+   com.ibm.etools.cobol.application.model.cobol.ast.factory.Stateme
+   ntFactor
+   y.createStatement(Unknown Source)
+   at
+   com.ibm.etools.cobol.application.model.cobol.ast.factory.Stateme
+   ntFactor
+   y.processSentenceList(Unknown Source)
+   at
+   com.ibm.etools.cobol.application.model.cobol.ast.factory.Stateme
+   ntFactor
+   y.createStatements(Unknown Source)
+   at
+   com.ibm.etools.cobol.application.model.cobol.ast.factory.Procedu
+   reDivisi
+   onFactory.createSentences(Unknown Source)
+   at
+   com.ibm.etools.cobol.application.model.cobol.ast.factory.Procedu
+   reDivisi
+   onFactory.createProcedureDivision(Unknown Source)
+   at
+   com.ibm.etools.cobol.application.model.cobol.ast.factory.Procedu
+   reDivisi
+   onFactory.create(Unknown Source)
+   at
+   com.ibm.etools.cobol.application.model.cobol.ast.factory.Program
+   Factory.
+   create(Unknown Source)
+   at
+   com.ibm.etools.cobol.application.model.cobol.ast.factory.Program
+   SourceFi
+   leFactory.create(Unknown Source)
+   at
+   com.ibm.etools.cobol.application.model.cobol.ast.ModelProvider.c
+   reateMod
+   el(Unknown Source)
+   at
+   com.ibm.rsar.analysis.codereview.cobol.CodeReviewResource.getCom
+   pilation
+   Unit(Unknown Source)
+   at
+   com.ibm.rsar.analysis.codereview.cobol.custom.rules.AbstractCust
+   omCobolA
+   nalysisRule.analyze(Unknown Source)
+   at
+   com.ibm.rsaz.analysis.core.rule.AbstractAnalysisRule.analyze(Unk
+   nown
+   Source)
+   at
+   com.ibm.rsaz.analysis.core.category.DefaultAnalysisCategory.anal
+   yze(Unkn
+   own Source)
+   at
+   com.ibm.rsar.analysis.codereview.baseline.language.AbstractRevie
+   wProvide
+   r.analyze(Unknown Source)
+   at
+   com.ibm.rsaz.analysis.core.manager.AnalysisProviderManager$2.run
+   (Unknown
+   Source)
+   at org.eclipse.core.internal.jobs.Worker.run(Unknown Source)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The COBOL Custom Code Rules API does not support abbreviated
+   combined relation conditions.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Modified the COBOL Custom Code Rules API to support abbreviated
+   combined relation conditions.
+   
+   The problem listed in this APAR has been resolved with
+   IBM Rational Developer for System z V9.1.1.2 Fix Pack which
+   is available from the Recommended Fixes support download page:
+   http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335 [http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI37515
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-20
+   
+   
+ * CLOSED DATE
+   2015-10-16
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * FIXED COMPONENT ID
+   5724T0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R911 PSY
+   UP

@@ -1,0 +1,232 @@
+Title: IBM PM87623: ALLOW CSSMTP TO TREAT TRAILING NULL CHARACTERS AS TRAILING BLANK CHARACTERS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The length limitation of 512 on the SMTP command lines are
+   enforced after the trailing blanks (x'40') are removed from the
+   command.  If the trailing characters are null characters (x'00')
+   then CSSMTP does not strip them away and counts these characters
+   towards the length of the command line.  An option setting for
+   CSSMTP is needed to allow trailing null characters to be
+   treated as trailing blank characters.
+   
+   
+   
+   
+   
+   
+   Additional Symptom(s) Search Keyword(s): KIXREVxxx 5.2.5 JES
+   too long RFC821 RFC 2821
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of the IBM Communications Server   *
+   *                 for z/OS Version 1 Release(s) 13 IP: CSSMTP  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Certain mail message files contained    *
+   *                      trailing nulls at the end of command    *
+   *                      records.  When the length of the        *
+   *                      records was longer than 510             *
+   *                      characters, the mail messages were      *
+   *                      rejected with a "500 5.2.5 JES          *
+   *                      Command line too long" reply.           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A new configuration statement and parameter have been added to
+   control the removal of trailing null characters in the
+   command records. The new parameter is NullTrnc in the Options
+   configuration statement.
+   
+   Options
+   {
+    NullTrnc No # leave trailing nulls(default)
+   #NullTrnc YES # Strip trailing nulls
+   }
+   +-------------------------------------------------------------+
+   + Please check our Communications Server for OS/390 homepages +
+   + for common networking tips and fixes.  The URL for these    +
+   + homepages can be found in Informational APAR II11334 [http://www-01.ibm.com/support/docview.wss?uid=isg1II11334].       +
+   +-------------------------------------------------------------+
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CSSMTP is amended to add a new configuration statement (OPTIONS)
+   and a new parameter (NULLTRNC) to remove trailing null
+   characters from the end of each command statement.
+   
+   z/OS Communications Server
+   IP Configuration Reference
+   Document Number SC31-8776-19
+   Chapter: Communications Server SMTP application
+   Heading: CSSMTP configuration statements
+   
+   
+   Update section 31.3.1 CSSMTP configuration statements to add
+   the NullTrnc parameter to the Options statement in table 108.
+   
+                                       Update
+   Configuration                       allowed by
+   file                   Required or  modified
+   statement     Default  Optional     refresh     Purpose
+   _____________ _______  ____________ ___________ _______________
+   Options       NullTrnc Optional     Yes         CSSMTP options
+                 No
+   
+   31.y Options statement
+   
+   Use the Options statement to change the processing behavior
+   of CSSMTP.
+   
+   Syntax
+   
+   >>__Options_| Put Braces and Parameters on Separate Lines |_><
+   
+   Put Braces and Parameters on Separate Lines:
+   |__ _{______________________ _______________________________|
+      |_| Options Parameters |_|
+      |_}______________________|
+   
+   Options Parameters:
+       _NullTrnc NO_______
+   |__|___________________|____________________________________|
+      |_NullTrnc__ _YES_ _|
+                  |_NO__|
+   
+                  |_NO__|
+   
+   
+   NullTrnc
+        Specifies if the trailing null characters are to be
+        stripped from command records (EHLO, HELO, MAIL, RCPT and
+        DATA).
+   
+        NO
+            The trailing null characters are not stripped from
+            the mail command records by CSSMTP. This is the
+            default.
+   
+        YES
+            The trailing null characters are stripped from the mail
+            command records by CSSMTP.
+   
+   
+   * Cross Reference between External and Internal Names
+   HHHMLCFG (EZAMLCFG)  HHHMLCFP (EZAMLCFP)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM87623
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   1D0
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-04-23
+   
+   
+ * CLOSED DATE
+   2013-05-20
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK94439 PM94506 [http://www-01.ibm.com/support/docview.wss?uid=isg1PM94506]
+   
+   
+
+MODULES/MACROS
+ *  EZAMLCFP EZAMLJSP HHHMLCFG HHHMLCFP
+   
+   
+    
+   
+   
+
+Publications Referenced SC31877619 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * FIXED COMPONENT ID
+   5655HAL00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R1D0 PSY UK94439 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK94439]
+   UP13/06/19 P F306
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

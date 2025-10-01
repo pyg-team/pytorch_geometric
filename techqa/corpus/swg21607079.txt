@@ -1,0 +1,167 @@
+Title: IBM ITCAM SAP 7.1 agent upgrade from 6.2 - United States
+
+Text:
+Migrate; Migration; IV25294; 5724B97SOTR TECHNOTE (FAQ)
+
+QUESTION
+ What are the steps to upgrade mySAP agent from v6.2 to v7.1? 
+
+ANSWER
+The following describes general procedures and considerations for upgrading a previous installation of IBM Tivoli Composite Application Manager for SAP in supported IBM Tivoli Monitoring environments.After installing the 7.1 agent we highly suggest that you apply the most current fix which can be found using the IBM support portal search 
+
+http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Tivoli+Composite+Application+Manager&product=ibm/Tivoli/Tivoli+Composite+Application+Manager+for+Applications&release=7.1.0.0&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Tivoli+Composite+Application+Manager&product=ibm/Tivoli/Tivoli+Composite+Application+Manager+for+Applications&release=7.1.0.0&platform=All&function=all]
+
+Perform an upgrade from a previous installation by completing the following general steps:
+1. If necessary, upgrade the IBM Tivoli Monitoring installation to one of the minimum supported versions.
+2. Upgrade the IBM Tivoli Composite Application Manager for SAP installation to version 7.1.
+3. Import IBM Tivoli Composite Application Manager for SAP Agent 7.1 ABAP transport on the SAP system.
+4. Start IBM Tivoli Composite Application Manager for SAP Agent.
+
+Section-A: Local Upgrade:
+
+I. Complete the following steps to upgrade SAP monitoring agents on Windows monitoring servers.
+
+Procedure:
+
+1. Please note that the monitoring agent is stopped during upgrade process
+2. In the \WINDOWS subdirectory on the agent product CD (for distributed products) or data files CD (for z/OS products), double-click the setup.exe file to launch the installation.
+3. Click Next on the Welcome window.
+4. On the Install Prerequisites window, read the information about the IBM Tivoli Composite Application Manager for SAP and its prerequisites.
+5. Click Next.
+6. Click Accept to accept the license agreement.
+7. Select the Agent to be installed:
+a. Expand the Tivoli Enterprise Monitoring Agent-TEMA node to display a list of Monitoring Agents that available for installation on the monitoring server.
+b. On the Select Features window, select IBM Tivoli Composite Application Manager for SAP Agent.
+
+
+[/support/docview.wss?uid=swg21607079&aid=1] [/support/docview.wss?uid=swg21607079&aid=1] 
+
+Click Next. 
+
+[/support/docview.wss?uid=swg21607079&aid=2] [/support/docview.wss?uid=swg21607079&aid=2] 
+
+Click Next.
+
+8. On the Start Copying Files window, read the list of actions to be performed and click Next to start the installation.
+9. Click Yes to continue the installation. Clicking Yes starts the upgrade process.
+10. Ignore the feature installation error and click OK proceed with the installation.
+11. Click Next on the Setup Type window.
+12. Fill the configuration details for the SAP agent:
+
+[/support/docview.wss?uid=swg21607079&aid=3] [/support/docview.wss?uid=swg21607079&aid=3] 
+
+a. Fill the TEMS Hostname or IP Address and click OK 
+
+[/support/docview.wss?uid=swg21607079&aid=4] [/support/docview.wss?uid=swg21607079&aid=4] 
+
+b. Select the SAP connection mode and fill the relative SAP info and click OK 
+
+[/support/docview.wss?uid=swg21607079&aid=5] [/support/docview.wss?uid=swg21607079&aid=5] 
+
+c. Provide the SAP Host name and system number.
+d. Test Connection feature allows verification of agent connection to the SAP system that is to be monitored.
+e. Click OK
+13. Click Finish to close the installation wizard.
+
+II. Complete the following steps to upgrade SAP monitoring agents on UNIX or Linux monitoring servers.
+
+Procedure:
+
+1. Please note that the monitoring agent is stopped during the upgrade process
+2. Run following command from the installation media (the agent product CD for distributed agent products or the data files CD for z/OS agent products):
+./install.sh
+3. When prompted for the IBM Tivoli Monitoring home directory, press Enter to accept the default directory (/opt/IBM/ITM) or type the full path to the installation directory to be used.
+4. The following prompt is displayed:
+
+Select one of the following:
+
+1) Install products to the local host.
+2) Install products to depot for remote deployment (requires TEMS).
+3) Install TEMS support for remote seeding
+4) Exit install.
+
+Please enter a valid number: 
+
+5. Read through the agreement, then type 1 and press Enter to accept it.
+6. Type 1 to install the required prerequisites.
+7. Following prompt is displayed:
+
+Product packages are available for this operating system and component support categories:
+
+1) IBM Tivoli Monitoring components for this operating system
+2) Tivoli Enterprise Portal Browser Client support
+3) Tivoli Enterprise Portal Server support
+4) Tivoli Enterprise Monitoring Server support
+5) Other operating systems
+
+Enter 1 to select IBM Tivoli Monitoring components for this operating system.
+
+8. Type 1 to confirm the selection.
+9. The installer displays the list of products that can be installed:
+
+The following products are available for installation:
+
+1) IBM Tivoli Composite Application Manager Agent for SAP V07.10.00.00
+2) Tivoli Enterprise Services User Interface Extensions V06.22.02.00
+3) all of the above
+
+Select 3 to upgrade the SAP agent.
+
+10. Type 1 to confirm the selection.
+11. Enter 1 to add additional products or Enter 2 to proceed with the installation.
+12. Choose the appropriate option to secure the IBM Tivoli Monitoring installation.
+13. After the SAP agents are added, refresh the monitoring server configuration to check for the upgraded version of SAP Agent.
+
+[/support/docview.wss?uid=swg21607079&aid=6] [/support/docview.wss?uid=swg21607079&aid=6]
+
+
+
+Section-B: Remote Upgrade: 
+
+The SAP agent can also be upgraded remotely from the command line. 
+
+I. Upgrading the monitoring agent through command line: 
+
+Procedure: 
+
+1. Complete the addbundles procedure.
+2. Use the updateagent command to upgrade the agent remotely. 
+For example:
+tacmd updateagent -t SA -n Primary:IBMSAP1-V20:NT -v 071000000
+3. To check the upgrade status use getDeployStatus command. 
+For Example:
+tacmd getDeployStatus –c UPDATE
+or
+tacmd getDeployStatus –g <transaction_id>
+
+
+This completes the discussion of SAP agent upgrade from 6.2 release to 7.1. 
+
+Starting or stopping the SAP agent:
+
+Use GUI to start and stop the agent on Windows.
+On Unix and Linux platforms, use GUI or command itmcmd to start and stop the agent.
+When using the command line to start or stop the SAP agent, use the -o option to specify which SAP
+instance to control. For example:
+
+itmcmd agent -o system_identifier start sa
+or
+itmcmd agent -o system_identifier stop sa
+
+where:
+system_identifier:
+Three-character SAP system ID for the SAP system
+
+For example, the following command starts a SAP system with the system ID of QA1:
+itmcmd agent -o QA1 start sa
+
+For more information about the itmcmd agent command, see the IBM Tivoli Monitoring Command
+Reference.
+
+For more information about “Importing the ABAP transport on the SAP system”, please see IBM Tivoli Composite Application Manager for SAP Agent 7.1 User Guide "Chapter 2. Agent installation and configuration"-> Section "Importing the ABAP transport on the SAP system"
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ mySAP

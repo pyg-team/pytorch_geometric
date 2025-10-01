@@ -1,0 +1,20 @@
+Title: IBM Questions about installing a new JVM (Java Virtual Machine) to an existing cluster for Batch Process - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You have an environment which is a single WAS (WebSphere application Server) cell with one MDM (Master Data Management) Cluster. You have 2 JVMs as members (one JVM per physical server/node). For batch process, you want to know:
+
+1. Is it possible to install the third JVM on one of the existing physical server/node with one of the existing JVMs? In other words, you will have two JVMs in one node.
+
+2. If the Batch JVM is in it's own cluster, how can you have it point to the same MDM Database as the existing Cluster? 
+
+3. Is it safe to run MDM within 2 separate WAS cells, with both of them actively pointing to the same Database at run time? 
+
+ANSWER
+1. This is not certified by MDM to have two JMVs in one node. If you want to separate the work load between batch and real time, the batch JVM should not be in the same cluster, but can be on the same physical server as the existing JVM. 
+2. You have to treat this as a new MDM installation and then re-pointing it back to the same database as the other cluster. Please refer to the steps here like an upgrade process:
+http://www.ibm.com/support/knowledgecenter/SSWSR9_11.0.0/com.ibm.swg.im.mdmhs.release.upgrade.doc/Topics/upgrademdmsdb.html?lang=en [http://www.ibm.com/support/knowledgecenter/SSWSR9_11.0.0/com.ibm.swg.im.mdmhs.release.upgrade.doc/Topics/upgrademdmsdb.html?lang=en]
+3. Yes, it is safe to configure 2 separate WAS cell with both of them pointing to same DB at run time. Please see HA(High availability) deployment suggestion here with 2 cell.
+http://www.ibm.com/support/knowledgecenter/SSWSR9_11.3.0/com.ibm.swg.im.mdmhs.release.install.doc/Topics/t_InstallingHighAvailability.html [http://www.ibm.com/support/knowledgecenter/SSWSR9_11.3.0/com.ibm.swg.im.mdmhs.release.install.doc/Topics/t_InstallingHighAvailability.html]

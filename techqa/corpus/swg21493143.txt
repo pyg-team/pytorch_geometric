@@ -1,0 +1,19 @@
+Title: IBM Matching SUDAAN variance estimates with missing data only on analysis variables - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm trying to get SPSS Complex Samples to match variance estimates from SUDAAN, without success. I've noticed that SPSS is deleting some cases that SUDAAN calls valid. What's being done differently, and can I get SPSS to match the SUDAAN results? 
+
+RESOLVING THE PROBLEM
+SPSS deletes any case missing on any of the design variables (weights, stratification variables, cluster variables, etc.) or any of the analysis variables. SUDAAN appears to delete only cases missing on any of the design variables. It seems to treat cases that are complete on design variables but not on analysis variables as if they were in a different domain or subpopulation, and proceed to include them in variance estimation. You may be able to reproduce the SUDAAN results by creating a subpopulation or domain variable that distinguishes the complete cases from the others, filling in arbitrary values for the missing analysis variables, and using the DOMAIN subcommand to restrict the parameter estimation to the domain or subpopulation
+
+RELATED INFORMATION
+ IBM SPSS Help and Support [https://www.ibm.com/analytics/us/en/spss/spss-support/]
+
+
+
+
+HISTORICAL NUMBER
+ 70979

@@ -1,0 +1,57 @@
+Title: IBM How to enable snapshot isolation on IBM Netezza or IBM PureData System for Analytics appliances - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is snapshot isolation in IBM Netezza Platform Software (NPS) releases? 
+
+ANSWER
+IBM Netezza Platform Software (NPS) Releases 4.5.4 P4, 4.6.8, 6.0, and later include support for snapshot isolation (also referred to as relaxed serializability). The NPS default mode is serializable transaction isolation, which provides the highest level of consistency. However, serializable isolation may not be well suited for customer environments where the following types of behaviors are common: 
+
+ * Users require the ability to delete or update different rows of the same table concurrently. 
+ * Users do not want to manage "Could not serialize - transaction aborted" errors in their applications. These errors occur because the NPS database cannot automatically queue and resubmit multi-statement transactions when a transaction serialization cycle occurs. 
+ * Usage patterns can sometimes cause transaction objects to be retained long after they have committed, especially when there are old outstanding transactions, because the system might need to reference these transactions for serialization cycle checking. Retaining these transaction objects could impact performance of the system by using memory or reaching transaction limits on the system, which prevents new transactions from starting until some of the existing transactions are aborted or committed. 
+ * Customers have existing work flows defined in other databases that rely on a less strict transaction serialization routine, and they cannot easily migrate to Netezza appliances without conversion costs to their work flows. 
+
+
+For these customers and environments, NPS supports the ability to use snapshot isolation as a system-level configuration setting or as a session-level setting. Snapshot isolation is not part of the SQL standard, but it is a general term used within the industry. Snapshot Isolation is an extension of the ISO SQL Standard Repeatable Read isolation level that does not allow "phantoms." Write-write conflict checking is performed at the row level. With serializable isolation, NPS performs stricter read-write conflict checking at the table level. About snapshot isolation 
+
+Snapshot isolation is a weaker form of transaction isolation than NPS default serializable isolation, but it offers advantages for environments where concurrent updates or deletes need to take place against the same table, but not concurrently on the same row of the same table. 
+
+With serializable isolation, if new transactions attempt to write to a table that is being updated by an older transaction, the NPS system either queues the new transactions or aborts them with a "Could not serialize - transaction aborted" error and rolls back the changes. 
+
+With snapshot isolation, concurrent transactions can update or delete rows in the same table. NPS allows a transaction to commit only if it did not make any updates or deletes that conflict with updates or deletes made by other concurrent transactions. If the NPS system detects a conflict, it aborts the transaction with a "Concurrent update or delete of same row" error and rolls back the transaction. 
+
+If your users or application work flows require snapshot isolation or could benefit from the greater concurrency of transactions, you can implement the snapshot isolation on a system-wide basis, or within a session as needed. 
+
+Cautions and conditions to watch for 
+
+If your users or applications modify the same table rows concurrently, note that those queries will fail with the error: "ERROR: Concurrent update or delete of same row." There is no queuing or automatic retry of those queries. 
+
+Your applications and users are responsible for managing the potential "concurrent update" errors, as well as for maintaining any inter-row constraints. Snapshot isolation could result in some inter-row inconsistencies, which would not occur with serializable isolation. If transactions independently change rows that rely upon one another, for example, the constraints might not be preserved after the transactions commit. 
+
+To enable snapshot isolation as a system-wide setting: 
+
+ 1. Log in to the NPS active host as the nz user. 
+ 2. With any text editor, open the /nz/data/postgresql.conf file. Use caution when you edit postgresql.conf. It contains important configuration parameters for the NPS system operation. 
+ 3. Add the following variable definition to the file:
+    
+    serializable = off
+    
+    The variable is a Boolean, so off, no, false, or the number 0 disable serializable isolation. Values of on, yes, true, or 1 enable serializable isolation, which is the default behavior. 
+ 4. Save and close the postgresql.conf file. 
+ 5. You must stop and restart the NPS software using the nzstop command followed by the nzstart command to place the new setting into effect. 
+
+
+This change affects only transactions against the user databases. The system catalog, used internally by NPS, is not affected by the setting. To enable snapshot isolation during a database session: 
+
+ 1. Start a database connection as a valid Netezza database user account using nzsql or your database connection client, or edit the body of your stored procedure. 
+ 2. Use the SET command to set the transaction isolation to snapshot isolation:
+    
+    SET serializable = off;
+    
+    The variable is a Boolean, so off, no, false, or the number 0 disable serializable isolation. Values of on, yes, true, or 1 enable serializable isolation, which is the default behavior.
+
+
+The session will use snapshot isolation for all queries and transactions until you close the session or you use the SET command to change back to serializable isolation. You can use the SHOW SERIALIZABLE command to display the current value of the session variable. If you use SET SERIALIZABLE in the body of a stored procedure, the change remains in effect for the session even after the procedure ends.

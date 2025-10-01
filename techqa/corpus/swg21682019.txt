@@ -1,0 +1,50 @@
+Title: IBM Installation of Tivoli Monitoring for Tivoli Storage Manager V6.3.5 and earlier fails on the SuSE Linux Enterprise Server operating system - United States
+
+Text:
+sreadme635; rptupdates635 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The installation of Tivoli Monitoring for Tivoli Storage Manager Version 6.3.5 and earlier fails on a SuSE Linux Enterprise Server operating system with the following error message:
+
+install.sh failure: KCI1138E could not determine the machine's architecture. 
+
+
+
+SYMPTOM
+The following installations fail on SuSE Linux Enterprise Server 11, SP2: 
+
+ * Tivoli Monitoring for Tivoli Storage Manager 
+ * Tivoli Monitoring for Tivoli Storage Manager agent only 
+ * Tivoli Monitoring for Tivoli Storage Manager agent only (when using the native Tivoli Storage Manager monitoring agent installer)
+
+
+CAUSE
+The IBM Tivoli Monitoring and Tivoli Storage Manager monitoring agent installers V6.3.5 and earlier do not provide native support for SuSE Linux Enterprise Server 11, SP2. 
+
+ENVIRONMENT
+The issue occurs with SuSE Linux Enterprise Server 11, SP2, and with Tivoli Monitoring for Tivoli Storage Manager V6.3.5 and earlier.
+
+
+
+DIAGNOSING THE PROBLEM
+To diagnose the issue, review the IBM Tivoli Monitoring and Tivoli Storage Manager monitoring agent installation and upgrade logs, which might contain the following error message: 
+
+
+install.sh failure: KCI1138E could not determine the machine's architecture.
+
+For more information about the error message, see Technote 21694249:
+http://www-01.ibm.com/support/docview.wss?uid=swg21694249 [http://www-01.ibm.com/support/docview.wss?uid=swg21694249]
+
+
+RESOLVING THE PROBLEM
+ 
+
+To resolve the issue, run the installation or upgrade command again with the following prefix:
+uname26
+
+For example:
+uname26 ./install.bin
+uname26 ./install.sh
+
+RELATED INFORMATION
+ Upgrading to SLES 11 SP2 [http://www-01.ibm.com/support/docview.wss?uid=swg21694249]

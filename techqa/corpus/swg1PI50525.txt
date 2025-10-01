@@ -1,0 +1,186 @@
+Title: IBM PI50525: EXCESSIVE APPEND CALLS CAUSE HIGH CPU WHEN USING INTELLIGENT MANAGEMENT AND PERFORMANCE MONITORING - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Intelligent Management calls PMI appendCustomSetString method
+   for every new URI request within 15 seconds poll interval for
+   each module. This drives many frequent calls to
+   appendCustomSetString and this causes hung Alarm threads and
+   high CPU.
+   
+   The related AlarmThread is as follows:
+   AlarmThreadMo W   UTLS0008W: The return of alarm thread
+   "Deferrable Alarm : 0" (0000007f) to the alarm thread pool has
+   been delayed for 12114 milliseconds. This may be preventing
+   normal alarm function within the application server.
+   The alarm listener stack trace is as follows:
+   at
+   com.ibm.ws.xd.pmi.async.server.PmiPost.getStatsInternal(Publis
+   her.java:3752)
+   at
+   com.ibm.ws.xd.pmi.async.server.PmiPost.getStats(Publisher.java:3
+   650)
+   at
+   com.ibm.ws.xd.pmi.async.server.PmiPost.doPost(Publisher.java:355
+   8)
+   at
+   com.ibm.ws.xd.pmi.async.server.PmiPost$1.run(Publisher.java:3343
+   )
+   at
+   com.ibm.ws.security.auth.ContextManagerImpl.runAs(ContextManager
+   Impl.java:5474)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The code is being fixed by calling appendLockCustomSetString
+   method provided by PMI.
+   
+   This will fix the unnecessary call to PMI appendCustomSetString.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server of Intelligent Management and        *
+   *                  Performance Monitoring Infrastructure       *
+   *                  (PMI)                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Intelligent Management calls the PMI    *
+   *                      appendCustomSetString method            *
+   *                      frequently, causing hung threads and    *
+   *                      high CPU.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Intelligent Management calls the PMI appendCustomSetString
+   method for every new URI request within 15 seconds poll
+   interval for each module. This drives many frequent calls to
+   appendCustomSetString and this causes hang Alarm threads and
+   high CPU.
+   The threads are hung at the following :
+   com.ibm.ws.pmi.server.PmiCollaboratorImpl.appendCustomSetString(
+   PmiCollaboratorImpl.java:218)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR requires prereq APAR PI48619 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI48619].
+   
+   The fix removes calling "appendCustomSetString" by Intelligent
+   Management to enable PMI metrics but calls new method
+   "perhapsCallPmiAppendLock" exposed by PMI once to enable
+   the metrics and it remains enabled.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.8.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI50525
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-10-14
+   
+   
+ * CLOSED DATE
+   2015-11-23
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

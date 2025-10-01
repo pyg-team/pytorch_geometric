@@ -1,0 +1,44 @@
+Title: IBM Problems with 4096-bit RSA HSM keygen on WebSphere DataPower Appliances - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You might encounter errors while trying to generate a 4096-bit RSA key on the HSM of a WebSphere DataPower SOA Appliance using the keygen action.
+
+On the 9235 platform generating 4096-bit RSA keys on the HSM is not supported.
+
+On the 7198/7199 platforms generating 4096-bit RSA keys on the HSM is supported, but the operation will occasionally hit a timeout instead of succeeding.
+
+
+SYMPTOM
+4096-bit RSA HSM keygen will fail with one of two error messages.
+
+
+CAUSE
+The underlying HSM on the 9235 platform can only generate 1024-bit and 2048-bit RSA keys, so attempting to generate 4096-bit RSA keys on it will always fail. 
+
+The underlying HSM on the 7198/7199 platforms can generate 4096-bit RSA keys but sometimes it exceeds a timeout while trying to do so (error 133).
+
+
+DIAGNOSING THE PROBLEM
+On the 9235 platform you will receive the following error message when attempting 4096-bit keygen on the HSM:
+keygen : *HSM only generates RSA keys of 1024 and 2048 bits*
+keygen : keygen failed 
+
+On the 7198/7199 platforms you might receive the following error message when attempting 4096-bit keygen on the HSM:
+keygen : *HSM RSA key generation failed: 133*
+keygen : keygen failed
+
+
+
+RESOLVING THE PROBLEM
+On the 9235 platform either generate a 2048-bit RSA key instead or generate a 4096-bit RSA key outside of the HSM instead by seting Generate Key on HSM under Administration > Miscellaneous > Crypto Tools to 'off'. 
+
+
+On the 7198/7199 platform try the operation again if it fails with error 133. Eventually the operation will succeed without hitting the 133 timeout error.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower B2B Appliance XB62 Firmware 4.0.2, 5.0.0 Business Integration WebSphere DataPower Integration Appliance XI50 Firmware 4.0.2, 4.0.1, 4.0, 3.8.2, 3.8.1, 3.8, 5.0.0 Business Integration WebSphere DataPower Integration Appliance XI52 Firmware 4.0.2, 5.0.0 Business Integration WebSphere DataPower Service Gateway XG45 Firmware 4.0.2, 5.0.0 Business Integration WebSphere DataPower XML Security Gateway XS40 Firmware 4.0.2, 4.0.1, 4.0, 3.8.2, 3.8.1, 3.8, 5.0.0

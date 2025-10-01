@@ -1,0 +1,165 @@
+Title: IBM BRMS Networking: Secure DDM - United States
+
+Text:
+BRMS; DDM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Additional considerations must be made when using secure DDM in a BRMS network. This documents the requirements for full BRMS network functionality with secure DDM enablement. 
+
+RESOLVING THE PROBLEM
+Additional considerations must be made when using secure DDM in a BRMS network. This documents the requirements for full BRMS network functionality with secure DDM enablement. 
+
+Setup of secure DDM within a BRMS network is easiest to configure two systems at a time: 
+
+Target System - System setup for secure DDM operations
+Source System - System needing to communicate to Target System
+
+Repeat the following steps as necessary for other systems in the BRMS network requiring secure TCP/IP DDM operations.
+
+
+
+ *  - [http://www.ibm.com/i/c.gif] Target System Instructions 
+   
+   Step 1: Type the following command to change the TCP/IP DDM attributes for secured operations:
+   
+   CHGDDMTCPA PWDRQD(*YES)
+   
+   Note: At V6R1 and later, it is now recommended to use value *USRIDPWD in place of value *YES. 
+   
+   Step 2: Prepare a user profile to be used for authentication. It is recommended QBRMS not have a password (IBM-provided default); therefore, it is not eligible to be used for the USRID and PASSWORD parameters of ADDSVRAUTE. For this reason, we suggest using an existing user profile or creating a new user profile. If the user does not have *ALLOBJ special authority, the user should have QBRMS as a group profile and special authority must be *NONE. In addition, the user should have *USE authority to the CRTDDMF command on the current system.
+   
+   Example
+   
+   CRTUSRPRF USRPRF(BRMSUSER) PASSWORD(password) SPCAUT(*NONE) PWDEXPITV(*NOMAX) GRPPRF(QBRMS)
+   
+   Note: Specify INLMNU(*SIGNOFF) to restrict profile BRMSUSER from being used to interactively sign-on, yet allow BRMS synchronization to complete in a secureDDM environment.
+   
+   Step 3: There are some environments which have the *LOCAL RDB directory entry set as something other than the local system name. We find this is often the system serial number which was added by the system automatically when the operating system was installed. Display the RDB directory entries with the following command:
+   
+   WRKRDBDIRE RDB(*ALL)
+   
+   Find the Remote Location which is set to *LOCAL. If the associated Entry is the same as the Default local location, seen from DSPNETA , there are no additional actions needed and you can skip to Step 4 under the Source System Instructions section. 
+   
+   If the Entry is something different than the Default local location, you will need to create a Relational Database Alias:
+   
+   ADDRDBDIRE RDB(RDBLOCAL RDBALIAS) RMTLOCNAME(LOCALIP *IP)
+   
+   RDBLOCAL = The associated Entry for Remote Location is *LOCAL as seen from WRKRDBDIRE RDB(*ALL)
+   RDBALIAS = The Default local location as seen from DSPNETA 
+   LOCALIP = The local IP address or host table name
+   
+   Note: More information on creating a Relational Database Alias can be found in Rochester Support Center knowledgebase document N1011534, BRMS Networking: Adding a Relational Database Directory Entry Alias [http://www.ibm.com/support/docview.wss?uid=nas8N1011534]
+   
+   
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] Source System Instructions 
+   
+   Step 4: Automated secure TCP/IP DDM operations are not possible if authentication passwords cannot be stored. Type the following command to change the QRETSVRSEC system value so that passwords used for authentication can be stored on the system:
+   
+   CHGSYSVAL QRETSVRSEC VALUE('1')
+   
+   Step 5: Use one of the following options to add the required Server Authentication Entries:
+   
+   
+   
+    *  - [http://www.ibm.com/i/c.gif] QDDMDRDASERVER - Preferred Server Authentication Support 
+      
+      This option is the required method if the following PTF or its supersede is applied on the source system:
+      
+      - SI44315 (V5R4M0)
+      - SI44317 (V6R1M0)
+      - SI44316 (V7R1M0)
+      
+      Note: This is the new Preferred Server Authentication support. Refer to APAR SE48945 [http://www-912.ibm.com/n_dir/nas4apar.nsf/ALLAPARS/SE48945] for more information. 
+      
+      Use the following command to add a server authentication entry for the QBRMS user profile. (This user profile is used for network synchronization)
+      
+      ADDSVRAUTE USRPRF(QBRMS) SERVER(QDDMDRDASERVER) USRID(BRMSUSER) PASSWORD(password)
+      
+      Note: QDDMDRDASERVER must be in uppercase.
+      
+      Use the following command to add server authentication entries for each other user who will be authorized to perform secured TCP/IP operations to the remote system. In this example environment, user BRMSUSER is used as a BRMS admin user profile, so a server authentication for it will be required:
+      
+      ADDSVRAUTE USRPRF(BRMSUSER) SERVER(QDDMDRDASERVER) USRID(BRMSUSER) PASSWORD(password) 
+      
+      When QDDMDRDASERVER is configured, ensure BRMS is no longer managing any secure DDM operations by running the following:
+      
+      INZBRM OPTION(*SECUREDDM) ACTION(*REMOVE)
+      
+      
+      
+   
+   
+    *  - [http://www.ibm.com/i/c.gif] QDDMSERVER - Original Server Authentication Support 
+      
+      Use the following command to add a server authentication entry for the QBRMS user profile. (This user profile is used for network synchronization)
+      
+      ADDSVRAUTE USRPRF(QBRMS) SERVER(QDDMSERVER) USRID(BRMSUSER) PASSWORD(password)
+      
+      Note: QDDMSERVER must be in uppercase.
+      
+      Use the following command to add server authentication entries for each other user who will be authorized to perform secured TCP/IP operations to the remote system. In this example environment, user BRMSUSER is used as a BRMS admin user profile, so a server authentication for it will be required:
+      
+      ADDSVRAUTE USRPRF(BRMSUSER) SERVER(QDDMSERVER) USRID(BRMSUSER) PASSWORD(password)
+      
+      If the Source and Target system are both at a release prior to V5R4, setup for BRMS using secure DDM operations is complete. 
+      
+      At V5R4 and above, BRMS uses SQL Call Level Interface (CLI) which has additional server authentication requirements. 
+      You must perform one of the following options:
+      
+      
+      
+       *  - [http://www.ibm.com/i/c.gif] User Managed - Multiple Entry 
+         
+         Add a server authentication entry for the Target server name for QBRMS and each other user who will be authorized to perform secured TCP/IP operations to the remote system:
+         
+         ADDSVRAUTE USRPRF(QBRMS) SERVER(Target) USRID(BRMSUSER) PASSWORD(password)
+         ADDSVRAUTE USRPRF(BRMSUSER) SERVER(Target) USRID(BRMSUSER) PASSWORD(password)
+         
+         If using SAVDOMBRM and do not have SI35706 (V5R4M0) or SI35708 (V6R1M0) applied or their superseding PTF, user QNOTES also requires a server authentication entry for Target:
+         
+         ADDSVRAUTE USRPRF(QNOTES) SERVER(Target) USRID(BRMSUSER) PASSWORD(password) 
+         
+         
+         
+      
+      
+      
+       *  - [http://www.ibm.com/i/c.gif] BRMS Managed - Single Entry 
+         
+         Starting with PTF SI37276 (V6R1M0), you can use the following BRMS command on one of the systems in the BRMS network to set the user profile and password to use for remote server secure DDM connections to all the systems in the BRMS network. 
+         
+         INZBRM OPTION(*SECUREDDM) ACTION(*SET) USER(BRMSUSER) PASSWORD(password)
+         
+         Note: The INZBRM OPTION(*SECUREDDM) command requires *SECADM special authority. It is recommended that the user profile entered on the ACTION(*SET) be the same user profile that was entered for the QDDMSERVER server authentication entry for the QBRMS user profile in Step 5. The user profile and password must exist and be the same on the local and remote systems. 
+         
+         
+         
+      
+      
+      
+      
+   
+   
+   
+   Step 6: The BRMS networking feature at V5R4 and later uses relational database (RDB) entries for BRMS networked systems. Use the following command on each system in the network to verify that RDB entries already exist for all your remote systems: 
+   
+   WRKRDBDIRE RDB(*ALL) 
+   
+   All systems in your BRMS network must have an entry in the RDB directory. Add an entry for Target if not already existing: 
+   
+   ADDRDBDIRE RDB(Target) RMTLOCNAME('ip_address' *IP) 
+   
+   To ensure the RDB directory entries are set up correctly for BRMS, follow Rochester Support Center knowledgebase document N1012571, BRMS Networking: Relational Database Directory Entries: [http://www.ibm.com/support/docview.wss?uid=nas8N1012571] 
+   
+
+
+
+Note: When BRMS needs to get a volume from another system in the network it will swap to user QBRMS profile and not use the profile running the backup. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 
+HISTORICAL NUMBER
+ 551595003

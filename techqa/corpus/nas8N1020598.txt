@@ -1,0 +1,170 @@
+Title: IBM MustGather: IBM Cloud Manager with OpenStack (CMwO) data collection - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What data is need to collect to help debug Cloud Manager with OpenStack (CMwO) issues? 
+
+ANSWER
+The intention of the document is to list what to collect for issues using IBM Cloud Manager with OpenStack (CMwO).
+Note: It is assumed that root is the user ID used to collect data.
+
+Installation Issues
+
+These are the files to collect :
+
+- /tmp/cmwo-installer.log
+- current log file in directory : /opt/ibm/cmwo/_installation/Logs
+
+
+Deployment Issues
+
+Deployment issues are errors when trying to use the knife command to deploy or update a topology. Examples are :
+
+- knife os manage deploy topology <your-topology-name.json>
+- knife os manage update topology <your-topology-name.json>
+
+For issues such as these, re-issue the command but put -VV at the end for extra verbose. Example :
+
+- knife os manage deploy topology <your-topology-name.json> -VV 
+- knife os manage update topology <your-topology-name.json> -VV
+
+After this, collect (on the same system) the directory /var/log/icm-deployer/. Example to zip up the directory to a file /tmp/ibmdata.tar.gz :
+
+- tar cvzf /tmp/ibmdata.tar.gz /var/log/icm-deployer/
+
+Note: For older ICM versions, the log directory may be: /var/log/chef-server
+
+Send in the file. Refer to section titled Uploading Data To IBM.
+
+
+Base Data Collection
+
+This is collection for CMwO data outside issues with installation or deployment. 
+
+Option 1 - Using QMGTOOLS
+
+Note: Collect data from the controller node along with compute nodes (if possible - or the compute node that an instance was to be deployed to)
+
+A script is provided to help with data collection. The script's intention is to connect via SSH to the system with CMwO and collect data. After that, it will download the data to the local system via SCP. When that is done, an option is include if you would like to upload the data to IBM via secure FTP (sftp).
+
+Refer to the QMGTOOLS section for information.
+
+
+Option 2 - Using infocollect.sh program
+On the controller node, look for directories :
+
+- /opt/ibm/SCExx/program/bin
+- /var/opt/ibm/.SCExx
+
+if either one of those does not exist, then skip to Option 1 or Option 3.
+
+If those exist, then create a directory in /tmp to store the data, so I will use /tmp/ibmdata. Next, run the infocollect.sh script located in /opt/ibm/SCExx/program/bin directory. Example :
+
+- /opt/ibm/SCExx/program/bin/infocollect.sh -c /var/opt/ibm/.SCExx -d /tmp/ibmdata
+
+Option 3 - manual collection
+On the controller node and compute nodes , if these directories exist in /var/log, then grab the log files 
+
+- ceilometer 
+- chef-server 
+- cinder 
+- glance 
+- heat 
+- httpd 
+- horizon 
+- iaasgateway 
+- keystone 
+- neutron 
+- nova 
+- openvswitch 
+- qpid 
+- rabbitmq
+
+If these files exist, grab these:
+
+- /opt/ibm/cmwo/version/product.version
+- /var/chef/cache/chef-stacktrace.out
+
+If these directories exist, grab the log files :
+
+- /var/opt/ibm/.SCE41/logs/
+- /var/opt/ibm/.SCE42/logs/
+
+Send data to IBM. Refer to section titled Uploading Data To IBM.
+
+
+CMwO Managing PowerVC
+
+If using PowerVC along with CMwO, then additional logs may be requested. 
+
+
+
+Collect PowerVC data 
+Option 1 - QMGTOOLS 
+A script is provided to help with data collection. The script's intention is to connect via SSH to the system with CMwO and collect data. After that, it will download the data to the local system via SCP. When that is done, an option is include if you would like to upload the data to IBM via secure FTP (sftp). 
+
+Refer to the QMGTOOLS section for information. 
+
+Option 2 - Use powervc-diag command 
+The command to collect data on the system running PowerVC is powervc-diag. Information can be found at this URL: 
+
+http://www-01.ibm.com/support/knowledgecenter/SSXK2N_1.2.2/com.ibm.powervc.standard.help.doc/powervc_powervcdiag_hmc.html?lang=en-us [http://www-01.ibm.com/support/knowledgecenter/SSXK2N_1.2.2/com.ibm.powervc.standard.help.doc/powervc_powervcdiag_hmc.html?lang=en-us] 
+
+
+Collect HMC data 
+Note: HMC user ID hscroot and hscpe is required. Refer to section 1 to create user hscpe in the following URL: 
+http://www-01.ibm.com/support/docview.wss?uid=nas8N1018878 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1018878] 
+
+Since PowerVC interacts with an HMC, data from the HMC may be needed. Normally PEDBG (PE debug) data is collected. 
+
+Option 1 - QMGTOOLS 
+A script is provided to help with data collection. The script's intention is to connect via SSH to the system with CMwO and collect data. After that, it will download the data to the local system via SCP. When that is done, an option is include if you would like to upload the data to IBM via secure FTP (sftp). 
+
+Refer to the QMGTOOLS section for information. 
+
+Option 2 - Using pedbg on HMC 
+Refer to the following URL to collect pedbg on the HMC 
+
+http://www-01.ibm.com/support/docview.wss?uid=nas8N1018878 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1018878] 
+
+
+VIOS 
+Note: If collecting SNAP data in conjunction with other data (HMC, IBM i, PowerVC etc.), please get date/timestamps from all devices for a frame of reference. 
+
+VIOS data might be needed. Follow this URL to collect SNAP data for VIOS. 
+
+http://www-01.ibm.com/support/docview.wss?uid=nas8N1018786 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1018786] 
+
+
+
+QMGTOOLS 
+
+
+Note: QMGTOOLS script was tested on RHEL6.5. 
+
+A script is provided to assist in collecting data. The idea is to run this script from a linux workstation. It will try to connect to a remote system via SSH, dump data, download the data to the local workstation via SCP, and give the user an option to upload the data to IBM via secure FTP (sftp). 
+
+Download the file, restore in a directory, and call qmgcollect.sh. 
+
+ftp://public.dhe.ibm.com/services/us/igsc/cloud/ [ftp://public.dhe.ibm.com/services/us/igsc/cloud/] 
+
+- tar -zxvf qmgcollect.tar.gz 
+- ./qmgcollect.sh 
+
+A menu like this will be shown. Select what to collect. More information can be found at this URL: http://www-01.ibm.com/support/docview.wss?uid=nas8N1020618 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1020618] 
+
+
+[/support/docview.wss?uid=nas8N1020598&aid=1] [/support/docview.wss?uid=nas8N1020598&aid=1] 
+
+
+Uploading Data To IBM 
+
+Refer to this URL for uploading data to IBM. Please have the PMR number handy. 
+
+http://www.ecurep.ibm.com/app/upload [http://www.ecurep.ibm.com/app/upload]  
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Cloud Technology Cloud Manager with Openstack Cloud Technology PowerVC Standard Edition

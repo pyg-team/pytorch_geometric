@@ -1,0 +1,90 @@
+Title: IBM MDM Remote RMI/EJB invocation failing with ORB error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The MDM Remote RMI/EJB invocation can fail with the following Object Request Broker (ORB) error:
+
+Error: Service bean could not be looked up on server iiop://hostname:2809 and provider url com/dwl/base/requestHandler/beans/DWLServiceController
+com.ibm.mdm.tools.metadata.common.exceptions.MetadataException: javax.naming.NamingException: Error getting WsnNameService properties [Root exception is org.omg.CORBA.TRANSIENT: initial and forwarded IOR inaccessible vmcid: IBM minor code: E07 completed: No] 
+
+SYMPTOM
+When a remote invocation failure occurs, a ORB message and trace file are generated on the file system, generally in the working folder of the Java client: 
+
+
+orbtrc.<timetstamp>.txt and orbmsg.<timestamp>.txt
+
+The error is:
+
+2014.04.04 15:02:00.242 com.ibm.ws.security.orbssl.WSSSLClientSocketFactoryImpl createSSLSocket IBM JDK ORB ORBRas ORBRas JSSL0130E: java.io.IOException: Signals that an I/O exception of some sort has occurred. Reason: Read timed out Remote Host: 9.20.26.114 Remote Port: 9403, p1=java.net.SocketTimeoutException: Read timed out 
+
+
+The trace file will contain this information:
+
+15:02:00.251 com.ibm.ws.orbimpl.transport.WSSSLTransportConnection connect:406 P=105985:O=0:CT ORBRas[default] org.omg.CORBA.COMM_FAILURE: CAUGHT_EXCEPTION_WHILE_CONFIGURING_SSL_CLIENT_SOCKET: JSSL0130E: java.io.IOException: Signals that an I/O exception of some sort has occurred. Reason: Read timed out Remote Host: x.xx.xx.xxx Remote Port: 9403 vmcid: 0x49421000 minor code: 70 completed: No
+at com.ibm.ws.security.orbssl.WSSSLClientSocketFactoryImpl.createSSLSocket(WSSSLClientSocketFactoryImpl.java:230)
+at com.ibm.ws.orbimpl.transport.WSSSLTransportConnection.createSocket(WSSSLTransportConnection.java:236)
+at com.ibm.CORBA.transport.TransportConnectionBase.connect(TransportConnectionBase.java:357)
+at com.ibm.ws.orbimpl.transport.WSTransport$1.run(WSTransport.java:502)
+at com.ibm.ws.security.util.AccessController.doPrivileged(AccessController.java:118)
+at com.ibm.ws.orbimpl.transport.WSTransport.getConnection(WSTransport.java:499)
+at com.ibm.CORBA.transport.TransportBase.getConnection(TransportBase.java:187)
+at com.ibm.rmi.iiop.TransportManager.get(TransportManager.java:97)
+at com.ibm.rmi.iiop.GIOPImpl.getConnection(GIOPImpl.java:130)
+at com.ibm.rmi.iiop.GIOPImpl.locate(GIOPImpl.java:219)
+at com.ibm.rmi.corba.ClientDelegate.locate(ClientDelegate.java:1983)
+at com.ibm.rmi.corba.ClientDelegate._createRequest(ClientDelegate.java:2008)
+at com.ibm.rmi.corba.ClientDelegate.createRequest(ClientDelegate.java:1186)
+at com.ibm.rmi.corba.ClientDelegate.createRequest(ClientDelegate.java:1268)
+at com.ibm.CORBA.iiop.ClientDelegate.createRequest(ClientDelegate.java:1457)
+at com.ibm.rmi.corba.ClientDelegate.createRequest(ClientDelegate.java:1164)
+at com.ibm.CORBA.iiop.ClientDelegate.createRequest(ClientDelegate.java:1423)
+at com.ibm.rmi.corba.ClientDelegate.request(ClientDelegate.java:1886)
+at com.ibm.CORBA.iiop.ClientDelegate.request(ClientDelegate.java:1379)
+at org.omg.CORBA.portable.ObjectImpl._request(ObjectImpl.java:458)
+at com.ibm.WsnBootstrap._WsnNameServiceStub.getProperties(_WsnNameServiceStub.java:38)
+at com.ibm.ws.naming.util.WsnInitCtxFactory.mergeWsnNSProperties(WsnInitCtxFactory.java:1549)
+at com.ibm.ws.naming.util.WsnInitCtxFactory.getRootContextFromServer(WsnInitCtxFactory.java:1042)
+at com.ibm.ws.naming.util.WsnInitCtxFactory.getRootJndiContext(WsnInitCtxFactory.java:962)
+at com.ibm.ws.naming.util.WsnInitCtxFactory.getInitialContextInternal(WsnInitCtxFactory.java:614)
+at com.ibm.ws.naming.util.WsnInitCtx.getContext(WsnInitCtx.java:128)
+at com.ibm.ws.naming.util.WsnInitCtx.getContextIfNull(WsnInitCtx.java:765)
+at com.ibm.ws.naming.util.WsnInitCtx.lookup(WsnInitCtx.java:164)
+at com.ibm.ws.naming.util.WsnInitCtx.lookup(WsnInitCtx.java:179)
+at javax.naming.InitialContext.lookup(InitialContext.java:422)
+at com.ibm.mdm.tools.metadata.admin.servicelocator.RuntimeServiceLocator.initDataServerBean(RuntimeServiceLocator.java:142)
+at com.ibm.mdm.tools.metadata.admin.servicelocator.RuntimeServiceLocator.getRuntimeServiceMethod(RuntimeServiceLocator.java:191)
+at com.ibm.mdm.tools.metadata.runtime.comms.messaging.LocalMessageProxy.init(LocalMessageProxy.java:55)
+at com.ibm.mdm.tools.metadata.runtime.comms.factory.MessageProxyFactory.getMessagingProxy(MessageProxyFactory.java:51)
+at com.ibm.mdm.tools.metadata.runtime.comms.impl.ConnectionImpl.connect(ConnectionImpl.java:68)
+at com.ibm.mdm.tools.servertxn.client.ServiceControllerClient.main(ServiceControllerClient.java:154) 
+
+
+CAUSE
+The security exception CAUGHT_EXCEPTION_WHILE_CONFIGURING_SSL_CLIENT_SOCKET: JSSL0130E: java.io.IOException: signals that an I/O exception of some sort has occurred. 
+
+Reason: 
+Read timed out Remote Host: x.xx.xx.xxx Remote Port: 9403 occurs when the server fails to resolve the client’s host correctly. This can be caused by a network DNS configuration issue.
+
+
+RESOLVING THE PROBLEM
+You may opt to manually add the client’s ip and hostname information to the hosts file of the remote server. This will be the host running Websphere and MDM.
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+If modifying the server’s hosts file is not an option, contact your network administrator to confirm that the DNS settings are correct for your network.

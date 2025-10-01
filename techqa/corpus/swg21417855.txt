@@ -1,0 +1,24 @@
+Title: IBM DataStage design information missing after job is saved, compiled and ran when XMETA database is Oracle. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Other behaviors include:
+1. Oracle EE stage not showing entries on Properties tab
+2. Imported jobs might display all stages to user using generic plug-in icon instead of actual stage icons.
+In the case where database charset was US7ASCII, some control characters we were storing in XMETA were getting changed, therefore the information we retrieved from XMETA after job import was no longer the same as we tried to store, causing us to show generic icons. 
+
+CAUSE
+NLS_CHARACTERSET was not set to AL32UTF8
+
+DIAGNOSING THE PROBLEM
+Run the following query against XMETA database: 
+
+Select * from nls_database_parameters; 
+
+Verify that NLS_CHARACTERSET=AL32UTF8.
+
+
+RESOLVING THE PROBLEM
+Create Oracle instance as AL32UTF8 as set in the provided scripts. Readme says " The recommended character set for use with IBM Information Server is AL32UTF8."

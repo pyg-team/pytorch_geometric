@@ -1,0 +1,176 @@
+Title: IBM IV44860: WIN 2008 WHEN A BAT FILE IS LAUNCHED DIRECTLY IT IS NOT RELEASED WHEN PROCESS ENDS.ATTEMPTS TO DELETE/RENAME IT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 4 (6.2.3-TIV-ITM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24034252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On Windows 2008 when a bat file is launched directly the bat
+   is not released when the process ends. Subsequent attempts to
+   delete or rename the file fail. Changing the launch for the
+   .bat file to cmd.exe /C then the bat file works and the file is
+   released. Problem customers will see is rename file, or delete
+   file failed cause: 5 in the install.log.
+   
+   Recreate Instructions:
+   Does not fail on all Windows 2008 R2 machines. so testing may
+   be difficult.
+    1. Install ITM 6.2.2 FP3 agents NT and UA on Windows 2008 R2
+   x64.
+   2. Upgrade to ITM 6.2.3 FP2
+   3. Review the upgrade log to see if any cause: 5 errors are
+   found when trying to delete or rename a .bat file. If found the
+   problem has been recreated.
+   
+   Environment:
+    ** Windows only **
+   The new logic was added for IV24444 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV24444] and works on some Win 2008
+   machines but fails on others. Works on Windows 2003. Can happen
+   to any agent created with 6.2.3 FP1, FP2, or FP3 installer.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The file that usually fails is GetJavaHome.bat. It can be
+   edited after the install is complete to add the following
+   information.
+   GetJavaHome.bat should contain 1 line
+   @echo C:\IBM\ITM\java\java#0\jre
+   # can be 5 or 6 depending on the release of java installed.
+   Check CandleGetJavaHome.vbs for the java directory needed. It
+   contains Wscript.Echo "C:\IBM\ITM\java\java#0\jre"
+   The value between the quotes can be copied to @echo c:\....in
+   the GetJavaHome.bat. If GetJavaHome.bat contains @echo  and
+   CandleGetJavaHome.vbs contains Wscript.Echo "" then Java may not
+   be installed. It is acceptable for GetJavaHome.bat and
+   CandleGetJavaHome.vbs to echo either on or nothing if Java is
+   not installed.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Install fails or produces incorrect results on some Windows 2008
+   machines.
+   
+   
+   On some Windows 2008 machines .bat files remain locked after
+   they are run.  This prevents the installer from replacing the
+   bat files with newer versions on upgrade.  When this happens the
+   install either fails or produces incorrect results.  This
+   problem only occurs on a subset of Windows 2008 machines.  It
+   does not occur on Windows 2003 machines.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was changed to run the bat file under the command
+   processor (cmd.exe).  When run in this manner (vs.  directly)
+   the bat files do not remain locked after they complete..  As a
+   result the installer is allowed to replace them on upgrade.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.2.3-TIV-ITM-FP0004
+     | fix pack | 6.3.0-TIV-ITM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV44860
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-25
+   
+   
+ * CLOSED DATE
+   2013-08-22
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP

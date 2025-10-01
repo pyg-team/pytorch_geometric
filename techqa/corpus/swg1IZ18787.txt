@@ -1,0 +1,150 @@
+Title: IBM IZ18787: WHEN USING THE JMS LISTENER LARGE SPIKE OF INCOMING MESSAGES CAN CONSUME ALL THE HEAP. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The JMS listener service will attempt to
+   buffer incoming messages irregardless of overall system memory
+   conditions.  This can lead to conditions where a large spike of
+   incoming messages can consume all the heap available to Impact
+   which in turn will cause Impact to crash.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  L3 has already coded a patch for customer that appears to solve
+   the issue, however APAR needs to be opened so that they can
+   complete the required process work.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Impact Users when large spike of events  *
+   *                 are sent.                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: WHEN USING THE JMS LISTENER LARGE SPIKE *
+   *                      OF INCOMING MESSAGES CAN CONSUME ALL    *
+   *                      THE HEAP.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Replication steps:
+   
+   1. Enable memory and queue monitoring of Self Monitoring
+   service. 2. Make sure JMSListener is up and running. 3. Send a
+   event storm >5K 4. JMS Listener reads all the events in its
+   queue 5. this causes the memory usage to spike up. 6. a) Check
+   the memory and queue usage using the Self Monitoring service.
+   b) alternatively check the logs for the JMS Listener service.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 4.0.2-TIV-NCI-IF0001.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ18787
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-28
+   
+   
+ * CLOSED DATE
+   2008-04-29
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

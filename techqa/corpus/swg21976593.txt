@@ -1,0 +1,78 @@
+Title: IBM Collecting Data: performance issue on Decision Server Execution Stack - United States
+
+Text:
+Collecting Data; Collecting Data; Collecting Data; MustGather; MustGather; MustGather; MustGatherDocument TECHNOTE (FAQ)
+
+QUESTION
+ You are having a performance issue in Decision Server (DS, previously called Rule Execution Server). You would like to know what documentation you must collect (MustGather) so that the IBM Operation Decision Manager Support team can diagnose your problem. If you gather this documentation before contacting support it will expedite the troubleshooting process, and save you time. 
+
+ANSWER
+
+General tuning versus specific issues
+
+IBM technical support is only for specific product issues and questions. 
+
+If you need assistance with general tuning, environment health checks or application tuning then you may want to look into engaging IBM Services. We also have this Performance tuning redbook: "IBM Operational Decision Management V8.0 Performance Tuning Guide [http://www.redbooks.ibm.com/Redbooks.nsf/RedbookAbstracts/redp4899.html]"
+
+
+If you have a specific product issue or question related to product behavior then we can assist with that via technical support. We will need a detailed use case for the issue, the delay times you are seeing or your question and why you consider this a product performance issue. 
+
+
+
+
+
+
+
+
+1 Detailed problem description 
+You should provide as much information as possible. The main questions that need to be answered: What is the time (or the most possible precise range of time) of the performance issue. 
+
+Which components (Decision Server Console, DecisionRunner, SSP, HTDS, RuleSession, MDB, XU) are involved. 
+
+If HTDS is used, are you using SOAP or REST API? XML or JSON format? 
+
+If the Rule Session API is used by the your application, please also provide the following information: 
+
+ * Attach the code calling the RuleSession API 
+ * Are you using managed XOM? 
+
+Describe the minimal execution scenario to generate the performance issue:  * how many different rulesets? 
+ * how many applications are involved? 
+ * how many concurrent executions? 
+ * what is the average duration of the ruleset execution? 
+ * what is the the average number of rulesets executed per second. 
+ * how many ruleset changes? 
+
+
+2 Settings and environment of the execution stack  * Description the topology of the decision server, the exact name and version of the application server, whether it is a stand alone server or a cluster, number of nodes and servers in the cluster. 
+ * The exact name and version of res database 
+ * A screenshot of the ruleset properties in the DS console of all concerned rulesets or send a backup of the RES repository. 
+ * How is XU installed in RES server: a global connector, scoped in a j2ee application or using j2se mode. 
+ * RES server JVM start up parameter.
+
+
+Provide the settings of the XU by attaching one of the following:  * the ra.xml if using J2SE mode 
+ * a screenshot of the configuration of the XU Connection Factory in the Application Server console 
+
+
+3 Log and dumps of the RES execution stack The logs of at least the RES components of the execution stack (RuleSession, XU, and persistence), if you are using WebSphere Application Server, please include also the FFDC logs. 
+
+Attach at least 2 XU dumps, one before and one after the issue. If possible one XU dump during the performance issue. You can find info about how to retrieve XU dump from 
+http://www.ibm.com/support/knowledgecenter/SSQP76_8.8.0/com.ibm.odm.dserver.rules.res.console/topics/tsk_rescons_res_xu_debug_trace.html?lang=en [http://www.ibm.com/support/knowledgecenter/SSQP76_8.8.0/com.ibm.odm.dserver.rules.res.console/topics/tsk_rescons_res_xu_debug_trace.html?lang=en] 
+
+4 Other info to gather for high CPU usage or system hang
+If you also encounter high CPU usage or system hang, please also capture the system performance info and java cores as documented in the following must gather depending 
+on your OS. Although the MustGathers are for WebSphere Application Server, you should provide similar info if DS is deployed on other application server: [http://www-01.ibm.com/support/docview.wss?uid=swg21115785] 
+
+ * MustGather: Performance, hang, or high CPU issues with WebSphere Application Server on Linux [http://www-01.ibm.com/support/docview.wss?uid=swg21115785] 
+ * MustGather: Performance, hang, or high CPU issues with WebSphere Application Server on Windows [http://www-01.ibm.com/support/docview.wss?uid=swg21111364] 
+ * MustGather: Performance, hang, or high CPU issues with WebSphere Application Server on AIX [http://www-01.ibm.com/support/docview.wss?uid=swg21052641]
+
+RELATED INFORMATION
+ Collecting Data: Read first for all IBM Operational Dec [http://www-01.ibm.com/support/docview.wss?uid=swg21653691]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.8, 8.7, 8.6, 8.5, 7.5 Enterprise

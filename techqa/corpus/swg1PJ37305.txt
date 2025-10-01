@@ -1,0 +1,160 @@
+Title: IBM PJ37305: YOU CAN NOT REPUBLISH A DOCUMENT WITH SETTABLEONLYONCREATE CUSTOM PROPERTIES WHEN VERSIONING THE PUBLICATION DOCUMENT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When republishing a document that has an associated "settable
+   only on create" property, the publish action fails with the
+   error:
+   The Publishing handler threw an exception.  The requester has
+   insufficient access rights to perform the requested operation.
+   Attempt to modify settable only on create property.
+   
+   Steps to reproduce:
+   1. Create Publish Template
+   - Publishing Designer > Republish Instructions tab > under
+   "Republish a versionable document" select "Version the current
+   publication document" or "Version and replace the current
+   publication version"
+   - Publishing Designer > Republish Instructions tab > under
+   "Properties of the new publication" select "Use properties
+   defined under 'Properties To Apply"
+   - Publishing Designer > Properties To Apply tab > select "Use
+   the source document properties"
+   2. Create document that is to be published
+   Create a subclass of the Document class and add a "settable only
+   on create" custom property, and add the document as this class
+   3. Publish the document using the publish template
+   4. Optionally version the document and specify new property
+   values (but note that this can not be done for the "settable
+   only on create" custom property)
+   5. Republish the (versioned) document
+   
+   Expected result: The publication document is successfully
+   versioned and properties are changed (except for the "settable
+   only on create" custom property that can not be changed).
+   
+   Actual results before the fix:  The publish action fails with
+   the above specified error.
+   
+   As a sidenote, both the source document and the publication
+   document can be checked out and in from Workplace.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Any P8CE-4.0.1-011 or lower when republishing documents with *
+   * SettableOnlyOnCreate custom property.                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When republishing a document that has a "settable only on    *
+   * create" property and versioning the publication document,    *
+   * the publish action will fail.                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to P8CE-4.0.1-012 or higher.                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When using P8CE-4.0.1-012 or higher the republish action will
+   complete successfully.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ37305
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-18
+   
+   
+ * CLOSED DATE
+   2010-07-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PJ37303 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ37303]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

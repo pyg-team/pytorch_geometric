@@ -1,0 +1,185 @@
+Title: IBM PM59825: ITCAM HTTP AGENT REPORTS SERVER 'STOPPED' EVEN THOUGH THE SERVER IS RUNNING - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0-TIV-ITCAMAD-FP0003: ITCAM for Application Diagnostics V7.1 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032604]
+7.1.0.3-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP3 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032985]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Tivoli Enterprise Portal shows HTTP Server status 'Stopped' in
+   "Web Server Agent->Web Servers Summary" view even though the
+   server is running.
+   
+   Environment
+   
+   Unix, Linux
+   Webserver: IBM_HTTP_Server, Apache
+   
+   ITCAM for Application Diagnostics -
+   ITCAM Agent for HTTP Servers - V7.1 Fixpack 2 Interim Fix 7 or
+   higher
+   
+   
+   Keyword/Symptom:
+   
+   HTTP Server error_log shows following errors:
+   
+   
+   [notice] attaching to shmem using path
+   [/xxx/xxxx/xxx/conf/httpd.conf]...
+   [error] [kht_get_init_sem] semget error 2: No such file or
+   directory
+   [error] [kht_create_init_sem] semop 1, error 27. Remove sid:
+   File too large
+   [error] [kht_sem_lock] semop: Invalid argument
+   
+   The error "semop 1, error 27" may be replaced by another error.
+   
+   Users Affected:
+   
+   Users who applied 7.1, Fix Pack 2, Interim Fix 7 or higher for
+   TEMA for HTTP Servers on Unix or Linux.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Bring the agent to level Interim Fix 7.1 Fix Pack 2, Interim Fix
+   006 or lower.
+   The problem was introduced in in 7.1 Fix Pack 2, Interim Fix
+   0007.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: ITCAM for HTTP Servers (KHT agent) users,
+   * monitoring Apache or IBM HTTP Server.
+   * Affected agent versions: 7.1.0.2 interim fix 7 and 10.
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Tivoli Enterprise Portal shows HTTP
+   * Server status 'Stopped' in "Web Server Agent->Web Servers
+   * Summary" view even though the server is running.
+   * Error messages in Apache error_log:
+   * [kht_get_init_sem] semget error 2: No such file or directory
+   * [kht_create_init_sem] semop 1, error 27. Remove sid: File too
+   * large
+   * [kht_sem_lock] semop: Invalid argument
+   ****************************************************************
+   * RECOMMENDATION:
+   * Update agent to 7.1.0.2 interim fix 11 or newer
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  | MDVREGR 7.1.0.2-TIV-ITCAMAD-IF0007 |
+   
+   Wrong usage of API semaphores corrected.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+           | interim fix | 7.1.0.2-TIV-ITCAMAD-IF0011
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM59825
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WEBSVR
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92WS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-06
+   
+   
+ * CLOSED DATE
+   2012-03-22
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WEBSVR
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92WS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

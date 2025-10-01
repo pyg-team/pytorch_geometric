@@ -1,0 +1,19 @@
+Title: IBM Is running HP-UX Diagnostic and ITCAM for AD monitoring tools on the same JVM supported? - United States
+
+Text:
+ITCAM HP-UX other Diagnostics monitoring agent same JVM CAMADALL TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ Is running HP-UX Diagnostic and ITCAM for AD monitoring tools on the same JVM supported? 
+
+ANSWER
+We have not done any co-existence testing with both HP-Diagnostics and ITCAM for AD monitoring agents on the same JVM. 
+We do not recommend simultaneous byte code instrumentation by two different monitoring agents. If the instrumentation for the HP product is turned off, ITCAM will probably work and vice-versa but this is a not tested and not supported configuration.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM4AD ITCAM for App Diagnostics

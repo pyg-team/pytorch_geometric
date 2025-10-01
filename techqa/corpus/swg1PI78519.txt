@@ -1,0 +1,11 @@
+Title: IBM PI78519: FIELD NAME IN THE DATABASE IS GETTING CONCATENATED WITH AN 00 - United States
+
+Text:
+What is this document:
+This document has the abstract of a technical article that is available to authorized users after you have logged on. Please use the link to actual document below to access the full document. You will be asked to log on if you are not already logged in. After log in, if you do not have the right authorization for this document, there will be instructions on what to do next.
+
+abstract text
+If an enumerated field is initially created as a single-select list, then later changed to be a multi-select list, the RT table
+
+link to actual document
+http://www.ibm.com/support/docview.wss?uid=swg1PI78519 [http://www.ibm.com/support/docview.wss?uid=swg1PI78519]

@@ -1,0 +1,229 @@
+Title: IBM PK98699: ERRORCODE=-4471 SETCURSORNAME() CALLED WHEN THERE ARE OPEN RESULTSET'S ON THE STATEMENT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The problem happens when exectue() is called on a perpared
+   statement the database driver will create result set objects,
+   for later use,  even if the application does not perform
+   any result set operations.  Result set objects that have not
+   been used by the application, are not wrappered by the IBM
+   Relation Resource Adapter (RRA).  Since these ojbects are not
+   wrappered they are not closed before the statement is placed in
+   the cache.  This means that the RRA is caching statements with
+   open results set objects, which is a leak.  These result set
+   objects are only held open until exectue() is called again, for
+   this statement.  So the severity of the leak depends on how long
+   the statement is in the cache, the size of results set objects,
+   and how many statements are in the cache.
+   
+   This APAR will add code to close unwrappered results set objects
+   before placing a statement in the cache.
+   
+   If user is using the DB2 universal driver, they might see the
+   exception below when statement caching is enabled.  If
+   the user is using other database drivers, they will not see this
+   exception but should apply the fix for this APAR to avoid the
+   leak condition.
+   
+   
+   Sample trace that was noticed:
+   
+    om.ibm.db2.jcc.a.SqlException:
+   invalid operation: setCursorName() called
+   when there are open ResultSet's on the Statement.
+   ERRORCODE=-4471,
+   SQLSTATE=null
+   .at com.ibm.db2.jcc.a.ad.a(ad.java:650)
+   .at com.ibm.db2.jcc.a.ad.a(ad.java:60)
+   .at com.ibm.db2.jcc.a.ad.a(ad.java:120)
+   .at com.ibm.db2.jcc.a.rl.setCursorName(rl.java:901)
+   .at
+   com.ibm.websphere.rsadapter.DB2UniversalDataStoreHelper.doStatem
+   entCleanup(DB2UniversalDataStoreHelper.java:225)
+   .at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.closeWrapper(W
+   SJdbcPreparedStatement.java:435)
+   .at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcCallableStatement.closeWrapper(W
+   SJdbcCallableStatement.java:236)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere Application Server    *
+   *                 V7.0                                         *
+   *                                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Result sets created by the database     *
+   *                      driver when execute() is called may be  *
+   *                      leaked.                                 *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When exectue() is called on a prepared statement, the database
+   driver creates result set objects for later use,  even if the
+   application does not perform any result set operations.  Result
+   set objects that have not been used by the application, are not
+   wrappered by the WebSphere Relation Resource Adapter (RRA).
+   Since these objects are not wrapped, they are not closed
+   before the statement is placed in the cache.  These result set
+   objects are only held open until exectue() is called again, for
+   this statement.  So the severity of the leak depends on how long
+   the statement is in the cache, the size of results set objects,
+   and how many statements are in the cache.
+   
+   Users of DB2 universal driver may see the following exception
+   when statement caching is enabled:
+   com.ibm.db2.jcc.a.SqlException: invalid operation:
+   setCursorName() called when there are open ResultSet's on the
+   Statement.
+   ERRORCODE=-4471,
+   SQLSTATE=null
+   .at com.ibm.db2.jcc.a.ad.a(ad.java:650)
+   .at com.ibm.db2.jcc.a.ad.a(ad.java:60)
+   .at com.ibm.db2.jcc.a.ad.a(ad.java:120)
+   .at com.ibm.db2.jcc.a.rl.setCursorName(rl.java:901)
+   .at
+   com.ibm.websphere.rsadapter.DB2UniversalDataStoreHelper.doStatem
+   entCleanup(DB2UniversalDataStoreHelper.java:225)
+   .at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.closeWrapper(W
+   SJdbcPreparedStatement.java:435)
+   .at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcCallableStatement.closeWrapper(W
+   SJdbcCallableStatement.java:236)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  APAR PK98699 includes code to close unwrapped results set
+   objects before placing a statement in the cache.
+   
+   APAR PK98699 is currently targeted for inclusion in Service
+   Level (Fix Pack) 7.0.0.9 of WebSphere Application Server V7.0.
+   
+   Please refer to URL:
+   //www.ibm.com/support/docview.wss?rs=404&uid=swg27006970
+   for Fix Pack availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK98699
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-15
+   
+   
+ * CLOSED DATE
+   2009-10-21
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK85473 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK85473]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  BBGUBINF BBOUBINF
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY UK55133 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK55133]
+   UP10/03/26 P F003
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

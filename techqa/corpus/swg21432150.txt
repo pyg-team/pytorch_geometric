@@ -1,0 +1,11 @@
+Title: IBM z/TPF debugger ZDECB display question. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why doesn't the ECB reference (ecbptr) and register 9 (R9) in the z/TPF debugger match the actual ECB address shown in the ZDECB display?
+
+
+ANSWER
+The value of the ECB address depends on what type of virtual address space is used to access the ECB. In other words, the ECB address value in system virtual memory (SVM) and the ECB virtual memory (EVM) is not the same. In the ZDECB output, the ECB address column displays the system virtual address (SVA) that is used to access an ECB from system memory because SVM maps all main storage. In the application space, the ECB virtual address (EVA) is used instead to map the storage for the ECB when processing. In the z/TPF debugger, a process (in the Debug View) is identified with the SVA for the ECB. However, because execution occurs in the application space, accessing data in the ECB is done in the EVM space and EVAs are used for both ECB.

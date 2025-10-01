@@ -1,0 +1,13 @@
+Title: IBM Adding a company logo to Hold Notice content - United States
+
+Text:
+Logo Atlas Hold Content TECHNOTE (FAQ)
+
+QUESTION
+ How do you add a company logo to a Hold Notice content? 
+
+CAUSE
+Uploading an image using the rich text editor may sometimes not work
+
+ANSWER
+You can use the $image text editor place holder in the main body or the header to include the company logo either in the Hold Notice or Hold Notice Template

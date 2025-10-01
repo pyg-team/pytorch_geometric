@@ -1,0 +1,58 @@
+Title: IBM Security Bulletin: IBM WebSphere MQ -  Potential denial of service when using the TCP listener (CVE-2014-0911) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ A denial of service vulnerability exists and could affect customers using the TCP listener (inetd) on UNIX and IBM i platforms. This vulnerability does not affect customers using the MQ listener. 
+
+VULNERABILITY DETAILS
+CVE ID: [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-5401]CVE-2014-0911 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0911]
+DESCRIPTION:
+The TCP/IP listener (inetd) can be used with WebSphere MQ on UNIX and IBM i systems. A denial of service vulnerability exists and could be exploited by a remotely connected user to either create FDCs which could fill the file system, or cause the inetd process to enter an infinite loop consuming all CPU resources. This vulnerability does not affect customers using the MQ listener (runmqlsr).
+
+
+CVSS:
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91876 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91876] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:N/A:P)
+
+AFFECTED PRODUCTS AND VERSIONS
+WebSphere MQ 7.1.x (UNIX and IBM i) 
+
+WebSphere MQ 7.5.x (UNIX only)
+
+REMEDIATION/FIXES
+The recommended solution is to apply the fix for each named product as soon as practical. Please see below for information on the fixes available.
+
+WebSphere MQ 7.1.x
+Apply fix pack 7.1.0.5 when available, in the meantime apply fix pack 7.1.0.4 [https://www-304.ibm.com/support/docview.wss?uid=swg27024302] and the interim fix for IV55886 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/WebSphere/WebSphere+MQ&release=7.1.0.4&platform=All&function=aparId&apars=IV55886]
+
+WebSphere MQ 7.5.x
+Apply fix pack 7.5.0.4 when available, in the meantime apply fix pack 7.5.0.3 [http://www-304.ibm.com/support/docview.wss?uid=swg27038184] and the interim fix for IV55886 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/WebSphere/WebSphere+MQ&release=7.5.0.3&platform=All&function=aparId&apars=IV55886]
+
+WORKAROUNDS AND MITIGATIONS
+Change to using the MQ listener (runmqlsr) instead of the TCP listener (inetd).
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 1 May 2014: Original Copy Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21672007]

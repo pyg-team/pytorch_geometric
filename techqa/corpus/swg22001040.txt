@@ -1,0 +1,112 @@
+Title: IBM Security Bulletin: OpenSSLにある複数の脆弱性のWebSphere Message BrokerとIBM Integration Busへの影響について - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ OpenSSLの脆弱性について、OpenSSL Projectより2016年 9月22日、9月26日、11月10日にそれぞれ公表されております。WebSphere Message BrokerならびにIBM Integration Busにて使用されているDataDirect ODBC ドライバーに対して該当するCVEがあり、対処しております。 
+
+VULNERABILITY DETAILS
+最新の情報は下記の文書（英語）をご参照ください。
+Security Bulletin: Multiple vulnerabilities in OpenSSL affect WebSphere Message Broker and IBM Integration Bus
+http://www.ibm.com/support/docview.wss?uid=swg22000536 [http://www.ibm.com/support/docview.wss?uid=swg22000536]
+
+CVEID: CVE-2016-6303 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-6303]
+DESCRIPTION: OpenSSLは、MDC2_Update関数のintegerのオーバーフローによって引き起こされるサービス拒否に対する脆弱性です。未知の攻撃方法を使用することにより、外部の攻撃者はこの脆弱性を悪用して範囲外の書き込みをトリガーし、アプリケーションをクラッシュさせる可能性があります。
+CVSS Base Score: 5.3
+CVSS Temporal Score: 現在のスコアは https://exchange.xforce.ibmcloud.com/vulnerabilities/117023 [https://exchange.xforce.ibmcloud.com/vulnerabilities/117023] を参照してください。
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2016-2182 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2182]
+DESCRIPTION: OpenSSLは、crypto / bn / bn_print.cのTS_OBJ_print_bio関数の範囲外書き込みによって引き起こされるサービス拒否に対する脆弱性です。外部の攻撃者は、特別に細工された値を使用してこの脆弱性を悪用し、アプリケーションをクラッシュさせる可能性があります。
+CVSS Base Score: 4.3
+CVSS Temporal Score: 現在のスコアは https://exchange.xforce.ibmcloud.com/vulnerabilities/116342 [https://exchange.xforce.ibmcloud.com/vulnerabilities/116342] を参照してください。
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2016-2177 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2177]
+DESCRIPTION: OpenSSLは、ヒープバッファ境界チェックのためのポインタ算術の不正な使用によって引き起こされるサービス妨害に対する脆弱性です。予期せぬmallocの動作を利用することで、外部の攻撃者はこの脆弱性を悪用して、integerのオーバーフローを引き起こし、アプリケーションをクラッシュさせる可能性があります。
+CVSS Base Score: 5.9
+CVSS Temporal Score: 現在のスコアは https://exchange.xforce.ibmcloud.com/vulnerabilities/113890 [https://exchange.xforce.ibmcloud.com/vulnerabilities/113890] を参照してください。
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H) 
+
+CVEID: CVE-2016-2178 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2178]
+DESCRIPTION: OpenSSLにデジタル署名アルゴリズムの実装の脆弱性により、不特定のタイミングである特定の操作によって外部から機密情報が漏洩される可能性があります。 
+攻撃者は、キャッシュタイミング攻撃を使用してこの脆弱性を悪用してプライベートDSAキーを回復できてしまいます。
+CVSS Base Score: 5.3
+CVSS Temporal Score: 現在のスコアは https://exchange.xforce.ibmcloud.com/vulnerabilities/113889 [https://exchange.xforce.ibmcloud.com/vulnerabilities/113889] を参照してください。
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N) 
+
+CVEID: CVE-2016-6306 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-6306]
+DESCRIPTION: OpenSSLに、証明書の解析時にメッセージの長さチェックを誤ってしまい、サービス不能になってしまう脆弱性があります。
+
+リモート認証された攻撃者は、この脆弱性を悪用して、範囲外の読み取りを引き起こし、サービス拒否を引き起こす可能性があります。
+CVSS Base Score: 4.3
+CVSS Temporal Score: 現在のスコアは https://exchange.xforce.ibmcloud.com/vulnerabilities/117112 [https://exchange.xforce.ibmcloud.com/vulnerabilities/117112] を参照してください。
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2016-2183 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2183]
+DESCRIPTION: OpenSSLにSSL / TLSプロトコルの一部として使用されるDES / 3DES暗号に問題があり、 外部攻撃者は機密情報を取得できてしまう可能性があります。大量の暗号化されたトラフィックをSSL / TLSサーバーとクライアントの間でキャプチャすることにより、中間者の攻撃を行うことができる外部攻撃者がこの脆弱性を利用して平文データに回復させ、機密情報を取得する可能性があります。この脆弱性はSWEET32 誕生日攻撃と呼ばれます。
+CVSS Base Score: 3.7
+CVSS Temporal Score: 現在のスコアは https://exchange.xforce.ibmcloud.com/vulnerabilities/116337 [https://exchange.xforce.ibmcloud.com/vulnerabilities/116337] を参照してください。
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N) 
+
+CVEID: CVE-2016-7055 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-7055]
+DESCRIPTION: OpenSSLに、Broadwell固有のモンゴメリ乗算の問題によって引き起こされるサービス拒否の脆弱性があります。外部攻撃者は、特別に細工されたデータを送信することにより、この脆弱性を悪用して、複数のリモートクライアントが影響を受けるECアルゴリズムを選択し、サービス拒否を引き起こすような構成で公開キー操作のエラーを引き起こす可能性があります。
+CVSS Base Score: 5.3
+CVSS Temporal Score: 現在のスコアは https://exchange.xforce.ibmcloud.com/vulnerabilities/118748 [https://exchange.xforce.ibmcloud.com/vulnerabilities/118748] を参照してください。
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+
+
+AFFECTED PRODUCTS AND VERSIONS
+次の製品・バージョンで影響があります。 
+
+
+IBM Integration Bus V9, V10 
+
+WebSphere Message Broker V8
+
+REMEDIATION/FIXES
+ 
+
+製品名 バージョン APAR Remediation/Fix IBM Integration Bus
+
+V10
+IT17992 Fixpack8にて修正されております。The APAR is available in fix pack 10.0.0.8
+https://www.ibm.com/support/docview.wss?uid=swg24043443 [https://www.ibm.com/support/docview.wss?uid=swg24043443] IBM Integration Bus
+
+V9
+IT17992 Fixpack7にて修正されております。The APAR is available in fix pack 9.0.0.7 [https://www-304.ibm.com/support/docview.wss?uid=swg24042598]
+http://www-01.ibm.com/support/docview.wss?uid=swg24043227 [http://www-01.ibm.com/support/docview.wss?uid=swg24043227] WebSphere Message Broker V8 IT17992 Interim fixが提供されております。IBM Fix Centralから入手できます。 
+http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Message+Broker&release=All&platform=All&function=aparId&apars=IT17992 [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+Message+Broker&release=All&platform=All&function=aparId&apars=IT17992] WORKAROUNDS AND MITIGATIONS
+ありません
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+関連情報
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg22000536]

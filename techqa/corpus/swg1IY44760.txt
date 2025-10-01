@@ -1,0 +1,157 @@
+Title: IBM IY44760: HTTP://<WEBSEAL>/PKMSLOGOUT?FILENAME=<HTML> DOESN'T WORK. THIS ALSO FAILS FOR PKMSPASSWD - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is integrating WPS and TAM 4.1 on Windows 2k Sp3. One
+   of the steps is to configure the pkmslogout to redirect to
+   another web page. Customer cannot get this to work. When they do
+   a http://<webseal>/pkmslogout?filename=wpslogout.html, it goes
+   to the logout.html instead. I cannot get this recreated in my
+   environment. There needs to be a way to trace the pkmslogout
+   form.
+   .
+   Also, customer is having the same issue for pkmspasswd:
+   .
+   The portal page is going to be our intranet page and we do not
+   want the end users seeing any of the "ugly" WebSeal screens.  We
+   have a couple ways of resolving this.
+   .
+   One is that we simply "pretty" up the html pages provided with
+   WebSeal.  But this still requires us to use those html pages,
+   meaning they will look distinct from the rest of the portal even
+   if we try to make them look similar.
+   .
+   Two is that we use the WebSeal commands within the portal
+   architecture.  (I am about to get technical) I have a login
+   portlet that simply displays login.jsp as its view.  In this
+   page, I get a parameter from the request object called
+   "status".  This parameter tells me what part of the process I am
+   dealing with.  For example, when the portlet loads on the
+   unauthenticated portal page, the "status" is null and therefore
+   the page loads a simple login screen (username, password, login
+   button).  Users enter the username and their password and click
+   the login button which submits the username and password to
+   "/pkmslogin.form?filename=loginRedirect.html".  If the login is
+   successful, then it should be sending the request to
+   loginRedirect.html, which I have created to redirect back to the
+   logged in portal page.  If the login isn't successful (for
+   example, the password is expired), then the login command will
+   redirect to passwd_exp.html.  I have modified that page to
+   redirect back to the portal with status=passwordexpired as part
+   of the query string.  The login portlet's login.jsp recognizes
+   that status parameter and displays the form to change the
+   password.  I literally copied the form from the passwd_exp.html
+   file.  When you submit this form (to
+   "/pkmspasswd.form?filename=loginRedirect.html"), it should be
+   changing the password and logging you in and sending you to the
+   logged in portal page.  But it seems to be sending you to the
+   WebSeal login.html page instead.  There is probably a reason why
+   it's doing this and if I had documentation, I could look it up.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *   see main problem description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   This is fixed in 4.10-AWS-FP01 via internal
+   defect 30347.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY44760
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0811
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2003-05-22
+   
+   
+ * CLOSED DATE
+   2003-06-02
+   
+   
+ * LAST MODIFIED DATE
+   2003-06-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * FIXED COMPONENT ID
+   5724C0811
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R410 PSN
+   UP

@@ -1,0 +1,31 @@
+Title: IBM Unable to connect workbench with internal LDAP - United States
+
+Text:
+tomcat Websphere application server madconfig.sh start_instance "Connection Refused" TECHNOTE (FAQ)
+
+QUESTION
+ I am unable to establish a connection between workbench and the internal LDAP from the "LDAP" and "User Management" perspectives. I can, however, successfully connect to the internal LDAP and authenticate using the inspector and/or web reports.
+
+Why am I getting this error and how can I prevent it? 
+
+CAUSE
+The LDAP port number for internal and external LDAP is specified in the $MAD_HOMEDIR/inst/mpinet_<inst>/conf/com.initiate.server.ldap.cfg file. Editing the file is sufficient for changing the port for external LDAP but not for internal one. 
+This is because we also have to open the internal LDAP port and configure it to listen for incoming connections at the operating system level, which is not needed for external LDAP.
+That is why certain applications running within the application server (on the same server) like inspector may be able to connect to internal LDAP but not remote ones like workbench.
+
+To confirm whether a specific port is listening on a Unix-like environment, use the following command:
+netstat -a | grep Port# 
+where port# is the number of the internal LDAP port. If it doesn't return anything, then the port is not listening and hence an external connection can not be established.
+
+
+ANSWER
+Go to $MAD_HOMEDIR/inst/mpinet_<inst>/ldap/config directory and modify "ds-cfg-listen-port" parameter in the config.ldif file to specify which ports to listen on. This variable should be modified for sections pertaining to LDAP like "dn: cn=LDAP Connection Handler,cn=Connection Handlers,cn=config" and "dn: cn=LDAPS Connection Handler,cn=Connection Handlers,cn=config". 
+
+Once the right port is specified, restart the engine and you should be able to successfully connect with the internal LDAP using the workbench.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ MDS
+Master Data Service
+Initiate

@@ -1,0 +1,17 @@
+Title: IBM When using IBM TRIRIGA forms and clicking buttons the pop-up window/dialog will not show up - United States
+
+Text:
+TRIWINDOWS; IE; pop-up; block TECHNOTE (FAQ)
+
+QUESTION
+ Why my IBM TRIRIGA form pop-up window is not showing up? 
+
+CAUSE
+A form action needs a pop-up window to be displayed and this may not work if Internet Browser has settings for blocking pop-ups. 
+
+ANSWER
+When using TRIRIGA forms and you click a button intended to open a pop-up window/dialog, this may not work if Internet Browser settings block pop-ups.
+
+For instance, in Internet Explorer 9, if you go to Tools -> Internet Options -> Privacy tab, you will find the check box field "Turn on Pop-up blocker". This will rule the pop-up blocker behavior. You may want to include your website (or IP) under "Address of website to allow:" list, manage such list as well, and determine the "Notifications and blocking level" you want for your Internet Explorer when managing pop-up window/dialog.
+
+If you active Internet Explorer -> View -> Toolbars -> Status bar, you will be able to see helpful messages at the time browser tries to open the dialog and fails. Typically it will be requesting you to press CTRL and click on the same button again to confirm you don't want to block the pop-up window/dialog for this action.

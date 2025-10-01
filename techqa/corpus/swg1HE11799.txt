@@ -1,0 +1,143 @@
+Title: IBM HE11799: After changing password in FileNet P8 Content Engine, existing P8 connections in IBM Content Collector cannot be modified - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Content Collector V3.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24035525]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the IBM FileNet P8 Content Engine password that is used for
+   the IBM FileNet P8 connection in IBM Content Collector is
+   changed, the configuration of the P8 connection cannot be
+   updated. As a result, the password that is used to connect to
+   FileNet P8 in IBM Content Collector cannot be changed.
+   
+   The following error message is displayed:
+   
+   Error: The application cannot log onto the P8 domain.
+   Problem: Failed to log into the P8 domain and fetch an instance
+   of the Entire Network object.
+   Solution: Ensure that the P8 Content Engine server is running
+   and accessible and that your supplied P8 credentials are valid.
+   See event log for more details.
+   
+   The same error occurs if the IBM FileNet P8 Content Engine
+   server is not available.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  IBM Content Collector requires a working connection to the IBM
+   FileNet P8 Content Engine to save the configuration of a IBM
+   FileNet P8 connection. If the connection is not possible because
+    the server is down or because the password has been changed,
+   the configuration cannot be changed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with IBM Content Collector 3.0 Fix Pack 4, the problem
+   has been fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE11799
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR FILES
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5701
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-29
+   
+   
+ * CLOSED DATE
+   2013-08-24
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR FILES
+   
+   
+ * FIXED COMPONENT ID
+   5724V5701
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R300 PSY
+   UP

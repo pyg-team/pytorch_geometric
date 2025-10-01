@@ -1,0 +1,73 @@
+Title: IBM TIP 2.2.0.0 portion of the ILMT 7.5.0 upgrade failed, no valid eWAS install - United States
+
+Text:
+TIPL2INST; ILMT Fresh; install; eWAS; Deployment Engine; CODBB0022E; old install; removed TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TIP 2.2.0.0 failed to install during the ILMT 7.5.0.0 Base install with this error:
+CODBB0022E: The installation of Tivoli Integrated Portal has failed, with return code -1 
+
+SYMPTOM
+The ILMT 7.5.0.0 base install failed at the TIP/eWAS Install: 
+
+[/support/docview.wss?uid=swg21973375&aid=1] [/support/docview.wss?uid=swg21973375&aid=1]
+
+
+CAUSE
+The server had residual software from earlier install attempts still on the system, which caused the ILMT install to fail, because there was no eWAS installed.
+
+
+ENVIRONMENT
+Fresh install of ILMT 7.5.0, which includes TIP 2.2.0.0
+
+
+
+DIAGNOSING THE PROBLEM
+Error in the <TIP_HOME>/_uninst/<TIP_INSTALL_FP>/plan/logs/MachinePlan_localhost.log which indicates that the Deployment Plan didn't complete, which points to the de_trace.log. 
+
+Caused by: C:\Program 
+Files\IBM\TIP\_uninst\TIPInstall22\plan\install\MachinePlan_localhost\00
+001_TIPCore\TIPCore.xml:364: The ProcessReq CREATE output did not 
+contain 'completed', warnings=0, or errors=0 
+
+Error in the de_trace.log which indicates that either eWAS didn't get fully installed. 
+
+Caused by: java.io.IOException: Cannot run program "C:\Program 
+Files\IBM\TIP/bin/manageprofiles.bat": CreateProcess error=2, The system
+cannot find the file specified. 
+at java.lang.ProcessBuilder.start(ProcessBuilder.java:470) 
+The output of the DE listIU command shows that eWAS ( embedded WebSphere
+) has been installed: 
+
+
+The output of the listIU command show that eWAS was at some point installed on the system: 
+
+IU UUID: 333EC6AFD750875204DA2DA45D4FD264 Name: SIU eWAS Version:
+7.0.0.15
+
+
+RESOLVING THE PROBLEM
+Because the previous install was not cleaned out properly, demonstrated by the fact that the output of the listIU command shows eWAS as being installed, and there is no <TIP_HOME>\profiles\TIPProfile directory, the system has to be cleaned out before another install attempt. 
+
+Important Note: This only applies on a ILMT fresh install, and the pathnames used in this example are the default Windows pathname defined by the ILMT install script. 
+
+Make sure the following is removed from the system after the uninstalll:
+
+C:\Program Files\IBM\tivoli\common 
+C:\Program Files (x86)\IBM\tivoli\common\COD 
+C:\Program Files (x86)\IBM\tivoli\common\cfg 
+
+Drop the TLMA db2 database 
+Remove the tlmsrv user from the Windows OS ( this user may not be in the windows OS ) 
+Check to confirm if db2inst1 user is gone from DB2 and Windows OS, if not, when you retry the ILMT install, it will ask you if you want to use the existing db2inst1 user, of so, select "yes". 
+
+Remove the TIP home directory: 
+
+C:\Program Files\IBM\TIP 
+
+Remove the Deployment Engine 
+
+C:\Program Files\IBM\common\acsi 
+C:\Program Files (x86)\IBM\common\acsi 
+
+Retry the install.

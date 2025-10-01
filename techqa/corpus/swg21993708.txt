@@ -1,0 +1,16 @@
+Title: IBM Atlas Database table containing Interview Questionnaire Templates - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Where do I find the Interview Questionnaire Templates in Atlas Database? 
+
+CAUSE
+Identify all the active Interview Questionnaire Templates in Atlas Database
+
+ANSWER
+ 
+
+ 1. Login to Atlas Database as PSSAPL 
+ 2. Run the query - Select * from q2definition where active='Y';

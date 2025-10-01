@@ -1,0 +1,236 @@
+Title: IBM IZ66275: ITNMV3.8 INSTALLATION SOLARIS 10 ZONES DOCUMENTATION NEEDS TO BE RE-WRITTEN TO BE MORE ACCURATE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITNMv3.8 Installation Solaris 10 zones Documentation needs to be
+   re-written to be more accurate.
+   
+   The following page:
+   
+   "
+   http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com]
+   .ibm.networkmanagerip.doc_3.8/itnm/ip/wip/install/reference/nmip
+   _ins_reqsforsolariszones.html"
+   
+   (ITNM SQA Team) made some comments and
+   recommendations to improve the documentation.
+   
+   ===========================================================
+   I've looked into these docs that are confusing your customer and
+   spoke
+   http://www-01.ibm.com/support/docview.wss?uid=swg1IZ20262 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ20262]
+   
+   The first link in that APAR is from the OpenSolaris docs and
+   seems to list generic advice on various settings including
+   something similar to the net_rawaccess parameter that we set on
+   our local zones in SQA to enable the application to build its
+   own raw packets. Note the difference between "net_rawaccess" and
+   "PRIV_NET_RAWACCESS". Obviously we don't use OpenSolaris (the
+   community supported version) but use Solaris 10, so some is this
+   may not be relevant anyway which I think the customer has worked
+   out.
+   
+   The second link which may have caused even more confusion
+   appears to relate to security hardening options in Solaris and
+   one of the mentioned settings just happens to have a similar
+   name as a setting we use in zones, therefore I think the other 4
+   settings are totally irrelevant and would only be needed if the
+   user was installing on a server that had been security hardened.
+   I don't think these are specifically local zone settings but
+   global zone ones to restrict/restore security hardening
+   settings.
+   
+   As far as I know in SQA we have only ever set the net_rawaccess
+   parameter in a zone configuration using the zonecfg command.
+   This is necessary as ITNM builds its own raw packets and a
+   default local zone does not have access to do this.
+   
+   Here is a blog detailing how to set this
+   http://blogs.sun.com/gbrunett/entry/i_see_you_snoop_1m [http://blogs.sun.com/gbrunett/entry/i_see_you_snoop_1m]
+   I suggest the docs are enhanced to give full guidance on how to
+   set this with an example zonecfg command (should be a good
+   example in the sun admin guide).
+   
+   I suggest reviewing the docs and making the following changes.
+   
+   Remove the first section "Installing in global zones" as this is
+   misleading, very unlikely to be needed unless the customer has
+   previously hardened their server in which case they should have
+   the knowledge to un-harden it in order to allow the application
+   to run. Besides as previously mentioned it looks like a few of
+   these are OpenSolaris and not Solaris 10.
+   
+   Enhance the next section "Installing in non-global zones" as
+   mentioned above by giving full instruction on how to set this
+   with the zonecfg command. (Maybe refer to non-global zones as
+   local zones)
+   
+   Indicate that the next two sections "Installing in full zones"
+   (change to it's correct terminology - full-root zone) and
+   "Installing in sparse zones" are both sub-sections of the
+   previous one and they are just two variants of a
+   non-global/local zone.
+   
+   I'm unable to fully comment on the "Installing in sparse zones"
+   and the "Sample commands to install as root in a sparse zone"
+   sections because I do not have any knowledge of how TIP/DE works
+   but I do know that in a sparse zone the /usr filesystem along
+   with several others are mounted as read-only from the global
+   zone and therefore applications that attempt to write to these
+   will no be able to. This appears to describe a work-around to
+   get it to install into a location other than /usr.
+   
+   In summary if your customer is installing into the global zone
+   then they probably don't need to do anything (unless they're on
+   a security hardened box in which case further investigation of
+   the correct Solaris 10 parameters is required). If they are
+   installing into a local zone then they will need to do the
+   following.
+   
+   on the global zone
+   
+   zonecfg -z their_zone_name
+   zonecfg:their_zone_name> set limitpriv=default,net_rawaccess
+   zonecfg:their_zone_name> verify
+   zonecfg:their_zone_name> commit
+   zonecfg:their_zone_name> exit
+   
+   shutdown their zone cleanly
+   zlogin their_zone_name shutdown
+   zoneadm -z their_zone_name boot
+   
+   or quickly
+   zoneadm -z their_zone_name reboot
+   
+   In order to pick up the new settings.
+   
+   Hope this helps.
+   
+   Regards
+   
+   Paul Mandell
+   ===========================================================
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  re-write the documentation so that is more accurate.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Installation on Solaris 10 platforms.
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The following topic requires changing to clear any confusion
+   around Solaris zones:
+   http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com]
+   .ibm.networkmanagerip.doc_3.8/itnm/ip/wip/install/reference/nmip
+   _ins_reqsforsolariszones.html
+   ****************************************************************
+   RECOMMENDATION:
+   Use the 3.9 information center when installing on Solaris 10 (or
+   the related technote until then).
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Update topic based on suggestions from Paul Mandell (ITNM SQA
+   team).
+   This update will be completed for the 3.9 release of ITNM, and
+   will be available in the information center under Planning for
+   installation->Software requirements->Requirements for Solaris
+   zones
+   (and single-sourced in the Installation and Configuration
+   Guide).
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ66275
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PREC TPL SV
+   
+   
+ * REPORTED COMPONENT ID
+   5724O6000
+   
+   
+ * REPORTED RELEASE
+   380
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-03
+   
+   
+ * CLOSED DATE
+   2009-12-07
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

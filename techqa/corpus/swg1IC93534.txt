@@ -1,0 +1,188 @@
+Title: IBM IC93534: BACKUP AND RESTORE PROCEDURE FAILS TO RECOVER FROM AUTHENTICATION CHANGE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Doc APAR to update the Infocenter documentation:
+   
+   Changing the user authentication configuration
+   
+   http://pic.dhe.ibm.com/infocenter/tivihelp/v59r1/index.jsp?topic
+   =%2Fcom.ibm.tpc_V5111.doc%2Ffqz0_c_change_user_auth_method.html [http://pic.dhe.ibm.com/infocenter/tivihelp/v59r1/index.jsp?topic=%2Fcom.ibm.tpc_V5111.doc%2Ffqz0_c_change_user_auth_method.html]
+   
+   Adding an LDAP repository to the federated repositories
+   
+   http://pic.dhe.ibm.com/infocenter/tivihelp/v59r1/index.jsp?topic
+   =%2Fcom.ibm.tpc_V5111.doc%2Ffqz0_t_config_ldap_active_directory. [http://pic.dhe.ibm.com/infocenter/tivihelp/v59r1/index.jsp?topic=%2Fcom.ibm.tpc_V5111.doc%2Ffqz0_t_config_ldap_active_directory.]
+   html
+   
+   Removing an LDAP repository from the federated repositories
+   http://pic.dhe.ibm.com/infocenter/tivihelp/v59r1/index.jsp?topic
+   =%2Fcom.ibm.tpc_V5111.doc%2Ffqz0_t_config_os.html [http://pic.dhe.ibm.com/infocenter/tivihelp/v59r1/index.jsp?topic=%2Fcom.ibm.tpc_V5111.doc%2Ffqz0_t_config_os.html]
+   
+   
+   1. Add two extra steps, one after 1c and one after 2b, stating
+   that the user also needs to backup and then restore the
+   directory isc.ear
+   TIP_installation_directory/profiles/TIPProfile/installedApps/TIP
+   Cell/isc.ear
+   i.e.  path c:\Program
+   Files\IBM\tipv2\profiles\TIPProfile\installedApps\TIPCell\isc.ea
+   r\
+   
+   2. In addition, in 1c, backup the following directory structure:
+   TIP_installation_directory/profiles/TIPProfile/installedApps/
+   i.e. path c:\Program
+   Files\IBM\tipv2\profiles\TIPProfile\installedApps
+   
+   
+   RECREATE STEPS:  Attempt restore procedure from OS to LDAP
+   Authentication or LDAP to OS  Authentication change.
+   
+   Problem as described by customer:   Unable to log into TIP/TPC
+   after Authentication change and restore attempt
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  TBD
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected: TPC 5.1.x and 4.2.x
+   
+   Problem Description:  See ERROR DESCRIPTION.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Future Information Centers will be updated.  Entries for the
+   current versions will be added to the Limitations and Known
+   Issues technotes.
+   
+   You cannot log in to Tivoli Intergrated Portal and Tivoli
+   Storage Productivity Center after you modify the authentication
+   and try to restore Tivoli Storage Productivity Center.
+   
+   To resolve this situation, complete the following tasks:
+   
+       Before you change the user authentication configuration by
+   adding or removing an LDAP repository in the federated
+   repositories framework, back up the existing WebSphere
+   Application Server configuration files.
+       After you add an LDAP repository to the user authentication
+   configuration and want to later change the LDAP authentication
+   settings, back up the WebSphere configuration files.
+       In the TIP_installation_directory, back up, and if
+   necessary, restore the isc.ear file.
+   
+   
+   On Windows operating systems:
+   
+   TIP_installation_directory\profiles\TIPProfile\installedApps\TIP
+   Cell\isc.ear
+   
+   If you completed a default installation on the Windows operating
+   system, the isc.ear directory is located here:
+   
+   C:\ProgramFiles\IBM\tipv2\profiles\TIPProfile\installedApps\TIPC
+   ell\isc.ear\
+   
+   On AIX or Linux operating systems:
+   
+   TIP_installation_directory/profiles/TIPProfile/installedApps/TIP
+   Cell/isc.ear
+   
+   If you completed a default installation on the AIX or Linux
+   operating systems, the isc.ear directory is located here:
+   
+   C:/ProgramFiles/IBM/tipv2/profiles/TIPProfile/installedApps/TIPC
+   ell/isc.ear
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC93534
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC STANDARD ED
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPCS0
+   
+   
+ * REPORTED RELEASE
+   422
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-25
+   
+   
+ * CLOSED DATE
+   2013-09-19
+   
+   
+ * LAST MODIFIED DATE
+   2013-09-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

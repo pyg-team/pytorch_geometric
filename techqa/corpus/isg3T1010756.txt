@@ -1,0 +1,55 @@
+Title: IBM Move a Symmetric key for EKM from one keystore to another. - United States
+
+Text:
+keytool symmetric keys TECHNOTE (FAQ)
+
+QUESTION
+ How do I move the symmetric keys from my keystore to another EKM server's keystore? 
+
+ANSWER
+To move symmetric key(s) (AES) from one keystore to another requires some preparation steps (1 & 2) followed by the actual export/import of the symmetric keys (steps 3 & 4).
+This is an example of the general process: (These are one line commands although they may have wrapped to more than one line in your viewer)
+
+1. Export a cert/public key from the destination keystore. 
+(This will be used to encrypt the export image containing the symmetric keys so they are not transferred in the clear. 
+Note: this does not copy the private key used to perform the decryption. Also, exporting does not remove keys from the keystore.)
+
+If the alias "mykeywrapper" does not exist create it using; 
+
+keytool -genkey alias mykeywrapper -keystore mytargetkeystore.jck -storepass "password” -storetype jceks
+
+Export the cert/public key
+
+keytool -export -alias mykeywrapper -file symkeycert.crt -keystore mytargetkeystore.jck -storepass "password” -storetype jceks
+
+2. Import the cert/public key into the symmetric key source keystore.
+
+keytool -import -alias mykeywrapper -file symkeycert.crt -keystore mysourcekeystore.jck -storepass "password” -storetype jceks
+
+
+3. Using keytool with exportseckey, export the symmetric key(s). 
+
+keytool -exportseckey -keyalias mykeywrapper -alias key000000000000000001 -keystore mysourcekeystore.jck -storepass "password” -keypass "password" -storetype jceks -exportfile myexportedkeys.file
+
+or 
+
+keytool -exportseckey -keyalias mykeywrapper -aliasrange key00-1F -keystore mysourcekeystore.jck -storepass "password" -keypass "password" -storetype jceks -exportfile myexportedkeys.file
+
+
+4. Using keytool import the symmetric key(s).
+
+keytool -importseckey -keyalias mykeywrapper -alias key000000000000000001 -keystore mytargetkeystore.jck -storepass "password” -keypass "password" -storetype jceks -importfile myexportedkeys.file
+
+or 
+
+keytool -importseckey -keyalias mykeywrapper -aliasrange key00-1F -keystore mytargetkeystore.jck -storepass "password" -keypass "password" -storetype jceks -importfile myexportedkeys.file
+
+
+The alternative is to use a secure method to copy the complete keystore from one host to another. Keep in mind EKM must be stopped when copying to the target location.
+
+Also, the keylabel (alias) cannot exist in the target keystore. If it does then you will need to use a different keystore.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Tape Storage Tape Libraries Not Applicable

@@ -1,0 +1,47 @@
+Title: IBM Cannot specify a REXX exec for Rational Team Concert for System z translators or language definitions - United States
+
+Text:
+rtc; rtcz; z series; z TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A Rational Team Concert for System z language definition can contain translators that are associated with an MVS module. If a REXX exec needs to be executed as a translator, there is no way to define a translator associated with it. 
+
+SYMPTOM
+Rational Team Concert for System z language definitions can contain translators. Translators are associated with an MVS module. Rational Team Concert for System z does not provide a way to define an associated translator if you need to run a REXX exec as a translator.
+
+RESOLVING THE PROBLEM
+As a workaround, instead of using the Ant with extensions for z/OS compile task, use the Ant apply task to call a REXX script. To do this, perform the following steps: 
+
+ 1. Create a dummy translator called "REXX," and then associate it with a nonexistent MVS module. 
+ 2. Create a dummy language definition called "REXX" and include the new dummy REXX translator. 
+ 3. Associate zFiles with the new "REXX" language definition. 
+ 4. Use the tso shell command to write a shell script that invokes a REXX script in a partitioned data set extended (PDSE). The following shell script example invokes "MYHLQ.JAZZ.EXEC(TEST)" with the parameters specified when the shell script is invoked:
+
+
+==== 
+#!/bin/sh 
+tso "EXEC 'MYHLQ.JAZZ.EXEC(TEST)' '${@}'" 
+==== 5. Edit the build.xml file to add a target to invoke the shell script: 
+
+<!-- Process source files with a REXX exec. -->
+<target name="rexx" description="invoke rexx">
+<apply executable="/u/username/callrexx.sh" relative="true">
+<restrict>
+<antz:buildableset 
+buildableList="${teamz.scm.fetchDestination}/buildableFiles.xml"/>
+<antz:langdefselector name="REXX" caseSensitive="false"/>
+</restrict>
+</apply>
+</target>
+
+
+RELATED INFORMATION
+#Rational Team Concert for System z information center [http://publib.boulder.ibm.com/infocenter/rtczhelp/v2r0m0/index.jsp]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ RTCz
+Rational Team Concert for z
+Team Concert for z

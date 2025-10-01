@@ -1,0 +1,30 @@
+Title: IBM Most of the CEC agent views are empty - United States
+
+Text:
+CEC views workspaces empty wrong managed system key.pl ITM Tivoli Monitoring agent pk TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Most of the CEC agent workspace views are not populated. 
+
+SYMPTOM
+TEP views are empty.
+
+
+CAUSE
+The wrong managed system has been specified during agent configuration.
+
+ENVIRONMENT
+Monitoring Agent for CEC Base
+
+DIAGNOSING THE PROBLEM
+The agent logs show the problem occurs while executing HMC command:
+(4FFAA74A.0021-2:hmcquery.c,1233,"execute_envLPARstruct") 
+execute_envLPARstruct - command = /usr/bin/ssh -l hscroot HMC "lssyscfg -r lpar -m\"<name>\" -F lpar_env:lpar_id:state" 
+(4FFAA74A.0022-2:hmcquery.c,1241,"execute_envLPARstruct") execute_envLPARstruct - command output = HSCL8018 The managed system <name> was not found.
+
+where <name> is the name of the managed system the ITM agent is pointing, and this information is provided during agent configuration.
+
+RESOLVING THE PROBLEM
+Run this script again:
+$CANDLEHOME/aix523/pk/bin/key.pl
+, and specify the correct managed system.

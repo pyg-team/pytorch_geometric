@@ -1,0 +1,133 @@
+Title: IBM Password policy attributes and uses - United States
+
+Text:
+ITDS; IDS; SWD; LDAP; password; pwdpolicy; policy; unlock; account TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This article describes the password policy attributes and their uses. 
+
+RESOLVING THE PROBLEM
+The following operational attributes are provided by the password policy feature:
+
+
+Attribute name Syntax Description pwdChangedTime GeneralizedTime Contains the time the
+password was last changed. pwdAccountLockedTime GeneralizedTime Contains the time at which
+the account was locked. If
+the account is not locked,
+this attribute is not present. pwdExpirationWarned GeneralizedTime Contains the time at which
+the password expiration
+warning was first sent to the
+client. pwdFailureTime GeneralizedTime A multi-valued attribute
+containing the times of
+previous consecutive login
+failures. If the last login was
+successful, this attribute is
+not present. pwdGraceUse
+(pwdGraceUseTime tds6.3) GeneralizedTime A multi-valued attribute
+containing the times of the
+previous grace logins. pwdReset Boolean Contains the value TRUE if
+the password has been reset
+and must be changed by the
+user. The value is FALSE or
+not present otherwise. 
+
+Password policy queries 
+
+The password policy operational attributes can be used to view the status of a directory entry or to query for entries matching specified criteria. Operational 
+attributes are returned on a search request only when specifically requested by the client. To use these attributes in search operations, you must have permission to critical attributes, or permission to the specific attributes used. 
+
+To view all password policy attributes for a given entry: 
+
+ldapsearch – b "uid=user1,cn=users,o=ibm"– s base 
+"(objectclass=*)"pwdChangedTime pwdAccountLockedTime 
+pwdExpirationWarned pwdFailureTime pwdGraceUseTime 
+pwdReset 
+
+To query for entries for which the password is about to expire, use the 
+pwdChangedTime. For example, to find passwords which expire on August 26, 
+2004, with a password expiration policy of 186 days, query for entries for which 
+the password was changed at least 186 days ago (February 22, 2004): 
+
+ldapsearch –b "cn=users,o=ibm" – s sub 
+"(!(pwdChangedTime>20040222000000Z))" 1.1 
+
+where the filter is equivalent to pwdChangedTime is less than or equal to 
+midnight, February 22, 2004. 
+
+Note: starting with Directory Server 6.0, pwdChangedTime can be determined dynamically and is now an operational attribute. As such, pwdChangedTime is not always explicitly set and will not always return all the accounts that will expire when used in a filter. More details here: 
+
+Limitations of pwdChangedTime [http://www.ibm.com/support/docview.wss?uid=swg21640156] 
+
+To query for locked accounts, use the pwdAccountLockedTime: 
+
+ldapsearch -b "cn=users,o=ibm"¨C s sub "(pwdAccountLockedTime=*)" 1.1 
+
+where "1.1" indicates that only the entry DNs are to be returned. 
+
+To query for accounts for which the password must be changed because the 
+password was reset, use the pwdReset attribute: 
+
+ldapsearch -b "cn=users,o=ibm -s sub "(pwdReset=TRUE)" 1.1 
+
+Overriding password policy and unlocking accounts 
+
+A directory administrator can override normal password policy behavior for 
+specific entries by modifying the password policy operational attributes and using the server administration control (-k option of the LDAP command line utilities). 
+
+You can prevent the password for a particular account from expiring by setting the pwdChangedTime attribute to a date far in the future when setting the 
+userPassword attribute. The following example sets the time to midnight, January 
+1, 2200. 
+
+ldapmodify -D cn=root -w ? -k 
+dn:uid=wasadmin,cn=users,o=ibm 
+changetype:modify 
+replace:pwdChangedTime 
+pwdChangedTime:22000101000000Z 
+
+You can unlock an account which has been locked due to excessive login failures by removing the pwdAccountLockedTime and pwdFailureTime attributes: 
+
+ldapmodify -D cn=root -w ? -k 
+dn:uid=user1,cn=users,o=ibm 
+changetype:modify 
+delete:pwdAccountLockedTime 
+- 
+delete:pwdFailureTime 
+
+You can unlock an expired account by changing the pwdChangedTime and 
+clearing the pwdExpirationWarned and pwdGraceUseTime attributes: 
+
+ldapmodify -D cn=root -w ? -k 
+dn:uid=user1,cn=users,o=ibm 
+changetype:modify 
+replace:pwdChangedTime 
+pwdChangedTime:yyyymmddhhss.Z 
+- 
+delete:pwdExpirationWarned 
+- 
+delete:pwdGraceUseTime 
+
+You can clear and then reset the "password must be changed" status by deleting and adding the pwdReset attribute: 
+
+ldapmodify -D cn=root -w ? -k 
+dn:uid=user1,cn=users,o=ibm 
+changetype:modify 
+delete:pwdReset 
+
+ldapmodify -D cn=root -w ? -k 
+dn:uid=user2,cn=users,o=ibm 
+changetype:modify 
+replace:pwdReset 
+pwdReset:TRUE RELATED INFORMATION
+ Tivoli software library [http://www.ibm.com/software/tivoli/library/]
+
+
+ 
+
+HISTORICAL NUMBER
+ WI XX01711
+PMR 51904 999 000
+APAR IR54216
+
+
+PRODUCT ALIAS/SYNONYM
+ IBM SecureWay Directory

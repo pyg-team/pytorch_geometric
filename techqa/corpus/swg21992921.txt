@@ -1,0 +1,39 @@
+Title: IBM Transaction fails after MDM AE initial startup . - United States
+
+Text:
+first TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ With Master Data Management Advanced Edition (MDM AE) v11.5,
+you see the timeout error for first batch run (i.e. getParty transactions) after restarting the server. If the ORB pool size is 50, first 50 transactions fail and the rest succeed. If you rerun the batch, all would be successful.
+
+
+SYMPTOM
+In systemout.log and trace.log, you see following timeout error message multiple times.
+=======================
+... ... TimeoutManage I WTRN0124I: When
+the timeout occurred the thread with which the transaction is, or was
+most recently, associated was Thread[ORB.thread.pool : 0,5,main]. The
+stack trace of this thread when the timeout occurred was:
+java.net.SocketInputStream.socketRead0(Native Method)
+java.net.SocketInputStream.read(SocketInputStream.java:164)
+java.net.SocketInputStream.read(SocketInputStream.java:134)
+oracle.net.ns.Packet.receive(Packet.java:311)
+oracle.net.ns.DataPacket.receive(DataPacket.java:105)
+oracle.net.ns.NetInputStream.getNextPacket(NetInputStream.java:305)
+oracle.net.ns.NetInputStream.read(NetInputStream.java:249)
+oracle.net.ns.NetInputStream.read(NetInputStream.java:171)
+oracle.net.ns.NetInputStream.read(NetInputStream.java:89)
+... ...
+=======================
+
+
+RESOLVING THE PROBLEM
+Workaround:
+To avoid the problem, You may run 1 transaction as first batch after server startup.
+
+Suggestion to resolve the issue: 
+
+The network latency between the servers might be making the problem occur more consistently. You may want to check ping delays between these servers. In a good lab env, the ping delay is generally < 1ms. 
+
+Additionally, an enhancement will be delivered for better performance in Q2 2017. APAR number is IT17364.

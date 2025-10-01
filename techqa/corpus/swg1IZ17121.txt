@@ -1,0 +1,178 @@
+Title: IBM IZ17121: INSTALLATION HANGS FOR 5.1.0-TIV-ITM_SAP-LA0004 AND 5.1.0-TIV-ITM_SAP-LA0006 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   Windows TMR/managed node
+   IBM Tivoli Monitoring, Version 5.1.2 with fix packs
+   IBM Tivoli Monitoring for Applications, Version 5.1.0 -
+   mySAP.com Fix
+   Pack 6, 5.1.0-SAP-FP06
+   
+   Problem Description: Installation of 5.1.0-TIV-ITM_SAP-LA0004
+   and
+   5.1.0-TIV-ITM_SAP-LA0006 hangs on Windows managed nodes if the
+   output from "wdmlseng" exceeds approximately 5000 characters
+   (approximately 120 lines).
+   
+   The trace_sap_510SAPIF04LCF_after.log and
+   trace_sap_510SAPIF06LCF_after.log in $DBDIR/ABH/logs show the
+   process stops prematurely.  The bottom of the log will look
+   like this:
+   
+    :
+   + + wdmlseng -e a <endpoint>
+   + 2>& 1
+   EngineStatus=
+   Forwarding the request to the endpoint:
+    :
+   
+   The following profiles are running:
+   
+    :                               (long list of profiles)
+    :
+   
+   ++ grep -c AMW0051E          ---> hangs here
+    (log end)
+   
+   
+   May also occur when installing
+   5.1.0-TIV-ITM_SAP-LA0007
+   5.1.0-TIV-ITM_SAP-LA0008
+   5.1.0-TIV-ITM_SAP-LA00010
+   5.1.0-TIV-ITM_SAP-LA00011
+   5.1.0-TIV-ITM_SAP-LA00013
+   5.1.0-TIV-ITM_SAP-LA00015
+   
+   
+   Detailed Recreation Procedure:
+   If "wdmlseng" on a Windows managed node returns more than 120
+   lines of output for one endpoint which has mySAPAppServer
+   objects, install one of the listed ITMfApp 5.1.0:mySAP LAs
+   listed above.
+   
+   Related Files:
+   5.1.0-TIV-ITM_SAP-LA0004 --> trace_sap_510SAPIF04LCF_after.log
+   510SAPLA04LCF.init
+   5.1.0-TIV-ITM_SAP-LA0006 --> trace_sap_510SAPIF06LCF_after.log
+   etc.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround: Before installing the LA fix, stop the ITM engine on
+   mySAPAppServer endpoints.
+   
+   When this problem is encountered, end the process and do the
+   following:
+   Stop the ITM engine on the endpoints and rerun install.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If installing an ITMfSAP LA fix on a Windows managed node and
+   the output of wdmlseng is greater than 120 lines, the install
+   hangs because the grep utility cannot handle that.  The method
+   for determining which endpoints are running mySAP resource
+   models has now been changed and will be included in any future
+   fixes.
+   This problem and the workaround has been documented in techote #
+   1298042.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  If the installation hangs:
+   end the installation process,
+   stop the ITM engine on the endpoints,
+   rerun install.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ17121
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF AP:MYSAP.C
+   
+   
+ * REPORTED COMPONENT ID
+   5724B97SP
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-06
+   
+   
+ * CLOSED DATE
+   2008-03-24
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP

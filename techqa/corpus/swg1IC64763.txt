@@ -1,0 +1,182 @@
+Title: IBM IC64763: RUNTIME EXCEPTION THROWN IF A WIRES SOURCE AND TARGET HAVE      DIFFERENT TYPES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM DESCRIPTION:
+   
+   The mediation flow engine parses the component flow at runtime
+   and if a wires source and target terminals have different types
+   then an exception occurs:
+   
+   Caused by:
+   com.ibm.ws.sibx.scax.mediation.model.loader.EFlowSimplifierExcep
+   tion:
+   
+   CWSXM4013E: Error parsing the Mediation Flow definition:
+   Terminal types do not match.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of WebSphere Enterprise Service Bus    *
+   *                 and WebSphere Process Server v6.2 and v7.0   *
+   *                 who wish to implement subflows with          *
+   *                 different types on the input and output.     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The mediation flow engine parses the    *
+   *                      component flow at runtime               *
+   *                      and if a wire's source and target       *
+   *                      terminals have different types          *
+   *                      then a runtime exception will occur:    *
+   *                                                              *
+   *                                                              *
+   *                      Due to weakly typed schema support      *
+   *                      and subflows it is beneficial           *
+   *                      to surpress this exception from         *
+   *                      causing the flow to terminate           *
+   *                      as in many situations processing        *
+   *                      could continue without any              *
+   *                      issues.                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If for example you attempt to invoke a subflow that has
+   undefined inputs and outputs a runtime exception will occur.
+   This APAR is required to enable the runtime to surpress this
+   exception from causing the flow to terminate.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified such that the protection around
+   different types has been removed
+   
+   There are no known side effects associated with this fix. This
+   code fix was targeted to be included in the following fix
+   pack:
+         6.2.0 Fix Pack 4 (v6.2.0.4)
+         7.0.0 Fix Pack 2 (v7.0.0.2)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC64763
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724I8200
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-24
+   
+   
+ * CLOSED DATE
+   2010-02-19
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724I8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSN
+   UP
+   
+   
+ * R200 PSN
+   UP
+   
+   
+ * R300 PSN
+   UP
+   
+   
+ * R612 PSN
+   UP
+   
+   
+ * R620 PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

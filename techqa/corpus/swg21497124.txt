@@ -1,0 +1,35 @@
+Title: IBM Web Service Proxy processing rule(s) at a WSDL level no longer shows on the Policy tab - United States
+
+Text:
+WS-Proxy processing rule; port binding TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Something changed in the environment, and now the Web Service Proxy (WS-Proxy) processing rule(s) no longer display in WebSphere DataPower. 
+
+SYMPTOM
+Not able to see the policy configuration and not able to see how the policy was defined earlier, and in the WS-Proxy service, the default is not disabled.
+
+
+CAUSE
+What can happen is, initially, the WSDL has a port binding defined so that the processing rules displayed correctly. Later, the WSDL gets updated to have different port bindings but the WS-Proxy configuration is not updated to match the new bindings added/specified. This then breaks the port binding match causing the processing rules to disappear from the WS-Proxy policy tab. 
+
+This issue is larger than just processing rules and can happen anywhere that a fragment identifier or a service port match expression is used. For example, if the port name changes, you won't see any endpoint handlers configured. In addition to the port binding changing, this can occur if any of the pieces used in the fragment identifier change.
+
+
+ENVIRONMENT
+WSDL port binding name does not exist in the WSDL
+
+
+
+DIAGNOSING THE PROBLEM
+Since the port binding is no longer in the WSDL, the processing rules cannot be displayed at any of the WSDL levels. You need to view the fragment identifier maps in order to further identify what is broken. 
+
+Steps to view the fragment identifier maps from the WebGUI:
+1. Click Objects -> WS-Proxy Processing Policy
+2. Select the policy being used by the WS-Proxy in question
+3. Click on the 'Policy Maps' tab.
+4. Note the Fragment Identifier column
+
+
+RESOLVING THE PROBLEM
+Add the correct WSDL port binding name(s) to the WSDL or update the fragment identifier map to match the WSDL changes and verify that the WS-Proxy processing rules now display properly.

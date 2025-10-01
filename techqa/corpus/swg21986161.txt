@@ -1,0 +1,63 @@
+Title: IBM Modifying the event queue size for SiteProtector Agent Managers and Event Collectors - United States
+
+Text:
+SP; AM; EC; SensorEventQueue.ADF; queue; full TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to change the size of the event queues on SiteProtector's Agent Manager and Event Collector components? 
+
+CAUSE
+When sensors send events to SiteProtector, the events pass through the Agent Manager and then the Event Collector before being sent to the database for storage. The Agent Manager and Event Collector each have event queue files to temporarily store events while preparing to send them to the next location.
+If something prevents the events from being forwarded, the event queues for each component might run out of space and be unable to accept new event data. An example cause for such a situation is if the database is taken offline for a long period of time for maintenance or backup activity.
+
+When the Agent Manager or Event Collector are unable to forward their events and become full, you can see messages like the following in the Properties of each component:
+
+The event queue is full and new records are being discarded.
+
+
+ANSWER
+ 
+
+
+
+YouTube Video Modifying the event queue size for Agent Managers and Event Collectors (3:04) How to modify the event queue size for Agent Managers and Event Collectors. Watch the video on YouTube [https://www.youtube.com/watch?v=PmRW_hrXVuE] (3:04) 
+If you are planning for an outage that might interrupt the event flow that is described above, it can be useful to increase the size of the event queue files for the Agent Manager and Event Collector. Increasing the queue size allows these components to store more events before they run out of space, which in turn allows for more time for the outage activity. 
+
+Use the following instructions to increase the size of the event queue files: 
+ 1. Open Windows Services and stop the issDaemon service on the server where your Agent Manager and Event Collector are installed.
+    
+ 2. Open the following file in a text editor:
+    
+    \Program Files\ISS\SiteProtector\Event Collector\common.policy
+    
+ 3. Locate the following line:
+    
+    SensorEventQueueSize =L 15000000;
+    
+    This line indicates that the Event Collector is using the default size of 15 MB for its event queue file. Make the following change to increase the file to 25MB:
+    
+    SensorEventQueueSize =L 25000000;
+    
+    Save and close the file when finished.
+    
+ 4. Open the following file in a text editor:
+    
+    \Program Files\ISS\SiteProtector\Agent Manager\common.policy
+    
+ 5. Locate the following line:
+    
+    SensorEventQueueSize =L 15000000;
+    
+    This line indicates that the Agent Manager is also using the default size of 15 MB for its event queue file. Make the following change to increase the file to 25MB:
+    
+    SensorEventQueueSize =L 25000000;
+    
+    Save and close the file when finished.
+    
+ 6. Start the issDaemon service.
+
+
+
+
+
+[/support/docview.wss?uid=swg21986161&aid=1] [https://ibm.biz/BdHdjw] [/support/docview.wss?uid=swg21986161&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21986161&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21986161&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21986161&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21986161&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21986161&aid=7] [http://ibm.biz/ContactSecSupport]

@@ -1,0 +1,232 @@
+Title: IBM PI28546: SUPPRESS ERRONEOUS ERROR MESSAGES DURING SERVER SHUTDOWN - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Includes:
+   
+   - Erroneous null pointer FFDC message from HttpICLReadCallback
+   could arise during server shutdown.
+   
+   - Erroneous "InvalidChannelNameException: Can't remove unknown
+   channel, defaultHttpEndpoint" could arise
+   during server shutdown.
+   
+   - CWWKX8127W and CWWKX8129W messages are seen on the
+   controller when <virtualHost> is defined in the server.xml
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty Profile                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Suppress erroneous error messages       *
+   *                      during server shutdown                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Several messages were being reported incorrectly in the server
+   logs during server shutdown, due to different parts of Liberty
+   profile shutting down in parallel and not correctly coordinating
+   with each other. These were harmless but unnecessarily worrying,
+   so we have fixed the code so it will no longer produce them. The
+   specific errors addressed resembled the following:
+   
+   1) A
+   spurious Null Pointer Exception:
+   
+   
+   junit.framework.AssertionFailedError: [Unexpected FFDC reporting
+   java.lang.NullPointerException was found (count = 1):
+   <LIBERTY_HOME>/usr/servers/JaxWsTransportSecurityServer/logs/ffd
+   c/ffdc_13.08.30_20.46.24.0.log
+       >------Start of DE processing
+   ----- = [8/30/13 20:46:24:122 BST]
+       >Exception =
+   java.lang.NullPointerException
+       >Source =
+   com.ibm.ws.tcpchannel.internal.WorkQueueManager
+       >probeid =
+   workerRun(req)
+       >Stack Dump = java.lang.NullPointerException
+   
+   > at
+   com.ibm.ws.http.channel.internal.inbound.HttpICLReadCallback.err
+   or(HttpICLReadCallback.java:81)
+       > at ...
+   
+   2) A spurious
+   InvalidChannelNameException
+   
+   
+   unit.framework.AssertionFailedError: [Unexpected FFDC reporting
+   com.ibm.wsspi.channelfw.exception.InvalidChannelNameException
+   was found (count = 1):
+   <LIBERTY_HOME>/usr/servers/Jaxb22FeatureTestServer/logs/ffdc/ffd
+   c_13.10.20_00.45.57.0.log
+       >------Start of DE processing-----
+   = [10/20/13 0:45:57:085 BST]
+       >Exception =
+   com.ibm.wsspi.channelfw.exception.InvalidChannelNameException
+   
+   >Source =
+   com.ibm.ws.channelfw.internal.ChannelFrameworkImpl.clear
+   
+   >probeid = 366
+       >Stack Dump =
+   com.ibm.wsspi.channelfw.exception.InvalidChannelNameException:
+   Can't remove unknown channel, defaultHttpEndpoint
+       > at
+   com.ibm.ws.channelfw.internal.ChannelFrameworkImpl.removeChannel
+   (ChannelFrameworkImpl.java:938)
+       > at ...
+   
+   3) Erroneous
+   CWWKX8127W and/or CWWKX8129W messages were seen on the
+   controller when <virtualHost> was defined in the server.xml:
+   
+   
+   [8/23/14 23:03:12:587 EDT] 0000003b
+   collective.member.internal.publisher.ServerManagementPublisher W
+   CWWKX8127W: Unable to publish the JMX endpoint information for
+   this server. This server's MBeans will not be able to be managed
+   through the collective. A configuration or other type of warning
+   or error has occurred. Check the previous warning or error
+   messages for possible corrective action.
+   
+       [8/23/14
+   23:04:12:571 EDT] 00000022
+   s.collective.member.internal.publisher.MemberJMXEndpointImpl W
+   CWWKX8129W: Unable to determine the JMX endpoint information. A
+   configuration error has occurred: no HTTP endpoint has been
+   configured for the default_host virtual host. Configure an HTTP
+   endpoint for the default_host virtual host.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code changes have been made to fix the problems described.
+   
+   The
+   fix for this APAR is currently targeted for inclusion in fix
+   pack 8.5.5.4.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  These messages are distracting, but do not actually represent a
+   malfunction in the server. They can safely be ignored.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI28546
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * REPORTED COMPONENT ID
+   5725L2900
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-10-28
+   
+   
+ * CLOSED DATE
+   2014-11-13
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * FIXED COMPONENT ID
+   5725L2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

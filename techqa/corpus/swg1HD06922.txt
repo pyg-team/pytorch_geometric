@@ -1,0 +1,137 @@
+Title: IBM HD06922: SHAPEDSGN - MEASURE BETWEEN TAKES 0MM VALUE IS OFFSET VALUE IS CHANGED EVEN IF AUTOMATIC UPDATE IN PART IS SELECTED - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SHAPEDSGN - MEASURE BETWEEN TAKES 0MM VALUE IS OFFSET VALUE
+   IS CHANGED EVEN IF AUTOMATIC UPDATE IN PART IS SELECTED
+   .
+   SCENARIO:
+   1. Open CATPart (Any workbench)
+   2. Activate "Automatic update in part" of "Update" section
+    (Tools/Options --> General/Parameters and Measure/"Measure
+   Tools" tab)
+   3. Change offset value
+    --> geometry is changed
+   ===> Value of "measure between" changes into "0mm" and moves
+   to origin  point (THIS IS PROBLEM)
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  "Measure between" move to origin and value changed into 0mm
+   SHAPEDSGN - MEASURE BETWEEN TAKES 0MM VALUE IS OFFSET VALUE IS
+   CHANGED EVEN IF AUTOMATIC UPDATE IN PART IS SELECTED
+   
+   
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON CATIA VERSION 5 RELEASE 13 GA lev
+   el.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED ON V5R12SP01.
+   
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD06922
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5/NT/200
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2003-05-20
+   
+   
+ * CLOSED DATE
+   2003-08-19
+   
+   
+ * LAST MODIFIED DATE
+   2003-09-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5/NT/200
+   
+   
+ * FIXED COMPONENT ID
+   569151000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSN
+   UP
+   
+   
+ * R511 PSN
+   UP

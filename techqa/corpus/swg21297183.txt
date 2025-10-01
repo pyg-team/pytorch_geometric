@@ -1,0 +1,113 @@
+Title: IBM WMB/IIB MustGather: problems with the HTTP Listener (on Windows) - United States
+
+Text:
+Biphttplistener; MustGather; MustGathers; Must Gather; Collect Troubleshooting Data; MustGatherDocument; Collecting; Trouble; Shooting TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are using WebSphere Message Broker (WMB) or IBM Integration Bus (IIB) and are having problems with the HTTP Listener (the biphttplistener process). 
+
+This MustGather document explains how to troubleshoot this problem by yourself, how to generate diagnostic data when the problem is happening, how to collect the available data from your system, and how to share that data with IBM support.
+
+
+ENVIRONMENT
+These instructions are for WebSphere Message Broker or IBM Integration Bus on Windows systems.
+Return to the WMB / IIB MustGather index [http://www-01.ibm.com/support/docview.wss?uid=swg21209857] for other systems.
+
+RESOLVING THE PROBLEM
+
+
+
+STEP 1: SELF-GUIDED TROUBLESHOOTING
+
+ 1. Consider following the Troubleshooting and support [http://www-01.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/com.ibm.etools.mft.doc/bu03830_.htm] guide.
+ 2. 
+ 3. Read more about Working with HTTP flows [http://www-01.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/com.ibm.etools.mft.doc/ac20450_.htm] [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp?topic=%2Fcom.ibm.etools.mft.doc%2Fbu03830_.htm].
+ 4. 
+ 5. Check for known issues:
+    Resolving problems when you use HTTP and SOAP nodes [http://www-01.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/com.ibm.etools.mft.doc/bu43710_.htm]
+    
+
+
+
+STEP 2: COLLECT DATA
+
+ 1.  mqsidc See: mqsidc usage instructions [http://www-01.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/com.ibm.etools.mft.doc/bu46012_.htm]
+     
+     
+      * When running the tool, select the option for 'Broker Collector', when prompted.
+     
+     
+ 2.  
+ 3.  Traces
+     Tracing the component will allow IBM Support to gain a better understanding of the problem.  * An HTTP Listener Trace [http://www.ibm.com/support/docview.wss?uid=swg21178415] can be used to capture a problem during runtime.
+      * An HTTP Listener Startup trace [http://www.ibm.com/support/docview.wss?rs=849&uid=swg21313282]can be used to capture problems that occur during the initialization of the component.
+     
+     
+ 4.  
+ 5.  Project Interchange files IBM Support may need to understand how the HTTP Listener is being invoked.
+     
+     
+      * You can export your Message Flow and Message Set project(s) into an archive file for easy transmission.
+        See: Exporting your message flow projects from the Toolki [http://www-01.ibm.com/support/docview.wss?uid=swg21418121]t 
+     
+     
+ 6.  
+ 7.  Abends
+     It is possible that the component is abruptly ending.
+     Check for abend files in the /MQSI_WORKPATH/common/errors directory.
+     See: Abend files [http://www-01.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/au14190_.htm]
+ 8.  
+ 9.  General Broker information
+     If the mqsidc tool was not run, then capture this information manually  * Record the WebSphere Message Broker version, release, and maintenance level.
+        This can be captured using the command 'mqsiservice -v'..
+      * Record the operating system version, release, and maintenance level.
+      * Record the version, release, and maintenance level of any related products and components for the problematic application.
+      * Collect the local error log.
+        On Window systems, the local error log is the Windows Application Event Log.
+        You can find the Event Viewer from the Windows Control Panel.
+        See: Event viewer logs [http://www.ibm.com/support/docview.wss?rs=849&uid=swg21295454]
+      * Collect the Standard Output/Error logs.
+        On Window systems, WMB writes information to a 'console.out' file.
+        This file is located under the Message Broker workpath.
+        See: Standard System Logs [http://www-01.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/com.ibm.etools.mft.doc/au14165_.htm]
+     
+     
+ 10. 
+ 11. Listener Properties  * The broker-wide listener properties.
+        mqsireportproperties <broker> -b httplistener -o HTTPListener -r mqsireportproperties <broker> -b httplistener -o HTTPConnector -r
+        mqsireportproperties <broker> -b httplistener -o HTTPSConnector -r
+        
+        
+      * The embedded EG ("SOAP") listener properties.
+        mqsireportproperties <broker> -e <eg_name> -o HTTPConnector -r
+        mqsireportproperties <broker> -e <eg_name> -o HTTPSConnector -r
+     
+     
+
+
+
+ATTENTION: A good problem description is one of the most important tools IBM needs to analyze your data!
+When sending data to IBM, be sure to update your PMR or send a note with the following information:
+
+ *  Tell us what errors you saw, where you saw them, and what time they happened Let us know if you made any changes to WebSphere Message Broker or the system before the problem Share any other observations which you think will help us to better understand the problem 
+
+
+
+STEP 3: SUBMIT DATA TO IBM
+
+ * Use IBM Service Request [http://www.ibm.com/support/servicerequest/] to open or view a problem record with IBM.
+ * Send your data to IBM [http://www.ibm.com/support/docview.wss?uid=swg21392217] for further analysis.
+
+
+
+
+Please see the IBM Software Support Handbook [http://www14.software.ibm.com/webapp/set2/sas/f/handbook/home.html] for more information on working with IBM support.
+
+
+
+Back to top
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

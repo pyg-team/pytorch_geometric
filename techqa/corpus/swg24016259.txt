@@ -1,0 +1,72 @@
+Title: IBM PK47643; 6.1.0.9: Web Services reliable messaging service encountered problems - United States
+
+Text:
+PK47643; PK47643; PK47643 DOWNLOADABLE FILES
+
+ABSTRACT
+ Following a server restart, WS-Reliable Messaging enabled webservices with stored persistent messages may be uninvokeable. 
+
+DOWNLOAD DESCRIPTION
+PK47643 resolves the following problem:
+
+ERROR DESCRIPTION: 
+Following a server restart, WS-Reliable Messaging enabled webservices with stored persistent messages may be uninvokeable.
+
+LOCAL FIX: 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+All IBM WebSphere Application Server users of Web Services Reliable Messaging
+
+PROBLEM DESCRIPTION:
+Following a server restart, WS-Reliable Messaging enabled webservices with stored persistent messages may be uninvokeable.
+
+RECOMMENDATION:
+None
+
+This APAR addresses three issues:
+1. Stopping the provider Messaging Engine causes deadlock between Messaging Provider and Reliable Messaging. The root cause was that both the messaging engine and reliable messaging were trying to close the connection at the same time.
+
+2. Hung threads and responses lost after server restart accompanied by message
+[14/06/07 13:58:39:047 BST] 0000000a WSChannelFram ECHFW0034W: The Transport Channel Service detected transport chain WCInboundDefault failed. The service will retry to start chain WCInboundDefault every 5000 milliseconds for up to 60 attempts.
+
+3. 2WaySync High Availability Recovery Hanging caused by the wrong classloader being used after server restart. The following exception was observed:
+[6/14/07 15:46:47:539] 00000047 ?
+MessageContex org.apache.axis2.context.MessageContext writeExternal [MessageContext:
+logID=urn:uuid:9D82E12CF1268A16251181832407746]:writeExternal(): can not serialize the SOAP message ***Exception***
+[javax.xml.ws.WebServiceException :
+javax.xml.bind.JAXBException: class com.ibm.websphere.wsaddressing.jaxws.W3CEndpointReference nor any of its super class is known to this context.]
+
+PROBLEM CONCLUSION: 
+The problems will be resolved as follows: 
+1. Class MEStoreConnectionImpl will be changed so that when the messaging engine is closing the reliable messaging service will not try and close the connection. 
+
+2. Received messages that are identified as duplicates in the sandeshaGlobalInHandler that had not been invoked before restart will be processed as ordinary application messages. 
+
+3. Persistent Store classes will be changed to use the 
+classLoader from the AxisService object 
+
+The fix for this APAR is currently targeted for inclusion in fixpack 6.1.0.11. 
+
+Please refer to the recommended updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+Please download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK47643/readme.txt] US English 6267 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 6.1.0.0-WS-WAS-TFPK47643 06-29-2007 US English 55772 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK47643/6.1.0.0-WS-WAS-TFPK47643.pak] DD 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www-306.ibm.com/software/support/probsub.html [http://www-306.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server Support Web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV(U.S. only). 
+
+ [/support/docview.wss?uid=swg24016259&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24016259&aid=2]Problems (APARS) fixed
+PK47643

@@ -1,0 +1,34 @@
+Title: IBM FTP script with TSO/E command OPUT appears to loop, to terminate must shutdown Connect:Enterprise - United States
+
+Text:
+STERLINGTRB TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using Sterling Connect:Enterprise for z/OS, FTP auto connect script with TSO/E command OPUT appears to loop. 
+
+The FTP auto connect script is below. The auto connect never ends. To terminate the connection you must shutdown Connect:Enterprise which generates a system dump. 
+
+/* REXX - C:E RDX Sample AC_Script for FTP Auto Client */
+Trace all
+Trace commands
+Trace results
+address mvs,
+"OPUT 'test.data' '/u/test.data' TEXT CONVERT(YES)"
+
+exit 0 
+
+SYMPTOM
+Error Message 
+
+IEA794I SVC DUMP HAS CAPTURED: 048
+DUMPID=019 REQUESTED BY JOB (CERDX)
+DUMP TITLE=C:E FTP CLIENT DUMP. THREAD=FTPC0001, JN=CERDX, CC=U1057, AB PGM=STREXX05+0000087C
+
+
+RESOLVING THE PROBLEM
+The OPUT command is not an FTP command, it is a TSO/E command. Do not include the OPUT command in an FTP A/C script. This command can be executed successfully from ISPF, =6 panel. More information can be found on command OPUT in the IBM manual -UNIX System Services Command Reference, Document Number: SA22-7802-07
+
+ 
+
+HISTORICAL NUMBER
+ TRB1756

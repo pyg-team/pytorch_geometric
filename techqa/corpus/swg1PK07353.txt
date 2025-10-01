@@ -1,0 +1,199 @@
+Title: IBM PK07353: XZPT AICA LOOP XLST EXCEPTION TRACE POINTID 10 CAMR FAIL BAD MAL - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CMAS loops during shutdown in method XZPT resulting in AICA
+   abend.  The following messages are issued.
+   .
+   EYUXL0900I   Starting Environment Recovery
+   EYUXL0905E applid AICA IN XZPT, OFFSET ????????
+              PSW=00000000 80DD7948
+   EYUXL0905E INTC=0000 ILC=0 TXCP=00000000 SCODE=S???? TRAN=XLST
+              TASK=0000170
+   EYUXL0905E Methods=XZPT,XLST,XLOP
+   EYUXL0906I Registers at ABEND
+   EYUXL0907I GPR0-GPR3  000007E0  1AE81080  1A4F59A1  00DC9F10
+   EYUXL0907I GPR4-GPR7  00000000  00DC9620  00000090  00000000
+   EYUXL0907I GPR8-GPRB  00DD815C  00DD7044  00000034  1AE7D388
+   EYUXL0907I GPRC-GPRF  1AE7D080  8004EF98  80DD7948  80DD7948
+   EYUXL0908I Storage At ABEND
+   EYUXL0909I -20  01010101  01010101  01010101  01010101
+   EYUXL0909I -10  01010101  01010101  01010101  01010101
+   EYUXL0909I +00  D203B129  B1589140  B0C84780  992C58E0
+   EYUXL0909I +10  C00C58EE  01C85800  99641AE0  BFEFE008
+   EYUXL0910I  EYU9XLRV Dump,jobname
+   ,applid,smfid,CMAS,XLST,0000170,
+               AICA,EYU0XZPT,dd/mm/yyyy hh:mm:ss
+   EYUXL0999I XLRV Exiting Successfully
+   IEA794I SVC DUMP HAS CAPTURED:  468
+   DUMPID=034 REQUESTED BY JOB (CICJCA3 )
+   DUMP TITLE=EYU9XLRV Dump,jobname
+   ,applid,smfid,CMAS,XLST,0000170,
+              AICA,EYU0XZPT,dd/mm/yyyy hh:mm:ss
+   .
+   Method XLST branches to label EXCP_TRAC if the CAMR method
+   call fails to write an exception trace.  At this time the MAL
+   may have already been freed and should not be traced.
+   .
+   Additional Symptom(s) Search Keyword(s): XLSB EYURXLSB SA_STCB
+   XLSP EYURXLSP STCB_XLSP LOCL_MAL_PFX MAL_CTMP_LEN R5 LENGTH
+   MAL_CTMP_MPMAL R4
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICSPlex SM V3R1M0 Users.                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An abend AICA may occur in method       *
+   *                      EYU0XZPT (XZPT) during CMAS shutdown,   *
+   *                      or when communications to another CMAS  *
+   *                      is lost.                                *
+   *                                                              *
+   *                      Examination of the trace will show a    *
+   *                      debug text of EXCEPTIO and a point ID   *
+   *                      of 10. The calling method will be XLST. *
+   ****************************************************************
+   * RECOMMENDATION: After applying the PTF that resolves this    *
+   *                 APAR, all CMASes must be recycled to pick    *
+   *                 up the new code.  Note that the restarts     *
+   *                 do not need to be done at the same time.     *
+   ****************************************************************
+   When a CMAS receives a Message Argument List (MAL) from another
+   CMAS, EYU0XLST (XLST) is typically called to process the
+   request.  Once completed, XLST calls EYU0CAMR (CAMR) to return
+   the results of the request to the originating CMAS and release
+   the MAL.  If the CAMR call fails, for example because
+   communications to the originating CMAS is not available, XLST
+   will call EYU0XZPT (XZPT) to create an exception trace entry.
+   
+   One of the parameters passed on the call from XLST to XZPT is
+   the MAL. If CAMR released the MAL, residual storage may be used
+   for the length of the MAL, causing a loop in XZPT if the length
+   used is large.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  XLST has been changed so that the MAL is not traced if the CAMR
+   call fails.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK07353
+   
+   
+ * REPORTED COMPONENT NAME
+   CPSM CICS 3.1
+   
+   
+ * REPORTED COMPONENT ID
+   5655M1501
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-06-16
+   
+   
+ * CLOSED DATE
+   2005-08-09
+   
+   
+ * LAST MODIFIED DATE
+   2005-09-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK07279
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK06075
+   
+   
+
+MODULES/MACROS
+ *     EYU0XLST
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CPSM CICS 3.1
+   
+   
+ * FIXED COMPONENT ID
+   5655M1501
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY UK06075 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK06075]
+   UP05/08/11 P F508
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

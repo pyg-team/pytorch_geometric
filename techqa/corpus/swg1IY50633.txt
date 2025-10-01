@@ -1,0 +1,170 @@
+Title: IBM IY50633: TAM 4.1+FP06/AIX 5.1 - websesal core - production system down CR ITSIT #AP1671 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TAM 4.1+FP06/AIX 5.1
+   LADAP 4.1 with FP 6
+   gskkm.rte 5.0.5.83
+   WebSphere Application Server 4.0.4
+   WAS_Security_03-17-2003_4.0.5-4.0.4-4.0.3_AE_cumulative_fix
+   
+   
+   They are in the process of doing a Tivoli Identity Manager
+   provisioning, and WebSEAL keeps coring.
+   
+   Here are some parameter changes they've made, which may or may
+   not be contributing to WebSEAL coring (narrative below):
+   
+   1. Change the slapd32.conf on r2l8.advo.com and r2l5.advo.com
+   (5 Nov 2003 @ 12am)
+    - ibm-slapdSizeLimit: from 500 to 0
+   2.  WebSeald process crashed at  0230hrs   (6 Nov 2003 )
+   3. Restarted at 8:30am, no changes to values   (6 Nov 2003 ).
+   4. Ran the tim  reconciliation, at 0900hrs (6 Nov 2003)
+    -  tim  reconciliation, did not bring back all TAM entries.
+   5. WebSeald process crashed at 1120hrs   (6 Nov 2003 )
+   6. Change slapd32.conf and ldap.conf.  approx 1130hrs  (6 Nov
+   2003 )
+    -  ibm-slapdSizeLimit: from 0 to 5000
+    -  max-search-size from 2048 to 5000
+    - restart ldap and webseal.
+   7.  Ran the tim  reconciliation,  at 0100hrs  ( 6 Nov 2003)
+    - TIM  reconciliation, brought back everything, all TAM
+   entries.
+   8. Webseald process crashed at 1355hrs  (6 Nov 2003 )
+    -  ibm-slapdSizeLimit: from 5000 to 500
+    -  max-search-size from 5000 to 2048.
+    - restart ldap and webseal.
+   9.  0900hrs 7 Nov 2003,  Webseal still running,  no crashes
+   since .
+    - Portal was also check at 0100hrs 7 Nov 2003, everything up
+   and able to log in.
+   10.  1400hrs 7 Nov 2003 , WebSeal Crashed and then restarted.
+   11.  1415hrs 7 Nov 2003, WebSeal Crashed and then restarted.
+   
+   With ibm-slapdSizeLimit and max-search-size at their default
+   settings, TIM would not reconcile all users in TAM, but
+   WebSEAL didn't crash.  At that point, they were advised by
+   the TIM Implementation Team to change the values for those
+   two parameters.  After the changes were made to
+   ibm-slapdSizeLimit and max-search-size, that's when WebSEAL
+   started coring.
+   
+   Halfway through the TIM implementation, because of so many
+   problems with TIM, they migrated from TIM 4.4 to TIM 4.5 hoping
+   this would correct this issue (as well as a few others)....but
+   it did not correct this particular problem.
+   
+   TIM 4.5 started working properly with TAM after changing
+   ibm-slapdSizeLimit, but then WebSEAL crashed at 11:20am, at
+   which point they changed ibm-slapdSizeLimit: from 0 to 5000 and
+   max-search-size from 2048 to 5000.  Then they ran another TIM
+   reconciliation, but WebSEAL crashed again at 13:55, so they
+   changed ibm-slapdSizeLimit: from 5000 to 500 and
+   max-search-size from 5000 to 2048 and restarted ldap and
+   webseal.  Even though they have not run a TIM reconciliation
+   since, WebSEAL crashed again at 2:00pm, then once again at
+   2:15pm.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *   This issue has been unreproducible both in the
+   L2 and L3 lab environments.  The customer was able to resolve th
+   e issue by increasing their ulimit values.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY50633
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR E-BU
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0800
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2003-11-06
+   
+   
+ * CLOSED DATE
+   2004-01-09
+   
+   
+ * LAST MODIFIED DATE
+   2004-01-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ACCESS MGR E-BU
+   
+   
+ * FIXED COMPONENT ID
+   5724C0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R410 PSN
+   UP

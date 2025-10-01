@@ -1,0 +1,115 @@
+Title: IBM HD86078: COMPOSITE DESIGN LICENCE NOT AVAILABLE                          . - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Composite Design Licence not available
+   A client is waiting for a v5r19 version of my
+   product TapeLay.
+   Interactively the product works fine (AL3 and SL3
+   licences checked)
+   But all the ODT are KO because the Composite
+   WorkBench is not available.
+   since v5r18 we put
+   export ODT_REQUESTED_PRODUCT="AL3.slt"
+   in all the odt shell. But on v5r19 composite design
+   is no more in the AL3 license.
+   We tried :
+   export
+   ODT_REQUESTED_PRODUCT="_SL3.slt",  "SL3.slt",
+   "sl3.slt"....
+   but it is not working.
+   There is no documentation on the subjet;
+   can you tell us what we need to put in the
+   ODT_REQUESTED_PRODUCT variable?
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  CPD  product is removed from AL3 licence
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD86078
+   
+   
+ * REPORTED COMPONENT NAME
+   CAA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151100
+   
+   
+ * REPORTED RELEASE
+   519
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-26
+   
+   
+ * CLOSED DATE
+   2009-09-25
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

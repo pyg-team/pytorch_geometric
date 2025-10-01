@@ -1,0 +1,75 @@
+Title: IBM How to configure IBM HTTP Server V9 for Host On-Demand V12 and above on z/OS - United States
+
+Text:
+IHS V9; z/OS; HOD V12; HOD TECHNOTE (FAQ)
+
+QUESTION
+ How do you configure IBM HTTP Server V9 on z/OS for IBM Host On-Demand V12 and above? 
+
+CAUSE
+The files for Host On-Demand V12 and above are named differently from previous Host On-Demand versions and the configuration for the Web server must be manually added to IBM HTTP Server (IHS) V9. The configuration directives for IBM HTTP Server (IHS) V9 are different from the configuration for previous levels of IHS. IHS V9 is powered by Apache 2.4 where previous versions of IHS were powered by Apache 2.2 and some configuration directives have changed with IHS V9. 
+
+ANSWER
+This configuration is for Host On-Demand Version 12 and above on z/OS with IHS 9 only. 
+
+Add the following configuration statements to the httpd.conf file for the IBM HTTP Server V9 to support the downloading of Host On-Demand clients on z/OS. 
+
+These statements assume the default install location /usr/lpp/HOD/hostondemand and the alias is hod. Modify the statements if installed in a different path and set the correct domain. 
+
+
+
+In httpd.conf, look for these statements:
+
+<Location />
+CharsetSourceEnc IBM-1047
+CharsetDefault ISO8859-1
+CharsetOptions DGWCompat
+</Location>
+
+Add these statements for HOD after the above <Location /> statement:
+
+<Location /hod/ >
+CharsetSourceEnc ISO8859-1
+CharsetDefault ISO8859-1
+</Location>
+
+Alias /hod/ "/usr/lpp/HOD/hostondemand/HOD/"
+<Directory "/usr/lpp/HOD/hostondemand/HOD/">
+Options MultiViews Includes FollowSymLinks
+Order Deny,Allow
+Deny from all
+Allow from <domain>(set the domain to your company domain like ibm.com)
+Require all granted
+</Directory>
+For more information about the Order directive, refer to the Apache Directive Index [https://httpd.apache.org/docs/2.4/mod/mod_access_compat.html#order]. Your company may require a different configuration. 
+
+
+Add these AddType directives: 
+
+AddType application/x-java-jnlp-file .jnlp
+AddType multipart/x-zip .jar
+
+
+Edit the mime.types file, found in the same directory as httpd.conf, and add the following:
+
+application/octet-stream cf 
+
+If you want to configure a user-defined publish directory for your customized html pages, add the following statements prior to the <Location /hod/ > statement above. 
+
+<Location /user/ > 
+CharsetSourceEnc ISO8859-1
+CharsetDefault ISO8859-1
+</Location> 
+Alias /user/ "/usr/lpp/userpublish/" 
+<Directory "/usr/lpp/userpublish/"> 
+Options MultiViews Includes FollowSymLinks
+Order Deny,Allow
+Deny from all 
+Allow from ibm.com(set the domain to your company domain like ibm.com)
+Require all granted 
+</Directory> 
+
+
+After making any changes to the httpd.conf file and mime.types, you will need to stop and restart the server. 
+
+Before the clients access the Host On-Demand server to download the client, you might need to clear the browser cache, Java cache, and remove any client on the machine.

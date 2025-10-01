@@ -1,0 +1,222 @@
+Title: IBM IY72519: AMQ9652 ERROR MESSAGE GENERATED INCORRECTLY WHEN THE CRYPTOGRAPHIC STORE / KEY REPOSITORY PASSWORD HAS EXPIRED. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 12 (CSD12) [http://www-01.ibm.com/support/docview.wss?uid=swg24011423]
+WebSphere MQ V6.0 for iSeries Refresh Pack 6.0.1.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24010895]
+WebSphere MQ V6.0 Refresh Pack 6.0.2.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24013482]
+WebSphere MQ V5.3 for iSeries - Fix Pack 12 (CSD12) [http://www-01.ibm.com/support/docview.wss?uid=swg24011422]
+WebSphere MQ V6.0 Refresh Pack 6.0.1.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24010812]
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 13 (CSD13) [http://www-01.ibm.com/support/docview.wss?uid=swg24014128]
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 14 (CSD14) [http://www-01.ibm.com/support/docview.wss?uid=swg24017668]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A channel fails to start and the following error is shown in the
+   queue manager error logs:
+   
+   AMQ9652: The remote SSL certificate has expired.
+   EXPLANATION:
+   The SSL certificate used by MQ on the remote end of the channel
+   has expired.
+   The channel is '????'; in some cases its name cannot be
+   determined and so is shown as '????'. The channel did not start.
+   ACTION:
+   Use your key management tool to provide MQ with a current SSL
+   certificate on the remote end of the channel. Restart the
+   channel.
+   
+   However, the certificate used by WMQ at the remote end of the
+   channel has not expired.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Generate a separate message in the error logs for the expiration
+   of an expired cryptographic store password.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Customers using SSL channels with WMQ V5.3 on the UNIX
+   platforms, or WMQ V6.0 on the UNIX and Windows platforms,
+   and having specified a password expiry interval when creating
+   the key repository for a queue manager.
+   
+   Platforms affected:
+    All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The actual reason for the failure of the channel to start is
+   that the password used to access the key repository for the
+   local queue manager has expired. This can be confirmed by
+   running the following command against the key repository for the
+   local queue manager where the AMQ9652 message is observed (not
+   the remote queue manager as described in the AMQ9652 message).
+   It will fail with "The password has expired":
+   gsk6cmd -cert -list -db <file>.kdb -pw <password>
+   
+   The command to reset this password is:
+   gsk6cmd -keydb -db <file>.kdb -changepw -pw <old_pw> -new_pw
+   <new_pw> -stash
+   
+   This command required version 6.0.5.44 of GSKit or later.
+   WebSphere MQ V6.0 is shipped with a version of GSKit which
+   supports this command.
+   For WebSphere MQ V5.3, this command may fail with:
+   "The password has expired".
+   An updated GSKit package, which supports this command, is
+   shipped with fix pack 12 and later for WebSphere MQ V5.3.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A new error message has been added to WebSphere MQ, which is
+   output when a channel cannot start because the password used
+   to access the key repository has expired:
+   
+   AMQ9770: The SSL key repository password has expired.
+   EXPLANATION: The SSL key repository cannot be used because the
+   password has expired.
+   The channel is '<insert one>'; in some cases its name cannot be
+   determined and so is shown as '????'. The channel did not start.
+   ACTION: Use your key management tool to reset the password of
+   the SSL key repository, ensuring that a new password stash file
+   is generated.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v5.3
+   Platform           Fix Pack 12
+   --------           --------------------
+   Windows            U200242
+   AIX                U803326
+   HP-UX (PA-RISC)    U803577
+   Solaris (SPARC)    U803579
+   iSeries            SI21715
+   Linux (x86)        U803580
+   Linux (zSeries)    U803582
+   Linux (Power)      Not applicable
+   
+                      v6.0
+   Platform           Refresh Pack 6.0.1.0
+   --------           --------------------
+   Windows            U200243
+   AIX                U803805
+   HP-UX (PA-RISC)    U803943
+   Solaris (SPARC)    U803944
+   iSeries            SI17318
+   Linux (x86)        U803945
+   Linux (zSeries)    U803946
+   Linux (Power)      U803947
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY72519
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ FOR SUN
+   
+   
+ * REPORTED COMPONENT ID
+   5724B4103
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-06-09
+   
+   
+ * CLOSED DATE
+   2005-06-20
+   
+   
+ * LAST MODIFIED DATE
+   2007-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ FOR SUN
+   
+   
+ * FIXED COMPONENT ID
+   5724B4103
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY
+   UP

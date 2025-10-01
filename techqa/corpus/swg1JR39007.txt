@@ -1,0 +1,158 @@
+Title: IBM JR39007: CWMAO1513E THROWN WHILE MODIFYING SCA IMPORT BINDING VIA ADMIN CONSOLE - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Enterprise Service Bus V7.0.0 Fix Pack 4 (7.0.0.4) [http://www-01.ibm.com/support/docview.wss?uid=swg24030312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer wanted to modify SCA import biding via AdminConsole. If
+   the import and export include multiple interface, they could got
+   exception as below:
+   
+   [2/25/11 11:13:48:765 CST]     FFDC
+   Exception:com.ibm.ws.sca.management.commands.SCACommandException
+   SourceId:com.ibm.ws.sca.management.commands.module.SCAImportBind
+   ingModifyCommand.beforeStepsExecuted ProbeId:424
+   Reporter:com.ibm.ws.sca.management.commands.module.SCAImportBind
+   ingModifyCommand@2a0a2a0a
+   com.ibm.ws.sca.management.commands.SCACommandException:
+   CWMAO1513E: The interface "ns1:SrvGestorePreventivov0101", which
+   is required by the import "GestorePreventivoSCAImport", cannot
+   be found in the export "GestorePreventivoLegacyExport".
+    at
+   com.ibm.ws.sca.management.commands.module.SCAImportBindingModify
+   Command.beforeStepsExecuted(SCAImportBindingModifyCommand.java:4
+   14)
+    at
+   com.ibm.websphere.management.cmdframework.provider.AbstractTaskC
+   ommand.executeReal(AbstractTaskCommand.java:835)
+    at
+   com.ibm.websphere.management.cmdframework.provider.AbstractTaskC
+   ommand.execute(AbstractTaskCommand.java:807)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  WPSV7003                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CWMAO1513E THROWN WHILE MODIFYING SCA   *
+   *                      IMPORT BINDING VIA ADMIN  CONSOLE       *
+   *                      BPS_CREATED_DEFECT                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Customer want to modify the sca import binding, but
+   the error CWMAO1513E will throw because the runtime tool
+   incorrectly work
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Customer wanted to modify SCA import biding via AdminConsole. If
+   the import and export include multiple interface, they could got
+   exception as below:
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR39007
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-28
+   
+   
+ * CLOSED DATE
+   2011-05-09
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

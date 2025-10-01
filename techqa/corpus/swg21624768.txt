@@ -1,0 +1,95 @@
+Title: IBM ConfigEngine task modify-servlet-path fails to find a match for websiteDisplayer.war - United States
+
+Text:
+configengine task failed; websitedisplayer TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After upgrading to Portal 8.0 CF03 the modify-servlet-path task will fail to find a match for websiteDisplayer.war
+
+SYMPTOM
+The exception in the configTrace.log notes:
+
+[wplc-edit-ear] -CtxRootForWebMod=[""WebsiteDisplayer"
+websiteDisplayer.war,WEB-INF/web.xml /enterprise/mccwebsiteDisplayer"]
+[wplc-edit-ear] appname="websiteDisplayer"
+[wplc-edit-ear] null
+[wsadmin] WASX7209I: Connected to process "dmgr" on node
+lx174CellManager01 using SOAP connector; The type of process is:
+DeploymentManager
+[wsadmin] Editing AppName websiteDisplayer with new options
+[wsadmin] WASX7017E: Exception received while running file
+"/opt/IBM/WebSphere/wp_profile/ConfigEngine/config/work/was/curJaclScrip
+t.jacl"; exception information:
+com.ibm.ws.scripting.ScriptingException: WASX7111E: Cannot find a match
+for supplied option: "[WebsiteDisplayer,
+websiteDisplayer.war,WEB-INF/web.xml, /enterprise/mccwebsiteDisplayer]"
+for task "CtxRootForWebMod"
+
+[wplc-edit-ear]
+/opt/IBM/WebSphere/PortalServer/ui/wp.mashup.widgets.deploy/config/inclu
+des/wp.mwidgets.deploy_cfg.xml:183: Java returned: 105
+
+
+
+
+CAUSE
+With the release of Cumulative fix 03, it appears that wrong websiteDisplayer.war is being searched for.
+
+ENVIRONMENT
+Portal 8.0.0.0 CF03
+
+DIAGNOSING THE PROBLEM
+When reviewing the wp.mwidgets.deploy_cfg.xml file, it appears to be looking for:
+
+<wplc-edit-ear
+appname="websiteDisplayer"
+wasuser="${WasUserid}"
+waspassword="${WasPassword}"
+conntype="${wsadminConnType}">
+<option key="CtxRootForWebMod">
+<value>"WebsiteDisplayer"
+websiteDisplayer.war,WEB-INF/web.xml
+/${WpsContextRoot}/mcc${websiteDisplayer}</value>
+</option>
+</wplc-edit-ear>
+
+the <value> tag points to websiteDisplayer.war but when reviewing
+
+/WebSphere/wp_profile/config/cells/wps61/applications/websiteDisplayer.e
+ar/deployments/websiteDisplayer
+
+We see the war name as websiteDisplayer_v201.war
+
+RESOLVING THE PROBLEM
+To work around this issue, you will need to edit the
+wp.mwidgets.deploy_cfg.xml file found
+WebSphere/PortalServer/ui/wp.mashup.widgets.deploy/config/includes
+
+In this call
+
+<wplc-edit-ear
+appname="websiteDisplayer"
+wasuser="${WasUserid}"
+waspassword="${WasPassword}"
+conntype="${wsadminConnType}">
+<option key="CtxRootForWebMod">
+<value>"WebsiteDisplayer"
+websiteDisplayer.war,WEB-INF/web.xml
+/${WpsContextRoot}/mcc${websiteDisplayer}</value>
+</option>
+</wplc-edit-ear>
+
+you will need to modify the <value> tag from:
+
+<value>"WebsiteDisplayer" websiteDisplayer.war,WEB-INF/web.xml
+/${WpsContextRoot}/mcc${websiteDisplayer}</value>
+
+to:
+
+<value>"WebsiteDisplayer" websiteDisplayer_v201.war,WEB-INF/web.xml
+/${WpsContextRoot}/mcc${websiteDisplayer}</value>
+
+
+
+
+This issue is targeted to be fixed in the next CF release.

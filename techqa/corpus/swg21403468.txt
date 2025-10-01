@@ -1,0 +1,52 @@
+Title: IBM Recreating Missing Oracle Text Indexes - United States
+
+Text:
+domain index; contains; DRG-10599; not indexed; TPAEORACLE TECHNOTE (FAQ)
+
+QUESTION
+ How can I identify missing Oracle Text indexes and recreate them? 
+
+ANSWER
+ 
+
+The following select statement will list all of the objects and attributes which have a searchtype of TEXT but for which there is no DOMAIN index on the associated table and column: 
+
+
+select objectname,attributename from maxattribute where persistent=1 and searchtype='TEXT'
+and objectname not in (select objectname from maxobject where isview=1)
+and not exists (select 1 from user_indexes a,user_ind_columns b
+where a.table_name=objectname and b.column_name=attributename
+and a.index_name=b.index_name and a.index_type='DOMAIN');
+
+
+If the above returns no results, then there are no missing Oracle Text indexes. 
+
+For each objectname,attributename result returned, you can recreate the missing index with the following command:
+
+CREATE INDEX indexname ON objectname (attributename)
+INDEXTYPE IS CTXSYS.CONTEXT PARAMETERS 
+('lexer global_lexer language column LANGCODE');
+
+
+
+indexname - Unique name for this index. Must not be more than 18 characters long. There is no requirement for a specific name. Oracle requires that the name be unique. Maximo requires that the length of the name not exceed 18 characters. 
+
+objectname - The objectname from the select statement results. 
+
+attributename - The attributename from the results. 
+
+The indexes can be recreated while the system is in use. For large tables, such as WORKORDER, the index creation will slow processing against that table during creation, so it may be more efficient to recreate the index during a time of low system utilization. 
+
+ 
+
+ 
+
+ 
+
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Change and Configuration Management Database Systems and Asset Management Tivoli Service Request Manager AIX, AIX 64bit, Linux, Linux Red Hat - zSeries, Linux zSeries, Solaris, Windows 2003 server 6.0, 7.1, 7.2 All Editions Systems and Asset Management Maximo Asset Management Essentials 7.1, 7.1.1

@@ -1,0 +1,23 @@
+Title: IBM Does IBM SPSS Statistics 21 and higher 64 bit work with JAWS 14 - United States
+
+Text:
+JAWS 14 configure 64 bit operating system windows 32 bit SPSS statistics 21 20 22 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am using IBM SPSS Statistics 21 and 22 bit in a Windows 64 bit operating system. IBM SPSS Statistics 20's documentation stated in order to work with JAWS, all bitness must be 32 bit. Does IBM SPSS Statistics 21 and 22 64 bit work with JAWS 14? 
+
+SYMPTOM
+Question. Not launching. 
+
+
+CAUSE
+Wanting to use Screen reader software.
+
+ENVIRONMENT
+Windows 64 bit
+
+RESOLVING THE PROBLEM
+IBM SPSS Statistics 21 and 22 64 bit versions have been tested and do work with JAWS 14 in a 64 bit windows environment. IBM SPSS Statistics 21 and 22 32 bit also work with JAWS 14 32 bit in a 32 bit environment.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

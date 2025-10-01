@@ -1,0 +1,191 @@
+Title: IBM PI42169: SHIP FMID HBBO850 COMPID 5655I3500 FIX PACK 8.5.5.6. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Ship FMID HBBO850 COMPID 5655I3500 Fix Pack 8.5.5.6.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere Application Server    *
+   *                 V8.5 for z/OS, including                     *
+   *                    - Liberty profile,                        *
+   *                    - DMZ Secure Proxy Server,                *
+   *                    - Web server plugins,                     *
+   *                    - IBM HTTP Server V8.5 on z/OS            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Deliver the local repository contents   *
+   *                      for Fix Pack 8.5.5.6.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This APAR packaging APAR will deliver the V8.5 local repository
+   Fix Pack 8.5.5.6 contents for WebSphere Application Server V8.5
+   for z/OS product, including the DMZ Secure Proxy Server, Web
+   server plugins, and IBM HTTP Server.
+   
+   For documentation of the APAR contents for Fix Pack 8.5.5.6
+   please refer to the following url:
+   
+   http://www-01.ibm.com/support/docview.wss?uid=swg27036319 [http://www-01.ibm.com/support/docview.wss?uid=swg27036319]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The local repository Fix Pack 8.5.5.6 contents for WebSphere
+   Application Server V8.5 for z/OS, including the Liberty profile,
+   DMZ Secure Proxy Server, Web server plugins, and IBM HTTP
+   Server, are delivered via this APAR.
+   
+   After installation of this APAR, the WebSphere Application
+   Server V8.5 repository for z/OS can be used to install WebSphere
+   Application Server components at the 8.5.0.0 and 8.5.5.6 levels.
+   
+   Please refer to the Recommended Updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   In addition, please refer to URL:
+   http://www.ibm.com/support/docview.wss?rs=404&uid=swg27006970 [http://www.ibm.com/support/docview.wss?rs=404&uid=swg27006970]
+   for Fix Pack PTF information.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI42169
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / CST
+   
+   
+ * SUBMITTED DATE
+   2015-06-01
+   
+   
+ * CLOSED DATE
+   2015-06-16
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI28577
+   
+   
+
+MODULES/MACROS
+ *     BBO02831 BBO02832 BBO02833 BBO02838 BBO02862
+   BBO02863 BBO02876 BBO02877 BBO02878 BBO02884 BBO02930 BBO02931
+   BBO02932 BBO02936 BBO02956 BBO02957 BBO02989 BBO02990 BBO02994
+   BBO02997 BBO03000 BBO03007 BBO03024 BBO03346 BBO03350 BBO03354
+   BBO03358 BBO03362 BBO03366 BBO03370 BBO03374 BBO03378 BBO03382
+   BBO03386 BBO03390 BBO03394 BBO03398 BBO03409 BBO03410 BBO03411
+   BBO03412 BBO03413 BBO03414 BBO03415 BBO03416 BBO03417 BBO03513
+   BBO03514 BBO03515 BBO03516 BBO03517 BBO03518 BBO03519 BBO03520
+   BBO03521 BBO03522 BBO03523 BBO03524 BBO03546 BBO03599 BBO03616
+   BBO03691 BBO03692 BBO03693 BBO03694 BBO03695 BBO03696 BBO03697
+   BBO03698 BBO03699 BBO03700 BBO03701 BBO03702 BBO03703 BBO03704
+   BBO03705 BBO03706 BBO03707 BBO03709 BBO03710 BBO03711 BBO03713
+   BBO03714 BBO03912 BBO03913 BBO03922 BBO03968 BBO03969 BBO03970
+   BBO03992 BBO04028 BBO04103 BBO04294 BBO04295 BBO04311 BBO04330
+   BBO04338 BBO04355 BBO04395 BBO04408 BBO04442 BBO04443 BBO04450
+   BBO04458 BBO04460 BBO04488 BBO04505 BBO04506 BBO04507 BBO04508
+   BBO04509 BBO04510 BBO04511 BBO04512 BBO04513 BBO04514 BBO04515
+   BBO04516 BBO04517 BBO04518 BBO04519 BBO04520 BBO04521 BBO04522
+   BBO04523 BBO04524 BBO04525 BBO04526 BBO04527 BBO04528 BBO04529
+   BBO04530 BBO04531 BBO04532 BBO04533 BBO04534 BBO04535 BBO04536
+   BBO04537 BBO04538 BBO04759 BBO04966 BBO04967 BBO05097 BBO05599
+   BBO05763 BBO05769 BBO05799 BBO05919 BBO05923 BBO05926 BBO05942
+   BBO05946 BBO05952 BBO05955 BBO05970 BBO05981 BBO05982 BBO05988
+   BBO05992 BBO05995 BBO06014 BBO06017 BBO06035 BBO06059 BBO06086
+   BBO06099 BBO06191 BBO06192 BBO06193 BBO06263 BBO06493 BBO06495
+   BBO06496 BBO06506 BBO06566 BBO06592 BBO06613 BBO06625 BBO06647
+   BBO06648
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY UI28577 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI28577]
+   UP15/06/26 P F506
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

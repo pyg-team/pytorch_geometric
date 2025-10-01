@@ -1,0 +1,28 @@
+Title: IBM FTP Connection Fails with Message TCP3D2C rc-95 - United States
+
+Text:
+FTP; MSGTCP3D2C; SSL; TCP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ System i FTP client attempting to connect with FTP/SSL fails immediately with error message TCP3D2C rc-95. 
+
+RESOLVING THE PROBLEM
+When attempting to initiate a FTP/SSL connection to another System i FTP/SSL server, the control 
+
+connection fails immediately with an error message TCP3D2C:
+
+Message . . . . . :Secure connection error, return code -95
+
+Value Description
+----- ------------------------------------
+-95 No keyring file was specified.
+
+Upon review of the FTP client configuration using Digital Certificate Manager (DCM), it was found the client 
+was never configured. The *SYSTEM store did not exist. After creating the *SYSTEM store and following
+the steps outlined in this tech doc New SSL FTP Client Configuration [http://www-01.ibm.com/support/docview.wss?uid=nas8N1014798], the connection was successfully
+established.
+
+
+
+HISTORICAL NUMBER
+ 606611742

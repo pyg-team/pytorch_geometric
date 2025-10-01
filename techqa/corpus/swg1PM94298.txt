@@ -1,0 +1,169 @@
+Title: IBM PM94298: VerifyError 'Inconsistent stackmap frames' for switch statements nested within a try-catch block - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Software Architect 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24035434]
+Rational Software Architect for WebSphere Software 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24035436]
+Rational Application Developer for WebSphere Software 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24035720]
+Rational Software Architect Fix Pack 1 (8.5.5.1) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24036832]
+Rational Software Architect for WebSphere Software Fix Pack 1 (8.5.5.1) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24036833]
+Rational Application Developer for WebSphere Software Fix Pack 1 (8.5.5.1) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24037967]
+Rational Software Architect Fix Pack 2 (8.5.5.2) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24038307]
+Rational Software Architect for WebSphere Software Fix Pack 2 (8.5.5.2) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24038308]
+Rational Software Architect Fix Pack 3 (8.5.5.3) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039397]
+Rational Software Architect for WebSphere Software Fix Pack 3 (8.5.5.3) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039398]
+Rational Application Developer for WebSphere Software Fix Pack 2 (8.5.5.2) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039443]
+Rational Software Architect Fix Pack 4 (8.5.5.4) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041240]
+Rational Software Architect for WebSphere Software Fix Pack 4 (8.5.5.4) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041241]
+Rational Application Developer for WebSphere Software Fix Pack 3 (8.5.5.3) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract:
+   
+   Attempts to build and run a Java application with a switch
+   nested within try-catch might result in:
+   
+   java.lang.VerifyError: JVMVRFY012 stack shape inconsistent
+   
+   when targeting Java 7.0 for compilation.
+   
+   Problem:
+   
+   The error was found when compiling and running their application
+   using Java 7.0.  When targeting Java 6.0 the application works
+   correctly.  When targeting Java 7 the application fails to run
+   and it throws:
+   
+   Exception in thread 'main' java.lang.VerifyError: JVMVRFY012
+   stack shape inconsistent; class=test/com/EclipseVerifyError,
+   method=method()V, pc=1
+    at java.lang.J9VMInternals.verifyImpl(Native Method)
+    at java.lang.J9VMInternals.verify(J9VMInternals.java:85)
+    at java.lang.J9VMInternals.initialize(J9VMInternals.java:162)
+   
+   For more technical details, see the following:
+   
+   https://bugs.eclipse.org/bugs/show_bug.cgi?id=381172 [https://bugs.eclipse.org/bugs/show_bug.cgi?id=381172]
+   
+   Note: Do not confuse this with similar Eclipse defect:
+   
+   https://bugs.eclipse.org/bugs/show_bug.cgi?id=361053. [https://bugs.eclipse.org/bugs/show_bug.cgi?id=361053.]
+   
+   as this problem does not happen when using Rational Application
+   Developer v8.5.1.
+   
+   Local fix:
+   
+   There is no known workaround at this time.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Building and running a Java application with a switch nested
+   within try-catch might result in:
+   java.lang.VerifyError: JVMVRFY012 stack shape inconsistent
+   when targeting Java 7.0 for compilation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is included in Rational Application
+   Developer v8.5.5.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM94298
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-01
+   
+   
+ * CLOSED DATE
+   2013-10-15
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

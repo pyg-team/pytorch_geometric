@@ -1,0 +1,133 @@
+Title: IBM PK73584: DEFECT: CQ 7.0.1.2 DESIGNER DOES NOT SET WEB DEPENDENT FIELD PRO PERTY IF SAME FIELDS ON DIFFERENT TABS OF FORM ARE ADDED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Defect was approved by escalation # RATLC01235188.
+   
+   This is a defect for CQ Designer.
+   
+   CQ 7.0.1.2 Designer does not set the web dependent field propert
+   y if same fields on different tabs of the form are added.
+   
+   For example, let's say I have Severity and Priority fields in Ma
+   in tab of my Base/Submit Defect form where Severity has a web de
+   pendent property set to Priority. Then, I decide to add the same
+    fields in another tab, Customer tab and forget to set the web d
+   ependent on Serverity. In CQ Web, when I edit Defect record, the
+    web dependent won't work right in the Customer tab (the Priorit
+   y field would not populate).
+   
+   The workaround is to check for any duplicate fields on each tab
+   and set the web dependency properly. Warren and I find this as a
+    defect because you shouldn't have to set the web dependent fiel
+   d property more than once and/or the web dependent field that yo
+   u did set should work in CQ Web.
+   
+   Steps to reproduce:
+   
+   1.) Login to CQ Web using the attached MS_ACCESS sampl database.
+   2.) Go to the customer tab and select a value from the severity
+   drop down and notice that the priority list doesn't change as it
+    should.
+   3.) Login to CQ designer and on the main tab bring up the proper
+   ties of the 'severity' field and add the 'priority' field to the
+    web dependent field list.
+   4.) Login to CQWeb and go to the customer tab and select a sever
+   ity and notice that the priority drop down now displays the corr
+   ect values in it's list.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This words as designed.  It is the responsibility of the
+   administrator to set up forms and other schema elements
+   consistently to do what the administrator wants.  If the
+   administrator sets up two inconsistent specifications, as
+   happened in this case, the Designer should not speculate on
+   which one is right.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK73584
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3600
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-09
+   
+   
+ * CLOSED DATE
+   2008-10-13
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

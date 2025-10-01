@@ -1,0 +1,24 @@
+Title: IBM Windows 2012 and Log File Agent - United States
+
+Text:
+ITM TM GKSI klo lo win2012 win TECHNOTE (FAQ)
+
+QUESTION
+ Is Log File Agent supported on Windows 2012? 
+
+ANSWER
+LogFile Agent (LFA) 6.2.2 FP04 does not officially support Windows 2012.
+
+LFA v6.2.3.2 was certified on Windows 2012 with one defect/issue found related to monitoring Windows Event Log. This defect is fixed in LFA v6.2.3.2 IF0002.
+
+IBM Tivoli Monitoring V6.2.3.2 Log File Agent Multiplatform English (CI8WDEN) 
+
+Recommended is to use version 6.3.
+IBM Tivoli Log File Agent V6.3, Multiplatform, Multilingual 
+Part Number: CIGM5ML
+
+Note: Upgrading to the v6.3 of the KLO agent is not 
+dependent on a v6.3 infrastructure. The minimum pre-req is 6.2.2 FP2.
+
+6.3.0-TIV-ITM_LFA-FP0001
+http://www-01.ibm.com/support/docview.wss?uid=swg24042317 [http://www-01.ibm.com/support/docview.wss?uid=swg24042317]

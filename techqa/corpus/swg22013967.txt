@@ -1,0 +1,55 @@
+Title: IBM SqlDataException after Enabling Transactionlog - United States
+
+Text:
+master data management; mdm; rdm; transaction; log TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you enable Transactionlog in configelement table for RDM v11.6.0.2, an exception
+start coming intermittently in the logs. 
+
+SYMPTOM
+You see the following error in the log:
+[20/10/17 13:53:52:225 GMT+03:00] 00000108 DWLExceptionU E
+com.ibm.pdq.runtime.exception.DataRuntimeException:
+[pdq][10103][3.200.75] An error prevented the update operation from
+completing successfully.; Caused by:
+com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error: SQLCODE=-302,
+SQLSTATE=22001, SQLERRMC=null, DRIVER=3.71.22
+at com.ibm.pdq.runtime.internal.db.JdbcData.update_(JdbcData.java:406)
+at com.ibm.pdq.runtime.internal.db.DataImpl.update(DataImpl.java:710)
+at com.ibm.pdq.runtime.generator.BaseData.update(BaseData.java:860)
+at com.dwl.base.tail.entityObject.EObjTransactionLogDataImpl.createEObj
+TransactionLog(EObjTransactionLogDataImpl.java:172)
+at com.dwl.base.commonservices.bobj.query.TAILTransactionBObjQuery.addT
+AILTransaction(TAILTransactionBObjQuery.java:264)
+at com.dwl.base.commonservices.bobj.query.TAILTransactionBObjQuery.pers
+ist(TAILTransactionBObjQuery.java:250)
+at com.dwl.bobj.query.AbstractBObjQuery.persistAdd(AbstractBObjQuery.ja
+va:547)
+at com.dwl.base.tail.component.TAILTransactionComponent.addTransactionL
+og(TAILTransactionComponent.java:307)
+at com.dwl.base.tail.component.TAILTransactionComponent.addTransactionL
+og(TAILTransactionComponent.java:216)
+at com.dwl.base.tail.component.DWLTAILComponent.addTAIL(DWLTAILComponen
+t.java:131)
+at com.dwl.base.tail.beans.TailManagerBean.addTail(TailManagerBean.java
+:63)
+... ...
+Caused by: com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error:
+SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=3.71.22
+at com.ibm.db2.jcc.am.gd.a(gd.java:805)
+at com.ibm.db2.jcc.am.gd.a(gd.java:66)
+... ...
+
+
+
+
+CAUSE
+The sql exception occurs when the UpdateMethCode is set to 'USE_BUSINESSKEY' which has 15 chars. The length of that field is only 10 chars. This field is provided in the dwlcontrol. 
+
+RESOLVING THE PROBLEM
+Either you can change the input or you have to increase the length of the db field.
+
+e.g. ALTER TABLE TRANSACTIONLOG ALTER COLUMN UPDATE_METH_CODE SET DATA TYPE VARCHAR(20)
+
+You may also need to increase the length USER_ROLE field.

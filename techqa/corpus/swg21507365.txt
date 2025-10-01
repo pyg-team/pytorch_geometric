@@ -1,0 +1,36 @@
+Title: IBM Announcement letter for CICS Interdependency Analyzer for z/OS 3.2 - United States
+
+Text:
+CICS IA 3.2 announcement letter ; CICS Interdependency Analyzer for z/OS Version 3.2 ; announcments letters ; CICS TS 4.2 ; general availablity ; ga date ; cicsia ; 5655U8600 5655U8601 R320 R32E R32K 5655-U86 5655U86 FMID H274320 J27432E J27432K retention32 PRODUCT LIFECYCLE
+
+ABSTRACT
+ General Availability of CICS Interdependency Analyzer for z/OS (CICS IA) V3.2 was 2 September 2011. CICS IA V3.2 supports all new and updated resources in CICS Transaction Server for z/OS (CICS TS) V4.2, the IBM CICS Explorer, and more. This document contains the Overview section of the announcement letter and a link to the announcement letter. 
+
+CONTENT
+CICS IA is a productivity tool that automates discovery of run-time resource relationships within CICS applications, giving you a comprehensive picture of how your CICS applications really work. It can be used by all who build, manage, and deploy complex mainframe CICS applications.
+
+CICS IA V3.2 supports all new and updated resources in CICS TS V4.2, enabling its users to benefit immediately from the important enhancements in the latest version of CICS TS (refer to Software Announcement 211-080 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS211-080], dated April 5, 2011).
+
+CICS IA V3.2 also delivers many new capabilities to enable you to control the cost of developing, testing, and managing CICS applications and to comply with internal IT policies: 
+
+ * Command Flow enhancements including multi-user support: The powerful Command Flow capability, first introduced in CICS IA V3.1, can now be used by multiple users simultaneously, allowing both system programmers and application developers to collect their own individual data for analysis. 
+ * CICS Business Events support: Loosely coupled dependencies between CICS resources and external applications - created when business events are generated - can now be identified, greatly simplifying change management of applications that can generate events. 
+ * New and improved views and controls in the plug-in for CICS Explorer: CICS Explorer enhancements include a new Affinity view, that can simplify the task of removing affinities from CICS applications, enabling them to participate in workload management. Dependency, Affinity, and Command Flow data collection can now be controlled from the IBM CICS Explorer, further reducing the need to use green-screen interfaces when developing and managing CICS. 
+ * Dependency data life-cycle management: New data life-cycle management for CICS IA dependency data helps you to compare the behavior of different versions of CICS applications, and manage space utilization more easily. 
+ * Enhanced business application analysis: New options in the business application views enables you to analyze which resources are used by each application. The options also allow you to view the transactions and programs actually used as well as the transactions and programs that define the application. 
+ * CICS user exit detection and mapping: Also new in this release is the ability to detect the usage of CICS Task-related user exits (TRUEs), and map entry points to meaningful names. Mappings for a number of IBM-supplied TRUEs are provided, including IBM WebSphere MQ, IBM CICS Transaction Gateway (CICS TG), Sockets, IBM DB2, and you can supply your own mappings for other vendor-provided and in-house TRUEs that you use with CICS. 
+ * Architectural enhancements: A wide range of architectural enhancements are delivered in this release, providing performance, usability, and serviceability enhancements. The new release also introduces a wide range of other technical and operational capabilities, including requirements raised by individual customers and user communities.
+   
+
+
+See the IBM CICS Interdependency Analyzer for z/OS Version 3.2 datasheet [ftp://public.dhe.ibm.com/software/htp/cics/tools/CICS_Interdependency_Analyzer_V3.2_datasheet_GI13-0580-00.pdf], the CICS IA Web page [http://www.ibm.com/software/htp/cics/ianaly/] [http://www.ibm.com/software/htp/cics/ianaly/], and the US Announcement Letter for CICS IA V3.2 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS211-266] [http://www-1.ibm.com/support/docview.wss?rs=1083&context=SSGMGV&uid=swg21257210] (211-266) for more information. Information for other country announcement letters is located here [http://www.ibm.com/common/ssi/index.wss]. 
+
+See the IBM Software Support Lifecycle Page for CICS IA [http://www.ibm.com/software/support/lifecycleapp/PLCDetail.wss?synkey=C489116T29811D24&synkey=S025140W51640Q58&from=spf] to determine if the release of CICS IA you are running is still supported or if there is a newer release of CICS IA. 
+RELATED INFORMATION
+#Announcement letters for CICS Products [http://www.ibm.com/support/docview.wss?uid=swg21227090]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICSIA CICS IA

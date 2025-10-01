@@ -1,0 +1,43 @@
+Title: IBM Ask the Experts Replay: Application Management in WebSphere Application Server - United States
+
+Text:
+wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; ApplicationManagement; Application deploy or update; admin console; wsadmin; jmx WEBCAST
+
+ABSTRACT
+ WebSphere Application Server run-time provides several administrative tools to manage enterprise applications such as the administrative console, the wsadmin scripting tool and the ability to use WebSphere JMX API programmatically . This webcast covers various types of questions on Application Management in WebSphere Application Server. 
+
+CONTENT
+Ask the Experts sessions are conducted in a question and answer format. The table below provides a time index (minutes:seconds) to the recording and describes the questions or topics discussed. You can fast forward to any question using the time index, a table containing the panel of experts is also included.
+
+
+To play or download the audio of this Ask the Experts session, see the Audio Section of this document.
+
+See the Related Information Section of this document for a list of documents referenced during the presentation.
+
+
+
+
+
+
+
+
+Ask the Experts session 
+13 March 2012 - 11:00 a.m. - 12:00 p.m. EDT 
+
+Time Questions asked 00:00 Silence 00:00 General introduction 03:49 Technical introduction 05:21 How can an enterprise application deployed in a cluster be updated with no downtime? 09:25 Can hot deployment process be a recommended approach to a production system? If not, please elaborate more? 13:49 Can I manage my enterprise applications using flexible management (JobManager/AdminAgent)? 16:20 Is it possible to deploy any regular enterprise application to be a business level application (BLA) in WebSphere Application Server runtime? What are the benefits of business level applications? 19:50 My installedApps folder was wiped out. How do I recover it and how do I prevent this from happening in the future? 22:19 I am using "com.ibm.websphere.management.cmdframework.AdminCommand" to set up a command and execute it. The command executes (w/o any errors) and I can even get the output. However, the result is coming in as a single object as opposed to a collection of multiple objects. I have tried multiple ways to read the result but all return the same, a single object. Is there a way to split the object into multiple objects without doing multiple string manipulations? 25:14 Could you please describe how we can efficiently use property based configuration to install applications? In particular, is there a practical way to use this mechanism for the deployment of an application to multiple states using portable property files and variable mappings? Could you also talk about resource mappings that are defined as tasks in the deployment configuration? 31:19 How can I perform a roll out update with scripting? 32:44 Do we have any option to avoid the JVM restart in the "roll update" option? 34:14 I have a question on the topic of mBean in the InfoCenter. Where can I find more information on how to use them as well as best practices? 36:21 Apart from the JVM parameters (i.e. JVM heap size, log path) and other resources configurations (i.e. Datasource and QCF) changes, do we need to restart the JVM for any application deployment (i.e. update option) activity? If so, what are the different scenarios for the JVM restart requirement for any WAR or EAR file deployment? 38:14 I have exported an EAR file from one WAS V6.1 admin console and tried to deploy the exported EAR file into another WAS V6.1 admin console (different WAS profile with the same WAS version). All of a sudden, in the destination WAS V6.1 admin console all of the installed applications have disappeared from the $WAS_INSTALL_HOME/ profiles/AppSrv02/installedApps/ directory. How can I avoid this kind of situation in the future? 41:00 Can we have multiple application deployments for different applications deployed on different JVMs at the same time using roll out update? 43:09 Regarding the property based configuration question (7). Is the simple output format an option in the extract command? What version of WAS supports it? 44:24 With an application deployed in a cluster, is it possible to use wsadmin to stop only in one node of the cluster when the plugin does not know that the application is stopped on that node? Also is it possible to configure the plugin to be detected when the application is stopped? 47:24 If I have one application that is deployed in a cluster with two nodes. We can send all the transactions through one particular JVM without stopping the JVM or the server? 49:20 Does IBM have or provide any sample scripts to automate application deployments in a distributed environment? 50:54 Can we customize the error page for an application when the application is in a stopped state? 52:05 Closing remarks 53:53 End of Call 
+Panel of Experts: Kumaran Ayyakutti WebSphere Application Server L2 support Preston Law WebSphere Application Server L2 support Sangwon Oh WebSphere Application Server L2 support Vikram Thommandru WebSphere Application Server L2 support 
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]WSTE-03132012-AskTheExperts-ApplicationManagementWebSphereApplicationServer-Thommandru.pdf [/support/docview.wss?uid=swg27024145&aid=2]WSTE-03132012-AskTheExperts-ApplicationManagementWebSphereApplicationServer-Thommandru.pdf [/support/docview.wss?uid=swg27024145&aid=1]
+
+Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]To replay the recording of this 53 minutes conference call, click on Download Audio [http://public.dhe.ibm.com/software/websphere/techexchange/Mar-13-2012-Thommandru.mp3] (6.0MB - audio in MP3 format). Right-click and select Save As to store the file on your local computer for later playback. Remember that you can fast forward to any question using the time index.
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchange [http://www.ibm.com/software/websphere/webcast]
+Time Zone Converter [http://www.timeanddate.com/worldclock/converter.html]
+Creating a Jython administrative script for IBM WebSphe [http://www.ibm.com/developerworks/websphere/library/techarticles/1004_gibson/1004_gibson.html]
+Commands for the AdminTask object using wsadmin scripti [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.nd.doc/info/ae/ae/rxml_admintask.html]
+Sample Scripts for WebSphere Application Server [http://www.ibm.com/developerworks/websphere/library/samples/SampleScripts.html]

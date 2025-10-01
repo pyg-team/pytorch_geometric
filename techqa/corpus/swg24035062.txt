@@ -1,0 +1,26 @@
+Title: IBM Cognos Disclosure Management 10.2.1 Fix Pack 1 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ Cognos Disclosure Management 10.2.1 FP1 provides important corrections and enhancements for Cognos Disclosure Management 10.2.1 products and should be applied to all installations. 
+
+DOWNLOAD DESCRIPTION
+This Fix Pack is an update of IBM Cognos Disclosure Management 10.2.1 for existing IBM Cognos Disclosure Management customers. New features have been added to this Fix Pack. Task lists, OLAP Suppression, Chart generation improvements, migration tool for FSR queries, HFM tagging and taxonomy migration are new enhancements. In addition, this Fix Pack includes fixes addressing defects. 
+
+PREREQUISITES
+This Fix Pack requires an existing installation of Cognos Disclosure Management 10.2.1.
+
+INSTALLATION INSTRUCTIONS
+For environments that have UAC (User Access Control) enabled, please run Update.exe (Server) using the 'Run as Administrator' option.
+
+URL LANGUAGE SIZE(Bytes) Cognos Disclosure Management 10.2.1 Information Center [http://pic.dhe.ibm.com/infocenter/cdm/v10r2m1/index.jsp] English 99 
+DOWNLOAD PACKAGE
+
+
+PROBLEMS SOLVED
+Fix List [http://www.ibm.com/support/docview.wss?uid=swg27037994#1021FP1]
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Cognos Disclosure Management 10.2.1 FP1 Windows 21 Aug 2013 Language Independent 180380000 FC [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Cognos&product=ibm/Information+Management/Cognos+Disclosure+Management&release=10.2.1&platform=Windows&function=fixId&fixids=10.2.1-BA-CDM-Windows-FP001&includeSupersedes=0] [ ]

@@ -1,0 +1,49 @@
+Title: IBM Content Navigator fix pack installer does not detect the installed base version. - United States
+
+Text:
+install; installanywhere; .com.zerog.registry.xml; product registry; icn; content navigator; navigator; root; /var; fixpack; fix pack TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Content Navigator fix pack installer does not detect the installed base version. 
+
+SYMPTOM
+The fix pack install attempt fails with an error that Content Navigator v2.0.3 was not found.
+
+
+CAUSE
+The InstallAnywhere product registry is possibly corrupted or the user that is installing the fix pack is different than the user that installed the base version or a workaround is needed..
+
+ENVIRONMENT
+Usually this occurs on Unix/Linux environments when install is being done by a non-root user.
+
+RESOLVING THE PROBLEM
+The InstallAnywhere product registry is the .com.zerog.registry.xml file and it is located
+- On Windows, in C:\Program Files (x86)\Zero G Registry directory
+- On Linux and UNIX, in 
+- /var if the install was done by root 
+- the installing user's home directory if install was done by a non-root user
+
+The user installing the fix pack must be same as the user that installed the base version of Content Navigator.
+Check the .com.zerog.registry.xml file to ensure that it contains
+1. <products> ... </products> section with a subsection containing the string "IBM Content Navigator". 
+2. <components> ... </components> section with lines containing ECMClient or a reference to the Navigator installation directory.
+
+If either of the above are missing, then the product registry file likely has corrupted data for Content Navigator. In this case, try 
+
+
+
+
+ 1. Backup the registry file 
+ 2. Open it and do the following:  * from the <products> ... </products> section, remove the subsection containing "IBM Content Navigator". 
+     * from the <components> ... </components> section, remove all subsections or lines containing the substring "ECMClient" or reference to the ICN install directory.
+    
+    
+ 3. Delete the installation directory for Navigator and reinstall Content Navigator v2.0.3. 
+ 4. Then retry the fix pack install.
+
+
+If the product registry file is not corrupted, then check the permissions on the file to ensure that it is accessible to the user performing the install. If permissions are in place and the product registry file does not appear to be corrupted and the install is being done by a non-root user, then retry the install after backing up the product registry file from the user's home directory and then copying over the product registry file from the /var location to the user's home directory.
+
+
+RELATED INFORMATION
+ IBM Content Navigator (ICN) install fails with an error [http://www-01.ibm.com/support/docview.wss?uid=swg21664132]

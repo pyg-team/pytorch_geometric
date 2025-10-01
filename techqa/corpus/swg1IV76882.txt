@@ -1,0 +1,176 @@
+Title: IBM IV76882: [DOCS] [TransportModule] JMS VERSION SUPPORT DETAILS TO BE LISTED IN GATEWAY GUIDE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  We need to raise a docs apar for the message bus gw to include
+   versions of JMS we support
+   
+   http://www-01.ibm.com/support/knowledgecenter/SSSHTQ/omnibus/gat
+   eways/xmlintegration/wip/general/xmlgw_summary.html [http://www-01.ibm.com/support/knowledgecenter/SSSHTQ/omnibus/gateways/xmlintegration/wip/general/xmlgw_summary.html]
+   as it currently does not list what version of JMS we support
+   
+   we gave them the following details earlier but we need to be
+   specific on what we support in the docs guide
+   
+   ==============
+   The gateway, or rather, the transport module was written using
+   JMS 1.1.
+   Some target applications apparently only support 1.1 (eg,
+   activeMQ for
+   instance).
+   
+   ==============
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  We need to raise a docs apar for the message bus gw to include
+   versions of JMS we support
+   
+   http://www-01.ibm.com/support/knowledgecenter/SSSHTQ/omnibus/gat
+   eways/xmlintegration/wip/general/xmlgw_summary.html [http://www-01.ibm.com/support/knowledgecenter/SSSHTQ/omnibus/gateways/xmlintegration/wip/general/xmlgw_summary.html]
+   as it currently does not list what version of JMS we support
+   
+   we gave them the following details earlier but we need to be
+   specific on what we support in the docs guide
+   
+   ==============
+   The gateway, or rather, the transport module was written using
+   JMS 1.1.
+   Some target applications apparently only support 1.1 (eg,
+   activeMQ for
+   instance).
+   
+   ==============
+   
+   Here was the official statement from L3
+   
+   The gateway, or rather, the transport module was written using
+   JMS 1.1.
+   Some target applications apparently only support 1.1 (eg,
+   activeMQ, I
+   believe). So one way of looking at this question is to ask if a
+   target
+   that supports v2.0 can also support communications from an
+   application
+   written using v1.1. I'm not familiar with TIBCO EMS but I would
+   be
+   surprised if the answer was 'no'.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of the Gateway for Message Bus.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The Gateway for Message Bus Reference Guide needs to state   *
+   * which version of JMS is supported.                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The updated guide will be uploaded to the Netcool/OMNIbus    *
+   * Knowledge Center during December 2015.                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following note will be added to Transport Module section of
+   the following topic:
+   http://www-01.ibm.com/support/knowledgecenter/SSSHTQ/omnibus/gat
+   eways/xmlintegration/wip/general/xmlgw_summary.html [http://www-01.ibm.com/support/knowledgecenter/SSSHTQ/omnibus/gateways/xmlintegration/wip/general/xmlgw_summary.html]
+   
+   Note:
+   The gateway supports Java Message Service (JMS) API 1.1 and
+   target applications that use later versions provided they
+   maintain backward compatibility as currently expected by the JMS
+   specification.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV76882
+   
+   
+ * REPORTED COMPONENT NAME
+   MESSAGE BUS GAT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O71MB
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-09-10
+   
+   
+ * CLOSED DATE
+   2015-12-21
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC14765009 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

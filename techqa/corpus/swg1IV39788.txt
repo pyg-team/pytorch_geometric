@@ -1,0 +1,137 @@
+Title: IBM IV39788: TEPS INSTALL FAILS IF JAZZSM ALREADY INSTALLED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 1 (6.3.0-TIV-ITM-FP0001) [http://www-01.ibm.com/support/docview.wss?uid=swg24034843]
+IBM Tivoli Monitoring 6.3.0 Fix Pack 2 (6.3.0-TIV-ITM-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24035402]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Installing or upgrading 6.3 TEPS will fail if IIM is installed
+   and runnig during ITM installaion process.  Changes are to
+   detect this situation and warn the user during TEPS
+   installation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Installation of the portal server fails if JazzSM has been
+   previously installed. Before performing installation and
+   configuration of the portal server, user needs to stop IBM
+   Install Manager process(es).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Common installer detects whether any IBM Install Manager(IIM)
+   process is running and does not proceed with installation until
+   user stops the processes.
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+   
+      | fix pack | 6.3.0-TIV-ITM-FP0001 |
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Whether informed by the installer or not, user needs to manually
+    close IIM before proceeding with portal server installation.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV39788
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-13
+   
+   
+ * CLOSED DATE
+   2013-05-08
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

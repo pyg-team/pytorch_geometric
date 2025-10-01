@@ -1,0 +1,195 @@
+Title: IBM IV01695: IPV6 SUPPORT FOR PING PROBE VERSION 6 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IPv6 support for Ping Probe version 6.
+   
+   Product : ping probe on Omnibius 7.3
+   Release ID 6.1.0
+   API release : 5.20.55
+   OS : Windows
+   
+   ============================
+   Se log:
+   2011-06-07T09:26:57: Debug: D-ETC-004-050: THREAD MGR: thread
+   probewatchheartbeat-thread (00E54BC0) running
+   2011-06-07T09:26:57: Warning: W-P_P-102-000: For DEBUG level
+   messages, set the environment variable
+   NDE_DEFAULT_LOG_LEVEL=debug prior to running
+   2011-06-07T09:26:57: Information: I-UNK-000-000: Probewatch:
+   Running ...
+   2011-06-07T09:27:00: Error: E-P_P-002-004: n_gethostname failed:
+   No such file or directory
+   
+   2011-06-07T09:27:00: Error: E-P_P-002-015: PingGetHostByName
+   failed: test1
+   2011-06-07T09:27:00: Debug: D-UNK-000-000: [Event Processor]
+   host:                 test1
+   2011-06-07T09:27:00: Debug: D-UNK-000-000: [Event Processor]
+   alias:                 test1
+   2011-06-07T09:27:00: Debug: D-UNK-000-000: [Event Processor]
+   ip_address:
+   2011-06-07T09:27:00: Debug: D-UNK-000-000: [Event Processor]
+   status:                 noaddress
+   2011-06-07T09:27:00: Debug: D-UNK-000-000: [Event Processor]
+   Processing alert {0 remaining}
+   2011-06-07T09:27:00: Debug: D-UNK-000-000: Rules file processing
+   took 0 usec.
+   2011-06-07T09:27:00: Debug: D-UNK-000-000: Flushing events to
+   object servers
+   2011-06-07T09:27:00: Error: E-P_P-002-023: Cannot create host:
+   test1
+   2011-06-07T09:27:00: Error: E-P_P-002-054: Pingfile: No valid
+   hosts
+   2011-06-07T09:27:00: Information: I-UNK-000-000: Probewatch:
+   Pingfile: No valid hosts
+   2011-06-07T09:27:00: Debug: D-UNK-000-000: Rules file processing
+   took 0 usec.
+   2011-06-07T09:27:00: Debug: D-UNK-000-000: Flushing events to
+   object servers
+   2011-06-07T09:27:00: Debug: D-UNK-000-000: Waiting for flush
+   acknowledge for server INFOSERVER.
+   2011-06-07T09:27:00: Debug: D-UNK-000-000: Received flush
+   acknowledge for server INFOSERVER.
+   2011-06-07T09:27:00: Debug: D-UNK-000-000: Flushing events to
+   object servers
+   2011-06-07T09:27:00: Error: E-P_P-002-046: pingfile read failed
+   2011-06-07T09:27:00: Error: E-P_P-102-000: Unable to get events:
+   General failure
+   
+   ============================
+   
+   On ipv4 the probe workes fine, but not on IPv6.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  It was confirmed that IPv6 is not supported for Windows
+   platform. IPv6 only supported for Solaris platform.
+   
+   Documentation must be changed.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of the IBM Tivoli Netcool/OMNIbus Ping Probe.      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The current probe reference guide states that the IPv6       *
+   * protocol is supported on Linux and Windows operating         *
+   * systems. IPv6 is only supported on the Solaris operating     *
+   * system.                                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The product documentation will be updated and published at   *
+   * the end of the current release cycle.                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The -Summary- section of the probe reference guide will be
+   changed.
+   
+   The following note will be added to the -IP environment- row of
+   the -Summary- table:
+   
+   Note: IPv6 is supported only on the Solaris operating system.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV01695
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-13
+   
+   
+ * CLOSED DATE
+   2011-07-20
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC23600905 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PING
+   
+   
+ * FIXED COMPONENT ID
+   5724P06PG
+   
+   
+
+APPLICABLE COMPONENT LEVELS

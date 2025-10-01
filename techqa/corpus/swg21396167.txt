@@ -1,0 +1,44 @@
+Title: IBM sitepreference renewed automatically - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In the workplace, site preference cannot be saved properly even after applying/saving the change 
+
+SYMPTOM
+this problem can be first observed by noticing that portlets suddently disappeared
+
+
+CAUSE
+It is very likely that the problem was caused by loading of incorrect 
+
+Site preferences file whenever the AEs cannot load preferences document,
+the user who logs into Workplace at the time may get incorrect Site 
+Preferences file. 
+Anyway, it's the connection somewhere between AE and CE that is having 
+the problem. 
+
+
+RESOLVING THE PROBLEM
+workaround the issue by modifying the default site preferences file 
+
+
+Steps to modify default SitePreferences.xml file:
+
+1. On the AE box, determine which object store contains the SitePreferences.xml file user wants to use by looking in 
+C:\Program Files\FileNet\Workplace\WEB-INF\bootstrap.properties. 
+Look at line objectStoreId=FSObjectStore to determine the object store. 
+
+2. On the CE box, use FileNet Enterprise Manager. 
+Expand "Object Stores> [Object Store Name from step 1] > Root Folder > Preferences". 
+Right click on "Site Preferences for Workplace". Select "View Document". 
+It's okay to use notepad to view the document. 
+
+3. On the AE box, make a back up of "C:\Program Files\FileNet\Workplace\WEB-INF\xml\SitePreferences.xml". 
+4. Replace the contents in "C:\Program Files\FileNet\Workplace\WEB-INF\xml\SitePreferences.xml" with the contents from step 2. 
+5. Add <?xml version="1.0"?> to the top of "C:\Program Files\FileNet\Workplace\WEB-INF\xml\SitePreferences.xml". 
+At this point, AE synchronized its sitepreferece file with CE,
+and won't have this kind of problem(portlet disappear).
+Do keep in mind to backup the original sitepreferece file defaulted in AE.
+(by changing name,or move to other folder)

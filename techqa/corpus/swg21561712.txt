@@ -1,0 +1,67 @@
+Title: IBM CDT fails with out-of-memory conditions on very large tables - United States
+
+Text:
+Performance Tuning; STERLINGTRB TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CDT fails with out-of-memory conditions on very large tables 
+
+SYMPTOM
+
+
+The Sterling Multi-Channel Fulfillment utility Configuration Deployment Tool (CDT), in particular versions prior to 8.5, may fail due to an out-of-memory condition when trying to process very large tables in the multi-million record range.
+
+Error Message Examples:
+
+JVMDUMP013I Processed Dump Event "systhrow", detail "java/lang/OutOfMemoryError". 
+Exception in thread "main" java.lang.OutOfMemoryError
+
+JVMJ9GC028E Option too large: '-Xmx4096m' 
+JVMJ9VM015W Initialization error for library j9gc23(2): Failed to initialize, parsing command line 
+Could not create the Java virtual machine.
+
+
+RESOLVING THE PROBLEM
+Solution 
+
+It is expected that in version 8.5 of CDT, common memory issues will be resolved as the utility is being overhauled. Until such time, work-arounds (not formal solutions) are available.
+
+Option 1:
+
+Try increasing the memory when running CDT via the '-[X]ms', '-[X]mx', and -[X]X:MaxPermSize parameters by editing ydk.[cmd|sh] (GUI) or cdtshell.[cmd|sh] (command-line) prior to running.
+
+Note: It is possible to reach a point where CDT still fails but the memory settings cannot be increased any further due to hardware limitations. If this occurs, please consider a different work-around.
+
+Option 2: 
+
+
+For the offending tables whose large number of records is choking CDT, ignore those tables via the YDK GUI or a direct modification to ydkprefs.xml.
+
+Then, use standard database export and import commands to manually migrate those tables' data from Source to Target. In this scenario, there may be downtime required for the Sterling MCF Application.
+
+Note: For these tables, if any are also marked as AppendOnly, you can simulate this CDT feature with export/import commands by including the "ignore errors" flag. For example, with Oracle, include flag 'IGNORE=Y'.
+
+Option 3:
+
+
+Follow a two-step approach to CDT. First, for any table that is failing due to out-of-memory, mark it as Ignore via the YDK GUI or a direct modification to ydkprefs.xml, then run. This will process all tables except the ones that cause out-of-memory conditions.
+
+Second, mark all other tables _except_ the ones that were failing as Ignore, then run again. This will then process just the tables that cause out-of-memory conditions.
+
+For example:
+
+Problem: YFS_LOCATION table has a huge number of records and fails in CDT with out-of-memory errors.
+
+Proposed Resolution:
+
+* Edit ydkprefs.xml, either via the YDK GUI or directly.
+* Ignore only the "Warehouse Layout" table group all at once, then run CDT. You can find this grouping by examining (but NOT editing!) file config-db.xml in sub-folder database/cdt, off of the installation directory. 
+* Now, ignore all other tables except the "Warehouse Layout" table group, then run CDT.
+
+This will ensure that any dependent tables to YFS_LOCATION, like YFS_SKU_DEDICATION, and even tables that contain both configuration and transaction data like YFS_TRAN_LOCN_ATTR, are processed since they carry relationships with the other tables defined under the "Warehouse Layout" table group. (YFS_TRAN_LOCN_ATTR, while not formally listed under the "Warehouse Layout" table group, is processed "internally.")
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling Order Management Installation AIX, Linux, Windows 9.2.1, 9.2, 9.1 
+HISTORICAL NUMBER
+ TRB2850

@@ -1,0 +1,32 @@
+Title: IBM List of XU log message codes - United States
+
+Text:
+BRES; RES; XU; code; error; execution unit TECHNOTE (FAQ)
+
+QUESTION
+ Where can I find the list of possible error and warning message codes (XU.ERROR.XXXXX and XU.WARNING.XXXXX) that are used by the Rule Execution Server Execution Unit (XU) when logging? 
+
+ANSWER
+XU error or warning codes are not listed in the documentation as they are used internally while the corresponding messages are printed in the log file along with the error code:
+for example XU.ERROR.10009 corresponds to "Cannot create ruleset" as in 
+
+
+ * Cannot create ruleset: /MyRuleApp/1.0/MyRuleset/1.0, error code: XU.ERROR.10009
+
+
+and XU.ERROR.10014 corresponds to " Cannot parse ruleset" as in 
+ * Cannot parse ruleset: "IRL/Pricing/Collision-dt.irl", line 10: error (40 times): undefined identifier myQuoteResp, error code: XU.ERROR.10014
+
+
+In order to understand the origin of such an error, one should look at the last portion of the stack trace (last "Caused by:") which indicates what the root cause of the issue is. 
+
+
+Starting in V8.0, the error codes are changed to consists of 10 alphanumeric characters all starting with GB. They are also now listed in the documentation at Decision Server V8.0.1 > Decision Server Rules > Reference > Rule Execution Server reference > Rule Execution Server Messages [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.ref.res/html/extensions/html/extensions.html]. 
+
+
+Note: Prior to V8.0, the list of error codes can be found in a messages.properties file packaged inside the XU RAR archive ( jrules-bres-xu-<AppServer>.rar/jrules-res-xu-<AppServer>.rar) under ilog/rules/bres/xu or ilog/rules/res/xu in a ra.jar (directly in the RAR for WebLogic). As the file is internal, this is subject to changes in coming versions. Starting in V8.0, that file is found under com/ibm/rules/res/xu. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0, 7.5 
+HISTORICAL NUMBER
+ jrules/FAQ/370

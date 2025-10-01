@@ -1,0 +1,45 @@
+Title: IBM Probe Type mismatch error in Backup ObjectServer - United States
+
+Text:
+type mismatch; nco_osreport; fail over; fail back TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ On probe failover to the Backup Object Server, no events are inserted. The probe and Object Server log display Type Mismatch errors. 
+
+SYMPTOM
+ 
+2013-07-30T08:21:38: Error: E-OBX-102-016: Language command from 
+probe@hostname failed. Type mismatch for column on 
+line 1 of statement \'insert into alerts.status values ( \'10.10.10.10 
+dialCtlPeerCfgEntry.1212.29 Peer Call Status 2 IETF-DIAL-CONTROL-MIB 
+MTTrapd Probe on hostname 2\',0,\'10.10.10.10\', 
+\'10.10.10.10\',\'MTTrapd Probe on hostname\',\'IETF-
+DIA...\' at or near \'NmosEntityId\' 
+2013-07-30T08:21:38: Error: E-OBX-102-018: Failed to resolve parsed 
+language command. (-636:Type mismatch for column) 
+2013-07-30T08:21:38: Error: E-OBX-102-016: Language command from 
+probe@hostname failed. Type mismatch 
+
+
+
+RESOLVING THE PROBLEM
+There are fields which are ordered differently between the Object Servers. For automatic probe failover and failback, the ordinal position of the fields in the alerts.status table must be identical.
+
+It won't be possible just to delete/recreate or re-order the fields manually, deleting any columns also deletes any objects that reference those columns such as triggers or tools. Instead, it would be best if 
+the Backup Object Server could be recreated and cloned off the Primary Object Server. You would first need to ensure there were no custom triggers which exist only on the Backup Object Server or it would be overwritten. Here are the typical steps for cloning the Primary Object Server. 
+
+1) Shutdown the Backup Object Server and the bi-directional failover Object Server gateway. Backup the Backup Object Server database files in $OMNIHOME/db/ just in case. 
+2) On the Primary Object Server, run nco_osreport with the -dbinit option, this will create several sql files which should be copied to the Backup Object Server 
+3) On the Backup Object Server, recreate the Object Server with the command 
+
+$NCHOME/omnibus/bin/nco_dbinit -server CNCOMS_BAK 
+-systemfile system.sql -applicationfile application.sql -alertsdata 
+-alertsdatafile alertsdata.sql -desktopfile desktop.sql -automationfile 
+automation.sql -securityfile security.sql -force 
+
+The -force option is needed at the end to overwrite the current Object Server. 
+
+4) Start the Backup Object Server and set properties BackupObjectServer to TRUE and ActingPrimary to FALSE. Ensure the primary_only trigger group is disabled. 
+5) Start the bi-directional Object Server failover gateway. 
+
+These steps only work on Omnibus 7.3.1 and later since nco_osreport was not available in previous versions.

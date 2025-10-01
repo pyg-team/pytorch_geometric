@@ -1,0 +1,142 @@
+Title: IBM HE11633: Viewing requests with p8ObjectStore=object_ store_ name fail for repositories other than the default repository. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Content Collector V3.0 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24033902]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When viewing email from Workplace XT using the IBM Content
+   Collector Document Viewer, the request sometimes fails.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Replace name of the object name with the GUID of the object
+   store in the URL . Manually replace the p8ObjectStoreName value
+   with the GUID of the object store.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If you use the Document Viewer in Workplace XT and the viewer is
+   configured to work with the Content Collector configuration
+   database, the object store name that is given in the viewing
+   request sometimes cannot be properly resolved. In this case, the
+   viewing request uses the default repository connection that is
+   specified in the Content Collector Web Application
+   configuration.
+   If the document cannot be found in that object store, an error
+   is returned.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with IBM Content Collector 2.2.0.3 LA007 and
+   IBM Content Collector 3.0.0 Fix Pack 2, the object store
+   names are properly resolved and the Document Viewer can work
+   with different object stores provided they are registered with
+   the primary IBM eDiscovery Manager repository, are all on the
+   same machine, and use the same credentials.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE11633
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-28
+   
+   
+ * CLOSED DATE
+   2013-02-01
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R220 PSY
+   UP
+   
+   
+ * R300 PSY
+   UP

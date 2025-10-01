@@ -1,0 +1,138 @@
+Title: IBM PM44600: Unable to diff/merge a model with clearcase (Batch Mode) - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Rhapsody Fix Pack 1 (7.6.0.1) for 7.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030780]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  use the attached model
+   
+   1-Add it in the VOB from an int view
+   
+   2- Create a dev view, that creates a branch ('branch_dev') and
+   modify one  of  the class
+   
+   
+   3-from the integration view, ask for 'diff/merge with rhapsody',
+   from inside   Rhapsody
+   
+   4- In the label box, type in: '/main/branch_dev/latest'
+   
+   5-Rhapsody displays the message to indicate it can't find the
+   unit.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Unable to diff/merge a model with Rational ClearCase (Batch
+   Mode)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in version 7.5.3.2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM44600
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   753
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-28
+   
+   
+ * CLOSED DATE
+   2011-09-22
+   
+   
+ * LAST MODIFIED DATE
+   2011-09-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R753 PSN
+   UP

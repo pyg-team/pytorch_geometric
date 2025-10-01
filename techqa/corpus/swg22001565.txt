@@ -1,0 +1,22 @@
+Title: IBM "Unable to download file Korean.Dat...' error when installing Sync Manager in iNotes - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+You attempt to install a Sync Manager from iNotes by click "Install Subscripton". However the installation stalls with the error message: 
+
+"Unable to download file Korean.DAT The Korean language resources are not supported by the server."
+
+
+CAUSE
+By default the Domino Off-Line Services (DOLS) installer checks the operating system to determine the language to install. When you launch the DOLS installer, a pop-up menu appears with several options, including installing a subscription and choosing a language. If no language is specified, the default is the language of the operating system.
+
+
+
+RESOLVING THE PROBLEM
+Change the Language Setting of International in iNotes Preferences from Korean to English. 
+
+- or - 
+
+Install the Korean language pack on Domino server.

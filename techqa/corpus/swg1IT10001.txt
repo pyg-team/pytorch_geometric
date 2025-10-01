@@ -1,0 +1,229 @@
+Title: IBM IT10001: WMQ MFT 7.5 GETS A JAVA.UTIL.REGEX.PATTERNSYNTAXEXCEPTION WHEN USING A '(' IN THE RESOURCE MONITOR - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using a WebSphere MQ Managed File Transfer directory
+   resource monitor to poll for files matching a particular
+   pattern, a java.util.regex.PatternSyntaxException error is
+   thrown if the pattern in use is a wildcard pattern that contains
+   a parenthesis, for example '('. This causes an FFDC file to be
+   generated with the following information:
+   
+   Filename:
+   C:\ProgramData\IBM\MQ\mqft\logs\MFT_QMGR\agents\AGENT1\logs\ffdc
+   \FFDC.FTE.20150710123532550.1786107274919157732.log
+   Level: f750-FP-20150212-0903
+   Time: 10/07/2015 12:35:32:550 BST
+   Thread: 24 (Thread-12)
+   Class: com.ibm.wmqfte.monitor.management.MonitorWork
+   Method: generateFFDC
+   Probe: FFDC_003
+   Cause: java.util.regex.PatternSyntaxException: Unclosed group
+   near index 7 TEST(.*
+   at java.util.regex.Pattern.error(Pattern.java:1724)
+   at java.util.regex.Pattern.accept(Pattern.java:1582)
+   ...
+   at
+   com.ibm.wmqfte.monitor.resource.impl.MonitorResourceFileFilter.g
+   enerateFilePattern(MonitorResourceFileFilter.java:105)
+   at
+   com.ibm.wmqfte.monitor.resource.impl.MonitorResourceFileFilter.(
+   MonitorResourceFileFilter.java:54)
+   at
+   com.ibm.wmqfte.monitor.resource.impl.MonitorResourceDirectory.(M
+   onitorResourceDirectory.java:104)
+   at
+   com.ibm.wmqfte.monitor.resource.MonitorResourceDirectoryFactory.
+   createResourceInstance(MonitorResourceDirectoryFactory.java:66)
+   at
+   com.ibm.wmqfte.monitor.management.MonitorWork.collectMonitorReso
+   urceItems(MonitorWork.java:633)
+   at
+   com.ibm.wmqfte.monitor.management.MonitorWork.execute(MonitorWor
+   k.java:293)
+   at
+   com.ibm.wmqfte.monitor.management.MonitorImpl.run(MonitorImpl.ja
+   va:139)
+   at
+   com.ibm.wmqfte.monitor.management.MonitorTimerTask.run(MonitorTi
+   merTask.java:78)
+   at java.util.Timer$TimerImpl.run(Timer.java:296)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do not use round parentheses in the wildcard pattern matching
+   string.
+   For example:
+    Change this: TEST(*
+    To this: TEST*
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects all users of WebSphere MQ Managed File
+   Transfer directory resource monitors who specify a wildcard
+   matching pattern (using the option -pt wildcard) and the pattern
+   matching string contains a parenthesis character.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When creating a WebSphere MQ Managed File Transfer directory
+   resource monitor, a matching pattern is specified that is used
+   to trigger the resource monitor when a file is detected that
+   satisfies the matching condition. The pattern type can be either
+   a wildcard or regex pattern, as specified by the -pt parameter
+   on the fteCreateMonitor command. When using a wildcard pattern,
+   asterisk (*) characters and question mark (?) characters have a
+   special meaning. A asterisk character matches zero or more
+   characters and a question mark matches exactly one character.
+   
+   A WebSphere MQ MFT agent converts the wildcard pattern defined
+   on a directory resource monitor into a regular expression to
+   perform the file matching checks. However, the agent code that
+   constructed the regular expression from the wildcard pattern did
+   not escape parentheses characters. Therefore, when the regular
+   expression was created and the wildcard pattern contained round
+   parentheses, these characters were treated a special characters
+   and used to denote grouping within the regular expression.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ Managed File Transfer directory resource
+   monitor code has been updated to ensure all characters, other
+   than asterisk and question mark characters, are correctly
+   escaped when using wildcard pattern matching. If an asterisk
+   character is included in the wildcard pattern, then it will
+   match zero or more of the same character. If a question mark
+   character is included in the wildcard pattern, then it will
+   match exactly one character.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.6
+   v8.0       8.0.0.4
+   
+   The latest available FTE maintenance can be obtained from
+   'Fix List for WebSphere MQ File Transfer Edition 7.0'
+   http://www-01.ibm.com/support/docview.wss?uid=swg27015313 [http://www-01.ibm.com/support/docview.wss?uid=swg27015313]
+   
+   The latest available MQ maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT10001
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ MFT
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7242
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-10
+   
+   
+ * CLOSED DATE
+   2015-08-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ MFT
+   
+   
+ * FIXED COMPONENT ID
+   5724H7242
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

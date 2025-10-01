@@ -1,0 +1,134 @@
+Title: IBM IV36036: SEEIMNG JAVA ERROR MSG IN TIP LOGS. JAVA ERROR MSG:JAVA.UTIL. MISSINGRESOURCEEXCEPTION: CAN'T FINDRESOURCE FOR BUNDLE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  1) This issue is related another more PMR : 34748,035,649
+   
+   2) After providing the solution for the PMR : 34748,035,649
+   customer were able to see the data in DC reports.
+   3) But still they are seeing the java errors in TIP log file.
+   4) According to L3, these error messages are ignorable. so
+   intimated the
+      same to customer and waiting for customer response.
+   5) Customer asked to fix this errors.
+   6) Informed customer to fix this errors we need to remove the
+   unwanted
+      print statements from code.
+   7) Infromed customer that is we are planning to remove unwanted
+   print
+      statements in our next internal fix.
+   
+   ==============================================================
+   
+   No data seeing in DC reports, parallel seeimng  JAVA error MSG
+   in TIP logs.
+   
+   JAVA error MSG: java.util.MissingResourceException: Can't find
+   resource for bundle General.DVCustomerBundle, key en_CA
+   
+   "- Per Dev. The error message needs to be suppressed"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The messages about Java errors found in the TIP log are benign
+   and can be ignored. TNPM DV team will remove the offending print
+   statements in a future DV update (FP, release)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV36036
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PROVISO DATA
+   
+   
+ * REPORTED COMPONENT ID
+   5724P59DV
+   
+   
+ * REPORTED RELEASE
+   131
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-29
+   
+   
+ * CLOSED DATE
+   2013-04-24
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R131 PSY
+   UP
+   
+   
+ * R132 PSY
+   UP

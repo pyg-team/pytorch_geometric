@@ -1,0 +1,15 @@
+Title: IBM Why am I getting the error message that the server failed while accessing Folder data? - United States
+
+Text:
+exporting; export folders; local server TECHNOTE (FAQ)
+
+QUESTION
+ I exported an application group and a folder to a local server. When I select the folder to view, update, or create a summary, I received this message: "The server failed while accessing Folder data. Contact your system administrator." 
+
+CAUSE
+When a folder is accessed, application groups that are contained in the folder are also accessed. In this case, the application group contains a database field with one or more mapping values that contain a comma in the Displayed Value of the Database Value/Displayed Value pair. These values are located on the Field Information tabbed page of the application group tabbed window. The comma is used as a delimiter to separate the Displayed Values on the local server. When the Displayed Values are processed on the local server, the values are not parsed correctly due to the extra commas.
+
+ANSWER
+To export and use an application group with mapping pairs on a local server, remove the commas from the Displayed Values before exporting the application group to the local server. If it isn't feasible or desirable to remove the commas, the XML Batch System Administration program can be used to export the application group and folder. The XML Batch System Administration program, called arsxml, is a command line program that runs on the OnDemand server and performs the same administrative tasks as the administration client. 
+
+Note: In some cases, accessing a folder with an application group that has a comma in the Displayed Value may result in the abnormal termination of the administrative client.

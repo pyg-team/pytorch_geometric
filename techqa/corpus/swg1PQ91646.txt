@@ -1,0 +1,150 @@
+Title: IBM PQ91646: ClearCase Multisite: Syncreplica export fails multitool: Warning: Version mismatch, software:3.0, packet:1.2 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the VOB server is upgraded to Clearcase (R) 4.0 and the
+   VOB's feature level is less than 2
+    "Syncreplica -import" issues a warning message:
+    multitool: Warning: Version mismatch, software:3.0, packet:1.2
+    multitool: Warning: Version mismatch, software:3.0, packet:1.2
+    Applied sync. packet ...
+   
+   The message is being generated as a result of the feature level.
+   The packets still apply.
+   This message should only be issued when there is an actual
+   software version mismatch.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Ignore the warning.
+   It is informational only
+   To avoid the warning upgrade the feature level of the VOB.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: na                                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See Error Description.                  *
+   ****************************************************************
+   * RECOMMENDATION: N/A                                          *
+   ****************************************************************
+   Syncreplica should not give a "version mismatch" error message u
+   nless the software version is mismatched.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in the following releases:
+   multisite_p2002.05.00-14
+   multisite_p2002.05.00.NT-14
+   multisite_p2003.06.00-8
+   clearcase 2003.06.15
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ91646
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARCASE WIN V
+   
+   
+ * REPORTED COMPONENT ID
+   5724G2900
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-07-19
+   
+   
+ * CLOSED DATE
+   2005-09-12
+   
+   
+ * LAST MODIFIED DATE
+   2005-09-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  na
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CLEARCASE WIN V
+   
+   
+ * FIXED COMPONENT ID
+   5724G2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60W PSN
+   UP

@@ -1,0 +1,100 @@
+Title: IBM Using WebSphere Application Server Shared Libraries in Rational Application Developer - United States
+
+Text:
+RAD; v6; v7; WAS.websphere; shared library; shared libraries; admin console; server; enhanced ear; classloader; class loader; class loading; ADMA017EE; WSVR0501E; PK49029; substitution variables; application scope; variables; shared; library; 1303233; shared lib; RAD7; RAD75; RAD80; v75.v80; v8; grey; gray; greyed ot; grayed out TECHNOTE (FAQ)
+
+QUESTION
+ Why does specifying a Shared Library on an EAR in a WebSphere Application Server (WAS) v6.x administration (admin) console not work in Rational Application Developer (RAD) v9.x, v8.x, v7.x, or v6.x? 
+
+CAUSE
+The specified shared library is not loaded when run in the EAR on WebSphere Application Server (WAS) v6.x in Rational Application Developer version 9.x, 8.x, v7.x or v6.x 
+
+ANSWER
+Note: This technote applies to all Rational Application Developer versions and WebSphere Application Server versions involving use of Shared Libraries. The discussion in this case refers to Rational Application Developer v7 and WebSphere Application Server v6.0 as per the originally reported user scenario.
+
+
+ Background on Server Publish Settings:
+
+The WebSphere Application Server v6.1 server settings in the Rational Application Developer v7 in the server overview editor (such as double click or right-click > open on the server in the Servers view) defaults to the setting: 
+
+> Publishing
+* Run server with resources within the workspace
+, and its associated
+[x] Minimize application files copied to the server
+
+while the WebSphere Application Server v6.0 setting has the option 'Minimize application files copied to the server' disabled.
+
+This is the default setting which uses the Rational Application Developer WebSphere Application Server server tooling loose configuration capability combined with WebSphere Application Server v6.x server WebSphere Rapid Deploy capability. This will be referred to as the loose configuration scenario.
+
+In the loose configuration scenario, the server runs the EAR application located directly from the various output folders from the projects in the workspace. Think of the server as keeping handles/pointers for your EAR (and its modules) to their location in the workspace. It also uses a combination of Eclipse/WTP and WebSphere Application Server related metadata information. It does not actually install the EAR and its modules physically to the server as for a stand-alone WebSphere Application Server V6.x server as would be done with the option:
+* Run server with resources on Server
+
+Notes:
+1. The WebSphere Application Serve v7+ admin console will not even show an [OK] button when attempting to associate an Shared Library to an EAR if proper settings are not used in Server Tools
+Whenever an EAR is in the workspace ,as in when using publishing option in RAD: 
+"Run Server with resources from the workspace"
+, there will always be some settings in the WAS admin console related to the EARs that will be greyed/grayed out and you cannot configure. This occurs because the EAR in not physically installed on the server profile, and results in certain limitation when using the admin console. It is necessary to use the option 
+"Run server with resources on the server" 
+to enable these classloading options. Otherwise using "Run Server with resources from the workspace" is recommended for optimal publishing of EAR(s) and making code changes.
+
+2. To better understand loose configuration/loose-config/looseconfig.xmi:
+How to compare a single-root module to a non single-root module [www.ibm.com/support/docview.wss?uid=swg21302931]
+
+
+Shared Library Solution:
+
+Shared Libraries configured on an EAR in the WebSphere Application Server v6.x admin console are not completely supported unless you use: "Run server with resources on Server".
+
+The WebSphere Application Server V6.x Administrative Console does not handle loosely-installed applications well. However, it usually will work with Shared Libraries when:
+
+* Run server with resources within the workspace
+
+if its associated option
+
+[ ] Minimize application files copied to the server
+
+is unchecked.
+It is worth while attempting to clear this option, as it often works and allows you to continue to work with the rapid deployment advantages of working with the application as it in the workspace and having those changes picked up with the default auto-publish.
+
+After making any of the above changes in the Server Overview editor, make sure to Remove your project/EAR from the server and then Add your project/EAR to the server for the new changes to take effect. It may also be necessary to restart the server.
+
+Note: Any shared library jars need to be added to the Java Build Path of any project in a RAD workspace, that has a build/compile time dependency on those jars. RAD would not be aware of any jars configured as a shared library in the WAS admin console for an EAR/WAR.
+
+
+Shared Library Recommended Practice: 
+
+Disabling/unchecking Minimize application files copied to the server with Run server with resources within the workspace is not a proper work-around. The server tools cannot guarantee what the WebSphere Application Server run time will do in these cases when they are constantly updating the EAR (that is, the relationship between the EAR and the shared library could potentially be destroyed). Once the application code/configuration is not going through many changes, it will usually work
+
+When developing, if you really want to have a shared library in a loose-config scenario then you should use the Enhanced EAR editor to define the shared libraries. This would be done in the EAR Deployment Descriptor editor under: Deployment Tab : Shared Libraries .
+When using the Enhanced EAR there is a limitation. Application-scoped shared libraries cannot depend on application-scoped variables (==substitution variables) to specify their location. If application-scoped variables are needed to specify a shared library, select them in the admin console at the cell, node or server scope instead. If needed, consult WebSphere Application Server server support on this limitation.
+
+When you are ready to export the EAR to an actual test/production server, you can In Rational Application Developer v6/v7 delete the {workspace}\MyEAR\META-INF\ibmconfig folder containing the Deployment Tab information for the Enhanced EAR, before exporting the EAR (or in the EAR itself using whatever compressed file utility you may have).
+Then, in the actual production server set the Shared Libraries in the admin console on the installed EAR
+and define whatever other resources may have been configured in the Enhanced EAR.
+
+Note - Rational Application Developer v7.0 WebSphere Application Server v6.1 Shared Library "admin console" - Error ADMA017EE and WSVR0501E:
+
+If using WebSphere Application Server v6.1, upgrading to WebSphere Application Server v6.1.0.13 or later is recommended, because of known APAR/defect:
+PK49029: IN WSAS RUNTIME SERVER FAILS TO START AFTER ASSOCIATING SHARED LIBRARY WITH AN ENTERPRISE APPLICATION
+This involved the use of "Run server with resources in the workspace" as well as
+"Minimize application files copied to the server", and the error:
+WSVR0501E: Error creating component com.ibm.ws.runtime.component.ApplicationMgrImpl@5d125d12 .
+
+The above is an example of why it is useful to try testing with the WAS server version having the latest fixpack applied when working with with RAD server tools. Similarly apply the latest fixpack to your RAD version. There have been ongoing improvements and fix(s) involving loose-config in both RAD and WAS. 
+
+Contact IBM Support for RAD if the above information did not help.
+
+
+Useful WebSphere Application Server ClassLoader information:
+
+From a WebSphere® Application Server (WAS) classloading/class loader perspective, in this case WebSphere Application Server v6.1, it is useful to consult the RedPaper: WebSphere Application Server V6.1: Classloader Problem Determination, [http://www.redbooks.ibm.com/redpapers/pdfs/redp4307.pdf] which addresses use of Shared Libraries, or the general url under Related information. Also, the class loader/loading chapters in the System Management & Configuration Handbooks for the various WebSphere Application Server server versions under Related information, provide similar background information. Specific to WebSphere Application Server v5.1 there is the red piece: WebSphere Application Server V5: Using Shared Library Support.
+
+Under Related information, the Rational Application Developer v7.0 technote: J2EE classpath Container Preferences with Java Build Path and J2EE Module Dependencies Properties, is useful from the perspective of the use of Java utility projects/jars by J2EE Projects.
+
+
+RELATED INFORMATION
+ Education For RAD v6/WASv6 Server tooling [http://www.ibm.com/support/docview.wss?uid=swg21199368]
+WAS V6.1 Classloader Problem Problem Determination [http://www.redbooks.ibm.com/abstracts/redp4307.html?Open]
+WAS V6.1 System Management and Configuration [http://www.redbooks.ibm.com/abstracts/sg247304.html?Open]
+WAS V6.0 System Management and Configuration [http://www.redbooks.ibm.com/abstracts/sg246451.html?Open]
+RADv7.0 - J2EE classpath Container Preferences with.. [http://www.ibm.com/support/docview.wss?uid=swg21304802]

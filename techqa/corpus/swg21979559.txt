@@ -1,0 +1,41 @@
+Title: IBM AVKCSS2200E SIP 503 Error starting Audio and Video in Meeting Room - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Audio / Video is no longer working in Meeting Rooms. The Sametime client receives an error message: "AVKCSS2200E - Failure response 503 received"
+
+SYMPTOM
+Audio / Video is no longer working in a Meetings. The Sametime client is receiving the error message: AVKCSS2200E - Failure response 503 received. 
+
+
+Audio and Video had been working until the server was restarted.
+
+
+CAUSE
+The SSL certificate between the Video Manager server and Conference Manager server had expired and was no longer trusted.
+
+
+ENVIRONMENT
+Sametime 9.0 Audio and Video
+
+
+
+DIAGNOSING THE PROBLEM
+Here are the error messages reported in the System.out file that showed why the SIP error was failing with a 503 : 
+
+ 
+
+This is from the Conference Manager rejecting the Video Manager. 
+
+
+[3/18/16 8:41:24:571 BRT] 000000df WSX509TrustMa E CWPKI0022E: SSL HANDSHAKE FAILURE: A signer with SubjectDN "CN=vmgr.DNSDomain.com, OU=sametime, O=ibm" was sent from target host:port "*:5081". The signer may need to be added to local trust store "IBM/WebSphere/AppServer/profiles/STMSPNProfile1/config/cells/<CellName>SSCCell/trust.p12" located in SSL configuration alias "NodeDefaultSSLSettings" loaded from SSL configuration file "security.xml". The extended error message from the SSL handshake exception is: "PKIX path building failed: java.security.cert.CertPathBuilderException: unable to find valid certification path to requested target".
+
+
+
+RESOLVING THE PROBLEM
+If you do not use a third party certificate the self signed Certificate will expire after 2 years. A new certificate must be generated. 
+
+These steps are outlined in the Install and Setup steps:
+http://www.ibm.com/support/knowledgecenter/SSKTXQ_9.0.0/admin/config/config_av_cf_vmgr_xchg_certs.dita [http://www.ibm.com/support/knowledgecenter/SSKTXQ_9.0.0/admin/config/config_av_cf_vmgr_xchg_certs.dita]

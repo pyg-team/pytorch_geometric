@@ -1,0 +1,155 @@
+Title: IBM PJ43846: TYPED CHARACTERS ARE SLOW TO APPEAR WHEN ENTERING CHARACTERS VIA INTERNET EXPLORER V11 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+IBM Case Manager V5.2.1 Fix Pack 4 for Linux for System z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.4-ICM-ZLINUX-FP004&source=SAR]
+IBM Case Manager V5.2.1 Fix Pack 4 for Windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.4-ICM-WIN-FP004&source=SAR]
+IBM Case Manager V5.2.1 Fix Pack 4 for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.4-ICM-LINUX-FP004&source=SAR]
+IBM Case Manager V5.2.1 Fix Pack 4 for AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.4-ICM-AIX-FP004&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a case client user concurrently opens 2 cases there is an
+   observable delay after pressing a key and the corresponding
+   character echos.  Entering characters with a Shift+keystroke
+   will incur about a one second delay.  When the users opens 3 or
+   more cases concurrently the delay is more pronounced.  Holding
+   down the shift key renders it completely non-responsive.  It is
+   not possible to enter any characters that require the shift key
+   depressed.
+   
+   This issue is not reproducible via Chrome, Firefox or a
+   different version of Internet Explorer
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use a different version of Microsoft Internet Explorer other
+   than V11, or any versions of Chrome or Firefox.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Case Client users running IE V11 with multiple tasks opened  *
+   * and pressing the shift key                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * It is recommended to apply 5.2.1.4-ICM-FP004 GA release or   *
+   * later.                                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This code defect has been corrected in the underlying Dojo IDX
+   library.  Both IBM Case Client and IBM Case Builder have been
+   updated to include the new library in this GA release.  With
+   this fix there is no delay of typed characters to appear when
+   the shift key is pressed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ43846
+   
+   
+ * REPORTED COMPONENT NAME
+   CASE MGR CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5725A1501
+   
+   
+ * REPORTED RELEASE
+   521
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-12-23
+   
+   
+ * CLOSED DATE
+   2016-05-03
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CASE MGR CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5725A1501
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R521 PSY
+   UP

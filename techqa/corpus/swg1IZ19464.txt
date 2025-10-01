@@ -1,0 +1,244 @@
+Title: IBM IZ19464: ON THE PHYSICAL COUNTS > COUNT LIST PAGE MULTI-BIN RECORDS ARE NOT SHOWING UP - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On the Physical Counts > Count List page multi-Bin records are
+   not showing up for User.   For example, item A12345 is in BinA,
+   BinB and BinC however, on the Count List Page only BinA is
+   showing up.  Yet if they go to other pages on Mobile and use the
+   Bin Look up all Bins have been downloaded - Or use the SQL
+   outside of Mobile to see what the result set is all Bin Records
+   show up.
+   
+   User said in Dec /Jan timeframe there was an issue
+   around Bins and their mulit bins were showing up at one point
+   for them - they are not sure what changed this.  Would you be
+   able to check their xml to see why this would be happening to
+   them.  On my build I do see multi-bin records on the Count List
+   page.
+   
+   
+   Note Below from User:
+   
+   Changing severity to 3 since we can workaround.  We found the
+   XML is
+   fine and multiple bins are now displaying.  The problem is both
+   usequeries and queryrequired have been set to false but old
+   queries we
+   added are still in the MOBILEQUERY table and effect the query
+   results.
+   When you log on to Security Groups (Mobile), there are no data
+   groups
+   or queries displayed.  They only display when usequeries are set
+   to
+   true.  I suggest the MOBILEQUERY records be deleted when updated
+   metadata files (e.g. mobileinv.xml) are imported that don't use
+   them.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: On the Physical Counts > Count List     *
+   *                      page multi-Bin records are              *
+   *                                                              *
+   *                      not showing up for User.   For          *
+   *                      example, item A12345 is in BinA,        *
+   *                                                              *
+   *                      BinB and BinC however, on the Count     *
+   *                      List Page only BinA is                  *
+   *                                                              *
+   *                      showing up.  Yet if they go to other    *
+   *                      pages on Mobile and use the             *
+   *                                                              *
+   *                      Bin Look up all Bins have been          *
+   *                      downloaded - Or use the SQL             *
+   *                                                              *
+   *                      outside of Mobile to see what the       *
+   *                      result set is all Bin Records           *
+   *                                                              *
+   *                      show up.                                *
+   *                                                              *
+   *                      User said in Dec /Jan                   *
+   *                      timeframe there was an issue            *
+   *                                                              *
+   *                      around Bins and their mulit bins were   *
+   *                      showing up at one point                 *
+   *                                                              *
+   *                      for them - they are not sure what       *
+   *                      changed this.  Would you be             *
+   *                                                              *
+   *                      able to check their xml to see why this *
+   *                      would be happening to                   *
+   *                                                              *
+   *                      them.  On my build I do see multi-bin   *
+   *                      records on the Count List               *
+   *                                                              *
+   *                      page.                                   *
+   *                                                              *
+   *                      Note Below from User:                   *
+   *                                                              *
+   *                      Changing severity to 3 since we can     *
+   *                      workaround.  We found the               *
+   *                                                              *
+   *                      XML is                                  *
+   *                                                              *
+   *                      fine and multiple bins are now          *
+   *                      displaying.  The problem is both        *
+   *                                                              *
+   *                      usequeries and queryrequired have been  *
+   *                      set to false but old                    *
+   *                                                              *
+   *                      queries we                              *
+   *                                                              *
+   *                      added are still in the MOBILEQUERY      *
+   *                      table and effect the query              *
+   *                                                              *
+   *                      results.                                *
+   *                                                              *
+   *                      When you log on to Security Groups      *
+   *                      (Mobile), there are no data             *
+   *                                                              *
+   *                      groups                                  *
+   *                                                              *
+   *                      or queries displayed.  They only        *
+   *                      display when usequeries are set         *
+   *                                                              *
+   *                      to                                      *
+   *                                                              *
+   *                      true.  I suggest the MOBILEQUERY        *
+   *                      records be deleted when updated         *
+   *                                                              *
+   *                      metadata files (e.g. mobileinv.xml) are *
+   *                      imported that don't use                 *
+   *                                                              *
+   *                      them.                                   *
+   *                                                              *
+   *                      .                                       *
+   *                                                              *
+   *                      LOCAL FIX:                              *
+   *                                                              *
+   *                      None                                    *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   ON THE PHYSICAL COUNTS > COUNT LIST PAGE MULTI-BIN RECORDS ARE
+   NOT SHOWING UP
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Orphaned MOBILEQUERY records are now deleted (i.e., when both
+   usequeries and queryrequired become false)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ19464
+   
+   
+ * REPORTED COMPONENT NAME
+   MOBILE INVEN MG
+   
+   
+ * REPORTED COMPONENT ID
+   5724R60IM
+   
+   
+ * REPORTED RELEASE
+   640
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-04-07
+   
+   
+ * CLOSED DATE
+   2008-04-09
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MOBILE INVEN MG
+   
+   
+ * FIXED COMPONENT ID
+   5724R60IM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R640 PSY
+   UP

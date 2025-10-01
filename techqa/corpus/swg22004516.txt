@@ -1,0 +1,18 @@
+Title: IBM Why did the IBM Spectrum Protect archives from my db-server stop working after I started using Guardium? - United States
+
+Text:
+Why did the IBM Spectrum Protect archives from my db-server stop working after I started using Guardium? TECHNOTE (FAQ)
+
+QUESTION
+ Why did the IBM Spectrum Protect archives from my db-server stop working after I started using Guardium? I've installed Guardium stap on the db-server and also I run db auto discovery on the db-server. If I stop the stap still the archive fails. I've to stop the Guardium collector for the archives to run without error. Sometimes it works ok but sometimes not.
+
+We get errors like this in IBM Spectrum Protect:
+06/17/2017 12:56:11 ANS0361I DIAG: Error reading http request. 
+
+ANSWER
+The auto-discovery scanning, and probing the of db-server is causing the problem. The IBM Spectrum Protect give error if Guardium auto discovery probes it's ports. Also if you read the article below it mention this problem:
+http://www-01.ibm.com/support/docview.wss?uid=swg21987964 [http://www-01.ibm.com/support/docview.wss?uid=swg21987964] 
+Two options to solve this problem: 
+- Option 1: Run db auto discovery scan less often for example only once a month, or once week, or once a day, and take care to scan at a time when TSM/IBM Spectrum Protect archive is not done.
+
+- Option 2: Do a scan as often you want but avoid to scan the ports that the TSM/IBM Spectrum Protect backup client use. Avoid scanning port 1500 plus additional ports used by the TSM/IBM Spectrum Protect backup client. Please check with your IBM Spectrum Protect administrator, or Database Administrator, what ports are used by the TSM/IBM Spectrum Protect backup client.

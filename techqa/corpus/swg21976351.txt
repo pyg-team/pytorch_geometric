@@ -1,0 +1,59 @@
+Title: IBM Impact Security scripts failing with a Java Core dump - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ This issue affects Impact version 7.1.0.4-TIV-NCI-FP0004 only. 
+
+The security scripts (i.e. confAuth4LDAP.sh, confAuth4OMNIbus.sh) in the install/security folder are failing and producing a Java core file.
+
+
+SYMPTOM
+ 
+
+The following error is seen:
+BUILD FAILED 
+<install dir>/install/security/cfg_scripts/confAuth4OMNIbus.xml:68: exec returned: 139 
+
+
+CAUSE
+The cause of the problem is the AIX Java SDK upgrade in 710 FP4. The JRE was updraded to 1.7.0 SR9 FP10.
+
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+As well as a java core dump, some systems produce a Snap and java core file with GPF details, as follows: 
+
+
+1TISIGINFO Dump Event "gpf" (00002000) received 
+
+1XHEXCPMODULE Module: 
+/opt/IBM/tivoli/impact/sdk/jre/lib/ppc64/libjava.so 
+
+The related Java AIX APAR is IV77818.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+This issue is tracked by APAR IV81135 which is planned for FP 7.1.0-TIV-NCI-FP0005. 
+
+To resolve the problem the SDK level must be changed to recommended level 1.7.0 SR9 FP30. please contact support for a link to down load this version. 
+
+ 
+
+The steps to update the JDK are as follows:
+
+
+
+1) Stop servers
+2) Rename IMPACT_HOME/sdk to sdk_orig
+3) Unzip the new sdk ensuring that you have maintained the same directory structure: IMPACT_HOME/sdk/jre/bin/java
+4) Start the servers

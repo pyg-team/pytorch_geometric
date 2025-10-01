@@ -1,0 +1,136 @@
+Title: IBM JR54269: WHEN YOU USE INTERNET EXPLORER TO DISPLAY SAVED SEARCH RESULTS THE SCROLL BAR IS SOMETIMES INCORRECTLY POSITIONED AT THE TOP - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Process Portal, when you display tasks in a saved search,
+   scroll down the list, and then run a task or click on the Work
+   tab, the next time you click the saved search tab you notice
+   that the scroll bar is at the top and the rows that you had
+   previously scrolled down to view are displayed. You know that
+   there are rows that are hidden at the top. You scroll down and
+   back up and the rows reappear.
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  In Internet Explorer, the scroll bar does not automatically
+   position itself based on the location of the rows that are in
+   focus.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix that that correctly positions the scroll bar in Internet
+   Explorer will be included in an IBM BPM V8.5.6.0 cumulative fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR54269
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-09-16
+   
+   
+ * CLOSED DATE
+   2015-10-22
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R856 PSY
+   UP

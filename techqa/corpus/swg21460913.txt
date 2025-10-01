@@ -1,0 +1,69 @@
+Title: IBM Rational Application Developer hangs when opening the file web.xml - United States
+
+Text:
+PM31232; web.xml; hang; java core TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to open the file web.xml if the HTML validator is enabled results in a hang when opening versions 7.5.5.1, 7.5.5.2 and 7.5.5.3 of IBM Rational Application Developer for WebSphere Software. 
+
+SYMPTOM
+The hang while opening the file wen.xml happens systematically when the default validators are enabled. If you suspend the validators, then you can open web.xml successfully. The hang is the consequence of exceptions while reading some specific HTML files, therefore changing the extension of these same HTML files, you can leave the HTML validator running and open successfully the file web.xml.
+
+CAUSE
+This issue was identified as a product defect under APAR PM31232.
+
+ENVIRONMENT
+Rational Application Developer 7.5.5.1, 7.5.5.2 and 7.5.5.3 containing Dynamic Web projects with HTML file using non Latin Character set.
+
+DIAGNOSING THE PROBLEM
+Generate Java Core files during the hang. Review technote 1261089 [http://www.ibm.com/support/docview.wss?uid=swg21261089] for more details on how to gather Java Core files.
+
+
+ 
+Below is the analysis of the JavaCores taken from the hung process, that was using 0% CPU for one hour. The JavaCores do not show an actual Deadlock, but there are 23 threads waiting on condition and 3 runnable. The main thread is trying to create an Editor Part, in particular, it comes from: 
+
+com/ibm/etools/web/ui/presentation/WebEditor. 
+
+The stack trace begins with: 
+
+
+
+Anonymous native thread
+(native thread ID:0x16E8, native priority: 0x0, native policy:UNKNOWN)
+Native callstack:
+KiFastSystemCallRet+0x0 (0x7C90E514 [ntdll+0xe514])
+WaitForSingleObject+0x12 (0x7C802542 [kernel32+0x2542])
+JNU_GetStringPlatformChars+0x2 (jni_util.c:795, 0x00404683 [java+0x4683])
+JNU_ClassObject+0x10 (jni_util.c:897, 0x00403B06 [java+0x3b06])
+
+"main" J9VMThread:0x415D1900, j9thread_t:0x00016FAC, java/lang/Thread:0x00588630, state:CW, prio=6
+(native thread ID:0xED4, native priority:0x6, native policy:UNKNOWN)
+Java callstack:
+at java/lang/Object.wait(Native Method)
+at java/lang/Object.wait(Bytecode PC:3(Compiled Code))
+at org/eclipse/wst/sse/core/internal/model/ModelManagerImpl$SharedObject.waitForLoadAttempt(Bytecode PC:4(Compiled Code))
+at org/eclipse/wst/sse/core/internal/model/ModelManagerImpl.getExistingModel(Bytecode PC:39)
+at org/eclipse/wst/sse/core/internal/model/ModelManagerImpl.getExistingModelForRead(Bytecode PC:92)
+at org/eclipse/wst/sse/ui/internal/reconcile/StructuredRegionProcessor.getContentType(Bytecode PC:10)
+at org/eclipse/wst/sse/ui/internal/reconcile/DocumentRegionProcessor.getValidatorStrategy(Bytecode PC:40)
+at org/eclipse/wst/sse/ui/internal/reconcile/DocumentRegionProcessor.setDocument(Bytecode PC:6)
+at org/eclipse/wst/sse/ui/internal/reconcile/StructuredRegionProcessor.setDocument(Bytecode PC:10)
+at org/eclipse/wst/sse/ui/internal/StructuredTextViewer.configure(Bytecode PC:160)
+at org/eclipse/ui/texteditor/AbstractTextEditor.createPartControl(Bytecode PC:54)
+at org/eclipse/ui/texteditor/StatusTextEditor.createPartControl(Bytecode PC:70)
+at org/eclipse/ui/texteditor/AbstractDecoratedTextEditor.createPartControl(Bytecode PC:2)
+at org/eclipse/wst/sse/ui/StructuredTextEditor.createPartControl(Bytecode PC:93)
+at org/eclipse/ui/part/MultiPageEditorPart.addPage(Bytecode PC:51)
+at org/eclipse/ui/part/MultiPageEditorPart.addPage(Bytecode PC:9)
+at com/ibm/etools/emf/workbench/ui/presentation/ArtifactEditMultiPageEditorPart.createNestedEditor(Bytecode PC:53)
+at com/ibm/etools/emf/workbench/ui/presentation/ArtifactEditMultiPageEditorPart.createExtensionPages(Bytecode PC:353)
+at com/ibm/etools/emf/workbench/ui/presentation/ArtifactEditMultiPageEditorPart.primCreatePages(Bytecode PC:1)
+at com/ibm/etools/web/ui/presentation/WebEditor.primCreatePages(Bytecode PC:5)
+
+
+
+
+RESOLVING THE PROBLEM
+There is no work around for the 7.5.x version of Rational Application Developer for WebSphere Software. 
+
+This issue has already been resolved in Rational Application Developer for WebSphere Software version 8.x [http://www-01.ibm.com/support/docview.wss?uid=swg24027295].

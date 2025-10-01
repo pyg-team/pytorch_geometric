@@ -1,0 +1,149 @@
+Title: IBM DataStage Web Services Pack job fails due to javax.net.ssl.SSLHandshakeException - United States
+
+Text:
+tls ssl TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SSL enabled Web Services Transformer stage job or Web Services Client stage job failed because of "javax.net.ssl.SSLHandshakeException: Remote host closed connection during handshake" error when accessing a Web Service which supports only TLS v1.2. 
+
+SYMPTOM
+Error message in job log. 
+
+ Item #: 226
+Event ID: 225
+Timestamp: 2016-03-30 16:31:02
+Type: Fatal
+User Name: dsadm
+Message Id: IIS-XXXX-XXXX-00000
+Message: WSTranformer,0: Fatal Error: Fatal: 0026`:`com.ascentialsoftware.wsclient.ServiceInvocationException: Service invocation exception: <Fault xmlns="http://schemas.xmlsoap.org/soap/envelope/ [http://schemas.xmlsoap.org/soap/envelope/]">
+<faultcode xmlns="">Server.userException</faultcode>
+<faultstring xmlns="">javax.net.ssl.SSLHandshakeException: Remote host closed connection during handshake</faultstring>
+<detail xmlns="">
+<stackTrace xmlns="http://xml.apache.org/axis/ [http://xml.apache.org/axis/]">javax.net.ssl.SSLHandshakeException: Remote host closed connection during handshake
+at com.ibm.jsse2.SSLSocketImpl.a(SSLSocketImpl.java:90)
+at com.ibm.jsse2.SSLSocketImpl.h(SSLSocketImpl.java:437)
+at com.ibm.jsse2.SSLSocketImpl.a(SSLSocketImpl.java:142)
+at com.ibm.jsse2.SSLSocketImpl.startHandshake(SSLSocketImpl.java:686)
+at org.apache.axis.components.net.JSSESocketFactory.create(JSSESocketFactory.java:224)
+at org.apache.axis.transport.http.HTTPSender.getSocket(HTTPSender.java:157)
+at org.apache.axis.transport.http.HTTPSender.invoke(HTTPSender.java:114)
+at org.apache.axis.strategies.InvocationStrategy.visit(InvocationStrategy.java:71)
+at org.apache.axis.SimpleChain.doVisiting(SimpleChain.java:150)
+at org.apache.axis.SimpleChain.invoke(SimpleChain.java:120)
+at org.apache.axis.client.AxisClient.invoke(AxisClient.java:180)
+at org.apache.axis.client.Call.invokeEngine(Call.java:2564)
+at org.apache.axis.client.Call.invoke(Call.java:2553)
+at org.apache.axis.client.Call.invoke(Call.java:1753)
+at com.ascentialsoftware.wsclient.OperationCall.invoke(OperationCall.java:303)
+at com.ascentialsoftware.wsclient.WebService.callServiceInternal(WebService.java:1685)
+at com.ascentialsoftware.wsclient.WebService.callService(WebService.java:1591)
+at com.ascentialsoftware.wsclient.WebService.callService(WebService.java:1544)
+at com.ascentialsoftware.wspack.Transformer.process(Transformer.java:105)
+at com.ascentialsoftware.jds.StageFactory.runStage(StageFactory.java:544)
+at com.ascentialsoftware.jds.StageFactory.runTransformer(StageFactory.java:361)
+Caused by: java.io.EOFException: SSL peer shut down incorrectly
+at com.ibm.jsse2.b.a(b.java:250)
+at com.ibm.jsse2.SSLSocketImpl.a(SSLSocketImpl.java:242)
+... 20 more
+</stackTrace>
+</detail>
+</Fault>
+at com.ascentialsoftware.wsclient.OperationCall.handleRemoteException(OperationCall.java:406)
+at com.ascentialsoftware.wsclient.OperationCall.invoke(OperationCall.java:311)
+at com.ascentialsoftware.wsclient.WebService.callServiceInternal(WebService.java:1685)
+at com.ascentialsoftware.wsclient.WebService.callService(WebService.java:1591)
+at com.ascentialsoftware.wsclient.WebService.callService(WebService.java:1544)
+at com.ascentialsoftware.wspack.Transformer.process(Transformer.java:105)
+at com.ascentialsoftware.jds.StageFactory.runStage(StageFactory.java:544)
+at com.ascentialsoftware.jds.StageFactory.runTransformer(StageFactory.java:361)
+
+
+CAUSE
+There is no common version of SSL/TLS protocol supported by Web Services pack and Web Service provider both. 
+
+
+When starting SSL handshake, TLS client sends ClientHello message specifying the highest SSL/TLS protocol version it talks. TLS server selects highest version protocol it and the client both support, and replies with ServerHello message including the selected version. If there is no common version useable, the server sends a "protocol_version" alert message and closes the connection.
+
+DataStage Web Services Pack supports SSL 3.0 and TLS 1.0 by default, so it sends "TLSv1" in ClientHello declaring it supports TLS v1.0 and SSL v3.0. If the TLS server does not support one of them, the handshake fails with above error.
+
+
+DIAGNOSING THE PROBLEM
+Turn on tracing by adding 
+
+-Djavax.net.debug=true
+to JVM options of Web Services Transformer stage or Web Services Client stage, then the SSL handshake steps are logged in the job log like below.
+
+Item #: 167
+Event ID: 166
+Timestamp: 2016-03-30 14:56:20
+Type: Info
+User Name: dsadm
+Message Id: IIS-DSEE-USBP-00001
+Message: WSTranformer,0: IBMJSSEProvider Build-Level: -20111101
+IBMJSSEProvider2 Build-Level: -20111101
+Installed Providers = 
+IBMJCE
+IBMJSSE
+IBMJSSE2
+...
+Is initial handshake: true
+%% No cached client session
+*** ClientHello, TLSv1
+RandomCookie: GMT: 1442532963 bytes = { 91, 18, 108, 47, 208, 32, 42, 96, 217, 156, 222, 208, 36, 119, 66, 139, 174, 96, 32, 111, 95, 63, 99, 153, 76, 17, 209, 68 }
+Session ID: {}
+Cipher Suites: [SSL_RSA_WITH_RC4_128_MD5, SSL_RSA_WITH_RC4_128_SHA, SSL_RSA_WITH_AES_128_CBC_SHA, SSL_DHE_RSA_WITH_AES_128_CBC_SHA, SSL_DHE_DSS_WITH_AES_128_CBC_SHA, SSL_RSA_WITH_3DES_EDE_CBC_SHA, SSL_RSA_FIPS_WITH_3DES_EDE_CBC_SHA, SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA, SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA, SSL_DHE_DSS_WITH_RC4_128_SHA, SSL_RSA_WITH_DES_CBC_SHA, SSL_RSA_FIPS_WITH_DES_CBC_SHA, SSL_DHE_RSA_WITH_DES_CBC_SHA, SSL_DHE_DSS_WITH_DES_CBC_SHA, SSL_RSA_EXPORT_WITH_RC4_40_MD5, SSL_RSA_EXPORT_WITH_DES40_CBC_SHA, SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA, SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA, SSL_RENEGO_PROTECTION_REQUEST]
+Compression Methods: { 0 }
+***
+[write] MD5 and SHA1 hashes: len = 81
+0000: 01 00 00 4d 03 01 56 fb 4e 63 5b 12 6c 2f d0 20 ...M..V.Nc..l...
+0010: 2a 60 d9 9c de d0 24 77 42 8b ae 60 20 6f 5f 3f .......wB....o..
+0020: 63 99 4c 11 d1 44 00 00 26 00 04 00 05 00 2f 00 c.L..D..........
+0030: 33 00 32 00 0a fe ff 00 16 00 13 00 66 00 09 fe 3.2.........f...
+0040: fe 00 15 00 12 00 03 00 08 00 14 00 11 00 ff 01 ................
+0050: 00 .
+main, WRITE: TLSv1 Handshake, length = 81
+[Raw write]: length = 86
+0000: 16 03 01 00 51 01 00 00 4d 03 01 56 fb 4e 63 5b ....Q...M..V.Nc.
+0010: 12 6c 2f d0 20 2a 60 d9 9c de d0 24 77 42 8b ae .l..........wB..
+0020: 60 20 6f 5f 3f 63 99 4c 11 d1 44 00 00 26 00 04 ..o..c.L..D.....
+0030: 00 05 00 2f 00 33 00 32 00 0a fe ff 00 16 00 13 .....3.2........
+0040: 00 66 00 09 fe fe 00 15 00 12 00 03 00 08 00 14 .f..............
+0050: 00 11 00 ff 01 00 ......
+main, received EOFException: error
+main, handling exception: javax.net.ssl.SSLHandshakeException: Remote host closed connection during handshake
+main, SEND TLSv1 ALERT: fatal, description = handshake_failure
+main, WRITE: TLSv1 Alert, length = 2
+[Raw write]: length = 7
+0000: 15 03 01 00 02 02 28 .......
+main, called closeSocket()
+
+
+
+RESOLVING THE PROBLEM
+Ask the web service provider if there is an alternative SOAP address which supports TLS v1.0 or SSL v3.0. 
+
+Or configure JVM for Web Services pack to use TLS v1.2 as follows. 
+
+
+Step 1. Install latest JVM for Information Server.
+Latest JVM for Information Server is released in Information Server security bulletin published in IBM support portal.
+For example, you can get the latest JVM for Information Server from http://www.ibm.com/support/docview.wss?uid=swg21976231 [http://www.ibm.com/support/docview.wss?uid=swg21976231] as of Apr. 1 2016. 
+
+Step 2. Change Web Services pack stage to use TLS v1.2 by setting Java system property com.ibm.jsse2.overrideDefaultProtocol to TLSv12.
+In DataStage Designer, open the job, right click Web Services Transformer or Web Services Client stage, select "Grid Style", go to Properties tab in Stage tab, set "JVM options" value to
+
+
+ * 
+
+
+Click "OK" button. 
+
+Compile and run the job. 
+
+
+Note: 
+WS Pack uses java at InformationServer/ASBNode/apps/jre/bin/java in v9.1 and lower, InformationServer/jdk/jre/bin/java in v11.3 and higher. 
+com.ibm.jsse2.overrideDefaultProtocol property is useable in IBM Java v6 Service Refresh 15 and higher, step 1 is to install newer JVM than SR15. If currently installed JVM version meets this condition, step 1 can be skipped. RELATED INFORMATION
+ Configuring DataStage Web Services stages to use securi [http://www.ibm.com/support/docview.wss?uid=swg21500980]
+IBMJSSE2 Debugging Utilities [https://www.ibm.com/support/knowledgecenter/SSYKE2_7.0.0/com.ibm.java.security.component.71.doc/security-component/jsse2Docs/debug.html]
+Overriding the SSL protocol defined by the default SSL [https://www.ibm.com/support/knowledgecenter/SSYKE2_6.0.0/com.ibm.java.security.component.60.doc/security-component/jsse2Docs/overrideSSLprotocol.html]

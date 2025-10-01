@@ -1,0 +1,267 @@
+Title: IBM RS02527: RULESET PARSING FAILS WHEN TESTING FROM BUSINESS CONSOLE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With ODM 8.8.0.1, a Classic Rule Engine (CRE) decision service
+   is successfully tested with DVS Excel file from Rule Designer.
+   When testing the same decision service with the same DVS Excel
+   file from Decision Center (DC) Business Console (BC), the test
+   fails with error message in the Decision Server (DS) logs:
+                    -----------------------
+   [10/9/16 12:19:21:382 CEST] 000000d7 execution     I   The
+   parsing of ruleset /cdira1476008357048_1f9d1e80_07fc_4e23_a204_
+   4705c566d3aa/1.0/cdirs1476008357048_1f9d1e80_07fc_4e23_a204_
+   4705c566d3aa/1.0 failed.
+   [10/9/16 12:19:21:382 CEST] 000000d7 execution     E   It was
+   not possible to create the ruleset: /cdira1476008357048_
+   1f9d1e80_07fc_4e23_a204_4705c566d3aa/1.0/cdirs1476008357048_
+   1f9d1e80_07fc_4e23_a204_4705c566d3aa/1.0.
+                                    com.ibm.rules.res.xu.engine.
+   cre.internal.RulesetParseException: GBRXU0014E: The parsing of
+   the ruleset /cdira1476008357048_1f9d1e80_07fc_4e23_a204_
+   4705c566d3aa/1.0/cdirs1476008357048_1f9d1e80_07fc_4e23_a204_
+   4705c566d3aa/1.0 failed 'IRL/[IRLFILENAME].irl', line [
+   LINENUMBER]: error: Undefined identifier [BOMDOMAINMEMBER]
+       at com.ibm.rules.res.xu.engine.cre.internal.RulesetParser.
+   createRulesetParseException(RulesetParser.java:129)
+       at com.ibm.rules.res.xu.engine.cre.internal.RulesetParser.
+   parseArchive(RulesetParser.java:81)
+       at com.ibm.rules.res.xu.ruleset.internal.XURulesetFactory.
+   createCRERuleset(XURulesetFactory.java:328)
+       at com.ibm.rules.res.xu.ruleset.internal.XURulesetFactory.
+   createRuleset(XURulesetFactory.java:119)
+       at com.ibm.rules.res.xu.ruleset.internal.RulesetParsingWork.
+   run(RulesetParsingWork.java:89)
+       at com.ibm.ejs.j2c.work.WorkProxy$RunWork.run(WorkProxy.
+   java:281)
+       at java.security.AccessController.doPrivileged(
+   AccessController.java:390)
+       at javax.security.auth.Subject.doAs(Subject.java:494)
+       at com.ibm.websphere.security.auth.WSSubject.doAs(WSSubject.
+   java:133)
+       at com.ibm.ejs.j2c.work.WorkProxy$RunWork.run(WorkProxy.
+   java:284)
+       at com.ibm.ws.security.util.AccessController.doPrivileged(
+   AccessController.java:63)
+       at com.ibm.ejs.j2c.work.WorkProxy.run(WorkProxy.java:666)
+       at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:
+   1881)
+   [10/9/16 12:19:21:695 CEST] 000000d4 execution     E   The
+   interaction plugin.factoryGetRulesetSignature has failed.
+                                    com.ibm.rules.res.xu.internal.
+   LocalizedResourceException: GBRXU0448E: Plug-in error.
+       at com.ibm.rules.res.xu.client.internal.jca.XUInteraction.
+   execute(XUInteraction.java:278)
+       at com.ibm.rules.res.xu.client.internal.XUSession.
+   executeOperation(XUSession.java:171)
+       at ilog.rules.res.session.extension.IlrXUOperations.execute(
+   IlrXUOperations.java:39)
+       at ilog.rules.res.session.extension.
+   IlrExtendedPOJOSessionFactory.createAndExecuteInteraction(
+   IlrExtendedPOJOSessionFactory.java:62)
+       at ilog.rules.res.session.extension.
+   IlrExtendedPOJOSessionFactory.createAndExecuteInteraction(
+   IlrExtendedPOJOSessionFactory.java:50)
+       at ilog.rules.dvs.ssp.rsi.signature.
+   IlrSSPRulesetSignatureFactory.getRulesetSignature(
+   IlrSSPRulesetSignatureFactory.java:96)
+       at com.ibm.rules.cdi.runtime.batch.artifacts.
+   ExcelScenarioReader.open(ExcelScenarioReader.java:108)
+       at com.ibm.jbatch.container.artifact.proxy.ItemReaderProxy.
+   open(ItemReaderProxy.java:54)
+       at com.ibm.jbatch.container.impl.ChunkStepControllerImpl.
+   openReaderAndWriter(ChunkStepControllerImpl.java:854)
+       at com.ibm.jbatch.container.impl.ChunkStepControllerImpl.
+   invokeChunk(ChunkStepControllerImpl.java:543)
+       at com.ibm.jbatch.container.impl.ChunkStepControllerImpl.
+   invokeCoreStep(ChunkStepControllerImpl.java:684)
+       at com.ibm.jbatch.container.impl.BaseStepControllerImpl.
+   execute(BaseStepControllerImpl.java:144)
+       at com.ibm.jbatch.container.impl.ExecutionTransitioner.
+   doExecutionLoop(ExecutionTransitioner.java:112)
+       at com.ibm.jbatch.container.impl.
+   JobThreadRootControllerImpl.originateExecutionOnThread(
+   JobThreadRootControllerImpl.java:110)
+       at com.ibm.jbatch.container.util.BatchWorkUnit.run(
+   BatchWorkUnit.java:80)
+       at com.ibm.rules.cdi.runtime.batch.services.
+   WebsphereThreadPoolServiceImpl$WebsphereWorkItem.run(
+   WebsphereThreadPoolServiceImpl.java:112)
+       at com.ibm.ws.asynchbeans.J2EEContext$RunProxy.run(
+   J2EEContext.java:271)
+       at java.security.AccessController.doPrivileged(
+   AccessController.java:364)
+       at com.ibm.ws.asynchbeans.J2EEContext.run(J2EEContext.java:
+   797)
+       at com.ibm.ws.asynchbeans.WorkWithExecutionContextImpl.go(
+   WorkWithExecutionContextImpl.java:222)
+       at com.ibm.ws.asynchbeans.ABWorkItemImpl.run(ABWorkItemImpl.
+   java:206)
+       at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:
+   1881)
+   Caused by: javax.resource.ResourceException: Unable to retrieve
+   the ruleset archive from Rule Execution Server.
+       at com.ibm.rules.dvs.plugin.cci.internal.
+   ExecutionTraceInteractionExtension.createResourceException(
+   ExecutionTraceInteractionExtension.java:957)
+       at com.ibm.rules.dvs.plugin.cci.internal.
+   ExecutionTraceInteractionExtension.getXmlSignatureParameters(
+   ExecutionTraceInteractionExtension.java:308)
+       at com.ibm.rules.dvs.plugin.cci.internal.
+   ExecutionTraceInteractionExtension.getRulesetParameters(
+   ExecutionTraceInteractionExtension.java:352)
+       at com.ibm.rules.dvs.plugin.cci.internal.
+   ExecutionTraceInteractionExtension.getRulesetSignature(
+   ExecutionTraceInteractionExtension.java:242)
+       at com.ibm.rules.dvs.plugin.cci.internal.
+   ExecutionTraceInteractionExtension.execute(
+   ExecutionTraceInteractionExtension.java:178)
+       at ilog.rules.res.xu.cci.IlrXUConnection.
+   executeInteractionExtension(IlrXUConnection.java:202)
+       at com.ibm.rules.res.xu.client.internal.jca.XUInteraction.
+   executeInteractionExtension(XUInteraction.java:208)
+       at com.ibm.rules.res.xu.client.internal.jca.XUInteraction.
+   dispatchExecution(XUInteraction.java:163)
+       at com.ibm.rules.res.xu.client.internal.jca.XUInteraction.
+   execute(XUInteraction.java:259)
+       ... 21 more
+   Caused by: com.ibm.rules.res.xu.engine.cre.internal.
+   RulesetParseException: GBRXU0014E: The parsing of the ruleset
+   /cdira1476008357048_1f9d1e80_07fc_4e23_a204_4705c566d3aa/1.
+   0/cdirs1476008357048_1f9d1e80_07fc_4e23_a204_4705c566d3aa/1.0
+   failed 'IRL/[IRLFILENAME].irl', line [LINENUMBER]: error:
+   Undefined identifier [BOMDOMAINMEMBER]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Either:
+   1- Because the faulty domain class is in root ("anonym")
+   package leading to name clash between local variable used to
+   build the domain cache and the class identifier, move the
+   domain class to a named package.
+   2- Set Decision Center property decisioncenter.web.
+   useDVSForCRETesting to true from the Enterprise Console and set
+   the target server to a Decision Server URL (http://.../res) to
+   run the test suite with the legacy DVS backend.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The problem occurs because the enum classes are in the
+   anonymous package.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02527
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6900
+   
+   
+ * REPORTED RELEASE
+   880
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-10
+   
+   
+ * CLOSED DATE
+   2016-10-31
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * FIXED COMPONENT ID
+   5725B6900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R881 PSY
+   UP

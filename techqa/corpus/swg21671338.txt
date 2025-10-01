@@ -1,0 +1,71 @@
+Title: IBM Security Bulletin: IBM WebSphere Cast Iron Solution is affected by a vulnerability in OpenSSL (CVE-2014-0160) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ A security vulnerability has been discovered in OpenSSL 
+
+CONTENT
+VULNERABILITY DETAILS 
+
+CVE-ID: CVE-2014-0160 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0160] [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-4353] 
+
+DESCRIPTION: OpenSSL could allow a remote attacker to obtain sensitive information, caused by an error in the TLS/DTLS heartbeat functionality. An attacker could exploit this vulnerability to expose 64k of private memory and retrieve secret keys. An attacker can repeatedly expose additional 64k chunks of memory. This vulnerability can be remotely exploited, authentication is not required and the exploit is not complex. It can be exploited on any system (ie. server, client, agent) receiving connections using the vulnerable OpenSSL library. 
+
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/92322 [https://exchange.xforce.ibmcloud.com/vulnerabilities/92322]
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+Warning: We strongly encourage you to take action as soon as possible as potential implications to your environment may be more serious than indicated by the CVSS score.
+
+AFFECTED PLATFORMS:
+IBM WebSphere Cast Iron v7.0 and Interim Fixes up to 7.0.0.0-CUMUIFIX-003 Physical Appliance and Virtual Appliance.
+
+REMEDIATION/FIXES: 
+
+
+
+Product VRMF APAR Remediation/First Fix CastIron Appliance 7.0.0.0-CUMUIFIX-004 LI77943 iFix 7.0.0.0-CUMUIFIX-004 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=7.0.0.0&platform=All&function=all]. It is available on IBM Fix Central site. [/support/docview.wss?uid=swg21671338&amp;aid=1] [/support/docview.wss?uid=swg21671338&amp;aid=1] [/support/docview.wss?uid=swg21671338&amp;aid=1] [/support/docview.wss?uid=swg21671338&amp;aid=1] 
+After applying the fix, additional instructions are needed for CVE-2014-0160 1) Replace your SSL Certificates. 
+
+You need to revoke existing SSL certificates and reissue new certificates. You need to be sure not to generate the new certificates using the old private key and create a new private key (ie using "openssl genrsa") and use that new private key to create the new certificate signing request (CSR). 
+
+2) Reset User Credentials 
+
+Users of network facing applications protected by a vulnerable version of OpenSSL should be forced to reset their passwords and should revoke any authentication or session related cookies set prior to the time OpenSSL was upgraded and force the user to re-authenticate.
+
+Warning: Your environment may require additional fixes for other products, including non-IBM products. Please replace the SSL certificates and reset the user credentials after applying the necessary fixes to your environment.
+
+WORKAROUNDS AND MITIGATIONS:
+None known
+
+Important note: IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www-03.ibm.com/systems/z/advantages/security/integrity_sub.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk.
+
+
+REFERENCE:
+[https://www-304.ibm.com/support/docview.wss?uid=swg21496117&wv=1]· Complete CVSS Guide (http://www.first.org/cvss/v2/guide [http://www.first.org/cvss/v2/guide])
+· On-line Calculator V2 (https://nvd.nist.gov/CVSS-v2-Calculator [https://nvd.nist.gov/CVSS-v2-Calculator]) 
+· OpenSSL Project vulnerability website [http://www.openssl.org/news/vulnerabilities.html]
+· Heartbleed [http://heartbleed.com/]
+
+
+
+RELATED INFORMATION:
+IBM Secure Engineering Web Portal [https://www-304.ibm.com/jct03001c/security/secure-engineering/]
+IBM Product Security Incident Response Blog [https://www.ibm.com/blogs/PSIRT]
+
+
+ACKNOWLEDGEMENT:
+None
+
+CHANGE HISTORY:
+<2014/04/24>: Original Copy Published
+
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+
+Disclaimer
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

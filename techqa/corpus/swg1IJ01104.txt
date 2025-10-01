@@ -1,0 +1,136 @@
+Title: IBM IJ01104: VI AGENT 07.20.04.01 NOT CONNECTING VCENTER USING ONLY TLS V1.2 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the target vCenter is configured to accept only TLS v1.2,
+   using the default configuration the agent will not be able to
+   connect.
+   It occurs because of Java 7 default behavior.
+   Java 7 supports TLS v1.2, but this protocol is not enabled by
+   default. It uses TLS 1.0 instead.
+   The agent collector behavior depends on Java configuration, as
+   a consequence the agent will attempt to complete SSL
+   handshaking using TLS 1.0 and the connection is rejected by the
+   vCenter, if this one only accepts v1.2.
+   To enable the agent using TLS 1.2 you have to:
+   1) Make a backup of the file kvm_data_provider.bat
+   2) Edit the file kvm_data_provider.bat and change the row:
+   SET KVM_JVM_ARGS=%KVM_CUSTOM_JVM_ARGS%
+   -Dinstance=%KVM_INSTANCE_NAME%
+   -Dlog4j.configuration=file:%AGENT_LIB_DIR%\log4j.properties
+   in
+   SET KVM_JVM_ARGS=%KVM_CUSTOM_JVM_ARGS%
+   -Dinstance=%KVM_INSTANCE_NAME%
+   -Dlog4j.configuration=file:%AGENT_LIB_DIR%\log4j.properties
+   -Dhttps.protocols=TLSv1.2
+   3) Restart the agent
+   From Java 8, this will no longer be necessary because Java 8
+   enables by default TLS v1.2.
+   Note : If user intended to enable some other protocols/Java
+   version then he must go through specific java documentation to
+   required protocol.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/n
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Tech note has already been publisehed
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  https://www.ibm.com/developerworks/community/blogs/0587adbc-8477 [https://www.ibm.com/developerworks/community/blogs/0587adbc-8477]
+   -431f-8c68-9226adea11ed/entry/Enabling_VMware_agent_to_work_with
+   _various_protocols_configured_with_vCenter?lang=en
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ01104
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF VE VM WARE
+   
+   
+ * REPORTED COMPONENT ID
+   5724L92VI
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-30
+   
+   
+ * CLOSED DATE
+   2018-04-18
+   
+   
+ * LAST MODIFIED DATE
+   2018-04-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

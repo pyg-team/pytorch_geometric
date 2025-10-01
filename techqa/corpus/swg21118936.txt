@@ -1,0 +1,36 @@
+Title: IBM How to identify the character set on the ClearQuest client - United States
+
+Text:
+1118936; 185654811; CQ; ClearQuest; database; Determine; character set; code page; lscodepage; existing; 185654811 TECHNOTE (FAQ)
+
+QUESTION
+ How do you determine the current character set for the client and for the schema repository in IBM Rational ClearQuest? 
+
+ANSWER
+The current code page information for ClearQuest can be retrieved by using the command line tools. 
+
+The installutil lscodepage command will return the current code page as set on the ClearQuest client workstation.
+
+Run the following command from a Microsoft Windows command prompt:
+
+installutil lscodepage -dbset <connection_name> <admin_user> <admin_password>
+
+
+Where:
+
+
+installutil Name of the utility. lscodepage Command to return the code page information. -dbset Identifier for the connection name as it appears in the Maintenance tool. connection_name The actual name of the connection. admin_user The super user login used to login to ClearQuest. admin_password Password for the super user of ClearQuest. 
+This command will return two lines. The first line returns the code page for the schema repository, the second line returns the code page for the client workstation. For example: 
+
+Code page of 2003.06.00: 20127 (US-ASCII) (default)
+Code page of client: 1252 (ANSI - Latin I)
+
+In this example, the workstation and the repository are set differently. The client workstation is set to support the Latin I code page. The ClearQuest schema repository is set to only allow for US-ASCII characters.  
+
+Note: There are numerous factors to consider before setting the code page. For more information on codepages in ClearQuest, refer to these topics in the ClearQuest Information Center [http://ibm.com/support/docview.wss?rs=988&uid=swg27010159]: 
+
+ * Guidelines for selecting a Rational ClearQuest data code page 
+ * Rational ClearQuest integrations and data code pages
+
+RELATED INFORMATION
+#How to set the code page to the platform code page for [http://www.ibm.com/support/docview.wss?uid=swg21118935]

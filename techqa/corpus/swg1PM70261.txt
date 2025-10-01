@@ -1,0 +1,177 @@
+Title: IBM PM70261: Reimporting Visio SAXML of BPMN diagram with the original open results in not valid format error in Rational System Architect - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When importing a BPMN process diagram via an SA XML file, while
+   the original file is still open, the not a valid format error is
+   seen in IBM Rational System Architect.
+   
+   Configuration:
+   ------------
+   Environment = Microsoft Windows (R)
+   Tool = IBM Rational System Architect (R)
+   Version = 11.4.2
+   Integration = SA Process Integrator with Microsoft Office Visio
+   (R) 2007
+   
+   Detailed Description:
+   --------------------
+   This issue is know to occur in two scenarios.
+   
+   Scenario #1
+   Importing the SAXML of a BPM diagram with the original diagram
+   still open in Visio.
+   
+   Scenario #2
+   Re-importing the SAXML of a BPM diagram with the original
+   diagram still open in Visio.
+   
+   Symptom:
+   -------
+   Error Message:
+   The imported diagram xml is not a valid format as supported by
+   SAPI.
+   
+   Impact:
+   ------
+   You may think there is something wrong when there may not be.
+   
+   Steps to reproduce:
+   ------------------
+   Scenario #1
+   1. Create a BPMN diagram within Visio using SAPI
+   2. Save the file as a .vsd file
+   3. Export the file into SAXML
+   4. Import the exported SAXML file into Visio
+      (ensure that the original file is still open)
+   
+   Scenario #1
+   1. Follows steps 1-3 above
+   2. Import into SA (optional: change models if you wish!)
+   3. Export from SA into XML
+   4. Import the exported SAXML file into Visio
+      (ensure that the original file is still open)
+   
+   Expected Results:
+   ----------------
+   The (re-)import happens without an error message.
+   
+   Actual Result:
+   -------------
+   On the (re-)import an error message is displayed.
+   
+   WORKAROUND
+   close the original diagram within Visio.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   "The imported diagram xml is not a valid format as supported
+   by SAPI" error message received when importing a BPMN
+   process diagram via an SA XML file, while the original file
+   is still open.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  There are no plans to address this issue. The problem only
+   occurs with the same diagram xml (obtained either from
+   System Architect or Process Integrator) being imported more
+   than once in the same session. Importing of different
+   diagrams is not affected. The resolution is to close the
+   original diagram within Visio. The client has agreed to
+   concede this issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM70261
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC SYS ARCH
+   
+   
+ * REPORTED COMPONENT ID
+   5724V68SA
+   
+   
+ * REPORTED RELEASE
+   B42
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-03
+   
+   
+ * CLOSED DATE
+   2013-04-03
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

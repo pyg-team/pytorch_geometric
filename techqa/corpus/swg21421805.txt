@@ -1,0 +1,63 @@
+Title: IBM MQ Multi-Instance: is there a way for the MQ code to expedite the failover? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You see that it takes several minutes for a standby instance to become active, when the power cord is unplugged from the host that has the active instance running for a WebSphere MQ Multi-Instance queue manager using NFS V4.
+
+You want to know if there is anything that can be done or fine tuned with MQ to expedite the failover process? 
+
+CAUSE
+The coordination between the active instance and the standby instance is done using file locks on the NFS V4 file system. NFS V4 uses a feature called "lease based file locking", which is critical for MQ Multi-Instance queue managers. 
+Note: NFS V3 does NOT have this feature, and thus, it cannot be used with MQ multi-instances.
+
+There are 3 files that are locked for these purposes:
+
+
+ * Master : Held in EXCLUSIVE mode by the MQ Execution Controller (EC) of the active instance. 
+ * Active : Held in SHARED mode by all QM processes (excluding those which are just internal applications), plus fastpath applications. 
+ * Standby : Held in EXCLUSIVE mode by the EC of a standby instance.
+
+
+Assuming that the shared files are located in: /mqexport/701/data/QMMI1 
+Then these are the 3 files used during the locking: 
+$ ls -ls active master standby 
+4 -rw-rw-rw- 1 mqm mqm 28 2010-01-18 15:19 active 
+4 -rw-rw-rw- 1 mqm mqm 28 2010-01-18 15:19 master 
+4 -rw-rw-rw- 1 mqm mqm 30 2010-01-18 15:23 standby 
+
+A standby instance: 
+- EC enters its main processing loop and does NOT complete its startup processing 
+- EC polls the file locks held by the active instance every 2 seconds 
+- it is responsive to requests to end (“endmqm–x”) 
+- it is responsive to requests by applications trying to connect, but rejects them 
+- Once the file locks are released by the active instance, the EC continues with the startup processing to become the active instance 
+
+When the active instance ends gracefully (such as when using "endmqm -s") the MQ code releases the file locks. Then, when the standby instance determines that the locks were released, then it acquires the locks and completes the startup processing. 
+
+When the active instance does not end gracefully (such as a power failure), then the MQ code does NOT release the file locks. 
+
+The locks need to be released by the NFS Server code which should eventually detect that the application that was using (leasing) these file locks is no longer active, and thus, it is up to the NFS server code to "break the lease" for that defunct application to release the locks. Then, when the standby instance determines that the locks were released, then it acquires the locks and completes the startup processing. 
+ANSWER
+The summary is that there is not much that the MQ code can do to expedite a failover (such as unplugging the power cord) from the active instance of a queue manager. 
+
+
+To expedite the failover process of a multi-instance queue manager, in order for the standby instance to complete its startup sequence and to become an active instance, the system administrator for the server needs to fine tune the behavior of the NFS Server daemon in order to expedite the detection of locks that can be released when the application that leased them is no longer active.
+
++++ AIX: example of fine tuning attribute for the chnfs command
+
+
+AIX: chnfs Command [http://www.ibm.com/support/knowledgecenter/ssw_aix_53/com.ibm.aix.cmds/doc/aixcmds1/chnfs.htm?cp=ssw_aix_53%2F1-2-0-2-80]
+
+Purpose
+Changes the configuration of the system to invoke a specified number of nfsd daemons or to change NFS global configuration values.
+
+Details on attribute relevant to this article:
+-L v4_lease_time 
+Specifies the lease time that the state manager uses when granting a lock to a client. This flag sets the NFS Version 4 lease time in seconds. The lease time also affects the length of the grace period, the time when a client is deemed dead or expired, and the duration of time that a client has before getting timed out. The valid range is from 10 to 600 seconds. The default value is 120 seconds. This flag is valid only for NFS Version 4.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

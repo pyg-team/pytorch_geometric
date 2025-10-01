@@ -1,0 +1,24 @@
+Title: IBM Int16 error with Verifine in IBM Datacap - United States
+
+Text:
+int16 taskmaster web verifine TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When bringing up an image with a large number of trailing pages in Verifine using Datacap Web, it errors out with:
+
+Value was either too large or too small for an Int16. 
+
+CAUSE
+Datacap defines zones by specifying X,Y coordinates where 0,0 is the top left corner of the image. Trailing pages are treated as if they were part of the main page, but appended to the bottom of the page. So if the Y coordinate of zones on the first page runs from 0 to 300, the Y coordinate for zones on the trailing page will be 301 to 600. However if there are enough trailing pages, the Y coordinate value can become too large for Verifine to handle and an error occurs.
+
+Coordinates for zones are in pixels. Because the exact pixel count can vary for different images, the number of trailing pages before this error can occur will vary.
+
+RESOLVING THE PROBLEM
+Run the MCCO Position Adjust action against the document containing the trailing pages. This converts the X,Y coordinates to a different form for trailing pages that prevents the Y coordinate from becoming too large. 
+
+See the APT application's Page Level rule in the Clean ruleset for an example of usage.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Datacap Taskmaster Capture Not Applicable Windows 8.1.0, 8.0.1

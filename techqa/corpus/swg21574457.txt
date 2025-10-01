@@ -1,0 +1,56 @@
+Title: IBM Applying Websphere Interim Fixes to TIP on Windows - United States
+
+Text:
+TIPL2; TIPL2INST; Tivoli Integrated Portal; Websphere Update Installer; UPDI; WUI; pak; Websphere; iFix; iFixes; Interim; Fix TECHNOTE (FAQ)
+
+QUESTION
+ What is the procedure to apply Websphere Application Server iFixes to a Tivoli Integrated Portal installation on a Windows platform? 
+
+ANSWER
+Warning: The following procedure applies only to Websphere Application Server "iFixes". Do not apply Websphere Application Server "fix packs" directly to a TIP installation. WAS fix packs must be bundled in a Tivoli Integrated Portal fix pack to ensure all TIP and administrative console functionality is still intact and to keep TIP in a supported configuration. 
+
+To apply a Websphere Application Server (WAS) iFix, do the following:
+
+To apply the fix: 
+
+
+ 1. Copy the iFix (.pak) file directly to the WAS Update Installer maintenance directory: 
+    
+    <TIP HOME>\WebSphereUpdateInstallerV7\maintenance 
+    
+    
+ 2. Stop TIP
+    
+    
+ 3. Launch the WAS Update Installer 
+    
+    $ <TIP HOME>\WebSphereUpdateInstallerV7\update.bat
+    
+    a) On the Welcome screen, click next;
+    
+    b) On the Product selection panel enter the literal path for <TIP HOME> for the Directory path, and then click next.
+    
+    c) On the Maintenance Operation selection panel select "install maintenance package", and then next.
+    
+    d) On the Maintenance Package selection panel enter "<TIP HOME>\WebSphereUpdateInstallerV7\maintenance" and then next. 
+    
+    e) On the Available Maintenance Packages to Install panel select 
+    target .pak file, and then next. 
+    
+    f) Click next for the next two screens to proceed with the install. 
+    
+    If the package is installed, you should get a "Success" confirmation.
+    
+    
+ 4. Start TIP
+    
+    
+
+To uninstall Websphere iFixes: 
+ 1. Stop TIP
+    
+    
+ 2. Launch the WAS Update Installer, and select the package to be uninstalled. Complete the uninstall.
+    
+    
+ 3. Restart TIP

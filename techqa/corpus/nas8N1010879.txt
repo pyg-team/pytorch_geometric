@@ -1,0 +1,51 @@
+Title: IBM How to Locate Packages in the IBM Installation Manager Repository - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document includes information on how to locate what packages are contained in an Installation Manager repository. This information can be used for installing WebSphere Application Server. 
+
+RESOLVING THE PROBLEM
+When installing software on the IBM i system, the usage of the IBM Installation Manager may be required. The IBM Installation Manager software requires a package to complete the installation of products such as IBM WebSphere Application Server. Each package is contained in a repository. 
+
+To locate what packages are contained in a repository, you would run the following commands:
+
+STRQSH
+umask 022
+cd /QIBM/ProdData/InstallationManager/eclipse/tools
+./imcl listAvailablePackages -repositories <repository>
+
+In the following example, the repository is a virtual media device for the IBM Web Enablement V8.5 package available from IBM Entitled Systems Support (ESS).
+
+Example
+STRQSH
+umask 022
+cd /QIBM/ProdData/InstallationManager/eclipse/tools
+$
+./imcl listAvailablePackages -repositories /qopt/WASV85_WEBENAB/WAS
+com.ibm.websphere.WEBENAB.v85_8.5.0.20120501_1108
+$
+
+The package com.ibm.websphere.WEBENAB.v85 would be used when running the imcl install command as follows:
+
+./imcl install com.ibm.websphere.WEBENAB.v85 -repositories /QOPT/WASV85_WEBENAB/WAS
+
+If a package is not found, the following error message is produced:
+
+CRIMC1011W WARNING: The following repositories are not connected:
+WARNING: Failed to connect repository '/QOPT/Testing' either because the repository does not exist, the repository is close
+d or the repository server can not be reached.
+WARNING: Some reasons why a repository connection fails are:
+WARNING: Is the Repository location mistyped?
+WARNING: Is the local network down?
+WARNING: If you use a firewall, does it allow the Installation Manager to access the server?
+WARNING: If your computer uses a proxy server, are the proxy settings for the Installation Manager set correctly?
+$
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 639626627

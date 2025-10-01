@@ -1,0 +1,54 @@
+Title: IBM WebSphere DataPower SOA appliance is logging "Unable to allocate execution resources" - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What does this error mean and how do I handle the error? 
+
+CAUSE
+The device is attempting to handle a new transaction. This requires a configurable chunk of contiguous memory that is unable to be allocated.
+
+ANSWER
+The "unable to allocate" error is simply a failure to allocate memory. Specifically the device has a 512k default Stack Size set in the Compile options policy. This stack size option can be seen either via the WebGUI Objects>Compile Options Policy or from the CLI "show compile" output. 
+
+Note: To apply any changes you may make to a Compile Options Policy, make sure it is selected in the XML Manager your service is using. 
+
+Each transform action uses a copy of this stack to execute the compiled stylesheet. All stylesheets within the processing policy requires its own stack. If a stylesheet is too large, you will receive an error message of "stack overflow" seen in the device error log.
+
+Persistent connections associated with that processing stack can trigger the stack size to grow dynamically to hold the connection information for reuse.
+
+Client-side closing or reset of the connection will not abort processing immediately. The stack will be held in memory until the backend transaction either completes or times out. This behavior can prevent new transactions from being handled while waiting on the old, failed transaction to complete.
+
+When the device is unable to allocate a new instance of the stack (for which contiguous memory is required), the error "unable to allocate" will be thrown.
+
+What conditions can commonly make this error message occur? 
+
+
+ * Heavy use of variables 
+ * Caching of WSDLs 
+ * Caching of stylesheets 
+ * Caching of schema docs 
+ * Persistent connections 
+ * Transactions that are slow to complete 
+ * Transactions that are slow to time out
+
+
+The items listed above are just a few common sources that can result in fragmentation of the device's memory which would prevent a contiguous block of 512k of memory. 
+
+This error message could also suggest the device is running at a very high memory utilization. If you are not already monitoring the device's memory statistics, you should do so. Also, capacity planning should be done. 
+
+See this best practices technote entitled MustGather: WebSphere DataPower SOA Appliance unexpected reload, reboot, or an unresponsive device. [http://www.ibm.com/support/docview.wss?uid=swg21459105] If you do not already have off-device logging or some type of statistics gathering set up, this is a great place to start. Those CLI outputs along with the logs can give a lot of insight into the source of the problem.  
+
+Later firmware releases such as 3.8.1, and most notably 3.8.2, have additional memory diagnostics information that will log the memory used per transaction such as the following log event, for example:
+
+
+20110123T123456Z [memory-report][debug] mpgw(mpgw_name): tid(98765)[1.2.3.4]: Response Finished: memory used 1725356 
+
+There are other memory statistics per domain and per service in those firmware releases that can assist in narrowing down the source of the memory use. 
+
+ 
+
+Another useful piece of information when working with this type of problem is Why does memory % differ for "show memory" and "show load" when using DataPower? [http://www.ibm.com/support/docview.wss?uid=swg21458214] This document provides details on memory information outputs and what they mean. 
+
+If you are not able to narrow the scope of the memory utilization, more intrusive diagnostics may be required. See MustGather: Memory Growth for WebSphere DataPower SOA Appliance [http://www.ibm.com/support/docview.wss?uid=swg21398114] prior to contacting IBM DataPower Support.

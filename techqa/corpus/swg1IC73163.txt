@@ -1,0 +1,210 @@
+Title: IBM IC73163: HIGH MEMORY ALLOCATION WHILE PROCESSING TABLE QUEUE ( TQ ) SPILLS ON DPF SYSTEMS - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.7 Fix Pack 4 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24029745]
+DB2 Version 9.7 Fix Pack 5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24031181]
+DB2 Version 9.7 Fix Pack 6 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032754]
+DB2 Version 9.7 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033685]
+DB2 Version 9.7 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24034634]
+DB2 Version 9.7 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036646]
+DB2 Version 9.7 Fix Pack 9a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037559]
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On Version 9.7, the temporary tables from Table Queue spills are
+   compressed.  The compression process requires memory
+   allocations to create the compression dictionary for the TEMP
+   table.
+   
+   Table Queue spills can have different characteristics,
+   such that:
+   1. A large number of temporary tables may be created
+   simultaneously, one per target partition.
+   2. the tables may not grow quickly.
+   
+   
+   This can result in excessive concurrently allocated memory for
+   building compression dictionaries on a large DPF system, thereby
+   resulting in errors from memory exhaustion and performance
+   problems from paging.
+   
+   The purpose of this APAR is to disable compression of temporary
+   tables from TQ spills.
+   
+   
+   Diagnostics:
+   1. The Database Heap (dbheap) is large or has a large high water
+   mark.  The value is rarely above 500MB on most systems.  Use the
+   following to monitor :
+        - db2pd -db <database> -mempools, check the PhySz and and
+   PhyHWM for the "dbh" memory pool
+        - select pool_watermark from sysibmadm.snapdb_memory_pool
+   where POOL_ID="'DATABASE'"
+   
+   2.   Check for a large number of the following block allocations
+   (Note the Size of 2.8MB, and File ID of 1008378243)
+         - db2pd -db <database> -memb 2
+   (this must be executed on a partition with high current dbheap
+   usage)
+   Address                      DataAddress              PoolID
+   PoolName BlkAge   Size(Bytes)  I LOC   File
+   0x0700000106CBFFC8 0x0700000106CBFFE0 2          dbh
+   36997   2883584      1 138   1008378243
+   0x070000010720FFC8 0x070000010720FFE0 2          dbh
+   36883   2883584      1 138   1008378243
+   0x07000000F800FFC8 0x07000000F800FFE0 2          dbh
+   36870   2883584      1 138   1008378243
+   ...
+   Memory blocks sorted by size for dbh pool:
+   PoolID     PoolName   TotalSize(Bytes)     TotalCount LOC   File
+   2             dbh            507510784            176
+   138     1008378243
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  A temporary workaround is available through an undocumented
+   registry variable:
+     db2set DB2_ROWCOMP_TEMP="tq=no"
+   This requires recycling the instance (db2stop, db2start).
+   It is recommended to upgrade to a fix pack, once its available,
+   and to unset the registry variable as follows:
+     db2set DB2_ROWCOMP_TEMP=
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All DPF systems are affected                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Use the following workaround:                                *
+   * db2set DB2_ROWCOMP_TEMP="tq=no"                              *
+   * This requires recycling the DB2 instance.                    *
+   * After upgrading to a level containing the APAR, unset the    *
+   * registry variable with:                                      *
+   * db2set DB2_ROWCOMP_TEMP=                                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem First Fixed in DB2 UDB Version 9.7 Fix Pack 4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  See Recommendation
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC73163
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / Pervasive
+   
+   
+ * SUBMITTED DATE
+   2010-12-09
+   
+   
+ * CLOSED DATE
+   2011-04-21
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC73304
+   
+   
+
+MODULES/MACROS
+ *  SQD
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSN
+   UP

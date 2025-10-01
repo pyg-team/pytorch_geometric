@@ -1,0 +1,227 @@
+Title: IBM PM22017: CURRENTSQLID DOES NOT WORK PROPERLY WHEN THE DATASOURCE USES IBM DATA SERVER DRIVER. CEIDS0058E - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24028875]
+7.0.0.15: Java SDK 1.6 SR9 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24028881]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24029071]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for IBM i [http://www-01.ibm.com/support/docview.wss?uid=swg24029072]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24029073]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for Solaris [http://www-01.ibm.com/support/docview.wss?uid=swg24029074]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24029075]
+7.0.0.17: WebSphere Application Server V7.0 Fix Pack 17 [http://www-01.ibm.com/support/docview.wss?uid=swg24029634]
+7.0.0.17: Java SDK 1.6 SR9 FP1 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24029894]
+7.0.0.19: WebSphere Application Server V7.0 Fix Pack 19 [http://www-01.ibm.com/support/docview.wss?uid=swg24030660]
+7.0.0.21: WebSphere Application Server V7.0 Fix Pack 21 [http://www-01.ibm.com/support/docview.wss?uid=swg24031366]
+7.0.0.23: WebSphere Application Server V7.0 Fix Pack 23 [http://www-01.ibm.com/support/docview.wss?uid=swg24032493]
+7.0.0.25: WebSphere Application Server V7.0 Fix Pack 25 [http://www-01.ibm.com/support/docview.wss?uid=swg24033267]
+7.0.0.27: WebSphere Application Server V7.0 Fix Pack 27 [http://www-01.ibm.com/support/docview.wss?uid=swg24033882]
+7.0.0.29: WebSphere Application Server V7.0 Fix Pack 29 [http://www-01.ibm.com/support/docview.wss?uid=swg24034966]
+7.0.0.31: WebSphere Application Server V7.0 Fix Pack 31 [http://www-01.ibm.com/support/docview.wss?uid=swg24036768]
+7.0.0.27: Java SDK 1.6 SR13 FP2 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035324]
+7.0.0.33: WebSphere Application Server V7.0 Fix Pack 33 [http://www-01.ibm.com/support/docview.wss?uid=swg24037573]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  It is possible that the schema name indicated by the
+   CurrentSQLID property is not honored.  One consequence is that
+   customers may encounter the following error due to an incorrect
+   schema name:
+   
+    Exception data: com.ibm.ejs.container.CreateFailureException: ;
+   nested exception is:
+   .com.ibm.events.datastore.DataStoreException: CEIDS0058E
+   Database table cei_t_properties does not exist for schema
+   WPJMSU. The defau lt data store is unable to start.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V7.0 users that configures Common    *
+   *                  Event Infrastructure with DB2 z/OS database *
+   *                  using IBM Data Server Driver.               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The automatic configuration process     *
+   *                      of Common Event Infrastructure with     *
+   *                      DB2 z/OS database does not support      *
+   *                      specifying a different schema from      *
+   *                      the CURRENTSQLID when the data source   *
+   *                      uses IBM Data Server.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The automatic configuration process of Common Event
+   Infrastructure with a DB2 z/OS database creates the WebSphere
+   Application Server data source based on the DB2 Universal JDBC
+   Driver Provider (XA) driver version (the case of remote DB2
+   z/OS database) or DB2 Universal JDBC Driver Provider (the case
+   of local DB2 z/OS database). These are the scenarios when JDBC
+   driver v3.0 is used and in this case the user can specify a
+   different schema where the tables are stored on. At runtime
+   the tables will be qualified with the correct schema. In case
+   of a data source that is based on the IBM Data Server driver
+   the tables are not correctly qualified. The user that is
+   specified for the connection is used instead.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The runtime code used when the initial database access is
+   performed was augmented in order to consider a different
+   schema if this is specified. This can be achieved by providing
+   a value tot the CURRENTSQLID custom parameter.
+   In order to support this also at the configuration level, the
+   automatic configuration process with DB2 z/OS database has been
+   changed by adding to the configEventServiceDB2ZOSDB
+   configuration Admin Task a new optional parameter
+   -jdbcDriverVersion that will accept the following
+   possible/acceptable values 3.0 / 4.0
+   By using the '3.0' value it will configure the JDBC provider
+   to use DB2 Universal JDBC Driver Provider (XA) or DB2
+   Universal JDBC Driver Provider. The usage of '4.0' value will
+   determine the configuration of the JDBC provider to be based
+   on the DB2 Using IBM JCC Driver (XA) or on the DB2 Using IBM
+   JCC Driver version (depending on the database location  &#162;&#226;&#130;&#172;&#226;€&#156;
+   remote or local).
+   The introduced behavior is:
+   a. -jdbcDriverVersion not specified in the AdminTask - The
+   configuration will be performed using 'DB2 Universal JDBC
+   Driver Provider (XA)' or DB2  &#162;&#226;&#130;&#172; &#156;Universal JDBC Driver Provid
+   therefore the 3.0 driver version.
+   b. -jdbcDriverVersion specified but no value supplied - Will
+   raise an exception as -jdbcDriverVersion needs a parameter,
+   then if the user goes so far as to use the parameter but does
+   NOT supply a value, we give an error stating like in the
+   following example "CEIIN0739E No value was specified for the
+   jdbcDriverVersion parameter".
+   c. -jdbcDriverVersion specified with the '3.0' value supplied
+   - The configuration will be performed using 'DB2 Universal
+   JDBC Driver Provider (XA)' or DB2 'Universal JDBC Driver
+   Provider'.
+   d. -jdbcDriverVersion specified with the '4.0' value supplied
+   - The configuration will be performed using 'DB2 Using IBM JCC
+   Driver (XA)' or 'DB2 Using IBM JCC Driver', therefore based
+   on the provider that supports JDBC 4.0 specification using the
+   IBM Data Server Driver.
+   e. -jdbcDriverVersion specified with a value OTHER than 3.0 or
+   4.0 - Will raise an exception like in the following example:
+   "CEIIN0701E The parameter jdbcDriverVersion contains the value
+   <wrong_value>, which is not valid. Valid values are: 3.0, 4.0."
+   
+   APAR PM22017 is currently targeted for inclusion in Service
+   Level (Fix Pack) 7.0.0.15 of WebSphere Application Server V7.0.
+   
+   Please refer to URL:
+   //www.ibm.com/support/docview.wss?rs=404&uid=swg27006970
+   for Fix Pack availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM22017
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-07
+   
+   
+ * CLOSED DATE
+   2010-11-29
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY UK65060 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK65060]
+   UP11/03/04 P F103
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

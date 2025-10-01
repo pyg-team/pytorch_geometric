@@ -1,0 +1,194 @@
+Title: IBM IT17083: Internal errors reported during failover after a health check thread detects a problem with the file system. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM MQ fails over after a health check thread detects a
+   problem with the file system.
+   
+   During the failover, an unexpected Failure Data Capture (FDC)
+   record with these details is generated:
+   
+   | Probe Id          :- XC333002
+                                                 |
+   | Thread            :- 13    LivenessMonitor
+                                    |
+   | Probe Description :- AMQ6109: An internal WebSphere MQ error
+   has occurred.  |
+   
+   MQM Function Stack
+   zxcLivenessMonitorThread
+   zxcInquireAndUpdateStatus
+   xlsPostEvent
+   xcsFFST
+   
+   } xlsWaitEvent rc=xecL_W_TIMEOUT
+   { hlgQueryNamedLSN
+   } hlgQueryNamedLSN rc=OK
+   { hlgQueryNamedLSN
+   } hlgQueryNamedLSN rc=OK
+   { zxcInquireAndUpdateStatus
+   -{ zapInquireAndUpdateStatus
+   -} zapInquireAndUpdateStatus rc=OK
+   -{ xlsPostEvent
+   -} xlsPostEvent rc=OK
+   -{ xlsPostEvent
+   --{ xcsFFST
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This problem will normally follow a period where a shared file
+   system becomes unavailable.  If the reason for this can be
+   determined and corrected then the error can be avoided.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of multi-instance queue managers may be affected by this
+   issue
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When using multi-instance queue managers, MQ uses a liveness
+   monitor thread that tests that the queue manager is responsive
+   to requests.  If the queue manager is no longer responsive, if
+   for example it loses a connection to a shared file system, then
+   the queue manager is supposed to end.
+   
+   During this sequence of events an unexpected additional error
+   condition occurred due to a queue manager resource being
+   unavailable from the liveness monitor thread. This unexpected
+   additional error condition was reported by the Failure Data
+   Capture (FDC) record above.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The IBM MQ code was corrected so that the necessary queue
+   manager resource was available to the liveness monitor thread.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.6
+   v9.0 CD    9.0.2
+   v9.0 LTS   9.0.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT17083
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-16
+   
+   
+ * CLOSED DATE
+   2016-10-25
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

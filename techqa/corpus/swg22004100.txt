@@ -1,0 +1,61 @@
+Title: IBM Restoring a mailbox to a PST file fails with rc 1856 - United States
+
+Text:
+tsm tivoli storage manager Remove-MailboxRestoreRequest 1856 rdb TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The function Remove-MailboxRestoreRequest fails with rc = 1856 when attempting to restore a mailbox to a PST file as a user from a different domain than the mailbox and the Exchange server. 
+
+SYMPTOM
+Example of the error message text: 
+
+ 'The operation couldn't be performed because object '[mailbox GUID]' 
+couldn't be found on 'server.exchange.domain'. 
+
+
+CAUSE
+When restoring to a .PST file the New-MailboxRestoreRequest cmdlet is
+first used to restore the requested mailbox to the recovery database (RDB) into the mailbox
+of the user performing the restore. Then the New-MailboxExportRequest
+cmdlet is used in order to export the restored mailbox from the RDB into
+a .PST file but fails due to a Microsoft limitation.
+
+
+ENVIRONMENT
+This issue was found with Microsoft Exchange 2016, Microsoft Windows 2012 R2, 
+
+and IBM Spectrum Protect for Mail - Data Protection for Microsoft Exchange 7.1.6. 
+The issue is expected to affect similar environments.
+
+
+DIAGNOSING THE PROBLEM
+A Data Protection for Microsoft Exchange service trace will show messages like: 
+
+
+02/16/2017 16:48:36.309 [055240] [2728] : psex07ut.cpp (2079):
+CreateExchange2010PowerShell(): Error message: 'The operation couldn't
+be performed because object 'e187039d-477d-4e19-8b20-737ccd4f6d60'
+couldn't be found on 'exdc2.exchange.ruhr-uni-bochum.de'.
+'
+02/16/2017 16:48:36.309 [055240] [2728] : psex07ut.cpp (2119):
+Exit CreateExchange2010PowerShell(), rc = 1856
+
+
+Find the preceding New-MailboxExportRequest command with its full syntax in the 
+Data Protection for Microsoft Exchange service trace, like:
+
+CreateExchange2010PowerShell(): Command-> New-MailboxExportRequest -Name TSM_ExportRequest_[..snip...] -Mailbox [mailbox GUID] ..... 
+
+Retry the restore keeping the recovery database mounted, then use that New-MailboxExportRequest command to re-create the failure manually in a Powershell.
+See the link below for the syntax description of the Microsoft New-MailboxExportRequest cmdlet.
+
+
+
+
+
+RESOLVING THE PROBLEM
+The work-around to the Microsoft limitation is to restore as a user from the same domain as the corresponding Microsoft Exchange server and mailbox.
+
+RELATED INFORMATION
+ New-MailboxExportRequest [https://technet.microsoft.com/en-us/library/ff607299%28v=exchg.160%29.aspx]
+IBM Spectrum Protect for Mail [https://www.ibm.com/support/knowledgecenter/SSERBW/landing/welcome_sserbw.html]

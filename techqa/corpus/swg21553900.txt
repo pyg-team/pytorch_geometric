@@ -1,0 +1,28 @@
+Title: IBM Need the result of stored procedure in process data instead of replacing primary document - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Need the result of stored procedure in process data instead of replacing primary document 
+
+SYMPTOM
+
+
+There is a stored procedure which will return single integer value. Now the result is replacing the primary document.But we need to write the result into process data instead of replacing Primary document.
+
+
+RESOLVING THE PROBLEM
+
+
+ The following are the steps to be done 
+
+1) We need to take a backup of the primary document and then execute LWJDBC adapter. The result of the stored procedure will replace the primary document. 
+
+2) We need use DocToDOM function to convert the result of the stored procedure to node in process data. So the stored procedure result will be written to process data. 
+3) After this step we need to replace the primary document with the backup that we took earlier. The following is the BPML code for the above mentioned steps <process name="LWJDBC"> <sequence> <assign name="Assign" to="OriginalDocument" from="PrimaryDocument/@SCIObjectID"></assign> <operation name="TestLWJDBC"> <participant name="LightweightJDBCAdapterQuery"/> <output message="LightweightJDBCAdapterTypeInputMessage"> <assign to="pool">mysqlPool_local</assign> <assign to="query_type">PROCEDURE</assign> <assign to="result_name">SQL_RESULT</assign> <assign to="row_name">ROW</assign> <assign to="sql">CALL procedure1(@A)</assign> <assign to="." from="*"></assign> </output> <input message="inmsg"> <assign to="." from="*"></assign> </input> </operation> <assign to="message_test" from="DocToDOM(PrimaryDocument)/ROW/ReturnValue"></assign> <assign name="Assign" to="PrimaryDocument" from="OriginalDocument/@SCIObjectID"></assign> </sequence> </process> 
+
+ 
+
+HISTORICAL NUMBER
+ NFX8126

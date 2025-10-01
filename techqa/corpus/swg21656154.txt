@@ -1,0 +1,83 @@
+Title: IBM Tivoli Integrated Portal 2.2.0.x Upgrade failure.  WASX7017E error. - United States
+
+Text:
+Tivoli; Integrated; Portal; 2.2.0.11; Upgrade; failure; corrupt; t XML; tipUpdateISCJ2EEWar.py; TIPL2INST TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TIP 2.2.0.11 Upgrade failed, because of corrupt page definition in the ibm-portal-topology.xml XML configuration file. Error in the wsadmin.traceout file: "WASX7017E: Exception received while running file "tipUpdateISCJ2EEWar.py"; 
+
+SYMPTOM
+TIP 2.2.0.x upgrade failed, error message to STDOUT indicating the cause is in the TIPFPInstaller-00.log file.
+
+
+CAUSE
+Corrupt page definition in the ibm-portal-topology.xml XML configuration file.
+
+ENVIRONMENT
+This issue could happen on Unix and Windows, while upgrading to TIP 2.2.0.11, but could be for any TIP upgrade..
+
+DIAGNOSING THE PROBLEM
+Error in the TIPFPInstaller-00.log
+
+
+
+
+
+FINE : MachinePlanEventOccurred(An exception was received during the processing of MachinePlan: localhost. See the Exception Stack Trace for more information.) (from com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.eventOccurred) 
+
+FINE : COIEventType.ERROR. Last step started was: TIPCorePostConfig (from com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.eventOccurred) 
+
+Error from the MachinePlan_localhost.log located in <TIP_HOME>/_uninst/TIPInstall22011/plan/install/MachinePlan_localhost/logs/[INSTALL_<DATE>/MachinePlan_localhost.log
+
+Caused by: The following error occurred while executing this line:
+/opt/IBM/tivoli/tipv2/_uninst/TIPInstall22011/plan/install/MachinePlan_localhost/00005_TIPCorePostConfig/TIPCorePostConfig.xml:582: exec returned: 105 
+
+ 
+
+Line 582 in the TIPCorePostConfig.xml, points to the rediploy_connMgr_fp_inst.out file in <TIP_HOME>/logs 
+
+
+WASX7017E: Exception received while running file 
+"/opt/IBM/tivoli/tipv2/profiles/TIPProfile/bin/tipUpdateISCJ2EEWar.py"; 
+exception information: com.ibm.ws.scripting.ScriptingException: 
+WASX7418E: Application update for isc failed: see previous messages for 
+details. 
+
+Error from the <TIP_HOME>/profiles/TIPProfile/logs/wsadmin.traceout:
+
+00000000 AbstractShell A WASX7093I: Issuing message: "WASX7017E: Exception received while running file "/opt/IBM/tivoli/tipv2/profiles/TIPProfile/bin/tipUpdateISCJ2EEWar.py"; exception information: com.ibm.ws.scripting.ScriptingException: WASX7418E: Application update for isc failed: see previous messages for details.
+
+######
+
+The final piece to this problem is traced in the WAS SystemOut.log, in <TIP_HOME>/profiles/TIPProfile/logs/server1, which indicates a problem with the pages defined in the ibm-portlet-topology-xml file:
+
+Caused by: org.eclipse.emf.ecore.xmi.UnresolvedReferenceException: 
+Unresolved reference 
+'com.ibm.tivoli.tip.charts.TIPChartPortlet.portletEntity.A_Window_com.ib
+m.isclite.admin.Freeform.navigationElement.pagelayoutA;com.ibm.isclite.I
+SCAdminPortlets;1376586295046_1376586306685'. 
+(file:/opt/IBM/tivoli/tipv2/profiles/TIPProfile/wstemp/Script14207810389
+/workspace/cells/TIPCell/applications/isc.ear/deployments/isc/isclite.wa
+r/WEB-INF/ibm-portal-topology.xml, 176, 560)
+
+
+RESOLVING THE PROBLEM
+The Page definition causing the problem is in the ibm-portal-topology.xml file. Please tar up the WEB-INF directory so the ibm-portal-topology.xml ( and other xml configuration files ) can be checked for corruption. 
+
+TIPHOME/profiles/TIPProfile/config/cells/TIPCell/applications/isc.ear/deployments/isc/isclite.war/WEB-INF 
+
+We will fix the file and return it. 
+
+To implement the new file: 
+
+ 1) Please make a backup copy of the WEB-INF directory: 
+
+ <TIPHOME>/profiles/TIPProfile/config/cells/TIPCell/applications/isc.ear/deployments/isc/isclite.war/WEB-INF 
+
+2) Copy the new WEB-INF directory file from IBM to this directory:
+
+<TIPHOME>/profiles/TIPProfile/config/cells/TIPCell/applications/isc.ear/deployments/isc/isclite.war, depending on the returned file, either untar or unzip the file. 
+
+3) Retry the TIP upgrade. 
+
+Please note that this might occur with other versions of TIP upgrades as well.

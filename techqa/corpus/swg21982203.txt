@@ -1,0 +1,48 @@
+Title: IBM What should I download if only having a NPS upgrade performed? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What should I download if we are only having a NPS upgrade performed? 
+
+ANSWER
+You will need to download the following: 
+
+ * NPS product 
+ * Software Support Tools 
+ * Hardware Support Tools 
+
+NPS product:  * 
+ * 
+ * see "fixcentral
+ * " 
+ * 
+ *  
+ * Related information section
+ *  In the Product Group: Select Information Management Select from Information Management: IBM Netezza NPS Software and Clients In the Install Version select the desired NPS version In Platform select all The package should be titled nz-nps-vVersion.tar.gz please download and place in the/nzscratch/upgrade directory on the server the upgrade is taking place. 
+ * 
+
+Software Support Tools:  * 
+ * 
+ * see "fixcentral
+ * " 
+ * 
+ *  
+ * Related information section
+ * 
+ *  In the Product Group: Select Information Management Select from Information Management IBM Netezza Tools In the Install Version the desired SWTools version(Typically match the NPS version) In Platform select all Select the desired SWTools package and download the file called IBM_Netezza_Software_Support_Tools-vVersion.tar.gz 
+ * 
+ * 
+
+Hardware Support Tools: 
+Download the HardwareSupport Tools package from the Fixcentral download site. 
+see "fixcentral " in the Related information section 
+ 1. In the Product Group: Select Information Management 
+ 2. Select from Information Management IBM Netezza Tools 
+ 3. In the Install Version select the latest HWTools version 
+ 4. In Platform select all 
+ 5. Select the latest HWTools package and download the file called nz-hwsupport-tf-VVersion.tar.gz
+
+RELATED INFORMATION
+ Fixcentral [http://www-933.ibm.com/support/fixcentral/]

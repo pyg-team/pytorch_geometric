@@ -1,0 +1,46 @@
+Title: IBM Memory Analysis Profiling of a large application in Enabled mode with IBM Rational Agent Controller will fail (and potentially crash the profiled application) - United States
+
+Text:
+RN7.5.5; SRX; profiling; Rational Agent Controller TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+When profiling a large application (such as WAS) with Memory Analysis, data will usually not be received, and the application itself will crash or terminate after some number of minutes (using the IBM Rational Agent Controller). 
+
+SYMPTOM
+ 
+
+When profiling a large application using memory analysis profiling, using the v8.1.x and v8.2.x IBM Rational Agent Controllers, with the 'enabled' command line parameter, the following symptoms may occur:
+
+
+ * Once the workbench attaches to the profiling agent and begins monitoring, the workbench does not receive any data. That is, the workbench says it is collecting, but no data appears in the memory view. 
+ * The application being profiled becomes entirely unresponsive, and trying to connect to the application (in our case, using a browser to request pages from the server) generates an error. 
+ * CPU usage of the Java process is at 100% (e.g. it is maxed out) 
+ * Application being profiled crashes after a minute or two have elapsed. (In other tests, the JVM has merely terminated prematurely, rather than crashing, or has thrown java.lang.VerifyError)
+
+
+This issue will likely affect all IBM Rational Agent Controller platforms, and has been specifically demonstrated to fail with Websphere Application Server v7 (WAS) on Windows and z/OS RESOLVING THE PROBLEM
+This is a known issue. The workaround is to switch the JVM parameters from enabled mode to controlled mode. When the profiler is using the controlled option, profiling data becomes available and the application will run as normal. 
+
+
+In WAS, which was the application for which this problem was identified, to change the profiling option, manually update the server.xml under 
+<WAS installation path>\profiles\<profile name>\config\cells\<cell name>\nodes\<node name>\servers\<server name>
+and 
+replace "server=enabled" to "server=controlled" under the "jvmEntries" element.
+
+Here is an example of the line after having been updated (Windows WAS v7):
+<jvmEntries xmi:id="JavaVirtualMachine_1183122130078" verboseModeClass="false" verboseModeGarbageCollection="false" verboseModeJNI="false" runHProf="false" hprofArguments="" debugMode="false" debugArgs="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=7781" genericJvmArguments="&quot;-agentpath:D:\ibmrac\plugins\org.eclipse.tptp.javaprofiler\JPIBootLoader=JPIAgent:server=controlled;HeapProf&quot; -DPD_DT_ENABLED=true -Xquickstart">
+
+For WAS on zOS, you will also need to update the JVM arguments in the "servant.jvm.options" file, found in the same path as the server.xml file already discussed. This is because WAS for z/OS uses the server.xml file in the admin console, but needs to maintain a separate, plain text copy of the arguments for the zOS batch job to process.
+
+Once you have made the change, you must restart the server for it to take effect.
+
+However, you will need to start WAS from the command line, rather than from inside RAD. Use the startServer.bat / startServer.sh scripts in the WAS installation directory. 
+
+After the server process is started from the command line, create an "Attach to Agent" profile launch configuration and select the profiling agent started with the WAS process to continue the startup of the server. One you have attached, the workbench will begin monitoring the process for data collection.
+
+Note: If you attempt to start the server in profile mode from inside RAD, the server.xml will likely revert to using 'enabled' mode, as this is the default profiling mode for WAS, when profiling through RAD. Launching WAS from RAD in 'enabled' mode will cause the symptoms described above.
+
+Don't forget to remove the change when you are done profiling. This can either be accomplished by editing the server.xml again to remove the "&quot;-agentpath:D:\ibmrac\plugins\org.eclipse.tptp.javaprofiler\JPIBootLoader=JPIAgent:server=controlled;HeapProf&quot; " component, or by starting the server in Run mode, rather than starting it in profiling mode, in RAD (Run mode will remove the server.xml change).
+
+One important point to consider: when the application is run with the 'controlled' JVM profiler parameters, rather than 'enabled', the JVM will not start executing the application (e.g. WAS will not start) until you have connected to it with the workbench (e.g. the agent appears as 'monitoring' in 
+RAD/RSA under the Profiling Monitor view of the Profiling and Logging Perspective).

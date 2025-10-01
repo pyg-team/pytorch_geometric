@@ -1,0 +1,37 @@
+Title: IBM Content Navigator (ICN) install fails with an error message indicating that either the current or previous version was found - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Install of IBM Content Navigator (ICN) fails with an error like:
+"The install was aborted for the following reason: The installer found the current version of IBM Content Navigator 2.0.2. Please uninstall and reinstall the application to fix the installation." 
+
+SYMPTOM
+An error message like the following is displayed to the user and logged in the installation log file:
+"IBM Content Navigator is up to date. The installer found the current version of IBM Content Navigator 2.0.2. Please uninstall and reinstall the application to fix the installation." 
+
+The error message may also mention that a previous version was found.
+
+
+CAUSE
+ ICN data is left over in the InstallAnywhere (IA) registry.
+
+
+RESOLVING THE PROBLEM
+The solution is to clear the InstallAnywhere (IA) registry file of all ICN information and then re-attempt the install. 
+
+The IA registry file is named .com.zerog.registry.xml and is located
+- On Windows, in C:\Program Files (x86)\Zero G Registry all directory
+- On Linux and UNIX, in 
+- /var if the install was attempted under root user
+- user's home directory if install was attempted by non-root user
+
+To clear the registry of ICN entries, do the following
+1. Backup the registry file
+2. Open the file to edit it.
+3. In the section <products> ... </products> , delete the subsection containing "IBM Content Navigator". 
+4. In the section<components> ... </components>, delete all subsections or lines containing the substring "ECMClient" or reference to the ICN install directory. 
+5. Delete the installation directory for ICN.
+
+Re-attempt the install of ICN.

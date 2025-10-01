@@ -1,0 +1,85 @@
+Title: IBM During the first server startup after installing WebSphere Business Services Fabric version 7.0, loading of content could fail because of Transaction Rollbacks and transaction time outs, resulting in inconsistent data in the database - United States
+
+Text:
+v70rnotes; Transaction Rollbacks ; timeouts TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During the first server startup after installation, WebSphere Business Services Fabric version 7.0 loads core content into the database. If there is latency in the transaction between the server and the database that exceeds the maximum transaction time out set on the server, the user might see transaction roll back exceptions in the log and the content will fail to load. 
+
+SYMPTOM
+There are two sets of symptoms: 
+
+During the first server startup after installation, Fabric loads core content into the database. If there is latency in the transaction between the server and the database which exceeds the maximum transaction time out set on the server, the content will fail to load and the user will see transaction roll back exceptions, such as: 
+
+Symptom 1: TimeoutManage I WTRN0006W: Transaction 00000125513......19C00000001 has timed out after 120 seconds.
+0000002c TimeoutManage I WTRN0124I: When the timeout occurred the thread with which the transaction is, or was most recently, associated was Thread[P=118627:O=0:CT,5,main]. The stack trace of this thread when the timeout occurred was: 
+java.util.AbstractList.iterator(AbstractList.java:583)
+org.apache.derby.iapi.sql.dictionary.ColumnDescriptorList.getColumnDescriptor(Unknown Source)
+org.apache.derby.iapi.sql.dictionary.TableDescriptor.getColumnDescriptor(Unknown Source)
+org.apache.derby.impl.sql.execute.InsertResultSet.normalInsertCore(Unknown Source)
+org.apache.derby.impl.sql.execute.InsertResultSet.open(Unknown Source)
+org.apache.derby.impl.sql.GenericPreparedStatement.execute(Unknown Source)
+org.apache.derby.impl.jdbc.EmbedStatement.executeStatement(Unknown Source)
+org.apache.derby.impl.jdbc.EmbedPreparedStatement.executeBatchElement(Unknown Source)
+org.apache.derby.impl.jdbc.EmbedStatement.executeBatch(Unknown Source)
+org.apache.derby.iapi.jdbc.BrokeredStatement.executeBatch(Unknown Source)
+com.ibm.ws.rsadapter.jdbc.WSJdbcStatement.executeBatch(WSJdbcStatement.java:748)
+org.springframework.jdbc.core.JdbcTemplate$4.doInPreparedStatement(JdbcTemplate.java:881)
+org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:591)
+org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:619)
+com.ibm.tyto.jdbc.dao.SchemaQualifiedJdbcTemplate.execute(SchemaQualifiedJdbcTemplate.java:101)
+
+Symptom 2: If TransactionRollBackException was not observed during server startup, but MetaDataMismatchExceptions are observed during invoking a runtime transaction, such as:
+
+000000fa ScaAssemblerI E At schema revision 6, >(RangeInfo(uri=http://www.ibm.com/websphere/fabric/context#strict;isInstanceRange)) cannot be used with method 'public abstract boolean com.ibm.ws.fabric.model.context.IContextSpecification.isStrict()' 
+com.ibm.ws.fabric.modelstore.session.proxy.MetadataMismatchedException: At schema revision 6, <http://www.ibm.com/websphere/fabric/context#strict>(RangeInfo(uri=http://www.ibm.com/websphere/fabric/context#strict;isInstanceRange)) cannot be used with method 'public abstract boolean com.ibm.ws.fabric.model.context.IContextSpecification.isStrict()' 
+at com.ibm.ws.fabric.modelstore.session.proxy.PersistedAsThing.coerce(PersistedAsThing.java:154) 
+at com.ibm.ws.fabric.modelstore.session.proxy.PersistedAsThing.handleTypedProperty(PersistedAsThing.java:106) 
+at com.ibm.ws.fabric.modelstore.session.proxy.PersistedAsThing.invoke(PersistedAsThing.java:68) 
+at $Proxy140.isStrict(Unknown Source) 
+at com.ibm.ws.fabric.da.impl.ApplyContextSpecification.prepareFilterOperations(ApplyContextSpecification.java:113) 
+at com.ibm.ws.fabric.da.impl.ApplyContextSpecification.<init>(ApplyContextSpecification.java:76) 
+
+
+CAUSE
+The causes for this issue are internal to the WebSphere Business Services Fabric database layer.
+
+
+RESOLVING THE PROBLEM
+In cases where thisis a fresh install, the above problem can be resolved by increasing the transaction timeout value and by cleaning up the BPM Repository database tables. The following steps explain the process: 
+
+
+
+Derby/Development environments:
+
+1. Download and extract the attached 7685-patch.zip
+2. Increase the Server Total transaction lifetime timeout value to an appropriate value, in most cases 300 to 600 seconds should work but depending on the database and the network, put an appropriate value.
+a. Login into the WebSphere Process Server Administrative Console
+b. Go to Servers> WebSphere Application Servers> Server1> Container Services> Transaction service> Total transaction lifetime timeout
+c. Replace the value '120' with '300'
+d. Save the new settings
+3. Stop Server
+4. Open a cmd/session window and Set the variable WPS_HOME to the location of your WPS installation (e.g SET WPS_HOME=C:\IBM\WID7_WTE\runtimes\bi_v7\)
+5. Navigate to the directory where the patch was downloaded and run the repositoryDerbyPatch.bat/repositoryDerbyPatch.sh as follows-repositoryDerbyPatch.bat <path_to_derby_database> where 'path_to_derby_database' is the location of the WPS common DB (example: repositoryDerbypatch.bat C:\IBM\WID7_WTE\runtimes\bi_v7\profiles\wbsfabric_dev\databases)
+6. Clean the logs and start server.
+
+For DB2/Oracle/Microsoft SQL Server databases:
+
+1. Increase the Server Total transaction lifetime timeout value to an appropriate value, in most cases 300 to 600 seconds should work but depending on the database and the network, put an appropriate value.
+a. Login into the WebSphere Process Server Administrative Console
+b. Go to Servers> WebSphere Application Servers> Server1> Container Services> Transaction service> Total transaction lifetime timeout
+c. Replace the value '120' with '300'
+d. Save the new settings
+2. Stop Server
+3. Use the attached drop_table scripts for the respective database to drop the repository tables.
+4. Navigate to profile_home\dbscripts\CommonDB\db_type\db_name\ and use the createTable_governancerepository.sql to recreate the repository tables. 
+(example: C:\IBM\WPS7\profiles\Wbsfabric01\dbscripts\CommonDB\DB2\WPRCSDB\createTable_governancerepository.sql)
+5. Start Server
+
+
+Note: The above steps are for eliminating transaction timeouts on first server startup and restoring a clean and consistent repository, they will not restore any user data that was added manually to the BPM repository.
+
+7685-patch.zip [/support/docview.wss?uid=swg21414647&aid=2] 7685-patch.zip [/support/docview.wss?uid=swg21414647&aid=1]
+drop_table_db2.sql [/support/docview.wss?uid=swg21414647&aid=4] drop_table_db2.sql [/support/docview.wss?uid=swg21414647&aid=3]
+drop_table_oracle.sql [/support/docview.wss?uid=swg21414647&aid=6] drop_table_oracle.sql [/support/docview.wss?uid=swg21414647&aid=5]
+drop_table_ms_sql.sql [/support/docview.wss?uid=swg21414647&aid=8] drop_table_ms_sql.sql [/support/docview.wss?uid=swg21414647&aid=7]

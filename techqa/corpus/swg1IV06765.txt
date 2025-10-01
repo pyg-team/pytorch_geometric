@@ -1,0 +1,202 @@
+Title: IBM IV06765: DOINTROSPECTION CHANGES TO FALSE AND THE STS:XPATHMAPPING IS EMPTY WHEN IMPORTING VIA WSADMIN AND RESPONSE FILES. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Tivoli Federated Identity Manager 6.2.1 Fixpack 2 (6.2.1-TIV-TFIM-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24029500]
+Tivoli Federated Identity Manager 6.2.1 Fixpack 4 (6.2.1-TIV-TFIM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24032885]
+Tivoli Fed Id Mgr Business Gateway v6.2.1, Fix Pack 4, 6.2.1-TIV-TFIMBG-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24033364]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem is that after importing the chain, the UUID in the
+   sts.xml no longer match.
+   
+   The recreation steps are :-
+   
+   1) Use the GUI to create a trust chain.
+   Set the token type to be TAMeB Credential"
+   I set issuer and appliesto to https://issuer and
+   https://appliesto [https://appliesto]
+   I created one with an IVCRED module in validate, an XSL mapping
+   module in map, and a username token in issue.
+   
+   2) Have a look at the cirrent sts.xml file. Look for  your chain
+   and verify that "dointrospection" attribute is "true" on "IX
+   likely to be
+   /opt/IBM/WebSphere/AppServer/profiles/<profile>/config/itfim/<do
+   main>/etc/sts.xml
+   
+   3) change directory to the bin directory of WAS profile where
+   TFIM management service is installed on ( likely to be
+   /opt/IBM/WebSphere/AppServer/profiles/<profile>/config/itfim/<do
+   main>/etc/sts.xml
+   
+   4. List the chain mappings that exist in the system with this
+   command.
+   
+   ./wsadmin.sh -username wasadmin -password passw0rd -c
+   "\$AdminTask manageltfimStsChainMapping { -operation list
+   -fimDomainName idp-domain}"
+   
+   5. Note the UUID from the output
+   
+   {name=testchain,
+   uuid=uuide15a757c-0131-1a89-85a4-fd17826c1a3f,chainld=uuid14d70c
+   f-0131-1ea-ae6b-824f6643d1cs,description=}
+   
+   6. Create a response file for the chain mapping ( using the uuid
+   you noted above). This will create file /mymapping.rsp
+   
+   ./wasadmin.sh -username wasadmin -passw0rd -c "\$AdminTask
+    manageltfimStsChainMapping { -operation createResponseFile
+   -fimDomainName idp-domain -fileld /mymapping.rsp -uuid
+   uuidel15a757c-0131-1a89-85a4-fd17826c1af}"
+   
+   7. Delete the mapping from the environment ( using the uuid you
+   noted above):
+   
+   ./wsadmin.sh -username wasadmin -password pass0wrd -c
+   "\$AdminTask manageltfimStsChainMapping {-operation delete
+   -fimDomainName idp-domain -uuid
+   uuide15a757c-0131-1a89-85a4-fd17826c1af
+   
+   8. Re-import the mapping from the file
+   ./wsadmin.sh username wasadmin -password passw0rd -c
+   "\$AdminTask manageltfimStsChainMapping {-operation create
+   -fimDomainName idp-domain -filed /mymapping.rsp}"
+   
+   9. Have a look in the sts,xml and validate that dointrospection
+   has been changed to " false". Also there is now and empty
+   sts:XPathMapping element which wasn't there before.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually update the sts.xml file
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  doIntrospection property of the STS chain mapping created or
+   modified through CLI is always set to false.
+   
+   This happens because:
+   1. doIntrospection property is not included in the response file
+   generated from the STS chain mapping
+   2. doIntrospection property in the response file is not read
+   when provided
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   | fix pack | 6.2.1-TIV-TFIM-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  The workaround is to:
+   1. manually update doIntrospection property for the new/modified
+   STS chain mapping in the sts.xml or
+   2. provide TokenType (same value as the one provided in chain
+   mapping) in the WS-Trust request
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV06765
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV FED ID MGR
+   
+   
+ * REPORTED COMPONENT ID
+   5724L7300
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-24
+   
+   
+ * CLOSED DATE
+   2011-08-31
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV FED ID MGR
+   
+   
+ * FIXED COMPONENT ID
+   5724L7300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R621 PSY
+   UP

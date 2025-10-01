@@ -1,0 +1,203 @@
+Title: IBM PI82749: ABEND0C4 AT OFFSET 491E INTO DFHISIS AFTER VARIOUS OTHER ABENDS TRYING TO PUT OUT MESSAGE DFHAC2251 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are running CICS Transaction server 5.2 and have a task
+   that experienced various abends.  The task has the following
+   TACB's associated with it:
+     AITJ    ADK3 and    ASPQ
+   Looking at internal trace, the following messages were
+   issued for this task:
+   DFHRM0129 APPLID Intersystem communication failure.
+             Resource updates are being backed out.
+             Local resources maybe out of sync with those
+             on the remote system
+   DFHIS0998 applid A transaction processing a request using
+             IP Interconnectivity has abended with code ASPQ.
+   DFHIS0001 An abend (code 0C4/AKEA) has occurred
+             at offset X'491E' in module DFHISIS
+   The program check occurs when trying to get information to put
+   out
+   for the following message :
+   .
+   DFHAC2251    tranid running program program_name term termid
+                has failed with abend ASPQ. Syncpoint commit
+                processing has failed while communicating with a
+                remote system.
+   .
+   CICS trace shows we issued :
+    XMIQ ENTRY - FUNCTION(INQUIRE_TRANSACTION)
+    XMIQ EXIT FUNCTION(INQUIRE_TRANSACTION) RESPONSE(OK)
+            FACILITY_TYPE(ISSESSION) FACILITY_TOKEN(24CFFE68)
+   .
+   storage at 24CFFE68 - is free at the time of this dump.
+   DFHISIS program checks at offset x'491E' on a MVC instruction,
+   due to R2 containing 7FFFF000.
+   The problem is the principle IS facility, has been
+   deleted- so the code ends up going to low core 00000000+20
+   to retreive the value 7FFFF000 for the IPCONN control block
+   ISCB.
+   .
+   prior to the program check, we see the following message:
+    DFHIS3030 I APPLID IPCONN name deleted
+   .
+   Eventually the DFHAC2251 is issued with a termid of  ???.
+   Additional Symptom(s) Search Keyword(s): KIXREVCHY
+   0C4 program check ipic IP connection
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: ABEND0C4 at offset 491E into DFHISIS    *
+   *                      when issuing message DFHAC2251.         *
+   ****************************************************************
+   * RECOMMENDATION: .                                            *
+   ****************************************************************
+   Two CICS regions are connected via IPIC. The IPCONN in server
+   CICS region is autoinstalled. A DPL request arrived into server
+   region via IPIC. CICS allocates an receive ISSB and attaches
+   the mirror task. An abend happened in mirror task. CICS handles
+   this abend including notifying the remote side and freeing the
+   ISSB. This ISSB isn't owned by this mirror task after getting
+   freed, but the task principal facility still addresses it.
+   Accordingly, DFHTFP is driven to handle the task abend and
+   then lose control. At this time, the IPIC connection is
+   released for some reason. As the IPCONN is autoinstalled, all
+   IPIC resources including the ISSB mentioned above will be
+   freemained. Then DFHTFP get control and continue to run, it
+   checks the task principal facility by addressing the ISSB which
+   has been freemained. An 0C4 abend will happen when it tries to
+   access the ISSB which contains residual values that causes low
+   core accessing.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHISAL has been changed to clear the principal facility
+   information after ISSB is freed, if ISSB is the principal
+   facility.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI82749
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-06-07
+   
+   
+ * CLOSED DATE
+   2017-10-12
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI51066 UI51067 UI51068
+   
+   
+
+MODULES/MACROS
+ *  DFHISAL  DFHISSR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI51068 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI51068]
+   UP17/10/20 P F710
+   
+   
+ * R100 PSY UI51066 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI51066]
+   UP17/10/20 P F710
+   
+   
+ * R900 PSY UI51067 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI51067]
+   UP17/10/20 P F710
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

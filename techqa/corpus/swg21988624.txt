@@ -1,0 +1,223 @@
+Title: IBM Updating expired default certificates on the SDS Virtual Appliance - United States
+
+Text:
+ISDS; LDAP; VA; DIRECTORYSUITE; ITDS; 80; 801; expired certificates TECHNOTE (FAQ)
+
+QUESTION
+ How to update expired default certificates on the Security Directory Suite Virtual Appliance 8.0 and 8.0.1? 
+
+CAUSE
+The default LDAP server and client certificates shipped with the Security Directory Server (SDS) Virtual Appliance (VA) at GA/Base levels of 8.0 and 8.0.1 are expired and as a result:
+1. Directory Administration Server (ibmdiradm process) fails to start and records the following messages in ibmdiradm.log:
+
+
+ * GLPSSL011E The certificate in the SSL key database file server_cert has expired.
+   GLPADM057I Terminating Admin server.
+
+2. Directory Server (ibmslapd process) fails to start in normal mode (or starts in configuration only mode) and records the following messages in ibmslapd.log: 
+ * 
+ * 
+ * 
+
+
+
+ANSWER
+ 
+
+Option 1. Update SDS 8.0.1 VA with the latest firmware update at the latest recommended level [http://www.ibm.com/support/docview.wss?uid=swg27049508].
+
+Option 2. On top of SDS 8.0.1.0 level apply the interim fix: 8.0.1.0-ISS-ISDS-IF0004 [https://www.ibm.com/support/fixcentral/swg/selectFixes?product=ibm%2FTivoli%2FIBM+Security+Directory+Suite&fixids=8.0.1.0-ISS-ISDS-IF0004.fixpack&source=dbluesearch&function=fixId&parent=IBM%20Security]
+
+Option 3: Manual method:
+To rectify this problem you must recreate default certificates in default databases. This procedure below provides complete step by step details on accomplishing the same.
+In order to work with certificates and key database files you need the following: 
+
+ *  GSKit v8 based gsk8capicmd_64 / gsk8capicmd command ikeycmd (or ikeyman) tools from IBM Java SDK or IBM Java JRE. 
+
+A. Download and install IBM Global Secure Kit v8 (GSKit v8) on a system/platform of your choice:  * Download
+ * 
+ * 
+ * http://www-01.ibm.com/support/docview.wss?uid=swg24042303
+ * 
+ * 
+ * Install GSKit V8 using the instructions provided below:
+ * 
+ * http://www-01.ibm.com/support/docview.wss?uid=swg21631460
+
+B. Verify / Prepare IBM Java SDK / IBM Java JRE for CMSProvider  * You may also use ikeycmd in place of gsk8capicmd_64, without the need to installing GSKit V8. 
+ * To setup Certificate Management Services (CMS) or kdb key databases using the ikeycmd (command line tool) or ikeyman (GUI tool), you must verify and add CMS provider line in java.security file. 
+ * In the $JAVA_HOME/jre/lib/security/java.security file, under the "List of providers" section, check if the following entry to register the CMS provider is present. If the entry does not exist, add this entry in the java.security file by entering the following (where, X is the next number in the order):
+   security.provider.X=com.ibm.security.cmskeystore.CMSProvider
+   ...
+
+C. Download default serverc.kdb, clientc.kdb and defaultwebadmin.jks from SDS appliance:  * Connect to SDS appliance via Web LMI interface using url such as: https://<SDS_VA_hostname_or_ip_addr>/login 
+ * Login using "admin" user and corresponding password. 
+ * Click on "Configure - Directory Suite" on the top panel and then click on "Custom File Management" under the section "Advanced Configuration". 
+ * Click on "Certificates" folder to display the default key databases and certificates. 
+ * Select one at a time and download serverc.kdb, clientc.kdb and defaultwebadmin.jks . 
+ * Transfer these files to a AIX/Linux/Solaris/Windows system where you have the GSKit V8 utilities installed as per Step A above. 
+
+D. List the current certs from serverc.kdb, clientc.kdb and defaultwebadmin.jks  * Note: 
+ * 
+ * 
+ * 
+ * 
+ *  serverc.kdb - server
+   clientc.kdb - client
+   defaultwebadmin.jks - secret 
+ * 
+ * 
+
+ * 
+ * Certificates found 
+   * default, - personal, ! trusted, # secret key 
+   ! client_cert 
+   ! defaultwebadmin 
+   ! default_lmi_certs 
+   *- server_cert 
+ * 
+ * 
+ * Certificates found 
+   * default, - personal, ! trusted, # secret key 
+   ! server_cert 
+   *- client_cert 
+ * 
+ * 
+ * Certificates in database defaultwebadmin.jks: 
+   defaultwebadmin 
+   server_cert 
+
+E. Check the details on server_cert, client_cert and defaultwebadmin certificates to see the expiration date: 
+ * 
+ * Label : server_cert 
+   Key Size : 1024 
+   Version : X509 V3 
+   Serial : 10f60cc8185a9ec8 
+   Issuer : CN=newhost,O=ibm,C=ind 
+   Subject : CN=newhost,O=ibm,C=ind 
+   Not Before : July 7, 2015 12:42:00 AM CDT 
+   Not After : July 7, 2016 12:42:00 AM CDT 
+   ... 
+ * 
+ * 
+ * Label : client_cert 
+   Key Size : 1024 
+   Version : X509 V3 
+   Serial : 10c4fbd62237419d 
+   Issuer : CN=newhost,O=ibm,C=ind 
+   Subject : CN=newhost,O=ibm,C=ind 
+   Not Before : July 7, 2015 12:42:00 AM CDT 
+   Not After : July 7, 2016 12:42:00 AM CDT 
+   ... 
+ * 
+ * 
+ * Label: defaultwebadmin 
+   Key Size: 2048 
+   Version: X509 V3 
+   Serial Number: 57 35 BF 33 
+   Issued by: CN=defaultwebadmin 
+   Subject: CN=defaultwebadmin 
+   Valid: From: Friday, May 13, 2016 6:49:07 AM CDT To: Monday, May 11, 2026 6:49:07 AM CDT 
+   ... 
+
+
+From the above output the server_cert and client_cert are already expired. 
+
+F. Remove the expired or default certificates: 
+Its highly recommended to remove and recreate all default certificates. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Certificates found 
+   * default, - personal, ! trusted, # secret key 
+   ! default_lmi_certs 
+ * 
+ * No certificates were found. 
+ * 
+ * No key was found in the key database. 
+
+G. Create a new certificates, extract the same and cross exchanging: 
+G.i. Create self signed server certificate in the serverc.kdb file. Replace cn=sdsva1.subdom.domain.com and use "cn=<fully qualified hostname>" of your SDS appliance for the "-dn" option. Also an expiration duration of 4 years (1460 days) is specified. 
+ * 
+
+G.ii. Extract server certificate: 
+ * 
+
+G.iii. Create self signed client certificate in the clientc.kdb file. 
+ * 
+
+G.iv. Extract client certificate: 
+ * 
+
+G.v. Create self signed webadmin certificate in the defaultwebadmin.jks file 
+ * 
+
+G.vi. Extract webadmin certificate: 
+ * 
+
+G.vii. Add client and webadmin certificates to serverc.kdb: 
+ * 
+ * 
+ * 
+
+G.viii. Add server certificate to clientc.kdb: 
+ * 
+
+G.ix. Add server certificate to defaultwebadmin.jks 
+ * 
+
+G.x. List certificates 
+ * 
+ * Certificates found 
+   * default, - personal, ! trusted, # secret key 
+   ! default_lmi_certs 
+   ! client_cert 
+   ! defaultwebadmin 
+   *- server_cert 
+ * 
+ * Certificates found 
+   * default, - personal, ! trusted, # secret key 
+   ! server_cert 
+   *- client_cert 
+ * 
+ * Certificates in database defaultwebadmin.jks: 
+   defaultwebadmin 
+   server_cert 
+
+H. Upload the certificates and key database files into virtual appliance using Web LMI  * Connect to SDS appliance via Web LMI interface using url such as: https://<SDS_VA_hostname_or_ip_addr>/login 
+ * Login using "admin" user and corresponding password. 
+ * Click on "Configure - Directory Suite" on the top panel and then click on "Custom File Management" under the section "Advanced Configuration". 
+ * Click on "Certificates" folder to display the default key databases and certificates. 
+ * Click on "Upload" button, then in "File Upload" dialog, click on "Browse". Select newly created files one by and upload into SDS virtual appliance. 
+ * Upload files list: serverc.kdb, server.arm, clientc.kdb, client.arm, defaultwebadmin.jks, defaultwebadmin.arm.
+
+I. Start ibmdiradm, ibmslapd and restart webadmin:  *  Connect to SDS appliance via Web LMI interface using url such as: https://<SDS_VA_hostname_or_ip_addr>/login 
+ * Login using "admin" user and corresponding password. 
+ * Under the Appliance Dashboard "Server Control" Panel, select "Directory Administration Server" and click "Start" 
+ * Similarly select "Directory Server" and click "Start" 
+ * Finally select "Directory Server Web Administration Tool" and click "Restart"
+
+J. Validate client tools such as idsldapsearch: 
+ * 
+ * cn=localhost 
+   cn=localhost 
+   objectclass=container 
+   objectclass=top 
+
+K. Similarly validate Web Admin Tool connectivity with Directory Server:  * Connect to SDS Web Admin Tool via browser using url such as: https://<SDS_VA_hostname_or_ip_addr>/IDSWebApp 
+ * Login to LDAP Server Name with SSL (e.g.: <hostname_or_ipaddress>:636) using "cn=root" user and corresponding password.

@@ -1,0 +1,109 @@
+Title: IBM Changes to XHTML and Java sources of a JSF 2.0 web project not refreshed on publish to the WAS V8 server - United States
+
+Text:
+RAD; JSF; JSF 2.0; facelets; xhtml; java; source; changes; publish; PROJECT_STAGE; project stage; Production; Development; refresh; reload; facelet; refresh; FACELETS_REFRESH_PERIOD; web.xml; deployment descriptor; web TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ XHTML and Java sources changes for a JSF web project do not refresh when using IBM Rational Application Developer to publish to an IBM WebSphere Application Server. 
+
+SYMPTOM
+Assume the example of using Rational Application Developer (RAD) V8.5.1 to auto-publish or manual publish a web 2.5+ JSF 2.0 project to WebSphere Application Server (WAS) V8.5 on Microsoft Windows 7 Professional. The publish worked fine for a plain JSP web project, but when it comes to a JSF 2.0 project, changes made in XHTML and Java sources are not published to the server. 
+
+WAS 8.5 does not refresh or pick up the JSF 2.0 web project changes when the web page is run after publishing to the server. These are single root projects. The Project > "Build Automatically" option is selected. Removing the application EAR from the server using the “Add and Remove” option and adding the web application EAR again does not resolve the issue. This happens even if you are logged in as an Administrator group user and use Run As Administrator to start RAD. Restarting the server does not resolve the issue.
+
+The web project targeted runtime might be set to WAS 8.0. Changing the target runtime to WAS 8.5 might briefly resolve the issue, but the problem might occur again later. 
+
+CAUSE
+The JSF 2.0 Parameter settings in web.xml deployment descriptor is incorrect.
+
+
+
+DIAGNOSING THE PROBLEM
+Examine the JSF 2.0 PROJECT_STAGE parameter settings in the web.xml deployment descriptor.
+
+
+
+RESOLVING THE PROBLEM
+The problem was resolved when the JSF 2.0 parameter "PROJECT_STAGE" in web.xml was set to Development instead of Production, as per this web.xml (web deployment descriptor) snippet:
+
+<context-param> 
+<param-name>javax.faces.PROJECT_STAGE</param-name> 
+<param-value>Development</param-value> 
+</context-param>
+
+
+
+WORKAROUND:
+
+The changes were not getting applied on the server until doing a Project > Clean and restarting the server.
+
+
+Background on javax.faces.PROJECT_STAGE parameter (param):
+
+The client had set this param to Production in the beginning for testing on a production server, and forgot to change it back to Development in RAD for testing. So why did the "Production" setting cause publish problems in RAD, in that changes to the JSF project java and xhtml source are not published to the server until a project clean was done and restarting the server?
+
+Normally while you are developing a JSF 2.0 project, you enable the "Development" Project Stage. Doing this enables better error messages, including in the client side JavaScript, at the cost of some performance. In JSF 2.0 development, setting the “javax.faces.PROJECT_STAGE” to “Development“, will provide useful debugging information to let you track the bugs easily. For deployment, you change it to “Production“, since you do not want your customers to look at debugging information. 
+
+However, JSF 2.0 Facelets do caching and do not re-read changes when the project stage is not set to Development or any other valid values other than Production. There is also a related javax.faces.FACELETS_REFRESH_PERIOD parameter that should be set to 0 (zero). JSF 1.2 has similar differently named parameters for this purpose. Here are some useful discussions with explanations and examples:
+
+- IBM developerWorks forum >? WebSphere >? WASdev >? JSF: Changes to xhtml files does not show [https://www.ibm.com/developerworks/community/forums/html/topic?id=84c6b415-d3e4-42ba-80a5-b75de4d95179]
+
+- Non IBM Reference: Stackoverflow > JSF and automatic reload of xhtml files [http://stackoverflow.com/questions/7512414/jsf-and-automatic-reload-of-xhtml-files]
+
+You need to take Facelet caching/cache into account, particularly when using MyFaces which caches relatively aggressively. There is a difference between the Production and Development Project Stages. There is a refresh interval where the facelet compiler will refresh a facelet. If using the Production Project Stage then JSF 2.0 won't refresh, the facelet is not reloaded so the changes won't be seen.
+
+
+JSF 1.2/2.x Parameter examples:
+
+JSF 2 (Facelets 2.x)
+
+
+<!-- Time in seconds that facelets should be checked for changes since last request.
+A value of -1 disables refresh checking. -->
+
+<context-param>
+<param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
+<param-value>0</param-value>
+</context-param>
+
+<!-- Set the project stage to "Development", "UnitTest", "SystemTest", or "Production". -->
+<!-- An optional parameter that makes troubleshooting errors much easier. -->
+<!-- You should remove this context parameter before deploying to production! -->
+
+<context-param>
+<param-name>javax.faces.PROJECT_STAGE</param-name>
+<param-value>Development</param-value>
+</context-param>
+
+
+JSF 1.2 (Facelets 1.x)
+
+
+<context-param>
+<param-name>facelets.REFRESH_PERIOD</param-name>
+<param-value>0</param-value>
+</context-param>
+<context-param>
+<param-name>facelets.DEVELOPMENT</param-name>
+<param-value>true</param-value>
+</context-param>
+
+
+Note: 
+
+The JSF 1.2 and 2.0 parameters should not be be confused with the JSF 1.1 facesconfig.xml descriptor, which has a somewhat similar sounding IBM faces custom setting as per this RAD technote:
+
+JSF Portlet Development Migration topics: Tips and Suggestions [http://www-01.ibm.com/support/docview.wss?uid=swg21424426]
+
+"7. Prior to going to production, remove the following parameter from the
+facesconfig.xml since it is only used for development and adds a
+performance overhead that can be removed while running in production:
+
+<state-manager>com.ibm.faces.application.DevelopmentStateManager</state-
+manager>"
+
+
+RELATED INFORMATION
+#javax.faces.application Enum ProjectStage [http://docs.oracle.com/cd/E17802_01/j2ee/javaee/javaserverfaces/2.0/docs/api/javax/faces/application/ProjectStage.html]
+Java Tutorial-JSF 2.0: JSF Project Stage [http://www.java-tutorial.ch/java-server-faces/jsf-project-stage]
+JSF 2.0 New Feature Preview Series: Part 1: ProjectStag [http://css.dzone.com/news/jsf-20-new-feature-preview-ser]

@@ -1,0 +1,23 @@
+Title: IBM Access and download SPSS software - United States
+
+Text:
+entitlements; software; download TECHNOTE (FAQ)
+
+QUESTION
+ Can I download the software without active Subscription and Maintenance? 
+
+CAUSE
+expired entitlements
+
+ANSWER
+ 
+
+Official statement by IBM eCustomer Care Team (Passport Advantage Online help desk):
+
+We would like to inform you that you can only access and download software that has active Subscription and Maintenance from Passport Advantage Online.
+If the Software Subscription and Maintenance has expired you will not be able to download the software from Passport Advantage Online.
+In this case, you would need to renew your software Subscription and Maintenance.
+
+You can order the Media CD copy of the software your company purchased. The software version is the one up to the time your subscription has expired.
+The sales department will be able to advise you if the Media CD is available.
+You can find your local contact for the IBM Sales Department at: https://www.ibm.com/planetwide/ [https://www.ibm.com/planetwide/]

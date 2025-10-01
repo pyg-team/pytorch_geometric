@@ -1,0 +1,145 @@
+Title: IBM IV74771: DATASOURCE USERNAME IS NOT SEEN WHEN IMPORTED WITH NCI_IMPORT - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 4(7.1.0-TIV-NCI-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24041269]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If nci_import is run to import a project that contains a
+   datasource and this datasoource already exists on the taget
+   system, the datasource username is not seen as changed in the
+   GUI to that contained in the import unless the Impact server is
+   restarted.
+   The documentation only states that the Impact server needs to
+   be restarted when the import includes the OMNIbusEventReader
+   service, but it needs to be restarted in the circumstances
+   described here too.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Restart Impact server after import.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The doc states if a user runs "nci_import  to import a       *
+   * Netcool/Impact configuration, which includes the             *
+   * OMNIbusEventReader service, when the nci_import is complete  *
+   * you must restart the Netcool/Impact to apply the changes",   *
+   * this statement requires clarification. The following         *
+   * statement would provide more clarity to the user: Important: *
+   * When the nci_import is complete you must restart             *
+   * Netcool/Impact to apply the changes.                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following statement was updated in this section of the
+   documentation: Tivoli Netcool/Impact 7.1.0.2>Working with
+   command-line tools>nci_import
+   Important: If you are using nci_import  to import a
+   Netcool/Impact configuration, which includes the
+   OMNIbusEventReader service, when the nci_import is complete you
+   must restart the Netcool/Impact to apply the changes.
+   To:
+   Important: When the nci_import is complete you must restart
+   Netcool/Impact to apply the changes.
+   This provides more clarity to the user.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV74771
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-02
+   
+   
+ * CLOSED DATE
+   2015-10-23
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC27491801 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

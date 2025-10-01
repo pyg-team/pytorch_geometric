@@ -1,0 +1,195 @@
+Title: IBM SE50458: MQM400 CUMULATIVE #71001 FIX PACK (WMQ V7.1.0 COMMANDS & OPS) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MDV service delivery for WebSphere MQ v7.1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Collective service MDV 7.1.0.1 for WebSphere MQ v7.1
+   
+   Details of problems fixed for the WMQ server product (5724H72)
+   are included in APAR SE50458.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Collective service MDV 7.1.0.1 for WebSphere MQ v7.1
+   - which contains fixes for all the problems listed below:
+   .                                                              .
+   SE51111 [http://www-01.ibm.com/support/docview.wss?uid=swg1SE51111] - SSL HANDSHAKE FAILS WITH CIPHER SPECIFICATION ERROR  .
+   SE50050 - WMQ COMMANDS LEAK HEAPSPACE                          .
+   SE39267 [http://www-01.ibm.com/support/docview.wss?uid=swg1SE39267] - FASTPATH CHANNELS FAIL IN JOB AMQRCMLA AMQ5520 AMQZIF
+   
+   IZ83480 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ83480] - A V7.0 OR V6.0 QUEUE MANAGER FAILS TO START WHEN THE .
+             SYSTEM.AUTH.DATA.QUEUE IS DAMAGED.                   .
+   IV12828 - CLIENT APPLICATION ABLE TO BYPASS SECURITY           .
+             CONFIGURATION WHEN CONNECTING TO A WEBSPHERE MQ V7.1 .
+             QUEUE MANAGER                                        .
+   IV12565 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV12565] - WEBSPHERE MQ CAN CAUSE A SIGSEGV WITHIN KPIMQPUT     .
+             WITHIN AMQZLAA0 PROXY SUB TASK ON QUIESCED ENDMQM    .
+             CAUSING A LONG SHUTDOWN TIME.                        .
+   IV12560 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV12560] - WEBSPHERE MQ REGSUB FAILS PERSISTENTPUBLISHRETRY     .
+             NONPERSISTENTPUBLISHRETRY RC3094                     .
+             MQRCCF_BROKER_COMMAND_FAILED                         .
+   IV12372 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV12372] - WEBSPHERE MQ V7.1 CHANNEL IS ENDING NORMALLY         .
+             IMMEDIATELY AFTER IT STARTS.                         .
+   IV12219 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV12219] - IMPROVE RELIABILITY OF PUBLISH/SUBSCRIBE FUNCTIONALITY
+   IV11979 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV11979] - WEBSPHERE MQ SEGMENTED MESSAGES IGNORED INTERMITTENTLY
+             DURING MQGET CALL                                    .
+   IV11871 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV11871] - WEBSPHERE MQ ADVANCED MESSAGING SECURITY CAPABILITY TO
+             PROVIDE SHA-2 HASHING OF DIGITAL CERTIFICATE         .
+             SIGNATURES                                           .
+   IV11593 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV11593] - SHARED MEMORY LEAK WHEN MESSAGES HAVE MQRFH2         .
+             PROPERTIES.                                          .
+   IV10230 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV10230] - WEBSPHERE MQ V7 CLIENT CHANNELS FAIL TO END COMPLETELY
+             FOLLOWING BROKEN CONNECTION TO THE QUEUE MANAGER.    .
+   IV10032 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV10032] - MEMORY LEAK IN AMQRMPPA PROCESS IF CHANNEL IS CLOSED .
+             BY A SECURITY EXIT                                   .
+   IV09923 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV09923] - WEBSPHERE MQ CHANNEL NOT RESTARTED AFTER REMOTE QUEUE.
+             MANAGER RESTARTED. FDC CREATED WITH PROBE ID RM409000.
+   IV09904 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV09904] - SUBUSERDATA SENT IN RESPONSE TO A REGSUB REQUEST FROM.
+             A WEBSPHERE MQ JMS CLIENT IS ESCAPED TWICE           .
+   IV09815 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV09815] - WEBSPHERE MQ JMS APPLICATION USING READAHEAD FACILITY.
+             FAILS TO RETRIEVE AVAILABLE MESSAGES FROM A QUEUE.   .
+   IV09544 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV09544] - PROBLEM WITH MIGRATION FROM PRE 6.0.1 TO WEBSPHERE MQ.
+             7.1                                                  .
+   IV09475 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV09475] - AN ADDRESSING FAULT SIGSEGV MIGHT OCCUR WHEN USING   .
+             WEBSPHERE MQ MONITORING APPLICATIONS WITH TRACE-ROUTE.
+             REPLY MESSAGES.                                      .
+   IV09400 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV09400] - IN A CLUSTER WITH MORE THAN TWO FULL REPOSITORIES THE.
+             SYSTEM.CLUSTER.COMMAND.QUEUE CAN FILL UP.            .
+   IV09185 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV09185] - HIGH CPU USAGE OCCURS FOR WEBSPHERE MQ V7 AMQZMUR0   .
+             PROCESS.                                             .
+   IV09149 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV09149] - A CORRUPT CHANNEL SYNCHRONIZATION FILE MAY CAUSE     .
+             CHANNEL CODE TO ENTER AN INFINITE LOOP WITHOUT AN    .
+             OBVIOUS ERROR REPORT                                 .
+   IV08347 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV08347] - RM291010, AMQ9422, XC130004. WEBSPHERE MQ V7 CLUSTER .
+             TOPICS ENUMERATED DURING CLUSTER CACHE RESTORE       .
+   IV08085 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV08085] - MESSAGE REALLOCATION IS NOT PERFORMED WHEN A CLUSSDR .
+             CHANNEL WITH RETRY COUNTS SET TO ZERO ENDS.          .
+   IV07886 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV07886] - PUBLISHING TO SUBSCRIPTIONS WITH REMOTE DESTINATION  .
+             SHOULD NOT INCUR SECURITY CHECK ON THE PUBLISHERS    .
+             USERID                                               .
+   IV07738 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV07738] - RM254000, AMQ9421, INVALID_ACTION_CODE.              .
+   IV06891 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV06891] - PUTCOUNT IN A QUEUE'S QUEUE STATISTICS IS NOT        .
+             INCREMENTED WHEN A PUB/SUB MESSAGE ARRIVES ON A      .
+             SUBSCRIBER QUEUE.                                    .
+   IV04905 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV04905] - FAILURE TO CREATE A SUBSCRIPTION WHEN THE DESTINATION.
+             QUEUE IS LOCATED USING A CLUSTERED QUEUE MANAGER ALIAS
+   IC80609 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC80609] - AMQ4607, KN468004, MQRC_PUBSUB_INHIBITED (2531),     .
+             MQRC_SUB_ALREADY_EXISTS (2432)                       .
+   IC78716 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC78716] - PCF COMMAND INQUIRE_CHANNEL_NAMES DOES NOT CONTAIN   .
+             VALID CHANNEL TYPE VALUE FOR CLIENT CONNECTION       .
+             CHANNELS.                                            .
+   IC77844 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC77844] - FDC WITH PROBEID XC589161 GENERATED WHEN FASTPATH IS .
+             ENABLED FOR CHANNELS IN WMQ V7.0.1.X.                .
+   156501  - WHEN GATHERING DIAGNOSTICS USING RUNQRAS ON UNIX     .
+             PLATFORMS THE TOOL IS UNABLE TO LAUNCH MQ PROGRAMS   .
+             FROM THAT INSTALLATION                               .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SE50458
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ ISERIES V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7226
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2011-12-14
+   
+   
+ * CLOSED DATE
+   2011-12-14
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    SI45651
+   
+   
+
+MODULES/MACROS
+ *  RCHMGR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ ISERIES V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7226
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY SI66136
+   UP17/11/20 I 1000

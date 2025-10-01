@@ -1,0 +1,141 @@
+Title: IBM IV58436: DAILY IMPORT FAILS FOR TEMA UPGRADE 2.2 PATCH 3 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer executed the TEMA Upgrade 2.2 patch 3 but now the daily
+   import
+   Fails with the following error:
+   
+   ERROR: Sequel::DatabaseError: NativeException: java.sql.
+   BatchUpdateException: Implicit conversion from data type
+   nvarchar to
+   binary is not allowed. Use the CONVERT function to run this
+   query.
+    Updated to sua 2.2 patch 3and still the same issue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * Scheduled import of data from Endpoint Manager fails and the
+   * following error is written in the logs:
+   *
+   * Implicit conversion from data type nvarchar to binary is not
+   * allowed. Use the CONVERT function to run this query.
+   *
+   * EXPECTED RESULTS:
+   * After you install the patch, the import succeeds and no
+   * error is written in the logs.
+   ****************************************************************
+   * RECOMMENDATION: Apply appropriate interim fix when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+    | Update | SUA 2.2 Patch 4, Site version updated:  48
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV58436
+   
+   
+ * REPORTED COMPONENT NAME
+   IEM SW USE ANL
+   
+   
+ * REPORTED COMPONENT ID
+   5725F5700
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-02
+   
+   
+ * CLOSED DATE
+   2014-05-14
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IEM SW USE ANL
+   
+   
+ * FIXED COMPONENT ID
+   5725F5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

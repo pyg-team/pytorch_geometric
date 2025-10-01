@@ -1,0 +1,29 @@
+Title: IBM Using the "sc" command to show the Service permissions. - United States
+
+Text:
+sc sdshow Service permissions J2EE TEMA CAMADALL TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ How do I check the Service permissions using the "sc" command? 
+
+ANSWER
+
+At times it may be necessary to check your Service permissions. This may be necessary when you've installed ITCAM as a certain user and need to run as a different user. To see the Service permissions you can use the "sc" command from a Windows command-line prompt. 
+
+To compare permissions for a particular Service, run it on two systems. See the outputs and compare each line in a notepad/wordpad session.
+
+Here's an example of using the Windows command "sc" and a Service called TCsiteStandard216.
+
+(Note: The "sc" command is in the C:\Windows\System32 dir. So if this directory is not in your direct path, you'll have to run it from the C:\Windows\System32 directory.)
+
+[/support/docview.wss?uid=swg21509503&aid=1] [/support/docview.wss?uid=swg21509503&aid=1]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for Application Diagnostics ITCAM for APPLICATION DIAGNOSTICS Agent for WebSphere Windows 7.1 
+PRODUCT ALIAS/SYNONYM
+ ITCAM4AD ITCAMfAD ITCAM4J2EE ITCAM for J2EE

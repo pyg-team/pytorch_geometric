@@ -1,0 +1,22 @@
+Title: IBM Rational Rhapsody license interface features and definitions - United States
+
+Text:
+RPRG; licensing; features; functionality; third party TECHNOTE (FAQ)
+
+QUESTION
+What product interfaces does IBM Rational Rhapsody support and what do the individual license features mean?
+
+ANSWER
+Any license features with the RPRG prefix indicates a third party tool supported by Rational Rhapsody Gateway. Gateway allows you to import requirements from a number of different sources. Most of these are only one-way. For example, Microsoft Word and Excel. IBM Rational DOORS and Rational RequisitePro allow for bi-directional use - import and export of requirements. 
+
+ 
+The Rational System Architect and Rational Rose features support importing of models into Rhapsody only. 
+
+The XMI and TAU XMI features allow both import and export of models in XMI format 
+
+The RPVBA feature is for Visual Basic for application support. This allows you to write scripts to interact with the Rational Rhapsody model via the Rational Rhapsody COM API. Please note the Rhapsody COM API is in the process of being replaced with the Rational Rhapsody Java API. 
+
+The Simulink and Rational SDL Suite features allows user to import algorithm blocks from Rational SDL Suite and Mathworks Simulink. 
+
+There is further background information about some of these products and features in the Rational Rhapsody documentation (http://publib.boulder.ibm.com/infocenter/rhaphlp/v7r5/index.jsp [http://publib.boulder.ibm.com/infocenter/rhaphlp/v7r5/index.jsp]) and on 
+the Rational Rhapsody Support Portal - http://www-947.ibm.com/support/entry/portal/Documentation/Software/Rational/Rational_Rhapsody_Product_line [http://www-947.ibm.com/support/entry/portal/Documentation/Software/Rational/Rational_Rhapsody_Product_line]

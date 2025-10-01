@@ -1,0 +1,38 @@
+Title: IBM SQL1092N error from db2start or db2stop when instance owner is defined in LDAP - United States
+
+Text:
+db2set db2auth osauthdb TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ db2start or db2stop fail with SQL1092N error when the instance owner is defined in LDAP. 
+
+SYMPTOM
+db2start or db2stop fail with: 
+
+SQL1092N The requested command or operation failed because the user ID 
+does not have the authority to perform the requested command or 
+operation. User ID: "DB2INST1". 
+
+The 'db2inst1' ID is the instance owner, and is defined in LDAP.
+
+
+CAUSE
+The SYSADM_GROUP database manager configuration parameter is not set the primary group of the Instance Owner (it is set to a secondary group that 'db2inst1' is a member of) and the 'db2auth' registry variable is not set.
+
+
+RESOLVING THE PROBLEM
+The 'db2auth' registry variable must be set to 'osauthdb' with the 
+
+db2set db2auth=osauthdb 
+
+command, because some (or all) userIDs are defined in LDAP. Unfortunately, attempts to execute that command will fail with the same SQL1092N error. 
+
+The solution is to first, execute 
+
+db2 update dbm cfg using sysadm_group NULL 
+
+so that SYSADM_GROUP will default to the primary group of the instance owner. You will now be able to execute 'db2start' and 'db2stop' and the required 
+
+db2set db2auth=osauthdb 
+
+command. Once you have done that, you can set SYSADM_GROUP back to your preferred value and recycle DB2.

@@ -1,0 +1,50 @@
+Title: IBM Download IBM Netcool Network Management V9.2.2 for AIX - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and install IBM Netcool Network Management V9.2.2 using the Passport Advantage website. 
+
+DOWNLOAD DESCRIPTION
+IBM Netcool Network Management provides network discovery and event and network management, including identification and resolution of root causes, system, network and service failures, and configuration management capabilities for network devices. Inventory and connectivity data is integrated with IBM Tivoli Netcool/OMNIbus event data. Network management staff can visualize and understand the layout of complex networks, and the impact of network events and failures. They can work with events to locate, diagnose, and solve network problems in real time. 
+
+Downloading and assembling the product 
+
+ 1. Got to [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER]Find Downloads and Media [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] on IBM Passport Advantage Online and log in. 
+ 2. Search for the part numbers that are associated with the eAssembly. The eAssembly number is CRRR8ML. 
+ 3. Download all the parts that you need and decompress them into a single temporary location on your system. If you want to install Tivoli Netcool/OMNIbus as part of the Network Manager installation process, download the Tivoli Netcool/OMNIbus installation package to a specific location and point the Network Manager installer to that location. Do not decompress or rename the Tivoli Netcool/OMNIbus installation package. 
+ 4. See the section on this page called "Installation instructions" for links to useful sources of information about installing and upgrading.
+
+
+AIX HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24037566] Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24037564] Linux on System z [http://www-01.ibm.com/support/docview.wss?uid=swg24037568] Solaris [http://www-01.ibm.com/support/docview.wss?uid=swg24037565] Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037567] 
+
+Supported operating systems 
+Netcool Network Management is only partially supported on AIX operating systems. That is, not all of the products in the solution can be installed and run on AIX . The following table lists the products and versions that are included in Netcool Network Management V9.2.2, states which products are supported on AIX, and points to the supported operating systems for each product . 
+
+
+Product Supported on AIX Link Network Manager V4.1.1 No http://www-01.ibm.com/support/knowledgecenter/SSSHRK_4.1.1/com.ibm.networkmanagerip.doc_4.1.1/itnm/ip/wip/install/reference/nmip_ins_supportedoperatingsystem.html [http://www-01.ibm.com/support/knowledgecenter/SSSHRK_4.1.1/com.ibm.networkmanagerip.doc_4.1.1/itnm/ip/wip/install/reference/nmip_ins_supportedoperatingsystem.html] Network Manager V3.9 Yes http://www-01.ibm.com/support/knowledgecenter/SSSHRK_3.9.0/com.ibm.networkmanagerip.doc_3.9/itnm/ip/wip/install/reference/nmip_ins_supportedoperatingsystem.html [http://www-01.ibm.com/support/knowledgecenter/SSSHRK_3.9.0/com.ibm.networkmanagerip.doc_3.9/itnm/ip/wip/install/reference/nmip_ins_supportedoperatingsystem.html] Tivoli Netcool/OMNIbus V7.4 Yes http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/osForProduct?deliverableId=1311792011350 [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/osForProduct?deliverableId=1311792011350] Netcool Configuration Management V6.4.1 Yes http://www-01.ibm.com/support/knowledgecenter/SS7UH9_6.4.1/ncm/wip/planning/reference/ncm_plan_softwarerequirements.dita [http://www-01.ibm.com/support/knowledgecenter/SS7UH9_6.4.1/ncm/wip/planning/reference/ncm_plan_softwarerequirements.dita] Downloadable parts 
+
+For reference, the following table points to the lists of downloadable parts for Netcool Network Management V9.2.2 that are supported on AIX operating systems. 
+
+
+
+Product Link Network Manager V3.9 http://www.ibm.com/support/docview.wss?rs=3117&uid=swg24028958 [http://www.ibm.com/support/docview.wss?rs=3117&uid=swg24028958] Tivoli Netcool/OMNIbus V7.4 http://www-01.ibm.com/support/docview.wss?rs=3120&uid=swg24033234 [http://www-01.ibm.com/support/docview.wss?rs=3120&uid=swg24033234] Netcool Configuration Management V6.4.1 http://www-01.ibm.com/support/docview.wss?uid=swg24037246 [http://www-01.ibm.com/support/docview.wss?uid=swg24037246] 
+
+Quick Start Guide 
+The Quick Start Guide is available for download. It has the part number CIZ0KML. The Quick Start Guide is also available from IBM Knowledge Center. See the section "Installation Instructions." 
+PREREQUISITES
+For installation and upgrade prerequisites, including the release notes, see the planning section of the Netcool Network Management V9.2.2 documentation on IBM Knowledge Center. 
+
+URL LANGUAGE SIZE(Bytes) Installation prerequisites [http://www-01.ibm.com/support/knowledgecenter/SSNFET_9.2.2/com.ibm.omnnmip.doc_9.2.2/omn_nmip/reference/omn_nmip_pln_systemreqs.html] English 1 
+INSTALLATION INSTRUCTIONS
+For instructions about a single-server installation that is useful for test purposes, see the Quick Start Guide. For installation instructions about each product in Netcool Network Management V9.2.2, see IBM Knowledge Center. For sample installation and upgrade scenarios to help you plan your deployment, see the section "Installation and upgrade scenarios" in the Netcool Network Management documentation on IBM Knowledge Center.
+
+URL LANGUAGE SIZE(Bytes) Quick Start Guide [http://www-01.ibm.com/support/knowledgecenter/SSNFET_9.2.2/com.ibm.omnnmip.doc_9.2.2/omn_nmip/qsguide/omn_nmip_qsg.html] English 1 Installing Network Manager V4.1.1 [http://www-01.ibm.com/support/knowledgecenter/SSSHRK_4.1.1/com.ibm.networkmanagerip.doc_4.1.1/itnm/ip/wip/install/task/nmip_ins_installingitnm.html] English 1 Installing Network Manager V3.9 [http://www-01.ibm.com/support/knowledgecenter/SSSHRK_3.9.0/com.ibm.networkmanagerip.doc_3.9/itnm/ip/wip/install/task/nmip_ins_installingitnm.html] English 1 Installing Netcool/OMNIbus V7.4 [http://www-01.ibm.com/support/knowledgecenter/SSSHTQ_7.4.0/com.ibm.netcool_OMNIbus.doc_7.4.0/omnibus/wip/install/concept/omn_ins_installingupgradinguninstalling.html] English 1 Installing Netcool Configuration Manager V6.4.1 [http://www-01.ibm.com/support/knowledgecenter/SS7UH9_6.4.1/ncm/wip/install/concept/ncm_ins_installingncm.dita] English 1 Installation and upgrade scenarios [http://www-01.ibm.com/support/knowledgecenter/SSNFET_9.2.2/com.ibm.omnnmip.doc_9.2.2/omn_nmip/task/nnm_ins_installupgradescenariosparent.html] English 1 
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Netcool/OMNIbus AIX, Linux, Solaris, Windows, HP-UX on Itanium v7.04 Systems and Asset Management Tivoli Netcool Configuration Manager Linux, Solaris, AIX 6.4.1 Systems and Asset Management Tivoli Network Manager IP Edition AIX, Linux, Solaris, Windows 3.9

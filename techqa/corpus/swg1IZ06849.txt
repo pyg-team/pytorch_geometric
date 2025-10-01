@@ -1,0 +1,162 @@
+Title: IBM IZ06849: DATATYPE QUERYCACHE DOES NOT ALLOW CACHE INVALIDATION OF WHOLE MINUTES VIA THE GUI. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I discovered this a few days prior to the client reporting it
+   This only occurs with whole minutes and not if one chose x
+   minutes and 1 second.
+   
+   You can force it to use minutes by setting it in the DataType
+   .type file and restarting the ImpactServer to bring in the
+   configuration.
+   
+   The value for the timeout (QUERYCACHEINVALIDATION) is set in
+   total seconds and converted to sexagesimal for display in the
+   DataType editor GUI.
+   
+   Opening the DataType editor GUI against such a .type file forced
+   configuration will incur the GUI error again.
+   
+   The error being a dialogue box requesting a valid invalidation
+   time value.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set the value via the .type file, restart the ImpactServer to
+   read in the value and never open the DataType editor against
+   that DataType again...
+   
+   OR:
+   
+   Go for x minutes and 1 second instead of whole minutes.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IBM Netcool/Impact users who are using   *
+   *                 caching with minutes invalidation            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: DATATYPE QUERYCACHE DOES NOT ALLOW      *
+   *                      CACHE INVALIDATION OF WHOLE MINUTES VIA *
+   *                      THE GUI.                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Steps to replicate 1. Create Datatype. 2. Edit the DataTypes
+   Cache settings. 3. Configur Query Caching for minutes , ie >=0
+   4. Save the data type 5. Observe error message: Please set
+   appropriate query cache invalidation time.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 4.0.2-TIV-NCI-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ06849
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-19
+   
+   
+ * CLOSED DATE
+   2008-04-23
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

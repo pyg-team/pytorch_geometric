@@ -1,0 +1,45 @@
+Title: IBM Overview of configuring LDAP with an SSL connection for ClearQuest - United States
+
+Text:
+1256255; CQ; ClearQuest; LDAP; SSL; secure sockets; config; gs; gskit; authentication; secure; connection; overview TECHNOTE (FAQ)
+
+QUESTION
+ How can you establish SSL for LDAP authentication in IBM Rational ClearQuest 7.0.x? 
+
+ANSWER
+
+See the ClearQuest and LDAP integration topic in the IBM Media Center: Rational ClearQuest and LDAP configuration [https://mediacenter.ibm.com/media/t/0_ve6qdphl] [http://www.ibm.com/support/knowledgecenter/rational_iea/com.ibm.iea.rcq/rcq/7.0/Operations.html]for details. All ClearQuest (CQ) clients must be upgraded to version 7.0.x to use the SSL feature. 
+
+
+ * Details for enabling SSL in the ClearQuest 8.0.x.x release are documented in the product documentation [http://www.ibm.com/support/knowledgecenter/SSSH5A_8.0.1/com.ibm.rational.clearquest.admin.doc/topics/ldap/t_settingtheclearquest-ldapconnectioninformationforssl.htm] 
+ * Details for enabling SSL in the ClearQuest 7.0.1.x release are documented in the product documentation [http://www.ibm.com/support/knowledgecenter/SSSH5A_7.1.2/com.ibm.rational.clearquest.admin.doc/topics/ldap/t_settingtheclearquest-ldapconnectioninformationforssl.htm]
+
+
+Note: This technote outlines the steps to enable SSL on LDAP authentication only. 
+
+The following steps are a summary of the required setup states: 
+
+ 1. Plan for Key Distribution
+    Review the ways the key file can be distributed and decide which method(s) to use for the environment. Refer to the Distributing the key database file topic of the ClearQuest product documentation [http://www.ibm.com/support/knowledgecenter/SSSH5A/welcome].
+    
+    
+ 2. Install GSKit
+    Have users manually install the GSKit, which provides the SSL encryption, on any client that will access the LDAP Server, i.e. wherever the ClearQuest Core authentication is executed. In a distributed environment this means the ClearQuest Client, ClearQuest Web Server, but not the ClearQuest Web Application (RWP). Search for "Enabling SSL Encryption with GSKit". Users can validate a successful Windows client install by running gsk7ver at C:\Program Files\IBM\GSK7\bin\. There should be no error messages. Unless the ClearQuest Admin gives the user a keystore file, this is all users must do. 
+    
+    Note: GSKit is included with both client and server installations starting in ClearQuest 7.0.1.
+    
+    
+ 3. Create the key database file
+    Run the GSKit iKeyMan utility by launching the file: C:\Program Files\IBM\GSK7\bin\gsk7ikm.exe and distribute. 
+    
+    
+ 4. Configure the Schema Repository for LDAP Authentication with SSL
+    Follow the steps to configure for LDAP but when using the setldapinit function, use the -Z parameter to configure SSL, and optionally, the -K parameter to specify the location of the key database file (see step 1). 
+    
+    
+ 5. Configure Users for LDAP Authentication 
+    Using the CQ User Admin Tool or the "SetupCQLDAP" script. 
+    
+    
+ 6. Trace key
+    To trace on LDAP related issues, use the trace key AUTHMODE. This is the ClearQuest core key for diagnostic tracing.

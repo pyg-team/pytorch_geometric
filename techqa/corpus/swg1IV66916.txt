@@ -1,0 +1,172 @@
+Title: IBM IV66916: LOGIN OF "AMBIGUOUS" USERS AUTHENTICATED VIA ACTIVE DIRECTORY DOES NOT WORK - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Env: SCA 1.4.46 and 1.5.78 on Windows
+   Users authenticated via Active Directory
+   
+   Problem:
+   Customer has configured SCA with users authenticated via Active
+   Directory. He cannot login to SCA Interface with one of his
+   users (ABCD), receiving the error:
+   
+   "There is no user matching the entered user name and password"
+   
+   even if the user credentials are correct and the user has been
+   correctly configured in SCA.
+   
+   After running some additional troubleshooting with Wireshark
+   trace to see the request sent to LDAP, we noticed SCA sends the
+   request for the user ABCD with the filter:
+   
+   (&(&(objectCategory=Person)(|(sAMAccountName=*)(userPrincipalNam
+   e=*)))(sAMAccountName=*ABCD*))
+   (note the wildcards for sAMAccountName surrounding ABCD).
+   .
+   The LDAP returns a matching user:
+   LDAPMessage bindRequest(1)
+   "CN=tABCD,OU=ORGUNIT1,OU=ORGUNIT2,DC=DOMAIN1,DC=DOMAIN2",
+   different from ABCD
+   .
+   Immediately after SCA sends a bindRequests as
+   LDAPMessage bindRequest(1)
+   "CN=tABCD,OU=ORGUNIT1,OU=ORGUNIT2,DC=DOMAIN1,DC=DOMAIN2" simple
+   .
+   receiving the bindResponse as:
+   LDAPMessage bindResponse(1) invalidCredentials (80090308:
+   LdapErr:
+   DSID-0C0903A9, comment: AcceptSecurityContext error, data 775,
+   v1db1)
+   
+   Customer has removed the user tABCD and the login of the user
+   ABCD worked correctly.
+   So the login does not seem to work properly when Active
+   Directory contains two users with matching pattern (or better
+   the name of the problematic user is a substring of the second
+   user name)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Avoid the definition of SCA user with the name which is a
+   substring of the name of another SCA user (f.i. avoid to define
+   ABCD if another SCA user tABCD is already defined).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem Description:
+   SCA user encounters error when logging and authenticating via
+   Active Directory.
+   Problem Summary:
+   The user encounters the following error message 'There is no
+   user matching the entered user name and password' when trying to
+   log in. This is due to a problem SCA has with handling 2 users
+   with the same name in the LDAP or Active Directory.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is resolved in SCA 1.6.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV66916
+   
+   
+ * REPORTED COMPONENT NAME
+   TV EP MG SEC CF
+   
+   
+ * REPORTED COMPONENT ID
+   5725C43SM
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-14
+   
+   
+ * CLOSED DATE
+   2015-04-30
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TV EP MG SEC CF
+   
+   
+ * FIXED COMPONENT ID
+   5725C43SM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R920 PSY
+   UP

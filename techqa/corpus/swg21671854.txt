@@ -1,0 +1,116 @@
+Title: IBM Installing Oracle WebLogic Server Tools in Rational Application Developer for Host Access Transformation Services results in an incomplete installation - United States
+
+Text:
+HATS Oracle WebLogic; RAD TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installing Oracle WebLogic Server Tools in IBM Rational Application Developer for WebSphere Software (RAD) 9.0 or 9.5 for Rational Host Access Transformation Services fails when trying to use the installation wizards in the Eclipse studio with error stating the installation is incomplete. 
+
+SYMPTOM
+The installation will fail with error "Cannot complete the install because one or more of the required items could not be found". The items listed can vary depending on what is currently installed. 
+
+
+CAUSE
+The version of the Oracle WebLogic Server Tools that the studio tries to install may only work with newer versions of Eclipse. Oracle often removes support for previous versions of Eclipse from the latest version of their server tools. 
+
+RAD 9.0 is based on Eclipse 4.2.2 and requires a version of the server tools which run on Eclipse Juno to install properly.
+
+RAD 9.5 is based on Eclipse 4.4.2 and requires a version of the server tools which run on Eclipse Luna to install properly.
+
+
+RESOLVING THE PROBLEM
+Follow these steps when installing to Rational Application Developer (RAD) 9.0: 
+
+In order to install the Oracle WebLogic Server Tools in RAD 9.0, an older version of the plugin is required. The last version that supported Eclipse 4.2 was the Oracle Enterprise Pack for Eclipse 12.1.2. 
+
+More information about this version can be found at Oracle Enterprise Pack for Eclipse 12.1.2. [http://www.oracle.com/technetwork/developer-tools/eclipse/downloads/oepe-12120-1970454.html] 
+
+ 
+
+Follow these step to install the correct version of the server tools. 
+
+ 1.  Launch RAD 9.0
+     
+     
+ 2.  From the RAD toolbar select Help > Instal New Software...
+     
+     
+ 3.  Click the Available Software Sites link in the upper right of the dialog
+     
+     
+ 4.  Click the Add... button
+     
+     
+ 5.  Enter the following information to add the required repository and click OK:
+     
+     Name: Oracle Enterprise Pack for Eclipse Repository
+     Location: http://download.oracle.com/otn_software/oepe/12.1.2/juno/repository 
+ 6.  Enable the following additional repositories in the Available Software Sites list, or add them if you do not have them
+     
+     Name: Eclipse Juno repository
+     Location: http://download.eclipse.org/releases/juno
+     
+     Name: Eclipse Web Tools Platform Repository
+     Location: http://download.eclipse.org/webtools/updates/ 
+ 7.  Click OK to close the Preferences window
+     
+     
+ 8.  Ensure that the Contact all update sites during install to find required software check box is selected
+     
+     
+ 9.  Select the Oracle Enterprise Pack for Eclipse Repository entry in the Work with drop down box
+     
+     
+ 10. Expand the results shown and check the box next to Oracle WebLogic Server Tools, then click Next
+     
+     
+ 11. Follow the steps in the wizard to complete the install
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+ 
+
+Follow these steps when installing to Rational Application Developer (RAD) 9.5: 
+
+In order to install the Oracle WebLogic Server Tools in RAD 9.5, an older version of the plugin is required. The last version that supported Eclipse 4.4.2 was the Oracle Enterprise Pack for Eclipse 12.1.3.8.1. 
+
+More information about this version can be found at Oracle Enterprise Pack for Eclipse 12.1.3.8.1. [http://www.oracle.com/technetwork/developer-tools/eclipse/downloads/oepe-121381-2665269.html] 
+
+ 
+
+Follow these step to install the correct version of the server tools. 
+
+ 1.  Launch RAD 9.5
+     
+     
+ 2.  From the RAD toolbar select Help > Instal New Software...
+     
+     
+ 3.  Click the Available Software Sites link in the upper right of the dialog
+     
+     
+ 4.  Click the Add... button
+     
+     
+ 5.  Enter the following information to add the required repository and click OK:
+     
+     Name: Oracle Enterprise Pack for Eclipse Repository
+     Location: http://download.oracle.com/otn_software/oepe/luna 
+ 6.  Enable the following additional repositories in the Available Software Sites list, or add them if you do not have them
+     
+     Name: Eclipse Luna repository
+     Location: http://download.eclipse.org/releases/luna 
+ 7.  Click OK to close the Preferences window
+     
+     
+ 8.  Ensure that the Contact all update sites during install to find required software check box is selected
+     
+     
+ 9.  Select the Oracle Enterprise Pack for Eclipse Repository entry in the Work with drop down box
+     
+     
+ 10. Expand the results shown and check the box next to Oracle WebLogic Server Tools, then click Next
+     
+     
+ 11. Follow the steps in the wizard to complete the install

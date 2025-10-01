@@ -1,0 +1,72 @@
+Title: IBM (参考)IBM License Metric Tool 9.2 - サポート対象のオペレーティングシステムについて - United States
+
+Text:
+ 製品のライフ・サイクル
+
+概要
+ ここに記載されているのは、License Metric Tool の各コンポーネントによってサポートされるオペレーティング・システムの情報です。この情報は、オペレーティング・システム別およびコンポーネント別に分かれています。 
+
+本文
+カスタム･レポートを生成する場合は、「Software Product Compatibility Reports (SPCR) [https://www.ibm.com/software/reports/compatibility/clarity/osForProduct.html]」を参照してください。PVU のフルキャパシティーおよびサブキャパシティーに使用される技術に関しては以下を参照してください。 
+
+ *  Eligible Virtualization Technology and Operating Systems [http://public.dhe.ibm.com/software/passportadvantage/SubCapacity/Eligible_Virtualization_Technology.pdf] 
+ *  Eligible Processor Technology [http://public.dhe.ibm.com/software/passportadvantage/SubCapacity/Eligible_Processor_Technology.pdf]
+
+
+アプリケーション・アップデート 9.2.10
+
+プラットフォーム別の要件：
+
+→AIX [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122&osPlatforms=AIX] →Linux [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122&osPlatforms=Linux] →サポートされるHypervisors [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/vesForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122]
+
+→IBM i* [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122&osPlatforms=IBM%20i] →Solaris [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122&osPlatforms=Solaris]
+
+→HP-UX [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122&osPlatforms=HP] →Windows [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122&osPlatforms=Windows]
+
+
+コンポーネント別の要件：
+
+→ BigFix Platform [http://www-01.ibm.com/support/docview.wss?uid=swg21976664#IBM%20BigFix%20Platform] → License Matric Tool Server [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122&osPlatforms=AIX%7CHP%7CIBM%20i%7CLinux%7CSolaris%7CWindows&duComponentIds=S001] → Disconnected scanner [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122&osPlatforms=AIX%7CHP%7CIBM%20i%7CLinux%7CSolaris%7CWindows&duComponentIds=A002]
+
+→ BigFix Agent** [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122&osPlatforms=AIX%7CHP%7CIBM%20i%7CLinux%7CSolaris%7CWindows&duComponentIds=A003] アプリケーション・アップデート 9.2.9
+
+プラットフォーム別の要件：
+
+→AIX [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF&osPlatforms=AIX]→Linux [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF&osPlatforms=Linux]→サポートされるHypervisors [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/vesForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF]
+
+→IBM i* [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF&osPlatforms=IBM%20i]→Solaris [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF&osPlatforms=Solaris]
+
+→HP-UX [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF&osPlatforms=HP]→Windows [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF&osPlatforms=Windows]
+
+
+コンポーネント別の要件：
+→BigFix Platform [http://www-01.ibm.com/support/docview.wss?uid=swg21976664#IBM%20BigFix%20Platform]→License Matric Tool Server [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF&osPlatforms=AIX%7CHP%7CIBM%20i%7CLinux%7CSolaris%7CWindows&duComponentIds=S001]→Disconnected scanner [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF&osPlatforms=AIX%7CHP%7CIBM%20i%7CLinux%7CSolaris%7CWindows&duComponentIds=A002]
+
+→BigFix Agent** [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF&osPlatforms=AIX%7CHP%7CIBM%20i%7CLinux%7CSolaris%7CWindows&duComponentIds=A003] アプリケーション･アップデート 9.2.8
+
+プラットフォーム別の要件：
+→AIX [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89&osPlatforms=AIX]→Linux [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89&osPlatforms=Linux]→サポートされるHypervisors [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/vesForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89]
+
+→IBM i* [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89&osPlatforms=IBM%20i]→Solaris [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89&osPlatforms=Solaris]
+
+→HP-UX [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89&osPlatforms=HP]→Windows [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89&osPlatforms=Windows]
+
+
+コンポーネント別の要件：
+
+→BigFix Platform [http://www-01.ibm.com/support/docview.wss?uid=swg21976664#IBM%20BigFix%20Platform]→License Matric Tool Server [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89&osPlatforms=AIX%7CHP%7CIBM%2020i%7CLinux%7CSolaris%7CWindows&duComponentIds=S003]→Disconnected scanner [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89&osPlatforms=AIX%7CHP%7CIBM%20i%7CLinux%7CSolaris%7CWindows&duComponentIds=A002]
+
+→BigFix Agent** [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89&osPlatforms=AIX%7CHP%7CIBM%20i%7CLinux%7CSolaris%7CWindows&duComponentIds=A001] 
+関連する要件 
+
+* IBM i でのディスカバリーは、非接続スキャンという、ハードウェア･インベントリーとソフトウェア･インベントリーに関するデータを収集する半自動的な手順に基づいています。 
+
+** オペレーティング･システムの中には、下位バージョンの BigFix エージェントだけがサポートするものがあります。ただし、BigFix プラットフォームを下位バージョンにダウングレードしてその特定のオペレーティング･システムをサポートする必要があるということではありません。最新バージョンの BigFix は下位バージョンのクライアントをすべてサポートしています。BigFix 9.5 をインストールしても、バージョン 9.0、9.1、9.2 のクライアントに接続することができます。 
+
+---------------------------------- 
+関連文書 
+原文： 
+(英文) 「IBM License Metric Tool 9.2 - Supported Operating Systems」(Technote #2003907) [http://www-01.ibm.com/support/docview.wss?uid=swg22003907] 
+
+この文書は、米国 IBM 社の資料を翻訳した参考文書です。日本語環境での検証は行っておりませんのでご注意ください。翻訳元の文書は、関連文書のリンクよりご参照ください。 
+----------------------------------

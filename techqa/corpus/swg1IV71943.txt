@@ -1,0 +1,165 @@
+Title: IBM IV71943: WRONG CHARACTERS IN THE FIELDS FRIENDLY_NAME AND DESCRIPTION - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring: Windows(R) OS Agent 6.3.0.4-TIV-ITM_WIN-IF0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24040127]
+IBM Tivoli Monitoring 6.3.0 Fix Pack 6 (6.3.0-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24040390]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  APAR SEV: 3
+   COMPID: 5724C040W
+   REL: 6.30 FP3
+   
+   Abstract:
+   Wrong characters in the fields Friendly_Name and Description
+   
+   Problem:
+   The attributes Friendly_Name and Description of the "Network
+   Interface" attribute group are not converted in UTF8
+   
+   Affected Platforms / Versions: All the releases
+   
+   Diagnostics: Wrong characters in the fields on TEP
+   
+   Initial Impact: Medium, the fields are not readable
+   
+   Additional Keywords:
+   NTNETWRKIN.FRNAME
+   NTNETWRKIN.DESC
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The Monitoring Agent for Windows OS does not convert to UTF-8
+   the attributes Friendly_Name and Description of the "Network
+   Interface" attribute group.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The attributes Friendly_Name and Description of the "Network
+   Interface" attribute group are converted to UTF-8.
+   
+   The fix for this APAR will be contained in the following
+   maintenance packages:
+   
+   | FixPack    | 6.3.0-TIV-ITM-FP0006
+   | InterimFix | 6.3.0.4-TIV-ITM_WIN-IF0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV71943
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040W
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-07
+   
+   
+ * CLOSED DATE
+   2015-05-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * FIXED COMPONENT ID
+   5724C040W
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R621 PSN
+   UP
+   
+   
+ * R622 PSN
+   UP
+   
+   
+ * R623 PSN
+   UP

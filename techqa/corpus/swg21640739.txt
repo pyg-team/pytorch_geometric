@@ -1,0 +1,90 @@
+Title: IBMMON_AGENT issues after importing SAP Agent transports - United States
+
+Text:
+ITCAM SAP ; Transport Import Fail 5724B97SOTR TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBMMON_AGENT user has issues after importing the SAP Agent Transport 
+
+SYMPTOM
+The following symptoms may occur 
+
+ 1.  'No RFC Authorization for function module RFCPING’ error in Test Connection. 
+ 2.  'IBMMON_AGENT' user is not created 
+ 3.  IBMMON_AGENT is locked
+
+
+RESOLVING THE PROBLEM
+ Make sure the password is correct and then verify the user is created in SAP system. Use 'SU01' transaction code to verify the user exists or not, if it does not exist, there are three possible reasons: 
+
+1) Use Central User Administration (CUA) to manage SAP user and password 
+2) Specify client number when install ABAP transport into SAP system.
+3) There is a complex password policy.
+
+Note: First two conditions are mentioned in ITCAM for Application: mySAP Agent Best Practice 
+Refer Tecnote: http://www.ibm.com/support/docview.wss?uid=swg21636393 [http://www.ibm.com/support/docview.wss?uid=swg21636393]
+
+Customer using complex password policy:
+
+· Problem 1:
+'IBMMON_AGENT' user is not created, when complex password policy have been applied.
+
+Solution: APAR: IZ66593 
+Abstract: User for mySAP agent is created as communication user not as system user. 
+Additional Information: Options are available so you can configure the agent user password and communication type in a property file. 
+
+How to change default password during importing transport: 
+1) Create a file named transport.prop under SAP DIR_TRANS/bin directory.By default, the 'DIR_TRANS' value should be like /usr/sap/trans on UNIX/Linux platform and C:/usr/sap/trans on Windows platform. The value of the 'DIR_TRANS' can be retrieved by 'RZ11' transaction code on SAP system with inputing 'DIR_TRANS' in the Param.Name input field.
+2) Append a line as below into transport.prop to change the default password 
+password=<YourPassword>
+3) Append a line as below into transport.prop if it needs to change the communication type of the agent user. See notes for communication type, for example,
+logontype=C 
+logontype=<YourCommunicationType>
+4) Save all changes and grant read and write authority to the corresponding SAP admin user. 
+5) Import the ABAP transport packaged in this fix. 
+
+· Problem2:
+‘IBMMON_AGENT’ user was created but getting ‘No RFC Authorization for function module RFCPING’ error in Test Connection.
+
+Solution: Follow SAP note 1108662
+Download SAP note from SAP market place or try to search in Internet.
+
+Add the function group SYST to the RFC authorization. Add the function group "SYST" to the default role SAP_BC_WEBSERVICE_SERVICE_USER in the authorizations for "Cross-application Authorization Objects" in the area "Authorization Check for RFC Access" and the object "Name of RFC object to be protected" and save and activate this role. You should then execute a user comparison for this role.
+
+Check if '/IBMMON/AUTH' profile is assigned to the user or not.
+1) Check whether '/IBMMON/AUTH' profile is created or not, if it doesn't exist,
+Create it and assign roles to this profile as specified below.
+
+[/support/docview.wss?uid=swg21640739&aid=1] [/support/docview.wss?uid=swg21640739&aid=1]
+
+2) Assign the profile created to it as below
+[/support/docview.wss?uid=swg21640739&aid=2] [/support/docview.wss?uid=swg21640739&aid=2]
+· Problem 3: The managed system name is changing from day to day
+Applicable when: Single hosts (no clustering) have multiple mySAP instances on it
+
+Solution: It is expected behavior and agent is behaving as per the design.
+In the normal scenario at the time of start-up to fetch the MSN(Managed Server Name) agent uses the "dbhostname" from the data returned by the function module /IBMMON/ITM_HOSTS for the SUBSYSTEM_ID part in MSN and register this name to show on TEP, In case if it fails to register this name then it uses the SAPHOSTname for the SUBSYSTEM_ID part instead of dbhostname. Whenever it is taking the SAPHOSTname instead of dbhostname there is RFC communication failure with RFC error: Error message : No RFC authorization for function module RFCPING due to which it is not able to register the MSN with dbhostname and hence going for the second option that is to take the SAPHOSTname instead of dbhostname.
+
+· Problem 4: IBMMON_AGENT User is locked
+Solution:
+1) Go to transaction SU01
+2) Enter name of user : IBMMON_AGENT
+3) Unlock the user.
+[/support/docview.wss?uid=swg21640739&amp;aid=3]
+· Problem 5: User is not allowed to create another user.
+1) Logon to SAP GUI
+2) Enter transaction code SM37
+3) Enter job name as ITM_CREATE_USERID_CLIENT_ClientNum
+Note: Here ClientNum is Client number where you are importing transport. 
+For example, If you are importing on Client 800, please give job name as ITM_CREATE_USERID_CLIENT_800
+4) Press F8 to execute
+5) If Job exists and status is complete/finished then check for job log of that job.
+If job log contains following statement:
+You are not authorized to create users 
+That means user is not authorized to create another user(which is IBMMON_AGENT)
+Solution: Provide authorization to user to create another user and then import.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ 5724B97SO

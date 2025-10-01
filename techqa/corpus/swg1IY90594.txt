@@ -1,0 +1,154 @@
+Title: IBM IY90594: OPERATOR VIEW INFORMATION GROUPS TABBED DISPLAY CONTAINS RED TEX T: "* REQUIRED FIELD" - PLEASE REMOVE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Specific Binary: nci_server
+   Last Modified By:
+   Version: 3.1
+   Component:
+   Product Group: Impact
+   Product: Impact
+   Prority: Med
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Imapact Users                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: OPERATOR VIEW INFORMATION GROUPS TABBED *
+   *                      DISPLAY CONTAINS RED TEXT: * REQUIRED   *
+   *                      FIELD - PLEASE REMOVE.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Steps to replicate (if applicable)
+   ---------------------------------- Create a simple Operator
+   View with no Event Panel, no Action Panel and a single
+   Information Group to display some data in Tabbed style.  For
+   example: a  By Filter  Information Group against a DataType
+   into the alerts.status table of an ObjectServer, which is being
+   populated by a default Simnet Probe, with the Filter statement:
+   
+   Class = 3300
+   
+   Once configured & saved simply open a Browser against the
+   Operator View eg:
+   
+   http://<Hostname>:<Port>/opview/displays/<Cluster>-<OperatorVie
+   w>.html [http://<Hostname>:<Port>/opview/displays/<Cluster>-<OperatorView>.html]
+   
+   and observe that, under the Information Group tabs, the
+   returned data is preceded by the undesirable *required field
+   text.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in Impact 3.1 Fix Pack 5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY90594
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-10-12
+   
+   
+ * CLOSED DATE
+   2007-06-05
+   
+   
+ * LAST MODIFIED DATE
+   2007-06-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     IMPACT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY
+   UP

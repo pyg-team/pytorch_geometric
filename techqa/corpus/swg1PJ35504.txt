@@ -1,0 +1,186 @@
+Title: IBM PJ35504: PROCESS ANALYZER DOES NOT RECOGNIZE CUSTOM EVENT LOGS. IT ONLY P ROCESSES EVENTS FROM THE DEFAULT EVENT LOG. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ***PLEASE PROVIDE THE FOLLOWING INFORMATION
+   THIS FIELD IS REQUIRED.***
+   Description of Problem (full details)
+   The customer first experienced issues with the ProcessWIP and
+   in an attempt to resolve they decided to reinstall the Process
+   Analyser software.
+   After the reinstall they were able to see events that were sent
+   to they Inboxes but not to certain queues. After further
+   analysis we could see that it was not recognising the other
+   Event logs.
+   Following is an excerpt from vwtool detailing the Event logs
+   that the customer has:
+   Event Log   Physical Table     Event Log
+   Name    Name      ID
+   --------------   --------------     ---------
+   DefaultEventLog   VWLog1_128     0
+   ACH_Reclamations_EventLog VWLog1_195     1
+   Derivatives_Collateral_EventLog VWLog1_196     2
+   The pa.log only shows that it was obtaining information from
+   the DefaultEventlog only:
+   2008/12/31 13:59:01 [filenet.pa.datacollector.EventDispatcher -
+   1] DEBUG datacollector filenet.pa.datacollector.LogAgent
+   useLogQuery Query VWVL1_DEFAULTEVENTLOG with Identity 8578
+   2008/12/31 13:59:01 [filenet.pa.datacollector.EventDispatcher -
+   1] DEBUG datacollector filenet.pa.datacollector.LogQuery
+   query start query
+   2008/12/31 13:59:01 [filenet.pa.datacollector.EventDispatcher -
+   1] DEBUG publisher  filenet.pa.publisher.PublisherQueue flush
+   ENTER
+   The inspectpa output shows that in the X_PAPEEventState table
+   it only lists the DefaultEventlog also:
+   PAPEEventState_key RegionId EventLog
+   
+   0    1
+   VWVL1_DEFAULTEVENTLOG
+   
+   
+   
+   
+   (1 row(s) affected)
+   We asked that the customer check that the user they are
+   attempting to connect to the PE Oracle database has permissions
+   to all the vw tables.
+   They granted the user - select any dictionary - access but
+   still saw the issue. I asked that they run a SQL query to see
+   if the user can see all vw tables. (Please see attached
+   output.) The user is able to see all vwlog tables.
+   How long has the problem been occurring (recent changes)? : It
+   started to occur after the customer reinstalled PA.
+   Does this occur on more than one station / server? : no
+   Is there a workaround? : not at this time.
+   What is the impact to the customer/system? :
+   They are unable to receive all events from the PE server to PA.
+   Can the problem be replicated on an internal system?  N
+   By Who (L3, Support, etc..)
+   I tried creating a custom Event log in my system but in my case
+   the custom Event log can be seen.
+   Steps to Reproduce: (only on customers system)
+   - Create a customer Event log and Roster in Config console and
+   save the changes.
+   - Create a simple Workflow and use the newly created Event log
+   and Roster.
+   - Transfer the workflow.
+   - Notice in the customers X_PAPEEventState table on the PA
+   there is no new entry for the custom Event log.
+   - Launch the workflow and notice no new events come over
+   either.
+   Actual Results:
+   Events are not being sent to the PA database from the PE.
+   Expected Results:
+   That all events from every event log be received by the PA.
+   Are there any similar or related Defects? If Y provide ECMDB #s
+   N
+   What logs were collected and where are they located?
+   Pa.log
+   Inspectpa output
+   Configuration/Environment :
+   Server OS : Windows 2003 on the PA, Sun Solaris on PE server.
+   Client OS :
+   Database : Oracle 10g for PE and SQL Server 2005 for the PA
+   Network:
+   App Server :
+   Browser :
+   Note if non US Language:
+   Other Product Component Versions:
+   AE P8AE-4.0.1-005
+   PE P8PE-4.0.3-000.003
+   CE P8CE-4.0.1-006 with one off P8CE-4.0.1-1069.zip
+   PA P8PA-4.0.1-001
+   Non Web Environment  Y or N
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  The views of custom event logs must exist such that PA can scan
+   the views and then retrieve data from its view.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ35504
+   
+   
+ * REPORTED COMPONENT NAME
+   PROCESS ANALYZE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7603
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-12
+   
+   
+ * CLOSED DATE
+   2009-01-12
+   
+   
+ * LAST MODIFIED DATE
+   2009-01-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

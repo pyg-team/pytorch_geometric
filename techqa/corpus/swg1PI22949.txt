@@ -1,0 +1,204 @@
+Title: IBM PI22949: Rapid recycling of a jvm results in a failed server restart indi cating "java.io.IOException: The P2P layer was unable to bind to - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+IBM WebSphere Virtual Enterprise Version 7.0 Fix Pack 6, also known as Version 7.0.0.6 is available for download. [http://www-01.ibm.com/support/docview.wss?uid=swg24039270]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere Virutal Enterprise V7.
+   
+   Applications connect to a remote system which is shutdown
+   without closing the sockets.  The stale sockets result in hung
+   threads, and a WXD policy causes an automatic restart after the
+   threads are hung for a certain amount of time.
+   
+   6/1/14 1:22:28:650 EDT] 00000003 TimeoutReques W   WXDH3012W:
+   The request timeout limit specified by policy
+   Default_Excessive_Request_Timeout was exceeded by server
+   SERVER_NAME on node NODE_NAME. The limit is 5.00 %
+   and the current timeout fraction is 100.00 %.  A total of 2
+   threads may be hung.
+   
+   [6/1/14 1:22:28:650 EDT] 00000003 TimeoutReques W   WXDH3012W:
+   The request timeout limit specified by policy
+   HungThreadTimeOuts was exceeded by server SERVER_NAME on node
+   NODE_NAME. The limit is 80.00 % and the current timeout
+   fraction is 100.00 %.  A total of 2 threads may be hung.
+   
+   [6/1/14 1:22:31:958 EDT] 00000260 RestartTask   I   WXDH1007I:
+   Server SERVER_NAME useForceToManualMode=false
+   clusterName=CLUSTER_NAME being restarted automatically.
+   
+   
+   Within 10 seconds the local system attempts to restart the JVM.
+    When the JVM tries to start it encounters UDP port errors:
+   
+   [6/1/14 1:31:50:571 EDT] 00000000 P2PBase       E   ODCF8005E:
+   There was an unexpected exception while initializing the SON
+   overlay; the exception is java.io.IOException: The P2P layer
+   was unable to bind to a UDP port.
+   
+   Because of the UDP port error, the JVM fails to start.
+   However, a later restart attempt is succesful.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If the WXD policy is present, adjust it so that the hung
+   threads do not result in an automatic restart of the JVM.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Virtual          *
+   *                  Enterprise.                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Recycling of a jvm results in a failed  *
+   *                      server restart indicating "IOException: *
+   *                      The P2P layer was unable to bind to a   *
+   *                      UDP port".                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Rapid recycling of a server may result in a failed restart if
+   the port associated with the server's
+   OVERLAY_UDP_LISTENER_ADDRESS is not freed by the operating
+   system prior to the peer attempting to rebind to it during
+   server start-up.
+   Both FFDC and SystemOut.log will contain a message similar to
+   the one below; output during the failed start-up.
+   java.io.IOException: The P2P layer was unable to bind to a UDP
+   port.
+   at com.ibm.son.mesh.RawUDPImpl.<init>(RawUDPImpl.java:89)
+   at com.ibm.son.mesh.UDPFactory.getUDP(UDPFactory.java:31)
+   at com.ibm.son.mesh.Peer.<init>(Peer.java:470)
+   at com.ibm.son.mesh.Peer.<init>(Peer.java:413)
+   at
+   com.ibm.ws.p2p.P2POverlayHelper.getPeer(P2POverlayHelper.java:15
+   7)
+   at com.ibm.ws.p2p.P2PBase.getPeer(P2PBase.java:31)
+   at
+   com.ibm.ws.bbson.BBFactoryImpl.<init>(BBFactoryImpl.java:632)
+   at java.lang.J9VMInternals.newInstanceImpl(Native Method)
+   at java.lang.Class.newInstance(Class.java:1572)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Peer-to-peer Service Overlay Network (P2P/SON) has been
+   altered to allow the operating system time to free the defined
+   OVERLAY_UDP_LISTENER_ADDRESS port rather then immediately
+   failing jvm start-up when the first binding failure occurs.
+   
+   This fix will be included in the next available fix pack for IBM
+   WebSphere Virtual Enterprise.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI22949
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS VIRTUAL ENT
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9203
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-29
+   
+   
+ * CLOSED DATE
+   2014-10-20
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS VIRTUAL ENT
+   
+   
+ * FIXED COMPONENT ID
+   5725C9203
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

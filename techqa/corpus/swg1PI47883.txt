@@ -1,0 +1,166 @@
+Title: IBM PI47883: UNABLE TO SAVE PROPERTY VALUE AFTER ENTERING WRONG PATTERN FOR A PROPERTY - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using FireFox browser, you will see the following issues in
+   the Component Template page.
+   
+   Steps to reproduce:
+   
+   1. Select Configuration > Environment Property Definition
+   2. Add Property
+   3. Set name= test
+   4. Set Pattern= +//d
+   5. Set value= 1234
+   
+   The page will not reload after you save--it will appear to hang.
+   
+   
+   Setting he pattern to: /d+ you will see the expected
+   error message:
+   
+   Please correct the following errors before submitting this form:
+   Default value for property test does not follow the required
+   pattern
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * N/A                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When using FireFox browser, you will see the following       *
+   * issues in                                                    *
+   * the Component Template page.                                 *
+   *                                                              *
+   * Steps to reproduce:                                          *
+   *                                                              *
+   * 1. Select Configuration > Environment Property Definition    *
+   * 2. Add Property                                              *
+   * 3. Set name= test                                            *
+   * 4. Set Pattern= +//d                                         *
+   * 5. Set value= 1234                                           *
+   *                                                              *
+   * The page will not reload after you save--it will appear to   *
+   * hang.                                                        *
+   *                                                              *
+   *                                                              *
+   * Setting he pattern to: /d+ you will see the expected         *
+   * error message:                                               *
+   *                                                              *
+   * Please correct the following errors before submitting this   *
+   * form:                                                        *
+   * Default value for property test does not follow the required *
+   * pattern                                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to UCD 6.2.5.0                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in UCD 6.2.5.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI47883
+   
+   
+ * REPORTED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * REPORTED COMPONENT ID
+   5725M5400
+   
+   
+ * REPORTED RELEASE
+   611
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-08-31
+   
+   
+ * CLOSED DATE
+   2017-06-21
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * FIXED COMPONENT ID
+   5725M5400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R624 PSY
+   UP

@@ -1,0 +1,193 @@
+Title: IBM LO40609: FTI : SEARCHING FOR AN ENGLISH STRING IN A MIXED HEBREW AND ENGL ISH PDF FILE ISN'T FINDING THE RESULTS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  To Full Index Hebrew text in a PDF file attachment the
+   FORMATS.INI file needs
+   to be modified so the line :
+   
+   200=pdf
+   
+   is changed to
+   
+   200=lpdf
+   
+   Once this is done and the index built (or rebuilt) then can find
+   Hebrew text
+   correctly, even in a mixed Hebrew/English String.
+   
+   However, when this is in place the search will not find English
+   text in the
+   mixed PDF file.
+   
+   This seems to be related to SPR : ZQSA6T8FHU which had the
+   reverse issue of
+   Hebrew text not being found in a mixed language PDF file.
+   
+   The fix for ZQSA6T8FHU seems to have introduced a problem in
+   searching for the
+   English text.
+   
+   
+   Tests performed to highlight this :
+   
+   
+   Debug activated :
+   FT_KV_LOG=1
+   FT_KV_DEBUG_FLT=1
+   DEBUG_FTV_INDEX=1
+   DEBUG_FT_STREAM=15
+   DEBUG_FTV_SEARCH=1
+   
+   Test 1 - Standard R8.5
+   
+   FORMATS.INI set to :
+   200=lpdf
+   
+   Rebuilding Index for FTITEST1.NSF
+   Search for "Creating FTI for FTITEST1.NSF" in the console -
+   test3_Console.log
+   to find the area of the console.log showing this.
+   
+   Searching for Hebrew string.
+   Search for "Searching for Hebrew string" in the console -
+   test3_Console.log to
+   find the area of the console.log showing this.
+   
+   Result : Correct search strings found.
+   
+   Searching for English string.
+   Search for "Searching for English String" in the console -
+   test3_Console.log to
+   find the area of the console.log showing this.
+   
+   Result : No documents found - error seen in console :
+   OUT FTGSearch error = F22
+   
+   
+   Test 4 - Standard R8.5
+   
+   FORMATS.INI set to :
+   200=pdf
+   
+   Rebuilding Index for FTITEST1.NSF
+   Search for "Creating FTI for FTITEST1.NSF" in the Console -
+   test4_console.log
+   to find the area of the console.log showing this.
+   
+   Searching for Hebrew string.
+   Search for "Searching for Hebrew string" in the console -
+   test4_console.log to
+   find the area of the console.log showing this.
+   
+   Result : No documents found - error seen in console :
+   OUT FTGSearch error = F22
+   
+   Searching for English string.
+   Search for "Searching for English String" in the console -
+   test4_console.log
+   
+   Result : Correct search strings found.
+   
+   The console logs referenced are attached
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# RSTN7S7M8M.
+   The change team could not reproduce the problem or determined
+    that the problem has already been corrected.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO40609
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES/DOMINO 7X
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED UR5
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-19
+   
+   
+ * CLOSED DATE
+   2009-06-12
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

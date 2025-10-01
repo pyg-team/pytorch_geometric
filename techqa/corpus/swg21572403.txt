@@ -1,0 +1,65 @@
+Title: IBM tacmd login fails with invalid user id and password - United States
+
+Text:
+tacmd login; SUID; ./SetPerm -s; Verify the correct user name and password and that you have permission to log in; getspnam failed for itmuser; getspnam; KUIC00006E; KUIC00003E; The specified user name or password is incorrect; KUIC00003E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ tacmd login fails a error message (KUIC00006E, KUIC00003E and getspnam failed for itmuser.err = 13 ) if the HUB Tivoli Monitoring Server (TEMS) is configured as non-root user 
+
+SYMPTOM
+ 
+
+ ./tacmd login -s <server name> -u itmuser
+Password? 
+
+Validating user... 
+
+KUIC00006E: The specified user name or password is incorrect. 
+
+You are not logged in because you specified an incorrect user name or password or you do not have permission to log in. 
+
+Verify the correct user name and password and that you have permission to log in. 
+
+KUIC00003E: Cannot connect to a hub monitoring server at addresses: https://server:3661 
+
+4E414692.0004-1:kdsvlunx.c,172,"kdsvlunx") Entry 
+(4E414692.0005-1:kbbssge.c,52,"BSS1_GetEnv") KGL_LDAP_VALIDATE="NO" 
+(4E414692.0006-1:kbbssge.c,52,"BSS1_GetEnv") KDS_VALIDATE_EXT="Y" 
+(4E414692.0007-1:kdsvlunx.c,281,"kdsvlunx") Validation extensions enabled. 
+(4E414692.0008-1:kdsvlunx.c,1033,"lockouts") Active RAS1 Classes: EVERYT
+(4E414692.0009-1:kdsvlunx.c,1033,"lockouts") Entry 
+(4E414692.000A-1:kdsvlunx.c,1453,"VDM1_start") Active RAS1 Classes: 
+(4E414692.000B-1:kdsvlunx.c,1453,"VDM1_start") Entry 
+(4E414692.000C-1:kdsvlunx.c,1339,"dl_init") Active RAS1 Classes: EVERYT 
+(4E414692.000D-1:kdsvlunx.c,1339,"dl_init") Entry 
+(4E414692.000E-1:kdsvlunx.c,1355,"dl_init") PAM library libpam.so would not loaded 
+(4E414692.000F-1:kdsvlunx.c,1351,"dl_init") PAM library libpam.so.0 loaded 
+(4E414692.0010-1:kdsvlunx.c,1420,"dl_init") Exit: 0x0 
+(4E414692.0011-1:kdsvlunx.c,1471,"VDM1_start") Exit: 0x1A 
+(4E414692.0012-1:kdsvlunx.c,1050,"lockouts") userid itmuser pam_start failed. error=26 status=8 
+(4E414692.0013-1:kdsvlunx.c,1253,"lockouts") Exit: 0x8 
+(4E414692.0014-1:kdsvlunx.c,343,"kdsvlunx") getspnam failed for itmuser.err = 13 
+(4E414692.0015-1:kdsvlunx.c,545,"kdsvlunx") Exit: 0x5 
+
+
+DIAGNOSING THE PROBLEM
+To diagnose the problem, set the below trace on HUB TEMS config file and recycle the TEMS
+
+config file : $candlehome/config//<hostname>_ms_<temsname>.config 
+Trace : KBB_RAS1='ERROR (UNIT:kglcry ALL) (UNIT:kdsvlunx ALL) (UNIT:kgllg ALL) 
+(UNIT:kglld ALL)' 
+
+
+RESOLVING THE PROBLEM
+To resolve the issue 
+
+
+1. Reconfigure the HUB TEMS using root id but TEMS can be started using non-root user id. According to the document, if you are configuring user security, you should use root login ID to configure. 
+
+2. execute ./SetPerm -s to set the Set User ID (SUID) bit 
+
+The -s (Optional) Used to set security validation on selected monitoring servers. 
+
+more detail about SUID..
+
+SUID stands for Set User ID. This means that if the SUID bit is set for any application then your user ID would be set as that of the owner of application/file rather than the current user, while running that application. That means in case I have an application whose owner is ' root ' and it has its SUID bit set, then when I run this application as a normal user, that application would still run as root. Since the SUID bit tells Linux that the User ID root is set for this application and whenever this application executes it must execute as if root was executing it (since root owns this file).

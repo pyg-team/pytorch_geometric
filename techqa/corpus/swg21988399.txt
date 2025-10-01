@@ -1,0 +1,61 @@
+Title: IBM Tivoli Integrated Portal hangs on startup. - United States
+
+Text:
+TIPL2; TNPM; TIP; start; hangs; hung; process; tns listener; Oracle; database TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An instance of TIP/TNPM cannot be started. When trying to start TIP with the startServer.sh script, the process just hangs, showing the message "initializing" but never finishes. 
+
+SYMPTOM
+TIP just hangs and the process doesn't get to the message "Server open for business"
+
+
+CAUSE
+Connection to Oracle DB cannot get established.
+
+ENVIRONMENT
+TIP 1.1 / TNPM 1.3 on Sun Solaris
+
+DIAGNOSING THE PROBLEM
+Check the systemout log for entries like these:
+
+[8/3/16 10:58:23:511 GMT] 0000002e PmiRmRegistra W PMRM0216W: 
+Duplicate registration with the existing registration id 2: component name JDBC, identity <null>. 
+[8/3/16 11:10:26:870 GMT] 00000056 ThreadMonitor W WSVR0605W: Thread "server.startup : 0" (0000002c) has been active for 756750 milliseconds and may be hung. There is/are 1 thread(s) in total in the server that may be hung. 
+[8/3/16 11:10:26:892 GMT] 00000056 ThreadMonitor W WSVR0605W: Thread "server.startup : 1" (0000002d) has been active for 724356 milliseconds and may be hung. There is/are 2 thread(s) in total in the server that may be hung. 
+[8/3/16 11:10:26:910 GMT] 00000056 ThreadMonitor W WSVR0605W: Thread "server.startup : 2" (0000002e) has been active for 730043 milliseconds and may be hung. There i:s/are 3 thread(s) in total in the server that may be hung. 
+
+Use the Mustgather information for "Performance, hang, or high CPU issues in TIP" , using one of these technotes:
+
+
+
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21568245#perfissues [http://www-01.ibm.com/support/docview.wss?uid=swg21568245#perfissues] 
+
+The analysis from the WASSDK team of the solperf output points to an issue with the connection to the Oracle DB. / JDBC driver: 
+
+at java.net.SocketInputStream.socketRead0(Native Method) 
+at java.net.SocketInputStream.read(SocketInputStream.java:129) 
+at oracle.net.ns.Packet.receive(Unknown Source) 
+at oracle.net.ns.NSProtocol.connect(Unknown Source) 
+at oracle.jdbc.driver.T4CConnection.connect(T4CConnection.java:858) 
+at oracle.jdbc.driver.T4CConnection.logon(T4CConnection.java:268) 
+at oracle.jdbc.driver.PhysicalConnection. (PhysicalConnection.java:441) 
+at oracle.jdbc.driver.T4CConnection. (T4CConnection.java:165)
+at 
+oracle.jdbc.driver.T4CDriverExtension.getConnection(T4CDriverExtension.j 
+ava:35) 
+at oracle.jdbc.driver.OracleDriver.connect(OracleDriver.java:801) 
+at 
+oracle.jdbc.pool.OracleDataSource.getPhysicalConnection(OracleDataSource 
+.java:297) 
+at 
+
+
+
+RESOLVING THE PROBLEM
+Customer tried to restart all the Oracle components of datachannel, dataload and database. 
+
+While starting he was not able to start any process, so he killed the tns listener and started it again. 
+
+After starting the tns listener, TIP started up fine.

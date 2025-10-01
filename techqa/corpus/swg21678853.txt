@@ -1,0 +1,35 @@
+Title: IBM Creating orders in Sterling Order Management system throws SQL Exception - United States
+
+Text:
+SQL exception; order creation; WCS; bytes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to create orders in IBM Sterling Order Management system (OMS) throws SQL Exception DB2 SQL Error: SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=4.12.55 
+
+SYMPTOM
+Steps to reproduce: 
+
+ 1. Capture the online order from IBM Webpshere Commerce site and transfer to the Order Management System. 
+    
+    
+    
+ 2. Run createOrder API to create the order. The following error is seen
+    <Errors>
+    <Error ErrorCode="com.ibm.db2.jcc.am.SqlDataException"
+    ErrorDescription="DB2 SQL Error: SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=4.12.55"
+    ErrorRelatedMoreInfo="" ErrorUniqueExceptionId="10.97.3.1113881258679810000000000004">
+    <Attribute Name="ErrorCode" Value="com.ibm.db2.jcc.am.SqlDataException"/>
+    <Attribute Name="ErrorDescription" Value="DB2 SQL Error: SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=4.12.55"/>
+
+
+CAUSE
+The reason behind the discrepancy observed when you enter the symbol through keyboard is that the keyboard entered character is actually single quote and requires only 1 byte for storage. However, the apostrophe symbol(sent from WCS) requires 3 byte of storage in DB2.
+
+DIAGNOSING THE PROBLEM
+Online orders are captured from IBM WCS and transferred to OMS. These orders may have some items which have specific promotion associated to them. In OMS, these promotions are inserted into tableYFS_LINE_CHARGES in which one of the columns is REFERENCE .The allowed character limit for this column REFERENCEis 50 characters. Accordingly the message coming from WCS to OMS is trimmed to 50 characters. However whenever the text contains a single apostrophe, even though the text has 50 characters still SQL exception is thrown during order creation in OMS. No error is thrown on an instance which used Oracle rather than Db2
+
+
+
+RESOLVING THE PROBLEM
+When trimming the text coming from WCS, you should use the number of bytes as a criteria rather than the number of characters entered. This would ensure that irrespective of the no of bytes required by any special character the API calls would go through successfully. 
+Apart from this particular symbol there might be other special characters as well which show a similar behavior and need multiple bytes for storage. Also, this would vary based on the character set used by the DB/system.

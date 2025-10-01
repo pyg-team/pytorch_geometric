@@ -1,0 +1,72 @@
+Title: IBM Cannot Login Datacap RV2  with LLLDAP - United States
+
+Text:
+RV2; Datacap 9.1.1 TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ We can not login Datacap RV2 with LLLDAP, and we applied the technote below:
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21590581 [http://www-01.ibm.com/support/docview.wss?uid=swg21590581]
+
+
+
+<add key="EnableLDAP" value="true"/>
+
+However, we found the empty userid and password in tms log:
+
+
+
+11/28/17 16:46:39.712 7 194c CConnection::Login to use: UID=; PWD=;-P; StID=1
+
+11/28/17 16:46:39.712 4 194c c:0f11c088 u: s: Connection::Login on 1
+
+11/28/17 16:46:39.712 4 194c <ITMA> Authenticator implements callBack interface
+
+11/28/17 16:46:39.712 4 194c <ITMA> Authenticator callback object is set
+
+11/28/17 16:46:39.712 4 194c <ITMA> Using authenticator "Datacap.itmaLLL"
+
+11/28/17 16:46:39.712 4 194c <ITMA> Authenticator implements IsSupported interface.
+
+11/28/17 16:46:39.712 4 194c <ITMA> Authenticator reported CredentialsChecker is true. 
+
+11/28/17 16:46:39.712 1 194c <LLLDAP Groups> LLLDAP Template ...
+
+....
+
+11/28/17 16:46:39.743 1 194c <LLLDAP Groups> dn search entry error, resulting in failed dn retrieval, error 0x57.
+
+11/28/17 16:46:39.743 1 194c <LLLDAP Groups> unable to get the 'DN' for user ""; ldap connection:246287236 [hex:eae0b84]
+
+11/28/17 16:46:39.743 9 194c <ITMA> Authenticator couldn't validate user "". Reported error: "<LLLDAP Groups> unable to get the 'DN' for user ""; ldap connection:246287236 [hex:eae0b84]". COMError:"The operation completed successfully."
+
+11/28/17 16:46:39.743 4 194c Login name and/or password invalid.
+
+
+
+
+CAUSE
+For Datacap 9.0.1 , 9.1.1 and later version.
+
+<add key="EnableLDAP" value="true"/>
+
+The above setting cause blank USERID passing to Datacap Server. 
+
+The following comments for the setting is also very clear, which is only enabled if ActiveX is being used to obtain the user name and password, if it is not the case, please setting back to false. 
+
+<!-- EnableLDAP when true uses ActiveX to obtain the user name and password. -->
+
+
+
+
+ANSWER
+Change following value to flase, so Datacap server can get proper userID and password, and authenticate with LDAP server.
+
+locate the file named web.config under \Datacap\RV2, make the following change
+
+<add key="EnableLDAP" value="false"/>
+
+Restart IIS for RV2, then verify if Datacap server can receive the logon USERID and password.

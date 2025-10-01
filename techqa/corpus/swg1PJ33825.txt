@@ -1,0 +1,166 @@
+Title: IBM PJ33825: PROCESS ADMINISTRATOR QUERY USING CUSTOM INDEX WITH MIN AND MAX VALUES DOESN'T RETURN WORK ITEMS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description of Problem (full details)
+   Perfroming a query in Process Administrator using user index
+   will return result.  However, no result is returned if users
+   add index values via "Advanced" button (next to the index)
+   where the min & max value were set to the range that the
+   exposed data fields contain
+   The problem was noticed initially using exposed time data
+   field. Later the problem is also reproduced using the exposed
+   integer data field.
+   How long has the problem been occurring (recent changes)? :
+   Does this occur on more than one station / server? : Yes
+   Is there a workaround? :
+   What is the impact to the customer/system? :
+   Can the problem be replicated on an internal system?  Y
+   Steps to Reproduce:
+   1. In Process Configuration Console, expose some data field
+   (e.g., myInteger) for Inbox before creating a user index
+   (e.g., myIntegerndex) using the integer data field
+   2. In Process Designer, expose the integer data field in the
+   Workflow Properties dialog when designing a new workflow
+   3.  Launch the workflow a few times after set the data field to
+   some number (e.g., we use 12345, 22345, 32345, 42345 when
+   launching the workflow)
+   4. Perform query in Process Administrator using the custom
+   index.
+   5. Start the search for the work items in the Inbox, user
+   should get 4 rows in the result list.
+   6. Now open the Specify index value dialog.  Enter "12345" as
+   the  Min value and "42345" as  the Max value
+   7 Start the search, users should notice that there is no
+   result returned.
+   http://hq-intgwinae9:9080/WorkplaceXT [http://hq-intgwinae9:9080/WorkplaceXT]
+   Actual Results:
+   No work items are returned
+   Expected Results:
+   Four work items returned in our case.
+   Are there any similar or related Defects? If Y provide ECMDB #s
+   What logs were collected and where are they located?
+   Configuration/Environment :
+   Server OS : AE/Win2k3 R2 + PE/Win2K3
+   Client OS :WinXP
+   Database : SQL2005 SP2
+   Network:
+   App Server : WebSphere 6.1.0.9
+   Browser : IE 6.0.2 +SP2
+   Note if non US Language:
+   Other Product Component Versions:
+   Non Web Environment  Y or N
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply P8PE 4.0.3 and newer releases.                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in P8PE 4.0.3 and newer releases.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ33825
+   
+   
+ * REPORTED COMPONENT NAME
+   PROCESS ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7607
+   
+   
+ * REPORTED RELEASE
+   403
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-06-09
+   
+   
+ * CLOSED DATE
+   2009-04-23
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PROCESS ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R7607
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R403 PSY
+   UP

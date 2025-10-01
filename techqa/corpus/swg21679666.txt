@@ -1,0 +1,28 @@
+Title: IBM How to deploy .dsar ruleset archive using the res-deploy Ant task in ODM - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When I use res-deploy Ant task to deploy a ruleset archive for the decision engine ruleset (.dsar file), I get the error:
+[res-deploy] [ERROR] ilog.rules.res.tools.http.IlrDeployRuleAppException: The RuleApp archive is not valid. 
+[res-deploy] ilog.rules.res.model.archive.IlrArchiveException: The RuleApp archive is not valid. 
+
+
+How do I deploy a .dsar ruleset file using an Ant task? 
+
+
+CAUSE
+This is expected behavior since the res-deploy Ant task deploys RuleApp archives, not ruleset archives. See the documentation at 
+Operational Decision Manager V8.5.1 > Decision Server Rules > Deploying business rules > Deploying rulesets > Deploying and exporting RuleApps [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/index.jsp?topic=%2Fcom.ibm.odm.dserver.rules.deploying%2Ftopics%2Ftsk_res_deploy_rlapp_ant.html]
+
+
+
+
+ANSWER
+ 
+
+Create a RuleApp archive which contains the ruleset .dsar archive, and use res-deploy Ant task to deploy the RuleApp archive instead of the ruleset archive.
+
+RELATED INFORMATION
+# Ruleset archives for the decision engine (.dsar files) [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/index.jsp?topic=%2Fcom.ibm.odm.dserver.rules.res.managing%2Ftopics%2Ftsk_res_config_xu_cacacheprop.html]

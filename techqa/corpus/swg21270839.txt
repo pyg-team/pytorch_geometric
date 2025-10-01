@@ -1,0 +1,103 @@
+Title: IBM CICS and the z/OS BEAR - Diagnosing program checks caused by a wild branch - United States
+
+Text:
+BEAR; SDWABEA; RTM2BEA; 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 R700 700 R000 000 HCI7000 5655Y0401 5655-Y04 5655Y04 KIXINFO TECHNOTE (FAQ)
+
+QUESTION
+ You would like to use the Breaking Event Address Register (BEAR) to diagnose a program check in CICS Transaction Server for z/OS (CICS TS). You think the abend is caused by a wild branch. You need to know, what is the BEAR, and how can you use it to resolve the abend? 
+
+ANSWER
+CICS TS V3.1 and later, provides the contents of the Breaking Event Address Register (BEAR). The BEAR is a hardware enhancement in z9-109 (z/Architecture mode). The BEAR is a 64-bit register that contains the address of the last instruction that caused a break in sequential instruction - the last successful branch address. It can be very useful in diagnosing wild-branch types of problems that typically result in 0C1 or 0C4 abends.
+
+The minimum operating system level to take advantage of the BEAR is z/OS V1.7.
+
+The BEAR [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.3.0/com.ibm.cics.ts.doc/dfhs1/topics/dfhs1c0044.html] is in the base product beginning with CICS TS V4.1. If you are running CICS TS V3.1 or V3.2, apply the following PTFs to use the BEAR:
+
+APAR PK47015 [http://www.ibm.com/support/docview.wss?uid=swg1PK47015], PTF UK28041 - CICS TS V3.1
+APAR PK47715 [http://www.ibm.com/support/docview.wss?uid=swg1PK47715], PTF UK28429 - CICS TS V3.2
+
+When z9 or higher hardware is present, the hardware will store the current contents of the BEAR in the Prefixed Save Area (PSA), field FLCEBEA. When a program check occurs, the operating system copies the contents of the BEAR from the PSA into diagnostic work areas, Recovery Termination Manager 2 Work Area (RTM2WA) and System Diagnostic Work Area (SDWA). The fields containing the BEAR are RTM2BEA and SDWABEA.
+
+Although the BEAR is a 64-bit register, in CICS TS V3.1 and V3.2, only the second word of the BEAR is saved due to space limitations. Since the operating system does not currently support running programs above the bar, this low-order word will generally be sufficient. In CICS TS V4.1 and higher, both words of the BEAR are saved.
+
+When the Kernel domain is formatted in a CICS dump with the BEAR support, the BEAR data will be formatted in the Kernel error information. In CICS V 4.2 and higher, BEAR is formatted with title 'Breaking Event Address'. In CICS TS V4.1 and lower, it is formatted with title 'Branch Event Address'. 
+
+To view the Kernel domain, enter IPCS command verbx dfhpdxxx 'ke' where xxx is the version and release of the CICS dump. For example, the value of xxx is 690 for CICS TS V5.2 and 700 for CICS TS V5.3. 
+
+
+
+
+
+
+
+For CICS TS V4.2 and higher, the CICS dump formatter will attempt to identify the module and offset of the BEAR (as highlighted below). It will also attempt to format the data at the PSW, called PSWDATA, and the data at the BEAR, called BEARDATA [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.3.0/com.ibm.cics.ts.doc/dfhs1/topics/dfhs1c0044.html]. 
+
+CICS Registers and PSW 
+PSW: 078D2001 80000000 00000000 0064828C Instruction Length: 6 Interrupt Code: 10 
+Exception Address: 00000000_40004000 
+Execution key at Program Check/Abend: 8 Addressing Mode: 64 
+Space at Program Check/Abend: Basespace 
+Breaking Event Address: 00000000_0064816E - offset 0000016E in module TESTPROG 
+In the above case, the Branch Event Address 64816E points to the last branch instruction that executed prior to the abend 0C4. 
+
+
+
+
+
+ 
+
+For CICS TS V4.1, the 64-bit BEAR is formatted as Branch Event Address:
+
+CICS Registers and PSW.
+PSW: 078D0000 80000002 Instruction Length: 2 Interrupt Code: 01
+Execution key at Program Check/Abend: 8
+Space at Program Check/Abend: Basespace Branch Event Address: 00000000_0187ECEC 
+
+
+In the above case, the Branch Event Address 187ECEC points to the last branch instruction that executed prior to the abend 0C1. The 0C1 is due to a branch to location zero.
+
+
+
+
+
+ 
+
+For CICS TS V3.1 and V3.2 , only the 31-bit BEAR is formatted:
+
+CICS Registers and PSW.
+PSW: 078D0000 80000002 Instruction Length: 2 Interrupt Code: 01
+Execution key at Program Check/Abend: 8
+Space at Program Check/Abend: Base Branch Event Address: 0187ECEC
+
+If you have a wild-branch type of problem and are running z/OS V1.7 or higher (running on a z9 or higher processor), but do not have the CICS APARs applied, it is often possible to find the BEAR if the program check is still in the MVS system trace table. You should be able to find either the GETMAIN for the SDWA, or the SYNCH (SVC C passing control to the CICS ESTAE) that will follow. You can get the SDWA address from either of these two system trace entries. If the SDWA can still be formatted, it should include the BEAR. Here's an example of finding the SDWA from the system trace table:
+
+[/support/docview.wss?uid=swg21270839&aid=1] [/support/docview.wss?uid=swg21270839&aid=1]
+
+The PSW address from the *PGM trace entry above contains 80000002. This is typical of a branch to location 00000000.
+
+Note: Some intervening trace entries were deleted.
+
+The following trace entry shows the SYNCH (SVC C) request, passing control to the CICS ESTAE or recovery module, DFHKESTX, following the above 0C1 abend (00 003C removed from left of display for formatting):
+
+[/support/docview.wss?uid=swg21270839&aid=2] [/support/docview.wss?uid=swg21270839&aid=2]
+
+On the above SYNCH request, Register 1 (see the UNIQUE-3 field) contains the address of the parameter list. This parameter list is the SDWA address, being passed to the CICS ESTAE.
+
+Once you have the SDWA address, you can try to format it under IPCS with the command:
+
+ip cbf 11FE45B0 str(SDWA)
+
+In this example, the SDWA address is 11FE45B0, and if the SDWA can still be formatted in the dump, it would look like:
+
+[/support/docview.wss?uid=swg21270839&aid=3] [/support/docview.wss?uid=swg21270839&aid=3]
+
+Then you can use a FIND command for the characters "BEA" to get to the SDWABEA field:
+
+[/support/docview.wss?uid=swg21270839&amp;aid=4]
+
+For this example, address 187ECEC points to the instruction that branched to location zeroes.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

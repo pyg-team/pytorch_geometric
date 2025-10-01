@@ -1,0 +1,225 @@
+Title: IBM IV96613: PLAIN TEXT MESSAGES COME OVER FINE FROM MAXIMO EMAILS BUT HTML MESSAGES FROM MAXIMO COMMUNICATIONS DO NOT. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ERROR DESCRIPTION:
+   
+   Plain text messages come over fine from Maximo emails but html
+   messages from Maximo communications do not.
+   
+   PROBLEM:
+   
+   If you recently upgraded the mail servers from Exchange 2008 to
+   Exchange 2013 CU10 you may experience some issue as below.
+   
+   It is related to formatting of communications that are sent
+   from Maximo.
+   
+   Plain text messages come over fine but html messages
+   do not.  The html messages are coming over as plain text with
+   the
+   header below.
+   
+   This is happening with communications that include long
+   descriptions
+   that are formatted as html.  This is also happening with the
+   email
+   listener error notifications that include the email message
+   where the
+   email message is formatted as html. This was not happening
+   before the
+   Exchange upgrade.
+   
+   You may wonder if there is a way to have both plain text and
+   rich text communications to be formatted correctly?
+   The only plain text communication they currently have coming
+   from
+   Maximo is the PMWoGen email. The convertToPlainText property
+   seems to be the problem.
+   
+   
+   PERFORMANCE ISSUE:  No
+   
+   STEPS TO REPRODUCE:
+   
+   Steps to replicate :
+   Log into Maximo as maxadmin
+   Go to System Properties and adjust the properties as per
+   scenarios below
+   Go to Preventive Maintenance app and search for any active PM
+   which is not due yet
+   Go to Select Actions > Generate Work Orders and generate PM
+   workorders ignoring the Frequency Criteria
+   Enter a valid email address in the dialog box.
+   Then go to Work Order Tracking app and search for any record
+   Go to Select Action > Create > Communication
+   Choose any valid communication template and send an email to a
+   valid email address (Rich Text Format)
+   
+   Test is according to the scenarios below :
+   
+   ---------------------------------------------------------------
+   Scenario 1 - From the Maximo side, if you use the following
+   settings
+   in System Properties app :
+   mxe.email.charset = UTF-8
+   mxe.email.content.type = text/html; charset=UTF-8
+   mxe.email.convertToPlainText = 0
+   
+   Results :
+   For these settings, the rich text communications look fine on
+   outgoing
+   communication templates. The plain text communications do not.
+   They are now formatted without carriage returns.
+   The plain text communication they currently have is from Maximo
+   is the
+   PMWoGen email.
+   ---------------------------------------------------------------
+   Scenario 2 - From the Maximo side, if they use the following
+   settings
+   in System Properties app :
+   mxe.email.charset = UTF-8
+   mxe.email.content.type = text/plain; charset=UTF-8
+   mxe.email.convertToPlainText = 1
+   
+   Results :
+   For these settings, the rich text communications are messed up.
+   The plain text communications look fine.
+   ---------------------------------------------------------------
+   
+   CURRENT ERRONEOUS RESULT: Extra spaces come in the email
+   communication.
+   
+   EXPECTED RESULT:  Email without extra spaces between lines
+   
+   ENVIRONMENT (SYSTEM INFO):  Maximo 7.5.0.6
+   
+   LOCAL FIX: none
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * MAXIMO                                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * PLAIN TEXT MESSAGES COME OVER FINE FROM MAXIMO EMAILS BUT    *
+   * HTML MESSAGES FROM MAXIMO COMMUNICATIONS DO NOT.             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   	 | release\fix pack | Interim Fix for Release 7.6.0.9 Product
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV96613
+   
+   
+ * REPORTED COMPONENT NAME
+   SYSTEM CONFIG
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46S1
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-05-25
+   
+   
+ * CLOSED DATE
+   2017-05-26
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SYSTEM CONFIG
+   
+   
+ * FIXED COMPONENT ID
+   5724R46S1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

@@ -1,0 +1,22 @@
+Title: IBM Job is killed by some unknown signal or unknown reason - United States
+
+Text:
+unknown signal reason job killed TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Job is killed by some unknown signal or unknown reason 
+
+RESOLVING THE PROBLEM
+My job is killed by some unknown signal or unknown reason.If your job exits with a value smaller than 128, it is the real exit value from your application. For example, if you have a C code which ends with exit(3), then the number 3 will be the exit code. You should check why your C code ends with exit(3) yourself. 
+
+If the job exits with value bigger than 128, it means the job is killed by signal. The real signal number is exit code minus 128. (Job exit value greater than 128) = 128 + SIGNAL_NUMBERFor example, if a job exited with 152, it was kill with signal 24 (SIGTSTP).
+
+If neither a user nor an LSF administrator kills the job, you may want to check if it is killed because of the resource usage limit: Run bjobs -l to check if there is limit specified in job submission command line. Run bqueues -l to see if there is any limit defined in the queue that the job is running. 
+
+Run bsub -q -I csh -c limit to check if there are other limits set for job running in this queue.
+
+You may also get additional information from bacct as it also displays some termination reasons. You will need to consult the manual to find out more about using bacct
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

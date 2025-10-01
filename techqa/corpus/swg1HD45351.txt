@@ -1,0 +1,139 @@
+Title: IBM HD45351: QUICK PRINT DOES NOT FOLLOW EXACTLY WHAT IS DOCUMENTED - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Quick Print does not follow exactly what is
+   documented
+   Online Documentation says for Quick print:
+   The current document is sent to your default
+   printer using the current print settings.
+   but Whatever are the print settings, "Quick Print"
+   always prints with following settings:
+   Rotation 0,
+   print area: display.
+   To avoid confusion, Documetation need to be
+   details for the quick print settings used.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Quick Print does not follow exactly what is documented
+   Quick Print does not follow exactly what is
+   documented
+   Online Documentation says for Quick print:
+   The current document is sent to your default
+   printer using the current print settings.
+   but Whatever are the print settings, "Quick Print"
+   always prints with following settings:
+   Rotation 0,
+   print area: display.
+   To avoid confusion, Documetation need to be
+   details for the quick print settings used.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS MODIFICATION WILL BE INCLUDED IN CATIA
+   DOCUMENTATION DELIVERED WITH CATIA
+   VERSION 5 RELEASE 17.
+   NOTE THAT DOCUMENTATION WILL ALSO BE
+   INCLUDED IN V5R16 SP02.
+   Documentation Reference
+   Infrastructure User's Guide
+   Basic Tasks
+   Printing a Document Quickly without Customizing
+   Print Setting
+   MODIFICATION:
+   "The current document is sent to your default
+   printer using the following print settings: Rotation:
+   0 and Display for the Print Area."
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD45351
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   514
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-10-12
+   
+   
+ * CLOSED DATE
+   2005-11-04
+   
+   
+ * LAST MODIFIED DATE
+   2005-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

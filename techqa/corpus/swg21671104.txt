@@ -1,0 +1,20 @@
+Title: IBM TWSz: An application's Last Update Date changes without anything being changed - United States
+
+Text:
+tws tivoli workload scheduler z/OS zOS last update modification date TECHNOTE (FAQ)
+
+QUESTION
+ It was noticed that an Application in the Application Database had a new timestamp for it's Last Updated date, but in the last update of the application, no changes were made. 
+
+ANSWER
+It is possible that a recent migration to a new level of Tivoli Workload Scheduler for z/OS (TWSz) has introduced new fields in the application description. These fields may not exist in the previous level of TWSz. When the databases were converted from the old release to the new, some of the new fields end up blank. (Some that have mandatory defaults are initialized by the EQQICTOP program, but there are some instances where the fields are left blank (or null), depending on the data type). 
+
+When a user access a record through the TWSz ISPF dialog, the dialog code includes verification that checks EVERY FIELD displayed on a given panel. If a field is blank or null, this verification code initializes that field to the defined default. This "counts" as a change, and the record in the database is updated to the new (default) value. 
+
+The issuance of the "APPLICATION CHANGED" message, and the Last Update Date is therefore dependant on exactly what panels the user looked at, and where or not the user has looked at the same information before (since the upgrade). 
+
+There are two ways this to address this: 
+
+1. As users enter and leave the panels, over time the applications will have a more relevant Last Update timestamp. 
+
+2. Using the Batch Loader, a user can unload and reload the entire Application Database, thus initializing most of the blank/null fields.

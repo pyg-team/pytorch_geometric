@@ -1,0 +1,230 @@
+Title: IBM IZ28844: MEMORY LEAK DUE TO BUILD UP OF JMSQUEUECONNECTIONHANDLE OR JMSTOPICONNECTIONHANDLE OBJECTS WHEN USING SSL - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 for i5/OS Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022812]
+WebSphere MQ V7.0 Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022810]
+WebSphere MQ V6.0 Fix Pack 6.0.2.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24022324]
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24025627]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using WebSphere MQ as the messaging provider with
+   WebSphere Application Server Version 6.x, a memory leak occurs
+   with the Javaheap showing a build up of either of the following
+   types of objects:
+   
+   - JMSConnectionHandle
+   - JMSQueueConnectionHandle
+   - JMSTopicConnectionHandle
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects all WebSphere Application Server Version 6.x
+   users who use WebSphere MQ as the messaging provider, and
+   secure the connections to the queue manager using SSL
+   repertoires.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When a JMSConnectionHandle, JMSQueueConnectionHandle or
+   JMSTopicConnectionHandle object is first created, a hashcode
+   for it is generated based on a number of properties of the
+   object as well as the constituent objects that the Connection
+   Handle contains. One of these constituent objects is an
+   SSLSocketFactory. This means that the initial Connection Handle
+   hashcode is set to:
+   
+   hashcode = properties of JMS Connection Handle    +
+   hashcodes of constituent object        +
+   hashcode of SSLSocketFactory object
+   
+   Immediately after the hashcode has been created, the JMS
+   Connection Handle object is stored in the application server's
+   internal list of connection handles.
+   
+   Now, during the lifetime of the Connection Handle, the
+   SSLSocketFactory used by the underlying JMS Connection changes
+   if SSL Repertoires are being used. This has an effect on the
+   hashcode of the JMS Connection Handle object.
+   
+   When the application server comes to remove the Connection
+   Handle from the internal list, the Java runtime environment
+   makes a check to ensure that the object we have requested to
+   remove matches the one in the list. Now, because the
+   SSLSocketFactory for the object we want to remove has changed,
+   it's hashcode is this:
+   
+   
+   hashcode = properties of JMS Connection Handle    +
+   hashcodes of constituent object        +
+   hashcode of new SSLSocketFactory object
+   
+   However, the hashcode of the object in the list is:
+   
+   hashcode = properties of JMS Connection Handle    +
+   hashcodes of constituent object        +
+   hashcode of SSLSocketFactory object
+   
+   Because the two hashcodes are different, the remove operation
+   fails, which means that the JMS Connection Handle remains in
+   the internal list maintained by the application server.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In order to fix this, the hashcode generation algorithm should
+   be changed so that it doesn't depend upon the SSLSocketFactory
+   being used by the underlying JMS Connection. Due to the class
+   hierarchy of the objects involved, this means a change to the
+   WebSphere MQ JMS class MQConnectionFactory.
+   
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.6
+   --------           --------------------
+   Windows            U200299
+   AIX                U819350
+   HP-UX (PA-RISC)    U819028
+   HP-UX (Itanium)    U819230
+   Solaris (SPARC)    U819232
+   Solaris (x86-64)   U819240
+   iSeries            tbc_p600_0_2_6
+   Linux (x86)        U818989
+   Linux (x86-64)     U819234
+   Linux (zSeries)    U819231
+   Linux (Power)      U819029
+   Linux (s390x)      U819233
+   
+                      v7.0
+   Platform           Fix Pack 7.0.0.1
+   --------           --------------------
+   Windows            U200301
+   AIX                U821414
+   HP-UX (PA-RISC)    U820765
+   HP-UX (Itanium)    U821296
+   Solaris (SPARC)    U820766
+   Solaris (x86-64)   U820880
+   iSeries            tbc_p700_0_0_1
+   Linux (x86)        U821407
+   Linux (x86-64)     U821295
+   Linux (zSeries)    U821294
+   Linux (Power)      U820881
+   
+   The latest available maintenance can be obtained from
+   'Websphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'Websphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ28844
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7201
+   
+   
+ * REPORTED RELEASE
+   602
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-08-01
+   
+   
+ * CLOSED DATE
+   2008-09-30
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V6
+   
+   
+ * FIXED COMPONENT ID
+   5724H7201
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

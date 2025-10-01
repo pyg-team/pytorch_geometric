@@ -1,0 +1,141 @@
+Title: IBM IT18362: PUREAPPLICATION SYSTEM: "CMM-77777703:NODE NODE % MESSAGE: EXPANSION CARD 1" CRITICAL EVENT SHOULD GENERATE A CALL HOME - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.2.3.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24043076]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PureApplication System
+   -
+   CMM-77777703:Node Node % message: Expansion card 1, (Mezz Exp 1
+   Fault) critical event does not generate a call home problem
+   report as expected.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The following REST request will change their CMM event to a call
+   home.
+   POST /admin/resources/event_rules
+   
+   With this data:
+   
+   {
+       "description": "change CMM-77777703:Node Node % message:
+   Expansion card 1, (Mezz Exp 1 Fault) critical. to a call home",
+       "search": "CMM-77777703:Node Node % message: Expansion card
+   %, \\(Mezz Exp % Fault\\) critical.",
+       "type": 8,
+       "category": "CallHome"
+   }
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The event rules metadata has been updated so that this event
+   generates a Call Home problem report.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix is being provided in PureApplication System and
+   BlueMix Local System version 2.2.3.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT18362
+   
+   
+ * REPORTED COMPONENT NAME
+   IPAS CH 8283 W2
+   
+   
+ * REPORTED COMPONENT ID
+   5725Q93CH
+   
+   
+ * REPORTED RELEASE
+   221
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-12-12
+   
+   
+ * CLOSED DATE
+   2017-03-27
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R223 PSY
+   UP

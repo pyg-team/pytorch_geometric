@@ -1,0 +1,68 @@
+Title: IBM Security Bulletin: DoS vulnerability in bundled Apache Commons FileUpload JAR used by Web Experience Factory, Websphere Dashboard Framework, and Lotus Widget Factory. - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ A DoS vulnerability has been disclosed in the version of Apache Commons FileUpload JAR bundled with Web Experience Factory (WEF) and Lotus Widget Factory (LWF). This vulnerability also applies to WebSphere Dashboard Framework (WDF) which is an extension of WEF. 
+
+VULNERABILITY DETAILS
+A DoS vulnerability has been disclosed in the version of Apache Commons FileUpload JAR bundled with Web Experience Factory (WEF) and Lotus Widget Factory (LWF). This vulnerability also applies to WebSphere Dashboard Framework (WDF) which is an extension of WEF.
+The file upload capability in WEF and LWF is disabled by default, therefore only those customers that use file upload are potentially vulnerable.
+
+Although WEF and LWF ship a copy of Commons FileUpload most customers will not use the bundled version in production. When deployed on Portal (the vast majority of production deployments) the vulnerable copy of Commons FileUpload is omitted from the WAR and the copy of Commons FileUpload provided by Portal is used instead. Therefore the majority of customers will need to wait for Portal to ship their patches for this vulnerability.
+See Security Bulletin: Fixes available for vulnerability in Apache Commons FileUpload contained in IBM WebSphere Portal (CVE-2014-0050) [http://www-01.ibm.com/support/docview.wss?uid=swg21672575] for details about Portal's fix. Patches for WEF and LWF are being released to cover those customers that deploy stand-alone applications to WebSphere for production use.
+
+Note: WEF 6.1.5 was originally built with Java 1.4.2 to run on versions of WebSphere and Portal that are no longer supported. However, the patched version of Apache Commons FileUpload requires a Java 1.5 or later run-time. Therefore no fixes will be released for WEF 6.1.5 (and WDF 6.1.5) running on a Java 1.4.2 run-time. All currently supported versions of WebSphere and Portal use Java 1.5 or later.
+
+CVE ID: CVE-2014-0050 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0050]
+
+Apache Commons FileUpload and Tomcat are vulnerable to a denial of service.
+
+CVSS Base Score: 5.0
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/90987 [https://exchange.xforce.ibmcloud.com/vulnerabilities/90987] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+
+AFFECTED PRODUCTS AND VERSIONS
+All versions of Web Experience Factory, WebSphere Dashboard Framework, and Lotus Widget Factory.
+
+REMEDIATION/FIXES
+Obtain the APAR appropriate for your version of WEF and WDF from Fix Central [http://www-933.ibm.com/support/fixcentral/] [http://www-933.ibm.com/support/fixcentral/]. Those APARs are:
+
+LO80075_WPF6152.zip [http://download4.boulder.ibm.com/sar/CMA/WSA/04iim/0/LO80075_WPF6152.zip] (also covers WDF 6.1.5.x; must use a Java 1.5 or better run-time)
+LO80076_WPF7002.zip [http://download4.boulder.ibm.com/sar/CMA/WSA/04iin/0/LO80076_WPF7002.zip]
+LO80077_WEF7014.zip [http://download4.boulder.ibm.com/sar/CMA/LOA/04ikn/0/LO80077_WEF7014.zip] (also covers WDF 7.0.1.x)
+LO80078_WEF8003.zip [http://download4.boulder.ibm.com/sar/CMA/LOA/04iiq/0/LO80078_WEF8003.zip]
+
+For LWF please contact IBM support to obtain the appropriate fix.
+
+Note: WEF APARs are cumulative for each major release; if you have installed a more recent APAR than one of those listed above, then you already have a fixed vesion of Commons FileUpload. However, you will still need to obtain Portal's fix if you use WEF for portlet development.
+
+WORKAROUNDS AND MITIGATIONS
+Disable the file upload feature if it is not being used by your application (file upload is disabled by default). If you application requires file upload to be enabled, then you must install one of the noted APARs.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+Security Bulletin: Fixes available for vulnerability in Apache Commons FileUpload contained in IBM WebSphere Portal (CVE-2014-0050) [http://www-01.ibm.com/support/docview.wss?uid=swg21672575] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 20 August 2015: CVSS Guide Link Updates
+20 May 2014: Original Copy Published
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the References section of this Flash. 
+
+Note: According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

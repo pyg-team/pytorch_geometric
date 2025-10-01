@@ -1,0 +1,48 @@
+Title: IBM Deletion of large workflow execution logs - United States
+
+Text:
+db2sysc; requestid; slow; runtime; interface; maximo; jcc TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Deleting large (very long) workflow execution logs from the TPM User Interface can take a long time. 
+
+SYMPTOM
+A hung thread message may appear in the WebSphere MXServer SystemOut.log:
+
+[11/26/12 14:50:04:331 PST] 0000000d ThreadMonitor W WSVR0605W: Thread "TpmUIThreadPool : 1" (0000003a) has been active for 706960 milliseconds and may be hung. There is/are 1 thread(s) in total in the server that may be hung.
+at java.net.SocketInputStream.socketRead0(Native Method)
+at java.net.SocketInputStream.read(SocketInputStream.java:155)
+at com.ibm.db2.jcc.t4.z.b(z.java:199)
+at com.ibm.db2.jcc.t4.z.c(z.java:268)
+at com.ibm.db2.jcc.t4.z.c(z.java:381)
+at com.ibm.db2.jcc.t4.z.v(z.java:1149)
+at com.ibm.db2.jcc.t4.cb.a(cb.java:40)
+at com.ibm.db2.jcc.t4.q.a(q.java:32)
+at com.ibm.db2.jcc.t4.rb.i(rb.java:135)
+at com.ibm.db2.jcc.am.jn.gb(jn.java:2064)
+at com.ibm.db2.jcc.am.jn.a(jn.java:3089)
+at com.ibm.db2.jcc.am.jn.a(jn.java:679)
+at com.ibm.db2.jcc.am.jn.executeQuery(jn.java:663)
+at psdi.mbo.MboSet.getNextRecordData(MboSet.java:2916)
+at psdi.mbo.MboSet.fetchMbosActual(MboSet.java:2591)
+at psdi.mbo.MboSet.fetchMbos(MboSet.java:2557)
+at psdi.mbo.MboSet.fetchNext(MboSet.java:2515)
+at 
+com.ibm.tivoli.tpm.maximo.mbo.AbstractBaseDomainObjectMboSet.toCollectionOfDomainObjects(AbstractBaseDomainObjectMboSet.java:231)
+... 
+
+
+CAUSE
+The deletion of large workflow logs from the TPM UI imposes a very large load on the database. This load is handled by the TPAE MXserver layer, which provides all database connections via the MXserver connection pool. 
+
+DIAGNOSING THE PROBLEM
+You delete a workflow log from the UI and it takes a minute or two to complete.
+
+RESOLVING THE PROBLEM
+If you can use the TPM CLI instead, we recommend this method as the connection will get made directly to the database and the removal will proceed much more quickly. 
+
+
+Use this command to remove all deployment requests that were created before the specified date. removeDeploymentRequests.sh date 
+
+RELATED INFORMATION
+#removeDeploymentRequests command [http://pic.dhe.ibm.com/infocenter/tivihelp/v45r1/topic/com.ibm.support.tpm.doc/commands/rcmd_remove-deployment-requests.html]

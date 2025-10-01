@@ -1,0 +1,233 @@
+Title: IBM PM17660: INCORRECT SQLCODE204 DURING DROP TRIGGER. SQLCODE904 ON BINDLOCK WHILE CREATE TRIGGER DSNXICTR 00E30083 00000802 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During CREATE TRIGGER when deadlock occurs on BIND lock
+   BINDLOCK, a row is inserted into SYSTRIGGERS, and not rolled
+   back. That causes that there is inconsistency between
+   SYSPACKAGE and SYSTRIGGERS and there is no way eg, to drop the
+   trigger with DROP trigger. SQLCODE204 is issued indicating that
+   trigger does not exist (exist only
+   
+   Typical scenario is:
+   
+        CREATE TRIGGER TRIG1
+   ...
+    DSNT408I SQLCODE = -904, ERROR:  UNSUCCESSFUL EXECUTION CAUSED
+   BY AN UNAVAILABLE RESOURCE. REASON 00E30083, TYPE OF.
+             RESOURCE 00000802, AND RESOURCE NAME BINDLOCK.
+    DSNT418I SQLSTATE   = 57011 SQLSTATE RETURN CODE.
+    DSNT415I SQLERRP    = DSNXICTR SQL PROCEDURE DETECTING ERROR.
+    DSNT416I SQLERRD    = 500  0  0  -1  0  0 SQL DIAGNOSTIC
+   INFORMATION.
+    DSNT416I SQLERRD    = X'000001F4'  X'00000000'  X'00000000'
+   X'FFFFFFFF'  X'00000000'  X'00000000' SQL DIAGNOSTIC.
+             INFORMATION.
+   
+   
+   
+       DROP TRIGGER  TRIG1;
+   
+   
+    DSNT408I SQLCODE = -204, ERROR: TRIG1 IS AN UNDEFINED NAME
+    DSNT418I SQLSTATE   = 42704 SQLSTATE RETURN  CODE
+    DSNT415I SQLERRP    = DSNTBFR2 SQL PROCEDURE DETECTING  ERROR
+    DSNT416I SQLERRD    = 238 0  0  -1  0  0 SQL DIAGNOSTIC
+    INFORMATION
+    DSNT416I SQLERRD    = X'000000EE'  X'00000000'  X'00000000'
+    X'FFFFFFFF'
+             X'00000000'  X'00000000' SQL DIAGNOSTIC INFORMATION
+   
+   
+   
+   Trigger entry exists in SYSTRIGGERS, with timestamp of failed
+   create trigger (when DEADLOCK BINDLOCK occured)
+   
+   To identify bad entries in SYSTRIGGERS run this query:
+   
+   SELECT CREATEDTS,NAME FROM SYSIBM.SYSTRIGGERS
+   WHERE NAME NOT IN (SELECT NAME FROM SYSIBM.SYSPACKAGE);
+   
+   
+   Keywords:
+   SQLTRIGGER SQLCODE904 SQLCODE204 BINDLOCK RC00E30083 RS00000802
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  workaround:
+   Manual catalog update is required, to delete bad SYSTRIGGERS row
+   Then REPAIR DBD REBUILD dbname.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: DB2 for z/OS users who are creating          *
+   *                 triggers.                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: THE PROBLEM THIS FIX ADDRESSES HAS THE  *
+   *                      FOLLOWING SYMPTOMS:                     *
+   *                                                              *
+   *                       A record is created in the             *
+   *                       SYSIBM.SYSTRIGGERS table even though   *
+   *                       a -904 SQLCODE was issued.             *
+   *                                                              *
+   *                      PROBLEM SCENARIO:                       *
+   *                                                              *
+   *                      The reported problem can happen when    *
+   *                      executing a CREATE TRIGGER. If a        *
+   *                      BINDLOCK deadlock occurs, the package   *
+   *                      is never created but an entry is        *
+   *                      created in the SYSIBM.SYSTRIGGERS       *
+   *                      table resulting in inconsistency        *
+   *                      between tables SYSIBM.SYSPACKAGE and    *
+   *                      SYSIBM.SYSTRIGGERS.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   SUMMARY OF DB2 EVENTS:
+   
+   DB2 did not correctly handle the return code from a deadlock
+   during the execution of a CREATE TRIGGER, so program execution
+   continued when it should have stopped. The result is an entry
+   in the SYSIBM.SYSTRIGGERS table but the package was not
+   created.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DB2 will now correctly handle the return code as a result of
+   a deadlock during a CREATE TRIGGER. A -904 will be issued and
+   neither SYSIBM.SYSTRIGGERS nor SYSIBM.SYSPACKAGE will be
+   updated.
+   
+   NOTE: If you have experienced this problem before
+   applying this fix, there is a possibility that you have
+   records in SYSIBM.SYSTRIGGERS without corresponding
+   records in SYSIBM.SYSPACKAGE. These orphaned records could
+   cause errors if you attempt to delete or re-create the trigger
+   with same name. See HOLD information to eliminate them.
+   
+   
+   ADDITIONAL KEYWORDS:
+   SQLTRIGGER BIND SQLCODE904
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM17660
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-01
+   
+   
+ * CLOSED DATE
+   2010-08-09
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK59556 UK59557
+   
+   
+
+MODULES/MACROS
+ *  DSNTBTRR DSNXICTR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY UK59556 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK59556]
+   UP10/08/25 P F008
+   
+   
+ * R910 PSY UK59557 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK59557]
+   UP10/08/25 P F008
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

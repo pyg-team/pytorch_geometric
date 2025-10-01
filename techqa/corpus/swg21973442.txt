@@ -1,0 +1,55 @@
+Title: IBM Security Bulletin: IBM Business Process Manager authorization checks for process and task deletion are insufficient (CVE-2015-7463) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ An API to delete process and task data is incorrectly available for non administrative users. 
+
+VULNERABILITY DETAILS
+CVEID:CVE-2015-7463 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7463]
+DESCRIPTION:IBM Business Process Manager could allow an authenticated user to delete process and task data through a command that should only be available to administrators.
+CVSS Base Score: 4.3
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/108393 [https://exchange.xforce.ibmcloud.com/vulnerabilities/108393]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+ * IBM Business Process Manager V7.5.x 
+ * IBM Business Process Manager V8.0.x 
+ * IBM Business Process Manager V8.5.0 
+ * IBM Business Process Manager V8.5.5 
+ * IBM Business Process Manager V8.5.6.0 up until including cumulative fix 2
+
+REMEDIATION/FIXES
+Install the interim fixes for APAR JR54823 as appropriate for your current IBM Business Process Manager version. 
+
+
+IBM Business Process Manager Express [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EWebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Express&release=All&platform=All&function=aparId&apars=JR54823] IBM Business Process Manager Standard [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EWebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Standard&release=All&platform=All&function=aparId&apars=JR54823] IBM Business Process Manager Advanced [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EWebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Advanced&release=All&platform=All&function=aparId&apars=JR54823] 
+Please note that the fixes for 8.5.6.0 can be included in a future cumulative fix. See Fix list for the IBM Business Process Manager Version 8.5 products, [http://www.ibm.com/support/docview.wss?uid=swg27039722] WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 2016-02-23: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Security Linux, Windows 8.5.6, 8.5.5, 8.5.0.2, 8.5.0.1, 8.5, 8.0.1.3, 8.0.1.2, 8.0.1.1, 8.0.1, 8.0, 7.5.1.2, 7.5.1.1, 7.5.1, 7.5.0.1, 7.5 Business Integration IBM Business Process Manager Standard Security AIX, Linux, Solaris, Windows 8.5.6, 8.5.5, 8.5.0.2, 8.5.0.1, 8.5, 8.0.1.3, 8.0.1.2, 8.0.1.1, 8.0.1, 8.0, 7.5.1.2, 7.5.1.1, 7.5.1, 7.5.0.1, 7.5

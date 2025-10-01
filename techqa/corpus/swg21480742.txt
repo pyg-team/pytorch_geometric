@@ -1,0 +1,36 @@
+Title: IBM How can I force my SPSS network client to look only one specific license manager machine? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I force my SPSS network client to look at only one specific license manager machine? 
+
+ANSWER
+While it has always been possible to designate which license server to use, SPSS will still do a broadcast out on the network if a license cannot be found on the specified machine. However, this has been changed and you will be able to do this in SPSS 13 and higher.
+
+You can use the LSFORCEHOST environment variable to force an SPSS or Amos network client to look for only one license server computer. Please see below:
+
+LSFORCEHOST - Select a Single License Server
+
+You can use the LSFORCEHOST environment variable to force the application to look for only one license server computer. If the license server listed in the variable cannot be found, the application stops broadcasting and returns an error. LSFORCEHOST overrides a LSHOST environment variable or LSHOST/lshost file, and prevents a network broadcast from being done. For example:
+
+For Windows 2000 and XP, go to Start-> Settings -> Control Panel and double-click on System. Next, click on the Advanced tab and click the Environment Variables button. Click New under System Variables and type "LSFORCEHOST" for the Variable name. For the Variable Value, type the IP Address or Host Name of the machine running the License Manager. Finally, click OK to accept the changes. For example:
+
+Variable name: LSFORCEHOST
+Variable value: ipaddress
+
+For Windows 98 and ME, edit autoexec.bat which is located in the root directory (e.g. C:\), add one of the following lines and reboot the machine. The value set for the SPSS Environment Variable needs to be the IP Address or Host Name of the machine running the SPSS license manager, i.e. 
+
+set LSFORCEHOST=ipaddress 
+or 
+set LSFORCEHOST=hostnam
+
+RELATED INFORMATION
+ Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 51499

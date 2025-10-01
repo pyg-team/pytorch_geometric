@@ -1,0 +1,26 @@
+Title: IBM Customizing Quickr to use HTTP/HTTPS in links in Newsletter - United States
+
+Text:
+Quickr NewsLetter URL; http; https; ssl; links TECHNOTE (FAQ)
+
+QUESTION
+By default, Quickr® generates the Uniform Resource Locator (URL) links in the NewsLetter by using Hypertext Transfer Protocol (HTTP). The links will not work if the server is set up with Secure Sockets Layer (SSL) enabled; in this case HTTP over SSL (HTTPS) is required.
+
+ANSWER
+There are two notes.ini variables that can be used to affect the URLs that Lotus Quickr generates in the Newsletters:
+Option 1:
+h_EmailUrlPrefix="xxxx"
+"xxxx" is what will be used as "HTTP" or "HTTPS" in URLs generated
+
+Notes:
+1. There is no check in Quickr to verify the value; whatever is entered is what will be generated.
+2. This setting takes precedence over the QuickPlaceSSL setting.
+
+Option 2:
+QuickPlaceSSL=0|1
+0 (or not set) will generate "HTTP"
+1 will generate "HTTPS"
+
+RELATED INFORMATION
+ QuickPlace newsletter has no URL links [http://www.ibm.com/support/docview.wss?uid=swg21097152]
+How QuickPlace determines the server address in URLs of [http://www.ibm.com/support/docview.wss?uid=swg21101822]

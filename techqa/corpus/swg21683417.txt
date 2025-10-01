@@ -1,0 +1,47 @@
+Title: IBM Sentinel RMS License Manager service fails to start on Windows 2012 R2 Server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have installed the Sentinel RMS License Manager to Windows 2012 R2 Server. After installation you notice that the LicenseManager service has not started. You attempt to start it manually and that fails as well. 
+
+SYMPTOM
+License Manager service does not start
+
+
+CAUSE
+From the Windows server event Log: 
+
+"The Sentinel RMS License Manager service is marked as an interactive service. However, the system is configured to not allow interactive services. This service may not function properly." 
+
+
+ENVIRONMENT
+Windows 2012 Server, Windows 2012 R2 Server
+
+
+
+DIAGNOSING THE PROBLEM
+You review the Windows Event log to find out why the service is not starting
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+Windows Server 2012 no longer allows interactive services, by default, which makes the Interactive Services Detection service unnecessary.
+
+If you must run a legacy application that installs an interactive service on Windows Server 2012, you may sacrifice server stability for compatibility by changing the following registry value from the default of "1" to "0".
+
+HKLM\SYSTEM\CurrentControlSet\Control\Windows
+NoInteractiveServices
+
+After doing so and rebooting, the Interactive Services Detection Service will start. RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Amos Business Analytics SPSS Modeler Business Analytics SPSS Text Analytics for Surveys

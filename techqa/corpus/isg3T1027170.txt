@@ -1,0 +1,20 @@
+Title: IBM How to clean flow instances from Flow Manager - United States
+
+Text:
+Flow Instance; remove TECHNOTE (FAQ)
+
+QUESTION
+ How to remove flow instances for a legacy user from Flow Manager? 
+
+ANSWER
+Here are the steps:
+(1) stop JFD by "jadmin stop"
+(2) grep all files with the legacy user names under $JS_HOME/work/storage/flow_storage,
+e.g: ls -l |grep "username" $JS_HOME/work/storage/flow_storage
+(3) Backup and delete the files listed in (2)
+(4) Backup and delete <flow_id>.dat files that belongs to this legacy user in $JS_HOME/work/storage/flow_instance_storage/finished
+e.g: grep "username" $JS_HOME/work/storage/flow_instance_storage/finished/*.dat to find all relevant files
+(5) Backup and delete the Cache file under $JS_HOME/work/storage/cache
+(6) start JFD by "jadmin start"
+
+Note: The Cache file contains minimum information (name, state etc) of finished flow instances to help jfd to start up quickly. After it is deleted, it may be a little slower when jfd is restarted, but a new Cache file will then be created automatically, so jfd startup will be faster next time.

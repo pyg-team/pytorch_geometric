@@ -1,0 +1,21 @@
+Title: IBM Maximo Asset Management SaaS users with Maximo Scheduler 7.5 versions experience TOC problems in the documentation in Knowledge Center - United States
+
+Text:
+msc751defect; msc752defect; TPAESCHED; TPAESCHEDULER TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When opening application help from inside a Maximo Scheduler application, the help is displayed with the incorrect table of contents in the left hand pane. 
+
+SYMPTOM
+The incorrect table of content displays. The user sees the Maximo Asset Management SaaS table of contents instead of the Maximo Asset Management Scheduler table of contents.
+
+
+ENVIRONMENT
+This problem affects Maximo Asset Management Scheduler 7.5.2 users who run Maximo Asset Management SaaS.
+
+RESOLVING THE PROBLEM
+Using the navigation in the table of contents (left hand) pane, select Back to All Products, choose Maximo Asset Management Scheduler, and then choose the correct release.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management IBM Maximo Asset Management (SaaS)

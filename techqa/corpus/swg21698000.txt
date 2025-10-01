@@ -1,0 +1,45 @@
+Title: IBM Tivoli Integrated Portal SystemOut log errors: LDAP: error code 32 - United States
+
+Text:
+TIPL2CONF LDAP: error code 32 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SystemOut.log shows below errors:
+CWWIM4527E The LDAP entry was not found:
+LDAP: error code 32 - 0000208D: NameErr: DSID-0310020A, problem 2001 (NO_OBJECT), data 0, best match of
+
+
+SYMPTOM
+The SystemOut.log may shows errors/warnings messages like below. The unique name in the error message will be different depending on object in question. 
+
+ 
+Remaining name: 'CN=NETCOOL,OU=Groups,DC=ibm,DC=com'; Resolved object: 'com.sun.jndi.ldap.LdapCtx@76ff76ff''.
+
+[2/16/15 9:16:41:729 EST] 00000020 ManageRolesVO W ManageRolesVO ManageRolesVO(String roleName, String roleType, String sessionId) CN=NETCOOL,OU=Groups,DC=ibm,DC=com is not exist any more
+:com.ibm.isclite.service.vmm.VMMSearchException: 
+CWWIM4527E The LDAP entry 'CN=NETCOOL,OU=Groups,DC=ibm,DC=com' was not found: 'javax.naming.NameNotFoundException: [LDAP: error code 32 - 0000208D: NameErr: DSID-0310020A, problem 2001 (NO_OBJECT), data 0, best match of:
+'OU=Groups,DC=ibm,DC=com'
+
+
+CAUSE
+Above errors can occur if a user group was assigned certain roles in TIP and later that group was deleted from TIP but the roles assigned to that user group were not removed before deleting the group. This leaves behind entries in Argus policy files, thus producing above errors/warning messages.
+
+
+DIAGNOSING THE PROBLEM
+Login into TIP using tipadmin account (default user Id) or equivalent id. 
+
+ 
+
+ 1. In left navigation pan, click on "Users and Groups -> Manage Groups" 
+ 2. Search for group Id in question. In this case search for NETCOOL group 
+ 3. If this group exist in TIP and the unique name is same as in the error message then this technote does not apply.
+    If no such user group is found in TIP then follow steps in below section to resolve this issue. 
+
+RESOLVING THE PROBLEM
+Check if the unique name found in the error message exist in the user repository specified in the unique name. In this particular case; check if (CN=NETCOOL,OU=Groups,DC=ibm,DC=com) exist in LDAP repository. 
+
+ 1. If above group does not exist in LDAP then create that group in LDAP. 
+ 2. Search for above group again in TIP (from Manage Groups). 
+ 3. You should find some roles already assigned to this group(which were previously assigned). 
+ 4. Remove all of those roles assigned to this group. 
+ 5. After this you can delete above group again from LDAP.

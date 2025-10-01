@@ -1,0 +1,15 @@
+Title: IBM Is Altas version 6.0.3 certified with Oracle database version 12C ? - United States
+
+Text:
+atlas; oracle; support TECHNOTE (FAQ)
+
+QUESTION
+ We are currently running Atlas 6.0.3 against an Oracle database 11g. We will be moving the database to a different environment, but wanted to know if Atlas was Certified and / or will it run on a Oracle 12.x
+
+database engine / schema? 
+
+CAUSE
+Oracle database version 12C is now available.
+
+ANSWER
+Atlas version 6.0.3 does not support Oracle database 12C . But Atlas version 6.0.3.3 supports Oracle 12C. If you plan to upgrade to database to 12C , you will need to upgrade Atlas to version 6.0.3.3.

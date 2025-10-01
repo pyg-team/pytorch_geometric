@@ -1,0 +1,63 @@
+Title: IBM Tools for IBM i - Installation - United States
+
+Text:
+ PLANNING
+
+ Tools for IBM i - Installation 
+
+
+
+ *  Performance and capacity [//www.ibm.com/support/docview.wss?uid=nas8N1022075 ] 
+ *  Plan and upgrade [//www.ibm.com/support/docview.wss?uid=nas8N1022078] 
+ *  Installation [//www.ibm.com/support/docview.wss?uid=nas8N1022076] 
+ *  Troubleshooting [//www.ibm.com/support/docview.wss?uid=nas8N1022077] 
+
+Locate useful installation tools to help you install your new system.
+
+
+
+
+
+IBM System Planning Tool [//www.ibm.com/systems/support/tools/systemplanningtool/]
+The IBM System Planning Tool (SPT) is a browser-based application that helps you design system configurations; it is particularly useful for designing logically partitioned systems. The SPT is integrated with the IBM Systems Workload Estimator (WLE), which enables you to plan a system based on existing performance data or based on new workloads.
+
+Power Systems Capacity on Demand [//www.ibm.com/systems/power/hardware/cod/index.html]
+A fast method of activating extra processor and memory capacity without disrupting existing operations.
+
+TCP/IP on IBM i [//www.ibm.com/systems/power/software/i/tcpip/index.html]
+IBM i offers robust support for TCP/IP, the protocol of the Internet. With the integrated TCP/IP capabilities of IBM i, users can link to networks throughout the world.
+
+IBM i Virtualization [//www.ibm.com/systems/power/software/i/virtualization.html]
+"Virtualization" is the concept of executing software in an environment that minimizes or eliminates the software's dependence on the hardware on which it runs. Simplify management of IT resources with storage virtualization provided by the IBM i operating system.
+
+Platform management on IBM i: Tools [//www.ibm.com/systems/power/software/i/management/platform/tools.html]
+IBM tools available to manage your IBM i environment.
+
+Electronic Service Agent [//www.ibm.com/support/esa/index.htm]
+IBM Electronic Service Agent is a monitoring tool that proactively reports hardware events as soon as they are detected. A service request is electronically routed directly to the appropriate IBM support engineer, with no intervention needed from you. The result: higher availability and faster fix delivery for your environment.
+
+
+
+
+CONNECTING TO YOUR SYSTEM
+Your system offers you many ways to connect to and communicate with the other systems in your environment.
+
+Browse information specific to your operating system from the following list:
+
+ * IBM i 7.2 [//www.ibm.com/support/knowledgecenter/ssw_ibm_i_72/rzahg/rzahgicinterface.htm]
+ * IBM i 7.1 [//www.ibm.com/support/knowledgecenter/ssw_ibm_i_71/rzahg/rzahgicinterface.htm]
+ * IBM i 6.1 [//www.ibm.com/support/knowledgecenter/ssw_ibm_i_61/rzahg/rzahgicinterface.htm]
+
+
+
+
+
+ADDITIONAL RESOURCES
+ * Entitled Systems Support (License keys and software) [//www.ibm.com/eserver/ess/]
+ * IBM Power Systems Redbooks [//www.redbooks.ibm.com/portals/power]
+ * IBM i Redbooks publications [http://www.redbooks.ibm.com/redbooks.nsf/searchsite?SearchView&query=%22ibm+i%22]
+ * IBM i storage solutions [//www.ibm.com/systems/power/software/i/management/storage/index.html]
+ * IBM i Knowledge Center [//www.ibm.com/support/knowledgecenter/ssw_ibm_i/welcome]
+ * IBM Knowledge Center [//www.ibm.com/support/knowledgecenter/]
+ * developerWorks for IBM i [https://www.ibm.com/developerworks/learn/ibmi/]
+ *

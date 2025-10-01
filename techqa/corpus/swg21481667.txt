@@ -1,0 +1,49 @@
+Title: IBM Where can I find logs? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I need to find logs for Deployment Manager, Modeler and C&DS/PES(3.5) 
+
+RESOLVING THE PROBLEM
+INSTALL LOGS:
+- log.txt: Install Shield places log.txt in root of installation directory
+- Setup.log: spssinc/<install dir>/log/setup.log (creator is setup.bat that is run automatically after setup)
+- setupinfo.xml: spssinc/enterprise repository/platform/setupinfo.xml (creator is setup.bat that is run automatically after setup)
+
+C&DS SERVER: (Application dependant i.e. Jboss, Oracle, Websphere etc.)
+a) When running a PES/C&DS job, and there is an SQL issue between the application server and the database this information should be logged as:
+- Server.log: <JBoss installation directory>/server/default/log
+- PES.log: This is the name for all other application servers located within the application install directory
+
+b) When running a job and there is an issue between the Clementine/Modeler Server and the database, multiple places exist to review logs.
+* The log (SQL) information should be logged in the job history.
+* SQL trace information can be obtained from setting odbc trace on within Unix ODBC.ini or MS odbc administrator.
+NOTE: ensure to restart your Modeler Server after applying these updates within UNIX.
+
+PEM/Deployment Manager thick client:
+- spssemgr.log: documents and settings\username\application data\spssinc\enterprise repository
+
+DEPLOYMENT MANAGER: 
+C:\Documents and Settings\username\Application Data\SPSSInc\Deployment Manager
+Win 2008
+C:\Users\Administrator\AppData\Roaming\SPSSInc\Deployment Manager
+
+CLEMENTINE/MODELER:
+With the Clementine or Modeler Server /options/options.cfg file the following values can be set to Y in order to log information within /log/Messages.log file. If the /log directory does not exist, create it and logging will be enabled.
+
+log_database_access, N
+log_database_errors, N
+log_directory, "" -> means default /log directory.
+log_file_access, N
+log_file_errors,
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 78132

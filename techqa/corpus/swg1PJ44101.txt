@@ -1,0 +1,137 @@
+Title: IBM PJ44101: USING VN LOCALE, 'IS LIKE' NOT TRANSLATED CORRECTLY FOR IN-BASKET FILTER DIALOG - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+IBM Case Manager V5.2.1 Fix Pack 4 for Linux for System z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.4-ICM-ZLINUX-FP004&source=SAR]
+IBM Case Manager V5.2.1 Fix Pack 4 for Windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.4-ICM-WIN-FP004&source=SAR]
+IBM Case Manager V5.2.1 Fix Pack 4 for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.4-ICM-LINUX-FP004&source=SAR]
+IBM Case Manager V5.2.1 Fix Pack 4 for AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.4-ICM-AIX-FP004&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the IBM Case Manager Client, the translation for "is like" in
+   the In-basket filters dialog is "la? thi?ch" which is incorrect.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users in the vn locale using the In-basket filter pane.      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * For IBM Case Manager, update to 5.2.1.4-ICM-FP004 or later.  *
+   * For IBM Content Navigator, update to 2.0.3.7-ICN-FP007 or    *
+   * later.                                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.2.1.4-ICM-FP004.  With this fix, the translation for
+   "is like" will be displayed correctly in the vn locale.  This
+   fix requires IBM Content Navigator fix pack 2.0.3.7-ICN-FP007.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ44101
+   
+   
+ * REPORTED COMPONENT NAME
+   CASE MGR CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5725A1501
+   
+   
+ * REPORTED RELEASE
+   521
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-19
+   
+   
+ * CLOSED DATE
+   2016-05-04
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CASE MGR CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5725A1501
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R521 PSY
+   UP

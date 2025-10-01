@@ -1,0 +1,63 @@
+Title: IBM "System.OverflowException: Overflow" when running "Company - Reports - Company Journals" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User clicks "Company - Reports - Company Journals". User chooses selections, and clicks 'Run'. The message "Preparing report" appears. After a few seconds, an error appears. 
+
+Problem only affects some (large) companies. If user selects a different company, the report works OK. 
+
+SYMPTOM
+[/support/docview.wss?uid=swg21696207&amp;aid=1] 
+
+Unhandled exception has occurred in your application...
+<...>
+System.OverflowException: Overflow
+at FrJournalsB.CompJournalsRepBClass.CreateJournals...
+
+Event Viewer (Application Log):
+Log Name: Application
+Source: VBRuntime
+Date: 05/02/2015 12:12:51
+Event ID: 1
+Task Category: None
+Level: Warning
+Keywords: Classic
+User: N/A
+Computer: SERVERNAME
+Description:
+The VB Application identified by the event source logged this Application FrJournalsB: Thread ID: 5828 ,Logged: Error occured at 05/02/2015 12:12:51 in FrJournalsB, Error No=6, Source=FrJournalsB.CompJournalsRepB.CreateJournalsRsCRN, Description=Overflow, HelpFile= HelpContext=0 
+
+Log Name: Application
+Source: Cognos Controller
+Date: 05/02/2015 12:12:56
+Event ID: 0
+Task Category: None
+Level: Warning
+Keywords: Classic
+User: N/A
+Computer: SERVERNAME
+Description:
+Error occured at 05/02/2015 12:12:56 in IBM Cognos Controller, Error No=5, Source=FrangoDirect.CompJournalsRepD.CreateJournalsRsCRN#ControllerProxyClient, Description=System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.OverflowException: Overflow
+at FrJournalsB.CompJournalsRepBClass.CreateJournalsRsCRN(String sGuid, Int32 lLLocale, Boolean bLokSprak, String sUser, String sAct, String sPeriod, String sCloVer, String sContrVer, String sConsType, String sGroup, Recordset rsComp, Boolean bAllComp, Recordset rsCurrType, Boolean bAccGroupSel, Recordset rsAccount, Boolean bAllAccount, Int32 lFromJnr, Int32 lToJnr, Boolean bAllJnr, Int32 lFromAmount, Int32 lToAmount, Boolean bAllAmount, DateTime dFromDate, DateTime dToDate, Boolean bAllDate, String sDateType, String sXmlDoc)
+at Cognos.Controller.Proxy.CCRWS.CompJournalsRepB_CreateJournalsRsCRN(String sGuid, Int32 lLLocale, Boolean bLokSprak, String sUser, String sAct, String sPeriod, String sCloVer, String sContrVer, String sConsType, String sGroup, DataSet rsComp, Boolean bAllComp, DataSet rsCurrType, Boolean bAccGroupSel, DataSet rsAccount, Boolean bAllAccount, Int32 lFromJnr, Int32 lToJnr, Boolean bAllJnr, Int32 lFromAmount, Int32 lToAmount, Boolean bAllAmount, DateTime dFromDate, DateTime dToDate, Boolean bAllDate, String sDateType, String sXmlDoc)
+
+
+CAUSE
+Defect (reference APAR PI34516) in Controller 10.2.0 and earlier.
+
+This defect is only triggered when the company is associated with a huge number of accounts. 
+
+ * Specifically, the error occurs when the number of accounts exceeds 32767.
+
+RESOLVING THE PROBLEM
+Fix: 
+
+Upgrade to Controller 10.2.1 (10.2.5100.95) or later..
+
+Workaround:
+Reduce the number of accounts associated with the company.
+
+RELATED INFORMATION
+#APAR PI34516 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI34516]

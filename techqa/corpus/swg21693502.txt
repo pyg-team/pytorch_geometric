@@ -1,0 +1,110 @@
+Title: IBM loadUrl() method causes ObjectNotFoundException - United States
+
+Text:
+FF; HTML; newtab; about:config; DOM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to call the loadUrl() method from an IBM Rational Functional Tester (RFT) script against Mozilla Firefox result in error "Could not find a Browser role attribute for the object." 
+
+SYMPTOM
+The full error message is as follows.
+
+
+Could not find a Browser role attribute for the object.
+com.rational.test.ft.ObjectNotFoundException
+at com.rational.test.ft.object.interfaces.ClientTestObject.invokeProxy(ClientTestObject.java:411)
+at com.rational.test.ft.object.interfaces.BrowserTestObject.loadUrl(BrowserTestObject.java:115)
+at NewTab2.testMain(NewTab2.java:41)
+at org.eclipse.equinox.internal.app.EclipseAppContainer.callMethodWithException(EclipseAppContainer.java:587)
+at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:198)
+at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:353)
+at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:180)
+at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:629)
+at org.eclipse.equinox.launcher.Main.basicRun(Main.java:584)
+at org.eclipse.equinox.launcher.Main.run(Main.java:1438)
+at org.eclipse.equinox.launcher.Main.main(Main.java:1414)
+at org.eclipse.core.launcher.Main.main(Main.java:34)
+
+
+The browser is properly enabled and passes the RFT browser test. The error does not occur in Internet Explorer. 
+
+Steps to reproduce 
+
+ 
+
+Record a script that does the following actions.
+
+
+
+ 1. Load any page in Firefox.
+    
+    
+ 2. Make a new tab by issuing Ctrl + t.
+    
+    
+ 3. Stop recording.
+    
+    
+ 4. Load ibm.com by scripting the following code.
+    
+    Disclaimer All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+    
+    
+    
+    browser_htmlBrowser().loadUrl("http://ibm.com [http://ibm.com/]");
+    
+    
+    
+ 5. Playback the script.
+    
+    
+
+
+You see the ObjectNotFoundException during playback. 
+CAUSE
+The behavior that you see is as expected in case of Firefox. However, when a new blank tab opens, RFT does not see it as an HTML browser, because there is no HTML page loaded as such. Therefore, Firefox must open an HTML document to find controls. 
+
+Internet Explorer does not have version independent support. Therefore, RFT can approach the browser directly and not just the HTML part.
+
+
+RESOLVING THE PROBLEM
+Consider the following steps. 
+
+ 
+
+ 1. Set the tab to open with a new URL by setting a Firefox preference.
+    
+    
+ 2. Type about:config in the Firefox address bar.
+    
+    
+ 3. Click the I'll be careful. I promise button.
+    
+    
+ 4. Type browser.newtab.url in the search field.
+    
+    
+ 5. Set it's value to any html page. Let's say the RFT page on ibm.com [http://www.ibm.com/software/products/en/functional/]. 
+    
+    
+
+
+Now, when the script opens a new tab with the following command, you see the RFT page on ibm.com [http://www.ibm.com/software/products/en/functional/]. 
+
+
+
+browser_htmlBrowser(document_ibmUnitedStates(),DEFAULT_FLAGS).inputKeys("ˆt");
+
+WORKAROUND
+
+The alternative is to open a new browser window with startBrowser. For example:
+
+
+
+public void testMain(Object[] args) 
+{
+startApp("RFT on ibm.com"); /This opens the RFT page 
+startBrowser("Mozilla Firefox","http://www.ibm.com [http://www.ibm.com]");
+}

@@ -1,0 +1,38 @@
+Title: IBM DataStage Jobs fail with "Too many open files" Error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DataStage job is trying to allocate more file handles than what the user limit Operating System setting will allow. 
+
+RESOLVING THE PROBLEM
+Message: main_program: APT_PMListenerPort: socket() call failed: Too many open files
+
+This is caused by ulimits not being set high enough for DataStage. InformationServer 8 requires higher settings for number of open files.
+
+To resolve this issue you should increase ulimits for the number of open files (ulimit -n nofiles) to 10240 or higher for DataStage environment for both root and dsadm. Increase the ulimits for root user (DataStage runs as root and inherits it's ulimits initially from the root user's settings). This is normally done by the System's Administrator.
+
+To Check ulimits for the DataStage environment:
+
+
+ 1. From the Administrator Tool log in as DataStage Administrator user, then go to Projects tab, click Command button and run this command:
+    
+    For soft limits:
+    SH -c "ulimit -a"
+    
+    For hard limits:
+    SH -c "ulimit -aH"
+    
+ 2. From designer select a job and click on job properties, then select either before job or after job command and set it to run EXECSH and use the following commands (results will be in job log after next job run):
+    
+    ulimit -a
+    or 
+    ulimit -aH
+
+
+If the changes to default root limits do not result in the desired limits in effect at job run time, another option is to add the limit to the "dsenv" script in the DSEngine directory. For example, add the following line to set file limit to 10240 for engine tier: 
+ulimit -n 10240 
+This limit change is dependent upon not having hard limit in place that prevents the update. 
+
+NOTE: For Clustered or GRID configurations each compute node will require maintaining each DataStage users ulimits manually. Ulimit settings are not inherited or transferred to remote compute nodes from the Conductor.

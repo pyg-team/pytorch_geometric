@@ -1,0 +1,144 @@
+Title: IBM IT03148: UNABLE TO RESUME ASYNC WITH CALLBACK FLOW AFTER SERVER RESTART - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.5 Refresh Pack 6 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24039185]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a mediation flow contains a Service Invoke (SI) that is using
+   Asynchronous with Callback invocation style and the server is
+   restarted between the SI invoking the service and that service
+   returning then the flow would not be able to carry on after the
+   service returns
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of Business Process Manager Advanced v8 who use Service
+   Invoke primitives in mediations with Async with Callback
+   invocations.
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When using a Service Invoke primitive in a mediation that uses
+   the Async with Callback invocation style the flow will create a
+   new Event flow to handle the response from the Service Invoke.
+   If the parent flow of this Event flow is an example of a
+   FaultFlow and this is not still in memory, such as would happen
+   if the server was restarted after the Service Invoke has sent
+   the request, then the Event flow would not be created and the
+   response could not be handled.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified such that the response can be handled for
+   Fault flows even after a server restart.
+   
+   
+   This code fix was targeted to be included in the following fix
+   packs:
+   
+   8.0.1 Fix Pack 4 (v8.0.1.4)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT03148
+   
+   
+ * REPORTED COMPONENT NAME
+   WESB IN BPM
+   
+   
+ * REPORTED COMPONENT ID
+   AIMCMFC00
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-16
+   
+   
+ * CLOSED DATE
+   2014-07-31
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WESB IN BPM
+   
+   
+ * FIXED COMPONENT ID
+   AIMCMFC00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

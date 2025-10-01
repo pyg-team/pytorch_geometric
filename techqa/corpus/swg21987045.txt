@@ -1,0 +1,27 @@
+Title: IBM Clarification of DB2 Administration Tool PBG NUMPARTS value 'DEFINED' when generating DDL for a partition-by-growth tablespace - United States
+
+Text:
+PBG; partition-by-growth-numparts; defined; ddl; tablespace; partition; reverse engineering NEWS
+
+ABSTRACT
+ The documentation for PBG NUMPARTS value 'DEFINED' on panel ADB2GEN needs to be clarified to account for the case in which NUMPARTS was not used when the tablespace was originally created. 
+
+CONTENT
+ The explanation of the PBG NUMPARTS value 'Defined' should read as follows:
+
+Defined
+
+The NUMPARTS clause will be generated
+with the value used when the table 
+space was created. If NUMPARTS was 
+not specified in the DDL when the table space
+was created, the value that is generated
+in the DDL will be the number of 
+partitions that DB2 initially creates
+- all having the same created 
+timestamp in the DB2 catalog (column 
+CREATEDTS in table SYSIBM.SYSTABLEPART).
+
+RELATED INFORMATION
+ V11 R1 Generating SQL to re-create a DB2 object [http://www.ibm.com/support/knowledgecenter/SSAUZ9_11.1.0/topics/adbu_rev-eng_recreate-obj.htm]
+V11 R2 Generating SQL to re-create a DB2 object [https://www.ibm.com/support/knowledgecenter/SSAUZ9_11.2.0/topics/adbu_rev-eng_recreate-obj.htm]

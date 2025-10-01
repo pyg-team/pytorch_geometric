@@ -1,0 +1,66 @@
+Title: IBM Security Guardium - Unable to add Oracle Protocol to Inspection Engine Configuration - United States
+
+Text:
+guardium; license; oracle; parser; inspection engine; db type; db_type; dropdown; STAP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have installed a Guardium STAP agent and want to configure inspection engine for the Oracle database. However, I can't see Oracle as an option in the DB_TYPE while creating an inspection engine on collector GUI under Manage > Activity Monitoring > S-TAP Control 
+
+CAUSE
+You do not have proper licenses installed.
+
+DIAGNOSING THE PROBLEM
+Execute command show license as user CLI on the collector. If the license keys are properly installed, you should see Parser ORACLE listed. If you can't see it in the list, you won't be able to configure an inspection engine for Oracle database. 
+
+e.g. Following is an example from a managed appliance that has one of the licenses installed as Guardium Advanced Monitoring License : 
+
+
+[/support/docview.wss?uid=swg21998304&amp;aid=1]
+
+
+
+
+RESOLVING THE PROBLEM
+Before proceeding further, you should be aware of the license keys you need to set up. Click here [http://www-01.ibm.com/support/docview.wss?uid=swg21973263] to know more. 
+
+ 
+
+To resolve this, reinstallation of license keys is required. 
+
+ 
+
+For a Standalone Collector 
+
+a. Clear the existing license. Execute below command as user CLI : 
+
+license clear 
+
+ 
+
+b. Install Collector Base key 
+
+c. Install appropriate append key. 
+
+How do I install license keys on Guardium v10 appliance ? [https://www.ibm.com/support/knowledgecenter/SSMPHH_10.0.0/com.ibm.guardium.doc.install/install/licenses_install.html] 
+
+ 
+
+In a Managed Environment 
+
+You can distribute the licenses by navigating to the Manage > Central Management > Central Management page and clicking the refresh unit info icon [/support/docview.wss?uid=swg21998304&amp;aid=2] to distribute licenses from the central manager to managed units. 
+
+If the Central Manager is missing the Parsers under show license, please perform following steps on Central Manager: 
+
+a. Clear the existing license 
+
+license clear 
+
+ 
+
+b. Install Central Management and Aggregation base license key 
+
+c. Install appropriate append keys. 
+
+d. Verify the parsers listed under show license command on Central Manager 
+
+e. click the refresh unit info icon from Central Management pane on Central manager by selecting all the managed units to distribute newly applied license keys.

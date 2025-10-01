@@ -1,0 +1,69 @@
+Title: IBM Collecting Data: ConfigEngine for WebSphere Portal 8.5 - United States
+
+Text:
+Collecting Data; Collecting Data; Collecting Data; MustGather; MustGather; MustGather; MustGatherDocument; PORTIN; ConfigEngine RECOMMENDED RESOURCES
+
+ABSTRACT
+ Collecting troubleshooting data for ConfigEngine issues with IBM® WebSphere® Portal 8.5 expedites time to resolution by enabling IBM Support to provide informed problem analysis. 
+
+CONTENT
+If you have already contacted IBM Support and must collect data to determine the nature of a problem in WebSphere Portal, review the information below for the available methods of data collection. Otherwise, review Collecting Data: Read first for WebSphere Portal 8.5 [http://www-01.ibm.com/support/docview.wss?uid=swg21672901]. 
+
+Collecting ConfigEngine information 
+
+ConfigEngine issues include any problems you encounter when executing any ConfigEngine script. 
+
+Data Collection
+
+Use the following instructions for collecting the necessary troubleshooting data.
+
+Option A: Automated collection of troubleshooting data 
+
+Automated log collection is the recommended method for improving accuracy of the data collection. 
+
+Follow the steps below to run the wpcollector tool for automated log collection. 
+
+1. Run the following script from <wp_profile>/PortalServer/bin to collect the data: 
+
+ Windows: wpcollector.bat 
+
+ Linux/Unix/i: wpcollector.sh
+
+Note: If you wish to use wpcollector to FTP the files to IBM Support, include the -Dpmr=<pmr_number> parameter to indicate the relevant PMR #. For example: wpcollector.bat -Dpmr=11111,222,333 
+
+2. If you did not FTP your files via wpcollector, locate the "wp.mustgather.zip" file or the "<pmr #>-wp.mustgather-timestamp.zip" file in <wp_profile_root> [https://idoc2.swg.usma.ibm.com/portal/topic/com.ibm.wp.ent.doc_v70/reference/wpsdirstr.html#wpsdirstr__wp_profile_root]/filesForAutoPD/. Send the files to IBM Support by using the instructions outlined in Exchanging information with IBM Technical Support for problem determination [http://www-01.ibm.com/support/docview.wss?rs=688&uid=swg21201571]. 
+
+Note: When sending in logs for review, include any console output from the ConfigEngine command that might be useful. 
+
+Option B: Manual collection of troubleshooting data 
+
+If you are unable to use wpcollector for WebSphere Portal for automatic log collection, use the following instructions for manually collecting the necessary information. 
+
+1. Collect the following log directories and files: 
+
+ * <wp_profile root>/ConfigEngine/log 
+ * <wp_profile root>/ConfigEngine/properties 
+ * <wp_profile root>/ConfigEngine/registry.xml 
+ * <wp_profile root>/logs 
+ * <wp_profile root>/PortalServer/jcr 
+ * <wp_profile root>/PortalServer/config 
+ * <wp_profile root>/config/cells/<cellname>/nodes 
+ * <wp_profile root>/config/cells/<cellname>/wim 
+ * <wp_profile root>/config/cells/<cellname>/security.xml 
+ * <wp_profile>/config/cells/<cellname>/registry.xml
+
+
+2. If you have a clustered environment, also collect the following directory from the DMGR:  * <dmgr_profile>/logs 
+ * <dmgr_profile>/config/cells/<cellname>/nodes 
+ * <dmgr_profile>/config/cells/<cellname>/clusters 
+ * <dmgr_profile>/config/cells/<cellname>/security.xml 
+ * <dmgr_profile>/config/cells/<cellname>/registry.xml
+
+
+3. If possible, gather a full file listing of the WebSphere file structure so that the AppServer, 
+PortalServer and profile directories are included. To do that, execute the following command:  Windows: dir /S > fileListing.txt
+Linux/UNIX: ls -latR > fileListing.txt 
+
+4. Include any console output from the ConfigEngine command that might be useful. 
+
+5. Send the files to IBM Support by using the instructions outlined in Exchanging information with IBM Technical Support for problem determination [http://www-01.ibm.com/support/docview.wss?rs=688&uid=swg21201571].

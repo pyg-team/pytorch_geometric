@@ -1,0 +1,26 @@
+Title: IBM java.lang.NoSuchMethodError when running "Test Assembly" - United States
+
+Text:
+Test Assembly; no such method error; NoSuchMethodError; java; hierarchical stage TECHNOTE (FAQ)
+
+QUESTION
+ When running "Test Assembly" in the Hierarchical Stage, you may get some type of java.lang.NoSuchMethodError
+
+This may look like
+
+java.lang.NoSuchMethodError: org/apache/http/conn/ssl/SSLSocketFactory.<init>(Ljava/lang/String;Ljava/security/KeyStore;Ljava/lang/String;Ljava/security/KeyStore;Ljava/security/SecureRandom;Lorg/apache/http/conn/ssl/TrustStrategy; 
+
+or 
+
+java.lang.NoSuchMethodError: 
+org/apache/http/client/methods/HttpRequestBase.releaseConnection() 
+
+CAUSE
+This can occur if there is a REST step in the assembly.
+
+ANSWER
+The Test Assembly feature is not enabled for the REST step in the Designer client.
+You will not be able to run the Test Assembly feature if the stage has a REST step.
+This is covered in the documentation for the Hierarchical Stage.
+
+You will need to run the job to see its effect.

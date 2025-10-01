@@ -1,0 +1,183 @@
+Title: IBM IC53221: Exceptions thrown when attempting to save more than 64Kb data on a Mediation Flow Component's context store. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you attempt to store more than 64Kb of data on a Mediation
+   Flow Component's correlation context store, a
+   UTFDataFormatException is thrown and the data is not saved.
+   
+   The exception message seen in the SystemOut.log is of the form:
+   
+   Caused by:  java.io.UTFDataFormatException at
+       java.io.DataOutputStream.writeUTF(DataOutputStream.java(
+   CompiledCode))
+   at com.ibm.ws.sibx.mediation.flowaction.impl.sca.AsyncInvocatio
+   n.write(AsyncInvocation.java:331) at
+   com.ibm.ws.sibx.context.impl.ContextStoreDestinationImpl.create
+   StoreMessage(ContextStoreDestinationImpl.java:423)
+   ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of WebSphere Enterprise Service Bus    *
+   *                 and WebSphere Process Server v6.0 where      *
+   *                 a Mediation Flow Component is being used     *
+   *                 to store more than 64Kb data on the          *
+   *                 correlation context store.                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Users are unable to store more than     *
+   *                      64Kb of data on the correlation         *
+   *                      context store for a Mediation Flow      *
+   *                      Component.                              *
+   *                                                              *
+   *                      This is due to a program defect, no     *
+   *                      workaround is known.                    *
+   ****************************************************************
+   * RECOMMENDATION: If you encounter this problem, you are       *
+   *                 advised to install the fix pack which        *
+   *                 contains the code fix associated with this   *
+   *                 APAR.                                        *
+   ****************************************************************
+   The correlation context store can be used to store user data in
+   a Mediation Flow Component, which permits data to be saved on
+   a request message flow, and recalled when the corresponding
+   response message is received.  This permits the use of
+   information in the response flow which was only available when
+   the request flow was processed, without having to encapsulate
+   the data within the message body itself to be propogated
+   downstream and back again in the response flow.
+   
+   However, if you attempt to store more than 64Kb data within
+   this data store, the runtime server throws an exception, of
+   the form:
+   
+   java.io.UTFDataFormatException
+   at java.io.DataOutputStream.writeUTF(DataOutputStream.java
+       (Compiled Code))
+   at com.ibm.ws.sibx.mediation.flowaction.impl.sca.
+       AsyncInvocation.write(AsyncInvocation.java:331)
+   at com.ibm.ws.sibx.context.impl.ContextStoreDestinationImpl
+       .createStoreMessage(ContextStoreDestinationImpl.java:423)
+   at com.ibm.ws.sibx.context.impl.ContextStoreDestinationImpl
+       .setPersistentContext(ContextStoreDestinationImpl.java:370)
+   at com.ibm.ws.sibx.context.impl.ContextStoreDestinationImpl
+       .put(ContextStoreDestinationImpl.java:240)
+   at com.ibm.wsspi.sibx.mediation.flow.ejb.MediationFlowBean
+       .transactionNotSupportedWriteContext
+       (MediationFlowBean.java:401)
+   
+   This is caused by a program defect, and there are no known
+   workarounds to store more than 64Kb data on the context
+   store without the code fix associated with this APAR.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code fix associated with this APAR is currently targetted
+   to be included in v6.0.2 Fix Pack 3 (6.0.2.3).
+   
+   There are currently no known side effects associated with this
+   code fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC53221
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724I8200
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-07-13
+   
+   
+ * CLOSED DATE
+   2007-09-06
+   
+   
+ * LAST MODIFIED DATE
+   2007-09-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724I8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP
+   
+   
+ * R200 PSY
+   UP

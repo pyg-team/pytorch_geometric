@@ -1,0 +1,168 @@
+Title: IBM PM28330: ITCAM MS TRAP AND ALERT HISTORY REFRESH BUTTON NOT WORKING - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.2-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP2 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24029067]
+7.1.0.2-TIV-ITCAMAD-IF0006: ITCAM for Application Diagnostics V7.1 FP2 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24031010]
+7.1.0.2-TIV-ITCAMAD-IF0007: ITCAM for Application Diagnostics V7.1 FP2 IF7 [http://www-01.ibm.com/support/docview.wss?uid=swg24031710]
+7.1.0.2-TIV-ITCAMAD-IF0010: ITCAM for Application Diagnostics V7.1 FP2 IF10 [http://www-01.ibm.com/support/docview.wss?uid=swg24032110]
+7.1.0-TIV-ITCAMAD-FP0003: ITCAM for Application Diagnostics V7.1 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032604]
+7.1.0.3-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP3 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032985]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using Firefox browser the trap and alert history refresh
+   button does not work.
+   
+   1. Create a trap and activate it.
+   
+   
+   2. Got to trap action history.
+   
+   3. Trigger the trap.  In my case, I had an email sent to me to
+   confirm.
+   
+   4. Refresh the Trap Action History page.  Nothing happens.
+   
+   5. Go to another view or hit the back button on the
+   browser...then back
+   to the Trap Action History page and the trap is there.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use a browser other than Firefox and the trap action history
+   will refresh.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   *
+   * ITCAM for WebSphere/J2EE users who use Firefox browser to view
+   * the "Trap Action History" page in Managing server console.
+   *
+   ****************************************************************
+   *
+   * PROBLEM DESCRIPTION:
+   *
+   * When a trap fires and if the user wants to see the new trap
+   * action in the "Trap Action History" page by clicking on the
+   * Firefox browser's button, the page does not refresh showing
+   * the new instance of the trap.  However, if the user goes to
+   * another page and comes back to the "Trap Action History"
+   * page, the information is present.
+   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | interim fix | 7.1.0.2-TIV-ITCAMAD-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM28330
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD MAN SER
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92MS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-12-07
+   
+   
+ * CLOSED DATE
+   2011-03-18
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD MAN SER
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

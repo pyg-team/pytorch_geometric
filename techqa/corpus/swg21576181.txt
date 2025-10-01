@@ -1,0 +1,35 @@
+Title: IBM Column Analysis fails in IBM InfoSphere Information Analyzer - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error messages seen in logs:
+[IIS-CONN-ODBC-000004] ODBC function "SQLConnect" reported: SQLSTATE = HY000: Native Error Code = -10003: Msg = [IBM(DataDirect OEM)][ODBC DB2 Wire Protocol driver][DB2]Unknown error: SQLCODE -10003 (CC_OdbcConnection::connect, file CC_OdbcConnection.cpp, line 438)
+[IIS-CONN-ODBC-000004] ODBC function "SQLEndTran(SQL_ROLLBACK)" reported: SQLSTATE = 08003: Native Error Code = 0: Msg = [DataDirect][ODBC lib] Connection not open (CC_OdbcConnection::rollback, file CC_OdbcConnection.cpp, line 953)
+Event 2: pxbridge(6),0: The runLocally() of the operator failed.
+ODBC Info: SQLSTATE = HY000: Native Error Code = -956: Msg = [IBM(DataDirect OEM)][ODBC DB2 Wire Protocol driver][UDB DB2 for Windows, UNIX, and Linux]e of the location is too l
+(note that the error message appears to be cut-off in the log) 
+
+RESOLVING THE PROBLEM
+This Column Analysis failure is often due to incorrect configuration of your system's limits. You can view your ulimit settings by running ulimit -a. 
+
+The appropriate settings for ulimits varies depending on the environment, processing methods, and amount of data being processed. Your system administrator will have to assist with that. Note that the NOFILES limit is important to set correctly, as is mentioned in this technote:
+
+https://www-304.ibm.com/support/docview.wss?uid=swg21450714 [https://www-304.ibm.com/support/docview.wss?uid=swg21450714]
+
+
+Also, stop all jobs and log off users. Then clear out your &PH& directory:
+
+There is a &PH& directory in each DataStage project directory, which contains information about active stages that is used for diagnostic purposes. The &PH& directory is added to every time a job is run, and needs periodic cleaning out.
+
+To clear the file from within DataStage:
+
+
+ 1. Ensure there are no DataStage jobs running anywhere on the system by running "ps -ef | grep dsrpc" 
+ 2. From the DataStage Administrator, go to the Projects page, select the project whose file you want to clear and click the Command button. The Command Interface dialog box opens. 
+ 3. Type the following into the command field: CLEAR.FILE &PH& (all uppercase) 
+ 4. Click Execute to run the command and clear the file.
+
+
+Then stop and restart the Engine, and try running Column Analysis again.

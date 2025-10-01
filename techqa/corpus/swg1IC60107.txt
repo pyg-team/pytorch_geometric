@@ -1,0 +1,174 @@
+Title: IBM IC60107: UNABLE TO USE THE WEBSPHERE MQ V7 EXPLORER TO CONNECT TO REMOTE QUEUE MANAGERS OVER SSL CHANNELS WITH A CCDT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When attempting to perform remote administration of a queue
+   manager using the WebSphere MQ Version 7 Explorer over SSL
+   secured channels defined with a Client Channel Definition Table
+   (CCDT), the Explorer fails to connect. A trace of the Explorer
+   taken during the connection attempt shows the following error:
+   
+   Exception caught
+   [idx=3]: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2397;AMQ9771:
+   SSL handshake failed.
+   javax.net.ssl.SSLHandshakeException[com.ibm.jsse2.util.h:
+   PKIX path building failed:
+   java.security.cert.CertPathBuilderException:
+   unable to find valid certification path to requested target
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do not use a CCDT and, instead, configure your SSL channel
+   configuration directly in the Add Queue Manager wizard.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the WebSphere MQ V7 Explorer who
+   administer remote queue managers, specifying the connection
+   details in a CCDT and securing the connection with SSL.
+   
+   Platforms affected:
+   Linux (Power),Linux (x86),Linux (x86-64),Linux (zSeries),
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When the connection from the Explorer to the queue manager was
+   created, some of the properties stored in the CCDT and the
+   Explorer itself were not being passed correctly to the method
+   doing the connect. This caused the SSL handshake to fail.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  All properties defined in the CCDT and the Explorer are now
+   correctly passed to the method creating the connection.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.0
+   --------           --------------------
+   Windows            U200306
+   Linux (x86)        U823664
+   Linux (x86-64)     U823773
+   Linux (zSeries)    U823668
+   Linux (Power)      U823666
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC60107
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-23
+   
+   
+ * CLOSED DATE
+   2009-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

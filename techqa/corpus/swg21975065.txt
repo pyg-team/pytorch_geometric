@@ -1,0 +1,59 @@
+Title: IBM Error while creating smcfs EAR using WebSphere Application Server 8.5.5 with webservices enabled - United States
+
+Text:
+EAR creation failure TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error thrown while creating EAR with webservices enabled in WebSphere Application server - ClassNotFoundException 
+
+SYMPTOM
+-create-webservice-war-websphere:
+[AFCecho] AFC000008: WebSphere libraries will be picked up from /opt/IBM/WebSphere/AppServer
+[exec] WSWS3752I: (C) COPYRIGHT International Business Machines Corp. 1997, 2010.
+[exec] WSWS3753I: IBM WebSphere Application Server Release 8.0
+[exec] WSWS3754I: Web services Java2WSDL emitter.
+[exec] java.io.IOException: java.lang.ClassNotFoundException: com.yantra.interop.services.webservices.rpc.ejb.YIFWebService
+[exec] at com.ibm.ws.webservices.wsdl.fromJava.Emitter.init(Emitter.java:816)
+[exec] at com.ibm.ws.webservices.wsdl.fromJava.Emitter.getWSDL(Emitter.java:681)
+[exec] at com.ibm.ws.webservices.wsdl.fromJava.Emitter.emit(Emitter.java:611)
+[exec] at com.ibm.ws.webservices.wsdl.fromJava.Emitter.preEmit(Emitter.java:504)
+[exec] at com.ibm.ws.webservices.wsdl.fromJava.Emitter.emit(Emitter.java:546)
+[exec] at com.ibm.ws.webservices.wsdl.fromJava.Emitter.emit(Emitter.java:585)
+[exec] at com.ibm.ws.webservices.tools.Java2WSDL.run(Java2WSDL.java:649)
+[exec] at com.ibm.ws.webservices.tools.Java2WSDL.main(Java2WSDL.java:695)
+[exec] at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+[exec] at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+[exec] at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+[exec] at java.lang.reflect.Method.invoke(Method.java:611)
+[exec] at com.ibm.ws.bootstrap.WSLauncher.main(WSLauncher.java:282)
+[exec] WSWS3752I: (C) COPYRIGHT International Business Machines Corp. 1997, 2010.
+[exec] WSWS3753I: IBM WebSphere Application Server Release 8.0
+[exec] WSWS3755I: Web services WSDL2Java emitter.
+[exec] WSWS3185I: Info: Parsing XML file: /opt/IBM/SSFS/tmp/webservice/META-INF/wsdl/YIFWebService.wsdl
+[exec] WSWS3574E: ---------- FATAL ERRORS ENCOUNTERED ----------
+[exec] GENERATION OF ARTIFACTS HAS BEEN SUSPENDED.
+[exec] See messages to follow for more details.
+[exec] WSWS3490E: Error: The system cannot load the file referenced within /opt/IBM/SSFS/tmp/webservice/META-INF/wsdl/YIFWebService.wsdl. The problem is with /opt/IBM/SSFS/tmp/webservice/META-INF/wsdl/YIFWebService.wsdl (No such file or directory).
+
+BUILD FAILED
+/opt/IBM/SSFS/properties/buildEAR.xml:122: The following error occurred while executing this line:
+/opt/IBM/SSFS/properties/buildWSUtils.xml:44: The following error occurred while executing this line:
+/opt/IBM/SSFS/properties/buildWSUtils.xml:62: The following error occurred while executing this line:
+/opt/IBM/SSFS/properties/buildWSUtils.xml:66: The following error occurred while executing this line:
+/opt/IBM/SSFS/properties/buildWSUtils.xml:242: Replace: source file /opt/IBM/SSFS/tmp/webservice/META-INF/webservices.xml doesn't exist 
+
+
+CAUSE
+The issue was with the JDK being used internally by WebSphere's Java2WSDL utility. 
+
+In 9.4, the product jars are compiled using JDK 1.7. WebSphere Application Server 8.5.5 by default uses JDK 1.6 for the Java2WSDL utility hence it is not able to the read the product jar files present in the classpath.
+
+
+RESOLVING THE PROBLEM
+Update WebSphere Application server profile command default JDK to 1.7 to resolve the issue. 
+
+You may use managesdk command present in WebSphere/AppServer/bin to switch the JDK version.
+
+Example: managesdk.bat/sh -setCommandDefault -sdkname 1.7_64 
+
+Refer to http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/rxml_managesdk.html [http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/rxml_managesdk.html] for more details on managesdk command

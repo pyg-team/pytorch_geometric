@@ -1,0 +1,61 @@
+Title: IBM Security Bulletin: Missing authorization concept for IBM Business Process Manager (BPM) User Attributes CVE-2014-0908 - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The User Attribute feature in IBM Business Process Manager does not have an authorization concept. 
+
+VULNERABILITY DETAILS
+As a consequence, each user can read and update their own attribute values and the attribute values for another user by using REST APIs. However, there are security-sensitive use cases for user attribute values, such as email notifications or task assignments that use expressions. You might also choose to store confidential information about users in user attribute values. The lack of authorization for this feature can create a security exposure.
+CVEID: CVE-2014-0908 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0908]
+CVSS Base Score: 4.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91870 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91870] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:S/C:P/I:P/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+ * IBM Business Process Manager Standard V7.5.x, 8.0.x, 8.5.x 
+ * IBM Business Process Manager Express V7.5.x, 8.0.x, 8.5.x 
+ * IBM Business Process Manager Advanced V7.5.x, 8.0.x, 8.5.x
+
+REMEDIATION/FIXES
+Install IBM Business Process Manager interim fix JR49505 as appropriate for your current IBM Business Process Manager product version. Interim fixes are available for the following products: 
+
+ * IBM Business Process Manager Standard [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EWebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Standard&release=All&platform=All&function=aparId&apars=JR49505&source=fc] 
+ * IBM Business Process Manager Express [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EWebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Express&release=All&platform=All&function=aparId&apars=JR49505&source=fc] 
+ * IBM Business Process Manager Advanced [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EWebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Advanced&release=All&platform=All&function=aparId&apars=JR49505&source=fc]
+
+WORKAROUNDS AND MITIGATIONS
+The following workarounds are available depending on your usage of the IBM Business Process Manager product and its REST APIs: 
+
+ * Do not use user attribute values for security-sensitive use cases. 
+ * Block write access to the REST APIs User resource (PUT and POST HTTP methods) in a firewall. 
+ * Do not expose the User resource REST API on your web server.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Security AIX, Linux, Linux zSeries, Solaris, Windows 8.5.0.1, 8.5, 8.0.1.2, 8.0.1.1, 8.0.1, 8.0, 7.5.1.2, 7.5.1.1, 7.5.1, 7.5.0.1, 7.5 Business Integration IBM Business Process Manager Express Security Linux, Linux zSeries, Windows 8.5.0.1, 8.5, 8.0.1.2, 8.0.1.1, 8.0.1, 8.0, 7.5.1.2, 7.5.1.1, 7.5.1, 7.5.0.1, 7.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

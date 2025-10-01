@@ -1,0 +1,163 @@
+Title: IBM How to verify the status of a given batch in IBM FileNet Image Services - United States
+
+Text:
+batch status; MKF_tool TECHNOTE (FAQ)
+
+QUESTION
+ How to check the status of a single batch or all the batches in FileNet Image Services 
+
+CAUSE
+Currently there are a large number of locked objects in Image Services bes_cache and need to know what status they are in and why they are not committing to Image Services Page_Cache and are not migrating to optical platters. 
+CSM_tool
+CSM_tool>status long
+Statistics for cache #2, name = 'bes_cache1:xxxx:FileNet'
+min_cache_sectors 3276800 locked_sectors 385932 inuse_sectors 385932
+max_cache_sectors 3276800 locked_objects 19859 inuse_objects 19859
+free_sectors 2890848 ageable F refcnts F
+self_cleaning F
+CSM_tool>quit
+
+
+ANSWER
+A dynamic record is created within this "batch_dyn_hdr" table for each batch that is created. This record is updated as the status of the batch changes, for example, when it is scanned, indexed, verified, or committed. The record is cleared from this table upon the successful committal and cataloging of the batch. 
+
+To verify the status of a give batch, perform the following procedures.
+
+cd /fnsw/local/tmp
+
+MKF_tool
+<MKF_tool>hardcopy batch_status.txt
+
+(to count all existing batches)
+<MKF_tool>count batch_dyn_hdr *
+
+(to display all field for all existing batches)
+<MKF_tool>select batch_dyn_hdr *
+
+(to display few selected fields for all existing batches)
+<MKF_tool>select batch_dyn_hdr * showing batch_id batch_name phase_status
+
+(to display all field for a give batch, where xx is batch id)
+<MKF_tool>select batch_dyn_hdr * where batch_id=xx
+
+<MKF_tool>quit
+
+The above query should create similar outputs in /fnsw/local/tmp/batch_status.txt file for each batch locked in bes_cache:
+
+Total of 498 records counted.
+------------------------------------------------------------------------------------
+batch_id..............139 Batch_name..........."Claim_Billing"
+phase_status [0]....0,0,4,4,0,0,4,4,0,0,0
+------------------------------------------------------------------------------------
+batch_id..............140 batch_name..........."Invoice_Billing"
+phase_status [0]....0,3,4,4,3,0,4,4,0,0,0
+------------------------------------------------------------------------------------
+batch_id..............142 batch_name..........."Order_Billing"
+phase_status [0]....0,0,4,4,0,0,4,4,0,0,0
+------------------------------------------------------------------------------------
+batch_id..............143 batch_name..........."Receivable_Billing"
+phase_status [0]....3,3,4,4,3,0,4,4,0,0,4
+------------------------------------------------------------------------------------
+etc...
+
+To interpret the above phase_status record use the following definition as guideline:
+
+Document Phase (The following table shows the document phase for a batch in the batch_dyn_hdr table. ):
+
+
+ * 0-Batch Creation 
+ * 
+ * 1-Scanning 
+ * 
+ * 2-Image Verification 
+ * 
+ * 3-Rescan 
+ * 
+ * 4-Assembly 
+ * 
+ * 5-Indexing 
+ * 
+ * 6-Index Verification 
+ * 
+ * 7-Batch Totaling 
+ * 
+ * 8-Committal 
+ * 
+ * 9-Cataloging 
+ * 
+ * 10-Recommit
+
+
+Phase Status Code (The following table shows the phase status associated with a batch in the batch_dyn_hdr table.): 
+ * 0-Not started 
+ * 
+ * 1-In progress 
+ * 
+ * 2-Interrupted 
+ * 
+ * 3-Completed 
+ * 
+ * 4-Unnecessary 
+ * 
+ * 5-Error occurred 
+ * 
+ * 6-Optional
+
+
+For example, the following phase_status record: 
+
+phase_status [0].... 3,3,4,4,3, 0 ,4,4, 0,0 ,4 
+
+would translate to: 
+ * 
+ * 3
+ * 
+ * 
+ * 
+ * 3
+ * 
+ * 
+ * 
+ * 4
+ * 
+ *  
+ * 
+ * 
+ * 
+ * 4
+ * 
+ * 
+ * 
+ * 3
+ * 
+ *  
+ * 
+ * 
+ * 
+ * 0
+ * 
+ * 
+ * 
+ * 4
+ * 
+ * 
+ * 
+ * 4
+ * 
+ * 
+ * 
+ * 0
+ * 
+ * 
+ * 
+ * 0
+ * 
+ * 
+ * 
+ * 4
+ * 
+
+
+Once the status of a given batch or all the batches have been identified, the Image Services Administrator, along with Capture Station user(s) can further troubleshoot the individual batches in order to continue processing them to final completion. 
+
+Note: The locked objects in bes_cache contain the actual documents, some with one page, and some with multiple pages. As for count of batch_dyn_hdr records, they are the actual batches created from FileNet Capture or Custom Capture APIs. Therefore the values of locked objects from CSM_tool and the batch_dyn_hdr from Permanent database do not have to be identical.

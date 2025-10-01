@@ -1,0 +1,46 @@
+Title: IBM SOAP address location contains my-server:my-port in generated CICS WSDL - United States
+
+Text:
+my-server my-port my server my port server port name my-server:my-port 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 ; 5655S9700 R660 660 R600 600 HCI6600 ; R670 670 R700 700 HCI6700 5655-S97 5655S97 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are developing a CICS Web services provider application and have generated the Web Service Definition Language (WSDL) file using DFHLS2WS. In the WSDL file, the SOAP address location is not updated with your CICS server:port name. It contains my-server:my-port. You would like to know if there a mechanism to update this field using DFHLS2WS. 
+
+CAUSE
+Prior to CICS Transaction Server for z/OS (CICS TS) V4.1 there was no way to specify a server location and port in the JCL for DFHLS2WS to populate the WSDL.
+
+RESOLVING THE PROBLEM
+If you are using CICS TS V4.1 or V4.2, you can either specify URI=mycicsserver:myport.. in DFHLS2WS [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.exampleapplication.doc/topics/dfhxa_t422.html] or make changes to the WSDL file as documented under Customizing generated web service description documents [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.webservices.doc/tasks/dfhws_customizing_wsdl.html] in the for CICS Transaction Server for z/OS (CICS TS) V4.2 information center:
+
+2. If you want to supply the network location of your web service, use the URI parameter in DFHLS2WS to set an absolute URI. If you have not used the URI parameter, add the details to the soap:address in the wsdl:service element. 
+
+
+ 1. If you are using an HTTP-based protocol, replace my-server with the TCP/IP host name of your CICS® region and my-port with the port number of the TCPIPSERVICE resource. 
+    
+ 2. If you are using WebSphere MQ as the transport protocol, replace myQueue with the name of the appropriate queue. 
+
+
+
+If you are using CICS TS V3.1 or V3.2, make changes to the WSDL file as documented under Running the Web services assistant program DFHLS2WS [http://publib.boulder.ibm.com/infocenter/cicsts/v3r2/topic/com.ibm.cics.ts.webservices.doc/sampleapp/topics/dfhxa_t422.html] in the CICS TS V3.2 information center: 
+
+5. Customize the service location in the Web service description. As generated, the <service> element contains the following: 
+
+<service name="DFHCMNService">
+<port binding="tns:DFH0XCMNHTTPSoapBinding" name="DFH0XCMNPort">
+<soap:address location="http://my-server:my-port/exampleApp/inquireSingle"/>
+</port>
+</service> 
+Before the Web service description can be published to clients, you must make the following changes:  * a. 
+ * Replace 
+ * my-server
+ *  with the CICS server location. 
+ * 
+ * b. 
+ * Replace 
+ * my-port
+ *  with the port number.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

@@ -1,0 +1,23 @@
+Title: IBM DSC server are unavailable for a while at failing back - United States
+
+Text:
+webseal 503 TECHNOTE (FAQ)
+
+QUESTION
+ On a ISAM cluster with multiple DSC servers enabled. When primary master is powered off, secondary DSC becomes active immediately. However, when primary master gets recovered, sometimes a reverse proxy instance can not contact primary DSC for a while after secondary DSC becomes standby. Then, reverse proxy returns 503 response. 
+
+CAUSE
+When a reverse proxy instance is configured DSC with non external ports, DSC communication flows on ssh tunnel.
+At appliance starting up, each services including sshd and dscd are automatically started at same time. However, since ssh tunnel is established over ssh session, it always be established after dscd gets up. Therefore, if DSC fail back (primary becomes active and secondary becomes standby) is done before ssh tunnel have been established, a reverse proxy can not contact both DSC servers for a while.
+
+
+ANSWER
+This may be occurred with following conditions. 
+
+1. DSC server has small data. So, fail back is done in very short time. 
+
+2. A reverse proxy instance is configured with ssh tunnel 
+
+ 
+
+To avoid this, use external interface for DSC configuration.

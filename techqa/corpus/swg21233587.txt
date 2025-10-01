@@ -1,0 +1,61 @@
+Title: IBM An OR query results in sqlcode -904 reason code 00C90084 on DB2 Content Manager z/OS - United States
+
+Text:
+performance TECHNOTE (FAQ)
+
+QUESTION
+ This problem happens on z/OS®. When I run a query with an OR clause that should return 
+a lot of results, such as the following,
+
+'/Employee[.//Degree/@Degree = "MBA" OR .//Job/@JobCategory = "Manager"]'
+
+I get this exception: 
+
+com.ibm.mm.sdk.common.DKUsageError: DGL5050A: SQL error executing query. 
+XQPE query: /Employee[.//Degree/@Degree = "MBA" OR .//Job/@JobCategory = "Manager"]. 
+Return code: 7015. Reason code: 0. Extended return code: -904. Extended 
+reason code: 0.; 
+ICM7015: During an SQL operation in the library server, an unexpected error occurred. 
+For details on the error, refer to the database document. (SERVER RC) : 7015 at com.ibm.mm.sdk.server.DKResultSetCursorICM.throwSQLException(DKResultSetCursorICM.java:1072) at com.ibm.mm.sdk.server.DKResultSetCursorICM.prepareAndExecuteSp(DKResultSetCursorICM.java:893) at com.ibm.mm.sdk.server.DKResultSetCursorICM.prepareAndExecuteSp(DKResultSetCurso rICM.java:768)
+at com.ibm.mm.sdk.server.DKResultSetCursorICM.open(DKResultSetCursorICM.java:1159)
+at com.ibm.mm.sdk.server.DKResultSetCursorICM.Init(DKResultSetCursorICM.java:221)
+at com.ibm.mm.sdk.server.DKResultSetCursorICM.<init>(DKResultSetCursorICM.java:122)
+at com.ibm.mm.sdk.server.DKDatastoreICM.execute(DKDatastoreICM.java:4718)
+at com.ibm.mm.sdk.server.DKDatastoreICM.evaluate(DKDatastoreICM.java:4313)
+
+The library server log, ICMSERVER.log shows this error:
+
+sqlca.sqlcode-904
+< DSNT408I SQLCODE = -904, ERROR: UNSUCCESSFUL EXECUTION CAUSED BY AN UNAVAILABLE RESOURCE. REASON 00C90084, TYPE OF RESOURCE 00000230, AND RESOURCE NAME 4K >
+< DSNT418I SQLSTATE = 57011 SQLSTATE RETURN CODE >
+< DSNT415I SQLERRP = DSNXRSOR SQL PROCEDURE DETECTING ERROR >
+< DSNT416I SQLERRD = -115 13172746 0 13231826 -959250432 0 SQL DIAGNOSTIC INFORMATION 
+
+CAUSE
+From the DB2® Messages and Codes, sqlcode -904 and reason code 00C90084 shows that the error is caused by a lack of temporary space. Because the query is returning a lot of results, the 4 KB temporary space was insufficient.
+
+ANSWER
+Ask your DB2 system administrator to give enough space on the temporary table. Your database administrator or the DB2 manuals will have suggestions about the appropriate size of the temporary table. After the temporary database table size has been increased by the database administrator, and DB2 has been restarted, you can run the query again. 
+
+From the DB2 Messages and Codes: 
+> Resource 00000230 is Temporary file / Name 4K (your workfile database 4k
+> tablespace - "DSNDB07" or equivalent)
+>
+> Check your system log for additional messages.
+>
+> Reason Code 00C90084 explains "An error was detected either during the
+> opening of the page set or during the formatting of the header and the
+> space map pages of the page set."
+>
+> Let your system personnel know! If this continues to occur they may need
+> to perform the User Response.
+>
+> Response: Delete and redefine the temporary data set(s) in question, and
+> then issue the -START DATABASE
+
+Another solution is to modify the query that can be executed in the database more efficiently. See the related technote # 1231501 for details.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager for z/OS DB2 Information Integrator for Content 8.3 Enterprise Content Management Content Manager DB2 Information Integrator for Content 8.3

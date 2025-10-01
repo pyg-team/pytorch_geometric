@@ -1,0 +1,245 @@
+Title: IBM PM03853: CUMULATIVE MAINTENANCE FIXPACK 7.0.1.2 FOR THE JMS FEATURE OF   WEBSPHERE MQ FOR Z/OS VERSION 7.0.1. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Fixpack 7.0.1.2 for WebSphere MQ for z/OS Version 7.0.1
+   provides fixes for the problems described in this APAR.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 0 Modification 1 with the MQ Java    *
+   *                 Feature.                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Service offering 7.0.1.2 for WebSphere  *
+   *                      MQ for z/OS V7.0.1 provides fixes for   *
+   *                      the problems described in this APAR.    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   IZ67599 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ67599] - AUTHORIZATION ERROR 2035 WHEN USING ALIAS QUEUE
+   IZ66744 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ66744] - MQRC_SELECTOR_SYNTAX_ERROR THROWN IN WEBSPHERE MQ
+             BRIDGE FOR HTTP V7 WHEN AN HTTPDELETE IS ISSUED WITH
+             THE MSGID HEADER
+   IZ65557 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ65557] - WMQ 7 JAVA APPLICATION EXPERIENCES A HANG WHILE
+             CONNECTING TO QUEUE MANAGER USING SHARED CONNECTIONS.
+   IZ64837 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ64837] - WMQ 7.0.1.0 CLIENT CONNECTION TO WMQ 6.0 QUEUE MANAGER
+             FAILS
+   IZ64691 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ64691] - WMQ V7, WSAS V7: QUEUE STATUS UNCOM(YES) CURDEPTH(0)
+             IF 'SUPPORT DISTRIBUTED TWO-PHASE COMMIT PROTOCOL' IS
+             ENABLED
+   IZ64620 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ64620] - WEBSPHERE MQ V7 UNCOMMITTED MESSAGE REMAINS ON THE
+             BACKOUT REQUEUE QUEUE.
+   IZ64141 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ64141] - HOSTNAME INCORRECTLY DISPLAYED WHEN USING ACTIVATION
+             SPECS TO CONNECT TO A WEBSPHERE MQ V7.X QUEUE MANAGER
+             IN BINDINGS MODE
+   IZ64140 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ64140] - ARRAYINDEXOUTOFBOUNDSEXCEPTION WHEN USING A V7 JAVA
+             CLIENT WITH MESSAGES WHICH TRANSFER IN LONGER THAN THE
+             WAIT TIME PERMITS
+   IZ62777 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ62777] - CALLING SESSION.RECOVER() DURING ONMESSAGE USING JMS
+             PERSISTENT MESSAGES COULD RESULT IN A DUPLICATE
+             DELIVERY.
+   IZ60293 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ60293] - WEBSPHERE MQ V7 JAVA CLIENT CCSID 1051
+             UNSUPPORTEDCHARSETEXCEPTION THROWN
+   IZ53893 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ53893] - HASHCODE METHOD MISSING FOR MQDESTINATION IN WEBSPHERE
+             MQ V7 JMS CLIENT
+   IC65509 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC65509] - A HANG CONDITION OCCURS IF THE MESSAGE CONSUMER CLOSE
+             OCCURS WHILST A MESSAGE IS BEING PROCESSED BY A
+             MESSAGE LISTENER.
+   IC65310 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC65310] - WMQ 7 RA.XML FILE CONTAINS INCORRECTLY NAMED AND
+             REDUNDANT PROPERTIES.
+   IC65226 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC65226] - WEBSPHERE MQ RESOURCE ADAPTER PROPERTY
+             LOGWRITERENABLED HAS NO EFFECT
+   IC65087 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC65087] - MQ JMS RESOURCE ADAPTER LEAKS CONNECTIONS WHEN USING
+             MDB TOPIC LISTENERS WITH PUBLISH/SUBSCRIBE
+   IC64950 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC64950] - A JMS CLIENT USING THE RECONNECT FEATURE HANGS AFTER
+             RECONNECTING
+   IC64838 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC64838] - NULLPOINTEREXCEPTION CAUSES WEBSPHERE MQ APPLICATIONS
+             TO HANG OR PERFORM SLOWLY.
+   IC64827 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC64827] - THE GETENUMERATION() METHOD FOR QUEUEBROWSER RETURNS A
+             SUBSET OF MESSAGES NOT PREVIOUSLY BROWSED. WMQ V6
+             RETURNS ALL MESSAGES.
+   IC64755 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC64755] - WMQ JMS 7 CLIENT ENCOUNTERS MQJMS1016 AND NULL POINTER
+             EXCEPTION WHEN RECEIVING MESSAGES
+   IC64613 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC64613] - NULLPOINTEREXCEPTION RECEIVED WHEN THE JAVA CLIENT HAS
+             DISCOVERED THAT THE TCP CONNECTION TO THE WMQ SERVER
+             IS BROKEN
+   IC64572 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC64572] - RESTART OF LOTUS EXPEDITOR INTEGRATOR IN A WMQ
+             V7.0.1.0 ENVIRONMENT RESULTS IN A
+             JAVA.LANG.CLASSCIRCULARITYERROR
+   IC64514 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC64514] - MULTI-THREADED WMQ V7 ASYNCHRONOUS JMS MESSAGE
+             CONSUMER HANGS WHEN ISSUING A COMMIT AND STOP ON THE
+             SAME CONNECTION OBJECT
+   IC64493 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC64493] - OUT OF MEMORY ERROR WHEN USING THE WMQ V7 RESOURCE
+             ADAPTER
+   IC64483 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC64483] - ASYNCHRONOUS JMS CONSUMER HANGS WHEN STOPPING A
+             CONNECTION WHEN AN EXCEPTION IS DELIVERED TO THE
+             EXCEPTIONLISTENER
+   IC64309 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC64309] - .BINDINGS FILES CREATED PRIOR TO WMQ V7.0.1 WILL NOT
+             UPDATE CORRECTLY
+   IC64284 - WEBSPHERE MQ RESOURCE ADAPTER PROPERTY
+             LOGWRITERENABLED HAS NO EFFECT
+   IC63827 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC63827] - WEBSPHERE MQ V7 RESOURCE ADAPTER DOES NOT PARSE THE
+             XML FOR ADMIN OBJECTS SUCCESSFULLY,  AFTER UPGRADING
+             FROM MQ V6.
+   IC62386 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC62386] - XASESSION.CLOSE() DOES NOT DISCONNECT FROM THE QUEUE
+             MANAGER, EVENTUALLY LEADING TO "AMQ951: MAX CHANNELS
+             REACHED" ERRORS.
+   PM00654 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM00654] - WMQ MESSAGES ARE NOT ROLLED BACK AFTER A CANCEL SIGINT
+             CNTRL-C OF THE JAVA CLIENT.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Java level info:
+   
+   Name:        WebSphere MQ classes for Java
+   Version:     7.0.1.2
+   CMVC Level:  k701-102-100504
+   Build Type:  Production
+   
+   JMS level info:
+   
+   Name:        Common Services for Java Platform, Standard Edition
+   Version:     7.0.1.2
+   CMVC Level:  k701-102-100504
+   Build Type:  Production
+   
+   Name:        IBM WebSphere MQ
+   Version:     7.0.1.2
+   CMVC Level:  k701-102-100504 mqjbnd=k701-102-100504
+   Build Type:  Production
+   
+   Name:        Java Message Service Client
+   Version:     7.0.1.2
+   CMVC Level:  k701-102-100504
+   Build Type:  Production
+   
+   Name:        WebSphere MQ classes for Java Message Service
+   Version:     7.0.1.2
+   CMVC Level:  k701-102-100504
+   Build Type:  Production
+   010Y
+   018Y
+   CSQMCUWT
+   CSQ8JTR1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM03853
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   018
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-21
+   
+   
+ * CLOSED DATE
+   2010-05-14
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK56956 UK56957
+   
+   
+
+MODULES/MACROS
+ *  CSQMCUWT CSQ8JTR1
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R010 PSY UK56956 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK56956]
+   UP10/05/19 P F005
+   
+   
+ * R018 PSY UK56957 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK56957]
+   UP10/05/19 P F005
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

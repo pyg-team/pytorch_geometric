@@ -1,0 +1,25 @@
+Title: IBM Ciphers used by Bigfix - United States
+
+Text:
+chipers; bigfix; openssl TECHNOTE (FAQ)
+
+QUESTION
+ Which ciphers are being used by the Bigfix components during communications when the Enhanced Security Mode is enabled? 
+
+ANSWER
+
+When enhanced security is enabled, the SHA256 is used, so all ciphers compatible to SHA256 survive. 
+.
+These are the chipers supported by BigFix:
+
+AES256-GCM-SHA384 TLSv1.2 
+AES256-SHA256 TLSv1.2 
+AES256-SHA TLSv1,TLSv1.1,TLSv1.2 
+CAMELLIA256-SHA TLSv1,TLSv1.1,TLSv1.2 
+AES128-GCM-SHA256 TLSv1.2 
+AES128-SHA256 TLSv1.2 
+AES128-SHA TLSv1,TLSv1.1,TLSv1.2 
+CAMELLIA128-SHA TLSv1,TLSv1.1,TLSv1.2 
+DES-CBC3-SHA TLSv1,TLSv1.1,TLSv1.2 
+
+The order of precedence depends on OpenSSL layer.

@@ -1,0 +1,16 @@
+Title: IBM Where can I find the end of support (EOS) dates for all versions of DB2? - United States
+
+Text:
+availsum.html availability summary eos end of support; end of service; date TECHNOTE (FAQ)
+
+QUESTION
+ Where can I find the end of support (EOS) for all versions of DB2? 
+
+ANSWER
+Official end of support (EOS) dates are listed in IBM product announcement letters. See the DB2 for z/OS software support lifecycle [http://www.ibm.com/software/data/db2/zos/support/plc/] page for announced EOS dates for DB2 for z/OS, and links to the announcement letters. 
+
+For support dates for other IBM Software products, and a link to the IBM Software Support Lifecycle policy, see the IBM Software Support Lifecycle [http://www-01.ibm.com/software/support/lifecycle/index.html] overview page. 
+
+RELATED INFORMATION
+ IBM Software Support Lifecycle [http://www.ibm.com/software/support/lifecycle/index.html]
+IBM Support Portal [http://www-947.ibm.com/support/entry/portal/Planning/Software/Information_Management/DB2_for_z~OS]

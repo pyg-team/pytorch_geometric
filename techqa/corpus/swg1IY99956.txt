@@ -1,0 +1,131 @@
+Title: IBM IY99956: USERS ARE HIDDEN WHEN LARGE LIST OF USERS IN TCR AUTHORISATIONS WINDOW - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After adding many users (15 for example), to TCR users list
+   if you try to scroll the list, the users are hidden, but if you
+   select the column header to change the sort (ASC/DESC) it shows
+   the users again. This behavior happens only in IE. It works fine
+   with Firefox.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  User names are hidden if there is a large list of users in TCR
+   authorizations window. After adding many users (for example 15)
+   to TCR authorizations list, the users are hidden if you try to
+   scroll the list. If you select the column header to change
+   sorting (ASC/DESC), the users are displayed. This behavior
+   occurs only in IE. TCR dojo table implementation was not
+   correct.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Official fix for this defect is included in the Interim Fix 6
+   for IBM Tivoli Common Reporting 1.2.0.1. More information about
+   the interim fix can be found in the following location:
+   http://www.ibm.com/support/docview.wss?uid=swg24026217 [http://www.ibm.com/support/docview.wss?uid=swg24026217]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY99956
+   
+   
+ * REPORTED COMPONENT NAME
+   TIVOLI COMMON R
+   
+   
+ * REPORTED COMPONENT ID
+   5724T6900
+   
+   
+ * REPORTED RELEASE
+   120
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-25
+   
+   
+ * CLOSED DATE
+   2010-03-24
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIVOLI COMMON R
+   
+   
+ * FIXED COMPONENT ID
+   5724T6900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R120 PSY
+   UP

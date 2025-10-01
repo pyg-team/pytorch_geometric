@@ -1,0 +1,29 @@
+Title: IBM Standardize accented characters (ex É = E) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Our goal is to standardize accented french characters (ex É = E). We're using the PXNM standardization function so we updated the mappings in CMAP-PXNM with the following 00C9;0045 
+
+I deployed CMAP-PXNM changes (confirmed in mpi_strcmap) and used run_mpitxm util (with success output). How do I confirm success in DB? Will the comparison string in memcmpd change?
+
+pre
+
+cmval = XXXX:DÉMXXXXX:Y:.
+
+post (expectation) is that it would like this
+
+cmval = XXXX:DEMXXXXX:Y:. 
+
+CAUSE
+The reason for not seeing this change was due to the fact that the standardization function associated to NAME did not have the correct character mapping string code defined within the properties for the NAME standardization in the Algorithm.
+
+RESOLVING THE PROBLEM
+By default the CMAP-PXNM.txt file has the correct conversion for this change. You do need to make sure that within the Algorithm you have the correct character mapping string code selected within the properties pull down menu. You can see this by opening the Algorithm view and in the standardization row select the NAME and within the properties you will see a drop down menu for character mapping string code in this case it was CMAP-PXNM.
+
+
+
+Will the comparison string in memcmpd change? Yes, the comparison string will change. 
+
+How do I confirm success in DB? You can confirm within the mpi_memcmpd table the cmpval with show XXXX:DEMXXXXX:Y:.

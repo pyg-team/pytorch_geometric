@@ -1,0 +1,26 @@
+Title: IBM When using the Obscure Process Data service and the parameter name is a number it fails - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using the Obscure Process Data service and the parameter name is a number it fails 
+
+SYMPTOM
+
+
+When using the Obscure Process Data service and the parameter name is a number it fails with INVALID_CHARACTER_ERR
+
+Error Message  com.sterlingcommerce.woodstock.workflow.WorkFlowException: INVALID_CHARACTER_ERR: An invalid or illegal XML character is specified. 
+
+
+
+RESOLVING THE PROBLEM
+
+
+It is not possible to have number as the first character as it is XML syntax violation.The first character of the parameter name should be an alphabet.
+
+ 
+
+HISTORICAL NUMBER
+ NFX6831

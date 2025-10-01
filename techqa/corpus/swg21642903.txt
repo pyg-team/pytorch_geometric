@@ -1,0 +1,82 @@
+Title: IBM FAQs for IBM Compiler Licensing on AIX and Linux on Power - United States
+
+Text:
+IBM Compiler Licensing TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Users of the IBM Compilers on AIX, and Linux on Power often have questions about the licensing model used. This technote addresses the most frequently asked question by our users. 
+
+RESOLVING THE PROBLEM
+ 
+
+ *  [/target/url/]How do I obtain license keys for these compiler products?
+
+ *  [/target/url/]What type of licenses are available for these compiler products ? 
+
+ *  [/target/url/]I have the trial version of the compiler installed, but have since purchased compiler licenses. Is there a key that I can enroll to convert the trial version of the compiler into the licensed version?
+
+ *  [/target/url/]If I buy additional systems, do I need additional licenses of the compilers?
+
+ *  [/target/url/]I am buying a new system to replace an existing system. How do I transfer my compiler licenses from my old system to my new system?
+
+ *  [/target/url/]For the Concurrent User licenses, I understand that the number of Concurrent User licenses required is the maximum number of people using the compiler at the same time. Does IBM provide any tools to help me determine the maximum number of people using the compiler at the same time?
+
+ *  [/target/url/]Where I can find XL C/C++ and Fortran for AIX terms and conditions of the product ?
+
+
+
+How do I obtain license keys for the compiler products? 
+There is no active license manager, keys or control mechanisms, and the IBM License Use Management (LUM) tool is no longer used. The compilers may be used as soon as they are installed, without license keys activation or enablement. 
+
+License compliance is ruled by the legal agreement accepted upon purchase and installation of the compiler product. Any usage of the product must abide by the legal terms and conditions agreed to, including user license adherence. 
+
+
+What type of licenses are available for these compiler products ? 
+There are two types of licenses available: Authorized User and Concurrent User. 
+
+An Authorized User license is required for each person who will be using the compiler. For example, if one lists all of the people who will be using the compiler, and there are ten names on the list, then 10 Authorized User licenses would be required. 
+
+A Concurrent User license can be shared amongst users and across machines. The number of Concurrent User licenses required is equal to the maximum number of users who are using the compiler at the same time. For example, if there are 10 users, but the maximum number of users who are using the compiler at the same time is 3, then 3 Concurrent User licenses will be required. 
+
+See the License Information document for the compiler product for the formal definitions of each type ofah license, and to help decide which model best suits the expected compiler usage. 
+
+
+I have the trial version of the compiler installed, but have since purchased compiler licenses. Is there a key that I can enroll to convert the trial version of the compiler into the licensed version? 
+There is no license key to convert the trial version to the licensed version. After purchasing licenses for the compiler, the full licensed compiler package must be downloaded and installed. It is recommended to fully uninstall the trial version, then install the licensed version. Refer to the product's Installation Guide for instructions. 
+
+As an alternative to uninstalling a trial installation, starting with XL C V12.1, XL C/C++ V12.1, XL Fortran V14.1, and COBOL for AIX V4.1.1, the licensed compiler package may be installed "on top" of an existing trial installation to upgrade the trial to full licensed status. Refer to the "Before Installing..." section of the Installation Guide for more information. 
+
+
+If I buy additional systems, do I need additional licenses of the compilers? 
+The IBM Compiler products for AIX and Linux on Power are licensed per user, not per system. As long as there is no increase in the number of developers (Authorized User licenses) or the maximum number of developers using the compiler at the same time (Concurrent User licenses), no changes to the compiler licenses are required. 
+
+
+I am buying a new system to replace an existing system. How do I transfer my compiler licenses from my old system to my new system? 
+Because these compiler products are licensed per user, not per system, nothing needs to be done with regard to the compiler licenses when moving from one system to another. All that is required is for the full licensed compiler package to be installed on the new system. 
+
+As long as there is no increase in the number of developers (Authorized User licenses) or the maximum number of developers using the compiler at the same time (Concurrent User licenses), no changes to the compiler licenses are required. 
+
+
+For the Concurrent User licenses, I understand that the number of Concurrent User licenses required is the maximum number of people using the compiler at the same time. Does IBM provide any tools to help me determine the maximum number of people using the compiler at the same time? 
+For XL C for AIX, XL C/C++ for AIX, and XL Fortran for AIX, the Compiler Utilization Reporting Tool (URT) is included with the compiler products. Please refer to the compiler documentation for more information on using the tool. 
+
+There is also a whitepaper, "Best Practices for the Utilization Tracking and Reporting Feature in the IBM® XL C, XL C-C++, and XL Fortran Compilers" [http://www-01.ibm.com/support/docview.wss?uid=swg27022104], which can be referenced. 
+
+Where I can find XL C/C++ and Fortran for AIX terms and conditions of the product ? 
+The terms and conditions for using XL C/C++ and/or Fortran are specified in the following PDF files, which are located in the root directory of the distribution package: 
+LicAgree.pdf 
+LicInfo.pdf 
+
+After basic installation, these files will be placed on the user's system in the following directories with file names LicenseAgreement.pdf and license.pdf : 
+
+/usr/vac/ - for XL C compilers up to and including V12.1 
+/usr/vacpp/ - for XL C/C++ compilers up to and including V12.1 
+/usr/lpp/xlf - for Fortran compilers up to and including V14.1 
+
+
+/opt/IBM/xlc/$V.$R.$M/ (e.g. /opt/IBM/xlc/13.1.0/license.pdf) - for XL C compilers starting from V13.1 
+/opt/IBM/xlC/$V.$R.$M/ (e.g. /opt/IBM/xlC/13.1.0/license.pdf) - for XL C/C++ compilers starting from V13.1 
+/opt/IBM/xlf/$V.$R.$M/ (e.g. /opt/IBM/xlf/15.1.0/license.pdf) - for XL Fortran compilers starting from V15.1  
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development XL C/C++ for AIX General Information AIX 12.1, 13.1, 13.1.2, 13.1.3 All Editions Software Development XL C for AIX General Information AIX 10.1, 11.1, 12.1, 13.1, 13.1.2, 13.1.3 All Editions Software Development XL C/C++ for Linux Compiler Linux 10.1, 11.1, 12.1, 13.1, 13.1.1, 13.1.2, 13.1.3, 13.1.4 All Editions Software Development XL Fortran for AIX Compiler AIX 12.1, 13.1, 14.1, 15.1, 15.1.2, 15.1.3 All Editions Software Development XL Fortran for Linux Compiler Linux 12.1, 13.1, 14.1, 15.1, 15.1.1, 15.1.2, 15.1.3, 15.1.4 All Editions Software Development COBOL for AIX Compiler AIX 4.1, 4.1.1, 5.1 All Editions Software Development PL/I for AIX AIX 1.1, 2.0, 3.1 All Editions

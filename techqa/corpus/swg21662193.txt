@@ -1,0 +1,77 @@
+Title: IBM Changes in the default user identifier between WebSphere MQ V7.0.1 classes for JMS and WebSphere MQ V7.1 classes for JMS - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You have configured a WebSphere Application Server WebSphere MQ messaging provider connection factory without an Authentication Alias and do not programmatically supply user identifier information when creating a connection to a queue manager. You notice a change in the default behaviour between WebSphere Application Server versions regarding the user identifier flowed on the MQCONN to the target WebSphere MQ Queue Manager:
+
+- When using WebSphere Application Server v7.0 and v8.0, no user identifier value (blank) is passed to the queue manager. 
+
+- When using WebSphere Application Server V8.5, a non-blank user identifier value is passed to the queue manager. 
+
+In the latter case, you receive the following exception when creating a connection to a queue manager:
+
+JMSCMQ0001: WebSphere MQ call failed with compcode '2' ('MQCC_FAILED') reason '2035' ('MQRC_NOT_AUTHORIZED') 
+
+Is this change in behaviour expected? 
+
+ANSWER
+WebSphere MQ access control is based on user identifiers. There is a deliberate change in the default behaviour between the WebSphere MQ V7.0.1 classes for JMS and the WebSphere MQ V7.1 (and later) classes for JMS regarding the default user identifier flowed to the queue manager.
+From the WebSphere MQ V7.1 classes for JMS onwards, a non-blank user identifier is always flowed to the queue manager when creating a connection to WebSphere MQ. This is true even if no user identifier has been specified, or a blank or null user identifier has been specified; for example by calling:
+
+MQConnectionFactory.createConnection();
+
+or:
+
+MQConnectionFactory.createConnection(“”, “”);
+
+or:
+
+MQConnectionFactory.createConnection(null, null);
+
+In the case where a null or blank user identifier has been specified, the WebSphere MQ V7.1 and later classes for JMS will query the value of the Java System Property user.name. The value of this property is flowed to the queue manager for authorization.
+
+As a result, if the user identifier specified by the Java System Property user.name is not authorized to access the queue manager, the queue manager will return an exception to the WebSphere MQ classes for JMS with Reason Code MQRC_NOT_AUTHORIZED and the connection to the queue manager will not be established.
+
+This change in behaviour could affect topologies that previously relied on the default behaviour in the WebSphere MQ V7.0.1 classes for JMS that flowed a blank user identifier when establishing a CLIENT mode transport connection. The expectation that a blank or null user identifier will be flowed by default, and that the user identifier that started the WebSphere MQ server-connection channel would be used by the queue manager when performing the authorization checks, is no longer valid from the WebSphere MQ V7.1 classes for JMS.
+
+In the case outlined above, system administrators that are currently relying on the default behaviour of the WebSphere MQ V7.0.1 classes for JMS should review their configurations regarding the use of user identifiers and authorization. This might also help to improve security within their WebSphere MQ topology.
+
+
+In summary, the change in behaviour will affect users of:
+
+- The WebSphere MQ V7.1 and later classes for JMS.
+
+- The WebSphere MQ V7.1 and later JCA Resource Adapter that includes the classes for JMS.
+
+- Versions of WebSphere Application Server that include the WebSphere MQ V7.1 and later JCA Resource Adapter. Currently this is WebSphere Application Server V8.5.0.0 and later.
+
+
+The com.ibm.mq.jms.ForceUserID Java System Property
+
+A Java System Property called “com.ibm.mq.jms.ForceUserID” was introduced as part of APAR IZ49302 [http://www.ibm.com/support/docview.wss?uid=swg1IZ49302] and included from WebSphere MQ V6.0.2.8 and WebSphere MQ V7.0.1.
+
+The changes made as part of this APAR could be used to change the default behaviour in the WebSphere MQ V7.0.1 classes for JMS regarding the user identifier value flowed to the queue manager when creating a connection.
+
+This property is no longer valid from WebSphere MQ V7.1. Setting this property will have no affect on the WebSphere MQ V7.1 classes for JMS and later.
+
+Other Useful Resources
+
+WebSphere MQ Documentation
+
+The WebSphere MQ Documentation contains a section on planning user authorization which also includes a description on access control for clients. A link to this section in the WebSphere MQ V7.1 Documentation is as follows:
+
+WebSphere MQ > Security > Planning for your security requirements >> Planning authorization [http://pic.dhe.ibm.com/infocenter/wmqv7/v7r1/topic/com.ibm.mq.doc/zs14070_.htm]
+
+Technotes
+
+A Technote is available that explains J2C Authentication Aliases and how they can be used to configure the user identifier flowed to a queue manager when creating a connection: 
+
+Enterprise applications, the WebSphere Application Server WebSphere MQ messaging provider connection factories and Authentication Aliases explained [http://www.ibm.com/support/docview.wss?uid=swg21580097]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server

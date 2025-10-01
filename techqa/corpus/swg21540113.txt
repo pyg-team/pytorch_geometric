@@ -1,0 +1,61 @@
+Title: IBM Using custom APIs code sample for invoking, configuration needed, connection fundamentals - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using custom APIs code sample for invoking, configuration needed, connection fundamentals 
+
+SYMPTOM
+PART: Platform 4.0 Platform
+COMPONENT: <None>
+OS: <None> - <None>
+DATABASE: <None> - <None>
+WEB SERVER: - 
+WEB BROWSER: -
+
+
+RESOLVING THE PROBLEM
+Let us say you have configured a custom api to use a class called com.yantra.AnandApi, with a method call anandMethod.
+1. anandMethod should have the following signature
+public Document anandMethod (YFSEnvironment env, Document inDoc)
+
+2. Let us say you want to call an api from anandMethod. This is how your code will look like:
+
+public Document anandMethod (YFSEnvironment env, Document inDoc) {
+
+YIFApi api = YIFClientFactory.getInstance().getLocalApi();
+// If you are using 4.0 and not 4.0 sp1 ,uncomment the following two
+// lines
+// env.setAdapterName("DefaultAdapter");
+// env.setSystemName("DefaultSystem");
+
+// to call a system api
+api.createOrder(env, <your document>)
+
+// If you want to access a custom method called myApi in some other HTTP/EJB
+// communication group from within anandMethod , you need to do this:
+env.setAdapterName("MyCommGroup");
+env.setSystem("MySystem")
+api.invoke(env, "myApi", <yourDoc>
+
+3. If you want to access the database and do sql operations you need to do something like this:
+com.yantra.yfs.japi.YFSConnectionHolder connHolder = (com.yantra.yfs.japi.YFSConnectionHolder) env;
+java.sql.Connection conn = connHolder.getDBConnection();
+java.sql.Statement sql = conn.createStatement();
+sql.executeQuery("your sql");
+
+Make sure that you DO NOT commit or rollback on this connection.
+Read the javadocs of com.yantra.yfs.japi.YFSConnectionHolder interface for more information.
+
+For database connections do not close the connection. The connection that resides in the YFSConnectionHolder is used by the entire transaction. Interop will close it. (in the future, we plan to give a proxy for teh connection , which will throw an exception when a commit, rollback or close is called on it)
+
+
+
+HISTORICAL NUMBER
+ PRI48529 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact

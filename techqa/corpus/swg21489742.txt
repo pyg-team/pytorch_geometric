@@ -1,0 +1,95 @@
+Title: IBM New build of Macintosh OSX 10.6.x computer presenting 'Error 75' when attempting to check out commuter license from Sentinel RMS License Manager. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have new installation of Macintosh OSX 10.6.x. You have a new installation of Statistics. Your Sentinel RMS License Manager is properly configured and is successfully providing standard network licensing to the new installations of Macintosh OSX 10.6.x and Statistics. When attempting to check out a commuter license, the client is presenting 'Error 75' and a commuter license cannot be checked-out. 
+
+RESOLVING THE PROBLEM
+The following procedure is designed to trouble-shoot and resolve the appearance of 'Error 75' under the following conditions only:
+
+The operating system of the client is Macintosh OSX 10.6.x.
+A new installation of the product.
+The product is able to receive a non-commuter license without error.
+The product exhibits 'Error 75' when attempting to check out a commuter license.
+
+IF ALL of the above conditions DO apply, THEN proceed to (A).
+IF ANY of the above conditions DO NOT apply, THEN do not proceed. See other Knowledgebase resolutions regarding 'Error 75' or contact SPSS Technical Support [http://www.ibm.com/planetwide/region.html].
+
+(A)
+Is the Sentinel RMS License Manager successfully distributing commuter licenses to other IBM SPSS products (whether on OSX or Windows)?
+IF YES, THEN go to (B)
+IF NO, THEN go to (E).
+
+(B) 
+
+Open the Terminal program.
+Change directory to the following folder: 
+
+/Applications/IBM/SPSS/Statistics/19/SPSSStatistics.app/Contents/bin 
+
+Execute the following command: 
+
+sudo ./licenseinit -f 1200 -v 19.0 
+
+Provide the administrator password when prompted.
+Note any response/error messages.
+If no error messages, open the IBM SPSS Statistics Commuter License utility.
+Attempt to check out a commuter license.
+
+
+IF 'Error 75' appears, THEN go to (C).
+IF 'Error 75' does not appear, then the problem is resolved.
+(C)
+Log into the computer with the Administrator account.
+Open the Macintosh hard drive (icon, on Desktop).
+Open the 'Applications' folder.
+Control+click (right-click) the 'IBM' folder.
+Select the 'Get Info' menu option.
+(A window labeled 'IBM Info' will appear.)
+Locate the 'Sharing & Permissions' section of the 'IBM Info' window.
+(If this section is not revealed, select the arrow next to 'Sharing & Permissions' to open it.)
+A number of user accounts will be listed.
+In the column labeled 'Privilege' set every account to 'Read & Write'.
+(It may be necessary to unlock this window to make these changes. To do so, select the 'lock' icon the lower right-hand corner of the window. Provide the Administrator credentials if prompted. When all changes have been made to all accounts, lock the window by selecting the 'lock' icon.)
+When all changes have been made, close the 'IBM Info' window.
+Check out a commuter license using the Commuter License utility.
+
+IF 'Error 75' appears, THEN go to (D).
+IF 'Error 75' does not appear, then go to (C)
+
+(C)
+Log out of the Administrator account.
+Log in with the normal end-user account.
+Check out a commuter license using the Commuter License utility.
+
+IF 'Error 75' appears, THEN go to (E).
+IF 'Error 75' does not appear, then error appears to have been due to a privilege issue that has been resolved with the previous procedure. 
+
+
+(D) 
+
+Open Finder to the following location: 
+
+ /Applications/IBM/SPSS/Statistics/19/ 
+
+Locate the following file: 
+
+IBM_SPSS_Statistics_19_InstallLog.log 
+
+Send this file to IBM SPSS Technical Support for evaluation. 
+
+
+(E)
+The source of 'Error 75' does not appear to be with the client installation. Please contact IBM SPSS Technical Support to trouble-shoot the Sentinel RMS License Manager
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 93181

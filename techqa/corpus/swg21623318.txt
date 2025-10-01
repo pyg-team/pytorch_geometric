@@ -1,0 +1,60 @@
+Title: IBM FileNet P8 reports error TRANSPORT_WSI_NETWORK_ERROR and E_SERVER_ERROR due to failed HTTP post request - United States
+
+Text:
+HTTP retry ; sun.net.http.retryPost ; TRANSPORT_WSI_NETWORK_ERROR ; E_SERVER_ERROR TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A CE client, such as IBM FileNet P8 Process Engine (PE), issues WebServices requests towards IBM FileNet P8 Content Engine (CE). If such a request is sent just as the tcp/ip connection is terminated (or other failure), this leads to the HTTP post request being retried. In many cases (including all CE API requests), the Java classes do not have the information to supply the HTTP post payload when they do the retry. Consequently, the HTTP post request is retried with an empty payload. This leads to the error shown below. 
+
+SYMPTOM
+When this happens, the following error is reported: 
+
+PE pesvr_system.log (i.e. the client side):
+
+[Warning] FNRPE2131090405W Param Error IN/OUT Wob#:XXXXXXXXXXXXXXXX, WC class#: , ISid#: , WOId#:, ,ABCDEF; Exception: Unexpected exception -- see chained exception
+... 
+Caused by:
+com.filenet.api.exception.EngineRuntimeException:
+FNRCE0062E: E_SERVER_ERROR: An error was returned from the server. A Web services request received an HTTP response that did not have a SOAP Content-Type: (text/html; charset=iso-8859-1).
+Response contents:
+413 Request Entity Too Large</title><LF></head>
+Request Entity Too Large
+The requested resource /wsi/FNCEWS40MTOM/ does not allow request data with POST requests, or the amount of data provided in<LF>the request exceeds the capacity limit. 
+
+ 
+
+CE p8_server_error.log (i.e. the server side):
+
+WSI FNRCT0042E - ERROR CEWS Listener, unexpected exception (elapsed request time 60462 ms)
+com.filenet.api.exception.EngineRuntimeException:
+FNRCT0042E: TRANSPORT_WSI_NETWORK_ERROR: A network error occurred when processing a Web service request or response. See the nested exception for specific details. See full stack trace for details.
+Message: Socket operation timed out before it could be completed
+at com.filenet.apiimpl.wsi.serialization.Util.ereOrIoe_common(Util.java:676)
+...
+Caused by: javax.xml.stream.XMLStreamException: java.net.SocketTimeoutException: Socket operation timed out before it could be completed
+...
+Caused by: java.net.SocketTimeoutException: Socket operation timed out before it could be completed
+...
+
+
+Also, HTTP server log may report something like:
+
+ERROR: lib_htrequest: htrequestWrite: just_read is -1; reading of chunked content failed rc=7 
+
+If such behaviour occurs while the PE is handling a request to create a new workflow, the PE client submitting this request may think that the request was not handled by the server and will resubmit it. This would mostly lead to duplicate workflow creation.
+
+
+CAUSE
+When a HTTP post request fails, as indicated by the HTTP response code, the standard Java classes automatically retry that post request. 
+
+ This should not be done for post requests as described in RFC 2616 , section 8.1.4 . [http://www.w3.org/Protocols/rfc2616/rfc2616-sec8.html#sec8.1.4] 
+
+
+RESOLVING THE PROBLEM
+The best way to solve this issue is to avoid the retry. Such a retry can be disabled by setting Java parametersun.net.http.retryPost to false. To achieve this, define the JVM argument: 
+
+-Dsun.net.http.retryPost=false 
+
+ For further information, see the definition of the Java Networking Properties [http://docs.oracle.com/javase/6/docs/technotes/guides/net/properties.html]. 
+
+ Another solution would be to avoid a possible cause of the retry as this is often linked to the keepalive mechanism of the HTTP Server. For example, you can disable the keepalive for Java Client in IBM HTTP Server. [http://www-01.ibm.com/support/docview.wss?uid=swg21590497]

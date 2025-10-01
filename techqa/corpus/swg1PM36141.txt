@@ -1,0 +1,254 @@
+Title: IBM PM36141: WCM STACKOVERFLOWERROR CAUSED BY A RACE CONDITION TRIGGERS AN INFINITE RECURSIVE QUERY. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WCM StackOverflowError caused by a race condition triggers an
+   infinite recursive query.
+   
+   In this case, WCM Content Items were unable to be modified or
+   deleted due to the reference exceptions and StackOverFlowError
+   
+   
+   Example:
+   
+   [3/31/11 20:45:53:959 CEST] 000000e6 AbstractComma E   <Null
+   Message>
+   java.lang.StackOverflowError
+       at
+   com.ibm.ejs.j2c.PoolManager.reserve(PoolManager.java:2010)
+       at
+   com.ibm.ejs.j2c.ConnectionManager.allocateMCWrapper(ConnectionMa
+   nager.ja
+   va:937)
+       at
+   com.ibm.ejs.j2c.ConnectionManager.allocateConnection(ConnectionM
+   anager.j
+   ava:611)
+       at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcDataSource.getConnection(WSJdbcD
+   ataSourc
+   e.java:449)
+       at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcDataSource.getConnection(WSJdbcD
+   ataSourc
+   e.java:418)
+       at
+   com.ibm.icm.ci.Datastore$DataSource.getConnection(Datastore.java
+   :596)
+       at
+   com.ibm.icm.ci.ConnectionService.getConnection(ConnectionService
+   .java:93
+   )
+       at
+   com.ibm.icm.ci.data.impl.PathService._acquireDataManager(PathSer
+   vice.jav
+   a:1645)
+       at
+   com.ibm.icm.ci.data.impl.PathService._executeGetLinks(PathServic
+   e.java:1
+   357)
+       at
+   com.ibm.icm.ci.data.impl.PathService._getLinks(PathService.java:
+   1296)
+       at
+   com.ibm.icm.ci.data.impl.PathService._getItemsOnPathList(PathSer
+   vice.jav
+   a:1028)
+       at
+   com.ibm.icm.ci.data.impl.PathService.retrieveContent(PathService
+   .java:83
+   9)
+       at
+   com.ibm.icm.ci.data.impl.PathService.retrieveContent(PathService
+   .java:17
+   55)
+       at com.ibm.icm.jcr.NodeImpl.getNode(NodeImpl.java:1073)
+       at com.ibm.icm.jcr.NodeImpl.getNode(NodeImpl.java:1004)
+       at com.ibm.icm.jcr.NodeImpl.getNode(NodeImpl.java:995)
+       at com.ibm.icm.jcr.NodeImpl.getNode(NodeImpl.java:987)
+       at
+   com.ibm.workplace.wcm.domain.transformers.controllable.CmpntRefe
+   renceTra
+   nsformer.implodeControllable(CmpntReferenceTransformer.java:151)
+       at
+   com.ibm.workplace.wcm.domain.transformers.controllable.CmpntTran
+   sformer.
+   implode(CmpntTransformer.java:501)
+       at
+   com.ibm.workplace.wcm.domain.transformers.TransformerUtils.trans
+   formNode
+   (TransformerUtils.java:1637)
+       at
+   com.ibm.workplace.wcm.domain.transformers.CmpntMapTransformUtils
+   .implode
+   CmpntMap(CmpntMapTransformUtils.java:275)
+       at
+   com.ibm.workplace.wcm.domain.transformers.CmpntMapTransformUtils
+   .implode
+   CmpntMap(CmpntMapTransformUtils.java:247)
+       at
+   com.ibm.workplace.wcm.domain.transformers.controllable.ContentTr
+   ansforme
+   r.implodeControllable(ContentTransformer.java:367)
+       at
+   com.ibm.workplace.wcm.domain.transformers.controllable.AbstractC
+   ontrolla
+   bleTransformer.implode(AbstractControllableTransformer.java:332)
+       at
+   com.ibm.workplace.wcm.domain.transformers.TransformerUtils.trans
+   formNode
+   (TransformerUtils.java:1637)
+       at
+   com.ibm.workplace.wcm.services.repository.RepositoryServiceImpl.
+   getByUUI
+   D(RepositoryServiceImpl.java:1333)
+       at
+   com.ibm.workplace.wcm.services.repository.RepositoryServiceImpl.
+   getByUUI
+   D(RepositoryServiceImpl.java:1250)
+       at
+   com.ibm.workplace.wcm.services.repository.RepositoryServiceImpl.
+   get(Repo
+   sitoryServiceImpl.java:387)
+       at
+   com.ibm.workplace.wcm.services.content.ContentServiceImpl.getImp
+   l(Conten
+   tServiceImpl.java:2046)
+       at
+   com.ibm.workplace.wcm.services.content.ContentServiceImpl.getImp
+   l(Conten
+   tServiceImpl.java:1889)
+       at
+   com.ibm.workplace.wcm.services.content.ContentServiceImpl.get(Co
+   ntentSer
+   viceImpl.java:1801)
+       at
+   com.aptrix.pluto.cmpnt.link.ContentLinkReference.getResourceType
+   ContentI
+   tem(ContentLinkReference.java:680)
+       at
+   com.aptrix.pluto.cmpnt.link.ContentLinkReference.<init>(ContentL
+   inkRefer
+   ence.java:97)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  An infinite recursive loop was triggered when an element within
+   a content, is linked to the content itself.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code was updated to prevent this issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM36141
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-03
+   
+   
+ * CLOSED DATE
+   2011-06-17
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61C PSY
+   UP
+   
+   
+ * R610 PSY
+   UP
+   
+   
+ * R615 PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

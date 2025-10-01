@@ -1,0 +1,82 @@
+Title: IBM ITCAM4Tx : Transaction Tracking details using Transaction plugin - United States
+
+Text:
+plugin; plug-in; arm; enablement; WebSphere; apache; ttapi; ihs; http server; 71TT-PLAN; 71TT-CONF; 71TT-GEN; 71TT-TS; 71GEN-ARM TECHNOTE (FAQ)
+
+QUESTION
+ Provide some details and links to documentation regarding Transaction Tracking enablement for Web Servers with ARM. 
+
+CAUSE
+Using for example ITCAM for Tx Transaction Tracking in the following environment : 
+
+Distributed (non z_OS) SLES 10 Update 2 server machine, with Apache web server v2.2.x, and "F5" device seating between the Apache server and WebSphere Portal Server.
+
+Is it possible to 'arm' Apache web server for transaction tracking, without using the Websphere plugin ?
+
+
+ANSWER
+A) There is not a specific TTAPI/ARM Data Collector plug-in for Apache HTTP Server. So the answer to the above question is No. 
+
+
+You would need to use the WebSphere Plug-in to arm instrument the Apache Web Server, like you would do with IHS (IBM Http Server). 
+see : [http://www-01.ibm.com/support/knowledgecenter/SS5MD2_7.4.0/com.ibm.itcamt.doc_7.4.0.0/tt/dita/task/kto_tools_arm_enable_ihs.html?lang=en]
+https://www.ibm.com/support/knowledgecenter/en/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/tt/dita/task/kto_tools_arm_enable_ihs.html [https://www.ibm.com/support/knowledgecenter/en/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/tt/dita/task/kto_tools_arm_enable_ihs.html]
+
+B) If the applications running on Apache are not armed already, one option would need to arm them manually, or TTAPI them manually; refer for that to TT API User Guide available at :
+https://www.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/tt/dita/ttapiug/oview_ttapi.html [https://www.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/tt/dita/ttapiug/oview_ttapi.html]
+
+
+C) In case the applications running on Apache web server are already armed :
+https://www.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/tt/dita/reference/kto_tools_arm_setup4arm.html [https://www.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/tt/dita/reference/kto_tools_arm_setup4arm.html]
+this link says :
+"Running ARM-instrumented applications on UNIX systems" :
+Transaction Tracking provides a shell script that allows you to modify the environment on UNIX® operating systems so that applications that are ARM-instrumented can make ARM calls and find the appropriate runtime libraries. The shell script is named setup4ARM.sh; it is placed in the $CANDLE_HOME/arch/tu/tusupport directory during installation. To use this script, you must provide a single parameter to the script that is in the path to the script. 
+For example, ../setup4ARM.sh ./setup4ARM.sh
+
+
+D) In case the WebSphere AS plug-in can be used in the environment :
+"For Transaction Tracking, All three types of Web servers (Apache, IHS, IIS) are instrumented by the ARM dll. Refer to "Enabling ARM transactions" in the ITCAM for Tx documentation:
+https://www.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/tt/dita/concept/kto_tools_arm_ihs.html [https://www.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/tt/dita/concept/kto_tools_arm_ihs.html]
+
+E) The main thing to watch out for when instrumenting Web servers are :
+- Make sure the right ARM dll (ie 32 vs 64bit) get copied. 
+- Make sure the paths for the web server is setup such that the correct dlls are selected 
+- Make sure there is access permissions for the ARM dlls (eg on Unix platforms, the user that the web server is running as needs execute permissions on the dll).
+- Ensure that CANDLE_HOME is define appropriately for the web server process. 
+- Be aware that the ARM filtering configuration (via AMCE) is located at $ITM_HOME\camconfig\... (which is derived from CANDLE_HOME, hence the point above).This is delivered from the AMCE (T3 agent) to the "local host" via the Transaction Collector (TU) agent. 
+- When the TU is not located on the same machine as the web server, you need to manually copy the configuration file across.
+
+F) "Data collector plugin" is a generic term referring to anything sending tracking data to a Transaction Collector. The following data collector plugins are available : 
+*native TTAPI - comes with the Transaction Collector and is installed in the "tusupport/ttapi" directory on distributed platforms, and on the tape for zOS and installed in the usual way for zOS. 
+
+*ARM DLL - comes with the Transaction Collector and is installed in the "tusupport" directory. 
+
+* WebSphere MQ data collector - installed as a separate component and is installed to "kth" directory for distributed environment, and on the tape for zOS and installed in the usual way for zOS. 
+
+* ITCAM for WAS 6.1 FP3 with IF15. IF15 can be found on the web support site for ITCAM for WAS 6.1 
+
+* ITCAM for AD 7.1
+
+* CICS - comes with the z/OS tape and installed in standard way for z/OS applications.
+
+* CICS TG 
+
+* IMS™ 
+
+* Tuxedo 
+
+* WebSphere Message Broker 
+
+* SOA, via ITCAM for SOA
+
+* J2EE, via ITCAM for J2EE 
+
+The data collector plugin will collect transactions for a specific domain. it's composed of a combination of a Transaction Tracking API (Transaction Tracking Application Programming Interface) and its supporting files which, when installed on a domain, enables an application to transmit tracking data to a Transaction Collector.
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfT
+TCAMfT
+CAMfT

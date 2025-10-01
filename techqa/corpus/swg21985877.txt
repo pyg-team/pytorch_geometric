@@ -1,0 +1,42 @@
+Title: IBM Microsoft .Net Framework error when saving a chart in IBM i2 Analyst's Notebook - United States
+
+Text:
+i2 ANB; ANBP; security; FIPS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When saving a chart in i2 Analyst's Notebook, the user receives a .Net Framework error, "Unhandled Exception has occured in a component in your application." The environment is required to have FIPS (Federal Information Processing Standard) enabled via Group Policy Security Settings/Local Policies/Security Options/System cryptography: 
+Use FIPS compliant algorithms for encryption, hashing and signing = Enabled .
+
+
+SYMPTOM
+
+[/support/docview.wss?uid=swg21985877&amp;aid=1]
+
+************** Exception Text **************
+System.InvalidOperationException: This implementation is not part of the Windows Platform FIPS validated cryptographic algorithms.
+at System.Security.Cryptography.SHA1Managed..ctor()
+at i2.Notebook.Tasks.MapChartItems.MappingControl.MappingController.GenerateCryptographicHash(String input)
+at i2.Notebook.Tasks.MapChartItems.MappingControl.MappingController.GenerateChartKey(String guid, String chartFilePath)
+at i2.Notebook.Tasks.MapChartItems.MappingControl.MappingController.<>c__DisplayClass1.<DisconnectKmzFileAsync>b__0()
+at System.Windows.Forms.Control.InvokeMarshaledCallbackDo(ThreadMethodEntry tme)
+at System.Windows.Forms.Control.InvokeMarshaledCallbackHelper(Object obj)
+at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state)
+at System.Windows.Forms.Control.InvokeMarshaledCallback(ThreadMethodEntry tme)
+at System.Windows.Forms.Control.InvokeMarshaledCallbacks()
+
+
+CAUSE
+Enforcing FIPS compliance on Windows, by enabling the FIPSAlgorithmPolicy value in the Windows Registry (FIPSAlgorithmPolicy=1), will cause a multitude of compatibility problems with applications from many vendors, including Microsoft themselves. For this reason, Microsoft now deprecates using FIPSAlgorithmPolicy to manage FIPS compliance:
+
+Why We’re Not Recommending “FIPS Mode” Anymore
+http://blogs.technet.com/b/secguide/archive/2014/04/07/why-we-re-not-recommending-fips-mode-anymore.aspx [http://blogs.technet.com/b/secguide/archive/2014/04/07/why-we-re-not-recommending-fips-mode-anymore.aspx]
+
+RESOLVING THE PROBLEM
+If you cannot disable FIPSAlgorithmPolicy (FIPSAlgorithmPolicy=0 in the registry), then set enforceFIPSPolicy to false in the ANB.exe.config file. This does not weaken the security of ANB.
+
+
+
+
+[/support/docview.wss?uid=swg21985877&aid=2] [/support/docview.wss?uid=swg21985877&aid=2]

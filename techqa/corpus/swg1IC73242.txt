@@ -1,0 +1,302 @@
+Title: IBM IC73242: CANNOT SELECT EPV ON MANAGE EPVS SCREEN - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you try to update an EPV value on the Process Admin console,
+   as soon as you select a Workspace in the Snapshot drop-down (as
+   far as I can tell, no snapshot names are shown in this
+   drop-down, just workspace names) that contains an EPV, you will
+   get this error:
+   
+   com.lombardisoftware.core.TeamWorksException: Cannot forward.
+   Response already committed.
+    at
+   com.lombardisoftware.core.TeamWorksException.asTeamWorksExceptio
+   n(TeamWorksException.java:129)
+    at
+   com.lombardisoftware.core.RegexExceptionRewriter.rewrite(RegexEx
+   ceptionRewriter.java:73)
+    at
+   com.lombardisoftware.core.ExceptionHandler.returnProcessedExcept
+   ion(ExceptionHandler.java:290)
+    at
+   com.lombardisoftware.servlet.ControllerServlet.doError(Controlle
+   rServlet.java:147)
+    at
+   com.lombardisoftware.servlet.ControllerServlet.doGet(ControllerS
+   ervlet.java:123)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:718)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:831)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWr
+   apper.java:1583)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWr
+   apper.java:1523)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebApp
+   FilterChain.java:104)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain._doFilter(WebAp
+   pFilterChain.java:77)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterManager.doFilter(WebA
+   ppFilterManager.java:885)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(Ser
+   vletWrapper.java:865)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(Ser
+   vletWrapper.java:475)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.handleRequest
+   (ServletWrapperImpl.java:175)
+    at
+   com.ibm.ws.webcontainer.webapp.WebAppRequestDispatcher.include(W
+   ebAppRequestDispatcher.java:673)
+    at
+   com.ibm.ws.webcontainer.webapp.WebApp.sendError(WebApp.java:3244
+   )
+    at
+   com.ibm.ws.webcontainer.webapp.WebAppRequestDispatcher.forward(W
+   ebAppRequestDispatcher.java:348)
+    at
+   com.lombardisoftware.servlet.LswServlet.showPage(LswServlet.java
+   :426)
+    at
+   com.lombardisoftware.servlet.LswServlet.showNextPage(LswServlet.
+   java:368)
+    at
+   com.lombardisoftware.servlet.ControllerServlet.doCommon(Controll
+   erServlet.java:480)
+    at
+   com.lombardisoftware.servlet.ControllerServlet.doGet(ControllerS
+   ervlet.java:118)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:718)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:831)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWr
+   apper.java:1583)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWr
+   apper.java:1523)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebApp
+   FilterChain.java:131)
+    at
+   com.lombardisoftware.servlet.CrossSiteScriptingFilter.doFilter(C
+   rossSiteScriptingFilter.java:39)
+    at
+   com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(Fi
+   lterInstanceWrapper.java:188)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebApp
+   FilterChain.java:116)
+    at
+   com.lombardisoftware.servlet.SetCharacterEncodingFilter.doFilter
+   (SetCharacterEncodingFilter.java:49)
+    at
+   com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(Fi
+   lterInstanceWrapper.java:188)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebApp
+   FilterChain.java:116)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain._doFilter(WebAp
+   pFilterChain.java:77)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterManager.doFilter(WebA
+   ppFilterManager.java:885)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(Ser
+   vletWrapper.java:865)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(Ser
+   vletWrapper.java:475)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.handleRequest
+   (ServletWrapperImpl.java:175)
+    at
+   com.ibm.ws.webcontainer.servlet.CacheServletWrapper.handleReques
+   t(CacheServletWrapper.java:91)
+    at
+   com.ibm.ws.webcontainer.WebContainer.handleRequest(WebContainer.
+   java:863)
+    at
+   com.ibm.ws.webcontainer.WSWebContainer.handleRequest(WSWebContai
+   ner.java:1583)
+    at
+   com.ibm.ws.webcontainer.channel.WCChannelLink.ready(WCChannelLin
+   k.java:182)
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleDiscr
+   imination(HttpInboundLink.java:455)
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleNewIn
+   formation(HttpInboundLink.java:384)
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpICLReadCallback.complet
+   e(HttpICLReadCallback.java:83)
+    at
+   com.ibm.ws.tcp.channel.impl.AioReadCompletionListener.futureComp
+   leted(AioReadCompletionListener.java:165)
+    at
+   com.ibm.io.async.AbstractAsyncFuture.invokeCallback(AbstractAsyn
+   cFuture.java:217)
+    at
+   com.ibm.io.async.AsyncChannelFuture.fireCompletionActions(AsyncC
+   hannelFuture.java:161)
+    at com.ibm.io.async.AsyncFuture.completed(AsyncFuture.java:138)
+    at
+   com.ibm.io.async.ResultHandler.complete(ResultHandler.java:204)
+    at
+   com.ibm.io.async.ResultHandler.runEventProcessingLoop(ResultHand
+   ler.java:775)
+    at com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:905)
+    at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1550)
+   Caused by: java.lang.IllegalStateException: Cannot forward.
+   Response already committed.
+    at java.lang.Throwable.<init>(Throwable.java:67)
+    at
+   com.ibm.ws.webcontainer.webapp.WebAppRequestDispatcher.forward(W
+   ebAppRequestDispatcher.java:126)
+    at
+   com.lombardisoftware.servlet.LswServlet.showPage(LswServlet.java
+   :426)
+    at
+   com.lombardisoftware.servlet.LswServlet.showNextPage(LswServlet.
+   java:368)
+    at
+   com.lombardisoftware.servlet.ControllerServlet.doCommon(Controll
+   erServlet.java:480)
+    at
+   com.lombardisoftware.servlet.ControllerServlet.doGet(ControllerS
+   ervlet.java:118)
+    ... 48 more
+   Repro steps:
+   
+   1. Create Process App.
+   2. Add EPV.
+   3. Navigate to Process Admin console > Admin Tools > Manage
+   EPVs.
+   4. Select your workspace where you created the EPV.
+   
+   I also tried to actually use the EPV appropriately but continued
+   seeing the error. Customer reproduced on AIX, I reproduced on
+   Win 7 Simple Install, support engineer sitting next to me also
+   reproduced it with a simple example like this.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  If you try
+   to update an EPV value on the Process Admin console,
+   as soon as you select a Workspace in the Snapshot drop-down (as
+   far as I can tell, no snapshot names are shown in this
+   drop-down, just workspace names) that contains an EPV, you will
+   get this error:
+   
+   com.lombardisoftware.core.TeamWorksException: Cannot forward.
+   Response already committed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Resolved
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC73242
+   
+   
+ * REPORTED COMPONENT NAME
+   WS LOMBRDI EDTN
+   
+   
+ * REPORTED COMPONENT ID
+   5725A3600
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-12-14
+   
+   
+ * CLOSED DATE
+   2011-02-28
+   
+   
+ * LAST MODIFIED DATE
+   2011-02-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS LOMBRDI EDTN
+   
+   
+ * FIXED COMPONENT ID
+   5725A3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

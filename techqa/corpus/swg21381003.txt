@@ -1,0 +1,47 @@
+Title: IBM DSRA0010E error on Derby database connection during WebSphere Portal startup - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+When WebSphere Portal is not stopped properly (as in a system crash), the embedded Derby database could be forced into an unusable state. In the SystemOut.log, you may see the following error messages: 
+
+[datetime] 00000017 SchedulerImpl E SCHD0124E: Unable to initialize wps/Scheduler due to error: com.ibm.ws.extensionhelper.exception.UnableToInitializeException: com.ibm.websphere.ce.cm.StaleConnectionException: Failed to start database 'C:/WebSphere/wp_profile/PortalServer/derby/wpsdb', see the next exception for details.DSRA0010E: SQL State = XJ040, Error Code = 40,000
+...
+Caused by: com.ibm.websphere.ce.cm.StaleConnectionException: Failed to start database 'C:/WebSphere/wp_profile/PortalServer/derby/wpsdb', see the next exception for details.DSRA0010E: SQL State = XJ040, Error Code = 40,000
+...
+java.sql.SQLException: Failed to start database 'C:/WebSphere/wp_profile/PortalServer/derby/wpsdb', see the next exception for details.DSRA0010E: SQL State = XJ040, Error Code = 40,000
+...
+ERROR XSLAO: Recovery failed unexpected problem log record is Not first but transaction is not in transaction table : 1847677.
+
+
+SYMPTOM
+HTTP 404 when accessing the WebSphere Portal URL from a browser.
+
+
+RESOLVING THE PROBLEM
+ 
+
+Use the following procedure to attempt to address the issue:
+
+1. Stop the Portal server if it's still running. 
+
+2. Delete the two lock files, db.lck and dbex.lck, in <wp_profile>/PortalServer/derby/wpsdb.
+
+3. Delete the "tranlog" for WebSphere_Portal, under <wp_profile>/tranlog/<cell>/<node>/WebSphere_Portal.
+
+4. Restart the Portal server.
+
+5. If the above steps fail and you have a backup of the "wpsdb" database, you may attempt to archive the current database in another location outside of the WebSphere directory structure and put the backup in place. 
+
+NOTE: Because of the potential database corruptions documented in this technote, we recommend periodic backup of your Derby databases, or the entire file system.
+
+RELATED INFORMATION
+ Derby transaction log [https://www.ibm.com/support/docview.wss?uid=swg21261294]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products AIX, HP-UX, IBM i, Linux, Solaris, Windows, z/OS 7.0, 6.1

@@ -1,0 +1,19 @@
+Title: IBM MSGIEC161I 002(00000014 0000EE01 00000000 00000000) or VSAM ERROR. RETURN CODE = 08   ERROR CODE = 135(X'87') when attempting to open a VSAM data set - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Receiving messages IEC161I 002(00000014 0000EE01 00000000 00000000) or a message from an application with a VSAM return code of 08 and an error code of 135(X'87'). Messages are indicating a failure to connect to CICSVR address space. 
+
+ANSWER
+These messages may be received for several reasons. If you do not have CICSVR Version 3.1 (or higher) then the reason is that the parameter FRLOG is set to FRLOG(REDO). This indicates that VSAM Batch Logging is to be used to log updates to the data set. If you do have CICSVR Version 3.1 (or higher) then the messages are indicating that VSAM OPEN could not connect to the CICSVR address space. 
+
+ To correct the first case, redefine the data set without the FRLOG parameter, or specify FRLOG(NONE), or use IDCAMS ALTER NULLIFY FRLOG to remove the FRLOG parameter. You may need to check your SMS Data Classes to be sure that FRLOG is not set incorrectly there. 
+
+ To correct the second case start the CICSVR address space. 
+
+ These specific return and reason codes are documented in the CICS VSAM Recovery Messages and Problem Determination manual in the section "CICSVR return codes and reason codes in non-CICSVS messages. 
+
+RELATED INFORMATION
+ CICS VSAM Recovery Messages and Problem Determination [http://publibfi.boulder.ibm.com/cgi-bin/bookmgr/BOOKS/dwwbmd20/COVER?DT=20070523121047]

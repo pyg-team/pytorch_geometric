@@ -1,0 +1,60 @@
+Title: IBM AppScan licenses since version 7.8 use FLEXlm format - United States
+
+Text:
+appscan; watchfire; standard; express; developer; license; license; licensing; flexlm; LKA; license server; license key; authorise; authorised; authorised user TECHNOTE (FAQ)
+
+QUESTION
+ IBM Rational AppScan version 7.8 and later uses the IBM Rational FLEXlm license format. You can use your account on the IBM Rational License Key Center to manage your license keys 24 hours a day and 7 days a week.
+Even if the old license file is usable, this old license type is out of maintanance because the the tool is out of service. This means that the license support is disabled for this *.lic format, in case you re-host or set restrictions. 
+
+CAUSE
+The AppScan software uses different license types according to the version name. 
+
+AppScan Edition Floating (cuncurrent) Node Locked (Authorized User type) Standard YES NO Express NO YES Developer YES YES 
+
+To reach your key you need to connect to your account on the IBM Rational License Key Center. The account ID is most likely the same number as your Passport Advantage site number. 
+
+Note: For technical reasons the INCREMENT line in the licenses look alike, but the Authorized User license will only activate AppScan Express not Standard and AppScan Standard will only work with the Floating license type. 
+ * For the Floating license for AppScan Standard:
+
+
+INCREMENT AppScanStandard rational 7.80000 permanent 2 97A5D99F28B1 \ 
+VENDOR_STRING="0|Floating|0|AppScan_License_Data \ 
+SubProduct=auditor Feature=all,all host=any ip=any " \ 
+OVERDRAFT=0 DUP_GROUP=UH vendor_info=" 0|IBM Rational AppScan \ 
+Standard Edition Floating License Key|0" ... 
+ * For the Authorised User license for AppScan Express:
+
+
+INCREMENT AppScanStandard rational 7.80000 permanent uncounted \ 
+2E40AB0E1B96 \ 
+VENDOR_STRING="0|Nodelocked|0|AppScan_License_Data \ 
+SubProduct=auditor Feature=all,all host=any ip=any " \ 
+HOSTID=ANY vendor_info=" 0|IBM Rational AppScan Express Edition \ 
+Authorized User License Key|0" ISSUED=03-jun-2010 ... 
+ANSWER
+To activate the product after you installed the product. 
+
+ 
+
+ 1. Start AppScan then click the menu Help > License... . 
+ 2. Click Load the IBM Rational License... .
+    
+    
+
+The License Key Administrator Wizard opens. It proposes you to import the *.UPD file that you generated form the IBM Rational License Key Center for the hosting machine. That means:  * on the local computer for authorized user licenses, 
+ * on the server that hosts the license server software for the floating licenses.
+   
+   
+
+[/support/docview.wss?uid=swg21376636&aid=1] [/support/docview.wss?uid=swg21376636&aid=1] 
+
+When you use floating licenses for the Standard or Developer editions, you need to point at the computer with the license server. You need to do that even if the server is hosted on the same computer. Alternatively you can do that through the License Key Administrator settings after selecting to use license server and add a server in the Client Server configuration. 
+
+For authorized users licenses just import the *.upd file locally. To complete the activation, you close the License Key Administrator. Then the license information appear as “License is valid” . 
+
+To host your floating license keys you need to install the Rational License Key Server. This product is available in the sub component list of your product in “Download software and Media access” on your Passport Advantage Online account. 
+
+You can download and request the media of the latest version of your products through the Passport Advantage Online [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] web site. 
+
+Note: On Passport Advantage Online you only find the products that currently have a valid support contract. If you contact the Passport Advantage Online support, you need to have ready your Proof Of Entitlement (POE) document.

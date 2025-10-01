@@ -1,0 +1,186 @@
+Title: IBM IT07543: SLOW START UP SEEN WHEN PRELOADING MEDIATION FLOWS IN HUMAN READABLE FORMAT - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Hung threads are observed in the SystemOut.log with a stack
+   similar to the following:
+   
+   [2/19/15 11:04:27:790 CST] 00000036 ThreadMonitor W WSVR0605W:
+   Thread "server.startup : 0" (0000008a) has been active for
+   632013 milliseconds and may be hung. There is/are 8 thread(s)
+   in total in the server that may be hung.
+   at java.util.zip.ZipFile.open(Native Method)
+   at java.util.zip.ZipFile.(ZipFile.java:140)
+   at java.util.jar.JarFile.(JarFile.java:140)
+   at java.util.jar.JarFile.(JarFile.java:77)
+   at sun.net.www.protocol.jar.URLJarFile.(URLJarFile.java:84)
+   at
+   sun.net.www.protocol.jar.URLJarFile.getJarFile(URLJarFile.java:6
+   0)
+   at
+   sun.net.www.protocol.jar.JarFileFactory.get(JarFileFactory.java:
+   92)
+   at
+   sun.net.www.protocol.jar.JarURLConnection.connect(JarURLConnecti
+   on.java:119)
+   at
+   sun.net.www.protocol.jar.JarURLConnection.getInputStream(JarURLC
+   onnection.java:147)
+   at
+   com.ibm.ws.sibx.scax.mediation.model.readablexml.FileLoaderHelpe
+   r$1.run(FileLoaderHelper.java:69)
+   at
+   com.ibm.ws.sibx.scax.mediation.model.readablexml.FileLoaderHelpe
+   r$1.run(FileLoaderHelper.java:64)
+   at
+   java.security.AccessController.doPrivileged(AccessController.jav
+   a:327)
+   at
+   com.ibm.ws.sibx.scax.mediation.model.readablexml.FileLoaderHelpe
+   r.openJarStream(FileLoaderHelper.java:64)
+   at
+   com.ibm.ws.sibx.scax.mediation.model.readablexml.FileLoaderHelpe
+   r.openStream(FileLoaderHelper.java:53)
+   at
+   com.ibm.ws.sibx.scax.mediation.model.xml.loader.XMLMedflowModelL
+   oaderUtil.initialiseMedflowInputStream(XMLMedflowModelLoaderUtil
+   .java:431)
+   at
+   com.ibm.ws.sibx.scax.mediation.model.xml.loader.XMLMedflowModelL
+   oaderUtil.isReadableFormat(XMLMedflowModelLoaderUtil.java:230)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of Business Process Manager v8.5 who have human readable
+   mediation flows and are making use of the preload WebSphere
+   environment variable to load the flows at application startup.
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   During preload a large amount of processing time was spent
+   reading the mediation flow file (mfc) to determine if the flow
+   was in a human readable format. This increased the time required
+   to start the application server.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A new WebSphere environment variable has been added to bypass
+   the code that determines if the flow is in a human readable
+   format, this reduces the time taken to start the server.
+   
+   The variable applies to the whole server and should only be set
+   if all of the mediation flows for all applications are in a
+   human readable format. This property should not be used if any
+   of the mediation flows are in the old EMF (non-human readable)
+   format.
+   
+   The variable is defined using the Integrated Solutions Console,
+   located under:
+   Environment -> WebSphere Variables.
+   
+   name: WESB_HUMAN_READABLE_VALUE
+   value: true
+   
+   The variable should be set at the server scope and the server
+   must be restarted before it will take affect.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT07543
+   
+   
+ * REPORTED COMPONENT NAME
+   WESB IN BPM
+   
+   
+ * REPORTED COMPONENT ID
+   AIMCMFC00
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-06
+   
+   
+ * CLOSED DATE
+   2015-03-25
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WESB IN BPM
+   
+   
+ * FIXED COMPONENT ID
+   AIMCMFC00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

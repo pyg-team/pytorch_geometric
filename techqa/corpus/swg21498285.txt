@@ -1,0 +1,25 @@
+Title: IBM V7.5 Ad Hoc (QBR) Reporting Features - United States
+
+Text:
+75; birt; ad hoc; qbr; report; maximo; ibmeam; TPAEREP; data; analysis TECHNOTE (FAQ)
+
+QUESTION
+ What features are available for V7.5 Ad Hoc or QBR (Query Based Reporting)? 
+
+ANSWER
+This document provides details on the Functionality and Business Logic used for the Release 7.5 Ad Hoc Reporting Capability known as Query Based Reporting (QBR). This includes information on creating and utilizing Report Object Structures (ROS) which are the basis for Ad Hoc Reporting. 
+This document first reviews the QBR functionality and its process flows. It then delves into the details of how you can create and execute Ad Hoc Reports. It then concludes with information on the setup work involved in enabling Ad Hoc Reports, including Security, Administration and how to enable Report Object Structures. 
+
+Finally, please note that this document is based on the Maximo ® Base Services 7.5.x Release or later versions. 
+For versions of this guide for Release 7.1, reference this report reference page [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Maximo%20Asset%20Management/page/Reporting%20Documentation]
+
+For more details on other reporting features, access the Maximo Report Wiki Pages available here [https://www.ibm.com/developerworks/community/wikis/home?lang=en#/wiki/IBM%20Maximo%20Asset%20Management/page/Reporting] 
+
+Revision History:
+April 2014 - Revision 8
+1. Updated to note that 'Use Where Clause' not enabled for QBR reports on page 70
+
+August 2013 - Revision 7
+1. Updated and reformatted content in sections 323 (ROS Best Practices) and 327 (Maxrelationship Business Rules) 2. Added content in business rule section that non-persistent attributes in maxrelationships not supported
+
+V75_QBR_Ad Hoc Reporting_rev8.pdf [/support/docview.wss?uid=swg21498285&aid=2]V75_QBR_Ad Hoc Reporting_rev8.pdf [/support/docview.wss?uid=swg21498285&aid=1]

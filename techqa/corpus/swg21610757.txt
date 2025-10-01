@@ -1,0 +1,72 @@
+Title: IBM Database tuning to improve performance for eDiscovery Manager using IBM FileNet P8 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I improve performance for IBM eDiscovery Manager using the IBM FileNet P8 platform? 
+
+ANSWER
+
+You can create the following indexes to improve the performance of eDiscovery Manager in FileNet P8 environments (which include databases such as DB2 or MSSQL). 
+
+Improving date range searches
+
+To improve IBM FileNet Email Manager date range searches, create a composite index on the docversion table. The following example creates a composite index on the uxy_senton and object_id columns. Replace xy with the actual number that is used in each object store database, for example u53_senton.
+
+create index I_SENTON_COMP on docversion (uxy_senton asc, object_id asc)
+
+Oracle systems only. [/support/docview.wss?uid=swg21610757&amp;aid=1] If your FileNet P8 environment uses Oracle databases, refer to the following IBM Technote for information about additional procedures that can improve the performance of date range searches: 
+
+ * Enabling Oracle Date Index Use in the FileNet Content Engine [http://www.ibm.com/support/docview.wss?uid=swg21397282]
+
+
+Improving non-text indexed property searches 
+
+To improve the performance of searches on non-text indexed properties, consider whether the properties are multi-valued or single-valued. Non-text indexed properties are properties that are not full text indexed by the archive server.  * If you are doing searches on multi-valued properties that are not full text indexed and there are more than a thousand rows in the corresponding database table, create the associated multi-valued table indexes. Follow the instructions for creating these indexes in the appropriate version of the FileNet P8 Performance Tuning Guide, which is available on the Product Documentation for FileNet P8 Platform [http://www.ibm.com/support/docview.wss?uid=swg27010422] web page.  * See the section entitled “Content Engine - Databases” in the FileNet P8 Performance Tuning Guide, Versions 4.5.1, 5.0, and 5.1.
+   
+   
+
+After adding indexes, compute statistics as needed for your database type. 
+
+If you are doing searches on single-valued properties that are not full text indexed, use IBM FileNet Enterprise Manager to create database indexes for each single-valued property. For example, to create database indexes for the Subject property of the Email document class: 
+ 1. Right-click on the Email class, select Properties, and click the Property Definitions tab. 
+ 2. Select the Subject property and click Edit. 
+ 3. In the Edit window, select the General tab and click Set/Remove. 
+ 4. In the Set/Remove Indexing window, select Set and Single Indexed, and then click OK. 
+ 5. Click OK to close all windows.
+
+
+Requirement: If you have a case-sensitive database collation and you have force case insensitivity configured, add a corresponding function-based index for that database by following the instructions for creating that index in the appropriate version of the FileNet P8 Performance Tuning Guide, which is available on the Product Documentation for FileNet P8 Platform [http://www.ibm.com/support/docview.wss?uid=swg27010422] web page. See the section “Maximize performance when using case insensitive queries” in both versions of the FileNet P8 Performance Tuning Guide. 
+
+IBM Content Collector systems only. [/support/docview.wss?uid=swg21610757&amp;aid=2] To improve the performance of searching and task setup, create the following indexes: 
+
+For both email and non-email content 
+ * 
+ * 
+ *  To improve the performance of login, case selection, and adding secondary content servers that contain large amounts of data, create an index on the OBJECT_ID and OBJECT_CLASS_ID columns of the GENERIC table, for example: 
+ *  CREATE INDEX IDX_OBJCLSID_OBJID ON GENERIC (OBJECT_CLASS_ID ASC, OBJECT_ID ASC); 
+ *  To improve the performance of creating a case, create an index on the UXXX_EDMNAME and OBJECT_ID columns of the GENERIC table, for example: 
+   CREATE INDEX IDX_GENERIC_EDMNAME ON GENERIC (UXXX_EDMNAME ASC, OBJECT_ID ASC); 
+ *  To improve the performance of case search, folder search, folder browsing, listing saved searches, and listing case searches, create an index on the TAIL_ID and HEAD_ID columns of the RELATIONSHIP table, for example: 
+ *  CREATE INDEX IDX_TAILID_HEADID ON RELATIONSHIP (TAIL_ID ASC, HEAD_ID ASC); 
+
+
+For email content 
+ * 
+ * 
+ *  To improve the performance of folder retrieval for e-mail content, create an index on the UXX_ICCMAILREFERENCE columns of the GENERIC table, for example: 
+ *  CREATE INDEX IDX_GENERIC_MAILR ON GENERIC (UXX_ICCMAILREFERENCE ASC); 
+
+
+Additional indexes to improve performance  * To improve the speed at which audit reports are displayed on the Audit Reports page, create the following index:
+
+ * Create index I_OCID_ID on docversion (object_class_id, object_id);
+
+
+ * If you have a large number of tasks, you can create the following indexes to improve performance for the task status/scheduled search page:
+
+ * CREATE INDEX I_EDMCaseSysID ON Generic (uxx_EDMCaseSysID, create_date desc)
+ * 
+ * 
+ * CREATE INDEX I_EDMScheduleID ON Generic(uxx_EDMScheduleID)

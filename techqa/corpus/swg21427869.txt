@@ -1,0 +1,19 @@
+Title: IBM Problem setting session timeout value for IBM InfoSphere Information Server - United States
+
+Text:
+session timeout; LTPA token timeout TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Setting the session timeout value in the IBM Information Server Web Console is not having the intended effect. 
+
+SYMPTOM
+Timeout after 10 minutes regardless of global session timeout setting.
+
+
+RESOLVING THE PROBLEM
+Problem in the InfoSphere Information Server authentication module, so that the user will be logged out once the WebSphere security cache timeout is reached. By default, the WebSphere security cache timeout is10 minutes, so the user will be logged out after being inactive for over 10 minutes. This timeout is not a precise setting, the cache maybe valid for a longer time, so user may not see the timeout occur at precisely 10 minutes. 
+
+ 
+The workaround is that the user has to increase this value so that it is bigger than ASBSession timeout. If either WebSphere security cache timeout or LTPA token timeout or ASBSession timeout, the user will be logged out. The LTPA token timeout is an absolute timeout. For example, an LTPA token timeout of 720 minutes, means the user will be logged out after 12 hours of login. The WebSphere security cache timeout and ASBSession timeout is an inactive timeout. 
+
+The user has to set WebSphere security cache timeout at least as long as the ASBSession timeout. For example, if you want ASBSession timeout to be 43200 seconds (12 hours), the WebSphere security cache timeout should be 43200 seconds (12 hours). The WebSphere security cache timeout is configured from WebSphere Administrator console, Security -> Global security page.

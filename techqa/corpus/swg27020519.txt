@@ -1,0 +1,149 @@
+Title: IBM System requirements for WebSphere Message Broker with Rules and Formatter Extension 7.0 on Solaris SPARC - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains the system requirements for WebSphere Message Broker with Rules and Formatter Extension 7.0 on Solaris SPARC. 
+
+CONTENT
+ #1 
+
+Please read first
+
+Mandatory Requirements#3#4
+- #3Message Broker Runtime
+
+Optional Requirements
+- Additional applications that can be used/connected
+- Embedded application software
+
+
+
+Please read first
+
+
+
+General Information  * Please refer to the WebSphere Message Broker README and [http://www.ibm.com/support/docview.wss?rs=849&uid=swg27006913]IBM WebSphere Message Broker with Rules and Formatter Extension Version 7.0 README [http://www.ibm.com/support/docview.wss?uid=swg27020262] for the latest information on this environment. 
+ * Where patches for a product are specified, this means that these patches were required to resolve problems found during testing and should therefore be considered as the minimum necessary maintenance level. Further maintenance should be applied in accordance with the guidance of the relevant software manufacturer. 
+ * Defect support is available for virtualization environments where they relate to releases of this platform already supported by WebSphere Message Broker. Unless stated elsewhere in the system requirements, WebSphere Message Broker has not been specifically tested in virtualization environments. WebSphere Message Broker Support is therefore unable to assist in issues related to configuration and setup, or issues that are directly related to the virtualization environment itself. 
+
+
+
+
+Mandatory Requirements 
+
+Message Broker Runtime Environment Hardware Requirements Sun Microsystems SPARC processor machines. Operating Systems  * Sun Solaris 9 
+ * Sun Solaris 10
+
+Application Software  * IBM WebSphere MQ V7.0.1 [http://www.ibm.com/software/integration/wmq/]
+
+
+
+
+Optional Requirements 
+
+Embedded application software Supported Adapters WebSphere Message Broker Version 7.0 supports SAP, Siebel and PeopleSoft WebSphere Adapters Version 7.0; in addition, WebSphere Message Broker Version 7.0.0.2 supports the JDEdwards adapter. For more information about the hardware and software requirements of WebSphere Adapters, see Supported software for IBM WebSphere Adapters and IBM WebSphere Business Integration Adapters [http://www.ibm.com/support/docview.wss?uid=swg27006249]. WebSphere Service Registry & Repository  * WebSphere Service Registry and Repository 6.1.0.2 [http://www.ibm.com/software/integration/wsrr/index.html] or later update 
+ * WebSphere Service Registry and Repository 7.0 [http://www.ibm.com/software/integration/wsrr/index.html] or later update [see section note 1]
+
+
+Notes:  1. Support is provided when using 6.1 compatibility URLs.
+    Documentation for the "compatibility URLs" mentioned can be found at: WebSphere Service Registry and Repository - Web service interface URLs [http://www.ibm.com/support/knowledgecenter/SSWLGF_8.5.0/com.ibm.sr.doc/rwsr_api_urls.html?lang=en]
+
+WebSphere Transformation Extender for Integration Servers  * WebSphere Transformation Extender for Integration Servers 8.3 [http://www.ibm.com/software/integration/wdatastagetx/editions.html]
+
+WebSphere Application Server  * WebSphere Application Server 7.0.0.9 [http://www.ibm.com/software/webservers/appserv/was] [see section note 1]
+
+
+Notes:  1. This is required when using SOAP nodes with the JMS transport when interfacing with WebSphere Application Server.
+
+WebSphere MQ File Transfer Edition  * WebSphere MQ File Transfer Edition 7.0.2 [http://www.ibm.com/software/integration/wmq/filetransfer/]
+
+CICS Transaction Server  * CICS Transaction Server for z/OS V3.2 [http://www.ibm.com/software/htp/cics/tserver/]
+
+
+
+Additional applications that can be used/connected Databases
+
+ * IBM DB2 9.1 [http://www.ibm.com/software/data/db2/9/sysreqs.html] 
+ * IBM DB2 9.5 [http://www.ibm.com/software/data/db2/9/sysreqs.html] [http://www.ibm.com/software/data/db2/9/sysreqs.html] [http://www.ibm.com/software/data/db2/9/sysreqs.html]
+
+
+Automatic Client Reroute for DB2 is supported.
+
+Globally coordinated transaction support (‘XA’) is supported.
+
+IBM DB2 Database Server - System i support:  * Brokers can access DB2 Databases on System i servers running OS/400 V5R3, V5R4 or V6R1 via DB2 Connect or System i for Windows. 
+ * This support is subject to the following restrictions:  * Globally coordinated 'XA' transactions are not supported. 
+    * Database stored procedures on the System i server may be called, when using DB2 Connect, but not with System i Access for Windows.
+   
+   
+
+IBM DB2 Database Server - System z support:  * Brokers can access DB2 Databases on System z servers via DB2 Connect. Supported versions of DB2 can be found here [http://www.ibm.com/support/docview.wss?uid=swg27022277].
+
+Brokers can access Information Integrator data sources, for user data, on WebSphere Information Integrator V9.1 for Linux, UNIX, and Windows.
+
+Brokers can access, via JDBC only, Information Integrator data sources for user data on WebSphere Information Integrator Classic Federation (IICF) for z/OS, where the WebSphere IICF client code is provided for the Message Broker platform.  * IBM solidDB 6.5 (plus Fix Pack 2) [see section note 1]
+
+
+Notes:  1. WebSphere Message Broker 7.0.0.1 or later is required.
+
+ * Oracle 10g Release 2 
+ * Oracle 11g Release 1
+
+
+Globally coordinated transaction support (‘XA’) is supported.
+
+This support is subject to the following restrictions:  *  Only the connect-time failover feature of Oracle RAC is supported. Oracle RAC is supported in XA environments for Oracle 10g Release 2 (plus Patch Set 4 or later) and Oracle 11g Release 1. 
+
+
+Notes:  1. WebSphere Message Broker V7.0.0.1 or later is required.
+
+ * Sybase Adaptive Server Enterprise (ASE) V15.0
+
+JMS Providers The JMSInput and JMSOutput nodes are compatible with any JMS provider that conforms to the Java Message Service Specification, version 1.1 [http://java.sun.com/products/jms/docs.html]. JDBC type 4 support For non-XA transactions, you can create a JDBC type 4 connection from a broker to all the database servers that are supported.
+
+For JDBC XA connections, the following restriction applies:  1. Only DB2 and Oracle are supported.
+
+
+For JDBC type 4 connections to DB2, the following restriction applies:  1. You need either DB2 Version 9.1 with Fix Pack 3 or later, or DB2 9.5.
+
+
+JDBC type 4 drivers are not supplied with WebSphere Message Broker; obtain these files from your database vendor. The following drivers are supported:  * IBM DB2 Driver for JDBC and SQLJ Version 9.1 and 9.5 
+ * IBM solidDB JDBC Driver 2.0 
+ * Microsoft SQL Server 2005 JDBC driver 1.1 for use with Microsoft SQL Server 2005 
+ * Microsoft SQL Server 2005 JDBC driver 1.2 for use with Microsoft SQL Server 2008 
+ * Oracle 10gR2 or 11gR1 JDBC Driver 
+ * Sybase jConnect for JDBC 6.05 
+ * IBM Informix JDBC 3.50.JC3
+
+Business Process Automation and Monitoring  * WebSphere Process Server 6.2 [http://www.ibm.com/software/integration/wps/] 
+ * WebSphere Business Monitor 6.2 [http://www.ibm.com/software/integration/wbimonitor/] 
+ * WebSphere Business Monitor 7.0 [http://www.ibm.com/software/integration/wbimonitor/]
+
+Security The runtime security manager interacts with the following external security providers:
+ * Lightweight Directory Access Protocol (LDAP) provides authentication and authorization services. You must use an LDAP server that is LDAP Version 3 compliant. 
+ *  [http://www.ibm.com/software/tivoli/products/federated-identity-mgr/]Tivoli Federated Identity Manager (TFIM) 6.1 [http://www.ibm.com/software/tivoli/products/federated-identity-mgr/] [www.ibm.com][see section note 1] 
+ * Tivoli Federated Identity Manager (TFIM) 6.2 [http://www.ibm.com/software/tivoli/products/federated-identity-mgr/] [www.ibm.com] [http://www.ibm.com/software/tivoli/products/federated-identity-mgr/] [www.ibm.com] [www.ibm.com][see section note 1]
+
+
+Notes:  1. WS-Trust 1.3 compliant Security Token Servers, for valuation and issuance of tokens, are only supported on TFIM 6.2. [www.ibm.com]
+
+System Management  * Tivoli Composite Application Manager for SOA Platform (ITCAM for SOA) [http://www.ibm.com/software/tivoli/products/composite-application-mgr-soa-platform/details.html] 
+ * Tivoli Composite Application Manager for Transactions (ITCAM for Transactions) [http://www.ibm.com/software/tivoli/products/composite-application-mgr-transactions/] 
+ * Tivoli OMEGAMON XE for Messaging for Distributed Systems (OMEGAMON for Messaging) [http://www.ibm.com/software/tivoli/products/omegamon-xe-messaging-dist-sys/]
+
+Troubleshooting  * IBM Support Assistant [http://www.ibm.com/software/support/isa/]
+
+Compilers If you develop user-defined extensions in C or Java, you need the appropriate supported software:  * Sun Studio 11 and 12 
+ * Java Version 6 (also known as Java 1.6) SR6 or later Service Release
+
+
+
+Change History  * 3rd December 2010: WebSphere Message Broker with Rules and Formatter Extension 7.0 on Solaris SPARC release. 
+ * 5th November 2014: Updated documentation link to WSRR Web Service Interface URLs
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB RFE

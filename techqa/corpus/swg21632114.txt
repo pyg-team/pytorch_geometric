@@ -1,0 +1,40 @@
+Title: IBM "No Applicable data" in Alert Information workspace - United States
+
+Text:
+No applicable data; ccms alert: data collection; InterimFix16; IF16; ccms; events; ISNEWCCMSDESIGN; timezone; sap; stzac; itm TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After having applied the fix containing the new CCMS Alert data collection method, even if there are new CCMS Alerts showed in the SAP system GUI, TEP workspace "Alert Information" shows only a row with the message "No Applicable Data". 
+
+SYMPTOM
+No CCMS Alert showed on TEP but no meaningful errors written into the mySAP Agent log files.
+The problem occurs only when the new CCMS Alert data collection method is activated by setting 
+ISNEWCCMSDESIGN=YES on SAP system.
+With the old data collection, the CCMS Alerts are correctly shown.
+
+
+CAUSE
+The new CCMS Alert data collection method introduced with MySAP Agent 6.2 Interim Fix 16 is based on time intervals.
+The data collection occurs by default every 3 minutes but it is designed to return only the new CCMS alert generated in the monitored time interval.
+So, for example, if the data collection starts at 11.33, it will include the CCMS Alerts generated between 11:30 and 11:33.
+This means that the invocation of the collection method includes as parameters the begin time and end time for the monitored period.
+In this case, in order to have this method working fine, the timezone defined on SAP system and the timezone defined at operating system level must match.
+If you have SAP System defined with CET timezone, and the operating system is instead using GMT, the data collection will not work because the invocation is passing an unexpected time interval.
+
+RESOLVING THE PROBLEM
+Verify the timezone specified for the SAP System using "STZAC" transaction.
+Then verify the operating system timezone setting using the proper command (it depends on the operating system where the SAP Agent runs).
+In Unix-like operating systems like AIX, you can use date and date -u commands.
+The output of date command must return the same timezone setting showed in SAP GUI.
+If it is not the same, you need to change the OS timezone settings.
+If this is not possible, you can alter the timezone only for mySAP Agent process by specifying it in the global variable TZ before starting the agent.
+In example, if SAP system is using CET, you can set on AIX operating system the CET timezone including DST (daylight saving time) using:
+export TZ=CET-1CEST-2,J090,J300 
+After having set this variable you can start the MySAP Agent and the new CCMS Alert data collection will work as expected. 
+
+The concept is valid also for MySAP Agent v7.1.x delivered with most recent ITCAM for Application bundle releases.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Tivoli Monitoring MySAP Agent 6.2 / 7.1

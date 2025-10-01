@@ -1,0 +1,49 @@
+Title: IBM Notes/Domino Best Practices: Domino Domain Monitoring (DDM) - United States
+
+Text:
+domino best practice guides; best practices; best practice checklists; domino best practices; DDM; domino domain monitoring PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The following document aggregates resources and checklists to help Domino adminsitrators develop an understanding of Domino Domain Monitoring (DDM) and the details of its implementation. 
+
+CONTENT
+ 
+
+Introduction to DDM
+Domino Domain Monitoring (DDM) is the new interface and tool to view server health information across your entire Domino domain. The feature provides Domino administrators with correlated Event report documents that help find existing configuration or performance problems and ward off potential problems in the future. Collection hierarchies are available to roll up DDM.nsf data into one or more collection servers and Filter documents can be used to ensure only the event types that are important in your domain are being reported. Corrective actions allow for a high degree of customization and automation and the DDM interface provides the framework for problem management workflow.
+
+
+Best practices
+
+
+ 1. To ensure DDM.nsf data on a collection server is available during a server outage or down time, it is highly recommended to provide redundancy of your collection server DDM.nsf databases. To accomplish this, add that collection server to another server collection hierarchy.
+    
+    
+ 2. The majority of the new DDM probes will only monitor Domino 7.0 and later servers, but there are three DDM probes that can monitor pre-Domino 7 servers: the Security, Web and Replication probes.
+    
+    
+ 3. DDM will report on more events and potential problems than most Domino administrators are normally used to seeing provided with other monitoring tools. It is highly recommended to control the volume of data into DDM with Event filters, by lowering the severity of certain Event Message documents or by permanently closing Event Report documents in DDM.
+    
+    
+ 4. Collect baselines for all servers and tailor probes according to the baseline.
+    
+    
+ 5. Disable probes during maintenance windows to avoid phantom events.
+    
+    
+ 6. Use fully qualified host names to monitor servers outside of the domain.
+    
+    
+ 7. During the upgrade from Domino 6 to Domino 7, prohibit design changes from R6 to R7 Events4.nsf.
+    
+    
+ 8. DDM will increase the load to some extent due to the behind-the-scenes replication. While this should be negligible, do not choose a heavily loaded server for a collection server.
+
+
+Related documents
+
+
+General Concepts Date Published Lotus Domino Domain Monitoring [http://www.redbooks.ibm.com/abstracts/redp4089.html]
+IBM Redpaper showing system administrators and IT architects how to use and leverage the capabilities of the new Lotus Domino domain monitoring feature of IBM Lotus Domino Version 7 05 Dec 2005 Lotus Education on Demand: Domino Domain Monitoring (DDM) [http://www-1.ibm.com/support/docview.wss?rs=463&uid=swg27007060]
+This workshop introduces you to Domino Domain Monitoring, commonly abbreviated as DDM. DDM is a new feature in Lotus Domino 7 intended to provide a simple, flexible and powerful interface for Domino administrators to monitor the servers in their domain. 20 Dec 2005 Using IBM Lotus Domino Domain Monitoring in the Real World [http://www-10.lotus.com/ldd/sandbox.nsf/ByDate/3e7ff7e99c4ba1b88525713700540e7b?OpenDocument]
+Lotus Domino Domain Monitoring presents a powerful new monitoring and event management capability in Lotus Domino 7. However, many administrators are already using existing pre-7 event management tools in mixed environments. How do you integrate and take advantage of Lotus Domino Domain Monitoring in an environment with pre-7 servers that might already be utilizing event generation, handling and monitoring? This session will illustrate the tips, tricks and traps administrators should know in deploying Lotus Domino 7 servers and Lotus Domino Domain Monitoring, avoiding functional overlap and achieving the best of the pre-Lotus Domino 7 and Lotus Domino 7 worlds. 22 Feb 2006

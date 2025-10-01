@@ -1,0 +1,34 @@
+Title: IBM Using Query Tables in Business Process Choreographer Explorer - United States
+
+Text:
+ EDUCATION
+
+ABSTRACT
+ This document describes the usage of query tables in Business Process Choreographer Explorer to improve performance of predefined and custom queries in customer scenarios. 
+
+CONTENT
+This document covers:
+
+
+ * Software Prerequisites 
+ * Using query tables in Business Process Choreographer Explorer predefined views 
+ * Using query tables in Business Process Choreographer Explorer custom views 
+ * Best practices for defining query tables for Business Process Choreographer Explorer 
+ * Samples for developing query tables
+
+Note that the following pdf document refers to interim Fix IZ66120 which is necessary for BPC Explorer 6.2.0.2 to enable query table support. 
+
+In all later releases 6.2.0.x the ServicePack readme file describes how to enable query table support for BPC Explorer.
+In all releases 7.x query table support for BPC Explorer is enabled by default.
+
+
+BPCExplorer62_QT_Support.pdf [/support/docview.wss?uid=swg27017638&aid=2] [/support/docview.wss?uid=swg27017638&aid=1]
+
+QueryPropertiesApp.ear [/support/docview.wss?uid=swg27017638&aid=4] [/support/docview.wss?uid=swg27017638&aid=3]
+IBMQT_ClaimsWithParam.jar [/support/docview.wss?uid=swg27017638&aid=6] [/support/docview.wss?uid=swg27017638&aid=5]
+IBMSMP.CLAIMS_WITH_PARAMS.qtd [/support/docview.wss?uid=swg27017638&aid=8] [/support/docview.wss?uid=swg27017638&aid=7]IBMSMP.CLAIMS_WITH_PARAMS.qtdex [/support/docview.wss?uid=swg27017638&aid=10] [/support/docview.wss?uid=swg27017638&aid=9]
+IBMSMP.CLAIMS_WITH_PARAMS.properties [/support/docview.wss?uid=swg27017638&aid=12] [/support/docview.wss?uid=swg27017638&aid=11]
+IBMSMP.CLAIMS_WITH_PARAMS_de.properties [/support/docview.wss?uid=swg27017638&aid=14] [/support/docview.wss?uid=swg27017638&aid=13]IBMSMP.CLAIMS_WITH_PARAMS_fr.properties [/support/docview.wss?uid=swg27017638&aid=16] [/support/docview.wss?uid=swg27017638&aid=15]
+
+ORIGINAL PUBLICATION DATE
+ 2010/2/24

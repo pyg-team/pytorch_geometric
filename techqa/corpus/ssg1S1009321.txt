@@ -1,0 +1,75 @@
+Title: IBM How to disable SSLv2 and SSLv3 in Data ONTAP for CVE-2016-0800 and CVE-2014-3566 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This article describes the procedures for disabling SSLv2 and SSLv3 in Data ONTAP operating in 7-Mode and clustered Data ONTAP versions 8.1 though 8.2.x for CVE-2016-0800 and CVE-2014-3566 
+
+SYMPTOM
+Procedure
+
+
+Run the following commands to disable SSLv2 and SSLv3 in Data ONTAP operating in 7-Mode and clustered Data ONTAP, as recommended by these security advisories: 
+
+ * CVE-2014-3566 SSL v3.0 Nondeterministic CBC Padding Vulnerability in Multiple IBM N Series Products. 
+ * CVE-2016-0800 SSLv2 Vulnerability in Multiple IBM N Series Products
+
+
+
+NOTE: Disabling the SSLv2 and SSLv3 protocols in supported versions of IBM N Series products should not cause any adverse impact to their operation.
+
+
+For Data ONTAP operating in 7-Mode, perform the following steps:
+TLS is disabled by default and must be enabled prior to disabling SSL to ensure uninterrupted secure communication.
+1. Enable TLS using the Data ONTAP command line interface:
+controller1> options tls.enable
+tls.enable off
+
+controller1> options tls.enable on
+
+controller1> options tls.enable
+tls.enable on
+
+Note: If the error Could not set option for https/ftps traffic. Try again is reported while enabling TLS, run the secureadmin setup -f ssl command and then attempt to enable TLS again.
+2. Disable only SSLv2 and v3 using the Data ONTAP command line interface:
+controller1> options ssl
+ssl.enable on
+ssl.v2.enable on
+ssl.v3.enable on
+
+controller1> options ssl.v3.enable off
+controller1> options ssl.v2.enable off
+
+controller1> options ssl
+ssl.enable on <<<< THIS MUST REMAIN ON FOR TLS TO WORK
+ssl.v2.enable off
+ssl.v3.enable off
+
+Note: Even though the httpd and ldap options mention SSL, they will use TLS when the SSLv2 and SSLv3 options are disabled. For clustered Data ONTAP, perform the following steps:
+1. Upgrade monitoring applications as needed to support TLS-based communication. For example, OnCommand Unified Manager must be version 6.2 or later.
+2. Display the current Web service options by running the following command:
+::>system services web show
+Output similar to the following is displayed:
+External Web Services: true
+Status: online
+HTTP Protocol Port: 80
+HTTPs Protocol Port: 443
+TLSv1 Enabled: true
+SSLv3 Enabled: true
+SSLv2 Enabled: false
+3. Disable SSLv3:
+::>system services web modify -external true -sslv3-enabled false
+4. If SSLv2 was enabled (it is disabled by default in all versions & not available in version 8.3) disable it:
+::>system services web modify -external true –sslv2-enabled false
+5. Run the following command to confirm the settings:
+::>system services web show
+External Web Services: true
+Status: online
+HTTP Protocol Port: 80
+HTTPs Protocol Port: 443
+TLSv1 Enabled: true
+SSLv3 Enabled: false
+SSLv2 Enabled: false
+
+Note: Only these versions of clustered Data ONTAP 8.2.3 and 8.2.4 have the ability to disable SSLv2 with LDAP.

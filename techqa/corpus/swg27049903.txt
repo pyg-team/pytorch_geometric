@@ -1,0 +1,29 @@
+Title: IBM Java SDKs for WebSphere Liberty - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ A list of the latest available IBM SDKs, Java Technology Edition for WebSphere Liberty using archives and Installation Manager. 
+
+
+CONTENT
+Announcement: 
+
+
+Java SE 7 support ends in September 2019. See removal notice [http://www.ibm.com/support/knowledgecenter/SSEQTP_liberty/com.ibm.websphere.wlp.nd.multiplatform.doc/ae/rwlp_remfeat.html].
+
+Use SDKs for specific installation method.
+
+Archive Install 
+
+ *  IBM SDK, Java™ Technology Edition, Version 8.0 for WebSphere Liberty using archive [http://www.ibm.com/support/docview.wss?uid=swg24043502][/support/docview.wss?uid=swg27049903&amp;aid=1] 
+
+Installation Manager Install  *  IBM SDK, Java™ Technology Edition, Version 8.0 for WebSphere Liberty using IM[/support/docview.wss?uid=swg27049903&aid=2] [http://www.ibm.com/support/docview.wss?uid=swg24042430] IBM SDK, Java™ Technology Edition, Version 7.1 for WebSphere Liberty using IM [http://www.ibm.com/support/docview.wss?uid=swg24042440][/support/docview.wss?uid=swg27049903&amp;aid=3] 
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

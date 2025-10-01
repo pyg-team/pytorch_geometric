@@ -1,0 +1,35 @@
+Title: IBM Education replay: Extending SOA and CICS with Web 2.0 - United States
+
+Text:
+CA8K CICS Web support ; delivering atom feeds ; SOA ; Web 2.0 ; Education webcast ; teleconference ; presentation webcast ; cics transaction server 3.2 ; 5697E9300 R300 300 R630 630 HCI6300 5697-E93 5697E93 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 ; kixinfo retention32 EDUCATION
+
+ABSTRACT
+ On 11 June 2008 a teleconference entitled Extending SOA and CICS with Web 2.0 was delivered by Peter Havercan, Software Developer. This teleconference explains how, with SupportPac CA8K, you can use existing CICS Web support facilities to deliver atom feeds containing data from CICS. An open question and answer session followed this presentation. 
+
+CONTENT
+To replay this 42 minute presentation, click on Download Audio [ftp://public.dhe.ibm.com/software/websphere/techexchange/June_11_Telecon_Extending_SOA_and_CICS_with_Web_2.0.mp3] to access the MP3 file then open the PDF file below:
+
+
+Presentation (in PDF format):
+
+June_11_Teleccon__Extending_SOA_and_CICS_with_Web_2.0.pdf [/support/docview.wss?uid=swg27016019&aid=2] [/support/docview.wss?uid=swg27016019&aid=1]
+
+
+
+
+
+[http://www.ibm.com/i/v14/icons/sout.gif] Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF 
+
+
+Note: If you have CICS Transaction Server for z/OS (CICS TS) V4.1 or higher, you will no longer need SupportPac CA8K because CICS provides support for Atom feeds within the base code. See Atom feeds from CICS [http://pic.dhe.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.internet.doc/topics/dfhtl_atom_serving.html] in the CICS TS V4.2 information center for more details.
+
+
+RELATED INFORMATION
+ SupportPac CA8K - Delivering Atom feeds from CICS [http://www.ibm.com/support/docview.wss?uid=swg24018619]
+Webcast replays for CICS and Omegamon [http://www.ibm.com/support/docview.wss?uid=swg27007244]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

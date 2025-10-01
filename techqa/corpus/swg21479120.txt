@@ -1,0 +1,19 @@
+Title: IBM Can I get a control chart graph to show all 3 sigma levels at once? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm using SPSS for Windows to create control charts, and I want the control chart graph to show all 3 sigma levels. I know I can choose one at a time, but I want to display all three on the same chart at once. Is there a way to do this? 
+
+RESOLVING THE PROBLEM
+Not at this time. An enhancement request has been filed with SPSS Development for the addition of this functionality in a future release. We apologize for any inconvenience
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 62175

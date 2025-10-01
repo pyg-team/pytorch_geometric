@@ -1,0 +1,98 @@
+Title: IBM Big Data cross-product platform support - United States
+
+Text:
+IBM; InfoSphere; BigInsights; Streams; Data Explorer; Data Click; accelerators; Social Data Analytics; Machine Data Analytics; Telecommunications Event Data Analytics DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ IBM InfoSphere BigInsights, IBM InfoSphere Streams, IBM InfoSphere Data Explorer, IBM InfoSphere Data Click and accelerators work together to provide Big Data platform integration. This document provides the supported operating systems levels across the products. 
+
+CONTENT
+ 
+
+For detailed support information for each product, see the links in the Related Information section. 
+
+Current cross-product platform support:
+
+
+
+
+[/support/docview.wss?uid=swg27036473&amp;aid=1] IBM Open Platform for Apache Hadoop and BigInsights V4.0* InfoSphere Streams V4.0.1** InfoSphere Data Explorer V9.0 x86 64-bit RHEL 6.3, 6.4, 6.5 6.1 or later
+7.0 or later 5.3 or later
+6.0 or later x86 64-bit SLES 11.2 and 11.3 11.2 or later 10 or later x86 64-bit CentOS [/support/docview.wss?uid=swg27036473&amp;aid=1] 6.1 or later
+7.0 or later 6.0 IBM Power Systems™ *** 64-bit RHEL 6.3, 6.4, 6.5 6.3 or later
+7.0 or later [/support/docview.wss?uid=swg27036473&amp;aid=1] x86 64-bit Oracle [/support/docview.wss?uid=swg27036473&amp;aid=1] [/support/docview.wss?uid=swg27036473&amp;aid=1] 5.0 x86 64-bit Windows Server DE [/support/docview.wss?uid=swg27036473&amp;aid=1] [/support/docview.wss?uid=swg27036473&amp;aid=1] 2008, R2, R2 SP1, SP2
+2012 x86 64-bit Windows Server EE [/support/docview.wss?uid=swg27036473&amp;aid=1] [/support/docview.wss?uid=swg27036473&amp;aid=1] 2008, R2, R2 SP1, SP2
+2012 * IBM Accelerator for Machine Data Analytics V1.3 is supported on all of the BigInsights supported platforms.
+** IBM Accelerator for Social Data Analytics requires both InfoSphere BigInsights and InfoSphere Streams to run. It needs to be installed on the same platform as both BigInsights and Streams. 
+***InfoSphere Streams supports the POWER7® and POWER8™ processors. 
+Hide details for Cross-product platform support for older versions: [/support/docview.wss?uid=swg27036473&amp;aid=2] Cross-product platform support for older versions: 
+
+
+[/support/docview.wss?uid=swg27036473&amp;aid=1] InfoSphere BigInsights V3.0* InfoSphere Streams V4.0** InfoSphere Data Explorer V9.0 x86 64-bit RHEL 6.3, 6.4, 6.5 6.1 or later
+7.0 or later 5.3 or later
+6.0 or later x86 64-bit SLES 11.2 and 11.3 11.2 or later 10 or later x86 64-bit CentOS [/support/docview.wss?uid=swg27036473&amp;aid=1] 6.1 or later
+7.0 or later 6.0 IBM Power Systems™ *** 64-bit RHEL 6.3, 6.4, 6.5 6.3 or later
+7.0 or later [/support/docview.wss?uid=swg27036473&amp;aid=1] x86 64-bit Oracle [/support/docview.wss?uid=swg27036473&amp;aid=1] [/support/docview.wss?uid=swg27036473&amp;aid=1] 5.0 x86 64-bit Windows Server DE [/support/docview.wss?uid=swg27036473&amp;aid=1] [/support/docview.wss?uid=swg27036473&amp;aid=1] 2008, R2, R2 SP1, SP2
+2012 x86 64-bit Windows Server EE [/support/docview.wss?uid=swg27036473&amp;aid=1] [/support/docview.wss?uid=swg27036473&amp;aid=1] 2008, R2, R2 SP1, SP2
+2012 * IBM Accelerator for Machine Data Analytics V1.3 is supported on all of the BigInsights supported platforms.
+** IBM Accelerator for Social Data Analytics requires both InfoSphere BigInsights and InfoSphere Streams to run. It needs to be installed on the same platform as both BigInsights and Streams. 
+[/support/docview.wss?uid=swg27036473&amp;aid=1] InfoSphere BigInsights V2.1.2* InfoSphere Streams V3.2.1** InfoSphere Data Explorer V9.0 x86 64-bit RHEL 5.9
+6.3 and 6.4 5.6 or later
+6.1 or later 5.3 or later
+6.0 or later x86 64-bit SLES 11.2 and 11.3 11.2 or later 10 or later x86 64-bit CentOS [/support/docview.wss?uid=swg27036473&amp;aid=1] 5.6 or later
+6.1 or later 6.0 POWER7 64-bit RHEL 6.3 and 6.4 6.2 or later [/support/docview.wss?uid=swg27036473&amp;aid=1] x86 64-bit Oracle [/support/docview.wss?uid=swg27036473&amp;aid=1] [/support/docview.wss?uid=swg27036473&amp;aid=1] 5.0 x86 64-bit Windows Server DE [/support/docview.wss?uid=swg27036473&amp;aid=1] [/support/docview.wss?uid=swg27036473&amp;aid=1] 2008, R2, R2 SP1, SP2
+2012 x86 64-bit Windows Server EE [/support/docview.wss?uid=swg27036473&amp;aid=1] [/support/docview.wss?uid=swg27036473&amp;aid=1] 2008, R2, R2 SP1, SP2
+2012 * IBM Accelerator for Machine Data Analytics V1.3 is supported on all of the BigInsights supported platforms.
+* IBM Accelerator for Social Data Analytics requires both InfoSphere BigInsights and InfoSphere Streams to run. It needs to be installed on the same platform as both BigInsights and Streams. 
+** IBM Accelerator for Telecommunications Event Data Analytics V1.2 is supported on the Streams supported platforms. 
+
+
+[/support/docview.wss?uid=swg27036473&amp;aid=1] InfoSphere BigInsights V2.1.0* or V2.1.1* InfoSphere Streams V3.2** InfoSphere Data Explorer V8.2-2 x86 64-bit RHEL 5.6, 5.7, 5.8
+6.1, 6.2, 6.3, 6.4 5.6 or later
+6.1 or later 5.3 or later
+6.0 or later x86 64-bit SLES 11.2 11.2 or later 11.2 or later x86 64-bit CentOS [/support/docview.wss?uid=swg27036473&amp;aid=1] 5.6 or later
+6.1 or later 6.0 POWER7 64-bit RHEL 6.2, 6.3, 6.4 6.2 or later [/support/docview.wss?uid=swg27036473&amp;aid=1] x86 64-bit Oracle [/support/docview.wss?uid=swg27036473&amp;aid=1] [/support/docview.wss?uid=swg27036473&amp;aid=1] 5.0 x86 64-bit Windows Server DE [/support/docview.wss?uid=swg27036473&amp;aid=1] [/support/docview.wss?uid=swg27036473&amp;aid=1] 2003 R2, R2 SP2
+2008, R2, R2 SP1, SP2
+2012 x86 64-bit Windows Server EE [/support/docview.wss?uid=swg27036473&amp;aid=1] [/support/docview.wss?uid=swg27036473&amp;aid=1] 2003, SP1, SP2, 
+2003 R2, R2 SP2
+2008, R2, R2 SP1, SP2
+2012 * InfoSphere BigInsights V2.1.1 bundles with InfoSphere Data Explorer V9.0.
+* IBM Accelerator for Machine Data Analytics V1.3 is supported on all of the BigInsights supported platforms.
+* IBM Accelerator for Social Data Analytics requires both InfoSphere BigInsights and InfoSphere Streams to run. It needs to be installed on the same platform as both BigInsights and Streams. 
+** IBM Accelerator for Telecommunications Event Data Analytics V1.2 is supported on the Streams supported platforms. 
+[/support/docview.wss?uid=swg27036473&amp;aid=1] InfoSphere BigInsights V2.1* InfoSphere Streams V3.1** InfoSphere Data Explorer V8.2-2 x86 64-bit RHEL 5.6, 5.7, 5.8
+6.1, 6.2, 6.3, 6.4 5.6 or later
+6.1 or later 5.3 or later
+6.0 or later x86 64-bit SLES 11.2 11.2 or later 11.2 or later x86 64-bit CentOS [/support/docview.wss?uid=swg27036473&amp;aid=1] 5.6 or later
+6.1 or later 6.0 POWER7 64-bit RHEL 6.2, 6.3, 6.4 6.2 or later [/support/docview.wss?uid=swg27036473&amp;aid=1] x86 64-bit Oracle [/support/docview.wss?uid=swg27036473&amp;aid=1] [/support/docview.wss?uid=swg27036473&amp;aid=1] 5.0 x86 64-bit Windows Server DE [/support/docview.wss?uid=swg27036473&amp;aid=1] [/support/docview.wss?uid=swg27036473&amp;aid=1] 2003 R2, R2 SP2
+2008, R2, R2 SP1, SP2
+2012 x86 64-bit Windows Server EE [/support/docview.wss?uid=swg27036473&amp;aid=1] [/support/docview.wss?uid=swg27036473&amp;aid=1] 2003, SP1, SP2, 
+2003 R2, R2 SP2
+2008, R2, R2 SP1, SP2
+2012 * IBM Accelerator for Machine Data Analytics V1.2 is supported on all of the BigInsights supported platforms.
+* IBM Accelerator for Social Data Analytics requires both InfoSphere BigInsights and InfoSphere Streams to run. It needs to be installed on the same platform as both BigInsights and Streams. 
+** IBM Accelerator for Telecommunications Event Data Analytics V1.2 is supported on the Streams supported platforms. 
+[/support/docview.wss?uid=swg27036473&amp;aid=1] InfoSphere BigInsights V2.0* InfoSphere Streams V3.0** InfoSphere Data Explorer V8.2 x86 64-bit RHEL 5.3 - 5.8
+6.0 and 6.2 5.3 or later
+6.1 or later 5.3 or later
+6.0 or later x86 64-bit SLES 11, 11.1, 11.2 [/support/docview.wss?uid=swg27036473&amp;aid=1] [/support/docview.wss?uid=swg27036473&amp;aid=1] x86 64-bit CentOS [/support/docview.wss?uid=swg27036473&amp;aid=1] 6.1 or later 6.0 POWER7 64-bit RHEL 6.2, 6.3 6.1 or later [/support/docview.wss?uid=swg27036473&amp;aid=1] x86 64-bit Oracle [/support/docview.wss?uid=swg27036473&amp;aid=1] [/support/docview.wss?uid=swg27036473&amp;aid=1] 5.0 x86 64-bit Windows Server DE [/support/docview.wss?uid=swg27036473&amp;aid=1] [/support/docview.wss?uid=swg27036473&amp;aid=1] 2003, SP1, SP2, 
+2003 R2, R2 SP2
+2008, R2, R2 SP1, SP2
+2012 x86 64-bit Windows Server EE [/support/docview.wss?uid=swg27036473&amp;aid=1] [/support/docview.wss?uid=swg27036473&amp;aid=1] 2003, SP1, SP2, 
+2003 R2, R2 SP2
+2008, R2, R2 SP1, SP2
+2012 * IBM Accelerator for Machine Data Analytics V1.1 is supported on all of the BigInsights supported platforms.
+* IBM Accelerator for Social Data Analytics requires both InfoSphere BigInsights and InfoSphere Streams to run. It needs to be installed on the same platform as both BigInsights and Streams. 
+** IBM Accelerator for Telecommunications Event Data Analytics V1.1 is supported on the Streams supported platforms. 
+
+
+RELATED INFORMATION
+ InfoSphere BigInsights detailed system requirements [http://www.ibm.com/support/docview.wss?uid=swg27027565]
+InfoSphere Streams detailed system requirements [http://www.ibm.com/support/docview.wss?uid=swg27036140]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Streams Linux 3.0, 3.1, 3.2

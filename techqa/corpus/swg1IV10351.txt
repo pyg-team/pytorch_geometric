@@ -1,0 +1,118 @@
+Title: IBM IV10351: SIMPLIFIED CHINESE CHARACTER IN AEN EVENT IN "HISTORICAL DATA VIEWER" DOESN'T SHOW CORRECTLY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Chinese characters in AEN event in "Historical Data Viewer"
+   doesn't show correctly. Login to AEN client, right-click AEN
+   icon, then click 'History...', all Chinese characters are
+   displayed as square.
+   
+   
+   Documentation should state clearly AEN is not fully globalised,
+   the ability of displaying Chinese, Japanese and other national
+   language characters in the real time and historical view are
+   provided on a best-effort basis.
+   
+   We provide a workaround how to modify the font setting for the
+   alert entry in the historical view via the AEN property file,
+   the customer could try different fonts to find out the one fits
+   their needs. Please refer to Local Fix for the workaround.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set the following property: system.List.font=courier,BOLD,11 in
+   AEN props file 'aen.properties' which is located in C:\Documents
+   and Settings\<username>\.netcool\nco_aen_settings directory
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is a duplicate of IV09124 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV09124]
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV10351
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   731
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-08
+   
+   
+ * CLOSED DATE
+   2011-11-10
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

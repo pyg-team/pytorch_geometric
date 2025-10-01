@@ -1,0 +1,100 @@
+Title: IBM WebSphere Migration Knowledge Collection: Migrating from V8.0, V7.0 or V6.1 - United States
+
+Text:
+KnowledgeCollection PRODUCT DOCUMENTATION
+
+ABSTRACT
+ End of Support for WebSphere Application Server V7 and V8 is April 30, 2018.
+End of Support for Java SE 6 on WebSphere Application Server V8.5.x is April 30, 2018.
+End of Support for Java SE 6 on WebSphere Liberty Server is September 30, 2017. 
+
+CONTENT
+ 
+
+TAB NAVIGATION
+ * Why Migrate? [http://www.ibm.com/support/docview.wss?uid=swg27008728] 
+ * Planning and Resources [http://www.ibm.com/support/docview.wss?uid=swg27008724]
+ * Offers and Assistance [http://www.ibm.com/support/docview.wss?uid=swg27013842]
+ * 9.0.x [http://www.ibm.com/support/docview.wss?uid=swg27048343]
+ * 8.5.x [http://www.ibm.com/support/docview.wss?uid=swg27008727]
+ * 8.0.x, 7.0.x and 6.1x- selected tab,
+ * z/OS [http://www.ibm.com/support/docview.wss?uid=swg27010819]
+ * Additional Resources [http://www.ibm.com/support/docview.wss?uid=swg27008729]
+
+[/support/docview.wss?uid=swg27008725&amp;aid=1] Important dates [/support/docview.wss?uid=swg27008725&amp;aid=2] List of affected products [/support/docview.wss?uid=swg27008725&amp;aid=3] Frequently asked questions Important dates  * 
+ * April 30, 2018
+ * 
+ *  WebSphere Application Server V7 and V8 WebSphere Application Server V8.5.x running on Java SE 6 
+ * 
+ * 
+ * September 30, 2017
+ * 
+ *  WebSphere Liberty server running on Java SE 6 
+ * 
+ * 
+ * September 30, 2019
+ * 
+ *  WebSphere Liberty server running on Java SE 7 
+ * 
+ * 
+ * September 30, 2016
+ * 
+ *  WebSphere Application Server V6.1
+   (End-of-life means that the extended support period of three years after the end-of-support date has expired. V6.1's end-of-support date was September 30, 2013.) 
+
+List of affected products  * What WebSphere Application Server products were affected by the latest announcements?
+ * On April 30, 2018, IBM ends customer and technical product support for the following products:  *  IBM WebSphere Application Server V7.0 IBM WebSphere Application Server V8.0 IBM WebSphere Application Server for z/OS V7.0 IBM WebSphere Application Server for z/OS V8.0 IBM WebSphere Application Server Network Deployment V7.0 IBM WebSphere Application Server Network Deployment V8.0 IBM WebSphere Application Server for Developers V7.0 IBM WebSphere Application Server for Developers V8.0 IBM WebSphere Application Server - Express V7.0 IBM WebSphere Application Server - Express V8.0 WebSphere Application Server Tools Edition V7.0 WebSphere Application Server Tools Edition V8.0 WebSphere Application Server for Developers Tools Edition for Eclipse V7.0 WebSphere Application Server for Developers Tools Edition for Eclipse V8.0 WebSphere Application Server Network Deployment Tools Edition V7.0 WebSphere Application Server Network Deployment Tools Edition V8.0 IBM WebSphere Virtual Enterprise V7.0 IBM WebSphere Virtual Enterprise for z/OS V7.0.0 IBM WebSphere Extended Deployment Compute Grid V8.0 IBM WebSphere Extended Deployment Compute Grid for z/OS V8.0 IBM WebSphere Application Server Hypervisor Edition V7.0 IBM WebSphere Application Server Hypervisor Edition V8.0 IBM HTTP Server for WebSphere Application Server Hypervisor Edition V7.0 IBM HTTP Server for WebSphere Application Server Hypervisor Edition V8.0 WebSphere Application Server - Feature Packs for V7.0 and V8.0 Java SE 6 for WebSphere Application Server V8.5.x 
+   
+   See the distributed [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/3/897/ENUS916-143/index.html] and z/OS [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/9/897/ENUS916-159/index.html] announcements for the complete list of products and feature packs being affected. 
+   
+   If the WebSphere Application Server is included in another IBM product, you might be otherwise entitled to support up to that product's End of Support date. You can verify your product's End of Support date by searching for your product on the IBM Software Lifecycle [http://www.ibm.com/software/support/lifecycle/] support page. 
+ * 
+ * 
+ * 
+ *  Frequently asked questions 
+ * Where are the WebSphere Application Server End of Support dates published?
+ *   * End of Support Announcement Letter:  * Software withdrawal and service discontinuance:
+       *  IBM WebSphere Application Server V7 and V8 
+         ( Announcement Letter: 916-143 [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/3/897/ENUS916-143/index.html]) 
+      
+      
+    * End of Support Announcement Letter:  * Software Withdrawal and service discontinuance:
+       *  WebSphere Application Server for z/OS, V7 and V8
+         ( Announcement Letter: 916-159 [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/9/897/ENUS916-159/index.html]) 
+      
+      
+   
+   End of Support date: April 30, 2018. 
+   End of Marketing date: December 16, 2016. 
+   For the entire list of announced End of Support dates for all IBM WebSphere Application Server products, search the IBM Software Lifecycle [http://www.ibm.com/software/support/lifecycle/] support page. 
+ * 
+ * How do I purchase a Support Extension if necessary?
+ * 
+ * IBM WebSphere Application Server recognizes that there might be unique situations where a Client is not able to migrate to a supported product version prior to an End of Support date. WebSphere Application Server may, at its discretion, extend customer technical support and defect support for a withdrawn release. Extended support for a product will be considered and provided on an individual Client basis. Information on how to purchase [http://www-304.ibm.com/support/docview.wss?uid=swg21298463] [http://www-304.ibm.com/support/docview.wss?uid=swg21298463] a Support Extension [http://www-304.ibm.com/support/docview.wss?uid=swg21298463] is available. 
+   
+   A Support Extension is no longer available for WebSphere Application Server V6.1 after September 30, 2016. 
+ * 
+ * 
+ * Where can I learn more about migrating to a newer release?
+ * 
+ * The migration planning [http://www.ibm.com/support/docview.wss?uid=swg27008724] tab in this website is a great place to start. This web site contains education materials, WebSphere Technical Exchange (WSTE), Redbooks, and links to the dedicated Knowledge Center pages for step by step planning and instructions for your migration project. 
+ * 
+ * Is the documentation for WebSphere Application Server V7 and V8 still available?
+ * 
+ * The WebSphere Application Server Version 7.0 and Version 8.0 documentation will remain available, however they will not be updated after the end of support date of April 30, 2018.  *  WebSphere Application Server Version V7.0 Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.nd.doc/info/ae/ae/welcome_nd.html] [http://www.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.nd.doc/info/ae/ae/welcome_nd.html] WebSphere Application Server Version V8.0 Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSAW57_8.0.0/com.ibm.websphere.nd.doc/info/ae/ae/welcome_nd.html] 
+   
+   
+ * 
+ * Is the documentation for WebSphere Application Server V6.1 still available?
+ * The WebSphere Application Server Version V6.1 Knowledge Center is no longer available. It went out of service shortly after its end of life date on September 30, 2016. 
+ * 
+ * I am using Websphere Application Server V7.0 or V8.0 as part of a bundle, am I still supported?
+ * Bundled products are not included in this announcement, each bundle follows their own terms. WebSphere Application Server V7.0 and V8.0 will continue to be supported when included as part of a bundle as long as the bundled product is supported. You can check your products terms under the IBM Software Lifecycle [http://www.ibm.com/software/support/lifecycle/] support page. 
+
+Back to top
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2016/9/9

@@ -1,0 +1,58 @@
+Title: IBM Using WASServiceCmd to create Windows services for WebSphere Application Servers - United States
+
+Text:
+wasservice; was service; wasservice command; websphere windows service; wasservice cmd; versiongap TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WASServiceCmd.exe is a front end for WASService.exe, which is shipped with WebSphere Application Server. WASService.exe is required in its default directory for adding, updating, and removing WebSphere Services in Windows.
+
+Notice: In WebSphere Application Server v8 and later, this utility is shipped with the product under the name of WASServiceHelper.bat in the bin directory.
+Reference:
+Using the WASServiceHelper utility to create Windows services for application servers
+https://www.ibm.com/support/knowledgecenter/en/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/tins_wasservicecmd.html [https://www.ibm.com/support/knowledgecenter/en/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/tins_wasservicecmd.html]
+
+See DeveloperWorks article for detailed information: (Link at the bottom of this document) 
+
+SYMPTOM
+Creating and removing a WebSphere service in Windows is confusing and error prone.
+
+
+CAUSE
+This application takes several parameters which can be confusing to the user along with several long path strings leaving opportunities to setup incorrectly.
+
+ENVIRONMENT
+Windows
+
+RESOLVING THE PROBLEM
+
+
+
+ 1. Place the WASServiceCmd.exe utility in the following directory:
+    
+    install_root\bin 
+    
+ 2. Launch the command from the command line. 
+    
+    
+ 3. The WASServiceCmd utility prompts you to select specific options and settings from a list and then calls the WASService.exe command passing all selected parameters. This greatly reduces the time it takes to create a Windows service for WebSphere Application Server and reduces the opportunity for user errors.
+
+
+[/support/docview.wss?uid=swg21397335&amp;aid=1] Flash demonstration [http://public.dhe.ibm.com/software/websphere/appserv/support/tutorials/wasservicecmd.swf] 
+
+Note: This also creates an entry in the WASServiceCmd.log in the current directory which contains the actual WASService.exe command used to create the service. 
+
+Example of a log entry: 
+
+[Fri Aug 14 12:22:01 -0500 2009] WASService.exe -add "Deployment Mgr01" -serverName "dmgr" 
+-profilePath "C:\Program Files\IBM\WebSphere\AppServer\profiles\Dmgr01"
+-logRoot "C:\Program Files\IBM\WebSphere\AppServer\profiles\Dmgr01\logs\dmgr"
+-logFile "C:\Program Files\IBM\WebSphere\AppServer\profiles\Dmgr01\logs\dmgr\WS_startdmgr.log" -encodeParams -stopArgs "-username vanno -password ****** " 
+-startType manual 
+-restart false WASServicecmd.zip [/support/docview.wss?uid=swg21397335&aid=3] [/support/docview.wss?uid=swg21397335&aid=2] 
+
+Notice: Some browsers are having trouble downloading this file and getting docview.wss instead. Download this file, then rename the file with a ".zip" extension (for example, docview.zip or WASServiceCmd.zip). You can now access the utility. 
+See DeveloperWorks article for more information: 
+The Support Authority: Take the confusion (and errors) out of creating Windows services for WebSphere Application Server [http://www.ibm.com/developerworks/websphere/techjournal/1005_supauth/1005_supauth.html] 
+
+
+See TroubleShooting: WebSphere Application Server (Windows Services) problems for V6.0, V6.1 and V7.0 [http://www.ibm.com/support/docview.wss?uid=swg21232884] if you are still having a problem with Windows services.

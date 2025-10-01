@@ -1,0 +1,202 @@
+Title: IBM LO87039: IBM CONNECTIONS: ANDROID APP: REJECTUNTRUSTEDCERTIFICATES=TRUE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Connections: Android App: RejectUntrustedCertificates=true
+   
+   ENVIRONMENT
+   ============
+   Linux
+   IBM Connections 5.0 CR2 / CR3 Page 19 of 21
+   Connections Mobile App for Android V5.1.0
+   
+   ISSUE
+   ====
+   
+   Customer set property "RejectUntrustedCertificates=true" in
+   mobile- config.xml to make sure that the mobile application
+   cannot connect to a  server which presents an untrusted SSL
+   certificate. This is to avoid a  man in the middle attack while
+   connecting to the Connection server.
+   
+   This mechanism does work fine with the Connections iOS app but
+   seems to be ignored by the Android app.
+   
+   Here the output of the SecurityConfiguration to proof that the
+   parameter "RejectUntrustedCertificates=true" has been set and
+   is  working correctly:
+   
+   Command:
+   
+   wget --no-check-certificate -U "Lotus Android"
+   --http-user=userid --
+   http-password=passw0rd --header "X-IBMCONM: IBM Connections;
+   5.1.0.2015100610; Android_908e0173580602ae;"
+   https://ic50.urspringer- [https://ic50.urspringer-]
+   net.de/mobile/homepage/SecurityConfiguration
+   cat SecurityConfiguration
+   
+   Output:
+   {"InfoPagePositivePathPattern":"(.*)\\\/terms\\\/accept(.*)","
+   InfoPageNegativePathPattern":"(.*)\\\/terms\\\/decline(.*)","
+   RejectUntrustedCertificates":"true","InfoPagePathPattern":"(.*)
+   \/terms\\.html(.*)"}
+   
+   Now the steps to reproduce:
+   - Delete the IBM Connections mobile app from your device
+   (Important as
+   it seems that SSL certificates are cached so deleteing the app
+   makes
+   sure you have a clean test envrionment) and reinstall it
+   
+   - Start the Mobile App and add an account via HTTPS to a server
+   which does have an untrusted certificate (e.g. a self signed
+   certificate)
+   
+   - If you try to connect to will get the message that the
+   identity of the server cannot be verified. Proceed with the
+   connection.
+   
+   - You will get an error message telling you that there is a
+   problem with authentication (here you should already get a
+   better message telling you that the servers certificate is
+   untrusted; you get this better message on iOS)
+   
+   - If you confirm that message and try to connect again you then
+   can connect without any further error message and you will
+   never be asked later again if you want to trust that
+   certificate.
+   
+   So if you set "RejectUntrustedCertificates=true" you should
+   NEVER be able to connect to that server even if the user
+   answers that he wants to ignore the certificate warning (that
+   is how iOS correctly works ...)
+   
+   The customer security team found that during a pen test session
+   and they need to shutdown mobile access for Android devices if
+   this will not be fixed ASAP. This would have impact to several
+   thousand users who would not be able to connect to Connections
+   with their mobile device.
+   
+   I guess that the same issue will happen also with the Blackberry
+   application (the customer is using many of these devices as
+   well) so we need to check and if needed correct this also for
+   Blackberry.
+   
+   SEV1 because security team told us to shutdown mobile access if
+   we cannot present a fast solution.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *   Fixed in the Mobile app
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   Fixed in the Mobile app
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO87039
+   
+   
+ * REPORTED COMPONENT NAME
+   CONNECTN ACTIVI
+   
+   
+ * REPORTED COMPONENT ID
+   5724S6800
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-11-12
+   
+   
+ * CLOSED DATE
+   2016-07-14
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONNECTN ACTIVI
+   
+   
+ * FIXED COMPONENT ID
+   5724S6800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP
+   
+   
+ * R550 PSY
+   UP

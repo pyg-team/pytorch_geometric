@@ -1,0 +1,174 @@
+Title: IBM PM90781: INCORRECT CONFIGURATION OF DB2 DATASOURCE BY INSTALLATION MANAGER MAY CAUSE FWLSE0101E EXCEPTION. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using DB2 datasource configuration set up by Installation
+   Manager, application may encounter exceptions of the form:
+   
+   FWLSE0101E: Caused by: <openjpa-1.2.2-r422266:898935 nonfatal
+   general error>
+   org.apache.openjpa.persistence.PersistenceException:
+   [jcc][t4][10120][10898][3.51.90] Invalid operation: result set
+   is closed. ERRORCODE=-4470, SQLSTATE=null
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Issue may be worked around by setting these custom properties
+   in the DB2 datasource configuration:
+   
+   nonTransactionalDataSource=true
+   resultSetHoldability=1
+   webSphereDefaultIsolationLevel=2
+   
+   However, this workaround does not work when using an XA
+   datasource.  There are no known workarounds available for that
+   case.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Administrators and developers working in a Worklight Server  *
+   * environment involving WebSphere Application Server and DB2   *
+   * with applications that use push notifications and connect to *
+   * DB2 as a data source.                                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Using Worklight Server 5.0.5, WAS 7.0 fix 27, and DB2 9.7,   *
+   * results in error with a subscribed user is sent a push       *
+   * notification:                                                *
+   *    [3/13/13 11:31:05:264 IST] 0000001e InvocationCon E       *
+   * logError FWLSE0099E: An error occurred while invoking        *
+   * procedure CityPulseCore/submitNotificationFWLSE0100E:        *
+   * parameters:{                                                 *
+   * "arr": [                                                     *
+   * "({usersIds: [\"lior1\"], badge: 2})"                        *
+   * ]                                                            *
+   * }                                                            *
+   * [jcc][t4][10120][10898][3.51.90] Invalid operation: result   *
+   * set is closed. ERRORCODE=-4470, SQLSTATE=null; nested        *
+   * exception is <openjpa-1.2.2-r422266:898935 nonfatal general  *
+   * error> org.apache.openjpa.persistence.PersistenceException:  *
+   * [jcc][t4][10120][10898][3.51.90] Invalid operation: result   *
+   * set is closed. ERRORCODE=-4470, SQLSTATE=null                *
+   * FWLSE0101E: Caused by: <openjpa-1.2.2-r422266:898935         *
+   * nonfatal general error>                                      *
+   * org.apache.openjpa.persistence.PersistenceException:         *
+   * [jcc][t4][10120][10898][3.51.90] Invalid operation: result   *
+   * set is closed. ERRORCODE=-4470, SQLSTATE=null                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified so that push notifications occur within
+   transactions.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   release 6.0.0.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM90781
+   
+   
+ * REPORTED COMPONENT NAME
+   WORKLIGHT ENTER
+   
+   
+ * REPORTED COMPONENT ID
+   5725I4300
+   
+   
+ * REPORTED RELEASE
+   505
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-10
+   
+   
+ * CLOSED DATE
+   2013-07-18
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORKLIGHT ENTER
+   
+   
+ * FIXED COMPONENT ID
+   5725I4300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R505 PSY
+   UP
+   
+   
+ * R506 PSY
+   UP

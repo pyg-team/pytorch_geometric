@@ -1,0 +1,28 @@
+Title: IBM Installing an adapter related to SPSS C&DS, Installation Manager (IM) presents a warning stating the package is not a 64-bit version. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ While installing an adapter (Modeler , Statistics) Installation Manager presents a Warning dialog stating the package is ont 64-bit and do not support the 64-bit version of IM. 
+
+CAUSE
+Installation Manager has evolved to a 64-bit version. Packages developed prior to this do not indicate they support 64-bit for IM as it was only available in 32-bit. Now IM 64-bit version exist. If packages to install predate this version of IM it is likely the packages have not been set to indicate they are compliant with IM 64-bit.
+This is inconsequential as the adapter involved is applied to the environment and bases it's bit on the JDK implemented with the Application Server. Therefore if the Application Server is using a 64-bit JDK then the adapter will be installed, and deployed in this fashion. Contrary, if 32-bit, it will also install and deploy in this fashion. The adapter is not associated to any specific bit level. 
+
+The actual message is: Message ID CRIMA1137W
+The following packages do not support the 64-bit version of Installation Manager that you are using: IBM SPSS Collaboration and Deployment Services - Server Adapter for Statistics version 22.0.0.0. If you continue, you might have issues with the installation and deployment. For information about 64-bit mode support for a package, see the package documentation
+
+
+ANSWER
+Proceed with the installation of the SPSS C&DS adapter.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Modeler

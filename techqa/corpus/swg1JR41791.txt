@@ -1,0 +1,136 @@
+Title: IBM JR41791: LACK OF CLEAR DOCUMENTATION FOR DEPLOYING AN ADAPTER TO A NETWORK DEPLOYED CLUSTER ENVIRONMENT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There is an important section missing in the
+   infocenter/adapter-documentation namely the installation and
+   configuration of the adapter in a clustered environment.
+   
+   We found a section called "Installing the RAR file" but this is
+   only valid for stand-alone WAS/WPS environments.
+   
+   Neither in the infocenter nor in the adapter documentation
+   do you find a corresponding section that explains how to install
+   and configure the adpater in a Network Deployed environment.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The following guide exists for 6.2, but this type of information
+   should be available in the infocenter for clustered installs:
+   
+   http://www.ibm.com/developerworks/websphere/library/techarticles [http://www.ibm.com/developerworks/websphere/library/techarticles]
+   /0909_ja
+   in/0909_jain.html
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  There is an important section missing in the
+   infocenter/adapter-documentation namely the installation and
+   configuration of the adapter in a clustered environment.
+   We found a section called "Installing the RAR file" but this is
+   only valid for stand-alone WAS/WPS environments.
+   Neither in the infocenter nor in the adapter documentation
+   a corresponding section that explains how to install
+   and configure the adpater in a Network Deployed environment.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  We have added the link of deploying and configuring  WebSphere
+   Adapters in a clustered environment  in the clustered
+   deployment.
+   
+   To deploy and configure WebSphere Adapter for Flat Files in a
+   clustered environment, see the following link:
+   http://www.ibm.com/developerworks/websphere/library/techarticles [http://www.ibm.com/developerworks/websphere/library/techarticles]
+   /0909_jain/0909_jain.html.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR41791
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS ADPT FLAT
+   
+   
+ * REPORTED COMPONENT ID
+   5724L7800
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-31
+   
+   
+ * CLOSED DATE
+   2012-02-29
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

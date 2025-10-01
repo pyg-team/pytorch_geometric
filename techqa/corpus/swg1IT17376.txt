@@ -1,0 +1,202 @@
+Title: IBM IT17376: IBM SPECTRUM CONTROL LOGIN SCREEN MAY RENDER IN AN ODD MANNER AND LOGIN FAILS WITH BPCUI0501E - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+IBM Spectrum Control V5.2.12 (November 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24042717]
+IBM Spectrum Control V5.2.13 (March 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043142]
+IBM Spectrum Control V5.2.14 (May 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043414]
+IBM Spectrum Control V5.2.15 (August 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043749]
+IBM Spectrum Control V5.2.15.2 (November 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24044286]
+IBM Spectrum Control V5.2.16 (March 2018) [http://www-01.ibm.com/support/docview.wss?uid=swg24044454]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrading to SC 5.2.11 or installing SC 5.2.11, login
+   screen may render in an odd manner (no Spectrum Control logo and
+    unusual position for login form)  and after clicking login
+   the next page contains something like:
+   {"result":{"type": "E","msgId":"BPCUI0501E","time":"Oct 1, 2016,
+   12:00:00", "text":"An invalid request was rejected."}}
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The issue can be resolved using the following steps:
+   
+   1. Create a backup of following files:
+   C:\Program
+   Files\IBM\TPC\ewas\profiles\WebServerProfile\installedApps\WebSe
+   rverCell\WebServer.ear\TPC-GUI.war\WEB-INF\web.xml
+   C:\Program
+   Files\IBM\TPC\ewas\profiles\WebServerProfile\config\cells\WebSer
+   verCell\applications\WebServer.ear\deployments\WebServer\TPC-GUI
+   .war\WEB-INF\web.xml
+   
+   
+   Modify the web.xml file in the GUI WAR.  This will need to be
+   edited in two distinct versions of web.xml.
+   C:\Program
+   Files\IBM\TPC\ewas\profiles\WebServerProfile\installedApps\WebSe
+   rverCell\WebServer.ear\TPC-GUI.war\WEB-INF\web.xml
+   C:\Program
+   Files\IBM\TPC\ewas\profiles\WebServerProfile\config\cells\WebSer
+   verCell\applications\WebServer.ear\deployments\WebServer\TPC-GUI
+   .war\WEB-INF\web.xml
+   
+   Locate the following line in the web.xml file, around line 100.
+       <filter-mapping>
+           <filter-name>CSRFFilter</filter-name>
+           <url-pattern>/*</url-pattern>
+       </filter-mapping>
+   
+   Change the code as marked below:
+       <filter-mapping>
+           <filter-name>CSRFFilter</filter-name>
+           <url-pattern>/CSRF/*</url-pattern>
+       </filter-mapping>
+   
+   Restart Spectrum Control.
+   https://www.ibm.com/support/knowledgecenter/en/SS5R93_5.2.8/com.
+   ibm.spectrum.sc.doc/fqz0_r_start_stop_tpc_services.html [https://www.ibm.com/support/knowledgecenter/en/SS5R93_5.2.8/com.ibm.spectrum.sc.doc/fqz0_r_start_stop_tpc_services.html]
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * IBM Spectrum Control 5.2.x users logging into the GUI        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * IBM SPECTRUM CONTROL LOGIN SCREEN MAY RENDER IN AN ODD       *
+   * MANNER                                                       *
+   * AND LOGIN FAILS WITH BPCUI0501E                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fix maintenance when available.                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is targeted for the following maintenance
+   package:
+   
+   | refresh pack | 5.2-TIV-TPC-RP0012 - target November 2016
+   
+   Fixed in IBM Spectrum Control 5.2.12.
+   
+   http://www.ibm.com/support/docview.wss?&uid=swg21320822 [http://www.ibm.com/support/docview.wss?&uid=swg21320822]
+   
+   The target dates for future refresh packs do not represent a
+   formal commitment by IBM. The dates are subject to change
+   without notice.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT17376
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPCA0
+   
+   
+ * REPORTED RELEASE
+   528
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-06
+   
+   
+ * CLOSED DATE
+   2016-10-12
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5608TPCA0
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R528 PSY
+   UP
+   
+   
+ * R529 PSY
+   UP
+   
+   
+ * R52A PSY
+   UP
+   
+   
+ * R52B PSY
+   UP

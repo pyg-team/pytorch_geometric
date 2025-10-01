@@ -1,0 +1,30 @@
+Title: IBM Licenses for RBD v7.0 and v7.1 with EGL - United States
+
+Text:
+EGL; RBD; Enterprise Generation Language; WDSC; RDz; RSA; license; extension; RBDe; 1303339 TECHNOTE (FAQ)
+
+QUESTION
+ What licence keys do you need for IBM® Rational® Business Developer (RBD) versions 7.0 or 7.1 with Enterprise Generation Language (EGL)? 
+
+ANSWER
+The license keys that you need, depend on the RBD version. 
+
+Version 7.1
+The 7.1 version of RBD is a stand-alone product. RBD contains all the necessary components of RAD, therefore no base product is required. Only the RBD license key is needed. 
+
+
+Version 7.0 
+
+The following keys in the IBM Rational License Key Center after installing RBD: 
+
+ * IBM Rational Business Developer, 
+ * IBM Rational Business Developer Extension (RBDe), 
+ * IBM Rational Developer on System i for Service-oriented architecture (SOA).
+
+
+RBDe version 7.0 is an extension to a base product. The underlying base products are 
+
+ * IBM Rational Application Developer, 
+ * IBM Rational Developer for z Series, 
+ * IBM Websphere Development Studio Client (WDSC), 
+ * IBM Rational Software Architect.

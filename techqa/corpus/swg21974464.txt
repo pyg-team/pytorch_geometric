@@ -1,0 +1,33 @@
+Title: IBM Error Received BMXAA6713E - The MBO fetch operation failed during Maximo Classification - United States
+
+Text:
+SCCD TPAE Maximo db2cli BMXAA6713E -805 DB2 IV65191 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During the classifications in the SCCD application, adding an attirbute caused the error in the system log. The action is then not completed 
+
+SYMPTOM
+Error in System Log:
+[2015-11-03 08:29:50:392 CET] 00051690 SystemOut O 03 nov 2015
+08:29:50:392 [ERROR] [MXServer] [server1234] BMXAA6713E - The
+MBO fetch operation failed in the mboset with the SQL error code -805.
+The record could not be retrieved from the database. See the log file
+for more details about the error.
+
+
+CAUSE
+This has been identified as a product defect under APAR IV65191 however in some cases the problem persists. The database configuration is also a contributing factor as it needs to handle largeSQL statements in sections in DB2.
+
+ENVIRONMENT
+Identified in the following combination: SCCD 7.5.0.2, TPAE 7.5.0.4 and DB2/NT64 9.7
+
+DIAGNOSING THE PROBLEM
+The classification structure with a parent and 996 child classifications. On adding a new attribute to the parent class then selecting "Apply down Hierarchy" will generate the error.
+
+RESOLVING THE PROBLEM
+Confirm the fix for Maximo IV65191 has been resolved in environment.
+
+This could also be related to the DB2 configuration to handle largeSQL
+statements in sections in 9.7. Check the settings in db2cli.ini as per DB2 Technote:
+
+http://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.db2.luw.apdv.cli.doc/doc/r0008961.html [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.db2.luw.apdv.cli.doc/doc/r0008961.html]

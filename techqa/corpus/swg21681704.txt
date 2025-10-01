@@ -1,0 +1,91 @@
+Title: IBM Procedure for Taking a Trace of a Failing Deploy to an Execution Group on z/OS - United States
+
+Text:
+deploy; trace; MustGather; MGDP; MGBK; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Use this procedure to capture a IBM Integration Bus (IIB) or WebSphere Message Broker (WMB) trace of a failing deploy to an Execution Group (EG) on a broker. 
+
+Gathering this information before calling IBM support will help familiarize you with the troubleshooting process and save you time. 
+
+RESOLVING THE PROBLEM
+
+[/support/docview.wss?uid=swg21681704&amp;aid=1] Tracing IIB V9 and WMB V8 or V7
+#2#3[/support/docview.wss?uid=swg21681704&amp;aid=1] Related Information 
+[/support/docview.wss?uid=swg21681704&amp;aid=1] Submitting Documentation
+
+
+
+
+
+Tracing IIB V9 and WMB V8 or V7 
+Use the following procedure to capture IIB V9 and WMB V8 or V7 deploy traces: 
+
+On the broker server: 
+1. Start tracing of the broker agent and execution group receiving the deploy using the following MVS modify commands 
+
+/F <brokertask>,ct t=yes,b=yes,l=debug,c=400000 
+/F <brokertask>,ct t=yes,e=<egroup>,l=debug,c=400000,r=yes 
+
+where <egroup> is the name of your execution group (EG) 
+
+Note: If lowercase characters are used in the EG label then enclose with single quotes to prevent label from being folded to upper case when the modify command is executed 
+e.g. /F <brokertask>,ct t=yes,e='eg1',l=debug,r=yes 
+
+2. Deploy and monitor for errors 
+
+3. Stop all tracing when deploy errors occur 
+/F <brokertask>,ct t=yes,b=yes,l=none 
+/F <brokertask>,ct t=yes,e=yes,l=none 
+
+
+Format the traces using the commands below: 
+
+4. Retrieve the trace log for the admin agent by editing / submitting the BIPRELG job using the following flags 
+-t -b agent -f -o agenttrc.xml 
+
+5. Format the XML log by editing / submitting the BIPFMLG job using the following flags 
+-i agenttrc.xml -o agenttrc.txt 
+
+6. Retrieve the trace log for the execution group by editing / submitting the BIPRELG job using the following flags 
+-t -e <egroup> -f -o <egroup>.xml 
+
+Note: Single quotes are not needed here to preserve lowercase characters. 
+
+7. Format the XML log by editing / submitting the BIPFMLG job using the following flags 
+-i <egroup>.xml -o <egroup>.txt 
+
+8. If a BIP error message resulted from the deploy, please confirm that it was captured by searching for it in the <egroup.txt> file. If not located, check the joblog to see if the BIP message occurred and use the corresponding timestamp to see if the trace captured this 
+
+9. After a PMR is open, submit the files agenttrc.txt and <egroup>.txt to IBM Support for problem determination along with the EG and admin agent joblogs. Back to top
+
+
+
+
+
+Related Information 
+Related Information 
+For a listing of all technotes, downloads, and educational materials specific to deployment, search the Integration Broker support site [https://www.ibm.com/mysupport/s/topic/0TO500000002JCnGAM/integration-bus?language=en_US&productId=01t50000004XS74]. 
+Back to top
+
+
+
+
+
+Submitting Documentation 
+For information on [http://www-306.ibm.com/software/support/exchangeinfo.html]submitting documentation to IBM Support please refer to the instructions for using the Enhanced Customer Data Repository (ECuRep) [http://www.ibm.com/de/support/ecurep/index.html] 
+[http://www.ibm.com/de/support/ecurep/index.html] Back to top
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Bus Deploy 9.0 All Editions 
+PRODUCT ALIAS/SYNONYM
+ WBI
+Message Broker
+WBIMB
+WMQI
+MQSI
+IIB
+Integration Bus

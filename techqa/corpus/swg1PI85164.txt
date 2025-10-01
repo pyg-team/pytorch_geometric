@@ -1,0 +1,151 @@
+Title: IBM PI85164: WCM SEARCH SEEDLIST NOT DETECTING SYNDICATED PUBLISHED ITEMS IF PREVIOUS INCREMENTAL CRAWL WAS PERFORMED BEFORE SYNDICATION - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The WCM search seedlist can fail to detect any newly syndicated
+   published items when an incremental crawl is performed.
+   
+   
+   This can occur when:
+   
+   - a content is published on the syndicator server
+   
+   - an incremental crawl is performed on the subscriber
+   
+   - the published item is syndicated to the subscriber
+   
+   - when the seedlist is crawled incrementally on the subscriber
+   again, the newly syndicated published item is not detected
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Perform a full crawl once the syndication has completed.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The WCM search seedlist can fail to detect any newly syndicated
+   published items when an incremental crawl is performed.
+   
+   
+   This can occur when:
+   
+   - a content is published on the syndicator server
+   
+   - an incremental crawl is performed on the subscriber
+   
+   - the published item is syndicated to the subscriber
+   
+   - when the seedlist is crawled incrementally on the subscriber
+   again, the newly syndicated published item is not detected
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 23 (PI77253 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI77253]) for Portal
+   8.0.0.1 available from Fix Central:
+   
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI77253
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI85164
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-07-28
+   
+   
+ * CLOSED DATE
+   2018-04-26
+   
+   
+ * LAST MODIFIED DATE
+   2018-04-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

@@ -1,0 +1,84 @@
+Title: IBM Install Lotus Notes Client using silent scriptable setup and adding notes.ini and deploying a customized pernames.ntf or bookmark.ntf using InstallShield Tuner 6.0 - United States
+
+Text:
+silent scripteable setup; silent install; without user intervention; hands free; programmatically; automatically; set up; configure; install; installation; setup script; setup program; tool; utility; under the System Configuration section; ND7; installing; how to install; at the same time; simultaneously; all at once; install shield tuner TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+How can you (Lotus Domino administrator) deploy a Lotus Notes client installation for your users, adding specific notes.ini variables, and at the same time deploying a customized boomark.ntf or pernames.ntf, and using only one Transform file?
+
+ANSWER
+This process can be accomplished by using the InstallShield Tuner version 6.0 or 7.0. Installshield Tuner can be downloaded here from technote 1226984 [http://www-01.ibm.com/support/docview.wss?rs=899&uid=swg21226984], "Is the InstallShield Tuner for Notes available for download?" - 
+Also see the IBM Lotus Notes/Domino Information Center [http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/index.jsp?topic=/com.ibm.help.domino.admin85.doc/H_CUSTOMIZING_CLIENT_INSTALLATION_STEPS.html] for more information.
+
+To add/set notes.ini parameters and/or setup.txt to your transform file using InstallShield Tuner 6.0 the admin should follow the steps listed below. 
+
+
+Applying NOTES.INI settings during Notes client installation 
+
+1. Open InstallShield Tuner(6) for Lotus Notes.
+2. Select "Create a transform file", and in the Base Windows Installer Package box browse to the file "Lotus Notes 7.0.2.msi". The file "Lotus Notes 7.0.2.mst" will appear in the Windows Installer Transforms box below. Select the Create button.
+3. From the System Configuration section, click the IniFiles item in the System Configuration section.
+4. In the center pane, right click Destination Computer and then select Show Folder > Program Files Folder.
+5. Expand the Program Files Folder directory to access the Lotus\Notes folder.
+6. Right-click the Notes folder and then select the option, New Inifile.
+7. Locate the default notes.ini file, INIFILE1.INI, that was created in the Notes folder. Rename this file with the name NOTES.INI.
+8. Locate the default section, NewSection1, that was created for the NOTES.INI file. Rename the default section with the name Notes.
+9. Select the Notes section and then modify these values that are located in the right-most pane of the Tuner:
+
+
+ * In the column titled Key, double-click New Key and modify the name using an appropriate value such as "ConfigFile". 
+ * In the column titled Value, double-click New Value to modify the name. Use an appropriate value such as "n:\config\setup.txt". 
+ * Verify that the Action value is set to the default value, Add Line.
+
+
+10. In the left pane, expand Additional Tools and click Direct Editor. 
+11. In the center pane, select the "Component" table, and then scroll down the component list until you locate CST_COMPONENT. 
+12. Change the value in the Directory_ column from NOTES to the new value VDIR_INI by clicking NOTES, clicking the drop-down, and scrolling down to VIDIR_INI. 
+13. In the center pane, select the table, IniFile, and then scroll down the component list until you locate CST_INIFILE. 
+14. Change the value in the DirProperty column from NOTES to the new value VDIR_INI. 
+
+After applying the notes.ini settings follow these steps: 
+
+Applying customized bookmark.ntf or pernames.ntf settings during Notes client installation 
+
+Note: The steps and images below use "pernames.ntf" as an example. 
+
+1. Select the Files and Folders section in the target System Configuration area. 
+2. In the Destination Computer's Folders section, expand Destination Computer > ProgramFilesFolder > Lotus > Notes > Data then you will see all the templates that Notes installs in the right-hand side of the pane 
+3. Remove the original pernames.ntf by right-clicking it and selecting Remove. It is important to note that once you remove it, it will not remove from the view completely but an X will appear next to it. 
+4. In the Destination Computer's Folders section, Destination Computer > ProgramFilesFolder > Lotus > Notes > Data > right-click Data, select Add, and accept the default new name, NewFolder1. 
+5. You now need to drag and drop the modified template from the top Explorer section "Source computers directory tree" to the NewFolder1 directory in the "Destination computer's folders" section, as you can notice under component in the Destination Computer File this customized bookmark should refer to > CST_COMPONENT1. 
+
+[/support/docview.wss?uid=swg21258077&aid=1] [/support/docview.wss?uid=swg21258077&aid=1] 
+
+
+6. In the left pane expand Additional Tools and select Direct Editor. 
+7. In the center pane, select the Component table. 
+8. Locate CST_COMPONENT1 in the Component column of the right pane. In the column "Directory_-s72" in the same row of the CST_COMPONENT1, click the entry, select the drop-down, and select "VDIR_SHARED" from the drop-down list. 
+9.The modified bookmark.ntf is added to that MST, so there is no need to share a copy of the modified template on a network drive. You can then deploy the client, using any Install method that accepts the .MST. 
+
+[/support/docview.wss?uid=swg21258077&aid=2] [/support/docview.wss?uid=swg21258077&aid=2] 
+
+
+As a note you should not do any changes but to double check and make sure that all your previous changes have gone through: 
+
+1. In the left pane go back to System Configuration > Files and Folders section. 
+2. In the "Destination computer's folders" box, expand Lotus > Notes > Data and click NewFolder1. In the "Destination computer's files" box, you should no longer see the template that you had previously dragged there. This is the correct behavior. 
+
+[/support/docview.wss?uid=swg21258077&aid=3] [/support/docview.wss?uid=swg21258077&aid=3] 
+
+
+3. In the "Destination computer's folders" box go to the Data folder. In the "Destination computer's files" box, you should see the template. If so, this means all of your changes were applied succesfully. 
+4. Make sure that the directory of this templates states: CST_COMPONENT1 
+
+[/support/docview.wss?uid=swg21258077&aid=4] [/support/docview.wss?uid=swg21258077&aid=4] 
+
+
+DISCLAIMER: These workarounds are examples only, and should be tested before rolling out to production. The Domino Administrator is responsible for modifying the customized template to best fit the Notes/Domino environment. 
+
+
+ * 
+ *

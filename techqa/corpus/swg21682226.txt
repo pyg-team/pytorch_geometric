@@ -1,0 +1,23 @@
+Title: IBM BN agent logs show "Internal error (from client)" when monitoring Datapower appliances. - United States
+
+Text:
+Datapower SOA BN MQ Connections CAMADALL SQL Connections Firmware Internal error TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ The BN agent logs show "Internal error (from client)" when monitoring Datapower appliances. 
+
+CAUSE
+This is caused due to the Firmware version of the DP device.
+
+ANSWER
+Please check the DataPower appliance FW version, and the agent version. The "SQL Connection" and "MQ Connection" workspace are introduced by DataPower agent v7.1 for FW6.0. If the FW version is 6.0 or later then the two workspace will be empty. In addition, you will see the "Internal error (from client)" messages in the logs. 
+
+To resolve this error, you have to download and install FP1 on the BN agent first, then install IF0001 which will resolve the log error you are seeing.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM Agent for WebSphere DataPower SOA

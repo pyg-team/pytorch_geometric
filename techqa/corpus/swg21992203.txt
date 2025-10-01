@@ -1,0 +1,136 @@
+Title: IBM Case Manager Platform Installation Tool (CMPIT) V5.2.1.4 fails at step 26 of 34 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running IBM CMPIT V5.2.1.4, the installation fails at step 26 while creating the P8 object store. 
+
+SYMPTOM
+The following entries will be recorded in cmpit5214_install_stdout.txt file: 
+
+Install-InvokeDescription: (26/34) createP8os.bat
+invokeScript: C:\Program Files (x86)\IBM\cmpit\install-scripts\createP8os.bat
+
+Cmd: "C:\Program Files (x86)\IBM\cmpit\install-scripts\createP8os.bat" "C:\Program Files (x86)\IBM\cmpit\install-scripts" "C:\Program Files (x86)\IBM\cmpit\decompressed" "C:\Users\Administrator\Desktop\IBM Soft" 64 "C:\Program Files (x86)\IBM\cmpit"
+
+OUTPUT>====================
+OUTPUT>Creating Object Store ...
+OUTPUT>04:57 PM
+OUTPUT>setdirs running
+OUTPUT>Start setdirs.bat
+OUTPUT>starting PE Service
+OUTPUT>P8Util!
+OUTPUT>createOS
+OUTPUT>createOSReadPropFile:C:\Program Files (x86)\IBM\cmpit\install-scripts\createP8os.properties
+OUTPUT>NUMOS:2
+OUTPUT>createOS: displayName: DESIGN
+OUTPUT>createOS: symbolicName: DESIGN
+OUTPUT>createOS: JNDIDataSource: DESIGNOSDS
+OUTPUT>createOS: JNDIXADataSource: DESIGNOSDSXA
+OUTPUT>createOS: OS Admin: P8Admin
+ERROR>log4j:WARN No appenders could be found for logger (filenet_error.api.com.filenet.apiimpl.util.ConfigValueLookup).
+ERROR>log4j:WARN Please initialize the log4j system properly.
+OUTPUT>[Perf Log] perflog.dir=null not found, auditor disabled 
+OUTPUT>[Perf Log] No interval found. Auditor disabled.
+ERROR>Exception in thread "main" com.filenet.api.exception.EngineRuntimeException: FNRCE0075E: E_TRANSACTION_FAILURE: A transaction failure has occurred due to an invalid state or timeout. Message was: ; nested exception is: javax.transaction.TransactionRolledbackException: Transaction is ended due to timeout errorStack={
+ERROR> at com.filenet.engine.ejb.EJBUtil.determineException(EJBUtil.java:114)
+ERROR> at com.filenet.engine.ejb.EngineBean.executeChanges(EngineBean.java:927)
+ERROR> at com.filenet.apiimpl.transport.ejbstubs.EJSLocalStatelessEngine_2e64c374.executeChanges(Unknown Source)
+ERROR> at com.filenet.apiimpl.transport.ejb.EnginePortLocal.executeChanges(EnginePortLocal.java:53)
+ERROR> at com.filenet.apiimpl.wsi.ServiceSessionNst$2.run(ServiceSessionNst.java:1360)
+ERROR> at java.security.AccessController.doPrivileged(AccessController.java:452)
+ERROR> at javax.security.auth.Subject.doAs(Subject.java:573)
+ERROR> at com.ibm.websphere.security.auth.WSSubject.doAs(WSSubject.java:196)
+ERROR> at com.ibm.websphere.security.auth.WSSubject.doAs(WSSubject.java:153)
+ERROR> at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+ERROR> at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+ERROR> at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+ERROR> at java.lang.reflect.Method.invoke(Method.java:611)
+ERROR> at com.filenet.apiimpl.util.J2EEUtilWS.doAs(J2EEUtilWS.java:239)
+ERROR> at com.filenet.apiimpl.wsi.ServiceSessionNst.sMakeInternalEJBCall(ServiceSessionNst.java:1223)
+ERROR> at com.filenet.apiimpl.wsi.ServiceSessionNst.sHandleIncomingRequest(ServiceSessionNst.java:1067)
+ERROR> at com.filenet.engine.wsi.ListenerNst.service(ListenerNst.java:179)
+ERROR> at javax.servlet.http.HttpServlet.service(HttpServlet.java:668)
+ERROR> at com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1232)
+ERROR> at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrapper.java:781)
+ERROR> at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrapper.java:480)
+ERROR> at com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.handleRequest(ServletWrapperImpl.java:178)
+ERROR> at com.ibm.ws.webcontainer.filter.WebAppFilterManager.invokeFilters(WebAppFilterManager.java:1114)
+ERROR> at com.ibm.ws.webcontainer.servlet.CacheServletWrapper.handleRequest(CacheServletWrapper.java:87)
+ERROR> at com.ibm.ws.webcontainer.WebContainer.handleRequest(WebContainer.java:940)
+ERROR> at com.ibm.ws.webcontainer.WSWebContainer.handleRequest(WSWebContainer.java:1817)
+ERROR> at com.ibm.ws.webcontainer.channel.WCChannelLink.ready(WCChannelLink.java:200)
+ERROR> at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleDiscrimination(HttpInboundLink.java:463)
+ERROR> at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleNewRequest(HttpInboundLink.java:530)
+ERROR> at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.processRequest(HttpInboundLink.java:316)
+ERROR> at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.ready(HttpInboundLink.java:287)
+ERROR> at com.ibm.ws.tcp.channel.impl.NewConnectionInitialReadCallback.sendToDiscriminators(NewConnectionInitialReadCallback.java:214)
+ERROR> at com.ibm.ws.tcp.channel.impl.NewConnectionInitialReadCallback.complete(NewConnectionInitialReadCallback.java:113)
+ERROR> at com.ibm.ws.tcp.channel.impl.AioReadCompletionListener.futureCompleted(AioReadCompletionListener.java:175)
+ERROR> at com.ibm.io.async.AbstractAsyncFuture.invokeCallback(AbstractAsyncFuture.java:217)
+ERROR> at com.ibm.io.async.AsyncChannelFuture.fireCompletionActions(AsyncChannelFuture.java:161)
+ERROR> at com.ibm.io.async.AsyncFuture.completed(AsyncFuture.java:138)
+ERROR> at com.ibm.io.async.ResultHandler.complete(ResultHandler.java:204)
+ERROR> at com.ibm.io.async.ResultHandler.runEventProcessingLoop(ResultHandler.java:775)
+ERROR> at com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:905)
+ERROR> at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1881)
+ERROR>Caused by: javax.ejb.TransactionRolledbackLocalException: ; nested exception is: javax.transaction.TransactionRolledbackException: Transaction is ended due to timeout
+ERROR> at com.ibm.tx.jta.embeddable.impl.EmbeddableTranManagerImpl.completeTxTimeout(EmbeddableTranManagerImpl.java:98)
+ERROR> at com.ibm.tx.jta.embeddable.impl.EmbeddableTranManagerSet.completeTxTimeout(EmbeddableTranManagerSet.java:92)
+ERROR> at com.ibm.ejs.csi.TransactionControlImpl.completeTxTimeout(TransactionControlImpl.java:1306)
+ERROR> at com.ibm.ejs.csi.TranStrategy.postInvoke(TranStrategy.java:193)
+ERROR> at com.ibm.ejs.csi.RequiresNew.postInvoke(RequiresNew.java:154)
+ERROR> at com.ibm.ejs.csi.TransactionControlImpl.postInvoke(TransactionControlImpl.java:567)
+ERROR> at com.ibm.ejs.container.EJSContainer.postInvoke(EJSContainer.java:4491)
+ERROR> at com.filenet.engine.ejb.EJSLocalStatelessEngineCore_22877cb1.executeChanges(Unknown Source)
+ERROR> at com.filenet.engine.ejb.EngineBean.executeChanges(EngineBean.java:913)
+ERROR> ... 39 more
+ERROR>Caused by: javax.transaction.TransactionRolledbackException: Transaction is ended due to timeout
+ERROR> ... 48 more
+ERROR>}
+ERROR> at com.filenet.apiimpl.wsi.serialization.core.ExceptionSerialization.deserialize(ExceptionSerialization.java:196)
+ERROR> at com.filenet.apiimpl.wsi.ServiceSessionNst.cDeserializeSoapFault(ServiceSessionNst.java:693)
+ERROR> at com.filenet.apiimpl.wsi.ServiceSessionNst.cReqRespPath(ServiceSessionNst.java:223)
+ERROR> at com.filenet.apiimpl.wsi.ServiceSessionNst.executeChanges(ServiceSessionNst.java:85)
+ERROR> at com.filenet.apiimpl.util.SessionHandle.executeChanges(SessionHandle.java:112)
+ERROR> at com.filenet.apiimpl.core.Session.callExecuteChanges(Session.java:146)
+ERROR> at com.filenet.apiimpl.core.Session.executeChanges(Session.java:532)
+ERROR> at com.filenet.apiimpl.core.Session.executeChange(Session.java:850)
+ERROR> at com.filenet.apiimpl.core.IndependentlyPersistableObjectImpl.save(IndependentlyPersistableObjectImpl.java:76)
+ERROR> at com.filenet.apiimpl.core.ObjectStoreImpl.save(ObjectStoreImpl.java:1696)
+ERROR> at com.filenet.apiimpl.core.IndependentlyPersistableObjectImpl.save(IndependentlyPersistableObjectImpl.java:67)
+ERROR> at com.ibm.bluestack.utils.P8Util.createOS(Unknown Source)
+ERROR> at com.ibm.bluestack.utils.P8Util.createOSreadPropFile(Unknown Source)
+ERROR> at com.ibm.bluestack.utils.P8Util.main(Unknown Source)
+OUTPUT>ERROR: Failed to create object store.
+OUTPUT>ERROR: Make sure:
+OUTPUT>ERROR: 1. Web Services Enhancements 3.0 is installed 
+OUTPUT>ERROR: 2. WAS is started and the CE is configured and deployed properly.
+Process completed with exit code: -1
+ERROR in InvokeScripts-function - Terminate the remaining scripts.
+***Aborting InvokeScripts-Install function.
+
+
+CAUSE
+The transaction time-out value specified in IBM WebSphere Application Server (WAS) is not sufficient to allow the long running database operations to complete. 
+
+
+RESOLVING THE PROBLEM
+1. Navigate to Transaction service in IBM WAS Admin Console. 
+
+[/support/docview.wss?uid=swg21992203&aid=1] [/support/docview.wss?uid=swg21992203&aid=1]
+2. Increase the timeout value.
+3. The recommended timeout in the documentation is 600 but in this situation, specifying a value of 1800-3600 should help. 
+4. Restart IBM WAS server. 
+5. Change the cmpit.properties script status to YES, up to script 25.
+6. Run CMPIT again (it will begin at step 26).
+
+RELATED INFORMATION
+ Specifying the WebSphere environment variables [http://www.ibm.com/support/knowledgecenter/en/SSNW2F_5.2.1/com.ibm.p8.planprepare.doc/p8ppi147.htm]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Case Manager

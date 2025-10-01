@@ -1,0 +1,147 @@
+Title: IBM IV73539: SSH CONNECTION TO DEVICE FAILBACK FROM SSH2 TO SSH1 WHEN CONNECTION ATTEMPT FAILED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+6.4.1.0-TIV-ITNCM-IF004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Configuration+Manager&fixids=6.4.1.0-TIV-ITNCM-IF004&source=SAR]
+6.4.1.3-TIV-ITNCM-IF001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Configuration+Manager&fixids=6.4.1.3-TIV-ITNCM-IF001&source=SAR]
+6.4.1.2-TIV-ITNCM-IF001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Configuration+Manager&fixids=6.4.1.2-TIV-ITNCM-IF001&source=SAR]
+6.4.1.1-TIV-ITNCM-IF004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Configuration+Manager&fixids=6.4.1.1-TIV-ITNCM-IF004&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SSH connection to device failback from SSH2 to SSH1 when
+   connection attempt failed
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All devices IDT would try ssh2 then fall back to ssh1 if the *
+   * ssh variable in the rad was set to ssh2.                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Customer wanted IDT ssh client to use only ssh2 if the ssh   *
+   * type was set to ssh2 in the rad. The ssh client would try    *
+   * ssh2 and then fail over to ssh1 no matter what the ssh type  *
+   * was set to.                                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 6.4.1.4 when available. There is an interim also  *
+   * an interim fix released on 6.4.1.3. The interim FixID is     *
+   * 6.4.1.3-TIV-ITNCM-IF001                                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Upgrade to 6.4.1.4 when available. There is an interim also an
+   interim fix released on 6.4.1.3. The interim FixID is
+   6.4.1.3-TIV-ITNCM-IF001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV73539
+   
+   
+ * REPORTED COMPONENT NAME
+   N/C CONFIG MGR(
+   
+   
+ * REPORTED COMPONENT ID
+   5724Z3100
+   
+   
+ * REPORTED RELEASE
+   641
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-25
+   
+   
+ * CLOSED DATE
+   2015-07-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   N/C CONFIG MGR(
+   
+   
+ * FIXED COMPONENT ID
+   5724Z3100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R641 PSY
+   UP

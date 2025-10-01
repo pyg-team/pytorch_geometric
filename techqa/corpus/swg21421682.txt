@@ -1,0 +1,37 @@
+Title: IBM The 'dbtest' argument in the klctl.sh script fails to connect successfully. - United States
+
+Text:
+CAMADMSALL CAMADMSDB CAMADMSSEC octigate connect connected unsuccessful failed pw klctl.sh dbtest TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ The output from the klctl.sh dbtest command shows that the Managing Server code fails to connect to the ITCAM database (e.g. octigate) successfully. 
+
+RESOLVING THE PROBLEM
+The following command tells you if the Managing Server (MS) code is configured properly to access the ITCAM database. 
+
+
+
+$MS_HOME/bin/klctl.sh dbtest 
+
+
+If the connection is not successful, go to $MS_HOME/bin/setenv.sh and make sure that the JDBC user id and password are correct. 
+
+
+JDBC_USER=amuser or whatever id you used for the schema owner JDBC_PASSWORD=xxxxxx where xxxxxx is JDBC_USER's password 
+
+
+If you change either setting, you will have to recycle the MS to pick up the changes.
+
+
+Note 
+
+
+The password should be encrypted in setenv.sh. Please use the amctypto.sh script to encrypt the current password before updating the JDBC_PASSWORD.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for WebSphere

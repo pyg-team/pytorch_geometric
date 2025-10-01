@@ -1,0 +1,39 @@
+Title: IBM Modify User Session timeout values in Collaborative Lifecycle Management for Rational Quality Manager - United States
+
+Text:
+user session timeout; LTPA token; Websphere Application Server TECHNOTE (FAQ)
+
+QUESTION
+ How do you modify the user session timeout duration in Collaborative Lifecycle Management (CLM) for Rational Quality Manager (RQM)? 
+
+CAUSE
+ 
+
+ * You may loose work because of low timeout values. 
+ * Idle session are retained for more time due to higher timeout values.
+
+ANSWER
+ 
+
+ * For RQM running on Tomcat Application Server - Refer to Technote : 1447983 [http://www-01.ibm.com/support/docview.wss?uid=swg21447983]
+
+ * For RQM running on WebSphere Application Server
+
+
+WebSphere Application Server session security Lightweight Third-Party Authentication (LTPA) token value controls the timeout duration and by default is set to 2 hours. 
+ 1. Login to the WebSphere Administration Console.
+    
+    
+    
+ 2. Select Security - Global Security.
+    
+    
+    
+ 3. Under Authentication select LTPA. 
+    
+    
+    
+ 4. Under LTPA timeout, enter the number of minutes for timeout
+
+RELATED INFORMATION
+#Modify timeout values for Tomcat Application server [http://www-01.ibm.com/support/docview.wss?uid=swg21447983]

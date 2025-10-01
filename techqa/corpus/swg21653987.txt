@@ -1,0 +1,43 @@
+Title: IBM Action Script Relevance Question - United States
+
+Text:
+action operator task fixlet issuer TECHNOTE (FAQ)
+
+QUESTION
+ How can I write an action statement that provides information about the operator who runs a task or fixlet on the client 
+
+CAUSE
+need to know which operator runs a task on a client
+
+ANSWER
+You could get the "action-issuer-name" from the "headers of action". Here is an example where the file __appendfile is created on the client when the task/fixlet is ran. It contains all the values of the headers:
+
+Created a Custom Action:
+delete __appendfile
+appendfile {concatenation "%0d%0a" of (((name of it, value of it) of headers of action) as string)}
+
+it created an __appendfile file with the following content:
+Subject, Custom Action
+X-Action-Component-Type, Action
+X-Classify-Subsequent-Relevance, Targeting
+X-Relevant-When, true
+X-Success-Criteria, RunToCompletion
+X-Fixlet-ID, 16023
+X-BigFix-Minimum-Required-Client-Version, 7.0.0.0
+X-Report-Criteria, IsOrWasTargeted
+action-active-user-requirement, None
+action-retry-limit, 0
+action-retry-delay, 1 hour
+action-try-limit, 1
+locking-exempt, 0
+action-distributor, actionsite
+action-end-time, ( Fri, 25 Oct 2013 14:10:28 )
+action-ui-name, Custom Action
+action-issuer-name, IEMAdmin
+action-ui-remote-consoles, 1
+site-context, http://<removed>:52311/cgi-bin/bfgather.exe/actionsite 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IEM BES BigFix TEM

@@ -1,0 +1,46 @@
+Title: IBM Add Additional Values To Timezone Domain - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to add additional Time Zones to Maximo Time Zone domain? 
+
+CAUSE
+There are pre-populated values in Maximo to allow selection of Time Zones in various applications. It may be possible that several new Time Zones need to be added because there are over 600 Time Zone names in the world and Maximo is installed with 127 of these in the Timezone domain. 
+
+ANSWER
+The Timezone ID as maxvalue of the domain has to be one of the supported Timezone IDs of Java. Java Timezone IDs are generally consistent with the tz of Timezone database. You can use the TimeZone.getAvailableIDs method to iterate through all the supported time zone IDs of Java 
+
+Should you wish to add additional time zones in Maximo this can be accomplished by the following steps:
+
+1. Determine the time zone name, offset, and daylight Y/N
+a. Use a web site like "timezone-db..."
+b. Example - Sierra Leone
+c. Time zone is Africa/Freetown
+d. Offset is +0 GMT
+e. Daylight No
+
+2. With the above data create a dbc file (extension ‘.dbc’)with the following:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE script SYSTEM "script.dtd">
+<script author="MyName" scriptname="Add_TZ">
+<description>Add timezone to TIMEZONE domain</description>
+<statements>
+<add_synonyms domainid="TIMEZONE">
+<synonymvalueinfo value="Africa/Freetown" maxvalue="Africa/Freetown" defaults="true" description="(GMT + 0 DST/N) Freetown, Sierra Leone" />
+<synonymvalueinfo value="Africa/Ouagadougou" maxvalue="Africa/Ouagadougou" defaults="true" description="(GMT + 0 DST/N) Burkina Faso" />
+</add_synonyms>
+</statements>
+</script>
+
+3. Copy the file to the /maximo/tools/maximo/en/script
+
+4. From the maximo/tools/maximo/internal folder (OS Prompt) run the following statement:
+runscriptfile -fadd_filename (without the file extension)
+e.g.
+runscriptfile -fadd_tz (where add_tz if the dbc script
+
+5. Restart the Maximo Application server
+The new time zones will be available in the Timezone domain

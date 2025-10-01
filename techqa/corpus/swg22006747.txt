@@ -1,0 +1,30 @@
+Title: IBM Rational Synergy-RTC integration fails to connect to RTC server, which is configured with TLS 1.2 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Rational Synergy-RTC integration fails to connect to RTC server, which is configured with TLS 1.2 
+
+CAUSE
+Out of the box, Rational Synergy-RTC integration does not support RTC server configured with TLS 1.2
+
+ANSWER
+Follow the below mentioned steps to configure Rational Synergy-RTC integration to connect to RTC server configured with TLS 1.2. 
+
+ 1. Take a backup of the file "$CCM_HOME/etc/ccm.server.properties" in the Synergy server run-area. 
+ 2. Search for the string "java.option.additional=" in the "ccm.server.properties" file and add the string "-Dcom.ibm.team.repository.transport.client.protocol=TLSv1.2" at the end of the line. 
+ 3. Restart the Synergy server, for the newly added configuration to take effect.
+
+
+After performing these configuration changes, Synergy-RTC integration would support RTC servers configured with TLS 1.0 and TLS 1.2 
+
+
+For example: 
+Original Line 
+java.option.additional=-Djava.util.logging.manager=com.telelogic.cm.logging.TLogManager -Djava.util.logging.config.class=com.telelogic.cm.logging.ConfigureLogging -Djava.util.logging.config.file="%ccm_home/etc/logging.properties" -Djava.library.path="%ccm_home/lib" -Dcom.telelogic.cm.processtype=server -Dcom.sun.management.jmxremote 
+
+Modified Line 
+java.option.additional=-Djava.util.logging.manager=com.telelogic.cm.logging.TLogManager -Djava.util.logging.config.class=com.telelogic.cm.logging.ConfigureLogging -Djava.util.logging.config.file="%ccm_home/etc/logging.properties" -Djava.library.path="%ccm_home/lib" -Dcom.telelogic.cm.processtype=server -Dcom.sun.management.jmxremote -Dcom.ibm.team.repository.transport.client.protocol=TLSv1.2 
+
+Note: Do not modify/delete any of the existing value, just append the new configuration to the existing value.

@@ -1,0 +1,65 @@
+Title: IBM Rational product support for Leap Second - United States
+
+Text:
+1327356; CC; ReqPro; RPM; RSA; RSM; RQM; Soda; ClearCase; RequisitePro; Rational; Software Arcitect; Software Modeler; appscan; Leap Second; support; impact; 1281089 TECHNOTE (FAQ)
+
+QUESTION
+ What is the support status for Leap Second with different products in the IBM Rational brand? 
+
+CAUSE
+A leap second will be inserted at the end of December 31, 2016 at 23:59:60 UTC.
+
+ANSWER
+
+
+
+ * Rational Apex Ada: The supported platforms of Apex do not support leap seconds, so Apex does not support leap seconds. It is possible to configure UNIX operating systems to support leap seconds, but that is not the default. 
+ * Rational Application Developer: Not impacted. Product does not use timers in such a way that a Leap Second would cause a problem. 
+ * Rational AppScan Standard, Source, Tester, and Enterprise: Not impacted. 
+ * Rational Build Forge: Not impacted. 
+ * Rational Change: Not impacted. 
+ * Rational ClearCase: Not impacted. 
+ * Rational ClearQuest: Does not support. Do not carry out ClearQuest activities during Leap Second (11:59:60). 
+ * Rational DOORS: Does not support. Product depends on operating system time for all time-related activities. 
+ * Rational DOORS Next Generation: Does not support. Impact is not known. It is advisable to avoid updating data during the leap second.
+
+ * Rational Focal Point 
+ * Rational Integration Tester: Escalation: Not impacted. 
+ * Rational Functional Tester: Not impacted. 
+ * Rational Licensing: Not impacted. 
+ * Rational Logiscope: Not impacted. 
+ * Rational Manual Tester: Not impacted. 
+ * Rational Performance Tester: Not impacted. 
+ * Rational Policy Tester: Not Impacted. 
+ * Rational Portfolio Manager: Not impacted. 
+ * Rational ProjectConsole: Not impacted. 
+ * Rational PurifyPlus: Not impacted. 
+ * Rational Quality Manager: Not impacted. 
+ * Rational Quantify: Not impacted. 
+ * Rational RequisitePro: Does not support. Product depends on operating system time for all time-related activities. 
+ * Rational Rhapsody and Rhapsody Design Manager: Not impacted. 
+ * Rational Robot: Not impacted. 
+ * Rational Rose: Does not support. Product depends on operating system time for all time-related activities. 
+ * Rational Rose RealTime: Not impacted. 
+ * Rational Service Tester for SOA Quality: Not impacted. 
+ * Rational SoDA: Not impacted. 
+ * Rational Software Architect: Not impacted. Product does not use timers in such a way that a Leap Second would cause a problem. 
+ * Rational Software Modeler: Not impacted. 
+ * Rational Synergy: Not impacted. 
+ * Rational Systems Tester: Not impacted. 
+ * Rational Team Concert: Not impacted. 
+ * Rational Test Agent: Not impacted. 
+ * Rational Test RealTime: Not impacted. 
+ * Rational TestManager: Not impacted. 
+ * Rational Test Workbench Eclipse Client: Not impacted. 
+ * Rational TTCN Suite: Not impacted. 
+ * Urban Code Deploy: Not impacted. 
+ * WebSphere Application Server - Websphere and the underlying SDK are not impacted as Java will function normally when leap second occurs. 
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21592292]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearQuest Software Development Rational Functional Tester Software Development Rational Licensing Software Development Rational Manual Tester Software Development Rational Performance Tester Software Development Rational Portfolio Manager Software Development Rational RequisitePro Software Development Rational Robot Software Development Rational Rose Enterprise Software Development Rational SoDA Software Development Rational Software Architect Software Development Rational Software Modeler Software Development Rational Team Concert Software Development Rational TestManager Software Development Rational Quality Manager Software Development Rational ProjectConsole Software Development Rational Rose RealTime Software Development Rational PurifyPlus family Software Development Rational Test RealTime Software Development Rational Quantify Software Development Rational Application Developer for WebSphere Software Software Development Rational Build Forge Software Development Rational Change Software Development Rational DOORS Software Development Rational Logiscope Software Development Rational Portfolio Manager Software Development Rational Rhapsody Software Development Rational Service Tester for SOA Quality Software Development Rational Synergy Software Development Rational Systems Tester

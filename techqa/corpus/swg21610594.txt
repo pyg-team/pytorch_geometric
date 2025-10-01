@@ -1,0 +1,25 @@
+Title: IBM OMEGAMON Enhanced 3270 User Interface and support for OMEGAMON Agent versions prior to 5.1.0 - United States
+
+Text:
+e3270ui; e3270; migration; upgrade; agent versioning; configuration TECHNOTE (FAQ)
+
+QUESTION
+ Does the OMEGAMON Enhanced 3270 User Interface support versions of OMEGAMON agents earlier than V5.1.0, (for example, V4.2.0); and, earlier than V5.1.1 for OMEGAMON XE for DB2 Performance Monitor/Performance Expert and V7.1.0 for OMEGAMON XE for Messaging? 
+
+CAUSE
+During the course of a staged upgrade for a given OMEGAMON agent (e.g. OMEGAMON XE for CICS on z/OS version 5.1.0) that exploits the OMEGAMON enhanced 3270 interface, users may be running a configuration with multiple versions/levels of a given OMEGAMON Agent; for example, V5.1.0 and V4.2.0.
+
+ANSWER
+OMEGAMON products that support the enhanced 3270 interface (that is version 5.1.0s, 5.1.1 for OMEGAMON XE for DB2/PE; 7.1.0 for OMEGAMON XE for Messaging) have delivered extended capability for support of more comprehensive problem solving scenarios. 
+
+The extended capability has been accomplished by significant updates and extensions to the infrastructure and data/information that is provided by OMEGAMON Agents. This extended capability is being exploited in the OMEGAMON Enhanced 3270 user interface. 
+
+OMEGAMON Enhanced 3270 users may experience operational limitations when running configurations that run multiple versions (e.g. V5.1.0 and V4.2.0) of a given OMEGAMON agent. This may be the case during a staged upgrade period. 
+
+The information in the table provided below summarizes related operational considerations by product. Please consult the product configuration and upgrade documentation for more information.
+
+
+
+Product version that provides enhanced 3270 interface support Operational considerations when running multiple Agent versions (e.g. v5.1.0 and V4.2.0) OMEGAMON XE for CICS on z/OS V5.1.0 Only data returned from the V5.1.0 OMEGAMON CICS agent will be displayed in the Enhanced e3270 user interface. Data returned from the V4.2.0 agents can be viewed from one of the other available interfaces; i.e. , TEP, OMEGAMON for CICS, or OMEGAMON II for CICS. OMEGAMON XE for DB2 Performance Expert on z/OS V5.1.1
+OMEGAMON XE for DB2 Performance Monitor on z/OS V5.1.1 Only data returned from the V5.1.1 OMEGAMON DB2 agent will be displayed in the Enhanced e3270 user interface. Data returned from the V5.1.0 and V4.2.0 agents can be viewed from one of the other available interfaces. OMEGAMON XE for IMS on z/OS V5.1.0 Please refer to the related product documentation [http://www-01.ibm.com/support/docview.wss?uid=swg21611162]: http://www.ibm.com/support/knowledgecenter/OMXEIMS510/com.ibm.omegamon.xe_ims.doc_5.1.0/omxeims_pcg14.htm [http://www-01.ibm.com/support/knowledgecenter/OMXEIMS510/com.ibm.omegamon.xe_ims.doc_5.1.0/omxeims_pcg14.htm] OMEGAMON XE for Mainframe Networks V5.1.0 The enhanced 3270 interface for OMEGAMON XE for Mainframe Networks Version 5.1.0 is designed for V5.1.0 and later monitoring agents. Some workspaces may display data from previous release agents, but there are attributes and tables that are only provided by V5.1.0 agents. Continue to use the TEP to view data from V4.2.0 agents. OMEGAMON XE for Messaging on z/OS V7.1.0 The enhanced 3270 interface for WebSphere MQ monitoring is designed for V7.1.0 and later monitoring agents. The WebSphere MQ Health Overview will not contain Queue Manager Status rows for queue managers monitored by previous release agents. Some workspaces may function with previous release agents, but you will not be able to navigate to them via health overview options for queue managers. The recommendation is to use the TEP interface or the old MQ 3270 interface to view data produced by previous release agents. OMEGAMON XE for Storage on z/OS V5.1.0 The Enhanced 3270 interface will only display data from the V5.1.0 Storage agent. Data from prior versions will be ignored in the Enhanced 3270 interface. Continue to use the TEP to view data from V4.2.0 agents. OMEGAMON XE on z/OS V5.1.0 The Enhanced 3270 interface is designed to display data from the V5.1.0 OMEGAMON XE on z/OS Agent. Data returned from the prior versions can be viewed from one of the other available interfaces.
+Note: OMEGAMON XE on z/OS V5.1.0 must be configured so that only V5.1.0 Agent(s) are eligible to assume the Sysplex Proxy role.

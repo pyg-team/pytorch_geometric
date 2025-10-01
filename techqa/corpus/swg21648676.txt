@@ -1,0 +1,25 @@
+Title: IBM Files requiring modification when updating, upgrading, moving, or migrating a System Monitor MSSQL database in IBM Enterprise Content Management System Monitor - United States
+
+Text:
+system monitor database TECHNOTE (FAQ)
+
+QUESTION
+ What files require modification when updating, upgrading, moving, or migrating a System Monitor MSSQL database? 
+
+ANSWER
+The files are:
+
+
+ * $CENIT_ROOT/cala_rex/cala_rex_srv.cfg 
+ * $CENIT_ROOT/cala_rex/cala_rex_finca.cfg 
+
+
+ * $CENIT_ROOT/server/cfg/db-cfg.xml 
+ * $CENIT_ROOT/.prodinfo/FSM_SERVER.settings
+
+
+There is a chance that a monitor could be configured to check the status of the monitor's database server, in which case the MSSQL database server name is also defined in this file: 
+ * $CENIT_ROOT/cala/misc/cmdtab_merged.ctb. 
+
+
+Please note: If the port, username, or password changes, they must also be reflected in the above files.

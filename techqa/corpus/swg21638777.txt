@@ -1,0 +1,12 @@
+Title: IBM Which version will support Windows 2012? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Which version will support Windows 2012? 
+
+ANSWER
+Support for Windows 2012 starts with Fixlevel 4.6.03.
+
+There are no plans to certify other previous releases for usage with Windows 2012.

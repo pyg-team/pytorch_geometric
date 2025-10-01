@@ -1,0 +1,190 @@
+Title: IBM PI21535: AFTER PI12528 IS APPLIED, WMQ V7 - ABEND058 RC10 OR RC20 MAY OCCUR AFTER A SECONDARY - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ABENDS058 S058 RC10 or RC20 and/or ABENDS0C4 after PI12528 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI12528] is
+   applied:
+   
+   
+   CSQMCFTK issues a SSAR for the broker address space, but never
+   sets the secondary address space back (i.e. to the primary).
+   If the broker address space ends in the meantime, the 058 abends
+   seen here may occur.
+   
+   Abend 0C4 in CSQMCFTK during message broker restart can also be
+   generated if subscription validation or publication evaluation
+   requests are queued while message broker is down.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ Version 7          *
+   *                 Release 0 Modification 1 and                 *
+   *                 Release 1 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: After APAR PI12528 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI12528] has been applied,    *
+   *                      when using extended content based       *
+   *                      filtering (CBF) with Message Broker     *
+   *                      (WMB/IIB) MQ queue manager generates    *
+   *                      abend 058 in CSQVSRRX when a message    *
+   *                      broker execution group is stopped       *
+   *                      and/or abend 0C4 in CSQMCFTK when       *
+   *                      message broker is restarted.            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When APAR PI12528 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI12528] has been applied, two problems have been
+   detected when a queue manager is connected to Message Broker
+   (WMB/IIB) to provide subscriptions with content based filtering
+   (CBF) and message broker is stopped and restarted:
+   
+   Abend 058 is generated in CSQVSRRX when a broker execution group
+   is stopped. This abend is caused when the broker ASID is left
+   set as secondary address space and the broker has terminated.
+   
+   Abend 0C4 is generated in CSQMCFTK when a broker execution group
+   is started and there has been CBF Pub/Sub activity while the
+   broker was unavailable. The queued requests for broker can be
+   corrupted.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Content based filtering MQ component has been changed to
+   tolerate broker (WMB or IIB) threads terminating and
+   reconnecting without generating abends.
+   010Y
+   100Y
+   CSQMBSTP
+   CSQMCFQQ
+   CSQMCFTK
+   CSQMCFTX
+   CSQMCUWT
+   CSQMDALL
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI21535
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-09
+   
+   
+ * CLOSED DATE
+   2014-11-05
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI28294 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI28294] UI22789 UI22790
+   
+   
+
+MODULES/MACROS
+ *  CSQMBSTP CSQMCFQQ CSQMCFTK CSQMCFTX CSQMCUWT CSQMDALL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R010 PSY UI22789 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI22789]
+   UP14/12/04 P F412 ð
+   
+   
+ * R100 PSY UI22790 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI22790]
+   UP14/12/04 P F412 ð
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

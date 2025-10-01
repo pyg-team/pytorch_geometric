@@ -1,0 +1,83 @@
+Title: IBM Attempt to upgrade WebSphere Portal CF fails with, "No provider found to create properties in" message - United States
+
+Text:
+no provider; CF; upgrade; wcmservices TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Customer experiences a failure when attempting to upgrade to latest CF. The logs show the following error, "No provider found to create properties in"
+
+SYMPTOM
+Review of the ConfigTrace.log shows the following....
+
+[wplc-create-res-env-custom-property-directory] name is userName
+[wplc-create-res-env-custom-property-directory] value is
+my_email@us.ibm.com
+[wplc-create-res-env-custom-property-directory] description is
+[wplc-create-res-env-custom-property-directory] (Resource ENV Provider)
+J2EEResourceProperty property userName create fail.
+[wplc-create-res-env-custom-property-directory] No provider found to
+create properties in
+[wplc-create-res-env-custom-property-directory] at
+com.ibm.wplc.deploy.tasks.impl.REProviderCustPropUpdateByDirectoryImpl.e
+xecuteResourceProviderUpdates(REProviderCustPropUpdateByDirectoryImpl.ja
+va:239)
+
+......
+
+[wplc-create-res-env-custom-property-directory] Direcory IO Exception
+No provider found to create properties in
+--- Exception Thrown ---
+/opt/IBM/WebSphere/PortalServer/wcm/prereq.wcm/config/includes/prereq.wc
+m_cfg.xml:4867: No provider found to create properties in
+at
+com.ibm.wplc.deploy.tasks.impl.REProviderCustPropUpdateByDirectoryImpl.e
+xecute(REProviderCustPropUpdateByDirectoryImpl.java:97)
+
+....
+
+Caused by: No provider found to create properties in
+at
+com.ibm.wplc.deploy.tasks.impl.REProviderCustPropUpdateByDirectoryImpl.e
+xecuteResourceProviderUpdates(REProviderCustPropUpdateByDirectoryImpl.ja
+va:289)
+at
+com.ibm.wplc.deploy.tasks.impl.REProviderCustPropUpdateByDirectoryImpl.p
+rocessPropertyFile(REProviderCustPropUpdateByDirectoryImpl.java:205)
+at
+com.ibm.wplc.deploy.tasks.impl.REProviderCustPropUpdateByDirectoryImpl.e
+xecute(REProviderCustPropUpdateByDirectoryImpl.java:88)
+... 51 more
+
+which ultimately results in the config task failing with....
+
+BUILD FAILED
+/opt/IBM/WebSphere/PortalServer/installer/wp.update/config/includes/cumu
+lative_fix.xml:59: The following error occurred while executing this
+line:
+/opt/IBM/WebSphere/PortalServer/wcm/prereq.wcm/config/includes/prereq.wc
+m_cfg.xml:4867: No provider found to create properties in
+
+
+CAUSE
+This can be caused by a couple of things....both related to having "extra" files with an extension of *.properties in the /opt/IBM/WebSphere/wp_profile/PortalServer/wcm/shared/app/config/wcmservices directory....
+
+1) The existence of backup files in this directory that are renamed but retain the *.properties extension. For example, SearchService_backup.properties
+
+2) Files with a *.properties extension that are not supposed to be in this directory. In this case a file called TranslationService.properties was incorrectly placed in this directory by a developer.
+
+The Portal code attempts to read every file in this directory that has a *.properties extension. If something is here that should not be, then it causes problems.
+
+ENVIRONMENT
+Portal 8001
+Linux
+
+DIAGNOSING THE PROBLEM
+Here is the location that the config task seems to be looking when the error occurs.....
+
+Processing property files in directory:
+/opt/IBM/WebSphere/wp_profile/PortalServer/wcm/shared/app/config/wcmservices
+
+Review this directory to see if any "rogue" files with a *.properties file exist.
+
+RESOLVING THE PROBLEM
+Remove or rename any "rogue" files and re-run the CF upgrade

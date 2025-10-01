@@ -1,0 +1,33 @@
+Title: IBM FileNet Workplace XT configuring bootstrap properties returns Failed create attempt for class AccessRole of type 15 error - United States
+
+Text:
+WorkplaceXT tenant domain TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ On a new install of Workplace XT 1.1.5 with P8 CPE 5.2.1, the first time logging in to WorkplaceXT returns a "Failed create attempt for class AccessRole of type 15" error when trying to save changes to the bootstrap properties. 
+
+SYMPTOM
+Using an admin user, the login to Workplace XT is successful. However, on a new install when trying to configure the bootstrap properties from WorkplaceXT, then saving the changes, the following error is returned to the screen: 
+
+ * 
+ * Problem while sending request or processing server response. Exception was java.lang.IllegalStateException: Failed create attempt for class AccessRole of type 15; java.lang.reflect.InvocationTargetException
+ * 
+
+
+CAUSE
+The system was configured with multiple P8 domains with a master domain and multiple tenant domains (new to P8 CPE 5.2.1). The object stores were in the tenant domains. However, Workplace XT was pointing to the master domain.
+
+ENVIRONMENT
+CPE 5.2.1
+WorkplaceXT 1.1.5
+
+
+
+RESOLVING THE PROBLEM
+Since the object stores were in the tenant domains, Workplace XT needs to point to the tenant domain rather than the master domain. This is documented on the following page of the P8 5.2.1 Knowledge Center: 
+
+http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.planprepare.doc/p8ppi265.htm [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.planprepare.doc/p8ppi265.htm] 
+
+ 
+
+The "?tenantId=<tenant_identifier>" parameter needs to be appended to the server URL. It is also possible to add the tenantId in the wcmapiconfig.properties file to default the server URL to a specific tenant domain.

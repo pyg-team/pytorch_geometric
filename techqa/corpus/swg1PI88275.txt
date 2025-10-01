@@ -1,0 +1,167 @@
+Title: IBM PI88275: CICS VR VSAM CHANGES CAN BE REPLICATED OUT OF ORDER UNDER SPECIFIC SITUATIONS INVOLVING A JOB SWITCHING SYSTEMS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The target and source IIDR for VSAM server LPARs were IPLed
+   at different times. After this, the following message is seen:
+   CECW0025I When replicating subscription PACXVUG1 from source
+   PACXVUG1, a record update was not performed. A record with key
+   40C5E2F3F7F4F1F5E3 in file TTES20  , data set
+   PGYU.V35A.VR.TTES20
+   does not match the before image.  The log stream timestamp is
+   2017-09-24-07.38.49.175031.
+   So one of our files is out of sync.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: InfoSphere Classic Change Data Capture for   *
+   *                 z/OS for VSAM                                *
+   *                 InfoSphere Data Replication for VSAM for     *
+   *                 z/OS                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The target and source side LPARs were   *
+   *                      IPL'ed at different times. After this,  *
+   *                      message CECW0025I was seen. One of      *
+   *                      the VSAM files is out of sync.          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   CICS VR changes were replicated out of order.
+   Connex was moved from one LPAR to another and the last block
+   of changes was replicated out of order. A file close was
+   missed and got the count of open files such that it was
+   non-zero. This prevented the non-recoverable commit from being
+   generated until later when it was done for other reasons
+   (e.g. LEOL or number of blocks read). However, by the time the
+   block is sent, it is out of order and some keys are out of
+   synch.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Classic code is changed to generate a commit if the job has
+   any outstanding updates.  This will be done for any file close
+   for the job. To avoid sending changes out of order, use any
+   file close to flush buffered changes for the job.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI88275
+   
+   
+ * REPORTED COMPONENT NAME
+   CLASSIC FED & E
+   
+   
+ * REPORTED COMPONENT ID
+   5697I8200
+   
+   
+ * REPORTED RELEASE
+   B3J
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-04
+   
+   
+ * CLOSED DATE
+   2017-10-10
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI50972
+   
+   
+
+MODULES/MACROS
+ *     CECCLRVR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CLASSIC FED & E
+   
+   
+ * FIXED COMPONENT ID
+   5697I8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB30 PSY UI50972 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI50972]
+   UP17/10/11 P F710
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

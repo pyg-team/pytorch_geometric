@@ -1,0 +1,188 @@
+Title: IBM MustGather: Collecting Data for IBM Case Manager Client v5.2.0.x issues - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What information should you collect when experience issues with Case Manager Client v5.2.0.x? 
+
+SYMPTOM
+When using Case Manager Client, you receive an error or the result of the task is not as expected.
+
+
+RESOLVING THE PROBLEM
+Collecting Data for Case Manager Client 
+
+For every problem, collecting data can aid in problem determination and save time resolving Problem Management Records (PMRs). Gathering this data before calling IBM support will help you to understand the problem and save time analyzing the data.
+
+Collecting MustGather data early, before opening the PMR, helps IBM® Support quickly determine if: 
+
+ * Symptoms match known problems (rediscovery). 
+ * There is a non-defect problem that can be identified and resolved. 
+ * There is a defect that identifies a work around to reduce severity.
+
+
+Locating the root cause of a problem can speed development of a code fix, if necessary. 
+
+Gathering General Information 
+
+For IBM® Case Manager, gather:  * Screen shot of the problem 
+ * Version of software 
+ * Operating system versions 
+ * Settings for the pertinent servers or client machines 
+ * Web Browser version information 
+ * Type of database and LDAP servers used
+
+
+
+Then, gather the following information that is specific to a Case Manager Client problem or issue:  * How often does this problem occur? 
+ * What has changed? 
+ * Can the problem be reproduced? 
+ * How many users are affected by this problem? 
+ * What is the business impact of this problem? 
+ * Is there a work around?
+
+
+
+Gathering Operating System Versions and Settings 
+
+These commands collect:  * OS Version 
+ * OS Environment Variables 
+ * OS Kernel parameters 
+ * OS system logs
+
+
+Run the following commands on the IBM Case Manager server and collect the output: 
+
+AIX users Command Collects uname -a or oslevel -q OS Version /usr/sbin/instfix -ivq OS Patches or Maintenance level env OS Environment Variable errpt OS Configuration and Error Reporting /usr/sbin/lsattr -E -l sys0 OS Kernel parameters /var/adm/syslog/syslog.log OS System log 
+Windows users Command Collects systeminfo
+inmsd 
+(and do a file -> “export” menu choice to create a text file) OS Version, Patches and Maintenance level set OS Environment Variables Start > All Programs > Administrative Tools > Event Viewer
+Save the following event logs:  * Application 
+ * Security 
+ * System
+
+
+If there are a large number of events that are irrelevant (perhaps months or years old), use the filtering capability to limit the data gathered. OS Event Logs Linux users 
+
+Command Collects uname -a OS Version /usr/bin/showrev -a OS Patches or Maintenance level env OS Environment Variable /usr/sbin/prtdiag -v OS Configuration and Error Reporting /usr/sbin/sysdef -D 
+/usr/bin/getconf -a OS Kernel parameters /var/log/messages.* OS System logs 
+Gathering Version Information 1. Collect all of the "deployed" version information as described below: 
+
+a) The version of Case Manager Client can be determined by logging into the Case Manager Client and selecting Tools > About. The version and build information is displayed in the About dialog. 
+
+ 
+
+ * [/support/docview.wss?uid=swg21640053&amp;aid=1]
+
+
+ * 
+ * 
+ * 
+   [/support/docview.wss?uid=swg21640053&amp;aid=2] [/support/docview.wss?uid=swg21640053&amp;aid=3] 
+ * 
+
+
+(b) Collect the Case Manager Client version information file that is located under the deployment directory.  * 
+ * 
+ *  <Websphere_Install_Root> /AppServer/profiles/< AppServerName >/installedApps/ <CaseManagerInstall_WAS_CELLName> /ICMClient.ear/ICMClient.war/version.txt 
+   
+   
+ * 
+ *  /opt/Oracle/Middleware/user_projects/domains/base_domain/servers/AdminServer /tmp/_WL_user/ICMClient/ <system generated> /war/version.txt 
+
+
+(c) Use the Case Manager REST service "info" page by pointing your browser to http://<server name>:<port #>/CaseManager/CASEREST/v1/info. This will provide a display similar to the following:  * 
+ * [/support/docview.wss?uid=swg21640053&amp;aid=4]
+ * 
+ * Copy the page into your collected documentation.
+
+
+2. Collect all the "installed" version information as described below: (a) Use the Case Manager Offline Version Tool, change to the <Case_Management_root_dir>, for example /opt/IBM/CaseManagement, and run the displayVersion.sh script: 
+
+
+
+
+ * [/support/docview.wss?uid=swg21640053&amp;aid=5]
+
+
+
+(b) Gather the version.txt file that is available in the < CASE_MANAGER_HOME > directory. The < CASE_MANAGER_HOME > directory is the home directory where IBM Case Manager is installed, for example /opt/IBM/CaseManagement directory. 
+
+
+Ping pages for supporting components: 
+
+Because the Case Manager Client interacts with the Content Platform Engine and Content Navigator, it is useful to collect their ping pages to make sure that all the components have the same client versions. 
+
+ 1. For Content: http://<cpe-server name>:<cpe-port #>/FileNet/Engine 
+ 2. For Process: http://<cpe-server name>:<cpe-port #>/peengine/IOR/ping 
+ 3. For Content Navigator: http://<icn-server name>:<icn-port #>/navigator/Ping
+
+
+Case Manager Client Log files
+
+Application server logs
+
+The IBM® Case Manager Client records log messages to the IBM Content Navigator log file. To configure debug level logging for IBM® Case Manager web applications, you must enable debugging on the IBM Content Navigator server and restart the IBM Content Navigator server.
+
+
+ * 
+ * 
+ * 
+ * 
+ *  Log in to the IBM Content Navigator administration desktop. Click the Settings tab and then click the Logging subtab. Set the logging level for the applications to Debug. Click Save and then click Close. Log out of the IBM Content Navigator administration desktop. Restart the application server instance where IBM Content Navigator is deployed. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * http://pic.dhe.ibm.com/infocenter/cmgmt/v8r4m0/topic/com.ibm.installingeuc.doc/eucts002.htm
+ * 
+ * 
+ * WebSphere Application Server
+ * 
+ * 
+ * 
+ * 
+ * 
+ * WAS_profile_location/logs/server/
+ * 
+ * 
+ * Oracle WebLogic Server
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Oracle/Middleware/user_projects/domains/base_domain/servers/AdminServer/logs
+ * 
+ * 
+ * 
+ * 
+
+
+Gathering Additional Information 
+
+The Case Manager Client is used for many different aspects of your Case Manager application. Depending on what actions you were trying to complete, additional data sets might be needed to support problem resolution. Depending on what aspect of Case Client you were using, also gather the following: 
+
+1. If the issue is related to a client side script error which is reproducible in the client browser, installing a tool to collect and capture header and response content between the browser and the IBM Case Manager server will help to diagnose and isolate the problem. Tools such as FireBug, Microsoft Internet Explorer Developer Tools, Fiddler, HTTPWatch, or other equivalent tools can be used to capture this information. 
+
+2. Add "icmErrorStackTrace=true" parameter in the URL, such as: "http://<server_name:port_number>/navigator/?desktop =icm&icmErrorStackTrace=true", if there are any errors when loading a page. This will provide additional detailed information in the error dialog when there is an error stack. 
+
+3. Refer to the following Case Manager Troubleshooting technote for additional information, which are more action-specific situations: 
+http://www.ibm.com/support/docview.wss?uid=swg21648669 [http://www.ibm.com/support/docview.wss?uid=swg21648669] 
+
+
+MustGather for dependent components 
+
+If you can tell based on the nature of the problem or visible symptoms in the log files that the issue is Content Platform Engine related, gathering the respective log files can help speed resolution, but these files are not specifically required to start the problem resolution process. 
+
+For additional information refer to the MustGather documents for:  * FileNet Process: http://www.ibm.com/support/docview.wss?uid=swg21589938 [http://www-01.ibm.com/support/docview.wss?uid=swg21589938] 
+ * FileNet Content: http://www.ibm.com/support/docview.wss?uid=swg21308231 [http://www.ibm.com/support/docview.wss?uid=swg21308231]
+
+
+
+PRODUCT ALIAS/SYNONYM
+ Advanced Case Management
+Case Manager
+IBM Case Manager

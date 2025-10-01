@@ -1,0 +1,34 @@
+Title: IBM Validate-Database task fails with the exception 'ORA-01017: invalid username/password; logon denied' - United States
+
+Text:
+ORA-01017 exception; validate database task failed; validate-database failed; invalid username password; portal install failed; unable to configure external database; external database failed TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When running the Validate-Database task, an exception occurs:
+
+[java] [02/14/11 15:40:19.345 EST] Attempting to make connection using: 
+
+jdbc:oracle:thin:@<hostname>:1521:<dbname> :: <db user name> :: PASSWORD_REMOVED
+[java] [02/14/11 15:40:20.165 EST] ERROR: Error obtaining connecting for
+jdbc:oracle:thin:@<hostname>:1521:<dbname>
+[java] java.sql.SQLException: ORA-01017: invalid username/password; logon denied
+...
+[java] at com.ibm.wps.config.db.Database.init(Database.java:155)
+[java] at com.ibm.wps.config.db.validation.ValidationDriver.main(ValidationDriver.java:281)
+[java] Exception in thread "main" java.sql.SQLException: ORA-01017:
+invalid username/password; logon denied
+[java] at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:440)
+
+
+CAUSE
+There can be several reasons for this exception. 
+
+
+
+RESOLVING THE PROBLEM
+Because it is failing at the Validate-Database task, we can narrow the areas to check: 
+
+
+1. The wrong username or password used in wkplc_dbdomain.properties file
+2. The user does not exist in Oracle DB
+3. Trying to connect to the wrong DB

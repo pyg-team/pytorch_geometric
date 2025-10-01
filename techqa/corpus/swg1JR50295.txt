@@ -1,0 +1,138 @@
+Title: IBM JR50295: COMBO BOX IN A COACH DISPLAYS "<NO SELECTION>" IN ENGLISH INSTEAD OF PORTUGUESE WHEN NO SELECTION IS MADE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+Version 8.5 Refresh Pack 6 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24039185]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM Process Portal, if your user profile is configured with
+   Portuguese as the language and you open a coach that has a
+   combo box for which no value has been selected or entered, the
+   text "<no selection>" (English text) is displayed in the combo
+   box instead of its Portuguese translation.
+   
+   
+   
+   
+   
+   PRODUCTS AFFECTED:
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The resource bundle for IBM Process Portal does not include a
+   Portuguese translation for the text that is displayed for a
+   combo box in a coach when no value has been selected or
+   entered.
+   
+   A fix will be delivered in future maintenance releases of IBM
+   BPM Version 8.0.1 and Version 8.5.5 that adds the correct
+   Portuguese translation of "<no selection>".
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR50295
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-20
+   
+   
+ * CLOSED DATE
+   2014-07-30
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP
+   
+   
+ * R855 PSY
+   UP

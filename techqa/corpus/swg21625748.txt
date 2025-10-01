@@ -1,0 +1,51 @@
+Title: IBM 104 ISAM error:  too many files open. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DML operations failing with ISAM Error -104 
+
+SYMPTOM
+DML operations failing with ISAM Error -104
+
+
+CAUSE
+The 32K File Descriptors (open tables) per thread limit has been reached 
+
+DIAGNOSING THE PROBLEM
+Use onstat -g opn and look at the ucount column 
+
+IBM Informix Dynamic Server Version 11.70.FC2 -- On-Line -- Up 14:23:05 -- 2964472 Kbytes
+tid rstcb isfd op_mode op_flags partnum ucount ocount lockmode 
+671522 0x000000009c9e0a20 0 0x00000400 0x00000397 0x004000da 2 2 0 
+671522 0x000000009c9e0a20 1 0x00000002 0x00000003 0x004000da 2 2 0 
+671522 0x000000009c9e0a20 2 0x00000400 0x00000397 0x00100003 2 2 0 
+671522 0x000000009c9e0a20 3 0x00000002 0x00000003 0x00100003 2 2 0 
+671522 0x000000009c9e0a20 8 0x01000400 0x00000407 0x0090003c 32692 0 0 
+671522 0x000000009c9e0a20 9 0x01000440 0x00000797 0x0090003d 32692 0 0 
+
+(please note there are 2 partitions - 0x0090003c, 0x0090003d - each of which is opened 32692 times)
+
+
+
+RESOLVING THE PROBLEM
+*Check the application logic.
+*Check that UDRs are not compiled with PDQ set 
+
+
+If you have a user defined routine (UDR) which is called as a
+part of many update/delete triggers on different tables
+and if the application logic in the update/delete triggers
+mimics some kind of hierarchy (so a modification in one table
+can cause many changes in many other tables), the UDR can get
+called multiple (thousands) times in one session.
+
+If the UDR
+1) contains a query which needs to materialize some view
+2) was created with PDQPRIORITY > 0 (or the last 'update
+statistics low [for procedure]' command was run with PDQPRIORITY
+> 0)
+
+each of its invocations materializes the view, leaving the base
+tables opened at the RSAM level.

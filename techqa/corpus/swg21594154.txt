@@ -1,0 +1,60 @@
+Title: IBM WRT - No https transactions in TEP workspaces - United States
+
+Text:
+71WRT-INS; 71WRT-CONF; 71WRT-TS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using ITCAM for Transactions 7.3 and WRT Unix 64bit agent and co-resident / local Apache 2.2 server, no https transaction or data is visible in ITM TEP WRT Transactions workspace. 
+
+SYMPTOM
+In addition to data not being displayed in the TEP, /opt/IBM/ITM/tmaitm6/wrm/keystore/servermap.csv file content is empty after agent (re)configuration
+
+
+CAUSE
+Possible cause is file or directory permission restrictions resulting in the following file not being updated when the agent is reconfigured: 
+
+/opt/IBM/ITM/tmaitm6/wrm/keystore/servermap.csv
+
+
+ENVIRONMENT
+Web Response Time V7.3
+Local Web Server (for example Apache V2.2)
+Unix (Linux for example) 64bit OS
+
+
+
+DIAGNOSING THE PROBLEM
+Check content of kfcm120 log file. 
+
+Web Response Time Agent Analyzer logs are located on Unix systems under : 
+
+ITM_HOME/tmaitm6/wrm/<platform>/${HOSTNAME}_kfcm120_*.log 
+
+Typical error message is the following :
+"No valid mappings or no valid keys found."
+as seen below
+
+(kbbssge.c,52,"BSS1_GetEnv")
+KFC_SSL_KEYMAP="/opt/IBM/ITM/tmaitm6/wrm/keystore/servermap.csv"
+
+(kfck_config.cpp,291,"ReadKFCKConfiguration") Using Stashfile: /shared/temp/keyfiles/wrtkeys.sth
+
+(kfck_config.cpp,408,"ReadKFCKConfiguration") No valid mappings or no valid keys found.
+
+It should contain a line like :
+<server ip address>,<https port>, <certificate>
+
+
+RESOLVING THE PROBLEM
+Check the file and directory permissions of file path: /opt/IBM/ITM/tmaitm6/wrm/keystore/servermap.csv
+
+Amend permissions so the WRT agent reconfiguration step resulting from the use of the "./Itmcmd manage" command, can successfully update servermap.csv or manually edit the file and update it according to your current configuration. Then restart WRT agent
+
+Other useful Technotes:
+http://www-01.ibm.com/support/docview.wss?uid=swg21589501 [http://www-01.ibm.com/support/docview.wss?uid=swg21589501]
+http://www-01.ibm.com/support/docview.wss?uid=swg21585874 [http://www-01.ibm.com/support/docview.wss?uid=swg21585874]
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WRM WRT Web Response Time Monitor ITCAM ITCAM for Transactions ITCAM4Tx ITCAMforTrans

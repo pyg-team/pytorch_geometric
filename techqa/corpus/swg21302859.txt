@@ -1,0 +1,81 @@
+Title: IBM Using MySQL as a backend database results in unusually slow UI operations - United States
+
+Text:
+InnoDB; MyISAM; performance; mysql; user interface; slow; drag; 1302859 TECHNOTE (FAQ)
+
+QUESTION
+ Why do the User Interface operations seem to process extremely slow when there is a MySQL® database configured for use with IBM® Rational® Build Forge®? There are two types of storage engines for MySQL, which are InnoDB and MyISAM. 
+
+CAUSE
+ 
+
+Build Forge operations respond much faster with the MyISAM storage as opposed to the transactional InnoDB engine. 
+
+If the InnoDB engine is selected both the database files and the server must be changed to the MyISAM storage engine to improve performance.
+
+
+ANSWER
+ 
+
+Change the MySQL database over to the MyISAM storage engine, then change the server configuration over to the MyISAM engine.
+
+Here are directions to change the tables to use the MyISAM storage engine:
+
+First, regardless of which option you use, stop the MySQL and Build Forge services.
+
+The SQL query -ALTER TABLE <table_name> ENGINE=MyISAM; - is used to convert between storage engines for the database files.
+
+Option 1 
+
+Run the above query against all current bf_ tables manually through the MySQL client.
+
+
+ * mysql> use database <bf_database_name>
+ * 
+ * mysql> show tables
+ * 
+ * mysql> Issue the ALTER TABLE syntax above for each table listed
+
+
+Option 2 
+ 1. Use the below Perl script to accomplish the same. The script requires Perl on the system as well as the DBD::Mysql module.
+    
+    -----CODE BEGIN--------- 
+    
+    #!/usr/bin/perl
+    use DBI;
+    
+    #Fill in the below variables with the correct values for your environment
+    my $db_name = '<db_name>';
+    my $db_user = '<db_user>';
+    my $db_pass='<db_pass>';
+    my $db_host = '<db_host>';
+    
+    my $storage_engine='MyISAM';
+    
+    my $dsn = "DBI:mysql:database=$db_name;host=$db_host";
+    my $dbh= DBI->connect($dsn, $db_user, $db_pass);
+    
+    #Issue the SHOW TABLES command to grab a list of the current tables
+    my $sth = $dbh->prepare("SHOW TABLES;");
+    $sth->execute or die "Error:" . $dbh->errstr;
+    
+    #Cycle through all tables to change the storage engine
+    while (my $ref = $sth->fetchrow_hashref()) {
+    my $sth = $dbh->prepare("ALTER TABLE $ref->{'Tables_in_$db_name'} 
+    ENGINE=$storage_engine");
+    $sth->execute or die "Error:" . $dbh->errstr;
+    }
+    
+    -----CODE END--------- 
+    
+    
+ 2. Change the storage engine for future tables that Build Forge will potentially create with new versions.
+    
+    
+ 3. Modify my.ini directive default-storage-engine to:
+    
+    default-storage-engine=MyISAM
+    
+    
+ 4. Restart the MySQL service, then restart the Build Forge service.

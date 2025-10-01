@@ -1,0 +1,141 @@
+Title: IBM HD46833: SMARTEAM GATEWAY NEEDS 2 LICENSES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Smarteam Gateway needs 2 licenses
+   Software : Smarteam Gateway V5R14 SP7
+   The problem is that we need two licences GWY.
+   The first is reserved by service : Smarteam SAP
+   Sync Service.
+   So it is necessary to have an other licence when
+   the gateway server work.
+   If there isn't another licence, the Biztalk
+   server manager says in his log event viewer that
+   Smarteam Gateway didn't find licence.
+   Is it normal to have two licence for only one
+   Baruch
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Smarteam Gateway needs 2 licenses
+   Smarteam Gateway needs 2 licenses
+   Software : Smarteam Gateway V5R14 SP7
+   The problem is that we need two licences GWY.
+   The first is reserved by service : Smarteam SAP
+   Sync Service.
+   So it is necessary to have an other licence when
+   the gateway server work.
+   If there isn't another licence, the Biztalk
+   server manager says in his log event viewer that
+   Smarteam Gateway didn't find licence.
+   Is it normal to have two licence for only one
+   Baruch
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON SMARTEAM
+   VERSION 5 RELEASE 17 GA level.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED
+   ON V5R17SP01.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD46833
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   514
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-11-21
+   
+   
+ * CLOSED DATE
+   2005-11-29
+   
+   
+ * LAST MODIFIED DATE
+   2006-10-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569199970
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R517 PSN SP51701
+   UP06/10/02 I 1000

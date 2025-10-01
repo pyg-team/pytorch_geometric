@@ -1,0 +1,153 @@
+Title: IBM Command-line system backup and restore for InfoSphere Workload Replay - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I perform a system back up and restore of IBM® InfoSphere® Optim™ Workload Replay? 
+
+CAUSE
+Before performing an upgrade to a newer release of InfoSphere Workload Replay, you can make a back up copy of workloads, database connections and associated data. 
+
+ANSWER
+This document describes the system backup and restore process for InfoSphere Workload Replay. 
+
+An InfoSphere Workload Replay system backup saves the system data and the configuration settings as two compressed backup files with file names of the format 2014****-SQLGUARD_DATA-9.0.tgz and 2014****-SQLGUARD_CONFIG-9.0.tgz. The backup files contain all user IDs , all database connections, and all workloads and reports that are stored on the InfoSphere Workload Replay server. A backup can be restored to the same system or to a different one. 
+
+Backing up the InfoSphere Workload Replay data and configuration settings 
+You use the InfoSphere Guardium® command-line interface (CLI) to back up the InfoSphere Workload Replay data. 
+
+Before you begin 
+Note the installed InfoSphere Guardium appliance version and installed patches on the system that you are backing up. 
+To see the installed system patches: 
+
+ 1. On the InfoSphere Workload Replay server that you want to back up, log on to the Guardium CLI as the cli user. 
+ 2. To display the installed system patches, run the show system patch installed command. 
+    Example: For an InfoSphere Workload Replay version 2.1.0.1 system the command will return a list similar to the following:
+    CLI prompt> show system patch installed
+    P# Who Description Request Time Status
+
+ * 50 CLI Guardium Patch Update (GPU) for 2014-08-28 09:46:57 DONE: Patch installation Succeeded.
+ * 
+ * 
+ * 9997 CLI Health Check for GPU and Upgrad 2014-08-29 02:31:29 DONE: Patch installation Succeeded.
+ * 
+ * 
+ * 200 CLI Guardium Patch Update (GPU) for 2014-08-29 02:34:27 DONE: Patch installation Succeeded.
+ * 
+ * 
+ * 1033 CLI Patch 1 for Optim Capture and R 2014-08-29 02:56:07 DONE: Patch installation Succeeded.
+ * 
+ * 
+ * 3990 CLI Pre-req to setup Aux server 2014-08-29 03:05:19 DONE: Patch installation Succeeded.
+ * 
+ * 
+ * 3423 CLI IOWR Install 2.1.348 2014_08_06 2014-09-17 16:07:46 DONE: Patch installation Succeeded.
+
+
+Backing up your data 
+To back up the InfoSphere Workload Replay data and configuration settings:  1.  On the InfoSphere Workload Replay server that you want to back up, log on to the Guardium CLI as the cli user. 
+ 2.  To back up the InfoSphere Workload Replay system data, run the backup system command and choose the Data backup option. 
+ 3.  Respond to the following prompts.  1. Transfer type (Choose SCP for a secure copy file transfer) 
+      2. Backup host name 
+      3. Backup host user name 
+      4. Destination directory on backup host 
+      5. Password for <user> @ <backup host> 
+      6. SCP port if you need to use a special port. Press Enter to use the default port. 
+     
+     
+ 4.  The system backs up the InfoSphere Workload Replay data to a backup file in the destination directory.
+     Note: Depending on the amount of data to back up, this process might take some time. There is no progress indication. 
+ 5.  Confirm that the backup completes successfully.
+     A message similar to the following should display at the command prompt:
+     Backup done. File=/destination/directory/2014****-SQLGUARD_DATA-9.0.tgz using=SCP
+     ok 
+ 6.  To back up the InfoSphere Workload Replay system configuration, run thebackup system command and choose the Configuration backup option. 
+ 7.  Respond to the following prompts:  1. Transfer type (Choose SCP for a secure copy file transfer) 
+      2. Backup host name 
+      3. Backup host user name 
+      4. Destination directory on backup host 
+      5. Password for <user> @ <backup host> 
+      6. SCP port if you need to use a special port. Press Enter to use the default port. 
+     
+     
+ 8.  The system backs up the InfoSphere Workload Replay configuration settings to a backup file in the destination directory. 
+ 9.  Confirm that the backup completes successfully.
+     A message similar to the following should display at the command prompt: 
+     Backup done. File=/destination/directory/2014****-SQLGUARD_CONFIG-9.0.tgz using=SCP
+     ok 
+ 10. Verify that the backup files were created on the destination host in the backup directory that you specified. 
+
+
+Restoring the InfoSphere Workload Replay data and configuration settings 
+You use the InfoSphere Guardium command-line interface (CLI) to restore the InfoSphere Workload Replay data to a new system. 
+
+Before you begin 
+
+Install an InfoSphere Workload Replay system with a patch level that matches the system that you backed up and now want to restore. 
+
+Example: If you created a backup on an InfoSphere Workload Replay version 2.1.0.1 system and you are restoring on a newly imaged InfoSphere Guardium version 9.0 appliance, before you restore your backed up data you must first install the following Guardium patches:  * 9997 
+ * 200 
+ * 1033 
+ * 3990 
+ * 3423 
+
+For installation information, see the InfoSphere Workload Replay installation guide [http://www-01.ibm.com/support/knowledgecenter/SS2S7B_2.1.0/com.ibm.datatools.capturereplay.install.doc/topics/cr_install.html?lang=en] or the InfoSphere Workload Replay for DB2 for z/OS installation guide [http://www-01.ibm.com/support/knowledgecenter/SSKSEA_2.1.0/com.ibm.datatools.capturereplay.install.zos.doc/topics/cr_install.html?lang=en]. 
+
+Restoring your data 
+To restore the InfoSphere Workload Replay data and configuration settings:  1.  On the Guardium server on which you want to restore your InfoSphere Workload Replay data and configuration settings, log on to the CLI as the cli user. 
+ 2.  To restore the InfoSphere Workload Replay system data, run the restore system command. 
+ 3.  Respond to the following prompts:  1. Transfer type (Choose SCP for a secure copy file transfer) 
+      2. Backup host name 
+      3. Backup host user name 
+      4. Backup directory on backup host 
+      5. Backup file name (/destination/directory/2014****-SQLGUARD_DATA-9.0.tgz) 
+      6. Password for <user> @ <backup host> 
+      7. SCP port if you need to use a special port. Press Enter to use the default port. 
+      8. Recovery type. Select Normal . 
+     
+     
+ 4.  The system restores the InfoSphere Workload Replay data from the backup file in the backup directory. 
+ 5.  Verify that the system data restore process completes successfully.
+     A message similar to the following should display at the command prompt:
+     Data recovery complete
+     Proceeding to startup services
+     Safekeeping xregs
+     Recovery procedure was successful.
+     ok 
+ 6.  To restore the InfoSphere Workload Replay system configuration, run the restore system command. 
+ 7.  Respond to the following prompts:  1. Transfer type (Choose SCP for a secure copy file transfer) 
+      2. Backup host name 
+      3. Backup host username 
+      4. Backup directory on backup host 
+      5. Backup file name (/destination/directory/2014****-SQLGUARD_CONFIG-9.0.tgz) 
+      6. Password for <user> @ <backup host> 
+      7. SCP port if you need to use a special port. Press Enter to use the default port. 
+      8. Recovery type. Select Normal . 
+     
+     
+ 8.  The system restores the InfoSphere Workload Replay system configuration from the backup file in the backup directory. 
+ 9.  Verify that the system configuration restore process completes successfully. 
+     A message similar to the following should display at the command prompt: 
+     Data recovery complete
+     Proceeding to startup services
+     Safekeeping xregs
+     Recovery procedure was successful.
+     ok 
+ 10. Restart InfoSphere Workload Replay:  1. Enter the following CLI command to restart the InfoSphere Guardium appliance: restart system 
+      2. Wait for the system to come back online. You can monitor the progress in the system console. 
+     
+     
+ 11. Start the InfoSphere Workload Replay system processes. 
+     Enter the following CLI command to start the InfoSphere Workload Replay capture manager:
+     restart ocr_capture_manager 
+ 12. Start the InfoSphere Workload Replay controller for auxiliary server.  1. Enter the following CLI command to start the InfoSphere Workload Replay controller for auxiliary server:
+         start ocr_aux_controller 
+      2. When the controller for auxiliary server has restarted, exit the command-line interface by entering the following CLI command:
+         exit 
+     
+     
+ 13. Verify that the InfoSphere Workload Replay server restarted correctly.  1. Access the InfoSphere Workload Replay web console at: 
+         https://guardium_hostname_or_ip:8443/dsweb/console/ocr/index.jsp 
+         Where guardium_hostname_or_ip is the host name or IP address of the InfoSphere Guardium appliance on which you installed the main InfoSphere Workload Replay server. 
+      2. Verify that you can log in to the Workload Replay web console as a user ID from the backed up system.

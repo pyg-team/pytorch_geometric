@@ -1,0 +1,273 @@
+Title: IBM RS03127: ORA-01795: MAXIMUM NUMBER OF EXPRESSIONS IN A LIST IS 1000 DURING SIMULATION AND TESTING - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Below stack is seen when simulation completes sometimes.
+   
+   [6/4/18 11:09:41:588 PDT] 000001b9 cdi E An internal error
+   occurred in Decision Batch Runner: Error occurred while
+   deleting data for the job with execution identifier 93303
+   com.ibm.rules.cdi.core.service.output.ScenarioSuiteException:
+   Error occurred while deleting data for the job with execution
+   identifier 93303
+   at
+   com.ibm.rules.cdi.runtime.DecisionRunnerController.deleteJobData
+   (DecisionRunnerController.java:571)
+   at
+   com.ibm.rules.cdi.server.rest.api.DecisionRunnerAPIImplV1.proces
+   sPostRequest(DecisionRunnerAPIImplV1.java:218)
+   at
+   com.ibm.rules.cdi.server.servlet.DecisionRunnerRestServlet.handl
+   eRequest(DecisionRunnerRestServlet.java:293)
+   at
+   com.ibm.rules.cdi.server.servlet.DecisionRunnerRestServlet.doPos
+   t(DecisionRunnerRestServlet.java:256)
+   at javax.servlet.http.HttpServlet.service(HttpServlet.java:595)
+   at javax.servlet.http.HttpServlet.service(HttpServlet.java:668)
+   at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWr
+   apper.java:1232)
+   at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(Ser
+   vletWrapper.java:781)
+   at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(Ser
+   vletWrapper.java:480)
+   at
+   com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.handleRequest
+   (ServletWrapperImpl.java:178)
+   at
+   com.ibm.ws.webcontainer.filter.WebAppFilterManager.invokeFilters
+   (WebAppFilterManager.java:1114)
+   at
+   com.ibm.ws.webcontainer.webapp.WebApp.handleRequest(WebApp.java:
+   3926)
+   at
+   com.ibm.ws.webcontainer.webapp.WebGroup.handleRequest(WebGroup.j
+   ava:304)
+   at
+   com.ibm.ws.webcontainer.WebContainer.handleRequest(WebContainer.
+   java:1007)
+   at
+   com.ibm.ws.webcontainer.WSWebContainer.handleRequest(WSWebContai
+   ner.java:1817)
+   at
+   com.ibm.ws.webcontainer.channel.WCChannelLink.ready(WCChannelLin
+   k.java:200)
+   at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleDiscr
+   imination(HttpInboundLink.java:463)
+   at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleNewRe
+   quest(HttpInboundLink.java:530)
+   at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.processRequ
+   est(HttpInboundLink.java:316)
+   at
+   com.ibm.ws.http.channel.inbound.impl.HttpICLReadCallback.complet
+   e(HttpICLReadCallback.java:88)
+   at
+   com.ibm.ws.tcp.channel.impl.AioReadCompletionListener.futureComp
+   leted(AioReadCompletionListener.java:175)
+   at
+   com.ibm.io.async.AbstractAsyncFuture.invokeCallback(AbstractAsyn
+   cFuture.java:217)
+   at
+   com.ibm.io.async.AsyncChannelFuture.fireCompletionActions(AsyncC
+   hannelFuture.java:161)
+   at com.ibm.io.async.AsyncFuture.completed(AsyncFuture.java:138)
+   at
+   com.ibm.io.async.ResultHandler.complete(ResultHandler.java:204)
+   at
+   com.ibm.io.async.ResultHandler.runEventProcessingLoop(ResultHand
+   ler.java:775)
+   at com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:905)
+   at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1881)
+   Caused by:
+   com.ibm.rules.cdi.persistence.PersistenceDAOException: Cannot
+   delete the job data for the job execution ID: 93303.
+   at
+   com.ibm.rules.cdi.persistence.internal.jdbc.GenericScenarioDAO.d
+   eleteJBatchData(GenericScenarioDAO.java:1532)
+   at
+   com.ibm.rules.cdi.persistence.internal.jdbc.GenericScenarioDAO.d
+   eleteJBatchData(GenericScenarioDAO.java:1499)
+   at
+   com.ibm.rules.cdi.persistence.internal.service.PersistenceServic
+   eImpl.deleteJobData(PersistenceServiceImpl.java:431)
+   at
+   com.ibm.rules.cdi.runtime.DecisionRunnerController.deleteJobData
+   (DecisionRunnerController.java:569)
+   ... 27 more
+   Caused by: java.sql.SQLSyntaxErrorException: ORA-01795: maximum
+   number of expressions in a list is 1000
+   
+   at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:450)
+   at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:399)
+   at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:1059)
+   at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:522)
+   at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:257)
+   at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:587)
+   at
+   oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedState
+   ment.java:225)
+   at
+   oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedState
+   ment.java:53)
+   at
+   oracle.jdbc.driver.T4CPreparedStatement.executeForDescribe(T4CPr
+   eparedStatement.java:774)
+   at
+   oracle.jdbc.driver.OracleStatement.executeMaybeDescribe(OracleSt
+   atement.java:925)
+   at
+   oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleSt
+   atement.java:1111)
+   at
+   oracle.jdbc.driver.OraclePreparedStatement.executeInternal(Oracl
+   ePreparedStatement.java:4798)
+   at
+   oracle.jdbc.driver.OraclePreparedStatement.executeQuery(OraclePr
+   eparedStatement.java:4845)
+   at
+   oracle.jdbc.driver.OraclePreparedStatementWrapper.executeQuery(O
+   raclePreparedStatementWrapper.java:1501)
+   at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.pmiExecuteQuer
+   y(WSJdbcPreparedStatement.java:1112)
+   at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.executeQuery(W
+   SJdbcPreparedStatement.java:714)
+   at
+   ilog.rules.res.persistence.impl.jdbc.helper.IlrDatabaseUtility.e
+   xecuteQuery(IlrDatabaseUtility.java:37)
+   at
+   com.ibm.rules.cdi.persistence.internal.jdbc.helper.ExecutionInst
+   anceDataTable.selectJobInstanceIdsByJobExecId(ExecutionInstanceD
+   ataTable.java:127)
+   at
+   com.ibm.rules.cdi.persistence.internal.jdbc.GenericScenarioDAO.d
+   eleteJBatchData(GenericScenarioDAO.java:1528)
+   ... 30 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users in the decision center.                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Running simulation creates simulation reports with a status. *
+   * When stopping a report using the UI, the report status       *
+   * should be set to stopping (request to stop job), then after  *
+   * a while to aborted.                                          *
+   * Instead, when stopping a report it stays forever in          *
+   * stopping.                                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS03127
+   
+   
+ * REPORTED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6903
+   
+   
+ * REPORTED RELEASE
+   890
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-06-19
+   
+   
+ * CLOSED DATE
+   2018-07-19
+   
+   
+ * LAST MODIFIED DATE
+   2018-07-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * FIXED COMPONENT ID
+   5725B6903
+   
+   
+
+APPLICABLE COMPONENT LEVELS

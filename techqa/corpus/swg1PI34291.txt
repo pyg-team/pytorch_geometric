@@ -1,0 +1,197 @@
+Title: IBM PI34291: RDZ V9111 INTERNAL DEFECTS AND ENHANCEMENTS - ID - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+9.1.1.1: PTF UI26082 for Rational Developer for System z Host Options [http://www-01.ibm.com/support/docview.wss?uid=swg24039633]
+9.1.1.2: PTF UI32110 for Rational Developer for System z Host Options [http://www-01.ibm.com/support/docview.wss?uid=swg24041074]
+9.1.1.3: PTF UI35670 for Rational Developer for System z Host Options [http://www-01.ibm.com/support/docview.wss?uid=swg24041790]
+9.1.1.3: PTF UI37230 for Rational Developer for System z Host Options [http://www-01.ibm.com/support/docview.wss?uid=swg24042124]
+9.1.1.3: PTF UI37833 for Rational Developer for System z Host Options [http://www-01.ibm.com/support/docview.wss?uid=swg24042197]
+9.1.1.4: PTF UI41212 for Rational Developer for System z [http://www-01.ibm.com/support/docview.wss?uid=swg24042818]
+9.1.1.5: PTF UI44156 for Rational Developer for System z [http://www-01.ibm.com/support/docview.wss?uid=swg24043245]
+9.1.1.6: PTF UI50717 for Rational Developer for System z [http://www-01.ibm.com/support/docview.wss?uid=swg24044109]
+9.1.1.7: PTF UI55786 for Rational Developer for System z [http://www-01.ibm.com/support/docview.wss?uid=swg24044797]
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  RDZ V9111 INTERNAL DEFECTS AND ENHANCEMENTS - ID
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: 01.RDz integrated Debugger users using LE    *
+   *                    user exit                                 *
+   *                 02.All RDz LE user exit users                *
+   *                 03.All RDz users who debug CICS with         *
+   *                    Integrated Debugger                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 01.Introduction of new debug level 3    *
+   *                         and fix problem with updating user   *
+   *                         exit profile.                        *
+   *                      02.Wrong LE modules can be used when    *
+   *                         the RDz LE user exit is updated.     *
+   *                      03.When debugging CICS applications,    *
+   *                         excessive messages for the           *
+   *                         Integrated Debugger are logged. An   *
+   *                         example of such messages might be:   *
+   *                                                              *
+   *                         13.01.58 JOB05898 AQE_SVC(172):      *
+   *                         Exit SVC; R15 = 0, R1 = 28810ef8     *
+   *                         13.01.58 JOB05898 AQE_SVC(144):      *
+   *                         ENTER - function 8, AQEDBGCB         *
+   *                         AA110040                             *
+   *                         13.01.58 JOB05898 AQE_SVC(172): Exit *
+   *                         SVC; R15 = 0, R1 = 28810f4c          *
+   *                         13.02.00 JOB05898 AQE_SVC(144):      *
+   *                         ENTER - function 4, AQEDBGCB         *
+   *                         AA110040                             *
+   *                         13.02.00 JOB05898 memRead(30):       *
+   *                         location = 28f35000, 0x1000 bytes,   *
+   *                         key 9                                *
+   *                         13.02.00 JOB05898 AQE_SVC(172): Exit *
+   *                         SVC; R15 = 0, R1 = 288119c0          *
+   *                         13.02.00 JOB05898 AQE_SVC(144):      *
+   *                         ENTER - function 4, AQEDBGCB         *
+   *                         AA110040                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   01.This Rational Developer for System z APAR matches APAR
+      PI33517 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI33517] PTF UI24170 of IBM Debug Tool 13.1. The comments of
+      AQED3CXT are updated to document the new debug level 3. The
+      pattern match function can fail to find a match when the
+      (Debug Tool) DTSP plug-in is used to update the user exit
+      profile.
+   02.Due to the order in which the SYSLIB libraries are placed,
+      the AQED3CEE JCL to include the Rational Developer for
+      System z LE user exit in CEEPIPI and CEEBINIT does not pick
+      up the latest version of the LE modules if the exit has been
+      created before. Instead, it picks up the CEE* modules that
+      already have the user exit. This can result in U4036-2
+      abends when the updated user exit is used.
+   03.When debugging CICS applications, the Integrated Debugger
+      was not correctly retrieving the trace option, thus causing
+      all trace messages to be output, in addition to the expected
+      standard error messages.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  01.Debug level 3 introduced and profile problem resolved.
+   02.sample JCL AQED3CEE is updated to ensure LE libraries are
+      placed first.
+   03.The Integrated Debugger will be modified to ensure that
+      tracing messages are only output when tracing is requested.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI34291
+   
+   
+ * REPORTED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0723
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-06
+   
+   
+ * CLOSED DATE
+   2015-03-18
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  AQECIC32 AQECIC41 AQECIC51 AQED3CEE AQED3CXT
+   AQED3XXT AQESVC03
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * FIXED COMPONENT ID
+   5724T0723
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY UI26082 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI26082]
+   UP15/04/01 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

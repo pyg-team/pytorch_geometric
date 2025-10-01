@@ -1,0 +1,127 @@
+Title: IBM JR45163: SRVC - BPM GENERATES FILES IN TEMPORARY DIRECTORIES THAT ARE NOT CLEANED UP - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  BPM uses three temporary directories for storing temp files.
+   /tmp
+       /opt/ibm/BPM/v7.5/profiles/ProcCtr01/temp/com.ibm.bpm.fds
+       /opt/ibm/BPM/v7.5/profiles/ProcCtr01/wstemp
+   The WSTEMP folder has some auto-clean up but manual clean up is
+   sometimes needed; refer to:
+   -
+   https://developer.ibm.com/answers/questions/168151/content-and-m [https://developer.ibm.com/answers/questions/168151/content-and-m]
+   aintenance-of-the-wstemp-directory-fo/
+   -
+   https://www.ibm.com/developerworks/community/blogs/aimsupport/en [https://www.ibm.com/developerworks/community/blogs/aimsupport/en]
+   try/deleting_temporary_files_in_websphere_application_server
+   For the OS temporary and BPM temp directory. These are not
+   cleaned up from BPM.
+   The following files can be found in the directories:
+   -application imports (twx, saved as zip)
+   -application exports (tw saved as zip)
+   -managed asset files - CSS, JAR, png, etc. These gnenerally do
+   not have extensions
+   -compiled data (jars) from inbound WSDL calls
+   BPM should auto-clean up these files after some time. Excessive
+   build up will consume large amounts of disk space.
+   Raised as concern in PMRs:
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  manually delete these files, recommending files that currently
+   do not have a OS file lock AND are older than one (1) day
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The problem will be fixed in the future release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR45163
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2012-12-14
+   
+   
+ * CLOSED DATE
+   2014-11-17
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP

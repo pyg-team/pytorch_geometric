@@ -1,0 +1,45 @@
+Title: IBM Security Bulletin: Vulnerabilities in glibc could lead to a local or remote buffer overflow in IBM SOA Policy Gateway Pattern for Red Hat Enterprise Linux Server . (CVE-2015-1472, CVE-2013-7423) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Vulnerabilities were found and fixed in the GNU C Library that could lead to buffer overflows and local leakage of sensitive information.. 
+
+VULNERABILITY DETAILS
+CVE-2015-1472 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1472]
+Description: GNU glibc is vulnerable to a heap-based buffer overflow, caused by improper bounds checking by stdio-common/vfscanf.c. A remote attacker could overflow a buffer and execute arbitrary code on the system or cause a denial of service.
+CVSS Base Score: 4.6
+CVSS Temporal Score: https://exchange.xforce.ibmcloud.com/vulnerabilities/100635 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100635] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:P/A:P)
+
+
+CVE-2013-7423 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-7423]
+Description: GNU glibc could allow a local attacker to obtain sensitive information, caused by the writing of DNS queries to random file descriptors under high load by the getaddrinfo() function. An attacker could exploit this vulnerability to obtain sensitive information.
+CVSS Base Score: 1.2
+CVSS Temporal Score: https://exchange.xforce.ibmcloud.com/vulnerabilities/100647 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100647] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:H/Au:N/C:P/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM SOA Policy Gateway Pattern for Red Hat Enterprise Linux Server version 2.5
+
+REMEDIATION/FIXES
+Fixes for these issues are currently only available in very recent releases of glibc, for which there is as yet no official Red Hat patch. Users who wish to mitigate this issue should download and apply glibc release 2.21 or later from the GNU web site [https://www.gnu.org/software/libc/].
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,98 @@
+Title: IBM Security Bulletin: Vulnerability in RC4 stream cipher affects IBM WebSphere MQ (CVE-2015-2808) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The RC4 “Bar Mitzvah” Attack for SSL/TLS affects IBM WebSphere MQ. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-2808 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2808]
+DESCRIPTION: The RC4 algorithm, as used in the TLS protocol and SSL protocol, could allow a remote attacker to obtain sensitive information. An attacker could exploit this vulnerability to remotely expose account credentials without requiring an active man-in-the-middle session. Successful exploitation could allow an attacker to retrieve credit card data or other sensitive information. This vulnerability is commonly referred to as "Bar Mitzvah Attack".
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/101851 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101851] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM WebSphere MQ v8.0 (maintenance levels prior to 8.0.0.3) 
+
+IBM WebSphere MQ v7.5 
+
+IBM WebSphere MQ v7.1 
+
+IBM WebSphere MQ v7.0.1 
+
+IBM WebSphere MQ for HP OpenVMS v6.0 
+
+IBM WebSphere MQ for HP NonStop Server v5.3.1 
+
+IBM MQ Appliance M2000
+
+REMEDIATION/FIXES
+IBM WebSphere MQ for OVMS 
+
+ * Apply fix for APAR IT08302 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+MQ&release=All&platform=All&function=aparId&apars=IT08302]
+
+
+IBM WebSphere MQ for distributed platforms (server)  * Apply fix pack 8.0.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg27043086#8003] 
+ * Apply fix pack 7.5.0.7 when available 
+ * Apply fixpack 7.1.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg21965293] 
+ * Apply fix pack 7.0.1.13 [http://www-01.ibm.com/support/docview.wss?uid=swg21960691]
+
+WORKAROUNDS AND MITIGATIONS
+All Platforms IBM strongly recommends immediately changing any channel definitions that use any of the following RC4 MQ CipherSpecs to use a stronger encryption algorithm; 
+
+
+ * RC4_SHA_US 
+ * TLS_RSA_WITH_RC4_128_SHA 
+ * RC4_MD5_US 
+ * TLS_RSA_WITH_RC4_128_MD5 
+ * RC4_56_SHA_EXPORT1024 
+ * RC4_MD5_EXPORT 
+ * TLS_RSA_EXPORT_WITH_RC4_40_MD5 
+ * ECDHE_ECDSA_RC4_128_SHA256 
+ * ECDHE_RSA_RC4_128_SHA256 
+ * TLS_RSA_WITH_RC4_128_SHA256
+
+
+
+Note that IBM might need to deprecate the use of weaker algorithms in response to a security vulnerability, for example MQ CipherSpecs that are not certified as FIPS 140-2 compliant via future product maintenance. 
+
+The IBM WebSphere MQ 8.0.0.3 fixpack deprecates the use of a number of CipherSpecs that are considered to be weak, this includes the use of RC4. 
+
+Further details on the MQ CipherSpecs that are currently available can be found here [http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.sec.doc/q014260_.htm]. 
+
+IBM WebSphere MQ for IBM i 
+IBM recommends that customers review system value QSSLCSL [http://www-01.ibm.com/support/knowledgecenter/ssw_ibm_i_71/rzakz/rzakzqsslcsl.htm] to prevent the use of the RC4 cipher.  
+
+IBM WebSphere MQ for UNIX, Linux, Windows & IBM MQ Appliance M2000 
+
+On other distributed platforms, enabling FIPS mode [http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.sec.doc/q010140_.htm] on a queue manager prevents weak ciphers including RC4 from being accepted by inbound connections and also from being used by outbound connections.
+
+You should verify that applying this configuration change does not cause any compatibility issues. Not disabling the RC4 stream cipher exposes you to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the RC4 stream cipher and take appropriate mitigation and remediation actions.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] Security Bulletin: Vulnerabilities in GSKit affect IBM WebSphere MQ (CVE-2015-0159, CVE-2015-0138 and CVE-2014-6221) [http://www.ibm.com/support/docview.wss?uid=swg21699055] 
+Security Bulletin: Vulnerability in SSLv3 affects IBM WebSphere MQ, IBM WebSphere MQ Internet Pass-Thru and IBM Mobile Messaging and M2M Client Pack (CVE-2014-3566) [http://www.ibm.com/support/docview.wss?uid=swg21687433] CHANGE HISTORY
+ 23 April 2015 - Original Version Published
+29 April 2015 - Add HP OpenVMS and HP NonStop Server to bulletin
+14 August 2015 - Add details of 7.0.1.13 Fix Pack
+27 November 2015 - Add details of 7.1.0.7 Fix Pack
+11 March 2016 - Add details of 7.5.0.6 Fix Pack
+13 April 2016 - Corrected availability of 7.5 fix in 7.5.0.7 Fix Pack 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

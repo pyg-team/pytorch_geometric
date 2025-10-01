@@ -1,0 +1,180 @@
+Title: IBM PM29267: Migrating WebSphere Application Developer CMP EJB2x projects to Rational Application Developer fails with Exception - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Migrating Websphere Application Developer (WSAD ) v5.1.2 CMP
+   EJB2x project to Rational Application Developer (RAD) v7.5.4 (or
+   v7.5.5.2) exception: The class 'Table' is not a valid
+   classifier.
+   The backend was Oracle 9.1. also reported with DB2
+   
+   There was no {CMP EJB2x project}/META-INF/backends/{Your
+   database vendor vNN}/SQLModelMigration.log file
+   , indicating no backend migration occurred and stopped/failed
+   after....
+   
+   Migration Results:
+   
+     Running validator: EJB Mapping Validator (id=
+   EjbMappingValidator)
+         Validating contents of backend folder:  ORACLE_V9_1...
+         A RAD7.x EJB mapping data model file does not exist.
+         An exception was encountered while searching for, parsing
+   or processing the EJB mapping map-file.
+         The class 'Table' is not a valid classifier
+         No EJB backend migration errors were logged
+   
+   A  RAD 7.5 workspace.log showed:
+   
+   !ENTRY com.ibm.etools.j2ee.migration.validation.ws.ext 4 4
+   2010-12-16 16:02:20.009
+   !MESSAGE Exception while processing EJB mapping map-file.
+   !STACK 0
+   !MESSAGE Exception while processing EJB mapping map-file.
+   !STACK 0
+   java.lang.IllegalArgumentException: The class 'Table' is not a
+   valid classifier
+       at
+   org.eclipse.datatools.modelbase.sql.tables.impl.SQLTablesFactory
+   Impl.create(Unknown
+   Source)
+       at
+   com.ibm.etools.ejbrdbmapping.xmi.XMLMapHelperImpl.createObject(U
+   nknown
+   Source)
+       at
+   org.eclipse.datatools.modelbase.sql.tables.impl.SQLTablesFactory
+   Impl.create(Unknown
+   Source)
+       at
+   com.ibm.etools.ejbrdbmapping.xmi.XMLMapHelperImpl.createObject(U
+   nknown
+   Source)
+       at
+   org.eclipse.emf.ecore.xmi.impl.XMLHandler.createObjectFromFactor
+   y(Unknown
+   Source)
+       at ...
+   
+   
+   Note 1: It also fails when  attempt to import into previous RAD
+   v7.0.0.10
+   Error:
+   The mapping for backend ORACLE_V9_1 is not valid. The database
+   vendor may not be supported. See the
+   META-INF/backends/ORACLE_V9_1/SQLModelMigration.log file for
+   details        TXCOMPEntityEJB
+   
+   Naturally there was no SQLModelMigration.log
+   
+   Note 2: it cannot be imported into RAD v8.0 which indicates WSAD
+   v5.1.2 is an unsupported previous product version. Example
+   'This project was created in an older product version and cannot
+   be directly migrated in the current version.'
+   and must be imported first into a product such as RAD v7.0 which
+   supported migration from WSAD v5.1.2.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  The Customer Project was erroneous resulting in import
+   failing.
+   
+   The Problems were:
+   
+   1) The Data Model had unresolved dependencies of Foreign
+   Keys that had somehow occured during manipulations of the
+   models. These needed to be removed.
+   2) The Project had more than one object with same names
+   which resulted in non-unique-name-exceptions. This is a
+   limitation on the Data Model Migrator. The models had to be
+   modified with unique names for the import.
+   3) There were invalid meta-data info that were previously
+   ignored in RAD 5.1.2 but are not ignored in subsequent RAD
+   releases.. The rectified metadata info solved the issue.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM29267
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   754
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-12-20
+   
+   
+ * CLOSED DATE
+   2011-02-17
+   
+   
+ * LAST MODIFIED DATE
+   2011-02-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

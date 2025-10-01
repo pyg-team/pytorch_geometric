@@ -1,0 +1,145 @@
+Title: IBM IZ40640: PA-AWARE BIDIRECTIONAL OBJECTSERVER GATEWAY SUFFERS SEGMENTATION FAULT UNDER PA - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Tivoli Netcool/OMNIbus 7.2.0 InterimFix 4, 7.2.0-TIV-NCOMNIbus-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24024892]
+Tivoli Netcool/OMNIbus 7.2.1 Fix Pack 7, 7.2.1-TIV-NCOMNIbus-FP0007 [http://www-01.ibm.com/support/docview.wss?uid=swg24025507]
+Tivoli Netcool/OMNIbus 7.2.1 Fix Pack 15, 7.2.1-TIV-NCOMNIbus-FP0015 [http://www-01.ibm.com/support/docview.wss?uid=swg24036693]
+Tivoli Netcool/OMNIbus 7.2.1 Fix Pack 13, 7.2.1-TIV-NCOMNIbus-FP0013 [http://www-01.ibm.com/support/docview.wss?uid=swg24031554]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Object Server cores unexpectedly
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of the bi-directional ObjectServer gateway.
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When the bi-directional gateway is set to run under PA control,
+   and an incorrect PA name is specified in the gateway
+   configuration file, the gateway will produce a segmentation
+   fault on startup.
+   ****************************************************************
+   RECOMMENDATION:
+   Apply the maintenance package listed in the Problem Conclusion.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The gateway will no longer core dump when an incorrect PA is
+   specified in the gateway configuration file.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+        | fix pack | 7.1.0-TIV-NCOMNIbus-FP0010
+        | fix pack | 7.2.0-TIV-NCOMNIbus-FP0005
+        | fix pack | 7.2.1-TIV-NCOMNIbus-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ40640
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-05
+   
+   
+ * CLOSED DATE
+   2009-03-23
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * FIXED COMPONENT ID
+   5724O4800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSN
+   UP

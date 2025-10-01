@@ -1,0 +1,195 @@
+Title: IBM PI59999: OpenJPA custom plugins can cause Classloader leaks - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+16.0.0.2: WebSphere Application Server Liberty 16.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24042163]
+16.0.0.3: WebSphere Application Server Liberty 16.0.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24042657]
+16.0.0.4: WebSphere Application Server Liberty 16.0.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24042990]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+17.0.0.1: WebSphere Application Server Liberty 17.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043339]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a customer creates a plugin, for example a JDBCListener
+   or DBDictionary, there exists the possibility for the custom
+   JDBCListener to retain a reference to a Classloader, which in
+   turn will not allow the Classloader to be Garbage Collected.
+   For example, when the JDBCListener is part of a JEE
+   application and the application is restarted, the JDBCListener
+   class can be listed as as a leak suspect.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V8.5.0 and V8.5.5 who make use of    *
+   *                  OpenJPA custom plugins.                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: OpenJPA custom plugins (for example,    *
+   *                      JDBCListener, DBDictionary) can cause   *
+   *                      Classloader leaks.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When a customer creates an OpenJPA customer plugin, for
+   example a JDBCListener, there exists the possibility for the
+   custom JDBCListener to retain a reference to a Classloader,
+   which in turn will not allow the Classloader to be GC'd. For
+   example, when the JDBCListener is part of a JEE application
+   and the application is restarted, the JDBCListener class can
+   be listed as as a leak suspect, as follows in this leak
+   suspect stack:
+   75,675,296 (59.45%) [32] 67 class
+   org/apache/openjpa/kernel/AbstractBrokerFactory 0x1027f7e8
+   75,637,832 (59.42%) [32] 40 class
+   org/apache/openjpa/lib/conf/Configurations 0xf370b48
+   75,637,552 (59.42%) [64] 2
+   org/apache/openjpa/lib/util/concurrent/ConcurrentReferenceHashMa
+   p 0x1110fa40
+   75,637,464 (59.42%) [64] 3 array of
+   org/apache/openjpa/lib/util/concurrent/ConcurrentReferenceHashMa
+   p$Entry 0x11115620
+   75,514,544 (59.32%) [48] 4
+   org/apache/openjpa/lib/util/concurrent/ConcurrentReferenceHashMa
+   p$WeakEntry 0x1111edb0
+   75,514,496 (59.32%) [48] 1
+   java/util/concurrent/ConcurrentHashMap 0x111f47b8
+   75,514,448 (59.32%) [80] 16 array of
+   java/util/concurrent/ConcurrentHashMap$Segment 0x111f47e8
+   75,505,976 (59.32%) [32] 2
+   java/util/concurrent/ConcurrentHashMap$Segment 0x111f48d0
+   75,505,912 (59.32%) [24] 1 array of
+   java/util/concurrent/ConcurrentHashMap$HashEntry 0x110d8f08
+   75,505,888 (59.32%) [24] 2
+   java/util/concurrent/ConcurrentHashMap$HashEntry 0x110d8f18
+   75,505,752 (59.32%) [32] 18 class listener/MyJDBCListener
+   0x10296078
+   75,505,600 (59.31%) [48] 1 java/util/HashMap 0x11113f88
+   75,505,552 (59.31%) [65,552] 6,411 array of
+   java/util/HashMap$Entry 0x1401ed10
+   As can be seen in this stack, the JDBCListener class (class
+   MyJDBCListener) is part of the leak suspect, with a retained
+   Configurations class. When looking at the OpenJPA
+   Configurations class, it can be seen that the Configurations
+   class has a ConcurrentReferenceHashMap which contains a
+   Classloader to Map, where the Map contains the JDBCListener
+   class (MyJDBCListener). It is these two maps which cause the
+   leak.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  With this fix, code has been added to OpenJPA to ensure a
+   'weak' reference is made to the Configuration class, thus
+   allowing the custom plugin class to be GC'd after an
+   application restart.
+   
+   The fix for this APAR is currently targeted for
+   inclusion in Service Level (Fix Pack) 8.5.5.10 of WebSphere
+   Application Server version 8.5.5 and Fix Pack 16.0.0.2 of Web
+   Liberty.
+   
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI59999
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-31
+   
+   
+ * CLOSED DATE
+   2016-06-22
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

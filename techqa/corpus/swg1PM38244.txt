@@ -1,0 +1,212 @@
+Title: IBM PM38244: UPGRADING MODULE VERSION TO 3.1 CAUSES EJBDEPLOY FAILURE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.0.0.1: WebSphere Application Server V8.0 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24030916]
+8.0.0.2: WebSphere Application Server V8.0 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031368]
+8.0.0.3: WebSphere Application Server V8.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032315]
+8.0.0.4: WebSphere Application Server V8.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033190]
+8.0.0.5: WebSphere Application Server V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033754]
+8.0.0.6: WebSphere Application Server V8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034673]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When ejb-jar.xml is upgraded from 3.0 to 3.1, the resulting
+   XML is no longer accepted by ejbdeploy. The following error
+   can occur:
+   
+   ADMA5018I: The EJBDeploy program is running on file
+   C:\Documents and Settings\Administrator\Local
+   Settings\Temp\app4137001232618553935.ear.
+       Starting workbench.
+       EJB Deploy configuration directory:
+   c:\WAS\WAS80.d1115.28\deploytool\itp\configuration/
+       framework search path:
+   c:\WAS\WAS80.d1115.28\deploytool\itp\plugins
+       build:RAD802-I20110226_2148
+       Creating the project.
+       An unexpected exception was thrown.  Halting execution.
+       Shutting down workbench.
+       Error executing deployment:
+   org.eclipse.emf.common.util.WrappedException. Error is
+   org.xml.sax.SAXParseException: cvc-complex-type.3.1: Value
+   '3.1' of attribute 'version' of element 'ejb-jar' is not valid
+   with respect to the corresponding attribute use. Attribute
+   'version' has a fixed value of '3.0'..
+   
+   org.eclipse.emf.common.util.WrappedException:
+   org.xml.sax.SAXParseException: cvc-complex-type.3.1: Value
+   '3.1' of attribute 'version' of element 'ejb-jar' is not valid
+   with respect to the corresponding attribute use. Attribute
+   'version' has a fixed value of '3.0'.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server version 8.0 using the EJBDeploy      *
+   *                  command.                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The EJBDeploy function will fail when   *
+   *                      a module's deployment descriptor        *
+   *                      version does not match the              *
+   *                      schema.                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   WebSphere Application Server will run the EJBDeploy command for
+   any deployed application that contains at least 1 EJB 2.x
+   module; however, some EJB 3.0 modules that should be
+   recognized as EJB 3.1 are not properly handled by the
+   WebSphere Application Server. These error cases cause
+   EJBDeploy to fail when it attempts to open the module.
+   
+   Some examples of attributes that may cause an EJB 3.0 module to
+   be treated as an EJB 3.1 module are:
+   
+    * Including @Singleton annotations
+    * Including @Resource annotations with the lookup attribute
+   employed (i.e. @Resource{lookup="..."}.
+   
+   WebSphere Application Server tracks the version of an EJB 3.0
+   module so that it can be 'upgraded' or 'promoted' when EJB 3.1
+   content is detected. In the case of an EJB 3.0 Module with an
+   explicitly-provided META-INF/ejb-jar.xml and EJB 3.1 content,
+   WebSphere Application Server modifies the META-INF/ejb-jar.xml
+   resource by changing the version to 3.1; however, you do not
+   have to specify any updates during deployment and the version
+   should not changed.
+   
+   The META-INF/ejb-jar.xml resource should only be updated
+   during deployment when requested by the user. This includes
+   a user's request to have WebSphere Application Server set
+   metadata-complete during deployment (Details here:
+   http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/topic/com. [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/topic/com.]
+   ibm.websphere.nd.multiplatform.doc/info/ae/ae/urun_rapp_metadata
+   _lockdd.html?resultof=%22%6d%65%74%61%64%61%74%61%2d%63%6f%6d%70
+   %6c%65%74%65%22%20).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The internal component for handling Java 2 Enterprise
+   Edition modules was updated to no longer modify the original
+   META-INF/ejb-jar.xml in an EJB JAR module. A similar update was
+   applied to ensure that explicit WEB-INF/web.xml and
+   WEB-INF/ejb-jar.xml descriptors do not have a similar problem
+   for Web Applications.
+   
+   There is no work-around available for this problem. This
+   problem is only resolved by applying a code update.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.0.0.1.  Please refer to the Recommended
+   Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM38244
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-03
+   
+   
+ * CLOSED DATE
+   2011-06-17
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

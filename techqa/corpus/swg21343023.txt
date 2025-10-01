@@ -1,0 +1,33 @@
+Title: IBM Hide Column Titles When exporting report to CSV - United States
+
+Text:
+Hide Column Headers in CSV TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Requirement is to export a list report and save it as a CSV file but without the Column Headers. The CSV is going to look at the report spec and display what is there, so even if you set the visible property to &quot;no&quot; or the box type to &quot;none&quot; it will still display the Column Header in the CSV file. 
+
+RESOLVING THE PROBLEM
+There are two ways to accomplish this.
+
+1) Set the Box Type to "None", run the report to Excel then save the output to CSV. (Which will work fine if you are running the report interactively)
+
+2) Set the Source Type to "Text" and don't enter a text value (which is good if your report is scheduled). 
+
+Steps: Solution #1 - a) Create List Report
+
+b) Select Column Header and set Box type to "None" in the Properties Pane
+
+c) Run the report Excel
+
+d) Save Excel sheet as CSV file.
+
+Solution #2 -
+
+a) Create List Report
+
+b) Select Column Header and set Source Type to "Text" in the Properties Pane and do not type a text value.
+
+ 
+
+HISTORICAL NUMBER
+ 1039759

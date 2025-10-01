@@ -1,0 +1,230 @@
+Title: IBM HD87536: WHEN CREATING INSTANCE, USELESS ERROR MESSAGE IS CREATED        . - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When creating Instance, useless error message is created.
+   Please see CR 204796 / SR 18114
+   Please see attached scenario.
+   The error looks like the error in CR 197450 / SR 14878
+   Returning E_NOTIMPL results in Key VTP_E_UE_NOTIMPL not
+   defined. - Tag is: VTP_E_UE_NOTIMPL
+   Traces and Authorization Form are attached.
+   Traces include:
+   - exported variable TRACE_RDB=3 in CustomEnv file
+   - enabled trace key DesktopObjects DesktopProduct
+   DesktopServer PSProduct PSII   -k
+   Scenario 1 using search and send to:
+   1. Log in as Designer|Struct
+   2. Search for CA1_CR12153.1|CA1_CR12153 ---
+   3. Send To > Product Editor
+   4. Expand IPST Flaperon configured product
+   5. RMB on CA1_CR12153.1|CA1_CR12153 ---  > Insert Instance
+   6. Fill out required attributes and click OK
+   Result: Instance is inserted but error message is received,
+   "[ENOSDAI_RDBInternalERR_2000]:
+   trying to modify an instance of type [BOECACVPMItemInstance]
+   instance locked by [EXP3262]"
+   Expected Result: No error message
+   Scenario 2:  Does not say how they found the part but
+   otherwise appears to be the same as Scenario 1:
+   Used the following scenario when collecting traces.
+   1. Logged in using DESIGNER|STRUCT
+   2. Opened CA1_CR12153.1 under product IPST Flaperon configured
+   product in Product Editor
+   3. RMB on CA1_CR12153.1 > Insert > Instance
+   4. Fill out required attributes and click OK
+   Result: Instance is correctly inserted but user receives the
+   following error message
+   [ENOSDAI_RDBInternalERR_2000]:
+   trying to modify an instance of type [BOECACVPMItemInstance]
+   instance locked by [EXP3262]
+   Expected Result: Instance is correctly inserted and user does
+   not receive error message
+   NOTE FROM LAURA STOWERS OF DS on 7/20/2009:  As an FYI since
+   Marisela is out this week. We both were able to reproduce the
+   problem in SR00019962 (which was also noted in SR00018114.
+   Per this note, since L2 is aware of the issue and has
+   reproduced it, I did not attempt to reproduce this issue at
+   the Front End as I have no Boeing customized environment
+   available in which to do so.
+   Note from FE:  There are 2 attachments with the same file size
+   and date (time is within 3 minutes) but I am sending both to
+   the back end to negate any possibility of differences.
+   There is one attachment with a file called Scenario.wrf.  This
+   is a webex recording file.  To view this file, download it to
+   your hard drive, then:
+   1.  Open DS Webex Enterprise Site.
+   2. My Webex   login (I only had to do this step when I was
+   connected via VPN.  When I was logged directly into the DS
+   network, the DS Webex Enterprise Site logged me in
+   automatically.
+   3. Select My Files from the navigation tree.
+   4. Select the My Recordings Tab and click the Add Recording
+   button.
+   5. Enter any value for the Topic and Description, then select
+   the Use the file on my local machine radio button.
+   6. Browse for the Scenario.wrf file you downloaded.
+   7. You must specify a length and since I didn t have any way
+   of knowing how long the recording was, I specified 1 hour.
+   That appeared to be ample time.
+   8. You can set a password if you like.  I did not.
+   9. Click the SAVE icon.  It will take a few minutes to save
+   the information.
+   10. Once the save is complete, browse over the right arrow at
+   the end of the line.  The help says this is how you Playback.
+   Click this button.
+   11. A popup displays telling you the file is loading, then it
+   automatically starts playing.
+   12. Sound did not appear to be part of the recording as I got
+   no sound even when I turned Mute off in the Settings.  I only
+   had video.
+   13. When I had seen the video, I clicked the X to close the
+   Downloading file popup, although you can choose file/exit if
+   you like.
+   Contact Information----------
+   FE Contact ------------
+   Name: EDSALL,Emma
+   Email: Emma.EDSALL@3ds.com
+   Tel:
+   Submit Contact ------------
+   Name: Ms LEE,Shirley
+   Email: shirley.lee@3ds.com
+   Tel: 425-373-8426
+   Customer Contact ------------
+   Name: Ms LEE,Shirley
+   Email: shirley.lee@3ds.com
+   Tel: 425-373-8426
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Abstract: When creating Instance, useless error message is
+   popped-up.
+   .
+   Scenario:
+   USER 1
+   1. Creats a PRC.
+   2. Inserts
+   an instance under the PRC.
+   3. Locks the usage of the
+   instance.
+   USER 2
+   4. Opens the same PRC.
+   5. Tries to insert
+   a child part under the parent part.
+   .
+   Actual Result: An
+   error  ENOSDAI_RDBInternalERR_2000  pops-up, though the child
+   part
+   (instance) gets created.
+   .
+   Expected Result: Instance
+   should be correctly inserted and user should not receive any
+   error message.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON   VERSION V5R20 GA
+   level.
+   Additional Closure Information:
+   The problem has been
+   fixed and the user will not get any useless error message.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD87536
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA V5 VPM N
+   
+   
+ * REPORTED COMPONENT ID
+   569151400
+   
+   
+ * REPORTED RELEASE
+   519
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-07-29
+   
+   
+ * CLOSED DATE
+   2009-09-24
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ENOVIA V5 VPM N
+   
+   
+ * FIXED COMPONENT ID
+   569151400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSN
+   UP

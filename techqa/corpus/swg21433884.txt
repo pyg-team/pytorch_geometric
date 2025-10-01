@@ -1,0 +1,84 @@
+Title: IBM Migration import fails during JCRInitializer call - United States
+
+Text:
+build failed; migration failed; EJPFD0016E: Initialization of service failed TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The migration import (WPMigrate.bat/sh portal-pre-upgrade) fails.
+
+SYMPTOM
+The console command line invocation fails in the jcr_cfg.xml file: 
+
+ [exec] initialize-nodetypes:
+[exec] Mon May 10 19:41:05 EDT 2010
+[exec] [echo] Calling JCRInitializer for file: /usr/IBM/Quickr/PortalServer/wcm/prereq.wcm/config/nodetypes/ibmcontentwcm_v1tov2.nodetypes
+
+[exec] BUILD FAILED
+[exec] /usr/IBM/Quickr/PortalServer/wcm/prereq.wcm/config/includes/prereq.wcm_cfg.xml:809: The following error occurred while executing this line:
+[exec] /usr/IBM/Quickr/PortalServer/wcm/prereq.wcm/config/includes/prereq.wcm_cfg.xml:864: The following error occurred while executing this line:
+[exec] /usr/IBM/Quickr/PortalServer/jcr/prereq.jcr/config/includes/jcr_cfg.xml:2714: Java returned: 1
+:
+BUILD FAILED
+:
+/usr/IBM/Quickr/PortalServer/migration/components/wp.migration.wcm/mig_ant.xml:375: exec returned: 1
+:
+MIGRATION FAILED
+
+This error also appears in the the Lotus Quickr 8.5 SystemOut.log file as follows: 
+[5/13/10 15:30:41:078 EDT] 0000001e WSRdbDataSour I DSRA8208I: JDBC driver type : 4
+
+[5/13/10 15:30:41:093 EDT] 0000001e DataStoreServ E com.ibm.wps.services.datastore.DataStoreServiceImpl checkCorrectSetup EJPDB0159E: The database layout is not correct.
+
+[5/13/10 15:30:41:140 EDT] 0000001e Servlet E com.ibm.wps.engine.Servlet init EJPFD0016E: Initialization of service failed.
+
+
+CAUSE
+This error occurs when the Lotus Quickr 8.5 system cannot initialize JCR note types. It is typically caused by missing one or more of the database related migration steps. 
+
+ 1. Lotus Quickr 8.1.1.x source server  1. After applying the 8.1.1.1 fixpack, the manual task to configure PK64247 did not run.
+    
+    
+ 2. Lotus Quickr 8.5 target server  1. After restoring the 8.1.1.1 JCR and Customization database information, one or more of the ConfigEngine tasks or DB2 tasks for migrating these databases did not run. 
+     2. The database server containing the JCR and Customization to be migrated is turned off. Or the database server used for other 8.5 databases is turned off. 
+     3. The step to exchange security certificates with the source server did not run from a particular 8.5 server. This may happen when re-using the same 8.1.1.1 backups for multiple 8.5 servers. 
+    
+    
+
+ENVIRONMENT
+All Lotus Quickr 8.5 servers that are migrating Lotus Quickr 8.1.1.x data to Lotus Quickr 8.5.
+
+
+
+DIAGNOSING THE PROBLEM
+The command line invocation of WPMigrate.bat/sh portal-post-upgrade returns MIGRATION FAILED. The MigrationTrace.log shows the error: 
+
+ [exec] initialize-nodetypes:
+[exec] Mon May 10 19:41:05 EDT 2010
+[exec] [echo] Calling JCRInitializer for file: /usr/IBM/Quickr/PortalServer/wcm/prereq.wcm/config/nodetypes/ibmcontentwcm_v1tov2.nodetypes
+
+[exec] BUILD FAILED
+[exec] /usr/IBM/Quickr/PortalServer/wcm/prereq.wcm/config/includes/prereq.wcm_cfg.xml:809: The following error occurred while executing this line:
+[exec] /usr/IBM/Quickr/PortalServer/wcm/prereq.wcm/config/includes/prereq.wcm_cfg.xml:864: The following error occurred while executing this line:
+[exec] /usr/IBM/Quickr/PortalServer/jcr/prereq.jcr/config/includes/jcr_cfg.xml:2714: Java returned: 1
+:
+BUILD FAILED
+
+
+RESOLVING THE PROBLEM
+These solutions correspond to the causes above. 
+
+ 1. Lotus Quickr 8.1.1.x source server  1. Verify that you ran the config task "config-pk64247". Open the file <Quickr8.1.1.1_install_dir>/PortalServer/log/ConfigTrace.log and any backups of it that you have. Then search for config-pk64247. You should find this: Command line arguments: -buildfile wpconfig.xml -listener -Dplatform.script.ext=bat -Dwas.platform.script.ext=.bat config-pk64247 which indicates that it ran. If you do not find any trace related to this task, the log file may have rolled over and trace is lost. Since this task creates new tables in your database, you may also check that these four new tables exist: CONTACTS_GROUP, LNK_MEMBER_GROUP, AI_FAVORITE, CONTACTS_MEMBER_DD. If you are using the default database, they are in wpsdb, customization schema. If they don't exist, you need to:  * Run the config task <Quickr8.1.1.1_install_dir>/PortalServer/config/WPSconfig.sh (or bat) config-pk64247 
+         * Re-run the migration steps starting from "Exporting the source data" that are found in the Lotus Quickr 8.5 documentation on the wiki at http://www.lotus.com/ldd/lqwiki.nsf/dx/Migrating_qp85 [http://www.lotus.com/ldd/lqwiki.nsf/dx/Migrating_qp85]. Make sure to restore the new backed up database to a newly named clone. Alternatively, you can clean out the bad clone. You do not need to reinstall Lotus Quickr 8.5. 
+        
+        
+    
+    
+ 2. Lotus Quickr 8.5 target server  1. After restoring the 8.1.1.1 JCR and Customization database information, one or more of the ConfigEngine tasks or DB2 tasks required for migration did not run. To see if you ran the ConfigEngine tasks, open the file <Quickr8.5_install_dir>/wp_profile/ConfigEngine/log/ConfigTrace.log and any backups of it that you have. Search for each of the 7 required ConfigEngine database tasks. If any are missing, you need to do the following:  * Re-run the migration steps starting from "Importing the source data to the target system" that are found in the Lotus Quickr 8.5 documentation on the wiki at http://www.lotus.com/ldd/lqwiki.nsf/dx/Migrating_qp85 [http://www.lotus.com/ldd/lqwiki.nsf/dx/Migrating_qp85]. Note that there are 7 ConfigEngine tasks. For DB2 users, there are also additional rebinding commands that must run. Make sure to restore the backed up database to a newly named clone. Alternatively, you can clean out the bad clone. 
+        
+        
+     2. Check your current connectivity to the various data sources by using the WebSphere Application Server console. Log in with administrator rights and click on Resources->JDBC Data sources. Test the connections for the cloned new names you used for the JCR and CUSTOMIZATION data sources. Also, test connections for some of the other data sources such as releaseDS. If you find any connectivity issues do the following:  * Resolve them (for example, make sure the database server is running). 
+         * Rerun the full migration portal-pre-upgrade command.
+        
+        
+     3. The step to exchange security certificates with the source server did not run from a particular 8.5 server. To see if this ran, rerun the wsadmin command described in the "Completing the source preparation" section of the Lotus Quickr 8.5 documentation on the wiki at http://www.lotus.com/ldd/lqwiki.nsf/dx/Migrating_qp85 [http://www.lotus.com/ldd/lqwiki.nsf/dx/Migrating_qp85]. If you are prompted about security certificates, that means you did not exchange them previously. To fix do the following:  * Reply Yes to the prompt to exchange certificates. 
+         * Rerun the full WPMigrate.sh/bat portal-pre-upgrade command.

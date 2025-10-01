@@ -1,0 +1,14 @@
+Title: IBM Sametime Unified Telephony Call Server Hardware Requirements - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Sametime Unified Telephony TCS Server Hardware Requirements 
+
+ * IBM System x3550M3 as specified in the Bill of Materials (BOM) below, or x3550M2 with part number 7946PKQ, or x3650T with part number 79805CX are the only part numbers that can be used as a TCS server. The IBM Lotus Sametime Unified Telephony Connect software can not be installed to any other server. For the former model x3650T, only upgrade install from releases are supported, new install of Sametime 8.5.2 release on this model will not be supported. 
+ * Telephony Control Server is always deployed with two physical servers that enable server fail over and high availability.
+
+
+Sametime Unified Telephony TCS Server Hardware x3550M3 BOM IBM Number Description Qty 7944_AC1 IBM System x3550 M3 1 7944_AC1_1787 IBM System x3550 M3 Riser Filler 1 7944_AC1_1788 IBM System x3550 M3 4 HDD and Optical Drive Kit 1 7944_AC1_2100 IBM 675W Redundant AC Power Supply 1 7944_AC1_2249 Request for an existing Public RPQ 1 7944_AC1_2577 System Packaging-WW 1 7944_AC1_2974 PRO/1000 PT Quad Port Server Adapter 1 7944_AC1_3577 ServeRAID-BR10i SAS/SATA Controller* 1 7944_AC1_3585 Dual port 1Gb Ethernet Daughter Card 1 7944_AC1_4039 IBM Gen-II Slides Kit 1 7944_AC1_4040 IBM Gen-II CMA 1 7944_AC1_4069 2.5inch HDD Filler Bezel 2 7944_AC1_4163 IBM UltraSlim Enhanced SATA Multi-Burner 1 7944_AC1_4375 PCI-Express (1 x16- FH/HL ) Riser Card 2 1 7944_AC1_4589 Intel Xeon Processor X5650 6C 2.66GHz 12MB Cache 1333MHz 95w 1 7944_AC1_4603 Addl Intel Xeon Proc. X5650 6C 2.66GHz 12MB Cache 1333MHz 95 1 7944_AC1_5080 IBM Virtual Media Key 1 7944_AC1_5599 IBM 300GB 10K 6Gbps SAS 2.5inch SFF Slim-HS HDD 2 7944_AC1_5663 System Common Planar for 1U/2U 1 7944_AC1_5693 IBM System x3550 M3 Base with 675W AC power supply 1 7944_AC1_5777 System Group BOM 1 7944_AC1_5977 Select Storage devices - no IBM-configured RAID required 1 7944_AC1_6311 2.8m- 10A/100-250V- C13 to IEC 320-C14 Rack Power Cable 2 7944_AC1_7449 System Documentation and Software-US English 1 7944_AC1_8935 2GB (1x2GB- 1Rx4- 1.5V) PC3-10600 CL9 ECC DDR3 1333MHz LP RD 6 7944_AC1_9206 No Preload Specify 1 7944_AC1_9X2845 1st Request for an existing Public RPQ 1 
+*There are different RAID controllers for x3550M3 model. Order the specified one in BOM. For example, use "ServeRAID-BR10i SAS/SATA Controller (3577)" and not "ServeRAID M5015 SAS/SATA".

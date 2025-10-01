@@ -1,0 +1,141 @@
+Title: IBM IC57435: ATTEMPTS TO END QMANAGER FAIL WITH -I AND -P - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24022899]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24025461]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24027369]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.8 [http://www-01.ibm.com/support/docview.wss?uid=swg24030009]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  "Corrupted Shared Memory files in the Queue Managers 'shmem'
+   directory
+   should not cause LEC to abend, and prevent Queue Manager from
+   starting."
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  na
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   WMQ OSS shared memory files contained invalid
+   data due to cpu failure that caused OSS file system error. This
+   corrupted the WMQ shared memory files that can be found in
+   <MQInstall>/var/mqm/qmgrs/<qmgrname>/shmem.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WMQ shared memory management code was revised to tolerate OSS
+   shmem/shm files that contain invalid data. Invalid data in
+   these files will be ignored and memory segment creation will
+   continue normally.
+   Released in WMQ HP NonStop Server V5315 fix pack
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Manually delete the files to recover the queue manager.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC57435
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ NSS MIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724A3901
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-29
+   
+   
+ * CLOSED DATE
+   2008-12-06
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ NSS MIP
+   
+   
+ * FIXED COMPONENT ID
+   5724A3901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY
+   UP

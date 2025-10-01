@@ -1,0 +1,65 @@
+Title: IBM Troubleshooting IBM InfoSphere Information Server Pack for SAP BW Load or Extract jobs hang or terminate with a "timeout" message - United States
+
+Text:
+packs; ds81relnotes; packs; relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An InfoSphere DataStage job that contains SAP BW Load or Extract stage hangs and eventually terminates with a "timeout" message. 
+
+SYMPTOM
+IBM InfoSphere Information Server Pack for SAP BW Load or Extract jobs hang or terminate with a "timeout" message.
+
+
+RESOLVING THE PROBLEM
+If the IBM InfoSphere Information Server Pack for SAP BW Load or Extract jobs hang or terminate with a timeout message, you can try the following troubleshooting actions. 
+
+Verify connection settings
+
+Most of the issues related to jobs hanging and terminating with a timeout message are caused by incorrect connection settings - seeTroubleshooting RFC Connections for Information Server Pack for SAP BW and R/3 [http://www.ibm.com/support/docview.wss?uid=swg21393028].
+
+Clean the temporary files and semaphores
+
+The issue may also be caused by temporary files or semaphores left behind due to an exceptional condition. If using version 4.3.2, make sure to install the latest fixpack (v4.3.2.3) - it includes APAR JR47169 [http://www.ibm.com/support/docview.wss?uid=swg1JR47169] which resolves some issues for Pull type jobs. Fix is also included in version 4.3.3
+
+Manual cleanup
+
+To perform a manual cleanup, stop the job in IBM InfoSphere DataStage and QualityStage Director, and then complete the actions listed under either option below.
+
+Option A - Run the jobReset utility
+For more information, see jobReset utility - cleaning up the temporary files for Pack for SAP BW jobs [http://www.ibm.com/support/docview.wss?uid=swg21441969] 
+Note: Even though this utility attempts to clean the semaphores, this process may fail. See step 3 in Option B for manual semaphore cleanup instructions. 
+
+Option B - Manually clean the Data folder and semaphores associated with the job:
+1. Stop the DS BW RFC listener (dsrfcd).
+Make sure that no dsrfc* processes is running. If any dsrfc* process is running, then stop it as follows: 
+
+ * On Windows, use Task Manager to stop the process. 
+ * On Unix, use the killcommand to stop the process.
+
+2. Delete the contents of the Data folder: <IIS folder>/Server/DSBWConnections/<Connection>/SourceSystems/<Source Sytem>/Data 
+For example: /opt/IBM/InformationServer/Server/DSBWConnections/BWCONN1/SourceSystems/BWCONN1_SS/Data 
+Notes: 
+- On AIX platforms, this also cleans the semaphores used by the listener; on other platforms need to perform step 3 
+- If you need to retain the log files ( *.log), save them to another folder 
+3. On non-AIX platforms, may need to reboot the DS Server host computer in order to clean the semaphores. Alternatively, you can manually cleanup these semaphores using a specific OS tool, like ipcrm command on Unix. If your platform allows it, this command clears all named semaphores (otherwise use the semaphore keys provided below for individual cleanup): 
+ipcrm -a sem 
+4. Restart the listener. 
+
+Semaphore keys 
+The names used for internal semaphores are provided below. On Windows there's no '/' prefixing the name. 
+BW Listener: /RFCSERVER_THREADING_MUTEX_<SSname>, /RFCSERVER_LOGGING_MUTEX_<SSname>, /RFCSERVER_SHUTDOWN_MUTEX_<SSname> ,/RFCSERVER_FAILEDCONNECT_MUTEX_<SSname> 
+where SSname=Source System name 
+
+BW Load: /BWLOAD_STARTFILE_MTX.<ISname>.<type>, /BWLOAD_READYFILE_MTX.<ISname>.<type>, /BWLOAD_DATAFILE_MTX.<ISname>.<type>* 
+where ISname=InfoSource Name, type=Load type 
+* - also used in the BW Listener 
+
+BW Extract: /BWEXTRACT_READYFILE_MTX.<PCname>.<ISname>, /BWOHEXTRACT_PACKETNUMBERING_MUTEX.<PCname>, /BWOHEXTRACT_STAGEINIT_MUTEX.<PCname> 
+where PCname=Process Chain name, ISname=Info Spoke name 
+
+Examples of using ipcrm 
+ipcrm -a sem -> removes all named semaphores 
+ipcrm -M /RFCSERVER_THREADING_MUTEX_DS -> removes the named semaphore with the key /RFCSERVER_THREADING_MUTEX_DS 
+
+Note: to display semaphore info, use the command ipcs 
+ipcs -i -s -> displays active semaphores

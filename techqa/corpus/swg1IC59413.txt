@@ -1,0 +1,166 @@
+Title: IBM IC59413: Increasing number of non-persistent data pages when using       WebSphere MQ v7 Explorer with v6 queue manager on z/OS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There is a growing number of non-persistent data pages on a
+   WebSphere MQ v6 queue manager running on z/OS being
+   administered by a v7 Explorer. The longer the Explorer is
+   connected to the queue manager, the larger the number of
+   non-persistent data pages.
+   
+   The symptom on z/OS is high usage of the pageset assigned to
+   AMQ.MQEXPLORER.* temporary dynamic queue(s). A CHINIT line
+   trace shows MQGETs failing with RC=2 RSN=2024
+   (MQRC_SYNCPOINT_LIMIT_REACHED).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This problem affects users of the WebSphere MQ v7 Explorer
+   managing a WebSphere MQ v6 queue manager on z/OS
+   
+   Platforms affected:
+   Linux (Power),Linux (s390x),Linux (x86),Linux (x86-64),
+   Linux (zSeries),Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The WebSphere MQ Explorer was not issuing an MQCMIT call, as it
+   did not expect the queue manager it was connected to to have
+   syncpoints enabled by default. The WebSphere MQ Explorer should
+   be setting MQGMO_NO_SYNCPOINT if it is not going to issue
+   MQCMITs as the z/OS default is MQGMO_SYNCPOINT for destructive
+   MQGETs.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Any MQGET calls from the Explorer not to be followed by a MQCMIT
+   now specify MQGMO_NO_SYNCPOINT. Messages are retrieved correctly
+   and there is no build up of syncpoints and data pages.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.0
+   --------           --------------------
+   Windows            U200306
+   Linux (x86)        U823664
+   Linux (x86-64)     U823773
+   Linux (zSeries)    U823668
+   Linux (Power)      U823666
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC59413
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-08
+   
+   
+ * CLOSED DATE
+   2009-03-12
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

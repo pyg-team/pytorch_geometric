@@ -1,0 +1,156 @@
+Title: IBM JR58740: PACKAGE WITH STORE AND FORWARD URI CAN'T BE FOUND DURING INSTALLATION - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+bpm.8600.cf2017.12.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8600.cf2017.12.delta.repository&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you use wsadmin to install some SCA modules with Store and
+   Forward qualifiers in offline mode, for example
+   
+   wsadmin.bat -conntype NONE
+   
+   you might see some warning message, like following message, in
+   <BPM_HOME>\profiles\<Dmgr_Profile>\logs\wsadmin.traceout:
+   
+   Core          W   CWSCA0001W: "DetermineScoreBP.component" is
+   not a valid Service Component Definition Language file for the
+   following reason:
+   "org.eclipse.emf.ecore.resource.Resource$IOWrappedException:
+   Package with uri
+   'http://www.ibm.com/xmlns/prod/websphere/wbiserver/storeAndForwa
+   rd/7.0.0' not found.
+   (file:///c:/BPM857/profiles/DmgrProfile/bin/DetermineScoreBP.com
+   ponent, 6, 71)".
+   
+   The SCA modules would be installed successfully, but the Store
+   and Forward feature could function incorrectly when you run
+   these SCA modules.
+   
+   Such an issue occurs only during the first installation of an
+   SCA module with Store and Forward qualifiers in a wsadmin
+   command session. You don't see this issue during installation
+   afterward in the same session.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Install a dummy SCA module with Store and Forward qualifiers
+   first in the wsadmin offline mode, and then install the real
+   applications next in the same wsadmin command session.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Store and Forward component did not implement an extension which
+    the classloader of IBM WebSpere Application Server used to
+   initialize the EMF packages in the wsadmin offline mode.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix that implement the extension is available for IBM BPM
+   V8.6.0.0 CF 2017.12.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR58740
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-11-17
+   
+   
+ * CLOSED DATE
+   2017-12-13
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

@@ -1,0 +1,142 @@
+Title: IBM PJ36979: INTERMITTENT CE IS_SSI_8824 ERRORS OCCUR WHEN FEDERATING, CALLIN G MOVECONTENT, OR VIEWING DOCUMENTS WHILE IN WORKPLACE OR EM. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Intermittently when using the moveContent() call, (moving a
+   document from IS to CE), the following error occurs:
+   
+   Caused by: java.util.MissingResourceException: Can't find
+   resource for bundle java.util.PropertyResourceBundle, key
+   IS_SSI_8824
+   
+   This is intermittent and could happen to any documents.  Once
+   the error occurs, using FileNet Enterprise Manager (FEM) to view
+   the document will product
+   the same error.  However, after one or two retries FEM is able
+   to display the document fine.
+   
+   The custom application would flag the document that failed to
+   move then process them again the next day.  The document would
+   get get moved successfully.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Process the document again.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Occasional CE IS_SSI_8824 errors when federating.            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to CE 4.0.1 FP12                                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CE 4.0.1 FP12 - Elimination of occasional CE IS_SSI_8824 errors
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ36979
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-22
+   
+   
+ * CLOSED DATE
+   2010-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

@@ -1,0 +1,42 @@
+Title: IBM How to troubleshoot the error "Failed to process response headers" - United States
+
+Text:
+datapower; failed; parse; process; error; network; connection; persistent; headers; response headers; failed to process response headers; 7993; 7993; 7993; machine type 7993 TECHNOTE (FAQ)
+
+QUESTION
+ What does this error mean?
+
+General error that is always seen:
+[servicetype][error] wsgw(policyrule): tid(196761)[error][x.x.x.x]: Failed to process response headers
+
+Specifically from a Web Service Gateway:
+[ws-proxy][error] wsgw(Proxy): tid(1234567)[10.2.3.4]: Backside header failed to parse due to: Failed to process response headers
+[ws-proxy][error] wsgw(Proxy): tid(1234567)[error][10.2.3.4]: Failed to process response headers 
+
+Additional log information might be seen while at the debug log level.
+
+
+CAUSE
+When you read this error, keep in mind that it is thrown from a rule within a policy of a service. This error almost always means that the policy did not receive any data. If you increase the logging from error to debug, you should see network failures surrounding the response header error.
+
+
+
+In almost every event, this error is caused by a connection failure.
+The error is correct, the service did not receive any response headers or data. The key to help confirm this is to increase the log level to debug. This will allow you to see the network debug errors around the context of the service error.
+
+
+ANSWER
+The classic causes of this are either of these two: 
+
+
+
+ 
+
+A slow response that causes the connection to timeout before receiving the response
+A failed connection attempt due to a closed persistent connection or some other connection issue that prevents the WebSphere® DataPower device® from connecting to the backend. For example, a reused connection would be attempted and found to already be closed out by something outside of DataPower®.
+An example of this is explained here:
+http://www-01.ibm.com/support/docview.wss?uid=swg21417934&wv=1 [http://www-01.ibm.com/support/docview.wss?uid=swg21417934&wv=1]
+
+There are a broad range of network errors that can trigger this to error. A packet trace is the key to capture the problem and confirm what type of failure is the cause. A log with event subscription of "all" "debug" will also help correlate and confirm the packet trace data.
+
+In some cases, a simple work around to try is to lower the DataPower persistent timeout or disable persistent connections. If this does not prevent the problem, then analysis of the packet trace and error report are required.

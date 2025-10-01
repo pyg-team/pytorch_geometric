@@ -1,0 +1,165 @@
+Title: IBM IV61982: CPU FREQUENCY COLUMN SHOWING 0 VALUE FOR SOME VIRTUAL MACHINES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer has discovered the CPU Frequency column in Hardware
+   Inventory view showing 0 value for some virtual machines.
+   
+   See attached screen shots in ECUREP.
+   
+   
+   johncpufrequency.png (Computer properties in IEM console)
+   johncpufrequency1.png (Computers view in IEM console)
+   johncpufrequency2.png (Hardware Inventory view in LMT console)
+   
+   
+   I reviewed the HW scan results file, it has CPU Frequency value
+   detected.  See below under CpuFreq variable.
+   
+   
+    <ComponentID version="1">
+     <Manufacturer>VMware, Inc.</Manufacturer>
+     <Product>VMware Virtual Platform</Product>
+     <Version>None</Version>
+     <SerialNumber>VMware-42 38 8d 27 46 da 57 a5-3d d6 34 1b a7 9f
+   51
+   e8</SerialNumber>
+     <Type></Type>
+     <UUID>42388D27-46DA-57A5-3DD6-341BA79F51E8</UUID>
+    </ComponentID>
+   
+    <PhysicalProcessor version="1">
+     <Id IsKey="1">1</Id>
+     <CorePerPackageCount>1</CorePerPackageCount>
+     <LogicalProcPerCore>1</LogicalProcPerCore>
+     <Manufacturer>AMD</Manufacturer>
+     <Family>Opteron</Family>
+     <Type>Unknown</Type>
+     <CpuFreq>2600</CpuFreq>
+     <L2CacheSize>512</L2CacheSize>
+     <L3CacheSize>5120</L3CacheSize>
+     <Brandname>Six-Core AMD Opteron(tm) Processor 8435</Brandname>
+     <Signature>0x00100F80</Signature>
+     <Is64BitSupported>Y</Is64BitSupported>
+     <ActiveProcessorCount>1</ActiveProcessorCount>
+     <ActiveCoreCount>1</ActiveCoreCount>
+    </PhysicalProcessor>
+   
+   
+   Interesting that I have both ILMT v9.0 servers running in the my
+   lab. One ILMT server has value in  CPU Frequency column for all
+   virtual machines hosted by the same VMWARE host server.
+   
+   On other ILMT server has 0 value in CPU Frequency column for all
+   virtual machines hosted by the same VMWARE host server.
+   
+   
+   The only different that I could tell at this time.  When the
+   System Model column is reported BLANK, the CPU Frequency column
+   will report 0 value.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * PROBLEM DESCRIPTION:
+   ****************************************************************
+   * The CPU Frequency column in Hardware Inventory view showing 0
+   * value for some virtual machines.
+   ****************************************************************
+   * RECOMMENDATION: Refer to updated product documentation for
+   * the corrected statement when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the product on-line
+   documentation (Infocenter).
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV61982
+   
+   
+ * REPORTED COMPONENT NAME
+   LIC METRIC TOOL
+   
+   
+ * REPORTED COMPONENT ID
+   5724LMTEM
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-26
+   
+   
+ * CLOSED DATE
+   2014-08-29
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

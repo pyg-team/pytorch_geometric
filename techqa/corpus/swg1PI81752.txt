@@ -1,0 +1,136 @@
+Title: IBM PI81752: CANNOT ADD CUSTOM LDAP REPOSITORY - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer has a SAML config with a local repository.
+   
+   Now they want to add an OpenLDAP repository.
+   
+   When customer tries to setup this ldap server,
+   
+   it never adds the server name that I put in the field.
+   
+   Using the config engine script wp-create-ldap failed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 23 (PI77253 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI77253]) for Portal
+   8.0.0.1 available from Fix Central:
+   
+   https://www-945.ibm.com/support/fixcentral/swg/selectFixes?paren
+   t=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=A [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=A]
+   ll&platform=All&function=aparId&apars=PI77253
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI81752
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-05-17
+   
+   
+ * CLOSED DATE
+   2018-05-22
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

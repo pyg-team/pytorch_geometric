@@ -1,0 +1,59 @@
+Title: IBM JSAS1479W errors observed in Portal logs after realm name was changed - United States
+
+Text:
+JSAS1479W target realm current hostname database TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ JSAS1479W errors observed in Portal logs after realm name was changed 
+
+SYMPTOM
+In the SystemOut logs, the following messages are seen: 
+
+[timestamp] 00000005 LeaseAlarm I SCHD0133I: Scheduler WPSTaskScheduler (wps/Scheduler) has acquired the lease and will run all tasks on this application server.
+[timestamp] 00000075 CSIv2Effectiv W JSAS1479W: The target realm [xxx] does not match the current realm [yyy]. Specify the target realm in the Trusted target realms field. From the AdminConsole, go to: Security -> Global Security -> RMI/IIOP security -> CSIv2 Outbound Authentication.
+
+
+CAUSE
+The Portal security configuration was updated recently with a new realm name. Runtime operations of the new security configuration work correctly. However, the Portal task scheduler may contain stale information about the former security configuration in the Portal database. The Portal task schedulers need to be updated with the new realm information of the new security configuration.
+
+
+DIAGNOSING THE PROBLEM
+Gather a wpcollector or ISALite collection, obtain an LTPAKey export. Compare the realm names in security.xml, wimconfig.xml, LTPAkey to ensure the realm names are all the same. If the problem shown in the stacktrace is still present with all realm names the same, then move onto the resolving the problem section. If not, update the realm names so they are consistent.
+
+
+
+RESOLVING THE PROBLEM
+Standalone: 
+
+1. Stop the Portal server 
+
+2. Open a command window and navigate to wp_profile/ConfigEngine 
+
+3. Execute the following command: 
+
+./ConfigEngine.sh|bat action-clean-scheduled-tasks -DWasPassword=<password> 
+
+ 
+
+4. Restart the Portal server 
+
+ 
+
+Clustered: 
+
+1. Stop the Primary node 
+
+2. On the Primary node, open a command window and navigate to wp_profile/ConfigEngine 
+
+3. Execute the following command: 
+
+./ConfigEngine.sh|bat action-clean-scheduled-tasks -DWasPassword=<password> 
+
+ 
+
+4. Restart all nodes in the cluster.
+
+RELATED INFORMATION
+ Exporting LTPA keys [http://www.ibm.com/support/knowledgecenter/en/SSAW57_7.0.0/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/tsec_altpaexp.html]
+Gathering a wpcollector [https://www-304.ibm.com/support/docview.wss?uid=swg21445430]
+ISALite collection [http://www-1.ibm.com/support/docview.wss?rs=0&uid=swg24008662]

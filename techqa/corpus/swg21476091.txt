@@ -1,0 +1,27 @@
+Title: IBM QUICK CLUSTER initial-center file formats error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I ran the SPSS Quick Cluster procedure for K Means cluster analysis, specifying an SPSS file with the initial cluster centers. I received the following error message:
+
+"The file referenced in the FILE subcommand does not have the proper format for QUICK CLUSTER initial cluster centers." 
+
+My cluster center file includes all the variables that are used in the Quick Cluster command and there is one case for each of the centers. Am I missing something? 
+
+RESOLVING THE PROBLEM
+The first variable in your cluster center file must be named cluster_ . The values for cluster_ in the K rows will be 1, 2, ... K, where K is the number of clusters. The absence of cluster_ will trigger the improper format error message. Other essential properties of the centers file include:
+
+1. You must have at least as many cases in the center file as the number of clusters specified in the QUICK CLUSTER command. If there are K cases in the centers file and J < K clusters specified in the QUICK CLUSTER command, only the first J cases from the centers file will be used.
+
+2. All the variables that are included in the QUICK CLUSTER command must be included in the centers file. Variable order need not be identical in the QUICK CLUSTER command and the centers file (provided cluster_ comes first in the centers file). Variables in the centers file that are not in the QUICK CLUSTER variable list will be ignored in the analysis
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 15374

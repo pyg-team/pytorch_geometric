@@ -1,0 +1,20 @@
+Title: IBM COBOL Copybook importer is missing in WTX Design Studio 8.4.1.1 if installed over 8.4.1.0 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When installing IBM WebSphere Transformation Extender (WTX) Design Studio 8.4.1.1 on the Windows platform over the top of an IBM WTX 8.4.1.0 installation, the COBOL Copybook importer may be missing after the upgrade. 
+
+SYMPTOM
+The COBOL Copybook importer option no longer appears in the list of available importers.
+
+
+CAUSE
+Some files are not correctly overwritten / modified during the upgrade.
+
+ENVIRONMENT
+IBM WebSphere Transformation Extender 8.4.1.1 Design Studio on Windows
+
+RESOLVING THE PROBLEM
+Install WTX Design Studio 8.4.1.1 in an empty directory, and then perform any installation customization.

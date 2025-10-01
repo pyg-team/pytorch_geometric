@@ -1,0 +1,170 @@
+Title: IBM PK94872: PROBLEMS WITH JPA.FVT.QUERY USING INFORMIX 11.5 ON 61027 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  For 61027 I'm running on a RHEL 5 ppc WAS build and Informix
+   11.50 on a remote server. I have not tested this on db2 yet,
+   but I suspect there problems are Informix unique. One concern
+   is that there seems to be no explicit Informix 11 support in
+   the bucket. All results were generated using the Informix 10
+   configuration parameters.
+   
+   For this bucket there seems to be 2 problems. Each of which is
+   present in all test cases for each suite.
+   
+   1. The DB version tests complain about the database not
+   existing or insufficient permission. This is confusing because
+   the database definitely exists and the user is the
+   administrative one.
+   
+   2. The Query tests show these 2 errors:
+   PersistenceException - Cannot create entity Manager - if using
+   embedded derby, close derby database connection
+   
+   PersistenceException: Cannot create, drop, or modify an object
+   on an another database server. {stmnt 106301014 CREATE TABLE
+   Administrator:AddressBean (street VARCHAR(40) NOT NULL, city
+   VARCHAR(30), state VARCHAR(20), zip VARCHAR(10), PRIMARY KEY
+   (street)) LOCK MODE ROW} [code=-556, state=IX000]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of IBM WebSphere Application Server   *
+   *                  Feature Pack for EJB 3.0 who use Informix   *
+   *                  for the OpenJPA back end.                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Using Informix DB causing               *
+   *                      PersistenceExceptions                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When running with an Informix DB, several
+   PersistenceExceptions might be thrown
+   1. PersistenceException - Cannot create entity Manager - if
+   using embedded derby, close derby database connection
+   2. PersistenceException: Cannot create, drop, or modify an
+   object on an another database server. {stmnt 106301014 CREATE
+   TABLE Administrator:AddressBean (street VARCHAR(40) NOT NULL,
+   city VARCHAR(30), state VARCHAR(20), zip VARCHAR(10), PRIMARY
+   KEY (street)) LOCK MODE ROW} [code=-556, state=IX000]
+   3. User will sometimes get an error about the database
+   not existing or insufficient permission. This is confusing
+   because the database definitely exists and the user may be the
+   administrative one.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In the OpenJPA code, several classes had to be updated with
+   code that works for WAS 7.0.  The code that was back ported
+   (DBDictionary.java, InformixDictionary.java, Distinct.java,
+   SchemaGenerator.java, SchemaTool.java) involved trimming the
+   schema name, checking to see if an index is created
+   automatically with table generation, not limiting name
+   lengths, using proper SQL for times and sequences and cross
+   joins and concatenation, supporting delete actions and
+   correlated subselects, and using a string for a boolean value.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 6.1.0.29.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK94872
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS EJB3 FEATUR
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0851
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-27
+   
+   
+ * CLOSED DATE
+   2009-09-02
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS EJB3 FEATUR
+   
+   
+ * FIXED COMPONENT ID
+   5724J0851
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

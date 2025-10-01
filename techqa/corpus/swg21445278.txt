@@ -1,0 +1,64 @@
+Title: IBM Rational Functional Tester Simplified Script Java editor does not contain custom imports section - United States
+
+Text:
+RFT; Functional Tester; Scripting; simplified scripting; raitonal functional tester; ss; rftss; java; java editor; import; statement; statements; custom import; custom imports; custom; TODO; Add custom imports here; begin custom imports; end custom imports; missing; legacy projects; older version; %script:customImports%; %script:endSimplifiedScript% for simplified script. Don't ever delete this line TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+This technote describes how to modify the script template in an IBM Rational Functional Tester project so that you can add custom import statements to scripts with Simplified Scripting enabled.
+
+SYMPTOM
+You are using Rational Functional Tester with Simplified Scripting [http://publib.boulder.ibm.com/infocenter/rfthelp/v8r1/topic/com.ibm.rational.test.ft.doc/topics/c_simplify_scripts.html] enabled. You want to add custom import statements to your scripts, but notice that the following lines of code are not present in the Java editor:
+// BEGIN custom imports
+//TODO: Add custom imports here.
+// END custom imports
+
+CAUSE
+The custom imports feature for Simplified Scripting was added in version 8.1.1. If you are using a project that was created in an older version of Rational Functional Tester, your project does not contain the updated script template to add these lines to new scripts.
+
+RESOLVING THE PROBLEM
+Modify the project template to add the custom imports feature to your project. 
+
+ 1. In the Functional Test Projects view, right-click your project. Select Properties in the context menu. 
+ 2. Click Functional Test Script Templates. 
+ 3. Under "Select template type", select "Script: header of the file".
+    [/support/docview.wss?uid=swg21445278&amp;aid=1] 
+ 4. Modify the template to match the text below (changes in italic text).
+    %script:packageDeclaration%
+    import com.rational.test.ft.*;
+    import com.rational.test.ft.object.interfaces.*;
+    import com.rational.test.ft.object.interfaces.SAP.*;
+    import com.rational.test.ft.object.interfaces.WPF.*;
+    import com.rational.test.ft.object.interfaces.dojo.*;
+    import com.rational.test.ft.object.interfaces.siebel.*;
+    import com.rational.test.ft.object.interfaces.flex.*;
+    import com.rational.test.ft.object.interfaces.generichtmlsubdomain.*;
+    import com.rational.test.ft.script.*;
+    import com.rational.test.ft.value.*;
+    import com.rational.test.ft.vp.*;
+    import com.ibm.rational.test.ft.object.interfaces.sapwebportal.*;
+    %script:customImports%
+    /**
+    * Description : Functional Test Script
+    * @author %system:user.name%
+    */
+    public class %script:name% extends %helper:name%
+    {
+    /**
+    * Script Name : <b>%script:name%</b>
+    * Generated : <b>%date% %time%</b>
+    * Description : Functional Test Script
+    * Original Host : %static:com.rational.test.ft.sys.OperatingSystem.getVersion%
+    * 
+    * @since %date:yyyy/MM/dd%
+    * @author %system:user.name%
+    */
+    public void testMain(Object[] args) 
+    {
+    %script:keywordSteps%
+    %script:insertBefore% this entire line will be deleted during initial script generation
+    %script:endSimplifiedScript% for simplified script. Don't ever delete this line
+    }
+    } 
+ 5. Click OK to save the changes. 
+ 6. Create a new script in the project, then switch to the Java editor. Note that the custom imports section is now available.
+    [/support/docview.wss?uid=swg21445278&amp;aid=2]

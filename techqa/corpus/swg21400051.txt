@@ -1,0 +1,80 @@
+Title: IBM Diagnosing CPLEX error 1001: out of memory - United States
+
+Text:
+1001; CPXERR_NO_MEMORY; Memory TECHNOTE (FAQ)
+
+QUESTION
+ Can you provide some guidelines for diagnosing CPLEX error 1001: out of memory? 
+
+ANSWER
+CPLEX Error 1001 (out of memory) can occur for many reasons. Some particular causes are discussed in documents titled: 
+
+ * Guidelines for estimating CPLEX memory requirements based on problem size [http://www-01.ibm.com/support/docview.wss?uid=swg21399933] 
+ * 32-bit AIX application memory usage [http://www-01.ibm.com/support/docview.wss?uid=swg21399971] 
+ * How to extend 32-bit CPLEX on Microsoft Windows use more than 2GB or RAM [http://www-01.ibm.com/support/docview.wss?uid=swg21400095]
+
+
+Rather than discuss individual causes, this document considers more general tactics to help identify the source of the memory limitation. In some cases, you might find that the application really does need more memory to run to completion. But, in others, you might find that a simple change to machine configuration, the mathematical model, the code that expresses the model, or CPLEX parameter settings will drastically reduce memory use, enabling your application to run much more efficiently. Out of memory errors in a CPLEX application typically fall into one of four categories, each of which is discussed in more detail below.
+
+ * Unexpected memory limits imposed by the operating system
+ * Unexpectedly large memory use by the application that calls CPLEX
+ * Unnecessary memory use during the modeling phase
+ * Excessive memory use by CPLEX optimization routines
+
+
+
+
+
+
+
+ 
+
+Unexpected memory limits imposed by the operating system An application may run out of memory unexpectedly because it cannot access all available memory on the computer. Possible reasons include: 
+
+ * Limits on individual accounts or processes. Use the 'ulimit -a' command on UNIX or the Windows Task Manager to check resources available for the individual account. 
+ * Memory restrictions imposed by the compiler, linker, or operating system. For example, programs compiled and linked as standard 32-bit applications using default options can access no more than 2 gigabytes of memory, regardless of the amount of memory available. And, 32-bit applications on AIX have a default of 256 MB of allocatable memory. (Read 32-bit AIX application memory usage [http://www-01.ibm.com/support/docview.wss?uid=swg21399971] to see how to increase this limit). When a 32-bit application imposes a memory limit on memory that CPLEX uses, consider moving to a 64-bit operating system instead. 
+ * Various other factors, such as multiple users on the computer or overly restrictive virtual memory configurations.
+
+
+
+Tools (like 'top' and 'vmstat' on UNIX or Windows Task Manager) can help you isolate these potential problems. Also, using a program that simply allocates, initializes, and frees arbitrary amounts of memory can help determine whether your problem is specific to your CPLEX application or more general. Click here testmalloc.c [/support/docview.wss?uid=swg21400051&aid=2] - testmalloc.c [/support/docview.wss?uid=swg21400051&aid=1] to download such a program. 
+Back to top
+
+
+
+Unexpectedly large memory use by the application that calls CPLEX 
+When a CPLEX based application runs out of memory, you need to find out whether the majority of the memory consumption occurs inside CPLEX or in the invoking application. If CPLEX inherits very little free memory from the calling application, CPLEX will probably issue an out-of-memory error message. Yet potential memory reductions are more likely to occur in the code surrounding CPLEX. The following tactics can help you assess the distribution of memory use among the various parts of the application.  * Monitor the memory consumption of the program as it proceeds, detecting spikes in use to isolate the parts of the application that may consume excessive memory. 
+ * Compare memory use of your CPLEX application with interactive CPLEX or a simple example program on the same model. This comparison can help you determine how much memory CPLEX will need to solve the model. Contrast that amount with the total memory use of your application to determine whether memory use outside of CPLEX is reasonable. 
+ * Use tools like Purify, Insure, Bounds Checker, and Valgrind to check for memory leaks in the application. 
+ * Make sure you solve the intended model. If the modeling code inadvertently creates a much larger model, the memory use may also increase. By writing out a SAV file of the model and reading it into interactive CPLEX, you can then examine the model statistics (by turning the datacheck parameter on and using the display problem stats command) to verify they are consistent with the intended model.
+
+
+Back to top
+
+
+Unnecessary memory use during the modeling phase When writing code to build the model you will give to CPLEX, make sure you don't create or retain problem data that is no longer needed after CPLEX has received or extracted the model. In the C API, CPLEX makes copies of any arrays passed to problem-creation or modification routines, so you can free the corresponding arrays in your programs if you don't need them anymore. In C++, inadvertent calls to copy constructors or lazy copy mechanisms can result in unnecessary memory use. In Java, using the class IloLPMatrix (or the equivalent method of ILPMatrix in .NET) has the potential to save memory during model generation.
+
+
+Back to top
+
+ 
+
+Excessive memory use by CPLEX optimization routines If you have determined that the majority of the memory use occurs in one of the CPLEX optimization algorithms, you need to determine whether memory use by CPLEX is reasonable given the problem size. For linear programs, a reasonable estimate of memory use is to allow one megabyte per thousand constraints (or, equivalently, one gigabyte per million constraints). For integer programs, no simple formula exists since memory use depends so heavily on the size of the branch and bound tree. But, the estimate for linear programs still provides a lower bound. For quadratic programs, a slightly stronger lower bound derives from adding the number of constraints and variables, then allow one megabyte for every thousand.
+
+If these estimates reveal that the requirements of CPLEX dramatically exceed the available memory on the machine, then consider adding more memory to the machine, or moving from a 32-bit to 64-bit operating system. If the CPLEX requirements just barely exceed available memory, you may be able to reduce CPLEX memory use by changing some of its parameter settings, including the following. Refer to the ILOG CPLEX Reference Manual if you need additional information about these parameters. 
+
+ * Users of CPLEX 10.0 and later should turn CPLEX's memory emphasis parameter on. This will instruct CPLEX to set various internal parameters to conserve memory. This setting may result in a slight increase in run time, but typically it is negligible. However, when solving linear programs with one of CPLEX's simplex methods, this setting limits solution information that requires a factorized basis (for example, sensitivity analysis or the basis condition number). Users of CPLEX 9.1 and earlier do not have access to the memory emphasis parameter, but they can attain many of the same benefits by turning on the presolve compress, barrier out of core, or simplex finalfactor parameters (all of which were consolidated into the memory emphasis parameter for version 10.0). As a last resort, you can actually turn presolve off. This will save more memory, but it can result in dramatic increases in solve-times for many models. 
+ * For linear and quadratic programs, consider using a different algorithm, as each algorithm uses memory differently. Similarly, setting the presolve dual parameter to on for linear programs can save memory. The memory required to solve the dual model may differ significantly from that required to solve the primal. 
+ * For mixed integer programs, the size of the branch and cut tree dominates memory use beyond that required to solve the initial LP relaxation. Anything you can do to reduce the size of the branch and cut tree will help. So, improving the run time will often also reduce memory. Read the document titled CPLEX Performance Tuning for Mixed Integer Programs [http://www.ibm.com/support/docview.wss?uid=swg21400023] for a discussion of MIP performance tuning. In addition, consider setting the node file parameter to 3 to write the nodes to disk. This will save memory with minimal overhead. 
+ * If you are taking advantage of the parallel CPLEX optimizers, reducing the number of threads in use typically also reduces memory usage. However, this may adversely impact performance, in which case one should view this as a short term solution. 
+ * If you are using the solution pool feature and CPLEX generates a huge number of solutions, storing those solutions may dominate memory usage. In that case, set the solution pool capacity number to a modest value. 
+ * If all else fails, you might be able to create an equivalent formulation of the model that requires less memory.
+
+Back to top
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce IBM ILOG CPLEX Optimization Studio General AIX, HP-UX, Linux, Mac OS, Solaris, Windows 12.6, 12.5.1, 12.5.0.1, 12.5, 12.4, 12.3, 12.2.0.1, 12.2 All Editions 
+HISTORICAL NUMBER
+ cplex/Document/134

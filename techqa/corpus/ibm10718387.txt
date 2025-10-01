@@ -1,0 +1,28 @@
+Title: IBM How to download the security certificate from RHEVM server for RHEV 4.0 and later - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+The procedure to download the security certificate from RHEVM server mentioned in the user's guide or README documents of the supported Monitoring Agent for Linux KVM versions is not applicable for RHEV 4.0 and later.
+
+CONTENT
+
+
+Problem 
+The procedure to download the security certificate from RHEVM ( Red Hat Enterprise Virtualization Manager) server mentioned in the user's guide or README documents of the supported Monitoring Agent for Linux KVM versions is not applicable for RHEV 4.0 and later. 
+
+
+
+CAUSE 
+The documentation is still referring to RHEVM 3.x related procedure to download the security certificate from RHEVM server. The procedure has changed with newer releases of RHEVM version 4.0 and later. 
+
+
+SOLUTION 
+To download the security certificate from the RHEVM server, follow steps specific to your installed version of the RHEVM server from the link below: 
+
+https://access.redhat.com/documentation/en-us/red_hat_virtualization [https://access.redhat.com/documentation/en-us/red_hat_virtualization] 
+
+e.g., for RHEVM 4.1 steps are mentioned under: 
+
+https://access.redhat.com/documentation/en-us/red_hat_virtualization/4.1/html/rhevm_shell_guide/attaining_an_ssl_certificate_from_rhevm_for_a_rest_api_client [https://access.redhat.com/documentation/en-us/red_hat_virtualization/4.1/html/rhevm_shell_guide/attaining_an_ssl_certificate_from_rhevm_for_a_rest_api_client]

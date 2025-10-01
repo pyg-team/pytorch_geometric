@@ -1,0 +1,26 @@
+Title: IBM Couldn't create DC_P8 FileNet object error with IBM Datacap Taskmaster Capture - United States
+
+Text:
+dc_p8 filenet object fnp8_upload TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When exporting to P8 Content Engine using the FileNet P8 actions library configured for either the 35DIME or MTOM interface, the batch aborts and the following error is generated in the log. This error will generally occur with whichever action from the FileNetP8 actions library is run first.
+
+Couldn't create DC_P8 FileNet object.
+ERROR!!! N-2147024894 
+
+CAUSE
+Components required for the P8 Export are missing or not registered. These requirements apply to both the 35DIME and MTOM interfaces.
+
+RESOLVING THE PROBLEM
+To resolve this, verify the following: 
+
+ * There is only one version of DC_P8_Server.dll on the server. 
+ * The dll is registered. To confirm, run the following command. The command will need to be modified if the dll is not in the C:\Datacap\dcshared folder.
+   C:\Windows\Microsoft.NET\Framework\v2.0.50727\regasm.exe C:\Datacap\dcshared\DC_P8_Server.dll /codebase 
+ * Web Services Enhancements (WSE) are installed as shown in Add/Remove Programs.  * Datacap Taskmaster 8.0.1 Fix Pack 2 and earlier requires Web Services Enhancements 2.0 SP3. 
+    * Datacap Taskmaster 8.0.1 Fix Pack 3 and newer requires Web Services Enhancements 3.0.
+   
+   
+ * For Datacap Taskmaster 8.0.1 Fix Pack 3 and newer, verify the IBM FileNet P8 Content Engine Client files are installed and correct for the version of P8 that Taskmaster is exporting to. To confirm the client files, check that both of the following:  * Content Engine .Net API is listed in Add/Remove Programs. 
+    * FileNet.API.dll is listed in the \Windows\assembly folder.

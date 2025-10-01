@@ -1,0 +1,141 @@
+Title: IBM IC76559: BFGDB0003E EXCEPTION OCCURS WHEN RUNNING WMQ FTE 7.0.3 DATABASE LOGGER AGAINST DB2 ON Z/OS - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere MQ File Transfer Edition V7.0 Fix Pack 7.0.4.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24031482]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  BFGDB0003E exception is seen when running the WMQ FTE database
+   logger against DB2 z/OS when using DB2 Connect:
+   
+   BFGDB0003E: A problem occurred with the database. The database
+   driver reported the following details: SQL State &#65517;42704&#65529;, Error
+   Code &#65517;-204&#65529;,
+   Message &#65517;DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704,
+   SQLERRMC=FTELOG.CALL, DRIVER=3.61.75&#65529;
+   &#65517;com.ibm.wmqfte.databaselogger.exceptions.DataStoreException&#65529;
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When the IBM WebSphere MQ File Transfer Edition standalone
+   database logger uses DB2 Connect to connect to DB2 on z/OS, the
+   currentSchema is not flown to the DB2 server due to a limitation
+   of DB2 Connect when WebSphere MQ Server is used as the
+   transaction coordinator.
+   
+   USERS AFFECTED:
+   All users of the standalone database logger connecting to DB2 on
+   z/OS.
+   
+   PLATFORMS AFFECTED:
+   All except z/OS
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been modified to flow the currentSchema setting on
+   each transaction when the database logger is running on a
+   non z/OS platform and the database being used is DB2 z/OS.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC76559
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ FILE TRANSF
+   
+   
+ * REPORTED COMPONENT ID
+   5724R1000
+   
+   
+ * REPORTED RELEASE
+   703
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-23
+   
+   
+ * CLOSED DATE
+   2011-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ FILE TRANSF
+   
+   
+ * FIXED COMPONENT ID
+   5724R1000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R703 PSY
+   UP
+   
+   
+ * R704 PSY
+   UP

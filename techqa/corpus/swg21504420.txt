@@ -1,0 +1,25 @@
+Title: IBM Installing posteifmsg - United States
+
+Text:
+posteifmsg; omnibus; install; postemsg; postzmsg TECHNOTE (FAQ)
+
+QUESTION
+ I would like to replace my TEC 3.9 executables postemsg and postzmsg with Omnibus 7posteifmsg. How can I install posteifmsg on my systems? 
+
+ANSWER
+The Event Integration Facility (EIF) SDK package is available on Passport Advantage. To install, you simply unzip or untar the file into a new directory on any server. The full event integration facility install is not needed on each system where you are running posteifmsg. Once you have unzipped or untared the event integration facility on one system, you can copy the posteifmsg executables from <install dir>\bin\<interp type>\posteifmsg to other servers for the relevant platform.. There is also a sample eif.conf configuration file under <install dir>\misc\eif.conf that can be configured with the ServerLocation and ServerPort of the EIF probe. If you already have a configuration file for the postemsg and postzmsg executables, you should be able to use the existing one if using the same EIF probe.. 
+
+ 
+
+Here's more information on the files included with the Event Integration Facility for Omnibus 8.1, and the available platforms. 
+
+ 
+http://www-01.ibm.com/support/knowledgecenter/SSSHTQ_8.1.0/com.ibm.netcool_OMNIbus.doc_8.1.0/omnibus/wip/eifsdk/reference/omn_eif_eifreference.html [http://www-01.ibm.com/support/knowledgecenter/SSSHTQ_8.1.0/com.ibm.netcool_OMNIbus.doc_8.1.0/omnibus/wip/eifsdk/reference/omn_eif_eifreference.html] 
+
+ 
+
+And here are examples on how to run posteifmsg to send events to the Tivoli EIF Probe: 
+
+ 
+
+http://www-01.ibm.com/support/knowledgecenter/SSSHTQ_8.1.0/com.ibm.netcool_OMNIbus.doc_8.1.0/omnibus/wip/eifsdk/reference/omn_eif_posteifmsg.html [http://www-01.ibm.com/support/knowledgecenter/SSSHTQ_8.1.0/com.ibm.netcool_OMNIbus.doc_8.1.0/omnibus/wip/eifsdk/reference/omn_eif_posteifmsg.html]

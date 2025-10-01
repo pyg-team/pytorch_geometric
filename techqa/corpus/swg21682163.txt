@@ -1,0 +1,46 @@
+Title: IBM Downloading and installing the Tomcat Apache server in preparation for ITCAM monitoring. - United States
+
+Text:
+CAMADALL Tomcat Apache download install start up monitor tema TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ Downloading and installing the Tomcat Apache server in preparation for ITCAM monitoring. 
+
+ANSWER
+So you want to download, install and monitor the Apache Tomcat server on your Windows system but don't quite know where to start? 
+
+Well, start here...
+
+A. How to download the Apache Tomcat Server:
+v5.5 is here: https://archive.apache.org/dist/tomcat/tomcat-5/v5.5.26/bin/ [https://archive.apache.org/dist/tomcat/tomcat-5/v5.5.26/bin/]
+v6.0, v7.0, v8.0 is here: http://tomcat.apache.org/whichversion.html [http://tomcat.apache.org/whichversion.html]- 
+- click on the version on the left and download the zip file to your C:\temp directory
+(Note: We don't support the actual Apache Tomcat server itself. For help with that, consult one of the many online forums.)
+
+B. How to install the Apache Tomcat Server:
+Installing is super easy, there's no GUI to run, there's no silent install, nothing.. Simply extract the zip file to your C:\Program Files(x86)\ dir. (Or any dir you want.) See my example here.. extracted to C:\Program Files(x86) directory. You will find a sub-directory under this directory called apache-tomcat-5.5.26 (or whatever version you install.)
+
+[/support/docview.wss?uid=swg21682163&aid=1] [/support/docview.wss?uid=swg21682163&aid=1]
+
+C. How to stop / start up the Apache Tomcat Server:
+In this example, am using Apache Tomcat v7.0.55. 
+Set the JRE_HOME and check your java version. Then run the startup.bat script which will start the Tomcat Server.
+[/support/docview.wss?uid=swg21682163&aid=2] [/support/docview.wss?uid=swg21682163&aid=2]
+(To stop the Apache Tomcat Server, simply run the shutdown.bat script from the same bin dir.)
+
+D. How to login to the Apache Tomcat server admin console:
+Bring up your browser, and simply point to your server on port 8080 (default) like this:
+http://<hostname_or_IP>:8080
+
+E. How to monitor Apache Tomcat server:
+- download and install the latest version of ITCAM for J2EE v7.1.1.x
+- configured the ITCAM agent and DC
+- restart your Server, login to your TEPS and observe data
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for J2EE

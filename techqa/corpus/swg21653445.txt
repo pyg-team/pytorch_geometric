@@ -1,0 +1,50 @@
+Title: IBM Memory management - United States
+
+Text:
+Java Virtual Machine compiler crash dump thread TECHNOTE (FAQ)
+
+QUESTION
+ How does InfoSphere MDM manage memory, what are the key memory parameters, and where can I set them? 
+
+CAUSE
+MDM is composed of a number of distinct components with inter-dependencies which interact with each other to get a unit of work done. These components perform at varying speeds with some being slower than others e.g. file I/O being slow while in memory computation is fast, or database processing is slow compared to network. To eliminate performance bottlenecks which may arise due to differences in components, we use buffer cache/RAM i.e. keep information in these buffer cache and prevent the need for extracting it again from different components. These buffer caches are what is known as memory and it is generally the fastest constituents of a system as well as one of the most expensive ones. Therefore to ensure optimum performance we must ensure that as much work is done in memory as possible but cost consideration means it should never be wasted either.
+
+Physical memory or RAM is divided into two types: native heap and Java heap. Java applications like MDM run in the virtual environment of the Java run time and utilizes Java heap memory. The run time itself is a native program written in a language (such as C) and the memory available to it is native memory. Every virtual resource, including the Java heap and Java threads, is stored in native memory, along with the data used by the virtual machine as it runs. Therefore both these types of memory are equally important and should be set appropriately for optimal performance.
+
+In 32 bit machines, there is a limit on how much memory can be allocated and that is set at 4 GB per JVM. As a result the recommended maximum heap size is 1.5 GB for 32 bit JVM but there is no such restriction in 64 bit machines.
+
+ANSWER
+All enterprise Java applications run as a JVM (Java Virtual Machine) which is akin to an operating system on its own and it is this additional layer of abstraction which gives Java the ability to be platform independent. But this also means that the JVMs do not relinquish memory slots once they have been allocated until the engine is shut down, even if it is no longer in active use. MDM engine process starts off with a specific Java heap memory allocation and will continue to expand its memory footprint as it needs more memory. This allocated memory will continue to grow (if needed) till the maximum allowed limit is reached. If the JVM requests more memory than is specified by the maximum limit, the engine JVM will quit with a java.lang.OutOfMemoryError. 
+
+In all releases prior to version 11, the memory settings were configured in the $MAD_HOMEDIR/inst/mpinet_<Instance_Name>/conf/wrapper.conf file. On start-up, the engine JVM would load the parameters in the wrapper.conf file as runtime environment variables and the JVM execution will be in accordance with them. Therefore we can control how memory is used up by tuning this file. Some of the common memory related parameters are: 
+
+ - wrapper.java.initmemory : The initial amount of memory in megabytes that the JVM should allocate at startup.
+- wrapper.java.maxmemory : The maximum amount of memory in megabytes that the JVM will be allowed to use.
+- wrapper.java.maxmemory.percent : This limits the maximum memory as a percentage of total physical memory available on the system. This property accepts a percentage value between 1 and 100 which will translate into a size in MBs.
+- wrapper.java.initmemory.percent : This limits the initial memory as a percentage of total physical memory available on the system. This property accepts a percentage value between 1 and 100 which will translate into a size in MBs.
+- wrapper.java.additional.<n> : This contains additional Java parameters to pass to the JVM when it is launched. Here n starts from 1 and increases as needed e.g. wrapper.java.additional.1, wrapper.java.additional.2, and so on. You may use this to specify JVM arguments like the following:
+1. -Xss argument which sets the thread stack size where the thread stores its local execution state. Thread stacks are memory areas allocated for each Java thread for their internal use.
+2. Xmso<size> argument which sets the default stack size for Operating System threads.
+... And so on
+- wrapper.java.command : The command to use when launching a JVM e.g. $JAVA_HOME/bin/java.
+
+From version 11 onwards, memory is managed by Websphere Application Server (WAS) and it can be monitored through Websphere Admin Console. WAS has automated garbage collection to reclaim unused memory and to prevent memory leaks. 
+
+The heap's size can also be controlled from the Java command line using the -Xmx and -Xms options (mx is the maximum size of the heap, ms is the initial size). If we wish to do so from the console user interface, we can specify parameters like maximum and initial heap size at the following screen: Servers > Application servers > "Application Name" > Java and Process Management > Process Definition > Java Virtual Machine. 
+
+We can enable verbose garbage collection (GC) logs in WAS in the same console screen as well. This is often useful in monitoring the usage of JVM memory via the native_stdout.log or native_stderr.log files.
+
+We also have the ability to dynamically modify the number of entries which are cached in memory in screen: Servers > Application servers > "Application Name" > Container Services > Dynamic Cache Service > Cache size. The administrator should consider increasing the cached objects to improve performance or decrease that number if they encounter OutOfMemory exceptions or high memory usage patterns.
+
+Finally for any JVM, we have the ability to generate a javacore (using "kill -9 pid" command) or a heapdump (using "kill -3 pid") command) where pid is the process id. These files will give us detailed snapshot of what the JVM was engaged in at any particular moment in time.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ MDS
+Master Data Service
+MDM
+Master Data Management
+IBM Infosphere Master Data Service
+MDM Advanced Edition
+MDM Hybrid Edition

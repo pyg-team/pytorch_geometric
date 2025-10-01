@@ -1,0 +1,173 @@
+Title: IBM IC74252: ENABLE SUPPORT FOR ASSUREDONCEDELIVERY ON JDEDWARDS INPUT NODE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR enables support for the AssuredOnceDelivery property
+   on the JDEdwards Input node.
+   
+   The JDEdwards event store is used to support assured once
+   delivery of real-time events. It is a persistent cache where
+   events are saved until the message flow can process them. In the
+   event of a broker crash the stored event will be re-delivered to
+   the message flow.
+   
+   Previously a customer trying to use AssuredOnceDelivery would
+   see a BIP3411E error message:
+   
+   BIP3411E: An attempt to set the property ''AssuredOnceDelivery''
+   on adapter component ''AssuredDeliveryMSApp.IBM WebSphere
+   Adapter for JD Edwards EnterpriseOne'' failed because the
+   property is not supported.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of WebSphere Message Broker v7 who want to use the
+   JDEdwards Input node and AssuredOnceDelivery.
+   
+   Platforms Affected:
+   All Platforms
+   ****************************************************************
+   PROBLEM SUMMARY:
+   This APAR enables support for the AssuredOnceDelivery property
+   on the JDEdwards Input node.
+   
+   The JDEdwards event store is used to support assured once
+   delivery of real-time events. It is a persistent cache where
+   events are saved until the message flow can process them. In the
+   event of a broker crash the stored event will be re-delivered to
+   the message flow.
+   
+   Previously a customer trying to use AssuredOnceDelivery would
+   see a BIP3411E error message:
+   
+   BIP3411E: An attempt to set the property ''AssuredOnceDelivery''
+   on adapter component ''AssuredDeliveryMSApp.IBM WebSphere
+   Adapter for JD Edwards EnterpriseOne'' failed because the
+   property is not supported.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere Message Broker has been modified to enable the
+   AssuredOnceDelivery option on the JDEdwards Input node.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   V7.0 - Maintenance Level 7.0.0.3
+   
+   The latest available maintenance can be obtained from
+   'WebSphere Message Broker Recommended Fixes'
+   http://www.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere Message
+   Broker Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC74252
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB MESSAGE BRO
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0510
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-02
+   
+   
+ * CLOSED DATE
+   2011-07-26
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB MESSAGE BRO
+   
+   
+ * FIXED COMPONENT ID
+   5724J0510
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

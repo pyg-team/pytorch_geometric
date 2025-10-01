@@ -1,0 +1,115 @@
+Title: IBM Understanding Home Sametime Server fields - United States
+
+Text:
+home sametime server TECHNOTE (FAQ)
+
+QUESTION
+What is the purpose of the Home Sametime Server field? How do you use it?
+
+ANSWER
+br><br>] 
+
+Purpose of Home Sametime Server fields 
+Usage 1: Access to user's contact list and personal preferences 
+
+A Sametime Community is a group of Sametime servers that are able to communicate presence and awareness among each other. A community can consist of stand-alone Sametime Community Servers, Clustered Community Servers, and stand-alone Meeting Servers. All the Sametime Servers in a Sametime Community should be pointing to the same authentication source, so in general a user would be able to log in to any server. This setup poses a problem because a user's personal preferences and contact list will not be stored on every server in a community. (Note: The install files and code base are the same for stand-alone Sametime Community Servers, Clustered Community Servers, and stand-alone Meeting Servers. The difference is in the configuration and functionality for which they are used.) 
+
+The Home Sametime Server Field is used to make sure that users log in to a specific Sametime Server or cluster in a Sametime Community. If you log in to another server, your community connection will be redirected to your Home Sametime Server. 
+
+Example 
+Sametime Community has 2 servers: 
+SERVER1: 
+- Domino Name: CN=ST01/O=Example 
+- DNS Name: st01.example.com 
+
+SERVER2: 
+- Domino Name: CN=ST02/O=Example 
+- DNS Name: st02.example.com 
+
+Scenario 1: If John Smith's Home Sametime Server field is blank, he could point his Sametime Connect client to either st01.example.com or st02.example.com and log in. However, he will get a different buddy list depending on which server he connects to. 
+
+Scenario 2: If John Smith's Home Sametime Server field is pointing to CN=ST01/O=Example, he will always get the contact list that is stored on ST01, even if he points his client to st02.example.com 
+
+Keep in mind, though, that the network connection from the client will still be to the original server that John Smith had pointed his client to. So in Scenario 2, a netstat on John Smith's workstation will show a network connection between his workstation and st02.example.com. There will not be a network connection between his workstation and st01.example.com. When ST02 receives the connection from John Smith and recognizes that the Home Sametime Server field is pointing to ST01, ST02 will work similarly to a Standalone MUX forwarding the community connection to ST01. 
+
+
+Usage 2: Preventing multiple server login disconnections 
+
+Another important use of Home Sametime Server fields is to prevent users from receiving errors for logging into multiple servers. By default, a user is allowed to login to one Sametime Server or one Community Cluster. If a user attempts to log in to multiple servers or clusters, then the user will be disconnected. Populating the user's Home Sametime Server field prevents that disconnection. 
+
+This behavior is extremely useful when there is a dedicated Meeting Server or multiple community clusters in the Sametime Community. 
+
+Example 
+Sametime Community has 2 servers: 
+SERVER1: 
+- Domino Name: CN=STIM/O=Example 
+- DNS Name: stim.example.com 
+- STIM is a dedicated instant messaging server 
+
+SERVER2: 
+- Domino Name: CN=STMTG/O=Example 
+- DNS Name: stmtg.example.com 
+- STMTG is a dedicated meeting server 
+
+Scenario 1: If John Smith's Home Sametime Server field is blank and he is logged in to STIM with a Sametime Connect client, he will be disconnected when he attempts to join a meeting on STMTG because he has logged into two different servers. 
+
+Scenario 2: If John Smith's Home Sametime Server field is pointing to CN=STIM/O=Example, when he joins a meeting on STMTG, the community connection will be redirected to STIM and he will not be disconnected. 
+
+
+Usage 3: Locking out users 
+
+After a user is authenticated, all Sametime Servers will check for the user's Home Sametime Server field and forward the user's connection if needed. The Sametime Servers do not check if the Home Sametime Server field is valid. If a user's Home Sametime Server field is not entered correctly, the user will not be able to log in to Sametime because the Sametime Server will fail when it tries to forward the connection. 
+
+Example 
+There is one server in the Sametime Community: 
+- Domino Name: CN=STIM/O=Example 
+- DNS Name: stim.example.com 
+
+Scenario 1: If John Smith's Home Sametime Server field is set to STIM/Example, John Smith will not be able to login. The Sametime Server only recognizes the FULL Domino name or a Cluster Name. 
+
+Scenario 2: If John Smith's Home Sametime Server field is set to stim.example.com, John Smith will not be able to login. The Sametime Server only recognizes the FULL Domino name or a Cluster Name. 
+
+Scenario 3: If John Smith's Home Sametime Server field is set to CN=STIM/O=Example, then John Smith will be able to login.. 
+
+This knowledge can be leveraged to prevent users from logging in. Simply set a user's Home Sametime Server field to an invalid value, and the user will not be able login. Of course there must be security in place to prevent users from modifying the Home Sametime Server field for this to be effective. 
+
+
+
+Good practices  1. If there is only one server in the community and all users are able to access the server, leave the Home Sametime Server field blank. 
+ 2. If the Home Sametime Server field is needed, always make sure to populate it with the Full Domino Name or the Cluster Name. 
+
+
+
+Populating the Home Sametime Server field 
+Domino Authentication: 
+
+If using Domino Authentication, the Home Sametime Server field is located in a user's Person Document. 
+
+Person document -> Basics tab -> Real - Time Collaboration section 
+It is best to use the Address Book Chooser to select the value from the address book to ensure that the field is set correctly. If typing in the value, make sure to type in the Full Domino Name (example: CN=STIM/O=Example) or the correct cluster name.
+
+When you look at the field, however, the name will appear as the abbreviated Domino name (example: STIM/Example). This is expected behavior and due to the fact that the field is a special Domino field type called a Names field.
+
+
+Domino LDAP:
+
+The Home Sametime Server field is stored in the SametimeServer attribute in Domino LDAP. By Default, a Domino LDAP Server will not return the Home Sametime Server field for an anonymous bind. If using Domino LDAP, make sure to use an authenticated connection or to add the SametimeServer attribute to the list of attributes that can be searched anonymously in the Default Configuration Document.
+
+Because the "Real - Time Collaboration" field is a Names Field, Domino LDAP will convert forward slashes to commas, which can cause problems. For example, a user's Real - Time Collaboration field is set to "CN=STIM/O=Example", Domino LDAP will return the SametimeServer attribute as "CN=STIM,O=Example". This will cause the Sametime Server to not recognize the Home Sametime Server field. 
+
+To avoid this problem, you can either 
+
+ * use a Java Customized LDAP Attributes to convert the comma to a forward slash (/) 
+ * edit the design of the Domino Directory so that the Real - Time Collaboration field is a normal Text field and not a Names field.
+
+
+Also, make sure to set the Home Sametime Server field attribute in the LDAP Server document in stconfig.nsf to SametimeServer. 
+
+
+Third Party LDAP: 
+
+A separate LDAP Attribute must be dedicated for use as the Home Sametime Server field. If possible it is recommended to extend the LDAP schema and add an attribute called SametimeServer; however this is not required. 
+
+Any text attribute can be used. For example, if the LDAP schema contains an attribute called "TelephoneNumber" that is not being used, it can technically be used to populate the Home Sametime Server value. 
+
+Just make sure to specify the name of the attribute being used as the Home Sametime Server Attribute in the STConfig.nsf's LDAP Server document and to populate the attribute with the correct value.

@@ -1,0 +1,38 @@
+Title: IBM How can I view detailed statistics one page at a time? (SCI86256) - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ How can I view detailed statistics one page at a time? (SCI86256) 
+
+ANSWER
+
+
+This can be achieved with a simple script, similar to the following:
+
+
+NDMAPICFG=/path/to/ndm/cfg/cliapi/ndmapi.cfg
+export NDMAPICFG
+/path/to/ndm/bin/direct << EOJ > statlog<BR>sel stat pnum=$1 detail=yes;<BR>quit;<BR>EOJ<BR>more statlog<BR>rm statlog
+
+ 
+
+HISTORICAL NUMBER
+ PRI18446 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Connect:Direct UNIX
+all releases 
+SCI86256
+
+
+Goal
+
+
+FAQ: How can I view detailed statistics one page at a time?

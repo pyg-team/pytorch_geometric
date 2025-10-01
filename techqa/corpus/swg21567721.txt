@@ -1,0 +1,50 @@
+Title: IBM Lotus Quickr: How to delete/clear server & client cached info? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+Lotus Quickr: How to delete/clear server & client cached info?
+
+ANSWER
+ 
+
+In many cases, specially when upgrading/migrating the Quickr server, its important to delete any cached info stored, so that the no conflicts/errors happen when connecting to the server... 
+
+ 
+
+Here is how to perform this: 
+
+ 
+
+Domino/Quickr Server side: 
+
+======================== 
+
+Clear/delete the files in the following folders:
+- Lotus\Domino\data\domino\quickplace\cache 
+- Lotus\Domino\data\domino\cache 
+
+ 
+
+Client side: 
+
+==========
+A) In case of using MS Internet Explorer:
+1- Make sure to delete all offline contents/files: 
+Internet Options -> General -> Delete Files -> Delete all offline contents -> Ok
+
+2- Make sure to delete all Java classes (only for Quickr 8.1.x/8.2.x):
+Internet Options -> General -> Settings -> View Objects -> select all objects and delete them
+
+B) In case of FireFox:
+1- From FireFox menu: select Tools -> Clear Recent History.
+2- Select the first five check boxes which relate to FF and not to any plug-ins.
+3- Click OK then restart FireFox
+
+
+
+
+
+ * 
+ *

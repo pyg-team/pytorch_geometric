@@ -1,0 +1,25 @@
+Title: IBM How do I configure a static fairshare user priority? - United States
+
+Text:
+Fairshare configuration TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do I configure a static fairshare user priority? 
+
+RESOLVING THE PROBLEM
+How do I configure a static fairshare user priority?Static priority fairshare assigns resources to the user with the most shares.
+Resource usage is ignored.
+
+To configure static priority fairshare, edit lsb.params and set all the weighting factors used in the dynamic priority formula to zero.
+
+Set CPU_TIME_FACTOR to 0
+Set RUN_TIME_FACTOR to 0
+Set RUN_JOB_FACTOR to 0
+Set COMMITTED_RUN_TIME_FACTOR to 0
+
+For ways of configure fairshare, please refer "Administering Platform LSF " section Scheduling Policies->Fairshare Scheduling->Ways to Configure Fairshare.
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

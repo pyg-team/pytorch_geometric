@@ -1,0 +1,22 @@
+Title: IBM IWR report problems- Slow performance or report failing. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IWR performance is erratic. 
+
+Reports that take less than a minute to run will suddenly take 20 minutes or hang but later run without problem. Scheduled reports fail but will run fine manually. As well, some impserver processes hang but do not disappear even after the report has been run or cancelled. 
+
+RESOLVING THE PROBLEM
+These consistency issues were resolved by changing two NT parameters:
+
+1. Network Neighborhood Properties -> Services -> Server Properties -> Optimization : Set this to "Balance" (it was previously at the default setting "Maximize Throughput for File Sharing").
+
+2. My Computer Properties -> Performance -> Virtual Memory : specify disk space only on one drive (in this case the C drive; it was previously set to use both the C and D drives).
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Series 7 Impromptu Business Analytics Cognos Series 7 Impromptu Web Reports Business Analytics Cognos Series 7 Upfront 
+HISTORICAL NUMBER
+ 104832

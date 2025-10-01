@@ -1,0 +1,141 @@
+Title: IBM IV86393: ISIM CONSOLE SSO LOGOUT PAGE DOES NOT FUNCTION PROPERLY AND GOES IN LOOP WHEN SESSION TIMEOUT. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When we configures webseal's inactive timeout longer than WAS's
+   one(ISIM Console), when session timeouts SSO logout page does
+   not function properly.
+   
+   Steps to Duplicate:
+   1. Configure ISIM with SSO.
+   2. Configure inactive-timout of WebSEAL 10 min.
+   3. Configure ISIM Console timeout to 2 min.
+   4. Access to /isim/console via WebSEAL.
+   5. Wait for 2 minutes (over default WAS inactive timeout) and
+   Click any link on isim console window.
+   6. Try to click on login button on sso logout page.
+   
+   Desired behavior:
+   ISIM should function properly when Login button is clicked on
+   SSO logout page.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1. set enrole.ui.timeoutURL=/itim/console/main in
+   ISIM_HOME/data/ui.properties file
+   2. Restart application
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  See main problem description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   delivery vehicle:
+   | Fix Pack | 6.0.0-ISS-SIM-FP0018
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV86393
+   
+   
+ * REPORTED COMPONENT NAME
+   SEC IDENTITY MG
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3406
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-30
+   
+   
+ * CLOSED DATE
+   2017-07-28
+   
+   
+ * LAST MODIFIED DATE
+   2017-07-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IV98018 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV98018]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SEC IDENTITY MG
+   
+   
+ * FIXED COMPONENT ID
+   5724C3406
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

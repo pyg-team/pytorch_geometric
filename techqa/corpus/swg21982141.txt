@@ -1,0 +1,44 @@
+Title: IBM Content Collector install fails - United States
+
+Text:
+1722 1603 icc TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Install of IBM Content Collector (ICC) fails with the following error.
+
+
+
+ICC install helpers: File: P84xConnectorSetup.msi, EXITCODE:1603 
+
+CAUSE
+One possible reason could be during the initial installation of the product there might be an issue and you reinstalled the product without cleaning up of existing installation.
+
+ENVIRONMENT
+ICC 4.0.1 on Windows
+
+DIAGNOSING THE PROBLEM
+The MSI log for the corresponding connector failure has the following error.
+
+CustomAction _A0350786_DC99_4D61_A323_8B11C8631A29 returned actual error code -1 (note this may not be 100% accurate if translation happened inside sandbox)
+MSI (s) (B4:D0) [10:06:44:895]: Product: P84x Connector -- Error 1722. There is a problem with this Windows Installer package. A program run as part of the setup did not finish as expected. Contact your support personnel or package vendor. Action _A0350786_DC99_4D61_A323_8B11C8631A29, location: D:\Program Files (x86)\IBM\ContentCollector\ctms\P84xConnectorService.exe, command: -r 
+
+
+RESOLVING THE PROBLEM
+
+
+
+
+
+ 1. Reboot the server and stop the ICC services from Windows Services. 
+ 2. Unintall ICC from Start --> Programs -->IBM Content Collector by following below knowledge center link.http://www.ibm.com/support/knowledgecenter/SSAE9L_4.0.0/com.ibm.content.collector.doc/installing/t_afu_uninstalling_icc.htm [http://www.ibm.com/support/knowledgecenter/SSAE9L_4.0.0/com.ibm.content.collector.doc/installing/t_afu_uninstalling_icc.htm] 
+ 3. Verify ICC services are removed from Windows Services. If any service is not removed, delete the service manually. 
+ 4. Manually delete the service.
+    sc query state= all --> To find the services.
+    sc delete <service name> 
+ 5. Remove the following registry keys, if they exist.
+    
+    HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IBM\Content Collector
+    
+    HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IBM\EMRC 
+ 6. Reboot the server 
+ 7. Install again.

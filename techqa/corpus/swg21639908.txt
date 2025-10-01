@@ -1,0 +1,18 @@
+Title: IBM The Trace Parameters menu item is missing from a Content Manager OnDemand server in the V9.5 and V9.0 administrative clients - United States
+
+Text:
+Trace Parameters; tracing; turning on trace TECHNOTE (FAQ)
+
+QUESTION
+ Why is the Trace Parameters menu item missing from a Content Manager OnDemand server in the V9.5 and V9.0 administrative clients? 
+
+CAUSE
+When a V9.5 or V9.0 Content Manager OnDemand Administrative client is logged on to a V8.5 OnDemand server, the list of menu options that appear when right-clicking on the server does not contain the Trace Parameters option.
+
+ANSWER
+Trace parameters are specified differently with the V9.5 and V9.0 CMOD Administrative client. Instead of selecting components from a list and selecting trace levels by checking boxes, the trace parameters are specified as a string of options in an editable field. Because the interface is different between the two releases, trace parameters can only be specified if the server is at V9.0 or higher. 
+
+If trace parameters need to be specified for a V8.5 server, tracing can be turned on without using the administrative client. Enable and configure server trace in the trace settings file referenced by the ARS_TRACE_SETTINGS parameter in the ars.cfg file.
+
+RELATED INFORMATION
+ How to enable trace in CM [http://www.ibm.com/support/docview.wss?uid=swg21330810]

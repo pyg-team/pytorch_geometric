@@ -1,0 +1,71 @@
+Title: IBM CICS IA IVP job CIUIVPLD fails with CIU6008E SQLCODE -805 - United States
+
+Text:
+CIUU050 CIUIVPLD CIUUBND ; RC 8 ; 08 ; SQL return code is -805 ; -551 PACKADM BINDADD SECTION = B-INIT-1 ; 5655U8600 5655U8601 R310 R31E R31K 5655-U86 5655U86 FMID H274310 J27431E J27431K ; R320 R32E R32K FMID H274320 J27432E J27432K TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are running the CICS Interdependency Analyzer for z/OS (CICS IA) installation verification (IVP) job CIUIVPLD. STEP040 ends with return code 8 (RC8) due to program CIUU055 receiving an SQLCODE -805 . You receive several error messages including CIU6008E, CIU6024E, DSNT570I, and DSNT408I. 
+
+SYMPTOM
+Following are the messages that you receive when STEP040 of CIUIVPLD ends with RC8 for program CIUU055:
+
+CIU6008E [http://pic.dhe.ibm.com/infocenter/cicsts/v4r1/topic/com.ibm.cics.ia.doc/CIU6008E.html]SQL error: CIUU055 FUNCTION SELECT SQL RETURN CODE -805 [http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/topic/com.ibm.db2z10.doc.codes/src/tpc/n805.htm]
+SECTION Y04-CHECK-FO ?????????????????????????
+CIU6024E [http://pic.dhe.ibm.com/infocenter/cicsts/v4r1/topic/com.ibm.cics.ia.doc/CIU6024E.html]SQLERRMC : xxxx..CIUU055.1908AB351608A816ÿCIUBTCHÿ03?????????????????????????
+
+DSNT570I WARNING: THIS APPLICATION HAS SELECTED DSNTIAR TO PERFORM SQL
+MESSAGE FORMATTING BECAUSE THE GET DIAGNOSTICS SERVICE RETURNED
+AN UNEXPECTED SQLCODE WHILE FORMATTING MESSAGES FOR ONE OR MORE
+SQL WARNING OR ERROR CONDITIONS. A DUMP OF THE SQLCA FOR THE GET
+DIAGNOSTICS REQUEST FOLLOWS:
+SQLCODE : -805 SQLSTATE: 51002 SQLERRP : DSNXEPM
+SQLERRMC: DTA2..DSNTIAUL.18D380D7120AA7F2ÿDSNTIB91ÿ03
+SQLERRD1: -251 SQLERRD2: 0 SQLERRD3: 0
+SQLERRD4: -1 SQLERRD5: 0 SQLERRD6: 0
+SQLWARN0: 1: 2: 3: 4: 5: 6: 7: 8: 9: A:
+DSNT408 [http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/topic/com.ibm.db2z10.doc.msgs/src/tpc/dsnt408i.htm]I SQLCODE = -805, ERROR: DBRM OR PACKAGE NAME xxxx..DSNTIAUL.18D380D7120AA7F2 NOT FOUND IN PLAN DSNTIB91. REASON03
+DSNT418I SQLSTATE = 51002 SQLSTATE RETURN CODE
+DSNT415I SQLERRP = DSNXEPM SQL PROCEDURE DETECTING ERROR
+DSNT416I SQLERRD = -251 0 0 -1 0 0 SQL DIAGNOSTIC INFORMATION
+DSNT416I SQLERRD = X'FFFFFF05' X'00000000' X'00000000' X'FFFFFFFF' X'00000000' X'00000000' SQL DIAGNOSTICINFORMATION
+
+
+CAUSE
+The userid associated with the CIUDBNB BIND job had insufficient authority. 
+
+ENVIRONMENT
+DB2 V9; DB2 V10; CICS IA V3.1; CICS IA V3.2;
+
+DIAGNOSING THE PROBLEM
+The DB2 DSNT408I message for the -805 has a reason code 03 indicating the plan is not bound. 
+
+The -805 is indicating a problem with the plan. Reviewing the CIUDBNB BIND job revealed the following BIND errors in the BIND1 jobstep resulting in RC8:
+
+BIND PACKAGE (CPS4) MEMBER (CIUU055) OWNER (xxxx) 
+QUALIFIER (xxxx) LIBRARY ('CICSIA32.SCIUDBRM') SQLERROR (NOPACKAGE) VALIDATE (BIND) ISOLATION (CS) EXPLAIN (NO) ACTION (REPLACE)
+DSNX200I - BIND SQL ERROR
+USING DTA2 AUTHORITY
+PLAN=(NOT APPLICABLE)
+DBRM=CIUU055
+STATEMENT=781
+SQLCODE=-551 [http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/topic/com.ibm.db2z10.doc.codes/src/tpc/n551.htm]
+SQLSTATE=42501
+TOKENS=xxxxÿSELECTÿxxxx.CIU_CICS_DATA
+CSECT NAME=DSNXOSC
+RDS CODE=-100
+
+The -551 is an authorization error.
+
+RESOLVING THE PROBLEM
+Review the CICS IA DB2 sample jobs with your DB2 DBA prior to running the CICS IA configuration clist to ensure all the required DB2 authorization to create databases and bind packages and programs has been established.
+
+In this instance, the userid associated with the CIUDBNB BIND job needed to have PACKADM [http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/topic/com.ibm.db2z10.doc.seca/src/tpc/db2z_packadmauthority.htm] for CREATE IN and BINDADD [http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/topic/com.ibm.db2z10.doc.seca/src/tpc/db2z_grantprivilege2plan.htm] authorization.
+
+RELATED INFORMATION
+#DB2 Considerations [http://pic.dhe.ibm.com/infocenter/cicsts/v4r1/topic/com.ibm.cics.ia.doc/ciuug3b.html]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS IA CICS/IA

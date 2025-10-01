@@ -1,0 +1,218 @@
+Title: IBM PM28867: ITCAM FOR AD V7.1.0.1 DC (ON WAS PORTAL SERVER) DOES NOT SUCCESSFULLY CONNECT TO TT COLLECTOR (V7.2) OUT OF THE BOX - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.2-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP2 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24029067]
+7.1.0.2-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP2 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24030518]
+7.1.0.2-TIV-ITCAMAD-IF0006: ITCAM for Application Diagnostics V7.1 FP2 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24031010]
+7.1.0.2-TIV-ITCAMAD-IF0007: ITCAM for Application Diagnostics V7.1 FP2 IF7 [http://www-01.ibm.com/support/docview.wss?uid=swg24031710]
+7.1.0.2-TIV-ITCAMAD-IF0010: ITCAM for Application Diagnostics V7.1 FP2 IF10 [http://www-01.ibm.com/support/docview.wss?uid=swg24032110]
+7.1.0-TIV-ITCAMAD-FP0003: ITCAM for Application Diagnostics V7.1 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032604]
+7.1.0.3-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP3 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032985]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment
+   ===========
+   WebSphere Portal Server v6.1 (Solaris 10)
+   ITCAM for AD DC & TEMA v7.1.0.1
+   ITCAM for TT Collector v7.2
+   
+   
+   Problem Description
+   ===================
+   ITCAM for AD v7.1.0.1 DC (on Portal Server) does not connect to
+   TT Collector (v7.2) out of the box when DC configuration has
+   been correctly set up.  To make this work we have to manually
+   set the -Djava.library.path variable to point to the DC's TTAPI
+   directory.  We would expect the path to be automatically set by
+   the DC during configuration (this issue is not seen with Process
+   Server or AppServer instances
+   
+   The following error message can be seen in the CYN logs
+   .
+   
+   <Trace Level="ERROR">
+   
+    <Time Millis="1288031965934"> 2010-10-25
+   20:39:25.934+02:00</Time>
+    <Server Format="IP">itcamad01</Server>
+    <ProductId>CYN</ProductId>
+    <Component>CYN.trc.shared.datacollector.ttapi.TTAPIUtil</Compon
+   ent>
+    <ProductInstance>19943</ProductInstance>
+    <LogText><![CDATA[TTAPI could not locate the TT JNI/C module;
+   TT
+   library not found; verify installation and confirm that platform
+   is
+   supported]]></LogText>
+    <Source FileName="com.ibm.tivoli.itcam.dc.ttapi.TTAPIUtil"
+   Method="createTTASServer()"/>
+    <Thread>ITCAM_GPE_Pooled_Thread : 2</Thread>
+    <Principal>itcamad01/11.222.33.444</Principal>
+   </Trace>
+   
+   <Trace Level="INFO">
+    <Time Millis="1288031965953"> 2010-10-25
+   20:39:25.953+02:00</Time>
+    <Server Format="IP">itcamad01</Server>
+    <ProductId>CYN</ProductId>
+    <Component>CYN.trc.shared.datacollector.ttapi.TTAPIUtil</Compon
+   ent>
+    <ProductInstance>19943</ProductInstance>
+    <LogText><![CDATA[TTAPI DC is NOT ready, TT Server could not be
+   created; see earlier messages for details]]></LogText>
+    <Source FileName="com.ibm.tivoli.itcam.dc.ttapi.TTAPIUtil"
+   Method="createTTASServer()"/>
+    <Thread>ITCAM_GPE_Pooled_Thread : 2</Thread>
+    <Principal>itcamad01/11.222.33.444</Principal>
+   </trace>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set the -Djava.library.path variable in the server.xml file
+   for the appserver instance to point to the DC's TTAPI directory.
+   e.g.
+   .
+   
+   -Djava.library.path=/websphere/admin/lib/mma:/opt/ITCAMDC/sol293
+   /yn/wasdc/7.1.0.1/toolkit/lib/sol293/ttapi
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   *
+   * ITCAM for AD users who want to send data to ITCAM for
+   * Transactions v7.2 collector.
+   *
+   ****************************************************************
+   *
+   * PROBLEM DESCRIPTION:
+   *
+   * ITCAM for AD v7.1.0.1 Data collector does not connect
+   * to TT Collector (v7.2) out of the box after the DC
+   * configuration is completed. The following error can
+   * be seen in the ITCAM trace logs:
+   *
+   * [TTAPI could not locate the TT JNI/C module;
+   *  TT library not found; verify installation and confirm
+   *  that platform is supported]
+   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix correctly loads the TTAPI native libraries if it cannot
+   find in the library path.
+   
+   The fix for this APAR is contained in the following maintenance
+   release:
+   
+     | interim fix | 7.1.0.2-TIV-ITCAMAD-IF0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM28867
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92DC
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-12-14
+   
+   
+ * CLOSED DATE
+   2011-03-18
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92DC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

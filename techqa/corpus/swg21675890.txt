@@ -1,0 +1,96 @@
+Title: IBM MustGather: di-buildindex related issues for WebSphere Commerce - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ MustGather: di-buildindex related issues for WebSphere Commerce 
+
+RESOLVING THE PROBLEM
+
+
+Gathering this MustGather information before calling IBM Support will help familiarize you with the troubleshooting process and save you time.
+
+
+ COLLECTING DATA 
+I. Configure environment Follow the instructions below to configure your environment to capture the required diagnostic information: 
+
+ 1. Edit the WC_installdir/instances/instance_name/xml/config/dataimport/buildindex-logging.properties file.  * Verify that com.ibm.commerce.level=FINEST (Feature Pack (FEP) FEP7+) or .level=FINEST (FEP 6 and earlier)
+     * java.util.logging.FileHandler.level=FINEST
+     * Verify that java.util.logging.FileHandler.limit=80000000
+     * Verify that java.util.logging.FileHandler.count=10
+    
+    
+ 2. Update the size of the trace files to 80MB and the number of historical trace files retained to 10
+ 3. Enable the following trace string on the Search indexing server: 
+    *=info: com.ibm.commerce.foundation.*=all: org.apache.*=all
+
+Configuring logging [http://pic.dhe.ibm.com/infocenter/wchelp/v7r0m0/topic/com.ibm.commerce.admin.doc/tasks/tlslogging.htm] 
+
+
+II. Reproduce the problem 
+
+ 1. Note the specific steps used to reproduce the problem and any details that may be relevant.
+ 2. Record the parameters used when running the di-buildindex script
+
+
+
+
+III. Collect data Include the general information requested in MustGather: General Issues in WebSphere Commerce [https://www-304.ibm.com/support/docview.wss?uid=swg21440709] alongside the component-specific information requested below.
+
+
+ 1. Collect the following files from the system:  * WAS_installdir/profiles/Search_profiledir/logs/search_server_name/trace.log
+     * WC_installdir/logs/wc-dataimport-buildindex.log
+     * WC_installdir/instances/instance_name/search/solr/home/solr.xml
+    
+    
+ 2. Parameters used for di-buildindex command. (example: di-buildindex.sh -masterCatalogId 10001 -dbuser db2inst1 -dbuserpwd passw0rd -instance fep7)
+ 3. 
+ 4. Run the following database queries to collect the necessary information from your database (output results in CSV format): Query Output file name SELECT * FROM SRCHCONF SRCHCONF.csv SELECT * FROM SRCHCONFEXT SRCHCONFEXT.csv 
+
+
+
+
+IV. Reviewing data Now that you have the requested data, you can do some initial analysis before sending it into IBM Support by reviewing the Getting Started section at the bottom of this page.
+
+
+ SUBMITTING DATA TO IBM SUPPORT 
+To diagnose or identify a problem, it is sometimes necessary to provide Technical Support with data and information from your system. In addition, Technical Support might also need to provide you with tools or utilities to be used in problem determination. You can submit files using one of following methods to help speed problem diagnosis:
+
+ * IBM Support Assistant (ISA)
+ * Service Request (SR)
+ * E-Mail
+ * FTP to the Enhanced Customer Data Repository (ECuRep)
+
+Exchanging information with IBM Technical Support for problem determination [http://www.ibm.com/software/support/exchangeinfo.html] 
+
+
+ GETTING STARTED 
+Now that you have collected this data, there are specific phrases that you can search for in the tracing captured to tell you more about your scenario and possible causes for the issue you are seeing. You can also ask yourself the associated questions to determine if this is the cause of the issue you are seeing:
+
+ *  Search for status is in the buildindex log to see the status of indexing for a particular core at a given time.
+   
+    * Solr server core will let you know which core this status update applies to.
+    * Time Elapsed will let you know how long this core has been indexing for.
+    * status will let you know if this core is still indexing. If the core is busy, then it is currently performing indexing. If the status is idle, then indexing has finished.
+    * Added/Updated will let you know how many Solr documents were added or updated for the search core once indexing has completed.
+   
+   
+ *  Search for DataImporter doFullImport Starting Full Import in the Search server tracing to see when indexing has started for a particular core.
+   
+    * Do all of your expected cores show that indexing has been started?
+   
+   
+ *  Search for DocBuilder finish Import completed successfully in the Search server tracing to see when indexing has completed for a particular core.
+   
+    * Do all of your expected cores eventually complete indexing?
+    * How long did it take to complete indexing? Compare the completion time against the start time to determine how long indexing took.
+   
+   
+
+
+ADDITIONAL RESOURCES
+ * di-buildindex utility [http://www.ibm.com/support/knowledgecenter/SSZLC2_7.0.0/com.ibm.commerce.admin.doc/refs/rsddibuildindex.htm]
+ * Database Tables Used for Buildindex [http://www.ibm.com/support/knowledgecenter/SSZLC2_7.0.0/com.ibm.commerce.developer.doc/concepts/csdsearchindextemptables.htm]
+ * FAQ: Commerce Search Buildindex (di-buildindex) [https://www.ibm.com/connections/blogs/wcs/entry/faq_commerce_search_buildindex_di_buildindex]
+ * Search 'n' Rescue: Buildindex Performance [https://www.ibm.com/developerworks/community/blogs/wcs/entry/Search_n_Rescue_Search_Buildindex_Performance]

@@ -1,0 +1,44 @@
+Title: IBM Error 7002 There appears to be a license for SPSS for Windows, but it is invalid. Specific Symptom # 12. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have installed IBM SPSS Statistics for Windows and when I launch SPSS I receive an error:
+
+"There appears to be a license for SPSS for Windows, but it is invalid. Specific Symptom # 12."
+
+followed by...
+
+Error # 7002
+There is no license for SPSS for Windows.
+This command not executed.
+
+Specific symptom number: 12
+
+What is the problem? 
+
+RESOLVING THE PROBLEM
+This problem is generally seen when a user does not have at least read permission to the following persistence path. Below are the full paths for XP and Vista.
+
+Windows XP:
+C:\Documents and Settings\All Users\Application Data\SafeNet Sentinel\Sentinel RMS Development Kit\System
+
+Windows 7: C:\Users\IBM_ADMIN\Documents\SafeNet Sentinel\Sentinel RMS Development Kit 
+
+Windows Vista:
+C:\ProgramData\SafeNet Sentinel\Sentinel RMS Development Kit\System 
+
+ 
+
+PLEASE NOTE: If setting the permissions suggested above fails to remedy your situation, please try granting read/write/execute permissions to the Application Data directory,
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 73872

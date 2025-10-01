@@ -1,0 +1,167 @@
+Title: IBM HD27555: SIDE EFFECT VERIFICATION FOR ALTERNATIVE API INSTEAD OF ST   PR OPOSED ONE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem description/Scenario :
+   Within some customization scripts to let client side
+   script to identifify field in profile card, We use ST
+   proposed API
+   var controls = ProfileCardObj.GetControls();
+   It takes 20 seconds to run, and it depend on how
+   many attributes in the profilecard,
+   if there are more attributes in profilecard, it runs
+   around 40 seconds at least we had met.
+   That's means, when user click a button, he need to
+   wait around 30~60 seconds, than he can do next
+   step.
+   That heavily hurts customer satisfaction of willing
+   to use ....etc.
+   From our talent developer's self study. We replace
+   original API with following one :
+   var controls = windows.document.all;
+   The performance improved times than
+   original.....from 30~60 sec to 1~2 sec.
+   But the side effect we know/foresee is that we
+   have take care each field's data type instead of
+   object type handling .....
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Side Effect Verification for Alternative API Instead of ST   Pr
+   oposed One
+   Problem description/Scenario :
+   Within some customization scripts to let client side
+   script to identifify field in profile card, We use ST
+   proposed API
+   var controls = ProfileCardObj.GetControls();
+   It takes 20 seconds to run, and it depend on how
+   many attributes in the profilecard,
+   if there are more attributes in profilecard, it runs
+   around 40 seconds at least we had met.
+   That's means, when user click a button, he need to
+   wait around 30 60 seconds, than he can do next
+   step.
+   That heavily hurts customer satisfaction of willing
+   to use ....etc.
+   From our talent developer's self study. We replace
+   original API with following one :
+   var controls = windows.document.all;
+   The performance improved times than
+   original.....from 30 60 sec to 1 2 sec.
+   But the side effect we know/foresee is that we
+   have take care each field's data type instead of
+   object type handling .....
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  THE PROBLEM WAS SUBMITTED ON :
+   SMARTEAM VERSION 5 RELEASE 13.
+   THIS PROBLEM IS NOT REPRODUCIBLE ON :
+   SMARTEAM VERSION 5 RELEASE 15 GA level AND
+   ON V5R13SP7
+   .
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD27555
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT 200
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   513
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-09-08
+   
+   
+ * CLOSED DATE
+   2004-09-26
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTEAM NT 200
+   
+   
+ * FIXED COMPONENT ID
+   569199970
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R513 PSN SP51307
+   UP04/11/05 N 1000
+   
+   
+ * R514 PSN
+   UP

@@ -1,0 +1,93 @@
+Title: IBM Poor performance when processing XML schemas with high values of maxOccurs - United States
+
+Text:
+Hang; 100% CPU; XML; xml schema; minOccurs; maxOccurs; XMLValidator; Xerces; RATLC01223144; 1296034 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM® Rational® Application Developer v7.0 may remain unresponsive with 100% CPU usage when opening XML documents. These documents are instances of XML schemas with a maxOccurs definition for an element. 
+
+SYMPTOM
+The problem can be identified by examining the following: 
+
+ * The XML schema contains an XML element definition with a high value for minOccurs or maxOccurs:
+   
+   
+   <element name="request">
+   <complexType>
+   <sequence>
+   <element name="foo" type="string" maxOccurs="250000"/>
+   </sequence>
+   </complexType>
+   </element>
+   
+   
+ * During the 100% CPU usage one job is running with the following call stack found in javacore.txt
+   
+   
+   "Worker-3" (TID:0x3CC36500, sys_thread_t:0x394A5988, state:CW, native ID:0x00000F18) prio=5
+   at org/apache/xerces/impl/dtd/models/CMStateSet.<init>(Bytecode PC:80(Compiled Code))
+   at org/apache/xerces/impl/xs/models/XSDFACM.buildDFA(Bytecode PC:102)
+   at org/apache/xerces/impl/xs/models/XSDFACM.<init>(Bytecode PC:71)
+   at org/apache/xerces/impl/xs/models/CMBuilder.createDFACM(Bytecode PC:31)
+   at org/apache/xerces/impl/xs/models/CMBuilder.getContentModel(Bytecode PC:70)
+   at org/apache/xerces/impl/xs/XSComplexTypeDecl.getContentModel(Bytecode PC:10)
+   at org/apache/xerces/impl/xs/XMLSchemaValidator.handleStartElement(Bytecode PC:1177)
+   at org/apache/xerces/impl/xs/XMLSchemaValidator.startElement(Bytecode PC:4)
+   at org/apache/xerces/impl/XMLNamespaceBinder.handleStartElement(Bytecode PC:790)
+   at org/apache/xerces/impl/XMLNamespaceBinder.startElement(Bytecode PC:12)
+   at org/apache/xerces/impl/dtd/XMLDTDValidator.startElement(Bytecode PC:24)
+   at org/apache/xerces/impl/XMLDocumentFragmentScannerImpl.scanStartElement(Bytecode:311(Compiled Code))
+   at org/apache/xerces/impl/XMLDocumentScannerImpl$ContentDispatcher.scanRootElementHook(Bytecode PC:100)
+   at org/apache/xerces/impl/XMLDocumentFragmentScannerImpl$FragmentContentDispatcher.dispatch(Bytecode PC:1017(Compiled Code))
+   at org/apache/xerces/impl/XMLDocumentFragmentScannerImpl.scanDocument(Bytecode PC:26)
+   at org/apache/xerces/parsers/DTDConfiguration.parse(Bytecode PC:62)
+   at org/apache/xerces/parsers/DTDConfiguration.parse(Bytecode PC:29)
+   at org/apache/xerces/parsers/XMLParser.parse(Bytecode PC:11)
+   at org/apache/xerces/parsers/AbstractSAXParser.parse(Bytecode PC:43)
+   at org/eclipse/wst/xml/core/internal/validation/XMLValidator.validate(XMLValidator.java:276)
+   
+
+
+CAUSE
+Rational Application Developer includes the Eclipse™ Web Standard Tools Project which provides a XMLValidator to check if a XML document is valid according to a XML schema. 
+
+
+The XML parser used in the XMLValidator is based on Xerces and is used to parse XML documents and XML schema files. 
+
+The parser has some known limitations with respect to XML schemas with large values for the attribute minOccurs and maxOccurs.
+
+
+ * The Defect 773 linked in the Related information section tracks the problem of the Poor performance when processing schemas. The Xerces project has provided a fix for Defect 773 as part of Xerces 2.9.1.
+   
+ * In addition the more general issue is described and tracked as Defect 1227: Poor performance / OutOfMemoryError. 
+   
+
+In addition to the XML parser that is part of the JRE, Rational Application Developer 7.0 ships a Xerces 2.8 packaged as an Eclipse plug-in. Most of the XML components depend on a Xerces bundle with a range of 2.8.x. They cannot therefore use updated Xerces 2.9.1. 
+RESOLVING THE PROBLEM
+Three solutions are available for this problem: 
+
+ 1. Disable the XML Validator. 
+    
+    Go to Window > Preferences, page Validation, uncheck XML Validation. 
+    You can disable the XML Validator also on project level via the Project Properties, page Validation.
+    
+    
+ 2. Use a maxOccurs="unbounded" or the corresponding minOccurs
+    
+    
+ 3. Update to Rational Application Developer 7.5 which includes a more recent version of the Xerces XML parser 2.9.1 as part of IBM JRE 6 and also in the WebTools Platform which do not show the problem.
+
+
+
+
+
+RELATED INFORMATION
+#Xerces Bug 773: Poor performance when processing schema [http://issues.apache.org/jira/browse/XERCESJ-773]
+Xerces Bug 1227: Poor performance / OutOfMemoryError fo [http://issues.apache.org/jira/browse/XERCESJ-1227]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect XML Development Linux, Windows 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4, 7.0.0.5, 7.0.0.6 All Editions

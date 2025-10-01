@@ -1,0 +1,278 @@
+Title: IBM PJ40387: PROVIDE LOCAL IPTE SUPPORT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  See Problem Summary.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  na
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  APAR NUMBER:  PJ40387
+   PRODUCT:  z/TPF
+   FUNCTIONAL AREA:  VIRTUAL STORAGE SERVICES
+   SHIPPED IN PUT:  9
+   
+   ABSTRACT:
+   Use local-TLB-clearing facility support for the local IPTE
+   instruction to improve copy-on-write performance.
+   
+   PACKAGE CONTENTS:
+   Source Segments:
+   (C) base/cp/cce4.cpy
+   (C) base/cp/cceh.cpy
+   (C) base/cp/ccnucl.asm
+   (C) base/cp/chsz.cpy
+   (C) base/cp/clhl.cpy
+   (C) base/cp/cpse.cpy
+   (C) base/cp/cth4.cpy
+   (C) base/include/tpf/i_ecb3.h
+   (C) base/macro/ieqce3.mac
+   (C) base/macro/izarch.mac
+   
+   Object Only Binaries:
+   None.
+   
+   Configuration Independent Binaries:
+   None.
+   
+   Support Files:
+   None.
+   
+   OTHER BINARIES TO BUILD: YES
+   (C) <sys>/load/CPS0.so
+   (C) <sys>/obj/ccclhr.o
+   (C) <sys>/obj/cccpse.o
+   (C) <sys>/obj/ccenbk.o
+   (C) <sys>/obj/cciisc.o
+   (C) <sys>/obj/ccnucl.o
+   (C) <sys>/obj/ccthds.o
+   (C) os390/bin/amx1.pds
+   (C) os390/bin/ppcp.pds
+   (C) os390/bin/sadump.obj
+   (C) os390/bin/tpfldr.pds
+   (C) os390/obj/amx1.o
+   (C) os390/obj/ccmcdc.o
+   (C) os390/obj/genfil.o
+   (C) os390/obj/sadump.o
+   (C) os390/obj/stpp.o
+   
+   COMMENTS:
+   Updates to static data can result in copy-on-write processing
+   being invoked to get an EVM-unique copy of the 4KB of static
+   data for the executing ECB. In order to map this 4KB into the
+   ECB's EVM address space, an IPTE (Invalidate Page Table Entry)
+   instruction must be done to remove the old virtual address to
+   real storage mapping from each i-stream's translation-lookaside
+   buffer (TLB). This IPTE instruction results in all i-streams
+   quiescing to update their TLBs. After all i-streams have
+   completed this task, the i-stream issuing the IPTE is allowed
+   to continue.
+   
+   When copy-on-write rates are high, system performance can be
+   impacted due to the repeated quiescing of i-streams due to many
+   IPTEs being executed. On the zEC12, a new local-TLB-clearing
+   facility is provided. This facility includes a new option on
+   the IPTE instruction that only clears the TLB of the i-stream
+   that issues the IPTE. This eliminates the wait time for all
+   other i-streams to update their TLBs.
+   
+   When using local IPTE for static data updates by a given ECB on
+   a system with multiple i-streams, there is an issue that must
+   be handled. Because local IPTE only removes old EVM to real
+   storage mappings for the i-stream that issued the IPTE, the
+   other i-streams may be left with these old (now incorrect)
+   mappings. As an example, consider the following scenario...
+   
+   1.ECB runs on i-stream 1 and in program ABCD it references a
+   static variable, x (current value of 1), in that program. This
+   puts the current EVM to real storage mapping for the 4KB of
+   static data in i-stream 1 TLB.
+   
+   2.ECB switches to i-stream 2 and again executes in program
+   ABCD, this time updating variable x to 2. This static data
+   update invokes copy-on-write processing that creates a new 4KB
+   EVM-unique copy of the storage that contains variable x. A
+   local IPTE is done to remove any old mappings for this 4KB from
+   i-stream 2 TLB. After copy-on-write processing completes, the
+   new EVM-unique storage has variable x set to 2.
+   
+   3.ECB switches back to i-stream 1 and again executes in program
+   ABCD, referencing variable x. Because the local IPTE was done
+   for variable x's storage, only i-stream 2 has the correct EVM
+   to real storage mapping for this 4KB. It is possible that
+   i-stream 1 has an old mapping (x = 1) for this storage.
+   
+   Because of this scenario, the zTPF system must keep track of
+   the i-streams that a given ECB has executed on. If an ECB is
+   being dispatched on an i-stream that it has already run on
+   (step #3 above) and the ECB has issued a local IPTE, then the
+   old EVM mappings in this i-stream's TLB for that ECB must be
+   removed before the ECB can be dispatched.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  SOLUTION:
+   Copy-on-write processing in cpse.cpy (csect cccpse) will now
+   use the local IPTE instruction if the local-TLB-clearing
+   facility is available and the ECB executing is allowed to use
+   it. The zTPF system now holds an i-stream history map of
+   i-streams on which an ECB executed. If an ECB issues a local
+   IPTE on a given i-stream and then returns to an i-stream it
+   previously executed on, a purge TLB (PTLB) is done on the this
+   i-stream before dispatching the ECB. This is required to
+   guarantee that the correct EVM to real storage mappings will be
+   used for the ECB. Thread ECBs will not be allowed to use local
+   IPTE support (all i-stream TLBs need to contain the same EVM to
+   real storage mappings at all times).
+   
+   COREQS: NO
+   None.
+   
+   MIGRATION CONSIDERATIONS: YES
+   Hardware, software, and configuration changes:
+   The local-TLB-clearing facility is available on the zEC12.
+   
+   Performance or tuning changes:
+   The use of the local IPTE instruction improves copy-on-write
+   performance on systems with multiple i-streams.
+   
+   This enhancement will provide benefit for ECBs that do not
+   frequently switch from i-stream to i-stream during their
+   execution. The i-stream history map for a given ECB only holds
+   information for the first 4 i-streams that an ECB executed on.
+   If an ECB runs on more than 4 i-streams, the zTPF system will
+   purge the new i-stream's TLB every time the ECB switches
+   i-streams.
+   
+   
+   
+   BUILD COMMANDS AND INSTRUCTIONS: YES
+   #maketpf commands for linux
+   maketpf -f CPS0 ccclhr.o cccpse.o ccenbk.o cciisc.o ccnucl.o
+   ccthds.o
+   maketpf CPS0 link
+   #maketpf commands for z/OS
+   maketpf -f tpfldr genfil.o
+   maketpf -f amx1 amx1.o
+   maketpf -f ppcp ccmcdc.o stpp.o
+   maketpf -f sadump sadump.o
+   maketpf tpfldr link
+   maketpf amx1 link
+   maketpf ppcp link
+   maketpf sadump link
+   
+   UPDATED INFORMATION UNITS: YES
+   z/TPF and z/TPFDF Migration Guide
+   z/TPF and z/TPFDF Migration Guide: PUT 2 and Later
+   
+   See your IBM representative if you need additional information.
+   
+   DOWNLOAD INSTRUCTIONS:
+   http://www.ibm.com/software/htp/tpf/maint/maintztpf.html [http://www.ibm.com/software/htp/tpf/maint/maintztpf.html]
+   
+   APAR URL:
+   http://www.ibm.com/software/htp/tpf/ztpfmaint/put9/PJ40387.htm [http://www.ibm.com/software/htp/tpf/ztpfmaint/put9/PJ40387.htm]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ40387
+   
+   
+ * REPORTED COMPONENT NAME
+   Z/TPF
+   
+   
+ * REPORTED COMPONENT ID
+   5748T1501
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2012-07-26
+   
+   
+ * CLOSED DATE
+   2012-10-25
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SK2T8062 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   Z/TPF
+   
+   
+ * FIXED COMPONENT ID
+   5748T1501
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSY
+   UP

@@ -1,0 +1,25 @@
+Title: IBM PDF rendering becoming much slower despite no changes to report or package it is based on - United States
+
+Text:
+network output version Adobe Reader TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ PDF rendering becoming much slower than before (45 minutes to render a 3-page report instead of 1 minute).
+No changes made to either the report or the package it is based on.
+HTML output is also slower than before, but the differene in PDF rendering time is more pronounced 
+
+CAUSE
+A used image is not accessable, for example a firewall blocking a dynamic image URL contained within the report
+
+RESOLVING THE PROBLEM
+Make sure that all used images are available and that there are no firewall restrictions preventing access to images contained within the report
+
+RELATED INFORMATION
+ Understanding how ReportNet and Cognos 8 locate images [http://www.ibm.com/support/docview.wss?uid=swg21340590]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Report Studio Business Analytics Cognos ReportNet ReportNet Business Analytics Cognos Business Intelligence -- AIX, HP-UX, HP Itanium, Linux, Solaris, Windows 8.3, 8.4, 8.4.1 
+HISTORICAL NUMBER
+ 1029038

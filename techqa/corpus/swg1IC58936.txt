@@ -1,0 +1,189 @@
+Title: IBM IC58936: THE USER DATA BUFFER LENGTH FOR WEBSPHERE MQ JAVA SECURITY      EXITS IS NOT RESET FOR EMPTY BUFFERS. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 for i5/OS Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022812]
+WebSphere MQ V7.0 Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022810]
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24025627]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a WebSphere MQ Java application uses a security exit which
+   returns an empty array (byte [0]) after previously returning a
+   non-empty array, the data transmitted to the queue manager may
+   indicate data is to follow, whereas no data does.
+   
+   If a queue manager security exit requests a channel to be
+   closed, the WebSphere MQ Java client application returns an
+   incorrect error (MQRC_CONNECTION_BROKEN) to the application.
+   
+   Also, when using security exits with the WebSphere MQ Version 7
+   Explorer, an error may be returned when attempting to connect
+   to a queue manager.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the WebSphere MQ Java or Java
+   Message Service (JMS) client,  and/or the WebSphere MQ Explorer
+   who use security exits.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   There are a number of issues here:
+   
+   - WebSphere MQ Java and JMS clients do not always set the data
+   length size when sending data to the queue manager.
+   
+   - The case where the queue manager security exit closes the
+   channel was not handled by WebSphere MQ Java or JMS clients.
+   
+   - The WebSphere MQ Explorer passed a null value to the
+   Java or JMS client, which resulted in a NullPointerException
+   being thrown when attempting to connect to a queue manager.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ Java and JMS clients have been updated to
+   always set the data length.
+   
+   The case where the queue manager security exit closes the
+   channel is now correctly reported as a
+   MQRC_CHANNEL_NOT_AVAILABLE (2537) error.
+   
+   A check was introduced to prevent NullPointerExceptions
+   occurring when using the WebSphere MQ Explorer with security
+   exits.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.0.2
+   --------           --------------------
+   Windows            U200302
+   AIX                U822354
+   HP-UX (PA-RISC)    U822349
+   HP-UX (Itanium)    U822351
+   Solaris (SPARC)    U822353
+   Solaris (x86-64)   U822394
+   iSeries            tbc_p700_0_0_2
+   Linux (x86)        U822348
+   Linux (x86-64)     U822393
+   Linux (zSeries)    U822352
+   Linux (Power)      U822350
+   
+   The latest available maintenance can be obtained from
+   'Websphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'Websphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC58936
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-11-14
+   
+   
+ * CLOSED DATE
+   2009-01-28
+   
+   
+ * LAST MODIFIED DATE
+   2009-01-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

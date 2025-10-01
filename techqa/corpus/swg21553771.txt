@@ -1,0 +1,66 @@
+Title: IBM SQLCODE -601received on _TEMP tables during SCC startup and daily 'removel/cleanup' from production DB - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SQLCODE -601received on _TEMP tables during SCC startup and daily 'removel/cleanup' from production DB 
+
+SYMPTOM
+
+
+SQLCODE -601 is received on the four tables named _TEMP when the SCC is started and during the daily cleanup process:
+
+
+
+The tables are partitioned and the number of partitions seems to continue to increase:
+
+
+
+Are these four table supposed to exists permanently as they seems to contain data from a date prior to an initialization of the tables?
+
+Error Message 19 Aug 2010 16:50:21,018 18023 [main] INFO SCCAgent - com.ibm.db2.jcc.am.vo: DB2 SQL Error: SQLCODE=-601, SQLSTATE=42710, SQLERRMC=SCCDB2.EVENTS_TEMP;TABLE, DRIVER=4.8.87
+19 Aug 2010 16:50:21,128 18133 [main] INFO SCCAgent - com.ibm.db2.jcc.am.vo: DB2 SQL Error: SQLCODE=-601, SQLSTATE=42710, SQLERRMC=SCCDB2.CD_STATS_LOG_TEMP;TABLE, DRIVER=4.8.87
+19 Aug 2010 16:50:21,218 18223 [main] INFO SCCAgent - com.ibm.db2.jcc.am.vo: DB2 SQL Error: SQLCODE=-601, SQLSTATE=42710, SQLERRMC=SCCDB2.CE_STATS_LOG_TEMP;TABLE, DRIVER=4.8.87
+19 Aug 2010 16:50:21,383 18388 [main] INFO SCCAgent - com.ibm.db2.jcc.am.vo: DB2 SQL Error: SQLCODE=-601, SQLSTATE=42710, SQLERRMC=SCCDB2.EVENT_COMMENTS_TEMP;TABLE, DRIVER=4.8.87
+20 Aug 2010 02:30:01,094 34798099 [QuartzWorkerThread-5] INFO SCCAgent - com.ibm.db2.jcc.am.vo: DB2 SQL Error: SQLCODE=-601, SQLSTATE=42710, SQLERRMC=SCCDB2.EVENTS_TEMP;TABLE, DRIVER=4.8.87
+20 Aug 2010 02:30:01,880 34798885 [QuartzWorkerThread-5] INFO SCCAgent - com.ibm.db2.jcc.am.vo: DB2 SQL Error: SQLCODE=-601, SQLSTATE=42710, SQLERRMC=SCCDB2.CD_STATS_LOG_TEMP;TABLE, DRIVER=4.8.87
+20 Aug 2010 02:30:02,182 34799187 [QuartzWorkerThread-5] INFO SCCAgent - com.ibm.db2.jcc.am.vo: DB2 SQL Error: SQLCODE=-601, SQLSTATE=42710, SQLERRMC=SCCDB2.CE_STATS_LOG_TEMP;TABLE, DRIVER=4.8.87
+20 Aug 2010 02:30:02,994 34799999 [QuartzWorkerThread-5] INFO SCCAgent - com.ibm.db2.jcc.am.vo: DB2 SQL Error: SQLCODE=-601, SQLSTATE=42710, SQLERRMC=SCCDB2.EVENT_COMMENTS_TEMP;TABLE, DRIVER=4.8.87
+
+
+RESOLVING THE PROBLEM
+
+
+ Currently this issue does not have a resolution; it is being worked on by Sterling Commerce Support. If you believe you are experiencing this issue and would like to be notified when a resolution is reached, please open a case through Customer Center and ask that it be associated with case number 00213799
+
+ 
+
+HISTORICAL NUMBER
+ NFX9897 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Escalation ID
+
+
+00213799
+
+
+Severity
+
+
+Normal
+
+
+Type
+
+
+NormalFix
+
+
+Build
+
+
+5.1.05 - build June 02 2010 24:21

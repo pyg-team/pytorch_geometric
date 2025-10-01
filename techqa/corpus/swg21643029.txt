@@ -1,0 +1,121 @@
+Title: IBM Work Order status does not change if reserved Item is issued - United States
+
+Text:
+WOMaterialStatusUpdateCronTask; TPAEWORK; TPAEINVENTORY; back order TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Work Order's status does not change if the reserved Item is issued. 
+
+SYMPTOM
+A Work Order's status is supposed to change from "WMATL" back to "APPR" when materials have been issued to the Work Order.
+
+
+RESOLVING THE PROBLEM
+Steps: 
+
+1. Go to the Organizations application.
+From the More Actions menu, select the "Work Order Options" and select "Other Organization options".
+
+[/support/docview.wss?uid=swg21643029&aid=1] [/support/docview.wss?uid=swg21643029&aid=1]
+De-select the "Ignore storeroom availability for work order status?" checkbox.
+
+[/support/docview.wss?uid=swg21643029&amp;aid=2]
+
+
+Click on the "More Action" menu, select "Inventory Options" and click on the "Inventory Defaults" option.
+
+
+[/support/docview.wss?uid=swg21643029&amp;aid=3]
+Select the "Disallow Negative Balance" and "Disallow Negative Available Balance" radio buttons.
+
+
+[/support/docview.wss?uid=swg21643029&amp;aid=4]
+
+
+2. Go to the Cron Task Setup application.
+
+Bring up the WOMaterialStatusUpdateCronTask cron task and set it to run every few minutes for testing purposes.
+The WOMaterialStatusUpdateCronTask cron task runs in the background to help evaluate the availability of Work Order materials. 
+
+
+[/support/docview.wss?uid=swg21643029&aid=5] [/support/docview.wss?uid=swg21643029&aid=5]
+3. Go to the Inventory application. 
+Bring up one of the items that has a zero balance. Note the Item number.
+Alternatively, bring up any item.
+Go to the 'Inventory Adjustments" action and select the "Current Balance Adjustment" option.
+Enter 0.00 in the "New Balance" field.
+
+
+[/support/docview.wss?uid=swg21643029&aid=6] [/support/docview.wss?uid=swg21643029&aid=6]
+
+
+4. Go to the Work Order Tracking application.
+Create a new Work Order. e.g. 'MAY1'
+
+[/support/docview.wss?uid=swg21643029&aid=7] [/support/docview.wss?uid=swg21643029&aid=7]
+
+
+Go to the Plans tab and Materials Sub-tab.
+Add the item from Step 3 above to the Materials sub-tab.
+
+
+[/support/docview.wss?uid=swg21643029&aid=8] [/support/docview.wss?uid=swg21643029&aid=8]
+
+
+Change the Work Order's status to Approved.
+
+When changing the status to Approved, the system evaluates whether or not the requested Materials are available or not. If the Materials are not available, the status of the Work Order is set to "WMATL". 
+
+
+[/support/docview.wss?uid=swg21643029&aid=9] [/support/docview.wss?uid=swg21643029&aid=9]
+
+
+
+4. Wait a few minutes. After the Cron Task has been run, the "Material Status Last Updated" field will be updated with the last run timestamp.
+Click on the double arrow besides the Storeroom Material Status field and click on the information icon.
+
+
+[/support/docview.wss?uid=swg21643029&aid=10] [/support/docview.wss?uid=swg21643029&aid=10]
+
+
+The Reservation Type (on the far right hand corner) has been updated to "BACKORDER".
+
+
+[/support/docview.wss?uid=swg21643029&aid=11] [/support/docview.wss?uid=swg21643029&aid=11]
+
+
+5. Go to the Inventory application.
+Bring up the same item (e.g. item 0-0048).
+Go to the 'Inventory Adjustments" action and select the "Current Balance Adjustment" option.
+Enter 10 as the New Balance value.
+
+
+[/support/docview.wss?uid=swg21643029&aid=12] [/support/docview.wss?uid=swg21643029&aid=12]
+
+
+Select the "Issue Current Item" action.
+Enter the same Work Order number and populate the GL Credit Account field.
+
+
+[/support/docview.wss?uid=swg21643029&aid=13] [/support/docview.wss?uid=swg21643029&aid=13]
+
+
+Click OK.
+
+6. Wait a few minutes. 
+Go to the Cron Task Setup application. Bring up the WOMaterialStatusUpdateCronTask cron task.
+Check that the "Last Run Timestamp" field has been updated.
+
+
+[/support/docview.wss?uid=swg21643029&aid=14] [/support/docview.wss?uid=swg21643029&aid=14]
+
+
+7. Go back to Work Order Tracking application. Bring up the same work order (e.g. 'MAY1').
+After the Cron Task has been run, the Storeroom Material Status value will be set to "COMP".
+The Material Status Last Updated value will be set to "COMP".
+
+
+[/support/docview.wss?uid=swg21643029&aid=15] [/support/docview.wss?uid=swg21643029&aid=15]
+
+
+Once the item becomes available and the availability statuses are set to COMPLETE, the Work Order's status is set back to Approved status so that work can be scheduled to begin.

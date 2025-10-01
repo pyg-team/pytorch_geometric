@@ -1,0 +1,27 @@
+Title: IBM How to read HP Verbose GC Log? what are the different columns? - United States
+
+Text:
+Operating System Performance; STERLINGHTG TECHNOTE (FAQ)
+
+QUESTION
+ How to read HP Verbose GC Log? what are the different columns? 
+
+ANSWER
+
+
+-Xverbosegc sends log information to stderr by default. The following command line sends -Xverbosegc output to a text file named yourApp_pid<pid>.vgc: java -Xverbosegc:file=yourApp_pid<pid>.vgc yourApp At every garbage collection 20 fields are printed as follows: GC: %1 %2 %3 %4 %5 %6 %7 %8 %9 %10 %11 %12 %13 %14 %15 %16 %17 %18 %19 %20 The following table contains brief descriptions of these 20 fields: Field Information in Field 1 Type of GC:  * 
+ * 1: Scavenge (GC of New Generation only)
+ * 
+ * 2: Old Generation GC or a Full GC
+ * 
+ * 3: Complete background CMS GC
+ * 
+ * 4: Incomplete background CMS GC
+ * 
+ * 11: Ongoing CMS GC
+ * 
+
+2 Additional information based on GC type in field 1. 3</ div> Program time at the beginning of the GC, in seconds. 4 GC invocation. Counts of background CMS GCs and other GCs are maintained separately. 5 Size of the object allocation request that forced the GC, in bytes. 6 Tenuring threshold—determines how long the newborn object remains in the New Generation. 7 Eden Sub-space (within the New Generation) occupied before GC. 8 Eden Sub-space (within the New Generation) occupied after GC. 9 </ td> Eden Sub-space (within the New Generation) current capacity. 10 Survivor Sub-space (within the New Generation) occupied before GC. 11 Survivor Sub-space (within the New Generation) occupied after GC. 12 Survivor Sub-space (within the New Generation) current capacity. 13 Old Generation occupied before GC. 14 Old Generation occupied after GC. 15 </ td> Old Generation current capacity. 16</ div> Permanent Generation (storage of Reflective Objects) occupied before GC. 17 </ td> Permanent Generation (storage of Reflective Objects) occupied after GC. 18 Permanent Generation (storage of Reflective Objects) current capacity. 19 The total stop-the-world duration, in seconds. 20 The total time used in collection, in seconds. Example: <GC: <u>2 1</u> 174206.339748 79</div> <div> </div> <div> </div> <div>In the above gc log, first one shows it is a full gc; second one shows it is perm gc.</div> <p> 
+
+HISTORICAL NUMBER
+ HTG2328

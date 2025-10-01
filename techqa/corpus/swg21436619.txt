@@ -1,0 +1,33 @@
+Title: IBM Deleting Agent Messages from the Health Summary page - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you delete Agent Message entries from the SiteProtector Health Summary in the agent properties window? 
+
+ANSWER
+The health summary tab from an agent contains information about the sensor like when it started and when it stopped. This article provides steps to deleting these entries.
+
+Those events will disappear after a while according to the purge default settings. If you would like to delete these directly and manually, you need to clear the sensor_info events from the analysis view for the sensor so it no longer appears on the health summary tab of the agent properties. You do this by right-clicking on thesensor_infoevent in the analysis view and choosingClear Events.
+
+Then, you need to run the following query in SQL Server Management Studio:
+
+
+EXEC iss_PurgeSD @BeginDate='yyyy-mm-dd', @ObsType='0,1,2,3,4,5,6,7,8,9', @ClearedOnly = 1, @PurgeFlag=1
+EXEC iss_PurgeObs @BeginDate='yyyy-mm-dd', @ObsType='0,1,2,3,4,5,6,7,8,9', @ClearedOnly = 1, @PurgeFlag=1
+EXEC iss_PurgeHealthInfoEvents @BeginDate='yyyy-mm-dd'
+
+yyyy-mm-dd stands for the date from when you want to delete the health summary entries.
+
+Note: Be aware that all data before this date that was deleted from the analysis view will now be deleted from the database.
+
+
+
+
+
+[/support/docview.wss?uid=swg21436619&aid=1] [https://ibm.biz/BdHdjw] [/support/docview.wss?uid=swg21436619&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21436619&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21436619&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21436619&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21436619&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21436619&aid=7] [http://ibm.biz/ContactSecSupport] 
+
+
+HISTORICAL NUMBER
+ 5102

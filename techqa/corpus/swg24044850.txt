@@ -1,0 +1,56 @@
+Title: IBM PI96286: Ship Java 8 SR5 FP15 for WebSphere Application Server traditional and Liberty - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ Ship Java 8 SR5 FP15 for WebSphere Application Server traditional and Liberty 
+
+DOWNLOAD DESCRIPTION
+ERROR DESCRIPTION: 
+
+
+Ship Java 8 SR5 FP15 for WebSphere Application Server traditional and Liberty 
+
+LOCAL FIX: 
+None
+
+PROBLEM SUMMARY: 
+Ship Java 8 SR5 FP15 for WebSphere Application Server traditional and Liberty
+
+USERS AFFECTED:
+IBM WebSphere Application Server traditional v8.5.x.x and Liberty v16.0.0.2 and later Java 8 users.
+
+PROBLEM DESCRIPTION: 
+Ship Java 8 SR5 FP15 for WebSphere Application Server traditional and Liberty 
+
+RECOMMENDATION:
+Apply this i-fix to your SDK to upgrade your SDK 8 to SDK8 SR5 FP15.
+
+NOTE:
+This iFix can ONLY be applied on:
+a) WebSphere Application Server traditional V8559 and above
+b) Liberty V8555 and 16.0.0.2 above
+
+NOTE:
+This i-fix will back up, and then replace the WAS_HOME/java1.8_xx/jre/lib/security/java.security file. This file contains a security fix that is critical to keeping your environment secure. The back up file will be placed at WAS_HOME/java1.8_xx/jre/lib/security/java.security.bak. If you have previously updated this file, you will need to merge your changes into the new copy.
+
+PROBLEM CONCLUSION: 
+Applying this apar will upgrade your SDK 8 to SDK8 SR5 FP15 (Oracle 1.8.0_u171).
+
+The fixes in this Java SDK are found here:
+https://www.ibm.com/developerworks/java/jdk/fixes/8/#SR5FP15 [https://www.ibm.com/developerworks/java/jdk/fixes/8/#SR5FP15]
+
+When downloading the fix from fix central, please also download the readme.txt with instructions for installation.
+
+This Java SDK level was minimally tested with WebSphere 8.5.5.13.
+
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] AIX 32-bit Power PC Java SDK 11 May 2018 English 145629798 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-AixPPC32-IFPI96286&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] AIX 64-bit Power PC Java SDK 11 May 2018 English 161008228 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-AixPPC64-IFPI96286&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Linux 32-bit i/p Series Java SDK 11 May 2018 English 143113496 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-LinuxPPC32-IFPI96286&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Linux 64-bit i/p Series Java SDK 11 May 2018 English 161702668 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-LinuxPPC64-IFPI96286&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Linux 64-bit Little Endian (LE) i/p Series Java SD 11 May 2018 English 160855509 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-LinuxPPC64LE-IFPI96286&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Linux 31-bit S/390 Java SDK 11 May 2018 English 133731500 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-LinuxS39031-IFPI96286&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Linux 64-bit S/390 Java SDK 11 May 2018 English 147282469 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-LinuxS39064-IFPI96286&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Linux 32-bit x86 AMD/Intel Java SDK 11 May 2018 English 136309700 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-LinuxX32-IFPI96286&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Linux 64-bit x86 AMD/Intel Java SDK 11 May 2018 English 147697229 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-LinuxX64-IFPI96286&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Solaris 64-bit SPARC Java SDK 11 May 2018 English 98881745 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-SolarisSparc64-IFPI96286&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Solaris 64-bit x86 AMD/Intel Java SDK 11 May 2018 English 96625161 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-SolarisX64-IFPI96286&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Win 32-bit x86 AMD/Intel Java SDK 11 May 2018 English 164780515 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-WinX32-IFPI96286&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Win 64-bit x86 AMD/Intel Java SDK 11 May 2018 English 192537172 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-WinX64-IFPI96286&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] z/OS 31-bit and 64-bit Java SDK 11 May 2018 English 843057715 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-OS390-IFPI96286&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] 
+ [/support/docview.wss?uid=swg24044850&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24044850&aid=2]Problems (APARS) fixed
+PI96286

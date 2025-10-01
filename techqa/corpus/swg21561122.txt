@@ -1,0 +1,34 @@
+Title: IBM EDIINTPARSE error - No record found for Original-Message-ID MOKOwcedi02-291aff-119ae7d2b20-7e9901181432506@ - United States
+
+Text:
+STERLINGTRB TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ EDIINTPARSE error - No record found for Original-Message-ID MOKOwcedi02-291aff-119ae7d2b20-7e9901181432506@ 
+
+SYMPTOM
+
+
+Received an error in the EDIINTParse BP which had the advanced status of: No record found for Original-Message-ID MOKOwcedi02 -291aff-119ae7d2b20-7e9901181432506@wcedi02 [MOKOwcedi02-291aff-119ae7d2b20-7e9901181432506@wcedi02]. 
+
+How to determine what the original data was and what caused this error? 
+
+Error Message EDIINT log:
+
+[2008-05-07 15:20:07.302] ALL 000000000000 GLOBAL_SCOPE MDN received for message MOKOwcedi02 -291aff-119ae7d2b20-7e9901181432506@wcedi02 [MOKOwcedi02-291aff-119ae7d2b20-7e9901181432506@wcedi02] action mode: automatic-action sending mode: MDN-sent-automatically disposition type: processed disposition modifier null
+[2008-05-07 15:20:07.304] ERROR 000000000000 GLOBAL_SCOPE No EDIINT transaction record found for message MOKOwcedi02 -291aff-119ae7d2b20-7e9901181432506@wcedi02 [MOKOwcedi02-291aff-119ae7d2b20-7e9901181432506@wcedi02]
+
+
+RESOLVING THE PROBLEM
+Solution 
+
+Their trading partner was sending them MDNs that were two days old. The customer had already received the MDNs from two days prior.
+
+They were using AS2 with MDN over synchronous. So the fact that they were receiving MDNs that were kicking off EDIINTPARSE alluded to the fact that something was wrong since synchronous MDNs are processed within the AS2SendSyncMDN proces structure. The other problem is the fact that the MDN was sent for a message sent by the customer two days ago.
+
+Once we identitied that they were receiving MDNs out of the normal process we could explain the errors and the fact that the Original-Message-IDs were not found in GIS since they've already received the MDN and have processed the AS2 Message.
+
+ 
+
+HISTORICAL NUMBER
+ TRB2801

@@ -1,0 +1,60 @@
+Title: IBM AMQ6118 ENDJOBABN gives unpredictable results for Queue Manager - United States
+
+Text:
+MQ400L2 ENDJOBABN DAMAGE SEMAPHORE 3484 SEMGET XY324192 mqminfo QP0ZIPCS GetSubpoolsLock TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After WebSphere MQ (WMQ) jobs are ended abnormally using ENDJOBABN, STRMQM fails with
+MSGAMQ6118 return code x'00000BCD'. 
+
+SYMPTOM
+Issuing WebSphere MQ commands after performing the ENDJOBABN resulted in the following messages: 
+
+An internal MQSeries error has occurred ('3484 - A damaged object was encountered.'from semget.) 
+An internal MQSeries error has occurred. 
+The FDC contained
+===================
+Probe Id :- XY324192 
+Component :- GetSubpoolsLock 
+Job Name :- 600016/USER/JOB 
+Process (MQPIDs) :- 00009375 (0, 0, 0, 0) 
+Major Errorcode :- xecF_E_UNEXPECTED_SYSTEM_RC 
+Probe Type :- MSGAMQ6119 
+Probe Description :- AMQ6119: An internal MQSeries error has occurred 
+('3484 - A damaged object was encountered.' from semop.) 
+Arith1 :- 3484 d9c 
+Comment1 :- '3484 - A damaged object was encountered.' from semget 
+==================== 
+MQM Function Stack 
+MQOPEN 
+zstMQCONN 
+zstMQConnect 
+zstInitCS 
+xcsInitialize 
+xcsFFST 
+
+
+CAUSE
+ENDJOBABN is a last resort action. It will make clean breaks that could have residual affects such as leaving objects in a damaged state, therefore, ENDJOBABN may give unpredictable results. In this particular case, the jobs that would not end, were waiting to obtain a lock on a resource that was already held (it is not known who was holding the lock on this resource). Since these jobs were never able to obtain a lock on this resource, they sat in termination phase indefinitely. When ENDJOBABN was run, it did not clean up leaving storage in an unpredictable state and forcing an ipl. 
+
+It was eventually determined the jobs had to be ended abnormally because they were inside the cancel handler, and could not progress because they were waiting on the AllSubPoolsLock.
+
+
+RESOLVING THE PROBLEM
+The program QP0ZIPCS, identifies damaged semaphores owned by QMQM. 
+
+ 
+CALL PGM(QP0ZIPCS) PARM('-Emsa') 
+
+This program produces a report which shows whether there are damaged semaphores or shared memory. 
+If the object has already been flagged for deletion, the semaphore or shared memory can not be deleted, in which case, an IPL is the only option. 
+
+Additional Note: The hang, which prompted the ENDJOBABN, resulted in three APAR fixes: 
+SA95970 - ENDMQM corrections(defect 71716) 
+SA96066 - Memory leak (defect 73314, IY37681) 
+SA96048 - AllSubPoolsLock (SA96022, 71227, 73013, 73251)
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

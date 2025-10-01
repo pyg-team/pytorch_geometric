@@ -1,0 +1,15 @@
+Title: IBM Resetting scan status - United States
+
+Text:
+dlp; tem; scan TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ My current scan status shows that a scan is running even though I am not currently running a scan. How do I reset my scan status? 
+
+RESOLVING THE PROBLEM
+This most likely occurred because a DLP scan was abruptly aborted in the middle of scanning. Use Task 24: Update Scan Status to reset your scan status.
+
+ 
+
+HISTORICAL NUMBER
+ 447

@@ -1,0 +1,16 @@
+Title: IBM TM1 unstable and taking a long time to run processes - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Chores that may usually take a short time end up taking hours to run. TM1 performance degrades overall and users may have trouble logging in. 
+
+DIAGNOSING THE PROBLEM
+In this case the Task Manager showed the CPU maxxed out. However, TM1 was only taking up 2% of the CPU usage. There were 49 conman.exe processes also running and each of these was also taking up 2% of the CPU, and this was causing the CPU to max out.
+
+RESOLVING THE PROBLEM
+Tivoli Work Scheduler was spawning the conman.exe processes due to an issue with that product. Therefore the issue was not really TM1-related at all. 
+
+
+This could feasibly happen with other applications that may be running on the server, as well, so look to see what is really causing the CPU to be eaten up before contacting TM1 support.

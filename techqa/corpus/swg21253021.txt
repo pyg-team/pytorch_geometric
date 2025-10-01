@@ -1,0 +1,34 @@
+Title: IBM Configuring DB2 Connect for utilizing the Sysplex on z/OS in V8 and V9 or later - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure DB2 Connect for utilizing the Sysplex on z/OS? 
+
+CAUSE
+A Sysplex is a group of zSeries systems that communicate and cooperate with one another using specialized hardware and software. Starting V8.1 GA, DB2 Connect support for Sysplex on zSeries is enabled by default. That means there is nothing you need to do on the DB2 Connect gateway to utilize Sysplex if it is enabled on your zSeries server. 
+
+In case the client applications are running locally on the same physical machine as DB2 Connect, you need to set DB2CONNECT_IN_APP_PROCESS=NO to force the local clients to run in an agent so as to utilize Sysplex support. 
+
+ * 
+ * db2set DB2CONNECT_IN_APP_PROCESS=NO
+   db2stop
+   db2start
+
+
+However, if you want to disable DB2 Connect Sysplex support on your gateway, you can simply catalog a DCS database without specifying the Sysplex in the parameter list and re-catalog the DCS database as your database alias. If no DCS directory is cataloged, then SYSPLEX is enabled
+by default (=for normal TCP/IP catalog entries). If DCS directory is cataloged then we disable the SYSPLEX if 6th parameter is not used, and enable SYSPLEX only when 6th parameter is specified.
+
+For example, SYSPLEX is disabled by the command below: 
+
+ * db2 catalog dcs db dbname as target_dbname 
+
+
+SYSPLEX is enabled by the command below:  * db2 'catalog dcs db dbname as target_dbname parms ",,,,,SYSPLEX"' 
+
+With Sysplex support enabled, any communication error occurs to the current connection to a Sysplex member will automatically be rerouted to the other active Sysplex member and the sqlcode -30108 will be sent to the client application. 
+
+
+
+ANSWER

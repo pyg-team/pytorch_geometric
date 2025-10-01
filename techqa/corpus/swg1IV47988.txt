@@ -1,0 +1,187 @@
+Title: IBM IV47988: SETTING THE WSSETDEFAULTPKGNAME VALUE GLOBALLY DOESN'T WORK WHEN THE WSINVOKE FUNCTION IS INSIDE A POLICY FUNCTION - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.1.1-TIV-BSM-FP0004-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0004-windows&source=SAR]
+6.1.1-TIV-BSM-FP0004-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0004-zlinux&source=SAR]
+6.1.1-TIV-BSM-FP0004-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0004-solaris&source=SAR]
+6.1.1-TIV-BSM-FP0004-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0004-linux&source=SAR]
+6.1.1-TIV-BSM-FP0004-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0004-aix&source=SAR]
+6.1.1-TIV-NCI-FP0004-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0004-windows&source=SAR]
+6.1.1-TIV-NCI-FP0004-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0004-zlinux&source=SAR]
+6.1.1-TIV-NCI-FP0004-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0004-solaris&source=SAR]
+6.1.1-TIV-NCI-FP0004-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0004-aix&source=SAR]
+6.1.1-TIV-NCI-FP0004-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0004-linux&source=SAR]
+6.1.1-TIV-BSM-FP0003-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0003-aix&source=SAR]
+6.1.1-TIV-NCI-FP0003-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0003-zlinux&source=SAR]
+6.1.1-TIV-NCI-FP0003-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0003-windows&source=SAR]
+6.1.1-TIV-NCI-FP0003-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0003-solaris&source=SAR]
+6.1.1-TIV-NCI-FP0003-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0003-linux&source=SAR]
+6.1.1-TIV-NCI-FP0003-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0003-aix&source=SAR]
+6.1.1-TIV-BSM-FP0003-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0003-zlinux&source=SAR]
+6.1.1-TIV-BSM-FP0003-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0003-windows&source=SAR]
+6.1.1-TIV-BSM-FP0003-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0003-solaris&source=SAR]
+6.1.1-TIV-BSM-FP0003-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0003-linux&source=SAR]
+6.1.1-TIV-BSM-FP0002-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0002-windows&source=SAR]
+6.1.1-TIV-BSM-FP0002-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0002-zlinux&source=SAR]
+6.1.1-TIV-BSM-FP0002-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0002-solaris&source=SAR]
+6.1.1-TIV-BSM-FP0002-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0002-aix&source=SAR]
+6.1.1-TIV-BSM-FP0002-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0002-linux&source=SAR]
+6.1.1-TIV-NCI-FP0002_zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0002_zlinux&source=SAR]
+6.1.1-TIV-NCI-FP0002_windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0002_windows&source=SAR]
+6.1.1-TIV-NCI-FP0002_solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0002_solaris&source=SAR]
+6.1.1-TIV-NCI-FP0002_linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0002_linux&source=SAR]
+6.1.1-TIV-NCI-FP0002_aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0002_aix&source=SAR]
+IBM Tivoli Business Service Manager V6.1.1 Fix Pack 1(6.1.1-TIV-BSM-FP0001) [http://www-01.ibm.com/support/docview.wss?uid=swg24036882]
+IBM Tivoli Netcool/Impact V6.1.1 Fix Pack 2 (6.1.1-TIV-NCI-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24039066]
+IBM Tivoli Business Service Manager V6.1.1 Fix Pack 3(6.1.1-TIV-BSM-FP0003) [http://www-01.ibm.com/support/docview.wss?uid=swg24039742]
+IBM Tivoli Netcool/Impact V6.1.1 Fix Pack 3 (6.1.1-TIV-NCI-FP0003) [http://www-01.ibm.com/support/docview.wss?uid=swg24039743]
+IBM Tivoli Netcool/Impact V6.1.1 Fix Pack 4 (6.1.1-TIV-NCI-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24041504]
+IBM Tivoli Business Service Manager V6.1.1 Fix Pack 4(6.1.1-TIV-BSM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24041505]
+IBM Tivoli Netcool/Impact V6.1.1 Fix Pack 5 (6.1.1-TIV-NCI-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24044185]
+IBM Tivoli Business Service Manager V6.1.1 Fix Pack 5(6.1.1-TIV-BSM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24044193]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Setting the WSSetDefaultPKGName value globally doesn't work when
+   the WSInvoke function is inside a policy function
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Be sure to set the WSSetDefaultPKGName value inside the same
+   policy function where the the WSInvoke function is located.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Setting the WSSetDefaultPKGName value globally doesn't work  *
+   * when                                                         *
+   * the WSInvoke function is inside a policy function            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Call WSSetDefaultPKGName in each user defined function.      *
+   ****************************************************************
+   Variables that are being set in Web Service functions are not
+   accessible outside of the user function in which they are
+   called.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Web Service functions have been changed to access global
+   variables and local variables.
+   
+   This fix will be included in the following Fix Pack:
+   |Fix Pack|6.1.1-TIV-NCI-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV47988
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/I DSA FOR WE
+   
+   
+ * REPORTED COMPONENT ID
+   5724O69WS
+   
+   
+ * REPORTED RELEASE
+   611
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-09-10
+   
+   
+ * CLOSED DATE
+   2014-02-06
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UKNOWN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/I DSA FOR WE
+   
+   
+ * FIXED COMPONENT ID
+   5724O69WS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R611 PSY
+   UP

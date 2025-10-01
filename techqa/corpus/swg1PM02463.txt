@@ -1,0 +1,149 @@
+Title: IBM PM02463: INCORRECT HANDLING OF FAILED SSL KEY RESET - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 0 Modification 0 and Modification 1  *
+   *                 using SSL/TLS.                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A channel failing due to a failure to   *
+   *                      renegotiate the SSL/TLS secret key does *
+   *                      not report the failure correctly. The   *
+   *                      channel ends and issues CSQX620E        *
+   *                      reporting a failure with RC=439         *
+   *                      (Connection closed).                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A channel using SSL/TLS transmits more than SSLRKEYC bytes of
+   data, and attempts to renegotiate the secret key however the
+   renegotiation fails. MQ does not report the reason for the
+   failure, and the channel terminates with the wrong return code
+   (connection closed).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CSQXSSLF is changed to correctly report the reason for the
+   renegotiation failure prior to the channel terminating.
+   000Y
+   010Y
+   CSQXSSLF
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM02463
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   010
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-01
+   
+   
+ * CLOSED DATE
+   2009-12-23
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM02454 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM02454]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK53138 UK53139
+   
+   
+
+MODULES/MACROS
+ *  CSQXSSLF
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK53138 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK53138]
+   UP10/01/23 P F001
+   
+   
+ * R010 PSY UK53139 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK53139]
+   UP10/01/23 P F001
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

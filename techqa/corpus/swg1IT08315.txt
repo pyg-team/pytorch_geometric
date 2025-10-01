@@ -1,0 +1,229 @@
+Title: IBM IT08315: JAZZSM NOT AVAILABLE FOR INSTALL AT MAIN TPC GUI INSTALLER SCREEN. - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+Refresh Pack 5.2.6 (June 2015) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24040111]
+Refresh Pack 5.2.7 (August 2015) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24040451]
+IBM Spectrum Control V5.2.8 (December 2015) [http://www-01.ibm.com/support/docview.wss?uid=swg24041108]
+IBM Spectrum Control V5.2.9 (February 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24041547]
+IBM Spectrum Control V5.2.10 (May 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24041940]
+IBM Spectrum Control V5.2.10.1 (July 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24042484]
+IBM Spectrum Control V5.2.11 (August 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24042489]
+IBM Spectrum Control V5.2.12 (November 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24042717]
+IBM Spectrum Control V5.2.13 (March 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043142]
+IBM Spectrum Control V5.2.14 (May 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043414]
+IBM Spectrum Control V5.2.15 (August 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043749]
+IBM Spectrum Control V5.2.15.2 (November 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24044286]
+IBM Spectrum Control V5.2.16 (March 2018) [http://www-01.ibm.com/support/docview.wss?uid=swg24044454]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After a successful installation of the TPC application in TPC
+   v5.2.0- v5.2.4.1.
+   
+   The main TPC Installer will only show 'license upgrade' as an
+   option and does not allow progression to the other two
+   'Installation Type' (i.e. Single server/Multiple server) as they
+   are greyed out.
+   
+   After selecting either Single server or Multiple server as a
+   selection in the Installer GUI, the next screen is the location
+   where the JazzSM components are available for selection to be
+   installed.
+   
+   Issue occurs only for non AE license types.
+   
+   Verify:
+   InstallVariables.properties
+   varInstallReportingLater=true,
+   
+   Launch Main TPC Installer and the only option being License
+   upgrade on the choose install type panel.
+   
+   traceTPCInstall.log:
+   2015-04-16 04:40:53.485-0700 INFO
+   com.ibm.tpc.install.frontend.ia.actions.CheckLicenseUpgradeActio
+   n install Validating nodelock.
+   2015-04-16 04:40:53.485-0700 INFO  Entry
+   com.ibm.tpc.install.backend.LicenseManager
+   getLicenseKeyIncludedPath
+   2015-04-16 04:40:53.485-0700 INFO  Exit
+   com.ibm.tpc.install.backend.LicenseManager
+   getLicenseKeyIncludedPath
+   2015-04-16 04:40:53.485-0700 INFO
+   com.ibm.tpc.install.frontend.ia.actions.CheckLicenseUpgradeActio
+   n install Null or empty getLicenseKeyIncludedPath - on to
+   license upgrade selection.
+   2015-04-16 04:40:53.485-0700 INFO
+   com.ibm.tpc.install.frontend.ia.actions.CheckLicenseUpgradeActio
+   n install varLicenseUpgradeNeededtrue
+   
+   
+   RECREATE STEPS:
+   Install TPC 5.2.x successfully.
+   TPC installed with non AE license. i.e. TPC base license
+   (NODELOCK)
+   No license file exists on cdimage or install media (i.e. NL
+   Fixpack) and only TPC reports and or JazzSM remain to be
+   installed.
+   Prepare JazzSM to be installed.
+   Launching the main TPC Installer will only show 'license
+   upgrade' option and does not show JazzSM, etc..
+   
+   ________________________________________________________________
+   DB2 Version used for Server:    N/A
+   The defect is against component:   5608TPC00
+   Server/Manager build/release (TPC):   5.2.3
+   ________________________________________________________________
+   Problem as described by customer:   JazzSM not available for
+   Install at main TPC GUI installer screen.
+   Initial customer impact (low/med/high): med
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Engage Support
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * TPC 5.2.x users who do not have the advanced (VSC) license   *
+   * and choose to install JazzSM as a separate step later.       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See ERROR DESCRIPTION.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fix maintenance when available.                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  JazzSM should be available for installation in this case.  The
+   fix for this APAR is targeted for the following maintenance
+   package:
+   
+   | refresh pack | 5.2-TIV-TPC-RP0006 - target June 2015
+   
+   http://www-01.ibm.com/support/docview.wss?&uid=swg21320822 [http://www-01.ibm.com/support/docview.wss?&uid=swg21320822]
+   
+   The target dates for future refresh packs do not represent a
+   formal commitment by IBM. The dates are subject to change
+   without notice.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT08315
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPC00
+   
+   
+ * REPORTED RELEASE
+   511
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-17
+   
+   
+ * CLOSED DATE
+   2015-04-20
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  INSTALL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC
+   
+   
+ * FIXED COMPONENT ID
+   5608TPC00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY
+   UP
+   
+   
+ * R523 PSY
+   UP
+   
+   
+ * R525 PSY
+   UP

@@ -1,0 +1,61 @@
+Title: IBM SEV parameter in SITINFO of situations is removed by KFW_CMW_SET_TEC_SEV=Y - United States
+
+Text:
+ITM; situation; severity; EIF; SITINFO; KFW_CMW_SET_TEC_SEV TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SEV parameter in SITINFO of exported situations disappeared after setting KFW_CMW_SET_TEC_SEV=Y on TEPS. Why is the parameter removed? 
+
+SYMPTOM
+After setting KFW_CMW_SET_TEC_SEV=Y on TEPS, 
+
+- SEV parameter in SITINFO of exported situations disappeared 
+- SEV parameter and EIF Severity are synchronized with what you set in TEP Situation editor. 
+
+You cannot change each severity to different level as you like. For example,
+
+case 1) 
+1. set the following severity level in the situation editor.
+State in Formula tab = Critical
+EIF Severity in EIF tab = Fatal
+2. "Apply" or "OK"
+3. open this situation in the situation editor
+4. The change of EIF Severity are not saved. Both of them are saved as Critical.
+State in Formula tab = Critical
+EIF Severity in EIF tab = Critical
+
+case 2) 
+1. set the following severity level in the situation editor.
+State in Formula tab = Critical
+EIF Severity in EIF tab = Fatal
+2. "Apply" or "OK"
+3. dissociate this situation
+4. open this situation in the situation editor
+5. EIF Severity are not saved. It shows "< Default EIF Severity>"
+
+
+CAUSE
+When KFW_CMW_SET_TEC_SEV=Y is set, severity of the situation is not determined
+by SEV in SITINFO. Severity of EIF events is synchronized with what you set in
+TEP Situation editor, so SEV parameter is no more stored in SITINFO.
+
+Default mapping of situation events to OMNIbus events 
+
+http://publib.boulder.ibm.com/infocenter/tivihelp/v61r1/topic/com.ibm.itm.doc_6.3/install/mapevent_omni.htm [http://publib.boulder.ibm.com/infocenter/tivihelp/v61r1/topic/com.ibm.itm.doc_6.3/install/mapevent_omni.htm]
+
+Before setting KFW_CMW_SET_TEC_SEV=Y
+<SITINFO>
+<![CDATA[ATOM=UNIXPS.UCOMMAND;SEV=Critical;]]>
+</SITINFO>
+
+After setting KFW_CMW_SET_TEC_SEV=Y
+<SITINFO>
+<![CDATA[ATOM=UNIXPS.UCOMMAND;]]>
+</SITINFO> 
+
+
+* The parameter "KFW_CMW_SET_TEC_SEV" was added by ITM 6.1 FP02. Default value is N.
+
+
+RESOLVING THE PROBLEM
+It is working as designed.

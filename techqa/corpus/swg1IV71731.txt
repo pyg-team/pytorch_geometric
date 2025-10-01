@@ -1,0 +1,161 @@
+Title: IBM IV71731: UPLOAD LATEST SW CATALOG - FAILED AT DATA IMPORT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer constructed an ILMT Server 9.2 (All in one box) and
+   tried to upload the latest SW catalog.  It failed at data
+   imports.
+   The import.txt has the following:
+   2015-03-31 00:46:39 (+0:00:12.219) INFO: Loading
+   SoftwareItems...
+   2015-03-31 00:51:53 (+0:05:14.282) ERROR: NameError:
+   uninitialized class
+   variable @@mac_address in UUIDTools::UUID
+    C:/Program
+   Files/ibm/LMT/wlp/usr/servers/server1/apps/tema.war/WEB-INF/gems
+   /gems/uu
+   idtools-2.1.5/lib/uuidtools.rb:637:in `mac_address'
+   
+   2015-03-31 00:59:43 (+0:00:02.172) WARN: Discoverable from
+   Charge Unit file has not been found in DB:
+    0468dfbea9c44fa1bf5f19eb6b11ddb2
+    [a lot of these warning messages]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   ERROR DESCRIPTION:
+   After you upload the latest software catalog and run an import
+   of data, the import fails and the following message can be found
+   in the log:
+   ERROR: NameError: uninitialized class variable @@mac_address
+   in UUIDTools::UUID C:/Program
+   Files/ibm/LMT/wlp/usr/servers/server1/
+   apps/tema.war/WEB-INF/gems/gems/uuidtools-2.1.5/lib/uuidtools.rb
+   :637:
+   in `mac_address'
+   
+   WARN: Discoverable from Charge Unit file has not been found in
+   DB
+   Behavior after you install the update:
+   The error does not occur and the import of data succeeds.
+   ****************************************************************
+   * RECOMMENDATION: Apply appropriate update when available or
+   * refer to the documentation update
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+    | Update | SUA 9.2.0.1 site 48
+    | Update | ILMT 9.2.0.1 site 61
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV71731
+   
+   
+ * REPORTED COMPONENT NAME
+   LIC METRIC TOOL
+   
+   
+ * REPORTED COMPONENT ID
+   5724LMTEM
+   
+   
+ * REPORTED RELEASE
+   920
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-01
+   
+   
+ * CLOSED DATE
+   2015-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIC METRIC TOOL
+   
+   
+ * FIXED COMPONENT ID
+   5724LMTEM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R920 PSY
+   UP

@@ -1,0 +1,214 @@
+Title: IBM JR37960: "CAN'T DETECT DB" EXCEPTION WHEN JCC DRIVER IS USED AS A PROVIDER FOR COMMONDB - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  "Can't detect DB" exception  when JCC driver is used as a
+   provide for CommonDB
+   
+   If we use JCC driver as a Provider for  Deployment manager
+   commonDB following exception is seen during Deployment manager
+   startup
+   
+   /ecurep/pmr/9/2/92989,442,000/2010-10-01/92989.442.00092989.442.
+   000.logs.zip_unpack/scm-unita-70/logs/dmgr
+   
+   [10/1/10 3:44:01:828 EDT] 00000000 ContainerHelp E   WSVR0501E:
+   Error creating component
+   com.ibm.wbiserver.security.auth.startup.SecurityComponentImpl@6c
+   806c80
+   com.ibm.ws.exception.RuntimeWarning: An error occurred while
+   starting system roles component to populate BPM admin roles.
+    at
+   com.ibm.wbiserver.security.auth.startup.SecurityComponentImpl.st
+   art(SecurityComponentImpl.java:75)
+    at
+   com.ibm.ws.runtime.component.ContainerHelper.startComponents(Con
+   tainerHelper.java:538)
+    at
+   com.ibm.ws.runtime.component.ContainerImpl.startComponents(Conta
+   inerImpl.java:627)
+    at
+   com.ibm.ws.runtime.component.ContainerImpl.start(ContainerImpl.j
+   ava:618)
+   ..
+   Caused by: java.lang.IllegalStateException: Can't detect DB
+    at
+   com.webify.wsf.support.spring.dbversion.DbUtils.doDetection(DbUt
+   ils.java:136)
+    at
+   com.webify.wsf.support.spring.dbversion.DbUtils.detectDatabaseTy
+   pe(DbUtils.java:92)
+    at
+   com.ibm.tyto.jdbc.database.DatabaseFactoryImpl.selectAdapter(Dat
+   abaseFactoryImpl.java:37)
+    at
+   com.ibm.tyto.jdbc.database.DatabaseFactoryImpl.getDatabase(Datab
+   aseFactoryImpl.java:31)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:48)
+    at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:37)
+    at java.lang.reflect.Method.invoke(Method.java:600)
+    at
+   org.springframework.beans.factory.support.SimpleInstantiationStr
+   ategy.instantiate(SimpleInstantiationStrategy.java:115)
+    ... 118 more
+   
+   Recreation steps:
+   
+   WPS 7.0.0.3 /AIX operating system
+   
+   1 Use DDT to rate  Database design file and use JCC   Driver for
+   provider selection
+   
+   (1)DB2 Universal JDBC Driver Provider # XA data source # DB2
+   Universal JDBC Driver Provider (XA)
+   (2)DB2 Using IBM JCC Driver # XA data source # DB2 Using IBM JCC
+   Driver (XA)
+   Please enter the number for the database provider :2
+   
+   2 Create the commonDatabase
+   3 Use Database design file to create Deployment manager
+   
+   --------------
+   create
+   profileName=scm-unita-70
+   nodeName=scm-unita-70_dm
+   hostName=wpssand01.bcbsfl.com
+   cellName=scm-unita-70
+   serverType=DEPLOYMENT_MANAGER
+   profilePath=/prod/wesadm/wes/was7/dmgr/profiles/scm-unita-70
+   templatePath=/opt/was7/dmgr/scm/profileTemplates/dmgr.wbiserver
+   enableAdminSecurity=true
+   adminUserName=portald
+   adminPassword=portald
+   ndtopology=false
+   dbDesignEnabled=true
+   wbidbDesign=/tmp/wps.nd.topology.dbDesign
+   dbDelayConfig=true
+   startingPort=19443
+   ----------------------------------------
+   
+   4. start the deloyment manager to see the excetion in the
+   systemout.logs
+   
+   Complete logs are saved under
+   
+   ftp://snjgsa.ibm.com/projects/w/wps_service/Level2Material/JR379
+   60
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  set JVM property for deployment manager  -Ddb.type=db2 addressed
+   the above problem but addtional problem seen reported in PMR
+   93831,442,000 .
+   
+   Change the provider for CommonDB to  DB2 Universal JDBC Driver
+   Provider
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Websphere Process Server 7.0 user           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: "Cannot detect DB" exception when JCC   *
+   *                      driver is used as a provider for        *
+   *                      COMMON DB                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   There is a limitation about JCC driver on current V7
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR37960
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-12
+   
+   
+ * CLOSED DATE
+   2010-11-01
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

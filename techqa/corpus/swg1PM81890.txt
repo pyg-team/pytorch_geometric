@@ -1,0 +1,141 @@
+Title: IBM PM81890: Add StackMapTable to Java class v51(Java 7) BCI modified methods - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  JVMVRFY012 error is seen in the logs which point to
+   inconsistent stack shape.  The fix is to enforce the bytecode
+   instrumentation to inject a StackMapTable on each modified
+   method.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   *
+   * ITCAM for Applications WebSphere Agent v7.2 installed for
+   * monitoring WebSphere 8.5 server running on JRE 1.7.
+   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   *
+   * When ITCAM generates byte code instrumentation for Java 1.7
+   * compiled classes, it is not generating the mandatory
+   * StackMapTable that is required from this Java version. This
+   * results in errors while loading classes into the JVM like
+   * the following:
+   * java.lang.VerifyError: JVMVRFY012 stack shape inconsistent;
+   * class=javax/naming/InitialContext, method=<init>(Z)V, pc=20
+   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR fix generates the StackMapTable for classes compiled
+   with JDK 1.7 compiler.
+   
+   The fix for this APAR is contained in the following release:
+   
+     | interim fix | 7.2.0.0-ITCAMAD-IF0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM81890
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92DC
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-01
+   
+   
+ * CLOSED DATE
+   2013-04-02
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92DC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP
+   
+   
+ * R720 PSY
+   UP

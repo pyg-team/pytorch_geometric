@@ -1,0 +1,70 @@
+Title: IBM Closing idle client/application connections to the server automatically - United States
+
+Text:
+reaper; idle; connections; dos; Reaper; Connections; stale connections; reaper; reaping threshold; bwm8 TECHNOTE (FAQ)
+
+QUESTION
+ This technote shows how to automatically close idle connections using a feature of the ITDS Server (often called the "reaper"). 
+
+ANSWER
+The reaper feature of the product allows you to have idle connections closed automatically based on user configurable settings.
+NOTE: it's normally the responsibility of the client application to close down connections (they initiate them). The reaper feature provides a workaround for closing connections that aren't being responsibly closed by the client application (or sometimes network appliances are closing the connection down with the client, so that the client doesn't know a connection still exists). In cases where client connections aren't being closed properly, the first thing that should always be done is to figure out why the client application isn't closing them and change the client to do so. If that is not possible, then you can use the repear feature to workaround broken clients/load balancers. Closing connections this way will appear as an error to the client-side, if they are still aware of the connection.
+
+The feature uses five configuration file parameters in the 'cn=Connection Management, cn=Front End, cn=Configuration' section of the ibmslapd.conf file.
+The four configuration parameters are:
+
+ibm-slapdAnonReapingThreshold: how many open idle anonymous connections must be open before the server will start reaping
+
+ibm-slapdBoundReapingThreshold: how many open idle authenticated connections must be open before the server will start reaping
+
+ibm-slapdAllReapingThreshold: how many combined authenticated and anonymous connections must be open before the server will start reaping
+
+ibm-slapdIdleTimeOut: how long (in seconds) the server waits before it determines whether to reap an idle connection
+
+ibm-slapdWriteTimeout: how long (in seconds) the server waits before it determines whether to time-out an attempt to return a result to a client.
+
+The defaults for these values are the following:
+
+ibm-slapdAllReapingThreshold: 1200 (Can be a number between 0 and 65535)
+ibm-slapdAnonReapingThreshold: 0 (Can be a number between 0 and 65535)
+ibm-slapdBoundReapingThreshold: 1100 (Can be a number between 0 and 65535)
+ibm-slapdIdleTimeOut: 300 (Can be a number between 0 and 65535)
+ibm-slapdWriteTimeout: 10 (Can be a number between 0 and 65535)
+
+Generally, these values for the ibm-slapd*ReapingThreshold should be set less than the number of available file descriptors for ibmslapd (retrieved on *nix boxes by running 'ulimit -n').
+
+When the connection cleaner (or reaper) runs, it determines if connections should be killed by looking at the stage it is running in and the idle time of the connection. If the connection qualities match the stage, and the idle time is greater than the time specified in ibm-slapdIdleTimeOut, the connection is killed.
+
+The definition of the 3 stages of reaping functionality which controls the reaping of connections:
+
+1) Anonymous Reaping threshold
+If the number of connections exceeds the ibm-slapdAnonReapingThreshold all anonymous connections that exceed the idle time-out will be killed.
+
+2) Bound Reaping threshold
+If the number of connections exceeds the ibm-slapdBoundReapingThreshold all anonymous and bound connections that exceed the idle time-out will be killed.
+
+3) All Reaping Threshold
+If the number of connections exceeds the ibm-slapdAllReapingThreshold all anonymous, bound and admin connections that exceed the idle time-out will be killed. Admin connections that are bound with the admin control will not be killed.
+
+To disable the feature, set ibm-slapdAnonReapingThreshold to 0.
+
+How to configure for use:
+
+This feature can be set using the Web Administration tool.
+From Web Administration tool, select 'Server administration'->'Manage connection properties' and define the values.
+
+You can also use the ldapmodify command line utility to make these updates to the
+server configuration.
+
+See the 'Managing Connection Properties' section of Administration Guide for more information for your version of SDS / TDS in Knowledge Center [https://www.ibm.com/support/knowledgecenter/].
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITDS
+TDS
+Secureway
+IDS
+LDAP
+Secureway Directory Server
+Directory Server

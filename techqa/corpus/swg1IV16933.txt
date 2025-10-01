@@ -1,0 +1,239 @@
+Title: IBM IV16933: IMPROVE SINGLE SIGN ON DOCUMENTATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer was configuring a multiple product integration so that
+   TADDM would authenticate via single sign on (SSO) and
+   Federated Repositories. Two problems:
+   
+   1)  We need better documentation (or packaging) on where to get
+   all the files needed for this configuration.  (Some were in the
+   CCMDB files, even tough CCMDB wasn't part of the integration.)
+   
+   2)  Customer's attempt to login after turning on VMM/Federated
+   repositories resulted in a 403.  The solution to this needs to
+   be  in the documentation:
+   
+   
+   
+   Step 1. Ensure "TrustClientRole" has "All Authenticated" set to
+   "Yes".
+   On
+   test system i found this "No" but from the PMR i see the
+   customer has it
+   set to "Yes". Just to double check please run this
+   
+   <TIP_HOME>/profiles/TIPProfile/bin>wsadmin.sh -username
+   <tipuser>
+   -password <pwd>
+   
+   wsadmin>$AdminApp view authnsvc_ctges
+   
+   from the output look for
+   
+   Role: TrustClientRole
+   
+   All Authenticated : Yes
+   
+   If this is a "Yes" we are good with this step. If it is no then
+   please
+   run the below tasks
+   
+   wsadmin>$AdminApp edit authnsvc_ctges {-MapRolesToUsers
+   {{"TrustClientRole" No Yes "" ""}}}
+   
+   wsadmin>$AdminConfig save
+   
+   wsadmin>$AdminApp view authnsvc_ctges
+   
+   From the output you can make sure if All Authenticated for
+   TrustClientRole is showing as "Yes"
+   
+   Restart the TIP server
+   (<TIP_HOME>/profiles/TIPProfile/bin>stopServer.sh
+   server1 and <TIP_HOME>/profiles/TIPProfile/bin>startServer.sh
+   server1)
+   
+   
+   Step2 : Propogate the changes to external JACC provider (Argus)
+   
+   Login to TIP console
+   
+   In the navigation pane, click Settings > Websphere
+   Administrative
+   Console and click Launch Websphere Administrative Console.
+   
+   In the WebSphere Application Server administrative console,
+   select
+   Security > Global security and click the External authorization
+   providers link.
+   
+   In the External authorization providers page, select the Update
+   with
+   application names listed option
+   
+   In the text pane, type authnsvc_ctges and click Apply
+   
+   In the messages area at the top of the page, click the Save link
+   to
+   commit your changes to the master configuration
+   
+   Stop and restart the Tivoli Integrated Portal Server
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  use above documentation
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Customer was configuring a multiple product integration so that
+   TADDM would
+   authenticate via single sign on (SSO) and Federated
+   Repositories. Two problems:
+   1) We need better documentation (or packaging) on where to get
+   all the files
+   needed for this configuration. (Some were in the CCMDB files,
+   even tough CCMDB
+   wasn't part of the integration.) 2) Customer's attempt to login
+   after turning on
+   VMM/Federated repositories resulted in a 403. The solution to
+   this needs to be in
+   the documentation: Step 1. Ensure "TrustClientRole" has "All
+   Authenticated" set
+   to "Yes". On test system i found this "No" but from the PMR i
+   see the customer
+   has it set to "Yes". Just to double check please run this
+   <TIP_HOME>/profiles/TIPProfile/bin>wsadmin.sh -username
+   <tipuser> -password <pwd>
+   wsadmin>$AdminApp view authnsvc_ctges from the output look for
+   Role:
+   TrustClientRole All Authenticated : Yes If this is a "Yes" we
+   are good with this
+   step. If it is no then please run the below tasks
+   wsadmin>$AdminApp edit
+   authnsvc_ctges {-MapRolesToUsers {{"TrustClientRole" No Yes ""
+   ""}}}
+   wsadmin>$AdminConfig save wsadmin>$AdminApp view authnsvc_ctges
+   From the output
+   you can make sure if All Authenticated for TrustClientRole is
+   showing as "Yes"
+   Restart the TIP server
+   (<TIP_HOME>/profiles/TIPProfile/bin>stopServer.sh server1
+   and <TIP_HOME>/profiles/TIPProfile/bin>startServer.sh server1)
+   Step2 : Propogate
+   the changes to external JACC provider (Argus) Login to TIP
+   console In the
+   navigation pane, click Settings > Websphere Administrative
+   Console and click
+   Launch Websphere Administrative Console. In the WebSphere
+   Application Server
+   administrative console, select Security > Global security and
+   click the External
+   authorization providers link. In the External authorization
+   providers page,
+   select the Update with application names listed option In the
+   text pane, type
+   authnsvc_ctges and click Apply In the messages area at the top
+   of the page, click
+   the Save linkto commit your changes to the master configuration
+   Stop and restart
+   the Tivoli Integrated Portal Server
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following changes will be made in the next release of the
+   publications:
+   
+   The section is called: "Single sign-on fails after turning on
+   VMM and federated repositories".
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV16933
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-09
+   
+   
+ * CLOSED DATE
+   2012-10-04
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

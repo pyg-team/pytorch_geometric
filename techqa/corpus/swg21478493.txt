@@ -1,0 +1,23 @@
+Title: IBM Interrupting Clementine stream execution occasionally takes a long time to respond - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Occasionally when I try to interrupt the execution of a Clementine stream, the stream execution continues for a significant amount of time before the execution actually stops. Why is this? 
+
+RESOLVING THE PROBLEM
+When you interrupt a stream execution in Clementine we rely on each operation (including database access implemented by 3rd party ODBC drivers) to respond in a timely manner. In some rare cases, perhaps due to a resource problem, the operation may not respond to the interrupt within a timeframe you would expect.
+
+In Clementine 11 the ability to interrupt a stream twice has been added. Interrupting the stream a second time in the event of the first interrupt not responding will abruptly terminate the Clementine Server (or local back end if running in local mode) session.
+
+Note that if the hang is occuring outside of stream execution (eg. during an ODBC call for example) then this option for a second interrupt will not abruptly terminate the server process
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 64293

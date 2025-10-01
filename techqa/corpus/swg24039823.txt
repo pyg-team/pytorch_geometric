@@ -1,0 +1,82 @@
+Title: IBM PI34548;8.5.5: URL fragments may be removed when requests are processed by the SAML web SSO TAI - United States
+
+Text:
+PI34548; PI34548; PI34548 DOWNLOADABLE FILES
+
+ABSTRACT
+ URL fragments may be removed on requests directed to the SAML web SSO TAI. 
+
+DOWNLOAD DESCRIPTION
+PI34548 resolves the following problem:
+
+
+ERROR DESCRIPTION: 
+When a request containing GET parameters in the URL is processed by the SAML web single sign-on (SSO) trust association interceptor (TAI) and requires a redirect to an identity provider (IdP) login page, the parameters from the request will be lost by the time the browser successfully authenticates with WebSphere.
+
+LOCAL FIX: 
+N/A 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+IBM WebSphere Application Server users of SAML web single sign-on (SSO)
+
+PROBLEM DESCRIPTION:
+GET parameters in a SAML Web SSO request may be deleted by the ACSTrustAssociationInterceptor.
+
+RECOMMENDATION:
+Install a fix pack that contains this APAR.
+
+When a user requests a web page that has URL fragments, if the user is not authenticated and needs to be authenticated via the SAML web single sign-on TAI, the fragment may be lost after the user is authenticated.
+
+For example:
+
+A user requests https://example.com/home?lang=en-us#!/somePage
+The user is not authenticated, so the authentication process occurs.
+After authentication, instead of https://example.com/home?lang=en-us#!/somePage,https://example.com/home is displayed. 
+
+
+PROBLEM CONCLUSION: 
+The SAML TAI preserves the requested URL before redirecting the user to the identity provider (IdP). However, the fragment is not part of request URL. Because of this, the fragment is lost after the user is authenticated.
+
+The SAML TAI is updated to use a javascript to reset the original requested web page after the user is authenticated.
+
+
+The following SAML TAI custom properties are added:
+
+redirectToIdPonServerSide 
+sso_<id>.sp.redirectToIdPonServerSide 
+
+Valid values are true and false. The default value is true.
+redirectToIdPonServerSide applies to all service providers (SPs) and sso_<id>.sp.redirectToIdPonServerSide applies to a specific SP.
+
+When either of these values are set to false for the active SP, the TAI will do a client-side redirect. 
+
+8.5.5.4-WS-WASProd-IFPI34548.zip applies to 8.5.5.4.
+8.5.5.5-WS-WASProd-IFPI34548.zip applies to 8.5.5.5.
+8.5.5.6-WS-WASProd-IFPI34548.zip applies to 8.5.5.6.
+
+The fix for this APAR is currently targeted for inclusion in fix pack 7.0.0.39, 8.0.0.11 and 8.5.5.7. Please refer to the Recommended Updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+Keywords: IBMWL3WSS, SAMLWSSO, INTERIMFIX
+
+PREREQUISITES
+None
+
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme 8.5.5.4 [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI34548/8.5.5.4/readme.txt] US English 5001 Readme 8.5.5.5 [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI34548/8.5.5.5/readme.txt] US English 5099 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 8.5.5.4-WS-WASProd-IFPI34548 04-14-2015 US English 396955 FC [http://www-933.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?fixes=8.5.5.4-WS-WASProd-IFPI34548&productid=WebSphere Application Server&brandid=5] [ ] 8.5.5.5-WS-WASProd-IFPI34548 2 Jun 2015 US English 396981 FC [http://www-933.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?fixes=8.5.5.5-WS-WASProd-IFPI34548&productid=WebSphere Application Server&brandid=5] [ ] 8.5.5.6-WS-WASProd-IFPI34548 23 Jul 2015 US English 294029 FC [http://www-933.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?fixes=8.5.5.6-WS-WASProd-IFPI34548&productid=WebSphere Application Server&brandid=5] [ ] 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24039823&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24039823&aid=2]Problems (APARS) fixed
+PI32293, PI34548

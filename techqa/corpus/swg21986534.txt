@@ -1,0 +1,46 @@
+Title: IBM Newly accessed tables result in increasing of dbheap - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Newly accessed tables result in increasing of dbheap 
+
+SYMPTOM
+From output of command "db2pd -db <db name> -mempools" you can find LogSz/PhySz of the memory pool named "dbh" keeps on increasing.
+
+
+CAUSE
+This is expected result. Every newly accessed table loads the tcb and has associated allocations for data, index, lob, compression dictionaries if applicable. This memory allocation is persistent/cached until the database deactivates or the table is dropped.
+
+DIAGNOSING THE PROBLEM
+Collect "db2pd -db showdb -memblocks 2 sort -alldbp", you will find most of the the newly memory allocations are from File 1601762203 LOC 1025 and LOC 1015: 
+
+Day 1:
+
+All memory consumers in Database memory set:
+PoolID PoolName TotalSize(Bytes) %Bytes TotalCount %Count LOC File 
+2 dbh 2502313088 51.03 59601 7.42 1025 1601762203
+2 dbh 1906996352 38.89 59601 7.42 1015 1601762203
+2 dbh 325096960 6.63 169321 21.08 2225 1235116617
+2 dbh 37055232 0.76 159296 19.84 3159 1235116617
+
+Day 2:
+
+All memory consumers in Database memory set:
+PoolID PoolName TotalSize(Bytes) %Bytes TotalCount %Count LOC File 
+2 dbh 2642441600 50.76 63266 7.16 1025 1601762203
+2 dbh 2027344256 38.95 63266 7.16 1015 1601762203
+2 dbh 356836992 6.86 185844 21.03 2225 1235116617
+2 dbh 40057088 0.77 174834 19.78 3159 1235116617
+
+Note, for different versions, LOC might be different, above LOC only applies to V9.7FP11.
+
+Collect "db2pd -d showdb -tcbstats -alldbp", you will see the number of tcb entries also keeps on increasing.
+
+
+
+
+
+RESOLVING THE PROBLEM
+This is the expected result, once all tables in the database are accessed for at least one time, the memory increasing will stop.

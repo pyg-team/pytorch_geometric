@@ -1,0 +1,141 @@
+Title: IBM IZ89817: TADDM BIRT REPORTS DO NOT WORK AFTER CHANGING DB INFORMATION (URL, USER, PASSWORD) IN COLLATION.PROPERTIES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After changing information about TADDM database in
+   collation.properties, the BIRT reports do not work anymore.
+   
+   In order to fix the problem:
+   1. cd
+   COLLATION_HOME/dist/deploy-tomcat/birt-viewer/WEB-INF/report/
+   directory
+   2. remove all files with extension .rptdesigncompiled
+   3. restart TADDM
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  TADDM BIRT reports do not work after changing DB
+   information (URL, user, password) in collation.properties.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The documentation change will be made in the next release of the
+   Application Dependency Discovery Manager InfoCenter in section
+   Troubleshooting > Solutions for problems that you might have >
+   BIRT report problems.
+   
+   
+   The following problem and solution has been added to the topic
+   "BIRT report problems":
+   
+   
+    BIRT reports do not run after changing database properties in
+   the collation.properties file
+   
+   
+    Problem
+     After changing the URL, user name, or password properties for
+   the TADDM database in the collation.properties file BIRT reports
+   do not run.
+   
+   
+    Solution
+     After modifying the URL, user name, or password database
+   properties in the collation.properties file, complete the
+   following steps:
+   
+   
+   1. On the TADDM server, go to the
+   $COLLATION_HOME/deploy-tomcat/birt-viewer/WEB-INF/report
+   directory.
+   2. Remove the .rptdesigncompiled  files.
+   3. Restart the TADDM server.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ89817
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-30
+   
+   
+ * CLOSED DATE
+   2010-12-22
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

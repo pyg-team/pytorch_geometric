@@ -1,0 +1,135 @@
+Title: IBM A servlet NullPointerException occurs when calling a web service in IBM Business Process Manager (BPM) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After you upgrade to IBM Business Process Manager (BPM) V7.5.1 Fix Pack 1, you cannot run any web service or any WSDL in IBM Business Process Manager. Instead, you see a NullPointerException message in a browser. 
+
+SYMPTOM
+Usually, the issue is seen after a recent upgrade or installation of IBM Business Process Manager. When you try to open a WSDL, you see the following NullPointerException in a browser: 
+
+java.lang.NullPointerException
+
+com.lombardisoftware.core.TeamWorksException: java.lang.NullPointerException
+at com.lombardisoftware.core.TeamWorksException.asTeamWorksException(TeamWorksException.java:130)
+at com.lombardisoftware.core.RegexExceptionRewriter.rewrite(RegexExceptionRewriter.java:76)
+at com.lombardisoftware.core.ExceptionHandler.returnProcessedException(ExceptionHandler.java:311)
+at com.lombardisoftware.servlet.ControllerServlet.processError(ControllerServlet.java:171)
+at com.lombardisoftware.servlet.ControllerServlet.doError(ControllerServlet.java:167)
+at com.lombardisoftware.servlet.ControllerServlet.goGet(ControllerServlet.java:143)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:718)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:831)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1657)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1597)
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebAppFilterChain.java:104)
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain_doFilter(WebAppFilterChain.java:77)
+at com.ibm.ws.webcontainer.filter.WebAppFilterManager.doFilter(WebAppFilterManager.java:908)
+... 
+
+
+The SystemOut.log file contains the following exceptions: 
+
+
+[8/21/13 12:12:12:126 GMT] 00000017 servlet E com.ibm.ws.webcontainer.servlet.ServletWrapper init SRVE0100E: Uncaught init() exception created by servlet webservice in application IBM_BPM_Teamworks_Node01_server1: java.lang.ExceptionInInitializerError 
+
+ *  at java.lang.J9VMInternals.initialize(J9VMInternals.java:222)
+ * 
+ *  at com.lombardisoftware.server.eai.soap.axis.TWAxisEngineConfiguration.<init>(TWAxisEngineConfiguration.java:25)
+ * 
+ *  at com.lombardisoftware.server.eai.soap.axis.TWAxisEngineConfigurationFactory.getServerEngineConfig(TWAxisEngineConfigurationFactory.java:115)
+ * 
+ *  at org.apache.axis.transport.http.AxisServletBase.getEngineEnvironment(AxisServletBase.java:273)
+ * 
+ *  at org.apache.axis.transport.http.AxisServletBase.getEngine(AxisServletBase.java:172)
+ * 
+ *  at org.apache.axis.transport.http.AxisServletBase.getOption(AxisServletBase.java:396)
+ * 
+ *  at org.apache.axis.transport.http.AxisServletBase.init(AxisServletBase.java:112)
+ * 
+ *  at org.apache.axis.transport.http.AxisServlet.init(AxisServlet.java:156)
+ * 
+ *  at javax.servlet.GenericServlet.init(GenericServlet.java:241)
+ * 
+ *  at com.ibm.ws.webcontainer.servlet.ServletWrapper.init(ServletWrapper.java:358)
+ * 
+ *  at com.ibm.ws.webcontainer.servlet.Se
+ * rvletWrapperImpl.init(ServletWrapperImpl.java:171)
+ * 
+ *  at com.ibm.ws.webcontainer.servlet.ServletWrapper.initialize(ServletWrapper.java:1809)
+ * 
+ *  at com.ibm.wsspi.webcontainer.extension.WebExtensionProcessor.createServletWrapper(WebExtensionProcessor.java:98)
+ * 
+ *  at com.ibm.ws.webcontainer.webapp.WebApp.getServletWrapper(WebApp.java:1047)
+ * 
+ *  at com.ibm.ws.webcontainer.webapp.WebApp.getServletWrapper(WebApp.java:968)
+ * 
+ *  at com.ibm.ws.webcontainer.webapp.WebApp.initializeTargetMappings(WebApp.java:647)
+ * 
+ *  at com.ibm.ws.webcontainer.webapp.WebApp.commonInitializationFinally(WebApp.java:449)
+ * 
+ *  at com.ibm.ws.webcontainer.webapp.WebAppImpl.initialize(WebAppImpl.java:304)
+ * 
+ *  at com.ibm.ws.webcontainer.webapp.WebGroupImpl.addWebApplication(WebGroupImpl.java:100)
+ * 
+ *  at com.ibm.ws.webcontainer.VirtualHostImpl.addWebApplication(VirtualHostImpl.java:166)
+ * 
+ *  at com.ibm.ws.webcontainer.WSWebContainer.addWebApp(WSWebContainer.java:732)
+ * 
+ *  at com.ibm.ws.webcontainer.WSWebContainer.addWebApplication(WSWebContainer.java:617)
+ * 
+ *  at com.ibm.ws.webcontainer.component.WebContainerImpl.install(WebContainerImpl.java:376)
+ * 
+ *  at com.ibm.ws.webcontainer.component.WebContainerImpl.start(WebContainerImpl.java:668)
+ * 
+ *  at com.ibm.ws.runtime.component.ApplicationMgrImpl.start(ApplicationMgrImpl.java:1127)
+ * 
+ *  at com.ibm.ws.runtime.component.DeployedApplicationImpl.fireDeployedObjectStart(DeployedApplicationImpl.java:1319)
+ * 
+ *  at com.ibm.ws.runtime.component.DeployedModuleImpl.start(DeployedModuleImpl.java:611)
+ * 
+ *  at com.ibm.ws.runtime.component.DeployedApplicationImpl.start(DeployedApplicationImpl.java:944)
+ * 
+ *  at com.ibm.ws.runtime.component.ApplicationMgrImpl.startApplication(ApplicationMgrImpl.java:740)
+ * 
+ *  at com.ibm.ws.runtime.component.ApplicationMgrImpl.start(ApplicationMgrImpl.java:2051)
+ * 
+ *  at com.ibm.ws.runtime.component.CompositionUnitMgrImpl.start(CompositionUnitMgrImpl.java:385)
+ * 
+ *  at com.ibm.ws.runtime.component.CompositionUnitImpl.start(CompositionUnitImpl.java:123)
+ * 
+ *  at com.ibm.ws.runtime.component.CompositionUnitMgrImpl.start(CompositionUnitMgrImpl.java:328)
+ * 
+ *  at com.ibm.ws.runtime.component.CompositionUnitMgrImpl.access$300(CompositionUnitMgrImpl.java:113)
+ * 
+ *  at com.ibm.ws.runtime.component.CompositionUnitMgrImpl$CUInitializer.run(CompositionUnitMgrImpl.java:895)
+ * 
+ *  at com.ibm.wsspi.runtime.component.WsComponentImpl$_AsynchInitializer.run(WsComponentImpl.java:349)
+ * 
+ *  at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1646)
+ * 
+ * Caused by: java.lang.NullPointerException
+ * 
+ *  at com.lombardisoftware.server.eai.soap.axis.TWURLMapper.<clinit>(TWURLMapper.java:93)
+ * 
+ *  at java.lang.J9VMInternals.initializeImpl(Native Method)
+ * 
+ *  at java.lang.J9VMInternals.initialize(J9VMInternals.java:200)
+ * 
+ *  ... 36 more
+
+
+CAUSE
+During an upgrade to IBM Business Process Manager V7.5.1 Fix Pack 1, there are critical profile upgrade steps. When these steps are not completed, classes are not initialized.
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, complete all of the steps in the Profile upgrade instructions for V7.5.1 Fix Pack 1 (V7.5.1.1) IBM Business Process Manager (BPM) product installations with existing profiles [http://www.ibm.com/support/docview.wss?uid=swg27035490] document.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard AIX, Linux, Solaris, Windows 7.5.1.1 Business Integration IBM Business Process Manager Express Linux, Windows 7.5.1.1 
+PRODUCT ALIAS/SYNONYM
+ BPM

@@ -1,0 +1,65 @@
+Title: IBM Distribute Decision Validation Service tests on different Rule Execution Server instances - United States
+
+Text:
+SSPResolver; SSP TECHNOTE (FAQ)
+
+QUESTION
+ Can I configure Rules Team Server to distribute the Decision Validation Service tests to multiple application servers? 
+
+CAUSE
+With a Rule Execution Server environment defined on a domain with multiple servers it is possible to define which Rule Execution Server instances will be used to execute the Rule Team Server Decision Services
+
+ANSWER
+First remember to pack all your XOMs (eXecutable Object Model) into the ssp.war following the documentation [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global720.html]. 
+
+Then make sure the SSP (ssp.war) is deployed on each server along with a XU connection factory and the appropriate datasource definition. 
+
+ 
+
+Then create your own SSP resolver, add it to the teamserver.war and set the teamserver.defaultSSPResolver.class property to this class following this specification [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=/com.ibm.websphere.ilog.jrules.doc/html/api/html/ilog/rules/teamserver/model/testing/IlrSSPResolver.html]. 
+
+ 
+
+By implementing your own method IlrSSPResolver.getSSPURL(String serverName,URL url), you will be able to point to something else than the default provider. 
+
+The default provider uses the url of the Rule Execution Server passed in parameter and replaces the application name with testing. 
+
+A simple implementation can use the server name to return a specific server URL. 
+
+for example you can have 2 servers defined in RTS: 
+
+ * testingServer1 http://host1:9080/res 
+ * testingServer2 http://host1:9080/res
+
+
+And your SSP provider can evaluate the SSP URL as follow : 
+if ( serverName.equals("testingServer1") )
+{
+return ( new URL( "http://server1:9080/testing" ) );
+}
+else if ( serverName.equals("testingServer2") )
+{
+return ( new URL( "http://server2:9080/testing" );
+}
+else 
+return( new URL( "http://host1:9080/testing" )); 
+
+ 
+
+Then when running a DVS test the execution will be dispatched according to the server you choose. 
+
+ 
+
+For a more elaborate implementation you can have a dependency with the project being tested so that you can distribute the DVS execution based on a project: 
+
+
+ManagerBean bean = ManagerBean.getInstance() ; 
+IlrSession session = bean.getSession(); 
+IlrRuleProject project = session.getWorkingBaseline().getProject();
+String pname = project.getName(); 
+
+.
+
+RELATED INFORMATION
+#Repackaging the XOM for remote testing [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global720.html]
+IlrSSPResolver [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=/com.ibm.websphere.ilog.jrules.doc/html/api/html/ilog/rules/teamserver/model/testing/IlrSSPResolver.html]

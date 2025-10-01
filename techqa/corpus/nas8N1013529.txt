@@ -1,0 +1,27 @@
+Title: IBM Error in Java Shared Class Cache - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes an error you will see if the class cache becomes corrupt or cannot be accessed. 
+
+RESOLVING THE PROBLEM
+The IBM Technology for Java™ JVM allows for classes to be cached and shared with multiple JVMs. If a JVM fails to connect to an existing cache file during startup, you will see errors similar to the following in the joblog: 
+
+...
+JVMSHRC020E An error has occured while opening semaphore
+JVMSHRC017E Error code: -302
+JVMSHRC028E Permission Denied
+...
+
+This should not cause errors or exceptions in the JVM itself; however, it could impact overall performance of the JVM. To fix the cache, you can do the following:
+
+
+
+1. Delete all files and sub-directories in /tmp/javasharedresources/ directory. 2. Re-start the JVM.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 495561784

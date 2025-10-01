@@ -1,0 +1,12 @@
+Title: IBM AutoDelete does not contain a 'suspended' batch status filter in IBM Datacap Taskmaster Capture - United States
+
+Text:
+AutoDelete TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ AutoDelete does not contain a 'suspended' batch status filter in IBM Datacap Taskmaster Capture 
+
+RESOLVING THE PROBLEM
+The "suspended" status is normally not used, but batches can be set to the status using the rrunner library action SetTaskStatus or some equivalent. In AutoDelete there is no filter for the batch status; this limitation is removed in IBM Datacap Taskmaster Capture 8.0.0 and later through NENU, the replacement for AutoDelete. 
+
+In Taskmaster 7.6 and earlier, batches with the "suspended" status can be deleted manually through the Job Monitor. In IBM Datacap Taskmaster Capture Client the Job Monitor Filter menu has a SQL button where a customized filter can be inserted -- the value qu_status IN ('suspended') can be used to show only batch records with the suspended status. Similar functionality exists in Taskmaster Web with the Monitor's Filter button screen.

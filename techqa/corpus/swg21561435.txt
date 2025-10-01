@@ -1,0 +1,68 @@
+Title: IBM What can cause frequent MCF reference data cache refreshes? - United States
+
+Text:
+Performance Tuning; STERLINGTRB TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What can cause frequent MCF reference data cache refreshes? 
+
+SYMPTOM
+
+
+One or more cached reference tables are getting refreshed too frequently, which can lead to performance problems.
+
+Error Message You will see this happen in two different ways:
+
+1) On the System Management Console, when viewing the cached table statistics, you see one or more tables that have had a high rate of cache clears compared to other tables (you can click on the Clears column two times to sort in descending order)
+
+2) From the application log, you see frequent clears happening for specific tables:
+
+2008-05-16 14:43:11,642:WARN :WebContainer : 4: Clearing cache. Number cached=9893,Lists cached=2,Singletons cached=0: YFS_Resource_PermissionDBCacheHome
+
+
+RESOLVING THE PROBLEM
+Solution 
+
+
+
+If you're not familiar with the architecture of the whats and whys the MCF reference data cache, please review the section on Reference Data Caching in the Performance Management Guide - it's a short but good intro to the essentials.
+
+Three of the key aspects of the reference caching are:
+- reference data is assumed to change infrequently
+- when a given table's cache fills up, it will be dropped to make space for the next request
+- when a process updates one piece of reference data (i.e., one database record), in addition to the database being updated, broadcast messages are sent to all Application, Agent, and Integration Servers to tell them to drop their existing caches (JNDI is used to identify all server processes).
+
+
+Frequent cache clears can happen because of two common reasons:
+
+1) Cache size too small
+
+This will happen when the total number of records in a single table exceeds the cache size enough such that one query will fill most/all of the cache; a second query then comes along and needs more than the space left. The cache manager will drop the first set of results, and then replace it the second. This can lead to 'thrashing' of the cache. This situation is well-described in the Performance Management Guide in relation to the tables YFS_RESOURCE and YFS_RESOURCE_PERMISSION; when the cache is too small, logins to the system can slow down significantly. Please see the PMG for solution steps.
+
+2) Automated updates of reference data is happening
+
+When reference cache information is infrequently updated (i.e., by a user doing it interactively), the impact of retrieving JNDI information, cache refresh broadcasts, activities associated with cache drops and subsequent rebuilding of caches, etc., is minimal. Problems can arise if an automated update is implemented; a programmed process can potentially generate hundreds of updates in a short period of time, with a resulting heavy load of refresh broadcasts, cache drops, and rebuilds. This can cause enough thrashing that users may notice a significant slowness when performing their regular operations.
+
+This is of concern for anyone implementing an automated update of some data items in the reference data cache. One example of this would be using the synchronizeUsers API to insert/update/delete user attributes with an external system, such as an LDAP server.
+
+If you're implementing an automated update, you have three options:
+
+1) Disabling affected tables from being cached
+2) Timing updates to only be done during known quiet times on the system, if possible
+3) For a batch-style update, you can use the modifyCache API to dynamically affect things:
+a) modifyCache to disable cache for desired table(s)
+b) run through update process for all records
+c) modifyCache to enable cache, which will also broadcast a cache clear to all servers
+
+With this option, remember that for the entire length of time between steps a and c, other servers may or may not see some of the updates, depending on whether they themselves need to crop their copy of the cache and start rebuilding it.
+
+If you have additional questions, please contact Sterling MCF Support.
+
+
+
+
+
+
+
+HISTORICAL NUMBER
+ TRB2881

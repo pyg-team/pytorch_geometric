@@ -1,0 +1,130 @@
+Title: IBM LO93296: Forms Experience Builder - APACHE COMMONS-FILEUPLOAD REMOTE CODE EXECUTION CVE-2016-1000031 - United States
+
+Text:
+  DIRECT LINK TO FIX
+8.6.4.2-FormsExpBldr-IF0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FIBM+Forms+Experience+Builder&fixids=8.6.4.2-FormsExpBldr-IF0001&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  USERS AFFECTED: Forms Experience Bulder 8.5.X and 8.6.X
+   ****************************************************************
+   Vulnerability Details
+   Apache Commons-FileUpload remote code execution
+   CVEID: CVE-2016-1000031
+   DESCRIPTION: A vulnerability in IBM Spectrum Symphony and IBM
+   Platform Symphony could allow a remote attacker to execute
+   arbitrary code on the system, caused by deserialization of
+   untrusted data in DiskFileItem class of FileUpload library. A
+   attacker could exploit this vulnerability to execute arbitrary
+   code under the context of the current process.
+   CVSS V3 Base Score: 7.5 HIGH
+   CVSS V3 Vector: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+   (legend)
+   CVSS V3 Impact Score: 5.9
+   CVSS V3 Exploitability Score: 3.9
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No Workaround Available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This issue is resolved in FEB 8.5.1 and 8.6.4.2 available on
+   Fix Central http://www.ibm.com/support/fixcentral [http://www.ibm.com/support/fixcentral]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO93296
+   
+   
+ * REPORTED COMPONENT NAME
+   FORMS EXP BUILD
+   
+   
+ * REPORTED COMPONENT ID
+   5725J9200
+   
+   
+ * REPORTED RELEASE
+   864
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-11-07
+   
+   
+ * CLOSED DATE
+   2018-01-23
+   
+   
+ * LAST MODIFIED DATE
+   2018-01-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  8.6
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,135 @@
+Title: IBM PI36050: UNDOCUMENTED CHANGES IN BEHAVIOUR OF ANALYTICS BETWEEN WORKLIGHT V6.2 AND 6.3 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  1)Under the topic "IBM MobileFirst Platform Foundation
+   6.3.0>Monitoring and mobile operations>Analytics>Operational
+   analytics>IBM MobileFirst Platform Operational Analytics
+   security>Protecting the analytics data entry point with basic
+   authentication"
+   it says that the path wl.analytics.url is unprotected. That is
+   only true up to v6.2, in v6.3 it is protected by basic auth.
+   
+   
+   2)In several places of the Knowledge Center for IBM MobileFirst
+   Platform Foundation,
+   the proposed value of both the wl.analytics.url and
+   wl.analytics.console parameters is
+   http://<hostname>:<port>/<context-root>/data. [http://<hostname>:<port>/<context-root>/data.]
+   It is important to understand that in v6.3 and up these
+   parameters use different context roots.
+   wl.analytics.url is using the context root of
+   worklight-analytics-service.war,
+   and wl.analytics.console is using the context root of
+   worklight-analytics.war
+   Before that, the context root of analytics.war was used.
+   
+   
+   Additional Keywords:
+   
+   Worklight Versions Affected: 6.3
+   
+   Initial Impact: Medium
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the correct values described above
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Documentation corrected. See Sandy's comment number 4.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI36050
+   
+   
+ * REPORTED COMPONENT NAME
+   WL/MFPF CONSUME
+   
+   
+ * REPORTED COMPONENT ID
+   5725I4301
+   
+   
+ * REPORTED RELEASE
+   505
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-03-02
+   
+   
+ * CLOSED DATE
+   2016-11-16
+   
+   
+ * LAST MODIFIED DATE
+   2016-11-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

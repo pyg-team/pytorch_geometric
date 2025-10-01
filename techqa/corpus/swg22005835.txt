@@ -1,0 +1,44 @@
+Title: IBM Security Bulletin: IBM Atlas eDiscovery Process Management vulnerable to SQL injection. - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Atlas eDiscovery Process Management has addressed vulnerablility due to SQL injection, where a remote attacker could send specially-crafted SQL statements, which could allow the attacker to view, add, modify or delete information in the back-end database. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2017-1356 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-1356]
+DESCRIPTION: IBM Atlas eDiscovery Process Management is vulnerable to SQL injection. A remote attacker could send specially-crafted SQL statements, which could allow the attacker to view, add, modify or delete information in the back-end database.
+CVSS Base Score: 6.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/126683 [https://exchange.xforce.ibmcloud.com/vulnerabilities/126683] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L) 
+
+AFFECTED PRODUCTS AND VERSIONS
+Atlas eDiscovery Process Management 6.0.3 - 6.0.3.5
+
+REMEDIATION/FIXES
+ 
+
+Product VRM Remediation Atlas eDiscovery Process Management 6.0.3 - 6.0.3.5 Use Atlas eDiscovery Process Management version 6.0.3 Fix Pack 6 [http:///] 
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ October 06, 2017: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

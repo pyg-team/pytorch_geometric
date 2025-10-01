@@ -1,0 +1,192 @@
+Title: IBM TAKEOVER HADR command fails and database is marked bad if the local port number is used by others - United States
+
+Text:
+HADR; Standby; TAKEOVER; bind; EADDRINUSE; DBMarkedBad TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ On HADR standby side, the TAKEOVER HADR command would fail and mark the database as "bad" if the HADR local port number was used by other applications (e.g. another HADR database).
+
+
+
+The local port number is the number specified in the "HADR_LOCAL_SVC" configuration parameter. 
+
+SYMPTOM
+When the TAKEOVER HADR command was performed on HADR Standby side, following messages were seen in db2diag.log file:
+===========================================
+2014-01-01-01.01.46.858750+480 E44677600A467 LEVEL: Event
+PID : 1234567 TID : 15492 PROC : db2sysc 0
+INSTANCE: DB2INST1 NODE : 000 DB : SAMPLE
+APPHDL : 0-566 APPID: *LOCAL.db2inst1.123456789123
+AUTHID : MB_ONLAD
+EDUID : 15492 EDUNAME: db2agent (SAMPLE) 0
+FUNCTION: DB2 UDB, base sys utilities, sqeDBMgr::StartUsingLocalDatabase, probe:13
+START : Received TAKEOVER HADR command.
+
+2014-01-01-01.01.50.552773+480 I45033380A394 LEVEL: Warning
+PID : 1234567 TID : 7281 PROC : db2sysc 0
+INSTANCE: DB2INST1 NODE : 000 DB : SAMPLE
+EDUID : 7281 EDUNAME: db2hadrs (SAMPLE) 0
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrSDoTakeover, probe:47042
+MESSAGE : Info: Standby switching roles to primary.
+
+2014-01-01-01.01.53.677826+480 E46298857A387 LEVEL: Event
+PID : 1234567 TID : 7281 PROC : db2sysc 0
+INSTANCE: mb_onlad NODE : 000 DB : SAMPLE
+EDUID : 7281 EDUNAME: db2hadrs (SAMPLE) 0
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrSetDbRole, probe:10010
+CHANGE : HADR role set to Primary (was Standby)
+
+2014-01-01-01.02.14.419890+480 I46300048A404 LEVEL: Warning
+PID : 1234567 TID : 7281 PROC : db2sysc 0
+INSTANCE: DB2INST1 NODE : 000 DB : SAMPLE
+EDUID : 7281 EDUNAME: db2hadrp (SAMPLE) 0
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrSDoTakeover, probe:47003
+MESSAGE : Info: Standby has completed takeover (now primary).
+
+2014-01-01-01.02.14.475614+480 I46300869A369 LEVEL: Warning
+PID : 1234567 TID : 7281 PROC : db2sysc 0
+INSTANCE: DB2INST1 NODE : 000 DB : SAMPLE
+EDUID : 7281 EDUNAME: db2hadrp (SAMPLE) 0
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrEduS, probe:20342
+MESSAGE : Info: Standby Finished.
+
+2014-01-01-01.02.16.440187+480 E46308630A466 LEVEL: Event
+PID : 1234567 TID : 50959 PROC : db2sysc 0
+INSTANCE: DB2INST1 NODE : 000 DB : SAMPLE
+APPHDL : 0-24207 APPID: *LOCAL.DB2.140416021044
+AUTHID : DB2INST1
+EDUID : 50959 EDUNAME: db2stmm (SAMPLE) 0
+FUNCTION: DB2 UDB, Self tuning memory manager, stmmLog, probe:1028
+DATA #1 : <preformatted>
+Starting STMM log from file number 0 
+
+2014-01-01-01.02.36.659916+480 I46315347A368 LEVEL: Warning
+PID : 1234567 TID : 7281 PROC : db2sysc 0
+INSTANCE: DB2INST1 NODE : 000 DB : SAMPLE
+EDUID : 7281 EDUNAME: db2hadrp (SAMPLE) 0
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrEduP, probe:20301
+MESSAGE : Info: Primary Started.
+
+2014-01-01-01.02.36.660165+480 I46315716A417 LEVEL: Warning
+PID : 1234567 TID : 7281 PROC : db2sysc 0
+INSTANCE: DB2INST1 NODE : 000 DB : SAMPLE
+EDUID : 7281 EDUNAME: db2hadrp (SAMPLE) 0
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrSetTcpWindowSize, probe:32201
+MESSAGE : Info: HADR Socket send buffer size, SO_SNDBUF: 262144 bytes
+
+2014-01-01-01.02.36.660281+480 I46316134A420 LEVEL: Warning
+PID : 1234567 TID : 7281 PROC : db2sysc 0
+INSTANCE: DB2INST1 NODE : 000 DB : SAMPLE
+EDUID : 7281 EDUNAME: db2hadrp (SAMPLE) 0
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrSetTcpWindowSize, probe:32251
+MESSAGE : Info: HADR Socket receive buffer size, SO_RCVBUF: 262144 bytes
+===========================================
+
+That means the HADR role had switched from "Standby" to "Primary", and the "db2hadrp" EDU was going to work as HADR Primary.
+However soon after that, the "db2hadrp" EDU reported error as follows:
+===========================================
+2014-01-01-01.02.36.670307+480 E46316555A482 LEVEL: Error (OS)
+PID : 1234567 TID : 7281 PROC : db2sysc 0
+INSTANCE: DB2INST1 NODE : 000 DB : SAMPLE
+EDUID : 7281 EDUNAME: db2hadrp (SAMPLE) 0
+FUNCTION: DB2 UDB, oper system services, sqloPdbBindSocket, probe:20
+MESSAGE : ZRC=0x810F001B=-2129723365=SQLO_ADDR_IN_USE "Address already in use"
+CALLED : OS, -, bind
+OSERR : EADDRINUSE (67) "Address already in use"
+
+2014-01-01-01.02.36.700734+480 I46317038A421 LEVEL: Error
+PID : 1234567 TID : 7281 PROC : db2sysc 0
+INSTANCE: DB2INST1 NODE : 000 DB : SAMPLE
+EDUID : 7281 EDUNAME: db2hadrp (SAMPLE) 0
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrBindAndListen, probe:20320
+RETCODE : ZRC=0x810F001B=-2129723365=SQLO_ADDR_IN_USE "Address already in use"
+
+2014-01-01-01.02.36.700874+480 I46317460A412 LEVEL: Error
+PID : 1234567 TID : 7281 PROC : db2sysc 0
+INSTANCE: DB2INST1 NODE : 000 DB : SAMPLE
+EDUID : 7281 EDUNAME: db2hadrp (SAMPLE) 0
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrEduP, probe:20380
+RETCODE : ZRC=0x810F001B=-2129723365=SQLO_ADDR_IN_USE "Address already in use"
+
+2014-01-01-01.02.36.701014+480 I46317873A369 LEVEL: Warning
+PID : 1234567 TID : 7281 PROC : db2sysc 0
+INSTANCE: DB2INST1 NODE : 000 DB : SAMPLE
+EDUID : 7281 EDUNAME: db2hadrp (SAMPLE) 0
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrEduP, probe:20302
+MESSAGE : Info: Primary Finished.
+
+2014-01-01-01.02.36.701123+480 I46318243A398 LEVEL: Severe
+PID : 1234567 TID : 7281 PROC : db2sysc 0
+INSTANCE: DB2INST1 NODE : 000 DB : SAMPLE
+EDUID : 7281 EDUNAME: db2hadrp (SAMPLE) 0
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrEduEntry, probe:21100
+MESSAGE : HADR marking logs bad; database should shut down.
+
+2014-01-01-01.02.36.703530+480 I46318642A416 LEVEL: Error
+PID : 1234567 TID : 7281 PROC : db2sysc 0
+INSTANCE: DB2INST1 NODE : 000 DB : SAMPLE
+EDUID : 7281 EDUNAME: db2hadrp (SAMPLE) 0
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrEduEntry, probe:21100
+RETCODE : ZRC=0x810F001B=-2129723365=SQLO_ADDR_IN_USE "Address already in use"
+===========================================
+
+That means the system call "bind()" failed with OS errno EADDRINUSE, which indicates the desired port number (specified in "HADR_LOCAL_SVC" parameter) on local machine was being used by others and could not be used by the "db2hadrp" EDU. As a result the "db2hadrp" EDU marked database logs as "bad", which means the database logging can no longer work.
+After that, if any EDU tried to access database logs the database would be marked bad:
+===========================================
+2014-01-01-01.02.37.006129+480 I46319059A435 LEVEL: Severe
+PID : 1234567 TID : 3940 PROC : db2sysc 0
+INSTANCE: DB2INST1 NODE : 000
+EDUID : 3940 EDUNAME: db2loggw (SAMPLE) 0
+FUNCTION: DB2 UDB, data protection services, sqlpgwlp, probe:350
+RETCODE : ZRC=0x8610000D=-2045771763=SQLP_BADLOG "Log File cannot be used"
+DIA8414C Logging can not continue due to an error.
+
+2014-01-01-01.02.37.053014+480 I46319495A436 LEVEL: Error
+PID : 1234567 TID : 3940 PROC : db2sysc 0
+INSTANCE: DB2INST1 NODE : 000
+EDUID : 3940 EDUNAME: db2loggw (SAMPLE) 0
+FUNCTION: DB2 UDB, data protection services, sqlpgasn2, probe:1820
+RETCODE : ZRC=0x8610000D=-2045771763=SQLP_BADLOG "Log File cannot be used"
+DIA8414C Logging can not continue due to an error.
+
+2014-01-01-01.02.37.053200+480 I46319932A337 LEVEL: Severe
+PID : 1234567 TID : 3940 PROC : db2sysc 0
+INSTANCE: DB2INST1 NODE : 000
+EDUID : 3940 EDUNAME: db2loggw (SAMPLE) 0
+FUNCTION: DB2 UDB, data protection services, sqlpgasn2, probe:4330
+MESSAGE : Logging can not continue.
+
+< ... skipped ... >
+
+2014-01-01-01.02.59.350439+480 E48963552A983 LEVEL: Critical
+PID : 1234567 TID : 56356 PROC : db2sysc 0
+INSTANCE: DB2INST1 NODE : 000 DB : SAMPLE
+APPHDL : 0-24228 APPID: 123.7.130.72.45771.123456789456
+AUTHID : DB2INST1
+EDUID : 56356 EDUNAME: db2agent (SAMPLE) 0
+FUNCTION: DB2 UDB, base sys utilities, sqeLocalDatabase::MarkDBBad, probe:10
+MESSAGE : ADM14001C An unexpected and critical error has occurred: 
+"DBMarkedBad". The instance may have been shutdown as a result. 
+"Automatic" FODC (First Occurrence Data Capture) has been invoked and 
+diagnostic information has been recorded in directory 
+"/MBONLDBS/usr/mb_onlad/sqllib/db2dump/FODC_DBMarkedBad_2014-04-16-03
+.37.58.748934_0000/". Please look in this directory for detailed 
+evidence about what happened and contact IBM support if necessary to 
+diagnose the problem.
+===========================================
+
+
+CAUSE
+When the TAKEOVER HADR is performed, the HADR role switches from Standby to Primary and the "db2hadrp" EDU tries to listen on the port number specified in "HADR_LOCAL_SVC" parameter. This is to receive CONNECT request from HADR Standby side (which was Primary side before TAKEOVER).
+If the port number was already used by some other applications - e.g. another HADR Primary database was using the same port number as local port number on the same host - the "db2hadrp" EDU would fail to listen on it, and the system call "bind()" would report OS errno EADDRINUSE.
+
+The root cause is: the system is not configured correctly. The port number is already occupied by other applications, so it can not be used by current "db2hadrp" EDU.
+
+DIAGNOSING THE PROBLEM
+Collect db2diag.log file on both HADR Primary side and HADR Standby side.
+
+RESOLVING THE PROBLEM
+Contact system administrator to check if the port number specified in "HADR_LOCAL_SVC" parameter is being used by other databases or other applications. Then change to some other port number that is not used by others.
+
+A common command used on Linux/Unix platforms is "netstat -an|grep <PortNumber>", where "<PortNumber>" is the port number specified in "HADR_LOCAL_SVC" parameter.
+The "<PortNumber>" is not supposed to show up in the command output. Otherwise it means someone is already using the port number, hence it can not be used by current HADR database.

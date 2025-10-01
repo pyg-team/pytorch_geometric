@@ -1,0 +1,141 @@
+Title: IBM IV51846: EXIT() FUNCTION BEHAVIOR ARE THE SAME IN BOTH IMPACT 5.X AND IMPACT 6.X AS 6.1 DOCUMENTATION DESCRIBED. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  For Impact 5.1.1
+   According to the document:
+   You can use the Exit function anywhere in a policy where you
+   want to
+   terminate processing.
+   
+   The Exit() function terminates a policy, when it's called
+   outside a
+   function.
+   
+   But the exit() doesn't terminate, when used in a user-defined
+   function.
+   Also, there is not much information in the 5.1.1 doc, as to how
+   the
+   exit() function behaves inside a user-defined function.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Exit() function behavior are the same in both Impact 5.x and
+   Impact 6.x.
+   It is as 6.1 document described.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Exit function dose not terminate processing when in a        *
+   * user-defined function                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Update Documentation                                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  You use the Exit function to stop a function anywhere in a
+   policy or to exit a
+   policy.
+   When you use Exit in a user-defined function it exits that
+   function, and the policy
+   continues.
+   
+   Fixed in Impact 5.1.1 FP02 policy reference guide.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV51846
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   511
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-10
+   
+   
+ * CLOSED DATE
+   2013-12-16
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC23883106 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,141 @@
+Title: IBM LO84360: INCONSISTENCIES WITH CREATED FIELD WHEN SETTING DATE IN PROMPT FOR TIME/DATE/PHONE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Initially, a user had issues with the timestamps of emails
+   because of a defective laptop battery causing the OS time to be
+   incorrect. During their tests, they found that the local OS
+   time can be changed via Notes client. This is by using the
+   option "Prompt for time/date/phone" in the Basics tab of the
+   Location Document. If you set this to YES, once you change to
+   this location, you will be prompted by a panel wherein you can
+   manually set phone dialing prefix as well as the date and time
+   for that location.
+   
+   You can manually set ANY date, regardless of the year. The
+   local OS time will change to the manually set date in the panel.
+   If you send an email after manually setting a date, notice that
+   the fields in the Document Properties pulls the erroneous time
+   from the OS, specifically the Created field on the first tab.
+   
+   If the date is set in the PAST, the fields Created (Initially),
+   Modified (Initially), Added (In this file) and Modified (In
+   this file) would be in the present/correct date. After sending
+   a few emails, you will notice that the Created (Initially)
+   field would sometimes change to the date set in the panel. (The
+   other fields would most likely remain at the present/correct
+   date.) But this is NOT constant. There are instances wherein
+   the Created (Initially) field would display a date that you
+   NEVER used in your tests at all, which makes the results
+   inconsistent. At times, the Created field is correct, at
+   another time, it would remain to the previous date you set
+   (will not update to the new date you set in the panel), and
+   then, it would display a date you never used at all, which
+   makes us wonder where this date is being pulled.
+   
+   If the date is set in the future, all this fields would be in
+   that future date. But at times, would not update to the new
+   date set in the prompt and would remain at the previous set
+   date.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# RUYA9V4LAD.
+   This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO84360
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   901
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-25
+   
+   
+ * CLOSED DATE
+   2015-04-23
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R901 PSN
+   UP

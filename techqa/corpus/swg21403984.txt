@@ -1,0 +1,32 @@
+Title: IBM A module for WebSphere Process Server (WPS) needs to be restarted after modifying the Maximum Failed Deliveries value for a SCA destination (when using Event Sequencing) - United States
+
+Text:
+v612rnotes; v62rnotes; Event Sequencing; Maximum Failed Deliveries; SCA retry; SCA destination; SCA message TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When installing a module to WebSphere Process Server, some queues are created on the Service Component Architecture (SCA) System Bus for internal message processing. If you want to modify the retry value for internal SCA messages, you need to change the value "Maximum Failed Deliveries" for the particular destination. Generally, it is possible to adjust this value at runtime. However, if Event Sequencing is in place, there is a limitation to this: Modifications to the Maximum Failed Deliveries value are not picked up at runtime. 
+
+SYMPTOM
+In case of a failure, SCA messages are not retried according to the new value but the retry count remains at the previously defined value.
+
+
+CAUSE
+The Event Sequencing consumer caches the "Maximum Failed Deliveries" value for the SCA component destination. Therefore updates during runtime are not picked up. It would cost too much in performance to modify this behavior, such that it accepts changes during runtime.
+
+ENVIRONMENT
+This issue applies to every environment where Event Sequencing is configured.
+
+RESOLVING THE PROBLEM
+You need to restart the according module after making the change to the "Maximum Failed Deliveries" parameter of the SCA destination. Then, the new set value is used for the Event Sequencing processing.
+
+RELATED INFORMATION
+ WebSphere Process Server V7: Processing events [http://pic.dhe.ibm.com/infocenter/dmndhelp/v7r0mx/topic/com.ibm.websphere.wps.doc/doc/eventsequence/cadm_eventsequence_ovw.html]
+WebSphere Application Server V7: Queue settings [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/SIBQueue_DetailForm.html]
+WebSphere Process Server Exception handling [http://www.ibm.com/developerworks/websphere/library/techarticles/0705_fong/0705_fong.html]
+WebSphere ESB V7: Managing resources for mediation [http://pic.dhe.ibm.com/infocenter/dmndhelp/v7r0mx/topic/com.ibm.websphere.wesb.doc/concepts/cwesb_res_admin.html]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WPS

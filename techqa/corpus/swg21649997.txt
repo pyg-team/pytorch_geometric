@@ -1,0 +1,42 @@
+Title: IBM Single user license cannot run on computer with Terminal Services activated - United States
+
+Text:
+License error: Single user-license on terminal server; Sub Code: Standalone application cannot run on terminal server; SPSS Text Analytics for Surveys; TAFS; SPSS Statistics; SPSS Modeler TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Install a IBM SPSS Software Product, for example: SPSS Text Analytics for Surveys, SPSS Statistics, SPSS Modeler.
+Activate a Single, Site, or Trial license. 
+Launch the software. 
+
+SYMPTOM
+"License error: Single user-license on terminal server"
+"Sub Code: Standalone application cannot run on terminal server."
+
+
+CAUSE
+Installing Text Analytics for Surveys using a Single, Site, or Trial license on a computer that has Terminal Services Activated.
+
+ENVIRONMENT
+Windows:
+Statistics workstation installations on computers running Terminal Services
+must be licensed using a Concurrent license (via a Network License Manager). 
+
+DIAGNOSING THE PROBLEM
+The computer has either 'multiple simultaneous desktop sessions' or has the
+capability of 'multiple simultaneous desktop sessions'.
+
+
+RESOLVING THE PROBLEM
+Resolution of the error requires exercise of at least one of the following two options:
+
+1) Disable any operating system facility that allows remote access to the computer.
+2) License the product using a concurrent license.
+
+
+RELATED INFORMATION
+ Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Statistics Windows Not Applicable Business Analytics SPSS Modeler Windows Not Applicable Business Analytics SPSS Amos Windows Not Applicable Business Analytics SPSS SamplePower Windows Not Applicable

@@ -1,0 +1,75 @@
+Title: IBM TKLM V2 FP005  failing with Exit Code 24 - United States
+
+Text:
+2.0.0-ISS-TKLM-FP0005; Exit Code 24; Fixpack installation; response files; install TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installing TKLM v2 FP005 fails with Exit Code 24, problem creating response files for TIP Installation 
+
+SYMPTOM
+ 
+
+After running \updateTKLM.bat tipadmin tipadminpwd >> D:\updateTKLM2005.log the installer quits rapidly. The updateTKLM2005.log file shows below entry: 
+
+ Tivoli Key Lifecycle Manager Exit Code = 24, Problem creating response 
+files for TIP Installation 
+
+
+CAUSE
+ 
+
+The fix pack installation fails because the installer is executed from another drive that is not the default (C:\) for %userprofile%.
+
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+During the installation process the installer creates a response with different installation parameters (tipadmin, tipadmin pwd, etc) in the %userprofile% path which by default is the C:\Users\Administrator on Windows 2008. Since the fix pack installer is being ran from D:\ , when the script tries to access %userprofile%, the path is not recognized because it does not exist in D:\. Therefore, installation fails with 
+
+Tivoli Key Lifecycle Manager Exit Code = 24, Problem creating response 
+files for TIP Installation
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+To resolve the problem please follow below steps: 
+
+1. Follow all steps from README file provided with Fixpack 05 
+
+ URL: ftp://129.35.224.115/ecc/sar/CMA/TIA/032db/0/2.0.0-ISS-TKLM-FP0005.README.html [ftp://129.35.224.115/ecc/sar/CMA/TIA/032db/0/2.0.0-ISS-TKLM-FP0005.README.html] 
+
+ 
+
+2. set TIP_HOME correctly 
+
+ Example: 
+
+ C:>set TIP_HOME=D:\ibm\tivoli\tiptklmV2 
+
+
+3. Copy or unzip TKLM v2 FP005 folder from D:\ to C:\ 
+
+ 
+
+4. Install Fixpack 
+
+ Example: 
+
+ C:\tklmv2fp5>updateTKLM.bat tipadmin ******** >> C:\updateTKLM2005.log 
+
+5. Check if FP05 installation completed successfully. 
+
+Example: 
+
+Login the Tivoli Integrated Portal (TIP) as tklmadmin and on the Welcome screen it should say: Welcome to Tivoli Key Lifecycle Manager –Version 2.0.0.5
+
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ TKLM

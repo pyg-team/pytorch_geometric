@@ -1,0 +1,61 @@
+Title: IBM Daeja ViewONE viewers can fail in HA and SSO environments - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Daeja ViewONE Virtual viewers and Daeja ViewONE Professional viewers with document streaming can fail in highly available cluster environments and in SSO environments. 
+
+SYMPTOM
+The viewers typically fail when you use a reverse proxy server or load balancer to access IBM Content Navigator. 
+
+When you attempt to open a document in the viewer, the viewer opens, but the content is not displayed. Additionally, an error message indicates that the document or annotation cannot be loaded. The error occurs intermittently and depends on the load balancer:
+
+
+ * If the load balancer routes the request to another node, the error occurs. 
+ * If the load balancer routes the request to the same node, the document opens without errors. 
+
+
+In the Daeja ViewONE Virtual viewer, this error can occur for any type of document. 
+
+In the Daeja ViewONE Professional viewer, this error occurs only for PDF or TIFF documents and occurs only when document streaming is enabled. 
+
+This problem affects the following releases and repositories: 
+
+Release IBM FileNet Content Manager repositories IBM Content Manager repositories 2.0.2 X X 2.0.3 X X 3.0.0 [/support/docview.wss?uid=swg22005170&amp;aid=1] X 
+CAUSE
+The Daeja ViewONE viewers employ a set of mid-tier web services to process document content. When a user opens a document, the initial request is made to the mid-tier web services to obtain the content. The mid-tier streaming service issues one or more secondary HTTP requests to obtain the content, and a “get content” URL is constructed based on the content URL that was used by the initial request. 
+
+Because the initial request comes from the user’s web browser, it contains the hostname of the load balancer. This can cause issues if the mid-tier web service cannot reach the host. If the load balance hostname is not visible to the individual node, or if the request is rerouted to one of the other nodes in the cluster, the request fails with an error for an out-of-session request for content. 
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, you can set additional configuration parameters for Daeja ViewONE Professional or Daeja ViewONE Virtual viewers by using the IBM Content Navigator administration tool. 
+
+
+The externalHost<N> and internalHost<N> parameters enable you to set the correct load balancer or reverse proxy server URL information so that requests are remapped to localhost. When requests are remapped, the document streaming service makes content requests back to the current node, where the service request is executed, which keeps the request in context. 
+
+For example, you can set the following parameter name-value pairs: 
+
+
+ * externalHost1=http://load.balanced.host/navigator 
+ * internalHost1=http://localhost:9080/navigator
+
+
+Important: The internal host port must be open and listening for connections on the node. 
+
+These parameters perform an internal string replacement on the inbound request URL, replacing the matching portion specified in externalHost1, with the replacement value in internalHost1. 
+
+You might be able to simply specify the “ host:port” portion of the URL. For example, you can set the following parameter name-value pairs: 
+ * externalHost1=load.balanced.host 
+ * internalHost1=localhost:9080
+
+
+You can map multiple sets of external hosts and internal hosts with a one-to-one mapping, so multiple load balancers or reverse proxy servers deployments are supported. However, you can't map a single external host to multiple internal hosts, so vertical clustering deployments are not supported. The numeric suffix of the parameters associate the external host to internal host. For example, you can set the following parameter name-value pairs: 
+ * externalHost1=first.load.balanced.host 
+ * internalHost1=localhost:9080 
+ * externalHost2=second.load.balanced.host 
+ * internalHost2=localhost:9080 
+
+Restart all IBM Content Navigator jvm nodes. RELATED INFORMATION
+ Troubleshooting problems with viewers in ICN [http://www.ibm.com/support/docview.wss?uid=swg27039281]

@@ -1,0 +1,144 @@
+Title: IBM IZ60763: KEYSIZE OF IMPORTED KEYS IS NOT CALCULATED CORRECTLY - United States
+
+Text:
+  A FIX IS AVAILABLE
+Tivoli Key Lifecycle Manager Version 1.0, Fix Pack 4, 1.0.0-TIV-TKLM-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24027909]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Import an asymmetric keypair of known size into TKLM. Using the
+   tklmKeyList CLI with the verbose option, list the imported key.
+   The keysize is listed incorrectly.
+   
+   CMVC Defect #107243
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Problem(Abstract)
+   Import an asymmetric keypair of known size into TKLM. Using the
+   tklmKeyList CLI with the verbose option, list the imported key.
+   The keysize is listed incorrectly.
+   
+   Symptom
+   For example, here is the listing of a 1024 bit key imported into
+   TKLM. Notice it shows the keysize to be 2048.
+   
+   
+   uuid KEY-f197c9de-67d8-4ed3-937d-1ddd46057499
+   information null
+   alias(es) jonb
+   key algorithm RSA
+   key length (in bits) 2048
+   key type RSAPrivateKey
+   owner null
+   certifications null
+   key store name(s) TKLMKeystore
+   key store uuid(s) KEYSTORE-79532f08-fbb2-4aba-90cf-cc440116297c
+   key state active
+   activation date Jul 21, 2009
+   archive date Apr 25, 2038
+   compromise date null
+   creation date Jul 29, 2009
+   expiration date May 1, 2013
+   destroy date null
+   retirement date Apr 26, 2033
+   hash value 0000: 21 6b 5d 4c 9d a7 0f a2 32 04 c9 4d 0a 3f 70 cd
+   .k.L....2..M..p.
+   
+   Resolving the problem
+   Imported key sizes are not calculated correctly in the TKLM B2
+   and displayed incorrectly when using the tklmKeyList CLI. This
+   does not cause any functional problems in TKLM. This defect will
+   be fixed in future release of the product.
+   
+   Technote   1399253 has been written to address this problem:  ht
+   tp://www-01.ibm.com/support/docview.wss?uid=swg21399253
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ60763
+   
+   
+ * REPORTED COMPONENT NAME
+   KEY LIFECYCLE M
+   
+   
+ * REPORTED COMPONENT ID
+   5724T6000
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-17
+   
+   
+ * CLOSED DATE
+   2009-09-17
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

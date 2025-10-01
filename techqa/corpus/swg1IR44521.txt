@@ -1,0 +1,137 @@
+Title: IBM IR44521: WITH IR40062 INSTALLED, GSA PRICE MANAGEMENT INCORRECTLY CALCULATES THE PREVIOUS LEAP YEAR AGAINST THE CURRENT DATE. - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With IR40062 installed, GSA Price Management incorrectly
+   calculates the previous leap year against the current date.
+   
+   RECREATE STEPS:
+   1. Ensure GSA PM 9801 and efix 3523 are installed and
+      relinked.
+   2. Set system date to 12/31/00 at approximately 23:50 (enough
+      time before midnight to allow the events to initialize
+      properly)
+   3. Apply a permanent event that is to start on 01/01/01 at
+      any hour after midnight.
+   4. Start and stop the background scheduler to pick up the event.
+   5. The event will never go pending, but will immediately apply.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  GSA PRICE MANAGEMENT INCORRECTLY CALCULATES THE PREVIOUS
+   LEAP YEAR AGAINST THE CURRENT DATE CAUSING EVENTS TO BE
+   STARTED PREMATURELY.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In functions CALC.TIME and CALC.DAYS the year 98 was used
+   as the base year in the calculation to determine how many
+   leap years have passed.  98 caused the leap year calculation
+   to fail, thereby allowing events to be started prematurely.
+   Changed the functions to use 97 as the base year instead of
+   98 so leap year is calculated correctly and events apply at
+   the correct time.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IR44521
+   
+   
+ * REPORTED COMPONENT NAME
+   4680-4690 GEN S
+   
+   
+ * REPORTED COMPONENT ID
+   569654600
+   
+   
+ * REPORTED RELEASE
+   121
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2001-01-14
+   
+   
+ * CLOSED DATE
+   2001-01-22
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UO01550 UO01551 UO01552
+   
+   
+
+MODULES/MACROS
+ *  EALPMBIC EALPMBPC EALPMBSC EALPMBTC EALPMBIL
+   EALPMBPL EALPMBSL EALPMBTL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   4680-4690 GEN S
+   
+   
+ * FIXED COMPONENT ID
+   569654600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R121 PSY UO01550
+   UP14/09/24 I 1000

@@ -1,0 +1,140 @@
+Title: IBM PI40825: WHEN I ASSOCIATED MULTIPLE DOORS MODEL IN DM, ONLY ONE IS DISPLAYED IN RHAPSODY. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Rational Design Manager 6.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24041312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If more than one DOORS module is associated, only one is shown
+   in Rhapsody.
+   
+   To have some fun, I associated two DOORS modules from one
+   database and
+   two DOORS modules from a second database on a different server.
+   I
+   opened up Rhapsody and I had one module from each of the two
+   databases!
+   
+   I also noticed, when I opened Rhapsody it only asked me to log
+   in to
+   one of the DOORS databases.  I had to request to be logged into
+   the
+   second database.  I tried this several times, and it was
+   consistent.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Rhapsody DM                                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * WHEN I ASSOCIATED MULTIPLE DOORS MODEL IN DM,                *
+   * ONLY ONE IS DISPLAYED IN RHAPSODY.                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 6.0 iFix1 and 5.0.2 iFix8
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI40825
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL RHAP DESIG
+   
+   
+ * REPORTED COMPONENT ID
+   5725D8000
+   
+   
+ * REPORTED RELEASE
+   502
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-11
+   
+   
+ * CLOSED DATE
+   2015-09-01
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL RHAP DESIG
+   
+   
+ * FIXED COMPONENT ID
+   5725D8000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R502 PSY
+   UP

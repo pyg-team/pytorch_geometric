@@ -1,0 +1,131 @@
+Title: IBM How can I tell if I have gathered the latest Fixlet messages that have been published by IBM? - United States
+
+Text:
+428; goglebigfix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The following information describes troubleshooting the TEM gather process. 
+
+RESOLVING THE PROBLEM
+How can I tell I have the latest patches that IBM has released? 
+
+You can see the most recent patches by selecting Fixlet Messages, ALL Fixlet Messages, sorting Fixlet Messages by the Source Release Date field. Remember that MICROSOFT has some Source Release Dates that are BLANK. You may verify the current version of the what you have by using the link below while on the TEM Server:
+http://127.0.0.1:52311/cgi-bin/bfenterprise/besgathermirrornew.exe 
+This report can also be viewed from the TEM Server Diagnostics > Services tab > View Server Diagnostics > Gather Status Page.
+
+A sample looks like this:
+
+
+
+Gather Status Report
+Failed: 
+
+Ready: 
+
+Id: 2	Date: Wed, 11 Jul 2007 15:25:40 +0000	Version: 127
+Url: http://bigfix-2kserv.bigfix.com:52311/cgi-bin/bfgather.exe/actionsite
+
+Id: 8	Date: Wed, 11 Jul 2007 21:52:38 +0000	Version: 17
+Url: http://sync.bigfix.com/cgi-bin/bfgather/assetdiscovery
+
+Id: 4	Date: Wed, 11 Jul 2007 21:52:17 +0000	Version: 971
+Url: http://sync.bigfix.com/cgi-bin/bfgather/avclient
+
+Id: 19	Date: Wed, 11 Jul 2007 21:52:54 +0000	Version: 36
+Url: http://sync.bigfix.com/cgi-bin/bfgather/besinventory
+
+Id: 18	Date: Wed, 11 Jul 2007 21:52:51 +0000	Version: 31
+Url: http://sync.bigfix.com/cgi-bin/bfgather/bespowermanagement
+
+Id: 7	Date: Wed, 11 Jul 2007 21:52:26 +0000	Version: 880
+Url: http://sync.bigfix.com/cgi-bin/bfgather/bessecurity
+
+Id: 1	Date: Wed, 11 Jul 2007 21:52:14 +0000	Version: 374
+Url: http://sync.bigfix.com/cgi-bin/bfgather/bessupport
+
+Id: 6	Date: Wed, 11 Jul 2007 21:52:23 +0000	Version: 15
+Url: http://sync.bigfix.com/cgi-bin/bfgather/configurationmanager
+
+Id: 15	Date: Wed, 11 Jul 2007 21:52:41 +0000	Version: 23
+Url: http://sync.bigfix.com/cgi-bin/bfgather/registrywindows
+
+Id: 12	Date: Wed, 11 Jul 2007 21:52:29 +0000	Version: 47
+Url: http://sync.bigfix.com/cgi-bin/bfgather/sanswindows
+
+Id: 16	Date: Wed, 11 Jul 2007 21:52:44 +0000	Version: 40
+Url: http://sync.bigfix.com/cgi-bin/bfgather/securitypolicymanager
+
+Id: 5	Date: Wed, 11 Jul 2007 21:52:20 +0000	Version: 114
+Url: http://sync.bigfix.com/cgi-bin/bfgather/spywareclient
+
+Id: 13	Date: Wed, 11 Jul 2007 21:52:32 +0000	Version: 73
+Url: http://sync.bigfix.com/cgi-bin/bfgather/updateswindowsapps
+
+Id: 14	Date: Wed, 11 Jul 2007 21:52:35 +0000	Version: 44
+Url: http://sync.bigfix.com/cgi-bin/bfgather/vulnwindows
+
+Id: 17	Date: Wed, 11 Jul 2007 21:52:48 +0000	Version: 1552
+Url: http://testsite.bigfix.com/cgi-bin/bfgather/bessupporttest
+
+In Process:
+
+
+
+The key piece of information you are looking for in this example is the following: 
+Id: 7	Date: Wed, 11 Jul 2007 21:52:26 +0000	Version: 880
+Url: http://sync.bigfix.com/cgi-bin/bfgather/bessecurity
+
+
+This is important because you can see the Version number 	Version: 880
+
+
+and the date it was gathered 	Date: Wed, 11 Jul 2007 21:52:26 +0000
+
+
+You should also be able to go to URL that is specified http://sync.bigfix.com/cgi-bin/bfgather/bessecurity
+
+
+This link takes you to the source content on the TEM servers and displays the current contents of the specified Site. What is returned should look like the following: MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg=sha1; boundary="----2CA88C8E915876211A32F8B69FD6DF30"
+
+
+This is an S/MIME signed message
+
+------2CA88C8E915876211A32F8B69FD6DF30
+MIME-Version: 1.0
+Content-Type: multipart/x-directory2; boundary="==="
+FullSiteURL: http://sync.bigfix.com/bfsites/bessecurity_880/__fullsite
+FullSiteURLSize: 972910
+SiteDiffBaseURL: http://sync.bigfix.com/bfsites/bessecurity_880/__diffsite
+SiteDiffList: 111111111111111
+Version: 880
+
+      
+     
+
+
+
+The piece of information that is important is the VERSION number. In this example: 
+Version: 880 
+
+This should match the version number seen when you linked to your TEM server or relay above. If the versions do not match and you see a DATE of 1970 for a SITE, then the TEM server does not have the most current data available. It will know to get the latest version of the site during the next gather operation, but if this doesn't change by the following day it indicates a problem with the gather operation. 
+
+If you see a discrepancy between the version number of the SITE on the TEM server and all the TEM relays, you should check the gather.log file to see if there are any errors that would explain why the current version is not present. By default you should be able to find the log file here: 
+"C:\Program Files\BigFix Enterprise\BES Server\GatherDBData\GatherDB.log"
+
+
+A healthy log file entry should look like this: 
+07/11/07 08:20:52 -- Beginning import of version 880 of site 'Enterprise Security' from 
+http://<servername>.com:52311/cgi-bin/bfenterprise/BESGatherMirror.exe?listnew=1&url=http://sync.bigfix.com/cgi-bin/bfgather/bessecurity
+
+
+
+
+If you are unable to get your content sites to gather through normal means of forcing a gather through the TEM Console you can utilize the Tools\Manage Sites menu and Remove Site for the specific site that is not gathering and then Add External Site as long as you have the content masthead provided to you by the Licensing department. Related Video: 
+
+
+
+ 
+
+HISTORICAL NUMBER
+ 428

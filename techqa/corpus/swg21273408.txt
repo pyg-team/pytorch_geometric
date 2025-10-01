@@ -1,0 +1,54 @@
+Title: IBM Using the Start menu results in "JVM terminated. Exit code=-1073741819" - United States
+
+Text:
+JVM; 1073741819; cache; JVM terminated; eclipse; eclipse error; class caching; class cache; exit code; exit code=-1073741819; javaw.exe has generated errors and will be closed by Windows; program error; 1273408 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why attempts to use the Start menu or the command line when launching IBM Rational Application Developer or Rational Software Architect results in the error "JVM terminated. Exit code=-1073741819". 
+
+SYMPTOM
+The JVM error appears in the screen capture below: 
+
+[/support/docview.wss?uid=swg21273408&amp;aid=1]
+
+[/support/docview.wss?uid=swg21273408&amp;aid=2]
+
+
+CAUSE
+The problem might occurs because IBM Rational Software Architect or Rational Application Developer uses class caching for the Java Virtual Machine (JVM) and the class cache has become corrupted. 
+
+The class cache is used to reduce the virtual memory footprint and improve startup time of the product.
+
+
+RESOLVING THE PROBLEM
+To solve the problem: 
+
+ 
+
+ 1. In a command prompt, navigate to the directory containing the [code]java.exe[/code] that the product is configured to use, for example,
+    [<code>]RSA_Installation_Directory/jdk/bin and type the following command:
+    
+    javaw -Xshareclasses:destroyAll
+    
+    destroyAll option will destroy all the shared classes
+    
+    In case there are several instances of J9 JVM (several install of product for example ) it's necessary to run the same command on each JDK installed . There are potentially multiple corrupted caches.
+    
+    
+ 2. Restart the product
+    
+    If these steps do not resolve the issue, repeat Steps 1 & 2 using the following command at Step 1:
+    
+    javaw -Xshareclasses:expire=10000, destroy
+    
+    expire=10000, destroy option will destroy caches that have not been used in a week.
+
+
+If the solution above does not solve the problem please contact Rational Support team. RELATED INFORMATION
+#A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21445840]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Application Developer for WebSphere Software Eclipse Windows 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4

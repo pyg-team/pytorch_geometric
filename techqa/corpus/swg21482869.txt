@@ -1,0 +1,35 @@
+Title: IBM What can I do about the message 'authorization failed the server was unable to establish communication with the data base - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When running an IBM SPSS product License Authorization Wizard the following error presents: 
+
+authorization failed the server was unable to establish communication with the data base
+end of transaction one or more codes failed
+
+What is causing this problem and how do I correct it? 
+
+CAUSE
+The IBM SPSS product host computer does not have network access to the IBM SPSS licensing servers. 
+This is normally due to internet communication restrictions (firewall settings) in the local environment where the product host computer is located.
+
+
+ANSWER
+If the error presents on a single installation, the simplest approach is license the product via email. This option will automatically appear in the License Authorization Wizard when the error presents.
+
+If the error presents on multiple products, then the best solution is to create an exception in all firewalls between the affected host machines and the internet domain of the IBM SPSS licensing servers: 
+
+lm.spss.com
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Amos Business Analytics SPSS Modeler Business Analytics SPSS Text Analytics for Surveys 
+HISTORICAL NUMBER
+ 81448

@@ -1,0 +1,145 @@
+Title: IBM PJ44082: Solution, DateLastModified, and LastModifier in Case Builder are not translated correctly in Hebrew locale [he] - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+IBM Case Manager V5.2.1 Fix Pack 4 for Linux for System z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.4-ICM-ZLINUX-FP004&source=SAR]
+IBM Case Manager V5.2.1 Fix Pack 4 for Windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.4-ICM-WIN-FP004&source=SAR]
+IBM Case Manager V5.2.1 Fix Pack 4 for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.4-ICM-LINUX-FP004&source=SAR]
+IBM Case Manager V5.2.1 Fix Pack 4 for AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.4-ICM-AIX-FP004&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following text are not translated correctly in Hebrew locale
+   [he] when using Case Builder.
+   
+   Translation Issue #1:
+   The 'solution' text.  This is seen in the confirmation dialog
+   when a user clicks on 'deploy' on a solution if there are
+   uncommitted changes on the solution.
+   
+   Translation Issue #2:
+   The 'DateLastModified' and 'LastModifier' text.  This is seen
+   when navigating to Case Type-> case type name -> views -> case
+   summary where it shows the list of system properties.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Case Builder users selected to use the Hebrew (he) locale.   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Update to 5.2.1.4-ICM-FP004 or later.                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.2.1.4-ICM-FP004.  With this fix, the text for
+   Solution, DateLastModified, and LastModifier in Case Builder are
+   translated correctly in the Hebrew locale [he] locale.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ44082
+   
+   
+ * REPORTED COMPONENT NAME
+   CASE MGR ADM CL
+   
+   
+ * REPORTED COMPONENT ID
+   5725A1506
+   
+   
+ * REPORTED RELEASE
+   521
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-06
+   
+   
+ * CLOSED DATE
+   2016-05-05
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CASE MGR BUILDE
+   
+   
+ * FIXED COMPONENT ID
+   5725A1500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R521 PSY
+   UP

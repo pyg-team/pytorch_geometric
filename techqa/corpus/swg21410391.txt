@@ -1,0 +1,25 @@
+Title: IBM KMQMQ107E  CC=X'02'  Reason=X'07FA' - United States
+
+Text:
+KMQMQ107E CC=X'02' Reason=X'07FA' MQOPEN MQPUT1 TECHNOTE (FAQ)
+
+QUESTION
+ My Queue Managers are getting KMQMQ107E messages. What is the cause of this? 
+
+ANSWER
+ KMQMQ107E Error from MQ API request MQOPEN . QMgr=mgrname CC=X'completion code' Reason=X'reason code' 
+
+IBM Tivoli OMEGAMON XE for WebSphere MQ has received a bad completion code from the named WebSphere MQ API request, where mgrname is the queue manager name, completion_code is the completion code and reason_code is the reason code. The function fails. 
+
+The Reason Code 2042 x'7FA'- MQRC_OBJECT_IN_USE is issued when an MQOPEN call was issued, but the object in question has already been opened by this or another application with options that conflict with those specified in the Options parameter. This arises if the request is for shared input, but the object is already open for exclusive input; it also arises if the request is for exclusive input, but the object is already open for input (of any sort). MCAs for receiver channels, or the intra-group queuing (IGQ) agent, may keep the destination queues open even when messages are not being transmitted; this results in the queues appearing to be "in use''. 
+
+Use the WebSphere MQ command DISPLAY QSTATUS to find out what is keeping the queues open. On z/OS, this reason can also occur for an MQOPEN or MQPUT1 call, if the object to be opened (which can be a queue, or for MQOPEN a namelist or process object) is in the process of being deleted. 
+To support multiple applications reading event queues, you can perform the following: 
+Refer to "WebSphere MQ Monitoring Agent User's Guide" - section "Specify event queues: SET EVENTQIN", as it defines the way event queues are identified: 
+"The SET EVENTQIN command identifies the queue manager event queue, channel event queue, performance event queue, and configuration event queue for a queue manager or group of queue managers. If there is no SET EVENTQIN command for a queue manager, the following 
+default WebSphere MQ names are used: 
+
+- SYSTEM.ADMIN.QMGR.EVENTS 
+- SYSTEM.ADMIN.CHANNEL.EVENTS 
+- SYSTEM.ADMIN.PERFM.EVENTS 
+- SYSTEM.ADMIN.CONFIG.EVENT

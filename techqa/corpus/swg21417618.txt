@@ -1,0 +1,77 @@
+Title: IBM Sametime on IBM i: Unable to restart Community server after crash during shutdown - United States
+
+Text:
+ibm i; i5/os; iseries; sametime crash; shut down TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+In rare cases, the Sametime Community Server might crash during server shutdown in the STPOLICY job. In this case, you might need to manually end some of the server jobs before you can restart the server.
+
+SYMPTOM
+The following stack is associated with this crash: 
+Q LE cleanup_ag 14 QLEAGTRM QLEAGTRM
+callUserExit__FRV10COM_AREA_T 3
+startActGrpExits__Fv 38 QLEEXIT QLECWI
+regNextPriority_ch__FP18_CNL_Hndlr_Parms_T 15
+regNextExit__F10CALL_COM_TP12exit_entry_tPv 28 
+callExit_ch__FP18_CNL_Hndlr_Parms_T 16 
+atexit_router__FUiT1PVUi 42 QC2ATEX QC2UTIL1
+__srterm__0__Fv 0 CISPDNNMOF STPLCYNTS
+__dt__14LNNotesSessionFv 3 SESSION LNCPP30
+Term__14LNNotesSessionFi 15 
+NotesTerm 1 STUB LIBNOTES
+NotesTerm 1 SDKINIT
+OSTerm 59 OSINIT
+TerminateNAMELookupThreads 11 NLTHREAD
+DestroyDirectoryThreadpool 3 NLTHREAD1
+__dt__11CNAMEThreadFv 2
+__dt__11CLDAPThreadFv 25 
+FreeLDAPThread__11CLDAPThreadFRPQ2_11CLDAPThread 21
+OSTermThread 13 THREAD
+NAMEClose 11 LOOKUP
+NIFCGDeaccess 74 COLGROUP
+NIFCloseCollection 1 CLOSE0 
+NIFCloseCollectionExtended 40 
+LockCollectionRead 17 OPEN
+Panic 35 OSPANIC
+fatal_error 34 BREAK
+OSFaultCleanup 1 CLEANUP
+OSFaultCleanupExt 86 
+OSRunExternalScript 40 
+__system_a 2 STDLIB_A LIBCAW
+
+
+CAUSE
+Some Sametime jobs might not have ended, preventing the server from restarting.
+
+
+
+RESOLVING THE PROBLEM
+Note: This issue was reported as SPR# HHAN7YDJL3 [http://www.lotus.com/ldd/stfixlist.nsf/SPR/HHAN7YDJL3] and fixed in Sametime 8.5.1. 
+
+Follow these steps to end all of the Sametime jobs so that you can restart the Community Server: 
+
+1. Run the WRKDOMSVR command, and enter option 6 (shutdown server) next to your Sametime server. 
+
+2. Wait a few minutes for any jobs to shutdown. Use option 9 (work with server jobs) to check the status of the Sametime jobs. 
+
+3. If there are still Sametime jobs that do not end, run the following command to end the server immediately: 
+
+ ENDDOMSVR <servername> *IMMED 
+
+Again, wait a few minutes and then use WRKDOMSVR option 9 to check the status of the jobs. If there are still Sametime jobs running, you will have to end them abnormally. The ENDJOBABN command can be used to kill jobs that will not shut down using other methods, but you must wait at least 10 minutes AFTER attempting to end the server using *IMMED. 
+
+If you need to end any Sametime jobs abnormally, follow these steps: 
+
+1. Run the WRKDOMSVR command and enter option 9 (work with server jobs) next to your Sametime server. 
+
+2. Enter option 5 (work with job) next to any of the remaining jobs. A Work with Job menu is displayed. The top of the menu contains information similar to the following: 
+
+ [/support/docview.wss?uid=swg21417618&aid=1] [/support/docview.wss?uid=swg21417618&aid=1] 
+
+3. On the command line at the bottom of the menu, run the ENDJOBABN command, specifying the job number, the user and the job name. For this example, you would run this command: 
+
+ENDJOBABN 347517/qnotes/stuserstg 
+
+4. Repeat steps 2 and 3 for each remaining server job. 
+
+Once you've verified that all of the server jobs have ended, restart the Sametime Community Server.

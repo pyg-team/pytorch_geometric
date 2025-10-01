@@ -1,0 +1,66 @@
+Title: IBM ConfigRM exits, CONFIGRM_SYSTEM_UNHEALTH_ER - United States
+
+Text:
+TSA; TSAMP; Windows; haltOS; ha_gs_goodbye; crit_fs.conf; C-Drive TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM.RecoveryRM exits with following error message :
+01/12/15 10:07:32.638423 T( 10) _RCD die(): CHARM is exiting - as required by request (7) error msg = 'n/a' [/project/sprelsa322/build/rsa322s008a/src/sam/CHARM/daemon/RMCApi.C]:1445! 
+
+SYMPTOM
+Node reboots
+
+
+CAUSE
+The IBM.RecoveryRM process is deliberately exiting because IBM.ConfigRM is exiting, which is a pre-requisite for IBM.RecoveryRM. The IBM.ConfigRM trace shows that IBM.ConfigRM has declared the root filesystem inaccessible, hence it needs to restart. However, on a Windows platform, the accessibility test is not as reliable as Linux/UNIX, so the recommendation is to disable this checking.
+
+ENVIRONMENT
+TSAMP on Windows
+
+DIAGNOSING THE PROBLEM
+IBM.RecoveryRM "trace"
+
+
+[00] 01/12/15 10:07:32.638423 T( 10) _RCD PeerDomainRgstrCbk::handleCallback - ConfigRM is gone; CHARM daemon needs to restart... 
+[00] 01/12/15 10:07:32.638423 T( 10) _RCD die(): CHARM is exiting - as required by request (7) error msg = 'n/a' [/project/sprelsa322/build/rsa322s008a/src/sam/CHARM/daemon/RMCApi.C]:1445!
+[00] 01/12/15 10:07:32.638423 T( 10) _RCD die(): calling goodbyeGroup() to exit CHARM daemon group...
+[00] 01/12/15 10:07:32.638423 T( 10) _GSA ha_gs_goodbye(token=1) Entered
+[00] 01/12/15 10:07:32.638423 T( 10) _GSA ha_gs_goodbye() Leaving
+
+
+IBM.ConfigRM "trace"
+
+[02] 01/12/15 00:20:33.954165 T( 4) _CFD !!!!!!!!!!!!!!!!! File system (/) is not accessible with errno=-2, status=Status[2] - IOTimedOut. Exiting. !!!!!!!!!!!!!!!!!
+[02] 01/12/15 00:20:33.954165 T( 4) _CFD logerr: In File=/project/sprelkod/build/rkods006a/src/rsct/rm/ConfigRM/ConfigRMRmcp.C (Version=1.110 Line=1628) :
+CONFIGRM_SYSTEM_UNHEALTH_ER
+The system is not healthy as the root disk is not accessible, and 
+the operating system is being halted or the cluster software will be restarted 
+to ensure that critical resources are 
+stopped so that another sub-domain that has operational quorum may recover 
+these resources without causing corruption or conflict.
+
+[02] 01/12/15 00:20:33.954165 T( 4) _CFD !!!!!!!!!!!!!!!!! PeerDomainRcp::haltOS Entered. !!!!!!!!!!!!!!!!!!!!!
+
+
+RESOLVING THE PROBLEM
+To disable C-Drive checking when using TSAMP/RSCT within a Windows environment :
+
+a) Create a file called "/var/ct/cfg/crit_fs.conf" with the following contents 
+MonitorType = 0 
+
+b) Create the same file on the other server 
+
+c) Stop the domain 
+stoprpdomain <domain_name> 
+
+d) Stop IBM.ConfigRM if its not already stopped: 
+lssrc -s IBM.ConfigRM 
+stopsrc -s IBM.ConfigRM 
+
+e) Start IBM.ConfigRM: 
+startsrc -s IBM.ConfigRM 
+
+f) Repeat d) & e) on the other server 
+
+g) Start the domain 
+startrpdomain <domain_name>

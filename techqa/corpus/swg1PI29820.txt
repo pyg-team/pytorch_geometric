@@ -1,0 +1,146 @@
+Title: IBM PI29820: LIBERTY PROFILE SSL CLIENT CERTIFICATE AUTHENTICATION DOES NOT WORK WITH IBM HTTP SERVER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SSL client certificate authentication does not work when IHS
+   is deployed in front of a Liberty profile application: the
+   Liberty profile server does not correctly handle the IHS
+   $WSCC header.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of IBM WebSphere Application Server   *
+   *                  Liberty profile and IBM HTTP Server (IHS).  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:  Liberty profile SSL client certificate *
+   *                      authentication does not work through    *
+   *                      IHS.                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   SSL client certificate authentication does not work when IHS is
+   deployed in front of a Liberty profile application: the Liberty
+   profile server does not correctly handle the IHS $WSCC header.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Liberty Profile WebContainer was updated to work properly
+   with SSL client certificate authentication through IHS via the
+   $WSCC header.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 8.5.5.5.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI29820
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * REPORTED COMPONENT ID
+   5725L2900
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-11-18
+   
+   
+ * CLOSED DATE
+   2015-01-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * FIXED COMPONENT ID
+   5725L2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

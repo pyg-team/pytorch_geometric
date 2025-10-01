@@ -1,0 +1,13 @@
+Title: IBM Direct access to event list on a mobile device - United States
+
+Text:
+mobile device; event list; event viewer; omnibus webgui TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to display an event list directly on a mobile device, without drilling down from an Event Dashboard or Gauge? 
+
+ANSWER
+Yes, it is. The URL can be entered in this format to display an event list in the Event Viewer on a mobile device:
+[https]://<host>:<port>/ibm/console/webtop/m/eventviewer?filtername=Escalated&filtertype=global
+
+Note: it is not possible to use a transient filter in the URL under these circumstances. The filter specified must be pre-defined via the Filter Builder.

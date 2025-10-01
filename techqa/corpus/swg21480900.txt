@@ -1,0 +1,86 @@
+Title: IBM Can SPSS help me generate a file of raw data with a specified correlation structure? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I wamt to do some analyses on published data and have only the correlation matrix and the number of cases. I would like to be able to create a data set in SPSS with standardized (mean 0, standard deviation 1) variables that have the specified correlation structure. Can I do this in SPSS? 
+
+RESOLVING THE PROBLEM
+Following are instructions that will allow you to create a data file with 10 variables and 100 cases, with correlations given by the initially input data. Annotations indicate where changes can be made to suit the particulars of your situation. Note also that file names may be modified if desired.
+
+*Input the desired correlation matrix and save it to a file.
+matrix data variables=v1 to v10
+/contents=corr.
+begin data.
+1
+.662 1
+.661 .697 1
+.641 .730 .703 1
+.131 -.112 .033 .040 1
+.253 .031 .185 .149 .641 1
+.332 .133 .197 .132 .574 .630 1
+.381 .304 .304 .382 .312 .509 .583 1
+.413 .313 .276 .382 .254 .491 .491 .731 1
+.520 .485 .450 .466 .034 .117 .294 .595 .534 1
+end data.
+save outfile='C:\temp\corrmat.sav'
+/keep=v1 to v10.
+
+*Generate raw data. Change #i from 100 to your desired N.
+*Change x(10) and #j from 10 to the size of your correlation matrix, if different.
+new file.
+input program.
+loop #i=1 to 100.
+vector x(10).
+loop #j=1 to 10.
+compute x(#j)=rv.normal(0,1).
+end loop.
+end case.
+end loop.
+end file.
+end input program.
+execute.
+
+*Use the FACTOR procedure to generate principal components, which
+*will be uncorrelated and have mean 0 and standard deviation 1 for each
+*variable. Change "x10" to reflect a different number of variables if 
+*necessary, and if doing this then also change the number of factors
+*(components) to generate and save.
+factor var=x1 to x10
+/criteria=factors(10)
+/save=reg(all z).
+
+*Use the MATRIX procedure to transform the uncorrelated variables to
+*a set of correlated variables, and save these to a new file. These variables
+*will be named COL1 to COL10 (or whatever is the chosen number of
+*variables). 
+matrix.
+get z /var=z1 to z10.
+get r /file='C:\temp\corrmat.sav'.
+compute out=z*chol(r).
+save out /outfile='C:\temp\generated_data.sav'.
+end matrix.
+
+*Get the generated data and test correlations.
+get file='C:\temp\generated_data.sav'.
+
+*Rename variables if desired. Replace "var1 to var10" with appropriate
+*variable names.
+rename variables (col1 to col10=var1 to var10).
+
+*Test correlations.
+correlations var1 to var10. 
+
+If you should want data with a given correlation structure but different means and/or standard deviations, simply follow these instructions and then adjust the created variables. If standard deviation adjustments are desired, these are accomplished by multiplying the variable(s) by the desired standard deviation(s). If changes are desired to the means, these are accomplished by adding the mean value to the variable. This should be done after any standard deviation adjustments. 
+
+If you get "Error # 12389 Operand matrix is not positive definite for CHOL." this means that the correlation matrix you input is not a proper correlation matrix. That is, such a correlation matrix could not be produced using complete data and Pearson correlations. This issue is more likely to occur if less precision is used (a smaller number of decimals is input). 
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 54862

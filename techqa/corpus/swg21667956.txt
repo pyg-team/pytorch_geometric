@@ -1,0 +1,27 @@
+Title: IBM Failed to start WebSphere due to error "com.ibm.db2.jcc.am.xo: DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704, SQLERRMC=ISDB201.EPACKAGE, DRIVER=3.58.135" in SystemOut.log - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere Application Server (WAS) failed to start up. An error similar to below is found in the SystemOut.log:
+
+======
+* SQLException during execution of sql-statement:
+* sql statement was 'SELECT A0.uri,A0.xml FROM EPackage A0'
+* Exception message is [DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704, SQLERRMC=ISDB201.EPACKAGE, DRIVER=3.58.135]
+====== 
+
+CAUSE
+The default user of the xmeta repository has read permission issues on the EPACKAGE table, either the xmeta repository database was created by another user other than the default user of xmeta repository, or the permission on the package was changed for unknown reason.
+
+RESOLVING THE PROBLEM
+Perform the following steps: 
+
+ 1. Verify the default user for the xmeta repository: open the Version.xml file on the services tier (by default /opt/IBM/InformationServer) and search for the string "xmeta.db.username" then look for the value set to it; 
+ 2. Using the default user to connect to the xmeta repository database, make sure the user name and password are correct. Below is an example, where xmeta_db_name is the default user for xmeta repository found in step above and password is its password;
+    db2 connect to xmeta_db_name user user_name using password 
+ 3. Run AppServerAdmin to set the user id and password as below:
+    AppServerAdmin.sh -db -user xmeta_db_name -password password
+    
+    For full usage of AppServerAdmin, please refer to IBM Information Server Infocenter.

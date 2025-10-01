@@ -1,0 +1,195 @@
+Title: IBM IZ92715: CONVERSION ERRORS - CLIENT OR CHANNEL FAILS WITH AMQ6048 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V6.0 Fix Pack 6.0.2.11 [http://www-01.ibm.com/support/docview.wss?uid=swg24029382]
+WebSphere MQ V6.0 for iSeries Fix Pack 6.0.2.11 [http://www-01.ibm.com/support/docview.wss?uid=swg24029383]
+WebSphere MQ V7.0 Fix Pack 7.0.1.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030108]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030534]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.11 (FP 04) [http://www-01.ibm.com/support/docview.wss?uid=swg24032452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The receiving MCA generates the following error message:
+   
+   ---------------------------------------------------------------
+   AMQ6048: DBCS error
+   EXPLANATION:
+   WebSphere MQ is unable to convert string data due to a DBCS
+   error. Conversion is from CCSID 1208 to CCSID 819.
+   ACTION:
+   Check the WebSphere MQ Application Programming Reference
+   Appendix and the appropriate National Language Support
+   publications to see if the CCSIDs are supported by your system.
+   ---------------------------------------------------------------
+   
+   The source encoding will be in UTF-8(e.g. CCSID 1208) while the
+   target encoding will be in SBCS(e.g. 819).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users using WebSphere MQ clients and sending data in UTF-8
+   (e.g. CCSID 1208) encoding
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The conversion error occurred because WebSphere MQ did not
+   initialize the ApplName field correctly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere MQ has been modified to correctly initialize the
+   ApplName field.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.6
+   --------           --------------------
+   Windows            U200328
+   AIX                U840698
+   HP-UX (PA-RISC)    U841555
+   HP-UX (Itanium)    U841560
+   Solaris (SPARC)    U841556
+   Solaris (x86-64)   U841562
+   iSeries            tbc_p700_0_1_6
+   Linux (x86)        U841557
+   Linux (x86-64)     U841561
+   Linux (zSeries)    U841558
+   Linux (Power)      U841559
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.11
+   --------           --------------------
+   Windows            U200326
+   AIX                U839822
+   HP-UX (PA-RISC)    U840685
+   HP-UX (Itanium)    U840690
+   Solaris (SPARC)    U840686
+   Solaris (x86-64)   U840693
+   iSeries            tbc_p600_0_2_11
+   Linux (x86)        U840687
+   Linux (x86-64)     U840692
+   Linux (zSeries)    U840688
+   Linux (Power)      U840689
+   Linux (s390x)      U840691
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ92715
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86-64
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7230
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-01-20
+   
+   
+ * CLOSED DATE
+   2011-02-17
+   
+   
+ * LAST MODIFIED DATE
+   2011-02-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86-64
+   
+   
+ * FIXED COMPONENT ID
+   5724H7230
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

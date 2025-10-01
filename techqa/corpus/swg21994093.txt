@@ -1,0 +1,71 @@
+Title: IBM Security Bulletin: IBM® DB2® LUW on AIX and Linux Affected by a Vulnerability in GPFS (CVE-2016-2119) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ DB2 LUW is affected by a vulnerability in IBM® Spectrum Scale Version 4.1.1 that is used by DB2® pureScale™ Feature on AIX and Linux. 
+
+IBM Spectrum Scale is previously known as General Parallel File System (GPFS),
+
+
+
+VULNERABILITY DETAILS
+CVEID: CVE-2016-2119 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2119]
+DESCRIPTION: Samba could allow a remote attacker to conduct spoofing attacks. A man-in-the-middle attacker could exploit this vulnerability to inject the SMB2_SESSION_FLAG_IS_GUEST or SMB2_SESSION_FLAG_IS_NULL flags to downgrade the client's configuration-required signing protections for SMB2 or SMB3 client connections and spoof the server.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/114797 [https://exchange.xforce.ibmcloud.com/vulnerabilities/114797] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+All fix pack levels of IBM DB2 V10.5 and V11.1.1 editions listed below, running on AIX and Linux are affected, and only for those customers who have DB2® pureScale™ Feature installed.
+
+IBM DB2 Enterprise Server Edition
+IBM DB2 Workgroup Server Edition
+IBM DB2 Advanced Enterprise Server Edition
+IBM DB2 Advanced Workgroup Server Edition
+IBM DB2 Direct Advanced Edition
+IBM DB2 Direct Standard Edition
+
+REMEDIATION/FIXES
+The recommended solution is to apply the appropriate fix for this vulnerability. 
+
+
+FIX:
+
+The fix for DB2 V11.1.1 is in V11.1.1 FP1, available for download from Fix Central [http://www-01.ibm.com/support/docview.wss?uid=swg24043113]. 
+
+Customers running any vulnerable fixpack level of an affected Program, V10.5 can contact IBM technical support to obtain the GPFS eFix. Before installing the GPFS eFix, the DB2 level might need to be upgraded to the level that includes the supported GPFS level. Do not attempt to upgrade GPFS by any other means. The table below lists the DB2 releases, the prerequisite that needs to be installed first and the GPFS efix to request from IBM technical support.
+
+
+
+DB2 Release Install following prerequisite before installing efix Obtain following GPFS efix from IBM technical support 10.5 10.5 FP8 gpfs.smb 4.2.2_gpfs_31-9 
+The GPFS efix install instructions are available here: http://www-01.ibm.com/support/docview.wss?uid=swg27048484 [http://www-01.ibm.com/support/docview.wss?uid=swg27048484] 
+
+Contact Technical Support: In the United States and Canada dial 1-800-IBM-SERV 
+View the support contacts for other countries [http://www.ibm.com/planetwide/] outside of the United States. 
+Electronically open a Service Request [http://www.ibm.com/software/data/db2/support/db2_9/probsub.html] with DB2 Technical Support. 
+
+WORKAROUNDS AND MITIGATIONS
+None.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ December 15, 2016: Original version published.
+December 29, 2016: Added product clarification, and removed extra spaces. 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

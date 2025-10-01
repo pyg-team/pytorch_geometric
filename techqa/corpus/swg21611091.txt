@@ -1,0 +1,48 @@
+Title: IBM User tasks are not shown in the My Team Performance Dashboard for IBM Business Process Manager (BPM) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A manager using the "My Team Performance" scoreboard with IBM Business Process Manager 8.0 can only view a subset of tasks that can be viewed in prior releases. 
+
+SYMPTOM
+You can see this issue if you complete the following steps: 
+
+ 1. Log into the Order Fulfillment Demo as a manager (ofManager1). 
+ 2. View the My Team Performance scoreboard.
+
+
+This scoreboard just shows "of Analysts" role tasks. Because the "of Managers" group also manages "of Vendors", you should see the "of Vendors" tasks too. 
+RESOLVING THE PROBLEM
+To allow tasks assigned directly to users to be displayed in the My Team Performance scoreboard, you can override a query definition in the 60Database.xml configuration file. Instructions for the "tasks-for-user-by-team" query definition are provided in a note in the "Problem conclusion" section of APAR JR42220 [http://www.ibm.com/support/docview.wss?uid=swg1JR42220]. Note: APAR JR44032 has superceeded JR42220, which was the original fix.
+
+
+
+The query change, which is included in the APAR document, also applies to IBM Business Process Manager Version 8.0. To summarize, the tasks-for-user-by-team query needs to change to the following form to allow tasks assigned directly to a user to be displayed:
+
+<tasks-for-user-by-team>
+({2}.user_id = -1 and {2}.group_id in ({1}))
+or ({2}.user_id in ({0}) or abs({2}.group_id) in (
+select ggm.container_group_id
+from lsw_grp_grp_mem_exploded_xref ggm
+where ggm.group_id in ({1})
+))
+</tasks-for-user-by-team> 
+
+Consult the "Problem conclusion" section for instructions on how to modify the <tasks-for-user-by-team> query. 
+
+
+Override this setting in the 100Custom.xml configuration file. The Configuration file overview and explanation for Lombardi Teamworks, WebSphere Lombardi Edition (WLE), and the IBM Business Process Manager (BPM) products [http://www.ibm.com/support/docview.wss?uid=swg21439614] document provides an overview of IBM Business Process Manager configuration files and how to use the 100Custom.xml file.
+
+RELATED INFORMATION
+ JR42220: MY TEAM PERFORMANCE SCOREBOARD TEAM FILTER [http://www.ibm.com/support/docview.wss?uid=swg1JR42220]
+Configuration file overview and explanation: Lombardi [http://www.ibm.com/support/docview.wss?uid=swg21439614]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Performance AIX, Linux, Linux zSeries, Solaris, Windows 8.0 Business Integration IBM Business Process Manager Express Performance Linux, Linux zSeries, Windows 8.0 
+PRODUCT ALIAS/SYNONYM
+ BPM

@@ -1,0 +1,121 @@
+Title: IBM PM71655: SAFENET'S SENTINEL LICENSE MANAGER'S DEFAULT INSTALL PATH INCORRECT IN DOCUMENTATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Network License Administrator's Guide for Modeler 15.0
+   states in several spots that the default location on Windows is:
+   C:\Program Files\Common Files\SafeNet Sentinel\Sentinel
+   RMSLicense Manager\
+   
+   he Network License Administrator's Guide for Modeler 15.0 states
+   in several spots that the default location on Windows is:
+   C:\Program Files\Common Files\SafeNet Sentinel\Sentinel
+   RMSLicense Manager\
+   
+   Whereas it installs by default to:
+   C:\Program Files\IBM\SPSS\Concurrent Licensing
+   Tools\9.5.0\License Manager
+   
+   or C:\Program Files (x86)\IBM\SPSS\Concurrent Licensing
+   Tools\9.5.0\License Manager
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * all                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM SPSS Modeler 16.0                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM71655
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS MODELER
+   
+   
+ * REPORTED COMPONENT ID
+   5725A64MD
+   
+   
+ * REPORTED RELEASE
+   F00
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-27
+   
+   
+ * CLOSED DATE
+   2013-12-10
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RF00 PSN
+   UP

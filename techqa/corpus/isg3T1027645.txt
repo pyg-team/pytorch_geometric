@@ -1,0 +1,50 @@
+Title: IBM WebSphere Fix Pack web site - United States
+
+Text:
+ 
+ 
+
+IBM INSTALLATION MANAGER FIX PACK INSTALLATION INSTRUCTIONS FOR WEBSPHERE APPLICATION SERVER
+After applying the WebSphere Application Server Group PTF, there are additional steps required to complete the fix pack installation for IBM Installation Manager. Refer to individual versions for more detail.
+
+SUMMARY TERMS
+Throughout these instructions, you must replace the following:
+
+ * <im_fixpack_version>: Example '144020110525_1254'. The internal IM fix pack name is used to create an IFS directory in which the expanded local fix pack is restored. For example, the internal IM fix pack '1.4.4.020110525_1254' denotes the IM version of this fix pack is 1.4.4.0 and it was built on May 25, 2011. The resulting IFS directory name would be 144020110525_1254. There may be multiple <im_fixpack_version> directories under the path /QIBM/WAS/IMFIXPACKS/IM/ 
+ * <im_fixpack_location>: Example '/QIBM/WAS/IMFIXPACKS/IM/14420110525_1254/FIXPACK'. The expanded IM fix pack will be laid down in the following IFS directory: /QIBM/WAS/IMFIXPACKS/IM/<im_fixpack_version>/FIXPACK 
+ * <im_fixpack_readme>: Example 'readme_1.4.4.html'. This file contains the "IBM Installation Manager release notes". By convention, the file name is of form 'readme_X.Y.Z.html' where X,Y and Z refer to the first three digits in the <im_fixpack_version> directory name, respectively. The <im_fixpack_readme> is contained in the <im_fixpack_location> directory.
+
+Tip: From a QShell session, issue the following IM imcl command to determine the current IM internal version:
+
+/QIBM/ProdData/InstallationManager/eclipse/tools/imcl
+-version Compare the current IM internal version to each <im_fixpack_version> directory name, using the definition of <im_fixpack_version> above, and determine if any of the available IM fix packs are newer then the current IM internal version. If the current IM internal version is earlier than the latest IM fix pack, then install that fix pack using the instructions below. Otherwise, do not attempt to install the IM fix pack.
+
+Note: Installation Manager versions are released as both fix packs and installer packages. However, both fix pack and installer packages can be used to update the Installation Manager. Even though the instructions provided below refer to installing the fix pack, it is actually the installer package that is provided in <im_fixpack_location>. IM installer packages are much smaller than fix pack packages since a fix pack package can be used to update IM on all supported platforms while an installer package can only be used to install or update IM on a single platform.
+
+SUMMARY INSTALLING A FIX PACK
+To install the fix pack, perform the following actions:
+
+ 1. Sign on to IBM i with a user profile that has *ALLOBJ and *SECADM special authorities.
+ 2. Before installing the IM fix pack, read the release notes in the <im_fixpack_readme> file.
+ 3. Enter QShell and CD to the fixpack directory of the latest <im_fixpack_version>.
+    cd /QIBM/WAS/IMFIXPACKS/IM/
+    <im_fixpack_version>/FIXPACK 
+ 4. Make sure that the umask is set to 022.  * To verify the umask setting, issue the following command: umask 
+     * To set the umask setting to 022, issue the following command: umask 022 
+    
+    
+ 5. Issue the following IM command to install the fix pack ./installc -acceptLicense -log
+    log_file_path_and_name 
+
+Note: <im_fixpack_location> directories are not managed by WebSphere or IBM Installation Manager. When an IM fix pack is no longer needed, the system administrator can delete the corresponding <im_fixpack_location> directory and all of its contents.
+
+NEXT STEPS
+After updating the Installation Manager, install the appropriate version fix pack for WebSphere Application Server.
+
+ * Version 8.5.5 [http://www.ibm.com/support/docview.wss?uid=isg3T1027644]
+   
+   
+ * Version 8.0 [http://www.ibm.com/support/docview.wss?uid=isg3T1027642]
+   
+   
+ * Version 7.0 [http://www.ibm.com/support/docview.wss?uid=isg3T1027641]

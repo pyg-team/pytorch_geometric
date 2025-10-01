@@ -1,0 +1,77 @@
+Title: IBM Known issues for virtual application database patterns in IBM PureApplication System W1500 and W1700 Version 1.1.0.1 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains information about known issues for virtual application database patterns, in this release. 
+
+CONTENT
+
+
+The following virtual application database pattern issues are known in this release.
+
+
+
+ 
+
+ * After deploying a DB2 10.5 database with BLU Acceleration, the database is not displayed 
+ * An HADR option is displayed for an existing DB2 10.5 database with BLU Acceleration deployment 
+ * Limitations for increasing memory for an AIX database
+ * Pattern cloning failed with the error message as "Virtual memory must be divisible by 4"
+ * Increasing Linux DB2 HADR database resources multiple times causes the scale up operation to hang
+ * Cannot view storage scale up information
+ * Incorrect value is displayed after database memory is increased
+ * Database deployments hang after an upgrade
+ * 
+ * After deploying a DB2 10.5 database with BLU Acceleration, the database is not displayed 
+   
+ *  Problem A DB2 10.5 database with BLU Acceleration will not deploy if the default advanced options are selected because the default option for Collating sequence is incorrectly set to SYSTEM. The only collation sequence option that is supported for DB2 10.5 with BLU Acceleration is IDENTITY. Resolution When you are initially deploying a database, go to Advanced options and set the Collating sequence field to IDENTITY. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  Problem When you are editing an existing DB2 10.5 database with BLU Acceleration, the option for high availability disaster recovery (HADR) is incorrectly displayed. BLU Acceleration does not support HADR. Resolution Refresh the details for the database deployment by clicking Edit. Select the Departmental Transaction radio button, then select the Data Mart radio button. This will refresh the window to display the correct settings and options for a Data Mart database deployment. The option to use HADR will disappear. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  Problem You cannot scale up the memory for an AIX database beyond 4 times the size that is specified during the initial deployment. Resolution If you want to scale up an existing database deployment, using the maximum memory size of 256 GB, you must initially deploy it with at least 64 GB of memory. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  Problem If you increase AIX database pattern memory with a number that is not a multiple of 4, the database cloning for that backup image will fail. Resolution When using the scale up option for memory, make sure that the total amount of memory assigned to a database is a multiple of 4. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  Problem If you attempt to increase the resources for an HADR database more than once, the scale up pane of the workload console might hang. Resolution In the workload console, click Instances > Databases, then select the database. Stop the database and wait until the details for the database indicates that it is in a stopped state, then restart the database. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  Problem After increasing the storage for a an existing database, the History section of the specified database does not display any information about the scale up procedure. Resolution From the workload console, select the database you are working with and click Manage. In the new tab, click Database > Virtual Instance. In Operation, click Execution Results. The information about the storage scale procedure up is displayed. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  Problem In the History section of a database deployment, an incorrect value is displayed for a memory scale up procedure. Resolution From the workload console, select the database you are working with and click Manage. In the new tab, click Database > Virtual Instance. In Operations, select DB2 then click Resources > Memory. The correct information about the memory scale up procedure is displayed. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  Problem Database deployments will hang if the the data performance monitor update is installed before the database patterns update is installed. Additionally, issues will occur if existing database deployments are not upgraded to the latest version of the patterns before the database performance monitor is installed. Resolution Make sure you install the virtual applications database patterns add-on first, and that the new version is applied to all of the existing database deployments. To do this, view the details for an existing database and click Upgrade. After all of the existing database deployments are upgraded, install the database performance monitoring add-on. 
+ * 
+ * Related
+ * 
+ * Release notes for IBM PureApplication System W1500 and W1700 Version 1.1.0.1
+ * 
+ * Installing database pattern and database performance monitoring updates for PureApplication System Version 1.1.0.1

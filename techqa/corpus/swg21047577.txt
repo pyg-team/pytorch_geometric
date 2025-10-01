@@ -1,0 +1,47 @@
+Title: IBM EYU9XENF RC 20 Reason code 56 Invocation error - United States
+
+Text:
+EYU9XENF RC = 20 RC20 Reason code 56 RSN56 Invocation 5655M1501 R100 R102 R310 5655-M15 5655M15 HCP3100 JCP3102 5655M1500 R320 R50M JCI650M 5655S9700 R600 R60M 5655-S97 5655S97 JCI660M R700 R70M JCI670M 5655Y0400 R800 R80M 5655-Y04 5655Y04 FMID JCI680M CPSM cpsmpddb TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You follow the instructions to add EYU9XENF to the TSO authorized command table. But, when you enter the command from ISPF as "TSO EYU9XENF" you receive the following message text:
+
+Authorized command 'EYU9XENF'. Return code = 20 . Reason code = 56 . Invocation error - System error encountered invoking authorized command 'EYU9XENF'. 
+
+SYMPTOM
+If the command is invoked from TSO READY outside of ISPF, the following messages are received:
+
+IKJ5664I EYU9XENF ENDED DUE TO ERROR+
+
+If you enter "?" for additional information you receive:
+
+IKJ5664I SYSTEM ABEND CODE 047 REASON CODE 00000000
+
+The Abend047 indicates an unauthorized program issued a restricted SVC .
+
+
+CAUSE
+The message is coming from the TSO/E command service facility IKJEFTSR as part of the TSO command processor. The TSO/E Programming Services manual documents the return and reason codes from IKJEFTSR . The return code 20 and reason code 56 indicate the command is authorized but could not be found in an authorized library.
+
+The library in STEPLIB would lose authorization if a non-authorized library was also in the STEPLIB concatenation. The active STEPLIB can be verified by issuing a TSO LISTALC command to see the library allocation.
+
+RESOLVING THE PROBLEM
+Correct the TSO STEPLIB library allocation to ensure all concatenated libraries are authorized OR invoke EYU9XENF using a TSO batch job as follows:
+
+
+//EYU9XENF JOB (nnnn),'userid',CLASS=A,REGION=32M,MSGCLASS=A,
+// NOTIFY=userid
+//EYU9XENF EXEC PGM=IKJEFT01,
+// REGION=2M,DYNAMNBR=99
+//STEPLIB DD DISP=SHR,DSN=&HLQ..SEYUAUTH
+//SYSTSPRT DD SYSOUT=*
+//SYSTSIN DD *
+EYU9XENF
+/*
+Replace the userid with your TSO userid, nnnn with job account information and &HLQ with the CPSM high level qualifier of the SEYUAUTH dataset.
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICSPlex SM CICSPlexSM CPSM CP/SM

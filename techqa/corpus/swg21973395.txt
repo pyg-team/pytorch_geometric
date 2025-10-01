@@ -1,0 +1,23 @@
+Title: IBM Is there a way to go beyond the last 48 hours default in the Memory Analysis Report? - United States
+
+Text:
+CAMADALL CAMADINST MEMORY_DATA ocitgate Last 48 hours 60 minutes beyond back TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ Is there a way to go beyond the last 48 hours default in the Memory Analysis Report? 
+
+ANSWER
+In the Memory Analysis Report (see first screenshot below), the available options to go back are "Last 60 Minutes" and "Last 48 Hours". Is there a way to go back beyond the last 48 hours?
+[/support/docview.wss?uid=swg21973395&aid=1] [/support/docview.wss?uid=swg21973395&aid=1]
+
+Yes, there is a way. The data is stored in the MEMORY_DATA table in the octigate database on the Managing Server. If you want to access data beyond the last 48 hours, you will have to create a Custom Report using any of the standard DB2 database query tools like TOAD for DB2 and access the MEMORY_DATA table. Here is the schema for the MEMORY_DATA table for a quick reference.
+
+[/support/docview.wss?uid=swg21973395&aid=2] [/support/docview.wss?uid=swg21973395&aid=2]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM4AD ITCAMfAD ITCAM for App Diagnostics

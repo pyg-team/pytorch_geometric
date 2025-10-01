@@ -1,0 +1,36 @@
+Title: IBM Failed patching of ITCAM application support on Windows - United States
+
+Text:
+ITCAM; installation; fixpack; interim fix; patch; image; appsupport; CAMADALL CAMADINST TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The installation of 7.2.0.0-TIV-ITCAMAD_WS_ITM-IF000x application support files on Windows fails because the prerequisite product is missing, even though 7.2 application support and agent are already installed on the same server. 
+
+SYMPTOM
+When trying to install 7.2.0.0-TIV-ITCAMAD_WS_ITM-IF000x application support files, you get the following error message at the beginning of the installation: 
+
+The DVD you are trying to install is a fixpack DVD and cannot be installed on a machine without an existing image to upgrade
+
+However the v7.2 application support (and agent) is already installed on the same server.
+
+
+CAUSE
+Possible mismatch of agent and application support installation images
+
+
+RESOLVING THE PROBLEM
+This has been a known issue since ITCAM for AD v7.1. The application support upgrade can only be done using matching images. 
+
+ 
+The application support is delivered both on its own (part number CIC85EN) and along with TEMA (part number CIC82EN).
+
+IBM Tivoli Composite Application Manager Agent for WebSphere Applications V7.2 Support Files, Multiplatform, English Only (CIC85EN) -
+Size 136mb Date posted 16-Nov-2012 
+
+IBM Tivoli Composite Application Manager Agent for WebSphere Applications V7.2, Windows, English (CIC82EN)
+Size 254mb Date posted 16-Nov-2012
+
+
+These images contain different license keys so they must be upgraded using the corresponding image. 
+
+If you have installed the application support using CIC82EN, then you must upgrade using 7.2.0.0-TIV-ITCAMAD_WS_Windows-IF000x (as opposed to 7.2.0.0-TIV-ITCAMAD_WS_ITM-IF000x)

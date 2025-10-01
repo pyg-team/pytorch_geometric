@@ -1,0 +1,53 @@
+Title: IBM RPT Citrix Playback on T6 agent requirements - United States
+
+Text:
+rational performance tester; robotic; 71RRT-RPTPLAN; 71RRT-RPTINS; 71RRT-RPTCONF; 71RRT-RPTREC; 71RRT-RPTPLAY; 71RRT-RPTTS; unsupported function; exception TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The playback of RPT Citrix scripts on a T6 agent requires specific Citrix client versions and excludes others. 
+
+SYMPTOM
+The response time measurements displayed in the TEPS are very small for Citrix transactions, showing less than one second for most transactions. This occurs on Windows 2008.
+
+
+ * trace-robotic log contains this error after setting DEBUG_MAX for the Generic Playback variables in the t6-logging.properties file
+   
+   text="Connection failed. 10 unsuccessful attempts were made before abandoning. The last error message was: Client is already started.
+   
+ * Other indications, not specific to this problem, may also be found in the CBE (CommonBaseEvent) logs after setting these variables in itcam-logging.properties file BWM.trc.rpt.pc.level=DEBUG_MAX
+   BWM.trc.rpt.pc.logging=true  * java.lang.ClassNotFoundException 
+    * stderr: java.lang.RuntimeException: Problem in SocketReader: null 
+    * RPIC0029E Connection to Citrix server failed&#xA;java.lang.IllegalStateException: A session is already running. Cannot create more than one. 
+    * RPIB0001E Internal Error&#xA;java.lang.NullPointerException 
+   
+   
+
+
+CAUSE
+The Citrix client changed, starting with client version 11.2, such that the kt6agent is unable to playback the scripts because the t6 agent runs as a Windows service. The failure is due to property changes in the Citrix client. The icaClient does not launch properly when the kt6agent is running as a service.
+
+DIAGNOSING THE PROBLEM
+To test if this is the exact problem you are encountering, either 
+
+ * start the agent from the console for playback to produce the correct result, 
+   
+   > cd <ITMHOME>\TMAITM6
+   > kt6agent.exe test 
+ * or use a different version of the Windows OS such as Windows 7 32bit and run the agent as a service (this is the default for the T6 agent implementation.)
+
+
+RESOLVING THE PROBLEM
+For ITCAM T6 playback, an earlier version of the client must be used, 11.1 or earlier. 
+
+RELATED INFORMATION
+ Unsupported Function with Citrix playback on T6 agent [http://www.ibm.com/support/docview.wss?uid=swg21455194]
+Configure and gather trace logs for RRT [http://www.ibm.com/support/docview.wss?uid=swg21433790]
+Apply ITCAM for Transactions 7.4.0.1 IF0001 [http://www.ibm.com/support/docview.wss?uid=swg21663324]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itcam
+itcamft
+itcamftx

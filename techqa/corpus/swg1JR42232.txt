@@ -1,0 +1,180 @@
+Title: IBM JR42232: SNAPSHOT CAN NOT BE FOUND WHEN TRYING TO MIGRATE IN-FLIGHT DATA - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 7.5.1 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24033036]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  For any process app, if the BPD is not exposed to start create
+   a new snapshot,
+   Use it to create a deployment package onto a offline server,
+   Choose "leave" option.
+   Then, deploy the package to offline server,
+   On ProcessAdmin -> Installed App, click the
+   "migrate in-flight data" of the new installed snapshot
+   
+   Problem:
+   no previous snapshot will be shown even if we have a running
+   instance of a previous snapshot.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  expose the BPD
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of BPM Express, BPM Standard and BPM  *
+   *                  Advanced.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Snapshot can not be found when trying   *
+   *                      to migrate in-flight data.              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   For any process app, if the BPD is not exposed to start,
+   create a new snapshot, and use it to create a deployment
+   package onto a offline server, choose "leave" option. Then,
+   deploy the package to offline server, on ProcessAdmin ->
+   Installed App, click the "migrate in-flight data" of the new
+   installed snapshot, but no previous snapshot will be shown
+   even if we have running instance of previous snapshot.
+   Reproduction steps :
+   1) for any process app, if the BPD is not exposed to start,
+   create a new snapshot, and use it to create a deployment
+   package onto a offline server, choose "leave" this time.
+   2) deploy the package to offline server
+   3) on ProcessAdmin -> Installed App, click the "migrate
+   in-flight data" of the new installed snapshot, but no previous
+   snapshot will be shown even if we have running instance of
+   previous snapshot.
+   The changes that were made to fix this issue allow
+   inflight migration of data for non-exposed BPD instances for a
+   given snapshot.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The changes that were made to fix this issue allow
+   inflight migration of data for non-exposed BPD instances for a
+   given snapshot.
+   
+   The fix is available on fix central and
+   pre-requisites the following fixes:
+   
+   http://www-01.ibm.com/support/docview.wss?uid=swg1JR42012
+   http://www-01.ibm.com/support/docview.wss?uid=swg1JR42220 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR42012http://www-01.ibm.com/support/docview.wss?uid=swg1JR42220]
+   http://www-01.ibm.com/support/docview.wss?uid=swg1JR42280 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR42280]
+   
+   and needs to be installed as follows:
+   - Install JR42012 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR42012] and JR42280 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR42280] on both Process Designer and
+   Process Center/Server using IM
+   - On Process Center/Server run bpmprofileUpgrade as outlined in
+   http://www-01.ibm.com/support/docview.wss?uid=swg27022245#recove [http://www-01.ibm.com/support/docview.wss?uid=swg27022245#recove]
+   rFailure
+   - On Process Center/Server run upgrade7x using the
+   instructions outlined in
+   http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/topic/c [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/topic/c]
+   om.ibm.wbpm.imuc.doc/upgrade/topic/upgrading_existing_dbs_751.ht
+   ml
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR42232
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-13
+   
+   
+ * CLOSED DATE
+   2012-04-18
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

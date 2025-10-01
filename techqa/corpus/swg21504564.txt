@@ -1,0 +1,52 @@
+Title: IBM CNX0624E or CNX0225W when selecting definitional resources from CICS Explorer - United States
+
+Text:
+csdgroup; csd; badparm; versioninvl; notsupported; 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When your connection is to a CICSPlex SM V3.2 WUI server and you attempt to select administrative or definitional resources from the CICS Explorer, you receive CNX0624E Get Definition from "region" failed. If using CICS Explorer V1.1.x.x , you also receive CNX0595E with BADPARM. If your connection is to a CICSPlex SM V4.x WUI server, you receive CNX0225W resource_type unsupported in this context. 
+
+SYMPTOM
+If you are using CICS Explorer V1.0.0.x or V1.0.1.x, you receive an OK response followed by message CNX0624E when selecting a definitional resource from the Administrative menu. You have a single pre CICS TS V4.1 region selected in the CICSplex tab and the host connection is a CICSPlex SM Data connection to a CICSPlex SM V3.2 WUI server. 
+
+CNX0599E: RESPONSE(OK)
+CNX0624E: Get resource_type Definition from context failed
+
+If you are using CICS Explorer V1.1.x.x, you receive a BADPARM response followed by message CNX0624E when selecting a definitional resource from the Administrative menu. You have a single pre CICS TS V4.1 region selected in the CICSplex tab and and the host connection is a CICSPlex SM Data connection to a CICSPlex SM V3.2 WUI server. 
+
+CNX0595E: An unexpected failure occurred: BADPARM
+CNX0624E: Get resource_type Definition from context failed
+
+If you are using CICS Explorer V1.0.0.x, V1.0.1.x, or V1.1.x.x, you receive a CNX0225W message when selecting a definitional resource from the Administrative menu (or Definitions menu in v1.1.x.x.). This occurs when you have a single pre CICS TS 4.1 region selected in the CICSplex tab and the host connection is either a CICSPlex SM Data connection or CICS Management Interface connection to a CICSPlex SM V4.x WUI server. 
+
+CNX0225W resource_type unsupported in this context.
+
+
+
+CAUSE
+The CICS Explorer specifies the CSDGROUP parameter on its GET request when a single CICS region is selected. The CSDGROUP parameter is only valid in CICS TS V4.2 regions or CICS TS V4.1 regions with APAR PK90112 [https://www.ibm.com/support/docview.wss?uid=swg1PK90112] applied or higher. In this instance, the CICS Explorer was connected to a CICS TS V3.2 WUI server using a CICSPlex SM Data connection and the CICS Explorer had selected an individual CICS region in the CICSplex tab before selecting a resource from the Administrative menu. 
+
+
+
+ENVIRONMENT
+CICS Explorer V1.0.0.7 or higher; CICS TS V3.x WUI server using the CICSPlex SM Data connection.
+
+
+
+DIAGNOSING THE PROBLEM
+In this case, a single CICS MAS is in focus in the CICSplex tab and results in the CSDGROUP parameter being added which is only valid for CICS TS V4.1 and above, not when using a CICSPlex Data connection. The .cicsexplorer.trace.0 contains entries similar to the following: 
+
+com.ibm.cics.sm.comm.cpsm.CPSMConnection.get() [OBJECT=TRNCLDEF&CONTEXT=WJBCM320&SCOPE=WJBMS32C&P_CSDGROUP=*] com.ibm.cics.sm.comm.cpsm.CPSMConnection.get() [STATUS=BADPARM&CMASSYSID=M32A&CPSMREL=0320&SERVERAPPLID=WJBMS32A&TASKID=0008555]
+
+
+RESOLVING THE PROBLEM
+If your connection is to CICSPlex SM V4.x WUI server, apply the PTFs for PK90112. 
+
+IBM FITS marketing requirement MR0705115551 has been submitted to provide more meaningful warning messages in the CICS Explorer to clearly indicate that the CSD definitional resources are only supported in CICS TS V4.1 (with PK90112 applied) or later levels of CICS TS.
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

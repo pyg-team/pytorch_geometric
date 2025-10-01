@@ -1,0 +1,46 @@
+Title: IBM What are the recommendations for better performance on IBM TRIRIGA Reserve functionality ? - United States
+
+Text:
+TRICONFIG; TRIPERFORMANCE; TRIRESERVE; Reserve; performance; slow-down TECHNOTE (FAQ)
+
+QUESTION
+ What are the recommendations for better performance on IBM TRIRIGA Reserve functionality ? 
+
+CAUSE
+Need to tune my IBM TRIRIGA environment to have better performance for IBM TRIRIGA Reserve functionality.
+
+ANSWER
+Here it follows a checklist for tuning your environment to a better performance for IBM TRIRIGA Reserve functionality:
+
+A) Make sure you are running with compatible hardware, software and addressed our System Sizing initial recommendations as well. See: 
+
+
+System Sizing [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20TRIRIGA1/page/System%20Sizing]
+
+
+B) Make sure you have our IBM TRIRIGA Best Practices for System Performance recommendations in place. See: 
+
+ 
+
+Best Practices for System Performance [https://www.ibm.com/developerworks/community/wikis/home?lang=en-us#!/wiki/IBM%20TRIRIGA1/page/Best%20Practices%20for%20System%20Performance]
+
+
+C) Make sure you review and deploy our IBM TRIRIGA Reserve performance recommendations. See: 
+
+
+Reserve Performance [https://www.ibm.com/developerworks/community/wikis/home?lang=en-us#!/wiki/IBM%20TRIRIGA1/page/Reserve%20Performance]
+
+
+D) Make sure you review the High Availability information available for IBM TRIRIGA product, since this may make system more stable and with faster response time. See: 
+
+ 
+
+How can I have multiple IBM TRIRIGA application servers (user sessions) working on a Load Balancing and a High Availability implementation? [http://www.ibm.com/support/docview.wss?uid=swg21980770] 
+
+ 
+
+How can I have multiple IBM TRIRIGA process servers (agents runs) working on a Load Balancing and a High Availability implementation? [http://www.ibm.com/support/docview.wss?uid=swg21980775] 
+
+ 
+
+BIRT Report Only Server on Advanced reporting in IBM TRIRIGA [https://www.ibm.com/support/knowledgecenter/SSHEB3_3.5.0/com.ibm.tap.doc/reporting_guide/c_IBM_TRIRIGA_advanced_reporting.html]

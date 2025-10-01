@@ -1,0 +1,28 @@
+Title: IBM How should the DB2 or SQL Enterprise Database be maintained in a Notes Traveler environment? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+How should the DB2 or SQL Enterprise Database be maintained in a Notes Traveler environment?
+
+ANSWER
+
+Prior to support of an enterprise database, IBM Notes Traveler used the internal Derby database to hold user device information, device security, and synchronization data. To maintain the Derby database, it is required to use the defrag command to defrag or defragging the database to compact and optimize its performance. 
+
+With the support of enterprise databases, such as Microsoft SQL Server or IBM DB2, we recommend that DB maintenance be performed at the database server level. Traveler makes no requirements or recommendations on enterprise database maintenance. With the support of enterprise databases, it is instead recommended to use the maintenance tools packaged with DB2 or SQL to maintain the Traveler database.
+
+Because an enterprise database is in use, performance is much improved over the usage of the derby database and should not require maintenance as often. 
+
+Consult with your DBA for best practices on how and when to run maintenance on the DB2 or SQL database.
+For more details, see Maintaining the Enterprise Database. [http://www-10.lotus.com/ldd/dominowiki.nsf/xpDocViewer.xsp?lookupName=Administering+IBM+Notes+Traveler+9.0.1#action=openDocument&res_title=Maintaining_the_enterprise_database_A901&content=pdcontent]
+
+Additional DB2 References:
+When to Issue a Reorg on a DB2 Database [https://www.ibm.com/developerworks/community/blogs/db2luwtechsupport/entry/when_should_a_reorg_be?lang=en]
+Choosing a Table Reorganization Method [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.5.0/com.ibm.db2.luw.admin.perf.doc/doc/c0024850.html?lang=en]
+
+For assistance with enterprise database maintenance, please consult with IBM DB2 or MS SQL Server support.
+
+RELATED INFORMATION
+#How to know if a reorg is needed can be checked using t [https://www.ibm.com/developerworks/community/blogs/db2luwtechsupport/entry/when_should_a_reorg_be?lang=en ]
+Choosing a table reorganization method: [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=%2Fcom.ibm.db2.luw.admin.perf.doc%2Fdoc%2Fc0024850.html]

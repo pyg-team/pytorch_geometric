@@ -1,0 +1,52 @@
+Title: IBM Querying IBM DB2 Content Manager Version 8 to support case-insensitive search - United States
+
+Text:
+query; search; case; sensitive; upper case; lower case; insensitive TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to do a search that is not case-sensitive of string attributes in DB2® Content Manager Version 8? This is possible in the query language by using the database UPPER() function. Using the database UPPER function may have performance issues, so a new attribute might be needed to hold the value of the string in its upper-case format. 
+
+CAUSE
+Search that is not case-sensitive is possible with DB2 Content Manager Version 8. To do this, the application has to rewrite its queries. In some cases, a change to the data model is required to support this feature efficiently.
+
+ANSWER
+The DB2 Content Manager Version 8 query language does case sensitive matching when comparing string attributes. For example, the query /Book[Book_Author/@LastName = "Richardt"] would only match the exact case specified in the query. In this example, any items with LastName equal to "Richardt" would be returned, but items with LastName equal to "richardt" or "RICHARDT" would not be returned. 
+
+One way to achieve a search that is not case-sensitive is to use the database UPPER function. The following query uses this database function to do case insensitive string matching: 
+
+/Book[UPPER(Book_Author/@LastName) = UPPER("Richardt")] 
+
+This query does a case insensitive search, but it may cause performance degradation over a case sensitive search. The reason for this in DB2 is that the UPPER() function always requires a table scan. For the above example, if there is an index of the LastName attribute, this index would be ignored when the UPPER() function is used. This is probably acceptable for item types that have a small number of items, but it is bad for item types that contain a large number of items. 
+
+One solution to this problem is to create an expression based index on the attribute. Expression based indexes were added to DB2 on LUW in version 10.5 and to DB2 on z/OS in version 9. Basically, this feature allows an index to be created on the expression UPPER(columnName). Similarly, function based indexes may be used in Oracle. For example, the index creation might look like this: 
+
+ * 
+ * CREATE INDEX CaseIx ON 
+ * ICMUT01000001
+ * (UPPER(
+ * ATTR0000001001
+ * ))
+
+
+Another solution for DB2 LUW customers prior to version 10.5 is to use a generated column. A description of how to do this can be found below in the Related information section. Another solution to this problem is to change the application data model and store an upper-case copy of the string. In this way, when the application needs to do a case insensitive search, this new attribute is used. In the example above, you might add a new attribute called LastName_upper. Whenever a value is stored in the Author attribute, the application would store the upper-case copy in LastName_upper. To do case insensitive search, this new attribute is used: 
+
+/Book[Book_Author/@LastName_upper = "RICHARDT"] 
+
+To optimize the performance of these queries, an index may be created on the LastName_upper attribute. Because the UPPER function is not needed, the index will be used in resolving this query. In this way, case insensitive string matching may be done efficiently. 
+
+As always, when adding an index to the item type, the database statistics should be updated. 
+
+Another possible solution is to use text search. Text search is not case-sensitive by default. In the example above, a text index would be created on the attribute LastName. After this is done and the text index is updated, then the following query will work: 
+
+/Book[contains-text-basic(Book_Author/@LastName, "Richardt")=1] 
+
+In general, text search will be less efficient than the second solution above, but it does not require duplicate data to be stored. Another issue with using text search is that the text indexes are updated asynchronously. This means that after an update of the attribute, the text index will not match the attribute data until the next time the text index is updated. Another possible issue is that text search does not do exact matching, so if the word specified is anywhere in the attribute, it will match.
+
+RELATED INFORMATION
+ Auto-Generated Column Solution [http://www-01.ibm.com/support/docview.wss?uid=swg21420031]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager DB2 Information Integrator for Content AIX, Linux, Solaris, UNIX, Windows, Red Hat Linux 8.4.3, 8.4.2, 8.4.1, 8.4, 8.3, 8.2, 8.1 All Editions

@@ -1,0 +1,47 @@
+Title: IBM SAP Agent 711 FP01 - Install Config Guide Correction - United States
+
+Text:
+5724B97SOTR; transport.prop; 7.1.1.1 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In SAP Agent 711 FP01, the Installation and configuration guide mentions incorrect file name file-transport.prop in the procedure section "Using SAP transport and defining the user". 
+
+SYMPTOM
+Under Chapter 2. Agent installation and configuration->Installation and configuration of the SAP agent->Using SAP transport and defining the user->Procedure, the documentation states: "you must create the file-transport.prop". This file name is incorrect. 
+
+Procedure
+1. Go to the /ABAP directory on the product CD.
+2. To install the single ITM file, select one of the following file import options:
+v If the SAP system, where you want to install the single IBM Tivoli Monitoring file, is a Solution
+Manager 7.1 Service Pack 6 level and has MAI configured, you must create the
+file-transport.prop file in the user/sap/SID SAP work directory, and add MAI_CONFIGURED = YES
+entry in that file. This entry creates a MAI_CONFIGURED = YES entry in the /IBMMON/ITM_CNFG
+database
+
+
+CAUSE
+See Related URL Using SAP transport and defining the user. 
+
+
+RESOLVING THE PROBLEM
+The intended file name is "transport.prop" instead of "file-transport.prop". 
+
+The correct procedure is as follows: 
+
+Procedure 
+
+ 1. Go to the /ABAP directory on the product CD. 
+ 2. To install the single ITM file, select one of the following file import options:
+    v If the SAP system, where you want to install the single IBM Tivoli Monitoring file, is a Solution
+    Manager 7.1 Service Pack 6 level and has MAI configured, you must create the transport.prop file in the user/sap/SID SAP work directory, and add MAI_CONFIGURED = YES entry in that file. This entry creates a MAI_CONFIGURED = YES entry in the /IBMMON/ITM_CNFG database
+
+
+Correction in Install Config Guide planned for the next major release of SAP Agent. RELATED INFORMATION
+ Using SAP transport and defining the user [http://www.ibm.com/support/knowledgecenter/SS3JRN_7.2.1.1/com.ibm.itcama.doc_7.2.1.1/sap/installiaptransport.html ]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ SAP 711 FP01
+5724B97SO

@@ -1,0 +1,34 @@
+Title: IBM Operational Decision Manager on Cloud Compatibility - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ IBM ODM on Cloud is compatible with on-premises versions of IBM Operational Decision Manager. 
+
+CONTENT
+You can work with decision services outside ODM on Cloud, and still take advantage of the cloud environment.
+
+Decision service artifacts (hybrid cloud) 
+You deploy a decision service from ODM on Cloud to an on-premises instance of Operational Decision Manager. This approach works with the following ODM on Cloud releases and on-premises ODM versions: 
+
+ODM on Cloud release On-premises ODM version 2017.10 8.9.1 2017.06 8.9.1 Note: There is no earlier release of ODM on Cloud currently in use. 
+
+For information on using a hybrid cloud environment, see IBM ODM on Cloud in a hybrid cloud environment [http://www.ibm.com/support/knowledgecenter/SS7J8H/com.ibm.odm.cloud.overview/topics/con_hybrid_cloud.html]. 
+
+Decision service projects 
+You import or export a decision service project from ODM on Cloud. This approach works with the following on-premises versions of Operational Decision Manager:  * 8.9.1 
+ * 8.9.0 
+ * 8.8.1 
+ * 8.8.0 
+ * 8.7.1
+
+
+Limitations 
+The following limitations apply to using ODM on Cloud and on-premises ODM together:  * The projects must go through the cloud version of Rule Designer. For example, you must import an on-premises project into the cloud Rule Designer to publish the project to the cloud environment. 
+ * The cloud environment only supports the decision engine. If you have an on-premises project that is based on the classic rule engine, you must switch the project to the decision engine before you publish the project to the cloud environment. 
+
+
+
+RELATED INFORMATION
+ Differences between Operational Decision Managers [https://www.ibm.com/support/knowledgecenter/SS7J8H/com.ibm.odm.cloud.overview/topics/con_differences.html]

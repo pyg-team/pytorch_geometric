@@ -1,0 +1,211 @@
+Title: IBM IZ96234: OBJECT_NOT_EXIST EXCEPTIONS ON SOME CONNECTIONS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: Even when LocationServiceDaemon is up, locate
+   request messages on some connections fail with OBJECT_NOT_EXIST
+   exceptions.
+   .
+   Stack Trace: <OSB>12/3/09 18:12:41:308 CET<CSB> 0000001b ORBRas
+         1 com.ibm.rmi.iiop.Connection doLocateRequestWork:2610
+   ORB.thread.pool : 0 The following exception was logged
+                                    org.omg.CORBA.OBJECT_NOT_EXIST:
+   BAD_SERVER_ID (1) for 0x4a4d424900000..........  vmcid: IBM
+   minor code: C02  completed: No
+    at
+   com.ibm.CORBA.iiop.ServerDelegate.locate(ServerDelegate.java:262
+   )
+    at com.ibm.rmi.iiop.ORB.locate(ORB.java:452)
+    at com.ibm.CORBA.iiop.ORB.locate(ORB.java:1741)
+    at
+   com.ibm.rmi.iiop.Connection.doLocateRequestWork(Connection.java:
+   2589)
+    at com.ibm.rmi.iiop.Connection.respondTo(Connection.java:2472)
+   at com.ibm.rmi.iiop.Connection.doWork(Connection.java:2221)
+    at com.ibm.rmi.iiop.WorkUnitImpl.doWork(WorkUnitImpl.java:65)
+    at com.ibm.ejs.oa.pool.PooledThread.run(ThreadPool.java:118)
+    at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1498)
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The problem is caused due to accepting connections before
+   LocationServiceDaemon initialization is complete.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   5.0.0 SR12 FP5
+   .
+   Logic of establishing/setting up connections is changed to
+   resolve this timing issue.
+   .
+   To obtain the fix:
+   Install build 20110314 or later
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  ZE FIX ERROR IV11182 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV11182] 29/11/11
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  The ORB initialization has been fixed to ensure that the ORB
+   will not process any requests till the ORB is completely
+   initialized.  Any call made at the this time will block until
+   the ORB is initialized.
+   
+   Applications which register an interceptor and make a call to
+   the ORB in the post_init of the interceptor and applications
+   which call the ORB as part of plugin initialization will
+   encounter problems.  According to the CORBA spec, the result of
+   calling the ORB at this time is not defined, but applications
+   may previously have run without reporting an error.  After
+   applying this APAR, the applications will hang, because the
+   calls to the ORB will block until the ORB is initialized, but
+   the ORB will not initialize until the plugin initialization and
+   post_init processing has completed.
+   
+   An application hanging because of this problem may be recognized
+   as it will have a stack trace like this:
+   
+   at java/lang/Object.wait(Native Method)
+   at java/lang/Object.wait(Object.java:199)
+   at com/ibm/rmi/corba/ORB.getLSDPlugin(ORB.java:4598)
+   at com/ibm/rmi/iiop/Connection.lsdInit(Connection.java:721)
+   at com/ibm/rmi/iiop/Connection.<init>(Connection.java:772)
+   at
+   com/ibm/rmi/iiop/TransportManager.createORBConnection(TransportM
+   anager.java:118)
+   .. <Code added as part of the post_init functionality>
+   at
+   com/ibm/rmi/pi/InterceptorManager.runPostInit(InterceptorManager
+   .java:217)
+   at com/ibm/rmi/corba/ORB.initializeInterceptors(ORB.java:624)
+   at com/ibm/CORBA/iiop/ORB.initializeInterceptors(ORB.java:1073)
+   at com/ibm/rmi/corba/ORB.orbParameters(ORB.java:1357)
+   at com/ibm/rmi/corba/ORB.set_parameters(ORB.java:1247)
+   at com/ibm/CORBA/iiop/ORB.set_parameters(ORB.java:1681)
+   at org/omg/CORBA/ORB.init(ORB.java:364)
+   
+   or
+   
+   at java/lang/Object.wait(Native Method)
+   at java/lang/Object.wait(Object.java:199)
+   at com/ibm/rmi/corba/ORB.getLSDPlugin(ORB.java:4598)
+   at com/ibm/rmi/iiop/Connection.lsdInit(Connection.java:721)
+   at com/ibm/rmi/iiop/Connection.<init>(Connection.java:772)
+   at
+   com/ibm/rmi/iiop/TransportManager.createORBConnection(TransportM
+   anager.java:118)
+   .. <Code added as part of the initialization of plugins>
+   at com/ibm/rmi/CORBA/iiop/Orb.initializePlugins(ORB.java:1363)
+   at com/ibm/rmi/corba/ORB.orbParameters(ORB.java:1357)
+   at com/ibm/rmi/corba/ORB.set_parameters(ORB.java:1247)
+   at com/ibm/CORBA/iiop/ORB.set_parameters(ORB.java:1681)
+   at org/omg/CORBA/ORB.init(ORB.java:364)
+   
+   Customers detecting such a hang need to modify their code so
+   that the ORB is not called before it is initialized.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ96234
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA 5 ORB
+   
+   
+ * REPORTED COMPONENT ID
+   620500123
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-09
+   
+   
+ * CLOSED DATE
+   2011-03-23
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA 5 ORB
+   
+   
+ * FIXED COMPONENT ID
+   620500123
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSN
+   UP

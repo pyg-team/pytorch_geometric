@@ -1,0 +1,196 @@
+Title: IBM PI46230: DOCUMENTATION FOR PORTAL 8.5 INFOCENTER CREATING A COPY OF THEME NEED REVISION (5 OF 7) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  AFFECTED URL:
+   http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/de [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/de]
+   v-theme/themeopt_cust_copy_modifystatres.dita
+   
+   TEXT READS:
+   
+                 <CHANGE 1>
+                 1. Open the plugin.xml in the
+   wp_profile_rootinstalledApps\cell\CustomThemeEAR.ear\CustomTheme
+   .war\WEB-INF\ directory.
+                 </CHANGE 1>
+   
+                 <CHANGE 2>
+                 3. Connect your WebDAV client to
+   http://host:port/wps/mycontenthandler/dav/fs-type1/. [http://host:port/wps/mycontenthandler/dav/fs-type1/.]
+                 4. Modify the profiles for your custom theme to
+   include the module in your plugin.xml.
+                 a. From the themes\customTheme\profiles folder,
+   copy the profile files.
+                 b. Remove the wp_dynamicContentSpots_85 module
+   from the profile.
+                 c. Add the wp_dynamicContentSpots_custom module
+   that you created by modifying the plugin.xml.
+                 d. Copy the profiles back to the profiles folder.
+                 5. From the themes\customTheme\nls folder, copy
+   the theme_en.html file, or whichever file is your default
+   locale, to the local drive. Repeat for any of the other locale
+   files for the languages that you support.
+                 6. Edit the theme*.html files, and find and
+   replace all occurrences of 85theme with customTheme. For
+   example, dyn-cs:id:85theme_head becomes
+   dyn-cs:id:customTheme_head.
+                 7. Save the files.
+                 8. Copy the files into the fs-type1 folder.
+                 9. Restart IBM&#65449; WebSphere&#65449; Portal.
+                 </CHANGE 2>
+   
+                 <CHANGE 3>
+                 Note: You do not need to modify the theme.html
+   file in the themes\customTheme folder. That file is not used
+   other than to redirect to the appropriate locale file in the nls
+   folder. You need to modify it only if you add or remove locales.
+                 </CHANGE 3>
+   
+                 <CHANGE 4>
+                 Parent topic: Link the static resources to the
+   dynamic resources for your theme
+                 </CHANGE 4>
+   
+                 TEXT SHOULD READ:
+                 <CHANGE 1>
+                 1. Open the plugin.xml from the CustomTheme
+   project you created on the previous step.
+                 </CHANGE 1>
+   
+                 <CHANGE 2>
+                 3. On your local disk, access the customTheme
+   directory you created in Copy the static resources for your
+   theme
+                 4. Modify the profiles for your custom theme to
+   include the module in your plugin.xml.
+                 a. From the customTheme\profiles folder, edit each
+   profile file.
+                 b. Replace the wp_dynamicContentSpots_85 module
+   with the wp_dynamicContentSpots_custom module that you created
+   by modifying the plugin.xml.
+                 c. Save your changes.
+                 5. From the customTheme\nls folder, edit the
+   theme_en.html file, or whichever file is your default locale, to
+   the local drive. Repeat for any of the other locale files for
+   the languages that you support.
+                 6. In the theme*.html files, find and replace all
+   occurrences of 85theme with customtheme. For example,
+   dyn-cs:id:85theme_head becomes dyn-cs:id:customtheme_head.
+                 7. Save the files.
+   
+                 ** Remove steps 8-9 **
+                 </CHANGE 2>
+   
+                 <CHANGE 3>
+                 Note: You do not need to modify the theme.html
+   file in the customTheme folder. That file is not used other than
+   to redirect to the appropriate locale file in the nls folder.
+   You need to modify it only if you add or remove locales
+                 </CHANGE 3>
+   
+                 <CHANGE 4>
+                 Parent topic: Create a copy of your theme
+                 </CHANGE 4>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Refer to the above.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This is planned to be changed in the product documentation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is planned to be changed in the product documentation.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI46230
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-08-04
+   
+   
+ * CLOSED DATE
+   2015-08-18
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

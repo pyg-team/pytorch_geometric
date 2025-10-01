@@ -1,0 +1,30 @@
+Title: IBM Table or view does not exist error when using Client for Windows with Oracle DB - United States
+
+Text:
+Oracle ICMADMIN.ICMLSPKG Content Manager Client for Windows TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using Client for Windows on Content Manager 8.4.X with an Oracle database (DB), an error message occurs while searching or retrieving item information. A further error also appears in the logs referring to the following Library Server package:
+
+ICMADMIN.ICMLSPKG 
+
+SYMPTOM
+Error messages such as this one appear in the ICMServer.log:
+<ORA-00942: table or view does not exist
+ORA-00942: table or view does not exist
+ORA-06512: at "ICMADMIN.ICMLSPKG", line 257
+>
+
+
+CAUSE
+The Oracle package ICMADMIN.ICMLSPKG is not correctly bound to the Oracle database.
+
+ENVIRONMENT
+Content Manager with an Oracle DB
+
+RESOLVING THE PROBLEM
+Running either the configuration utility or the following commands will bind the Oracle package to the DB correctly:
+
+$IBMCMROOT/config/cmcfglsi. -t bind
+$IBMCMROOT/config/cmcfglsi. -t cacl
+$IBMCMROOT/config/cmcfglsi. -t comptypes

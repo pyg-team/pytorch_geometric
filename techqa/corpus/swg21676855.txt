@@ -1,0 +1,39 @@
+Title: IBM 0C1 and DWW180E server preallocation requirements not met when starting CICS VR - United States
+
+Text:
+IEF196I 0C1 S0C1 abend=s0C1 00000001 DWW180E DWW1IRCM RC=00000008 REASON=711152E0 RSN=711152E0 RC= 00000024 REASON=711F52E6 RSN=711F52E6 MSGDWW180E ; MSGEF196I ; CICSVR SERVER ; 5655P3000 5655-P30 5655P30 ; R420 R42E R42K FMID HCCV420 JCCV42E JCCV42K ; R430 R43E R43K FMID HCCV430 JCCV43E JCCV43K ; 5655Y2400 R510 R51E R51K 5655-Y24 ; 5655Y24 FMID HCCV510 JCCV51E JCCV51K TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When starting CICS VSAM Recovery for z/OS (CICS VR), you recieve an abend S0C1 (abend=0C1) and message DWW180E with problem description: CICSVR server preallocation requirements not met. This occurs after you allocate the CICS VR server datasets DWWMSG, DWWDMSG, and DWWDUMP on extended address volumes (EAVs). 
+
+SYMPTOM
+The SYSLOG contains the following messages: 
+
+ IEF196I SYSTEM COMPLETION CODE=0C1 REASON CODE=00000001 
+
+*DWW180E [http://www.ibm.com/support/knowledgecenter/SSQJMU_5.2.0/dwwmd/kw00454.html?lang=en] UNEXPECTED ERROR DURING CICSVR SERVER PROCESSING. 097 
+MODULE WHICH DETECTED THE ERROR: DWW1IRCM
+RETURN CODE (HEX): 00000008
+REASON CODE (HEX): 711152E0
+CALLED MODULE ERROR INFORMATION:
+RETURN CODE (HEX): 00000024
+REASON CODE (HEX): 711F52E6
+COMPLETION CODE:
+PROBLEM DESCRIPTION: CICSVR SERVER PREALLOCATION REQUIREMENTS NOT MET
+
+
+CAUSE
+Enhancements were made to CICS VR V5.2 to allow the CICS VR server datasets DWWMSG, DWWDMSG, and DWWDUMP to be allocated on EAV volumes. This ability has not been added to CICS VR V5.1 or lower. Therefore, at start time, the CICS VR server tries to evaluate available DWWMSG, DWWDMSG, and DWWDUMP space and if it finds EAV volume (DSCB format other than format-1) and it terminates.
+
+
+RESOLVING THE PROBLEM
+Upgrade to CICS VR 5.2, if you want to allocate CICS VR server datasets DWWMSG, DWWDMSG and DWWDUMP on EAV volumes.
+
+RELATED INFORMATION
+#CICS VR 5.2 adds support for extended address volumes [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS214-153]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICSVR CICS VR CICS/VR

@@ -1,0 +1,25 @@
+Title: IBM How/Where to get license information for SPSS Server? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I am using SPSS Server and have a few questions on the license. How/Where do I get the license information for SPSS Server ? How can I see when my SPSS Server license will be expired? How can I see what modules are licensed? 
+
+ANSWER
+SPSS Server's license is recorded in a file called spss.err located in the ..\en\windows directory. 
+You can use the Show License syntax the same way with SPSS Server in two ways. 
+
+1. Connect SPSS Client to SPSS Server and run the syntax.
+
+2. Without using the client, execute spssb.exe in the SPSS Server directory. This brings up an interactive >SPSS command prompt. Type 'Show License.' and <ENTER>. Type 'Finish.' to get out
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 59988

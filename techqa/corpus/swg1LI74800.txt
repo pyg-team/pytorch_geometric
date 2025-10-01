@@ -1,0 +1,133 @@
+Title: IBM LI74800: CMVC 190711 - RESOLVE THE ISSUE THAT A LIST IN SQL REACH ORACLE MAXIMUM NUMBER OF EXPRESSIONS (1000) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If there are more than 1000 attributes or merchandising
+   associations per catalog entry, the following exception will be
+   thrown in management center:
+    ORA-01795: maximum number of expressions in a list is 1000.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   WebSphere Commerce users on V6.0.
+   
+   PROBLEM ABSTRACT:
+   Management Center: ORA-01795 error occured in product display
+   page.
+   
+   BUSINESS IMPACT:
+   User is not able to view product in Management Center when the
+   issue happens.
+   
+   RECOMMENDATION:
+   Applying APAR LI74800 will resolve the issue.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  SQL in data service layer was rewritten to avoid the error.
+   
+   
+   -------------------------------------------------------------
+   The latest available maintenance information can be obtained
+   from the Recommended Fixes for WebSphere Commerce technote:
+   http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296 [http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LI74800
+   
+   
+ * REPORTED COMPONENT NAME
+   WC BUS ED ILINU
+   
+   
+ * REPORTED COMPONENT ID
+   5724I3804
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-05
+   
+   
+ * CLOSED DATE
+   2009-08-29
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WC BUS ED ILINU
+   
+   
+ * FIXED COMPONENT ID
+   5724I3804
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

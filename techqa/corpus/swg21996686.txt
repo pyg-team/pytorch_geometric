@@ -1,0 +1,63 @@
+Title: IBM Attempting to enable 2-Way Secure connectivity from Sterling B2B Integrator to the Oracle Database over TLS 1.2 protocol using Oracle JDBC thin driver - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempting to enable 2-Way Secure connectivity from Sterling B2B Integrator (SBI) to the Oracle Database over TLS 1.2 protocol using Oracle JDBC thin driver, but it fails with a Fatal alert SSL Handshake failure seen in the TCPDUMP and Sterling B2B Integrator SSL trace. 
+
+SYMPTOM
+Packet # are referenced w.r.t. TCPDUMP captured from this particular occurrence. They may vary between connections. 
+
+- In the TCPDUMP, SBI sends a Fatal alert handshake failure
+For example, see the following scenario, focused on TCP Packets 6 - 34.
+In Packet 6, the Client Hello is TLS 1.2 and there are 36 ciphers(some are SHA256 and some are SHA384, these can be used for TLS1.2).
+Packet 24, is ServerHello, TLS1.0 and cipher is tls_rsa_with_aes_256_cbc_sha.
+(Just noting: This is not a TLS1.2 cipher, this is a TLS1.0 cipher).
+Packet 26, is Server certificates sent.
+Packet 28, Hello Done TLS1.0.
+Packet 30, SBI sends Fatal alert handshake failure. 
+
+- In the SSL trace, the ServerHello sends a TLSv1, but never sends TLSv1.2 when both Sterling B2B Integrator and Oracle JDBC Thin driver are configured for version 1.2.
+
+JsseJCE: Using KeyGenerator IbmTlsPrf from provider TBD via init
+HandshakeMessage: TLS Keygenerator IbmTlsPrf from provider from init
+IBMJCEFIPS version 1.71
+%% Didn't cache non-resumable client session: [Session-1,
+SSL_RSA_WITH_AES_256_CBC_SHA]
+main, WRITE: TLSv1 Application Data, length = 272
+main, READ: TLSv1 Application Data, length = 128
+main, called close()
+main, called closeInternal(true)
+main, SEND TLSv1 ALERT: warning, description = close_notify
+main, WRITE: TLSv1 Alert, length = 32
+main, called closeSocket(selfInitiated)
+
+
+CAUSE
+The main issue seen in the TCPDUMP is the ServerHello sending TLS1.0 protocol, instead of TLS1.2. We later determined that the Oracle JDBC Thin driver version 11.2.0.3.0 contained a bug which allowed TLS 1.0 protocol, but failed attempting to use TLS 1.1 or TLS 1.2 protocols.
+
+
+ENVIRONMENT
+Using Oracle DB 11.2.0.4.0 with Oracle JDBC Thin driver version 11.2.0.3.0, and jar file ojdbc6.jar .
+
+
+
+DIAGNOSING THE PROBLEM
+Capture a Network trace (TCPDUMP or Wireshark) and a corresponding Sterling B2B Integrator SSL trace. And also capture an Oracle trace which displays the SSL_CIPHER_SUITES, SSL_VERSION = 1.2 and other Oracle SQLNET parameters that are configured. 
+
+Review the Sterling B2B Integrator customer_overrides.properties file to ensure the Oracle Pool connections are all configured with the correct oracle.net.ssl_version of 1.2 (for TLS 1.2).
+
+
+RESOLVING THE PROBLEM
+This is a non-SB2Bi issue. 
+
+
+It is resolved by applying Oracle patch for bug 19030178 which allows TLSv1.2. 
+This Patch 19030178 added TLSV1.1 and TLSV1.2 in the JDBC THIN driver.
+TLS 1.0 worked without the patch being applied. Details on this Oracle patch found at URL http://stackoverflow.com/questions/39174147/database-connectivity-over-tls1-2-using-jdbc-thin-and-jks [http://stackoverflow.com/questions/39174147/database-connectivity-over-tls1-2-using-jdbc-thin-and-jks]
+
+Also while configuring SSL/TLS specific properties in Sterling B2B Integrator's customer_overrides.properties file for your Oracle Pool, make sure correct value is specified for ssl_version property.
+e.g., 
+oraclePool.oracle.net.ssl_version=1.2 (this is for TLS 1.2) 
+oraclePool.oracle.net.ssl_version=1.1 (1.1 would be for TLS 1.1)

@@ -1,0 +1,163 @@
+Title: IBM PM17755: J2FP4:SPELLING MISTAKE ON TEP ABOUT W/S APPLICATION HEALTH - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TEMA
+   OS Information: windows2008e 64 bit
+                App Server (including FP level): Weblogic 10.3.1.0
+   
+   Steps to reproduce
+    Step 1: Install 6.1.0.4 DC and install TEMA62 FP4 TEMA
+    Step 2: Start Weblogic and config DC to Weblogic
+     Step 3: Restart Weblogic and TEMA
+     Step 4:logn TEP,Windows Systems->host1->J2EE Agent - Primary
+   -> BEA Weblogic App Server - AdminServer -> Application Health
+   -> Application Configuration
+     In the Longest Request Thresholds chart,there is an spelling
+   mistake.it is "Thresholds" but not "Tresholds"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   ***********************
+   * USERS AFFECTED: Customers using ITCAM for J2EE v6.1.0.4
+   WebLogic DC/TEMA
+   ****************************************************************
+   **********************
+   
+   ERROR DESCRIPTION:
+    TEMA
+                OS Information: windows2008e 64 bit
+                App Server (including FP level): Weblogic 10.3.1.0
+   
+   Steps to reproduce
+    Step 1: Install 6.1.0.4 DC and install TEMA62 FP4 TEMA
+    Step 2: Start Weblogic and config DC to Weblogic
+     Step 3: Restart Weblogic and TEMA
+     Step 4:logn TEP,Windows Systems->host1->J2EE Agent - Primary
+   -> BEA Weblogic App Server - AdminServer -> Application Health
+   -> Application Configuration
+     In the Longest Request Thresholds chart,there is an spelling
+   mistake.it is "Thresholds" but not "Tresholds"
+   
+   ****************************************************************
+   ***********************
+   * RECOMMENDATION: apply ITCAM for J2EE V6.2, TEMA Fix Pack 5
+   when
+   * available
+   ****************************************************************
+   ***********************
+   
+   When using ITCAM for J2EE v6.1.0.4 WebLogic DC/TEMA to monitor a
+   Weblogic 10 server, in the Longest Request Thresholds
+   chart,there is an spelling error. "Thresholds" is displayed as
+   "Tresholds".
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   | fix pack | 6.2.0-TIV-ITCAM_J2EE_TEMA-FP005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM17755
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS DIS T
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62TM
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-02
+   
+   
+ * CLOSED DATE
+   2010-07-15
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS DIS T
+   
+   
+ * FIXED COMPONENT ID
+   5724L62TM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP
+   
+   
+ * R620 PSY
+   UP

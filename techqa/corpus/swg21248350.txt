@@ -1,0 +1,23 @@
+Title: IBM Daylight Savings Time information for AF/Operator and OMEGACENTER Gateway - United States
+
+Text:
+Daylight Saving TOD ; DST2007 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Information about how changes in Daylight Saving Time (DST) affect AF/Operator and OMEGACENTER Gateway. 
+
+RESOLVING THE PROBLEM
+There are no AF/Operator or OMEGACENTER Gateway PTFs that are required for the Daylight Saving Time (DST) changes. 
+
+Time of Day (TOD) traps should still fire at their designated time. For example, a TOD trap scheduled for 03:00 AM will still fire at 03:00, even if the system clock has been turned back one hour. If the system clock is turned forward one hour, TOD traps scheduled to fire during that hour will fire immediately since their time has now passed. 
+
+The only aberration may be for TOD traps that are set to fire on some interval, and the clocks are turned back one hour. The time the trap should next fire is obtained by adding the interval to the current time, then storing that new time back in the TOD trap. If the clocks are turned back after the new time is computed, there could be an extra hour delay. 
+
+For example, after a TOD trap with a 30 minute interval fires at 01:45 AM, the new time of 02:15 is stored in the TOD trap. If the system clock is then turned back one hour, the TOD will still fire at 02:15, which is actually one hour and 30 minutes, not just 30 minutes. 
+
+There is no requirement that AF/Operator (or OMEGACENTER Gateway) be recycled during Daylight Saving Time. However, many people choose to recycle to avoid any issues such as the one mentioned above.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli AF/OPERATOR on z/OS z/OS 3.4

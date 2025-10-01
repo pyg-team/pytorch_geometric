@@ -1,0 +1,65 @@
+Title: IBM Migrating ObjectServer customisation using nco_osreport - United States
+
+Text:
+automations.sql; nco_dbinit; nco_osreport; sql; SQL; migrate; migration; dump; export; nco_confpack; object server TECHNOTE (FAQ)
+
+QUESTION
+ nco_osreport : Creating nco_dbinit SQL files from ObjectServers, can this be done? 
+
+CAUSE
+Migration to Netcool/OMNIbus v8.1 requires additional manual customisation beyond the scope of the standard migration process due to customer configuration
+
+ANSWER
+ 
+
+Netcool/OMNIbus v81 includes a utility called nco_osreport that allows the contents of an ObjectServer to be dumped in the following formats;
+
+-dbinit SQL files for nco_dbinit (default).
+-html HTML file containing all ObjectServer tables.
+-xml XML file containing all ObjectServer tables.
+
+This allows older versions of Netcool/OMNIbus to be dumped as well, which is useful for the migration process, and for customising ObjectServers based on previous manual customisation which are not easily manipulated using the nco_confpack tool.
+
+Once exported the custom SQL can be merged manually into default ObjectServer SQL as required.
+
+The general process to capture an ObjectServer's SQL files is;
+
+On the pre-Netcool/OMNIbus v8.1 system;
+[CLEAN_NCOMS]
+{
+Primary: sourcehost 10001
+}
+nco_igen
+
+Create a blank ObjectServer
+nco_dbinit -server CLEAN_NCOMS
+
+Check the server works ok, then shutdown using control-c
+nco_objserv -name CLEAN_NCOMS
+^C
+
+Copy the to be migrated ObjectServer tab files to CLEAN_NCOMS db directory;
+cd $OMNIHOME/db
+cp <MYCOMS>/*.tab CLEAN_NCOMS 
+
+Start the CLEAN_NCOMS ObjectServer up;
+nco_objserv -name CLEAN_NCOMS -autoenabled
+
+Purge unwanted data from the CLEAN_NCOMS 
+e.g.
+alerts.status, alerts.details, alerts.journal, master.stats etc.
+
+On the Netcool/OMNIbus v8.1 system;
+[CLEAN_NCOMS]
+{
+Primary: sourcehost 10001
+}
+nco_igen
+
+Create the dbinit directory to hold the files
+mkdir /tmp/CLEAN_NCOMS
+
+Export the SQL data from the CLEAN_NCOMS ObjectServer;
+nco_osreport -server CLEAN_NCOMS -directory /tmp/CLEAN_NCOMS -user root -password ''
+OR
+nco_osreport -host sourcehost -port 10001 -directory /tmp/CLEAN_NCOMS -user root -password ''

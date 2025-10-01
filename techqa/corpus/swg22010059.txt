@@ -1,0 +1,32 @@
+Title: IBM New online Support experience for IBM Security is now live! - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ In order to serve you better, IBM Security has launched a new online Support experience. 
+
+CONTENT
+As previously announced in late October 2017, IBM Security support's new online Support Community is now live! The transition to our new Community was designed to be seamless for you, and we would like to share some resources to will help you get started.
+To access the Community, follow these steps: 
+
+ *  Go to www.ibm.com/mysupport [http://www.ibm.com/mysupport] For a personalized experience, log in with your IBM ID. 
+
+To learn how to use the new Community to open a Support case and search for Support content, watch these short tutorial videos: 
+
+Video 1 - Introducing the IBM Support Community: Search 
+
+Video 2 - IBM Support Community: Open And Manage Cases
+
+
+
+If you experience a problem with the new community (such as a login issue, etc.), we are here to help. You can submit your issue via our Support page [https://www.ibm.com/mysupport/s/] by clicking “Email IBM Support,” or by emailing mysphelp@us.ibm.com [mysphelp@us.ibm.com]. 
+
+We understand that you may have other IBM products, and this change may require you to temporarily access different portals for different products. We will continue to onboard products quickly so that you can have a simple, consistent experience. There will be no change to the process of contacting Support through phone or e-mail. 
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security i2 Analyst's Notebook Security i2 Analyst's Notebook Premium Security i2 Analyze Security i2 Enterprise Insight Analysis Security i2 iBase Security IBM BigFix family Security IBM BigFix Inventory Security IBM BigFix Platform Security IBM Intelligent Video Analytics Security IBM QRadar Network Security Security IBM SecureWay Firewall Security IBM Security Access Manager for Mobile Security IBM Security Access Manager for Web Security IBM Security Directory Integrator Security IBM Security Directory Server Security IBM Security Guardium Security IBM Security Identity and Access Manager Security IBM Security Identity Governance and Intelligence Security IBM Security Identity Manager Security IBM Security Key Lifecycle Manager Security IBM Security Network Intrusion Prevention System Security IBM Security Network Protection Security IBM Security QRadar Risk Manager Security IBM Security QRadar SIEM Security IBM Security QRadar Vulnerability Manager Security IBM Security SiteProtector System Security IBM Security zSecure Admin Security IBM Security zSecure Alert Security IBM Security zSecure Audit

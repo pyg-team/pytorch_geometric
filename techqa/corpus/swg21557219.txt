@@ -1,0 +1,87 @@
+Title: IBM Unable to authenticate some users using LDAP - United States
+
+Text:
+Extensions; Adapters; Protocol/Authentication; STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to authenticate some users using LDAP 
+
+SYMPTOM
+
+
+The customer has correctly configured the authentification_policy.properties file.
+
+authentication_policy.authentication_1.className=com.sterlingcommerce.woodsto ck.security.LDAPAuthentication
+authentication_policy.authentication_1.display_name=LDAP_test
+authentication_policy.authentication_1.enabled=true
+authentication_policy.authentication_1.jndi_factory=com.sun.jndi.ldap.LdapCtxFac tory
+authentication_policy.authentication_1.server=ldapsrvr.domain.com
+authentication_policy.authentication_1.port=389
+authentication_policy.authentication_1.security_type=simple
+authentication_policy.authentication_1.principle=cn=ABCDE,ou=KLM,o=XYZ
+authentication_policy.authentication_1.credentials=
+authentication_policy.authentication_1.password_attribute=userPassword
+authentication_policy.authentication_1.search_root=o=XYZ
+authentication_policy.authentication_1.search_filter=(uid=<userid>)
+authentication_policy.authentication_1.with_user_bind=true
+
+
+They are able to authenticate some users using LDAP, but for other accounts they get a Null Pointer Exception.
+
+ 
+
+Error Message [2010-12-08 13:52:42.963] ERROR 000000000000 GLOBAL_SCOPE AuthenticationService.isAuthenticated()
+[2010-12-08 13:52:42.963] ERROR 000000000000 GLOBAL_SCOPE [1291812762963] null
+[2010-12-08 13:52:42.963] ERRORDTL 000000000000 GLOBAL_SCOPE [1291812762963]java.lang.NullPointerException
+at com.sun.jndi.ldap.LdapNamingEnumeration.getNextBatch(LdapNamingEnumeration.java: 126)
+at com.sun.jndi.ldap.LdapNamingEnumeration.nextAux(LdapNamingEnumeration.java:260)< br /> at com.sun.jndi.ldap.LdapNamingEnumeration.nextImpl(LdapNamingEnumeration.java:251) 
+at com.sun.jndi.ldap.LdapNamingEnumeration.next(LdapNamingEnumeration.java:199)
+at com.sun.jndi.ldap.LdapNamingEnumeration.nextElement(LdapNamingEnumeration.java:1 03)
+at com.sterlingcommerce.woodstock.security.LDAPAuthentication.isAuthenticated(LDAPA uthentication.java:138)
+at com.sterlingcommerce.woodstock.security.AuthenticationService.isAuthenticated(Au thenticationService.java:486)
+at com.sterlingcommerce.woodstock.security.SecurityManager.isAuthenticated(Security Manager.java:493)
+at com.sterlingcommerce.woodstock.security.User.isAuthenticated(User.java:425)
+at com.sterlingcommerce.woodstock.services.sftpserver.server.SSHSCIAuthenticationPr ovider.logonUser(SSHSCIAuthenticationProvider.java:91)
+at com.maverick.sshd.platform.AuthenticationProvider.logon(Unknown Source)
+at com.maverick.sshd.PasswordKeyboardInteractiveProvider.setResponse(Unknown Source)
+at com.maverick.sshd.KeyboardInteractiveAuthentication.processMessage(Unknown Source)
+at com.maverick.sshd.AuthenticationProtocol.processMessage(Unknown Source)
+at com.maverick.sshd.TransportProtocol.A(Unknown Source)
+at com.maverick.sshd.TransportProtocol.B(Unknown Source)
+at com.maverick.sshd.TransportProtocol.onSocketRead(Unknown Source)
+at com.maverick.nio.SocketConnection.processReadEvent(Unknown Source)
+at com.maverick.nio.Daemon$_C.processSelectionKey(Unknown Source)
+at com.maverick.nio.SelectorThread.run(Unknown Source)
+
+
+RESOLVING THE PROBLEM
+
+
+To understand the issue you need to understand how LDAP works.
+
+The LDAP module uses an account named the "principle" to connect to the LDAP server. That account is like a sort of LDAP admin that has Read Only rights, but can only verify the User / Password information for users declared in a hierarchical level below the "Principle" account.
+
+So, if some users are defined in the LDAP directory under a different hierarchy level, then that Principal account used to do the authentification does not have access to the user credentials, and will fail authentification.
+
+To correct the issue you need to have a "principle" account that has the correct Parent level above the users he needs to authenticate.
+
+This is specified in the following property :
+
+authentication_policy.authentication_1.principle=cn=ABCDE,ou=KLM,o=XYZ
+
+
+ 
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling B2B Integrator Adapters 
+HISTORICAL NUMBER
+ NFX10434 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Severity
+
+
+Normal

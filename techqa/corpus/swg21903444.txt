@@ -1,0 +1,25 @@
+Title: IBM Datacap Web Services (wTM) returns error code 400 with Invalid Request - United States
+
+Text:
+wTM; Logon; 400; invalid request TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using wTM API /ServicewTM.svc/Session/Logon with a valid body and header, the http response code is 400 (failure) on IBM Datacap 9.0.0.X or 9.0.1. 
+
+SYMPTOM
+IBM Datacap 8.1.0.x returns code 200 (success) on the same request
+
+
+CAUSE
+The dc_KTF.xml file needs to be copied from the Taskmaster server to each client folder for decryption purposes to include FastDoc, DStudio, RV2\bin, DcDesktop, and tmweb.net, and wTM\bin. 
+
+Note: The Fingerprint service does not require it.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Copy dc_KTF.xml from C:\Datacap\Taskmaster 
+ 2. Paste into C:\Datacap\wTM\bin 
+ 3. Restart Datacap Taskmaster Server 
+ 4. Restart the IIS server

@@ -1,0 +1,10 @@
+Title: IBM What is the minimum privilege required for the Box user when using with IBM Datacap 9.0 Box Connector? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is the minimum privilege required for the Box user when using with IBM Datacap 9.0 Box Connector? 
+
+ANSWER
+Datacap will need to read, write, modify, and delete to be able to have functional Import and Export to Box. The Box equivalent user to do these at a minimum is an "Editor".

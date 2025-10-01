@@ -1,0 +1,35 @@
+Title: IBM Scheduler Error Values - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In Scheduler when a task does not run there is an Error Code displayed. What do these error values mean? 
+
+RESOLVING THE PROBLEM
+Here is a listing of the Errors and their meaning. Troubleshoot accordingly.
+
+Value Meaning
+
+0 System was out of memory, executable file was corrupt, or relocations were invalid.
+2 File was not found.
+3 Path was not found.
+5 Attempt was made to dynamically link to a task, or there was a sharing or network protection error.
+6 Library required separate data segments for each task.
+8 There was insufficient memory to start the application.
+10 Windows version was incorrect.
+11 Executable file was invalid. Either it was not a Windows application or there was an error in the .EXE image.
+12 Application was designed for a different operating system.
+13 Application was designed for MS-DOS 4.0.
+14 Type of executable file was unknown.
+15 Attempt was made to load a real-mode application (developed for an earlier version of Windows).
+16 Attempt was made to load a second instance of an executable file containing multiple data segments that were not marked read-only.
+19 Attempt was made to load a compressed executable file. The file must be decompressed before it can be loaded.
+20 Dynamic Link library (DLL) file was invalid. One of the dll's required to run this application was corrupt.
+21 Application requires Microsoft Windows 32bit extensions.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Series 7 Impromptu Business Analytics Cognos Series 7 Transformer Business Analytics Cognos Series 7 Scheduler 
+HISTORICAL NUMBER
+ 50900

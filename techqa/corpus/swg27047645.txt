@@ -1,0 +1,62 @@
+Title: IBM Installation of standalone MQ Client and standalone MQ Explorer coexisting in Linux - United States
+
+Text:
+ WHITE PAPER
+
+ABSTRACT
+ This document describes how to perform, in a machine that has Linux SuSE Linux Enterprise Server (SLES) Version, the following tasks related to the installation and maintenance of multiple MQ components and versions/fix packs: 
+
+- Install the standalone MQ Client 7.5 (SupportPac MQC75). This will be the Primary installation.
+- Install the standalone MQ Client 8.0 (SupportPac MQC8).
+- Install the standalone MQ Explorer 8.0 (SupportPac MS0T).
+- Apply maintenance to the MQ Client for a Fix Pack for 7.5 and 8.0.
+- Replace the MQ Explorer with the latest level
+- Finally, uninstall all these components. 
+
+CONTENT
+The chapters are: 
+
++ Initial status:
+MQ Client 7.5: None
+MQ Client 8.0: None
+MQ Explorer 8.0: None
+
+Chapter 1: Summary of Scenarios and summary of commands
+Chapter 2: How to get the installation images
+Chapter 3: Create userid "mqm" and group "mqm"
+Chapter 4: Baseline - confirming that MQ is not installed in the machine
+Chapter 5: Scenario 1: Installation of MQ Client: 7.5.0.4 
+(Installation1 in /opt/mqm)
+Chapter 6: Scenario 2: Installation of MQ Client: 8.0.0.2 
+(Installation2 in /opt/mqm80)
+Chapter 7: Scenario 3: Installation of MQ Explorer 8.0.0.3 
+(in /opt/ibm/WebSphere_MQ_Explorer)
+Chapter 8: Scenario 4: Upgrade MQ Client 7.5.0.4 to 7.5.0.5 
+(Installation1 in /opt/mqm)
+Chapter 9: Scenario 5: Upgrade MQ Client 8.0.0.2 to 8.0.0.4 
+(Installation2 in /opt/mqm80)
+Chapter 10: Scenario 6: Upgrade of MQ Explorer 8.0.0.3 to 8.0.0.4 
+(in /opt/mqm80)
+SECTION 1: Scenario 6-A: Uninstall MQ Explorer 8.0.0.3
+SECTION 2: Scenario 6-B: Install MQ 8.0.0.4
+Chapter 11: Scenario 7: Uninstall MQ Client 7.5.x 
+(Installation1 in /opt/mqm)
+Chapter 12: Scenario 8: Uninstall MQ Client 8.0.0.4 
+(Installation2 in /opt/mqm80)
+Chapter 13: Scenario 9: Uninstall MQ Explorer 8.0.0.4 
+(in /opt/ibm/WebSphere_MQ_Explorer)
+
++ Ending status:
+MQ Client 7.5: None
+MQ Client 8.0: None
+MQ Explorer 8.0: None
+
+
+
+File name: Installation of standalone MQ Client and standalone MQ Explorer coexisting in Linux.pdf 
+
+
+Installation of standalone MQ Client and standalone MQ Explorer coexisting in Linux.pdf [/support/docview.wss?uid=swg27047645&aid=2]Installation of standalone MQ Client and standalone MQ Explorer coexisting in Linux.pdf [/support/docview.wss?uid=swg27047645&aid=1]
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM MQ Linux

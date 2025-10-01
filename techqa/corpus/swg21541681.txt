@@ -1,0 +1,39 @@
+Title: IBM How do I change netmap entry from SNA to TCP/IP? (SCI22188) - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ How do I change netmap entry from SNA to TCP/IP? (SCI22188) 
+
+ANSWER
+1. Double click Netmap from the Requester.
+2. Double-click the remote netmap node entry in the Requester.
+3. Click the TCP/IP tab, enter the remote node's ip address and listening port and then select Mode1 for the Mode Override.
+4. Click the Communication Paths tab, highlight TCPCommPath and click the right arrow to make TCPCommPath the Selected Path. 
+5. Highlight the APPCCommPath in the Selected Path and click the left arrow to remove it from the Selected Path.
+6. Click OK.
+7. There should be a yellow flag next to the netmap entry in the Netmap Nodes window.
+8. Right click on the remote node and select Apply.
+
+ 
+
+HISTORICAL NUMBER
+ PRI8136 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+CONNECT:Direct NT Server, Release 3.3.00 
+CONNECT:Direct NT Server, 
+Release 3.3.02 
+SCI22188
+
+
+Goal
+
+
+FAQ: How do I change netmap entry from SNA to TCP/IP?

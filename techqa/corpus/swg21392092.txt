@@ -1,0 +1,77 @@
+Title: IBM Limiting LDAP connections - United States
+
+Text:
+ldap; vmm; context pool; connection pool; limit; maxpoolsize; authentication; query; connectionpool; contextpool TECHNOTE (FAQ)
+
+QUESTION
+ How can I limit the number of LDAP connections used for WebSphere Portal? 
+
+ANSWER
+
+LDAP connections made for WebSphere Portal can be divided into two categories, authentication and other (including authorization tasks such as requests for group membership, general tasks such as requests for attribute values, etc.). The procedures below are based on the assumption that either federated repository or stand-alone LDAP security is already enabled.
+
+
+Authentication 
+
+WebSphere Portal security can be integrated with LDAP servers in one of two ways, either via federated repository or via stand-alone LDAP. 
+
+
+Federated repository 
+
+Virtual Member Manager (VMM) authenticates users, and if connection pooling is enabled, LDAP connections can grow uncontrollably. To limit this growth, disable connection pooling either (A) through the WebSphere Application Server (WAS) Integrated Solutions Console (ISC) or (B) directly in VMM's configuration file wimconfig.xml.
+
+(A) ISC: 
+
+1. Go to: Secure administration, applications, and infrastructure > Federated repositories > Manage repositories > (repository name) > Performance 
+2. Uncheck "Use connection pooling" 
+3. Save the configuration and restart Portal.
+
+(B) wimconfig.xml: 
+
+1. Update wimconfig.xml such that: 
+
+<config:repositories xsi:type="config:LdapRepositoryType" ... id="repositoryid" ...>
+...
+<config:ldapServerConfiguration ...>
+<config:ldapServers ... connectionPool="false" ...>
+... 
+
+2. Restart Portal.
+
+
+Note: If connection pooling is disabled, VMM closes LDAP connections made at the JNDI layer as soon as authentication of a given user completes. Conversely, if connection pooling is enabled, one connection per user authentication persists until staled (either explicitly closed by the LDAP server or timed out by the network stack).
+
+
+
+Stand-alone LDAP'
+
+The Standalone LDAP registry defined in WAS authenticates users and manages the related LDAP connections. Refer to WAS documentation for details on Standalone LDAP registry settings.
+
+
+
+Other (all non-authentication-related LDAP queries)
+
+VMM uses its context pool to manage all LDAP connections which are not related to authentication in both stand-alone LDAP and federated repository environments.. To limit the total number of non-authentication-related LDAP connections at any given time, configure the context pool, either via ISC or wimconfig.xml.
+
+(A) ISC: 
+
+1. Go to: Secure administration, applications, and infrastructure > Federated repositories > Manage repositories > (repository name) > Performance 
+2. Set context pool configuration parameters as needed
+
+(B) wimconfig.xml: 
+
+<config:repositories xsi:type="config:LdapRepositoryType" ... id="repositoryid" ...>
+...
+<config:contextPool enabled="true" initPoolSize="1" maxPoolSize="20" poolTimeOut="0" poolWaitTime="3000" prefPoolSize="3"/>
+...
+
+Note: Setting "Context pool times out" in ISC or poolTimeOut="0" in wimconfig.xml means that context instances will stay in the pool until staled.
+
+
+
+
+Summary
+
+In a federated repository security environment with context pooling enabled and connection pooling disabled, the total number of LDAP connections made for WebSphere Portal will be limited to the maxPoolSize (context pool; VMM only) plus the total number of concurrent authentication requests (connection pool; JNDI connections by VMM).
+
+In a stand-alone LDAP security environment with context pooling enabled, this total will be limited by the maxPoolSize (context pool; VMM only) plus the maximum number of connections maintained by WAS for authentication (refer to WAS documentation).

@@ -1,0 +1,27 @@
+Title: IBM Cluster Failover or Node Panic Due to Temporary SAN/Path Issues - United States
+
+Text:
+Cluster Failover; DMS Timeout; rw_timeout TECHNOTE (FAQ)
+
+QUESTION
+ Why did my HA (or Oracle, or DB2, or Veritas, etc.) Cluster Fail Over due to temporary SAN/Path Issues? 
+
+CAUSE
+DMS Timeout or node failover because cluster timeout value and/or heartbeat value is set too low.
+
+ANSWER
+There are a variety of issues which can occur in a SAN fabric which will lead to I/O delays on the host-side. The vast majority of such issues are fully recoverable. AIX I/O device drivers utilize robust recovery mechanisms to deal with such SAN/fabric issues. 
+
+A common problem seen in the field is that Cluster Software providers design the cluster to either failover, or panic a node in the cluster for a timeout value of 30 seconds (or less). That value is too low to allow the lower level device drivers to go through their full recovery attempts. Each storage vendor supplies a default read/write timeout value for the attached disks. That timeout value can be viewed in lsattr output: 
+
+lsattr -El hdisk# | grep rw_timeout 
+
+As of this writing, the LOWEST possible rw_timeout value for any fibre-attached disk is 30 seconds. Most storage vendors set a default rw_timeout value of 60 seconds on their disks. Therefore, any cluster software which implement a timeout value of 30 seconds (or less) won't allow the disk driver sufficient time to retry an I/O which, if merely given the chance, might well succeed upon retry. 
+
+When a read/write timeout error occurs for any given I/O request, the AIX disk driver will retry that I/O an additional four times... with each attempt spaced at an interval of rw_timeout seconds. The best practice recommendation from AIX support is to set database timeout values such that they can survive at least 3*rw_timeout value. That, at least, allows the lower level device drivers to go through error recovery attempts before the cluster software takes the drastic action of either forcing a failover or, even worse, a node panic/crash. 
+
+Most customers would prefer a 2-3 minute period of slower I/O to the 20-30 minutes (or longer) outage which is required for a cluster failover. Certainly, they prefer a brief, 2-3 minute period of somewhat slower I/O to a system crash/panic. 
+
+AIX support's advice is to increase database timeout values such that they can withstand 3*rw_timeout value prior to taking any drastic action. If the database vendor cannot allow 3*rw_timeout value, then at least allow 2*rw_timeout value, such that the lower level devices drivers get more than one chance to redrive the I/O. 
+
+NOTE: It may be advisable to reduce the rw_timeout value on the disks. The lowest possible rw_timeout value is 30 seconds for most storage arrays. Keep in mind that each storage vendor does all testing using default values and each vendor has valid reasons for choosing their respective defaults. However, lowering rw_timeout value in the case where command timeouts occur for one or more disks DOES shorten the time required to failover to another path in those cases. That can sometimes prevent the cluster software from overreacting to otherwise recoverable SAN/path issues.

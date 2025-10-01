@@ -1,0 +1,137 @@
+Title: IBM RS02504: PERIOD CHARACTER IN BRANCH NAMES PREVENTS CREATING PROJECT IN RULE DESIGNER FROM DECISION CENTER - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When creating a project in rule designer (RD) from decision
+   center, none of the project elements (rule, BOM, ruleflow, ...)
+   are downloaded to the workspace if the subbranch name contains
+   period / dot [.] (although from the enterprise console every
+   project element can be seen).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Either use minus sign [-] or underscore [_] in place of period.
+   Or, because the problem is specific to ODM 8.5.1, upgrade to
+   ODM latest version and, at least, the next version ODM 8.6.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The issue occurs when trying to retrives a baseline and when
+   handling the case of baseline with dots in their name.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02504
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6900
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-18
+   
+   
+ * CLOSED DATE
+   2016-09-30
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * FIXED COMPONENT ID
+   5725B6900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R851 PSY
+   UP

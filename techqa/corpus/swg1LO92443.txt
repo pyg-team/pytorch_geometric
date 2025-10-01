@@ -1,0 +1,121 @@
+Title: IBM LO92443: APPLICATION BLOCKED BY JAVA SECURITY APPEARS AFTER JAVA 8 UPDATE 131 32-BIT INSTALLED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The messages appear as below after after Java 8
+   update 131 32-bit installed.
+   
+   Enviormnet
+   
+   Steps to reproduce:
+   
+   1. Install jre-8u131-windows-i586.exe.
+   2.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# ACHGAMXC9Z.
+   This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO92443
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   853
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-06-02
+   
+   
+ * CLOSED DATE
+   2017-06-16
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R853 PSN
+   UP

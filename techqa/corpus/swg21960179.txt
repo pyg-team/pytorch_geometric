@@ -1,0 +1,26 @@
+Title: IBM Exit Code 208 Install SPSS 22 Mac - United States
+
+Text:
+Exit code 208 SPSS Mac TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are installing SPSS 22 on Mac 10.10.3 and you receive an Exit code different than 0 after the installation is finished 
+
+SYMPTOM
+After installation instead of Exit code 0 (no errors) you receive Exit code 208
+
+
+CAUSE
+The Exit code 208 is in relation to the Audio Manager of the OS X. There are some cases in which the same error code is seen if the machine is infected by a virus, the installer is corrupt or the hard-disk has logical errors 
+
+ENVIRONMENT
+OS X 10.10.3 // SPSS 22
+
+DIAGNOSING THE PROBLEM
+Check sites that provide error codes for Mac
+
+RESOLVING THE PROBLEM
+As the Exit code 208 is in relation to the Audio Manager of the OS X and SPSS does not require sound/audio the program should run without issues
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

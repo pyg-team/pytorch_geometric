@@ -1,0 +1,118 @@
+Title: IBM WebSphere Operational Decision Management V7.5.0.1 Fix Pack - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This cumulative fix pack updates WebSphere Operational Decision Management V7.5 to V7.5.0.1. 
+
+DOWNLOAD DESCRIPTION
+This cumulative fix pack updates WebSphere Operational Decision Management V7.5 to V7.5.0.1.
+
+
+This fix pack is entitled. Only customers who have purchased WebSphere Operational Decision Management V7.5 can download this fix pack.
+
+How to install the fix pack
+If you are not installing both components, skip the instructions regarding Decision Center or Decision Server.
+
+
+ 1. Unzip the file wodm_decision_center.7.5.0.1.zip. 
+ 2. Unzip the file wodm_decision_server.7.5.0.1.zip. 
+ 3. Launch IBM Installation Manager. 
+ 4. In the toolbar menu, open File > Preferences and do the following:  1. Select repositories. 
+     2. Click add Repository ... 
+     3. Browse to the recently unzipped folder WDC_7.5.0.1\model\updates. 
+     4. Select the file repository.config. 
+     5. Click add Repository ... 
+     6. Browse to the recently unzipped folder WDS_7.5.0.1\model\updates. 
+     7. Select the file repository.config. 
+     8. Make sure both repositories are checked in the repository list Apply, and click OK to close.
+    
+    
+ 5. Click Update to update your installation. 
+ 6. Follow the instructions in the installation manager to complete the installation.
+
+
+Decompressing TAR files with WinZip 
+The product files are delivered as compressed TAR files. You must decompress the files into the same directory to install them. 
+
+If you use WinZip to extract the TAR files, deselect TAR file smart CR/LF conversion:  1.  Open WinZip Classic. 
+ 2. Select Options > Configuration, and click the Miscellaneous tab. 
+ 3. Clear the TAR file smart CR/LF conversion check box. 
+ 4. Unzip and import the data.
+
+
+To avoid problems with the extraction of the TAR files, decompress them to the same folder at the root of your hard drive. 
+
+Installation issue 
+If you have downloaded the fix pack (Decision Center and/or Decision Server) prior to 6 Jan. 2012, you will need to update two files in each of the installers to allow the fix pack to install properly. However, if you have downloaded since 6 Jan. 2012, you are not concerned by this workaround. 
+
+To fix the installers in Decision Center or Decision Server, please follow these steps: 
+
+Decision Center 
+When you downloaded the fix pack, you got a file called wodm_decision_center.7.5.0.1.zip. After unzipping the file, you got a directory called WDC.im15.7.5.0.1.updatesite. Here you need to update the following information before installing: 
+
+In WDC.im15.7.5.0.1.updatesite\model\updates\repository.config: 
+
+Change:  * repository.url.1=http://boegsa.ibm.com/projects/b/brms/PackagingTeam/IMRepositories/WDC.latest/WDC.im15.7.5.0.1.updatesite/model/7500
+ * 
+ * 
+ * repository.url.2=http://boegsa.ibm.com/projects/b/brms/PackagingTeam/IMRepositories/WDC.latest/WDC.im15.7.5.0.1.updatesite/model/7501
+ * 
+ * 
+ * repository.url.3=http://boegsa.ibm.com/projects/b/brms/PackagingTeam/IMRepositories/WDC.latest/WDC.im15.7.5.0.1.updatesite/model/7501-7500
+
+
+To (respectively):  * repository.url.1=../7500
+ * 
+ * 
+ * repository.url.2=../7501
+ * 
+ * 
+ * repository.url.3=../7501-7500
+ * 
+
+
+In WDC.im15.7.5.0.1.updatesite\model\updates\repository.xml: 
+
+Change:  * <repository location='http://boegsa.ibm.com/projects/b/brms/PackagingTeam/IMRepositories/WDC.latest/WDC.im15.7.5.0.1.updatesite/model/7500'>
+ * 
+ * 
+ * <repository location='http://boegsa.ibm.com/projects/b/brms/PackagingTeam/IMRepositories/WDC.latest/WDC.im15.7.5.0.1.updatesite/model/7501'>
+ * 
+ * 
+ * <repository location='http://boegsa.ibm.com/projects/b/brms/PackagingTeam/IMRepositories/WDC.latest/WDC.im15.7.5.0.1.updatesite/model/7501-7500'>
+
+
+To (respectively):  * <repository location='../7500'>
+
+ * <repository location='../7501'>
+
+ * <repository location='../7501-7500'>
+
+
+Decision Server 
+Follow the same steps for WDS (from wodm_decision_server.7.5.0.1.zip). PREREQUISITES
+WebSphere Operational Decision Management V7.5
+
+INSTALLATION INSTRUCTIONS
+Back up your current installation before installing the new release. Download and execute the V7.5.0.1 product installer.
+
+DOWNLOAD PACKAGE
+WebSphere Operational Decision Management V7.5.0.1
+
+
+
+PROBLEMS SOLVED
+Fix List for WebSphere Operational Decision Management [http://www-01.ibm.com/support/docview.wss?uid=swg27023767]
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] WebSphere Operational Decision Mana 15 Dec 2011 Language Independent 8000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/identifyFixes?query.parent=ibm~WebSphere&query.product=ibm~WebSphere~WebSphere%20Operational%20Decision%20Management&query.release=7.5.0.1&query.platform=All] [ ] 
+TECHNICAL SUPPORT
+ Contact 1-800-IBM-SERV (U.S. only) or visit the WebSphere Operational Decision Management support site: http://www-947.ibm.com/support/entry/portal/Software/WebSphere/WebSphere_Operational_Decision_Management [http://www-947.ibm.com/support/entry/portal/Software/WebSphere/WebSphere_Operational_Decision_Management] 
+
+ [/support/docview.wss?uid=swg24031627&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24031627&aid=2]Problems (APARS) fixed
+RS00747, RS00788, RS00806, RS00814, RS00828, RS00709, RS00798, RS00802, RS00806, RS00810, RS00828

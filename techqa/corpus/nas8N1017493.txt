@@ -1,0 +1,67 @@
+Title: IBM Calling OS/400 Programs and APIs Through SQL Applications - United States
+
+Text:
+JDBC; ODBC; OLEDB TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM OS/400 and IBM i5/OS commands, programs, and APIs can be called from SQL applications through the use of external stored procedure calls. 
+
+RESOLVING THE PROBLEM
+Stored procedures can be used with any SQL-based middleware such as the IBM iSeries Access for Windows ODBC driver, OLEDB provider and .Net provider, and the IBM Toolbox for Java JDBC driver. 
+
+The following techniques can be used. The first uses an external stored procedure definition specific to the program being called. This method offers the greatest flexibility since it allows output and input/output parameters and even result sets. A second method, using the IBM OS/400 or IBM i5/OS command interpreter, offers a simple way to run operating system commands and programs when only a success/failure return value is required. 
+
+External Stored Procedure Call
+
+The preferred method for calling an OS/400 or i5/OS program is through a stored procedure call. Virtually any OS/400 or i5/OS program written in any language can be called as a stored procedure. This method is required if the program returns output or input/output parameters or if the program is to return an SQL result set.
+
+The first step in calling the program is to define the program to IBM DB2 for iSeries by creating the procedure definition. This is done using the CREATE PROCEDURE SQL statement.
+
+The create procedure statement provides DB2 with the information it needs to safely map the SQL data types to the language-specific data type used by the operating system program. In addition, some client programming tools require the procedure metadata (created by the create procedure) to build the code for the call. The supported and recommend data type mappings for each programming language are described in the SQL Programming Guide. The syntax for the create procedure is defined in the SQL Reference. Both manuals can be found in the iSeries Information Center.
+
+Even data types not supported directly in SQL (such as structures) can be used in stored procedure calls. To use an unsupported data type, the parameter must be declared as binary. The parameter data must then be converted in the application program. Both iSeries Access for Windows and IBM Toolbox for Java provide APIs to aid in the data type conversion. 
+
+Once a definition for the procedure exists, the procedure can be called using the DB2 syntax or the middleware specific syntax (such as ODBC or JDBC escape sequences). The iSeries Information Center, the iSeries Access for Windows toolkit, the Rochester Support Center knowledgebase database, and the Rochester Support Center FTP site provide numerous examples.
+
+Note: Although it is strongly recommended that the procedure definition exist, this is not required. If a procedure definition is not created, the call must follow the rules outlined in the SQL Programming Concepts manual. Failure to follow these rules could result in corrupted data or severity 40 errors during the call. The following is taken from the R450 SQL Programming Concepts manual:
+
+
+
+The following rules pertain to the processing of a dynamic CALL statement when there is no CREATE PROCEDURE definition:
+
+o All arguments are treated as IN type parameters.
+o The CALL type is GENERAL (no indicator argument is passed).
+o The program to call is determined based on the procedure name specified on the CALL and the naming convention.
+o The language of the program to call is determined based on information retrieved from the system about the program.
+
+...the length of the expected argument in the program must be kept in mind. If program MYLIB.P3 expected an argument of only 5 characters, [and seven are passed] the last 2 characters of the constant specified in the example would be lost to the program.
+
+For numeric constants passed on a CALL statement, the following rules apply:
+
+o All integer constants are passed as fullword binary integers.
+o All decimal constants are passed as packed decimal values. Precision and scale are determined based on the constant value. For instance, a value of 123.45 is passed as a packed decimal(5,2). Likewise, a value of 001.01 is also passed with a precision and scale of 5 and 2, respectively.
+o All floating point constants are passed as double-precision floating point. 
+Calling a Program or Command through QCMDEXC 
+
+OS/400 commands can be executed using a stored procedure call to the OS/400 or i5/OS command interpreter (QCMDEXC). Operating system programs that use input-only parameters can be called indirectly using the CALL CL command. This technique is demonstrated in the ODBC User's Guide and below. One advantage to this technique is that the SMBJOB CL command can be used to have the target program run in batch (asynchronously). 
+
+As an example, consider a CL program that accepts one character string parameter. The first few lines of the CL source might look like the following: 
+
+PGM PARM(&STRING1) 
+DCL VAR(&STRING1) TYPE(*CHAR) LEN(25) 
+
+This program could be called by executing the following SQL statement: 
+
+CALL QSYS.QCMDEXC('SBMJOB CMD(CALL PGM(MYLIB/MYCLP) PARM(ABCDEF)) ',0000000058.00000) 
+
+This example calls the CL program MYCLP in the MYLIB library with a value of 'ABCDEF' passed as input to the program. Because the program is submitted to a job queue, control is returned to the ODBC application almost immediately rather than after the program finishes processing. Note that parameter values that contain embedded single quotes must be escaped. 
+
+Alternatives 
+
+Other alternatives include: 
+
+o The iSeries Access for Windows program call APIs and Microsoft ActiveX objects o The iSeries Access for Windows OLEDB provider's native program call syntax o The IBM Toolbox for Java ProgramCall, PCML and Command classes 
+These alternatives all use a different operating system host server, which is optimized for this type of work (the remote command, program call host server). In general, performance is much better when using this server; however, keep the following in mind: o The programs can not be run under the same commitment control definition as other SQL work. A different connection and different job are used to run the program in this mode. o The iSeries Access for Windows program call API and ActiveX objects as well as the IBM Toolbox for Java ProgramCall classes require the programmer to handle all data type conversions. o The iSeries Access for Windows program call ActiveX objects and the current version (R450) of iSeries Access for Windows OLEDB are apartment threaded. This implies that the objects will not perform as well as ODBC in a multithreaded application (such as Microsoft Internet Information Server). o Applications that frequently connect and disconnect (such as most web applications) should use connection pooling. iSeries Access for Windows does not provide connection pooling; however, the ODBC runtime does. IBM Toolbox for Java does supply a connection pool class, but the application programmer must include extra code to make use of it. This requires more programming effort than using an existing pool manager such as IBM WebSphere's JDBC connection manager.  
+
+HISTORICAL NUMBER
+ 22415138

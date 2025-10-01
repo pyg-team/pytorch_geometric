@@ -1,0 +1,31 @@
+Title: IBM ORA-01017 Invalid userid and password - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error
+
+ORA-01017. Invalid userid and password. Logon denied.
+
+when attempting to run a report against an Oracle database via SQL*Net. 
+
+RESOLVING THE PROBLEM
+This error is being returned from the Oracle Database and references an invalid userid and password. Attempt to connect in SQL*Plus using the same userid and password. If an error is returned there please contact your DBA for further information.
+If no error is returned in SQL*Plus create a new database definition and confirm that it is accessing the correct datasource. 
+
+From the Oracle help:
+
+ORA-01017 invalid username/password; logon denied 
+
+Cause: An invalid username or password was entered in an attempt to log on to Oracle. The username and password must be the same as was specified in a GRANT CONNECT statement. If the username and password are entered together, the format is: username/password. 
+
+Action: Enter a valid username and password combination in the correct format. 
+
+For Trusted Oracle7 users, if the cause of this error is that the username was either not created or not granted the CREATE SESSION system privilege in a secondary database, ask the database administrator to authorize the username to access the secondary database. Alternatively, if the cause of this error is that the username is granted the CREATE SESSION system privilege at a higher label than that of the attempted login, either log in at that higher label or ask the database administrator to re-grant the privilege at the appropriate label.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Planning Contributor 
+HISTORICAL NUMBER
+ 51814

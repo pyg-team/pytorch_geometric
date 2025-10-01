@@ -1,0 +1,174 @@
+Title: IBM PI90910: IBM MQV9: A CLIENT APPLICATION FAILS TO CONNECT TO A QUEUE MANAGER WITH ERROR CSQX777E CHANNEL WAS BLOCKED. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A client application fails to connect to a queue manager with
+   error CSQX777E: Channel was blocked.
+   
+   CSQX777E: Channel was blocked
+   The inbound channel 'A.TO.B' was blocked from address 'abc
+   (xxx.xxx.xxx.xxx)' because the active values of the channel
+   matched a record configured with USERSRC(NOACCESS). The active
+   values of the channel were 'CLNTUSER(xyz) ADDRESS(abc)'.
+   
+   MQ is not matching the MQCSP user against the USERMAP rule
+   above. Instead it is only looking at the ID that the client
+   application process is running under.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of IBM MQ for z/OS Version 9       *
+   *                 Release 0 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A client application fails to connect   *
+   *                      to a queue manager with error CSQX777E: *
+   *                      CHANNEL WAS BLOCKED.                    *
+   *                                                              *
+   ****************************************************************
+   When ADOPTCTX(YES) is specified IBM MQ fails to honor a USERMAP
+   rule.
+   For example, with the following channel authentication record
+   definition:
+   .
+   SET CHLAUTH('MY.CHLAUTH') TYPE(USERMAP) DESCR('Allow user bob
+   and force CONNAUTH') CLNTUSER('bob') CHCKCLNT(REQUIRED)
+   USERSRC(CHANNEL)
+   .
+   When logged in as 'fred', it might be expected that the
+   following command would authenticate as 'bob':
+   .
+   runmqsc -c -u bob QMGR
+   .
+   In fact, the queue manager uses the logged in user identifier of
+   'fred'.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The new behavior introduced in this APAR is set OFF by default.
+   For details of how to enable this behavior contact IBM MQ
+   Support.
+   .
+   When the new behavior is set ON channel authentication rules
+   are evaluated after connection authentication validation of
+   credentials. This change in ordering allows channel
+   authentication blocking and mapping rules to consider any
+   changes in the client security context from a successful user ID
+   and password validation.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI90910
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ Z/OS V9
+   
+   
+ * REPORTED COMPONENT ID
+   5655MQ900
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-11-30
+   
+   
+ * CLOSED DATE
+   2018-03-19
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI61670 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI61670]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI54585
+   
+   
+
+MODULES/MACROS
+ *  CMQXRMSA CMQXRSRV CSQIRECP CSQM148M CSQMCCSP CSQMCLEL CSQMQMR7
+   CSQMQMRQ CSQMSTRT CSQXCPRS CSQXREXT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM MQ Z/OS V9
+   
+   
+ * FIXED COMPONENT ID
+   5655MQ900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI54585 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI54585]
+   UP18/04/24 P F804
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

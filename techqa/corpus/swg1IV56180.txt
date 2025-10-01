@@ -1,0 +1,191 @@
+Title: IBM IV56180: TWS 9.1 JOB STATE IN DWC DIFFERENT THAN STATE FROM CONMAN SJ - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+9.2.0-TIV-TDWC-TWS-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TDWC-TWS-FP0001&source=SAR]
+9.2.0-TIV-TWS-AIX_AGENT_FOR_ZOS-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-AIX_AGENT_FOR_ZOS-FP0001&source=SAR]
+9.2.0-TIV-TWS-AIX_AGENT-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-AIX_AGENT-FP0001&source=SAR]
+9.2.0-TIV-TWS-HPIA64_AGENT_FOR_ZOS-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-HPIA64_AGENT_FOR_ZOS-FP0001&source=SAR]
+9.2.0-TIV-TWS-HPIA64_AGENT-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-HPIA64_AGENT-FP0001&source=SAR]
+9.2.0-TIV-TWS-IBM_I_AGENT_FOR_ZOS-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-IBM_I_AGENT_FOR_ZOS-FP0001&source=SAR]
+9.2.0-TIV-TWS-IBM_I_AGENT-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-IBM_I_AGENT-FP0001&source=SAR]
+9.2.0-TIV-TWS-LNX_I386_AGENT_FOR_ZOS-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-LNX_I386_AGENT_FOR_ZOS-FP0001&source=SAR]
+9.2.0-TIV-TWS-LNX_I386_AGENT-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-LNX_I386_AGENT-FP0001&source=SAR]
+9.2.0-TIV-TWS-LNX_PPC_AGENT_FOR_ZOS-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-LNX_PPC_AGENT_FOR_ZOS-FP0001&source=SAR]
+9.2.0-TIV-TWS-LNX_PPC_AGENT-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-LNX_PPC_AGENT-FP0001&source=SAR]
+9.2.0-TIV-TWS-LNX_S390_AGENT_FOR_ZOS-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-LNX_S390_AGENT_FOR_ZOS-FP0001&source=SAR]
+9.2.0-TIV-TWS-LNX_S390_AGENT-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-LNX_S390_AGENT-FP0001&source=SAR]
+9.2.0-TIV-TWS-LNX_X86_64_AGENT_FOR_ZOS-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-LNX_X86_64_AGENT_FOR_ZOS-FP0001&source=SAR]
+9.2.0-TIV-TWS--LNX_X86_64_AGENT-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS--LNX_X86_64_AGENT-FP0001&source=SAR]
+9.2.0-TIV-TWS-SOLARIS_AGENT_FOR_ZOS-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-SOLARIS_AGENT_FOR_ZOS-FP0001&source=SAR]
+9.2.0-TIV-TWS-SOLARIS_AGENT-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-SOLARIS_AGENT-FP0001&source=SAR]
+9.2.0-TIV-TWS-SOLARIS_I386_AGENT_FOR_ZOS-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-SOLARIS_I386_AGENT_FOR_ZOS-FP0001&source=SAR]
+9.2.0-TIV-TWS-SOLARIS_I386_AGENT-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-SOLARIS_I386_AGENT-FP0001&source=SAR]
+9.2.0-TIV-TWS-AIX-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-AIX-FP0001&source=SAR]
+9.2.0-TIV-TWS-HPIA64-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-HPIA64-FP0001&source=SAR]
+9.2.0-TIV-TWS-LINUX_X86_64-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-LINUX_X86_64-FP0001&source=SAR]
+9.2.0-TIV-TWS-LINUX390-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-LINUX390-FP0001&source=SAR]
+9.2.0-TIV-TWS-LINUXPPC-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-LINUXPPC-FP0001&source=SAR]
+9.2.0-TIV-TWS-SOLARIS_I386-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-SOLARIS_I386-FP0001&source=SAR]
+9.2.0-TIV-TWS-SOLARIS-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-SOLARIS-FP0001&source=SAR]
+9.2.0-TIV-TWS-WINDOWS_AGENT_FOR_ZOS-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-WINDOWS_AGENT_FOR_ZOS-FP0001&source=SAR]
+9.2.0-TIV-TWS-WINDOWS_AGENT-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-WINDOWS_AGENT-FP0001&source=SAR]
+9.2.0-TIV-TWS-WINDOWS_X86_64_AGENT_FOR_ZOS-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-WINDOWS_X86_64_AGENT_FOR_ZOS-FP0001&source=SAR]
+9.2.0-TIV-TWS-WINDOWS_X86_64_AGENT-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-WINDOWS_X86_64_AGENT-FP0001&source=SAR]
+9.2.0-TIV-TWS-WINDOWS_X86_64-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=9.2.0-TIV-TWS-WINDOWS_X86_64-FP0001&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After attempting to confirm multiple EVERY jobs to SUCC via DWC
+   simultaneously only one of the set will show the state SUCC
+   from the DWC view.  The following message is returned if the
+   action is retried for the instances that do not show SUCC:
+   "AWSUI0796E The specified action cannot be performed.
+   Reason: AWSJSY404E The Symphony plan operation
+   "confirmJobInstance" could not be completed because an error
+   has occurred while accessing the Symphony plan. The error
+   message is: "AWSBIN076E The operation cannot be performed. The
+   job or the current instance of the job is in an incorrect
+   state.".
+   Looking at the involved jobs via conman show all with the state
+   set to SUCC.  Also, confirming the state via conman does not
+   reflect a SUCC state in DWC.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  In the state where job states via conman do not agree with the
+   job states seen via DWC the following command can be launched
+   on the MDM to synchronize the job states:
+   $ planman resync
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  After attempting to confirm multiple EVERY jobs to SUCC via DWC
+   simultaneously only one of the set will show the state SUCC
+   from the DWC view.  The following message is returned if the
+   action is retried for the instances that do not show SUCC:
+   "AWSUI0796E The specified action cannot be performed.
+   Reason: AWSJSY404E The Symphony plan operation
+   "confirmJobInstance" could not be completed because an error
+   has occurred while accessing the Symphony plan. The error
+   message is: "AWSBIN076E The operation cannot be performed. The
+   job or the current instance of the job is in an incorrect
+   state.".
+   Looking at the involved jobs via conman show all with the state
+   set to SUCC.  Also, confirming the state via conman does not
+   reflect a SUCC state in DWC.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This apar will be fixed   9.1.0-TIV-TWS-FP0001,
+   9.2.0-TIV-TWS-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  In the state where job states via conman do not agree with the
+   job states seen via DWC the following command can be launched
+   on the MDM to synchronize the job states:
+   $ planman resync
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV56180
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV WKLD SCHDL
+   
+   
+ * REPORTED COMPONENT ID
+   5698WKB91
+   
+   
+ * REPORTED RELEASE
+   9A1
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-03
+   
+   
+ * CLOSED DATE
+   2014-04-04
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV WKLD SCHDL
+   
+   
+ * FIXED COMPONENT ID
+   5698WKB91
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R9A1 PSY
+   UP

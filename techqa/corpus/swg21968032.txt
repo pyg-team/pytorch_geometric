@@ -1,0 +1,32 @@
+Title: IBM How to solve IBM FileNet Process Engine(PE)'s configuration error when trying to save solution change after upgrade IBM Case Manager Builder from 5.2 to 5.2.1? - United States
+
+Text:
+solution; error; upgrade TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to save solution in IBM Case Manager Builder (Case Builder) 
+
+Open solution file in Case Builder and edit one of the pages, Change the size from 100% to 95% or making changes to the in-basket and click save, it will throw the error:
+
+--------------------
+The PE configuration file could not be saved because of the following error: The in-basket settings could not be created in the PE configuration.
+
+The solution data was not saved to the Process Engine configuration file.
+
+See the associated message. Update the solution information, and try the operation again.
+-------------------- 
+
+CAUSE
+This happens due to the "LOMS_TaskAssignedUNumber" index does not exist in the PE somehow. 
+
+RESOLVING THE PROBLEM
+The workaround is - After we manually cleaned up or deleted this index value from PEConfig.xml, Solution Save is working as expected. 
+
+Steps as following:
+1. Delete the index from PE Config file after check out from FileNet Enterprise Management and check-in back.
+Note: If user recreate the Index and Redeploy the Solution then encountered the same error again on Saving the solution. Then it should.
+2. Edit the "Legal Operations Management System" solution and go to Properties tab.
+3. Edit the String Property "Task Assigned U Number" and change the "Maximum length" value from 64 to 10, 
+4. Save and Close the solution and also Commit the Solution.
+
+The issue also reported in APAR PJ43397 and will fixed in IBM Case Manager Builder 5.2.1.2-IF001.

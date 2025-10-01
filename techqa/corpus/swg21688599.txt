@@ -1,0 +1,171 @@
+Title: IBM Security Bulletin: Vulnerability in SSLv3 affects IBM® Endpoint Manager for Remote Control (CVE-2014-3566) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ SSLv3 contains a vulnerability that has been referred to as the Padding Oracle On Downgraded Legacy Encryption (POODLE) attack. SSLv3 is enabled in IBM® Endpoint Manager for Remote Control. 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2014-3566 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566]
+
+DESCRIPTION: Product could allow a remote attacker to obtain sensitive information, caused by a design error when using the SSLv3 protocol. A remote user with the ability to conduct a man-in-the-middle attack could exploit this vulnerability via a POODLE (Padding Oracle On Downgraded Legacy Encryption) attack to decrypt SSL sessions and access the plaintext of encrypted connections.
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/97013 [https://exchange.xforce.ibmcloud.com/vulnerabilities/97013] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Endpoint Manager for Remote Control versions 9.1.0 and 9.0.1
+
+REMEDIATION/FIXES
+None. 
+
+
+SSLv3 will be disabled by default on all IBM Endpoint Manager for Remote Control components in the next interim fixpack cycle that is expected Q1 2015.
+IBM recommends that you review your entire environment to identify other areas that enable the SSLv3 protocol and take appropriate mitigation such as disabling SSLv3 and remediation actions. 
+
+WORKAROUNDS AND MITIGATIONS
+SSLv3 is only supported in connections from the target, CLI, controller, broker and gateway components to the remote control server component. Disabling SSLv3 connections on the remote control server disables the use of SSLv3 throughout an IBM Endpoint Manager for Remote Control infrastructure. 
+
+Use the following instructions to disable SSLv3 on a component by component basis where applicable 
+
+Version 9.1.0 
+
+Server component
+1. Open a command prompt 
+2. Go to the [TRCINSTALLDIR]\wlp\usr\servers\trcserver directory
+3. Open the ssl.xml file in a text editor. For example, Notepad. Edit the defaultSSLConfig line and change the sslProtocol value to TLS
+
+<server>
+<ssl id="defaultSSLConfig" sslProtocol="TLS" />
+</server>
+
+4. Save the file and restart the server service. 
+
+Windows operating system: 
+restart IBM Endpoint Manager for Remote Control - Server service within Control Panel > Administrative tools > Services.
+
+Linux operating system: 
+restart the server service, within a terminal as root, by using the following command 
+
+/etc/init.d/trcserver restart 
+
+ 
+
+ 
+
+Controller component 
+
+In the 9.1.0 controller, only TLSv1 or higher is used for HTTPS connections, so SSLv3 is already not supported. 
+
+ 
+
+ 
+
+Target and CLI components
+The target and cli components have SSLv3 enabled by default for HTTPS connections to the remote control server. For all other types of connection, SSLv3 is disabled by default. To disable SSLv3 for HTTPS connections to the remote control server, use the instructions relevant to your operating system:
+
+Windows operating system:
+1. Use regedit.exe and navigate to the target configuration stored in the following registry key:
+
+32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\IBM\Tivoli\Remote Control\Target
+64-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\IBM\Tivoli\Remote Control\Target
+
+2. Add a new String Value (REG_SZ) with the name UseSSLv3 and a value of No
+3. Restart the IBM Endpoint Manager for Remote Control - Target service within Control Panel > Administrative tools > Services.
+
+
+Linux operating system:
+1. Edit the /etc/ibmtrct.conf file.
+2. Add a new line:
+UseSSLv3 = No
+3. Restart the ibmtrct service 
+
+
+
+
+Broker component
+The broker component has SSLv3 enabled by default for HTTPS connections to the remote control server. For all other types of connections, including HTTPS connections from endpoint browsers to the reverse proxy, SSLv3 is disabled by default. 
+To disable SSLv3 for HTTPS connections to the remote control server, add the following line to the trc_broker.properties file and restart the broker service:
+
+ServerSSLv3 = false
+
+
+
+
+Gateway component
+The gateway component only uses SSL/TLS connections when NIST SP800-131a support is enabled. However, SP800-131a does not allow the use of SSL/TLS protocol lower than version 1.2. Therefore, SSLv3 is not supported by the IBM Endpoint Manager for Remote Control gateway and does not need to be disabled. 
+
+
+
+
+Version 9.0.1 
+
+Server component
+1. Open a command prompt 
+2. Go to the [TRCINSTALLDIR]\wlp\usr\servers\trcserver directory
+3. Open the ssl.xml file in a an editor ( see note * below). For example, Notepad. Edit the line defaultSSLConfig and change the sslProtocol value to TLS
+
+<server>
+<ssl id="defaultSSLConfig" sslProtocol="TLS" />
+</server>
+
+4. Save the file and restart the server service.
+
+Windows operating system: 
+restart IBM Endpoint Manager for Remote Control - Server service within Control Panel > Administrative tools > Services.
+
+Linux operating system: 
+restart the server service, within a terminal as root, by using the following command 
+
+/etc/init.d/trcserver restart
+
+*Note: If there is no ssl.xml file, edit the memory.xml file. 
+After the <keystore line, add the following line
+
+<ssl id="defaultSSLConfig" sslProtocol="TLS" />
+
+
+
+
+Controller component 
+Controller connections to the broker, target, CLI and gateway components do not use SSLv3.
+For HTTPS connections to the remote control server SSLv3 cannot be disabled fully on the controller, therefore you must disable it on the server component. 
+
+
+
+
+Target, CLI and Broker component
+For HTTPS connections to the remote control server SSLv3 cannot be disabled on the target, CLI or broker, therefore, you must disable it on the server component. 
+
+ 
+
+ 
+
+ 
+
+Gateway component
+The 9.0.1 gateway does not use SSL/TLS connections.
+
+
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+Subscribe to Security Bulletins [http://www.ibm.com/support/mynotifications/] 
+CHANGE HISTORY
+ 10 November 2014: Original version published. 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

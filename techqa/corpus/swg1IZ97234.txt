@@ -1,0 +1,170 @@
+Title: IBM IZ97234: CHANGING THE DATE/TIME OF A FUTURE SCHEDULED REPORT TO A SCHEDULED TIME FOR TODAY FAILS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description: Changing the date/time of a future
+   scheduled report
+   to a scheduled time for today fails. When changed, it displays
+   the
+   latest scheduled time and date, but the report does not run
+   then. It
+   runs in the previously future scheduled day and time.
+   
+   Steps to replicate:
+   1. Bring up a work order in work order tracking.
+   2. Using Select Action, Run Reports, schedule the Details report
+   to run
+   two days from now at a selected time (say 9 am).
+   3. Submit the report and close all reports dialogs.
+   4. Once again, using Select Action Run Reports, display the
+   Schedule
+   Status of that scheduled report.
+   5. Expand the line to show the details. Change the date to today
+   but
+   leave the same time (has to be later than current time).
+   6. You can now exit the dialog screens and re-display by using
+   Select
+   Action, Run Reports and show Schedule Status. It shows the last
+   changes
+   made.
+   7. Wait for report to run at the scheduled time. It does not run
+   then,
+   but will run in the future date/time that was set at first.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No local fix/Work Around
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Report users                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Reports run on old schedule even after  *
+   *                      changing the schedule of a scheduled    *
+   *                      report.                                 *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   Reports run on old schedule even after changing the schedule of
+   a scheduled report.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   
+   release\fix pack | REL 7.1.1.9 - BS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ97234
+   
+   
+ * REPORTED COMPONENT NAME
+   REPORTING
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46RP
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-24
+   
+   
+ * CLOSED DATE
+   2011-03-28
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   REPORTING
+   
+   
+ * FIXED COMPONENT ID
+   5724R46RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

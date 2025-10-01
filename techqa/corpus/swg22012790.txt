@@ -1,0 +1,139 @@
+Title: IBM Recommended Maintenance Service Levels for IBM Monitoring and IBM Performance Management. - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ As a quality improvement activity, IBM has provided additional focus on verification of the following products IBM Monitoring and IBM Performance Management listed below. Any additional questions or concerns please email : Tivoli Customer Care/Durham/IBM or tivolicc@us.ibm.com. 
+
+CONTENT
+
+
+
+ALERT! 
+
+If you use TEP Browser or TEP Java Webstart Clients read this! 
+Java ALERT technote: 
+http://www.ibm.com/support/docview.wss?uid=swg21972841 [http://www.ibm.com/support/docview.wss?uid=swg21972841] 
+and technote: 
+
+Failed to validate expired certificate affecting all TEP browser TEP webstart 
+
+http://www.ibm.com/support/docview.wss?uid=swg21269613 [http://www.ibm.com/support/docview.wss?uid=swg21269613] 
+
+Master list of ITM TEP/Java issues 
+
+http://www.ibm.com/support/docview.wss?uid=swg21672459 [http://www.ibm.com/support/docview.wss?uid=swg21672459] 
+
+* END ALERT! * 
+
+
+Fix Central provides fixes and updates for your system's software, hardware, and operating system https://www-945.ibm.com/support/fixcentral/ [https://www-945.ibm.com/support/fixcentral/] enter the interim fix or fix pack name to download. Not looking for fixes or updates? Please visit Passport Advantage [http://www-112.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma] to download purchased software products, or My Entitled Systems Support [http://www-304.ibm.com/servers/eserver/ess/index.wss?lnk=msdDO-enss] to download system software. 
+
+Tivoli / IBM Monitoring 6.X.X ( Recommended Maintenance ) 
+Software version: 6.2.3.1, 6.2.3.2, 6.2.3.3, 6.2.3.4, 6.2.3.5, 6.3.0, 6.3.0.1, 6.3.0.2, 6.3.0.3, 6.3.0.4, 6.3.0.5, 
+6.3.0.6, 6.3.0.7 
+
+interim fix: 6.X.X-TIV-ITM_JRE_CANDLEHOME-20171027 (7.1 GB) 
+IBM Tivoli Monitoring Version 6.X.X JRE CANDLEHOME 20171027 
+More Information --> https://www-01.ibm.com/support/docview.wss?uid=swg24043630 [https://www-01.ibm.com/support/docview.wss?uid=swg24043630] 
+
+interim fix: 6.X.X-TIV-ITM_JRE_CANDLEHOME-20170504 (6.96 GB) 
+IBM Tivoli Monitoring Version 6.X.X JRE CANDLEHOME 20170504 
+More Information --> https://www-01.ibm.com/support/docview.wss?uid=swg24043630 [https://www-01.ibm.com/support/docview.wss?uid=swg24043630] 
+
+interim fix: 6.X.X-TIV-ITM_JRE_CANDLEHOME-20170126 (7.06 GB) 
+IBM Tivoli Monitoring Version 6.X.X JRE CANDLEHOME 20170126 
+
+interim fix: 6.X.X-TIV-ITM_JRE_TEP-20171027 
+IBM Tivoli Monitoring Version 6.X.X JRE TEP 20171027 
+More Information --> http://www-01.ibm.com/support/docview.wss?uid=swg24043629 [http://www-01.ibm.com/support/docview.wss?uid=swg24043629] 
+
+interim fix: 6.X.X-TIV-ITM_JRE_CANDLEHOME_7.10.10.00 
+IBM Tivoli Monitoring Version 6.X.X IBM Runtime Environment, Java(TM) Technology Edition, Version 7 SR10 FP10 update for the JRE installed in the CANDLEHOME installation directory for IBM Tivoli Monitoring version 6.30.00.00 through 6.30.06.00. 
+
+fix pack: 6.3.0-TIV-ITM_LFA-FP0002 
+Tivoli Log File Agent Version 6.3.0 Fix Pack 02 (6.3.0-TIV-ITM_LFA-FP0002) 
+More Information --> https://www-01.ibm.com/support/docview.wss?uid=swg24043263 [https://www-01.ibm.com/support/docview.wss?uid=swg24043263] 
+
+interim fix: 6.X.X-TIV-ITM_JRE_TEP-20170817 
+IBM Tivoli Monitoring Version 6.X.X JRE TEP 20170817 
+More Information --> http://www-01.ibm.com/support/docview.wss?uid=swg24043981 [http://www-01.ibm.com/support/docview.wss?uid=swg24043981] 
+
+interim fix: 6.X.X-TIV-ITM_JRE_TEP-20170504 
+IBM Tivoli Monitoring Version 6.X.X JRE TEP 20170504 
+More Information --> http://www-01.ibm.com/support/docview.wss?uid=swg24043629 [http://www-01.ibm.com/support/docview.wss?uid=swg24043629] 
+
+fix pack: 6.3.0-TIV-ITM-FP0007 
+IBM Tivoli Monitoring Version 6.3.0 Fix Pack 7 
+More Information --> http://www-01.ibm.com/support/docview.wss?uid=swg24041633 [http://www-01.ibm.com/support/docview.wss?uid=swg24041633] 
+
+fix pack: 6.3.0-TIV-ITM-FP0006 
+IBM Tivoli Monitoring Version 6.3.0 Fix Pack 6 
+More Information --> http://www-01.ibm.com/support/docview.wss?uid=swg24040390 [http://www-01.ibm.com/support/docview.wss?uid=swg24040390] 
+
+IBM Performance Management 8.1.4.x ( Recommended Maintenance ) 
+
+interim fix: 8.1.4.0-IBM-APM-DOTNET-AGENT-IF0003 
+IBM Application Performance Management 8.1.4.0 Monitoring Agent for Microsoft .NET Interim Fix 3 (8.1.4.0-IBM-APM-DOTNET-AGENT-IF0003) 
+
+interim fix: 8.1.4.0-IBM-APM-LIBERTY-DATACOLLECTOR-IF0002 
+IBM Cloud Application Performance Management 8.1.4.0 Liberty Data Collector Interim Fix 2 (8.1.4.0-IBM-APM-LIBERTY-DATACOLLECTOR-IF0002) 
+
+interim fix: 8.1.4.0-IBM-APM-SERVER-IF0002 
+IBM Cloud Application Performance Management 8.1.4.0 Interim Fix 2 Server Patch 
+More Information --> https://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400003632 [https://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400003632] 
+
+interim fix: 8.1.4.0-IBM-APM-WAS-AGENT-IF0002 
+IBM Application Performance Management 8.1.4.0 WebSphere Applications Agent Interim Fix 2 (8.1.4.0-IBM-APM-WAS-AGENT-IF0002) 
+
+interim fix: 8.1.4.0-IBM-APM-NETAPP-STORAGE-AGENT-APM-IF0001 
+IBM Cloud Application Performance Management 8.1.4.0 Monitoring Agent for NetApp Storage Interim Fix 01 (8.1.4.0-IBM-APM-NETAPP-STORAGE-AGENT-IF0001) 
+
+interim fix: 8.1.4.0-IBM-APM-OS-AGENT-IF0001 
+IBM Application Performance Management 8.1.4.0 OS Monitoring Agents Interim Fix 1 (8.1.4.0-IBM-APM-OS-AGENT-IF0001) 
+
+interim fix: 8.1.4.0-IBM-APM-GATEWAY-IF0001 
+Hybrid Gateway for IBM Cloud Application Performance Management Interim Fix 01 
+More Information --> https://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400003576 [https://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400003576] 
+
+interim fix: 8.1.4.0-IBM-APM-HADOOP-AGENT-IF0001 
+IBM Cloud Application Performance Management 8.1.4.0 Hadoop Agent Interim Fix 1 (8.1.4.0-IBM-APM-HADOOP-AGENT-IF0001) 
+
+interim fix: 8.1.4.0-IBM-APM-IIB-AGENT-IF0001 
+IBM Cloud Application Performance Management 8.1.4.0 IBM Integration Bus Agent Interim Fix 1 (8.1.4.0-IBM-APM-IIB-AGENT-IF0001) 
+
+interim fix: 8.1.4.0-IBM-APM-CORE-FRAMEWORK-APM-IF0001 
+IBM Cloud Application Performance Management 8.1.4.0 core framework Interim Fix 01 (8.1.4.0-IBM-APM-CORE-FRAMEWORK-IF0001) 
+
+interim fix: 8.1.4.0-IBM-APM-RT-AGENT-IF0001 
+IBM Application Performance Management 8.1.4.0 Response Time Agent Interim Fix 1 (8.1.4.0-IBM-APM-RT-AGENT-IF0001) 
+
+IBM Performance Management 8.1.3.x ( Recommended Maintenance ) 
+
+interim fix: 8.1.3.2-IBM-APM-IIB-AGENT-WIN64-IF0002 
+Monitoring Agent for IBM Integration Bus for IBM Performance Management 8.1.3.2 Interim Fix 2 
+More Information --> https://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400003534 [https://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400003534] 
+
+interim fix: 8.1.3.2-IBM-APM-IIB-AGENT-AIX-IF0002 
+Monitoring Agent for IBM Integration Bus for IBM Performance Management 8.1.3.2 Interim Fix 2 
+More Information --> https://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400003534 [https://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400003534] 
+
+interim fix: 8.1.3.2-IBM-APM-IIB-AGENT-XLINUX-IF0002 
+Monitoring Agent for IBM Integration Bus for IBM Performance Management 8.1.3.2 Interim Fix 2 
+More Information --> https://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400003534 [https://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400003534] 
+
+interim fix: 8.1.3.2-IBM-APM-IIB-AGENT-WIN64-IF0001 
+Monitoring Agent for IBM Integration Bus for IBM Performance Management 8.1.3.2 Interim Fix 1 
+More Information --> https://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400003461 [https://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400003461] 
+
+interim fix: 8.1.3.2-IBM-APM-IIB-AGENT-AIX-IF0001 
+Monitoring Agent for IBM Integration Bus for IBM Performance Management 8.1.3.2 Interim Fix 1 
+More Information --> https://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400003461 [https://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400003461] 
+
+interim fix: 8.1.3.2-IBM-APM-IIB-AGENT-XLINUX-IF0001 
+Monitoring Agent for IBM Integration Bus for IBM Performance Management 8.1.3.2 Interim Fix 1 
+More Information --> https://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400003461 [https://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400003461] 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management IBM Application Performance Management Systems and Asset Management IBM Application Performance Management Advanced

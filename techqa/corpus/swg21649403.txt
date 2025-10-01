@@ -1,0 +1,39 @@
+Title: IBM How to connect to SPSS server from SPSS client desktop using LDAP account ? - United States
+
+Text:
+modeler server linux LDAP account user TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm trying to connect SPSS Modeler clients to SPSS Modeler server (Linux Redhat 6.2) using an LDAP account and it is failing with error:
+"Login failed for user: user01" 
+
+SYMPTOM
+I'm trying to connect SPSS Modeler clients to SPSS Modeler server (Linux Redhat 6.2) using an LDAP account and it is failing with error:
+"Login failed for user: user01" 
+
+Modeler Server is running as root. The Modeler Server messages.log shows: Login failed for user: user01
+
+Connection to Modeler Server using a local Linux account (define in /etc/password) is working fine.
+
+The Linux SPSS server is configured to use LDAP and it is operational.
+
+Connection to this server using SSH using the same LDAP user account is also successful.
+
+
+
+RESOLVING THE PROBLEM
+1. Ensure SPSS Modeler Server is started as root or review the the online help: 
+
+IBM SPSS Modeler Help > Server Administration and performance > Configuring and running SPSS modeler server as a non-Root process on Unix > Troubleshooting user authentication failures
+
+2. If SSH authentication is succeeding with the same LDAP login then it is likely that PAM authentication is succeeding with SSH and not with Modeler Server. To verify this apply the PAM rule for sshd to Modeler Server by running the following 2 commands on the Linux server:
+cd /etc/pam.d
+cp ./sshd modelerserver
+Then restart Modeler Server
+and try again to connect to Modeler Server
+
+If this succeeds it is likely that the default "other" PAM rule, which Modeler Server will use by default, is preventing LDAP authentication. 
+If required the customer's system admin can then fine-tune the PAM rule for Modeler Server (that will be a copy of the sshd PAM rule after completing step 2. above). 
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]

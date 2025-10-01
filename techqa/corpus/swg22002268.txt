@@ -1,0 +1,112 @@
+Title: IBM Security Bulletin: Multiple Security Vulnerabilities exist in IBM Cognos Express. - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There is a vulnerability in IBM® Runtime Environment Java™ Technology Edition Version 7 that is used by IBM Cognos Express. This issue was disclosed as part of the IBM Java SDK updates in July 2016. 
+
+OpenSSL vulnerabilities were disclosed by the OpenSSL Project. OpenSSL is used by IBM Cognos Express. IBM Cognos Express has addressed the applicable CVEs. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2000-1254 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2000-1254]
+DESCRIPTION: OpenSSL could allow a remote attacker to obtain sensitive information, caused by the improper handling of C bitwise-shift operations that exceed the size of an expression by crypto/rsa/rsa_gen.c. An attacker could exploit this vulnerability to defeat cryptographic protection mechanisms and decrypt data.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/113136 [https://exchange.xforce.ibmcloud.com/vulnerabilities/113136] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N) 
+
+CVEID: CVE-2016-2177 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2177]
+DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by the incorrect use of pointer arithmetic for heap-buffer boundary checks. By leveraging unexpected malloc behavior, a remote attacker could exploit this vulnerability to trigger an integer overflow and cause the application to crash.
+CVSS Base Score: 5.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/113890 [https://exchange.xforce.ibmcloud.com/vulnerabilities/113890] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H) 
+
+CVEID: CVE-2016-2180 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2180]
+DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by an out-of-bounds read in the TS_OBJ_print_bio function. A remote attacker could exploit this vulnerability using a specially crafted time-stamp file to cause the application to crash.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/115829 [https://exchange.xforce.ibmcloud.com/vulnerabilities/115829] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H) 
+
+CVEID: CVE-2016-2183 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2183]
+DESCRIPTION: OpenSSL could allow a remote attacker to obtain sensitive information, caused by an error in the DES/3DES cipher, used as a part of the SSL/TLS protocol. By capturing large amounts of encrypted traffic between the SSL/TLS server and the client, a remote attacker able to conduct a man-in-the-middle attack could exploit this vulnerability to recover the plaintext data and obtain sensitive information. This vulnerability is known as the SWEET32 Birthday attack.
+CVSS Base Score: 3.7
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/116337 [https://exchange.xforce.ibmcloud.com/vulnerabilities/116337] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N) 
+
+CVEID: CVE-2016-3485 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-3485]
+DESCRIPTION: An unspecified vulnerability related to the Networking component has no confidentiality impact, low integrity impact, and no availability impact.
+CVSS Base Score: 2.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/115273 [https://exchange.xforce.ibmcloud.com/vulnerabilities/115273] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N) 
+
+CVEID: CVE-2016-6304 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-6304]
+DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by multiple memory leaks in t1_lib.c during session renegotiation. By sending an overly large OCSP Status Request extension, a remote attacker could exploit this vulnerability to consume all available memory resources.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/117110 [https://exchange.xforce.ibmcloud.com/vulnerabilities/117110] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Cognos Express 10.1 
+
+IBM Cognos Express 10.2.1 
+
+IBM Cognos Express 10.2.2
+
+REMEDIATION/FIXES
+IBM Cogonos Express 10.2.1 
+
+
+The recommended solution is to apply the fix for versions listed as soon as practical.
+
+
+IBM Cogonos Express 10.2.1 FP4 IF 2 [http://www.ibm.com/support/docview.wss?uid=swg24043573] 
+
+ 
+
+IBM Cognos Express 10.2.2 
+
+
+IBM Cognos TM1 and IBM Cognos Business Intelligence are shipped as components of IBM Cognos Express. Information about a security vulnerability affecting IBM Cognos TM1 and IBM Cognos Business Intelligence has been published in their respective Security Bulletins.
+
+Security Bulletin: IBM Cognos TM1 is affected by multiple vulnerabilities [http://www-01.ibm.com/support/docview.wss?uid=swg21999649]
+
+Security Bulletin: IBM Cognos Business Intelligence Server 2016Q4 Security Updater : IBM Cognos Business Intelligence Server is affected by multiple vulnerabilities. [http://www-01.ibm.com/support/docview.wss?uid=swg21995691]
+
+
+IBM Cognos Express 10.1.x 
+
+
+IBM Cognos Express 10.1.x customers should upgrade to a more current version and apply the corresponding update. Please contact Customer Support with any questions.
+
+https://www-947.ibm.com/support/entry/myportal/product/cognos/cognos_express?productContext=-15869866 [https://www-947.ibm.com/support/entry/myportal/product/cognos/cognos_express?productContext=-15869866]
+
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 09 June 2017 : Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

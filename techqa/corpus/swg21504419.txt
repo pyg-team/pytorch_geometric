@@ -1,0 +1,22 @@
+Title: IBM Omnibus options to replace TEC postemsg and postzmsg - United States
+
+Text:
+nco_postemsg; posteifmsg; postemsg; postzmsg; TEC; Omnibus; firewall TECHNOTE (FAQ)
+
+QUESTION
+ I am using custom monitoring scripts which send events directly to TEC with postemsg and postzmsg. How can I achieve the same functionality with Omnibus? 
+
+ANSWER
+There are two options to replace the TEC postemsg and postzmsg utilities. 
+
+1) nco_postmsg is part of the Omnibus core installation. It does require an installation of the deployment engine installer. The full Omnibus installation package would need to be copied to each system, but you would only need to select the Probe Support feature to install. The interfaces or omni.dat file would also need to be configured with the Object Server connection information. The nco_postmsg command sends an event directly to the Object Server. 
+
+ 
+
+2) posteifmsg is part of a separate installation for the Event Integration Facility. It does not require an installation of the deployment engine. The Event Integration Facility can be installed on a single server and the posteifmsg binary can be copied to other systems for the relevant platform. The posteifmsg is similar to the TEC postemsg and postzmsg utilities in that it also needs a configuration file which lists the EIF probe hostname and port. Events from posteifmsg have to go to an EIF probe first and the EIF probe sends the event to the Object Server. 
+
+ 
+
+Either of these options would work. If the volume of events sent will be high, you may want to send them to an EIF probe first, where you could also enable the flood detection probe rules. 
+
+If you are sending events via postemsg or postzmsg across a firewall, with Omnibus 7.3.1 and later, a Firewall Bridge Server was added. With this architecture, posteifmsg utilities outside of the firewall could be configured to connect to send events to an EIF probe outside of the firewall. The EIF probe outside of the firewall will connect to a client access firewall bridge instead of the Object Server. The client access bridge outside the firewall connects to a server access firewall bridge inside the firewall. The firewall bridge restricts port usage to a single port between the client access firewall bridge and the server access firewall bridge. The server access firewall bridge connects to the Object Server. For more information on this architecture see the Netcool/OMNIbus 7.3.1 Administration Guide Chapter 3: Configuring a fiewall bridge server.

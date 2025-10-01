@@ -1,0 +1,76 @@
+Title: IBM Unable to perform operation "make label" in replica - United States
+
+Text:
+mklabel; MultiSite; Unable to create label; Trouble applying label to; instance mastership; shared; unshared; cleartool mklabel fails; 1146237; type object mastership; type mastership TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why attempts to apply a label to an IBM® Rational® ClearCase® element version in a replicated VOB results in the error, cleartool: Error: Unable to perform operation "make label" in replica "replica_name", along with steps to resolve the problem. 
+
+SYMPTOM
+ 
+
+When attempting to apply a label to a version of an element you observe the following: 
+
+%>cleartool mklabel test makefile.txt
+cleartool: Error: Unable to perform operation "make label" in replica "make_rep_
+r2000pro" of VOB "\make_rep_r2000pro".
+cleartool: Error: Master replica of file element is "original".
+cleartool: Error: Trouble applying label to "makefile.txt".
+cleartool: Error: Unable to create label "test" on "makefile.txt" version "\main\r2000pro_rep\CHECKEDOUT". 
+
+If you attempt to apply another label to the same version of the same element, it works. 
+
+%>cleartool mklbtype test_2
+Comments for "test_2":
+.
+Created label type "test_2". 
+
+The element is the same, but one mklabel command succeeds while the other fails.
+
+A cleartool describe -long of both the lbtypes will reveal the needed output: 
+
+%>cleartool describe -long lbtype:test
+label type "test"
+created 03-Feb-01.17:04:18 by joeuser.clearusers@host_name
+master replica: make_rep_r2000pro@\make_rep_r2000pro
+instance mastership: shared >>>>>>>>>>>>>>>>>>>>
+owner: joeuser
+group: clearusers
+scope: this VOB (ordinary type)
+constraint: one version per element
+
+%>cleartool describe -long lbtype:test_2
+label type "test_2"
+created 03-Feb-01.17:12:01 by joeuser.clearusers@host_name
+master replica: make_rep_r2000pro@\make_rep_r2000pro
+instance mastership: unshared >>>>>>>>>>>>>>>>>>>>
+owner: joeuser
+group: clearusers
+scope: this VOB (ordinary type) 
+
+ 
+
+The difference is the line indicating instance mastership for the label that succeeds is unshared and for the one that fails, it is shared.
+
+CAUSE
+ 
+
+This is expected behavior as different mastership rules apply to shared types versus unshared type. 
+
+Review the IBM Rational ClearCase MultiSite Administrator's Guide on the topic of Type Object Mastership [https://publib.boulder.ibm.com/infocenter/cchelp/v7r1m0/index.jsp?topic=/com.ibm.rational.clearcase.cc_ms_admin.doc/c_type_obj_mstrshp.htm] for more details.
+
+
+RESOLVING THE PROBLEM
+ 
+
+Shared types of mastership allow you to create or delete metadata (labels in this example) at any replica in the VOB family. In order to create the label, you must have mastership of the necessary object depending on how the mklabel command is executed:
+
+
+ * If you specify –pbranch option in mklbtype, the replica from which the mklabel command is run must master the branch of the version you specify in the mklabel or rmlabel command. 
+ * If you do not specify –pbranch, the replica from which the mklabel command is run must master the element of the version you specify in the mklabel or rmlabel command. 
+ * If the label type is global and shared, additional mastership restrictions exist when you create instances of the type.  1. You cannot create instances of the type unless the client VOB contains a local copy of the type 
+    2. Or the administrative VOB at the current site masters the type.
+   
+   
+
+Once you have the appropriate mastership, you should be able to create the label.

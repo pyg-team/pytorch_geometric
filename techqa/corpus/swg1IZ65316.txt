@@ -1,0 +1,138 @@
+Title: IBM IZ65316: NONEXISTING SPMI METRICS CAUSES NO DATA IN WORKSPACE - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring: AIX(R) Premium Agent 6.2.0.1-TIV-ITM_AIX_PREM-IF0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24025059]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:  IBM Tivoli Monitoring Agents for System P V6.2
+   Interim Feature 1:  AIX Premium Agent
+   Problem Description:
+   When running the AIX Premium agent on AIX 5.3 TL5 or TL6, SPMI
+   does not supply all the metrics.  The result is that all
+   metrics, even the ones SPMI does supply, are displayed as zero
+   for LPAR CPU Utilization, LPAR Attributes and CPU Entitlement.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  **************************************************************
+   * USERS AFFECTED: Users running IBM Tivoli Monitoring:
+   * AIX Premium Agent, Version 6.2.0.1.
+   **************************************************************
+   * PROBLEM DESCRIPTION: When running the AIX Premium agent on
+   * AIX 5.3 TL5 or TL6, SPMI does not supply all the
+   * metrics.  The result is that all metrics, even the
+   * ones SPMI does supply, are displayed as zero for LPAR
+   * CPU Utilization, LPAR Attributes and CPU Entitlement.
+   **************************************************************
+   * RECOMMENDATION: Install Interim Fix
+   * 6.2.0.1-TIV-ITM_AIX_PREM-IF0002 or IBM Tivoli Monitoring:
+   * AIX Premium Agent, Version 6.2.1.
+   **************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   
+   | interim fix | 6.2.0.1-TIV-ITM_AIX_PREM-IF0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ65316
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM SE SYSP AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04AP
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-16
+   
+   
+ * CLOSED DATE
+   2009-11-24
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM SE SYSP AIX
+   
+   
+ * FIXED COMPONENT ID
+   5724C04AP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

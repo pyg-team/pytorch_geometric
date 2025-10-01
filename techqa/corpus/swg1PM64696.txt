@@ -1,0 +1,301 @@
+Title: IBM PM64696: PCF INQUIRE CHANNEL AUTHENTICATION RECORD IS NOT RETURNING THE PROPER ATTRIBUTE AND IGNORING THE KEYWORD MQIACF_CHLAUTH_ATTRS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer was issuing a PCF command
+   MQCMD_SET_CHLAUTH_REC and received
+   a return code 3340 (MQRC 3340).
+   .
+   The MQRC 3340 is coming from
+   MQRCCF_WRONG_CHLAUTH_USERSRC).
+   .
+   The customer was using the following parameters:
+   .
+   MQCMD_SET_CHLAUTH_REC = 7 parameters
+   1- MQIACF_ACTION = MQACT_REPLACE
+   2- MQCACH_CHANNEL_NAME = "xxx.xxx.xxx"
+   3- MQIACF_CHLAUTH_TYPE = MQCAUT_QMGRMAP
+   4- MQCA_CHLAUTH_DESC = "Default zzzzzz"
+   5- MQCA_REMOTE_Q_MGR_NAME = "yyyy"
+   6- MQIACH_WARNING = 0 (false)
+   7- MQIACH_USER_SOURCE = MQUSRC_CHANNEL
+   .
+   and the parameters MQIACH_WARNING and
+   MQIACH_USER_SOURCE are incompatible.
+   .
+   The MQCMD_INQUIRE_CHLAUTH_RECS command with
+   MQIACF_CHLAUTH_ATTRS(MQIACF_ALL) was
+   returning all attributes that can be part of
+   the channel authority record TYPE(QMGRMAP)
+   and this includes WARN, because it is used
+   with USERSRC(NOACCESS).
+   .
+   The recommendation is to use INQUIRE with
+   MQIACF_CHLAUTH_ATTRS, which is different from
+   MQIACF_ALL to get a more selective display
+   of the record.
+   .
+   The valid  attributes are ADDRESS, ALTTIME,
+   ALTDATE, CUSTOM, DESCR, MCAUSER, USERSRC,
+   and WARN.  But in this case the customer
+   should had omit WARN.
+   .
+   The selective command has a defect.
+   It is returning all attributes and
+   ignoring the keyword MQIACF_CHLAUTH_ATTRS.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ Version 7 Release  *
+   *                 1 Modification 0.                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A selective PCF                         *
+   *                      MQCMD_INQUIRE_CHLAUTH_RECS command      *
+   *                      returns a response message with all the *
+   *                      attributes in the channel               *
+   *                      authentication records.                 *
+   *                                                              *
+   *                      In addition to the above, some          *
+   *                      parameters that should be allowed in    *
+   *                      the list MQIACF_CHLAUTH_ATTRS are       *
+   *                      rejected with MQRCCF_PARM_VALUE_ERROR   *
+   *                      (3229).                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The processing of PCF command MQCMD_INQUIRE_CHLAUTH_RECS is
+   incorrect when selecting which parameters to include in the
+   response of a selective inquire. This means that all parameters
+   are returned instead of the requested parameters.
+   
+   This is unexpected because the selective inquire has the list of
+   parameters in MQIACF_CHLAUTH_ATTRS that should be included in
+   the response.
+   
+   The syntax definition table for PCF command
+   MQCMD_INQUIRE_CHLAUTH_RECS is incomplete causing the rejection
+   of parameters that should be allowed in the MQIACF_CHLAUTH_ATTRS
+   list.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The syntax definition table for PCF command
+   MQCMD_INQUIRE_CHLAUTH_RECS has been updated to indicate which
+   parameters are allowed in the MQIACF_CHLAUTH_ATTRS list.
+   
+   The selective inquire command includes the requested parameters
+   in the response as well as the default parameters that are
+   always displayed depending on the authentication record type.
+   
+   ======= Change to MQ V710 Infocenter INQUIRE CHLAUTH ========
+   The page that describes the PCF command Inquire Channel
+   Authentication Records (MQCMD_INQUIRE_CHLAUTH_RECS) needs
+   to be updated with the information described below:
+   
+   Refer to following infocenter link:
+   http://publib.boulder.ibm.com/infocenter/wmqv7/v7r1/
+   topic/com.ibm.mq.doc/pc20650_.htm [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r1/topic/com.ibm.mq.doc/pc20650_.htm]
+   
+   The page to be updated is located on the following path
+   >WebSphere MQ
+   ->Reference
+   -->Administration Reference
+   --->Programmable command formats reference
+   ---->Definition of PCFs
+   ----->Inquire Channel Authentication Records
+   Upd1. The list of requested attributes that can be specified
+         in the ChannelAuthAttrs (MQIACF_CHLAUTH_ATTRS) is
+         incorrect. The following is the correct list:
+         MQIACF_ALL
+         MQCACH_CONNECTION_NAME
+         MQCA_ALTERATION_DATE
+         MQCA_ALTERATION_TIME
+         MQCA_CUSTOM
+         MQCA_CHLAUTH_DESC
+         MQCACH_MCA_USER_ID
+         MQIACH_USER_SOURCE
+         MQIACH_WARNING
+   Upd2. The following parameters need the type added to the name:
+         generic-channel-name --> generic-channel-name(MQCFST)
+         CommandScope         --> CommandScope(MQCFST)
+         Match                --> Match(MQCFIN)
+   =============================================================
+   
+   ======= Change to MQ V710 Infocenter INQUIRE CHLAUTH RESP ===
+   The page that describes the PCF command Inquire Channel
+   Authentication Records (response) needs to be updated with
+   the information described below:
+   Refer to following infocenter link:
+   http://publib.boulder.ibm.com/infocenter/wmqv7/v7r1/
+   topic/com.ibm.mq.doc/pc20660_.htm [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r1/topic/com.ibm.mq.doc/pc20660_.htm]
+   
+   The page to be updated is located on the following path
+   >WebSphere MQ
+   ->Reference
+   -->Administration Reference
+   --->Programmable command formats reference
+   ---->Definition of PCFs
+   ----->Inquire Channel Authentication Records (Response)
+   Upd1. The "Always returned:"  paragraph should be replaced by
+         the following paragraph:
+   
+        "Always returned:
+         ChlAuth, Type, Warn(yes)
+   
+         Always returned if type is MQCAUT_BLOCKUSER:
+         UserList
+   
+         Always returned if type is MQCAUT_BLOCKADDR:
+         AddrList
+   
+         Always returned if type is MQCAUT_SSLPEERMAP:
+         Address(unless blanks), MCAUser(unless blanks), SSLPeer,
+         UserSrc
+   
+         Always returned if type is MQCAUT_ADDRESSMAP:
+         Address, MCAUser(unless blanks), UserSrc
+   
+         Always returned if type is MQCAUT_USERMAP:
+         Address(unless blanks), ClntUser, MCAUser(unless blanks),
+         UserSrc
+   
+         Always returned if type is MQCAUT_QMGRMAP:
+         Address(unless blanks), MCAUser(unless blanks), QMName,
+         UserSrc
+   
+   Upd2. The "Returned if requested:" paragraph should be replaced
+         by the following paragraph:
+   
+        "Returned if requested:
+         Address, AltDate, AltTime, Custom, Descr, MCAUser,
+         UserSrc, Warn
+        ".
+   =============================================================
+   
+   100Y
+   CSQMDCKW
+   CSQMDRTP
+   CSQ9SCNA
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  &#158;**** PE13/03/19 PTF IN ERROR. SEE APAR PM82185 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM82185]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM64696
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-15
+   
+   
+ * CLOSED DATE
+   2012-07-11
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK80216
+   
+   
+
+MODULES/MACROS
+ *  CSQMDCKW CSQMDRTP CSQ9SCNA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY UK80216 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK80216]
+   UP12/07/26 P F207
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

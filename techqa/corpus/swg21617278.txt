@@ -1,0 +1,13 @@
+Title: IBM Typed features in IBM Content Analytics Studio - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ IBM Content Analytics Studio provides annotation structures with features of the type "String" which when mapped to index fields of the type decimal, are ignored and the UIMA pipeline is unable to provide index field values to be used in number range facets. How can this problem be solved? 
+
+ANSWER
+This problem can be solved by using a custom stage casting String features into Float features, which then would be processed correctly by ICA. 
+
+ 
+The approach to cast String to Float is valid. As an alternative, IBM Content Analytics Studio can handle some types other than String (e.g. Integer). Passing typed values from ICA Studio is a cleaner option to implement the scenario.

@@ -1,0 +1,190 @@
+Title: IBM PI92940: Avoid sudden high CPU usage and threads hung on busy servers. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Sudden high CPU usage was observed on servers that
+   process large number of requests.
+   
+   Java dump analysis showed multiple threads were
+   writing to non thread-safe WeakHashMap.
+   
+   Java callstack:
+   
+   at
+   java/util/WeakHashMap.put(WeakHashMap.java:585(Compiled Code))
+   at
+   org/apache/axis2/jaxws/description/builder/DescriptionBuilderCom
+   posite.setSparseComposite(DescriptionBuilderComposite.java:176(C
+   ompiled Code))
+   at
+   org/apache/axis2/jaxws/description/impl/DescriptionFactoryImpl.c
+   reateServiceDescription(DescriptionFactoryImpl.java:167(Compiled
+    Code))
+   at
+   org/apache/axis2/jaxws/description/DescriptionFactory.createServ
+   iceDescription(DescriptionFactory.java:99(Compiled Code))
+   at
+   org/apache/axis2/jaxws/spi/ServiceDelegate.<init>(ServiceDelegat
+   e.java:216(Compiled Code))
+   at
+   org/apache/axis2/jaxws/spi/Provider.createServiceDelegate(Provid
+   er.java:83(Compiled Code))
+   at
+   org/apache/axis2/jaxws/spi/Provider.createServiceDelegate(Provid
+   er.java: 79(Compiled Code))
+   at
+   javax/xml/ws/Service.<init>(Service.java:92(Compiled Code))
+   ... ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server for JAX-WS Web services.             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Avoid sudden high CPU usage and         *
+   *                      threads hung on busy servers.           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Sudden high CPU usage was observed on servers that process
+   large number of requests.
+   Java dump analysis showed multiple threads were writing to non
+   thread-safe WeakHashMap.
+   Java callstack:
+   at
+   java/util/WeakHashMap.put(WeakHashMap.java:585(Compiled Code))
+   at
+   org/apache/axis2/jaxws/description/builder/DescriptionBuilderCom
+   posite.setSparseComposite(DescriptionBuilderComposite.java:176(C
+   ompiled Code))
+   at
+   org/apache/axis2/jaxws/description/impl/DescriptionFactoryImpl.c
+   reateServiceDescription(DescriptionFactoryImpl.java:167(Compiled
+   Code))
+   at
+   org/apache/axis2/jaxws/description/DescriptionFactory.createServ
+   iceDescription(DescriptionFactory.java:99(Compiled Code))
+   at
+   org/apache/axis2/jaxws/spi/ServiceDelegate.<init>(ServiceDelegat
+   e.java:216(Compiled Code))
+   at
+   org/apache/axis2/jaxws/spi/Provider.createServiceDelegate(Provid
+   er.java:83(Compiled Code))
+   at
+   org/apache/axis2/jaxws/spi/Provider.createServiceDelegate(Provid
+   er.java: 79(Compiled Code))
+   at
+   javax/xml/ws/Service.<init>(Service.java:92(Compiled Code))
+   ... ...
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Synchronization has been added for WeakHashMap access to
+   prevent deadlocks.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.14 and 9.0.0.9.  Please refer to the Recommended
+   Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI92940
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-01-25
+   
+   
+ * CLOSED DATE
+   2018-06-08
+   
+   
+ * LAST MODIFIED DATE
+   2018-06-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,217 @@
+Title: IBM IZ51505: FILE HANDLES LEAK IN SVCHOST.EXE THROUGH WMI INTERFACE WHEN PROCESSING "PROCESSOR INFORMATION" ATTRIBUTE GROUP - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring: Windows(R) OS Agent 6.2.1.0-TIV-ITM_WIN-IF0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24023604]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This issue affects 6.2 and 6.21 ITM OS agent on Windows.
+   
+   Applications using WMI may become unresponsive and report
+   the following error:
+   
+    Server buffers are full and data cannot be accepted
+   
+   This occurs due to a file handle leak in the ITM Windows OS
+   agent when collecting "Processor Information" attribute
+   group (KNT.NTPROCINFO).
+   
+   This leak can be seen in Windows Task Manager by displaying
+   the handles used by the svchost.exe process used by
+   WMI (Windows Management Instrumentation) interface.
+   L2 diagnostics:
+   Set RAS1 logging to following in KNTENV file:
+    KBB_RAS1=ERROR (UNIT:KNT69 ALL) (UNIT:KNTWMI ALL)
+   
+   Create situations using the "Processor Information" attribute
+   group, and let situations run while monitoring the handle
+   count for svchost.exe processes in Task Manager.
+   
+   Handle count should increase over time.
+   In the xxxx_kntcma_yyyyy.log RAS1 log file located in
+   tmaitm6\logs
+   directory, look for the following sequence of trace messages:
+   
+    kntutil.cpp,939,"CKUtil::getWmiClassAttributes") Entry
+    kntutil.cpp,961,"CKUtil::getWmiClassAttributes")
+     No WMI class instance attributes available
+    kntutil.cpp,962,"CKUtil::getWmiClassAttributes") Exit: 0x0
+    knt69agt.cpp,134,"TakeSample") No Query Instances returned for
+     SELECT * FROM Win32_Processor Where DeviceID = 'CPU1'
+    knt69agt.cpp,148,"TakeSample") Exit
+   
+   In the above, the ITM OS agent is not closing the WMI query
+   which results in the handle leak.  A properly functioning system
+   would show trace messages indicating the WMI query being closed:
+   
+    kntutil.cpp,1035,"CKUtil::getWmiClassAttributes") Exit: 0x1
+    kntutil.cpp,855,"CKUtil::WmiClose") Entry
+    kntwmi.cpp,178,"KNTwmi::Close_WMIQueries") Entry
+    kntwmi.cpp,198,"KNTwmi::Close_WMIQueries") Exit
+    kntutil.cpp,859,"CKUtil::WmiClose") Exit
+   
+   The ITM agent does not handle the return from WMI of
+    "No WMI class instance attribute available" which results in
+   the handle leak.
+   This issue was reported on 32-bit Windows systems, but may
+   affect 32 or 64 bit agents, the ITM code is the same.  If
+   64-bit Windows systems return the
+   "No WMI class instance attribute available" from WMI, the ITM
+   Windows OS agent would fail to close out the WMI query resulting
+   in a handle leak in WMI on 64-bit OS as well.
+   
+   Detailed Recreation Procedure:
+   To recreate the problem you should run situations for the
+   "Processor Information" attribute group (KNT.NTPROCINFO).
+   As the leak is not very evident, we suggest to run
+   multiple copies of the situation with a short sampling
+   interval (e.g. 1 minute).
+   
+   From the Windows Task Manager list, the growing of the
+   handles for the svchost.exe process will be evident.
+   
+   To look in the agent log, to identify the mentioned
+   problem, set RAS1 logging to:
+    KBB_RAS1=ERROR (UNIT:KNT69 ALL) (UNIT:KNTWMI ALL)
+   The key records can be displayed also with more general
+   trace levels of (UNIT:KNT ALL), but the above will limit
+   the size of the trace logs.
+   
+   Additional files and output:
+   In (ITM HOME)\TMAITM6\logs check the operations log files
+   xxx.LGO or .LG1 and confirm that situations for KNT.NTPROCINFO
+   are started.
+   
+   In the same directory, the trace log for the agent
+   xxxx_kntcma_yyyyy.log will contain the above mentioned
+   trace records when the trace level is set to
+    KBB_RAS1=ERROR (UNIT:KNT69 ALL) (UNIT:KNTWMI ALL)
+   
+   The growing of file handles can be observed in the Windows
+   Task Manager list for the svchost.exe process.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Recycle ITM Windows OS agent to free WMI handles.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Applications using WMI may become unresponsive and report
+   the following error:
+     "Server buffers are full and data cannot be accepted"
+   This occurs due to a file handle leak in the ITM Windows OS
+   agent when collecting "Processor Information" attribute
+   group (KNT.NTPROCINFO).
+   This leak can be seen in Windows Task Manager by displaying
+   the handles used by the svchost.exe process used by
+   WMI (Windows Management Instrumentation) interface.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was changed to properly release the handles after they
+   were used.
+   The fix for this APAR is contained in the following maintenance
+   package:
+            Interim Fix : 6.2.1.0-TIV-ITM_WIN-IF0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ51505
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040W
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-19
+   
+   
+ * CLOSED DATE
+   2009-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * FIXED COMPONENT ID
+   5724C040W
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R621 PSY
+   UP

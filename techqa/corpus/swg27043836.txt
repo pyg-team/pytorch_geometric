@@ -1,0 +1,33 @@
+Title: IBM Detailed instructions on preparing WebSphere for non-English environments - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ The IBM Knowledge Center documentation on preparing WebSphere for non-English FileNet P8 environments needs more detail. 
+
+CONTENT
+The following IBM Knowledge Center topics document the WebSphere configuration that is required for FileNet P8 to run in non-English environments.
+
+
+Product and version Topic FileNet P8 5.1.0 Configuring character encoding on WebSphere Application Server [http://www.ibm.com/support/knowledgecenter/SSNW2F_5.1.0/com.ibm.p8.planprepare.doc/p8pap018.htm] FileNet P8 5.2.0 Configuring character encoding on WebSphere Application Server [http://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.planprepare.doc/p8pap018.htm] IBM Content Foundation 5.2.0 Configuring character encoding on WebSphere Application Server [http://www.ibm.com/support/knowledgecenter/SSGLW6_5.2.0/com.ibm.p8.planprepare.doc/p8pap018.htm] 
+The IBM Knowledge Center topics should clarify why these WebSphere settings are needed and provide an example showing how to apply them by using WebSphere administrative console. 
+
+FileNet P8 requires two configuration settings: com.ibm.CORBA.ORBCharEncoding, to specify the native encoding set of character data that Object Request Broker uses, and com.ibm.websphere.security.BasicAuthEncoding, to match the encoding used by Basic Authentication for Web Services so that client applications can access web services. 
+
+To configure these settings on WebSphere Application Server: 
+ 1. Log on to the WebSphere administrative console.
+    
+ 2. In the navigation pane, click Servers > Server Types > WebSphere application servers > server_name, where server_name is the name of one of your application servers.
+    
+ 3. In the Container services section, click ORB service > Custom properties > New.
+    
+ 4. In the Name field, enter com.ibm.CORBA.ORBCharEncoding, set the value to UTF8, and save your changes.
+    
+ 5. In the Server Infrastructure section, click Java and process management > Process definition > Java virtual machine > Custom properties > New.
+    
+ 6. In the Name field, enter com.ibm.websphere.security.BasicAuthEncoding, set the value to UTF8, and save your changes.
+    
+ 7. Restart the application server.
+    
+ 8. Repeat steps 2 through 7 for your other application servers.

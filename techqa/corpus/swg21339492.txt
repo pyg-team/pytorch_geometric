@@ -1,0 +1,23 @@
+Title: IBM How to clip the contents of a text item (stop text from wrapping) - United States
+
+Text:
+clip contents text item wrap wrapping second line TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes three methods to clip text contents of a text item so that the text doesn't wrap to a second line. 
+
+RESOLVING THE PROBLEM
+Three solutions: use text item trunc, place text in a block, or list fixed width.
+
+Steps:Method #1: 
+1) Set the Text Item > Maximum characters to a desired value. Method #2:
+1) Unlock the List.
+2) Insert a Block into the cell.
+3) Insert the Text Item into the block.
+4) Set the Size & Overflow properties of the Block to the desired height & width and check that Content is Clipped.
+5) Test in HTML & PDF.
+
+Method #3:
+1) Set Width on the Text Item to a wide value (eg. 5").
+2) Set Width on the List Column to the required width (eg. 1").
+3) Set the List Property > Table Properties > Fixed Width.

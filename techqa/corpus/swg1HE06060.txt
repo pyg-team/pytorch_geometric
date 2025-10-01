@@ -1,0 +1,148 @@
+Title: IBM HE06060: FILTER PART INSTANCE FUNCTION WITH SEVERAL OR ATTRIBUTES ON LARG E ENOVIA DATABASE RESULTS IN ENDLESS QUERY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  1.  Launch catia
+   2.  Select large PRC
+   3.  Open Filter GUI
+   4.  right click attributes, add criterion on attribute
+   5.  Customer adds 5 customized attributes, 3 where attribute
+   = value, 2 where attribute = *value*.   Support was able to
+   repro the problem with 5 standard attributes (3 = value, 2 =
+   *value*) and also a separate test with 3 attributes where
+   attribute = value, no wildcard.
+   6.  change the filter to "OR" filter and hit OK
+   7.  the query will never finish (as far as we know).
+   Customer has 6 minute limit on queries.   Support tested in
+   the lab and killed the 5-attribute test after 12 minutes and
+   the 3 attribute test after 22 minutes.   Customer reports
+   that it drives database server excessive CPU and that if 2 of
+   them are running simulataneously it freezes the db.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  empty
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  1.  Launch catia
+   2.  Select large PRC
+   3.  Open Filter GUI
+   4.  right click attributes, add criterion on attribute
+   5.  Customer adds 5 customized attributes, 3 where attribute
+   = value, 2 where attribute = *value*.   Support was able to
+   repro the problem with 5 standard attributes (3 = value, 2 =
+   *value*) and also a separate test with 3 attributes where
+   attribute = value, no wildcard.
+   6.  change the filter to "OR" filter and hit OK
+   7.  the query will never finish (as far as we know).
+   Customer has 6 minute limit on queries.   Support tested in
+   the lab and killed the 5-attribute test after 12 minutes and
+   the 3 attribute test after 22 minutes.   Customer reports
+   that it drives database server excessive CPU and that if 2 of
+   them are running simulataneously it freezes the db.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM IS PERMANENT RESTRICTION IN I-PLM Collaborative
+   Innovation
+   Additional Closure Information:
+   R&D has examined the scenario and the attachments.
+   1.  They believe that the query described in the scenario is
+   too complex (with 5 attributes, 2 of them with begin+end
+   wildcards)
+   2.  The proposed SQL solution is not workable and will not
+   produce the correct results
+   3.  They do not have any plan to modify the code for large
+   "OR" queries in the Filter
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE06060
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA V5 VPM N
+   
+   
+ * REPORTED COMPONENT ID
+   569151400
+   
+   
+ * REPORTED RELEASE
+   519
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-11
+   
+   
+ * CLOSED DATE
+   2011-04-12
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,82 @@
+Title: IBM Watson Explorer Community Edition: 
+Release Notes, Installation Instructions, Documentation - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The PDF attached to this techdoc contains the documentation for the Watson Explorer Community Edition, including installation instructions. The content of this techdoc also serves as the release notes for Watson Explorer Community Edition.
+
+
+CONTENT
+wex_ce.pdf [/support/docview.wss?uid=swg27050410&aid=2]wex_ce.pdf [/support/docview.wss?uid=swg27050410&aid=1]
+
+
+IBM Watson Explorer Community Edition [https://www.ibm.com/us-en/marketplace/content-analytics] application can be downloaded from https://www.ibm.com/us-en/marketplace/content-analytics [https://www.ibm.com/us-en/marketplace/content-analytics]. Before you install the IBM Watson Explorer Community Edition [https://www.ibm.com/us-en/marketplace/content-analytics] application, get familiar with the most important information related to the installation process. 
+
+ 
+
+Feedback / Suggestions / Questions 
+
+You are welcome to provide any feedback in the community.
+
+Please post to the dWAnswers Community with the watson-explorer tag at the following URLs: 
+
+ * https://developer.ibm.com/answers/topics/watson-explorer/ [https://developer.ibm.com/answers/topics/watson-explorer/]
+
+
+Supported platforms 
+
+ * Windows  * Windows 10 Education 
+    * Windows 10 Enterprise 
+    * Windows 10 Pro
+   
+   
+ * MacOS  * Mac OS X 10.10.3 or later
+   
+   
+
+Supported browsers 
+
+ * Google Chrome Version 60 or later 
+ * Mozilla FireFox Version 52 (ESR) or later 
+ * Microsoft Edge on Windows 
+ * Microsoft Internet Explorer 11 on Windows
+
+
+Note: 'Supported platforms/browsers' here means those are confirmed to work with Watson Explorer Community Edition [https://www.ibm.com/us-en/marketplace/content-analytics]. Watson Explorer Community Edition [https://www.ibm.com/us-en/marketplace/content-analytics] is provided under Evaluation/Trial license, thus no support will be provided via Passport Advantage/IBM Support channel. 
+
+ 
+
+Known Issues and Limitations
+
+
+ * Installing the application
+ *  If you use an older toolbox-based version of Docker, uninstall it before you install the application. If you have other containers that run on your computer, stop them before you start the installation process of the application because your computer might have resource constraints. The application pulls a Docker Image during the installation process. The installation takes about 10-15 minutes on a standard network speed of about 15-20 Mbps. A typical corporate VPN is likely to limit the download speed. Consider it while you wait for the installation to finish. If you already have the application installed and want to upgrade to a new version, from the 'More info' menu in the upper-right corner on the Result page select Uninstall. This will remove the older version of Docker Image and container. Finally relaunch the application to pull most recent Image. 
+ * 
+ * 
+ * Launching the application
+ *  If you are a Mac user, the following security warning is displayed when you launch the application: "IBM Watson Explorer Community Edition [https://www.ibm.com/us-en/marketplace/content-analytics] can't be opened because it is from an unidentified developer" In this case, from the Apply menu, choose System Preferences, click Security & Privacy, then click General. In the General pane, click Open Anyway button. For details, see https://support.apple.com/kb/PH25088?locale=en_US [https://support.apple.com/kb/PH25088?locale=en_US]. 
+ * 
+ * 
+ * Other Known Issues / Limitations
+ *  Multiple dictionary annotators do not work with a single collection. If you want to apply multiple dictionaries, create a dictionary annotator that includes multiple dictionaries. When creating a new model for a classifier and cancelling the creation during Creating datasets status in either Content Miner or Admin Console, the status may not be changed although the process has been actually cancelled in the system. Facet highlighting is partially supported. The text will be highlighted when the exact same facet value string is specified as the facet refinement query. For example, query 'facet:"positive expression"' does not highlight 'good product' in the document text. Facet counting for numeric or date facets in the custom analysis view is not supported in Content Miner. On Windows 10 OS while the application is downloading the docker image. If there is internet disconnection. The Application has to be restarted. If a native field name in a crawler data source is id or ID, the dataset field name is changed to id_ or ID_. 
+ * 
+ * 
+ * Browser specific issues - please use Chrome or any other tested browsers
+ *  Safari on Mac is not a supported browser. Pop-up error with "ReferenceError: 'URLSearchParms' is undefined" appears on Microsoft Internet Explorer 11 and Microsoft Edge when trying to create a new classifier in Admin Console. Some UI elements are not correctly rendered in Admin Console with Microsoft Internet Explorer 11. 
+
+
+FAQ  * On Windows installation, the window to input the username/password for mounting the volume may not appear in front. 
+ * You may need to search if the screen is found behind the installer. (Installation itself will be succeeded once you input the user name/password, but may be confusing.) 
+ * While installation, if there is an interruption in internet connection. The Application waits till the connection is back, and continues after. But there are cases when the percentage may go beyond 100% because of the interruption. In this case, close the application, restart the Docker Daemon and relaunch the application. 
+ * If the Application redirects to error page right after installation, after multiple tries. In this case check run the command docker ps -a on the terminal and check to see if the status of the container is in 'Created' state. If it is in Created state then run docker rm -f wex-d-g to remove the container. Finally relaunch the Application. 
+ * For users who would like to look at the mounts on the terminal. Run the command docker exec -it wex-d-g ls /mnt. 
+ * For users using windows machine with AsureAD. When trying to mount a folder, the docker prompts for user credentials. Even after the user enters the password, as the password stored for the AzureAD account is not local, it will not succeed. This is an issue from Docker and Windows with Azure AD. For details, see "Installing Watson Explorer Community Edition on a computer with Azure Active Directory [http://www.ibm.com/support/docview.wss?uid=swg22010048]" .
+   
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2017/10/27

@@ -1,0 +1,201 @@
+Title: IBM IO12723: Deploy_IDSWebApp fails to deploy webadmin into WAS ND 7.0 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Tivoli directory server provided deploy_IDSWebApp script can be
+   used to deploy the IDSWebApp.war (webadmin) file into WebSphere.
+   
+   When using the script in full WAS ND 7.0 the deploy script fails
+   as below:
+   
+   # ./deploy_IDSWebApp -p /opt/IBM/WebSphere/AppServer/ -w
+   /opt/IBM/ldap/V6.2/idstools/IDSWebApp.war -r AppSrv01
+   
+   /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/bin/wsadmin.sh
+   -conntype NONE -c "\$AdminApp install
+   {/opt/IBM/ldap/V6.2/idstools/IDSWebApp.war} {-configroot
+   \"${WAS_HOME}/config\" -node DefaultNode -usedefaultbindings
+   -nodeployejb -appname ${IDSWebApp_Name} -contextroot
+   \"IDSWebApp\"}"
+   WASX7357I: By request, this scripting client is not connected to
+   any server process. Certain configuration and application
+   operations will be available in local mode.
+   ...
+   ADMA5016I: Installation of IDSWebApp.war started.
+   ADMA5026E: No valid target is specified in ObjectName
+   WebSphere:cell=tdsx6404Cell01,node=DefaultNode,server=server1
+   for module IDSWebApp.war+WEB-INF/web.xml.
+   com.ibm.websphere.management.exception.AdminException:
+   ADMA5026E: No valid target is specified in ObjectName
+   WebSphere:cell=tdsx6404Cell01,node=DefaultNode,server=server1
+   for module IDSWebApp.war+WEB-INF/web.xml.
+           at
+   com.ibm.ws.management.application.task.ConfigRepoHelper.getServe
+   rNames(ConfigRepoHelper.java:1496)
+           at
+   com.ibm.ws.management.application.task.ConfigRepoHelper.getAddRe
+   moveServerNames(ConfigRepoHelper.java:1405)
+           at
+   com.ibm.ws.management.application.task.ConfigRepoHelper.getServe
+   rNames(ConfigRepoHelper.java:1177)
+           at
+   com.ibm.ws.management.application.AppAssociation.getServerNames(
+   AppAssociation.java:1256)
+           at
+   com.ibm.websphere.management.application.AppDeploymentUtil.getNo
+   deVersionForAppTargets(AppDeploymentUtil.java:139)
+           at
+   com.ibm.ws.management.application.task.ValidateAppTask.performTa
+   sk(ValidateAppTask.java:147)
+           at
+   com.ibm.ws.management.application.SchedulerImpl.run(SchedulerImp
+   l.java:284)
+           at java.lang.Thread.run(Thread.java:735)
+   ADMA5011I: The cleanup of the temp directory for application
+   IDSWebApp.war is complete.
+   ADMA5014E: The installation of application IDSWebApp.war failed.
+   WASX7015E: Exception running command: "$AdminApp install
+   {/opt/IBM/ldap/V6.2/idstools/IDSWebApp.war} {-configroot
+   "/opt/IBM/WebSphere/AppServer/config" -node DefaultNode
+   -usedefaultbindings -nodeployejb -appname IDSWebApp.war
+   -contextroot "IDSWebApp"}"; exception information:
+    com.ibm.ws.scripting.ScriptingException: WASX7132E: Application
+   install for /opt/IBM/ldap/V6.2/idstools/IDSWebApp.war failed:
+   see previous messages for details.
+   ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Instead of using deploy script use the WAS Admin Console to
+   deploy the IDSWebApp.war file.
+   
+   Applications -> New Application -> New Enterprise Application
+   
+   Browse and find IDSWebApp.war and select the same, Click OK.
+   
+   Select Fast Path, Click Next.
+   
+   Click Next Again on "Select installation options".
+   
+   In "Map modules to servers" Panel, select the check box in the
+   table for IBM Tivoli Directory Server Web Application v2.0 then
+   choose appropriate "Clusters and servers" from the drop down and
+   Click "Apply". This will update the "Server" column in the
+   table. It may already be appropriate when you first reach this
+   panel. Just verify. Then Click "Next".
+   
+   In "Map virtual hosts for Web modules" Choose appropriate
+   "Virtual host" or Simply select default_host, Click "Next".
+   
+   In "Map context roots for Web modules" Panel, Update the context
+   root to be "/IDSWebApp", Click "Next".
+   
+   In "Summary" page - Review and finish.
+   
+   Save configuration.
+   
+   Now you can connect to default ports of WAS via the url below to
+   access the webadmin of tds.
+   http://hostname:9080/IDSWebApp/IDSjsp/Login.jsp [http://hostname:9080/IDSWebApp/IDSjsp/Login.jsp]
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  For WAS ND its a permanent design limitation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The technote is published with details the procedure on
+   how to deploy the IDSWebApp.war file in a WAS ND 7.0 with an
+   exisitng profile.
+   http://www-01.ibm.com/support/docview.wss?uid=swg21443554 [http://www-01.ibm.com/support/docview.wss?uid=swg21443554]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO12723
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM TIV DIR SER
+   
+   
+ * REPORTED COMPONENT ID
+   5724J3960
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-27
+   
+   
+ * CLOSED DATE
+   2010-09-17
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

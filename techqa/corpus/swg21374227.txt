@@ -1,0 +1,176 @@
+Title: IBM Reducing the size of Controller database by deleting "period locking by company" records in table 'xacclock' - United States
+
+Text:
+large grown shrink reduce smaller growing grown small purge rows TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer would like to know if there is a way to reduce the size of their Controller application database repository. 
+
+CAUSE
+There are, of course, many different potential causes of a large Controller database. 
+
+ * For example, one cause (especially in Controller 10.1) is large amounts of data inside the table XDBTRICKLE. For more details on this, see separate Technote #1624409.
+
+
+This IBM Technote deals specifically with the scenario where the size of the database table ' XACCLOCK' has grown to be large. 
+
+More Information: 
+Customer is using the " company locking" functionality.  * This locks the data by company and account, and additionally by multi period locking  * In other words, it allows the system to be locked so further Data Entry is not possible.
+   
+   
+ * This creates many 'period locks by company' entries inside the database  * These entries are stored inside the database table 'xacclock'
+   
+   
+
+
+The Controller system does *not* delete these automatically. Therefore, over many years, these 'period lock by company' entries will be part of the cause why the database has grown.  * Periodically, some customers may wish to delete these entries (in order to keep the size of the Controller application repository database 'in shape').
+
+
+What are the possible drawbacks of deleting data inside 'xacclock'? If a period/actuality (called "perakt") is closed and will never be reopened again, then the information in xacclock is NOT useful :-) 
+
+ * Therefore, a lot of the information in xacclock can normally be deleted
+
+
+However, imagine a scenario where: 
+
+ * some companies have closed one or more submissions, and then the whole 'perakt is closed'. 
+ * After this, the period is reopened (for some reason) and you want to come back to exactly the same state (regarding what is locked and what is not). 
+
+
+In this scenario you would actually need the information in xacclock (for that perakt) to allow you to do this. 
+
+Finally, a totally locked 'perakt' is very seldom reopened. One possible scenario is that you temporarily need to lock down the system (i.e. have no updates) while there is some kind of maintenance done, but you decide that you need to be back in the exact same lock state (as before the perakt was locked).  * This is a rare scenario, but it does happen.
+
+ENVIRONMENT
+The instructions/scripts here are mainly based on Microsoft SQL.
+
+
+
+DIAGNOSING THE PROBLEM
+To see how large your xacclock table is, use the instructions inside separate IBM Technote #1345780. 
+
+ * Compare this size with the size of your entire Controller database.
+
+
+Alternatively, for a quick/simple count of the number of rows in the xacclock table use this SQL query:  * 
+
+RESOLVING THE PROBLEM
+Reduce the size of the xacclock table by deleting period locks for historic periods. 
+
+ * In other words, delete the period locks for old months/years which the financial users no longer have any use for.
+
+
+Only the customer's finance superuser can decide which periods can be defined as ' Historic'.  * In general terms, these will be periods that never will be opened again for data entry.
+
+
+IMPORTANT 
+Make sure you understand the consequences of deleting data inside the table 'xacclock': 
+
+Deleting (truncating) that table means that if you perform both of the following actions...  *  open a period that has been closed and unlock a Company that has been locked 
+ * ...it causes the locking history of that company to be lost. 
+   
+
+However, it is important to remember that the main locking of period/submissions/companies is stored in a different table ('xopen'). Therefore, even though the locking *history* has been lost, the following is true:  *  the periods (that are locked) remain locked and also companies (that are locked) remain locked. 
+
+
+======================================================================== 
+** WARNINGS ** 
+ * Do not use the instructions contained inside this article unless you are 100% confident you know exactly what the consequences are 
+ * MAKE SURE that you 100% backup the Controller database *before* performing any of the actions listed 
+ * These processes can generate large transaction log (LDF file) usage on the SQL server. Therefore make sure you have very large free space on the SQL server's hard drive(s). 
+ * Only apply the script (see below) to a period which is already locked by multi-period locking!
+
+======================================================================== 
+
+Steps: 
+
+The historic locks can be deleted by either of the following two methods:  * Method (1)
+ * 
+ *  This does not rely on the I.T. department However, it is slow and inconvenient, therefore not recommended for most situations. 
+ * Method (2)
+ * 
+ *  This requires assistance from the I.T. department's SQL DBA (administrator) It is often the quickest method, therefore it is recommended for most situations. 
+
+
+Method #1 - Using the menus inside Controller 
+ 1. Click "Maintain/Period Locking/Change period locking by Company" 
+ 2. For each historic period (those that will never be opened again for data entry), actuality and submission, remove all company locks. 
+ 3. Click "Maintain/Submission Define" 
+ 4. For each historic period, actuality and submission, remove all Form Sets. 
+ 5. Click "Maintain/Period Locking/Change Multi period locking" 
+ 6. For each historic period, actuality and submission, update the period lock by unticking the "Lock (total)" checkbox, save, tick the checkbox again and save.
+
+
+Method #2 - (Recommended for most customers ) Run SQL scripts directly on the database 
+
+Let us imagine a scenario where:  * the finance superuser has decided that they do not need any locks that exist before the period 1701.  * In other words, they wish to delete all locks for any periods 1700 or older (which for most customers means periods in the years 2016 and older).
+   
+   
+ * The SQL login user that Cognos Controller uses (to connect to the database) is called "fastnet".
+
+
+In this scenario: 
+1. Ensure no users using Controller (downtime) 
+2. Backup the Controller database as a precaution  * TIP: You may find it useful to keep this database archived (stored somewhere safe) forever, since it contains some information that will soon be lost.
+
+
+3. Check current size of database 
+4. Launch a SQL tool (for example SQL Management Studio) 
+
+5. When connecting to the SQL server, logon using the same SQL login user that Cognos Controller uses to connect to the database  * For example, perhaps logon as: fastnet
+
+
+6. Run the SQL script below (naturally change 1700 and fastnet entries to the values that are relevant to your needs): 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+7. Test system works OK 
+8. Run a database optimisation routine (from within the Controller client GUI) 
+9. Check new size of database, and the size of the table XACCLOCK 
+10. To reclaim all the 'empty' (blank) space inside the database, you should now perform a 'shrink' on both the log (LDF) and data (MDF) portions of the database.  * TIP: For instructions, see separate IBM Technote #1367388.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+NOTE: By Microsoft design, the next time that you rebuild the database indexes (for example as part of your Maintenance Plan on Sunday morning) the database file will grow (quite significantly in many cases).  * This is no cause for alarm. Do not re-shrink the database (after the re-index) otherwise you will lose performance. If your SQL server's hard drives are getting full, use other methods (such as increasing the disk size) rather than regularly shrinking the database.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+11. Finally, to improve performance, it is recommended to now rebuild your SQL indexes.  * For example, inside Controller click "Maintain - Database Optimise" and tick/enable 'rebuild indexes' option.
+
+RELATED INFORMATION
+ 1364473 - Accounts of one company are locked for data e [http://www.ibm.com/support/docview.wss?uid=swg21364473]
+1345780 - How to find out the size of each table inside [http://www.ibm.com/support/docview.wss?uid=swg21345780]
+1624409 - How to reduce the size of a Controller databa [http://www.ibm.com/support/docview.wss?uid=swg21624409]
+1646654 - How to delete data in Controller database (IB [http://www.ibm.com/support/docview.wss?uid=swg21646654]
+1367388 - How to shrink a Microsoft SQL database transa [http://www.ibm.com/support/docview.wss?uid=swg21367388]
+
+
+
+
+HISTORICAL NUMBER
+ 1020388

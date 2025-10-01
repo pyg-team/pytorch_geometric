@@ -1,0 +1,198 @@
+Title: IBM PK18867: LDAP REGISTRY IMPLEMENTATION GETS NO ROUTE TO HOST WHILE STARTING THE APPLICATION SERVER. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere security uses JNDI to connect to LDAP server, and JNDI
+   uses java.net.InetAddress class to resolve LDAP host name. By
+   default, java.net.InetAddress caches the ip address once it
+   resolve the LDAP host name. So if LDAP IP is changed but host
+   name is not changed, JNDI client will not be able to connect to
+   LDAP server.  So with DNS, we are reusing the IP which is first
+   resolved , and we are unable to get a new IP if the resolved IP
+   is not available due to Java cache even the DNS could resolve
+   other available IP.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Possible Workarounds
+   2.1. approach 1:
+   With Java 1.4, there is a way to control the "time to live" for
+   naming cache by editing java.security file, see
+   networkaddress.cache.ttl  property description in
+   http://java.sun.com/j2se/1.4.2/docs/guide/net/properties.html .
+   By default this property is set to -1, which means cache
+   forever. If change it to a small value, host would be resolved
+   from cache after cache expired. Since this property is a JVM
+   system property, it has global impact if it is modified, and
+   also open a hole for DNS spoofing attack.
+   
+   2.2. approach 2:
+   This is to take the advantage of our LDAP failover registry to
+   work-around IP cache.  Our LDAP failover registry can take
+   unlimited number of LDAP hosts or IPs, and it can failover among
+   participated LDAPs. What this customer can do in this case is to
+   add all backend LDAP's IP to security LDAP host configuration,
+   rather than just enter the domain host name. So here we are not
+   totally depending on java naming cache, even java cache the
+   first IP address it resolved, we still can failover to other IP.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Application Server security        *
+   *                 users who use LDAP user registry             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If multiple LDAP servers are setup to   *
+   *                      have the same host name but with its    *
+   *                      own IP address, websphere security      *
+   *                      LDAP registry only connects to first    *
+   *                      resolved IP address, and was unable     *
+   *                      to failover to next available LDAP      *
+   *                      server.                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   WebSphere security uses JNDI to connect to LDAP server, and
+   JNDI uses java.net.InetAddress class to resolve LDAP host
+   name. By default, java.net.InetAddress caches the ip address
+   once it resolve the LDAP host name. So if LDAP IP is changed
+   but host name is not changed, JNDI client will not be able to
+   connect to LDAP server.  So with DNS, we are reusing the IP
+   which is first resolved, and we are unable to get a new IP if
+   the resolved IP is not available due to Java cache eventhough
+   the DNS could resolve other available IP.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere security LDAP registry does not rely on JNDI to
+   resolve LDAP host name, and resolve LDAP host name outside JNDI.
+   The fix for this APAR is currently targeted for inclusion in
+   fixpack 6.0.2.11. Please refer to the Recommended
+   Updates page for delivery dates:
+   http://www-1.ibm.com/support/docview.wss?rs=180&context=SSEQTP
+   &uid=swg27004980 [http://www-1.ibm.com/support/docview.wss?rs=180&context=SSEQTP&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK18867
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS BASE 5.0
+   
+   
+ * REPORTED COMPONENT ID
+   5630A3600
+   
+   
+ * REPORTED RELEASE
+   60A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-01-31
+   
+   
+ * CLOSED DATE
+   2006-03-21
+   
+   
+ * LAST MODIFIED DATE
+   2006-06-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PK23252 PK25735
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP

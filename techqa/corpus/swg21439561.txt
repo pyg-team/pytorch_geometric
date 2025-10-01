@@ -1,0 +1,53 @@
+Title: IBM Coaches can time out with com.ibm.ejs.container.SessionBeanTimeoutException after 10 minutes - United States
+
+Text:
+com.ibm.ejs.container.SessionBeanTimeoutException; SessionBeanTimeoutException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If a coach is idle for 10 minutes or more, the errors below are thrown when you follow a path out of the coach (i.e. clicks a button). 
+
+SYMPTOM
+com.ibm.ejs.container.SessionBeanTimeoutException: Stateful bean BeanId(teamworks#twcore-ejb.jar#EJBWorkflowManager, 10506f2ee12) timed out.
+org.omg.CORBA.OBJECT_NOT_EXIST:
+com.ibm.ejs.container.SessionBeanTimeoutException: Stateful bean BeanId(teamworks#twcore-ejb.jar#EJBWorkflowManager, 10506f2ee12) timed out. 
+vmcid: 0x0 minor code: 0 completed: No
+at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java(Compiled Code)
+
+
+RESOLVING THE PROBLEM
+You can fix this problem by adding a timeout value to the EJBWorkflowManager bean: 
+
+Note: This procedure requires modifying the teamworks.ear file. This should be done by a skilled developer or a WebSphere administrator. 
+
+ 1. Modify the ibm-ejb-jar-ext.xmi file that is located in the META-INF directory of the twcore-ejb.jar file located at the root of the <TeamWorks_Install_Dir>/process-server/applications/teamworks.ear file (NOT the ones located under $WAS_HOME). There are several ways that you can do this, but here is a relatively simple method:  * Make a copy of the <TeamWorks_Install_Dir>/process-server/applications/teamworks.ear file and name it teamworks.zip. 
+     * Unzip teamworks.zip into a temp dir. 
+     * Open the twcore-ejb.jar file in WinZip or another zip application and extract the /META-INF/ibm-ejb-jar-ext.xmi file to c:/META-INF/ibm-ejb-jar-ext.xmi 
+     * Open the ibm-ejb-jar-ext.xmi file in a text editor. 
+     * Change the following line to add the timeout setting as highlighed below: <ejbExtensions xmi:type="ejbext:SessionExtension" mi:id="SessionExtension_1088097409140" timeout="7200"> 
+       
+        
+       
+       Note that Lombardi recommends a timeout value equal to your session timeout which is determined by the LTPA timeout. The default LTPA is 120 minutes, thus the 7200 second timeout value above. Also note that there are two statements in this xmi file. They are for different beans - one for Session_5 and one for Session_6. You only need to edit the one called out above - Session_5 - this is for the EjbWorkflowManager. 
+       
+        
+       
+       
+     * Save your changes to the ibm-ejb-ext.xmi file. 
+     * "Freshen" the twcore-ejb.jar file with the modified ibm-ejb-jar-ext.xmi file. Be sure that the path information for the file remains /META-INF/. 
+     * Open the <TeamWorks_Install_Dir>/process-server/applications/teamworks.ear file in WinZip or another zip application. 
+     * "Freshen" the teamworks.ear archive with the updated twcore-ejb.jar file. Again, be sure that the path information for this file remains correct (no additional path info should be stored for this file). 
+    
+    
+ 2. After updating the teamworks.ear file, redeploy the ear to your WebSphere server or cluster. This is required in order for the changes to be picked up by WebSphere. Note that you should use the JACL files that come with TeamWorks to redeploy the ear to make sure that your class loader order stays correct. Note that you will want to review these files prior to re-deploying the ear in order to insure no passwords have changed. The easiest way to re-deploy the ear would be to run deploy_teamworks script located in <TeamWorks_Install_Dir>/process-server/ directory. The script undeploys all process server applications and re-deploys updated versions of the applications back again.
+
+
+Additional Information about Timeouts in WebSphere  *  When the web session expires a users credentials are not expired (you are not forced to re-login). This is due to the WebSphere implementation of LTPA tokens and more info on this is covered in the IBM documentation. When the LTPA token expires the users credentials are expired (you are forced to re-login). The web session timeout is relative to user activity. That is, it resets to 0 when user activity is detected. LTPA token timeout is not related to user activity. It will timeout after the amount of time from creation date no matter what user activity is going on. The EJB timeout specifies how long the session bean is available before the container removes it. The EJB timeout is relative to user activity when the bean is required. So in a coach when we move from one to screen to another we are re-querying the bean for information and so the EJB timeout resets. 
+
+Let's consider an example of a search coach that users might leave up constantly throughout the day. Let's say the users need that search coach active for the whole day which is 9 hours and you don't want your users to need to log in more than once a day. You would first need to set the LTPA token timeout to larger than 9 hours so the users will not be required to log in again during the day - remember that the LTPA token timeout is not based on user activity, so this needs to be an absolute value. Next, depending on the frequency users touch the search screen you need to adjust the web session timeout and ejb timeouts accordingly. For example, if the users touch the search screen once every 1 hour, then the web session/ejb timeouts could be around 1 hour. If it's once in every 3 hours then, it could be set to around 3 hrs etc. If you want to guarantee that the users will not see any timeout messages then you need to set all three timeouts to over 9 hours or whatever the longest time a user is online for, or you need to implement some kind of refresh in both the portal and coach code at the appropriate intervals.  
+
+HISTORICAL NUMBER
+ 37 
+
+PRODUCT ALIAS/SYNONYM
+ TW Teamworks

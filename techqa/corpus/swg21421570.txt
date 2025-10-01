@@ -1,0 +1,12 @@
+Title: IBM Why can I not see all my Content Manager for iSeries object directories? - United States
+
+Text:
+CM/400 WAF EKD0121 TECHNOTE (FAQ)
+
+QUESTION
+ I have thousands of object directories defined to Content Manager for iSeries. However, not all of them show up in the "Work with Object Directories" panel. Why might this be? 
+
+ANSWER
+Due to a subfile limitation in the i5/OS operating system, only 9,999 object directories can be displayed in the Content Manager profile panel. If you have more than 9,999 object directories, they are all present in the database file but cannot be viewed through our "Work with Object Directories" panel from the CMPRF menu. 
+
+You would need to query the EKD0121 file in your file library (e.g., QUSRVI) in order to see all defined Content Manager object directories.

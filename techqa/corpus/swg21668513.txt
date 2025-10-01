@@ -1,0 +1,24 @@
+Title: IBM Tuning performance of text extraction processes on zLinux and Red Hat Enterprise Linux systems - United States
+
+Text:
+tuning; performance; cbr; search TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Content Search Services indexing throughput may be improved and CPU consumption lowered on systems running zLinux and Red Hat Enterprise Linux operating systems. This is achieved by configuring the Content Platform Engine server to start a smaller number of text extraction processes during indexing. 
+
+RESOLVING THE PROBLEM
+By default, each text extraction process started will process a batch of 50 content files at a time. It is recommended to increase the batch size to 500 which will reduce the number of text extraction processes started. The batch size is adjusted using a JVM argument. 
+Please note that this setting is unrelated to the "Extracting: Maximum Worker Threads Per Batch" and "Extracting: Maximum Worker Threads" settings in ACCE (the "Filters per Batch" and "Maximum number of Filters" settings in FEM). 
+
+To set JVM arguments in WebSphere, go into the WAS Admin Console under
+WebSphere Application servers -> <server1 or your server name> -> Java and Process Management -> Process Definition -> Java Virtual Machine
+Add the following into the Generic JVM arguments, appended to any existing contents, click apply and then save to the Master Configuration:
+
+-Dcom.filenet.cbr.insoBatchSize=500
+
+To set JVM arguments in JBoss and WebLogic, edit the start scripts (run.bat/.sh and startWebLogic.bat/.sh, respectively) and add the JVM argument above to the launching Java call for the application server process.
+
+The JVM argument should be applied on all CPE servers in the domain where any object stores are enabled for Content-Based Retrieval (CBR).
+. 
+After restarting the CPE server, check the ping page to confirm that the new setting was enabled. Here is a sample link to the FileNet/Engine ping page : 
+http://servername:9080/FileNet/Engine

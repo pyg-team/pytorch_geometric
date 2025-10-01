@@ -1,0 +1,44 @@
+Title: IBM Archecker point-in-time restore of a table fails with with GLS error -48 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are trying to do a point-in-time restore of table using archecker but it fails with errors printed in ac_msg.log. 
+
+SYMPTOM
+Errors printed in ac_msg.log may look like: 
+
+<...>
+STATUS: Dropping old log control tables
+ERROR: GLS error 48
+ERROR: Datetime conversion error -1
+ERROR: Internal error at line 10 column 32, near token "2014-03-18 14:26:38"
+ERROR: Error parsing "/chunks/dmitriyr/12.10.FC3/ids1210fc3/tab1.sql"
+CRITICAL ERROR: Unable to initialize extraction
+STATUS: archecker completed Physical Restore pid = 16172 exit code: 3
+
+
+CAUSE
+The database is using UTF locale which requires GL_DATETIME environment variable to be set properly.
+
+
+DIAGNOSING THE PROBLEM
+Check if the database has UTF locale. Check that GL_DATETIME is set. Check if datetime value used in the archecker's command file is matching the format specified in GL_DATETIME environment variable. 
+
+ 
+
+
+RESOLVING THE PROBLEM
+Ensure that GL_DATETIME is set properly and the datetime format specified matches the datetime value specified in the archecker's command file. 
+
+ 
+
+For example: 
+
+
+restore to "14-03-20 14:54:19";
+
+The above RESTORE clause requires the following format specified in GL_DATETIME environment variable:
+
+export GL_DATETIME="%y-%m-%d %H:%M:%S"

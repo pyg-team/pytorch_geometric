@@ -1,0 +1,135 @@
+Title: IBM PI62303: Updated bluemixUtility to use TLS 1.1 or 1.2 instead of 1.0 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Previous versions of the bluemixUtility used TLS 1.0 when
+   sending request to Bluemix, it has now been updated to use
+   TLS 1.1 or 1.2
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty - Liberty Buildpack          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Update the bluemixUtility to use TLS    *
+   *                      1.1 or 1.2 instead of 1.0 when          *
+   *                      communicating with Bluemix              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Bluemix deprecated use of TLS 1.0 thus requiring an update to
+   the bluemixUtility to use the correct versions.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Modified the bluemixUtility to use TLS 1.1 or 1.2 when
+   communicating with Bluemix
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 8.5.5.10.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI62303
+   
+   
+ * REPORTED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0814
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-11
+   
+   
+ * CLOSED DATE
+   2016-05-12
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * FIXED COMPONENT ID
+   5724J0814
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

@@ -1,0 +1,152 @@
+Title: IBM JR52821: CANNOT LOG IN TO THE PROCESS CENTER FROM IBM INTEGRATION DESIGNER - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.5.6.0-WS-IID-IFJR52821 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Integration+Designer&fixids=8.5.6.0-WS-IID-IFJR52821&source=SAR]
+8.5.5.0-WS-IID-IFJR52821 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Integration+Designer&fixids=8.5.5.0-WS-IID-IFJR52821&source=SAR]
+8.5.7.0: IBM Integration Designer V8.5 Refresh Pack 7 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24041577]
+8.5.7.0: IBM Integration Designer V8.5 Refresh Pack 7 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24041578]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Integration Designer cannot to connect to Process Center
+   after Integration Designer restarts.
+   
+   PRODUCTS AFFECTED
+   Integration Designer
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Delete process applications and toolkits from the workspace and
+   restart integration Designer. After you re-import projects from
+   Process Center, open the Process Center perspective before you
+   shut down Integration Designer.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Integration Designer might show that logging in to
+   Process Center fails even though the correct credentials were
+   used. on some systems when process apps or toolkits are in the
+   workspace and the workbench is started in the Business
+   Integration view. This problem occurs because cookies are not
+   being sent back to the server when the Process Center URL is
+   called.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for v8.5.5 and v8.5.6 IBM Integration
+   Designer that correctly sets the cookies needed for
+   authentication.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR52821:
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2.Select APAR or SPR, enter JR52821, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR52821
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION DES
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9702
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-13
+   
+   
+ * CLOSED DATE
+   2015-04-02
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION DES
+   
+   
+ * FIXED COMPONENT ID
+   5725C9702
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

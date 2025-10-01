@@ -1,0 +1,191 @@
+Title: IBM PM80441: DEFAULT JOIN-COLUMN IS NOT BEING OVERRIDDEN BY THE @JOINCOLUMN ANNOTATION'S NAME PROPERTY - United States
+
+Text:
+  A FIX IS AVAILABLE
+8.5.0.2: WebSphere Application Server V8.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24034672]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the SQL for a named query is generated, the "name"
+   attribute of a @JoinColumn is ignored when the "table" attribute
+   is also specified. This issue is specific to  JPA 2.x only.
+   
+   
+   The following error may be noted
+   
+   ERROR: DB2 SQL Error: SQLCODE=-206, SQLSTATE=42703,
+   SQLERRMC=T1.OWNER_EMPNO, DRIVER=3.57.82 {prepstmnt 65007978
+   SELECT
+   t0.hwserial, t0.hwtype, t1.empno, t0.hwname, t2.empno,
+   t2.empname FROM
+   HWASSETS t0 INNER JOIN HWASSETSOWNERSHIP t1 ON t0.hwtype =
+   t1.HWTYPE AND
+   t0.hwserial = t1.HWSERIAL LEFT OUTER JOIN PEOPLE t2 ON
+   t1.OWNER_EMPNO =
+   t2.empno WHERE (t1.empno = ?) [params=?]} [code=-206,
+   state=42703]SQLCA
+   OUTPUT[Errp=SQLNQ075, Errd=-2145779603, 0, 0, 0, -10, 0] DB2 SQL
+   Error:
+   SQLCODE=-206, SQLSTATE=42703, SQLERRMC=T1.OWNER_EMPNO,
+   DRIVER=3.57.82
+   DB2 SQL Error: SQLCODE=-727, SQLSTATE=56098,
+   SQLERRMC=2;-206;42703;T1.OWNER_EMPNO, DRIVER=3.57.82 DB2 SQL
+   Error:
+   SQLCODE=-727, SQLSTATE=56098,
+   SQLERRMC=2;-206;42703;T1.OWNER_EMPNO,
+   DRIVER=3.57.82
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  try adding the following line to the preperties section of
+   the persistence.xml file
+   <property name="openjpa.Compatibility"
+   value="NonDefaultMappingAllowed=false"/>
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty Profile                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: JoinColumn annotation is ignored when   *
+   *                      mapping a unidirectional owned OneToOne *
+   *                      that is in a SecondaryTable.            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The OpenJPA runtime incorrectly ignores @JoinColumn name when
+   mapping a unidirectional owned OneToOne that is in a
+   SecondaryTable.
+   This problem only exists when running with a persistence.xml
+   that is set to 2.0 (version="2.0">).
+   For example:
+   @Entity
+   @SecondaryTable(name = "ParentSecondaryTable", pkJoinColumns =
+   { @PrimaryKeyJoinColumn(name = "idParent",
+   referencedColumnName = "idParent") })
+   public class Parent {
+   @Id
+   @GeneratedValue
+   int idParent;
+   String child_ref;
+   @OneToOne
+   @JoinColumn(name = "CHILD_REF", table =
+   "ParentSecondaryTable", referencedColumnName = "idChild")
+   PChild child;
+   }
+   The column "CHILD_REF" will be ignored and the runtime will
+   look for the Foreign Key in non-existent column
+   ParentSecondaryTable.CHILD_IDCHILD.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  With this fix, code has been added to OpenJPA to ensure the
+   JoinColumn annotation's name field is not ignored in a
+   unidirectional OneToOne mapping that is in a SecondaryTable
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.0.2. Please refer to the Recommended Updates page
+   for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM80441
+   
+   
+ * REPORTED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0814
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-11
+   
+   
+ * CLOSED DATE
+   2013-03-08
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM70566 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM70566]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * FIXED COMPONENT ID
+   5724J0814
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

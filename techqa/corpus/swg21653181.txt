@@ -1,0 +1,66 @@
+Title: IBM NetApp self-signed KMIP certificate SSL error - United States
+
+Text:
+kmip NetApp import cert ssl handshake ca unknown TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error: Can't connect to SSL service. 
+
+DIAGNOSING THE PROBLEM
+Trying to connect a NetApp storage device to TKLM server via SSL for disk encryption. 
+
+Generated a self-signed cert with OpenSSL and all seems well. 
+
+Imported the cert into TKLM and it is accepted fine. 
+
+However upon encryption setup or in the boot process of the new device fails: 
+> key_manager status
+Error: Can't connect to SSL service.
+
+TKLM_audit.log 
+--------------- 
+outcome=[result=successful]
+resource=[name=Certificate_List: [DeviceTypeID:8,
+
+outcome=[result=unsuccessful]
+message=Connection has been shutdown:
+javax.net.ssl.SSLHandshakeException:
+Received fatal alert: unknown_ca
+
+debug:
+----------
+com.ibm.TKLM.kmip.stub.SSLRequestProcessor
+ALL: dispatcher.process() threw an exception
+javax.net.ssl.SSLException: Connection has been shutdown:
+javax.net.ssl.SSLHandshakeException: Received fatal alert: unknown_ca
+...
+ALL: Server does not trust the client certificate. This may also occur
+if the database is unavailable or password is incorrect.
+...
+com.ibm.TKLM.kmip.KMIPMessage <init>
+ALL: Could not parse protocol version from request, setting response
+version to v1.0
+...
+Tag: Result Status (0x42007F), Type: Enumeration (0x05), Data:
+0x00000001 (Operation Failed)
+Tag: Result Reason (0x42007E), Type: Enumeration (0x05), Data:
+0x00000004 (Invalid Message)
+
+RESOLVING THE PROBLEM
+The "unknown_ca" is coming from NetApp. It means that NetApp does not trust TKLM's self-signed SSL server Certificate.
+
+Solution:
+- Use a certificate signed by customer's enterprise certificate authority (CA). 
+
+- Import the enterprise root certificate into TKLM
+
+- Import the TKLM self-signed SSL SERVER certificate into NetApp. 
+
+- Clear NetApp of any previous setup process attempts. ("key_manager setup").
+
+
+- You don't have to make changes to your DNS setup 
+
+- You don't have to import the enterprise root certificate info into NetApp as each NetApp client has its own cert
+
+- TKLM server only needs the enterprise root certificate and it trusts anything signed by that CA.

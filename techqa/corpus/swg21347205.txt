@@ -1,0 +1,57 @@
+Title: IBM Standard Error #7: 'Out of Memory.' - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User tries to update/run a Controller Excel Link report. User receives error message. 
+
+SYMPTOM
+Symptom 
+
+Standard Error
+Number: 7
+Source:
+Description: Exception of type System.OutOfMemoryException was thrown.
+
+CAUSE
+There are several potential causes for similar error messages. For more examples, search the IBM Technotes knowledgebase. 
+
+ 
+This IBM Technote shall specifically relate to the scenario where the 'key buffer' memory is full. 
+
+ * The Controller client sends information to the Controller server 
+ * The error is produced when the 'key buffers' (which are sent) are so large, that they are in fact larger than the amount of memory that is available at the time
+
+
+There are several potential causes for this:  * Scenario #1 - Spreadsheet is too complex for the system to cope with 
+ * Scenario #2 - Microsoft Excel session is running into a Microsoft Excel memory limitation limit.  * In early versions of Excel (for example Microsoft Excel 2000), the memory limit is 64Mb 
+    * In Excel 2002, the limit is increased to 128Mb 
+    * In Microsoft Office Excel 2003, the limit is increased to 1 gigabyte (1 Gb) 
+    * In Microsoft Office Excel 2007 and Excel 2010 32-bit, the limit is increased to 2 gigabyte (2 GB). 
+    * For more information, see Microsoft KB 313275
+   
+   
+
+ENVIRONMENT
+The problem could potentially affect any client device (even very powerful client devices), but it will especially affect client devices that have small/limited physical memory.
+
+
+
+RESOLVING THE PROBLEM
+Scenario #1 - Reduce the amount of data being fetched from the database (make the report smaller and/or more efficient) by using IBM-recommended report optimisation techniques (such as by using Optimise2/ERO). 
+
+ * For more information, see separate IBM Technotes #1347497 and 1347048.
+
+
+Scenario #2 - Upgrade to a later version of Microsoft Office. 
+RELATED INFORMATION
+#"Not enough memory" error messages when you copy formul [http://support.microsoft.com/kb/313275]
+1347497 - Controller 8.x Excel Report Performance Tips [http://www.ibm.com/support/docview.wss?uid=swg21347497]
+1347048 - What is Optimise2 (ERO / Enhanced Reporting O [http://www.ibm.com/support/docview.wss?uid=swg21347048]
+
+
+
+
+HISTORICAL NUMBER
+ 1033663

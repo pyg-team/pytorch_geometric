@@ -1,0 +1,143 @@
+Title: IBM IV74740: CREATE / CLONE WIDGETS IN RAPID SUCCESSION, MAY CAUSE A WIDGET WITH INCOMPLETE DATA. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the user creats and clones widgets in rapid succession,
+   sometimes we get a widget with incomplete data (the "mode" is
+   missing, and should typically be "view").
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  When the javascript widget object is created, we now check that
+   its mode exists, and if not go ahead and create it as
+   mode="view".
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Jazz for SM users                                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * DASH widget not able to load or save                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Fixed issue by provind fix as a part of DASH 3.1.2.1         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed issue by provind fix as a part of DASH 3.1.2.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV74740
+   
+   
+ * REPORTED COMPONENT NAME
+   JAZZ SM TIP DAS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04JD
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-01
+   
+   
+ * CLOSED DATE
+   2015-08-03
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  RAVE
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAZZ SM TIP DAS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04JD
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSY
+   UP

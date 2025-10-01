@@ -1,0 +1,181 @@
+Title: IBM PK54183: THE LOG INFORMATION FOR THE NON-ROOT USER PROFILE IS INCORRECT IN THE WEBSPHERE APPLICATION SERVER V6.0.X DOCUMENTATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The log information in the "Creating a profile as a root user
+   and assigning ownership to a non-root user" topic is incorrect
+   in the Information Center for WebSphere Application Server
+   Version 6.0.x. The log information in step 3 of this task is
+   relevant to Version 6.1, but not Version 6.0.x. In WebSphere
+   Application Server Version 6.0.x, the following directory
+   structure does not exist:
+   app_server_root/logs/manageprofiles/profile01
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  For WebSphere Application Server V6.0.x, a profile_name
+   subdirectory does not exist under the
+   WAS_HOME/logs/wasprofile path. Rather, these log files are
+   located under the PROFILE_HOME/logs directory.
+   
+   The logs directory is named app_server_root/logs/wasprofile
+   rather than app_server_root/logs/wasprofile/profile01.
+   
+   Instead of chown -R user1
+   app_server_root/logs/wasprofile/profile01, the path should read
+   chown -R user1 app_server_root/logs/wasprofile
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: This APAR affects users of WebSphere         *
+   *                 Application Server Version 6.0.x, who are    *
+   *                 creating a profile as a root user and        *
+   *                 assigning ownership of the profile to a      *
+   *                 non-root user. This APAR does not affect     *
+   *                 users of WebSphere Application Server V6.1   *
+   *                 who are completing the same task.            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The "Creating a profile as a root       *
+   *                      user and assigning ownership to a       *
+   *                      non-root user" topic says to change     *
+   *                      the ownership of a logs directory,      *
+   *                      which do not exist for Version 6.0.x.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The topic incorrectly tells users to change ownership of the
+   logs directory:
+   
+   3. Change the ownership of the logs directory for the
+   profile01 profile to the user1 non-root user to prevent
+   displaying log messages to the console.
+   
+   Linux, HP-UX, Solaris, AIX: Issue the following command:
+   chown -R user1 app_server_root/logs/wasprofile/profile01
+   
+   Windows: Follow instructions in the Windows documentation to
+   grant user1 access to the following directory:
+   C:\app_server_root\logs\wasprofile\profile01
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The step that discusses changing ownership of the logs
+   directory and references to the logs directory have been
+   removed from the Version 6.0.x documentation.
+   
+   Date that the information will be available externally to
+   customers:
+   Periodically, we update the documentation in our
+   information centers. Thus, the changes might have been made
+   before you read this text. To access the latest on-line
+   documentation, complete the following steps:
+   1. Go to the product library page at the following Web site:
+   http://www.ibm.com/software/webservers/appserv/library [http://www.ibm.com/software/webservers/appserv/library]
+   2. Locate the appropriate version and product.
+   3. Under "Documentation - Information center format", click
+   the appropriate link. In most cases, the WebSphere Application
+   Server documentation is available in both an online version
+   and in an IBM Eclipse Help System version. For more
+   information on the IBM Eclipse Help system, see the following
+   Web site: http://www.alphaworks.ibm.com/tech/iehs [http://www.alphaworks.ibm.com/tech/iehs]
+   
+   If you install the IBM Eclipse Help System, you must also
+   install the appropriate help system plug-in for the WebSphere
+   Application Server documentation in its eclipse/plugins
+   directory. The plug-in is available from our product library
+   page.
+   
+   The modified documentation will be available in the December
+   2007 update to the information centers.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK54183
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60I
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-05
+   
+   
+ * CLOSED DATE
+   2007-10-10
+   
+   
+ * LAST MODIFIED DATE
+   2007-11-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

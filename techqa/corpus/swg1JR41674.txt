@@ -1,0 +1,143 @@
+Title: IBM JR41674: WARNING MESSAGE FOR COGNOS CACHE CLEARING TASK FILLING UP SYSTEMOUT.LOG - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Business Monitor V7.5.1.0 Interim Fix JR42840 [http://www-01.ibm.com/support/docview.wss?uid=swg24033176]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On a server where Cognos Business Intelligence is running,
+   the following message is periodically written to the
+   SystemOut.log file, as a warning message:
+   
+   CognosConfigF W
+   com.ibm.wbimonitor.admin.command.cognos.CognosConfigForCacheClea
+   ring runCognosCacheClearingTask  about to release
+   
+   The frequency with which the message is logged is determined by
+   the global cache clearing interval in Cognos BI and the interval
+   configured in the Monitor scheduled service for Cognos BI cube
+   cache clearing (see this page in the Information Center for
+   more details:
+   http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5mx/topic/c [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5mx/topic/c]
+   om.ibm.wbpm.mon.admin.doc/data/cognos_cubecaching_manage.html);
+   each time the cube cache clearing task is executed, the message
+   is logged.
+   
+   This message should not be logged as a warning during normal
+   operation; instead, it should only be logged as part of tracing
+   (component com.ibm.wbimonitor.admin.command.cognos), so that it
+   does not needlessly fill up SystemOut.log (which could affect
+   the ability to diagnose real issues that may occur, in addition
+   to simply wasting disk space, depending on the configured
+   maximum size of the log).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This problem exists in IBM Business Monitor Version 7.5.1.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem is resolved in IBM Business Monitor V7.5.1.0
+   Interim Fix JR41464 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR41464], available at:
+   
+   http://www.ibm.com/support/docview.wss?uid=swg24032100 [http://www.ibm.com/support/docview.wss?uid=swg24032100]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR41674
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB BUS MONITOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724M2400
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-13
+   
+   
+ * CLOSED DATE
+   2012-03-07
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB BUS MONITOR
+   
+   
+ * FIXED COMPONENT ID
+   5724M2400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP

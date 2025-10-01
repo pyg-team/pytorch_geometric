@@ -1,0 +1,24 @@
+Title: IBM Enabling the LSW_EM_TASK_HISTORY table for IBM Business Process Manager (BPM) and WebSphere Lombardi Edition (WLE) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you enable the LSW_EM_TASK_HISTORY database table to gather additional information about task execution? 
+
+ANSWER
+By default, the LSW_EM_TASK_HISTORY is disabled so the LSW_EM_TASK_HISTORY table is empty. This table collects additional information that is useful in determining why scheduled tasks do not fire or fail. Complete the following steps to enable this table: 
+
+ 1. Locate the 80EventManager.xml file.
+    
+    
+ 2. Uncomment the <task-execution-listener> line, which is typically near the bottom of the file.
+    
+    
+ 3. Restart the server.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced General AIX, Linux, Windows 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Express General Linux, Windows 8.0.1, 8.0, 7.5.1, 7.5 Business Integration WebSphere Lombardi Edition General AIX, Linux, Windows 7.2, 7.1, 6.2.2 
+PRODUCT ALIAS/SYNONYM
+ BPM WLE

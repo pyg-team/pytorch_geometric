@@ -1,0 +1,88 @@
+Title: IBM Security Bulletin: Security Bulletin: Vulnerabilities in OpenSSL and ReDoS vulnerability in semver module affect IBM® SDK for Node.js™  in IBM Bluemix  (CVE-2016-2107, CVE-2016-2105, CVE-2015-8855) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ OpenSSL vulnerabilities were disclosed on May 3, 2016 by the OpenSSL Project. OpenSSL is used by IBM SDK for Node.js. IBM SDK for Node.js has addressed the applicable CVEs. The "semver" module is vulnerable to regular expression denial of service (ReDoS) when extremely long version strings are parsed. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2016-2107 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2107]
+DESCRIPTION: OpenSSL could allow a remote attacker to obtain sensitive information, caused by an error when the connection uses an AES CBC cipher and the server support AES-NI. A remote user with the ability to conduct a man-in-the-middle attack could exploit this vulnerability via the POODLE (Padding Oracle On Downgraded Legacy Encryption) attack to decrypt traffic.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/112854 [https://exchange.xforce.ibmcloud.com/vulnerabilities/112854] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:N) 
+
+CVEID: CVE-2016-2105 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2105]
+DESCRIPTION: OpenSSL is vulnerable to a heap-based buffer overflow, caused by improper bounds checking by the EVP_EncodeUpdate() function. By sending an overly long argument, a remote attacker could overflow a buffer and execute arbitrary code on the system or cause the application to crash.
+CVSS Base Score: 5.6
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/112855 [https://exchange.xforce.ibmcloud.com/vulnerabilities/112855] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L) 
+
+CVEID: CVE-2015-8855 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-8855]
+DESCRIPTION: The Node.js semver module is vulnerable to a denial of service, caused by an error in the regular expression implementation. An attacker could exploit this vulnerability using a regular expression to cause the application to hang.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/112562 [https://exchange.xforce.ibmcloud.com/vulnerabilities/112562] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P) 
+
+AFFECTED PRODUCTS AND VERSIONS
+CVE-2016-2107 affects IBM SDK for Node.js v1.1.1.0 and earlier releases.
+All listed vulnerabilities affect IBM SDK for Node.js v1.2.0.11 and earlier releases. 
+All listed vulnerabilities affect IBM SDK for Node.js v4.4.3.0 and earlier releases.
+All listed vulnerabilities affect IBM SDK for Node.js v6.0.0.0.
+The corresponding open-source versions are v0.10.44, v0.12.13 and v4.4.3, respectively.
+
+To check which version of the Node.js runtime runtime your Bluemix application is using, navigate to the "Files" menu item for your application through the Bluemix UI. In the "logs" directory, check the "staging_task.log". 
+
+You can also find this file through the command-line Cloud Foundry client by running the following command:
+
+cf files <appname> logs/staging_task.log
+
+Look for the following lines:
+
+-----> IBM SDK for Node.js Buildpack _______
+
+If the Node.js engine version is not v0.10.45, v0.12.14 or v4.4.4, your application may be vulnerable.
+
+
+REMEDIATION/FIXES
+The fixes for these vulnerabilities are included in IBM SDK for Node.js v1.1.1.1, v1.2.0.12, v4.4.4.0 and subsequent releases. 
+
+
+To upgrade to the latest version of the Node.js runtime, please specify the latest Node.js runtime in your package.json file for your application:
+
+"engines": {
+"node": ">=0.10.45"
+},
+or 
+"engines": {
+"node": ">=0.12.14"
+},
+or 
+"engines": {
+"node": ">=4.4.4"
+},
+
+You will then need to restage (or re-push) your application using the IBM SDK for Node.js Buildpack v3.4. 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] Node.js 0.10.45 [http://nodejs.org/en/blog/release/v0.10.45/] 
+Node.js 0.12.14 [http://nodejs.org/en/blog/release/v0.12.14/] 
+Node.js 4.4.4 [https://nodejs.org/en/blog/release/v4.4.4/] CHANGE HISTORY
+ May 27 2016: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

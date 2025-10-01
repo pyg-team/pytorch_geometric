@@ -1,0 +1,133 @@
+Title: IBM IV99656: APM 8.1.4 MIN SERVER CRASHES DUE TO WAS AGENT - United States
+
+Text:
+  READMES ARE AVAILABLE
+8.1.4.0-IBM-APM-WAS-AGENT-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=isg400003506]
+8.1.4.0-IBM-APM-WAS-AGENT-IF0002 [http://www-01.ibm.com/support/docview.wss?uid=isg400003603]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  APM 8.1.4 min server crashes often due to WAS agent
+   
+   Debug :
+   
+   1.enable the AAR file(was agent ):
+       1.1 set logging for AAR
+          Enable the logging of AARs by setting the following in
+   the
+   tfe.cfg ( for linux /home/ibm/apm/agent/localconfig/yn) file:
+          ENABLE_AAR_LOGGING=true
+      1.2 check log file :
+          /opt/ibm/apm/agent/lx8266/yn/aar.txt
+    2. run the pdcollector tool to collect logs .
+   
+   for the WAS agent side,we got the result as below:
+   From the latest AAR files,we have another investigate, we have
+   different handle for different components type  of the
+   transaction, for the customer's env,the component type such as
+   Http Request  have the large url which including the query
+   parameters. AAR key context is as below:
+   "interactionContext": {
+       "componentName": "HTTP Request",
+       "serverName": "msnurmid11.ussco.com",
+       "transactionName":
+   
+   The data is exact .If the server side need the agent not
+   include the query parameters to keep the db capacity,We will
+   change for that. next to do :
+   we need to do the code change and make test regression
+   
+   we will make a patch with was agent IFix01(07.30.14.01)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Fixed
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV99656
+   
+   
+ * REPORTED COMPONENT NAME
+   MONITORING UI V
+   
+   
+ * REPORTED COMPONENT ID
+   5725U05UI
+   
+   
+ * REPORTED RELEASE
+   814
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-06
+   
+   
+ * CLOSED DATE
+   2017-12-18
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R813 PSY
+   UP

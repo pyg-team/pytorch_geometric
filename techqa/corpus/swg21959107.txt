@@ -1,0 +1,51 @@
+Title: IBM Security Bulletin: Vulnerability with Diffie-Hellman ciphers may affect server products in WebSphere Dynamic Process Edition (CVE-2015-4000) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The LogJam Attack on Diffie-Hellman ciphers (CVE-2015-4000) may affect some configurations of IBM WebSphere Application Server Full Profile that is shipped as a component of server products in WebSphere Dynamic Process Edition. The IBM HTTP Server used by WebSphere Application Server is not affected. 
+
+VULNERABILITY DETAILS
+CVEID:CVE-2015-4000 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-4000]
+DESCRIPTION:The TLS protocol could allow a remote attacker to obtain sensitive information, caused by the failure to properly convey a DHE_EXPORT ciphersuite choice. An attacker could exploit this vulnerability using man-in-the-middle techniques to force a downgrade to 512-bit export-grade cipher. Successful exploitation could allow an attacker to recover the session key as well as modify the contents of the traffic. This vulnerability is commonly referred to as "Logjam".
+CVSS Base Score: 4.3
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/103294 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103294]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+WebSphere Dynamic Process Edition 6.1, 6.2, 7.0 
+
+If you are using an unsupported version, IBM strongly recommends to upgrade.
+
+REMEDIATION/FIXES
+Please consult the following security bulletins for vulnerability details and information about fixes. 
+
+ * Security Bulletin: Vulnerability with Diffie-Hellman ciphers may affect IBM WebSphere Application Server (CVE-2015-4000) [http://www.ibm.com/support/docview.wss?uid=swg21957980] 
+ * Security Bulletin: Multiple vulnerabilities in IBM Java SDK (CVE-2015-0478, CVE-2015-0488, and CVE-2015-1916) and with Diffie-Hellman ciphers (CVE-2015-4000) may affect IBM Integration Designer (IID) and WebSphere Integration Developer (WID) [http://www.ibm.com/support/docview.wss?uid=swg21961812]
+
+WebSphere Application Server is used by WebSphere Process Server, WebSphere Business Services Fabric, and WebSphere Business Monitor. 
+The following setting in java.secruity allows you to reenable ciphers using DH and DHE key exchange that you had to disable as a temporary workaround: 
+jdk.tls.disabledAlgorithms=SSLv3, RC4, DH keySize <768 WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] ACKNOWLEDGEMENT
+Reported to IBM by The WeakDH team athttps://weakdh.org [https://weakdh.org] 
+
+CHANGE HISTORY
+ 2015-06-03: inital version published
+2015-06-26: explaining new Java setting replacing the workaround
+2015-07-30: added link for WebSphere Integration Developer 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

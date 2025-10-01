@@ -1,0 +1,60 @@
+Title: IBM BMXAA0884E - The entered path \\<server_name>\Maximo\DOCLINKS\Attachments is not a directory - United States
+
+Text:
+TPAEDOCLINK maximo unc path doclinks TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides info about Doclinks on a UNC Path configuration with issues to create new attachments 
+
+SYMPTOM
+Working with Attached Documents may bring you scenario where you get an error message like this, in the 'Create a File Attachment' dialog box :
+
+System Message
+BMXAA0884E - The entered path \\<server_name>\Maximo\DOCLINKS\Attachments is not a directory [More Information]
+
+
+And if you try to modify the Default File Path in the 'Manage All Document Folders' dialog box, you get :
+
+The specified path \\<server_name>\Maximo\DOCLINKS\Attachments is not valid. The specified patch must be a subdirectory of the system-defined top-level doclink directory.
+
+
+
+RESOLVING THE PROBLEM
+About the error "The entered path is not a directory" regarding attached documents, please check the following items.
+
+>> If you access an application with DOCLINKS enabled (Work Order Tracking for example) - Select Action - Attachment Library/Folders - Manage Folders - is the path to the folders still correct?
+
+You may need to go over configuration settings and network permissions, for valid network account with access to the network share.
+
+Considering that if you try to view an existing attached document shows correctly and that you are aware that attached documents are case sensitive, please check :
+
+1- Check whether the user that starts your services have full rights to the folder where the documents are being stored.
+
+2- Also, all the IBM Windows services below need to be started as Network Domain admin Log On as user.
+
+> IBM HTTP Administration
+> IBM HTTP Server
+> IBM WebSphere Application Server ctgCellManager
+> IBM WebSphere Application Server Nodeagent
+
+Make sure the NodeAgent service is set to run as a domain user ID with "Run as Part of the Operating System" permissions (so that the network user can see the full network).
+
+
+One possible cause for this issue is that IBM WebSphere windows services are started as Local Systems account , and that the IBM HTTP Server 8.5 service is running an authorized network domain account.
+
+Make sure that all IBM services are started with authorized network domain accounts.
+
+Click the Windows Start button and navigate to Settings > Control Panel > Administrative tools > Services.
+
+In a Test environment, stop both services bellow :
+
+> IBM WebSphere Application Server ctgCellManager
+> IBM WebSphere Application Server Nodeagent
+
+Then you can right click on each of them, and select Properties.
+
+On the Properties dialog box, under the Log On tab, make sure that the logon account is set to a valid network domain, rather than Local System account. 
+
+This consists of the domain administrator logging in to the local machine and providing rights for the domain user to run the Windows service.
+
+After this change you can restart Maximo server, then retest this issue scenario, trying to add new attachments in Maximo.

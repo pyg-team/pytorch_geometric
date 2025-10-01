@@ -1,0 +1,119 @@
+Title: IBM PM26589: DATABASE CONNECTION HANGS AND WAIT TIMEOUT EXCEPTIONS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS RETURNED (APAR CANNOT BE RESOLVED WITHOUT ADDITIONAL INFO FROM IBM OR CUSTOMER.)
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  JDBC database connection requests hang or time out waiting
+   for a connection.  A trace shows that the connection pool is at
+   MAX connections while the actual pool snapshot shows no
+   connections exist and waiters accumulating:
+   
+   
+   Total number of connections: 6 (max/min 6/6)
+   The waiter count is 21
+   
+   Shared Connection information:
+     No shared connections
+   
+   Free Connection information:
+     No free connections
+   
+   UnShared Connection information
+     No unshared connections
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  APAR PM26589 is being closed RET because the customer has not
+   come back with test results after many followups.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM26589
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED RET
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-12
+   
+   
+ * CLOSED DATE
+   2011-01-31
+   
+   
+ * LAST MODIFIED DATE
+   2011-01-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

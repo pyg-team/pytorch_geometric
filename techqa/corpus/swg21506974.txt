@@ -1,0 +1,65 @@
+Title: IBM Setting Timeout and Retry Count correctly for HTTP import bindings - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When calling a service with a HTTP import binding, how do I set timeout and retry values according to my needs ? 
+
+ANSWER
+Introduction 
+
+From an SCA (Service Component Architecture) component, a service could be called via the HTTP protocol. In SCA terminology, in this case, a HTTP import binding is defined to access this service.. 
+
+For example, in a BPEL process, with an Invoke activity, this service can be called. An other possibility is to call this service from a mediation module. 
+
+As with the HTTP protocol, the delivery is not assured, after a timeout, the service request could be sent again. This Technote describes how you can configure timeout and retry values of the HTTP import binding to match your needs. 
+
+This Techdoc applies to the following products and versions: 
+
+ * WebSphere Process Server v6.2 with APAR JR39899 or higher, v7.0.0.4 or higher 
+ * WebSphere Enterprise Service Bus v6.2 with APAR or JR39899 higher, v7.0.0.4 or higher, v7.5.0.1 or higher 
+ * WebSphere Business Process Manager v7.5.0.1 or higher
+
+
+This Techdoc describes the situation for WebSphere Process Server v7.0.0.4 but applies in the same way to the other products mentioned above. For more information about the HTTP binding see the InfoCenters of the products used. 
+
+Setting HTTP import timeout and retry values in WebSphere Integration Developer 
+
+In WebSphere Integration Developer, these two options are called Read timeout and Number of retries. In the file <HTTP Import name>.import, the options are stored with the XML elements readTimeOut and numberOfRetries. 
+
+Timeout and retry value can be specified on two levels: 
+
+ 1. On binding level for all methods of the binding
+    To display and change the values, go into the Assembly Diagram, select the HTTP import binding and display the properties. There, under Binding, Advanced Configuration, select the tab Performance. 
+ 2. Specifically for a method.
+    To display and change the values, go into the Assembly Diagram, select the HTTP import binding and display the properties. There, under Binding, Method Bindings, select the correct method. Then, under the tab Performance, you can access the values of a specific method.
+
+
+If for one option and one method, both the binding value and the method value are specified, then the method value takes precedence. If you already specified a value for one of these options, in WebSphere Integration Developer, you cannot "unset" this value anymore. Instead, open the import file with an XML editor and remove the specific line containing this option from the import file. 
+
+Setting HTTP import timeout and retry values in the Integration Solution Console 
+
+After a SCA module has been deployed, with the Integration Solution Console of the runtime environment, the actual values of the read timeout and the number of retries can be changed: 
+
+Under Applications, SCA modules, you select the SCA module containing the HTTP binding of interest. Then, under Module components, you open Imports, then open the HTT binding of interest and there, under Binding, you select HTTP. Here again, you can view and update the values on binding scope and method scope. 
+
+The options of interest are Number of Connection retries near the beginning of the page and Response Read Timeout at the end of the page. 
+
+Runtime behaviour of HTTP import timeout and retry values 
+
+With the HTTP binding, the request is sent out via HTTP. Then, the caller waits until the read timeout for a reply. In case no reply is received within this time and the number of retries is larger 0, then, the request is sent again. In case no reply is returned within the read timeout, this process of resending starts again until the number of retries is exhausted. 
+
+Please observe that besides the HTTP read timeout, there are other timeouts, for example the HTTP transport channel timeout and a database transaction timeout. These other timeouts control the overall time waiting for a reply. So, in case the sending of requests and retrying is not completed and the database transaction timeout occurred, then the transaction is aborted even if the number of retries is not exhausted. 
+
+With other words, the maximum time waiting for the completion of the HTTP service request is the minimum of the following values: 
+
+ * 1 plus the number of retries multiplied by the read timeout 
+ * database transaction timeout 
+ * HTTP channel timeout
+
+
+In case the transaction is aborted containing the HTTP service invocation, the transaction could be retried which would mean that the HTTP service would be called again with the behaviour described above.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Enterprise Service Bus 7.5, 7.0, 6.2 Business Integration IBM Business Process Manager Advanced Not Applicable 7.5

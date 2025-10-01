@@ -1,0 +1,22 @@
+Title: IBM Virtual System (vSys) Pattern Differences - United States
+
+Text:
+vSys.Calssic; vSys.Next; vSys Classic; vSys Next; patterns TECHNOTE (FAQ)
+
+QUESTION
+ Using IBM Cloud Orchestrator, what is the difference between Virtual System Classic and Virtual System Next patterns? 
+
+ANSWER
+Before answering this question, here is an explanation of the difference between vSys and vApp Patterns. 
+
+ * vSys Pattern
+   A vSys pattern is a topology-centric definition of a multi-tier middleware composition. It is often used in situations where you need to describe a system topology that you want to deploy -- deployment of your products onto multiple instances or systems. There are virtual images available for the product that you want to include in the topology along with add-ons and script packages that help you to configure products. 
+ * vApp Pattern:
+   A vApp pattern is an application and service-level-agreement (SLA)-centric definition that includes application components, such as Java™ Platform Enterprise Edition (Java EE) application archives like EAR and WAR files. It has a corresponding SLA, such as a response time less than three seconds. You do not have to define a topology and other descriptive elements in the virtual application pattern.
+
+
+Difference between vSys Classic and vSys Next patterns 
+
+Virtual system patterns that were built before PureApplication System 2.0 are now referred to as classic virtual system (vSys) patterns. vSys Next patterns are built on PureApplication System 2.0. The new virtual system patterns provide many enhancements to offer richer lifecycle management functionality.
+
+Refer to the What's new for virtual system patterns in Pure Application System 2.0 [http://www.ibm.com/developerworks/websphere/library/techarticles/1412_apte/1412_apte.html] document for details on the specifics of vSys.Classic and vSys.Next.

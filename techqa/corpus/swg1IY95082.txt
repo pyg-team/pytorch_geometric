@@ -1,0 +1,206 @@
+Title: IBM IY95082: FAILURE TO RESERVE SWAP SPACE ERROR ENCOUNTERED WHEN RUNNING OMNIBUS 7.X NCO_DBINIT OR NCO_OBJSERV ON HP-UX 11I - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using Omnibus 7.0 or Omnibus 7.1 on HP-UX 11i systems,
+   administrators may encounter an error when running
+   $OMNIHOME/bin/nco_dbinit or $OMNIHOME/bin/nco_objserv commands,
+   with an error indicating a failure to reserve swap space
+   necessary for the application.    Provided one is able to
+   confirm there is sufficient available and reserved swap space
+   available on the system (as demonstrated by the output of the
+   command 'swapinfo -tam'), the error may be the result of an
+   inavailability of virtual memory in the memory quadrant being
+   requested by the application.    While an operating system
+   resource error, the impacted Omnibus components should be
+   modified to set a flag on the impacted binaries at build time to
+   avoid this problem.
+   
+   Association with this APAR may be confirmed by running tusc
+   capture of the nco_dbinit or nco_objserv command while in
+   process and verifying that an "ERR#12 ENOME" error is received.
+   One may also request technical support assistance in confirming
+   this error by raising a PMR with IBM technical support.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Two independent workarounds exist for this issue:
+   
+   #1:   Reduce the "memstore" memory storage allocation value for
+   the Objectserver before running $OMNIHOME/bin/nco_dbinit.   This
+   is done by editing the following line in the
+   $OMNIHOME/etc/system.sql
+   file to include reduced values where needed for the hard and
+   soft limits of memory allocation.  Recommend backing up original
+   version of this file before modification.
+   
+   create memstore table_store persistent hard limit xxxM soft
+   limit xxxM;
+   
+   Note that tuning may be necessary to determine the optimal
+   setting for the environment.  Recommend reducing values
+   incrementally until nco_dbinit command is successful.  Questions
+   regarding impact of this change on Objectserver sizing should be
+   directed to IBM technical support.
+   
+   
+   #2:   Operating system may be reconfigured to allocate memory
+   from a different quadrant of memory address space, when
+   insufficient memory is available in the default requested
+   quadrant.  This is done using the chatr command and is issued to
+   each binary which will be granted this access.   For example:
+   
+   chatr +q3p enable $OMNIHOME/bin/hpux11/nco_dbinit
+   chatr +q3p enable $OMNIHOME/bin/hpux11/nco_objserv
+   
+   Note that any operating system changes should be reviewed with
+   the system's administrator and undertaken with caution if
+   running other applications or in a production environment.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: On HP-UX the following error might occur     *
+   *                 when running nco_dbinit:                     *
+   *                                                              *
+   *                 Sun Feb 11 13:52:21 2007 Error:              *
+   *                 E-DBI-002-001: Failed to reserve swap space  *
+   *                 for region in file                           *
+   *                 /opt/netcool/omnibus/etc/system.sql at or    *
+   *                 near table_store on line 2 of statement      *
+   *                 'create memstore table_store persistent hard *
+   *                 l...' Sun Feb 11 13:52:21 2007 Fatal:        *
+   *                 F-DBI-002-008: Failed to process file:       *
+   *                 Failed to reserve swap space for region      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: By default, only 1 gigabyte of virtual  *
+   *                      memory is reserved for private data in  *
+   *                      users processes. In addition, the       *
+   *                      ObjectServer requires continuous memory *
+   *                      for its stores.                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Using the chatr command, 2G of private data can be made
+   available for the ObjectServer.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Another gigabyte of memory can be made available using the
+   chatr command. See the HP-UX manual on chatr for more
+   information. Before executing chatr, the Object Server should
+   be shut down and the binaries backed up.
+   
+   On version 7.0.*:
+   
+   chatr +q3p enable /bin/hpux11/nco_dbinit chatr +q3p enable
+   /bin/hpux11/nco_objserv
+   
+   On version 7.1.*
+   
+   chatr +q3p enable /platform/hpux11/bin/nco_dbinit chatr +q3p
+   enable /platform/hpux11/bin/nco_objserv
+   
+   Date of Release: Fix Pack Name: n/a
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY95082
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-02-19
+   
+   
+ * CLOSED DATE
+   2007-05-10
+   
+   
+ * LAST MODIFIED DATE
+   2007-05-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

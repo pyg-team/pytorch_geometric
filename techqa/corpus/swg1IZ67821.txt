@@ -1,0 +1,155 @@
+Title: IBM IZ67821: TEP NOT DISPLAYING DATA IN LARGE VMWARE ENVIRONMENTS WHILE RUNNING SITUATIONS AND HISTORICAL DATA COLLECTION. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring for Virtual Servers: VMware VI 6.2.1-TIV-ITM_VMWVI-IF0008 [http://www-01.ibm.com/support/docview.wss?uid=swg24028098]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   
+   IBM Tivoli Monitoring for Virtual Servers: VMware VI 6.2.1
+   
+   Problem Description:
+   
+   In large VMware environments, if the VMware agent is configured
+   to run situations and historical data collection, requests from
+   the TEP might time out before the agent responds with data.
+   The result is most or all of the views in a workspace will be
+   blank.  This is after the TEP does show data for the first 5 to
+   15 minutes after starting the agent.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   ***
+   * USERS AFFECTED: VMware VI Agent users monitoring large VMware
+   *                 environments (>100 hosts or >1000 VMs).
+   ****************************************************************
+   ***
+   * PROBLEM DESCRIPTION:  In large VMware environments, if the
+   VMware
+   * agent is configured to run situations and historical data
+   * collection, requests from the Tivoli Enetrprise Portal might
+   time
+   * out before the agent responds with data.  The result is most
+   or all
+   * of the views in a workspace will be blank.  This occurs after
+   the
+   * Tivoli Enterprise Portal shows data for the first 5 to 15
+   minutes
+   * after starting the agent.  The agent cache is now used, in
+   * addition to the data provider cache.
+   ****************************************************************
+   ***
+   * RECOMMENDATION: Install Interim Fix
+   6.2.1-TIV-ITM_VMWVI-IF0005.
+   ****************************************************************
+   ***
+   The problem is resolved in 6.2.1-TIV-ITM_VMWVI-IF0005.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   
+       | interim fix | 6.2.1-TIV-ITM_VMWVI-IF0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ67821
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF VMWARE VI
+   
+   
+ * REPORTED COMPONENT ID
+   5724L92VI
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-11
+   
+   
+ * CLOSED DATE
+   2010-03-05
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMF VMWARE VI
+   
+   
+ * FIXED COMPONENT ID
+   5724L92VI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R621 PSY
+   UP

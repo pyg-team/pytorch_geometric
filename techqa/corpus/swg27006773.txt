@@ -1,0 +1,18 @@
+Title: IBM MQLink for SAP R/3 and WebSphere Data Interchange - United States
+
+Text:
+SAP MQLink MQSeries WMQ websphere mq AIX windows WHITE PAPER
+
+ABSTRACT
+ This document explains how to exploit WebSphere MQSeries and the MQSeries Link for SAP R/3 to avoid the need for files. 
+
+CONTENT
+There are two files associated with this topic. The PDF document describes the MQSeries Link for SAP R/3. The zip file contains 'C' and Windows 'dll' files that are Exits for the MQ Link for SAP R/3 (inbound and outbound servers). They need to be installed in the correct MQ Link directories and the MQ Link for SAP R/3 config should be updated.
+
+WDI32_MQLINK.pdf [/support/docview.wss?uid=swg27006773&aid=2] [/support/docview.wss?uid=swg27006773&aid=1]
+
+
+WDI32_MQLINK_UE_03June2003.zip [/support/docview.wss?uid=swg27006773&aid=4] [/support/docview.wss?uid=swg27006773&aid=3]
+
+ORIGINAL PUBLICATION DATE
+ 2005/11/23

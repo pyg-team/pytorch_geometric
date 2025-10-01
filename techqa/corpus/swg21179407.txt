@@ -1,0 +1,25 @@
+Title: IBM Maximum number of connections to the database - United States
+
+Text:
+increase connections database broker TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM Integration Bus (IIB) or WebSphere Message Broker (WMB) broker database has reached the maximum number of connections. Is it possible to shutdown the broker database and change the number of connections and then restart the database? If not what are the steps to increase the number of connections. 
+
+RESOLVING THE PROBLEM
+You must stop the broker. The proper method for increasing the number of connections on the database is as follows: 
+
+ 1. Stop the broker 
+ 2. Shutdown the database 
+ 3. Change the max numbers of connection property on the Database 
+ 4. Restart the database 
+ 5. Start the broker
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Bus Database 9.0 All Editions 
+HISTORICAL NUMBER
+ 25306 075 724 
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

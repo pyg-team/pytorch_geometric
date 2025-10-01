@@ -1,0 +1,21 @@
+Title: IBM Verifying a batch incorrectly reports no problems found in IBM Datacap Taskmaster Capture - United States
+
+Text:
+problems found verify TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When verifying a batch, Taskmaster Client reports No Problems Found, even though there are problems with documents in the batch. 
+
+CAUSE
+If filters are not set up for the Verify task, Taskmaster does not know which documents are problem documents and will not report any problems documents to show in verification.
+
+RESOLVING THE PROBLEM
+Instructions on how to set up the filters: 
+
+ 1. Go to Setting > Workflow. 
+ 2. Drop down Main Job and then highlight Verify. 
+ 3. Hit setup. 
+ 4. In the Verify setup screen go to File > Task Settings. 
+ 5. Click on the Filters tab. 
+ 6. Highlight the appropriate Page Type, make sure Level is on Page and set Property to Status. 
+ 7. Set Problem Value to 1 and then hit Add.

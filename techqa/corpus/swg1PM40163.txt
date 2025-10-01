@@ -1,0 +1,159 @@
+Title: IBM PM40163: PE58520-F007 DWW838I IXGWRITE UNDOLOG RC 00000008 RSN 00000868 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PE58520-F007
+   After applying PTF UK58520 for APAR PM16626 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM16626] , CICS VR users
+   which heavily perform batch logging to DASDONLY logstreams
+   can experience a performance slowdown in their batch jobs
+   following message:
+   .
+   DWW838I date time A TEMPORARY ERROR CONDITION OCCURRED DURING
+           SYSTEM LOGGER OPERATION IXGWRITE FOR LOG STREAM
+           &hlq..UNDOLOG . SYSTEM LOGGER RETURN CODE 00000008
+   REASON CODE 00000868
+   .
+   If a logstream is temporary unavailable at VSAM batch logging,
+   CICS VR expands internal buffers in the CICSVR address space
+   to keep REDOs and UNDOs.  In some cases this can lead to extra
+   wait time.
+   .
+   Additional Symptom(s) Search Keyword(s): KIXREVWJB
+   IXGRSNCODESTAGINGDSFORMAT performance waits hangs VSAM Recovery
+   log DASD ONLY delay allocate staging
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: This APAR affects CICS VR 4.3 users that     *
+   *                 strongly use CICS VR Batch Logging with      *
+   *                 DASD-only logstreams and fixes APAR PM16626 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM16626]  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If a logstream is temporary unavailable *
+   *                      at VSAM batch logging, CICS VR expands  *
+   *                      internal buffers in CICS VR address     *
+   *                      space to keep REDOs and UNDOs. In some  *
+   *                      cases this can lead to extra wait time. *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The APAR fixes PM16626 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM16626].
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM40163
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS VSAM RECOV
+   
+   
+ * REPORTED COMPONENT ID
+   5655P3000
+   
+   
+ * REPORTED RELEASE
+   430
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-26
+   
+   
+ * CLOSED DATE
+   2011-06-02
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK68395
+   
+   
+
+MODULES/MACROS
+ *     DWW1RMIB DWW3MROE DWW3RMMB DWW3RMRD
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS VSAM RECOV
+   
+   
+ * FIXED COMPONENT ID
+   5655P3000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R430 PSY UK68395 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK68395]
+   UP11/06/08 P F106
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

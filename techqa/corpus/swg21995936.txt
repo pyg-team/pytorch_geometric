@@ -1,0 +1,32 @@
+Title: IBM CodeModules folder not found error with IBM Enterprise Records (IER) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During an IER installation when running the Configure Workflows task an error is thrown by the IER Configuration Tool stating that the CodeModules folder required cannot be found in IBM FileNet P8 Content Engine Object Store (OS). 
+
+SYMPTOM
+ 
+
+The following error appears:
+
+The requested item was not found. Folder /CodeModules not found.
+
+
+CAUSE
+ 
+
+This issue occurs after using the Composite Platform Installation Tool (CPIT) which does not create the CodeModules folder required by IER during Content Platform Engine (CPE) installations. 
+
+Manual object store creation includes this folder by default so this issue does not occur. It should also be noted that other applications which depend on this folder (eg. IBM Case Manager) have a verification process to ensure this folder exists. IER currently does not have this feature.
+
+
+ENVIRONMENT
+IER 5.2.0 
+
+CPE 5.2.1
+
+
+RESOLVING THE PROBLEM
+The issue is resolved by recreating the FPOS object store and rerunning the FPOS configuration tasks.

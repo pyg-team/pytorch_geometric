@@ -1,0 +1,231 @@
+Title: IBM IY90240: MTTRAPD IGNORES CERTAIN SYSUPTIME.0 FOR V2 TRAPS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  the probe will only use the last sysUptime.0 in v2 trap varbind
+   list, others are ingored.
+   
+   Current Behaviour
+   -----------------
+   mttrapd_6 ignores some sysUptime.0 varbinds for v2 traps
+   
+   Expected Behaviour
+   ------------------
+   mttrapd should not change varbind list of v2 traps
+   
+   Product/Component Version
+   -------------------------
+   Netcool/OMNIbus MTTrapd probe - Version 7
+   Copyright (C) 1994,1999, Micromuse Inc.
+   
+   Netcool/OMNIbus Probe API Library Version 7
+   Release ID: 6.0.1086
+   API Release ID: 7.0.1.75
+   Software Compile Date: Tue Dec  6 11:38:23 GMT 2005 on
+   l000147s.uk.dev.micromuse.com (Linux 2.4.9-e.3smp #1 SMP Fri May
+   3
+   16:48:54 EDT 2002)
+   
+   OMNIbus Version
+   ---------------
+   v7
+   
+   End Application / Device Version
+   --------------------------------
+   None
+   
+   Replicated ?
+   ------------
+   Yes
+   
+   Steps to replicate (if applicable)
+   ----------------------------------
+   1.run mttrapd probe with NCKL1.2
+   2.install netsnmp
+   3. use following command to send a v2 trap to the probe:
+   snmptrap -v 2c -c public 192.168.62.2 60 .1.3.6.1.6.3.1.1.5.1
+   .1.3.6.1.2.1.1.3.0 timesticks 120 .1.3.6.1.2.1.1.3.0 timesticks
+   180
+   .1.3.6.1.4.1.9.2.1.2 string testing
+   
+   If unable to replicate tests carried out
+   ----------------------------------------
+   
+   
+   Log file excerpt of relevant information
+   ----------------------------------------
+   Wed Sep 20 14:01:15 2006 Debug: 1 trap in queue
+   Wed Sep 20 14:01:15 2006 Debug: V2/V3 trap/inform received
+   Wed Sep 20 14:01:15 2006 Information: Number of items in the
+   trap queue
+   is 0
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] ReqId:
+   766689949
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] community:
+   public
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] IPaddress:
+   192.168.62.2
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] PeerIPaddress:
+   192.168.62.2
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] ReceivedPort:
+   162
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] ReceivedTime:
+   1158732075
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] Protocol:
+   UDP
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] SNMP_Version:
+   2
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] UpTime:
+   180
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] Uptime:
+   0:00:01.80
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor]
+   .1.3.6.1.2.1.1.3.0:
+   (180) 0:00:01.80
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] notify:
+   .1.3.6.1.6.3.1.1.5.1
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor]
+   .1.3.6.1.6.3.1.1.4.1.0:       .1.3.6.1.6.3.1.1.5.1
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] OID1:
+   .1.3.6.1.4.1.9.2.1.2
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] 1:    testing
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] 1_raw:
+   testing
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] 1_text:
+   testing
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] 1_hex:
+   74 65 73
+   74 69 6e 67
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor]
+   .1.3.6.1.4.1.9.2.1.2:
+   testing
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] Node: koala
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] PeerAddress:
+   koala
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] EventCount:
+   1
+   Wed Sep 20 14:01:15 2006 Debug: [Event Processor] Processing
+   alert {0
+   remaining}
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of the probe for mttrapd               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Current Behaviour: Only one Uptime is   *
+   *                      processed per trap. Required behaviour: *
+   *                      All Uptime settings in a trap should be *
+   *                      processed for v2c and v3 traps.         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Uptime was being overwritten, the subsequent tokens should be
+   processed as default vars.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  date of Release:30/09/2007
+   
+   Date of Release: 12/30/07 Fix Pack Name:
+   probe-nco-p-mttrapd-7_1
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY90240
+   
+   
+ * REPORTED COMPONENT NAME
+   GEN TRAPD/SYSLO
+   
+   
+ * REPORTED COMPONENT ID
+   5724P03GT
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-10-19
+   
+   
+ * CLOSED DATE
+   2007-08-14
+   
+   
+ * LAST MODIFIED DATE
+   2007-08-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

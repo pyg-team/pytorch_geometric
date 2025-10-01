@@ -1,0 +1,12 @@
+Title: IBM How can we change the size of the folder navigation in IBM Cognos Analytics? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible for us to change the size of folder navigation in IBM Cognos Analytics? 
+
+ANSWER
+It is possible to change the size of the folder navigation menu. To do so, you hold your mouse over the two lines down the right hand side of the navigation pane. You then hold the right mouse in and drag the pane in or out, adjusting it to your satisfaction. The below image is circled with what you should use to resize the pane. 
+
+ [/support/docview.wss?uid=swg22012499&aid=2]Content Navigation.png [/support/docview.wss?uid=swg22012499&aid=1]

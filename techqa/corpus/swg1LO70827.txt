@@ -1,0 +1,138 @@
+Title: IBM LO70827: "SAVE SENT MAIL" VALUE IS NOT REFLECTED IMMEDIATELY. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS RETURNED (APAR CANNOT BE RESOLVED WITHOUT ADDITIONAL INFO FROM IBM OR CUSTOMER.)
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The "Save sent mail" value of desktop policy is not reflected
+   immediately.
+   
+   Steps to Reproduce:
+   Prepare two users. ( Admin Notes, User Notes )
+   1. User Notes start a Notes client.
+   2. Go to File - Preferences - Mail - Sending and Receiving.
+   3. Change the value of "Save copies of messages that I send:"
+   item into "Never"
+   4. Save a preferences.
+   5. Admin Notes start Domino Administrator, and create a desktop
+   setting doc.
+   6. Open Preferences - Mail
+   7. Change the value of "Save sent mail" item into "Always" and
+   select "Set value and prevent changes".
+   8. Set "MyDesktop" into Name, and save a Desktop setting doc.
+   9. Create Desktop policy.
+   Go to [Basic].
+   - Policy Name: DTPol
+   - Policy Type: Explict
+   - Desktop: MyDesktop
+   Go to [Policy Assignment]
+   - Set "User Notes" into Users and Groups.
+   10. Save a Desktop policy doc.
+   11. User Notes restart a Notes client.
+   12. Open a mail database.  Close a mail database after "Notes
+   configuration settings have been refreshed" message was
+   displayed in status bar.
+   DCC finished and the Desktop policy was pushed.
+   13. Go to File - Preferences - Mail - Sending and Receiving.
+   The value of "Save copies of messages that i send:" item is
+   "Never" and locked( gray out ).
+   14. User Notes sent a mail. However, a copy message was not
+   saved in his mail database.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Restart Notes client.The value of "Save copies of messages that
+   I send:" item changed to "Always".
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# KKOO8WQ8SM.
+   The record was returned to the person who created it for more
+    information.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO70827
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   852
+   
+   
+ * STATUS
+   CLOSED RET
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-31
+   
+   
+ * CLOSED DATE
+   2012-08-23
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

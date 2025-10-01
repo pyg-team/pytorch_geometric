@@ -1,0 +1,24 @@
+Title: IBM Support Resources for TSAMP (Configure) - United States
+
+Text:
+TSA; TSAMP; landing page; LandingPage; FeaturedDocument; featured documents; featured; top 10; top ten; popular; most popular; recommended; most requested; highlight; customization RECOMMENDED RESOURCES
+
+ABSTRACT
+ This is the support resources home page for the TSAMP product. Each tab contains a collection of information that has been identified as most relevant for the given category. Click a button to see the available resources for a specific topic. 
+
+CONTENT
+ 
+
+TAB NAVIGATION
+ * Hot Links [http://www.ibm.com/support/docview.wss?uid=swg27024950]
+ * Education [http://www.ibm.com/support/docview.wss?uid=swg27042681]
+ * Troubleshooting [http://www.ibm.com/support/docview.wss?uid=swg27039217]
+ * Install & Migration [http://www.ibm.com/support/docview.wss?uid=swg27039218]
+ * Configuration
+ * Operation & Maintenance [http://www.ibm.com/support/docview.wss?uid=swg27039221]
+ * Support Tools [http://www.ibm.com/support/docview.wss?uid=swg27039252]
+
+HOT RESOURCES
+This is small tool that will streamline the creation of an automation policy (resource model) so as to allow TSAMP to manage a DB2 HADR environment on the Windows platform. In Version 9.7 Fix Pack 4 and later fix packs, you can use these new scripts to enable automatic management for DB2® servers using DB2 High Availability Disaster Recovery (HADR) and IBM® Tivoli® System Automation for Multiplatforms (SA MP) on Windows operating systems. BEST PRACTICES
+CLUSTER HEARTBEAT AND RSCT INITIATED REBOOTS
+COMMON CONFIGURATION TOPICS

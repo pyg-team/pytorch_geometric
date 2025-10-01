@@ -1,0 +1,139 @@
+Title: IBM LI79173: EXCEPTION IN CMECS WHEN NULL JCID PROVIDED - United States
+
+Text:
+  A FIX IS AVAILABLE
+Communications Server for Linux, Version 6.4 -- Latest Fixpack [http://www-01.ibm.com/support/docview.wss?uid=swg24024814]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Java application encounters javacore on cmsend.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED: All users of Java CPI-C
+   
+   PROBLEM DESCRIPTION:
+   javacore.txt data shows:
+   Dump Event "gpf" (00002000) received
+   Request Flags: 0x81 (exclusive+preempt)
+   Prep State: 0x100 ()
+   Exclusive VM access not taken: data may not be
+   ----------------------------------------------
+   GPINFO subcomponent dump routine
+   J9Generic_Signal_Number: 00000004
+   Signal_Number: 0000000B
+   Error_Value: 00000000
+   Signal_Code: 00000002
+   Handler1: F7EDBCD2
+   Handler2: F7EA01B1
+   InaccessibleAddress: D6B7C000
+   The native callstack includes:
+   Java_COM_ibm_eNetwork_cpic_CPIC_cmsend+0x51
+   
+   PROBLEM SUMMARY:
+   A previous fix (APAR LI78373 [http://www-01.ibm.com/support/docview.wss?uid=swg1LI78373]) fails to release back memory
+   pinned by the JNI in an error case (for instance when cmsend
+   passes a null). This could cause the Java garbage collector to
+   run out of memory.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been changed to release memory properly in this case.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LI79173
+   
+   
+ * REPORTED COMPONENT NAME
+   CS LINUX ON ZSE
+   
+   
+ * REPORTED COMPONENT ID
+   5724I3400
+   
+   
+ * REPORTED RELEASE
+   640
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-05
+   
+   
+ * CLOSED DATE
+   2016-08-05
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    LI79171 [http://www-01.ibm.com/support/docview.wss?uid=swg1LI79171]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CS LINUX ON ZSE
+   
+   
+ * FIXED COMPONENT ID
+   5724I3400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R640 PSY

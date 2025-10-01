@@ -1,0 +1,43 @@
+Title: IBM WebSphere ILOG JRules V7.1.1.5 Fix Pack - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This cumulative fix pack updates JRules V7.1.1 (7.1.1, 7.1.1.1, 7.1.1.2, 7.1.1.3 or 7.1.1.4) to V7.1.1.5. 
+
+DOWNLOAD DESCRIPTION
+This cumulative fix pack updates JRules V7.1.1 (7.1.1, 7.1.1.1, 7.1.1.2, 7.1.1.3 or V7.1.1.4) to V7.1.1.5. 
+
+This fix pack does not work directly with earlier versions of JRules. Users of V7.0 and V7.1.0 should update to V7.1.1 in order to install V7.1.1.5.
+
+This fix pack is entitled. Only customers who have purchased JRules V7.1.1 can download this fix pack.
+
+PREREQUISITES
+WebSphere ILOG JRules V7.1.1
+
+DOWNLOAD PACKAGE
+WebSphere ILOG JRules V7.1.1.5 
+
+
+PROBLEMS SOLVED
+For details on problems fixed in this fix pack, refer to the Fix list for V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg27019787#7114] document.
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options WebSphere ILOG JRules V7.1.1.5 Windows 18 Oct 2012 Language Independent 4000000000 HTTP [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+ILOG+JRules&release=All&platform=All&function=fixId&fixids=7.1.1.5-WebSphere-JRules-Windows-fp0005&includeRequisites=1&includeSupersedes=0&do] WebSphere ILOG JRules V7.1.1.5 UNIX 18 Oct 2012 Language Independent 4000000000 HTTP [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+ILOG+JRules&release=All&platform=All&function=fixId&fixids=7.1.1.5-WebSphere-JRules-Unix-fp0005&includeRequisites=1&includeSupersedes=0&downl] 
+TECHNICAL SUPPORT
+ 
+
+ * Contact 1-800-IBM-SERV (U.S. only) or visit the WebSphere ILOG JRules Support site [http://www-947.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_ILOG_JRules].
+ * Passport Advantage Online support [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html] 
+ * Fix List for WebSphere ILOG JRules BRMS V7.1.1.5 [http://www-01.ibm.com/support/docview.wss?uid=swg27019787#7115]
+ * Known limitations in WebSphere Business Rule Management System V7.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg21498138]
+ * WebSphere ILOG JRules BRMS V7.1 Download document [http://www-01.ibm.com/support/docview.wss?uid=swg24030938]
+
+
+
+ [/support/docview.wss?uid=swg24033599&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24033599&aid=2]Problems (APARS) fixed
+RS00677, RS00691, RS00706, RS00752, RS00784, RS00787, RS00788, RS00794, RS00806, RS00814, RS00826, RS00831, RS00832, RS00838, RS00844, RS00847, RS00858, RS00866, RS00903, RS00927, RS00951, RS00957, RS00979, RS01004, RS01030, RS01031, RS01036, RS01053, RS01065, RS01066, RS01103, RS01137

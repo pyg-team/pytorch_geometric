@@ -1,0 +1,330 @@
+Title: IBM IZ31853: DATAVIEW USEREDITOR DOES NOT ALLOW USER TO ENTER HIS COMPLETE   LDAP USER DN, LIMITS USERNAME TO MAX SIZE OF 120 CHARACTERS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After configuring LDAP security provider in SMC, silverStream is
+   able to connect to corporate LDAP using SSL certificate (which
+   was already imported fine into certificate authorities list),
+   lists all LDAP users fine from 'LDAPprovisousers' group but
+   somehow failing to authenticate any searched user even though we
+   are using LDAP as default security realm.
+   
+   Here is the security provider config details:
+   
+   Server: atl.ldap.companyname.com
+   Username: CN=A1tsdapp,OU=Users,OU=Standard Users,OU=Users and
+   Computers,
+   OU=Atlanta Corporate,OU=CCI,DC=CORP,DC=COMPANYNAME,DC=com
+   Pass: ******
+   User Login attribute: CN (tried 'uid' also)
+   Groups Tab Info ->
+   Group Location: OU=Users and Computers,OU=Atlanta
+   Corporate,OU=CCI,
+   DC=CORP,DC=COMPANYNAME,DC=com
+   Group Filter: (ObjectClass=organizationalUnit)
+   Group Attribute: uniquemember
+   Users Tab Info ->
+   User Location: OU=CCI,DC=CORP,DC=COMPANYNAME,DC=com
+   User Filter: (memberOf=CN=CATL0Provisousers,OU=Groups,OU=Atlanta
+   Corporate,OU=CCI,DC=CORP,DC=COMPANYNAME,DC=com)
+   User Description Attribute: title
+   Full name attribute: name
+   Test User:
+   LDAP\atl.ldap.companyname.com\CN=Julia Roberts
+   (CCI-Atlanta),OU=Users,OU=Admin
+   Users,OU=Users and Computers,OU=Atlanta
+   NOC,OU=CCI,DC=CORP,DC=COMPANYNAME,DC=com
+   
+   After testing above config fine in SMC, we tried to add
+   the above test user to Dataview using DVUserEditor tool, but it
+   truncates the username.
+   
+   After debugging, I found backend table called RUSER_DESC has
+   a field called 'STR_NAME' that stores all thse usernames and has
+   maximum size limit of 120 chars. But COMPANYNAME LDAP username
+   DNs have size more than 120 (~150 chars).I am not sure that is
+   relavant for the two issues (authentication and dataview reports
+   autherization) we are now facing.
+   
+   *** STEPS TO REPRODUCE ISSUE ***
+   
+   Replicating Issue with long distinguished names
+   
+   1. Install LDAP server (in this case, openLDAP from
+      http://www.openldap.org). [http://www.openldap.org).]
+      Configure per defaults. Run LDAP server (slapd) with default
+      port.
+   2. Create an ldif file to populate the ldap database.  Something
+      like this:
+   
+   dn: DC=CORP,DC=COMPANYNAME,dc=com
+   objectClass: top
+   objectClass: dcobject
+   dc: CORP
+   
+   # Organization for Replication if COMPANYNAME communications
+   LDAP
+   dn: DC=corp,DC=COMPANYNAME,DC=com
+   objectClass: dcObject
+   objectClass: organization
+   dc: corp
+   o: corporate
+   description: corporate division
+   
+   # Organizational Unit for CCI
+   dn: ou=CCI,DC=CORP,DC=COMPANYNAME,DC=com
+   objectClass: top
+   objectClass: organizationalunit
+   ou: CCI
+   Description: CCI
+   
+   # Organizational Unit for Atlanta HQ
+   dn: ou=Atlanta corporate,ou=CCI,DC=corp,DC=companyname,DC=com
+   objectClass: top
+   objectClass: organizationalunit
+   ou: Atlanta corporate
+   description: Atlanta corporate
+   
+   # Organization Unit
+   dn: ou=Users and computers,ou=Atlanta
+   corporate,ou=CCI,DC=corp,DC=companyname,DC=com
+   objectClass: top
+   objectClass: organizationalunit
+   ou: Users and computers
+   description: Users and computers
+   
+   # Organizational Unit
+   dn: ou=Standard Users,ou=Users and computers,ou=Atlanta
+   corporate,ou=CCI,DC=corp,DC=companyname,DC=com
+   objectClass: top
+   objectClass: organizationalunit
+   ou: Standard Users
+   description: Standard Users
+   
+   #Organizational Unit
+   dn: ou=Users,ou=Standard Users,ou=Users and computers,ou=Atlanta
+   corporate,ou=CCI,DC=corp,DC=companyname,DC=com
+   objectClass: top
+   objectClass: organizationalunit
+   ou: Users
+   description: Users
+   
+   # User
+   dn: cn=A1tsdapp,ou=Users,ou=Standard Users,ou=Users and
+   computers,ou=Atlanta
+   corporate,ou=CCI,DC=corp,DC=companyname,DC=com
+   objectClass: top
+   objectClass: person
+   cn: A1tsdapp
+   userpassword: gofigure
+   
+   # User
+   cn=Julia Roberts (CCI-Atlanta),ou=Users,ou=Admin Users,ou=Users
+   and computers,ou=Atlanta
+   corporate,ou=CCI,dc=CORP,dc=COMPANYNAME,dc=com
+   objectClass: top
+   objectClass: person
+   cn: Julia Roberts (CCI-Atlanta)
+   userpassword: guessagain
+   
+   # User
+   dn: cn=pvuser,ou=CCI,DC=corp,DC=companyname,DC=com
+   objectClass: top
+   objectClass: person
+   cn: pvuser
+   sn: pvuser
+   userpassword: thatsnotit
+   
+   3. Import ldif file (ldapadd -f entries.ldif -x -v -D
+      "cn=Manager,dc=CORP,dc=COMPANYNAME,dc=com" -w secret) using
+      appropriate values for the administrative account, password
+      and filename.
+   4. Start Silverstream Management Console on the DataView server.
+      Select the Security tab, then Security Providers.
+   5. Click ?Add??, then select LDAP, and click Next.  On the next
+      screen, enter the IP address or hostname of the LDAP server,
+      the user name and password of the administrative user (used
+      to query the LDAP server.
+      Click Next.  On the next screen, enter the
+      appropriate values (to work with the example LDIF file above,
+      use Group Location:  dc=CORP,dc=COMPANYNAME,dc=com; Group
+      Filter: (objectclass=organizationalunit); Group/User
+      Attribute:
+      ou; and Group Description Attribute: description).  Click
+      Next.
+      On the next screen,  enter appropriate values (to work with
+      the example LDIF file above, use User Location:
+      dc=CORP,dc=COMPANYNAME,dc=com; User Filter:
+      (objectclass=person); User Description Attribute:
+      description; and Full Name Attribute: cn).  Click Finish.
+   
+   6. To verify, Select Users & Groups, and expand the Users item
+      under the appropriate LDAP server ? you should see the users
+      you created in your LDIF file.  Note that these distinguished
+      names can be longer than 120 characters ? so SilverStream is
+      picking up the full name without a problem.
+   
+   7. Start DVUserEditor on the DataView server.  Create a user.
+      For the name, type in LDAP\<server>\<distinguished name>.
+      For example above, the cn=Julia Roberts
+      (CCI-Atlanta),ou=Users,ou=Admin Users,ou=Users and
+      computers,ou=Atlanta
+      corporate,ou=CCI,dc=CORP,dc=COMPANYNAME,dc=com entry from the
+      example LDIF file was used.  If the name is too long, you
+      will get an error dialog that says ?The user name is too
+      long. The name will be trimmed to 120 characters.?  When you
+      dismiss this error you will see that the name has been
+      truncated.
+      Add the NOC Reporting group to the user, so that it will have
+      an authorized page in DataView.
+   
+   8. Log in to the portal, using the name as you entered it
+      previously (e.g., LDAP\9.48.195.185\cn=Julia Roberts
+      (CCI-Atlanta),ou=Users,ou=Admin Users,ou=Users and
+      computers,ou=Atlanta
+      corporate,ou=CCI,dc=CORP,dc=COMPANYNAME,dc=com).  You will
+      get an error dialog, indicating that although authentication
+      worked (SilverStream querying LDAP), authorization
+      (SilverStream querying DataView) did not, as the user names
+      did not match.
+   
+      The error dialog will say ?No groups assigned to the user.
+      Add groups to users via the User Editor.?  At this point you
+      will  groups to users via the User Editor.?  At this point
+      you will see a blank portal page, with no navigation or
+      reports available. Trying to log in with the truncated user
+      name will fail authentication, as the LDAP query will not
+      return any matching results.
+   
+   9. Logging in with a shorter name will work, and you can use the
+      Settings page to verify that it is getting the full LDAP user
+      name, not the truncated name.  You can also use this to
+      verify that even if you configure the system to use an
+      alternate attribute for login (such as cn or mail), the user
+      name that LDAP provides to DataView, and which must match the
+      user in DVUserEditor, is still the distinguished name.  Using
+      a different attribute allows the user to type a shorter user
+      name, but still requires that the user name in DVUserEditor
+      be the full dn, so there is no workaround for customers with
+      distinguished names longer than 120 characters.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  this will be delivered in 4.4.1.0-TIV-PROV-FP0005
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  We have increased the LDAP space in the DB
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ31853
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PROVISO DESI
+   
+   
+ * REPORTED COMPONENT ID
+   5724P5200
+   
+   
+ * REPORTED RELEASE
+   441
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-11
+   
+   
+ * CLOSED DATE
+   2008-10-23
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/PROVISO DESI
+   
+   
+ * FIXED COMPONENT ID
+   5724P5200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R441 PSY
+   UP
+   
+   
+ * R500 PSY
+   UP
+   
+   
+ * R442 PSN
+   UP

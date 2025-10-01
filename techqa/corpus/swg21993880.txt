@@ -1,0 +1,104 @@
+Title: IBM Appstack Disk Space /dev/sdb1 is Full - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Our StoredIQ Appstack Disk space is getting full 
+
+SYMPTOM
+When we run a 'df -h' command on our Appstack Console (SSH putty session), we see that the /dev/sdb1 File System is almost full (90% +)
+
+
+CAUSE
+This issue is caused by remnants of some older code. It is a known issue that StoredIQ development is looking into permanently resolving.
+
+ENVIRONMENT
+StoredIQ Application Server
+
+DIAGNOSING THE PROBLEM
+Please login to the Appstack Console through a putty SSH session as root, and the login to the psql database using the following command:
+
+/siq/bin/psql -U postgres 
+
+Then run the following query by copy and pasting the command below:
+
+SELECT d.datname AS Name, pg_catalog.pg_get_userbyid(d.datdba) AS 
+
+
+Owner, 
+CASE WHEN pg_catalog.has_database_privilege(d.datname, 'CONNECT') 
+THEN 
+pg_catalog.pg_size_pretty(pg_catalog.pg_database_size(d.datname)) 
+ELSE 'No Access' 
+END AS SIZE 
+FROM pg_catalog.pg_database d 
+ORDER BY 
+CASE WHEN pg_catalog.has_database_privilege(d.datname, 'CONNECT') 
+THEN pg_catalog.pg_database_size(d.datname) 
+ELSE NULL 
+END DESC; 
+
+If the result of the command above shows the 'Platoon' size as being ~7000 MB or greater, then we know this is the issue we are tracking
+
+
+RESOLVING THE PROBLEM
+Regularly, the platoon size should be ~77 MB, NOT 7723 MB 
+
+
+Space should return to ~7% after process below. If space is still high, reboot the Appstack server to free up locked space
+
+Run the following command to stop services on appstack: 
+
+service appstack stop 
+
+Run these commands to confirm services were stopped: 
+
+pidof uwsgi 
+pidof platoon 
+
+Make a snapshot of the Appstack to make a backup of the current Appstack: speak with IT team on this
+
+OR 
+
+Run the following commands to backup the /dev/sdb1/data directory and content: 
+
+service appstack stop <-- to ensure that SIQ was down 
+
+For the commands below, replace '151.171.81.245' with the Dataserver IP Address and '20160824' with the current date.
+
+1. cd /mnt/sdb1 
+2. tar -zvcpf - data/ | ssh root@151.171.81.245 'cat - > /deepfs/nas/appstackbackup/appstackbackup_20160824.tar.gz' 
+
+Once backup was completed ran the following series of commands: 
+
+1. Stop all appstack services 
+service appstack stop 
+
+2. Restart monit 
+/siq/env/monit/bin/monit -c /siq/svc/monit/monitrc 
+
+3. Restart postgres 
+/siq/env/monit/bin/monit start postgresql -c /siq/svc/monit/monitrc 
+
+4. Export needed environment variables 
+export BAKE_MODULES="spire.tasks mesh.tasks" 
+
+5. Drop and deploy a fresh copy of platoon (command below is one single command)
+/siq/bin/bake spire.schema.deploy schema=platoon config=/etc/siq/uwsgi/platoonapi.yaml drop=True 
+
+6. Restart all appstack service 
+service appstack restart 
+
+7. Watch the nucleus.log and wait until you see the 'nucleus INFO all services ready' message 
+tail -f /var/siq/log/nucleus.log 
+
+When complete confirm ability to log onto Appstack. 
+
+Enter command df -h at shell and very that /dev/sdb1 file system is now smaller, should be lower at around ~15% utilization. 
+
+Customers sometimes have issues logging into Appstack after restart of services. 
+
+Restart services again and clear cookies, cache and active logins from browser history for past hour or longer if needed. 
+
+Try logging in again

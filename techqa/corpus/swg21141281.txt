@@ -1,0 +1,79 @@
+Title: IBM Unable to install  Resource Adapter Archive (RAR) in WebSphere Studio Application Developer version 5.1 - United States
+
+Text:
+RAR; WSAD; v5.1_accepted; 1141281 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When installing a Resource Adapter Archive (RAR) file in WebSphere® Studio Application Developer (WSAD) version 5.1, you might get an error at development time or run time.
+
+There are three different possible issues you might face:
+
+
+
+ * 
+ * If you create a new WebSphere Application Server v5.0 test environment server configuration and try to add a Resource Adapter Name on the Java™ 2 Connector (J2C) tab of the server configuration, you may receive: WAA1350E could not read RAR deployment descriptor. Choose another RAR or cancel this operation. Package with uri "null" not found.
+ * 
+ * 
+ * If you try to add the Resource Adapter name from the Administration Console you may receive an error message saying it cannot add the resource adapter 
+ * 
+ * 
+ * When you try to access your Resource Adapter using JNDI you will receive the following error message:
+   com.ibm.websphere.naming.CannotInstantiate ObjectException: Exception occurred while the JNDI NamingManager was processing a javax.naming.Reference object. [Root exception is java.lang.NullPointerException]
+ * 
+
+
+
+
+CAUSE
+These error messages are caused by two defects in WSAD and another defect in WebSphere Application Server.
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Unable to add Resource Adapter Archive (RAR) in WebSphere Studio Application Developer server editor:
+    This problem is fixed WebSphere Studio Application Developer v5.1.1. The workaround is to use Administration Console to add RAR file.
+    
+ 2. Unable to add RAR in WSAD administration console:
+    This problem is fixed in WebSphere Studio Application Developer v5.1.1. The workaround is explained in the readme file of WebSphere Studio Application Developer v5.1; in the "Creating Data sources and Servers in the WebSphere V5 Admin console" section of the readme. The following is an excerpt from the readme:
+    
+    Creating Data Sources and Servers in the WebSphere v5 Administration Console
+    You can receive a NullPointerException or other errors when creating servers using the WebSphere v5 Administration Console within WebSphere Studio. Use the following workaround:  1. Stop the server. 
+     2. Copy the templates directory from the following directory (where WS_installdir is the directory with WebSphere Studio):
+        WS_installdir\runtimes\base_v5\config\templates
+        to your current workspace under:
+        workspace_ dir\server_ project\server_ name.wsc folder 
+     3. Restart the server and try again.
+        
+    
+    
+ 3. Receive NullPointerException when accessing RAR resource using JNDI in WebSphere Studio Application Developer v5.1:
+    This problem has been reported as defect, APAR: PQ78934.
+    To workaround this problem, do the following:  1. Create a dummy Alias:  1. Open the server editor. 
+         2. Click the Security tab. 
+         3. In the JAAS Authentication Entries click Add. 
+         4. Enter any information for the connection. 
+         5. Save the editor.
+        
+        
+     2. Add the alias to your connection factory:  1. Open the server editor. 
+         2. Click the J2C tab. 
+         3. In the J2C Resource Adapters, select the resource adapter. 
+         4. In the J2C Connections Factories, select the factory. 
+         5. Click Edit... 
+         6. In the Component-managed authentication alias drop down menu, select the newly created alias. 
+         7. Save the server.
+        
+        
+    
+    
+
+
+
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Application Developer for WebSphere Software -

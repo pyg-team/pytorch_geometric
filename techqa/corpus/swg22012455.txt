@@ -1,0 +1,72 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities in Apache HTTP Server affect IBM API Connect (CVE-2017-7668, CVE-2017-7679) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM API Connect has addressed Apache HTTPD vulnerabilities involving access to sensitive information and potential denial of service. 
+
+VULNERABILITY DETAILS
+
+CVEID:CVE-2017-7679 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-7679]
+DESCRIPTION:Apache HTTPD could allow a remote attacker to obtain sensitive information, caused by a buffer overread in mod_mime. By sending a specially crafted Content-Type response header, a remote attacker could exploit this vulnerability to read one byte past the end of a buffer.
+CVSS Base Score: 5.3
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/127420 [https://exchange.xforce.ibmcloud.com/vulnerabilities/127420]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N)
+
+CVEID:CVE-2017-7668 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-7668]
+DESCRIPTION:Apache HTTPD is vulnerable to a denial of service, caused by a buffer overread in the ap_find_token() function. By sending a specially crafted sequence of request headers, a remote attacker could exploit this vulnerability to cause a segmentation fault.
+CVSS Base Score: 5.3
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/127419 [https://exchange.xforce.ibmcloud.com/vulnerabilities/127419]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Affected IBM API Management Affected Versions IBM API Connect 5.0.0.0-5.0.6.5 IBM API Connect 5.0.7.0-5.0.7.2 IBM API Connect 5.0.8.0-5.0.8.1 REMEDIATION/FIXES
+ 
+
+Affected Product Addressed in VRMF APAR Remediation / First Fix IBM API Connect
+
+5.0.0.0-5.0.6.5 5.0.6.6 LI79964 Addressed in IBM API Connect V5.0.6.6.
+
+Management Server is impacted.
+
+Follow this link and find the "APIConnect_Management" package:
+
+https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/IBM+API+Connect&release=5.0.6.5&platform=All&function=all [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/IBM+API+Connect&release=5.0.6.2&platform=All&function=all] IBM API Connect
+
+5.0.7.0-5.0.7.2 5.0.8.2 LI79964 Addressed in IBM API Connect V5.0.8.2.
+
+Management Server is impacted.
+
+Follow this link and find the "APIConnect_Management" package:
+
+https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/IBM+API+Connect&release=5.0.8.1&platform=All&function=all [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/IBM+API+Connect&release=5.0.7.0&platform=All&function=all] IBM API Connect
+
+5.0.8.0-5.0.8.1 5.0.8.2 LI79964 Addressed in IBM API Connect V5.0.8.2.
+
+Management Server is impacted.
+
+Follow this link and find the "APIConnect_Management" package:
+
+https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/IBM+API+Connect&release=5.0.8.1&platform=All&function=all [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/IBM+API+Connect&release=5.0.7.0&platform=All&function=all] GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 19 February 2018: original document published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

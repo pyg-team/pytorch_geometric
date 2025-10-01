@@ -1,0 +1,24 @@
+Title: IBM WebSphere Transformation Extender V8.4.1 is available - United States
+
+Text:
+8.4.1; 8.4.1.0 ; fix list NEWS
+
+ABSTRACT
+ May 31, 2013 
+
+IBM WebSphere® Transformation Extender V8.4.1 is now available through Passport Advantage.
+
+Build ID: 8.4.1(115) 
+
+CONTENT
+ 
+
+Fix List WebSphere Transformation Extender V8.4.1 Fix List [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg27038462] 
+WTX 8.4.1 Core Release Notes Release Notes for IBM WebSphere Transformation Extender V8.4.1 [http://www-01.ibm.com/support/docview.wss?uid=swg27038390] Release Notes for IBM WebSphere Transformation Extender with Launcher Hypervisor Edition V8.4.1 [http://www-01.ibm.com/support/docview.wss?uid=swg27038542] Release Notes for IBM WebSphere Transformation Extender Documentation V8.4.1 [http://www-01.ibm.com/support/docview.wss?uid=swg27038555] Release Notes for IBM WebSphere Transformation Extender for z/OS V8.4.1 [http://www-01.ibm.com/support/docview.wss?uid=swg27038485] Release Notes for IBM WebSphere Transformation Extender Launcher Agent V8.4.1 [http://www-01.ibm.com/support/docview.wss?uid=swg27038541] Release Notes for IBM WebSphere Transformation Extender Secure Adapter Collection V8.4.1 [http://www-01.ibm.com/support/docview.wss?uid=swg27038544] Release Notes for IBM WebSphere Transformation Extender for Integration Servers V8.4.1 [http://www-01.ibm.com/support/docview.wss?uid=swg27038563] 
+WTX 8.4.1 Core Download Documents WebSphere Transformation Extender with Command Server V8.4.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24034962] WebSphere Transformation Extender Design Studio V8.4.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035010] WebSphere Transformation Extender Online Library V8.4.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035016] WebSphere Transformation Extender with Launcher Hypervisor Edition V8.4.1 - AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24035018] WebSphere Transformation Extender with Launcher Hypervisor Edition V8.4.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035017] WebSphere Transformation Extender with Launcher V8.4.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035019] WebSphere Transformation Extender Launcher Agent 8.4.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035020] WebSphere Transformation Extender for Application Programming V8.4.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035021] WebSphere Transformation Extender Secure Adapter Collection V8.4.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035022] WebSphere Transformation Extender for Integration Servers V8.4.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035024] 
+
+
+IBM PassPort Advantage Online [http://www-01.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]  
+
+PRODUCT ALIAS/SYNONYM
+ Ascential DataStage TX Mercator

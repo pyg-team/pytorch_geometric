@@ -1,0 +1,135 @@
+Title: IBM HE01287: Content Collector returns an error when searching for e-mail that contains comment characters in a display field - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM InfoSphere Content Collector V2.1.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24030471]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a user searches for e-mail in IBM InfoSphere Content
+   Collector and one of the e-mail documents in the search
+   result contains a comment character (like "/*") in one
+   of the fields that is displayed in the search result
+   list, Content Collector returns the following error:
+   
+   The system cannot connect to the server. The server
+   might be down or there might be a network problem. HTTP
+   error code: 0, error text: JSON was not comment filtered
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If an e-mail document contains special characters, like "/*",
+   in the title or any other property that is displayed in the
+   search result list, the document can be archived and indexed
+   successfully. However, when a search result list contains that
+   document, Content Collector returns an error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with this fix, comment characters in a display field
+   do not cause an error message anymore.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE01287
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   211
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-22
+   
+   
+ * CLOSED DATE
+   2011-08-08
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R211 PSN
+   UP

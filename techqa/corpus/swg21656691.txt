@@ -1,0 +1,89 @@
+Title: IBM Tivoli Integrated Portal WebSphere fixpack fails to install. - United States
+
+Text:
+Tivoli; Integrated; Portal; FP 2.2.0.7; install; WAS FP; failure; NIFStack; nifregistry; iFixes missing; TIPL2INST TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TIP Fixpack upgrade fails when trying to install the WebSphere fixpack. The error in the TIPFPInstaller-00.log shows its a WAS FP failure: FINE:PlanStepEventOccurred(Failed target 'step_00003_WASFP') 
+
+SYMPTOM
+TIP fixpack upgrade fails when the WebSphere fixpack fails to install.
+
+
+CAUSE
+The WAS fixpack install is complaining about iFixes that are showing up in the <WAS_HOME>/properties/version/nif/backup directory, but not in the NIFStack.xml configuration file. This causes the UPDI validation step to fail, which in turn causes the WAS fixpack install to fail.
+
+ENVIRONMENT
+This could happen in any environment where Tivoli Integrated Portal is being upgraded.
+
+DIAGNOSING THE PROBLEM
+Initial errors in the TIPFPInstaller-00.log point to a problem installing a WebSphere fix pack: 
+
+
+ 
+2013-10-24 14:35:47.563-05:00 : INFO : [echo] output of 
+fix.WAS_FP_PAK.install.out = [echo] Executing command: <TIP_HOME>/WebSphereUpdateInstallerV7/java/jre/bin/java -cp 
+<TIP_HOME>/WebSphereUpdateInstallerV7/update.jar -Xms48m -Xmx384m run 
+-silent -options <TIP_HOME>/temp/install_WASPAK.txt (from AntRuntime.execute) 2013-10-24 14:35:47.608-05:00 : FINE : PlanStepEventOccurred(Failed 
+target 'step_00003_WASFP') 
+
+MachinePlan_localhost.log:
+
+Caused by: The following error occurred while executing this line:
+<TIP_HOME>/_uninst/TIPInstall2207/plan/install/MachinePlan_localhost/00003_WASFP/WASFP.xml:246: CTGWA0075E Failure occurs when applying WebSphere Application Server runtime fix.
+
+
+Line 244-246 in the WASFP.xml point to the <TIP_HOME>/logs/fix.WAS_FP_PAK.install.out file, which indicates it is a WASEmbedded fixpack
+
+At this point, the WAS updatelog.txt logs need to be reviewed to find the WebSphere fixpack that failed to install. These log files are in the 
+<TIP_HOME>/logs/update/<WAS fixpack id> directories. Here is an example of the WAS fixpack directories: 
+
+7.0.0-WS-WASEmbedded-AixPPC64-FP0000015.install
+7.0.0-WS-WASEmbedded-AixPPC64-FP0000017.install
+7.0.0-WS-WASEmbedded-AixPPC64-FP0000019.install
+
+In each of these directories is a updatelog.txt file while will include any install errors. At the end of each updatelog.txt file, there will either be a INSTCONFFAILED or INSTCONFSUCCESS message.
+
+In this case, the WAS fixpack that failed was the WASEmbedded FP0000019 fixpack. Here are the errors from the <TIP_HOME>/logs/update/7.0.0-WS-WASEmbedded-AixPPC64-FP0000019.install/ updatelog.txt file: 
+
+
+(Oct 24, 2013 2:35:47 PM), Install, com.ibm.ws.install.ni.ismp.actions.PopulateUninstallableIfixList, err, missing entries of NIFStack.xml:
+7.0.0.13-WS-WASEmbeded-IFPM52274; 7.0.0.19-WS-WASEmbeded-IFPM72536; 
+(Oct 24, 2013 2:35:47 PM), Install, com.ibm.ws.install.ni.ismp.actions.PopulateUninstallableIfixList, err, org.xml.sax.SAXException: missing entries of NIFStack.xml:
+7.0.0.13-WS-WASEmbeded-IFPM52274; 7.0.0.19-WS-WASEmbeded-IFPM72536; 
+
+This indicates that the WAS iFixes 
+
+7.0.0.13-WS-WASEmbeded-IFPM52274; 7.0.0.19-WS-WASEmbeded-IFPM72536;
+
+are in the <WAS_HOME>/properties/version/nif/backup directory shown as .pak files
+
+7.0.0.13-WS-WASEmbeded-IFPM52274.pak
+7.0.0.19-WS-WASEmbeded-IFPM72536.pak 
+
+but not listed in the list of APARS in the <WAS_HOME>/properties/version/nif/NIFStack.xml file
+
+
+RESOLVING THE PROBLEM
+1) Stop the Application Server(s) running on this server if any. 
+
+2) Backup the entire WebSphere environment (the file system). 
+
+3) Identify and move the .pak files identified as existing in the <WAS_HOME>/properties/version/nif/backup directory but not listed in the NIFStack.xml file to a location outside of the WAS environment: 
+
+For example these two iFixes identifed in the updatelog.txt file above:
+7.0.0.13-WS-WASEmbeded-IFPM52274.pak 7.0.0.19-WS-WASEmbeded-IFPM72536.pak
+
+should be moved from the <WAS_HOME>/properties/version/nif/backup directory to any directory outside the WAS environment.
+
+4) Move the .nifregistry file somewhere outside the WAS environment. 
+Unix non-root:
+<user_home>/.ibm/.nif/.nifregistry
+Unix root 
+/opt/.ibm/.nif/.nifregistry
+Windows administrator:
+C:\Windows\.nifregistry
+Windows non-administrator
+C:\Users\<user_name>\.nifregistry
+
+5) Retry the TIP upgrade.

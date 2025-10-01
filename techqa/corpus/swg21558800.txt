@@ -1,0 +1,84 @@
+Title: IBM Intermittent exception when sending to a load balanced SAP system via ALE - United States
+
+Text:
+Extensions; Adapters; STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Intermittent exception when sending to a load balanced SAP system via ALE 
+
+SYMPTOM
+
+
+The GIS instance is clustered and patched to Gentran Integration Suite, Release 4.3 Build 4320. The SAP load-balanced. ALE is the transport mechanism, the SAPSuiteALE adapters do not use external Java Virtual Machines. 
+
+Several times a day GIS throws an error: 
+
+Name: SAPinbDelivery Instance ID:6866668 Service Name: SapSuite_SP1_LoadBalanced 
+Status Report for Internal Problem. Message = 
+An Exception occurred in SapSuite.processData. The reason is : writing aborted; java.io.NotSerializableException: com.sterlingcommerce.woodstock.util.frame.log.ServerLog. 
+Problem Type =class java.io.WriteAbortedException 
+Problem Message =writing aborted; java.io.NotSerializableException: com.sterlingcommerce.woodstock.util.frame.log.ServerLog
+
+Error Message SAP LOG:
+
+[2010-09-20 02:02:59.656] ALL 000000000000 GLOBAL_SCOPE SapSuite_SP1_LoadBalanced.ConnPool.service_loop (2:2:59:656) Error during closing connection to SAP system.
+[2010-09-20 02:02:59.657] ALL 000000000000 GLOBAL_SCOPE SapSuite_SP1_LoadBalanced.ConnPool.service_loop (2:2:59:657) An Exception occurred in com.sterlingcommerce.woodstock.services.sapsuite.connectionHandler.SAPConnection Pool.pool maintenance. The reason is : com.sap.mw.jco.JCO$Exception : Connection cannot be disconnected. Connection currently used in another thread.. 
+com.sap.mw.jco.JCO$Exception: (132) JCO_ERROR_CONCURRENT_CALL: Connection cannot be disconnected. Connection currently used in another thread.
+at com.sap.mw.jco.JCO$Client.disconnect(JCO.java:3190)
+at com.sap.mw.jco.JCO$Client.disconnect(JCO.java:3163)
+at com.sterlingcommerce.woodstock.services.sapsuite.connectionHandler.SAPConnection Pool.processJob(SAPConnectionPool.java:1266)
+at com.sterlingcommerce.woodstock.services.sapsuite.common.JobEngine$SynchronJobIte m.run(JobEngine.java:157)
+at java.util.TimerThread.mainLoop(Timer.java:512)
+at java.util.TimerThread.run(Timer.java:462)
+
+
+RESOLVING THE PROBLEM
+
+
+In Deployment > Services > Configuration menu of the GIS User Interface, find the SAPSuiteALE Adapter using Search or List and click Edit. In the Connection Pool screen, activate "Close session after maximum session time" and specify a value for "Max. Session Time (minutes)." Start with a high value, such as 300 minutes. Save the changes and click "Finish" on the Confirmation screen.
+
+In Operations > System > Troubleshooter > Adapters, stop the SAPSuiteALE Adapter. After it is fully stopped, start the Adapter again.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling B2B Integrator Adapters 
+HISTORICAL NUMBER
+ NFX9945 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+SAP
+
+
+Escalation ID
+
+
+231350
+
+
+Fix ID
+
+
+None
+
+
+Severity
+
+
+Normal
+
+
+Type
+
+
+NormalFix
+
+
+Build
+
+
+None

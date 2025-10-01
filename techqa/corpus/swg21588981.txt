@@ -1,0 +1,31 @@
+Title: IBM Error Message: "MAD_ComSelect: socket (##) has timed out." with Inbound Message Broker - United States
+
+Text:
+socket; timeout; MAD_ComSelect; inbound broker TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to start up the Inbound broker gives the following error in the logs:
+
+MsgBroker ERROR MAD_ComSelect: socket (344) has timed out. errno='0'
+MsgBroker ERROR MAD_ComReceive: MAD_ComSelect failed.
+MsgBroker ERROR MAD_ComRecvBin: MAD_ComReceive failed.
+
+A similar error observed in the Outbound broker looks as follows:
+
+15:00:53 [258] ERROR MAD_ComSelect: socket (7) has timed out. errno='0'
+15:00:53 [258] ERROR MAD_ComReceive: MAD_ComSelect failed.
+15:00:53 [258] ERROR MAD_ComRecvBin: MAD_ComReceive failed.
+15:00:53 [258] ERROR MPI_IxnExecDriver_MPINET: MAD_ComRecvData() failed.
+15:00:53 [258] ERROR MI_MpinetCommunicationException: MI_MpinetInteractionManager::EvaluateExecutionError() - A communication exception was detected on interaction 'EIASEARCH' with error code 2(common/MI_MpinetInteractionManager.cpp:1321) 
+
+CAUSE
+During high system or database load such as hot backups, message broker timeouts can occasionally occur. 
+
+The same error is seen with Outbound Broker if, when trying to do an EIASEARCH through the engine, a response is not returned within the time specified in MAD_SOTIMEOUT. If SOTIMEOUT is missing (defaulting to 30 seconds) and then engine takes longer than 30 seconds to return a result, then this error is logged.
+
+
+
+RESOLVING THE PROBLEM
+The default timeout for an Inbound Broker is set to 30 seconds. To increase this timeout, set the MAD_SOTIMEOUT environment variable to a higher value in the profile of the user that starts the message brokers, or the message broker startup scripts to reduce the occurrence of these timeouts. 
+
+In the case of the Outbound Broker, aside from increasing the timeout variable, it may be worthwhile investigating the database (indexes, etc) to ensure it has been properly tuned for best performance, given that taking longer than 30 seconds for an EIASEARCH - or in fact any interaction - is an undesirable performance bottleneck.

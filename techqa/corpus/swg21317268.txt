@@ -1,0 +1,33 @@
+Title: IBM How to replace the IBM JRE on the Host On-Demand Server - United States
+
+Text:
+Host On-Demand; java 2; plug-in; distributed; replace; jre; server; client; 1317268 TECHNOTE (FAQ)
+
+QUESTION
+ How do you replace the IBM JRE on the IBM Rational Host On-Demand Server on all platforms? 
+
+ANSWER
+These instructions are for Host on-Demand Administrators to replace the JRE provided on the Host On-Demand server for Windows clients. 
+
+ 1. Download the IBM 6.0 SP12 JRE for Windows from the Host On-Demand Fix Central sit [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Rational&product=ibm/Rational/IBM+Host+On-Demand&release=1.6.0.12&platform=Windows&function=all]e [http://www-933.ibm.com/support/fixcentral/] and save to an accessible location.
+    
+    
+ 2. Go to your Host On-Demand Server and go to the JREInstall subdirectory within the Host On-Demand publish directory. The default path for each server platform is:  * Windows: C:\Program Files\IBM\HostOnDemand\HOD\JREInstall 
+     * AIX: /opt/IBM/hostondemand/HOD/JREInstall 
+     * Linux: /opt/IBM/hostondemand/HOD/JREInstall 
+     * i5OS: /QIBM/ProdData/IBM/hostondemand/HOD/JREInstall 
+     * z/OS: /usr/lpp/HOD/hostondemand/HOD/JREInstall
+       
+       
+    
+    
+ 3. From the JREInstall subdirectory, back up the file IBM-Win32-JRE.exe to another location or rename this file. 
+    
+    
+ 4. Copy or ftp in binary previously downloaded file, ibm-java-jre-60-win-i386_SR12.exe, into the JREInstall directory.
+    
+    
+ 5. Rename the Java executable file to IBM-Win32-JRE.exeto ensure that the HODMain.html links work.
+
+
+This IBM JRE is included on the Host On-Demand server and accessible by way of the "IBM 32-bit RunTime Environment for Java 2" link on the HODMain.html page. When no JRE is detected when a client is downloaded or started, this JRE is available to the user to download unless the Host On-Demand Administrator has disabled the download.

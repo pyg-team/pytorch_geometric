@@ -1,0 +1,124 @@
+Title: IBM Security AppScan Enterprise v9.0.2 is now available on Passport Advantage - United States
+
+Text:
+4039476; AppScan Enterprise; PI35716; PI35580; PI35464; PI35365; PI35246; PI35067; PI34719; PI34658; PI34434; PI34134; PI33842; PI32434; PI32335; PI32304; PI32033 DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM Security AppScan Enterprise Version 9.0.2 has been made generally available on the IBM Passport Advantage website. 
+
+DOWNLOAD DESCRIPTION
+
+
+TAB NAVIGATION
+ * 9.0.2- selected tab,
+ * Support Resources [http://www.ibm.com/support/docview.wss?uid=swg21672251]
+
+
+
+
+This release is a full product download. 
+
+ * Passport Advantage clients: Passport Advantage and Passport Advantage Express clients are required to sign in to Passport Advantage Online [https://www.ibm.com/software/howtobuy/softwareandservices/passportadvantage] to download the image.
+   
+   
+ * Non-Passport Advantage clients: If your organization did not purchase your software and support through Passport Advantage or Passport Advantage Express, you are required to sign in to the new IBM Software Group OEM Portal [https://www.ibm.com/software/howtobuy/softwareandservices/oem] to download the image.
+   
+   Note: This includes clients with Flexible Contract Type (FCT) license purchases and IBM Business Partners.
+   
+   For assistance with the IBM Software Group OEM Portal, visit the eCustomer care [https://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html] page.
+   
+   
+
+
+Here are the main new features and enhancements in this release: 
+
+ * A new Dashboard tab displays the charts previously displayed in the Portfolio tab, and adds more metrics to assess the current status and progress of an application security initiative. This includes:  * trend of portfolio risk status 
+    * the number of applications with open security issues 
+    * trend of overall open issues 
+    * trend of applications test status
+   
+   
+ * A new approach to create scans consistent with AppScan Standard, for both the security team who creates the templates and for the developers who create the scans. 
+ * New built-in formulas include new issues, open issues, fixed issues, and total issues. 
+ * Enhancements to issue management: A 'new' classification has been added for issue management. All issues that are scanned or imported from 3rd party scanners and that have not yet been triaged are now classified as 'new' in both the Monitor and the Scans views. 
+ * Group issues by Status in an application tab. 
+ * New and updated REST APIs [http://www-03preprod.ibm.com/support/knowledgecenter/SSW2NF_9.0.2/com.ibm.ase.help.doc/topics/r_api_change_history.html?lang=en-us#r_api_change_history].
+
+PREREQUISITES
+
+
+Supporting Documentation Document Description Detailed System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27027541] A detailed list of the supported hardware, operating systems and information related to IBM and third party software requirements. Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSW2NF_9.0.2] Browse or search on-line information related to the deployment, configuration and usage of the product. 
+INSTALLATION INSTRUCTIONS
+The Interactive Installation Guide is available at http://www.ibm.com/support/knowledgecenter/SSW2NF_9.0.2/com.ibm.ase.help.doc/topics/roadmap_ase_install.html [http://www.ibm.com/support/knowledgecenter/SSW2NF_9.0.2/com.ibm.ase.help.doc/topics/roadmap_ase_install.html]. A Planning & Installation Guide in PDF is included in the download package at IBM Passport Advantage. This document is also available at the IBM Publications Center at http://www.ibm.com/e-business/linkweb/publications/servlet/pbi.wss [http://www.ibm.com/e-business/linkweb/publications/servlet/pbi.wss].
+
+DOWNLOAD PACKAGE
+These download packages are available at IBM Passport Advantage: 
+
+IBM Security AppScan Enterprise Server V9.0.2 Multiplatform Multilingual eAssembly (Part Number CRVG1ML) 
+This download package includes:
+
+
+ * Quick Start Guide - IBM Security AppScan Enterprise V9.0.2 Multilingual (Part Number CN4X4ML) 
+ * IBM Security AppScan Enterprise Server V9.0.2 Windows Multilingual (Part Number CN4X6ML) 
+ * IBM Security AppScan Enterprise Server V9.0.2 Linux Multilingual (Part Number CN4X7ML) 
+ * Rational License Server Key V8.1.4 Multilingual (Part Number CRP2XML) 
+ * IBM Installation Manager V1.4.3.1 for Linux x86 Multilingual (Part Number CZM8XML) 
+ * IBM Installation Manager V1.4.3.1 for Windows x86 Multilingual (Part Number CZM90ML) 
+
+
+IBM Security AppScan Enterprise Dynamic Analysis Scanner V9.0.2 Multilingual eAssembly (Part Number CRVG0ML ) 
+This download package includes: 
+ * Quick Start Guide - IBM Security AppScan Enterprise V9.0.2 Multilingual (Part Number CN4X4ML) 
+ * IBM Security AppScan Enterprise Dynamic Analysis Scanner V9.0.2 Windows Multilingual (Part Number CN4X5ML)
+
+HOW CRITICAL IS THIS FIX?
+Recommended
+
+
+
+PROBLEMS SOLVED
+ 
+
+PI35716 Importing LDAP users fails with "The User Name specified is not valid. User does not exist". PI35580 License expiration warning is not working. PI35464 ASE : Error occurs when associating a job to an application. PI35365 Default Instance is checked by default when multiple instances exist. PI35246 ASE 9.0.1.1: Monitor View column alignment and custom field values missing when using IE9. PI35067 ASE 9.0.1.1: Engine/SDK/Sys logs show different version/build/security rules that the About box. PI34719 ASE: Security Issue matrix Issue count shifts right when Group By Option is used for imported Source assessments. PI34658 False Positive confirmation. PI34434 Invalid characters when importing data from a .csv. PI34134 Scan suspended with out of memory error even in a small/medium site. PI33842 Missing documentation for removing an existing ASE instance. PI32434 ASE: Concurrent sessions get used up and no additional sessions can be granted. PI32335 ASE ME plugin cannot connect to site in proxy environment. PI32304 AppScan flags "Database Error Pattern Found" when characters "sqlnnnn" appear in __ViewState (.NET hidden field). PI32033 AST/ASE: Some Log Messages/Descriptions about multisteps are incorrect. 
+KNOWN SIDE EFFECTS
+ 
+
+ * To access the new interactive REST API framework in 9.0.2, the AppScan Enterprise instance name must be called 'ase' (for example, https://<localhost>:9443/<b>ase</b>/api/pages/apidocs.html). 
+ * Use Microsoft Silverlight with Internet Explorer 8.0 to properly render Dojo functionality in the Monitor view. 
+ * When a scan job only has a recorded login (no Manual Explore or Starting URLs), the scan will not crawl below that page. Add at least one URL to the Manual Explore or Starting URL of the What to Scan page. 
+ * If you upgrade a database from pre-8.8, and then click any existing job, the scan log will be empty. Rerun your jobs to generate a new scan log. 
+ * When editing the Edit Application Profile Template page in IE 8/9, changes are not saved. Navigate away from the field you are editing and then back to it. Save your changes. Alternatively, upgrade your browser to IE11 or Firefox 31.
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options AppScan Enterprise Server at Passport Advantage 14 Apr 2015 English 3654522019 HTTPS [https://www.ibm.com/software/howtobuy/softwareandservices ] Dynamic Analysis Scanner at Passport Advantage 14 Apr 2015 English 861695150 HTTPS [https://www.ibm.com/software/howtobuy/softwareandservices] AppScan Enterprise User Component 14 Apr 2015 English 179867648 HTTPS [https://www.ibm.com/software/howtobuy/softwareandservices ] 
+TECHNICAL SUPPORT
+ 
+
+ * Visit the AppScan Enterprise Support [http://www.ibm.com/support/entry/portal/product/security_systems/ibm_security_appscan_enterprise] portal to review lists of known problems, fixes, and a wealth of important support information. 
+ * If you have an issue with the AppScan product, open a support ticket (PMR) at Service Request [https://www.ibm.com/support/servicerequest/Home.action]. 
+ * For quick questions, use the AppScan Enterprise Forum [https://www.ibm.com/developerworks/community/forums/html/forum?id=d5279ab7-956b-4146-bd17-b766d22690f7]. 
+
+
+LICENSING INFORMATION
+ * Consult Licensing for AppScan Enterprise [http://www.ibm.com/support/docview.wss?uid=swg21634292]. 
+
+
+
+HELPFUL HINTS FOR OBTAINING TECHNICAL ASSISTANCE
+Before you open a support ticket (PMR) at Service Request [https://www.ibm.com/support/servicerequest/Home.action], gather the background information that you need to describe the problem. When creating the ticket give the following information: 
+
+ * What operation did you performed - and what error message have you received? 
+ * The background information needed to understand the issue. 
+ * Version of AppScan Enterprise. Make sure you are opening the ticket for AppScan Enterprise (there are several AppScan products supported by different teams). 
+ * Impact of the issue on your organization, schedule, deadlines. 
+ * Upload logs, screen captures, and background information to the ticket (logs required for common troubleshooting issues [http://www.ibm.com/support/docview.wss?uid=swg21671422]). 
+   
+    Back to top
+   
+   
+
+
+
+ [/support/docview.wss?uid=swg24039476&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24039476&aid=2]Problems (APARS) fixed
+PI35716, PI35580, PI35464, PI35365, PI35246, PI35067, PI34719, PI34658, PI34434, PI34134, PI33842, PI32434, PI32335, PI32304, PI32033

@@ -1,0 +1,64 @@
+Title: IBM ** Troubleshooting ** Error 'Exception has been thrown by the target of an invocation' when using Excel link - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User launches Excel. User clicks "Controller" - "Log on". User receives error message. 
+
+SYMPTOM
+Exception has been thrown by the target of an invocation
+
+
+CAUSE
+There are many different causes for the error "Exception has been thrown by the target of an invocation". 
+
+ * This IBM Technote specifically relates to the scenario where the message appears when using the Excel-link functionality. 
+ * For the scenario where the user is using the 'main' Controller application interface (not the Excel-based functionality) see separate IBM Technote #1347234.
+
+
+In this case there are several scenarios why this error would appear inside Excel: 
+
+ * Scenario #1 - "Client Distribution Server" settings are configured to use http://localhost [http://localhost] 
+ * Scenario #2 - Unsupported version of Microsoft Office installed on end user's client PC  * See separate IBM Technote #1347207
+   
+   
+ * Scenario #3 - Dotnet Trust (caspol command) and Trusted Site in IE are not using the naming convention that matches the "Client Distribution Server" settings mentioned in Scenario #1. 
+ * Scenario #4 - User's Windows user account has been locked out of the Microsoft Active Directory (domain).  * See separate IBM Technote #1347252
+   
+   
+
+RESOLVING THE PROBLEM
+Scenario #1 
+
+Reconfigure the "Client Distribution Server" settings so that they refer to http://<servername> as opposed to http://localhost. 
+
+ 1. Logon to the Controller application server 
+ 2. Launch the program "Controller Configuration" 
+ 3. Open the section "Client Distribution Server" 
+ 4. Modify the settings (such as "CASUrl") to refer to http://servername/xxxxxx instead of http://localhost/xxxxxxxxxx 
+ 5. Click "Save.
+
+
+Scenario #2 
+Upgrade end user's client PC to a supported version of Microsoft Office.  * See separate IBM Technote #1347207
+
+
+Scenario #3
+Run the caspol command using the correct server naming convention for the Controller application server and then add this host name, again using same convention, to IE's Trusted Sites. 
+
+For detailed instructions on how to do this, find these sections headed: 
+"Server Naming Conventions",
+"CASPOL Disable2.BAT", 
+and 
+"Appendix 2 – Manual Method of configuring Microsoft Internet Explorer trusted sites" 
+..of the "IBM Cognos Proven Practices: How to Install the IBM Cognos Controller Client on a User's PC" document. See link below for one version of this which is generally applicable to all Controller versions. 
+
+Scenario #4 
+Ask the I.T. department to unlock the user's Windows user account.  * See separate IBM Technote #1347252
+
+RELATED INFORMATION
+#1347234 - ** Troubleshooting ** unable to log in to Con [http://www.ibm.com/support/docview.wss?uid=swg21347234]
+1347207 - Exception error opening an Excel link data en [http://www.ibm.com/support/docview.wss?uid=swg21347207]
+1347252 - Error 'Exception has been thrown by the targe [http://www.ibm.com/support/docview.wss?uid=swg21347252]
+How to Install the IBM Cognos Controller Client on a Us [http://www.ibm.com/developerworks/data/library/cognos/infrastructure/cognos_specific/page506.html]

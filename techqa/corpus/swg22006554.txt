@@ -1,0 +1,144 @@
+Title: IBM Host on Demand V12 published technotes - United States
+
+Text:
+ RECOMMENDED RESOURCES
+
+ABSTRACT
+ Host on Demand V12 published technotes 
+
+CONTENT
+The following list contains all the HOD V12 technotes. 
+
+z/OS:
+How to configure Host On-Demand on z/OS for RACF Authentication
+http://www-01.ibm.com/support/docview.wss?uid=swg21990351 [http://www-01.ibm.com/support/docview.wss?uid=swg21990351]
+
+How to configure IBM HTTP Server 7, 8, and 8.5 for Host On-Demand V12 on z/OS
+http://www-01.ibm.com/support/docview.wss?uid=swg21986779 [http://www-01.ibm.com/support/docview.wss?uid=swg21986779]
+
+How to configure IBM HTTP Server 9 for Host On-Demand V12 on z/OS
+http://www-01.ibm.com/support/docview.wss?uid=swg21986764 [http://www-01.ibm.com/support/docview.wss?uid=swg21986764]
+
+How to install Host On-Demand V12 on z/OS with Installation Manager
+http://www-01.ibm.com/support/docview.wss?uid=swg21979271 [http://www-01.ibm.com/support/docview.wss?uid=swg21979271]
+
+Must gather: Host On-Demand Service Manager on z/OS fails to start
+http://www-01.ibm.com/support/docview.wss?uid=swg21220236 [http://www-01.ibm.com/support/docview.wss?uid=swg21220236]
+
+How to set up multiple Host On-Demand Servers on z/OS
+https://www-304.ibm.com/support/docview.wss?uid=swg21159698 [https://www-304.ibm.com/support/docview.wss?uid=swg21159698]
+
+How to create, add or convert certificates to CustomizedCAs.p12 file on z/OS for Host On-Demand
+http://www-01.ibm.com/support/docview.wss?uid=swg21461759 [http://www-01.ibm.com/support/docview.wss?uid=swg21461759]
+
+How to configure IBM HTTP Server 5.3 to work with Host On-Demand V12 (Z/OS)
+http://www-01.ibm.com/support/docview.wss?uid=swg21983914 [http://www-01.ibm.com/support/docview.wss?uid=swg21983914]
+
+Configuration: 
+
+How to configure IBM HTTP Server 8 and 8.5 to work with Host On-Demand
+http://www-01.ibm.com/support/docview.wss?uid=swg21681373 [http://www-01.ibm.com/support/docview.wss?uid=swg21681373]
+
+IBM Host On-Demand browser support
+http://www-01.ibm.com/support/docview.wss?uid=swg21980025 [http://www-01.ibm.com/support/docview.wss?uid=swg21980025]
+
+How to configure SSL on the Host On-Demand Redirector
+http://www-01.ibm.com/support/docview.wss?uid=swg21595625 [http://www-01.ibm.com/support/docview.wss?uid=swg21595625]
+
+How to install and configure the License Manager Server for Host On-Demand and Personal 
+Communications
+https://www-01.ibm.com/support/docview.wss?uid=swg21691875 [https://www-01.ibm.com/support/docview.wss?uid=swg21691875] 
+
+MustGather
+Must Gather: Host On-Demand Java Web Start Client Problems
+http://www-01.ibm.com/support/docview.wss?uid=swg21229394 [http://www-01.ibm.com/support/docview.wss?uid=swg21229394]
+
+Must Gather: IBM Host On-Demand Server Problems on AIX or Linux
+http://www-01.ibm.com/support/docview.wss?uid=swg21225440 [http://www-01.ibm.com/support/docview.wss?uid=swg21225440]
+
+Must Gather: IBM Host On-Demand Macro Problems
+http://www-01.ibm.com/support/docview.wss?rs=0&context=SS5RCF&q1=MustGather&uid=swg21219980&loc=en_US&cs=utf-8&lang= [http://www-01.ibm.com/support/docview.wss?rs=0&context=SS5RCF&q1=MustGather&uid=swg21219980&loc=en_US&cs=utf-8&lang=]
+
+Must Gather: LOG0001 error when using IBM Host On-Demand on IBM i5
+http://www-01.ibm.com/support/docview.wss?uid=swg21219976 [http://www-01.ibm.com/support/docview.wss?uid=swg21219976]
+
+Must Gather: Debugging IBM Host Access Client Library
+http://www-01.ibm.com/support/docview.wss?rs=128&context=SWF20&dc=DB560&uid=swg21219975&loc=en_US&cs=utf-8&lang=en [http://www-01.ibm.com/support/docview.wss?rs=128&context=SWF20&dc=DB560&uid=swg21219975&loc=en_US&cs=utf-8&lang=en]
+
+Must Gather: Read first for Rational Host On-Demand problems
+http://www-01.ibm.com/support/docview.wss?uid=swg21220328 [http://www-01.ibm.com/support/docview.wss?uid=swg21220328]
+
+MustGather: Host On-Demand Redirector problems when using SSL
+http://www-01.ibm.com/support/docview.wss?uid=swg21220238 [http://www-01.ibm.com/support/docview.wss?uid=swg21220238]
+
+
+ 
+
+Security
+How to convert Host On-Demand CustomizedCAs.p12 to CustomizedCAs.jks file
+http://www-01.ibm.com/support/docview.wss?uid=swg21697803 [http://www-01.ibm.com/support/docview.wss?uid=swg21697803]
+
+How do I configure Host On-Demand to use Java Secure Socket Extension for 
+Transport Layer Security support.
+http://www-01.ibm.com/support/docview.wss?uid=swg21665725 [http://www-01.ibm.com/support/docview.wss?uid=swg21665725]
+
+How to make server certificates available to Host On-Demand clients for JSSE TLS support
+http://www-01.ibm.com/support/docview.wss?uid=swg21960399 [http://www-01.ibm.com/support/docview.wss?uid=swg21960399]
+
+Miscellaneous:
+How to use Start PC Command (STRPCCMD) in Host On-Demand on iSeries
+http://www-01.ibm.com/support/docview.wss?uid=swg21968964 [http://www-01.ibm.com/support/docview.wss?uid=swg21968964]
+
+Pressing the Escape key while recording a macro in Host On-Demand VT session results in an 
+incorrect character recorded
+http://www-01.ibm.com/support/docview.wss?uid=swg21670269 [http://www-01.ibm.com/support/docview.wss?uid=swg21670269]
+
+How can I determine the version of Host On-Demand on a server?
+http://www-01.ibm.com/support/docview.wss?uid=swg21568555 [http://www-01.ibm.com/support/docview.wss?uid=swg21568555]
+
+Rational Host On-Demand html parameters
+http://www-01.ibm.com/support/docview.wss?uid=swg21499829 [http://www-01.ibm.com/support/docview.wss?uid=swg21499829]
+
+Starting Host On-Demand service manager results in 'RDR0008: Native library failed to load' 
+error
+http://www-01.ibm.com/support/docview.wss?uid=swg21413535 [http://www-01.ibm.com/support/docview.wss?uid=swg21413535]
+
+Publishing Host On-Demand Deployment Wizard files to a location other than Host On-Demand 
+servers publish directory
+http://www-01.ibm.com/support/docview.wss?uid=swg21064431 [http://www-01.ibm.com/support/docview.wss?uid=swg21064431]
+
+How to stop the beeping sounds in Host On-Demand 3270 sessions
+http://www-01.ibm.com/support/docview.wss?uid=swg21041008 [http://www-01.ibm.com/support/docview.wss?uid=swg21041008]
+
+Signer Certificate Revoked for IBM Host On-Demand
+http://www-01.ibm.com/support/docview.wss?uid=swg21992843 [http://www-01.ibm.com/support/docview.wss?uid=swg21992843]
+
+Support for Session Manager APIs and Portlets in Host On-Demand Version 12
+http://www-01.ibm.com/support/docview.wss?uid=swg21981897 [http://www-01.ibm.com/support/docview.wss?uid=swg21981897]
+
+Discontinue support of some Operating Systems for Host On-Demand
+http://www-01.ibm.com/support/docview.wss?uid=swg21981892 [http://www-01.ibm.com/support/docview.wss?uid=swg21981892]
+
+How to suppress the 'Java update needed' pop up in the Host On-Demand clients
+http://www-01.ibm.com/support/docview.wss?uid=swg21967418 [http://www-01.ibm.com/support/docview.wss?uid=swg21967418]
+
+Release Support Discontinuance Announcements for IBM Host On-Demand
+http://www-01.ibm.com/support/docview.wss?uid=swg21966750 [http://www-01.ibm.com/support/docview.wss?uid=swg21966750]
+
+Upgrading Host On-Demand clients requires clearing cached client for SSL/TLS session 
+connection
+http://www-01.ibm.com/support/docview.wss?uid=swg21702171 [http://www-01.ibm.com/support/docview.wss?uid=swg21702171]
+
+Host On-Demand server ends with "Out of memory" error
+http://www-01.ibm.com/support/docview.wss?uid=swg21652076 [http://www-01.ibm.com/support/docview.wss?uid=swg21652076]
+
+Upgrading Java results in the Host On-Demand Java Web Start shortcut disappearing from 
+desktop
+http://www-01.ibm.com/support/docview.wss?uid=swg21572402 [http://www-01.ibm.com/support/docview.wss?uid=swg21572402]
+
+Rational Host On-Demand client with Tivoli Access Manager and HTTP-only flag enabled fails to 
+launch
+http://www-01.ibm.com/support/docview.wss?uid=swg21496415 [http://www-01.ibm.com/support/docview.wss?uid=swg21496415]
+
+Support for Host On-Demand with other software that is no longer supported
+http://www-01.ibm.com/support/docview.wss?uid=swg21443698 [http://www-01.ibm.com/support/docview.wss?uid=swg21443698]

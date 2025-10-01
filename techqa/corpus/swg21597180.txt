@@ -1,0 +1,49 @@
+Title: IBM LMT/TAD4D 7.5 affected by java.lang.RuntimeException: java.lang.OutOfMemoryError - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ After installing/upgrading to LMT/TAD4D 7.5 the application is failing to perform some very memory consuming tasks like: Software Catalog import, Aggregation, Recalculation. 
+
+CONTENT
+This may especially affect the users using LMT/TAD4D sever based on embedded WebSphere Application Server (eWAS). 
+
+By default 'Maximum heap size' for JVM is set to 1024 MB. 
+
+In some cases this value may not be sufficient to perform complicated calculations - especially on environments with large number of agents reporting a wide range of software products. 
+
+ 
+
+In WAS(TIP) logs, a similar exception can be seen:
+Alarm/Timer threw exception commonj.work.WorkCompletedException: 
+java.lang.RuntimeException: java.lang.OutOfMemoryError 
+Caused by: java.lang.OutOfMemoryError 
+...
+at com.ibm.license.mgmt.dao... 
+
+ 
+
+It is recommended to increase this value to at least 2048 MB.
+
+You can increase the WebSphere JVM heap size, by navigating from Tivoli Integrated Portal to:
+> Settings -> WebSphere Administrative Console -> Launch console 
+
+In the WebSphere web console, select: 
+>Servers -> Server Types -> WebSphere application servers -> server_name->
+Server Infrastructure -> Java and Process Management -> Process definition -> 
+
+In Additional Properties section, select Java Virtual Machine and increase the value for "Maximum heap size". 
+
+In cases where the panel is not available to the user (for example after upgrading TIP to 2.2.0.7)
+you can use the following workaround:
+
+- please search for server.xml file in path like <eWAS_dir>/profiles/profile_name/config/cells/cell_name/nodes/node_name/servers/server1/
+
+- you should find information similar to the following:
+<jvmEntries xmi:id="JavaVirtualMachine_1343815583563" 
+verboseModeClass="false" verboseModeGarbageCollection="false" verboseModeJNI="false" initialHeapSize="256" maximumHeapSize="1024" runHProf="false" hprofArguments="" debugMode="false" debugArgs="-Djava.compiler=NONE -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=11078" genericJvmArguments="">
+
+- please check the values for initialHeapSize (should be set at 256) and maximumHeapSize (1024). It is recommended to increase the value of maximumHeapSize to at least 2048 MB. 
+
+After performing these changes please restart the server.

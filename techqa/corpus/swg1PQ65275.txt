@@ -1,0 +1,172 @@
+Title: IBM PQ65275: DFSDCAP0 MISSING RECORDS. RECON STCK MISMATCH 9904 DUE TO CVTLSO - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DPROPNR reported some expected 9904 records were missing.
+   Certain 9904 records have incorrect STCK value that is a
+   mismatch with the RECON SLDS STCK. The cause involves the
+   CVTLSO (Leap Second Option).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IMS R810 users of Changed Data Capture   *
+   *                 when MVS time is set with a non-zero         *
+   *                 leap second adjustment value.                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A discrepancy found between the         *
+   *                      universal time in the RECON and         *
+   *                      the converted hardware TOD value        *
+   *                      used by DPROP from the IMS Changed      *
+   *                      Data Capture log record type9904.       *
+   ****************************************************************
+   * RECOMMENDATION: INSTALL CORRECTIVE SERVICE FOR APAR/PTF      *
+   ****************************************************************
+   The leap seconds value in the CVTLSO field leads to a
+   discrepancy between the hardware STCK time in log record
+   type9904 and the universal time UTC in the padding log record
+   type48. The UTC time from the padding log record is used in the
+   RECON for the start/stop time of an SLDS. DPROP is using the
+   hardware STCK time in log record type9904. This time has to be
+   exact and equal to the time in the RECON.
+   The time in the RECON showed 22 seconds (leap second adjustment
+   value) less than the converted hardware TOD value in log record
+   type9904
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   AIDS: RIDS/SYS RIDS/ESS SYS ESS
+     DEP: NONE
+     GEN:
+   
+   *** END IMS KEYWORDS ***
+   DFSFTIM and DFSFTIMP : These macros were changed to support
+                         a new function - TIME=STCK - to generate
+                         a STCK value adjusted by the leap second
+                         value in the CVT at IMS start, plus any
+                         XRF adjustment value (to account for
+                         differences in the active and alternate
+                         hardware clocks).
+                         STCK values produced by this new function
+                         are consistent with the 12-byte IMS UTC
+                         timestamps.
+   
+   DFSCPY40            : Changed the instruction STCK at sequence
+                         number 03094000 to use the macro DFSFTIM.
+                         The same changes were made at sequence
+                         number 07113000.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ65275
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V8
+   
+   
+ * REPORTED COMPONENT ID
+   5655C5600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2002-08-14
+   
+   
+ * CLOSED DATE
+   2002-09-12
+   
+   
+ * LAST MODIFIED DATE
+   2003-03-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PQ62252
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ69772
+   
+   
+
+MODULES/MACROS
+ *     DFSCPY40 DFSFTIM  DFSFTIMP
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V8
+   
+   
+ * FIXED COMPONENT ID
+   5655C5600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY UQ69772
+   UP02/09/19 P F209

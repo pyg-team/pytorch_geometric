@@ -1,0 +1,44 @@
+Title: IBM AWSJCO005E or SRVE0255E errors logging in to TDWC - United States
+
+Text:
+unable; cannot; connect; webui; dwc; tip; isc; AWSUI0766E; AWSUI0833E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SRVE0255E error is received when attempting to navigate to the Tivoli Dynamic Workload Console (TDWC) URL: https://my_server:31124 
+
+SYMPTOM
+SRVE0255E: A WebGroup/Virtual Host to handle / has not been defined. 
+
+SRVE0255E: A WebGroup/Virtual Host to handle my_server:31124 has not been defined.
+
+
+When checking the port (31124 in the example above), netstat shows the appserver to be "LISTENING": 
+
+netstat -a|grep 31124 
+
+**************************
+AWSUI0766E Test connection to [prod] : failed. 
+AWSUI0833E The operation could not be completed. There has been a communication failure.
+The internal message is: AWSJCO005E WebSphere Application Server has given the following error: A communication failure occurred while attempting to obtain an initial context with the provider URL: 
+
+
+CAUSE
+Incorrect (truncated) URL is being used to make the connection.
+
+Also, if the TDWC is installed on a remote workstation, DNS may not recognize the short host name for the master's workstation.
+
+
+RESOLVING THE PROBLEM
+Use the full, complete URL to login to the TDWC. 
+
+Example:
+https://my_server.austin.ibm.com:31124/ibm/console/secure/securelogon.do
+
+Also, if the TDWC is installed on a remote workstation, use the fully qualified domain name or IP address for the server in the URL.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Maestro
+TWS
+TWA

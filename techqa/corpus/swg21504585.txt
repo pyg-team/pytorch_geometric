@@ -1,0 +1,72 @@
+Title: IBM SETTING UP ANOTHER INFORMIX INSTANCE ON THE SAME MACHINE - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you set up another Informix Instance on the same machine 
+
+CAUSE
+Steps to setup another instance (same or different version) on the same physical machine
+
+ANSWER
+ 
+
+1. Write down the dbservername (INFORMIXSERVER), INFORMIXDIR, PATH,ONCONFIG, servernum,port number,rootpath, mirror path,message path, and any other relevant information that you want to have unique. 
+
+2. If you are installing a new version: create the INFORMIXDIR for the 
+new instance. Make sure that is a different one from the one you have 
+for the first instance so you don't install the files over your existing 
+ones. If you are using the same version of informix and want to use that 
+same INFORMIXDIR you can do that. In this case, you don't have to make 
+sure INFORMIXDIR is different or copy any new files over (skip step 3). 
+
+3. cd to that directory and install the product (ensure you are 
+logged in as root. Then follow directions for that version as to who you should 
+be logged in as- informix or root). 
+
+run installserver files as appropriate 
+
+4. Make a setup file with new INFORMIXDIR, PATH, INFORMIXSERVER, 
+ONCONFIG, and path to the sqlhosts file and source the setup file. Make 
+sure env shows the right variables. 
+
+5. Edit your /etc/services file to add the entry for your new dbserver 
+TCP/IP connection. The service name and the port number must be unique 
+in the file. I would suggest putting this next to your other informix 
+entry to keep them together. 
+
+6. Add an entry in your same sqlhosts (you only need one) for the new 
+database server, including the new service name you just added. 
+
+7. Copy over your onconfig.std to the path you have your new ONCONFIG 
+environment variable pointed to. If you copy over your onconfig from the 
+first instance you run the risk of losing any newly added ONCONFIG 
+parameters to the newer version. 
+
+8. Customize your onconfig so that the new rootpath, mirrorpath, message 
+path, servernum, dbservername, dbserveraliases, and any other relevant 
+information is DIFFERENT from your first onconfig. THE ROOTPATH IS VERY 
+IMPORTANT SO THAT YOU DON"T OVERWRITE THE FIRST INSTANCE'S DATA!!! Also 
+keep in mind the servernum is used to calculate a relevant location in 
+shared memory. The value you choose is not important except that it must 
+be unique for each database server on your local host computer. Make 
+sure this is different from your first instance or you will get an error 
+message upon initialization. 
+
+9. Touch any cooked files you need to have for the rootdbs and make sure 
+they have the right permissions (informix informix 660). 
+
+10. Do another env to double check your environment; make sure 
+INFORMIXSERVER is pointing to the new server and ONCONFIG is the path to 
+the new onconfig file. 
+
+11. When ready do an oninit -ivy! This will initialize the disk (not 
+just the memory) for the first time and will wipe out any existing data. 
+This is why you must make sure everything is pointing to the new 
+instance so the right root chunk is initialized. Any other time after 
+the first time, you bring up the instance with oninit and any other 
+flags BUT the -i option! 
+
+12. Now you can recreate the database or data if wanted by using 
+dbimport or any other migration utility.

@@ -1,0 +1,27 @@
+Title: IBM Database commit instead of rollback when FAIL() function aborts a map - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During the execution of an IBM WebSphere Transformation Extender map, if a 'rules based' database connection is made first, it can adversely affect the rollback behavior.
+
+Consider the scenario of a top level map called 'Parent'. Output card #1 of this map drops to a functional map for each row of input and calls a RUN() map, 'Child1'. Output card #2 includes a FAIL() function.
+
+'Child1' does an insert of a single row into the database for each execution using the output card, but it also has a DBLOOKUP() which does a simple query (of another table) using the same connection parameters (pulled from the MDQ file). Only one connection will be established with the database. WTX connection manager will share the same connection because the connection parameters are identical.
+
+If the scope of both maps is set to map, you might expect no records to be inserted (at the FAIL() in output card #2 of the 'Parent' map, everything should roll-back) but you would observer that this is not happening. This is because the same connection is shared and the first database transaction setup, is actually the DBLOOKUP() and the transaction scope then becomes locked to 'rules based'.
+
+
+SYMPTOM
+Database updates are committed when the FAIL() function aborts the map.
+
+
+CAUSE
+Incorrect scope of the first database transaction.
+
+DIAGNOSING THE PROBLEM
+A review of the database adapter trace .DBL file will reveal the first active database connection.
+
+RESOLVING THE PROBLEM
+To ensure that all transactions in a run map are rolled-back if the top level map fails, in this situation you can add a dummy input card to the top level map 'Parent', doing a simple query. One connection will be created and it will be shared for all transactions. But the connection scope will be the top level map scope and no rows are inserted if the top level map fails.

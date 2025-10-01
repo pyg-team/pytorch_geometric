@@ -1,0 +1,23 @@
+Title: IBM Memory leak using a WTX map node from IIB on z/OS USS when using the WIRE adapter as output - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A memory leak was detected using IBM WebSphere Transformation Extender (WTX) called via the WTX node in IBM Integration Broker (IIB) 
+
+SYMPTOM
+Memory used by the IIB Execution Group continues to grow until it is exhausted and the application crashes.
+
+
+CAUSE
+This has been identified as a product defect under APAR PI61797
+
+ENVIRONMENT
+IBM WebSphere Transformation Extender (WTX) called via the WTX node in IBM Integration Broker (IIB) on the z/OS USS platform.
+
+DIAGNOSING THE PROBLEM
+Use the DA Active User panel in the SDSF Job/Output Display panel of the ISPF interface to monitor the Execution Group as messages are processed.
+
+RESOLVING THE PROBLEM
+Obtain and apply the fix for APAR PI61797

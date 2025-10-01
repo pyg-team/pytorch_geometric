@@ -1,0 +1,84 @@
+Title: IBM Recommended fixes for IBM Integration Bus and WebSphere Message Broker - United States
+
+Text:
+csd csd csd csd01 csd01 csd01 fix pack fixpack fixpak fixpac fix pack fixpack fixpak fixpac fix RecommendedFixesDocument RecommendedFixesDocument RecommendedFixesDocument PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This page provides links to the latest available maintenance for the in service IBM Integration Bus and WebSphere Message Broker family of products. 
+
+CONTENT
+ For the latest end of service dates see the IBM Software Support Lifecycle page [http://www.ibm.com/software/info/supportlifecycle/]. If you require further information to resolve your problem, refer to the WebSphere Message Broker Support page and the SupportPac page [http://www.ibm.com/software/integration/support/supportpacs/]. If you are still unable to resolve your problem, and you have a maintenance contract, then raise a problem using the Service Request (SR) tool [http://www-01.ibm.com/software/websphere/support/d2w.html]. 
+
+
+IBM Integration Bus V10.0
+IBM Integration Bus V9.0
+IBM WebSphere Message Broker v8.0
+IBM WebSphere Message Broker v7.0
+IBM WebSphere Message Broker Connectivity Pack for Healthcare v7.0
+IBM WebSphere Message Broker v6.1
+
+A list of the planned release dates for future maintenance can be found at the following link [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006308].
+
+
+
+
+Product & Version Latest Maintenance Pack Release Date IBM Integration Bus v10.0  * Integration Bus
+
+10.0.0.12 [http://www.ibm.com/support/docview.wss?uid=swg24044510] March 2018 
+
+Product & Version Latest Maintenance Pack Release Date IBM Integration Bus v9.0  * Integration Bus
+ * 
+ * Integration Toolkit
+ * 
+ * Integration Explorer
+
+9.0.0.10 [http://www.ibm.com/support/docview.wss?uid=swg24044363] December 2017 
+
+
+Product & Version Latest Maintenance Pack Release Date IBM WebSphere Message Broker v8.0  * Message Broker
+ * 
+ * Message Broker Toolkit
+ * 
+ * Message Broker Explorer
+
+8.0.0.9 [http://www.ibm.com/support/docview.wss?uid=swg24043806] June 2017 
+
+
+Product & Version Latest Maintenance Pack Release Date IBM WebSphere Message Broker v7.0  * Message Broker
+
+7.0.0.8 [https://www-304.ibm.com/support/docview.wss?rs=849&uid=swg24041187] November 2015  * Message Broker Toolkit
+
+7.0.0.8 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg24041170] November 2015  * Message Broker Explorer
+
+7.0.0.8 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg24041184] November 2015 
+
+
+Product & Version Latest Maintenance Pack Release Date IBM WebSphere Message Broker Connectivity Pack for Healthcare v7.0  * Message Broker Connectivity Pack 
+ * 
+ * for Healthcare
+
+7.0.0.2 [http://www.ibm.com/support/docview.wss?rs=849&uid=swg24032449] Apr 2012 
+
+
+Product & Version Latest Maintenance Pack Release Date IBM WebSphere Message Broker v6.1  * Message Broker
+
+6.1.0.12 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg24036648] Dec 2013  * Toolkit
+
+6.1.0.12 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg24036663] [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg24014329] Dec 2013 
+
+
+
+RELATED INFORMATION
+ WebSphere Broker Detailed System Requirements [http://www.ibm.com/support/docview.wss?&uid=swg27006551]
+WebSphere Broker libraries [http://www.ibm.com/software/integration/wbimessagebroker/library/]
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2005/4/13 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Event Broker Maintenance AIX, HP-UX, Linux, Solaris, Windows, z/OS 6.1, 6.0, 5.0 Business Integration WebSphere Message Broker with Rules and Formatter Extension Workbench - General AIX, HP-UX, Linux, Solaris, Windows, z/OS 6.1, 6.0, 5.0 Business Integration IBM Integration Bus Maintenance AIX, HP-UX, Linux, Solaris, Windows, z/OS 10.0, 9.0 PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

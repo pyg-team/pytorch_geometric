@@ -1,0 +1,32 @@
+Title: IBM Storwize V7000 Unified V1.5 is going out of support in September 2017. - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ IBM Storwize V7000 Unified V1.5 is going out of support in September 2017. 
+
+CONTENT
+Recommendation
+IBM Storwize V7000 Unified V1.5 end of support announcements were made last year. Please refer to announcement letter links provided below for various regions.
+You are encouraged to plan the upgrade of Storwize V7000 Unified systems to V1.6.x well before the earlier version goes out of support.
+
+IBM United States Withdrawal Announcement
+https://www-01.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS916-149 [https://www-01.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS916-149]
+
+IBM Europe, Middle East, and Africa Withdrawal Announcement
+https://www-01.ibm.com/common/ssi/cgi-bin/ssialias?infotype=AN&subtype=CA&htmlfid=877/ENUSZP16-0338 [https://www-01.ibm.com/common/ssi/cgi-bin/ssialias?infotype=AN&subtype=CA&htmlfid=877/ENUSZP16-0338]
+
+IBM Canada Withdrawal Announcement
+https://www-01.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&appname=gpateam&supplier=649&letternum=ENUSA16-0570 [https://www-01.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&appname=gpateam&supplier=649&letternum=ENUSA16-0570]
+
+IBM Latin America Withdrawal Announcement
+https://www-01.ibm.com/common/ssi/rep_ca/4/899/ENUSLP16-0334/ENUSLP16-0334.PDF [https://www-01.ibm.com/common/ssi/rep_ca/4/899/ENUSLP16-0334/ENUSLP16-0334.PDF]
+
+IBM Japan Withdrawal Announcement
+http://www-304.ibm.com/jct01003c/common/ssi/printableversion.wss?docURL=/common/ssi/rep_ca/1/760/ENUSJP16-0331/index.html [http://www-304.ibm.com/jct01003c/common/ssi/printableversion.wss?docURL=/common/ssi/rep_ca/1/760/ENUSJP16-0331/index.html]
+
+IBM Asia Pacific Withdrawal Announcement
+http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/8/872/ENUSWP16-0118/index.html&lang=en&request_locale=en [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/8/872/ENUSWP16-0118/index.html&lang=en&request_locale=en]
+
+IBM also recommends that you subscribe to My Notifications at: http://www-01.ibm.com/software/support/einfo.html [http://www-01.ibm.com/software/support/einfo.html] for future communications regarding support for this product.

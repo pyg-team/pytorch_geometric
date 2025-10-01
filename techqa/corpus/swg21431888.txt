@@ -1,0 +1,11 @@
+Title: IBM includeEndBoDelimiter exception thrown while migrating WebSphere Adapter for Flat Files - United States
+
+Text:
+Flat File Adapter; Flat File Adapter Migration; WebSphere Flat File Adapter; End of BO; End of business object TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When migrating WebSphere Adapter for Flat Files from lower versions to latest version, an includeEndBoDelimiter exception is thrown. 
+
+RESOLVING THE PROBLEM
+The workaround is to replace the <includeEndBoDelimiter></includeEndBoDelimiter> tags with 
+<writeBoDelimiter></writeBoDelimiter> tags in the .import file.

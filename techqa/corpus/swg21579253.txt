@@ -1,0 +1,37 @@
+Title: IBM Using IBM Web Experience Factory portlets with the WebSphere Portal 7.0.0.2 optimized theme - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+How do I use Web Experience Factory portlets with the new optimized theme in WebSphere Portal 7.0.0.2?
+
+ANSWER
+You need to be aware of special guidelines when you use IBM Web Experience Factory portlets with the WebSphere Portal 7.0.0.2 optimized theme. 
+
+ * WebSphere Portal 7.0.0.2 introduces new modular, optimized theme support that does not enable Dojo by default. 
+ * To run correctly, many Web Experience Factory portlets use Dojo, and thus require Dojo to be available on the portal page. 
+
+If you use Web Experience Factory portlets on the new modular and optimized theme, read this document. If you are using WebSphere Portal 7.0.0.1 or earlier, or are using WebSphere Portal 7.0.0.2 but not yet using the modular, optimized theme for your portal pages, you are not likely affected by the information described here. 
+
+WebSphere Portal 7.0.0.2 optimized theme 
+
+If you are using WebSphere Portal 7.0.0.2 or later, and leveraging the optimized theme in your portal pages, become familiar with the Portal documentation on how to administer the theme. This information is currently presented in supplemental documentation available from the following link. 
+
+Designing a Portal Site Using Theme Optimization [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/7.0.0.2_Designing_a_portal_site_using_theme_optimization_sdoc] 
+
+Potential issues and recommendations 
+
+A profile associated with a modular theme can be lightweight, deferred, or full. 
+ * The default optimized theme, and themes that your organization may have created based on it, may be using the lightweight type or deferred type of optimized portal theme profile. These profile types do not load Dojo by default. 
+ * For development use, you may select the full optimized portal theme profile, as described in the Portal Optimized Theme documentation available from the link above. 
+ * For production use with an optimized portal theme, a best practice is to determine the minimum amount of theme modules to be loaded and create a custom portal theme profile that specifies that list of modules. 
+ * Web Experience Factory's use of Dojo varies based on the builders and the rich data definition that the portlets use. At a minimum, Web Experience Factory uses the following components. 
+ * Smart Refresh and Partial Page Refresh leverage core Dojo and core parts of the dijit and dijit.layout widgets. So you need to include those modules. 
+ * The Dojo rich data definition that gives the rich Dojo widget behavior to input form fields leverages both the dijit and dijit.form widgets. 
+ * Other Dojo builders leverage their corresponding Dojo widgets, some from dijit.layout.* and some from dojox.layout.*. To determine the widgets used, run your models and look at the list of dojo.require statements in the page source. This list tells you the Dojo widgets that are used from which packages. Match the list up against any additional Portal Optimized Theme Dojo modules that you may want to add to your custom optimized theme profile. Use your custom theme profile rather than the full profile that pulls in more modules than necessary. 
+
+NOTE: Web Experience Factory development WAR files include the project's copy of Dojo. Therefore, you can run models as standalone web applications for testing (where portal is not involved). For testing, your portlet MAY be using that copy of Dojo if you have an optimized portal theme page without Dojo. Production deployment Web Experience Factory portlet WAR files do NOT include Dojo by default because portlets should get Dojo from the portlet page. Therefore, the above issues and recommendations apply even if your portlets appear to work from your development WAR on an optimized portal page that does not have Dojo. As a best practice, test production deployment WAR files (created from the Export Web Experience Factory Portlet WAR menu action) regularly throughout your project and do not rely on development WAR files throughout the project's development and test cycle. 
+
+NOTE: The best practice is to always have portal pages supply Dojo to the page and not have portlets supply Dojo. If you cannot follow this best practice and must supply Dojo from the portlet WAR to a portal page, then do not do so unless that portal page will never have Dojo loaded by the portal. The WebSphere Portal optimized theme deferred profile will load and rely on Dojo 1.6 when the Page Builder is first activated. A Web Experience Factory portlet running on a deferred profile page with its own copy of Dojo (Dojo 1.4.3 for Web Experience Factory 7.0.x) could cause problems for Page builder if it loads the older version of Dojo onto the portal page before Page Builder attempts to load the newer version. RELATED INFORMATION
+#Designing a portal site using theme optimization [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/7.0.0.2_Designing_a_portal_site_using_theme_optimization_sdoc]

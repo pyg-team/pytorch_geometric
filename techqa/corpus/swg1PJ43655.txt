@@ -1,0 +1,195 @@
+Title: IBM PJ43655: CSS FAILS TO PROCESS CERTAIN DOCUMENT TYPES CORRECTLY - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using IBM Content Collector (ICC) for indexing through CSS,
+   the following issues occur with specified file types:
+   
+           XPS   Sent to zip parser instead of OIT as they should
+   be
+          PSD  Add PSD files to unsupported list to handle like
+   other image files
+          ZIP    Failed handling ZIP file "Attachments.zip"
+                   When trying to handle the ZIP file, we are
+   getting the following errors:
+   
+   de.schlichtherle.io.ArchiveController$ArchiveEntryNotFoundExcept
+   ion: <file name> (no such file entry)
+                     at
+   de.schlichtherle.io.ArchiveController.createInputStream0(Archive
+   Controller.java:609)
+                     at
+   de.schlichtherle.io.ArchiveController.createInputStream(ArchiveC
+   ontroller.java:567)
+                     at
+   de.schlichtherle.io.FileInputStream.createInputStream(FileInputS
+   tream.java:128)
+                     at
+   de.schlichtherle.io.FileInputStream.<init>(FileInputStream.java:
+   103)
+           XLSX  Certain XLSX files fail textExtraction despite
+   being readable in Excel
+           XLSX  Not being sent for extraction to OIT and they
+   should be
+   
+   
+      Actual Results:
+        XPS files are zip files ( like open office) and the files
+   parsed by the Zip parser instead of OIT parser
+        PSD They are currently being indexed with an empty content.
+        XLSX Fail to extract when they should be extracted and
+   indexed
+        ZIP files are not being processed correctly, or do not
+   produce the expected result.
+   
+      Expected Results:
+        The file types are expected to be supported and processed
+   correctly.
+         XPS    files are zip files ( like open office) to be
+   parsed by OIT parser
+         PSD:  When processed will correctly produce the following
+   error:
+             *** Error parsing document!!! , Error level -
+   IQQP0008W Unable to index document TestFromimp because the
+   binary filter was not found or the MIME type
+   [image/vnd.adobe.photoshop] is unsupported.
+        ZIP: Correctly processed by new TrueZip version (7.7.9)
+   instead of prior version (6.8.1)
+        XLSX  Successful extraction and indexing of document
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Customers using 5.2.1.2-P8CSS-FP002 and prior certain        *
+   * document types fail extraction when sent through IBM Content *
+   * Collector                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Using IBM Content Collector with IBM Content Search          *
+   * Services, certain document types fail indexing.              *
+   * The following types were found to cause problems in certain  *
+   * cases:                                                       *
+   *         XPS   Sent to zip parser instead of OIT as they      *
+   * should be                                                    *
+   *        PSD  Add PSD files to unsupported list to handle like *
+   * other image files                                            *
+   *        ZIP    Failed handling ZIP file "Attachments.zip"     *
+   *                 When trying to handle the ZIP file, the      *
+   * following error appears in the CSS log output:               *
+   *                                                              *
+   *                                                              *
+   * de.schlichtherle.io.ArchiveController$ArchiveEntryNotFoundEx *
+   * ception: <file name> (no such file entry)                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.2.1.3-P8CSS-FP003 or later.                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.2.1.3-P8CSS-FP003 or later where the problems with
+   certain XPS, PSD and ZIP files have been fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ43655
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT SEARCH
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8109
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-10-09
+   
+   
+ * CLOSED DATE
+   2015-12-14
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT SEARCH
+   
+   
+ * FIXED COMPONENT ID
+   5724R8109
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R521 PSY
+   UP

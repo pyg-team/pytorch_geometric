@@ -1,0 +1,47 @@
+Title: IBM How to change timeout for AppScan Enterprise sessions - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you change a license timeout for inactive sessions of the IBM Security AppScan Enterprise (ASE) Consoles and REST APIs? 
+
+CAUSE
+ 
+
+ * When a user logs out using the Log Out button in the ASE Console, the license is released immediately. 
+
+ * However, when a user logs in into AppScan Enterprise Console or REST API and leaves the session inactive (the user keeps the browser open, or the user closes the browser) the user license is kept by the AppScan Enterprise Server for two hours (in most cases) before the license is released. 
+
+ * When the AppScan Enterprise Server goes down, the License Server releases the license after 30 minutes if the connection with the AppScan Enterprise Server is not reestablished. See technote How to change the default timeout in the License Key Server [http://www.ibm.com/support/docview.wss?uid=swg21622571]. 
+
+
+ANSWER
+In AppScan Enterprise version 9.0.3.1 and later, the timeout in the AppScan Enterprise Server is set to two hours. To change the connection limit, modify the session.timeout property (in milliseconds) in the following file: 
+<install-dir>\AppScan Enterprise\Liberty\usr\servers\ase\server.xml 
+
+
+In AppScan Enterprise versions from 9.0.1.0 to 9.0.3.0, the timeout in the AppScan Enterprise Server is set to two hours, and there is no possibility to change it. 
+
+ 
+
+
+In AppScan Enterprise versions 9.0.0.0 and 9.0.0.1, there are two different session timeouts configured in the AppScan Enterprise Server, one in Windows IIS and another in the Jazz Team Server. 
+
+ * If your AppScan Enterprise installation uses Windows authentication, then the ASE Server will use the timeout that is set in the IIS web server. The timeout in IIS is configured by a setting in the AppScan Enterprise web.config file. By default it is set to 120 minutes. To change it, perform as follows: 
+    1. Login to the machine where AppScan Enterprise Console is installed 
+    2. Open in an editor the file: <ASE_installation>\WebApp\web.config 
+    3. Modify accordingly this line: 
+       <sessionState timeout="120" /> 
+    4. Restart IIS
+   
+   
+   
+ * If your AppScan Enterprise uses Jazz Team Server for authentication, then the ASE Server will use the Jazz Team Server timeout. The timeout is set by default to 30 minutes. To change the setting do as follows:
+    1. Login to the machine where AppScan Enterprise Server with Jazz Team Server is installed 
+    2. Open in an editor the file: <ASE_installation>\JazzTeamServer\server\tomcat\conf\web.xml 
+    3. Edit the timeout on the "session-timeout" tag which looks as follows:
+       <session-config>
+       <session-timeout>30</session-timeout>
+       </session-config> 
+    4. Restart the Tomcat service.

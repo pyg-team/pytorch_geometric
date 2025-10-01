@@ -1,0 +1,162 @@
+Title: IBM ZZ00396: YAML PARSER NEEDS TO BE UPDATED NOT TO REMOVE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Per the Openstack specification, the user_data field of a
+   Heat template can contain script code.
+   Allowable headers are "#!" for bash, "rem cmd" for batch, and
+   "#ps1" or "#ps1_systnative" for Powershell, Powershell 64,
+   respectively.
+   
+   If you create a stack for a Windows node with a header for a
+   Powershell script in user_data, it will work (execute the
+   script
+   code) if you submit it from the command line, but not when you
+   do so through the BPM GUI, because ICO removes comment lines,
+   except the one for bash scripts.
+   
+   Therefore, need to o update Yaml parser to not remove "#ps1"
+   or "#ps1_systnative" for  Powershell, Powershell
+   64,respectively, as that comment line tells HEAT what execution
+   context to use.
+   
+   ENVIRONMENT:  ICO 2.4.0.1 with VmWare hypervisor
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Per the Openstack specification, the user_data field of a
+   Heat template can contain script code.
+   Allowable headers are "#!" for bash, "rem cmd" for batch, and
+   "#ps1" or "#ps1_systnative" for Powershell, Powershell 64,
+   respectively.
+   
+   If you create a stack for a Windows node with a header for a
+   Powershell script in user_data, it will work (execute the
+   script
+   code) if you submit it from the command line, but not when you
+   do so through the BPM GUI, because ICO removes comment lines,
+   except the one for bash scripts.
+   
+   Therefore, need to o update Yaml parser to not remove "#ps1"
+   or "#ps1_systnative" for  Powershell, Powershell
+   64,respectively, as that comment line tells HEAT what execution
+   context to use.
+   
+   ENVIRONMENT:  ICO 2.4.0.1 with VmWare hypervisor
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  updated Yamlparser.js file in 70_SCOrchestrator_Heat_Support_Too
+   lkit_2402_20150813.twx, to not remove "#ps1"
+   or "#ps1_systnative" for Powershell or Powershell
+   64 respectively, as that comment line tells HEAT what execution
+   context to use.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00396
+   
+   
+ * REPORTED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2800
+   
+   
+ * REPORTED RELEASE
+   240
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-28
+   
+   
+ * CLOSED DATE
+   2015-08-25
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * FIXED COMPONENT ID
+   5725H2800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R240 PSY
+   UP

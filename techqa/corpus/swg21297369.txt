@@ -1,0 +1,218 @@
+Title: IBM Understanding the Global Domain Document - United States
+
+Text:
+IEALOTUS TECHNOTE (FAQ)
+
+QUESTION
+What is the Global Domain document used for and how is one created?
+
+ANSWER
+The Global Domain document is a document used by the Domino server to identify the local Notes domain and the Internet domain(s) that Domino will accept mail for. It is also used to form the structure of a user's internet reply address when one is not present in a message routing out to the internet. . 
+
+The document is necessary to ensure you receive mail for any and all of your valid internet domains, and can be critical in ensuring that your users receive replies from the internet. 
+
+ 
+
+The following will run you through the steps of creating a Global Domain document, giving detail on the fields that are necessary for your environment. 
+
+ 
+
+STEP 1 – Where to create a Global Domain document: 
+
+ 
+
+In your Administrator Client, navigate to the Configuration tab. Then in the left hand pane, expand Messaging. Select Domains, and then in the middle pane, select “Add Domain”. 
+
+ 
+
+STEP 2 – Choosing to create a Global Domain document: 
+
+ 
+
+When the new domain document has opened, choose “Global Domain” for the field “Domain Type”. 
+
+ 
+
+STEP 3 – The Basics Tab: 
+
+ 
+
+Now that we have a new Global Domain document, we will go through the Basics Tab. 
+
+ 
+
+The first field is the “Domain type” where we have defined that this is a Global Domain document. 
+
+ 
+
+The second field is “Global domain name”. The name of the document is arbitrary, so you can name it anything you’d like. The idea is to have a way for you to identify the server to which the document belongs. 
+
+ 
+
+The third field is “Global domain role”. You should select “R5/R6/R7 Internet domains or R4.x SMTP MTA”. The option for X.400 MTA is strictly used for compatibility with versions of Domino 4 or below. 
+
+ 
+
+The fourth field, “Use as default Global Domain (for use with all Internet protocols except http)” should be selected if you have more than one Global Domain document. This will designate one Global Domain document to be referenced for internet addressing. 
+
+ 
+
+ 
+
+STEP 4 – The Restrictions Tab: 
+
+ 
+
+To define local Domino domains which use the Global Domain document 
+
+ 
+
+ 
+
+The field, “Domino domains and aliases”, is where you define each and any of the Domino domains which will use this Global Domain document. The domains listed here are not to be confused with internet domains (i.e. ACME, not acme.com). In this field you will want to include the Domino domain found on the Basics tab of your server document. In addition, you will also want to include the domains for each of your address books, if you have Directory Assistance enabled. 
+
+If any of your domains include non-ASCII characters, such as e-graves (é), umlauts (ü) and/or any other international characters, then it is important that you include an ASCII equivalent. The ASCII value need not be a translation of the non-ASCII domain; it can be any arbitrary domain name, so long as it is in ASCII characters. The non-ASCII domain name and its alias should be separated by a character as specified in the field: 
+
+ 
+
+“Alias separator character” 
+
+ 
+
+The equal sign “=” is the default. 
+
+ 
+
+Here is an example of non-ASCII to ASCII alias: 
+
+
+blåbærsyltetøy = InternationalDomain
+
+
+In addition, you can designate an alias for any ASCII domain. For example, if the domain is ACME and has an alias of DOE, then in Domino domains and aliases” field, you would enter in the domain as:
+
+
+ACME = DOE 
+
+ 
+
+STEP 5 – The Conversions Tab: 
+
+ 
+
+A) To define the local internet domain(s), for which the server will accept mail. 
+
+ 
+
+To define the local internet domain, a Global Domain document is necessary. On the conversions tab of the Global Domain Document you will see two fields which are responsible for this: 
+
+ 
+
+"Local Primary Internet Domain name" 
+
+(This field is used to define the primary internet domain used, i.e. acme.com) 
+
+And 
+
+"Alternate internet domain name aliases" 
+
+(This field is used to define any additional domains for which your server will accept mail for and considered to be a local internet domain, i.e. acme.org, acme.net) 
+
+ 
+
+The internet domains specified here, determine which internet domains are local. Here are two examples which show its importance: 
+
+Ex 1: An external user tries to send mail to your Domino server. He/she addresses the email to jane.doe@acme.com. When Domino sees the intended recipient's domain name, it accepts it because acme.com is a local internet domain, defined in the Global Domain Document. On the other hand, if an external user tries to connect to your Domino server and addresses it to john.doe@yahoo.com, Domino recognizes that this is not a local domain, and therefore will not deliver the message for local delivery. The message will either be rejected or relayed to the appropriate yahoo server, depending on the inbound SMTP settings in your server configuration document. 
+
+ 
+
+Ex 2: An internal Notes user addresses a message to jane.doe@yahoo.com; the router looks at the Global Domain Document and sees that yahoo.com is not listed. As a result, it determines that yahoo.com is an external internet domain and therefore will try to route the message out to the internet. Conversely, if an internal Notes user sends a message to jane.doe@acme.com, Domino sees that acme.com is a local domain, the router then tries to find Jane Doe in the Domino Directory, and then the message is sent to Jane Doe by means of local delivery. 
+
+ 
+
+ 
+
+B) To form the structure of a user's internet reply address 
+
+
+It is first important to understand how a reply address is formed and when the Global Domain document will be used for this. 
+
+When creating a reply address, Notes/Domino first looks at the ID/credentials accessing the mailfile. Based upon the ID/credentials, Notes/Domino identifies the person for whom the reply address will be formed. 
+
+Once the person has been identified, Domino will form the reply address following the steps below: 
+
+ 
+
+-If a Notes Client user sends a message to the internet, the reply address will be formed by the "Internet Address" field in the location document. 
+
+-If this field in the location document is blank, or the sender is using a browser to access their mail (i.e. DWA or Webmail), then the router will look at the Global Domain Document. 
+
+-If the "Internet Address Lookup" field is enabled, the router will form the reply address from the internet address listed in the Person Document. 
+
+-If the "Internet Address" field is blank in the person document, or the Global Domain Document does not have "Internet Address Lookup" enabled then the router will construct the reply address with the settings defined in the Global Domain Document. 
+
+ 
+
+These settings are all located on the conversions tab. 
+
+If "Internet Address Lookup" is enabled and the "Internet address" in the person document is blank, or the "Internet Address Lookup" is disabled, the router looks directly to the Global Domain document and the specific settings you have. 
+
+The specific fields are "Local part formed from", "Domino Domain(s) included", "Domino domain(s) position", and "Domino domain separator". 
+
+ 
+
+"Local part formed from" - indicates the format for the portion of the email address before the ‘@’ symbol. 
+
+ The options for this include: 
+
+ -Fullname: Jane_Doe/Sales/Acme 
+
+ -Common name: Jane_Doe 
+
+ -Short name: jdoe 
+
+ 
+
+"Domino Domain(s) included" - indicates whether or not to include the domains listed on the Restrictions tab of the Global Domain Document within the internet address. The domains listed here are Notes domains, not internet domains (i.e. ACME, not acme.com). 
+
+The options for this include: 
+
+ -None: include no domains 
+
+ -One: include only the primary domain (i.e... not a domain from any other directories that might be referenced in Directory Assistance) 
+
+ -All: include all domains listed (all domains listed on the Restrictions tab of the Global Domain Document) 
+
+ 
+
+"Domino domain(s) position"- indicates where the Notes domain(s) will be placed. 
+
+The options for this include: 
+
+ -Left of '@': Jane_Doe.Acme@acme.com 
+
+ -Right of '@': Jane_Doe@Acme.acme.com 
+
+ 
+
+"Domino domain separator"- indicates how the Notes domains will be separated within the internet address. 
+
+The options for this include: 
+
+ -period: Jane_Doe.Acme@acme.com 
+
+ -percentage: Jane_Doe%Acme@acme.com 
+
+ 
+
+There is also an "Address example" field that will display how your internet address will look as it goes out to the internet. 
+
+ 
+
+ 
+
+STEP 6 - Ensuring changes are implemented 
+
+ 
+
+It is recommended to restart the Domino server after creating a new Global Domain document or making any changes to the existing document.

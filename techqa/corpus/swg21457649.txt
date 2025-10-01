@@ -1,0 +1,36 @@
+Title: IBM How to discover Siebel Integration Objects - United States
+
+Text:
+siebel; oda; wbi; integration object; esd; discovery; xsd TECHNOTE (FAQ)
+
+QUESTION
+ How to discover Siebel Integration Objects with WebSphere Business Integration Adapters (WBI) and WebSphere Adapter for Siebel Business Applications? 
+
+CAUSE
+The design changed between the discovery agents of WBI and JCA technologies.
+
+ANSWER
+For the WebSphere Business Integration for Siebel Business Applications, Siebel Integration Objects can be discovered with the Siebel ODA (Object Discovery Agent) as shown in the picture below. 
+
+[/support/docview.wss?uid=swg21457649&amp;aid=1]
+
+With the WebSphere Adapters for Siebel Business Applications, the design of the metadata discovery changed. The discovery for "Integration Objects" is integrated into the discovery process for "Siebel Business Services".
+
+Example:
+
+(1) Select "Siebel Business Services" and perform a query for "EAI Siebel*" as below. 
+
+[/support/docview.wss?uid=swg21457649&aid=2] [/support/docview.wss?uid=swg21457649&aid=2]
+
+Add the "Query" (or something else) to the right. 
+
+(2) A popup dialog will be shown and the user can choose "Integration Object" (IO) as Siebel Message attribute. Note that the type of Siebel Message is "Hierarchy" in Siebel server, so it can be assigned to any IOs. 
+
+[/support/docview.wss?uid=swg21457649&aid=3] [/support/docview.wss?uid=swg21457649&aid=3]
+
+(3) Click "Select" to choose the IO from the list for SiebelMessage. This is similiar to "Integration Object" in the ODA. 
+
+[/support/docview.wss?uid=swg21457649&aid=4] [/support/docview.wss?uid=swg21457649&aid=4]
+
+After the discovery is finished, the IO will be mapped to the attribute "SiebelMessage" automatically.
+The artifacts for Business Services and Integration Objects are generated automatically as well.

@@ -1,0 +1,32 @@
+Title: IBM Advantages and disadvantages of using RQM live reporting model? - United States
+
+Text:
+Live reporting; rqm; xdc; data warehouse; datawarehouse; warehouse TECHNOTE (FAQ)
+
+QUESTION
+ What are the advantages and disadvantages of using RQM live reporting model over data warehouse model in IBM Rational Reporting for Development Inteligence (RRDI)? 
+
+CAUSE
+You want to decide between using RQM live reporting and data warehouse reporting models.
+
+ANSWER
+Advantages: 
+
+ *  The data you see in the RQM live reporting is up to date with what you have in the tool.
+
+
+Disadvantages:  * Because the data is generated in real time from the RQM REST API without using a database, you can encounter severe performance problems when the data volume increases
+   
+   
+ * RQM live data model is more restricted than the data warehouse data model and offers limited possibilities for cross reporting with the other CLM applications. 
+   
+   
+ * List of projects and the user credentials are hard coded in the xdc file, so every time you have a new project in IBM Rational Quality Manager (RQM) or the data collector user password is changed, you will need to generate a new xdc file. 
+
+RELATED INFORMATION
+#How to decide that I need RQM live reporting? [https://jazz.net/forum/questions/125704/how-to-decide-that-i-need-rqm-live-reporting]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Quality Manager RRDI AIX, Linux, Solaris, Windows 4.0.1, 4.0.2, 4.0.3, 4.0.4, 4.0.5, 4.0.6, 4.0.7, 5.0

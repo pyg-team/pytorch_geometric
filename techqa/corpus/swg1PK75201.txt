@@ -1,0 +1,206 @@
+Title: IBM PK75201: Robot-User statesRtgap.dll appears in logs from TM - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running a GUI script in TM, their test seems to fail consis
+   tently until they add delays several lines above the
+   failure then the problem is resolved. It appears that Robot cont
+   inues running the script before some function was completed; may
+    or may not be the case, but the delays appear to be indicating
+   that Robot was not completing certain steps before going to the
+   next command on the next
+   line. In the log, they get a RTGap.dll error '[22.24.6.2]: rtgap
+   .dll function GAPTaskExecute failed.'
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Problem: Robot-User statesRtgap.dll appears in logs in TM.
+   
+   Environment: TM 7.0.1.1, iFix02 Robot 7.0.1.2, Windows XP
+   SP2, IE7
+   
+   What, when, where. When running a GUI script in TM, their
+   test seems to fail consistently until they add delays
+   several lines above the
+   failure then the problem is resolved. It appears that Robot
+   continues running the script before some function was
+   completed; may or may not be the case, but the delays appear
+   to be indicating that Robot was not completing certain steps
+   before going to the next command on the next
+   line. In the log, they get a RTGap.dll error "[22.24.6.2]:
+   rtgap.dll function GAPTaskExecute failed". This occurs on
+   multiple scripts that they try to record, but it did not
+   happen when using IE6, but started happening using IE7. The
+   customer stated that it occurs about "40-50 time in one
+   regression shell test." Only 4 users are getting this error
+   message. I sent the customer a technote for this issue which
+   was:
+   
+   " Title * When running GUI script in TestManager,
+   "[22.24.6.2]: rtgap.dl
+   function GAPTaskExecute failed" error message received in
+   log file.
+   Problem(Abstract) * This field is displayed on the search
+   results
+   webpage seen by customers, and effects search ranking and
+   relevance. When running a GUI script with a function call
+   which uses
+   custom DLL(s) declared in a header file (SBH file) from
+   Rational?
+   TestManager, the test passes with an information message of:
+   Rational
+   TestManager: [22.24.6.2]: rtgap.dll function GAPTaskExecute
+   failed
+   These DLL(s) are put in the dll folder of the project's
+   datastore, and
+   the project location is specified with the UNC path. When
+   running the
+   same script from Rational? Robot, there is no error message.
+   When
+   running a script without a function call from Rational
+   TestManager,
+   there is no error message.
+   Symptom *
+   
+   Cause When running a GUI script with a function call which
+   uses custom
+   DLL(s) in a SBH file from Rational TestManager, you need to
+   specify the
+   complete path to the DLL(s).
+   
+   
+   Environment
+   Diagnosing the problem
+   Resolving the problem * To resolve the issue, the user can
+   do either of
+   the following; 1. Declare with the complete path name of the
+   DLL(s) 2.
+   Declare "dll\xxx.dll" in the SBH file when the custom DLL(s)
+   files are
+   put in the dll folder of the project's TestDatastore If the
+   comments
+   are in another language, translate using the following
+   URL:http://www.google.com/translate."
+   
+   But they said that if this issue is at the shell level it
+   will break their application that relies on the .dll files
+   used. I've attached a screenshots of the error and the
+   script used to this new note.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Recived the mail form Derrek Meade as follows.
+   After looking through PMR, the customer's PMR was closed and
+   archived. They did not provide us with a sample application
+   at the time when the PMR was active. The customer only sent
+   in screenshots for this issue, but they have been deleted by
+   the FTP server already. The customer stated that they were
+   new to to Robot at the time and wanted to know more about
+   the technote(# 1175747 ) given to them since they were not
+   sure about what to do. After explaining the technote to the
+   customer, they brought the instructions to their testers who
+   stated that since the technote deals with fixing things at
+   the shell level, they could do this for their application as
+   it would break .dll files they recieved from IBM already
+   that fixed other issue(was not sure on what issues were
+   fixed by certain .dll files) they encountered with Robot.
+   
+   Since the PMR is closed and customer is not willing proivde
+   sample Application, This APAR can be closed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK75201
+   
+   
+ * REPORTED COMPONENT NAME
+   TESTMANAGER WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724G240A
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-11-06
+   
+   
+ * CLOSED DATE
+   2009-04-14
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATIONAL ROBOT
+   
+   
+ * FIXED COMPONENT ID
+   5724G2400
+   
+   
+
+APPLICABLE COMPONENT LEVELS

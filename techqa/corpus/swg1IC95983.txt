@@ -1,0 +1,189 @@
+Title: IBM IC95983: MQ CLIENT V7.1 AND HIGHER REPORTS A WIN32EXCEPTION, ACCESS DENIED FOR MQCONNX - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix Pack 7.1.0.5 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24037553]
+WebSphere MQ V7.5 Fix Pack 7.5.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using WebSphere MQ Client v7.1 or higher, Win32Exception
+   errors are generated to the Application event log with Access
+   denied errors for a MQCONNX call. There are no errors or FDCs
+   written to the WMQ logs. The error is not captured in a WMQ
+   trace.
+   
+   The event log shows failure for MQCONNX for Your Application
+   resource name:
+    Exception Type: System.ComponentModel.Win32Exception
+   NativeErrorCode: 5
+   ErrorCode: -2147467259
+   Message: Access is denied
+   Data: System.Collections.ListDictionaryInternal
+   TargetSite: Microsoft.Win32.SafeHandles.SafeProcessHandle
+   OpenProcess(Int32, Int32, Boolean)
+   HelpLink: NULL
+   Source: System
+   
+   at System.Diagnostics.ProcessManager.OpenProcess(Int32
+   processId, Int32 access, Boolean throwIfExited)
+   at System.Diagnostics.NtProcessManager.GetModuleInfos(Int32
+   processId, Boolean firstModuleOnly)
+   at System.Diagnostics.ProcessManager.GetModuleInfos(Int32
+   processId)
+   at System.Diagnostics.Process.get_Modules()
+   at IBM.WMQ.Nmqi.UnmanagedNmqiMQ.MQCONNX(String pQMgrName, MQCNO&
+   pConnectOpts,Hconn parentHconn, Phconn phconn, Int32& pCompCode,
+   Int32& pReason)
+   at IBM.WMQ.Nmqi.UnmanagedNmqiMQ.MQCONNX(String pQMgrName,
+   MQConnectOptions pConnectOpts, Phconn phconn, Int32&
+   pCompCode, Int32& pReason)
+   at IBM.WMQ.MQQueueManager.Connect(String queueManagerName)
+   at IBM.WMQ.MQQueueManager..ctor(String queueManagerName)
+   at IBM.WMQAX.MQQueueManager..ctor(String m)
+   at IBM.WMQAX.MQSession.AccessQueueManager(String qm)
+   
+   The MQCONNX call can be from UnmanagedNmqiMQ.
+   XAUnmanagedNmqiMQ or from BindingsNmqiMQ.
+   
+   Additional Symptom(s) Search Keyword(s):
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   7.1 and 7.5 Users of IIS client applications that connects to
+   Queue manager.
+   
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   WebSphere MQ client code issues an OpenProcess call on itself
+   during MQCONN(X) call. Few IIS application might not have the
+   required security privileges to issue OpenProcess call on
+   itself. This causes the application to throw Win32Exception with
+   access denied error from MQCONN(X)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere MQ client code has been modified such that the
+   Win32Exception is handled gracefully.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.1       7.1.0.5
+   v7.5       7.5.0.4
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC95983
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-16
+   
+   
+ * CLOSED DATE
+   2013-11-13
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7241
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

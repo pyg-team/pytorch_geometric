@@ -1,0 +1,281 @@
+Title: IBM PK82722: Caching a reuslt set object accross transaciton boundaries can  result in ORA-01002 fetch out of sequence errors - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Implementing Oracle XA transactions across different database
+   using distributed transactions, the application encounters
+   ORA-01002 errors.
+   
+   
+   If the application code caches result set ( associated to an
+   unshared connection) across a transaction  boundary the
+   following error will occur when using oracle.
+   
+   [11/03/09 11:40:59:645 CET] 00000029 OracleDataSto >
+   findMappingClass for : Entry
+   java.sql.SQLException:
+   ORA-01002: fetch out of sequence
+   
+   at
+   oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError
+   .java:112)
+   at
+   oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:331)
+   at
+   oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:288)
+   at oracle.jdbc.driver.T4C8Oall.receive(T4C8Oall.java:745)
+   at
+   oracle.jdbc.driver.T4CStatement.doOall8(T4CStatement.java:207)
+   at
+   oracle.jdbc.driver.T4CStatement.fetch(T4CStatement.java:1029)
+   at
+   oracle.jdbc.driver.OracleResultSetImpl.close_or_fetch_from_next(
+   OracleResultSetImpl.java:291)
+   at
+   oracle.jdbc.driver.OracleResultSetImpl.next(OracleResultSetImpl.
+   java:213)
+   at
+   oracle.jdbc.driver.ScrollableResultSet.cacheRowAt(ScrollableResu
+   ltSet.java:1743)
+   at
+   oracle.jdbc.driver.ScrollableResultSet.isValidRow(ScrollableResu
+   ltSet.java:1726)
+   at
+   oracle.jdbc.driver.ScrollableResultSet.next(ScrollableResultSet.
+   java:315)
+   at
+   oracle.jdbc.driver.SensitiveScrollableResultSet.next(SensitiveSc
+   rollableResultSet.java:73)
+   at
+   oracle.jdbc.driver.UpdatableResultSet.next(UpdatableResultSet.ja
+   va:264)
+   at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcResultSet.next(WSJdbcResultSet.j
+   ava:2468)
+   
+   
+   
+   The problem is because the IBM RRA does not attempt to lazy
+   enlist the connection in the current transaction. This apar
+   will add lazy enlist option for result operations.
+   
+   
+   The customer will have to set the following custom property on
+   the data source
+   beginTranForResultSetScrollingAPIs
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V6.1                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If the resultset object which is        *
+   *                      associated with unshared connection     *
+   *                      is cached across the trasaction         *
+   *                      boundary you see ORA-01002 exception.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The cause of problem is that lazy enlistment for the connection
+   is not attempted by the IBM Relational resource adapter.
+   You see the following exception:
+   
+   [11/03/09 11:40:59:645 CET] 00000029 OracleDataSto >
+   findMappingClass for : Entry
+   java.sql.SQLException:
+   ORA-01002: fetch out of sequence
+   at
+   oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError
+   .java:112)
+   at
+   oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:331)
+   at
+   oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:288)
+   at oracle.jdbc.driver.T4C8Oall.receive(T4C8Oall.java:745)
+   at
+   oracle.jdbc.driver.T4CStatement.doOall8(T4CStatement.java:207)
+   at
+   oracle.jdbc.driver.T4CStatement.fetch(T4CStatement.java:1029)
+   at
+   oracle.jdbc.driver.OracleResultSetImpl.close_or_fetch_from_next(
+   OracleResultSetImpl.java:291)
+   at
+   oracle.jdbc.driver.OracleResultSetImpl.next(OracleResultSetImpl.
+   java:213)
+   at
+   oracle.jdbc.driver.ScrollableResultSet.cacheRowAt(ScrollableResu
+   ltSet.java:1743)
+   at
+   oracle.jdbc.driver.ScrollableResultSet.isValidRow(ScrollableResu
+   ltSet.java:1726)
+   at
+   oracle.jdbc.driver.ScrollableResultSet.next(ScrollableResultSet.
+   java:315)
+   at
+   oracle.jdbc.driver.SensitiveScrollableResultSet.next(SensitiveSc
+   rollableResultSet.java:73)
+   at
+   oracle.jdbc.driver.UpdatableResultSet.next(UpdatableResultSet.ja
+   va:264)
+   at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcResultSet.next(WSJdbcResultSet.j
+   ava:2468)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Introduced a custom property
+   beginTranForResultSetScrollingAPIs which needs to be set to
+   true for DataSource to add lazy enlist option for result
+   operations.The default value is false.
+   
+   beginTranForResultSetScrollingAPIs
+   Type : Boolean
+   default value: false
+   
+   Where to set the value :
+   
+   In the administrative console,
+   click Resources > JDBC provider
+   Select Configured_JDBC_Provider , and then select DataSource.
+   Click the name of the data source for which you want to
+   customize
+   Under additional properties, click Custom properties > New.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 6.1.0.27  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK82722
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   61A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-03-17
+   
+   
+ * CLOSED DATE
+   2009-05-18
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

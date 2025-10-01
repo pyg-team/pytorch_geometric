@@ -1,0 +1,235 @@
+Title: IBM HD78269: FTA/MEASURE RESULTS INCONSISTENT AFTER UPDATE AFTER - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  FTA/MEASURE RESULTS INCONSISTENT AFTER
+   UPDATE AFTER EDITING FEATURE.
+   .
+   Pre-Settings:
+   Go to Tools/ Options: Activate
+   0-1. "General/Parameters and Measure/Measure
+   Tools/Automatic update in product"
+   0-2. "General/Display/Performance/3D Accuracy"
+   sets "0.02"
+   0-3. "Infrastructure/Part
+   Infrastructure/General/Update" sets "Manual"
+   0-4 Click "OK".
+   .
+   SCENARIO:
+   .
+   0 Start CATIA.
+   1. Open the CATProduct.
+   2. Click "Update All" icon.
+   3. Select "B(B.1) in tree.
+   4. Select "View/Tree Expansion/Expand Selection"
+   in menu bar.
+   >>"Specification tree depth" window is displayed.
+   5. Select "5" and click "OK".
+   >>Tree of "B(B.1) is expanded.
+   6. Impact is given, Edit the sketch "B\Part1\Body1
+   \OGS.1\Sketch.3".
+   -Double click "click "B\Part1\Body1\OGS.1
+   \Sketch.3".
+   7. Edit the sketch: -Create Horizontal Line
+   - Create Constraint created line with H axis.
+   - Edit the offset value to 12mm.
+   - Trim the Circle.
+   8. Exit Sketch.
+   9. Double Click "Product" in tree.
+   10. Click "Update All" icon.
+   .
+   RESULTS OBTAINED:
+   The value of Measure is changed inconsistency.
+   .
+   EXPECTED RESULTS:
+   The result of Measure should not be changed
+   after "Update all" command is launched.
+   .
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  FTA/MEASURE RESULTS INCONSISTENT AFTER UPDATE AFTER
+   EDITING FEATURE
+   FTA/MEASURE RESULTS INCONSISTENT AFTER
+   UPDATE AFTER EDITING FEATURE.
+   .
+   Pre-Settings:
+   Go to Tools/ Options: Activate
+   0-1. "General/Parameters and Measure/Measure
+   Tools/Automatic update in product"
+   0-2. "General/Display/Performance/3D Accuracy"
+   sets "0.02"
+   0-3. "Infrastructure/Part
+   Infrastructure/General/Update" sets "Manual"
+   0-4 Click "OK".
+   .
+   SCENARIO:
+   .
+   0 Start CATIA.
+   1. Open the CATProduct.
+   2. Click "Update All" icon.
+   3. Select "B(B.1) in tree.
+   4. Select "View/Tree Expansion/Expand Selection"
+   in menu bar.
+   >>"Specification tree depth" window is displayed.
+   5. Select "5" and click "OK".
+   >>Tree of "B(B.1) is expanded.
+   6. Impact is given, Edit the sketch "B\Part1\Body1
+   \OGS.1\Sketch.3".
+   -Double click "click "B\Part1\Body1\OGS.1
+   \Sketch.3".
+   7. Edit the sketch: -Create Horizontal Line
+   - Create Constraint created line with H axis.
+   - Edit the offset value to 12mm.
+   - Trim the Circle.
+   8. Exit Sketch.
+   9. Double Click "Product" in tree.
+   10. Click "Update All" icon.
+   .
+   RESULTS OBTAINED:
+   The value of Measure is changed inconsistency.
+   .
+   EXPECTED RESULTS:
+   The result of Measure should not be changed
+   after "Update all" command is launched.
+   .
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM IS PERMANENT RESTRICTION IN
+   CATIA.
+   .
+   Incident Diagonosis
+   .
+   FTA/MEASURE RESULTS INCONSISTENT AFTER
+   UPDATE AFTER EDITING FEATURE
+   .
+   EXPLANATION:
+   .
+   "Update all" updates the position of the
+   constrained components so as to satisfy the
+   constraint requirements. For Update All ,order of
+   updates in update all function will not change.So
+   with Automatic update in part and changing to
+   Automatic Update is doing the same.Thus part is
+   updated and hence measure is also getting updated
+   in correct order and measure result is not
+   modified.And shows desired correct behaviour
+   .
+   BYPASS:
+   .
+   First By-Pass
+   (Other Setting same but instead of Uncheck this
+   option)
+   "General/Parameters and Measure/Measure
+   Tools/Automatic update in product".
+   .
+   Use ( Select this option)
+   "General/Parameters and Measure/Measure
+   Tools/Automatic update in part"
+   .
+   Second By-Pass:
+   .
+   (Other Setting same instead of Uncheck this option)
+   "Infrastructure/Part Infrastructure/General/Update"
+   sets "Manual" .
+   .
+   Use ( Select this option)
+   "Infrastructure/Part Infrastructure/General/Update"
+   sets "Automatic".
+   .
+   Third ByPass:
+   .
+   ForceMeasureUpdate
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD78269
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   517
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-26
+   
+   
+ * CLOSED DATE
+   2008-10-01
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

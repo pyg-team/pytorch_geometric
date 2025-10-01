@@ -1,0 +1,37 @@
+Title: IBM Case Manager 5.0 Fix Pack 2: Changes to Content Engine AssociatedCase security proxy on the base Document class - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document describes the change in behavior for documents that previously inherited the case folder permissions when the documents were associated with the case. After IBM Case Manager 5.0 Fix Pack 2 is installed, documents do not inherit the case folder permissions. 
+
+CONTENT
+How does using AssociatedCase as a security proxy cause a security concern? 
+
+A user who has limited access to a document but who has higher levels of access to the case can obtain an elevated level of access to the document by filing it in the case folder. Filing the document in a case folder causes the case folder permissions to be dynamically merged with the document permissions.
+
+For example, a case worker who has read-only access to a document can acquire write or even delete access to the document by filing it into a case folder.
+
+How does installing Fix Pack 2 change the AssociatedCase property to address the security concern?
+
+IBM Case Manager 5.0 Fix Pack 2 modifies the base Document class CmAcmAssociatedCase object-value property so that it no longer acts as a security proxy property. This affects any existing documents that are already filed into case folders, and also affects any new case documents that are added after the fix pack is installed.
+
+How does this affect the system after Fix Pack 2 is installed?
+
+After the fix pack is installed, the fix affects all current document instances. Security settings will no longer propagate from case folders to the documents within the case.
+
+
+
+Document category IBM Case Manager 5.0 GA or Fix Pack 1 After installing IBM Case Manager 5.0 Fix Pack 2 An existing shared reference document that is filed into a case Case folder permissions are merged with the document permissions, potentially giving case workers elevated access to the document. Document permissions are no longer affected by case folder permissions. A case-owned document that is created in a case context Case folder permissions are merged with the permissions of the created document, automatically granting case workers permissions to the document. Document permissions are no longer affected by case folder permissions.
+
+New document instances acquire the default instance permissions as specified in their Document Class Definition.
+
+Administrators:  * Carefully review and configure the default instance security of your document classes to fit your business use case. 
+ * For existing document instances that are already filed in cases, use FEM to search for affected documents. Then, adjust permissions on those existing documents in order to allow case workers to continue accessing them with proper rights.
+
+A case-owned document that is later filed into a different case New case folder permissions are merged with the permissions of the re-filed document, automatically granting case workers on the new case permissions to the document. 
+
+Because the AssociatedCase object-value property points to only one single case folder at a time, any permissions that are inherited from the previous case that the document is filed in are lost when the document is filed into a new case. Document permissions are no longer affected by case permissions.
+
+After the permission adjustments described in the previous row are applied to existing documents, future filing of documents to new case folders will no longer affect document permissions.

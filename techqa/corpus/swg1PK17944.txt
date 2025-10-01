@@ -1,0 +1,233 @@
+Title: IBM PK17944: IF WAS_HOME, CONTAINS ( ) PARENTHESES LIKE C:\PROGRAM FILES (X86)\... THE INSTALL FAILS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR deals with a problem with the profile creation  steps
+   on windows, specifically installing filetransfer, adminconsole,
+   ivt and mejb.
+   
+   All of these profile creation steps use a similar Ant task.  The
+   ant
+   task is as follows:
+   
+   
+       <target name="deployFileTransferAppWindows"
+               description="Deploys the FileTransfer EAR
+   Application for
+   Windows"
+               if="configWindows">
+   
+           <wscmtlog>Deploying FileTransfer EAR, the output will be
+   recorded in:
+   ${WS_CMT_LOG_HOME}/${profileName}/filetransfer_config.log</wscmt
+   log>
+   
+           <exec executable="${WSADMIN_EXECUTABLE}"
+   
+   output="${WS_CMT_LOG_HOME}/${profileName}/filetransfer_config.lo
+   g"
+   failonerror="true">
+               <arg value="-conntype"/>
+               <arg value="NONE"/>
+               <arg value="-c"/>
+               <arg value="$AdminApp install
+   \&quot;${WAS_HOME_UNIX_STYLE}/systemApps/filetransfer.ear\&quot;
+   {-node
+   ${NODE_NAME} -cell ${CELL_NAME} -server ${serverName}
+   -usedefaultbindings -nocreateMBeansForResources -appname
+   filetransfer}"/>
+               <env key="WAS_USER_SCRIPT"
+   value="${profilePath}/bin/${setupCmdLineName}"/>
+               <env key="PROFILE_CONFIG_ACTION" value="true"/>
+           </exec>
+       </target>
+   
+   The Ant task, is in essence creating a command line call to
+   wsadmin,
+   using both -conntype NONE and -c to specify a single command.
+   It turns out if that WAS_HOME, in this case
+   ${WAS_HOME_UNIX_STYLE}
+   contains ( ) parens (c:\Program Files (x86)\...) the install
+   fails.
+   This is easily re-creatable on a base install, the fix is to
+   rather than
+   use the -c option, create a temporary file containing the
+   command we
+   want to execute and reference it using the -f option, that way
+   the
+   command isn't parsed on the command line, but passed directly
+   into the
+   wsadmin
+   interpreter.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  @echo on
+   setlocal
+   
+   echo %*
+   
+   for %%P in ( %* ) do echo "%%P"
+   
+   echo %*
+   
+   endlocal
+   
+   run the batch file with parameters as,
+   >test.bat -c "$AdminApp install "C:\Program Files(x86)\abc.ear"
+   {-server
+   server1}"
+   ----------------------------------------------------------------
+   --------
+   
+   The above for loop statement is there in setupCmdLine.bat file.
+   Here
+   while executing for loop statement "%*" will be replaced with
+   the
+   arguments passed. From OS point of view; for loop values ends at
+   first
+   occurrence of the closing parenthesis (i.e. the one next to
+   x86')').
+   So the remaining characters are unexpected from OS point of
+   view, hence
+   it terminates batch file execution at this stage, app install is
+   not
+   even started.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Application Server version 6.0.2   *
+   *                 users who create profiles running on         *
+   *                 Microsoft Windows operating system with      *
+   *                 a WebSphere Application Server install       *
+   *                 directory containing opening and/or          *
+   *                 closing parenthesis.                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: You cannot create profiles if the       *
+   *                      install directory contains parentheses. *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   You can not create profiles on Microsoft Windows operating
+   system if the Application Server install directory contains
+   opening and/or closing parenthesis.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been changed to handle the parentheses.
+   
+   The fix for this APAR is currently targeted for inclusion
+   in fixpack 6.0.2.9.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK17944
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-01-16
+   
+   
+ * CLOSED DATE
+   2006-03-21
+   
+   
+ * LAST MODIFIED DATE
+   2006-03-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  INSTALL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60W PSY
+   UP

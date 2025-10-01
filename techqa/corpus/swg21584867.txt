@@ -1,0 +1,46 @@
+Title: IBM ILMT 7.5: Install TIP fix pack 2.2.0.3 fails with errors - United States
+
+Text:
+TIP install; ILMT 7.5; CODPT0017I; CODPT0060E; CODPT0022E TECHNOTE (FAQ)
+
+QUESTION
+ Why does TIP fix pack 2.2.0.3 fails when installing ILMT 7.5? 
+
+ANSWER
+ 
+
+Issue:
+
+When installing ILMT 7.5, TIP fix pack 2.2.0.3 fails with the following error message: 
+
+"CODPT0017I: Step: Select Tivoli Integrated Portal CODPT0018I: 
+Executing... CODPT0023I: Select Tivoli Integrated Portal version 2.2.0.0 
+at D:\IBM\TIP CODPT0024I: WebSphere Application Server details: Name: 
+IBM Embeddable WebSphere Application Server Version: 7.0.0.15 ID: 
+embeddedEXPRESS CODPT0031I: The credentials for Tivoli Integrated Portal 
+have been validated successfully. CODPT0020I: Step "Select Tivoli 
+Integrated Portal" completed successfully CODPT0017I: Step: Install
+Tivoli Integrated Portal fix pack 2.2.0.3 CODPT0018I: Executing... 
+CODPT0058I: Tivoli Integrated Portal fix pack is being installed. 
+CODPT0060E: The Tivoli Integrated Portal Fixpack installation has failed 
+with return code: -1. CODPT0022E: The mandatory step "Install Tivoli 
+Integrated Portal fix pack 2.2.0.3" has failed. CODPT0003E: The Patch 
+Tool exits with code 16.." "
+
+
+Resolution:
+
+Before running the TIP fix pack 2.2.0.3 installation, you must ensure that all the TIP related Java processes are disabled. 
+
+Otherwise, perform the steps below in order to disable the TIP service:
+
+1. Under the Windows Services control panel, locate the service for Tivoli Integrated Portal.
+2. Right-click on the TIP service and select Properties 
+3. Select "Disabled" from the Startup Type dropdown box
+4. Click Apply, and then OK.
+
+Do not stop the service, as that will stop the TIP server process. You need that running for the TIP fix pack installation. 
+Once you have disabled the service, please retry the TIP fix pack 2.2.0.3 install. 
+
+If the issue still occurs, you need to collect the information from below technote and contact IBM Support. 
+https://www-304.ibm.com/support/docview.wss?uid=swg21468983 [https://www-304.ibm.com/support/docview.wss?uid=swg21468983]

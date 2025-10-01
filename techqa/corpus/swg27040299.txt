@@ -1,0 +1,98 @@
+Title: IBM Updating data in near real time using IBM Cognos Dynamic Cubes 10.2.1.1 Fix Pack 3 - United States
+
+Text:
+FB 10.2.1.1; near real time; updating fact rows PRODUCT DOCUMENTATION
+
+ABSTRACT
+ In previous versions of IBM Cognos Dynamic Cubes, to maintain consistent data values between the fact tables, aggregate tables, and data caches in a running dynamic cube, it was necessary to stop the cube before applying any changes to the data warehouse.
+
+This step was required to allow the application of changes to data values in the data warehouse tables during the execution of end user business intelligence (BI) queries. When the update was complete, it was necessary to restart the cube in order to rebuild the data caches to reflect the new table values.
+
+With near real time updates, data can be inserted into fact and aggregate tables in the data warehouse without stopping a dynamic cube. BI queries will return consistent data in the presence of the updates and a dynamic cube can consume the inserted records on the fly without stopping the cube, and while ensuring each BI query provides a consistent view of the data. The data caches are updated and not rebuilt. 
+
+CONTENT
+The advantages of using near real time updates are:
+
+
+ * You only need to load data and caches to a dynamic cube once. The cube is available for queries at all times after the initial load. 
+ * Aggregate table data can be updated separately from updates to fact table data, and you can choose when to run these maintenance updates. 
+ * You can achieve low latency without sacrificing performance. 
+ * Database changes are supported whilst the cube is running. 
+ * Queries to the cube are consistent to a point in time, even if they require multiple database and/or cache accesses.
+
+
+You can load fact table updates outside of your regular maintenance window, reducing the amount of time needed for regular maintenance. 
+
+The only time you must stop a dynamic cube for updating is when either update or delete changes are made to a fact table. 
+
+Limitations 
+
+Currently, near real time updates are limited to new fact rows only. It is not possible to apply near real time updates to the following items:  * Updated or deleted rows in the fact table. 
+ * New, updated, or deleted rows in dimension tables. 
+ * Measures with Custom (Unknown) aggregate type. 
+ * Virtual cubes with the data cache and result set cache enabled.
+
+
+Steps to enable near real time updates To enable near real time updates for a dynamic cube: 
+
+1. Add a nullable transaction ID (TID) column to each fact table. 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  Product Sales TID Paper 50 [/support/docview.wss?uid=swg27040299&amp;aid=1] Pen 75 [/support/docview.wss?uid=swg27040299&amp;aid=1] Paper 45 [/support/docview.wss?uid=swg27040299&amp;aid=1] Paper 5 [/support/docview.wss?uid=swg27040299&amp;aid=1] Paper 20 1 Paper 5 1 Paper 25 2 
+ * The aggregate tables should be created from the initial fact data only (rows with a NULL TID column), as illustrated in this table. 
+ * Aggregate table for initial fact data 
+ *  Product Aggregate Sales Paper 100 Pen 75 
+
+2. Identify this column in the dynamic cube using IBM Cognos Cube Designer:  *  From the Project Explorer tree, expand your cube. Select the measure dimension folder. In the Properties pane, select the TID column from the Transaction ID drop-down list.
+   
+
+3. Publish the dynamic cube. Rules for inserting new rows into a data source fact table 
+
+Before loading fact data to a dynamic cube, you insert new rows into the fact tables in the data source. New rows for near real time updates must adhere to certain rules: 
+
+ * Each insert transaction must use a TID value greater than any previous transaction. 
+ * Within a single transaction, all rows can use the same TID value.
+
+
+When you follow these rules, new rows can be inserted at any time. However, the rows are not visible in a dynamic cube until you either perform an incremental update or the cube is restarted. 
+Loading initial fact data to a dynamic cube 
+
+When you start a published dynamic cube, IBM Cognos Dynamic Cubes: 
+
+ * Checks for the highest TID value and uses it for the initial load.
+   
+   In the example fact table, there are rows of initial fact data (null TID value), and rows of updates for two increments. So, Cognos Dynamic Cubes uses the TID value 2 as the initial load state. 
+ * Loads the aggregate cache and query data cache with aggregate table and fact data based on the initial load state. 
+   
+
+
+Loading incremental updates to fact data 
+
+After loading initial fact data, new fact rows can continue to be added to the fact table at any time. 
+
+After you have started a dynamic cube, you update the fact table with new rows, and make them visible in a dynamic cube, by using an incremental load. 
+
+To identify these rows to Cognos Dynamic Cubes, you must use a non-null TID value the rows that is higher than the TID value for the previous inserted rows. For example, if previously updated fact data using TID value 2, the next update must use a TID value of 3 or higher. 
+
+Note: You should assign the same TID value to all fact rows that are loaded together. 
+
+You can load more than one increment at a time. For example, if you have updates available for TID values 3, 4 and 5, you can load them all at once. Alternatively, you can specify that you want to load only incremental updates up to TID value 4. 
+
+Whilst incremental updates to a dynamic cube are in progress, queries against the cube return values based on the current completed update. When the update is complete, and data caches have been updated, new queries return values based on the latest incremental update. 
+
+To load an incremental update, you use the incrementallyLoadCubes command (see http://www.ibm.com/support/docview.wss?uid=swg27040417 [http://www.ibm.com/support/docview.wss?uid=swg27040417]). 
+Updating aggregate data separately to fact data
+
+You can load updates to aggregate tables separately, at a later time, and you can choose when to run these maintenance updates. To achieve low latency and continue to provide fast performance, queries against a dynamic cube return values based on a combination of aggregate table data and the current completed incremental update of fact data. Over time, as new rows are added to the fact table but not accounted for in the aggregate tables, the sql queries will slow down. To restore the performance, the aggregate tables should be updated.
+
+When you are ready, you can update the aggregate tables with incremental updates available from the dynamic cube. (see http://www.ibm.com/support/docview.wss?uid=swg27040458 [http://www.ibm.com/support/docview.wss?uid=swg27040458]).

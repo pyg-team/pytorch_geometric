@@ -1,0 +1,10 @@
+Title: IBM How to change IN search operator delimiter in Content Manager OnDemand (CMOD) Windows Client - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to change IN search operator delimiter in CMOD Windows Client? 
+
+ANSWER
+The setting is available in CMOD Windows Client -> Options menu -> Set IN Search Operator Delimiter.

@@ -1,0 +1,78 @@
+Title: IBM AMQ9657: The key repository could not be opened - SSL failure - United States
+
+Text:
+MQ400L2 5724B4106 SSL stash key repository TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You can not start your WebSphere MQ (WMQ) SSL channel, unless the authorities to the System Certificate Store (/qibm/userdata/icss/cert/server/default) have group ownership of QMQMADM. When you remove group ownership of QMQMADM, the SSL channel fails, and you get the following error:
+
+AMQ9657: The key repository could not be opened (channel 'TRIPLE_DES_SHA_US'). 
+
+SYMPTOM
+AMQ9657: The key repository could not be opened (channel 'TRIPLE_DES_SHA_US').
+EXPLANATION:
+Cause . . . . . : The key repository could not be opened. The key repository either does not exist or has incorrect permission's associated with it. The channel is 'TRIPLE_DES_SHA_US'; in some cases its name cannot be determined and so is shown as '????'. The channel did not start. Recovery . . . : Ensure that the key repository you specify exists and that its permission's are such that the MQ process involved can read from it. Restart the channel.
+Technical Description . . . . . . . . : None.
+
+
+CAUSE
+Authority to the key repository and incorrect password stashed in the stash file.
+
+RESOLVING THE PROBLEM
+In the "WebSphere MQ Security" manual, SC34-6079-01, Ch. 11, p.88 the only reference we make about the system certificate store is:
+
+>  
+"The queue manager certificate store name comprises a path and stem name. The default path is /QIBM/UserData/ICSS/Cert/Server/ and the default stem name is Default. On OS/400, the default certificate store, /QIBM/UserData/ICSS/Cert/Server/Default.kdb, is also known as *SYSTEM.
+
+Optionally, you can choose your own path and stem name, but the extension must be .kdb."
+
+
+Per the password stash file, because the file is essentially an WMQ owned file and we do not rely on QSYS adopted authority, this file should be accessible by using group authority of QMQMADM, we should have this authority if we are able to start a channel job.
+
+
+
+GENERAL INFORMATION
+ 1. The system store should by default be owned by QSYS without a group profile associated with it. QSYS as owner should have the appropriate authority to read and write to the object.
+ 2. If you decide to use your own certificate store/keyring, this is generally where authority issues can arise as we cannot guarantee the access path will be a similar one to the system store. WebSphere MQ still attempts to access the certificate store/keyring, so it requires group or other authority to access the object.
+ 3. All you have to do for the System Certificate Store ( .KDB file) is change Data Authorities for *PUBLIC from *NONE to *RX. This alone is enough to give MQ Authority to the Key Repository.
+ 4. It is safe to allow management of WMQ Certificates by the System Store as long as you give *PUBLIC *RX.
+ 5. Adopted authorities are not honored in the Integrated File System(IFS) therefore changes are required to use the keyrings.
+ 6.  DCM can not be used to assign certificates to WebSphere MQ.
+
+ To address the majority of the immediate SSL setup problems make the following checks and collect the following documentation:
+
+ 1. Basic check Confirm they are using WMQ v5.3 with CSD03 minimum applied: 5724B41 V5R3M0 WebSphere MQ for iSeries Verify HTTP Server is installed and active: 5722DG1 V5R2M0 IBM HTTP Server Confirm the operating system level: 5722SS1 V5R2M0 L00 Operating System/400 Verify licensed program DCM is installed: 5722SS1 V5R2M0 OS/400 - Digital Certificate Manager Check the Cipher Spec level: 5722AC3 V5R2M0 Crypto Access Provider 128-bit for AS/400 
+ 2. If possible check the equivalent level at the remote end.
+ 3. DSPMQM the queue managers involved ...in particular paying attention to the key repository path SSL Key Repository: ./QIBM/USERDATA/ICSS/CERT/CERTAUTH/DEFAULT Note: There should be no '.KDB' extension in this parameter.
+ 4. Check that QMQMADM has *RX permission to ALL directories in the IFS path for the key repository and also to the *.KDB file.
+ 5. Check QMQMADM authority on the path containing the stash file..QMQMADM should have *RWX to the file: .../ssl/Stash.sth in the qmgr directory.
+ 6. Check channel definitions from both ends.
+
+ * DSPMQMCHL we are particularly interested in the keywords
+ * SSL client authentication . . : *REQUIRED
+ * SSL CipherSpec . . . . . . . . : *NULL_MD5
+
+If the problem persist collect the following documentation as well as the definitions, and authorities above:
+
+ * MQ TRACE taken at the same time..at both ends
+ * AMQERRnn.LOG files at Queue Manager level
+ * Job logs from AMQRMPPA/RUNMQCHL /AMQZLAA0
+
+
+
+COMMON ERRORS
+ *  If you encounter: AMQ9660......SSL key repository: password stash file absent or unusable If its not permission..and not the wrong path, it may be incorrect, you can reset it with:CHGMQM ... SSLKEYRPWD('mypassword') AMQ9657......The key repository could not be opened (channel '&3'). Check path permissions '/qibm/userdata/icss/cert/server/... Check ssl key repository path on QMGR. Is should NOT have .kdb extension. If there is a problem with labels on certificates, unless they are missing completely, it is most likely a case sensitive issue, or a spelling mistake. The label should be lower case ibmwebspheremq 'yourqmgr' where 'yourqmgr' is your queue manager name. It might be that you have fixed the problem..but you need a restart. 
+
+WHEN CHANGES BECOME EFFECTIVE:
+Changes to the certificates in the certificate store and to the key repository attribute become effective:
+
+ * When a new outbound single channel process first runs an SSL channel.
+ * When a new inbound TCP/IP single channel process first receives a request to start an SSL channel.
+ * For channels that run as threads of a process pooling process (amqrmppa), when the process pooling process is started or restarted and first runs an SSL channel. If the process pooling process has already run an SSL channel, and you want the change to become effective immediately, restart the queue manager.
+ * For channels that run as threads of the channel initiator, when the channel initiator is started or restarted and first runs an SSL channel. If the channel initiator process has already run an SSL channel, and you want the change to become effective immediately, restart the queue manager.
+ * For channels that run as threads of a TCP/IP listener, when the listener is started or restarted and first receives a request to start an SSL channel.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

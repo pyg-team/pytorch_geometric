@@ -1,0 +1,17 @@
+Title: IBM Labels of repeated nested rows in TM1 - United States
+
+Text:
+ FIX README
+
+ABSTRACT
+ Labels of repeated nested rows in IBM Cognos TM1 are left blank. In Microsoft Excel the text font for the repeated label is made to match the background color, and therefor cannot be seen. In TM1 Web, the repeated cells are merged. 
+
+CONTENT
+To see the hidden text in Excel you can change the color of the font by using a conditional format on the outer rows to override the default setting. This formatting on merged headers was previously not allowed in TM1 Web. 
+In TM1 10.2.2 FP1 and later releases, this method to override hidden text will work both in Excel and in TM1 Web websheets:
+
+
+ 1. Select: Conditional formatting > New rule. 
+ 2. Select: Use a formula to to determine which cells to format. 
+ 3. In the field Format values where this formula is true type =1=1 
+ 4. Click Format and select how you want the hidden text to be viewed.

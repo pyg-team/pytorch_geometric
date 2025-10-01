@@ -1,0 +1,96 @@
+Title: IBM How to set up a job with ATS (Administrative Task Scheduler) - United States
+
+Text:
+ATS Administrative Task Scheduler db2 db2_ats_enable job setup TECHNOTE (FAQ)
+
+QUESTION
+ How to set up a job with ATS (Administrative Task Scheduler)? 
+
+ANSWER
+The Administrative Task Scheduler in DB2 is similar to the 'cron' utility 
+in Unix. It allows you to schedule the automatic execution of any task at
+any regular time or interval.
+
+The 'Administrative Task Scheduler' or ATS is enabled by setting the variable
+'DB2_ATS_ENABLE' to 'YES':
+
+# db2set DB2_ATS_ENABLE=YES
+
+ATS also requires the existence of the tablespace 'SYSTOOLSPACE' in order
+to run. You can check and create it like this:
+
+# db2 "SELECT TBSPACE FROM SYSCAT.TABLESPACES WHERE TBSPACE = 'SYSTOOLSPACE'"
+
+If it does not exist, then create it:
+
+# db2 "CREATE TABLESPACE SYSTOOLSPACE IN IBMCATGROUP \
+MANAGED BY AUTOMATIC STORAGE EXTENTSIZE 4"
+
+You are now ready to create your tasks and register them with the ATS.
+Let's say you want to export the content of a given table every day to a file.
+To do that you can create a stored procedure that will use the 'ADMIN_CMD()'
+routine to execute the 'EXPORT'. Then you will register that procedure with 
+'ATS' to execute day at 2am for example.
+
+== STEP 1 == Create the stored procedure.
+
+The following stored procedure will execute an 'export' of the table to 
+a file using the data of the day the export is made.
+
+# cat > myproc.db2 <<SdS
+create procedure myproc()
+language sql
+modifies sql data
+external action
+
+begin
+
+declare filedate varchar(16);
+declare filename varchar(64);
+declare filecmd varchar(128);
+
+select varchar_format(current timestamp, 'YYYYMMDD') into filedate from sysibm.sysdummy1;
+set filename = '/tmp/tab1.unl' || filedate;
+set filecmd = 'export to ' || filename || ' of del select * from tab1';
+call sysproc.admin_cmd(filecmd);
+
+commit;
+end@
+SdS
+
+
+== STEP 2 == Register the task.
+
+We register the task. The schedule follows the Unix cron rules. So it looks like this:
+
+# db2 "call SYSPROC.ADMIN_TASK_ADD ('MYTASK', NULL, NULL, NULL, '0 2 * * *', \
+'DALLA', 'MYPROC', NULL, NULL, NULL )"
+
+
+Note that the database needs to be active for the scheduler to execute
+the tasks you registered.
+
+You can check the if the task is scheduled and the status of the last run:
+
+# db2 "SELECT substr(name, 1, 10) as taskname, taskid FROM SYSTOOLS.ADMIN_TASK_LIST"
+
+TASKNAME TASKID
+---------- -----------
+MYTASK 21
+
+1 record(s) selected.
+
+
+# db2 "SELECT taskid, sqlcode, status, invocation FROM SYSTOOLS.ADMIN_TASK_STATUS"
+
+TASKID SQLCODE STATUS INVOCATION
+----------- ----------- ---------- -----------
+21 0 COMPLETE 1
+
+1 record(s) selected.
+
+You can see the file created at the requested time:
+
+# ls /tmp/tab1*
+[/home/dalla/tmp/ATS]->l /tmp/tab*
+-rw-r--r-- 1 dalla build 2 Jun 17 02:00 /tmp/tab1.unl20160617

@@ -1,0 +1,67 @@
+Title: IBM PK54499: WebContainer option to override fileservingenabled="true" - United States
+
+Text:
+PK54499; PK54499; PK54499 DOWNLOADABLE FILES
+
+ABSTRACT
+ It is not possible to globally prevent all applications, on a given application server, from serving static files. 
+
+DOWNLOAD DESCRIPTION
+PK54499 resolves the following problem:
+
+ERROR DESCRIPTION: 
+This APAR provides the option to globally disable static file serving on a given application server. This enables the setting of fileServingEnabled="true" at the application level to be overridden. 
+
+LOCAL FIX: 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+IBM WebSphere Application Server users who do not wish to serve static files. 
+
+PROBLEM DESCRIPTION:
+It is not possible to globally prevent all applications, on a given application server, from serving static files regardless of their individual deployment settings.
+
+RECOMMENDATION:
+None
+
+The WebContainer provides a custom property (fileServingEnabled) that can be used to enable/disable the serving of static files for all applications that do not define the fileServingEnabled setting in their deployment information. As a result, because the custom property setting is overridden by the specific deployment information of each application, there is no way to globally disallow file serving irrespective of the specific deployment information of each application. 
+
+
+
+
+
+PROBLEM CONCLUSION: 
+A new WebContainer custom property has been added that disallows file serving on all applications (except the administration console) on a given application server, irrespective of the specific deployment information of each application. 
+
+Set the new WebContainer custom property com.ibm.ws.webcontainer.disallowAllFileServing to true to 
+disable all file serving on a given application server. This custom property is not case sensitive. 
+
+Please refer to the following technote for instructions on enabling WebContainer custom properties: 
+http://www.ibm.com/support/docview.wss?rss=180&uid=swg21284395 [http://www.ibm.com/support/docview.wss?rss=180&uid=swg21284395] 
+
+
+The fix for this APAR is currently targeted for inclusion in Fix Packs 5.1.1.17, 6.0.2.25 and 6.1.0.15. 
+
+ 
+Please refer to the recommended updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+Please download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK54499/readme.txt] US English 5682 
+DOWNLOAD PACKAGE
+
+
+Download package What is Fix Central (FC)? [http://www.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html] What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 6.0.2.23-WS-WAS-IFPK54499 12-17-2007 US English 9975 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=6.0.2.23-WS-WAS-IFPK54499&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK54499/6.0.2.13-WS-WAS-IFPK54499.pak] DD 
+
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www-306.ibm.com/software/support/probsub.html [http://www-306.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server Support Web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV(U.S. only). 
+
+ [/support/docview.wss?uid=swg24017926&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24017926&aid=2]Problems (APARS) fixed
+PK54499

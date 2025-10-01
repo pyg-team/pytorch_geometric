@@ -1,0 +1,38 @@
+Title: IBM Download the Information Server Update Installer, Version 8.5.0.310 - United States
+
+Text:
+Update Installer; install85relnotes; updating; installing patches; patches; fix packs; install; installation; updates; information server DOWNLOADABLE FILES
+
+ABSTRACT
+ Download the latest version of the Update Installer for IBM InfoSphere Information Server, Version 8.5.0.310. 
+
+DOWNLOAD DESCRIPTION
+
+
+
+
+
+
+The Information Server update installer is used to 
+
+ * Install individual fixes, fix packs and updates 
+ * Uninstall fixes and updates 
+
+
+Follow any installation instructions which are specific to the package that is being installed. This download does not include any Information Server patches or updates. Information Server Fix Packs, roll up patches and other fixes are made available for download on Fix Central. To acquire fixes that are not available on Fix Central, open a service request with IBM Support.  
+
+ 
+
+This Update Installer package is for use with Information Server, Version 8.5 only.
+
+INSTALLATION INSTRUCTIONS
+For details on installing and using the Update Installer, see the online patch installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Update Installer Instructions [http://www.ibm.com/support/docview.wss?uid=swg27016531] English 1 
+DOWNLOAD PACKAGE
+Actual file size is calculated and displayed within Fix Central.
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options Download the Update Installer 9 Jul 15 US English 1 HTTP [http://www.ibm.com/support/fixcentral/swg/quickorder?&product=ibm/Information+Management/IBM+InfoSphere+Information+Server&function=fixId&fixids=is85_update_installer*] 
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Business Glossary IBM Information Server Business Glossary Anywhere AIX, HP-UX, Linux, Solaris, Windows 8.5 Information Management InfoSphere DataStage AIX, HP-UX, Linux, Solaris, Windows 8.5 Information Management InfoSphere FastTrack AIX, HP-UX, Linux, Solaris, Windows 8.5 Information Management InfoSphere Information Analyzer AIX, HP-UX, Linux, Solaris, Windows 8.5 Information Management InfoSphere Information Services Director AIX, HP-UX, Linux, Solaris, Windows 8.5 Information Management InfoSphere Metadata Workbench AIX, HP-UX, Linux, Solaris, Windows 8.5 Information Management InfoSphere QualityStage AIX, HP-UX, Linux, Solaris, Windows 8.5

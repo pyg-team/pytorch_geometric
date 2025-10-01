@@ -1,0 +1,10 @@
+Title: IBM Where can I find what is new in each version of the Netezza FDT? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Where can I find what is new in each version of the Netezza FDT? 
+
+ANSWER
+You can review the release notes to find and what Firmware levels were updated in this version of FDT by extracting the file from the nz-fdt-vVersion.tar.gz.

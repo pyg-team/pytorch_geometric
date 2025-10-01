@@ -1,0 +1,25 @@
+Title: IBM User A has privileges to RW objects in C&DS against unit A but can not see unit B.  If altering through LDAP to allow R on Unit B and only R on unit A this update next login? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ LDAP security integration is supported by Collaboration and Deployment Services (C&DS). 
+
+If user A belongs to business area 'Unit A' and has the privileges to read and write
+objects on C&DS and only for those that belongs to 'Unit A' folder. User A can't see any other folder in C&DS.
+
+Now, privileges for user A are modified by the LDAP administrator, restricting the user A to read only on 'Unit A' folder, and give read access to 'Unit B' folder. The next time the user A logs into C&DS, it 'automatically' restricts the options of 'writing' objects, and also allows the option of browsing 'Unit B' folder'? 
+
+RESOLVING THE PROBLEM
+With LDAP users and Security:
+Once an LDAP user is recognized in C&DS, they are secured just like any other user (LDAP or non-LDAP). Permissions are granted on objects (folders, files, jobs, etc.). Permissions are either Read, Write, Delete or Modify Permissions. If a user is not granted any of those permissions, they will not see an object. So if a user needs to be able to store objects in 'Unit A' folder, then they need at least Write permission. If that same user needs to be able to read objects in 'Unit B' folder, then they need to have at least Read permission to that folder. When adding permissions to an object, they would select the Active Directory security provider, locate the user or group (users can inherit a group's permission) and choose the permissions to add
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 89090

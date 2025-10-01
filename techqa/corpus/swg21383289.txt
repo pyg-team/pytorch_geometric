@@ -1,0 +1,75 @@
+Title: IBM Unable to set FileNet Workplace or FileNet WorkplaceXT Site Preferences. - United States
+
+Text:
+Workplace site preferences; Dynamic Referential Containment Relationship; Application Engine; ae; ce; Content Engine; Workplace TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to set FileNet Application Engine Workplace or WorkplaceXT Site Preferences 
+
+SYMPTOM
+ 
+
+ * The initial save of the WorkPlace Site Preferences appears to be successful but Preferences revert back to previous values in about twenty minutes.
+   
+   
+ * Second attempt to change and save Workplace Site Preferences produces the following error:
+   
+   com.filenet.api.exception.EngineRuntimeException;Requested item not found...
+   
+   
+ * After twenty or so minutes, the WorkPlace Site Preferences is accessible and reset to original values.
+   
+   
+ * In FileNet Enterprise Manager (FEM), under the Object Store/Root Folder/Preferences, multiple instances of Site Preferences for Workplace exist in Containment/Folder Name appended with a number. For example: Site Preferences for Workplace(33) 
+   
+   
+ * Each attempt to change the Site Preferences results in a new Site Preferences for Workplace entry in FEM under ObjectStore/Root Folder/Preferences appended with an (number) increment by 1.
+
+
+CAUSE
+An orphaned Dynamic Referential Containment Relationship for "Site Preferences for Workplace". When CE attempts to update the site preferences file, it cannot resolve the object it points to and generates a new Site Preferences for Workplace entry, appending a sequential number. After twenty minutes, CE reloads the site preferences, cannot find a valid object and loads the default values.
+
+DIAGNOSING THE PROBLEM
+ 
+
+Confirm a new Site Preferences for Workplace entry in Filenet Enterprise Manager (FEM) is created in 'Root Folder/Preferences' whenever the Site Preferences are changed and saved in Workplace.
+
+Check to see if an orphaned Dynamic Referential Containment Relationship exists by doing the following:
+
+
+
+ 1. In FileNet Enterprise Manager (FEM), do a search with the following values:
+    
+    Select From Table = Dynamic Referential Containment Relationship
+    Criteria: Column = "Containment Name", Condition = "Like", Value="Site Preferences for Workplace"
+    
+    
+ 2. Review the properties of the item returned who's containment name = "Site Preferences for Workplace".
+    
+    
+ 3. An orphaned Dynamic Referential Containment Relationship exists if the Head is not a valid object.
+
+
+RESOLVING THE PROBLEM
+ 
+
+Delete the orphaned Dynamic Referential Containment Relationship for "Site Preferences for Workplace". Once deleted, changes to the Workplace Site Preferences will be properly saved. 
+
+Steps to delete: 
+
+ 
+
+ 1. In FileNet Enterprise Manager (FEM), do a search with the following values:
+    
+    Select From Table = Dynamic Referential Containment Relationship
+    Criteria: Column = "Containment Name", Condition = "Like", Value="Site Preferences for Workplace"
+    
+    
+ 2. Review the properties of the item returned who's containment name = "Site Preferences for
+    Workplace" and confirm it is an orphaned Dynamic Referential Containment Relationship object.
+    
+    
+ 3. Delete the orphaned Dynamic Referential Containment Relationship object.
+    
+    
+ 4. Optional. Delete the extra Site Preferences for Workplace(num) entries in FEM/Object Store/Root Folder/Preferences folder.

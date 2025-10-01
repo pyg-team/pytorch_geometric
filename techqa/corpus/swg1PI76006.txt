@@ -1,0 +1,143 @@
+Title: IBM PI76006: VALIDATION ERROR WITH TERADATA NATIVE DRIVER 15.10 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I have a stream which merges several tables together; when I run
+   it against the Teradata Native Driver 15.10, I get errors like:
+   SQL Validation Error: 42000[-3704] [Teradata][ODBC Teradata
+   Driver][Teradata Database] '{' ('7B'X) is not a valid Teradata
+   SQL token
+   
+   If I use driver version 14.10, I do not have such errors.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Enable the Legacy Parser in 15.10.
+   On Linux this translates to:
+   in your odbc.ini, add:
+   ENABLELEGACYPARSER=Yes
+   and restart Modeler Server.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * This affects users of SPSS Modeler connecting to a Teradata  *
+   * data source.                                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * VALIDATION ERROR WITH TERADATA NATIVE DRIVER 15.10.          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM SPSS Modeler 18.1 to resolve this      *
+   * issue.                                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been resolved in IBM SPSS Modeler 18.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI76006
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS MODELER SV
+   
+   
+ * REPORTED COMPONENT ID
+   5725A65MS
+   
+   
+ * REPORTED RELEASE
+   I00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-02-03
+   
+   
+ * CLOSED DATE
+   2017-06-21
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS MODELER SV
+   
+   
+ * FIXED COMPONENT ID
+   5725A65MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RI00 PSY
+   UP

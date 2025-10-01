@@ -1,0 +1,76 @@
+Title: IBM Fixing an "SQL0964C Transaction log for database is full" error - United States
+
+Text:
+transaction log; SQL0964C; logfilsiz; logfilesize; log file size; full TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The DB2 Transaction log (logfilsiz) value of the database will need to be increased if you encounter a transaction log full message, SQL0964C in the db2cli.log. 
+
+CAUSE
+The default value of the DB2 Transaction log (logfilsiz) value of the database configured by ITDS is 2000. This is good enough with most directory implementations but in case the above error shows up, then the logfilsiz value must be updated to have a higher value.
+
+DIAGNOSING THE PROBLEM
+a. The data load will fail when attempting via ldif2db 
+
+b. The entry add will fail when attempted via ldapadd - in some cases this ldapadd might be coming from a supplier system to a consumer system in replicated topology.
+In both the above cases refer to db2cli.log to observe SQL0964C error when the problem happened.
+Alternatively, use the bulkload utility to load files with large amounts of entries. This problem may not be visible when doing the bulkload operation.
+
+
+RESOLVING THE PROBLEM
+Use the following procedure to increase the size of the DB2 transaction log (logfilsiz): 
+
+
+1. Determine the current log file size setting by issuing the command: 
+
+ * 
+ * su - <db2instance> 
+   db2 list db directory # to list the database name 
+   db2 connect to <databaseName> 
+   db2 get db config for <databaseName> | grep -i logfilsiz 
+
+ * 
+ * su - ldapdb2 
+   db2 connect to amdb 
+   db2 get db config for amdb | grep -i logfilsiz 
+   
+ * 
+ * open a DB2CMD window 
+   set DB2INSTANCE=<databaseName> from the ibmslapd.conf file 
+   db2 list db directory 
+   db2 connect to <databaseName> 
+   db2 get db config for <databaseName> 
+   check the value for logfilsiz 
+   
+
+2. Increase the size of the log file size setting by issuing the command:  * db2 UPDATE db cfg for <databaseName> using LOGFILSIZ <new_value> 
+   
+ * 
+ * db2 UPDATE db cfg for amdb using LOGFILSIZ 5000 
+   
+   NOTE: The LOGFILSIZ value is the number of 4k pages. 
+   and needs to be increased as appropriate for the environment. 
+   Tuning this may be a trial and error process 
+
+
+3. Stop the ibmslapd process. 
+ibmslapd -k -I <instance name> 
+
+4. Issue the commands:  * db2 force applications all 
+   db2stop force 
+
+
+5. Restart ibmslapd process. 
+
+[/support/docview.wss?uid=swg21121437&amp;aid=1] RELATED INFORMATION
+ Tivoli Directory Server documentation [http://publib.boulder.ibm.com/infocenter/tivihelp/v2r1/index.jsp?toc=/com.ibm.IBMDS.doc/toc.xml]
+
+
+
+
+HISTORICAL NUMBER
+ WI XX001148
+PMR 37340 500 000 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Tivoli Directory Server

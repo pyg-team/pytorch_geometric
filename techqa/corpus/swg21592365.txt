@@ -1,0 +1,36 @@
+Title: IBM Unable to perform search after migrating custom searches - United States
+
+Text:
+Legacy Search Services; Content Search Services; Legacy Search Engine TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The search could not be completed error when performing search after migrating custom searches created in FileNet Content Engine Content Search Engine (CSE) to FileNet Content Search Services (CSS). 
+
+SYMPTOM
+Error received on client: 
+
+The search could not be completed. 
+
+
+CAUSE
+The Search Template is not compatible with the content search engine that is configured for the object stores that are included in the search. Ask your system administrator to use the Search Designer to convert the search to a compatible search type.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Go to Search Designer and check out the Search that is giving the above error.
+    
+    
+ 2. When you do this you will automatically see the following message:
+    
+    "<ContentSearchTemplate>" is an IBM Legacy Search Engine search.
+    
+    Do you want to convert it to an IBM Content Search Services search?
+    
+    
+ 3. Select Yes, and check the Search back in.
+    
+    
+ 4. Exit Search Designer and test the Search.

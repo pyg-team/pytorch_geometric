@@ -1,0 +1,87 @@
+Title: IBM Manage Sessions functionality - United States
+
+Text:
+manage sessions; mxe.enableConcurrentCheck; TPAESECURITY TECHNOTE (FAQ)
+
+QUESTION
+ This document outlines how to use the "Manage Sessions" functionality and considerations when using the mxe.enableConcurrentCheck = 1 System Property. 
+
+ANSWER
+The "Manage Sessions" functionality is used to manage and view the Maximo users who are currently 
+
+logged into the system, and to view the login history of users. 
+
+Go to the Users application and do Select Action/ Manage Sessions. 
+
+- You can view users who are currently logged into the system. 
+
+- You can log out a user from the system or log out and block a user from the system. 
+
+- You can see the login history of Maximo users. 
+
+Maximo tables related to the "Manage Sessions" functionality are: MAXSESSION, LOGINTRACKING 
+
+,MAXUSER and MAXUSERSTATUS. 
+
+ 
+
+How Maximo is working when logging a user out: 
+
+- If a user logs into Maximo, that user's session information is saved in the MAXSESSION table. 
+
+For example: user = TESTU1 
+
+
+[/support/docview.wss?uid=swg21418171&aid=1] [/support/docview.wss?uid=swg21418171&aid=1]
+
+
+- Even if the System Administrator user logs that user (TESTU1) out via the Users application and the 'Manage Sessions' functionality, the TESTU1 session information is not removed immediately. As you can see below, information for the TESTU1 user's session (ACTIVE flag -> 0 , ADMINLOGOUT flag -> 1 ) will be updated.
+
+
+ [/support/docview.wss?uid=swg21418171&amp;aid=2] 
+
+ 
+
+- When the TESTU1 user is trying to do something in Maximo, the TESTU1 user will get a notice like in the screenshot below: 
+
+ 
+
+ [/support/docview.wss?uid=swg21418171&amp;aid=3] 
+
+ And at this time, information for that user session will be deleted from MAXSESSION table permanently. 
+
+ 
+
+ Considerations: 
+
+ Case1 : mxe.enableConcurrentCheck = 0 
+
+ (The mxe.enableConcurrentCheck property is used to allow or disallow a single user to log on more than once into Maximo at a time) 
+
+ 1. When a user is closing a Maximo session abnormally (in other words, not using the normal Sign Out button but by clicking the X button of an IE window for example), that user's session is not deleted until the specified session timeout is reached. 
+
+ 2. At this moment, if the System Administrator user logs that user out using "Manage Sessions", when that user tries to log into Maximo again, he will get the message below and he will be able to log into Maximo once again. 
+
+ [/support/docview.wss?uid=swg21418171&amp;aid=4] 
+
+ 
+
+ 
+
+ Case 2 : mxe.enableConcurrentCheck = 1 
+
+ There is a limitation to the "Manage Sessions" functionality when using mxe.enableConcurrentCheck = 1 . 
+
+ 1. When a user is closing a Maximo session abnormally, that user's session is not deleted until the specified session timeout is reached. 
+
+ 2. At this moment, even if the System Administrator user logs that user out via "Manage Sessions", that user cannot log on to Maximo until the specified session timeout is reached. 
+
+ When that user tries to log into Maximo again, that user will get the message below: 
+
+ 
+
+ [/support/docview.wss?uid=swg21418171&amp;aid=5] 
+
+ End-user training ( users need to sign out normally with the Sign Out option) is recommended. 
+
+ PS: According to the Development team's confirmation, this behaviour has been reported as a Request For Enhancement criteria.

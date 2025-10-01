@@ -1,0 +1,72 @@
+Title: IBM Release of QRadar Incident Forensics 7.2.4 Patch 1 (7.2.4-1418937956) - United States
+
+Text:
+7.2.4 patch 1; patching. fixpack; QRadar; release notes; 7.2.4-QRADAR-QRSIEM-988458; 7.2.4.1 RELEASE NOTES
+
+ABSTRACT
+ A list of the installation instructions and fixes for IBM Security QRadar Incident Forensics 7.2.4 Patch 1 (7.2.4-1418937956). 
+
+CONTENT
+If your deployment is installed with any version of QRadar Incident Forensics, you can install this fix pack to update your appliances to QRadar Incident Forensics 7.2.4 Patch 1.
+
+
+Note: Fix packs are for upgrades only. If you need to complete a fresh installation, you need to use an ISO file. For more information, see the QRadar Incident Forensics Installation Guide [http://public.dhe.ibm.com/software/security/products/qradar/documents/7.2.4/QIF/EN/b_forensics_ig.pdf]. 
+
+ 
+
+
+Before you begin 
+
+Ensure that you take the following precautions: 
+
+ * Back up your data before you begin any software upgrade. For more information, see the IBM Security QRadar Incident Forensics Administration Guide [http://public.dhe.ibm.com/software/security/products/qradar/documents/7.2.4/QIF/EN/b_forensics_ag.pdf]. 
+ * To avoid access errors in your log file, close all open QRadar sessions. 
+ * Verify that all changes are deployed on your appliances. The patch cannot install on appliances that have changes that are not deployed. 
+
+
+
+
+About this task 
+
+Fix packs are cumulative software updates to fix known software issues in your QRadar Incident Forensics software. QRadar fix packs are installed by using an SFS file. 
+
+
+
+
+Procedure 
+
+ *  Download the fix pack QRadarForensics_patchupdate-7.2.4-1418937956.sfs from the IBM Fix Central website: [https://ibm.biz/BdEZdW] [https://ibm.biz/BdEncd]https://ibm.biz/BdEhQT [https://ibm.biz/BdEhQT] (IBM Shortened URL) Using SSH, log in to your QRadar Incident Forensics appliance as the root user. Copy the fix pack to the /tmp directory on the . 
+   Note: If space in the /tmp directory is limited, copy the fix pack to another location that has sufficient space. To create the /media/updates directory, type the following command:mkdir -p /media/updates Change to the directory where you copied the patch file. For example, cd /media/updates To set the permissions on the fix pack, type the following command: chmod +x QRadarForensics_patchupdate-7.2.4-1418937956.sfs To mount the patch file to the /media/updates directory, type the following command:mount -o loop -t squashfs QRadarForensics_patchupdate-7.2.4-1418937956.sfs/media/updates To run the patch installer, type the following command:/media/updates/installer
+   
+   If your Secure Shell (SSH) session is disconnected while the upgrade is in progress, the upgrade continues. When you reopen your SSH session and rerun the installer, the patch installation resumes.
+   After the fix pack installs, the administrator must reboot the QRadar Incident Forensics appliance. To reboot the appliance, type reboot.
+   Administrators and users should clear their browser cache before logging in to the Console. 
+ * 
+
+
+Results After the appliance reboots, administrators can send an email to their team to inform them that they will need to clear their browser cache before logging in to the QRadar interface. 
+
+ 
+
+ 
+
+
+
+
+
+
+
+Issues resolved in QRadar Incident Forensics 7.2.4 Patch 1 
+Description RESOLVES AN ISSUE WHERE DIGITAL IMPRESSIONS MIGHT NOT RETURN DATA AS EXPECTED. RESOLVES AN ISSUE WHERE THE PATCH COULD DISPLAY INCORRECT VERSION INFORMATION DURING AN UPDATE. RESOLVES AN ISSUE WHERE LARGE PCAP DOWNLOADS OR LONG RECOVERY JOBS COULD FILL THE ROOT PARTITION AND CAUSE SYSTEM PERFORMANCE ISSUES. THE SYSTEM NOW USES /OPT/IBM/FORENSICS/TMP FOR TEMPORARY STORAGE. RESOLVES AN ISSUE WHERE THE FORENSICS LOGS WERE INCORRECTLY IDENTIFYING AN UNABLE TO DELETE DIRECTORY MESSAGE AFTER A LARGE COLLECTION IS REMOVED. RESOLVES AN INSTALLATION ISSUE WHERE SOME REQUIRED RPMS WERE MISSING TO UPGRADE FROM FORENSICS 7.2.3 TO THE LATEST VERSION. IMPROVED RECOVERY FAILURE MESSAGES TO MAKE THEM MORE USER FRIENDLY. RESOLVES AN ISSUE IN FORENSICS AFTER A SYSTEM IS REBOOTED WITH DEBUG ENABLED. IMPROVED FIELD VALIDATIONS FOR THE USER INTERFACE TO PREVENT POTENTIAL CROSS SITE SCRIPTING VULNERABILITIES. MySQL DIGITAL IMPRESSIONS REQUIRE SSLv3 CONNECTIONS. SSL CONECTIONS REQUIRE SSLv3 OR TLSv1 TO REMEDIATE THE POODLE VULNERABILITY. UPDATED THE IBM JAVA VERSION TO RESOLVE VULNERABILITIES. UPDATED RPM PACKAGES TO ADDRESS A NUMBER OF VULNERABILITIES.
+ * HIGH: glibc, kernel, rsyslog5
+ * MEDIUM: krb5, openssh, libxml2, file, wget
+
+UPDATED THE PHP CONFIGURATION PARAMETERS TO IMPROVE SECURITY. RESOLVES AN ISSUE WHERE THE HANDLING OF VLAN DATA STRUCTURES COULD INTRODUCE A STABILITY ISSUE. 
+
+
+
+Where do I find more information? 
+If you have additional questions or some of this content is not clear, you can see the QRadar forum or contact customer support: 
+ * Online QRadar Customer Forums [https://ibm.biz/BdR2kC] 
+ * Submit and manage your support tickets online 24x7 using IBM Service Request [http://www.ibm.com/software/support/servicerequest/quick_start.html] 
+ * QRadar Downloads - IBM Fix Central [http://www.ibm.com/support/fixcentral/options?selection=Security+Systems;ibm/Other+software/IBM+Security+QRadar+SIEM]

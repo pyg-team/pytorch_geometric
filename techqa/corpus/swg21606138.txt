@@ -1,0 +1,32 @@
+Title: IBM Omnibus failover and failback is not working - United States
+
+Text:
+failover; failback; Omnibus; objectserver; actingprimary; gateway; primary; backup TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If the Primary Object Server is down, on failover, the Backup Object Server does not correctly take over as ActingPrimary. On failback when the Primary Object Server is again available, the Backup Object Server does not have ActingPrimary set to FALSE. 
+
+SYMPTOM
+Problems can also be seen with the enabling or disabling of the primary_only trigger group on the Backup Object Server during failover/failback or the direction of the bi-directional Object Server failover gateway resync. 
+
+
+CAUSE
+With Omnibus 7.3.x, a new property ActingPrimary was added to the Object Server. For the failover/failback to work correctly, certain configuration changes need to be made.
+
+RESOLVING THE PROBLEM
+The best practice configuration for failover/failback is provided through the multitier architecture in $OMNIHOME/extensions/multitier. If deploying a single Primary and a single Backup Object Server with a bi-directional Object Server failover gateway between them, the Aggregation layer of the multitier configuration should be used. The multitier configuration automatically configures the following for automatic failover/failback:
+
+
+1) On the Backup Object Server, the triggers backup_counterpart_up, backup_counterpart_down, backup_finished and resync_finished should be enabled 
+
+2) On the Backup Object Server, the property BackupObjectServer must be set to TRUE 
+
+3) On the Backup Object Server, initially the primary_only trigger group should be disabled and the property ActingPrimary should be set to FALSE 
+
+4) In the bi-directional Object Server failover gateway, the following properties must be set:
+Gate.ObjectServerA.Description : 'failover_gate'
+Gate.ObjectServerB.Description : 'failover_gate'
+
+On failover when the Primary Object Server is unavailable, the bi-directional failover gateway will raise the signal gw_counterpart_down. In the Backup Object Server, the backup_counterpart_down trigger fires to enable the primary_only trigger group and set the property ActingPrimary to TRUE. 
+
+On failback, when the Primary Object Server is available, the bi-directional failover gateway will raise the signal gw_counterpart_up. In the Backup Object Server, the trigger backup_counterpart_up fires to disable the primary_only trigger group. When the bi-directional Object Server gateway completes the resynchronization from the Backup Object Server to the Primary Object Server, it raises the signal gw_resync_finish. On the Backup Object Server, the trigger resync_finished fires to set the property Acting Primary to FALSE.

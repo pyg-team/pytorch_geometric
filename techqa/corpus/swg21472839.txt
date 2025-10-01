@@ -1,0 +1,15 @@
+Title: IBM Locating a certificate about to expire on the IBM WebSphere DataPower SOA Appliance - United States
+
+Text:
+finding; expired; expiring; certificate TECHNOTE (FAQ)
+
+QUESTION
+ A message warned that the "__gskit_id_cert_n" or "__gskit_val_cert_n" certificate is about to expire but there is no certificate found by this name. How do I locate the expiring certificate on the WebSphere DataPower SOA appliance? 
+
+ANSWER
+The unrecognizable certificate names refer to Identification Credential and Validation Credential objects which DataPower generates internally from a key database for MQ/SSL connections. The warning message referring to "__gskit_id_cert_n" or"__gskit_val_cert_n" certificate names may have come from the DataPower certificate monitor service. The log category of these messages are typically SSL, which means those certificates are used in SSL connections.
+To locate the expiring certificate, check your key database (the kdb file) for any certificate nearing expiration. The certificate may be replaced with a new one or deleted if not needed any longer.
+
+Refer to Configuring DataPower MQ client to use SSL in mutual authentication mode [http://www-01.ibm.com/support/docview.wss?uid=swg21260155] for more details about SSL configuration and key generation. 
+
+For any other expiring certificates, navigate to the DataPower WebGUI Control Panel > Keys and Certificates Management.

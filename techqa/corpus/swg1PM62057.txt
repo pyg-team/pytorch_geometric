@@ -1,0 +1,193 @@
+Title: IBM PM62057: UPDATING OR RESTARTING SCA APPLICATION CAUSES CORBA.OBJECT_NOT_EXIST ERROR ON INVOKE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.0.0.4: WebSphere Application Server V8.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033190]
+8.5.0.1: WebSphere Application Server V8.5 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24033606]
+8.0.0.5: WebSphere Application Server V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033754]
+8.5.0.2: WebSphere Application Server V8.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24034672]
+8.0.0.6: WebSphere Application Server V8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034673]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Updating or restarting SCA application causes
+   CORBA.OBJECT_NOT_EXIST error on invoke
+   
+   [1/24/12 10:50:52:126 EST]     FFDC
+   Exception:org.omg.CORBA.OBJECT_NOT_EXIST
+   SourceId:com.ibm.ws.sca.internal.binding.handler.SCAImportBindin
+   gHandler
+   ProbeId:002
+   Reporter:com.ibm.ws.sca.internal.binding.handler.SCAImportBindin
+   gHandler
+   @6ff66ff6
+   org.omg.CORBA.OBJECT_NOT_EXIST: SERVANT_NOT_FOUND (4) for key
+   
+   minor code: C14  completed: No
+    at
+   com.ibm.rmi.corba.ObjectManager.lookupServant(ObjectManager.java
+   :110)
+    at
+   com.ibm.CORBA.iiop.ServerDelegate.getServant(ServerDelegate.java
+   :312)
+    at
+   com.ibm.CORBA.iiop.ClientDelegate.lookupServant(ClientDelegate.j
+   ava:635)
+    at
+   com.ibm.CORBA.iiop.ClientDelegate.is_local(ClientDelegate.java:5
+   72)
+    at
+   org.omg.CORBA.portable.ObjectImpl._is_local(ObjectImpl.java:381)
+    at
+   com.ibm.ws.sca.internal.binding.handler.SCAImportBindingHandler.
+   processClassicMessage(SCAImportBindingHandler.java:1012)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Restart environment
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V8.                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Updating or restarting a Service        *
+   *                      Component Architecture (SCA)            *
+   *                      application causes a                    *
+   *                      CORBA.OBJECT_NOT_EXIST error on invoke  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   WebSphere Process Server caches EJB stubs that point to
+   modules registered by the SCA runtime. These registered names
+   can change when the application is restarted because a list of
+   services queried by the SCA runtime and used to construct the
+   module name does not have a pre-determined order. Therefore
+   the WebSphere Process Server stubs can fall out of sync with
+   the SCA runtime and no longer find these services.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The SCA runtime no longer includes the specific service name
+   as part of the registered module name. It cannot change
+   between application restarts and will not fall out of sync
+   with the WebSphere Process Server stubs.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.0.0.4.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   The Feature Pack for SCA fix for this APAR will be delivered
+   via APAR PM57831 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM57831].
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM62057
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-04-09
+   
+   
+ * CLOSED DATE
+   2012-05-15
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM57831 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM57831]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

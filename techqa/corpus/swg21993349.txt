@@ -1,0 +1,45 @@
+Title: IBM Impact of the 2016-12-31 leap second IBM Security Infrastructure products - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Are IBM Security Infrastructure products impacted by the 2016-12-31 leap second? 
+
+CAUSE
+There will be a leap second on 31 Dec 2016 UTC. See the Space.com article [http://www.space.com/33361-leap-second-2016-atomic-clocks.html] on the subject for additional information.
+
+ANSWER
+The impact of the leap second on each product is described below:
+
+
+Security Network Protection (XGS)
+
+
+ * NTP users are unaffected as the time will be updated by the NTP server. 
+ * The following updates add support for the leap second on the XGS sensor: 5.3.3.1, 5.3.2.5, and 5.3.1.11. Running earlier firmware versions will result in event time stamps showing one extra second after conversion from system time to local time. The sensor will experience no other functional impact from the leap second.
+
+Security Network Intrusion Prevention System (GX) 
+ * NTP users are unaffected as the time will be updated by the NTP server. 
+ * There is currently no patch to adjust the time for non-NTP users. This will result in event time stamps showing one extra second after conversion from system time to local time. The sensor will experience no other functional impact from the leap second.
+
+Security Network Active Bypass 
+
+This system is not impacted by the leap second. See the information that is provided in Technote 1903782: Network Active Bypass support for Leap Second [http://www.ibm.com/support/docview.wss?uid=swg21903782]. 
+
+Security SiteProtector System 
+
+Support for the leap second occurs at the operating system level. See Microsoft's Support for the leap second [https://support.microsoft.com/en-us/kb/2722715] article for further information. 
+
+
+
+
+[/support/docview.wss?uid=swg21993349&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21993349&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21993349&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21993349&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21993349&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21993349&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21993349&aid=7] [http://ibm.biz/ContactSecSupport] 
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21994415]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Network Intrusion Prevention System General Information Platform Independent Version Independent Security IBM Security Network Active Bypass Documentation Platform Independent Version Independent Security IBM Security SiteProtector System General Information Platform Independent Version Independent

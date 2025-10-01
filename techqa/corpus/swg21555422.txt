@@ -1,0 +1,16 @@
+Title: IBM Does Sterling Certificate Wizard 1.3 support FIPS 140-2 private key encryption? - United States
+
+Text:
+Performance Tuning; STERLINGNFX TECHNOTE (FAQ)
+
+QUESTION
+ Does Certificate Wizard use FIPS 140-2 validated encryption when it creates and encrypts the private keys? 
+
+ANSWER
+The toolkit which Certificate Wizard uses is FIPS 140-2 certified. It is the Certicom GSE-J 2.2 toolkit.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling Connect:Direct for UNIX Not Applicable Commerce Sterling Connect:Direct for z/OS Not Applicable Commerce Sterling Connect:Direct for VM/VSE Not Applicable Commerce Sterling Connect:Direct for i5/OS Not Applicable Commerce Sterling Connect:Direct for HP NonStop Not Applicable Commerce Sterling Connect:Direct for OpenVMS Not Applicable Commerce Sterling Connect:Enterprise for z/OS Not Applicable Commerce Sterling Connect:Enterprise for UNIX Not Applicable Commerce Sterling Connect:Express for z/OS Not Applicable Commerce Sterling Connect:Express for Microsoft Windows Not Applicable 
+HISTORICAL NUMBER
+ NFX6176

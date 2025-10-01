@@ -1,0 +1,16 @@
+Title: IBM Invalid date format error from IBM Content Manager OnDemand (CMOD) ODWEK Java API ODFolder.storeDocument() - United States
+
+Text:
+ODFolder.storeDocument; invalid format; OnDemand; Web Enablement Kit TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to get rid of the error of invalid date format when calling ODWEK API ODFolder.storeDocument() to store a document in CMOD? 
+
+RESOLVING THE PROBLEM
+ 
+
+The error of invalid date format may occur under below conditions:
+
+
+ * If a value is set in the Display Format in the folder field, and the supplied value does not match this Display Format. 
+ * If a value is not set in the Display Format in the folder field. and the supplied value does not match the field format. For example, a value in date format is supplied to a date/time field.

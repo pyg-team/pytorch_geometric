@@ -1,0 +1,78 @@
+Title: IBM WebSphere Partner Gateway -  UPDI: Fixpack installation falling on CheckFixContent - United States
+
+Text:
+WPG; WebSphere Partner Gateway; UPDI; Update Installer; CheckFixContent TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Fixpack installation fails with error: "CWUPI0013E: A configuration action failed. The failing configuration action is: CheckFixContent." 
+
+SYMPTOM
+Following error is seen in the updatelog.txt:
+
+(Sep 1, 2010 10:00:00 AM), Install, com.ibm.ws.install.ismp.actions.InstallListOfMaintenances, err, Configuration failed. The config action that failed was: CheckFixContent.
+(Sep 1, 2010 10:00:00 AM), Install, com.ibm.ws.install.ismp.actions.InstallListOfMaintenances, err, CWUPI0013E: A configuration action failed. The failing configuration action is: CheckFixContent.
+(Sep 1, 2010 10:00:00 AM), Install, com.ibm.ws.install.ismp.actions.InstallListOfMaintenances, err, com.ibm.ws.install.ni.framework.NIFException: CWUPI0013E: A configuration action failed. The failing configuration action is: .
+at com.ibm.ws.install.ni.framework.install.NIFPackageApplicationPlugin.runInstallConfigActions(NIFPackageApplicationPlugin.java:805)
+at com.ibm.ws.install.ni.framework.install.NIFPackageApplicationPlugin.execute(NIFPackageApplicationPlugin.java:125)
+at com.ibm.ws.install.ni.framework.satellites.DeploySatellitesPlugin.configureSatellites(DeploySatellitesPlugin.java:254)
+at com.ibm.ws.install.ni.framework.satellites.DeploySatellitesPlugin.execute(DeploySatellitesPlugin.java:166)
+...
+...
+
+
+CAUSE
+The possible cause to see this exception behavior, is likely due to the mismatch between the Update Installer being used for WebSphere Partner Gateway Fix pack application.
+
+DIAGNOSING THE PROBLEM
+Compare the <dmgr and hub>\properties\version\nif\update\config\<install and uninstall>\lib\wpgplugins.jar file, with the one compressed in the WPG UPDI ZIP package downloaded from the web [http://www.ibm.com/support/docview.wss?uid=swg27015150]. Please ensure to download the latest of WPG UPDI ZIP package for corresponding WPG fixpack release. 
+
+RESOLVING THE PROBLEM
+
+
+
+
+
+
+[Preventive action]
+It is recommended to always use the latest available WPG Update Installer zip package for corresponding WPG fix pack releases.
+
+[Corrective action]
+If file comparison is mismatch, please take the follow procedure to rectify the issue:
+1) run the IBM Update Installer to recover the earlier installation/uninstallation failure
+2) Close the Update Installer application
+3) backup and then directly remove the following file and four subfolders: 
+
+ * <dmgr and hub>/
+ * properties
+ * 
+ * <dmgr and hub>/
+ * responsefiles
+ * 
+ * <dmgr and hub>/
+ * META-INF
+ * 
+ * <dmgr and hub>/bin/
+ * bcgHistory.*
+ * 
+ * 
+ * <dmgr and hub>/logs/
+ * update
+
+4) Follow the WPG UPDI user guide to re-extract files and then configure WPG UPDI environment. 
+5) Launch the IBM Update Installer and perform WPG maintenance installation. 
+
+
+Related documents: 
+Indexed Collection of WebSphere Partner Gateway Technotes [http://www-01.ibm.com/support/docview.wss?uid=swg27016406#updi] 
+Update Installer for WebSphere Partner Gateway [https://www-304.ibm.com/support/docview.wss?uid=swg27015150] 
+MustGather - WPG Product Installation or Fix Pack Update (UPDI) problems [https://www-304.ibm.com/support/docview.wss?uid=swg21447872] 
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Partner Gateway Enterprise Edition AIX, Linux, Solaris, Windows 6.1, 6.1.1, 6.2 Advanced, Enterprise 
+PRODUCT ALIAS/SYNONYM
+ WPG
+WebSphere Partner Gateway

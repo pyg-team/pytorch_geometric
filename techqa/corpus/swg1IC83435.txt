@@ -1,0 +1,130 @@
+Title: IBM IC83435: JCC APPLICATIONS THAT CONNECT TO A DATABASE WITH CCSID 1156 GET ERROR: 'UNSUPPORTED CCSID, ENCODING, OR LOCALE: "1156"'. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Applications that use the IBM Data Server Driver for JDBC and
+   SQLJ (also called the JCC driver) to connect to a database with
+   CCSID (coded character set identifier) 1156
+   might disconnect from the database with an error including:
+   'Unsupported ccsid, encoding, or locale: "1156".
+   ERRORCODE=-4499'.
+   
+   The change that this APAR introduces is to allow applications
+   that use the IBM Data Server Driver for JDBC and SQLJ to connect
+   to a database with CCSID 1156 without disconnecting from the
+   database with that error, provided that the JDK (Java
+   Development Kit) supports CCSID 1156.
+   
+   CCSID 1156 is BALTIC EBCDIC with the euro symbol.
+   The non-euro-enabled counterpart of CCSID 1156 is CCSID 1112.
+   At code point hex 9F where CCSID 1156 has the euro symbol,
+   CCSID 1112 has the International Currency Sign
+   (the character at Unicode code point U00A4).
+   Even without the change that this APAR introduces,
+   applications that use the IBM Data Server for JDBC and SQLJ to
+   connect to a database with CCSID 1112 will not disconnect from
+   the database with that error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If practical, as a workaround you can connect to a database with
+   a CCSID other than 1156, such as CCSID 1112.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This is currently a limitation
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  See LOCAL FIX
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC83435
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 CONNECT
+   
+   
+ * REPORTED COMPONENT ID
+   DB2CONNCT
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2012-05-15
+   
+   
+ * CLOSED DATE
+   2017-05-25
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,48 @@
+Title: IBM Errors -206 and -111 attempting to access database objects with Enterprise Gateway Manager - United States
+
+Text:
+egm 211 111 uppercase lowercase TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document discusses possible causes of errors -206 and -111 while attempting to execute a select with full qualified name, create a synonym or view . 
+
+SYMPTOM
+You might get Errors -206 and -111 when referring to a database object (table, view, synonym) using a fully qualified name with IBM® Informix® Enterprise Gateway Manager™ (EGM) in SELECT, CREATE VIEW, CREATE SYNONYM statements. 
+
+206: The specified table (datasource@egmserver:user.TABLE) is not in the database.
+111: ISAM error: no record found.
+
+
+CAUSE
+Errors -206 and -111 indicate the object does not exist in the remote target. To construct the fully qualified name, the following rules apply: 
+
+
+
+1. If the owner is in between quotes in the original statement, send the owner as specified.
+
+2. If the original statement contains the owner, but the owner is not in between quotes, the following conditions apply:
+
+
+
+ * If the database logging mode is an ANSI database, convert the original owner to uppercase and send it as a quoted value.
+
+ *  If the database logging mode is non-ANSI, convert the original owner to lower-case and sent it as a quoted value.
+
+
+3. If you do not specify the owner, the following conditions apply: 
+
+ * If the database logging mode is an ANSI database, send the UNIX® user ID as a quoted value.
+
+ * If the database logging mode is a non-ANSI database, do not send an owner value.
+
+
+
+Example: 
+
+Owner value 
+as specified in 
+SQL statement Owner value used by the data source ANSI database Non-ANSI database "Valau" "Valau" "Valau" Valau "VALAU" "valau" not specified "informix" "scott" 
+
+In this table, informix is the Operating System user that is used to connect to the Gateway Manager. scott is the user used by informix at the data source. In the example, the egmdba utility might have been used to map the informix user to the datasource user scott. 
+RESOLVING THE PROBLEM
+Make sure that the table exists at the data source and consider the rules that apply to the owner value on fully qualified object names.

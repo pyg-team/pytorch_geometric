@@ -1,0 +1,90 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities in IBM Java Runtime affect WebSphere eXtreme Scale: CVE-2015-0138, CVE-2014-6593, CVE-2015-0410, CVE-2015-0383 - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There are multiple vulnerabilities in IBM® Runtime Environment Java™ Technology Edition. These vulnerabilities affect WebSphere eXtreme Scale version 7.1.0, 7.1.1, 8.5, and 8.6. These issues were disclosed as part of the IBM Java SDK updates in January 2015. This bulletin also addresses the “FREAK: Factoring Attack on RSA-EXPORT keys" TLS/SSL client and server vulnerability.
+
+These vulnerabilities affect IBM SDK, Java Technology Edition, Version 6 Service Refresh 16 Fix Pack 2 and earlier releases.
+
+These vulnerabilities affect IBM SDK, Java Technology Edition, Version 6R1 Service Refresh 8 Fix Pack 2 and earlier releases.
+
+These vulnerabilities affect IBM SDK, Java Technology Edition, Version 7 Service Refresh 8 and earlier releases.
+
+These vulnerabilities affect IBM SDK, Java Technology Edition, Version 7R1 Service Refresh 2 and earlier releases. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-0138 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0138]
+DESCRIPTION: A vulnerability in various IBM SSL/TLS implementations could allow a remote attacker to downgrade the security of certain SSL/TLS connections. An IBM SSL/TLS client implementation could accept the use of an RSA temporary key in a non-export RSA key exchange cipher suite. This could allow a remote attacker using man-in-the-middle techniques to facilitate brute-force decryption of TLS/SSL traffic between vulnerable clients and servers. 
+
+This vulnerability is also known as the FREAK attack. 
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/100691 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100691] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N) 
+
+CVEID: CVE-2015-0410 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0410]
+DESCRIPTION: An unspecified vulnerability related to the Security component could allow a remote attacker to cause a denial of service.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/100151 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100151] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P) 
+
+
+
+
+CVEID: CVE-2014-6593 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6593]
+DESCRIPTION: An unspecified vulnerability related to the JSSE component has partial confidentiality impact, partial integrity impact, and no availability impact.
+CVSS Base Score: 4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/100153 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100153] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:P/I:P/A:N) 
+
+The following CVE only applies if you run WebSphere eXtreme Scale on Solaris or HP-UX:
+
+
+CVEID: CVE-2015-0383 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0383]
+DESCRIPTION: An unspecified vulnerability in Oracle Java SE and JRockit related to the Hotspot component has no confidentiality impact, partial integrity impact, and complete availability impact.
+CVSS Base Score: 5.4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/100148 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100148] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:M/Au:N/C:N/I:P/A:C)
+
+AFFECTED PRODUCTS AND VERSIONS
+WebSphere eXtreme Scale 7.1.0
+WebSphere eXtreme Scale 7.1.1
+WebSphere eXtreme Scale 8.5
+WebSphere eXtreme Scale 8.6
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix WebSphere eXtreme Scale 7.1 0 PI37460 http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=7.1.0.3&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=7.1.0.3&platform=All&function=all] WebSphere eXtreme Scale 7.1 1 PI37459 http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=7.1.1.1&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=7.1.1.1&platform=All&function=all] WebSphere eXtreme Scale 8.5 PI37459 http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=8.5.0.3&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=8.5.0.3&platform=All&function=all] WebSphere eXtreme Scale 8.6 PI37459 http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=8.6.0.7&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=8.6.0.7&platform=All&function=all] WORKAROUNDS AND MITIGATIONS
+The only mitigation is to apply the recommended fix. The fix must be applied if you are running the WebSphere eXtreme Scale server or Java client in stand-alone mode. If either the server or Java client is running under WebSphere Application Server or the WebSphere Application Server Liberty Profile, then you must apply an interim fix as described here: http://www-01.ibm.com/support/docview.wss?uid=swg21698613 [http://www-01.ibm.com/support/docview.wss?uid=swg21698613]. The default WebSphere Application Server cipher suite configuration does not apply to WebSphere eXtreme Scale Connections. Therefore, an interim fix must be applied. 
+
+[/support/docview.wss?uid=swg21701338&amp;aid=1] 
+It is possible to run WebSphere eXtreme Scale with a Java runtime not delivered with the product. IBM recommends that you ensure that the Java runtime you use has fixes for these vulnerabilities. 
+
+Important note: IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www-03.ibm.com/systems/z/solutions/security_integrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+IBM Java SDK Security Bulletin [http://www-01.ibm.com/support/docview.wss?uid=swg21695474] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+CVE-2015-0138 was reported to IBM by Karthikeyan Bhargavan of the PROSECCO team at INRIA 
+
+CHANGE HISTORY
+ 2 April 2015 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

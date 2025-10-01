@@ -1,0 +1,65 @@
+Title: IBM Installing the SAP server components for IBM InfoSphere Pack for SAP Applications 6.5 - United States
+
+Text:
+RFC cofiles; RFC data files; RFC data transfer method; remote function module Z_RFC_DS_SERVICE_CTS PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ How do I install the SAP server components for IBM InfoSphere Pack for SAP Applications 6.5? 
+
+CONTENT
+In addition to installing the client and server components of the SAP Pack on the Information Server tiers, you also need to install the following components on your SAP system to use the Pack: 
+
+ * RFC-enabled function modules (Z_RFC_DS_SERVICE and Z_RFC_DS_SERVICE_CTS) 
+ * Authorization profiles that can be assigned to users
+
+
+Step 1: Uploading the transport request files 
+
+To import the transport request files, you must first copy them to a directory on the SAP system. 
+
+Procedure  1. Log on to the SAP system as a system administrator. 
+ 2. Copy the transport files to the /usr/sap/trans/cofiles and /usr/sap/trans/data folders respectively on the SAP system. The transport files are grouped by component and SAP version.
+
+SAP version Folder path R/3 4.7 - ECC 5.0, Unicode RFC/transports/<component>/unicode/R3 R/3 4.7 - ECC 5.0, non-Unicode RFC/transports/<component>/non-unicode/R3 ECC 6.0 and later, Unicode RFC/transports/<component>/unicode/ECC ECC 6.0 and later, non-Unicode RFC/transports/<component>/non-unicode/ECC 
+Step 2: Importing the transport request files 
+
+The SAP administrator can import the transport request files by using one of the following methods: 
+
+Option 1. Importing the transport request files by using the Transport Management System 
+
+Procedure 
+ 1.  Log on to the SAP system using the SAP GUI as the SAP administrator. 
+ 2.  Create the development class (package) ZETL with the transport route definition for your environment. You can use transaction SE80 to do this. 
+ 3.  Enter the transaction STMS. 
+ 4.  Click Overview > Imports. 
+ 5.  Double-click the current SID in the Queue column. 
+ 6.  Click Extras > Other Requests > Add. 
+ 7.  Select the transport request ID for your SAP system configuration (see the table below) and click Continue. 
+ 8.  Repeat steps 6 and 7 for the other transport request. 
+ 9.  Select the transport request in the import queue and click Request > Import. 
+ 10. Enter the client number. 
+ 11. Check the option "Ignore component version" on the Options tab, if available, and click Continue. 
+ 12. Repeat steps 9 - 11 for each transport request. 
+ 13. Verify that the function modules and authorization profiles were imported successfully by using any appropriate transactions such as SE80 and SU01.
+
+
+Option 2: Importing the transport request files at the operating system level 
+
+Procedure 
+ 1. Log on to the SAP system using the SAP GUI as the SAP administrator. 
+ 2. Create the development class (package) ZETL with the transport route definition for your environment. You can use transaction SE80 to do this. 
+ 3. Log on to the SAP system as a system administrator. 
+ 4. Add the appropriate requests to the import buffer by running the following command:
+    tp addtobuffer <transport request> <SID> 
+    For example:
+    tp addtobuffer RP5K901047 DD1 
+ 5. Import the transport requests by running the following command:
+    tp import <transport request> <SID> client=<NNN>
+    where <NNN> is the client number. For example:
+    tp import RP5K901047 DD1 client=800 
+ 6. Verify that the function modules and authorization profiles were imported successfully by using any appropriate transactions such as SE80 and SU01.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Information Server

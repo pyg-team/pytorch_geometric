@@ -1,0 +1,144 @@
+Title: IBM Audio Issues - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I get my audio to work for my ProveIt! Assessments? 
+
+ANSWER
+Before we are able to start troubleshooting any audio issues, please safely log out of your session following these steps:
+If you are running a Windows Operating System
+· Hold down the Ctrl, Alt and Delete keys at the same time
+
+· Select the Task Manager option
+· Select the Applications tab
+· Select the internet browser icon that you are accessing your assessment through
+· Select End Task
+· Repeat this step until all browser web pages are closed
+
+If you are running a Macintosh Operating System
+· Hold down the Command, Option and Esc keys at the same time 
+· Select the internet browser icon that you are accessing your assessment through
+· Select Force Quit
+· Repeat this step until all browser web pages are closed
+
+Please follow the troubleshooting steps that are appropriate for the Operating System and web-browser you are using.
+
+Windows
+We would recommend using either Internet Explorer or Mozilla Firefox for the audio assessments. Below are the troubleshooting steps that should assist you with the audio for your test:
+
+Internet Explorer
+· Open Internet Explorer 
+· Select Tools from the Menu bar - Press [Alt] + [T] on your keyboard
+· Select Internet Options 
+· Click on the Advanced Tab
+· Scroll down until you see the Multimedia Section
+· Check the box – Play sounds in WebPages
+· Select the Security tab
+· Click Custom Level
+· Scroll down until you see the Miscellaneous section
+· Locate the Access Data Sources across Domains option and Enable
+· Click Ok
+· Click Yes
+· Click on the General Tab
+· Click the Delete button located under Browsing History
+· Check the box for Temporary Internet Files and Cookies 
+· Click Delete
+· Select Tools from the Menu bar - Press [Alt] + [T] on your keyboard
+· Click on Compatibility View settings
+· Type Proveit.com under Add this website
+· Click Add 
+· Type Proveit2.com under Add this website
+· Click Add
+Proveit.com and Proveit2.com should now appear in the box located under:
+Websites you’ve added to Compatibility View
+
+· Ensure all check-boxes below are checked
+· Click Close
+· Close completely out of Internet Explorer
+· Reopen Internet Explorer and attempt your test again
+
+
+Mozilla Firefox
+If you are having trouble with the audio using Mozilla Firefox you will need to install a specific version of Apple QuickTime.
+
+You will need to begin by removing any other versions of Apple QuickTime you have installed. To do this, please follow the steps below:
+
+Open the Start Menu at the lower left-hand corner of your screen
+· If you are using Windows 8 – hold down the Windows key and X on your keyboard
+· Select Control Panel
+· Click on one of the following options: 
+o Uninstall a Program
+o Programs and Features
+o Add or Remove a Program
+· Scroll through the list until you locate Apple QuickTime
+· Select Apple QuickTime and click on Remove
+· Once Apple QuickTime has been removed from the list you may close the control panel
+
+To install Apple QuickTime 7.6, please use the link provided below:
+https://support.apple.com/kb/DL762?locale=en_US [https://support.apple.com/kb/DL762?locale=en_US] 
+· Click on Download
+· Click on Save File
+· Click on the blue arrow when it appears in the top-right corner of your screen
+· Select Show All Downloads
+· Click on the QuickTimeInstaller
+· Select Run
+· You will see a window that says “Welcome to the QuickTime 7 Installer”
+· Select Next
+· You will see the License Agreement and will need to select Yes to continue
+· Click on Install
+· It may ask if you want to make changes to the computer
+· Select Yes
+· You will see a message that says “QuickTime 7 has been successfully installed on your computer”
+· Select Finish
+· It may ask if you want to upgrade from video watcher to video maker 
+· Select No Thanks
+· Restart your computer and attempt your test again.
+· If you continue to experience issues after installing Apple QuickTime, you may need to clear the Cache and Cookies. Please follow the steps provided below:
+· Open Mozilla Firefox
+· Select History from the Menu Bar &nbsp; -&nbsp;&nbsp; Press [Alt] + [S] on your keyboard
+· Click on Clear Recent History
+· In the drop-down next to Time Range to Clear
+· Select Everything
+· In the details section, place a check-mark next to Cookies and Cache
+· Click on Clear Now
+· Close completely out of Mozilla Firefox
+· Reopen Mozilla Firefox and attempt your test once more
+
+Macintosh
+We would recommend using either Safari or Mozilla Firefox for the audio assessments. Below are the troubleshooting steps that should assist you with the audio for your test:
+
+Please Note: Any Mac with Operating Systems 10.10.5 and above are not compatible with the audio tests and sound will not play. You must take the test from a different computer in this case.
+
+To find out the Operating System version: Click on the APPLE in the left hand corner, then click on About this Mac. It will display the OS X version 10.#.#
+
+You will first want to ensure that there are no updates for your computer
+· Click on the Apple icon in the top left hand corner of your screen. 
+· Click on Software Update
+· Select Check for Updates
+· If there are any updates you will need to restart the computer and attempt your test again
+· If you continue to experience issues after updating your system, you may need to clear the browser’s Cache and Cookies. Please follow the steps provided for your web-browser:
+
+Safari
+· Open Safari
+· Click on Safari in the top left hand corner of your screen
+· Select Preferences
+· Click on the Advanced tab
+· Place a check-mark next to Show Develop Menu and close this window
+· Select Develop from the Menu bar
+· Click on Empty Caches
+· Close completely out of Safari 
+· Reopen Safari and attempt your test again
+
+Mozilla Firefox
+· Will also need the specific version of Quicktime previously outlined. Follow the same instructions and go to the same link for the Firefox for Windows installation given above. If you already have Quicktime 7.7, you will need to remove it first. Simply uninstall by searching for the program in the finder and then dragging it to the Trash/Recycle bin on your desktop.
+· Once Quicktime has been installed and the computer restarted follow these steps before you attempt the test again:
+o Open Mozilla Firefox
+o Select History from the Menu Bar
+o Click on Clear Recent History
+o In the drop down next to Time Range to Clear, select Everything
+o In the details section, place a check-mark next to Cookies and Cache
+o Click on Clear Now
+o Close completely out of Mozilla Firefox
+o Reopen Mozilla Firefox and attempt your test again

@@ -1,0 +1,45 @@
+Title: IBM Installing GSC in AppScan Enterprise - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you download and install GSC (IBM Generic Service Client) in IBM Security AppScan Enterprise? 
+
+ANSWER
+There are several methods to download the GSC explorer used to explore Web Services. The methods are listed in How to download Web Services Explorer for AppScan Enterprise [http://www.ibm.com/support/docview.wss?uid=swg21460059]. This technote describes a method introduced in AppScan Enterprise 9.0.3 where the installation initiates in a Content Scan Job. 
+
+
+
+ 1.  Click on the + icon in the folder explorer view in ASE.
+     [/support/docview.wss?uid=swg21980933&aid=1] [/support/docview.wss?uid=swg21980933&aid=1]
+     
+     
+ 2.  Select Content Scan Job
+     
+     
+ 3.  Give this web service scan job a name.
+     
+     
+ 4.  Select Create using default scan properties from AppScan Enterprise under Method of Creation.
+     [/support/docview.wss?uid=swg21980933&aid=2] [/support/docview.wss?uid=swg21980933&aid=2] 
+ 5.  Click on the Create button.
+     
+     
+ 6.  Expand the Web Services (Security Testing Only) twistie.
+     
+     
+ 7.  Click on Import data file now...
+     [/support/docview.wss?uid=swg21980933&aid=3] [/support/docview.wss?uid=swg21980933&aid=3]
+     
+     
+     
+ 8.  Click on the Download button to download and install the Web Services Explorer.
+     [/support/docview.wss?uid=swg21980933&aid=4] [/support/docview.wss?uid=swg21980933&aid=4]
+     
+     
+ 9.  ASE_GSCSetup.exe file will be downloaded. Run the file to initiate the installation process. 
+     
+     
+ 10. Once GSC is installed, follow the bullet points 2 to 4 in the image below to run GSC tool, or consult technote How to scan Web Services in AppScan Enterprise [http://www.ibm.com/support/docview.wss?uid=swg21620778]. 
+     [/support/docview.wss?uid=swg21980933&aid=5] [/support/docview.wss?uid=swg21980933&aid=5]

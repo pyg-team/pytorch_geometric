@@ -1,0 +1,204 @@
+Title: IBM IIS 6.0 - Configuring the WebSphere Application Server Web server plug-in for multiple Web sites - United States
+
+Text:
+plugin; IIS6 TECHNOTE (FAQ)
+
+QUESTION
+ Internet Information Services (IIS) version 6.0 has the ability to run multiple Web sites within a single IIS server. Given this ability, can the WebSphere Application Server Web server plug-in be used with multiple IIS Web sites? 
+
+ANSWER
+Yes. Using the plug-in with multiple IIS Web sites is supported, but requires that each Web site run its own instance of the plug-in. The following guide provides a detailed example for configuring the plug-in with two IIS Web sites.
+
+
+
+TAB NAVIGATION
+ * IIS 7.x / 8.x [http://www.ibm.com/support/docview.wss?uid=swg21366887]
+ * IIS 6.0- selected tab,
+
+
+
+Prerequisites 
+
+[/support/docview.wss?uid=swg21328944&amp;aid=1]
+* [/support/docview.wss?uid=swg21328944&amp;aid=1]
+Minimum plug-in versions: 8.5, 8.0, 7.0, 6.1, 6.0 [/support/docview.wss?uid=swg21328944&amp;aid=1]
+* [/support/docview.wss?uid=swg21328944&amp;aid=1]
+The following guide is meant as a post-install configuration. The initial plug-in installation wizard must be completed prior to performing these steps. For the WebSphere Application Server Web server plug-in v8.0 and higher, the WebSphere Customization Toolbox > Plugin Configuration Tool must also be completed prior to performing these steps. 
+Creating the directory structure In the following example, the initial plug-in has been installed to:
+C:\IBM\WebSphere\Plugins 
+
+ 1. From Windows Explorer, navigate to the plug-in install root and expand the bin, config and logs subdirectories as shown below:
+    
+    [/support/docview.wss?uid=swg21328944&amp;aid=2]
+    
+    
+ 2. Under each of the expanded directories (bin, config, logs), create a copy of the current Web site-specific subdirectory as shown below:
+    
+    [/support/docview.wss?uid=swg21328944&amp;aid=3]
+    
+    
+ 3. In this example, the original (webserver1) directories will be used for the first Web site and the directory copies for the second Web site. While the directory copies can be given any name without spaces, in this example, we rename the copies as webserver2.
+    
+    [/support/docview.wss?uid=swg21328944&amp;aid=4]
+    
+    
+
+Updating plug-in configuration files 
+
+ 1. Under the ..bin\IIS_webserver2 directory, open the plugin-cfg.loc file in a text editor. Currently this points to the plugin-cfg.xml under config\webserver1
+    
+    C:\IBM\WebSphere\Plugins\config\webserver1\plugin-cfg.xml 
+    - Change this so it points to config\webserver2
+    
+    C:\IBM\WebSphere\Plugins\config\webserver2\plugin-cfg.xml 
+    - Save & Close.
+    
+    
+ 2. Under the ..config\webserver2 directory, open the plugin-cfg.xml in a text editor. Currently, the "Name" parameter of the <Log> tag points to logs\webserver1:
+    
+    <Log LogLevel="Error" Name="C:\IBM\WebSphere\Plugins\logs\webserver1\http_plugin.log"/> 
+    - Change this so it points to logs\webserver2
+    
+    <Log LogLevel="Error" Name="C:\IBM\WebSphere\Plugins\logs\webserver2\http_plugin.log"/> 
+    - Save & Close.
+    
+    
+
+Updating the IIS configuration This section includes settings which may already have been configured by the initial plug-in install. This section also assumes that the two IIS Web sites intended for use with the plug-in have already been created.
+
+
+ 1. Launch the IIS Administrative Console.
+    
+    
+ 2. From the console tree, expand the Server node [/support/docview.wss?uid=swg21328944&amp;aid=5] , right-click the "Web Sites" node and choose Properties.
+    
+     1. Select the "Service" tab and ensure that Isolation mode is disabled by unchecking "Run WWW service in IIS 5.0 isolation mode" if it is currently checked:
+        [/support/docview.wss?uid=swg21328944&amp;aid=6]
+        
+        
+     2. Click Apply.
+        
+        
+     3. Select the "ISAPI Filters" tab and remove any filters which point to the plug-in library (iisWASPlugin_http.dll). Example:
+        
+        [/support/docview.wss?uid=swg21328944&amp;aid=7]
+        
+        
+     4. Click Apply / OK.
+        
+        
+    
+    
+ 3. From the console tree, right-click the "Application Pools" node and choose New > Application Pool.
+    
+     1. Enter a name for the App pool ID relevant for the first Web site (eg. webserver1AppPool) and click OK.
+        
+        
+     2. Repeat this step, creating a second Application Pool with a name relevant for the second Web site (eg. webserver2AppPool).
+        
+        Example:
+        
+        [/support/docview.wss?uid=swg21328944&amp;aid=8]
+        
+        
+    
+    
+ 4. From the console tree, expand the "Web Sites" node, right-click the first Web site intended for the plug-in and choose Properties.
+    
+     1. Select the "ISAPI Filters" tab and click the "Add" button.
+        
+        
+     2. For the "Filter name" value, enter iisWASPlugin.
+        
+        
+     3. For the "Executable" value, browse and select the iisWASPlugin_http.dll that will be used for the first Web site:
+        
+        [/support/docview.wss?uid=swg21328944&amp;aid=9]
+        
+        
+     4. Click OK / Apply.
+        
+        
+     5. Select the "Home Directory" tab and change the "Application pool" field to point to the Application Pool that was created for the first Web site:
+        
+        [/support/docview.wss?uid=swg21328944&amp;aid=10]
+        
+        
+     6. Click OK.
+        
+        
+     7. Repeat this entire step for the second Web site making sure to choose the relevant iisWASPlugin_http.dll and Application Pool:
+        
+        [/support/docview.wss?uid=swg21328944&amp;aid=11]
+        
+        
+        [/support/docview.wss?uid=swg21328944&amp;aid=12]
+        
+        
+    
+    
+ 5. From the console tree, right-click the first Web site and choose New > Virtual Directory, then click Next.
+    
+     1. For the "Alias" value, enter sePlugins.
+        
+        [/support/docview.wss?uid=swg21328944&amp;aid=13]
+        
+        
+     2. Click Next. For the "Path" value, browse and select the directory containing the iisWASPlugin_http.dll for the first Web site:
+        
+        [/support/docview.wss?uid=swg21328944&amp;aid=14]
+        
+        
+     3. Click Next. Put a check mark next to "Execute (such as ISAPI applications or CGI)":
+        
+        [/support/docview.wss?uid=swg21328944&amp;aid=15]
+        
+        
+     4. Click Finish.
+        
+        
+     5. Repeat this entire step for the second Web site making sure to choose the relevant iisWASPlugin_http.dll directory:
+        
+        [/support/docview.wss?uid=swg21328944&amp;aid=16]
+        
+        
+    
+    
+ 6. From the console tree, right-click the "Web Service Extensions" node and choose "Add a new Web service extension".
+    
+     1. For the "Extension name" value, enter WASPlugin.
+        
+        
+     2. For the "Required files" value, click Add, then browse and select the iisWASPlugin_http.dll that will be used for the first Web site. Click OK.
+        
+        
+     3. Click Add again, then browse and select the iisWASPlugin_http.dll that will be used for the second Web site. Click OK.
+        
+        
+     4. Put a check mark next to "Set extension status to Allowed".
+        
+        Example:
+        
+        [/support/docview.wss?uid=swg21328944&amp;aid=17]
+        
+        
+     5. Click OK.
+        
+        
+    
+    
+ 7. Close the IIS Administrative Console and restart the following services:
+    
+    "IIS Admin Service"
+    "World Wide Web Publishing Service"
+    
+    
+
+Pre-Deployment Because each IIS Web site uses its own independent plug-in configuration, most WebSphere Application Server deployments will require a unique "Web server definition" for each Web site. This enables the Application Server to generate separate plugin-cfg.xml files, thereby allowing each Web site to have its own independent set of application mappings. For detailed information on configuring Web server definitions, refer to the following IBM Product Documentation:
+
+
+WebSphere Application Server 8.5 [http://publib.boulder.ibm.com/infocenter/wasinfo/v8r5/topic/com.ibm.websphere.base.doc/ae/cins_webplugins.html] 
+
+WebSphere Application Server 8.0 [http://publib.boulder.ibm.com/infocenter/wasinfo/v8r0/index.jsp?topic=/com.ibm.websphere.base.doc/info/aes/ae/cins_webplugins.html] [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.base.doc/info/aes/ae/cins_webplugins.html] 
+
+WebSphere Application Server 7.0 [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.base.doc/info/aes/ae/cins_webplugins.html]

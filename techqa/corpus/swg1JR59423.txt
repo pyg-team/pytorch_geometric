@@ -1,0 +1,176 @@
+Title: IBM JR59423: LOG FILES FILL UP WITH SQLINTEGRITYCONSTRAINTVIOLATIONEXCEPTION MESSAGES AFTER THE SERVER STARTS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After the server starts, systemOut.log files fill up with the
+   following SqlIntegrityConstraintViolationException when the IBM
+   Process Center index is being built:
+   
+   00000116 RepositoryArt W
+   com.ibm.bpm.search.artifact.repo.impl.RepositoryArtifactReaderIm
+   pl registerClient Failed to register BPM indexing client
+   
+   com.lombardisoftware.client.delegate.BusinessDelegateException:
+   PreparedStatementCallback; SQL [update BPM_PC_INDEXER set
+   LAST_INDEXED_ON = ?,NAME = ?,DESCRIPTION = ? where INDEXER_ID =
+   ?]; Error for batch element #1: DB2 SQL Error: SQLCODE=-407,
+   SQLSTATE=23502, SQLERRMC=TBSPACEID=2, TABLEID=101, COLNO=1,
+   DRIVER=4.21.29; nested exception is
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException:
+   Error for batch element #1: DB2 SQL Error: SQLCODE=-407,
+   SQLSTATE=23502, SQLERRMC=TBSPACEID=2, TABLEID=101, COLNO=1,
+   DRIVER=4.21.29
+   at
+   com.lombardisoftware.client.delegate.BusinessDelegateException.a
+   sBusinessDelegateException(BusinessDelegateException.java:46)
+   at
+   com.lombardisoftware.client.delegate.common.WebsphereDelegateHel
+   per.doAsCurrentSubjectContextSensitive(WebsphereDelegateHelper.j
+   ava:227)
+   at
+   com.lombardisoftware.client.delegate.PersistenceServicesDelegate
+   Default.save(PersistenceServicesDelegateDefault.java:424)
+   at
+   com.lombardisoftware.client.persistence.common.factorydelegate.U
+   nversionedFactoryDelegate.save(UnversionedFactoryDelegate.java:8
+   2)
+   at
+   com.lombardisoftware.client.persistence.common.AbstractUnversion
+   edPOFactory.save(AbstractUnversionedPOFactory.java:181)
+   at
+   com.ibm.bpm.search.artifact.repo.impl.RepositoryArtifactReaderIm
+   pl.registerClient(RepositoryArtifactReaderImpl.java:1017)
+   at
+   com.ibm.bpm.search.artifact.repo.impl.RepositoryArtifactReaderIm
+   pl.finalizeReader(RepositoryArtifactReaderImpl.java:400)
+   at
+   com.ibm.bpm.artifact.indexer.artifactstore.repo.RepositoryArtifa
+   ctStoreReader.close(RepositoryArtifactStoreReader.java:194)
+   at
+   com.ibm.bpm.index.core.impl.DefaultIndexer.updateIndex(DefaultIn
+   dexer.java:349)
+   at
+   com.ibm.bpm.index.core.impl.AdvancedIndexer.updateIndexInternal(
+   AdvancedIndexer.java:196)
+   at
+   com.ibm.bpm.index.core.impl.AdvancedIndexer.updateIndex(Advanced
+   Indexer.java:123)
+   at
+   com.ibm.bpm.search.artifact.index.ArtifactIndexUpdaterDaemon$1.r
+   un(ArtifactIndexUpdaterDaemon.java:162)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  You see the exception when the index client is being registered.
+    This error doesn't affect any functions.
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM)
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be included in a future release of IBM Business
+   Automation Workflow that skips the registration of the index
+   client when registering it is unnecessary.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR59423
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   860
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-04-13
+   
+   
+ * CLOSED DATE
+   2018-05-18
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM
+   
+   
+ * FIXED COMPONENT ID
+   5737A5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS

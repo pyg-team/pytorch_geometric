@@ -1,0 +1,210 @@
+Title: IBM IC79885: RESTORE VM FAILS WITH ANS4177E, RC=4389, ANS9404E AND REPORTING INVALID DATASTORE FORMAT - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A full backup of a virtual machine was taken using the IBM
+   Tivoli Storage Manager client v6.2 and is attempted to be
+   restored using the IBM Tivoli Storage Manager client v6.3 which
+   fails with the following messages in the foreground:
+   
+   ANS4177E Full VM restore of VMware Virtual Machine 'W2K3' failed
+   with RC=4389 target node name='VMNODE', data mover node
+   name='VMNODE'
+   >>>>>> Restore Processing Interrupted!! <<<<<<
+   ANS9404E Error creating the specified Virtual Machine. See log
+   files for more information.
+   
+   The dsmerror.log contains the following errors when a v4 vCenter
+   is used:
+   11/15/2011 11:26:15 ANS9365E VMware vStorage API error.
+      TSM function name : visdkWaitForTask
+      TSM file          : vmvisdk.cpp (3727)
+      API return code   : 60
+      API error message : Invalid datastore format '[datastore1]'.
+   11/15/2011 11:26:15 ANS9365E VMware vStorage API error.
+      TSM function name : visdkWaitForTask
+      TSM file          : vmvisdk.cpp (3732)
+      API return code   : 60
+      API error message : Invalid datastore format '[datastore1]'.
+   11/15/2011 11:26:15 ANS5250E An unexpected error was
+   encountered.
+      TSM function name : vmVddkRestoreVM
+      TSM function      : Can not create virtual machine
+      TSM return code   : 4389
+      TSM file          : vmrestvddk.cpp (1116)
+   11/15/2011 11:26:16 ANS9404E Error creating the specified
+   Virtual Machine. See log files for more information.
+   
+   When connecting to a v5 vCenter, the messages are slightly
+   different.
+   
+   11/15/2011 10:13:20 ANS9365E VMware vStorage API error.
+      TSM function name : visdkWaitForTask
+      TSM file          : vmvisdk.cpp (3727)
+      API return code   : 60
+      API error message : Invalid configuration for device '3'.
+   11/15/2011 10:13:20.680 : vmrestvddk.cpp      (1119): ANS5250E
+   An unexpected error was encountered.
+      TSM function name : vmVddkRestoreVM
+      TSM function      : Can not create virtual machine
+      TSM return code   : 4389
+      TSM file          : vmrestvddk.cpp (1120)
+   
+   Trace messages from the v5 example would show no datastore name
+   between the brackets in below messages because that device '3'
+   has a invalid configuration (as seen above).
+   
+   11/15/2011 10:13:18.485 : visdkdevices.cpp    (3489):
+   addVMDKDevice: device type 'VirtualDiskFlatVer2BackingInfo'
+   11/15/2011 10:13:18.485 : visdkdevices.cpp    (3490):    number:
+   '3'
+   11/15/2011 10:13:18.485 : visdkdevices.cpp    (3493):    label:
+   'Hard disk 1'
+   11/15/2011 10:13:18.485 : visdkdevices.cpp    (3494):
+   summary: '7,357,770 KB'
+   11/15/2011 10:13:18.485 : visdkdevices.cpp    (3528):    adding
+   disk '[]' to config spec. <<<< Note: no datastore name between
+   the square brackets
+   
+   The foreground messages and error code are the same for both
+   cases. The same VM backup can be restored using the v6.2 client
+   without issues.
+   
+   
+   Platforms and versions affected:
+   Tivoli Storage Manager client 6.3
+   Tivoli Storage Manager for Virtual Environments 6.3
+   
+   Initial Impact:
+   Low
+   
+   Additional Keywords:
+   tsm client vm vstor snapshot esx vcenter zztsm63
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Run your "dsmc restore vm" command with the
+   -datastore=YOUR_DATASTORE_NAME parameter or use the 6.2 client
+   until a fix is available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Backup-archive client versions 6.3.0 with    *
+   *                 VMware support                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See ERROR DESCRIPTION                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   *
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  TSM 630 was modified to work like TSM 623 using the VMX file
+   datastore to restore all the VMDKs to.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC79885
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMCL
+   
+   
+ * REPORTED RELEASE
+   63W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-21
+   
+   
+ * CLOSED DATE
+   2011-12-12
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMCL
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R63L PSY
+   UP
+   
+   
+ * R63W PSY
+   UP

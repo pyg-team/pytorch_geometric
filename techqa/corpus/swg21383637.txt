@@ -1,0 +1,13 @@
+Title: IBM Where is the Search and Indexing API (SIAPI) JavaDoc for WebSphere Portal 6.1? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Where is the Search and Indexing API (SIAPI) JavaDoc download location for IBM WebSphere Portal 6.1? 
+
+ANSWER
+The download location for the SIAPI JavaDoc for WebSphere Portal 6.1 is the same as for WebSphere Portal 6.0 and can be found in the following document: IBM Search and Indexing API (SIAPI) [http://www.ibm.com/developerworks/websphere/library/specs/0511_portal-siapi/0511_portal-siapi.html].
+
+RELATED INFORMATION
+ Portal Search [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/topic/com.ibm.wp.ent.doc_v6101/admin/admsrch.html]

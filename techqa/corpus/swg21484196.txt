@@ -1,0 +1,19 @@
+Title: IBM What family is used for multiple-comparison corrections when using EMMEANS COMPARE to produce simple-effects comparisons with SPSS/PASW Statistics? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm using a procedure such as GLM, UNIANOVA, or MIXED in SPSS/PASW Statistics with the COMPARE keyword on the EMMEANS subcommand, where I've specified a product term for TABLES and am thus getting results for simple effects. I have the option to obtain Bonferroni or Sidak adjusted comparisons, but I'm not certain of the family used in the corrections with regard to Type I errors. If I have three levels of the factor being compared at each level of the other factor, is each set of three comparisons its own family, or are these pooled over the sets of comparisons? 
+
+RESOLVING THE PROBLEM
+When you produce comparisons for simple effects using SPSS/Statistics procedures using EMMEANS with COMPARE, each set of pairwise comparisons (or comparisons with a control, where available) is treated as its own family for purposes of Type I error correction
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 85278

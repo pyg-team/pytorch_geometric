@@ -1,0 +1,191 @@
+Title: IBM PJ34500: USING DBEXECUTE RESULTS ERROR [ERR=D56D00E0] ERROR:UNEXPECTED "N O DATA FOUND" EXCEPTION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description of Problem (full details)
+   Aftrer upgrading from PE 3.5.2 to 3.5.3 and using the dbexecute
+    which runs a Stored procedure (SQL Update statements) in SQL
+   2000. The stored procedure does not update any records in the
+   table and the item will fail with
+    the following error
+   
+   Malfunction: [Err=d56d00e0] Error:Unexpected "No Data Found"
+   Exception [DbExecute]
+   This issue is occurring with version PE 3.5.3
+   There is no such issue with PE 3.5.2
+   This issue is seen with the simplest of workflows and on the
+   test work flows so as to rule out the problem being with how
+   the workflow were created.
+   
+   How long has the problem been occurring (recent changes)? :
+   After applying PE3.5.3
+   Does this occur on more than one station / server? : Yes
+   Is there a workaround? : NO
+   What is the impact to the customer/system? :  Are unable to u
+   Can the problem be replicated on an internal system? Yes
+   By Who (L3, Support, etc..)
+   L2, on test machine - > 9.162.93.42  .  Can VNC to this box.
+   Steps to Reproduce:
+   1 create workflow with dbexecute system step
+   2 create Stored procedure in SQL 2000 which trys to update a
+   record
+   3 launch the workflow
+   Actual Results: workflow goes to malfunction with
+   [Err=d56d00e0] Error:Unexpected "No Data Found"
+   Exception [DbExecute]
+   Expected Results: NO error
+   Are there any similar or related Defects? If Y provide ECMDB #s
+   FileNet Resolution - 20002996 --> The resolution was
+   implemented but they still face the same issue
+   Defect number : 386539
+   What logs were collected and where are they located?
+    Workflow example (.pep)
+    SP example
+    vwtrace for good scenario (PE 3.5.2)
+    vwtrace for bad scenario  (PE 3.5.3)
+   Configuration/Environment :
+   Server OS : Windows 2003SP1 EE
+   Client OS : NA
+   Database : SQL server 2000 SP4
+   Network:NA
+   App Server :NA
+   Browser :NA
+   Note if non US Language:
+   Other Product Component Versions:
+   AE: 3.5.1.012
+   CE: 3.5.2.012
+   PE: 3.5.3.001
+   Non Web Environment Y or N
+   [Customer/Configuration section]
+   PMR #: Call Tracking id PMR 26050,001,726
+   Full customers system configuration (including patch level and
+   HW)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Applications using the dbexecute feature.Aftrer upgrading from P
+   
+   Malfunction: [Err=d56d00e0] Error:Unexpected "No Data Found"
+   Exception [DbExecute]
+   Steps to Reproduce:
+   1 create workflow with dbexecute system step
+   2 create Stored procedure in SQL 2000 which trys to update a rec
+   3 launch the workflow
+   
+   Actual Results: workflow goes to malfunction with:
+   [Err=d56d00e0] Error:Unexpected "No Data Found"
+   Exception [DbExecute]
+   
+   Database stored procedures can throw exceptions, so you should c
+   If you have upgraded from FileNet P8 version 3.5.2 or earlier an
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added the following Best Practices section to the dbExecute syst
+   em instruction topic regarding catching exception from the datab
+   ase, included information about the change in behavior in MS SQL
+    Server in P8 3.5.3.
+   Best practices using stored procedures
+   Database stored procedures can throw exceptions, so you should c
+   onsider handling exceptions in the stored procedure or in an exc
+   eption map in the workflow.
+   If you have upgraded from FileNet P8 version 3.5.2 or earlier an
+   d you are using Microsoft SQL Server, you might see exceptions i
+   n delete or update statements that you did not see before. The d
+   atabase will return an exception when a delete or update stateme
+   nt that contains a Where clause does not select any records. For
+    example, if you are deleting all records where Name=Don, if the
+   re are no records where Name=Don, the stored procedure receives
+   an error from the database. If you do not catch these exception
+   in the stored procedure, then the work object receives the excep
+   tion and goes to either your exception map or to the Malfunction
+    queue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ34500
+   
+   
+ * REPORTED COMPONENT NAME
+   PROCESS ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7607
+   
+   
+ * REPORTED RELEASE
+   353
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-03
+   
+   
+ * CLOSED DATE
+   2008-10-15
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

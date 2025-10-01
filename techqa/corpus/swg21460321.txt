@@ -1,0 +1,27 @@
+Title: IBM CSSMTP logs debug-level messages at startup regardless of LogLevel specified - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Here's what I have coded in the configuration file: 
+LogLevel 7 # Error, Warning, Event 
+
+But I am finding that the syslogd log is accumulating records for debug-level messages as well, at CSSMTP startup time. 
+
+CAUSE
+When CSSMTP first starts up, the LogLevel [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/F1A1B4A0/31.9?SHELF=F1A1BKc0&DT=20100607113411] is set, regardless of the LogLevel [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/F1A1B4A0/31.9?SHELF=F1A1BKc0&DT=20100607113411] specified on your configuration file, to log all of the following:
+
+ 
+
+ * Error-level messages 
+ * Warning-level messages 
+ * Event-level messages 
+ * Information-level messages 
+ * Debug-level messages
+
+
+This is to aid in first failure data capture in the event of a problem. 
+
+RESOLVING THE PROBLEM
+When CSSMTP initialization is complete, the LogLevel [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/F1A1B4A0/31.9?SHELF=F1A1BKc0&DT=20100607113411] is then modified to what was specified in the configuration file, or to the default LogLevel [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/F1A1B4A0/31.9?SHELF=F1A1BKc0&DT=20100607113411] value of 7 if LogLevel [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/F1A1B4A0/31.9?SHELF=F1A1BKc0&DT=20100607113411] was not specified.

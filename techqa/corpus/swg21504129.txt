@@ -1,0 +1,21 @@
+Title: IBM DataPower HTTP Service uses non-persistent connections - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Does an HTTP Service configured on a DataPower appliance use persistent connections? 
+
+CAUSE
+Persistent connections should be disabled if using locally chained services in a DataPower Appliance. See Best Practices for WebSphere DataPower SOA Appliances local interface traffic. [http://www.ibm.com/support/docview.wss?uid=swg21417934] 
+
+
+If a local HTTP Service handles local interface traffic, there may be a concern whether the HTTP Service uses persistent connections and, if so, how to disable persistent connections.
+
+
+ANSWER
+The HTTP Service on a DataPower Appliance does not use persistent connections. This means that there should be no concern about disabling persistent connections for this particular use case. 
+
+This can be further observed by examining the HTTP Service response. For example: 
+
+A GET request responds with an HTTP 1.0 response and a connection:close header.

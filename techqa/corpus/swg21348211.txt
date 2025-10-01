@@ -1,0 +1,102 @@
+Title: IBM FileNet Content Manager Content Engine Object Store service is failing unexpectedly        
+ and causing the cluster group to bounce between nodes. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Content Engine Object Store service is failing unexpectedly and causing the cluster group to bounce between nodes causing workflows fail. 
+
+CAUSE
+COM applications using servername of whichever node in a cluster to process transactions, whether it is active or passive causing workflows to fail.
+
+ANSWER
+Configure Content Engine COM Client stations to not start the object 
+
+ store service on a passive node. 
+In a Content Engine active/passive cluster environment the object store 
+service should only be running on the active node. If the service is 
+launched on a passive node unexpected behavior can occur. 
+
+CAUTION Do not manually launch IBM FileNet Enterprise Manager on a 
+passive node, as this will launch the object store service on that node. 
+Example: In a cluster environment, if the object store service is 
+running on both the active and passive nodes, subscription workflows 
+could queue on the passive node, effectively locking these subscriptions 
+from being processed. 
+
+Specify each nodes of the cluster to use the virtual IP of the Content Engine cluster group on 
+the CE COM clients by adding the virtual IP address of the Content 
+
+
+Engine cluster group to the etc\hosts file for each node. 
+Configure COM Clients in a farmed environment to use a specific Object 
+Store service.
+
+By default, COM Clients in a CE Farm environment will dynamically select 
+an Object Store service in the farm environment. Depending on your farm 
+setup, certain farm servers may not be ideally situated for this 
+behavior. Object Store Service To add the CE server name to the registry 
+entry 
+
+Example: A COM Client may select a farmed server at a remote site where 
+communication lag with the remote server could lower the performance of 
+the client. The CE COM clients do not have any information about network 
+performance or the proximity of the servers, and will sometimes dynamically select the Object Store services at the remote site, instead of using one that is locally available. 
+To avoid this possibility you can configure your farmed environment to 
+only use a certain CE server for the Object Store service by adding the 
+
+
+CE server name to the registry of the farmed servers. 
+To add the CE server name to the registry entry 1. Verify that you have 
+applied CE 3.5.2 on all the CE COM client stations. 2. Add the Content 
+Engine server name to the registry entry: Under the key: 
+HKLM\Software\FileNet\ECM\Content Engine\Client add a new string value 
+UseServer and set this value to the (Netbios) name of the Content Engine 
+server. 
+
+Use of Network Names for Cluster environments: 
+
+Both the Object Store and the FileStore service obtain the name of the 
+server they are running on by invoking a Win32 API GetComputerName which 
+retrieves the contents of the _CLUSTER_NETWORK_NAME_ environmental 
+variable. This variable should contain the virtual cluster name when the 
+"User Cluster Name" parameter is enabled for the respective service 
+resource in the Cluster Administrator. 
+
+
+The name of the server retrieved from _CLUSTER_NETWORK_NAME_ will also 
+affect the value of the DequeueHost column in the QueueItem table ( if items are placed in this table with a specific server name, they will be retrieved by the specific server name, else they will build up).
+
+This situation may occur when the "Use Cluster Name" option is unchecked 
+and the server name retrieved is the name of the node. The newly 
+QueueItem entries are created with Node1 as the DequeueHost. Upon 
+failover to Node2, new entries are created in the queue with references 
+to Node2. The active node (Node2) will only process entries that have 
+Node 2 as the DequeueHost and any entries remaining from Node1 as the 
+DequeueHost will never get processed until the failback to Node1. 
+
+If you experience mixed results with the QueueItem entries, you may 
+enable Catalog tracing for a couple of minutes and should note a query 
+that repeats regularly : 
+
+SELECT object_id object_class_id, retry_count FROM QueueItem WHERE UPPER(dequeue_host) ='<<SERVERNAME>>' AND retry_count <> 0 AND (next_retry_date IS NULL OR OF 
+next_retry_date <= ?) ORDER BY next_retry_date> 
+
+The <<SERVERNAME>> value will indicate what the ObjectServices believes 
+is its current hostname. 
+
+Furthermore, you may use Microsoft / Sysinternals Process Explorer, 
+drill down to the properties of the fnk_catservice.exe ( Object Store 
+Service), fnk_contentrm.exe (FileStore Service), right click on the 
+service and then inspect the Environment tab for the value of 
+_CLUSTER_NETWORK_NAME_ (or lack thereof). 
+
+The GetComputerName API not returning the name of the cluster will also 
+affect Centera migration due to a similar mechanism to the QueueItem 
+entries .
+
+Please refer to the HA documentation with instructions on setting "Use of Network Name for Objecstores and Filestores in a cluster. 
+
+
+Note: Solution can be applied to any remote COM application interacting with CE in a clustered environment.

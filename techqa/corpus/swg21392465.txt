@@ -1,0 +1,38 @@
+Title: IBM Automating the deletion of old FDC files for the i5/OS platform - United States
+
+Text:
+FDCCLEAN TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have old FDC files for WebSphere MQ and you want to know how to delete the files and how the process can be automated for the i5/OS platform? 
+
+RESOLVING THE PROBLEM
+The FDCCLEAN utility is used to delete FDC files within a directory that are older than a certain number of days.
+
+The utility is invoked as follows:
+
+CALL QMQM/FDCCLEAN 'x' [dirname] 
+Where x is the number of days of FDC data you want to keep.
+Where [dirname] is the directory containing the FDC files.
+This value is optional and defaults to the 
+/qibm/userdata/mqm/errors directory. 
+
+WebSphere MQ Services can be used to automate the removal of old files at queue manager startup. 
+
+
+Create MQ Service (CRTMQMSVC) 
+Queue manager name . . . . . . : IBMEXAMPLE 
+Service name . . . . . . . . . : FDCCLEAN 
+Text 'description' . . . . . . : Cleanup /qibm/userdata/mqm/errors 
+Start command program . . . . : FDCCLEAN 
+Library . . . . . . . . . . : QMQM 
+Start command arguments . . . : 15 
+Service type . . . . . . . . . : *CMD 
+Service control . . . . . . . : *QMGR 
+
+Note : FDCCLEAN is a new utility, which was made available in the WebSphere MQ V6.0.2.3 fix pack and higher. 
+
+For the above example, the service definition specifies program FDCCLEAN in library QMQM will be run when queue manager IBMEXAMPLE is started. The program argument value '15' indicates the number of days of FDC files to keep in the default directory (/qibm/userdata/mqm/errors).  
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

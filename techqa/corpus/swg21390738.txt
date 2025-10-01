@@ -1,0 +1,34 @@
+Title: IBM Commonly used ITCAM for WAS v6.1.0.4 part numbers for Distributed MS, DC and TEMA. - United States
+
+Text:
+FP4 MS DC TEMA part numbers images v6.1.0.4 TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ I need to download some ITCAM for WAS 6.1.0.4 images from Passport Advantage. Where do I find the part numbers for Distributed ITCAM for WAS? 
+
+RESOLVING THE PROBLEM
+ 
+Here are the commonly used part numbers to search for when downloading FP4 (6.1.0.4) MS, DC or TEMA images from Passport Advantage.
+
+Note that FP4 (6.1.0.4) includes both base code (6.1.0.0) + FP4 on top of it. 
+
+These are for the US English images. If you are looking for non-US English images please do your search on Passport Advantage for the right image to download.
+
+UPDATE: As of 1Q2015, version 7.1.1.0 of the J2EE agent is out now. You can
+use ITCAM for J2EE v7.1.1.0 directly, the part numbers are here [http://www-01.ibm.com/support/docview.wss?uid=swg21679593]. [http://www-01.ibm.com/support/docview.wss?uid=swg21679593]
+
+For ITCAM for WAS V6.1.0.4 Managing Server, here are the part numbers: 
+
+Operating System Part Number Windows C1L6VEN Linux for System x86 Series CZ0WYEN Linux for System z CZ0X0EN Linux for System p CZ0X1EN AIX CZ0WXEN Solaris CZ0WZEN HP-UX CZ0X2EN 
+For ITCAM for WAS V6.1.0.4 Data Collector, here are the part numbers: Operating System Part Number Windows C1L6PEN AIX, Solaris, HP-UX CZ0WQEN Linux CZ0WREN OS/400 C1RK0EN Quick start guide (multiplatform) C1T36Ml 
+For ITCAM for WAS V6.1.0.4 Community Edition, here are the part numbers: Operating System Part Number Windows C1L6SEN Unix CZ0WTEN Linux CZ0WSEN 
+For ITCAM for WAS V6.1.0.4 TEMA, here are the part numbers: Operating System Part Number Windows C1L70EN Unix C1L71EN Linux C1L72EN HP-UX on Itanium C1M90EN 
+For ITCAM for J2EE TEMA V6.1.0.4, here are the part numbers: Operating System Part Number Windows C1L73EN Unix C1L74EN Linux on x86, POWER C1L75EN HP-UX on Itanium C1M91EN 
+
+For ITCAM for WebSphere Web Server TEMA V6.1.0.4, here are the part numbers: Operating System Part Number Windows C1L76EN Unix C1L77EN Linux on x86, POWER C1L78EN HP-UX on Itanium C1M92EN  
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for WAS ITCAM4WAS

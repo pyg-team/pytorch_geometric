@@ -1,0 +1,38 @@
+Title: IBM Will IBM SPSS Statistics 22 run on Apple OS Mac OS X, 10.10 Yosemite? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I am plannig to update to the new Apple Mac OS X, 10.10 Yosemite and would like to know if IBM SPSS Statistics will run successfully on this OS. 
+
+CAUSE
+OS Update
+
+ANSWER
+IBM SPSS Statistics (any version) has two issues to resolve before it will run on OS X 10.10: 
+
+1. Download and re-install Apple Java 6
+
+- After the OS upgrade is finished, Apple Java 6 no longer exists on their system. 
+- The first time the user runs an application that relies on Java 6, the OS pops up a dialog box stating they've requested Java 6, but none is present.
+- The Java dialog has a "More Info" button, which when clicked opens a browser to an Apple Tech Support page for Apple Java 2014-001. A download link is provided (http://support.apple.com/kb/dl1572 [http://support.apple.com/kb/dl1572]).
+- User must click on the download link and a DMG containing the Java 6 installer is downloaded.
+- User must open the Java DMG, then double click on the Java installer, follow the prompts and complete the installation.
+
+2. Re-license Statistics
+
+- We use Safenet Sentinel technology for licensing. Safenet writes hidden data somewhere on-disc for keeping track of licensing data.
+- The OS X 10.10 upgrade process erases that hidden data. Attempting to run Statistics produces a licensing error and Stats does not start/run properly.
+- Solution: Re-run the SPSS License Authorization Wizard, enter auth code again and complete licensing procedure.
+- Statistics will now run normally.
+
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Statistics

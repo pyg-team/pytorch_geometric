@@ -1,0 +1,37 @@
+Title: IBM ODBCINI environment variable not found errors when WebSphere Message Broker runs as a WebSphere MQ service - United States
+
+Text:
+mqiinfo; ODBCINI; service.env; service TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When starting IBM Integration Bus (IIB) or WebSphere Message Broker (WMB) as a WebSphere MQ (WMQ) service and processing a message through a message flow that accesses an application database, the message fails with the following exception:
+"Error selecting records from table <table name>. SQL Native error is [DataDirect][ODBC lib] System information file not found. Please check the ODBCINI environment variable." 
+
+CAUSE
+When IIB or WMB runs as a WMQ service, it uses the Queue Manager's environment. Therefore, all IIB or WMB related environment variables (such as ODBCINI) that are not included in 'mqsiprofile' must be present in the environment from which the queue manager is started.
+
+DIAGNOSING THE PROBLEM
+Considering this error is thrown during message processing, it may be difficult to notice, depending on your message flow configuration. 
+
+If you have wired your catch/failure terminal(s), you may see this error in an exception list.
+If not, this error may be written to your IIB or WMB Syslog. 
+
+If you are unsure, collect a WMB User Level trace [http://www.ibm.com/support/docview.wss?&uid=swg21177321] to verify the processing status.
+
+
+RESOLVING THE PROBLEM
+1. Add the 'odbcini' environment variable to the var/mqm/qmgrs/<QMGR>/service.env file for your queue manager. This variable should point to your odbc.ini file. 
+
+ODBCINI=/var/mqsi/odbc/odbc.ini
+
+2. Restart the broker as a WebSphere MQ service. 
+
+Note:
+This may indicate that other necessary environment variables are missing, as well. If you are uncertain, review your Message Broker environment settings and service profiles to ensure that all necessary settings are copied into the MQ environment.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Bus 9.0 All Editions 
+PRODUCT ALIAS/SYNONYM
+ WMB MB Message Broker MQ Integrator WBIMB WBI-MB MQSI WMQI

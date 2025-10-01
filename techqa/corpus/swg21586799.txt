@@ -1,0 +1,33 @@
+Title: IBM Best Practices to import assets into XMETA - United States
+
+Text:
+import xmeta assets performance TECHNOTE (FAQ)
+
+QUESTION
+ Importing views / tables via istool is getting slower and slower when the total number of assets increases. 
+
+CAUSE
+When assets are added to existing containers (host, database etc.), then it tries to find if the asset being imported already exists in the target repository. The matching logic to search for existing assets impacts the performance 
+
+ANSWER
+Here are few tips from engineering to help alleviating performance issue when importing a large volume of views/tables into XMETA via istool and possibly other import tools 
+
+In general, there is no way to optimise XMETA database to load for large volume hosts. By following the best practices described below, an observable performance improvement can be achievable. 
+
+1) If a set of assets S1 depends on another set of assets S2, importing S2 prior to importing S1 can help to reduce the overall import time. This is so because the cost of storing the unresolved links for later resolving them is avoided.
+
+The main cases that should be taken into account include:
+a) Import the database tables before importing the DataStage jobs depending on them.
+b) Import the corresponding Principals (users and groups) before importing the Business Glossary assets exported with the –includestewardship option.
+c) Import the corresponding Principals before importing the Common Metadata assets exported with the –includeContactAssignment option.
+d) Import Principals before transferring Information Analyzer or FastTrack projects, if transferring project roles.
+e) Import PDR (common metadata) assets and verify the associated data connection prior to transferring the IA projects depending on them.
+
+2) Import assets from different components separately
+
+3) Avoid concurrent imports
+
+4) The occasional transfer of a small volume of assets may not require too much planning or consideration,. On the other hand, by adhering to some of the best practices considered above for recurring and/or large asset transfers across different environments, it is possible to realise significant cost savings and to reduce the complexity of maintenance of cross component dependencies across systems. 
+
+
+Example: If a DB has 20000 tables and export and import of all these tables in one archive file fails with out of memory exception, then we recommend to export schemas (by giving identity string of Schema) into separate archives. If one schema contains too many tables to transfer in one archive, then the only options is to split the archive by exporting the tables by giving identity string of tables.

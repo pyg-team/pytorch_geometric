@@ -1,0 +1,49 @@
+Title: IBM How to change a namespace and delete old namespace - United States
+
+Text:
+namespace; delete; existing; CM-SYS-5104; CM-CFG-5125 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Trying to delete old namespaces and add a new namespace with an existing name 
+
+SYMPTOM
+Cognos was not starting, these messages were seen in diaglog box 
+
+CM-SYS-5104 Content Manager detected the unconfigured
+security namespace "NAME" (ID "NAME") in the content store database.
+CM-CFG-5125 Content Manager cannot create a namespace with
+the name "NAME1" and ID "NAME1_ID" because a
+namespace with the same name but with a different ID "NAME1" already
+exists in the Content Manager data store.
+20:12:42, 'ContentManagerService', 'StartService', 'Failure'.
+
+
+
+CAUSE
+Namespace was not deleted from the content store 
+
+DIAGNOSING THE PROBLEM
+Cognos was not starting, these messages were seen in dialog box 
+
+CM-SYS-5104 Content Manager detected the unconfigured
+security namespace "NAME" (ID "NAME") in the content store database.
+20:12:42, CM-CFG-5125 Content Manager cannot create a namespace with
+the name "NAME1" and ID "NAME1_ID" because a
+namespace with the same name but with a different ID "NAME1" already
+exists in the Content Manager data store.
+20:12:42, 'ContentManagerService', 'StartService', 'Failure'.
+
+
+RESOLVING THE PROBLEM
+1. Get every user to move all content in their My Folders to a unique folder in public folders in Cognos Connection. 
+2. Delete all namespaces in Cognos Configuration and start Cognos
+3. Login to Cognos administration as an admin
+4. Delete all namespaces (Cognos Administration -> Security -> User, Groups and Roles -> there should be a red X next to all namespaces that were deleted from Cognos Configuration)
+Note once you delete all these namespaces any content in users my folders will be deleted and cannot be recovered
+5. At this time you can rename the namespace in Cognos Configuration or leave the name as is 
+6. You should only have one namespace at this time
+7. Users can now login to the new namespace and move contents that they placed in public folders back to their My Folders
+8. You will then have to add security back for users under the new namespace.
+
+
+Note- If users content in my folders is not needed skip steps 1 and 7

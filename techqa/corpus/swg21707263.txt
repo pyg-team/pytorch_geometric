@@ -1,0 +1,96 @@
+Title: IBM Starting Rational Team Concert Client for Microsoft Visual Studio results in com.ibm.team.filesystem.common.FSDaemonConnectionException - United States
+
+Text:
+visual studio scm daemon start failure class cache stack underflow TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to start the IBM Rational Team Concert (RTC) Client for Microsoft Visual Studio results in the error "CRRTC8500E: Server Error: Unexpected error while running an operation". 
+
+SYMPTOM
+Error reported: 
+
+CRRTC8500E: Server Error: Unexpected error while running an operation
+
+com.ibm.team.filesystem.common.FSDaemonConnectionException
+
+Exception message:
+
+Starting the SCM daemon (C:\IBM\Rational Team Concert Client for Microsoft Visual Studio IDE\3rd Party\scmtools\eclipse\scm.exe) on_no_cfa returned error: Scm:
+
+An error has occurred. See the log file
+
+C:\Users\<user>\.jazz-scm\configuration\5.0.2.0-RTC-120141021-2128\1427738950619.log.
+
+
+CAUSE
+This error code can be triggered by multiple causes, the one being documented here is due to corrupt application JAR files, or a corrupt class cache.
+
+
+DIAGNOSING THE PROBLEM
+The error shown in Visual Studio: 
+
+
+[/support/docview.wss?uid=swg21707263&amp;aid=1] 
+
+ 
+
+Open the log file mentioned in the exception from Visual Studio:
+
+!SESSION 2015-03-30 13:09:10.520 -----------------------------------------------
+eclipse.buildId=unknown
+java.fullversion=JRE 1.6.0 IBM J9 2.4 Windows 7 x86-32 jvmwi3260sr16-20140626_204542 (JIT enabled, AOT enabled)
+J9VM - 20140626_204542
+JIT - r9_20130920_46510ifx7
+GC - GA24_Java6_SR16_20140626_1848_B204542
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en_US
+Framework arguments: daemon start -c 120000 -i 1000
+Command-line arguments: -os win32 -ws win32 -arch x86 -data @noDefault daemon start -c 120000 -i 1000
+
+!ENTRY org.eclipse.osgi 4 0 2015-03-30 13:09:10.725
+!MESSAGE
+!STACK 0
+org.osgi.framework.BundleException: Exception in org.eclipse.osgi.framework.internal.core.SystemBundleActivator.start() of bundle org.eclipse.osgi.
+at org.eclipse.osgi.framework.internal.core.BundleContextImpl.startActivator(BundleContextImpl.java:806)
+at org.eclipse.osgi.framework.internal.core.BundleContextImpl.start(BundleContextImpl.java:755)
+at org.eclipse.osgi.framework.internal.core.InternalSystemBundle.resume(InternalSystemBundle.java:207)
+at org.eclipse.osgi.framework.internal.core.Framework.launch(Framework.java:654)
+at org.eclipse.core.runtime.adaptor.EclipseStarter.startup(EclipseStarter.java:298)
+at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:175)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:620)
+at org.eclipse.equinox.launcher.Main.basicRun(Main.java:575)
+at org.eclipse.equinox.launcher.Main.run(Main.java:1408)
+Caused by: java.lang.VerifyError: JVMVRFY036 stack underflow; class=org/eclipse/osgi/internal/resolver/StateReader, method=<init>(Ljava/io/File;)V, pc=51
+
+
+
+RESOLVING THE PROBLEM
+To resolve the issue, perform the following steps: 
+
+ 
+
+ 1. Re-install the client. If the problem persists after a re-install, the issue is due to a corrupt class cache.
+    
+    
+ 2. Find the JRE used by Visual Studio. It should be in a directory similar to the following:
+    
+    C:\Program Files\IBM\Rational Team Concert Client for Microsoft Visual Studio IDE\3rd Party\jre\bin
+    
+    
+ 3. Run the following command:
+    
+    java -Xshareclasses:listAllCaches
+    
+    
+ 4. Obtain the cache name from the output of the command, and run the following command
+    
+    java -Xshareclasses:name=<cacheName>,destroy
+
+
+
+
+Leverage the Jazz Community The Jazz based products have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://ibm.com/support/docview.wss?uid=swg21319600] for details and links.

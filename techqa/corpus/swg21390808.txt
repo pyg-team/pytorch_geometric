@@ -1,0 +1,19 @@
+Title: IBM How can I automatically remove Spool File Archive reports from the system after they have been stored a certain number of years? - United States
+
+Text:
+SFA expiring TECHNOTE (FAQ)
+
+QUESTION
+ I'd like to know a way of removing reports from my Spool File Archive system (OnDemand for iSeries) after they are 3 years old. All the reports on my system are on disk, now that we no longer have optical, and I want to get rid of the very old ones. Is there a way to do this? 
+
+ANSWER
+Since all your reports are on disk, you can delete the reports when they reach a certain age by following the steps below: 
+
+ 1. Query the QARLRSRT file in library QUSRRDARS to see which Management policies (field COLLN) are being used by the reports you want to get rid of after 3 years. The reason you would want to query this file, even though it can be very large because it lists every report ever archived in Spool File Archive (SFA), is because it is safer than displaying the policy name specified in the report definition from the WRKADMRDAR menu because the report definition may have been changed over time and the policy currently shown in the report definition may not be the one originally used when the report was stored. 
+ 2. Once the Management policy names for the reports in question have been determined, then take option 2 from the RDARSRPT menu and display the policy(ies). Check the "Expire after days" setting. This setting specifies the number of days to keep an archived report and its indexes before it is eligible for deletion. 
+ 3. If your report policy for these reports shows the "Expire after days" to be many many days out in the future, then shortening this value will mean that the documents may be expired the next time RMC runs, depending on their eligibility. To keep the reports just 3 years, you would change the "Expire after days" value to 1095 (3 x 365). The "Expire after" number of days is calculated from the "Run Date" field of the reports listed in the QARLRSRT file. If that length of time has elapsed, the reports are eligible to be deleted. 
+ 4. Run Report Management Cycle (RMC). If you shortened the "Expire after days" in step 3 above, then it may take a long time to expire the reports, if there are many that will all of a sudden be eligible to expire. Reports that are expired are deleted from their current storage location and removed from the QARLRSRT file when RMC is run. RMC produces a report to tell you which reports it expired. 
+
+
+
+Bear in mind that report policies can be shared by many reports, so careful consideration should be made when changing those values. It is suggested that you try this approach for just ONE migration policy at a time to validate the approach and get a sense for how much longer RMC runs. Furthermore, you should back up the QUSRRDARS library and the /QIBM/UserData/RDARS directory before making any major changes on the expiration values, just in case!

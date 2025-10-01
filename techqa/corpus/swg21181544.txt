@@ -1,0 +1,15 @@
+Title: IBM DB2 Universal Database for AIX operating system prerequisites - United States
+
+Text:
+system requirements; installation requirements TECHNOTE (FAQ)
+
+QUESTION
+ What are the operating system prerequisites for DB2® Universal Database™ (DB UDB) on AIX® operating environments? 
+
+ANSWER
+aix_prereqs.pdf [/support/docview.wss?uid=swg21181544&aid=2] [/support/docview.wss?uid=swg21181544&aid=1]
+To see additional recommendations about AIX maintenance levels, refer to the "Known issues for DB2 on AIX" link in the Related Information. 
+
+RELATED INFORMATION
+ System requirements website [http://www.ibm.com/software/data/db2/9/sysreqs3.html]
+Known issues for DB2 on AIX [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21165448]

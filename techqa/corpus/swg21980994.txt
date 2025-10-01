@@ -1,0 +1,49 @@
+Title: IBM Content Collector utilityConnector.exe execution fails with Error 0x1584 : Cannot remove service entries from registry - United States
+
+Text:
+ICC; utlityConnector.exe; Access is denied; server registry TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ To intigrate Content Classification for use in IBM Content Collector (ICC) task routes, the utilityConnector.exe file found at:
+
+<ICC_Installation_Directory>/ctms
+
+needs to be run as detailed in the ICC documentation here:
+
+http://www.ibm.com/support/knowledgecenter/en/SSAE9L_4.0.0/com.ibm.content.collector.doc/icm/t_afu_enabling_rc_icm_integration.html [http://www.ibm.com/support/knowledgecenter/en/SSAE9L_4.0.0/com.ibm.content.collector.doc/icm/t_afu_enabling_rc_icm_integration.html]
+
+The utilityConnector.exe file can fail with an "Access is denied" error as detailed below. 
+
+SYMPTOM
+The utilityConnector.exe file fails with: 
+
+Error 0x1584 Cannot remove service entries from regis 
+try. Reason: Error accessing key 
+'HKEY_LOCAL_MACHINE\Software\IBM\EMRC\4.0\Servi 
+ceDeclarations3 
+
+Error 0x1584 Failed to open service control manager. 
+(error 0x5 - Access is denied.) 
+
+Fatal 0x5f4 Failed to open service control manager. 
+(error 0x5 - Access is denied.) 
+ibm::ctms::connector::connector_service_main 
+
+
+CAUSE
+This is usually caused by the Operating System user running the script not having permissions to edit the server registry
+
+
+ENVIRONMENT
+ICC 4.0 and onwards 
+
+Windows Server
+
+
+DIAGNOSING THE PROBLEM
+Verify that the user that is running the script does not have the necessary Operating System permissions to edit the server registry
+
+
+
+RESOLVING THE PROBLEM
+Either assign the Operating System permissions to the logged in user to allow it to edit the server registry and the Windows services or switch to a user that already has these permissions in order to run the script successfully.

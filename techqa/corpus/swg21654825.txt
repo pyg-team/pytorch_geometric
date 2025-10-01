@@ -1,0 +1,14 @@
+Title: IBM Does WPG support TLS v1.2? - United States
+
+Text:
+MT# 71597; 499; 000 TLS security TECHNOTE (FAQ)
+
+QUESTION
+ Does WPG support TLS v1.2? 
+
+ANSWER
+WPG 621 FP3 support TLS v1.2 in transition and strict mode.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Partner Gateway Enterprise Edition Not Applicable AIX, HP-UX, Linux, Solaris, Windows, Linux on Power, Windows 2003 server, Linux pSeries 6.2.1 Advanced, Enterprise

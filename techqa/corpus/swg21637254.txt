@@ -1,0 +1,28 @@
+Title: IBM Assignment of dynamic parameters for processing actions - United States
+
+Text:
+xs xg xi xb xm ve 402 limitation 500limitation 600limitation TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Processing actions, such as sign, verify, encrypt, and decrypt; contain optional parameters for custom processing. The sign action, for example, provides parameters for Key, Certificate, Canonicalization Algorithm, and Timestamp Expiration Period among others. DataPower variables can often be used to dynamically assign values. In some cases, you must use the Object section of the DataPower WebGUI or the command line to assign of these variables. You can also use multiple static actions and conditional execution to bypass the need for dynamic parameter assignment. 
+
+CAUSE
+Some action properties are presented with the WebGUI Services section in drop down list, which contain a list of valid parameters. Other properties are shown as text boxes, where you enter free from text. Other properties provide a combination drop down list and text box. Still others provide another selection process to identify variables for dynamic assignment. 
+
+You might not be allowed to enter a variable or other free form text where a drop down box is the only input mechanism. Additionally, you might see an error message when you enter invalid text. An example is when you enter string text in a field that expects an integer value.
+
+
+RESOLVING THE PROBLEM
+In those cases where variable assignment is not possible in the Services section of the WebGUI, the user can resolve the problem by entering those values within the Processing Action of the Objects section of the WebGUI or by editing in the CLI. 
+
+
+The following graphic shows an action being edited via the Objects screen. In this example, four optional parameters are dynamically assigned. Variables must adhere to the format of context variables.
+[/support/docview.wss?uid=swg21637254&aid=1] [/support/docview.wss?uid=swg21637254&aid=1]
+You must use the fully qualified name for each parameter. In this example, each parameter contains the DataPower configuration namespace and a name that reflects the parameter to assign. In addition to editing the action object as shown above, the parameter name values can also be determined by hovering over the action within the drag-and-drop editor.
+
+[/support/docview.wss?uid=swg21637254&aid=2] [/support/docview.wss?uid=swg21637254&aid=2]
+In cases which the default value is used and no alternative is selected, you might need to to assign a nondefault value to see the fully qualified parameter name.
+
+With the Object screen, you can assign variables to many fields that the Services section of the WebGUI does not allow. In some situations, specifically fields with only a drop down list, the variable name is not displayed. However, you can see the parameter assignment as demonstrated above.
+
+Additionally, the you can use alternatives to dynamic parameter assignment. For example, consider creating multiple actions with differing properties such as those identified for the sign action. These alternative sign actions can be conditionally processed with the conditional action to bypass dynamic parameter assignment.

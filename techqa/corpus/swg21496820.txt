@@ -1,0 +1,107 @@
+Title: IBM Runtime Java error: Unsupported major.minor - UnsupportedClassVersionError - United States
+
+Text:
+Java version Unsupported major.minor version 49.0 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You compile and successfully test a Java™ program that uses the WebSphere MQ client. You copy that program into another host and you get the following runtime error:
+
+(Unsupported major.minor version 49.0)
+
+Such as:
+C:\> java -jar traceanalyzer4.0.jar
+The java class could not be loaded. java.lang.UnsupportedClassVersionError: com/ibm/protrace/gui/MainApplication (Unsupported major.minor version 49.0)
+
+
+CAUSE
+For the specific sample in this technote, the problem is that the executable was compiled with Java 1.5 (major 49) but the runtime is older, such as Java 1.4 (major.minor 48.0). Thus, the runtime Java 1.4 does not support running this program that was compiled with Java 1.5. 
+To determine if the runtime Java supports the level of Java with which the program was compiled, follow these steps:
+
+1) Check the runtime version of Java. 
+
+java -version 
+For example, the output might look like this:
+java version "1.4.2"
+Java 2 Runtime Environment, Standard Edition (build 1.4.2)
+
+2) Check the version of Java used to compile the Java class file that you are trying to run. There are several different ways to do this depending on the environment. 
+
+ * If using Linux, you can use the command "file" to find out the version of Java used to compile the Java class file that you are trying to run, for example:
+   $ file MQSample.class
+   MQSample.class: cafe babe compiled Java class data, version 49.0 
+ * For other operating systems, you can use the Java simple dis-assembler utility "javap" which is included with the Java SDK (but not included with the Java JRE). If the file is called JavaClassName.class, do NOT specify the *.class when invoking this tool:
+   UNIX:
+   javap -verbose JavaClassName | grep major
+   major version: 50
+   javap -verbose JavaClassName | grep minor
+   minor version: 0
+   
+   Windows:
+   javap -verbose JavaClassName | findstr major
+   major version: 50
+   javap -verbose JavaClassName | findstr minor
+   minor version: 0 
+ * You could compile and use the sample Java program mentioned in this article:
+   
+   Java API to find out the JDK version a class file is compiled for? [http://stackoverflow.com/questions/1293308/java-api-to-find-out-the-jdk-version-a-class-file-is-compiled-for]
+
+
+
+3) Use the following table to map the versions: 
+
+Major Minor Java platform version 45 3 1.1 46 0 1.2 47 0 1.3 48 0 1.4 Example: 1.4.x 49 0 1.5 Example: 1.5 50 0 1.6 51 0 1.7 52 0 1.8 
+
+For this example, there are 2 items to map: 
+a) Runtime Java version 1.4.x => major.minor is 48.0 
+b) Java class file shows "version 49.0", but it should be interpreted as: major.minor 49.0 => Java 1.5 
+
+Conclusion: 
+You are trying to run in a system that has Java 1.4 (major.minor 48) a Java class file that was compiled under Java 1.5 (major.minor 49), thus the error message:  (Unsupported major.minor version 49.0) 
+
+In other words, the runtime (major.minor 48) does not support major.minor 49. 
+
+
+Miscellaneous
+The above table was obtained from:
+http://www.rgagnon.com/javadetails/java-0544.html [http://www.rgagnon.com/javadetails/java-0544.html]
+and
+http://en.wikipedia.org/wiki/Java_class_file [http://en.wikipedia.org/wiki/Java_class_file]
+See "General layout" section, description comments for bytes 6 and 7
+
+Java: Check the class version
+The first 4 bytes are a magic number, 0xCAFEBABE, to identify a valid class file then the next 2 bytes identify the class format version (major and minor).
+
+
+RESOLVING THE PROBLEM
+There are several options that you can use to resolve this problem.: 
+
+
+1) Upgrade the runtime Java to the one that is needed. For example, if you encounter the error when using Java 1.4, then upgrade to Java 1.5 or later.
+
+2) If you cannot upgrade the runtime, then you may want to bring the Java source code into the target machine and recompile with the older version.
+
+3) You could use the JRE provided with the MQ or MQ FTE code:
+
+WMQ 7.0.1 ships a Java Runtime Environment (JRE) that is at level 1.5 (major.minor 49.0).
+
+WMQ 7.1 ships a JRE at level 1.6 (major.minor 50)
+UNIX: /opt/mqm/java/jre/bin/java
+AIX: /usr/mqm/java/jre/bin/java
+Windows: C:\Program Files\IBM\WebSphere MQ\java\jre\bin\java.exe
+
+WMQ FTE 7.0.3 and 7.0.4 ship the JRE at level 1.6.
+UNIX: /opt/ibm/WMQFTE/java/jre/bin/java
+AIX: /usr/ibm/WMQFTE/java/jre/bin/java
+Windows: C:\Program Files\IBM\WMQFTE\jre\bin
+
+You can specify the full path shown above to override the system wide "java".
+For example, if you are trying to run a jar file using the "java" executable provided with WMQ FTE 7.0.4 in Linux, you can issue:
+/opt/IBM/WMQFTE/java/jre/bin/java -jar file.jar
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM MQ 
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ MQSeries WMQFTE

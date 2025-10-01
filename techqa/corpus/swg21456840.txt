@@ -1,0 +1,58 @@
+Title: IBM Unable to login to TKLM GUI with TIPAdmin or TKLMAdmin after install of 2.0.0.0 - United States
+
+Text:
+Tivoli Key Lifecycle Manager failed fail fails TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After successfully installing TKLM, unable to login with the default user accounts TIPAdmin or TKLMAdmin. Even changing the TIPAdmin password manually doesn't allow login. 
+
+CAUSE
+Websphere fix pack did not install properly
+
+RESOLVING THE PROBLEM
+There have been instances when the TKLM install appears to have completed without error but when trying to login to the TKLM GUI, you are unable to login successfully with the TIPAdmin or the TKLMAdmin account. If this is the case, please the updatelog.txt file found at this location: 
+
+C:\ibm\tivoli\tipv2tklm\logs\update\6.1.0-WS-WASEmbeded-WinX32-FP0000029.install
+
+Check this log file and you may see errors like the following:
+
+(Sep 13, 2010 10:47:36 AM), Install, com.ibm.ws.install.ismp.actions.FailureRecoveryAction, msg1, Finished executing 6.1.0-WS-WASEmbeded-WinX32-FP0000029.pak.
+(Sep 13, 2010 10:47:36 AM), Install, com.ibm.ws.install.ismp.actions.FailureRecoveryAction, err, Failed to delete: file:/C:/ibm/tivoli/tiptklmV2/bin/WASServiceMsg.dll
+(Sep 13, 2010 10:47:36 AM), Install, com.ibm.ws.install.ismp.actions.FailureRecoveryAction, err, The file bin/WASServiceMsg.dll could not be replaced.
+(Sep 13, 2010 10:47:36 AM), Install, com.ibm.ws.install.ismp.actions.FailureRecoveryAction, err, com.ibm.ws.install.ni.framework.NIFException: The file bin/WASServiceMsg.dll could not be replaced.
+
+This indicates a problem with the Websphere fixpack 29 not installing properly. To fix this problem, you must take the following steps:
+
+Note: TIP_HOME = C:\ibm\tivoli\tiptklmV2
+
+
+1. Stop TIP server(the Tivoli Integrated Portal Service). Its possible stopping the service will not completely work. So you can also try setting the service to manual startup and rebooting the system. Or you can try killing the java.exe processes to ensure that the service is truly stopped.
+2. Go to <TIP_HOME>/bin and rename the WASServiceMsg.dll as WASServiceMsg.dll_bkup 
+3. Navigate to <TIP_HOME>/systemApps/isclite.ear/isclite.war/WEB-INF 
+4. Copy web.xml to C:/temp 
+5. Navigate to <TIP_HOME>/plugins 
+6. Copy com.ibm.ws.webui_6.1.0.jar to C:/temp 
+7. Navigate to cdimage containing the TKLM installables and go to COI\DeploymentSteps\eWAS-FP29\FILES 
+8. Unzip the update_eWAS_6_1_0_29_WinX32-Fixpacks.zip 
+9. Start the Websphere Update Installer from All Programs (Start Menu) 
+a. Start -> Programs -> IBM Websphere -> Update Installer for Websphere -> Update Installer
+b. Click Next 
+c. Enter the directory path as <TIP_HOME> and click Next 
+d. Select "Install maintenance package" 
+e. Enter the maintenace package directory path as: <INSTALLATION Image> 
+\COI\DeploymentSteps\eWAS\FILES\update_eWAS_6_1_0_21_WinX32-Fixpacks 
+(this is the same path where the fixpack is unzipped to in step 8) 
+f. Select 6.1.0-WS-WASEmbeded-WinX32-FP0000029.pak and 
+6.1.0-WS-WASSDK-WinX32-FP0000029.pak and click Next 
+g. Wait for the upgrade to finish and click on Finish 
+10. Copy the web.xml from C:/temp to following directories:
+
+
+ * <TIP_HOME>/systemApps//isclite.ear/isclite.war/WEB-INF/ 
+ * <TIP_HOME>\profiles\TIPProfile\config\cells\TIPCell\applications\isclite.ear\deployments\isclite\isclite.war\WEB-INF
+
+
+11. Copy the com.ibm.ws.webui_6.1.0.jar from C:/temp to <TIP_HOME>/plugins 
+12. Start the TIP server 
+
+After performing these steps, try logging into the TKLM GUI again. This time it should work.

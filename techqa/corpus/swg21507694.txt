@@ -1,0 +1,50 @@
+Title: IBM With WebSphere Process Server, a WSVR0605W: WorkManager.es-workmanager is hung message occurs and event-sequenced messages are blocked on SCA queues - United States
+
+Text:
+WSVR0605W; WorkManager; es-workmanager; hanging threads; thread pool; v61rnotes; v612rnotes; v62rnotes; v70rnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere Process Server (WPS) is unable to process event-sequenced messages due to es-workmanager hung threads. WSVR0605W warnings are thrown in the log files and traces. 
+
+SYMPTOM
+Message processing, that is related to event-sequenced operations, stops. After handling several messages, further messages wait in the Service Component Architecture (SCA) bus queues and event-sequenced es-workmanager hung-thread WSVR0605W warnings are seen in the log files and traces. The entire process of event-sequenced messages in the system is effectively blocked. 
+
+The following code is an example of an es-workmanager hung-thread warning:
+
+[01/01/11 12:00:37:844 CEST] 0000000d ThreadMonitor W WSVR0605W: Thread "WorkManager.es-workmanager : 9" (0000012e) has been active for 602495 milliseconds and may be hung. There is/are 5 thread(s) in total in the server that may be hung.
+at java.lang.Object.wait(Native Method)
+at java.lang.Object.wait(Object.java:231)
+at com.ibm.ws.util.BoundedBuffer.waitPut_(BoundedBuffer.java:229)
+at com.ibm.ws.util.BoundedBuffer.put(BoundedBuffer.java:339)
+at com.ibm.ws.util.ThreadPool.execute(ThreadPool.java:1189)
+at com.ibm.ws.util.ThreadPool.execute(ThreadPool.java:1040)
+at com.ibm.ws.asynchbeans.WorkItemImpl$PoolExecuteProxy.run(WorkItemImpl.java:197)
+at com.ibm.ws.asynchbeans.WorkItemImpl.executeOnPool(WorkItemImpl.java:211)
+at com.ibm.ws.asynchbeans.WorkManagerImpl.queueWorkItemForDispatch(WorkManagerImpl.java:425)
+at com.ibm.ws.asynchbeans.WorkManagerImpl.startWork(WorkManagerImpl.java:381)
+at com.ibm.ws.asynchbeans.WorkManagerImpl.startWork(WorkManagerImpl.java:510)
+at com.ibm.ws.asynchbeans.WorkManagerImpl.startWork(WorkManagerImpl.java:525)
+at com.ibm.wbiserver.sequencing.service.BaseEsService.submitWork(BaseEsService.java:417)
+...
+
+
+
+CAUSE
+Event sequencing uses a WebSphere Application Server (WAS) thread pool. This event-sequencing thread pool is named "es-workmanager," by default, and it is configured during the profile creation process. The startWork method behavior is that the method is blocked until the work is placed in the thread pool and then returned. The work is later run asynchronously. If there are not enough threads available in the es-workmanager thread pool, the startWork call to the work manager is blocked indefinitely and the WSVR0605W es-workmanager hung-thread warnings are thrown. With each warning, the number of blocked threads increases.
+
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, you must tune the thread pool size for the es-workmanager thread pool. By default, the es-workmanager thread pool is created with a minimum of 2 threads and a maximum of 20 threads. Also, the Growable option is set to true, which means that the number of threads can go beyond the maximum, if needed. When the defaults are used, this issue should not happen because the thread pool can grow, if necessary. However, in certain situations, it might be necessary to limit and tune the maximum thread pool size. In these situations, individual performance tuning is necessary to prevent blocked threads. You can tune es-workmanager thread-pool properties in a pre-production test environment to avoid performance problems on a production server. 
+
+
+You can access the configuration for work managers in the administrative console under Resources > Asynchronous beans > Work managers > es-workmanager. The task of configuring work managers is also described in the Configuring work managers [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.nd.doc/info/ae/asyncbns/tasks/tasb_workmanager.html] topic within the information center:
+
+RELATED INFORMATION
+#WebSphere Process Server V7.0 Information Center [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/index.jsp?topic=/com.ibm.websphere.wps.doc/welcome_wps.html]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WPS

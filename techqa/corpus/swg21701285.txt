@@ -1,0 +1,52 @@
+Title: IBM Security Bulletin: Security vulnerabilities have been identified in multiple components shipped with IBM Intelligent Operations Center (April 2015) - United States
+
+Text:
+ SECURITY BULLETIN
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ Language Independent 
+
+SUMMARY
+ Multiple components are shipped with IBM Intelligent Operations Center. Information about security vulnerabilities affecting some components has been published in security bulletins. 
+
+VULNERABILITY DETAILS
+Consult the following security bulletins for vulnerability details: 
+
+ * Vulnerabilities in GSKit fixed in IBM Security/Tivoli Directory Server (CVE-2015-0138, CVE-2015-0159) [http://www.ibm.com/support/docview.wss?uid=swg21698703] 
+ * Vulnerability with RSA Export Keys may affect IBM WebSphere Application Server (CVE-2015-0138) [http://www.ibm.com/support/docview.wss?uid=swg21698613] 
+ * Vulnerabilities in OpenSSL affect IBM Worklight and IBM MobileFirst Platform Foundation (CVE-2014-3570, CVE-2014-3572, CVE-2015-0204) [http://www.ibm.com/support/docview.wss?uid=swg21698574] 
+ * Multiple vulnerabilities in IBM Java SDK affect WebSphere Application Server January 2015 CPU [http://www.ibm.com/support/docview.wss?uid=swg21695362] 
+ * Potential Security Vulnerabilities fixed in IBM WebSphere Application Server Version 7.0.0.37 [http://www.ibm.com/support/docview.wss?uid=swg21697369] 
+ * Potential Security Vulnerabilities fixed in IBM WebSphere Application Server 8.0.0.10 [http://www.ibm.com/support/docview.wss?uid=swg21695392] 
+ * Cognos Business Intelligence 10.2.x interim fixes address a security vulnerability [http://www.ibm.com/support/docview.wss?uid=swg24038861] 
+ * Vulnerabilities in GSKit affect IBM WebSphere MQ (CVE-2015-0159, CVE-2015-0138 and CVE-2014-6221) [http://www.ibm.com/support/docview.wss?uid=swg21699055] 
+ * TLS padding vulnerability affects IBM HTTP Server (CVE-2014-8730) [https://www.ibm.com/support/docview.wss?uid=swg21692502]
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Affected Product and Version(s) Product and Version shipped as a component IBM Intelligent Operations Center version 1.6.0.3  * IBM GSKit 8.0.50.41 
+ * IBM WebSphere Application Server 8.0.0.10 (Fix Pack 10 and interim fix PI33406) 
+ * IBM WebSphere Application Server 7.0.0.37 (Fix Pack 37) 
+ * IBM Worklight 6.2.0.1 (Fix Pack 1 and interim fix PI34896) 
+ * IBM SDK, Java Technology Edition, Version 6R1 Service Refresh 8 Fix Pack 3 
+ * IBM SDK, Java Technology Edition, Version 6 Service Refresh 16 Fix Pack 3 
+ * IBM HTTP Server 8.0.0.10 (Fix Pack 10 and interim fix PI31516) 
+ * IBM Cognos 10.2.1.5 (Fix Pack 5 interim fix 8) 
+ * IBM WebSphere MQ 7.5.0.4 (Fix Pack 4 and Fix LAIV70568) 
+
+REMEDIATION/FIXES
+Download and install IBM Intelligent Operations Center 1.6.0.3 multiple security fixes (April 2015) [http://www.ibm.com/support/docview.wss?uid=swg24039699]. 
+Security fixes are not cumulative. You must install all earlier security fixes in addition to the current fix.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

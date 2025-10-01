@@ -1,0 +1,166 @@
+Title: IBM IT05279: IBM WEBSPHERE MQ EXPLORER V8.0 FAILS CONNECTING TO A REMOTE QUEUE MANAGER WHEN USING SSL AND AMQCLCHL.TAB FILE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When attempting to connect WebSphere MQ Explorer to a remote
+   queue manager via a SSL configuration using a channel
+   definition table (AMQCLCHL.TAB) file; MQ Explorer fails to
+   connect. An error dialog is displayed showing:
+   
+     Queue manager QMGRNAME is not available for client
+        connection due to an SSL configuration error. (AMQ4199)
+     Severity: 30 (Severe Error)
+     Explanation: The user is trying to connect to a remote queue
+        manager using a secure connection.
+     Response: Check the SSL configuration of the target queue
+   manager and the local SSL trust store.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Configure MQ Explorer v8.0 to use a direct connection instead
+   of using the AMQCLCHL.TAB method. This problem only occurs with
+   MQ Explorer v8.0, v8.0.0.1; previous versions of MQ Explorer do
+   not have this problem.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of MQ Explorer v8.0.0.0 who are
+   attempting to connect to a remote queue manager using an
+   SSL-secured connection defined in a client channel definition
+   table (CCDT).
+   
+   
+   Platforms affected:
+   Linux on x86-64, Linux on x86, Windows
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   A coding error in MQ Explorer's CCDT parsing logic meant that a
+   NullPointerException occurred when attempting to parse the SSL
+   configuration details from the CCDT. This prevented MQ Explorer
+   from attempting to connect to the queue manager.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQ Explorer has been updated so that the
+   NullPointerException does not occur when parsing the SSL
+   configuration information from the CCDT.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT05279
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-30
+   
+   
+ * CLOSED DATE
+   2014-10-31
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

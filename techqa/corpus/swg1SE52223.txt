@@ -1,0 +1,216 @@
+Title: IBM SE52223: MQM400 CUMULATIVE #71002 FIX PACK (WMQ V7.1.0 JAVA/JMS CLIENT) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MDV service delivery for WebSphere MQ v7.1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Collective service MDV 7.1.0.2 for WebSphere MQ v7.1
+   
+   Details of problems fixed for JAVA/JMS are included in
+   APAR SE52223 - 5724L26 (option *BASE)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Collective service MDV 7.1.0.2 for WebSphere MQ v7.1
+   - which contains fixes for all the problems listed below:
+   
+   .                                                              .
+   IV23098 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV23098] - WMQ CLASSES FOR JMS THROWS A                         .
+             'MQRC_DEST_CLASS_NOT_ALTERABLE' EXCEPTION WHEN       .
+             RESUMING AN UNMANAGED DURABLE SUBSCRIPTION           .
+   IV23042 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV23042] - HIGH CPU USE BY AMQZLAA0 PROCESS WHEN USING WMQ 7.0  .
+             CLASSES FOR JMS AND WMQ V6.0 STYLE QUEUED PUB/SUB.   .
+   IV22989 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV22989] - WEBSPHERE MQ V7.1 CLASSES FOR JAVA APPLICATION REPORTS
+             MQJE001 COMPLETION CODE 2 REASON 2018 WHEN SENDING   .
+             MESSAGES                                             .
+   IV22760 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV22760] - WEBSPHERE MQ CLASSES FOR JMS FAILS TO OPEN A V7 Z/OS .
+             QUEUE MANAGER QUEUE, WITH ERROR CODE 2042            .
+             'MQRC_OBJECT_IN_USE'                                 .
+   IV21807 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV21807] - WEBSPHERE MQ V7 CLASSES FOR JMS UPDATES THE          .
+             'JMSDESTINATION' FIELD IN THE RFH2 HEADER DURING     .
+             MESSAGE BACKOUT                                      .
+   IV20518 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV20518] - PERFORMANCE DEGRADATION WHEN MANY WMQ-JMS            .
+             QUEUERECEIVERS ARE CLOSED CONCURRENTLY WHEN CREATED  .
+             FROM THE SAME JMS CONNECTION                         .
+   IV17302 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV17302] - WEBSPHERE MQ ACTIVATION SPECIFICATIONS CONSUMING     .
+             MESSAGES FROM V6 QUEUE MANAGERS DO NOT SHOW WMQ RETURN
+             CODES WITHIN WAS                                     .
+   IV16931 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV16931] - DURING A WMQ-JMS BACKOUT REQUEUE OPERATION FOR A     .
+             POISON MESSAGE, A 2085 MQRC_UNKNOWN_OBJECT_NAME MAY  .
+             OCCUR.                                               .
+   IV16698 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV16698] - WEBSPHERE MQ CLASSES FOR JMS RETURN CLASSCASTEXCEPTION
+             FROM LISTENER PORT WHEN MDB THROWS A JAVA EXCEPTION  .
+   IV16597 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV16597] - WEBSPHERE MQ V7.0JMS CLIENT HANGS IN A FINALIZER     .
+             THREAD CAUSING AN OUT OF MEMORY CONDITION.           .
+   IV16565 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV16565] - WHEN A WEBSPHERE MQTT JAVA CLIENT RE-ESTABLISHES A   .
+             CONNECTION TO A BROKER IT CAN FAIL TO CONNECT        .
+             CORRECTLY.                                           .
+   IV16297 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV16297] - WEBSPHERE MQ EXPLORER BROWSE DIALOG REPORTS A LARGER .
+             VALUE FOR THE MESSAGE LENGTH THAN THE SIZE OF MESSAGE.
+             DATA DISPLAYED                                       .
+   IV16138 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV16138] - ACTIVATION SPECIFICATIONS LOSE THEIR CONNECTION TO   .
+             WEBSPHERE MQ AND STOP CONSUMING MESSAGES. NO ERROR   .
+             MESSAGES ARE REPORTED                                .
+   IV16115 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV16115] - WEBSPHERE MQ 7 CLASSES FOR JMS APPLICATION HANGS IN A.
+             DEADLOCK AND IS UNABLE TO SEND OR RECEIVE MESSAGES   .
+   IV15811 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV15811] - WEBSPHERE APPLICATION SERVER V7 REPORTS A CWWMQ0045E .
+             ERROR WHEN USING ACTIVATION SPECIFICATIONS AND       .
+             NON-TRANSACTED MDBS                                  .
+   IV15695 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV15695] - NULLPOINTEREXCEPTION THROWN WHEN USING THE WEBSPHERE .
+             MQ V7 CLASSES FOR JAVA AND SETTING THE FORMAT OF AN  .
+             MQMESSAGE TO NULL                                    .
+   IV15526 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV15526] - WEBSPHERE MQ V7 CLASSES FOR JAVA PCF INTERFACES RETURN
+             INCORRECT VALUES FOR 64-BIT PARAMETERS FOR STATISTICS.
+             RECORDS                                              .
+   IV14464 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV14464] - MQJCA1031 ERROR MESSAGE SEEN WHEN USING THE WEBSPHERE.
+             MQ V7.0 RESOURCE ADAPTER WITHIN WEBLOGIC 11G R1      .
+   IV14093 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV14093] - OUTOFMEMORYEXCEPTION IN WEBSPHERE APPLICATION SERVER .
+             DUE TO HUNG FINALIZER THREAD WHILE PROCESSING WMQ    .
+             CONNECTION EVENT                                     .
+   IV13714 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV13714] - A LISTENER PORT RUNNING INSIDE WEBSPHERE APPLICATION .
+             SERVER V7 MAY ENCOUNTER A NULLPOINTEREXCEPTION WHEN  .
+             PROCESSING MESSAGES                                  .
+   IV12486 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV12486] - WHEN USING THE WEBSPHERE MQ V7 CLASSES FOR JMS, A    .
+             JMSINPUT NODE THROWS A NUMBERFORMATEXCEPTION.        .
+   IV12345 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV12345] - PAUSING THEN RESUMING A WEBSPHERE MQ ACTIVATION      .
+             SPECIFICATION RESULTS IN A QUEUE MANAGER ID MISMATCH .
+             EXCEPTION                                            .
+   IV11947 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV11947] - UPGRADING TO WEBSPHERE MQ CLASSES FOR JMS 7.0.1.5    .
+             RESULTS IN BACKED OUT MESSAGES HAVING A DIFFERENT    .
+             MESSAGE ID TO ORIGINAL                               .
+   IV10367 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV10367] - JMS QUEUEBROWSERS FAIL TO BACKOUT MESSAGES TO THE    .
+             BACKOUT QUEUE WHEN USING V7 WEBSPHERE CLASSES FOR JMS.
+   IV07932 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV07932] - WSAS V7 FAILED TO REMOVE A POISON MESSAGE TO BACKOUT .
+             QUEUE, JMSWMQ2002, JMSCMQ0001, MQ REASON 2150,       .
+             MQRC_DBCS_ERROR                                      .
+   IV05536 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV05536] - MULTIPLE FFDC FILES GENERATED BY THE WMQ V7.0.1.5 JMS.
+             CLIENT (XA ENABLED), SOON AFTER A POISON MESSAGE IS  .
+             BACKED OUT                                           .
+   IV00757 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV00757] - WMQ V7 JMS APPLICATION HANGS DUE TO A THREAD DEADLOCK.
+             WHEN CLOSING MESSAGECONSUMER OR SESSION              .
+   IC85084 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC85084] - WEBSPHERE MQ CLASSES FOR JMS/JAVA THREAD HANGS WHEN  .
+             CONFIGURED TO USE ASYNCHRONOUS PUT TO SEND MESSAGES TO
+             A QUEUE                                              .
+   IC83604 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC83604] - WEBSPHERE MQ CLASSES FOR JMS NULLPOINTEREXCEPTION    .
+             THROWN AFTER MESSAGE PROPERTY 'JMS_IBM_CHARACTER_SET'.
+             IS SET TO NULL                                       .
+   IC83337 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC83337] - WEBSPHERE MQ 7.0.1 INFORMATION IN THE MANIFEST.MF FOR.
+             THE FILE COM.IBM.MQ.COMMONSERVICES.JAR HAS AN        .
+             INCORRECT VERSION ENTRY                              .
+   IC81953 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC81953] - HANG ENCOUNTERED IN WEBSPHERE MQ V7.1 RESOURCE ADAPTER
+             WHEN QUEUE MANAGER CHANNEL IS RESTARTED DURING MESSAGE
+             FLOW                                                 .
+   IC81809 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC81809] - JAVA APPLICATION USING C SECURITY EXIT THAT MODIFIES .
+             EXITREASON CRASHES                                   .
+   IC79103 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC79103] - WMQ EXPLORER CONNECTION TO QUEUE MANAGER FAILS WHEN  .
+             THE QUEUE MANAGER DOES NOT SUPPORT OPTIONAL INTERNAL .
+             CALLS IN FAP9 SPEC.                                  .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SE52223
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA CLIENT ISE
+   
+   
+ * REPORTED COMPONENT ID
+   5724L2620
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2012-06-05
+   
+   
+ * CLOSED DATE
+   2012-06-05
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    SI47033
+   
+   
+
+MODULES/MACROS
+ *  RCHMGR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA CLIENT ISE
+   
+   
+ * FIXED COMPONENT ID
+   5724L2620
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY SI66147
+   UP17/11/20 I 1000

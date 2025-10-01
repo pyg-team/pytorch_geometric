@@ -1,0 +1,164 @@
+Title: IBM OA46064: HISTORICAL COLLECTION REQUEST RETURN/STORE DATA FOR ALL SUBNODES REGARDLESS OF HISTORY COLLECTION DISTRIBUTION. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Users Affected: All WebSphere MQ Monitoring Agent users
+   
+   Environment:  z/OS only
+   
+   Problem Description:  Table agents for our sampled attribute
+   groups
+   return data for all subnodes (queue managers) monitored by the
+   agent
+   regardless of  distribution and this data will be written to
+   history.
+   This will result in higher CPU collecting all this data for all
+   subnodes
+   and more data being written than requested.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IBM Tivoli OMEGAMON XE for Messaging:    *
+   *                 WebSphere MQ Monitoring 7.0.1 users.         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Historical collection request returns   *
+   *                      data for all subnodes regardless of     *
+   *                      history collection distribution.        *
+   ****************************************************************
+   * RECOMMENDATION: Apply this PTF.                              *
+   ****************************************************************
+   Table agents for the sampled attribute groups return data
+   for all subnodes (queue managers) monitored by the agent
+   regardless of distribution and this data will be written
+   to history. This will result in higher CPU collecting all
+   this data for all subnodes and more data being written than
+   requested.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The table agent code of the sampled attribute groups is
+   modified to return data only for queue managers requested
+   in the subnode list.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA46064
+   
+   
+ * REPORTED COMPONENT NAME
+   OMG XE MSG ZOS
+   
+   
+ * REPORTED COMPONENT ID
+   5608A1100
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-16
+   
+   
+ * CLOSED DATE
+   2014-09-24
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    OA45798 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA45798]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  KMQAGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMG XE MSG ZOS
+   
+   
+ * FIXED COMPONENT ID
+   5608A1100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY UA75112 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA75112]
+   UP14/10/15 P F410
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

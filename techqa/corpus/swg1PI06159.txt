@@ -1,0 +1,120 @@
+Title: IBM PI06159: UNCAUGHT ACCESS VIOLATION EXCEPTION WHEN INSERTING IMAGE VIA INP LACE EDITING - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using the Insert Image function via inplace editing, the
+   following exception will be seen in the system log.
+   
+   com.ibm.icm.jcr.access.AccessDeniedException: ACC3504E: The
+   requested operation violates one or more access constraints
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When using the Insert Image function via inplace editing, the
+   following exception will be seen in the system log.
+   
+   com.ibm.icm.jcr.access.AccessDeniedException: ACC3504E: The
+   requested operation violates one or more access constraints
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code was modified to prevent to error condition from occurring.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI06159
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-14
+   
+   
+ * CLOSED DATE
+   2013-11-14
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

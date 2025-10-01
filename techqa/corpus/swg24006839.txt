@@ -1,0 +1,33 @@
+Title: IBM MQSeries for Sun Solaris, Intel Platform Edition, V5.1 - Fix Pack 9 (CSD09) - United States
+
+Text:
+csd fix pack mqseries v5.1 mq csd09 sun solaris intel DOWNLOADABLE FILES
+
+ABSTRACT
+ Fix Pack 9 (CSD09) for MQSeries V5.1 on Sun Solaris, Intel Platform Edition. 
+
+DOWNLOAD DESCRIPTION
+ This is the second Fix Pack for IBM MQSeries for Sun Solaris, Intel Platform Edition Version 5.1 from IBM. It is delivered via PTF U478911.
+
+Fix Packs are cumulative, so Fix Pack 9 incorporates all previous Fix Packs for this product.
+
+The installation instructions and details of the problems fixed are available in the 'installation instructions' section below.
+
+INSTALLATION INSTRUCTIONS
+Please refer to the links below for the installation instructions and details of the problems fixed.
+
+URL LANGUAGE SIZE(Bytes) Installation instruction [ftp://public.dhe.ibm.com/software/mqseries/fixes/solaris_intel51/U478911/README.TXT] English 7220 Problems fixed [ftp://public.dhe.ibm.com/software/mqseries/fixes/solaris_intel51/README.TXT] English 94272 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options Fix Pack 9 (PTF U478911) 13/08/2002 English 7471602 FTP [ftp://public.dhe.ibm.com/software/mqseries/fixes/solaris_intel51/U478911/] 
+TECHNICAL SUPPORT
+ Details of how to obtain technical support can be found at the following URL:
+
+http://www.ibm.com/support/customercare/sas/f/handbook/home.html [http://www.ibm.com/support/customercare/sas/f/handbook/home.html] 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ 
+
+ [/support/docview.wss?uid=swg24006839&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24006839&aid=2]Problems (APARS) fixed
+IC31041, IC31043, IY21317, IY21319, IY21325, IY21328, IY21329, IC26214, IC27211, IC29358, IC29721, IC29805, IC29847, IC30250, IC30908, IC31323, IC31431, IC31755, IC32260, IC33691, IC34063, IY13629, IY14518, IY16483, IY18500, IY18567, IY20510, IY20763, IY21665, IY21795, IY22185, IY22333, IY22429, IY23148, IY24268, IY25080, IY25639, IY25746, IY25795, IY31498

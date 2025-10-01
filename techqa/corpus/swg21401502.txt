@@ -1,0 +1,84 @@
+Title: IBM Avoiding "out of memory" errors in OPL - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I avoid running out of memory in OPL? 
+
+ANSWER
+In OPL, memory is used by several different modules: 
+
+ * by the OPL IDE or the oplrun executable
+ * by the objects that each model declares
+ * by the actual optimization process of an individual model
+ * if you are using OPL Interfaces, by the application that invokes the OPL objects
+
+ If you are running out of memory, it is important to determine which parts are using up the most memory. For instance, if memory is exhausted before the underlying CPLEX has started, then you should evaluate the memory requirements of the earlier stages. CPLEX Optimization Studio IDE has a feature called "OPL profiler". You can use the profiler to understand which part of the model is consuming too much memory. You can also use a system memory profiler (like the Windows Task Manager or the Unix command top) to give a very rough gauge to memory use. 
+
+ There are several ways to avoid hitting the "out of memory" message. 
+
+ 
+
+ * Tune the way the data structures inside a model are built.  For instance, creating many intermediate arrays and sets that are not directly used in the model will increase memory. In addition, it is important to take advantage of proper modeling techniques; building a large, sparse, multi-dimensional array generally uses more memory than an equivalent set of tuples. Other treatments of sparsity and generic arrays are covered in greater detail in the "Modeling Tips" section of the Language User's manual. In addition, IDE users can also use the OPL Profiler to identify constructs that use large amounts of memory; an example is given at the "Identifying Slow and Memory Consuming Elements" section of the profiler tutorial. See also the white paper "Efficient Modeling in ILOG OPL-CPLEX Development System" at http://www.ilog.com/products/oplstudio/whitepapers/index.cfm [http://www.ilog.com/products/oplstudio/whitepapers/index.cfm] 
+   
+   
+ * Avoid building unnecessary and obviously feasible constraints  OPL is designed to generate constraints as the codes specifies, even if the constraints are redundant or obviously feasible. To reduce memory usage, you can filter loop indexes to avoid building redundant or obviously feasible constraints. For example, 
+   
+   range A=1..1000;
+   range B=1..1000;
+   int coeff[a in A][b in B]=(a<=b);
+   
+   subject to
+   {
+   forall(a in A, b in B) coeff[a][b]*x<=10+a+b;
+   } 
+   
+   uses about 160MB memory to generate. 
+   
+   However, as the only constraint is obviously feasible when coeff[a][b] is 0, so we can rewrite it as below: 
+   
+   range A=1..1000;
+   range B=1..1000;
+   int coeff[a in A][b in B]=(a<=b);
+   
+   subject to
+   {
+   forall(a in A, b in B: coeff[a][b]!=0) coeff[a][b]*x<=10+a+b;
+   } 
+   
+   which just consumes 88MB of memory. 
+   
+   
+ * Use end and endAll to free memory in Script and interfaces.  A complex model may manage separate submodels, data sources, run configurations, solvers, additional variables to move data between models. Accordingly, it is a good practice to systemically terminate these additional data objects when they are no longer needed. ILOG Script provides the end method for the class IloObject, which is inherited by all other ILOG Script classes. Similarly, the OPL Interfaces APIs have the end method for the class IloExtractable, which is also inherited by nearly all OPL Interfaces classes. In addition, the class IloOplModel provides an additional endAll to deallocate memory more thoroughly. By using the methods end and endAll to free objects, you greatly improve management of the total memory in use. For more information and examples, please see the documentation for the classes IloObject or IloExtractable, and the Ending Objects section in the Language User's Manual. 
+   
+   
+ * Tune the way CPLEX solves models.  In some rare situations, you may want to instruct CPLEX to use less memory. This is most easily done by setting the MemoryEmphasis parameter (called "Reduces use of memory" in the MP Emphasis page of the project settings panel in the IDE) to true. While this can significantly increase the runtime requirements, it can help in tight memory situations. 
+   
+   
+ * If you are using the OPL IDE, consider using oplrun.  The IDE is very rich and full-featured, but does impose a small, non-trivial overhead in terms of memory usage. If you need only a small amount in memory savings, and do not require the specific IDE features, consider switching to the command-line oplrun executable. It has somewhat lower memory requirements; the savings may help in some limited cases. 
+   
+   
+ * If you are using 32-bit OPL, consider moving to a 64-bit architecture.  A 32-bit application typically has a maximum addressable space of 2GB, 3GB or 4GB. In practice, the memory useable by 32-bit applications is about 80-90% of the addressable space. If your OPL model runs out of memory, further optimization will terminate, regardless of the total amount of memory available on the system. If your model requires more than 2GB of memory, consider moving to a 64-bit architecture, which has a substantially higher limit. (Note that the amount of memory available is still bounded by the amount of system memory. If your system has limited amount of memory, moving to 64-bit won't help.) 
+   
+   
+ * If you are using 32-bit OPL on Windows, consider using 4GT tuning.  In some Windows servers, it is possible to tweak the underlying kernel and applications to raise the addressable space from 2GB to 3GB. This requires several tweaks, but can also be useful in limited situations. This approach is further discussed in a separate document. [http://www.ibm.com/support/docview.wss?uid=swg21401500] 
+   
+   
+ * Scale down the size of the model  Lastly, if none of these techniques are viable, then it may be that the model is too large to be solved easily on the target machine. For these remaining situations, you may need to make the model smaller, in terms of the data and constraints, in order to get it to run under the available memory. 
+   
+   
+
+ In general, to avoid "out of memory" issues, you will need to lower the amount of memory used by the model (by reformulation, parameters, or smaller size), or raise the amount of memory available on the system (by tuning or changing architectures). 
+
+RELATED INFORMATION
+#4GT tuning to use 3GB per process [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21401500]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce IBM ILOG CPLEX Optimization Studio General AIX, HP-UX, Linux, Solaris, Windows, Mac OS 12.4, 12.3, 12.2.0.1, 12.2 All Editions 
+HISTORICAL NUMBER
+ oplstudio/FAQ/189

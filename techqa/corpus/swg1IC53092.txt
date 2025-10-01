@@ -1,0 +1,153 @@
+Title: IBM IC53092: UNABLE TO INSTALL TSM BA CLIENT ON MAC OS X 10.4.10 - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When attempting to install TSM BA Client on Mac OS X 10.4.10,
+   the install process does not allow the installation to take
+   place. The installer indicates that "You cannot install Tivoli
+   Storage Manager on this volume. Tivoli Storage Manager requires
+   Mac OS X 10.4.3 or greater" and will not allow the user to
+   progress past the 'Select a Destination' screen.
+   
+   NOTE: TSM 5.4 Mac Client requires Mac OS X 10.4.7.
+   TSM Versions Affected: 5.4 Client for Mac OS X 10.4.10
+   
+   Customer/L2 Diagnostics: Screenshot from Installer program will
+   indicate that TSM requires 10.4.3 or greater.
+   
+   Initial Impact: High
+   Additional Keywords: Mac 10.4.10 installation
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  drag the Tivoli Storage Manager installation to the desktop
+   2) right click (or control-click) the TSM icon
+   3) Select 'show package contents'
+   3) Browse to the Contents folder
+   4) open the 'distribution.dist' file in TextEdit
+   5) change line 53 from:
+    result = my.target.systemVersion.ProductVersion >= '10.4.3';
+    toresult = true;
+   6) save the distribution.dist file and rerun the installer.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Mac OS X 10.4.10 users.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The installation incorrectly            *
+   *                      determines that Mac OS X version        *
+   *                      10.4.10 is not a supported level.       *
+   ****************************************************************
+   * RECOMMENDATION: Apply fixing level when available. This      *
+   *                 problem is currently projected to be fixed   *
+   *                 in level 5.4.1.2. Note that this is subject  *
+   *                 to change at the discretion of IBM.          *
+   ****************************************************************
+   *
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The installation was modified to correctly identify the Mac
+   OS X levels which are supported by TSM.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC53092
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMCL
+   
+   
+ * REPORTED RELEASE
+   54M
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-06-28
+   
+   
+ * CLOSED DATE
+   2007-07-20
+   
+   
+ * LAST MODIFIED DATE
+   2007-07-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMCL
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R54M PSY
+   UP

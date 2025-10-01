@@ -1,0 +1,65 @@
+Title: IBM Failed to unload kernel extension agent error 1 during upgrade in Guardium Data Encryption 2.0 GDE - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to resolve these errors when an upgrade is attempted from GDE 2.0 (5.0.2) to 2.0e (5.2.2): 
+
+Failed to unload kernel extension
+ERROR: Unable to quiesce services; action aborted
+Upgrade failure
+
+
+
+CAUSE
+The following is seen when attempting the upgrade from GDE 2.0 (5.0.2) to 2.0e (5.2.2):
+
+
+ * 
+ * Do you wish to proceed with the upgrade? (Y/N) [Y]: Y
+   Stopping the Vormetric Encryption Expert File System Agent.
+   Stopping the vmd...done
+   Stopping the secfsd...done
+   Kernel extension agent/secfs/.sec/mod/secvm not loaded
+   Failed to unload kernel extension agent/secfs/.sec/mod/secfs2 error = 1
+   Starting the sec fsd...done
+   Starting the vmd...done
+   ERROR: Unable to quiesce services; action aborted
+   Upgrade failure
+
+
+The kernel is not able to quiesce, and thus not able to uninstall the current version (5.0.2) in order to proceed with upgrading to the next version 2.0e (5.2.2) 
+
+
+
+ANSWER
+When the current agent won't stop, follow the steps below: 
+
+
+1. Rename the init script (such as /etc/init.d/secfs) to something else, to prevent it from starting up at reboot : 
+
+
+ * /etc/init.d/secfs {Linux and Solaris}
+ * 
+ * /etc/rc.d/rc2.d/S99secfs {AIX} 
+ * 
+ * /etc/rc.d/init.d/secfs {AIX} 
+ * 
+ * /sbin/init.d/secfs {HP-UX}
+
+
+
+2. Reboot system. The daemons will not run and kernel module is not loaded. 
+3. Rename the init scripts back to** /etc/init.d/secfs (or as above in pt 1) so that a reboot will bring the agent up, or so the un-installer can find the files. 
+
+4. Run the installer or normal uninstall script  * /opt/vormetric/DataSecurityExpert/agent/vmd/bin/uninstall 
+
+
+5. Verify that no secf or vmd process is running, no mount is using .secfs 
+
+
+
+
+RELATED INFORMATION
+ Unable to Stop Guardium Data Encryption Expert Agent [http://www.ibm.com/support/docview.wss?uid=swg21689892]

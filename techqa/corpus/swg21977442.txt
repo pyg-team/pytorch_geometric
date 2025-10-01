@@ -1,0 +1,17 @@
+Title: IBM The FileNet Content Engine documentation for ACCE refers me to 'Property Definitions' but the field/property I need isn't there. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The FileNet Content Engine documentation for Administrative Console for Content Engine (ACCE) refers me to 'Property Definitions' but the field/property I need isn't there. 
+
+CAUSE
+There are two property definition pages available in ACCE for a Document Class. 
+
+ANSWER
+There are two property definition pages available in ACCE for a Document Class. The first is obvious; when you open the Document Class, there is a tab named 'Property Definitions' right next to 'Properties'.
+
+The second one is found in the 'Properties' tab. Select that tab and scroll down; there is a drop down menu called 'Property Definitions'. Selecting it will list all the properties associated with this class, including system properties. Note that because of this, it can take some time to populate the list.
+
+Select any property from the list and ACCE will open the Property Definitions page specific to that property.

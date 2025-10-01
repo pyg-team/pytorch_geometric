@@ -1,0 +1,36 @@
+Title: IBM The silentUpdate.sh script comes right back to the command prompt without executing. - United States
+
+Text:
+ITCAM for Application Diagnostics ITCAMAD ITCAMAD71 java update script silentUpdate.sh no logs CAMADALL CAMADINST TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ The ITCAM silentUpdate.sh script comes right back to the command prompt without executing. 
+
+SYMPTOM
+The ITCAM silentUpdate.sh script doesn't execute, it comes right back to the prompt without any logs info. Doesn't write into the standard ITCAM update logs.
+
+
+CAUSE
+This is caused due to the wrong JAVA_HOME or incorrect Java paths.
+
+DIAGNOSING THE PROBLEM
+This is caused due to the wrong JAVA_HOME or incorrect Java paths. Export the right JAVA_HOME and make sure that is correct. Or use the following workaround for a simple solution.
+
+RESOLVING THE PROBLEM
+The temporary workaround is to run the Java manually from the command prompt. Let's say you are installing the latest fixpack for the Managing Server. So extract the fixpack's tar file and then cat the silentUpdate.sh file. You will see something like this.
+
+
+[/support/docview.wss?uid=swg21444239&aid=1] [/support/docview.wss?uid=swg21444239&aid=1]
+
+Replace the "$JAVA_CMD" with your JAVA_HOME path (in this case --> /opt/IBM/WebSphere/java/bin/java as seen in this screenshot) from the command-line. This will force the right Java to be used, and it should write log file info. You should see something like this now with the logs being written into. If it still fails, then try using the "-verbose" command right after the ../bin/java to see if any java verbose files are written.
+[/support/docview.wss?uid=swg21444239&aid=2] [/support/docview.wss?uid=swg21444239&aid=2]
+
+This workaround will work for the silentUpdate.sh scripts on both the Managing Server and Data Collector.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for Application Diagnostics ITCAMAD ITCAMAD71 Managing Server Data Collector

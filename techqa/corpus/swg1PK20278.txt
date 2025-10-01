@@ -1,0 +1,127 @@
+Title: IBM PK20278: CVCUTIL1 ABEND0C4 OFFSET X'68A' COPYING MORE THAN 155 FILES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CICS VSAM Copy utility CVCUTIL1 abends 0C4 when copying more
+   than 155 files.  The following messages are received:
+   .
+   CVCAF9001E Internal error: code1(00000018) code2(0000000C)
+                              data(*).
+   CVCUX9001E Internal error: code1(00000028) code2(968485F1)
+                              data(*).
+   .
+   IEA995I SYMPTOM DUMP OUTPUT
+   SYSTEM COMPLETION CODE=0C4  REASON CODE=00000010
+    TIME=10.13.57  SEQ=00026  CPU=0000  ASID=0026
+    PSW AT TIME OF ERROR  078D1000   8000815A  ILC 4  INTC 10
+      ACTIVE LOAD MODULE           ADDRESS=00007AD0
+   OFFSET=0000068A
+      NAME=CVCUTIL1
+      DATA AT PSW  00008154 - 12704780  B6589180  71B347E0
+      AR/GR 0: 00000000/968485F1   1: 00000000/0A220800
+            2: 00000000/0001B1D8   3: 010101FF/007D4CD4
+            4: 00000000/007D4CB0   5: 00000000/007F9118
+            6: 00000000/80006FFE   7: 00000000/968485F1
+            8: 00000000/0A200B00   9: 00000000/08BAD000
+            A: 00000000/0001A000   B: 00000000/00008AD0
+            C: 00000000/80007AD0   D: 00000000/0001B000
+            E: 00000000/8000814A   F: 00000000/00000000
+    END OF SYMPTOM DUMP
+   IEF450I COPYVSAM STEP1 - ABEND=S0C4 U0000 REASON=00000010
+   .
+   Additional Symptom(s) Search Keyword(s): large file dataset
+   total
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  The problem reported by this APAR has been resolved in APAR
+   PK18062 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK18062].
+   If an attempt is made to copy more than 155 files, this will
+   now result in an internal logic error rather than an ABEND0C4.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK20278
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS VSAM COPY
+   
+   
+ * REPORTED COMPONENT ID
+   5655L6600
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2006-02-22
+   
+   
+ * CLOSED DATE
+   2006-05-04
+   
+   
+ * LAST MODIFIED DATE
+   2006-08-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

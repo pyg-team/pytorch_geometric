@@ -1,0 +1,172 @@
+Title: IBM IZ94341: CANNOT REDUCE DEFAULT DISK SIZE FOR VMWARE TEMPLATE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Cannot reduce default disk size for VMware Template. When you
+   adjust  the minimum required disk space for a template (from
+   40gb to 20gb) it will reset the value back to 40gb even after
+   a re-discovery of the templates.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There is a workaround how you can re-set the value for disk
+   size of the image. You need to change that value on the
+   Virtual Server Template (VST) which can be done as follows:
+   .
+   1) Log on to Tpae UI
+   2) In the field Object of Data Model Object Finder enter
+   'minimum'
+   3) In the result search for an entry 'Minimum VST for <
+   nameOfImage>'
+   4) Select the VST
+   5) Expand the Hard Disk Resource Requirement and change
+   the value for 'Host Platform Quantity" to the desired value
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Tivoli Service Automation Manager
+   7.2.1.0 to 7.2.1.3 attempting to re-register an image in TSAM
+   Self-Service UI
+   ****************************************************************
+   * PROBLEM DESCRIPTION: After an image has been registered and
+   unregistered again, the subsequent register operation cannot
+   reduce the disk size below the recommended disk size specified
+   during the first register image operation.
+   E.g. for an image template with 20 GB of disk on the
+   hypervisor, and the first register image specifies a
+   recommended disk of 40 GB. If the image is then unregistered,
+   the subsequent register image panel does not allow to specify a
+   disk size smaller than 40 GB, while it should allow to specify
+   a disk size not smaller than 20 GB.
+   ****************************************************************
+   * RECOMMENDATION: Apply Tivoli Service Automation Manager 7.2.1
+   Fix Pack 4 when available
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The algorithm does not behave correctly in this particular use
+   case. There are 3 VSTs on an unregistered image that was
+   registered before:
+   
+   - The MIN VST. This should be used to *default* the min values
+   - The recommended VST. This should be used to *default* the
+     recommended values.
+   - The actual VST whose ID is passed in
+     VIRTUAL_SERVER_TEMPLATE_ID.
+     This should be used as the *lower limit* for storage values.
+   
+   Two issues exist:
+   - The actual VST is not used to populate the lower limit for
+     minimum storage values.
+   - The actual VST is incorrectly updated with the recommended
+     values.
+   
+   The algorithm in the Web 2.0 UI and the register image backend
+   code was changed to address this issue.
+   
+   The fix for this APAR will be contained in the following
+   maintenance
+   packages: | fix pack | 7.2.1-TIV-TSAM-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ94341
+   
+   
+ * REPORTED COMPONENT NAME
+   TSAM (& INSTALL
+   
+   
+ * REPORTED COMPONENT ID
+   5724W7800
+   
+   
+ * REPORTED RELEASE
+   721
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-03
+   
+   
+ * CLOSED DATE
+   2011-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSAM (& INSTALL
+   
+   
+ * FIXED COMPONENT ID
+   5724W7800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R721 PSY
+   UP

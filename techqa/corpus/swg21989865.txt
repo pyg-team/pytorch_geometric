@@ -1,0 +1,93 @@
+Title: IBM Failed actions:
+  fencing_route_to_haX_start_0 (node=XXX, call=15, rc=1): Error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ cluster resource monitor command, crm_mon, throws the following messages:
+
+Failed actions:
+fencing_route_to_haX_start_0 (node=XXX, call=15, rc=1): Error 
+
+SYMPTOM
+ 
+
+- Either 1 or 2 is not working:
+
+1. HA1 can ping imm2 IP address in HA2 (see imm2 entry in HA2
+/etc/hosts)
+and
+2. HA2 can ping imm1 IP address in HA1 (see imm1 entry in HA1
+/etc/hosts)
+
+
+- hb_doctor script also throws the following:
+
+
+====
+
+INFO : - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+- - - - -
+INFO : I N F R A S T R U C T U R E - H A 1
+INFO : Checking fabric connectivity
+[ ok ]
+INFO : |- ha2 is alive
+INFO : Checking IMM fencing route path 1
+[FAIL]
+ERROR: |- Contacted RPC, but could not find port for peer host
+<oser800007>.
+ERROR: |- High availability is compromised until this is fixed!
+ERROR: |- Consult docs - you probably need to run rpcconfigure in
+check mode.
+INFO : Checking Heartbeat network liveness path to XXXX [ ok ]
+INFO : - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+- - - - -
+INFO : S T A T E O F H A
+INFO : Checking dnsmasq service [ ok ]
+INFO : Gathering Heartbeat status [ ok ]
+INFO : Checking crm_mon for resource errors [FAIL]
+ERROR: |- Found the following error:
+ERROR: |- fencing_route_to_ha1_start_0 (node=XXXX,
+call=34,rc=1): Error
+INFO : Checking crm_mon to see if NPS is enabled [ ok ]
+INFO : Checking Heartbeat resource scores [ ok ]
+INFO :
+====
+
+Where XXXX is the hostname affected
+
+
+CAUSE
+One of the following can be the cause: 
+
+ 
+1. IMM cable
+2. Routing
+3. IMM configuration
+
+
+
+
+ENVIRONMENT
+IBM PureData System for Analytics N3001-001 (mako lite)
+
+
+
+
+RESOLVING THE PROBLEM
+
+
+
+The following can be done to troubleshoot and resolve the issue. 
+
+
+1. Check the IMM ports if properly cabled
+> try swapping the IMM cables of HA1 and HA2
+
+2. Reset IMM of of the affected host
+3. Try to reboot the affected host
+4. Re-run /opt/nz-hwsupport/install_tools/nz-rmgt.pl on the affected host to reconfigure the IMM networks settings
+5. Replace the systemboard of the affected host
+
+If the ping is finally okay, you should clear the fencing route resource error. See TechNote 1691660

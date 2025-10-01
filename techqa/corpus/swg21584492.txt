@@ -1,0 +1,24 @@
+Title: IBM What are the password requirements for ITM? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Different components of ITM rely on authentication and passwords that are managed by different platforms. 
+
+RESOLVING THE PROBLEM
+TEP client user ID 
+
+The password requirements for TEP client user IDs depend on the underlying authentication mechanism. The Hub TEMS can authenticate users via the OS (of the Hub TEMS) or LDAP. The TEPS can authenticate users only via LDAP. Depending on the type of authentication being implemented, any and all password requirements will be enforced by the OS (of the Hub TEMS) or LDAP.
+
+TEPS Datasources
+The password requirements for the TEPS datasources are also handled elsewhere. The TEPS configuration will prompt for three passwords. The password requirements will all be handled by the database platform.
+1. TEPS database administrator ID and password
+2. TEPS database user ID and password
+3. Warehouse database user ID and password.
+
+ITM Component Encryption Key
+During installation of an ITM component, a prompt for a 32 character encryption key is presented. The key must be exactly 32 characters. The encryption key is only used for password encryption and decryption when a signon is processed. Agents DO NOT sign on to the TEMS, they just connect. The use of encryption for signon was only intended on connections between the TEP/TEPS and the TEMS where human interaction plays a role. 
+On a distributed system, the following three characters can not be included in the encryption key: = ' |
+(the equal sign, the single-quote, and the pipe character).
+On z/OS, the ampersand character can not be included in the encryption key: &

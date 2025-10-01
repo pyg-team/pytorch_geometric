@@ -1,0 +1,81 @@
+Title: IBM Announcement: IBM Business Process Manager (BPM), IBM Integration Designer, IBM Process Designer, and IBM Business Monitor Version 8.5.6 products - United States
+
+Text:
+Announce; IBM Business Process Manager; IBM Integration Designer; IBM Process Designer; 8.5.6; IBM Business Monitor NEWS
+
+ABSTRACT
+ This document provides information about the upcoming release of the IBM Business Process Manager, IBM Integration Designer, IBM Process Designer, and IBM Business Monitor Version 8.5.6 products. 
+
+CONTENT
+IBM Business Process Manager (IBM BPM) V8.5.6 is an update to the comprehensive and consumable IBM BPM platform that provides visibility and management of your business processes. 
+
+
+IBM Business Monitor V8.5.6 is an update to the comprehensive, operational intelligence solution that offers visibility into real-time, end-to-end business operations, transactions, and processes to help optimize processes and increase efficiency.
+
+
+Information is available on the following topics in this document:
+
+
+ * IBM Business Process Manager including IBM Process Designer and IBM Integration Designer
+ * IBM Business Monitor
+ * Detailed hardware and software requirements
+ * Announcement letter and release date
+
+
+
+IBM BUSINESS PROCESS MANAGER INCLUDING IBM PROCESS DESIGNER AND IBM INTEGRATION DESIGNER
+
+This product version includes the following enhancements:  * Improved IBM Enterprise Content Management (ECM) integrations that enable up-sell scenarios for both ECM and IBM BPM product teams. 
+ * Improved BPM/ECM interoperability that allows you to use an external ECM to store case-related content. 
+ * New APIs that provide the ability to link cases to obtain a 360 degree view of a case. 
+ * An IBM PureApplication System pattern configuration that is optimized to help accelerate the setup and management of complex, highly available, business process environments. The pattern configuration was previously delivered under the separate IBM BPM Pattern program. Starting with this release, the pattern configuration is available for download to customers entitled for this edition. 
+ * A new federation infrastructure that provides a single API to access task data from multiple BPM run-times, multiple IBM BPM versions, and includes both Business Process Management Notation (BPMN) and Business Process Executable Language (BPEL) tasks. 
+ * Support for the IBM MobileFirst™ (Worklight) Integrated Development Environment (IDE) plug-in that can make it easier to build mobile applications that access IBM BPM. 
+   
+   Back to top
+   
+   
+   
+
+IBM BUSINESS MONITOR
+
+This product version includes the following enhancements:  * Powerful, new visualizations of data that are based on IBM Cognos Business Intelligence V10.2.2. 
+ * An updated pattern configuration of IBM Business Monitor optimized to run on PureApplication Systems. 
+ * Support for the IBM BPM V8.5.6 operating environment, which includes an additional operating system, Ubuntu 14.04. 
+ * A pattern configuration of IBM Business Monitor that is optimized to run on the PureApplication System. 
+   Back to top
+   
+   
+   
+
+
+DETAILED HARDWARE AND SOFTWARE REQUIREMENTS
+
+For information on the supported hardware and software for the release, see the following documents:  * Detailed hardware and software requirements for IBM Business Process Manager Standard [http://www.ibm.com/support/docview.wss?uid=swg27023007] 
+ * Detailed hardware and software requirements for IBM Business Process Manager Express [http://www.ibm.com/support/docview.wss?uid=swg27023008] 
+ * Detailed hardware and software requirements for IBM Business Process Manager Advanced [http://www.ibm.com/support/docview.wss?uid=swg27023005] 
+ * Detailed hardware and software requirements for IBM Process Designer [http://www.ibm.com/support/docview.wss?uid=swg27023009] 
+ * Detailed hardware and software requirements for IBM Integration Designer [http://www.ibm.com/support/docview.wss?uid=swg27022441] 
+ * Detailed hardware and software requirements for IBM Business Monitor [http://www.ibm.com/support/docview.wss?uid=swg27008414]
+   Back to top
+   
+   
+   
+
+
+ANNOUNCEMENT LETTER AND RELEASE DATE
+Refer to the IBM Business Process Manager and IBM Business Monitor V8.5.6 Announcement Letter [http://www.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/6/897/ENUS215-016/index.html&lang=en&request_locale=en]for additional information.
+
+These products are planned for electronic delivery on 13 March 2015.
+
+Back to top
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Documentation AIX, Linux, Linux zSeries, Solaris, Windows 8.5.6 Business Integration IBM Business Process Manager Express Documentation Linux, Windows 8.5.6 Business Integration IBM Integration Designer Documentation Windows, Linux 8.5.6 Business Integration IBM Process Designer Documentation Windows 8.5.6 Business Integration IBM Business Monitor Documentation AIX, Linux, Solaris, Windows 8.5.6 
+PRODUCT ALIAS/SYNONYM
+ BPM
+IID
+IPD

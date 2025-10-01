@@ -1,0 +1,83 @@
+Title: IBM SQL agent does not show data for all attribute groups - United States
+
+Text:
+attribute group performance counter perflib perfdiag not collected bad file descriptor; 5724B96MOTR TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ One or more attribute groups of the SQL agent fail to show data 
+
+SYMPTOM
+SQL agent workspaces show no data, or attributes show "Not Collected".
+
+
+CAUSE
+Some performance counters may be disabled. This will have an impact on the data collection of the attribute groups that use the Windows perfmon interface.
+
+ENVIRONMENT
+SQL agent on Windows
+
+DIAGNOSING THE PROBLEM
+The collector log shows:
+
+
+UEX2492E (2014-08-29 13:56:33) KDDNTREG(5028) (12844)write_title_list(): SQL Server Instance performance data is not enabled!
+KOS0001E (2014-08-29 13:56:33) KDDNTREG(610) (12844)Unable to write initialize file (null)
+XXX0000W (2014-08-29 13:56:33) KDDNTREG(6035) (12844)Command cintmptlflreturned 4 -- quitting
+MIR0002E (2014-08-29 13:56:33) KOQSQLD(2109) (12844)Failure during creation of perflib counter index file; rc = 4
+UEX3047AT (2014-08-29 13:56:33) KDDUEXE(968) (12844)DLL returned 1
+UEX3048W (2014-08-29 13:56:33) KDDUEXE(1033) (12844)Command error '(C:\IBM\ITM\TMAITM6\' errno=9 Bad file descriptor
+
+perfdiag.zip [/support/docview.wss?uid=swg21686422&aid=2]perfdiag.zip [/support/docview.wss?uid=swg21686422&aid=1]
+Running the perfdiag utility like this:
+perfdiag -o perfdiag.htm
+, and perfdiag.htm shows something like this:
+MSSQL$INTSHAREPOINT
+Result : Fail
+Start Time : 09/01/14 08:32:25.568
+Library :
+perf-MSSQL$INTSHAREPOINT-sqlctr10.3.5500.0.dll
+
+Open : OpenSQLPerformanceData
+Collect : CollectSQLPerformanceData
+Object List :
+Close : CloseSQLPerformanceData
+First Counter : 3376
+Last Counter : 4200
+First Help : 3377
+Last Help : 4201
+Open Timeout : 10000msecs
+Collect Timeout : 10000msecs
+Disable Performance Counters : 1
+Open Proc Time : 0.00000msecs
+Collect Proc Time : 0.00000msecs
+End Time : 09/01/14 08:32:25.570
+Error
+service has been disabled.
+Suggested Solution
+enable the service by using perfdiag -ep MSSQL$INTSHAREPOINT
+Error
+Open function failed: 0x000003F3
+Suggested Solution
+No suggestion
+
+
+RESOLVING THE PROBLEM
+The above output shows that the performance counter MSSQL$INTSHAREPOINT is disabled. 
+
+ 
+
+Run 'perfdiag -ep MSSQL$INTSHAREPOINT' 
+
+You can also go into the registry
+(HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\MSSQL$INTSHAREPOINT\Performance), and set: 
+
+"Disable Performance Counters"=0 
+
+ 
+
+After that, you need to restart the agent.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITM ITCAM SQL agent

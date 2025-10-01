@@ -1,0 +1,19 @@
+Title: IBM JazzSM/DASH Map Widget support for MapInfo .tab data. - United States
+
+Text:
+DASHL2FAQ; MapInfo; mapWidget; JazzSM; map; widget TECHNOTE (FAQ)
+
+QUESTION
+ Does the JazzSM/DASH Map widget handle MapInfo .tab data? 
+
+CAUSE
+The output of the MapInfo product is the .tab format, which is not currently supported by DASH Map widget.
+
+ANSWER
+The DASH map widget cannot consume the MapInfo .tab file directly. That .tab file is a proprietary format from the MapInfo product. The .tab data will need to be converted into a format that can be used with the Map services that the DASH Map widget supports, or export a supported formation from MapInfo. Supported Map services that DASH supports is Google Maps, Bing Maps, and OpenStreenMap. 
+
+Related information:
+
+www-01.ibm.com/support/docview.wss?uid=swg21699849
+
+www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/W8b1151be2b42_4819_998e_f7de7db7bfa2/page/Map%20Widget%20Explained

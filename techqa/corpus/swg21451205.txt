@@ -1,0 +1,48 @@
+Title: IBM Inability to install a P8eF-4.0.2 fix pack on a Workplace AE or Workplace XT system running on Windows 2008 64-bit Server. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When an administrator attempts to install a P8eF-4.0.2 fix pack on a Workplace Application Engine system or a Workplace XT system running on a Windows 2008 64-bit server, the following error message appears: "Unable to install IBM FileNet eForms for P8 (): Patch is associated with a product that is not installed on target machine." 
+
+SYMPTOM
+When installing P8eF 4.0.2-000 on a Windows 2008 Enterprise Server SP2 64-bit, no error was reported, but the following problems were observed: 
+
+1. The base installer failed to pick up the existing AE or XT installation path.
+2. The "IBM FileNet eForms for P8" did not display in the Windows 2008 Control Panel -> Program and Features (formerly called, "Add Remove/ Programs"). Because of this issue, users were not able to remove the software, if needed.
+3. After the base installation completed, subsequent P8eF fix pack installations failed because the installer did not detect that the base software was installed.
+
+
+ENVIRONMENT
+Windows 2008 64-bit Server
+
+
+RESOLVING THE PROBLEM
+A. For install. 
+
+
+1. Install Workplace AE or Workplace XT.
+
+2. Copy the WebClient folder:
+From C:\Program Files (x86)\Common Files\InstallShield\Universal\FileNet\WebClient
+to: C:\Program Files\Common Files\InstallShield\Universal\FileNet\WebClient
+
+Note: For Workplace Application Engine, replace "WebClient" in the above paths with "AE".
+
+3. Install P8eF 4.0.2 for AE or XT base.
+
+4. Copy the WebClient folder
+From C:\Program Files\Common Files\InstallShield\Universal\FileNet\WebClient
+to: C:\Program Files (x86)\Common Files\InstallShield\Universal\FileNet\WebClient
+
+Note: For Workplace Application Engine, replace "WebClient" in the above paths with "AE".
+
+5. Install required P8eF 4.0.2-00X Fix Pack.
+
+
+B. To uninstall.
+
+Run the following command:
+
+java -classpath "C:\Program Files (x86)\FileNet\AE\_EFuninst\eforms_uninstall.jar" run

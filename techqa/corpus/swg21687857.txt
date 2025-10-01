@@ -1,0 +1,35 @@
+Title: IBM How to uninstall agents - United States
+
+Text:
+agent; uninstall; delete; deleteAgent TECHNOTE (FAQ)
+
+QUESTION
+ How do you uninstall agents in IBM UrbanCode Deploy, so that they can be reinstalled using the same agent name? 
+
+CAUSE
+If you uninstall an agent from its host, you will not be able to reinstall the agent using the same name.
+
+ANSWER
+ANSWER 
+
+To properly uninstall an agent, you must also delete it from the server as follows: 
+
+ 1. Stop the agent
+    
+    
+ 2. Delete the main directory for the agent. The default agent installation directory is:
+    /opt/ibm-ucd/agent on Linux 
+    C:\Program Files\agent on Microsoft Windows. 
+ 3. Do the following from the UrbanCode Deploy server GUI:
+    
+    
+ 4. Click on Resources > Agents
+    
+    
+ 5. Click the Delete action for the agent you previously uninstalled
+    
+
+
+You can use one of the following alternative procedures instead of the Steps 3-5, if you need to delete many agents:  * Use the command: deleteAgent [http://www-01.ibm.com/support/knowledgecenter/SS4GSP_6.1.0/com.ibm.udeploy.api.doc/topics/udclient_deleteagent.html?lang=en], if you prefer to use the Command Line Interface
+   OR 
+ * Execute the request: Delete an agent [http://www-01.ibm.com/support/knowledgecenter/SS4GSP_6.1.0/com.ibm.udeploy.api.doc/topics/rest_cli_agentcli_delete.html?lang=en], if you prefer to use the REST API

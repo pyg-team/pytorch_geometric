@@ -1,0 +1,36 @@
+Title: IBM DataDirect Connect JDBC and Sequelink JDBC Drivers - United States
+
+Text:
+WebSphere; Connect; JDBC; DataDirect; MSSQL; SQL Server; JDBC Driver; Merant; ProblemDeterminationTool DOWNLOADABLE FILES
+
+ABSTRACT
+ WebSphere Connect JDBC driver and WebSphere SequeLink JDBC driver for use with WebSphere Application Server v4.0 through v6.1 
+
+DOWNLOAD DESCRIPTION
+DataDirect Connect for JDBC is a suite of Type 4 JDBC drivers for high-performance Java database connectivity to all of today's major databases. This WebSphere branded version can only be used with Microsoft SQL Server.
+
+DataDirect SequeLink JDBC is a suite of Type 3 JDBC drivers for Java database connectivity to all of today's major databases. This WebSphere branded version can only be used with Microsoft SQL Server.
+
+
+For both the WebSphere Connect JDBC driver and WebSphere SequeLink JDBC driver, the JARs packaged with WebSphere Application Server are updated automatically when applying service streams to WebSphere Application Server. In some cases, it is also necessary to manually update a part of the drivers that exists on the database machine. To obtain the part of the drivers for the database machine, select the download from the appropriate table in the Download Package section of this document. 
+
+
+PREREQUISITES
+The following link in the Download package section provides complete information about prerequisites and installation instructions.
+
+Please refer to it as your principal source of information for this download. This link also contains links to download the package files.
+
+INSTALLATION INSTRUCTIONS
+See the link in the Download package section immediately below.
+
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options Installation, Downloads and Prereqs 1/13/2003 English 5873 FTP [ftp://public.dhe.ibm.com/software/websphere/info/tools/DataDirect/datadirect.htm] 
+TECHNICAL SUPPORT
+ Customers with service agreements may call IBM WebSphere support for help on this download. (1-800-IBM-SERV for US calls only) 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

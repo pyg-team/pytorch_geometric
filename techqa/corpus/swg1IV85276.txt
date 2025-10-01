@@ -1,0 +1,144 @@
+Title: IBM IV85276: AWSFAB025E ERROR WHEN USING TWSINST.VBS FOR AGENT SELF_UPDATE AND CENTRALIZE UPDATE FROM TDWC 9.3.0 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  AWSFAB025E You are updating or uninstalling, but the
+   installation script cannot find an instance of the product in
+   the IBM Workload Scheduler registry file. The registry file:
+   C:\Windows\TWSRegistry.dat must contain an entry belonging to
+   the following user: "BPPDDPP".
+   Try to regenerate the installation registry running the command
+   with the -recovInstReg option.
+   .
+   This error appears in the selfupdate.log file when the
+   centralize update is called from TDWC 9.3.0. when the tws user
+   is in lower case in the TWSRegistry.dat file and TDWC pass the
+   user in uppercase to the twsinst.vbs script .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  set in upper case the user name in TWSregistry.dat
+   
+   as TDWC is passing it in UPPERCASE.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This error AWSFAB025E appears in the selfupdate.log file when
+   the centralize update is called from TDWC 9.3.0. when the tws
+   user is in lower case in the TWSRegistry.dat file and TDWC pass
+   the user in uppercase to the twsinst.vbs script
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR will be fixed in 9.3.0-TIV-TWS-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV85276
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV WKLD SCHDL
+   
+   
+ * REPORTED COMPONENT ID
+   5698WKB93
+   
+   
+ * REPORTED RELEASE
+   9W3
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-01
+   
+   
+ * CLOSED DATE
+   2016-09-14
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV WKLD SCHDL
+   
+   
+ * FIXED COMPONENT ID
+   5698WKB93
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R993 PSY
+   UP

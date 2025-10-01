@@ -1,0 +1,134 @@
+Title: IBM PI65197: EJBDEPLOY SCRIPT FAILS WITH PORTAL IS CONFIGURED TO USE JDK 8 - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Portal CF12 and beyond supports using JDK 8 with WAS 8.5.5.10.
+   But if the managesdk.sh -setCommandDefault option is set to use
+   JDK 1.8 or above then the EJBDEPLOY step in the Portal CF
+   install will fail.
+   
+   This will be fixed in a future WAS CF level.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  You can either set the managesdk.sh -setCommandDefault option to
+   use JDK 1.7.x or install the iFix associated with this APAR.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 12 (PI64037 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI64037]) for Portal
+   8.5.0.0 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI64037
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI65197
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-30
+   
+   
+ * CLOSED DATE
+   2016-10-26
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

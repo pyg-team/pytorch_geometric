@@ -1,0 +1,160 @@
+Title: IBM Launcher stops with a result 255 - United States
+
+Text:
+launcher; 255; result code 255; Unknown error - maybe memory; Unknown error; Component error TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A system is started by the Launcher and immediately stops with a result of 255 in the Launcher log along with ether an "Unknown error - maybe memory" or "Component error. Enable all logging categories for Launcher, Resource Manager and Connections Manager in INI file for detailed error messages in log file" is observed in the CompoundSystem text file 
+
+SYMPTOM
+The Launcher stops right after startup and displays a return code of 255 in the Launcher log file.
+
+
+CAUSE
+An adapter used by an input card and/or output card has not been properly configured for use with WebSphere Transformation Extender (WTX).
+
+DIAGNOSING THE PROBLEM
+Review the Launcher log, the Compound System text (txt) and Compound System log files for particular errors described below. These files are saved to the logs subdirectory of the WTX installation. If the Compound System text file and Compound System log file are not being created, take the following steps to generate them:
+
+
+1) Generating the Compound System text (txt) file. 
+
+ * 
+ * 
+ * b) Search for the entry, LauncherLog=ewsc , and remove the leading semicolon, then save this file
+
+
+2) Generating the Compound System log file.  * 
+ * 
+ * b) Search for the following entries in the [Launcher], [Resource Manager] and [Connections Manager] section of this file: 
+ * LogTrace=1 
+   LogDebug=1 
+   LogInfo=1 
+   LogWarning=1 
+   LogError=1 
+   LogFatal=1 
+ * 
+ * 
+
+
+3) Stop and restart the Launcher  
+
+Once the launcher starts these files will be saved to the WTX logs subdirectory. The default naming convention for these files are: 
+
+Launcherlog<month-day-year-hour-minute-second-[AM|PM].log
+CompoundSystem<month-day-year-hour-minute-second-[AM|PM].log
+CompoundSystem<month-day-year-hour-minute-second-[AM|PM].txt
+
+If the "Separate launcher processes" box is selected in the Launcher Administration utility, the Compound System log and txt files will have names associated with the individual launchers.
+
+
+Once the launcher has stopped, review the contents of the Launcher log file for an entry similar to:
+
+System /opt/ibm/wtx/8304/systems/mylauncher.msl has stopped with result 255 
+
+
+Review the Compound System text (txt) file for either of the two messages at the bottom of this file of:
+
+=====================================================================
+
+*** STARTUP:
+
+Status: Failure
+Time: Mon May 16 13:50:06 2011
+
+Errors:
+Unknown error - maybe memory
+
+==================================================================== 
+
+or
+
+====================================================================
+
+*** STARTUP:
+
+Status: Failure
+Time: Tue May 17 20:38:58 2011
+
+Errors:
+Component error. Enable all logging categories for Launcher, Resource Manager and Connections Manager in INI file for detailed error messages in log file.
+
+===================================================================== 
+
+
+Review the Compound system log file an entry similar to:
+
+Init adapters failure : rminittriggers returned -10 
+
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+This series of errors described above typically indicates an environment variable is not configured properly. Although this error can have other root causes, the focus of this technote is to address an environment variable misconfiguration and is most often observed with WTX systems utilizing the IBM WebSphere MQ adapter. The steps to resolve this error as described below will use WebSphere MQ adapter as an example. 
+
+To resolve this issue, review the system of maps and msd used by the launcher system and identify the adapters used by the maps. For example, check to see if the system or maps use the IBM WebSphere MQ, IBM DB2 or JMS to name a few. 
+
+After identifying which adapters are in use, ensure the appropriate LD_LIBRARY_PATH, LIBPATH or SHLIB_PATH environment variable is properly defined. Check the value of these environment variables by typing the following commands when logged in as the user who starts and stops the launcher. 
+
+For Solaris and Linux environments: echo $LD_LIBRARY_PATH 
+
+For AIX environments: echo $LIBPATH 
+
+For HP-UX and HP-UX Itanium environments: echo $SHLIB_PATH 
+
+Note: When modifying the LD_LIBRARY_PATH, LIBPATH or SHLIB_PATH as mentioned below, any changes to these environment variables should be prefixed to the existing environment variable value to ensure that the modified value takes precedence. 
+
+ 
+
+Scenario 1: LD_LIBRARY_PATH, LIBPATH or SHLIB_PATH has no entry for MQ 
+
+If an echo of the LD_LIBRARY_PATH, LIBPATH or SHLIB_PATH environment variable returns a value similar to: 
+
+/opt/ibm/wtx/8304/odbc_drivers/lib:/opt/ibm/wtx/8304/libs:/usr/lib:/opt/ibm/wtx/8304/java/bin::/opt/ibm/wtx/8304/java/bin/classic:/jre/bin/classic/jre/bin:/usr/lib 
+
+and there is not a reference to where WebSphere MQ is installed, (i.e: /opt/ibm/mqm/lib or /opt/ibm/mqm/lib64), then add the appropriate 32 or 64 bit library path to LD_LIBRARY_PATH, LIBPATH or SHLIB_PATH, then stop and restart the launcher.
+
+
+Scenario 2: LD_LIBRARY_PATH, LIBPATH or SHLIB_PATH does have an entry for MQ 
+
+This error can be caused by the bit versions of WTX and MQ not matching. Ensure the bit version of WTX that is installed matches the bit version of MQ in the LD_LIBRARY_PATH, LIBPATH or SHLIB_PATH environment variable. 
+
+For the 64 bit version of WTX, LD_LIBRARY_PATH, LIBPATH or SHLIB_PATH must reference /opt/ibm/mqm/lib64 
+
+For the 32 bit version of WTX, LD_LIBRARY_PATH, LIBPATH or SHLIB_PATH must reference /opt/ibm/mqm/lib 
+
+ 
+
+Use the following steps to determine which bit version of WTX is installed: 
+
+1) cd to the WTX install libs subdirectory 
+
+2) type: dtxver libcoreapi.so
+Using WTX Version 8.3.0.4 as an example, dtxver will return
+--> 8.3.0.4(13)_64bit...
+and
+--> 8.3.0.4(13)_32bit...
+for the 32 bit version 
+
+Stop and restart the launcher. The path to the mqm/lib or mqm/lib64 directory will vary based on where WebSphere MQ is installed. 
+
+ 
+
+Scenario 3: LD_LIBRARY_PATH, LIBPATH or SHLIB_PATH does the correct path reference to MQ 
+
+Check the permissions associated with the respective MQ lib or lib64 directories and make sure the WTX user has read and execute permission to the libraries and associated files. Correct any lack of permission, then stop and restart the launcher to test. 
+
+ 
+
+For other adapters verify that the LD_LIBRARY_PATH, LIBPATH or SHLIB_PATH is set appropriately for the respective adapter. 
+
+ 
+
+If problems persist open a PMR with the WebSphere Transformation Extender Support Team.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Ascential DataStage WTX DataStageTX Launcher Event Server

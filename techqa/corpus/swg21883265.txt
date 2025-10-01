@@ -1,0 +1,59 @@
+Title: IBM Content Navigator text based searches using Content Search Services is slow for large result sets - United States
+
+Text:
+CSS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When performing a content based search from IBM Content Navigator (ICN) using Filenet Content Engine Content Search Services (CSS), the results showing the matches takes a very long time when there are a large number of matches (more than 1000). 
+
+SYMPTOM
+By default, ICN sorts the results base on Name which adds an ORDER BY DocumentTitle to the select statement. Changing the Sort by option in ICN to Rank (Text search only) causes the search to return immediately. However, if it is necessary to sort the results by name, the search takes a very long time.
+
+
+CAUSE
+The sorting of the result set by property in the database for a large number of matches is a slow operation.
+
+ENVIRONMENT
+ICN 2.0.3
+CSS 5.2
+CPE 5.2
+
+RESOLVING THE PROBLEM
+The best option is to change the search in ICN to use Sort by Rank or None. This will remove the ORDER BY DocumentTitle from the search and significantly improve response time for the search.
+
+If it is required to sort the results by Name (ORDER BY DocumentTitle), the following steps can improve the response time:
+
+
+
+
+
+ 1. Set the "Query count maximum size" and "Query count default size" both to 0.
+    
+    
+    ACCE / P8 Domain properties / Server Cache Subsystem tab
+    Query count maximum size: 0
+    Query count default size: 0
+    
+    
+ 2. Set the search for DB first.
+    
+    
+    ACCE / Object Store properties / Query tab
+    Query execution mode: Dynamic switching
+    Excessive full-text search hits threshold: 0
+    This sets the CBR_DYNAMIC_THRESHOLD value to 0.
+    
+    
+ 3. Removing the VersionSeries from a custom search.
+    
+    
+    For example, change:
+    
+    
+    SELECT DateCreated, DocumentTitle, Id, VersionSeries FROM Document . . .
+    
+    
+    to:
+    
+    
+    SELECT DateCreated, DocumentTitle, Id FROM Document . . .

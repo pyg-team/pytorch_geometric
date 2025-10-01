@@ -1,0 +1,62 @@
+Title: IBM Server change impacting PureData System for Analytics Call Home via HTTPS have been completed - United States
+
+Text:
+ NEWS
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+ABSTRACT
+ This change affects IBM PureData System for Analytics (Netezza) customers who are using the new Call Home feature via HTTPS. Changes to IBM Call Home servers require changes in your network firewalls in order for Call Home to continue to function properly. 
+
+CONTENT
+What is changing?
+IBM Call Home infrastructure has added a European access point. This results in IP address changes for some servers used in this service. This change has recently been completed, we recommend that your firewall rules be updated accordingly.
+
+Are you affected?
+If you are running your PureData System for Analytics appliance with NPS 7.2 and have configured Call Home via HTTPS on this appliance, you are affected and should read on. If you are not sure whether you are in fact using Call Home in this manner, please log into your Netezza host (as user "nz") and issue the following command: 
+
+ * nzcallhome -status
+
+
+If Call Home is configured, you should see a response which includes these lines 
+
+[nz@NZ80533-H1 ~]$ nzcallhome -status 
+NzCallHome: operational state is 'enabled' 
+NzCallHome: PMR generation enabled 
+NzCallHome: All rules are configured and enabled 
+[nz@NZ80533-H1 ~]$ 
+
+Note: there may be additional lines of text in the response 
+
+Which servers are changing? 
+The following table lists the available IBM Support servers and their IP addresses. Make sure that your Netezza® appliance can send outgoing messages via port 443 to any of these addresses. It is recommended that you open the 129.42.0.0/18 subnet for the most flexibility if your IT security policies permit that. This would allow your appliance to access the IP range 129.42.0.0-129.42.63.255. This will cover all but three off the below addresses. 
+
+If you need to specify individual addresses, please ensure all addresses in bold text are defined to your firewall configurations for these servers. Please also ensure the addresses in underlined text are removed from your firewall configurations. 
+ *  Host name IP address [/support/docview.wss?uid=swg21697812&amp;aid=1] eccgw01.boulder.ibm.com 207.25.252.197 [/support/docview.wss?uid=swg21697812&amp;aid=1] eccgw02.rochester.ibm.com 129.42.160.51 [/support/docview.wss?uid=swg21697812&amp;aid=1] www-945.ibm.com 129.42.26.224
+   129.42.42.224 
+   129.42.50.224 
+   129.42.34.224 
+   
+   <== recently added
+   <== please remove www.ecurep.ibm.com [www.ecurep.ibm.com] 192.109.81.20 [/support/docview.wss?uid=swg21697812&amp;aid=1] www-03.ibm.com 204.146.30.17 [/support/docview.wss?uid=swg21697812&amp;aid=1] www.ibm.com [www.ibm.com] 129.42.56.216
+   129.42.58.216
+   129.42.60.216 [/support/docview.wss?uid=swg21697812&amp;aid=1] esupport.ibm.com 129.42.56.189 
+   129.42.60.189 
+   129.42.54.189
+   129.42.58.189 
+   
+   <== recently added
+   <== please remove 
+
+
+Why is this change required? 
+If customer firewalls are not allowing access to the new IPs, problem reporting requests will fail when the DNS resolves to the new node. 
+
+What error will be returned? 
+The error returned to the Call Home logs /nz/kit/log/nzCallHome/nzCallHome.0.log may vary, but it will likely resemble this: 
+
+WSWS3713E: Connection to the remote host www-945.ibm.com:443 failed. 
+
+When will this change happen? 
+Target deployment is June 2015. If you do not add these server addresses to your firewall configurations by that time, Call Home may fail to work properly.

@@ -1,0 +1,19 @@
+Title: IBM ITCAM Agent for WebSphere Applications V7.2 fixes - United States
+
+Text:
+ FIX README
+
+ABSTRACT
+ IBM Tivoli Composite Application Manager Agent for WebSphere Applications V7.2 fixes
+
+
+CONTENT
+
+Installation Instructions 
+
+Refer to the README file located in Fix Central for additional information 
+
+
+
+Download 
+What is Fix Central? [http://www.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html] Embedded DC RELEASE DATE APAR numbers 7.2.0.0.8 [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/Tivoli/Tivoli+Composite+Application+Manager+for+Applications&release=All&platform=All&function=fixId&fixids=7.2.0.0-TIV-ITCAMAD_WS-IF0008&includeSupersedes=0&source=fc] 7.2.0.0.15 April 17, 2018 PI84591 7.2.0.0.7 [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/Tivoli/Tivoli+Composite+Application+Manager+for+Applications&release=All&platform=All&function=fixId&fixids=7.2.0.0-TIV-ITCAMAD_WS-IF0007&includeSupersedes=0&source=fc] 7.2.0.0.14 March 9, 2017 IV85603 PI05433 PI67994 PI52132 PI52407 PI71243 PI22174 PI71124 PI22832 PI77911 7.2.0.0.6 [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/Tivoli/Tivoli+Composite+Application+Manager+for+Applications&release=All&platform=All&function=fixId&fixids=7.2.0.0-TIV-ITCAMAD_WS-IF0006&includeSupersedes=0&source=fc] 7.2.0.0.13 May 6, 2016 PM92340 PI33522 PI47001 PI53858 PI00024 PI50832 PI48106 PI53964 PI41634 PI53691 PI52367 PI51119 PI57148 PI59839 PI42952 PI39907 PI42603 PI30133 PI35027 PI35893 PI34945 PI39525 PI43321 PI48106 PI53964 PI41634 PI53691 PI11450 PI16745 PI18682 PI21062 PI24319 PI25035 PI25663 PI27187 PI33891 PI34061 PI35680 PI36215 PI37162 PM70256 PM74078 PM75193 PM75581 PM87883 PM93570 IV47342 IV69645 7.2.0.0.5 [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/Tivoli/Tivoli+Composite+Application+Manager+for+Applications&release=All&platform=All&function=fixId&fixids=7.2.0.0-TIV-ITCAMAD_WS-IF0005&includeSupersedes=0&source=fc] 7.2.0.0.10 Oct 8, 2014 PM98778 PI06311 PI07084 PI22743 PI08200 PM88373 PM99070 PM94101 IV47342 PI06761 PI08473 PI08257 7.2.0.0.4 7.2.0.0.9 This is Limited Availability Interim Fix. Please contact Customer Support to obtain this fix . 7.2.0.0.3 [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/Tivoli/Tivoli+Composite+Application+Manager+for+Applications&release=All&platform=All&function=fixId&fixids=7.2.0.0-TIV-ITCAMAD_WS-IF0003&includeSupersedes=0&source=fc] 7.2.0.0.8 Oct 10, 2013 PM93570 7.2.0.0.2 [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/Tivoli/Tivoli+Composite+Application+Manager+for+Applications&release=All&platform=All&function=fixId&fixids=7.2.0.0-TIV-ITCAMAD_WS-IF0002&includeSupersedes=0&source=fc] 7.2.0.0.7 Aug 23, 2013 7.2.0.0.1 [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/Tivoli/Tivoli+Composite+Application+Manager+for+Applications&release=All&platform=All&function=fixId&fixids=7.2.0.0-TIV-ITCAMAD_WS-IF0001&includeSupersedes=0&source=fc] 7.2.0.0.5 Jul 17, 2013 PM81890; PM77662; PM79101; PM82318; PM80120; PM88932; PM76203

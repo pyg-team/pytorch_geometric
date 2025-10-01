@@ -1,0 +1,20 @@
+Title: IBM Error: Access to this database is currently denied long2clob - United States
+
+Text:
+long2clob; unlock; "Access to this database is currently denied long2clob"; denied; 1253503 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to unlock a user database in IBM® Rational® ClearQuest® after running long2clob utility. After running the long2clob tool, trying to login to ClearQuest client fails with the error:
+Access to this database is currently denied long2clob. 
+
+CAUSE
+After the running the long2clob utility, the database was not unlocked, causing the error:
+
+Access to this database is currently denied long2clob
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, unlock the database by running the Long2clob tool with the unlock option.
+
+
+For more information on how to run this command type in long2clob -man

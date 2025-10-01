@@ -1,0 +1,108 @@
+Title: IBM CICS Explorer downloads - United States
+
+Text:
+CICS Explorer; CICS Transaction Server; CICS tools; CICS Transaction Gateway; plug-in; SDK CICS TS 5.4 ; 5655Y0400 R701 701 R100 100 HCI7100 5655Y0401 5655-Y04 5655Y04 CICS TS 5.3 5655Y0400 R700 700 R000 000 5655Y0401 R350 530 HCI7000 CICSCM 5.3 ; 5697CIC00 5697CIC01 R530 R53E R53K 5697-CIC 5697CIC FMID HCCK530 JCCK53E JCCK53K CICSDA 5.3 ; 5655Y2900 5655Y2901 R530 5655-Y29 5655Y29 FMID HGEM530 CICSIA 5.3 ; 5655Y2200 5655Y2201 R530 R53E R53K 5655-Y22 5655Y22 FMID H274530 J27453E J27453K CICSPA 5.4; CICSPA 5.3 ; 5655Y2300 5655Y2301 R530 R53C R53E R53K R53S 5655-Y23 5655Y23 FMID H24D530 J24D53E J24D53K J24D53C J24D53S ; 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 R690 690 R900 900 HCI6800 5655-Y04 HCI6900 5655Y04 KIXINFO CICS CM 5.1 ; R510 R51C R51E R51K FMID HCCK510 ; CICSCM 5.2 ; 5697CIC00 5697CIC01 R520 R52E R52K 5697-CIC 5697CIC FMID HCCK520 JCCK52E JCCK52K CICS DA 5.1 ; R510 R51C R51E R51K HGEM510 ; CICSDA 5.2 ; 5655Y2900 5655Y2901 R520 R52C R52E R52K 5655-Y29 5655Y29 FMID HGEM520 ; CICS IA 5.1 ; R510 R51C R51E R51K H274510 ; CICSIA 5.2 ; 5655Y2200 5655Y2201 R520 R52E R52K 5655-Y22 5655Y22 FMID H274520 J27452E J27452K ; CICS PA 5.1 ; R510 R51C R51E R51K R51S H24D510 ; CICSPA 5.2 ; 5655Y2300 5655Y2301 R520 R52C R52E R52K R52S 5655-Y23 5655Y23 FMID H24D520 J24D52E J24D52K J24D52C J24D52S DOWNLOADABLE FILES
+
+ABSTRACT
+ From this page you can download and install the latest release of IBM CICS Explorer, and find installation instructions for the CICS Tools plug-ins. 
+
+DOWNLOAD DESCRIPTION
+If you want to download CICS Explorer in conjunction with other plug-ins which run on top of IBM Explorer for z/OS (z/OS Explorer), refer to the Mainframe Developer Center [https://developer.ibm.com/mainframe/] for general information and Download Eclipse Tools [https://developer.ibm.com/mainframe/products/downloads/eclipse-tools/] for update and installation details. 
+
+
+
+IMPORTANT: IBM Policy on automatic software updates CICS Explorer V5.3 and V5.4 can be installed, updated and extended from the following software repositories:
+V5.3: 
+http://public.dhe.ibm.com/ibmdl/export/pub/software/htp/zos/tools/aqua/ 
+V5.4: 
+http://public.dhe.ibm.com/ibmdl/export/pub/software/htp/zos/tools/aqua3.1/
+[http://public.dhe.ibm.com/ibmdl/export/pub/software/htp/zos/tools/aqua/]
+You can use these repositories, or update sites, with any compatible Installation Manager (IM) or Eclipse-based product to add CICS Explorer, for example, into that environment.
+
+Note that these web links differ from that used for CICS Explorer V5.2. IBM's current policy for tooling provided on this download site is to perform automatic updates to the latest version of compatible tooling, where requested. IBM intends to update CICS Explorer at set intervals throughout the year. Updates will typically roll up service fixes and may address additional usability and functional issues. 
+
+Two methods of installation are available: 
+[/support/docview.wss?uid=swg24033579&amp;aid=1]IBM Installation Manager (IM) - Recommended [https://nextstage.torolab.ibm.com/mainframe/products/downloads/#im]
+[/support/docview.wss?uid=swg24033579&amp;aid=2]Eclipse p2 Update
+
+Visit [https://developer.ibm.com/mainframe/products/downloads/eclipse-tools/]Download Eclipse Tools [https://developer.ibm.com/mainframe/products/downloads/eclipse-tools/] to select the one that is right for you.
+
+
+To help you decide, CICS Explorer Release Notes are provided, and An overview of CICS Explorer and CICS Explorer resources [https://developer.ibm.com/mainframe/products/cicsexplorer/]is also available. Detailed instructions on how to install CICS Explorer in different scenarios are also available, in the CICS product documentation under Installing CICS Explorer [https://www.ibm.com/support/knowledgecenter/SSSQ3W_5.4.0/com.ibm.cics.core.help/topics/tasks/installing.html].
+
+Provided below you will also find information on Adding IBM CICS SDK for WebSphere Application Server Liberty profile to your CICS Explorer and Installation Instructions CICS Tools plug-ins for CICS Explorer.
+
+
+
+
+
+
+
+Adding IBM CICS SDK for WebSphere Application Server Liberty profile to your CICS Explorer
+
+
+
+Instructions to add the IBM CICS SDK for Java EE and Liberty to your CICS Explorer  1. In CICS Explorer, go to Help > Install New Software 
+ 2. Expand IBM CICS Explorer and select IBM CICS SDK for Java EE and Liberty
+
+
+Back to top
+
+
+ 
+
+
+
+Installation Instructions for V5.4 CICS Performance Analyzer for z/OS plug-in and V5.3 CICS Tools plug-ins for CICS Explorer
+
+
+
+CICS Tools plug-ins for CICS Explorer - Installation Instructions and What's New for V5.4 CICS Explorer and CICS Performance Analyser for z/OS have been updated to V5.4; the rest of the plug-ins have remained at V5.3 however they have been updated to work with this latest release of CICS Explorer. To install the plug-ins, click on Downloads > Eclipse Tools from the Mainframe Developer Center [https://developer.ibm.com/mainframe/] and follow the installation instructions. Note that the plug-ins can no longer be downloaded directly from this page. 
+
+The following product details include an overview, features, what's new, and system requirements that should be reviewed before you install the plug-ins:
+ * CICS Configuration Manager for z/OS - CICS CM product details [https://developer.ibm.com/mainframe/products/cm/] 
+ * CICS Deployment Assistant for z/OS - CICS DA product details [https://developer.ibm.com/mainframe/products/da/] 
+ * CICS Interdependency Analyzer for z/OS - CICS IA product details [https://developer.ibm.com/mainframe/products/ia/] 
+ * CICS Performance Analyzer for z/OS - CICS PA product details [https://developer.ibm.com/mainframe/products/pa/]
+   
+
+
+For previous releases of all available CICS Tools plug-ins for CICS Explorer, go to Downloads for older releases of IBM Explorer for z/OS and IBM CICS Explorer [http://www.ibm.com/support/docview.wss?uid=swg24031508].
+
+For details of the compatibility of CICS Tools plug-ins with each release of CICS Explorer, go to z/OS Explorer, CICS Explorer, and CICS tools plug-ins release compatibility reference tables [http://www.ibm.com/support/docview.wss?uid=swg21577571].
+
+
+
+Back to top
+
+
+
+
+
+
+Release Notes
+
+
+
+Release notes for CICS Explorer View release notes for CICS Explorer [http://public.dhe.ibm.com/ibmdl/export/pub/software/htp/zos/updates/cicsts_explorer_release_notes.html] 
+
+Back to top
+
+PREREQUISITES
+To get the full benefit from CICS Explorer, CICS Transaction Server for z/OS version 4 or later [http://www.ibm.com/software/htp/cics/] is required. 
+
+
+System requirements details are available on the CICS Explorer V5.4 detailed system requirements page [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=2504EB10A27911E5B4D746C499E8F397] and CICS Explorer V5.3 detailed systems requirements page [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1404834280402].
+
+
+
+
+
+TECHNICAL SUPPORT
+ Each IBM CICS Explorer deliverable available for download from this page (the "CICS Explorer Program") is available at no charge to all licensed users of the IBM Program(s) specified in the Limited Use Program clause of the accompanying IBM International Program License Agreement (IPLA) (the "Parent Program"). The CICS Explorer Program is supplied under the standard terms and conditions of the IPLA and of the associated License Information and other documentation, and provides a defect correction entitlement for those licensed users entitled to service for the Parent Program. Service is available for the CICS Explorer Program for as long as the Parent Program with which the CICS Explorer Program is to be used is generally supported by IBM. In addition, IBM reserves the right to discontinue service on the CICS Explorer Program when it is withdrawn from marketing by IBM.
+
+Please read the license file that accompanies the CICS Explorer Program, to determine if you want to use it. 
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Performance Analyzer for z/OS CICS Explorer Plug-in Host Transaction Processing CICS Configuration Manager for z/OS CICS Explorer Plug-in Host Transaction Processing CICS Deployment Assistant for z/OS Explorer Plug-in Host Transaction Processing CICS Interdependency Analyzer for z/OS IA Explorer 
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

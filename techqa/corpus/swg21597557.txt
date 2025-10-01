@@ -1,0 +1,173 @@
+Title: IBM What are the steps to apply the latest Patch in MDM v10.1 and older? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ We need to apply the latest patch. What are the required or recomended steps to apply the patch? 
+
+ANSWER
+This Technote is a high level or generic over view of the process of installing an IBM Initiate patch to your environment. It is intended to be a guide to demonstrate the patch process and should be used as a supplement to the existing documentation (see section 8 below for links). It includes some examples that are specific to a generic test demo data implementation. 
+The Patch Process consists of 8 steps:
+
+
+ 1. Before you begin (backup operational data, gathering existing configuration information) 
+ 2. Shutdown sequence 
+ 3. Patching the Master Data Engine, external Entity managers, and LDAP Servers (Windows) (running the installer and the upgrade script “madconfig”) 
+ 4. Patching the Message Broker Suite (running the installer, updating the instance specific service files) 
+ 5. Startup sequence 
+ 6. Patch install verification 
+ 7. Reverting changes 
+ 8. Resources information 
+ 9. Patching other components (API, Inspector etc.)
+
+
+
+1. Before you Begin:  1. Review the Release notes 
+ 2. Obtain Patch installation documentation 
+ 3. Obtain the maintenance release software  * Fix Central can be found at http://www.ibm.com/eserver/support/fixes/ [http://www.ibm.com/eserver/support/fixes/]
+    
+    
+ 4. Ensure that you have the proper permission to perform the patch installation.  * stop/start service(s) and process 
+     * Database and file system reading and writing
+    
+    
+ 5. Back up all of the IBM Initiate directories.  * MAD_HOMEDIR – Instance home directory 
+     * MAD_ROOTDIR – Installation directory 
+     * BROKER DIRs – All of the Broker HOME and ROOT directories 
+     * Web Application or any other directories that may not reside within the MAD_HOMEDIR (such as external LDAP or entity managers, environment variable profiles etc.)
+    
+    
+ 6. Back up your data base(s). 
+ 7. Gather existing configuration information.  * Instance(s) names 
+     * Services.ini (system variable MAD_CONFNAME) 
+     * Running process/service names
+    
+    
+
+
+2. Shut Down Sequence: 
+The shut down sequence is based on order of dependence and is as follows:  1. Web Applications (Inspector, Enterprise Viewer etc.) 
+ 2. API jars (any custom application that uses the IBM Initiate API) 
+ 3. Brokers (Inbound, Outbound Mapping etc.) 
+ 4. External Entity Managers 
+ 5. External LDAP servers 
+ 6. Master Data Engine
+
+
+3. Patching the Master Data Engine, external Entity managers, and LDAP Servers:  1. Install the Engine patch over the existing Engine (MAD_ROOTDIR)  * Set the “Destination directory” to your existing Engine’s root directory. This updates all the Binary files with the new patched code.
+    
+    
+ 2. Run the MADCONFIG script  * Via command line, navigate to MAD_ROOTDIR/scripts and run: 
+     * madconfig upgrade_instance
+    
+    
+
+
+(Note: make sure to answer yes when asked if you wish to update the database) 
+This will update the database with any necessary updates. 
+
+External Entity Manager: madconfig upgrade_entitymgr 
+External LDAP Server: madconfig upgrade_ldap 
+
+4. Patching the Message Broker Suite: 
+The Message Broker Suite requires a three step patch process: 
+
+Step 1: Install the Broker patch over the existing Broker (BROKER_ROOTDIR). Set the “Destination directory” to your existing Broker’s root directory 
+
+(NOTE: Windows requires instance specific service files that are not updated) 
+UNIX - does not employ instance specific files (all the instances point to the same original executable). Therefore after for Unix platforms skip steps 2 and3. 
+
+Windows - The following is an example of a windows implementation that illustrates the instance specific files: 
+
+EXAMPLE: instance name = inb1 (after step 1 was applied) 
+52 mad.dll 06/12/2011 
+53 madpass.exe 06/12/2011 
+... 
+61 msgbroker.exe 06/12/2011 
+62 msgbroker_inb1_service.exe 12/04/2010 
+63 msgbroker_service.exe 06/12/2011 
+64 msgreader.exe 06/12/2011 
+65 msgreader_inb1_service.exe 12/04/2010 
+66 msgreader_service.exe 06/12/2011 
+... 
+Notice how lines 62 and 65 were not updates (the date is older than the other files). These are the instance specific files which will need to be up dated in step2 and 3. 
+
+Step 2: (Windows only): Identify and remove all the instance specific service files 
+Make a list of all the instance specific files 
+Delete the Instance specific files 
+Example 
+52 mad.dll 06/12/2011 
+53 madpass.exe 06/12/2011 
+... 
+61 msgbroker.exe 06/12/2011 
+62 msgbroker_inb1_service.exe 12/04/2010 
+63 msgbroker_service.exe 06/12/2011 
+64 msgreader.exe 06/12/2011 
+65 msgreader_inb1_service.exe 12/04/2010 
+66 msgreader_service.exe 06/12/2011 
+... 
+Step 3: (Windows only): Recreate the instance specific files by making a copy of the master service files 
+Example: 
+52 mad.dll 06/12/2011 
+53 madpass.exe 06/12/2011 
+... 
+61 msgbroker.exe 06/12/2011 
+62 Copy of msgbroker_service.exe 06/12/2011 
+63 msgbroker_service.exe 06/12/2011 
+64 msgreader.exe 06/12/2011 
+65 Copy of msgreader_service.exe 06/12/2011 
+66 msgreader_service.exe 06/12/2011 
+... 
+Rename 
+Line 62 - Copy of msgbroker_service.exe to -> msgbroker_inb1_service.ex 
+Line 65 - Copy of msgreader_service.exe to -> msgreader_inb1_service.exe 
+Now all files should have the same date. 
+
+5. Startup sequence: 
+The startup sequence is the opposite of the shut down: 
+ 1. Master Data Engine 
+ 2. External LDAP servers 
+ 3. External Entity Managers 
+ 4. Brokers 
+ 5. API jars 
+ 6. Web Applications
+
+
+6. Patch install verification:  * Master Data Engine: Via command line, navigate to MAD_ROOTDIR/scripts and run:  * madconfig version
+   
+   
+
+ * Message Broker Suite:  * 
+   
+   
+
+ * Check the Logs: The begging of the logs for both the Hub and Brokers print the version and build.
+
+
+7. Reverting changes: 
+In case the Patch implementation requires to be reverted follow the steps:  1. Stop services or processes 
+ 2. Remove ROOT directory  * Master Data Engine: MAD_ROOTDIR 
+     * Message Broker Suite: BROKER_ROOTDIR
+    
+    
+ 3. Restore backed up files  * Master Data Engine: MAD_ROOTDIR 
+     * Message Broker Suite: BROKER_ROOTDIR
+    
+    
+ 4. Restore Database (only if Master Data Engine has been patched) 
+ 5. Start services or processes  * Verify logs
+    
+    
+
+
+8. Resources More information:  1. Support Technical Exchanges:  * http://www.ibm.com/support/entry/portal/Previous_tech_exchanges [http://www.ibm.com/support/entry/portal/Previous_tech_exchanges]
+    
+    
+ 2. Fix Central  * http://www.ibm.com/eserver/support/fixes/ [http://www.ibm.com/eserver/support/fixes/] 
+    
+    
+
+
+9. Patching other components: 
+To Patch other software not mentioned in this Technote (such as Inspector, WebServices etc. ), please refer to the documentation referenced in section 8.

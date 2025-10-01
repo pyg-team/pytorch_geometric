@@ -1,0 +1,269 @@
+Title: IBM IC57401: EXCESSIVE SNMP TRAPS INVOKE EVENT-BASED DISCOVERY AND CAUSE DEVICE SERVER PERFORMANCE PROBLEMS. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PMR NO:   50983,500,000
+   COMPID:   5608TC100         AFFECTED RELEASE(s):  3.3.1
+   ________________________________________________________________
+   ABSTRACT:  EXCESSIVE SNMP TRAPS INVOKE EVENT-BASED DISCOVERY
+              AND CAUSE DEVICE SERVER PERFORMANCE PROBLEM
+   DETAIL OF PROBLEM (include example(s) of error(s)):  Device
+   Server performance is so bad after several days of operation
+   that it essentially stops running.  There are a number of
+   possible causes for device server performance problems to this
+   degree, but can be, in part, due to the TPC Device Server
+   continually processing event-based switch discovery and probe
+   requests for snmp traps received from the monitored switches on
+   out of band fabric agents.  Logging of this problem can be found
+   in the tpcmon logs under the device server's ~/apps/was/profiles
+   directory and appear significantly as:
+       WARNING - Evaluator
+       com.ibm.tpc.srvmon.eval.SNMPScannerQLEvaluator
+       triggered warning action (hint: QL OutbandScanner)
+       Threshold action for warning level has been
+       triggered for evaluator
+       com.ibm.tpc.srvmon.eval.FabricSMISScannerQLEvaluator
+       in area .istr
+   In this instance, the traps are coming from configuration on the
+   Cisco switches, which "show SNMP trap" suggests *all* possible
+   traps are configured "on".   In addition, the external alert log
+   grows too large to view with the GUI and results in memory heap
+   dumps on the GUI and the device server.
+   Filters had to be added to the TPC environment set to disregard
+   all SNMP traps received that specify those enterprise values and
+   not invoke an event-based discovery.  Development on-site did
+   not filter out anything from the FC Mgmt MIB
+   (enterprise=1.3.6.1.3.94), which are the main topology related
+   traps indicating activities for which we would want to do a
+   fabric probe.  The SNMP trap config on the switches (show snmp
+   trap) indicated that nearly every type of trap had been enabled.
+   This resulted in most activities on the switch generating traps.
+   While filters could be configured at the switch, as well, it can
+   impact other applications expecting to receive traps.
+   A change performed on-site was to issue the srcmp command to
+   filter two enterprise identifiers that were being excessively
+   alerted.  After the filter was added and the log entries cleared
+   using an SQL delete command, the external log entries no longer
+   occurred at the frequency that resulted in the error.     It is
+   believed that the trap filtering put in place with TPC 3.3.1
+   alleviated the frequent fabric probes and subsequent device
+   server performance behavior.
+   This apar is opened to filter traps with the default
+   configuration of TPC rather than hitting this problem in the
+   field and then adding the filters.  Development should determine
+   exactly which enterprise filters need be put in place via
+   default, in part, based upon these findings on-site.
+   RECREATE STEPS:  Please see development escalation record.
+   ________________________________________________________________
+   DB2 Version used for Server: DB2V9 (not version specific)
+   The defect is against component:   FABRIC MANAGER 5608TC100
+   Server/Manager build/release (TPC):  3.3.1.81
+   Agent build/release (TPC):  n/a
+   Server/Manager (OS):  Linux (not OS specific)
+   Agent (OS):   n/a
+   ________________________________________________________________
+   Problem as described by customer:  Extremely poor device server
+   performance.
+   Initial customer impact (low/med/high):  high
+   Local Fix:  none
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  see above
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   Primarily those with Cisco switches sending SNMPv1 traps to the
+   TPC server.
+   
+   Problem Description:
+   Cisco switches can easily be configured to send ALL traps,
+   rather than a subset, to a particular destination.  TPC
+   configuration recommends setting the TPC server as a trap
+   destination host on the switches that are being monitored so
+   that the fabric topology can be updated based on activity in the
+   fabric.  In this case, event-based fabric probes, not the
+   scheduled ones, are invoked too frequently because so many traps
+   are received.  Most of these traps are not indicating a fabric
+   topology related change and are unnecessarily invoking the
+   fabric probe activity.
+   
+   The external category in the Alert Log in the TPC GUI shows what
+   traps are received from various devices and logs a time stamp.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The default filters in TPC are being updated to block groups of
+   traps.  The following filters have been added.
+   
+   Cisco private MIB traps --> 1.3.6.1.4.1.9
+   SNMPv2 MIB traps --> 1.3.6.1.6
+   Mail MIB traps -->1.3.6.1.7
+   
+   Additional filters may be added or existing ones removed to
+   further refine the traps that cause fabric probe activity.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  The filters can be manually applied using the srmcp command.
+   
+   Windows:
+   
+   To run the srmcp command on Windows, complete the following
+   steps:
+   1. Start a command prompt session, type the command setenv, and
+   press Enter.
+   2. Go to this default directory on Windows:
+      C:\Program Files\IBM\TPC\device\bin\w32-ix86
+   3. To filter all Cisco private MIB traps:
+      srmcp -u <user_ID> -p <password> SANEventCorrelatorFactory
+   add filter enterprise=1.3.6.1.4.1.9
+   4. To filter all SNMPv2 MIB traps:
+      srmcp -u <user_ID> -p <password> SANEventCorrelatorFactory
+   add filter enterprise=1.3.6.1.6
+   5. To filter all mail MIB traps:
+      srmcp -u <user_ID> -p <password> SANEventCorrelatorFactory
+   add filter enterprise=1.3.6.1.7
+   
+   Note:  To list the configured filters, use the following
+   command:
+      srmcp -u <user_ID> -p <password> SANEventCorrelatorFactory
+   list
+   
+   UNIX:
+   
+   To run the srmcp command on UNIX, complete the following steps:
+   1. Go to this default directory on UNIX:
+      /opt/IBM/TPC/device/aix (for AIX)
+      /opt/IBM/TPC/device/linux (for Linux)
+   2. Run this command:
+      ./setenv.sh
+   3. To filter all Cisco private MIB traps:
+      ./srmcp -u <user_ID> -p <password> SANEventCorrelatorFactory
+   add filter enterprise=1.3.6.1.4.1.9
+   4. To filter all SNMPv2 MIB traps:
+      ./srmcp -u <user_ID> -p <password> SANEventCorrelatorFactory
+   add filter enterprise=1.3.6.1.6
+   5. To filter all mail MIB traps:
+      ./srmcp -u <user_ID> -p <password> SANEventCorrelatorFactory
+   add filter enterprise=1.3.6.1.7
+   
+   Note:  To list the configured filters, use the following
+   command:
+      ./srmcp -u <user_ID> -p <password> SANEventCorrelatorFactory
+   list
+   
+   Additional help is available through the command line interface
+   or in the Problem Determination Guide.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC57401
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC FOR FABRIC
+   
+   
+ * REPORTED COMPONENT ID
+   5608TC100
+   
+   
+ * REPORTED RELEASE
+   33L
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-25
+   
+   
+ * CLOSED DATE
+   2008-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2008-12-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC FOR FABRIC
+   
+   
+ * FIXED COMPONENT ID
+   5608TC100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R33A PSY
+   UP
+   
+   
+ * R33L PSY
+   UP
+   
+   
+ * R33W PSY
+   UP

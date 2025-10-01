@@ -1,0 +1,18 @@
+Title: IBM Available memory for backend ITNM processes - United States
+
+Text:
+ncp process memory TECHNOTE (FAQ)
+
+QUESTION
+ What is the available memory for ITNM core processes (e.g. ncp_disco, ncp_poller etc) on each platform? 
+
+ANSWER
+The available memory for ITNM Core processes varies based on the operating system: 
+
+1) On Linux & Solaris - its 4gb per process (gb=Gigabyte) 
+
+2) On zLinux - 2gb (as zLinux is 31bit Operating System) 
+
+3) On AIX - 3.25gb (the OS reserves some of the pointer memory range) 
+
+3) Windows 32/64bit - 2gb

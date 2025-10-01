@@ -1,0 +1,28 @@
+Title: IBM Replace Tivoli and IBM logo in OMNIbus Administrator - United States
+
+Text:
+omni; custom; banner; change logo; webgui; ControlTower.jar TECHNOTE (FAQ)
+
+QUESTION
+ How can we change or customize the Tivoli logo in the banner in IBM Netcool/OMNIbus Administrator client ? 
+
+CAUSE
+Customization.
+
+ANSWER
+Banner of Netcool/OMNIbus Administrator client [/support/docview.wss?uid=swg21676893&aid=1] [/support/docview.wss?uid=swg21676893&aid=1] 
+
+Unfortunately, allowing customers to swap image files, like WebGUI does, isn't supported by the Administrator client (as highlighted in the image above). The image files used are stored as resources within the ControlTower.jar file itself. You could replace the two GIF files (mmsmall.gif (for Tivoli Netcool/OMNIbus) and heading_right.gif (for IBM logo)) in that JAR file, but that has not been tested.
+
+This action is not supported and may affect the supportability of your product. 
+
+Alternatively, if you're looking at customizing WebGUI, please refer to: 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21496221 and 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21673806 
+
+
+
+PRODUCT ALIAS/SYNONYM
+ OMNIbus

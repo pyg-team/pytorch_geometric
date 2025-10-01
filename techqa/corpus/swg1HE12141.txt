@@ -1,0 +1,139 @@
+Title: IBM HE12141: AN ERROR MESSAGE IS DISPLAYED WHEN MOVING AN ITEM FROM THE SEARCH RESULT LIST IN THE STORE PROVIDER TO ANOTHER FOLDER - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.0.0.3-IBM-ICC-FP003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Collector&fixids=4.0.0.3-IBM-ICC-FP003&source=SAR]
+IBM Content Collector V4.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24039003]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you use IBM Content Collector Search for searching in
+   archived email and the mailbox and move an item from the Outlook
+    search result list to a folder in your mailbox or an Outlook
+   data file (.pst), the operation succeeds (the message is copied
+   to the destination folder), but an error message is displayed,
+   for example:
+   * Cannot move the items. MAPI_W_PARTIAL_COMPLETION
+   * Cannot move the items. MAPI_E_INTERFACE_NOT_SUPPORTED
+   * Cannot move the items. The item cannot be moved. It was either
+   already moved or deleted, or access was denied.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A search result list is not a folder in the store hierarchy, but
+    a view. It contains only references to the items in the search
+   result list. Therefore, items cannot be moved but only be
+   copied. If the Outlook user tries to move an item from a search
+   result list, the item is copied to the destination folder but is
+    not deleted from the search result list.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with interim fix 4.0.0.0-IBM-ICC-OE-IF004, the IBM
+   Content Collector Outlook Extension will not display an error
+   when moving an item from the search result list.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12141
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-29
+   
+   
+ * CLOSED DATE
+   2014-08-01
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

@@ -1,0 +1,13 @@
+Title: IBM How to confirm a Global Hold Reminder after the next Global Hold Reminder issued ? - United States
+
+Text:
+atlas ghr TECHNOTE (FAQ)
+
+QUESTION
+ How to confirm a Global Hold Reminder (GHR) after the next GHR issued in Atlas ? 
+
+CAUSE
+When you generate a corresponding report the custodian record for this GHR will shows as "No Reply"
+
+ANSWER
+Always the latest GHR notice takes precedence. Which means if a GHR is missed then you can only confirm the latest GHR notice.

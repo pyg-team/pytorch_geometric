@@ -1,0 +1,146 @@
+Title: IBM RS03008: ANT SYNCHRONIZATION DOES NOT PUBLISH ALL THE XOM ZIP IN XOM-LIBRARIES WHICH CAUSES THE DEPLOYMENT FAILS. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a XOM is referenced in multiple project it will appear in
+   multiple xom-libraries folder.
+   In DC it will result in multiple instances of the same resource
+   
+   After an update of the XOM  when publishing with ant only one
+   resource is updated, the other references keep the original
+   version.
+   
+   We can see from the query "Find all resources" that not all xom
+   gets updated.
+   
+   Because the ANT synchronization does not publish all the xom zip
+   in xom-libraries the deployment fails or has strange behavior
+   with multiple version of xom resources deployed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When updating a XOM referenced in multiple projects using ant
+   synchronization task only one XOM will be updated. The other
+   references will keep their original version. Because of this
+   issue, the deployment of a Rule project may fails or will
+   strange behavior with the multiple version of xom resources
+   deployed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS03008
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6900
+   
+   
+ * REPORTED RELEASE
+   881
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-03-16
+   
+   
+ * CLOSED DATE
+   2018-03-23
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * FIXED COMPONENT ID
+   5725B6900
+   
+   
+
+APPLICABLE COMPONENT LEVELS

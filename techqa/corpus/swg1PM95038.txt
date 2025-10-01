@@ -1,0 +1,120 @@
+Title: IBM PM95038: Unable to launch RTW Eclipse Client v8.5 with Floating license support - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Performance Tester Fix Pack 1 (8.5.0.1) for 8.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24035587]
+Rational Service Tester for SOA Quality Fix Pack 1 (8.5.0.1) for 8.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24035588]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Unable to launch RTW Eclipse Client v8.5 with Floating license
+   support
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The license check was failing due to an incorrect version
+   specified for the RTW offering.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  RTW 8.5 doesn't work with floating license configured because
+   of an incorrect version specified in the product offering.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM95038
+   
+   
+ * REPORTED COMPONENT NAME
+   RATIONAL LICENS
+   
+   
+ * REPORTED COMPONENT ID
+   5648LIC00
+   
+   
+ * REPORTED RELEASE
+   813
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-14
+   
+   
+ * CLOSED DATE
+   2013-10-03
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATIONAL LICENS
+   
+   
+ * FIXED COMPONENT ID
+   5648LIC00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R813 PSY
+   UP

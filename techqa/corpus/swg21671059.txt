@@ -1,0 +1,80 @@
+Title: IBM Security Bulletin: IBM Tealeaf Customer Experience (CX) is affected by a vulnerability in OpenSSL (CVE-2014-0160) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ A security vulnerability has been discovered in OpenSSL. 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2014-0160 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0160] 
+
+DESCRIPTION: OpenSSL could allow a remote attacker to obtain sensitive information, caused by an error in the TLS/DTLS heartbeat functionality. An attacker could exploit this vulnerability to expose 64k of private memory and retrieve secret keys. An attacker can repeatedly expose additional 64k chunks of memory. This vulnerability can be remotely exploited, authentication is not required and the exploit is not complex. It can be exploited on any system (i.e. server, client, agent) receiving connections using the vulnerable OpenSSL library. 
+
+
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/92322 [https://exchange.xforce.ibmcloud.com/vulnerabilities/92322]
+CVSS Environcomental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+Warning: We strongly encourage you to take action as soon as possible as potential implications to your environment may be more serious than indicated by the CVSS score.
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Tealeaf CX
+IBM Tealeaf cxImpact
+IBM Tealeaf cxView
+IBM Tealeaf cxVerify
+IBM Tealeaf cxReveal
+IBM Tealeaf cxConnect for Data Analysis
+IBM Tealeaf cxConnect for Web Analytics
+IBM Tealeaf cxConnect for Voice of Customer
+IBM Tealeaf CX Mobile
+
+Versions: 8.0-8.8
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF Remediation/First Fix IBM Tealeaf Customer Experience 8.8 PCA: https://www.ibm.com/support/entry/portal/search_results?sn=spe&filter=keywords:ibmsupportfixcentralsearch&q=8.8_IBMTealeaf_PCA-3625-4_SecurityRollup_FixPack [https://www.ibm.com/support/entry/portal/search_results?sn=spe&filter=keywords:ibmsupportfixcentralsearch&q=8.8_IBMTealeaf_PCA-3625-4_SecurityRollup_FixPack]
+Tealeaf CX: https://www.ibm.com/support/entry/portal/search_results?sn=spe&filter=keywords:ibmsupportfixcentralsearch&q=8.8.0.9034_IBMTealeaf_CXUpgrade_FixPack8 [https://www.ibm.com/support/entry/portal/search_results?sn=spe&filter=keywords:ibmsupportfixcentralsearch&q=8.8.0.9034_IBMTealeaf_CXUpgrade_FixPack8] IBM Tealeaf Customer Experience 8.7 PCA: https://www.ibm.com/support/entry/portal/search_results?sn=spe&filter=keywords:ibmsupportfixcentralsearch&q=8.7_IBMTealeaf_PCA-3615-4_SecurityRollup_FixPack [https://www.ibm.com/support/entry/portal/search_results?sn=spe&filter=keywords:ibmsupportfixcentralsearch&q=8.7_IBMTealeaf_PCA-3615-4_SecurityRollup_FixPack]
+Tealeaf CX: https://www.ibm.com/support/entry/portal/search_results?sn=spe&filter=keywords:ibmsupportfixcentralsearch&q=8.7.1.8830_IBMTealeaf_CXUpgrade_FixPack9 [https://www.ibm.com/support/entry/portal/search_results?sn=spe&filter=keywords:ibmsupportfixcentralsearch&q=8.7.1.8830_IBMTealeaf_CXUpgrade_FixPack9] IBM Tealeaf Customer Experience 8.6 and earlier You can contact the Technical Support [http://www.ibm.com/software/marketing-solutions/tealeaf/support] team for guidance. For v9.0.0, 9.0.0A, and versions before v8.7, IBM recommends upgrading to a later supported version of the product. After applying the fix, additional instructions are needed for CVE-2014-0160 
+
+1) Replace your SSL Certificates. 
+
+You need to revoke existing SSL certificates and reissue new certificates. You need to be sure not to generate the new certificates using the old private key and create a new private key (for example, using "openssl genrsa") and use that new private key to create the new certificate signing request (CSR). 
+
+2) Reset User Credentials 
+
+Users of network facing applications protected by a vulnerable version of OpenSSL should be forced to reset their passwords and should revoke any authentication or session related cookies set prior to the time OpenSSL was upgraded and force the user to re-authenticate.
+
+Warning: Your environment may require additional fixes for other products, including non-IBM products. Replace the SSL certificates and reset the user credentials after applying the necessary fixes to your environment.
+
+WORKAROUNDS AND MITIGATIONS
+None known.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+· OpenSSL Project vulnerability website [http://www.openssl.org/news/vulnerabilities.html] 
+· Heartbleed [http://heartbleed.com/] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None. 
+
+CHANGE HISTORY
+ 10 June 2016: Update Fix Central links
+22 April 2014: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21671291]

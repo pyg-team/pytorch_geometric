@@ -1,0 +1,27 @@
+Title: IBM Agent Management Services for d4 agent and CAP files - United States
+
+Text:
+ITCAMADALL D4 DataPower TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Is Agent Management Services available for the ITCAM for SOA D4 agent? Are the CAP files included with the product and if not where can they be obtained 
+
+SYMPTOM
+After installing the D4 agent would like to use ITM Agent Management Services which require CAP files. These are not included with the base agent.
+
+
+CAUSE
+No agent CAP files
+
+RESOLVING THE PROBLEM
+This link can be used to download the CAP files for any ITM monitoring agent that does not include them by default. 
+
+www-304.ibm.com/software/brandcatalog/ismlibrary/details?catalog.label=1TW10TM8T#
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for SOA Platform

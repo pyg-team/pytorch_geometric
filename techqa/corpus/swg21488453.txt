@@ -1,0 +1,39 @@
+Title: IBM Can the Sentinel RMS License Manager monitor various products and multiple versions of a single product?  And will it work with non-IBM SPSS products? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Can the Sentinel RMS License Manager monitor various products and multiple versions of a single product? And will it work with non-IBM SPSS products? If so, how do I add the license for each product/version? 
+
+RESOLVING THE PROBLEM
+Yes, the Sentinel RMS License Manager is capable of monitoring different products, e.g. IBM SPSS Statistics 20.0 and IBM SPSS Modeler 14.0, and multiple versions of a single product, e.g. Statistics 19.0 and Statistics 20.0. Please note the Sentinel RMS License Manager is not designed to monitor versions prior to SPSS (Statistics) 13.0, Clementine (Modeler) 9.0, and AMOS 6.0. 
+
+All licenses for IBM SPSS products can be added by navigating to the Sentinel License Manager installation directory and running the licenseactivator utility. Please see the Network License Administrator's Guide in your product documentation for further information. 
+
+The version of the Sentinel License Manager that is supplied with your installation media, whether on physical CD/DVD or by download, is the one meant for use with the particular IBM SPSS product. We do not support the use of IBM SPSS product licenses with versions or editions of the Sentinel License Manager you may already have in place from other non-IBM SPSS products. 
+
+But you may be able to use the non-IBM SPSS licenses with the Sentinel LM that we supply. You can add non-IBM SPSS product licenses by following the instructions below:
+
+Adding a license from a file:
+1. Open the Wlmadmin tool: Choose Start->Programs->Sentinel RMS License Administrator (or Sentinel LM Tools if the actual Sentinel LM is running on a non-Windows platform)->Sentinel LM Server Administration.
+2. Expand Subnet Servers (or you may have to use Defined Servers if the actual License Manager you are administering is on a different subnet) and locate your License Manager server.
+3. Right-click the License Manager and select Add Feature->From a File->To Server and its File. 
+4. Navigate to your license file and click Open. Click OK on all message boxes that appear.
+
+Adding a license from a string:
+1. Open the Wlmadmin tool: Choose Start->Programs->Sentinel RMS License Administrator (or Sentinel LM Tools if the actual Sentinel LM is running on a non-Windows platform)->Sentinel LM Server Administration.
+2. Expand Subnet Servers (or you may have to use Defined Servers if the actual License Manager you are administering is on a different subnet) and locate your License Manager server.
+3. Right-click the License Manager and select Add Feature->From a String
+4. Enter the license code and check the "Add Feature to server's file" box or the license will be removed from memory upon reboot.
+5. Click the Add button and click OK on all message boxes that appear
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 60202

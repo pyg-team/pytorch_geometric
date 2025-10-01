@@ -1,0 +1,225 @@
+Title: IBM PM89923: ABEND0C4 IN HWSSSL00 NEAR LABEL RETRYSEC AFTER CLOSEHWS FORCE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During ICON shutdown CLOSEHWS FORCE, HWSSSL00 routine RETRYSEC
+   retrySecureSocketInit gets S0C4 in instruction:
+   IC       r0,(*)sockaddr_in.sockaddr_in.sin_family(,r1,1)
+   at module offset B7C8 because base register reg1 points to
+   unavailable storage.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IMS V12 IMS Connect users using the      *
+   *                 SSL port.                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: IMS Connect abends S0C4 in module       *
+   *                      HWSSSL00 after CLOSEHWS FORCE command.  *
+   *                                                              *
+   *                      IMS Connect does not shutdown after     *
+   *                      a CLOSEHWS command when there is        *
+   *                      an SSL connection that has not          *
+   *                      completed the SSL handshake.            *
+   *                                                              *
+   *                      IMS Connect does not completely close   *
+   *                      the SSL port after a STOPPORT command   *
+   *                      when there is an SSL connection that    *
+   *                      has not completed the SSL handshake.    *
+   ****************************************************************
+   * RECOMMENDATION: INSTALL CORRECTIVE SERVICE FOR APAR/PTF      *
+   ****************************************************************
+   Problem #1:
+   When a CLOSEHWS FORCE command is issued while a client and
+   IMS Connect is in the middle of the SSL handshake processing,
+   IMS Connect may abend S0C4 during termination processing.
+   
+   During CLOSEHWS FORCE termination processing, the CTOKEN block
+   is released. The SSL connection thread that is still
+   processing the SSL handshake tries to access the CTOKEN block
+   to get the IP address to build an error message, but the
+   CTOKEN block was already released which results in the S0C4
+   abend.
+   
+   Problem #2:
+   When a CLOSEHWS command is issued after a client makes a
+   connection to the SSL port but does not complete the SSL
+   handshake, IMS Connect hangs and does not shutdown.
+   IMS Connect shutdown may eventually complete if the SSL
+   handshake completes and the connection times out.
+   
+   During the CLOSEHWS shutdown processing, IMS Connect
+   terminates client connections that are in READ and RECV
+   states.  However, SSL connections that are in the middle of
+   its SSL handshake are in ACTV state so they were not
+   terminated.
+   
+   Problem #3:
+   When a STOPPORT command is issued after a client makes a
+   connection to the SSL port but does not complete the SSL
+   handshake, the SSL port does not completely close.  New
+   connections cannot be made to the SSL port, but it remains
+   in ACTIVE state with the one connection.
+   
+   During the STOPPORT shutdown processing, IMS Connect
+   terminates client connections that are in READ and RECV
+   states.  However, SSL connections that are in the middle of
+   its SSL handshake are in ACTV state so they were not
+   terminated.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  GEN:
+   KEYWORDS:
+   
+   *** END IMS KEYWORDS ***
+   IMS Connect has been corrected to stop SSL handshake processing
+   if the connection is in stop state caused by a CLOSEHWS FORCE,
+   CLOSEHWS, or STOPPORT command.
+   
+   A check is added to ensure the connection is not in stop state
+   before continuing with the SSL handshake process.  This
+   prevents the CTOKEN storage from being accessed after it
+   is released.
+   
+   A check is added to terminate ACTV connection threads to
+   prevent the CLOSEHWS and STOPPORT commands from hanging.
+   
+   
+   HWSLEPS0
+   - Check connection is not in stop state before continuing
+     SSL handshake.
+   
+   HWSSOCL0
+   - Set ACTV state connection to stop and post the connection
+     thread if it is waiting.
+   
+   HWSSSTP0
+   - Set ACTV state connection to stop and post the connection
+     thread if it is waiting.
+   - Set port in shutdown to prevent queued connection requests
+     from making connections.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM89923
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V12
+   
+   
+ * REPORTED COMPONENT ID
+   5635A0300
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-05-28
+   
+   
+ * CLOSED DATE
+   2013-10-08
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM98019 [http://www-01.ibm.com/support/docview.wss?uid=isg1PM98019] UK98316
+   
+   
+
+MODULES/MACROS
+ *  HWSLEPS0 HWSSOCL0 HWSSSTP0
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V12
+   
+   
+ * FIXED COMPONENT ID
+   5635A0300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY UK98316 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK98316]
+   UP13/10/15 P F310 Ž
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

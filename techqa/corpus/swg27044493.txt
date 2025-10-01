@@ -1,0 +1,46 @@
+Title: IBM Open Mic Webcast: Increase Connections Adoption By Socializing Your System Monitoring Data - 04 February 2015 [recordings and presentation attached] - United States
+
+Text:
+lste_webcast; STEwebcastDocument; Watchit; WatchIt WEBCAST
+
+ABSTRACT
+ Why not integrate Connections into how you share user/client response time data for Connections and its various supporting components? In this Open Mic replay, Jim Dewan describes how to incorporate Connections into your software solution monitoring/troubleshooting and performance analysis. Learn how to leverage Watchit, a no cost monitoring and performance reporting tool available via the IBM Greenhouse, to collect client response time data throughout the environment and share it within the friendly confines of a Connections Community. Leveraging the Connections mobile client for this data provides access from any place, any time, and anywhere. The key to adoption rates of Connections is to deliver necessary data within various teams. Real time system status and response times metrics, information that is constantly changing, is a great way to increase usage of a Connections Community. Teams then document their knowledge around these real time stats leveraging the powerful features of Connections. Also hear about the new Connections monitoring features of Watchit which include user tasks such as Bookmark creation/deletion, Files upload/deletion, Community creation/deletion, Wiki creation/deletion, Profiles searching and Blog creation/deletion. The new Watchit 10.4 Connections monitors are a new improvement for understanding each functional area's performance and errors, increasing user impact awareness. 
+
+CONTENT
+ 
+
+ * Topic: Increase Connections Adoption By Socializing Your System Monitoring Data 
+ * Date recorded: Wednesday, February 4, 2015
+
+Presentation OpenMic_ConnWatchit_020415.pdf [/support/docview.wss?uid=swg27044493&aid=2]OpenMic_ConnWatchit_020415.pdf [/support/docview.wss?uid=swg27044493&aid=1] 
+
+
+Audio recording Socializing system monitoring Open Mic 02042015.mp3 [/support/docview.wss?uid=swg27044493&aid=4]Socializing system monitoring Open Mic 02042015.mp3 [/support/docview.wss?uid=swg27044493&aid=3] 
+
+Length 53:15 minutes. Q&A period starts at approximately 45:30 minutes. 
+
+
+Video recordings Jim Dewan also included a demo of the Watchit Connections Dashboard during the Open Mic. That demo was recorded and can be viewed and downloaded from the IBM Collaboration Solutions Support YouTube channel [https://www.youtube.com/user/ICSSupportVideos]. The demo video can be found here: https://www.youtube.com/watch?v=svJ8GGaXkC0 [https://www.youtube.com/watch?v=svJ8GGaXkC0]. 
+
+Another video was made from combining the slides and recorded audio from the session. You can download that video from this FTP site: ftp://public.dhe.ibm.com/software/lotus/info/connections/OpenMic_WatchitConn.mp4 [ftp://public.dhe.ibm.com/software/lotus/info/connections/OpenMic_WatchitConn.mp4]. 
+
+
+Q&A summary 
+Web Chat Q&A Does Watchit requires metrics to be installed? No, Watchit's requirements are minimal. Java and a few more apps are required for the dashboard. For requirements information: Prerequisites of the Application [https://greenhouse.lotus.com/forums/html/topic?id=a65dab5d-8815-417f-b2d3-1afc9b25ec44] What is the URL to obtain more information on Watchit? The Watchit Monitoring tool community [https://greenhouse.lotus.com/communities/service/html/communitystart?communityUuid=43a17133-d91a-4828-a371-059138f6bc60] in the IBM Greenhouse has detailed information. If you are not a Greenhouse member, you can create a Greenhouse account. [https://greenhouse.lotus.com/gh_next/lotusgreenhouserequests.nsf/MainDocumentSelf?openForm] Will Watchit work on Connections 4.5? Yes Is Watchit an IBM product or a business partner's solution? Watchit is a homegrown application written by Jim Dewan, today's presenter. Is it free to use? Yes! Download today from the IBM Greenhouse. Is the mobile app for Watchit available now? I just checked the Google Play Store but did not find it. You use the IBM Connections mobile application to view the Watchit data in a Connections community. There is no separate Watchit mobile app. The Watchit probes - are they located on user PCs throughout the network? If so, what is the burden there? Where you load Watchit is where the probes live. So would that mean we will need to load/install Watchit across multiple servers, to monitor the same? Generally yes. A typical setup is to have a server instance probing servers directly - for example - running one probe on the ISC and one in the user zone, simulating user behavior. 
+Audio Q&A (starts at 45:30 minutes) 
+
+How does the Watchit data get into IBM Connections community? Watchit leverages the REST API for the functions. It is generating the graphs and performance data locally wherever you have Watchit installed. There is nothing on the actual Connections server itself from a Watchit perspective. After generating the data, Watchit then uses the REST API that the Connections server makes available; it uses an API program to go out and upload files, update the wiki pages, and generate that dashboard all within a Connections community. You've shared information on user response times and user data. You haven't shared information yet on server-specific monitoring, like HTTP server, or load balancer server, or cluster server. How do we get that data? There are various ways. From the network probe, you don't just point to the load balancer, you hit all the cluster servers. You can validate that any of the WebSphere ports to where you are running Watchit are available. You can hit any network port or socket that those clustered servers are running on. You can also direct the WebSphere monitor or any of the Connections probes directly to the specific servers. Don't go only through the load balancer but hit the back-end servers. 
+
+You have to be careful about what's open through the firewalls. In certain cases, you might have access to only the load balancer address. In that case, because Watchit is so small, you can place one probe within the data center and one without. You then have a user-facing probe that comes through only the allowed channels and an internal one that hits all the servers. Therefore, you can tell if any server in a cluster is down. Are there other details you could get in Watchit besides server status? For example, could you get details for an HTTP or WebSphere server as to why it's slow or under performing ? There was a plug-in you could install on top of Watchit for WebSphere statistics that might give you additional details as to what's going on within a WebSphere process itself. That plug-in was created the the Field Support Services (FSS) team. Check with IBM Software Services for Collaboration [http://www-01.ibm.com/software/lotus/services/contact.html] for availability of that plug-in. 
+
+Another approach for server analysis is to look at the different probes that you have in your environment. If you have only a WebSphere probe and see performance slowing, it might be helpful to add another probe, like a network probe, that hits the same backend. By correlating data from each of the probes, you might find that network latency has increased, as an example. Or you can compare probe data, for example, at a time when you have an LDAP slow down. By looking at all the probes as one and comparing, you might find that what looks like a WebSphere problem on the surface is due to network issues or a backend database issue or LDAP issue contributing to the problem. 
+
+About Open Mic Webcasts IBM Collaboration Solutions (Lotus) Support wants to help you take full advantage of your products. Join us for our Open Mic Webcast series as technical experts share their knowledge and answer your questions. These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient online webcast format. For more information about our Open Mic webcasts, visit the IBM Collaboration Solutions Support Open Mics [http://www.ibm.com/software/lotus/support/lotus-open-mics/] page. 
+RELATED INFORMATION
+ Video of Open Mic session (presentation and audio) [ftp://public.dhe.ibm.com/software/lotus/info/connections/OpenMic_WatchitConn.mp4]
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2014/12/17

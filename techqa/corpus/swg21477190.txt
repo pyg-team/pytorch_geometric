@@ -1,0 +1,57 @@
+Title: IBM After setting up SSL for Collaboration and Deployment Services, User is unable to login, view or create jobs within Deployment Manager. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After setting up SSL for Collaboration and Deployment Services (C&DS), user is unable to view or create jobs within Deployment Manager thick Client and unable to log into Deployment Manager thin/browser-based client.
+
+When attempting to create a new job, I get the following message within DM Client: 
+
+Unable to create this part due to an internal error. Reason for the failure: Error opening job.
+----------------------------------------------------------------------------------------
+
+I then attempted to connect with browser-based DM, and received the following message:
+
+Login unsuccessful. 
+Technical Details: java.net.ConnectException: 
+Connection refused: connect
+----------------------------------------------------------------------------------------
+
+In both instances I am logging in with admin. This had been working until SSL was enabled for this environment. I am getting the same error in DM Client when using either the 443 or 8080 port. However, I am unable to bring up a DM browser login if I use the 443 port. 
+
+
+Within the DM client log, I see the following error:
+----------------------------------------------------------------------------------------
+2007-10-15 09:12:20,670 ERROR [AuthenticateUserAsction.class] User is not authenticated
+AxisFault
+faultCode: {http://schemas.xmlsoap.org/soap/envelope/ [http://schemas.xmlsoap.org/soap/envelope/]}Server.userException
+faultSubcode: 
+faultString: java.net.ConnectException: Connection refused: connect
+----------------------------------------------------------------------------------------
+
+and 
+
+----------------------------------------------------------------------------------------
+ERROR [CapabilityClientWrapper.class] Exception occured while calling capabilities for Capability Information Webservice
+java.net.SocketException: Connection reset 
+
+RESOLVING THE PROBLEM
+The 'java.net.ConnectException: Connection refused: connect' messages indicates that the server cannot establish TCP connection using provided host name and port number. 
+
+
+
+Validate the URL Prefix parameter within Deployment Manager Administrator Console (<servername>:<port>/security/login) under Configuration | Setup | URL Prefix.. May need to change depending on the protocol (http or https) selected. 
+
+
+
+Note: If changing the URL Prefix to an IP address, that the IP address must be internal. If using an external site, set the URL Prefix to the external site and then add a HOSTS entry that maps the external site to the internal IP Address.
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 73753

@@ -1,0 +1,161 @@
+Title: IBM PM72399: CHANGING DATA COLLECTOR MAINTENANCE LEVEL USING COMMAND LINE WITH MULTIPLE SERVERS FAILS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Changing Data Collector maintenance level using command line
+   with multiple server instances failes.
+   
+   Example:
+   6.Use this option to update Data Collectors with the new
+   maintenance or reverting the update.
+   
+   
+   The configuration utility prompts you for the WebSphere&#65449; server
+   instance names.
+   Input WebSphere Server Instance Name
+   For example: cells/ITCAMCell/nodes/ITCAMNode/servers/server1
+   (default is: ): Enter the full names of one or several WebSphere
+   server instances for which you need to change the maintenance
+   level. Separate multiple instances with commas (for example,
+   cells/tivpc045Node05Cell/nodes/tivpc045test/servers/server1,
+   cells/tivpc045Node05Cell/nodes/tivpc045test/servers/server2)
+   
+   The configuration will run without any error messages but will
+   not perform the configuration.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1. Change the maintenance level of one server at a time
+   2. Use the GUI
+   3. Perform silent config.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of ITCAM for Application Diagnostics 7.1
+   * (KYN agent) updating DC maintenance level using command line.
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Update maintenance level using list
+   * of nodes separated by commas finishes without errors, but
+   * DC levels are not updated.
+   ****************************************************************
+   * RECOMMENDATION: Update KYN agent to version 7.1.0.3 IF5
+   * or newer.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Update maintenance level failed because of verification
+   procedure, which did not support nodes list.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+           | interim fix | 7.1.0.3-TIV-ITCAMAD-IF0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM72399
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92DC
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-07
+   
+   
+ * CLOSED DATE
+   2012-12-31
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92DC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

@@ -1,0 +1,21 @@
+Title: IBM CDM - Downloading IBM Cognos Disclosure Management Fix Packs and Full Versions - United States
+
+Text:
+get full version TECHNOTE (FAQ)
+
+QUESTION
+ Where can I download IBM Cognos Disclosure Management Fix Packs? 
+Where can I download the latest version of IBM Cognos Disclosure Management (CDM)? 
+
+ANSWER
+Where can I download IBM Cognos Disclosure Management Fix Packs? 
+
+Fix Packs can be downloaded from IBM Fix Central. 
+
+You can be automatically notified of the latest Fix Packs and Upgrades by subscribing to the notification emails on the IBM Cognos Disclosure Management Support Portal. 
+
+ * Where can I download the latest version of IBM Cognos Disclosure Management? 
+   
+   Register and log on to Passport Advantage and search for the version your are looking for. E.g. "CDM 10.2.5" 
+   
+   If you are having problems downloading the software please submit an inquiry using the "contact us" link after you have logged in.

@@ -1,0 +1,57 @@
+Title: IBM SQL Agent is not collecting data in cluster environment - United States
+
+Text:
+5724B96MO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When the default instance is configured in a cluster environment, the MS SQL Server agent does not collect data. 
+
+SYMPTOM
+- Data for default instance is not being collected 
+
+ - Agent services are restarted. 
+
+
+CAUSE
+The MS SQL Server agent uses the Windows Management Instrumentation (WMI) query to get the status of the MS SQL Server service. This query takes the name of MS SQL server service as a input.
+When the default instance is in a cluster environment, the service is created with the default instance name, which is MSSQLSERVER. So to get the status of the MS SQL Server service, 'MSSQLSERVER' should be provided as a input to the WMI query.
+But, agent uses the cluster name to query the status of the default instance. Hence, the WMI query fails to return the status of the default instance.
+Note: This issue does not occur when a named instance is configured in a cluster environment.
+
+
+ENVIRONMENT
+SQL Agent 06.30.01.03 , 06.31.08.00
+
+
+
+DIAGNOSING THE PROBLEM
+The collector log file coll.out located at ‘%candle_home% TMAITM6_x64\logs’ or ‘%candle_home% TMAITM6\logs’ should have lines similar to : 
+
+
+<Log Snippet>
+CTS0200T (2016-05-09 12:54:55) (23352)started collection for cursor HART1
+FXR4022T (2016-05-09 12:54:55) (23352)Host variable 'KOQV.LOGONID' replaced with 'candle'
+FXR4022T (2016-05-09 12:54:55) (23352)Host variable 'KOQV.PASSWORD' replaced with '{AES256:keyfile:a}qNf3u5TzYsiNXRacS4/sXQ=='
+FXR4022T (2016-05-09 12:54:55) (23352)Host variable 'KOQV.SERVERID' replaced with 'BI-SSIS-PROD'
+UEX3010T (2016-05-09 12:54:55) KDDUEXE(644) (23352)Cmd 'koqsql'; Parms '-logon candle -password {AES256:keyfile:a}qNf3u5TzYsiNXRacS4/sXQ== -rdbms BI-SSIS-PROD 3 "select * from Win32_Service where DisplayName = 'SQL Server (" '
+PRCSSQLT (2016-05-09 12:54:55) KOQSQLD(3567) (23352)SRVSTATUS :Query:: select * from Win32_Service where DisplayName = 'SQL Server (BI-SSIS-PROD)'
+FXR4028T (2016-05-09 12:54:55) (23352)Exit returned 0 rows
+YPP0200T (2016-05-09 12:54:55) (23352)ended collection for cursor HART1
+RCS0020T (2016-05-09 12:54:55) (23352)rows collected in 0 seconds 
+CGN1521E (2016-05-09 12:54:55) (23352)Interval collection failed for cursor HART1
+</Log Snippet>
+
+The HART1 cursor tries to execute the following WMI query and fails: 
+select * from Win32_Service where DisplayName = 'SQL Server (<Cluster Name>)'
+
+The query is for the default instance and should contain the default instance name:
+select * from Win32_Service where DisplayName = 'SQL Server (MSSQLSERVER)'
+
+Note: The agent specific environment variable 'KOQ_NAMED_INSTANCE' can be used to identify if the instance is a default or a named. 
+KOQ_NAMED_INSTANCE = 0 : Default Instance
+KOQ_NAMED_INSTANCE = 1 : Named Instance 
+
+
+
+RESOLVING THE PROBLEM
+This issue is fixed in version 06.31.08.01 of the MS SQL Server agent.

@@ -1,0 +1,152 @@
+Title: IBM PI78594: ROUNDTRIPPING CODE DELETES INTIALIZER IN CONSTRUCTOR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description
+   
+   A large project has a class with a constructor and destructor.
+   The constructor has an initializer. Code is generated for the
+   entire project. A comment in the .cpp of the class is edited,
+   and then Roundtripped. After the Roundtrip, the intializer in
+   the constructor is now gone. User expects the intializer to
+   still be there after the roundtrip, since only the comment was
+   edited
+   
+   Reproduction
+   
+   See attached document for detailed reproduction steps
+   
+   Attachments
+   
+   Project is attached, as well as a document with reproduction
+   steps
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  work as design
+    Roundtrip got a performance optimization on not opening include
+   files outside the component scope,
+   this optimization cause Roundtrip to fail to recognize that the
+   constructor
+   Foo_Bar(Tracking_Photoeye* aSource, const RTF::Address&
+   aClient_address);
+   and it implementation
+   Foo_Bar::Foo_Bar(Tracking_Photoeye* aSource, const RTF::Address&
+   aClient_address) { ...}
+   are the same function and as result the information in the
+   constructor implementation is lost.
+   
+   the problem is with name space RTF that is unknown while
+   analyzing the constructor  specification, but known when
+   analyzing the constructor  implementation because of includes in
+   the Cpp files that contain decleration of the name space after
+   the include: #include "PDL/LogicalDevices/Foo_Bar.hpp"
+   
+   This optimization work fine with the default code generation
+   properties, but your overwrite of property
+   CPP_CG::Dependency::GenerateForwardDeclarations
+   cause a missing forward deceleration to classes inside the RTF
+   names space so the optimization cause Roundtrip failure
+   
+   work around:
+    add dependency from class "Foo_Bar"  with stereotype usage ,(
+   usage = Existing   cause   minimal code change, can be " usage
+   =implementation"),
+    with  property CPP_CG::Dependency::GenerateForwardDeclarations
+   = true to one of the used classes in name space RTF
+   
+   in general the problem is with operation arguments with type in
+   name space that define in another component
+   and the work around is adding "namspace <somenamespace> {...}"
+   to the specification code by adding forward deceleration to
+   element inside the name space
+   
+   note: this is not a dummy dependency the use of type in the
+   namespace for the argument is actual logical dependency
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI78594
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   814
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-22
+   
+   
+ * CLOSED DATE
+   2017-06-11
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

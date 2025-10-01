@@ -1,0 +1,117 @@
+Title: IBM Release Notes for IBM Business Process Manager Banking Pack version 7.5 - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ This document provides the Release Notes for IBM Business Process Manager Banking Pack version 7.5. 
+
+CONTENT
+The IBM Business Process Manager (BPM) Banking Pack accelerates the delivery of Business Process Management-based industry solutions for banking institutions using the prebuilt assets provided with it.
+
+
+ * Description
+ * System requirements
+ * Installing Business Process Manager Banking Pack v7.5
+ * Known issues and limitations
+ * Globalization limitations
+ * Accessibility limitations
+ * Contacting IBM Software Support
+
+
+
+Description
+
+
+The IBM Business Process Manager Banking Pack includes the following assets:
+
+
+ * Banking Capability Models: The Banking Capability Models are based on American Productivity & Quality Center (APQC)-Process Classification Framework (PCF), International Organization for Standardization (ISO) 20022, and IBM best practices.
+
+ * Banking Process Models: The Banking Process Models are based on IBM best practices.
+
+ * Banking Common Components: The Banking Common Components include Banking common services that are Banking-specific common Web service implementations based on the Banking industry standards. These common services are based on ISO 20022 SEPA, NACHA industry standards, and IBM best practices.
+
+ * Banking Business Vocabulary: The Banking Business Vocabulary is based on the Business Terms derived from Information FrameWork (IFW).
+
+ * Banking Business Object Models: The Banking Business Object Models is based on the ISO 20022 Payments Messaging Model. ISO 20022 is an industry-standard XML message specification for Banking. 
+
+ * Banking Solution Scenarios: The Banking Solution Scenarios are Business Process Manager implementations packaged as a reference to help understand the end-to-end delivery of a Business Process Manager solution for the Banking industry. In this pack, the New Account Opening Solution Scenario has been included.
+   
+   Back to top
+   
+   
+
+
+
+System requirements
+
+
+For information about hardware and software compatibility, see the Detailed installation requirements [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5mx/topic/com.ibm.ws.icp.bkkpay.doc/shared/ins_gd/concept/c_swhw_reqs.html] section in the IBM Business Process Manager Industry Packs V7.5 product documentation. 
+
+Back to top
+
+
+Installing Business Process Manager Banking Pack v7.5
+
+
+For the step-by-step installation instructions, see the Installing the Business Process Manager Banking Pack [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5mx/topic/com.ibm.ws.icp.bkkpay.doc/shared/ins_gd/concept/c_installing_ovr.html] section in the IBM Business Process Manager Industry Packs V7.5 product documentation.
+
+
+
+Back to top
+
+
+Known issues and limitations
+
+
+For a complete list of known issues and limitations, see the Known issues and limitations [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5mx/topic/com.ibm.ws.icp.bkkpay.doc/shared/ins_gd/concept/c_known_problems.html] section in the IBM Business Process Manager Industry Packs V7.5 product documentation.
+
+
+
+Back to top
+
+
+Globalization limitations
+
+
+The globalization limitations identified for this release of the Business Process Manager Banking Pack are as follows. 
+
+ * The Business Space widgets, provided with the Solution Scenarios in Business Space, are available only in English.
+
+ * The terms and their descriptions in the Business Vocabulary are available only in English.
+
+ * The online help for Asset Navigator is available only in English, Brazilian Portuguese, French, German, Japanese, and Spanish languages.
+   
+   Back to top
+   
+   
+
+
+
+Accessibility limitations 
+The accessibility limitations identified for this release of the Business Process Manager Banking Pack are as follows: 
+
+We provide limited accessibility support.
+
+Limitation
+The Asset Navigator that is implemented in Flash does not support the JAWS screen reader. JAWS cannot read through the Flash components without the supporting HTML pages.
+
+
+
+Back to top
+
+
+Contacting IBM Software Support 
+If you encounter a problem with this product, see the product documentation available at the IBM Business Process Manager Industry Packs V7.5 product documentation [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5mx/topic/com.ibm.ws.wicp.icmaster.doc/ic-homepage.html] before contacting IBM technical support.
+
+
+
+Back to top
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ BPM

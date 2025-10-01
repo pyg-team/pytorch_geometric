@@ -1,0 +1,176 @@
+Title: IBM PK96344: AN FFDC WITH CLASSCASTEXCEPTION IS GENERATED CASTING TO CONTROLLABLEPROXYSUBSCRIPTION - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An FFDC with ClassCastException is generated when casting to
+   ControllableProxySubscription. This error can occur at any
+   time that a messaging engine or application is stopped on a
+   system with multiple messaging engines and publish/subscribe
+   is being used.
+   
+   For each bus member, an FFDC reporting ClassCastException
+   was generated prior to the shutdown of the application.
+   The FFDC has the following stack:
+   com.ibm.ws.sib.msgstore.transactions.
+   MSDelegatingLocalTransaction.commit 1:469:1.51.2.1
+   .
+   Exception = java.lang.ClassCastException:
+   com.ibm.ws.sib.processor.matching.MatchingConsumerDispatcher
+   incompatible with
+   com.ibm.ws.sib.processor.impl.ControllableProxySubscription
+   at com.ibm.ws.sib.processor.impl.ControllableProxySubscription.
+   equals(ControllableProxySubscription.java:85)
+   at java.util.ArrayList.remove(ArrayList.java:450)
+   at com.ibm.ws.sib.processor.matching.ConsumerMonitoring.
+   removeConsumer(ConsumerMonitoring.java:235)
+   ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of the default messaging provider for *
+   *                  IBM WebSphere Application Server Version 6.1*
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An FFDC report is logged showing        *
+   *                      java.lang.ClassCastException:           *
+   *                      com.ibm.ws.sib.processor.matching.      *
+   *                      MatchingConsumerDispatcher              *
+   *                      incompatible with                       *
+   *                      com.ibm.ws.sib.processor.impl.          *
+   *                      ControllableProxySubscription           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The ClassCastException might occur when publish/subscribe
+   messaging is being used in a bus that contains multiple
+   messaging engines.
+   
+   The exception occurs when deregistering a proxy subscription on
+   behalf of a remote messaging engine in the bus.
+   A check is made to determine whether the proxy subscription
+   is in an internal data structure, and an incorrect comparison
+   routine meant this could fail with a ClassCastException
+   depending on what other items were in the data structure.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR corrects the comparison routine to
+   prevent the ClassCastException from occurring.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 6.1.0.29.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK96344
+   
+   
+ * REPORTED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * REPORTED COMPONENT ID
+   620600101
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-16
+   
+   
+ * CLOSED DATE
+   2009-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * FIXED COMPONENT ID
+   620600101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY
+   UP

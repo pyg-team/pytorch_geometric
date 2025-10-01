@@ -1,0 +1,184 @@
+Title: IBM IZ47024: DOCUMENTATION CHANGES FOR REGULAR EXPRESSIONS IN ADAPTERS GUIDE - United States
+
+Text:
+AIX  A FIX IS AVAILABLE
+3.9.0.8-TIV-TEC-IF0113 IBM Tivoli Enterprise Console Version 3.9 Interim Fix [http://www-01.ibm.com/support/docview.wss?rs=0&uid=swg24022894]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description:
+   .
+   Regular expressions are not fully supported when using them
+   in adapter filter statements. There are common shortcuts
+   like (?i) for case insensitive matching that will not work
+   in the adapter filter statements.  Suggested approach to
+   this issue would be:
+   
+   - Remove the following statement "For more information
+     about Tcl regular expressions, see a Tcl user's guide." .
+   
+   - Add the following statement: Meta syntax, such as ?i for
+     case-insensitive matching, is not supported by the Tivoli
+     Event Integration Facility (EIF) or Adapter Filters that
+     use regular expressions.
+   
+   .
+   Failing Component: Tec Docs
+   .
+   Customer Recreate Environment:
+   .
+   TEC 3.9 FP7+
+   All Platforms
+   .
+   Database: N/A
+   TME Framework: N/A
+   Install Method: New
+   TEC Server: 3.9 FP7
+   TEC Gateway: 3.9 FP7
+   TEC UI Server: 3.9 FP7
+   TEC Console: 3.9 FP7
+   Risk Manager Server: N/A
+   Risk Manager Gateway: N/A
+   Risk Manager Agent: N/A
+   Websphere Server: N/A
+   Endpoint Level: N/A
+   TMR / TEC Same Machine: Yes
+   Affected Locale: All
+   .
+   Collected Information:
+   .
+   None - Documentation Apar
+   .
+   Last Known Good Level: None
+   Level 3 Acknowledged: S.B.
+   .
+   Recreate Steps:
+   .
+   N/A
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All TEC users or regular expressions in
+   *   adapter filter statements.
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The TEC EIF uses an exception to the Tcl
+   *   regular expression syntax for adapter filter statements.
+   *   Meta syntax, such as (?i) for case insensitive matching, is
+   *   not supported.
+   ****************************************************************
+   * RECOMMENDATION: Read the documentation update below.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The note about reqular expression filter statement syntax on
+   page 21 of the TEC Adapters Guide and page 33 of the EIF
+   Reference manual should be updated with the following statement:
+   
+     "Meta syntax, such as ?i for case-insensitive matching, is not
+   supported by the Tivoli Event Integration Facility."
+   
+   Also, the following statement should be removed from both
+   manuals:
+   
+     "For more information about Tcl regular expressions, see a Tcl
+   user's guide."
+   
+   For more information on the Tcl regular expression syntax used
+   by TEC, see APAR IY56192 [http://www-01.ibm.com/support/docview.wss?uid=swg1IY56192] and the 'regtest' sample shipped in the
+   EIFSDK.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+     | Interim Fix | 3.9.0.8-TIV-TEC-IF0113
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ47024
+   
+   
+ * REPORTED COMPONENT NAME
+   TIVOLI ENT.CONS
+   
+   
+ * REPORTED COMPONENT ID
+   5698TEC00
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-03-19
+   
+   
+ * CLOSED DATE
+   2009-04-28
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

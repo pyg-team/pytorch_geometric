@@ -1,0 +1,182 @@
+Title: IBM JR55893: Dbclean throws an SQL error on deletion in Scheduler tables - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Commerce Version 8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24042512]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After migrating from V7 to V8, the dbclean utility might throw
+   exceptions when cleaning scheduler tables:
+   
+   Chained SQLException 2: DB2 SQL Error: SQLCODE=-727,
+   SQLSTATE=56098,
+   SQLERRMC=2;-206;42703;SCHCONFIG.SCCJOBREFUM, DRIVER=4.19.26
+   
+   com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error:
+   SQLCODE=-206, SQLSTATE=42703, SQLERRMC=SCHCONFIG.SCCJOBREFUM,
+   DRIVER=4.19.26
+    at com.ibm.db2.jcc.am.kd.a(Unknown Source)
+    at com.ibm.db2.jcc.am.kd.a(Unknown Source)
+   ...
+    at
+   com.ibm.commerce.clean.dbcleaner.DBCleaner.deleteDirect(DBCleane
+   r.java:1460)
+    at
+   com.ibm.commerce.clean.dbcleaner.DB2Cleaner.deleteCommit(DB2Clea
+   ner.java:347)
+    at
+   com.ibm.commerce.clean.dbcleaner.DBCleaner.cleanTable(DBCleaner.
+   java:1412)
+    at
+   com.ibm.commerce.clean.dbcleaner.DBCleaner.clean(DBCleaner.java:
+   992)
+    at
+   com.ibm.commerce.clean.dbcleaner.DBCleaner.clean(DBCleaner.java:
+   823)
+    at com.ibm.commerce.clean.DBClean.execute(DBClean.java:374)
+    at com.ibm.commerce.clean.DBClean.main(DBClean.java:84)
+    20160502-181632| DBCleaner.printCounters> The total number of
+   tables visited is 0.
+   20160502-181632| DBCleaner.printCounters> The total number of
+   tables affected is 0.
+   20160502-181632| DBCleaner.clean> The system could not run the
+   following SQL statement: DELETE FROM SCHCONFIG WHERE SCCAPPTYPE
+   ='broadcast' AND NOT EXISTS (SELECT 1 FROM SCHACTIVE A WHERE
+   SCHCONFIG.SCCJOBREFUM = A.SCSJOBNBR) AND NOT EXISTS (SELECT 1
+   FROM SCHBRDCST B WHERE SCHCONFIG.SCCJOBREFNUM = B.JOBREFNUM AND
+   B.JOBSTATE = 'R') AND (days(CURRENT TIMESTAMP) - days(SCCSTART)
+   >= ?)
+   20160502-181632| DBCleaner.doFailureOutput> The DBClean utility
+   completed with errors.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Run the following SQL statement against your database to correct
+    the issue (in the original SQL, there was a typo. "SCCJOBREFUM"
+    should be "SCCJOBREFNUM"):
+   
+   DELETE FROM SCHCONFIG WHERE SCCAPPTYPE = 'broadcast' AND NOT
+   EXISTS (SELECT 1 FROM SCHACTIVE A WHERE SCHCONFIG.SCCJOBREFNUM =
+    A.SCSJOBNBR) AND NOT EXISTS (SELECT 1 FROM SCHBRDCST B WHERE
+   SCHCONFIG.SCCJOBREFNUM = B.JOBREFNUM AND B.JOBSTATE = 'R') AND
+   (days(CURRENT TIMESTAMP) - days(SCCSTART) >= ?)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   WebSphere Commerce Version 8 users who migrated from WebSphere
+   Commerce Version 7.
+   
+   PROBLEM ABSTRACT:
+   Dbclean throws an SQL error on deletion in Scheduler tables
+   
+   BUSINESS IMPACT:
+   Cannot clean scheduled tables.
+   
+   RECOMMENDATION:
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed the merging process that happens during the migration.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR55893
+   
+   
+ * REPORTED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * REPORTED COMPONENT ID
+   5724I3800
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / Pervasive / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-10
+   
+   
+ * CLOSED DATE
+   2016-06-10
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * FIXED COMPONENT ID
+   5724I3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

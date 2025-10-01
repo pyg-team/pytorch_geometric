@@ -1,0 +1,43 @@
+Title: IBM ITCAM4Tx : ISM https monitor reports "SSL handshake failed" message - United States
+
+Text:
+71ISM-PLAN; 71ISM-CONF; 71ISM-GEN; 71ISM-TS TECHNOTE (FAQ)
+
+QUESTION
+ 
+ISM HTTPS monitor against an https target server reports "SSL handshake failed", but wget works. why? 
+
+CAUSE
+
+Possible cause is that the targeted web server SSL implementation predates the TLS
+v1.2 standard, so it may not correctly handle a TLS 1.2 client connecting (like ISM client).
+WGet may work because it isn't using tls v1.2 as its maximum protocol.
+
+
+ANSWER
+ 
+
+Try and disable tls v1.1 and tls v1.2 from ISM HTTPS monitor.
+
+In order to do this, install these on your ISM agent, if not already in use
+
+Install ISM 74 IF18
+see its readme:
+http://www.ibm.com/support/docview.wss?uid=isg400001898 [http://www.ibm.com/support/docview.wss?uid=isg400001898]
+(for reference, it includes IF13
+http://www.ibm.com/support/docview.wss?uid=isg400001841 [http://www.ibm.com/support/docview.wss?uid=isg400001841]
+which includes
+APAR IV56117: ISM MONITORS NEED TO BE ABLE TO DISABLE TLS 1.2 AND TLS
+1.1 FOR COMPATIBILITY WITH OLDER CRYPTOGRAPHY IMPLEMENTATIONS)
+
+Once ISM 74 IF18 is installed, set in https.props file the line :
+SSLDisableTLS11 : 1
+
+That disables TLS1.1 and TLS1.2
+
+Recycle the ISM agent.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itcam itcam4tx itcamfortx internet services monitoring

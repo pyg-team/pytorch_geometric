@@ -1,0 +1,195 @@
+Title: IBM PI76992:Provide connectivity with IBM Cloud Product Insights - United States
+
+Text:
+PI76992; PI76992; PI76992 DOWNLOADABLE FILES
+
+ABSTRACT
+ Provide connectivity with IBM Cloud Product Insights 
+
+DOWNLOAD DESCRIPTION
+PI76992 resolves the following problem:
+
+ERROR DESCRIPTION: 
+The WebSphere Application Server process should register with 
+IBM Cloud Product Insights and provide usage metrics. 
+
+LOCAL FIX: 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+All users of IBM WebSphere Application
+Server
+
+PROBLEM DESCRIPTION:
+Provide connectivity with IBM Cloud
+Product Insights
+
+RECOMMENDATION:
+None
+
+IBM WebSphere Application Server should provide a mechanism to
+register and provide metrics to the IBM Cloud Product Insights
+service in Bluemix.
+
+PROBLEM CONCLUSION: 
+APAR PI76992 provides support for registering a WebSphere 
+Application server with an instance of the IBM Cloud Product 
+Insights service. 
+
+IBM Cloud Product Insights, an IBM Bluemix service, allows 
+you to connect your IBM WebSphere Application Server to server 
+registration and usage information. This includes application 
+servers hosted both in IBM Bluemix and in other environments. 
+When an application server is configured to connect to Product 
+Insights, the following information is reported and can be 
+viewed in Product Insights dashboards: 
+
+- Number of active servers 
+- Host location of each server 
+- Product edition and version of each server 
+- How busy each server is 
+
+After installing the APAR, before you connect an IBM WebSphere 
+Application Server traditional server to Product Insights, you 
+must have an IBM Bluemix account and create the service in an 
+organization and space. Follow the "Getting started" steps 
+to set up an account and allocate the Product Insights service. 
+
+Ensure that you have the API host and API key values of the 
+Product Insights service that you want WebSphere Application 
+Server to register to. Complete the following steps to obtain 
+the API host and API key values: 
+
+1 - Click your new Product Insights service tile to open it. 
+The service dashboard is displayed. 
+
+2 - Click the Service credentials tab. The list of credentials 
+for your IBM Software products is displayed, including 
+the service credential name that you specified for your 
+new service. 
+
+3 - Click View credentials to show the API key that will be 
+used for the connection to your IBM Integration Bus 
+integration servers. 
+
+4 - Copy the API host and API key from the Service credentials 
+tab, which you will later use when you configure your 
+servers. 
+
+Important: If your WebSphere Application Server installation 
+does not have direct internet access and needs to connect to 
+Product Insights through a gateway or proxy server, see the 
+developerWorks article on using a gateway or proxy server. 
+
+Once the Bluemix service has been created and the API host and 
+API key are known, then configure the WebSphere Application 
+Server traditional server using the following procedure: 
+
+1 - Create a was-product-insights.properties file with the 
+following contents, substituting the API host and key 
+from the service credentials. 
+
+# required 
+url=<apihostFromBluemix> 
+apiKey=<apikeyFromBluemix> 
+
+# optional - to use, remove # and define groups 
+# groups=<groups> 
+
+On the optional groups attribute, you can define sets of 
+servers to be grouped together for reporting purposes. 
+You can define multiple nested group levels, and each 
+server can be included in multiple groups by separating 
+the group names with a comma: 
+
+groups="WASGroup1, WASGroup1/subgroupA" 
+
+Top-level groups are specified without a forward slash 
+(/), and nested groups are specified in the following 
+format: <parentGroup>/<nestedGroup>. Grouped servers 
+are displayed hierarchically in the Product Insights 
+service. 
+
+2 - Add the was-product-insights.properties file to your 
+installation. 
+
+- For WebSphere Application Server (base), place the file 
+in the directory: 
+
+<wasInstallRoot>/profiles/<profileName>/config/cells/<cellName> 
+
+
+- For WebSphere Application Server Network Deployment or 
+WebSphere Application Server for z/OS, place the file in 
+any of the following directories. You can configure 
+Product Insights at the server, cluster, node, or cell 
+level, depending on which directory is used. 
+
+- Server directory: 
+<wasInstallRoot>/profiles/<profileName>/config/cells/<cellName>/
+nodes/<nodeName>/servers/<servername> 
+- Cluster directory: 
+<wasInstallRoot>/profiles/<profileName>/config/cells/<cellName>/
+clusters/<clustername> 
+- Node directory: 
+<wasInstallRoot>/profiles/<profileName>/config/cells/<cellName>/
+nodes/<nodeName> 
+- Cell directory: 
+<wasInstallRoot>/profiles/<profileName>/config/cells/<cellName> 
+
+If your environment uses a deployment manager, place the 
+file in the directory tree for the deployment manager 
+profile. Then, propagate the file to each of the 
+managed nodes by starting wsadmin and running the 
+following commands: 
+
+repository= 
+AdminControl.queryNames('type=ConfigRepository,process=dmgr,*') 
+AdminControl.invoke(repository, 'refreshRepositoryEpoch') 
+AdminNodeManagement.syncActiveNodes() 
+
+If your environment does not use a deployment manager, 
+place the file in the corresponding directory for 
+each server, node, or cell that you want to register. 
+
+After you add the file, if the server is running or the 
+next time it starts, the server registers with the 
+Product Insights service instance. 
+
+
+Each registered WebSphere Application Server traditional 
+server - or for Network Deployment, each registered cluster, 
+node, or cell - reports usage metrics to your Product Insights 
+service instance. 
+
+If you no longer want to report metrics to the Product 
+Insights service, remove the was-product-insights.properties 
+file from your WebSphere Application Server installation. 
+
+For information about how to use Product Insights at run time, 
+see the Bluemix documentation at About IBM Product Insights, or 
+articles about Product Insights on developerWorks. 
+
+The fix for this APAR is currently targeted for inclusion in 
+fix packs 8.5.5.12 and 9.0.0.4. Please refer to the 
+Recommended Updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+None
+
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) V90 Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI76992/9.0.0.3/readme.txt] US English 11890 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 9.0.0.3-WS-WAS-IFPI76992 03-15-2017 US English 379549 HTTP [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%2FWebSphere&product=ibm/WebSphere/WebSphere+Application+Server&release=All&platform=All&function=fixId&fixids=9.0.0.3-WS-WAS-IFPI76992&includeSupersedes=0] 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24043459&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24043459&aid=2]Problems (APARS) fixed
+PI76992

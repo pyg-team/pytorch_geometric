@@ -1,0 +1,218 @@
+Title: IBM IC68436: MSG FLOW WITH WS-SECURITY ENABLED ON MORE THAN 1 SOAP NODE PAIR FAILS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a message flow has WS-Security enabled on more than 1 SOAP
+   Node pair, ie SOAP Input -> SOAP Request -> SOAP Reply or SOAP
+   Request -> SOAP Request, then the verification of any X509
+   tokens defined in the policy set and bindings may fail in the
+   second SOAP node, indicating that too many X509 tokens have
+   been found, even though it is correctly configured:
+   "Found an extranious X509 token - more than configured for
+   PolicySet". The following BIP message and exception stack will
+   also be seen:
+   
+   BIP3701E: A Java exception was thrown whilst calling the Java
+   JNI method ''Axis2Requester_processResponseMessageSync''.
+   The Java exception was ''
+   org.apache.axis2.AxisFault: CWWSS6521E: The Login failed because
+   of an exception:
+   javax.security.auth.login.LoginException: Found an extranious
+   X509 token - more than configured for PolicySet''.
+   
+   The Java stack trace was ''Frame : 0 org.apache.axis2.AxisFault:
+   CWWSS6521E: The Login failed because of an exception:
+   javax.security.auth.login.LoginException: Found an extranious
+   X509 token
+   - more than configured for PolicySet
+   | @: org.apache.axis2.AxisFault.makeFault(AxisFault.java:430)
+   | @: com.ibm.ws.wssecurity.handler.WSSecurityConsumerBase.invoke
+   (WSSecurityConsumerBase.java:142)
+   | @:
+   com.ibm.ws.wssecurity.handler.WSSecurityConsumerHandler.invoke
+   (WSSecurityConsumerHandler.java:461)
+   | @: org.apache.axis2.engine.Phase.invoke(Phase.java:295)
+   | @:
+   org.apache.axis2.engine.AxisEngine.invoke(AxisEngine.java:266)
+   | @:
+   org.apache.axis2.engine.AxisEngine.receive(AxisEngine.java:163)
+   | @:
+   com.ibm.broker.axis2.Axis2Requester.processResponseMessageIntern
+   al
+   (Axis2Requester.java:1377)
+   | @:
+   com.ibm.broker.axis2.Axis2Requester.processResponseMessageSync
+   (Axis2Requester.java:1088)
+   |Frame : 1 com.ibm.wsspi.wssecurity.core.SoapSecurityException:
+   CWWSS6521E: The Login failed because of an exception:
+   javax.security.auth.login.LoginException: Found an extranious
+   X509 token - more than configured for PolicySet
+   | @: com.ibm.wsspi.wssecurity.core.SoapSecurityException.format
+   (SoapSecurityException.java:67)
+   | @:
+   com.ibm.ws.wssecurity.wssapi.token.impl.CommonTokenConsumer.invo
+   ke
+   (CommonTokenConsumer.java:252)
+   | @: com.ibm.ws.wssecurity.core.WSSConsumer.callTokenConsumer
+   (WSSConsumer.java:2048)
+   | @: com.ibm.ws.wssecurity.core.WSSConsumer.callTokenConsumer
+   (WSSConsumer.java:1909)
+   | @: com.ibm.ws.wssecurity.core.WSSConsumer.invoke
+   (WSSConsumer.java:756)
+   | @: com.ibm.ws.wssecurity.handler.WSSecurityConsumerBase.invoke
+   (WSSecurityConsumerBase.java:107)
+   | @:
+   com.ibm.ws.wssecurity.handler.WSSecurityConsumerHandler.invoke
+   (WSSecurityConsumerHandler.java:461)
+   | @: org.apache.axis2.engine.Phase.invoke(Phase.java:295)
+   | @:
+   org.apache.axis2.engine.AxisEngine.invoke(AxisEngine.java:266)
+   | @:
+   org.apache.axis2.engine.AxisEngine.receive(AxisEngine.java:163)
+   | @:
+   com.ibm.broker.axis2.Axis2Requester.processResponseMessageIntern
+   al
+   (Axis2Requester.java:1377)
+   | @:
+   com.ibm.broker.axis2.Axis2Requester.processResponseMessageSync
+   (Axis2Requester.java:1088)''.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of WebSphere Message Broker who use the the SOAP
+   nodes with WS-Security enabled.
+   
+   Platforms Affected:
+   All Platforms
+   ****************************************************************
+   PROBLEM SUMMARY:
+   If a message flow has WS-Security enabled on more than 1 SOAP
+   Node pair, ie SOAP Input -> SOAP Request -> SOAP Reply or SOAP
+   Request -> SOAP Request, then the verification of any X509
+   tokens defined in the policy set and bindings may fail in the
+   second SOAP node indicating that too many X509 tokens have been
+   found even though it is correctly configured.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere Message Broker has been modified so that more that 1
+   SOAP node pair can be included in a message flow and have WS-
+   Security enabled to verify x509 tokens.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   V6.1 - Maintenance Level 6.1.0.9
+   
+   V7.0 - Maintenance Level 7.0.0.3
+   
+   The latest available maintenance can be obtained from
+   'WebSphere Message Broker Recommended Fixes'
+   http://www.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere Message
+   Broker Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC68436
+   
+   
+ * REPORTED COMPONENT NAME
+   WMB WINDOWS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0500
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-06
+   
+   
+ * CLOSED DATE
+   2010-11-16
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMB WINDOWS V6
+   
+   
+ * FIXED COMPONENT ID
+   5724J0500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

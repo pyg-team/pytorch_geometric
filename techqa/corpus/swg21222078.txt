@@ -1,0 +1,55 @@
+Title: IBM AMQ6047 conversion not supported on AIX CCSID 1208 273 - United States
+
+Text:
+convert conversion data ucs utf-8 1208 273 ccsid amq6047 amq6174 mqminfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You install a new AIX server system. This server hosts a WebSphere MQ queue manager with channels to several other systems. The MQ channels all work fine except the connection to the host system. The transfer of messages fails with the following errors and the messages are transferred to the dead letter queue. 
+
+AMQ6047: Conversion not supported. 
+EXPLANATION: WebSphere MQ is unable to convert string data tagged in CCSID 1208 to data in CCSID 273. 
+
+AMQ6174: The library /var/mqm/exits//MQSTR_r was not found. The queue manager will continue without this module. 
+EXPLANATION: The dynamically loadable file /var/mqm/exits//MQSTR_r was not found. 
+
+CAUSE
+Data conversion in MQ is done by making calls to the Operating System which uses data conversion tables to translate the message data from one CCSID to another CCSID. The conversion tables have names containing the 2 CCSID's which are being converted. So in this example, the table used to do the conversion from 1208 (UTF-8) to 273 is named UTF-8_IBM-273. In order for the MQ conversion call to complete successfully this table must be installed on the Operating System. 
+
+
+On AIX, these tables are located in the directory /usr/lib/nls/loc/iconv . The error message you are getting is indicating the UTF-8_IBM-273 conversion table is not installed on your AIX system.
+
+
+RESOLVING THE PROBLEM
+ You will need to install the UTF-8_IBM-273 conversion table on your AIX system in order for this conversion to be done on the AIX system. This should be part of the AIX fileset: 
+
+ bos.iconv.ucs.ebcdic 
+
+ 
+
+Note: For completeness, here are 2 other filesets that are involved in character conversion tasks.
+bos.iconv.ucs.com Unicode converters for AIX sets 
+bos.iconv.ucs.pc Unicode converters for Windows PC sets
+
+
+Additional information
+Once you are able to install this fileset, or if you believe this is already installed, you can check the conversion using the iconv command to see if conversion can be done by the Operating System for the CCSID pages involved. 
+
+1. Create a 'test.in' file with some random text data in it. 
+
+2. Issue the following command 
+iconv -f UTF-8 -t IBM-273 test.in > test.out 
+
+3. You can also test that it can convert data in the opposite direction using the command
+iconv -f IBM-273 -t UTF-8 test.out > test.txt 
+
+
+Once this works then MQ will be able to do the conversion also. If you are not able to install the conversion tables on AIX, you could alter your setup between AIX and the partner host system such that it does not do conversion on AIX, and let the data conversion happen on the partner host system instead. 
+
+For outgoing messages, you would set the AIX sender channel to convert=no and then on the host side your applications would have to specify convert as a option when they do their MQGET calls to get the messages off the host queues. 
+
+For incoming messages, you would set the sender channel on host to have convert=yes so conversion is done before the message leaves the host. Then on the AIX side you would have your applications not do conversion, since the data is already converted by the host queue manager. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

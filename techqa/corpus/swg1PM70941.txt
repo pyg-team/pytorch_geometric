@@ -1,0 +1,197 @@
+Title: IBM PM70941: MASES IN A CICSPLES NOT INHERITING TIMEZONE ATTRIBUTES PROPERLY.EVENTS MAY NOT TRIGGER AT CORRECT TIME - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You define your CICS regions with CSYSDEF records in the CPSM
+   data repository. Fields 'Time zone', 'Time zone offset' and
+   'Daylight saving time in effect' (fields TMEZONE, TMEZONEO and
+   DAYLGHTSV respectively) are all set to INHERIT, so that they
+   inherit the settings assigned to the CMAS to which the CICS
+   system is connected.
+   .
+   You find that CPSM functions such as !!SAMOPS alerts based on
+   Time Periods do not trigger accurately, as the CICS region has
+   not properly inherited the time zone fields from the connecting
+   CMAS.
+   .
+   Additional Symptoms/Keywords
+   KIXREVSVR
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICSPlex SM V4R1M0 and V4R2M0 Users      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:    In the CSYSDEF records defining your *
+   *                      CICS regions in the CPSM data reposi-   *
+   *                      tory, fields 'Time zone', 'Time zone    *
+   *                      offset' and 'Daylight saving time in    *
+   *                      effect' (attributes TMEZONE, TMEZONEO   *
+   *                      and DAYLGHTSV respectively) are all set *
+   *                      to INHERIT, so that they inherit the    *
+   *                      real values from the CMAS to which the  *
+   *                      CICS regions connect.                   *
+   *                         You find that CPSM functions based   *
+   *                      on Time Period Definitions (PERIODEFs), *
+   *                      such as !!SAMOPS alerts, do not trigger *
+   *                      accurately, as the CICS region has not  *
+   *                      inherited the time zone attributes from *
+   *                      the connecting CMAS properly.           *
+   ****************************************************************
+   * RECOMMENDATION:    After applying the PTF that resolves this *
+   *                 APAR, all CMASes must be recycled to pick up *
+   *                 the new code.  Note that regions do not need *
+   *                 to be brought down and restarted at the same *
+   *                 time.                                        *
+   ****************************************************************
+      If any of the time zone definition fields 'Time zone', 'Time
+   zone offset', or 'Daylight saving time in effect', in the CICS
+   System Definition (CSYSDEF) resource are set to "Inherit", then
+   the real time zone values will be copied from the CMAS to which
+   the MAS connects at MAS start time, or when the values of the
+   time zone attributes of the CMAS are changed by an API program,
+   or through the EYUSTARTCMAS WUI view or CICS Explorer.  However
+   if the value of the MAS field 'Real time analysis status' is
+   updated, for example from RTASTATUS=NO to RTASTATUS=SAM, then
+   changes to the CMAS's time zone attributes or the plex's sec-
+   urity processing options will not be inherited by the MAS until
+   the MAS agent restarts, either by recycling the CICS region or
+   by stopping and restarting the MAS agent manually using the COSH
+   and COLM transactions.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *     Module EYU0TSRS (TSRS - Refresh CICS System Descriptor) was
+   updated to retain the inheritance status of security and time
+   zone attributes when called to refresh the CICS System Descrip-
+   tor (CSDB) to reflect a change of the MAS's RTASTATUS attribute.
+   Module EYU0TISC (TISC - Create CICS System Object) was modified
+   to set the time zone inheritance flag in the CSDB from the CMAS
+   if any of the time zone attributes of the CSYSDEF resource are
+   set to "Inherit".
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM70941
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   60M
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-15
+   
+   
+ * CLOSED DATE
+   2012-10-26
+   
+   
+ * LAST MODIFIED DATE
+   2012-11-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK83016 UK83017
+   
+   
+
+MODULES/MACROS
+ *     EYU0TISC EYU0TSRS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60M PSY UK83016 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK83016]
+   UP12/10/28 P F210
+   
+   
+ * R70M PSY UK83017 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK83017]
+   UP12/10/28 P F210
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

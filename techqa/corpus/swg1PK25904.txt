@@ -1,0 +1,277 @@
+Title: IBM PK25904: INCORROUT ATF TO DATASET PANEL ATD3 SHOWS ROW OF DOTS RATHER THAN DATA - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract - INCORROUT APPLICATION TRACE Event Detail screen ZATD3
+   
+   Description -
+   From main menu -
+   s A  APPLICATION TRACE .... Trace and view application activity
+   s D  SELECT DATASET ..... Specify a trace dataset to view
+   on screen ZATRD specify dataset name, press enter, validate and
+   press enter again
+   enter E in command line to for E-VIEW DATASET
+   result ZATVD - zoom thread
+   result ZATVC - zoom thread
+   result ZATVS - enter E in command line for E-EVENT DETAIL
+   result ZATD3 - page down see lines of periods rather than data
+   
+   
+   
+   PMR shows
+   
+         APPLICATION TRACE:  Enter a selection letter on the top
+   line.
+   
+   
+   
+   A- PROGRAM    B-SQL INDEX    C-SQL DETAIL    D-LOCK DETAIL
+   *-EVENT  DETAIL
+   ================================================================
+   ===============
+   >                        APPLICATION TRACE EVENT DETAIL
+   
+    ATD3
+   
+   + Planname=DSNESPCS   Connid=TSO        Corrid=T8659KM
+   Authid=T8659KM
+   +
+   : Control=NEXT
+   (FIRST/LAST/NEXT/PREV/+nnnn/-nnnn/Snnnn/TOP/BOTTOM/UP/DOWN)
+   + Current=000001  Total Number of SQL Calls=000030
+   +
+   + Event Time   TN Event Type            Event Resource
+   Information
+   + ------------ -- ---------------------
+   ---------------------------------------
+   + 11:48:10.333    START PREPARE         PGM=DSNESM68 STMT=00134
+   and more lines until
+   + 11:48:10.608    END OF INDEX SCAN     DB=DSNRLST   PS=00004
+   + 11:48:10.620    END PREPARE           ROWS=0000012
+   PAGES=0000061
+   +  ...........    .....................
+   .......................................
+   + ............    .....................
+   .......................................
+   + ............    .....................
+   .......................................
+   
+   I ran an ATF of my userid performing a SPUFI against D71D. I
+   record to the following dataset LISOM.ATF.P55111.V4.
+   After performing the application trace
+   From main menu -
+   s A  APPLICATION TRACE .... Trace and view application activity
+   s D  SELECT DATASET ..... Specify a trace dataset to view
+   on screen ZATRD specify dataset name, press enter, validate and
+   press enter again
+   enter E in command line to for E-VIEW DATASET
+   result ZATVD - zoom thread
+   result ZATVC - zoom thread
+   result ZATVS - enter E in command line for E-EVENT DETAIL
+   result ZATD3 - page down a couple of times and
+   + 12:01:27.927    LOCK RELEASE (GROUP)  DURATION=MANUAL
+   + 12:01:27.935    END PREPARE           ROWS=0000013
+   PAGES=0000042
+   +  ...........    .....................
+   .......................................
+   + ............    .....................
+   .......................................
+   + ............    .....................
+   .......................................
+   
+   Additionally this screen has controls for stepping thru the data
+   : Control=NEXT
+   (FIRST/LAST/NEXT/PREV/+nnnn/-nnnn/Snnnn/TOP/BOTTOM/UP/DOWN)
+   + Current=000001  Total Number of SQL Calls=001712
+   
+   If I start stepping thru the data, press enter for next, some
+   subsequent screens do not show the line of dots and some do; eg
+   : Control=NEXT
+   (FIRST/LAST/NEXT/PREV/+nnnn/-nnnn/Snnnn/TOP/BOTTOM/UP/DOWN)
+   + Current=000002  Total Number of SQL Calls=001712
+   +
+   + Event Time   TN Event Type            Event Resource
+   Information
+   + ------------ -- ---------------------
+   ---------------------------------------
+   + 12:01:27.935    START OPEN CURSOR     PGM=DSNESM68 STMT=00190
+   + 12:01:27.937    END OPEN CURSOR       ROWS=0000000
+   PAGES=0000000
+   ================================================================
+   ===============
+   
+   : Control=NEXT
+   (FIRST/LAST/NEXT/PREV/+nnnn/-nnnn/Snnnn/TOP/BOTTOM/UP/DOWN)
+   + Current=000003  Total Number of SQL Calls=001712
+   +
+   + Event Time   TN Event Type            Event Resource
+   Information
+   + ------------ -- ---------------------
+   ---------------------------------------
+   + 12:01:27.937    START FETCH           PGM=DSNESM68 STMT=00183
+   + 12:01:27.963    START SEQUENTIAL SCAN DB=........  PS=00009
+   + 12:01:27.999    LOCK ACQUIRE          DB=........  PS=00009
+   DPAG S   D=MNL
+   + 12:01:28.058    END FETCH             ROWS=0000003
+   PAGES=0000001
+   +  ...........    .....................
+   .......................................
+   ================================================================
+   ==================
+   
+   I also think there is an error on ZATD1, the results of
+   selecting C-SQL Detail. This was a single SPUFI that I ran. It
+   looks like the screen is prepared to show a second miniplan when
+   none exists
+   + Dynamic SQL Call Text :
+   + -----------------------
+   +   SELECT * FROM      SYSIBM.SYSTABLES
+   +
+   + Miniplan Generated by DB2 :
+   + ---------------------------
+   +
+   + Plan #  1    (Estimated Cost:    2776 )
+   +
+   + Table: SYSTABLES            Access Type: SEQUENTIAL SCAN
+   + Prefetch Activity: SEQUENTIAL
+   +
+   +
+   + Plan #  2    (Estimated Cost:    2776 )         <====== why is
+   this line here
+   ======================================================
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: OMEGAMON XE for DB2 PE/DB2PM V310            *
+   *                 users of component:                          *
+   *                 - Classic Interface                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Panel ATD3 shows rows of dots rather    *
+   *                      than data                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ARSB program is updated to fix this problem
+   ----------------
+   SYSMOD TITLE: Panel ATD3 shows rows of dots
+   KEYWORDS:     INCORROUT ROWS OF DOTS ATF ATD3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK25904
+   
+   
+ * REPORTED COMPONENT NAME
+   OM XE DB2PE/PM
+   
+   
+ * REPORTED COMPONENT ID
+   5655OPE00
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-06-06
+   
+   
+ * CLOSED DATE
+   2006-06-08
+   
+   
+ * LAST MODIFIED DATE
+   2006-07-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    OA16278
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK15169
+   
+   
+
+MODULES/MACROS
+ *     KO2ARSBS KO2ARSB2
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OM XE DB2PE/PM
+   
+   
+ * FIXED COMPONENT ID
+   5655OPE00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY UK15169 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK15169]
+   UP06/06/12 P F606
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

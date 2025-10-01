@@ -1,0 +1,181 @@
+Title: IBM IV87200: SETUP OF "NON-ROOT SECURITY" NEEDS TO BE ADJUSTED FOR CHANGES MADE TO RSCT SECURITY CONFIGURATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  BE Support Engineer:   CJ
+   Change Team Engineer:  EJ
+   SAMP: 4.1.0
+   RSCT: 3.2
+   Problem Description:   The instructions for setting up non-root
+   security for TSAMP require that the localhost line in the
+   default stanza of /var/ct/cfg/ctrmc.acls  be commented out.
+   With a recent change to RSCT this causes a problem with RMC
+   which causes a problem for the entire cluster.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Remove the entire localhost line from the default stanza
+   completely.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   * Tivoli System Automation for Multiplatforms (SA MP) 4.1 users
+   * using non-root security setup
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   * The SA MP Installation and Cpnfiguration guide is incorrect in
+   * the description for the setup of 'non-root security'.
+   * The procedure describes to comment out the line
+   *
+   *   LOCALHOST  *  r
+   *
+   * within the file /var/ct/cfg/ctrmc.acls, but the line has to be
+   * removed from the file instead.
+   ****************************************************************
+   * RECOMMENDATION:
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The SA MP Installation and Configuration guide will be updated
+   to correct this issue as follows:
+   
+    Chapter 5: Securing
+      Setting up non-root user Ids for the command line interface
+   
+      The step 6 of the procedure will be adjusted.
+   
+    Old content:
+    6.Modify the file /var/ct/cfg/ctrmc.acls on all nodes. You must
+      add the following entries for the global user IDs sa_operator
+      and sa_admin to the RMC ACL file (/var/ct/cfg/ctrmc.acls) on
+      every node in the cluster and comment the line that starts
+      with LOCALHOST, for example:
+      # The following stanza contains default ACL entries.
+      # These entries are appended
+      # to each ACL defined for a resource class and
+      # are examined after any entries
+      # explicitly defined for a resource class
+      # by the stanzas in this file,
+      # including the OTHER stanza.
+      DEFAULT
+      root@LOCALHOST * rw
+      # LOCALHOST * r // comment this line out!
+      none:root * rw // give root access to all
+      none:sa_admin * rw // append this row for saadmin
+      none:sa_operator * rso // append this row for saoperator
+   
+    New content:
+    6.Modify the file /var/ct/cfg/ctrmc.acls on all nodes. You must
+      add the following entries for the global user IDs sa_operator
+      and sa_admin to the RMC ACL file (/var/ct/cfg/ctrmc.acls) on
+      every node in the cluster and remove the line that starts
+      with LOCALHOST, for example:
+      # The following stanza contains default ACL entries.
+      # These entries are appended
+      # to each ACL defined for a resource class and
+      # are examined after any entries
+      # explicitly defined for a resource class
+      # by the stanzas in this file,
+      # including the OTHER stanza.
+      DEFAULT
+      root@LOCALHOST * rw
+      none:root * rw // give root access to all
+      none:sa_admin * rw // append this row for saadmin
+      none:sa_operator * rso // append this row for saoperator
+   .
+   Additional Search Keywords
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV87200
+   
+   
+ * REPORTED COMPONENT NAME
+   SA MULTIPLATFOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724M0000
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-22
+   
+   
+ * CLOSED DATE
+   2016-08-12
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

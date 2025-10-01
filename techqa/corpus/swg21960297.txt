@@ -1,0 +1,90 @@
+Title: IBM How do I enable logging for Datacap Navigator 9.0? - United States
+
+Text:
+log file; must gather; mustgather TECHNOTE (FAQ)
+
+QUESTION
+ How do I enable various logging for Datacap Navigator 9.0? 
+
+ANSWER
+These are the steps to turn on logging for IBM Datacap Navigator, versions 9.0 or higher. Although there are logging configuration options that can be used for different levels of logging, these steps are specific to providing maximum logging to troubleshoot Datacap Navigator issues when they occur. If desired, logging may be left on continuously for a test or development system, but should be set to minimum on a production server, as it will negatively impact performance.
+1. Checking ICN and Daeja Viewer version:
+http://<server>:<port>/navigator/Ping
+
+2. Enabling Content Navigator Tracing
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * <profile_root>
+ * 
+ * <servername>
+ * 
+
+
+3. Enabling wTM Tracing 
+
+Turn on wTM tracing by doing one of the following: 
+ * 
+ * 
+
+or  * 
+ * 
+ * 
+
+========================= 
+<setting name="logSeverity" serializeAs="String"> 
+<value>0</value> 
+</setting> 
+<setting name="logOverwrite" serializeAs="String"> 
+<value>False</value> 
+</setting> 
+<setting name="logPath" serializeAs="String"> 
+<value>c:\Datacap</value> 
+</setting> 
+<setting name="logEnable" serializeAs="String"> 
+<value>True</value> 
+</setting> 
+<setting name="logFlushBuffer" serializeAs="String"> 
+<value>True</value> 
+</setting> 
+<setting name="logAtmEnable" serializeAs="String"> 
+<value>True</value> =========================
+
+
+ * 
+ * d. There will be two files: wtm.X.log and aTM.log.X.log in the location specified in the logPath parameter.
+
+
+If using wTM with IIS, there will be an IIS log . The default location is C:\inetpub\logs\LogFiles\  
+
+5. The Datacap Navigator Client log can be seen one of two ways: 
+
+ * 
+ * 
+ * http://yourServerName:yourServerPort/navigator/?logLevel=4
+   
+ * NOTE: If you are using a non-default desktop then the URL would look similar to this: 
+ * https://yourServerName:yourServerPort/navigator/?desktop=datacap&logLevel=4
+   
+   
+   
+   
+ * You may also need to disable the pop up blocker, if applicable, since the log will be shown in a separate browser window. 
+ * [/support/docview.wss?uid=swg21960297&aid=1] [/support/docview.wss?uid=swg21960297&aid=1]
+
+
+or  * 
+ * 
+ * https://yourServerName:yourServerPort/navigator/?desktop=datacap&logLevel=4&useConsole=true 
+
+
+ * 
+ * [/support/docview.wss?uid=swg21960297&amp;aid=2]
+ * 6. Turn on Dynamic Web Twain tracing to scanning related issues: 
+ * http://www-01.ibm.com/support/docview.wss?uid=swg21984821 [http://www-01.ibm.com/support/docview.wss?uid=swg21984821]

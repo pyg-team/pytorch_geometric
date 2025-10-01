@@ -1,0 +1,164 @@
+Title: IBM PM26528: UPDATEPORTAL FAILS ON A MIGRATED PROFILE WITH WEBDAV ITEM (NULL) COULD NOT BE FOUND - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal V7.0 Combined Cumulative Fix [http://www-01.ibm.com/support/docview.wss?uid=swg24027254]
+Recommended Updates for WebSphere Portal and IBM Web Content Manager V7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24027857]
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  UpdatePortal fails on a migrated profile with webdav item
+   (null) could not be found.
+   
+   Reproduction Scenario:
+   1. Migrate Portal 6.1 to Portal 7
+   a. Install and configure Portal 6.1
+   b. Install Portal 7 binary only (no profile)
+   c. Use WAS migration to create a WAS 7 profile and migrate to
+   it
+   d. Use Portal migration to update the new WAS 7 profile to
+   Portal 7
+   
+   Expected Results:
+   UpdatePortal succeeds
+   
+   Actual Results:
+   BUILD FAILED
+   com.ibm.wps.resolver.webdav.tree.exceptions
+   .WebdavItemNotFoundException: EJCBG0018E: The item [null] could
+   not be found.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The filestore did not exist after the migration and thus the
+   install failed when it tried to store data in it.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added logic to setup the filestore before the other install step
+   tries to store data in it.
+   
+   
+   Version Information:
+      Portal Version(s): 7.0.0.0
+       Pre-Requisite(s): ---
+        Co-Requisite(s): ---
+   
+   Manual Steps:
+      None
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   PM26528 is part of PM25191 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM25191] (CF001 for Portal 7000).
+   
+   You can retrieve the download from the link on the Recommended
+   Updates page for WP/WCM V7.0, here:
+   
+   http://www.ibm.com/support/docview.wss?uid=swg24027857 [http://www.ibm.com/support/docview.wss?uid=swg24027857]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM26528
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-11
+   
+   
+ * CLOSED DATE
+   2010-12-23
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

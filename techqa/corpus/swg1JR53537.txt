@@ -1,0 +1,165 @@
+Title: IBM JR53537: CLIENT APPLICATON CANNOT LOCATE THE SCA EXPORT IN THE ADMINISTRATIVE CONSOLE - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8560.cf1.delta.repository.2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.2&source=SAR]
+bpm.8560.cf1.delta.repository.1 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.1&source=SAR]
+8.5.5.0-WS-BPM-IFJR53537 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Advanced&fixids=8.5.5.0-WS-BPM-IFJR53537&source=SAR]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you use an SCA client application that makes an SCA call to
+   an SCA export that was created by using an SCA message event in
+   a business process definition (BPD), you see the following error
+    message when you click the SCA import binding's link of the
+   client application in the administrative console:
+   
+   ?CWMAO1504E: The module moduleName cannot be found.
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually update the SCA client application to find the SCA
+   export AFTER deploying the applications
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When the BPD application that uses an SCA message event is
+   activated so it shows up in the SCA modules panel of
+   administrative console, the name of the module is changed. After
+    the change, for the client application the official name of the
+    target module is different from the name of the target module
+   that is written in the binding configuration file of the target
+   module. As a result, the target module is not located on the SCA
+    import binding panel.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM Business Process Manager V8.5.5 that
+   allows you to view the target module and the target export on
+   the SCA import binding panel in the administrative console.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR53537:
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select APAR or SPR, enter JR53537, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Manually set the target module and target export in the Module
+   and Export menus on the SCA import binding panel in the
+   administrative console. Save your changes.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR53537
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-06-05
+   
+   
+ * CLOSED DATE
+   2015-07-20
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

@@ -1,0 +1,155 @@
+Title: IBM PJ39693: FEM QUERY BUILDER SCRIPT ACTION DOES NOT PROCESS ALL RESULTS EVEN THOUGH "PROCESS ALL RESULTS" CHECKBOX IS CHECKED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using the FEM 4.5.1 query builder to run a script against
+   thousands of documents in CE, you would normally set the Maximum
+   to Display value to 0 and check the "Process All Results"
+   checkbox.  This way, the script runs against all the documents
+   returned from the query, but doesn't cause out of memory
+   problems since no results are displayed.
+   
+   When using FEM 5.1, this same procedure does not work.  Even
+   though "Process All Results" is checked, the system will only
+   process as many items as the Maximum Displayed value specified.
+   
+   Steps to Reproduce:
+   1. In FEM, select New Search to launch the Query Builder
+   2. Enter search criteria that will return a few documents (For
+   this example, 5 documents.)
+   3. Set the Maximum Displayed value to 1
+   4. Check the "Process All Results" checkbox
+   5. On the script tab, click Enable Script and use a simple
+   script such as:
+   Public Sub OnCustomProcess (CEObject)
+     msgbox "Processing document:" + CEObject.Id
+   End Sub
+   6. Execute the search
+   Notice that only 1 message box pops up instead of the expected
+   5.
+   
+   Actual Results: The script only runs against 1 item (or however
+   many items are specified for Maximum to display) instead of
+   against all the items in the query.
+   
+   Expected Results: The message box pops up 5 times as expected,
+   indicating that the script is run against all documents returned
+   from the query.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Customers using Content Engine prior to 5.1.0.1-P8CE-FP001.  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * FileNet Enterprise Manager (FEM) query builder script action *
+   * does not process all results even though "Process all        *
+   * results" option is selected.                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.1.0.1-P8CE-FP001 or higher.                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  5.1.0.1-P8CE-FP001 and higher will resolve this problem.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ39693
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-16
+   
+   
+ * CLOSED DATE
+   2012-09-26
+   
+   
+ * LAST MODIFIED DATE
+   2012-09-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP

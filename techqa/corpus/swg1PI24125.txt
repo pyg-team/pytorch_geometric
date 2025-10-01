@@ -1,0 +1,185 @@
+Title: IBM PI24125: UCD THROWS "CLOSED CONNECTION" EXCEPTION WHILE CLEANING UP ARTIFACTS. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  UCD throws "Closed Connection" exception while cleaning up
+   artifacts.
+   
+   
+   2014-08-08 11:31:23,318 - SQL Error: 17008, SQLState: 08003
+   2014-08-08 11:31:23,319 - Closed Connection
+   2014-08-08 11:31:23,333 - JDBC commit failed
+   java.sql.SQLRecoverableException: Closed Connection
+   at
+   oracle.jdbc.driver.PhysicalConnection.commit(PhysicalConnection.
+   java:3867)
+   at
+   oracle.jdbc.driver.PhysicalConnection.commit(PhysicalConnection.
+   java:3907)
+   at
+   com.mchange.v2.c3p0.impl.NewProxyConnection.commit(NewProxyConne
+   ction.java:803)
+   at
+   org.hibernate.transaction.JDBCTransaction.commitAndResetAutoComm
+   it(JDBCTransaction.java:166)
+   at
+   org.hibernate.transaction.JDBCTransaction.commit(JDBCTransaction
+   .java:142)
+   at com.urbancode.air.vc.Transaction.commit(Transaction.java:38)
+   at
+   com.urbancode.ds.cleanup.CleanupScheduledEvent.run(CleanupSchedu
+   ledEvent.java:120)
+   at
+   com.urbancode.ds.cleanup.CleanupEventListener.handleEvent(Cleanu
+   pEventListener.java:36)
+   at
+   com.urbancode.air.services.event.EventService.run(EventService.j
+   ava:214)
+   at
+   com.urbancode.air.services.event.AsynchronousEventService$Proces
+   sEventRunnable.run(AsynchronousEventService.java:72)
+   at
+   java.util.concurrent.Executors$RunnableAdapter.call(Executors.ja
+   va:471)
+   at
+   java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:33
+   4)
+   at java.util.concurrent.FutureTask.run(FutureTask.java:166)
+   at
+   java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExec
+   utor.java:1145)
+   at
+   java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExe
+   cutor.java:615)
+   at java.lang.Thread.run(Thread.java:722)
+   at
+   com.urbancode.commons.util.concurrent.NamedThreadFactory$NamedTh
+   read.run(NamedThreadFactory.java:29)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  no
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All end users                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Artifact cleanups are failing due to a "Closed Connection"   *
+   * error.                                                       *
+   * This is due to database transactions being held open longer  *
+   * than intended.                                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in IBM UrbanCode Deploy 6.1.0.3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI24125
+   
+   
+ * REPORTED COMPONENT NAME
+   UDEPLOY
+   
+   
+ * REPORTED COMPONENT ID
+   5725M7700
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-19
+   
+   
+ * CLOSED DATE
+   2014-12-11
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UDEPLOY
+   
+   
+ * FIXED COMPONENT ID
+   5725M7700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

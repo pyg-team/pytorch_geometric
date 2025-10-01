@@ -1,0 +1,21 @@
+Title: IBM Filtering report on current fiscal year. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Is it possible to filter an Impromptu report on the current fiscal year? 
+
+RESOLVING THE PROBLEM
+Yes, using this calculation in a filter to obtain the required report you need. This calculation assumes that the period of May 1, 1997 and April 30, 1998 is Fiscal year 97.
+
+(if (month(order date) between 5 and 12) then (year(order date)) else (year(order date) -1)) = (if (month(today()) between 5 and 12) then (year(today())) else (year(today()) -1))
+
+If this period is called Fiscal year 98, it would be the following filter:
+
+(if (month(order date) between 5 and 12) then (year(order date) +1) else (year(order date))) = (if (month(today()) between 5 and 12) then (year(today()) +1) else (year (today())))
+
+ 
+
+HISTORICAL NUMBER
+ 59718

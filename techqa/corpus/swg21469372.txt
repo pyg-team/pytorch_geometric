@@ -1,0 +1,35 @@
+Title: IBM Slow performance on Linux in a VM on 7.0.1 and prior releases - United States
+
+Text:
+performance degradation; Linux; VM TECHNOTE (FAQ)
+
+QUESTION
+ Why am I experiencing slow performance running WebSphere Lombardi on my Linux server which is running in a VM. 
+
+CAUSE
+Linux uses an entropy pool to build secure communications. The Oracle driver (and perhaps other drivers) uses this entropy pool when it communicates with the database.
+The entropy pool on Linux gets exhausted very quickly in Linux running in a VM. This causes VERY slow database calls. In a stand alone test running in a loop returning 3MB of data, calls went from an average of 5 seconds to an average of 30 seconds after the 3rd or 4th database call.
+
+If you have this problem you will notice slow startup times for the process server and slow execution. Java thread dumps will show the system waiting to retrieve data from the database.
+
+This problem does not appear in our testing on non-vm linux systems, although it may possibly occur on headless systems without a keyboard or mouse as the keyboard is used to rebuild the entropy pool.
+
+
+ANSWER
+You can solve this problem by adding the following to the startup of the server: 
+
+
+-Djava.security.egd=file:///dev/urandom
+
+or you can change your java.security file as documented here:
+Avoiding JVM Delays Caused by Random Number Generation [http://download.oracle.com/docs/cd/E12529_01/wlss31/configwlss/jvmrand.html]
+
+There is also a great article on this issue here:
+Entropy drained [http://www.arnebrodowski.de/blog/273-Entropy-drained.html]
+
+This problem does NOT occur on our 7.x releases or if you are running 6.x on WebSphere on Linux. This is because the IBM JVM does not do entropy the same way and will not exhaust the entropy pool.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TW Teamworks Lombardi

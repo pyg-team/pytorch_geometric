@@ -1,0 +1,23 @@
+Title: IBM Support Resources for System Z - Operation Management Software OMEGAMON and Tivoli Management Server - United States
+
+Text:
+FeatureDocument LandingPage Landing Page PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ This is your first stop when looking for help on the System Z - Operation Management Software OMEGAMON and Tivoli Management Server products. Select the tab that best matches the information you are looking for and click a topic button for a targeted list of popular documents on the subject. 
+
+CONTENT
+ 
+
+TAB NAVIGATION
+ *  Home 
+ * TMS on z/OS [http://www.ibm.com/support/docview.wss?uid=swg21671925]
+ * z/OS Agents [http://www.ibm.com/support/docview.wss?uid=swg21674831]
+
+ALERTS/NEWS
+An error may be encountered when using Oracle Java 8 update 131 or any update newer than 131 while using the TEP client. Unsigned application requesting unrestricted access to the system may show up. IBM Tivoli Monitoring is not vulnerable to the Bash vulnerabilities that have been referred to as “Bash Bug” or “Shellshock” and the two memory corruption vulnerabilities. Recent Java updates have caused various problems related to the TEP Client <--> TEPS connection. SUPPORT RESOURCES
+The IBM Support Portal is a central entry point into all support offerings and provides information and support resources for your products. Visit the Support Portal to review and access Tech Alerts, Downloads, Tools, Support Content and other resources. Contains all the product documentation, including quick start guides, product user guides, release notes, and installation guides. Compatibility matrix provides information related to your supported products and the supported platforms/compatibility products. Release notes detail important information, known limitations, new features, and changes to IBM products. The End of Support (EOS) announcements and supported version information provides content about supported versions, what versions that no longer have support, and when current versions will end support. The IBM Service Request (SR) application is used to open and update serve requests (formerly called Problem Management Records or PMRs) online. You can use SR to report problems on your supported IBM products. Visit the RFE community to submit enhancement requests and collaborate directly with the product development teams and other product users. You can track upcoming product release plans through the release cycle, and comment and rate planned items along the way. The IBM Support Handbook provides information on the support service offerings provided by IBM, including definitions of programs, policies, and procedures. Passport Advantage Online provides access to entitled software downloads. 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli OMEGAMON XE for CICS on z/OS z/OS All Versions Systems and Asset Management Tivoli OMEGAMON XE for CICS Transaction Gateway on z/OS z/OS 4.2.0, 5.1.0, 5.3.0 Systems and Asset Management Tivoli OMEGAMON XE for DB2 Performance Expert on z/OS z/OS 5.1.0, 5.1.1, 5.2.0 Systems and Asset Management Tivoli OMEGAMON XE for DB2 Performance Monitor on z/OS z/OS 5.1.0, 5.1.1, 5.2.0 Systems and Asset Management Tivoli OMEGAMON XE for IMS on z/OS z/OS 4.2.0, 5.1.0 Systems and Asset Management Tivoli OMEGAMON XE for Mainframe Networks z/OS 5.1.0, 5.1.1, 5.3.0 Systems and Asset Management Tivoli OMEGAMON XE for Storage Platform Independent Version Independent

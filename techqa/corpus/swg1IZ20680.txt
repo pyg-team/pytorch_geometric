@@ -1,0 +1,125 @@
+Title: IBM IZ20680: HTTPREQUEST FAILING WITH EINTR ON LINUX FOR LARGE NUMBER OF     REQUESTS - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Message Broker V6.1 - Fix Pack 6.1.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24026355]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Websphere Message Broker        *
+   *                 with HttpRequest Node.                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The error reported is BIP3150 failing   *
+   *                      with EINTR 'Interrupted system call'    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   WebSphere Message Broker's HttpRequest Node performs a
+   select() operation to select the socket file descriptor to
+   write on.
+   On linux systems, when a large number of select() calls is
+   made, one could fail with EINTR and result in the HttpRequest
+   Node call failing.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere Message Broker has been modified so that it retries
+   the select() call when there is an EINTR error.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ20680
+   
+   
+ * REPORTED COMPONENT NAME
+   WMB LIN X86 V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0505
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-04-21
+   
+   
+ * CLOSED DATE
+   2008-06-11
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMB LIN X86 V6
+   
+   
+ * FIXED COMPONENT ID
+   5724J0505
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

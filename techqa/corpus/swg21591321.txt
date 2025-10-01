@@ -1,0 +1,176 @@
+Title: IBM IIS 7 configuration issues when installing AppScan Enterprise - United States
+
+Text:
+500.21; Internal Server Error; Handler; AboMapperCustom; IsapiModule; 500.23; ASP.NET; Integrated pipeline; HTTP Error; 404.2; Not Found; ISAPI; CGI Restriction; Web server; 401.2; Unauthorized; authentication headers TECHNOTE (FAQ)
+
+QUESTION
+ What are the common problems and resolutions with IIS (Internet Information Services) version 7 and IIS version 7.5 configuration issues when installing IBM Security AppScan Enterprise Edition? 
+
+CAUSE
+Most common cause is that needed IIS modules are not installed.
+
+ANSWER
+Check if your IIS includes all needed components at IIS 7 and 7.5 components for AppScan Enterprise [http://www-01.ibm.com/support/docview.wss?uid=swg21588814]. 
+
+
+Check the following video for common IIS features: http://www.youtube.com/watch?v=vBNoTK31zPo [http://www.youtube.com/watch?v=vBNoTK31zPo] 
+
+
+PROBLEM 
+
+When accessing the ASE webpage you may get the following error: 
+
+HTTP Error 500.21 - Internal Server Error
+Handler "AboMapperCustom" has a bad module "IsapiModule" in the module list.
+
+
+[/support/docview.wss?uid=swg21591321&aid=1] [/support/docview.wss?uid=swg21591321&aid=1]
+
+
+CAUSE: 
+
+ASP.NET module is not installed
+
+[/support/docview.wss?uid=swg21591321&aid=2] [/support/docview.wss?uid=swg21591321&aid=2] 
+
+ 
+
+RESOLUTION: 
+
+Install Role "ASP.NET". 
+
+[/support/docview.wss?uid=swg21591321&aid=3] [/support/docview.wss?uid=swg21591321&aid=3] 
+
+ 
+
+ 
+
+ 
+
+
+PROBLEM 
+
+When accessing the ASE webpage you may get the following error: 
+
+HTTP Error 500.23 - Internal Server Error
+An ASP.NET setting has been detected that does not apply in Integrated pipeline mode.
+
+[/support/docview.wss?uid=swg21591321&aid=4] [/support/docview.wss?uid=swg21591321&aid=4]
+
+
+RESOLUTION: 
+
+To correct this you have to manually change the application pool in IIS - It defaults to DefaultAppPool, so you change it to Classic .NET AppPool. 
+
+Do the following steps (the process is described on Microsoft pages: http://technet.microsoft.com/en-us/library/cc731755%28v=ws.10%29.aspx [http://technet.microsoft.com/en-us/library/cc731755%28v=ws.10%29.aspx] ): 
+
+
+ 1. Open IIS Manager with "Start -> Administrative Tools -> Internet Information Services (IIS) Manager". 
+ 2. In the Connections pane (on the left), expand the server node and click "Application Pools". 
+ 3. On the Application Pools page, select "DefaultAppPool". 
+ 4. In the Actions pane (on the right), click "View Applications". 
+ 5. Select the ASE application (you may have two application, Root application and ASE application) and then click "Change Application Pool" in the Actions pane. 
+ 6. In the "Select Application Pool" dialog box, select "Classic .NET AppPool" and then click OK. 
+ 7. Restart IIS.
+
+
+[/support/docview.wss?uid=swg21591321&amp;aid=5]  
+
+ 
+
+ 
+
+
+PROBLEM 
+
+When accessing the ASE webpage you may get the following error: 
+
+HTTP Error 404.2 - Not Found
+The page you are requesting cannot be served because of the ISAPI and CGI Restriction list settings on the Web server.
+
+
+[/support/docview.wss?uid=swg21591321&aid=6] [/support/docview.wss?uid=swg21591321&aid=6]
+
+
+CAUSE: 
+
+ISAPI features "ASP.NET v4.0.3" and "ASP.NET v4.0.3 (64)" were not allowed: 
+
+[/support/docview.wss?uid=swg21591321&aid=7] [/support/docview.wss?uid=swg21591321&aid=7] 
+
+ 
+
+RESOLUTION: 
+
+Allow those two features. 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+PROBLEM 
+
+You get the following error when accessing the ASE webpage: 
+
+HTTP Error 401.2 - Unauthorized
+You are not authorized to view this page due to invalid authentication headers. 
+
+ 
+
+[/support/docview.wss?uid=swg21591321&aid=8] [/support/docview.wss?uid=swg21591321&aid=8] 
+
+ 
+
+RESOLUTION: 
+
+If you use the Jazz platform, then you would need to "enable" Anonymous Authentication in IIS 7, as in the following picture: 
+
+[/support/docview.wss?uid=swg21591321&aid=9] [/support/docview.wss?uid=swg21591321&aid=9] 
+
+ 
+
+If you use the LDAP authentication, you need to add the Windows Authentication package, since your Windows Server 2008 machine doesn't include a windows authentication scheme. 
+
+Open up Server Manager (one way to do this is by right clicking the computer node from within the start menu and choosing Manage). Expend the Roles node. Right click the Web Server (IIS) and choose Add Role Services. You'll get the following wizard, just scroll down a bit and check Windows Authentication under the security node. 
+
+[/support/docview.wss?uid=swg21591321&amp;aid=10] 
+
+ 
+
+Enable "Windows Authentication" and "Basic Authentication" and disable "Anonymous Authentication" in IIS authentication panel: 
+
+[/support/docview.wss?uid=swg21591321&amp;aid=11] 
+
+ 
+
+ 
+
+ 
+
+ 
+
+PROBLEM 
+
+You get the following error when accessing the ASE webpage: 
+
+HTTP Error 401.1 - Unauthorized
+You do not have permission to view this directory or page using credentials that you supplied.
+
+
+[/support/docview.wss?uid=swg21591321&aid=12] [/support/docview.wss?uid=swg21591321&aid=12]
+
+
+CAUSE: 
+
+This error was associated with another error showing when running the Configuration Wizard: 
+
+Unable to configure virtual directory
+
+
+RELATED INFORMATION
+ IIS 7 and IIS 7.5 components for AppScan Enterprise [http://www.ibm.com/support/docview.wss?uid=swg21588814]

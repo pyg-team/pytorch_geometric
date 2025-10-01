@@ -1,0 +1,171 @@
+Title: IBM IT13139: WEBSPHERE MQ V8 BROKER COMMAND FAILS WITH REASON CODE 3155 MQRCCF_SUBSCRIPTION_IN_USE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  - After a JMS application has created the durable subscription,
+   the queue manager is shut down and restarted.
+   - The WebSphere MQ classes for JMS detect this and throw a
+   JMSException to the application.
+   - The application reconnects to the queue manager, and attempts
+   to reopen the durable subscription.
+   - The durable subscription is reopened successfully.
+   
+   - The queue manager is then stopped and restarted again.
+   - Once again, the WebSphere MQ classes for JMS detect that the
+   queue manager has been stopped and throw a JMSException back to
+   the application.
+   - The application reconnects to the queue manager, and tries to
+   open the durable subscription for a third time.
+   - This time, the attempt to open the durable subscription fails
+   and the WebSphere MQ classes for JMS throw a JMSException
+   containing the WebSphere MQ Reason Code 3155:
+   
+       MQRCCF_SUBSCRIPTION_IN_USE
+   
+     back to the application.
+   
+   A queue manager trace will show
+   
+   -----}! lpiSPIUnsubscribe rc=MQRC_IDENTITY_MISMATCH
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of WebSphere MQ V8 queue managers with JMS applications
+   which open durable subscriptions and attempt to reconnect to the
+   subscription following queue manager restart.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   If a JMS application opens a durable subscription to a queue
+   manager and that queue manager terminates then the application
+   could only reconnect to that durable subscription the first
+   time.  A coding error prevented the queue manager from accepting
+   the request to reopen after subsequent terminations, returning
+   rc=3155 (MQRCCF_SUBSCRIPTION_IN_USE).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQ queue manager code that handles reconnection requests has
+   been corrected to allow multiple reconnection attempts for
+   durable subscriptions.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.5
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT13139
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-12
+   
+   
+ * CLOSED DATE
+   2016-07-25
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

@@ -1,0 +1,183 @@
+Title: IBM LO60014: NOT GETTING INITIAL BOT WELCOME MESSAGE IN STPROXY WEB CLIENT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ENVIRONMENT: Sametime 8.5.1
+   
+   PROBLEM DESCRIPTION:
+   Not getting intial bot message in STProxy web client
+   
+   Customer has sametime proxy server 8.5.1.1 on windows 2003
+   enterprise edition. They have sametime bots (application). On
+   initiating chat with this bot from browser client, users are not
+   getting initial message. If they input anything then they are
+   getting the response message from the bot.
+   
+   TROUBLESHOOTING:
+   
+   - Customer provided and tested the sameple BOT in lab ST
+   8.5.1 env. Managed to reproduce the issue.
+   
+   When logged in using ST 8.5.1 connect client, I initiated chat
+   session with the BOT, I was able to receive the initial welcome
+   message from the BOT. But if I logged in from STProxy web
+   client, I was not able to receive the initial message. When I
+   input anything and send, I was able to receive response message
+   from the BOT.
+   
+   These are some configuration info of my lab env:
+   +++++++++++++++++++++++
+   In lab env, I can reproduce the issue on my ST 8.5.1.1 env. This
+   is the details of my lab env:
+   ST SSC and ST Proxy are running on same server
+   ST Community Server on another server
+   OS: Windows 2003 Std Server
+   
+   LDAP - Active Directory - on another server
+   Client Browser - IE7
+   +++++++++++++++++++++++
+   
+   To reproduce this issue using the sample bot customer provided,
+   1) just extract the zip file to a folder, and edit "run.bat"
+   file to specify Sametime server, userid, and password
+   information.
+   2) run the run.bat to let the bot login to the Sametime server
+   3) then login from a stproxy web client in browser, add the id
+   used by the bot
+   4) start a chat session with the bot from stproxy web client.
+   Without entering anything, the user should receive an initial
+   welcome message from the bot, but it doesn't happen in stproxy
+   web client.
+   If you repeat step 3) to 4) by using UIM client to initiate a
+   chat session with the bot, you will receive the welcome message
+   from the bot as expected.
+   
+   Please also note, all ST Proxy web client testing done in lab
+   was through HTTP (no SSL).
+   
+   Per Customer's attached files:
+   1) 05960.999.744.bot_initiat.doc - screenshots
+   2) SampleFirstMessageBot-1.0.0.zip - sameple BOT. When testing,
+   please edit run.bat to replace community server ip, login id,
+   and password.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# YXIO8FV4XA.
+   A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO60014
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS SAMETIME
+   
+   
+ * REPORTED COMPONENT ID
+   5724J2300
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-13
+   
+   
+ * CLOSED DATE
+   2013-01-31
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS SAMETIME
+   
+   
+ * FIXED COMPONENT ID
+   5724J2300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R851 PSN
+   UP

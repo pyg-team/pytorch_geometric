@@ -1,0 +1,56 @@
+Title: IBM ICC CSS constructor not initialized with java.lang.NoClassDefFoundError. - United States
+
+Text:
+icc; css TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Content Collector (ICC) Content Search Services (CSS) constructor fails to initialize with java.lang.NoClassDefFoundError. 
+
+SYMPTOM
+The following message can be seen from the CSS log:
+
+<message>IQQG0180E The constructor [com.ibm.afu.icc.ctor.AfuConstructor] initialization process failed because the constructor class cannot be loaded. Error details: com.filenet.api.exception.EngineRuntimeException.
+Causes of the problem:
+IQQG0020E java.lang.NoClassDefFoundError: com.filenet.api.exception.EngineRuntimeException
+IQQG0020E java.lang.ClassNotFoundException: com.filenet.api.exception.EngineRuntimeException
+java.net.URLClassLoader.findClass(URLClassLoader.java:434)
+java.lang.ClassLoader.loadClass(ClassLoader.java:653)
+java.lang.ClassLoader.loadClass(ClassLoader.java:619)
+java.lang.J9VMInternals.verifyImpl(Native Method)
+java.lang.J9VMInternals.verify(J9VMInternals.java:72)
+java.lang.J9VMInternals.initialize(J9VMInternals.java:134)
+java.lang.J9VMInternals.newInstanceImpl(Native Method)
+java.lang.Class.newInstance(Class.java:1345)
+com.ibm.ecmts.constructor.ConstructorsRepository.init(ConstructorsRepository.java:171)
+com.ibm.es.nuvo.GlobalSystem.initialize(GlobalSystem.java:960)
+com.ibm.es.nuvo.Startup.main(Startup.java:166)</message>
+
+
+CAUSE
+Some jar files are missing. 
+
+ENVIRONMENT
+IBM Content Collector 
+P8 Content Search Services 
+
+DIAGNOSING THE PROBLEM
+Review the CSS log and check if the above message is reported. 
+
+RESOLVING THE PROBLEM
+P8 Content Engine client is not installed correctly.
+The client needs to be installed including the option "Other Application" as this is how the Content Engine java API will get installed. 
+If CE client is installed correctly with Other Application, the required jar files will be deployed automatically. 
+
+
+
+
+
+However, if the CE client was not installed correctly at first and you need to re-run the installer after ICC for CSS support is already installed and deployed, manually perform the following steps: 
+
+ * Re-install CE client with the option "Other Application" 
+ * After CE client is successfully re-installed, copy these two files:  *  ../IBM/FileNet/CEClient/lib/log4j-1.2.14.jar ../IBM/FileNet/CEClient/lib/Jace.jar 
+   
+   and place them into this directory:  *  ../IBM/ContentSearchServices/CSS_Server/plugins/ 
+   
+   
+ * Restart CSS service and review the log to verify that the error does not occur.

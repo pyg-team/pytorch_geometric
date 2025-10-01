@@ -1,0 +1,63 @@
+Title: IBM Clearing caches and other temporary files when upgrading IBM SCORE - United States
+
+Text:
+IBMSCORE IBM_SCORE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The readme for IBM Solution for Compliance in a Regulated Environment (IBM SCORE) 6.1.1 fix pack 1, 2, 3, 4 & 5 has steps to clean up WebSphere and repository caches and temporary files. This technote provides expanded steps on how to clean up these caches in an existing IBM SCORE system. 
+
+RESOLVING THE PROBLEM
+Clearing WebSphere server caches and temporary files 
+
+Delete all files in the following directories and restart the server:
+
+profile_root/wstemp
+profile_root/temp
+profile_root/logs
+profile_root/tranlog 
+
+Where profile_root is the directory structure for WebSphere. 
+
+Restart the server. 
+
+ 
+
+Clearing Documentum caches
+
+For Documentum 5.3 
+
+In the Portal directory structure on the Portal and Process servers, delete all the folders (and contents) under the dmcl directory. 
+
+Restart the servers. 
+
+ 
+
+For Documentum 6.5 & 6.7 
+
+On the Portal and Process servers, delete all the folders (and contents) under documentum_dir/cache. 
+
+Restart the servers. 
+
+ 
+
+Clearing IBM Content Manager caches 
+
+IBM Content Manager caches are cleared by restarting the Portal , Process , and Content Manager servers. 
+
+ 
+
+Clearing SCORE JavaServer Pages (JSP) cache 
+
+Find the directory similar to the following (portions in italic are installation dependent):
+
+Windows:
+drive letter :\WAS\wp_profile\temp\SCOREPortalNode\WebSphere_Portal\Score\SCOREUI.war\WEB-INF 
+
+Unix: 
+/WAS/wp_profile/temp/SCOREPortalNode/WebSphere_Portal/Score/SCOREUI.war/WEB-INF 
+
+ 
+
+Delete the WEB-INF directory and all its children directories. 
+
+These are cached copies and are recreated automatically by the server as needed. The directories can be deleted even if the server is running.

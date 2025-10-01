@@ -1,0 +1,72 @@
+Title: IBM BMXAA5457E The Report Import Process Failed On WEBLOGIC - United States
+
+Text:
+TPAEWEBLOGIC; TPAEWEBSPHERE; TPAEREP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ BMXAA5457E Error During Report Import After Fix Pack Upgrade 
+
+SYMPTOM
+Clients upgrading from Maximo TPAE 7502 to TPAE 7504 on Weblogic may experience issue running reports. 
+
+
+After the upgrade to Maximo 7504, when Maximo Administrator tries to import reports (importreports.cmd), the following error occurs: 
+
+
+"BMXAA5457E - The report import process failed. Verify the specified information is correct before proceeding again." 
+
+Running reports from Maximo give the error below: 
+
+"Error 500--Internal Server Error psdi.util.MXApplicationException: BMXAA5476E - The report custom_woprint.rptdesign could not be prepared to run." 
+CAUSE
+Three files were missing from the following directory:
+
+applications\maximo\maximouiweb\webmodule\WEB-INF\birt\platform\plugins 
+
+
+1.
+org.eclipse.birt.report.engine.script.javascript_3.7.1.v20110905.jar
+
+2. 
+org.eclipse.compare.core_3.5.200.I20110208-0800.jar
+
+3. 
+org.mozilla.javascript_1.7.2.v201005080400.jar
+
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+Review the following troubleshooting steps:
+
+1. Follow technoteReference #:1661187as a checklist to ensure Java 2 Securitysettings are in place.
+
+Reference #:1661187 - Cannot run and import BIRT reports 
+Problem(Abstract): Cannot run BIRT reports due to error BMXAA4214E and cannot import reports due to error BMXAA5457E 
+
+
+2. Check to see if a Birt temp directory path "-Dmxe.report.birt.tempfolder" is set in JVM parameter of Websphere console. This should have some value like:
+
+C:\temp\birttemp
+
+This can be done by adding a parameter to the Generic Java Parameters in either WebSphere or WebLogic.
+
+eg. Dmxe.report.birt.tempfolder=c:\tempReport\BIRTTEMP
+
+This process varies in WebLogic and Websphere, but in both cases, the Directory Path to this folder should contain no spaces.
+
+If "-Dmxe.report.birt.tempfolder" is not set then search for the "birtplatform" directory under 
+
+<domainpath>\servers\AdminServer\tmp 
+
+Check all files under this Birt temp directory.
+
+
+
+
+RESOLVING THE PROBLEM
+Contact Maximo Support to obtain copy of these files. Copy these three files into the Birt Platform Plugins directory. If issue persists, consider re-installing Maximo again.a
+
+RELATED INFORMATION
+ Cannot run and import BIRT reports [http://www-01.ibm.com/support/docview.wss?uid=swg21661187]

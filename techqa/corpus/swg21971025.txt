@@ -1,0 +1,59 @@
+Title: IBM QRadar: Information about offense duration, retention, and activity - United States
+
+Text:
+offense retention; active offenses; inactive offenses TECHNOTE (FAQ)
+
+QUESTION
+ How long are offenses active in QRadar? 
+
+ANSWER
+
+
+OFFENSES IN QRADAR
+
+Offenses in QRadar can be retained indefinitely, if they are not closed or inactive. 
+After the initial offense rule has fired, the offense is marked as active in QRadar. QRadar checks every 10 minutes to see whether new events have been added to the offense. In this state, the offense is waiting for new event or flows to hit the Offense Rule test. If new events have been detected, the offense clock is reset to keep the offense as active for another 30 minutes. QRadar will mark an offense as dormant if new events or flows occur after 30 minutes. We will also mark the offense as dormant even if we have not processed any events after 4 hours. 
+
+
+OFFENSES RETENTION
+
+QRadars dormancy period lasts 5 days. After these 5 days, an offense is marked as inactive. New events triggering the Offense rule test will not contribute to the inactive offense. Our Offense Model checks each day within these 5 days to determine which offenses are still dormant and which are inactive. If an event is received during the dormant time, the dormant time is reset back to zero. You will have to wait another 5 days of no events or flows triggering the rule test in order for the offense to become inactive. 
+
+[/support/docview.wss?uid=swg21971025&aid=1] [/support/docview.wss?uid=swg21971025&aid=1] 
+
+Note: By default, the system allows 2,500 open (active) offenses and 100,000 (inactive) offenses. If these values are reached, a System Notification is generated to alert the administrator that they might need to review offenses that can be closed or tune rules to reduce the overall number of offenses that are being generated in QRadar. By default the system will begin to remove 0.05 percent all inactive offenses every 2 hours. 
+
+
+OFFENSES MAINTENANCE
+
+When an offense is closed either by manually closing an offense or by magistrate, which makes the offense inactive, the Offense Retention Period setting is then applied. The Offense Retention Period determines how long inactive offenses are kept before being purged from the Console. 
+
+
+
+The administrator can manage offenses from Admin tab > Advanced> Clean SIM Model. The options include:  * Soft Clean - this option closes all offenses, but does not remove them from QRadar. 
+ * Hard Clean - this option closes and removes all offenses from the system. It is not advised to Hard Clean your SIM Model, unless advised by QRadar Support. 
+
+
+[/support/docview.wss?uid=swg21971025&aid=2] [/support/docview.wss?uid=swg21971025&aid=2] 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Where do you find more information? 
+
+
+
+
+[/support/docview.wss?uid=swg21971025&aid=3] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21971025&aid=4] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21971025&aid=5] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21971025&aid=6] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21971025&aid=7] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21971025&aid=8] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21971025&aid=9] [http://ibm.biz/SuptRegQuikStart] 
+RELATED INFORMATION
+ Troubleshooting System Notifications [http://public.dhe.ibm.com/software/security/products/qradar/documents/7.2.8/en/b_qradar_system_notifications.pdf]

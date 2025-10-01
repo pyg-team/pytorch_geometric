@@ -1,0 +1,175 @@
+Title: IBM IT17503: SQL SERVER ODBC SELECT WITH SUB QUERY FAILS WITH SQLSTATE HY000 AND NATIVE ERROR 156 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An ODBC SELECT statement that contains a sub query with
+   parameter markers fails when executed against a SQL Server
+   database. The following error is reported:
+   
+   BIP2322E: Database error: SQL State 'HY000'; Native Error Code
+   '156'; Error Text '[IBM][ODBC SQL Server Wire Protocol
+   driver][Microsoft SQL Server]Incorrect syntax near the keyword
+   'SET'.'.
+   
+   
+   
+   Additional Symptom(s) Search Keyword(s): ODBC Select,
+   BIP2322E,  SQL STATE HY000, SQL SERVER
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of IBM Integration Bus v10 using the SQL Server
+   DataDirect ODBC driver.
+   
+   
+   Platforms affected:
+   AIX, HP-UX Itanium platform, Linux on Power platform, Linux on
+   x86-64 platform, Linux on zSeries platform, Solaris x86-64
+   platform, Solaris SPARC platform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   An ODBC SELECT statement that contains a sub query with
+   parameter markers fails when executed against a SQL Server
+   database. The following error is reported:
+   
+   BIP2322E: Database error: SQL State 'HY000'; Native Error Code
+   '156';
+   Error Text '[IBM][ODBC SQL Server Wire Protocol
+   driver][Microsoft SQL Server]Incorrect syntax near the keyword
+   'SET'.
+   
+   The ODBC driver rejects the SQLDescribeParam() call that is used
+   to find out the description of the parameter marker, for example
+   the datatype.
+   
+   There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0.  For details
+   visit
+   http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.e
+   tools.mft.doc/bb23814_.htm [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/bb23814_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product now handles the error and substitutes the values for
+   the parameter markers into the statement string before
+   re-executing the query.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v10.0      10.0.0.9
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available,information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT17503
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION BUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0540
+   
+   
+ * REPORTED RELEASE
+   A00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-14
+   
+   
+ * CLOSED DATE
+   2017-05-25
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION BUS
+   
+   
+ * FIXED COMPONENT ID
+   5724J0540
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA00 PSY
+   UP

@@ -1,0 +1,185 @@
+Title: IBM PK59516: DFHAP0701 CIUX63R1 OFFSET X'2C8' OR X'354' MQOPEN MQDISC - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You activate dependency collection in your CICS TS v2.3 region
+   for MQ API requests and receive the following messages:
+   .
+   DFHAP0701 applid AN ABEND (CODE 0C4/AKEA) HAS OCCURRED IN EXIT
+                    PROGRAM CIUX63R1 AT EXIT POINT XRMIOUT.
+   DFHAP0001 applid AN ABEND (CODE 0C4/AKEA) HAS OCCURRED AT OFFSET
+                    X'000002C8' IN MODULE CIUX63R1.
+   DFHME0116 applid
+   (MODULE:DFHMEME) CICS SYMPTOM STRING FOR MESSAGE DFHAP0001 IS
+   PIDS/5697E9300 LVLS/630 MS/DFHAP0001 RIDS/DFHSRP PTFS/UK05570
+   AB/S00C4 AB/UAKEA RIDS/CIUX63R1 ADRS/000002C8
+   .
+   The module name and offset may vary based on the release of
+   CICS TS.  The failure occurs due to CICS IA XRMIOUT GLUE
+   interpreting an MQ API DISC request as an OPEN request and
+   attempting to process MQ API parameters for an OPEN which will
+   not exist resulting in the 0C4 abend.
+   .
+   CICS IA needs to detect and ignore an MQ API disconnect call.
+   .
+   Additional Symptom(s) Search Keyword(s): R220 CIUX62R1 CIUX64R1
+   CIUX65R1 CSQCTRUE CSQCSTUB MQOPEN DFHERM DFHUEH UEPTRUEP UEPHMSA
+    DFHUEPARparm parmlist offset x'354' R2 R9 blanks x'40404040'
+   MQFUNC2 MQ_OPEN STUB_DISC x'03010001' STUB_OPEN x'06010001'
+   DFHRMCAL KIXREV
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICSIA V2 users collecting MQ resource   *
+   *                 information.                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   *                      You activate dependency collection in   *
+   *                      your CICS TS v2.3 region for MQ API     *
+   *                      requests and receive the following      *
+   *                      messages:                               *
+   *                                                              *
+   *                      DFHAP0701 applid AN ABEND               *
+   *                      (CODE 0C4/AKEA) HAS OCCURRED IN EXIT    *
+   *                      PROGRAM CIUX63R1 AT EXIT POINT XRMIOUT. *
+   *                                                              *
+   *                      DFHAP0001 applid AN ABEND               *
+   *                      (CODE 0C4/AKEA) HAS OCCURRED AT OFFSET  *
+   *                      X'000002C8' IN MODULE CIUX63R1.         *
+   *                                                              *
+   *                      DFHME0116 applid                        *
+   *                      (MODULE:DFHMEME) CICS SYMPTOM STRING    *
+   *                       FOR MESSAGE DFHAP0001 IS               *
+   *                      PIDS/5697E9300 LVLS/630 MS/DFHAP0001    *
+   *                       RIDS/DFHSRP PTFS/UK05570               *
+   *                      AB/S00C4 AB/UAKEA RIDS/CIUX63R1         *
+   *                       ADRS/000002C8                          *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   The CIUXnnR1 XRMIOUT GLUE does not check the MQ function
+   code correctly hence an MQDISC is treated as an MQOPEN and an
+   abend occurs.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Processing of the MQ commands modified to ignore commands
+   other than those supported by CICS:
+   MQOPEN
+   MQCLOSE
+   MQPUT
+   MQPUT1
+   MQGET
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK59516
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS INTER ANAL
+   
+   
+ * REPORTED COMPONENT ID
+   5697J2300
+   
+   
+ * REPORTED RELEASE
+   210
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-17
+   
+   
+ * CLOSED DATE
+   2008-02-19
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK33829 UK33830
+   
+   
+
+MODULES/MACROS
+ *  CIUX53R1 CIUX62R1 CIUX63R1 CIUX64R1 CIUX65R1
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS INTER ANAL
+   
+   
+ * FIXED COMPONENT ID
+   5697J2300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R210 PSY UK33829
+   UP08/02/21 P F802
+   
+   
+ * R220 PSY UK33830
+   UP08/02/21 P F802

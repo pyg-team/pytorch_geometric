@@ -1,0 +1,215 @@
+Title: IBM IV71422: ORDERING A CATALOG OFFERING WITH A GL ACCOUNT SPECIFICATION GETS AN ERROR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM:
+   Ordering a Catalog Offering with a GL Account specification
+   gets an error.  When customer is ordering an Offering in the
+   Service Catalog following error message is displayed when using
+   SRM 7.2.1.6:
+   
+   CTGRC2601E - Validation script validation was unable to complete
+   successfully. Contact the system administrador.
+   
+   If using SCCD 7.5.1.2:
+   
+   BMXAA4176E - Attribute ORGID does not exist.
+   
+   
+   PERFORMANCE ISSUE:  no
+   
+   
+   STEPS TO REPRODUCE:
+   
+   1) Go to -> System Application -> Platform Application ->Domains
+   
+   2) Edit DATATYPE domain adding two new rows
+   
+      Domain: DATATYPE
+      Domain Type: SYNONYM
+   
+   new row:
+      Internal Value: ALN
+      Value: DATETIME
+      Description: Date and Time
+      Default? No
+   
+   new row:
+      Internal Value: MAXTABLE
+      Value: GL
+      Description: GL Type
+      Default? No
+   
+      Click on 'OK'
+   
+   3) In the DOMAINS application, create new Table domain called
+   ACP_GLPROYT
+   
+      Domain: ACP_GLPROYT
+      Object: CHARTOFACCOUNT
+   
+   4) Go to -> Offerings  (Go to -> Service Request Manager
+   catalog ->  Offerings)
+   
+      - new Offering is created
+      - classification = any
+      - these setting may not matter but customer had a
+   tickettemplate choosen & both the Auto Line Mgr Appr and Auto
+   Fulfill Mgr Appr checkboxes marked.
+   
+   5) Go to -> Select Action -> Add/Modify attribute
+   
+   6) Create a new attribute
+   
+      Attribute: ACP_GLPROYTAREA
+      Description: GL Account para Proyecto y Tarea
+      Data Type: GL
+      Domain: ACP_GLPROYTAREA
+   
+   7) in the Offerings application, click on Specifications tab
+   and to add the new attribute as a new Specifications.   Set the
+   following fields:
+         - Table Attribute = GLACCOUNT
+         - Lookup Name = GLNAVIGATOR
+         (note that the GLNAVIGATOR value did not appear for me
+   from Select Value dialog but if keyed in it will be accepted as
+   it is in the lookups.xml)
+   
+   8) Enable Offerings and associate it to a Security Group as
+   necessary
+   
+   9) Login into Maximo with an user with Offering privileges.
+   
+   10)  From Offering Catalog, open this offering and when trying
+   to enter the GL account from the dialog.  Hitting OK on the
+   dialog get you the validation error but there is no validation
+   set on the Offering or specification.
+   
+   
+   CURRENT ERRONEOUS RESULT:  Order Offering gets:
+   
+   in SRM 7.2.1.6:
+   CTGRC2601E - Validation script validation was unable to complete
+   successfully. Contact the system administrador.
+   
+   in SCCD 7.5.1.2:
+   BMXAA4176E - Attribute ORGID does not exist.
+   
+   EXPECTED RESULT:
+   No error.
+   
+   ADDITIONAL INFO:
+   none.
+   
+   ENVIRONMENT:
+   - SRM:  7216    or SCCD 7512  (probably all versions up to 7512)
+   - TPAE:  7.1.1.12 thru 7506
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ORDERING A CATALOG OFFERING WITH A GL ACCOUNT SPECIFICATION GETS
+    AN ERROR
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix will be included in SCCD 7513 fixpack and next SCCD 7.6
+   release
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV71422
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV SERVICE CAT
+   
+   
+ * REPORTED COMPONENT ID
+   5724S85C0
+   
+   
+ * REPORTED RELEASE
+   721
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-03-24
+   
+   
+ * CLOSED DATE
+   2015-05-21
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV SERVICE CAT
+   
+   
+ * FIXED COMPONENT ID
+   5724S85C0
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R721 PSY
+   UP

@@ -1,0 +1,61 @@
+Title: IBM Document check out fails in FileNet Enterprise Manager and in Workplace - United States
+
+Text:
+exclusive checkout TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempting to checkout a document using FileNet Content Engine Enterprise Manager (FEM) or Workplace fails with error code 0x8004021c 
+
+SYMPTOM
+The error in IBM FileNet Enterprise Manager: 
+
+File = .\EMDocVersion.cpp, Line = 495, Rev. = $Revision: 1.10.1.0 $ 
+
+ * 
+ * 
+ *  Description = Error 0x8004021c at System.Environment.GetStackTrace 
+ * (Exception e, Boolean needFileInfo) 
+ *  at System.Environment.get_StackTrace() 
+ *  at FileNet.Api.Compatibility.CompatibilityException..ctor(Int32 
+ * DmaRC) 
+ *  at FileNet.Api.Compatibility.NonExtensibleBase._Checkout(Object 
+ * OptFlags, Object ReservationIdent) 
+ *  at FileNet.Api.Compatibility.NonExtensibleBase.Checkout(Object 
+ * OptFlags, Object& ReservationIdent) 
+ *  at System.RuntimeMethodHandle._InvokeMethodFast(Object target, Object 
+ * [] arguments, SignatureStruct& sig, MethodAttributes methodAttributes, 
+ * RuntimeTypeHandle typeOwner) 
+ *  at System.RuntimeMethodHandle.InvokeMethodFast(Object target, Object 
+ * [] arguments, Signature sig, MethodAttributes methodAttributes, 
+ * RuntimeTypeHandle typeOwner) 
+ *  at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, 
+ * BindingFlags invokeAttr, Binder binder, Object[] parameters, 
+ * CultureInfo culture, Boolean skipVisibilityChecks) 
+ *  at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, 
+ * BindingFlags invokeAttr, Binder binder, Object[] parameters, 
+ * CultureInfo culture) 
+ *  at FileNet.Api.Compatibility.PropertiesHolder.InvokeMember(String name, 
+ * BindingFlags invokeAttr, Binder binder, Object target, Object[] 
+ * args, ParameterModifier[] modifiers, CultureInfo culture, String[] 
+ * namedParameters) 
+ * -------- 
+ * Error Code: 0 
+ * Error Source: FileNet Content Engine 
+ *  HR = 0x8004021c 
+ *  HR Description = Error 0x8004021c 
+ *  MinorCode = 0x00000a94 
+
+
+The error in Workplace: 
+
+Checkout is not supported for this document
+
+
+CAUSE
+When the document was created, the Supports Versioning option was disabled on the document class
+
+
+RESOLVING THE PROBLEM
+Look at the properties for the document class to see if the Supports Versioning option is enabled. If it is disabled, you can enabled it and all new documents of that document class will be versionable and can be checked out. 
+
+For all existing documents, the versioning_enabled property will need to be modified to allow checkout.

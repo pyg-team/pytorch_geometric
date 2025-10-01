@@ -1,0 +1,59 @@
+Title: IBM (参考) IBM Java Runtime の複数の脆弱性の IBM Mobile Connect への影響 (CVE-2016-5597, CVE-2016-5542) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM Mobile Connect で使用されている IBM Runtime Environment Java バージョン 7 で複数の脆弱性が報告されました。 
+
+VULNERABILITY DETAILS
+
+この製品とともに配布されている IBM Java Runtime を使って独自の Java コードを実行している場合、脆弱性の問題がコードに該当するかを確定するために、コードの評価をする必要があります。脆弱性の完全なリストは、IBM Java SDK Security Bulletin を参照してください。
+
+CVEID: CVE-2016-5597 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5597]
+説明: Networking コンポーネントの不特定の脆弱性により、リモートの攻撃者が未知の攻撃ベクトルを使用して機密情報を取得し、機密性に高い影響を及ぼす可能性があります。
+
+CVSS Base Score: 5.9
+CVSS Temporal Score: 現時点のスコアについては ISS X-Force Database [https://exchange.xforce.ibmcloud.com/vulnerabilities/118071] を参照してください。
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N) 
+
+
+CVEID: CVE-2016-5542 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5542]
+説明: Libraries コンポーネントの不特定の脆弱性により、完全性に低い影響を及ぼす可能性のある脆弱性が存在します。機密性・可用性には影響しません。
+
+CVSS Base Score: 3.1
+CVSS Temporal Score: 現時点のスコアについては ISS X-Force Database [https://exchange.xforce.ibmcloud.com/vulnerabilities/118073] を参照してください。
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:R/S:U/C:N/I:L/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Mobile Connect (Gatekeeper コンポーネントのみ) 6.1.5, 6.1.5.1, 6.1.5.2
+
+REMEDIATION/FIXES
+これらの問題は、IBM Mobile Connect および IBM Mobile Connect とともに出荷された IBM Java Runtime で修正されました。
+
+IBM Mobile Connect の修正の詳細 
+
+製品 バージョン APAR 修正 IBM Mobile Connect 6.1.5.2 IV90676 (英文)「Recommended Maintenance: IBM Mobile Connect」(Technote #7009682) [http://www.ibm.com/support/docview.wss?uid=swg27009682] GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+本事象はセキュリティ問題に該当しているため、問題の再現手順など詳細に関するお問い合わせについて、ここに掲載された以上の情報提供を行っておりません。セキュリティ保全の観点による措置のため、あらかじめご了承いただきますようお願いします。 
+
+重要度、発生頻度など当事象を評価する情報については、以下の CVSS 評価値を利用ください。CVSS の評価値の読み方については、「共通脆弱性評価システム CVSS 概説」をご参照ください。 
+
+原文： 
+(英文)「Security Bulletin: Multiple vulnerabilities in IBM Java Runtime affect IBM Mobile Connect (CVE-2016-5597, CVE-2016-5542)」(Technote #1994236) [http://www.ibm.com/support/docview.wss?uid=swg21994236] 
+
+この文書は、米国 IBM 社の資料を翻訳した参考文書です。日本語環境での検証は行っておりませんのでご注意ください。翻訳元の文書は、関連情報のリンクよりご参照ください。 
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

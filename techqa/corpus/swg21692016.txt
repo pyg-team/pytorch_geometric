@@ -1,0 +1,34 @@
+Title: IBM How to clear AMM (Advanced Management Module) event log when it gets full in IBM PureData for Analytics appliances. - United States
+
+Text:
+Netezza pda AMM event log TECHNOTE (FAQ)
+
+QUESTION
+ How can I clear AMM event log when it gets full? 
+
+CAUSE
+This happens when too many events are logged in the AMM. This is a non-critical warning and when the event log is full, new events continue to be added while the oldest events in the log are deleted (FIFO)
+
+ANSWER
+The issue can be quickly fixed by clearing the event log. 
+To do so you should collect AMM service data first and save it for future reference. 
+To collect AMM service data, please run where X is the spa chassis number: 
+
+/nz/kit/bin/adm/ibm_amm --loc=spaX.mm --service_data=/tmp/mm00X_sd.tgz 
+
+Where X is spa number where the issue occurs. 
+This script could take few minutes to finish. Once it is completed, move the file mm00X_sd.tgz to another directory then /tmp 
+After that below command can be safely run and the event log should be cleared: 
+
+ssh mm00X clearlog -T mm[1]
+
+It may fail if the mm[1] is not primary. In that case you should use:
+
+ssh mm00X clearlog -T mm[2]
+
+
+To check if the warning was cleared you may use folowing command: 
+
+ssh mm00X health -l 2 -f 
+
+It should display: Ok.

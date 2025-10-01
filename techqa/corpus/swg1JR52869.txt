@@ -1,0 +1,144 @@
+Title: IBM JR52869: DOC - BEHAVIOR OF DEACTIVATED SNAPSHOTS IS NOT CLEAR IN REGARD RUNNING BPD INSTANCES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The behavior of deactivated snapshots is not clear in regard
+   running or starting BPD instances.
+   
+   The infocenter mentions this line:
+   "Deactivating a snapshot allows all existing business process
+   definition process instances to complete, but no new process
+   instances can be started."
+   
+   Although this is not exactly true. After applying JR48205 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR48205] the
+   behavior is more consistent with the above statement but not
+   exact.
+   
+   After this fix.
+   New BPD instances are blocked for BPDs started with Javascript,
+   REST, or Webservice APIs. Although UCA and Process Designer
+   started instances would not be blocked.
+   
+   
+   There were also new flags introduced that modify this behavior
+   further.
+   http://www-01.ibm.com/support/docview.wss?uid=swg21622725 [http://www-01.ibm.com/support/docview.wss?uid=swg21622725]
+   These flags impact both starting new instance and running
+   instances on a deactivated snapshot.
+   block-deactivated-snapshot-task-progression - This flag blocks
+   the starting or progression of task based services like human
+   tasks.
+   
+   block-deactivated-snapshot-favorite-progression - This flag
+   blocks the starting of task-less services.
+   
+   In newer versions some of these flags are enabled by default.
+   They may need to be disabled if you wish to have running
+   instances complete on a deactivated snapshot.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  It's not clear whether BPD instances run in deactivated
+   snapshots.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The content will be updated the next time the documentation is
+   refreshed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR52869
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-20
+   
+   
+ * CLOSED DATE
+   2015-06-10
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS

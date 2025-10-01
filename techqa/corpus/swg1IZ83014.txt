@@ -1,0 +1,270 @@
+Title: IBM IZ83014: DOC:USER GUIDE - INSTALLATION STEPS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  User Guide - Update the Installation Steps for odbc and oracle
+   gateway for pre 7.3 omnibus version and 7.3 omnibus version and
+   above.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of the IBM Tivoli Netcool/OMNIbus ODBC Gateway and the
+   IBM Tivoli Netcool/OMNIbus Gateway for Oracle.
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The installation sections of the current Reference Guides for
+   the IBM Tivoli Netcool/OMNIbus ODBC Gateway and the IBM Tivoli
+   Netcool/OMNIbus Gateway for Oracle are out of date.
+   ****************************************************************
+   RECOMMENDATION:
+   The updated versions of both guides, containing the fully
+   rewritten installations sections, will be available on the
+   Netcool/OMNIbus Information Center during October 2010.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The installation sections of the Reference Guides for the ODBC
+   Gateway and the Gateway for Oracle will be updated as outlined
+   below. The updated versions of both guides, containing the
+   fully rewritten installations sections, will be available on
+   the Netcool/OMNIbus Information Center during October 2010.
+   
+   
+   Updates for the Gateway for Oracle Reference Guide
+   --------------------------------------------------
+   The Reference Guide for the Gateway for Oracle will be updated
+   as follows:
+   
+   <Update1>
+   The following information will be added to the Requirements row
+   of the -Summary- section table:
+   
+   If you are running IBM Tivoli Netcool/OMNIbus V7.0.0, you must
+   have Fix Pack 13 (7.0.1.13-TIV-NCOMNIbus-arch-FP0013) installed.
+   If you are running IBM Tivoli Netcool/OMNIbus V7.1.0, you must
+   have Fix Pack 10 (7.1.0-TIV-NCOMNIbus-arch-FP0010) installed.
+   If you are running IBM Tivoli Netcool/OMNIbus V7.2.0, you must
+   have Fix Pack 5 (7.2.0-TIV-NCOMNIbus-arch-FP0005) installed.
+   If you are running IBM Tivoli Netcool/OMNIbus V7.2.1, you must
+   have Fix Pack 3 (7.2.1-TIV-NCOMNIbus-arch-FP0003) installed.
+   
+   <Update2>
+   The following sections will be updated to reference new
+   information added as a result of this APAR: -Obtaining the
+   Gateway for Oracle- and -Audit mode and reporter mode-
+   
+   <Update3>
+   A new section, -Setting environment variables-, will be added
+   to the guide. It will contain the same information that is
+   currently found in -Configuring the Database- ==> -Setting the
+   environment variables-.
+   
+   <Update4>
+   A new section, -Installation overview-, will be added to the
+   existing -Installing the gateway- section. It will contain the
+   following text:
+   
+   It will explain how to install any required Fix Packs, the
+   gateway itself, the reporter or audit mode patch, and the
+   GICMD tool.
+   
+   <Update5>
+   The existing -Installing the Gateway for Oracle on UNIX- section
+   will be replaced by -Installing the Gateway for Oracle on UNIX
+   and Linux operating systems-.
+   
+   <Update6>
+   The content of the -Installing the Gateway for Oracle on
+   Windows- section will be fully updated.
+   
+   <Update7>
+   The existing sections -Installing the audit mode patch- and
+   -Installing the reporter mode patch- will be replaced with a new
+   section, -Installing the gateway- ==> -Installing audit and
+   reporter mode patches-.
+   
+   It will explain how to do the following: install audit and
+   reporter mode patches, back up existing scripts and
+   configuration files, install the audit mode patch on UNIX,
+   Linux, and Windows operating systems, and install the reporter
+   mode patch on UNIX, Linux, and Windows operating systems.
+   
+   <Update8>
+   The existing content of the -Installing the gateway interactive
+   command line tool- section will be replaced with new sections
+   that describe how to install the gateway interactive command
+   line tool in separate sections, one for UNIX and Linux
+   operating systems and one for Windows operating systems.
+   
+   <Update9>
+   The -Configuring the database- section will be relocated, to
+   appear after the -Installing the gateway- section in the guide,
+   will be fully updated, and sections added to identify
+   prerequisites, to explain how to run the reporter mode
+   scripts, and how to explain how to run the audit mode scripts.
+   
+   ****************************************************************
+   ************************************************
+   
+   The Reference Guide for the ODBC gateway will be updated as
+   follows:
+   
+   Updates for the ODBC Gateway Reference Guide
+   --------------------------------------------------
+   
+   <Update1>
+   The following information will be added to the Requirements row
+   of the -Summary- section table:
+   
+   If you are running IBM Tivoli Netcool/OMNIbus V7.0.0, you must
+   have Fix Pack 13 (7.0.1.13-TIV-NCOMNIbus-arch-FP0013) installed.
+   If you are running IBM Tivoli Netcool/OMNIbus V7.1.0, you must
+   have Fix Pack 10 (7.1.0-TIV-NCOMNIbus-arch-FP0010) installed.
+   If you are running IBM Tivoli Netcool/OMNIbus V7.2.0, you must
+   have Fix Pack 5 (7.2.0-TIV-NCOMNIbus-arch-FP0005) installed.
+   If you are running IBM Tivoli Netcool/OMNIbus V7.2.1, you must
+   have Fix Pack 3 (7.2.1-TIV-NCOMNIbus-arch-FP0003) installed.
+   
+   <Update2>
+   The following sections will be updated to reference new
+   information added as a result of this APAR: Overview, Obtaining
+   the ODBC Gateway, Audit mode and reporter mode.
+   
+   
+   <Update3>
+   A new section, -Installation overview-, will be added to the
+   existing -Installation- section. It will describe installation
+   requirements and dependencies.
+   
+   <Update4>
+   The information in -Backing up existing scripts on UNIX- will be
+   moved to a new section, -Installing audit and reporter mode
+   patches- ==> -Backing up existing scripts and configuration
+   files-.
+   
+   <Update5>
+   The section -Installing DataDirect Connect for ODBC drivers-
+   will be replaced by -Installing LIBODBC drivers-. It will
+   describe how to install the LIBODBC drivers.
+   
+   <Update6>
+   The existing -Installing the ODBC Gateway on UNIX- section will
+   be replaced by -Installing the ODBC gateway on UNIX and Linux
+   operating systems-.
+   
+   <Update7>
+   The information in -Installing the gateway to run with
+   Netcool/Reporter- will be moved to -Configuring the database-
+   ==> -Running the reporter mode scripts-.
+   
+   <Update8>
+   The information in -Backing up existing scripts on Windows- will
+   be moved to -Installing audit and reporter mode patches- ==>
+   -Backing up existing scripts and configuration files-.
+   
+   <Update9>
+   The content of the -Installing the ODBC Gateway on Windows-
+   section will be updated.
+   
+   <Update10>
+   A new section, -Installing audit and reporter mode patches-,
+   will be added to the Installation section. It will contain
+   describe how to back up existing scripts and install the audit
+   and reporter mode patches.
+   
+   <Update11>
+   The -Configuring the database- section will be relocated, to
+   appear after the -Installation- section in the guide. The
+   current content of this section will be updated.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ83014
+   
+   
+ * REPORTED COMPONENT NAME
+   ODBC (MYSQL) GA
+   
+   
+ * REPORTED COMPONENT ID
+   5724O71SQ
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-17
+   
+   
+ * CLOSED DATE
+   2010-09-03
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC23957200 SC23766903 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

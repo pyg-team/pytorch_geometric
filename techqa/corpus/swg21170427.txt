@@ -1,0 +1,18 @@
+Title: IBM Running DB2 High Performance Unload returns 'INZU016E select_options statement:  "Syntax is invalid"' - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When using DB2® High Performance Unload, issuing db2hpu results in the following messages:
+INZU010I Item starting at (6,1) ending at(7,58)
+INZU016E select_options statement syntax is invalid
+INZU333E Syntax error in the control file
+INZU366I HPU return code 8 (reason code 0x107a003) 
+
+ANSWER
+The character used in the 'FORMAT delimiter delim' parameter must be enclosed in single quotes. 
+
+For example: 
+
+format delimited delim '|'

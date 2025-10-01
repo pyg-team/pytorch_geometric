@@ -1,0 +1,22 @@
+Title: IBM Business Monitor V8.5.5 and IBM Business Process Manager (BPM) must be configured to run in separate cells - United States
+
+Text:
+configuration; single cell; multiple cells TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you are configuring IBM Business Monitor V8.5.5 and IBM Business Process Manager (BPM), you must configure the two products to run in separate cells. 
+
+CAUSE
+It is not possible for IBM Business Monitor to augment an existing IBM Business Process Manager profile or for IBM Business Process Manager to augment an existing IBM Business Monitor profile. 
+
+RESOLVING THE PROBLEM
+Even if IBM Business Monitor V8.5.5 and IBM Business Process Manager are installed in the same root directory, always install the two products in separate cells. 
+
+ If you are using events that were configured in an earlier version of IBM BPM that ran in the same cell as IBM Business Monitor, you need to reconfigure the topology to run the products in separate cells. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Installation / Configuration Linux, Windows 8.5.5, 8.5.0.1, 8.5, 8.0.1.2 Business Integration IBM Business Process Manager Standard Installation / Configuration AIX, Linux, Linux zSeries, Solaris, Windows 8.5.5, 8.5.0.1, 8.5, 8.0.1.2 
+PRODUCT ALIAS/SYNONYM
+ BPM

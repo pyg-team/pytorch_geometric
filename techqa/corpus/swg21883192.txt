@@ -1,0 +1,39 @@
+Title: IBM Security Bulletin: Vulnerability in RC4 stream cipher affects WebSphere Application Server shipped with Tivoli Netcool Performance Manager  (CVE-2015-2808) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The RC4 "Bar Mitzvah" for SSL/TLS may affect some configurations of WebSphere Application Server as a component of IBM Tivoli Netcool Performance Manager . 
+NOTE: If you are configured for FIPS140-2, Suite B or SP800-131 in your Security>SSL certificate and key management then you are not affected by this vulnerability or your SSL communication for Liberty. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-2808 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2808]
+DESCRIPTION: The RC4 algorithm, as used in the TLS protocol and SSL protocol, could allow a remote attacker to obtain sensitive information. An attacker could exploit this vulnerability to remotely expose account credentials without requiring an active man-in-the-middle session. Successful exploitation could allow an attacker to retrieve credit card data or other sensitive information. This vulnerability is commonly referred to as "Bar Mitzvah Attack".
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/101851 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101851] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N) 
+
+Please consult the security bulletin Vulnerability in RC4 stream cipher affects WebSphere Application Server (CVE-2015-2808) [http://www-01.ibm.com/support/docview.wss?uid=swg21701503] for vulnerability details.
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Affected Product and Version(s) IBM WebSphere Application Server Version Tivoli Network Performance Manager 1.4 IBM WebSphere version 8.5.0.1 (Bundled in the Jazz for Service Management version 1.1.0.2) Tivoli Network Performance Manager 1.3.3 IBM WebSphere version 7.0.0.x (Bundled the TIP version 2.1.0.x) Tivoli Network Performance Manager 1.3.2 IBM WebSphere version 7.0.0.x (Bundled in the TIP version 2.1.0.x) Tivoli Network Performance Manager 1.3.1 IBM WebSphere version 7.0.0.x (Bundled in the TIP version 2.1.0.x) REMEDIATION/FIXES
+Remediation is available at the security bulletin Vulnerability in RC4 stream cipher affects WebSphere Application Server (CVE-2015-2808) [http://www-01.ibm.com/support/docview.wss?uid=swg21701503] 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 20 April 2015: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

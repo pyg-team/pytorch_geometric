@@ -1,0 +1,150 @@
+Title: IBM IZ05422: V8FP16-AIX-NON_FATAL ASSERTION-SNAPPRSR.C AND INSTANCE PANIC. - United States
+
+Text:
+AIX  A FIX IS AVAILABLE
+DB2 UDB Version 8.1 FixPak 16 (also known as Version 8.2 FixPak 9 ) [http://www-01.ibm.com/support/docview.wss?uid=swg24018266]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I am executing V8FP15 scenario on AIX64bit (n070221 build) DPF
+   instance having 16 node setup(4 logical nodes on 4 physical
+   machines) and as part of my testing I was running clients
+   performing insert, update, deletes and reorg and also running
+   monitor tool. I hit an non-fatal assertion failure in
+   "snapPrsr.C" and FMP is marked as unstable and instance got
+   panic and suspended.
+   Looking into the code it seems like "size" in "dataGroup"
+   structure is not being populated correctly and this is causing
+   assertion failure in Ossmemory.c
+   I was running a module that takes snapshots and from looking at
+   logs and output from module it looks like it failed when trying
+   to run below statement:
+   db2 "select * from table(HEALTH_DBM_HI(-2)) as HEALTH_DBM_HI"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  V8FP16-AIX-NON_FATAL ASSERTION-SNAPPRSR.C AND INSTANCE PANIC.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in DB2 UDB Version 8.2, FixPak 16
+   
+   I am executing V8FP15 scenario on AIX64bit (n070221 build) DPF
+   instance having 16 node setup(4 logical nodes on 4 physical
+   machines) and as part of my testing I was running clients
+   performing insert, update, deletes and reorg and also running
+   monitor tool. I hit an non-fatal assertion failure in
+   "snapPrsr.C" and FMP is marked as unstable and instance got
+   panic and suspended.
+   Looking into the code it seems like "size" in "dataGroup"
+   structure is not being populated correctly and this is causing
+   assertion failure in Ossmemory.c
+   I was running a module that takes snapshots and from looking at
+   logs and output from module it looks like it failed when trying
+   to run below statement:
+   db2 "select * from table(HEALTH_DBM_HI(-2)) as HEALTH_DBM_HI"
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  NA
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ05422
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4100
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-09-26
+   
+   
+ * CLOSED DATE
+   2008-07-15
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * FIXED COMPONENT ID
+   5765F4100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSY
+   UP

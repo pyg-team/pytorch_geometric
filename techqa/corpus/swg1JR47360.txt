@@ -1,0 +1,237 @@
+Title: IBM JR47360: ILLEGALSTATEEXCEPTION WHEN STOPPING AND STARTING TEAMWORKS.EAR. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.0.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035701]
+Version 8.5.0 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035702]
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Stopping followed by starting of teamworks.ear results in an
+   IllegalStateException in SystemOut.log and a stopped event
+   manager that
+   does not restart.
+   
+   java.lang.IllegalStateException: Scheduler has already been
+   initialized.
+         at
+   com.lombardisoftware.server.scheduler.TeamworksAdapter.init(Team
+   worksAda
+   pter.java:51)
+         at
+   com.lombardisoftware.server.scheduler.TeamworksAdapter.init(Team
+   worksAda
+   pter.java:43)
+         at
+   com.ibm.bpm.server.startup.SchedulerInitializerStartupBean$1.run
+   (Schedul
+   erInitializerStartupBean.java:47)
+         at
+   com.lombardisoftware.client.delegate.common.WebsphereDelegateHel
+   per$2$1.
+   run(WebsphereDelegateHelper.java:78)
+         at
+   java.security.AccessController.doPrivileged(AccessController.jav
+   a:314)
+         at javax.security.auth.Subject.doAs(Subject.java:573)
+         at
+   com.ibm.websphere.security.auth.WSSubject.doAs(WSSubject.java:19
+   5)
+         at
+   com.ibm.websphere.security.auth.WSSubject.doAs(WSSubject.java:15
+   2)
+         at
+   com.lombardisoftware.client.delegate.common.WebsphereDelegateHel
+   per.doAs
+   (WebsphereDelegateHelper.java:150)
+         at
+   com.lombardisoftware.client.delegate.common.WebsphereDelegateHel
+   per$2.ru
+   n(WebsphereDelegateHelper.java:74)
+         at
+   com.ibm.bpm.server.startup.SchedulerInitializerStartupBean.start
+   (Schedul
+   erInitializerStartupBean.java:72)
+         at
+   com.ibm.websphere.startupservice.EJSRemoteStatelessSchedulerInit
+   ializer_
+   996c7877.start(Unknown Source)
+         at
+   com.ibm.websphere.startupservice._AppStartUp_Stub.start(_AppStar
+   tUp_Stub
+   .java:252)
+         at
+   com.ibm.ws.startupservice.StartBeanInfo.start(StartBeanInfo.java
+   :287)
+         at
+   com.ibm.ws.startupservice.StartUpModule.appStart(StartUpModule.j
+   ava:152)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The problem was that during Application stop, the event manager
+   infrastructure is stopped in such a way that it cannot be
+   restarted. When during Application start an attempt was made to
+   restart the event manager infrastructure, the described
+   symptoms occurred.
+   
+   PROBLEM DETAILED DESCRIPTION:
+   If the IBM_BPM_Teamworks_<nodename>_<servername> application is
+   stopped and afterwards restarted, strange symptoms occur:
+   
+   - SystemOut.log contains the following exception:
+    java.lang.IllegalStateException: Scheduler has already been
+      initialized.
+     at com.lombardisoftware.server.scheduler.TeamworksAdapter.
+       init(TeamworksAdapter.java:51)
+     at com.lombardisoftware.server.scheduler.TeamworksAdapter.
+       init(TeamworksAdapter.java:43)
+     at com.ibm.bpm.server.startup.SchedulerInitializerStartup
+       Bean$1.run(SchedulerInitializerStartupBean.java:47)
+     at com.lombardisoftware.client.delegate.common.Websphere
+       DelegateHelper$2$1.run(WebsphereDelegateHelper.java:78)
+     at java.security.AccessController.doPrivileged
+       (AccessController.java:314)
+     at javax.security.auth.Subject.doAs(Subject.java:573)
+     at com.ibm.websphere.security.auth.WSSubject.doAs
+       (WSSubject.java:19 5)
+     at com.ibm.websphere.security.auth.WSSubject.doAs
+       (WSSubject.java:152)
+     at com.lombardisoftware.client.delegate.common.Websphere
+       DelegateHelper.doAs(WebsphereDelegateHelper.java:150)
+     at com.lombardisoftware.client.delegate.common.Websphere
+       DelegateHelper$2.run(WebsphereDelegateHelper.java:74)
+     at com.ibm.bpm.server.startup.SchedulerInitializerStartupBean.
+       start(SchedulerInitializerStartupBean.java:72)
+     at com.ibm.websphere.startupservice.EJSRemoteStateless
+       SchedulerInitializer_996c7877.start(Unknown Source)
+     at com.ibm.websphere.startupservice._AppStartUp_Stub.start
+       (_AppStartUp_Stub.java:252)
+       ...
+   
+   - The event manager is stopped and cannot be restarted
+   
+   - BPDs stop to navigate
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The solution was to get completely rid of the event manager
+   infrastructure during application stop. When now the application
+   is restarted, a new event manager infrastructure is created and
+   started.
+   
+   FIX AVAILABILITY:
+   iFix for 8.0.1.1 is available on Fix Central, search for APAR
+   JR47360 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   Fix is also targetted for inclusion in next fixpack for BPM
+   8.0.1, BPM 8.5.0
+   
+   When obtaining any of the above fixes, be sure to download the
+   accompanying readme, for itself, and any prerequisite fixes, and
+   review them thorougly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR47360
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-30
+   
+   
+ * CLOSED DATE
+   2013-10-29
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

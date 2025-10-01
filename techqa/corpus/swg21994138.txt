@@ -1,0 +1,19 @@
+Title: IBM Curam Social Program Management 'checkSQL' target fails for Oracle 12c and Java 1.8 - United States
+
+Text:
+checkSQL TECHNOTE (FAQ)
+
+QUESTION
+ Why do I see an error when I execute the 'checkSQL' target against an Oracle 12c database using Java 1.8 with Curam Social Program Management? 
+
+CAUSE
+This error is caused because the Oracle 12c database driver does not support Java 1.8. 
+
+Error details: 
+
+
+ERROR: Exception in thread "main" java.lang.NoClassDefFoundError: sun/io/CharToByteConverter [sqlcheck] at sqlj.util.io.OracleOutputStreamWriter.<init>(OracleOutputStreamWriter.java:82) [sqlcheck] at sqlj.util.io.OracleOutputStreamWriter.<init>(OracleOutputStreamWriter.java:52) [sqlcheck] at sqlj.tools.Sqlj.initializeErrors(Sqlj.java:922) …......[sqlcheck] [sqlcheck] [sqlcheck] Exception in thread "main" java.lang.RuntimeException: ERROR: Please correct the above errors and re-run. [sqlcheck] at curam.util.tools.sqlcheck.SQLCheck.handleError(SQLCheck.java:222) [sqlcheck] at curam.util.tools.sqlcheck.SQLCheck.main(SQLCheck.java:209)
+
+
+ANSWER
+The problem is related to the Oracle 12c database driver (translator.jar) which is used by the 'checkSQL' target and currently does not support Java 1.8. The 'checkSQL' target continues to function against the Oracle 12c database driver using Java 1.6 and 1.7.

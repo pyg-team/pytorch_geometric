@@ -1,0 +1,40 @@
+Title: IBM Passport Advantage Parts list for IBM uDeploy - United States
+
+Text:
+PartListDocument; ppa; parts list; part list; partlist PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document describes the parts that you must download from the Passport Advantage Online website for IBM uDeploy. 
+
+CONTENT
+ 
+
+TAB NAVIGATION
+ * Release 5.0.0.1- selected tab,
+ * Passport Advantage
+
+IBM Passport Advantage Clients with Passport Advantage Software Subscription and Support can access available product upgrades from Passport Advantage Online:
+
+Passport Advantage Online - Customer sign in [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/]
+
+Passport Advantage Online - Reseller sign in [http://www.ibm.com/software/howtobuy/passportadvantage/paoreseller/]
+
+
+IBM Passport Advantage Software Subscription and Support provides you with product upgrades and technical support for your organization. A period of Passport Advantage Software Subscription and Support is included with each new IBM distributed software license and Fixed Term License.
+
+When the initial period of Software Subscription and Support expires, it must be renewed for continued access to technical support and product upgrades.
+
+The following links provide additional information about Passport Advantage Software Subscription and Support:
+
+Learn more about Passport Advantage [http://www.ibm.com/software/lotus/passportadvantage/]
+
+Passport Advantage Online Videos [http://www.ibm.com/software/lotus/passportadvantage/PassportAdvantageOnlinevideos.html]
+
+Contact Passport Advantage [https://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]
+
+Parts for download by version: Part number Description File name CIPZ4EN README File for IBM uDeploy 5.0 Licensing README_FILE_FOR_IBM_UDEP_5.0_LICG.zip CIPZ5EN IBM uDeploy License Key IBM_UDEPLOY_LICENSE_KEY.zip CIPZ6EN IBM uDeploy Server 5.0 IBM_UDEPLOY_SERVER_5.0.zip CIPZ7EN IBM uDeploy Relay Server 5.0 IBM_UDEPLOY_AGENT_SERVER_5.0.zip IBM uDeploy Server 5.0.0.1 is available on Fix Central: IBM uDeploy 5.0.0.1 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Rational&product=ibm/Rational/IBM+uDeploy&release=5.0.0.0&platform=All&function=all&source=fc]. The IBM uDeploy agent is available in the IBM uDeploy Relay Server 5.0 archive file.  Back to top 
+
+RELATED INFORMATION
+ V.R.M.F. Maintenance Stream Delivery Vehicle glossary [http://www.ibm.com/support/docview.wss?uid=swg27008656]
+Software Product Compatibility Reports [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity/index.jsp]
+Fix Central [http://www.ibm.com/support/fixcentral/]

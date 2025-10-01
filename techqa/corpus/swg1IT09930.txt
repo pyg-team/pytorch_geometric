@@ -1,0 +1,131 @@
+Title: IBM IT09930: MQ 8.0: ABILITY TO SET AUTHINFO CHCKCLNT(NONE) FOR CONNAUTH AND REQUIRED VIA CHLAUTH RULES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Users reviewing the MQ Knowledge Center find multiple
+   contradictory descriptions of the CHLAUTH rules, in particular
+   the implications of setting CHKCLNT are not clear.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users using channel authentication feature of MQ Version 8 and
+   trying to configure as described in the MQ Knowledge Center.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The MQ Knowledge Center contained contradictory information
+   while describing CHLAUTH rules.
+   
+   The parameter CHCKCLNT should be at a minimum set to 'OPTIONAL'
+   in order to use more stringent CHLAUTH rules, and this should
+   have been reflected in the relevant section of the Knowledge
+   Center.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR is used to correct the Knowledge Center, confirming
+   that the designed behaviour is as follows:
+   
+    If you select NONE and the client connection matches a CHLAUTH
+   record with CHCKCLNT REQUIRED (or REQDADM on platforms other
+   than z/OS), the connection fails. You receive message AMQ9793 on
+   platforms other than z/OS, and message CSQX793E on z/OS.
+   
+   Ref url:
+   http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.i
+   bm.mq.ref.adm.doc/q085490_.htm [http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.ref.adm.doc/q085490_.htm]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT09930
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-07-08
+   
+   
+ * CLOSED DATE
+   2015-11-26
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

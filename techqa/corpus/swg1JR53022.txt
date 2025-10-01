@@ -1,0 +1,199 @@
+Title: IBM JR53022: SEVERAL OPERATIONS FAIL WITH SECURITY_ANONYMOUS_DISALLOWED ERROR - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8560.cf1.delta.repository.2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.2&source=SAR]
+bpm.8560.cf1.delta.repository.1 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.1&source=SAR]
+8.5.6.0-WS-BPM-IFJR53022 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.6.0-WS-BPM-IFJR53022&source=SAR]
+8.5.5.0-WS-BPM-IFJR53022 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPM-IFJR53022&source=SAR]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  While using IBM Business Process Manager (BPM), you see several
+   operations to start failing with an error containing the
+   SECURITY_ANONYMOUS_DISALLOWED error code. The server
+   SystemOut.log file contains exceptions, for example
+   
+    3/25/15 9:22:50:222 CET  000001c2 wle           E   CWLLG2229E:
+   An exception occurred in an EJB call.  Error: CWTDS0000E: An
+   unexpected failure occurred. Details: 'FNRCS0001:
+   SECURITY_ANONYMOUS_DISALLOWED: Access to Content Engine was not
+   allowed because the request was made anonymously instead of by
+   an authenticated user. The application server reported that the
+   user was anonymous.'
+   
+   Explanation: An exception was thrown.
+   
+   Action: Check the server log files.
+   
+   
+   com.lombardisoftware.core.TeamWorksException: CWTDS0000E: An
+   unexpected failure occurred. Details: 'FNRCS0001:
+   SECURITY_ANONYMOUS_DISALLOWED: Access to Content Engine was not
+   allowed because the request was made anonymously instead of by
+   an authenticated user. The application server reported that the
+   user was anonymous.'
+   
+   Explanation: An exception was thrown.
+   
+   Action: Check the server log files.
+   
+    at com.lombardisoftware.server.ejb.api.
+     BPDInstanceDocumentAPICore.getDocumentsByInstance
+     (BPDInstanceDocumentAPICore.java:566)
+    at com.lombardisoftware.server.ejb.api.
+     BPDInstanceDocumentAPICore.getDocumentsByInstance
+     (BPDInstanceDocumentAPICore.java:533)
+    at sun.reflect.GeneratedMethodAccessor960.invoke(Unknown
+     Source)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke
+     (DelegatingMethodAccessorImpl.java:37)
+    at java.lang.reflect.Method.invoke(Method.java:611)
+   
+   Note that the call stack you see might be different because the
+   error happens at several different operations.
+   
+   Restarting the server resolves the issue until it reappears
+   after some time.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When accessing the IBM BPM document store, a technical user who
+   is defined as the IBM BPM EmbeddedECMTechnicalUser role type is
+   used for various operations. The javax.security.auth.Subject
+   object for this user is cached with a renewal mechanism before
+   it expires.
+   
+   This issue happens when the credentials within the subject are
+   invalidated by another thread, for example an asynchronous SCA
+   operation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM that changes the subject caching
+   logic to always validate the subject before using it. If
+   invalidated, a new subject is created.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR53022:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR53022, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR53022
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-07
+   
+   
+ * CLOSED DATE
+   2015-06-02
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP
+   
+   
+ * R856 PSY
+   UP

@@ -1,0 +1,35 @@
+Title: IBM Deploying IBM Business Process Manager (BPM) Pattern V8.6.0 or IBM Process Federation Server (PFS) Pattern V8.6.0 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you use Oracle as your database type, you might require supporting documentation to successfully deploy IBM Business Process Manager (BPM) Pattern V8.6.0 or IBM Process Federation Server (PFS) Pattern V8.6.0. 
+
+CAUSE
+Process Federation Server is part of the IBM BPM V8.6 product. From V8.6, IBM BPM no longer includes Java database connectivity (JDBC) drivers for Oracle databases.
+
+RESOLVING THE PROBLEM
+Before you can configure your Oracle database for either of these pattern types, you must obtain one of the supported Oracle JDBC drivers. For a list of supported Oracle versions, see Advanced database support for IBM Business Process Manager (BPM) [https://www-01.ibm.com/support/docview.wss?uid=swg21578920]. 
+
+The way in which you configure the Oracle database connection, depends on the pattern that you are installing. 
+
+IBM Business Process Manager Pattern V8.6.0 
+
+During deployment of the pattern template, you are prompted to upload the Oracle JDBC driver to the IBM BPM 860 Process Center Deployment Manager and IBM BPM 860 Custom Node nodes. To upload the JDBC driver, use the DB Driver File on each of these nodes. 
+
+ 
+
+IBM Process Federation Server Pattern V8.6.0 
+
+You can deploy and install this pattern without previously uploading the Oracle JDBC driver. However, before you can perform operations on the Oracle database, you must upload the JDBC driver to each of the Process Federation Server nodes and complete the database configuration. 
+
+ 1. Rename the Oracle JDBC driver .jar file to ojdbc7.jar. 
+ 2. On each of the Process Federation Server nodes, upload the JDBC driver to /opt/IBM/PFS/v85/ibmProcessFederationServer/wlp-ext/jdbcdrivers/Oracle. 
+ 3. Complete the database configuration. For more information, see Configuring the Process Federation Server database [https://www.ibm.com/support/knowledgecenter/SSFPJS_8.6.0/com.ibm.wbpm.main.doc/topics/cfg_fps_database.html].
+
+
+
+PRODUCT ALIAS/SYNONYM
+ IBM BPM Pattern
+IBM PFS Pattern

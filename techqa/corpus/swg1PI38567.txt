@@ -1,0 +1,184 @@
+Title: IBM PI38567: RQM WORD EXPORT UTILITY ERRORS WITH RICHTEXT IMPORTING TEST SCRIPT STEPS - SAXPARSEEXCEPTION - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Quality Manager 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24040221]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using the IBM Rational Quality Manager (RQM) Microsoft (MS)
+   Word Utility with RichText() function and bold and color fonts
+   in testscript.steps.description, you get a status code 400,
+   "Uploaded content does not consist of well-formed XML or does
+   not match the XML schema for testscript" and SAXParseException.
+   
+   
+   There is a partial workaround at this time:
+   1. Open the MS Word Document file
+   2. Select All and Cut
+   3. Open a new MS WordPad file (All Programs > Accessories >
+   WordPad
+   4. Paste
+   5. Select All
+   6. Paste it back to the MS Word Document file
+   7. Use RQM Word Utility to Export to Repository
+   
+   The test script will be imported, however the words with the
+   bold/color are concatenated to the next word.
+   
+   Review the following work item on Jazz.net for details:
+   https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manage
+   r#action=com.ibm.team.workitem.viewWorkItem&id=135539 [https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manager#action=com.ibm.team.workitem.viewWorkItem&id=135539]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * RQMWordImporter > RichText issues for testscript.steps       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Issue: Word Import Tool RichText function for test script    *
+   * generation                                                   *
+   *                                                              *
+   * RichText() function in testscript.steps.description gives    *
+   * status code 400, Uploaded content does not consist of        *
+   * well-formed XML or does not match the XML schema for         *
+   * testscript.  See comment 3 for complete stack trace of       *
+   * SAXParseException.                                           *
+   *                                                              *
+   * If you generate the XML instead of importing into the        *
+   * repository and look at in Notepad++ or other XML editor, it  *
+   * seems one of the problems is that the XML created for the    *
+   * "style=..." has double quotes instead of single.             *
+   *                                                              *
+   * RichText() function in testscript.steps.expectedResult works *
+   * as expected.                                                 *
+   *                                                              *
+   * Version: the customer is using 5.0.1 but we tested in 5.0.2  *
+   * too and it has the same problem.                             *
+   *                                                              *
+   * Steps to Reproduce:                                          *
+   * You can use the sample data.                                 *
+   * 1. Open the Word Sample "TestScript in Tables.doc"           *
+   * 2. Make the Step Description text bold.  Customer is using   *
+   * bold and color but the error occurs even just with bold      *
+   * text.                                                        *
+   * 3. Change the corresponding config file so that              *
+   * testscript.steps.description is using RichText function,     *
+   * like this:                                                   *
+   * testscript.steps.description=RichText(Table(2).B)            *
+   * 4. Run the import                                            *
+   * Get the 400 error                                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been resolved in version 6.0
+   See Jazz Workitem for additional details
+   https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manage
+   r#action=com.ibm.team.workitem.viewWorkItem&id=135539 [https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manager#action=com.ibm.team.workitem.viewWorkItem&id=135539]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI38567
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL QUALITY MG
+   
+   
+ * REPORTED COMPONENT ID
+   5724V1000
+   
+   
+ * REPORTED RELEASE
+   501
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-07
+   
+   
+ * CLOSED DATE
+   2015-06-25
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL QUALITY MG
+   
+   
+ * FIXED COMPONENT ID
+   5724V1000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R501 PSY
+   UP
+   
+   
+ * R502 PSY
+   UP

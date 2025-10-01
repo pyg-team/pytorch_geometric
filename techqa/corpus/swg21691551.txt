@@ -1,0 +1,104 @@
+Title: IBM Deployment Engine Health Checking in Netcool/OMNIbus - United States
+
+Text:
+de_healthChecker.sh; de_healthChecker.cmd; de_healthChecker; installations fails; STDERR; failed; completed with some errors TECHNOTE (FAQ)
+
+QUESTION
+ DE Installer : Why does the installer fail? 
+
+CAUSE
+Corrupt DE file system or database
+
+ANSWER
+ 
+
+It is possible to corrupt the deployment engine file system or database whilst trying to install a product. 
+
+Because of this the Deployment Engine system includes a system checker. 
+
+In the first instance check through the DE troubleshooting section from the Netcool/OMNIbus manual [see related information]. 
+
+ 
+
+Then use the de_healthChecker to confirm the status of the DE installation. 
+
+ 
+
+Running the DE Health Check program provides feedback as to the status of the DE installation. 
+
+ 
+
+For example for a linux installation of Netcool/OMNIbus v7.4 installed as a non-root user: 
+
+
+cd /opt/nrv74/.<acsi>/bin
+
+
+./de_healthChecker.sh
+The current user (nrv74) has access to Deployment Engine.
+=================================================
+DE Health checker in progress...
+
+-------------------------------------------------
+Check : Check that all properties in ACUApplication.properties have values
+Status : CHECK PASSED: All properties have values.
+
+-------------------------------------------------
+Check : DE stale Lock issue
+Status : CHECK PASSED: No stale lock files found in /opt/nrv74/.<asci>/logs
+
+-------------------------------------------------
+Check : Check that DE stored hostname matches the machine hostname.
+Status : CHECK PASSED: The "myhost.mydomain.com" hostname in DE matches that of the current system.
+
+-------------------------------------------------
+Check : Check that Derby database username & password are valid
+Status : CHECK PASSED: User has valid credentials
+
+-------------------------------------------------
+Check : Check that the DE discriminant matches with install location
+Status : CHECK PASSED: DE discriminant matches install location
+
+-------------------------------------------------
+Check : Check that the DE version & file permissions is not corrupted.
+Status : CHECK PASSED: DE versions and file permissions are correct
+
+-------------------------------------------------
+Check : Check that all Installable Units are in a useable state
+Status : CHECK PASSED: All Installable Units are in useable state
+
+-------------------------------------------------
+Check : Check that each IU Instance in the FAMILY table is not superseded
+Status : CHECK PASSED: No invalid entries found in DE database. 
+
+
+Summary : 8/8 checks passed. 
+
+ 
+
+In this case the DE installation is confirmed as working as expected. 
+
+ 
+
+Example issues: 
+
+Problem#1:
+Check : DE stale Lock issue
+Status : CHECK PASSED: STALE LOCK files found in /opt/nrv74/.<asci>/logs 
+
+Solution: 
+
+Remove the lock files and try to install again after running the products uninstaller and removing the product directory from _uninst directory. 
+
+Problem#2:
+Check : Check that Derby database username & password are valid
+Status : <process times out or stalls> 
+
+Solution: 
+
+Reboot the system, and re-run the de_healthChecker program to see if the issue is cleared. 
+
+
+
+RELATED INFORMATION
+ Troubleshooting the Deployment Engine [http://www-01.ibm.com/support/knowledgecenter/SSSHTQ_7.4.0/com.ibm.netcool_OMNIbus.doc_7.4.0/omnibus/wip/install/reference/omn_trb_troubleshootingde.html?lang=en]

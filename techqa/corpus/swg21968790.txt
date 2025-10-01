@@ -1,0 +1,72 @@
+Title: IBM 5.2.0.0-ISS-XGS-All-Models-Hotfix-FP0012 - United States
+
+Text:
+IBM; Fixpack; FP0012; AllModels; HotFix; XGS FIX README
+
+ABSTRACT
+ This document discusses the fixes covered in 5.2.0.0-ISS-XGS-All-Models-Hotfix-FP0012 and the modules affected by it. 
+
+CONTENT
+Delivers security fixes to date. Please visit http://www.ibm.com/support/entry/portal/support [http://www.ibm.com/support/entry/portal/support] to view security bulletins for this product. 
+Previous Fixes:
+
+- Fixes the issue where adapter mode (Simulation) is not honored when alpsd ConnTable is full
+- Fixes the issue issue where forward unanalyzed does nott work in Frmcap PacketIfs.
+- Fixes the issue where simulation mode does not disable ssl MITM.
+- Fix for the issue where GSKit/MSL Malformed ECParameters causes infinite loop. 
+- Updates Openssl, Openssh, tzdata, unzip, krb, ntp to latest MCP version
+- Disables IBM HTTP Server RC4 Cipher by default. Includes advance tuning parameter to enable if necessary. e.g lmi.security.RC4 = true
+- 64948: Disabling protection ports prior to port pair for SSL inspection prevents any Outbound SSL inspection from occurring.
+- 65209: Firmware Settings page displays an error on Internet Explorer 11.
+- 65864: XGS LCD panel displays incoherent text on several XGS3100 models.
+- 66565: mesa_eventsd fails to initialize DB after enough number of reloading.
+- 67899: LUM's agent description string is missing firmware version.
+- 67900: alpsd has no effective watchdog during shutdown
+- 62145: Update time zones to support Eternal Winter Time. 
+- 64019: An invalid "TCP Reset Interface" setting in the adapters policy causes all future policy changes to reset links on all connected protection interfaces.
+- Fixes an issue with LACP Down.
+- Fixes issue with snapshot upload not working for some browser configurations.
+- Fixes adapter configuration for ips event filter rules.
+- Fixes issue for not able to add ICMP into restriction tab for Non-Web Object in NAP rules.
+- Fixes issue for not able to save customized schedule security setting policy in SP for Windows OS Language that does not support the 12-hour notation (AM/PM) conversion. e.g Japanese
+Note: Patch in SiteProtector-XGS-Schedule-Security-Settings-Fix folder
+- Fixes an issue where XGS fails to post events to SP.
+- Fixes an Exception on License and Updates Overview page that does not load page when all protection interfaces disabled.
+- Corrects aplsd crash
+- Add DCA lookup logging
+- Corrects pktcapd restart race condition which prevents NAP rule from being changed.
+- Fixes kernel panic
+- Quarantine rules are not added in response to non-sequitur events (Network sweeps, scans and flood events) that have quarantine responses enabled.
+- Quarantine rules are added in response to events that are detected in Monitoring mode (IDS mode), even though quarantine responses are not applicable in Monitoring mode.
+- Improvements to hardware bypass to prevent a crash on exit under certain conditions.
+- PAM XPU 34.070 (July 2014) breaks Domain Certificate Object matching in Network Access and SSL Inspection rules.
+- Update to hardware bypass to allow for continued operation of the bypass modules if an internal error occurs.
+- Fixes the command line interface to display DHCP acquired management IP addresses.
+- Fixes Inbound SSL decryption failures related to error message "No Error Set."
+- Optimizations to decrease packet latency.
+- Fixes an internal error that can occur when processing TLS or SSL traffic.
+- Fixes an intermittent issue that displays Top 10 Applications as Unknown when the application is known.
+- Replaces application database recovery files that were not migrated when updating from 5.1.2 to 5.2.
+- Fixes the status of the Application Control license.
+- Fix to preserve the IP Reputation license when the Application License is removed
+
+Modules impacted:
+- Pktcapd, SSL, IHS, libuser, libc,Kernel, net-snmp, libcurl, LACP, MSL, LMI, SiteProtector, java, openssl, tzdata, ntpd, openssh, krb, unzip
+
+Known Issues:
+- We are aware of issue 64948, where if you disable any protected interfaces before enabling outbound SSL inspection, it will cause the SSL inspection to not work. As a work around, re-enable the protected interfaces, re-enable outbound SSL inspection, and then disable your desired interface. This should allow the inspection to function correctly. A fix for this is planned for a future release.
+- There is a migration issue that might occur after installing fixpack and SP patch. There are issues in SP when migrating update-xforce policy from 5.2 to 5.3 that will cause the time to appear as blank. Also XGS at 5.2 will ask for update-xforce policy of 5.3 instead of 5.2 so it will not update the policy.
+
+
+Notes:
+- Fixpack does not allow for rollback
+- After applying fixpack, a reboot is required for the changes made by the fixpack to apply
+- Clear the browser cache on any browsers used to manage the appliance.
+- If the Event Id GLGSY0038W appears in your System Events Event Log, then the operating system is experiencing a temporary failure. However, the appliance is still protecting your network. Contact IBM Support for assistance. 
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21968790&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21968790&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21968790&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21968790&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21968790&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21968790&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21968790&aid=7] [http://ibm.biz/ContactSecSupport]

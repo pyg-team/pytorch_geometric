@@ -1,0 +1,52 @@
+Title: IBM ECM Widgets Synchronization Error: Installation Manager cannot locate synchronization data for the installation package. - United States
+
+Text:
+No Internet connection; ECM Widgets TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ One of the installation steps for the IBM ECM Widgets 4.5.2.1 is "Install the Business Space powered by WebSphere package to your WebSphere Application Server home directory". During the Import sub-step, the IBM Installation Manager (IM) displays in a pop-up window with the following error:
+
+"Installation Manager cannot locate synchronization data for the installation package. To access package data, you must configure repository connections and ensure that you can access the network or repository media." 
+
+SYMPTOM
+ 
+
+ * After specifying the files "bscc.7000.repository.zip", "7.0.0-WS-BSPACE-FP0000002.zip", and "was-sync/repository.config", the next step is to execute the Import step. During this step, Installation Manager (IM) displays in a pop-up window the above-mentioned error "Installation Manager cannot locate synchronization data...". In the pop-up window, there is a "Details >>" button. Clicking on the "Details >>" button causes the following text to be displayed:
+   
+   Connections to repositories with synchronization data could not be established for the following packages:
+   - IBM WebSphere Application Server 7.0
+   
+   Some reasons for repository connection problems follow:
+   The repository location is incorrectly typed.
+   The local network is down.
+   A firewall might prevent Installation Manager from accessing the server.
+   Proxy settings might not be set correctly, if your computer uses a proxy server.
+   
+   
+ * The only option available after the error is to cancel the Import step.. 
+ * The system where ECM Widgets is being installed, has no Internet connection.
+
+
+CAUSE
+Based on the current fix pack of the WebSphere Application Server (WAS) that was installed on the local system, IM downloads the appropriate repositories from http://public.dhe.ibm.com/software/websphere/repositories [http://public.dhe.ibm.com/software/websphere/repositories] (see "was-sync\repository.config" for details). When IM is unable to connect to the Web site, it reports the above mentioned error.
+
+RESOLVING THE PROBLEM
+Make available all the files that IM needs locally so IM does not need to access the Internet by doing the following before executing the Import step: 
+
+ 1. Download and copy the following files to the ECM Widgets system:
+    
+    http://public.dhe.ibm.com/software/websphere/downloads/xml/import/xml.1.0.import.zip [http://public.dhe.ibm.com/software/websphere/downloads/xml/import/xml.1.0.import.zip]
+    http://public.dhe.ibm.com/software/websphere/downloads/sca/import/sca.1.0.import.zip [http://public.dhe.ibm.com/software/websphere/downloads/sca/import/sca.1.0.import.zip]
+    http://public.dhe.ibm.com/software/websphere/downloads/was/import/was.7.0.import.zip [http://public.dhe.ibm.com/software/websphere/downloads/was/import/was.7.0.import.zip]
+    
+    
+ 2. Unzip the three zip files as follows:
+    
+    - Unzip xml.10.0.import.zip to <ECWidgets_Home>/BusinessSpace/was-sync, e.g., "C:\Program Files\IBM\ECMWidgets\BusinessSpace\was-sync".
+    
+    - Unzip sca.1.0.import.zip to <ECWidgets_Home>/BusinessSpace/was-sync.
+    
+    - Unzip was.7.0.import.zip to <ECMWidgets_Home/BusinessSpace/was-sync/was/import, e.g., "C:\Program Files\IBM\ECMWidgets\BusinessSpace\was-sync\was\import".
+    
+    
+ 3. Restart IM, then proceed to retry the Import step.

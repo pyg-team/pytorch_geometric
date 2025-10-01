@@ -1,0 +1,34 @@
+Title: IBM Clarifications on data retention period for ILMT v9.x. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Clarifications on data retention period for ILMT v9.x. 
+
+CAUSE
+Some clarifications on "Configuring data retention period" setting as documented in this link below.
+www-01.ibm.com/support/knowledgecenter/SS8JFY_9.2.0/com.ibm.lmt.doc_9.2/com.ibm.license.mgmt.doc/planinconf/t_configuring_data_retention.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SS8JFY_9.2.0/com.ibm.lmt.doc_9.2/com.ibm.license.mgmt.doc/planinconf/t_configuring_data_retention.html?lang=en]
+
+[/support/docview.wss?uid=swg21964126&aid=1] [/support/docview.wss?uid=swg21964126&aid=1]
+
+
+As mentioned above that Data Retention setting is only applied to:
+
+1.) Removed computers 
+2.) Uninstalled software
+3.) Deleted software catalog entries, and that PVU and RVU data is still retained. ("Removal of the historical data does not affect the PVU and RVU reports")
+
+The questions are:
+
+1.) Does the PVU and RVU data have a period before it is cleansed, or is it kept indefinitely?
+
+2.) Whether answer to question 1 is Indefinitely or 90 days as example, is there a way to purge RVU and PVU data sooner? 
+
+
+
+ANSWER
+Raw data store time on IEM is dependent on type. Capacity scans are stored up to 5 days and software scans are stored till next software scans are conducted. 
+
+
+PVU and RVU data is not purged. Data is divided into raw data (parsed capacity scans and parsed software scans) and aggregated data (PVU, RVU values). This raw data and aggregated data is not purged.

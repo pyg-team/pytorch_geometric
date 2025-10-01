@@ -1,0 +1,203 @@
+Title: IBM Errors Found in crm_mon - PureData System for Analytics - United States
+
+Text:
+fencing route; crm_mon; failed resources; netezza TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Failed resources are found when checking the cluster status using crm_mon. 
+
+RESOLVING THE PROBLEM
+The following steps can be used to clear each failed resource using cib_tool.pl. 
+
+[root@system pts]# /opt/nz-hwsupport/pts/cib_tools.pl
+heartbeat is running on ha1
+heartbeat is running on ha2
+No split brain detected on ha1
+No split brain detected on ha2
+CRM running on ha1
+CRM running on ha2
+
+
+
+
+CIB tools
+
+============
+Last updated: Fri Jan 16 18:32:06 2015
+Current DC: system (487fb699-c9d5-4dfc-af3c-8358070c151a)
+2 Nodes configured.
+3 Resources configured.
+============
+
+Node: system2 (e3c03746-26c0-4e7e-9e10-c654c1117c18): online
+Node: system (487fb699-c9d5-4dfc-af3c-8358070c151a): online
+
+Resource Group: nps
+drbd_exphome_device (heartbeat:drbddisk): Started system
+drbd_nz_device (heartbeat:drbddisk): Started system
+exphome_filesystem (heartbeat::ocf:Filesystem): Started system
+nz_filesystem (heartbeat::ocf:Filesystem): Started system
+fabric_ip (heartbeat::ocf:IPaddr): Started system
+wall_ip (heartbeat::ocf:IPaddr): Started system
+nz_dnsmasq (lsb:nz_dnsmasq): Started system
+nzinit (lsb:nzinit): Started system
+
+Failed actions:
+fencing_route_to_ha2_start_0 (node=system, call=29, rc=1): Error
+fencing_route_to_ha1_start_0 (node=system2, call=15, rc=1): Error
+
+Failed resources are detected
+Options to choose from:
+
+1: Add addtional mount
+2: Add virtual ip
+3: Disable stonith
+4: Enable stonith
+5: Clear Failed resource
+6: Delete a Resource
+7: Display Resources
+
+e: Exit
+
+Choose an option:5
+
+
+============
+Last updated: Fri Jan 16 18:32:15 2015
+Current DC: system (487fb699-c9d5-4dfc-af3c-8358070c151a)
+2 Nodes configured.
+3 Resources configured.
+============
+
+Node: system2 (e3c03746-26c0-4e7e-9e10-c654c1117c18): online
+Node: system (487fb699-c9d5-4dfc-af3c-8358070c151a): online
+
+Resource Group: nps
+drbd_exphome_device (heartbeat:drbddisk): Started system
+drbd_nz_device (heartbeat:drbddisk): Started system
+exphome_filesystem (heartbeat::ocf:Filesystem): Started system
+nz_filesystem (heartbeat::ocf:Filesystem): Started system
+fabric_ip (heartbeat::ocf:IPaddr): Started system
+wall_ip (heartbeat::ocf:IPaddr): Started system
+nz_dnsmasq (lsb:nz_dnsmasq): Started system
+nzinit (lsb:nzinit): Started system
+
+Failed actions:
+fencing_route_to_ha2_start_0 (node=system, call=29, rc=1): Error
+fencing_route_to_ha1_start_0 (node=system2, call=15, rc=1): Error
+
+Failed resources are detected
+Failed resources that can be cleared:
+
+0. fencing_route_to_ha2_start_0 (node=system, call=29, rc=1): Error
+1. fencing_route_to_ha1_start_0 (node=system2, call=15, rc=1): Error
+Select a resource to clear(Input number next to resource to select or
+press enter to return):0
+crm_resource[11082]: 2015/01/16_18:32:21 info: Invoked: crm_resource -r
+fencing_route_to_ha2 -C -H system
+
+
+Resource Cleared Succesfully!
+
+CIB tools
+
+============
+Last updated: Fri Jan 16 18:32:23 2015
+Current DC: system (487fb699-c9d5-4dfc-af3c-8358070c151a)
+2 Nodes configured.
+3 Resources configured.
+============
+
+Node: system2 (e3c03746-26c0-4e7e-9e10-c654c1117c18): online
+Node: system (487fb699-c9d5-4dfc-af3c-8358070c151a): online
+
+Resource Group: nps
+drbd_exphome_device (heartbeat:drbddisk): Started system
+drbd_nz_device (heartbeat:drbddisk): Started system
+exphome_filesystem (heartbeat::ocf:Filesystem): Started system
+nz_filesystem (heartbeat::ocf:Filesystem): Started system
+fabric_ip (heartbeat::ocf:IPaddr): Started system
+wall_ip (heartbeat::ocf:IPaddr): Started system
+nz_dnsmasq (lsb:nz_dnsmasq): Started system
+nzinit (lsb:nzinit): Started system
+fencing_route_to_ha2 (stonith:apcmastersnmp): Started system
+
+Failed actions:
+fencing_route_to_ha1_start_0 (node=system2, call=15, rc=1): Error
+
+Failed resources are detected
+Options to choose from:
+
+1: Add addtional mount
+2: Add virtual ip
+3: Disable stonith
+4: Enable stonith
+5: Clear Failed resource
+6: Delete a Resource
+7: Display Resources
+
+e: Exit
+
+Choose an option:5
+
+
+============
+Last updated: Fri Jan 16 18:32:33 2015
+Current DC: system (487fb699-c9d5-4dfc-af3c-8358070c151a)
+2 Nodes configured.
+3 Resources configured.
+============
+
+Node: system2 (e3c03746-26c0-4e7e-9e10-c654c1117c18): online
+Node: system (487fb699-c9d5-4dfc-af3c-8358070c151a): online
+
+Resource Group: nps
+drbd_exphome_device (heartbeat:drbddisk): Started system
+drbd_nz_device (heartbeat:drbddisk): Started system
+exphome_filesystem (heartbeat::ocf:Filesystem): Started system
+nz_filesystem (heartbeat::ocf:Filesystem): Started system
+fabric_ip (heartbeat::ocf:IPaddr): Started system
+wall_ip (heartbeat::ocf:IPaddr): Started system
+nz_dnsmasq (lsb:nz_dnsmasq): Started system
+nzinit (lsb:nzinit): Started system
+fencing_route_to_ha2 (stonith:apcmastersnmp): Started system
+
+Failed actions:
+fencing_route_to_ha1_start_0 (node=system2, call=15, rc=1): Error
+
+Failed resources are detected
+Failed resources that can be cleared:
+
+0. fencing_route_to_ha1_start_0 (node=system2, call=15, rc=1): Error
+Select a resource to clear(Input number next to resource to select or
+press enter to return):0
+crm_resource[17386]: 2015/01/16_18:32:37 info: Invoked: crm_resource -r
+fencing_route_to_ha1 -C -H system2
+
+
+Resource Cleared Succesfully!
+
+CIB tools
+
+============
+Last updated: Fri Jan 16 18:32:39 2015
+Current DC: system (487fb699-c9d5-4dfc-af3c-8358070c151a)
+2 Nodes configured.
+3 Resources configured.
+============
+
+Node: system2 (e3c03746-26c0-4e7e-9e10-c654c1117c18): online
+Node: system (487fb699-c9d5-4dfc-af3c-8358070c151a): online
+
+Resource Group: nps
+drbd_exphome_device (heartbeat:drbddisk): Started system
+drbd_nz_device (heartbeat:drbddisk): Started system
+exphome_filesystem (heartbeat::ocf:Filesystem): Started system
+nz_filesystem (heartbeat::ocf:Filesystem): Started system
+fabric_ip (heartbeat::ocf:IPaddr): Started system
+wall_ip (heartbeat::ocf:IPaddr): Started system
+nz_dnsmasq (lsb:nz_dnsmasq): Started system
+nzinit (lsb:nzinit): Started system
+fencing_route_to_ha2 (stonith:apcmastersnmp): Started system
+
+No failed resources

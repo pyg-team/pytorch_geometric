@@ -1,0 +1,133 @@
+Title: IBM PJ42670: MANAGEMENT AND UPDATE OF EXISTING AGENT IS NOT POSSIBLE DUE TO SECURITY CHANGES IN ECM-SM (FIPS 140-2 COMPLIANT ENCRYPTION) - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+IBM_ECM_SM-5.2.0-001-Solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+System+Monitor&fixids=IBM_ECM_SM-5.2.0-001-Solaris&source=SAR]
+IBM_ECM_SM-5.2.0-001-Win [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+System+Monitor&fixids=IBM_ECM_SM-5.2.0-001-Win&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Updating from 4.5 and 5.1 agents to the ECM SM 5.2 agent is not
+   possible.  The JRE installed along with the agent on versions
+   prior to 5.2 does not comply with the new security standard, so
+   the upgrade will not succeed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ECM SM 5.2 GA environments                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply ECM SM 5.2 FP1.                                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in ECM SM 5.2 FP1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ42670
+   
+   
+ * REPORTED COMPONENT NAME
+   SYSTEM MONITOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724R9100
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-24
+   
+   
+ * CLOSED DATE
+   2015-05-01
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SYSTEM MONITOR
+   
+   
+ * FIXED COMPONENT ID
+   5724R9100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY
+   UP

@@ -1,0 +1,28 @@
+Title: IBM AnyNet Fails with Message CPI5989 Code 8004000 - United States
+
+Text:
+MSGCPF8921; MSGCPI5989 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Pass-through fails with CPF8921 RC0009. Message CPI5989 with sense code 8004000 is found in
+the QSYSOPR message queue. In a communications trace, there is no AnyNet (port 397) traffic 
+getting out of the system. 
+
+RESOLVING THE PROBLEM
+ 
+
+Important Note: Starting in i 7.1, AnyNet (a method used to run SNA communications traffic over IP) is no longer supported. Users of AnyNet are encouraged to migrate to Enterprise Extender as a replacement. For information about migrating to Enterprise Extenders from AnyNet, see the Migrating from AnyNet to Enterprise Extender topic in the IBM i Information Center. 
+Pass-through fails with CPF8921 RC0009. In the QSYSOPR message queue, message CPI5989 with 
+sense code 8004000 is found. In a communications trace there is no AnyNet (port 397) traffic getting 
+out of the system. 
+
+In the QAPPCTCP job log, message TCP4F04 was found pointing to a domain name that is not 
+configured in any Host Table Entry. Used the DSPDTAARA for QZPAIDOMAN in QUSRSYS to determine if they had created this data area to change the default IBM AnyNet Domain name used. Yes, they had. A second entry was added to the host table using the domain name configured in the data area and pass-through worked. The other way to resolve this problem is to delete the data area and bounce TCP/IP so the data area is no longer used, and then be sure that there is the appropriate entry in the host table for host.netid.SNA.IBM.COM. 
+
+Refer to the following DCF Technotes document: 
+Changing the Default IBM AnyNet Domain (SNA.IBM.COM) [http://techsupport.rchland.ibm.com/__85256A68006E850A.nsf/0/DB5E28CD9D651BEC85257BC10069A299?Open&Highlight=2,Changing,the,Default,IBM,AnyNet,Domain,SNA.IBM.COM,domain_search_exclude_20110517]  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 27181226

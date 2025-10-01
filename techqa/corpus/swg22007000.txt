@@ -1,0 +1,148 @@
+Title: IBM How to install the IBM FileNet P8 Case Foundation stand-alone Process Designer application on a Windows computer - United States
+
+Text:
+PE Designer; stand alone application TECHNOTE (FAQ)
+
+QUESTION
+ What are the steps to install the Process Designer stand-alone application on a Windows computer? 
+
+CAUSE
+Starting with IBM FileNet P8 CPE 5.2.1 Fix Pack 7, the PE JRE based applications (Process Designer, Process Administrator, etc.) can also be run using a new Process Designer application stand-alone client, which is not dependant on a browser.
+
+ANSWER
+This document provide details on the installation of the stand-alone application. For more details on the application, please review Technote 7049480:
+http://www-01.ibm.com/support/docview.wss?uid=swg27049480 [http://www-01.ibm.com/support/docview.wss?uid=swg27049480] 
+
+CPE Server: 
+
+1. After installing CPE 5.2.1 Fix Pack 7 on a CPE 5.2.1.x server, you will find the newly installed Windows batch files in the "PE" directory, as seen highlighted in this screen shot: 
+
+
+[/support/docview.wss?uid=swg22007000&amp;aid=1] 
+
+ 
+
+After the Fix Pack installation is completed, edit the "cpetoolenv.bat" file to include a viable JRE as the "JAVA_HOME=" value. 
+
+The following screen shot is an example:
+[/support/docview.wss?uid=swg22007000&aid=2] [/support/docview.wss?uid=swg22007000&aid=2] 
+
+ 
+
+2. Open a Windows command prompt in the "PE" directory and run the pedesigner.bat file to start the Process Designer stand-alone application. 
+
+ 
+
+NOTE: depending upon your Windows Server version, you may be able to create a desktop shortcut which will run the Process Designer application directly, by including the Connection Point in the "Target" value:
+[/support/docview.wss?uid=swg22007000&amp;aid=3] 
+
+ 
+
+3. At the logon screen, input appropriate user credentials: 
+
+
+[/support/docview.wss?uid=swg22007000&aid=4] [/support/docview.wss?uid=swg22007000&aid=4]
+
+
+4. The Process Designer stand-alone application includes a "Tools" menu option, from which you can launch Process Administrator:
+
+[/support/docview.wss?uid=swg22007000&amp;aid=5] 
+
+ 
+
+ 
+
+On a Windows Client PC (non-CPE server): 
+
+In order to deploy the Process Designer stand-alone application on a non-CPE server, Windows computer, you must first install the "Tools" in the CPE 5.2.1 installer, and then install the "Tools" in the CPE 5.2.1 FP7 installer. 
+
+ 
+
+NOTE: after following these instructions, all of the tools in the "PE" directory (i.e. vwtool, 
+
+ 
+
+1. Copy both the CPE 5.2.1 base installer files, and the CPE 5.2.1.7 installer files on the target Windows computer.
+[/support/docview.wss?uid=swg22007000&amp;aid=6]
+
+2. Run the CPE 5.2.1 installer, and select only the "tools" option during the installer setup:
+
+[/support/docview.wss?uid=swg22007000&aid=7] [/support/docview.wss?uid=swg22007000&aid=7]
+
+
+
+3. Input the target CPE server URL to which the stand-alone application will be connecting, for example:
+
+[/support/docview.wss?uid=swg22007000&aid=8] [/support/docview.wss?uid=swg22007000&aid=8] 
+
+ 
+
+4. After completing the initial setup pages, run the CPE 5.2.1 installation to install the required "Tools" on the Windows computer 
+
+
+[/support/docview.wss?uid=swg22007000&aid=9] [/support/docview.wss?uid=swg22007000&aid=9] 
+
+ 
+
+ 
+
+5. When the CPE 5.2.1 installation is completed, then run the CPE 5.2.1 FP7 installer, again, choosing only the "Tools" option: 
+
+
+[/support/docview.wss?uid=swg22007000&aid=10] [/support/docview.wss?uid=swg22007000&aid=10] 
+
+ 
+
+ 
+
+6. When the FP7 installation is completed, you will find the two Process Designer application batch files in the "PE" directory: 
+
+
+[/support/docview.wss?uid=swg22007000&amp;aid=11] 
+
+ 
+
+7. Edit the "cpetoolenv.bat" file to include a viable JRE as the "JAVA_HOME=" value. 
+
+The following screen shot is an example: 
+
+
+[/support/docview.wss?uid=swg22007000&aid=12] [/support/docview.wss?uid=swg22007000&aid=12] 
+
+ 
+
+8. From the Windows command prompt, run the pedesigner.bat (including the Connection Point): 
+
+
+[/support/docview.wss?uid=swg22007000&aid=13] [/support/docview.wss?uid=swg22007000&aid=13] 
+
+ 
+
+9. At the logon screen, input appropriate user credentials: 
+
+
+[/support/docview.wss?uid=swg22007000&aid=14] [/support/docview.wss?uid=swg22007000&aid=14]
+
+
+10. The Process Designer stand-alone application includes a "Tools" menu option, from which you can now launch Process Administrator:
+
+[/support/docview.wss?uid=swg22007000&amp;aid=15] 
+
+ 
+
+
+How to change target CPE servers:
+
+In order to run the Process Designer application on a different CPE server, you must edit the WcmApiConfig.properties file
+
+For example:
+C:\Program Files (x86)\IBM\FileNet\ContentEngine\tools\PE\config\WcmApiConfig.properties
+
+
+The following value must point to a valid CPE server:
+RemoteServerUrl = http://<server_name>:<port>/wsi/FNCEWS40MTOM/ [http://ecmdemo1:9080/wsi/FNCEWS40MTOM/]
+
+
+NOTE: an invalid URL will cause a runtime failure, for example:
+
+Caused by: java.lang.RuntimeException: Error 500: com.filenet.api.exception.EngineRuntimeException: FNRCA0015E: API_INVALID_URI: An invalid URI was found for connection http://ecmdemo1:9080/wsi/api/pesendapi [http://ecmdemo1:9080/wsi/api/pesendapi].

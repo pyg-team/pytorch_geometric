@@ -1,0 +1,31 @@
+Title: IBM How to collect a thread dump on a Weblogic server with ITCAM enabled. - United States
+
+Text:
+thread dump JVMDUMP010I java core CAMJ2INST Weblogic TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ How to collect a thread dump on a Weblogic server with ITCAM enabled. 
+
+ANSWER
+Sometimes you might need to collect a thread dump on your WebLogic server to see things like hung threads, threads waiting on resources, etc.. It is very easy to do this and can be done while the server is running. Please follow these steps to capture a java thread dump. 
+
+1. Do a "ps -aef | grep -i weblogic" and get the process id. For example, in my screenshot example here, my Weblogic server process id (pid) is 12995.
+[/support/docview.wss?uid=swg21697883&aid=1] [/support/docview.wss?uid=swg21697883&aid=1]
+
+2. Next do a kill -3 12995 from the command-line as shown here:
+[/support/docview.wss?uid=swg21697883&aid=2] [/support/docview.wss?uid=swg21697883&aid=2]
+
+3. This will write a Java thread dump to a file and the output path will be shown in your server logs shown here. Look for the JVMDUMP0101I message along with the path of the Java thread dump file:
+[/support/docview.wss?uid=swg21697883&aid=3] [/support/docview.wss?uid=swg21697883&aid=3]
+
+(Note: Your server will continue to run, so it shouldn't impact production. You can do the "ps -aef | grep -i weblogic" again and verify that its still running. You can create a thread dump at any point in time, the most common need for creating a thread dump is when you suspect hung threads or threads waiting indefinitely for completion.)
+
+Send this thread dump file to IBM Support for review if asked.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM for J2EE

@@ -1,0 +1,123 @@
+Title: IBM PK84176: BF: Auto-loading doesnt keep scroll location - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer has a project running with 75 steps so that, when t
+   hey are viewing the running job with auto-paginate off (as in, '
+   display all'), only half of the steps are visible on the screen.
+     When they scroll down to look at the last steps, the page keep
+   s auto-refreshing and losing their scroll position putting them
+   back at the top of the page.  I'm using IE  7.0 on Windows also
+   reproducible in FireFox and Google Chrome.  Seriously annoying.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The loading process of the main listing needed splitting up
+   into chunks of processing in order to keep Internet Explorer
+   from locking up on lengthy listings. This kept the browser
+   from properly remembering the scroll position of the
+   listing.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  We now keep track of the scroll position and apply it upon
+   rendering of the full listing.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK84176
+   
+   
+ * REPORTED COMPONENT NAME
+   BUILD FORGE EE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q6101
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-04-06
+   
+   
+ * CLOSED DATE
+   2009-05-20
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUILD FORGE EE
+   
+   
+ * FIXED COMPONENT ID
+   5724Q6101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSN
+   UP

@@ -1,0 +1,85 @@
+Title: IBM Why is my Guardium internal database filling up? - United States
+
+Text:
+Guardium; database; mysql; full database; top tables TECHNOTE (FAQ)
+
+QUESTION
+ If I see my Guardium internal database filling up how can I find the cause?
+What actions can I take to reduce the size of the largest tables in my Guardium internal database? 
+
+CAUSE
+The Guardium internal database can fill up for many reasons. A general approach to resolving the situation can be found here:
+What can I do if I see my Guardium Appliance getting full? [https://www-304.ibm.com/support/docview.wss?uid=swg21511904]
+
+This guide should be used in conjunction with the above link to help resolve the problem. If you are unable to take any of the actions below, you will have to use the general steps in the link to lower the database size.
+
+
+ANSWER
+The reason for the internal database filling up can often be determined by analyzing the largest tables in the database. Each table has different processes that cause it to grow and different strategies for managing its size. 
+
+The first step is to check the top tables in CLI: 
+
+ * support show db-top-tables all
+
+
+Example output: 
+Table Size (M) | I/D % | Unused(M) | Est. Rows | Name 
+-------------- | ----- | --------- | --------- | ---------- 
+132526 | 17 | 22621 | 46144369 | GDM_CONSTRUCT_TEXT 
+20669 | 213 | 25 | 6738570 | GDM_CONSTRUCT_INSTANCE 
+19399 | 126 | 11 | 1051215 | GDM_POLICY_VIOLATIONS_LOG 
+1038 | 241 | 4 | 254991 | REPORT_RESULT_DATA_ROW 
+987 | 172 | 24 | 166504 | GDM_SESSION 
+860 | 29 | 0 | 516276 | GDM_FIELD 
+743 | 248 | 7 | 90036 | GDM_OBJECT 
+
+
+Below is a list of the most common top tables, causes for filling up and actions to stop the problem in the long term. The list is not exhaustive and this information should be used in conjunction with an overall purging strategy. Starting with your largest table, use the actions below to help reduce the size in the long term. 
+
+In emergency situations, most of these tables can be purged using clean DAM_data [http://www-01.ibm.com/support/docview.wss?uid=swg21661280]. It is recommended to attempt GUI purge before running clean DAM_data. Please consult with Guardium support before running. 
+
+GDM_CONSTRUCT_TEXT 
+
+Cause  * All data captured by a policy rule with "log full details" action is written to this table. 
+
+Actions  * "log full details" should be used as little as possible in the policy. If this table is constantly filling up you should review your reports and policy definition to ensure you are not capturing excess traffic with this action. 
+ * 
+
+GDM_POLICY_VIOLATIONS_LOG 
+
+Cause  * All policy rules with alerting action write to this table as well as sending alert by the defined method (e.g. syslog). Correlation alerts log to this table if "log policy violation" is selected in the definition. 
+
+Actions  * Review the alerting rules in your policy. Ensure that they are not alerting excessively, for example "alert per match" is not used when "alert once per session" would be appropriate. 
+ * Check in the policy violations report GUI->Incident Management->Policy Violations for the most common alerts. A recent change in the environment may cause a spike in alerts, for example a new application may be creating 1000s of failed login requests. Investigate the cause of the most common alerts and modify the policy if appropriate. 
+ * 
+
+REPORT_RESULT_DATA_ROW 
+
+Cause  * The results of audit processes are stored in this table. They are only purged once they have been cleared from all receiver to-do lists and the conditions for removal in the definition are met (by default the results of the last five runs are kept). This table is not purged by purge started in the GUI. 
+
+Actions  * Use the steps in this technote to manage the table:  * How do I purge off some old audit results from my Guardium Appliance?
+   
+   
+   
+
+One or more of GDM_CONSTRUCT, GDM_FIELD, GDM_OBJECT, GDM_SENTENCE 
+
+Cause  * These tables are known as "static" as they are expected to be of roughly constant size. However, in some cases the size can increase rapidly, for example if a monitored application uses many temporary objects. 
+
+Actions  * In Guardium V9.1 collectors the static tables should be cleaned regularly. On older versions or aggregators you may have to manually start a "static orphans cleanup" process to remove static data that is no longer in use. On any appliance you can run the process manually via CLI->diag->4. Perform Maintenance Actions->12. Clean Static Orphans. 
+ * On V9.1 Aggregators you can use the CLI command "store aggregator orphan_cleanup_flag" details in the knowledge center: Aggregator CLI commands [http://www-01.ibm.com/support/knowledgecenter/SSMPHH_9.1.0/com.ibm.guardium91.doc/appendices/topics/aggregator_cli_commands.html]. 
+
+
+GDM_EXCEPTION 
+
+Cause  * The exception table can be filled with Guardium created exceptions (for example - parser errors) or exceptions from the monitored database (for example - SQL errors). 
+
+
+Actions  * There are many types of exception logged in this table. The first step is to identify which are the most common. You can use predefined reports in GUI->Tools->Report Building->Exceptions Tracking to find which exceptions are most common. 
+   "Exceptions Type Distribution" will show the number of each exception. Double clicking the chart will allow you to drill down into further details, like a breakdown per server or client. You could also define your own query in Exceptions Tracking domain. 
+   Depending on the type of exception, you may know how to stop it. If not, you can contact Guardium support with details of your investigation. 
+
+RELATED INFORMATION
+ What if I see my Guardium Appliance getting full? [http://www.ibm.com/support/docview.wss?uid=swg21511904]
+Resolving DB Full with clean DAM_data [http://www.ibm.com/support/docview.wss?uid=swg21661280]
+How do I purge off old audit results? [http://www.ibm.com/support/docview.wss?uid=swg21641946]

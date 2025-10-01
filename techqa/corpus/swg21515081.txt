@@ -1,0 +1,19 @@
+Title: IBM Using embedded Websphere Application Server without re-installing IBM Content Collector - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I use embedded Websphere Application Server without re-installing IBM Content Collector? 
+
+CAUSE
+During the initial installation of IBM Content Collector, "Manually to a different Websphere Application Server" was selected for how to deploy the IBM Content Collector Web Application and the IBM Content Collector Configuration Web Service. 
+
+ANSWER
+To deploy IBM Content Collector Web Application and the IBM Content Collector Configuration Web Service to the embedded Websphere Application Server, do the following: 
+
+ 1. In the Content Collector installation directory, execute afu_ewas_install.bat from the afuWeb sub-folder. 
+ 2. This will re-install the embedded Websphere Application Server and also deploy the IBM Content Collector Web Application and Configuration Web Service. 
+ 3. Review afuInstallLog.txt and afuInstallLog.err.txt to ensure there is no error. 
+ 4. Go to IBM Content Collector configuration manager, General settings, Configuration Web Service. Select the checkbox to use embedded Web Application Server. Make sure the JDBC driver information is filled out as well. Save the settings. 
+ 5. The IBM Content Collector Web Application service will be restarted and it will be using the embedded Websphere Application Server.

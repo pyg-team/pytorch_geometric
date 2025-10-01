@@ -1,0 +1,24 @@
+Title: IBM Launch from any OMEGAMON product to IBM Application Performance Analyzer - United States
+
+Text:
+APA TRACE TECHNOTE (FAQ)
+
+QUESTION
+ Do you want to launch from any OMEGAMON product to IBM Application Performance Analyzer? 
+
+CAUSE
+Provide sample to launch from any OMEGAMON product to IBM Application Performance Analyzer.
+
+ANSWER
+IBM Application Performance Analyzer (APA) is a trace analysis facility for various workloads running on z/OS, including z/OS tasks, CICS, IMS, MQ, DB2 and more. This describes how to enable the interface to invoke APA from OMEGAMON. 
+
+PTF UA82064 (APAR OA50020) delivers three sample files that are installed into the TKANSAM target library. Copy these files to appropriate libraries, edit them to meet the requirements of your environment, and invoke APA using a console command. APA may be invoked from OMEGAMON using the Take Action option from a situation. 
+
+ 
+
+See the attached PDF for more information.
+
+OMEGAMON XE interface to Application Performance Analyzer.pdf [/support/docview.wss?uid=swg21985902&aid=2]OMEGAMON XE interface to Application Performance Analyzer.pdf [/support/docview.wss?uid=swg21985902&aid=1] 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli OMEGAMON DE on z/OS Systems and Asset Management Tivoli OMEGAMON Family Systems and Asset Management Tivoli OMEGAMON XE for CICS on z/OS Systems and Asset Management Tivoli OMEGAMON XE for CICS Transaction Gateway on z/OS Systems and Asset Management Tivoli OMEGAMON XE for DB2 on z/OS Systems and Asset Management Tivoli OMEGAMON XE for IMS on z/OS Systems and Asset Management Tivoli OMEGAMON XE for Mainframe Networks Systems and Asset Management Tivoli OMEGAMON XE for Messaging for z/OS Systems and Asset Management Tivoli OMEGAMON XE for Storage Systems and Asset Management Tivoli OMEGAMON XE on z/OS Monitoring Feature for JVM

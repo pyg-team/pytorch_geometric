@@ -1,0 +1,80 @@
+Title: IBM Cognos reports are not getting emailed - United States
+
+Text:
+TSM troubleshoot TCR Cognos report email smtp not send tivoli common reporting TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Email sending is configured for the reports in Tivoli Common Reporting (TCR) but these emails don't leave the SMPT queue in the Tivoli Storage Manager Administration Center. 
+
+DIAGNOSING THE PROBLEM
+First check that the configuration has been properly setup following technote "Setting up Email for the reports in Tivoli Common Reporting":
+https://www-304.ibm.com/support/docview.wss?uid=swg21572413 [https://www-304.ibm.com/support/docview.wss?uid=swg21572413] 
+
+Confirm that everything has been configured as indicated above. 
+If all is properly set collect the following info: 
+
+1) If it exists, make a backup of the "ipfclientconfig.xml" file located in 
+
+<reporting home>\cognos\configuration.
+
+The default <reporting home> is 
+
+ * on Windows ---> C:\IBM\tivoli\tipv2Components\TCRComponent 
+ * on AIX/UNIX/Linux ----> opt/IBM/tivoli/tipv2Components/TCRComponent 
+
+
+2) Copy 
+<reporting home>\cognos\configuration\ipfSDSclientconfig.xml.sample 
+to 
+<reporting home>\cognos\configuration\ipfclientconfig.xml 
+
+
+3) Usually the trace is dynamically activated. In that case, if try sending a report, it is possible to observe the following rows into the "cogserver.log" file: 
+
+JMS.Session.QueueSession.SMTP-1 DLS 6018 3 Audit.RTUsage.ds.DLS 
+Run AgentDefinition Success N/A <parameters><item 
+name='USER'><![CDATA[tipadmin]]></item><item 
+name='EMAIL'><![CDATA[aldo@dom1.com]]></item><item 
+name='AGENTPATH'><![CDATA[N/A]]></item><item 
+name='MESSAGEID'><![CDATA<1513380404.11389797094513.JavaMail.root@nchos t>]></item><item name=''><![CDATA[]]></item><item 
+name='toAddress'><![CDATA[aldo@dom1.com]]></item><item 
+name='subject'><![CDATA[Report: Reporting Overview]]></item><item 
+name='memoPart'><![CDATA[memoPart]]></item></parameters> 
+JMS.Session.QueueSession.SMTP-1 JSM 6031 4 Audit.RTUsage.JSM 
+BiBusMonitorUtil.callMonitorServiceNotify entered eventID: 
+7415331930C830C801439659B5C5800100143965c87ab eventID_index: 2 Status: 
+succeeded 
+x.xxx.xxx.xxx:16310 8736 2014-01-15 15:44:54.561 +1 
+JMS.Session.QueueSession.SMTP-1 JSM 6031 4 Audit.RTUsage.JSM 
+[CognosReportNetPortClientImpl] Calling trustedLogon() 
+
+indicating that Cognos has triggered the mail client to send the email. 
+
+If you don't see the above rows, please recycle the Tivoli Common Reporting (TCR) to force trace activation using the following steps: 
+ * for UNIX or Linux platforms
+   1. Stop the TCR server by issuing the following command: /opt/IBM/tivoli/tiptklmV2/bin/stopServer.sh server1 
+
+2. Start the TCR server issue the following command: 
+/opt/IBM/tivoli/tiptklmV2/bin/startServer.sh server1 
+ * for Windows platforms 
+   The default for TCR_HOME is C:\IBM\tivoli\tipv2Components\TCRComponent. 
+   1. From a DOS prompt, change directories to the <TCR_HOME>\bin directory. 
+   2. Stop Tivoli Common Reporting and the Tivoli Integrated Portal server by issuing the following command: 
+
+stopTCRserver.cmd tip_admin tip_pw 
+
+3. Start Tivoli Common Reporting and the Tivoli Integrated Portal server by issuing the following 
+startTCRserver.cmd 
+
+
+4) Reproduce the scenario and watch out the time when the report has been run and sent the email in order to restrict the area of analysis within the logs. 
+
+Another place to get useful information is within Tivoli Common Reporting Cognos GUI. 
+For the report already executed, you may need to check the "Run History Details". 
+
+A) Select the report and click on "More". 
+B) Click "View Run History". 
+C) For the report instance you executed and sent mail for, click the "Run History Details" icon. 
+
+
+This will also show informational and/or error messages concerning the email delivery.

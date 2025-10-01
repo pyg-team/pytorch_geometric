@@ -1,0 +1,70 @@
+Title: IBM Change the host authentication key - United States
+
+Text:
+host key authentication TECHNOTE (FAQ)
+
+QUESTION
+ How to change the change the host authentication key 
+
+CAUSE
+The instructions seem pretty clear in the admin guide. I had questions posed to me and the following:
+These instructions are not 100% clear. They either need to be bullet proof clear or we need to do the changes
+
+
+ANSWER
+In making them bullet-proof clear fine the following:
+
+A) Use the following command to create a new host key:
+
+[root@nzhost1 nz]# /nz/kit/bin/adm/nzkey generate -hostkey -file /export/home/nz/hostkey.txt
+Host key written to file
+
+The command creates saves the key in the specified file in plaintext. You can then specify the host or key file as part of an nzkey change operation.
+
+Important: The key files are in plain text and unencrypted. After you use the files to change the key for the hosts or SPUs, make sure that you delete the generated key files to protect the keys from being read by users who log in to the NPS system.
+
+
+B) Backup keystore 
+
+To create a key store backup file:
+
+[root@nzhost-h1 ~]# /nz/kit/bin/adm/nzkeybackup /nz/var/keybackup.tar.gz
+Keystore archive /nz/var/keybackup.tar.gz written
+
+Copy this file somewhere safe in case a restore is needed. You may also delete this once copy is completed.
+
+
+C) To change the host AEK, the NPS system must be in the Stopped state. The new AEK takes effect on both hosts when the nzkey command finishes running successfully. The command creates a backup copy of the current keystore before it changes the key. After the change is finished, you should create a backup of the new keystore using the nzkeybackup command.
+
+1. Log in to the active host of the NPS system as the nz user.
+
+2. Transition the system to the Stopped state, for example:
+[nz@nzhost1 ~]$ nzsystem stop
+
+3. Run the nzstate command to confirm that the system is in the Stopped state.
+
+4. Log in as the root user:
+[nz@nzhost1 ~]$ su - root
+
+5. Use the nzkey change command to change the host key:
+
+[root@nzhost-h1 ~] /nz/kit/bin/adm/nzkey change -hostkey -file /export/home/nz/hostkey.txt -backupdir /nz/var/backups/
+# Keystore archive /nz/var/backups/keydb_20140711054140.tar.gz written
+==========================================================
+AEK Summary
+==========================================================
+Result: Key operation completed successfully.
+
+6. Create a backup of the updated keystore:
+[root@nzhost-h1 ~] /nz/kit/bin/adm/nzkeybackup /nz/var/keybackup.tar.gz
+Keystore archive /nz/var/keybackup.tar.gz written
+
+7. Log out of the root account and return to the nz account.
+
+8. Run the nzstart command to return the system to the Online state.
+
+
+After they key is successfully applied, move the /nz/var/keybackup.tar.gz to a secure location away from the appliance so that you have a backup available for disaster recovery of the keystore. You should also delete the host key file 
+(/export/home/nz/hostkey.txt in this example) as a security precaution for someone finding your authentication key outside the protected keystore.
+
+Thanks Barry

@@ -1,0 +1,26 @@
+Title: IBM Replacing or updating a WSDL attached to a Web Service Proxy - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You uploaded your modified WSDL to File Management as a way to update the Web Service Proxy (WS-Proxy) but these WSDL changes did not take effect. 
+
+CAUSE
+Once a WSDL has been compiled and attached to a WS-Proxy, DataPower will not recompile it unless a WSDL Cache Policy is being used or the WSDL is detached from the WS-Proxy and then reattached.
+
+RESOLVING THE PROBLEM
+The following steps should be followed when updating a WSDL attached to a WS-Proxy: 
+
+ 1. Ensure all configuration changes have been saved. By doing this, your configuration changes will be persisted should the device reboot or reload. 
+ 2. Remove the WSDL to be updated from the WS-Proxy configuration. This can be done from the WebGUI using these steps:  1. Click Control Panel 
+     2. Click on Web Service Proxy 
+     3. Click to edit the appropriate WS-Proxy 
+     4. Remove the appropriate WSDL from the list of configured WSDLs displayed. 
+     5. Click Apply and Save the configuration changes you just made
+    
+    
+ 3. From the Configure Web Service Proxy screen, click Add WSDL to add the updated WSDL. 
+ 4. Upload the modified WSDL to the appropriate directory and use the Overwrite Existing File option if needed 
+ 5. Click Next to continue with the configuration of the WS-Proxy using the updated WSDL. 
+ 6. Complete the WS-Proxy configuration and review the added WSDL to see if it contains the changes made.

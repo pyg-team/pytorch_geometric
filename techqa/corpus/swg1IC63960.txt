@@ -1,0 +1,155 @@
+Title: IBM IC63960: 32 BIT .NET PROVIDER NOT GETTING INSTALLED ON 64 BIT WINDOWS. - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.7 Fix Pack 2 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24026928]
+DB2 Version 9.7 Fix Pack 3 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027906]
+DB2 Version 9.7 Fix Pack 3a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028306]
+DB2 Version 9.7 Fix Pack 4 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24029745]
+DB2 Version 9.7 Fix Pack 5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24031181]
+DB2 Version 9.7 Fix Pack 6 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032754]
+DB2 Version 9.7 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033685]
+DB2 Version 9.7 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24034634]
+DB2 Version 9.7 Fix Pack 9a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037559]
+DB2 Version 9.7 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036646]
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When installing 32 bit IBM data server client on a 64 bit
+   Windows, .NET Provider does not get registered.
+   
+   The client installation finishes successfully, but VSAI  fails
+   to install with the following error.
+   1: ERROR:To install IBM Database Add-Ins for Visual Studio, you
+   must have one of the following providers installed:
+   IBM Data Server Provider for .NET
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround is to manually register the driver using db2nmpcfg or
+   use "db2swtch.exe -IDS common"  command.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users installing V9.7 32 bit IBM ADD-INS for Visual Studioon *
+   * 64 bit Windows.                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * IBM Data server client installation finishes                 *
+   * successfully,but IBM add-ins for Visual studio(VSAI)  fails  *
+   * to installwith the following error.1: ERROR:To install IBM   *
+   * Database Add-Ins for Visual Studio,you must have one of the  *
+   * following providers installed:IBM Data Server Provider for   *
+   * .NET                                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to V9.7 FP2.                                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in V9.7 FP2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC63960
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 CONNECT
+   
+   
+ * REPORTED COMPONENT ID
+   DB2CONNCT
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-22
+   
+   
+ * CLOSED DATE
+   2010-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IC63957 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC63957]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 CONNECT
+   
+   
+ * FIXED COMPONENT ID
+   DB2CONNCT
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSY
+   UP

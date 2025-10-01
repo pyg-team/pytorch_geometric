@@ -1,0 +1,225 @@
+Title: IBM PM87946: Application that can be installed V7.0 standalone server cannot be deployed from Deployment Manager V8.0 or higher. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.1: WebSphere Application Server V8.5.5 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035935]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+8.5.5.2: WebSphere Application Server V8.5.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037250]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.5.5.3: WebSphere Application Server V8.5.5 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038133]
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The annotation scanning is not fully detecting the correct EJB
+   level and is promoting th eEJB to a spec level higher than
+   what is supported by WebSphere Application Server V7.0.
+   
+   Processing of EJB metadata can incorrectly flag an EJB as a
+   local bean.  This is a direct error in the generated EJB
+   metadata.  In addition, the presence of the local bean flag
+   causes the enclosing EJBJAR to be detected as including EJB 3.1
+   features, preventing deployment of the EJBJAR to an IBM
+   WebSphere Application Server v7.0 level node.
+   
+   ADMA5055E: Errors in validating application target association
+   for EDE_TST -
+   ADMA0110E:  This type of J2EE application 50 is not supported
+   on nodes [timpanogos2Node06] of version [7]
+   com.ibm.websphere.management.exception.AdminException:
+   ADMA5055E: Errors in validating application target association
+   for EDE_TST -
+   ADMA0110E:  This type of J2EE application 50 is not supported
+   on nodes [timpanogos2Node06] of version [7]
+   at
+   com.ibm.ws.management.application.task.ValidateAppTask.performTa
+   sk(ValidateAppTask.java:424)
+   at
+   com.ibm.ws.management.application.SchedulerImpl.run(SchedulerImp
+   l.java:315)
+   at java.lang.Thread.run(Thread.java:772)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N.A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server deploying applications from a        *
+   *                  deployment manager, where the deployment    *
+   *                  manager is at version V8.0 or V8.5 and the  *
+   *                  node is running WebSphere Application       *
+   *                  Server V7.0.                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An application that can be installed    *
+   *                      on a WebSphere Application Server V7.0  *
+   *                      standalone server cannot be deployed    *
+   *                      from a Deployment Manager at V8.0 or    *
+   *                      higher.                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The problem occurs because of a bug in checking the EJB for a
+   no-interface view.  The code neglected to check for @LocalHome
+   and @RemoteHome annotations.  Because of this the bean was
+   incorrectly marked as having a no-interface view, a feature of
+   Java EE 6.  This caused the bean to be promoted to EJB 3.1 and
+   the application to be promoted to Java EE 6.
+   The application is deployable by a standalone WebSphere
+   Application Server V7.0, because V7.0 is a Java EE 5
+   implementation, and thus it ignores Java EE 6 features.
+   WebSphere Application Server V8.0 and V8.5 implement Java EE
+   6, and when they detect a Java EE 6 feature in the
+   application, they promote the application to the Java EE 6
+   level and refuse to deploy the application to a WebSphere
+   Application Server V7.0 node.
+   The following messages will be displayed in the log when the
+   error occurs:
+   ADMA5055E: Errors in validating application target association
+   for MY_APP -
+   ADMA0110E:  This type of J2EE application 50 is not supported
+   on nodes [myNode01] of version [7]
+   com.ibm.websphere.management.exception.AdminException:
+   ADMA5055E: Errors in validating application target association
+   for MY_APP -
+   ADMA0110E:  This type of J2EE application 50 is not supported
+   on nodes [myNode01] of version [7]
+   at
+   com.ibm.ws.management.application.task.ValidateAppTask.performTa
+   sk(ValidateAppTask.java:424)
+   at
+   com.ibm.ws.management.application.SchedulerImpl.run(SchedulerImp
+   l.java:315)
+   at java.lang.Thread.run(Thread.java:772)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The check for no-interface view has been corrected to also
+   look for the @LocalHome and @RemoteHome annotations.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 8.0.0.8 and 8.5.5.1.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM87946
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-26
+   
+   
+ * CLOSED DATE
+   2013-06-11
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

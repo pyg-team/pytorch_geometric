@@ -1,0 +1,32 @@
+Title: IBM Case Manager Client integrated viewer widget loading closes the right-click context menu - United States
+
+Text:
+internal viewer; right click menu TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When the integrated internal document viewer loads a default attachment, the IBM Case Manager Client right-click context menu disappears when using Microsoft Internet Explorer 
+
+SYMPTOM
+ On the Case Manager Solution Work page with the integrated viewer widget configured to automatically load the default attachment with a right-click action, the right-click context menu disappears and the focus changes to the viewer widget. This is specific to Microsoft Internet Explorer (IE). It does not happen when using Firefox or Chrome.
+
+
+CAUSE
+IE handles the focus functionality at the Java layer differently than Firefox and Chrome.
+
+ENVIRONMENT
+IBM Case Manager Client and IBM Content Navigator 2.0.3 Fix Pack 3 or lower.
+
+RESOLVING THE PROBLEM
+This issue was corrected in IBM Content Navigator 2.0.3.4, but requires a configuration change to take effect.
+
+
+
+
+ 1. Install ICN 2.0.3 Fix Pack 4 or above. 
+ 2. Open the IBM Content Navigator Admin desktop (.../?desktop=admin) 
+ 3. Click on the Daeja ViewOne node, in the left hand column 
+ 4. In the Additional settings section of the Daeja Viewer settings add InitialFocus and initial_focus with a value of false. 
+ 5. Save the changes by clicking the "Save" button
+
+
+[/support/docview.wss?uid=swg21962934&aid=1] [/support/docview.wss?uid=swg21962934&aid=1]

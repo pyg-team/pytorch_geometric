@@ -1,0 +1,195 @@
+Title: IBM IT18162: DB2LOGGR TRAPPED WITH SIGSEGV ON SQLPGSWITCHFROMREDOTOUNDO - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  db2loggr trapped with sigsegv and the following entries in
+   db2diag.log:
+   
+   2016-11-05-21.59.23.435076-300 I5044E398           LEVEL:
+   Warning
+   PID     : 18910                TID  : 46914305255744PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000          DB   : SAMPLE
+   EDUID   : 88                   EDUNAME: db2hadrs (SAMPLE) 0
+   FUNCTION: DB2 UDB, High Availability Disaster Recovery,
+   hdrSDoTakeover, probe:47001
+   MESSAGE : Info: Standby has initiated a takeover.
+   
+   2016-11-05-21.59.24.712560-300 I5443E400           LEVEL:
+   Warning
+   PID     : 18910                TID  : 46914305255744PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000          DB   : SAMPLE
+   EDUID   : 88                   EDUNAME: db2hadrs (SAMPLE) 0
+   FUNCTION: DB2 UDB, High Availability Disaster Recovery,
+   hdrSDoTakeover, probe:47042
+   MESSAGE : Info: Standby switching roles to primary.
+   
+   2016-11-05-21.59.24.715694-300 I5844E429           LEVEL: Info
+   PID     : 18910                TID  : 46912879192384PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000          DB   : SAMPLE
+   EDUID   : 29                   EDUNAME: db2loggr (SAMPLE) 0
+   FUNCTION: DB2 UDB, recovery manager, sqlpgSwitchFromRedoToUndo,
+   probe:842
+   DATA #1 : <preformatted>
+   TailIndex 0  firstLso 26575520001  nextLso 26578272270
+   logGapSize 0
+   
+   2016-11-05-21.59.24.715888-300 I6274E409           LEVEL: Info
+   PID     : 18910                TID  : 46912879192384PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000          DB   : SAMPLE
+   EDUID   : 29                   EDUNAME: db2loggr (SAMPLE) 0
+   FUNCTION: DB2 UDB, recovery manager, sqlpgSwitchFromRedoToUndo,
+   probe:1800
+   DATA #1 : <preformatted>
+   Create Last Log, FileCount is 1, TailIndex is 0
+   
+   2016-11-05-21.59.25.004842-300 I6684E429           LEVEL:
+   Warning
+   PID     : 18910                TID  : 46912879192384PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000          DB   : SAMPLE
+   EDUID   : 29                   EDUNAME: db2loggr (SAMPLE) 0
+   FUNCTION: DB2 UDB, RAS/PD component,
+   pdEDUIsInDB2KernelOperation, probe:600
+   DATA #1 : String, 30 bytes
+   _Z25sqlpgSwitchFromRedoToUndo
+   DATA #2 : String, 4 bytes
+   sqlp
+   
+   2016-11-05-21.59.25.005346-300 I7114E487           LEVEL: Severe
+   PID     : 18910                TID  : 46912879192384PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000          DB   : SAMPLE
+   EDUID   : 29                   EDUNAME: db2loggr (SAMPLE) 0
+   FUNCTION: DB2 UDB, RAS/PD component,
+   pdResilienceIsSafeToSustain, probe:800
+   DATA #1 : String, 37 bytes
+   Trap Sustainability Criteria Checking
+   DATA #2 : Hex integer, 8 bytes
+   0x200000000000884C
+   DATA #3 : Boolean, 1 bytes
+   false
+   
+   In the trap file following stack can be found
+   
+   Stack #1             Signal #11        Timestamp
+   2016-11-05-21.59.24.796742
+   0        ossDumpStackTraceEx
+   1        OSSTrapFile::dumpEx
+   2        sqlo_trce
+   3        sqloEDUCodeTrapHandler
+   4        __pthread_mutex_cond_lock
+   5        sqlpgSwitchFromRedoToUndo
+   6        sqlpgasn
+   7        sqloEDUEntry
+   8        pthread_create@@GLIBC_2.2.5
+   9        clone
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This is currently a limitation                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is currently a limitation
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT18162
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-11-30
+   
+   
+ * CLOSED DATE
+   2017-05-08
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

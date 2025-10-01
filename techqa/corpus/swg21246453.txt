@@ -1,0 +1,29 @@
+Title: IBM 3156 MQRCCF SUBSCRIPTION LOCKED - United States
+
+Text:
+pub sub pubsub pub/sub keep alive keepalive 3156 MQRCCF_SUBSCRIPTION_LOCKED mqminfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your WebSphere MQ publish and subscribe client application subscribes using a durable subscription, and a network problem causes the client loses the connection. When the client tries to reconnect, it is getting an MQ reason code 3156 (MQRCCF_SUBSCRIPTION_LOCKED). 
+
+SYMPTOM
+Some sockets are remaining established after the failure with the client IP and there are some SVRCONN channels which are still showing active after the client is stopped. To solve the locked subscription you stop the queue manager, or stop the SVRCONN channel, however as there are other clients using this channel, it terminates those sessions.
+
+
+CAUSE
+The problem is that TCP has not run KeepAlive cleanup between the point when the connections were broken and the point when the MQRCCF_SUBSCRIPTION_LOCKED occurred. 
+
+RESOLVING THE PROBLEM
+By default, on most platforms, KeepAlive will run every 2 hours to clean up broken sessions. If you want to change the interval at which the keepalive is done, you can change a parameter within TCP which will allow you to cause the KeepAlive checks to happen more frequently. Refer to the TCP or Operating System documentation if you need further details on how change those values.
+
+RELATED INFORMATION
+#More details about setting Keepalive [http://www.ibm.com/support/docview.wss?&uid=swg21216834]
+
+
+ 
+
+HISTORICAL NUMBER
+ 59459 B100 C838 
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ MQSeries

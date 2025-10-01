@@ -1,0 +1,15 @@
+Title: IBM What is the maximum number of ALT.COMM entries that can be coded? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is the maximum number of ALT.COMM entries that can be coded? 
+
+CAUSE
+Customer had a need to code nine (9) ALT.COMM entries and wanted to make sure that it could be done.
+
+ANSWER
+The number of ALT.COMM entries that you can have on a NETMAP ADJACENT.NODE entry is limited to the length of the area in the NETMAP record where the ALT.COMM entry is stored which is 2,048 bytes. Your typical single ALT.COMM is about a 100 bytes if you are coding it with the IP address. If the IP address is in IPv6 then it is closer to 120 bytes. Each additional entry for ALT.COMM is usually somewhere between 80 and 90 bytes. 
+
+If you use DNS for the ALT.ADDR address then you will use a considerable more bytes depending on how long the DNS names are.

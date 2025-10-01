@@ -1,0 +1,152 @@
+Title: IBM JR48411: TEMPORARY FILES IN USER TEMP DIRECTORY ARE NOT ALWAYS DELETED WHEN UPLOADING DOCUMENT IN DOCUMENT LIST - United States
+
+Text:
+  A FIX IS AVAILABLE
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Monitoring the file creation and noticed in my user temp
+   directory, files with this name pattern are created:
+   
+   upload_*.tmp
+   
+   These files do not get deleted.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ==>The uploaded temporary file is not deleted after it was
+   processed.
+   
+   EDITIONS AFFECTED:
+   ==>IBM Business Process Manager (BPM) V8.0.1.1 and V8.0.1.2
+   Advanced, Standard, and Express
+   
+   PROBLEM DETAILED DESCRIPTION:
+   ==>When you create Enterprise Content Management (ECM) documents
+   using the Document List Coach view, you notice that temporary
+   files that are named upload_*.tmp are created in the temp
+   directory (for example, C:\Windows\Temp) for each uploaded file.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ==>Fixes for IBM BPM V8.0.1.1 and V8.0.1.2 are available, that
+   ensure that the appropriate method is called to delete the
+   temporary files.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral) search
+   for JR48411:
+   
+   1. Select the product group, product, installed version, and
+   platform, and click Continue.
+   2. Select APAR or SPR, enter JR48411, and click Continue.
+   
+   
+   When downloading fix packages, ensure that you also download the
+   readme file for each fix. Review each readme file for additional
+   installation instructions and information about the fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR48411
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-07
+   
+   
+ * CLOSED DATE
+   2014-01-08
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

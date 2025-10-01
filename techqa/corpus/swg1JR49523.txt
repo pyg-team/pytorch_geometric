@@ -1,0 +1,202 @@
+Title: IBM JR49523: FAILED BPD INSTANCES WHEN SERVER IS STOPPED OR DATABASE FAILS OVER - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.0.1.0-WS-BPM-IFJR49523 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.0-WS-BPM-IFJR49523&source=SAR]
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Failed BPD Instances after Process Center or Process Server is
+   stopped with the stopServer command or a database failover
+   occurs are not being resumed by another cluster member.
+   In the BPM Failover scenario, we expect the BPM runtime will be
+   able to handle BPM failover seamlessly without significant
+   interruptions and/or manual intervention to remediate any
+   failover related issues.
+   For example, in the scenario in which the Active BPM Node Fails
+   on a Host-A node (HA Config) .
+   The expected behavior is that the standby Messaging on Host-B
+   will become the active one and will continue to process the in
+   flight workflow BPD instances.
+      When Host A fails, one might see an error like this
+   On Host A
+   [10/14/13 7:19:58:523 CDT] 00000125 wle E CWLLG0326E: A
+   deliverException has occurred.
+   com.lombardisoftware.core.TeamWorksRuntimeException:
+   com.lombardisoftware.client.delegate.BusinessDelegateException:
+   Task killed by stopping scheduler engine
+   at
+   com.lombardisoftware.core.TeamWorksRuntimeException.asTeamWorksR
+   untimeException(TeamWorksRuntimeException.java:65)
+   at
+   com.lombardisoftware.client.persistence.common.versioning.Refere
+   nceHelper.findSystemDataByName(ReferenceHelper.java:184)
+   at
+   com.lombardisoftware.client.persistence.common.versioning.Refere
+   nceHelper.getSystemParticipant(ReferenceHelper.java:156)
+   at
+   com.lombardisoftware.bpd.component.flowcomponent.activity.worker
+   .BPDActivityWorker.resolveSendTo(BPDActivityWorker.java:988)
+   at
+   com.lombardisoftware.bpd.component.flowcomponent.activity.worker
+   .BPDActivityWorker.createTask(BPDActivityWorker.java:687)
+   at
+   com.lombardisoftware.bpd.component.flowcomponent.activity.worker
+   .BPDActivityWorker.executeImplementation(BPDActivityWorker.java:
+   482)
+   at
+   com.lombardisoftware.bpd.component.flowcomponent.activity.worker
+   .BPDActivityWorker.doWork(BPDActivityWorker.java:262)
+   at
+   com.lombardisoftware.bpd.runtime.engine.FlowObjectExecutionTreeN
+   ode.doWork(FlowObjectExecutionTreeNode.java:369)
+   CWLLG0594E: An  exception occurred while initializing the
+   runnable thread. Error:
+   com.lombardisoftware.component.common.workflow.
+   WorkflowProcessItemException: Task killed by stopping scheduler
+   engine
+   In this exception, the UUID of flow object, bpd, and step are
+   listed. These will be uniuqe per exception.
+   wle_ucaexcept E   CWLLG0181E: An
+   exception occurred during execution of task 123456.  Error:
+   [<message:com.lombardisoftware.server.scheduler.TaskDeath: Task
+   killed by stopping scheduler
+   engine><flowObjectID:[uuid]/25.[bpd_uuid]//bpdid :
+   [step_uuid]/Step (name of step)>]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1. There is the manual approach of using Process Inspector to
+   locate and remediate failed instances,
+   2. use the REST API to query for failed instances and to resume
+   them.
+   3. schedule UCA to kick of task which uses the JavaScript API,
+   using TWSearch to find failed Instances and TWProcessInstance
+   to resume the instances.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  BPM's EventManager uses a thread pool of worker threads to
+   execute BPD navigation steps. When the server is stopped,
+   threads from this thread pool are stopped via a Thread.stop()
+   call. This causes inside the worker threads a ThreadDeath error
+   to be thrown which is not handled correctly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Refrain from stopping Event Manager threads. Just let them
+   complete their work and prevent new worker threads from
+   starting.
+   
+   FIX AVAILABILITY:
+   iFix for 8.0.1.1 is/will be available on Fix Central; search for
+   APAR JR49523 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   Fix is also targetted for inclusion in next fixpack for
+   BPM V8.0.1
+   
+   When obtaining any of the above fixes, be sure to download the
+   accompanying readme, for itself, and any prerequisite fixes, and
+   review them thoroughly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR49523
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-04
+   
+   
+ * CLOSED DATE
+   2014-05-07
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

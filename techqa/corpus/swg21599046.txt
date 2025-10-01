@@ -1,0 +1,146 @@
+Title: IBM How to configure WebSphere Portal with administrators from multiple LDAPs - United States
+
+Text:
+vmm; administration; wpsadmin; wpsadmins; mutliple; LDAP; database; repository; federated TECHNOTE (FAQ)
+
+QUESTION
+ IBM WebSphere Portal has been configured to use the federated repositories configuration with multiple user repositories (for example, multiple LDAP servers). One repository contains the primary Portal administrative user and the primary Portal administative group. You would like to add additional Portal administrative users from the second repository. This document will detail how to configure the Portal to allow administators to exist in multiple repositories. 
+
+ANSWER
+WebSphere Portal has a default configuration which allows a single superuser administrator for the system (e.g. wpsadmin) and a single administrator group for the system (e.g. wpsadmins). There are two configuration options which can allow multiple Portal administrators in this scenario: 
+
+Option #1: Manually duplicate Portal permissions
+Advantage: Quickest option to implement
+Disadvantage: Most difficult to maintain. New permission assignments must be manually duplicated
+
+
+Option #2: Utilize application groups 
+Advantage: Greatest flexibility, scalability, and robustness
+Disadvantage: Most time-consuming initial configuration 
+
+
+
+
+Option #1: Manually duplicate Portal permissions 
+
+Let's suppose we have the following group from LDAP server A as our Portal administrators group: 
+
+cn=wpsadminsA,ou=groups,dc=websphere,dc=com 
+
+ 
+
+We are looking to add a second LDAP group to the Portal server configuration from LDAP server B: 
+
+cn=wpsadminsB,ou=groups,dc=lotus,dc=com 
+
+ 
+
+The following steps will allow the second LDAP group to administer most of the Portal: 
+
+1) Login to the Portal server as an administrator from LDAP serverA 
+
+2) Navigate to the Administration Area, and click on the Users and Groups link. 
+
+3) In the Manage Users and Groups portlet, search for the second group you wish to make an administration group, e.g. wpsadminsB. 
+
+4) Click on the third icon for "Duplicate Role Assignments"
+[/support/docview.wss?uid=swg21599046&aid=1] [/support/docview.wss?uid=swg21599046&aid=1]
+
+5) Search for the wpsadminsA group group. Select it, and click OK.
+6) The second group in LDAP server B now will now be able to administer the Portal server.
+
+The following steps are required if you have Web Content Management (WCM) installed with your Portal server. If you do not have WCM installed, skip the following steps:
+
+7) Still in the Administration Area, click on the "Web Content Libraries" 
+8) Click the button for "Set Access on Root"
+[/support/docview.wss?uid=swg21599046&aid=2] [/support/docview.wss?uid=swg21599046&aid=2]
+
+9) Click "Edit Role" for the "Administrator" Role.
+10) Verify the "wpsadminsB" group appears at this screen.
+
+[/support/docview.wss?uid=swg21599046&amp;aid=3].
+
+
+Note: The "Duplicate Role Assignments" operation only duplicates the permissions at the time the icon is clicked. It will not automatically duplicate new role assignments from the first administration group to the second administration group. Therefore, If you manually assign the wpsadminsA group to a page, portlet, etc., you will also need to manually assign the wpsadminsB group as well with the same permissions, OR, click the "Duplicate Role Assignments" icon once more to ensure the wpsadminsB group matches the wpsadminsA group permissions.
+
+
+Option #2: Utilize application groups
+Per the Portal Infocenter [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Enabling_application_groups_wp7]:
+"Application groups is a concept that allows you to define user groups within the database user registry with members (users or groups) contained in the federated LDAP user registry you configured. The benefit of application groups is that you can create Groups that are only used in IBM® WebSphere® Portal."
+
+
+In this specific case, we will create a new application group: 
+
+cn=wpsadminsDB,o=dbrepo
+
+
+And add the two LDAP groups as members of the application group: 
+
+cn=wpsadminsA,ou=groups,dc=websphere,dc=com 
+
+cn=wpsadminsB,ou=groups,dc=lotus,dc=com 
+
+ 
+
+And configure Portal to use the application group (cn=wpsadminsDB,o=repo) as the administrators group in its configuration. As a result, any users who are members of the wpsadminsA group from LDAP server #1, or, any users who are members of the wpsadminsB group from LDAP server #2 will now be Portal administrators. 
+
+ 
+
+The primary administrator we will assume to remain in LDAP server A, e.g. uid=wpsadminA,ou=users,dc=websphere,dc=com 
+
+ 
+
+To setup application groups in this configuration: 
+
+1) Create a new database [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Linux_Adding_a_database_user_registry_wp7] to store the application groups per step #2 in the Portal Infocenter. 
+
+2) Run the configuration task wp-create-db [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Linux_Adding_a_database_user_registry_wp7] to configure Portal to use the database per step #8 in the Portal Infocenter. Restart the servers after running this configuration task. 
+
+3) Update the location where new users and new groups are created to be the database by running the configuration task wp-set-entitytypes [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Linux_Adding_a_database_user_registry_wp7] per step #10 in the Portal Infocenter. Restart the servers after running this configuration task. 
+
+4) Run the configuration task wp-update-group-repository-relationship [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Enabling_application_groups_wp7] to allow users from LDAP server A to be added as members in the application groups per step #1 in the Portal Infocenter. Restart the servers after running this configuration task. 
+
+5) Run the configuration task wp-update-group-repository-relationship [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Enabling_application_groups_wp7] to allow users from LDAP server B to be added as members in the application groups per step #1 in the Portal Infocenter. Restart the servers after running this configuration task. 
+
+6) Using the WebSphere Portal Manage Users & Groups portlet, create a new group named "wpsadminsDB". 
+
+7) Using the WebSphere Portal Manage Users & Groups portlet, add the "wpsadminsA" group from LDAP server A to the wpsadminsDB group. 
+
+8) Using the WebSphere Portal Manage Users & Groups portlet, add the "wpsadminsB" group from LDAP server B to the wpsadminsDB group. 
+
+9) Run the configuration task wp-change-portal-admin-user [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Replacing_the_WebSphere_Portal_administrator_user_ID_wp7] per step #2 in the Portal Infocenter with the following conditions:
+-DnewAdminId=uid=wpsadminA,ou=users,dc=websphere,dc=com
+-DnewAdminGroupId=cn=wpsadminsDB,o=dbrepo
+
+
+Restart the servers after running this configuration task.
+
+Note: This step is updating only the administrator group to be the newly created application group. We do not wish to change the primary Portal administrator at this time, however, the configuration task requires the -DnewAdminId parameter be specified. Therefore, specify the -DnewAdminId parameter to be the fullDN of the current Portal administrator in LDAP server A.
+
+10) Verify users in the wpsadminsA group in LDAP server A and wpsadminsB in LDAP server B are able to login to the Portal and access the Administration area successfully.
+
+11) Optional: Create a new user in the database to be the primary Portal administrator. 
+i. Verify steps #1-#10 complete successfully, otherwise, the Portal may not start executing this optional step.
+ii. Using the WebSphere Portal Manage Users & Groups portlet, create a new user named "wpsadminDB".
+iii. Run the configuration task wp-change-portal-admin-user [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Replacing_the_WebSphere_Portal_administrator_user_ID_wp7] per step #2 in the Portal Infocenter with the following conditions:
+-DnewAdminId=uid=wpsadminDB,o=dbrepo
+-DnewAdminGroupId=cn=wpsadminsDB,o=dbrepo
+
+iv. Restart the servers. 
+
+Note: This option requires the most time up-front for configuration, but also offers the greatest flexibility for Portal administrators spread across multiple user repositories. In our example of multiple LDAP servers, each LDAP server can independently maintain their respective wpsadmins group, adding / removing LDAP users to each group as needed. If optional step #11 was executed, should LDAP server A become unavailable, the Portal server would remain operable with the primary administrative user stored in a database, rather than LDAP server A. 
+
+
+
+
+RELATED INFORMATION
+ Adding a database user registry [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Linux_Adding_a_database_user_registry_wp7]
+Enabling application groups [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Enabling_application_groups_wp7]
+Changing the Portal admin ID or admin group ID [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Replacing_the_WebSphere_Portal_administrator_user_ID_wp7]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products AIX, HP-UX, IBM i, Linux, Solaris, Windows, z/OS 7.0, 6.1

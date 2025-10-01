@@ -1,0 +1,223 @@
+Title: IBM PK63979; 6.1.0.17: Portal fails to start if Hindi locale used - United States
+
+Text:
+PK63979; PK63979; PK63979 DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM WebSphere Portal fails to start on WebSphere Application Server if Hindi locale is used. 
+
+DOWNLOAD DESCRIPTION
+PK63979 resolves the following problem:
+
+ERROR DESCRIPTION: 
+Startup of the IBM WebSphere Portal fails to start on IBM WebSphere Application Server if the installation of WebSphere Application Server V6.1.0.11 and WebSphere Portal Server V6.1 is on a system using Hindi locale. There are several log messages, but the root cause seems to be that Hindi date/time format is not accepted in the fileRegistry.xml file. 
+
+Start of the WebSphere Portal Application Server fails with the following errors: 
+
+The startServer.log for wp_profile/WebSphere_Portal shows: 
+
+
+
+
+ 
+[?/??/?? ??:??:??:??? EDT] 0000000a WindowsServic 1 Trying to 
+new up 
+WindowsService using serverName=WebSphere_Portal, 
+winServiceName=null 
+[?/??/?? ??:??:??:??? EDT] 0000000a ManagerAdmin I TRAS0018I:
+The 
+trace state has changed. The new trace state is *=info. 
+[?/??/?? ??:??:??:??? EDT] 0000000a AdminTool A ADMU0128I:
+Starting tool with the wp_profile profile 
+[?/??/?? ??:??:??:??? EDT] 0000000a AdminTool A ADMU3100I:
+Reading 
+configuration for server: WebSphere_Portal 
+[?/??/?? ??:??:??:??? EDT] 0000000a AdminTool A ADMU3200I:
+Server 
+launched. Waiting for initialization status. 
+[?/??/?? ??:??:??:??? EDT] 0000000a AdminTool A ADMU3011E:
+Server 
+launched but failed initialization. startServer.log, 
+SystemOut.log(or 
+job log in zOS) and other log files under 
+C:\IBM\WebSphere\wp_profile\logs\WebSphere_Portal should contain
+failure information. 
+
+The systemout.log for the wp_profile/WebSphere_Portal shows the following: 
+
+[?/??/?? ??:??:??:??? EDT] 0000000a CoordinatorIm I HMGR0206I:
+The 
+Coordinator is an Active Coordinator for core group 
+DefaultCoreGroup. 
+[?/??/?? ??:??:??:??? EDT] 0000000a DCSPluginSing I HMGR0005I:
+The 
+Single Server DCS Core Stack transport has been started for core
+group 
+DefaultCoreGroup. 
+[?/??/?? ??:??:??:??? EDT] 0000000a NameServerImp A NMSV0018I:
+Name 
+server available on bootstrap port 10031. 
+[?/??/?? ??:??:??:??? EDT] 0000000a exception E 
+com.ibm.ws.wim.adapter.file.was.FileData load CWWIM4507E Virtual
+member 
+manager failed to read the 
+'C:\IBM\WebSphere\wp_profile\config\cells\itani\fileRegistry.xml
+' file: 
+'Value '????-??-??T??:??:??.???-04:00' is not legal. 
+(file:///C:/IBM/WebSphere/wp_profile/all.datagraph, 12, 79)'. 
+[?/??/?? ??:??:??:??? EDT] 0000000a exception E 
+com.ibm.ws.wim.adapter.file.was.FileData load 
+
+com.ibm.websphere.wim.exception.InitializationException: 
+CWWIM4507E 
+Virtual member manager failed to read the 
+'C:\IBM\WebSphere\wp_profile\config\cells\itani\fileRegistry.xml
+' file: 
+'Value '????-??-??T??:??:??.???-04:00' is not legal. 
+(file:///C:/IBM/WebSphere/wp_profile/all.datagraph, 12, 79)'. 
+at 
+com.ibm.ws.wim.adapter.file.was.FileData.load(FileData.java:277)
+at 
+com.ibm.ws.wim.adapter.file.was.FileAdapter.initialize(FileAdapt
+er.java: 
+307) 
+at 
+com.ibm.ws.wim.RepositoryManager.initialize(RepositoryManager.ja
+va:493) 
+... 
+Caused by: 
+org.eclipse.emf.ecore.resource.Resource$IOWrappedException: 
+Value '????-??-??T??:??:??.???-04:00' is not legal. 
+(file:///C:/IBM/WebSphere/wp_profile/all.datagraph, 12, 79) 
+at 
+org.eclipse.emf.ecore.xmi.impl.XMLLoadImpl.handleErrors(XMLLoadI
+mpl.java 
+:80) 
+at 
+org.eclipse.emf.ecore.xmi.impl.XMLLoadImpl.load(XMLLoadImpl.java
+:189) 
+at 
+org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl.doLoad(XMLResourc
+eImpl.ja 
+va:179) 
+at 
+org.eclipse.emf.ecore.resource.impl.ResourceImpl.load(ResourceIm
+pl.java: 
+1094) 
+at 
+org.eclipse.emf.ecore.sdo.util.SDOUtil.loadDataGraph(SDOUtil.jav
+a:1175) 
+at 
+com.ibm.ws.wim.adapter.file.was.FileUtils.loadFileAsDataGraph(Fi
+leUtils. 
+java:85) 
+at 
+com.ibm.ws.wim.adapter.file.was.FileData.load(FileData.java:269)
+Caused by: java.lang.NumberFormatException: 
+'????-??-??T??:??:??.???-04:00' has wrong format 
+at 
+org.eclipse.emf.ecore.xml.type.internal.XMLCalendar.parseIntYear
+(XMLCale 
+ndar.java:815) 
+at 
+org.eclipse.emf.ecore.xml.type.internal.XMLCalendar.getYearMonth
+(XMLCale 
+ndar.java:553) 
+at 
+org.eclipse.emf.ecore.xml.type.internal.XMLCalendar.getDate(XMLC
+alendar. 
+java:512) 
+at 
+org.eclipse.emf.ecore.xml.type.internal.XMLCalendar.parseDateTim
+e(XMLCal 
+endar.java:1130) 
+at 
+org.eclipse.emf.ecore.xml.type.internal.XMLCalendar.<init>(XMLCa
+lendar.j 
+ava:176) 
+at 
+org.eclipse.emf.ecore.xml.type.impl.XMLTypeFactoryImpl.createDat
+eTime(XM 
+LTypeFactoryImpl.java:259) 
+at 
+org.eclipse.emf.ecore.xml.type.impl.XMLTypeFactoryImpl.createDat
+eTimeFro 
+mString(XMLTypeFactoryImpl.java:2202) 
+at 
+org.eclipse.emf.ecore.xml.type.impl.XMLTypeFactoryImpl.createFro
+mString( 
+XMLTypeFactoryImpl.java:1608) 
+at 
+org.eclipse.emf.ecore.xmi.impl.XMLHelperImpl.createFromString(XM
+LHelperI 
+mpl.java:1486) 
+at 
+org.eclipse.emf.ecore.xmi.impl.XMLHelperImpl.setValue(XMLHelperI
+mpl.java 
+:1050) 
+at 
+org.eclipse.emf.ecore.xmi.impl.XMLHandler.setFeatureValue(XMLHan
+dler.jav 
+a:2388) 
+
+Further analysis would also imply that Eclipse Modeling Framework (EMF) does not read the date value from the fileRegistry.xml: 
+
+Caused by: java.lang.NumberFormatException: 
+'????-??-??T??:??:??.???-04:00' has wrong format 
+at org.eclipse.emf.ecore.xml.type.internal.XMLCalendar.parseIntYear
+(XMLCalendar.java:815) 
+
+Steps to recreate: 
+1. Set locale Hindi (hi_IN) on User (set English in System locales) 
+2. Install Application Server by manul with Hindi locale 
+3. Apply Application Server JDK 1.5 SR7 (PK62155) 
+4. Install Portal Server Full using English PII 
+5. Start Portal 
+
+OS: Windows 2003 
+Version: Enterprise Edition SP2, 
+WebSphere Application Server V6.1.0.11 
+
+LOCAL FIX: 
+None 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+This affects IBM WebSphere Application Server V6.1 users who are using a built-in file repository of "federated repository" on Hindi locale.
+
+PROBLEM DESCRIPTION:
+WebSphere Portal fails to start if Hindi locale is used.
+
+RECOMMENDATION:
+None
+
+The timestamp was stored in Hindi locale in fileRegistry.xml which Eclipse Modeling Framework (EMF) was not able to read.
+
+PROBLEM CONCLUSION: 
+The timestamp is now stored in English locale in the fileRegistry.xml. 
+
+The fix for this APAR is currently targeted for inclusion in Fix Pack 6.1.0.19. 
+
+ 
+Please refer to the recommended updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+Please download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK63979/readme.txt] US English 16398 
+DOWNLOAD PACKAGE
+
+
+Download package What is Fix Central (FC)? [http://www.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html] What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 6.1.0.0-WS-WAS-IFPK63979 4/23/2008 US English 20733 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=6.1.0.0-WS-WAS-IFPK63979&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK63979/6.1.0.0-WS-WAS-IFPK63979.pak] DD 
+
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www-306.ibm.com/software/support/probsub.html [http://www-306.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server Support Web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV(U.S. only). 
+
+ [/support/docview.wss?uid=swg24019019&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24019019&aid=2]Problems (APARS) fixed
+PK63979

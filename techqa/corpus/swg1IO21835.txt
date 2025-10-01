@@ -1,0 +1,133 @@
+Title: IBM IO21835: PAGE LEVEL ACTIONS SUCH AS BARCODE RECOGNITION ABORT AFTER CONVERT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After the Convert library is used to convert files, immediately
+   running actions that are dependent on the corresponding file
+   (e.g. barcode recognition, where the image must be loaded by the
+   engine for attempt to identify barcodes) may fail.  This occurs
+   due to the ImageFile / ImageName returning a relative path,
+   exclusive of the batch directory.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * windows users                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Datacap.Libraries.Convert.dll Version 8.0.1.105              *
+   * * PDF class passes full new image path to newdcopage         *
+   * creation.                                                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Datacap.Libraries.Convert.dll Version 8.0.1.105
+   * PDF class passes full new image path to newdcopage creation.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO21835
+   
+   
+ * REPORTED COMPONENT NAME
+   DATACAP TASKMST
+   
+   
+ * REPORTED COMPONENT ID
+   5725C1500
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-04
+   
+   
+ * CLOSED DATE
+   2015-05-21
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IO22580 [http://www-01.ibm.com/support/docview.wss?uid=swg1IO22580]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATACAP TASKMST
+   
+   
+ * FIXED COMPONENT ID
+   5725C1500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

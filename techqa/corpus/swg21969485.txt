@@ -1,0 +1,19 @@
+Title: IBM Jazz for Service Management (JazzSM) installation using IBM Installation Manager (IIM) reports wrong disk space requirement - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installation of Tivoli Common Reporting (TCR) 3.1.2 or 3.1.2.1 using IIM, disk space requirement is more than what is reported in IIM
+
+
+RESOLVING THE PROBLEM
+Recommendation is to run Pre-reqchcker for diskspace verification prior to the actual installation using IIM 
+
+For more information, please check below links:
+http://www-01.ibm.com/support/knowledgecenter/SSEKCU_1.1.2.0/com.ibm.psc.doc_1.1.2.0/install/psc_t_install_prs_prereqs.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSEKCU_1.1.2.0/com.ibm.psc.doc_1.1.2.0/install/psc_t_install_prs_prereqs.html?lang=en]
+http://www-01.ibm.com/support/knowledgecenter/SSEKCU_1.1.2.0/com.ibm.psc.doc_1.1.2.0/install/psc_t_install_run_prs_cli.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSEKCU_1.1.2.0/com.ibm.psc.doc_1.1.2.0/install/psc_t_install_run_prs_cli.html?lang=en]
+
+Note : Other known issue on AIX http://www-01.ibm.com/support/docview.wss?uid=swg21968763 [http://www-01.ibm.com/support/docview.wss?uid=swg21968763]
+
+[/support/docview.wss?uid=swg21969485&aid=2]capture-20151007-1827.png [/support/docview.wss?uid=swg21969485&aid=1]

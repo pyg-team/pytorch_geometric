@@ -1,0 +1,197 @@
+Title: IBM ZZ00370: LDAPAUTH.PY MISSING SECRET=TRUE WHICH ALLOWS OBFUSCATED BIND PASSWORD IN KEYSTONE.CONF - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using an encrypted (obfuscated) password may be preferred in
+   the keystone.conf file.
+   In order to achieve this the 'openstack-obfuscate' command will
+   be used to generate the encrypted string for the "password =
+   nnn" entry in the conf file.
+   
+   When configuring your Keystone service to use LDAP
+   authentication with a plaintext bind password, the LDAP bind
+   works perfectly.
+   When using the obfuscated password, the keystone service will
+   be unable to bind with LDAP.  DEBUG logging in the keystone.log
+   shows us:
+   ################################################################
+   
+   
+   2015-02-16 14:54:28.600 29326 DEBUG
+   keystone.middleware.ldapauth [-]
+   Ldap user to dn failed due to: {'info': '80090308: LdapErr:
+   DSID-0C0903A8, comment: AcceptSecurityContext error, data 52e,
+   v1db1','desc': 'Invalid credentials'} user_to_dn
+   /usr/lib/python2.6/site-packages/keystone/middleware/ldapauth
+   .py
+   :308
+   
+   ################################################################
+   
+   
+   We know the password is correct and the configuration works
+   with plain-text. The problem only occurs when using the
+   obfuscated password.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1. Make a backup of the file:
+   
+   /usr/lib/python2.6/site-packages/keystone/middleware/ldapauth
+   .py
+   
+   2. Change the line #48:
+   
+   48         cfg.StrOpt('password', default=None),
+   
+   to be:
+   (all one line)
+   48         cfg.StrOpt('password', default=None,
+   secret=True),
+   
+   3.  Restart Keystone, using the obfuscated password in the
+   keystone.conf file.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   
+   * USERS AFFECTED:
+   All users of IBM Cloud Orchestrator 2.4 connecting to LDAP/MSAD
+   to manage identities using obfuscated LDAP bind password.
+   
+   ****************************************************************
+   
+   * PROBLEM DESCRIPTION:
+   While processing identity verification fron login panel keystone
+   can not connect to LDAP/MSAD due to invalid credentials.
+   
+   ****************************************************************
+   
+   * RECOMMENDATION:
+   Apply IBM Cloud Orchestrator 2.4 Fixpack 3 when available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ****************************************************************
+   
+   * PROBLEM CONCLUSION:
+   When configuring your Keystone service to use LDAP/MSAD
+   authentication with a plain text bind password, the LDAP bind
+   works perfectly.
+   When using the obfuscated password, the keystone service will be
+   unable to bind with LDAP/MSAD.
+   The LDAP authentication code must be aware that the bind
+   password can be obfuscated.
+   A missing parameter was added to allow obfuscated bind password.
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   | fix pack | IBM Cloud Orchestrator 2.4 FixPack 3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00370
+   
+   
+ * REPORTED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2800
+   
+   
+ * REPORTED RELEASE
+   240
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-02
+   
+   
+ * CLOSED DATE
+   2015-05-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * FIXED COMPONENT ID
+   5725H2800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R240 PSY
+   UP

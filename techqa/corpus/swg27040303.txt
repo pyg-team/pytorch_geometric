@@ -1,0 +1,57 @@
+Title: IBM Known issue: Additional steps are required to enable records management capabilities if you set up your IBM Enterprise Records environment by using IBM Content Foundation - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ If you installed your environment by using IBM Content Foundation, and you now want to use IBM Enterprise Records, you must follow this procedure to add records management capabilities to your environment. 
+
+CONTENT
+ 
+
+IBM Enterprise Records V5.1.2 can be used with an IBM Content Foundation installation. However in this configuration you must still install the IBM Enterprise Records web application in the same JVM as Workplace XT.
+
+When using IBM Enterprise Records with IBM Content Foundation, Workplace XT is only used to support the IBM Enterprise Records administrative tasks. It is not licensed as a means for end users to declare or interact with records. All end user interaction with the records management system must be done through IBM Content Navigator or using the Content Platform Engine and the IBM Enterprise Records application programming interfaces.
+
+Use the following procedures to add IBM Enterprise Records to an IBM Content Foundation installation:
+
+
+ 1.  
+ 2.  From Fix Central, download the following files:  1. The latest Workplace XT fix pack (all Workplace XT fix packs are full installation programs).
+      2. The Content Engine fix pack that matches the level of Content Platform Engine software currently installed or the latest Content Engine fix pack.
+      3. If not already installed, the latest fix pack for IBM Content Navigator V2.0.2.
+     
+     
+     
+ 3.  From Passport Advantage, download the IBM Enterprise Records software.
+ 4.  
+ 5.  If appropriate, upgrade the IBM Content Navigator V2.0.2 installation with the fix pack downloaded in Step 1c.
+ 6.  
+ 7.  If appropriate, upgrade the Content Platform Engine installation using the fix pack downloaded in Step 1b.
+ 8.  
+ 9.  Install Workplace XT using the package downloaded in Step 1a.
+ 10. 
+ 11. If the Content Platform Engine server was updated during Step 4, run the Content Platform Engine client installation program downloaded in Step 1b against IBM Content Navigator, and validate that it works correctly against the updated Content Platform Engine server.
+ 12. Run the Content Platform Engine client installation program downloaded in Step 1b against Workplace XT, and validate that it works correctly against the Content Platform Engine installed from the IBM Content Foundation installation.
+ 13. Continue with the standard IBM Enterprise Records installation steps. For instructions, see Installing IBM Enterprise Records [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.installingrm.doc/frmic003.htm]. When the instructions reference running the Content Platform Engine client installation program, use the installation program downloaded in Step 1b.
+ 14. Configure IBM Enterprise Records:  1. Run the IBM Enterprise Records Configuration Manager tool and complete the 3 tasks in the Web Application Deployment profile.
+      2. If appropriate, create a File Plan Object Store (FPOS) and a Record-enabled Object Store (ROS).
+      3. Configure FPOS and ROS.  * If the FPOS and ROS are new, run the IBM Enterprise Records Configuration Manager tool and complete the tasks in the Object Store Configuration profile.
+          * If the FPOS and ROS were configured in a previous release of IBM Enterprise Records, run the IBM Enterprise Records Configuration Manager tool and complete the tasks in the Object Store Upgrade profile.
+         
+         
+      4. Adjust Workplace XT Site Preferences settings as documented in the IBM Enterprise Records Installation and Upgrade Guide.
+      5. Configure the Process region to support IBM Enterprise Records workflows and operations using the Process Configuration Console, as documented.
+      6. Configure the Component Manager in Workplace XT Process Task Manager to support IBM Enterprise Records operations, as documented.
+      7. Define Records Manager groups and associated users in your LDAP.
+      8. Run the Security Script Wizard for your FPOS, specifying the appropriate IBM Enterprise Records Groups and users that you specified in Step 9g.
+     
+     
+     
+
+Note: If the deployment of IBM Content Navigator, Workplace XT, or IBM Enterprise Records fails on a WebSphere 8.x application server, and the System.Out log indicates that a context root is in use or other similar error, then IBM Content Navigator must be deployed to a separate WebSphere Node or Profile.
+
+RELATED INFORMATION
+ Fix Central [http://www.ibm.com/support/fixcentral/]
+Download IBM Enterprise Records [http://www.ibm.com/support/docview.wss?uid=swg24035858]
+IBM Enterprise Records detailed system requirements [http://www.ibm.com/support/docview.wss?uid=swg27036498]

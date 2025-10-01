@@ -1,0 +1,108 @@
+Title: IBM Download IBM Business Process Manager Express Version 8.5.6 (Linux) - United States
+
+Text:
+PAODownloadDocument; passport advantage; 8.5.6; Linux DOWNLOADABLE FILES
+
+ABSTRACT
+ This document provides the eAssembly part numbers that are required to download IBM Business Process Manager Express Version 8.5.6 files from the Passport Advantage website. 
+
+DOWNLOAD DESCRIPTION
+IBM Business Process Manager is a comprehensive and consumable business process management platform that provides visibility and management of business processes. It includes tools and a runtime environment for process design, execution, monitoring, and optimization. It is specifically designed to enable process owners and business users to engage directly in the improvement of their business processes. 
+
+More information
+For more information, see the Latest information and critical fixes for Business Process Manager Express, Release notes [http://www.ibm.com/support/search.wss?tc=SSFTBX&atrn=SWVersion&atrv=8.5.6] and Installing IBM Business Process Manager Express [http://www.ibm.com/support/knowledgecenter/SSFTN5_8.5.6/com.ibm.wbpm.imuc.stbpm.doc/topics/cbpm_inscfg.html] documents.
+
+
+Space requirements
+Refer to the Hardware and software requirements [http://www.ibm.com/support/docview.wss?uid=swg27023008] page for this platform for space requirements. 
+
+
+Downloading and assembling the product 
+
+ 1. Ensure that your workstation has sufficient space to store both the files that you must download from IBM Passport Advantage and the extracted installation image.
+    
+    
+ 2. Navigate to the Passport Advantage website [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] and download all of the parts that you need. The parts are listed by platform in the tabbed sections of this document. 
+    (For information about how to access Passport Advantage, see the Passport Advantage Quick reference guide in the Learn more section on the Passport Advantage website [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm].) 
+    
+    
+ 3. Download all of the required parts for the product installation image from IBM Passport Advantage to a temporary directory.
+    
+    
+ 4. Extract the downloaded files to one directory. 
+    
+    
+ 5. Open the Quick Start Guide, which is located in the Quick Start image, to access the documentation to help with product installation.
+
+
+
+
+TAB NAVIGATION
+ * Linux [http://www.ibm.com/support/docview.wss?uid=swg24038624]- selected tab,
+ * Windows [http://www.ibm.com/support/docview.wss?uid=swg24038623]
+
+
+SUPPORTED PLATFORMS
+
+For supported platforms, including required version levels, see the Hardware and software requirements for Linux [http://www.ibm.com/support/docview.wss?uid=swg27023008]. 
+
+
+Downloadable parts 
+
+To install IBM Business Process Manager Express on a Linux platform, download the images that are listed in the following tables. 
+
+REQUIRED SOFTWARE
+ 
+
+eAssembly Image Description CRVF1ML CN4R4ML IBM Business Process Manager Express V8.5.6 Quick Start Guide CN4R5ML
+CN4R6ML
+CN4R7ML IBM Business Process Manager Express Version 8.5.6 for Linux on x86, 64-bit, Multilingual
+
+Make sure that you download all of the images and extract them to the same location.
+
+Includes:  * IBM Business Process Manager Express Version 8.5.6 
+ * IBM WebSphere Application Server Network Deployment Version 8.5.5 Fix Pack 5 
+ * IBM DB2 Express V10.1.0 Fix Pack 1
+
+
+OPTIONAL SOFTWARE
+
+IBM Tivoli software
+
+
+eAssembly Image Description CRVF1ML CZZ89ML IBM Tivoli Access Manager for e-business V6.1.1 for WebSphere Application Server V8.0 for Linux on x86, Multilingual CZK9IML IBM Tivoli Directory Server V6.3 Client-Server with entitlement (.tar file) for Linux x86 64-bit, Multilingual 
+
+ACCESSING AND INSTALLING RECOMMENDED FIXES FOR IBM BUSINESS PROCESS MANAGER V8.5.6
+
+For information about accessing and installing interim fixes for IBM Business Process Manager, see Fix list for the IBM Business Process Manager Version 8.5 products [http://www.ibm.com/support/docview.wss?uid=swg27039722].
+
+
+
+
+PREREQUISITES
+See the prerequisites section of the Detailed system requirements for IBM Business Process Manager Express 8.5.6 on Linux [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1379596784918&osPlatform=Linux].
+
+INSTALLATION INSTRUCTIONS
+Make sure that you download the Quick Start Guide from your product eAssembly. Open the PDF file and follow the instructions to install the product. 
+
+
+Detailed installation instructions for your product are available in the IBM Business Process Manager product documentation [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.6/com.ibm.wbpm.main.doc/kc-homepage-bpm.html].
+
+
+
+DOWNLOAD PACKAGE
+Download IBM Business Process Manager Express Version 8.5.6 for Linux platforms from the Passport Advantage website [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]. 
+
+
+
+
+
+TECHNICAL SUPPORT
+ See Passport Advantage Online support at:
+http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html].
+
+See IBM Business Process Manager Express support at:
+http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Express [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Express]. 
+
+PRODUCT ALIAS/SYNONYM
+ BPM

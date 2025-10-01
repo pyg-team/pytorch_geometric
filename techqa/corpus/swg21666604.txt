@@ -1,0 +1,82 @@
+Title: IBM WebSphere Application Server Liberty Profile V8.5 and CA Wily Introscope APM
+9.1.0.X - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Introduction :
+This document talks about using CA Wily Introscope APM (Referred as ‘CA APM’ in the rest of this document) Version 9.1.0.2 to instrument WebSphere Application Server (WAS) Liberty Profile V8.5.x.. 
+
+CAUSE
+ 
+
+At the time of writing it was necessary to use CA APM client (agent) at a level of 9.0.8.x with WebSphere Application Server Liberty profile. 9.0.8.x CA APM clients can be used with any later version of CA APM Enterprise Manager Server, such as 9.1.0.x, to monitor any version of the WAS Liberty Profile. There is a known restriction for CA APM clients version 9.1.x.x which prevents them from being used with WAS Liberty profile.
+
+Environment
+• CA APM Enterprise Manager 9.1.0.2
+• CA_APM Agent for WebSphere Application Server 9.0.8.0
+• Java Version (IBM Java 6 SR9, as well as IBM Java 7)
+• Liberty Profile (Version 8.5.5)
+• Tested Agent on Windows Platform
+
+Steps required for setup
+
+PART A – Configuration of WAS Liberty Server for Monitoring
+
+
+ Set up the WAS Liberty JVM properties for APM. An easy way to do this is by creating a file named “jvm.options” under <LIBERTY_HOME>/usr/servers/<SERVER_NAME>/ directory and add the following definitions to that file
+
+# Set up CA APM Monitoring
+-javaagent:C:/Wily/Agent/Agent.jar
+-Dcom.wily.introscope.agentProfile=C:/Wily/Agent/IntroscopeAgent.profile
+-Dorg.osgi.framework.bootdelegation=com.wily.*
+-Dcom.wily.introscope.agent.agentName=MyAgentName
+
+Assuming CA APM agent is in “C:/Wily/Agent” directory. 
+With the above configuration, Liberty server successfully connected to CA APM Agent and Performance Data can be seen at CA APM dash board.
+
+[/support/docview.wss?uid=swg21666604&aid=1] [/support/docview.wss?uid=swg21666604&aid=1]
+
+
+[/support/docview.wss?uid=swg21666604&aid=2] [/support/docview.wss?uid=swg21666604&aid=2] 
+
+ 
+
+PART B – JMX Configuration
+Additional WebSphere Liberty Monitoring data is enabled through the Liberty monitor-1.0 feature as described in the InfoCenter:
+
+http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/index.jsp?topic=/com.ibm.websphere.wlp.core.doc/ae/twlp_mon.html [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/index.jsp?topic=/com.ibm.websphere.wlp.core.doc/ae/twlp_mon.html]
+
+Add in the <feature>monitor-1.0</feature> to the server.xml to get Liberty monitoring data. This is equivalent to the PMI data produced when running with WAS full profile. In addition to configuring WAS Liberty to produce this performance instrumentation data and expose it through JMX, the following configuration of the CA APM agent is required for APM to gather it:
+
+The following property is required in IntroscopeAgent.profile file.
+introscope.agent.jmx.enable=true
+
+With above property, you will be able to get standard JMX data in CA APM. Liberty Monitoring data is available as standard MX Beans in the platform MBean server and can be seen under the JMX section of CA APM.
+
+Other than above property, one more change is required. 
+Copy in the CA WebAppSupport.jar file from C:\Wily\Agent\ to C:\Wily\Agent\ext directory.
+
+copy C:\Wily\Agent\WebAppSupport.jar C:\Wily\Agent\ext\WebAppSupport.jar
+
+Register the CA APM agent with the JVM through the jvm.options file, as described in the previous section. With the above JVM options, users can start a Liberty server and see Liberty Performance Data, MX Beans etc in CA APM.
+
+
+[/support/docview.wss?uid=swg21666604&aid=3] [/support/docview.wss?uid=swg21666604&aid=3]
+
+
+ANSWER
+ 
+
+Summary:
+
+CA Wily Introscope APM successfully tested with WebSphere Application Server Liberty V8.5.x using CA APM. Users can use latest Wily Introscope Enterprise Manager (currently tested on 9.1.0.2), using CA APM Client 9.0.8.0.
+
+The following combinations are known to work:
+• WAS Liberty Profile V8.5.0 and later
+• CA APM Client V9.0.8.x
+• CA APM Enterprise Manager V9.1.0.x and later.
+
+There is currently a known restriction with CA Agent Version 9.1.0.x and later with WAS Liberty Profile. Lower versions of CA APM agents are compatible with higher versions of CA APM Enterprise Manager. It is recommended to use the latest version of CA Enterprise
+Manager and Agents at version 9.0.8.x when monitoring WAS Liberty Profile.

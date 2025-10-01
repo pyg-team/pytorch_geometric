@@ -1,0 +1,41 @@
+Title: IBM Not all EIF events are being sent to event console - United States
+
+Text:
+eif probe; missing events; tec forwarding; forward; events TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ EIF events are being dropped and never appear in the event console even though the situation event has fired. 
+
+SYMPTOM
+With (UNIT:kfaot all) tracing set, you could see that ITM was sending all of the events. A script was run that would generate 100 events to see if they arrived in the event console. One could see in ITM that 100 events were sent from the event forwarding component of the TEMS for a particular situation. It was observed that every 5th or 6th event did not appear in the event console. Also during this time connectivity issues were occurring.
+
+
+CAUSE
+Incorrect connection mode was set.
+
+ENVIRONMENT
+The customer had an ITM 6.2.2 FP3 TEMS running AIX 6.1 and was sending events to a 3rd party event console (not TEC or OMNIbus). However, this particular problem could occur with any event receiver.
+
+RESOLVING THE PROBLEM
+In the ITM _ms logs we could see that the EIF was defined for connection oriented:
+
+
+
+
+
+(4CCACE9F.012F-10:socket_imp.c,1606,"socket_put_event_conn") socket_put connection oriented
+
+There are two ways that events can be sent to an event receiver. Those two modes are "connection oriented" and "connectionless".
+
+ConnectionOriented was intended for situations where this making and breaking of connections would impede event flow, so the idea was to have a single connection and use that and keep it open. If you have a very high event throughput and very stable network then this should be fine. 
+
+ConnectionLess was intended for situations where keeping a single path open all the time may not work. or if the network was less than very stable. In this mode, when an event occurs a new connection will be opened, the event will be sent to the server and the connection will be ended.
+
+Because of the connectivity issues that were observed, the recommendation is to use "Connection_Less". This can be configured as follows:
+
+- On the Hub TEMS go to Install_dir/tables/hostname/TECLIB/om_tec.config
+- Change ConnectionMode=co to ConnectionMode=connection_less
+- Restart the EIF on your ITM (this is NOT a TEMS restart): 
+tacmd refreshTECinfo -t eif
+
+Changing the mode to connection_less resolved the issue.

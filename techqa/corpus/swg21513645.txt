@@ -1,0 +1,15 @@
+Title: IBM Logging into SiteMinder shows 500 error (page cannot be displayed) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Logging into SiteMinder shows 500 error (page cannot be displayed) 
+
+RESOLVING THE PROBLEM
+If OpenPages application has System Admin Mode set to "true", users cannot log into the application. If SiteMinder is used, an error will be displayed indicating either the backend application does not exist, or a 500 error (page cannot be displayed). You have to set System Admin Mode to "false" for a successful login using SiteMinder.
+
+
+
+HISTORICAL NUMBER
+ 00001127

@@ -1,0 +1,91 @@
+Title: IBM Installing Annotation Administration Console in silent mode or console mode - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ IBM Knowledge Center provides instructions for running the Annotation Administration Console installation program in graphical mode. You can also run the installation program in silent mode or console mode. 
+
+CONTENT
+Regardless of which installation mode you choose, be sure to see the Related information links below to learn about the information that you must gather before you run the installation program. 
+
+SILENT INSTALLATION
+
+To install Annotation Administration Console silently, you must edit a properties file to provide information that allows the installation program to install and configure your system, and then run the installation command. 
+
+To ensure a successful installation, read the comments that are provided for each property to understand the values that you must provide. 
+
+After you extract files from the Watson Explorer product DVD or electronic image, the Annotation Administration Console installation program and ANNOTATION_ADMIN_OS_10.0.0.x.properties file are available in the Watson Explorer installation directory.
+
+To install Annotation Administration Console in silent mode:
+
+1. Change to the Watson Explorer installation directory, such as /opt/IBM/WEX on Linux or C:\Program Files\IBM\WEX on Windows.
+
+2. Make a copy of the ANNOTATION_ADMIN_OS_10.0.0.x.properties file and edit the properties as appropriate for your environment.
+
+3. Run the installation program and specify the name of the properties file that you edited. For example:
+
+
+ * 
+ * ./ANNOTATION_ADMIN_LINUX_10.0.0.0.bin -i silent -f my_ANNOTATION_ADMIN_10.0.0.0.properties 
+ * 
+ * ANNOTATION_ADMIN_WINDOWS_10.0.0.0.exe -i silent -f my_ANNOTATION_ADMIN_10.0.0.0.properties 
+
+
+If you copy a template file to another location to edit, specify the fully qualified path for the file when you run the installation program. 
+ * On Linux, if the response file path includes a space or a character that must be escaped, you must escape the space or character with the backslash (\) character. For example: 
+
+ * ./ANNOTATION_ADMIN_LINUX_10.0.0.0.bin -i silent -f /my\ downloads/my_ANNOTATION_ADMIN.properties 
+
+ * On Windows, if the response file path includes a space, enclose the path in double quotation marks ("). For example: 
+
+ * ANNOTATION_ADMIN_WINDOWS_10.0.0.0.exe -i silent -f "c:\my downloads\my_ANNOTATION_ADMIN.properties" 
+
+
+4. On Windows, restart the system to complete the installation. You can specify an option to restart the system in the properties file or manually restart the system after the installation program finishes. 
+
+Notes:  * On Windows, after you enter the command, the process runs in the background after the command prompt is re-displayed. 
+ * Be sure to specify a valid password for the administrative user. If the password does not meet the requirements, the installation fails. 
+ * Be sure to run the installation program on a supported operating system. If your system is not supported (such as a Windows 7 client machine), the installation fails. 
+ * For details about the success of the program or to learn about why the installation failed, see the log file in the Annotation Administration Console installation directory, for example, on Windows: 
+   
+   C:\Program Files\IBM\es\uninstall_10.0.0.0\Logs\IBM_Watson_Explorer_Annotation_Administration_Console_Install_05_13_2015_10_38_15.log
+
+
+CONSOLE INSTALLATION
+When you run the installation program in console mode, the screens are rendered in text and prompt you for the same information as the graphical installation mode.
+
+After you extract files from the Watson Explorer product DVD or electronic image, the Annotation Administration Console installation program is available in the Watson Explorer installation directory.
+
+To install Annotation Administration Console in console mode:
+
+1. Change to the Watson Explorer installation directory, such as /opt/IBM/WEX on Linux or C:\Program Files\IBM\WEX on Windows.
+
+2. Run the installation program and specify the console installation option:
+
+
+ * 
+ * ./ANNOTATION_ADMIN_LINUX_10.0.0.0.bin -i console 
+ * 
+ * ANNOTATION_ADMIN_WINDOWS_10.0.0.0.exe -i console 
+
+
+It might take a few minutes for the installation program to finish installing the software after you press Enter at the end of the installation prompts. Do not end the program or suspend it until user control is returned so that additional commands can be entered. 
+
+Notes:  * On Windows, after you enter the command, a process runs in the background for a number of seconds before the console installation program is displayed. 
+ * To exit the console installation process before it finishes, enter quit at the command prompt. 
+ * For details about the success of the program or to learn about why the installation failed, see the log file in the Annotation Administration Console installation directory, for example, on Windows: 
+
+ * C:\Program Files\IBM\es\uninstall_10.0.0.0\Logs\v10.0.0.0install.log 
+
+
+Changing the temporary directory 
+You can change the temporary directory for the installation program if the default temporary directory does not have enough space. You must set the temporary directory to a directory that has enough space before you start the installation program. For example: 
+ * 
+ * export IATEMPDIR=/home/tmp 
+ * 
+ * set TMP=d:\temp 
+
+RELATED INFORMATION
+ Gathering information for installation [http://www.ibm.com/support/knowledgecenter/SS8NLW_10.0.0/com.ibm.watson.wex.aac.doc/aac-instgather.html]
+Running the installation program in graphical mode [http://www.ibm.com/support/knowledgecenter/SS8NLW_10.0.0/com.ibm.watson.wex.aac.doc/aac-install.html]

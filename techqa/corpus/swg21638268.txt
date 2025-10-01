@@ -1,0 +1,115 @@
+Title: IBM Supported Upgrade and Downgrade paths for DataPower Virtual Edition - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Which WebSphere DataPower virtual edition fix pack can I upgrade to and downgrade from? 
+
+CAUSE
+Not all scrypt4 fix packs are compatible with the 5.0.0.0 OVA files that were released in November 2012 and March 2013. If you upgrade or downgrade with an incompatible fix pack, unexpected errors might occur.
+
+ANSWER
+ Use the following links to determine which fix packs are compatible with your virtual deployment.
+
+
+
+
+ * 5.0.0.0 from 30 November 2012 (build 220750)
+ * 5.0.0.0 from 29 March 2013 (build 227007)
+ * 5.0.0.5
+ * 5.0.0.6
+ * 5.0.0.8 or later
+ * 6.0.0.0 or later
+
+
+
+
+
+
+
+
+
+
+
+5.0.0.0 from 30 November 2012 (build 220750) 
+When your virtual deployment is the OVA file from 30 November 2012, you can install any fix pack from Fix Central, except for the 5.0.0.0 fix pack. On Fix Central, the 5.0.0.0 fix pack is for the 5.0.0.0 OVA release from 29 March 2013. 
+
+Back to top
+
+
+
+
+
+
+
+
+
+
+5.0.0.0 from 29 March 2013 (build 227007) 
+When your virtual deployment is the OVA file from 29 March 2013, you can install only the 5.0.0.0 fix pack and 5.0.0.8 or later fix packs from Fix Central. On Fix Central, the 5.0.0.5 and 5.0.0.6 fix packs are for the 5.0.0.0 OVA release from 30 November 2013. 
+
+Back to top
+
+
+
+
+
+
+
+
+
+
+5.0.0.5 
+When your virtual deployment is 5.0.0.5, you can install any fix pack from Fix Central, except for the 5.0.0.0 fix pack. On Fix Central, the 5.0.0.0 fix pack is for the 5.0.0.0 OVA release from 29 March 2013. 
+
+Back to top
+
+
+
+
+
+
+
+
+
+
+5.0.0.6 
+When your virtual deployment is 5.0.0.6, you can install any fix pack from Fix Central, except for the 5.0.0.0 fix pack. On Fix Central, the 5.0.0.0 fix pack is for the 5.0.0.0 OVA release from 29 March 2013. 
+
+Back to top
+
+
+
+
+
+
+
+
+
+
+5.0.0.8 or later 
+When your virtual deployment is 5.0.0.8 or later, do not install any fix pack from Fix Cental that is earlier than the 5.0.0.8 fix pack. The 5.0.0.8 fix pack has critical fixes. For more information, see Critical Updates [http://www-01.ibm.com/support/docview.wss?uid=swg21390112#part2]. 
+
+Note: You must install the 5.0.0.8 or later fix pack to upgrade to 6.0.0.0 or later. The 5.0.0.8 fix pack contains a required fix to allow the larger sized firmware image to fit. 
+
+Back to top
+
+
+
+
+
+
+
+
+
+
+6.0.0.0 or later 
+When your virtual deployment is the 6.0.0.0 OVA file or a firmware upgrade through a 6.0.0.0 or later fix pack, do not install any fix pack from Fix Cental that is earlier than the 5.0.0.8 fix pack. The 5.0.0.8 fix pack has critical fixes. For more information, see Critical Updates [http://www-01.ibm.com/support/docview.wss?uid=swg21390112#part2]. 
+
+Back to top
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower Service Gateway XG45 Virtual Edition VMware ESXi, VMware ESX 5.0.0, 6.0.0 Edition Independent

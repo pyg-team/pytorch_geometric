@@ -1,0 +1,25 @@
+Title: IBM Database maps will not compile after migration from SI 5.0 to SI 5.2.4 and Oracle 10g to Oracle 11g - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Database maps will not compile after migration from SI 5.0.0.8 to SI 5.2.4 and Oracle 10g to Oracle 11g. Attempting translation throws the error: "ORA-01410 invalid ROWID. 
+
+SYMPTOM
+"ORA-01410 invalid ROWID" when translation runs.
+
+
+CAUSE
+This seems to be an Oracle 11g driver issue, and/or possibly an issue with the Oracle 11g compatibility mode setting. 
+
+There are differences in the Oracle 10g and 11g versions in the use of ROWIDs. ROWIDs are actual physical addresses of database rows on the physical disk . ROWIDs are not automatically used or provided with the 11g driver. The mapper sends the SQL query to Oracle, which returns a result set, which the driver or mapper attempts to 'walk through' by ROWID . Since no ROWIDs are returned (or not returned in the correct format) we get the error "ORA-01410 invalid ROWID". Calls using the third-party Toad utility or the Lightweight JDBC Adapter do not error because they simply display the result set; they do not walk through it or access the ROWIDs. If the Toad query is altered to include the ROWID, (select *,rowid from <table>, or select rowid from <table>), then the same error will likely be seen. .It is possible that setting the "compatibility mode" on the 11g database to 10, would fix this. It is also possible that this is an 11g driver issue. 
+
+
+DIAGNOSING THE PROBLEM
+"ORA-01410 invalid ROWID" when translation runs
+
+
+
+RESOLVING THE PROBLEM
+In the one case that we have seen with the issue, the map worked fine in the 5.2.4 Production environment after compilation using the Oracle instant client 10.2.0.4 driver.

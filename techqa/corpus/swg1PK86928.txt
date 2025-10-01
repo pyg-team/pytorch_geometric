@@ -1,0 +1,168 @@
+Title: IBM PK86928: No GC data appearing on MS because the silent config script did not comment out the unused TEMAGCCollector.log.path setting - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The TEMAGCCollector.log.path is not commented out when
+   configuring the DC, so it is not possibile to have a
+   non-hardcoded path for the gc log.
+   
+   A new property has been added for the silent config:
+   
+   -V SET_TGCCLP="false" - means that TEMAGCCollector.log.path will
+                           stay commented out, thus the path to gc
+                           logs won't be hard-coded.
+   
+   When it's not specified, configurator will uncomment
+   TEMAGCCollector.log.path, so it's not necessary to specify -V
+   SET_TGCCLP="true".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If no GC data is appearing on the Managing Server console, you
+   can either comment out the TEMAGCCollector.log.path setting in
+   the kwjcd.properties file and recycle the JVM, or you can set
+   the TEMAGCCollector.log.path to the same value as -Xverbosegclog
+   in the WebSphere GenericJVMArguments and recycle the JVM.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Those who want to not hard code verbose GC
+   * path and use WebSphere variables in the path.  Also, users
+   * who want to specify rolling verbose GC files and some
+   * WebSphere Portal users.
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   * Users need a way to comment out TEMAGCCollector.log.path
+   * during silent configuration to make use of -Xverbosegclogpath
+   * JVM variable (or equivalent in HotSpot and other JVMs). This
+   * is required when rolling GC files are specified, for example.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A new silent config option parameter has been added to uncomment
+   the TEMAGCCollector.log.path in the kwjdc.properties file.  The
+   parameter is:
+   
+   -V SET_TGCCLP="false"
+   
+   The "false" value will comment the TEMAGCCollector.log.path
+   property.
+   
+   When it's not specified, configurator will uncomment
+   TEMAGCCollector.log.path, so it's not necessary to specify -V
+   SET_TGCCLP="true".
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+      | interim fix | 6.1.0.5-TIV-ITCAMfWAS_MP-IF0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Manually comment the TEMAGCCollector.log.path in the
+   <DC_HOME>/runtime/<server>/<server>.kwjdc.properties file.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK86928
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * REPORTED COMPONENT ID
+   5724L6200
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-19
+   
+   
+ * CLOSED DATE
+   2009-09-26
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * FIXED COMPONENT ID
+   5724L6200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

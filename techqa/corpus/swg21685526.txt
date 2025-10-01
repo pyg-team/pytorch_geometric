@@ -1,0 +1,46 @@
+Title: IBM Security Bulletin: IBM WebSphere MQ vulnerability in CHLAUTH with adopted credentials (CVE-2014-4793) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There is a vulnerability in IBM WebSphere MQ 8.0.0.0 where CHLAUTH rules do not correctly block client connections that match a rule after adopting context using CONNAUTH. 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2014-4793 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-4793]
+CVSS Base Score: 3.5
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/95208 [http://xforce.iss.net/xforce/xfdb/95208] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:S/C:N/I:P/A:N)
+
+IBM WebSphere MQ could allow an authenticated attacker to bypass security restrictions and access a queue manager that they should not have privileges for.
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM WebSphere MQ V8.0.0.0
+
+REMEDIATION/FIXES
+For IBM WebSphere MQ for distributed platforms, apply Fix Pack 8.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg21682233] or later. 
+
+For IBM WebSphere MQ for z/OS apply PI19991 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI19991].
+
+WORKAROUNDS AND MITIGATIONS
+None known
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 01 October 2014 - Original version published.
+09 October 2014 - Added link to z/OS fix 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21686201]

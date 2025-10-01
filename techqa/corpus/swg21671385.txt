@@ -1,0 +1,19 @@
+Title: IBM Virtualdomain connectivity and port bonding - United States
+
+Text:
+bond0; virtualdomain; transport; failover; bonding; ipconfig TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ Warning: Failed to send on transport layer found in file CRivObjSockServer.cc. virtualdomain does not connect to remote server 
+
+ENVIRONMENT
+ipconfig -a on primary server shows multiple IP addresses to use. An interface is also listed as bond0 or an interface that is bonded.
+
+DIAGNOSING THE PROBLEM
+Review the ServiceData.cfg file in $NCHOME/etc/precision to see which IP addresses are used by ITNM. Check both dynamic NO or YES processes
+
+RESOLVING THE PROBLEM
+ncp_virtualdomain is started and that dynamic: NO entry is copied from ServiceData.cfg so it is the same in both primary and backup servers. But in a situation where ipconfig -a shows an entry of 'bond' or 'bond0' this may not be the right IP address. Where port bonding is used, check with your system administrator to see if any of these IP addresses are blocked or firewalled between servers. It is valid to edit the IP addresses in ServiceData.cfg to use IPs that allow communication between servers. If IPs are changed in this file, make the change in both primary and backup ITNM servers in the ServiceData.cfg file.

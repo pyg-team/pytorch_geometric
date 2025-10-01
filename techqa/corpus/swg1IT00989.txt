@@ -1,0 +1,172 @@
+Title: IBM IT00989: COREDUMP ON AIX AFTER HTTPREQUEST TIMEOUT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On AIX only, memory corruption can occur after an exception
+   condition, such as a timeout, in the HTTPRequest node.
+   
+   This then causes a coredump and a restart of the integration
+   server. The stack in the coredump can vary, but is most likely
+   to show a segfault following a native throw:
+   
+   ImbWSRequestNode.ImbBufferedStringBase
+    char,std::char_traits,unsigned
+    short,24,128>::__dftdt()(??) at 0x900000016273b40
+   invokedtr.__Invoke__Destructor() at 0x9000000006ef9e4
+   __DoThrowV6() at 0x9000000006f2dcc
+   ImbRecoverableException::throwThis()(??) at 0x900000000f026d0
+   ImbWSRequestNode::evaluate(const ImbMessageAssembly&,const
+    ImbDataFlowTerminal*)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of IBM Integration Bus V9.0 on AIX, who use the
+   HTTPRequest node.
+   
+   
+   Platforms affected:
+   AIX
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   On AIX only, memory corruption can occur after an exception
+   condition, such as a timeout, in the HTTPRequest node.
+   
+   This then causes a coredump and a restart of the integration
+   server. The stack in the coredump can vary, but is most likely
+   to show a segfault following a native throw:
+   
+   ImbWSRequestNode.ImbBufferedStringBase
+    char,std::char_traits,unsigned
+    short,24,128>::__dftdt()(??) at 0x900000016273b40
+   invokedtr.__Invoke__Destructor() at 0x9000000006ef9e4
+   __DoThrowV6() at 0x9000000006f2dcc
+   ImbRecoverableException::throwThis()(??) at 0x900000000f026d0
+   ImbWSRequestNode::evaluate(const ImbMessageAssembly&,const
+    ImbDataFlowTerminal*)
+   
+   There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0. For details
+   visit
+   http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.e
+   tools.mft.doc/bb23814_.htm [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/bb23814_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product no longer encounters memory corruption following an
+   exception in the HTTPRequest node.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v9.0       9.0.0.3
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT00989
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION BUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0530
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-04-11
+   
+   
+ * CLOSED DATE
+   2014-07-31
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION BUS
+   
+   
+ * FIXED COMPONENT ID
+   5724J0530
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

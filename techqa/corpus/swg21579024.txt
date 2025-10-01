@@ -1,0 +1,49 @@
+Title: IBM ITCAM for Transactions - AMC - Agent Status - United States
+
+Text:
+AMC; configuration; "agent status"; 71AMCON-RPTG; 71AMCON-WV; 71AMCON-TS; 71GEN-TS TECHNOTE (FAQ)
+
+QUESTION
+ Why does the AMC Configuration workspace contain information in the Agent Status view for a product we haven't installed? 
+
+ANSWER
+The Agent Status view lists the status of the following ITCAM for Transaction agents based on the Product Codes found in the Managed System List:
+
+Client Response Time - T4
+Web Response Time - T5
+Robotic Response Time - T6
+Transaction Collector - TU
+Transaction Reporter - TO
+Internet Service Monitoring - IS
+
+If any of these product codes are present in the Managed System List they will be displayed in the Agent Status view.
+
+Product Codes are created for Universal Agent Managed Systems based the first 2 characters after the ":" in the Full Managed System name.
+
+For example:
+"ISISLOGS00" is the Managed System name for a set of log files being monitored by the UA FileDP. 
+
+"listsystems" output shows:
+
+Managed System Name Product Code Version Status
+AUAHOST:ISISLOGS00 IS 06.00.00.00 Y 
+
+However, "cinfo" output for the same host doesn't have anything for Product Code IS.
+
+The presence of this entry as a Managed System causes the entry to appear in the AMC Agent Status view.
+
+If the full UA Managed System Name includes ":T3xxxxx", with a status of "Y", this will be treated as an active "T3" agent that can result in AMC/AMCE problems as described in this blog:
+
+ITCAM for Transactions - AMC - Best practices and pitfalls [https://www.ibm.com/developerworks/community/blogs/0587adbc-8477-431f-8c68-9226adea11ed/entry/ITCAM_for_Transactions_AMC_Best_practices_and_pitfalls?lang=en]
+
+To avoid this conflict you should try to use Universal Agent Managed System names where the first 2 characters are not "T3" or the same as the Product Codes listed above.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfT
+TCAMfT
+CAMfT
+ITCAMfTx
+TCAMfTx
+CAMfTx

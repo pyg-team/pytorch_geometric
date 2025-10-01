@@ -1,0 +1,158 @@
+Title: IBM PI77948: CANNOT MODIFY EXISTING LINK WITH TEXTBOX.IO - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.5.0.0 and V9.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using the Textbox.io rich text editor, an existing link to
+   
+   either an external link or a WCM item cannot be modified (by
+   
+   selecting or placing the cursor inside the link text within the
+   rich text field and then clicking on the Insert Link button).
+   
+   
+   
+   When the Insert Link dialog is launched, only the existing link
+   text value is preserved on the link form. All the remaining
+   
+   link properties (such as Link description, Link target and
+   selected content) are empty.
+   
+   
+   Further, new or updated values entered into these link property
+   fields will not be applied to the existing link.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually edit the link anchor tag using the Code view of the
+   rich text editor or alternatively remove the existing link and
+   then insert an entirely new link.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Using the Textbox.io rich text editor, an existing link to
+   either an external link or a WCM item cannot be modified (by
+   selecting or placing the cursor inside the link text within the
+   rich text field and then clicking on the Insert Link button).
+   
+   
+   
+   When the Insert Link dialog is launched, only the existing link
+   text value is preserved on the link form. All the remaining link
+   properties (such as Link description, Link target and selected
+   content) are empty.
+   
+   
+   Further, new or updated values entered into these link property
+   fields will not be applied to the existing link.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 14 (PI73835 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI73835]) for Portal 8.5
+   and 9.0 available from Fix Central:
+   
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI73835
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI77948
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-09
+   
+   
+ * CLOSED DATE
+   2017-06-27
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

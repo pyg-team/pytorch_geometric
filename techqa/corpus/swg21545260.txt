@@ -1,0 +1,48 @@
+Title: IBM Yantra Console : increase / change Session timeout variable : "Your session has timed out" - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Yantra Console : increase / change Session timeout variable : "Your session has timed out" 
+
+SYMPTOM
+PART: Yantra DCM 
+OS: Solaris - 2.8
+DATABASE: Oracle - 8.1.7
+WEB SERVER: WebLogic - 6.1 SP3
+WEB BROWSER: Internet Explorer - 5.5 sp2
+
+Yantra Console : increase / change Session timeout variable : "Your session has timed out"
+
+
+RESOLVING THE PROBLEM
+For setting the session timeout variable the following steps need to be carried out:
+Launch Weblogic Server Console
+Launch the yantra web applications using the navigator for. eg. yantra>deployments>web applications>yfs
+click on yfs and then click on the Edit Web Application Descriptor - this will launch a window with the descriptor properties 
+
+select session config from the explorer bar on the left...this will show the session timeout value...which by default is 30 = 30 minutes
+
+SESSION TIMEOUT is The number of minutes after which sessions in this Web Application expire. The value set in this element overrides the value set in the TimeoutSecs parameter of the Session Descriptor in the WebLogic-specific deployment descriptor weblogic.xml, unless one of the special values listed here is entered. for eg. if 15 is entered here it means 15 minutes is the session timeout value.
+Special Values for Session Timeout mean
+Special values:
+-2 = Use the value set by TimeoutSecs in Session Descriptor 
+-1 = Sessions do not timeout. The value set in Session Descriptor is ignored
+
+select WebApp Ext/session descriptor from the explorer bar on the left..one of the values shown will be Timeout Secs..which by default is 3600
+Timeout Secs:
+Sets the time, in seconds, that WebLogic Server waits before timing out a session, where x is the number of seconds between a session's activity.
+Minimum value is 1, default is 3600, and maximum value is integer MAX_VALUE.
+On busy sites, you can tune your application by adjusting the timeout of sessions. While you want to give a browser client every opportunity to finish a session, you do not want to tie up the server needlessly if the user has left the site or otherwise abandoned the session.
+This parameter can be overridden by the session-timeout element (defined in minutes) in web.xml. (as has been specified above)
+
+
+
+HISTORICAL NUMBER
+ PRI48735 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact

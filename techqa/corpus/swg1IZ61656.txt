@@ -1,0 +1,149 @@
+Title: IBM IZ61656: XS:ANYTYPE ELEMENTS WITH HEXBINARY INPUT CANNOT BE ALTERED IN BPC EXPLORER - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 3 (6.2.0.3) [http://www-01.ibm.com/support/docview.wss?uid=swg24027123]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You cannot work with a message that contains a xs:anytype
+   element with
+   hexBinary content in the BPC Explorer. For example, if you want
+   to
+   restart an activity whose input message has such a structure,
+   you are
+   not able to fix the message with the BPC Explorer.
+   The problem is due to the fact that BPC Explorer first shows a
+   form view
+   that distorts the hexBinary value. If the user switches to the
+   source
+   view, the distorted values from the forms view are still shown.
+   The fix will make sure that the user can switch to the source
+   view and
+   fix the message there.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  You cannot work with a message that contains a xs:anytype
+   element with
+   hexBinary content in the BPC Explorer. For example, if you want
+   to
+   restart an activity whose input message has such a structure,
+   you are
+   not able to fix the message with the BPC Explorer.
+   The problem is due to the fact that BPC Explorer first shows a
+   form view that distorts the hexBinary value. If the user
+   switches to the
+   source view, the distorted values from the forms view are still
+   shown.
+   The fix will make sure that the user can switch to the source
+   view and fix the message there.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix will be included in WPS 6.2.0.3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ61656
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * REPORTED COMPONENT ID
+   5655FLW11
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-24
+   
+   
+ * CLOSED DATE
+   2009-10-21
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ61654
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * FIXED COMPONENT ID
+   5655FLW11
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

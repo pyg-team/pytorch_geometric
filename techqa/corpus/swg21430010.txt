@@ -1,0 +1,53 @@
+Title: IBM Steps to delete read only custom stage in Information Server 8.0.x - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I delete read only custom stage in Information Server 8.0.x ? 
+
+ANSWER
+note: In Information Server 8.1, custom read-only stages can be deleted from DataStage Designer by DataStage Administrator.
+.
+First Step is to find the right table name (they differ between database types and version)
+
+
+On Linux and Unix
+
+go to: ../IBM/InformationServer/ASBServer/bin/out/src/<db type used for xmeta>/sql
+
+type: grep DSStageType DataStageX.xmetagen.sql | grep "CREATE TABLE"
+
+
+On Windows:
+
+Open file: ..\IBM\InformationServer\ASBServer\bin\out\src\<db type used for xmeta>\sqlDataStageX.xmetagen.sql in your favorite text editor and search for this string:
+
+_DSStageType
+
+
+-> this should give you the table create statement that tells us the system specific table name where the Stage Type Information is stored e.g.
+
+CREATE TABLE DataStageX_xmetagen_DSStageTypec2e76d84
+
+
+Next we need to verify if custom Stage is set to read-only and we use the table name discovered in previous step.
+
+(same for Linux, Unix and Windows)
+
+a) Connect to your XMETA repository using your SQL Query tool e.g. DB2, SQLPlus etc.
+
+b) run this command: SELECT DSNameSpace_xmeta, NAME_XMETA, ISSYSTEM_XMETA FROM <table name> WHERE NAME_XMETA = '<custom stage name>'
+
+All returned Stage Types records that have ISSYSTEM_XMETA = 1 are read-only
+
+
+Finally we can turn off the read only flag, by running the following update statement:
+
+update <table name> SET ISSYSTEM_XMETA=0 where (NAME_XMETA = '<custom stage name>' AND DSNAMESPACE_XMETA = '<MYSERVER>:<MYPROJECT>')
+
+columns explained:
+
+DSNameSpace_xmeta = DataStage server name and project name separated by colon
+NAME_XMETA = Stage Type Object Name
+ISSYSTEM_XMETA = read only flaf (1 or 0)

@@ -1,0 +1,28 @@
+Title: IBM Error "Unable to open module..." seen after an IBM rational DOORS database archive restore - United States
+
+Text:
+archive; restore; unix; solaris; ddbs; doorsd; file; directory; module; unable; open; .zip; .dtc TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+Why are the modules I restore and try to archive on my unix server's new DOORS database failing? After I restore a module and try to open it, I get an error saying: "Unable to open module '/module/name' No such file or directory $SERVERDATA/.../...*.dtc ", and when I try to archive anything I get an error saying: "No Such File or directory $SERVERDATA/xxxxxxxx.zip" 
+
+SYMPTOM
+After restoring a module, opening it results in an error saying: "Unable to open module '/module/name' No such file or directory $SERVERDATA/.../...*.dtc ", 
+
+When archiving anything an error is displayed indicating: "No Such File or directory $SERVERDATA/xxxxxxxx.zip"
+
+
+
+CAUSE
+If permissions are set properly on $DOORSHOME and $SERVERDATA as the install manual documents, the issue will be because there are missing files in the Rational DOORS database server installation which are needed by the archive/restore process. 
+
+
+
+RESOLVING THE PROBLEM
+Check the $DOORSHOME/etc for the following two files: 
+
+ * zip 
+ * unzip
+
+
+The problem arises when these two files are missing. The solution is to reinstall the Rational DOORS database server and verify that these files are created.

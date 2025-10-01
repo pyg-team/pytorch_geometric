@@ -1,0 +1,122 @@
+Title: IBM PI19083: ENABLE SELECTING 'WIDE LISTING' OPTION FOR 'COMPARE' IN THE FM PLUGIN. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Client, using the File Manager plug-in under RDz, desires to
+   generate a Compare report that is not a 'wide report'.  They are
+   able to do this under ISPF, but can't under RDz.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All File Manager Plugin Users.               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 'Wide Listing' options is not available *
+   *                       in FM plugin Compare wizard.           *
+   ****************************************************************
+   * RECOMMENDATION: Install FM plugin V11, 11.1.12 or above.     *
+   ****************************************************************
+   'Wide Listing' feature on the 'Compare' panel in FM host is a
+   useful option to be added to the 'Compare' wizard in the FM
+   plugin.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  'Wide Listing' option added to the 'Compare' wizard in FM plugin
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI19083
+   
+   
+ * REPORTED COMPONENT NAME
+   FILE MANAGER Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5655W4700
+   
+   
+ * REPORTED RELEASE
+   B10
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-06-03
+   
+   
+ * CLOSED DATE
+   2014-06-23
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI21592 [http://www-01.ibm.com/support/docview.wss?uid=isg1PI21592] PI21593 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI21593]
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RB10 PSN
+   UP

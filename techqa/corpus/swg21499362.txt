@@ -1,0 +1,90 @@
+Title: IBM NullPointerException accessing friendly URL - United States
+
+Text:
+friendly URL; inactive page; NullPointerException; EJPEJ0070E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+You request a friendly URL and Portal does not serve the requested page.
+
+SYMPTOM
+During a request for a friendly URL, WebSphere Portal writes the following to SystemOut.log:
+Servlet E com.ibm.wps.engine.Servlet handleException EJPEJ0070E: An exception occurred while processing the request.
+java.lang.NullPointerException
+at com.ibm.wps.model.metadata.content.ContentMetaDataModelImpl.getCacheKey(ContentMetaDataModelImpl.java:114)
+...
+at com.ibm.wps.resolver.utils.Helper.setPathInfo(Helper.java:1469)
+at com.ibm.wps.resolver.friendly.cor.FriendlyResolver.resolvePathInfo(FriendlyResolver.java:543)
+... com.ibm.wps.resolver.portal.ResolvedPreprocessor.handleResolution(ResolvedPreprocessor.java:447)
+...
+at com.ibm.wps.engine.Servlet.doGet(Servlet.java:516)
+
+
+CAUSE
+The friendly URL resovled to an inactive page.
+
+
+DIAGNOSING THE PROBLEM
+Assuming the test case of requesting: 
+
+ 
+
+.../wps/portal/friendlyurl1 
+
+ 
+
+Export the configuration by using ExportRelease as input to XMLAccess. Search for: 
+
+
+<parameter name="com.ibm.portal.friendly.name" type="string" update="set"><![CDATA[friendlyurl1]]></parameter> 
+
+ 
+
+Also, inspect the export for: 
+
+<url-mapping-context ... label="friendlyurl1" ... 
+
+ 
+
+ 
+
+You may also recreate the problem with these traces enabled: 
+
+com.ibm.wps.resolver.*=all:com.ibm.wps.engine.*=all 
+
+ 
+
+The selection-node in the following handleResolution trace message indicates the objectid of the content-node to which the friendly URL resolves. This may help expedite your review of the exported configuration: 
+
+
+ResolvedPrepr 2 com.ibm.wps.resolver.portal.ResolvedPreprocessor handleResolution State after resolution: [...
+<root>
+<state type="navigational">
+<selection selection-node="6_IHCC18K0G89IE0IB4GGI3F2GA8"/>
+</state>
+</root>
+]
+...
+Servlet E com.ibm.wps.engine.Servlet handleException EJPEJ0070E: An exception occurred while processing the request.
+java.lang.NullPointerException
+at com.ibm.wps.model.metadata.content.ContentMetaDataModelImpl.getCacheKey(ContentMetaDataModelImpl.java:114)
+
+
+RESOLVING THE PROBLEM
+First, ensure only a single page resolves to this friendly URL. In other words, make sure that there are no conflicts between multiple friendly URL definitions or between a friendly URL definition and a URL mapping definition. 
+
+ 
+
+Second, ensure that whichever page resolves to this friendly URL is active:
+
+<content-node action="update" active="true" ...>
+...
+<parameter name="com.ibm.portal.friendly.name" type="string" update="set"><![CDATA[friendlyurl1]]></parameter>
+...
+</content-node>
+
+You may activate pages via the Manage Pages portlet or XMLAccess.
+
+Key point: An inactive page may not share a friendly URL with an active page. In such cases, the friendly URL could resolve to the inactive page, resulting in this NullPointerException.
+
+RELATED INFORMATION
+ Requirement for unique friendly URLs [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Working_with_pages_wp7]

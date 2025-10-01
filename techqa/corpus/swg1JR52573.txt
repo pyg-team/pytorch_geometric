@@ -1,0 +1,154 @@
+Title: IBM JR52573: CANNOT RESUBMIT SCA-TYPE FAILED EVENTS AFTER MIGRATING FROM IBM WEBSPHERE PROCESS SERVER V7 TO IBM BPM V8.5.5 - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.5.5.0-WS-BPM-IFJR52573 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Advanced&fixids=8.5.5.0-WS-BPM-IFJR52573&source=SAR]
+Version 8.5 Refresh Pack 6 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24039185]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you try to resubmit a SCA-type failed event in a migrated
+   IBM Business Process Manager (BPM) environment that uses the
+   previous version of the SCA bus names (SCA.SYSTEM.<cellName>.Bus
+   and SCA.APPLICATION.<cellName>.Bus), you see an exception
+   similar to the following exception:
+   
+   Failed event with ID 0A639FED82C6D8A2_93001169 could not be
+   resubmitted. The server returned: com.ibm.websphere.sib.
+   exception.SINotPossibleInCurrentConfigurationException:
+   CWSIC8007E: An exception was caught from the remote server with
+   Probe Id 3-008-0001. Exception: CWSIK0015E: The destination
+   sca/ExecuteTransactionV002 was not found on messaging engine
+   Advantage_SYS.Messaging.000-SCA.APPLICATION.Cell01.Bus...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The failed event manager tries to resubmit SCA-type failed
+   events by using the SCA application bus instead of the SCA
+   system bus. However, the SI destinations are defined on the SCA
+   system bus.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.5.0 that ensures the failed
+   event manager uses the SCA system bus instead of the SCA
+   application bus to resubmit SCA-style failed events.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR52573:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR52573, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR52573
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-12
+   
+   
+ * CLOSED DATE
+   2015-04-10
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

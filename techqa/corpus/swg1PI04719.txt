@@ -1,0 +1,188 @@
+Title: IBM PI04719: DEADLOCK IN UPDATING LRS.JOBSTATUS TABLE. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.2: WebSphere Application Server V8.5.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037250]
+8.0.0.4: WebSphere Extended Deployment Compute Grid V8.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24037623]
+8.5.5.3: WebSphere Application Server V8.5.5 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038133]
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.0.0.5: WebSphere Extended Deployment Compute Grid V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24040426]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Deadlock in updating LRS.JOBSTATUS table.  The scheduler logs
+   shows the following error:
+   
+   [10/15/13 7:05:36:605 CDT] 0000006c SchedulerSing E
+   CWLRB3020E: [Long Running Job Scheduler
+   cell_cgpilot01b/pfgdsmbatchq701/batch0LRS_q701] failed:
+   com.ibm.db2.jcc.am.SqlTransactionRollbackException: DB2 SQL
+   Error: SQLCODE=-911, SQLSTATE=40001, SQLERRMC=68, DRIVER=3.61.75
+    at com.ibm.db2.jcc.am.ed.a(ed.java:663)
+    at com.ibm.db2.jcc.am.ed.a(ed.java:60)
+    at com.ibm.db2.jcc.am.ed.a(ed.java:127)
+    at com.ibm.db2.jcc.am.gn.c(gn.java:2554)
+    at com.ibm.db2.jcc.t4.cb.s(cb.java:967)
+    at com.ibm.db2.jcc.t4.cb.k(cb.java:404)
+    at com.ibm.db2.jcc.t4.cb.a(cb.java:61)
+    at com.ibm.db2.jcc.t4.q.a(q.java:50)
+    at com.ibm.db2.jcc.t4.sb.b(sb.java:228)
+    at com.ibm.db2.jcc.am.hn.mc(hn.java:2924)
+    at com.ibm.db2.jcc.am.hn.b(hn.java:3873)
+    at com.ibm.db2.jcc.am.hn.ec(hn.java:720)
+    at com.ibm.db2.jcc.am.hn.executeUpdate(hn.java:703)
+    at com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement
+   .pmiExecuteUpda te(WSJdbcPreparedStatement.java:1152)
+    at com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement
+   .executeUpdate( WSJdbcPreparedStatement.java:793)
+    at com.ibm.ws.batch.JobStatusStoreImpl.update
+   (JobStatusStoreImpl.ja va:194)
+    at com.ibm.ws.batch.SchedulerSingleton.updateJobStatus
+   (SchedulerSin gleton.java:5376)
+    at
+   com.ibm.ws.batch.PGCJobStatusProcessor._updateJobStatusInDB
+   (PGCJ obStatusProcessor.java:229)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  WebSphere Compute Grid V8 and WebSphere     *
+   *                  Application Server V855 users of the batch  *
+   *                  function.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Job Scheduler JobStatus table could     *
+   *                      not be updated due to a deadlock        *
+   *                      condition.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When attempting to update the Job Scheduler JobStatus table,
+   the update fails and the following error is shown in the logs:
+   [10/15/13 7:05:36:605 CDT] 0000006c SchedulerSing E
+   CWLRB3020E: [Long Running Job Scheduler
+   cell_cgpilot01b/pfgdsmbatchq701/batch0LRS_q701] failed:
+   com.ibm.db2.jcc.am.SqlTransactionRollbackException: DB2 SQL
+   Error: SQLCODE=-911, SQLSTATE=40001, SQLERRMC=68,
+   DRIVER=3.61.75
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  During a cancel or stop request, if an exception was received
+   in sending the request to the endpoint, the connection to the
+   JobStatus table was not being committed causing a lock to be
+   held open on that table and preventing further updates.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   WebSphere Compute Grid fixpack 8.0.0.4 and WebSphere
+   Application Server fixpack 8.5.5.2. Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?uid=swg27022998 or
+   http://www.ibm.com/support/docview.wss?uid=swg27036319 [http://www.ibm.com/support/docview.wss?uid=swg27036319]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI04719
+   
+   
+ * REPORTED COMPONENT NAME
+   WXD COMPUTE GRI
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9301
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-24
+   
+   
+ * CLOSED DATE
+   2014-04-07
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WXD COMPUTE GRI
+   
+   
+ * FIXED COMPONENT ID
+   5725C9301
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

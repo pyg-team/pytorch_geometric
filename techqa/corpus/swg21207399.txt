@@ -1,0 +1,90 @@
+Title: IBM Upgrading information for CICS when changing releases of CICS, z/OS, DB2 or IMS - United States
+
+Text:
+changing releases ; versions migrates migration migrating upgrades upgrading installing new version ; installation ; CICS TS 5.4 5.3 5.2 5.1 4.2 4.1 ; zos ; z/OS 1.13 2.1 2.2 ; DB2 9.1 10.1 11.1 ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 R700 700 R000 000 HCI7000 R701 701 R100 100 HCI7100 5655Y0401 5655-Y04 5655Y04; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 R700 700 R000 000 HCI7000 R701 701 R100 100 HCI7100 5655Y0401 5655-Y04 5655Y04 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You would like to know what problems you might encounter when you upgrade from one release of CICS or CICSPlex SM to another. You also want to know what CICS problems you might encounter if you change to a new release of z/OS, DB2, or IMS. 
+
+RESOLVING THE PROBLEM
+Select the appropriate link for the product you are installing to be taken to the corresponding table. Then, click the search link to the right of the release of the product you are installing. 
+
+
+
+ * 
+ * CICS TS for z/OS upgrading information
+ * CICS TS for z/VSE upgrading information
+ * DB2 upgrading information
+ * IMS upgrading information
+ * z/OS upgrading information
+ * z13 or z14 upgrading information
+
+
+If you are upgrading from an old release, you should click the search links for ALL the intervening releases. For example, if upgrading from CICS TS 4.2 to 5.2 then you should click the search links to the right of "CICS Transaction Server for z/OS 5.1" and "CICS Transaction Server for z/OS 5.2". 
+
+
+
+
+
+
+
+
+
+
+
+
+CICS TS for z/OS upgrading information dW Answers posts Other content sources CICS Transaction Server for z/OS V5.4 Upgrade2CICS54 [https://developer.ibm.com/answers/topics/upgrade2cics54.html] KIXDCFCIC710 [http://www.ibm.com/support/search.wss?q=kixdcfcic710+OR+upgrade2cics54] CICS Transaction Server for z/OS V5.3 Upgrade2CICS53 [https://developer.ibm.com/answers/topics/upgrade2cics53.html] KIXDCFCIC700 [http://www.ibm.com/support/search.wss?q=kixdcfcic700+OR+upgrade2cics53] CICS Transaction Server for z/OS V5.2 Upgrade2CICS52 [https://developer.ibm.com/answers/topics/upgrade2cics52.html] KIXDCFCIC690 [http://www.ibm.com/support/search.wss?q=kixdcfcic690+OR+upgrade2cics52] CICS Transaction Server for z/OS V5.1 Upgrade2CICS51 [https://developer.ibm.com/answers/topics/upgrade2cics51.html] KIXDCFCIC680 [http://www.ibm.com/support/search.wss?q=kixdcfcic680+OR+upgrade2cics51] CICS Transaction Server for z/OS V4.2 Upgrade2CICS42 [https://developer.ibm.com/answers/topics/upgrade2cics42.html] KIXDCFCIC670 [http://www.ibm.com/support/search.wss?q=kixdcfcic670+OR+upgrade2cics42] CICS Transaction Server for z/OS V4.1 [/support/docview.wss?uid=swg21207399&amp;aid=1] KIXDCFCIC660 [http://www.ibm.com/support/search.wss?q=kixdcfcic660+OR+upgrade2cics41] 
+You should also look at the Detailed System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27006382] and the "Cross Product Dependencies" section in the PSP bucket [http://www.ibm.com/support/docview.wss?uid=swg21231874] of the product that you are upgrading. 
+
+
+Back to top
+
+
+
+
+
+CICS TS for z/VSE upgrading information dW Answers posts Other content sources CICS Transaction Server for z/VSE V2.2 Upgrade2CICS22 [https://developer.ibm.com/answers/topics/upgrade2cics22.html] KIXDCFCIC22 [http://www.ibm.com/support/search.wss?rs=1083&q=kixdcfcic22+OR+upgrade2cics22] CICS Transaction Server for z/VSE V2.1 Upgrade2CICS21 [https://developer.ibm.com/answers/topics/upgrade2cics21.html] KIXDCFCIC21 [http://www.ibm.com/support/search.wss?rs=1083&q=kixdcfcic21+OR+upgrade2cics21] CICS Transaction Server for VSE/ESA V1.1.1 Upgrade2CICS111 [https://developer.ibm.com/answers/topics/upgrade2cics111.html] KIXDCFCIC411 [http://www.ibm.com/support/search.wss?rs=1083&q=kixdcfcic411+OR+upgrade2cics111] 
+Back to top
+
+
+
+
+
+DB2 upgrading information dW Answers posts Other content sources DB2 for z/OS V12.1 Upgrade2DB2121 [https://developer.ibm.com/answers/topics/upgrade2db2121.html] KIXDCFUDB12 [http://www.ibm.com/support/search.wss?q=kixdcfudb12+OR+upgrade2db2121] DB2 for z/OS V11.1 Upgrade2DB2111 [https://developer.ibm.com/answers/topics/upgrade2db2111.html] KIXDCFUDB11 [http://www.ibm.com/support/search.wss?q=kixdcfudb11+OR+upgrade2db2111] DB2 for z/OS V10.1 Upgrade2DB2101 [https://developer.ibm.com/answers/topics/upgrade2db2101.html] KIXDCFUDB10 [http://www.ibm.com/support/search.wss?q=kixdcfudb10+OR+upgrade2db2101] 
+
+[http://www-1.ibm.com/support/search.wss?rs=1083&q=kixdcfzos18] 
+Back to top
+
+
+
+
+
+IMS upgrading information dW Answers posts Other content sources IMS V15.1 Upgrade2IMS151 [https://developer.ibm.com/answers/topics/upgrade2ims151.html] KIXDCFIMS151 [http://www.ibm.com/support/search.wss?q=kixdcfims151+OR+upgrade2ims151] IMS V14.1 Upgrade2IMS141 [https://developer.ibm.com/answers/topics/upgrade2ims141.html] KIXDCFIMS141 [http://www.ibm.com/support/search.wss?q=kixdcfims141+OR+upgrade2ims141] IMS V13.1 Upgrade2IMS131 [https://developer.ibm.com/answers/topics/upgrade2ims131.html] KIXDCFIMS131 [http://www.ibm.com/support/search.wss?q=kixdcfims131+OR+upgrade2ims131] 
+
+[http://www-1.ibm.com/support/search.wss?rs=1083&q=kixdcfzos18] 
+Back to top
+
+
+
+
+
+z/OS upgrading information See z/OS migration and installation page [http://www.ibm.com/systems/z/os/zos/installation/] contains links for the different releases of z/OS. The following table contains a link for the "upgrading search" that returns documents related to CICS and the specific release of z/OS, and a link to the Planning for Installation manual for each z/OS release. z/OS release dW Answers posts Other content sources Software requirements for running z/OS z/OS V2.3 Upgrade2zOS23 [https://developer.ibm.com/answers/topics/upgrade2zos23.html] KIXDCFZOS23 [http://www.ibm.com/support/search.wss?q=kixdcfzos23+OR+upgrade2zos23] z/OS V2.3 Planning for Installation [https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.3.0/com.ibm.zos.v2r3.e0zb100/toc.htm] z/OS V2.2 Upgrade2zOS22 [https://developer.ibm.com/answers/topics/upgrade2zos22.html] KIXDCFZOS22 [http://www.ibm.com/support/search.wss?q=kixdcfzos22+OR+upgrade2zos22] z/OS V2.2 Planning for Installation [https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.2.0/com.ibm.zos.v2r2.e0zb100/toc.htm] z/OS V2.1 Upgrade2zOS21 [https://developer.ibm.com/answers/topics/upgrade2zos21.html] KIXDCFZOS21 [http://www.ibm.com/support/search.wss?q=kixdcfzos21+OR+upgrade2zos21] z/OS V2.1 Planning for Installation [https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.1.0/com.ibm.zos.v2r1.e0zb100/toc.htm] 
+Back to top
+
+
+
+
+
+IMS upgrading information dW Answers posts Other content sources IBM z14 Upgrade2z14 [https://developer.ibm.com/answers/topics/upgrade2z14.html] Upgrade2z14 [http://www.ibm.com/support/search.wss?q=upgrade2z14] IBM z13 Upgrade2z13 [https://developer.ibm.com/answers/topics/upgrade2z13.html] Upgrade2z13 [http://www.ibm.com/support/search.wss?q=upgrade2z14] 
+[http://www-1.ibm.com/support/search.wss?rs=1083&q=kixdcfzos18] 
+Back to top
+
+RELATED INFORMATION
+ CICS Detailed System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27006382]
+Finding CICS PSP Buckets [http://www.ibm.com/support/docview.wss?uid=swg21231874 ]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/VSE CICS VSE CICS/TS CICS TS CICS Transaction Server CICSPlex SM CICSPlexSM CPSM CP/SM

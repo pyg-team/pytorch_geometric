@@ -1,0 +1,162 @@
+Title: IBM PK80022: CQDBCRAWLER.PL JAVA CORES WITH UNHANDLED EXCEPTION WHEN CQ SEARC H PROPERTIES XML FILE HAS MALFORMED CREDENTIALS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When configuring the CQ Search Properties XML file for ClearQues
+   t Full Text Search you must specify a valid CQ username, encrypt
+   ed password, and keyfile path.
+   
+   Failure to do so yields Java core dump and unhandled exception w
+   hen attempting to run cqdbcrawler.pl to index your CQ user datab
+   ase with Solr.
+   
+   In this scenario a valid CQ username and unencrypted password wa
+   s used -- which cannot be used for the CQ Search Properties File
+    without encrypted and a keyfile.
+   
+   Error:
+   03.02.2009 21:48:03 com.ibm.rational.clearquest.cqtscrawler.comm
+   on.ExtractionConfig logConfig
+   INFO: Data repository: ProblemManagerTest/test
+   03.02.2009 21:48:03 com.ibm.rational.clearquest.cqtscrawler.batc
+   h.BatchController ?init?
+   INFO: Initializing......
+   Unhandled exception
+   Type=Segmentation error vmState=0x00040000
+   J9Generic_Signal_Number=00000004 ExceptionCode=c0000005 Exceptio
+   nAddress=7EF9F589 ContextFlags=0001003f
+   Handler1=7EFB04E0 Handler2=7F057A80 InaccessibleAddress=00000000
+   EDI=0007FCE4 ESI=00000020 EAX=00000000 EBX=00176400
+   ECX=00000000 EDX=0007FC70
+   EIP=7EF9F589 ESP=0007FAEC EBP=0007FB4C
+   Module=C:\Program Files\IBM\RationalSDLC\Common\Java5.0\jre\bin\
+   j9vm23.dll
+   Module_base_address=7EF90000 Offset_in_DLL=0000f589
+   Target=2_30_20070420_12448_lHdSMR (Windows XP 5.1 build 2600 Ser
+   vice Pack 2)
+   CPU=x86 (1 logical CPUs) (0x7feec000 RAM)
+   JVMDUMP006I Processing Dump Event 'gpf', detail '' - Please Wait
+   .
+   JVMDUMP007I JVM Requesting System Dump using 'C:\Program Files\I
+   BM\RationalSDLC\ClearQuest\core.20090203.204804.9372.dmp'
+   JVMDUMP010I System Dump written to C:\Program Files\IBM\Rational
+   SDLC\ClearQuest\core.20090203.204804.9372.dmp
+   JVMDUMP007I JVM Requesting Snap Dump using 'C:\Program Files\IBM
+   \RationalSDLC\ClearQuest\Snap0002.20090203.204804.9372.trc'
+   JVMDUMP010I Snap Dump written to C:\Program Files\IBM\RationalSD
+   LC\ClearQuest\Snap0002.20090203.204804.9372.trc
+   JVMDUMP007I JVM Requesting Java Dump using 'C:\Program Files\IBM
+   \RationalSDLC\ClearQuest\javacore.20090203.204804.9372.txt'
+   JVMDUMP010I Java Dump written to C:\Program Files\IBM\RationalSD
+   LC\ClearQuest\javacore.20090203.204804.9372.txt
+   JVMDUMP013I Processed Dump Event 'gpf', detail ''.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  In Escalation RATLC01280558, the customer get a core crash
+   when do indexing, even it turns out to be a usage error, the
+   record crawler can do a better job to exit gracefully than
+   crash. This can be fixed by adding a new error message.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available in ClearQuest 7.1.0.2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK80022
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3600
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-04
+   
+   
+ * CLOSED DATE
+   2009-06-25
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724G3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSN
+   UP

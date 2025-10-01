@@ -1,0 +1,191 @@
+Title: IBM IV25853: ECLIPSE OSGI FAILED WITH JAVA.LANG.EXCEPTION AFTER APPLYING APAR IV25852 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: Test did not run:
+   testSignedContent10(org.eclipse.osgi.tests.security.SignedBundle
+   Test)
+   .
+   Stack Trace: java.lang.Exception: Test did not run:
+   testSignedContent10(org.eclipse.osgi.tests.security.SignedBundle
+   Test)
+    at
+   org.eclipse.core.tests.session.SessionTestRunner.run(SessionTest
+   Runner.java:307)
+    at
+   org.eclipse.core.tests.session.TestDescriptor.run(TestDescriptor
+   .java:87)
+    at
+   org.eclipse.core.tests.session.SessionTestSuite.runSessionTest(S
+   essionTestSuite.java:156)
+    at
+   org.eclipse.core.tests.session.SessionTestSuite.runTest(SessionT
+   estSuite.java:174)
+    at
+   org.eclipse.core.tests.session.SessionTestSuite.runTestSuite(Ses
+   sionTestSuite.java:192)
+    at
+   org.eclipse.core.tests.session.SessionTestSuite.runTest(SessionT
+   estSuite.java:177)
+    at
+   org.eclipse.core.tests.session.SessionTestSuite.run(SessionTestS
+   uite.java:129)
+    at
+   org.eclipse.core.tests.session.ConfigurationSessionTestSuite.run
+   (ConfigurationSessionTestSuite.java:198)
+    at
+   org.eclipse.test.EclipseTestRunner.run(EclipseTestRunner.java:37
+   6)
+    at
+   org.eclipse.test.EclipseTestRunner.run(EclipseTestRunner.java:20
+   9)
+    at
+   org.eclipse.test.CoreTestApplication.runTests(CoreTestApplicatio
+   n.java:35)
+    at
+   org.eclipse.test.CoreTestApplication.run(CoreTestApplication.jav
+   a:31)
+    at
+   org.eclipse.equinox.internal.app.EclipseAppContainer.callMethodW
+   ithException(EclipseAppContainer.java:587)
+    at
+   org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseApp
+   Handle.java:198)
+    at
+   org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.run
+   Application(EclipseAppLauncher.java:110)
+    at
+   org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.sta
+   rt(EclipseAppLauncher.java:79)
+    at
+   org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStart
+   er.java:369)
+    at
+   org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStart
+   er.java:179)
+    at
+   org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:619)
+    at org.eclipse.equinox.launcher.Main.basicRun(Main.java:574)
+    at org.eclipse.equinox.launcher.Main.run(Main.java:1407)
+    at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
+    at org.eclipse.core.launcher.Main.main(Main.java:34)
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  There are two situations will cause this situation:
+   1. Though the WeakReference key is GC'd, it is not on the
+   ReferenceQueue yet.
+   2. After asking for more space in the rehash, there is a GC
+   happened.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   6.0.0 SR11
+   6.0.1 SR4
+   .
+   WeakHashMap has been updated to prevent the problem.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV25853
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA CLASS LIBS
+   
+   
+ * REPORTED COMPONENT ID
+   620700130
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-07
+   
+   
+ * CLOSED DATE
+   2012-08-07
+   
+   
+ * LAST MODIFIED DATE
+   2012-11-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA CLASS LIBS
+   
+   
+ * FIXED COMPONENT ID
+   620700130
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

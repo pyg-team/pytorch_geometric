@@ -1,0 +1,32 @@
+Title: IBM How to Proxy SSL request from DataPower to Remote Proxy Server? - United States
+
+Text:
+Forward Proxy XMLFW MPGW CONNECT TUNNEL TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to configure an IBM WebSphere DataPower SOA Appliance Service to proxy an SSL request to a remote proxy server using the CONNECT method for SSL tunneling? 
+
+CAUSE
+Many common forward proxy servers expect requests in different formats depending on if they are proxying non-SSL or SSL requests.
+
+For example, a non-SSL request to be proxied may come in the form of GET hostname:port/URI.
+
+For SSL requests to be proxied, remote proxy servers are commonly configured to tunnel the request from the client to the backend server.
+
+In the SSL request scenario, remote proxy servers will typically expect a CONNECT request and then tunnel the SSL request from the client to the backend server.
+
+Users configuring DataPower may need a way to implement this CONNECT method for SSL tunneling to a remote Proxy Server.
+
+
+
+
+RESOLVING THE PROBLEM
+Non-SSL Proxy requests will work using either:
+
+a) an XML Firewall when configuring in the HTTP Options tab, where the user can configure the Proxy Host and Port
+
+b) a Multi-Protocol Gateway when configuring an HTTP Proxy Policy in the User Agent
+
+SSL Proxy requests will work using the CONNECT method for SSL Tunneling when using a Multi-Protocol Gateway when configuring in a User Agent's HTTP Proxy Policy.
+
+The XML Firewall service is not designed to use the CONNECT method for SSL Tunneling.

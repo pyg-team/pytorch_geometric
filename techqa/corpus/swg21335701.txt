@@ -1,0 +1,27 @@
+Title: IBM Error when trying to open or save a node on the Contributor website either through Internet Explorer - United States
+
+Text:
+Unknown Error TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error when trying to open or save a node on the Contributor website either through Internet Explorer or the Contributor Excel Addin. 
+
+RESOLVING THE PROBLEM
+ 
+
+Error Cause Resolving the problem Unknown error Invalid Access Manager certificate in the Contributor Admin console.
+
+To low of buffer settings in metabase.xml file.
+
+Didn't GTP application. Validate the Acess Manager certificate and GTP the application.
+
+Make changes in the metabase.xml file.
+
+GTP the application. 
+(Incorrectly upgrading from version 3.0 to 7.1 for example.) Check the versions of installed components on the webservers, application servers and web client. On website: unknown error. In PlanningErrorLog.csv: Not enough storage is available to complete this operation Dllhost process on the webserver not releasing memory properly. Restart the COM+ component and Planning Service (cer4).
+Check the remote connection method in CAC\Tools\Options is set to HTTP rather than COM. On website: unknown error. In PlanningErrorLog.csv: errors creating or reading the ADO component record. Outdated or corrupt MDAC. Upgrade to MDAC 2.8 and restarting the server resolves this issue. On website: unknown error. In PlanningErrorLog.csv: The user is disabled or A function was called out of sequence. User running COM+ was associated via OS signon to a Accman user that was disabled. The COM+ user was re-associated with another user, but this made the access manager certificate invalid for all applications. Validate the Acces Manager certificate and GTP the application. On website: unknown error. In PlanningErrorLog.csv: Database errors: Source: Microsoft OLE DB Provider for SQL Server Description: Timeout expired Details: nodestatetryWriteLock Restarting the sql server process allowed the resources to be available in the short term. Add more RAM, or free up memory using some other method for a long term solution. On website: unknown error. In PlanningErrorLog.csv: on the webserver there were Oracle errors indicating that it could not extend for tablespace users Not enough tablespace available on the database server. Have the dba increase the amount of space for the tablespace in question, whether add another datafile to it or increase the size of the existing data file.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Planning Contributor 8.1 
+HISTORICAL NUMBER
+ 1012296

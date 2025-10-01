@@ -1,0 +1,28 @@
+Title: IBM Tivoli Monitoring 6 JRE Update (6.X.X-TIV-ITM_JRE_CANDLEHOME-20160408 ) - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This fix updates the IBM® SDK, Java™ Technology Edition for the JRE installed in the IBM Tivoli Monitoring installation directory (e.g. CANDLEHOME) to newer levels specified below. 
+
+DOWNLOAD DESCRIPTION
+This fix updates the IBM SDK Java Technology Edition Java Runtime Environment (JRE) which is installed into the IBM Tivoli Monitoring installation directory (for example, CANDLEHOME). This is an embedded JRE which is used by various IBM Tivoli Monitoring components and agents. It is a different JRE than is used by the Tivoli Enterprise Portal Browser client or Java WebStart client.
+
+
+There are three fixes provided: 
+
+
+
+Fix Name Description 6.X.X-TIV-ITM_JRE_CANDLEHOME_5.16.14.00 This is a fix for IBM Tivoli Monitoring version 6.22.00.00 through 6.23.00.00. It contains the updated IBM Runtime Environment, Java Technology Edition, Version 5 SR16 FP14.. 6.X.X-TIV-ITM_JRE_CANDLEHOME_6.16.20.00 This is a fix for IBM Tivoli Monitoring version 6.23.01.00 through 6.23.05.00. It contains the updated IBM Runtime Environment, Java Technology Edition, Version 6 SR16 FP20.. 6.X.X-TIV-ITM_JRE_CANDLEHOME_7.09.30.00. This is a fix for IBM Tivoli Monitoring version 6.30.00.00 through 6.30.06.00. It contains the updated IBM Runtime Environment, Java Technology Edition, Version 7 SR 9 FP30. INSTALLATION INSTRUCTIONS
+Refer to the README file located in Fix Central for additional information.
+
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 6.X.X-TIV-ITM_JRE_CANDLEHOME-20160408 8 Apr 2016 English 1 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.2.3&function=fixId&fixids=6.X.X-TIV-ITM_JRE_CANDLEHOME-20160408] [ ] 
+PRODUCT ALIAS/SYNONYM
+ ITM

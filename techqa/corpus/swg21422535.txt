@@ -1,0 +1,38 @@
+Title: IBM Rational DOORS Web Access  is not able to login after 20 mins idle time, when using Rational Directory Server - United States
+
+Text:
+DOORS; 9.2.0.2; DWA; 1.3; invalid; user; password; idle TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote identifies a potential cause and resolution to the error: "Invalid user/password". Rational DOORS Web Access (DWA) is not able to login after 20 mins idle time, when using Rational Directory Server 
+
+SYMPTOM
+If DOORS Web Access was on idle stage more than 20 mins, then no users are able to logon to DOORS Web Access. DWA displays "Invalid user/password" messages
+
+
+CAUSE
+This issue has been identified and logged as APAR ID: PM07474 
+
+This issue has been fixed on DWA 1.4
+
+
+ENVIRONMENT
+Microsoft Windows Server 2003 
+
+ * IBM Rational DOORS 9.2.0.2 
+ * IBM Rational DOORS Web Access 1.3 
+ * IBM Rational Directory Server 5.1
+
+RESOLVING THE PROBLEM
+Currently the known workaround is: 
+
+ 1. Restart DOORS Interop Server. 
+ 2. Try to login on DOORS Web Access.
+
+
+Otherwise, upgrade to DWA 1.4
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Rational DOORS

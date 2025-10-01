@@ -1,0 +1,162 @@
+Title: IBM JR31562: CAN NOT EDIT BUSINESS PROCESS CHOREOGRAPHER EXPLORER SETTINGS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following link to "Business Process Choreographer Explorer
+   settings" in WPS v6.1 INFOCENTER document explains the BPC
+   Explorer settings can be edited.
+   
+   
+   To view this administrative console page, click Servers >
+   Clusters > cluster_name or Servers > Application servers >
+   server_name, then under Business Integration, expand Business
+   Process Choreographer, and click Explorer Configuration. To
+   create a new explorer configuration, click Add. To view an
+   existing configuration, click an instance name, or select an
+   instance and "CLICK EDIT."
+   
+   
+   No as such EDIT option in the bpc explorer configuration page
+   to edit the settings. We cannot modify the explorer
+   configurations and search result value through Administrative
+   Console in current versions.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The below workaround to modify the BPC explorer search result
+   limit value,
+   
+   Change the value of Parameter : maxListEntries from the web.xml
+   of bpcexplorer.war web application.
+   
+   Path to web.xml, where the bpcexplorer web application resides
+   in profile directory,
+   
+   <WPS_root>\profiles\<profile_name>\config\cells\<cellname>\appli
+   cations\<bpc explorer configration name>.ear\deployments\<bpcexp
+   lorer configration name>\bpcexplorer.war\WEB-INF\web.xml
+   
+   Here the <bpc explorer configration name> maybe (for example)
+   BPCExplorer_WPSNode_servre1.
+   
+   
+   Modify the value in <param-value> which just under the
+   <param-name>maxListEntries</param-name>
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Process Server 6.1.2.x  and        *
+   *                 earlier versions users who have configured   *
+   *                 Business Process Choreographer Explorer.     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: After configuring the Business          *
+   *                      Process Choreographer Explorer, it is   *
+   *                      not possible to use the                 *
+   *                      administrative console to change the    *
+   *                      value for "Explorer search result       *
+   *                      limit".                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When the user navigates to the Business Process Choreographer
+   Explorer configuration page using the administrative console
+   (click Servers->Clusters->cluster_name or Servers->Application
+   servers->server_name, then under Business Integration, expand
+   Business Process Choreographer, click Explorer Configuration,
+   then click on the name of the instance you want to modify) the
+   field "Explorer search result limit" is read-only, which means
+   that the user can't change the value that was set when the
+   instance was configured. This prevents the customer from using
+   the administrative console to tune this aspect of the
+   performance of the Explorer's database queries from the
+   default value  of 10000.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR31562
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   612
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-12-30
+   
+   
+ * CLOSED DATE
+   2009-03-10
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

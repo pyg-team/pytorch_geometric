@@ -1,0 +1,132 @@
+Title: IBM IZ54829: BPC EXPLORER FAILS TO VALIDATE ELEMENTS THAT ARE SET TO NIL - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 2 (6.2.0.2) [http://www-01.ibm.com/support/docview.wss?uid=swg24024407]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  BPC Explorer fails to validate elements that are set to nil
+   .
+   "If a message contains elements which are nillable, such a
+   message may contain elements that are set to nil. If such a
+   message is displayed, the BPC Explorer will render an empty
+   input field which is ok. But if the form is submitted, the BPC
+   Explorer still tries to validate the field although, it should
+   just keep the nil value in case that the user did not enter any
+   literal in the field. The fix will make sure that the field is
+   not validated if the user did not enter any value.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  If a message contains elements which are nillable, such a
+   message may contain elements that are set to nil.
+   If such a message is displayed, the BPC Explorer will render an
+   empty input field which is ok. But if the form is submitted,
+   the BPC Explorer still tries to validate the field although it
+   should just keep the nil value in case that the user did not
+   enter any literal in the field. The fix will make sure that the
+   field is not validated if the user did not enter any value.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  iFix available on top of V6201
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ54829
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * REPORTED COMPONENT ID
+   5655FLW11
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-07-08
+   
+   
+ * CLOSED DATE
+   2009-08-25
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * FIXED COMPONENT ID
+   5655FLW11
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

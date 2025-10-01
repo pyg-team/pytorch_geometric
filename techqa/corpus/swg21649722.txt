@@ -1,0 +1,37 @@
+Title: IBM The Independence Of Independent Security Groups - United States
+
+Text:
+TPAESECURITY TECHNOTE (FAQ)
+
+QUESTION
+ Do I want a group to be independent? 
+
+ANSWER
+Independence of security groups are one of the most misunderstood concepts in the Maximo/TPAE security construct. Why would you want a group to be independent? What are the implications of checking that check box?
+Basically, security group independence exists to allow you to configure site specific access to a set of applications, options or controls. If you are not configuring site specific rules you don’t need an Independent group. If you only have one site, you should never have Independent groups.
+
+By default, security groups combine with each other and business logic calculates the ‘highest’ level of access a user has for an application in a site. This means you can have sites in one group, approval limits in another group, some application options in a third group and other applications in a fourth group.
+
+Independent groups work differently. All the permissions that need to be combined need to exist in the one group. For example, an independent group without any site access will never see anything in any application other than system level applications. Also, it really doesn’t make sense to authorize an independent group for all sites – limiting the access by site is the reason these groups exist and if you are adding business logic processing every time you use an independent group as it is evaluate outside of the ‘regular’ security group combining.
+
+For example, if a user is a member of three non-independent groups where
+
+Group 1 is authorized for all sites and all options for the Work Order application
+
+Group 2 is authorized for all sites and all options for the Purchase Order application
+
+Group 3 is authorized for all sites an all options for the Asset application
+
+The security logic will need to search through the MAXGROUP, SITEAUTH and APPLICATIONAUTH tables to figure out what access the logged in user should get. In this scenario, when it evaluates Group 1 it finds that the group is authorized for all sites on the first search of the MAXGROUP table and the SITEAUTH table is never searched. The APPLICATIONAUTH table would be searched three times – once for each group. 4 total searches.
+
+If the groups were independent and configured as follows:
+
+Group 1 is authorized for all sites and all options for the Work Order application
+
+Group 2 is authorized for all sites and all options for the Purchase Order application
+
+Group 3 is authorized for all sites an all options for the Asset application
+
+Again the security logic would search the same tables – MAXGROUP, SITEAUTH and APPLICATIONAUTH. MAXGROUP would need to be searched three times – once for each group – and APPLICATIONAUTH would be searched three times. 6 total searched - There is more processing for the same end user access result.
+
+There is one exception to the combining rules for Independent groups. The EVERYONE group (or whatever group your organization has identified as the group for all users) always combines with all groups, even Independent ones. This is because there is product business logic configured in the authorizations in this group. Bear this in mind if you are adding your own authorizations to this group – they will be reflected in permissions applied from other Independent groups.

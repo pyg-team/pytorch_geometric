@@ -1,0 +1,36 @@
+Title: IBM Steps to upgrade IBM Cognos Content Store using database backup - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What would be one of the easier ways to upgrade my IBM Cognos environment to the new version that would be using the same configuration? 
+
+ANSWER
+Use a database backup and allow the new IBM Cognos environment to upgrade the content during startup.
+1 - Stop services on the original environment. Have your DBA do a back up of the existing content store to be safe.
+
+2 - Run the DB MakeConsistent script against the IBM Cognos content store database. 
+
+ * Simply replace [database] with the option relevant for the Content Store: DB2, Derby, Oracle, SQL Server or Sybase. If using IBM DB2, the script will be:
+   Windows: <cognos_install>\configuration\schemas\content\db2\dbMakeConsistent_db2.sql
+   UNIX: <cognos_install>/configuration/schemas/content/db2/dbMakeConsistent_db2.sql
+
+
+3 - Do another backup of the content store database. 
+
+4 - Restore the back up database, made in step 3, to a new database. 
+
+5 - Configure the new IBM Cognos environment to point to that restored database, from step 4, and test the connection to be sure it works. 
+
+6 - Run the NC drop script against the IBM Cognos content store database.  * Simply replace [database] with the option relevant for the Content Store: DB2, Derby, Oracle, SQL Server or Sybase. If using IBM DB2, the script will be:
+   Windows: <cognos_install>\configuration\schemas\delivery\db2\NC_DROP_db2.sql
+   UNIX: <cognos_install>/configuration/schemas/delivery/db2/NC_DROP_db2.sql
+
+
+7 - Start the services on the new environment. 
+
+NOTE*** When prompted for whether you would like to upgrade or not, you should do so, however this is not a must. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Business Intelligence

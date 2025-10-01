@@ -1,0 +1,191 @@
+Title: IBM IZ12294: RECONCILIATION WITH A FILTER BY AD ADAPTER REGISTERS DUPLICATED ACCOUNT ENTRY IN ITIM SERVER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  **********************************************
+   **********************************************
+   Title: Reconciliation with a filter by AD adapter registers
+   duplicated account entry in ITIM server
+   
+   Problem Description:
+   User directly changed an attribute of AD account on AD/Windows
+   after performing full reconciliation.
+   Then he tried to reconciliate the changed AD account using the
+   changed attribute value for filter.
+   He expected that the account data gets replaced with the new
+   data on TIM server, but the recon created one more extra AD
+   account that is having the same name.
+   The original AD account entry still has the old data for the
+   attribute, and the AD account newly added by the recon has the
+   new data.
+   
+   Can Customer Recreate: Yes, and Japan L2 duplicated.
+   
+   ITIM Server Version - 4.6 with FP61 + IF 62 (Latest as of today)
+   Agent Version - AD Adapter V4.6.20          (Latest as of today)
+   
+   Agent Environment
+   Operating System : Windows 2003
+   
+   Desired Behavior:
+   Recon should not create extra duplicated account.
+   
+   Steps to Duplicate:
+   1) Create a role
+   2) Create a service for AD
+   3) Create a provisioning policy
+      - Set the role and the service
+   4) Create a person, then set the role so that he will have AD
+      account.
+   5) Set "XXX" to Title attribute of his AD account on ITIM GUI.
+   6) Change Title attribute to "YYY" on AD.
+   7) Recon the changed AD account using (Title=YYY) filter.
+   8) Search AD account using the account name.
+      Two AD accounts will be listed.
+      - One is the original account that is tied to the person. The
+        changed attribute still has the original data - "XXX" in
+        this case.
+      - The other is account registered by the recon, and it
+        doesn't tied to the person. The changed attribute has the
+        new data - "YYY" in this case.
+   
+   **********************************************
+   **********************************************
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No work around available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This is being closed as a USER ERROR.
+   L3 investigated this issue and found that the problem as
+   described is a USER ERROR and ITIM is working correctly.
+   Basically, when you make modifications to any of the attributes
+   including "ou" "logonprofile", and "title"outside of ITIM, the
+   results will be unpredictable.
+   The scenario described is where the customer is using filtered
+   reconciliations to partition the account data for a resource
+   (based on the "title" attribute value in this case). Plus the
+   customer is then manually changing the "title" attribute value
+   for one or more accounts outside of ITIM, so that the account is
+   moved into a different filtered subset than it was in the last
+   time ITIM reconciled it.
+   Consequently, the next time an ITIM reconciliation is run, the
+   account is now in a different partitioned set. This will of
+   course either result in ITIM creating a duplicate account (if it
+   was externally moved INTO the filtered subset for the new
+   reconciliation), or WILL RESULT in ITIM deleting the account
+   (if it was moved OUT of the filtered subset for the new
+   reconciliation).
+   This is as we would expect, and is working as designed.
+   If a customer wants to use filtered reconciliations to partition
+   the account data, then they cannot EXTERNALLY TO ITIM modify the
+   value of the attribute being used for the partitioning criteria
+   in any of the accounts, as this invalidates the criteria being
+   used to partition the accounts.
+   Note that everything would work fine if they used ITIM to modify
+   the field value being used for partitioning ("title" in this
+   case).  The problem is because the partition key attribute
+   value is being modified externally to ITIM.
+   This is a limitation of using filtered reconciliations, and is
+   due to the purpose behind this functionality. The filtered
+   reconciliation functionality was designed to be used for
+   basically one or more of two purposes:
+   1. Increase the speed of reconciliations by limiting the data
+   to a subset of the entire accounts list for a particular
+   resource.
+   2.Increase the scalability of reconciliations by not requiring
+   so much data to be processed during a reconciliation, and hence
+   limiting the memory utilization for reconciliation. In
+   particular, the size and memory used for the list of current
+   accounts (as of the last reconciliation).
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ12294
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM TIV ID MGR
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3403
+   
+   
+ * REPORTED RELEASE
+   460
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-06
+   
+   
+ * CLOSED DATE
+   2008-01-25
+   
+   
+ * LAST MODIFIED DATE
+   2008-01-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

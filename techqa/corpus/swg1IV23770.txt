@@ -1,0 +1,146 @@
+Title: IBM IV23770: KLZ AGENT DOES NOT SUPPORT NFS WITH A HUGE SIZE - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring: Linux (R) OS Agent 6.2.2.4-TIV-ITM_LINUX-IF0006 [http://www-01.ibm.com/support/docview.wss?uid=swg24033253]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Approver: FS
+   
+   Environment: Monitoring Agent for Linux OS 6.22 fp4
+   
+   Problem Description:
+   The Linux os agent does not support nfs file systems with a
+   huge size.
+   In this case, the linux os agent for nfs filesystems shows value
+   for the attribute Size (MB) less than Disk Used (MB).
+   Detailed Recreation Procedure: mount a filesystems greater than
+   2 TeraByte on a linux machine and open the TEPS the "Disk usage"
+   view.
+   
+   Reference: defect 141709
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The Linux os agent does not support nfs file systems with a
+   huge size.
+   In this case, the linux os agent for nfs filesystems shows value
+   for the attribute Size (MB) less than Disk Used (MB).
+   Detailed Recreation Procedure: mount a filesystems greater than
+   2 TeraByte on a linux machine and open the TEPS the "Disk usage"
+   view.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is included in the following maintenance
+   vehicle:
+   
+      | fix pack | 6.2.2.4-TIV-ITM_LINUX-IF0006 |
+      | fix pack | 6.2.3-TIV-ITM-FP0003 |
+   
+   Note: Search the IBM technical support web site for maintenance
+   package availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV23770
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04LN
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-26
+   
+   
+ * CLOSED DATE
+   2012-10-18
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * FIXED COMPONENT ID
+   5724C04LN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP
+   
+   
+ * R623 PSY
+   UP

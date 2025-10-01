@@ -1,0 +1,36 @@
+Title: IBM The session management server certificate has expired - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can we renew the SMS server's certificate used to communicate with the Policy server when getting the following errors.
+
+CTGSM0901E The session management server was not able to initialize 
+the Tivoli Access Manager Runtime for Java: 
+[ 
+[ 
+HPDBA0287E Automatic refresh could not be performed because the 
+certificate has expired. 
+
+
+ANSWER
+1- find the .properties file for the SMS server instance. This is usually 
+located at 
+. 
+./AppSrv01/installedApps/Cell01/DavidSess.ear/DSess.war/WEB-INF/ 
+SMS-One/pdjrtecfg.properties 
+. 
+2- Run the following command using the name of the config file found on 
+your server, and using the java for your WAS server: 
+. 
+java com.tivoli.pd.jcfg.SvrSslCfg -action replcert -admin_id sec_master -admin_pwd **** -cfg_file ./AppSrv01/installedApps/Cell01/DavidSess.ear/DSess.war/WEB-INF/SMS-One/pdjrtecfg.properties 
+
+This will generate a new certificate.
+
+ 
+
+HISTORICAL NUMBER
+ 39778
+047
+649

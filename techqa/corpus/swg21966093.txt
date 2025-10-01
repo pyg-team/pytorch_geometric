@@ -1,0 +1,46 @@
+Title: IBM ITM Agents which run on i5/OS on "IBM System i"  cannot be started after Sep 6th, 2015. - United States
+
+Text:
+Agents; i5/OS; IBM System i; Sep 6th 2015; 2015/09/06; MQ FLASH (ALERT)
+
+ABSTRACT
+ The ITM i5 OS Agent, the ITM MQ agent and the ITM MC Agent running on "IBM System i" cannot be started after Sep 6th, 2015. 
+
+Please make NOTE of the following: 
+
+All other ITM agents running on other OS platforms are NOT AFFECTED by this problem. 
+
+
+
+
+CONTENT
+ITM Agents which run on i5/OS on "IBM System i" cannot be started after Sep 6th, 2015.
+Please do not restart the agents until the problem is resolved !
+The agents can be started if the date of the Operating System is changed to before Sep 5th, 2015.
+
+Here are the APAR's opened
+
+APAR for i5 agent is IV76801
+APAR for MQ agent is IV76825 
+
+FIX Delivery Mechanism: We will use this FLASH to post the necessary files for customers to patch their agents. This allows for customers to pull the files without the need for opening PMRs. 
+
+FIX Information for MQ agent (MQ monitoring):
+KMQ 701 - Available below
+KMQ 710 - Available below
+KMQ 730 - Available below
+
+FIX Information for MC agent (MQ configuration):
+KMC 701 - Available below
+KMC 710 - Available below
+KMC 730 - Available below
+
+
+
+IBM i MQ Agents Patch Comments ITCAM Agent for Websphere MQ on IBM i V710 IV76825_KMQ_V710_iSeries_Fix.zip [/support/docview.wss?uid=swg21966093&aid=2]IV76825_KMQ_V710_iSeries_Fix.zip [/support/docview.wss?uid=swg21966093&aid=1] Readme and install instructions included in zip file. ITCAM Agent for Websphere MQ on IBM i V701 IV76825_KMQ_V701_iSeries_Fix.zip [/support/docview.wss?uid=swg21966093&aid=4]IV76825_KMQ_V701_iSeries_Fix.zip [/support/docview.wss?uid=swg21966093&aid=3] Readme and install instructions included in zip file. ITCAM Agent for Websphere MQ on IBM i V730 IV76825_KMQ_V730_iSeries_Fix.zip [/support/docview.wss?uid=swg21966093&aid=6]IV76825_KMQ_V730_iSeries_Fix.zip [/support/docview.wss?uid=swg21966093&aid=5] Readme and install instructions included in zip file. ITCAM Agent for Websphere MC on IBM i V701 IV76825_KMC_V701_iSeries_Fix.zip [/support/docview.wss?uid=swg21966093&aid=8]IV76825_KMC_V701_iSeries_Fix.zip [/support/docview.wss?uid=swg21966093&aid=7] Readme and install instructions included in zip file. ITCAM Agent for Websphere MQ Configuration on IBM i V710 IV76825_KMC_V710_iSeries_Fix.zip [/support/docview.wss?uid=swg21966093&aid=10]IV76825_KMC_V710_iSeries_Fix.zip [/support/docview.wss?uid=swg21966093&aid=9] Readme and install instructions included in zip file. ITCAM Agent for Websphere MQ Configuration on IBM i V730 IV76825_KMC_V730_iSeries_Fix.zip [/support/docview.wss?uid=swg21966093&aid=12]IV76825_KMC_V730_iSeries_Fix.zip [/support/docview.wss?uid=swg21966093&aid=11] Readme and install instructions included in zip file. 
+FIX Information FOR i5 OS Agents: 
+
+ITM i5 OS Agent version Link URL to fixes Last updated Comments ITM 630 
+(all levels) http://www.ibm.com/support/docview.wss?uid=swg21966639 [http://www.ibm.com/support/docview.wss?uid=swg21966639] Sep 15, 2015 Updated Readme ITM 623 
+(all levels) http://www.ibm.com/support/docview.wss?uid=swg21966645 [http://www.ibm.com/support/docview.wss?uid=swg21966645] Sep 15, 2015 Updated Readme ITM 622 
+(all levels) http://www.ibm.com/support/docview.wss?uid=swg21966646 [http://www.ibm.com/support/docview.wss?uid=swg21966646] Sep 15, 2015 Updated Readme

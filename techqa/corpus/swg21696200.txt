@@ -1,0 +1,22 @@
+Title: IBM Logging URL data from Network Access events - United States
+
+Text:
+xgs; network; access; policy; nap; url; data TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to see the URL data for Network Access Policy events such as anonymous proxy in the Security Network Protection (XGS) event logs? 
+
+ANSWER
+The short answer is no, but it is possible to have this information that is captured using an Intrusion Prevention Inspection object. 
+
+The URL data is not in included in the Network Access Policy event, but an Intrusion Prevention Inspection object with the HTTP_Get event enabled can be utilized to capture URL data for events that match the Network Access Policy rule. If using the Intrusion Prevention Inspection object to capture this data, it will also be available for review in SiteProtector. 
+
+Note: If an extremely high volume of Audit IPS events such as HTTP_Get are being logged by the appliance, this might have a negative impact on the device's performance.
+
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21696200&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21696200&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21696200&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21696200&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21696200&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21696200&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21696200&aid=7] [http://ibm.biz/ContactSecSupport]

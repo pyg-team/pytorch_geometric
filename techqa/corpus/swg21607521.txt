@@ -1,0 +1,55 @@
+Title: IBM Installing Installation Manager results in error "Failed to create executable extension" - United States
+
+Text:
+launchpad.exe; firewall; antivirus TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While installing License Key Server version 8.1.2, the installation wizard installs Installation Manager first, which results in error "Failed to create executable extension". 
+
+SYMPTOM
+The entire error message is as follows: 
+
+Failed to create executable extension com.ibm.cic.agent.internal.adapters.nativeAdapter.win32.WinPlatformOperationsProvider: org.eclipse.core.runtime.CoreException: Plug-in "com.ibm.cic.agent.core.nativeInstallAdapter.win32" was unable to instantiate class "com.ibm.cic.agent.internal.adapters.nativeAdapter.win32.WinPlatformOperationsProvider"
+
+
+CAUSE
+There are several possibilities that could contribute to the error, for example: 
+
+ 1. JSP invocation policies in the computer 
+ 2. Firewall or antivirus intervention 
+ 3. The path to installation media is too long (more than 100 characters in the length of the path to launchpad.exe) 
+ 4. Corrupted installation file due to download or files not being fully extracted after the download.
+
+RESOLVING THE PROBLEM
+Try first the following solutions: 
+
+ 
+
+ 1. Shorten the path of the installation folder to less than 100 characters in the length of the path to launchpad.exe. 
+ 2.  
+ 3. Disable firewall or antivirus programs 
+ 4.  
+ 5. Instead of installing the product with ..\disk1\launchpad.exe install the Installation Manager with ...\disk1\InstallerImage_win32\setup.exe and then proceed with step #3 below. 
+
+
+If the above does not help, then download the latest version of Installation Manager, install it separately, then open it and install the License Server from it. The steps are as follows: 
+
+ 1. Bring the latest Installation Manager. 
+    The latest version of IM is here: http://www-01.ibm.com/support/docview.wss?uid=swg24032358 [http://www-01.ibm.com/support/docview.wss?uid=swg24032358] 
+    
+ 2. Install it (the installation instructions are in the link above). 
+    
+ 3. Open IBM Installation Manager from "Start > Programs > IBM Installation Manager > IBM Installation" 
+    
+ 4. Go to "File > Preferences > Repositories" 
+    
+ 5. Click "Add Repository" 
+    
+ 6. Browse to the location of "disk1\diskTag.inf" in the image of the License Server that you would like to install 
+    Example: ...\ratlLicenseKeyServer-8-1-2_Windows\RLKSSERVER_SETUP\disk1\diskTag.inf 
+    
+ 7. Press OK to go back to the Preferences window and press OK again to go back to the IBM Installation Manager front page 
+    
+ 8. Now, if you click on "Install", Installation Manager will detect the License Server product that you would like to install (because its repository has been added) 
+    
+ 9. Follow the instructions in the wizard to continue with the installation

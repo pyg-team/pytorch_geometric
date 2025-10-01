@@ -1,0 +1,35 @@
+Title: IBM Webcast replay: IBM WebSphere DataPower 7993/9003 SOA Appliance - Migrating from firmware level 3.6.0 and 3.6.1 to the newer 3.7.x or 3.8 firmware - United States
+
+Text:
+wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; firmware WEBCAST
+
+ABSTRACT
+ This presentation describes the firmware upgrade process for a WebSphere DataPower 7993/9003 SOA appliance from 3.6.1 to the newer 3.7.x and 3.8 firmware, which requires an intermediate firmware upgrade. The presentation also references migration tips to consider during migration and testing.
+
+
+Level of Difficulty: Intermediate 
+
+Presenter(s): Robert Bunn, Rolf Wittich & Colt Gustafson
+
+DATE: 17 June 2009 
+
+CONTENT
+To replay this 19 minutes exchange, click on Download Audio [ftp://public.dhe.ibm.com/software/websphere/techexchange/Jun-17-2009-Bunn-Wittich-Gustafson.mp3] (audio in MP3 format) then open the pdf file below:
+
+Presentation (in PDF format): 
+
+
+WSTE-06172009-Upgrading9002DataPowerFrom360-Gustafson.pdf [/support/docview.wss?uid=swg27016007&aid=2] [/support/docview.wss?uid=swg27016007&aid=1]
+
+[http://www.ibm.com/i/v14/icons/sout.gif] Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchange [http://www.ibm.com/software/websphere/webcast]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower XML Accelerator XA35 Firmware 3.8, 3.7.3, 3.7.2 All Editions Business Integration WebSphere DataPower Integration Appliance XI50 Firmware 3.8, 3.7.3, 3.7.2 All Editions Business Integration WebSphere DataPower XML Security Gateway XS40 Firmware 3.8, 3.7.3, 3.7.2 All Editions

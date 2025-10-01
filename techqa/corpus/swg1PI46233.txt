@@ -1,0 +1,274 @@
+Title: IBM PI46233: DOCUMENTATION FOR PORTAL 8.5 INFOCENTER CREATING A COPY OF THEME NEED REVISION (7 OF 7) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  AFFECTED URL:
+   http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/de [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/de]
+   v-theme/themeopt_cust_copy_bindtheme.dita
+   
+   TEXT READS:
+   
+                 <CHANGE 1>
+                 Procedure
+                 1. In PortalServer_root\bin, create the file
+   input.xml with the following contents:
+                 </CHANGE 1>
+   
+                 <CHANGE 2>
+                 4. Search for the title of your skin. Scroll up to
+   the line with the surrounding <skin> tag; it is likely the last
+   <skin> tag in the file. Modify it from:
+                 <skin action="update" active="true"
+   context-root="/wps/themeModules" default="false" domain="rel"
+                   objectid="ZK_73OKBB1A088IE0I5O7IP2J0G77"
+   resourceroot="Hidden" type="default">
+                 to:
+   
+                 <skin action="update" active="true"
+   context-root="/customTheme" default="false" domain="rel"
+                   objectid="ZK_73OKBB1A088IE0I5O7IP2J0G77"
+   resourceroot="customSkin" type="default"
+   uniquename="customSkin">
+   
+                 Set the correct context-root, resourceroot, and
+   uniquename for your skin.
+                 </CHANGE 2>
+   
+                 <CHANGE 3>
+                 5. Find the <theme> tag for the Portal 8.5 theme.
+   It is likely the first <theme> tag in the file. Find and copy
+   one of the <allowed-skin> tag lines, such as:
+                 <allowed-skin skin="ZK_CGAH47L00GJJ40IDC03MS13OS2"
+   update="set"/>
+                 Find the <theme> tag for your customTheme theme,
+   it is likely the last <theme> tag in the file. Paste the
+   <allowed-skin> tag line in just before the <parameter> tags.
+   Modify the skin parameter value identifier to be the identifier
+   of your customSkin skin, which can be found in the objectid
+   parameter of the <skin> tag of your customSkin skin. It is
+   likely the last <skin> tag in the file, such as:
+                 <allowed-skin skin="ZK_N0IEGGC0I08PF0IDQ60O6310N4"
+   update="set"/>
+                 </CHANGE 3>
+   
+                 <CHANGE 4>
+                 6. Find the com.ibm.portal.layout.template.href
+   parameter for your customTheme theme. Modify it from:
+                 <parameter
+   name="com.ibm.portal.layout.template.href" type="string"
+   update="set"><![CDATA[dav:fs-type1/themes/Portal8.5/layout-templ
+   ates/2ColumnEqual/]]></parameter>
+   
+                 to:
+   
+                 <parameter
+   name="com.ibm.portal.layout.template.href" type="string"
+   update="set"><![CDATA[dav:fs-type1/themes/customTheme/layout-tem
+   plates/2ColumnEqual/]]></parameter>
+   
+                 Set the correct context-root, resourceroot, and
+   uniquename for your layout template.
+                 Note: Ensure that the URI is encoded. If there are
+   spaces or other characters in the URI that are not allowed, the
+   theme does not work.
+   
+                 7. From the command line, run the following
+   xmlaccess command to update the skin and theme definitions
+   according to your change:
+                 xmlaccess -user admin userid -password admin
+   password -url hostname:10039/wps/config -in output.xml -out
+   output2.xml
+   
+                 8. From the command line, run the following
+   xmlaccess command to export all skin and theme definitions again
+   to a file called output3.xml.
+                 xmlaccess -user admin userid -password admin
+   password -url hostname:10039/wps/config -in input.xml -out
+   output3.xml
+   
+                 9. Edit the output3.xml file to verify that the
+   result works, and then delete the input.xml, output.xml,
+   output2.xml, and output3.xml files.
+                 </CHANGE 4>
+   
+                 <CHANGE 5>
+                 Parent topic: Link the static resources to the
+   dynamic resources for your theme
+                 </CHANGE 5>
+   
+   TEXT SHOULD READ:
+   
+                 <CHANGE 1>
+                 Procedure
+                 Note: The steps below use xmlaccess from the
+   command line to bind your theme. Alternatively, you can use the
+   Portal Administration pages to use xmlaccess. Simply import the
+   file under Portal Settings -> Import XML then copy the results
+   from the View Details window.
+                 1. In PortalServer_root\bin, create the file
+   input.xml with the following contents:
+                 </CHANGE 1>
+   
+                 <CHANGE 2>
+                 4. Search for the title of your skin. Scroll up to
+   the line with the surrounding <skin> tag; it is likely the last
+   <skin> tag in the file. Modify it from:
+                 <skin action="update" active="true"
+   context-root="/wps/themeModules" default="false" domain="rel"
+                   objectid="ZK_73OKBB1A088IE0I5O7IP2J0G77"
+   resourceroot="Hidden" type="default">
+                 to:
+   
+                 <skin action="update" active="true"
+   context-root="/customTheme" default="false" domain="rel"
+                   objectid="ZK_73OKBB1A088IE0I5O7IP2J0G77"
+   resourceroot="customSkin" type="default"
+   uniquename="customSkin">
+   
+                 Set the correct context-root, resourceroot, and
+   uniquename for your skin.
+                 Note: resourceroot was used in previous versions
+   of Portal when multiple themes were deployed in the same WAR
+   file. It indicates which folder in the WAR to find the specific
+   theme. For the skin, this parameter should be set to the folder
+   name where the skin is located.
+                 </CHANGE 2>
+   
+                 <CHANGE 3>
+                 5. Find the <theme> tag for the Portal 8.5 theme.
+   It is likely the first <theme> tag in the file. Find and copy
+   one of the <allowed-skin> tag lines, such as:
+                 <allowed-skin skin="ZK_CGAH47L00GJJ40IDC03MS13OS2"
+   update="set"/>
+                 Find the <theme> tag for your customTheme theme,
+   it is likely the last <theme> tag in the file. Paste the
+   <allowed-skin> tag line in just before the <parameter> tags.
+   Modify the skin parameter value identifier to be the uniquename
+   of your customSkin skin, which can be found in the uniquename
+   parameter of the <skin> tag of your customSkin skin. It is
+   likely the last <skin> tag in the file, such as:
+                 <allowed-skin skin="customSkin" update="set"/>
+                 </CHANGE 3>
+   
+                 <CHANGE 4>
+                 ** Remove step 6 **
+   
+                 6. From the command line, run the following
+   xmlaccess command to update the skin and theme definitions
+   according to your change:
+                 xmlaccess -user <admin userid> -password <admin
+   password> -url <hostname>:10039/wps/config -in output.xml -out
+   output2.xml
+   
+                 7. From the command line, run the following
+   xmlaccess command to export all skin and theme definitions again
+   to a file called output3.xml.
+                 xmlaccess -user <admin userid> -password <admin
+   password> -url <hostname>:10039/wps/config -in input.xml -out
+   output3.xml
+   
+                 8. Edit the output3.xml file to verify that the
+   result works, and then delete the input.xml, output.xml,
+   output2.xml, and output3.xml files.
+                 </CHANGE 4>
+   
+                 <CHANGE 5>
+                 Parent topic: Create a copy of your theme
+                 </CHANGE 5>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This is planned to be changed in the product documentation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is planned to be changed in the product documentation.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI46233
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-08-04
+   
+   
+ * CLOSED DATE
+   2015-08-18
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,156 @@
+Title: IBM JR58655: YOU RECEIVE A JAVA.LANG.ILLEGALSTATEEXCEPTION WHEN YOU TRY TO MODIFY AN SCA WEB SERVICE BINDING ENDPOINT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+bpm.8600.cf2017.12.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8600.cf2017.12.delta.repository&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In administrative console, you might receive the following
+   exception when you modify an SCA web service binding endpoint:
+   
+   java.lang.IllegalStateException:
+   com.ibm.bpm.config.spi.ConfigurationSpi.getAuthenticationAliasNa
+   me() requires a non-null deploymentTarget when called on the
+   deployment manager
+   at
+   com.ibm.bpm.config.spi.ConfigurationSpi.getAuthenticationAliasNa
+   me(ConfigurationSpi.java:1391)
+   at
+   com.ibm.bpm.config.spi.ConfigurationSpi.getAuthenticationAliasNa
+   me(ConfigurationSpi.java:1346)
+   at
+   com.ibm.ws.sca.internal.deployment.jaxrpc.EJBJarHelper.getSCAAut
+   hAlias(EJBJarHelper.java:819)
+   at
+   com.ibm.ws.sca.internal.deployment.jaxrpc.EJBJarHelper.createRes
+   RefForBean(EJBJarHelper.java:766)
+   at
+   com.ibm.ws.sca.internal.deployment.jaxrpc.JaxRpcDeployTaskImpl.p
+   rocessImportBindings(JaxRpcDeployTaskImpl.java:457)
+   ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Make the required changes to the Applciation using the IID and
+   update the Application
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  YOU RECEIVE A JAVA.LANG.ILLEGALSTATEEXCEPTION WHEN  YOU TRY TO
+   MODIFY AN SCA WEB SERVICE BINDING ENDPOINT
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix that ensures the web service binding endpoint modification
+    works is available for IBM BPM V8.5.7 cumulative fix 2016.12.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR58655
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-30
+   
+   
+ * CLOSED DATE
+   2017-11-27
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

@@ -1,0 +1,327 @@
+Title: IBM HD00927: LMG / PROFILE FINISHING : DISPLAY PROBLEM IN LOCAL INVERT TAB . - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  LMG / PROFILE FINISHING : DISPLAY PROBLEM IN LOCAL INVERT
+   TAB .
+   .
+   Invert Lift-off angle and radius are superimposed .
+   .
+   
+   
+   mc
+   
+   03$                                              INTEG(Y/N): N P
+   ROD: ...... LEV: ....... COMPAT(D/A): . SOL:    ...........
+                                                    WORKSHOP: LATHM
+   ACH        COMMAND: PROFILE                     FINISHING.......
+   ............                                     OPERATING SYSTE
+   M: W2  OPERATING SYSTEM LEVEL:                  ................
+   .........                                        SERVICE PACKAGE
+    REQUEST (Y/N): Y AT LEVEL: SP3                  REGRESSION
+            (Y/N): N FROM LEVEL/SP LEVEL:
+   ..... / ........
+    STATUS REQUEST          (Y/N): Y ELECTRONIC FILE (Y/N): Y
+    ATTACHED MATERIAL       (Y/N): N
+    FILENAME: 64948742.073A GIF
+   FILE.......................................
+    MAIL, E-MAIL OR FAX     (Y/N): . ADDRESS OR FAX NUMBER:
+   ...............
+    64948742.073B IMAGE FILE   sent
+   09/12/02...............................
+    HARDWARE DESCRIPTION:
+   .................................................
+    CD/LOOP(Y/N): . PERFO(Y/N): . FUNCSEG(Y/N): . PROJ:
+   ...................
+    ABSTRACT: PANEL IN LMG DOES NOT DISPLAY
+   CORRECTLY......................
+   
+   ................................................................
+    +CATSERV               -569151000
+   -L16U/USEPLM-P4S4-02/08/26-15:28 -CE
+   ***X1S2R3V4 PLM DEFECT SUPPORT ONLY
+   *** Valid for defect support only on the product selected
+   *** Ensure the product in the PMR header matches the one
+   reported below
+   *** Customer will monitor PMR for updates
+   ***
+   *** FAX Number:
+   *** E-Mail: vincent.brouillet@pwc.ca
+   ***
+   Abstract: Profile finishing +local inverse parameter are
+   piled
+   .
+   Operating System:  WindowsNT V4 SP5
+   Product Group:  CATIA V5R9 ServicePack 1 or below on WinNT
+   Area Affected: LMG
+   Showstopper: NO
+   Regression: YES
+   Regression from: v5r8
+   Recommended Fixes Installed: YES
+   .
+   Environment:
+   For Client/Server type products
+     Client OS level _______
+       Associated software and level (e.g. browser) _____
+     Server OS Level _______
+       Associated software and level (WebServers, DBs) _____
+   ------------------------------------------------
+   .
+   Problem:
+   In LMG Profile Finishing , on the option tab local invert,
+   two
+   parameters appears piled one over the other making the
+   selection
+   difficult
+   
+   Over to NC queue per Mark.
+   
+    NO CONTACT IS REQUIRED
+   
+   under investigation
+   
+   .
+   I do not see a problem here on V5R9.
+   Please look at 48742.gif in FTP site /xxxxxx/fromibm
+    -SYSTEM GENERATED TEXT--569151000  -POCID=BDC
+   -------02/09/03-05:49 -
+    PROBLEM WAS INACTIVE FOR MORE THAN 07 DAYS -- CALL
+   GENERATED
+   
+    -SYSTEM GENERATED TEXT--569151000  -POCID=BDC
+   -------02/09/11-05:48 -
+    PROBLEM WAS INACTIVE FOR MORE THAN 07 DAYS -- CALL
+   GENERATED
+   
+    +CATSERV               -
+   -L16U/USEPLM-P4S4-02/09/11-18:24 SCE
+   *** Electronic update by customer
+   ***
+   Additional Information:
+   I sent you a picture of what I obtain. It is when I set
+   invert
+   liftoff type to circular that I get this situation. See
+   picture for
+   example
+   
+   Sending to NC work queue.
+   
+   Hello DS
+   .
+   We have sent you .gif file64948742.073A
+   .
+   Problem:
+   In LMG Profile Finishing , on the option tab local invert,
+   two
+   parameters appears piled one over the other making the
+   selection
+   difficult
+   .
+   Please look at gif file and advise
+   
+   T=CDS$$ <=                                               The Fil
+   e is available under:                                    AIX.: /
+   s/maint5/db/c649/pmr64948742.073                         Best Re
+   gards, Christophe DENIS.
+                                                            Receive
+   d additional image file                                  Send to
+    DS
+                                                             NO CON
+   TACT IS REQUIRED
+   
+   HELLO DS
+   .
+   We have sent you 64948742.073B image file
+   .
+   Please look at this file to understand problem
+   
+   Update From ROJAT Benoit                          ==>
+   $$RSPMNT=BRJ$$ <=
+   Update for Dassault Systemes Material Unloading Team :
+   Hello Chris,
+   Some material must have been sent with the PMR.
+   It either was not unloaded or has been archived now.
+   Can you please unload this material.
+   Best regards, Benoit
+   .
+   ==> $$RSPMNT=FRV$$ <==
+   
+   Update From ROJAT Benoit                          ==>
+   $$RSPMNT=BRJ$$ <=
+   Thanks for additional info.
+   .
+   Regards, Benoit
+   .
+   ==> $$RSPMNT=FRV$$ <==
+   
+   Update From DENIS Christophe                      ==>
+   $$RSPMNT=CDS$$ <=
+   The File is available under:
+   AIX.: /s/maint5/db/c649/pmr64948742.073
+   Best Regards, Christophe DENIS.
+   
+    -SYSTEM GENERATED TEXT--569151000  -POCID=RS4
+   -------02/09/21-11:18 -
+    PROBLEM WAS INACTIVE FOR MORE THAN 07 DAYS -- CALL
+   GENERATED
+   
+    -SYSTEM GENERATED TEXT--569151000  -POCID=RS4
+   -------02/09/29-01:43 -
+    PROBLEM WAS INACTIVE FOR MORE THAN 07 DAYS -- CALL
+   GENERATED
+   
+    -SYSTEM GENERATED TEXT--569151000  -POCID=RS4
+   -------02/10/07-02:04 -
+    PROBLEM WAS INACTIVE FOR MORE THAN 07 DAYS -- CALL
+   GENERATED
+   
+   Hello DS
+   .
+   Please provide status on this pmr.
+   We have had no response in 30 days.
+   
+   Update From RIVE Florence                         ==>
+   $$RSPMNT=FRV$$ <=
+    -SYSTEM GENERATED TEXT--569151000  -POCID=RS4
+   -------02/10/23-02:12 -
+    PROBLEM WAS INACTIVE FOR MORE THAN 07 DAYS -- CALL
+   GENERATED
+   
+    -SYSTEM GENERATED TEXT--569151000  -POCID=RS4
+   -------02/10/31-02:10 -
+    PROBLEM WAS INACTIVE FOR MORE THAN 07 DAYS -- CALL
+   GENERATED
+   
+    -SYSTEM GENERATED TEXT--569151000  -POCID=RS4
+   -------02/11/08-02:29 -
+    PROBLEM WAS INACTIVE FOR MORE THAN 07 DAYS -- CALL
+   GENERATED
+   
+   Hello DS
+   .
+   Please provide status on this pmr.
+   We have had no response in 60 days!
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *   INCIDENT DIAGNOSIS:
+      LMG / PROFILE FINISHING : DISPLAY PROBLEM IN LOCAL INVERT TAB
+      .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  THE PROBLEM WAS SUBMITTED ON :
+       CATIA VERSION 5 RELEASE 9
+   .
+   THIS PROBLEM IS NOT REPRODUCIBLE ON :
+       CATIA VERSION 5 RELEASE 11 GA level
+   
+    INCIDENT DIAGNOSIS:
+     LMG / PROFILE FINISHING : DISPLAY PROBLEM IN LOCAL INVERT TAB
+     .
+   
+    REASON:
+      problem already corrected
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD00927
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5/NT/200
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   509
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2002-11-19
+   
+   
+ * CLOSED DATE
+   2002-11-29
+   
+   
+ * LAST MODIFIED DATE
+   2006-06-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5/NT/200
+   
+   
+ * FIXED COMPONENT ID
+   569151000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R509 PSN
+   UP
+   
+   
+ * R510 PSN
+   UP

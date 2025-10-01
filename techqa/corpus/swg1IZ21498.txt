@@ -1,0 +1,133 @@
+Title: IBM IZ21498: PERFMON API COUNTER MEMORY LEAK - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The perfmon API to get the performance data
+   is leaking on counters based on registry corruption or Microsoft
+   internal leaks.  Over time this uses up all the available memory
+   on the machine.
+   
+   Detailed Recreation Procedure: None, have only seen on a hand
+   full of customer's machines.  Have not been able to reproduce
+   internally.
+   
+   Related Files and Output: Customer has provide kntcma traces
+   that show the memory leakage.
+   
+   Environment: Windows all versions
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The Windows API for gathering data on perfmon counters can cause
+   memory leaks if the perfmon counters are installed incorrectly
+   or the perfmon registry has been corrupted.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR has been fixed and delivered in a limited availability
+   fix 6.1.0.7-TIV-ITM_WIN-LA0001. This maintenance delivery
+   vehicle is a limited availability patch and therefore is in a
+   "hidden directory." Level 2 Support can provide down load
+   instructions to you. Contact level 2 support at:
+   
+   http://www.ibm.com/software/sysmgmt/products/support/Contact_L2
+   Support.html [http://www.ibm.com/software/sysmgmt/products/support/Contact_L2Support.html]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ21498
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040W
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-05-02
+   
+   
+ * CLOSED DATE
+   2008-05-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * FIXED COMPONENT ID
+   5724C040W
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

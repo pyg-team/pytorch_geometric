@@ -1,0 +1,27 @@
+Title: IBM Configuring automatic probe failover and failback - United States
+
+Text:
+ObjectServer; fail over; fail back; connectionwatch; connections; failover; failback; automatic; configure; configuration; probe TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure a probe to failover and failback automatically between a Primary and Backup Object Server? 
+
+ANSWER
+Configure the following probe properties. The example values can be configured for your environment.
+Server: 'NCOMSP'
+ServerBackup: 'NCOMSB'
+AutoSAF: 1
+NetworkTimeout: 30 # Number of seconds the probe waits before determining the Object Server is unavailable
+PollServer: 60 # Number of seconds the probe waits between disconnecting from the Backup Object Server and reconnecting to the Primary Object Server 
+
+On the Backup Object Server, ensure the property BackupObjectServer is set to TRUE. 
+
+With the settings above, when the probe determines the Primary Object Server NCOMSP is unavailable, it will connect to the Backup Object Server NCOMSB. Every PollInterval of 60 seconds, the probe will disconnect from the Backup Object Server, and attempt to reconnect to the Primary Object Server. The probe will wait the NetworkTimeout of 30 seconds to determine the Primary Object Server is unavailable, and then reconnect to the Backup Object Server. The probe will continue disconnecting from the Backup Object Server and reconnecting to the Primary Object Server until the Primary Object Server is available. 
+
+Note - the PollServer property must be greater than the NetworkTimeout property. If the PollServer property is not greater than the NetworkTimeout property, the probe will not have enough time to send events to the Backup Object Server between polls to the Primary Object Server. 
+
+If the Primary Object Server will be down for maintenance for a long period of time, the Backup Object Server property BackupObjectServer can be set to FALSE. This will prevent the probe from attempting to failback and repeatedly reconnecting to the Backup Object Server. 
+
+A Virtual Object Server can be used instead of the Server and ServerBackup properties, however the probe then uses internal timing to determine when the Object Server is unavailable and available again. 
+
+In Omnibus 7.3, functionality was added to configure controlled failback of clients with a trigger. The above configuration should not be used with controlled probe failover and failback as a Virtual Object Server configuration is required.

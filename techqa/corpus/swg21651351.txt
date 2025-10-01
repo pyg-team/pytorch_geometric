@@ -1,0 +1,69 @@
+Title: IBM Generating thumbnails with FileNet Content Platform Engine without X Windows server dependency - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Can I configure the IBM® FileNet® P8 Content Platform Engine to generate thumbnails without configuring any X Windows server? 
+
+CAUSE
+The IBM FileNet P8 Content Platform Engine documentation page Configuring the display for thumbnail generation on X Windows [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.ce.admin.tasks.doc/p8pcc165.htm] specifies that an X Windows server is required to be able to generate thumbnails on AIX® and Linux.
+
+ANSWER
+
+
+CONTENT PLATFORM ENGINE 5.2 FIX PACK 3 AND LATER
+Starting from Content Platform Engine 5.2 Fix Pack 3, the default behavior of generating thumbnails on Linux x86 64-bit has been changed to using SCCOPT_RENDERING_PREFER_OIT option and does not require configuring X Windows server and setting Thumbnail.OI.XWinDisplay configuration parameters.
+
+The default thumbnail generation on Linux x86 64-bit will use the TrueType fonts included in the application server JRE bundled font library. If you already have other Windows TrueType fonts installed on you Linux server which you want to use for thumbnail generation, you can set the following configuration parameter in FileNet.properties:
+
+Thumbnail.OI.GDFontPath=YOUR_FONT_PATH
+
+
+
+CONTENT PLATFORM ENGINE 5.2 FIX PACK 2
+
+Content Platform Engine 5.2 Fix Pack 2 ships with Oracle Outside In 8.4.1 which can generate thumbnails without any X Windows server dependency on the Linux x86 64-bit platform (Red Hat Enterprise Linux and Novell SUSE Linux Enterprise). 
+
+To configuration without using X Windows server on Linux: 
+ 1. Edit the Oracle Outside In Image Export configuration file to specify rendering without X Windows server:  1. Locate the ix.cfg options configuration file in the folder with the Outside In library & filter files and the ibmfnthb executable 
+     2. The ix.cfg file can be found in the Outside In Search Export & Image Export folder under the application server (for example /usr/IBM/WebSphere/AppServer/profiles/AppSrv01/FileNet/ce_member1/INSO/bin/sx-8-4-1-linux-x86-64) 
+     3. Open the ix.cfg file, search for the SCCOPT_RENDERING_PREFER_OIT section, and change the option preferoitrendering from false to true.
+    
+    
+ 2. Create a font directory for Windows TrueType fonts.
+    
+    Make sure the font directory is accessible to the ibmfnthb process which is executed from the Content Platform Engine JVM. One such location is the Content Engine installation folder where for example a gdfonts folder could be created (e.g. /opt/IBM/FileNet/ContentEngine/gdfonts). 
+ 3. Install Windows TrueType fonts to the font directory.
+    
+    Note that all Windows TrueType fonts used in documents for which there will be generated thumbnails should be copied to this location. Also note that when copying Windows fonts to a UNIX system, the font extension for the files (*.ttf or *.ttc) must be lowercase, or they will not be detected during the search for available fonts by Outside In Image Export.
+    
+    For Microsoft TrueType fonts distribution and license issues, please refer to the Microsoft Typography website (http://www.microsoft.com/typography/faq/faq11.htm [http://www.microsoft.com/typography/faq/faq11.htm]). 
+ 4. Specify a GDFONTPATH environment variable for the operating system user account that starts the Content Platform Engine application server.
+    
+    This can be done either via user specific login scripts or system wide login scripts. Make sure to enter a valid value for the GDFONTPATH environment variable pointing to the fonts folder with the Windows TrueType fonts. e.g.:
+    
+    GDFONTPATH=/opt/IBM/FileNet/ContentEngine/gdfonts
+    export GDFONTPATH 
+ 5. Verify the system picks up the GDFONTPATH environment variable  1. Logout and login to the system using the operating system user account that starts the Content Platform Engine application server. 
+     2. From the command shell run echo $GDFONTPATH to verify it is set properly
+    
+    
+ 6. Start or restart the application server where Content Platform Engine is deploy
+
+
+NOTE If the Outside In libraries (a.k.a. INSO) are redeployed then this modification to the ix.cfg file must be done again. 
+
+Once configured to generate thumbnails without any X Windows server dependency, the following warning messages captured in P8 trace log can be ignored: 
+ * <DATETIME Stamp> THMG FNRCE0000W - WARN Thumbnail.OI.XWinDisplay is not set. Will use the current environmental variable $DISPLAY value.
+
+
+ADDITIONAL INFORMATION
+
+Oracle Outside In refers to this feature as the GD output solution. Oracle Support describes this feature in the document: 
+ * 
+ * ID 760121.1
+ * 
+
+
+This document also states that this GD Output Solution feature can be used to assist users who are seeing degraded quality of font rendering in the output generated by Outside In with the X Windows server solution.

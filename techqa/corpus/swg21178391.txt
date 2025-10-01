@@ -1,0 +1,61 @@
+Title: IBM Accessing a test database from the ClearQuest Web Java client - United States
+
+Text:
+1178391; ClearQuest; CQ Web; ClearQuest Web; Web Java Client; PK45542; CQ; RATLC01023674; PK45542; Test Database; CQ Java Web; Setting; Test; NCQW; Java web; web; test work; client; CQWJ; shortcut; short; cut; short cut; RATLC01202361; Designer TECHNOTE (FAQ)
+
+QUESTION
+ How can I access a test database using the IBM® Rational® ClearQuest® Web client for versions 2003.06.13 through 7.0.x? 
+
+ANSWER
+In order to use a database designated as a test database within the ClearQuest Designer, add the parameter "test=1" to the URL. When this is specified, the global toolbar is replaced by a simple text field, which will allow you to type in the name of a test database. The database marked as test in the ClearQuest Designer can then be specified in that field. 
+
+An example of the URL would be:
+
+http://localhost/cqweb/login?test=1 
+
+
+ 
+
+[/support/docview.wss?uid=swg21178391&amp;aid=1] 
+
+
+Note: This feature was broken in original 7.0.0 release of ClearQuest, but was fixed in version 7.0.0.1 and later. 
+
+ 
+
+Alternatively, you can use a URL that includes the schema repository, the logical database name of the test database and a user name and password. The following sample URL uses the same format as the 7.0.x shortcut functionality where values in the '{{ * }}' must be supplied by the user. 
+
+
+http://{{CQ WEB SERVER}}/cqweb/main?command=GenerateMainFrame &service=CQ≻hema={{CONNECTION NAME}}&contextid={{DATABASE NAME}} &username={{CQ USERNAME}}&password={{CQ PASSWORD}}&test=1 
+
+For example: 
+
+ http://localhost/cqweb/main?command=GenerateMainFrame&service=CQ ≻hema=7.0.0&contextid=SAMPL&username=engineer&password=password&test=1 
+
+ 
+
+See technote 1136402 [http://www.ibm.com/support/docview.wss?rs=988&uid=swg21136402] for more information on ClearQuest URLs. 
+
+ 
+
+Notes: 
+
+ * Selecting "Test Work" from the ClearQuest Designer will still open the test database in the ClearQuest native client for Microsoft® Windows®. A request of enhancement exists, RFE RATLC01202361 [http://www.ibm.com/developerworks/support/rational/rfe/execute?use_case=viewChangeRequest&CR_ID=1184], for an option to change the ClearQuest client that opens upon selecting Test Work in Designer. This feature is available starting in ClearQuest 7.1. See technote 1335125 [http://ibm.com/support/docview.wss?rs=988&uid=swg21335125] for more details. 
+ * These URLs are recognized and converted to a new URL format starting in ClearQuest 7.1.0.2.
+
+
+
+
+
+
+RELATED INFORMATION
+#Test Databases in CQ Web ASP [http://www.ibm.com/support/docview.wss?uid=swg21127649]
+Test Databases in CQ Eclipse RCP [http://www.ibm.com/support/docview.wss?uid=swg21288768]
+Test Databases in CQ Web 7.1 [http://www.ibm.com/support/docview.wss?uid=swg21335125]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational ClearQuest Designer Software Development Rational ClearQuest Client - Native Windows

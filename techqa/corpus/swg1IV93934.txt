@@ -1,0 +1,143 @@
+Title: IBM IV93934: THE AGENT NO DOCS FOR 7.4 AND 8.1 IS MISSING A SECTION OF OBJECT SERVER SCHEMA CHANGES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Agent NO docs for 7.4 and 8.1 is missing a section of
+   installing
+   object server schema changes.
+   
+   Take a look at the good docs (Agent_73.jpg):
+   
+   http://www.ibm.com/support/knowledgecenter/SSSHRK_3.9.0/com.ibm. [http://www.ibm.com/support/knowledgecenter/SSSHRK_3.9.0/com.ibm.]
+   netcool_
+   OMNIbus.doc_7.3.1/omn_itmagent.pdf
+   
+   You will noticed it has instructions on installing the object
+   server
+   schema (red squared section in Agent_73.jpg)
+   
+   Now take a look at the bad docs (Agent_81.jpg):
+   http://www.ibm.com/support/knowledgecenter/SSSHTQ_8.1.0/com.ibm. [http://www.ibm.com/support/knowledgecenter/SSSHTQ_8.1.0/com.ibm.]
+   netcool_
+   OMNIbus.doc_8.1.0/omn_itmagent.pdf
+   
+   That whole "Agent-specific installation ...." section is
+   missing.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of the ITM agent.                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The "Agent-specific installation ...." section was missing   *
+   * from the OMNIbus 8.1.0 documentation.                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * See the updated 'IBM Tivoli Monitoring Agent for Tivoli      *
+   * Netcool/OMNIbus Users Guide' at                              *
+   * https://www.ibm.com/support/knowledgecenter/en/SSSHTQ_8.1.0/ *
+   * com.ibm.netcool_OMNIbus.doc_8.1.0/omnibus/wip/common/referen *
+   * ce/omn_ref_PDFbooks.html                                     *
+   ****************************************************************
+   Follow the instruction in the above referenced document-topic.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  OMNIbus v8.1.0.12
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV93934
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   740
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-06
+   
+   
+ * CLOSED DATE
+   2017-07-11
+   
+   
+ * LAST MODIFIED DATE
+   2017-07-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,216 @@
+Title: IBM Rational Functional Tester data collector available through IBM Support Assistant - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ This document describes how to use the Rational Functional Tester data collectors that are available as part of Rational Functional Tester 7.0 add-on for IBM Support Assistant . The collectors provides an automated way for customers to provide information for our Rational support team. 
+
+CONTENT
+IBM Support Assistant (ISA) is a cross-product extensible client application that increases your capacity for self-help by making it easier to access support resources. Additionally, provides capability for automated data collection for you to gather the necessary data for the support team for initial diagnosis of your problem. 
+
+You can now automate data collection steps for problems you have with Rational Functional Tester 7.0 on Linux and Windows platform.
+
+
+
+
+
+
+
+
+Prerequisites
+
+Installation Instructions
+
+Using ISA Collectors
+
+Details: IBM Installation Manager Collector
+
+Details: Rational Functional Tester General Collector
+
+Debugging for Rational Functional Tester
+
+Details: Collect Debug information and Disable Debug for Rational Functional Tester
+
+
+
+
+ 
+
+Prerequisites 
+
+IBM Support Assistant V4.0 or higherhttp://www.ibm.com/software/support/isa/ [http://www.ibm.com/software/support/isa/] 
+
+
+
+ Back to top 
+
+
+
+
+ 
+
+Installation Instructions 
+
+You'll need to install Rational Functional Tester 7.0 add-on for IBM Support Assistant. To do so : 
+
+ 1.  Start IBM Support Assistant Select Update > Find new > Product Add-ons from the menu. Expand the Rational Select Rational Functional Tester 7.0 and click Next. Click Next again. Select I accept the terms in the license agreements and click Next. Click Finish. Click Finish again and click Yes to restart ISA. 
+
+If you've already Rational Functional Tester 7.0 add-on installed previously, you can pick up the updates: 1. Start IBM Support Assistant 2. Select Update > Find Updates to Add-ons from the menu. 3. Select Rational Functional Tester 7.0 and click Next. 4. Select I accept the terms in the license agreements and click Next. 5. Click Finish. 6. Click Finish again and click Yes to restart ISA.  Back to top 
+
+
+
+
+
+ 
+
+Using ISA collector 
+
+Once ISA is started with Rational Functional Tester 7.0 add-on installed, click on Analyze Problem. Expand Rational Functional Tester 7.0 , and you should see a list of data collectors. Select the collector and click on Add. This will add the collector to the Collector Queue to be run. See below. [/support/docview.wss?uid=swg21329234&aid=1] Click on Collect All to start the collection. If you have multiple products added, each of these collectors will run in sequence per the Collector Queue. You can click on View Details to get more information on the progress of each of these collectors collector. More information can be found in ISA product help system at Help > Help Contents. For a more in-depth understanding of the various methods on deploying the IBM Support Assistant collectors see: Collecting diagnostic information using the IBM Support Assistant.http://www.ibm.com/developerworks/websphere/techjournal/0809_supauth/0809_supauth.html [http://www.ibm.com/developerworks/websphere/techjournal/0809_supauth/0809_supauth.html]
+
+
+
+ Back to top 
+
+
+
+
+
+
+ 
+
+IBM Installation Manager Collector For more information, please refer to IBM Installation Manager data collector available through IBM Support Assistanthttp://www.ibm.com/support/docview.wss?uid=swg21321795 [http://www.ibm.com/support/docview.wss?uid=swg21321795]
+
+This is the same data collector. 
+
+
+
+ Back to top 
+
+
+
+
+
+ 
+
+Rational Functional Tester General Collector 
+
+For more information, please refer to Rational Product General Collector available through IBM Support Assistanthttp://www.ibm.com/support/docview.wss?uid=swg21321831 [http://www.ibm.com/support/docview.wss?uid=swg21321831]
+
+This is the same data collector, but customized to gather Rational Functional Tester 7.0 specific product information.
+
+
+
+ Back to top 
+
+
+
+
+
+
+ 
+
+Enabling Debugging for Rational Functional Tester Use this collector to automatically enable debug settings for Rational Functional Tester . See: http://www.ibm.com/support/docview.wss?uid=swg21224514 [http://www.ibm.com/support/docview.wss?uid=swg21224514]
+
+This collector is to be used in conjuncture with the "Enabling Debugging for Rational Functional Tester" 
+
+ 
+
+What are the information being collected? 
+
+This collector enables debug settings for Rational Functional Tester 7.0. 
+
+ * Collects the ivory.properties file that has been updated. 
+ * Collects collector execution information.
+
+
+To check what contents has been collected, extract the .zip file that is created.  
+
+Walk thru for "Enabling Debugging for Rational Functional Tester" 
+
+This collector will first inform you what this data collector does. Click OK, to proceed .
+[/support/docview.wss?uid=swg21329234&aid=2] [/support/docview.wss?uid=swg21329234&aid=2]
+
+
+When the collector is completed, it will request feedback about ISA. Select Yes, to provide feedback. Select No to continue. 
+
+It will also ask you whether you would like to FTP the collected data. Please note that this is using the ftp protocol. If you have concern on the security of the data being transferred, please leverage the service request web page to transfer the data to your IBM Support team. 
+
+These are the FTP options. 
+
+ *  FTP the Logs to IBM. If you have a PMR number, you can send the collected data directly to IBM Support team. FTP the Logs to a Different Location. If you have an ftp site you want to send the files to - use this option. Do Not FTP the Logs. Do nothing. 
+
+Click OK and continue. If you choose the above 1 or 2 option, you'll have additional panels to fill in information that will for FTP information. 
+
+The collector will prompt you to recreate the problem. This is only informational. Click OK here. 
+[/support/docview.wss?uid=swg21329234&aid=3] [/support/docview.wss?uid=swg21329234&aid=3] 
+
+The collector should end. At this point, please re-create the problem. When completed, use the "Collect Debug information and Disable Debug for Rational Functional Tester" collector to gather the trace data. 
+
+ Back to top 
+
+
+
+
+
+
+ 
+
+Collect Debug information and Disable Debug for Rational Functional Tester Use this collector to automatically disable debug settings for Rational Functional Tester, and gather the debug trace data See: http://www.ibm.com/support/docview.wss?uid=swg21224514 [http://www.ibm.com/support/docview.wss?uid=swg21224514]
+
+This collector is to be used in conjuncture with the "Enabling Debugging for Rational Functional Tester"
+
+
+What are the information being collected? 
+
+This collector disables debug settings for Rational Functional Tester 7.0 and gathers the trace output. 
+
+ * Collects the debug output specified by rational.test.ft.debug.filename key in ivory.properties file. 
+ * Collects collector execution information.
+
+
+To check what contents has been collected, extract the .zip file that is created. 
+Walk thru for "Collect Debug information and Disable Debug for Rational Functional Tester" 
+
+This collector will first inform you what this data collector does. Click OK, to proceed .
+[/support/docview.wss?uid=swg21329234&aid=4] [/support/docview.wss?uid=swg21329234&aid=4]
+
+
+When the collector is completed, it will request feedback about ISA. Select Yes, to provide feedback. Select No to continue. 
+
+It will also ask you whether you would like to FTP the collected data. Please note that this is using the ftp protocol. If you have concern on the security of the data being transferred, please leverage the service request web page to transfer the data to your IBM Support team. 
+
+These are the FTP options. 
+
+ *  FTP the Logs to IBM. If you have a PMR number, you can send the collected data directly to IBM Support team. FTP the Logs to a Different Location. If you have an ftp site you want to send the files to - use this option. Do Not FTP the Logs. Do nothing. 
+
+Click OK and continue. If you choose the above 1 or 2 option, you'll have additional panels to fill in information that will for FTP information.  
+
+When the collector is completed, a link will be provided to you for quick access to the .zip file containing the collected data. You can use any unzip tool to extract the files. Alternatively, you can use the case manager capabilities within ISA to extract and examine the files collected.
+
+
+
+ Back to top 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+RELATED INFORMATION
+#IBM Support Assistant [http://www.ibm.com/software/support/isa/]
+Collecting diagnostic information using the IBM Support [http://www.ibm.com/developerworks/websphere/techjournal/0809_supauth/0809_supauth.html]
+Setting debug options in Rational Functional Tester [http://www.ibm.com/support/docview.wss?uid=swg21224514]

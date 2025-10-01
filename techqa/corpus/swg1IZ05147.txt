@@ -1,0 +1,182 @@
+Title: IBM IZ05147: SAP CUA ADAPTER 4.65.1009 DOES NOT CAUSE THE PASSCODE TO BE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Title: SAP CUA adapter 4.65.1009 does not cause the PASSCODE to
+   be
+   generated on a password change transaction as occurs during an
+   add
+   provisioning operation.
+   
+   Problem description:
+   
+   Customer states:
+   
+   "On a password change request, a new password isn't getting
+   properly
+   sent
+   down to the child systems. With SAP version 7, there is both a
+   BCODE and
+   PASSCODE field on the user accounts. BCODE is there for backward
+   compatability with
+   pre-version 7 systems. In our environment, that means uppercase
+   and 8
+   characters. the PASSCODE is the "new" field and will accept up
+   to a 40
+   character password, in mixed case. It's this
+   passcode that's not being replicated down to the child systems,
+   and our
+   SAP person believes he has found why in the BAPI that is called
+   on a
+   change (/TIVSECTY/TIM_USER_USR02_620). He sees where it copies
+   the BCODE
+   value down but not the PASSCODE."
+   
+   IF agrees with the customer's assessment and has asked to have
+   an apar
+   raised.
+   
+   Steps to duplicate:
+   
+   IF has duplicated per customer description of problem.
+   
+   
+   Customer Recreate:
+   
+   Yes.
+   
+   
+   Desired behavior:
+   
+   PASSCODE to be propagated to child systems on password
+   change operation as it is on add operation.
+   
+   
+   =================================================
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   Modified SAP transport to replace passcode
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   Fix will ship in SAP Adapter v4.6.6 in 1Q208
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *   Install updated transport.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ05147
+   
+   
+ * REPORTED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C34AG
+   
+   
+ * REPORTED RELEASE
+   460
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-09-21
+   
+   
+ * CLOSED DATE
+   2007-10-31
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     AGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * FIXED COMPONENT ID
+   5724C34AG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R460 PSY
+   UP

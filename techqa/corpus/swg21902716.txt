@@ -1,0 +1,39 @@
+Title: IBM Data Migration steps for Tivoli Common Reporting does not work - United States
+
+Text:
+jazzsm1120relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Data Migration steps for Tivoli Common Reporting from Version 3.1.0.x to Version 3.1.2: does not work. 
+
+RESOLVING THE PROBLEM
+Follow these steps for successful data migration from Tivoli Common Reporting Version 3.1.0.x to Version 3.1.2: 
+
+ * 
+ *  JazzSM v1.1.x (TCR 3.1.0.x) Export Upgrade Package:
+ * 
+ * 
+ * 
+ *  Launch -> Administration -> Configuration -> Content Administration -> Export
+   
+ * 
+ *  Windows: <JazzSM_HOME>\reporting\cognos\deployment 
+   Linux: <JazzSM_HOME>/reporting/cognos/deployment 
+
+
+ * JazzSM v1.1.2(TCR 3.1.2) Import Upgrade Package :
+ * 
+ * 
+ *  Windows: <JazzSM_HOME>\reporting\cognos\deployment 
+   Linux: <JazzSM_HOME>/reporting/cognos/deployment 
+ *  
+ * 
+ * 
+ * 
+ * Launch -> Administration -> Configuration -> Content Administration -> New Import
+ * 
+ * 
+ * Note: Birt reporting package should be re-imported through 
+ *  
+ * <JazzSM_HOME>/reporting/trcmd.bat/sh
+ *  in order to get design files in TCR 3.1.2

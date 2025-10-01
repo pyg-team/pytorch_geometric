@@ -1,0 +1,13 @@
+Title: IBM Unable to copy/paste a Local View to a Shared View: Paste and other functionalities grayed out - United States
+
+Text:
+grey; greyed; EV; close view; reload; new view; new folder; rename; delete; properties TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In Executive Viewer an admin user is unable to copy/paste from Local Views to Shared Views. When moving to the Shared Views, other than Open View, all other options are grayed out. 
+
+CAUSE
+Item Policy is set correctly for the user (with appropriate admin role) at the correct item level, but System Policy is not set correctly.
+
+RESOLVING THE PROBLEM
+Set the user to the appropriate admin role in System Policy. This should provide the correct permissions required to manipulate the Shared Views.

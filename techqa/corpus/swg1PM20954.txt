@@ -1,0 +1,184 @@
+Title: IBM PM20954: REMOTE GETSERVICE APPENDS UNQUALIFIED INTERFACE NAME TO COMPONENT NAME - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When only component name is passed to getService, and the
+   service is located on a remote server, the Service Component
+   Architecture SCA code will append the interface name to the
+   component name. This may result in a NameNotFoundException.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of the IBM WebSphere Application      *
+   *                  Server V7 Feature Pack for Service          *
+   *                  Component Architecture (SCA)                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When only component name is passed to   *
+   *                      getService, and the service is located  *
+   *                      on a remote server, the SCA code will   *
+   *                      append the unqualified interface name   *
+   *                      to the component name. This may         *
+   *                      result in a NameNotFoundException.      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This problem is encountered when the following conditions
+   occur simultaneously.
+   
+   1)An application, such as a servlet or JavaServer Page (JSP),
+   contains a call to CurrentCompositeContext.getService and is
+   deployed to a different server or cluster than the service it
+   is attempting to locate.
+   
+   2)Only the component name is passed to getService.
+   
+   3)The service name is not equal to the unqualified interface
+   name. This pattern occurs more often in components using
+   implementation.osgiapp or implementation.spring.
+   
+   As an example, if the following component is deployed on
+   Node01/server1:
+   
+   <component name="MyFrontEnd">
+       <implementation.spring location="META-INF/my-context.xml"/>
+       <service name="MyFrontEnd">
+           <interface.java interface="test.spring.FrontEnd"/>
+           <binding.sca />
+       </service>
+   </component>
+   
+   And the following jsp code is deployed on Node02/server2:
+   
+   CompositeContext compositeContext =
+   com.ibm.websphere.sca.context.CurrentCompositeContext.getContext
+   ();
+   FrontEnd fe =
+   (FrontEnd)compositeContext.getService(FrontEnd.class,
+   "MyFrontEnd");
+   
+   When the jsp code is invoked the following error will be seen:
+   
+   Caused by:
+   javax.naming.NameNotFoundException:
+   Context: Cell01/nodes/Node02/servers/server2, name:
+   cell/persistent/scaServices/MyFrontEnd/FrontEnd: First
+   component in name FrontEnd not found. [Root exception
+   is org.omg.CosNaming.NamingContextPackage.
+   NotFound: IDL:omg.org/CosNaming/NamingContext/Not
+   Found:1.0]
+   
+   Note the error shows the code is looking for <Component
+   Name>/<Unqualified Interface Name> rather than <Component Name>.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Feature Pack for SCA was changed to remove the code
+   adding the unqualified interface name to the component name,
+   hence correcting the issue reported in this APAR.
+   
+   APAR PM20954 is currently targeted for inclusion in Service
+   Level (Fix Pack) 1.0.1.9 of WebSphere Application Server v7
+   Feature Pack for Service Component Architecture (SCA) Refresh
+   Pack. Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM20954
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS SCA FEATURE
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0854
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-20
+   
+   
+ * CLOSED DATE
+   2010-08-24
+   
+   
+ * LAST MODIFIED DATE
+   2010-08-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS SCA FEATURE
+   
+   
+ * FIXED COMPONENT ID
+   5724J0854
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

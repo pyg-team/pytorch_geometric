@@ -1,0 +1,56 @@
+Title: IBM Repository Index ends prematurely and restarts.  Unable to complete the indexing. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After having restored PES 3.5 objects to a Collaboration and Deployment Services (C&DS) 4.1 repository and restarting the server, the indexing process is started.
+After a while, when monitoring the progress via the Deployment Manager Indexing page, the page times out with "Page cannot be found".
+When refreshing a couple of times the browser window it again allows a login and I can access the indexing page.
+The indexing seems still "In process" but started again at the beginning.
+This scenario is repeated every time. The indexing does every time seem to get a little further but there clearly is a performance issue.
+
+The server log has no clear errors.
+The java max heap size has been increased to the maximum. 
+
+RESOLVING THE PROBLEM
+First make sure the environment meets the all system requirements, especially RAM memory (4 GB minimum) and processor.
+
+To improve performance during indexing, the following steps could be taken:
+
+1) Check the Java heap size and increase it. If the java heap size is too small, it could degrade performance significantly. 
+For JBOSS, update this file and increase the max heap size setting:
+
+\jboss-4.2.0.GA\wrapper\conf\wrapper.conf
+
+# Maximum Java Heap Size (in MB)
+wrapper.java.maxmemory=512
+
+
+2) When doing performance testing, we found that reorganizing indexes could have large improvement with object creation and search indexing. With SQLServer, you can do this from the SQLServer Management Studio. Expand the database and tables until you see the Indexes in the tree. Right click that and select Reorganize All. 
+
+SPSSCMOR__ATTRIBUTE
+SPSSCMOR__FILEVERSION
+SPSSCMOR__MODELELEMENT
+SPSSCMOR_NAMEDOBJECT
+SPSSCMOR_NAMESPACE
+SPSSCMOR_OBJECT
+SPSSCMOR_OBJECTTYPE
+SPSSCMOR_OBJECTVERSION
+SPSSCMOR_RELATIONSHIP
+SPSSFIND_DATA
+SPSSFIND_FIELD
+SPSSFIND_TERM
+SPSSFIND_TOPICS
+SPSSCMOR__MININGATTRIBUTE
+
+3) SQLServer appears to be using a lot of memory. You might consider stopping and restarting SQLServer.
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 90040

@@ -1,0 +1,75 @@
+Title: IBM QRadar: External Authentication Fails Due to Password Fallback Change for Administrators (Updated) - United States
+
+Text:
+log in; administrator log in; administrator cannot log in; ldap log in not working; admin user password; authentication remote server; ldap unable to log in as administrator; change login policy; allow admin users to login QRadar; qradar login issues; log in after patching; qradar 7.2.8 Patch 8 log in issue admin; qradar 7.2.8 patch 9 login issues admins; ldap server down; ad server down; cannot log in qradar active directory; tacas; radius; LOCAL_FALLBACK_FOR_ALL_ADMINS TECHNOTE (FAQ)
+
+QUESTION
+ A security change in QRadar modifies how the admin user account can log in when external authentication is unavailable in several software versions. This article provides administrators information on how to change this functionality.
+
+
+
+CAUSE
+Users that have the Administrator user role assigned to them are unable to log in due to a security change in QRadar for how fallback passwords function with external services, such as LDAP, Active Directory, TACAS, or Radius. The 'Admin' named user can always log in, but administrator user roles, such as 'user.lastname' would not be able to authenticate to QRadar when the external authentication server is unavailable. 
+
+Affected versions
+In these versions, a LOCAL_FALLBACK_FOR_ALL_ADMINS parameter can be added to allow administrator to log in when external authentications servers are unavailable or unresponsive. 
+
+ * QRadar 7.2.8 Patch 8 (7.2.8.20170707222831) 
+ * QRadar 7.2.8 Patch 9 (7.2.8.20170726184122) 
+ * All future QRadar 7.2.8 versions 
+ * QRadar 7.3.0 Patch 4 (7.3.0.20170830160510) 
+ * All future QRadar 7.3.0 versions
+
+
+
+Not affected
+In the versions listed below, fall back to the local password works for all administrator accounts. In these versions, there is no core code change to allow the use of the LOCAL_FALLBACK_FOR_ALL_ADMINS parameter. 
+
+ * QRadar 7.3.0 (7.3.0.20170315023309) 
+ * QRadar 7.3.0 Patch 1 (7.3.0.20170503143306) 
+ * QRadar 7.3.0 Patch 2 (7.3.0.20170620100024) 
+ * QRadar 7.3.0 Patch 3 (7.3.0.20170727172058)
+   
+
+
+
+
+
+ANSWER
+Historically, QRadar has always used fallback passwords for all administrator accounts. A security change in this policy was released starting with QRadar 7.2.8 Patch 8 (7.2.8.20170707222831) and QRadar 7.3.0 Patch 4 (7.3.0.20170830160510) to only the 'Admin' named user account can log in until a configuration change is made to QRadar. This change requires root access to the Console appliance. 
+
+
+
+ 
+
+ * 
+ * Updating your QRadar Console
+   
+ * 
+ * 
+ * 
+   
+   Procedure 
+ *  Log in to the QRadar Console as an administrator. To make a copy of your existing nva.conf file, type: cp /opt/qradar/conf/nva.conf /root/nva.conf.bak Add the following files to change the LOCAL_FALLBACK_FOR_ALL_ADMINS=TRUE
+   
+   /opt/qradar/conf/nva.conf
+   /store/configservices/deployed/globalconfig/nva.conf
+   /store/configservices/staging/globalconfig/nva.conf
+   
+   Important: Depending on your version, you might be required to add or edit this line to nva.conf. The line position does not matter when making this change, the new line can be added to the top, bottom, or in alphabetical order to the QRadar Console. Do not edit the backup file you created as nva.conf.bak from the root directory as administrators can restore this file if an issue occurs. 
+    
+   
+   Save the changes to the files. Log in to the Console as an administrator. Click the Admin tab. Click Deploy Changes.
+   
+   Results
+   After the Deploy Changes completes, all managed hosts are provided with an updated nva.conf file that contains the change to allow all administrators the ability to log in the Console when external authentication is unavailable. 
+   
+   This change will persist through QRadar patches/updates. After you have made this configuration change one time, there should be no reason to have to repeat this procedure in future software versions. If you need assistance with this change, administrators can contact QRadar Support [http://ibm.biz/qradarsupport] to open a software ticket or they can ask additional questions in our forums using the Community questions and discussion field below. 
+
+ * 
+ * 
+
+Where do you find more information? 
+
+
+[/support/docview.wss?uid=swg22007092&aid=1] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg22007092&aid=2] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg22007092&aid=3] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg22007092&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg22007092&aid=5] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg22007092&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg22007092&aid=7] [http://ibm.biz/SuptRegQuikStart]

@@ -1,0 +1,149 @@
+Title: IBM PK71528: Memory size of the RAM Java process never decreases - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  We are evaluating IBM Rational Asset Manager for 2 months and we
+   recently noticed that the memory size of the java process never
+    decreases. In deed, at each user action, the memory size of the
+    process increases but it never decreases even after a long peri
+   od of inactivity.
+   As consequences, once the memory size reaches its limit, the app
+   lication response time is very long and we have to reboot the PC
+   .
+   
+   Configuration:
+   Our Rational Asset Manager V7.1 server is installed on a Windows
+    XP PC with 3.5 GB of memory. It uses the DB2 database supplied
+   in the package. WebSphere Application Server is used for the Web
+    clinet. the rich client is not used.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This may be a WebSphere Application Server configuration
+   issue. Try these settings.
+   
+   1)  Increase the heap size to 1700 or more if you have 3.5GB
+   of memory.  Do not exceed a heap size of 2048.
+   Servers -? Application servers -? Java and process
+   management -? Process definition -? Java virtual machine -?
+   Initial heap size and Maximum heap size.
+   
+   2) Set the GC policy to -Xgcpolicy:gencon
+   Servers -? Application servers -? ?Server name? -? Java and
+   process management -? Process definition -? Java virtual
+   machine -? Generic JVM arguments.
+   
+   It's normal for the java process to grow in size until it
+   reaches the maximum heap size, but the application should
+   not become significantly slower. The garbage collector
+   should continue to free memory as it is needed by the JVM
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This may be a WebSphere Application Server configuration
+   issue. Try these settings.
+   
+   1)  Increase the heap size to 1700 or more if you have 3.5GB
+   of memory.  Do not exceed a heap size of 2048.
+   Servers -? Application servers -? Java and process
+   management -? Process definition -? Java virtual machine -?
+   Initial heap size and Maximum heap size.
+   
+   2) Set the GC policy to -Xgcpolicy:gencon
+   Servers -? Application servers -? ?Server name? -? Java and
+   process management -? Process definition -? Java virtual
+   machine -? Generic JVM arguments.
+   
+   It's normal for the java process to grow in size until it
+   reaches the maximum heap size, but the application should
+   not become significantly slower. The garbage collector
+   should continue to free memory as it is needed by the JVM
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK71528
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL ASSET MGR
+   
+   
+ * REPORTED COMPONENT ID
+   5724R4200
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-04
+   
+   
+ * CLOSED DATE
+   2008-11-26
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

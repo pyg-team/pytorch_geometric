@@ -1,0 +1,27 @@
+Title: IBM Linux KVM (KV1) agent packaged in ITM for Virtual Environment version 7.2 FP3 and 7.2 FP4 unable to install support through SDA (Self Describing Agent) feature. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+The Linux KVM (KV1) agent is not enabled to support SDA in mentioned release version so support for this agent does not get seeded unless user explicitly installs it manually on the IBM Tivoli Monitoring TEMS/TEPS. 
+
+
+SYMPTOM
+User can see the log statement in kv1 agent log as : 
+
+“Ignoring TEMA_SDA Configuration! Agent SDA package not found for PRODUCT "V1".”
+
+
+RESOLVING THE PROBLEM
+There is no resolution available for this issue currently.
+
+
+
+
+
+Local installation of the Agent support files is the work-around for this issue. Application support can be installed manually using agent installer or separate application support installer bundled in the downloaded suite of this agent. User may refer to the user's guide for the detailed steps to install the application support manually. 
+
+Please refer Chapter 2 in attached user guide URL:
+https://www.google.co.in/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&ved=0ahUKEwiRjcjpxYvYAhVEwbwKHZh5B-4QFggmMAA&url=https%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcommunity%2Ffiles%2Fform%2Fanonymous%2Fapi%2Flibrary%2F891686d1-2481-4934-9b56-8f244b559c7c%2Fdocument%2F12d463ac-91c4-4fd8-ae56-692f592142ea%2Fmedia&usg=AOvVaw2QzmWEvrAcUJ7V70HHzS_q [https://www.google.co.in/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&ved=0ahUKEwiRjcjpxYvYAhVEwbwKHZh5B-4QFggmMAA&url=https%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcommunity%2Ffiles%2Fform%2Fanonymous%2Fapi%2Flibrary%2F891686d1-2481-4934-9b56-8f244b559c7c%2Fdocument%2F12d463ac-91c4-4fd8-ae56-692f592142ea%2Fmedia&usg=AOvVaw2QzmWEvrAcUJ7V70HHzS_q]

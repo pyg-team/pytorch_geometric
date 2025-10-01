@@ -1,0 +1,135 @@
+Title: IBM RS03052: ENTERPRISE CONSOLE VULNERABILITY OTG-INPVAL-001 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Enterprise console is affected by the following vulnerability:
+   OWASP category: OTG-INPVAL-001 - Testing for Reflected Cross
+   Site Scripting
+   
+   https://www.owasp.org/index.php/Testing_for_Reflected_Cross_site [https://www.owasp.org/index.php/Testing_for_Reflected_Cross_site]
+   _scripting_(OTG-INPVAL-001)
+   
+   Some parameters in some forms are vulnerable to XSS exploit.
+   
+   Vulnerable forms and parameters:
+   TAB Explore - Check Action Rule - Edit
+   TAB Compose - Action Rule - OK
+   TAB Analyze - Generate Project Report - Generate Report
+   TAB Query - Generate Report on Query Results
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  There was a vulnerability in the enterprise console.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS03052
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6900
+   
+   
+ * REPORTED RELEASE
+   881
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-03-06
+   
+   
+ * CLOSED DATE
+   2018-03-07
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * FIXED COMPONENT ID
+   5725B6900
+   
+   
+
+APPLICABLE COMPONENT LEVELS

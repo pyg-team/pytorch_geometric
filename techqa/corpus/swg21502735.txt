@@ -1,0 +1,35 @@
+Title: IBM Steps to limit users' View list in Tivoli Integrated Portal - United States
+
+Text:
+Tivoli Integrated Portal; TIPL2; TIPL2CONF; views list; preference profile; role; group; user management TECHNOTE (FAQ)
+
+QUESTION
+ What is the procedure to limit the list of views visible to a user or group in the "Views" drop down in TIP? 
+
+ANSWER
+For TIP versions older than 2.1 the procedure is as follows: 
+
+ 1. Login into the console as a user with administrator privileges.
+    
+ 2. Create Role to be used with the desired view:
+    Go to the Administrative User Roles if the restriction should apply to a specific user, or Administrative Group Roles if the restriction should apply to a group.
+    
+ 3. Assign the role from step 2 to the appropriate user or group.
+    
+ 4. Create a view:
+    Go to Settings ->View Management. Select the pages that should be visible for the view, and assign the role created in step 2, and then click save. 
+    
+ 5. Create a preference profile to be used with the desired role:
+    Go to Settings->Console Profile Preference. 
+    Name the new profile.
+    Uncheck "All task" checkbox
+    Check "Core view" box.
+    Add the role from step 2 to the "Roles Using This Preference Profile" section.
+    
+ 6. Log out and log back in with a user ID that should have the limited "Views" list.
+    
+    
+
+For TIP version 2.1 and higher:
+The same procedure applies to TIP version 2.1 and newer except there is an additional option that must be checked when creating the profile preference in step 5. In step 5, the "Hide view selector" option must also be selected. That option is new to version 2.1. 
+The behavior is slightly different in TIP version 2.1 as well. After the procedure has been applied, the target user will no longer see the "Views" drop down.

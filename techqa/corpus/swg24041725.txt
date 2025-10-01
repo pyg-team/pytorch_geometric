@@ -1,0 +1,57 @@
+Title: IBM Operational Decision Manager V8.8.0.1 Fix Pack - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This cumulative fix pack updates Operational Decision Manager V8.8.0 to V8.8.0.1. 
+
+DOWNLOAD DESCRIPTION
+This fix pack is entitled. Only customers who have purchased Operational Decision Manager V8.8.0 can use this fix pack.
+
+
+How to install the fix pack
+For each Operational Decision Manager component that you use: 
+
+ 1. Download its file in the following table. 
+    Change <OS> to match your platform: AIX, HPUX, LIN_PPC, LIN_S390, LIN_X86, OS400, SOL_SPARC, SOL_X86, and WIN. 
+ 2. Extract the contents of the download file to a new folder. Use the corresponding folder name in the table. 
+ 3. If you use WebSphere Application Server, download the profile templates for your component.
+
+Component Download file Folder name (InstallDir) Note Decision Server Insights 8.8.0-WS-ODM_DSI-<OS>-FP001.zip DSI Only available for Linux (LIN) and Windows (WIN). Decision Center 8.8.0-WS-ODM_DC-<OS>-FP001.zip WDC For Windows and Linux, use <install path of ODM 8.8.0>/jdk/bin/jar xf to extract files in the WDC directory. Decision Server Rules 8.8.0-WS-ODM_DSR-<OS>-FP001.zip DSR [/support/docview.wss?uid=swg24041725&amp;aid=1] Decision Server Events 8.8.0-WS-ODM_DSE-<OS>-FP001.zip DSE [/support/docview.wss?uid=swg24041725&amp;aid=1] Decision Center profile templates for WebSphere Application Server 8.8.0-WS-ODM_PTDC-FP001.zip WDC_PT [/support/docview.wss?uid=swg24041725&amp;aid=1] Decision Server Rules profile templates for WebSphere Application Server 8.8.0-WS-ODM_PTR-FP001.zip DSR_PT [/support/docview.wss?uid=swg24041725&amp;aid=1] Decision Server Events profile templates for WebSphere Application Server 8.8.0-WS-ODM_PTE-FP001.zip DSE_PT [/support/docview.wss?uid=swg24041725&amp;aid=1] Installing with IBM Installation Manager:  1. Launch IBM Installation Manager. 
+ 2. Open File > Preferences > Repositories. 
+ 3. For each component that you use: 
+    a. Click Add Repository.
+    b. Browse to the extracted folder <InstallDir>/updates.
+    c. Select the repository.config file. 
+ 4. Make sure the repositories are selected in Repositories. 
+ 5. Click Apply to save your changes, and click OK to close Repositories. 
+ 6. Click Update to update your installation. 
+ 7. Follow the instructions in the installation manager to complete the installation.
+
+
+Installing with the Installation Manager command line:  1. Locate the imcl command under <IM installation>/eclipse/tools. 
+ 2. Run the commandimcl updateAll -repositories WDC/updates, DSR/updates, DSE/updates -acceptLicense.
+
+ * Use the option -installDirectory <install path of ODM 8.8.0> to update a specific installation. 
+ * If you update only one component, specify the repository accordingly.
+
+
+Applying the fix pack 
+After you install the fix pack, you might have to do additional steps to apply the fix pack in your environment. To complete the update, see When and how to apply a modification or fix pack [http://www-01.ibm.com/support/docview.wss?uid=swg21665766]. DOWNLOAD PACKAGE
+
+
+
+PROBLEMS SOLVED
+Fix List for IBM Operational Decision Manager [http://www.ibm.com/support/docview.wss?uid=swg27023767]
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] ODM 8.8.0.1 AIX 25 Feb 2016 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.8.0.0&platform=AIX&function=all] [ ] DD ODM 8.8.0.1 HPUX 25 Feb 2016 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.8.0.0&platform=HPUX&function=all] [ ] DD ODM 8.8.0.1 Linux PPC 25 Feb 2016 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.8.0.0&platform=Linux+PPC&function=all] [ ] DD ODM 8.8.0.1 Linux x86 25 Feb 2016 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.8.0.0&platform=Linux+x86&function=all] [ ] DD ODM 8.8.0.1 Linux zSeries 25 Feb 2016 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.8.0.0&platform=Linux+zSeries&function=all] [ ] DD ODM 8.8.0.1 OS/400 25 Feb 2016 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.8.0.0&platform=OS/400&function=all] [ ] DD ODM 8.8.0.1 Solaris 32-bit SPARC 25 Feb 2016 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.8.0.0&platform=Solaris+32-bit,SPARC&function=all] [ ] DD ODM 8.8.0.1 Solaris 64-bit SPARC 25 Feb 2016 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.8.0.0&platform=Solaris+64-bit,SPARC&function=all] [ ] DD ODM 8.8.0.1 Solaris 32-bit x86 25 Feb 2016 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.8.0.0&platform=Solaris+32-bit,x86&function=all] [ ] DD ODM 8.8.0.1 Solaris 64-bit x86 25 Feb 2016 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.8.0.0&platform=Solaris+64-bit,x86&function=all] [ ] DD ODM 8.8.0.1 Windows 25 Feb 2016 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.8.0.0&platform=Windows&function=all] [ ] DD 
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Advanced Business Integration IBM Operational Decision Manager Express Business Integration IBM Operational Decision Manager for z/OS 
+
+ [/support/docview.wss?uid=swg24041725&aid=2]Problems (APARS) fixed [/support/docview.wss?uid=swg24041725&aid=3]Problems (APARS) fixed
+Decision Center , RS02014, RS02135, RS02194, RS02214, RS02215, RS02218, RS02222, RS02223, RS02224, RS02227, RS02237, RS02243, RS02244, RS02247, RS02249, RS02250, RS02254, RS02256, RS02257, RS02268, RS02273, RS02276, RS02279, RS02282, RS02283, RS02287, DS Rules, RS01870, RS02183, RS02205, RS02209, RS02224, RS02225, RS02228, RS02230, RS02242, RS02274, DS Events, RS01980, RS02051, RS02078, RS02096, RS02138, RS02192, RS02224, RS02255, DS Insights, RS02117, RS02181, RS02196, RS02197, RS02198, RS02199, RS02200, RS02201, RS02202, RS02204, RS02206, RS02224, RS02229, RS02269, RS02285, RS02289, RS02293, Flat list for ODM , RS02285 RS02269 RS02287 RS02274 RS02276 RS02279 RS02282 RS02283 RS02255 RS01980 RS02014 RS01870 RS02051 RS02078 RS02096 RS02117 RS02135 RS02138 RS02181 RS02197 RS02196 RS02201 RS02200 RS02199 RS02204 RS02198 RS02192 RS02183 RS02202 RS02222 RS02194 RS02206 RS02209 RS02205 RS02229 RS02215 RS02214 RS02218 RS02249 RS02225 RS02227 RS02223 RS02224 RS02228 RS02273 RS02230 RS02247 RS02289 RS02237 RS02242 RS02250 RS02243 RS02244 RS02254 RS02256 RS02257 RS02268 RS02293

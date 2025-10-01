@@ -1,0 +1,146 @@
+Title: IBM OA47417: START DATE/TIME OF QMCURSTAT RETURN N/A FOR Z/OS QUEUE MANAGERS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Start Date and Start Time attributes of the
+   Current Queue Manager Status attribute group
+   returns "n/a" for active queue managers on z/OS.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IBM Tivoli OMEGAMON XE for Messaging:    *
+   *                 WebSphere MQ Monitoring 7.3.0 users.         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Start Date and Start Time           *
+   *                      attributes of the Current Queue         *
+   *                      Manager Status attribute group          *
+   *                      returns "n/a" for active queue          *
+   *                      managers on z/OS.                       *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   The Start Date and Start Time are two new attributes added
+   in 7.3.0. The MQ agent code sets values for distributed
+   queue managers, but not for queue managers on z/OS.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is modified to return data for queue managers on
+   z/OS too.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA47417
+   
+   
+ * REPORTED COMPONENT NAME
+   OMG XE MSG ZOS
+   
+   
+ * REPORTED COMPONENT ID
+   5608A1100
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-01
+   
+   
+ * CLOSED DATE
+   2015-04-10
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  KMQAGENT KMQAMQS3
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMG XE MSG ZOS
+   
+   
+ * FIXED COMPONENT ID
+   5608A1100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R730 PSY UA76890 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA76890]
+   UP15/05/07 P F505
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

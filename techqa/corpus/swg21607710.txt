@@ -1,0 +1,16 @@
+Title: IBM Support's Guide to the Multi-Headed NT Log File Probe - United States
+
+Text:
+nco_p_mhntlog; nco_p_mhntlog.exe; Microsoft Windows API; event log; windows TECHNOTE (FAQ)
+
+QUESTION
+ MHNT Log File Probe : How does the probe work? 
+
+ANSWER
+
+The MHNT Log File Probe reads from given hosts Windows log files using the Windows API.
+Please refer to Support's Guide to the Multi-Headed NT Log File Probe for further details.
+
+Note: For Windows 2008 and above you should use the Windows Event log probe.
+
+MHNTLOGFILEProbe_SupportsGuide_20.pdf [/support/docview.wss?uid=swg21607710&aid=2]MHNTLOGFILEProbe_SupportsGuide_20.pdf [/support/docview.wss?uid=swg21607710&aid=1]

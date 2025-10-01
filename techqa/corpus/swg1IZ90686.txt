@@ -1,0 +1,127 @@
+Title: IBM IZ90686: UPDATE INSTALLER FOR NOKIA BASED CLIENTS TO SUPPORT S^3 CLASS OFDEVICES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Lotus Mobile Connect Mobility Client for Nokia release 6.1.4.
+   
+   The Lotus Mobile Connect install program for Symbian uses a
+   Nokia API to create entries in the device communications
+   database and then programmatically adds the VPN service
+   records.  Once this is complete the install program verifies
+   that all of the communication database records are pointing
+   to each other as appropriate.  With the release of the Nokia
+   S^3 devices there has been a small change in the relationships
+   between the commuications database records and therefore the
+   existing Mobility Client install verification logic is failing
+   the install.  This APAR is being written to address that
+   problem.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The reported problem will not be resolved by the Lotus Mobile
+   Connect development team.  After carefully weighing the work
+   required to allow the Mobility Client to run on the Nokia S^3
+   devices and the apparent Nokia strategy to embrace the Windows
+   Phone operating software a decision was made not to move ahead
+   with the work required to resolve the reported issue.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The documented issue with the Mobility Client on Nokia S^3
+   devices will remain unresolved and closed as a Permanent
+   Restriction for the product.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ90686
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS MOBILE CO
+   
+   
+ * REPORTED COMPONENT ID
+   5724R2000
+   
+   
+ * REPORTED RELEASE
+   614
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2010-12-13
+   
+   
+ * CLOSED DATE
+   2011-10-07
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,168 @@
+Title: IBM IV07138: DOCS: ESF ARCHITECTURE DESIGN REFERENCE FOR MULTITIER ARCHITECTURE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This is pre-v7.3.x;
+   
+   http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com]
+   .ibm.netcool_OMNIbus.doc_7.3.1/omnibus/wip/install/task/omn_ha_c
+   onfiguringcontrolledfailback.html
+   
+   To minimize event loss, which can occur if clients fail back to
+   a primary ObjectServer before resynchronization is completed,
+   client failback behavior must be controlled by a failover pair
+   of ObjectServers instead of the clients themselves. The
+   configuration for controlled failback is based around the
+   aggregation layer in the multitiered architecture.
+   To configure controlled failback for clients that connect to the
+   failover pair, perform the following steps for the client types:
+   
+       * Probes: If probes are connecting to the aggregation
+   failover pair, disable failback in the probes by configuring
+   them to connect to the aggregation (virtual) ObjectServer pair
+   and by disabling polling. In the probe properties file:
+             o Set Server to AGG_V.
+             o Set ServerBackup to "".
+             o Set PollServer to 0.
+   
+   The present multitier configuration is to use the probes Server
+   and ServerBackup [PollServer & NetworkTimeout] properties at the
+   Collection layer.
+   Controlled synchronisation is managed within the Netcool/OMNIbus
+   v7.3 product and pre-v7.2 is covered on the GAT site.
+   The use of Virtual Object Servers at this [Collection] level
+   isn't recommended as failover/failback is not managed.
+   
+   The use of Server, ServerBackup, PollServer & NetworkTimeout is
+   not documented adequately in the current documentation set and
+   this should also be addressed.
+   e.g.
+   PollServer > NetworkTimeout
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users accessing the "Configuring controlled failback of      *
+   * clients" topic in the documentation Info Center.             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The documentation talks about connecting probes to the       *
+   * Aggregation layer and using a VOS.                           *
+   * This is incorrect. The probes should only connect to the     *
+   * collection layer and should use the standard                 *
+   * failover/failback probe property settings.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The customer should refer to the updated information center  *
+   * re the "Configuring controlled failback of clients" topic.   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The "Configuring controlled failback of clients" topic has been
+   updated with the following information:
+   
+   Probes connecting to the collection failover pair, must use the
+   standard failover and failback property settings. In the probe
+   properties file:
+   
+   Set Server to NCOMS_P.
+   Set ServerBackup to NCOMS_B.
+   Set NetworkTimeout to 15.
+   Set PollServer to 60.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV07138
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-05
+   
+   
+ * CLOSED DATE
+   2011-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2011-09-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

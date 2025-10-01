@@ -1,0 +1,27 @@
+Title: IBM Setting the Australian date format in the IBM Business Process Manager (BPM) Process Portal - United States
+
+Text:
+BPM; Process Portal; Locale; Date Format; Australian; Process Admin TECHNOTE (FAQ)
+
+QUESTION
+ The default date format in BPM Process Portal is "MM/dd/yy h:mm a". How do you set the date format as the "dd/MM/yy h:mm a" Australian date format? 
+
+ANSWER
+You can change the Locale setting for the user using the IBM Business Process Manager Process Admin Console. The Process Admin Console has a User Management > Bulk User Attribute Assignment panel where an administrator can change the Locale attribute that is used for a user. For more information, see the Assigning user attributes [http://www.ibm.com/support/knowledgecenter/SSFPJS_7.5.1/com.ibm.wbpm.admin.doc/common/topic/assigning_user_attributes.html] topic in the IBM Business Process Manager Version 7.5.1 Information Center.
+The link in this topic for the "View by Attribute" option will likely be the easier view to use. When you view by attribute, it is possible to highlight the "Locale" attribute, search for users, select multiple users, and then enter "en-au" for the "Value" field under the "Specify a Value and Assign it to the Selected Users" heading.
+
+After you select the "en-au" value for the "Locale" attribute in the Process Admin Console, the date display in the Process Portal Inbox should be in the form "dd/MM/yy h:mm a" for the user or users where the "Locale" attribute was changed.
+
+Note: If you submit an English "Interface language" setting in the Process Portal General Preferences after setting the "Locale" using the Process Admin Console "Bulk User Attribute Assignment" option, it overwrites the "en-au" locale setting to "en", which is part of the product design. Because the Process Portal General Preferences do not have country-specific languages in most cases, selecting English does reset the locale to "en". To work around this situation, update and save the Locale setting for the user in the Process Admin Console again.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Process Portal AIX, Linux, Windows 8.5.5, 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Express Process Portal Linux, Windows 8.5.5, 8.5, 8.0.1, 8.0, 7.5.1, 7.5 
+HISTORICAL NUMBER
+ 06304
+101
+616 
+
+PRODUCT ALIAS/SYNONYM
+ BPM

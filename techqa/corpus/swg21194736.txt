@@ -1,0 +1,29 @@
+Title: IBM <FS> delimiter is not recognized - United States
+
+Text:
+MQIINFO ASCII file separator character (ASCII 28; hex 1C) not recognized <FS>. TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You define a IBM Integration Bus (IIB) or WebSphere Message Broker (WMB) message set with TDS wire format. Data Element Separation is set to All Elements Delimited. The Delimiter needs to be the ASCII file separator character (ASCII 28, hex 1C). The Help file says that the mnemonic is <FS>. Your messages do not parse correctly, and the file separator character is not recognized as delimiter. 
+
+RESOLVING THE PROBLEM
+Ensure that your input bitstream has the correct codepoints for the file separator character. This must be consistent with the CodedCharSetId. 
+
+ * If you have one header, then CodedCharSetId is derived from MQMD.CodedCharSetId 
+ * If you have more than one header, then the CodedCharSetId is derived from the last header, not the MQMD.CodedCharSetId value.
+   
+
+Additional information 
+When an input bitstream is parsed by the MRM, internal conversions will occur from the CodedCharSetId of the message body to Unicode, and then the separation process will occur. Therefore you need to ensure that your input bitstream has the correct codepoints for the file separator character, which is consistent with the CodedCharSetId. 
+
+For example, if the MQMD.CodedCharSetId is codepage 819 or 500, then the file separator is x'1c', and this would be converted to x'001c' in Unicode. However, if you specify an MQMD.CodedCharSetId of 437 for the input messages, then x'1c' is NOT the file separator character for this codepage. X'1c' is the Delete character in codepage 437 and x'1A' is actually the file separator character and this would be converted to x'001c' in Unicode. 
+
+Throughout this technote, reference to the MQMD.CodedCharSetId has been made. It should be noted that, the message body codepage is actually represented by the CodedCharSetId of the last header in the input message. So if you did have other headers, then it would be the CodedCharSetId of this last header, not the MQMD.CodedCharSetId value.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Bus Application Development 9.0 All Editions 
+HISTORICAL NUMBER
+ 71868 999 000 
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

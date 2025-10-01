@@ -1,0 +1,39 @@
+Title: IBM JMSListener AutoReconnect properties misconception - United States
+
+Text:
+netcool; impact; netcool/impact; nci; jms; dsa; connectivity; reconnect; auto; autoreconnect; property; properties; listener; jmslistener; misconception; disinformation; misunderstanding; misinterpretation; error; fault; inaccuracy TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There appears to be a common misconception regarding the application of the JMS DSA Listener properties for AutoReconnect
+
+
+
+SYMPTOM
+AutoReconnect fails
+
+
+CAUSE
+Properties for the JMSListener in the file: 
+
+$NCHOME/impact/etc/[ImpactServerName]_[JMSListenerName].props
+
+have been set as:
+
+impact.[JMSListenerName].jms.autoreconnect=true
+impact.[JMSListenerName].jms.autoreconnect.pollinterval=[TimeValue]
+
+
+
+
+RESOLVING THE PROBLEM
+Properties for the JMSListener in the file: 
+
+
+$NCHOME/impact/etc/[ImpactServerName]_[JMSListenerName].props
+
+Where [ImpactServerName] is the name of the ImpactServer (for example: NCI) and [JMSListenerName] is the name of the JMSListener Service (for example: MyJMSListener) and the properties should be set as:
+
+impact.[JMSListenerName].autoreconnect=true
+impact.[JMSListenerName].autoreconnect.pollinterval=[TimeValue]
+
+Where [JMSListenerName] is the name of the JMSListener Service (for example: MyJMSListener) and [TimeValue] is the desired polling interval value in milliseconds (for example: 30000 (equivalent to 30 seconds)). So, the properties are without the additional .jms bit.

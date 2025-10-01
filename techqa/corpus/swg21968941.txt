@@ -1,0 +1,32 @@
+Title: IBM How to Access the IBM license key center for SPSS software. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I navigate the IBM SPSS License Key Center in order to create, manage or view my existing SPSS licenses? 
+
+CAUSE
+Using the IBM License Key Center
+
+ANSWER
+The license key center is a secure site. Only the Primary contact (generally the person who purchased your product), site technical contact, or their designated contacts are able to access it.
+
+
+If you already have access navigate to: https://www.ibm.com/analytics/us/en/spss/spss-support/ [https://developer.ibm.com/predictiveanalytics/get-help/] 
+- Select SPSS Statistics Version 25, 24, 23... Scroll down to Licensing section - Get your license key 
+
+
+Click on Button: "Visit the License Key Center" or use the direct link below:
+https://spss.subscribenet.com/control/ibmp/login [https://spss.subscribenet.com/control/ibmp/login]
+
+If you continue to have issues, please review our SPSS licensing forum https://developer.ibm.com/answers/topics/spsslicensing.html [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+RELATED INFORMATION
+ IBM SPSS Help and Support [https://www.ibm.com/analytics/us/en/spss/spss-support/]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Amos Business Analytics SPSS Modeler Business Analytics SPSS Collaboration and Deployment Services Business Analytics SPSS SamplePower Business Analytics SPSS Statistics Business Analytics SPSS Text Analytics for Surveys

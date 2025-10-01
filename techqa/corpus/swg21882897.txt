@@ -1,0 +1,25 @@
+Title: IBM Can I use StoredIQ to harvest a GPFS with a CIFS or NFS volume configuration? - United States
+
+Text:
+StoredIQ; SIQ; GPFS; IBM Spectrum Scale; harvest; CIFS TECHNOTE (FAQ)
+
+QUESTION
+ Can I use StoredIQ to harvest a GPFS (General Parallel File System) with a CIFS or NFS volume configuration? 
+
+ANSWER
+The GPFS Server license permits the licensed virtual server to share GPFS data directly through any application, service protocol or method such as Network File System (NFS), Common Internet File System (CIFS), File Transfer Protocol (FTP), or Hypertext Transfer Protocol (HTTP).
+It should be noted, however, the following limitations exist regarding GPFS support for Windows:
+
+
+ * GPFS for Windows does not support OpenLdap for Windows-Unix user-mapping. The only way to achieve Windows-Unix user-mapping in GPFS is via Identity Mapping for Unix (IMU) from Microsoft. 
+ * Exporting GPFS file systems as Server Message Block (SMB) shares (also known as CIFS shares) from GPFS Windows nodes is not supported.
+
+
+As the use of StoredIQ with GPFS has not been tested internally there may be capability and support issues that are unknown at this time. RELATED INFORMATION
+ IBM Spectrum Scale - GPFS [http://www-01.ibm.com/support/knowledgecenter/SSFKCN/com.ibm.cluster.gpfs.doc/gpfs_faqs/gpfsclustersfaq.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management eDiscovery Identification and Collection StoredIQ Platform Platform Independent 7.5.1, 7.5.0.2, 7.5.0.1, 7.5 All Editions Enterprise Content Management Policy Assessment and Compliance StoredIQ Platform Platform Independent 7.5.1, 7.5.0.2, 7.5.0.1, 7.5 All Editions Enterprise Content Management Unstructured Data Identification and Mgmt Platform Platform Independent 7.5.1, 7.5.0.2, 7.5.0.1, 7.5 All Editions

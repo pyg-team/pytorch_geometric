@@ -1,0 +1,148 @@
+Title: IBM Security Bulletin: Vulnerability in Apache Commons affects Tivoli Storage Productivity Center and IBM Spectrum Control (CVE-2015-7450) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ An Apache Commons Collections vulnerability for handling Java object deserialization was addressed by Tivoli Storage Productivity Center and IBM Spectrum Control. 
+
+VULNERABILITY DETAILS
+CVEID: [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7450] CVE-2015-7450 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7450]
+DESCRIPTION:Apache Commons Collections could allow a remote attacker to execute arbitrary code on the system, caused by the deserialization of data with Java InvokerTransformer class. By sending specially crafted data, an attacker could exploit this vulnerability to execute arbitrary Java code on the system.
+CVSS Base Score: 9.8
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/107918 for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Spectrum Control 5.2.9
+Tivoli Storage Productivity Center 5.2.0 through 5.2.7
+Tivoli Storage Productivity Center 5.1.0 through 5.1.1.9
+
+Tivoli Storage Productivity Center 4.x and 3.x are not affected.
+IBM Spectrum Control 5.2.8 is not affected.
+
+* Important: Although IBM Spectrum Control 5.2.8 is not affected by this vulnerability, if you have applied version 5.2.9, the vulnerability has been re-introduced and must be remediated.
+
+REMEDIATION/FIXES
+The solution is to apply an appropriate IBM Spectrum Control or Tivoli Storage Productivity Center fix maintenance for each named product and execute the manual steps listed below.
+
+If you cannot upgrade to a fixed level of IBM Spectrum Control or Tivoli Storage Productivity Center, you can follow a procedure to apply an IBM WebSphere Application Server interim fix to your existing server as a mitigation noted here. 
+
+Note: It is always recommended to have a current backup before applying any update procedure. 
+
+
+
+
+IBM Spectrum Control 5.2.x and Tivoli Storage Productivity Center V5.2.x
+
+
+
+Affected Version APAR Fixed Version Availability 5.2.0 - 5.2.7 IT14418 5.2.8 * December 2015 5.2.9 * IT15009 5.2.10 May 2016 * Important: This vulnerability is not resolved in IBM Spectrum Control 5.2.9, even if you previously applied IBM Spectrum Control 5.2.8. 
+
+Apply fix maintenance as soon as practicable. (See Latest Downloads [http://www.ibm.com/support/docview.wss?uid=swg21320822]) 
+
+
+
+Tivoli Storage Productivity Center V5.1.x
+
+
+
+Affected Version APAR Fixed Version Availability 5.1.x IT14418 5.1.1.10
+
+Manual update steps are required in addition to applying 5.1.1.10. See steps below this table. April 2016 Apply fix maintenance as soon as practicable. (See Latest Downloads [http://www.ibm.com/support/docview.wss?uid=swg21320822]) 
+
+These manual steps are required in addition to applying the V5.1.1.10 fixpack. 
+
+Tivoli Storage Productivity Center 5.1.x embeds Tivoli Integrated Portal 2.2 which embeds Websphere Application Server 7.0 and requires the corresponding fix below. Follow these steps to apply the fix: 
+ * 
+ * 
+ * http://www-01.ibm.com/support/docview.wss?uid=swg24041257
+ * 
+ * 
+ * 
+ * 
+ * 
+ * On Windows, the default location for WAS Update Installer is:
+ * 
+ * 
+ * 
+ * 
+ * Reference
+ * :
+ * Security Bulletin: Multiple security vulnerabilities has been identified in Websphere Application Server shipped with Tivoli Integrated Portal (CVE-2015-7450) (CVE-2015-2017)
+ * 
+   
+
+WORKAROUNDS AND MITIGATIONS
+ Applying IBM WebSphere Application Server interim fix PI52103 is an alternate option to mitigate the vulnerability if you cannot move up to a fixed level as noted in the table above. For more information, review the Websphere Application Server security bulletin: http://www-01.ibm.com/support/docview.wss?uid=swg21970575 [http://www-01.ibm.com/support/docview.wss?uid=swg21970575] 
+
+Note: Prior to applying the WebSphere Application Server interim fix, ensure Tivoli Storage Productivity Center is at the latest maintenance level -- 5.1.1.9, 5.2.7 or 5.2.9. If you later upgrade to a version of Tivoli Storage Productivity Center that does not contain a fix, you will need to perform this mitigation again. (See Latest Downloads [http://www.ibm.com/support/docview.wss?uid=swg21320822]) 
+
+Note: It is always recommended to have a current backup before applying any update procedure. 
+
+ 
+
+Procedure for mitigation of IBM Spectrum Control 5.2.9 and Tivoli Storage Productivity Center 5.2.x and 5.1.1.x: 
+
+1. Download Websphere iFix PI52103 for Websphere Application Server 8.0.0.0 (8.0.0.0-WS-WAS-IFPI52103) from this location: http://www.ibm.com/support/docview.wss?uid=swg24041257 [http://www-01.ibm.com/support/docview.wss?uid=swg24041257] 
+
+2. If IBM Installation Manager is not yet installed on the IBM Spectrum Control or Tivoli Storage Productivity server system, download and install IBM Installation Manager. It is recommended to use the latest version -- currently 1.8.3, available here: http://www.ibm.com/support/docview.wss?uid=swg24039631 [http://www-01.ibm.com/support/docview.wss?uid=swg24039631] 
+
+3. Launch IBM Installation Manager from the command line, specifying the IMData directory. The following is an example for Windows:
+
+
+ * 
+ * 
+ * where TPC_dir might be \Program Files\IBM\TPC 
+ * 
+
+
+4. From the IBM Installation Manager UI:  * 
+ * 
+ * b. Click on 'Add repository' 
+ * c. Select the directory containing the WAS iFix. Press 'OK' 
+ * d. Choose the 'Update' icon 
+ * e. Select WAS iFix PI52103 and press 'Next' 
+ * f. Verify the pre-installation summary is correct and select 'Update'
+
+
+
+Additional procedure for mitigation of Tivoli Integrated Portal used by Tivoli Storage Productivity Center 5.1.1.x only: 
+
+Tivoli Storage Productivity Center 5.1.x embeds Tivoli Integrated Portal 2.2 which embeds Websphere Application Server 7.0 and requires the corresponding fix below. Follow these steps to apply the fix: 
+
+1. Download Websphere iFix PI52103 for WAS 7.0.0.0 (7.0.0.0-WS-WAS-IFPI52103) 
+http://www.ibm.com/support/docview.wss?uid=swg24041257 [http://www-01.ibm.com/support/docview.wss?uid=swg24041257] 
+
+2. Apply the WebSphere Application Server 7.0 ifix PI52103 to Tivoli Integrated Portal using the preinstalled WAS Update Installer 
+
+On Windows, the default location for WAS Update Installer is: 
+[TPC_Install_Location]\IBM\tipv2\WebSphereUpdateInstallerV7\ 
+
+Reference: Security Bulletin: Multiple security vulnerabilities has been identified in Websphere Application Server shipped with Tivoli Integrated Portal (CVE-2015-7450) (CVE-2015-2017) [http://www-01.ibm.com/support/docview.wss?uid=swg21971089] 
+
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] Security Bulletin: Vulnerability in Apache Commons affects IBM WebSphere Application Server (CVE-2015-7450) [http://www.ibm.com/support/docview.wss?uid=swg21970575] 
+Security Bulletin: Multiple security vulnerabilities have been identified in Websphere Application Server shipped with Tivoli Integrated Portal (CVE-2015-7450) (CVE-2015-2017) [http://www-01.ibm.com/support/docview.wss?uid=swg21971089] CHANGE HISTORY
+ 02 December 2015: Original Version Published
+22 March 2016: Updated with fix information for 5.2.x and 5.1.x
+28 April 2016: Added IBM Spectrum Control 5.2.9 to affected versions and documented fix 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Storage Management Tivoli Storage Productivity Center Advanced AIX, Linux, Windows 5.1.1, 5.1, 5.2, 5.2.1, 5.2.2, 5.2.3, 5.2.4, 5.2.5, 5.2.6, 5.2.7

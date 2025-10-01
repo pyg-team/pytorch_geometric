@@ -1,0 +1,139 @@
+Title: IBM Cognos Disclosure Management Version 10.2: Installation requirements - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document provides further information on client requirements, application server requirements, and database server requirements for installing Cognos Disclosure Management. 
+
+CONTENT
+The Cognos Disclosure Management client
+
+
+Client computers for IBM Cognos Disclosure Management must meet operating system, software, hardware, and access requirements. 
+
+Operating system requirements for the Cognos Disclosure Management client 
+
+At a minimum, each computer where the client is installed must be using Microsoft Windows XP Professional operating system with Service Pack 2, or later, installed. However, Windows 7 64-bit is the recommended operating system. 
+
+The Cognos Disclosure Management client can be installed on 32-bit or 64-bit operating systems. 
+
+Software requirements for the Cognos Disclosure Management client 
+
+Ensure that the computer on which you install a client meets the following software requirements: 
+
+ * Microsoft Office 2003 with the Microsoft Office Compatibility Pack, Microsoft Office 2007, and Microsoft Office 2010 are supported in their native mode. If an object is created in a later version of Microsoft Office, and a user with an earlier version opens the object, the object opens in Program Compatibility mode
+
+
+Important: It is recommended that all users run the same Windows and Microsoft Office platforms, including the latest service packs. If some users use different versions of Microsoft Office, users of Microsoft Office 2003 must install the Office Compatibility Pack. 
+
+Normal font style and size should be consistent across end-user client computers. It is recommended that all users apply the same screen resolution and default font size for Microsoft Excel, Microsoft Word and Microsoft PowerPoint. These settings should remain consistent across all end-user client computers. 
+ * Microsoft .NET Framework 4 
+ * Adobe Reader Version 9 or Adobe Acrobat Version 9, or later, must be installed
+
+
+Optional software installations for the Cognos Disclosure Management client 
+
+You can install the following compatible software: 
+ * IBM Cognos TM1 10.1.1 (the TM1 Perspectives add-in for Microsoft Excel) 
+ * IBM Cognos for Microsoft Office 10.1.1 
+ * IBM Cognos Analysis for Microsoft Excel 10.1.1 
+ * IBM Cognos Controller (the add-in for Microsoft Excel) 
+ * Oracle Hyperion Financial Management (HFM) Smart View Runtime Client
+
+
+Important: Ensure that port 443 is used for communication between the Cognos Disclosure Management client and the Cognos Disclosure Management server. 
+
+Hardware requirements for the Cognos Disclosure Management client 
+
+There are different hardware requirements for different operating systems. 
+
+Windows 7 
+ * At least 10 GB of free disk space 
+ * A minimum of 2 CPU is required, but 4 CPU is recommended 
+ * A minimum of 4 GB RAM is required 
+ * A minimum processor speed of 2.4 GHz is required
+
+
+Windows XP  * At least 10 GB of free disk space 
+ * A minimum of 1 CPU is required, but 2 CPU is recommended 
+ * A minimum of 2 GB RAM is required, but 3 GB RAM is recommended 
+ * A minimum processor speed of 2.4 GHz is required
+
+
+Important: A gigabyte internet card (and LAN connection) needs to exist between the application and database servers. 
+
+Cognos Disclosure Management application server and database requirements 
+
+Ensure that your application server and database meet the operating system and software requirements. The Cognos Disclosure Management database will be created during the server installation. 
+
+Operating system requirements for the application server 
+
+The application server must be running the 64-bit Microsoft Windows Server 2003 operating system, or later. Windows Server 2008 R2 is recommended. 
+
+You cannot install the Cognos Disclosure Management server on a 32-bit computer. 
+
+Hardware requirements for the application and database server 
+
+Ensure that the computer on which you install the server components meets the following hardware requirements: 
+ * A minimum of 4 CPU cores 
+ * A minimum of 8 GB RAM 
+ * A minimum processor speed of 2.4GHz
+
+
+Software requirements for the application server 
+
+Ensure that the computer on which you install the server components meets the following software requirements: 
+ * Microsoft Internet Information Services (IIS) Version 6.0, or later, must be installed and running 
+ * Microsoft .NET Framework 4 software must be installed 
+ * Microsoft Visual C++ 2008 SP1 Redistributable Package. If this is not already installed, the installation wizard will download and install the package 
+ * Microsoft Visual C++ 2010 Redistributable Package. If this is not already installed, the installation wizard will download and install the package
+
+
+Data source connectivity requirements for the application server 
+ * If you have installed TM1 Perspectives, you will require the TM1 Runtime client 64-bit, Version 10.1 
+ * Microsoft Analysis Services ADOMD.NET 2005 or 2008 
+ * If you use Oracle Essbase software, connectivity and installation of the correct Oracle Essbase Runtime client software is required:  *  Oracle Instant Client Oracle Data Provider for .NET 
+   
+   
+ * The DB2 relational source requires installation of the DB2 ADO.NET client Runtime component 
+ * TCP/IP connectivity with OLAP database environment, if applicable 
+ * TCP/IP connectivity to the Cognos Disclosure Management database server
+
+
+SSL certificate requirement for the application server 
+
+Cognos Disclosure Management requires the secure sockets layer (SSL) to be enabled on your web/application server. Ensure that you have acquired a SSL certificate from a recognized certificate authority. 
+
+Database server requirements 
+
+Microsoft SQL Server 2005 or 2008. Microsoft SQL Server 2008 is recommended. The SQL Server edition should be Standard or Enterprise. SQL Server can be either 32-bit or 64-bit. 
+
+You must use the 64-bit version of the Microsoft SQL Server Native Client. The 64-bit native client works with both the 32-bit and 64-bit versions of Microsoft SQL Server. 
+
+For your database, 50 GB free disk space is recommended for future database growth. This does not take into account other databases and their respective growth. 
+
+CITRIX server requirements 
+
+If you are using a CITRIX server, ensure it meets the software and hardware requirements described below. 
+
+Software requirements for the CITRIX server 
+
+Ensure that the computer on which you install the CITRIX server meets the following software requirements: 
+ * CITRIX XenApp Versions 4.5, 5.0, 5.5, 6 or 6.5 
+ * Windows Server 2003, or later. Windows Server 2008 R2 is recommended 
+ * Microsoft .NET Framework 4 software must be installed 
+ * Adobe Reader Version 9 or Adobe Acrobat Version 9, or later, must be installed 
+ * IBM Cognos TM1 10.1.1 (the TM1 Perspectives add-in for Microsoft Excel) 
+ * IBM Cognos for Microsoft Office 10.1.1 
+ * IBM Cognos Analysis for Microsoft Excel 10.1.1 
+ * IBM Cognos Controller (the add-in for Microsoft Excel)
+
+
+Hardware requirements for the CITRIX server 
+
+Ensure that the computer on which you install the CITRIX server meets the following hardware requirements: 
+ * At least 10 GB of free disk space, but 15 GB of free disk space is recommended for temporary files 
+ * A minimum of 4 CPU is required, but 8 CPU is recommended 
+ * A minimum of 8 GB RAM is required, but 16 GB RAM is recommended 
+ * A minimum processor speed of 2.4 GHz is required

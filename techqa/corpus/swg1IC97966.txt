@@ -1,0 +1,178 @@
+Title: IBM IC97966: WMB V7.0 : HTTP INPUT NODE ADDS A SECOND 'EXPECT 100-CONTINUE' TO THE HEADER WHEN PROCESSING A HTTP REQUEST - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Integration Bus V9.0 - Fix Pack 9.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037877]
+WebSphere Message Broker V7.0 - Fix Pack 7.0.0.8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041187]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When an HTTP request is processed by the broker HTTP Input
+   node it retains the 'Expect 100-continue' header if supplied
+   and adds another 'Expect 100-continue'. This results in the
+   HTTP Header having two 'Expect 100-continue' fields, separated
+   by a comma.
+   
+   This can cause failure of remote servers which are not expecting
+   to have to interpret a list of values for the Expect header.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Remove any repeated HTTP 'Expect' headers using a compute
+   node, prior to calling the Request Node.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of WebSphere Message Broker V7.0 and V8.0 and IBM
+   Integration Bus V9.0. using the HTTPRequest node.
+   
+   
+   Platforms affected:
+   MultiPlatform, z/OS
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When the HTTPRequest node receives an input message tree which
+   contains multiple copies of the same HTTP header in accordance
+   with RFC 2616 section 4.1 the Broker is free to represent this
+   as a single header with a comma separated list. If 2 or more
+   "Expect" headers are present in the tree then this can result in
+   the 2 headers being presented as a concatenated list. For
+   example:
+   
+   Expect: 100-continue, 100-continue
+   
+   This can cause failure of remote servers which are not expecting
+   to have to interpret a list of values for the Expect header.
+   
+   In this instance the sematics of the Expect header are such that
+   it does not make sense to present multiple values.
+   
+   There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0. For
+   details visit
+   http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.e
+   tools.mft.doc/bb23814_.htm [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/bb23814_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product has been modified to ignore multiple Expect headers.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.0       7.0.0.8
+   v8.0       8.0.0.5
+   v9.0       9.0.0.2
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC97966
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB MESSAGE BRO
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0510
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-26
+   
+   
+ * CLOSED DATE
+   2014-02-28
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB MESSAGE BRO
+   
+   
+ * FIXED COMPONENT ID
+   5724J0510
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

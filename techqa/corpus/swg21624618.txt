@@ -1,0 +1,38 @@
+Title: IBM Scheduled reports fail after password update: CM-REQ-4159 CM-CAM-4005 Unable to authenticate. Check your security directory server connection and confirm the credentials entered at login. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After logging on to Cognos Connection successfully after a password change, previously scheduled reports will fail, while other non-scheduled reports will run successfully during this session. 
+
+SYMPTOM
+Error message when schedules fail: 
+
+CM-REQ-4159 Content Manager returned an error in the response header. The error "cmAuthenticateFailed CM-CAM-4005 Unable to authenticate. Check your security directory server connection and confirm the credentials entered at login" can be found in the response SOAP header. CM-REQ-4342 An error has occurred with the client.
+
+
+CAUSE
+For performance reasons, the automatic renewal is only performed the first time a user logs in each time period (restarting the Cognos services also resets this check). 
+
+ 
+The time period in this case has been set to 24 hours, but it's not guaranteed to occur at the beginning of a day. The credential renewal check occurs on the first user login within the given time period (24 hours). For this reason, the renewal could happen at any point during a day depending on when that time period started. 
+
+The time period for automatic credential renewal has been set to 24 hours to avoid a scenario where the Content Store is hammered with queries for the users stored trusted credential every single time a user logs in. In a case where you know the users password has changed and they have reports scheduled to run within 24 hours, it's safest to manually renew the credentials within Cognos Connection. 
+
+
+ENVIRONMENT
+Issue occurs in both single server and multi-server distributed environments
+
+
+
+RESOLVING THE PROBLEM
+For performance reasons, by default the trusted credentials are only automatically renewed once a day. When you change your password, you should renew your credentials manually. Otherwise, if the credentials are used before they are automatically renewed, they might not work. 
+
+
+Steps for manually renewing credentials:
+1) In IBM Cognos Connection, click the my area options button --> 'My Preferences'.
+2) On the Personal tab, under Credentials, click 'Renew the credentials'.
+
+Additional information on trusted credentials can be found in the Administration and Security guide here:
+http://www-01.ibm.com/support/knowledgecenter/SSEP7J_10.2.1/com.ibm.swg.ba.cognos.ug_cra.10.2.1.doc/c_trustedcredentials.html%23TrustedCredentials?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSEP7J_10.2.1/com.ibm.swg.ba.cognos.ug_cra.10.2.1.doc/c_trustedcredentials.html%23TrustedCredentials?lang=en]

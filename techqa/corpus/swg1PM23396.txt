@@ -1,0 +1,141 @@
+Title: IBM PM23396: AFTER MS RESTART THE KERNEL FAILS TO SEND THE SAMPLING RATE TO THE PUBLISH SERVER - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When Managing Server is restarted, Data Collector reconnects to
+   the kernel, but fails to send sampling rate to the Publish
+   Server.
+   
+   When the Publish Server is down, the Data Collector sometimes
+   does not  detect absence of Publish Server connection.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  ITCAM Managing server users who change the
+   * request data sampling percentage from the default value of
+   * 2%.
+   *
+   ****************************************************************
+   *
+   * PROBLEM DESCRIPTION:
+   *
+   * When the ITCAM Data collector reconnects to the Managing
+   * server's Publish server component, the sampling percentage
+   * is reset to default 2% from the value that was set initially.
+   *
+   * The DC to Publish server reconnect can happen through the
+   * following cases:
+   *
+   * 1. Publish server is restarted
+   * 2. Socket disconnect due to network problems
+   * 3. Setting the networkagent.socket.resettime property
+   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | interim fix | 6.1.0.5-TIV-ITCAMfWAS_MP-IF0015
+     | interim fix | 6.1.0.5-TIV-ITCAMfJ2EE_MP-IF0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM23396
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS ZOS D
+   
+   
+ * REPORTED COMPONENT ID
+   5698A7100
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-28
+   
+   
+ * CLOSED DATE
+   2010-11-20
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS ZOS D
+   
+   
+ * FIXED COMPONENT ID
+   5698A7100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

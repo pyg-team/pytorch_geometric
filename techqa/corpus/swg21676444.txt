@@ -1,0 +1,38 @@
+Title: IBM InfoSphere Information Governance Catalog: Rows in an extension mapping document that have database stored procedures are ignored - United States
+
+Text:
+is113relnotes; isigc113relnotes; isigc115relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM InfoSphere Information Governance Catalog changed the way in which database stored procedures and design stored procedures are identified. As a result, in extension mapping documents, mappings that reference these assets as a source or as a target are ignored during import. Other mappings are imported correctly. 
+
+SYMPTOM
+No message is displayed to indicate that the stored procedure assets were not mapped.
+
+
+CAUSE
+The identity of stored procedures was changed in InfoSphere Metadata Workbench, version 9.1. 
+
+Before version 9.1, the identity of stored procedure assets washost.database. 
+
+In version 9.1, the identity of stored procedure assets became host.database.schema. 
+
+Example
+
+In version 9.1, the mapping row for a stored procedure in the CSV mapping document might be:
+
+
+
+Name Source Columns Target Columns [/support/docview.wss?uid=swg21676444&amp;aid=1] SP.DB.SCMA.MySP SP.DB.SCMA.MySP 
+Where: 
+
+SP.DB.SCMA is the name of the host, the database, and the schema that form the identity of the stored procedure. 
+
+MySP is the name of the stored procedure. 
+
+RESOLVING THE PROBLEM
+Edit the CSV mapping document and include the schema in the identity of every stored procedure.
+
+RELATED INFORMATION
+ CSV file format for mappings in extension mapping docs [https://www-01.ibm.com/support/knowledgecenter/api/content/SSZJPZ_11.3.0/com.ibm.swg.im.iis.mdwb.doc/topics/r_CSVfileFormatExtensionMappings.html]
+Identity requirements for extended data sources [https://www-01.ibm.com/support/knowledgecenter/api/content/SSZJPZ_11.3.0/com.ibm.swg.im.iis.mdwb.doc/topics/r_context_identity_of_assets.html]

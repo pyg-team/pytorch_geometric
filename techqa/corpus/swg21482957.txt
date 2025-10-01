@@ -1,0 +1,54 @@
+Title: IBM After changing date, when launching Modeler receive message: Licence error:  Licence key has expired or Error sub-code: 26 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After changing my date, when launching Modeler I receive the following error message: 
+Licence error: Licence key has expired Error sub-code: 26. 
+
+RESOLVING THE PROBLEM
+Modeler is reporting your license has expired. Please check your system date to ensure it is correct. If your system date is accurate and is not beyond the expiration date, you will need to contact IBM SPSS Technical Support and provide your Lock Code ID so your license can be reset. 
+
+Note: This Lock Code needs to be a 8- code and not a 100- code. 
+The below instructions will provide how the customer can generate a 8- Lock Code. 
+
+1. Please go to a command prompt via Start->Run and type 'cmd'. 
+
+2. Change to the IBM\SPSS\Modeler\xx\bin directory, 
+e.g. cd "C:\Program Files\IBM\SPSS\Modeler\14.2\bin" 
+
+3. Type "echoid -a" (no quotes). 
+
+4. Please provide the lock code that begins with "8-" to the SPSS Technical Support representative. This lock code is to the right of "Host ID" in parenthesis. 
+
+The representative will generate and send you an Override Code based on the machine's lock code. Please note this Override Code will only work for the machine whose lock code the customer provided. There will be an one week window to reset the license from the time the representative generates the Override Code. If user is unable to reset the license within this time frame, please inform the representative when you will be able to do so. If you have access to email, please provide your email address to the representative. You will receive an email containing a clean.lic file. Save this attachment to your SPSSInc\Clementinexx\bin directory. 
+
+<< Support Rep: See Tech Note 1494587: How to generate the clean.lic >>
+---------------------------------------------------------------------------------
+
+After 8-xxxxx lock code has been provided to Support Rep, and user receives the clean.lic:
+
+5. Please download the clean81.zip file [attached to this resolution] to a temporary location on your computer. 
+
+6. Using an unzip utility extract the contents of clean81.zip into your IBM\SPSS\Modeler\xx\bin directory. Overwrite the file, lsclean.exe, when prompted. 
+The Clean.lic is to be saved to the IBM\SPSS\Modeler\xx\bin directory as well.
+
+7. Using Windows Explorer, navigate to the IBM\SPSS\Modeler\xx\bin directory and double-click clean.bat. 
+
+If the following message is reported, the license has been reset: Cleaned trial information for feature "feature" version "version" from the system. 
+
+If you provided the wrong lock code ID to the SPSS Technical Support representative, you will receive the message: Not authorized to run on this machine. 
+
+If you receive the following message, the system date is not accurate or time is beyond the two-day window to reset the license. If the system date is accurate, please contact SPSS Technical Support for a new Override Code: LSClean license is expired. 
+
+If the above procedure does not correct the problem, please contact IBM SPSS Technical Support
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+clean81.zip [/support/docview.wss?uid=swg21482957&aid=2] - clean81.zip [/support/docview.wss?uid=swg21482957&aid=1] 
+
+HISTORICAL NUMBER
+ 81638

@@ -1,0 +1,24 @@
+Title: IBM MCH3601 QLEAWI  Q LE leActivationInitRouter Received in a Long Running Job that is Posting Messages - United States
+
+Text:
+MSGMCH3601 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A long running job that continually posts messages could receive a message MCH3601 T/QLEAWI F/QLEAWI. The To and From Procedure is 'Q LE leActivationInitRouter'. 
+
+RESOLVING THE PROBLEM
+In long running jobs, there are internal resources that are being used. Two of these resources are Activation Mark/Activation Group Mark and Message Reference Keys. Depending on what happens in the job, the resources may be used up and may cause the job to end abnormally. 
+
+Note: Always review information in the joblog before following information in this document
+
+This document deals with the internal object Message Reference Key. For information on Activation Mark/Activation Group Mark, refer to Rochester Support Center document New, Long-Running Jobs, Jobs Processing Lots of Data, and Prestart Jobs versus Large Mark Problems: . When a long running job continually posts messages, there is a chance that the job 'Message Reference key' may grow larger than 0x7FFFFFFF, which is the maximum size it can currently be. This counter is scoped to the job; it is a 'job message queue', not an 'activation group message queue'. Internally, the message reference key is treated as an unsigned integer, so it can actually go up to 0xFFFFFFE0. Just before this message counter limit is reached (around 0xFFFFFFD2), vlogs for the messages will start appearing. These vlogs are 1D00 0201. There will be a log for each of the last 30 messages. 
+
+To verify what is happening in a job that appears to be running into this issue, do the following: 
+
+1. Collect the vlogs. 2. Collect a job trace by issuing STRTRC. This trace should be run for a few minutes only. 3. Collect a 'lic component trace'. This trace could have a significant performance impact on a system; it would be appropriate to monitor the system if this is done. 
+The lic component trace needs to be set up using the following options: Component trace: Queue Space management Qualifier restriction: Only, 401 (401 is matprmsg) Task/thread restriction: Whatever process this is running in Size/wrapping: 5 Mb with wrap, if the job is close to function checking 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.2 Operating System IBM i 7.3 
+HISTORICAL NUMBER
+ 498057183

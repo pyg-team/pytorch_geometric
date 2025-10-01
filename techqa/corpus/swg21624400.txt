@@ -1,0 +1,31 @@
+Title: IBM DataStage 9.1 Client install to supported platform fails the prerequisite check - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have been able to install the server without any issue. But when I attempt to install the Client side, the pre-requisite checker of the installation program indicates
+"Ensure the current platform is a supported platform"
+
+
+CAUSE
+the wrong bundle file was copied into the is-client install folder 
+
+DIAGNOSING THE PROBLEM
+The install log indicates
+FAILED: Ensure the current platform is a supported platform.
+Details:
+FAILED: Ensure the current platform is a supported platform.
+Resolution: The current platform is a 64-bit platform and your installation image is a 32-bit image. Obtain the proper 64-bit installation image and try again.
+
+
+
+This problem occurs when installing the DataStage client using the DataStage server bundle specification file instead of the client bundle specification file.
+
+
+
+RESOLVING THE PROBLEM
+Download and unpack the correct client bundle specification file, InfoSvr_V9.1_Client_Bundle_Spec_File into the installation directory. 
+
+You can obtain the correct client bundle file for Information Server 9.1 by downloading the package from Passport Advantage, for example: 
+IBM InfoSphere Information Server v9.1 Client Bundle Spec File Windows Multilingual ( CIFI1ML )

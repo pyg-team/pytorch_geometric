@@ -1,0 +1,36 @@
+Title: IBM Error when performing any administrative task in IBM Content Analytics with Enterprise Search admin console - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I see various errors on the IBM Content Analytics with Enterprise Search (ICAwES) admin console after successfully logging in. 
+
+SYMPTOM
+Errors:
+FFQEP0002E An error occurred when processing a remote API. The reason is : FFQC4823E Session Controller (node1) [controller] is not running. FFQO0262E Session Controller (node1) [controller] is not created yet.
+
+Not enough memory is configured for this component. See the collection log file for details.
+
+
+CAUSE
+Unable to create threads
+
+DIAGNOSING THE PROBLEM
+Check to see if java cores and heap dumps are created in the ES_NODE_ROOT/logs directory.
+
+
+You should find the following in the java core :
+1TISIGINFO Dump Event "systhrow" (00040000) Detail "java/lang/OutOfMemoryError" "Failed to create a thread: retVal -1073741830, errno 11" received
+
+
+RESOLVING THE PROBLEM
+ 
+
+ * As the root user, edit the Linux file /etc/security/limits.conf and increase the soft nproc value to 32768 for the userid that you are using. 
+ * Verify the setting by logging in as the admin_user_ID and running "ulimit -aS". 
+ * Restart ICAwES by running "esadmin system stopall" and "esadmin system startall". 
+ * For AIX and Solaris operating systems, see the Related Information URL link.
+
+RELATED INFORMATION
+ Setting ulimit values [http://www-01.ibm.com/support/knowledgecenter/SS5RWK_3.0.0/com.ibm.discovery.es.in.doc/iiysiulimits.htm]

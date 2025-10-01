@@ -1,0 +1,243 @@
+Title: IBM IY29843: IE6 WON'T PASS A POLICY DIRECTOR COOKIE IN A BUSINESS TO BUSINESS WEB ENVIRONMENT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  submitter: Cathryn Wang
+   Customer Contact: Julius Wong (Freddie Mac)
+   .
+   Following are the problem description and purposed fix for IBM
+   from the
+   customer:
+   .
+   Tools in use by Freddie Mac.
+   Weblogic application server v5.1
+   IBM Policy Director
+   Solaris v5.5.1
+   Code written in Java to J2EE spec.
+   Internet Explorer v4+
+   .
+   Problem is with IE6
+   .
+   PAG
+   Problem.
+   Internet Explorer 6 implementation of P3P and its default
+   security
+   setting not allowing 3rd party cookies in a business to business
+   internet web application.  The default ( medium ) setting in IE
+   6 is
+   defined as follows:
+   .
+   Cookies from third-party Web sites that do not have a compact
+   policy
+   (a condensed computer-readable privacy statement) will be
+   blocked
+   .
+   Cookies from third-party Web sites that use your personally
+   .
+   identifiable information without your implicit consent will be
+   .
+   blocked
+   .
+   PAG
+   Cookies from first-party Web sites that use your personally
+   .
+   O
+   identifiable information without your implicit consent will be
+   .
+   deleted from your computer when you close Internet Explorer
+   .
+   Description.
+   Freddie Mac has a web based application that can be accessed
+   through
+   another vendors website.   If a customer of the vendor logs into
+   their
+   website they can access our application through it.  When the
+   link to
+   Freddie Mac is clicked our application opens up as a frame
+   within their
+   website and we become a 3rd party vendor.  This is when the
+   problem
+   occurs. If those customers are using the default setting (
+   medium ) in
+   Internet Explorer 6, IE blocks our cookies.  Since Internet
+   Explorer 6
+   rejected all of the cookies our website within our website the
+   application is rendered inoperable.  We can fix this within our
+   web       PAG
+   servers by implementing the full P3P standard including the XML
+   policy,
+   html policy and compact policy for the http header or by just
+   adding the    O
+   compact policy to the header.  At this point the customer is
+   securely
+   logging into our website and everything appears to work until
+   they click
+   on a link within our website such as help. The customer does not
+   know
+   that the Weblogic cookies were set but the Policy Director
+   cookies were
+   rejected even though it appeared that they logged in to us
+   normally.
+   When they click on help a new IE browser opens ( it is on the
+   same leg
+   as the application ) and the user is asked to re-authenticate
+   again.
+   This is after they have already logged into our site.  This is a
+   problem
+   because from what our security people are saying we cannot add
+   the
+   compact policy which IE needs to the Policy Director http
+   header.
+   .
+   This only occurs if I do not accept the cookies from Policy
+   Director
+   when I first log in to our application.  If I do accept the
+   cookie on
+   the initial log in then all the subsequent cookies are accepted
+   and no    PAG
+   log in prompt occurs.  I tested this by having IE prompt me for
+   instructions on whether or not to accept the cookies.  If I log
+   in and      O
+   only accept our WebLogic cookies then click help I am prompted
+   to re
+   authenticate to Policy Director.
+   .
+   From what I can tell,  IE 6 is inheriting the characteristics of
+   the
+   parent browser.  Since the parent browser declined the cookie,
+   any
+   children spawned from that browser will decline those cookies as
+   well
+   even though we are in the same SSL session.  This is completely
+   different behavior than was exhibited by IE 5+ ( with the
+   exception of
+   v5.5 privacy beta ).
+   .
+   Julius purposed the following fix for Policy Director:
+   .
+   The P3P fix from IBM will consist of including a header option
+   into
+   WebSEAL:
+   PAG
+   1. Putting a new option into iv.conf (PD3.7.1) and webseald.conf
+   (PD3.8)
+   to
+   .
+   enable P3P Privacy Headers.
+   eg. p3p-privacy-header = blah.....blah
+   .
+   ***An APAR fix from WebSEAL will be the biggest pain relieve as
+   we
+   currently have a P3P implementation header for us*****
+   .
+   The fix that we need to muscle from Microsoft includes:  ****
+   Long term
+   fix
+   needed ******
+   1. Fixing IE6.0 ssl-session inheritance for daughter windows
+   (pop-up
+   boxes).
+   2. Reimplementing P3P Privacy Policy distinction between
+   persistant and
+   session cookie.
+   3. Redefining Default IE6.0 Privacy Policy settings.
+   PAG
+   .
+   +++++
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  no
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *   This is a product enhancement suggestion.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY29843
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV POL DIR WEB
+   
+   
+ * REPORTED COMPONENT ID
+   5698PDD10
+   
+   
+ * REPORTED RELEASE
+   380
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2002-04-05
+   
+   
+ * CLOSED DATE
+   2002-08-15
+   
+   
+ * LAST MODIFIED DATE
+   2002-08-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

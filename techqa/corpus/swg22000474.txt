@@ -1,0 +1,70 @@
+Title: IBM 【セキュリティ情報】OpenSSLの脆弱性がIBM WebSphere MQ Advanced Message Security に与える影響について(CVE-2016-2177, CVE-2016-2178) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ OpenSSLプロジェクトから、OpenSSLの脆弱性が2016年9月22日、26日に公開されました。
+IBM WebSphere MQ Advanced Message Security はIBM i プラットフォーム上でのみ、OpenSSLを使用しています。
+このため IBM WebSphere MQ Advanced Message Security はこれらのCVEの影響を受けます。
+
+最新の情報については下記の文書（英語）をご参照ください。 
+Security Bulletin: Vulnerabilities in OpenSSL affect IBM WebSphere MQ Advanced Message Security (CVE-2016-2177, CVE-2016-2178)
+http://www.ibm.com/support/docview.wss?uid=swg21999724 [http://www.ibm.com/support/docview.wss?uid=swg21999724]
+
+
+VULNERABILITY DETAILS
+
+CVEID: CVE-2016-2177 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2177] 
+DESCRIPTION: OpenSSLはサービス拒否を引き起こす脆弱性を含んでいます。
+これはヒープ・バッファーのバウンダリー・チェックで用いられる、ポインタ演算子の不正な利用によって引き起こされます。
+予期しないmallocを使用することで、リモートの攻撃者はこの脆弱性を悪用してintegerのオーバーフローを引き起こし、アプリケーションをクラッシュさせることができます。
+CVSS Base Score: 5.9
+CVSS Temporal Score: 現時点のスコアは以下のサイトを参照してください。https://exchange.xforce.ibmcloud.com/vulnerabilities/113890 [https://exchange.xforce.ibmcloud.com/vulnerabilities/113890] 
+CVSS Environmental Score*: 未定義
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H)
+
+CVEID: CVE-2016-2178 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2178]
+DESCRIPTION: OpenSSLはDSA実装に含まれるエラーによって、リモート攻撃者に重要な情報を与えてしまう可能性があります。このエラーは特定の操作を不特定の時間に許すため、攻撃者はこの脆弱性を悪用してキャッシュタイミング攻撃を使用し、DSA秘密鍵を取得することが可能です
+CVSS Base Score: 5.3
+CVSS Temporal Score: 現時点のスコアは以下のサイトを参照してください。 https://exchange.xforce.ibmcloud.com/vulnerabilities/113889 [https://exchange.xforce.ibmcloud.com/vulnerabilities/113889]
+CVSS Environmental Score*: 未定義
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM WebSphere MQ V8
+8.0.0.0 から 8.0.0.5 までの保守バージョンが影響を受けます。
+
+REMEDIATION/FIXES
+Fix Pack 8.0.0.6 [http://www-01.ibm.com/support/docview.wss?uid=swg21995100] 以降へアップデートします。
+
+WORKAROUNDS AND MITIGATIONS
+回避策はございません
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+公開済みのフィックスパックについては、以下のサイトよりご利用いただけます。 
+Recommended Fixes for WebSphere MQ 
+http://www.ibm.com/support/docview.wss?uid=swg27006037 [http://www.ibm.com/support/docview.wss?uid=swg27006037] 
+
+フィックス・パックの公開予定については、以下のサイトよりご確認いただけます。 
+MQ planned maintenance release dates 
+http://www.ibm.com/support/docview.wss?uid=swg27006309 [http://www.ibm.com/support/docview.wss?uid=swg27006309] 
+CHANGE HISTORY
+ 2017年 3月13日：初版公開 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+関連情報
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21999724]

@@ -1,0 +1,39 @@
+Title: IBM WebSphere MQ for HP NonStop Server v5.3.1, Fix Pack 5.3.1.1 - United States
+
+Text:
+Refresh Pack refresh pack Fix Pack fix pack WMQ maintenance fixes recommended updates csd fixpac csd 5.3.1 5.3.1.1 5.3 DOWNLOADABLE FILES
+
+ABSTRACT
+ This is Fix Pack 5.3.1.1 for WebSphere MQ for HP NonStop Server v5.3.1 
+
+DOWNLOAD DESCRIPTION
+Fix pack 5.3.1.1 is the first cumulative fix pack maintenance for WebSphere MQ V5.3.1 for HP NonStop Server (PTF IP22943) which shipped in March 2007. There have been several maintenance releases since the original release of 5.3.1 but this is the first fix pack. 
+
+This fix pack is cumulative and includes all service performed on 5.3.1 since the original release.
+
+The link in the download section below links to a download for fix pack 5.3.1.1 for WebSphere MQ V5.3.1 for HP NonStop Server. You will be asked to register before being presented with a set of downloadable files.
+
+PREREQUISITES
+Install this fix pack on top of WebSphere MQ V5.3.1 for HP NonStop Server - at any maintenance level.
+
+The links below give the supported environments for WebSphere MQ V5.3.1 for HP NonStop Server.
+
+URL LANGUAGE SIZE(Bytes) System Requirements; WebSphere MQ HP NSS 5.3 Integrity [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006797] English 9999 System Requirements; WebSphere MQ HP NSS 5.3 S-Series [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006796] English 9999 
+INSTALLATION INSTRUCTIONS
+Below is the link to the latest fix pack readme. The readme includes installation instructions. The readme also includes a summary of the problems which have new fixes in this fix pack.
+
+Please also review an updated list of recommendations for the levels of various HP system software products (SPRs) that this fix pack has been verified with.
+
+URL LANGUAGE SIZE(Bytes) Readme for 5.3.1.1 [http://www.ibm.com/support/docview.wss?uid=swg27010657] English 9999 
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options Fix Pack 5.3.1.1 05/10/2007 English 9999 HTTPS [https://www.ibm.com/services/forms/preLogin.do?source=wsmqcsd] 
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ 
+
+ [/support/docview.wss?uid=swg24017102&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24017102&aid=2]Problems (APARS) fixed
+IC52737 , IC52789 , IC52919 , IC52942 , IC53240 , IC53243 , IC53248 , IC53250 , IC53254 , IC53288 , IC53383 , IC53492 , IC53524 , IC53552 , IC53652 , IC53728 , IC53835 , IC51425 , IC52602 , IC52886 , IC53341 , IC51829 , IC51627 , IC51680 , IC51743 , IC51802 , IC51865 , IC51962 , IC52039 , IC52041 , IC52231 , IC52347 , IC52274 , IC52406 , IC52428 , IC52428 , IC52428 , IC52428 , IC52443 , IC52475 , IC52505 , IC52522 , IC52679 , IC52756 , IC53130 , IC52816 , IC52914 , IC52916 , IC53371

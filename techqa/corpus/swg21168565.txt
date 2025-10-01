@@ -1,0 +1,38 @@
+Title: IBM Assigning ORB listener port with firewall instead of dynamically selected - United States
+
+Text:
+firewall; orb ; iiop ; launchclient ; waswlm; listener ; dynamic ; port TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You access a server beyond a firewall and notice the ORB listener port is selected dynamically. 
+
+RESOLVING THE PROBLEM
+IBM WebSphere Application Servers use various ports during operation for communication. The ORB uses a listener port for IIOP communications. By default, this listener port is selected dynamically during runtime. 
+When working with a firewall, you must open a range of ports. You might want to instead open one port for the ORB to use. To do this, you must specify a static port for the ORB listener, and open the port specified on your firewall. 
+The endPoint property for setting the ORB listener port is: 
+
+
+ * ORB_LISTENER_ADDRESS 
+
+
+You can specify this endpoint in serverindex.xml, located in the config directory. 
+In the Network Deployment (ND) environment, the ORB_LISTENER_ADDRESS is always specified on the NodeAgent. The LSD (Location Service Daemon) resides on the NodeAgent and uses the same port as the ORB listener, resulting in the need to have that port fixed as well. 
+
+Add the ORB_LISTENER_ADDRESS to the other Application Servers to set their ORB listen port. 
+
+N ote: Each ORB must use a distinct listener port. If you are in an ND environment, you must specify a unique listener port for each entity on the same host. For example: 
+ * NodeAgent: ORB_LISTENER_ADDRESS=9000 
+ * Server1: ORB_LISTENER_ADDRESS=9811 
+ * Server2: ORB_LISTENER_ADDRESS=9812 
+
+
+
+From the Administrative Console : 
+ * Select Servers > Application Servers > server1 > End Points. 
+ * Click New. 
+ * Select End Point Name as ORB_LISTENER_ADDRESS. 
+ * Assign the port and hostname.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

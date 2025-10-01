@@ -1,0 +1,53 @@
+Title: IBM Region soft limit exceeded error in ObjectServer log. - United States
+
+Text:
+store; region; object server; softlimit; hardlimit; omnibus; region soft limit exceeded TECHNOTE (FAQ)
+
+QUESTION
+ What is this ObjectServer error message?
+
+"Error: E-OBJ-102-019: Failed to execute parsed language command. (-402:Region soft limit exceeded)" 
+
+CAUSE
+The default size of storage for table data was exceeded.
+
+ANSWER
+ 
+
+The error means the default size of storage for table data with the v7.x ObjectServer which by default (in 7.0.3 +) is 450 MB Soft Limit, 500 MB Hard Limit, was exceeded.
+
+
+The next step is to increase the Hard and Soft limit. The general guideline is to use 6Kb per row max and multiply with the number of resident events in the object server for all 3 tables (status, journal and details), in order to decide the Hard and Soft limit size.
+
+In addition, to increase the Hard limit please stop the object server and issue the following command
+
+$OMNIHOME/bin/nco_store_resize -newhardlimit <new size> -server <server name>
+
+then before you start the object server run
+
+$OMNIHOME/bin/nco_check_store -server <server name> 
+
+(The nco_check_store utility verifies that existing checkpoint files are valid.)
+
+If "success" is returned, start the object server and then increase the Soft limit vi nco_sql with the following command:
+
+1> alter memstore table_store set soft limit <new size> M;
+2> go
+
+*Note* M after the new size to specify megabytes.
+
+The limits are that the soft limit <size> cannot be higher than the hard limit or lower than the current amount of storage. The reason is because when the soft limit is set lower than the hard limit, it acts as buffer zone. Therefore, once we get the warnings that the soft limit has been hit, the soft limit can be raised, on the fly, to allow more data to be written, while you are preparing to stop the affected object server in order to increase the Hard limit.
+
+The maximum memstore size is as follows: 
+
+ * AIX: 2047 
+ * HPUX: 1024 
+ * Linux x86: 2047 
+ * Solaris: 2047 
+ * Windows: 700 
+ * zLinux: 1024
+
+ 
+
+HISTORICAL NUMBER
+ DAL0122329

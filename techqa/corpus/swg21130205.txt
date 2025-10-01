@@ -1,0 +1,63 @@
+Title: IBM Case insensitive queries in ClearQuest when using Oracle - United States
+
+Text:
+CQ; ClearQuest; Case insensitive query; Oracle; sql editor; sql; insensitive; sensitive; RATLC00486799; lower; upper; MR1; 1130205; RATLC00705833 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to create a case insensitive query with IBM® Rational® ClearQuest® when using Oracle as the database vendor. This solution is not applicable when using Microsoft® SQL Server or Microsoft Access as the database vendor. 
+
+CAUSE
+ClearQuest initiates queries against databases without specifying preference to case sensitivity. When a back-end database has been setup to be case sensitive, ClearQuest does not provide a method for running a case insensitive query using the query editor.
+
+RESOLVING THE PROBLEM
+
+
+
+Control of case-sensitivity for queries of multiline text fields on Oracle 10g databases 
+
+
+The ClearQuest 7.0.1 introduced a method for creating indexes that allow case insensitive searches on Oracle 10g databases and the CLOB datatype. For details on enabling Oracle 10g case insensitive searches, refer to the following whitepaper on the IBM developerWorks site: 
+
+http://www.ibm.com/developerworks/rational/library/07/0531_clearquest/ [http://www.ibm.com/developerworks/rational/library/07/0531_clearquest/]
+
+In IBM Rational ClearQuest environments using Oracle version 10g or later, administrators can use a feature in ClearQuest version 7.0.1 to allow users to run queries on multi-line text fields and return case-insensitive results. 
+
+
+
+
+
+
+Case insensitive searches with Oracle 8 and 9 
+
+There is a workaround for Oracle 8 and 9 databases that use the LONG datatype and have the Intermedia Context server enabled for multiline text fields. 
+
+Note: This solution does not work with Oracle 10g or the CLOB datatype. 
+
+Use the ClearQuest SQL Editor to modify the query by adding the LOWER function around the field names. 
+Example syntax:
+
+LOWER(T1.fieldname)}
+
+
+The ClearQuest SQL Editor is initiated by choosing View > SQLPane within the ClearQuest native client. A separate tab will appear beneath the Result Set with the label SQL editorwhich will allow modifications of the SQL.
+
+Note: When the SQL is modified using the SQL Editor, it is no longer possible to use the GUI tools to change display/filter information. It must be modified manually from then on. 
+
+ * 
+ * Example of a Working Query. . .
+ * 
+ * 
+   select distinct T1.dbid,T1.headline,T1.id from defect T1 where
+   T1.dbid <> 0 and LOWER(t1.headline) LIKE '%another%'
+   
+
+Note: This will only work if the database vendor is Oracle and if the datatype is not CLOB. The function LOWER is not recognized by Microsoft SQL Server or Microsoft Access. 
+
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational ClearQuest Query Windows 2003.06.00, 2003.06.12, 2003.06.13, 2003.06.14, 2003.06.15, 2003.06.16, 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.1, 7.0.1.1, 7.0.1.2

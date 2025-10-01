@@ -1,0 +1,26 @@
+Title: IBM Rational Application Developer installation results in "LUM enablement operation" error - United States
+
+Text:
+RAD installation fails; HATS; LUM enablement operation error; installation failure; LUM enablement operation error during phase for license file at c:\program files\IBM\SDP\lum/; LUM enablement operation error during phase for license file; Installation of Rational Application Developer for WebSphere version 7.5; Installation of Rational Application Developer for WebSphere version 7; 5 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attemtps to install IBM Rational Application Developer for WebSphere Software 7.5 results in the error "LUM enablement operation error during phase for license file at <path>". 
+
+SYMPTOM
+Installation of Rational Application Developer for WebSphere version 7.5 fails with an error: 
+
+LUM enablement operation error during phase for license file at C:\Program Files\IBM\SDP\lum/
+
+
+
+CAUSE
+Trial version license expired in January 2011.
+
+
+
+RESOLVING THE PROBLEM
+If you downloaded the Rational Application Developer trial version in 2010 and did not install it until 2011, the license expired in January 2011. 
+
+You will need to download a newer 7.5 trial version. 
+
+ * Rational Application Developer 7.5 Trial [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=RATLe-RAD7-EVAL&S_CMP=web_dw_rt_swd]

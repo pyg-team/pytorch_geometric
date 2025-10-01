@@ -1,0 +1,21 @@
+Title: IBM ADMU0118E: The log file cannot be written - United States
+
+Text:
+stopping; server; tivoli integrated portal TECHNOTE (FAQ)
+
+QUESTION
+ Error ADMU0118E appears in <TIPHOME>/profiles/TIPProfile/logs/server1/serverStatus.log when I run serverStatus.sh | bat and I'm unable to stop the TIP/WebGUI server. Why? 
+
+ANSWER
+This could happen if the install is a non-root install and someone started the TIP server as root. This causes a bunch of the files to be owned by root, and then when the server tries to start as non-root, it can't write the files. Check the <TIPPROFILE>/logs/server1 directory and make sure none of the files are owned by root. If some are, then run the steps below to change ownership back to the non-root user (in the example we've used the user 'netcool'):
+1. As the root user, cd $TIPHOME
+2. chown -R netcool.ncoadmin *
+3. Log back in as the "netcool" user and retry stopping the TIP/WebGUI server
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Components Tivoli Integrated Portal (TIP) AIX, Linux, Solaris, Windows 1.1, 1.1.0.1, 2.1, 2.2 
+PRODUCT ALIAS/SYNONYM
+ WebGUI

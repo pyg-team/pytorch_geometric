@@ -1,0 +1,17 @@
+Title: IBM How to perform a Thread Dump from SBI in Windows Using the IBM JDK - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to perform a Thread Dump from IBM Sterling B2B Integrator (SBI) in Windows Using the IBM JDK uwithout installing additional tools or starting SBI in console mode? 
+
+ANSWER
+If you only need thread dumps once a minute or less for Windows instances, then you can just add an empty file named threadDumpTrigger.txt in the install directory
+
+In the SBI install directory, create an empty file named threadDumpTrigger.txt. It is case sensitive. It will disappear within a minute or two. When it disappears the thread dump is complete. 
+It will go to noapp.log with the date/time stamp. It checks every 60 seconds for the file so you can only do it that quickly. 
+It is not as comprehensive as generating a javacore however.
+
+RELATED INFORMATION
+#B2Bi and SFG Community Wiki >‎ Performing a Thread Dump [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Wf96854c0c8fc_4762_9b83_c6247feca5fc/page/Performing%20a%20Thread%20Dump%20in%20Windows%20Using%20the%20IBM%20JDK]

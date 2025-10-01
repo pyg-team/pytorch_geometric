@@ -1,0 +1,119 @@
+Title: IBM LI80059: TLS V1.1 and V1.2 needed with IBM Wave connection to LDAP. - United States
+
+Text:
+z/VM SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Wave currently supports TLS V 1.2 with other communications, but
+   only TLS V 1.0 with the connection to LDAP for the GUI logon.
+   TLS V1.1 and V1.2 support is needed for that connection.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  IBM Wave is supporting only up to TLS 1.0 when connecting to
+   LDAP for the GUI logon.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Support for TLS 1.1 and TLS 1.2 provided with this APAR.  APAR
+   interim fix available on request, otherwise it is planned to b
+   e included with IBM Wave V 1.2 FP 11.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LI80059
+   
+   
+ * REPORTED COMPONENT NAME
+   WAVE FOR Z/VM
+   
+   
+ * REPORTED COMPONENT ID
+   5648AE102
+   
+   
+ * REPORTED RELEASE
+   120
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-05-23
+   
+   
+ * CLOSED DATE
+   2018-08-09
+   
+   
+ * LAST MODIFIED DATE
+   2018-08-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAVE FOR Z/VM
+   
+   
+ * FIXED COMPONENT ID
+   5648AE102
+   
+   
+
+APPLICABLE COMPONENT LEVELS

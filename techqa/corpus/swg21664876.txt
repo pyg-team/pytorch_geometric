@@ -1,0 +1,49 @@
+Title: IBM Adding teamspace permissions by using IBM Content Navigator displays fewer Document and Folder permissions than what is granted on the FileNet P8 server (FileNet P8) - United States
+
+Text:
+defect 37574 FLASH (ALERT)
+
+ABSTRACT
+ When you add more teamspace permissions (selections under "Teamspace permissions") by using IBM Content Navigator, the selections in the "Document and Folder permissions" section show fewer Document and Folder permissions than what is granted on the FileNet P8 server. 
+
+CONTENT
+This problem affects only FileNet P8 that also have teamspaces enabled and in use.
+
+Resolving the problem 
+
+To resolve this problem and correctly display the permissions granted for teamspace roles: 
+
+1. Upgrade to IBM Content Navigator Version 2.0.2 Fix Pack 2. 
+
+2. If you previously upgraded from Version 2.0.0.x or 2.0.1.x, after you install this fix pack (2.0.2.2), do the following steps: 
+
+ *  Go to the administration tool and click Repository > Configuration Parameters. Select the Allow owners to modify the roles of existing teamspaces check box. 
+
+
+3. To refresh the role settings, all existing teamspaces and teamspace templates must be edited and saved by the teamspace owners. Any edit to a role will refresh the role settings. For example, to edit a role to refresh the roles, each teamspace owner can: 
+
+ *  Open a teamspace that they own and click Modify Teamspace. Edit the Member role by clearing a check box in Permission. Remember which permission you edit so that you can undo the change after saving the edit. Click OK to close the Modify Teamspace dialog box. This action saves the edit, which refreshes the roles in this teamspace. Click Modify Teamspace again and undo the change if necessary. Repeat for all other teamspaces and teamspace templates that this user owns. 
+
+Results 
+
+This fix will result in the following corrected behavior for FileNet P8 teamspaces and teamspace templates: If a teamspace permission requires document and folder permissions, the web client user interface will select and display those permissions when the teamspace permission is selected.
+
+
+This fix introduces the following new rules for teamspace permissions: 
+
+ * The teamspace permissions of the Owner role can be edited only by a member of the Owner role and only for the Modify roles teamspace permission. 
+ * The Add searches permission will include the Add to folders permission. 
+ * The Manage teamspace users permission will include the following permissions:  * 
+    * Add searches
+    * 
+    * Create searches
+    * 
+    * Ma
+    * nage classes or entry templates
+    * 
+    * 
+    *  Manage permissions
+    * 
+    * Add to folders
+    * 
+    * View documents

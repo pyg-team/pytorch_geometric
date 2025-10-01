@@ -1,0 +1,140 @@
+Title: IBM Documentation errata for IBM XL C/C++ Enterprise Edition for AIX, V9.0 - United States
+
+Text:
+1263481 PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ This page contains corrections and additions to the product documentation shipped with IBM XL C/C++ Enterprise Edition for AIX, V9.0 
+
+CONTENT
+Installation Guide
+The following correction applies to the IBM XL C/C++ Enterprise Edition for AIX, V9.0 Installation Guide:
+
+Filesets
+
+The text:
+
+IBM Debugger for AIX, V6.0 supersedes IBM Distributed Debugger. If the IBM Distributed Debugger V9.3 is installed on your system, it will be removed upon installation of the IBM Debugger for AIX, V6.0.
+
+Should read:
+
+IBM Debugger for AIX, V6.0 supersedes IBM Distributed Debugger. If the IBM Distributed Debugger V9.2 is installed on your system, it will be removed upon installation of the IBM Debugger for AIX, V6.0.
+
+NOTE: 
+For more information, see:
+Versioning conventions for IBM Debugger and IBM Distributed Debugger for AIX [http://www-1.ibm.com/support/docview.wss?uid=swg21286616]
+Latest updates for supported IBM C and C++ compilers [http://www-1.ibm.com/support/docview.wss?rs=2239&uid=swg21110831]
+
+Using SMIT
+
+The text:
+
+c. Messages are displayed as each part is successfully installed.
+
+Should read:
+
+c. Messages are displayed for both successfully and unsuccessfully installed parts. 
+
+The text:
+
+d. The installation log will be stored to file /home/smit.log.
+
+Should read:
+
+d. The installation log will be stored to file $HOME/smit.log.
+
+Compiler Reference
+The following corrections and additions apply to the IBM XL C/C++ Enterprise Edition for AIX, V9.0 Compiler Reference:
+
+-qfloat
+
+-qfloat=fltint | nofltint option
+The following new information is added:
+
+If -qarch is set to a processor that has an instruction to convert from floating point to integer, that instruction will be used regardless of the [no]fltint setting. This conversion also applies to all PowerPC processors in 64-bit mode.
+
+
+ * -qfloat=dfpemulate:nofenv:nofltint:fold: nohscmplx:nohsflt:nohssnglmaf:nonans:norelax:rndsngl:rngchk:norrm:norsqrt:single:nospnans 
+
+
+Should read: 
+ * -qfloat=dfpemulate:nofenv:nofltint:fold: nohscmplx:nohsflt:nohssngl:maf:nonans:norelax:rndsngl:rngchk:norrm:norsqrt:single:nospnans 
+
+
+-qinfo=private suboption 
+In the syntax diagram the suboption -qinfo=private has no affect when specified and should be removed. Instead, use the -qreport option to report compiler-driven automatic parallelization cases; user parallelization cases are not reported. 
+
+-qlanglvl 
+
+-qlanglvl=[no]FileScopeConstExternLinkage option 
+The following -qlanglvl option is added: 
+
+[no]FileScopeConstExternLinkage 
+Controls whether the file scope of constant variables have internal or external linkage when the static or extern keyword is not specified. 
+
+When -qlanglvl=fileScopeConstExternLinkage is in effect, all file scope constant variables are marked as externally visible. Otherwise, all file scope constant variables are marked as static. 
+
+Default: nofileScopeConstExternLinkage 
+
+-Q, -qinline 
+
+Specifying -Q (or -qnoinline) disables all inlining, including that performed by the high-level optimizer with the -qipa option, and functions declared explicitly as inline. 
+
+Should read: 
+
+Specifying -Q! (or -qnoinline) disables all inlining, including that performed by the high-level optimizer with the -qipa option, and functions declared explicitly as inline. 
+
+#pragma stream_unroll 
+
+Examples 
+
+Should read: 
+
+The following example shows how #pragma stream_unroll can increase performance. 
+
+int i, m, n;
+int a[1000];
+int b[1000];
+int c[1000];
+
+....
+
+#pragma stream_unroll(4)
+for (i=0; i<n; i++) {
+a[i] = b[i] * c[i];
+} 
+
+The unroll factor of 4 reduces the number of iterations from n to n/4, as follows: 
+
+m = n/4;
+
+for (i=0; i<n/4; i++){
+a[i] = b[i] + c[i];
+a[i+m] = b[i+m] + c[i+m];
+a[i+2*m] = b[i+2*m] + c[i+2*m];
+a[i+3*m] = b[i+3*m] + c[i+3*m];
+} 
+
+The increased number of read and store operations are distributed among a number of streams determined by the compiler, which reduces computation time and increase performance. 
+
+Programming Guide 
+The following corrections and additions apply to the IBM XL C/C++ Enterprise Edition for AIX, V9.0 Programming Guide: 
+
+Under Parallelizing your programs, Shared and private variables in a parallel environment 
+
+The following text: 
+
+The compiler can privatize some shared variables if it is possible to do so without changing the semantics of the program. For example, if each loop iteration uses a unique value of a shared variable, that variable can be privatized. Privatized shared variables are reported by the -qinfo=private option. Use critical sections to synchronize access to all shared variables not listed in this report. 
+
+Should read: 
+
+The compiler can privatize some shared variables if it is possible to do so without changing the semantics of the program. For example, if each loop iteration uses a unique value of a shared variable, that variable can be privatized. Privatized shared variables are reported by the -qreport option. Use critical sections to synchronize access to all shared variables not listed in this report. 
+
+For information on how to list which shared variables are privatized by the compiler, see: 
+How to list privatized shared variables in an automatic parallel loop [http://www-01.ibm.com/support/docview.wss?uid=swg21326216] 
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development XL C/C++ for AIX Documentation AIX 9.0 Enterprise

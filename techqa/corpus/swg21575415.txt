@@ -1,0 +1,20 @@
+Title: IBM TwainPRO License Validation Check error reported during real scan in IBM Datacap Taskmaster Capture - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TwainPRO License Validation Check error reported during real scan in IBM Datacap Taskmaster Capture 
+
+SYMPTOM
+During real scan -- Taskmaster Web scanning with a scanner -- you may receive an error with the following message: 
+
+The Pegasus Imaging Corp. license validation check has failed for the TwainPRO control. You do not have an appropriate license to use this ActiveX control.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Browser settings must allow for download, installation and execution of ActiveX components. Normally this is done by allowing the Taskmaster website to be in Trusted Zones, and configuring Trusted Zones settings accordingly. If using SSL, enable the browser setting "do not save encrypted pages to disk" in Tools | Internet Options | Advanced and then retest 
+ 2. In Taskmaster Web, click the link to "IE Test Page" in the login page. Once the IE Test Page has fully loaded, click the "Test!" button and ensure that all listed items succeed. If any does not, then address each issue accordingly. Refer to the IBM Datacap Taskmaster Capture installation and configuration guide, as well as the Taskmaster Web Client Configuration utility (\Datacap\support\WebConfiguration\WebClientConfig.exe) for assistance 
+ 3. If the problem persists, try deleting all Temporary Internet files through Tools | Internet Options | (Temporary Internet files) Settings | View Files. In Settings, also set "check for newer versions of stored pages" to "Every visit to the page". Run only the x86 version of Microsoft Windows Internet Explorer and contact IBM Support if you continue to receive the error

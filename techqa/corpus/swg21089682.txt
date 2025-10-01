@@ -1,0 +1,77 @@
+Title: IBM Files attached using EmbedObject method appear as V2 style attachments - United States
+
+Text:
+V2-style; V2 attachment; V2-style-attachment; Domino Designer; Notes; Incident 1263079; Workstation/Desktop; Application Development; LotusScript TECHNOTE (FAQ)
+
+QUESTION
+In some cases, when using the EmbedObject method (of the NotesRichTextItem class) to attach a file, the attachment appears at the bottom of the document below a line (also referred to as a V2 style attachment).
+
+CAUSE
+There are two possible causes: 
+
+ * There's a mixup regarding updates to the rich text item from the front-end methods (e.g. the user saving the document) vs. back-end methods. 
+ * Or, the rich text value has been displayed while there are still changes pending to it. The Update method can be used to complete all pending changes.
+
+ANSWER
+ 
+
+Note: The descriptions and examples below reference LotusScript, but the same thing can happen with the Java front-end methods added in version 8.5.1. Most front-end operations can be done in any of Notes' supported programming languages; attaching files in the back end can only be done in LotusScript and Java.
+
+This problem occurs because of the following sequence of events:
+
+
+ * The document was opened in Edit mode in the Notes client, and updates were made to the rich text item either manually by the user, or through front-end class methods or properties (in any language). 
+ * The back-end NotesRichTextItem.EmbedObject method was used to create the attachment. The first two steps might occur in either order. 
+ * The document was saved in the front end, either manually by the user, or using the Save method (of the NotesUIDocument class).
+
+
+
+LotusScript is performing as designed. The front-end rich text changes overwrite the back-end changes when you save. The overwritten back-end changes include the attachment icon and a reference to the attachment. However, the actual attachment is stored elsewhere -- not in the rich text field -- so the loss of the back-end rich text changes doesn't affect the fact that a file is still attached to the document, but not associated with a field anymore. 
+
+You might also see this occur if you use the NotesUIWorkspace.EditDocument method (or DialogBox) to display a document after you've added the attachment using NotesRichTextItem.EmbedObject. 
+
+Workaround: 
+
+If your problem is with the EditDocument or DialogBox method, this is easy to correct, you must simply call either NotesDocument.Save, or the NotesRichTextItem.Update method, before you display the document. 
+
+It's more complex to make rich text changes (even if they don't involve attachments) in a document the user's already editing. Rich text fields behave differently from other field types; unlike those other fields, back-end changes to rich text do not automatically update the document the user is editing on screen. Nor do changes the user makes, automatically show up in the back end NotesDocument. 
+
+It is possible to read the user's latest changes into the back end using the NotesUIDocument.Refresh method with the argument True. There's not a way to refresh the screen with back-end rich text changes, except by closing and reopening the document (however, as we will see, this can be done without saving the document). 
+
+So the situation can still be managed fairly simply if the user is prohibited from editing the rich text item between the time you add the attachment, until the document has been saved. You might do this by saving the document immediately, or by making the field non-editable (by making it Computed rich text, or using the "Input Enabled" formula, for instance). Or you could save up all your changes until the end, and do them in the Postsave form event (and then immediately close the document to prevent further editing). 
+
+You could, of course, make your back-end changes, save the document yourself with a back-end save, close and reopen it. However, then you've saved a document which the user might not have been ready to save yet. Because you used a back-end save, you also bypassed validations, so if the user chooses to exit now without saving changes, they may leave the document with invalid data. 
+
+Another approach that works nicely, but is a little kludgey, involves making your rich text changes, closing and reopening the document without saving it. Here's an example of this approach (version 6.0 and later; for 5.0 don't call Update, but use CompileWithForm instead): 
+
+Dim wksp As New NotesUIWorkspace
+Dim session As New NotesSession
+Dim uidoc As NotesUIDocument, uidocNew As NotesUIDocument
+Dim doc As NotesDocument
+Dim rti As NotesRichTextItem
+Dim strFieldname As String
+Dim att123 As Variant 
+Set uidoc = wksp.CurrentDocument
+uidoc.Refresh True ' do this if rich text field is editable, to get current contents in case user has modified them. 
+Set doc = uidoc.Document ' get the back-end document for the document open on screen. 
+strFieldname = uidoc.CurrentField ' remember the current field if any 
+Set rti = doc.GetFirstItem(" Body ")
+
+' Make your rich text changes here, for instance: 
+Set att123 = rti.embedobject(Embed_Attachment,"","C:\Test.123","Test Worksheet")
+rti.Update ' ND6 and later 
+
+doc.SaveOptions = "0" ' to close the document without a "do you want to save" prompt. If this is a mail-in doc , may need to set MailOptions="0" also to avoid being prompted. 
+Call uidoc.Close(True)
+Set uidocNew = wksp.EditDocument(True, doc, , , , True)
+Delete uidoc ' remove the document from memory 
+uidocNew.Document.RemoveItem("SaveOptions") ' also makes the document 'modified' so the user will be prompted to save when they close 
+If strFieldname <> "" Then uidocNew.GotoField(strFieldname) ' return focus to field that was current before. 
+
+Note: this will cause Queryclose, Queryopen, Postopen (and so on) form events to trigger. Also, uidoc.Refresh will execute computed field formulas and input validations, so you should write the validation formulas to not return @Failure unless @IsDocBeingSaved | @IsDocBeingSent is true. RELATED INFORMATION
+ How to Convert a Notes V2-Style Attachment to an Attach [http://www.ibm.com/support/docview.wss?uid=swg21104835]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Messaging Applications IBM Domino Designer Not Applicable Windows 8.5, 8.0, 7.0, 6.5, 6.0, 5.0

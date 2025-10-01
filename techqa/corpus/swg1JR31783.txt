@@ -1,0 +1,221 @@
+Title: IBM JR31783: WEB CONSOLE FOR IBM INFORMATION SERVER SESSIONS WILL TIMEOUT OUT WHEN THE WAS SECURITY CACHE TIMEOUT IS EXEEDED. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SUMMARY:
+   Web Console for IBM Information Server sessions will timeout out
+   when the WAS security cache timeout is exeeded.
+   
+   DETAILS:
+   In a  Web Console for IBM Information Server session, the
+   session will timeout after a period of inactivity.
+   
+   The default is 10 minutes.
+   
+   There are thre properties that affect sessions timeouts:
+   1)  The Web Console for IBM Information Server
+       - Global Session Properties Timeout
+   
+   2)  The Websphere Application Server
+       - Session Properties Timeout
+   
+   3)  The Websphere Application Server
+       - Security Cache Timeout
+   
+   The default values for these are:
+      1) 1800 seconds
+      2)   30 minutes
+      3)  600 seconds
+   
+   So, it is possible that even though the Global Session
+   Properties Timeout(1) is increased, the Web Console session will
+   still time out.
+   
+   Therefore, all 3 properties must have at least the same values.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There are three timeout properties that require to be set.
+   
+   1)  The Web console Global Session Properties Timeout
+   
+       This is found under the
+       Adminsitration Tab ->  Session Management -> Active Sessions
+       screen.
+   
+       The Global Session Property is:
+   
+       "Inactive Session Timeout"
+   
+   2)  The Websphere Application Server Session Properties Timeout
+   
+       Using the Websphere Adminstrative Console this property can
+       be found under the Servers -> Application Servers screen.
+   
+       eg: http://iishost:9060/ibm/console [http://iishost:9060/ibm/console]
+           User ID:  WAS Admin userid created at time of
+                     installation
+           Password: WAS Admin password.
+   
+       Servers [+]
+          Application Servers [+]
+                server1  (this is a URL, click to see settings)
+   
+          Container Setting [+] ( click to expand )
+                Web Container Settings
+                    Session Management
+   
+          Session Timeout
+                Set Timeout
+                          720 minutes (NOTE: This is in minutes)
+   
+   
+   3)  The Websphere Application Server Security Cache Timeout
+   
+       Using the Websphere Adminstrative Console this property can
+       be found under the Security -> Global Security screen.
+   
+       eg: http://iishost:9060/ibm/console [http://iishost:9060/ibm/console]
+           User ID:  WAS Admin userid created at time of
+                     installation
+           Password: WAS Admin password.
+   
+       Security [+]
+          Global security [+]
+   
+          Configuration -> General Properties
+   
+            Cache timeout  (NOTE: this is in seconds, default 600).
+   
+   
+   
+   Ensure that the Websphere Application Server timeout values are
+   greater than or equal to the Inactive Session Timeout set in the
+   Web Console for IBM Information Server.
+   
+   Example:
+      If we want to have an Inactive Session Timeout of 6 hours,
+   then we need to have the following settings:
+   
+   1) "Inactive Sesson Timeout" = 21600 seconds
+   
+   2) "Session timeout"         =   366 minutes
+   
+   3) "Cache timeout"           = 21660 seconds
+   
+   Once the changes have been made to the Websphere Application
+   Server, the WAS server1 must be restarted.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   User is logout from InformationServer web console, when
+   WebSphere security cache timeout reached.
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When WebSphere security cache timeout reached, the user is
+   logout from InoformationServer web console.
+   ****************************************************************
+   RECOMMENDATION:
+   Update to version 8.2
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR31783
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36DS
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-03
+   
+   
+ * CLOSED DATE
+   2009-03-09
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  SERVER
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSN
+   UP

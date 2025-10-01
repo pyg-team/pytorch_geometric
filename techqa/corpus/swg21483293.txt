@@ -1,0 +1,46 @@
+Title: IBM Customer is requesting the ability to limit/restrict OS system cache - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer is requesting to have the ability to limit/restrict OS system cache based on an options.cfg file entry.
+
+Below you will find information from Microsoft concerning the use of cache from a Windows API perspective. 
+
+Based on what you said in your email below about the application creating lots of files, the Windows API that you might want to discuss would be CreateFile. A full description of that API and its as associated parameters can be found here:
+
+http://msdn.microsoft.com/en-us/library/aa363858.aspx [http://msdn.microsoft.com/en-us/library/aa363858.aspx]
+
+Here is a sampling from the full Microsoft article that we feel applies to the Clementine Issue:
+
+Caching Behavior
+Several of the possible values for the dwFlagsAndAttributes parameter are used by CreateFile to control or affect how the data associated with the handle is cached by the system. They are:
+FILE_FLAG_NO_BUFFERING 
+FILE_FLAG_RANDOM_ACCESS 
+FILE_FLAG_SEQUENTIAL_SCAN 
+FILE_FLAG_WRITE_THROUGH 
+FILE_ATTRIBUTE_TEMPORARY 
+If none of these flags is specified, the system uses a default general-purpose caching scheme. Otherwise, the system caching behaves as specified for each flag.
+Some of these flags should not be combined. For instance, combining FILE_FLAG_RANDOM_ACCESS with FILE_FLAG_SEQUENTIAL_SCAN is self-defeating.
+Specifying the FILE_FLAG_SEQUENTIAL_SCAN flag can increase performance for applications that read large files using sequential access. Performance gains can be even more noticeable for applications that read large files mostly sequentially, but occasionally skip forward over small ranges of bytes. If an application moves the file pointer for random access, optimum caching performance most likely will not occur. However, correct operation is still guaranteed.
+The flags FILE_FLAG_WRITE_THROUGH and FILE_FLAG_NO_BUFFERING are independent and may be combined.
+If FILE_FLAG_WRITE_THROUGH is used but FILE_FLAG_NO_BUFFERING is not also specified, so that system caching is in effect, then the data is written to the system cache but is flushed to disk without delay.
+If FILE_FLAG_WRITE_THROUGH and FILE_FLAG_NO_BUFFERING are both specified, so that system caching is not in effect, then the data is immediately flushed to disk without going through the Windows system cache. The operating system also requests a write-through of the hard disk's local hardware cache to persistent media.
+Note Not all hard disk hardware supports this write-through capability.
+Proper use of the FILE_FLAG_NO_BUFFERING flag requires special application considerations. For more information, see File Buffering.
+A write-through request via FILE_FLAG_WRITE_THROUGH also causes NTFS to flush any metadata changes, such as a time stamp update or a rename operation, that result from processing the request. For this reason, the FILE_FLAG_WRITE_THROUGH flag is often used with the FILE_FLAG_NO_BUFFERING flag as a replacement for calling the FlushFileBuffers function after each write, which can cause unnecessary performance penalties. Using these flags together avoids those penalties. For general information about the caching of files and metadata, see File Caching.
+When FILE_FLAG_NO_BUFFERING is combined with FILE_FLAG_OVERLAPPED, the flags give maximum asynchronous performance, because the I/O does not rely on the synchronous operations of the memory manager. However, some I/O operations take more time, because data is not being held in the cache. Also, the file metadata may still be cached (for example, when creating an empty file). To ensure that the metadata is flushed to disk, use the FlushFileBuffers function.
+Specifying the FILE_ATTRIBUTE_TEMPORARY attribute causes file systems to avoid writing data back to mass storage if sufficient cache memory is available, because an application deletes a temporary file after a handle is closed. In that case, the system can entirely avoid writing the data. Although it doesn't directly control data caching in the same way as the previously mentioned flags, the FILE_ATTRIBUTE_TEMPORARY attribute does tell the system to hold as much as possible in the system cache without writing and therefore may be of concern for certain applications 
+
+RESOLVING THE PROBLEM
+Enhancement Request Submitted. Currently targeted for version 15
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 82838

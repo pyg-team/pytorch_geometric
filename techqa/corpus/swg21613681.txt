@@ -1,0 +1,47 @@
+Title: IBM Collecting Data for FileNet P8 Connector Problems in IBM Content Collector - United States
+
+Text:
+MustGatherDocument TECHNOTE (FAQ)
+
+QUESTION
+ What information should be collected when you experience a problem with FileNet P8 Connector in IBM Content Collector? 
+
+Collecting this information before calling IBM support will help clarify the problem and save time analyzing the data. 
+
+ANSWER
+ 
+
+ * What is the version of FileNet P8 Content Engine server including the fixpack level? 
+
+ * What is the version of the FileNet P8 .Net client and Java client installed on the IBM Content Collector server? 
+
+ * What is the version of the Windows Web Services Enhancements installed on the IBM Content collector server?
+
+ * Is text search function provided by IBM Legacy Content Search Engine or the IBM Content Search Services? 
+
+ * On the primary IBM Content Collector server, open Configuration Manager:  * Select from the Menu Item: Tools > Task Route Service Configuration > Task Route > Log level and select "Trace 2 (verbose logging)" and select OK to save changes. 
+    * Select the Connectors configuration task, then select IBM FileNet P8 and set Log level to "Trace 2 (verbose logging)".
+   
+   
+ * Enable tracing for the FileNet P8 Content Engine:  * From the FileNet Enterprise Manager Administration Tool, right-click Enterprise Manager [your domain name] and select Properties. Click on the Trace Control tab, click on Enable Trace Logging button if tracing is not already enabled. Select the following subsystems:  * Database 
+       * Error 
+       * WSI
+      
+      
+    * Based on the actual problem encountering, tracing for different subsystems may be required. Follow additional instructions from IBM Support. 
+   
+   
+ * Reproduce the problem and collect the following logs:  * On Content Collector server:  * ContentCollector\ctms\logs\ibm.ctms.taskrouteservice*.log 
+       * ContentCollector\ctms\logs\ibm.ctms.p8connector*.log
+      
+      
+    * On the P8 Content Engine server:  * For WebSphere Application Server:
+         install_root/profiles/profile_name/FileNet/server_Instance_name/p8_server_error.log and p8_server_trace.log 
+       * For WebLogic Server:
+         /user_projects/domains/my_domain/FileNet/AdminServer/p8_server_error.log and p8_server_trace.log 
+       * For JBoss:
+         jboss_install/jboss-as/bin/FileNet/server_instance_name/p8_server_error.log and p8_server_trace.log
+         
+      
+      The exact location of the logs can be found from the Content Engine ping page. 
+      For example, http:// hostname:9080/FileNet/Engine

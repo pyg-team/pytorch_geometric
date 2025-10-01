@@ -1,0 +1,36 @@
+Title: IBM TIP WebGroup/Virtual Host to handle /ibm/console has not been defined - United States
+
+Text:
+TIPL2; TIPL2CONF; WebGroup Virtual Host not been defined TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Users were getting below error upon login to Tivoli Integrated Portal console:
+
+SRVE0255E: A WebGroup/Virtual Host to handle /ibm/console has not been defined 
+
+CAUSE
+xml files in the config directory could be corrupted.
+
+DIAGNOSING THE PROBLEM
+Take a look into the SystemOut.log and see if has below errors: 
+
+[1/26/15 21:49:18:054 GMT] 00000011 ClientService E WSWS1000E: Error: org.eclipse.emf.common.util.WrappedException: org.xml.sax.SAXParseException: Content is not allowed in prolog.
+at org.eclipse.wst.common.internal.emf.resource.EMF2DOMRenderer.loadDocument(EMF2DOMRenderer.java:345) 
+
+ 
+Caused by: com.ibm.ws.webcontainer.exception.WebAppNotLoadedException: Failed to load webapp: Failed to load webapp: Failed to process xml from Deployment Descriptor
+at com.ibm.ws.webcontainer.WSWebContainer.addWebApp(WSWebContainer.java:742)
+at com.ibm.ws.webcontainer.WSWebContainer.addWebApplication(WSWebContainer.java:617)
+at com.ibm.ws.webcontainer.component.WebContainerImpl.install(WebContainerImpl.java:376) 
+
+
+RESOLVING THE PROBLEM
+You may follow instructions in below technote to determine if xml files are in fact corrupted. 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21640312 [http://www-01.ibm.com/support/docview.wss?uid=swg21640312]
+
+Please provide following files so we can investigate this issue further. 
+
+<TIPHOME>/profiles/TIPProfile/config 
+
+<TIPHOME>/profiles/TIPProfile/logs/server1/SystemOut.*

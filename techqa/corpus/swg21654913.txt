@@ -1,0 +1,61 @@
+Title: IBM Case Manager Admin Client failed to export a solution with a SSLHandshakeException - United States
+
+Text:
+CMAC solution export SSLHandshakeException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Case Manager Admin Client (CMAC) failed to export a solution with a SSLHandshakeException 
+
+SYMPTOM
+Error message displayed in a dialog box:
+
+"The solution package for the solution or template could not be created. Use your case management installation and configuration checklist to verify the Content Engine server property values that you entered in the wizard and ensure that the Content Engine server is running. 
+
+Click OK to return to the wizard to review and correct your settings. 
+"
+
+
+CAUSE
+By default, the SSL configuration should be set to use "SSL_TLS" protocol.
+
+But, the WAS SystemOut.log showed that the Protocol was set to SSLv3 with the following exception: 
+
+
+"Exception is javax.net.ssl.SSLHandshakeException: Client requested protocol SSLv3 not enabled or not supported"
+
+The SSLv3 protocal is not a valid SSL protocol by default for CMAC.
+
+
+DIAGNOSING THE PROBLEM
+- The CAMC log showed the following exception:
+
+FINER Thu Oct 24 15:00:06 EDT 2013 THROW
+com.ibm.casemgmt.api.exception.CaseMgmtException thrown while executing method exportPages() of com.ibm.ecm.configmgr.app.acm.properties.ContentEngineDiscoverer
+Stack Trace follows (when available):
+com.ibm.casemgmt.api.exception.CaseMgmtException: FNRPA9001E The Business Space server is not available. Verify the URL, the administrative user name, and the password.
+...
+
+- The WAS SystemOut.log also logged the follwoing error at the about the same time.
+
+[10/24/13 15:00:06:594 EDT] 00000030 SSLHandshakeE E SSLC0008E: Unable to initialize SSL connection. Unauthorized access was denied or security settings have expired. Exception is javax.net.ssl.SSLHandshakeException: Client requested protocol SSLv3 not enabled or not supported
+at com.ibm.jsse2.kb.z(kb.java:218)
+at com.ibm.jsse2.SSLEngineImpl.b(SSLEngineImpl.java:525)
+at com.ibm.jsse2.SSLEngineImpl.c(SSLEngineImpl.java:175)
+...
+
+Caused by: javax.net.ssl.SSLHandshakeException: Client requested protocol SSLv3 not enabled or not supported
+at com.ibm.jsse2.o.a(o.java:25)
+at com.ibm.jsse2.SSLEngineImpl.a(SSLEngineImpl.java:294)
+at com.ibm.jsse2.kb.a(kb.java:51)
+...
+
+
+
+RESOLVING THE PROBLEM
+From the Websphere console, navigate to
+
+Global security > CSIv2 inbound communications > SSL configurations > CellDefaultSSLSettings > Quality of protection (Qop) settings > General Properties > Protocol
+
+If the current Protocol value is set to anything other than "SSL_TLS", select "SSL_TLS" from the pull-down list of available Protocol options and save the change.
+
+After restarting the CMAC, the export function should work without getting the error.

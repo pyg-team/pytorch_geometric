@@ -1,0 +1,129 @@
+Title: IBM WebSphere Data Interchange 3.3 for z/OS TSO/CICS and DB2 V11 deprecated support of simple table spaces - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Technical notes related to WebSphere Data Interchange (WDI) V3.3.0 and IBM DB2 11 for z/OS table space definitions. 
+
+CONTENT
+This document identifies customer considerations for IBM DB2 11 for z/OS deprecated capabilities related to simple table spaces. Although the deprecated capabilities continue to be supported in DB2 11, they will eventually be removed.
+
+
+
+
+Formal support for WebSphere Data Interchange (WDI) V3.3.0 with IBM DB2 11 was announced March 2014. At that time there were no changes required to the WDI table definitions or table spaces. WDI has recently completed some additional testing surrounding DB2 simple table spaces, segmented table spaces, partitioned table spaces, and universal table spaces (UTS). 
+
+Simple Table Spaces and Segmented (non-UTS) Table Spaces
+
+A simple table space is defined as not segmented or partitioned. Any table space defined with a SEGSIZE value of 0 is a simple table space. Simple table spaces can no longer be created, but data can be altered, updated, or retrieved with the use of simple table spaces.
+
+The deprecated simple table space capabilities is not new for DB2 11. The creation of simple table spaces has been deprecated as far back as DB2 Version 9.
+
+If a table space is created without specifying the SEGSIZE, NUMPARTS, or MAXPARTITIONS options, DB2 will automatically create a segmented table space instead of a simple table space. By default, the segmented table space has a SEGSIZE value of 4 and a LOCKSIZE value of ROW.
+
+Reference to IBM DB2 11 Knowledge Center: [https://www.ibm.com/support/knowledgecenter/SSEPEK_11.0.0/intro/src/tpc/db2z_simpletablespaces.html]
+https://www.ibm.com/support/knowledgecenter/SSEPEK_11.0.0/intro/src/tpc/db2z_simpletablespaces.html [https://www.ibm.com/support/knowledgecenter/SSEPEK_11.0.0/intro/src/tpc/db2z_simpletablespaces.html]
+
+
+Recommendation from IBM DB2
+
+If you have any simple table spaces in your database, alter them to a preferred type of table space with the ALTER TABLESPACE statement. If a simple table space contains only one table, alter it to a universal table space.
+
+WDI V3.3.0 Actions
+
+WDI defines 2 tables as simple table space, EDIOWNR and EDITSLT. All other table definitions specify SEGSIZE and are defined as segmented. Since there is no "user" data in either EDIOWNR or EDITSLT tables, this readily accommodates moving to segmented spaces. 
+
+If you have an existing WDI database, the table definitions must be converted to segmented spaces before altering them to universal table space See Universal Table Spaces section of this document for more information.
+
+1) Drop tablespaces EDIOWNR and EDITSLT.
+
+2) Recreate tablespaces EDITSLT and EDIOWNR using parts of the provided DDL in EDI.V3R3M0.SEDISQL1(EDISDB2) as follows. 
+
+Note you will need to modify the file below for your environment (or start with the DDL you already have updated which created these tables originally). Also note that you need not specify SEGSIZE as DB2 V11 will automatically do so. But if you wish you can add "SEGSIZE 4" after the BUFFERPOOL parm on the create statement. 
+
+The following are listed in order as taken from EDISDB2 DDL member of the WDI Installation procedures.
+
+Simp2Seg.ddl [/support/docview.wss?uid=swg27050403&aid=2]Simp2Seg.ddl [/support/docview.wss?uid=swg27050403&aid=1]
+
+3) Rebind the WDI plans, e.g. the EDIENU33 plan is for WDI in batch and, if applicable, DIENU33C is for CICS.
+
+Note: At this point, all WDI tables are no longer simple table spaces, i.e. they are either segmented or partitioned, both of which are still supported by IBM DB2 11 and can still be created. Eventually, however, it is noted that these too may also be deprecated in the future. 
+
+References to IBM DB2 11 Knowledge Center: 
+Segmented: [https://www.ibm.com/support/knowledgecenter/SSEPEK_11.0.0/intro/src/tpc/db2z_segmentedtablespaces.html]
+https://www.ibm.com/support/knowledgecenter/SSEPEK_11.0.0/intro/src/tpc/db2z_segmentedtablespaces.html [https://www.ibm.com/support/knowledgecenter/SSEPEK_11.0.0/intro/src/tpc/db2z_segmentedtablespaces.html]
+Partitioned: [https://www.ibm.com/support/knowledgecenter/SSEPEK_11.0.0/intro/src/tpc/db2z_partitionedtablespaces.html]
+https://www.ibm.com/support/knowledgecenter/SSEPEK_11.0.0/intro/src/tpc/db2z_partitionedtablespaces.html [https://www.ibm.com/support/knowledgecenter/SSEPEK_11.0.0/intro/src/tpc/db2z_partitionedtablespaces.html]
+
+The remainder of this document covers the process necessary to optionally convert all WDI tables from partitioned or segmented to universal table spaces (UTS). 
+
+Partitioned (non-UTS) Table Spaces
+
+A partitioned (non-UTS) table space defines a single table using the table space. DB2 divides the table space into partitions.
+
+Partitioned (non-UTS) table spaces have been deprecated. Although they are supported in DB2 11, support may be removed in a future release. If you create a table space by specifying NUMPARTS without specifying the SEGSIZE or MAXPARTITIONS options, DB2 creates a range-partitioned universal table space instead of a partitioned table space that is not segmented. The default table space SEGSIZE value is 32.
+
+Recommendation from IBM DB2
+
+Convert existing partitioned (non-UTS) spaces to partition-by-range (UTS) table spaces as soon as possible.
+
+WDI V3.3.0 Actions
+
+WDI definess 1 table space as a non-partitioned table space, EDIDBREQ. This table space contains 3 table definitions, EDIDBREQ, EDIDBFILE1, and EDIDBFILE2. UTS adds additional complexity due to the EDIDBREQ table space having 3 tables defined therein. The 3 tables are used for WDI remote server requests via WDI client Server Commands.
+
+If you have an existing WDI database, the table definitions must be converted to partitioned spaces before altering them to universal table space see Universal Table Spaces section of this document for more information. 
+
+Use the following SQL to verify if the tables contain "user" data. Note you will need to modify these for your environment replacing EDIENU33 below: 
+
+ * SELECT * FROM EDIENU33.EDIDBREQ; 
+   SELECT * FROM EDIENU33.EDIDBFILE1; 
+   SELECT * FROM EDIENU33.EDIDBFILE2; 
+
+
+
+IF THE TABLES CONTAIN NO "user" data in either EDIDBREQ, EDIDBFILE1, and EDIDBFILE2 tables, the tables can simply be dropped and created with EDIDBFILE1 and EDIDBFILE2 definining their own table spaces.  * 
+ * 
+
+ * Chg2Part.ddl [/support/docview.wss?uid=swg27050403&amp;aid=4]Chg2Part.ddl
+
+ * 
+
+
+IF THE TABLES CONTAIN "user" data, the tables will need to be unloaded prior to conversion to UTS, then re-loaded post conversion to UTS.  * 
+ * 
+
+ * EDIJRDU6.jcl [/support/docview.wss?uid=swg27050403&amp;aid=6]EDIJRDU6.jcl
+
+ * 
+
+ * Chg2Part.ddl [/support/docview.wss?uid=swg27050403&amp;aid=8]Chg2Part.ddl
+
+ * 
+
+ * EDIJRDL6.jcl [/support/docview.wss?uid=swg27050403&amp;aid=10]EDIJRDL6.jcl
+
+ * 
+
+
+Universal Table Spaces (UTS) 
+
+Universal Table Spaces were introduced in DB2 for z/OS V9. UTS uses a combination of partitioned and segmented table space schemes. Existing table spaces can be altered to universal table spaces by using the ALTER TABLESPACE statement. 
+
+Recommendation from IBM DB2 
+
+If your database contains any simple table spaces, alter them to universal table spaces as soon as possible. 
+
+WDI V3.3.0 Actions 
+
+WDI defines all table spaces as non-UTS. Existing table spaces can be altered to universal table spaces by using the ALTER TABLESPACE statement followed by a REORG. 
+
+1) Alter Table Space example: 
+
+Alt2UTS.ddl [/support/docview.wss?uid=swg27050403&aid=12]Alt2UTS.ddl [/support/docview.wss?uid=swg27050403&aid=11] 
+
+2) REORG Table Space example: 
+
+EDIReorg.jcl [/support/docview.wss?uid=swg27050403&aid=14]EDIReorg.jcl [/support/docview.wss?uid=swg27050403&aid=13] 
+
+3) Rebind the WDI plans, e.g. the EDIENU33 plan is for WDI in batch and, if applicable, DIENU33C is for CICS.

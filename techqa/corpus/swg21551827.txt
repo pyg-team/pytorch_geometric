@@ -1,0 +1,118 @@
+Title: IBM Exporting large number of GIS resources throws OutOfMemory error - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Exporting large number of GIS resources throws OutOfMemory error 
+
+SYMPTOM
+
+
+Exporting a large number of GIS resources throws OutOfMemory error. The export just shows the progress on the UI but goes on for hours.
+
+Error Message noapp.log.D20090701.T000014
+[2009-07-01 01:22:47.248] ALL 000000000000 GLOBAL_SCOPE Exception in thread
+
+"Thread-93987"
+[2009-07-01 01:22:47.261] ALL 000000000000 GLOBAL_SCOPE
+
+java.lang.OutOfMemoryError
+[2009-07-01 01:22:47.262] ALL 000000000000 GLOBAL_SCOPE at
+
+java.io.ByteArrayOutputStream.write(ByteArrayOutputStream.java:116)
+[2009-07-01 01:22:47.262] ALL 000000000000 GLOBAL_SCOPE at
+
+java.io.OutputStream.write(OutputStream.java:79)
+[2009-07-01 01:22:47.262] ALL 000000000000 GLOBAL_SCOPE at
+
+com.sterlingcommerce.woodstock.profile.ie.ExportXML.addBinaryFile(ExportXML.java:537)
+[2009-07-01 01:22:47.262] ALL 000000000000 GLOBAL_SCOPE at
+
+com.sterlingcommerce.woodstock.profile.ie.resource.MapsExporter.setData(MapsExporter.java:201)
+[2009-07-01 01:22:47.262] ALL 000000000000 GLOBAL_SCOPE at
+
+com.sterlingcommerce.woodstock.profile.ie.resource.MapsExporter.writeMapsToTarget(MapsExporter.java:156)
+[2009-07-01 01:22:47.262] ALL 000000000000 GLOBAL_SCOPE at
+
+com.sterlingcommerce.woodstock.profile.ie.resource.MapsExporter.exportResources(MapsExporter.java:70)
+[2009-07-01 01:22:47.262] ALL 000000000000 GLOBAL_SCOPE at
+
+com.sterlingcommerce.woodstock.profile.ie.Export.generateXML(Export.java:660)
+[2009-07-01 01:22:47.262] ALL 000000000000 GLOBAL_SCOPE at
+
+com.sterlingcommerce.woodstock.profile.ie.Export.generateXML(Export.java:563)
+[2009-07-01 01:22:47.262] ALL 000000000000 GLOBAL_SCOPE at
+
+com.sterlingcommerce.woodstock.ui.ImpExpEditor.save(ImpExpEditor.java:830)
+[2009-07-01 01:22:47.262] ALL 000000000000 GLOBAL_SCOPE at
+
+com.sterlingcommerce.woodstock.adminui.servlet.SaveImpExp.run(SaveImpExp.java:64)
+noapp.log
+noapp.log:JVMDUMP006I Processing Dump Event "systhrow", detail
+
+"java/lang/OutOfMemoryError" - Please Wait.
+noapp.log:JVMDUMP013I Processed Dump Event "systhrow", detail
+
+"java/lang/OutOfMemoryError".
+noapp.log:JVMDUMP006I Processing Dump Event "systhrow", detail
+
+"java/lang/OutOfMemoryError" - Please Wait.
+noapp.log:JVMDUMP013I Processed Dump Event "systhrow", detail
+
+"java/lang/OutOfMemoryError".
+noapp.log:JVMDUMP006I Processing Dump Event "systhrow", detail
+
+"java/lang/OutOfMemoryError" - Please Wait.
+noapp.log:JVMDUMP013I Processed Dump Event "systhrow", detail
+
+"java/lang/OutOfMemoryError".
+
+
+RESOLVING THE PROBLEM
+
+
+Please apply Gentran Integration Suite, Release 4.3 Build 4322 or later.
+
+ 
+
+HISTORICAL NUMBER
+ NFX8326 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+Import/Export
+
+
+Escalation ID
+
+
+QC
+
+
+Fix ID
+
+
+199163
+
+
+Severity
+
+
+Normal
+
+
+Type
+
+
+NormalFix
+
+
+Build
+
+
+4322

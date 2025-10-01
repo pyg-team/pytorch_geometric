@@ -1,0 +1,53 @@
+Title: IBM DASH Page Cycler Creates additional Page tabs each time through the cycle. - United States
+
+Text:
+DASHL2INST; DashTools; Cumulative Patch4; DASH 3.1.2.1; Page Cycler.; Cumulative Patch 3; IV85266 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Starting with DASH Cumulative Patch 4, the DashTools Page Cycler Widget creates new Page tabs each time it cycles through the list of Pages to display, each page name will show an incrementing number in brakets after
+the name. name(1), name(2) etc 
+
+SYMPTOM
+When displaying the Pages defined in the Page Cycler Widget, instead of cycling through the pages to display, DASH creates a new Page Tabs each time it cycles through the list. Here is an example, you can see that the instance number increases over time. It will keep creating new tabs until you stop the Page Cycler. 
+
+[/support/docview.wss?uid=swg21983438&aid=1] [/support/docview.wss?uid=swg21983438&aid=1]
+
+
+CAUSE
+Cause yet to be determined. Please refer to the Resolving the problem section below.
+
+
+
+ENVIRONMENT
+DASH 3.1.2.1 Cumulative Patch 4
+
+
+
+DIAGNOSING THE PROBLEM
+Please refer to the Symptom section above for see the behavior after Cumulative Patch 4 is installed. 
+
+After you have uninstalled DASH Cumulative Patch 4, you should see the following with no increase in the number of Pages defined:
+
+[/support/docview.wss?uid=swg21983438&aid=2] [/support/docview.wss?uid=swg21983438&aid=2]
+
+
+
+RESOLVING THE PROBLEM
+There are two options to fix this issue: 
+
+ 
+
+1) Since this issue was introduced in DASH Cumulative Patch 4, you need to uninstall DASH 3.1.2.1 Cumulative Patch 4. This problem does not appear earlier DASH 3.1.2.1 Cumulative Patches 
+
+To determine what if any DASH 3.1.2.1 cumulative patches you have installed, please check the <JazzSM_HOME>/ui/Patches directory and cross reference the patch number with the information in this link, which also contains the downloads for all DASH 3.1.2.1 Cumulative Patches. 
+
+
+www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/W8b1151be2b42_4819_998e_f7de7db7bfa2/page/Download%20Cumulative%20Patches%20-%20UI%20Services%20%28DASH%29 [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/W8b1151be2b42_4819_998e_f7de7db7bfa2/page/Download%20Cumulative%20Patches%20-%20UI%20Services%20%28DASH%29]
+
+DASH 3.1.2.1 Cumulative Patch 4 is # 201601290334
+
+2) This is fixed in DASH 3.1.3 Cumulative Patch 3. The APAR number is: IV85266 
+
+Link to DASH 3.1.3 Cumulative Patch 3:
+
+www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7ETivoli&product=ibm/Tivoli/Jazz+for+Service+Management&release=1.1&platform=All&function=all [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7ETivoli&product=ibm/Tivoli/Jazz+for+Service+Management&release=1.1&platform=All&function=all]

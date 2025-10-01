@@ -1,0 +1,77 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities in IBM® Java SDK affect WebSphere Application Server included in Tivoli Network Manager IP Edition April 2015 CPU - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There are multiple vulnerabilities in IBM® SDK Java™ Technology Edition that is shipped with IBM WebSphere Application Server included in Tivoli Network Manager IP Edition. These issues were disclosed as part of the IBM Java SDK updates in April 2015. 
+
+VULNERABILITY DETAILS
+
+CVE IDs:CVE-2015-0488 CVE-2015-0478 CVE-2015-0204 CVE-2015-2808 CVE-2015-1916 CVE-2015-0138 
+
+DESCRIPTION:This bulletin covers all applicable Java SE CVEs published by Oracle as part of their April 2015 Critical Patch Update and additional vulnerabilties which affect IBM SDK, Java Technology Edition. There are other advisories included in the IBM Java SDK but WebSphere Application Server is not vulnerable to them. You will need to evaluate your own code to determine if you are vulnerable. Please refer to the Reference section for more information on the advisories not applicable to WebSphere Application Server. 
+
+CVE-2015-0204 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0204] was fixed in IBM SDK, Java Technology Edition under CVE-2015-0138 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0138]. Both CVEs are included in this advisory for completeness. 
+
+CVEID:CVE-2015-0488 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0488]
+DESCRIPTION:An unspecified vulnerability related to the JSSE component could allow a remote attacker to cause a denial of service.
+CVSS Base Score: 5
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/102336 [https://exchange.xforce.ibmcloud.com/vulnerabilities/102336] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P) 
+
+CVEID:CVE-2015-0478 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0478]
+DESCRIPTION:An unspecified vulnerability related to the JCE component could allow a remote attacker to obtain sensitive information.
+CVSS Base Score: 4.3
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/102339 [https://exchange.xforce.ibmcloud.com/vulnerabilities/102339]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N) 
+
+CVEID:CVE-2015-0204 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0204]
+DESCRIPTION:A vulnerability in the OpenSSL ssl3_get_key_exchange function could allow a remote attacker to downgrade the security of certain TLS connections. An OpenSSL client accepts the use of an RSA temporary key in a non-export RSA key exchange ciphersuite. This could allow a remote attacker using man-in-the-middle techniques to facilitate brute-force decryption of TLS/SSL traffic between vulnerable clients and servers. This vulnerability is also known as the FREAK attack.
+CVSS Base Score: 4.3
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/99707 [https://exchange.xforce.ibmcloud.com/vulnerabilities/99707]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N)
+
+CVEID:CVE-2015-2808 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2808]
+DESCRIPTION:The RC4 algorithm, as used in the TLS protocol and SSL protocol, could allow a remote attacker to obtain sensitive information. An attacker could exploit this vulnerability to remotely expose account credentials without requiring an active man-in-the-middle session. Successful exploitation could allow an attacker to retrieve credit card data or other sensitive information. This vulnerability is commonly referred to as "Bar Mitzvah Attack". 
+CVSS Base Score: 5
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/101851 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101851]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N) 
+
+CVEID:CVE-2015-1916 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1916]
+DESCRIPTION:Server applications which use the IBM Java Secure Socket Extension provider to accept SSL/TLS connections are vulnerable to a denial of service attack due to an unspecified vulnerability.
+CVSS Base Score: 5
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/101995 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101995] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P) 
+
+CVEID:CVE-2015-0138 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0138]
+DESCRIPTION:A vulnerability in various IBM SSL/TLS implementations could allow a remote attacker to downgrade the security of certain SSL/TLS connections. An IBM SSL/TLS client implementation could accept the use of an RSA temporary key in a non-export RSA key exchange ciphersuite. This could allow a remote attacker using man-in-the-middle techniques to facilitate brute-force decryption of TLS/SSL traffic between vulnerable clients and servers. This vulnerability is also known as the FREAK attack.
+CVSS Base Score: 4.3
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/100691 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100691]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Affected Product and Version(s) Product and Version shipped as a component Tivoli Network Manager 3.8 Bundled the TIP version 1.1.1.x, IBM WebSphere version 6.1.0.x and the JRE from IBM SDK Java 2 Technology Edition Version 6. Tivoli Network Manager 3.9 Bundled the TIP version 2.1.0.x, IBM WebSphere version 7.0.0.x and the JRE from IBM SDK Java 2 Technology Edition Version 7. Tivoli Network Manager 4.1 and 4.1.1 Bundled the TIP version 2.2.0.x, IBM WebSphere version 7.0.0.x and the JRE from IBM SDK Java 2 Technology Edition Version 7. Upgrade your SDK to an interim fix level as determined below: 
+http://www-01.ibm.com/support/docview.wss?uid=swg21902260 [http://www-01.ibm.com/support/docview.wss?uid=swg21902260] GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

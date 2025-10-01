@@ -1,0 +1,104 @@
+Title: IBM Open Mic Webcast: IBM Lotus Notes & Domino Out Of Office Functionality -  22 May 2012 (audio replay, presentation, Q&A) - United States
+
+Text:
+STEwebcastDocument; lste_webcast; Tech Exchange; STEwebcast; openmic call; open microphone call; discussion; conference call; customer call; submit; ask the experts; discuss; open mic; questions; answers; questions and answers; q&a; replay; recording; webcast; FAQ; best practice; transcript; OOO; out of office; calendar and scheduling WEBCAST
+
+ABSTRACT
+ IBM hosted an Open Mic webcast with Lotus Development and Support Engineers on 22 May 2012. The topic was "IBM Lotus Notes & Domino Out Of Office Functionality." 
+
+CONTENT
+ 
+
+For more information about our Open Mic webcasts, visit the IBM Collaboration Solutions Support Open Mics [http://www.ibm.com/software/lotus/support/lotus-open-mics/] page.
+
+
+
+Presentation & Audio Replay 
+Presentation: 
+OpenMicWebcast_OutOfOffice_May2012.pdf [/support/docview.wss?uid=swg27024609&aid=2]OpenMicWebcast_OutOfOffice_May2012.pdf [/support/docview.wss?uid=swg27024609&aid=1] 
+
+
+Audio Replay: 
+OpenMic_Notes_Domino_OutOfOffice_May2012.mp3 [ftp://public.dhe.ibm.com/software/lotus/info/notes/OpenMic_Notes_Domino_OutOfOffice_May2012.mp3] 
+
+
+
+References 
+Forum post [http://www.lotus.com/ldd/nd85forum.nsf/DateAllThreadedWeb/c604d664b47783ae852579d4006ce7c1?OpenDocument] for Q&A related to this Open Mic. 
+
+
+developerWorks & wiki articles The new IBM Lotus Notes 8 Out of Office functionality [http://www.ibm.com/developerworks/lotus/library/notes8-ooo/]
+The IBM Lotus Notes and Domino Out of Office service: Best practices [http://www.lotus.com/ldd/dominowiki.nsf/dx/01072009040728PMWEBSS8.htm]
+
+
+
+Known Issues 
+
+Technote 1403332 - Out of Office agent can get stuck enabled when using the Out of Office [http://www.ibm.com/support/docview.wss?uid=swg21403332]service [http://www.ibm.com/support/docview.wss?uid=swg21403332]
+Technote 1425342 - iNotes Out Of Office agent/service malfunction after Domino upgrade from [http://www.ibm.com/support/docview.wss?uid=swg21425342]8.0.x to 8.5.1 [http://www.ibm.com/support/docview.wss?uid=swg21425342]
+
+
+Tools 
+
+Technote 1296389 - How to use the Out Of Office (OOO) diagnostic tool [http://www.ibm.com/support/docview.wss?uid=swg21296389]
+Technote 1459332 - All-in-one Admin Tool for agent-based troubleshooting & problem solving [http://www.ibm.com/support/docview.wss?uid=swg21459332] 
+
+ 
+
+Q&A 
+Q. Is it possible to set Out of Office on an hourly basis in iNotes? Our out of office functionality works in iNotes, but not for setting hours. We are an iNotes-only shop, no Notes Client installs. 
+If you're using the Out of Office Service, you should be able to enable it for 1 or more hours. If you cannot see the hours options, please open a PMR and we can investigate. 
+
+
+Q. We are on 8.5.2 and using the OOO Service. We also run our mail files in Local Mode. Sometimes when a User enables their OOO in their mail file they do not wait for that setting to replicate to their server copy. Are there any plans to allow us to force a replication when they enable their OOO message? 
+-- At this point, we recommend setting the Notes Client Preferences to prompt the user to replicate on close. We will look into an option to force replication on close. 
+-- We're aware of that problem, and unfortunately not able to address it in 8.5.4. But this is a very high priority for our next release. 
+
+
+Q. How do I load the OOO Service 
+Configuration server doc -> Router/SMTP -> Advanced -> Controls -> Out of Office type 
+See this article for a screenshot of the Configuration doc http://www.ibm.com/developerworks/lotus/library/notes8-ooo/ [http://www.ibm.com/developerworks/lotus/library/notes8-ooo/] 
+
+
+Q. What if the summary only shows some email addresses not all email addresses that an email was received? 
+IBM would have to investigate. If using the service, please enable the Out of Office Service debug (Debug_OOS=1) and open a PMR 
+
+
+Q. Which would be more prefered OOO running as agent or as service? 
+Running the Out of Office as a service is recommended by IBM 
+
+
+Q. I'm a member of the Help Desk group and would not like it to respond when I receive those group emails, just as an example I would like this. 
+I don't see an existing SPR for an enhancement like that, so please do call in and we can get that created. 
+
+
+Q. If you enable the OOO service on a mail server, but BES is pre 5.0, will BES fall back to using OOO agent or just not function? 
+Yes, I believe so. (revert to agent) 
+
+
+Q. "Some time user who have delegated access on some other user's mail file, for example assistant want to enable OOO on her/his boss mail file but could not enable it and getting message "Off, Processing request to Enable." 
+Any idea why its not enabling. Delegated person has Editor access. 
+Sounds like something is preventing the Adminp request from processing correctly. Definitely open a PMR on that so that we can investigate further into the specifics in your environment. 
+
+
+Q. Need to know if there is a scheduled to address SPR# PCHE8LFMGH: When user is out for prolonged period and/or receives a large number of emails from unique senders. This causes the Notified field in the Out of Office Service profile (OOSProfile) to grow past 64K causing memory allocation errors. The 64K size restriction is a limitation of the product itself. This is fixed in 9.0 and 8.5.3 Fix Pack 3. 
+
+
+Q. Has there been change to field that OOO service uses. In vers 7 it seems to have used either From or Reply to Field, in OOO service is it using Principal field. This is generating DFRs for certain mails that have principal field as Mail DB (user name) 
+As far as I know, that has not changed. But, if you are seeing different behavior between the service and agent in 8.x, please do open a PMR so that we can look into it further. 
+
+
+Q. Does the tell router o work if we are currently running as agents? If not, is there a way to tell who is currently enabled before switching the server to run as a service? 
+Tell router o is only for the service - tell amgr sched will show scheduled out of office agents 
+
+
+Q. One "improvement" I would like to suggest is our users delegate Calendar rights to their admins, but you cannot set the OOO with Calendar only rights, you need full mail rights (Editor), some of our delegators don't want to give mail rights, it seems it would make sense to allow someone who has full calendar rights to also set the OOO but to still not have mail access 
+Good point. I'll add that to the list of enhancements we're considering for the next release 
+
+
+ORIGINAL PUBLICATION DATE
+ 2012/4/2 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Messaging Applications IBM Domino Calendaring and Scheduling 8.5.3

@@ -1,0 +1,51 @@
+Title: IBM Error -- "java.util.MissingResourceException: Can't find bundle for base name resources/extn/extnbundle, locale en_KR" - United States
+
+Text:
+Upgrade; Migrate; STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error -- "java.util.MissingResourceException: Can't find bundle for base name resources/extn/extnbundle, locale en_KR" 
+
+SYMPTOM
+
+
+User are getting the following error - "java.util.MissingResourceException: Can't find bundle for base name resources/extn/extnbundle." This exception is displayed for all the locales configured in the Sterling application. 
+
+Error Message Platform initialization complete.
+java.util.MissingResourceException: Can't find bundle for base name resources/extn/extnbundle, locale en_KR
+at java.util.ResourceBundle.throwMissingResourceException(ResourceBundle.java:1521) 
+at java.util.ResourceBundle.getBundleImpl(ResourceBundle.java:1260)
+at java.util.ResourceBundle.getBundle(ResourceBundle.java:787)
+at com.yantra.yfc.util.YFCI18NUtils.loadBundle(YFCI18NUtils.java:308)
+at com.yantra.yfc.util.YFCI18NUtils.initBundles(YFCI18NUtils.java:156)
+at com.yantra.appserver.ConsoleUIInitializer.setLocaleInfo(ConsoleUIInitializer.jav a:261)
+at com.yantra.appserver.ConsoleUIInitializer.init(ConsoleUIInitializer.java:69)
+at weblogic.servlet.internal.StubSecurityHelper$ServletInitAction.run(StubSecurityH elper.java:283)
+at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.ja va:321)
+at weblogic.security.service.SecurityManager.runAs(SecurityManager.java:121)
+at weblogic.servlet.internal.StubSecurityHelper.createServlet(StubSecurityHelper.ja va:64)
+
+
+RESOLVING THE PROBLEM
+
+
+This error occurs if both extnbundle.properties and extended extnbundle.properties are not present in the EAR (under resources.jar).
+
+Check the resources/extn folder for the presence of extnbundle.properties or extended extnbundle.properties after exploding the EAR. If not present, place the appropriate properties file, rebuild the resources.jar, rebuild the EAR and redeploy. Please refer to Sterling Installation and Customization Guides for further information on building the jars, EAR and deployment. 
+
+HISTORICAL NUMBER
+ NFX10270 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+Installation
+
+
+Severity
+
+
+Normal

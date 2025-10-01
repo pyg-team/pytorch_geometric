@@ -1,0 +1,38 @@
+Title: IBM Setting trace for TWS or DWC v9.x installations that use IM - United States
+
+Text:
+TWS; trace; installation; 9.1; 9.2; InstallationManager; MDM; Master; Dynamic Workload Console; fixpack TECHNOTE (FAQ)
+
+QUESTION
+ How can you set a trace level for a silent or GUI installation of a TWS v9.x Master Domain Manager (MDM), Backup Manager (BKM), Dynamic Domain Manager (DDM), or Dynamic Workload Console (DWC) that uses Installation Manager (IM)? 
+
+CAUSE
+When an installation failure occurs it is sometimes difficult to follow the default log files.
+
+ANSWER
+The trace level can be set for a Tivoli Workload Scheduler (TWS) 9.x MDM, BKM, DDM, or DWC fresh installation or Fix Pack installation if Installation Manager (IM) has already been installed. 
+
+Procedure: 
+
+1. Login as root. 
+
+2. cd /var/ibm/InstallationManager/logs 
+
+3. vi log.properties 
+
+Add one line to the file: 
+
+ com.ibm.tws=DEBUG 
+
+4. Launch the installation.
+
+For a silent installation, the extra logging will write to stdout. 
+
+For a GUI installation the extra detail will be written to the latest file in this directory: /var/ibm/InstallationManager/logs/
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Maestro
+TWS
+TWA

@@ -1,0 +1,186 @@
+Title: IBM PI74854: DFHRM0001 AKEC & 0C4 ABENDS FOR CLQ2 TASKS DURING RESTART 17/03/10 PTF PECHANGE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Various abends and loops occur in RM domain modules, usually
+   during CICS restarts, due to corrupted RMLK chains. The abends
+   include symptoms like these:
+   .
+   DFHRM0001 An abend (code ---/AKEC) has occurred at
+    offset X'FFFF' in module DFHRMLK3 or DFHRMLN.
+   .
+   DFHRM0001 An abend (code 0C4/AKEA) has occurred at
+    offset X'1D60' in module DFHRMRS.
+   .
+   DFHRM0001 An abend (code 0C4/AKEA) has occurred at
+    offset X'4044' in module DFHRMLN.
+   .
+   DFHRM0001 An abend (code 0C4/AKEA) has occurred at
+    offset X'1E6C' in module DFHRMLSO.
+   .
+   The failures occur for CLQ2 resynch tasks. The global chain of
+   RMLKs show that the previous/next pointers are corrupted. An
+   IPCS FIND command in the formatted RM domain will usually show
+   message:
+   .
+   ** DFHPD0105  A loop has been detected. RMLKChn at address
+     aaaaaaaa already encountered.
+   .
+   Additional Symptom(s) Search Keyword(s): KIXREVSCB
+   RMLKClss DFHRMCI3 AKEF DFHRMRO2 DFHRMLK2 DFHRMLINK RMLINK 0C4
+   S0C4 abend0C4 AKEC loop looping startup
+   AICJ ABEND
+   DFHSM0002 A severe error (code X'030D') in module DFHSMGF.
+   DFHAP0002 A severe error (code X'05CC') in module DFHICXM.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS Users with UI38223 UI38106 applied  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Abends in DFHRMRS, DFHRMLN and other    *
+   *                      RM domain modules due to a corrupt      *
+   *                      RMLK (DFHRMlink) chain.                 *
+   ****************************************************************
+   After applying PTF UI38223 or UI38106 CICS regions which are
+   processing large numbers of recovery links during restart
+   can experience abends in the RM domain due to a corrupt RMLK
+   chain. This is because links were attempted to be removed from
+   the chain twice.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  UI38106 UI38223
+   DFHRMLK has been changed to prevent corruption of the RMLK
+   chain.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI74854
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-12
+   
+   
+ * CLOSED DATE
+   2017-03-10
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI45464 UI45465
+   
+   
+
+MODULES/MACROS
+ *  DFHR2TRI DFHRMCD  DFHRMCD1 DFHRMCD2 DFHRMCI2 DFHRMCI3 DFHRMCI4
+   DFHRMDM  DFHRMDU0 DFHRMDU2 DFHRMDU3 DFHRMDU4 DFHRMDU5 DFHRML1D
+   DFHRMLK1 DFHRMLK2 DFHRMLK3 DFHRMLK4 DFHRMLK5 DFHRMLKQ DFHRMLN
+   DFHRMLSD DFHRMLSF DFHRMLSO DFHRMLSP DFHRMLSS DFHRMLSU DFHRMNM
+   DFHRMNM1 DFHRMNS1 DFHRMNS2 DFHRMOT  DFHRMR1D DFHRMR1E DFHRMR1K
+   DFHRMR1S DFHRMRO  DFHRMRO1 DFHRMRO2 DFHRMRO3 DFHRMRO4 DFHRMROO
+   DFHRMROS DFHRMROU DFHRMROV DFHRMRS  DFHRMST  DFHRMST1 DFHRMTRI
+   DFHRMU1C DFHRMU1D DFHRMU1E DFHRMU1F DFHRMU1G DFHRMU1J DFHRMU1K
+   DFHRMU1L DFHRMU1N DFHRMU1Q DFHRMU1R DFHRMU1S DFHRMU1U DFHRMU1V
+   DFHRMU1W DFHRMUC  DFHRMUO  DFHRMUW  DFHRMUW0 DFHRMUW1 DFHRMUW2
+   DFHRMUW3 DFHRMUWB DFHRMUWE DFHRMUWF DFHRMUWH DFHRMUWJ DFHRMUWL
+   DFHRMUWN DFHRMUWP DFHRMUWQ DFHRMUWS DFHRMUWU DFHRMUWV DFHRMUWW
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI45465 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI45465]
+   UP17/03/16 P F703 {
+   
+   
+ * R900 PSY UI45464 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI45464]
+   UP17/03/16 P F703 {
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

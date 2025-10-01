@@ -1,0 +1,130 @@
+Title: IBM PM54137: 'deleteTransition' doesn't remove transition from diagram view until project is saved - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Rhapsody Fix Pack 1 (8.0.1) for 8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24033836]
+Rational Rhapsody 8.0.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24037021]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There is a problem when deleting a transition/state from a
+   statechart via the COM API.  I use Rhapsody 7.6.0.1  The
+   transition which  I have deleted is not deleted from the view.
+   Only by pressing the save button  the transition is deleted from
+   the view.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When using the Rhapsody API to delete a transition, the
+   transition is not removed from the diagram view until the
+   project is saved
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect is not reproducible.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM54137
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED UR5
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-12
+   
+   
+ * CLOSED DATE
+   2013-03-19
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSN
+   UP

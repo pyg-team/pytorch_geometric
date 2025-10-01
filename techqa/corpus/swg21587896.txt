@@ -1,0 +1,20 @@
+Title: IBM Why are split batches not keeping the high priority setting in IBM Datacap Taskmaster Capture? - United States
+
+Text:
+lost priority; priorities; split batches; child job TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have a Taskmaster application that performs a split of a batch. If I set the priority on a batch to "high" and Taskmaster performs the split of the batch, the split batch does not keep the high priority and gets reverted back to the default priority. 
+
+SYMPTOM
+Split batches are not retaining the priority for documents.
+
+
+CAUSE
+Taskmaster Server is not configured correctly for the Child job to inherit priorities.
+
+DIAGNOSING THE PROBLEM
+In the Job Monitor, find the column for "Pr". If the original batch is set to priority 1 and split batch is performed, review the column for "Pr" for the new split batch. If it is reverted to the default of 5 and you wish that the new split batch maintains the high priority of 1, then you need to review the configuration of your Taskmaster Server.
+
+RESOLVING THE PROBLEM
+Run your Taskmaster Server Manager. Click on the "Taskmaster" tab and check to see if the setting "Child job inherits priority" is enabled. Split batches are considered child jobs in IBM Datacap Taskmaster Capture. Once you have this setting enabled, save the settings. You will need to restart Taskmaster Server if the service is running. As a warning, when restarting the Taskmaster Server, make sure no Taskmaster Client services, Quattro services, Taskmaster Web, RuleRunner Servers, or client PCs are running or connected to the Taskmaster Server so that no loss of data or errors occur.

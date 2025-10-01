@@ -1,0 +1,163 @@
+Title: IBM IC62020: CRASH IN LOTUS EXPEDITO INTEGRATOR RUNTIME DUE TO JRE DLL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The crash happens when there is a continuous load on Lotus
+   Expeditor Integrator.
+   
+   From javacore file:
+   
+   1XHEXCPCODE    J9Generic_Signal_Number: 00000004
+   1XHEXCPCODE    ExceptionCode: C0000005
+   1XHEXCPCODE    ExceptionAddress: 7FE808DC
+   1XHEXCPCODE    ContextFlags: 0001003F
+   1XHEXCPCODE    Handler1: 7FEE9280
+   1XHEXCPCODE    Handler2: 7FEC94E0
+   1XHEXCPCODE    InaccessibleAddress: 00000010
+   NULL
+   1XHEXCPMODULE  Module:
+   D:\MAI\XPD\rcp\eclipse\plugins\com.ibm.rcp.j2se.win32.x86_1.6.0.
+   20081029
+   a-200811140851\jre\bin\j9gc24.dll
+   1XHEXCPMODULE  Module_base_address: 7FE60000
+   1XHEXCPMODULE  Offset_in_DLL: 000208DC
+   NULL
+   1XHREGISTERS   Registers:
+   2XHREGISTER      EDI: 00000000
+   2XHREGISTER      ESI: 105D1990
+   2XHREGISTER      EAX: 00000000
+   2XHREGISTER      EBX: 00000000
+   2XHREGISTER      ECX: 001F6938
+   2XHREGISTER      EDX: 1586FC00
+   2XHREGISTER      EIP: 7FE808DC
+   2XHREGISTER      ESP: 1586FB8C
+   2XHREGISTER      EBP: 001F6938
+   2XHREGISTER      EFLAGS: 00010202
+   NULL
+   1XHFLAGS       VM flags:0002000F
+   NULL
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  CRASH IN LOTUS EXPEDITO INTEGRATOR RUNTIME DUE TO JRE DLL
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 6.2.0 iFix2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  The files have been placed on this external location:
+   
+   ftp://ftp.emea.ibm.com/fromibm/pmr/57292,033,724/Readme_integrat
+   orJREFix.txt
+   
+   ftp://ftp.emea.ibm.com/fromibm/pmr/57292,033,724/integratorJREFi
+   x.zip
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC62020
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS EXPEDITOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724R0900
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-07-15
+   
+   
+ * CLOSED DATE
+   2010-07-09
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS EXPEDITOR
+   
+   
+ * FIXED COMPONENT ID
+   5724R0900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

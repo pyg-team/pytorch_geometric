@@ -1,0 +1,36 @@
+Title: IBM In CAFE, the IBM Cognos tab disappeared - United States
+
+Text:
+installed working unavailable found missing visible viewed crashed exited halted terminated TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In Cognos Analysis for Microsoft Excel (CAFE), the IBM Cognos tab suddenly vanished and could no longer be seen. 
+
+CAUSE
+It is likely that the IBM Cognos tab was being used at the time when Excel stopped functioning for some reason or other. Excel automatically assumes that the current add-in was to blame and disables that add-in, thereby removing the IBM Cognos add-in.
+
+ENVIRONMENT
+MS Windows Server 7 Professional
+MS Office Professional Plus 2007
+
+DIAGNOSING THE PROBLEM
+In Excel, resize window to maximum
+> Go to File - Options
+In Excel Options, click Add-Ins, and resize window to maximum
+~ For Manage, select Disabled Items, click Go… 
+In Disabled Items, check if the “Addin: ibm cognos office for excel 2007/2010 (cognosofficeshim12.dll)” is in the list of disabled add-ins
+
+RESOLVING THE PROBLEM
+If the Excel add-in “IBM Cognos Office for Excel 2007/2010” is disabled then re-enable it to re-display the “IBM Cognos” tab in Excel.
+
+Steps:
+* In Excel, go to File - Options
+* In Excel Options, click Add-Ins
+* For Manage, select Disabled Items, click Go… 
+* In Disabled Items, select the “Addin: ibm cognos office for excel 2007/2010 (cognosofficeshim12.dll)”, click Enable and then click Close
+* Restart Excel
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CAFE XLS XLSX

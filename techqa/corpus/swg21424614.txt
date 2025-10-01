@@ -1,0 +1,60 @@
+Title: IBM What encryption algorithms are supported by Host On-Demand Version 11 - United States
+
+Text:
+Encryption algorithm; HOD; security; cipher suite; cipher TECHNOTE (FAQ)
+
+QUESTION
+ What are the encryption algorithms that are supported by IBM Rational Host On-Demand Version 11? 
+
+CAUSE
+The online documentation does not include this information. 
+
+ANSWER
+IBM Host On-Demand uses SSLITE and GSKIT encryption engines for client-side and server-side encryption respectively. 
+
+The IBM GSKit Version 7 provides a multi-platform secure socket implementation that supports FIPS-approved cryptographic operations. Refer to the following Validated FIPS 140-1 and FIPS 140-2 Cryptographic Modules [http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/1401val2007.htm]
+
+JSSE ciphers (Oracle Java or when FIPS is disabled):
+"SSL_RSA_WITH_AES_128_CBC_SHA", 
+"SSL_RSA_WITH_AES_256_CBC_SHA",
+"SSL_RSA_WITH_DES_CBC_SHA",
+"SSL_RSA_FIPS_WITH_DES_CBC_SHA",
+"SSL_RSA_WITH_3DES_EDE_CBC_SHA",
+"SSL_RSA_FIPS_WITH_3DES_EDE_CBC_SHA",
+"SSL_DHE_RSA_WITH_AES_128_CBC_SHA",
+"SSL_DHE_RSA_WITH_AES_256_CBC_SHA",
+"SSL_DHE_RSA_WITH_DES_CBC_SHA",
+"SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA",
+"SSL_DHE_DSS_WITH_AES_128_CBC_SHA",
+"SSL_DHE_DSS_WITH_AES_256_CBC_SHA",
+"SSL_DHE_DSS_WITH_DES_CBC_SHA",
+"SSL_RSA_EXPORT1024_WITH_DES_CBC_SHA",
+"SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA",
+"SSL_DHE_DSS_EXPORT1024_WITH_DES_CBC_SHA",
+"SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA",
+"SSL_DH_anon_WITH_AES_128_CBC_SHA",
+"SSL_DH_anon_WITH_AES_256_CBC_SHA",
+"SSL_DH_anon_WITH_DES_CBC_SHA",
+"SSL_DH_anon_WITH_3DES_EDE_CBC_SHA",
+"SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA",
+"SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA" (from sslite)
+
+Java FIPS ( with IBM Java):
+"SSL_RSA_WITH_3DES_EDE_CBC_SHA" , 
+"SSL_RSA_FIPS_WITH_3DES_EDE_CBC_SHA" , 
+"SSL_RSA_WITH_AES_128_CBC_SHA" ,
+"SSL_DHE_RSA_WITH_AES_128_CBC_SHA" ,
+"SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA" ,
+"SSL_DHE_DSS_WITH_AES_128_CBC_SHA" ,
+"SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA",
+
+SSLite:
+"TLS_RSA_WITH_AES_128_CBC_SHA", 
+"TLS_DHE_RSA_WITH_AES_128_CBC_SHA", 
+"TLS_RSA_WITH_3DES_EDE_CBC_SHA", 
+"TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA", 
+"SSL_RSA_FIPS_WITH_3DES_EDE_CBC_SHA", 
+"TLS_RSA_WITH_AES_256_CBC_SHA", 
+"TLS_DHE_RSA_WITH_AES_256_CBC_SHA" 
+
+In Host On-Demand, the encryption algorithm or standard used in an established secured session can be determined in the Host On-Demand session by clicking Communication-> Security on the terminal window menu bar.

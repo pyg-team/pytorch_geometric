@@ -1,0 +1,163 @@
+Title: IBM PI44319: MQRC 2085 EVENT IS GENERATED WHEN STOPPING OR STARTING AN AUTO-DEFINED CLUSTER-SENDER (CLUSSDRA). - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Since migrating to MQ V8, a start or stop of a CLUSDRA channel
+   generates a MQRC 2085 (MQRC_UNKNOWN_OBJECT_NAME) event.
+    Due to changes to CSQMIARC, queue-manager event messages
+   with MQRC 2085 will be incorrectly generated when stopping or
+   starting an auto-defined cluster-sender. This occurs due to the
+   channel start/stop code getting MQRC 2085 when it tries to open
+   a channel object for the cluster-sender (this is to be expected
+   as the channel is auto-defined).
+   .
+   ADDITIONAL KEYWORDS:
+   CSQX435E MQRC_UNKNOWN_OBJECT_NAME
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 8 *
+   *                 Release 0 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When manually starting or stopping      *
+   *                      auto-defined cluster sender channels,   *
+   *                      superfluous channel event messages      *
+   *                      indicating MQRC = 2085                  *
+   *                      (MQRC_UNKNOWN_OBJECT_NAME) may be       *
+   *                      generated on the                        *
+   *                      SYSTEM.ADMIN.QMGR.EVENT queue.          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When starting or stopping a manually-defined cluster sender
+   channel may result in an internal attempt to open the related
+   object definition for the sender channel. Because the channel is
+   auto-defined, no such channel object is expected to exist and
+   therefore the resulting 2085 (MQRC_UNKNOWN_OBJECT_NAME) error
+   should not be reported as a channel event as the behavior is
+   expected.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Processing has been amended to ensure that event messages are
+   not generated when the channel object is not found for an
+   auto-defined cluster sender channel.
+   000Y
+   CSQMIARC
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI44319
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * REPORTED COMPONENT ID
+   5655W9700
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-07-04
+   
+   
+ * CLOSED DATE
+   2015-07-30
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI29856
+   
+   
+
+MODULES/MACROS
+ *  CSQMIARC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * FIXED COMPONENT ID
+   5655W9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI29856 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI29856]
+   UP15/09/09 P F509
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

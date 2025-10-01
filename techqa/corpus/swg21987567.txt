@@ -1,0 +1,33 @@
+Title: IBM The bootstrap engine-ws.ear file  for FileNet Content Manager was accidently deleted - United States
+
+Text:
+bootstrap; deleted; engine-ws.ear TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The boostrapped engine-ws.ear file was accidenrtly deleted and the ear file was not backed up. 
+
+SYMPTOM
+Unable to start the CPE server. 
+
+
+CAUSE
+Missing Engine-ws.ear file.
+
+ENVIRONMENT
+CPE 5.2.1 / AIX 7.1
+
+RESOLVING THE PROBLEM
+To recover from a deleted Engine-ws.ear file that was not backed up, you would need to perform the following steps:
+
+
+
+1. Create a new EAR with a bootstrap user/password using the Configuration Manager User Interface (CMUI). See the FileNet P8 information for step by step directions.
+
+
+2. Shut down the existing application.
+
+
+3. Request the GCD Utility tool from FileNet P8 Content Engine Support, and change the existing GCD with the new password using the following command: resetdcpasswd -p password.
+
+
+4. Deploy the new application.

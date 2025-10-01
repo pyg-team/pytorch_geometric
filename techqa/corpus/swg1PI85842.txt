@@ -1,0 +1,159 @@
+Title: IBM PI85842: CICS IS FAILING IN ATTEMPTING TO PERFORM A CHANGE_MODE TO THE TPTCB. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The KEDS error is caused because CICS attempt to CHANGE_MODE
+   onto the TP which has been previously deleted from the system.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS Users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Severe Error x'0504' during install of  *
+   *                      Liberty and CICS bundles.               *
+   ****************************************************************
+   JVMSERVER installs and is set to enabled, the Liberty server is
+   still starting up.  CRLR resolution transaction executes to
+   notify the enabled JVMSERVER about installed BUNDLES and is
+   suspended due to other work in the System.  The Liberty server
+   fails to startup correctly and so the JVMSERVER moves to a
+   disabling state.  The JVMSERVER is disabled removing all the TP
+   and T8 TCBs.
+   
+   Additional Keywords: x0504
+   
+   CRLR resumes and attempts to enable the bundle within the
+   JVMSERVER, this causes a change_mode to occur during the
+   processing and leads to the severe error x'0504' error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHSJTH has been changed to detect a JVMSERVER state change
+   and not allocate a thread.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI85842
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-15
+   
+   
+ * CLOSED DATE
+   2018-03-22
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI54656 UI54657
+   
+   
+
+MODULES/MACROS
+ *  DFHSJDM  DFHSJDUF DFHSJJS  DFHSJSA  DFHSJST  DFHSJTH
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI54656 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI54656]
+   UP18/03/23 I 1000
+   
+   
+ * R100 PSY UI54657 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI54657]
+   UP18/03/23 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

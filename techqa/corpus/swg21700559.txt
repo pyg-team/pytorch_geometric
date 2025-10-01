@@ -1,0 +1,63 @@
+Title: IBM Sterling B2B Integrator  - java.lang.OutOfMemoryError : Failed to create a thread: retVal -1073741830, errno 11 - United States
+
+Text:
+java.lang.OutOfMemoryError : Failed to create a thread: retVal -1073741830; errno 1; jetty; http; perimeter; native TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Sterling B2B Integrator (SB2Bi) caught up with native OutOfMemory (OOM) error due to large number of HTTP PS/Jetty Threads and application become unresponsive. 
+
+SYMPTOM
+noapp.log.DATESTAMP file shows errors in following pattern - 
+
+[2015-02-08 01:50:07.147] ALL 000000000000 GLOBAL_SCOPE java.lang.OutOfMemoryError : Failed to create a thread: retVal -1073741830, errno 11
+[2015-02-08 01:50:07.147] ALL 000000000000 GLOBAL_SCOPE at java.lang.Thread.startImpl(Native Method)
+[2015-02-08 01:50:07.147] ALL 000000000000 GLOBAL_SCOPE at java.lang.Thread.start(Thread.java)
+[2015-02-08 01:50:07.147] ALL 000000000000 GLOBAL_SCOPE at com.sterlingcommerce.perimeter.api.scheduler.DebugPooledExecutor.addThread(DebugPooledExecutor.java)
+[2015-02-08 01:50:07.147] ALL 000000000000 GLOBAL_SCOPE at com.sterlingcommerce.perimeter.api.scheduler.DebugPooledExecutor.workerDone(DebugPooledExecutor.java)
+[2015-02-08 01:50:07.147] ALL 000000000000 GLOBAL_SCOPE at com.sterlingcommerce.perimeter.api.scheduler.DebugPooledExecutor$Worker.run(DebugPooledExecutor.java)
+[2015-02-08 01:50:07.148] ALL 000000000000 GLOBAL_SCOPE at java.lang.Thread.run(Thread.java)
+
+[2015-02-08 01:50:09.716] ALL 000000000000 GLOBAL_SCOPE Exception in thread "XXX_YYY_HttpServerAdapter_node1-Thread-89" 
+[2015-02-08 01:50:09.716] ALL 000000000000 GLOBAL_SCOPE java.lang.OutOfMemoryError : Failed to create a thread: retVal -1073741830, errno 1
+[2015-02-08 01:50:09.716] ALL 000000000000 GLOBAL_SCOPE at java.lang.Thread.startImpl(Native Method)
+[2015-02-08 01:50:09.716] ALL 000000000000 GLOBAL_SCOPE at java.lang.Thread.start(Thread.java)
+[2015-02-08 01:50:09.716] ALL 000000000000 GLOBAL_SCOPE at com.sterlingcommerce.perimeter.api.scheduler.DebugPooledExecutor.addThread(DebugPooledExecutor.java)
+[2015-02-08 01:50:09.717] ALL 000000000000 GLOBAL_SCOPE at com.sterlingcommerce.perimeter.api.scheduler.DebugPooledExecutor.workerDone(DebugPooledExecutor.java)
+[2015-02-08 01:50:09.717] ALL 000000000000 GLOBAL_SCOPE at com.sterlingcommerce.perimeter.api.scheduler.DebugPooledExecutor$Worker.run(DebugPooledExecutor.java)
+[2015-02-08 01:50:09.717] ALL 000000000000 GLOBAL_SCOPE at java.lang.Thread.run(Thread.java)
+
+<install>/noapp/bin/javacore.... file reported native OOM - 
+1TISIGINFO Dump Event "systhrow" (00040000) Detail "java/lang/OutOfMemoryError" "Failed to create a thread: retVal -1073741830, errno 11" received 
+
+
+CAUSE
+Native OOM could happen for several reasons when underlying Operating System (OS) is unable to grant resources (thread in this case) based out of native memory (NOT Heap allocated to application) as requested by application (SB2Bi) running on it.
+
+Cause of the issue in this particular case was user had configured large # of HTTP server PS/Jetty threads. User had 10s of HTTP server adapters, each trying to get stated threads and leading to native OOM. i.e., OS memory was getting exhausted.
+
+http.numOfmaxThread=150
+http.numOfminJettyThread=10
+http.numOfmaxJettyThread=150
+
+DIAGNOSING THE PROBLEM
+Look for OutOfMemory error reported in noapp.log and match with one from this article.
+
+RESOLVING THE PROBLEM
+Lower thread counts and restart SB2Bi node and monitor it before deciding right configuration for your system. If you are keep receiving the same error, lower the counts further until system stabilizes.
+
+
+
+
+ Or You can also consider allotting more resources to the operating system and/or user (RAM, ulimit settings) 
+
+e.g., //customer_overrides.properties 
+
+http.numOfminThread=5
+http.numOfmaxThread=15
+http.numOfminJettyThread=5
+http.numOfmaxJettyThread=100
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling B2B Integrator

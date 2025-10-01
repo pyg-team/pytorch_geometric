@@ -1,0 +1,25 @@
+Title: IBM What is the GDE equivalent of Vormetric software? - United States
+
+Text:
+version; vormetric; gde; matrix; how to determine TECHNOTE (FAQ)
+
+QUESTION
+ How does the GDE version compare to the Vormetric Version? This document provides a comparison matrix. 
+
+ANSWER
+Below is a mapping of the two software versions: 
+
+Vormetric Version IBM GDE Version 4.4.0.x 1.1.4 4.4.1.x 1.1.4 5.0.0.x 1.1.5 5.0.2.x 2.0 5.1.0.x 2.0 5.1.1.x 2.0 5.1.2.x 2.0 5.1.3.x 2.0 5.2.1.x 2.0 5.2.2.x 2.0 5.2.3.x 2.0 5.2.4.x 2.0 5.2.5.x 2.0 5.2.6.x 2.0 6.0.1.x 3.0 6.0.2.x 3.0 6.0.3.x 3.0  
+
+To determine if you are using Vormetric Version or GDE Version, please enter the following in a CLI session:
+
+
+
+[root@gde-dsm log]# su - cliadmin
+0000:vormetric$ main
+0001:maintenance$ showver
+ver_count=1
+cur_ver=Version 5.2 Cumulative Patch 1 Build 1176
+
+show version SUCCESS
+0002:maintenance$

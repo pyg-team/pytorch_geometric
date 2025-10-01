@@ -1,0 +1,61 @@
+Title: IBM Where to add INI settings - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Where does one insert code into the INI files? 
+
+RESOLVING THE PROBLEM
+Any statements in the cognos.ini are separated by entries in square brackets [ ].
+For example, if you were to add the following: 
+
+[PowerPlay DataServer]
+ReadCacheSize=4096
+WriteCacheSize=16384
+
+into the cognos.ini file, it should be included either at the very end or the very beginning or at a line preceding a [ ... ] entry.
+To make the following three examples functional, settings need to be saved. If Transformer is open, close the application and restart it for the new settings to take effect. 
+
+1.
+[PowerPlay DataServer]
+ReadCacheSize=4096
+WriteCacheSize=16384
+[ServicesK]
+COGN LSTAB=coglang.tab
+SRVCMSGS=SRVCMSGS.MSG
+WSK=pgwsckk
+[Services]
+Tempo rary=C:\TEMP
+SortMemory=512
+
+2. 
+[ServicesK]
+COGNLSTAB=coglang.tab
+SRVCMSGS=SRVCMSGS.MSG
+WSK=pgwsckk 
+[Services]
+Temporary=C:\TEMP
+SortMemory=512
+[PowerPlay DataServer]
+ReadCacheSize=4096
+WriteCacheSize=16384
+
+3.
+[Services K]
+COGNLSTAB=coglang.tab
+SRVCMSGS=SRVCMSGS.MSG
+WSK=pgwsckk
+[PowerPla y DataServer]
+ReadCacheSize=4096
+WriteCacheSize=16384
+[Services]
+Tempo rary=C:\TEMP
+SortMemory=512
+Bob Mango
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics CognosReportNet CognosReportNet Business Analytics Cognos Series 7 Transformer 
+HISTORICAL NUMBER
+ 88911

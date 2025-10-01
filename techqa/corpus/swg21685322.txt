@@ -1,0 +1,87 @@
+Title: IBM QRadar: How to determine average event payload and record size (in bytes) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am curious as to what is the average size or my events for disk space estimates. Is there a method to determine this in QRadar? 
+
+SYMPTOM
+NA
+
+
+CAUSE
+NA
+
+ENVIRONMENT
+QRadar 7.1 or later
+
+DIAGNOSING THE PROBLEM
+NA
+
+RESOLVING THE PROBLEM
+Yes, an administrator can log in to the appliance that is processing events and run a command that will provide a decent representation of the average event size. These values can be used to determine the average size of events, which when multiplied by the EPS rate, can give a representation of how much data is written to disk in bytes. 
+
+
+
+
+
+To determine the average event payload size and record size
+This will give you the size (in bytes) of the event payloads (raw) and events records (normalized) that have been written to disk since the last ECS restart. 
+
+ 
+
+ 1. Using SSH, log in to QRadar Console as the root user. 
+ 2. Using SSH, log in to the appliance responsible for processing events, such as a 16xx or 18xx appliance. 
+ 3. Based on your QRadar version, type one of the following commands:
+    
+    FOR 7.1.X OR PRIOR:
+    
+    /opt/qradar/support/jmx.sh -p 7777 -b "com.q1labs.ariel:application=ecs,type=Database writer*" | grep "AveragePayloadSize\|AverageRecordSize"
+    
+    FOR 7.2.X OR LATER:
+    
+    Short query:
+    /opt/qradar/support/jmx.sh -p 7799 -b "com.q1labs.ariel:application=ecs-ep,type=Database writer,a1=events-2" | grep "AveragePayloadSize\|AverageRecordSize"
+    
+    [/support/docview.wss?uid=swg21685322&aid=1] [/support/docview.wss?uid=swg21685322&aid=1]
+    
+    Full information:
+    /opt/qradar/support/jmx.sh -p 7799 -b "com.q1labs.ariel:application=ecs-ep,type=Database writer,a1=events-2"
+    
+    Example screen capture of the output:
+    [/support/docview.wss?uid=swg21685322&aid=2] [/support/docview.wss?uid=swg21685322&aid=2]
+    (Click to enlarge the image)
+    
+    FOR 7.3 OR LATER:
+    
+    Short query:
+    /opt/qradar/support/jmx.sh -p 7799 -b "com.q1labs.ariel:application=ecs-ep.ecs-ep,type=Database writer,a1=events-2" | grep "AveragePayloadSize\|AverageRecordSize"
+    
+    Full information:
+    /opt/qradar/support/jmx.sh -p 7799 -b "com.q1labs.ariel:application=ecs-ep.ecs-ep,type=Database writer,a1=events-2"
+    
+
+
+This information can then be used to determine how much space is used per day in bytes with the following formula: [eps rate] * ([AveragePayloadSize in bytes] + [AverageRecordsSize in bytes]) * 86400 
+
+86400 represents the number of seconds per day, which is multiplied against the EPS rate and the average payload size, plus the normalized record size. To determine the average EPS rate, users can click the Dashboard tab, then select the System Monitoring dashboard item. This dashboard contains and event per second and flows per minute dashboard item. To see EPS details, click the View in Log Activity link. This will give an estimate of the data size for events per day.  
+
+NOTE: For users who have QRadar 7.2.7 installed, the number of events received in the last minute is listed in the Log Sources user interface. Also users with QRadar 7.2.7 no longer need to figure compression as a variable as all new data in QRadar received after the upgrade to QRadar 7.2.7 is compressed by default. 
+[/support/docview.wss?uid=swg21685322&aid=3] [/support/docview.wss?uid=swg21685322&aid=3] 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+Where do you find more information? 
+
+
+
+
+[/support/docview.wss?uid=swg21685322&aid=4] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21685322&aid=5] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21685322&aid=6] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21685322&aid=7] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21685322&aid=8] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21685322&aid=9] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21685322&aid=10] [http://ibm.biz/SuptRegQuikStart]

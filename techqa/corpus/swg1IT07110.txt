@@ -1,0 +1,148 @@
+Title: IBM IT07110: SETTING UP ALERTS FOR MQ MFT IS CAUSING THOUSANDS OF EMAILS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When an agent goes down we see multiple CCNS027I events
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  STRRTC - 455783
+   SF / SF
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Description of issue:
+   If you have a rule that monitors when an MQ MFT agent is
+   stopped, then when the rule is triggered it will cause about 100
+   alerts to be created.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Description of fix:
+   Changed the logic behind the MQ MFT monitoring so that it looks
+   for Agents with a status that contains STOPPED instead of
+   matches STOPPED.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Description of issue:
+   If you have a rule that monitors when an MQ MFT agent is
+   stopped, then when the rule is triggered it will cause about 100
+   alerts to be created.
+   
+   Description of fix:
+   Changed the logic behind the MQ MFT monitoring so that looks for
+   Agents with a status that contains STOPPED instead of matches
+   STOPPED.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT07110
+   
+   
+ * REPORTED COMPONENT NAME
+   STR CONTROL CEN
+   
+   
+ * REPORTED COMPONENT ID
+   5725D0200
+   
+   
+ * REPORTED RELEASE
+   542
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-11
+   
+   
+ * CLOSED DATE
+   2015-03-11
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR CONTROL CEN
+   
+   
+ * FIXED COMPONENT ID
+   5725D0200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R542 PSY
+   UP
+   
+   
+ * R600 PSY
+   UP

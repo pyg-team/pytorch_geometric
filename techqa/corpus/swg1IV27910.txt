@@ -1,0 +1,130 @@
+Title: IBM IV27910: UPDATE 5620 SAM JMS PROBE DOCUMENTATION TO REMOVE REFERRAL TO SPECIFIC SUBVERSION. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Currently the 5620 SAM JMS probe documentation makes a
+   reference to specific subversions supported. The doc will be
+   changed to reflect the fact that all subversions are supported.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of the Probe for Alcatel 5620 SAM JMS v10.             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Currently the guide specifies that the probe supports        *
+   * Alcatel SAM v9.0 R1 and SAM v10.0 R1. However, the probe     *
+   * does in fact support all revisions of SAM v9.0 and SAM       *
+   * v10.0.                                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The updated guide will be uploaded in the Information Center *
+   * during the next asynchronous release in September 2012.      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The 2nd paragraph in the introduction will be altered to say the
+   following:
+   
+       The Probe for Alcatel-Lucent 5620 SAM v10 supports all
+   revisions of both SAM V9.0 and V10.0.
+   
+   
+   
+   In the Summary table, the Probe target will be changed to the
+   following:
+   
+   
+      All revisions of Alcatel-Lucent 5620 Service Aware Manager
+   (SAM) V9.0 and V10.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV27910
+   
+   
+ * REPORTED COMPONENT NAME
+   ALCATEL 5620 CO
+   
+   
+ * REPORTED COMPONENT ID
+   5724P18AL
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-13
+   
+   
+ * CLOSED DATE
+   2012-09-20
+   
+   
+ * LAST MODIFIED DATE
+   2012-09-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC22546000 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,22 @@
+Title: IBM SmartCloud APM 7.7 UI Servers stop running - United States
+
+Text:
+apm apmui scr scrderby server 5724G70UI 5724G70UITR TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When the MS-DOS prompt used to start APM UI servers is closed or if the user logs out of the system, the APM UI servers stop running. 
+
+SYMPTOM
+The SCR, SCRDERBY and APMUI server processes end when the user logs out or the MS-DOS window is closed.
+
+
+RESOLVING THE PROBLEM
+Edit server.bat under the "<APMUI_HOME>/bin" directory, change 'java' on line 362 to 'javaw'. 
+
+Original (line 362):
+set JAVA_CMD_QUOTED="!JAVA_HOME!\bin\java"
+
+Corrected (line 362):
+set JAVA_CMD_QUOTED="!JAVA_HOME!\bin\javaw"
+
+Restart the servers.

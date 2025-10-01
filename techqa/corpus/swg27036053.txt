@@ -1,0 +1,37 @@
+Title: IBM Webcast replay: AIX Native Memory Problem Determination Techniques and Tools for WebSphere Application Server - United States
+
+Text:
+wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; AIX; native; NOOM; MALLOCDEBUG; OOM WEBCAST
+
+ABSTRACT
+ This presentation covers native memory issues for WebSphere Application Server, particularly native OutOfMemoryErrors and leaks on AIX. It covers theory, memory layouts, detecting and monitoring (svmon, dbx), isolating and avoiding (including MAXDATA), and finally analyzing leaks with MALLOCDEBUG.
+
+
+Level of Difficulty: Advanced 
+
+Presenter(s): Kevin Grigorenko
+
+Date: 16 October 2012 
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]WSTE_KevinGrigorenko_AIXNative.pdf [/support/docview.wss?uid=swg27036053&aid=2]WSTE_KevinGrigorenko_AIXNative.pdf [/support/docview.wss?uid=swg27036053&aid=1]
+
+
+Click the PDF file above to play the slide presentation for this Webcast. Right-click and select Save As to store the file on your local computer for later review.
+
+Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]To replay the recording of this Webcast, click on Download Audio [http://public.dhe.ibm.com/software/websphere/techexchange/October-16-2012-Grigorenko.mp3](audio in MP3 format) then open the PDF file above.
+
+Right-click and select Save As to store the file on your local computer for later playback.
+
+Problem listening to the audio replay?
+If you are having a problem listening to the audio when you use a left-click on the audio link above, you need to download the MP3 file to your local computer before playback by doing a right-click and Save As.
+
+
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchange [http://www.ibm.com/software/websphere/webcast]
+Time Zone Converter [http://www.timeanddate.com/worldclock/converter.html]

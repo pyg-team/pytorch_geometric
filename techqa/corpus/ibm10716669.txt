@@ -1,0 +1,246 @@
+Title: IBM® Datacap Version 9.1.4, Interim Fix 001 readme file - United States
+
+Text:
+ FIX README
+
+ABSTRACT
+This readme file contains information about installation of the interim fix and about known problems, restrictions, and solutions in support of IBM® Datacap Version 9.1.4.
+
+CONTENT
+ 
+
+Readme file for: IBM® Datacap
+Product or component release: 
+IBM® Datacap
+Update name: 
+Interim Fix 001
+Fix ID: 
+9.1.4.0-Datacap-WIN-IF001
+Publication date: 
+16 July 2018 
+Last modified date: 
+16 July 2018
+
+Download location 
+
+Download the fix from the following location: https://www-945.ibm.com/support/fixcentral/fixes [https://www-945.ibm.com/support/fixcentral/fixes] or access the fix from the following table.
+
+Product or Component Name Platform File Name IBM® Datacap Windows 9.1.4.0-Datacap-WIN-IF001.zip 
+Known problems, restrictions, and solutions 
+
+Known problems, restrictions, and solutions that affect administration and usage of interim fixes are documented as techdocs in the product support knowledge base. To review all known problems, restrictions, and solutions that affect Version 9.1.4 interim fixes, use the following link to query the product support knowledge base: https://www.ibm.com/support/home/product/Z865301M54010G81/Datacap [https://www.ibm.com/support/home/product/Z865301M54010G81/Datacap].
+
+The techdoc links are also provided here:
+
+Component Problem description Datacap Navigator Viewer problems when using IBM Content Navigator V3.0.3 with IBM Datacap Version 9.1.3, or later [http://www-01.ibm.com/support/docview.wss?uid=swg22013382] Datacap Navigator Scan task does not show image when the first scan or hold on Chrome V62 [http://www.ibm.com/support/docview.wss?uid=swg22013455] Datacap Navigator Datacap Navigator problem about detecting scanner flatbed [http://www-01.ibm.com/support/docview.wss?uid=swg22013503] Datacap Studio Custom column displays column names with quotes when the names are created in lowercase instead of upper-case [http://www-01.ibm.com/support/docview.wss?uid=swg22015449] Solutions and Core Capture Failed email count does not get captured in DCO variable [http://www-01.ibm.com/support/docview.wss?uid=ibm10716801] Datacap Desktop A few keyboard shortcuts do not work in Datacap Desktop Verify task [http://www-01.ibm.com/support/docview.wss?uid=ibm10717459] Datacap Desktop Task start time is not updated in Datacap Desktop Job Monitor, whereas in Datacap Web Server, it is updated for the same batch [http://www.ibm.com/support/docview.wss?uid=ibm10717923] To review all known problems, restrictions, and solutions that affect Version 9.1.4, see IBM Datacap Version 9.1.4 Release Notes [http://www-01.ibm.com/support/docview.wss?uid=swg27051196].
+
+To view IBM Datacap 9.1.4 documentation, see IBM Datacap 9.1.4 Knowledge Center [https://www.ibm.com/support/knowledgecenter/SSZRWV_9.1.4/com.ibm.datacaptoc.doc/datacap_9.1.4.htm].
+
+Prerequisites for IBM® Datacap Version 9.1.4, Interim Fix 001 
+
+The official statements for hardware and software support for IBM® Datacap are provided as part of the hardware and software requirements for IBM® Datacap Version 9.1.4. Before you install this fix, ensure that you installed IBM® Datacap Version 9.1.4. For more information about installing IBM® Datacap, see Installing IBM Datacap [https://www.ibm.com/support/knowledgecenter/SSZRWV_9.1.4/com.ibm.dc.install.doc/dc_inst.htm]. For complete details about the hardware and software requirements for IBM® Datacap, see System requirements [https://www.ibm.com/support/knowledgecenter/SSZRWV_9.1.4/com.ibm.dc.install.doc/sw_comp_reports.htm].
+
+Installing IBM® Datacap 9.1.4, Interim Fix 001 
+
+To install the IBM® Datacap 9.1.4, Interim Fix 001, use the following procedure: Procedure
+
+ 1. Download the 914 iFix 001 package from Fix Central [https://www-945.ibm.com/support/fixcentral/fixes].
+ 2. Extract the 914 iFix 001 package, and run the Update.exe file. 
+
+APARs addressed by this code fix 
+
+The following table displays a list of APARs created in the previous versions of Datacap, and fixed in IBM Datacap V9.1.4, Interim Fix 001:
+
+Component APAR Number Description Defect ID Solutions and Core Capture
+
+IO25302
+
+FindExtractedText () action fails if the extractor is run on a page at the Parent Document level with fields at the page level.
+
+181342
+
+Client and Server
+
+IO25302
+
+Copying and moving Datacap application from MS SQL to MS Access shows an error when data field contain a (') in the data column.
+
+181340
+
+Datacap Navigator
+
+IO26059, IO26297
+
+The browser hangs when you click "show captured words" or "show captured lines" in the verify page.
+
+181725
+
+Datacap Navigator
+
+IO26245
+
+A field value fails to save, which is in the invalid status and set by a dependency choice list.
+
+181767
+
+Solutions and Core Capture
+
+IO26290
+
+im_scan() action fails to ingest emails into the batch folder when emails from email server contains Content-Type equal to message.
+
+181330
+
+Solutions and Core Capture IO26290
+
+Poor Zone and Overlay alignment in MClaims Application returns incorrect data and skewed results in majority of cases.
+
+181317
+
+Client and Server
+
+IO26305
+
+Verify task shows the error "System.IO.IOException: The process cannot access the file".
+
+181242
+
+Datacap Navigator
+
+IO26309
+
+"Fit to Height" user setting does not work on the first page with Local Rendering.
+
+181267
+
+Client and Server
+
+IO26320
+
+Save layout/Set filter permission does not work.
+
+181195
+
+Datacap Navigator
+
+IO26324
+
+In Datacap Navigator application, a field cannot be both a lookup field and a Sticky field.
+
+181744
+
+Datacap Navigator
+
+IO26326
+
+On a batch tree view, the pop-up menu shows Page Status codes.
+
+181746
+
+Datacap Navigator
+
+IO26327
+
+After enabling prep profiler in Verify, 'Show Recognized words/line' menu disappears.
+
+181709
+
+Datacap Navigator
+
+IO26327
+
+Datacap Navigator EDS dependent fields are not being saved correctly in dependent choice list when switching pages back in the batch tree.
+
+181368
+
+Datacap Navigator
+
+IO26328
+
+Unable to fetch StartBatchPanelField value in PostScanProfile rules in the Scan task.
+
+181420
+
+Role Based Batch Filtering
+
+IO26328
+
+Role-based batch filtering does not work when processing batches through the Rulerunner service.
+
+181715
+
+Datacap Navigator
+
+IO26328
+
+In Datacap Navigator, read only fields allow Click and Key from image.
+
+181711
+
+Datacap Navigator
+
+IO26329
+
+Scan page gets empty after switching scan job on the top menu.
+
+181719
+
+Fixed issues 
+
+The following issues are fixed in IBM Datacap 9.1.4 Interim Fix 001:
+
+Component Defect ID Description Client and Server
+
+181042
+
+Name of the Custom Column that is added for Oracle DB appears in uppercase in Datacap Web Server.
+
+Solutions and Core Capture
+
+181370
+
+In help text and Datacap documentation, improved examples for action mv_retain_folder in MVScan action library.
+
+Solutions and Core Capture 181389
+
+Failed email count does not get captured in DCO variable for Imail action.
+
+Datacap Navigator
+
+181411
+
+Internet Explorer browser does not support Transaction/Datacap Capture page.
+
+Solutions and Core Capture 181651
+
+OCR/A does not work on Microsoft Azure platform.
+
+Datacap Navigator
+
+181721
+
+Image does not display in the capture pane after logging off and then logging in if capture is not set as default feature.
+
+Client and Server
+
+181722
+
+Batch processing cannot proceed as data is not recognized at Verify step of Datacap Desktop.
+
+Datacap Navigator
+
+181737
+
+Capture content ID "Field with Space" is incorrect on Transaction Capture page.
+
+Client and Server
+
+181740
+
+Removed flooding log message: "wtm: getFormattedDate date".
+
+Datacap Navigator
+
+181855
+
+Click N Key does not work for lineitem field in Verify page.

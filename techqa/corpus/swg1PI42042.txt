@@ -1,0 +1,148 @@
+Title: IBM PI42042: VERSION CHECK FAILS FOR ORACLE 12C DATA WAREHOUSE (WI 339475) - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Insight Fix Pack 7 (1.1.1.7) for 1.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24039168]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Jazz Reporting Service (JRS) gives an error if Oracle 12c is
+   used as the database, and fails to connect with the following
+   error message:
+   
+   "Data source connection test failed: CRRGW5548E An
+   com.ibm.team.integration.reporting.db.exception.DbAccessExceptio
+   n error occurred when validating the database connection, caused
+   by !CRRGW6011E Database version detected is "Oracle Database 12c
+   Enterprise Edition Release 12.1.0.2.0 - 64bit Production With
+   the Partitioning, OLAP, Advanced Analytics and Real Application
+   Testing options" but Oracle 10.2.0.0 or 11.2.0.2 or later is
+   required"
+   
+   The workaround is to ignore the version check by adding
+   com.ibm.team.datawarehouse.db.override.versioncheck=true to the
+   app.properties file to ignore the version check.
+   
+   Refer to the following defect work item for details:
+   
+   https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo]
+   rkItem/339475
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users using version prior to 6.0                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Version check fails for Oracle 12c data warehouse            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Solution:
+   The Oracle driver code in JRS was only supporting versions 10g
+   and 11g of the database. Support for a 12c database was added.
+   In addition, the JRS driver now allows versions 11.2+ and 12.1+
+   of the Oracle JDBC driver.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI42042
+   
+   
+ * REPORTED COMPONENT NAME
+   JAZZ REPT SERVI
+   
+   
+ * REPORTED COMPONENT ID
+   RATLJRS00
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-05-29
+   
+   
+ * CLOSED DATE
+   2015-06-26
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI41944
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAZZ REPT SERVI
+   
+   
+ * FIXED COMPONENT ID
+   RATLJRS00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

@@ -1,0 +1,47 @@
+Title: IBM Security Bulletin: Vulnerability in Apache Struts affect Tivoli Netcool/OMNIbus WebGUI (CVE-2015-0899) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Fix is available for vulnerability in Apache Struts affecting Tivoli Netcool/OMNIbus WebGUI (CVE-2015-0899). 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-0899 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0899]
+DESCRIPTION: Apache Struts could allow a remote attacker to bypass security restrictions, caused by an error in the MultiPageValidator implementation. An attacker could exploit this vulnerability using a modified page parameter to bypass restrictions and launch further attacks on the system. This vulnerability also affects other products.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/101770 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101770] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+Tivoli Netcool/OMNIbus WebGUI 8.1.0
+Tivoli Netcool/OMNIbus WebGUI 7.4.0
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/Fix Tivoli Netcool/OMNIbus WebGUI 8.1.0 IV98709 Apply Fix Pack 11
+(Fix Pack for WebGUI 8.1.0 Fix Pack 11 [http://www.ibm.com/support/docview.wss?uid=swg24043825]) Tivoli Netcool/OMNIbus WebGUI 7.4.0 IV98709 Upgrade to WebGUI 8.1.0 and then apply Fix Pack 11
+(Fix Pack for WebGUI 8.1.0 Fix Pack 11 [http://www.ibm.com/support/docview.wss?uid=swg24043825]) 
+For unsupported versions IBM recommends upgrading to a fixed, supported version of the product. WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 11 August 2017: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

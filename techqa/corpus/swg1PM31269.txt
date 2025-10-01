@@ -1,0 +1,127 @@
+Title: IBM PM31269: NULLPOINTEREXCEPTION WHEN WCM ADMINISTRATORS ACCESS WCM AUTHORING PORTLET WITH INTERNET EXPLORER - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  NULLPOINTEREXCEPTION WHEN WCM ADMINISTRATORS ACCESS WCM
+   AUTHORING PORTLET WITH INTERNET EXPLORER
+   
+   Stacktrace in systemOut.log
+   
+   java.lang.NullPointerException at
+   
+   com.ibm.psw.wcl.renderers.form.html.HTMLInputComponentRenderer.c
+   auseOnChangeEvent(HTMLInputComponentRenderer.java:862)
+   
+   The issue occurs only with Internet Explorer.
+   
+   When WCM administrators log on, they see that the WCM Authoring
+   Portlet is unavailable and get a Null Pointer Exception in the
+   logs.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When WCM administrators log on to WCM Authoring Portlet using
+   Internet Explorer, user see that the WCM Authoring Portlet is
+   unavailable and get a Null Pointer Exception in the logs.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  For Internet Explorer user, WCL code throws NPE when it checks
+   for Netscape v4 browser. Code fixed to catch the NPE and
+   continue to allow
+   WCM Authoring Portlet to initialize without error.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM31269
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   61A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-01-27
+   
+   
+ * CLOSED DATE
+   2011-06-17
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP

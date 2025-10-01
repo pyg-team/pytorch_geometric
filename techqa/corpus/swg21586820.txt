@@ -1,0 +1,39 @@
+Title: IBM Oracle only: Adding a text index back to an Oracle Maximo 7.x database - United States
+
+Text:
+ORA-20000; BMXAA4210E; DRG-10599; CREATE INDEX; Maximo; Mam; Oracle; TPAEORACLE; TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Explanation on how to add a missing text search field index to an Oracle Maximo 7.x database 
+
+SYMPTOM
+Getting error messages stating indexes are not indexed or stating you are missing an index
+
+
+CAUSE
+Missing a text index
+
+DIAGNOSING THE PROBLEM
+You may get a BMXAA4210E - Database error number 20000 has occurred, ORA-20000: Oracle Text error: DRG-10599: column is not indexed error at some stage if you try to do something in Maximo. 
+
+Say for example you try to search or do a query from the jobplan list screen.
+It could be, after investigation, you find out that the text string index on the 
+job plan table was missing or the whole index.
+
+In order to identify if you have a missing Oracle index , please see Technote 1403468
+
+
+RESOLVING THE PROBLEM
+In order to ADD this missing text index back again, you need to run the following create index statement: 
+
+
+CREATE INDEX jobplandes_tidx on jobplan (description) indextype is ctxsys.context parameters ('lexer global_lexer language column 
+LANGCODE')
+
+To use the above example,the same format counts for any text index you may need to re-add.
+You just change jobplandes_tidx to index name, jobplan to table name, description to column name. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management for IT Not Applicable AIX, HP-UX, Linux, Solaris, Windows, Windows 2003 server, Windows 2008 server 7.1, 7.1.1, 7.5 Systems and Asset Management Tivoli Service Request Manager Not Applicable AIX, Linux, Solaris, Windows 2003 server, Windows 2008 server 7.1, 7.5 Systems and Asset Management Tivoli Change and Configuration Management Database Not Applicable AIX, Linux, Windows, Solaris, HP-UX, Windows 2000, Windows 2003 server, Windows XP 7.1, 7.1.1, 7.5

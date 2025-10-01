@@ -1,0 +1,37 @@
+Title: IBM Cloud and Smarter Infrastructure Distributed Agents - United States
+
+Text:
+ITMAGENT agent klzagent kntagent PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ For every problem, collecting data can aid in problem determination and save time resolving Problem Management Records (PMRs). Collecting this data before calling IBM support will help you understand the problem and save time analyzing the data. 
+
+CONTENT
+ 
+
+TAB NAVIGATION
+ * Home [http://www.ibm.com/support/docview.wss?uid=swg21663046]
+ * Tivoli Enterprise Management Server [http://www.ibm.com/support/docview.wss?uid=swg21671925]
+ * Dist Agents [http://www.ibm.com/support/docview.wss?uid=swg21663665]
+ * Z/OS Agents [http://www.ibm.com/support/docview.wss?uid=swg21674831]
+
+DISTRIBUTED AGENTS
+ To see information on the Windows agents (NT). 
+
+ To see information on Linux agents (LX). 
+
+ To see information on UNIX agents (UX). 
+
+ To see information on the i5 agents (A5).
+
+To see Agent Builder information. 
+
+To see Jazz SM information. 
+
+To see Log File agent information. 
+
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management IBM Tivoli Monitoring V6 ITM Agent Linux V6 Systems and Asset Management IBM Tivoli Monitoring V6 ITM Agent iSeries V6 Systems and Asset Management IBM Tivoli Monitoring V6 ITM Agent UNIX V6 Systems and Asset Management IBM Tivoli Monitoring V6 ITM Agent Windows V6 Systems and Asset Management IBM Tivoli Monitoring V6 Agent Builder Systems and Asset Management IBM Tivoli Monitoring V6 Tivoli Log File Agent Systems and Asset Management Tivoli Components Jazz for Service Management

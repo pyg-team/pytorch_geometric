@@ -1,0 +1,150 @@
+Title: IBM IC79441: WEBSPHERE MQ FILE TRANSFER EDITION AGENT PROCESS FAILS WITH A JAVA.LANG.NULLPOINTEREXCEPTION - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ File Transfer Edition V7.0 Fix Pack 7.0.4.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24031482]
+WebSphere MQ File Transfer Edition V7.0 Fix Pack 7.0.4.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24033115]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The WMQ FTE agent process fails with  a
+   java.lang.NullPointerException.
+    The following stack is evident in the FTE agent FDC file
+    Method:     uncaughtException
+    Probe:      ABEND_001
+    Cause:      java.lang.NullPointerException
+    java.lang.NullPointerException
+      at com.ibm.wmqfte.statestore.impl.FTEStateStoreImpl.
+      sendResyncReceiverResponseMessage
+        (FTEStateStoreImpl.java:2633)
+     at com.ibm.wmqfte.statestore.impl.FTEStateStoreImpl.
+         senderTransferRecovered(FTEStateStoreImpl.java:2605)
+     at com.ibm.wmqfte.transfer.impl.TransferSenderRunnable.
+        transferRecovered(TransferSenderRunnable.java:1195)
+     at com.ibm.wmqfte.transfer.impl.TransferSenderRunnable.run
+        (TransferSenderRunnable.java:460)
+     at java.lang.Thread.run(Thread.java:736)
+     at com.ibm.wmqfte.thread.FTEThread.run
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The agent terminated because it had received a recovery message
+   from the destination agent before it had received the response
+   to the initial transfer negotiation message.  This can occur
+   when messages are received from IBM WebSphere MQ out of order.
+   
+   USER AFFECTED:
+   All
+   
+   PLATFORMS AFFECTED:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been altered so that it handles out of order
+   messages from IBM WebSphere MQ.  The agent ignores the recovery
+   message continues to wait for the initial transfer negotiation
+   response message.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC79441
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ FILE TRANSF
+   
+   
+ * REPORTED COMPONENT ID
+   5724R1000
+   
+   
+ * REPORTED RELEASE
+   703
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2011-10-25
+   
+   
+ * CLOSED DATE
+   2011-11-25
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ FILE TRANSF
+   
+   
+ * FIXED COMPONENT ID
+   5724R1000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R703 PSY
+   UP
+   
+   
+ * R704 PSY
+   UP

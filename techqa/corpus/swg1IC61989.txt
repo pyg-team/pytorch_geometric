@@ -1,0 +1,273 @@
+Title: IBM IC61989: SVC CIMOM DISCOVERY COMPLETED WITH RETURN CODE 4. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer has  new TPC 4.1.0.79 installed on Widnows 2003, he has
+   svc001 and svc002, the CIMOM discovery of both completed with
+   return code 4. In the dmSvcTrace.log file,
+   it showed the following messages:
+   xxx-svc001:
+   2009.06.23 03:29:50.665-08:00 Msg: HWN021725I TPC
+   discovered/rediscovered a device with name
+   xxx.xxx.38.182:00000200606030B8/sea-svc001 on CIMOM
+   https://xxx.xxx.38.181:5999. [https://xxx.xxx.38.181:5999.]
+   @(-9223372036854773886;[-9223372036854772640,0,1];4559;Process
+   Processor (Thread-83))
+   com.ibm.tpc.disk.discovery.SVCDiscoveryProcessPlugin
+   collectDeviceData
+   2009.06.23 03:29:50.665-08:00 HWN099992W SQL Exception while
+   persisting properties: {io_group_id=10867, numberofnodes=2,
+   ref_toplevelsystem_name=xxx.xxx.38.182:00000200606030B8,
+   operationalstatus=[0], ipaddress=xxx.xxx.38.182,
+   elementname=io_grp0, originalcimclassname=CIM_ComputerSystem,
+   enableddefault=2, remotecopytotalmemory=20971520,
+   nameformat=Other, flashcopytotalmemory=20971520,
+   otheridentifyinginfo=[0, io_grp0, SVC_NODE_1, 12,
+   500507680100185C, SVC_NODE_2, 14, 5005076801001A72],
+   numberofvolumes=619, ref_namespace=root/ibm, enabledstate=5,
+   identifyingdescriptions=[IO Group ID, IO Group Name, Node Name,
+   Node ID, Node WWPN, Node Name, Node ID, Node WWPN],
+   ref_serviceurl=https://xxx.xxx.38.181:5999, description=A group
+   containing two Nodes. An IOGroup defines an interface for a set
+   of Volumes. All Nodes and Volumes are associated with exactly
+   one IOGroup. The read and write cache provided by a node is
+   duplicated for redundancy. When IO is performed to a Volume, the
+   node that processes the IO will duplicate the data on the
+   Partner node in the IOGroup. This class represents the system
+   aspect of an IO group wheras IOGroupSet represents the set
+   aspect., ref_toplevelsystem_id=1587, numberofhosts=135,
+   creationclassname=IBMTSSVC_IOGroup,
+   ref_toplevelsystem_cimom2namespaceid=1586,
+   flashcopyfreememory=18661376, caption=io_grp0, dedicated=[0],
+   requestedstate=5, remotecopyfreememory=20971520,
+   resetcapability=5, ref_classname=IBMTSSVC_IOGroup, name=0,
+   ref_toplevelsystem_nameformat=0}@(-9223372036854771864;[-9223372
+   036854772640,0,4];-9223372036854771001;Process Processor
+   (Thread-83))   com.ibm.tpc.disk.collection.DiskCIMProcessor
+   handleEntity
+   2009.06.23 03:29:50.665-08:00 HWN099993E DB2 SQL error: SQLCODE:
+   -803, SQLSTATE: 23505, SQLERRMC: 1;TPC.T_RES_IO_GROUP
+   @(-9223372036854771864;[-9223372036854772640,0,4];-9223372036854
+   771001;Process Processor (Thread-83))
+     com.ibm.db2.jcc.b.SqlException: DB2 SQL error: SQLCODE: -803,
+   SQLSTATE: 23505, SQLERRMC: 1;TPC.T_RES_IO_GROUP
+    at com.ibm.db2.jcc.b.ig.d(ig.java:1338)
+    at com.ibm.db2.jcc.c.gb.k(gb.java:351)
+    at com.ibm.db2.jcc.c.gb.a(gb.java:60)
+    at com.ibm.db2.jcc.c.w.a(w.java:52)
+    at com.ibm.db2.jcc.c.wb.b(wb.java:202)
+    at com.ibm.db2.jcc.b.jg.ab(jg.java:1794)
+    at com.ibm.db2.jcc.b.jg.d(jg.java:2348)
+    at com.ibm.db2.jcc.b.jg.W(jg.java:463)
+    at com.ibm.db2.jcc.b.jg.executeUpdate(jg.java:446)
+    at
+   com.ibm.tpc.infrastructure.mapping.AbstractDBAttributeMapper.att
+   emptUpdate(AbstractDBAttributeMapper.java:2045)
+    at
+   com.ibm.tpc.infrastructure.mapping.AbstractDBAttributeMapper.per
+   sistWithJDBC(AbstractDBAttributeMapper.java:2201)
+    at
+   com.ibm.tpc.infrastructure.mapping.AbstractDBAttributeMapper.per
+   sist(AbstractDBAttributeMapper.java:1048)
+    at
+   com.ibm.tpc.infrastructure.mapping.SMISIBMTSSVC_IOGroupToDbMappe
+   r.persist(SMISIBMTSSVC_IOGroupToDbMapper.java:85)
+    at
+   com.ibm.tpc.disk.collection.DiskCIMProcessor.handleEntity(DiskCI
+   MProcessor
+   
+   
+   xxx-SVC002:
+   ..............................
+   2009.06.23 03:29:26.118-08:00 HWN099992W No Mapping found for
+   :Software
+   Installation@(-9223372036854772495;[-9223372036854772665,0,5];45
+   62;Process Processor (Thread-233))
+   com.ibm.tpc.disk.discovery.LSIDiscoveryProcessPlugin
+   saveCapabilities
+   2009.06.23 03:29:50.008-08:00 Msg: HWN021725I TPC
+   discovered/rediscovered a device with name
+   xxx.xxx.39.19:000002006380AA64/SEA-SVC002 on CIMOM
+   https://xxx.xxx.39.18:5989. [https://xxx.xxx.39.18:5989.]
+   @(-9223372036854773846;[-9223372036854772655,0,1];4560;Process
+   Processor (Thread-85))
+   com.ibm.tpc.disk.discovery.SVCDiscoveryProcessPlugin
+   collectDeviceData
+   2009.06.23 03:29:50.055-08:00 HWN099992W SQL Exception while
+   persisting properties: {io_group_id=10860, numberofnodes=2,
+   ref_toplevelsystem_name=xxx.xxx.39.19:000002006380AA64,
+   operationalstatus=[0], ipaddress=xxx.xxx.39.19,
+   elementname=io_grp0, originalcimclassname=CIM_ComputerSystem,
+   enableddefault=2, remotecopytotalmemory=20971520,
+   mirrorfreememory=0, nameformat=Other,
+   flashcopytotalmemory=20971520, otheridentifyinginfo=[0, io_grp0,
+   SVC_NODE_1, 1, 5005076801005532, SVC_NODE_2, 2,
+   500507680100532E], numberofvolumes=32, ref_namespace=root/ibm,
+   enabledstate=5, identifyingdescriptions=[IO Group ID, IO Group
+   Name, Node Name, Node ID, Node WWPN, Node Name, Node ID, Node
+   WWPN], ref_serviceurl=https://xxx.xxx.39.18:5989, description=A
+   group containing two Nodes. An IOGroup defines an interface for
+   a set of Volumes. All Nodes and Volumes are associated with
+   exactly one IOGroup. The read and write cache provided by a node
+   is duplicated for redundancy. When IO is performed to a Volume,
+   the node that processes the IO will duplicate the data on the
+   Partner node in the IOGroup. This class represents the system
+   aspect of an IO group wheras IOGroupSet represents the set
+   aspect., ref_toplevelsystem_id=1557, numberofhosts=43,
+   creationclassname=IBMTSSVC_IOGroup,
+   ref_toplevelsystem_cimom2namespaceid=1556,
+   flashcopyfreememory=20971520, caption=io_grp0,
+   mirrortotalmemory=0, dedicated=[0], requestedstate=5,
+   remotecopyfreememory=20971520, resetcapability=5,
+   ref_classname=IBMTSSVC_IOGroup, name=0,
+   ref_toplevelsystem_nameformat=0}@(-9223372036854771891;[-9223372
+   036854772655,0,4];-9223372036854771018;Process Processor
+   (Thread-85))   com.ibm.tpc.disk.collection.DiskCIMProcessor
+   handleEntity
+   2009.06.23 03:29:50.055-08:00 HWN099993E DB2 SQL error: SQLCODE:
+   -803, SQLSTATE: 23505, SQLERRMC: 1;TPC.T_RES_IO_GROUP
+   @(-9223372036854771891;[-9223372036854772655,0,4];-9223372036854
+   771018;Process Processor (Thread-85))
+     com.ibm.db2.jcc.b.SqlException: DB2 SQL error: SQLCODE: -803,
+   SQLSTATE: 23505, SQLERRMC: 1;TPC.T_RES_IO_GROUP
+    at com.ibm.db2.jcc.b.ig.d(ig.java:1338)
+    at com.ibm.db2.jcc.c.gb.k(gb.java:351)
+    at com.ibm.db2.jcc.c.gb.a(gb.java:60)
+    at com.ibm.db2.jcc.c.w.a(w.java:52)
+    at com.ibm.db2.jcc.c.wb.b(wb.java:202)
+    at com.ibm.db2.jcc.b.jg.ab(jg.java:1794)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Hot Fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Tivoli Storage Productivity Center 4.1.0     *
+   *                 customers running CIMOM discovery for SVC.   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See ERROR DESCRIPTION                   *
+   ****************************************************************
+   * RECOMMENDATION: Apply fixing level when available. This      *
+   *                 problem is currently projected to be fixed   *
+   *                 in 4.1.  Note that this is subject to        *
+   *                 change at the discretion of  IBM.            *
+   ****************************************************************
+   -
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is targeted for the following
+   maintenance packages:
+   
+   http://www-01.ibm.com/support/docview.wss?&uid=swg21320822 [http://www-01.ibm.com/support/docview.wss?&uid=swg21320822]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC61989
+   
+   
+ * REPORTED COMPONENT NAME
+   MULTIPLE DEVICE
+   
+   
+ * REPORTED COMPONENT ID
+   5648HWN01
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-07-14
+   
+   
+ * CLOSED DATE
+   2009-07-17
+   
+   
+ * LAST MODIFIED DATE
+   2009-07-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MULTIPLE DEVICE
+   
+   
+ * FIXED COMPONENT ID
+   5648HWN01
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R410 PSY
+   UP

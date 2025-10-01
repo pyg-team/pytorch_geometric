@@ -1,0 +1,53 @@
+Title: IBM Sessions running stored procedures use more memory - United States
+
+Text:
+slow performance; memory; segment; virtual shared memory; more memory; extra memory; sanjitc TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When and how to use the environment variable DBMAXPROC to control the amount of stored procedure information cached at the session level. 
+
+SYMPTOM
+You see one or more of the following symptoms: 
+
+ * A session uses more memory after several stored procedures are executed.
+
+ * The size of the ralloc memory pool for a session is larger than expected. Monitor the memory for a specific session by running: 
+
+
+onstat -g ses sid 
+
+sid 
+The session id number from the id column of the onstat -g ses output. 
+
+Look in the name columns of the Memory pools section of the output for the ralloc pool. 
+ * The excessive memory is not freed until the session disconnects.
+
+
+CAUSE
+Each session's memory area has a cache of information about stored procedures the session has executed. The database server does this to save time if the procedure is executed again. For this reason, sessions with stored procedures will require additional shared memory resources. The cache, and therefore the memory, is not freed until the session disconnects. 
+The information that is cached is memory pointer, which points to the global memory cache. The global memory cache stored procedure context, consisting of the executable format and any query plans belonging to the stored procedure. 
+
+By default, the database server caches information for 50 stored procedures in the session's memory area.
+
+
+RESOLVING THE PROBLEM
+ 
+
+The DBMAXPROC environment variable controls the number of stored procedures that are cached in a session's memory area. DBMAXPROC is useful if you have long running sessions that occasionally execute several stored procedures, but which may not merit caching all the stored procedure information.
+
+A lower DBMAXPROC value will consume less shared memory. Keep in mind: 
+
+
+ * A reasonable value will be around 30-100.
+
+ * Setting it to 1 may result in memory thrashing.
+
+ * Setting it to a very high value will result in high memory consumption.
+
+ * The default setting is 50. 
+
+
+DBMAXPROC can be set: 
+ * in individual session environments. Setting DBMAXPROC in an individual user’s session takes precedence over the default global settings.
+
+ * in the environment of the engine to control the default value of all sessions. The database server must be stopped and restarted for the new DBMAXPROC value to take effect globally.

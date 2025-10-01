@@ -1,0 +1,174 @@
+Title: IBM PM13449: RATIONAL DEVELOPER FOR SYSTEM Z , 750 , 'TIMEOUT' ON WEB SERVICES EXPLORER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  THis coccurs during testing SOAP services via the Web Services
+   Explorer (WSE) component.
+   1) Select the correct WSDL
+   
+   2) Add necessary Endpoint
+   3) Populate test data
+   4) Click Go
+   5) Enter authentication Userid/Password
+   6) Check result of test
+   7) Fix any problems
+   8) repeat steps 4, 6, 7.
+   
+   If step 7 takes any length of time, clicking Go,
+   nothing happens. The only way to recover from this is
+   to completely close WSE and start the whole process again.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Close WSE and start again.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   All users whose web service calls take longer than the default
+   timeout value.
+   
+   ****************************************************************
+    PROBLEM DESCRIPTION:
+   ****************************************************************
+   If a user?s web service call session in Web Services Explorer
+   takes longer than the default timeout value, the service fails.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem Resolution:
+   The hidden preference:
+   org.eclipse.wst.ws.explorer.sessionTimeout
+   was added.
+   
+   This preference represents the session timeout of the web
+   service explorer in minutes.  Entering a negative value will
+   disable timeouts completely.  If the
+   preference is not set the default is still 30 minutes.
+   
+   This preference is not exposed through the user interface, but
+   it can be set in three ways:
+   at the product level you can edit your plugin_customization.ini
+   file to add the
+   line: org.eclipse.wst.ws.explorer/sessionTimeout=<timeout value>
+   
+   or at the workspace level you can add a line to this file (or
+   create it if it does not exist)
+   <workspace>\.metadata\.plugins\org.eclipse.core.runtime\.setting
+   s\org.eclipse.wst.ws.explorer.prefs
+   that contains this line: sessionTimeout=<timeout value>
+   
+   You can also set it via the config.ini.  If for any
+   reason both a "hidden preference" and a config.ini property are
+   both set, the config.ini property will take precedence.  The
+   property to set in the
+   config.ini is org.eclipse.wst.ws.exlorer.sessionTimeout
+   
+   e.g. org.eclipse.wst.ws.exlorer.sessionTimeout=60
+   
+   
+   The problem listed in this APAR has been resolved with
+   IBM Rational Developer for System z V7.6.2.1 Fix Pack which
+   is available from the Recommended Fixes support download page:
+   http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335 [http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM13449
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   760
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-29
+   
+   
+ * CLOSED DATE
+   2010-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * FIXED COMPONENT ID
+   5724T0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R762 PSY
+   UP

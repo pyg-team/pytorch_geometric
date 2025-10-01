@@ -1,0 +1,67 @@
+Title: IBM Creating a IP Tables rule to allow access to Jazz Team Server through a Firewall - United States
+
+Text:
+RTC; firewall; Linux; iptables; user interface; web UI; Jazz Team Server; connectivity; Failed to Connect; Firefox ; establish a connection to the local server; localhost:9443 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+The Jazz Team Server cannot be accessed through a web browser because a firewall has been configured on the host computer in Linux. An IP Tables rule needs to be configured on the firewall to allow access to the Jazz Team Server and IBM Rational Team Concert.
+
+SYMPTOM
+When trying to access the Jazz Team Server Web Admin User Interface through a web browser, the following error message is displayed even though the database is currently running. 
+
+ * 
+ * Failed to Connect
+ * Firefox can't establish a connection to the local server at localhost:9443
+
+
+
+
+
+[/support/docview.wss?uid=swg21397169&aid=1] [/support/docview.wss?uid=swg21397169&aid=1] RESOLVING THE PROBLEM
+To diagnose this connectivity issue and conclude that it is because of a Firewall, try to ping the server by using the command #ping [JazzTeamServerName], or the command #ping [JazzTeamServerIPAddress]. If you are able to ping the server, yet still cannot access the Jazz Team Server Web User Interface, this is probably because of a firewall-related issue. 
+
+To see if a firewall is currently on, use the command:
+#service iptables status
+
+Depending on corporate security policy, an administrator can temporarily stop the firewall on Linux to test to see if it is blocking the traffic to the Jazz Team Server. 
+To do this, the user must have root privileges, and enter the following command: 
+# service iptables stop 
+(depending on what version of Linux is being ran, a variation of the command might need to be used) [/support/docview.wss?uid=swg21397169&aid=2] [/support/docview.wss?uid=swg21397169&aid=2] 
+
+*Note: It is not necessary to turn off the Firewall to add a rule to it. Turning off the Firewall is a quick way to test whether or not the Firewall is causing issues when trying to connect to the Jazz Team Server login screen. 
+
+Next, try to access the Web User Interface in a browser by going to https://localhost:9443/jazz. If the following screen appears, the issue was that the Firewall was dropping the traffic to the Jazz Team Server. 
+
+[/support/docview.wss?uid=swg21397169&aid=3] [/support/docview.wss?uid=swg21397169&aid=3] 
+
+To correct this, a rule will need to be added to the firewall so that traffic is accepted to the Jazz Team Server. The rule entered is as follows: 
+# iptables –A INPUT –p tcp --dport 9443 –j ACCEPT 
+
+This allows the Firewall to: 
+-A Append a rule to the end of the rule set. 
+INPUT Filters packets that have a destination of the Firewall (used if the firewall is on the Jazz Team Server, if it is not, then OUTPUT would be used). 
+-p tcp Filters based on packets using TCP 
+--d port 9443 Filters based on packets destined for port 9443 on the Firewall. 
+-j ACCEPT Jump to the specified ACCEPT chain, that is, accept the incoming packet. 
+
+*Note: Port 9443 is the default secure port used by Tomcat and Jazz Team Server. Another common port used by Tomcat is 9080, however this is an unsecure port. If this port is normally used to access the Jazz Team Server, it should be entered as a separate rule. 
+
+[/support/docview.wss?uid=swg21397169&aid=4] [/support/docview.wss?uid=swg21397169&aid=4] 
+
+After this rule has been entered, the following commands can be entered. 
+#service iptables save 
+
+This will save the configuration to the Firewall. You can then turn on the Firewall by entering the following command: 
+#service iptables start 
+(depending on what version of Linux is being ran, a variation of the command might need to be used) [/support/docview.wss?uid=swg21397169&aid=5] [/support/docview.wss?uid=swg21397169&aid=5] 
+
+If the Firewall was not turned off, either the machine or Firewall must be restarted to accept the changes made to the Firewall. The Firewall can be restarted using the following command: 
+# service iptables restart 
+
+To test that this rule was configured correctly, open a browser to the Web User Interface homepage, https://localhost:9443/jazz, and ensure that the login screen appears. 
+
+Leverage the Jazz Community: Jazz and Rational Team Concert have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://ibm.com/support/docview.wss?rs=3488&&uid=swg21319600] for details and links.
+
+Do you need more help? For additional assistance, contact IBM Rational Customer Support:
+Submit a Service Request (SR) [http://www.ibm.com/software/support/probsub.html?ratlid=srnewfooter]

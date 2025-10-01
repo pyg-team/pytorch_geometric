@@ -1,0 +1,109 @@
+Title: IBM Using the Proventia System Diagnostics Utility (sysdiag/provdiag) - United States
+
+Text:
+sysdiag; provdiag; hardware TECHNOTE (FAQ)
+
+QUESTION
+ What is the Proventia System Diagnostics Utility (sysdiag/provdiag) and how is it used? 
+
+ANSWER
+The Proventia System Diagnostics Utility is a hardware diagnostics utility that is used to diagnose hardware issues on Proventia appliances. This utility will be included with all future firmware releases and is available for the following appliances and firmware versions:
+
+
+ * Security Network IPS (GX): 4.6.1 and 4.6.2 
+ * Proventia Network Multi-Function Security (M/MX): 3.14, 3.15, 4.1, 4.2, 4.3, 4.4, 4.5, and 4.6 
+ * Proventia Network Enterprise Scanner: 1.4, 2.1, 2.2, and 2.3 
+ * SP3001 SiteProtector Appliance
+
+
+Notes:  * See Technote 1654438: Using the Proventia Diagnostics Utility on the SP3001 appliance [http://www.ibm.com/support/docview.wss?uid=swg21654438] for detailed instructions on running this on the SP3001. 
+ * For Security Network Protection (XGS) appliances, see Technote 1684986: Running Platform Hardware Diagnostics utility on the Security Network Protection appliance [http://www.ibm.com/support/docview.wss?uid=swg21684986].
+
+
+The current version of Proventia system diagnostics performs the following tests: 
+ * Model and serial number verification tests 
+ * Disk tests 
+ * Network tests 
+ * LCD module and keypad (depending on diagnostics version and appliance) 
+
+To run the Proventia System Diagnostics Utility, you need the following: 
+ * A host computer with a serial port and ethernet port 
+ * The serial cable that came with your Proventia appliance 
+ * One crossover cable for each pair of interfaces on your Proventia appliance 
+ * The most recent recovery CD available for your Proventia appliance
+
+
+Note: If a recovery CD is needed, log in to the IBM Security Download Center [https://ibmss.flexnetoperations.com/] [https://ibmss.flexnetoperations.com/]. On the left pane under My Software, select Download. Choose the appropriate product under My Products then the correct model under Product Lines. You should now see the available recovery images. 
+
+
+Follow the steps below to run the diagnostic: 
+ 1. Connect the serial cable between the host computer and the Proventia appliance.
+    
+ 2. Boot the appliance using the Recovery CD:  * If you are running a GXv2 (black chassis), GX6, or GX7 series appliance, you can create a USB bootable drive to run this utility. See the Installation options for Network IPS by operating system [http://www.ibm.com/support/knowledgecenter/SSB2MG_4.6.2/com.ibm.ips.doc/concepts/gx_gv_install_options_nonvirtual.htm] documentation for details on creating the bootable USB drive. 
+     * If the appliance has a built-in CD-ROM drive, recable the appliance as described towards the bottom of the document in Appendix A before continuing. On the host computer, launch HyperTerminal and create a new serial connection using the settings that are described in Technote 1434919: Serial port settings for Network IPS (GX) appliances console connection [http://www.ibm.com/support/docview.wss?uid=swg21434919]. Place the recovery CD in the CD-ROM drive, power on your Proventia appliance, and proceed to Step 3. 
+     * If the appliance does not have a built-in CD-ROM drive, the appliance needs to be booted from the network. Because of this, the appliance cannot be recabled until after Step 4 of these instructions. The network boot procedure is described in the Reinstalling the Network IPS firmware by using a PXE boot server [http://www.ibm.com/support/knowledgecenter/SSB2MG_4.6.2/com.ibm.ips.doc/tasks/gx_gv_reinstall_firmware_pxe.htm] documentation (this procedure should be the same for all models).
+       
+    
+    
+ 3. On the host computer, you see a boot message that is displayed with a boot: prompt at the end. To run Proventia System Diagnostics Utility with all tests enabled, enter sysdiag or provdiag (depending on release and as indicated on the screen) and press Enter. If you want to disable certain tests, then include any of the following parameters, separated by a space: (Note: available options vary depending on the appliance model).  * noinv - Skip Inventory tests 
+     * nolcd - Skip LCD module tests 
+     * nodisk - Skip All Disk tests 
+     * noraid - Skip RAID test protion of the Disk tests 
+     * noraidcc - Skip RAID Consistency Check portion of the RAID test 
+     * nofsck - Skip Filesystem Check portion of Disk tests 
+     * dtreadonly - Use Read-Only mode for Disk tests 
+     * dtbb=X - Repeat Disk Badblocks test X times (default 1, 0 to disable)
+       Note: This test's default behavior has changed from 1 to 0 (disabled) in firmware 4.5 and later on the Proventia Network IPS devices. If you require this test and you are running firmware 4.5 or higher on the IPS (G/GX), be sure to set dtbb to 1 or greater. 
+     * nonet - Skip All Network tests 
+     * notraffic - Skip Traffic test portion of Network tests 
+     * nonetself - Skip Interface Self-test portion of Network tests
+       Note: Running the network tests requires recabling of the appliance.
+       
+    
+    
+ 4. Immediately after pressing Enter, you will see the following three lines:
+    Loading installer.....
+    Loading filesystem.....
+    Booting, please wait.
+    Once these messages have displayed, you may re-cable your Proventia appliance for the network tests as described in Appendix A below, if you have not already done so.
+    
+ 5. You will see the message, Starting Proventia system diagnostic tests for, followed by the diagnostic output results for the tests.
+    
+ 6. When the tests have completed, you will see a summary screen that indicates a Final Test Result and the message Spawning Shell... Enter exit to shutdown or reboot to reboot. If you are currently viewing the console output using HyperTerminal, you may skip to Step 7 for instructions on how to download the Proventia System Diagnostics log tarball bundle to your host system. Otherwise, press Ctrl-G to reboot your host system into Windows. Once the host computer has rebooted, start HyperTerminal and configure it as described in Technote 1434919: Serial port settings for Network IPS (GX) appliances console connection [http://www.ibm.com/support/docview.wss?uid=swg21434919].
+    
+ 7. The Proventia System Diagnostics log tarball bundle containing the test results can be retrieved from the appliance either through HyperTerminal or downloaded to a USB flash key (Note: Downloading to a USB flash is not supported on all appliance models).  * Within HyperTerminal, you should see a BASH prompt (if you do not, press Enter and one should appear). Enter download to transfer the Proventia System Diagnostics log tarball bundle to your host machine (this file is normally transferred to \Documents and Settings\<yourusername>\ folder and the file name is sysdiag_<serialnumber>.tgz or provdiag_<serialnumber>.tgz). This file can be e-mailed to Technical Support [http://www.ibm.com/support/docview.wss?uid=swg21446948] for further analysis. 
+     * To download onto a USB flash key, plug the flash key into an available USB port and at the BASH prompt enter usbdownload to download the Proventia System Diagnostic log tarball bundle to your flash key. The flash key can be safely removed when the BASH prompt returns.
+       Important Note: This diagnostic file is stored in memory only on the Proventia appliance. If the appliance is rebooted before executing the download (or usbdownload) command, the diagnostic log tarball bundle is lost.
+       
+    
+    
+ 8. Enter exit or reboot to power down your Proventia appliance. You may then restore its prior cabling and disconnect the host computer.
+    Note for the GX6116 appliance:
+    After the completion of any Proventia System Diagnostic test, always choose the exit option to completely shut down the appliance. Do not use the reboot option after running diagnostics to start the appliance into the IPS. If the appliance does not boot properly after running the Proventia System Diagnostics Utility, press and hold the power button until the appliance shuts down.
+
+
+
+Appendix A: Recabling the appliance: 
+ * Proventia GX3002: Using crossover Ethernet cables, connect the Management port (2) to the Protected 1B port and the TCP Reset port (0) to the Protected 1A port.
+   
+ * Proventia G/GX appliances (non-GX3002): Connect consecutive monitoring ports to each other (A to B, C to D, E to F, and G to H). Also connect the Management port (1) to the RSKill port (2).
+   
+ * Proventia M: Using crossover Ethernet cables, Connect ports to each other in numerical order (INT0 to EXT1, INT2 to INT3, INT4 to INT5, INT6 to INT7, and INT8 to INT9).
+   
+ * Proventia MX: Connect ports to each other in numerical order (ETH0 to ETH1, ETH to ETH3, ETH4 to ETH5, ETH6 to ETH7, and ETH8 to ETH9). Use crossover Ethernet cables for MX3006.
+   
+ * Enterprise Scanner ES1500: Connect the Management port to Scan port 1, Scan port 2 to Scan port 3, and Scan port 4 to Scan port 5.
+   
+ * Enterprise Scanner ES750: Connect the Management port to the Scan port.
+
+
+
+
+
+[/support/docview.wss?uid=swg21435525&aid=1] [http://ibm.biz/KC-SNIPS] [/support/docview.wss?uid=swg21435525&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21435525&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21435525&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21435525&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21435525&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21435525&aid=7] [http://ibm.biz/ContactSecSupport] 
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Security Proventia Network Multi-Function Security Hardware Firmware 3.14, 3.15, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6 Security Proventia Network Enterprise Scanner Hardware Firmware 1.4, 2.1, 2.2, 2.3 
+HISTORICAL NUMBER
+ 3724

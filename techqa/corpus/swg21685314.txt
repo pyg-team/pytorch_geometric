@@ -1,0 +1,106 @@
+Title: IBM Artifacts using old lock format cause RM ETL errors - United States
+
+Text:
+RepairInvalidLocks; locks; old format; ETL errors; ERROR .server.rrs.etl.internal.etlbuild.RMRequirementETL - com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error: SQLCODE=-302; SQLSTATE=22001; SQLERRMC=null; DRIVER=4.17.28; ERROR .server.rrs.etl.internal.etlbuild.RMRequirementETL - Could not transform requirement; ERROR .server.rrs.etl.internal.etlbuild.RMRequirementETL - Failed to update requirement; ERROR rrs.etl.internal.etlbuild.RMRequirementsLookupsETL - Req ID not found for url TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote provides diagnosis steps to resolve requirements extract, transform, and load (ETL) errors when running IBM Rational Requirements Composer (RRC) or IBM Rational DOORS Next Generation (RDNG). 
+
+SYMPTOM
+When running a full requirements ETL, you will see these error messages in rm-etl.log and rm-etl-driver.log as follows. 
+
+rm-etl.log
+2014-09-23 12:31:23,826 [WebContainer : 9 @@ 12:29 username /rm/service/com.ibm.team.reports.common.internal.service.IReportRestService/updateSnapshotData] ERROR .server.rrs.etl.internal.etlbuild.RMRequirementETL - com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error: SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=4.17.28
+
+2014-09-23 12:31:23,826 [WebContainer : 9 @@ 12:29 username /rm/service/com.ibm.team.reports.common.internal.service.IReportRestService/updateSnapshotData] ERROR .server.rrs.etl.internal.etlbuild.RMRequirementETL - Failed to update requirement: name=somename.png; uuid=5b132684073164339b3a0496b49f31dd; identifier=https://server/rm/locks/_ONK0Ua7FEeOL_I7Ey58H1w; format=WrapperResource; creatorUUID=edad49660052382ac4f5a2678f6c8ac0; creationtime=2014-03-18 13:46:23.638; modifTime=2014-03-18 13:46:23.638; projectUUID=66f5e1ddfb11305df33d6d7b9c6e6ceb; url=https://server/rm/resources/_ONK0Ua7FEeOL_I7Ey58H1w; datasrcId=_a7CjQjksEeSgs-jy6D66pwRRC; extKey2=_ONK0Ua7FEeOL_I7Ey58H1w; reqType=Product Requirement; isDeleted=false; lookupOwnerId=-1; lookupPrjId=47; lookupReqClassId=23; lookupReqId=1159; lookupCollId=-1
+
+2014-09-23 12:31:23,827 [WebContainer : 9 @@ 12:29 username /rm/service/com.ibm.team.reports.common.internal.service.IReportRestService/updateSnapshotData] ERROR .server.rrs.etl.internal.etlbuild.RMRequirementETL - Could not transform requirement somename.png
+
+2014-09-23 12:31:23,827 [WebContainer : 9 @@ 12:29 username /rm/service/com.ibm.team.reports.common.internal.service.IReportRestService/updateSnapshotData] ERROR .server.rrs.etl.internal.etlbuild.RMRequirementETL - Name:somename.png @@ UUID:5b132684073164339b3a0496b49f31dd @@ Identifier:https://server/rm/locks/_ONK0Ua7FEeOL_I7Ey58H1w @@ Format:WrapperResource @@ TypeName:Product Requirement @@ CreatorUUID:edad49660052382ac4f5a2678f6c8ac0 @@ CreationTime:2014-03-18 13:46:23.638 @@ ModificationTime:2014-03-18 13:46:23.638 @@ ProjectUUID:66f5e1ddfb11305df33d6d7b9c6e6ceb @@ URL:https://server/rm/resources/_ONK0Ua7FEeOL_I7Ey58H1w @@ DATASOURCE_ID:_a7CjQjksEeSgs-jy6D66pwRRC @@ ImplementedBy: @@ ValidatedBy: @@ AffectedBy: @@ TrackedBy: @@ GenericLinkTitle: @@ GenericLinkTypeName: @@ GenericLinkTypeUUID: @@ GenericLink: @@ GenericLinkURL: @@ TypeItemId:_fpMEVKOtEeKOxKDk7re7Vg @@ ProjectAreaUUID:66f5e1ddfb11305df33d6d7b9c6e6ceb @@ ItemId: @@ Datatype: @@ IsEnumeration: @@ IsDeleted:false @@ IsParent:false @@ IsChild:false @@ LiteralId: @@ LiteralName: @@ AttrName: @@ ExternalURL: @@ ExternalLabel: @@ ExternalLinkType: @@ Value:
+
+2014-09-23 12:31:24,258 [WebContainer : 9 @@ 12:29 username /rm/service/com.ibm.team.reports.common.internal.service.IReportRestService/updateSnapshotData] ERROR rrs.etl.internal.etlbuild.RMRequirementsLookupsETL - Req ID not found for url https://server/rm/resources/_1QpjQo6BEeOL_I7Ey58H1w
+
+2014-09-23 12:31:24,258 [WebContainer : 9 @@ 12:29 username /rm/service/com.ibm.team.reports.common.internal.service.IReportRestService/updateSnapshotData] ERROR rrs.etl.internal.etlbuild.RMRequirementsLookupsETL - Lookup info: uuid=62218c2ad3c4f45b1420b2631224e0ac; url=https://server/rm/resources/_1QpjQo6BEeOL_I7Ey58H1w; implBy=; validatedBy=; affectedBy=; trackedBy=; decomposition=null; genericLink=; genericLinkURL=; linkTypeUUID=; linkTypeName=; ModuleArtifactUUID=; ModuleArtifactURL=; ModuleUUID=; lookupReqId=-1; lookupCollId=-1; lookupRequest=-1; lookupGenLinkId=-1; lookupTestPLnId=-1; lookupTestCaseId=-1; lookupTestscriptStepId=-1; lookupTrackedId=-1; lookupAffectedId=-1; isParent=false; isChild=false; lookupChildId=-1; lookupParentId=-1; lookupLnkTypeId=-1; ModuleArtifactID=-1
+
+
+
+rm-etl-driver.log
+2014-09-23 12:18:22,780 [ Thread-3699] ERROR tional.drivers.jdbc.xml.internal.PageFetcherThread - java.lang.NullPointerException
+2014-09-23 12:18:22,780 [ Thread-3699] ERROR tional.drivers.jdbc.xml.internal.PageFetcherThread - com.ibm.rational.etl.common.exception.ETLException: java.lang.NullPointerException
+com.ibm.rational.etl.common.exception.ETLException: com.ibm.rational.etl.common.exception.ETLException: java.lang.NullPointerException
+at com.ibm.rational.drivers.jdbc.xml.internal.PageFetcherThread.exeFetch(PageFetcherThread.java:594)
+at com.ibm.rational.drivers.jdbc.xml.internal.PageFetcherThread.run(PageFetcherThread.java:144)
+Caused by: com.ibm.rational.etl.common.exception.ETLException: java.lang.NullPointerException
+at com.ibm.rational.drivers.jdbc.xml.internal.PageFetcherThread.exeFetch(PageFetcherThread.java:534)
+... 1 more
+Caused by: java.lang.NullPointerException
+at com.ibm.rational.drivers.jdbc.xml.util.SQLRowInMemoryStorage.notifyAvailable(SQLRowInMemoryStorage.java:59)
+at com.ibm.rational.drivers.jdbc.xml.util.SQLRowInMemoryStorage.check(SQLRowInMemoryStorage.java:87)
+at com.ibm.rational.drivers.jdbc.xml.util.SQLRowInMemoryStorage.put(SQLRowInMemoryStorage.java:158)
+at com.ibm.rational.etl.database.services.util.SQLRowFactoryHandler.blockingOrStore(SQLRowFactoryHandler.java:690)
+at com.ibm.rational.etl.database.services.util.SQLRowFactoryHandler.endElement(SQLRowFactoryHandler.java:441)
+at org.apache.xerces.parsers.AbstractSAXParser.endElement(Unknown Source)
+at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl.scanEndElement(Unknown Source)
+at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl$FragmentContentDispatcher.dispatch(Unknown Source)
+at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source)
+at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source)
+at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source)
+at org.apache.xerces.parsers.XMLParser.parse(Unknown Source)
+at org.apache.xerces.parsers.AbstractSAXParser.parse(Unknown Source)
+at org.apache.xerces.jaxp.SAXParserImpl$JAXPSAXParser.parse(Unknown Source)
+at com.ibm.rational.drivers.jdbc.xml.internal.PageFetcherThread.exeFetch(PageFetcherThread.java:504)
+... 1 more
+
+
+ 
+
+Note: The driver version may differ, so the first error message could also be: 
+
+ 
+
+
+2014-11-08 21:54:55,611 [jts: AsynchronousTaskRunner-3 @@ 20:59] ERROR se.service.rrc.internal.etlbuild.RRCRequirementETL - com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error: SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=4.14.121
+
+
+
+CAUSE
+The ETL is trying to load the ID of the resource (which should only be a certain length) but the ID is defined as identifier=https://server/rm/locks/_ONK0Ua7FEeOL_I7Ey58H1w. Based on the format of the locks referenced in the log above, they are from the old format (pre-4.0.5) and need to be deleted followed by a re-index.
+
+
+
+DIAGNOSING THE PROBLEM
+From your web browser, use this link to get a full list of locks: 
+
+ 
+
+IBM Rational Requirements Composer 4.x
+https://server/jts/storage/com.ibm.rdm.locks?iterate&size=512
+
+IBM Rational DOORS Next Generation 5.0 or higher
+https://server/rm/debug?storageExplorer=https://myserver/rm/locks
+
+Note: The lock graphs (good) are the ones whose URL UUID starts with "p_" (such as: https://server/jts/storage/com.ibm.rdm.locks/p_kBB-QJRjEeOsnYFFlv1-wwg1). Anything that does not start with "p_" would be an old style lock that needs to be deleted. You can see the creation date for each lock, to verify that it was created prior to your last upgrade.
+
+
+RESOLVING THE PROBLEM
+IBM RDNG development team has provided a tool - RepairInvalidLocks which will remove the invalid locks, instead of performing the removal manually. The tool is available on the diagnostic portal for version 4.x and version 5.x.
+
+Steps
+
+1. Follow readme from RepairInvalidLocks tool to run the repair - You can contact IBM Rational Support [https://www-947.ibm.com/support/servicerequest/Home.action?lnk=msdTS-srap-usen] if you need a copy of the repair tool. 
+
+
+2. A reindex all should be run after the tool successfully runs - this is a safeguard.
+
+
+
+Leverage the Jazz Community The Jazz based products have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600: Leveraging the Jazz Community on Jazz.net [http://ibm.com/support/docview.wss?uid=swg21319600] for details and links.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Requirements Composer General Information Windows, Linux 4.0.5, 4.0.6, 4.0.7 
+PRODUCT ALIAS/SYNONYM
+ DNG
+RRC

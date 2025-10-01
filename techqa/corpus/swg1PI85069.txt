@@ -1,0 +1,196 @@
+Title: IBM PI85069: DB2 ADMINISTRATION TOOL GOCCM IMPORT DOES NOT PARSE GENERATED ASIDENTITY - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  GOCCM cannot import DDL with
+   GENERATED AS IDENTITY (START WITH 1)
+   where
+      GENERATED ALWAYS AS IDENTITY (START WITH 1)
+   works OK. ADBCDTS don't recognize ALWAYS as optional. ADBCDTS
+   issues the following messages.
+   
+   On IMPORT:
+      ADBCDTS - Unsuccessful completion
+                ADB9409E Registration could not be completed.
+                  Reason Code . . . :             16
+                  Reason  . . . . . : Failed while building the
+                                      delta version.
+                  Change ID . . . . :            961
+      Register error. rc=            16
+   
+   Compare reports:
+      ADB7751W The token ( was found in the Column list, but
+               it is not valid.
+      ADB7751W The token START was found in the Column list, but
+               it is not valid.
+      ADB7751W The token WITH was found in the Column list, but
+               it is not valid.
+      ADB7751W The token 1 was found in the Column list, but it
+               is not valid.
+      ADB7723E Unexpected token in table definition. The token
+               is ).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Add "ALWAYS":
+      GENERATED ALWAYS AS IDENTITY (START WITH 1)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of DB2 Administration Tool for z/OS    *
+   *                 and DB2 Object Comparison Tool for z/OS      *
+   *                 who import a change or perform a compare     *
+   *                 using DDL.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The DDL reader fails to correctly       *
+   *                      process DDL when a user tries to        *
+   *                      import a change or compare using        *
+   *                      a DDL that contains CREATE or           *
+   *                      ALTER TABLE statement that has          *
+   *                      the GENERATED clause without            *
+   *                      the ALWAYS keyword.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When importing a change or using compare to process DDL that
+   contains CREATE or ALTER TABLE statement that has GENERATED
+   clause without ALWAYS keyword, the following warning messages
+   are observed:
+   
+   ADB7751W The token ( was found in the
+   Column list, but it is not valid.
+   ADB7751W The token START was found in
+   the Column list, but it is not valid.
+   ADB7751W The token WITH was found in
+   the Column list, but it is not valid.
+   ADB7751W The token 1 was found in the
+   Column list, but it is not valid.
+   ADB7723E Unexpected token in table
+   definition. The token is ).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem has been resolved.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI85069
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 ADMIN TOOL
+   
+   
+ * REPORTED COMPONENT ID
+   568851500
+   
+   
+ * REPORTED RELEASE
+   B20
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-07-28
+   
+   
+ * CLOSED DATE
+   2017-08-17
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI49640 UI49641
+   
+   
+
+MODULES/MACROS
+ *     ADBCDTS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 ADMIN TOOL
+   
+   
+ * FIXED COMPONENT ID
+   568851500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB20 PSY UI49640 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI49640]
+   UP17/08/23 P F708
+   
+   
+ * RC10 PSY UI49641 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI49641]
+   UP17/08/23 P F708
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

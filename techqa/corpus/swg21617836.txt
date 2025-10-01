@@ -1,0 +1,68 @@
+Title: IBM Missing journals from gateways that use replication - United States
+
+Text:
+tblrep; def; tblrep.def; filter; miss; missing; lost; missed; nco_g_jdbc; nco_g_objserv_uni; nco_g_objserv_bi TECHNOTE (FAQ)
+
+QUESTION
+ alerts.journal : Not replicating : Why are journals missing? 
+
+CAUSE
+
+The filter on alerts.status prevent journals from being replicated as expected.
+
+
+
+ANSWER
+ 
+
+Gateways that use the table replication definition file can appear not to process journals as expected because of the filter on the replication of the status table . 
+
+ 
+
+For example:
+Given the table replication definition:
+REPLICATE ALL FROM TABLE 'alerts.status' 
+USING MAP 'StatusMap' 
+FILTER WITH 'GWFilter = 1'
+SET UPDTOINS CHECK TO FORCED 
+AFTER IDUC DO 'GWFilter = 2' 
+; 
+
+REPLICATE ALL FROM TABLE 'alerts.journal' 
+USING MAP 'JournalMap'
+;
+#EOF
+
+The property Gate.Reader.IgnoreStatusFilter was introduced in:
+
+Tivoli Netcool/OMNIbus 7.3.1 Fix Pack 1, 7.3.1-TIV-NCOMNIbus-FP0001
+Tivoli Netcool/OMNIbus 7.3.0 Fix Pack 5, 7.3.0-TIV-NCOMNIbus-FP0005 
+
+Check the property is available for the gateway:
+e.g.
+nco_g_jdbc -dumpprops
+
+and set this to TRUE:
+Gate.Reader.IgnoreStatusFilter: TRUE
+
+For earlier versions of Netcool/OMNIbus or as a temporary fix use the following workaround: 
+
+The gateway accepts events with the custom field GWFilter set to '1' and sets GWProcessed to '1' afterwards, using the AFTER IDUC statement.
+e.g.
+Table replication definition:
+REPLICATE ALL FROM TABLE 'alerts.status' 
+USING MAP 'StatusMap' 
+FILTER WITH 'GWFilter = 1' 
+SET UPDTOINS CHECK TO FORCED 
+AFTER IDUC DO 'GWProcessed = 1' 
+; 
+REPLICATE ALL FROM TABLE 'alerts.journal' 
+USING MAP 'JournalMap' 
+;
+#EOF
+
+
+
+On the source ObjectServer[s] use two ObjectServer triggers to perform the task of setting GWFilter to '1' when a new journal is added with the other trigger setting GWFilter to '2' after processing, i.e. when GWProcessed is '1' [see attached example SQL].
+
+missed_journals.sql [/support/docview.wss?uid=swg21617836&aid=2]missed_journals.sql [/support/docview.wss?uid=swg21617836&aid=1]

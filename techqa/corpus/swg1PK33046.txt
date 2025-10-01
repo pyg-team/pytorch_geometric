@@ -1,0 +1,127 @@
+Title: IBM PK33046: JSF dynamic date pattern doesn't work in the data list. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  JSF dynamic date pattern doesn't work in the data list.
+   Environment
+   Windows XP Professional Service Pack 2
+   Rational Application Developer 6.0.1.1 iFix001,002,003
+   Re-produce steps
+   1. import attached el_test.zip from [file] ? [import] ? [project
+    exchange]
+   2. select test.jsp ? right click ? [Run on Server]
+   3. select test2.jsp ? right click ? [Run on Server]
+   Result:
+   In test.jsp, date format pattern is applied to display date.
+   In test2.jsp, date format pattern is NOT applied to display date
+   .
+   Date format pattern is defined in the test.UserEntity.java.
+   Thus this pattern can dynamically change.
+   In JSP, this pattern is specified as #[objectName.Value].
+   If you use this dynamic pattern in the single outputText compone
+   nt, It works (test.jsp).
+   But If you use it in the data list, It does not work (test2.jsp)
+   .
+   Screen shot for test.jsp and test2.jsp are attached . please ref
+   er them.
+   Expected:
+   Date format pattern is applied to both test.jsp, test2.jsp.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  The convert tag attributes are evaluated when the tag is
+   first read unlike component tag attributes that are
+   evaluated when needed for rendering. Therefore
+   "varuserEntities" does not exist when the attribute is
+   evaluated.
+   I am assuming the date format should be the same for all
+   outputText so then using:
+       pattern="#{pc_Test.testUserEntity.dateFormat}"
+   will work fine in a dataTable.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK33046
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEV V6 WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-10-16
+   
+   
+ * CLOSED DATE
+   2006-10-27
+   
+   
+ * LAST MODIFIED DATE
+   2006-10-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

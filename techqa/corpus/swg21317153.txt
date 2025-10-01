@@ -1,0 +1,68 @@
+Title: IBM Error "file being imported is invalid" at import Software Delivery Platform v7 license key - United States
+
+Text:
+Software Development Platform; FlexLM; SDP; activation kit; At least one of the licenses in the file being imported is invalid. Would you like to import; these Floating Licenses?; At least one of the licenses in the file being imported is invalid; Would you like to import; LKAD; License Key Administrator; Floating; Invalid; quantity unknown; expiration unknown; unknown; Confirm Import; 1317153 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to import a FlexLM licesnse key in IBM Rational License Key Administrator for an IBM Rational Software Delivery Platform (SDP) product results in the error "At least one of the licenses in the file being imported is invalid. Would you like to import these Floating Licenses? " 
+
+SYMPTOM
+Error when trying to import a FLEXlm license key for a Rational SDP product in the License Key Administrator. 
+
+The error message in the Confirm Import window is as follows.
+
+
+At least one of the licenses in the file being imported is invalid. Would you like to import these Floating Licenses? 
+
+
+
+ * The product is the SDP product, for example Rational ibmrpt. 
+   
+   
+ * The License Type is Floating.
+   
+   
+ * The License Term is Invalid. 
+   
+   
+ * The Quantity is Unknown. 
+   
+   
+ * The Expiration is Unknown.
+   
+
+Importing the license fails. 
+CAUSE
+A known cause is that you do not have the correct version of the IBM Rational License Server installed. 
+Required versions of the IBM Rational License (Key) Server are as follows.
+
+
+ * For Microsoft Windows: version 7.0.1 or later.
+   
+   
+ * For UNIX and Linux: version 7.0.0.1 or later
+   
+
+
+Only these versions contain the ibmratl daemon process. This process is required for the SDP version 7.x products. Without this daemon process the license file seems to be invalid. Note: As of Rational License Key Server v8.1 the ibmratl vendor daemon has become the sole vendor daemon which however is able to authenticate features previously served by the other vendor daemons. The IBM Rational License Key Server v8.x is backward compatible.
+
+
+
+RESOLVING THE PROBLEM
+Procedure: 
+
+ 1. Verify the version of the License Server. 
+    Click Start > (All) Programs > IBM Rational > Rational Software Installed Product Information.
+    
+    
+ 2. Update the License Server if necessary.
+    
+    
+
+
+You can download newer versions from your Passport Advantage On-line Software download & Media access page. You will find the correct Rational License Server software mentioned as a component of the Optional download files of your IBM Rational Software Development Platform product.  
+
+If you need help on Passport Advantage, visit the page eCustomer care contact information [https://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]. 
+
+RELATED INFORMATION
+#1250404 Activation of Eclipse-based Rational Products [http://www.ibm.com/support/docview.wss?uid=swg21250404]

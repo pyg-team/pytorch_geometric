@@ -1,0 +1,78 @@
+Title: IBM ITCAM4Tx : RRT Response times increase over time when running RPT SAP GUI playback - United States
+
+Text:
+71RRT-RPTPLAN; 71RRT-RPTINS; 71RRT-RPTCONF; 71RRT-RPTREC; 71RRT-RPTUPLOAD; 71RRT-RPTPLAY; 71RRT-RPTWV TECHNOTE (FAQ)
+
+QUESTION
+ Why is the response time increasing over time, and the application becomes unavailable, after playing back a RPT SAP logon script on ITCAM4tx robotic (t6) agent? 
+
+CAUSE
+Resource usage can increase when RPT SAP GUI scripts are run over a long period of time. For example, javaw memory growth.
+This is more likely to be seen in complex tests with many transactions.
+
+ANSWER
+Enable Long Run Mode (LRM). 
+
+In RPT Workbench use the long run mode process to reduce resource consumption with the SAP GUI client. This mode increases the reliability of long duration test runs because a new process starts every time the specified number of SAP sessions completes.
+
+The following RPT documentation provides more information and explains how to enable Long Run Mode in RPT Workbench:
+
+SAP performance testing guidelines
+http://www.ibm.com/support/knowledgecenter/SSMMM5_9.0.0/com.ibm.rational.test.lt.sap.doc/topics/csapreqs.html [http://www.ibm.com/support/knowledgecenter/SSMMM5_9.0.0/com.ibm.rational.test.lt.sap.doc/topics/csapreqs.html]
+
+Running long duration tests
+https://www.ibm.com/support/knowledgecenter/beta/en/SSMMM5_9.0.0/com.ibm.rational.test.lt.doc/topics/trunlongtests.html [https://www.ibm.com/support/knowledgecenter/beta/en/SSMMM5_9.0.0/com.ibm.rational.test.lt.doc/topics/trunlongtests.html]
+
+Refer to the following example to see how the problem might be seen and how to enable Long Run Mode on the RRT/T6 agent:
+
+RRT workspaces show increased response times and reduced availability:
+
+[/support/docview.wss?uid=swg21988591&aid=1] [/support/docview.wss?uid=swg21988591&aid=1]
+
+To enable the Long Run Mode on your robotic response time agent, you would simply need to add RPT_SAP_LONG_RUN_MODE as a Windows system environment variable and set it to :
+
+1.5 x (number of RPT SAP tests you plan to run on the ITCAM4Tx robotic agent)
+
+For example, if you want to run 24 RPT SAP scripts, set value to 36.
+
+If you are planning to playback only 2 RPT SAP scripts, set RPT_SAP_LONG_RUN_MODE value to 3. 
+
+ 
+
+[/support/docview.wss?uid=swg21988591&amp;aid=2]
+
+Remark 1: It is important that you check the kt6agent service is picking up the new RPT_SAP_LONG_RUN_MODE value any time you adjust this parameter. 
+
+You can do this using Process Explorer:
+Select kt6agent process -> right mouse click -> Properties -> Environment tab : 
+
+It helps reviewing the process environment variables, and should tell you if RPT_SAP_LONG_RUN_MODE is effective 
+
+[/support/docview.wss?uid=swg21988591&aid=3] [/support/docview.wss?uid=swg21988591&aid=3] 
+
+ 
+
+Remark 2 : The RPT SAP GUI test scripts are run concurrently, and not in visible mode on the ITCAM4Tx Robotic agent. 
+
+ 
+
+Remark 3: with LRM active, 2 extra processes are visible/used during RPT SAP script playbacks : 
+
+cmd.exe 
+
+and 
+
+SapGUiController.exe 
+
+
+[/support/docview.wss?uid=swg21988591&aid=4] [/support/docview.wss?uid=swg21988591&aid=4]
+
+Remark 4 : Inside RPT Workbench, in order to check RPT SAP test script execution results, and prior to uploading it to the ITCAM4Tx AMC (t3) agent, it can be useful to run the test in visible mode, so to see if all steps recorded previously are played back fine.
+
+To enable the visible mode on RPT, use the "SAP options" tab while editing the RPT SAP script, and select the Show GUI option :
+[/support/docview.wss?uid=swg21988591&aid=5] [/support/docview.wss?uid=swg21988591&aid=5]
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itcam itcam4tx itcamfortx itcamfortrans rational performance tester

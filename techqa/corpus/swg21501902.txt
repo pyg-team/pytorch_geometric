@@ -1,0 +1,15 @@
+Title: IBM InfoSphere Change Data Capture - Monitoring Statistics database error - United States
+
+Text:
+Monitoring Statistics; Statistics; Instance; Pointbase TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am seeing the following error when trying to start my CDC instance
+
+com.datamirror.ts.monitoragent.statistics.MonitorStatisticsPbException Monitoring Statistics database error: A SQL exception has occurred. The SQL error code is '60000'. The SQL state is: ZQ000. The error message is: |Log manager errors. Log record is corrupted. LSN that the log record was read at = 13:14020160. LSN stored in the log record = 0:0. 
+
+CAUSE
+Monitor Statistics Pointbase Metadata corruption
+
+RESOLVING THE PROBLEM
+Try to remove the files in the <CDC Install>/instance/<instance name>/statistics directory. They are transient files that will be recreated on startup.

@@ -1,0 +1,58 @@
+Title: IBM Stream Threshold Network Tunable Parameter - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I am not able to login to my AIX box with non-root users using telnet/ssh,
+I keep receiving the following: error: /dev/pts/X: Out of STREAMS resources. 
+
+CAUSE
+The stream threshold tunable parameter has reached its maximum value
+
+ANSWER
+The error appears describes the amount of mbuf memory used for streams resources, 
+
+This is controlled by strthresh network tunable parameter in which it disallows users
+Without the appropriate privilege to open Streams, push modules, or write to Stream devices.
+
+The default value for the strthresh tunable is 85%. The strthresh tunable specifies that once
+The total amount of allocated memory reaches 85% of the thewall tunable value, no more memory
+Goes to streams resources, which means the return value of the streams call is ENOSR, to open streams,
+Push modules or write to streams devices.
+
+- We can see the current value:
+# no -L strthresh
+--------------------------------------------------------------------------------
+NAME CUR DEF BOOT MIN MAX UNIT TYPE
+DEPENDENCIES
+--------------------------------------------------------------------------------
+strthresh 85 85 85 0 100 %_of_thewall D
+--------------------------------------------------------------------------------
+
+# no -a | grep strthresh
+strthresh = 85
+
+
+- We can set a new value:
+# no -o strthresh=90 
+Setting strthresh to 90
+
+# no -L strthresh
+--------------------------------------------------------------------------------
+NAME CUR DEF BOOT MIN MAX UNIT TYPE
+DEPENDENCIES
+--------------------------------------------------------------------------------
+strthresh 90 85 85 0 100 %_of_thewall D
+--------------------------------------------------------------------------------
+
+# no -a | grep strthresh
+strthresh = 90
+
+
+
+Thank you very much for taking the time to read through this.
+I hope it has been helpful and easy. If you feel you have found any inconsistencies,
+Please don’t hesitate to email me at ahdmashr@eg.ibm.com
+
+Ahmed Mashhour

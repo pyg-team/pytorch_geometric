@@ -1,0 +1,30 @@
+Title: IBM Handling native security assigned to a Microsoft Word Object in IBM Cognos Disclosure Management - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Word object which includes restrictions will not load/open when using Office 2013 
+
+ENVIRONMENT
+Microsoft Windows 2013
+
+DIAGNOSING THE PROBLEM
+The Word document contains content that is "Restricted". 
+
+Word has a feature where certain content in Word can be restricted with a password, so that the user(s) cannot edit whatever content that is restricted. The same content also contains other fields that can be edited by user.
+
+This feature is available by clicking Review tab, then click Restrict Editing to restrict the content. To Unrestrict, click the Unrestrict button.
+
+The object will only open in CDM when using Microsoft Office 2013 if it is unrestricted, but users would like to use this feature. 
+
+
+RESOLVING THE PROBLEM
+IBM Cognos Disclosure Management has workflow security for objects as such it is recommended for Users to use object security within Cognos Disclosure Management. Please refer to User Guide: http://www-01.ibm.com/support/knowledgecenter/SSQK59_10.2.1/com.ibm.swg.ba.cognos.cdm_ag.10.2.1.doc/t_cdm_ag_permission_manage_workflows.html [http://www-01.ibm.com/support/knowledgecenter/SSQK59_10.2.1/com.ibm.swg.ba.cognos.cdm_ag.10.2.1.doc/t_cdm_ag_permission_manage_workflows.html] 
+
+ 
+
+The work around for the restriction of the word document is go to Microsoft Word\File\Options\General and Uncheck "Open e-mail attachments and other editable files in reading view". After the change has been made to Microsoft Word document properties then the document opens up with Cognos Disclosure Management. 
+
+
+Hint: It is a good idea to review any security at the document level for Microsoft Objects (PowerPoint, Excel and Word) as part of moving the document over to Cognos Disclosure Management workflow. Please refer to the best practices guide for more information on handling Microsoft Objects within Cognos Disclosure Management: http://www-01.ibm.com/support/docview.wss?uid=swg27036748 [http://www-01.ibm.com/support/docview.wss?uid=swg27036748]

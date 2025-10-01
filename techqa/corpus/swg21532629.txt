@@ -1,0 +1,39 @@
+Title: IBM Cybersource: The authorization code for this request has already been settled against > Payment Execution > Execute Collection Error > CYB00005: Settlement failed - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Cybersource: The authorization code for this request has already been settled against > Payment Execution > Execute Collection Error > CYB00005: Settlement failed 
+
+SYMPTOM
+PART: Yantra 5x
+
+We have an order which has split shipments.
+For each shipment we make one settlement attempt. 
+The first settlement was successful but subsequent settlements failed.
+with the following error
+ReplyMessage=CYB00005: Settlement failed. Unable to obtain a valid reply code due to the following reason : The authorization code for this request has already been settled against.ℜplyCode=0ℜplyFlag=DNOAUTH
+
+
+RESOLVING THE PROBLEM
+Troubleshooting Steps:
+If the Tran Return Code is 0 or -1, that means Cybersource has rejected this transaction.
+First contact Cybersource to ask them what is the problem with this particular credit card.
+In this case - the problem was that American Express cards do not allow multiple settlements on the same card.
+
+Such a transaction would typically have moved to a FAILED_CHARGE status. You can attempt a fresh authorization and settlement cycle on this by manually switching it to AWAIT_AUTH and proceeding with PAYMENT_REQUEST followed by PAYMENT_EXECUTION.
+
+One other option is to change Yantra's Payment Collection Rules > 
+Config>BusinessRules>XYZ Ruleset>Order Management Rules>Financial>PaymentCollectionRules>
+Allow Same Authorization to be Used MultipleTimes
+
+
+
+HISTORICAL NUMBER
+ PRI49235 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact

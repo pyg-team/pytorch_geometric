@@ -1,0 +1,251 @@
+Title: IBM PI65369: VARIOUS PROBLEMS ENCOUNTERED IN THE QMGR AND CHIN LATE IN THE FINAL TEST CYCLE. FIX NEEDED FOR STABILITY AND MIGRATION - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Various problems found during final test cycle.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of IBM MQ for z/OS Version 9 Release 0             *
+   * Modification 0.                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Various problems found during the final test cycle.          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * N/A                                                          *
+   ****************************************************************
+   Various queue-manager and channel initiator problems found
+   during the final test cycle.
+   
+   For example,
+   CHIN ABEND S0C4-00000038 in CSQXRCTL when DIAG traps are
+   enabled.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following APAR fixes are included in this APAR:
+   
+   PI40486 - INTEGRITY PROBLEM
+   PI41923 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI41923] - WMQ ABENDA78 ABEND0C4 DURING EXECUTION OF SVRCONN
+   CHANNEL EXIT
+   PI50176 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI50176] - RECEIVE CSQX205E WHEN TRYING TO START A LISTENER WITH
+   IPADDR SPECIFYING A DOTTED-DECIMAL ADDRESS
+   PI54598 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI54598] - WMQ Z/OS V800: PREVENT THE MESSAGES FROM BEING
+   GENERATED OUT-OF-ORDER FOR QUEUE SERVICE INTERVAL EVENT
+   PI55997 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI55997] - CSQX218E MQ LISTENER FAILS TO RESTART USING IP ADDRESS
+   0.0.0.0
+   PI56364 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI56364] - MESSAGES STUCK ON SYSTEM.QSG.TRANSMIT.QUEUE AFTER
+   CSQM065E (MQRC=2124 FOLLOWED BY ABEND 5C6-00D40050
+   PI56916 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI56916] - MQ ABEND S5C6 ABN=5C6-00F20042 MQCLOSE ERROR
+   M=CSQGFRCV,LOC=CSQ2IEPL.CSQ2QCP0+0000455C - PI38007 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI38007] APPLIED
+   PI59408 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI59408] - WMQ WHEN USING SDEFS TO CREATE QMODEL DEFINITIONS THIS
+   FAILS WITH CSQN103I CSQM148I CSQ9023E
+   PI59706 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI59706] - WMQ V8 - CSQX479E RECEIVED FOR A SHARED RECEIVER
+   CHANNEL WHEN IT IS STARTED ON A DIFFERENT QMGR IN THE QSG.
+   PI60014 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI60014] - WMQ ABENDS0C4 ABN=0C4-00000004
+   BUFF-CSQP3GET,M=CSQGFRCV,LOC=CSQPLPLM.CSQP3GET ABEND S0C4 0C4
+   BUFFER POOLS ABOVE THE BAR
+   PI60172 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI60172] - STORAGE LEAK CAUSING HIGH CPU IN CHIN ASID DUE TO
+   FRAGEMENTION.
+   PI60242 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI60242] - WMQ CSQN212E COMMAND SERVER ERROR PUTTING TO REPLY TO
+   QUEUE MQRC 2052
+   PI60424 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI60424] - MQ MSTR ADDRESS SPACE RECEIVED
+   ABEND=S026,REASON=08118001 WITH REASON=00C510AB
+   PI60478 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI60478] - MQ MQINQ FOR MQCA_CUSTOM ATTRIBUTE FAILS WITH
+   MQRC_SELECTOR_ERROR ERROR RC2067 ( 0813 ) ( 2067 )
+   PI61141 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI61141] - WMQ JAVA THREADS FOR MQGET HANG AFTER WEBSPHERE MQ JMS
+   MAINTENANCE IS APPLIED 16/05/04 PTF PECHANGE
+   PI61291 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI61291] - WMQ Z/OS V8: CSQ2004E WITH MQRC=2013
+   (MQRC_EXPIRY_ERROR) AFTER CSQ2005I WITH FEEDBACK=292
+   (MQFB_NOT_AUTHO 16/04/28 PTF PECHANGE
+   PI61741 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI61741] - WMQ V8:ABEND 5C6 RSN00F30230 WHEN STOP QMGR
+   MODE(FORCE)
+   PI61954 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI61954] - DURING FORWARD MIGRATION FROM V6 TO V800, THE PROPCTL
+   ATTRIBUTE SHOULD BE SET TO V6COMPAT, AFTER BACKWARDS MIGRATION
+   PI62545 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI62545] - WMQ V8: ABEND 5C6-00D400A6 AFTER SET CHLAUTH COMMAND
+   PI63137 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI63137] - WMQ: CONTENTS OF SMDS DO NOT MATCH WITH CONTENTS OF CF
+   FOR MESSAGE BEING READ DUE TO ERROR IN RECOVER CFSTRUCT
+   PROCESSING
+   PI63883 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI63883] - WMQ Z/OS V800:SET CHLAUTH CLNTUSER PARAMETER IS 12
+   CHARACTERS WHICH CAUSES CSQY337E
+   PI64205 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI64205] - WMQ V800 ABEND5C6 WITH REASON CODE 00C51059 AT
+   BROADCAST LAST CLOSE OF SHARED QUEUE TO ACTIVE QUEUE MANAGERS IN
+   QSG.
+   PI64235 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI64235] - ABEND 0C4 OCCURS IN CSQJL002.CSQJOFF1 DURING QUEUE
+   MANAGER SHUTDOWN
+   PI64687 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI64687] - CSQUTIL TRIED TO FORMAT PAGES BEYOND THE 64 GB LIMIT.
+   PI64757 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI64757] - MQMSTR HIGH CPU CONSUMPTION AND FLOOD OF MESSAGES
+   IGD103I IGD104I RELATED TO BSDS AND LOG OF A STOPPED MEMBER OF
+   QSG
+   PI66686 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI66686] - WMQ: SHUTDOWN HANGS FOR AN MQ APPLICATION AND THEN THE
+   QUEUE MANAGER AFTER Z/OS MAINTENANCE IS APPLIED.
+   
+   The following new messages are introduced by this APAR:
+   
+   CSQY344E
+   csect-name&#160;Loading of channel authentication rules failed,
+   profile&#160;rule-name&#160;is restricted
+   
+   Severity
+   8
+   
+   Explanation
+   During initialization the queue manager was unable to load the
+   channel authentication rules because profile&#160;rule-name&#160;uses
+   function that is disabled by the queue manager mode of operation
+   (OPMODE).
+   
+   For example, the channel authentication profile has been defined
+   with a hostname but the queue manager mode of operation is
+   OPMODE(COMPAT,800), so version 8 new functions are not
+   available. Only the first profile found is reported so other
+   restricted profiles might also exist.
+   
+   System action
+   Queue manager initialization continues, but inbound channels are
+   not permitted to start.
+   
+   System programmer response
+   Ensure the queue manager mode of operation is correctly
+   configured. If the configuration is correct, remove channel
+   authentication profiles that use restricted function, then
+   restart the queue manager.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI65369
+   
+   
+ * REPORTED COMPONENT NAME
+   MQ Z/OS V9
+   
+   
+ * REPORTED COMPONENT ID
+   5655MQ900
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-07
+   
+   
+ * CLOSED DATE
+   2016-08-12
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI40085 UI40086 UI40087 UI40088 UI40089 UI40090
+   
+   
+
+MODULES/MACROS
+ *  CSQFMDIF CSQFMTXF CSQFSTXF CSQFXTXF CSQFYDIF
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MQ Z/OS V9
+   
+   
+ * FIXED COMPONENT ID
+   5655MQ900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI40085 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI40085]
+   UP16/09/20 P F609
+   
+   
+ * R001 PSY UI40086 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI40086]
+   UP16/09/20 P F609
+   
+   
+ * R002 PSY UI40087 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI40087]
+   UP16/09/20 P F609
+   
+   
+ * R003 PSY UI40088 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI40088]
+   UP16/09/20 P F609
+   
+   
+ * R004 PSY UI40089 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI40089]
+   UP16/09/20 P F609
+   
+   
+ * R005 PSY UI40090 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI40090]
+   UP16/09/20 P F609
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

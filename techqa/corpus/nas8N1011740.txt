@@ -1,0 +1,48 @@
+Title: IBM Slow Remote Journal or Invalid Data on Target Journal Receivers - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There are times when Remote Journal starts falling behind (slow at getting to the target side) or jobs reading the journal receiver on the target side 
+experience invalid data and fail to read or apply the changes 
+
+RESOLVING THE PROBLEM
+There are times when Remote Journal starts falling behind (slow at getting to the target side) or jobs reading the remote journal receiver experience invalid data which cause the read or apply to fail. Most often this is due to a network or communication issue that is currently occurring or occurred when the data was previously sent to the target system. The network must be looked at first to determine what is causing packet loss or corruption. 
+
+Common network issues are as follows:
+o A network router has a hardware problem or needs to be reset
+o TCP port 3777 is blocked
+o A network compression device has a hardware problem
+o A mismatch in LINESPEED/DUPLEX with a switch 
+
+Options to take from i5 for slow performance 
+
+1. Ensure source journal is set to Receiver Size Option of *MAXOPT1 or higher and *RMVINTENT. These settings can reduce the number of journal entries that are sent to the remote system. You can view the current settings by using CL command WRKJRNA on the source journal on the source system. Receiver size options are on the right hand side of the screen.
+
+If changes need to be made you can use the CL command CHGJRN JRN(LIB/JRN) RCVSIZOPT(*RMVINTENT *MAXOPT1) to be used on the source journal on the source system. 2. Look for retransmissions using NETSTAT. If the value for Total retransmissions is high or is climbing, there is a network issue that can affect Remote Journal performance. You can check the retransmissions by doing the following:
+
+a. On the source system's command line, type NETSTAT and select Option 3.
+b. Press F15 to work with subsets. Type 3777 for the remote port range Lower value.
+c. Press F11 to display byte counts, and press F5 to refresh to see which connections are the most active.
+d. Select Option 5 by the port to display the details. Scroll down two times: retransmissions information will be at the top.
+
+At R710, the retransmission counts are now listed within the WRKJRNA output. Issue the WRKJRNA command for the source journal, and press F16 to display Remote Journal information. Then take option 5 for the remote journal in question and page down to display retransmissions.
+
+Note: If retransmissions are not seen, this does not rule out a possible network issues and the network should still be looked at for any bottlenecks. 3. Confirm that the line description and the network switch settings for line speed and duplex match.
+
+Note: Refer to Rochester Support Center document New, TCP/IP File Transfer is Slow - Linespeed, Duplex Problem: Database 'DCF Technotes (IBM i)', View 'Products', Document 'TCP/IP File Transfer is Slow - Linespeed, Duplex Problem ' [http://www-01.ibm.com/support/icons/doclink.gif] [http://www-01.ibm.com/support/docview.wss?uid=nas8N1016545] for assistance. 
+Options to take from system for problems with reading the Journal Receiver 1. Look for re-transmissions at the time the journal receiver is being sent to the target side. Use Step 2 above. 2. At V6R1 and higher, you can change the journal to turn on Validity checking. This will inactivate the remote journal if the TCP packets being sent from the source is different than what the target side received. If a validity check occurs, you will see message msgCPE3028 sent to the journal message queue. This indicates data is not valid on the target system. You will also see VLOG (LIC Log) VL0D00ECFF. You turn this on by issuing the CHGRMTJRN VLDCHK(*ENABLED) command on the source IBM i
+
+Notes: 
+a) If the validity checker is turned on, you must look for the VLOG VL0D00ECFF to determine if errors were found in the packages. Many HA applications will automatically restart your remote journal link when the system inactivates if a packet difference is found. This may appear to fix the issue as the bad data is no longer put into the JRNRCV when, in fact, it is masking the network issue.
+b) You can only turn on validity checking when restarting remote journal, not if remote journal is already running.
+
+Possible VLOGs:
+1. VL0D000508 - Indicates a 'D77'x error. Generally seen with keep alive failures or from a failed connect operation. 
+2. VL0D000531 - Indicates a SCAM OPEN or SCAM CONNECT operation failed.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 588092424

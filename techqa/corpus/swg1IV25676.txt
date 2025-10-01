@@ -1,0 +1,195 @@
+Title: IBM IV25676: ITM FOR SAP 6.2.0 HOW MONITOR SAP CENTRAL INST OUTAGE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring for Applications: mySAP Agent, 6.2.0-TIV-ITM_SAP-IF0015 [http://www-01.ibm.com/support/docview.wss?uid=swg24033394]
+ITCAM Agent for SAP Applications, 7.1.0-TIV-ITM_SAP-FP0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24034776]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ENVIRONMENT:
+   SAP 620 IF0014
+   
+   
+   ERROR DESCRIPTION:
+   We have System_Down situation (situation name
+   dbk_aldown_gsa2_mysap)
+   running for both SAP Instances (cf. tacmd listSit/viewsystemlist
+   output).
+   The situation only fires once, indicating that Application
+   Instance
+   PPA-ppaappl1_PPA_25:Ins is down. The situation does not
+   fire another System_Down Alert, even though both SAP Instances,
+   inlcuding the Central Instance PPA-ppaci_PPA_25:Ins
+   have been down for several hours. So the issue is that up to now
+   we
+   never have seen any System_Down Alert indicating that the
+   Central Instance is down.
+   
+   
+   STEPS TO REPRODUCE:
+   1. Create a Single SAP system(single SAP ID) having multiple SAP
+   instances nodes (:INS)
+   2. Start Agent to monitorthis SAP Server
+   Select
+   R3_Alert_System_Up situation under until clause of
+   R3_Alert_System_Down
+   situation
+   3. Stop SAP instance. An R3_Alert_System_Down alert appears on
+   one node.
+   3. Start the SAP Agent.R3_Alert_System_Up alert fires.
+   4. The R3_Alert_System_Down should get cleared when
+   R3_Alert_System_Up alert has arrived, but it did not, because
+   this one is associated to a different subnode.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ERROR DESCRIPTION:
+   We have System_Down situation (situation name
+   dbk_aldown_gsa2_mysap)
+   running for both SAP Instances (cf. tacmd listSit/viewsystemlist
+   output).
+   The situation only fires once, indicating that Application
+   Instance
+   PPA-ppaappl1_PPA_25:Ins is down. The situation does not
+   fire another System_Down Alert, even though both SAP Instances,
+   inlcuding the Central Instance PPA-ppaci_PPA_25:Ins
+   have been down for several hours. So the issue is that up to now
+   we
+   never have seen any System_Down Alert indicating that the
+   Central Instance is down.
+   
+   
+   STEPS TO REPRODUCE:
+   1. Create a Single SAP system(single SAP ID) having multiple SAP
+   instances nodes (:INS)
+   2. Start Agent to monitorthis SAP Server
+   Select
+   R3_Alert_System_Up situation under until clause of
+   R3_Alert_System_Down
+   situation
+   3. Stop SAP instance. An R3_Alert_System_Down alert appears on
+   one node.
+   3. Start the SAP Agent.R3_Alert_System_Up alert fires.
+   4. The R3_Alert_System_Down should get cleared when
+   R3_Alert_System_Up alert has arrived, but it did not, because
+   this one is associated to a different subnode.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The formal fix for this APAR is contained in the following
+   package:
+   IBM(R) Tivoli(R) Monitoring for Applications: mySAP Agent,
+   Version 6.2.0
+   Interim Fix: 0014, 6.2.0-TIV-ITM_SAP-IF0015
+   Component ID: 5724B97SO
+   Date: August, 2012
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV25676
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * REPORTED COMPONENT ID
+   5724B97SO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-06
+   
+   
+ * CLOSED DATE
+   2012-08-14
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * FIXED COMPONENT ID
+   5724B97SO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP
+   
+   
+ * R710 PSY
+   UP

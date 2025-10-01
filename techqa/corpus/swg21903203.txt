@@ -1,0 +1,81 @@
+Title: IBM SPSS Statistics 18、 19、 20、 21、 22 和 23支持的Mac操作系统版本是什么 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+疑问
+ IBM SPSS Statistics 18、 19、 20、 21、 22 和 23支持的Mac操作系统版本是什么 
+
+答案
+建议阅读 IBM 软件产品的兼容性报告 
+
+www-969.ibm.com/software/reports/compatibility/clarity/index.jsp [http://www-969.ibm.com/software/reports/compatibility/clarity/index.jsp]
+
+具体兼容信息请参阅下表：
+
+******当前版本 SPSS Statistics 22 和 23：
+
+-Statistics 23 支持苹果 Macintosh OS X 10.9 和 10.10 （英特尔处理器）
+-Statistics 22 支持苹果 Macintosh OS X 10.7和 10.8 （英特尔处理器）
+-Statistics 22 不支持苹果 Macintosh OS X 10.6
+
+- 注意： IBM SPSS Statistics 22 的发布时间早于Macintosh OS X 10.9。然而，根据 SPSS 的产品管理，如果在安装Statistics 22之前，在Mac OS X 10.9上安装了Apple Java SE 6 (1.6.0_65) ，Statistics 22 是可以安装在 Mac OSX 10.9上的。请从以下链接下载。
+support.apple.com/kb/dl1572 [http://support.apple.com/kb/dl1572]
+
+- 2014 年10月16日，苹果公司发布了最新的 Mac OS X 10.10。虽然Statistics 22 FP1 在苹果 Mac OS X 10.10 之前发布，如果你阅读了下面的说明，Statistics 22 FP1 仍然可以在此操作系统上运行。Statistics 22 FP2 和Statistics 23已经在Mac OSX 10.10上全面测试。所以如果你想在Mac OSX 10.10上运行Statistics 22, 请安装Statistics 22 FP2，并且阅读下面段落。
+
+
+例如，你已经在Mac OS X 10.9 上安装了Statistics 22 FP1， 并且升级Mac到Mac OS X 10.10
+
+需要：
+
+1.下载并安装Statistics 22 FP2
+
+2.下载并重新安装Mac Java 6
+
+- 在Mac OSX 升级完毕后，Mac Java 6不再存在于已经升级的系统上。
+- 如果启动依赖于Java 6的Statistics 22，Mac操作系统会弹出一个对话框，说明需要Java 6，但是不存在。
+- Java对话框具有一个"详细信息"按钮，点击它时，会打开一个浏览器链接到苹果技术支持页面Java 2014-001，并提供下载链接：
+support.apple.com/kb/dl1572 [http://support.apple.com/kb/dl1572]
+- 点击下载链接，下载包含Java 6安装包的DMG文件。
+- 打开 Java DMG，双击Java安装包，按照操作提示完成Java 6的安装。
+
+3.在某些情况下需要重新授权Statistics 22的许可证。
+
+- IBM SPSS Statistics使用 Safenet Sentinel技术授权许可证。Safenet 在光盘的某个地方写入隐藏文件用于跟踪授权数据。
+- OS X 10.10 升级过程会删除这些隐藏的数据。尝试运行Statistics会产生一个许可证错误，先前安装的Statistics 22 则无法正常启动/运行。
+- 作为解决方案，将需要重新运行 SPSS 许可证授权向导，再次输入授权码，完成授权过程。
+- 先前在Mac OS X 10.9上安装的Statistics 22，在升级到Mac OS X 10.9后，将再次正常运行。
+
+
+如何在 Macintosh 计算机上重新运行 SPSS Statistics 许可证授权向导？
+在 Finder -> 应用程序，并选择 IBM -> SPSS -> Statistics -> 22 文件夹
+双击 SPSS Statistics 许可证授权向导
+在产品授权向导选择 "立即授予产品许可证"，单击"下一步"
+在下一个屏幕上输入授权码，请单击"下一步"
+将自动获得许可证代码
+（在此过程中计算机应当连接到互联网）
+
+
+******更早的版本，Statistics 19 到 21：
+
+- 请注意Statistics 18 不在支持范围，请联系 IBM 销售部更新您的合同
+- Statistics 19支持苹果 Macintosh OS X 10.5 和 10.6 （英特尔处理器）
+- Statistics 19不支持苹果 Macintosh OS X 10.7及以上版本
+- Statistics 20支持苹果 Macintosh OS X 10.6 和 10.7 （英特尔处理器）
+- Statistics 21支持苹果 Macintosh OS X 10.6 ，10.7 和10.8（英特尔处理器）
+
+- IBM SPSS Statistics 20 的发布时间早于Macintosh OS X 10.8，它不正式支持 10.8，也就是说只能在将来的版本中解决发现的任何问题。然而，预计没有严重问题。 IBM SPSS Statistics 20 可以在Macintosh OS X 10.8 （英特尔处理器）上运行，但是：
+
+a) 如果计划安装Statistics 20，强烈建议首先阅读技术文档1606447，并遵照有关苹果公司Gatekeeper的安全性能说明
+
+b) 如果已经安装Statistics 20.0，并且正在升级操作系统，可能遇到许可证的相关问题，请参阅1607184技术文档获得进一步信息。
+
+相关信息
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+历史编号
+ 1507587

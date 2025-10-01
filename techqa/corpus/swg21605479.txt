@@ -1,0 +1,43 @@
+Title: IBM Problems with Wily Introscope when exploiting the MQ JMS client from WebSphere Application Server - United States
+
+Text:
+Introspect TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are using the application "CA Application Performance Management", also known as "CA Wily Introscope and Customer Experience Manager" (often misspelled as Wily Introspect) to monitor activity for your MQ JMS client from WebSphere Application Server. You are seeing several types of errors that are difficult to explain, such as memory leaks and disconnections. 
+
+SYMPTOM
+You see in the WebSphere Application Server traces some Java™ stacks that contain both WebSphere MQ (WMQ) and Wily Introscope calls, such as: 
+
+at com.wily.introscope.agent.trace.ATracerFactory.formatParameterizedName(ATracerFactory.java:455)
+at com.wily.introscope.agent.trace.hc2.ASingleInstanceTracerFactoryHC.getComponentName(ASingleInstanceTracerFactoryHC.java:142)
+
+
+CAUSE
+Due to the way Wily Introscope operates, it is extremely difficult to diagnose problems from WMQ JMS trace. 
+
+
+The Introscope agent has been shown to intercept internal WMQ Java calls, and inject additional API calls, modifying the flow of client execution and causing the client to take an unintended and untested execution path. 
+
+While the resulting symptoms of this vary between environments, common issues resulting from this include:
+
+- Deadlocking of threads in the JVM 
+- Exhaustion of JMS and/or physical connections 
+- Additional extraneous connections created by Wily, outside the control of the WAS pooling mechanisms
+- Memory and/or connection leaks
+
+++ Additional possible cause
+
+- Changing the WMQ_MQMD_WRITE_ENABLED header which leads to message format changes.
+
+
+
+RESOLVING THE PROBLEM
+Disable Wily Introscope and rerun the scenario that caused problems. 
+
+If the problems disappear, then contact the vendor for Wily Introscope for further assistance if you want to continue using this product.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ WebSphere MQ MQSeries

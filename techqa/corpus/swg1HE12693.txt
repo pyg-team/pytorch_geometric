@@ -1,0 +1,162 @@
+Title: IBM HE12693: UPGRADED ICC 2.2 TO ICC 4.0.1 FP4, FOLDER SEARCH IS NOT WORKING AFTER FOLLOWING THE INSTRUCTIONS TO IMPLEMENT FOLDER SEARCH. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.0.1.6-IBM-ICC-FP006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Collector&fixids=4.0.1.6-IBM-ICC-FP006&source=SAR]
+IBM Content Collector V4.0.1 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24043989]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrading ICC 2.2 to ICC 4.0.1 FP4,  folder search doesn't
+   work even after following the instructions properly.
+   Search works only after disabling customlabel.properties file
+   and manually tying folder name.
+   When user select Inbox from Folder dropdown, it returns zero
+   results.  Whereas, when user types "Inbox" in the Folder
+   dropdown, it  returns some results.
+   The setting for folder normalized is missed during the upgrade
+   process.
+   
+   The problem was detected initially while working with the
+   following environment:
+   ICC 4.0.1 FP4
+   ICC OE 4.0.1 FP4
+   CE 5.1.0.4 (5.1 Fix Pack 4)
+    ICC CSSS 4.0.1.3
+   CSS is 5.1.0.0 IF006
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Contact IBM Support for fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  After upgrading ICC 2.2 to ICC 4.0.1 FP4,  folder search doesn't
+    work even after following the instructions properly.
+   Search works only after disabling customlabel.properties file
+   and manually tying folder name.
+   When user select Inbox from Folder dropdown, it returns zero
+   results.  Whereas, when user types "Inbox" in the Folder
+   dropdown, it  returns some results.
+   The setting for folder normalized is missed during the upgrade
+   process.
+   
+   The problem was detected initially while working with the
+   following environment:
+   ICC 4.0.1 FP4
+   ICC OE 4.0.1 FP4
+   CE 5.1.0.4 (5.1 Fix Pack 4)
+    ICC CSSS 4.0.1.3
+   CSS is 5.1.0.0 IF006
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with IBM Content Collector 4.0.1 FP6 release, this
+   issue has been fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  4.0.1.4-IBM-ICC-Server-LA004
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12693
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-07-05
+   
+   
+ * CLOSED DATE
+   2017-08-29
+   
+   
+ * LAST MODIFIED DATE
+   2017-08-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

@@ -1,0 +1,181 @@
+Title: IBM Using armtest and arm4test to verify CRT generic ARM capture - United States
+
+Text:
+armtest; arm4test; setup4ARM.sh; CRT; T4; ARM; generic ARM; 71CRT-CONF; 71CRT-RPTG; 71CRT-WW; 71CRT-TS TECHNOTE (FAQ)
+
+QUESTION
+ How can you use the armtest and arm4test applications to verify that the Client Response Time (CRT) agent is correctly capturing generic ARM transactions? 
+
+ANSWER
+
+This technote shows you how to configure and run the armtest and arm4test applications to verify that your CRT agent is exporting generic ARM data correctly to the Tivoli Enterprise Portal (TEP). These examples illustrate configuring and running armtest and arm4test on an AIX 5.3 64-bit platform.
+
+Included is how to configure the environment manually to run armtest or arm4test. Also how to use the setup4ARM.sh script to set up the environment automatically. You can use either approach to configure the environment for armtest and arm4test. 
+
+Note that the arm4test runs automatically. In comparison, the armtest application allows you to specify the application and transaction names.
+
+Using armtest
+
+1) Find instances of the product-provided armtest application. This application is installed by default when you install the CRT application. The directory aix523 contains 32-bit code, and the directory aix526 contains 64-bit code. The key is the last digit in the directory name (3=32 bit or 6=64 bit).
+
+# cd /opt/IBM/ITM
+# find . -name armtest -exec ls -l {} \;
+-rwxrwxrwx 1 root system 16661 Sep 19 22:53 ./aix523/t4/bin/armtest
+-rwxrwxrwx 1 root system 16661 Sep 19 22:53 ./aix523/t6/lib/armtest
+-rwxrwxrwx 1 root system 18348 Sep 19 22:53 ./aix526/t4/bin/armtest
+
+2) Determine that the Java JRE is accessible.
+
+# java -version
+java version "1.5.0"
+Java(TM) 2 Runtime Environment, Standard Edition (build pap32dev-20070201 (SR4))
+IBM J9 VM (build 2.3, J2RE 1.5.0 IBM J9 2.3 AIX ppc-32 j9vmap3223-20070201 (JIT enabled)
+J9VM - 20070131_11312_bHdSMR
+JIT - 20070109_1805ifx1_r8
+GC - 200701_09)
+JCL - 20070126
+
+3) Determine what is currently assigned to the system LIBPATH variable. In this case, nothing has been assigned.
+
+# echo $LIBPATH
+
+4) Search for existing instances of the product-provided libarm.a library and the armjni.jar file.] This library and jar file are required to run armtest.
+
+# cd ../../..
+# pwd
+/opt/IBM/ITM
+# find . -name libarm.a -exec ls -l {} \;
+-rwxrwxrwx 1 root system 68773059 Sep 19 22:53 ./aix523/t4/lib/libarm.a
+-rwxrwxrwx 1 root system 68773059 Sep 19 22:53 ./aix523/t6/bin/libarm.a
+-rwxrwxrwx 1 root system 68773059 Sep 19 22:53 ./aix523/t6/lib/libarm.a
+-rwxrwxrwx 1 root system 68773059 Sep 19 22:53 ./aix526/t4/lib/libarm.a
+# ls -l ./aix523/t4/lib/
+total 271936
+-rwxrwxrwx 1 root system 50 Sep 19 22:53 ITCAMCRT0702.SYS2
+-rwxrwxrwx 1 root system 6848 Sep 19 22:53 RTAgentMsgs_en.res
+-rwxrwxrwx 1 root system 6848 Sep 19 22:53 RTAgentMsgs_root.res
+-rwxrwxrwx 1 root system 11588 Sep 19 22:53 armjni.jar
+-rwxrwxrwx 1 root system 284434 Sep 19 22:53 armjni4.jar
+-rwxrwxrwx 1 root system 176196 Sep 19 22:53 kt_callpoint.jar
+-rwxrwxrwx 1 root system 68773059 Sep 19 22:53 libarm.a
+-rwxrwxrwx 1 root system 69073695 Sep 19 22:53 libarm4.a
+-rwxrwxrwx 1 root system 55681 Sep 19 22:53 libarmjni4.a
+-rwxrwxrwx 1 root system 231605 Sep 19 22:53 libkt1.a
+-rwxrwxrwx 1 root system 588797 Sep 19 22:53 libttapi.a
+#
+
+5) Export the LIBPATH variable to point to the directory containing libarm.a and armjni.jar. On Linux or Solaris platforms, use the environment variable LD_LIBRARY_PATH instead of LIBPATH.
+
+# export LIBPATH=/opt/IBM/ITM/aix523/t4/lib/:$LIBPATH
+# echo $LIBPATH
+/opt/IBM/ITM/aix523/t4/lib/:
+
+6) Run the armtest application. Enter application and transaction names. Use these application and transaction names to identify transactions in the TEP.
+
+# cd /opt/IBM/ITM/aix523/t4/bin/
+
+# ./armtest
+
+This program generates transactions for ARM Agents.
+Please enter the name of your application:
+armtest
+arm_init worked. Application handle [0]
+Please enter the name of your transaction:
+trans-1
+arm_getid worked. Transaction handle [0]
+Type "start" to start the transaction
+start
+arm_start worked. Start handle [0]
+Type a few characters and press ENTER.
+Or type "end" and press ENTER, to end the program.
+
+asdf
+arm_stop worked.
+arm_start worked. Start handle [1]
+Type a few characters and press ENTER.
+Or type "end" and press ENTER, to end the program.
+
+asdf
+arm_stop worked.
+arm_start worked. Start handle [2]
+Type a few characters and press ENTER.
+Or type "end" and press ENTER, to end the program.
+
+end
+arm_stop worked.
+end
+arm_end worked.
+# 
+
+7) Check whether an ARM*.dat file has been generated in the /opt/IBM/ITM/tmaitm6/arm/log/cat directory. The ARM*.dat file contains the transaction data for the armtest session.
+
+# ls -l /opt/IBM/ITM/tmaitm6/arm/log/cat
+total 8
+-rw-r--r-- 1 root system 536 Sep 22 23:16 ARM_704708_1285215351.dat
+drwxr-xr-x 2 root system 256 Sep 22 17:35 delete
+-rw-rw-rw- 1 root system 0 Sep 22 18:22 gendata.dat
+#
+
+8) View CRT transaction data in the TEP.
+
+[/support/docview.wss?uid=swg21447708&aid=1] [/support/docview.wss?uid=swg21447708&aid=1]
+
+Using arm4test
+
+Here is the recommended way to run the arm4test using the setupARM.sh script. 
+
+1) Find the 32-bit and 64-bit instances of setup4ARM.sh.
+
+# cd /opt/IBM/ITM
+# find . -name setup4ARM.sh -exec ls -l {} \;
+-rwxrwxrwx 1 root system 2997 Sep 19 22:53 ./aix523/t4/bin/setup4ARM.sh
+-rwxrwxrwx 1 root system 2997 Sep 19 22:53 ./aix526/t4/bin/setup4ARM.sh
+
+2) cd to the 32-bit version of the arm4test application and list the contents of the directory.
+
+# cd ./aix523/t4/bin/
+# ls -l
+total 26024
+drwxrwxrwx 2 root system 256 Sep 19 18:38 aix4-r1
+-rwxrwxrwx 1 root system 421275 Sep 19 22:53 arm4test
+-rwxrwxrwx 1 root system 16661 Sep 19 22:53 armtest
+drwxrwxrwx 2 root system 256 Sep 19 18:38 hpux10
+-rwxrwxrwx 1 root system 12773491 Sep 19 22:53 kt4agent
+drwxrwxrwx 2 root system 256 Sep 19 18:38 linux-ix86
+-rw-rw-rw- 1 root system 33856 Sep 22 17:35 psit_sequoia_T4.str
+-rwxrwxrwx 1 root system 2997 Sep 19 22:53 setup4ARM.sh
+drwxrwxrwx 2 root system 256 Sep 19 18:38 solaris2
+-rwxrwxrwx 1 root system 62934 Sep 19 22:53 t4_xa
+drwxrwxrwx 2 root system 256 Sep 19 18:38 w32-ix86
+
+3) Launch the setup4ARM.sh script. "sourcing" the script makes the settings accessible in other sessions. Notice that the syntax is '.', followed by a space, followed by the command and the command argument. The argument is the path to the script. 
+
+# . ./setup4ARM.sh ./setup4ARM.sh
+
+4) Launch the arm4test script. The script takes a single argument, which is '/ap'.
+
+# ./arm4test /ap
+
+5) The program runs automatically. It generates ARM4 transactions, and then terminates.
+
+arm_register_application worked. app_id [0000000020070D181234567887654321]
+arm_start_application worked. app_handle [537364296]
+arm_register_transaction worked. tran_id [00000000200BB9081234567887654321]
+arm_start_transaction worked. tran_handle[1] [0x1]
+arm_stop_transaction worked.
+arm_stop_application worked.
+arm_destroy_application worked.
+#
+
+6) View CRT transaction data in the TEP.
+
+[/support/docview.wss?uid=swg21447708&aid=2] [/support/docview.wss?uid=swg21447708&aid=2]
+
+RELATED INFORMATION
+ ITCAM for Transactions 7.3 life cycle [http://www.ibm.com/software/support/lifecycleapp/PLCDetail.wss?synkey=Y126067R51028J24-O585999X22860W87-F775004X76484Y69]
+
+
+ 
+
+HISTORICAL NUMBER
+ 22129.122.000

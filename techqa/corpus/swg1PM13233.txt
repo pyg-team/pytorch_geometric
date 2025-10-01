@@ -1,0 +1,197 @@
+Title: IBM PM13233: DFHWS2LS CAUSES PROBLEMS WITH TRUNCATION OF LONG FIELD NAMES - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Due to the limitations in COBOL, truncation of the names occurs
+   and numbers are added to make the COBOL copybook field names
+   unique. If the element names of the WSDL are longer than 28
+   characters and  if the differences of the names starts beyond
+   of this limit, the CICS Webservices Assistant produces strange
+   results in that the '-num' fields and their underlying fields
+   are out of sync in the numbering. Adding later on one element
+   as input to WS2LS means that all copy book fields are again
+   out of sync.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  na
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: DFHWS2LS truncates field names that are *
+   *                      longer than 28 characters when          *
+   *                      generating COBOL copybooks from WSDL    *
+   *                      and XSD files, using numeric            *
+   *                      suffixes to guarantee uniqueness. When  *
+   *                      such types are changed and the COBOL    *
+   *                      is re-generated, the order in which the *
+   *                      names are produced can change.          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When DFHWS2LS generates COBOL copybooks from WSDL files it
+   truncates element names to fit the 28 characters allowed for a
+   COBOL field name. A numeric suffix is used
+   to make the names unique.
+   
+   When the schema is modified, running DFHWS2LS may cause the
+   suffix numbers to be reassigned. Significant development effort
+   can be required to identify these reassigments and make the
+   necessary application changes to allow for them.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHWS2LS has been updated to include a new parameter which can
+   be specified to change the way in which the truncation
+   algorithm works.
+   
+   The new parameter is called NAME-TRUNCATION. It can take a value
+   of either LEFT or RIGHT (and defaults to RIGHT). This new
+   parameter can be used with both DFHWS2LS and DFHSC2LS programs.
+   
+   The CICS Transaction Server for z/OS version 1 release 4 Web
+   Services Guide (SC34-7020-01) will be updated as follows;
+   
+   In Chapter 8 "Creating a Web Service", section "DFHWS2LS: WSDL
+   to high-level language conversion" add a new optional parameter
+   
+   NAME-TRUNCATION=value
+   
+   to the syntax diagram of input parameters.  This parameter is
+   available at all mapping levels.
+   
+   Add the following to the parameter descriptions section;
+   
+   NAME-TRUNCATION={LEFT|RIGHT}
+   Use this optional parameter if you wish to specify whether the
+   truncation algorithm used when truncating XML element names
+   down to a length appropriate for the high-level language,
+   should be performed from the left or the right of the element
+   name.  The default value used by the assistant is 'RIGHT'.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM13233
+   
+   
+ * REPORTED COMPONENT NAME
+   CICSTS V3 Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655M1500
+   
+   
+ * REPORTED RELEASE
+   60D
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-28
+   
+   
+ * CLOSED DATE
+   2010-08-17
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK59769
+   
+   
+
+MODULES/MACROS
+ *     DFJ@H176 DFJ@H223
+   
+   
+    
+   
+   
+
+Publications Referenced SC34702001 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60D PSY UK59769 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK59769]
+   UP10/08/23 P F008
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

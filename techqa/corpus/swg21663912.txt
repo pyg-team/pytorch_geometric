@@ -1,0 +1,30 @@
+Title: IBM WebSphere Transformation Extender V8.3.0.6 and Interim Fix 1 for V8.4.0.4 and V8.4.1.1 are available - United States
+
+Text:
+8.3.0.6; V8.3.0.6; 8.4.1.1; V8.4.1.1; 8.4.0.4; V8.4.0.4; Interim Fix; Fix List NEWS
+
+ABSTRACT
+ February 5th, 2014 
+
+IBM WebSphere® Transformation Extender V8.3.0.6 and Interim Fix 1 for V8.4.0.4 and V8.4.1.1 are available through Passport Advantage and Fix Central. 
+
+Build ID: 8.3.0.6(3)
+
+
+
+CONTENT
+ 
+
+Fix List WebSphere Transformation Extender V8.3.0.6 Fix List [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg27041120] 
+Main Release Notes page WebSphere Transformation Extender product release notes [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg27008337] 
+WTX 8.3.0.6 Core Release Notes Release Notes for IBM WebSphere Transformation Extender V8.3.0.6 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg27041132] 
+WTX 8.3.0.6 Core Download Documents WebSphere Transformation Extender with Command Server V8.3.0.6 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036857] WebSphere Transformation Extender Design Studio V8.3.0.6 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036858] WebSphere Transformation Extender Online Library V8.3.0.6 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036859] WebSphere Transformation Extender with Launcher V8.3.0.6 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036860] WebSphere Transformation Extender Launcher Agent V8.3.0.6 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036861] WebSphere Transformation Extender for Application Programming V8.3.0.6 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036862] WebSphere Transformation Extender Secure Application Collection V8.3.0.6 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036863] WebSphere Transformation Extender for Integration Servers V8.3.0.6 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036864] 
+
+WTX Interim Fix Release Notes Release Notes for V8.4.0.4 and V8.4.1.1 Interim Fix 1 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg27041204] 
+
+
+IBM Fix Central [http://www.ibm.com/support/fixcentral/] 
+IBM Passport Advantage Online [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]  
+
+PRODUCT ALIAS/SYNONYM
+ Ascential DataStage TX

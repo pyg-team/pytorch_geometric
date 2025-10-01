@@ -1,0 +1,59 @@
+Title: IBM Deleting unneeded additional products, fixed file stores, and content caches before upgrading IBM FileNet Content Engine - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ It is a best practice to delete unneeded additional products, fixed file stores, and content caches before upgrading Content Engine from version 3.5.2 to version 4.5.0, 4.5.1, 5.0.0, or 5.1.0. 
+
+CONTENT
+If you do not remove additional products, fixed file stores, or content caches that you do not intend to use after the upgrade, you might be unable to remove them after the upgrade, as explained in the following paragraphs. 
+
+The standard procedures to delete fixed file stores or content caches work after the upgrade if the upgraded environment can connect to the storage location. There are no procedures for deleting them after the upgrade if the upgraded environment cannot connect to the storage location. Contact IBM Software Support to determine if options exist for your situation.
+
+To delete a fixed content store or content cache, you must be able to make a connection to its storage location, as defined in the Global Configuration Database. If you do not delete a fixed content store or content cache before the upgrade, and its storage location does not exist in the upgraded environment, the upgraded Content Engine will fill the p8_server_error.log file with connection-failure error messages.
+
+For example, suppose that you created a fixed content store for IBM FileNet Content Federation Services for Image Services before the upgrade. If Image Services is not available after the upgrade, the upgraded Content Engine cannot connect to it. But the fixed content store still exists in FileNet Enterprise Manager after the upgrade.
+
+The result is that when the upgraded Content Engine starts, the p8_server_error.log file fills up with connection-failure error messages because Content Engine cannot connect to Image Services. With no connection to Image Services, FileNet Enterprise Manager cannot delete the fixed content store. The only recovery is to restore the pre-upgrade environment, delete the fixed content store, and then redo the upgrade.
+
+A similar problem occurs for content caches. Suppose that you created a content cache and that you do not delete it before the upgrade. The content cache is specified by a Windows drive letter, such as C:\. If the Content Engine upgrade includes migration to a UNIX platform, the upgraded Content Engine can no longer connect to the content cache. You can still create a mount point in the upgraded environment, but you cannot refer to it by a Windows drive letter.
+
+The result is that you cannot delete the content cache in the upgraded environment. To prevent this problem, delete the content cache before the upgrade, and then create a new content cache after the upgrade and migration of Content Engine to UNIX.
+
+To delete an additional product before the upgrade, complete the following steps:
+
+
+ 1. Navigate to Product Documentation for FileNet P8 Platform [http://www-01.ibm.com/support/docview.wss?rs=86&uid=swg27010422]and click the Versions 3.5, 4.0, 4.5, and 4.5.1 tab The FileNet P8 Related Products table on this page contains a link to each additional product.
+    
+    
+ 2. Click the link for the additional product you want to delete (uninstall) and find its installation guide, which contains topics on uninstalling the additional product. For example, to find the installation guide for FileNet eForms, complete the following substeps:
+    
+     1. In the FileNet P8 Related Products table, click the icon in the Link column for the FileNet eForms entry.
+        
+        
+     2. In the Product Documentation for FileNet eForms page, scroll down to the FileNet eForms Product Documentation table and click the icon in the v3.5 column for the FileNet eForms Install and Upgrade Guide.
+        
+        
+     3. In the FileNet eForms for FileNet P8 Workplace Installation and Upgrade Guide, navigate to the topic "Removing Software" and complete the steps in the "Remove FileNet eForms" subtopic for the application server on which eForms is installed.
+        
+        
+    
+    
+ 3. Complete the steps in the topic to uninstall the additional product.
+    
+
+
+To delete a fixed file store, complete the following steps: 
+ 1. Navigate within your deployed version 3.5 FileNet P8 Documentation to the FileNet P8 Administration > Content Engine Administration > Content stores > File stores > How to... > Delete a file store topic.
+    
+    
+ 2. Complete the steps in the topic to delete the fixed file store.
+
+
+
+To delete a content cache, complete the following steps: 
+ 1. Navigate within your deployed version 3.5 FileNet P8 Documentation to the FileNet P8 Administration > Content Engine Administration > Content Stores > Content cache stores > How to... > Delete cache topic.
+    
+    
+ 2. Complete the steps in the topic to delete the content cache.

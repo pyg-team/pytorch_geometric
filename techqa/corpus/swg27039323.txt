@@ -1,0 +1,105 @@
+Title: IBM Fixed: WebLogic-specific documentation on securing communication with IBM Content Search Services is incomplete - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ Procedures are missing from information center topics on configuring secure Content Platform Engine communication with IBM Content Search Services on WebLogic. 
+
+CONTENT
+Procedures for deploying self-signed and third-party certificates are missing from the following topics in the FileNet P8 Information Center. 
+
+
+In the "Installing and configuring IBM Content Search Services" section of the Information Center: 
+
+ * Deploying a self-signed certificate on Content Platform Engine (WebLogic Server) [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.install.doc/p8pin345.htm] 
+ * Deploying a third-party certificate on Content Platform Engine (WebLogic Server) [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.install.doc/p8pin346.htm]
+
+
+In the "Upgrading IBM Content Search Services" section of the Information Center:  * Deploying a self-signed certificate on Content Platform Engine (WebLogic Server) [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.install.doc/p8pup714.htm] 
+ * Deploying a third-party certificate on Content Platform Engine (WebLogic Server) [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.install.doc/p8pup715.htm]
+
+
+Procedures for deploying self-signed and third-party certificates are missing from the following topics in the IBM Content Foundation Information Center:  * Deploying a self-signed certificate on Content Platform Engine (WebLogic Server) [http://pic.dhe.ibm.com/infocenter/iconf/v5r2m0/topic/com.ibm.p8.install.doc/p8pin345.htm] 
+ * Deploying a third-party certificate on Content Platform Engine (WebLogic Server) [http://pic.dhe.ibm.com/infocenter/iconf/v5r2m0/topic/com.ibm.p8.install.doc/p8pin346.htm]
+
+
+The missing procedures are as follows. If you complete one of these procedures, you do not need to complete the other. 
+
+To deploy a self-signed certificate: 
+
+ 1. On the IBM Content Search Services server, open a command prompt and navigate to the YourCSSfolder\bin folder. YourCSSfolder is the folder where you installed the IBM Content Search Services server.
+    
+    
+ 2.  Export the certificate to a file by entering the following command: 
+    
+    keytool -export -alias cssSelfsigned -keypass YourKeyPassword-keystore selfsignedServerStore -storepass YourStorePassword-file selfsignedCert.cer
+    
+    
+ 3. Copy the selfsignedCert.cer file to a folder on the Content Platform Engine server, for example, C:\IBM\cssKeystore.
+    
+    
+ 4. On the Content Platform Engine server, open a command prompt and navigate to the folder where you copied the selfsignedCert.cer file in step 3.
+    
+    
+ 5. On the WebLogic application server where you deployed Content Platform Engine, determine the current configured trust keystore. For example, WebLogic might be configured to use DemoTrust (DemoTrust.jks) by default. (Note that Oracle does not recommend using DemoTrust in a production environment.)
+    
+    
+ 6. Deploy the selfsignedCert.cer file to the keystore that you determined in step 5 by entering the following command. (If your keystore is not DemoTrust, or you are not running WebLogic 10.3 on a Windows platform, make the appropriate substitutions in the command.)
+    
+    keytool -import -alias cssSelfsigned -keystore C:\Oracle\Middleware\WLserver_10.3\server\lib\DemoTrust.jks -storepass YourStorePassword -file selfsignedCert.cer
+    
+    
+ 7. Verify that the certificate was created in the keystore by entering the following command: 
+    
+    keytool -list -v -keystore selfsignedCaStore -storepass YourStorePassword
+    
+    
+ 8. To perform SSL authentication, specify the following Java system parameters on the Content Platform Engine application server. For more information about adding Java system parameters, see your application server documentation. (If your keystore is not DemoTrust, or you are not running WebLogic 10.3 on a Windows platform, make the appropriate parameter substitution.)
+    
+     * -Djavax.net.ssl.trustStore=C:\Oracle\Middleware\WLserver_10.3\server\lib\DemoTrust.jks
+     * -Djavax.net.ssl.trustStorePassword=YourStorePassword 
+    
+    
+    
+ 9. Restart the Content Platform Engine application server instance. 
+
+
+
+To deploy a third-party CA certificate: 
+
+ 1. Download a CA certificate from the Certificate Authority website and save it as ca.cer in any folder on your Content Platform Engine server, for example, C:\IBM\cssKeystore.
+    
+    
+ 2. On the Content Platform Engine server, open a command prompt and navigate to the folder where you copied the ca.cer file in step 1.
+    
+    
+ 3. On the WebLogic application server where you deployed Content Platform Engine, determine the current configured trust keystore. For example, WebLogic might be configured to use DemoTrust (DemoTrust.jks) by default. (Note that Oracle does not recommend using DemoTrust in a production environment.)
+    
+    
+ 4. Deploy the ca.cer file to the keystore that you determined in step 3 by entering the following command. (If your keystore is not DemoTrust, or you are not running WebLogic 10.3 on a Windows platform, make the appropriate substitutions in the command.)
+    
+    keytool -import -alias cssThirdParty -keystore C:\Oracle\Middleware\WLserver_10.3\server\lib\DemoTrust.jks -storepass YourStorePassword-file ca.cer
+    
+    
+ 5. Verify that the certificate was imported into the keystore by entering the following command:
+    
+    keytool -list -v -keystore thirdPartyCaStore -storepass YourStorePassword
+    
+    
+ 6. To perform SSL authentication, specify the following Java system parameters on the Content Platform Engine application server. For more information about adding Java system parameters, see your application server documentation. (If your keystore is not DemoTrust, or you are not running WebLogic 10.3 on a Windows platform, make the appropriate parameter substitution.)
+    
+     * -Djavax.net.ssl.trustStore=C:\Oracle\Middleware\WLserver_10.3\server\lib\DemoTrust.jks
+     * -Djavax.net.ssl.trustStorePassword=YourStorePassword 
+    
+    
+    
+ 7. Restart the Content Platform Engine application server instance.
+
+
+A fix for this issue was applied to the IBM FileNet P8 Platform documentation ( http://www.ibm.com/support/knowledgecenter/ [http://www.ibm.com/support/knowledgecenter/]). 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Foundation Content Search Services AIX, Linux, Solaris, Windows 5.2 All Editions

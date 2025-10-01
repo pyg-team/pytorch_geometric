@@ -1,0 +1,147 @@
+Title: IBM IZ11945: ENHANCE DATA COLLECTION FOR JOBS ON BIG SYSTEMS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Existing agent code can process and send data to Tivoli
+   Enterprise Management Server for up to approximately 54,000
+   jobs.
+   This is due to restrictions on the amount of data that can be
+   stored in the internal memory buffers. This can cause data
+   collection skipped on some jobs if more than 54000 jobs active
+   on the system.
+   This can lead to some job related situations not trigger as
+   expected.
+   
+   Agent code need to be updated to add more filtering to the job
+   selection criteria. Situation conditions can be used to set the
+   job selection criteria for situations and environment variables
+   can be used to set the job selection criteria for views on work
+   spaces.
+   
+   
+   Detailed Recreation Procedure:
+   This problem can not be recreated normally on systems with
+   normal job load.
+   More than 54,000 jobs need to exist on the i5/OS system to
+   recreate this problem.
+   
+   1. Create more than 54,000 jobs on a i5/OS system. Some customer
+   systems have around 250,000 jobs. A CL program to create dummy
+   jobs can be used to create more jobs on the system
+   programmatically.
+   
+   2. Verify product provided Job Resource Information view on Jobs
+   and Queues workspace to see if all jobs are listed.  View may
+   time out or entries for some jobs may be missing.
+   
+   3. Create and start some situations using Job attribute group
+   and verify if they trigger as expected.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  See APAR description. README of LA fix
+   6.1.0-TIV-ITM_i5OS-LA0008 provides detailed description for this
+   APAR.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in ITM 6.1 i5/OS agent LA fix 6.1.0-TIV-ITM_i5OS-LA0008.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ11945
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT ISERI
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04A4
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-12-26
+   
+   
+ * CLOSED DATE
+   2008-02-18
+   
+   
+ * LAST MODIFIED DATE
+   2008-02-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT ISERI
+   
+   
+ * FIXED COMPONENT ID
+   5724C04A4
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

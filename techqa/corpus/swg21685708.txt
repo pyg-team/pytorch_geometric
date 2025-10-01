@@ -1,0 +1,18 @@
+Title: IBM WebSphere Application Server support on POWER8 hardware - United States
+
+Text:
+Power 8; POWER 8; POWER8 TECHNOTE (FAQ)
+
+QUESTION
+ Is WebSphere Application Server supported on POWER8 hardware? 
+
+ANSWER
+For the operating systems that are supported by WebSphere Application Server and POWER8 hardware, the minimum WebSphere Application Server fix pack levels for IBM POWER8 support are specified in the processor-mode columns within the following table.
+
+
+
+
+WebSphere Application Server Version POWER8 processor in POWER6 compatibility mode POWER8 processor in POWER7 compatibility mode POWER8 processor in POWER8 compatibility mode (Toleration) POWER8 processor in POWER8 compatibility mode (Optimized) 8.5.5 8.5.5.0 (IBM WebSphere SDK Java Technology Edition Version 6.0 and 7.0) 8.5.5.0 (IBM WebSphere SDK Java Technology Edition Version 6.0 and 7.0) 8.5.5.0 (IBM WebSphere SDK Java Technology Edition Version 6.0 and 7.0) 8.5.5.3 (IBM WebSphere SDK Java Technology Edition Version 7.1). 8.0 8.0.0.7 (IBM WebSphere SDK Java Technology Edition Version 6.0) 8.0.0.7 (IBM WebSphere SDK Java Technology Edition Version 6.0) 8.0.0.7 (IBM WebSphere SDK Java Technology Edition Version 6.0) Not applicable 7.0 7.0.0.31 (IBM WebSphere SDK Java Technology Edition Version 6.0) 7.0.0.31 (IBM WebSphere SDK Java Technology Edition Version 6.0) 7.0.0.31 (IBM WebSphere SDK Java Technology Edition Version 6.0) Not applicable 6.1* Not applicable 6.1.0.47 (IBM WebSphere SDK Java Technology Edition Version 5.0) Not applicable Not applicable 
+*Notice: v6.1 support is only available for customers with current Service Extension contracts. Restrictions apply, consult IBM Support for details. 
+
+For detailed system requirements for WebSphere Application Server by release, see http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27006921 [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27006921] for more information.

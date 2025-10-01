@@ -1,0 +1,76 @@
+Title: IBM Using domainless group feature to allow LDAP users to belong to local groups - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can LDAP users belong to local groups? 
+
+ANSWER
+Starting with AIX 6100-09 and 7100-03, AIX added a new feature called domainless groups that allows LDAP users to belong to local groups and vice versa.
+Prior to this domainless group feature, LDAP users can only belong to LDAP groups and local users cannot belong to LDAP groups.
+
+Here's a link to AIX documentation for domainless groups:
+https://www.ibm.com/support/knowledgecenter/en/ssw_aix_71/com.ibm.aix.security/domainlessgroups.htm [https://www.ibm.com/support/knowledgecenter/en/ssw_aix_71/com.ibm.aix.security/domainlessgroups.htm]
+
+Here's an example of how I configured and tested the domainless group feature:
+
+1) Enable domainless groups
+# chsec -f /etc/secvars.cfg -s groups -a domainlessgroups=true
+
+2) Created an LDAP user whose primary group is on LDAP only
+# lsldap -a passwd test123
+dn: uid=test123,ou=People,cn=aixdata
+uidnumber: 215
+homedirectory: /home/test123
+isadministrator: false
+loginshell: /usr/bin/ksh
+uid: test123
+cn: test123
+objectclass: posixaccount
+objectclass: account
+objectclass: shadowaccount
+objectclass: aixauxaccount
+objectclass: ibm-securityIdentities
+objectclass: top
+hostlastunsuccessfullogin: loopback
+ixtimelastunsuccessfullogin: 1406913402
+terminallastunsuccessfullogin: /dev/pts/1
+shadowlastchange: 16284
+userpassword: {crypt}7NJB.cEpP8AMI
+passwordchar: !
+hostlastlogin: localhost
+ixtimelastlogin: 1407271951
+terminallastlogin: /dev/pts/3
+unsuccessfullogincount: 0
+gidnumber: 204 <--- gidnumber 204 corresponds to "testldap" group
+
+3) Created same local user whose primary group is in /etc/group only
+# grep test123 /etc/passwd
+test123:*:215:202::/home/test123:/usr/bin/ksh
+-- gid 202 corresponds to "testloc" group in /etc/group file
+
+- My user has SYSTEM=LDAP and registry=LDAP in /etc/security/user file
+
+- My group details
+testloc is a local group in /etc/group
+# grep testloc /etc/group
+testloc:!:202:test123
+
+testldap is a group defined only in LDAP
+# grep testldap /etc/group
+# lsgroup testldap
+testldap id=204 admin=false users=test123,locusr registry=LDAP
+
+4) Test
+- Here's lsuser of LDAP user
+# lsuser -a id pgrp groups registry SYSTEM test123
+test123 id=215 pgrp=testldap groups=testldap,staff,testloc registry=LDAP SYSTEM=LDAP
+
+- Here's lsuser of local user
+# lsuser -R files -a id pgrp groups registry SYSTEM test123
+test123 id=215 pgrp=testloc groups=testloc,staff,testldap registry=LDAP SYSTEM=LDAP
+
+Note that the local user also picks up the group membership on LDAP and vice versa.
+
+The local and LDAP groups are defined in the same format and fashion as they have always been configured. Previously you could not mix local and LDAP group membership, the latest AIX code allows you to do so.

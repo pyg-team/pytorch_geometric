@@ -1,0 +1,205 @@
+Title: IBM PI33520: CICS PA PERFORM HDB HOUSEKEEPING CAN SOMETIME GENERATE EXTRA INVALID CHARACTERS AFTER THE PLAN NAME AT THE END DSN COMMAND. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The job step to delete expired DB2 Table Rows is generated with
+   invalid characters after the plan name at the end of the DSN
+   command
+   
+   For example:
+   
+   DSN SYSTEM(DB1I)
+   RUN PROGRAM(DSNTIAD) -
+   LIB('DSN910.DB0I.RUNLIB.LOAD') PLAN(DSNTIA) A0
+   
+   
+   DCC47CEDFFF4CCFC4DEDDCC4DDCC754DDCD4CEDECC51CF144444444444444444
+   392DD425910B4209B945392B3614DD07315D425391D610800000000000000000
+   
+                                               ||
+                                               ||
+                                               ||--- Invalid chars
+   
+   
+   This will only occur when the length of the values entered for
+   "DSNTIAD Plan Name" and "DB2 Load Library", in the CICS PA
+   Profile (DB2 Settings) is 29 characters.
+   
+   For example:
+   
+   DSNTIAD Plan Name  . .DSNTIA                    - 6 chars
+   DB2 RUNLIB Library . .'DSN910.DB0I.RUNLIB.LOAD' - 23 chars
+   
+   (not including quote marks)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually edit the job to change the extra characters to spaces
+   x'40'
+   
+   or
+   
+   Change length of "DSNTIAD Plan Name" or "DB2 RUNLIB Library" so
+   that the length of both strings added together does not total 29
+   characters
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of CICS PA V5.2                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: HDB Housekeeping job failed because the *
+   *                      JCL contained invalid hex characters in *
+   *                      the RUNTIAD job step.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   HDB Housekeeping JCL failed because:-
+   1. It contains invalid hex characters in RUNTIAD job step.
+      The invalid hex values show at the end of LIB(   ) PLAN( )
+      when generating HDB Housekeeping JCL.
+   2. Data Set Prefix didn't apply to DB2 RUNLIB when CICSPA
+      generated HDB Housekeeping JCL.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR corrects
+   1. Invalid hex characters generated at the end of LIB('..')
+      PLAN(..) line by cleaning the output work area properly.
+   2. Applying the Data Set Prefix properly.
+   52CY
+   52EY
+   52KY
+   520Y
+   CPAHDHSK
+   CPAHDXSD
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI33520
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS PERF ANALY
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y2300
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-27
+   
+   
+ * CLOSED DATE
+   2015-02-06
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI24999 UI25000 UI25001 UI25002
+   
+   
+
+MODULES/MACROS
+ *  CPAHDHSK CPAHDXSD
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS PERF ANALY
+   
+   
+ * FIXED COMPONENT ID
+   5655Y2300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R52C PSY UI25000 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI25000]
+   UP15/02/11 P F502
+   
+   
+ * R52E PSY UI25001 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI25001]
+   UP15/02/11 P F502
+   
+   
+ * R52K PSY UI25002 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI25002]
+   UP15/02/11 P F502
+   
+   
+ * R520 PSY UI24999 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI24999]
+   UP15/02/11 P F502
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

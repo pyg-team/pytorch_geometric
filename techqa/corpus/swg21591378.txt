@@ -1,0 +1,74 @@
+Title: IBM Can property extension override default LDAP attributes' values? - United States
+
+Text:
+property extension; ldap; attribute; override; extend; preferredlanguage; CWWIM0511E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+How do you override default LDAP attributes' values, such as preferredLanguage, in IBM WebSphere Portal?
+
+SYMPTOM
+Virtual Member Manager's (VMM) property extension database is designed to only extend, not override, the user registry's attributes. Per the Information Center: 
+
+"When you configure a property extension database, you effectively extend the user registry to make new attributes available as part of your portal user profile." 
+
+Therefore, VMM cannot store default LDAP attributes' values in property extension. For example, property extension cannot contain a value for preferredLanguage to override the preferredLanguage value stored in LDAP. 
+
+If you try to implement such a configuration, two problems may occur: 
+
+1. If you try to add preferredLanguage as a property to be stored in property extension, via the ConfigEngine task wp-add-la-property, the task will fail with (from ConfigTrace.log): 
+
+[wplc-add-property] com.ibm.websphere.wim.exception. 
+
+SchemaAlreadyExistException: CWWIM0511E The 'preferredLanguage' 
+
+property type is already defined for the 'PersonAccount' entity type. 
+
+[wplc-add-property] at com.ibm.ws.wim.SchemaManager. 
+
+... 
+
+BUILD FAILED 
+
+ 
+
+2. VMM may attempt to write preferredLanguage to the LDAP, resulting in: 
+
+LDAP: error code 50 
+
+This could occur regardless of whether you have configured VMM's LDAP definition to treat preferredLanguage an unsupported (from wimconfig.xml): 
+
+<config:propertiesNotSupported name="preferredLanguage"/>
+
+CAUSE
+VMM property extension is working as designed.
+
+
+
+RESOLVING THE PROBLEM
+If your user repository is read-only, your application must be designed with full consideration of VMM's design. 
+
+ 
+
+For example, given the requirements: 
+
+ * Your LDAP is read-only. 
+ * You need to store a preferred language for individual users. 
+ * You need to render pages according to its value.
+
+
+Then you would need to implement a custom solution like: 
+
+ * Add a custom property to VMM's property extension database. For example, preferredLanguageCustom. 
+ * Store preferred language values in the custom property. 
+ * Encode the preferred language into the WebSphere Portal URLs based on preferredCustomLanguage's value.
+
+RELATED INFORMATION
+#Property Extension [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Configuring_a_property_extension_database_on_AIX_wp7]
+Language Selection [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Selecting_and_changing_the_language_wp7]
+Encoding Language in URL [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Dynamically_changing_the_language_during_the_session_wp7]
+
+
+
+
+ * 
+ *

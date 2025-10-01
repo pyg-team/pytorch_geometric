@@ -1,0 +1,198 @@
+Title: IBM IC87188: SAMETIME CONNECT CLIENT CRASH (JVM TERMINATED. EXIT CODE=8096) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  -----------------------------------------
+   Eclipse
+   -----------------------------------------
+   JVM terminated. Exit code=8096
+   
+   ....
+   trace-log-0.xml
+   <CommonBaseEvent creationTime="2008-05-20T10:12:40.006-04:00"
+   globalInstanceId="ELc0a8010f00011a06acb25800000002"
+   msg="BundleEvent STARTED"
+   severity="10" version="1.0.1">
+    <extendedDataElements name="CommonBaseEventLogRecord:level"
+   type"Java heap
+   almost exhausted"="noValue">
+     <children name="CommonBaseEventLogRecord:name" type="string">
+   
+      <values>INFO</values>
+     </children>
+   ....
+   javacore file
+   
+   1XMCURTHDINFO  Current Thread Details
+   NULL           ----------------------
+   3XMTHREADINFO      "main" TID:0x00214E00, j9thread_t:0x003452BC,
+   state:R, prio=6
+   3XMTHREADINFO1            (native thread ID:0x774, native
+   priority:0x6, native
+   policy:UNKNOWN)
+   4XESTACKTRACE          at
+   org/eclipse/swt/internal/win32/OS.PeekMessageW(Native
+   Method)
+   4XESTACKTRACE          at
+   org/eclipse/swt/internal/win32/OS.PeekMessage(Bytecode
+   PC:12(Compiled Code))
+   4XESTACKTRACE          at
+   org/eclipse/swt/widgets/Display.readAndDispatch(Bytecode
+   PC:25(Compiled Code))
+   4XESTACKTRACE          at
+   org/eclipse/ui/internal/Workbench.runEventLoop(Bytecode PC:9)
+   4XESTACKTRACE          at
+   org/eclipse/ui/internal/Workbench.runUI(Bytecode
+   PC:225)
+   4XESTACKTRACE          at
+   org/eclipse/ui/internal/Workbench.createAndRunWorkbench(Bytecode
+   PC:11)
+   4XESTACKTRACE          at
+   org/eclipse/ui/PlatformUI.createAndRunWorkbench(Bytecode PC:2)
+   4XESTACKTRACE          at
+   com/ibm/rcp/personality/framework/internal/RCPApplication.run(By
+   tecode PC:125)
+   4XESTACKTRACE          at
+   org/eclipse/core/internal/runtime/PlatformActivator$1.run(Byteco
+   de PC:221)
+   4XESTACKTRACE          at
+   org/eclipse/core/runtime/internal/adaptor/EclipseAppLauncher.run
+   Application(Ecli
+   pseAppLauncher.java:92)
+   4XESTACKTRACE          at
+   org/eclipse/core/runtime/internal/adaptor/EclipseAppLauncher.sta
+   rt(EclipseAppLau
+   ncher.java:68)
+   4XESTACKTRACE          at
+   org/eclipse/core/runtime/adaptor/EclipseStarter.run(EclipseStart
+   er.java:400)
+   4XESTACKTRACE          at
+   org/eclipse/core/runtime/adaptor/EclipseStarter.run(EclipseStart
+   er.java:177)
+   4XESTACKTRACE          at
+   java/lang/reflect/AccessibleObject.invokeL(Bytecode
+   PC:4)
+   4XESTACKTRACE          at
+   java/lang/reflect/Method.invoke(Bytecode PC:369)
+   4XESTACKTRACE          at
+   org/eclipse/core/launcher/Main.invokeFramework(Main.java:336)
+   4XESTACKTRACE          at
+   org/eclipse/core/launcher/Main.basicRun(Main.java:280)
+   4XESTACKTRACE          at
+   org/eclipse/core/launcher/Main.run(Main.java:977)
+   4XESTACKTRACE          at
+   com/ibm/rcp/core/internal/launcher/Main.startLaunch(Main.java:89
+   5)
+   4XESTACKTRACE          at
+   com/ibm/rcp/core/internal/launcher/Main.main(Main.java:1313)
+   4XESTACKTRACE          at
+   java/lang/reflect/AccessibleObject.invokeV(Bytecode
+   PC:4)
+   4XESTACKTRACE          at
+   java/lang/reflect/Method.invoke(Bytecode PC:158)
+   4XESTACKTRACE          at com/ibm/oti/vm/JarRunner.main(Bytecode
+   PC:121)
+   NULL
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue was found to be caused by Kensington MouseWorks
+   software, and was
+   resolved by disabling the following startup application using
+   msconfig:
+   
+   kmw_run.exe kmw_run.exe All Users
+   HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  PMR was closed as issue was due to third party software.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC87188
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS EXPEDITOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724R0900
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-15
+   
+   
+ * CLOSED DATE
+   2013-05-08
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    LO38894
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,104 @@
+Title: IBM ITCAM4Tx ISM on Linux - run ISM nco monitor as non root user - United States
+
+Text:
+71ISM-CONF; 71ISM-GEN; 71ISM-TS TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to run nco_m_icmp or nco_m_dhcp for example as non-root account on Linux system? 
+
+CAUSE
+Some ISM monitors (DHCP, ICMP, TRANSX) must be run as root because they use specific privileged OS calls. 
+For nco_p_ping executable, setting a setuid is sufficient to run it as a non-root user id.
+-rwsr-xr-x 1 root admin 82916 Apr 22 2010 nco_p_ping
+but nco_p_ping is a probe, and not a monitor.
+
+For ICMP or DHCP monitor for example, using only setuid command is not sufficient. When trying to start ICMP nco monitor, you get in icmp.log file the following message : "Error: This monitor requires root privileges to run"
+
+
+ANSWER
+Here is an example of the steps that can be followed in order to possibly run successfully the monitors from a non root account : 
+
+ 
+
+possible current settings: 
+
+[root@ ~]# cd /opt/IBM/ITM/lx8263/is/platform/linux2x86/bin 
+
+[root@ bin]# ls -l 
+
+… 
+
+-rwxr-xr-x 1 ncoadmin admin 918572 Jan 24 15:51 nco_m_dhcp 
+
+-rwxr-xr-x 1 ncoadmin admin 999824 Jan 24 15:51 nco_m_icmp 
+
+… 
+
+ 
+
+change permissions and setuid: 
+
+[root@ bin]# chown root nco_m_icmp 
+
+[root@ bin]# chown root nco_m_dhcp 
+
+[root@ bin]# chmod u+s nco_m_icmp 
+
+[root@ bin]# chmod u+s nco_m_dhcp 
+
+ 
+
+verification: 
+
+[root@ bin]# ls -l 
+
+… 
+
+-rwsr-xr-x 1 root admin 918572 Jan 24 15:51 nco_m_dhcp 
+
+-rwsr-xr-x 1 root admin 999824 Jan 24 15:51 nco_m_icmp 
+
+… 
+
+ 
+
+add lib path to ld.so.conf file: make sure you use double quotes in the below command on Linux... 
+
+[root@ bin]# echo ”/opt/IBM/ITM/lx8263/is/platform/linux2x86/lib” >> /etc/ld.so.conf 
+
+[root@ bin]# cat /etc/ld.so.conf 
+
+include ld.so.conf.d/*.conf 
+
+/opt/IBM/ITM/lx8263/is/platform/linux2x86/lib 
+
+ 
+
+run ldconfig command: 
+
+[root@ bin]# ldconfig 
+
+ 
+
+
+change monitor log/err files permissions: 
+
+[root@ ~]# cd /opt/IBM/ITM/lx8263/is/log 
+
+chmod 777 icmp.* 
+
+chmod 777 dhcp.* 
+
+ 
+
+After these steps are completed, you should be able to start the monitor executables (/opt/IBM/ITM/lx8263/is/bin/nco_m_dhcp and /opt/IBM/ITM/lx8263/is/bin/nco_m_icmp) as non root, as "ncoadmin" user for example.
+
+
+
+HISTORICAL NUMBER
+ 11340
+124
+848. 
+
+PRODUCT ALIAS/SYNONYM
+ itcam itcam4tx itcamfortx Internet Services Monitoring

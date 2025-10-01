@@ -1,0 +1,37 @@
+Title: IBM Operational Decision Manager z/OS 8.8.1.3 Fix Pack - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This page contains APAR and PTF information for installing IBM Operational Decision Manager z/OS 8.8.1.3. 
+
+DOWNLOAD DESCRIPTION
+This page provides APAR and PTF information for IBM Operational Decision Manager z/OS 8.8.1.3. Use the information to download and install PTFs from IBM Shopz [https://www-304.ibm.com/software/shopzseries/ShopzSeries_public.wss].
+
+
+Installation instructions
+Use SMP/E RECEIVE and APPLY to install the PTFs in your target SMP/E repository. When you are satisfied with the installation, use SMP/E ACCEPT.
+
+Notes 
+
+ * The PTFs are entitled. Only customers who have purchased Operational Decision Manager z/OS V8.8 can use the PTFs. 
+ * This page is for reference only. 
+ * The APAR numbers in the table are linked to description pages that include the PTF numbers. You can click the PTF numbers in the descriptions to find the PTFs in IBM Shopz [https://www-304.ibm.com/software/shopzseries/ShopzSeries_public.wss].
+
+
+
+APAR/PTF table Release Date FMID Product APAR PTF 22 Sept. 2017 HDM8810 ODM Base for z/OS PI86739 UI50491 22 Sept. 2017 HDM8811 ODM & Business Rules Common for z/OS PI86757 UI50492 22 Sept. 2017 JDM8812 Events Components for z/OS PI86783 [http://www.ibm.com/support/docview.wss?uid=swg1PI77975] UI50494 22 Sept. 2017 HDM8813 Rules Components for z/OS PI86789 [http://www.ibm.com/support/docview.wss?uid=swg1PI77977] UI50521 22 Sept. 2017 HDM8813 Rules Components for z/OS PI86790 UI50522 22 Sept. 2017 HDM8813 Rules Components for z/OS PI86797 UI50523 22 Sept. 2017 JDM8814 Decision Center for z/OS PI86809 [http://www.ibm.com/support/docview.wss?uid=swg1PI77987] UI50524 22 Sept. 2017 JDM8814 Decision Center for z/OS PI86826 [http://www.ibm.com/support/docview.wss?uid=swg1PI78015] UI50525 22 Sept. 2017 JDM8815 Insights Components for z/OS PI86828 UI50526 22 Sept. 2017 JDM8815 Insights Components for z/OS PI86829 UI50527 DOWNLOAD PACKAGE
+
+
+
+PROBLEMS SOLVED
+Fix List for IBM Operational Decision Manager [http://www.ibm.com/support/docview.wss?uid=swg27023767]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Decision Center for z/OS Business Integration IBM Decision Server for z/OS 
+
+ [/support/docview.wss?uid=swg24044042&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24044042&aid=2]Problems (APARS) fixed
+PI86739, PI86757 , PI86783 , PI86789, PI86790, PI86797, PI86809, PI86826, PI86828, PI86829

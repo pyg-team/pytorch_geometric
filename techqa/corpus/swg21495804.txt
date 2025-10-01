@@ -1,0 +1,159 @@
+Title: IBM Guidelines for managing IBM Rational product licenses with FlexNet - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ All information about licenses management for IBM Rational Products (such as Synergy, Change...) is detailed in the "IBM Rational License Server TL Licensing Guide".
+However, this technote intends on highlighting reoccurring issues encountered by licenses managers dealing with FlexNet. 
+
+SYMPTOM
+"I believe I've properly set up my licenses files for Rational Synergy and Rational Change (telelogic.opt, license.dat), however some of them seem to be overlooked. I don't know how I should start investigating."
+
+DIAGNOSING THE PROBLEM
+1. Does your environment grant licenses to competing versions of Rational software?
+
+
+If your licenses server serves several versions of a product simultaneously (for example: Synergy 6.5 and 7.1), then please consult Technote 1468613 [http://www-01.ibm.com/support/docview.wss?uid=swg21468613]. 
+
+ 
+
+ 
+
+2. Understand the information from lmdiag or lmstat 
+
+You are aware that the FlexNet/FlexLm command "lmutil lmdiag" (or "lmutil lmstat") produces a report of your licenses availability. The use of these commands is detailed in the FlexNet/FlexLm user guide. 
+
+However, the output mustn't be misunderstood: You might not be able to see all the licenses present in your license.dat file. 
+
+Here is an excerpt of the FlexNet/FlexLm manual : 
+
+
+=======================
+"lmstat prints information that it receives from the license server system; therefore, it does not report on unserved licensessuch as uncounted licenses. To report on an uncounted license, the license must be added to a served license file and the application must be directed to use the license server system for that license file (via @host, port@host or USE_SERVER). Queued users and licenses shared due to duplicate grouping are also not returned by lmstat."
+=======================
+
+
+ 
+
+In other words, when it comes to Rational products, the only way to double-check why some licenses seem to be overlooked by the server is to study your "license.dat" and "telelogic.opt" files yourself. 
+
+ 
+
+ 
+
+ 
+
+3. Mix user-based and floating licenses with caution 
+
+There are some restrictions to mixing those 2 types of licenses. 
+
+They are detailed in the "IBM Rational License Server TL Licensing Guide" [http://publib.boulder.ibm.com/infocenter/rsdp/v1r0m0/topic/com.ibm.help.download.tls.doc/pdf_2.0/IBM%20Rational_Licensing_Guide.pdf]. See section "Mixing user-based and floating licenses". 
+
+Section 4 of this Technote gives you a more practical approach to this. 
+
+ 
+
+Note: Also, make sure you have no obsolete "Per user" licenses left (see Technote 1468613 about this topic). 
+
+ 
+
+ 
+
+ 
+
+4. Study thoroughly the use of the keywords "sort", "version", and "include"/"exclude" 
+
+ * 
+ * 4.1.
+ *  About "sort"
+ * Its use is detailed in the "IBM Rational License Server TL Licensing Guide" [http://publib.boulder.ibm.com/infocenter/rsdp/v1r0m0/topic/com.ibm.help.download.tls.doc/pdf_2.0/IBM%20Rational_Licensing_Guide.pdf]. See section "Mixing user-based and floating licenses". 
+ * In a nutshell, the goal of this keyword is to force a specific order of licenses checkout, by choosing an arbitrary precedence for each entry in the license file. 
+ * This precedence is chosen by applying a "weight" to the entry. For example, "100" is the default sort order value of an entry. 
+ * Having said that, don't forget that other precedence rules apply, such as the issue date, "feature" before "increment", etc. They are detailed in the same section. However, the "sort" rule supersedes the other rules. 
+ *  
+ * 4.2. About "include", "exclude" and groups 
+ * Their use is detailed in the "IBM Rational License Server TL Licensing Guide" [http://publib.boulder.ibm.com/infocenter/rsdp/v1r0m0/topic/com.ibm.help.download.tls.doc/pdf_2.0/IBM%20Rational_Licensing_Guide.pdf]. See sections "The INCLUDE statement in the options file", "The EXCLUDE statement in the options file", "The GROUP statement in the options file". 
+ *  
+ * Both "include" and "exclude" keywords are meant to grant or forbid licenses checkouts from a specific feature for the specified users. 
+ * Considering the complexity of precedence rules, you might end up having to do some "micro management" with your licenses, to have a complete control over who gets licenses and who doesn't. Therefore, you'll have to cleverly devise how you split your users into groups, that you will then include or exclude. 
+ * Note: The GROUP feature of "telelogic.opt" is very basic and not hierarchical (you cannot include a group into another group). 
+ *  
+ * The more groups you create, and the more exclusive they become of one another (e.g. an INCLUDE applying to the same group as another EXCLUDE), the more you'll have to pay attention to how you dispatch users across groups. 
+ * You might end up having to split users into many groups to get the expected checkout behaviour for each group. If you use too many "include" and "exclude" simultaneously, you might end up finding it difficult to have an overview of the checkout "permissions" of each group. Hence making yourself vulnerable to human mistakes. 
+ * However, this is sometimes necessary when you fail to make sense of the checkout precedence rules devised in section 4.1. 
+ *  
+ * Note: EXCLUDE supersedes INCLUDE. 
+ * Note: INCLUDE is required for all USER_BASED features 
+ * Note: Every USER_BASED license should be assigned to a user. This is very important. See "Typical situation 2" 
+ *  
+ * Typical situation 1: 
+ *  Some users are being granted floating licenses when you'd like them to receive user_based licenses, you fail to solve the problem even by using "SORT" combined with "VERSION". In that case, you can combine "include" and "exclude" keywords to allow the checkout of user_based licenses but forbid the checkout of floating licenses for that group of users. A serious drawback to this strategy is that you lose the benefit of floating licenses when all user_based licenses are taken, as you have explicitly forbidden the use of the floating licenses. 
+ * 
+ * Typical situation 2: 
+ *  Your "telelogic.opt" file offers both USER_BASED and FLOATING licenses A user that wasn't assigned a USER_BASED license tries to log onto the product It received neither a USER_BASED license nor a floating license, and therefore it can't connect. This happens when you forgot to assign some of your USER_BASED licenses to at least one group or one user inside your "telelogic.opt" file. The licenses server will try to give away the non-assigned USER_BASED licenses to the user who's trying to connect, and, since the user is not part of the entitled users for this license, it will be rejected. It won't even get a floating license. So, always make sure that all your USER_BASED licenses are assigned to a user or a group inside "telelogic.opt". 
+ * 
+ * 4.3. About "version" 
+ * Its use is illustrated in the "IBM Rational License Server TL Licensing Guide" [http://publib.boulder.ibm.com/infocenter/rsdp/v1r0m0/topic/com.ibm.help.download.tls.doc/pdf_2.0/IBM%20Rational_Licensing_Guide.pdf]. See section "General example for user based licenses". 
+ * This keyword is used in pair with "include" (or "exclude"). Indeed, when you use "include" to refer to an entry that has several "FEATURE" or "INCREMENT" lines for the same feature, then you must use a unique identifier to tell the license server which of those lines your "include" is referring to. This is done with "version=XXXXXX". 
+ * XXXXXX must correspond to the code appearing on the FEATURE/INCREMENT line you wish to use from "license.dat" 
+ *  
+ * Example: 
+   This ensures that the licenses server will give a license from entry "INCREMENT" to user "user1" (as opposed to a license from entry "FEATURE"). 
+ *  
+   In license.dat: 
+   
+   
+   =====================
+   FEATURE F1 telelogic 2008.0530 31-Dec-2008 10 USER_BASED etc.
+   INCREMENT F1 telelogic 2008.103131-Dec-2008 10 USER_BASED etc.
+   =====================
+   
+   
+   In telelogic.opt: 
+   
+   
+   =====================
+   INCLUDE F1:VERSION=2008.1031USER user1
+   =====================
+   
+   
+   
+ * 
+ * 
+ * 
+
+
+5. Run tests Try to enable and disable some of the keywords mentioned in the previous section, and then perform manual license checkouts. You will see for sure if your changes worked the way you expected. 
+
+In particular, use "lmutil lmdiag" to see for yourself what type of license a specific user received when he checked in. 
+
+Example : 
+
+
+=====================
+"SYNERGY-CMBase" v2011.0305, vendor: telelogic
+floating license
+user1 XXXXXXX (v2009.0602) (licenseserver/19353 XXX), start Mon 2/30 8:30
+user2 XXXXXXX (v2009.0602) (licenseserver/19353 XXX), start Mon 2/30 8:31
+=====================
+
+
+This reveals that users user1 and user2 received floating licenses when they checked in, and it details from what "license.dat" entry those licenses have been checked out. 
+
+Please note that the same "license.dat" entry can appear several times in the report, but can be interleaved with other checkouts. from other "license.dat" entries. There is no way to predict the display order. 
+
+
+
+
+
+
+RELATED INFORMATION
+#Rational License Server TL Licensing Guide [http://publib.boulder.ibm.com/infocenter/rsdp/v1r0m0/topic/com.ibm.help.download.tls.doc/pdf_2.0/IBM%20Rational_Licensing_Guide.pdf]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Change Licensing AIX, Linux, Solaris, Windows 5.0, 5.1, 5.2, 5.2.0.2

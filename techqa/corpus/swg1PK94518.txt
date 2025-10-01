@@ -1,0 +1,129 @@
+Title: IBM PK94518: Documentation defect: Login to switch user database on CQWeb 7.1 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  We found a documentation defect in CQ 7.1 Information Center:
+   
+   https://publib.boulder.ibm.com/infocenter/cqhelp/v7r1m0/topic/co
+   m.ibm.rational.clearquest.user_web.doc/topics/t_log_on_cqw.htm [https://publib.boulder.ibm.com/infocenter/cqhelp/v7r1m0/topic/com.ibm.rational.clearquest.user_web.doc/topics/t_log_on_cqw.htm]
+   
+   'Select a schema repository from the Repository list. If you hav
+   e more than one database subscription, you are prompted to selec
+   t a database from the Database list. You can subsequently change
+    your database selection without having to log on again.'
+   
+   However in CQWeb 7.1 we cannot switch user database under the sa
+   me schema repo without re-login.
+   
+   Same defect exists in Chinese CQWeb welcome page and the help ht
+   ml. It mentioned a new feature that user can switch user databas
+   es without authentication.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The "Logging on to ClearQuest Web" help topic included
+   incorrect information about changing user databases without
+   re-authenticating.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available in ClearQuest 7.1.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK94518
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3600
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-24
+   
+   
+ * CLOSED DATE
+   2009-12-15
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724G3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSN
+   UP

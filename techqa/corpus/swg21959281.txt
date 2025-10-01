@@ -1,0 +1,17 @@
+Title: IBM ITCAM for SOA KD4SDMS database size grows - United States
+
+Text:
+CAMSOAALL CAMSOADB CAMSOAPERF REQMETRICS RESPMETRICS kd4TrimDB2db TECHNOTE (FAQ)
+
+QUESTION
+ As the KD4SDMS grows unbounded, is there a way to regularly prune it? 
+
+ANSWER
+Regarding the older release ITCAM for SOA 7.1.1, there is no a mechanism to automatically regularly prune the KD4SDMS database. The following Wiki page has been published on the topic:
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli+Composite+Application+Manager/page/Pruning+SDMS+Relationship+Metrics+Tables [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli+Composite+Application+Manager/page/Pruning+SDMS+Relationship+Metrics+Tables]
+
+To keep only the latest 24 hours every day (regular pruning), you can schedule a daily job to run the kd4TrimDB2db utility provided above. 
+
+As for the newer ITCAM for SOA 7.2, there is a cleanup task that runs on the TEPS host where SDMS database is installed. It deletes REQMETRICS and RESPMETRICS table rows where SRTTIME (start of period) is more than 24 hours ago. So these two tables, which are responsible for most of KD4SDMS storage occupation, should not grow unbounded anymore.
+
+NOTE: ITCAM for SOA 7.1.1 is Out-Of-Support since 2015 April 30.

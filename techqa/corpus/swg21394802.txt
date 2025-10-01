@@ -1,0 +1,63 @@
+Title: IBM CYNVE0002E error when logging on to Managing Server. - United States
+
+Text:
+CAMADALL PAGE_CUSTOMIZE TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ CYNVE0002E error logging into Managing Server due to OCTIGATE database table PAGE_CUSTOMIZE is missing. 
+
+SYMPTOM
+These messages will be seen in the trace-ma.log: 
+
+<Trace Level="ERROR"> 
+<Time Millis="1247670289492"> 2009-07-15 15:04:49.492+00:00</Time> 
+<Server Format="IP">nbaxb152</Server> 
+<ProductId>CYN</ProductId> 
+<Component>CYN.trc.ve.method</Component> 
+<ProductInstance>6</ProductInstance> 
+<LogText><![CDATA[SQL : SELECT 
+PC.USERID,PC.PAGENAME,PC.TABLENAME,PC.SORTFIELD,PC.SORTORDER,PC.PAGESIZE
+FROM PAGE_CUSTOMIZE PC WHERE PC.USERID=? AND PC.PAGENAME=? AND 
+PC.TABLENAME=?]]></LogText> 
+<Source 
+FileName="com.ibm.tivoli.octigate.pagecustomize.PageCustomizeManagerBean
+" 
+Method="com.ibm.tivoli.octigate.pagecustomize.PageCustomizeManagerBean.f
+indPageCustomizeByUseridPageTableName(int userid,String pagename,String 
+tablename)"/> 
+<Thread>WebContainer : 6</Thread> 
+<Principal>nbaxb152/149.131.121.186</Principal> 
+</Trace> 
+
+
+CAUSE
+Database table PAGE_CUSTOMIZE table is missing.
+
+
+ENVIRONMENT
+DB2, Oracle
+
+
+
+DIAGNOSING THE PROBLEM
+Have customer logon to database with schema owner AMUSER - db2 connect to octigate. Issue command: DB2 list tables. You will not see the table PAGE_CUSTOMIZE 
+
+
+
+RESOLVING THE PROBLEM
+The error is related to the table PAGE_CUSTOMIZE missing which most likely occurred because 
+
+updateDB was set to false when Fix Pack 4 or later was installed. 
+
+The update DB sql script for different code levels can be found in 
+MS_HOME/update/updateDb. Please run the sql script that is appropriate for your situation. 
+For example, if you are using Oracle for the MS database and have Fix Pack 4 installed, 
+run the sql script oracleSQL_6.1.0.4 which has the fix for the error seen. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM4AD ITCAM for App Diagnostics

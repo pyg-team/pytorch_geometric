@@ -1,0 +1,27 @@
+Title: IBM ATTLS TCP/IP job log does not show system SSL crypto messages - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When AT-TLS is initialized, the following expected messages do not appear in the TCPIP joblog:
+System SSL: SHA-1 crypto assist is available 
+System SSL: SHA-224 crypto assist is available 
+System SSL: SHA-256 crypto assist is available 
+System SSL: SHA-384 crypto assist is available 
+System SSL: SHA-512 crypto assist is available 
+System SSL: DES crypto assist is available 
+System SSL: DES3 crypto assist is available 
+System SSL: AES 128-bit crypto assist is available 
+System SSL: AES 256-bit crypto assist is available 
+System SSL: ICSF FMID is HCR7770 
+System SSL: PCI cryptographic accelerator is not available 
+System SSL: PCIX cryptographic coprocessor is available 
+System SSL: Public key hardware support is available 
+System SSL: Max RSA key sizes in hardware - signature 4096, encryption 4096 
+
+RESOLVING THE PROBLEM
+Add the following JCL card to your TCPIP PROC JCL:
+//STDERR DD SYSOUT = * 
+
+When you re-test, you should now see the system SSL crypto messages in your TCPIP joblog.

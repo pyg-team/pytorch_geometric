@@ -1,0 +1,124 @@
+Title: IBM HE11874: Changing the table border does not reflect in the Atlas Hold Notice Content - United States
+
+Text:
+  A FIX IS AVAILABLE
+Download IBM Atlas Policy Suite Version 6.0.3 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24041515]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If existing Hold Notice content contains tables defined for
+   formatting purposes (table border=0),  the content
+   will show all these formatting tables with a black border after
+   upgrading to Atlas 6.0.1.4. Changing the table border using the
+   editor does not have any effect in the content
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Tables with border set to zero were used in Hold Notices in
+   Atlas V5 to achieve the required alignment of text. After Atlas
+   is upgraded to V6, these notices show up with 1px table border
+   in preview; and when they are sent from V6, notices are also
+   received with table borders.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix is available now from FixCentral in 6.0.3.3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE11874
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-02
+   
+   
+ * CLOSED DATE
+   2016-01-05
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY
+   UP

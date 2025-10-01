@@ -1,0 +1,151 @@
+Title: IBM IC52428: WMQ 53 HP NONSTOP SSL CHANNELS PROBLEMS WITH SSLPEER AND SSLCAUTH - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ for HP NonStop Server v5.3.1, Fix Pack 5.3.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24017102]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24025461]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24027369]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.8 [http://www-01.ibm.com/support/docview.wss?uid=swg24030009]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When attempting to start and SSL-configured channel and the
+   entropy daemon is not running (or has not been running long
+   enough), the following error messages get generated:-
+   "WebSphere MQ was unable to display an error message 24064064."
+   New message amq9617.msg implemented
+   Following an SSL channel error, an error message referencing
+   GSKIT was being generated.   Openssl Specific messages have been
+   implemented.
+   The runmqsc channel status display did not correctly show the
+   distinguished name of the SSL peer queue manager.  The sslpeer
+   name is correctly displayed now.
+   If an invalid certificate is installed for a queue manager,  an
+   SSL channel start fails and produces the following message:
+   "WebSphere MQ was unable to display an error message 6065064"
+   The error is correctly identified as rrcE_SSL_BAD_CERT by the
+   security library but gets mismapped. Openssl specific messages
+   implemented with openssl reason codes and text
+   SSLCAUTH(optional) says that the 'client' end of an SSL
+   conversation (i.e. the caller channel) will not be authenticated
+   by the 'server' end (the responder channel).  In this case it is
+   valid for the client to not have a certificate available.  The
+   RP1 code correctly forced clients to have certificates in all
+   cases. The correct behavior is to require a client  certificate
+   only if the server wishes to authenticate the client   (i.e.
+   only if the server (responder) channel uses the
+   SSLCAUTH(REQUIRED).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *   Various defects described in the error
+   description.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   WMQ communications library code will be been
+   revised to improve the reporting of SSL errors from the OpenSSL
+   product. Further revisions will also correct the channel status
+   and channel definition SSLPEER defects.Certficate verification
+   logic within WMQ has been revised to work correctly with the
+   SSLPEER fixes previously described.
+   Correction released in WMQ V531 eFix3.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC52428
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ NSS MIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724A3901
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-04-12
+   
+   
+ * CLOSED DATE
+   2007-04-18
+   
+   
+ * LAST MODIFIED DATE
+   2007-04-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ NSS MIP
+   
+   
+ * FIXED COMPONENT ID
+   5724A3901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY
+   UP

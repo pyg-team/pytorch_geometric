@@ -1,0 +1,191 @@
+Title: IBM IV13720: COLLECTORINVENTORY AGENT CORES WHEN CERTAIN ENTRIES PRESENT IN CSV FILES - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Network Manager IP 3.9.0 Fix Pack 3, 3.9.0-TIV-ITNMIP-FP0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24033501]
+IBM Tivoli Network Manager IP 3.9.0 Fix Pack 4, 3.9.0-TIV-ITNMIP-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24034724]
+IBM Tivoli Network Manager IP Edition 3.9.0 Fix Pack 5, 3.9.0-TIV-ITNMIP-FP0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24037809]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the following entries are in CSV files for GenericCsv
+   Collector:
+   
+   devices.csv:92:1.0.0.66|MY60_AAA_BSC|MULTIPLEXER_OBJECT|MULTIPLE
+   XER|MY60
+   _BTD_BSC|0|
+   layer2Links.csv:165:MY60_BATHINDA_02,8,1.0.0.66,5
+   layer2Links.csv:305:MYNBHA01,10,1.0.0.66,11
+   
+   it causes CollectorInventory agent to core.
+   
+   When these entries are removed, the CollectorInventory agent
+   does not core.
+   
+   Randomly, the following lines appear in the trace:
+   
+   Wed Dec  7 11:54:41 2011  Warning: A generic error has occurred
+   found in
+   ::ProcessEntities(), failed to add local nbr
+   *** glibc detected *** ncp_agent: free(): invalid pointer:
+   0xb7e02aac
+   ***
+   ======= Backtrace: =========
+   /lib/libc.so.6[0x3ac6c5]
+   /lib/libc.so.6(cfree+0x59)[0x3acb09]
+   /opt/IBM/tivoli/netcool/precision/platform/linux2x86/lib/libNCPB
+   ase.so.1
+   (_ZN9CRivUCharD1Ev+0x24)[0xf39644]
+   /opt/IBM/tivoli/netcool/precision/platform/linux2x86/lib/libNCPB
+   ase.so.1
+   (_ZN8CRivAtom11RAMakeCleanEv+0x7a)[0xf109ea]
+   /opt/IBM/tivoli/netcool/precision/platform/linux2x86/lib/libNCPB
+   ase.so.1
+   (_ZN8CRivAtomD1Ev+0x1d)[0xf10f3d]
+   /opt/IBM/tivoli/netcool/precision/platform/linux2x86/lib/libNCPB
+   ase.so.1
+   (_ZN13CRivAtomStore13DelRefCntAtomEP8CRivAtomb+0x4b)[0xf161eb]
+   
+   ********
+   
+   Customer rep has uploaded the cores and the output of gdb
+   against ncp_agent and the core.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Remove the three (3) entries above from the CSV files and
+   the collector processes without a problem.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ITNM-IP 3.9 on all platform                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * CollectorInventory Agent cores when duplicate entity         *
+   * EntPhysicalIndex field defined in entities.csv               *
+   *                                                              *
+   * PB60_BTD_BSC,3,9,BOARD 28,BOARD 28,2,28,,                    *
+   * --Duplicate                                                  *
+   * PB60_BTD_BSC,3,9,BOARD 29,BOARD 29,2,28,,                    *
+   * PB60_BTD_BSC,3,9,BOARD 30,BOARD 30,2,28,,                    *
+   * PB60_BTD_BSC,3,9,BOARD 30,BOARD 30,2,28,,                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The fix for this APAR is contained in the following          *
+   * maintenance packages:                                        *
+   * fix pack | 3.9.0-ITNMIP-FP0001                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem conclusion: This is caused by the duplication of the
+   EntPhysicalIndex field in the entities.csv
+   
+   Solution: We added data validation process in
+   GenericCsvCollector.pm to filter any duplication in
+   EntPhysicalIndex field. If there are any, we only accept the
+   first record and discard others with a warning message in the
+   GenericCsvCollector log.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV13720
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PREC DISCOVY
+   
+   
+ * REPORTED COMPONENT ID
+   5724O52DS
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-19
+   
+   
+ * CLOSED DATE
+   2012-02-14
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IV13719
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/PREC DISCOVY
+   
+   
+ * FIXED COMPONENT ID
+   5724O52DS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R390 PSY
+   UP

@@ -1,0 +1,227 @@
+Title: IBM PJ41704: WHEN FEDERAL INFORMATION PROCESSING STANDARD IS ENABLED THE EXPO RT SOLUTION USING CASE MANAGER ADMIN CLIENT FAIL WITH FNRPA9001E - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+IBM Case Manager V5.1.1 Fix Pack 3 for Linux for System z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-ZLINUX-FP003&source=SAR]
+IBM Case Manager V5.1.1 Fix Pack 3 for Windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-WIN-FP003&source=SAR]
+IBM Case Manager V5.1.1 Fix Pack 3 for Solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-SOLARIS-FP003&source=SAR]
+IBM Case Manager V5.1.1 Fix Pack 3 for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-LINUX-FP003&source=SAR]
+IBM Case Manager V5.1.1 Fix Pack 3 Client for Linux for System z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-CLIENT-ZLINUX-FP003&source=SAR]
+IBM Case Manager V5.1.1 Fix Pack 3 Client for Windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-CLIENT-WIN-FP003&source=SAR]
+IBM Case Manager V5.1.1 Fix Pack 3 Client for Solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-CLIENT-SOLARIS-FP003&source=SAR]
+IBM Case Manager V5.1.1 Fix Pack 3 Client for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-CLIENT-LINUX-FP003&source=SAR]
+IBM Case Manager V5.1.1 Fix Pack 3 Client for AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-CLIENT-AIX-FP003&source=SAR]
+IBM Case Manager V5.1.1 Fix Pack 3 for AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-AIX-FP003&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the "Use the United States Federal Information Processing
+   Standard (FIPS) algorithms" option is enabled in WebSphere
+   Application Server, the export solution using Case Manager
+   administration client (CMAC) fails with error code  FNRPA9001E.
+   
+   
+   The  WebSphere Application Server's SystemOut.log also show
+   following error:
+   ----------------------------------------------------------------
+   ---------------------------
+   [MM/DD/YY HH:MM:SS:sss TMZ] 00000030 SSLHandshakeE E  SSLC0008E:
+   Unable to initialize SSL connection.  Unauthorized access was
+   denied or security settings have expired.  Exception is
+   javax.net.ssl.SSLHandshakeException: Client requested protocol
+   SSLv3 not enabled or not supported
+   :
+   :
+   
+   The Case Manager administration client's log show the following
+   error:
+   ----------------------------------------------------------------
+   -----------------
+   FINER ddd MMM DD HH:MM:SS TMZ YYYY THROW
+   com.ibm.casemgmt.api.exception.CaseMgmtException  thrown while
+   executing method exportPages() of
+   com.ibm.ecm.configmgr.app.acm.properties.ContentEngineDiscoverer
+   Stack Trace follows (when available):
+   com.ibm.casemgmt.api.exception.CaseMgmtException: FNRPA9001E The
+   Business Space server is not available. Verify the URL, the
+   administrative user name, and the password.
+   :
+   :
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround:
+   ---------------
+   1. Temporally disable Federal Information Processing Standard
+   (FIPS).
+   2. Export the Solution.
+   3. Enable FIPS again.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * System Administrators and Business Analysts who export       *
+   * solutions using Case Manager administration client.          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When the "Use the United States Federal Information          *
+   * Processing Standard (FIPS) algorithms" option is enabled in  *
+   * WebSphere Application Server, the export solution operation  *
+   * using Case Manager administration client fails with error    *
+   * code  FNRPA9001E.                                            *
+   *                                                              *
+   * The  WebSphere Application Server's SystemOut.log also shows *
+   * the following error:                                         *
+   * ------------------------------------------------------------ *
+   * ------------------------------------                         *
+   * [MM/DD/YY HH:MM:SS:sss TMZ] 00000030 SSLHandshakeE E         *
+   * SSLC0008E:                                                   *
+   * Unable to initialize SSL connection.  Unauthorized access    *
+   * was                                                          *
+   * denied or security settings have expired.  Exception is      *
+   * javax.net.ssl.SSLHandshakeException: Client requested        *
+   * protocol SSLv3 not enabled or not supported                  *
+   * :                                                            *
+   * :                                                            *
+   *                                                              *
+   * The Case Manager administration client log shows the         *
+   * following error:                                             *
+   * ------------------------------------------------------------ *
+   * --------------------                                         *
+   * FINER ddd MMM DD HH:MM:SS TMZ YYYY THROW                     *
+   * com.ibm.casemgmt.api.exception.CaseMgmtException  thrown     *
+   * while                                                        *
+   * executing method exportPages() of                            *
+   * com.ibm.ecm.configmgr.app.acm.properties.ContentEngineDiscov *
+   * erer                                                         *
+   * Stack Trace follows (when available):                        *
+   * com.ibm.casemgmt.api.exception.CaseMgmtException: FNRPA9001E *
+   * The                                                          *
+   * Business Space server is not available. Verify the URL, the  *
+   * administrative user name, and the password.                  *
+   * :                                                            *
+   * :                                                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply the 5.1.1.2-ICM-IF001 or, later versions.              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.1.1.2-ICM-IF001. Users can now successfully export
+   solutions using the Case Manager administration client when the
+   FIPS option is enabled in WebSphere Application Server.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ41704
+   
+   
+ * REPORTED COMPONENT NAME
+   CASE MGR ADMIN
+   
+   
+ * REPORTED COMPONENT ID
+   5725A1502
+   
+   
+ * REPORTED RELEASE
+   511
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-08
+   
+   
+ * CLOSED DATE
+   2014-04-29
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PJ41751 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ41751]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CASE MGR ADMIN
+   
+   
+ * FIXED COMPONENT ID
+   5725A1502
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSN
+   UP
+   
+   
+ * R510 PSN
+   UP
+   
+   
+ * R511 PSY
+   UP

@@ -1,0 +1,185 @@
+Title: IBM PK71446: WTX DB ADAPTER DOES NOT HANDLE NVARCHAR CORRECTLY INJAPANESE AND IN DID, NVARCHAR IS ALWAYS CREATED WITH 'UNICODE LITTLE ENDIAN'. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When generating tree from Database Interface Designer , nvarchar
+   field is always created with 'Unicode Little Endian(not
+   recommended)' irrerespective of the character set specified in
+   the DID. This is with Japanese env.
+   
+   Also the WTX database adapter doesnot seem to handle the
+   nvarchar data correctly from SQL Server in the map in the
+   Japanese environment.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTXCQ - WTX00027270
+   AR / AR
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The OLEDB adapter handles Microsoft SQL Server nvarchar database
+   columns in either UNICODE Little Endian (UTF-16 LE) or
+   null-terminated (native) character sequences.  The encoding is
+   determined at run-time, depending on whether the associated type
+   tree has the column defined as Unicode or native.  Before this
+   fix, the adapter could only process one type of data (either
+   UTF-16 or native, but not both).  With this fix, the customer
+   can determine the best type of character encoding to use for a
+   nvarchar column that is stored on the backend database as
+   UNICODE LE, but typically retrieved in a native (e.g. single
+   byte) character sequence.
+   
+   Please note that the Database Interface Designer  (DBID) is used
+   to associate type trees with the DB adapter's input and output
+   card processing.  By default, the nvarchar database column will
+   be assigned a "native" encoding.
+   
+   However, by defining the WTX_HANDLE_NVARCHAR_AS_UNICODE_LE
+   environment variable with any value (e.g. set
+   WTX_HANDLEL_NVARCHAR_AS_UNICODEL_LE=1), the DBID will assign a
+   "UTF-16 Little Endian" type to the nvarchar database column.
+   This same variable will be checked at runtime, in order to
+   determine how to retrieve nvarchar database columns that are
+   returned from DBLookup/DBQuery/Get function calls.  When the
+   environment variable is undefined, any nvarchar fields will be
+   retrieved in a native format.  When the environment variable is
+   defined with any value, any nvarchar fields will be retrieved in
+   a UTF-16 LE format.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The OLEDB adapter handles Microsoft SQL Server nvarchar database
+   columns in either UNICODE Little Endian (UTF-16 LE) or
+   null-terminated (native) character sequences.  The encoding is
+   determined at run-time, depending on whether the associated type
+   tree has the column defined as Unicode or native.  Before this
+   fix, the adapter could only process one type of data (either
+   UTF-16 or native, but not both).  With this fix, the customer
+   can determine the best type of character encoding to use for a
+   nvarchar column that is stored on the backend database as
+   UNICODE LE, but typically retrieved in a native (e.g. single
+   byte) character sequence.
+   
+   Please note that the Database Interface Designer  (DBID) is used
+   to associate type trees with the DB adapter's input and output
+   card processing.  By default, the nvarchar database column will
+   be assigned a "native" encoding.
+   
+   However, by defining the WTX_HANDLE_NVARCHAR_AS_UNICODE_LE
+   environment variable with any value (e.g. set
+   WTX_HANDLEL_NVARCHAR_AS_UNICODEL_LE=1), the DBID will assign a
+   "UTF-16 Little Endian" type to the nvarchar database column.
+   This same variable will be checked at runtime, in order to
+   determine how to retrieve nvarchar database columns that are
+   returned from DBLookup/DBQuery/Get function calls.  When the
+   environment variable is undefined, any nvarchar fields will be
+   retrieved in a native format.  When the environment variable is
+   defined with any value, any nvarchar fields will be retrieved in
+   a UTF-16 LE format.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK71446
+   
+   
+ * REPORTED COMPONENT NAME
+   WSTX
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4000
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2008-09-03
+   
+   
+ * CLOSED DATE
+   2008-09-22
+   
+   
+ * LAST MODIFIED DATE
+   2008-09-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WSTX
+   
+   
+ * FIXED COMPONENT ID
+   5724M4000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY
+   UP
+   
+   
+ * R820 PSY
+   UP

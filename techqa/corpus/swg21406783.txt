@@ -1,0 +1,15 @@
+Title: IBM When a Certificate Authority (CA) signs a certificate using SHA2(SHA-256), IBM Websphere DataPower SOA Appliance can validate the signature of CA on certificate. - United States
+
+Text:
+Datapower DP valcred SHA2 SHA-2 SHA-256 certificate trust CA TECHNOTE (FAQ)
+
+QUESTION
+ When a Certificate Authority(CA) signs a certificate using SHA2(SHA-256), can IBM Websphere DataPower SOA Appliance validate the certificate and trust chain? 
+
+ANSWER
+ Yes, if a Certificate Authority(CA) signs a certificate using SHA2(SHA-256), IBM Websphere DataPower SOA Appliance can validate CA's signature on the certificate while building trust chain from the DataPower ValCred.
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower SOA Appliances General Firmware 3.8.1, 3.8, 3.7.3, 3.7.2

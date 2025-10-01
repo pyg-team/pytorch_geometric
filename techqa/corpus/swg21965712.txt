@@ -1,0 +1,25 @@
+Title: IBM Support for SHA-2 certificates on IBM Sterling Connect:Direct for OpenVMS - United States
+
+Text:
+Sterling Connect:Direct OpenVMS SHA-2; Certificate TECHNOTE (FAQ)
+
+QUESTION
+ Certificates are going to expire. 
+
+CAUSE
+Certificates are going to expire.
+
+ANSWER
+Support for SHA-2 certificates is not available in IBM Sterling Connect:Direct for OpenVMS version 3.6.0. To acquire that feature, you will need to install fix pack 3.6.0.2. With that installed, the application will support the following SHA-2 digests:
+
+SHA224
+SHA256
+SHA384
+SHA512
+
+Consider applying the latest iFix package to IBM Sterling Connect:Direct for OpenVMS 3.6.0.2, in order to bring your installation fully up-to-date. 
+
+
+Sterling Connect:Direct for OpenVMS
+* 3.6.0.2 or later
+* 3.5.0.0 Maint. dated 08/15/2013 or later

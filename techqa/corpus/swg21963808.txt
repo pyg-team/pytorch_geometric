@@ -1,0 +1,10 @@
+Title: IBM Reconnecting to a server after disconnecting an automatic view. - United States
+
+Text:
+rcleartool disconnect; rcleartool login; disconnect; login; automatic view TECHNOTE (FAQ)
+
+QUESTION
+ After I log into an automatic view client, why am I not immediately connected to the server? 
+
+ANSWER
+If you attempt to log in to an automatic view client after disconnecting from it (using rcleartool disconnect) there can be a slight delay between successful authentication and establishing a connection with the server.

@@ -1,0 +1,285 @@
+Title: IBM IT06939: SSLFIPSREQUIRED PROPERTY FOR AN ACTIVATION SPECIFICATION USING THE WEBSPHERE MQ JMS PROVIDER IS NOT HONORED. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The properties of an Activation Specification object determine
+   how a message drive bean (MDB) receives JMS messages from a
+   WebSphere MQ queue. An Activation Specification has a set of
+   configuration properties that are used to create a JMS
+   Connection to a WebSphere MQ queue manager. One of these
+   properties has the name:
+   
+     sslFipsRequired
+   
+   that accepts a boolean (true/false) value. The default value of
+   the sslFipsRequired property is false.
+   
+   Configuring the sslFipsRequired property with the value:
+   
+     true
+   
+   ensures that a secure connection must use a CipherSuite that is
+   supported by the IBM Java JSSE FIPS provider (IBMJSSEFIPS).
+   
+   In WebSphere Application Server the sslFipsRequired property for
+   an Activation Specification object can be defined as a Custom
+   Property with the following details:
+   
+   -----------------------------
+    Name: sslFipsRequired
+    Value: true
+    Type: java.lang.String
+   -----------------------------
+   
+   After applying a WebSphere Application Server interim fix for
+   CVE-2014-3566 to disable SSLv3, as per the IBM Technote:
+   
+   http://www-01.ibm.com/support/docview.wss?uid=swg21687173 [http://www-01.ibm.com/support/docview.wss?uid=swg21687173]
+   
+   and enabling FIPS compliance within WebSphere Applciation Server
+   for secure TCP/IP connections and configuring an Activation
+   Specification with the sslFipsRequired Custom Property set to
+   the value "true", the WebSphere MQ Resource Adapter should maps
+   the Java CipherSuite:
+   
+     SSL_RSA_WITH_3DES_EDE_CBC_SHA
+   
+   to the WebSphere MQ CipherSpec:
+   
+     TLS_RSA_WITH_3DES_EDE_CBC_SHA
+   
+   when establishing secure TCP/IP connections to a WebSphere MQ
+   queue manager.
+   
+   However, during WebSphere Application Server endpoint
+   activation, a secure connection fails to be established to
+   WebSphere MQ with the following exception logged to the
+   WebSphere Application Server SystemOut.log file:
+   
+   J2CA0138E: The Message Endpoint activation failed for
+   ActivationSpec myActivationSpecification
+   (com.ibm.mq.connector.inbound.ActivationSpecImpl) and MDB
+   application MyApplication#MyEJB.jar#MyMDB due to the following
+   exception: javax.resource.spi.ResourceAdapterInternalException:
+   com.ibm.msg.client.jms.DetailedIllegalStateException:
+   JMSWMQ0018: Failed to connect to queue manager 'QM1' with
+   connection mode 'Client' and host name 'localhost(1414)'. Check
+   the queue manager is started and if running in client mode,
+   check there is a listener running. Please see the linked
+   exception for more information.
+   ...
+   Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2059;AMQ9204:
+   Connection to host 'localhost(1414)' rejected.
+   [1=com.ibm.mq.jmqi.JmqiException[CC=2;RC=2059;AMQ9204:
+   Connection to host 'localhost/127.0.0.1:1414' rejected.
+   [1=java.lang.IllegalArgumentException[Only TLS protocol can be
+   enabled in FIPS
+   mode],3=localhost/127.0.0.1:1414,4=TCP,5=Socket.connect]],3=loca
+   lhost(1414),5=RemoteTCPConnection.connnectUsingLocalAddress]
+   ...
+   Caused by: java.lang.IllegalArgumentException: Only TLS protocol
+   can be enabled in FIPS mode
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the WebSphere MQ JCA Resource
+   Adapter who want to configure the property:
+   
+     sslFipsRequired
+   
+   on an Activation Specification object for inbound messaging, or
+   on a JMS ConnectionFactory object for outbound messaging.
+   
+   This includes users of:
+   
+   - The WebSphere MQ v7.0.1, v7.1, v7.5 and v8 JCA Resource
+   Adapter
+   - The WebSphere Application Server v7.0, v8.0 and v8.5 WebSphere
+   MQ messaging provider who perform inbound messaging
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Some Java CipherSuites that are supported by the WebSphere MQ
+   Resource Adapter (the component of WebSphere Application Server
+   than handles communication to WebSphere MQ) map to two WebSphere
+   MQ CipherSpecs; one that uses the SSLv3 protocol and one that
+   uses a TLS protocol. Setting the sslFipsRequired property to the
+   value "true" should ensure that dual mapping Java CipherSuites
+   resolve to the WebSphere MQ CipherSpec that use the TLS protocol
+   and not the SSLv3 protocol CipherSpec.
+   
+   For example, the Java CipherSuite:
+   
+     SSL_RSA_WITH_3DES_EDE_CBC_SHA
+   
+   maps to the WebSphere MQ CipherSpecs:
+   
+     TRIPLE_DES_SHA_US (that uses the SSLv3 protocol)
+   
+   and
+   
+     TLS_RSA_WITH_3DES_EDE_CBC_SHA (that uses the TLS v1.0
+   protocol)
+   
+   
+   When the sslFipsRequired property (for an Activation
+   Specification or JMS ConnectionFactory) was set to the value
+   "true", for example by defining a Custom Property using the
+   WebSphere Application Server Administration Console, the value
+   would not be correctly set on the underlying configuration for
+   the object when the setter method for this property was invoked.
+   The sslFipsRequired property is defined a java.lang.String
+   property and is set using a method that accepts a
+   java.lang.String parameter as the value to parse. The
+   java.lang.String property was not correctly parsed a
+   java.lang.boolean such that the sslFipsRequired property would
+   be set to the default value "false".
+   
+   Therefore, when a connection attempt was made to WebSphere MQ
+   using either an Activation Specification or JMS
+   ConnectionFactory configured to use a dual mapping Java
+   CipherSuite, the Java CipherSuite was mapped to the
+   corresponding WebSphere MQ SSLv3 CipherSpec. In the example
+   above, the Java CipherSuite SSL_RSA_WITH_3DES_EDE_CBC_SHA would
+   be mapped to the WebSphere MQ CipherSpec TRIPLE_DES_SHA_US. A
+   connection would then not be established if SSLv3 has been
+   disabled, an existing connection has been established that uses
+   a FIPS-certified algorithm or the WebSphere MQ server-connection
+   channel was defined to use the corresponding TLS CipherSpec for
+   the Java CipherSuite.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ JCA Resource Adapter code has been updated such
+   that when the method to set the sslFipsRequired property is
+   called with a java.lang.String argument, the property will be
+   set to true when the java.lang.String argument passed is equal
+   to the string "true", ignoring case.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.0       7.0.1.14
+   v7.1       7.1.0.7
+   v7.5       7.5.0.6
+   v8.0       8.0.0.3
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT06939
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-03
+   
+   
+ * CLOSED DATE
+   2015-02-22
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

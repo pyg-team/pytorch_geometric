@@ -1,0 +1,41 @@
+Title: IBM SiteProtector Security Fusion debug logging - United States
+
+Text:
+manually; generate; debug; logs; SiteProtector; Security; Fusion; component TECHNOTE (FAQ)
+
+QUESTION
+ How to manually generate debug logging for the SiteProtector Security Fusion component? 
+
+ANSWER
+The SiteProtector Security Fusion component has been integrated to the SiteProtector Application Server at firmware version 3.0 and up. It is no longer a separate component. 
+
+To debug any issues with the Security Fusion Module (SFM), debug logging should be enabled. The SFM debug messages will be captured in the Event Collector debug logs. Below are instructions to assist you with collecting logs.
+
+
+
+ 1. Go to the Agent View, select the Security Fusion Module, then right-click to select Manage Policy.
+    
+    
+ 2. Right-click the FusionPolicy and Open the policy. Go to the Advanced settings section. Here you have three options: Fusion Agent trace level, Impact Analysis Component trace level, and Operating system trace level. Set all options to Debug.
+    
+    
+ 3. Click Save at the upper-right of the policy window and deploy this policy to the Security Fusion Module. 
+    
+    Note: Give the SFM 30 minutes to start with the new policy changes. 
+    
+    
+ 4. Restart the issDaemon (which can be found on the Event Collector host) service so that the log includes the debug settings.
+    
+    Note: Fire some events that you believe should show a Fusion status. 
+    
+    
+ 5. From the Analysis View, once you see Fusion status events, export the events in CSV format, and send them in for review. To export the events from the Analysis View, on the right side of the SiteProtector Console just below the Filters… button you will find the Export the current view button. Set the file name, Browse to select the save location, select the CSV file type, then click OK.
+    
+    
+ 6. Send in the Analysis View CSV file and the SiteProtector Event Collector debug logs [http://www.ibm.com/support/docview.wss?uid=swg21697782] for review.
+
+
+
+
+
+[/support/docview.wss?uid=swg21970010&aid=1] [https://ibm.biz/BdHdjw] [/support/docview.wss?uid=swg21970010&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21970010&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21970010&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21970010&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21970010&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21970010&aid=7] [http://ibm.biz/ContactSecSupport]

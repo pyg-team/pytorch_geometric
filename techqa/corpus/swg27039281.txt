@@ -1,0 +1,14 @@
+Title: IBM Troubleshooting problems with viewers in IBM Content Navigator - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ If you have a problem with a viewer or viewing feature, you might have a problem with your IBM Content Navigator configuration or your IBM Content Navigator web application server configuration. 
+
+CONTENT
+Most problems can be addressed by reviewing the attached troubleshooting document to determine the cause of the problem and how to resolve the problem. 
+
+However, if you have a problem with a Daeja ViewONE viewer in an SSO environment, you might need to set additional configuration parameters. See the following article for more information: Daeja ViewONE viewers can fail in HA and SSO environments [http://www.ibm.com/support/docview.wss?uid=swg22005170]. 
+
+IBM_Content_Navigator-Content_Viewing_Troubleshooting_Guide.docx [/support/docview.wss?uid=swg27039281&aid=2]IBM_Content_Navigator-Content_Viewing_Troubleshooting_Guide.docx [/support/docview.wss?uid=swg27039281&aid=1]

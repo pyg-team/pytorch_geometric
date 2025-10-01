@@ -1,0 +1,192 @@
+Title: IBM How to create an enterprise repository - United States
+
+Text:
+irjen khono; enterprise repository; sdp repository; sdp release area; how to create release area; rad release area; how to use packaging utility; packaging utility faq; package utility; set up repository; set up release area; center installation; central installation; central images; update image; update repository; remote repository; service repositories; service repository; 1314476 TECHNOTE (FAQ)
+
+QUESTION
+ How do you create an enterprise repository (that contains base version and fix packs) for IBM Rational Software Delivery Platform (SDP) v7 products on Microsoft Windows so that this repository will mimic the behavior of the IBM Remote Repository and be used as a central installation and update enterprise repository? 
+
+ANSWER
+
+This technote acts as a sample case to demonstrate the creation of Enterprise Repository for Rational SDP v7 Products
+
+[/support/docview.wss?uid=swg21314476&aid=1] [/support/docview.wss?uid=swg21314476&aid=1]
+
+
+
+Image above is taken from Developer Works Article: 
+
+http://www.ibm.com/developerworks/rational/library/jul07/manahan_quiring/ [http://www.ibm.com/developerworks/rational/library/jul07/manahan_quiring/] 
+
+ 
+
+Prerequisites: 
+
+ 1. RAD v7.0.0.0 (base version) 
+    
+ 2. RAD v7 update files (fix packs)
+
+
+In this document, RAD v7.0.0.5 update files (fix pack) were used as an example to demonstrate combining RAD v7.0.0.0 (base version) with the update files. 
+
+Note: To create an update repository you always need the base version. 
+
+For comparison purpose, 11 parts for RAD v7.0.0.0 have been downloaded and unzipped to a test computer. (You will also have these 11 parts [files] when you download your RAD v7.0.0.0 from Passport Advantage):  * Disk 1 – Disk 10 
+ * RAD_V7.0_Activation_Kit 
+
+
+Note: Ensure these files are in the same level of directory. 
+
+
+Example: 
+
+[/support/docview.wss?uid=swg21314476&amp;aid=2] 
+
+
+In addition, all 6 parts (files) for RAD v7.0.0.5 update files (fix pack) were downloaded from the following site: 
+
+http://ibm.com/support/docview.wss?id=swg24017403 [http://ibm.com/support/docview.wss?uid=swg24017403]
+
+Ensure the unzipped files are in the same level of directory
+
+[/support/docview.wss?uid=swg21314476&amp;aid=3] 
+
+
+
+
+
+
+
+
+First, you need to use the latest version of Packaging Utility to create a repository for RAD 7.0.0.0 + RAD v7.0.0.5 fix packs + permanent license key
+1. Go to Start > All Programs > IBM Packaging Utility > IBM Packaging Utility > Copy Packages
+
+Note: If you don’t have IBM Packaging Utility installed, download the latest version for Windows (as of this article is v1.1.2 [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/pu/112/zips/pu.installer.win32-1.1.2.zip]).
+
+After you have unzipped it, go to “disk_win32/InstallerImage_win32” and click on install.exe.
+
+
+
+2. Click Next > Open repository
+
+3. Select the directory where you have RAD v7.0.0.0 (base version) extracted images, then find disk1\diskTag.inf, and then click OK
+
+Note: It is assumed that all RAD v7.0.0.0 files have been downloaded and extracted to a temporary directory
+
+For example: D:\Image\RAD 7\disk 1\diskTag.inf 
+
+[/support/docview.wss?uid=swg21314476&amp;aid=4]
+
+4. Click Open repository to add the repository for the RAD v7.0.0.5 update files (fix packs). 
+
+To be exact browse to <RADv7005_update>disk1\diskTag.inf
+
+For example:
+
+[/support/docview.wss?uid=swg21314476&amp;aid=5]
+
+5. Click Open repository to add the license key. 
+
+For example:
+
+[/support/docview.wss?uid=swg21314476&amp;aid=6]
+
+6. Select all the 3 repositories that you just added to the Package's table and click Next
+
+For example:
+
+[/support/docview.wss?uid=swg21314476&aid=7] [/support/docview.wss?uid=swg21314476&aid=7]
+7. Accept the terms in the license agreements and click Next
+
+8. Click Browse to select an empty directory (repository location) where you want to store the RAD v7.0.0.5 + license; click Next
+
+For example: ‘E:\RADv7_Repository’
+
+[/support/docview.wss?uid=swg21314476&aid=8] [/support/docview.wss?uid=swg21314476&aid=8]
+
+
+9. Click Copy > Finish
+
+[/support/docview.wss?uid=swg21314476&aid=9] [/support/docview.wss?uid=swg21314476&aid=9]
+
+
+
+Now, you have an RADv7.0.0.0 + RAD v7.0.0.5 (Permanent license) repository which can be shared. 
+
+
+
+
+
+
+Second, install (or update) Installation Manager on the client. 
+
+ 
+
+ 1. Download the latest version of IBM Installation Manager for Windows (as of this article is v1.1.2 [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/112/zips/im.installer.win32-1.1.2.zip]).
+    
+    
+ 2. Unzip to temporary directory, and make sure the IBM Installation Manager is not running
+    
+    
+ 3. Run install.exe
+    
+    
+ 4. Follow the wizard pages to install it.
+    
+    Notes:
+
+ * 
+ * install.exe
+ * 
+ * If you do not have IM installed, then install.exe will install a new instance of IM
+
+
+
+
+
+
+Third, point the Installation Manager to RADv7_Repository  
+
+ 1. Go to Start > All Programs > IBM Installation Manager > IBM Installation manager
+    
+    
+ 2. Click File > Preferences, and then click Repositories
+    
+    
+ 3. On the Repositories page, click Add Repository
+    
+    
+ 4. In the Add repository window, browse to or enter the file path to the RADv7_Repository location
+    
+    For example, ‘E:\RADv7_Repository’ and press OK.
+    [/support/docview.wss?uid=swg21314476&aid=10] [/support/docview.wss?uid=swg21314476&aid=10]
+    
+    
+ 5. Ensure the following option is unchecked
+    [/support/docview.wss?uid=swg21314476&aid=11] [/support/docview.wss?uid=swg21314476&aid=11]
+    
+    
+    Note: Disabling this option will prevent the Installation Manager to look for updates on the internet
+    
+    
+ 6. Click OK to close the Preference page.
+    
+    
+ 7. Click the Install Packages button
+    
+    [/support/docview.wss?uid=swg21314476&aid=12] [/support/docview.wss?uid=swg21314476&aid=12]
+    
+
+
+After you clicked "Show all versions" you will see that there are 2 versions of RAD v7 (v7.0.0.0 or v7.0.0.5) that are detected by IM. Since the repository contained 2 versions of RAD v7.  
+
+In addition, you will see that License Key Type is Permanent because license key has also been added into the repository. 
+
+
+
+RELATED INFORMATION
+#Illustration high level on Enterprise Repository [http://www.ibm.com/developerworks/rational/library/jul07/manahan_quiring/]
+Merging a new update into existing repository [http://www.ibm.com/support/docview.wss?uid=swg21315112]
+Sample script for installing/updating for IM [https://www.ibm.com/support/knowledgecenter/SSDV2W_1.7.0/com.ibm.im.articles.doc/topics/SCRIPTING_IM.htm]
+Deploy/update Rational products via Microsoft SMS [https://www.ibm.com/support/knowledgecenter/SSDV2W_1.7.0/com.ibm.im.articles.doc/topics/msm.htm]
+Silently install Rational SDPv7 on Enterprise Environme [http://www.ibm.com/developerworks/rational/library/edge/08/apr08/naqvi/index.html]

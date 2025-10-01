@@ -1,0 +1,50 @@
+Title: IBM Data loaded into OpenPages GRC using batch load might not be indexed by global search - United States
+
+Text:
+OpenPages; global search; partial results; no results; folder acl; incremental indexer TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If IBM OpenPages global search is enabled, data loaded via a batch load task (i.e. FastMap) might not be indexed. Subsequent global searches return no results for the loaded data. 
+
+CAUSE
+The cause of this issue stems from the way batch load works and global search relying on timestamp of records in the database to find what is new or changed. 
+
+During a batch load task, records are created in the database having timestamp of when the said record is actually created. Some object types, such as Business Entity, or Processes, that have security model on them also end up creating entries in Folder ACL data. Records and Folder ACL items added to the database, do not become visible to any SQL queries until the batch load has issued a final commit on the transaction. Depending on how many records a batch load task is loading, it can take anywhere from few seconds to hours for a batch load to commit. This means, none of the records and their associated Folder ACL items data created by the batch load task are visible till the end of the transaction, but yet, they all have a timestamp of when they were created.
+
+The global search incremental indexer queries the database on a schedule basic. Based on the Polling Interval setting with a default value of 60 seconds. The Polling Interval is used as a sliding time window that advances over time using this value. Each time it runs, it looks for what's new or changed in the database since the last time it run utilizing the timestamp on the record. If the incremental indexer queries the database while a batch load task is underway it will miss those record because the batch load has not yet committed the transaction. This leads to global search not finding records added via a batch load task.
+
+The above scenario is for Folder ACL data and thus impacts any object type that has a security model on it that generates or updates Folder ACL data.
+
+
+DIAGNOSING THE PROBLEM
+After setting up IBM OpenPages global search, you perform a batch load task, such as FastMap, to load data into OpenPages. When the batch load is completed, you perform global search expecting to get hits on the newly loaded data and you get partial hits or no hits.
+
+
+
+RESOLVING THE PROBLEM
+To change the frequency of Folder ACL re-indexing from the default of weekly to daily, take those steps: 
+
+ 
+
+ 1. Edit the file <OP_Home>/OPSearch/opsearchtools/openpages_search.properties 
+ 2. Locate the line that reads:
+    
+    OPSearchTool.FolderAclRebuildScheduler = 23:30, Weekly, Sat
+    
+    And change it to:
+    
+    OPSearchTool.FolderAclRebuildScheduler = 23:30, Daily
+    
+    
+ 3. Login to OpenPages and from Administration > Global Search, first click on "Disable" and after when it is done, click on "Enable".
+
+
+You can learn more about this property setting by visiting More search properties [http://www.ibm.com/support/knowledgecenter/SSFUEU_7.2.0/com.ibm.swg.ba.cognos.administrators_guide.7.2.0.doc/c_adm_more_search_properties.html]. 
+
+If you need to force a Folder ACL re-indexing outside the scheduled time set via the search property, take those steps: 
+
+ 1. Start a command shell with administrative permission. 
+ 2. cd <OP_Home>/OPSearch/opsearchtools/ 
+ 3. java -jar opsearchtool.jar stopIndexing -indexname folderacl 
+ 4. java -jar opsearchtool.jar fullIndex -indexname folderacl 
+ 5. java -jar opsearchtool.jar startIndexing -indexname folderacl

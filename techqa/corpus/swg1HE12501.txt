@@ -1,0 +1,139 @@
+Title: IBM HE12501: COPYING CONTENT INTO A HOLD NOTICE CONTENT CAUSES GARBLED CHARACTERS, ESPECIALLY IN LISTS (BULLETS). - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.0.3-ATLAS-WINDOWS-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3-ATLAS-WINDOWS-FP0004&source=SAR]
+6.0.3-ATLAS-SOLARIS-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3-ATLAS-SOLARIS-FP0004&source=SAR]
+6.0.3-ATLAS-LINUX-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3-ATLAS-LINUX-FP0004&source=SAR]
+6.0.3-ATLAS-AIX-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3-ATLAS-AIX-FP0004&source=SAR]
+IBM Atlas Policy Suite Version 6.0.3 Fix Pack 4 Download Document [http://www-01.ibm.com/support/docview.wss?uid=swg24043136]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When copying content from Microsoft Word into an Atlas v6.0.3.x
+   Hold Notice, you could see some garbled characters in the
+   content especially when using lists or bullets. The issue
+   occurs in (a) hold notice content preview (b) email of the
+   notice sent out to custodians or "Send Me" when using Outlook
+   as the email client. This is visible mainly when using Chrome
+   or Firefox to edit/save the hold notice.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use Internet Explorer to create the hold notice.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When copying content from Microsoft Word into an Atlas v6.0.3.x
+   Hold Notice, you could see some garbled characters in the
+   content especially when using lists or bullets. The issue
+   occurs in (a) hold notice content preview (b) email of the
+   notice sent out to custodians or "Send Me" when using Outlook
+   as the email client. This is visible mainly when using Chrome
+   or Firefox to edit/save the hold notice.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is available now on Fix Central, as part of Atlas 6.0.3
+   Fix pack 4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12501
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   603
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-02
+   
+   
+ * CLOSED DATE
+   2016-12-14
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R603 PSY
+   UP

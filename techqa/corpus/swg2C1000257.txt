@@ -1,0 +1,69 @@
+Title: IBM SAP HANA DB SR Failure. Manual Roll Back Procedure - United States
+
+Text:
+SAP HANA DB; Clean up; Manual HANA DB install TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ HANA DB SR Failed. Unable to submit new SR with SAP System ID "DAM". Error System ID is already in use. 
+
+SYMPTOM
+A SR for SAP HANA DB failed. A retry fails with error "System ID is already in use"
+
+
+CAUSE
+No clear root cause. Building SAP HANA DB is mostly manual. A probable cause is as follows 
+
+All tasks except "Availability Check and Update SAP Tables" (the first one) are manual. Probably "Create CIs" task was routed as Unsuccessful by the user even though the CIs were created successfully (manually). 
+
+The SR cannot be revived as the change is already CLOSED. 
+All other manual tasks after "Create CIs" are set to COMP but having no completion state. 
+Maybe they tried some back-end fix or something similar because tasks should not be COMP and without a completion state.
+
+
+ENVIRONMENT
+Physical Server, SAP HANA DB, CMS 1.x
+
+
+
+DIAGNOSING THE PROBLEM
+There is no known problem. SAP HANA DB request failed. Retry too keeps failing because System ID is already in use. 
+
+Most probably one or more manual steps were not performed correctly
+
+
+RESOLVING THE PROBLEM
+Clean up all the manual changes made for provisioning SAP HANA DB 
+
+These steps are valid for system without DR.
+Identify the used physical servers, then for each node repeat the steps 1-10 below 
+
+ 1.  Find the logical HANA VM which has HOSTING_COMPUTER_UUID = physical server VM UUID 
+ 2.  Find records in PMSAP_SAP_INSTANCE_COMPUTER where COMPUTER UUID = HANA VM UUIDs,  * Note the INSTANCE UUID to be deleted in the next step, 
+      * Delete the records.
+     
+     
+ 3.  Find records in PMSAP_SAP_INSTANCE for the INSTANCE UUID identified in the previous step,  * Identify the CI for it ("SAP Instance ID " + <Instance Id>), 
+      * Change state to Archived, 
+      * Delete the instance record.
+     
+     
+ 4.  Identify the HANA CONFIG ID (this is getting difficult because the SAP system was removed) 
+ 5.  Find SPPC_IP_INTERFACE records for HANA VM UUIDs - DO NOT REMOVE THEM.  * Use the Ids to determine SPPC_IP_ADDRESS. SPPC_IP_ADDRESSID is used to determine SPPC_FQDN records.
+     
+     
+ 6.  Find SPPC_FQDN records (4) for HANA VM UUIDs and remove them. 
+ 7.  Find SPPC_IP_ADDRESS records (4) for the HANA VM UUIDs and remove them. 
+ 8.  Delete the SPPC_VM_SPEC records found in SPPC_VM for the corresponsing HANA VM UUID 
+ 9.  Delete the SPPC_VM where UUID = HANA VM UUID 
+ 10. For each physical server identified,  * Note down the INT_GPFS_VLAN_ID - 100 = CONFIG ID 
+      * Note down HANA_NETWORK_CELL_ID, HANA_NODE_ID, HANA_NODE_TYPE, INT_GPFS_VLAN_ID, GPFS_SWITCH_INTERFACE_IP_ID, INT_HANA_VLAN_ID, HANA_SWITCH_INTERFACE_IP_ID, INT_GPFS, LACP_INT_GPFS_ID, INT_GPFS_ALT, INT_HANA, LACP_INT_HANA_ID, INT_HANA_ALT
+     
+     
+ 11. Determine the POD Id of the physical servers 
+ 12. Identify the records from PMSAP_HANA_CONFIG_NWCELL with the HANA_NWCELL_ID and HANA_CONFIG_ID noted at step 10) and delete it.
+
+Unable to determine and cleanup (because the record is deleted, we don't know the SAP System Id):  * CIs for SAP system 
+ * *SAP System

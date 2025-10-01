@@ -1,0 +1,62 @@
+Title: IBM How do I change a Company Name and Company ID when given a new license key in Optim? - United States
+
+Text:
+company id; company name; license key; purge optim directory; export registry data; import registry data TECHNOTE (FAQ)
+
+QUESTION
+ If I am given a license key that has a different Customer Name and Company ID than the one I am currently running with, how do I change these in my Optim Installation? 
+
+ANSWER
+The Optim Directory registry entry must be purged before entering the new Company Name and ID. Please follow the following steps to purge and recreate this entry:
+
+1. Bring up Optim Configuration, select File->Export Registry Data.
+
+2. Select to include all Optim directories for Export, and select check boxes 'Export Optim Directory Logon Information' and 'Export DB Alias Logon Information' (NOTE: Do NOT select 'Export License Information'). Specify an export file and click OK:
+
+[/support/docview.wss?uid=swg21699561&aid=1] [/support/docview.wss?uid=swg21699561&aid=1]
+
+3. Select Tasks->Purge Optim Directory Registry Entry. Select the check box:
+
+[/support/docview.wss?uid=swg21699561&aid=2] [/support/docview.wss?uid=swg21699561&aid=2]
+
+4. Leave the next check box unselected and select Proceed:
+
+[/support/docview.wss?uid=swg21699561&aid=3] [/support/docview.wss?uid=swg21699561&aid=3]
+
+5. Select an Optim Directory entry, and select Proceed:
+
+[/support/docview.wss?uid=swg21699561&aid=4] [/support/docview.wss?uid=swg21699561&aid=4]
+
+6. Select the check box:
+
+[/support/docview.wss?uid=swg21699561&aid=5] [/support/docview.wss?uid=swg21699561&aid=5]
+
+7. Select the check box if you have more than one Directory Entry, and click Proceed to repeat the above steps for each entry. If you have only one entry, leave the check box unchecked:
+
+[/support/docview.wss?uid=swg21699561&aid=6] [/support/docview.wss?uid=swg21699561&aid=6]
+
+8. Still in the Configuration Program, select Options->Company Name, and enter the new Company Name and ID:
+
+[/support/docview.wss?uid=swg21699561&aid=7] [/support/docview.wss?uid=swg21699561&aid=7]
+
+You will get the following prompt. Click OK:
+
+[/support/docview.wss?uid=swg21699561&aid=8] [/support/docview.wss?uid=swg21699561&aid=8]
+
+9. Still in the Configuration Program, select Options->License Key, and paste in the new License Key:
+
+[/support/docview.wss?uid=swg21699561&aid=9] [/support/docview.wss?uid=swg21699561&aid=9]
+
+10. Go to File->Import Registry Data. Specify the export file you created in Step 2, select all directories for import, and click OK:
+
+[/support/docview.wss?uid=swg21699561&aid=10] [/support/docview.wss?uid=swg21699561&aid=10]
+
+11. Select Tasks->Apply Maintenance for Optim Directory Access, and apply maintenance to all Optim Directories.
+
+12. Select Options->Sign Optim exit, and re-sign the exit:
+
+[/support/docview.wss?uid=swg21699561&aid=11] [/support/docview.wss?uid=swg21699561&aid=11]
+
+13. Bring up Optim under the new Customer Name.
+
+14. Note: All Unix Configuration files (pstserv.cfg and pstlocal.cfg files) need to be updated with the new information (Company Name, Company ID, and License Key) as well.

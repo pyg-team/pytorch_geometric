@@ -1,0 +1,29 @@
+Title: IBM In 5.2.0.3-P8CPE-FP003, the default value in Administration Console for Content Platform Engine (ACCE) for the Index Maximum Size of a new Content Search Services (CSS) index area is too low.  This can result is slower search performance over time. - United States
+
+Text:
+index area; index; configuration; CSS search; performance TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In 5.2.0.3-P8CPE-FP003 (build# dap520.003.146), when using the Administration Console for Content Platform Engine (ACCE) to create new Index Areas, the default value for the Index Maximum Size of a CSS index is too small.
+
+Note: This is only an issue with ACCE. In FileNet Enterprise Manager (FEM) the default value for the Index Maximum Size of a CSS index is set to the recommended value.
+
+The original 5.2.0.3-P8CPE-FP003 (build# dap520.003.146) has been removed from Fix Central and it has been replaced by 5.2.0.3-P8CPE-FP003a (build# dap520.003.147) 
+
+SYMPTOM
+With 5.2.0.3-P8CPE-FP003 (build# dap520.003.146), if you use the Index Maximum Size default value (250 MB), then depending upon your volume of data to be indexed, you might create more text indexes than is optimal, which may decrease search performance over time.
+
+
+DIAGNOSING THE PROBLEM
+Check existing indexes to determine their size. The recommended size for each index with a state of FULL is 256,000 MB. If the size of your indexes are smaller than this and you did not intentionally set the Index Maximum Size to less than 256,000 MB, then remediation is recommended. See the 'Resolving the problem' section.
+
+RESOLVING THE PROBLEM
+Install 5.2.0.3-P8CPE-FP003a (build# dap520.003.147) so that ACCE now uses the appropriate default Index Maximum Size value (256,000 MB). If you have already installed 5.2.0.3-P8CPE-FP003 (build# dap520.003.146), then you can install and deploy 5.2.0.3-P8CPE-FP003a (build# dap520.003.147) directly over it.
+
+
+
+
+If CSS indexing has been previously performed and the size of your indexes with a state of FULL are under 256,000 MB, then it is recommended that you reindex all of your existing indexes so that each index is now 256,000 MB in size. Note that this is not required, but having many smaller indexes, rather than fewer larger ones may result in CSS search performance issues in the long run.
+
+RELATED INFORMATION
+ Default ACCE CSS Index Maximum Size preformance [http://www.ibm.com/support/docview.wss?uid=swg21657473]

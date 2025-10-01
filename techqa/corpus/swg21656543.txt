@@ -1,0 +1,79 @@
+Title: IBM Fail to apply Fix Pack of Load Balancer V8.5.5 with CRIMA1161E - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you installed Edge Components Load Balancer from V8.5.5 GA installation image, you will fail to apply Fix Pack for V8.5.5 with "CRIMA1161E: Failed to find required installation files." 
+
+SYMPTOM
+Installation Manager fails the Update Packages with the CRIMA1161E error. 
+
+For example,
+-----
+Failed to find required installation files.
+
+CRIMA1161E: Failed to find required installation files.
+
+Installation Manager did not find required installation files from the repository. An issue has occurred with the package that cannot be resolved by Installation Manager.
+
+If the repository files were transferred from a different location before the installation, verify that the files were not altered during the transfer operation. Copy the repository files to a different location and install from that location. If the repository files were not transferred note the package name and version number and contact customer support.
+
+'zip ibmlb-lic_Win 8.5.0.0' not found in C:\inst.images\8.5.5-WS-EDGELLB-FP0000001.
+-----
+
+
+CAUSE
+Updating of Fix Pack for V8.5.5 needs a zip file for license, ibmlb-lic_Win_8.5.0.0.zip, is accessible. But V8.5.5 GA installation image has bundled another zip file ibmlb-lic_Win_8.5.5.0.zip.
+
+
+RESOLVING THE PROBLEM
+This error can occur when you update to V8.5.5.1 - V8.5.5.9 because of a problem accessing a license file. You can resolve it by installing the 8.5.5.1-WS-EDGELB-IFPI55786.zip interim fix and the fix pack together. 
+
+
+For example, if V8.5.5.0 is installed and you want to update to V8.5.5.8, follow these steps:
+
+1. Download the 8.5.5.1-WS-EDGELB-IFPI55786.zip [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Application+Server&release=All&platform=All&function=fixId&fixids=8.5.5.1-WS-EDGELB-IFPI55786&includeSupersedes=0] interim fix from IBM Fix Central to your local machine.
+
+2. Add both the location of the interim fix .zip file and the fix pack repository to your Installation Manager repositories: 
+A. IM GUI: File->Preferences->Add Repository to add both /tmp/8.5.5.1-WS-EDGELB-IFPI55786.zip and <fix pack V8.5.5.8 repository> 
+B. imcl command: imcl.sh... -repositories "/tmp/8.5.5.1-WS-EDGELB-IFPI55786.zip,<fix pack V8.5.5.8 repository>"
+
+3. Update to Version 8.5.5.8 as usual. See Installing fix packs to Edge Components. 
+
+ 
+
+ 
+
+Workaround: 
+
+You can also workaround the problem by applying Fix Pack with V8.5.0 GA installation image. 
+
+ 
+
+ * New Installation  1. Download the V8.5.0 GA installation image and Fix Pack for V8.5.5. You don't need to download the V8.5.5 GA installation image. 
+    2. Add the both diskTag.inf file in GA image and repository.config in Fix Pack into Repositories of Installation Manager (File > Preferences > Repositories) 
+    3. From "Install" button of Installation Manager, select the latest Installation Package level including Fix Pack such as "Version 8.5.5.1" instead of "Version 8.5.0.0" and install it.
+       
+       
+   
+   
+ * User who has installed Load Balancer using V8.5.5 GA installation image  1. Download the V8.5.0 GA installation image and Fix Pack. 
+    2. Add the both diskTag.inf file in GA image and repository.config in Fix Pack into Repositories of Installation Manager (File > Preferences > Repositories) 
+    3. From "Update" button of Installation Manager, select the latest Update Package level including Fix Pack such as "Version 8.5.5.1" and update it.
+       
+       
+   
+   
+ * User who has installed Load Balancer using V8.5.0 GA installation image  1. Download the Fix Pack. You don't need to download the V8.5.5 Refresh Pack. (*1) 
+    2. Add repository.config in Fix Pack into Repositories of Installation Manager (File > Preferences > Repositories) 
+    3. From "Update" button of Installation Manager, select the latest Update Package level including Fix Pack such as "Version 8.5.5.1" and update it.
+       
+   
+   
+   (*1) If you have removed the saved files for rollback, you will need V8.5.0 GA installation image. Please follow the instruction in "User who has installed Load Balancer using V8.5.5 GA installation image" in this case.
+   Update History: 
+   
+   2015/2/19 Added the comment (*1) for the customer who has removed the saved files for rollback. 
+   
+   2016/4/1 Added information about the fix by APAR PI55786 [http://www.ibm.com/support/docview.wss?uid=swg1PI55786].

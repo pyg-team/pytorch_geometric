@@ -1,0 +1,49 @@
+Title: IBM Hostnames affect whether browser sets necessary cookies - United States
+
+Text:
+IE; cookie; hostname; browser; set-cookie; wasrequrl TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+If hostnames do not comply with IETF's specifications, browsers may not set the cookies that WebSphere Portal needs to function properly.
+
+SYMPTOM
+HTTP 400 error during a request for wps/myportal/... Specifically: 
+
+1. Prior to user authentication, browser issues HTTP GET for ...//host_name.ibm.com/wps/myportal/... 
+
+2. WebSphere Application Server responds with a 302 redirect to location ...//host_name.ibm.com/wps/redirect with a header like: 
+
+set-cookie: WASReqURL=.../wps/myportal/...; path=/ 
+
+3. The browser issues an HTTP GET for ...//host_name.ibm.com/wps/redirect but does not include the WASReqURL cookie with the request. 
+
+4. The server responds with HTTP 400. 
+
+ 
+
+This same problem can manifest itself differently for different configurations and test cases. In general, the symptom is: 
+
+1. Server's response includes set-cookie header with no domain. 
+
+2. Subsequent requests from the browser do not include the cookie from (1).
+
+
+CAUSE
+When set-cookie does not include a domain, the IETF's RFC 6265 (5.3 #6) instructs user agents to treat the hostname as the domain. If the hostname is invalid (RFC 952, RFC 1123), the user agent might not store the cookie at all or might store it in such a way that it cannot retrieve it for use in subsequent requests. 
+
+Actual behavior depends on the specific browser's implementation. The behavior described in this technote has been observed on Microsoft Internet Explorer.
+
+
+DIAGNOSING THE PROBLEM
+Capture HTTP headers with Fiddler or a similar tool. Inspect the set-cookie headers from the server. Check to see whether the client presents these cookies in subsequent requests. If not, check to see if the client addresses the server with a hostname that does not comply with the RFCs. For example, any hostname that includes an underscore ("_").
+
+
+
+RESOLVING THE PROBLEM
+Change the hostnames of WebSphere Portal and/or any proxies which provide access such that they comply with the RFCs.
+
+RELATED INFORMATION
+ RFC 952 [http://tools.ietf.org/html/rfc952]
+RFC 1123 [http://tools.ietf.org/html/rfc1123#section-2.1]
+RFC 6265 [http://tools.ietf.org/html/rfc6265#section-5.3]
+Fiddler [http://www.fiddlertool.com]

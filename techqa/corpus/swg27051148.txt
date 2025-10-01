@@ -1,0 +1,37 @@
+Title: IBM Limit usage of ONLY the latest TLS communication protocol version, TLS1.2, with IBM Order Management - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This communication is to let all our clients know that the security vulnerabilities in older versions of the TLS communication protocol have necessitated IBM to limit the usage of ONLY the latest TLS1.2 version with IBM Order Management. Starting with IBM Order Management, version 18.2, IBM will no longer support the clients who are using any lower version of the TLS communication protocol. 
+
+CONTENT
+What is Transport Layer Security (TLS) protocol?
+
+
+TLS is the successor to SSL. It is a handshake protocol between applications communicating over the network. For more information about TLS, please see https://en.wikipedia.org/wiki/Transport_Layer_Security [https://en.wikipedia.org/wiki/Transport_Layer_Security]
+
+How does IBM Order Management uses TLS protocol?
+IBM Order Management uses TLS protocol for inbound or outbound communications between various components. For example, communication between an application server and an external third-party ecosystems or communication between agent or integration servers and third-party ecosystems. In other words, the third-party ecosystems, which invoke IBM Order Management REST APIs use TLS protocol for communication.
+
+From release 18.2 onwards, IBM Order Management will only support TLSv1.2 protocol, which means all the third-party integrations should also use TLSv1.2 protocol only. All other earlier versions such as TLSv1.0 and TLSv1.1 will not be supported starting from release 18.2.
+
+Going forward, we will only be supporting the use of TLSv1.2 protocol. Please immediately validate that none of the ecosystem solutions are initiating or receiving on a lower TLS version protocol for inbound or outbound communications.
+
+How can I find out what integration protocol my ecosystem solutions are using?
+Most applications should have an equivalent of jvmparams or app server SSL or TLS protocol settings- for communication with other systems. A thorough review of such settings is needed to ensure that you are not using a lower version of TLS protocol. Custom code for third-party integrations, which invokes REST APIs should be analyzed to make sure it uses TLSv1.2 protocol only.
+
+What about TLS 1.3 protocol?
+TLS 1.3 protocol is still in an Internet Draft status and has not yet been approved as an Internet Standard for communication. IBM will inform our clients sufficiently in advance when this standard is allowed for use with the IBM Order Management. 
+
+What will happen if this change is not done in third-party integration ecosystem?
+Any delays to implementing this change will have a security exposure in the solution. If any of your applications attempt a communication using a lower TLS - The IBM Order Management will not be able to establish the handshake and the request will not be honored resulting in an incomplete communication.
+
+When will IBM Order Management de-support older TLS protocol versions?
+IBM Order Management will sunset earlier versions of TLS protocol such as TLSv1.0 and TLSv1.1 with the rollout of IBM Order Management release 18.2. In future versions, we are also plan to restrict System Integrator's or client’s ability to arbitrarily override or change this protocol setting. 
+
+What are next steps or actions? 
+
+ * Review and update third-party protocol settings or custom code to ensure that TLSv1.2 protocol is supported. 
+ * For any questions or concerns please log a support ticket and our technical team will be able to help clarify with additional inputs.

@@ -1,0 +1,119 @@
+Title: IBM How to Collect Guardium ATAP logs For Terdata - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using Teradata ATAP to send packets to the Guardium Appliance sniffer, a Guardium report may show unexpected or inconsistent results. The problem could originate from KTAP or ATAP. To diagnose the issue, collect specific ATAP logs.
+
+
+SYMPTOM
+The following scenarios may be observed 
+
+ * Unable to capture failed logins from Teradata SQL Assistant client tool using TCP. (No issue with successful login.) 
+ * Inconsistent DB username for successful and unsuccessful logins.
+
+
+CAUSE
+ATAP is not sending the decrypted packets to the Guardium sniffer. You need to see if there are internal ATAP errors or if ATAP is capturing these packets and not sending it through KTAP.
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+At this point, ATAP should already be activated. (see Setup Teradata ATAP within this page [http://www-01.ibm.com/support/knowledgecenter/SSMPHH_9.5.0/com.ibm.guardium95.doc/stap/topics/atap_act_deact.html] to verify the steps are performed already) 
+
+
+ 
+
+Note: Please run problem scenarios whilst the diagnostic collections are running . It is important to capture logs during the problem scenario and not outside the problem situation
+
+
+Steps to gather all ATAP logs: . 
+
+
+ * 
+ * 
+ * 
+ * 
+ *  /usr/local/guardium/modules/UTILS/current/files/bin/guard-tag edit executor/env [TERADATA DB INSTALL DIRECTORY]/bin/pdemain 
+ * 
+ * 
+ *  #ATAP_LOG_LEVEL=10 
+   #ATAP_LOG_PATH=/var/log/guard/atap/pid%05d-thr%08d.log 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  **NOTE: If your Teradata DB cannot start up. You need to manually take the ATAP away. 
+    * Perform below only if you are unable to start Teradata:  * 
+       * 
+       * cd [TERADATA INSTALL DIR]/bin/
+       * 
+       * 
+       * mv pdemain-guard-original pdemain
+       * 
+       * 
+       * rm -f /usr/local/guardium/etc/guard/executor/teradata
+       * 
+       * 
+      
+      
+   
+   
+ * 
+ * 
+ * slon capture
+ * 
+ * 
+ * 
+ *  echo -n 'd4' > /usr/local/guardium/modules/STAP/current/.stap.console 
+ * 
+ * 
+ * 
+ *  netstat -natp | grep gtwgateway 
+ * For example:  * tcp 0 0 :::1025 :::* LISTEN 31292/gtwgateway
+    * 
+    * tcp 0 0 9.70.157.181:1025 9.32.113.185:65265 ESTABLISHED 31292/gtwgateway
+   
+   
+ *   * 
+    * 
+   
+   
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  echo -n 'd0' > /usr/local/guardium/modules/STAP/current/.stap.console 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  /usr/local/guardium/modules/UTILS/current/files/bin/guard-tag edit executor/env [TERADATA DB INSTALL DIRECTORY]/bin/pdemain 
+ * Comment the two lines for ATAP logging. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *   * all of /var/log/guard/atap/ and /tmp/guard_stap.stderr.txt from the DB Server. 
+    * the slon capture file from the collector.
+   
+   
+
+ 
+
+RELATED INFORMATION
+ APAR - BLANK OS USER FROM TERADATA ATAP [https://www-01.ibm.com/support/entdocview.wss?uid=swg1GA15522]
+How to capture Teradata failed login events [http://www.ibm.com/support/docview.wss?uid=swg21679200]
+Missing OS User and Source Program for Teradata ATAP [http://www.ibm.com/support/docview.wss?uid=swg21963770]
+Reports do not show DB user correctly - Teradata [http://www.ibm.com/support/docview.wss?uid=swg21651589]

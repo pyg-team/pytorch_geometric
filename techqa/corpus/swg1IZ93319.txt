@@ -1,0 +1,131 @@
+Title: IBM IZ93319: TNPM 1.3A - ALCATEL-LUCENT 5620 SAM TECHNOLOGY PACK SUPPORTS SAM V8 BUT THE DOCUMENTATION SAYS IT JUST SUPPORTS SAMV6, V6.1, & V7 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The TNPM 1.3A - 2.8.0.0 Alcatel-Lucent 5620 SAM Technology Pack
+   documentation provided with the Tech Pack states that the only
+   supported hardware is SAM v 6, v6.1 and v7. This contradicts the
+   information which we were supplied with last year that states
+   this version of the Tech Pack would support SAM v8.
+   
+   Can we please have the documentation updated to state this Tech
+   Pack supports SAMv8 on 4.4.3.2 or set the wheels in motion to
+   get support for SAM v8 urgently.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Documentation to be corrected.
+   
+   The following section needs to be updated:
+   
+   Alcatel-Lucent 5620 SAM server compatibility
+   
+   ?The Alcatel-Lucent 5620 SAM Technology Pack currently runs on
+   the following Alcatel-Lucent 5620 SAM servers:
+   ?Alcatel-Lucent 5620 SAM Server Release 6
+   ?Alcatel-Lucent 5620 SAM Server Release 6.1
+   ?Alcatel-Lucent 5620 SAM Server Release 7
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The documentation released for the Alcatel-Lucent 5620 SAM
+   Technology Pack v2.8.0.0 for release 1.3A, failed to inlcude the
+   entry that state support SAM Server Release 8. A Technote was
+   published to account for this
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Please refer to technote titled:
+   Alcatel-Lucent 5620 SAM Technology Pack v2.8.0.0  User's Guide
+   update for release 1.3A
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ93319
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PROV ALC 562
+   
+   
+ * REPORTED COMPONENT ID
+   5724P68SM
+   
+   
+ * REPORTED RELEASE
+   430
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-01-27
+   
+   
+ * CLOSED DATE
+   2011-03-08
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

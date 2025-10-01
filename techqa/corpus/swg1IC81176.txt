@@ -1,0 +1,221 @@
+Title: IBM IC81176: WMQ 7.0: THE XMS .NET EXCEPTION LISTENER IS PASSED 2009 OR 2219 FROM NMQI LAYER. - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.9 [http://www-01.ibm.com/support/docview.wss?uid=swg24033008]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Message Service Client for .NET (XMS) exception listener is
+   incorrectly informed about a NMQI connection broken ( 2009 ),
+   which it should not be. This causes the XMS application to
+   bring down other existing connections and requires a restart of
+   the application.
+   
+   2219 exception occurs due to a second FAP call from the same
+   thread when the first was still in progress.
+   
+   The following are examples of what is seen in an XMS trace:
+   
+   ----------
+   00000738 d UOW=
+   source=IBM.XMS.Client.Impl.XmsProviderExceptionListener org=IBM
+   prod=WebSphere component=Message Service Client for .NET
+   thread=[1 : 0]
+   OnException(Exception,Boolean)
+   XMSCC3036
+   IBM.XMS.IllegalStateException: A problem with this
+   connection has occurred. This exception has been delivered due
+   to an exception listener being registered on this connection.
+   Use the linked exception to determine the cause of this error.
+   
+   Linked Exception : CompCode: 2, Reason: 2009
+   ----------
+   00000738 X UOW=
+   source=IBM.XMS.Client.Impl.XmsMessageConsumerImpl org=IBM
+   prod=WebSphere component=Message Service Client for .NET
+   thread=[1 : 0]
+   IBM.XMS.IllegalStateException: Failed to close topic P25FCW.
+   XMS attempted to close a WebSphere MQ destination, but
+   encountered an error. The destination might already be closed,
+   or another thread may be performing an MQGET while close() is
+   called. Use the linked exception to determine the cause of
+   this error. You may be able to perform the close() later.
+   at
+   IBM.XMS.Client.WMQ.WmqMessageConsumer.CheckNmqiCallSuccess
+   (String messageid, String insert, String insertKey, Int32
+   completionCode, Int32 reason, NmqiEnvironment environment,
+   String probeid, WmqCommonConnection commonConnection, Hconn
+   hconn)
+   at IBM.XMS.Client.WMQ.WmqConsumerShadow.Close()
+   at IBM.XMS.Client.WMQ.WmqMessageConsumer.Close()
+   at
+   IBM.XMS.Client.Impl.XmsMessageConsumerImpl.EmergencyClose()
+   
+   Linked Exception : CompCode: 2, Reason: 2009
+   ----------
+   
+   IBM.XMS.XMSException: {0} failed for the queue manager when
+   handling a poison message. XMSC_INSERT_METHODMQOPEN When
+   requeuing a poison message, {0} failed when attempting to
+   inquire about the queue manager.  Please see the linked
+   exception for more information on the failures and/or warnings.
+   at IBM.XMS.Client.WMQ.WmqPoison.CheckNmqiCallSuccess(String
+   method, String messageid, String targetDestination, Int32
+   completionCode, Int32 reason1, String probeid)
+   at IBM.XMS.Client.WMQ.QmAttrs..ctor(WmqPoison
+   wmqPoisonInstance)
+   at IBM.XMS.Client.WMQ.WmqPoison..ctor(WmqConsumerOwner
+   owner, WmqDestination destination, Hobj hobj, String
+   subscriptionQueue)
+   at IBM.XMS.Client.WMQ.WmqConsumerShadow.InitialisePoison()
+   at
+   IBM.XMS.Client.WMQ.WmqAsyncConsumerShadow.Poisonous
+   (MQMessageDescriptor mqmd1, ProviderMessage msg, Byte[] pBuffer)
+   
+   Linked Exception : CompCode: 2, Reason: 2219
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix&#65496;
+   None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users using XMS .NET client multi threaded application
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   WebSphere MQ .NET Classes when used in multi-threaded
+   environment intermittently throws MQRC 2219 or MQRC 2009. This
+   behavior of client is observed primarily when one or few
+   threads issue MQDISC while others are still executing.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere MQ code has been modified such that synchronization
+   and disconnect are handled correctly.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.9
+   --------           --------------------
+   Windows            U200337
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC81176
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-02
+   
+   
+ * CLOSED DATE
+   2012-05-29
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,66 @@
+Title: IBM Eclipse Exit code=8096 at start Rational Performance Tester - United States
+
+Text:
+1454033; RPT; crash; 8096; java; rpt; 8.2; license; PM26331; RATLC01980786 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to start the IBM Rational Performance Tester (RPT) 8.2 workbench result in "Error: Java was started but ..." 
+
+SYMPTOM
+The error message is as follows.
+
+Error: Java was started but returned exit code=8096 
+
+C:\Program Files\IBM\jdk\jre\bin\javaw.exe 
+
+<parameters>
+
+
+
+
+ 
+
+At the moment that RPT checks out a license key from an IBM Rational License Server 7.x, the Eclipse error message opens and RPT stops running. 
+
+
+[/support/docview.wss?uid=swg21454033&aid=1] [/support/docview.wss?uid=swg21454033&aid=1]
+
+CAUSE
+Rational Performance Tester 8.2 requires Rational License Server 8.1.1. This issue was identified as a product defect under APAR PM26331. 
+
+
+
+ENVIRONMENT
+ 
+
+ * Rational Performance Tester 8.2. 
+ * Rational License Server 7.x.
+   
+   
+
+RESOLVING THE PROBLEM
+Upgrade Rational License Server to version 8.1.1.
+
+
+
+
+REMARKS 
+
+ * You can download the Rational License Key Server from IBM PassportAdvantage [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]. 
+   
+   
+ * RPT v8.2.0.2 implements a defect correction. The defect fix consist of changing the message into the following message.
+   
+   This software is not compatible with the license server you are running. The current configuration is not supported and upgrading the license server to the latest version is recommended.
+
+RELATED INFORMATION
+#IBM PassportAdvantage Helpdesk [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]
+Rational License Server Delivery and Support [http://www.ibm.com/support/docview.wss?uid=swg21265239]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21570990]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Common Licensing Licensing Linux, Windows 7.0, 7.1, 7.5, 8.0

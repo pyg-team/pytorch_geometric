@@ -1,0 +1,36 @@
+Title: IBM WebSphere Adapter for JDBC throws SQL error ORA-02396 during execution of outbound operation - United States
+
+Text:
+jdbc adapter; SQL; ORA-02396 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ JDBC Adapter throws an SQL error "ORA-02396: exceeded maximum idle time" while performing an outbound operation. 
+
+SYMPTOM
+Shown below is a part of the trace file for the SQL error: 
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+[4/15/13 9:06:51:030 IST] 00001f8d JDBCAdapter E com.ibm.j2ca.jdbc. JDBCDBOperationHandler executeExecStoredProcedureWithRS CWYDB0301E: An operation on the database could not be completed, and an SQL exception was generated for the following reason: ORA-02396: exceeded maximum idle time, please connect again. 
+Explanation=The adapter could not perform a database operation. The problem might be in the driver, the database, or the business object data. The SQL exception reported can help you identify the problem area. UserAction=Analyze the reason for the failure of the database operation, and fix the related setup problems. 
+
+[4/15/13 9:06:51:039 IST] 00001f8d JDBCAdapter E JDBCInteraction execute CWYBC1201E: The execute call to the interaction could not be completed. 
+Explanation= The adapter could not perform the Execute operation on the interaction. The exception message logged gives the reason for the failure. UserAction=Check the exception and perform corrective action. 
+
+[4/15/13 9:06:51:045 IST] 00001f8d JDBCAdapter E JDBCManagedConnection rollback CWYDB0201E: The adapter could not establish a connection to the database for the following reason: ORA-01012: not logged on . 
+Explanation=The adapter could not establish a connection to the database. The problem might be in the driver, the database, or the user credentials provided. The reason stated in the error message can help you identify the problem area. UserAction=Analyze the reason for the failure to establish a connection, and fix the related setup problems. 
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+CAUSE
+The ORA-02396 SQL error is thrown due to the idle time out setting on the database server end.
+
+
+RESOLVING THE PROBLEM
+Engage your database administrator and check the idle time-out value at the database end, and increase this value if possible. 
+
+
+If increasing the idle time-out value on the database end is not possible, follow the recommendations below to tune the Datasource connection pool settings:
+
+1) Set the Minimum connections value to 0.
+2) Decrease the unused time-out value to less than the idle time-out value.
+3) Check the reap time value, and consider reducing it so that the connection pool maintenance thread runs more frequently.

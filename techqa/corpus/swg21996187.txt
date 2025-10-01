@@ -1,0 +1,86 @@
+Title: IBM Migrating Datacap applications to V9.1.0 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I upgrade my Datacap application to Datacap V9.1.0? 
+
+ANSWER
+To upgrade your Datacap application to V9.1.0, complete the following steps:
+Before Upgrade:
+----------------- 
+
+ 1. Ensure to take full backups of the Admin, Engine, and Fingerprint database tables. 
+ 2. Ensure that the Admin, Engine and Fingerprint databases are transferred to SQL Server, Oracle and DB2. 
+ 3. Run the installer to install IBM Datacap V9.1.0. You do not need to uninstall IBM Datacap 9.0.1 prior to upgrade. 
+ 4. Migrate your Datacap V9.0.1 applications to V9.1.0. Database schemas may need to be updated.
+
+There are three cases for migration; out of which two require DB changes and one does not require changes to the DB. These three cases are discussed below:  * Case A) 
+ * 
+ * 
+ * 
+ * Case B
+ * 
+ * DB migration steps for 9.0 upgrade to 9.0.1
+ * 
+ * 
+ * 
+ * Case C) 
+ * 
+ * all the steps for migrating from 8.0.1 to 8.1
+ * 
+ *  steps for migrating from 9.0 to 9.0.1
+ * 
+
+ * Note:
+ * 
+ * 
+ *  Populate Fields Using Keywords, ExportToBoxRul, ImportFromBoxRul, 
+ * 
+ * RecognizePagesAndFieldsRul.
+ * 
+ * 
+ * 
+ *  \Datacap\rrs 
+ * 
+ * 
+ * 
+ *  Populate_Fields_Using_Keywords.Rul.dll ExportToBoxRul.dll ImportFromBoxRul.dll RecognizePagesAndFieldsRul.dll. 
+ * 
+ * Rules 
+ * 
+ * 
+
+5. After the upgrade is complete, restart the computer. 
+6. Re-build and reinstall your customized Datacap Desktop panels, if any. 
+ * The Datacap Desktop panels are for use with IBM Datacap 9.1.
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+After Upgrade: 
+-----------------  1. Validate that the upgrade to V9.1.0 is successful with no errors displayed to user. 
+ 2. Validate that the Install.log contains no errors or warnings. 
+ 3. For each application migrated to V9.1.0, validate that batch records are intact and have identical details compared with V9.0.1 FP2 using the following clients:  * Datacap Desktop 
+     * Datacap Studio 
+     * Fastdoc 
+     * TMWeb 
+     * RV2

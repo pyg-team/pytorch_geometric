@@ -1,0 +1,295 @@
+Title: IBM IT17270: WHEN THE INSTANCE IS DOWN, & A NODE IS OFFLINE, DB2START WILL FAIL WITH SQL1677N - United States
+
+Text:
+z/os SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the instance is down, & a Node is offline, db2start will
+   fail with SQL1677N.
+   This can also happen if there is a problem checking the license
+   on any node.
+   
+   The Instance state look like the following:
+   
+   $db2instance -list
+   
+   ID      TYPE               STATE        HOME_HOST
+   CURRENT_HOST        ALERT    PARTITION_NUMBER    LOGICAL_PORT
+   NETNAME
+   --      ----               -----        ---------
+   ------------        -----    ----------------    ------------
+   -------
+   0    MEMBER             STOPPED        db2host1        db2host1
+   NO                   0               0
+   db2host1-en0,db2host1-en2
+   1    MEMBER             STOPPED        db2host2        db2host2
+   NO                   0               0
+   db2host2-en0,db2host2-en2
+   2    MEMBER             STOPPED        db2host3        db2host3
+   NO                   0               0
+   db2host3-en0,db2host3-en2
+   3    MEMBER             STOPPED        db2host4        db2host4
+   NO                   0               0
+   db2host4-en0,db2host4-en2
+   128    CF             STOPPED        db2hostcf1
+   db2hostcf1           NO                   -               0
+   db2hostcf1-en0,db2hostcf1-en1,db2hostcf1-en2,db2hostcf1-en3
+   129    CF             STOPPED        db2hostcf2
+   db2hostcf2           NO                   -               0
+   db2hostcf2-en0,db2hostcf2-en1,db2hostcf2-en2,db2hostcf2-en3
+   
+   HOSTNAME           STATE        INSTANCE_STOPPED    ALERT
+   --------           -----        ----------------    -----
+   db2hostcf2          ACTIVE                     YES       NO
+   db2hostcf1          ACTIVE                     YES       NO
+   db2host4          ACTIVE                     YES       NO
+   db2host3          ACTIVE                     YES       NO
+   db2host1          ACTIVE                     YES       NO
+   db2host2        INACTIVE                     YES      YES
+   There is currently an alert for a member, CF, or host in the
+   data-sharing instance. For more information on the alert, its
+   impact, and how to clear it, run the following command:
+   'db2cluster -cm -list -alert'.
+   
+   The db2diag.log will show the following:
+   
+   2016-09-28-09.17.48.692820+120 E84981A1233          LEVEL:
+   Severe
+   PID     : 31590350             TID : 1029           PROC :
+   db2start
+   INSTANCE: db2inst              NODE : 000
+   HOSTNAME: db2host1
+   EDUID   : 1029
+   FUNCTION: DB2 UDB, high avail services, sqlhaExecuteCommandSQO,
+   probe: 1058
+   DATA #1 : String, 13 bytes
+   db2host2
+   DATA #2 : String, 26 bytes
+   /usr/sbin/rsct/bin/samlicm
+   DATA #3 : String, 2 bytes
+   -s
+   DATA #4 : String, 4 bytes
+   root
+   DATA #5 : String, 7 bytes
+   db2inst
+   DATA #6 : String, 7 bytes
+   db2inst
+   DATA #7 : unsigned integer, 4 bytes
+   400
+   DATA #8 : Boolean, 1 bytes
+   false
+   DATA #9 : SQLHA Remote Command Output,
+   PD_TYPE_SQLHA_COMMAND_RESPONSE,
+   3508 bytes
+   commandResponse->callRC: 0x00000000
+   commandResponse->output: ssh: connect to host db2host2 port 22:
+   Connection timed out
+   
+   DATA #10: Hex integer, 4 bytes
+   0x00000000
+   DATA #11: Hex integer, 4 bytes
+   0x000000FF
+   CALLSTCK: (Static functions may not be resolved correctly, as
+   they are resolved to the nearest symbol)
+     [0] 0x090000000D2DF9E0 sqlhaExecuteCommand + 0xD7C
+     [1] 0x090000000D2DED44 sqlhaExecuteCommand + 0xE0
+     [2] 0x090000000D2DED44 sqlhaExecuteCommand + 0xE0
+     [3] 0x09000000004FAE10 _pthread_body + 0xF0
+     [4] 0xFFFFFFFFFFFFFFFC ?unknown + 0xFFFFFFFF
+   
+   2016-09-28-09.17.48.698102+120 I86215A730           LEVEL: Error
+   PID     : 31590350             TID : 1              PROC :
+   db2start
+   INSTANCE: db2inst              NODE : 000
+   HOSTNAME: db2host1
+   EDUID   : 1
+   FUNCTION: DB2 UDB, high avail services,
+   sqlhaGetLicenseStatusFromEachHost, probe:24101
+   MESSAGE : Problem running command on the host.
+   DATA #1 : SQLHA Remote Command Set, PD_TYPE_SQLHA_COMMAND_SET,
+   289048 bytes
+   commandSet->numCommands: 6
+   commandSet->options: NONE
+   commandSet->previousDb2RshCmd:
+   DATA #2 : SQLHA Remote Command Output,
+   PD_TYPE_SQLHA_COMMAND_RESPONSE, 8 bytes
+   commandResponse->callRC: 0x00000001
+   commandResponse->output: (0
+   DATA #3 : unsigned integer, 8 bytes
+   3
+   DATA #4 : String, 13 bytes
+   db2host2
+   
+   2016-09-28-09.17.48.698738+120 I86946A490           LEVEL: Error
+   PID     : 31590350             TID : 1              PROC :
+   db2start
+   INSTANCE: db2inst              NODE : 000
+   HOSTNAME: db2host1
+   EDUID   : 1
+   FUNCTION: DB2 UDB, high avail services, sqlhaVerifyHostLicenses,
+   probe: 18358
+   MESSAGE : The cluster manager license for the host is not ok:
+   DATA #1 : String, 13 bytes
+   db2host2
+   DATA #2 : SQLHA_LICENSE_STATUS, PD_TYPE_SQLHA_LICENSE_STATUS, 4
+   bytes
+   SQLHA_LICENSE_STATUS_UNKNOWN
+   
+   2016-09-28-09.17.48.699239+120 I87437A349           LEVEL:
+   Severe
+   PID     : 31590350             TID : 1              PROC :
+   db2start
+   INSTANCE: db2inst              NODE : 000
+   HOSTNAME: db2host1
+   EDUID   : 1
+   FUNCTION: DB2 UDB, base sys utilities, sqleIssueStartStop,
+   probe:5980
+   DATA #1 : String, 7 bytes
+   db2inst
+   DATA #2 : Boolean, 1 bytes
+   false
+   
+   2016-09-28-09.17.48.701606+120 I87787A1280          LEVEL: Event
+   PID     : 31590350             TID : 1              PROC :
+   db2start
+   INSTANCE: db2inst              NODE : 000
+   HOSTNAME: db2host1
+   EDUID   : 1
+   FUNCTION: DB2 UDB, base sys utilities, sqleIssueStartStop,
+   probe:5980
+   DATA #1 : SQLCA, PD_DB2_TYPE_SQLCA, 136 bytes
+   sqlcaid : SQLCA     sqlcabc: 136   sqlcode: 0   sqlerrml: 0
+   sqlerrmc:
+   sqlerrp : SQL10058
+   sqlerrd : (1) 0x00000000      (2) 0x00000000      (3) 0x00000000
+              (4) 0x00000000      (5) 0x00000000      (6)
+   0x00000000
+   sqlwarn : (1)      (2)      (3)      (4)        (5)       (6)
+              (7)      (8)      (9)      (10)        (11)
+   sqlstate:
+   DATA #2 : SQLCA, PD_DB2_TYPE_SQLCA, 136 bytes
+   sqlcaid : SQLCA     sqlcabc: 136   sqlcode: -1677   sqlerrml: 0
+   sqlerrmc:
+   sqlerrp : SQLESSCM
+   sqlerrd : (1) 0x00000000      (2) 0x00000000      (3) 0x00000000
+              (4) 0x00000000      (5) 0x00000000      (6)
+   0x00000000
+   sqlwarn : (1)      (2)      (3)      (4)        (5)       (6)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Platforms                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to db2 11.1m1fp1                                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem resolved in db2 11.1m1fp1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT17270
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-29
+   
+   
+ * CLOSED DATE
+   2017-10-09
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA50 PSN
+   UP

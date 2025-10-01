@@ -1,0 +1,211 @@
+Title: IBM IV24698: XMS.NET v2 CLIENT CONNECTIONS TO WMQV6 QMGR HANGS WITH NULL REF EXCPTN WHEN APPLN CLOSES ASYNC CONSUMER WITHIN EXCPTN LISTENER. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.9 [http://www-01.ibm.com/support/docview.wss?uid=swg24033008]
+Fix Pack 7.1.0.2 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24033287]
+WebSphere MQ V7.5 Fix Pack 7.5.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24034616]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Description?
+   A Message Service Client (XMS) .NET v2.0  or above application
+   loses connection to a WebSphere MQ (WMQ) v6 queue manager due
+   to a network problem, and receives the expected
+   MQRC_CONNECTION_BROKEN (2009) errors.While disposing the XMS
+   resources in Exception Listener call back function and after
+   re-establishing the connection, and message listeners, there's a
+   message delivery hang observed with trace reporting a Null
+   Reference Exception .
+   
+   XMS trace shows:
+   UOW= source=IBM.XMS.WMQ.WmqMessageConsumer org=IBM
+   prod=WebSphere component=Message Service Client for .NET
+   thread=[1 : 0]
+   SetupBackoutDLQ() : Error setting up BOQ and DLQ
+   UOW= source=IBM.XMS.WMQ.WmqMessageConsumer org=IBM
+   prod=WebSphere component=Message Service Client for .NET
+   thread=[1 : 0]
+   System.NullReferenceException: Object reference not set to an
+   instance of an object.
+   at IBM.XMS.WMQ.WmqMessageConsumer.SetupBackoutDLQ()
+   UOW= source=IBM.XMS.WMQ.WmqMessageConsumer
+   method=SetupBackoutDLQ() [:] org=IBM prod=WebSphere
+   component=Message Service Client for .NET thread=[1 : 0]
+   exit
+   UOW= source=IBM.XMS.WMQ.WmqMessageConsumer method=ctor() [:]
+   org=IBM prod=WebSphere component=Message Service Client for
+   .NET thread=[1 : 0]
+   exit
+   UOW= source=IBM.XMS.WMQ.WmqSession
+   method=CreateConsumer(Destination, Selector, noLocal) [:]
+   org=IBM prod=WebSphere component=Message Service Client for
+   .NET thread=[1 : 0]
+   exit
+   UOW= source=IBM.XMS.Client.Impl.XmsMessageConsumerImpl org=IBM
+   prod=WebSphere component=Message Service Client for .NET
+   thread=[1 : 0]
+   ProviderConsumer.get
+   IBM.XMS.WMQ.WmqMessageConsumer
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix&#65496;
+   End and restart application.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Applications using XMS.NET 2.0 or Above and Connecting to a WMQ
+   v6 Queue Manager
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   A XMS .NET v2.0 or above application when attempts to dispose
+   the XMS objects(Consumer or Session) from the Exception Listener
+   callback function, on receipt of a exception. The dispose call
+   has raised a Null Reference Exception breaking the application
+   logic to execute further.
+   Also, after the connections are re established, not all the
+   message listeners were starting to receive the messages. This
+   was observed only after application re established the connecti.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In the event of connection failure, the application is allowed
+   to close the consumer from the exception listener.
+   When the connections are re established following a connection,
+   the message listeners are started correctly to re start
+   receiving the messages.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.9
+   --------           --------------------
+   Windows            7.0.1.09
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.2
+   --------           --------------------
+   Windows            7.1.0.2
+   
+   Platform           v7.5
+   --------           --------------------
+   Multiplatforms     7.5.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV24698
+   
+   
+ * REPORTED COMPONENT NAME
+   MSG SRVCS CL .N
+   
+   
+ * REPORTED COMPONENT ID
+   5724M2100
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-11
+   
+   
+ * CLOSED DATE
+   2012-07-25
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MSG SRVCS CL .N
+   
+   
+ * FIXED COMPONENT ID
+   5724M2100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY
+   UP

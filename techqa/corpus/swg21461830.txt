@@ -1,0 +1,56 @@
+Title: IBM Notes client crash: "Lotus Notes has stopped working" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Notes crashes intermittently with a Windows7 dialog box as illustrated in the following screen shot: 
+
+ [/support/docview.wss?uid=swg21461830&amp;aid=1] 
+
+
+ENVIRONMENT
+Notes Standard 8.5.1 FixPack 1 
+
+ Windows 7 Enterprise 
+
+
+DIAGNOSING THE PROBLEM
+The NSD files that are generated are as follows: 
+
+PANIC: Process notes2.exe (pid=####) no longer exists. A JVM fault could be responsible. 
+
+WARNING (0): WCT Abnormal Termination Detected! Notes paniced because process notes2.exe (pid=####) was missing.
+WARNING (0): The fatal thread reported will show only the panicing thread that detected that notes2.exe was missing. Searching for a javacore...
+WARNING (0): Javacore file C:\Program Files\IBM\lotus\notes\data\workspace\logs\javacore.xxxx.xxxx.txt was found. Please review this file for further information on why notes2.exe abnormally terminated
+
+
+This indicates that the Notes2 process is no longer present. It crashed and generated a javacore*.txt file that is located in the Notes\workspace\logs directory. This file must be reviewed for further troubleshooting. 
+
+Checking the "top" of the generated javacore*.txt files, you find that the "Dump Event" is "gpf". General Protection Fault (gpf) means it's a crash.
+
+SECTION TITLE subcomponent dump routine
+NULL ===============================
+1TISIGINFO Dump Event "gpf" (00002000) received 
+1TIDATETIME Date: 2011/01/16 at 18:26:07
+1TIFILENAME Javacore filename: C:/Program Files (x86)/IBM/Lotus/Notes/Data/workspace/logs\javacore.20110116.182604.4384.0003.txt
+NULL ------------------------------------------------------------------------
+
+
+However, analysis of the javacore*.txt file show the following incomplete "Current Thread" which does not lead to a cause of the crash:
+
+
+NULL ------------------------------------------------------------------------
+0SECTION THREADS subcomponent dump routine
+NULL =================================
+NULL 
+1XMCURTHDINFO Current Thread Details
+NULL ----------------------
+3XMTHREADINFO "main" TID:0x00353700, j9thread_t:0x02583E54, state:R, prio=6
+3XMTHREADINFO1 (native thread ID:0x17EC, native priority:0x6, native policy:UNKNOWN)
+
+
+
+
+RESOLVING THE PROBLEM
+In this cause creating a new Desktop8.ndk and names.nsf file resolved the issue

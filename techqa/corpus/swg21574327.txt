@@ -1,0 +1,29 @@
+Title: IBM IS Pack for SAP Applications: ABAP jobs fail with the error: BAPI Logical Connection not found - United States
+
+Text:
+Information Server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In a DataStage cluster all ABAP jobs that are running on the processing nodes are failing with the error: BAPI Logical Connection not found. 
+
+SYMPTOM
+In a cluster of DataStage servers, one is acting as the primary/head node and other servers are acting as secondary/processing nodes. The SAP applications host name changed and the change was propagated to the primary node by updating the SAP connection properties in the DSSAPConnections.config file using the DataStage Administrator for SAP client. 
+
+The SAP connection properties in the DSSAPConnections.config were updated manually in all other DataStage servers in the cluster. 
+
+As a result, the ABAP jobs that are running on the processing node were failing with the 'BAPI Logical Connection not found' error and, at the same time, the ABAP jobs that are running on the primary node completed successfully.
+
+
+CAUSE
+When the change was propagated manually, even though the updates were thought to be the same on the processing nodes, it was not completely correct causing the error.
+
+
+DIAGNOSING THE PROBLEM
+The DSSAPConnections.config file in each DataStage server in the cluster is accessible, content of the file look exactly the same and the correct SAP Application host is specified.
+
+
+
+RESOLVING THE PROBLEM
+Replace the DSSAPConnections.config file on the processing nodes with the one from the primary node to avoid errors from manual intervention. 
+
+Recommend renaming the existing DSSAPConnections.config file on each processing node first and then copy the DSSAPConnections.config file from the primary to each processing node.

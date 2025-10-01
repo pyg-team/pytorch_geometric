@@ -1,0 +1,220 @@
+Title: IBM JR45030: JSONDATAHANDLER DO NOT SUPPORT INTERFACE WITH MULTIPLE INPUT PARAMETERS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.0.1 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24034495]
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  FFDC Exception:java.lang.RuntimeException
+   SourceId:java.lang.RuntimeException caught trying to serialize
+   BO BusinessObject: @12e912e9
+   (:mixed=[ServiceMessageObject:smo=ServiceMessageObject:
+   ServiceMessageObject@10d010d0 (context=ContextType@11171117,
+   headers=HeadersType@c830c83,
+   body=com.ibm.ws.http.data.bindings.HTTPParsableNativeDataHolder@
+   10481048)], smo=ServiceMessageObject@10d010d0) (mixed:
+   [ServiceMessageObject:smo=ServiceMessageObject:
+   ServiceMessageObject@10d010d0 (context=ContextType@11171117,
+   headers=HeadersType@c830c83,
+   body=com.ibm.ws.http.data.bindings.HTTPParsableNativeDataHolder@
+   10481048)]) ProbeId:214
+   java.lang.RuntimeException: An error occurred while parsing
+   native data: The error message is:
+   commonj.connector.runtime.DataBindingException:
+   commonj.connector.runtime.DataHandlerException: CWLAP0100E: The
+   generateContentSoapIn data object with the
+   http://xxxx/xxx/ContentManagement/generateContent/V1 namespace
+   cannot be created due to missing schema file..
+   Caused By: commonj.connector.runtime.DataBindingException:
+   commonj.connector.runtime.DataHandlerException: CWLAP0100E: The
+   generateContentSoapIn data object with the
+   http://xxx/xxx/ContentManagement/generateContent/V1 namespace
+   cannot be created due to missing schema file.
+    at
+   com.ibm.ws.sibx.smobo.impl.ServiceMessageObjectImpl.getBodyImpl(
+   ServiceMessageObjectImpl.java:690)
+    at
+   com.ibm.ws.sibx.smobo.impl.ServiceMessageObjectImpl.getBody(Serv
+   iceMessageObjectImpl.java:601)
+    at
+   com.ibm.ws.sibx.smobo.impl.ServiceMessageObjectImpl.eIsSet(Servi
+   ceMessageObjectImpl.java:914)
+    at
+   org.eclipse.emf.ecore.impl.BasicEObjectImpl.eIsSet(BasicEObjectI
+   mpl.java:818)
+    at
+   org.eclipse.emf.ecore.xmi.impl.XMLSaveImpl.saveFeatures(XMLSaveI
+   mpl.java:1103)
+    at
+   com.ibm.ws.bo.bomodel.util.BOXMLSaveImpl.saveFeatures(BOXMLSaveI
+   mpl.java:977)
+    at
+   org.eclipse.emf.ecore.xmi.impl.XMLSaveImpl.saveElementID(XMLSave
+   Impl.java:2458)
+       .......
+   Caused by: An error occurred while parsing native data: The
+   error message is:
+   commonj.connector.runtime.DataBindingException:
+   commonj.connector.runtime.DataHandlerException: CWLAP0100E: The
+   generateContentSoapIn data object with the
+   http://xxx/xx/ContentManagement/generateContent/V1 namespace
+   cannot be created due to missing schema file..
+   Caused By: commonj.connector.runtime.DataBindingException:
+   commonj.connector.runtime.DataHandlerException: CWLAP0100E: The
+   generateContentSoapIn data object with the
+   http://xxx/xx/ContentManagement/generateContent/V1 namespace
+   cannot be created due to missing schema file.
+    at
+   com.ibm.ws.http.data.bindings.HTTPParsableNativeDataHolder.getBo
+   dy(HTTPParsableNativeDataHolder.java:265)
+    at
+   com.ibm.ws.http.data.bindings.HTTPParsableNativeDataHolder.getBo
+   dyReadOnly(HTTPParsableNativeDataHolder.java:189)
+    at
+   com.ibm.ws.sibx.smobo.impl.ServiceMessageObjectImpl.getBodyImpl(
+   ServiceMessageObjectImpl.java:673)
+    ... 76 more
+   Caused by: commonj.connector.runtime.DataBindingException:
+   commonj.connector.runtime.DataHandlerException: CWLAP0100E: The
+   generateContentSoapIn data object with the
+   http://xxx/xx/ContentManagement/generateContent/V1 namespace
+   cannot be created due to missing schema file.
+    at
+   com.ibm.websphere.http.data.bindings.HTTPStreamDataBindingDHWrap
+   per.getDataObject(HTTPStreamDataBindingDHWrapper.java:382)
+    at com.ibm.ws.http.data.bindings.HTTPParsableNa
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No loal fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  WebSphere Process Server v7.0 users         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Json date handler does not support      *
+   *                      interface with multiple input           *
+   *                      parameters                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If the interface has multiple input parameters, when using
+   Json date handler, the exception could occur:
+   commonj.connector.runtime.DataHandlerException: CWLAP0100E: The
+   generateContentSoapIn data object with the
+   http://xxx/xx/ContentManagement/generateContent/V1 namespace
+   cannot be created due to missing schema file.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem is fixed by coffecting BO mode helper to support
+   multiple input parameters in JR45030.
+   
+   Install/Dependency information is available in the readme.txt
+   on FixCentral. When the user goes to the download files page
+   in FixCentral, the readme will be available with the fix
+   package as a separate download.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR45030
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-12-04
+   
+   
+ * CLOSED DATE
+   2012-12-21
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

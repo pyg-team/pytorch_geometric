@@ -1,0 +1,43 @@
+Title: IBM FileNet Content Federation Services for Content Integrator 5.2 Fix Pack 2 (5.2.0.2-CFS-FP002) configuration changes - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ IBM Content Federation Services for Content Integrator 5.2.0.2-CFS-FP002 streamlines installation procedures and simplifies the distributed deployment of the Federation Administration web application. 
+
+CONTENT
+Streamlined installation procedures 
+
+The Content Federation Services 5.2.0.2-CFS-FP002 fix pack streamlines the installation procedure in the following ways:
+
+
+ * You do not have to configure the target Content Platform Engine server. 
+ * You do not have to download the FileNet P8 client Jace.jar file. 
+ * You do not have to connect to a running Content Platform Engine server.
+
+
+Distributed deployment of the Federation Administration web application You can install and configure the Content Federation Services Federation Administration application and Content Platform Engine as separate applications on the same or different servers. With distributed deployment, the steps in the following topics are no longer required:
+
+
+1) Installing optional components > IBM FileNet CFS for Content Integrator installation and upgrade > Deploying Content Federation Services Federator Administration Application > Deploying stand-alone into its own application server > Configuring for deployment when applications are not collocated [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.installingcfs.doc/cfsin084.htm] 
+
+2) Installing optional components > IBM FileNet CFS for Content Integrator installation and upgrade > Deploying Content Federation Services Federator Administration Application > Collocated in a different application server instance from Content Platform Engine> Configuring for deployment when applications are not collocated [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.installingcfs.doc/cfsin084.htm]
+
+
+Correction to the release note regarding DB2 for z/OS support
+
+
+In the release note DB2 for z/OS is supported with Content Manager 5.2.0 starting in 5.2.0 FP2 [http://www.ibm.com/support/docview.wss?uid=swg27038918], the following section is no longer applicable: 
+
+ * 
+ * Notes on 
+ * CFS-ICI
+ *  support for DB2 z/OS
+   
+ * 
+ * 
+ * 
+ * 
+   
+ *

@@ -1,0 +1,26 @@
+Title: IBM EGO service automatic failover recovery - United States
+
+Text:
+EGO service automatic failover recovery TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ EGO service automatic failover recovery 
+
+RESOLVING THE PROBLEM
+
+
+You found your EGO service for example called ApplicationEGO has stopped running due to a power outage, network failure, application error or other causes, and below error messages was logged in $EGO_TOP/eservice/esc/log/esc.log. . You wonder how to enable EGO service automatic failover recovery to improve reliability. 
+
+2011-09-20 14:33:44.000 EDT WARN [29972:47130101744032] do_containerStateChange(): on host , the container <292811> belongs to instance <2> of service terminated, reason , status <0> 2011-09-20 14:33:44.000 EDT WARN [29972:47130101744032] Service instance went down on host in cluster You can add below failover parameters into your service profile file ApplicationEGO.xml in this example under $EGO_ESRVDIR/esc/conf/services. This example is for setting the ApplicationEGO service automatic failover. In the following setting, the service can restart a maximum of 10 times and the interval to wait to failover after a host failed is 1 minute.
+
+ 
+AUTOMATIC 
+10 
+PT1M 
+
+
+The format HostFailoverInterval is PTXHYMZS, which means X hours, Y minutes and Z seconds. For example, PT10M0s means 10 min and PT60s means 60 sec. The range is 0~1hour; if the setting is out of this range, the service will not be loaded by egosc.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum Symphony

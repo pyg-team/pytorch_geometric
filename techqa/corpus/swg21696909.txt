@@ -1,0 +1,28 @@
+Title: IBM How do I remove Reset and Clear buttons from Long Description - United States
+
+Text:
+TPAEAPPDESIGNER; reset; clear; button; long description TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Removing the Reset and Clear buttons from the Long Description 
+
+RESOLVING THE PROBLEM
+This is a global change not for a specific application 
+
+1. Go to Application Designer 
+2. Select Action menu Export System XML
+3. Export the Library.xml file save to your local drive and make a backup
+4. In the library.xml file search for ""longdesc_dialog" 
+5. Comment out the below tag as shown 
+<!--
+<pushbutton id="longdesc_2" label="Reset" mxevent="resetvalue" targetid="longdesctext"/>
+<pushbutton id="longdesc_3" label="Clear" mxevent="clearvalue" targetid="longdesctext"/>
+-->
+6. Save the changes and Import it in the Application Designer
+
+[/support/docview.wss?uid=swg21696909&aid=1] [/support/docview.wss?uid=swg21696909&aid=1]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Control Desk

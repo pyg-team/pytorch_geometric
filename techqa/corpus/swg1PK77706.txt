@@ -1,0 +1,191 @@
+Title: IBM PK77706: DIRECT CQ WEB URL FOR TEST DB RECORD W/O USERNAME + PASSWORD DOE S NOT WORK PROPERLY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CQ 7.0.x, Windows.
+   
+   ================================================================
+   ==============
+   The following format is to access a CQ Web record with a
+   username and password (it works fine):
+   
+   http://<CQ_server_name>cqweb/main?command=GenerateMainFrame&serv
+   ice=CQ&schema=<connection_name>&contextid=<logical_user_db>&user [http://<CQ_server_name>cqweb/main?command=GenerateMainFrame&service=CQ&schema=<connection_name>&contextid=<logical_user_db>&user]
+   name=<username>&password=<password>&entityID=<dbid_of_record>&en
+   tityDefName=<record_type_of_record>
+   ================================================================
+   ==============
+   
+   Customer has an CQ Web environment with a test database and no
+   production databases.
+   
+   Customer has a script which sends an email to a user informing
+   them that they need to take action on a particular record.
+   Basically, the email includes a CQ Web URL of the record, but
+   without the username and password specified. For example:
+   http://<CQ_server_name>cqweb/main?command=GenerateMainFrame&serv
+   ice=CQ&schema=<connection_name>&contextid=<logical_user_db>&enti [http://<CQ_server_name>cqweb/main?command=GenerateMainFrame&service=CQ&schema=<connection_name>&contextid=<logical_user_db>&enti]
+   tyID=<dbid_of_record>&entityDefName=<record_type_of_record>
+   
+   The problem is that when users go to the URL above, it takes
+   them to the CQ Web login page, but the database field value says
+   'Select a database' and the test database is not in the drop
+   down list. See screenshot, testDB.jpg.
+   
+   If a user tries to access the following format, then user sees
+   the test datbase in the database field, but it takes them to the
+   login splash screen, and not specific record specified in the
+   URL:
+   http://<CQ_server_name>cqweb/login?&test=1&service=CQ&schema=<co
+   nnection_name>&contextid=<logical_user_db>&entityID=<dbid_of_rec [http://<CQ_server_name>cqweb/login?&test=1&service=CQ&schema=<connection_name>&contextid=<logical_user_db>&entityID=<dbid_of_rec]
+   ord>&entityDefName=<record_type_of_record
+   
+   Steps to reproduce:
+   1. Create new schema repo with only 1 test database, no
+   production database.
+   2. Submit a defect (for example, TEST0000001) in the test
+   database using CQ Web, and note the dbid of the record from the
+   back-end.
+   3. Access defect TEST0000001 record WITH username and password.
+   For example:
+   http://localhost/cqweb/main?command=GenerateMainFrame&service=CQ
+   &schema=7.0.0&contextid=TEST&username=admin&password=myPassword& [http://localhost/cqweb/main?command=GenerateMainFrame&service=CQ&schema=7.0.0&contextid=TEST&username=admin&password=myPassword&]
+   entityID=3445443&entityDefName=Defect
+   
+   4. Customer gives users the above URL format without the
+   username and password. Access the Access defect TEST0000001
+   record WITHOUT username and password. For example:
+   http://localhost/cqweb/main?command=GenerateMainFrame&service=CQ
+   &schema=7.0.0&contextid=TEST&entityID=3445443&entityDefName=Defe [http://localhost/cqweb/main?command=GenerateMainFrame&service=CQ&schema=7.0.0&contextid=TEST&entityID=3445443&entityDefName=Defe]
+   ct
+   
+   5. It takes you to the CQ Web login page. You will see that the
+   database field value says 'Select a database' and the test
+   database is not available in the drop down list. This needs to
+   be fixed.
+   
+   6. Also, if you use the following format, then it takes you to
+   the CQ Web login page, you can enter the test database, however,
+   after logging in, it displays the splash screen instead of the
+   specific record:
+   http://localhost/cqweb/login?&test=1&service=CQ&schema=7.0.0&con
+   textid=TEST&entityID=3445443&entityDefName=Defect [http://localhost/cqweb/login?&test=1&service=CQ&schema=7.0.0&contextid=TEST&entityID=3445443&entityDefName=Defect]
+   
+   What customer wants:
+   A. Fix the database field value, so it shows the test database.
+   
+   OR
+   
+   B. Fix the CQ Web URL for test database (with test=1), so it
+   doesn't go to the login splash screen, but the specific record.
+   
+   Please let me know if you have any questions or need help
+   replicating the issue. Thanks!
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Direct CQ Web URL for test database record without username
+   and password does not work properly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available in ClearQuest 7.0.1.5.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK77706
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3600
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-12-18
+   
+   
+ * CLOSED DATE
+   2009-06-04
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724G3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSN
+   UP

@@ -1,0 +1,62 @@
+Title: IBM Finding the version of Operational Decision Manager installed product and fixes - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is there a way to determine the version of Operational Decision Manager product and fixes that are installed? 
+
+ANSWER
+Starting with version 7.5, the Operational Decision Manager (ODM) products are installed using IBM Installation Manager (IIM). You can use IIM to display the versions of your installed products. 
+
+With IIM, you can choose one of the two methods for displaying the product version: You can use the GUI or you can use the command line. 
+
+
+To display your product installation version by using the GUI approach: 
+
+1. Launch the IBM Installation Manager. 
+2. Click File > View Installed Packages. 
+
+A window opens. The window displays the product components, fix-packs, and the iFixes that are installed. 
+
+
+You can use a command line for Windows or Linux to display your product installation version:
+
+Linux: 
+
+./imcl listInstalledPackages -long 
+
+Windows: 
+
+imcl.exe listInstalledPackages -long 
+
+The above command displays the versions of all the products that are installed through IIM including the install paths.
+
+You can use a command line for Window and Linux to display your installed product features:
+
+Linux: 
+
+./imcl listInstalledPackages -features -long 
+
+Windows: 
+
+imcl.exe listInstalledPackages -features -long 
+
+ 
+
+The "imcl" executable is typically found in the"/eclipse/tools" directory of IBM Installation Manager install directory. 
+
+ 
+
+The returned information includes a longer description of the packages and the features that are included in the repository. 
+
+ 
+
+Note 1: If you encounter the error "CRIMC1018E ERROR: Administrator privileges are required" when attempting to run the above commands, ensure that the user has administrative privileges. This error is documented in this link [http://pic.dhe.ibm.com/infocenter/install/v1r5/topic/com.ibm.messages.IMic/CRIMC1018E.html].
+
+
+
+Note 2: In order to find out the version of Decision Center and Decision Server consoles and Rule Designer, you should check the "About" menu. Here is a link to a tech-note that offers a way to verify this information: http://www.ibm.com/support/docview.wss?uid=swg21400738 [http://www.ibm.com/support/docview.wss?uid=swg21400738]
+
+RELATED INFORMATION
+#Find the version of JRules/WODM components [http://www-01.ibm.com/support/docview.wss?uid=swg21400738]

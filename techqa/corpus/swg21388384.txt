@@ -1,0 +1,36 @@
+Title: IBM WebSphere Adapter for JDBC throws recordNotFoundException - United States
+
+Text:
+WebSphere Adapter for JDBC; errorOnEmptyResultset; recordNotFoundException; retrieveAll operation TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When the adapter tries to retrieve data from a database and there is no entry for the requested keys, then the adapter throws the following recordNotFoundException instead of simply an empty or null object: 5/13/09 12:28:29:332 GST com.ibm.j2ca.base.exceptions.RecordNotFoundException. 
+
+SYMPTOM
+WebSphere Adapter for JDBC throws recordNotFoundException
+
+
+CAUSE
+During retrieveAll operation, adapter throws RecordNotFoundException when no records are returned from the database. The WebSphere Adapter for JDBC didn't handle the empty entry correctly.
+
+RESOLVING THE PROBLEM
+Contact IBM support to retrieve WebSphere Adapter for JDBC interim fix V6.0.2.3IF10. 
+
+With this fix, a new property called ErrorOnEmptyResultset has been added on the Managed Connection Factory. The default value for this property is true and will result in current behavior, i.e. if no rows are returned for the RetrieveAll operation, a RecordNotFoundException is thrown.
+
+If you want to override the behavior for retrieveAll operation then you can change the value for this property through Admin Console and set it to false after deploying the application. In this case, adapter will not throw an exception and return an empty container when no records are found after processing the retrieveAll operation. This property is not configurable through EMD in this fix, and has to be changed in the Admin Console. In the V6.2 release, this property will be added to the EMD code as well.
+
+You can also add the "errorOnEmptyResultset" property to *.import file like this: 
+
+<connection type="com.ibm.j2ca.jdbc.JDBCManagedConnectionFactory" interactionType="com.ibm.j2ca.jdbc.JDBCInteractionSpec"> 
+<properties>
+<databaseURL>jdbc:microsoft:sqlserver://localhost:1433;DatabaseName=adapter</databaseURL> 
+<jdbcDriverClass>com.microsoft.jdbc.sqlserver.SQLServerDriver</jdbcDriverClass> 
+<password>adrienne</password> 
+<userName>sa</userName> 
+<errorOnEmptyResultset>false</errorOnEmptyResultset> 
+</properties> 
+
+If you will apply this interim fix to the Redhat Linux, you can also try deploying the EAR with "parent last" class loader option to make sure this interim fix will be used. 
+
+[/support/docview.wss?uid=swg21388384&aid=1] [/support/docview.wss?uid=swg21388384&aid=1]

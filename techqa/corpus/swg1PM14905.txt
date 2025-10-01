@@ -1,0 +1,180 @@
+Title: IBM PM14905: MS LOGIN FAILURE DUE TO CONNECTIONWAITTIMEOUTEXCEPTION WITH JDBC/CYANEADATASOURCE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.1-TIV-ITCAMAD-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24027898]
+7.1.0.2-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP2 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24029067]
+7.1.0.2-TIV-ITCAMAD-IF0006: ITCAM for Application Diagnostics V7.1 FP2 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24031010]
+7.1.0.2-TIV-ITCAMAD-IF0007: ITCAM for Application Diagnostics V7.1 FP2 IF7 [http://www-01.ibm.com/support/docview.wss?uid=swg24031710]
+7.1.0.2-TIV-ITCAMAD-IF0010: ITCAM for Application Diagnostics V7.1 FP2 IF10 [http://www-01.ibm.com/support/docview.wss?uid=swg24032110]
+7.1.0-TIV-ITCAMAD-FP0003: ITCAM for Application Diagnostics V7.1 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032604]
+7.1.0.3-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP3 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032985]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MS login failure due to ConnectionWaitTimeoutException with
+   jdbc/CyaneaDataSource
+   
+   [05/03/10 3.06.01:114 CET] 00000026 SystemErr     R Caused by:
+   
+   com.ibm.websphere.ce.j2c.ConnectionWaitTimeoutException:
+   Connection not
+   available, Timed out waiting for 180003
+    at
+   com.ibm.ejs.j2c.FreePool.createOrWaitForConnection(FreePool.java
+   :1613)
+    at com.ibm.ejs.j2c.PoolManager.reserve(PoolManager.java:2342)
+    at
+   com.ibm.ejs.j2c.ConnectionManager.allocateMCWrapper(ConnectionMa
+   nager.ja
+   va:934)
+    at
+   com.ibm.ejs.j2c.ConnectionManager.allocateConnection(ConnectionM
+   anager.j
+   ava:610)
+    at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcDataSource.getConnection(WSJdbcD
+   ataSourc
+   e.java:449)
+    at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcDataSource.getConnection(WSJdbcD
+   ataSourc
+   e.java:418)
+    at
+   com.cyanea.octigate.common.DbAccessContainer.getDbConn(DbAccessC
+   ontainer
+   .java:126)
+   ...
+   ........
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   *
+   * ITCAM 6.1 and AD 7.1 Managing server console users.
+   *
+   ****************************************************************
+   *
+   * PROBLEM DESCRIPTION:
+   *
+   * While logging into Managing server console, users may
+   * experience login failure due to Database connection wait
+   * time out exception.  The trace logs will indicate a
+   * com.ibm.websphere.ce.j2c.ConnectionWaitTimeoutException
+   * with database connection not available due to timeout.
+   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   pakcages:
+   
+     | interim fix | 6.1.0.5-TIV-ITCAMfWAS_SVR-IF0012
+   
+     | interim fix | 7.1.0.1-TIV-ITCAMAD_SVR-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM14905
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62MS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-20
+   
+   
+ * CLOSED DATE
+   2010-08-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-08-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * FIXED COMPONENT ID
+   5724L62MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSN
+   UP

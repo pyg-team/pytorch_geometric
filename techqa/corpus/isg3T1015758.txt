@@ -1,0 +1,54 @@
+Title: IBM The Purger will cease to function if the Transaction Log becomes too large - United States
+
+Text:
+transaction log; Purger TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Purger will cease to function if the Transaction Log becomes too large 
+
+RESOLVING THE PROBLEM
+
+
+The purger will stop working and errors such as these will appear in the purger logs:
+
+"ERROR com.platform.perf.purger.PurgeTask.purgeSQLServerDB(PurgeTask.java:920) Error purging SqlServer database.The transaction log for database 'ABC' is full. To find out why space in the log cannot be reused, see the log_reuse_wait_desc column in sys.databases"
+
+ The transaction log is a history of actions executed by the database management system, including purging of records. When the purger runs, the transaction log gets appended.
+
+By default, the purging interval is 24 hours. A large quantity of data in a database can expire within 24hours. If the purger removes large amounts of expired data from the database, the transaction log will increase rapidly. If the transaction log becomes too large, the purger may cease to function because there is no free space available to write to the transaction logs.
+
+ To resolve this issue, the purging interval can be reduced to 1 hour so that less expired data is purged at once, keeping the transaction log relatively small.
+
+ Before making any changes, stop the purger service: "egosh service stop purger".
+
+On Windows:
+
+ 1. Open %EGO_CONFDIR%\..\..\eservice\esc\conf\services\purger_service.xml and locate this line:
+    "${EGO_TOP}\perf\1.2.3u1\etc\purger.bat" -t 00:30 
+    
+    
+ 2. Change the line such that the purger will run every hour:
+    "${EGO_TOP}\perf\1.2.3u1\etc\purger.bat" -t *:05 
+    
+    
+ 3.  Restart the master host:
+    "egosh ego restart"
+
+On Linux:
+
+ 1.  Open the file "$EGO_CONFDIR/../../eservice/esc/conf/services/purger_service.xml" locate this line:
+    ${EGO_TOP}/perf/1.2.3u1/etc/purger.sh -t 00:30 
+    
+    
+ 2. Change the line such that the purger will run every hour:
+    ${EGO_TOP}/perf/1.2.3u1/etc/purger.sh -t *:05 
+    
+    
+ 3.  Restart the master host: 
+    "egosh ego restart"
+
+For more information on purger configuration, consult the "Reporting" section of the Symphony Cluster and Application Management Guide; look under "Data Purger".
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum Symphony

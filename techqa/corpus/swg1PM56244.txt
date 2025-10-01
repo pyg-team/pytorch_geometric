@@ -1,0 +1,119 @@
+Title: IBM PM56244: MISSING SDD COMPONENTS FOR MIGRATION FROM 6152 TO 7001 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Opened for release 7001
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Problem: When executing Portal 6.1.x to Portal 7.0.0.2 CF11
+   Migration, you will see an exception about Class Not Found when
+   running ConfigEngine task upgrade-profile.
+   Solution: Install APAR PM56244 after 7.0.0.2 CF11 upgrade and
+   before running Migration.
+   http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm
+   ~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=All&pl [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=All&pl]
+   atform=All&function=aparId&apars=PM56244
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is pub'd in the link given above and included in 7002 CF12.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM56244
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-20
+   
+   
+ * CLOSED DATE
+   2012-12-05
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,64 @@
+Title: IBM SQL0805N Package NULLID.SYSLH21E was not found. - United States
+
+Text:
+SYSLH21E; SQL0805N TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ The error message -805 was received from an application stating that the package SYSLH21E was not found. 
+
+SYMPTOM
+The following are examples of the symptom that could be observed. 
+
+SQL0805N Package "SYSLH21E" not found.
+
+
+com.ibm.db2.jcc.c.SqlException: DB2 SQL error: SQLCODE: -805, SQLSTATE: 51002, SQLERRMC: DB2PROD.NULLID.SYSLH21E.5359534C564C3031;DISTSERV;04 
+
+DB2 SQL error: SQLCODE: -805, SQLSTATE: 51002, SQLERRMC: NULLID.SYSLH21E
+
+
+CAUSE
+The SQL0805 NULLID.SYSL[HN]xyy error normally shows up when an 
+application runs out of statement handles. The number of statement 
+handles available to a CLI application depends on the number of large 
+packages the application has defined and is limited by overall system 
+resources. By default, 3 small and 3 large packages are created. Each 
+small package allows a maximum of 64 statement handles per connection, 
+and each large package allows a maximum of 384 statements per 
+connection, giving a total of 1,344 statement handles. 
+
+If your application requires more than 1,344 handles, you will need to 
+increase the number of large packages by setting the CLIPKG keyword
+up to a value up to 30, which you have already done. 
+
+Some definitions for the package name SYSL[HN]xyy: 
+[HN] - One or the other. H means with hold, N means without hold. 
+x - Isolation level: 0=NC, 1=UR, 2=CS, 4=RS, 8=RR 
+yy - Package iteration 00 through FF. 
+
+For yy, the max is 1D, which is hex for 29. This means that you can have 
+a maximum of 30 (packages are numbered 0-29) large packages, for a grand 
+total of (64*3)+(384*30)=11,712 statement handles. 
+The message received is error for package SYSLH21E. 
+
+Thus the cause of the SQL0805N error is when the application is trying to use a CLIPKG value greater than 30 which is 1E in hex.
+
+
+RESOLVING THE PROBLEM
+The preferred way to address this issue is to modify the application code so that it properly closes statement objects when finished using them. 
+
+
+The application may be failing to close statements when they are no longer needed. Modify the application to specifically call the Statement.close() method on Statements, PreparedStatements, to avoid running out of resources. The application should not rely on the garbage collector to close the resources.
+
+It is good programming practice for the application to specifically close its resources when no longer needed. Currently the driver must maintain a list of references to open statements and therefore statements are not automatically garbage collected when application references go out of scope.
+
+The JCC Type 4 driver functions differently than the JDBC Type 2 legacy driver, in that statement handles were being reused with the Type 2 legacy driver, but not reused with type Type 4 JCC driver.
+Adding additional Statement.close() calls to the application code will resolve this issue.
+
+RELATED INFORMATION
+ Understanding CLI packages [http://www.ibm.com/developerworks/db2/library/techarticle/dm-0606chun/]
+CLI Package Names [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.apdv.cli.doc/doc/r0007866.html]
+Knowledge Collection: SQL0805N [http://www.ibm.com/support/docview.wss?uid=swg21358478]

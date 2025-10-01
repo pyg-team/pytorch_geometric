@@ -1,0 +1,79 @@
+Title: IBM Downloading IBM Business Process Manager Standard - United States
+
+Text:
+PAODownloadDocument; passport advantage; AIX; Linux; Solaris; Windows PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document provides links to download documents that describe how to download IBM Business Manager Standard eAssembly images from the Passport Advantage website. 
+
+CONTENT
+IBM Business Process Manager Standard is a comprehensive and consumable business process management platform that provides visibility and management of business processes. It includes tools and a runtime environment for process design, execution, monitoring, and optimization. It is specially designed to enable process owners and business users to engage directly in the improvement of their business processes.
+
+
+The download documents provide the part numbers and descriptions for the eAssembly images that are required to download IBM Business Process Manager Standard in all available versions from the IBM Passport Advantage website.
+
+Use the following links to download IBM Business Process Manager Standard for the specified releases and operating systems.
+
+
+TAB NAVIGATION
+ * Version 8.5.7- selected tab,
+ * Version 8.5.6
+ * Version 8.5.5
+ * Version 8.5
+ * Version 8.0.1
+ * Version 8.0
+ * Version 7.5.1
+ * Version 7.5
+
+ * Download IBM Business Process Manager Standard Version 8.5.7 [http://www.ibm.com/support/docview.wss?uid=swg24041560]
+
+Download IBM Business Process Manager Standard Version 8.5.6 for the following operating systems:  * AIX [http://www.ibm.com/support/docview.wss?uid=swg24038628]
+ * Linux [http://www.ibm.com/support/docview.wss?uid=swg24038627]
+ * Solaris [http://www.ibm.com/support/docview.wss?uid=swg24038626]
+ * Windows [http://www.ibm.com/support/docview.wss?uid=swg24038625]
+
+Download IBM Business Process Manager Standard Version 8.5.5 for the following operating systems:  * AIX [http://www.ibm.com/support/docview.wss?uid=swg24037165]
+ * Linux [http://www.ibm.com/support/docview.wss?uid=swg24037164]
+ * Solaris [http://www.ibm.com/support/docview.wss?uid=swg24037163]
+ * Windows [http://www.ibm.com/support/docview.wss?uid=swg24037162]
+
+Download IBM Business Process Manager Standard Version 8.5 for the following operating systems:  * AIX [http://www.ibm.com/support/docview.wss?uid=swg24034319]
+ * Linux [http://www.ibm.com/support/docview.wss?uid=swg24034318]
+ * Solaris [http://www.ibm.com/support/docview.wss?uid=swg24034317]
+ * Windows [http://www.ibm.com/support/docview.wss?uid=swg24034316]
+
+Download IBM Business Process Manager Standard Version 8.0.1 for the following operating systems:  * AIX [http://www.ibm.com/support/docview.wss?uid=swg24033078]
+ * Linux [http://www.ibm.com/support/docview.wss?uid=swg24033079]
+ * Solaris [http://www.ibm.com/support/docview.wss?uid=swg24033080]
+ * Windows [http://www.ibm.com/support/docview.wss?uid=swg24033081]
+
+Download IBM Business Process Manager Standard Version 8.0 for the following operating systems:  * AIX [http://www.ibm.com/support/docview.wss?uid=swg24031889]
+ * Linux [http://www.ibm.com/support/docview.wss?uid=swg24031890]
+ * Solaris [http://www.ibm.com/support/docview.wss?uid=swg24031892]
+ * Windows [http://www.ibm.com/support/docview.wss?uid=swg24031891]
+
+Download IBM Business Process Manager Standard Version 7.5.1 for the following operating systems:  * AIX [http://www.ibm.com/support/docview.wss?uid=swg24030608]
+ * Linux [http://www.ibm.com/support/docview.wss?uid=swg24030609]
+ * Solaris [http://www.ibm.com/support/docview.wss?uid=swg24030611]
+ * Windows [http://www.ibm.com/support/docview.wss?uid=swg24030610]
+
+Download IBM Business Process Manager Standard Version 7.5 for the following operating systems:  * AIX [http://www.ibm.com/support/docview.wss?uid=swg24029281]
+ * Linux [http://www.ibm.com/support/docview.wss?uid=swg24029285]
+ * Solaris [http://www.ibm.com/support/docview.wss?uid=swg24029853]
+ * Windows [http://www.ibm.com/support/docview.wss?uid=swg24029289]
+
+
+Note: Your entitlement to support, if any, is dependent upon your license and/or maintenance agreements for IBM Business Process Manager Standard and is limited to your use of the relevant prerequisite with a supported IBM Business Process Manager Standard product.
+
+
+RELATED INFORMATION
+ IBM BPM Standard detailed system requirements [http://www.ibm.com/support/docview.wss?uid=swg27023007]
+IBM BPM Developer Center [https://developer.ibm.com/bpm/]
+IBM BPM library [http://www.ibm.com/software/integration/business-process-manager/library/documentation/]
+IBM BPM Standard Support Portal [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Standard]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ BPM

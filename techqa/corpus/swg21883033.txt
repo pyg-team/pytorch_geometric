@@ -1,0 +1,17 @@
+Title: IBM Microsoft Office 2013 Compatibility and other questions regarding TRIRIGA 3.4.2 / 10.4.2 release - United States
+
+Text:
+TRIINSTALL; TRIUPGRADE; TRICONFIG TECHNOTE (FAQ)
+
+QUESTION
+ Our firm is getting ready to move to Microsoft Office 2013. Our current version is TRIRIGA Platform is 3.4.1.1. After checking the TRIRIGA Compatibility and Support Matrix, Microsoft 2013 does not appear there.
+What type of compatibility issues may be encountered with the new release? 
+
+ANSWER
+MS Outlook 2013 and MS Project 2013 are compatible with TRIRIGA 3.4.2 but not with any previous releases. 
+MS Excel 2013 will continue to work with Offline forms and Exporting Data under 3.4.1.1 and later.
+Excel sections are not supported under MS Office 2013 with TRIRIGA 3.4.2 or any future releases.
+MS Project/Gantt charts are not compatible with and may not work with TRIRIGA 3.4.1.1
+MS Word/Powerpoint/Excel - doc uploads into doc manager should continue to work as long as proper mime types have been set.
+
+TRIRIGA 3.4.2 has embedded the Websphere Liberty application profile. This simplified WebSphere configuration is the natural progression for TRIRIGA application server support. WebSphere Liberty is the replacement for the previous JBoss application server. TRIRIGA 3.4.2 will not be compatible with JBoss Application servers.

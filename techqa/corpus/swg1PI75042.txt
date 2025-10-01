@@ -1,0 +1,154 @@
+Title: IBM PI75042: MQ - "AN UNEXPECTED ERROR (3228) HAS OCCURRED (AMQ4999)" IS BEING ISSUED TRYING TO DELETE A CHLAUTH RECORD WITH MQEXPLORER. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  "An unexpected error (3228) has occurred (AMQ4999)" is
+   being issued trying to delete a CHLAUTH record with the
+   MQExplorer.
+   
+    It's possible to remove the CHLAUTH record by an MQSC command:
+   SET CHLAUTH(' ') TYPE(ADDRESSMAP) ADDRESS(1) ACTION(REMOVE)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of IBM MQ for z/OS Version 9 Release 0             *
+   * Modification 0.                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Channel authentication records with invalid profile names    *
+   * may be created.                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * None.                                                        *
+   ****************************************************************
+   Attempting to create a Channel Authentication record with a
+   profile name that is prefixed by blanks or consists entirely of
+   blanks succeeds.
+   
+   The rules for naming MQ objects states that leading blanks are
+   not permitted for names so the attempt to define a Channel
+   Authentication record with such a name should fail.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Processing has been amended to ensure that attempts to define
+   Channel Authentication records with profile names containing
+   leading blanks are rejected.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI75042
+   
+   
+ * REPORTED COMPONENT NAME
+   MQ Z/OS V9
+   
+   
+ * REPORTED COMPONENT ID
+   5655MQ900
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-17
+   
+   
+ * CLOSED DATE
+   2017-01-25
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI72039 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI72039]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI44187
+   
+   
+
+MODULES/MACROS
+ *  CSQMSCA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MQ Z/OS V9
+   
+   
+ * FIXED COMPONENT ID
+   5655MQ900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI44187 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI44187]
+   UP17/02/08 P F702
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

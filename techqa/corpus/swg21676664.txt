@@ -1,0 +1,42 @@
+Title: IBM DFHAM4889 URIMAP containing certificate flagged invalid during install - United States
+
+Text:
+DFHAM4889 MSGDFHAM4889 RC=8; 0 RC=C; C 5655Y0400 R680 680 R800 800 R690 690 R900 900 HCI6800 5655-Y04 HCI6900 5655Y04 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are using CEDA to install a URIMAP with an associated Certificate. The install fails with message DFHAM4889 Install of URIMAP failed because attribute CERTIFICATE is invalid. The same error happens during the install of the URIMAP during startup of CICS Transaction Server for z/OS (CICS TS). The certificate is a known valid certificate that works without problems if the Certificate label name is removed from the URIMAP definition. 
+
+SYMPTOM
+DFHAM4889 [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.2.0/com.ibm.cics.ts.messages.doc/DFHAM/DFHAM4889E.html?lang=en] Install of URIMAP failed because attribute CERTIFICATE is invalid.
+
+
+CAUSE
+RACF Subsystem address space is missing. 
+
+ENVIRONMENT
+CICS TS and RACF
+
+DIAGNOSING THE PROBLEM
+A CICS dump with standard trace set to level 1 for all components and level 1-2 for the EI and XS components is helpful. The following CICS exception trace entry shows DFHXSSE failing in process VALIDATE_CERTIFICATE due to RACF return codes 8,0 and external security manager (ESM) return codes C,C :
+
+
+
+XS FE04 XSSE *EXC* FUNCTION(VALIDATE_CERTIFICATE_LABEL) RESPONSE(EXCEPTION) REASON(RACF_SUBSYSTEM_ERROR) SAF_RESPONSE(8) SAF_REASON(0) ESM_RESPONSE(C) ESM_REASON(C)
+
+DFHXSSE validates a certificate label by issuing command RACDCERT LIST('label') using the R_admin (IRRSEQ00) callable service. CICS TS translates the RACF return codes to indicate RACF_SUBSYSTEM_ERROR. This can be caused by either the CICS region userid not having access to profile IRR.DIGTCERT.LIST within the FACILITY Class in RACF........ OR ....... there is no RACF Subsystem address space running.
+
+
+RESOLVING THE PROBLEM
+Define a RACF Subsystem address space by coding an entry in SYS1.PARMLIB(IEFSSNXX) member similar to:
+
+SUBSYS SUBNAME(RACF) INITRTN(IRRSSI00) INITPARM('cmdpref[,scope]') 
+
+
+RELATED INFORMATION
+#Updating the IEFSSNxx member of SYS1.PARMLIB [http://www.ibm.com/support/knowledgecenter/SSLTBW_2.1.0/com.ibm.zos.v2r1.icha200/iefssn.htm?lang=en]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

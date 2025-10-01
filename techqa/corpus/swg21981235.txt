@@ -1,0 +1,62 @@
+Title: IBM How much data is in my Guardium top tables per day? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ My Guardium internal database is filling up and some tables are much larger than others. 
+How can I see how the data in those tables is spread out by day?
+How can I use that information to help lower the space used by those tables? 
+
+ANSWER
+The below two technotes can help you understand why your internal database is filling up and what actions can be taken to reduce its space. 
+
+What can I do if I see my Guardium appliance getting full? [https://www-304.ibm.com/support/docview.wss?uid=swg21511904] 
+
+Why is my Guardium internal database filling up? [http://www-01.ibm.com/support/docview.wss?uid=swg21696497] 
+
+This steps in this technote should be used in conjunction with the above to give you further information about the data filling up the internal database. This can be used to inform your decisions on how to reduce the % full of the internal database. 
+
+High level steps 
+
+i) Identify the top tables on the appliance using CLI command - support show db-top-tables all. See Why is my Guardium internal database filling up? [http://www-01.ibm.com/support/docview.wss?uid=swg21696497] for more information on top tables. 
+
+ii) Use reports in the GUI to see how much data is in the largest tables per day. Limit this to only the tables that are using the majority of the space. Pre made reports are available below to import into your appliance. 
+
+Note - If the database is very full some of these reports may take a long time to run. In that case you can run them as an ad-hoc audit process, or proceed to reduce the database space without this investigation. 
+
+iii) Use that information to see: 
+
+ * 
+ * 
+ * b) If there was a spike of data on a certain day that needs to be purged to reduce the space.
+
+
+Example - Sessions per day 
+
+Use the Sessions per day report to see how many sessions are on the appliance each day. This report is useful for checking if there is data on the appliance older than the retention (purge) period. 
+
+Query definition:
+[/support/docview.wss?uid=swg21981235&amp;aid=1]
+
+Example result:
+[/support/docview.wss?uid=swg21981235&amp;aid=2]
+
+Analysis:
+The Start Date is going back several months, however there are no sessions older than 4 days. 
+You can compare these days to the retention period of the appliance in v9 Administration Console -> Data Management -> Data Archive or Data Export (depending on where the purge is set).
+v10 Manage -> Data Management -> Data Archive or Data Export.
+If there is a lot of data older than the retention period, it means there may be a problem with the purge process. To troubleshoot see - How to troubleshoot Guardium aggregation or archive errors [http://www-01.ibm.com/support/docview.wss?uid=swg21698234]. 
+
+There is also a spike of data on one of the days. This may need further investigation and it also tells you that this day may need to be purged to gain a significant amount of space back. Spikes in data are especially important to check for in the largest tables on your appliance using the reports below.
+
+Pre made reports to import into your appliance
+
+Definitions are available to import into your v9 and v10 appliances. There will be a compatibility warning when importing into v10 but it will succeed. The definitions may not import for versions before 9.1. The reports are applicable for collectors and aggregators.
+
+Important Note! Due to a known issue in v9p600 the below reports may not import correctly. The issue is fixed in v9p610 and above, see fix central to obtain the latest bundle patch or GPU for v9. Alternatively the reports can be made from scratch using the information below.
+
+
+
+Report to download Report name What table from top tables is it looking at? Report domain - Main entity Time attribute Count attribute Sessions_per_day.sql [/support/docview.wss?uid=swg21981235&aid=4]Sessions_per_day.sql [/support/docview.wss?uid=swg21981235&aid=3] -Sessions per day GDM_SESSION Access - Session Session Start Date Session ID SQL_per_day.sql [/support/docview.wss?uid=swg21981235&aid=6]SQL_per_day.sql [/support/docview.wss?uid=swg21981235&aid=5] -SQL per day GDM_CONSTRUCT_INSTANCE Access - SQL Access Period Start Date Total access Full_SQL_per_day.sql [/support/docview.wss?uid=swg21981235&aid=8]Full_SQL_per_day.sql [/support/docview.wss?uid=swg21981235&aid=7] -Full SQL per day GDM_CONSTRUCT_TEXT Access - Full SQL Session Start Date Full SQL ID Exceptions_per_day.sql [/support/docview.wss?uid=swg21981235&aid=10]Exceptions_per_day.sql [/support/docview.wss?uid=swg21981235&aid=9] -Exceptions per day GDM_EXCEPTION Exception - Exception Exception Date Exception ID Policy_violations_per_day.sql [/support/docview.wss?uid=swg21981235&aid=12]Policy_violations_per_day.sql [/support/docview.wss?uid=swg21981235&aid=11] -Policy Violations per day GDM_POLICY_VIOLATAIONS_LOG Policy Violations - Policy Rule Violation Timestamp Date Violation Log ID RELATED INFORMATION
+ Guardium Administrator Responsibilities Guide [http://www-01.ibm.com/support/docview.wss?uid=swg21700685]

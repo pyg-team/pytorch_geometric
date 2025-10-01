@@ -1,0 +1,122 @@
+Title: IBM Open Mic Webcast: Implementing TLS support with IBM Domino 9.x and IBM HTTP Server (IHS) - 19 November 2013 (Q&A, presentation, audio recording) - United States
+
+Text:
+lste_webcast; STEwebcastDocument WEBCAST
+
+ABSTRACT
+ IBM's Yvonne Devlin led a presentation and discussion on implementing TLS support with IBM Domino 9.x and IBM HTTP Server (IHS). Domino has the option of running the IBM HTTP Server on the same computer as a Domino HTTP server; the purpose of this enhancement is to support the Transport Layer Security (TLS) protocol. See below for the Q&A, presentation and audio recording from this event. 
+
+CONTENT
+ 
+
+ * --> Planned SHA-2 deliveries for IBM Domino 9.x [http://www.ibm.com/support/docview.wss?uid=swg21418982] (technote 1418982) 
+   --> How is IBM Domino impacted by the POODLE attack? [http://www.ibm.com/support/docview.wss?uid=swg21687167] (technote 1687167) 
+
+
+Presentation & Audio Recording 
+OpenMic_Domino9_IHS_19November2013.pdf [/support/docview.wss?uid=swg27039743&aid=2]OpenMic_Domino9_IHS_19November2013.pdf [/support/docview.wss?uid=swg27039743&aid=1] 
+
+
+
+Implementing TLS support with Domino 9x and IHS - Open Mic - 19 Nov 2013 (edited).mp3 [/support/docview.wss?uid=swg27039743&aid=4]Implementing TLS support with Domino 9x and IHS - Open Mic - 19 Nov 2013 (edited).mp3 [/support/docview.wss?uid=swg27039743&aid=3] 
+
+
+Q&A 
+NOTE 1: To run IHS and Domino on the same server the IHS version that you need ships with the Domino and the IKEYMAN utility version that you need ships with Domino so they all come with the 9.x installer. So there's no need to download or install 
+another version. 
+
+NOTE 2: We have found one bug with the installer if you install 9.0 and then you install 9.0.1. We've upgraded IHS but those files will not be copied down. So what you may need to do is to rename the IHS subdirectory under your Domino program directory and then install again selecting the IHS so you get the new binaries. Then copy over your config files as needed. 
+
+* * * 
+Q1. If you have authorization set up for, let's say, Kerberos or SAML. Does that have any issues when you enable this? 
+-- SAML and IHS definitely can coexist. I haven't heard if there has been any issues with SAML and IHS together. 
+-- I have set up SAML and IHS at the same time on my development machines and it's worked for me. 
+-- I've setup SAML with Web-based authentication. I haven't heard of any there being any issues with Kerberos and IHS. 
+
+
+Q2. Regarding TLS over HTTP, is there any talk about integrating that into the Domino HTTP stack? Because now we're adding a layer of complexity of putting IHS in front of Domino and you have limited platforms? 
+-- There are SPRs requesting that it be implemented with the HTTP stack and also with other platforms. 
+-- It's a fairly large development effort right now so it's still being evaluated. It's not only HTTP that is affected by the SSL stack but rather the entire Domino product that sits atop the same SSL stack. So we have to evaluate the cost of development there. 
+
+
+Q3. You eluded to using IHS with the Traveler server. Could you elaborate on what would be the benefits or what would be the reason for doing that with Traveler rather than just the Domino HTTP? 
+There's no extra benefit. The main purpose of this configuration is to support a TLS use-case for the Domino server itself on the same machine. If you do not need that configuration then there is no need for you to configure this. 
+
+Also, in the Notes Traveler case IHS is a 32-bit process so it has a limited number of threads that you can start. I've got up to about 3500 in the lab but after that IHS would probably not start so it may not be suited for some of your Notes Traveler servers. 
+
+
+Q4. Is IHS available for platforms besides Windows? Is there any additional feedback about when it might be available for other operating systems? 
+It's under review. No ETA. 
+
+
+Q5. What is the difference between the IBM HTTP Server and the Domino HTTP. One difference I noted from your conversation is it's needed for the TLS support in case you want to implement in the Traveler environment. But is there any other benefit or difference between the two? 
+They are very different HTTP servers; one is based on Apache server and one is Domino (homegrown about 15 years ago). So there are different HTTP stacks; the Domino HTTP stack hosts the Domino Web Engine and the Domino application environment where the IHS does not. Those are some of the differences but it's a very large question to answer. 
+
+
+Q6. Why couldn't have this been added to the Domino HTTP Engine w/o needing to add IHS? Will Domino support TLS natively in the future without IHS? 
+Currently there are no plans to have Domino support TLS natively. The use of IHS is to allow us to use the TLS security and be able to update it easily going forward. 
+
+
+Q7. Did I hear at the beginning that this is for Windows platform only? If so, is that temporary - would like to hear of support for Linux / System P? 
+Yes, currently this is available only for Windows platforms. It is being investigated for other platforms. The Domino module is currently supported only on Windows for Domino 9 and later. 
+
+
+Q8. What is the maximum key size supported for Domino 9? 
+-- IKEYMAN will allow you to create key size up to 4096 
+-- Using the Domino server certificate admin database, the largest key we can have using native SSL is 2048 
+
+
+Q9. Can we use WebSphere Edge Server instead of IHS to do the same thing? 
+Yes, you can use any proxy you like to provide this TLS functionality. IBM provides this IHS offering as an option with your install of Windows Domino 9x. 
+
+
+Q10. Any instruction on how to change the existing server from Domino HTTP to IHS? 
+-- For an existing 9.0 server the steps are the same - the IHS files can be installed over an existing server install even when that is an existing server. 
+-- You can run the Domino installer again and choose the options as mentioned from the Customer Install options. Once installed the configuration is the same. 
+
+
+Q11. When running the Domino installer again, will the Domino installer keep all the existing settings when selecting the custom Domino installation? We may have a Domino server with customized installation. 
+Yes, all your current settings and configurations will be maintained. 
+
+
+Q12. IHS is a 32 bit on Windows? 
+Yes, IHS is 32 bit only 
+
+
+Q13. Are there other advantages of using IHS besides TLS support? 
+IHS also provides alternate subject name support via IKEYMAN. 
+
+
+Q14a. How can I make a redirect from https://serverfqdn>/names.nsf to another page once Domino is behind the IBM HTTP Server? 
+The Domino Web Engine is still in place behind the IHS, so you'd make your Web site rules in Domino just as if you were not using IHS 
+
+ * Q14b. Except that Domino sees the connection coming in over HTTP. Making a redirection from /names.nsf to ,otherurl> from a website document won't work
+ * 
+ * 
+ * 
+ * 
+
+ * Q14c. That's not my experience. I had all rules set up and working. Then we put IHS in front and the rules stopped working.
+ * 
+ * 
+
+ * Q14d. We haven't tested with Domino 9.0.1 yet. Will do so and if issue still occurs will contact you offline.
+ * 
+ * 
+
+
+References 
+SPR# DMEA96CMVX - fixed in 9.0.1. http://www-10.lotus.com/ldd/fixlist.nsf/Public/DC8548ABAF725C9485257C0C0041F3A7?OpenDocument [http://www-10.lotus.com/ldd/fixlist.nsf/Public/DC8548ABAF725C9485257C0C0041F3A7?OpenDocument] 
+
+SPR# MKEN966HFR - fixed in 9.0.1 http://www-10.lotus.com/ldd/fixlist.nsf/94db90f3de07606e052569ce00706cdd/ab8e4d745d3202b885257c0c0041f477?OpenDocument [http://www-10.lotus.com/ldd/fixlist.nsf/94db90f3de07606e052569ce00706cdd/ab8e4d745d3202b885257c0c0041f477?OpenDocument] 
+
+
+
+
+Follow highlights from these Open Mics live on Twitter using #ICSOpenMic or following us on Twitter @IBM_ICSsupport. For more information about our Open Mic webcasts, visit the IBM Collaboration Solutions Support Open Mics [http://www.ibm.com/software/lotus/support/lotus-open-mics/] page.
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2013/9/30

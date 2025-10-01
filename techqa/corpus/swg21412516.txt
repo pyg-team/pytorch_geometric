@@ -1,0 +1,35 @@
+Title: IBM History information not collected for Agent for HTTP Servers - United States
+
+Text:
+history; collection; Agent for HTTP Servers; TEMS; TEPS; monitoring server; portal server; tacmd; Tivoli Enterprise Monitoring Server; Tivoli Enterprise Portal Server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installation of ITCAM Agent for HTTP Servers, history information is not collected. This issue is not fully covered in the ITCAM Agent for HTTP Servers Installation and Configuration Guide that was delivered with the ITCAM for Application Diagnostics Version 7.1 CD. However, it is covered in the IBM.com Infocenter version, and in all subsequent versions. 
+
+SYMPTOM
+Blank graphs in workspaces; history information not available.
+
+
+RESOLVING THE PROBLEM
+ITCAM Agent for HTTP Servers workspaces require collection of history data. You need to enable this by using a script on the Tivoli Enterprise Portal Server.
+
+
+The khtHistoryConfigure.bat (on Windows) or khtHistoryConfigure.sh (on Linux and UNIX systems) script is installed with the Agent support files. It requires the IBM Tivoli Monitoring user interface component (tacmd command). 
+
+You need to run the script after installing the support files. 
+
+To run the script, you need to know the name of the Tivoli Enterprise Monitoring Server, as configured on the Tivoli Enterprise Portal Server. If there is more than one Tivoli Enterprise Monitoring Server to which Agents for HTTP Servers are connected, you need to run the script for each of the Tivoli Enterprise Monitoring Servers. 
+
+The script is located in the ITM_HOME/bin directory. Run it with the following command: 
+
+Windows: 
+khtHistoryConfigure.bat usernamepasswordTEMS_name
+
+Linux and UNIX systems: 
+./khtHistoryConfigure.sh usernamepasswordTEMS_name
+
+Where: 
+
+ * username is the name of a Tivoli Enterprise Portal user with administrative privileges (for example, SYSADMIN). 
+ * password is the password for this user. 
+ * TEMS_name is the name of the Tivoli Enterprise Monitoring Server, as configured on the Tivoli Enterprise Portal Server.

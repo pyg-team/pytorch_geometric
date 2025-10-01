@@ -1,0 +1,153 @@
+Title: IBM HD91264: EXPORT NAME WHICH HOOKED THE SCRIPT IS DISPLAYED IN THE USER DEFMENU. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Export name which hooked script is displayed in the user
+   defined menu.
+   Scenario :
+   1. Start Export tool
+   2. Create new export
+   3. Set any query and any script
+   4. Strat Script maintenance tool
+   5. Open "User Defined" panel
+   ==> Export name is automatically added in the user deinfed
+   command. Also Export name is displayed in the user defined
+   menu on the editor
+   Note: Even if the user removed this export definition on the
+   export tool, the user cannot delete it from the user defined
+   command.
+   Expectation:
+   export name should not be appeared on the user defined
+   command.
+   If it is impossible, the user should be able to delete
+   unnecessary user defined command which was automatically
+   added by smarteam.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Export name which hooked script is displayed in the user
+   defined menu.
+   Scenario :
+   1. Start Export tool
+   2. Create new export
+   3. Set any query and any script
+   4. Strat Script maintenance tool
+   5. Open "User Defined" panel
+   ==> Export name is automatically added in the user deinfed
+   command. Also Export name is displayed in the user defined
+   menu on the editor
+   Note: Even if the user removed this export definition on the
+   export tool, the user cannot delete it from the user defined
+   command.
+   Expectation:
+   export name should not be appeared on the user defined
+   command.
+   If it is impossible, the user should be able to delete
+   unnecessary user defined command which was automatically
+   added by smarteam.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  NOTE THAT THIS PROBLEM WILL ALSO BE FIXED ON V5R19 SP7.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED ON V5R20 SP1.
+   Additional Closure Information:
+   -
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD91264
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   518
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-30
+   
+   
+ * CLOSED DATE
+   2010-03-01
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569199970
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R519 PSN
+   UP

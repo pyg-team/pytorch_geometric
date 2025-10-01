@@ -1,0 +1,69 @@
+Title: IBM How can I use Operations Manager for z/VM to monitor and manage EREP data - United States
+
+Text:
+EREP z/VM Operations Manager TECHNOTE (FAQ)
+
+QUESTION
+ In z/VM, the EREP service machine generates data on its 191 minidisk. After a period of time, this disk can become full, but since the EREP data is typically all in one file and in binary format, cleanup is not a simple matter of erasing older files and keeping only the most recent files.
+
+So how can I clean up this disk and use Operations Manager for z/VM to monitor when the disk is getting full? 
+
+ANSWER
+There are two separate tasks: 
+
+ *  Task 1: Monitor EREP's 191 minidisk and notify someone when it's getting full Task 2: Create an EREP report and clean up EREP's 191 minidisk 
+
+
+Task 1 : To use Operations Manager for z/VM to monitor the percent full of EREP's 191 disk so you have time to do the cleanup (described below) and avoid IPL errors: 
+
+If it's not already there, add the following to your Operations Manager V1.6 configuration file (syntax for V1.5 and earlier is slightly different): 
+
+DEFSCHD NAME EREP191 + 
+WHEN 04:00 + 
+ACTION CHKDISK + 
+PARM 'EREP 191' 
+
+DEFACTN NAME CHKDISK + 
+COMMAND 'EXEC CHKDISK &s &p' + 
+ENV SVM 
+
+Change the WHEN parameter to a value that suits your needs, depending on how often and what time of day you want to check the disk. The example above will check the percent full of the disk every day at 4:00am. 
+
+You may already have the CHKDISK action defined since it is shipped as a sample in Operations Manager for z/VM V1.6. You can find the sample DEFACTN and the sample CHKDISK EXEC on the 5697J10F 2C2 disk. Please read the content of the samples to understand what other updates you must make on your system for notifications to work. 
+
+Task 2 : When you receive a notification that EREP's 191 minidisk is getting full, do the following to create an EREP report and clean up its 191 minidisk: 
+ 1. Logon to MAINT and issue the following commands to get ready to run EREP reports:  *  FORCE EREP ACC 201 Z FILEDEF DIRECTWK DISK DIRECTWK EREPWORK * DET 181 (the response will probably say you have no 181, but that's okay) LINK EREP 191 333 MR ACC 333 W (or any free filemode) Q DISK (to see how full the W disk is) Create a file on the A disk named FILE1 INPUT with the following contents:
+       PRINT=NO 
+       ACC=Y 
+       ZERO=Y 
+       ENDPARM 
+    
+    
+ 2. To run the EREP reports, continue from MAINT and issue the following commands:  *  FILEDEF ACCDEV DISK EHISTORY DAILY * (RECFM VB BLKSIZE 12000 FILEDEF EREPPT PRINTER (NOCHANGE BLKSIZE 133 FILEDEF TOURIST TERMINAL (BLKSIZE 133 EXEC CPEREPXA FILE1 INPUT A 
+       
+    
+    
+ 3. You now have EHISTORY DAILY on MAINT's A-disk and can run reports on it. You can't read the file directly - it's in binary format, so you have to run reports.
+    
+ 4. EREP 191 is now cleaned up. (Issue Q DISK and see how full the W disk is.) You can release EREP's 191 disk and restart EREP:
+    REL W (DET
+    XAUTOLOG EREP
+    
+ 5. Usually you can just keep (or backup or archive) the HISTORY file in case you have hardware problems and your IBM representative wants to see EREP data. But if you want to run reports on the EHISTORY DAILY file yourself, refer to Chapter 3 of the EREP User Guide (GC35-0151). 
+    
+    For example, to create a system summary report on z/VM:  *  Logon to MAINT Create a file called FILE2 INPUT on the A disk that contains the following:
+       SYSUM
+       HIST
+       ACC=N
+       ENDPARM Then issue the following commands:  *  FILEDEF ACCIN DISK EHISTORY DAILY * EXEC CPEREPXA FILE2 INPUT A 
+       
+       
+    
+    
+
+
+
+For more information on EREP, refer to the EREP User Guide (GC35-0151). 
+
+For more information on Operations Manager for z/VM, refer to the Operations Manager Administration Guide (SC18-9347). RELATED INFORMATION
+ IBM Operations Manager for z/VM [http://www.ibm.com/software/products/en/operations-manager-for-zvm]

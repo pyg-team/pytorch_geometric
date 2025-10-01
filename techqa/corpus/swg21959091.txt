@@ -1,0 +1,15 @@
+Title: IBM Tivoli Network Manager IP Edition (5724-S45)  V3.8 - End of Support update - United States
+
+Text:
+ PRODUCT LIFECYCLE
+
+ABSTRACT
+ IBM Tivoli Network Manager IP Edition V3.8 (5724-S45) - End of Support update
+This update will be formally announced in September 2015 as part of the September EoM/EoS announce letter. 
+
+
+CONTENT
+Please be advised that the IBM Tivoli Network Manager IP Edition (5724-S45) - V3.8 offering End of Support date, which was previously announced to be effective on the 30th September 2015, has now been rescheduled to EoS on the 30th September 2016.
+
+
+This update will be formally announced in September 2015 as part of the September EoM/EoS announce letter.

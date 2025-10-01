@@ -1,0 +1,111 @@
+Title: IBM NullPointerException occurs when searching with Portal Search Bar - United States
+
+Text:
+OEE; WPS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I use IBM OmniFind Enterprise Edition.
+I have integrated IBM OmniFind Enterprise Edition with WebSphere Portal server 7.0, and configured the WebSphere Portal Search Bar.
+When I search in the Portal Search Bar, I encounter Error 500 :java.lang.NullPointerException. 
+
+SYMPTOM
+When I search in the Portal Search Bar, I encounter Error 500 :java.lang.NullPointerException on the portal page, in addition, I can see the following stack trace in SystemOut.log in the WebSphere Portal server. 
+
+SystemOut.log:
+[7/4/11 10:05:10:260 JST] 00000010 servlet E com.ibm.ws.webcontainer.servlet.ServletWrapper service SRVE0068E: Uncaught exception created in one of the service methods of the servlet /omnifind/portalSearchBar.jsp in application wps. Exception created : java.lang.NullPointerException
+at com.ibm._jsp._portalSearchBar._jspService(_portalSearchBar.java:88)
+at com.ibm.ws.jsp.runtime.HttpJspBase.service(HttpJspBase.java:99)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:831)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1657)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1597)
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebAppFilterChain.java:131)
+:
+at com.ibm.io.async.ResultHandler.runEventProcessingLoop(ResultHandler.java:775)
+at com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:905)
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1604)
+
+CAUSE
+Your Portal Search Bar sends a query term to the portalSearchBar.jsp with POST method instead of GET method which the default Portal Search Bar uses.
+
+
+
+RESOLVING THE PROBLEM
+To resolve the issue, edit the portalSearchBar.jsp as follows, 
+
+Before:
+<%@ page import="com.ibm.es.searchui.portal.utils.ESURLGenerator" %> 
+<%
+request.setCharacterEncoding("UTF-8");
+if (request.getParameter("q") == null && request.getParameter("query") != null) { 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+
+} else {  * 
+ * String url = ESURLGenerator.generateUrlString("ibm.portal.OmniFindSearch", "ibm.portal.OmniFindSearch.called", "/myportal", request, response); 
+   //String url = ESURLGenerator.generateUrlStringByObjectId("ObjectId of ibm.portal.OmniFindSearch", "ObjectId of ibm.portal.OmniFindSearch.called", "/myportal/<VirtualPortal>", request, response); 
+   response.sendRedirect(url); 
+ * 
+ * e.printStackTrace(); 
+ * 
+
+} 
+%>  
+
+After:
+<%@ page import="com.ibm.es.searchui.portal.utils.ESURLGenerator" %> 
+<%@ page import="java.util.Map" %> 
+<%@ page import="java.util.Iterator" %> 
+<%@ page import="java.lang.StringBuffer" %> 
+<%
+request.setCharacterEncoding("UTF-8");
+if (request.getParameter("q") == null && request.getParameter("query") != null) { 
+
+ * 
+ * 
+ * 
+ * String query = request.getQueryString(); 
+   String newQuery = query.replaceFirst("query=", "q="); 
+   response.sendRedirect(request.getRequestURL().append("?" + newQuery).toString()); 
+ * 
+ * StringBuffer sb = new StringBuffer(); 
+   sb.append("?"); 
+   Map map = request.getParameterMap(); 
+   for(Iterator it = map.entrySet().iterator(); it.hasNext(); ) {  * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * sb.append(key).append("=").append(values[i]); 
+      if(i != values.length - 1) sb.append("&"); 
+    * 
+    * 
+    * 
+   
+   } 
+   response.sendRedirect(request.getRequestURL().append(sb).toString()); 
+ * 
+
+} else {  * 
+ * String url = ESURLGenerator.generateUrlString("ibm.portal.OmniFindSearch", "ibm.portal.OmniFindSearch.called", "/myportal", request, response); 
+   //String url = ESURLGenerator.generateUrlStringByObjectId("ObjectId of ibm.portal.OmniFindSearch", "ObjectId of ibm.portal.OmniFindSearch.called", "/myportal/<VirtualPortal>", request, response); 
+   response.sendRedirect(url); 
+ * 
+ * e.printStackTrace(); 
+ * 
+
+} 
+%> 
+
+
+Notes: The modification above is just an example. You can modify the portalSearchBar.jsp according to your environment. 
+
+RELATED INFORMATION
+#Configuring the WebSphere Portal Search bar [http://publib.boulder.ibm.com/infocenter/discover/v9r1m0/topic/com.ibm.discovery.es.ad.doc/iiysaitsearchbar6.htm]

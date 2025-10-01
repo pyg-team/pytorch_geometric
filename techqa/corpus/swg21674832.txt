@@ -1,0 +1,116 @@
+Title: IBM TWS and DWC 9.2 file lists - United States
+
+Text:
+Install; uninstall; remove; files; list TECHNOTE (FAQ)
+
+QUESTION
+ What files are added to a workstation with a Tivoli Workload Scheduler (TWS) and Dynamic Workload Console (DWC) v9.2 installation on Linux? 
+
+CAUSE
+Installation of TWS v9.2 and DWC v9.2
+
+ANSWER
+MDM 9.2: 
+
+ UNIX:
+
+InstallationManager:
+/etc/.ibm/registry/InstallationManager.dat
+<InstallTarget>/InstallationManager
+<InstallTarget>/IMShared
+/var/ibm/InstallationManager
+
+WebSphere:
+<InstallTarget>/WebSphere
+/opt/.ibm/.was.installlocations.registry
+/root/.java/.userPrefs
+
+MDM:
+<InstallTarget>/TWA
+/etc/ibm/tivoli
+/etc/ibm/tivoli/common/cfg/log.properties
+/etc/cit
+/etc/rc.d/*/*tebctl*
+/etc/teb
+/logs/dynamicvar.txt
+/logs/packageDeploy.log
+/opt/.ibm
+/opt/tivoli
+/usr/Tivoli/TWS
+/usr/ibm/tivoli
+<TWSUser_Home>/.TWS
+<root_HOME>/.TWS
+<root_HOME>/.java
+
+Registry Files:
+/etc/TWS
+/etc/TWA
+/var/ibm/InstallationManager/installRegistry.xml
+/var/ibm/InstallationManager/installed.xml
+
+*** Linux_X86_64 System Menu Files:
+
+Installation Manager:
+/etc/xdg/menus/applications-merged/IBMIM0InstallationManager012*
+/etc/xdg/menus/kde-applications-merged/IBMIM0InstallationManager012*
+/usr/share/desktop-directories/IBMIM0InstallationManager012*
+/usr/share/applications/IBMIM0InstallationManager012*
+
+WebSphere:
+/etc/xdg/menus/applications-merged/IBM_WebSphere*
+/etc/xdg/menus/applications-merged/IBMIM0WebSphereApplicationServerV8.501234*
+/etc/xdg/menus/kde-applications-merged/IBM_WebSphere*
+/etc/xdg/menus/kde-applications-merged/IBMIM0WebSphereApplicationServerV8.501234*
+/usr/share/desktop-directories/IBMIM0WebSphereApplicationServerV8.501234*
+
+
+DWC 9.2
+
+UNIX:
+
+InstallationManager:
+/etc/.ibm/registry/InstallationManager.dat
+<InstallTarget>/InstallationManager
+<InstallTarget>/IMShared
+/var/ibm/InstallationManager
+
+WebSphere:
+<InstallTarget>/WebSphere
+/opt/.ibm/.was.installlocations.registry
+/root/.java/.userPrefs
+
+JazzSM:
+<InstallTarget>/JazzSM
+
+DWC:
+<InstallTarget>/TWAUI
+
+Registry Files:
+/etc/TWA/twainstance<#>.TWA.properties
+/var/ibm/InstallationManager/installRegistry.xml
+/var/ibm/InstallationManager/installed.xml
+
+Install Logs:
+/tmp/TWA/TDWC
+/tmp/TWA/tws92
+
+*** Linux_X86_64 System Menu Files:
+Installation Manager:
+/etc/xdg/menus/applications-merged/IBMIM0InstallationManager012*
+/etc/xdg/menus/kde-applications-merged/IBMIM0InstallationManager012*
+/usr/share/desktop-directories/IBMIM0InstallationManager012*
+/usr/share/applications/IBMIM0InstallationManager012*
+
+WebSphere:
+/etc/xdg/menus/applications-merged/IBM_WebSphere*
+/etc/xdg/menus/applications-merged/IBMIM0WebSphereApplicationServerV8.501234*
+/etc/xdg/menus/kde-applications-merged/IBM_WebSphere*
+/etc/xdg/menus/kde-applications-merged/IBMIM0WebSphereApplicationServerV8.501234*
+/usr/share/desktop-directories/IBMIM0WebSphereApplicationServerV8.501234*
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Maestro
+TWS
+TWA

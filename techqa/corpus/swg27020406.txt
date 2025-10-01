@@ -1,0 +1,76 @@
+Title: IBM Installing IBM CMIS for FileNet Content Manager in a highly available environment - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+This document describes how to install IBM Content Management Interoperability Services for FileNet Content Manager (IBM CMIS) in an IBM FileNet P8 highly available environment. 
+
+CONTENT
+
+
+BEFORE YOU BEGIN
+ Important: Before you install IBM CMIS for FileNet Content Manager in a highly available environment, ensure that your IBM FileNet P8 system, specifically IBM FileNet Content Manager, supports the same levels of WebSphere Application Server as IBM CMIS for FileNet Content Manager. For additional information, see the following documents: 
+
+ *  IBM CMIS for FileNet Content Manager Version 1.0 hardware and software requirements [http://www.ibm.com/support/docview.wss?uid=swg27019859] 
+ *  IBM CMIS for FileNet Content Manager Version 1.0 hardware and software requirements [http://www.ibm.com/support/docview.wss?uid=swg27013654] 
+ *  IBM FileNet P8 5.x Fix Pack Compatibility Matrix [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg27014734] 
+
+
+ You can install IBM CMIS for FileNet Content Manager in a highly available environment by using WebSphere Application Server Network Deployment software. 
+
+ A highly available installation of IBM CMIS for FileNet Content Manager should connect to a highly available instance of Content Engine. 
+
+ In highly available configurations that use WebSphere Application Server clusters, a load balancing proxy web server is required to distribute load among the server nodes. 
+
+ Important: The following procedures assume that IBM HTTP Server (IHS) is the proxy server. 
+
+
+PREREQUISITE TASKS
+These instructions assume that the following tasks have been completed:
+
+ 1.  Install and configure IBM FileNet Content Engine in a high availability environment. 
+ 2.  Install and configure IBM HTTP Server, including either:  *  Load balancing 
+     *  Proxy features 
+    
+    
+
+
+INSTALLING IBM CMIS FOR FILENET CONTENT MANAGER IN A HIGHLY AVAILABLE ENVIRONMENT
+ For specific information about installing and configuring IBM CMIS for FileNet Content Manager, see Installing IBM CMIS for FileNet Content Manager [http://publib.boulder.ibm.com/infocenter/p8docs/v5r0m0/topic/com.ibm.installingp8cmis.doc/cmiin000.htm] in the IBM FileNet P8 Version 5.0 Information Center. 
+
+ Before you install IBM CMIS for FileNet Content Manager in a highly available environment, ensure that the WebSphere Application Server cluster nodes, and the IBM HTTP Server proxy server or the IBM HTTP Server load balancer are started. 
+
+ To install IBM CMIS for FileNet Content Manager in a highly available environment: 
+
+ 1.  Install IBM CMIS for FileNet Content Manager by following the directions in Installing IBM CMIS for FileNet Content Manager [http://publib.boulder.ibm.com/infocenter/p8docs/v5r0m0/topic/com.ibm.installingp8cmis.doc/cmiin000.htm]. In addition, install the IBM CMIS for FileNet Content Manager software on each node in the cluster. 
+ 2.  Configure the IBM CMIS for FileNet Content Manager web application EAR file by following the directions in Configuring the IBM CMIS for FileNet Content Manager web application [http://publib.boulder.ibm.com/infocenter/p8docs/v5r0m0/topic/com.ibm.installingp8cmis.doc/cmico012.htm], with the following changes:  *  The Content Engine URL must have the format corbaloc::node1_server_name:port#I,:[node#_server_name:port#],:nodeZ_server_name:port#/cell/clusters/CE_Cluster/FileNet/Engine 
+       Where: 
+       node#_server_name represents the nodes in the cluster. 
+       nodeZ_server_name represents the final node in the cluster. 
+       
+       For example, if the cluster contains three nodes, the Content Engine URL would be corbaloc::node1_server_name:9811,:node2_server_name:9810,:node3_server_name:9809/cell/clusters/CECluster/FileNet/ Engine 
+       
+    
+    
+ 3.  Deploy the EAR file to the cluster by following the directions in Deploying IBM CMIS for FileNet Content Manager [http://publib.boulder.ibm.com/infocenter/p8docs/v5r0m0/topic/com.ibm.installingp8cmis.doc/cmide000.htm]. Use the deployment manager to deploy the application to each node in the cluster. 
+    
+    Remember: You can use the IBM CMIS configuration tool to configure and deploy the web application EAR file, or you can use the configuration tool to configure the web application and then manually deploy the application EAR file by using the WebSphere Application Server administrative console. 
+    
+    
+ 4.  In the WebSphere Application Server administrative console, recreate the web server, which will generate the IBM HTTP Server plug-ins for the deployed IBM CMIS for FileNet Content Manager application. 
+ 5.  Restart the IBM HTTP Server and the WebSphere Application Server cluster. 
+
+
+VERIFYING THE IBM CMIS FOR FILENET CONTENT MANAGER DEPLOYMENT
+ To verify that IBM CMIS was successfully deployed in the highly available environment: 
+
+ 1.  Ensure that the WebSphere Application Server cluster nodes and the IBM HTTP Server proxy server or the IBM HTTP Server load balancer are started. 
+ 2.  Verify that the application was deployed to each of the nodes in the cluster:  *  In a web browser open the IBM CMIS index page. The index page URL has the format http://host_name:port/context_root/index.jsp. By default, the context root of IBM CMIS for FileNet Content Manager is fncmis. For example, http://IBM_CMIS_server_name.com:9080/fncmis/index.jsp. 
+     *  Verify that the IBM CMIS index page displays information about the URI templates and service collections that are defined for the repositories (IBM FileNet P8 object stores) on your Content Engine server. 
+     *  Repeat this step for each node in the cluster. 
+    
+    
+ 3.  Verify that the application was deployed to the cluster:  *  In a web browser open the IBM CMIS index page. In a highly available environment, the index page URL has the format http://proxy_server_name:port_number/context_root. The default context root of the IBM CMIS for FileNet Content Manager application is fncmis. For example, http://appserver-proxy.server.com:80/fncmis/index.jsp. 
+     *  Verify that the IBM CMIS index page displays information about the URI templates and service collections that are defined for the repositories (IBM FileNet P8 object stores) on your Content Engine server. 
+     *  Stop one of the nodes in the cluster. Open the IBM CMIS index page again and verify that the contents display correctly.

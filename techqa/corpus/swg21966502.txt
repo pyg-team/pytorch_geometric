@@ -1,0 +1,95 @@
+Title: IBM Probe support for devices process - United States
+
+Text:
+compatible; compatibility; support; supports; probe; integration; ems; EMS; element manager TECHNOTE (FAQ)
+
+QUESTION
+ Probe support for devices : How can you tell compatibility? 
+
+CAUSE
+
+1. Customers sometimes miss the documentation statements or description.txt files.
+2. Other customers see the supported devices listing but do not see their version.
+
+
+ANSWER
+ 
+
+The manuals and probe package description.txt will list all devices the probe has been confirmed as compatible with. 
+
+ 
+
+Checking support for a device 
+
+The probe manuals Summary section: 
+
+The Probe manual may include a statement of compatibility within the Summary section: 
+
+e.g. Summary section
+Probe target
+Huawei iManager M2000 V200 R012
+Huawei iManager M2000 V200 R013
+Huawei iManager U2000 V200 R014
+
+For Generic probes, the general version support is given in a section before the Summary section:
+e.g.
+The probe complies with the following 3GPP standards:
+* 32.111-3 V6.4.0 - Alarm IRP
+* 32.303 V6.4.0 - Notification IRP
+* 32.363 V6.4.0 - Entry Point IRP 
+
+In which case the target device must also support the same standards, as the probe. 
+
+ 
+
+The probes package description.txt file 
+
+The probes description.txt will list all of the Patch Dependencies as well as the APAR fixes and enhancements provided by the product patch. Sometimes device support is listed at the top of the file as well as within the enhancement listing. 
+
+ 
+
+Note : If your specific device support is not listed in the manual or description.txt, then the probe has not been tested with that version. This does not mean that the probe does not work with your device, only that the probe was never tested against that specific version of the device. 
+
+ 
+
+Obtaining device support for a probe 
+
+ 
+
+Ask the device vendor 
+
+The best way to check that a probe support's a new device version is to raise the issue with the vendor of the device. 
+
+Example#1: 
+
+Is the nco_p_huawei_u2000_3gpp_corba probe compatible with Huawei iManager U2000 V200 R015? 
+
+Action: 
+
+Raise a ticket with Huawei support and ask if the CORBA interface between Huawei iManager U2000 V200 R014 and iManager U2000 V200 R015 is compatible. 
+
+If the interface is not compatible, ask if the device supports the earlier version, and how to configure this compatibility. 
+
+ 
+
+Example#2: 
+
+Is the nco_p_generic_3gpp probe compatible with the MyNewVendor 3GPP EMS? 
+
+Action: 
+
+Ask the EMS administrator to check the Alarm IRP, Notification IRP and Entry Point IRP versions supported by the MyNewVendor 3GPP EMS. If the EMS administrator is unsure, raise a ticket with the device vendor.
+
+
+ 
+
+Raise a request for enhancement with IBM 
+
+For IBM to confirm support for specific device versions, raise a request for enhancement as detailed in the link provided for Related Information. 
+
+RFE's are managed by product management and can be tracked and escalated by the IBM account team. 
+
+
+
+RELATED INFORMATION
+ Tivoli Request For Enhancement (RFE) Process [https://developer.ibm.com/answers/questions/246375/how-do-i-submit-an-rfe-request-for-enhancement-for.html#answer-246377]

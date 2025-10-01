@@ -1,0 +1,170 @@
+Title: IBM IC79037: MQ V7.0.1: XMS .NET CLIENT APPLICATION EXPERIENCES SLOW PUB/SUB MSG PROCESSING DURING HIGH TRAFFIC LOAD TO A MQ V6 QMGR - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.8 [http://www-01.ibm.com/support/docview.wss?uid=swg24031775]
+WebSphere MQ V7.0 Fix Pack 7.0.1.8 [http://www-01.ibm.com/support/docview.wss?uid=swg24031774]
+WebSphere MQ v7.0.1.8 Hypervisor for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24032802]
+WebSphere MQ v7.0.1.8 Hypervisor for RHEL [http://www-01.ibm.com/support/docview.wss?uid=swg24032809]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  End user application running Message Service Client for .NET
+   v2.0 (XMS .NET) doing pub/sub to a topic on a remote WebSphere
+   MQ (WMQ) v6 queue manager experiences slow publishing. The
+   condition occurs during heavy load periods and no errors are
+   produced at the remote queue manager.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   WebSphere MQ V7 .NET client applications users.
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   There is long delay seen during the phase when a connection is
+   established when several threads make simultaneous connection
+   requests.
+   
+   A connection pool is maintained and the pooled connections are
+   verified to see if a existing socket can accommodate the new
+   connection request. An existing connection in the pool can
+   accommodate the new connection request if that has not reached
+   the maximum sharing conversation number and if the connection
+   details matches. The time spent in matching the connection
+   details multiplies with the increase in the number of active
+   connections. This results in the contention for acquiring a
+   lock on the connection pool and hence, results in long delays.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is modified so that we reorder the checks that are
+   made while searching in the pooled connections. If the
+   connection has already reached the maximum sharing conversation
+   number then we need not perform other checks which compares the
+   connection attributes. For example: if the client is connecting
+   to a version 6 queue manager then there is no need to verify the
+   pooled connection with the intention to reuse it. This reduces
+   the delay to a large extent during the connection establishment
+   phase.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.8
+   --------           --------------------
+   Windows            U200335
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC79037
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-05
+   
+   
+ * CLOSED DATE
+   2012-01-20
+   
+   
+ * LAST MODIFIED DATE
+   2012-01-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

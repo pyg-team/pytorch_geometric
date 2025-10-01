@@ -1,0 +1,150 @@
+Title: IBM ZZ00618: SCCM VMWARE JOBFILE NOT CONNECTING TO VCENTER V5.5 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When configuring the VMware datasource in the UI, the
+   datasource connection is successful but the resulting job does
+   not run successfully from the startJobrunner.sh script.  The
+   trace log indicates error:
+   Nov 28, 2016 1:57:55 PM
+   com.ibm.tivoli.tuam.integrator.collector.vmware.
+   VMwareServiceReader queryService
+   SEVERE: AUCIN0352E A remote error occurred while attempting to
+   connect to the web service. Verify that the URL, user name, and
+   password are correct. Consult the trace and message logs for
+   additional information.
+   Nov 28, 2016 1:57:55 PM com.ibm.tivoli.tuam.integrator.main.
+   CIMSIntegrator execute
+   SEVERE: AUCIN0305E The CollectorInput stage failed during the
+   following process: Initialization. Refer to the log messages
+   and trace files to determine the problem and take the
+   appropriate actions. If the problem persists, contact IBM
+   Software Support.
+   FINE: NOTE  ==>Service error occured while attempting to
+   connect to the web service:
+   com.sun.xml.internal.ws.client.ClientTransportException:
+   HTTP transport error: javax.net.ssl.SSLHandshakeException:
+   Remote host
+   closed connection during handshake
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  we changed the startJobRunner.sh
+   added -Dhttps.protocol=TLSv1 it to the JAVA_OPTS string (all on
+   1 line):
+     JAVA_OPTS="${JAVA_OPTS} -Xms50M -Xmx512M
+   -Dhttps.protocol=TLSv1"
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  SCCM vmware job file gives ssl handshake exception for
+   connecting to vmware vcenter v5.5.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The solution is provided to the client.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00618
+   
+   
+ * REPORTED COMPONENT NAME
+   SMTCLD ORCH ENT
+   
+   
+ * REPORTED COMPONENT ID
+   5725H28ET
+   
+   
+ * REPORTED RELEASE
+   240
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-12-07
+   
+   
+ * CLOSED DATE
+   2017-01-03
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMTCLD ORCH ENT
+   
+   
+ * FIXED COMPONENT ID
+   5725H28ET
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R240 PSY
+   UP

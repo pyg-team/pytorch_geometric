@@ -1,0 +1,222 @@
+Title: IBM JR47465: STACKOVERFLOW EXCEPTION WHEN FILTERING BY USER IN PROCESS INSPECTOR - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.0.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035701]
+Version 8.5.0 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035702]
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The StackOverFlowException occurs when filtering the
+   search by user in process inspector. This is caused by having a
+   large number of snapshots for the process app.
+   
+   number of data in user DB:
+   ------------------------------------------------
+   select * from twdb.lsw_snapshot  --   65536
+   select * from twdb.LSW_Participant --   94
+   select * from twdb.LSW_PARTICIPANT_GROUP  --  7441
+   -------------------------------------------------
+   
+   Exception log:
+   --------------------------------------------------------------
+   [13/07/29 14:50:38:811 JST] 000019ce RequestProces E
+   org.apache.wink.ser ver.internal.RequestProcessor handleRequest
+   ????????
+   [13/07/29 14:50:38:811 JST] 000019ce servlet       E
+   com.ibm.ws.webcontainer.servlet.ServletWrapper service
+   SRVE0014E:
+   service() ??
+   ??{?? RestAPIServlet ????????:
+   javax.servlet.ServletException: java.lang.StackOverflowError
+    at
+   org.apache.wink.server.internal.RequestProcessor.handleRequest(R
+   equestPr
+   ocessor.java:195)
+    at
+   org.apache.wink.server.internal.servlet.RestServlet.service(Rest
+   Servlet.
+   java:124)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:668)
+   ......
+           at
+   com.ibm.bpm.wle.query.core.ValidationVisitor.visit(ValidationVis
+   itor.jav
+   a:271)
+    at
+   com.ibm.bpm.wle.query.parser.QTDelimitedString.jjtAccept(QTDelim
+   itedStri
+   ng.java:33)
+    at
+   com.ibm.bpm.wle.query.parser.SimpleNode.childrenAccept(SimpleNod
+   e.java:9
+   0)
+    at
+   com.ibm.bpm.wle.query.core.ValidationVisitor.visit(ValidationVis
+   itor.jav
+   a:298)
+    at
+   com.ibm.bpm.wle.query.parser.QTLiteral.jjtAccept(QTLiteral.java:
+   33)
+    at
+   com.ibm.bpm.wle.query.parser.SimpleNode.childrenAccept(SimpleNod
+   e.java:9
+   0)
+    at
+   com.ibm.bpm.wle.query.core.ValidationVisitor.visit(ValidationVis
+   itor.jav
+   a:342)
+    at
+   com.ibm.bpm.wle.query.parser.QTValue.jjtAccept(QTValue.java:33)
+   ----------------------------------------------------------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No Workaround/IFix exists.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users filtering searches by 'Person' in     *
+   *                  Process Inspector.                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A StackOverflowException may occur      *
+   *                      when filtering by 'Person'.             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When executing filtered searches in Process Inspector under
+   the Process Admin console by 'Person', a user may encounter a
+   StackOverflowException during runtime. The issue may be seen
+   when a large number of participant groups(PG) are created for a
+   process application. The error may be more apparent if there
+   are a large number of snapshots created as each snapshot will
+   contain a copy of the PGs.
+   A similar error can be seen in the logs:
+   com.ibm.ws.webcontainer.servlet.ServletWrapper service
+   SRVE0014E:
+   service() ??
+   ??{?? RestAPIServlet ????????:
+   javax.servlet.ServletException: java.lang.StackOverflowError
+   at
+   org.apache.wink.server.internal.RequestProcessor.handleRequest(R
+   equestPr
+   ocessor.java:195)
+   at
+   org.apache.wink.server.internal.servlet.RestServlet.service(Rest
+   Servlet.
+   java:124)
+   at javax.servlet.http.HttpServlet.service(HttpServlet.java:668)
+   A temporary workaround for this situation would be to archive
+   and delete old snapshots that are of no use. This would
+   eliviate unneccessary looping through the old snapshots.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code changes have been made to resolve the
+   StackOverflowException and properly return the correct
+   results. An interim fix is available on v8.0.1.1. The fix will
+   be integrated into the next fix pack.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR47465
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-09
+   
+   
+ * CLOSED DATE
+   2013-09-23
+   
+   
+ * LAST MODIFIED DATE
+   2013-09-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

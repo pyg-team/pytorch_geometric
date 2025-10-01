@@ -1,0 +1,37 @@
+Title: IBM DASH/JazzSM: Change Session time out - United States
+
+Text:
+DASHL2; DASHCONF; DASH session time out TECHNOTE (FAQ)
+
+QUESTION
+ How can I change session time out in IBM Dashboard Application Service Hub (DASH) /JazzSM? 
+
+ANSWER
+The session time out can be controlled by modifying below files. 
+
+Please make a backup copy of each file before modifying it.
+
+1. deployment.xml 
+
+<JazzSM_HOME>/profile/config/cells/JazzSMNode01Cell/applications/isc.ear/deployments/isc/deployment.xml
+
+In this file, locate the following section and change the invalidationTimeout to a desired value (by default it is set to 30 minutes). If there is no activity in DASH for set time, the session will time out and user will be logged out of DASH.
+
+<tuningParams xmi:id="TuningParams_1447548332527" usingMultiRowSchema="false" maxInMemorySessionCount="1000" allowOverflow="true" scheduleInvalidation="false" writeFrequency="TIME_BASED_WRITE" writeInterval="10" writeContents="ONLY_UPDATED_ATTRIBUTES"invalidationTimeout="30">
+<invalidationSchedule xmi:id="InvalidationSchedule_1447548332527" firstHour="14" secondHour="2"/>
+</tuningParams>
+
+2. consoleProperties.xml 
+
+<JazzSM_HOME>/profile/config/cells/JazzSMNode01Cell/applications/isc.ear/deployments/isc/isclite.war/WEB-INF/consoleProperties.xml
+
+Change below property to keep the DASH session alive for the time that is set. By default, it is set to 20 minutes. So, for every 20 minutes, it will make a call to DASH to keep it active so that the session will not get expired.
+
+
+<consoleproperties:console-property id="ISC.KEEPALIVE.INTERVAL" value="20"/> 
+
+
+If you want the session to expire when there is no activity in DASH, please make sure that the above value is GREATER than the "invalidationTimeout" value that you set in deployment.xml.
+
+
+For example; If invalidationTimeout is set to "20" and ISC.KEEPALIVE.INTERVAL is set to "30", and there is no activity for 20 minutes then the user will be logged out automatically after 20 minutes.

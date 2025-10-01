@@ -1,0 +1,16 @@
+Title: IBM Impact of Leap Second events on Cognos Business Intelligence - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Q: Are there any reported issues against Leap Second events? 
+
+A: No issues have been detected or reported with Cognos BI in relation to the Leap Second event
+
+Q: Can Cognos products present the inserted leap time period correctly, if the database supports it?
+
+A: Both @23:59:60 and @0:0:0 will be formatted to the same date/time ... Our products will convert the two different timestamps into one formatted value. 
+
+RESOLVING THE PROBLEM
+No action required - Leap Second will have no impact on Cognos BI

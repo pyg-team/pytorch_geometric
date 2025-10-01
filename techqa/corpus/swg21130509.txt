@@ -1,0 +1,67 @@
+Title: IBM Automatically enclosing all fields in a .csv file with double quotes for ClearQuest import - United States
+
+Text:
+1130509; 137685338; CQ; ClearQuest; import tool; excel; import; macro; quotes; double quotes; field; automatically; enclose TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains a process using a Microsoft Excel macro to enclose all fields of a .csv file in double quotes for importing into IBM Rational ClearQuest. 
+
+SYMPTOM
+Text files not created using the ClearQuest Export tool, might not be formatted correctly for use by the ClearQuest Import tool. The import file must have all fields enclosed in double quotes and separated by a comma (other acceptable delimiters are tab, pipe, semi-colon or colons).
+
+RESOLVING THE PROBLEM
+The fileImportFormat.xls in the Related information section of this technote can be used to place double quotes around all fields in a .csv file. In order for data to be imported into ClearQuest, the import file must have all fields enclosed in double quotes and separated by a comma (other acceptable delimiters are tab, pipe, semi-colon or colons). 
+
+For example, for the following lines of text to be imported: 
+
+ * 
+ * Id,headline,state,severity
+   SAMPL000001,This is a headline,Submitted,Critical
+   SAMPL000002,Second headline,Opened,Medium
+   
+
+
+ 
+
+They will need to be formatted as: 
+
+ * 
+ * "Id","headline","state","severity"
+   "SAMPL000001","This is a headline","Submitted","Critical"
+   "SAMPL000002","Second headline","Opened","Medium"
+   
+
+
+ 
+
+The attached macro will easily add the double quotes to the .csv file so that the user does not have to do it manually. 
+
+To apply the macro to a file: 
+
+ 1.  Start Microsoft Excel. 
+ 2.  Open the attached file, ImportFormat.xls. 
+ 3.  Select Enable macros when the Microsoft Excel dialog box appears. 
+ 4.  Open the .csv file with the data that needs to be imported into Rational ClearQuest. 
+ 5.  Select Tools > Macro > Macros. 
+ 6.  Select the ImportFormat.xls!SaveCQImport macro and select Run. 
+ 7.  The data will be saved into a new file: C:\bugbert.csv. 
+ 8.  Open this file (C:\bugbert.csv) in Notepad to verify the format is in csv format. 
+ 9.  All fields should now be enclosed in double quotes. 
+ 10. Close Excel without saving changes.
+
+
+You can now proceed with the import into Rational ClearQuest by using the Rational ClearQuest Import Tool. 
+
+
+Disclaimer All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. br>
+The attached file is a sample file, provided only to illustrate how to format the sample fields provided in this example. Rational Support will not be able to customize this macro for a customer's own configuration. While this has worked for many customers, it is offered as a suggestion only, and is not supported by IBM Rational Software.
+
+
+RELATED INFORMATION
+#Excel macro to enclose all fields of a .csv file [ftp://public.dhe.ibm.com/software/rational/technote/ImportFormat_1-NFQ8S_1-INXS.xls]
+
+
+
+
+HISTORICAL NUMBER
+ 137685338

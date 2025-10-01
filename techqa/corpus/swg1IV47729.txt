@@ -1,0 +1,266 @@
+Title: IBM IV47729: INTEGRATION FRAMEWORK ERROR LOADING DATA - BMXAA4134E - TABLEVALUE DID NOT VALIDATE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Same problem as APAR IZ44233 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ44233].
+   
+   Reproduced on 7.5.0.2, 7.5.0.4
+   
+   Steps to reproduce (from original APAR):
+   
+   MEA: enable object structure MXASSET and all necessary steps.
+   Note ASSETSPEC is part of the object structure.
+   Table Domain:
+   1. Go to Domains and create a new TABLE domain called
+   MYASSETDOMAIN(ex)
+   2. In the object area, insert a new row and give "ASSET".  You
+   can give PERSON or any other maximo tables. The object "ASSET"
+   entered here is not related to the Asset app we will test.
+   Save.
+   Classification:
+   1. Go to Classification app, create a new classification called
+   MYDOMAINCLASS(ex).
+   2. In use with table window, new row, enter ASSET
+   3. In Attributes table window, new row, enter MYATTR. Click Yes
+   to the question Attribute MYATTR does not exist....
+   4. Enter the following values:
+       Data Type: TABLE
+       Domain: MYASSETDOMAIN
+       Lookup Attribute: ASSETNUM
+       Lookup Name: ASSET
+   5. Save.
+   
+   Asset App:
+   1. Go to Asset App and create a new asset called MYASSET, do not
+   save yet.
+   2. Click Specification tab, and in the Clasification field, type
+   MYCLASS. In Asset app, you have to type so the table window will
+   populate.
+   3. In the Table Value field of the attribute MYATTR, select a
+   valid assetnum such as 7500.
+   4. Save the asset.
+   
+   XML output file:
+   Change your output file to Sync/Sync. Also
+   change  ASSET.<PURCHASEPRICE>0.0</PURCHASEPRICE> to
+   <PURCHASEPRICE>18.0</PURCHASEPRICE>
+   Change ASSETSPEC <TABLEVALUE>7500</TABLEVALUE> to
+   <TABLEVALUE>11200</TABLEVALUE>
+   
+   External System: Import the xml back.
+   
+   Asset App: Bring up MYASSET and you should see purchase price 18
+   and table value in Specification tab to be 11200.
+   
+   If you can succesfully complete the above steps without seeing
+   the TABLE VALUE does not validate error, then it works.
+   
+   Additionally, in the TABLEVALUE tag in the xml, try to give an
+   invalid ASSETNUM such as XYZZ.  The import should fail because
+   the value XYZZ does not exist in the ASSET table derived from
+   the table domain MYASSETDOMAIN.   You should see TABLEVALUE XYZZ
+   is not valid.
+   ex..Change ASSETSPEC <TABLEVALUE>XYZZ</TABLEVALUE>
+   
+   
+   Stack trace:
+   17 Jun 2013 14:16:10:529 [ERROR] [MXServer] [] Processing failed
+   for
+   MXASSETInterface. The object structure is 1. The primary object
+   is
+   ASSET. The key is BEDFORD~2125.BMXAA4134E - TABLEVALUE did not
+   validate.
+   Gather the logs from the <HOME> directory and determine the
+   problem by
+   looking at the message that is appended to this message.
+    null
+   17 Jun 2013 14:16:10:529 [ERROR] [MXServer] [] Processing failed
+   for
+   MXASSETInterface. The object structure is 1. The primary object
+   is
+   ASSET. The key is BEDFORD~2125.BMXAA4134E - TABLEVALUE did not
+   validate.
+   Gather the logs from the <HOME> directory and determine the
+   problem by
+   looking at the message that is appended to this message.
+    null
+   17 Jun 2013 14:16:10:530 [INFO] [MXServer] [] Error processing
+   inbound
+   transaction document/line 1. BMXAA4134E - TABLEVALUE did not
+   validate.
+   Gather the logs from the <HOME> directory and determine the
+   problem by
+   looking at the message that is appended to this message.
+    null
+   psdi.util.MXSystemException: BMXAA4134E - TABLEVALUE did not
+   validate.
+   Gather the logs from the <HOME> directory and determine the
+   problem by
+   looking at the message that is appended to this message.
+    null
+    at psdi.mbo.Mbo.validate(Mbo.java:4106)
+    at
+   psdi.iface.mos.MosProcessImpl.checkValidateErrors(MosProcessImpl
+   .java:16
+   39)
+    at
+   psdi.iface.mos.MosProcessImpl.setAdditionalTableData(MosProcessI
+   mpl.java
+   :1146)
+    at
+   psdi.iface.mos.MosProcessImpl.createChildrens(MosProcessImpl.jav
+   a:545)
+    at
+   psdi.iface.mos.MosProcessImpl.fillMaximoTables(MosProcessImpl.ja
+   va:410)
+    at
+   psdi.iface.mos.MosProcessImpl.processExternalData(MosProcessImpl
+   .java:29
+   1)
+    at
+   psdi.iface.mic.MicSetIn.processExternalData(MicSetIn.java:147)
+    at
+   psdi.iface.mic.MicService.processDataIn(MicService.java:1504)
+    at
+   psdi.iface.mic.MicService.processExternalData(MicService.java:14
+   00)
+    at
+   psdi.iface.load.FileLoaderProcess.processData(FileLoaderProcess.
+   java:585
+   )
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * MAXIMO users using Maximo Integration Framework to import    *
+   * assetspec(or other specification records) that contain       *
+   * tablevalue.                                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Cnnot import Assetspec records with TABLEVALUE - null        *
+   * pointer exception was thrown                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to MAXIMO 7.5.0.6 or rlease request hotfixes  *
+   * for your current maximo release                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is fixed in code.  The fix for this APAR is contained in
+   the following maintenance package:
+     | release\fix pack | Interim Fix for Release 7.5.0.6 Product
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV47729
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46I1
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-30
+   
+   
+ * CLOSED DATE
+   2013-09-10
+   
+   
+ * LAST MODIFIED DATE
+   2013-09-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION
+   
+   
+ * FIXED COMPONENT ID
+   5724R46I1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

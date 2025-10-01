@@ -1,0 +1,179 @@
+Title: IBM PI24308: EXPOSE WCM SYNDICATION SUBSCRIBERCOMPLETING EXTENSION POINT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The SubscriberCompleting extension point has been added to WCM
+   public Java API.
+   
+   Note: SubscriberComplete and SyndicatorComplete have been
+   deprecated. The new SubscriberCompleting extension should be
+   used instead.
+   
+   Details:
+   The Subscriber Completing extension point allows implementors to
+   receive notification of a subscriber run completing.
+   
+   The provider passes in a summary of changes to the extension
+   point allowing implementors to determine what item level
+   changes
+   syndication performed during the run.
+   
+   Note that throughout a syndication run an item may be saved
+   multiple times as part of the internal syndication process. Many
+   of these multiple updates are collapsed and combined into single
+   change info of the final consistent item. As a result the
+   changes provided may not match the amount of events from other
+   event sources such as the more generic WCM JMS topics.
+   
+   The extension keeps track of changes during the run in a
+   non-persistent way and makes no guarantees of recovery from
+   failure. If the system was to fail during a run the updates
+   performed during that run may never be reported, please plan
+   usage accordingly.
+   
+   Also note that the extension is called during syndication
+   completing so as of invoking the syndication run is still
+   considered active. As a result its not possible to run
+   syndication within the implementor for the given
+   syndicator/subscriber pair.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The SubscriberCompleting extension point has been added to WCM
+   public Java API.
+   
+   Note: SubscriberComplete and SyndicatorComplete have been
+   deprecated. The new SubscriberCompleting extension should be
+   used instead.
+   
+   Details:
+   The Subscriber Completing extension point allows implementors to
+   receive notification of a subscriber run completing.
+   
+   The provider passes in a summary of changes to the extension
+   point allowing implementors to determine what item level
+   changes
+   syndication performed during the run.
+   
+   Note that throughout a syndication run an item may be saved
+   multiple times as part of the internal syndication process. Many
+   of these multiple updates are collapsed and combined into single
+   change info of the final consistent item. As a result the
+   changes provided may not match the amount of events from other
+   event sources such as the more generic WCM JMS topics.
+   
+   The extension keeps track of changes during the run in a
+   non-persistent way and makes no guarantees of recovery from
+   failure. If the system was to fail during a run the updates
+   performed during that run may never be reported, please plan
+   usage accordingly.
+   
+   Also note that the extension is called during syndication
+   completing so as of invoking the syndication run is still
+   considered active. As a result its not possible to run
+   syndication within the implementor for the given
+   syndicator/subscriber pair.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Refer to the above for further details.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI24308
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-20
+   
+   
+ * CLOSED DATE
+   2015-02-25
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

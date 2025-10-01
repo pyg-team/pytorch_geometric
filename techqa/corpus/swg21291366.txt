@@ -1,0 +1,29 @@
+Title: IBM Middleware Config Utility fails to run on Red Hat - United States
+
+Text:
+mw middleware config ITIM TECHNOTE (FAQ)
+
+QUESTION
+ Attempting to execute the ITIM Middleware Config Utility on Red Hat fails with:
+
+"The installer is unable to run in graphical mode. Try running the installer with the -console or -silent flag."
+
+
+CAUSE
+In some installations of RedHat, the Middleware Config Installer (Installshield) is unable to run correctly.
+
+ANSWER
+First check that display settings are correctly set (xhost <host>, DISPLAY=<host>:0.0, etc) 
+
+Confirm other GUI's can be displayed successfully (xclock , etc). 
+
+Assuming the above is successful....use the following command to execute the Middleware Config Utility: 
+
+ 
+
+$WAS_HOME/AppServer/java/bin/java -jar cfg_itim_mw.jar
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITIM ISIM

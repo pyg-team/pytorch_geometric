@@ -1,0 +1,76 @@
+Title: IBM Configuring an IBM WebSphere DataPower SOA appliance user for ITCAM SOA data collection - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If ITCAM SOA is not connecting to IBM WebSphere DataPower SOA appliance for data collection and you have created a new DataPower userid specifically for ITCAM SOA, the new userid and password may be the source of the connection issue. The userid may not be configured properly, or, if it has never been used to login to DataPower, may have an expired password that cannot be used by ITCAM SOA to collect information. 
+
+SYMPTOM
+ITCAM SOA has just been configured to collect from a DataPower appliance but is not collecting any data. No specific error message is listed in the ITCAM SOA logs, or the message KD4P0004E is displayed when startdpdc is issued to start ITCAM SOA data collection: 
+
+KD4DP0004E The data collector could not retrieve a domain list for DataPower appliance: mydatapower.xxx.com using user ID: my_itcam_user. Detailed error message: wsman:AccessDenied
+
+The DataPower Web Services Management Subscriber status shows no subscribers, indicating that ITCAM SOA is not connecting.
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+ 1. Check the connection configuration.  * Connectivity to a DataPower appliance is specified in ITCAM SOA in a configuration file. On a UNIX platform, the file might be stored in a path and filename similar to 
+       
+       /opt/IBM/ITM/li6243/d4/KD4/config/KD4.dpdcConfig.properties 
+       The file contains the DataPower hostname, connection port, userid and password; the password is encoded.  * DataPower.host.1=mydatapower.mycompany.com 
+        * DataPower.port.1=5550 
+        * DataPower.user.1=mynewuserid 
+        * DataPower.encpswd.1=myencodedpw== 
+       
+       
+    
+    
+ 2. From the ITCAM SOA platform, ping the DataPower host to verify you can connect. 
+ 3. On the DataPower appliance WebGUI, select Status > TCP Port Status, and verify that the port specified, for example, 5550, is listed as an active port. 
+ 4. Login to the DataPower WebGUI with the userid and password configured in ITCAM SOA. Verify that you have read access to the domains you will be monitoring with ITCAM SOA. 
+ 5. Use the DataPower Command Line Interface (CLI) to confirm the user and group settings are set according to the instructions below in the Related Information section.  * Type: show usergroup my_itcam_group_name 
+     * Verify the output looks like  * 
+        * usergroup: my_itcam_group_name [up]
+        * 
+        * -------------------
+        * 
+        * admin-state enabled
+        * 
+        * access-policy */*/mgmt/xml-mgmt?Access=r
+        * 
+        * access-policy */my_monitored_domain/*?Access=r
+        * 
+        * access-policy */default/login/xml-mgmt?Access=r
+       
+       
+     * Type: show username my_itcam_user 
+     * Verify the output looks like
+    
+    
+
+ *   * user: my_itcam_user [up]
+    * 
+    * ---------------
+    * 
+    * admin-state enabled
+    * 
+    * access-level group-defined
+   
+   
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. If you are prompted to change the password when you login to the DataPower appliance, you may have found the source of your connection issue. Change the password, and then rerun the configdpdc ITCAM SOA utility to specify the new password. Verify the KD4.dpdcConfig.properties file lists only the new userid and password configuration; edit the file and remove the old, failing configuration if needed. 
+ 2. If the new userid and password fail to resolve the connectivity issue, use the configdpdc ITCAM SOA utility a second time to specify your DataPower admin userid, or a userid with administrator privileges. Try ITCAM SOA data collection again. If collection works with the administrator userid, you have verified that the connection issue is associated with the new userid and password. Review the userid to make sure it is associated with a DataPower group with the privileges specified in the ITCAM SOA Informaion Center section "Configuring a user account on the DataPower appliance". See the Related URL section below. 
+
+RELATED INFORMATION
+#Configuring a user account on the DataPower appliance [http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/topic/com.ibm.itcamsoa.doc/kd4inmst145.htm#dpuserconfig ]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower SOA Appliances General Firmware 3.7.3, 3.7.2, 3.7.1, 3.6.1 Edition Independent

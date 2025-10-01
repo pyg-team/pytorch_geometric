@@ -1,0 +1,42 @@
+Title: IBM When is Control Given Back to the Application When Using Journals - United States
+
+Text:
+JRN TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What impact does journal cache and using soft commit have when control is given back to the job and where Journal entries are written to disk. 
+
+RESOLVING THE PROBLEM
+Journal caching and soft commits can be used to improve the performance of an application/job when journaling is turned on. "Special Entry" are entries which must survive an IPL such as: Start journal, end journal, commits and rollbacks. 
+
+Warning : Using journal caching and soft commits introduces the risk of losing transactions in the case of an abnormal system end. You must understand how using either of these options will affect your business. 
+Traditional journaling requires that all journal entries are forced to disk so that they are all available for recovery in the event of a crash. With commitment control, it is not necessary to force all journal entries as an incomplete transaction will be rolled back anyway. This is why running under commit may be faster, there is no need to wait for the forcing of entries to disk. An exception to this is that the commit entries still need to be forced because we need to know when transactions are completed. 
+
+Journal caching emulates the commit behavior in that journal entries are no longer forced. That is why caching is faster when compared to traditional journaling yet not likely faster when compared to commit. The downside of caching is that because entries are not forced, they can be lost in the event of a crash. There is no transaction boundary like there is with commit, so the last entries that survive and are recovered can be at a somewhat random point. 
+
+Soft commit has no dependency on journal caching. Journal entries are already cached (not forced to disk) because of commit as described above. The difference is that without soft commit, the commit entry is forced(if the cache is less than 128K(buffer size) the journal is not reaching the optimal write size) and any crash recovery preserves data prior to the last completed commit cycle. With soft commit, the commit entry is also cached (not forced to disk). Environments with small commit cycles can see a performance improvement because the number of disk writes are reduced. The downside of soft commit is that there is no longer a guarantee that crash recovery preserves data prior to the last completed commit cycle. The last few commit cycles can be completely lost because the commit cycles were not forced to disk. In this situation the application or job may believe that work was done but actually never forced to disk. So the job will have to do that work over again. 
+
+The following table lists when entries are written to disk and when control is given back to the job or application that is writing the entry. 
+
+Cache 
+(Yes or No) Commit Where Entries Reside Resources / Comments No No Entries must be written to disk before JO returns control to the job. Lots of small disk I/Os. Yes No Entries are in main store until cache size reached, JO returns control to the job quickly. Fewer and larger disk I/Os. Yes Yes Entries are in main store until cache size reached or "special entry" received, JO returns control quickly with exception of the "special entries" where it waits for I/O to complete. Somewhat fewer and larger I/Os (unless a lot of "special entries"). No Soft Commit Entries are in main store until cache size reached, JO returns control quickly even with "special entries". Fewer and larger disk I/Os. Yes Soft Commit Entries are in main store until cache size reached, JO returns control to application quickly even with "special entries". Fewer and larger disk I/Os. 
+
+Other areas to look at when trying to improve response times are as follows: 
+
+1. Look at how many disk arms the data is being spread across. 
+2. The main memory working set size should be taken into account. 
+3. For large commit cycles, you should also consider the time it takes to unlock the rows that were under commit. 
+
+Note: At R610 and higher, the CHGJRNA command allows a user to change recovery count (number of changes forced to disk per journal) or journal cache wait time (time between each force of the journal entries to disk when caching is on). 
+
+Reference material: 
+Journal Caching: Understanding the Risk of Data Loss 
+http://publib-b.boulder.ibm.com/abstracts/tips0627.html?Open [http://publib-b.boulder.ibm.com/abstracts/tips0627.html?Open] 
+
+Soft Commit: Worth a Try on IBM i5/OS V5R4 
+http://www.redbooks.ibm.com/abstracts/tips0623.html?Open [http://www.redbooks.ibm.com/abstracts/tips0623.html?Open]  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 518885649

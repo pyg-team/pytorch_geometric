@@ -1,0 +1,28 @@
+Title: IBM Attempting to start IBM i2 Analyze results in a database connection error - United States
+
+Text:
+analyze; db2; tcpip; 08001; 4499 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When starting i2 Analyze using the 'startLiberty' command, the server fails to start and the following error message is displayed:
+
+# Errors occurred accessing system resources from RobustDatabaseTaskExecutor: (core)
+# Failed Resource Type: [DATABASE] from the source class [com.i2group.apollo.versioncheck.internal.VersionCheckEntityManagerModule] with additional context [WriteStore]: Failure to create EntityManagerFactory. The likely cause is the system was unable to connect to the database for the data source named [WriteStore] - [jcc][t4][2043][11550][4.19.26] Exception java.net.ConnectException: Error opening socket to server <server name>/<IP address> on port 50,000 with message: Connection refused. ERRORCODE=-4499, SQLSTATE=08001 DSRA0010E: SQL State = 08001, Error Code = -4,499 (core) 
+
+CAUSE
+A possible cause for this problem is that TCP/IP is not properly enabled on your DB2 database server.
+
+ENVIRONMENT
+DB2 database.
+
+RESOLVING THE PROBLEM
+Use the 'db2set DB2COMM' command from the DB2 command window to enable TCP/IP on your database:
+
+
+
+
+db2set DB2COMM=tcpip 
+
+db2stop 
+
+db2start

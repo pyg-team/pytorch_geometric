@@ -1,0 +1,185 @@
+Title: IBM IZ43729: DOCS : NATIVE CLIENT X RESOURCES LISTING - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The documentation does not include the list of X Resources used
+   by the UNIX desktops and widget listing utility software is not
+   generally available
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Contact support
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The IBM Tivoli Netcool/OMNIbus V7.2.1 documentation does not
+   describe how to configure fonts in the UNIX monitor box window
+   and event list by using the X Resources.
+   ****************************************************************
+   RECOMMENDATION:
+   To configure the UNIX monitor box window and event list fonts:
+   1.  Go to the location:
+   $NCHOME/omnibus/desktop/locale/arch/locale_name/app-defaults
+   Where "arch" is the operating system directory and
+   "locale_name" is the full locale name; for example
+   en_GB.ISO8859-1. Note that the "locale_name" value must match
+   your current locale. You can run the locale command (without any
+   arguments) to list the current locale.
+   
+   2.  Edit the NCOEvent resource file to change the fonts for the
+   resources as required:
+   -  NCOEvent*fontList: Affects most of the text unless overridden
+   by another resource definition
+   -  NCOEvent*XmText.fontList: Affects descriptive text items such
+   as journal entries
+   -  NCOEvent*XmTextField.fontList: Affects editable text items
+   such as the Username field in the login window
+   -  NCOEvent*XmLabel.fontList: Affects non-editable labels such
+   as the labels next to the Username and Password fields
+   -  NCOEvent*main_status_line.fontList: Affects the status
+   message that is displayed in the status bar at the bottom of the
+   monitor box window after login
+   -  NCOEvent*main_user_field.fontList: Affects the name of the
+   logged-in user, which is displayed in the status bar at the
+   bottom of the monitor box window after login
+   -  NCOEvent*main_server_field.fontList: Affects the ObjectServer
+   name that is displayed in the status bar at the bottom of the
+   monitor box window after login
+   -  NCOEvent*sub_status_line.fontList: Affects the status message
+   that is displayed in the status bar at the bottom of an event
+   list
+   -  NCOEvent*sub_user_field.fontList: Affects the name of the
+   logged-in user, which is displayed in the status bar at the
+   bottom of an event list
+   -  NCOEvent*sub_server_field.fontList: Affects the ObjectServer
+   name that is displayed in the status bar at the bottom of an
+   event list
+   -  NCOEvent*sub_clock.fontList: Affects the date and time
+   displayed in the status bar at the bottom of an event list
+   -  NCOEvent*sub_matrix.labelFont: Affects the column headers in
+   an event list
+   -  NCOEvent*sub_matrix.fontList: Affects the text for the event
+   data in an event list table. This resource is not listed in the
+   NCOEvent resource file, but can be added if you want to change
+   this font. You can copy the NCOEvent*sub_matrix.labelFont line,
+   paste the text below the NCOEvent*sub_matrix.labelFont line,
+   and then amend the NCOEvent*sub_matrix.labelFont portion of the
+   pasted text to read NCOEvent*sub_matrix.fontList
+   -  *view_builder*display_matrix.labelFont: Affects the headers
+   above each column in the Display Columns section of the View
+   Builder. This change is also reflected in the event list column
+   headers.
+   
+   For example, to increase the font size of any of these
+   resources from 12 to 24, you can change
+   -adobe-helvetica-bold-r-normal--12-*-75-75-*-*-iso*-*  to
+   -adobe-helvetica-bold-r-normal--24-*-75-75-*-*-iso*-*
+   
+   3.  Save your changes.
+   
+   4.  For the changes to take effect, close and reopen the
+   monitor box window and event list.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product documentation will be updated to include
+   instructions for configuring the fonts in the UNIX monitor box
+   window and event list. This update will be available in the IBM
+   Tivoli Netcool/OMNIbus V7.3 release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ43729
+   
+   
+ * REPORTED COMPONENT NAME
+   NATIVE CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O48NC
+   
+   
+ * REPORTED RELEASE
+   721
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-17
+   
+   
+ * CLOSED DATE
+   2009-04-24
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

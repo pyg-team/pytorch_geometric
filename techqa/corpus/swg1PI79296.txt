@@ -1,0 +1,126 @@
+Title: IBM PI79296: MODELER TRIAL 'PINGS' HTTP://IBM.COM BUT OUR WEBSITE ONLY ANSWERS TO HTTPS://IBM.COM NOW - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the last 24 hours the IBM web site has secured itself by no
+   longer responding to the "http://ibm.com" address.  Instead, it
+   is now answering to the https://ibm.com address.  Unfortunately,
+   the IBM SPSS Modeler 18.0 Trial  software is still 'pinging' the
+   old address and getting now response.  Ultimately, this means
+   that potential customers cannot launch their trial software
+   until this issue is resolved.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue has been temporarily fixed by a change to the IBM web
+   site.  A permanent fix is targeted for the next release of the
+   Modeler client.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of the Modeler Trial software                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * MODELER TRIAL 'PINGS' http://IBM.COM  BUT OUR WEBSITE ONLY   *
+   * ANSWERS TO https://IBM.COM NOW                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to Modeler 18.1                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI79296
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS MODELER
+   
+   
+ * REPORTED COMPONENT ID
+   5725A64MD
+   
+   
+ * REPORTED RELEASE
+   I00
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-04-03
+   
+   
+ * CLOSED DATE
+   2017-06-21
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RI10 PSN
+   UP
+   
+   
+ * RI10 PSY
+   UP

@@ -1,0 +1,10 @@
+Title: IBM What is the latest version of JRE that supports Maximo 7.6 - United States
+
+Text:
+TPAEACM TECHNOTE (FAQ)
+
+QUESTION
+ What is the latest version of JRE that supports Maximo 7.6 
+
+ANSWER
+Java Runtime Environment Browser Plug-In 1.8.0_45 and 51

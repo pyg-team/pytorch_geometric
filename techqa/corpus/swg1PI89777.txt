@@ -1,0 +1,239 @@
+Title: IBM PI89777: ADD NEW WIZARD DOES NOT ASSOCIATE SECONDARY PARENTS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a user selects both primary parent and non-primary parent
+   objects in the Add New Wizard to be associated, upon saving the
+   object, only the primary parent associations get saved.
+   
+   Prerequisites:
+   
+   OpenPages installed
+   
+   Create role template and assign profile
+   1.	Log into the OpenPages UI as OpenPagesAdministrator
+   2.	Navigate to Administration -> Role Templates
+   3.	Click Add, name it TestRole, click Next
+   4.	Tick SOXBusEntity leaving the permissions as is, tick
+   SOXProcess and set Associate permission to Granted, and tick
+   SOXRisk and set Write and Associate to Granted, click Next then
+   Finish
+   5.	At the top right, click on Add New and select Business Entity
+   6.	Provide a name of Ent01, fill in all mandatory fields, then
+   click Save
+   7.	At the top right, click on Add New and select Business Entity
+   8.	Provide a name of Ent02, fill in all mandatory fields, then
+   click Save
+   9.	Navigate to Administration -> Users, Groups and Domains
+   10.	Expand Security Domains and click on Ent01
+   11.	Across from Users, click on Add New
+   12.	Provide a name testuser, select OpenPages Modules 7.3.0
+   Master as the profile, fill in all other mandatory fields and
+   click Create
+   13.	Across from Role Assignments, click on Assign
+   14.	Click Add, tick testuser and click OK, click Next, select
+   TestRole, click Next, select /Ent01 then click Finish
+   15.	Navigate to Administration -> Profiles
+   16.	Click on OpenPages Modules 7.3.0 Master
+   17.	Under Object Types, click on SOXProcess
+   18.	Under Navigational Views, for the Folder view, click on
+   Enable if not already enabled
+   
+   Create test data
+   1.	On the top right, click on Add New and select Process
+   2.	Select Ent01 as the parent, name it Proc01, fill in all
+   mandatory fields, then click Save
+   3.	On the top right, click on Add New and select Process
+   4.	Select Ent02 as the parent, name it Proc02, fill in all
+   mandatory fields, then click Save
+   5.	Navigate to Organization -> Processes
+   6.	Change the view to Folder View
+   7.	Expand the Ent02 folder and tick the Proc02 process
+   8.	Click the Move To button, expand the Processes folder, tick
+   Ent01 and click OK
+   
+   Steps to Reproduce:
+   
+   1.	Log into the OpenPages UI as testuser
+   2.	On the top right, click on Add New and select Risk
+   3.	In the Parents tab, make sure Processes is selected under
+   Narrow By, enter % in the Search field and note that both Proc01
+   and Proc02 is returned
+   4.	Click both Proc01 and Proc02 so that they are both selected.
+   Note that Proc01 is allowed as Primary and Proc02 is not.
+   5.	Under the General tab, enter a name of Risk01 and fill out
+   all other mandatory fields, then click Save
+   6.	Navigate to Assessments -> Risks
+   7.	Enter % in the quick filter, press enter, then click on the
+   Risk01 to go to the detail page. Note that under parents,
+   Processes only shows 1 parent even though we picked 2 parents.
+   8.	Click on Processes
+   9.	On the right, click on Actions -> Associate Existing
+   Processes
+   10.	In the Search tab, enter % in the search field, click on
+   Proc02, then click Associate. This now allows the association of
+   the non-primary parent.
+   
+   Expected Results:
+   
+   The Add New Wizard should allow the association of Primary
+   Parents as well as Non-Primary Parents, as long as 1 Primary
+   Parent is selected
+   
+   Actual Results:
+   
+   The Add New Wizard only associates selected Primary Parents, and
+   doesnt associate any Non-Primary Parents that the user was
+   allowed to select
+   
+   Error Message:
+   
+   None
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Assign secondary associations after the object has already been
+   created.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * OpenPages Users                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * ADD NEW WIZARD DOES NOT ASSOCIATE SECONDARY PARENTS          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customers should download OpenPages 7.4 from Passport        *
+   * Advantage. See the following document for details on         *
+   * obtaining OpenPages 7.4:                                     *
+   * http://www.ibm.com/support/docview.wss?uid=swg24044421       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem: Add New - can't associate as a secondary parent if
+   object can't be primary parent
+   
+   Cause: In fixing another defect, we made a mistake where we set
+   canBeParent to false when checkCanCreateForParent returns false.
+   This is not correct since it is possible that an object can't be
+   a primary parent because the user doesn't have create rights to
+   the required parent directory where the new object will be
+   created.  However, this should not prevent the object from being
+   a non-primary parent.
+   
+   Solution:
+   We have corrected this mistake in our code.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI89777
+   
+   
+ * REPORTED COMPONENT NAME
+   OPENPAGES GRC
+   
+   
+ * REPORTED COMPONENT ID
+   5725D5100
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-11-02
+   
+   
+ * CLOSED DATE
+   2018-03-20
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OPENPAGES GRC
+   
+   
+ * FIXED COMPONENT ID
+   5725D5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS

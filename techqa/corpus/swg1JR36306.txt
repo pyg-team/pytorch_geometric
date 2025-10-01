@@ -1,0 +1,137 @@
+Title: IBM JR36306: WRONG USER SET AS ALERT OWNER FOR NEW ALERT AFTER LOGGING IN AS DIFFERENT USER IN SAME WEB BROWSER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere Business Monitor V7.0 Fix Pack 3 (7.0.0.3) [http://www-01.ibm.com/support/docview.wss?uid=swg24027529]
+WebSphere Business Monitor V7.0 Fix Pack 4 (7.0.0.4) [http://www-01.ibm.com/support/docview.wss?uid=swg24030252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you create at least one new alert in the Alert Manager
+   widget, then log out of Business Space (or WebSphere Portal) and
+   log back in under a different user name using the same web
+   browser window, then once again create at least one new alert in
+   the Alert Manager widget, the owner assigned to the alerts you
+   create in this session will be the user under which you were
+   logged in during the first session, not the user under which you
+   are currently logged in.  This behavior does not occur if you
+   close the browser window after logging out of the first session
+   and then open a new browser window to initiate the second
+   session.
+   
+   Here is an example of the failing scenario:
+   
+   1. Open a web browser.
+   2. Log into Business Space as user 'user1'.
+   3. Open a page containing an Alert Manager widget.
+   4. Click "New Alert" and create a new alert.  The owner will be
+   'user1'.
+   5. Log out of Business Space.
+   6. Log back into Business Space (with the same browser window),
+   as user 'user2'.
+   7. Open a page containing an Alert Manager widget.
+   8. Click "New Alert" and create a new alert.  The owner will be
+   'user1' instead of 'user2'.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  After creating alerts in the Alert Manager widget and logging
+   out of Business Space or WebSphere Portal, close the web browser
+   and open a new one to log in as a different user.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This problem exists in WebSphere Business Monitor Version 7.0.
+   It will be resolved in WebSphere Business Monitor V7.0 Fix Pack
+   3 (7.0.0.3).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR36306
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB BUS MONITOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724M2400
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-20
+   
+   
+ * CLOSED DATE
+   2010-05-24
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

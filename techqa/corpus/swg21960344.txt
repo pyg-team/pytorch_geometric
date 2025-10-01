@@ -1,0 +1,33 @@
+Title: IBM Netcool WebGUI users get Error 500 from Filter Builder, View Builder - United States
+
+Text:
+Error 500; filter; view; tool builder; Connection refused.DSRA0010E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Users get below error from filter, view, and tool builder:
+
+Error 500: javax.servlet.ServletException: <openjpa-1.2.3-SNAPSHOT-r422266:1350274 fatal user error> 
+ArgumentException: A connection could not be obtained for driver class "null" and URL "null" 
+
+SYMPTOM
+User get below error message on the screen from filter builder, view builder, tool builder :
+
+
+Error 500: javax.servlet.ServletException: <openjpa-1.2.3-SNAPSHOT-r422266:1350274 fatal user error> org.apache.openjpa.persistence. ArgumentException: A connection could not be obtained for driver class "null" and URL "null". You may have specified an invalid URL. 
+
+ 
+
+Below error messages were found in SystemOut.log on WebGUI server. These error messages suggest that WebGUI server is trying to access DB2 database but it is failing. 
+
+
+[6/17/15 14:15:02:237 EDT] 0000002f servlet E com.ibm.ws.webcontainer.servlet.ServletWrapper service SRVE0068E: Uncaught exception created in one of the service methods of the servlet AutoAdminXMLRPC in application isc. Exception created : <openjpa-1.2.3-SNAPSHOT-r422266:1350274 fatal user error> org.apache.openjpa.persistence.ArgumentException: A connection could not be obtained for driver class "null" and URL "null". You may have specified an invalid URL. 
+
+Caused by: com.ibm.websphere.ce.cm.StaleConnectionException: [ibm][db2][jcc][t4][2043][11550] Exception java.net.ConnectException: Error opening socket to server mytesserver.com/9.11.11.11 on port 50,000 with message: Connection refused.DSRA0010E: SQL State = null, Error Code = -4,499
+
+
+CAUSE
+WebGUI server was part of high availability cluster. DB2 database needed for the cluster was down.
+
+
+RESOLVING THE PROBLEM
+DB2 database was restarted. It resolved the issue

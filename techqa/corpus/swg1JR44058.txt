@@ -1,0 +1,144 @@
+Title: IBM JR44058: MONITOR DATA SECURITY GROUP SEARCH FAILS TO RETURN GROUPS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Business Monitor V8.0.1 Fix Pack 1 (8.0.1.1) [http://www-01.ibm.com/support/docview.wss?uid=swg24034357]
+IBM Business Monitor V7.5.1 Fix Pack 2 (7.5.1.2) [http://www-01.ibm.com/support/docview.wss?uid=swg24036470]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the Monitor Data Security panel in the administrative
+   console, when
+   you attempt to search for groups to add to a monitor model (via
+   <monitor_model_name> > Groups > Search), the search may fail to
+   return
+   any groups.  This issue has been observed in certain customer
+   environments; in these environments, the group search initiated
+   via
+   Security > Users and Groups > Manage Groups (standard WebSphere
+   Application Server security) works correctly.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of WebSphere Business Monitor         *
+   *                  Version 7.0, and IBM Business Monitor       *
+   *                  Versions 7.5 and 8.0.                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: In the Monitor Data Security panel in   *
+   *                      the administrative console, when        *
+   *                      you attempt to search for groups to     *
+   *                      add to a monitor model (via             *
+   *                      <monitor_model_name> > Groups >         *
+   *                      Search), the search may fail to         *
+   *                      return any groups.  This issue has      *
+   *                      been observed in certain customer       *
+   *                      environments; in these environments,    *
+   *                      the group search initiated              *
+   *                      via Security > Users and Groups >       *
+   *                      Manage Groups (standard WebSphere       *
+   *                      Application Server security) works      *
+   *                      correctly.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The underlying filter used for group search in the Monitor
+   Data Security needs to be modelled after what is used by
+   WebSphere Application Server (administrative console panels
+   that provide group search capability).
+   This issue will be resolved in future maintenance releases of
+   WebSphere Business Monitor Version 7.0, IBM Business
+   Monitor Version 7.5, and IBM Business Monitor Version 8.0.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR44058
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB BUS MONITOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724M2400
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-12
+   
+   
+ * CLOSED DATE
+   2012-12-04
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R750 PSY
+   UP

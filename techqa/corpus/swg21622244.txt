@@ -1,0 +1,22 @@
+Title: IBM A custodian is still on hold but we are unable to sent the custodian a release notice - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A custodian in the Atlas application is still shown as being on hold for a matter, but you cannot send a release notice to the person. The person is not an active recipient of any hold notice, not listed in the People in Scope for the request and does not show up as a Release Candidate when editing the recipients for a release notice.. 
+
+DIAGNOSING THE PROBLEM
+View the request through the application. Capture the "requestid" value from the URL. Then query the database SCOPETARGET table to view the underlying data for thecustodian record. 
+
+select * from scopetarget where requestid = ? and targetname like '%name%'; 
+
+For the custodian, verify the STATUS field is set to "Released" and the RELEASEISSUED field is set to "1". If the data is like this, it reflects that a release was attempted, but some error occurred. The SCOPETARGET record was updated, but no release notice was sent.
+
+
+RESOLVING THE PROBLEM
+Capture the SCOPETARGETID value from the select query. Execute the following SQL update to reset the RELEASEISSUED flag to "0". 
+
+update scopetarget set releaseissued = 0 where requestid = ? and scopetargetid = ?; 
+
+After the update is committed, you can access the application and add the custodian to a release notice by viewing the Release Candidates tab when editing the recipients for the notice.

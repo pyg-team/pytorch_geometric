@@ -1,0 +1,129 @@
+Title: IBM Installing WebSphere Transformation Extender version 8.4 and later products - United States
+
+Text:
+WTX; TX RELEASE NOTES
+
+ABSTRACT
+ Use the IBM® WebSphere® Transformation Extender version 8.4 product installation program to install V8.4 and later versions on Microsoft® Windows® or UNIX® systems. 
+
+CONTENT
+
+
+
+This installation procedure applies to IBM WebSphere Transformation Extender version 8.4 and later products and supported Packs [http://www.ibm.com/software/products/us/en/wdatastagetx/]. For earlier versions of IBM WebSphere Transformation Extender products and Packs, see the installation procedure at http://www.ibm.com/support/docview.wss?uid=swg27022110 [http://www.ibm.com/support/docview.wss?uid=swg27022110]. 
+
+For more information about the products, go to http://www.ibm.com/software/integration/wtx [http://www.ibm.com/software/integration/wtx].
+
+Before you begin
+
+
+ 1. When you use WebSphere Transformation Extender with another product, ensure that you satisfy the system requirements of the base product and apply all required fixes to the base product. For information about product fixes, see the IBM Support Porta [http://www.ibm.com/support/entry/portal/Downloads]l. 
+ 2. Ensure that your system meets the basic system requirements [http://www.ibm.com/support/docview.wss?uid=swg27045341]. 
+ 3. Read the WebSphere Transformation Extender release notes [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg27008337] for additional release- and product-specific installation instructions. 
+ 4. Close all running programs and back up your existing files. 
+ 5. Disable any antivirus software.
+
+
+Secure Adapter Collection prerequisites 
+
+To install WebSphere Transformation Extender Secure Adapter Collection, first you must install the WebSphere Transformation Extender base product. 
+
+To use Secure Sockets Layer (SSL) with the Launcher Agent, you must install the Launcher Agent before you install the Secure Adapter Collection. 
+
+Launcher Agent and Launcher Studio 
+
+You can install both WebSphere Transformation Extender Launcher Agent and WebSphere Transformation Extender Launcher Studio alone or on a computer with another WebSphere Transformation Extender product. If you install Launcher Agent or Launcher Studio on a computer with another WebSphere Transformation Extender product, install the other product first. 
+
+Default installation path 
+
+Throughout the documentation, install_dir is the path where the product is installed. You can install the product in any accessible path. If you want to install the new version of the product in the path where an earlier version of the product is installed, first remove the earlier version. 
+
+On Microsoft Windows systems, the default path is:  * 
+ * C:\IBM\WebSphere Transformation Extender 
+ * n.n
+ * 
+ * 
+ * 
+ * n.n 
+ * 
+
+
+On UNIX® systems, the default path is: 
+ * /opt/ibm/wsdtx
+
+
+
+Installing WebSphere Transformation Extender products on Windows systems 
+
+Ensure that the permissions of the logged-in user provide sufficient authority to install software on the Windows system. 
+
+To install the WebSphere Transformation Extender product:  1. Obtain the product media or image [http://www.ibm.com/support/entry/portal/Downloads/Software/WebSphere/WebSphere_Transformation_Extender]. 
+ 2. Run the setup.exe command. (With electronic software delivery, run the part_number.exe command.) 
+ 3. Follow the instructions in the installation program.
+
+
+
+Installing WebSphere Transformation Extender products on UNIX and Linux systems 
+
+ID and group requirements for WebSphere Transformation Extender for Integration Servers 
+
+To install WebSphere Transformation Extender for Integration Servers, log in with a user ID that has permission to write to the installation directory of the peer product (for example, WebSphere Message Broker). If you log in as root, the installation program prompts you for the service ID and group that is to own the WebSphere Transformation Extender installation. Provide an ID and group that can write to the installation directory of the peer product. The root user cannot own the WebSphere Transformation Extender installation. 
+
+
+UNIX and Linux system installation procedure 
+
+To install the WebSphere Transformation Extender product:  1. Obtain the product media or image [http://www.ibm.com/support/entry/portal/Downloads/Software/WebSphere/WebSphere_Transformation_Extender]. 
+ 2. Extract the installation archive file to an unused directory. 
+ 3. Run the DTXINST script. 
+ 4. Follow the instructions in the installation program.
+
+
+Installing a fix pack or product modification on a Windows system 
+
+When you install a fix pack or modification of a V8.4 product, the installation program prompts you to uninstall or update the existing product. 
+ * Uninstalling the existing product removes the earlier product version, similar to the Microsoft Windows Add/Remove Programs utility. The installation directory (install_dir) is not removed. After you uninstall, you run the installation program again to install the new product version.
+
+ * Updating the existing product installs the product update in the installation directory of the earlier product version (for example, C:\IBM\WebSphere Transformation Extender 8.4). You cannot choose a different installation directory.
+
+
+During an update, the installation process compares certain existing configuration files to the configuration files that are installed by the fix pack or modification. If the earlier files appear to be customized, the installation process saves them in the install_dir/retainedfiles/ package_name directory. You must manually reconcile any customized configuration files with the later version of the files, which might contain new options or defaults. 
+
+The update installation process can save these configuration files if they have been customized:  * adapters.xml 
+ * dtx.acl 
+ * DTXCommon.bat 
+ * dtx.ini 
+ * dtx.security 
+ * dtx_smi1.mib 
+ * dtx.uacl 
+ * EventServerAdmin.bin 
+ * LauncherAdmin.bin 
+ * mgmtconsole.bin 
+ * wmqi\dtxwmqi.ini 
+
+
+
+Multiple product installation 
+
+WebSphere Transformation Extender products have files in common. 
+
+On a Microsoft Windows system 
+
+If you install a V8.4 WebSphere Transformation Extender product on a computer where another V8.4 WebSphere Transformation Extender product is installed, the installation program installs the second product in the installation directory of the first product. You cannot choose an installation directory. For example, if you install WebSphere Transformation Extender with Launcher V8.4 and then install WebSphere Transformation Extender for Integration Servers V8.4, WTX for Integration Servers is installed in the installation directory of the Launcher. 
+
+Common binary files (such as adapter libraries) are replaced with the latest version. However, these common files are not replaced:  * adapters.xml 
+ * dtx.bin 
+ * dtxcommon.bat 
+ * dtx.ini 
+ * install.properties 
+
+
+When multiple V8.4 products are installed, update each product with the fix pack or modification. 
+
+On a UNIX system 
+
+The WebSphere Transformation Extender installation program does not install multiple products in the same directory. The installation program prompts you to uninstall the existing product. If you do not uninstall the existing product, you must install the second product in a different directory. 
+
+Related tasks 
+ *  [http://www.ibm.com/support/docview.wss?uid=swg27022110]Install an earlier version [http://www.ibm.com/support/docview.wss?uid=swg27022110] of WebSphere Transformation Extender 
+ * Install the WebSphere Transformation Extender online library [http://www.ibm.com/support/docview.wss?uid=swg27019816] 
+ * Uninstall [http://www.ibm.com/support/docview.wss?uid=swg27019817]WebSphere Transformation Extender products

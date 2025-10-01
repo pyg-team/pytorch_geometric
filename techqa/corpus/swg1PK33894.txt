@@ -1,0 +1,168 @@
+Title: IBM PK33894: The documentation for an LDAP server in a federated repository configuration needs clarification - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The "Configuring Lightweight Directory Access Protocol entity
+   types in a federated repository configuration" topic within the
+   Information Center for WebSphere Application Server Version 6.1
+   needs clarification.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  KEYWORDS:
+   security realm user group admin registry v61 V6101 V6100
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: This APAR affects users of WebSphere         *
+   *                 Application Server Version 6.1 who want to   *
+   *                 configure Lightweight Directory Access       *
+   *                 Protocol entity types in a federated         *
+   *                 repository configuration.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The "Administrative roles" topic does   *
+   *                      not explain how to change               *
+   *                      administrative user and group roles.    *
+   *                      The "Configuring Lightweight Directory  *
+   *                      Access Protocol entity types in a       *
+   *                      federated repository configuration"     *
+   *                      topic in the Information Center for     *
+   *                      WebSphere Application Server Version    *
+   *                      does not fully explain the custom       *
+   *                      LDAP type.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The "Administrative roles" topic needs to state that the
+   primary administrative user must be logged into the
+   administrative console to change administrative user and group
+   roles. Also, the "Configuring Lightweight Directory Access
+   Protocol entity types in a federated repository configuration"
+   topic must explain that default values are not set when you
+   select the Custom LDAP type in a federated repositories
+   configuration.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The "Administrative roles" topic has been updated with the
+   following statement:
+   
+   "The Primary administrative user name must be used to log on
+   to the administrative console to change the administrative user
+   and group roles."
+   
+   Note: The previous statement is not applicable to the
+   "Configuring Lightweight Directory Access Protocol entity
+   types in a federated repository configuration" topic in the
+   Information Center.
+   
+   The following statement has been added to the "Configuring
+   Lightweight Directory Access Protocol entity types in a
+   federated repository configuration" topic:
+   
+   "During LDAP configuration, based on the selected LDAP
+   server type, some defaults and mappings are set in the
+   configuration. When the selected LDAP server type is custom,
+   no default is set, and you must set all of the mappings
+   manually. To avoid setting all of the mappings manually,
+   choose a non-custom LDAP server type (for example, IBM
+   Directory Server or SunOne) which matches closely to your
+   LDAP server."
+   
+   Date that information will be available externally to
+   customers:
+   The modified documentation will be available in the next
+   update to the Information Centers, which is scheduled to
+   occur on or before March 31, 2007.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK33894
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   61I
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-10-31
+   
+   
+ * CLOSED DATE
+   2007-01-10
+   
+   
+ * LAST MODIFIED DATE
+   2007-01-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

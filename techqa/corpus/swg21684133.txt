@@ -1,0 +1,34 @@
+Title: IBM What is the version of Tomcat shipped with AppScan Enterprise - United States
+
+Text:
+tomcat; version; ase; appscan enterprise; security; ase_tomcat; service; java TECHNOTE (FAQ)
+
+QUESTION
+ Where do you find the version number of Tomcat supplied with IBM Security AppScan Enterprise (ASE)? 
+
+ANSWER
+ 
+
+ * If the Tomcat service is running, access root folder of Tomcat by accessing the following URL in a browser: 
+   
+   https://<server>:9443
+   
+   where <server> is the machine where AppScan Enterprise Server is installed. 
+   The Tomcat version number is in the accessed page as follows: 
+   
+   [/support/docview.wss?uid=swg21684133&aid=1] [/support/docview.wss?uid=swg21684133&aid=1]
+
+
+ 
+
+ 
+
+ * If the Tomcat service is not running, open a command prompt and run the following commands:
+   
+   cd <ASE_installation> 
+   JazzTeamServer\server\tomcat\bin\version.bat
+   
+   where <ASE_installation> by default is: C:\Program Files (x86)\IBM\AppScan Enterprise.
+   The Tomcat version number is in the output which looks as follows: 
+   
+   [/support/docview.wss?uid=swg21684133&aid=2] [/support/docview.wss?uid=swg21684133&aid=2]

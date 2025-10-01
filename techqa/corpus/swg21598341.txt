@@ -1,0 +1,88 @@
+Title: IBM WebSphere MQ classes for Java/JMS V7.0 highlighted issues - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ WebSphere MQ Version 7.0 introduced many internal changes to the product to add in all the additional functionality it provides. With the maturing of this functionality due to maintenance activity, it has been evident that customers who have moved to recent maintenance levels such as 7.0.1.7 or above have benefitted from the fixes which have been included. Analysis of recent problems reported by our clients has shown that they frequently report problems which are already available in these more recent Fix Packs. While there are always costs to applying maintenance due to test and other quality assurance activities for our customers, there are many benefits to staying up to date with WebSphere MQ maintenance.
+
+One area of the product which has benefitted in particular from maintenance recently is the WebSphere MQ classes for Java/JMS, where the cumulative effect of fixes delivered into recent Fix Packs have allowed customers applying recent levels such as 7.0.1.7 or 7.0.1.8 as preventative maintenance to avoid problems which other customers on earlier maintenance levels are reporting to IBM. Users of the MQ resource adapter (RA) in WebSphere Application Server users would see similar benefit by updating to 7.0.0.21 or higher to obtain an updated MQ RA. 
+
+This document provides a list of the more repeatedly seen symptoms and associated APARs which users of the WebSphere MQ classes for Java/JMS V7.0, including the WebSphere MQ Resource Adapter, have reported to IBM Support.
+
+It is not intended to represent the complete list of issues which are known about, and included in fix packs. For that information, see the Fix list for WebSphere MQ Version 7.0:
+http://www.ibm.com/support/docview.wss?rs=171&uid=swg27014224 [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27014224]
+
+This document will be updated with APARs which are worthy of note, as they are highlighted by the IBM Support teams. 
+
+CONTENT
+
+Application Thread Hangs 
+
+ * IZ72627 [http://www.ibm.com/support/docview.wss?uid=swg1IZ72627] - fixed in 7.0.1.3
+   Multi-threaded JMS applications receiving messages from the same queue may hang where message sizes are greater than 4kB.
+   
+   
+ * IZ94412 [http://www.ibm.com/support/docview.wss?uid=swg1IZ94412] - fixed in 7.0.1.5
+   Asynchronous consumption (used by JMS MessageListeners) stops consuming messages from the queue included in 7.0.1.5), giving the impression that the receiving thread has hung.
+   
+   
+ * IZ90144 [http://www.ibm.com/support/docview.wss?uid=swg1IZ90144] - fixed in 7.0.1.6
+   Readahead functionality unreliable, leading to message consumers not receiving messages, giving the impression that the receiving thread has hung. Also see IV09815 [http://www.ibm.com/support/docview.wss?uid=swg1IV09815], included in 7.0.1.7 for a related queue manager side issue.
+   
+   
+ * IC76544 [http://www.ibm.com/support/docview.wss?uid=swg1IC76544] - fixed in 7.0.1.7
+   Asynchronous non-durable JMS subscribers only receive one message from subscription, giving the impression that the receiving thread has hung.
+   
+   
+ * IV00757 [http://www.ibm.com/support/docview.wss?uid=swg1IV00757] - fixed in 7.0.1.7
+   Thread deadlock occurs while closing JMS MessageConsumers or Sessions, while a MessageListener is communicating with the queue manager.
+   
+
+
+
+High CPU Usage  * IZ86170 [http://www.ibm.com/support/docview.wss?uid=swg1IZ86170] - fixed in 7.0.1.5
+   Maxed out CPU usage when using multi-threaded JMS applications to pull messages from the same queue where message sizes are greater than 4kB.
+   
+ * IZ94777 [http://www.ibm.com/support/docview.wss?uid=swg1IZ94777] - fixed in 7.0.1.6
+   When using migration mode (channel property SHARECNV=0, connected to a V6 queue manager or using the PROVIDERVERSION=6 property), if a connection is disconnected by the network topology, the disconnection is not registered with the calling application, and a single thread consumes the available CPU.
+
+
+
+
+Message Conversion Issues  * IC72897 [http://www.ibm.com/support/docview.wss?uid=swg1IC72897] - fixed in 7.0.1.5
+   JMS applications upgraded from V6 may have encountered problems associated with data conversion, either the received message bytes were different in V7 to those seen in V6, or the queue manager was unable to convert the messages in V7 issuing error messages.
+   This APAR switches the default JMS message conversion behaviour back to that of V6.
+   
+
+
+
+Uneven Distribution of Messages  * IZ97460 [http://www.ibm.com/support/docview.wss?uid=swg1IZ97460] - fixed in 7.0.1.6
+   When multiple JMS asynchronous consumers are monitoring a queue (for example, in the case of application server activation specifications), the message distribution is not even between all the JVMs. For more information, please see the URI below:
+   http://www.ibm.com/support/docview.wss?uid=swg21508338 [https://www-304.ibm.com/support/docview.wss?uid=swg21508338]
+   
+   Note that this fix is a code change to the queue manager and not the WebSphere MQ classes for JMS.
+
+
+
+
+WebSphere Application Server V7.0 using an out of date WebSphere MQ Resource Adapter  * By default when a WebSphere Application Server V7.0 profile is created at the WebSphere Application Server V7.0.0.0 level (for example by the product install profile creation tool), the WebSphere MQ Resource Adapter V7.0.0.0 is installed in such a way as to remain at this level regardless of the WebSphere Application Server fix pack level which is then applied.
+   
+   The version of the WebSphere MQ Resource Adapter which is included in each WebSphere Application Server fix pack is documented in the table in technote "Which version of WebSphere MQ is shipped with WebSphere Application Server ? [http://www.ibm.com/support/docview.wss?rs=171&uid=swg21248089]"
+   
+   To ensure that your application server uses the appropriate version of the WebSphere MQ Resource Adapter, you will need to run a script which updates the application server profile to point to the fix pack installed version of the resource adapter. This procedure is documented in the WebSphere Application Server product documentation [http://www.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/tmm_mig.html?cp=SSAW57_7.0.0%2F3-4-9-2], 
+   
+   
+   
+   
+
+Messages are not consumed by an MDB  * IZ93547 [http://www.ibm.com/support/docview.wss?uid=swg1IZ93547] - fixed in 7.0.1.6
+   An application server is using multiple Activation Specifications, or Listener Ports (within WebSphere Application Server), configured to consume messages from WebSphere MQ queues. The application server system log reports a warning message JMSCC0108, and messages are not being consumed and processed by the associated Message Driven Beans (MDBs).
+   
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Java Message Service (JMS) AIX, HP-UX, i5/OS, Linux, Solaris, Windows, z/OS 7.0 
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ WAS WebSphere Application Server

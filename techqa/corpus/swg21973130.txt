@@ -1,0 +1,12 @@
+Title: IBM Client certificate authentication support for secure connections to LDAP servers - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I configure client certificate authentication support for LDAP server connections that are used when the federation component is communicating with an LDAP server? 
+
+ANSWER
+In the local management interface, go to Secure Federations > Global Settings > Server Connections. You can configure client certificate support with the SSL Mutual Authentication Key field under Server properties. This field represents the label of client certificate to be presented when connecting to the LDAP. This property is sourced from SSL Truststore. 
+
+Note: This field is required only if mutual SSL authentication is required by the server.

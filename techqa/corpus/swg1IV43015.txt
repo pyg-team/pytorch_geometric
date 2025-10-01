@@ -1,0 +1,196 @@
+Title: IBM IV43015: DLA DOES NOT FILTER INVALID SERIALNUMBER FROM KVM-BASED LINUX - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 2 (6.3.0-TIV-ITM-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24035402]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Approver:PB
+   
+   Environment: ITM Linux OS Agent 6.30
+   
+   Problem Description: For each property in the DLA template a
+   list of invalid values is provided. They are filtered out from
+   the produced iDML book thus avoiding incorrect machines
+   reconciliation. In the case of Linux running on KVM hypervisor,
+   the dmidecode command used to retrieve the SerialNumber may
+   return a value, "Not Specified", which is not in this list.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The tmsdla template for the ITM OS agent for Linux, called
+   klz_tmsdla.xml,  is filtering out the UNKNOWN serial number with
+   the lines:
+   
+             <tmsdla:filter name="SERIAL" exclude="UNKNOWN" />
+   
+   If needed, the file can be customized, and you can add a line to
+   filter also the NOTSPECIFIED serial numbers as follows:
+   
+             <tmsdla:filter name="SERIAL" exclude="UNKNOWN" />
+             <tmsdla:filter name="SERIAL" exclude="NOTSPECIFIED" />
+   
+   Please change the file klz_tmsdla.xml accordingly and verify the
+   results.
+   Note that there are two places in the  klz_tmsdla.xml file where
+   the filter is occurring. Please change both places.
+   
+   IMPORTANT: if you want to save the unmodified  klz_tmsdla.xml,
+   please save it in a different directory, becayse the tmsdla
+   command processes all the .xml files which are found in its
+   directory.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem Description: Reconciliation issues due to invalid Serial
+    Number from KVM Linux servers
+   
+   Problem/Problem Summary:
+   For each property in the DLA template a list of invalid values
+   is provided. They are filtered out from the produced iDML
+   book thus avoiding incorrect machines reconciliation.
+   In the case of Linux running on KVM hypervisor, the dmidecode
+   command used to retrieve the SerialNumber may return a value,
+   "Not Specified", which is not in this list.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added filtering instruction in the ComputerSystem CDM object
+   definition to exclude the new invalid value:
+   <tmsdla:filter name="SERIAL" exclude="NOTSPECIFIED" />
+   
+   The fix for this APAR will be contained in the following
+   maintenance package:
+   
+   | FixPack | 6.3.0-TIV-ITM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Manually add the above instruction next to <tmsdla:filter
+   name="SERIAL" exclude="UNKNOWN" /> in the klz_tmsdla.xml file
+   located under the "tmsdla" subdir of your Tivoli Enterprise
+   Portal Server installation.  Then run the tmsdla command again.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV43015
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04LN
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-23
+   
+   
+ * CLOSED DATE
+   2013-05-27
+   
+   
+ * LAST MODIFIED DATE
+   2013-09-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * FIXED COMPONENT ID
+   5724C04LN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R621 PSN
+   UP
+   
+   
+ * R622 PSN
+   UP
+   
+   
+ * R623 PSN
+   UP

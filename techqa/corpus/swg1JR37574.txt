@@ -1,0 +1,152 @@
+Title: IBM JR37574: ODBC CONNECTOR JOBS FAILING WITH ERROR "INVALID CHARACTER VALUE.ERROR IN PARAMETER 1." WHEN THE DECIMAL FIELD IS USED AS KEY COL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  While connecting to the Oracle database using the ODBC
+   Connector, when there is a numeric field defined as not null,
+   then the job is aborting with this error message.
+   
+   ODBC function "SQLExecute" reported:  SQLSTATE = 22018: Native
+   Error Code = 0: Msg = [IBM(DataDirect OEM)][ODBC Oracle Wire
+   Protocol driver]Invalid character value. Error in parameter 1.
+   (CC_OdbcDBStatement::executeInsert, file CC_OdbcDBStatement.cpp,
+   line 604)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users using ODBC Connector and Connecting to Oracle Database.
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   ODBC CONNECTOR JOBS FAILING WITH ERROR "INVALID CHARACTER
+   VALUE.
+   ERROR IN PARAMETER 1.
+   
+   While connecting to the Oracle database using the ODBC
+   Connector, when there
+   is a numeric field defined as not null, then the job is
+   aborting with this error message.
+   ODBC function "SQLExecute" reported: SQLSTATE = 22018: Native
+   
+   Error Code = 0: Msg = [IBM(DataDirect OEM)][ODBC Oracle Wire
+   Protocol driver]
+   nvalid character value.
+   Error in parameter 1.(CC_OdbcDBStatement::executeInsert, file
+   CC_OdbcDBStatement.cpp,l
+   ine 604)
+   ****************************************************************
+   RECOMMENDATION:
+   Apply the APAR 37574
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Corrected the binding.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR37574
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36DS
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-24
+   
+   
+ * CLOSED DATE
+   2010-09-01
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  ODBC CC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * FIXED COMPONENT ID
+   5724Q36DS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSN
+   UP

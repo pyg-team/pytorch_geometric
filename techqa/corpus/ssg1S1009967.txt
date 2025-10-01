@@ -1,0 +1,58 @@
+Title: IBM PSU false-positive warning symptom - United States
+
+Text:
+Incorret filesystem space NFSv4 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IMM renumerates hardware devices during POST and run-time and generate events as devices are re-detected. 
+When these events are passed up through the RAS stack, an alert is generated and the HW status is flagged in the GUI. These PSU events are benign and can be ignored. 
+
+SYMPTOM
+The error/event will appear in GUI similar to the following: 
+
+SA0165W - Received an SNMP-Node message from a SONAS node: \"Power Supply 1\" has been detected in \"Chassis 1\"" The node may have rebooted.
+
+The error will appear in the CLI "lslog" output similar to: 
+mgmt002st001 INFO EFS000848I 3/28/16 4:50 PM GUI 3/28/16 4:49 PM Normal/Good State Event for Power supply 1
+mgmt002st001 WARNING EFS009998W 3/28/16 4:50 PM GUI 3/28/16 4:48 PM Sensor Power Unit detected a degraded state: Redundancy lost.
+mgmt002st001 SEVERE EFS000840C 3/28/16 4:49 PM GUI 3/28/16 4:48 PM Offline Event detected for Power supply 1
+
+These events are usually accompanied by other events stating hard drives and power supplies were detected: 
+Normal/Good State Event for Power supply 2
+Normal/Good State Event for Power supply 1
+Sensor Drive 00 detected a good state for Disk/Disk bay0
+Sensor Drive 10 detected a good state for Disk/Disk bay1
+Sensor PCI Riser 1 detected a good state for System internal expansion board1
+
+
+ENVIRONMENT
+ 
+
+This issue exists on IBM SONAS and IBM Storwize V7000 Unified System V1.5 and V1.6
+
+
+RESOLVING THE PROBLEM
+ 
+
+These events can be safely cleared from the GUI with no functional impact
+
+Verify the PSU's state when this event is logged. 
+Prior clearing the event, ssh into the affected node and query the power supply heath from the IMM.
+
+Example:
+# ssh mgmt002st001
+#ipmitool sdr | grep PS
+PS 1 Fan Fault | 0x01 | ok
+PS 2 Fan Fault | 0x01 | ok
+PS 1 Therm Fault | 0x01 | ok
+PS 1 OP Fault | 0x01 | ok
+PS 2 OP Fault | 0x01 | ok
+PS 2 Therm Fault | 0x01 | ok
+PS1 12V OV Fault | 0x01 | ok
+PS2 12V OV Fault | 0x01 | ok
+PS1 12V UV Fault | 0x01 | ok
+PS2 12V UV Fault | 0x01 | ok
+PS1 12V OC Fault | 0x01 | ok
+PS2 12V OC Fault | 0x01 | ok
+PS 1 VCO Fault | 0x01 | ok
+PS 2 VCO Fault | 0x01 | ok

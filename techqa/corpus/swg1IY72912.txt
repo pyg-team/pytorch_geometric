@@ -1,0 +1,177 @@
+Title: IBM IY72912: USERS CAN FORCE FAILOVER LOGIN TO WEBSEAL BY A FEW RELOADING, EVEN AFTER INACTIVE-TIMEOUT HAS PASSED. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+5.1.0-TIV-TAM-IF0043-WIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=5.1.0-TIV-TAM-IF0043-WIN&source=SAR]
+5.1.0-TIV-TAM-IF0043-LIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=5.1.0-TIV-TAM-IF0043-LIN&source=SAR]
+5.1.0-TIV-TAM-IF0043-PPC [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=5.1.0-TIV-TAM-IF0043-PPC&source=SAR]
+5.1.0-TIV-TAM-IF0043-SOL [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=5.1.0-TIV-TAM-IF0043-SOL&source=SAR]
+5.1.0-TIV-TAM-IF0043-S390 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=5.1.0-TIV-TAM-IF0043-S390&source=SAR]
+5.1.0-TIV-TAM-IF0043-HP [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=5.1.0-TIV-TAM-IF0043-HP&source=SAR]
+5.1.0-TIV-TAM-IF0043-AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=5.1.0-TIV-TAM-IF0043-AIX&source=SAR]
+Tivoli Access Manager for e-Business WebSEAL, Patch 5.1.0-TIV-AWS-FP0039 [http://www-01.ibm.com/support/docview.wss?uid=swg24021081]
+Tivoli Access Manager for e-Business WebSEAL, Patch 5.1.0-TIV-AWS-FP0040 [http://www-01.ibm.com/support/docview.wss?uid=swg24025790]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ENV: Access Manager 5.1 WebSEAL + FP0014
+   
+   My customer tried to use session activity timestamp function of
+   failover authentication.
+   
+   After inactive-timeout has passed, when the user tried failover
+   to second webseald, the browser actually received login.html at
+   first. But after trying some reloading, the user can login to
+   the webseald. The user do not need to input id and password to
+   login the second websealdl
+   
+   I gathered network traces and found that the browser received
+   the new PD-ID cookie during the reloading. The failover login
+   was succeeded by using the new PD-ID cookie.
+   
+   Here is the summary of the configuration to reproduce
+   this issue:
+   [session]
+   timeout = 3600
+   inactive-timeout = 60
+   [forms]
+   forms-auth = both
+   [failover]
+   failover-auth = both
+   failover-cookies-keyfile =
+                /var/pdweb/keytab-instance/failover.key
+   failover-cookie-lifetime = 60
+   enable-failover-cookie-for-domain = yes
+   use-utf8 = yes
+   failover-update-cookie = 0
+   failover-require-lifetime-timestamp-validation = yes
+   failover-require-activity-timestamp-validation = yes
+   [failover-add-attributes]
+   session-lifetime-timestamp = add
+   session-activity-timestamp = add
+   [failover-restore-attributes]
+   session-* = preserve
+   [authentication-mechanisms]
+   passwd-ldap = /opt/PolicyDirector/lib/libldapauthn.so & -cfgfile
+   [/opt/pdweb/etc/webseald-instance.conf]
+   failover-password = /opt/pdwebrte/lib/libfailoverauthn.so
+   ----------------------------------------------------------------
+   I tested reauth-for-inactive as yes and no, but both cases are
+   the same results.
+   
+   The first failover login request to the second webseal has PD-ID
+   cookie, but does not contain PD-H-SESSION cookie. WebSEAL
+   returns login.html and Set-Cookie of PD-H-SESSION. In the second
+   reloaded request, it contains PD-ID and PD-H-SESSION. In this
+   case, the response contains Set-Cookie of new PD-ID. WebSEAL
+   seemed to update PD-ID without successful authentication. The
+   users can failover login by using this new PD-ID cookie.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  see main problem description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is expected to be cont
+   ained in the following maintenance delivery vehicle:
+   | LA interim fix | 5.1.0-TIV-AWS-LA0016
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY72912
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR E-BU
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0800
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-06-16
+   
+   
+ * CLOSED DATE
+   2005-08-28
+   
+   
+ * LAST MODIFIED DATE
+   2008-01-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ACCESS MGR E-BU
+   
+   
+ * FIXED COMPONENT ID
+   5724C0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSN
+   UP

@@ -1,0 +1,206 @@
+Title: IBM PI18320;8.5.5: nullpointerexception when service integration bus messaging engin - United States
+
+Text:
+PI18320; PI18320; PI18320 DOWNLOADABLE FILES
+
+ABSTRACT
+ When using the default messaging provider of WebSphere Application Server and having a configuration where the Service Integration Bus has clusters (more than one) as bus members c 
+
+DOWNLOAD DESCRIPTION
+PI18320 resolves the following problem:
+
+ERROR DESCRIPTION: 
+In WebSphere Application Server v8.5.5, Service Integration Bus messaging engine is stopped and restarted after a temporary database connection loss. After the messaging engine is restarted, 
+CWSIP0785W messages are logged in the SystemOut.log and no messages get processed until the JVMs hosting the messaging engines are restarted. 
+
+Following messages are logged in the SystemOut.log: 
+
+J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adapter for resource jdbc/AAA. The exception is: com.microsoft.sqlserver.jdbc.SQLServerException: Read timed out 
+
+CWSIP0785W:A message held on messaging engine XXX for transmission to a remote destination or foreign bus _PSIMP.PROXY.QUEUE_F8E54DF5681F6276 has remained in committing state for 151,860 seconds under transaction NULL. Further messages may not flow until this transaction completes 
+
+Following FFDCS are produced during the messaging engine startup: 
+
+FFDC 
+Exception:com.ibm.ws.sib.processor.impl.exceptions.InvalidMessageException
+SourceId:com.ibm.ws.sib.processor.gd.SourceStream.BlockedStreamAlarm.checkState ProbeId:1:1683:1.139
+Reporter:com.ibm.ws.sib.processor.gd.SourceStream$BlockedStream
+Alarm@d576ccf0
+com.ibm.ws.sib.processor.impl.exceptions.InvalidMessageException
+at 
+com.ibm.ws.sib.processor.gd.SourceStream$BlockedStreamAlarm. 
+checkState(SourceStream.java:1678)
+at 
+com.ibm.ws.sib.processor.gd.SourceStream$BlockedStreamAlarm.
+alarm(SourceStream.java:1751)
+at 
+com.ibm.ws.sib.processor.utils.am.MPAlarmManager.fireInternal
+Alarm(MPAlarmManager.java:551)
+at 
+com.ibm.ws.sib.processor.utils.am.MPAlarmThread.run(MPAlarm
+Thread.java:217)
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1862) 
+
+FFDC 
+Exception:java.lang.NullPointerException
+SourceId:com.ibm.ws.sib.msgstore.transactions.MSDelegatingLocal
+Transaction.commit ProbeId:1:477:1.51.1.14 
+Reporter:com.ibm.ws.sib.msgstore.transactions.MSDelegatingLocal 
+TransactionSynchronization@677a79a2
+java.lang.NullPointerException 
+at 
+com.ibm.ws.sib.trm.topology.TopologyManager.listConns(Topology
+Manager.java:460)
+at 
+com.ibm.ws.sib.trm.topology.RoutingManagerImpl.listConnections
+(RoutingManagerImpl.java:85)
+at 
+com.ibm.ws.sib.processor.io.MPIO.findMPConnection(MPIO.java:366)
+at 
+com.ibm.ws.sib.processor.io.MPIO.sendToMe(MPIO.java:540) 
+at 
+com.ibm.ws.sib.processor.impl.PtoPOutputHandler.eventPostAdd
+(PtoPOutputHandler.java:1516)
+at 
+com.ibm.ws.sib.processor.impl.PtoPOutputHandler.messageEvent 
+Occurred(PtoPOutputHandler.java:1263) 
+at 
+com.ibm.ws.sib.processor.impl.store.items.MessageItem.event 
+PostCommitAdd(MessageItem.java:1301) 
+at 
+com.ibm.ws.sib.msgstore.task.AddTask.postCommit(AddTask. 
+java:425) 
+at 
+com.ibm.ws.sib.msgstore.task.TaskList.postComplete(TaskList. 
+java:434) 
+at 
+com.ibm.ws.sib.msgstore.transactions.MSDelegatingLocal 
+Transaction.commit(MSDelegatingLocalTransaction.java:466) 
+at 
+com.ibm.ws.sib.processor.proxyhandler.Neighbours.resetBus 
+SubscriptionList(Neighbours.java:1793) 
+at 
+com.ibm.ws.sib.processor.proxyhandler.MultiMEProxyHandler. 
+initalised(MultiMEProxyHandler.java:221) 
+at 
+com.ibm.ws.sib.processor.impl.MessageProcessor.startInternal 
+(MessageProcessor.java:1690) 
+at 
+com.ibm.ws.sib.processor.impl.MessageProcessor.start(Message
+Processor.java:1346)
+at 
+com.ibm.ws.sib.admin.impl.JsMessagingEngineImpl.start
+(JsMessagingEngineImpl.java:627)
+at 
+com.ibm.ws.sib.admin.impl.HAManagerMessagingEngineImpl.
+activate(HAManagerMessagingEngineImpl.java:1243)
+at 
+com.ibm.ws.sib.admin.impl.JsActivationThread.run(JsActivation
+Thread.java:94)
+
+LOCAL FIX: 
+Restart the JVMs hosting the messaging engines or install the fix for apar PM92447 and set the property 
+sib.meEnableInstanceOnFailure=false in sib.properties file. 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+Users of the default messaging provider for IBM WebSphere Application Server
+
+PROBLEM DESCRIPTION:
+When using the default messaging provider of WebSphere Application Server and having a configuration where the Service Integration Bus has clusters (more than one) as bus members configured in High Availability mode or in an environment using Service Integration Bus have a single(or more) cluster as a bus member configured in High Scalability mode, a NullPointerException is observed.
+Following the NullPointerException
+"CWSIP0785W" message is observed, whenever a messaging engine is restarted or whenever a messaging engine is disabled and enabled.
+
+RECOMMENDATION:
+None
+
+In an environment using Service Integration Bus, where the Bus is configured to have more than one cluster as bus members in High Availability mode or the Bus is configured to have a single or more clusters as bus members in High Scalability mode, the following NullPointerException is observed whenever a messaging engine is restarted or whenever a messaging engine is disabled and enabled:
+
+
+
+
+
+Reporter:com.ibm.ws.sib.msgstore.transactions.MSDelegatingLocalTransactionSynchronization@30e15344
+java.lang.NullPointerException
+at
+com.ibm.ws.sib.trm.topology.TopologyManager.listConns(TopologyManager.java:460)
+at
+com.ibm.ws.sib.trm.topology.RoutingManagerImpl.listConnections(RoutingManagerImpl.java:85)
+at
+com.ibm.ws.sib.processor.io.MPIO.findMPConnection(MPIO.java:366)
+at
+com.ibm.ws.sib.processor.io.MPIO.sendToMe(MPIO.java:540)
+at
+com.ibm.ws.sib.processor.impl.PtoPOutputHandler.eventPostAdd(PtoPOutputHandler.java:1516)
+at
+com.ibm.ws.sib.processor.impl.PtoPOutputHandler.messageEventOccurred(PtoPOutputHandler.java:1263)
+at
+com.ibm.ws.sib.processor.impl.store.items.MessageItem.eventPostCommitAdd(MessageItem.java:1301)
+at
+com.ibm.ws.sib.msgstore.task.AddTask.postCommit(AddTask.java:425
+)
+at
+com.ibm.ws.sib.msgstore.task.TaskList.postComplete(TaskList.java
+:434)
+at
+com.ibm.ws.sib.msgstore.transactions.MSDelegatingLocalTransaction.commit(MSDelegatingLocalTransaction.java:466)
+at
+com.ibm.ws.sib.processor.proxyhandler.Neighbours.resetBusSubscriptionList(Neighbours.java:1793)
+at
+com.ibm.ws.sib.processor.proxyhandler.MultiMEProxyHandler.initalised(MultiMEProxyHandler.java:221)
+at
+com.ibm.ws.sib.processor.impl.MessageProcessor.startInternal(MessageProcessor.java:1690)
+at
+com.ibm.ws.sib.processor.impl.MessageProcessor.start(MessageProcessor.java:1346)
+at
+com.ibm.ws.sib.admin.impl.JsMessagingEngineImpl.start(JsMessagingEngineImpl.java:627)
+at
+com.ibm.ws.sib.admin.impl.HAManagerMessagingEngineImpl.activate(HAManagerMessagingEngineImpl.java:1243)
+at
+com.ibm.ws.sib.admin.impl.JsActivationThread.run(JsActivationThread.java:94)
+Following the above ffdc, the below ffdc is logged:
+com.ibm.ws.sib.processor.impl.exceptions.InvalidMessageException
+at
+com.ibm.ws.sib.processor.gd.SourceStream$BlockedStreamAlarm.checkState(SourceStream.java:1669)
+at
+com.ibm.ws.sib.processor.gd.SourceStream$BlockedStreamAlarm.alarm(SourceStream.java:1742)
+at
+com.ibm.ws.sib.processor.utils.am.MPAlarmManager.fireInternalAlarm(MPAlarmManager.java:551)
+at
+com.ibm.ws.sib.processor.utils.am.MPAlarmThread.run(MPAlarmThread.java:217)
+at
+com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1862)
+Then, we would see the following error message being logged:
+CWSIP0785W: A message held on messaging engine Cluster1.000-ClusterBus for transmission to a remote destination or foreign bus _PSIMP.PROXY.QUEUE_A229A7EE6D9B9277 has remained in
+committing state for 1,860 seconds under transaction NULL. 
+
+
+Further messages may not flow until this transaction completes.The above exceptions occur because the Neighborhood object is observed to be null when we try to obtain connection for the neighboring messaging engines to send subscription messages as part of starting the messaging engine.
+
+PROBLEM CONCLUSION: 
+The code has been modified to ensure that there is a check being made to see if the Neighborhood object exists when trying to obtain connection and there by avoiding the NullPointerException and the above exceptions. 
+
+The fix for this APAR is currently targeted for inclusion in fix packs 8.0.0.10 and 8.5.5.4 . Please refer to the 
+Recommended Updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+None
+
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI18320/8.5.5.3/readme.txt] US English 14029 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 8.5.5.3-WS-WASND-IFPI18320 01-28-2015 US English 272544 HTTP [http://www-933.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?fixes=8.5.5.3-WS-WASND-IFPI18320&productid=WebSphere%20Application%20Server&brandid=5] 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24039259&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24039259&aid=2]Problems (APARS) fixed
+PI18320

@@ -1,0 +1,44 @@
+Title: IBM What is the difference between largesend and jumbo frame? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I am configuring VIO Servers and AIX VIO Clients on Power system. There are many network attributes realated to laregsend and jumbo frame such as largesend, large_send, mtu_bypass, jumbo_frame, use_jumbo_frame. I am confused about these attributes. I want to understand how largesend and jumbo_frame work and what is the difference between two.
+
+
+ANSWER
+[/support/docview.wss?uid=isg3T1025713&aid=1] [/support/docview.wss?uid=isg3T1025713&aid=1]
+[/support/docview.wss?uid=isg3T1025713&aid=2] [/support/docview.wss?uid=isg3T1025713&aid=2]
+
+[/support/docview.wss?uid=isg3T1025713&aid=3] [/support/docview.wss?uid=isg3T1025713&aid=3]
+
+
+In case 1, Messages are segmented to MTU size 1500 by TCP Kernel stack in AIX.
+
+
+[/support/docview.wss?uid=isg3T1025713&aid=4] [/support/docview.wss?uid=isg3T1025713&aid=4]
+
+In case 2, Messages are segmented to MTU size 1500 by Real Ethernet Adapter.
+
+
+[/support/docview.wss?uid=isg3T1025713&aid=5] [/support/docview.wss?uid=isg3T1025713&aid=5]
+
+In case 3, Messages are segmented to MTU size 9000 by TCP Kernel stack in AIX.
+
+
+[/support/docview.wss?uid=isg3T1025713&aid=6] [/support/docview.wss?uid=isg3T1025713&aid=6] 
+
+
+In case 4, Messages are segmented to MTU size 9000 by Real Ethernet Adapter.
+
+Conclusions:
+- largesend and jumbo frame does two different actions. These actions are mutually independent.
+- largesend decides who does the segmentation.
+- jumbo frame decides the size of the segmented packet that goes on the wire.
+
+
+
+Authors: Darshan Patel, Perry Smith, Saania Khanna 
+
+Feedback: aix_feedback@wwpdl.vnet.ibm.com

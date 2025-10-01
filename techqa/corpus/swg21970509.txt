@@ -1,0 +1,78 @@
+Title: IBM The 'backup vm' command fails with ANS9365E API return code 18000 and 26. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The 'backup vm' commands fails and two ANS9365E messages are logged in dsmerror.log file. One ANS9365E is logged with API Return Code 18000, and another ANS9365E is logged with API return code 26. 
+
+SYMPTOM
+The 'backup vm' commands fails and two ANS9365E messages are logged in dsmerror.log file, as below: 
+
+ * 
+ * mm/dd/yyyy hh:mm:ss ANS1711W Incremental backup selected for '<VM name>', but a Full backup has not yet been performed. Performing a Full backup instead.
+ * 
+ * mm/dd/yyyy hh:mm:ss ANS9365E VMware vStorage API error for virtual machine '<VM name>'.
+ * 
+ * TSM function name : VixDiskLib_Open
+ * 
+ * TSM file : vmvddksdk.cpp (1764) 
+ * 
+ * API return code : 18000
+ * 
+ * API error message : Cannot connect to the host
+ * 
+ * mm/dd/yyyy hh:mm:ss ANS1228E Sending of object '<VM name>' failed.
+ * 
+ * mm/dd/yyyy hh:mm:ss ANS1026E The session is rejected: There was a communications protocol error.
+ * 
+ * 
+ * mm/dd/yyyy hh:mm:ss ANS9365E VMware vStorage API error for virtual machine '<VM name>'.
+ * 
+ * TSM function name : VixDiskLib_Cleanup
+ * 
+ * TSM file : vmvddksdk.cpp (1714) 
+ * 
+ * API return code : 26
+ * 
+ * API error message : Unable to connect to the host
+
+
+CAUSE
+SSL verification for VDDK has been enabled, but it isn't set up correctly.
+
+
+DIAGNOSING THE PROBLEM
+TSM Client trace shows that the SSL verification is enabled but it isn't set up correctly. as below. 
+
+ 
+
+ * mm/dd/yyyy hh:mm:ss
+ * .mmm [005508] [788] : vmvddksdk.cpp (1291): VixDiskLibVim: VixDiskLibIsVerifyEnabledWin SSL certificate verification is enabled.
+ * 
+ * mm/dd/yyyy hh:mm:ss.mmm [005508] [788] : vmvddksdk.cpp (1291): VixDiskLibVim: VixDiskLibVimAllocCbData SSL certificate verification is enabled, but the thumbprint is missing or too short.
+
+
+RESOLVING THE PROBLEM
+SSL verification in VDDK in registry should be disabled, as below. 
+
+ 
+
+ * 
+ * 
+ * 
+ *  For 32-bit Windows systems use
+   HKEY_LOCAL_MACHINE\SOFTWARE\VMware, Inc.\VMware Virtual Disk Development Kit 
+ *  For 64-bit Windows systems use
+   HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\VMware, Inc.\VMware Virtual Disk Development Kit 
+ * 
+ * VerifySSLCertificates = 0 
+
+RELATED INFORMATION
+ Virtual Disk Transport Methods [https://pubs.vmware.com/vsphere-51/index.jsp?topic=%2Fcom.vmware.vddk.pg.doc%2FvddkDataStruct.5.5.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 14154

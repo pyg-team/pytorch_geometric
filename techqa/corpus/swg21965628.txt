@@ -1,0 +1,47 @@
+Title: IBM Data Freespace (MB) showing incorrect zero value. - United States
+
+Text:
+negative value; MSSQL Server; huge database; Data Freespace ; Database Maximum Growth Size; RFE 59520; wrong value; returns zero TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The attribute Data Freespace (MB) in the "Log and Space" workspace view for MSSQL Server Agent shows value zero, while it is know to be lot of space for the monitored database.
+
+
+SYMPTOM
+Beside "Data Freespace (MB)" in the "Log and Space" workspace view, there are also other attributes returning wrong data. 
+
+In workspace "Database Information", "Database Summary" view, the attribute "Minimum PCT data freespace" shows a negative value. 
+
+Also 'Database Maximum Growth Size' is showed as a negative value, for example:
+-1122758.82MB 
+
+
+CAUSE
+Since 'Database Maximum Growth Size' is wrong, calculation of other attributes like 'Database
+FreeSpace', 'Database Percent Used' is also affected. 
+
+The problem occurs when dealing with very big databases, having size exceeding 2.1TB.
+In this case, it is expected to have also very big values for attributes like "Database Maximum Growth Size", and this may result in an overflow of the buffer that should contain this attribute.
+So the negative value we observed above is only the result of this condition.
+
+There is known limitation in the agent; until version 6.3.1.2 it is able to support/monitor databases with a max size of 2TB
+
+This limitation has been removed with RFE 59520.
+The RFE is addressed in MSSQL Server agent version 6.3.1.2 IF02.
+Installing this maintenance level you can monitor databases having
+size up to 20TB.
+
+Note: This issue could happen also if freespace and other space related attributes exceeds 2 TB.
+
+
+RESOLVING THE PROBLEM
+ Upgrade the agent to 6.3.1.2 IF2. 
+
+You can download the IF2 from Fix Central, all the details about this interim fix can be found here: 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg24040007 [http://www-01.ibm.com/support/docview.wss?uid=swg24040007]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for MSSQL Server Agent 6.3.1

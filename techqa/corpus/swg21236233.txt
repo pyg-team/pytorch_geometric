@@ -1,0 +1,34 @@
+Title: IBM TSAMP commands failing with 2610-643 code and RMC error - United States
+
+Text:
+TSA; TSAMP; lssamctrl; lsrsrc-api; RMC; RSCT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Issued "lssamctrl" command and tried other ls* commands, and the result is the following error:
+(lsrsrc-api) 2610-643 The specified session scope is not currently supported.
+lssamctrl: An unexpected RMC error occurred.The RMC return code was 1. 
+
+RESOLVING THE PROBLEM
+This will occur if the domain has not been started, or the node where the command is running has not been started. Check the domain and node status using the commands:
+lsrpdomain (Use "startrpdomain <domain_name>" to start a domain)
+lsrpnode (Use "startrpnode <node_name>" to start a node)
+
+Also ensure that the CT_MANAGEMENT_SCOPE=2 variable it set and exported in your shell on all nodes.
+
+If the nodes and domain are online, then it most likely indicates a problem with the underlying RSCT infrastructure.
+
+Check that the core RSCT daemons (ctrmc and ctcas) are "active":
+lssrc -g rsct
+
+Use "startsrc -g rsct" to start them. If they won't start, then no Resource Managers, including TSAMP's IBM.RecoveryRM will be startable. The RSCT Support team will need to assist.
+
+If ctrmc is active, check that the Resource Managers are active:
+lssrc -g rsct_rm
+
+Use "startsrc -g rsct_rm" to start them. Make sure at least the following Resource Managers are active:
+- IBM.ConfigRM
+- IBM.ERRM
+- IBM.RecoveryRM
+- IBM.GblResRM
+
+If the ConfigRM or ERRM cannot be activated, then the RSCT Support team will need to assist. If both of them are running but either of the RecoveryRM and GblResRM resource managers won't start, then please capture data using the "getsadata -all" utility and open a problem ticket with IBM (TSAMP) Support.

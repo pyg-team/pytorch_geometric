@@ -1,0 +1,33 @@
+Title: IBM FileType and ClientFileType Values in Access Client Solutions - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What "FileType" value is used in Access Client Solutions (ACS) FDFX files for the different PC file types?
+What "ClientFileType" value is used in ACS .dttx and .dtfx files for different PC file types? 
+
+ANSWER
+Following is a list of the supported PC file types when using Access Client Solutions (ACS) data transfer from/to IBM i along with the corresponding "FileType" value for each PC file type as recorded in the FDFX file. These values are also shown on the "ClientFileType" parameter in saved ACS data transfer requests .dttx (To IBM i) and .dtfx (From IBM i) files. 
+
+FileType or ClientFileType value and PC file type 
+
+ 
+
+1: Text (.txt) 
+
+2: DOS random (.dsr) 
+
+12: Comma Separated Values (.csv) 
+
+14: Tab Delimited Text (.txt) 
+
+16: Microsoft Excel 97-2003 (.xls) 
+
+23: Microsoft Excel 2007-2010 (.xlsx) 
+
+24: OpenOffice (.ods) 
+
+25: Active Calc Spreadsheet 
+
+26: Active Excel Spreadsheet

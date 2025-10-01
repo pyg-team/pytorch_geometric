@@ -1,0 +1,31 @@
+Title: IBM How to force a user to re-login after 'n'  minutes of inactivity in Change? - United States
+
+Text:
+timeout; session; invalidate; expire TECHNOTE (FAQ)
+
+QUESTION
+ How to force a user to re-login after 'n' minutes of inactivity in Change? 
+
+ANSWER
+By default Change is configured never to invalidate a user's session after inactivity for a period of time. This setting is present in the pt.cfg file located in <Change_home>\cs_app\webapps\synergy\WEB-INF\wsconfig: 
+
+ * 
+ * 
+ * # forcing them to re-login. A value of '0' disables the timeout. 
+ * [CCM_SYSTEM][USER_SESSION_TIMEOUT]0[/USER_SESSION_TIMEOUT][/CCM_SYSTEM] 
+ * 
+
+
+By default the setting is '0' so as never to invalidate the user. To set a time limit of inactivity, simply specify the time in minutes in the above line.  
+
+Once set, save the file and then click 'Load configuration data' from 'Administration -> General' for the changes to take effect. 
+
+
+
+
+
+
+
+
+HISTORICAL NUMBER
+ 40267

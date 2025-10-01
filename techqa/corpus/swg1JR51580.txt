@@ -1,0 +1,147 @@
+Title: IBM JR51580: DOC - JDBC DRIVER INFORMATION MISSING FOR SQL SERVER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the "JDBC drivers and locations ﾢ￢ﾂﾬ   topic
+   (http://www.ibm.com/support/knowledgecenter/SSFPJS_8.0.1/com.ibm
+   .wbpm.imuc.doc/topics/cins_jdbcdrvrs.html?cp=SSFPJS_8.0.1&lang=e
+   n), Table 1 says that the SQL Server driver as  is the
+   Microsoft SQL Server JDBC Driver 2.0. However, this
+   information is incorrect for the SQL JDBC driver that shipped
+   with IBM Business Process Manager (BPM) V8.0.1.3.
+   
+   In Table 2, "Supported JDBC drivers that are not provided with
+   the product," Microsoft SQL Server JDBC Driver 1.2 and 3.0 is
+   listed for SQL Server. However, Microsoft SQL Server JDBC
+   Driver 4.0 is also supported.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM BPM Advanced                            *
+   *                  IBM BPM Standard                            *
+   *                  IBM BPM Express                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: In the "JDBC drivers and locations ¢â‚¬
+   *                      topic                                   *
+   *                      (http://www.ibm.com/support/knowledgece *
+   *                      nter/SSFPJS_8.0.1/com.ibm.wbpm.imuc.doc *
+   *                      /topics/cins_jdbcdrvrs.html?cp=SSFPJS_8 *
+   *                      .0.1&lang=en), Table 1 says that the    *
+   *                      SQL Server driver as  is the            *
+   *                      Microsoft SQL Server JDBC Driver 2.0.   *
+   *                      However, this information is            *
+   *                      incorrect for the SQL JDBC driver       *
+   *                      that shipped with IBM Business          *
+   *                      Process Manager (BPM) V8.0.1.3.         *
+   *                      In Table 2, "Supported JDBC drivers     *
+   *                      that are not provided with the          *
+   *                      product," Microsoft SQL Server JDBC     *
+   *                      Driver 1.2 and 3.0 is listed for SQL    *
+   *                      Server. However, Microsoft SQL Server   *
+   *                      JDBC Driver 4.0 is also supported.      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The next time the documentation is refreshed, Table 2 will be
+   replaced with a sentence stating that IBM BPM supports all
+   JDBC drivers that are compatible with supported databases.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR51580
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-21
+   
+   
+ * CLOSED DATE
+   2014-12-12
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SFTBX_8.0. FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

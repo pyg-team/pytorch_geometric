@@ -1,0 +1,276 @@
+Title: IBM IZ18089: HEARTBEAT FUNCTION CAUSING GUI SESSION TIMEOUT ISSUES. FUNCTION IS NO LONGER NEEDED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The problem is caused when a session is busy doing something
+   and we do
+   not see a heartbeat come in the default 20 mins. My email thread
+   below
+   explains in detail the cause of error.
+   
+   After going back and forth with L3/Dev on this, the final
+   conclusion at
+   this time is that  the heartbeat.timeout is not really used and
+   needs to
+   be removed from product. So to circumvent the issues seen by
+   eBay we
+   need to simply increase the
+   com.collation.clientProxy.heartbeat.timeout.mins=180 from
+   default of
+   20mins. This will not cause the session to timeout if an
+   GUI activity takes longer than 20 minutes.
+   
+   
+   Development agrees that the heartbeat function
+   is an obsolete function, so a FIN APAR is created to simply
+   remove it in the next release.
+   
+   The Problem:
+   There are two parameters
+   Session timeout defined by the user created at the domain
+   manager - in
+   ebay's case administrator is set to 240 min (14400000
+   miliseconds)
+   com.collation.clientProxy.heartbeat.timeout.mins=20   (1200000)
+   -->
+   This is the heartbeat timeout for clinetproxy
+   
+   So what happens is when we start a function which takes more
+   than 20
+   minutes, in one testcase when we were creating a new version,
+   the
+   product console is busy doing this activity and while doing this
+   we do
+   not send any heartbeat back to the proxy server. This causes the
+   heartbeat timeout to exceed the current state and ultimately it
+   removes
+   the user causing the user to see session timeout.  Given below
+   is the
+   log from ebay system where we see this
+   
+   2008-02-28 12:04:50,375 ClientProxy [Thread-30]  INFO
+   cdb.StateThread -
+   [StateThread.I.0] Checking stale sessions...
+   2008-02-28 12:04:50,375 ClientProxy [Thread-30]  DEBUG
+   cdb.StateThread -
+   Max memory is: 1073741824
+   2008-02-28 12:04:50,375 ClientProxy [Thread-30]  DEBUG
+   cdb.StateThread -
+   Total memory is: 321012224
+   2008-02-28 12:04:50,375 ClientProxy [Thread-30]  DEBUG
+   cdb.StateThread -
+   Free memory is: 93441184
+   2008-02-28 12:04:50,375 ClientProxy [Thread-30]  DEBUG
+   cdb.StateManager
+   - No of active clients are  4
+   2008-02-28 12:04:50,375 ClientProxy [Thread-30]  DEBUG
+   security.DomainSecuritySetup - getPassword(/10.19.7.104,9540)
+   2008-02-28 12:04:50,376 ClientProxy [Thread-30]  DEBUG
+   jini.ChallengeResponse - respond: got challenge:
+   -71eac6731dc2312a74684dff9f60317c
+   2008-02-28 12:04:50,376 ClientProxy [Thread-30]  DEBUG
+   jini.ChallengeResponse - respond: written:
+   -524bfe829419fe88574caaff595449a1
+   2008-02-28 12:04:50,376 ClientProxy [Thread-30]  DEBUG
+   jini.CustomSocket
+   - Security handshake response sent
+   2008-02-28 12:04:50,380 ClientProxy [Thread-30]  INFO
+   cdb.StateManager -
+   [StateManager.I.2] Timeout from user manager for user is
+   14400000 milli
+   secs
+   2008-02-28 12:04:50,380 ClientProxy [Thread-30]  INFO
+   cdb.StateManager -
+   [StateManager.I.3] diff for 3,615,251,797,669,941,046 is 820316
+   and the
+   timeout is 14400000
+   2008-02-28 12:04:50,380 ClientProxy [Thread-30]  INFO
+   cdb.StateManager -
+   [StateManager.I.5] heartbeatDiff for 3,615,251,797,669,941,046
+   is 1799
+   and the heartbeat timeout is 1200000
+   2008-02-28 12:04:50,381 ClientProxy [Thread-30]  INFO
+   cdb.StateManager -
+   [StateManager.I.2] Timeout from user manager for user is
+   14400000 milli
+   secs
+   2008-02-28 12:04:50,381 ClientProxy [Thread-30]  INFO
+   cdb.StateManager -
+   [StateManager.I.3] diff for -8,763,699,353,709,043,473 is
+   1632613 and
+   the timeout is 14400000
+   2008-02-28 12:04:50,381 ClientProxy [Thread-30]  INFO
+   cdb.StateManager -
+   [StateManager.I.5] heartbeatDiff for -8,763,699,353,709,043,473
+   is
+   1632613 and the heartbeat timeout is 1200000
+   2008-02-28 12:04:50,382 ClientProxy [Thread-30]  INFO
+   cdb.StateManager -
+   [StateManager.I.6] User session -8,763,699,353,709,043,473 has
+   no
+   heartbeat for 1632613 milli seconds, removing...
+   2008-02-28 12:04:50,383 ClientProxy [Thread-30]  INFO
+   cdb.StateManager -
+   [StateManager.I.2] Timeout from user manager for user is
+   14400000 milli
+   secs
+   2008-02-28 12:04:50,383 ClientProxy [Thread-30]  INFO
+   cdb.StateManager -
+   [StateManager.I.3] diff for -1,350,475,935,091,788,303 is 640339
+   and the
+   timeout is 14400000
+   2008-02-28 12:04:50,384 ClientProxy [Thread-30]  INFO
+   cdb.StateManager -
+   [StateManager.I.5] heartbeatDiff for -1,350,475,935,091,788,303
+   is 182
+   and the heartbeat timeout is 1200000
+   2008-02-28 12:04:50,385 ClientProxy [Thread-30]  INFO
+   cdb.StateManager -
+   [StateManager.I.2] Timeout from user manager for user is
+   14400000 milli
+   secs
+   2008-02-28 12:04:50,385 ClientProxy [Thread-30]  INFO
+   cdb.StateManager -
+   [StateManager.I.3] diff for 313,371,056,302,970,514 is 383900
+   and the
+   timeout is 14400000 00 2008-02-28 12:04:50,385 ClientProxy
+   [Thread-30]
+   INFO cdb.StateManager - [StateManager.I.5] heartbeatDiff for
+   313,371,056,302,970,514 is 1563 and the heartbeat timeout is
+   1200000
+   2008-02-28 12:04:50,385 ClientProxy [Thread-30]  INFO
+   cdb.StateManager -
+   [StateManager.I.7] User session -8,763,699,353,709,043,473 has
+   been idle
+   logout...
+   2008-02-28 12:04:50,385 ClientProxy [Thread-30]  DEBUG
+   cdb.ClientProxyServer - logging out -8763699353709043473
+   2008-02-28 12:04:50,385 ClientProxy [Thread-30]  DEBUG
+   cdb.UserState -
+   setting the heartbeat time to 1204229090385 for session id
+   com.collation.securitymgr.client.SessionContext@7b867b86
+   
+   As you can see the heartbeat has not taken place for 1632613
+   (27.2 min)
+   so at the next heartbeat interval which is 10min we check the
+   status and
+   it exceeds 1200000 (20min) and we remove this user.  Even though
+   the
+   session timeout is 240min
+   
+   The above is the reason why the customer is seeing session
+   timeout.
+   
+   Now the issue is when we are busy with a activity which does
+   takes
+   longer than 20 minutes, should we stop heartbeating ?
+   Unfortunately we
+   also have the rmi timeout which is set to default 20min
+   hardcoded which
+   cannot be changed so options like versions, reports which take
+   longer
+   will fail from UI perspective anyway, but will actually work
+   behind the scenes.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  So to circumvent the issues seen, a need to simply increase the
+   com.collation.clientProxy.heartbeat.timeout.min=180 from the
+   default of 20 minutes.  This will not cause the session to
+   timeoutif an activity takes longer than 20 minutes.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In the next release we will remove the functionality that
+   disconnects the client due to the heartbeat.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ18089
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-19
+   
+   
+ * CLOSED DATE
+   2008-04-24
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

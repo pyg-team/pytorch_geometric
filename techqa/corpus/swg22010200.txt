@@ -1,0 +1,14 @@
+Title: IBM Encrypting SQL connections to SQL server via ForceEncryption = true - United States
+
+Text:
+Force Encryption = true; SQL Server; Encryption; Replication down TECHNOTE (FAQ)
+
+QUESTION
+ Why did CDC replication end when I choose ForceEncryption=true on SQL Server. 
+
+CAUSE
+Setting Force Encryption in SQL Server Network Configuration, mandates all the clients connecting to SQL server use encryption. CDC as a standalone application does not support encryption and therefore replication halts. 
+
+
+ANSWER
+CDC as does not support built in encryption. The functionality on encryption offered by CDC is to use SSH tunneling, which encrypts the connections coming from CDC via SSH tunnel.

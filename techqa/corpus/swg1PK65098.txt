@@ -1,0 +1,181 @@
+Title: IBM PK65098: SRVE0068E due to ClassCastException when attempting to pass a SOAPFAULT in PAYLOAD mode. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When attempting to pass a SOAPFault in PAYLOAD mode using
+   WebSphere Appliction Server Feature Pack for Web Services, the
+   following ClassCastException is thrown:
+   
+   [10/24/07 11:56:01:968 EDT] 00000024 ServletWrappe E
+   SRVE0068E: Uncaught exception thrown in one of the service
+   methods of the servlet:
+   com.xyz.webservice.PingServicePortImpl.
+   Exception thrown : java.lang.ClassCastException:
+   org.apache.axiom.om.impl.llom.OMSourcedElementImpl incompatible
+   with org.apache.axiom.soap.SOAPFault
+    at
+   org.apache.axiom.soap.impl.llom.SOAPBodyImpl.getFault(SOAPBodyIm
+   pl.java:113)
+    at
+   org.apache.axis2.transport.http.AxisServlet.handleFault(AxisServ
+   let.java:363)
+    at
+   com.ibm.ws.websvcs.transport.http.WASAxis2Servlet.doPost(WASAxis
+   2Servlet.java:939)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:763)
+   [10/24/07 11:56:02:062 EDT] 00000024 WebApp        E   [Servlet
+   Error]-[com.xyz.webservice.PingServicePortImpl]:
+   java.lang.ClassCastException:
+   org.apache.axiom.om.impl.llom.OMSourcedElementImpl incompatible
+   with org.apache.axiom.soap.SOAPFault
+    at
+   org.apache.axiom.soap.impl.llom.SOAPBodyImpl.getFault(SOAPBodyIm
+   pl.java:113)
+    at
+   org.apache.axis2.transport.http.AxisServlet.handleFault(AxisServ
+   let.java:363)
+    at
+   com.ibm.ws.websvcs.transport.http.WASAxis2Servlet.doPost(WASAxis
+   2Servlet.java:939)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:763)
+   
+   
+   The exception was observed in WebSphere Application Server
+   Feature Pack for Web Services v6.1.0.13, but not confined to
+   this particular version.
+   
+   The exception is only bounded to the Payload mode since the
+   Messag mode path uses a different mechanisms to identify faults.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  WebSphere Application Server Feature Pack   *
+   *                  for Web Services users of JAXWS Provider    *
+   *                  Web Services                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If a JAXWS Provider returns a SOAP      *
+   *                      Fault, ClassCastException errors might  *
+   *                      occur.                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If a JAXWS Provider returns a SOAP Fault, the WebSphere
+   Application Server does not process the SOAP Fault correctly.
+   This scenario might cause ClassCastException errors or
+   other kinds of errors.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere Application Server is fixed to correctly
+   support SOAP Fault messages from JAXWS Providers.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fixpack 6.1.0.23.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK65098
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-04-25
+   
+   
+ * CLOSED DATE
+   2008-09-23
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSERVIC FEATU
+   
+   
+ * FIXED COMPONENT ID
+   5724J0850
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

@@ -1,0 +1,163 @@
+Title: IBM PK80514: Static HTML pages do not render for anonymous users - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.3 Download: WebSphere Portal and WCM V6.1 fix pack 3, 6.1.5 feature pack [http://www-01.ibm.com/support/docview.wss?uid=swg24025054]
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Unable to render public static pages.
+   If anonymous access is set to a static HTML page the static
+   content does not display. Instead the page is rendered using the
+   default portal template. The theme and screen template selection
+   logic has been changed to render static pages for the anonymous
+   user.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If anonymous access is set to a static HTML page the static
+   content does not display. Instead the page is rendered using the
+   default portal template.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The theme and screen template selection logic has been
+   changed to render static pages for the anonymous user.
+   
+   Failing Module(s):
+      Engine: Page Assembly
+   
+   Affected Users:
+      All users
+   
+   Version Information:
+       Portal Version(s): 6.1.0.0
+        Pre-Requisite(s):
+         Co-Requisite(s): ---
+   
+       Portal Version(s): 6.1.0.1
+        Pre-Requisite(s):
+         Co-Requisite(s): ---
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   A fix is available from Fix Central:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PK80514&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PK80514&productid=WebSphere%20Portal&brandid=5]
+   
+   You may need to type or paste the complete address into your Web
+   browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK80514
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   61A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-13
+   
+   
+ * CLOSED DATE
+   2009-05-28
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP
+   
+   
+ * R61A PSY
+   UP

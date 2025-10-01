@@ -1,0 +1,21 @@
+Title: IBM ILMT software catalog update/fix timeline - United States
+
+Text:
+LMT; software catalog update; fix timeline TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ What is the software catalog update/fix implementation timeline while troubleshooting cases of not detected software? 
+
+ANSWER
+While troubleshooting ILMT software catalog issues concerning software not detected by ILMT agent, you need to take under consideration some time limitations and processes. 
+
+1) After you import the newest software catalog/fix to the server you need to wait 24 hours until it generates the software catalog version for the agents. To force/speed up this process you may restart ILMT server.
+
+2) Agents should download the newest data from ILMT server within 6 hours. To force/speed up this process you may stop the agent, delete the '/scanner' and '/cache' folders from the agent's location and restart the agent. It will download the latest information from the server.
+
+3) Then you can wait for the scan upload/scheduled scan or force it by running the 'tlmagent -sw' command. This command ensures that the scan data will be sent to the server just after the scan triggered.
+
+4) In 7.2.1 and 7.2.2 versions changes in the 'Software Products' tab are visible after 6 hours and changes in the 'Current capacity' panel are visible after 2 days. In 7.5 version changes in the 'Manage Software Inventory' panel are visible after 6 hours..

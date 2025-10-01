@@ -1,0 +1,18 @@
+Title: IBM Is it possible to monitor the WAS Activation Specifications using the WAS YN agent? - United States
+
+Text:
+WAS agent TEMA Monitoring Activation Specs Specifications CAMADALL CAMADINST TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ Is it possible to monitor the WAS Activation Specifications using the WAS YN agent? 
+
+ANSWER
+No, you cannot use the WAS YN agent or the MQ Monitoring agent to monitor the WAS Activation Specifications. You have to use a custom script that will check the activation specifications. An Enhancement Request (ER) has been submitted at this time (3Q 2014).
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM4AD ITCAMfAD ITCAM for App Diag ITCAM for Application Diagnostics WSAM

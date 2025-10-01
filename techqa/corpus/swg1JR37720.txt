@@ -1,0 +1,202 @@
+Title: IBM JR37720: RECOVERY SUBSYSTEM IS DISABLED WITH RMI CONNECTOR FOR ADMIN SERVICES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With RMI Connector as the preferred connector for Administrative
+   Services, the Recovery subsystem/Failed Event Manager will not
+   function. Recovery subsystem is disabled is displayed when the
+   Failed Event Manager is accessed.
+      The error that occurs is
+   2/2/10 13:58:25:002 CST] 00000079 Recovery      E
+   com.ibm.wbiserver.management.FailedEventManagerMBean
+   getFailedEventCount() CWRCV0004E: The count of failed events
+   cannot be retrieved.
+   .
+   DMGR trace.log shows the CORBA_NO_PERMISSION it received from
+   NodeAgent with request ID 100(from NodeAgent port 9114):
+   [8/6/10 16:40:20:101 IST] 0000003c ORBRas        1
+   com.ibm.CORBA.iiop.ClientDelegate@4080408 invoke:642
+   ORB.thread.pool : 0
+   The following exception was logged
+   
+   org.omg.CORBA.TRANSACTION_ROLLEDBACK:
+   vmcid: 0x0  minor code: 0  completed: No
+    at com.ibm.ws.Transaction.JTS.TxClientInterceptor.
+   receive_common(Tx ClientInterceptor.java:322)
+    at com.ibm.ws.Transaction.JTS.TxClientInterceptor.
+   receive_exception (TxClientInterceptor.java:130)
+    at com.ibm.rmi.pi.InterceptorManager.invokeInterceptor
+   (InterceptorManager.java:603)
+    at com.ibm.rmi.pi.InterceptorManager.iterateClientInterceptors
+   (InterceptorManager.java:410)
+    at com.ibm.rmi.pi.InterceptorManager.iterateReceiveException
+   (InterceptorManager.java:706)
+    at com.ibm.rmi.corba.ClientDelegate.intercept(ClientDelegate.
+   java:1000)
+    at com.ibm.rmi.corba.ClientDelegate.invoke(ClientDelegate.java:
+   451)
+    at  com.ibm.CORBA.iiop.ClientDelegate.invoke(ClientDelegate.
+   java:1188)
+    at
+   com.ibm.rmi.corba.ClientDelegate.invoke(ClientDelegate.java:768)
+    at com.ibm.CORBA.iiop.ClientDelegate.invoke
+   (ClientDelegate.java:1218)
+    at org.omg.CORBA.portable.ObjectImpl._invoke
+   (ObjectImpl.java:484)
+    at com.ibm.ws.management.connector.rmi._RMIConnector_Stub.
+   queryNames(_RMIConnector_Stub.java:110)
+    at com.ibm.ws.management.connector.rmi.RMIConnectorClient.
+   queryNames(RMIConnectorClient.java:405)
+    at com.ibm.ws.management.AdminClientImpl.queryNames
+   (AdminClientImpl .java:89)
+    at com.ibm.ws.management.AdminServiceImpl.queryNames
+   (AdminServiceImpl.java:519)
+   ...
+   Caused by: org.omg.CORBA.NO_PERMISSION:
+    >> SERVER (id=11c328fe, host=WPSL2.in.ibm.com) TRACE START:
+    >>    org.omg.CORBA.NO_PERMISSION: Transaction service is
+   unavailable
+   vmcid: 0x0  minor code: 0  completed: No
+    >>  at com.ibm.ws.Transaction.JTS.TxServerInterceptor.
+   receive_request(T xServerInterceptor.java:315)
+    >>  at com.ibm.rmi.pi.InterceptorManager.invokeInterceptor
+   (InterceptorManager.java:631)
+    >>  at
+   com.ibm.rmi.pi.InterceptorManager.iterateServerInterceptors
+   (InterceptorManager.java:531)
+    >>  at com.ibm.rmi.pi.InterceptorManager.iterateReceiveRequest
+   (InterceptorManager.java:777)
+    >>  at com.ibm.CORBA.iiop.ServerDelegate.dispatchInvokeHandler
+   (ServerDelegate.java:616)
+    >>  at
+   com.ibm.CORBA.iiop.ServerDelegate.dispatch(ServerDelegate.
+   java:480)
+    >>  at com.ibm.rmi.iiop.ORB.process(ORB.java:512)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use SOAPConnector for Administrative services
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Websphhere Process Server and Websphere     *
+   *                  Enterprise Service Bus administration users *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Failed event manager being reported     *
+   *                      as unavailable.                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When FEM was configured to use an RMI connection,
+   communications attempted to use a transaction. This caused a
+   TX Not Supported error to be thrown which caused the
+   administration console to report that FEM was not available.
+   A workaround consisting of configuring FEM to use a soap
+   connector was not feasible for business reasons.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  FEM was modified to suspend transactions during inter-process
+   communications.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR37720
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-09
+   
+   
+ * CLOSED DATE
+   2010-10-07
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM29830 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM29830]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

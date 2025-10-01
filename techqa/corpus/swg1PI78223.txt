@@ -1,0 +1,165 @@
+Title: IBM PI78223: RATIONAL DEVELOPER FOR SYSTEM Z V9.1.1 - DEBUGGING A CICS PROGRAM FAILS WITH AQEDB0003E LISTING NOT FOUND - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+9.1.1.6: PTF UI50717 for Rational Developer for System z [http://www-01.ibm.com/support/docview.wss?uid=swg24044109]
+9.1.1.7: PTF UI55786 for Rational Developer for System z [http://www-01.ibm.com/support/docview.wss?uid=swg24044797]
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Rational Developer for System z V9.1.1, while remote
+   debugging a CICS program, the debugger issues
+   the following AQEDB0003E message indicating the program listing
+   is not found. As a results, the COBOL
+   source is not available and the disassembly of the program is
+   displayed in the Debug Perspective
+   for stepping.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: 01.Debug users who have ASA control          *
+   *                    characters in their listings.             *
+   *                 02.Debug users who have null characters in   *
+   *                    their listings or source.                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 01.When debugging, no local variables   *
+   *                         are available for the selected       *
+   *                         stack while debugging.               *
+   *                      02.During a debug session users         *
+   *                         incorrectly see AQEDB0003E which     *
+   *                         indicates the listing or source      *
+   *                         cannot be found.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   01.When debugging COBOL V4, where the listings include ASA
+      control characters, the debugger is unable to determine the
+      local variables.
+   02.When a listing or source contains null characters, the
+      Integrated Debugger is unable to correctly process it,
+      resulting in message AQEDB0003E which indicated the listing
+      cannot be found. As a result, disassembly of the program is
+      displayed in the debug editor for stepping.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  01.The Integrated Debugger engine was updated to correctly
+      process the ASA control characters in listings.
+   02.The Integrated Debugger engine was updated to correctly
+      process null characters in listings or source.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI78223
+   
+   
+ * REPORTED COMPONENT NAME
+   ID/Z HOST
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0723
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-15
+   
+   
+ * CLOSED DATE
+   2017-09-28
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  AQECIC32 AQECIC41 AQECIC51 AQECSD   AQECTL
+   AQEEVDBG AQELDR31 AQELDR64 AQEL3Z3  AQEL3Z6  AQEL6Z3  AQEL6Z6
+   AQEMVS31 AQEMVS64 AQESVC03 AQEW3Z3  AQEW3Z6  AQEXPL31 AQEZPCM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ID/Z HOST
+   
+   
+ * FIXED COMPONENT ID
+   5724T0723
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY UI50717 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI50717]
+   UP17/10/10 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

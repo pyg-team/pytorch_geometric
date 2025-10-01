@@ -1,0 +1,66 @@
+Title: IBM CNMSTYLE Report Generator - United States
+
+Text:
+CNMSTYLE; NetView stylesheet DOWNLOADABLE FILES
+
+ABSTRACT
+Consolidates information from CNMSTYLE and %INCLUDEd files and creates a report of the contents. 
+
+DOWNLOAD DESCRIPTION
+This tool reads your current CNMSTYLE file and %INCLUDEd files, analyzes the information, and then creates a report of the contents. Information presented includes %INCLUDE structure of CNMSTYLE members, CNMSTYLE statements grouped by NetView function with the member and line number where each statement was found, a tower indicator that states which tower must be active for the given statement to be active, multiple occurrences of the same CNMSTYLE statement presented in the order they were discovered for quick determination of which statement is active, auxInitCmd statements listed together, user-created statements listed together, and a section to analyze statements affected by Data REXX.
+
+The tool consists of two compiled REXX execs (CNMECRG and CNMEAUX), two input files (CNMCRGI1 and CNMCRGI2), one message file (CNMNMSGS), and a JCL sample file (CNMSJCRG) that is used to invoke CNMECRG. A documentation file (README) is also included. The files have been placed in a package formatted by the TSO TRANSMIT command.
+Programming language: REXX and JCL
+
+Author: James Zoeller
+Date: October 26, 2005
+
+This sample is provided "as-is", and no warranty is provided by IBM.
+
+PREREQUISITES
+Tivoli NetView for OS/390 V1R4 or Tivoli NetView for z/OS V5R1 and the REXX Alternate Library .
+
+INSTALLATION INSTRUCTIONS
+This package includes the following files:
+
+CNMECRG (compiled REXX exec)
+CNMEAUX (compiled REXX exec)
+CNMSJCRG (JCL sample file)
+CNMNMSGS (message file)
+CNMCRGI1 (input file)
+CNMCRGI2 (input file)
+README (documentation file)
+
+The files are in sequential format and should be uploaded as such. For example, issuing the following commands on Windows will upload the relevant files via the Personal Communications Emulator as binary files.
+For NetView V1R4 users:
+send cnmecrg14.xmt a:'CNMECRG.UPLOAD'
+
+For NetView V5R1 users:
+send cnmecrg51.xmt a:'CNMECRG.UPLOAD'
+
+where "send" is the command, "cnmecrg14.xmt" or "cnmecrg51.xmt" is the file name, "a:" is the emulator window and "CNMECRG.UPLOAD" is the resulting data set on TSO.
+
+Note that the files must be uploaded in binary format. That means not including "ascii crlf" on an emulator upload, and using "bin" in any FTP transfer.
+
+After the files have been uploaded, the files must be received on TSO. To do this, issue the TSO RECEIVE command to read the files and convert them from TSO TRANSMIT format to PDS members. The syntax of the command is:
+
+receive indataset('CNMECRG.UPLOAD')
+
+You will then be prompted with the following 2 messages. Note that the actual name of the packaged data set is displayed, rather than the name of the intermediate transmit file.
+
+INMR901I Dataset STYLERPT.TOOL from USERxx on xxxx
+INMR906A Enter restore parameters or 'DELETE' or 'END' +
+
+If you simply press ENTER, the data set will be received with the name "HLQ.TOOL" where "HLQ" is the high-level qualifier that is created using the userid under which you are logged on. If you would like to rename the data set, then you must supply a data set name in response to the INMR906A message such as:
+
+da('MY.USER.DATASET')
+
+Once you have completed the receive, the 7 files listed above will be members in a PDS data set. The README file contains instructions on where to place each of the files, and how to run the tool.
+
+NOTE: Although listed separately below, the same NetView V1R4 package applies to both OS/390 and z/OS. This is also true for the NetView V5R1 package.
+
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] Report Generator 1.4 11/1/2005 English 242720 FTP [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/cnmecrg14.xmt] DD Report Generator 5.1 11/1/2005 English 241920 FTP [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/cnmecrg51.xmt] DD

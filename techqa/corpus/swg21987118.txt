@@ -1,0 +1,46 @@
+Title: IBM Identity Insight Configuration Console Timeout Settings - United States
+
+Text:
+Configuration Console; timeout; Unused Timeout; Aged Timeout TECHNOTE (FAQ)
+
+QUESTION
+ How do I control the Identity Insight Configuration Console timeout Settings? 
+
+CAUSE
+Connections may be timing out after sitting idle for a period of time. 
+
+ANSWER
+The Identity Insight Configuration Console settings can be changed in:
+
+<profile>/config/cells/DefaultCell/nodes/DefaultNode/servers/server1/resources.xml.
+
+
+Look at 'Unused Timeout' and 'Aged Timeout'. 
+
+Unused Timeout
+Specifies the interval in seconds after which an unused or idle connection is discarded.
+Set the Unused Timeout value higher than the Reap Timeout value for optimal performance. Unused physical connections are only discarded if the current number of connections not in use exceeds the Min Connections setting. For example, if the unused timeout value is set to 120, and the pool maintenance thread is enabled (Reap Time is not 0), any physical connection that remains unused for two minutes is discarded. Note that accuracy of this timeout, as well as performance, is affected by the Reap Time value. See Reap Time for more information.
+
+Data type Integer
+Units Seconds
+Default 1800
+Range 0 to maximum integer
+
+
+Aged Timeout
+Specifies the interval in seconds before a physical connection is discarded.
+Setting Aged Timeout to 0 supports active physical connections remaining in the pool indefinitely. Set the Aged Timeout value higher than the Reap Timeout value for optimal performance. For example, if the Aged Timeout value is set to 1200, and the Reap Time value is not 0, any physical connection that remains in existence for 1200 seconds (20 minutes) is discarded from the pool. The only exception is if the connection is involved in a transaction when the aged timeout is reached. The only exception is if the connection is involved in a transaction when the aged timeout is reached, the application server will not discard the connection until after the transaction is completed and the connection is closed. Note that accuracy of this timeout, as well as performance, are affected by the Reap Time value. See Reap Time for more information.
+
+Data type Integer
+Units Seconds
+Default 0
+Range 0 to maximum integer
+
+
+From the source:
+
+Connection pool settings
+https://www.ibm.com/support/knowledgecenter/ssw_i5_54/rzamy/50/admin/help/udat_conpoolset.html [https://www.ibm.com/support/knowledgecenter/ssw_i5_54/rzamy/50/admin/help/udat_conpoolset.html]
+
+
+The Identity Insight ewas server must be restarted for the changed to take effect.

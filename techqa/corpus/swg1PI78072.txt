@@ -1,0 +1,194 @@
+Title: IBM PI78072: A server start may receive a java.util.MissingResourceException if started with a disabled command port. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+17.0.0.2: WebSphere Application Server Liberty 17.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24043541]
+17.0.0.3: WebSphere Application Server Liberty 17.0.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24044079]
+17.0.0.4: WebSphere Application Server Liberty 17.0.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24044285]
+18.0.0.1: WebSphere Application Server Liberty 18.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24044624]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the server is configured with a disabled command port
+   (command.port=-1) then the following messages and exception
+   may occur:
+   
+   in Launcher, about to error.unknownException
+   CWWKE0005E: The runtime environment could not be launched.
+   CWWKE0018E: An exception occurred while launching the
+   runtime environment: java.util.MissingResourceException:
+   Can't find resource for bundle
+   com.ibm.ws.kernel.boot.resources.LauncherMessages, key
+   warning.serverStartedCommandPortDisabled
+   java.util.MissingResourceException: Can't find resource for
+   bundle com.ibm.ws.kernel.boot.resources.LauncherMessages,
+   key warning.serverStartedCommandPortDisabled
+   	at
+   java.util.ResourceBundle.getObject(ResourceBundle.java:407)
+   	at
+   java.util.ResourceBundle.getString(ResourceBundle.java:367)
+   	at
+   com.ibm.ws.kernel.boot.internal.commands.ProcessControlHelpe
+   r.startStatus(ProcessControlHelper.java:259)
+   	at
+   com.ibm.ws.kernel.boot.Launcher.handleActions(Launcher.java:
+   273)
+   	at
+   com.ibm.ws.kernel.boot.Launcher.createPlatform(Launcher.java
+   :120)
+   	at
+   com.ibm.ws.kernel.boot.cmdline.EnvCheck.main(EnvCheck.java:6
+   0)
+   	at
+   com.ibm.ws.kernel.boot.cmdline.EnvCheck.main(EnvCheck.java:3
+   6)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty - Command Line Tools         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A server start may receive a            *
+   *                      java.util.MissingResourceException if   *
+   *                      started with a disabled command port.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If the server is configured with a disabled command port
+   (command.port=-1) then the following messages and exception may
+   occur:
+   
+   in Launcher, about to error.unknownException
+   CWWKE0005E: The runtime environment could not be launched.
+   CWWKE0018E: An exception occurred while launching the runtime
+   environment: java.util.MissingResourceException: Can't find
+   resource for bundle
+   com.ibm.ws.kernel.boot.resources.LauncherMessages, key
+   warning.serverStartedCommandPortDisabled
+   java.util.MissingResourceException: Can't find resource for
+   bundle com.ibm.ws.kernel.boot.resources.LauncherMessages, key
+   warning.serverStartedCommandPortDisabled
+   	at java.util.ResourceBundle.getObject(ResourceBundle.java:407)
+   	at java.util.ResourceBundle.getString(ResourceBundle.java:367)
+   	at
+   com.ibm.ws.kernel.boot.internal.commands.ProcessControlHelper.st
+   artStatus(ProcessControlHelper.java:259)
+   	at
+   com.ibm.ws.kernel.boot.Launcher.handleActions(Launcher.java:273)
+   at
+   com.ibm.ws.kernel.boot.Launcher.createPlatform(Launcher.java:120
+   )
+   	at
+   com.ibm.ws.kernel.boot.cmdline.EnvCheck.main(EnvCheck.java:60)
+   	at
+   com.ibm.ws.kernel.boot.cmdline.EnvCheck.main(EnvCheck.java:36)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code was modified to restore a missing message definition for
+   message CWWKE0087W.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 17.0.0.2.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI78072
+   
+   
+ * REPORTED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0814
+   
+   
+ * REPORTED RELEASE
+   CD0
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-13
+   
+   
+ * CLOSED DATE
+   2017-03-29
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * FIXED COMPONENT ID
+   5724J0814
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RCD0 PSY
+   UP

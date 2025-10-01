@@ -1,0 +1,31 @@
+Title: IBM Unable to edit text within a dendogram output with Statistics 18 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After creating a dendogram, I found that I am not able to edit the Y-Axis labels that were generated using the /ID subcommand (syntax).
+The syntax I am running is as simple as:
+CLUSTER avail price cost calories 
+/METHOD BAVERAGE 
+/MEASURE=SEUCLID 
+/ID=beer
+/PRINT SCHEDULE 
+/PLOT DENDROGRAM.
+
+Editing the dendogram, does not allow me to change the size of the font of my case labels. This is a big issue as some labels are too large and are left blank, which makes my dendogram appear to be incomplete.
+
+I've run the same procedure in PASW Statistics 17.0.2 and did not encounter this problem. I was able to change the font, size etc of my labels without issue. 
+
+RESOLVING THE PROBLEM
+This problem has been reported to SPSS Development and has been resolved in the 18.0.1 patch. Please download and install this patch in order to resolve this problem.
+SPSS would like to apologise for the inconvenience caused
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 86114

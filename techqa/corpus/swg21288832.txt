@@ -1,0 +1,64 @@
+Title: IBM Cannot launch the WebSphere Application Server v6.x in profiling mode because WebSphere Application Server fails to load piAgent module - United States
+
+Text:
+JVMJ9VM011W; piAgent; ADMU3200I; ADMU3011E; Server launched; Waiting for initialization status; Server launched but failed initialization; startServer.log; JVMJ9VM011W; Unable to load piAgent; 1288832 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ To successfully start WebSphere® Application Server (WAS) version 6.x in profiling mode, the WAS process needs to launch the piAgent module object. In some cases, operating systems such as Linux® or Microsoft® Windows® cannot locate the module. This technote tells how to resolve messages that display in the Rational Application Developer (RAD) or Rational Software Architect (RSA) console view and the WAS native_stderr.log. 
+
+SYMPTOM
+Below are the common messages that display in the Rational Application Developer (RAD) or Rational Software Architect (RSA) console view and the WAS native_stderr.log.
+
+Error message from console view: 
+
+ 
+
+ADMU3200I: Server launched. Waiting for initialization status.
+ADMU3011E: Server launched but failed initialization. startServer.log,
+SystemOut.log(or job log in zOS) and other log files under
+C:\Program
+Files\IBM\SDP70\runtimes\base_v6x\profiles\AppSrv01\logs\server1
+should contain failure information.
+
+
+Error message from native_stderr.log: 
+
+JVMJ9VM011W Unable to load piAgent: The specified module could not be found. Could not create the Java virtual Machine.
+
+
+
+CAUSE
+WAS server fails to load piAgent module.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 
+
+ 1. Ensure Test and Performance Tools Platform (TPTP) feature is installed. You can find installed features in the Installation Manager Modify Package window. 
+ 2. Search for piAgent.dll in <SDPShared>\plugins directory.
+    If there are multiple piAgent.dll files in <SDPShared>\plugins, select the one that has the latest time stamp. 
+    Example: C:\Program Files\IBM\SDP70Shared\plugins\org.eclipse.hyades.execution.win32.x86_4.2.3.v200701141614<[/code>] 
+ 3. Go to Control Panel > System > Advanced tab > Environment Variable 
+ 4. Add C:\Program Files\IBM\SDP70Shared\plugins\org.eclipse.hyades.execution.win32.x86_4.2.3.v200701141614< to PATH variable. 
+ 5. Relaunch RAD (or RSA) and start WTE in profile mode.
+
+If the native_stderr.log contains a different massage, contact IBM Support for further assistance.
+
+
+
+
+
+
+
+RELATED INFORMATION
+#1254829: Cannot profile the WAS version [http://www.ibm.com/support/docview.wss?uid=swg21254829]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Windows 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4

@@ -1,0 +1,39 @@
+Title: IBM JavaScript example of how to change a document's existing class using bulk processing with Administration Console for Content Engine (ACCE) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ JavaScript example of how to change a document's existing class using bulk processing with Administration Console for Content Engine (ACCE) 
+
+ANSWER
+In the Administration Console for Content Engine (ACCE) you can apply JavaScript bulk actions to the search results of an object store query. This example shows how to change a document's existing class to the desired one using the Content Platform Engine Java API and Java class libraries.
+1. Open an object store and create an object store search.
+2. On the SQL view tab, enter the following query:
+
+SELECT TOP 100 This FROM Document
+
+3. Select Enable bulk action on the bulk action tab.
+4. In the Script section, click Run script.
+5. Copy the following JavaScript code and paste it into the Script field.
+
+Note: Use the symbolic name rather than the display name. You can use this as the base for making other modifications also. I am using the "TestClass" document class in the below example.
+
+
+ * importClass(Packages.com.filenet.api.constants.RefreshMode);
+ * 
+ * 
+ * function OnCustomProcess (CEObject)
+ * 
+ * {
+ * 
+ *  CEObject.changeClass("TestClass");
+ * 
+ *  CEObject.save(RefreshMode.REFRESH);
+ * 
+ * }
+ * 
+
+6. Click Run. The administration console runs the query and the JavaScript action. 
+
+After the query runs, confirm that the document's class has been changed.

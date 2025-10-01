@@ -1,0 +1,44 @@
+Title: IBM Unable to Add Document Using Entry Template in IBM Content Navigator - United States
+
+Text:
+ICN Content Navigator Entry Templates AddOn Add-on FNRCR0081E CIWEB1016 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Users receive a CIWEB1016 error when trying to add a document using an Entry Template in IBM Content Navigator (ICN). 
+
+SYMPTOM
+ 
+
+ * Users receive a CIWEB1016 error when trying to add a document using an Entry Template in IBM Content Navigator. 
+ * In the SystemOut.log an exception will be recorded:
+   
+   com.filenet.api.exception.EngineRuntimeException: FNRCR0081E:
+   RETRIEVE_PROPERTY_NOT_DEFINED: The property
+   EntryTemplateObjectStoreName is not defined. 
+   
+   See this link [http://www-01.ibm.com/support/knowledgecenter/SSEUEX_2.0.2/com.ibm.installingeuc.doc/eucts003.dita?lang=en] for more information on SystemOut.log for ICN.
+
+
+CAUSE
+Workplace Template Extensions add-on needs to be installed.
+
+DIAGNOSING THE PROBLEM
+ 
+
+Parse the SystemOut.log for ICN for the following exception: 
+
+
+com.filenet.api.exception.EngineRuntimeException: FNRCR0081E:
+RETRIEVE_PROPERTY_NOT_DEFINED: The property
+EntryTemplateObjectStoreName is not defined.
+
+
+RESOLVING THE PROBLEM
+Install Workplace Templates Extensions add-on and the Workplace XT add-on in FileNet. For more details on how to install the add-ons refer to Connecting and configuring IBM FileNet Content Manager repositories [http://www-01.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.installingeuc.doc/eucco015.htm?lang=en]. [http://www-01.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.installingeuc.doc/eucco015.htm?lang=en]
+
+RELATED INFORMATION
+ IBM FileNet P8 add-ons required for ICN [http://www-01.ibm.com/support/knowledgecenter/SSEUEX_2.0.2/com.ibm.installingeuc.doc/eucpl081.dita]
+Workplace Templates Extensions [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.ce.admin.tasks.doc/featureaddons/wptempaddon/_start_here_wptemp.htm]
+Installing object store add-on features [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.installingp8qkr.doc/p8qin045.htm?lang=en]
+ICN Log files [http://www-01.ibm.com/support/knowledgecenter/SSEUEX_2.0.2/com.ibm.installingeuc.doc/eucts003.dita?lang=en]
+Connecting and configuring IBM FileNet Content Manager [http://www-01.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.installingeuc.doc/eucco015.htm?lang=en]

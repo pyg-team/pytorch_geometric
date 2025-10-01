@@ -1,0 +1,162 @@
+Title: IBM IV25852: ALTERNATE HASH ALGORITHM SUPPORT FOR HASH RELATED COLLECTION MAPS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: An alternate hash algorithm for java.lang.String
+   is introduced to avoid the hash collision in put/get operations
+   of Hash related collection maps like Hashtable, HashMap, etc
+   .
+   Stack Trace: N/A
+   .
+   N/A
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The current hashing algorithm is more predictable and can cause
+   hash collision in put/get operations of Hash related collection
+   maps like Hashtable, HashMap, etc. The alternate hash
+   implementation will avoid the hash collision by introducing a
+   random factor.
+   
+   Due to the introduction of random factor, the order of retrieval
+   of elements from the collection maps can differ when the new
+   hash algorithm is used. As documented in the API specification,
+   there is no guarantee as to the order of the map; in particular,
+   it does not guarantee that the order will remain constant over
+   time. Application should make sure that they removed any such
+   dependency before enabling the alternate hash algorithm. By
+   default, the new hashing algorithm is disabled. It will be in
+   affect only when the map capacity reaches the hashing threshold
+   which can be set using Java command line argument
+   -Djdk.map.althashing.threshold=nn.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   6.0.0 SR11
+   6.0.1 SR3
+   7.0.0 SR2
+   .
+   The JDK has been equipped with an alternate hash implementation
+   which avoids the hash collision in put/get operations of Hash
+   related collection maps.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  ZE FIX ERROR IV25853 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV25853] 12/08/07
+   ZE FIX ERROR IV25699 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV25699] 12/08/30
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV25852
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA CLASS LIBS
+   
+   
+ * REPORTED COMPONENT ID
+   620700130
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-07
+   
+   
+ * CLOSED DATE
+   2012-08-07
+   
+   
+ * LAST MODIFIED DATE
+   2012-11-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA CLASS LIBS
+   
+   
+ * FIXED COMPONENT ID
+   620700130
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

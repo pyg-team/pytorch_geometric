@@ -1,0 +1,152 @@
+Title: IBM PM54300: RDz: PDS member/include synchronization fails to show updates via RDz client - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This situation occurs with either local syntax check or edit
+   with RDz client.
+   The user opens the main file from an RDz subproject which is
+   associated with PLI include files.
+   The PLI include files are available in Host libraries and are
+   downloaded to the client.
+   He closes the subproject file.
+   Meanwhile on ISPF (or by using Host Emulator), a Host include
+   file is changed and saved.
+   When that include file is opened from RSE view, the new updates
+   made on the Host are not available.
+   .
+   This problem also occurs if changes are made to Host COBOL
+   copybooks.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   
+   USERS AFFECTED:
+   RD/z users who use RD/z to edit PL/I programs or COBOL
+   programs and change PL/I include files or COBOL copybooks
+   outside of RD/z.
+   ****************************************************************
+   
+   PROBLEM DESCRIPTION:
+   When editing PL/I programs with include files or COBOL
+   programs with copybooks, RD/z downloads the include files or
+   copybooks to a workspace cache. If the include files or
+   copybooks had timestamps, and the include files or timestamps
+   were modified outside of RD/z, the cached version of the include
+   files or copybooks was displayed when they were edited in RD/z
+   after being modified. Also, local syntax check used the cached
+   version.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ************************************************************
+   PROBLEM RESOLUTION:
+   RD/z displays the updated version of include files or
+   copybooks when they are opened in an RD/z editor. Also, local
+   syntax check will use the updated version of the include files
+   or copybooks rather than the cached version.
+   ****************************************************************
+   
+   The problem listed in this APAR has been resolved with
+   IBM Rational Developer for System z V7.6.2.4 Fix Pack which
+   is available from the Recommended Fixes support download page:
+   http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335 [http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM54300
+   
+   
+ * REPORTED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0723
+   
+   
+ * REPORTED RELEASE
+   762
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-13
+   
+   
+ * CLOSED DATE
+   2012-08-23
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * FIXED COMPONENT ID
+   5724T0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R762 PSY
+   UP

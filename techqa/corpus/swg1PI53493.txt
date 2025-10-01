@@ -1,0 +1,155 @@
+Title: IBM PI53493: LOCAL OS REGISTRY CAN NOT GET MEMBERS IN GROUP WHICH CONTAINS A LOT OF MEMBERS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a group contains a lot of members and the size of /etc/group
+   exceeds the buffer size which Local OS registry allocates,
+   Local OS registry fails to get group members when validating
+   the authorization.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V7.0, 8.0 and 8.5                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Using local OS Registry is resulting    *
+   *                      in very large groups not being found.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Customer is running WIM. The userRegistry is the localOS on a
+   Linux operating system. They attempt to use the administrative
+   console panel to browse groups, "Users and Groups > Manage
+   Groups". A particular group, which is a very large group, is
+   not displayed. If the customer shrinks the size of the group,
+   the group is displayed fine.
+   Note that the customer does not have to be using WIM for this
+   problem to occur. The problem is with the localOS registry.
+   The buffer we are using is too small to contain groups of this
+   size.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  We have increased the buffer size to accomadate larger groups.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 7.0.0.41, 8.0.0.13, and 8.5.5.10.  Please refer to
+   the Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI53493
+   
+   
+ * REPORTED COMPONENT NAME
+   EMBEDDED WAS (E
+   
+   
+ * REPORTED COMPONENT ID
+   AIMCWAS00
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-12-02
+   
+   
+ * CLOSED DATE
+   2016-02-01
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   EMBEDDED WAS (E
+   
+   
+ * FIXED COMPONENT ID
+   AIMCWAS00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP

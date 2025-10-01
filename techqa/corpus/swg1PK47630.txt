@@ -1,0 +1,231 @@
+Title: IBM PK47630: ARSDB UPDATE TO ARSSYS FAILS WITH DECIMAL POINT AS COMMA WITH DSNT408I 07/06/28 PTF PECHANGE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer applies PTF UK24971, and in the ++HOLD, it has him
+   run arsdb to update table ARSSYS.  The customer has "DECIMAL
+   POINT AS COMMA" set for the db.  He gets messages:
+   
+   DSNT408I SQLCODE = -104, ERROR: ILLEGAL SYMBOL "''". SOME
+   SYMBOLS THAT MIGHT BE LEGAL ARE: ) ,
+   arsdb: Unable to insert into table ARSSERVR.arssys the values (
+   5000, 'AAA', 0, 90, 3600, 31, 1, 8, 1, 0,'', '', 1182163461, 0,
+   1080001 )
+   
+   The MIN_GID column of the ARSSYS table is not being set to a
+   correct value.  This causes the arsdb -u to not update
+   additional tables correctly.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  1. The INSERT statement did not have a space after a 0,.
+   
+   2. No default was specified for the MIN_GID column.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  1. A space is placed after the comma.
+   
+   2. A default is provided for the MIN_GID column.
+   
+   ****************************************************************
+   * WARNING!                                                     *
+   * ========                                                     *
+   *                                                              *
+   *  Prior to applying this SYSMOD, run the following SQL to     *
+   *  determine if any of the ARSAPP columns are currently too    *
+   *  big to fit in the updated tables:                           *
+   *                                                              *
+   *  SELECT NAME, AGID FROM ARSUSER.ARSAPP WHERE                 *
+   *        LENGTH(FIXED_VIEW)   > 10698  OR                      *
+   *        LENGTH(INDEXER)      > 10698  OR                      *
+   *        LENGTH(PREPROCESSOR) >  10698;                        *
+   *                                                              *
+   *  If any rows are returned, DO NOT APPLY this SYSMOD.  The    *
+   *  columns will need to be reduced in size before this SYSMOD  *
+   *  is applied.  Contact IBM Support for assistance.            *
+   *                                                              *
+   ****************************************************************
+   
+   
+   The ACTIONS required for the PTF for APAR PK47630 depend upon
+   whether the PTF is installed before PTF UK24971 has been
+   installed and its ACTIONS performed, or the PTF for APAR PK47630
+   is installed in conjunction with PTF UK24971.
+   
+   
+   PTF UK24971 has been installed and its actions performed
+   ========================================================
+   
+   If you have upgraded the tables using the arsdb -u command after
+   applying UK24971, but before applying the PTF for PK47630, you
+   should perform the following:
+   
+   
+   Determine the MIN_GID value by doing a SPUFI
+   
+     SELECT MIN_GID FROM ARSUSER.ARSSYS;
+   
+   If the value is 1080001, no further action is required.
+   
+   If the value is NULL,  you need to perform the following actions
+   
+   1 -  using SPUFI ,
+        UPDATE ARSUSER.ARSSYS SET MIN_GID = 80001;
+   
+   2 -  run the arsdb <-I instance_name> -vu.
+   
+        The command will generate a number of messages including
+        some that indicate tables could not be created, or that
+        indexes could not be created.   These involve the
+        arsagindex, arscab, arscab, arscab2fol, and arscabperms
+        tables.  These are expected.
+   
+   3 - Verify the MIN_GID is now 1080001 by doing a SPUFI
+       SELECT MIN_GID FROM ARSUSER.ARSSYS;
+   
+   
+   PTF UK24971 has NOT been installed and its actions performed
+   ============================================================
+   
+   If you have installed the PTF for PK47630 prior to performing
+   the actions in UK24971, the above actions are not required.
+   Instead, perform the actions required to upgrade the tables:
+   
+    1. Customize and execute the ARSTSPCC member of
+       SARSINST to create the additional tablespaces.
+    2. Stop the OnDemand Server.
+    3. Backup the OnDemand Database or make sure there
+       is a current backup.
+    4. Run "arsdb <-I instance_name> -vx ARSSYS"
+    5. Run "arsdb <-I instance_name> -vx ARSAPP"
+    6. Run "arsdb <-I instance_name> -vd ARSSYS"
+    7. Run "arsdb <-I instance_name> -vd ARSAPP"
+    8. Run "arsdb <-I instance_name> -vc ARSSYS"
+    9. Run "arsdb <-I instance_name> -vc ARSAPP"
+   10. Run "arsdb <-I instance_name> -vi ARSSYS"
+   11. Run "arsdb <-I instance_name> -vi ARSAPP"
+   12. Run "arsdb <-I instance_name> -vu"
+   13. Start the OnDemand Server
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK47630
+   
+   
+ * REPORTED COMPONENT NAME
+   CM OD Z/OS, OD/
+   
+   
+ * REPORTED COMPONENT ID
+   5655H3900
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-06-22
+   
+   
+ * CLOSED DATE
+   2007-07-12
+   
+   
+ * LAST MODIFIED DATE
+   2007-08-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK27016
+   
+   
+
+MODULES/MACROS
+ *     ARSDB
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CM OD Z/OS, OD/
+   
+   
+ * FIXED COMPONENT ID
+   5655H3900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY UK27016 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK27016]
+   UP07/07/15 P F707
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

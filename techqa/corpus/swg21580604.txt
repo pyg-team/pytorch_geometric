@@ -1,0 +1,22 @@
+Title: IBM Error: The driver could not establish a secure connection to SQL Server by using Secure Sockets Layer (SSL) encryption. - United States
+
+Text:
+RQM; CLM; JDBC driver; WebSphere; FIBS; setting up TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After configuring IBM Rational Quality Manager (RQM) server with Microsoft SQL server 2008 database, RQM is unable to connect to the database. 
+
+SYMPTOM
+The following error is shown in the "Database Status" section of the RQM admin page: 
+
+The driver could not establish a secure connection to SQL Server by using Secure Socket Layer (SSL) encryption. Error: "SQL Server did not return a response. The connection has been closed."'
+
+CAUSE
+One possible cause for this error is that the IBM WebSphere Application Server being used is FIPS-enable (Federal Information Processing Standard). This is a Microsoft JDBC driver defect.
+
+
+
+RESOLVING THE PROBLEM
+The Microsoft JDBC driver hotfix can be requested from Microsoft by means of the Microsoft Support web site: 
+
+http://support.microsoft.com/kb/982512 [http://support.microsoft.com/kb/982512]

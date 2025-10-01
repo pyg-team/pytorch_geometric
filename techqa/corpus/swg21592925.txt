@@ -1,0 +1,58 @@
+Title: IBM db2haicu setup fails on primary node after succeeding on standby node - United States
+
+Text:
+TSA; TSAMP; haicu; db2haciu; pending; hadms; dms; pending online TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to configure HADR with db2haicu result in a error message on the primary node after successful completion on standby.
+
+
+SYMPTOM
+The "db2haicu" error message text on the primary: 
+
+The HADR database mydb cannot be added to the cluster because the standby instance is not configured in the domain. Run db2haicu on the standby instance to configure it into the cluster. 
+All cluster configurations have been completed successfully. db2haicu exiting ... 
+
+Apr 01 12:00:01 node01 hatsd[3068]: hadms: Loading watchdog softdog, timeout = 8000 ms.
+Apr 01 12:00:01 node01 hatsd[3068]: hadms: Found loaded iTCO_vendor_support with count 1
+Apr 01 12:00:01 node01 hatsd[3068]: hadms: iTCO_vendor_support has a use count of 1 and cannot be unloaded
+
+After running db2haicu on standby node, lssam shows resources pending online instead of online.
+
+
+CAUSE
+The issue is that when db2haicu is run on the primary node that it expects that the resources created on the standby are online but in this situation they are not so db2haicu exits. The resources are not reported online because RSCT cannot load its default DMS client, hadms which results in those resources being reported as pending online.
+
+
+RESOLVING THE PROBLEM
+The DB2 documentation tells you how to deal with this issue but it is incorrect for the SLES 10/11 platform. 
+
+Verify that the "iTCO_vendor_support" watchdog is loaded with the following command: 
+
+lsmod | grep iTCO 
+
+ 
+
+If loaded you will need to perform the steps below. 
+
+ 
+
+For SLES 10/11: 
+
+In the file /etc/modprobe.d/blacklist: 
+
+blacklist iTCO_wdt 
+blacklist iTCO_vendor_support
+
+Or you can change the alias settings in /lib/modules/*/modules.alias:
+alias iTCO_wdt off
+alias iTCO_vendor_support off: 
+
+ 
+
+For RHEL the DB2 Support portal is correct:
+Add the following lines to the /etc/modprobe.conf file:
+blacklist iTCO_wdt
+blacklist iTCO_vendor_support
+
+After updating any of the above you will need to reboot the node to clear the iTCO_vendor_support watchdog to allow RSCT to load its own watchdog.

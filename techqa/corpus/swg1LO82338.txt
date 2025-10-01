@@ -1,0 +1,145 @@
+Title: IBM LO82338: CANNOT SAVE CHANGES TO WIKI PAGES IN THE HTML SOURCE TAB WHEN WIKI MACROS ARE ENABLED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer enabled Wiki Macros in 4.5 CR5 and when they do
+   that they can no longer save their edits to Wiki pages when
+   they are on the HTML Source tab. If they try to save on the
+   Rich Text tab it succeeds.
+   
+   The customer reports that their changes are lost when they hit
+   the "save and close" button.
+   
+   The customer disabled Wiki Macros and the problem stopped.
+   
+   I tested this issue on a test environment running Connections
+   5.0 and when you have Wiki Macros enabled and try to hit "save"
+   or "save and close" from the HTML Source tab the buttons will
+   not do anything. The page just sits there. If I then switch to
+   the Rich Text tab the buttons work and the changes are saved
+   properly.
+   
+   I can also save from the HTML Source tab in 5.0 when I disable
+   Wiki Macros.
+   
+   Also note that this problem happens regardless of whether any
+   macros are utilized in the wiki page - or even if any changes
+   are made to the page at all.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disable Wiki Macros or change to the Rich Text tab and then
+   save your changes
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fixed in IC 4.5 CR5 (LO79880 [http://www-01.ibm.com/support/docview.wss?uid=swg1LO79880])
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in IC 4.5 CR5 (LO79880 [http://www-01.ibm.com/support/docview.wss?uid=swg1LO79880])
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO82338
+   
+   
+ * REPORTED COMPONENT NAME
+   CONNECTN ACTIVI
+   
+   
+ * REPORTED COMPONENT ID
+   5724S6800
+   
+   
+ * REPORTED RELEASE
+   450
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-10
+   
+   
+ * CLOSED DATE
+   2015-08-07
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONNECTN ACTIVI
+   
+   
+ * FIXED COMPONENT ID
+   5724S6800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R450 PSY
+   UP

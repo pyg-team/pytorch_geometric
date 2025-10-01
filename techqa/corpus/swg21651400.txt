@@ -1,0 +1,24 @@
+Title: IBM Unable to send events to Tivoli EIF probe using portmapper - United States
+
+Text:
+portmapper; postemsg; nco_p_tivoli_eif TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Tivoli EIF probe fails to send events when using postemsg -S <EIF Server>
+
+
+SYMPTOM
+When events are sent using the config file the probe receives the events, but when the postemsg -S option is used, the probe fails to receive events.
+
+
+CAUSE
+ Whenpostemsg -S is called, the portmapper service is used, and needs to be configured properly.
+
+DIAGNOSING THE PROBLEM
+Check that events are seen when the portmapper service is not use, as there may be other issues causing event failure, such as firewalls or name resolution.
+
+RESOLVING THE PROBLEM
+The probe will need to be registered with the portmapper on the server where the Tivoli EIF probe is running; Make sure that portmapper is configured on the probe server. 
+
+
+If you are usingrcpbind, you should be replacing it with portmapper.

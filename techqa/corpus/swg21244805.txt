@@ -1,0 +1,47 @@
+Title: IBM WTRN0062E and J2CA0030E Errors While Trying To Do Last Participant Support Extensions - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While attempting to use last participant support (LPS), the transaction fails with a J2CA0030E logged due to a com.ibm.ws.Transaction.IllegalResourceIn2PCTransactionException. 
+
+SYMPTOM
+The following exceptions are logged in the SystemOut.log file:
+[8/5/15 10:51:11:469 CDT] 00000036 RegisteredRes E WTRN0062E: An illegal attempt to use multiple resources that have only one-phase capability has occurred within a global transaction.
+[8/5/15 10:51:11:938 CDT] 00000036 LocalTransact E J2CA0030E: Method enlist caught com.ibm.ws.Transaction.IllegalResourceIn2PCTransactionException: Illegal attempt to enlist multiple 1PC XAResources
+at com.ibm.ws.Transaction.JTA.RegisteredResources.enlistResource(RegisteredResources.java:368)
+at com.ibm.ws.Transaction.JTA.TransactionImpl.enlistResource(TransactionImpl.java:2953)
+at com.ibm.ws.Transaction.JTA.TranManagerSet.enlistOnePhase(TranManagerSet.java:418)
+at com.ibm.ejs.j2c.LocalTransactionWrapper.enlist(LocalTransactionWrapper.java:516)
+at com.ibm.ejs.j2c.ConnectionManager.lazyEnlist(ConnectionManager.java:1766)
+at com.ibm.ws.rsadapter.spi.WSRdbManagedConnectionImpl.lazyEnlist(WSRdbManagedConnectionImpl.java:2061)
+at com.ibm.ws.rsadapter.jdbc.WSJdbcConnection.beginTransactionIfNecessary(WSJdbcConnection.java:549)
+at com.ibm.ws.rsadapter.jdbc.WSJdbcConnection.prepareStatement(WSJdbcConnection.java:1830)
+at com.ibm.ws.rsadapter.jdbc.WSJdbcConnection.prepareStatement(WSJdbcConnection.java:1785)
+
+
+CAUSE
+These errors will occur when there are more than one one-phase capable (1PC) resources in an XA transaction. If this is the case, then the WTRN0062E is correct and working as designed.
+
+RESOLVING THE PROBLEM
+Review all of your resources (data sources) and verify that you only have one one-phase capable resource in the global transaction. This can be done by referring to the JDBC provider used for each data source. In the WebSphere Application Server Information Center, the article entitled "JDBC provider summary [https://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.multiplatform.doc/ae/udat_minreq.html]" to determine if any of your data sources are using a non-XA (that is, 1pc) driver. (Note, the link provided is for the WebSphere Application Server v7).
+
+
+With Last Participant Support (LPS), you are only allowed to have one one-phase capable resource with any number of two-phase capable resources in the same global transaction. Using the administrative console: select Enterprise Applications > your_ear_file >
+Last participant support extension, if the box for Accept
+heuristic hazard is checked, then the application has LPS enabled.
+
+If you are receiving this message, then the application has more than one 1pc data source involved in the global transaction. The two ways that this may be addressed are
+1. change the transaction settings so that one of the 1pc resources is involved in a separate global transaction. See the Information Center article "Setting EJB module ActivitySession deployment attributes [https://www.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.base.doc/ass/tasks/tas_depejb2.html]".
+
+2. change from using a non-XA JDBC provider to an XA JDBC provider for one of the data sources that is non-XA. That is, ensure that there is only one 1pc resource in the global tx.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK 
+HISTORICAL NUMBER
+ 84651
+122
+000

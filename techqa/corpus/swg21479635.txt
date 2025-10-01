@@ -1,0 +1,19 @@
+Title: IBM How to set up data for multiple response sets in PASW Statistics - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I am using PASW Statistics and need some help. I know that I want to use a multiple response set in my data but I am unsure on how to set it up. Do I use one variable and put and all values in the one cell or many variables with one value each? 
+
+ANSWER
+When designing your data file for a multiple response set, create a variable for each question or data point. For example, if you want to have a multiple response set created for 10 questions, you should create a variable for each question. Then you would go to Analyze->Multiple response->Define Sets or Analyze->Tables->Multiple Response Sets. For information on how to create the multiple response set, consult the SPSS User's Guide on the Manual's CD or the SPSS Base online Help
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 26553

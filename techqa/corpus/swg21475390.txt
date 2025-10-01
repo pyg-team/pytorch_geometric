@@ -1,0 +1,82 @@
+Title: IBM Statistics 19 will not install via MSI command line, receive error: This application has failed to start because the application configuration is incorrect - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Statistics 19 will not install via MSI command line. I try to install version 19 on a Windows 32 bit machine via MSI. Therefore I copied the complete win32 folder from the DVD to C:\temp folder because in this folder you can find the necessary MSI and other files needed to push the installation.
+I open a command prompt and change the directory to C:\temp\win32 and run the following command according to the instructions in the SPSS License Administrator's Guide on page 4 in the Command Line Example:
+
+MSIExec.exe /i "IBM SPSS Statistics 19.msi" /qn /L*v 19log.txt
+
+After running the command the program was installed in the default directory C:\Program Files\IBM\SPSS\Statistics\19. In the C:\temp\win32 the 19log.txt was also created and the text in the log confirms that the program was installed successfully.
+
+However, the following error is returned when attempting to run the program:
+
+"C:\Program Files\IBM\SPSS\Statistics\19\stats.exe
+
+This application has failed to start because the application configuration is incorrect. Reinstalling the application may fix this problem."
+
+How to install IBM SPSS Statistics 19 on Windows via MSI?
+
+This problem also appears when installing on a Windows 2003 server for a network license and try to start Statistics 19 on the server, I get the message:
+"The application failed to initialize properly." 
+
+RESOLVING THE PROBLEM
+This problem has been reported to SPSS Development - Workaround 
+
+Available
+.
+One possible cause of this problem is that the Microsoft Visual C++
+redistributables the application requires did not execute and install
+properly during installation of the Statistics application. You can run
+them manually post-installation from here:
+.
+C:\Program Files\IBM\SPSS\Statistics\19\VC8\Vcredist_x86.exe
+C:\Program Files\IBM\SPSS\Statistics\19\VC9\Vcredist_x86.exe
+(the file names may be slightly different for 64-bit installations)
+.
+For Vista, Windows 7, or Server 2008 installations, be sure to
+right-click and select Run As Administrator to properly execute the
+installation of the redistributables.
+Temporarily disable anti-virus, firewall and spyware software.
+.
+Once those installations complete, you should be able to launch the
+application successfully.
+.
+If you would like to run the installation of the redistributables silent
+you can create a batch file from the instructions below.
+.
+These are the commands used to create the batch files:
+.
+For 32bit Windows:
+.
+cd \program files\ibm\spss\statistics\19\vc8
+msiexec -i "vcredist.msi" /qn
+cd \program files\ibm\spss\statistics\19\vc9
+vcredist_x86.exe /q:a /c:"VCREDI~1.EXE /q:a /c:""msiexec /i vc_red.msi
+/qn"" "
+.
+For 64bit Windows:
+.
+cd \program files\ibm\spss\statistics\19\vc8
+msiexec -i "vcredist.msi" /qn
+cd \program files\ibm\spss\statistics\19\vc9
+vcredist_x64.exe /q:a /c:"VCREDI~2.EXE /q:a /c:""msiexec /i vc_red.msi
+/qn"" "
+.
+For more information please refer to:
+http://blogs.msdn.com/b/astebner/archive/2007/02/07/update-regarding-silent-install-of-the-vc-8-0-runtime-vcredist-packages.aspx [http://blogs.msdn.com/b/astebner/archive/2007/02/07/update-regarding-silent-install-of-the-vc-8-0-runtime-vcredist-packages.aspx]
+VC9 (Microsoft Visual C++ 2008 Redistributable - x86 9.0.21022) shipped
+with SPSS 19 extracted files appear in root directory. Alternatively you
+can use VC9 SP1 (Microsoft Visual C++ 2008 Redistributable - x86
+9.0.30729.17) which is available at Microsoft.com
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 91305

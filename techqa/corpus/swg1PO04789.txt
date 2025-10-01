@@ -1,0 +1,170 @@
+Title: IBM PO04789: LEFT HAND NAVIGATION PANE IN SCREENING OR APPLICATION SHOULD AUTO-HIDE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a standard user logs in and starts a new motivation, such
+   as new Screening or new online application, the left hand
+   navigation bar should automatically retreat or auto hide until
+   the user leaves the Intelligent Evidence Gathering (IEG) script.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When a standard user logs in and starts a new motivation, such
+   as new Screening or new online application, the left hand
+   navigation bar should automatically retreat or auto hide until
+   the user leaves the Intelligent Evidence Gathering (IEG) script.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR is included in Release 6.2.0.2. Please refer the
+   release notes under
+   http://www-01.ibm.com/support/docview.wss?uid=swg27048751 [http://www-01.ibm.com/support/docview.wss?uid=swg27048751]
+   PO04789, WorkItem:118764 - Resuming an IEG script from a
+   Standard User Home page should result in the left hand
+   navigation bar to retreat
+   Previously in citizen portal, when logged in citizen started a
+   new Screening or Application or resumed an existing one, the
+   system was in some cases not hiding the left hand navigation
+   bar of the Home page while the citizen entered data within the
+   screening or application IEG script. This resulted in an
+   inconsistent user experience for the citizen, and the
+   possibility that the citizen might accidentally click on the
+   left hand navigation bar of the Home page resulting in
+   navigational issues.
+   This issue has been resolved and the left-hand navigation bar
+   of the Home page is now hidden consistently from the citizen
+   when entering data within a screening or application IEG script
+   and displayed again once the user completes or exits the IEG
+   script.
+   Customization Instructions:
+   If there exists a custom motivation that does not go through
+   the standard pages of UA OOTB flows such as
+   "StartIntakeScript", "SetupScreening" or
+   "StartNewLifeEventScript" for screening, intake or life events
+   then that flow will have custom development impact.
+   These standard pages by default call the OOTB Resolve.jspx
+   before launching IEG pages in which the feature for retreating
+   the left hand navigation bar is introduced. The new custom flow
+   should make sure it is calling the Resolve.jspx page and its
+   associated Resolve.properties in order for the left hand
+   navigation bar to retreat properly on the new page.
+   If calling Resolve.jspx in the custom flow is not feasible or
+   if it is customized then the following JSP scriptlet must be
+   included in the page which triggers the execution of the IEG
+   script in order for the left hand navigation bar to be
+   retreated.
+   <JSP_SCRIPTLET> <![CDATA[
+   out.print("<script>top.CuramExternalApp.hideAppNavigation();</sc
+   ript>"); ]]> </JSP_SCRIPTLET>
+   Similarly, if the finish page of the IEG script is customized
+   then the following scriptlet must be explicitly included to
+   resume the hidden left hand navigation bar making it visible
+   and accessible to the user.
+   <JSP_SCRIPTLET> <![CDATA[
+   out.print("<script>top.CuramExternalApp.showAppNavigation();</sc
+   ript>"); ]]> </JSP_SCRIPTLET>
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PO04789
+   
+   
+ * REPORTED COMPONENT NAME
+   CURAM UNIVERSAL
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2614
+   
+   
+ * REPORTED RELEASE
+   605
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-03-19
+   
+   
+ * CLOSED DATE
+   2016-09-25
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

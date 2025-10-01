@@ -1,0 +1,25 @@
+Title: IBM Uninstall procedure for COI/DE - United States
+
+Text:
+COI/DE - Composite Offer Installer; Deployment Engine TECHNOTE (FAQ)
+
+QUESTION
+ How to do a clean uninstall of Composite Offer Installer/Deployment Engine(COI/DE)? 
+
+ANSWER
+A)Uninstalling DE on Unix when it was installed by root:
+Source the DE environment: ". /var/ibm/common/acsi/setenv.sh" or "source /var/ibm/common/acsi/setenv.csh"
+Uninstall DE: "/usr/ibm/common/acsi/bin/si_inst.sh -r -f"
+Remove DE's database backup: "rm -rf /usr/ibm/common/acsi" 
+
+B) Uninstalling DE on Unix when it was installed by non-root:
+
+DE exists under ~/.acsi_$USER, so: "rm -rf ~/.acsi_$USER"
+Also: "rm -rf ~/tivoli/cit"
+Also: "rm -rf ~/.cit"
+
+D) Uninstalling DE on Windows:
+
+Source the DE environment: "C:\Program Files\IBM\Common\acsi\setenv.cmd"
+Remove DE: "C:\Program Files\IBM\Common\acsi\bin\si_inst.bat -r -f"
+Remove DE's database backup: "rmdir /s C:\program Files\IBM\Common\acsi"

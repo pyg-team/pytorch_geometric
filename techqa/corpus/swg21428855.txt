@@ -1,0 +1,23 @@
+Title: IBM The value of a host variable in the EXECUTE or OPEN statement is too large in IBM InfoSphere Discovery - United States
+
+Text:
+disc; disc41relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While running Column Analysis, the task completed with errors: 
+
+The value of a host variable in the EXECUTE or OPEN statement is too large 
+
+SYMPTOM
+The issue was replicated in DB2 Express version 9.7. 
+
+
+ENVIRONMENT
+Discovery Server, Discovery Engine, Discovery Studio version 4.1.1.068
+
+RESOLVING THE PROBLEM
+The issue occurs while running text file for source data for InfoSphere Discovery version 4.1.1.068 and using DB2 Express version 9.7 for staging and repository. For InfoSphere Discovery 4.1.1.068, we only certify and support DB2 version 9.1 for staging and repository. Uninstall DB2 Express version 9.7 and install DB2 9.1 to resolve the issue.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Discovery Discovery Studio Windows 4.1.1 Enterprise

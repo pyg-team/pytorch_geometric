@@ -1,0 +1,20 @@
+Title: IBM For iA1500 Revision B model of appliance, does BMC require a different server or windows client machine? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ For iA1500 Revision B model of appliance, does BMC require a different server or windows client machine? 
+
+RESOLVING THE PROBLEM
+BMC does require a separate program called SOL Proxy on a different server or windows client machine in order to connect to BMC. Please note that this BMC server or client machine should be on the same subnet.
+
+
+
+HISTORICAL NUMBER
+ 00001259 
+
+PRODUCT ALIAS/SYNONYM
+ Cast Iron Solution
+Cast Iron Operating System
+Cast Iron Studio

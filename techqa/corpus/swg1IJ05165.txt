@@ -1,0 +1,316 @@
+Title: IBM IJ05165: CAN NOT GET SCAN DATA ON Z/VM 6.2 SYSTEM - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Summary
+   -----------------------
+   Getting No Scan Data on z/VM system.
+   
+   Environment
+   -----------------------
+   <server>
+   ILMT9.2.10.1
+   Bigfix 9.5.8
+   Windows
+   
+   <Client>
+   Bigfix9.5.8
+   z/Linux SLES11 SP4
+   z/VM 6.2
+   scanner 2.8.0.6000
+   -----------------------
+   
+   Problem Description
+   -----------------------
+   Customer's environment is "z/VM 6.2".
+   Therefore customer run "Create Capacity Configuration for Linux
+   on z Systems" fixlet.
+   Installing scanner and running capacity scan is fine, and import
+   data on ILMT. But "No scan data" for this z/VM system is
+   displayed.
+   
+   import log has the follwing message:
+   --
+   WARN:(ImportCapacity-Thread:0)VirtualMachine layer of type
+   z/VM-hypervisor does not have valid name () or VirtualMachineID
+   is not set (1), Discarting the capacity scan from agent with id
+   : 186
+   --
+   WARN:(ImportCapacity-Thread:0)CapacityScanFileHandler::process
+   Task::Some error occurred during capacity scan form file
+   :/tlm_hw_201802221704_1519286651.xml for endpoint :186
+   --
+   
+   And tlm_hw_201802221704_1519286651.xml shows the following.
+   ------
+   <VirtualLayer version="1">
+     <Name></Name>
+     <Number>1</Number>
+     <VirtualLayerID>1</VirtualLayerID>
+     <Type>z/VM-hypervisor</Type>
+     <CpuTotal>-1.000000</CpuTotal>
+     <CpuDedicated>-1.000000</CpuDedicated>
+     <CpuShared>-1.000000</CpuShared>
+     <CpTotal>-1.000000</CpTotal>
+     <CpDedicated>-1.000000</CpDedicated>
+     <CpShared>-1.000000</CpShared>
+     <IflTotal>-1.000000</IflTotal>
+     <IflDedicated>-1.000000</IflDedicated>
+     <IflShared>-1.000000</IflShared>
+    </VirtualLayer>
+    ------
+   "Name" has no data.
+   
+   Customer can not get any scan data on z/VM 6.2.
+   
+   ------------------
+   More info can be found in: TS000121676
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   
+   * ERROR DESCRIPTION:
+   *
+   * Problem Summary
+   *
+   * -----------------------
+   *
+   * Getting No Scan Data on z/VM system.
+   *
+   *
+   *
+   * Environment
+   *
+   * -----------------------
+   *
+   * <server>
+   *
+   * ILMT9.2.10.1
+   *
+   * Bigfix 9.5.8
+   *
+   * Windows
+   *
+   *
+   *
+   * <Client>
+   *
+   * Bigfix9.5.8
+   *
+   * z/Linux SLES11 SP4
+   *
+   * z/VM 6.2
+   *
+   * scanner 2.8.0.6000
+   *
+   * -----------------------
+   *
+   *
+   *
+   * Problem Description
+   *
+   * -----------------------
+   *
+   * Customer's environment is "z/VM 6.2".
+   *
+   * Therefore customer run "Create Capacity Configuration for Linu
+   *
+   * on z Systems" fixlet.
+   *
+   * Installing scanner and running capacity scan is fine, and impo
+   *
+   * data on ILMT. But "No scan data" for this z/VM system is
+   *
+   * displayed.
+   *
+   *
+   *
+   * import log has the follwing message:
+   *
+   * --
+   *
+   * WARN:(ImportCapacity-Thread:0)VirtualMachine layer of type
+   *
+   * z/VM-hypervisor does not have valid name () or VirtualMachineI
+   *
+   * is not set (1), Discarting the capacity scan from agent with i
+   *
+   * : 186
+   *
+   * --
+   *
+   * WARN:(ImportCapacity-Thread:0)CapacityScanFileHandler::process
+   *
+   * Task::Some error occurred during capacity scan form file
+   *
+   * :/tlm_hw_201802221704_1519286651.xml for endpoint :186
+   *
+   * --
+   *
+   *
+   *
+   * And tlm_hw_201802221704_1519286651.xml shows the following.
+   *
+   * ------
+   *
+   * <VirtualLayer version="1">
+   *
+   *   <Name></Name>
+   *
+   *   <Number>1</Number>
+   *
+   *   <VirtualLayerID>1</VirtualLayerID>
+   *
+   *   <Type>z/VM-hypervisor</Type>
+   *
+   *   <CpuTotal>-1.000000</CpuTotal>
+   *
+   *   <CpuDedicated>-1.000000</CpuDedicated>
+   *
+   *   <CpuShared>-1.000000</CpuShared>
+   *
+   *   <CpTotal>-1.000000</CpTotal>
+   *
+   *   <CpDedicated>-1.000000</CpDedicated>
+   *
+   *   <CpShared>-1.000000</CpShared>
+   *
+   *   <IflTotal>-1.000000</IflTotal>
+   *
+   *   <IflDedicated>-1.000000</IflDedicated>
+   *
+   *   <IflShared>-1.000000</IflShared>
+   *
+   *  </VirtualLayer>
+   *
+   *  ------
+   *
+   * "Name" has no data.
+   *
+   *
+   *
+   * Customer can not get any scan data on z/VM 6.2.
+   *
+   *
+   *
+   * ------------------
+   *
+   * More info can be found in: TS000121676
+   *
+   * **************************************************************
+   *
+   * EXPECTED RESULTS:
+   * The issue does not occure.
+   ****************************************************************
+   * RECOMMENDATION: Apply appropriate update when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+    | Update | BFI 9.2.12
+    | Update | ILMT 9.2.12
+   ****************************************************************
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ05165
+   
+   
+ * REPORTED COMPONENT NAME
+   LIC METRIC TOOL
+   
+   
+ * REPORTED COMPONENT ID
+   5724LMTEM
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-03-26
+   
+   
+ * CLOSED DATE
+   2018-04-27
+   
+   
+ * LAST MODIFIED DATE
+   2018-06-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIC METRIC TOOL
+   
+   
+ * FIXED COMPONENT ID
+   5724LMTEM
+   
+   
+
+APPLICABLE COMPONENT LEVELS

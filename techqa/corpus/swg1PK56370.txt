@@ -1,0 +1,132 @@
+Title: IBM PK56370: CQ Web, Eclipse, API, Unix, and Windows clients interpret newlin e characters differently - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The problem is with the display of a multi line static text:
+   Create a new field short string or multiline string, add a stati
+   c text to the form and add this initialization script:
+    my $val=hello.\n\n.my.\n\n.world.\n\n;
+    $entity-?SetFieldValue($fieldname, $val);
+   this should display:
+   hello
+   my
+   world
+   and on the windows client, it is working fine.
+   However, on the Eclipse client, it shows just
+   hello
+   and on the web client it shows
+   hello my world
+   on just one long line.
+   The problem has been reproduced on ClearQuest 7.0.0.0, 7.0.0.0 i
+   Fix02, 7.0.0.1 and 7.0.0.1 iFix04
+   Attached  the customer document with screenshots and the SAMPL d
+   atabase where I reproduced the problem
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Static text labels were being auto resized.  Only control
+   labels should be resized.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available in ClearQuest 7.0.0.6, 7.0.1.5, and
+   7.1.0.2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK56370
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3600
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-11-12
+   
+   
+ * CLOSED DATE
+   2009-09-18
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724G3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSN
+   UP

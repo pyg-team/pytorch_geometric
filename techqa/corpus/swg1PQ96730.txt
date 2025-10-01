@@ -1,0 +1,173 @@
+Title: IBM PQ96730: REPLACE PTF'S UQ56499 & UQ56753 TO AVOID CONFUSION AND EASE THE INSTALLATION. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The member EZAPPCSI is used as placeholder for a static copy
+   of IGGCSI00 in both FTP and NPF. PTF's UQ56499 & UQ56753 each
+   ship EZAPPCSI for their respective products. This has caused
+   application problems because they both have to be applied at
+   the same time. We need 2 new PTF that supersede the original
+   and coreq each other to avoid the problems and confusion in
+   applying the original PTF's.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: IBM Communications Server for OS/390         *
+   *                 Release 10 IP: FTP & NFP                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The member EZAPPCSI is used as          *
+   *                      place holder for a static copy of       *
+   *                      IGGCSI00 in both FTP and NPF. PTF's     *
+   *                      UQ56499 & UQ56753 each ship EZAPPCSI    *
+   *                      for their respective products. This has *
+   *                      caused application problems because     *
+   *                      they both have to be applied at the     *
+   *                      same time. We need 2 new PTF's that     *
+   *                      supersede the original and coreq each   *
+   *                      other to avoid the problems and         *
+   *                      confusion in applying the original      *
+   *                      PTF's.                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   PTF's UQ56499 & UQ56753 each ship EZAPPCSI. If the NPF function
+   is installed or PTF UQ56753 is applied after UQ56499, then the
+   function will steal the ownership of the part from FTP. The next
+   time FTP is compiled EZAPPCSI will not be linked in. Although,
+   this will cause an error, it is not always noticed. If UQ56499
+   is applied after UQ57753 then, because the part is not owned by
+   FTP, it will not be linked in, and the resulting error may be
+   missed. The first symptom may be when FTP ABENDS because
+   IGGCSI00 did not get linked in correctly.
+   +-------------------------------------------------------------+
+   + Please check our Communications Server for OS/390 homepages +
+   + for common networking tips and fixes.  The URL for these    +
+   + homepages can be found in Informational APAR II11334 [http://www-01.ibm.com/support/docview.wss?uid=isg1II11334].       +
+   +-------------------------------------------------------------+
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Problem resolved by shipping PTF's which supersede
+   UQ56499 & UQ56753 and insuring the PTF coreq each
+   other.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ96730
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   120
+   
+   
+ * STATUS
+   CLOSED UR3
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2004-11-04
+   
+   
+ * CLOSED DATE
+   2004-12-07
+   
+   
+ * LAST MODIFIED DATE
+   2005-03-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ95916
+   
+   
+
+MODULES/MACROS
+ *  EZAFTPCX EZAFTPLS EZAPPCSI HTCP50AJ
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * FIXED COMPONENT ID
+   5655HAL00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R50A PSY UQ95916 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ95916]
+   UP05/02/23 P F502
+   
+   
+ * R56A PSY UQ95917 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ95917]
+   UP05/02/23 P F502
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

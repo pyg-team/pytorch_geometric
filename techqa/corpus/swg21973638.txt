@@ -1,0 +1,52 @@
+Title: IBM WinCollect: The configuration server registration failed with response code 0x80000007 - United States
+
+Text:
+WinCollect configuration server registration failed TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The error code 0x80000007 typically represents a connection issue from the WinCollect service to the Configuration Server that is running on the QRadar appliance. 
+
+CAUSE
+In most cases with customers on the latest WinCollect version (7.2.2-2), this is a connection error / network issue.
+Example error message:
+
+2014-11-02 14:11:52,815 WARN System.WinCollectSvc.Service : The configuration server registration failed with response code 0x80000007 (The socket connection to the server failed); will try again later.
+
+
+ENVIRONMENT
+Wincollect 7.2.2-2
+
+
+
+DIAGNOSING THE PROBLEM
+Option 1: Use Wincollectping.exe to validate connectivity 
+
+
+There is a utility in the WinCollect/bin directory called WinCollectPing.exe. This utility is run from the command-line with no arguments and attempts to use the current configuration in config/install_config.txt to connect to the configuration console. If a connection is established with QRadar and a certificate exists (or is successfully created as part of the connection) the application simply sends a basic ConnectionEstablishmentRequest to the WinCollect server and prints out the result and exits. It does not attempt to perform an agent registration or do any of the things that occur in the normal course of WinCollect running; it is simply a connection test to allow for quicker debugging of installer parameters and network issues.
+
+Procedure 
+1. Log in to the Windows host with WinCollect installed. 
+2. Open a command prompt. 
+3. Navigate to C:\Program Files\IBM\WinCollect\bin. 
+4. To run the tool, type WinCollectPing.exe > test.txt 
+5. Review the output and see if any errors are displayed. 
+
+Option 2 - Rename ConfigurationServer.PEM 
+
+On the Windows host, the ConfigurationServer.PEM file is provided by the QRadar appliance and allows the WinCollect agent to talk to QRadar over port 8413. If you stop the WinCollect service, rename the existing ConfigurationServer.PEM file, and restart the service the QRadar appliance should immediately issue what it thinks the latest certificate is. 
+
+Procedure 
+1. Log in to the Windows host with WinCollect installed. 
+2. Stop the WinCollect service. 
+3. Navigate to C:\Program Files\IBM\WinCollect\config. 
+4. Locate the ConfigurationServer.PEM file. 
+5. Rename this file to ConfigurationServer.old. 
+6. Start the WinCollect service. 
+7. Watch the C:\Program Files\IBM\WinCollect\config directory as the QRadar appliance will issue a new ConfigurationServer.PEM file to the agent. 
+
+
+RESOLVING THE PROBLEM
+This test validates that communication is established over port 8413. It also ensures that there is not a mismatch in PEM files, in case someone deleted or updated the QRadar appliance with new certificates without communicating the change. 
+
+
+If these troubleshooting steps do not resolve your issue, please contact support and open a PMR.

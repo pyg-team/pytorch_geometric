@@ -1,0 +1,209 @@
+Title: IBM JR42984: GOT NULLPOINTEREXCEPTION WHEN DELETING A FAILED EVENT WHEN MEDIATION MODULE IS ALSO MAPPED TO WEBSERVER - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.5.0.1-WS-BPM-IFJR42984 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Advanced&fixids=8.5.0.1-WS-BPM-IFJR42984&source=SAR]
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Got NullPointerException when deleting a failed event that is
+   mapped to a non-WebSphere Application Server (WPS) component.
+   The logs will show that the failed event is mapped to two
+   different servers, one of which is a not an Application Server.
+   [4/24/12 10:53:50:022 EDT] 0000002e Recovery      2
+   com.ibm.wbiserver.management.FailedEventManagerMBean
+   getRemoteSessionBeanForBindingType(FailedEvent) node name is
+    MyWPS.AppTarget+WebSphere:cell=wesb01Cell01
+   
+   [4/24/12 10:53:50:022 EDT] 0000002e Recovery      2
+   com.ibm.wbiserver.management.FailedEventManagerMBean
+   getRemoteSessionBeanForBindingType(FailedEvent) server name is
+    webserver1
+   The SCA module ACS_UItoBackEnd  was first deployed via the SCA
+   modules installation screen.
+   To make the WebService available through the http server
+   ACS_UItoBackEndWeb Module of  ACS_UItoBackEndApp was mapped to
+   the server cluster and the webserver1.
+   .
+   ================================================
+   [4/24/12 10:53:50:023 EDT] 0000002e Recovery      2
+   com.ibm.wbiserver.management.FailedEventManagerMBean
+   discardFailedEvents(List) An exception occurred while deleting a
+   failed event with
+   msgId:'ID:414d51204143535354475f514d4752204f8bee1f2000352f',
+   it is added to exception report
+                                    java.lang.NullPointerException
+       at
+   com.ibm.wbiserver.management.FailedEventManagerMBean.discardFail
+   edEvents
+   (FailedEventManagerMBean.java:1501)
+       at sun.reflect.NativeMethodAccessorImpl.invoke0(Native
+   Method)
+       at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.jav
+   a:48)
+       at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   Accessor
+   Impl.java:25)
+   ...
+   ==================================================
+      This is preceded by this event
+   [4/24/12 10:53:50:022 EDT] 0000002e Recovery      2
+   com.ibm.wbiserver.management.FailedEventManagerMBean
+   getRemoteSessionBeanForBindingType(FailedEvent) Legacy recovery
+   node not  found.
+   javax.naming.NameNotFoundException: Context:
+   cell_prod_wesb01/clusters/wesb1600, name:
+   cell/nodes/wesb1600+WebSphere:cell=cell_prod_wesb01/servers/pfgW
+   eb/ejb/com/ibm/wbiserver/manualrecovery/ejb/FailedEventManagerEJ
+   BHome: First component in name
+   wesb1600+WebSphere:cell=cell_prod_wesb01/servers/pfgWeb/ejb/com/
+   ibm/wbiserver/manualrecovery/ejb/FailedEventManagerEJBHome not
+   found. [Root exception is
+   org.omg.CosNaming.NamingContextPackage.NotFound:
+   IDL:omg.org/CosNaming/NamingContext/NotFound:1.0]
+    at
+   com.ibm.ws.naming.jndicos.CNContextImpl.mapNotFoundException(CNC
+   ontextImpl.java:4378)
+    at
+   com.ibm.ws.naming.jndicos.CNContextImpl.doLookup(CNContextImpl.j
+   ava:1807)
+    at
+   com.ibm.ws.naming.jndicos.CNContextImpl.doLookup(CNContextImpl.j
+   ava:1762)
+    at
+   com.ibm.ws.naming.jndicos.CNContextImpl.lookupExt(CNContextImpl.
+   java:1513)
+    at
+   com.ibm.ws.naming.jndicos.CNContextImpl.lookup(CNContextImpl.jav
+   a:645)
+    at
+   com.ibm.ws.naming.util.WsnInitCtx.lookup(WsnInitCtx.java:166)
+    at
+   com.ibm.ws.naming.util.WsnInitCtx.lookup(WsnInitCtx.java:180)
+    at
+   javax.naming.InitialContext.lookup(InitialContext.java:436)
+    at
+   com.ibm.wbiserver.management.FailedEventManagerMBean.getRemoteSe
+   ssionBeanForBindingType(FailedEventManagerMBean.java:224)
+    at
+   com.ibm.wbiserver.management.FailedEventManagerMBean.discardFail
+   edEvents(FailedEventManagerMBean.java:1501)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Delete the events from the database directly to bypass the
+   problem.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Websphere process server users              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: NullPointerException happens            *
+   *                      occurs when deleting a failed event     *
+   *                      in the Failed Event Manager (FEM).      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This issue is caused by the mixed cluster environment.
+   A non non-application server is linked in the cluster. When
+   deleting an event from the Failed Event Manager (FEM), the
+   command used was from the non-application server.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR42984
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-04
+   
+   
+ * CLOSED DATE
+   2012-07-17
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,76 @@
+Title: IBM MustGather: Problems with PMQ CNDS Job - United States
+
+Text:
+MustGather; CNDS; stream TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This Technote describes information you need to gather when troubleshooting CNDS job problems with PMQ.
+
+IBM recommends to gather this information before contacting IBM support and this will help you during troubleshooting of the issue. 
+
+RESOLVING THE PROBLEM
+Must Gather information to troubleshoot PMQ CNDS Job issue: 
+
+The following information will be useful when troubleshooting the issues of PMQ Data loading.
+
+1) Is this a Single-server configuration? Or Multiple-server configuration?
+
+2) What is the OS version for Data node, IIB node, Analytic node, and BI node?
+
+3) What is the version of PMQ, CNDS server, and Modeler Server?
+
+4) Provide the name of the problematic Job and Stream.
+
+5) Provide the screenshot of the "Job History" tab showing the problematic job. The following steps show how to check the "Job History".
+
+5-1) Open SPSS Collaboration and Deployment Services Deployment Manager.
+5-2) On "Content Explorer" tab, select the problematic job under "Content Repository".
+5-3) Right click the problematic job and select "Show Job History".
+
+[/support/docview.wss?uid=swg22005509&aid=1] [/support/docview.wss?uid=swg22005509&aid=1]
+
+5-4) On "Job History" tab, find a Job with "failure" status and expand it. Then take a screenshot.
+
+[/support/docview.wss?uid=swg22005509&aid=2] [/support/docview.wss?uid=swg22005509&aid=2]
+
+6) Provide jobStepLog.txt for the problematic Stream.
+The following steps show how to collect jobStepLog.txt.
+
+6-1) On "Job History" tab, find a failed Stream(.str_step) under the problematic job and expand it.
+
+[/support/docview.wss?uid=swg22005509&aid=3] [/support/docview.wss?uid=swg22005509&aid=3]
+
+6-2) Right Click "Log" entry for the problematic Stream and select "Download".
+
+[/support/docview.wss?uid=swg22005509&aid=4] [/support/docview.wss?uid=swg22005509&aid=4]
+
+6-3) Specify the directory you want to save the jobStepLog.txt and click OK.
+
+7) Provide BugData.zip which includes CNDS Server log files. The following steps show how to collect BugData.zip.
+
+7-1) Access CNDS Web Portal at http://<servername>:<port>/config
+Note: The default port number is 9080. If it is single-server configuration, the default port number is 9081.
+
+7-2) Enter the Login name and Password of the administrator user then click Login.
+Note: The default Login name is admin and the default Password is admin.
+
+7-3) Select "About" on the left side of screen and click "Show Detail".
+
+[/support/docview.wss?uid=swg22005509&aid=5] [/support/docview.wss?uid=swg22005509&aid=5]
+
+7-4) Click the second option "Download version, system details and logs in one zip file."
+
+[/support/docview.wss?uid=swg22005509&aid=6] [/support/docview.wss?uid=swg22005509&aid=6]
+
+8) Provide the system log file. The file name is typically like "message" under /var/log directory on IIB node and Data node.
+
+9) Provide db2diag.log from the data node. It is typically located under /home/db2inst1/sqllib/db2dump directory.
+
+10) Provide all the log files under /opt/IBM/SPSS/ModelerServer/<version>/log for Modeler Server log.
+
+11) Verify if the problematic Stream can run from Modeler Client successfully.
+
+12) Provide the screen shot of the error message if you see any other error message elsewhere.
+
+RELATED INFORMATION
+#

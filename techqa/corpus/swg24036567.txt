@@ -1,0 +1,54 @@
+Title: IBM Download IBM Integration Bus Retail Pack V1.0 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM Integration Bus Retail Pack V1.0 eImages from the Passport Advantage website. 
+
+DOWNLOAD DESCRIPTION
+Terminology
+
+IBM Integration Bus Retail Pack V1.0 is supplied in an eImage. The eImage contains the Quick Start Guide and the product code.
+
+Related product documentation 
+
+
+For information about tasks you must complete before you install the product, and about the installation process itself, see the IBM Integration Bus Retail Pack V1.0 Installation Guide that is supplied with the product, or see the IBM Integration Bus Retail Pack V1.0 Information Center [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/index.jsp].
+
+The most up-to-date information can be found in the IBM Integration Bus Retail Pack V1.0 release notes at http://www.ibm.com/support/docview.wss?&uid=swg27006913 [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27006913]. 
+
+Downloading the relevant eImages from the Passport Advantage website 
+
+ 1. Find the IBM Integration Bus Retail Pack V1.0 images for your platform in the following eImages table.
+ 2. Go to the "Download package" section of this document, and follow the link to the Passport Advantage website. 
+ 3. Sign in to download the images that you need.
+ 4. Unpack each of the parts onto your system by following the instructions in the Installation Guide.
+
+
+
+eImages table 
+
+ 
+
+eImage Description eImage Part Number IBM Integration Bus Retail Pack V1.0 Quick Start eImage CIS8REN IBM Integration Bus Retail Pack for Enterprise V1.0 Multiplatform eImage CIS97EN IBM Integration Bus Retail Pack for Store V1.0 Multiplatform eImage CIS8WEN PREREQUISITES
+Use the link in the following table to see information about system requirements:
+
+URL LANGUAGE SIZE(Bytes) System requirements [http://www.ibm.com/software/integration/wbimessagebroker/requirements/] English 1 
+INSTALLATION INSTRUCTIONS
+Use the link in the following table to see installation information:
+
+URL LANGUAGE SIZE(Bytes) IBM Integration Bus information center [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/index.jsp] English 1 
+DOWNLOAD PACKAGE
+Use the link in the following table to access the download package:
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] IBM Passport Advantage Online 13 Dec 2013 English 1 FC [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] [ ] 
+TECHNICAL SUPPORT
+ For Passport Advantage Online support, see:
+http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]
+
+To see latest information and technotes, go to the WebSphere Message Broker support website:
+http://www.ibm.com/software/integration/wbimessagebroker/support/ [http://www.ibm.com/software/integration/wbimessagebroker/support/]

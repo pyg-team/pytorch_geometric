@@ -1,0 +1,53 @@
+Title: IBM CRIMC1018E ERROR: Administrator privileges are required - United States
+
+Text:
+tsm tsmrept authority TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The installation of Tivoli Monitoring for Tivoli Storage Manager into an existing IBM® Tivoli® Monitoring environment logs the CRIMC1018E error when install.sh is launched 
+
+SYMPTOM
+The installation is launched with sudo for the itmid user. The following messages are logged : 
+
+
+sudo -u itmid ./install.sh
+GUI failed to start. For more information see /tmp/install.12745.log. 
+Launching console mode...
+CRIMC1018E ERROR: Administrator privileges are required.
+Explanation: You started the Installation Manager in administrator
+mode, but you do not have the required administrator privileges. On
+Microsoft Windows XP Professional, you must be a member of an
+administrator group. On Windows Vista, Windows 2008, Windows 7, and
+Windows 8, you must use the Run as administrator option. On Linux,
+UNIX, Mac OS X, IBM i, and z/OS, you must have root privileges.
+User Action: To use the Run as administrator option on Windows:
+1. Right-click the executable icon.
+2. Select Run as administrator.
+3. Enter an administrator password when prompted for either an 
+administrator password or a confirmation.
+4. Click Continue.
+
+
+
+CAUSE
+Incorrect package used for installation.
+
+
+DIAGNOSING THE PROBLEM
+Verify the packages used for installation. In this case, the following packages were used : 
+
+MONIT_FOR_TSM7.1_LIN_1OF2_ML.bin
+MONIT_FOR_TSM7.1_LIN_2OF2_ML.bin
+These packages are the incorrect packages to install into an existing IBM® Tivoli® Monitoring environment.
+
+
+RESOLVING THE PROBLEM
+If you have an existing IBM® Tivoli® Monitoring system that does not have Tivoli Monitoring for Tivoli Storage Manager installed, you can run the native IBM Tivoli Monitoring installation wizard to install more monitoring agents. 
+
+If you do not want to install the agent, you can install only the application support files, which are required by the Tivoli Enterprise Monitoring server and Tivoli Enterprise Portal server to monitor Tivoli Storage Manager servers.
+
+To install the monitoring agent or application support files into an existing IBM® Tivoli® Monitoring environment, download the appropriate executable file from Passport Advantage®, or the FTP download site at 
+ftp://public.dhe.ibm.com/storage/tivoli-storage-management/maintenance/reporting/v7r1 [ftp://public.dhe.ibm.com/storage/tivoli-storage-management/maintenance/reporting/v7r1]
+
+The file name for installing only the monitoring agent, or only the application support files, can be recognized by the word AGENT in capital letters. For example:
+7.1.0.000-TIV-TSMRPT-AGENT-Linux.bin [ftp://public.dhe.ibm.com/storage/tivoli-storage-management/maintenance/reporting/v7r1/7.1.0.000/7.1.0.000-TIV-TSMRPT-AGENT-Linux.bin]

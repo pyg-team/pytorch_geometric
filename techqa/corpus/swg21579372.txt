@@ -1,0 +1,62 @@
+Title: IBM CQ AIX install error /opt/rational/clearquest/shlib/libcqpddbaccess.so - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ClearQuest 7.1.1 error cannot load module /opt/rational/clearquest/shlib/libcqpddbaccess.so when installing ClearQuest 
+
+SYMPTOM
+Errors: 
+
+0509-022 cannot load module /opt/rational/clearquest/shlib/libcqpddbaccess.so 
+
+0509-150 Dependent module libodbc.a(odbc.so) could not be loaded. 
+
+and 
+
+Installation Manager fetched 676 files(517.82 MB during this installaton attempt. 
+
+You can keep those files to avoid fetching them again. Installtion Manager will delete 
+
+these files 
+
+during a successful installation of this or any other package. 
+
+Action CoreAction (install /opt/local/IBM/RationalSDLC adminDir=/var/adm/rational 
+
+tempDir=/tmp @2 
+
+stderr: /opt/local/IBM/RationalSDLC/clearquest/cqreg[7]: Clearcase: not found. 
+
+stderr: /opt/local/IBM/RationalSDLC/clearquest/cqreg[5]: Clearcase: not found. 
+
+stderr: /opt/local/IBM/RationalSDLC/clearquest/cqreg[7]: Clearcase: not found. 
+
+stderr: /opt/local/IBM/RationalSDLC/clearquest/cqreg[7]: Clearcase: not found. 
+
+exec(): 0509-036 cannot load program /opt/local/IBM/RationalSDLC/clearquest/aix4_power 
+
+/bin/cqreg_ma 
+
+0509-022 Cannot load module /opt/rational/clearquest/shlib/libcqddbaccess.so.
+
+
+CAUSE
+Customer had installed ClearCase 7.1.1 using the installation Manager from that install, then went to install ClearQuest and got the error part way through the installation. Switching back to using the installation Manager from ClearCase resolved the issue.
+
+
+ENVIRONMENT
+ClearCase 7.1.1 
+
+ClearQuest 7.1.1 
+
+AIX 6.1.TL5 
+
+DB2
+
+
+RESOLVING THE PROBLEM
+Using the Installation Manager from the ClearCase installation resolve the issue. 
+
+There may have been a difference of Installation Managers between the two installs, and how they handle a integrated install, and the symbolic links for ClearQuest.

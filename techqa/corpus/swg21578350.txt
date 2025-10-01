@@ -1,0 +1,139 @@
+Title: IBM Installing IBM HTTP Server Fixpack 6.1.0.41 and higher might prevent HTTPS from working if you have ClearQuest, ClearCase, ProjectConsole or RequisitePro installed - United States
+
+Text:
+SRX RN7.1; RN7.1..2.x; IBM HTTP Server connection failure; Global Security Kit; SSL0193W; SSL0198; SSL0193W; GSK_ALLOW_ONLY_EXTENDED_RENEGOTIATION TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading to IBM HTTP Server Fixpack 6.1.0.41 or later, SSL connection requests from the IBM HTTP Server to a Rational product web server fail because the IBM HTTP Server cannot access the required version of the Global Security Kit (GSKit).
+
+Note: This problem was reported as APAR PM54911 and has been fixed in ClearQuest 8.0.0, ClearCase 8.0.0, Requisite Pro 7.1.3. It has also been fixed for version 7.1.2.8 and later for Rational ClearCase, ClearQuest , and Requisite Pro. 
+
+SYMPTOM
+In the Rational product web client, one of the following errors might occur: 
+
+Mozilla FireFox:: Problem loading page
+Internet Explorer: Internet Explorer cannot display the webpage.
+
+CAUSE
+The Rational product installation programs for version 7.1.1, 7.1.2 and related fix packs install Global Security Kit (GSKit) version 7.0.4.11 in one of the following default locations. 
+
+C:\Program Files\IBM\GSK7
+C:\Program Files (x86)\IBM\GSK7
+
+The installation also copies some of the GSKit libraries into <product installation directory>\common. Where the default location of <production installation directory> is one of the following:
+
+C:\Program Files\IBM\RationalSDLC
+C:\Program Files (x86)\IBM\RationalSDLC 
+
+
+The Rational product installation also adds the common folder to the PATH environment variable. 
+
+ IBM HTTP Server maintenance fix pack, version 6.1.0.41 or later, requires GSKit version 7.0.4.36 or later to connect to IBM HTTP Server using SSL. This version of the GSKit is installed during the IBM HTTP Server fixpack installation process. However, when a connection request occurs, the IBM HTTP Server searches the PATH environment variable for the GSKit location and locates the older GSKit library in the Rational common folder. The connection request fails because the IBM HTTP Server tries to use the older library which is not supported.
+
+
+ENVIRONMENT
+This problem occurs in environments where IBM HTTP Server Fixpack 6.1.0.41 or later is used with version 7.1.1, 7.1.2, and related fix packs for the following Rational products. ClearQuest, ClearCase, ProjectConsole, and RequisitePro.
+
+
+
+DIAGNOSING THE PROBLEM
+Check the Rational product error log (default path = \common\IHS\logs ). for the following message:
+
+
+[notice] Using GSKit version 7.0.4.11
+[notice] SSL0198I: System is running without a security library capable
+of directly rejecting  insecure SSL client renegotiation.  
+Aborting HTTPS requests that span SSL sessions
+[crit] SSL0193W: Error setting GSK_ALLOW_ONLY_EXTENDED_RENEGOTIATION to 0 (701)
+[error] Error retrieving GSKit defaults from VirtualHost localhost:0, 
+using hard-coded defaults
+[notice] SSL0198I: System is running without a security library capable
+of directly rejecting  insecure SSL client renegotiation.  
+Aborting HTTPS requests that span SSL sessions
+[crit] SSL0193W: Error setting GSK_ALLOW_ONLY_EXTENDED_RENEGOTIATION to 0 (701)
+
+
+
+
+RESOLVING THE PROBLEM
+You can avoid this issue completely by upgrading to one of the following product versions where the issue has been fixed: 
+
+ * ClearQuest 8.0.0, ClearCase 8.0.0, Requisite Pro 7.1.3. version 7.1.2.8 and later for 
+   Rational ClearCase, ClearQuest , and Requisite Pro.version 7.1.2.8 and later
+
+
+If you do not upgrade, use the following information to work around the problem. If you do not want to upgrade, use information in the following sections to resolve the GSKit version problem for the IBM HTTP Server. 
+
+ * 
+ * Resolving the GSKit version problem for Rational ClearQuest, ClearCase, or ProjectConsole
+ * Resolving the GSKit version problem for Rational RequisitePro
+
+
+
+
+
+Resolving the GSKIT version problem for Rational ClearQuest, Rational ClearCase, or Rational ProjectConsole 
+
+Complete the following procedure to resolve the GSKit version conflict. 
+
+ * 
+ * Important:
+ * 
+ * Resolving the GSKIT version problem for Rational Requisite Pro.
+ *  
+ * 1. Edit the PATH environment variable of the account that is running IBM HTTP Server. 
+ * 2. Locate the path value for the common folder. For example: C:\Program Files\IBM\RationalSDLC\common. 
+ * 3. Insert the library path for GSKIT 7.0.4.36 or later before the path to the common folder. For example,
+   C:\Program Files\IBM\GSK7\lib 
+   
+   In installations where the paths include x86, add C:\Program Files (x86)\IBM\GSK7\lib in the path before C:\Program Files (x86)\IBM\RationalSDLC\common. 
+ * 4. Restart the IBM HTTP Server. 
+   
+   Some Windows architectures, such as Windows 2008 R2, do not dynamically update the PATH statement. On these Operating Systems, reboot the system to apply the path changes.
+   
+ * Maintaining the solution across Rational product upgrades 
+ *  If you upgrade to a subsequent fix pack for Rational ClearCase, Rational ClearQuest, Rational Project Console or Rational RequisitePro, complete the following steps to prevent the IBM HTTP Server failure from reoccurring. 
+ *   1. Uninstall the IBM HTTP Server and WebSphere maintenance fix pack.
+       
+       This step is required to prevent the Rational product upgrade from failing and is also mentioned in the How to update the WebSphere Application Server components in Rational ClearCase and Rational ClearQuest 7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg21390803]. One reason the installation might fail is if the program tries to install an older version of the GSKit required by the Rational product when a newer version is already installed. 
+    2. Install the Rational product maintenance fix pack. 
+    3. Reinstall the IBM HTTP Server and WebSphere maintenance fix packs. 
+    4. Check the PATH environment variable and ensure that the path value for GSKIT 7.0.4.36 or later precedes the path value for the Rational common library. 
+    5. To apply any PATH changes, restart the IBM HTTP Server or reboot the system if required.
+   
+   
+
+
+
+
+Resolving the GSKIT version problem for Rational RequisitePro 
+
+Rational Requisite Pro7.1.1, 7.1.2, and related maintenance fix packs only support GSKit version 7.0.4.11. Consequently, you cannot use IBM HTTP Server 6.1.0.41 or later with Rational Requisite Pro 7.1.1 because of the GSKit version conflict. 
+
+You can try any of the following options to work around the problem: 
+
+ * Only allow non-SSL connection requests to the IBM HTTP Server. 
+ * Run Rational Requisite Pro using IBM HTTP Server versions earlier than version 6.1.0.41. 
+ * If you require secure connections using IBM HTTP Server version 6.1.0.41 or later, upgrade to Requisite Pro version 7.1.3. The GSKit version conflict has been fixed in that release.
+
+
+Warning: If you have Rational Requisite Pro version 7.1.1 or 7.1.2 installed and update thePATH environment variable as described in Resolving the problem for Rational ClearQuest, ClearCase, or ProjectConsole, Rational RequisitePro Client for Windows and Rational RequisiteWeb might not work. 
+
+
+In the RequisitePro client for Web, the following error might occur:
+
+Could not open RequisitePro project file...
+The remote procedure call failed. 
+
+In the RequisitePro client for Windows, the following error might occur: 
+
+The procedure entry point... could not be located in the dynamic link library. gsk7cms.dll. 
+
+If these errors occur, update the PATH environment variable to remove the path value for GSKit 7.0.4.36 or later. Then, restart the IBM HTTP Server, the Rational RequisitePro web server, and the Rational RequisitePro Client if it is running. Depending on the Windows platform, you might have to reboot the system to apply the changes to the PATH environment variable. See the Windows system documentation for information.
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase General Information Software Development Rational ProjectConsole General Information Software Development Rational RequisitePro General Information

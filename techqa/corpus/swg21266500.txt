@@ -1,0 +1,28 @@
+Title: IBM WebSphere Business Integration Adapter for Siebel eBusiness Applications, version 4.6.3 and later supports Siebel 8.0 - United States
+
+Text:
+Siebel 8 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere Business Integration Adapter for Siebel eBusiness Applications, version 4.6.3 and later supports Siebel 8.0. 
+
+RESOLVING THE PROBLEM
+Adapter for Siebel eBusiness Applications version 4.6.3 and later now supports Siebel 8.0; however, to support Siebel 8.0, you must take several actions: 
+
+ 1. Install fix pack version 4.6.3 to enable the adapter to support Siebel 8.0. 
+ 2. Upgrade the JRE used by the adapter to IBM® JRE 5.0. 
+ 3. Apply Siebel Quick Fix 8.0 (20405) - QF [0008] by Oracle. 
+ 4. Import a .sif file 
+
+
+ 1. Install fix pack 4.6.3
+    Obtain the fix pack 4.6.3 from the following link: 
+    http://www.ibm.com/support/docview.wss?rs=695&uid=swg24003719 [http://www.ibm.com/support/docview.wss?rs=695&uid=swg24003719] 
+ 2. Upgrade the JRE used by the adapter to JRE 5.0
+    Upgrade the JRE used by the adapter to IBM JRE 5.0. The following link provides instructions about upgrading to IBM JRE 5.0 manually.http://www.ibm.com/support/docview.wss?rs=695&uid=swg21265380 [http://www.ibm.com/support/docview.wss?rs=695&uid=swg21265380] 
+ 3. Apply Siebel Quick Fix 8.0 [20405] - QF [0008] 
+    Because Siebel 8.0 has a defect (CR# 12-1JUG1BX) that prevents the adapter from working normally with Siebel 8.0, you must apply Siebel Quick Fix 8.0 [20405] - QF[0008] by Oracle. After installing Siebel 8.0, apply QF0008 to your Siebel server. After applying the quick fix, be sure to use the Siebel driver. 
+ 4. Import the ibm_audit.sif file
+    Siebel 8.0 is large; therefore, the previous .sif files for Siebel 7.7, which are used to create IBM Events BC and IBM Archive BC can no longer be used in Siebel 8.0. A new file, ibm_audit.sif file, which contains the entire IBM Audit project is available for you to import. A sample written in eScript, Account.js, which demonstrates how to write Server Script for inserting new event records to IBM Events BC is also available. 
+
+ibm_audit.sif [/support/docview.wss?uid=swg21266500&aid=2] [/support/docview.wss?uid=swg21266500&aid=1] Account.js [/support/docview.wss?uid=swg21266500&aid=4] [/support/docview.wss?uid=swg21266500&aid=3]

@@ -1,0 +1,25 @@
+Title: IBM Questions regarding the IBM SPSS (Sentinel RMS) Concurrent License Manager. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Questions regarding the IBM SPSS (Sentinel RMS) Concurrent License Manager. 
+
+RESOLVING THE PROBLEM
+How do I add a new license to the SPSS (Sentinel RMS) License Manager? [http://www.ibm.com/support/docview.wss?uid=swg21989508] 
+
+How do I migrate my SPSS (Sentinel RMS) License Manager client(s) to a new host? [http://www.ibm.com/support/docview.wss?uid=swg21987631]
+
+How do I move/migrate my License Manager to a new host? [http://www.ibm.com/support/docview.wss?uid=swg21489714]
+
+Installing and licensing the SPSS Concurrent License Manager in a virtual environment. [http://www.ibm.com/support/docview.wss?uid=swg21677004]
+
+How do I perform a version upgrade on a solo (non-redundant) License Manager installed on a Windows host? [http://www.ibm.com/support/docview.wss?uid=swg21989211]
+
+How do I analyze a License Manager usage log file? [http://www.ibm.com/support/docview.wss?uid=swg21986875]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Amos Business Analytics SPSS Modeler Business Analytics SPSS Statistics Business Analytics SPSS Text Analytics for Surveys

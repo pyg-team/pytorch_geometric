@@ -1,0 +1,35 @@
+Title: IBM WebSphere Transformation Extender V8.4.1.2 and Q2 Industry Packs are available - United States
+
+Text:
+8.4.1.2; 8.2.1.8; 4.2.7; 1.0.4; FIX; NACHA; Trading Manager; Fix List NEWS
+
+ABSTRACT
+ June 13, 2014 
+
+IBM WebSphere® Transformation Extender V8.4.1.2 and Q3 Industry Packs are now available through Passport Advantage.
+
+Build ID: 8.4.1.2(4)
+
+
+Industry Pack releases: 
+
+Pack for NACHA 4.2.7 
+Pack for FIX 4.2.7 
+Pack for ACORD 1.0.4 
+Trading Manager 8.2.1.8 
+
+CONTENT
+ 
+
+Fix List WebSphere Transformation Extender V8.4.1.2 Fix List [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg27042050] 
+Main Release Notes page WebSphere Transformation Extender product release notes [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg27008337] 
+WTX 8.4.1.2 Core Release Notes Release Notes for IBM WebSphere Transformation Extender V8.4.1.2 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg27042051] 
+WTX 8.4.1.2 Core Download Documents WebSphere Transformation Extender with Command Server V8.4.1.2 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24037689] WebSphere Transformation Extender Design Studio V8.4.1.2 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24037690] WebSphere Transformation Extender Online Library V8.4.1.2 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24037691] WebSphere Transformation Extender with Launcher Hypervisor Edition V8.4.1.2 - AIX [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24037693] WebSphere Transformation Extender with Launcher Hypervisor Edition V8.4.1.2 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24037692] WebSphere Transformation Extender with Launcher V8.4.1.2 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24037694] WebSphere Transformation Extender Launcher Agent V8.4.1.2 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24037695] WebSphere Transformation Extender for Application Programming V8.4.1.2 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24037697] WebSphere Transformation Extender Secure Adapter Collection V8.4.1.2 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24037698] WebSphere Transformation Extender for Integration Servers V8.4.1.2 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24037699] 
+
+WTX Pack Release Notes Release Notes for WebSphere Transformation Extender Pack for NACHA 4.2.7 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg27041960] Release Notes for WebSphere Transformation Extender Pack for FIX 4.2.7 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg27042200] Release Notes for WebSphere Transformation Extender Pack for ACORD 1.0.4 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg27042044] Release Notes for WebSphere Transformation Extender Trading Manager 8.2.1.8 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg27041686] 
+WTX Pack Download Documents WebSphere Transformation Extender Pack for NACHA 4.2.7 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24037720] WebSphere Transformation Extender Pack for FIX 4.2.7 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24037726] WebSphere Transformation Extender Pack for ACORD 1.0.4 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24037723] WebSphere Transformation Extender Trading Manager 8.2.1.8 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24037724] 
+WTX Pack Fix Lists WebSphere Transformation Extender Trading Manager 8.2.1.8 Fix List [http://www.ibm.com/support/docview.wss?uid=swg27042238] 
+
+
+
+IBM PassPort Advantage Online [http://www-01.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]

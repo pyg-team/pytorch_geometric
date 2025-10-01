@@ -1,0 +1,47 @@
+Title: IBM Featured Documents for IBM BigFix - United States
+
+Text:
+ RECOMMENDED RESOURCES
+
+ABSTRACT
+ This list features the most requested documents as well as those identified as valuable in helping answer your questions related to IBM BigFix family of products. The list will be updated periodically to reflect new trends and issues. 
+
+CONTENT
+List of featured documents for IBM BigFix:
+
+Featured Documents
+
+Essential: 
+
+ *  IBM BigFix Support Center [http://www-01.ibm.com/support/docview.wss?uid=swg21624185] 
+ *  IBM BigFix Documentation [http://www-01.ibm.com/support/docview.wss?uid=swg21964132]
+
+
+Common problems and solutions:  * How do I clear the IBM BigFix Console cache? (1505993) [http://www-01.ibm.com/support/docview.wss?uid=swg21505993] 
+ * What do the action status messages mean? (1505986) [http://www-01.ibm.com/support/docview.wss?uid=swg21505986] 
+ * How do I troubleshoot Fixlet actions? (1505932) [http://www-01.ibm.com/support/docview.wss?uid=swg21505932] 
+ * Can I automatically assign a TEM Client a particular relay at installation time? (1505838) [http://www-01.ibm.com/support/docview.wss?uid=swg21505838] 
+ * How do I use TEM with a proxy? (1505994) [http://www-01.ibm.com/support/docview.wss?uid=swg21505994] 
+ * What do the winsock error numbers in the TEM Client logs mean? (1505977) [http://www-01.ibm.com/support/docview.wss?uid=swg21505977] 
+ * Can the SQL Server database exist on a separate computer from the TEM Server? [http://www-01.ibm.com/support/docview.wss?uid=swg21505841] (1505841) 
+ * How can I tell if I have gathered the latest Fixlet messages that have been published by Tivoli Endpoint Manager? (1505823) [http://www-01.ibm.com/support/docview.wss?uid=swg21505823] 
+ * Computers grayed out in the console (1505813) [http://www-01.ibm.com/support/docview.wss?uid=swg21505813] 
+ * Why do my TEM Clients report "<not reported>" for every action I take? (1505835) [http://www-01.ibm.com/support/docview.wss?uid=swg21505835] 
+ * Preventing Send Refresh abuse in a large deployment [http://www-01.ibm.com/support/docview.wss?uid=swg21688336] 
+ * Why do some TEM Clients have not reported or unknown for a computer name or other properties? [http://www-01.ibm.com/support/docview.wss?uid=swg21505948]
+
+
+System/Network Requirements:  * BigFix Server System Requirements [http://www-01.ibm.com/support/docview.wss?uid=swg21505691] 
+ * BigFix Console System Requirements [http://www-01.ibm.com/support/docview.wss?uid=swg21505693] 
+ * BigFix Platform Support Policy [http://www-01.ibm.com/support/docview.wss?uid=swg21570458] 
+ * BigFix Network Traffic Guide [https://www.ibm.com/developerworks/mydeveloperworks/wikis/home/wiki/Tivoli%20Endpoint%20Manager/page/Network%20Traffic%20Guide?lang=en] 
+
+
+If you were unable not able to find a solution on this page to the problem you are experiencing, you also could:  * Further search for a solution via the IBM BigFix Support Portal [https://support.podc.sl.edst.ibm.com/support/home/product/Q055780Z86547U43/IBM_BigFix_family] 
+ * Search for solutions on the BigFix Forum [https://forum.bigfix.com/] 
+ * Visit the BigFix DeveloperWorks Wiki [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli+Endpoint+Manager/page/Home] 
+ * Access BigFix Documentation [http://www-01.ibm.com/support/docview.wss?uid=swg21964132] 
+ * See additional resources on the IBM BigFix Support Center [http://www-01.ibm.com/support/docview.wss?uid=swg21624185]
+
+
+In the event you are unable to find a solution or work around your issue, you can open a PMR with L2 Bigfix Support, see: What information do I include when I open a PMR with IBM BigFix Support? (1505708) [http://www-01.ibm.com/support/docview.wss?uid=swg21505708]

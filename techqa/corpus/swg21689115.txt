@@ -1,0 +1,38 @@
+Title: IBM Collecting Data for Cúram Social Program Management WebSphere Issues - United States
+
+Text:
+MustGather; MustGatherReadFirstDocumentCuram TECHNOTE (FAQ)
+
+QUESTION
+ What data is required when handling Performance and Configuration of Java issues on Websphere with Cúram Social Program Management? The information that you gather is also known as MustGather information. 
+
+ANSWER
+WebSphere Logs
+The WebSphere logs of interest include: 
+
+ * JVM stdout and stderr logs 
+ * JVM Verbose garbage collection GC logs - requires configuration in WebSphere 
+ * WebSphere FFDC logs
+
+
+The default location for JVM logs, FFDC logs, and Verbose GC logs, when configured, is the logs folder of the WebSphere profiles, for example:C:/IBM/WebSphere/AppServer/profiles/<profile_name>/logs. 
+C:/IBM/WebSphere/AppServer/logs 
+
+Each server within the logs folder has a sub folder and the FFDC logs are stored in the logs\ffdc folder for the profile. So a copy of this folder, preferably in compressed format, is the easiest, most reliable way of gathering WebSphere logs since the JVM logs might be in multiple files. However, configuration options per server within WebSphere are available to adjust the JVM log location, size, and management strategy. 
+
+Your gathering of WebSphere logs needs to take into account any customisation. Depending on the nature of the issue, the logs for each profile including the deployment manager might be necessary. To Configure JVM Verbose Garbage Collection
+Due to its low overhead and value in identifying performance issues with the JVM, it is recommended that Verbose GC is always enabled and monitored in production environments. 
+
+
+In the WebSphere administrative console for each relevant server designated by <server_name>:
+
+
+ 1. Go to Servers > Server Types > WebSphere application server > <server_name> > Server Infrastructure > Java and Process Management > Process Definition > Java Virtual Machine 
+ 2. Enable the Verbose GC check box. 
+ 3. By default, the GC log data is stored in the native_stderr.log file. However, you can specify an alternate file and location by adding -Xverbosegclog:<GC log file location> to the Generic JVM arguments. This location can be the same location as where the WebSphere JVM stdout and stderr logs are written, for example, C:/IBM/WebSphere/AppServer/profiles/<profile_name>/logs/<server_name>/gc_log.txt 
+ 4. Save the changes to the master configuration and restart the server(s). 
+ 5. After the issue occurs or is recreated, gather the log data, preferably in compressed format, and provide it with your PMR.
+
+
+Processing Verbose GC Data
+To process the verbose GC logs locally, use the IBM Monitoring and Diagnostics Tools for Java - Garbage [http://www.ibm.com/developerworks/java/jdk/tools/gcmv/].

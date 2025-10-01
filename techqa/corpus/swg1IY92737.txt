@@ -1,0 +1,169 @@
+Title: IBM IY92737: CUSTOM SERVER DISCOVERY ON MULTIPLE SAME PROCESSES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Custom server template matches only 1 entry for a
+   process definition and spawns off only 1 Custom Server Sensor
+   for that
+   process when multiple processes with the same name are running
+   on the
+   same box.
+   For e.g. multiple MQ queue managers are running on a target
+   box with a process name - amqzxma0, only one sensor gets spawned
+   for
+   one of the processes. This process does not listen to a port, so
+   we had
+   to enter the process name in the forcedServerList in collation.
+   Essentially, there is only 1 MQ queue manager found on
+   that system when there are multiple Queue Managers running.
+   .
+   The problem is that topobuilder will consolidate them if there
+   is more
+   than one on a server. It does this because the ip address and
+   the
+   listening port are the same
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CDT/TADDM Users.                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Custom server template matches only 1   *
+   *                      entry for a process definition and      *
+   *                      spawns off only 1 Custom Server Sensor  *
+   *                      for that process when multiple          *
+   *                      processes with the same name are        *
+   *                      running on the same box.                *
+   *                      For example, multiple MQ queue          *
+   *                      managers are running on a target        *
+   *                      box with a process name - amqzxma0,     *
+   *                      only one sensor gets spawned            *
+   *                      for one of the processes. This          *
+   *                      process does not listen to a port,      *
+   *                      so we had to enter the process name     *
+   *                      in the forcedServerList in collation.   *
+   *                      Essentially, there is only 1 MQ queue   *
+   *                      manager found on                        *
+   *                      that system when there are multiple     *
+   *                      Queue Managers running.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The issue is that topobuilder will consolidate them if
+   there is more than one on a server. It does this because
+   the ip address and the listening port are the same.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In order to discover multiple processes that do not have a
+   listening port, you will need to find something unique about
+   the process. This could be a command line argument,
+   an environment variable, or - in the worst case - a PID.
+   PID is a bad choice because after a reboot, the chances of the
+   pid being the same are not good.
+   
+   Here is an example of a command line argument;
+   First, I create a custom server template for efe as "program
+   name contains efe", then add "efe" to the forced server list
+   in collation.properties.
+   
+   After starting several of these efe processes, putting a
+   sequential number at the end of the command line, then ran
+   a discovery. The result was discovery of a single efe process.
+   
+   Then create a custom server extension in
+   etc/templates/commands/efe with the following content:
+   CMD:keyName=echo $COLL_CMDLINE$ |awk '{print $NF}'
+   
+   After running a discovery, the custom server template did match
+   and create a custom server for each of the running processes.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY92737
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-12-12
+   
+   
+ * CLOSED DATE
+   2007-03-13
+   
+   
+ * LAST MODIFIED DATE
+   2007-03-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

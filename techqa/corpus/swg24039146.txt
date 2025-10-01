@@ -1,0 +1,79 @@
+Title: IBM Tivoli Netcool/OMNIbus_GUI 7.3.1 Fix Pack 7 Interim Fix 1, 7.3.1.7-TIV-NCOMNIbus_GUI-IF0001 - United States
+
+Text:
+OMNIbus_GUI 7.3.1 FP0007 IF0001; OMNIbus_GUI 7.3.1 Fix Pack 7 Interim Fix 1; OMNIbus_GUI 7.3.1.7.IF0001; 7.3.1.7.IF0001; Web GUI 7.3.1.7.IF0001; Web GUI 7.3.1 Fix Pack 7 Interim Fix 1; Web GUI 7.3.1 FP0007 IF0001 DOWNLOADABLE FILES
+
+ABSTRACT
+ This interim fix solves issues mentioned in APAR IV67836. 
+
+DOWNLOAD DESCRIPTION
+This interim fix solves issues mentioned in APAR IV67836.
+
+
+APAR IV67836:
+For users with ncw_user (only) role, system filters are not being loaded for custom Event Dashboard. Only global filters are being loaded even in a customized Event Dashboard containing a single monitor box with a system filter. "Error HEMCDW0035: Unable to get data from the server. Contact your administrator." is displayed on the Event Dashboard.
+
+This is a regression of APAR IV51293 that was delivered in WebGUI 7.3.1 Fix Pack 7 (7.3.1.7).
+
+PREREQUISITES
+This interim fix requires the 7.3.1 Fix Pack 7 release.
+
+INSTALLATION INSTRUCTIONS
+The included fix is based on Web GUI 7.3.1 Fix Pack 7 (7.3.1.7) and should only be used with this release.
+
+The included ZIP file contains modified versions of the following files:
+
+- version.jar, which should replace the existing copy located at
+$TIPHOME/profiles/TIPProfile/installedApps/TIPCell/isc.ear/OMNIbusWebGUI.war/WEB-INF/lib/version.jar
+
+- applets.jar, which should replace the existing copy located at
+$TIPHOME/profiles/TIPProfile/installedApps/TIPCell/isc.ear/OMNIbusWebGUI.war/classes/applets.jar
+
+- version.jar (2), which should replace the existing copy located at
+$TIPHOME/profiles/TIPProfile/installedApps/TIPCell/isc.ear/OMNIbusWebGUI.war/classes/version.jar
+
+where $TIPHOME is the root TIP installation directory.
+
+The steps for installing the fix on a Unix platform are listed below:
+
+
+ 1. Stop the TIP server
+    eg. $TIPHOME/bin/stopServer.sh server1 
+ 2. Take a backup of the existing files which are to be replaced
+    cp $TIPHOME/profiles/TIPProfile/installedApps/TIPCell/isc.ear/OMNIbusWebGUI.war/WEB-INF/lib/version.jar /tmp
+    cp $TIPHOME/profiles/TIPProfile/installedApps/TIPCell/isc.ear/OMNIbusWebGUI.war/classes/applets.jar /tmp/classes
+    cp $TIPHOME/profiles/TIPProfile/installedApps/TIPCell/isc.ear/OMNIbusWebGUI.war/classes/version.jar /tmp/classes 
+ 3. Copy the interim fix files to the TIP home directory
+    eg. cp 7.3.1.7-TIV-NCOMNIbus_GUI-IF0001_files.zip $TIPHOME 
+ 4. Move to the TIP home directory
+    eg. cd $TIPHOME 
+ 5. Unzip the interim fix files, opting to replace existing files
+    eg. unzip 7.3.1.7-TIV-NCOMNIbus_GUI-IF0001_files.zip 
+ 6. Restart the TIP server
+    eg. $TIPHOME/bin/startServer.sh server1
+
+
+Verifying The Fix 
+ 1. Login to TIP and confirm the WebGUI version is Version 7.3.1.7 IF0001 
+ 2. Using user with ncw_admin role, set-up Event Dashboard to have mixture of global and system type filters. 
+ 3. Open the Event Dashboard configured in step #1 using user with ncw_user role. The user must only set with ncw_user role and does not hold ncw_admin role. 
+ 4. Verify that the monitor box of system type filter is loaded and displayed successfully.
+
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 7.3.1.7-TIV-NCOMNIbus_GUI-IF0001 26 Dec 2014 English 1332322 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%2FTivoli&product=ibm/Tivoli/Tivoli+Netcool+OMNIbus&release=All&platform=All&function=fixId&fixids=7.3.1.7-TIV-NCOMNIbus_GUI-IF0001&includeSupersedes=0&source=fc] [ ] 
+PRODUCT ALIAS/SYNONYM
+ OMNIbus_GUI 7.3.1 FP0007 IF0001
+OMNIbus_GUI 7.3.1 Fix Pack 7 Interim Fix 1
+OMNIbus_GUI 7.3.1.7.IF0001
+7.3.1.7.IF0001
+Web GUI 7.3.1.7.IF0001
+Web GUI 7.3.1 Fix Pack 7 Interim Fix 1
+Web GUI 7.3.1 FP0007 IF0001 
+
+ [/support/docview.wss?uid=swg24039146&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24039146&aid=2]Problems (APARS) fixed
+IV67836

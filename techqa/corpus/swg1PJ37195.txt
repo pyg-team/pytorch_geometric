@@ -1,0 +1,132 @@
+Title: IBM PJ37195: When folder criteria contain path name but no folder ID in searc h template xml file, the search template fails with an error. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the AND parameter is assigned to all properties in a search
+   template, the search template fails with a "Parameter is
+   incorrect" error. This problem doesn't occur in Workplace. It
+   appears a change was made to search templates somewhere along
+   the way causing older templates to fail in Workplace XT.
+   
+   The workaround is to create the same search template using
+   Workplace XT.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of search templates that define folder criteria using  *
+   * path name only.                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When a search template defines folder criteria using the     *
+   * path name, but not ID, the search fails with an error.       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 1.1.4.4-WPXT-FP004 or higher.                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In 1.1.4.4-WPXT-FP004, search templates can be executed when
+   
+   the folder criteria is defined using the path name or ID.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ37195
+   
+   
+ * REPORTED COMPONENT NAME
+   WORKPLACE XT
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7611
+   
+   
+ * REPORTED RELEASE
+   114
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-15
+   
+   
+ * CLOSED DATE
+   2010-02-26
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORKPLACE XT
+   
+   
+ * FIXED COMPONENT ID
+   5724R7611
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R114 PSY
+   UP

@@ -1,0 +1,60 @@
+Title: IBM Error: CRJAZ0975I, on Jazz Team Server Web User Interface - United States
+
+Text:
+1397162; RTC; licensing error; beta; error; CRJAZ0975I; Jazz Team Server; jazz; web UI; com.ibm.team.jazz.foundation.server[1.0.0; 1.1.0); requires bundle; RQM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to resolve an error, that can occur when using IBM Rational Team Concert.
+
+This technote explains how to resolve an CRJAZ0975I error, that can occur when trying to upload a server license key using the Jazz Team Server with IBM Rational Team Concert and IBM Rational Quality Manager. 
+
+SYMPTOM
+When trying to upload a server license key, to Jazz Team Server the error is displayed, even if there are no floating licenses configured: 
+
+ * 
+   "CRJAZ0975I- The policy requires the bundle com.ibm.team.jazz.foundation.server[1.0.0,1.1.0), but it could not be found.
+   
+   There is a problem with the server license. Resolve the issue described in the status section below to continue.  
+   
+   The new server license does not support floating licenses. If the license changes are saved, the active floating leases will be terminated.
+   
+   
+
+
+
+This error might even be seen if there are no floating licenses created. 
+
+
+CAUSE
+This happens because you are using an activation kit which is not compatible with the software version you upgraded to.
+
+
+DIAGNOSING THE PROBLEM
+On the License Key Management section under the Server Tab in the Admin Web user Interface of Jazz Team Server, it will state that the Status is "Expired Trial", however, when a valid license file is uploaded, the following error is displayed: 
+
+
+[/support/docview.wss?uid=swg21397162&aid=1] [/support/docview.wss?uid=swg21397162&aid=1]
+
+
+
+RESOLVING THE PROBLEM
+
+Rational Team Concert 2.0 
+
+This error was known to occur in the beta versions of Rational Team Concert 2.0, but has been fixed in the full 2.0 release. Ensure you have downloaded and installed the GA'ed version of Rational Team Concert.
+
+
+Rational Quality Manager 2.0
+To resolve this issue you will need to use the 2.0 version activation kit which can be downloaded from the Rational License Key Center [https://www-01.ibm.com/software/rational/support/licensing/]. 
+
+Note: Server licenses for IBM Rational Team Concert and IBM Rational Quality Manager 1.0 will not work on 2.0. 
+
+
+
+Leverage the Jazz Community Jazz and Rational Team Concert have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://ibm.com/support/docview.wss?uid=swg21319600] for details and links.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Quality Manager Licensing Linux, Windows 2.0

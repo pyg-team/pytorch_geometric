@@ -1,0 +1,72 @@
+Title: IBM Synchronizing in headless mode using a custom logger - United States
+
+Text:
+synchro; log; logging; trace TECHNOTE (FAQ)
+
+QUESTION
+ How do I use a custom logger when synchronizing in headless mode? 
+
+ANSWER
+You can synchronize rule projects between Rule Studio and Rule Team Server (RTS) with Eclipse in "headless" mode, that is, with no user interface. This enables you to automate the publishing and updating of rule projects. 
+
+The feature provides the option to use a custom logger. By default, just like Rule Studio does for the GUI synchronization, the headless synchronization logs its actions in the corresponding Eclipse workspace log (<workspaceDir>/.metadata/.log), showing messages like the following: 
+
+ * 
+ * 
+ * les.studio.teamserver 1 1 2011-09-29 10:31:39.046
+ * 
+ * 
+ * artifact /bomdomainpopulate-rules/rules/CheckOrder has been updated from the remote server.
+
+
+To change the logging you need first to create a class implementing ilog.rules.studio.teamserver.operations.IlrTransfertOperationsLogger and then deploy it in the Rule Studio/Eclipse distribution. 
+
+The methods to implement are:
+
+
+ * 
+ * void published(IResource resource);
+   void publishedAndDeleted(IResource resource);
+ * void updated(IResource resource);
+   void updatedAndDeleted(IResource resource); 
+ * void unprocessedConflicting(IResource resource);
+   void unprocessedIncoming(IResource resource);
+   void unprocessedOutgoing(IResource resource); 
+ *  
+   
+
+Here are the steps to create and install your logger :  1. Create a plugin fragment in Studio : "New Project > Plugin Development > Fragment Project" 
+ 2. Choose a name for your project, keep all other values as default ("Create a Java project" option checked), and click 'Next' 
+ 3. In the second step, specify the plugin to be extended in the "Host Plug-in" section: use the 'Browse' button and select "ilog.rules.studio.teamserver" 
+ 4. Click Finish to create the project 
+ 5. Create and implement your logger class in the new project 
+ 6. In the overview tab of the plugin editor, use the "Export Wizard" link (under "Exporting") to export the plugin generated to the folder "<EclipseHomeDir>/dropins" ("<JRulesHomeDir>/eclipse/dropins" if you use the Eclipse instance embedded in the JRules installation).
+
+
+You can then use your logger when synchronizing a rule project in headless mode with the "-syncLogger" command line parameter. For example: 
+
+ * 
+ * java.exe -Xmx512m -XX:MaxPermSize=128m 
+   -cp %ECLIPSE_HOME%/plugins/org.eclipse.equinox.launcher_*.jar org.eclipse.core.launcher.Main 
+   -data "C:\data\devworkspace" 
+   -application ilog.rules.studio.teamserver.teamServerSynchronizer 
+   -project loanvalidation-rules 
+   -retrieve 
+   -login rtsAdmin 
+   -pwd rtsAdmin 
+   -teamserver
+ * 
+ * 
+ * 
+   -syncLogger test.myLogger
+
+
+You will find more information on the headless synchronization feature in the product documentation at WebSphere ILOG JRules BRMS V7.1 > Rule Studio > Synchronizing and storing rules > Synchronizing in headless mode > Synchronizing in headless mode [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=%2Fcom.ibm.websphere.ilog.jrules.doc%2FContent%2FBusiness_Rules%2FDocumentation%2F_pubskel%2FJRules%2Fps_JRules_Global653.html]. 
+
+ 
+
+Note: WODM V7.5 introduces a new feature replacing the headless synchronization which allows to synchronize rule projects between Rule Designer and Decision Center using ANT (see documentation links below).
+
+RELATED INFORMATION
+#Synchronizing using Ant tasks in WODM V7.5 [http://pic.dhe.ibm.com/infocenter/dmanager/v7r5/topic/com.ibm.dcenter.synchro/Content/Business_Rules/_pubskel/Infocenter_Primary/ps_DC_Synchronizing3214.html]
+Synchronizing using Ant tasks in WODM V8.0 [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0/topic/com.ibm.wodm.dcenter.synchro/topics/tpc_synch_headless.html]

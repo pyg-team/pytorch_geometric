@@ -1,0 +1,103 @@
+Title: IBM Crash on Linux produces no core or truncated core - United States
+
+Text:
+MustGather; MustGather; MustGather; crash; linux; core; autopd; auto pd; MustGatherDocument; wasjdk; waseng TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document outlines what needs to be done to ensure that a full core file is produced on Linux if WebSphere Application Server crashes. 
+
+RESOLVING THE PROBLEM
+
+
+Core dump files should generate in WebSphere Application Server during a crash of if manually triggered (via kill -11, the gcore command, or from the admin console itself), but a few conditions may end up truncating the dump file. 
+
+NOTE: There is a different technote that discusses issues where the process does not record a crash event. [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21144595]
+
+
+1. SET ULIMITS
+See Also: Guidelines for Setting Ulimits [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21469413]
+
+The ulimits for core and file need to be tuned so that the hard and soft limits are set to unlimited. This may require root access to change. 
+
+If you change it on the command line, you will need to restart your nodeagent from the same command line window. Your application server can be started normally. In the case where this installation doesn't have a nodeagent, the appserver must be started from the command line window. This is because the ulimit settings would be temporary for that session. 
+
+ulimit -c unlimited
+ulimit -f unlimited
+
+For setting them at a global level, you would need to edit the /etc/security/limits.conf file to change the core and file settings for hard and soft limits. However, if the application server is started by the init process at startup, these settings will not take effect. You will need to use the ulimit command line settings directly in the init.d script. 
+
+To verify the change, you can use ulimit -a on the same command line. 
+If you want to validate an already running application server process, either capture a javacore, or run the following command:
+
+cat /proc/PID/limits
+Where PID is the process ID
+
+
+
+2. DISK SPACE
+Check your partitions where WebSphere Application Server resides and make sure there is enough space for the dump to be produced. Usually an error message will be seen in the native_stderr.log that indicates if the core was unable to be written.
+
+To check all of your partitions, execute this command (the -k is for kilobytes):
+
+df -k
+
+
+
+3. CORE PATTERN CONFIGURATION
+In some cases (which has been seen with -Xdisableexplicitgc configured), the core_pattern setting may have extra options added to its configuration which may need to be removed, such as this string:
+"|/usr/libexec/abrt-hook-ccpp %s %c %p %u %g %t e". 
+This piped setting specifies that core dumps are to be piped to an external program, in this case the program is "abrt-hook-ccpp". 
+
+The core_pattern setting is configured in this file:/proc/sys/kernel/core_pattern 
+
+Simply remove the piped abrt-hook-ccpp and its options to restore dump functionality. 
+
+
+
+4. DISABLE SIGNAL HANDLERS
+To force the operating system to handle all signals sent to the JVM process, you can disable all JVM signal handlers. 
+
+For IBM SDK 5.0 and later, set this JVM argument [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21417365]:
+-Xrs
+
+NOTE: On SDK 6.0, to prevent unintentional crashes due to SIGTRAP, clear the shared class cache [http://www.ibm.com/support/docview.wss?uid=swg21607887] by executing <WAS_HOME>/bin/clearClassCache.sh
+
+
+
+Additional Questions:
+What happens if I do not have write permission in the profile's root directory, or the directory I am redirecting javacores, heapdumps, and system core files to?
+
+This will result in a failure when writing these files to the system. Check for an error in the native_stderr.log, as it may try to write the dump to an alternate folder (such as /tmp). 
+
+
+
+Even with all ulimit settings set to unlimited, core files are truncated at 2GB? 
+
+There is a limitation on 32-bit processes which can be worked around if you enable large file support..
+Using a 64-bit version of WebSphere Application Server also resolves this limitation, although if you run out of disk space the dump can still be truncated. 
+
+
+
+Can I test my configuration to see if a core can be generated?
+
+Yes you can simulate a crash by sending a signal 6 or signal 11 to the JVM process. This will terminate the process. 
+
+kill -6 PID
+or
+kill -11 PID
+
+
+An alternative is to use the gcore command. This produces a core file and keeps the process running.
+
+gcore PID
+
+RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]
+Guidelines for setting ulimits (WebSphere Application S [http://www.ibm.com/support/docview.wss?uid=swg21469413]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server - Express Hangs/performance degradation Linux 8.5.5, 8.0, 7.0 Application Servers Runtimes for Java Technology Java SDK

@@ -1,0 +1,65 @@
+Title: IBM Attempts to build application with older version of servlet specification causes compile errors - United States
+
+Text:
+RAD; servlet specification; compile error; target runtime; RATLC02490373 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to build an application with older version of servlet specification causes compile errors on IBM Rational Application Developer for WebSphere Software, when project's targeted WebSphere Application Server supports newer version of servlet specification. 
+
+SYMPTOM
+In case there is a ClassA implements the HttpServletRequest in the servlet 2.3 web project and its target runtime was V6.0, if changing the target runtime to V8.0, the compile errors occurs due to not implementing the abstract methods which introduced in servlet 2.4 or later despite the actual servlet version is 2.3. Errors will be detected on the methods like #getPart(String), #login(Stirng, String), #logout(),,,etc. in this case. 
+
+Common error messages on this issue is following:
+The type Xxx must implement the inherited abstract method Yyy
+
+
+Steps to reproduce: 
+
+ 1.  Create a "Dynamic Web project"
+    - Setting target WebSphere Application Server runtime as v6.0
+    - Setting the servlet facet version as 2.3 
+ 2. Create a class (ex, ClassA) and implement interface HttpServletResponse, with "Create inherited abstract method" option 
+ 3. Change the target WebSphere Application Server runtime to v8.0 
+ 4. You will see compile errors on ClassA due to not implementing the inherited abstract methods introduced in servlet 2.4/2.5/3.0
+
+
+CAUSE
+When the target runtime is changed, the WebSphere Application Server library (j2ee.jar) is installed in the project build path. However this library is always the latest version of j2ee.jar which is supported by targeted runtime WebSphere Application Server even if the project's servlet version is older.
+
+
+
+RESOLVING THE PROBLEM
+Although this is currently working as designed, a Request For Enhancement RFE 12209 [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=12209] is registered to enhance the capability to develop the older version of Java EE project. 
+
+ 
+
+WORKAROUND: 
+
+There are three ways to circumvent this issue. 
+
+ 
+
+Option 1 (Recommended) 
+
+Change the target WebSphere Application Server runtime to V8.0 and put the older j2ee.jar entry before the V8 j2ee jar in the build classpath of the project. 
+
+ 
+
+How to configure: 
+
+ 1. Right click the project > [Properties] > [Java Build Path] > [Libraries] 
+ 2. Select [Add External Jars] tab > Select "<was_v8_install_dir>/dev/JavaEE/<version>/j2ee.jar"
+    (For example "C:\Program Files\IBM\WebSphere\AppServer80\dev\JavaEE\1.3\j2ee.jar") 
+ 3. Select [Order and Export] tab > Select the entry created in step 2. > Click [Top] button
+
+
+ 
+
+Option 2 
+Change the target WebSphere Application Server runtime to V8.0 and implement methods introduced in newer servlet spec, although this is not actually necessary for v2.3. 
+
+
+
+
+Option 3 
+Keep target WebSphere Application Server runtime with older version (for example (6.0/6.1/7.0) and deploy it to V8 server.

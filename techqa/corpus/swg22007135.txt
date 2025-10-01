@@ -1,0 +1,24 @@
+Title: IBM Connections 6.0 additional setting when forcing TLS v1.2 - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ IBM Connections 6.0 with Java 8 requires an additional setting when forcing TLS v1.2 
+
+CONTENT
+IBM Connections 6.0 with Java 8 requires an additional setting when forcing TLS v1.2 to prevent errors from servers that accept only TLS v1.2. Follow the instructions in the help topic Forcing traffic to use TLS 1.2 [https://www.ibm.com/support/knowledgecenter/SSYGQH_6.0.0/admin/secure/t_admin_common_forcing_tls.html] then enable the JVM argument "-Dcom.ibm.jsse2.overrideDefaultTLS=true" on the AppServer so that Java 8 returns TLS 1.0, TLS 1.1 and TLS 1.2 protocols for SSLContext. The Client will pick highest Protocol TLS 1.2 in TLS Handshake when it sends ClientHello to Server for establishing TLS 1.2 connections. 
+
+ * 
+ * Note:
+ * 
+
+
+Instructions for setting the JVM argument: 
+ 1. Open the Websphere Integrated Solution Console 
+ 2. Select Server Types -> Websphere Application Server 
+ 3. For each Application Server expand Java and Process Management then go to Process definition->Java Virtual Machine 
+ 4. Add the following in Generic JVM arguments: -Dcom.ibm.jsse2.overrideDefaultTLS=true
+    [/support/docview.wss?uid=swg22007135&amp;aid=1] 
+ 5. Click OK and Save Changes 
+ 6. Restart the Application Server to apply the changes

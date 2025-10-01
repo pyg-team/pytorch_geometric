@@ -1,0 +1,216 @@
+Title: IBM HD69212: GSD : DIFERENT BEHAVIOR WITH WARNING MESSAGE WHEN UPDATE MODE SWITCHED BETWEEN MAUNAL AND AUTOMATIC - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  GSD : DIFERENT BEHAVIOR WITH  WARNING
+   MESSAGE WHEN UPDATE MODE SWITCHED
+   BETWEEN MAUNAL AND AUTOMATIC
+   .
+   Scenario:
+   This problem occurs under specific conditions.
+   Please apply the following setup before reproducing
+   this scenario. Tools / Options / Infrastructure / Part
+   Infrastructure /
+   General / Update / Automatic => Active
+   .
+   < Process >
+   1. Start CATIA with V5R17SP3.
+   2. Open the file : TXX9968.CATPart. Workbench :
+   Generative Shape Design.
+   3. Double click Point.104 from the tree. >>Point
+   Definition dialog box is displayed.
+   4 Change the value of Ratio. (For example, 0.58)
+   >>Warning message is appeared.
+   5. Close CATPart without save and reopen. Now
+   check above scenario ( from step 1 to step4) with
+   Update mode set as Manual. Now update the
+   CATPart, no warning message displayed. Why
+   there is difference with Manual and Automatic
+   Update mode? This is problem. In Japanese OS this
+   warning message appears in English This is
+   problem too.
+   .
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  GSD : DIFERENT BEHAVIOR WITH  WARNING MESSAGE WHEN UPDATE MODE
+   SWITCHED BETWEEN MAUNAL AND AUTOMATIC
+   GSD : DIFERENT BEHAVIOR WITH  WARNING
+   MESSAGE WHEN UPDATE MODE SWITCHED
+   BETWEEN MAUNAL AND AUTOMATIC
+   .
+   Scenario:
+   This problem occurs under specific conditions.
+   Please apply the following setup before reproducing
+   this scenario. Tools / Options / Infrastructure / Part
+   Infrastructure /
+   General / Update / Automatic => Active
+   .
+   < Process >
+   1. Start CATIA with V5R17SP3.
+   2. Open the file : TXX9968.CATPart. Workbench :
+   Generative Shape Design.
+   3. Double click Point.104 from the tree. >>Point
+   Definition dialog box is displayed.
+   4 Change the value of Ratio. (For example, 0.58)
+   >>Warning message is appeared.
+   5. Close CATPart without save and reopen. Now
+   check above scenario ( from step 1 to step4) with
+   Update mode set as Manual. Now update the
+   CATPart, no warning message displayed. Why
+   there is difference with Manual and Automatic
+   Update mode? This is problem. In Japanese OS this
+   warning message appears in English This is
+   problem too.
+   .
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  THE PROBLEM WAS SUBMITTED ON :
+   CATIA VERSION 5 RELEASE 17.
+   THIS PROBLEM IS NOT REPRODUCIBLE ON :
+   CATIA VERSION 5 RELEASE 19 GA level AND ON
+   V5R18SP03
+   .
+   Scenario reproduced on reported R17SP03 level.
+   Scenario not reproduced on above mentioned
+   levels.
+   .
+   Incident diagnosis:
+   Reported scenario can be classified in three sub
+   scenario:
+   1. The cause of warning message while update
+   mode is Automatic
+   2. Why warning message not displayed in Manual
+   Update mode?
+   3. Warning message displayed in English while
+   working with Jap OS with Jap CATIA.
+   .
+   Correction Explanation:
+   1. There is slight gap between input elements of
+   Intersection. This gap can be checked with connect
+   checker. The warning message is displayed as
+   Intersection also gets updated. This message can
+   be displayed while its creation
+   2. During 'Manual Update' when point parameter is
+   changed, only point feature update is called. So
+   warning message of Intersect is not thrown. Later if
+   we call update on Intersect feature manually then
+   the feature is correctly updated without any error;
+   only warnings are not thrown. This is because no
+   command is active at this point. (Normally, warning
+   message throws if any command is active while
+   update. In automatic update, Point function is
+   active while updating hence warning message
+   displayed)
+   3. We have provided correction with this APAR to
+   translate the warning message in Japanese
+   language when OS and CTAIA are in Japanese.
+   Correction is available on above mentioned level.
+   .
+   .
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD69212
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   517
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-11-15
+   
+   
+ * CLOSED DATE
+   2007-12-07
+   
+   
+ * LAST MODIFIED DATE
+   2008-01-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569151000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R518 PSN SP51803
+   UP08/01/25 I 1000
+   
+   
+ * R517 PSN
+   UP

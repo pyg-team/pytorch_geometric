@@ -1,0 +1,228 @@
+Title: IBM IV20954: XMS V2.0: CLIENT MODE CONNECTIONS USING CCDT PROGRAMMATICALLY FAILS WITH ERROR CWSMQ0006E AND WMQ REASON CODE 2278. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix Pack 7.1.0.2 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24033287]
+WebSphere MQ V7.0 Fix Pack 7.0.1.10 [http://www-01.ibm.com/support/docview.wss?uid=swg24034145]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A client application using the Messaging Service Client for
+   .NET V2.0 fails to make a client mode connection to the remote
+   queue manager when attempting to use a client channel
+   definition table ( CCDT ).  The CCDT is specified
+   programmatically in the client application code as follows:
+   
+   XMSFactoryFactory factoryFactory =
+   XMSFactoryFactory.GetInstance(XMSC.CT_WMQ);
+   
+   IConnectionFactory cf =
+   factoryFactory.CreateConnectionFactory();
+   
+   cf.SetIntProperty(XMSC.WMQ_CONNECTION_MODE, XMSC.CT_WMQ);
+   cf.SetStringProperty(XMSC.WMQ_CCDTURL,
+   "file://C:\\PATH_TO_CCDT\\AMQCLCHL.TAB");
+   cf.SetStringProperty(XMSC.WMQ_QUEUE_MANAGER, "*QMNAME");
+   
+   The connection attempt fails with XMS error CWSMQ0006E and MQ
+   reason code 2278, which means MQRC_CLIENT_CONN_ERROR.
+   
+   Error in trace:
+   
+   00000010 X UOW=
+   source=IBM.XMS.Client.WMQ.WmqConnectionFactory org=IBM
+   prod=WebSphere
+   component=Message Service Client for .NET thread=[1 : 0]
+   IBM.XMS.XMSException: CWSMQ0006E: An exception was received
+   during the call to the method
+   ConnectionFactory.CreateConnection:
+   IBM.WMQ.Nmqi.NmqiException: Exception of type
+   'IBM.WMQ.Nmqi.NmqiException' was thrown.
+   at IBM.WMQ.Nmqi.ManagedNmqiMQ.NmqiConnect(String name,
+   NmqiConnectOptions pNmqiConnectOpts, MQConnectOptions cno,
+   Hconn parentHconn, Phconn pHconn, Int32& compCode, Int32&
+   reason)00000010 X UOW=
+   source=IBM.XMS.Client.WMQ.WmqConnectionFactory org=IBM
+   prod=WebSphere
+   component=Message Service Client for .NET thread=[1 : 0]
+   IBM.XMS.XMSException: CWSMQ0006E: An exception was received
+   during the call to the method
+   ConnectionFactory.CreateConnection:
+   IBM.WMQ.Nmqi.NmqiException: Exception of type
+   'IBM.WMQ.Nmqi.NmqiException' was thrown.
+   at IBM.WMQ.Nmqi.ManagedNmqiMQ.NmqiConnect(String name,
+   NmqiConnectOptions pNmqiConnectOpts, MQConnectOptions cno,
+   Hconn parentHconn, Phconn pHconn, Int32& compCode, Int32&
+   reason)
+   
+   at
+   IBM.XMS.Client.WMQ.WmqConnectionFactory.
+   CreateProviderConnection(XmsPropertyContext connectionProps)
+   Linked Exception : CompCode: 2, Reason: 2278
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   1. Using CCDT file with Queue Manager Name specified as
+   asterisk OR Queue Manager name not specified in the
+   application program.
+   2. Using CCDT file for Client Connections on x64bit clients.
+   3. Using XMSC.WMQ_CCDTURL property to set CCDT location for
+   in the XMS application.
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   Issue1 - XMS .NET was unable to locate Channel Table file when
+   its location has been provided as value to XMS Connection
+   Factory Property - XMSC.WMQ_CCDTURL. Due to this reason, it
+   has failed with MQRC_CLIENT_CONN_ERROR (MQRC 2278)
+   
+   Issue2 - XMS .NET(NMQI) client was unable to match channel
+   definitions when the Queue manager name in client application
+   is set as an asterisk or set as in groups or not set.
+   This was again causing MQRC_CLIENT_CONN_ERROR (MQRC 2278)
+   during XMS CreateConnection.
+   
+   Isuue3 - XMS .NET(NMQI) client was failing while constructing
+   a channel definition from the CCDT file stream on x64bit client
+   machines only. This was again causing MQRC_CLIENT_CONN_ERROR
+   (MQRC 2278) during XMS Create Connection.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  For Issue1 mentioned above - NMQI code has been fixed to honor
+   the CCDT file location and name when set in
+   XMSC.WMQ_CCDTURL property with XMS connection factory property.
+   
+   For Issue2 - NMQI code has been fixed to allow Queue Manager
+   Name as asterisk or QueueManagerGroup and match the Channel
+   Definitions as per WMQ specifications.
+   
+   For Issue3 - NMQI Code has been fixed read and process the CCDT
+   file stream correctly while creating MQ Channel Definition
+   structure on x64bit client platforms.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.10
+   --------           --------------------
+   Windows            7.0.1.10
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.2
+   --------           --------------------
+   Windows            7.1.0.2
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV20954
+   
+   
+ * REPORTED COMPONENT NAME
+   MSG SRVCS CL .N
+   
+   
+ * REPORTED COMPONENT ID
+   5724M2100
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-11
+   
+   
+ * CLOSED DATE
+   2012-05-31
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MSG SRVCS CL .N
+   
+   
+ * FIXED COMPONENT ID
+   5724M2100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY
+   UP

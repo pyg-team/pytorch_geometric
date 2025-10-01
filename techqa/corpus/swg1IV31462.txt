@@ -1,0 +1,157 @@
+Title: IBM IV31462: CUSTOMER NEEDS TO LOGIN TWICE WHEN CONNECTING VIA CITRIX THIN CLIENT - United States
+
+Text:
+  A FIX IS AVAILABLE
+8.2.0-ISS-SAMESSO-AA-FP0014 [http://www-01.ibm.com/support/docview.wss?uid=swg24033851]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  AA 8.2
+   Citrix Xenapp 6.5
+   
+   We are using ESSO on Windows workstations, then Citrix thin
+   client to access other hosts. (These other hosts also have ISAM
+   ESSO AccessAgent   installed)
+   
+   Single Sign-On these other hosts with the thin client only works
+   some of the time. Getting it to work, or to fail, is not
+   predictable.
+   
+   Successful outcome:  Open Citrix client and log in to host
+   through ESSO  GINA. User must enter password once.
+   Unsuccessful outcome: Open Citrix client and log in to host
+   through ESSO GINA. After this, with Windows GINA is shown. User
+   must enter password twice (as AA is not entering Windows
+   password)
+   
+   
+   Detailed test cases:
+   Case1,
+   -> Log in to cisco VPN on laptop
+   -> RDP to test workstation (x.x.24.251)
+   -> Log in as sitauser1 (through ESSO GINA)
+   -> Connect to the same workstation or another one, using Citrix
+   -> Go to Start > Lock
+   > Unlock
+   -> Enter ESSO password
+   -> MS GINA is displayed, password is NOT injected by AA
+   -> Have to enter password into MS GINA to log in
+   
+   Case2,
+   
+   1>     User1 logon to critix.
+   2>     Then close the connect to critix directly, not log off.
+   3>     Next time logon back, unlock will have issue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When logging on to AccessAgent from a Citrix thin client, the
+   Windows password is sometimes not injected.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem will be addressed in an AccessAgent fix pack, which
+   will be published for download on Fix Central.
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm~Tivoli&product=ibm/Tivoli/Tivoli+Access+Manager+for+Enterpr [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Tivoli+Access+Manager+for+Enterpr]
+   ise+Single+Sign-On&release=All&platform=All&function=all
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV31462
+   
+   
+ * REPORTED COMPONENT NAME
+   SSO ACCESS AGEN
+   
+   
+ * REPORTED COMPONENT ID
+   5724V67AG
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-07
+   
+   
+ * CLOSED DATE
+   2012-11-23
+   
+   
+ * LAST MODIFIED DATE
+   2012-11-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SSO ACCESS AGEN
+   
+   
+ * FIXED COMPONENT ID
+   5724V67AG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSY
+   UP

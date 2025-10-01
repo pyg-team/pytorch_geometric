@@ -1,0 +1,182 @@
+Title: IBM IC88165: WEBSPHERE MQ REPORTS MQRC_CONNECTION_BROKEN ERROR DURING CLIENT DISCONNECT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.5 Fix Pack 7.5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24035286]
+Fix Pack 7.1.0.3 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035405]
+WebSphere MQ V7.0 Fix Pack 7.0.1.11 [http://www-01.ibm.com/support/docview.wss?uid=swg24035750]
+WebSphere MQ v7.5.0.2 Hypervisor for RHEL [http://www-01.ibm.com/support/docview.wss?uid=swg24036533]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere MQ managed .NET application reports
+   MQRC_CONNECTION_BROKEN error during disconnect. The following
+   error is reported in the event viewer:
+   
+   MQRC_CONNECTION_BROKEN
+   EventWatcher\Match Message In
+   at IBM.WMQ.MQQueueManager.Disconnect()
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   WebSphere MQ managed .NET applications.
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   WebSphere MQ managed .NET application intermittently reports
+   MQRC_CONNECTION_BROKEN error during disconnect with the
+   following exception.
+   
+   System.Net.Sockets.SocketException
+   Message: An invalid argument was supplied
+   StackTrace:
+   at System.Net.Sockets.Socket.Shutdown(SocketShutdown how)
+   at IBM.WMQ.MQTCPConnection.CloseSocket()
+   at IBM.WMQ.MQFAPConnection.Close(MQTSH tshc)
+   at IBM.WMQ.MQFAPConnection.Disconnect()
+   at IBM.WMQ.MQFAP.Disconnect(Int32 hConn, Int32& compCode,
+   Int32& reason)
+   at IBM.WMQ.Nmqi.ManagedNmqiMQ.MQDISC(Phconn phconn, Int32&
+   pCompCode, Int32& pReason)
+   
+   This was because the System.Net.Sockets.Socket.Shutdown invoked
+   while closing the socket was intermittently reporting
+   SocketException.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  System.Net.Sockets.Socket.Shutdown invoked while closing the
+   socket intermittently reports SocketException. The WebSphere MQ
+   .NET code is modified to ignore this exception and proceed
+   towards closing the socket.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.11
+   --------           --------------------
+   Windows            7.0.1.11
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.3
+   --------           --------------------
+   Windows            7.1.0.3
+   
+   Platform           v7.5
+   --------           --------------------
+   Multiplatforms     7.5.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC88165
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-12
+   
+   
+ * CLOSED DATE
+   2013-01-31
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

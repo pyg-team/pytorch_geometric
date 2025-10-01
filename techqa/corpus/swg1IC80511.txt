@@ -1,0 +1,139 @@
+Title: IBM IC80511: OPTIM PERFORMANCE MANAGER - JAVA.LANG.NOCLASSDEFFOUNDERROR: ZERO/UTIL/HTTP/HTTPCONNECTIONCONTENTHANDLERFACTORY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Optim Performance Manager Initialization failure error
+   $ ./OPMstart.sh WebClient
+   $
+   STARTING: http://localhost:55000/optimdatatools/console [http://localhost:55000/optimdatatools/console]
+   Initialization failure. See log files for errors.
+   java.lang.NoClassDefFoundError:
+   zero/util/http/HttpConnectionContentHandlerFactory
+       at com.ibm.datatools.zero.servlet.adapter.AppLauncher.<init>
+   (AppLauncher.java:49)
+       at com.ibm.datatools.zero.servlet.adapter.Main.doStart
+   (Main.java:341)
+       at
+   com.ibm.datatools.zero.servlet.adapter.Main.doOp(Main.java:253)
+       at
+   com.ibm.datatools.zero.servlet.adapter.Main.main(Main.java:113)
+   Caused by: java.lang.ClassNotFoundException:
+   zero.util.http.HttpConnectionContentHandlerFactory
+       at java.net.URLClassLoader$1.run(URLClassLoader.java:202)
+       at java.security.AccessController.doPrivileged(Native
+   Method)
+       at
+   java.net.URLClassLoader.findClass(URLClassLoader.java:190)
+       at java.lang.ClassLoader.loadClass(ClassLoader.java:307)
+       at
+   sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:301)
+       at java.lang.ClassLoader.loadClass(ClassLoader.java:248)
+       ... 4 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  (1). if PATH is not set in bin/product.sh - above, please
+        include it in product.sh.
+        PATH=${dsserver_home}/java150_64/jre/bin:${PATH}
+        export PATH
+   (2). run <installdir>/bin/init.sh -- this initializes the
+        console server (chmod 755 bin/*.sh if needed)
+   (3). run <installdir>/bin/start.sh - to start only the console
+        server.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Optim Performance Manager version 5.1.1.0 contains the fix.
+   Either upgrade the OPM to 5.1.1.0 or install OPM 5.1.1.0 from
+   scratch.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC80511
+   
+   
+ * REPORTED COMPONENT NAME
+   OPT PER MGR DB2
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y9400
+   
+   
+ * REPORTED RELEASE
+   411
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-20
+   
+   
+ * CLOSED DATE
+   2012-08-01
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R511 PSY
+   UP

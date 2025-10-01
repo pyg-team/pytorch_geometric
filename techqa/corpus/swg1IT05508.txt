@@ -1,0 +1,129 @@
+Title: IBM IT05508: PUREAPPLICATION SYSTEM V2.0 CALL HOME FUNCTION SWITCHES EVENT SOURCES ON UPLOAD RETRIES - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038445]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After the Call Home function creates the Problem Management
+   Report (PMR) ticket it attempts to upload the problem files to
+   the PMR ticket system. If it fails it retries.
+   
+   The user noticed that during retries the source of the
+   failure events seemed to change. Sometimes it specified
+   "PureSystems Manager SN#XXXXXXX" and other times it had a source
+   similar to "Cluster Cluster 1".
+   
+   This created 2 separate sets of correlated events. When the
+   upload retry succeeded only one of the failure event sets would
+   be resolved.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The Call Home function was creating failed upload events using
+   an incorrect event source.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix is being provided in PureApplication System version
+   2.0.0.1 to prevent invalid retry events from being created.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT05508
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-11
+   
+   
+ * CLOSED DATE
+   2014-11-11
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY
+   UP

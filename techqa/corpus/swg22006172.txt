@@ -1,0 +1,40 @@
+Title: IBM API Management Version 4.0.4.6 is now available - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ IBM API Management Version 4.0.4.6 addresses important APARs 
+
+CONTENT
+
+
+IBM API Management V4.0.4.6 is now available for download 
+
+We advise all users of IBM API Management V4.0 to install this update to take advantage of the fixes. 
+
+
+APAR FIXES
+THE FOLLOWING APARS WERE ADDRESSED BY IBM API MANAGEMENT V4.0.4.6, ALONG WITH OTHER INTERNALLY RAISED QUALITY FIXES:
+APAR Summary LI79716 CONTENTS CONFIDENTIAL LI79679 CHANGES TO ADDRESS OUT OF MEMORY ERRORS ON MANAGEMENT SERVER LI79596 IN APIMV4, IF PARAMETER VALUE IN QUERY STRING CONTAINS A '+' IS SUBMITTED, IT WILL BE TRIMMED IN THE OUTBOUND URL LI79668 ARRAY-TO-ARRAY MAPPING ISSUE USING MATHEMATICAL NUMBER TRANSFORMATION LI79654 CONTENTS CONFIDENTIAL LI79605 CALLS TO GATEWAY FROM MANAGEMENT SERVER MAY GET STUCK INDEFINITELY IN CERTAIN SITUATIONS LI79567 RUNTIME SERVERS AUTOMATICALLY MOVING TO STANDALONE OR INACTIVE LI79106 'HA LIST' and 'SYSTEM SHOW STATUS' commands, runtime of nodes fluctuating between Up and Down unexpectedly. LI78738 API MANAGEMENT: THE CERTIFICATE OF A BACKEND SYSTEM IS VALIDATED EVEN WHEN 'REQUEST AND VALIDATE CERTIFICATE' IS OFF LI79690 ISSUES WITH SERVER VALIDATION OF PARAMETERS 
+
+ HOW CRITICAL IS THIS FEATURE PACK? 
+Critical/Highly recommended. 
+
+ RECOMMENDED GATEWAY SERVER VERSION: 
+Use DataPower version 7.2, 7.1.0.x, 7.0.0.x, 6.0.0.7, or 6.0.1.3 (or higher) with IBM API Management Version 4.0.4.6. 
+
+SUPPORT LIFECYCLE POLICY FOR API MANAGEMENT VERSION 4.0.4.6: 
+IBM API Management Version 4.0.4.x is a Maintenance Support Release and provides predictable support through regular, cumulative, in-place iFixes for a minimum period of two years. 
+
+A Maintenance Support Release is a recommended product level for which support, including defect and security updates, will be provided over a specified period of time. A Maintenance Support Release is intended for customers that may need a longer term deployment for their environment. 
+
+DOWNLOADS:
+ Full installation and upgrade files for IBM API Management Version 4.0.4.6 can be downloaded from Fix Central: IBM API Management Version 4.0.4.6 [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/IBM+API+Management&release=4.0.4.5&platform=All&function=all] 
+
+Ensure that you have read and understood the above Important installation instructions before downloading and using the installation or upgrade files.
+
+
+
+What is Fix Central (FC)? [http://www.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html] CHANGE HISTORY: 
+18 July 2017: IBM API Management Version 4.0.4.6 released.

@@ -1,0 +1,68 @@
+Title: IBM ERO (Optimise2) does not work when Excel spreadsheet's sheet names are named similar and contain space characters or &. - United States
+
+Text:
+Optimise2 out of memory TROUBLESHOOTING
+
+PROBLEM
+Customer has a very large and complex spreadsheet (for example XLS file) report. When running an F9 refresh (to 'run' the report) they find that the report takes a long time to run. They may also experience an out-of-memory exception. To solve these problems, the customer implements Optimise2 (also known as "Enhanced Reporting Optimisation" / ERO). For more details, see separate IBM Technote #1347048. However, when they run the report, Optimise2 does not appear to have done anything (there is no change to the behaviour of the report).
+
+SYMPTOM
+After implementing/enabling Optimise2, the report runs just as slowly as before (no performance increase), and any error messages (such as 'out of memory') remain.
+
+For example, this error may be seen when a larger, more complex Excel report is refreshed:
+
+Standard Error Number: 5
+Source: FrangoDirect.ExcelLinkD.FetchValues#ControllerProxyClient
+Description: System.Web.Services.Protocols.SoapException: Server was Unable to process request. -' System.OutOfMemoryException:
+Exception of type 'System.OutOfMemoryException' was thrown
+
+CAUSE
+Limitation in older versions of Controller, where the Excel link cannot resolve 'named areas' and worksheets if the worksheet name(s) either:
+
+ * contain a 'space' character in them.
+ * or contain a '&' character in them
+ * or are similarly named
+
+
+Example 
+For example, imagine a scenario where the spreadsheet has two sheets. Their names are:
+
+ * Sheet 1:  * IMPORT ABC 
+   
+   
+ * Sheet 2:  * IMPORT DEF 
+   
+   
+
+[https://www-prd-trops.events.ibm.com/sites/default/files/support/swg/cogtech.nsf/0/998ae07d5c5f96d885257529006ca4c9/Cause/0.3BE.gif] [https://www-prd-trops.events.ibm.com/sites/default/files/support/swg/cogtech.nsf/0/998ae07d5c5f96d885257529006ca4c9/Cause/0.3BE.gif]
+
+ENVIRONMENT
+This problem has been seen in the following versions of Controller: 8.3, 8.4, 8.5, 8.5.1, 10.1, 10.1.1, 10.2.0, and (probably) 10.2.1.
+
+RESOLVING THE PROBLEM
+Fix: 
+
+Upgrade to a later version of Controller.
+
+ * TIP: The problem is known to not affect Controller 10.3.0 FP1 IF4 (10.3.1.53) and later versions (for example Controller 10.3.1 onwards).
+
+Workaround: 
+
+Ensure that any spreadsheets used with Optimise2/ERO do not contain 'spaces' in their worksheet names/
+
+TIP: Instead you can use the underscore ('_') character.
+
+Example 
+
+
+In the above example scenario, the solution could have been to rename the sheets to:
+
+ * IMPORT_ABC 
+ * IMPORT_DEF 
+
+[https://www-prd-trops.events.ibm.com/sites/default/files/support/swg/cogtech.nsf/0/998ae07d5c5f96d885257529006ca4c9/Content/0.2AA.gif] [https://www-prd-trops.events.ibm.com/sites/default/files/support/swg/cogtech.nsf/0/998ae07d5c5f96d885257529006ca4c9/Content/0.2AA.gif]
+
+RELATED INFORMATION
+1347048 - What is Optimise2 (ERO / Enhanced Reporting O [http://www.ibm.com/support/docview.wss?uid=swg21347048] 
+HISTORICAL NUMBER
+1040026

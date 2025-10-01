@@ -1,0 +1,57 @@
+Title: IBM Nodeagent will not start on source environment after Portal migration - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After a migration from Portal 6.1x (source) to Portal 8.0x (target) the nodeagent on the source environment will not start. Portal requires the nodeagent to be started before Portal can start, so since the nodeagent will not start the Portal cannot be started either.
+
+SYMPTOM
+The nodeagent SystemOut.log shows the following....
+5/23/14 19:01:04:489 EDT] 00000df3 JMSRegistrati E WMSG1605E: It was
+not possible to detect the MQ JMS client at the specified path
+D:\Data\IBM\WebSphere\AppServer\lib\WMQ.
+[5/23/14 19:01:04:505 EDT] 00000df3 TCPChannel I TCPC0002I: TCP
+Channel TCP_1 has stopped listening on host * (IPv6) port 9353.
+[5/23/14 19:01:04:552 EDT] 00000df3 NodeAgent E ADML0059E: An
+error occurred restarting the node agent: Feature 'localAdminProtocol'
+not found.
+(file:/C:/IBM/WebSphere/wp_profile/config/cells/<cellname>/nodes/
+<nodename>/servers/nodeagent/server.xml, 6, 266)
+[5/23/14 19:01:04:567 EDT] 00000df3 ServerCollabo A WSVR0024I: Server
+nodeagent stopped
+[5/23/14 19:01:06:505 EDT] 00000e21 NodeSync E ADMS0005E: The
+system is unable to generate synchronization request:
+javax.management.JMRuntimeException: ADMN0022E: Access is denied for
+the getRepositoryEpoch operation on ConfigRepository MBean because of
+insufficient or empty credentials.
+at
+com.ibm.ws.management.connector.soap.SOAPConnectorClient.handleAdminFaul
+t(SOAPConnectorClient.java:827)
+
+
+CAUSE
+In this case this occurred because the DMGR from the target environment (Portal 8.0x) performed a sync against the nodeagent from the source environment (Portal 6.1x). Because a sync occurred there were v8 artifacts synced to the 6.1 nodeagent configuration and thus the errors.
+
+
+ENVIRONMENT
+Portal 6.1x - source 
+
+Portal 8.0x - target 
+
+Windows 
+
+Portal cluster
+
+
+DIAGNOSING THE PROBLEM
+Review SystemOut.log from nodeagent startup
+
+
+
+RESOLVING THE PROBLEM
+There are 2 options... 
+
+1) Restore the Portal environment from file system backup 
+
+2) Restore the nodeagent config using the restoreConfig utility from WebSphere Application Server

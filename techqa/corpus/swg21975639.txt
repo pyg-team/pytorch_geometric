@@ -1,0 +1,87 @@
+Title: IBM Transformation Extender or WebSphere Transformation Extender file extensions - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ This document lists file extensions that are created or used by Transformation Extender (TX) or WebSphere Transformation Extender (WTX). 
+
+ANSWER
+Source file extensions:
+*.mdq Database Query Definition
+*.mms Map Source
+*.mrc Resource Configuration
+*.mrn Resource Name
+*.msd System Definition
+*.mts Type Script
+*.mtt Type Tree
+
+Default compiled map extensions by platform:
+
+*.aix AIX
+*.dpa DataPower Appliance
+*.hpi HP Itanium
+*.lnx Intel Linux
+*.mmc Windows
+*.mvs z/OS
+*.pnx Power Linux
+*.sun Sun Solaris
+*.znx zLinux
+
+Other files created by TX: 
+
+*.mar Map Archive for IBM Integration Bus
+*.mdg Map Debug
+*.mopt Map Source Options
+*.msl System Launcher
+*.mtx Temporary Native Schema / XSD Type Tree
+
+Other files used by TX:
+
+*.bat Batch file or Script to run on Windows
+*.cmd Batch file or Script to run on Windows
+*.dtd Document Type Definition
+*.html Hypertext Markup Language
+*.ini Initialization File
+*.jcl Script to run on z/OS
+*.msg SOAP message request or response
+*.sh Script to run on Unix
+*.wsdl Web Services Description Language
+*.xml XML Document
+*.xsd XML Schema
+*.xslt XSL Transformations
+
+Backup files:
+
+*.bak Input or Output backup or other backup
+*.bc$ Type tree backup in memory 
+*.odq Old Database Query
+*.omm Old Map Source
+*.omt Old Type Tree
+
+Log files:
+
+*.dbe Type Tree Analysis Message
+*.dbl Database adapter trace log
+*.dpl DataPower Session log
+*.log Map audit log or other logs
+*.mme Map Build Analysis Results
+*.mprof Map Profiler result
+*.mtr Map input validation / output trace or Adapter trace 
+*_log.xml XML validation / output trace log
+
+Workfiles:
+
+*.FN? Card workfile
+*.FNL Master workfile
+*.hfn HANDLEIN function workfile
+*.I?? Input workfile
+*.O?? Output workfile
+*.tmp temporary shadow file
+
+Sterling B2B Integrator Maps:
+
+*.ltx B2B Integrator Compiled Map (Lightweight Translation Object)
+*.map B2B Integrator Map Source
+*.mxl B2B Integrator Map Source (XML format)
+*.txo B2B Integrator Compiled Map (Translation Object)

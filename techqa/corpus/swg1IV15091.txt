@@ -1,0 +1,181 @@
+Title: IBM IV15091: I5OS AGENT STARTS BUT THEN ENDS ABNORMALLY - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Product: i5OS for AS400 agent
+   
+   
+   Severity: 3
+   
+   Approver: John Ripstra
+   Reported Release: 6.2.2
+   Compid: 5724C04A4
+   
+   Problem Description: i5OS Agent starts but then ends abnormally
+   
+   
+   Problem: When using ENDOMA or GO OMA option 3 and specifying
+   *IMMED,
+   JOBSn *USRSPC(s) are not properly deleted in QAUTOTMP.  The next
+   startup
+   of the agent causes additional user spaces to be created.  If
+   this is
+   done several times, once the list of user spaces reaches 36, the
+   agent
+   will fail to start up.
+   
+   LOCAL FIX: When ending the agent, make sure to use the default
+   of
+   *CNTRLD rather than *IMMED to allow the agent to remove
+   temporary workspaces.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  When ending the agent, make sure to use the default
+   of *CNTRLD rather than *IMMED to allow the agent to remove
+   temporary workspaces.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The Monitoring Agent for i5/OS starts but ends suddenly with an
+   error.
+   
+   During startup of the Monitoring Agent for i5/OS, an attempt to
+   create a user space in the library QAUTOTMP for an enabled
+   situation fails because we have already reached the maximum
+   number of unique user spaces for that situation. The job log for
+   the CT_AGENT job will have a C2M1601 message that indicates a
+   SIGABRT signal was raised, followed by a CEE9901 message that
+   indicates that the application ended abnormally due to an
+   unhandled exception.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Monitoring Agent for i5/OS now performs cleanup of known
+   uniquely named user spaces prior to starting the agent. This
+   will allow the agent to create new user spaces and start
+   successfully.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+     | fix pack | 6.2.2-TIV-ITM-FP0009
+     | fix pack | 6.2.3-TIV-ITM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  When stopping the agent, make sure to use the default option of
+   *CNTRLD rather than *IMMED. Stopping the agent with the *CNTRLD
+   option allows the agent to shutdown cleanly, removing the
+   temporary user spaces.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV15091
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT ISERI
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04A4
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-07
+   
+   
+ * CLOSED DATE
+   2012-04-24
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT ISERI
+   
+   
+ * FIXED COMPONENT ID
+   5724C04A4
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP
+   
+   
+ * R623 PSY
+   UP

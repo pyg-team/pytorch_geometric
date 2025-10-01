@@ -1,0 +1,152 @@
+Title: IBM PK47659: CONNECTION ERRORS WHEN REBUILDING THE EVENT LOG AND WHEN SYNDICA TING - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Connections exceptions occur during start up when rebuilding the
+   event log database. The server skips the failed items and starts
+   successfully but the event log does not contain the correct list
+   of items which may cause problems during syndication. The
+   following exceptions will appear in the SystemOut.log file:
+   
+   [5/25/07 21:51:08:694 NZST] 0000000a ConnectionEve A
+   J2CA0056I: The Connection Manager received a fatal connection
+   error from the Resource Adaptor for resource jdbc/JCRDS.  The
+   exception which was received is
+   com.ibm.websphere.ce.cm.StaleConnectionException: No more data
+   to read from socket
+   [5/25/07 21:51:08:763 NZST] 0000000a EventLogServi E
+   IWKMU1062X: Message: Cannot add version entry for item
+   [Ljava.lang.Object;@2a28b07f., Cause: java.sql.SQLException:
+   ORA-01000: maximum open cursors exceeded
+   
+   [5/25/07 21:51:09:084 NZST] 0000000a EventLogServi E
+   IWKMU1062X: Message: Cannot add log entry for item 5/25/07 9:51
+   PM., Cause: com.ibm.websphere.ce.cm.ObjectClosedException:
+   DSRA9110E: Connection is closed.
+   
+   com.ibm.workplace.wcm.services.eventlog.EventLogException:
+   IWKMU1062X: Message: Cannot add log entry for item 5/25/07 9:51
+   PM., Cause: com.ibm.websphere.ce.cm.ObjectClosedException:
+   DSRA9110E: Connection is closed.
+   
+   This may continue to occur after applying PK46099 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK46099] because the
+   process is threaded and it was possible for the system to
+   attempt to close the connections on the wrong thread.
+   
+   It was also possible for connections to become stale during
+   connection, resulting in this error in the logs:
+   
+   [6/13/07 19:11:33:006 NZST] 00000049 SaveWorkspace E   Could not
+   save object in repository.
+                                    javax.jcr.RepositoryException:
+   Io exception: Connection resetThread 197246069 :
+   .cm.StaleConnectionException: Io exception: Connection reset
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This occurs because the connections were not being closed correc
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  An Interim Fix is available for this APAR on Fix Central at:
+   
+   6.0.1.1
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?brandid=2&productid=Workplace%20Web%20Content%20Management&fix [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?brandid=2&productid=Workplace%20Web%20Content%20Management&fix]
+   es=6.0.1.1-WCM-PK47659
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK47659
+   
+   
+ * REPORTED COMPONENT NAME
+   WRKPLC WEB CON
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   60A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-06-25
+   
+   
+ * CLOSED DATE
+   2007-06-25
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WRKPLC WEB CON
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP

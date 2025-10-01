@@ -1,0 +1,167 @@
+Title: IBM IV90657: REMOVAL OF INDEX CREATION - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-LINUX-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0009&source=SAR]
+7.1.0-TIV-NCI-ZLINUX-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0009&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0009&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0009&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0009&source=SAR]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 9(7.1.0-TIV-NCI-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24043378]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 10(7.1.0-TIV-NCI-FP0010) [http://www-01.ibm.com/support/docview.wss?uid=swg24043588]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 11(7.1.0-TIV-NCI-FP0011) [http://www-01.ibm.com/support/docview.wss?uid=swg24043858]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 12 (7.1.0-TIV-NCI-FP0012) [http://www-01.ibm.com/support/docview.wss?uid=swg24044312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  - removal of index creation. For 2 reasons
+   a) it is not appropriate for NOI to create
+          indexes on another;s database
+       b) the index creation is based on the ID, but
+          the filter fields are not added to the index.
+          A better index should include these. +type fields.
+    - Documentation update to recommend users to manually create
+   their own index based on ID and Filter + Type fields
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Update to appear in a future fix pack and documentation
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL IMPACT USERS                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Impact code creates indexes on the customer's REPORTER       *
+   * database.                                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * As of  NOI 1.4.0.5 / Impact 7.1.0.9, Impact will no longer   *
+   * automatically create indexes on the events history table for *
+   * the filter date column (FIRSTOCCURRENCE by default) and the  *
+   * Identity field for Seasonality. It is the responsibility of  *
+   * the database admin to construct (and maintain) appropriate   *
+   * indexes on the REPORTER history database. It is recommended  *
+   * to review the filter fields for the reports as a basis for   *
+   * an index, plus review if an index is required for Identity   *
+   * fields.                                                      *
+   ****************************************************************
+   The code should not do this - it is a violation. Document the
+   Index requirement instead.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following
+   maintenance packages:
+   |Fix Pack | 7.1.0-TIV-NCI-FP0009
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV90657
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-11-10
+   
+   
+ * CLOSED DATE
+   2016-12-19
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UNKNOWN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

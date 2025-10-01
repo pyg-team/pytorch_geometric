@@ -1,0 +1,134 @@
+Title: IBM PI10149: MOBILE BROWSER SIMULATOR IS BLOCKED IN BROWSER WHEN USING ORACLE JAVA 7 UPDATE 51 WITH "HIGH" SECURITY SETTING - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS CHANGE TO ACCOMODATE OEM VENDOR'S CODE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A change was introduced in Oracle Java 7 Update 51 that
+   requires a Permissions attribute in the JAR manfest of Java Web
+   Start applications and web-based applets when the security
+   level is set to "High" in the Java Control Panel.  The
+   Worklight Mobile Browser Simulator does not include such
+   attributes in it's JAR manifest, and will be blocked in the
+   browser if the user's Java security level is set to "High".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  As a workaround, the security level in the Java Control Panel
+   can be reduced to "Medium", which will permit the Mobile
+   Browser Simulator to run.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Developers using the Mobile Browser Simulator with Oracle    *
+   * Java 7 u51 and later.                                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The Mobile Browser Simulator cordova applet jar needed to be *
+   * signed with new permissions to follow the latest Oracle Java *
+   * 7 u51 guidelines.                                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * -                                                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Mobile Browser Simulator applet jar has been signed
+   correctly.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fixpack 6.1.0.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI10149
+   
+   
+ * REPORTED COMPONENT NAME
+   WORKLIGHT ENTER
+   
+   
+ * REPORTED COMPONENT ID
+   5725I4300
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED OEM
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-01-22
+   
+   
+ * CLOSED DATE
+   2014-02-09
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

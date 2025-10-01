@@ -1,0 +1,103 @@
+Title: IBM MustGather: Read first for all WebSphere Application Server Community Edition components - United States
+
+Text:
+collector; collector; Must Gather Logs; Must Gather Logs; Must Gather Logs; WASCE Logs; WASCE Logs; WASCE Logs; MustGatherReadFirstDocument; MustGatherDocument; WAS CE; WAS CE; WAS CE; WASCE; WASCE; WASCE; JBoss; JBoss; JBoss; Glassfish; Glassfish; Glassfish; App Server; App Server; WebSphere CE; WebSphere CE; WebSphere CE; WebSphere Community Edition; WebSphere Community Edition; WebSphere Community Edition; IBM CE; IBM CE; IBM CE; Open Source; Open Source; Open Source TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ MustGather documents aid in problem determination and save time resolving Problem Management Records (PMRs) for WebSphere Application Server Community Edition. 
+
+RESOLVING THE PROBLEM
+Collecting MustGather data early, even before opening the PMR, helps IBM Support quickly determine if:
+
+ 1. Symptoms match known problems (rediscovery).
+    
+ 2. There is a non-defect problem that can be identified and resolved.
+    
+ 3. There is a defect that identifies a work-around to reduce severity.
+    
+ 4. Locating root cause can speed development of a code fix.
+
+
+MustGather: Readme first table of contents: 
+
+
+
+[/support/docview.wss?uid=swg21231419&amp;aid=1] Gathering general information [/support/docview.wss?uid=swg21231419&amp;aid=2] Gathering snap-shot of server configuration using Collector tool [/support/docview.wss?uid=swg21231419&amp;aid=3] Submitting information to IBM Support 
+
+
+
+
+Gathering general information: 
+ 1. Copy the version of WebSphere Application Server Community Edition, as well as list of installed patches into a text file.
+    
+    
+ 2. Locate the InstallDir/var/log/server-log4j.properties file. Set the value of log4j.rootLogger to "DEBUG, CONSOLE, FILE".
+    
+    Note : For v1.1 users, set the value of log4j.rootCategory to "DEBUG, CONSOLE, FILE".
+    
+    
+ 3. If you are experiencing a problem in a specific component, locate the related LOG4J categories in InstallDir/var/log/server-log4j.properties file, then set appropriate log level to generate output that shows where the problem occurs. 
+    
+    By default, most of the categories have the "WARN" log level. Typically, changing the log level to "DEBUG" will provide useful information for problem determination.
+    
+    
+ 4. Restart the Application Server and recreate the problem.
+    
+    
+ 5. If there is a testcase application, deploy the testcase application on to the server and collect the expanded application folders in InstallDir/repository, after recreating the scenario. 
+    
+    If there is no geronimo plan for the application, server generates a module configuration for the application with default groupID during deployment. Locate the expanded folders for the application in InstallDir/repository/default
+    
+ 6. Collect the following data:  * InstallDir/var/catalina/logs/*.log 
+     * InstallDir/var/derby/*.log 
+     * InstallDir/var/log/*.log 
+     * InstallDir/var/log/*.properties 
+     * InstallDir/var/txlog/*
+       
+       
+    
+    
+ 7. Bundle the above information. We suggest using zip or tar.
+    
+    
+ 8. Follow the below directions for gathering snap-shot of server configuration.
+    
+    
+ 9. If the problem being experienced is related to start-up of the server, set the appropriate log levels by following Steps 1 to 3 and restart the server to collect the logs mentioned in the Step 6. Finally, follow the link at the bottom of this technote to submit the collected logs to Support team.
+    
+
+
+Gathering snap-shot of server configuration using Collector Tool : 
+
+The Collector-tool, as the name suggests, is a Java™ application that collects information from WebSphere Application Server Community Edition Server running locally or on a remote host. The idea of this tool is to provide a snapshot of the entire server configuration to system administrator. Currently, it compiles the Server Build/Version, JVM, Web Server, JMS Server, Repository and Configurations information of a running WebSphere Application Server Community Edition Server and outputs the information to standard output (STDOUT). The server should be running to invoke this tool. The output from the tool can be helpful in diagnosing any server or application problems quickly. 
+
+Collector tool can be invoked by using the script file provided in InstallDir/bin folder. The script is platform-specific. On windows, it is InstallDir/bin/collector.bat file. On Linux®, it is InstallDir/bin/collector.sh file. 
+
+Regardless of which file is used, the command syntax is same. 
+ * collector <options>
+
+
+
+Invoking this script writes the output to standard output (STDOUT). The output can be redirected to a file or piped to another application. 
+
+Examples of Usage : 
+
+Use this syntax to run collector-tool against an active server on the local host. After installation, the initial username is system and the initial password is manager. If username/password are omitted then the default values are assumed. 
+ * collector –-username <username> –-password <password>
+
+
+Use this syntax to run collector-tool against an active server on a remote host. After installation, the initial username is system and the initial password is manager. The default value of port is 1099. If username/password/port values are omitted then the default values are assumed. 
+ * collector –-host <ip> –-port <port> –-username <username> –-password <password>
+
+
+You can zip/tar the information gathered from collector-tool and bundle it along with the general information collected in the previous section. 
+
+Follow the directions for submitting information to IBM Support (below). 
+
+Submitting information to IBM Support: 
+It is necessary to open a PMR before sending information to IBM Support. If a PMR is already open, update the PMR after sending information. 
+
+Follow directions for Submit diagnostic information to IBM Support. [http://www.ibm.com/support/docview.wss?rs=180&context=SSEQTP&uid=swg21153852] 
+
+Tip to save you time: 
+If you open and update your PMRs electronically, using SR [http://www.ibm.com/software/support/probsub.html], update the PMR to indicate that data has been sent.

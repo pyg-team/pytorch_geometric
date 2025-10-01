@@ -1,0 +1,105 @@
+Title: IBM java.lang.StackOverflowError found in 5001 RC_4 in sftpclient.log.D20090413.T153017 - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ java.lang.StackOverflowError found in 5001 RC_4 in sftpclient.log.D20090413.T153017 
+
+SYMPTOM
+
+
+java.lang.StackOverflowError found in 5001 RC_4 in sftpclient.log.D20090413.T153017. 
+The StackOverflowError is happening due to improperly configured SFTP_EDIInboundBootstrap BP. There is a parameter (RemoteFileName) in process data being treated as an XML node instead of simple text and being passed through RMI to the SFTP Client PUT adapter.
+There is a statement in SFTP_EDIInboundBootstrap BP highlighted below:
+<operation name="SFTP Client PUT Service">
+<participant name="SFTPClientPut"/>
+<assign to="RemoteFileName" from="ExtractBeginResponse/MessageName"></assign>
+Here, we should actually be using the following assign statement:
+<assign to="RemoteFileName" from="ExtractBeginResponse/MessageName/text()"></assign>
+In the "MessageToService" for SFTP PUT service, we see the following:
+<RemoteFileName>
+<MessageName>F8_po1002.xml</MessageName>
+</RemoteFileName>
+This is what is expected in the "MessageToService" for SFTP PUT service:
+<RemoteFileName>F8_po1002.xml</RemoteFileName>
+This is the cause of the StackOverflowError as the assign statement passes an XML node to the PUT Service as opposed to a string.
+
+Error Message [2009-04-13 17:22:42.825] ERROR 000000000000 GLOBAL_SCOPE SFTPClientPut
+[2009-04-13 17:22:42.829] ERRORDTL 000000000000 GLOBAL_SCOPE [1239657762825]java.rmi.ServerError: Error occurred in server thread; nested exception is: 
+java.lang.StackOverflowError
+at sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:337)
+at sun.rmi.transport.Transport$1.run(Transport.java:168)
+at java.security.AccessController.doPrivileged(AccessController.java:279)
+at sun.rmi.transport.Transport.serviceCall(Transport.java:164)
+at sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:506)
+at sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.handleRequest(TCPTransport.java:838)
+at sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:912)
+at java.lang.Thread.run(Thread.java:810)
+at sun.rmi.transport.StreamRemoteCall.exceptionReceivedFromServer(StreamRemoteCall.java:263)
+at sun.rmi.transport.StreamRemoteCall.executeCall(StreamRemoteCall.java:239)
+at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:141)
+at com.sterlingcommerce.woodstock.services.sftpclient.AdapterImpl_Stub.put(AdapterImpl_Stub.java:704)
+at com.sterlingcommerce.woodstock.services.sftpclient.services.PutService.primitiveProcessData(PutService.java:64)
+at com.sterlingcommerce.woodstock.services.sftpclient.services.Service.processData(Service.java:76)
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.invokeService(ActivityEngineHelper.java:1738)
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.nextMainLogic(ActivityEngineHelper.java:596)
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.next(ActivityEngineHelper.java:350)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.doWork(WorkFlowQueueListener.java:326)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.run(WorkFlowQueueListener.java:202)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.onMessage(WorkFlowQueueListener.java:163)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.onMessage(WorkFlowQueueListener.java:150)
+at com.sterlingcommerce.woodstock.workflow.queue.wfTransporter.run(wfTransporter.java:328)
+at com.sterlingcommerce.woodstock.workflow.queue.BasicExecutor$Worker.run(BasicExecutor.java:496)
+at java.lang.Thread.run(Thread.java:810)
+Caused by: java.lang.StackOverflowError
+
+
+RESOLVING THE PROBLEM
+
+
+Provide a properly configured business process and make sure to assign a simple text string instead of an XML node to RemoteFileName.
+Please apply Sterling Integrator, Release 5.0 Build 5001 or later.
+
+ 
+
+HISTORICAL NUMBER
+ NFX5921 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+Adapters
+
+
+Escalation ID
+
+
+QC
+
+
+Fix ID
+
+
+183229
+
+
+Severity
+
+
+Normal
+
+
+Type
+
+
+NormalFix
+
+
+Build
+
+
+5001

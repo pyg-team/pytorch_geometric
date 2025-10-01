@@ -1,0 +1,175 @@
+Title: IBM PI36162: MQOUTPUT NODE DOES NOT RECOVER FROM 2345 / 2373 ERRORS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+IBM Integration Bus V10.0 - Fix Pack 10.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24040056]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The MQOutput node acquires a handle to open the queue before
+   putting the message to the queue. If the MQPUT fails and
+   returns a coupling facility (CF) failure reason code, the queue
+   handle will no longer be valid:
+   
+   2345 MQRC_CF_NOT_AVAILABLE
+   2373 MQRC_CF_STRUC_FAILED
+   
+   When the CF is recovered, the node will continue to use the
+   invalid handle to put to the queue. Without this APAR fix, the
+   execution group needs restarting for the node to acquire a new
+   queue handle.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of IBM Integration Bus on z/OS putting messages to MQ
+   queues.
+   
+   
+   Platforms affected:
+   z/OS
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The MQOutput node acquires a handle to open the queue before
+   putting the message to the queue. If the MQPUT fails and returns
+   a coupling facility (CF) failure reason code, the queue handle
+   will no longer be valid:
+   
+   2345 MQRC_CF_NOT_AVAILABLE
+   2373 MQRC_CF_STRUC_FAILED
+   
+   When the CF is recovered, the node will continue to use the
+   invalid handle to put to the queue.
+   
+   There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0. For details
+   visit
+   http://www-01.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.i
+   bm.etools.mft.doc/bb23814_.htm [http://www-01.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bb23814_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product now recognises the MQRC_CF reason codes in the event
+   of an MQPUT failure.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v9.0       9.0.0.5
+   v10.0      10.0.0.1
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available,information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI36162
+   
+   
+ * REPORTED COMPONENT NAME
+   IB Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655IBB00
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-03
+   
+   
+ * CLOSED DATE
+   2015-04-30
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IB Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5655IBB00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

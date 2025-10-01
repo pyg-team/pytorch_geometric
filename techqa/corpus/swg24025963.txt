@@ -1,0 +1,75 @@
+Title: IBM XA0A:  WebSphere Adapters - ReST Enablement - United States
+
+Text:
+xa0a; websphere adapters; ReST enablement; supportpac DOWNLOADABLE FILES
+
+ABSTRACT
+ ReSTful access to SAP system’s BAPIs via IBM WebSphere Adapter for SAP Software 
+
+DOWNLOAD DESCRIPTION
+A WebSphere Adapters user may find a need to access and execute the SAP systems' BAPIs over HTTP in a ReSTful manner. User may also want to consume the URIs exposed by the 'ReSTfacade for WebSphere Adapters' component in another mashup or web application. 
+
+The 'ReSTfacade for WebSphere Adapters' has two components and is explained below:
+
+ReSTfacade Designer for WebSphere Adapters:
+An Eclipse based plug-in which needs to be installed on top of existing Rational Application Developer. The designer will help users create datasource configurations and 'export' them in a predefined format. The main role of the designer is to assist user select the BAPI(s) he/she is interested in over HTTP in a ReSTful manner. Those 'interested' BAPIs are available for execution (over ReST) when they use below 'ReSTfacade for WebSphere Adapters' component on WebSphere Application Server.
+
+ReSTfacade for WebSphere Adapters:
+A Web Application aRchive (WAR) file to be used in either WebSphere Application Server product. It allows the user to execute the target BAPI(s) with the payload sent by user over HTTP in ReSTful fashion.
+
+Possible Uses
+• Enables user to selected the list of BAPI(s) over HTTP in a ReSTful manner.
+• Enables user to execute the target SAP system's BAPI(s) over HTTP in a ReSTful manner and fits well with Web 2.0 programming model.
+• Enrich the usage of IBM WebSphere Adapter for SAP Software by exposing target SAP system's BAPIs for execution.
+
+Skill Level Required
+• WebSphere Adapters – Intermediate.
+• ReST and Web 2.0 – Beginner.
+
+Feedback
+The developers of this SupportPac would be very interested to know how you might use it, in order to help with future development. A short questionnaire and contact id to respond to can be found within the pdf file below.
+
+Details
+Author: Rajan Kumar, WebSphere Adapters (AIM)
+Category: 2
+Released: 11Jun10 
+Current SupportPac Version: 1.0
+»Please note that the version number shown in the right-hand pane is the version of the WebSphere Adapters product that this SupportPac applies to. The date is the last webpage refresh. 
+
+To view the complete portfolio of WebSphere Adapters SupportPacs please visit the WebSphere MQ SupportPacs homepage. [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27007205]
+
+PREREQUISITES
+• Rational Application Developer 7.5.5.1
+• WebSphere Application Server v 7.0.0.9
+• WebSphere Application Server Community Edition v 2.1.1.3 or later (see link below)
+• WASCE 2.1 WTP Server Adapter Eclipse Plugin (see link below)
+
+URL LANGUAGE SIZE(Bytes) WAS Server Community Edition [http://www-01.ibm.com/software/webservers/appserv/community/] US English 111 WAS Eclipse Update Site [http://public.dhe.ibm.com/software/websphere/wasce/updates/] US English 111 
+INSTALLATION INSTRUCTIONS
+To install the SupportPac:
+
+1. Download the binaries (xa0a.zip) from SupportPac website and unzip it into a temporary directory.
+2. Uncompress using InfoZip's Unzip.
+3. This will create two directories ('development', 'production') under the temporary directory.
+4. Copy the entire content inside 'development' directory (com.ibm.rwad_1.0.0 folder) and paste it inside plug-ins folder of your Rational Application Developer installation directory. (Example C:\IBM\SDP\plugins). This completes your development environment set up.
+5. For the production environment, the directory 'production' has the required WAR file which needs to be deployed to your WebSphere Application Server where the adapter is deployed at node level. 
+6. You may delete xa0a.zip
+7. Usage and implementation instructions are provided in the User Guide 
+8. You may want to refer Eclipse plugin installation instructions to know how to install an Eclipse plugin
+
+Usage instructions are provided in the User Guide 
+
+URL LANGUAGE SIZE(Bytes) xa0a User Guide [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/xa0a.pdf] US English 1102455 
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options xa0a.zip 11/06/2010 US English 17598620 HTTP [http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?popup=Y&li_formnum=L-AFOS-85SEEE&accepted_url=ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/xa0a.zip] 
+TECHNICAL SUPPORT
+ Category 2 SupportPacs are provided in good faith and AS-IS. There is no warranty or further service implied or committed and any supplied sample code is not supported via IBM product service channels. 
+
+You may submit a question using the 'rate this page' below but a response is not guaranteed.
+
+Please read the license information contained within the zip file of this SupportPac to determine if you want to use it.

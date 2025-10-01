@@ -1,0 +1,21 @@
+Title: IBM Why can't I see my tables in the Open Database Wizard? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have created an ODBC data source for my database, and I can see it in the Open Database Wizard in SPSS. I've selected it and clicked next. I do get a list of tables, but I seem to be missing some of them. I know I have permission to view all of them, and I've been able to see them in other applications using the same data source. What is wrong? 
+
+RESOLVING THE PROBLEM
+Starting with SPSS 14.0 for Windows, system tables, system views and synonyms are available in the Open Database Wizard. In SPSS 15.0 for Windows, you can choose which objects you wish to display.
+
+If you do not have SPSS 14.0 for Windows, you can create your SQL statements that call on system tables, views and synonyms, those can be used within SPSS. Please see Resolution Id 21450 for instructions on how to use your SQL queries within SPSS
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 36266

@@ -1,0 +1,130 @@
+Title: IBM PM10861: Rhapsody 7.4.0 CORBA impl file generation creates a double names pace prefix in inherited classes. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer reports:
+   
+   When I  changes the file type (Specification, Implementation, Lo
+   gical, Other) and generate that _impl file, I get a double names
+   pace prefix for the inheritance for the _impl class.  Full regen
+   eration clears that but    brings back the split file problem.
+   
+   
+   2) Can't push multiple CORBA interfaces to a single file in Clas
+   sic
+   code generator and have namespace not be repeated.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Generation of CORBA implementation file results in double
+   namespace prefix.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 7.5.2.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM10861
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   740
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-25
+   
+   
+ * CLOSED DATE
+   2010-09-16
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R740 PSN
+   UP

@@ -1,0 +1,36 @@
+Title: IBM About IBM Rational DOORS local data temporary directories - United States
+
+Text:
+local data directories; Temp TECHNOTE (FAQ)
+
+QUESTION
+ Can you delete the directories in the Rational DOORS temp area with the prefix "LD_" ? 
+
+CAUSE
+There are a number of directories in the local data area; some of these are empty, other contain subdirectories or files.
+
+ANSWER
+Never remove any temporary files or directories when the DOORS client is running. As long as there is no DOORS client running, these directories are safe for deletion.
+
+
+Rational DOORS uses a local data area for temporary file storage and use. These directories and files are created and used during a DOORS client session.
+
+
+Below is a sample directory list tree: 
+
+C:\Documents and Settings\Administrator\Application Data\Telelogic\DOORS\Temp 
+
+ * 
+ * Telelogic
+ *  
+   DOORS  * 
+    * Temp
+    *  
+      LD_0a07252  * 
+       * cache_36677@IBM-613E51529A5_1261486378
+       *  
+         v6data  * 
+          * 20
+          *  
+            m00000024.mod  * 
+             * current.ver

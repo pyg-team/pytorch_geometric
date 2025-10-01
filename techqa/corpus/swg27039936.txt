@@ -1,0 +1,62 @@
+Title: IBM Detailed system requirements for IBM Intelligent Video Analytics - United States
+
+Text:
+ DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+This document provides access to the detailed system requirements information for IBM Intelligent Video Analytics.
+
+CONTENT
+The detailed system requirements information is available through the Software Product Compatibility Reports [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity/index.jsp] web site. This web site provides you with the ability to dynamically generate operating system, prerequisite, server virtualization environment, translation, end of service, and detailed system requirements reports by component for your specific product, release, and operating systems.
+
+The following section provides direct links to the detailed system requirements information for the components of IBM Intelligent Video Analytics.
+
+
+TAB NAVIGATION
+ * Version 2.5- selected tab, 
+ * Version 2.0- selected tab, 
+ * Version 1.6.1- selected tab, 
+ * Version 1.6.0- selected tab, 
+ * Version 1.5- selected tab, 
+ * 
+
+ * Middleware for Large Scale Surveillance (MILS) [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=FD0973006E6411E8A0B560E89C071ECC&duComponentIds=Server_0D2D4A70A6CC11E6B99494E59F104C59]
+ * Smart Surveillance Engine (SSE) [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=FD0973006E6411E8A0B560E89C071ECC&duComponentIds=Server_0D30A5D0A6CC11E6B99494E59F104C59]
+ * Deep Learning Engine (DLE) [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=FD0973006E6411E8A0B560E89C071ECC&duComponentIds=Server_0D31B740A6CC11E6B99494E59F104C59]
+
+Related information 
+
+Intelligent Video Analytics V2.0 product documentation in IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SS88XH_2.0.0/iva/kc_welcome.dita]
+
+ * Middleware for Large Scale Surveillance (MILS) [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=22B13930446E11E69A3DC80984E80E3E&duComponentIds=Server_0D2D4A70A6CC11E6B99494E59F104C59]
+ * Smart Surveillance Engine (SSE) [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=22B13930446E11E69A3DC80984E80E3E&duComponentIds=Server_0D30A5D0A6CC11E6B99494E59F104C59]
+ * Deep Learning Engine (DLE) [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=22B13930446E11E69A3DC80984E80E3E&duComponentIds=Server_0D31B740A6CC11E6B99494E59F104C59]
+
+Related information 
+
+Intelligent Video Analytics V2.0 product documentation in IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SS88XH_2.0.0/iva/kc_welcome.dita]
+
+ * http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1390405070438&duComponentIds=Server_27D16FE0837B11E399C2FED50CFA5139
+ * Middleware for Large Scale Surveillance (MILS)
+ * Smart Surveillance Engine (SSE) [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1390405070438&duComponentIds=Server_27CFE940837B11E399C2FED50CFA5139]
+
+Related information 
+
+Intelligent Video Analytics V1.6.1 product documentation in IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SS88XH_1.6.1/iva/kc_welcome.dita]
+
+ * Middleware for Large Scale Surveillance (MILS) [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1390403390599&osPlatforms=Linux%7CWindows&duComponentIds=S002&mandatoryCapIds=360%7C261%7C26&optionalCapIds=62]
+ * Smart Surveillance Engine (SSE) [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1390403390599&osPlatforms=Linux%7CWindows&duComponentIds=S001&mandatoryCapIds=360%7C261%7C26&optionalCapIds=62]
+
+Related information 
+
+Intelligent Video Analytics V1.6.0 product documentation in IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SS88XH_1.6.0/iva/kc_welcome.dita]
+
+ * Middleware for Large Scale Surveillance (MILS) [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=5F3B0140B7F111E28A11BAD50925FE1B&osPlatforms=Linux%7CWindows&duComponentIds=S002&mandatoryCapIds=62%7C360%7C261%7C26]
+ * Smart Surveillance Engine (SSE) [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=5F3B0140B7F111E28A11BAD50925FE1B&osPlatforms=Linux%7CWindows&duComponentIds=S001&mandatoryCapIds=62%7C360%7C261%7C26]
+
+Related information 
+
+IBM Intelligent Video Analytics Publication Library [http://www.ibm.com/support/docview.wss?uid=swg27039485]
+
+
+Note : Your entitlement to support, if any, is dependent upon your license and/or maintenance agreements for IBM Intelligent Video Analytics, and is limited to your use of the relevant prerequisite with a supported version of IBM Intelligent Video Analytics.

@@ -1,0 +1,184 @@
+Title: IBM PM19237: Update Rational Application Developer 7.5.5.1 BASED EJBDEPLOY   in WebSphere Application Server - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24027977]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24027999]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for IBM i [http://www-01.ibm.com/support/docview.wss?uid=swg24028000]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24028001]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for Solaris [http://www-01.ibm.com/support/docview.wss?uid=swg24028002]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028003]
+7.0.0.13: Java SDK 1.6 SR8FP1 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24028004]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24028875]
+7.0.0.15: Java SDK 1.6 SR9 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24028881]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24029071]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for IBM i [http://www-01.ibm.com/support/docview.wss?uid=swg24029072]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24029073]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for Solaris [http://www-01.ibm.com/support/docview.wss?uid=swg24029074]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24029075]
+7.0.0.17: WebSphere Application Server V7.0 Fix Pack 17 [http://www-01.ibm.com/support/docview.wss?uid=swg24029634]
+7.0.0.17: Java SDK 1.6 SR9 FP1 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24029894]
+7.0.0.19: WebSphere Application Server V7.0 Fix Pack 19 [http://www-01.ibm.com/support/docview.wss?uid=swg24030660]
+7.0.0.21: WebSphere Application Server V7.0 Fix Pack 21 [http://www-01.ibm.com/support/docview.wss?uid=swg24031366]
+7.0.0.23: WebSphere Application Server V7.0 Fix Pack 23 [http://www-01.ibm.com/support/docview.wss?uid=swg24032493]
+7.0.0.25: WebSphere Application Server V7.0 Fix Pack 25 [http://www-01.ibm.com/support/docview.wss?uid=swg24033267]
+7.0.0.27: WebSphere Application Server V7.0 Fix Pack 27 [http://www-01.ibm.com/support/docview.wss?uid=swg24033882]
+7.0.0.29: WebSphere Application Server V7.0 Fix Pack 29 [http://www-01.ibm.com/support/docview.wss?uid=swg24034966]
+7.0.0.31: WebSphere Application Server V7.0 Fix Pack 31 [http://www-01.ibm.com/support/docview.wss?uid=swg24036768]
+7.0.0.27: Java SDK 1.6 SR13 FP2 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035324]
+7.0.0.33: WebSphere Application Server V7.0 Fix Pack 33 [http://www-01.ibm.com/support/docview.wss?uid=swg24037573]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PM12606|Issue with map.mapxmi reverse migrator
+   PM12919|RAD v7.5.5.1 ejb 2.x cmp mapping tools do not support
+   DB2 v9.7 for Linux/Unix/Windows
+   PM12532|ADMA0086E: An error occurred from the EJBDeploy
+   program: com.ibm.etools.ejbdeploy.EJBDeploymentException:
+   Invalid options
+   PM15017|ejbDeploy Ant Task fails when it encounters a finder
+   and the converter VapNumberToBooleanConverter
+   PM09681|DB transaction rollback when EJB CMR was not set and
+   foreign key overlaps with primary key
+   PM06206|EJBDeploy throws error while loading database vendor
+   definition document
+   PM06472|Incremental pessimistic Prepare For Deployment did not
+   cause the regeneration of Stubs
+   PM09972|EJB 2.1 bottom up generation from DB2 ZOS v 8 tables
+   is  missing columns and primary keys
+   PM01051|Incremental Prepare for Deployment does not detect
+   change of supplier of ejb-ref in other EAR
+   PM06009|Infinite publishing loop after installing
+   TestFix
+   PK98205|EJB finder returns no results due to primary key not
+   set in IndexedRecord within BeanInjectorImpl
+   PM05066|Prepare for deployment option fails when EJB project
+   targetted to Portal 6.1 running on WebSphere 7.0
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V7.0                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Update Rational Application             *
+   *                      Developer 7.5.5.1 based EJBDeploy       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   List of problems fixed listed in description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Rational Application Developer 7.5.5.1 based EJBDeploy has
+   been updated.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 7.0.0.13.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM19237
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-26
+   
+   
+ * CLOSED DATE
+   2010-09-16
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

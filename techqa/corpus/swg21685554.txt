@@ -1,0 +1,47 @@
+Title: IBM Volumes not deleted during reclamation - United States
+
+Text:
+recl reclaim reclamation del vol TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Reclamation reports an ANR2111W and the empty volumes are not deleted form the storage pool 
+
+CAUSE
+Reclamation finishes with the following message. 
+
+ * 
+ * ANR2017I Administrator ADMIN issued command: RECLAIM STGPOOL MONTHLY_FP threshold=51 
+ * 
+ * ANR2111W RECLAIM STGPOOL: There is no data to process for MONTHLY_FP.
+
+DIAGNOSING THE PROBLEM
+Verify that all volumes in the storage pool report a percent reclaimable space that is lower than the specified threshold as follows. 
+
+
+Volume Name Storage Device Pct Volume Pct. Recla-
+Pool Name Class Name Util Status imable
+Space
+
+----------------- ----------- ---------- ----- -------- ----------
+H:\00009AFB.BFS MONTHLY_FP FILE_DEVC- 0.0 Empty 0.0
+LASS
+H:\00009AFD.BFS MONTHLY_FP FILE_DEVC- 0.0 Empty 0.0
+LASS
+H:\00009AFF.BFS MONTHLY_FP FILE_DEVC- 0.0 Empty 0.0
+LASS
+H:\00009B01.BFS MONTHLY_FP FILE_DEVC- 0.0 Empty 0.0
+LASS
+
+
+RESOLVING THE PROBLEM
+The reason that this does not reclaim any volumes is that all volumes are under the threshold for reclamation. As such reclamation ends immediately and the deletion thread does not run. In order for the deletion thread to run, at least one volume needs to be above the reclamation threshold. 
+
+
+In the above case, every volume was at 0.0. Since the lowest threshold that can be specified for reclamation is 1, the volumes cannot be deleted by the reclamation process. Manual deletion of the volumes should be done using the DELETE VOLUME [http://www-01.ibm.com/support/knowledgecenter/api/content/SSGSG7_7.1.1/com.ibm.itsm.srv.ref.doc/r_cmd_volume_delete.html] command. Do not use the DISCARDDATA=YES option without direction from support.
+
+NOTE: Always check that the volume is indeed empty by using the QUERY CONTENT [http://www-01.ibm.com/support/knowledgecenter/api/content/SSGSG7_7.1.1/com.ibm.itsm.srv.ref.doc/r_cmd_content_query.html] command before deleting the volume. Make sure to include the FOLLOWLINKS=YES option in this command in order to ensure the volume is indeed empty.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ TSM IBM Spectrum Protect

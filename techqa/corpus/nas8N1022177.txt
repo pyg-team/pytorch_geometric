@@ -1,0 +1,87 @@
+Title: IBM Security Bulletin: Vulnerabilities in BIND affect Power Hardware Management Console - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ BIND is used by Power Hardware Management Console (HMC). HMC has addressed the applicable CVEs. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2017-3136 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-3136]
+DESCRIPTION: ISC BIND is vulnerable to a denial of service, caused by the improper handling of query requests when using DNS64 with "break-dnssec yes" option. By sending a specially crafted DNS request, a remote attacker could exploit this vulnerability to make named exit unexpectedly with an assertion failure.
+CVSS Base Score: 5.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/124516 [https://exchange.xforce.ibmcloud.com/vulnerabilities/124516] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H) 
+
+CVEID: CVE-2017-3137 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-3137]
+DESCRIPTION: ISC BIND is vulnerable to a denial of service, caused by the improper handling of a query response containing CNAME or DNAME resource records in an unusual order. By sending a specially crafted DNS response, a remote attacker could exploit this vulnerability to make named exit unexpectedly with an assertion failure.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/124517 [https://exchange.xforce.ibmcloud.com/vulnerabilities/124517] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H) 
+
+CVEID: CVE-2017-3138 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-3138]
+DESCRIPTION: ISC BIND is vulnerable to a denial of service, caused by an error related to the processing of control channel commands. By sending a specially crafted command, a remote attacker with access to the BIND control channel could exploit this vulnerability to make named exit unexpectedly with an assertion failure.
+CVSS Base Score: 6.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/124518 [https://exchange.xforce.ibmcloud.com/vulnerabilities/124518] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H) 
+
+CVEID: CVE-2017-3139 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-3139]
+DESCRIPTION: BIND on Red Hat Enterprise Linux is vulnerable to a denial of service, caused by a DNSSEC validation flaw. By sending a specially-crafted DNS response, a remote attacker could exploit this vulnerability to cause the system to crash.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/125766 [https://exchange.xforce.ibmcloud.com/vulnerabilities/125766] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H) 
+
+
+CVE-ID: CVE-2017-3142 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-3142]
+DESCRIPTION: ISC BIND could allow a remote attacker to bypass security restrictions, caused by an error when an attacker can send and receive messages to an authoritative DNS server and has knowledge of a valid TSIG key name. By sending a specially crafted request packet, an attacker could exploit this vulnerability to bypass TSIG authentication on AXFR requests and transfer the target zone.
+CVSS Base Score: 5.3
+CVSS Temporal Score: https://exchange.xforce.ibmcloud.com/vulnerabilities/127901 [https://exchange.xforce.ibmcloud.com/vulnerabilities/127901] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N)
+
+CVE-ID: CVE-2017-3143 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-3143]
+DESCRIPTION: ISC BIND could allow a remote attacker to bypass security restrictions, caused by an error when an attacker can send and receive messages to an authoritative DNS server and has knowledge of a valid TSIG key name. By sending specially crafted data, an attacker could exploit this vulnerability to bypass TSIG authentication and manipulate BIND into accepting an unauthorized dynamic update.
+CVSS Base Score: 7.5
+CVSS Temporal Score: https://exchange.xforce.ibmcloud.com/vulnerabilities/127902 [https://exchange.xforce.ibmcloud.com/vulnerabilities/127902] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+Power HMC V8.4.0.0
+Power HMC V8.5.0.0
+Power HMC V8.6.0.0
+
+REMEDIATION/FIXES
+The following fixes are available on IBM Fix Central at: http://www-933.ibm.com/support/fixcentral/ [http://www-933.ibm.com/support/fixcentral/] 
+
+Product VRMF APAR Remediation/Fix Power HMC V8.8.4.0 SP2 MB04099 MH01713 [https://www-945.ibm.com/support/fixcentral/main/selectFixes?parent=powersysmgmntcouncil&product=ibm~hmc~9100HMC&release=V8R8.4.0&platform=All] Power HMC V8.8.5.0 SP2 MB04100 MH01714 [https://www-945.ibm.com/support/fixcentral/main/selectFixes?parent=powersysmgmntcouncil&product=ibm~hmc~9100HMC&release=V8R8.5.0&platform=All] Power HMC V8.8.6.0 SP1 MB04103 MH01718 [https://www-945.ibm.com/support/fixcentral/main/selectFixes?parent=powersysmgmntcouncil&product=ibm~hmc~9100HMC&release=V8R8.6.0&platform=All] Power HMC V8.8.6.0 SP2 MB04101 MH01716 [https://www-945.ibm.com/support/fixcentral/main/selectFixes?parent=powersysmgmntcouncil&product=ibm~hmc~9100HMC&release=V8R8.6.0&platform=All] WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 28 Aug 2017 : Initial version 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System Server Firmware- HMC and SDMC

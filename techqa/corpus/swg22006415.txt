@@ -1,0 +1,80 @@
+Title: IBM [DB2 LUW] pureScale may receive ADM7530W and failover CF - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why pureScale receive ADM7530W at CF 128 and then failover to CF 129? 
+
+CAUSE
+It may be caused by known AIX APAR IV94210.
+
+ANSWER
+In this case, we may find following error at CF's db2diag.log. 
+
+---
+2017-06-30-16.32.45.995098+540 I3860425A1367 LEVEL: Error
+PID : 16187410 TID : 1 PROC : db2rocme 900 [db2inst1]
+INSTANCE: db2inst1 NODE : 900
+HOSTNAME: host01
+EDUID : 1 EDUNAME: db2rocme 900 [db2inst1]
+FUNCTION: DB2 UDB, high avail services, sqlhaMonitorPartitionProcess, probe:984
+MESSAGE : ZRC=0x8273019A=-2106392166=HA_ZRC_PROCESS_NOT_FOUND
+"Process was not found."
+DATA #1 : String, 52 bytes
+Check ca-server process exists failed but LWD exists
+DATA #2 : User id, 4 bytes
+1001
+DATA #3 : String, 39 bytes
+/home/db2inst1/sqllib/cf/ca-server -i 128
+DATA #4 : PGRP File Contents, PD_TYPE_SQLO_PGRP_FILE_CONTENTS, 3224 bytes
+pgrpFile->iPgrpFileVersion : 2225
+pgrpFile->iPgrpId : 16515274
+pgrpFile->iWdogPgrpId : 16056488
+pgrpFile->iSubPgrpId : 15597616
+pgrpFile->iIndex : 56000
+pgrpFile->iNumber : 128
+pgrpFile->iMonitorOverride : 0
+pgrpFile->crashCounter : 0
+pgrpFile->firstCrashTimeSeconds : 1970-01-01 09:00:00.000000
+pgrpFile->monitorTimeoutCounter : 0
+pgrpFile->firstMonitorTimeoutSeconds : 1970-01-01 09:00:00.000000
+pgrpFile->lastMonitorTimeoutSeconds : 1970-01-01 09:00:00.000000
+pgrpFile->hostname : host01
+pgrpFile->iNumHCAs : 2
+pgrpFile->HCAs[ 0 ]: HCA netname: hostps2 HCA name: hca1 alert: false
+pgrpFile->HCAs[ 1 ]: HCA netname: hostps1 HCA name: hca0 alert: false
+
+--- snip ---
+
+2017-06-30-16.32.49.310941+540 E3870589A469 LEVEL: Event
+PID : 16187468 TID : 1 PROC : db2rocme 128 [db2inst1]
+INSTANCE: db2inst1 NODE : 128
+HOSTNAME: host01
+EDUID : 1 EDUNAME: db2rocme 128 [db2inst1]
+FUNCTION: DB2 UDB, high avail services, db2rocm_main, probe:911
+MESSAGE : ADM7530W An unexpected cluster caching facility (CF) error occurred.
+CF recovery will be attempted.
+STOP : CF
+---
+
+Which indicates that the ca-server process was not found. Taking a look at the 
+same host's cfdiag-xxxx.128.log, we see the following error logged:
+
+---
+2017-06-30-16.32.44.0729722000+540 E123456789A260 LEVEL : Severe
+PID : 15597616 TID : 5141
+NODE : 000
+HOSTNAME : host01
+FUNCTION : CA general, ERROR: assert failed.
+MESSAGE : CA server has encountered an error.
+DATA #1 :
+0 == rc
+---
+
+Which indicates that the CF code hit an assertion which brought down the CF.
+
+If the above logs are seen, it is likely that AIX APAR IV94210 has been hit.
+
+RELATED INFORMATION
+ IV94210: TWO THREADS MAY TAKE THE PTHREAD_WRLOCK SIMULT [http://www.ibm.com/support/docview.wss?uid=isg1IV94210]

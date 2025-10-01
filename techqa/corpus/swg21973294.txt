@@ -1,0 +1,13 @@
+Title: IBM In What Version(s) of IBM Sterling B2B Integrator is SHA256 Supported? - United States
+
+Text:
+sha-2; sha256; sha2; sha-256; SB2B; sterling integrator TECHNOTE (FAQ)
+
+QUESTION
+ In What Version(s) of IBM Sterling B2B Integrator is SHA-256 Supported? 
+
+ANSWER
+Beginning with IBM Sterling B2B Integrator (SI) 5.2.4.2 support for FIPS 140-2 Level 1 is certified with using the Certicom Government Service Edition (GSE) cryptographic module that is distributed within SB2Bi.
+While previous product releases allowed you to check-in or even generate a SHA256 RSA certificate, the underlying support to utilize that hash level was not present. To be fully compliant at a SHA256 level you must be running version 5.2.4.2 or higher.
+
+SHA256 is the same as SHA2 or SHA-2

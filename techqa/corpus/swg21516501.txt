@@ -1,0 +1,74 @@
+Title: IBM Redeploying the REST Services Gateway applications - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using WebSphere Process Server or WebSphere Business Monitor, data can be accessed via the REST Services Gateway (applications). This is deployed during the initial setup of the system, and should not require maintenance. In some rare conditions, like manually changing the configuration files, the configuration can become corrupted. The steps to recover by redeploying and reconfiguring the applications are given below. 
+
+RESOLVING THE PROBLEM
+ 
+
+Redeploying and reconfiguring the REST Services Gateway Dmgr application
+
+Note: The REST Services Gateway Dmgr application is installed with IBM WebSphere Process Server (not with IBM WebSphere Business Monitor). If IBM WebSphere Process Server is not installed, this application will not be installed, so the procedure in this section would not be applicable.
+
+
+ 1. Stop the deployment manager. 
+ 2. In the deployment manager profile root, back up the config-rest.xml file, and then manually edit the file, removing the following content:
+    
+    <deploymentTargets xmi:id="WBIRestDeploymentTarget_1315319209455" contextID="cells:hostnameCell02:nodes:hostnameCellManager02:servers:dmgr">
+    <webModules xmi:id="WBIRestWebModule_1315319211517" name="rest.gateway.war" applicationName="REST Services Gateway Dmgr" contextRoot="/rest" transportType="https://" hostName="hostname" port="9046">
+    <endpoints xmi:id="WBIRestEndpoint_1315319211517" id="dd119e4c-c45f-48c2-b2fd-f8e429139fc9" name="SCA Services" description="SCA Services" type="{com.ibm.bpm}SCA" typeDisplayName="SCA Services" version="6.2.0.0" providerEndpointID="{com.ibm.bpm}SCA" jndiName="SCA" relativeURL="/sca/v1"/>
+    <endpoints xmi:id="WBIRestEndpoint_1315319211518" id="9f92efba-ce36-4b55-8ded-ecf7fee051f5" name="Health Monitor" description="The Health Monitor REST is an application programming interface for system health" type="{com.ibm.bpm}HealthMonitor" typeDisplayName="Health Monitor" version="6.2.0.0" providerEndpointID="HM" jndiName="HM" relativeURL="/bpm/hm/v1"/>
+    <endpoints xmi:id="WBIRestEndpoint_1315319211519" id="b521f13a-56ad-419d-b5b5-3efaef24890b" name="SCM Connectivity Server" description="Service Connectivity Management Connectivity Server" type="{com.ibm.ws.sibx.scmp.connectivityprovider}SibxConnectivityProviderServer" typeDisplayName="SCM Connectivity Server" version="7.0.0.0" publicEndpoint="true" providerEndpointID="{com.ibm.ws.sibx.scmp.connectivityprovider}SibxConnectivityProviderServer" jndiName="SibxConnectivityProviderServer" relativeURL="/scmp"/>
+    </webModules>
+    </deploymentTargets>
+    
+    
+ 3. Start the deployment manager. 
+ 4. Uninstall the REST Services Gateway Dmgr application that is already installed. 
+ 5. Stop the deployment manager. 
+ 6. On the deployment manager, open a command prompt, navigate to <dmgr_profile_root>/bin, and run this command:
+    
+    wsadmin -conntype none -f <install-root>/bpm/profileTemplates/dmgr.bpm/actions/scripts/configureRESTGatewayServices.py
+    
+    
+ 7. Start the deployment manager.
+
+
+Redeploying and reconfiguring the REST Services Gateway application
+
+
+ 1.  Stop the deployment manager. 
+ 2.  In the deployment manager profile root directory, back up the config-rest.xml file, and then manually edit the file, removing the following content:
+     
+     <deploymentTargets xmi:id="WBIRestDeploymentTarget_1315387708302" contextID="cells:hostnameCell02:clusters:wpsmon.WebApp">
+     <webModules xmi:id="WBIRestWebModule_1315387708302" name="rest.gateway.war" applicationName="REST Services Gateway" contextRoot="/rest" transportType="https://" hostName="hostname" port="9448">
+     <endpoints xmi:id="WBIRestEndpoint_1315387708302" id="6c78b7f2-c2d4-4602-94a4-46c39f016dde" name="Business Calendar" description="WBI Business Calendar REST API" type="{com.ibm.bpm}TimeTable" typeDisplayName="Time Tables" version="6.2.0.0" publicEndpoint="true" providerEndpointID="BusinessCalendar" relativeURL="/bpm/businesscalendar"/>
+     <endpoints xmi:id="WBIRestEndpoint_1315387708303" id="7571abbe-6481-433b-811a-2ced4c3be6a0" name="Business Rules" description="WBI Business Rule REST API" type="{com.ibm.bpm}BusinessRules" typeDisplayName="Business Rules" version="6.1.2.0" providerEndpointID="BusinessRules" relativeURL="/bpm/brules"/>
+     <endpoints xmi:id="WBIRestEndpoint_1315387708304" id="6160d766-67ca-4962-bdfd-6012856b1ade" name="Direct Deploy" description="Internal REST service for directly deploying SCA modules" type="{com.ibm.bpm}DirectDeploy" typeDisplayName="Direct Deploy" version="6.2.0.0" providerEndpointID="DirectDeploy" relativeURL="/serverComponent"/>
+     <endpoints xmi:id="WBIRestEndpoint_1315387708305" id="31b17065-545d-4810-ae12-b4d24af9af42" name="MonitorREST" description="Websphere Business Monitor REST services" type="{com.ibm.bpm}Monitor" typeDisplayName="Monitor" version="7.0.0" publicEndpoint="true" providerEndpointID="MonitorREST" relativeURL="/bpm/monitor"/>
+     <endpoints xmi:id="WBIRestEndpoint_1315387708306" id="37928d53-2f73-439c-8c77-c06ee49118da" name="Service Monitor REST" description="SCA Service Monitor REST" type="{com.ibm.bpm}ServiceMonitor" typeDisplayName="Service Monitor REST" version="6.2.0.0" providerEndpointID="RestSM" jndiName="SMRest" relativeURL="/bpm/sm/v1"/>
+     <endpoints xmi:id="WBIRestEndpoint_1315387708307" id="13b565d3-8fb2-4769-942a-1437d06c486c" name="Gateway REST API" description="Gateway REST API" type="{com.ibm.sibx}GatewayRESTAPI" typeDisplayName="Gateway REST API" version="7.0.0.0" providerEndpointID="SIBXGatewayRest" jndiName="SIBXGatewayRest" relativeURL="/wesb/gateway/v1"/>
+     <endpoints xmi:id="WBIRestEndpoint_1315387708308" id="79954b48-1c0f-4f5e-b240-2768be96f298" name="Registry and Mediation Policy REST API" description="Registry and Mediation Policy REST API" type="{com.ibm.sibx}PolicyRESTAPI" typeDisplayName="Registry and Mediation Policy REST API" version="6.2.0.0" providerEndpointID="SIBXPolicyRest" jndiName="SIBXPolicyRest" relativeURL="/wesb/v1"/>
+     <endpoints xmi:id="WBIRestEndpoint_1315387708309" id="49561cad-97a5-41a1-996b-8244d89fa217" name="Store and forward" description="WBI Store and Forward REST API" type="{com.ibm.bpm}Qualifier" typeDisplayName="SCA Qualifier" version="7.0.0.0" publicEndpoint="true" providerEndpointID="StoreAndForward" relativeURL="/bpm/qos/storeandforward"/>
+     <endpoints xmi:id="WBIRestEndpoint_1315387708310" id="aa902fca-c764-4d79-af2c-9e7e2e2da133" name="Virtual Member Manager" description="User Membership REST API" type="{com.ibm.bpm}VirtualMemberManager" typeDisplayName="User Membership" version="6.2.0.0" publicEndpoint="true" providerEndpointID="VirtualMemberManager" relativeURL="/ws/um"/>
+     <endpoints xmi:id="WBIRestEndpoint_1315387708311" id="9871543a-656d-4fb7-8eb2-f0a29b03fab6" name="WBI Security" description="WBI Security REST API" type="{com.ibm.bpm}Security" typeDisplayName="Security" version="6.2.0.0" providerEndpointID="WBISecurity" relativeURL="/bpm/security"/>
+     <endpoints xmi:id="WBIRestEndpoint_1315387708312" id="949d91e6-cc07-4420-9b17-7709e4962242" name="Visual Step REST API" description="Visual Step REST" type="Visual Step REST" typeDisplayName="Visual Step REST" version="7.0.0" providerEndpointID="modelerEvents" relativeURL="/modeler"/>
+     </webModules>
+     </deploymentTargets>
+     
+     
+ 3.  Start the deployment manager. 
+ 4.  Uninstall the REST Services Gateway application that is already installed. 
+ 5.  Log into the WebSphere administrative console, and navigate to Servers > Clusters > WebSphere application server clusters > <cluster_name> > Business Integration > REST Services. 
+ 6.  Enter the correct value for virtual host information, or use the defaults to point to one cluster member's host and port number, and then click OK. 
+ 7.  Navigate to Servers > Clusters > WebSphere application server clusters > <Business_Space_cluster> > Business Integration > Business Space Configuration > REST service endpoint registration. 
+ 8.  Make sure that all REST service endpoints are mapped to correct deployment targets, and click OK. 
+ 9.  Save the changes and synchronize the nodes. 
+ 10. Make sure the REST Services Gateway application is started.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Process Server Not Applicable AIX, HP-UX, Linux, Solaris, Windows 7.0 NA

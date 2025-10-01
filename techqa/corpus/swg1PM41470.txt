@@ -1,0 +1,167 @@
+Title: IBM PM41470: ABEND04E RC00C90101 DSNIBHUN 5013 ( ERQUAL5013 ) DURING POSTPONE ABORT RESTART PROCESSING WHEN SQL TRUNCATE REUSE IS USED. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ABEND 04E 00C90101 DSNIBHUN 5013 or ABEND04E RC00C90101
+   DSNIBHRE 5005 during postpone abort processing on DB2 restart.
+   When the SQL Truncate Reuse statement is used, it causes a
+   mass delete to be done and the segment entries to be reused.
+   The DB2 system crashee and back out of the inflight UR's is done
+   during postpone abort processing. The the back out of the
+   SQL Truncate Reuse SQL wil cause a ABEND04E in DSNIBHUN. Also
+   if forward recovery is attempted an ABEND04E in DSNIBHRE can
+   occur.
+   The log apply will fail because page id map entry is broken
+   during the back out processing.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  An SQL Delete without a Where clause will do the same mass
+   delete as SQL Truncate Reuse, but it will not reuse the segment
+   entries. This is a workaround until a fix can be applied.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All DB2 for z/OS users using TRUNCATE        *
+   *                 TABLE with STORAGE REUSE option.             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: ABEND04E RC00C90101 DSNIBHUN 5013       *
+   *                      ( ERQUAL5013 ) may happen during the    *
+   *                      rollback of TRUNCATE statement with     *
+   *                      STORAGE REUSE option.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When TRUNCATE table STORAGE REUSE option and subsequence insert
+   are performed in a same commit scope, the deleted space
+   was reused by the insert prematurely before commit.
+   If this TRUNCATE table statement rolled back before the actual
+   commit, then it can result in the reported abend.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DB2 code was changed to ensure the deleted space from the
+   TRUNCATE STORAGE REUSE statement is reused after commit.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM41470
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-13
+   
+   
+ * CLOSED DATE
+   2011-09-13
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK71861 UK71862
+   
+   
+
+MODULES/MACROS
+ *  DSNISGSS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY UK71861 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK71861]
+   UP11/09/29 P F109
+   
+   
+ * R910 PSY UK71862 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK71862]
+   UP11/09/29 P F109
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

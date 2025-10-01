@@ -1,0 +1,29 @@
+Title: IBM The login to the Rule Execution Server (RES) console is slow on a WebSphere Application Server (WAS) cluster and Federated Repository with LDAP - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Logging in to the RES management console can be slow under the following conditions:
+- The RES is part of a WAS cluster.
+- A LDAP registry is used in a Federated repository.
+- The user belongs to a large group (a few hundred people). 
+
+CAUSE
+The configureDSCluster script defines execution unit (XU) resources at the node level. The product documentation might also suggest defining the XU resource adapter at the node level.
+
+When the user logs in to the RES console, the JVM node agent performs access control verification through LDAP. 
+
+Because the node agent does not implement the LDAP DynaCache caching component, the LDAP server systematically retrieves all the user groups for verification.
+
+
+RESOLVING THE PROBLEM
+Redefine the XU adapter and connection factories with either a server or a cluster scope. 
+
+
+For suggestions on configuring the XU RAR with a server or cluster scope, see Step 7 of the ODM 8.5.1 Rule Execution Server configuration on WAS: Deploying the XU RAR [http://www-01.ibm.com/support/knowledgecenter/SSQP76_8.5.1/com.ibm.odm.zos.config/topics/tsk_ds_deploy_xu.html?lang=en].
+
+RELATED INFORMATION
+#Running the configureDSCluster script to create a clust [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/topic/com.ibm.odm.distrib.config.was/config_ds_res_was8/tsk_was_ds_cluster_run_script.html]
+Deploying XU RAR [http://www-01.ibm.com/support/knowledgecenter/SSQP76_8.5.1/com.ibm.odm.distrib.config.was/config_ds_res_was8/tsk_was_deploy_xu.html?lang=en]
+Restrict XU visibility [http://www-01.ibm.com/support/docview.wss?uid=swg21443030]

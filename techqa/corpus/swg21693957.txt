@@ -1,0 +1,31 @@
+Title: IBM FrameworkManagerでデータソースを選択するとエラー(BMT-IMP-0002) - United States
+
+Text:
+ 技術情報(FAQS)
+
+質問
+ Cognos Administrationからデータソース(PostgreSQL)の接続定義を登録しました。
+ブラウザからのJDBCの接続テストは成功しているのですが、
+FrameworkManagerからデータソースを選択すると下記のエラーが発生します。
+解決方法を教えて下さい。
+
+Error Message:
+BMT-IMP-0002 メタデータ要求を実行できませんでした。java.lang.NullPointerException
+CAF-WRN-2082 エラーが発生しました。管理者に連絡してください。詳細なエラー情報はCAFにより次のSecureErrorID で記録されました。
+
+
+回答
+データソース(PostgreSQL)の設定ファイル(pg_hba.conf)にFramework ManagerとBIサーバーのアドレスを追記しDB再起動して対応します。
+下記は設定ファイルの変更例です。(※Framework ManagerのアドレスをYYY.YYY.YYY.YYY、BIサーバーをZZZ.ZZZ.ZZZ.ZZZと表します)
+関連情報のリンクとあわせご参考情報としてご活用ください。
+
+
+pg_hba.conf ------------------------------------------------
+# IPv4 local connections: 
+host all all 127.0.0.1/32 md5 
+host all all YYY.YYY.YYY.YYY/32 md5
+host all all ZZZ.ZZZ.ZZZ.ZZZ/32 md5
+------------------------------------------------------------------
+
+関連情報
+#PostgreSQL Documentation (external site) [http://www.postgresql.org/docs/9.2/static/auth-pg-hba-conf.html]

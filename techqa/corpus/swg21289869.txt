@@ -1,0 +1,131 @@
+Title: IBM MustGather: Appliance presents a power supply message, such as: "System power supply #_ has failed." - United States
+
+Text:
+MustGatherDocument; mustgather; power supply; System power supply; failed; power-1-failure; power-2-failure wsdpcru TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Work with IBM Support to collect and troubleshooting problems when the M/T 9235, M/T 7199 or M/T 7198 , WebSphere DataPower SOA Appliance, IBM WebSphere Deployer, XC10, Cast Iron or Cloudburst appliance presents messages for a potential power supply problem. 
+
+RESOLVING THE PROBLEM
+The following information describes the basic documentation needed when working with IBM support on the telephone to investigate questions or problems if the appliances present a power supply problem message. 
+Potential power supply problems are reported in logs, users displays, and from CLI command output. 
+
+These problems or messages could simply indicate an appliance power cord or power source in the data center has been disconnected. 
+
+IBM Support will work with you on the telephone to determine the cause of the problem. The problem might be a reporting problem as noted in this technote [http://www.ibm.com/support/docview.wss?uid=swg21512291] and not be a problem with the power supply. The problem could be firmware, power source, chassis, power cables, power supply or elsewhere. 
+
+The machine types: 7198, 7199, and the 9235 appliances have two power supplies and will operate normally with only one power supply active. 
+
+Section 1. Resolving and gathering information on the problem. 
+
+Read and follow all safety precautions listed in the documents linked from our technote on 
+Installing and Removing and Replacing Parts for Appliances. [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21313112]
+
+
+The IBM remote support team will work with you to debug the problem on the telephone. 
+
+We provide this information to prepare you to work with IBM remote support via the telephone. 
+
+Our goal is to promptly determine the problem. 
+
+You will need: 
+
+ * A problem record open with IBM support, see Section 3 below. 
+ * Physical access to the appliance. 
+ * You might need: A personal computer with a serial connection and the IBM null modem serial cable supplied with the appliance. For a 9235 the IBM part number is 46M0493 or 46M0494 which is on a white tab connected to the cable. 
+   
+
+Section 2. Working on the telephone with IBM Support 
+
+On the telephone with IBM remote support together you will perform the following MustGather steps to isolate the problem: 
+
+ 1. Read and follow all safety precautions listed in the documents linked from: Removing and Replacing Parts provided by IBM Level 2 for IBM WebSphere DataPower SOA Appliances: 9004/9235. [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21313112] before continuing. Do not continue if you have safety concerns. Follow your company's safety procedures. 
+ 2. IBM Support will work with you via telephone to following these next steps to document and determine the problem. See Section 2 for information on contacting IBM support. 
+ 3. Obtain power supply status:  1. Cast Iron  * From the Webconsole click on System > Hardware Status. 
+         * From the CLI: 
+           system bedrock cli
+           platform collect-pd console
+           status power-supply
+        
+        
+     2. IBM WorkLoad Deployer,  * From the Webconsole click on System > Monitoring > Trap Subscriptions and set the Trap Priority to "info". 
+         * From the CLI: (n/a) 
+        
+        
+     3. XC10,  * From the WebConsole 
+         * From the CLI: 
+           platform collect-pd console
+        
+        
+     4. DataPower  * From the CLI: 
+           show time
+           show version
+           show license
+           show sensors-other
+           config
+           test hardware
+           exit
+           Look for power supply failures and report this information in the phone call.
+        
+        
+    
+    
+ 4. What is the color of the LED on both power supplies? 
+ 5. Check power cable connections.  1. Power off the appliance. 
+     2. Check that the power cord was not disconnected, and that both ends of both power cords are well seated. 
+     3. Check that the power source in the wall or rack for the failing power connection is working. 
+     4. Reconnect power cables and power on the appliance. 
+     5. What is the color of the LED on both power supplies? 
+     6. Was a cable loose or power source not working? If not continue:
+    
+    
+ 6. Check power cables.  1. Power off the appliance 
+     2. Switch the power cords for the 2 power supplies to see if the problem is with the power cords. 
+     3. Reconnect power cables and power on the appliance. 
+     4. What is the color of the LED on both power supplies? 
+     5. Does the problem move to the other power supply or follow the power cable? If it changes with the power cable replace the power cable. If the problem stays with the power supply continue.
+    
+    
+ 7. Check the power supply slot in the appliance.  1. Power off the appliance. 
+     2. Unplug both power cords. 
+     3. Follow all safety precautions and instructions on removing the CRU (Customer Replaceable Unit) listed in the documents linked from: Removing and Replacing Parts provided by IBM [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21313112] 
+     4. Follow the [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21313112]instructions specific to for a machine type to swap the power supplies in the appliance. That is: move power supply A to the slot for power supply B and power supply B to the slot for power supply A in the appliance. This is to determine if the problem follows the power supply or is with the power supply slot in the appliance. 
+     5. Reconnect power cables and power on the appliance. 
+     6. What is the color of the LED on both power supplies? 
+     7. Does the problem move to the other power supply slot and follow the power suppy, or stay with the same power supply slot? 
+    
+    
+ 8. IBM Support will work with you on the next steps based in this information an other information in the phone call. 
+
+
+
+Section 3. Contacting IBM Support and sending your MustGather information to IBM support 
+ 1.  Obtain the serial number of the appliance which experienced the problem. This is needed for the IBM entitlement processing, before a PMR can be created. Use the WebGUI, select Status > System > Version Information, locate tag on the case of the appliance, or from the CLI use Show System 
+ 2.  Locate the firmware version of the appliance. select Status > System > Device Features or from the CLI use show version 
+ 3.  Have your IBM customer number ready. 
+ 4.  Determine the severity of your problem based on the Severity Levels table found in the following technote: "WebSphere DataPower Extended Maintenance and Support Services". [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21254180#severity.] 
+ 5.  Prepare to describe how the problem affects your business operations. 
+ 6.  Determine which telephone number IBM should use to contact you concerning this problem report. 
+ 7.  Reference our technote for information on Contacting IBM WebSphere DataPower SOA Appliance Support [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21236322]. 
+ 8.  Also during the telephone call, IBM support will have information on how to send in the MustGather information. 
+ 9.  After you have contacted IBM Support for the initial report of the problem, a PMR number will be assigned. Create a zip file of the MustGather CLI information if you have the information.  * A text file which contains the CLI command output results
+     
+     
+ 10. Rename the zip file and send to IBM as noted in Exchanging information with IBM WebSphere DataPower Technical Support for problem determination [http://www-1.ibm.com/support/docview.wss?rs=2362&uid=swg21267385]. 
+ 11. Do not send any proprietary or confidential information from your company. 
+ 12.  
+ 13. 
+
+Review the where power supply status messages log file entries. In the System log from the WebGUI, these messages can be found: 
+
+09:30:30 system critic 60 0x02220001 Power supply failure. 
+09:30:30 system critic 60 0x80400022 System power supply #1 has failed 
+
+or other logs: 
+
+Thu Nov 29 2009 09:30:30 [system][critic] sensors: tid(60): System power supply #1 has failed. 
+Thu Nov 29 2009 09:30:30 [system][critic] sensors: tid(60): Power supply failure.  
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower B2B Appliance XB60 3.7.3, 1.0.0 All Editions Business Integration WebSphere DataPower Low Latency Appliance XM70 3.7.3, 1.0.0 All Editions Business Integration WebSphere DataPower XML Accelerator XA35 3.7.3, 3.7.2, 3.7.1, 3.6.1, 3.6.0 All Editions Business Integration WebSphere DataPower XML Security Gateway XS40 3.7.3, 3.7.2, 3.7.1, 3.6.1, 3.6.0 All Editions Business Integration WebSphere DataPower SOA Appliances Firmware 3.8.1, 3.8, 3.7.3, 3.7.2 Edition Independent

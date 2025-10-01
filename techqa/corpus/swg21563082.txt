@@ -1,0 +1,54 @@
+Title: IBM How to replace special characters in XML documents with html entities - United States
+
+Text:
+Extensions; Adapters; STERLINGHTG TECHNOTE (FAQ)
+
+QUESTION
+ How to replace special characters in XML documents with html entities 
+
+ANSWER
+Special characters (such as <, >, &, ", and ' ) can be replaced in XML documents with their html entities using the DocumentKeywordReplace service. However, since html entities used within BPML are converted to the appropriate character, the string mode of DocumentKeywordReplace will not work in this instance. In other words, if you try to replace string('&lt;') with string('<'), the BPML interpreter will change the &lt; to the < character before doing the replace. So, in effect, it replaces '<' with '<'.
+In order to make the replacement correctly, the hex mode of DocumentKeywordReplace must be utilized. The following service configuration will replace the < character with the appropriate ASCII characters. (26 = &, 6C = l, 74 = t, and 3B = ;)
+
+
+<process name="1_dockeywordreplace_xml_to_entity">
+<sequence>
+<operation name="Document Keyword Replace">
+<participant name="DocKeywordReplace"/>
+<output message="DocKeywordReplaceInputMessage">
+<assign to="literal_mode">true</assign>
+<assign to="keyword1" from="string('&lt;')"></assign>
+<assign to="replace1">266C743B</assign>
+<assign to="replacetype1">hex</assign>
+<assign to="." from="*"></assign>
+</output>
+<input message="inmsg">
+<assign to="." from="*"></assign>
+</input>
+</operation>
+
+<operation name="File System Adapter">
+<participant name="Blank_FSA"/>
+<output message="FileSystemInputMessage">
+<assign to="Action">FS_EXTRACT</assign>
+<assign to="." from="*"></assign>
+</output>
+<input message="inmsg">
+<assign to="." from="*"></assign>
+</input>
+</operation>
+</sequence>
+</process>
+
+
+Passing a file to this BP containing '<<<' will extract a file containing '&lt;&lt;&lt;'
+
+Other reserved XML characters are handled in the same way, and can even be added to the same Document Keyword Replace service by utilizing additional assign xml nodes: keyword2, replace2, replacetype2, keyword3, replace3, replacetype3, etc.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling B2B Integrator Adapters 
+HISTORICAL NUMBER
+ HTG1714

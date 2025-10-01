@@ -1,0 +1,194 @@
+Title: IBM IV99503: MORE SEARCH OPTIONS - CAN'T ENABLE THE SELECT VALUE OPTION FOR LOCATIONS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  More Search Option - Enable the Select Value option for
+   Locations.
+   
+   Under More Search fields, we need the ability to chose the
+   Select Value
+   under the Locations label for the Locations application. We
+   have tried
+   several configurations but no luck.
+   
+   Action Taken:
+   Modified the Lookup value and/or the Menu Type for the Location
+   attribute in the Location More Search screen in Application
+   Designer.
+   Tried a number of configurations including matching what is
+   setup on
+   the Locations field on the More Search in the Assets
+   application, but
+   the lookup either does not display or you get Invalid Bindings
+   when
+   trying to use it.
+   
+   For testing, I added Select Value to the
+   current menutype  LOCATIONSCLASSIFICATION and added
+   lookup="locations"
+   on the Location field. I saw invalid binding when I clicked
+   Select Value.
+   
+   ENVIRONMENT:
+   Tivoli's process automation engine 7.6.0.0 Build 20141117-2230
+   DB Build
+   V7600-218
+   IBM TPAE Integration Framework 7.6.0.0 Build 20141117-1800 DB
+   Build
+   V7600-15
+   IBM Maximo Linear Management 7.5.0.0 Build 20141023-2230 DB
+   Build V7500-
+   01
+   IBM Maximo Asset Management Scheduler 7.5.3.0 Build
+   20141117-2230 DB
+   Build V7530-19
+   IBM Maximo Spatial Asset Management 7.5.0.1-20170106-1612 Build
+   20120714-2208 DB Build V7501-13 HFDB Build HF7501-07
+   IBM Maximo for Utilities 7.5.0.1-20150212-1452 Build
+   20120710-0136 DB
+   Build V7501-14 HFDB Build HF7501-10
+   IBM Maximo for Transportation 7.5.1.0 Build 20130902-1500 DB
+   Build
+   V7510-10
+   IBM Maximo Asset Management 7.6.0.0 Build 20141117-2230 DB
+   Build V7600-
+   00
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  na
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * maximo users who use the Locations app                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * In the More Search Fields dialog of the Locations            *
+   * application, adding Select Value to the Location field did   *
+   * not work.                                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is fixed in code.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   	 | release\fix pack | Interim Fix for Release 7.6.0.9 Product.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV99503
+   
+   
+ * REPORTED COMPONENT NAME
+   SYSTEM CONFIG
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46S1
+   
+   
+ * REPORTED RELEASE
+   760
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-30
+   
+   
+ * CLOSED DATE
+   2017-09-01
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  maximo
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SYSTEM CONFIG
+   
+   
+ * FIXED COMPONENT ID
+   5724R46S1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R760 PSY
+   UP

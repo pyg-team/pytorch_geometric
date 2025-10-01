@@ -1,0 +1,161 @@
+Title: IBM IZ05660: NCO_OBJSERV : Object server cores when SOFT LIMIT is reached without logging a message - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Object Server reaches its soft limit (in temp_store)
+   and core dumps without logging any messages
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The problem seen was caused by the use of large selects within
+   triggers. To reduce the memory used, the select list should be
+   specific to the data being used within the trigger.
+   e.g.
+   select * -> Select Identifier, Summary
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: ObjectServer users who have automations with *
+   *                 an evaluate clause, where the resultset      *
+   *                 returned by the query will create a          *
+   *                 temporary table that exceeds the size of the *
+   *                 temp_store (100M).                           *
+   *                                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The problem is due to large result set  *
+   *                      returned by the triggers evaluate       *
+   *                      clause. If the evaluate clause query    *
+   *                      selects a large amount of data, then    *
+   *                      temp_store may exceed the memory limit, *
+   *                      causing ObjectServer to stop.  The      *
+   *                      problem may be caused by the select     *
+   *                      statement having a large number of      *
+   *                      columns being selected or the number of *
+   *                      rows being returned being large or a    *
+   *                      combination of both.                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   The ObjectServers temp_store reaches its soft limit and exits.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When the temp_store limit is exceeded the ObjectServer will now
+   log an error message and continue to run.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+   |fix pack| 7.0.1.12-TIV-NCOMIbus-FP0012 |fix pack|
+   7.1.0.5-TIV-NCOMIbus-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ05660
+   
+   
+ * REPORTED COMPONENT NAME
+   NATIVE CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O48NC
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-03
+   
+   
+ * CLOSED DATE
+   2007-10-29
+   
+   
+ * LAST MODIFIED DATE
+   2007-10-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NATIVE CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5724O48NC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

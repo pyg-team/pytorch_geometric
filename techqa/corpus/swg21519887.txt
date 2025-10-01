@@ -1,0 +1,21 @@
+Title: IBM In the Advanced server properties, what does the option to enable tracing do and what are the performance issues if turned on? - United States
+
+Text:
+Installation; Performance; Upgrade; Migrate; STERLINGFAQ TECHNOTE (FAQ)
+
+QUESTION
+ In the Advanced server properties, what does the option to enable tracing do and what are the performance issues if turned on? 
+
+ANSWER
+
+
+Enabling tracing for a particular server sends additional debug logging to the CCEngine log for that server. This additional information is used to help troubleshoot errors with that server. But due to the amount of additional data sent to the CCEngine log, tracing should only be used when requested by Sterling Commerce Customer Support, as it does significantly impact performance.
+
+See the Sterling Control Center System Administration Guide, Chapter 5, "Managing Servers", for further information concerning setting tracing for a server.
+
+Tracing is a new function that has been added to Sterling Control Center Version 4.2.
+
+ 
+
+HISTORICAL NUMBER
+ FAQ1257

@@ -1,0 +1,17 @@
+Title: IBM Incorrect Program Directory references in ITCAM Agent for WebSphere Applications Installation Guide for z/OS. - United States
+
+Text:
+Program Directory; documentation; installation; FMID TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Program Directory references are incorrect in the ITCAM Agent for WebSphere Applications Installation Guide for z/OS. This issue only exists in the document delivered on the ITCAM for Application Diagnostics Version 7.1 CD. The IBM.com Infocenter version and all subsequent versions of this document contain the correct information. 
+
+RESOLVING THE PROBLEM
+For the installation of the following components:
+Data Collector (FMID HAAD710);
+ITCAM Common Services (FMID HAAD71C); 
+Monitoring Agent (FMID HKYN710);
+the Program Directory names are incorrectly referenced in the ITCAM Agent for WebSphere Applications Installation Guide for z/OS.
+
+The installation for all of these components is covered in the following Program Directory:
+Program Directory for IBM Tivoli Composite Application Manager (ITCAM) for Application Diagnostics on z/OS V7.1

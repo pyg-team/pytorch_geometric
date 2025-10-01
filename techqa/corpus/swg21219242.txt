@@ -1,0 +1,58 @@
+Title: IBM EYUXE0014E EYU9X### module not found after upgrading to new release of CICS TS - United States
+
+Text:
+5655M1501 R100 R102 R310 HCP3100 JCP3102 5655M1500 R320 R50M 5655-M15 5655M15 JCI650M ; 5655S9700 R660 660 R600 R60M 600 60M HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 R80M 800 80M R690 690 R900 R90M 900 90M HCI6800 HCI6900 5655-Y04 5655Y04 KIXINFO CPSM cpsmpddb kixdcfcpc310 kixdcfcic650 kixdcfcic660 kixdcfcic670 kixdcfcic680 kixdcfcic690 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You install a new version of CICS Transaction Server for z/OS (CICS TS) but keep your old CICS TS environment to run in parallel until you complete your enterprise-wide migration strategy. You start your CICS TS CMAS address space and receive message EYUXE0014E indicating module EYU9Xxxx cannot be found. 
+
+CAUSE
+As part of the CICS TS installation activity, you update your z/OS linklist dataset to remove the previous release of CICS TS linklist library members and replace them with the new CICS TS required linklist members.
+
+The CICS TS V5.2 documentation, in the section titled CICS- and CICSPlex SM-supplied modules required in the MVS linklist [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.2.0/com.ibm.cics.ts.installation.doc/topics/dfha13c.html], states the following:
+
+Compatibility with earlier CICS releases
+Unless otherwise stated, the CICS Transaction Server for z/OS®, Version 5 Release 2 levels of the modules in SDFHLINK are compatible with earlier releases of CICS. The CICSPlex SM modules in SEYULINK are not compatible with earlier releases. CICSPlex SM modules in SEYULINK are release specific. If you plan to run multiple releases of CICSPlex SM on the same MVS image, you must have the equivalent modules specific to the releases you are running.
+
+
+DIAGNOSING THE PROBLEM
+You can check to see if EYU9Xnnn is in the LNKLIST or STEPLIB by entering the following commands: 
+
+ 1. First determine which LNKLIST is being used by entering the following command:
+    
+    D PROG,LNKLIST
+    
+    CSV470I [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/iea2m4b0/17.131]10.38.32 LNKLST DISPLAY 142 
+    LNKLST SET LNKLSTRN LNKAUTH=LNKLST
+    
+    
+ 2. Then use the LNKLST SET name displayed in a SETPROG command. In this example LNKLSTRN. The EYUXE0014E module to look for is EYU9X320.
+    
+    SETPROG LNKLIST,TEST,NAME=LNKLSTRN,MODNAME=EYU9X320
+    
+    If EYU9X320 is found in LNKLIST message:
+    
+    CSV502I MODULE EYU9X320 WAS LOCATED
+    IN DATA SET SYS2.CPSM320.PROD.SEYULINK
+    USING LNKLST SET LNKLSTRN
+    
+    If EYU9X320 is not in LNKLIST, the following message will be returned:
+    
+    CSV503I MODULE EYU9X320 COULD NOT BE LOCATED USING LNKLST SET LNKLSTRN
+
+RESOLVING THE PROBLEM
+Do not remove the EYU9cnnn modules (where c is 'A' or 'D' or X' or 'T' and nnn is 310, 320, 410, 420, 510 or 520) from the z/OS linklist if you need to continue to start your CICS TS CMAS from a previous release. Reference the table below for a list of required linklist members for your release of CICS Transaction Server CICSPlex SM environment.
+
+[/support/docview.wss?uid=swg21219242&aid=1] [/support/docview.wss?uid=swg21219242&aid=1]
+
+RELATED INFORMATION
+#Upgrade MP CMAS to the new version [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/index.jsp?topic=/com.ibm.cics.ts.migration.doc/dfheg/dfheab00100.html]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Transaction Server Installation z/OS 5.2, 5.1, 4.2, 4.1, 3.2, 3.1 
+PRODUCT ALIAS/SYNONYM
+ CICSPlex SM CICSPlexSM CPSM CP/SM

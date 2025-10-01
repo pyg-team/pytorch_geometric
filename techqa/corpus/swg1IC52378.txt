@@ -1,0 +1,189 @@
+Title: IBM IC52378: MSCS times out in lookAlive checks leading to failover of cluster resources through MQMTerminate. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V6.0 for iSeries Fix Pack 6.0.2.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24018193]
+WebSphere MQ V6.0 Fix Pack 6.0.2.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24017980]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A failover occurs in MSCS. The trace shows that the looksAlive
+   call, which occurs every 5 seconds, does not return in under 10
+   seconds and this initiates a failover through MQMTerminate. The
+   CPU counters at the time showed a vast increase in user CPU at
+   the time of the failure. This led to the unusually long time
+   taken for the looksAlive check.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  na
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of MSCS with WebSphere MQ.
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   If an external process uses all the CPU then this will impact
+   the responsiveness in WMQ. If that process is a higher priority,
+   it can completely starve WMQ processes from running, and if this
+   happens the looksAlive check in the WMQ resource (on the
+   resrcmon thread) could time out. If the check times out, the
+   health of the resource is presumed to be bad and so MSCS sends a
+   terminate request to WMQ. If the system is still short of CPU
+   resources at this time, WMQ could time out while terminating its
+   MSCS resouces, in turn leading to a failure to bring the other
+   resource online.
+   
+   In this specific case, it was discovered that an external
+   process (McShield) was utilizing all the CPU for about 5
+   minutes, at about the same time each day, each time resulting in
+   a failover.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere MQ has been modified to include the following.
+   1) New FDCs with probe id MC009000 or MC010000 will be
+   generated for when the looksAlive check times out.
+   2) Improved management of the queue manager object means that
+   the object is now cached on creation to avoid having to
+   construct the object every time, which reduces the CPU overhead
+   for the looksAlive check and may avoid triggering the timeout.
+   3) The timeout value for the looksAlive check has been made
+   customizable by setting the AMQ_MSCS_TIMEOUT environment
+   variable to the amount in milliseconds that the timeout should
+   be. The cluster will need to be stopped and restarted for this
+   to take effect. Note changing this value will impact how
+   responsive the WMQ resource is to a 'real' failure, and it
+   should only be set as an interim measure whilst the real
+   problem is resolved.
+   
+   However, these changes only help reduce the symptoms, and the
+   real problem is the source of why the check was taking so long.
+   For example, in this instance an external process hogging the
+   CPU and this needs to be remedied in tandem with applying this
+   APAR.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.3
+   --------           --------------------
+   Windows            U200279
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC52378
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7200
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-04-04
+   
+   
+ * CLOSED DATE
+   2007-06-28
+   
+   
+ * LAST MODIFIED DATE
+   2007-07-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V6
+   
+   
+ * FIXED COMPONENT ID
+   5724H7200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

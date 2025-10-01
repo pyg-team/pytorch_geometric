@@ -1,0 +1,121 @@
+Title: IBM Customer access Portal for IBM® Service Management Suite for z/OS - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is the customer access Portal for IBM® Service Management Suite for z/OS? 
+
+ANSWER
+ What's new
+This portal contains information and software downloads for IBM Service Management Suite for z/OS. IBM Service Management Unite is the initial component available in this portal. 
+
+IBM® Service Management Unite V1.1.3 includes the following new or enhanced features: 
+
+ * New dahsboards for JVM overview, details and problem isolation based on OMEGAMON for JVM. 
+ * New dashboard for advanced problem isolation, based on the new INGWHY command (with SA z/OS V4.1 installed), to provide expert capabilities to easily determine resource problems. 
+ * Support of the new INGSUSPD command (with SA z/OS V4.1 installed) for suspending automation resources. 
+ * Enhanced resource filtering to provide possibility of status reporting for creation of custom dashboards. 
+ * Improved support for end-to-end automation:  * New operational states for resource references. 
+    * Manage schedules for resource references.
+   
+   
+ * Improved integration of permormance management and automation dashboards. 
+ * Several usability enhancements. 
+ * As well as the functions described below in V1.1.2.3, V1.1.2, V1.1.1 and V1.1.0.
+
+
+
+IBM® Service Management Unite V1.1.2.3 includes the following new or enhanced features:  * Improved navigation on System Automation Domain Page. 
+ * Enhanced interface to control System Automation scheduling. 
+ * Support for end-to-end automation provided in IBM System Automation for z/OS V4.1.0 for cross-sysplex configurations. 
+ * View captured messages for APL and SYS resources. 
+ * View a monitoring history for MTR resources. 
+ * As well as the functions described below in V.1.1.2, V1.1.1 and V1.1.0. 
+
+
+IBM® Service Management Unite V1.1.2 includes the following new or enhanced features:  * Added z/OS Problem Isolation dashboards to allow you to identify and resolve z/OS-based resource conflicts and delay states. 
+ * Redesigned z/OS dashboard to speed problem identification and resolution. 
+ * Increased integration with System Automation to ensure operators can issue commands to resolve problems without impacting automation policies. 
+ * Enhanced interface to control System Automation scheduling and policies. 
+ * As well as the functions described below in V1.1.1 and V1.1.0.
+
+
+
+IBM Service Management Unite V1.1.1 includes the following new or enhanced features:  * Added Network Application dashboards to allow you to identify and resolve application communication issues. 
+ * Improved problem identification to support acknowledged ownership to indicate who is working on a problem. 
+ * Reduced risk of performing a system shutdown action by requiring verification before command execution. 
+ * Enhanced performance management dashboards enable you to quickly identify exceeded thresholds or special conditions with conditional formatting that uses color to highlight problems.
+
+Abstract
+IBM Service Management Unite is a systems management console that consolidates mainframe management information and tasks from disparate sources into a single environment. This portal will provide information about Service Management Unite as well as a link to download it. 
+
+ 
+
+Function
+IBM Service Management Unite is a customizable dashboard user interface that is available with IBM Service Management Suite for z/OS V1.5.0. Service Management Unite provides system programmers, operators, and administrators with a transparent view about the of system health status and allows for easy problem identification. The dashboard enables operators to see both monitoring and automation exception events together so they can identify critical problems. Operators can quickly and confidently analyze, isolate and diagnose problems by providing all relevant data in a single place. Service Management Unite also enables operators interact directly with the system by issuing commands and viewing results without going to a different console.
+
+Service Management Unite also provides access to automation functions to start, stop or recycle business applications running on z (z/OS or Systems z), even from mobile devices. This flexibility helps system programmers, operators, and administrators by delivering more usable and efficient automation and system and network management capabilities. The integrated operations console can be used by operators to issue commands such as starting and stopping heterogeneous business applications on IBM z Systems and distributed platforms. 
+
+This release of Service Management Unite includes integration with:
+- IBM System Automation for z/OS v4.1, with APAR OA52610 installed
+- IBM Tivoli System Automation for z/OS V3.5, with APAR OA51668 installed
+- IBM Tivoli Composite Application Manager Agent for WebSphere Applications V7.1.03 FP8, or later 
+- IBM OMEGAMON XE on z/OS V5.3.0 with PTF UA80391 Fix Pack, 5.3.0-TIV-KM5-FP0003, or later
+- IBM Tivoli OMEGAMON XE for CICS on z/OS V5.3.0, or later
+- IBM Tivoli OMEGAMON XE for DB2 Performance Expert on z/OS V5.3.0, or later
+- IBM Tivoli OMEGAMON XE for IMS on z/OS V5.3.0, or later
+- IBM Tivoli OMEGAMON XE for Messaging on z/OS V5.3.0, or later
+- IBM Tivoli OMEGAMON for Mainframe Networks V5.3.0, or later
+- IBM Operations Analytics - Log Analysis v1.3.2
+- IBM Tivoli Netview for z/OS Enterprise Management Agent V6.2.1 
+
+
+Hardware and software requirements
+
+
+IBM Service Management Unite has prerequisites on several other components included with the SMSz suite or available in fix central.
+
+For the WebUI to be fully functional, you must first install and configure the following: 
+
+- JazzSM V1.1.2.1 or higher. JazzSM V1.1.3 is included on the download link 
+
+- Dashboard Application Server Hub (DASH) (installed with the JazzSM package) 
+
+- Tivoli Directory Integrator V7.1.1 Fixpack 4 or higher. Tivoli Directory Integrator V7.1.1.5 is included in the download link as part of the JazzSM V1.1.3 package. The latest fixpack can also be found on [http://www.ibm.com/support/fixcentral/]IBM Fix Central [http://www.ibm.com/support/fixcentral/] 
+
+- IBM NetView for z/OS V6.2.1 
+
+- IBM System Automation for z/OS V4.1.0, with APAR OA52610 installed 
+
+- IBM Tivoli Monitoring v6.3.0 Fixpack 6 with ITM TEPS. This fixpack can be found on [http://www.ibm.com/support/fixcentral/]IBM Fix Central [http://www.ibm.com/support/fixcentral/] 
+
+- IBM OMEGAMON for z/OS v5.3.0 with PTF UA80391 Fix Pack, 5.3.0-TIV-KM5-FP0003, or later, can be found on [http://www.ibm.com/support/fixcentral/]IBM Fix Central [http://www.ibm.com/support/fixcentral/] 
+
+- IBM z/OS TEMA 
+
+- TEP/IOA-LA integration must be enabled in PARMGEN and PTFs are required.
+See the technote for more information:
+http://www.ibm.com/support/docview.wss?uid=swg21696831 [http://www.ibm.com/support/docview.wss?uid=swg21696831] 
+
+- OMEGAMON® for z/OS and IBM Operations Analytics - Log Analysis V1.3.1 integration PTFs for the following agents: 
+
+IBM® MQ Monitoring 
+Link to fix: http://www.ibm.com/support/docview.wss?uid=swg1OA46839 [http://www.ibm.com/support/docview.wss?uid=swg1OA46839] 
+
+IBM® Integration Bus Monitoring
+Link to fix: http://www.ibm.com/support/docview.wss?uid=swg1OA46840 [http://www.ibm.com/support/docview.wss?uid=swg1OA46840] 
+
+OMEGAMON for Storage
+Link to fix: https://www.ibm.com/support/entdocview.wss?uid=swg1OA46871 [http://www.ibm.com/support/docview.wss?uid=swg1OA46871] 
+
+ 
+
+Download
+IBM Service Management Unite software downloads are available on the following url: https://www.ibm.com/marketing/iwm/iwm/web/preLogin.do?source=swg-ibmsms [https://www.ibm.com/marketing/iwm/iwm/web/preLogin.do?source=swg-ibmsms].
+
+To access the download link you will need your IBM customer ID and password as well as the access key which is supplied with the product materials on a CD titled Accessing IBM Service Management Unite. The form number is LCD8-2731-00. 
+
+If you have misplaced the CD you can reorder the product materials via Shop zSeries. You can also contact IBM support or the tivzos@us.ibm.com email ID. Please include your IBM customer and contact info when emailing IBM. 
+
+Feedback can be sent to tivzos@us.ibm.com.

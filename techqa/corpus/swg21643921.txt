@@ -1,0 +1,97 @@
+Title: IBM Running Security AppScan software on IBM Business Process Manager (BPM) and WebSphere Lombardi Edition - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ After running Security AppScan software, it lists vulnerable URLs in the report. What does it mean? Is your IBM Business Process Manager or WebSphere Lombardi Edition software vulnerable? 
+
+ANSWER
+Note: The information that is contained in this document has been moved to dW Answers at this location [https://developer.ibm.com/answers/questions/170879/running-security-appscan-software-on-ibm-business/]. The new format will allow you to ask questions of the community to better understand the information. This technote will be archived in 60 days. Please bookmark the new location.
+
+
+ABOUT SECURITY APPSCAN SOFTWARE
+You can obtain information about the different IBM implementations of Security AppScan software on the IBM Security AppScan [http://www.ibm.com/software/products/en/appscan] web site. Security AppScan software is also available through several third-party vendors. 
+
+
+
+TERMINOLOGY
+Typically, Security AppScan tools can detect whether the following main security vulnerabilities exist in IBM Business Process Manager and WebSphere Lombardi Edition products:
+
+
+
+ * XSS vulnerabilities 
+ * SQL injections
+
+
+
+Cross-site scripting (XSS) is a type of computer security vulnerability that is typically found in web applications. XSS enables attackers to inject client-side script into web pages that are viewed by other users. A cross-site scripting vulnerability might be used by attackers to bypass access controls such as the same origin policy. 
+
+
+SQL injection is a technique that is often used to attack data-driven applications. This attack is done by including portions of SQL statements in an entry field in an attempt to get the web site to pass a newly formed rogue SQL command to the database. For example, a command might dump the database contents to the attacker. SQL injection is a code injection technique that exploits a security vulnerability in application software. The vulnerability happens when user input is either incorrectly filtered for string literal escape characters embedded in SQL statements or user input is not strongly typed and unexpectedly executed. 
+
+INTERPRETING APPSCAN RESULTS
+It is important to understand that some cases require a response containing scripts for features that are implemented in the product. So, many AppScan-reported vulnerabilities are based on the concern that because the response is returning scripts, it can potentially execute on the client system. However, this scenario is not the case due to page proper header information that is used to ensure that the scripts are not executed unintentionally. A user would need to manually parse and inject scripts on the client side system to make them run, which is the use case in which they wanted them to run.
+
+
+You might see XSS vulnerabilities that are real vulnerabilities. Thus, the first thing to check is if you have the corresponding XSS prevention flag set to true in the IBM Business Process Manager or WebSphere Lombardi Edition configuration files. The <escape-user-input> property in the 00Static.xml configuration file prevents a user who is working in the Process Portal, Process Admin Console, or both from executing JavaScript™ that is embedded in the URLs and might cause a security risk. The <escape-user-input> property can have one of the following values:
+
+
+
+ * false - This value disables the escaping of user input in Process Portal and Process Admin Console URLs. When escaping is disabled, JavaScript that is inserted into the URLs can be executed.
+   
+   
+ * true - This value enables the escaping of user input in Process Portal and Process Admin Console URLs. When escaping is enabled, JavaScript that is inserted into the URLs cannot be executed.
+
+
+
+By default, the value is set to true. However, you can change it in the 00Static.xml file or add an override in the 100Custom.xml file. Thus, make sure to verify that the property is set to true in your environment before you run a Security AppScan. If necessary, re-run the Security AppScan after you set the property to true. For more information about the configuration files, see the Configuration file overview and explanation for Lombardi Teamworks, WebSphere Lombardi Edition (WLE), and the IBM Business Process Manager (BPM) products [http://www.ibm.com/support/docview.wss?uid=swg21439614] document. 
+
+
+Note: In most cases, you cannot do anything outside the scope of what the user who is successfully authenticated in the Process Portal or Process Admin console has permission to do. 
+
+UNDERSTANDING FALSE POSITIVE URLS VERSUS ACTUAL VULNERABILITIES
+It is important to understand which of the URLs are false positive versus URLs those that are exposing real vulnerabilities.https://host:port/teamworks/tm_process_finished.lsw The tm_processed_finished.lsw address is a false positive from AppScan. AppScan might be complaining about the fact that the code is changing the window.opener.location.href value in two different places. In the both cases, the HREF being assigned is to the same host, port and webapp as the original. However, sensitive data is not added to the URL and, thus, this URL cannot be hijacked.
+
+https://host:port/teamworks/coach.lsw The coach.lsw URL is also a false positive for cross-site request forgery (CSRF). The coach.lsw URL is a redirect mechanism to display the Coach. This redirect is based off LTPA token - HTTP session (JSESSIONID), which is only authorized user using an LTPA token that can access the protected resources, such as a Coach. In addition, an HTTP session is used to store Coach data. An HTTP session, by default, expires in 30 minutes due to inactivity. An LTPA token, by default, expires in 2 hours. These values are sufficient to prevent CSRF. After the HTTP session expires, any attempt to retrieve Coach data results in an exception and the following message is returned to end user: 
+
+
+You have been automatically logged out for security reasons. Unfortunately, because of this we are unable to save your information at this time. Please run this task again to save your information.
+
+https://host:port/teamworks/fauxRedirect.lsw The fauxredirect.lsw URL is actually used to prevent data from being re-submitted. So, it is again a false positive from AppScan. The main purpose of this URL is to avoid re-submitting the data when you click Refresh or F5 in the browser. So, the fauxredirect.lsw URL is used to avoid Post Resubmit on Refresh. 
+
+
+
+
+
+KNOWN VULNERABILITIES AND RESOLUTIONS
+ * An XSS vulnerability is possible even when the escape-user-input property is set to true. When you have a document attachment widget on the Coach, the property does not work as expected. For more information, see the IC79890: ESCAPE-USER-INPUT DOES NOT WORK ON A COACH WITH A DOCUMENT ATTACHMENT CONTROL [http://www.ibm.com/support/docview.wss?uid=swg1IC79890] document. This issue is addressed in WebSphere Lombardi Edition V7.2.0 Fix Pack 5 and IBM Business Process Manager V7.5.1 Fix Pack 1 and V8.0.1.
+   
+   
+ * SQL injection is possible using the My Team Performance page, which is covered by APAR JR42331. This issue is addressed in IBM Business Process Manager V7.5.1 Fix Pack 1 and V8.0.0. You can also download an interim fix [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Standard&release=All&platform=All&function=aparId&apars=JR42331&source=fc] from Fix Central for IBM Business Process Manager V7.5.1.
+   
+   
+ * The following URLs in IBM Business Process Manager are vulnerable to Cross Site Scripting, Cross Site Request Forgery, Link Injection, and Phishing Through Frames attacks:
+   
+   https://host_name:port_number/ProcessPortal/jsp/socialPortal/dashboard.jsp 
+   https://host_name:port_number/teamworks/executeServiceByName 
+   https://host_name:port_number/portal/jsp/viewAdHocReportWizard.do 
+   https://host_name:port_number/rest/bpm/wle/v1/process 
+   
+   
+   
+   
+   See the Security Bulletin: IBM Business Process Manager (BPM) Vulnerable URLs (CVE-2013-0581) [http://www.ibm.com/support/docview.wss?uid=swg21633593] document for a fix to address the vulnerabilities with previous URLs.
+   
+   
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21679451]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Security AIX, Linux, Linux zSeries, Solaris, Windows 8.0.1, 8.0, 7.5.1, 7.5 Business Integration WebSphere Lombardi Edition Security AIX, Linux, Linux zSeries, Solaris, Windows 7.2 
+PRODUCT ALIAS/SYNONYM
+ BPM
+WLE

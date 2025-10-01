@@ -1,0 +1,118 @@
+Title: IBM IZ84588: IMPROVEMENTS IN CRYPTOGRAPHIC OPERATION HANDLING FOR FIPS 140-2 MODE - United States
+
+Text:
+  A FIX IS AVAILABLE
+Tivoli Key Lifecycle Manager Version 1.0, Fix Pack 4, 1.0.0-TIV-TKLM-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24027909]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Internal processing improvements to TKLM when in FIPS 140-2
+   (110881)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Improvements in crypographic operation handling for FIPS 140-2
+   Mode
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  | fix pack | 1.0.0-TIV-TKLM-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ84588
+   
+   
+ * REPORTED COMPONENT NAME
+   KEY LIFECYCLE M
+   
+   
+ * REPORTED COMPONENT ID
+   5724T6000
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-08
+   
+   
+ * CLOSED DATE
+   2010-09-13
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   KEY LIFECYCLE M
+   
+   
+ * FIXED COMPONENT ID
+   5724T6000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

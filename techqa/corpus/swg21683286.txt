@@ -1,0 +1,40 @@
+Title: IBM How can you determine the number of profiles and the default profile? - United States
+
+Text:
+default profile TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+A WebSphere environment can have multiple profiles. How can you determine the number of profiles in an given WAS environment and how can you determine which one of those profiles is the default profile?
+
+ENVIRONMENT
+Portal 8.x
+
+RESOLVING THE PROBLEM
+Locate the <was_root>/properties/profileRegistry.xml file. The contents will look something like this...
+
+<?xml version="1.0" encoding="UTF-8"?><profiles>
+<profile isAReservationTicket="false" isDefault="false"
+name="cw_profile"
+path="/opt/IBM/WebSphere/AppServer/profiles/cw_profile"
+template="/opt/IBM/WebSphere/AppServer/profileTemplates/default"/>
+<profile isAReservationTicket="false" isDefault="true"
+name="wp_profile" path="/opt/IBM/WebSphere/wp_profile"
+template="/opt/IBM/WebSphere/AppServer/profileTemplates/default">
+<augmentor
+template="/opt/IBM/WebSphere/PortalServer/profileTemplates/default.porta
+l.full"/>
+</profile>
+<profile isAReservationTicket="false" isDefault="false"
+name="Dmgr01" path="/opt/IBM/WebSphere/AppServer/profiles/Dmgr01"
+template="/opt/IBM/WebSphere/AppServer/profileTemplates/management"/>
+</profiles>
+
+In this case, there are three profiles...wp_profile (the Portal profile), cw_profile (the ConfigWizard profile), and Dmgr01 (the Deployment Manager profile). The wp_profile is set as the default profile. 
+
+Those who don't want to go thru XML files (or need the information in scripts) you can use the WebSphere command manageprofiles.sh (.bat) to retrieve this information. 
+
+To get a list of the profiles for a specific WebSphere Application Server installation run the following command: cd <was_home> me@myhost:/wp8/AppServer/bin$ ./manageprofiles.sh -listProfiles [cw_profile, wp_profile, s0000] 
+
+To retrieve the default profile run cd <was_home> me@myhost:/wp8/AppServer/bin$ ./manageprofiles.sh -getDefaultName s0000 
+
+The manageprofiles command provides many more options. Run me@myhost:/wp8/AppServer/bin$ ./manageprofiles.sh -help for an overview of the command options or visit the Knowledge Center at http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.installation.nd.doc/ae/rxml_manageprofiles.html?cp=SSAW57_8.5.5%2F1-5-0-6-0-2&lang=en [http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.installation.nd.doc/ae/rxml_manageprofiles.html?cp=SSAW57_8.5.5%2F1-5-0-6-0-2&lang=en]

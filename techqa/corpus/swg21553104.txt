@@ -1,0 +1,26 @@
+Title: IBM Sometimes changes made to the JSP page do not show up in the browser - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Sometimes changes made to the JSP page do not show up in the browser 
+
+SYMPTOM
+
+
+Sometimes new updates made to a JSP page do not show up in the browser. The JSP displays an outdated version of the page. How can the old version be forced to be refreshed?
+
+
+RESOLVING THE PROBLEM
+
+
+1. The best thing to do is identify the compiled java and the class file that corresponds to the jsp in the work folder and delete it. This will force the jsp to be recompiled and the changes will show up. 
+
+2. Another option is to "touch" the JSP to reset the updated date. This will typically force the JSP to refresh in your browser.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling Selling and Fulfillment Suite MCS - Comergent SDK 
+HISTORICAL NUMBER
+ NFX2861

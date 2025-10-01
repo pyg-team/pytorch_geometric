@@ -1,0 +1,29 @@
+Title: IBM Will Tivoli Endpoint Manager release Fixlet messages for daylight savings time? - United States
+
+Text:
+daylight savings time; DST; Microsoft; patch; patching; 394; googlebigfix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Microsoft has released patches for supported Windows operating systems that updates to the new daylight savings time information. These patches have been incorporated into the Fixlet site "Patches for Windows (Enterprise Security)". 
+
+RESOLVING THE PROBLEM
+
+
+The US (and some other countries) changed the hours for daylight savings starting in 2007. To reflect this new daylight savings information, computers must be updated and Microsoft has released patches for supported Windows operating systems that updates to the new daylight savings time information. These patches have been incorporated into the Fixlet site "Patches for Windows (Enterprise Security)".
+
+Current published Fixlets to address DST issues includes the OSes: - Windows Server 2003 - Windows XP - Windows XP Professional x64 Edition / Windows Server 2003 x64 Edition.
+
+Note: Windows Vista ships with the new DST rules already included.
+
+Note for customers with Windows 2000 and below: Microsoft does not currently make available patches for OSes that are no longer supported (Win2000, WinNT, Win98, Win95). If you have "extended Hotfix Support" for Windows 2000, Microsoft will give you a patch for Win2000 DST, but this patch is not publicly available for all customers. (More info at http://www.microsoft.com/windows/timezone/dst2007.mspx).
+
+Since Microsoft has not released official public patches for these other operating systems, we cannot provide and support Fixlets to adjust daylight savings for older operating systems on our current Fixlet sites. However, due to heavy demand from our customers, we did find a way to adjust the registry settings in Windows 2000 to properly set the new DST information using information published by Microsoft (see here for more information http://support.microsoft.com/kb/914387). We are making these Fixlets available only through Professional Services because there is not an officially supported Microsoft patch and it is outside of the scope of our "Patches for Windows" sites.
+
+The Fixlets for updating DST information for unsupported Microsoft operating systems are only available by contacting our Professional Services department. We will be able to deliver to you custom Fixlets that should be easily importable into your deployment that will allow you to update DST information on the older Microsoft operating systems. There will be a relatively small professional services fee for these Fixlets that will cover the development and support of these custom Fixlets.
+
+Note: Microsoft has not publicly released any DST patches for Exchange 5.5 so there are no FIxlets for it available at this time.
+
+ 
+
+HISTORICAL NUMBER
+ 394

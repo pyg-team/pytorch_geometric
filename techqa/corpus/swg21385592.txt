@@ -1,0 +1,55 @@
+Title: IBM Configuration task fails during XMLAccess with 'EJPXB0016E Connection refused' error - United States
+
+Text:
+EJPXB0016E; connection; refused; xmlaccess; localhost; config; configuration; task; configengine; xmlaccesshost TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM® WebSphere® Portal is successfully installed and configured. While running a configuration task using the ConfigEngine (.sh|.bat) command, an XMLAccess call is made to update the Portal system configuration. During the XMLAccess call, a EJPXB0016E Connection Refused error message appears and the configuration task fails. 
+
+This technote provides an overview of how to diagnose and resolve this error to allow Portal to successfully complete the configuration task. 
+
+SYMPTOM
+The following output appears in the Portal ConfigTrace.log file: 
+
+[xmlaccess] EJPXB0006I: Connecting to URL 
+http:/ /localhost:80/wps/config/
+[xmlaccess] EJPXB0009E: Could not connect to portal.
+[xmlaccess] java.net.ConnectException: Connection refused: connect
+[xmlaccess] EJPXB0016E: An error occurred on the client: Connection refused: connect
+
+
+CAUSE
+The name "localhost" is not defined in the operating system hosts file. Therefore, when the Portal system attempts to perform a Domain Name Service (DNS) lookup of the Internet Protocol (IP) address associated with the name "localhost", the DNS lookup fails. As a result, the Portal v6.1.x configuration task fails.
+
+
+DIAGNOSING THE PROBLEM
+The wkplc.properties file contained the Fully Qualified Domain Name (FQDN) of the Portal server under the WpsHostName parameter. The wkplc_comp.properties file showed the parameter XmlAccessHost to have a value of localhost. This mismatch keyed in on the localhost value not returning a valid IP address from the DNS lookup, whereas the FQDN of the Portal server defined in the WpsHostName parameter did return a valid IP address. This allowed configuration steps prior to the XmlAccess call to complete successfully.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+Update the XMLAccessHost in the wkplc_comp.properties file:
+
+1. Back up the existing <wp-profile>\ConfigEngine\properties\wkplc_comp.properties file, as in:
+2. Open the wkplc_comp.properties in a text editor.
+
+3. Modify the following item, 
+
+ * 
+ * 
+ * XmlAccessHost=localhost
+ * 
+ * 
+ * 
+ * XmlAccessHost=hostname.compyname.com
+ * 
+ * 
+
+4. Save the updated wkplc_comp.properties file. 
+
+5. Retry the configuration task that previously failed.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products AIX, HP-UX, IBM i, Linux, Solaris, Windows, z/OS 7.0, 6.1

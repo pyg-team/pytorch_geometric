@@ -1,0 +1,81 @@
+Title: IBM Apache セキュリティーの脆弱性と Rational Web Platform/CM サーバーへの影響 - United States
+
+Text:
+1266155; CQ; CC; ReqPro; PjC; RWP; IHS; ClearQuest; ClearCase; RequisitePro; ProjectConsole; RequisiteWeb; Rational Web Platform; IBM HTTP Server; RATLC01032027; RATLC01017358; PK11929; CAN; CVE; mod_ssl; Apache; mod_rewrite; XSS; security; vulnerabilies; vulnerability; 脆弱性; セキュリティー; アパッチ; hi FAQ TECHNOTE(トラブルシューティング)
+
+問題(概要)
+ [Japanese] 本技術情報では、一般的に報告されている Apache セキュリティーの脆弱性問題の、IBM Rational Web Platform および Change Management (CM) サーバー に対する影響について説明します。 これらの Web プラットフォームは、IBM Rational ClearCase、IBM Rational ClearQuest、IBM Rational ProjectConsole、そして IBM Rational RequisitePro 製品に Web インターフェースコンポーネントとして使用されています。 
+
+症状
+Rational Web Platform は、IBM HTTP Server を含んでいます。これらは、IBM Rational ClearCase、IBM Rational ClearQuest、IBM Rational ProjectConsole、そして IBM Rational RequisitePro 製品バージョン 7.0 に使用されています。IBM Rational ClearCase、IBM Rational ClearQuest 製品バージョン 7.1 では、Web プラットフォームとして CM サーバーが使用されています。これらも、IBM HTTP Server を使用しています。 
+
+IBM HTTP Server は、Apache HTTP Server が基となっているため、native Apache 自体の脆弱性が、セキュリティーの脆弱性スキャンプログラムによって検出され、セキュリティーに関する警告を受ける可能性があります。
+
+
+
+原因
+IBM HTTP Server は、Apache バージョン 2.0.47 が基となっています。セキュリティーの脆弱性 スキャンプログラムの中には、この Apache サーバーバージョンのみを確認して、IBM HTTP Server の バージョンや Fix Pack レベルの違いを確認しないプログラムもあります。
+
+
+
+診断
+Apache HTTP Server の脆弱性の多くは、次のような理由により、IBM HTTP Server には該当しません。 
+
+ 
+
+ * IBM HTTP Server は、脆弱性を含む Apache 機能を、別の実装方法で提供しています。 
+ * IBM HTTP Server は、脆弱性を含む Apache 機能を提供していません。 
+ * IBM HTTP Server は、脆弱性を持たない Apache の ベージョンレベルを基にしています。 
+ * IBM HTTP Server は、修正パッチ(fix pack や e-fixes) により、脆弱性を修正しています。
+
+
+Apache ベースバージョンに対する報告されている脆弱性とは別に、 IBM HTTP Server に対して報告されている追加の脆弱性も修正パッチ （fix pack) によって対応しています。バージョン 7.0.1 以降の Rational 製品は、適用する fix pack にも IBM HTTP Server が含まれています。 
+
+適用する Fix pack は、 mod_rewrite and Cross-site Scripting ( XSS) を含む Apache に影響する多くの共通の脆弱性を対応しています。この脆弱性は、コマンド " Apache.exe -V/apachectl -V " を実行し、IBM HTTP Server サーバーのバージョン情報を参照するときに確認できます。なお、以下のディレクトリーは、デフォルトのインストールパスを仮定しています。 
+ * Microsoft® Windows®
+   
+   バージョン 7.0.0.x と 7.0.1.x: C:\Program Files\Rational\Common\rwp\IHS\bin バージョン 7.0.2.x, 7.0.3.x, と 7.1.x: C:\Program Files\IBM\RationalSDLC\common\IHS\bin
+   
+   
+   
+ * Linux® と UNIX®
+   
+   バージョン 7.0.0.x と 7.0.1.x: /opt/rational/common/rwp/IHS/bin
+   バージョン 7.0.2.x, 7.0.3.x, と 7.1.x: /opt/IBM/RationalSDLC/common/IHS/bin
+
+
+
+これらの脆弱性は、 Common Vulnerabilities and Exposures ( CVE) IDs として追跡できます。これらの ID の詳細は、 [http://cve.mitre.org] National Vulnerability Database [http://nvd.nist.gov] にて確認することができます。もし、セキュリティーの脆弱性スキャンプログラムにて、 上記の IBM HTTP Server バージョン情報表示に関する脆弱性が報告される場合、スキャンプログラム自体のエラーの可能性があります。セキュリティーの脆弱性スキャンプログラムによっては、独自のカタログシステムを使用していることがあるので、セキュリティー管理者は、その責任範囲において、そのカタログシステムを CVE 標準のカタログシステムにマッピングして使用する必要があります。 
+
+CVE 修正のリストには、 mod_ssl を含む脆弱性の修正が含まれていません。 IBM HTTP Server は、mod_ssl モジュールを実装していないので、これらのセキュリティー問題には関係ありません。 
+解決方法
+Rational Web Platform サーバーを、確実に最新の脆弱性の問題を修正した状態にするには、Rational 製品の最新バージョンへのアップグレードを行います。 
+
+
+加えて、次のディレクトリに示す IBM HTTP Server コンポーネントに IBM HTTP Server の Fix pack を直接適用することも可能です。各プラットフォームおよびバージョンのデフォルトディレクトリーは以下のとおりです。
+
+Microsoft Windows
+バージョン 7.0.0.x と 7.0.1.x: C:\Program Files\Rational\Common\rwp\IHS
+バージョン 7.0.2.x, 7.0.3.x, と 7.1.x: C:\Program Files\IBM\RationalSDLC\common\IHS 
+
+
+Linux and UNIX
+バージョン 7.0.0.x と 7.0.1.x: /opt/rational/common/rwp/IHS
+バージョン 7.0.2.x, 7.0.3.x, と 7.1.x: /opt/IBM/RationalSDLC/common/IHS 
+
+
+Rational Web Platform 用の IBM HTTP Server を更新する方法の詳細については、技術情報 1394480 [http://ibm.com/support/docview.wss?rs=988&uid=swg21394480] を参照します。Fix pack をダウンロードするための IBM HTTP Server のバージョンは、上記に説明した方法で確認できます。 Rational Web Platform 用の IBM HTTP Server の動作に問題がないことを確実にするため、まずテストサーバーへ適用して事前に確認することを推奨します。
+
+IBM HTTP Server についての情報は、IBM HTTP Server Questions and Answers [http://publib.boulder.ibm.com/httpserv/ihsdiag/questions.html] サイトを参照してください。トピック "What release of Apache is IBM HTTP Server based on?" と "Is a specific Apache fix in my level of IBM HTTP Server?" に Apache コアについての説明があります。
+
+
+
+関連情報
+#English Technote 1266155: Apache security vulnerabilit [http://www.ibm.com/support/docview.wss?uid=swg21266155]
+
+
+
+
+
+
+クロスリファレンス情報 区分 製品 コンポーネント プラットフォーム バージョン エディション Software Development Rational ClearQuest Web Java Server AIX, HP-UX, Linux, Solaris, Windows 7.0 Software Development Rational ClearCase Rational Web Platform (RWP) AIX, HP-UX, Linux, Solaris, Windows 7.0 Software Development Rational ClearCase CM Server AIX, HP-UX, Linux, Solaris, Windows 7.1 Software Development Rational RequisitePro RequisiteWeb Windows, AIX, HP-UX, Linux, Solaris 7.0, 7.1 Software Development Rational ProjectConsole Web Server AIX, HP-UX, Linux, Solaris, Windows 7.0

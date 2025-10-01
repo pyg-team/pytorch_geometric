@@ -1,0 +1,171 @@
+Title: IBM JR48745: BOOTSTRAP FAILS AGAINST A DATABASE WITH DECIMAL=COMMA SET UP ON DB2/Z - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  bootstrap fails against a database with decimal=comma set up on
+   DB2/z
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  no
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM BPM V8.5.0.1 Advanced &#175;   &#146;Standard and
+   *                  Express                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:  The bootstrapProcessServerData.sh      *
+   *                      command fails when run against a DB2    *
+   *                      for z/OS database with decimal=comma    *
+   *                      set                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When IBM BPM uses a DB2 for z/OS
+   database with the decimal=comma
+   setting,
+   bootstrapProcessServerData.sh fails
+   with the following
+   BadSqlGrammarException error message:
+   org.springframework.jdbc.BadSqlGrammarE
+   xception: PreparedStatementCallback;
+   bad SQL grammar [insert into
+   LSW_ACL_ENTRY(acl_entry_id,group_id,po_
+   type,po_id,mask)
+   values(1,3,5000,?,127)]; nested
+   exception is
+   com.ibm.db2.jcc.am.SqlSyntaxErrorExcept
+   ion: DB2 SQL Error: SQLCODE=-104,
+   SQLSTATE=42601,
+   SQLERRMC=,5000;MICROSECONDS
+   MICROSECOND SECONDS SECOND MINUTES
+   MINUTE HOURS, DRIVER=4.11.69
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for IBM BPM V8.5.0.1 is available that updates the
+   SQL so that the error is eliminated and the
+   bootstrapProcessServerData.sh script runs cleanly against a
+   DB2 for z/OS database with decimal=comma configured.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR48745:
+   
+   1. Select the product group, product, installed version, and
+   platform, and click Continue.
+   2. Select APAR or SPR, enter JR48745, and click Continue.
+   
+   When downloading fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   After you apply the fix, rerun the
+   boostrapProcessServerData.sh command.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR48745
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-08
+   
+   
+ * CLOSED DATE
+   2014-01-15
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

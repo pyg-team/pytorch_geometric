@@ -1,0 +1,210 @@
+Title: IBM PI08401: LIBERTY PROFILE DOES NOT FIND THE APPLICATIONS HANDLERCHAIN.XML FILE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.2: WebSphere Application Server V8.5.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037250]
+8.5.5.3: WebSphere Application Server V8.5.5 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038133]
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Liberty Profile (V8.5.5.1) customer is running into issue
+   where Liberty does not find the HandlerChain.xml file.
+   
+   The customer application is packaged as an .ear file with a lib
+   folder and multiple .war files. When customer starts the
+   Liberty server they get the errors below.
+   
+   Errors seen from console:
+   
+   [ERROR   ] CWWKZ0106E: Could not start web application
+   <APPLICATION_NAME>.
+   [ERROR   ] CWWKZ0002E: An exception occurred while starting the
+   application <APPLICATION_NAME>. The exception message was:
+   com.ibm.ws.container.service.metadata.MetaDataException:
+   javax.xml.ws.WebServiceException:
+   CWWKW0032E: The handler chain
+   file cannot be parsed because of exception JAR entry
+   <XML_PATH>/HandlerChain.xml not found in <FILESYSTEM_PATH>.
+   <JAR_PATH>.
+   
+   Error seen in the FFDC log file:
+   
+   Exception = java.io.FileNotFoundException
+   Source =com.ibm.ws.jaxws.metadata.builder.
+   HandlerChainInfoBuilder
+   probeid = 373
+   Stack Dump = java.io.FileNotFoundException: JAR entry
+   <XML_PATH>/HandlerChain.xml not found in <FILESYSTEM_PATH>.
+   <JAR_PATH>
+   ...
+   ...
+   Dump of objectArray[0]
+   Object type = java.lang.String
+   String value = "<APPLICATION_METHOD>"
+   
+   Dump of objectArray[1]
+   Object type = java.lang.String
+   String value = "HandlerChain.xml"
+   
+   It appears that the problem is that the package path is also in
+   a jar file that is in the .ear's lib folder.  The customer sees
+   that Liberty finds the package path in the application jar first
+   and expects the HandlerChain.xml file to be there. Since it is
+   not there,  Liberty throws an error instead of continuing to
+   search additional jars in the classpath.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  L3 developers added the two classes, that have a fix, into
+   com.ibm.ws.jaxws.common_1.0.jar (under wlp/lib) so Liberty
+   WILL find the HandlerChain.xml in the correct location, and the
+   customer application WILL deploy successfully.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  This issue will affect IBM WebSphere        *
+   *                  Application Server Liberty Profile users    *
+   *                  under the following conditions:             *
+   *                  - use a web service application             *
+   *                  - have a handler chain configuration file   *
+   *                  associated with a service class             *
+   *                  - the same package name of the given        *
+   *                  service class exists in more than one Java  *
+   *                  EE Jar/War file                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Liberty Profile does not find the web   *
+   *                      service application's                   *
+   *                      handlerchain.xml file                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The handler chain configuration file is associated with one
+   given class. Previously the logic was to get the java package
+   name from the class name, and then search the package name to
+   locate the folder. However, the same java package could exist
+   in more than one jar archive, in such case it could find the
+   wrong path.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The new logic is to search where the java class file is, but
+   not the package name since we just want to locate the handler
+   chain configuration file from the same path of the given class
+   which it is associated with.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.2. Please refer to the Recommended Updates page
+   for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI08401
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * REPORTED COMPONENT ID
+   5725L2900
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-12-18
+   
+   
+ * CLOSED DATE
+   2014-01-09
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * FIXED COMPONENT ID
+   5725L2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

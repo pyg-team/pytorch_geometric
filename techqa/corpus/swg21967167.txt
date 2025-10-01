@@ -1,0 +1,20 @@
+Title: IBM How to add Station and Operator fields to RV2 with IBM Datacap - United States
+
+Text:
+station; operator; user; RV2; column; report TECHNOTE (FAQ)
+
+QUESTION
+ When I run RV2 reports, the Station and Operator fields are missing, and when running the Batch Aging report or the Batch Productivity report, the Operator and Station column is mostly blank.. How do I add those fields? 
+
+ANSWER
+The writing of the Operator and Station data is controlled by the Store setting defined for that task. The following instructions show how to collect this data for the VScan task in TravelDocs.
+
+
+ 1. Launch Datacap Web and login to TravelDocs. Select the Administrator Tab. 
+ 2. Expand the TravelDocs Workflow, and then expand the Main Job. Select VScan, as an example 
+ 3. On the right side is the Selected Task Details pane. For the Store dropdown box, the default is None. Because of this, nothing is being written to the columns. 
+ 4. To have reports show the Operator and/or Station, set Store to Station ID, User ID, or Station ID and User ID. 
+ 5. Repeat for other tasks as needed.
+
+
+The Store setting has other uses and setting this can affect other behavior. For more information, see Batch queuing to specific users and stations [http://www.ibm.com/support/knowledgecenter/SSZRWV_9.0.0/com.ibm.dc.admin.doc/dcaad007.htm?lang=en].

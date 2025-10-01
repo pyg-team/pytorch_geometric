@@ -1,0 +1,85 @@
+Title: IBM Installing Maximo Anywhere and MobileFirst using Oracle 12c database - United States
+
+Text:
+TPAEANYWHERE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote briefly describes special considerations and steps that must be taken when installing Maximo Anywhere and MobileFirst using an Oracle 12c database, 
+
+SYMPTOM
+When installing the MobileFirst from the Maximo Anywhere launchpad, Oracle 12c is not displayed as an option on the database type panel: 
+
+[/support/docview.wss?uid=swg21976757&aid=1] [/support/docview.wss?uid=swg21976757&aid=1]
+
+Oracle 12c is supported by Maximo Anywhere and MobileFirst, but the following must be done prior to running the installer:
+
+
+ 1. An Oracle 12c database instance for MobileFirst must be created manually. 
+ 2. MobileFirst users must be manually created in the database. 
+ 3. The Oracle JDBC URL connection option must be chosen and configured when using the MobileFirst installer and Server Configuration Tool.
+    
+
+
+Further detail on each of these items is provided below. 
+RESOLVING THE PROBLEM
+Complete the following steps before installing the MobileFirst Server from the Maximo Anywhere launchpad:
+
+You must either use your existing Maximo 12c database instance for MobileFirst or create separate dedicated instance (recommended) using Oracle tools (Oracle Database Configuration Assistant GUI tool, DBCA command or SQL CREATE DATABASE commands)
+
+Once the database is created, you must create four (4) MobileFirst users manually in the database.
+
+Sample scripts for each user are provided below.
+
+App Center User:
+===================
+CONNECT system/password@ORCL
+CREATE USER APPCENTER IDENTIFIED BY appcenterpassword
+DEFAULT TABLESPACE USERS QUOTA UNLIMITED ON USERS;
+GRANT CREATE SESSION, CREATE SEQUENCE, CREATE TABLE TO APPCENTER;
+DISCONNECT;
+
+WLAdmin User:
+===================
+CONNECT system/password@ORCL
+CREATE USER WLADMIN IDENTIFIED BY wladminpassword
+DEFAULT TABLESPACE USERS QUOTA UNLIMITED ON USERS;
+GRANT CREATE SESSION, CREATE SEQUENCE, CREATE TABLE TO WLADMIN;
+DISCONNECT;
+
+Worklight User:
+==================
+CONNECT system/password@ORCL
+CREATE USER WORKLIGHT IDENTIFIED BY worklightpassword
+DEFAULT TABLESPACE USERS QUOTA UNLIMITED ON USERS;
+GRANT CREATE SESSION, CREATE SEQUENCE, CREATE TABLE TO WORKLIGHT;
+DISCONNECT;
+
+Worklight Reports User:
+==========================
+CONNECT system/password@ORCL
+CREATE USER WORKLIGHTREPORTS IDENTIFIED BY worklightreportspassword
+DEFAULT TABLESPACE USERS QUOTA UNLIMITED ON USERS;
+GRANT CREATE SESSION, CREATE SEQUENCE, CREATE TABLE TO WORKLIGHTREPORTS;
+DISCONNECT;
+
+Once this has been completed, you can now install MobileFirst from the Maximo Anywhere launchpad.
+
+When doing so, choose Oracle 11g as the database type.
+
+On the Database server properties panel, choose Connect using a generic Oracle JDBC URL then select your JDBC driver:
+
+[/support/docview.wss?uid=swg21976757&aid=2] [/support/docview.wss?uid=swg21976757&aid=2]
+
+On the Database server additional properties panel, enter the Database JDBC URL connect string for your MobileFirst database instance.
+
+For example:
+
+jdbc:oracle:thin:@yourdbservername:1521:ORCL
+
+[/support/docview.wss?uid=swg21976757&aid=3] [/support/docview.wss?uid=swg21976757&aid=3]
+
+Complete the installation. Be sure to select the Database JDBC URL option for all remaining tasks in the MobileFirst Server Configuration Tool.
+
+For further information on this topic see the IBM MobileFirst v6.3.0 Knowledge Center:
+
+http://www.ibm.com/support/knowledgecenter/SSHS8R_6.3.0/wl_welcome.html [http://www-01.ibm.com/support/knowledgecenter/SSHS8R_6.3.0/wl_welcome.html]

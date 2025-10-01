@@ -1,0 +1,184 @@
+Title: IBM PK72645: INCORRECT SQLCODE551 FOR CREATE VIEW WITH USER HAVING CREATEIN  PRIVILEGE ON SCHEMA - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  As per V9 base code change (DK223), user which is having DBADM
+   can create VIEW in other schema if he has CREATEIN on that
+   SCHEMA.
+   
+   Problem scenario:
+   USER1 has CREATEIN on SCHEMA AAAAA
+   and performs:
+   SET CURRENT SCHEMA=AAAAA ;
+   CREATE VIEW TESTVIEW AS SELECT * FROM TAB1;
+   getting
+   
+   DSNT408I SQLCODE = -551, ERROR:  USER1 DOES NOT HAVE THE
+   PRIVILEGE TO PERFORM OPERATION CREATE VIEW ON OBJECT
+             AAAAA.TAB1
+    DSNT418I SQLSTATE   = 42501 SQLSTATE RETURN CODE
+    DSNT415I SQLERRP    = DSNXICVW SQL PROCEDURE DETECTING ERROR
+    DSNT416I SQLERRD    = 32  0  0  -1  0  0 SQL DIAGNOSTIC
+                          INFORMATION
+    DSNT416I SQLERRD    = X'00000020'  X'00000000'  X'00000000'
+                          X'FFFFFFFF'  X'00000000'  X'00000000'
+                         SQL DIAGNOSTIC           INFORMATION
+   
+   SQLCODE551 is issued incorrectly, statemnet should be allowed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  GRANT CREATEIN ON SCHEMA * TO USER1;
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: DB2 users creating views                     *
+   *                                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: SQLCODE -551 received incorrectly when  *
+   *                      the user is authorized to create the    *
+   *                      view.                                   *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   SQLCODE -551 was received during create view with an implicit
+   qualifier, when the user had the necessary CREATEIN privilege
+   on the schema.
+   An sqlcode like the following is issued:
+    DSNT408I SQLCODE = -551, ERROR:  USER1 DOES NOT HAVE THE
+    PRIVILEGE TO PERFORM OPERATION CREATE VIEW ON OBJECT
+              AAAAA.TAB1
+     DSNT418I SQLSTATE   = 42501 SQLSTATE RETURN CODE
+     DSNT415I SQLERRP    = DSNXICVW SQL PROCEDURE DETECTING ERROR
+     DSNT416I SQLERRD    = 32  0  0  -1  0  0 SQL DIAGNOSTIC
+                           INFORMATION
+     DSNT416I SQLERRD    = X'00000020'  X'00000000'  X'00000000'
+                           X'FFFFFFFF'  X'00000000'  X'00000000'
+                          SQL DIAGNOSTIC           INFORMATION
+   For view creation, DB2 did not consider the CREATEIN privilege
+   that was held on the schema.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code was changed to consider the CREATEIN schema privilege
+   for CREATE VIEW with an implicit qualifier.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK72645
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-23
+   
+   
+ * CLOSED DATE
+   2008-11-25
+   
+   
+ * LAST MODIFIED DATE
+   2009-01-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK41930
+   
+   
+
+MODULES/MACROS
+ *  DSNXA02
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY UK41930 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK41930]
+   UP08/12/10 P F812
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

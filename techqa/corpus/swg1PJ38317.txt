@@ -1,0 +1,136 @@
+Title: IBM PJ38317: If a client is in a different time zone than the Workplace XT server, search templates may not return correct documents. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description of Problem (full details)
+   When the client is in a different time zone than the Workplace
+   XT server, search templates may not return the correct documents
+   when searching on custom date properties.
+   
+   When searching for documents with a specific date time property
+   value, the expected documents are not returned due to the time
+   zone  differences. This affects all searches: search template,
+   stored
+   search and advanced search.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users search on date properties for documents added from     *
+   * time zones other than the client time zone.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * It doesn't return all expected documents added from various  *
+   * time zones although the correct date value is displayed on   *
+   * the browse page.                                             *
+   * All documents displayed on the browse page with a same date  *
+   * should be returned when searched on the same date from a     *
+   * Search Template or the Advanced Search page.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to the Workplace XT 1.1.4.9.                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem has been fixed in the Workplace XT 1.1.4.9.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ38317
+   
+   
+ * REPORTED COMPONENT NAME
+   WORKPLACE XT
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7611
+   
+   
+ * REPORTED RELEASE
+   114
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-28
+   
+   
+ * CLOSED DATE
+   2011-01-05
+   
+   
+ * LAST MODIFIED DATE
+   2011-01-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORKPLACE XT
+   
+   
+ * FIXED COMPONENT ID
+   5724R7611
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R114 PSY
+   UP

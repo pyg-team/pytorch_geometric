@@ -1,0 +1,62 @@
+Title: IBM QRadar: Reverse Flow Direction - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Network Activity tab displays flow direction for certain flows in the wrong direction. Traffic originating from the server might be reversed to make it look like the flow originated from the client. 
+
+SYMPTOM
+From the Network Activity tab in QRadar, the flow directions of certain flows display in the wrong direction. 
+
+
+DIAGNOSING THE PROBLEM
+QRadar's default behavior is to review incoming traffic and change the direction when the system believes that flow direction is incorrectly reported. 
+
+For example, if we see a traffic "originating" from the Server to the Client, then the direction will be reverse to make it look like Client to the Server. QRadar makes decisions about flow direction and will reverse the direction based on the following criteria: 
+
+
+
+
+ * If the destination port IS NOT a common destination port then reverse the flow direction if:  *  the source port is a common destination port OR the source port is less than 1024 AND the destination port is greater than 1024 
+   
+   
+   OR
+   
+ * If the destination port IS a common destination port then reverse the flow direction if:  *  the source port is a common destination port AND the source port is less than 1024 AND the destination port is greater than 1024 
+      
+   
+   
+
+
+
+
+RESOLVING THE PROBLEM
+The advanced configuration option for the QFlow component can be updated to disable the "Use Common Destination Port" option. When turned off, the reported flow direction does not change in the user interface.
+
+Note: Changing this option should resolve your issue, however, administrators might notice other issues with traffic direction in your flow traffic, which is caused by disabling the common destination port option in QFlow. 
+
+
+Procedure (QRadar 7.2.4 and earlier)
+This procedure is specific to QRadar 7.2.5, since this change can only be made through the Deployment Editor in QRadar. 
+
+
+ *  Log in to the QRadar Console as an administrator. Click the Admin tab. Launch the Deployment Editor. In the Deployment Editor, right-click on the qflow object and select Configure. Click Advanced to display advanced component settings.. Locate the field Use Common Destination Port and set the value to No.
+   [/support/docview.wss?uid=swg21972754&aid=1] [/support/docview.wss?uid=swg21972754&aid=1] Click Save. When prompted with a performance message, click Yes. Click File > Save and Close or Save to Staging if there are multiple qflow components that need to be updated. Repeat this process for each qflow component in your deployment. There will be one component for each QFlow appliance and VM in your network. Click Deploy Changes. Review the user interface to determine of the flow direction issue is resolved. 
+ * 
+
+
+Procedure (QRadar 7.2.5 and later) 
+Administrators on newer versions of QRadar can manage this component setting from the System and License Management interface. 
+ *  Log in to the QRadar Console as an administrator. Click the Admin tab. Click the System and License Management icon. Select a QFlow system (1201 / 1202 appliances) from the list. From the Deployment Actions drop-down, select Edit Host. Click the Component Management (gear) icon.
+   [/support/docview.wss?uid=swg21972754&amp;aid=2] From the Flow Collector panel, locate the Use Common Destination Port drop-down and set the value to No.
+   [/support/docview.wss?uid=swg21972754&amp;aid=3] Click Save. Click Deploy Changes.
+   The update is complete. Review the user interface to determine of the flow direction issue is resolved. 
+
+
+
+----- 
+Where do you find more information? 
+
+
+[/support/docview.wss?uid=swg21972754&aid=4] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21972754&aid=5] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21972754&aid=6] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21972754&aid=7] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21972754&aid=8] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21972754&aid=9] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21972754&aid=10] [http://ibm.biz/SuptRegQuikStart]

@@ -1,0 +1,163 @@
+Title: IBM IZ67268: WHEN THE ORACLE DATABASE INSTANCE HAS BEEN STANDBY OR SHUTDOWN, THE LISTEBER IS NOT MONITORED - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring for Databases: Oracle Agent 6.2.1-TIV-ITM_ORA-IF0007 [http://www-01.ibm.com/support/docview.wss?uid=swg24033217]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Severity:   2
+   
+   
+   Approver: N/A
+   
+   Compid:   5724B96OO
+   
+   Release:  6.2 and 6.2.1
+   
+   Abstract:   FAILS TO MONITOR ORACLE LISTENER WHEN DATABASE IS
+   INACTIVE
+   
+   Detailed Recreation Procedure:
+   1. Login the Oracle Database instance and shutdown it.
+   su - oracle
+   sqlplus / as sysdba
+   shutdown immediate
+   
+   2. Make sure the listener is active
+   
+   lsnrctl status
+   
+   3. Go to ITM TEP, check Oracle->OracleInstanceName->Processes
+   Node, make
+   a view to display the KORLISTD ODI table data, you will found
+   that no
+   data is display. and Oracle_Server_Not_Active is trigger.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ***************************************************************
+   * USERS AFFECTED:
+   ITM for Database:Oracle Agent Version 6.20FP1
+   ***************************************************************
+   * PROBLEM DESCRIPTION:
+   Oracle Agent can not monitor the Oracle listener when Oracle
+   Server
+   is inactive.
+   ***************************************************************
+   * RECOMMENDATION:
+   apply 6.2.0.1-TIV-ITM_ORA-IF0008 when available
+   ***************************************************************
+   Oracle Agent can not monitor oracle listener because Agent
+   find out the Oracle server is inactive and stop all
+   database related monitor
+   activities including listener monitoring.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR will be contained in the following
+   maintenance packages:
+   6.2.0.1-TIV-ITM_ORA-IF0008
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ67268
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON ORACLE
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96OO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-22
+   
+   
+ * CLOSED DATE
+   2010-03-01
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON ORACLE
+   
+   
+ * FIXED COMPONENT ID
+   5724B96OO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP
+   
+   
+ * R621 PSY
+   UP

@@ -1,0 +1,121 @@
+Title: IBM PK62362: groups do not display permissions info using sqlserver 2005 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Normally, when selecting a group within the admin? access groups
+   menu, a list of all permissions applicable to that user are dis
+   played in the lower-left detail pane.  under sqlserver 2005, thi
+   s does not appear.
+   Steps I used:
+   1. Create new db, allow BF to lay down schema
+   3. Click on a group (admin? access groups? click on any group)
+   4. Observe left lower pane only shows associated items, no permi
+   ssion data is visible
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  In Administration -? Access Groups, the individual
+   permissions are not displayed in the lower-left-hand pane.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is fixed now.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK62362
+   
+   
+ * REPORTED COMPONENT NAME
+   BUILD FORGE EE
+   
+   
+ * REPORTED COMPONENT ID
+   5724S2701
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-06
+   
+   
+ * CLOSED DATE
+   2008-07-15
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUILD FORGE EE
+   
+   
+ * FIXED COMPONENT ID
+   5724S2701
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSN
+   UP

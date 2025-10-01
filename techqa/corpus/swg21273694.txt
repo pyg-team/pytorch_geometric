@@ -1,0 +1,149 @@
+Title: IBM Securing communications between a WebSphere Application Server JMS client and a WebSphere MQ server using SSL repertoires - United States
+
+Text:
+communications WAS JMS client WMQ server SSL repertoires secure connection TECHNOTE (FAQ)
+
+QUESTION
+ How do I secure communications between a WebSphere Application Server JMS client and a WebSphere MQ server, using SSL repertoires? 
+
+CAUSE
+Prior to the release of 6.0.2.15 the only way to enable secure communications between the WebSphere Application Server JMS client and the WebSphere MQ server was to use JVM properties set in the WebSphere Application Server console to specify a keystore and truststore which would be used for every connection. 
+Since the release of versions 6.0.2.15 and 6.1.0.2 WebSphere Application Server now has the ability to use a different keystore and truststore - and so different certificates - for every connection that is created between the application server's JMS client and the WebSphere MQ server. This is done by setting a custom property on the connection factory. This article explains how an existing connection can be modified to enable secure communications. 
+
+The custom property which is used to enable SSL communication is valid for use with queue, topic and unified connection factories, however this example shows how to modify a queue connection factory. 
+
+A queue connection factory, queue destination and message listener need to be set up and running before proceeding with the setup. Note that the transport type of the connection factory must be CLIENT. 
+
+
+
+ANSWER
+Create key databases 
+
+Key databases must be created to contain the certificates. For this example, only two are needed: one for the WebSphere MQ server and one for the WebSphere Application Server connection factory. To secure more connection factories, the same key database - and so the same certificates - can be used, or more key databases can be created if a different set of certificates are to be used for the additional connections. 
+
+To create the databases, use iKeyman. This certificate management tool is supplied with WebSphere MQ. To start it, type strmqikm at a command line. 
+
+To create key database for WebSphere MQ: 
+
+ * Key Database File > New 
+ * Key database type > CMS 
+ * File name > key.kdb 
+ * Location > C:\Program Files\IBM\WebSphere MQ\qmgrs\qmgrname\ssl (where qmgrname is the name of the WebSphere MQ server queue manager) 
+ * Next step > enter password, ensure 'stash password to a file' is selected 
+ * To create jks keystore(s) for WebSphere Application Server connection (for this example, only one need be created): 
+ * Key Database File > New 
+ * Key database type > JKS 
+ * Filename > key.jks 
+ * Location > C:\WASclient (any location can be specified) 
+ * Next step > enter password 
+
+
+Create certificates 
+
+In order to utilize server and client authentication a CA signer certificate and a signed personal certificate for each connection you wish to secure must be created, as well as a CA signer certificate and signed personal certificate for the WebSphere MQ server. 
+
+Each of the CA signer certs created for the WebSphere Application Server key databases will need to be added to the WebSphere MQ server's key database along with the server's CA signer certificate and its signed personal certificate. 
+
+Each WebSphere Application Server connection factory's keystore will need the WebSphere MQ server's CA signer certificate, its own CA signer certificate, and its own signed personal certificate: 
+
+
+WMQ WAS1 WAS2
+
+serverCA serverCA serverCA
+WAS_CA1 WAS_CA1
+WAS_CA2 WAS_CA2
+serversigned WASsigned1 WASsigned2 
+
+For this example two CA signer certificates will need to be created, and each of these will need to be used to sign a personal certificate. 
+
+ 
+
+Add certificates to key databases 
+
+For this example each key database will need to contain both of the CA signer certificates generated, and its own signed personal certificate. 
+
+Use ikeyman to add certs. 
+
+These steps need to be followed for each key database: 
+
+To add CA certs: 
+
+ * Open the database 
+ * Signer certs tab > click Add 
+ * Select location, enter label - the label given to CA certificates is not important 
+ * Do this for each CA cert. 
+ * To add signed (personal) certs: 
+ * Open the database 
+ * Select personal certificates tab > Import 
+ * Select key file type PKCS12 
+ * Select cert, enter password, alter label (ensure that the WebSphere MQ server's signed cert has label 'ibmwebspheremqqmgrname', for the WebSphere Application Server connection factory's signed cert this label is not important) 
+
+
+Create SSL repertoire(s) 
+
+An SSL repertoire must be created for each key database. This is used to specify the location, password and other details of the key database inside WebSphere Application Server. 
+
+To create the SSL repertoire: 
+
+ * In the WebSphere admin console go to Security > SSL > New JSSE Repertoire 
+ * Alias 'JMSClient' (the alias entered here can be anything) 
+ * Select 'client auth' 
+ * Security level 'high' 
+ * Select all cipher suites and click 'add' 
+ * Enter key and trust store locations and passwords (note: in this example, these are the same file) 
+ * Save 
+
+
+Alter connection factory details 
+
+The next step is to alter the connection factory to add the cipher spec and the custom property 'ssl.repertoire' 
+
+In the WebSphere admin console: 
+
+ * Go to Resources > JMS Providers > Websphere MQ 
+ * Then select the connection factory to be secured 
+ * In 'SSL cipher suite' enter a valid cipher suite (eg SSL_RSA_WITH_3DES_EDE_CBC_SHA) 
+ * Select 'Custom properties' 
+ * Select 'New' 
+ * Enter name 'ssl.repertoire' 
+ * Enter the Alias - this is the alias which was specified for the repertoire created earlier, prepended by the name of the node in which it was created - for this example: 'nodename/JMSClient' 
+ * Save all 
+
+
+Alter queue manager details 
+
+Next, alter the WebSphere MQ channel definition. 
+
+On a command line: 
+
+ * runmqsc qmgrname 
+ * alter chl(SYSTEM.DEF.SVRCONN) chltype(svrconn) sslciph(TRIPLE_DES_SHA_US) 
+ * The cipher spec must match that specified in the connection factory. There is a list of valid cipher spec combinations in the Websphere MQ Using Java manual, Appendix D 
+
+
+Enable global security 
+
+To turn on global security: 
+
+ * On the WebSphere Admin Console: go to Security > Global Security 
+ * Select a user registry to contain signon information - for this example go to 'local OS'. 
+ * Enter user name and password here 
+ * Save 
+ * Go back to Security > Global Security 
+ * Select 'enable global security' 
+ * Ensure that active user registry is 'local OS' 
+ * Save 
+ * Restart WebSphere Application Server and WebSphere MQ (ensure WebSphere MQ listener is running after the restart) 
+
+
+Note: Once Global Security has been enabled WebSphere Application Server must be stopped using the stopServer script, specify the username and password from the local OS user registry. When WebSphere Application Server is restarted, the message listener using the altered connection factory should be running with its communications secured. 
+
+ 
+
+HISTORICAL NUMBER
+ 77482442000 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ
+WebSphere MQ
+MQSeries

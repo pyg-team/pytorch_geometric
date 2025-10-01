@@ -1,0 +1,135 @@
+Title: IBM Knowledge Collection: Informix JDBC driver: migration and resources - United States
+
+Text:
+KnowledgeCollection; Migration; migrate; migration; migrating; upgrade; upgrading; Design; Develop; Maintain; Plan; Troubleshoot; Use; Develop; Install; Maintain; Plan; Use; Deployment; Installation; Migration TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides information and links to online documentation and resources related to the Informix JDBC driver. It also gives guidance on which versions you should use when want to take advantage of new functionalities present on Informix Dynamic server (IDS) version 12.10. 
+
+RESOLVING THE PROBLEM
+[/support/docview.wss?uid=swg21272034&aid=1] [/support/docview.wss?uid=swg21272034&aid=1]
+
+[/support/docview.wss?uid=swg21272034&amp;aid=2] Overview
+[/support/docview.wss?uid=swg21272034&amp;aid=3] Prerequisites
+[/support/docview.wss?uid=swg21272034&amp;aid=4] Planning
+[/support/docview.wss?uid=swg21272034&amp;aid=5] Education
+[/support/docview.wss?uid=swg21272034&amp;aid=6] Troubleshooting
+[/support/docview.wss?uid=swg21272034&amp;aid=7] Miscellaneous
+
+
+
+[/support/docview.wss?uid=swg21272034&aid=8] [/support/docview.wss?uid=swg21272034&aid=8]
+[/support/docview.wss?uid=swg21272034&amp;aid=9] Overview
+[/support/docview.wss?uid=swg21272034&aid=10] [/support/docview.wss?uid=swg21272034&aid=10]
+
+The two main scenarios you should consider when migrating the JDBC driver are the following:
+
+
+
+[/support/docview.wss?uid=swg21272034&amp;aid=11] Compatibility of existing Java applications with IDS version 12.10 . Here, you want to upgrade your database server but possibly keep your Java applications as they are and upgrade them at a later time. Generally, unless the JDBC driver you are using is approaching or already passed the End of Service date you shouldn't have problems running it against IDS version 12.10 . [/support/docview.wss?uid=swg21272034&amp;aid=12] Upgrade Informix JDBC driver to the latest version. By upgrading you will be able to access all the latest features such as named parameters , IPV6 support or communication encryption. Verify if the upgrade requires you to modify or recompile your Java programs. For example the latest JDBC driver may require a version of JDK which is more recent than the one you are using. 
+Avoid using software versions that are not supported anymore. Check the Product support lifecycle [http://www-306.ibm.com/software/data/support/lifecycle/] page to see the End Of Service date for the older Informix JDBC drivers . 
+
+As a general rule, avoid upgrading the JDBC driver directly on a production environment. Always allow for some time to test it on a pre-production installation and note what actions are necessary for the upgrade, how much time it requires and if there are any unwanted side effects that you need to address before doing the same operation on a production environment. 
+
+The Informix JDBC driver uses the SQLI protocol to communicate with the Informix Database Servers. If your IDS instance is configured to only use the DRDA protocol, you should use the JDBC driver provided with the IBM Data Server Client [http://www-947.ibm.com/support/entry/portal/product/information_management/ibm_data_server_client_packages?productContext=-1656832394]. 
+
+[/support/docview.wss?uid=swg21272034&amp;aid=13] Back to top 
+
+
+
+[/support/docview.wss?uid=swg21272034&aid=14] [/support/docview.wss?uid=swg21272034&aid=14] 
+[/support/docview.wss?uid=swg21272034&amp;aid=15] Prerequisites [/support/docview.wss?uid=swg21272034&aid=16] [/support/docview.wss?uid=swg21272034&aid=16] 
+
+Release notes [http://pic.dhe.ibm.com/infocenter/informix/v121/topic/com.ibm.relnotes.doc/relnotes_jdbc.htm] 
+The release notes contain the latest information about the driver on aspects such as:  * The Java runtime required. 
+ * The OS levels supported and the patches required. 
+ * The versions of Informix databases the driver can connect to. 
+ * New features 
+ * Fixed bugs 
+ * Known issues
+
+
+Highlights are:  * Java Runtime 1.5 or newer is required. Java 1.6 is needed if using JDBC methods introduced in this version. 
+ * Most of the JDBC 4.0 specification is not yet implemented although the methods are included as dummy calls.
+
+
+
+[/support/docview.wss?uid=swg21272034&amp;aid=17] Back to top 
+
+
+
+[/support/docview.wss?uid=swg21272034&aid=18] [/support/docview.wss?uid=swg21272034&aid=18] 
+[/support/docview.wss?uid=swg21272034&amp;aid=19] Planning 
+[/support/docview.wss?uid=swg21272034&aid=20] [/support/docview.wss?uid=swg21272034&aid=20] 
+
+New features [http://pic.dhe.ibm.com/infocenter/informix/v121/index.jsp?topic=%2Fcom.ibm.po.doc%2Fnew_features_ce.htm] 
+Check the details on the new features introduced with the latest JDBC driver. 
+
+Release notes for previous versions: 3.70 [http://pic.dhe.ibm.com/infocenter/idshelp/v117/topic/com.ibm.relnotes.doc/relnotes_jdbc.htm] , 3.50 [http://pic.dhe.ibm.com/infocenter/idshelp/v115/topic/com.ibm.relnotes.doc/relnotes_jdbc.html] and 3.10 [http://publib.boulder.ibm.com/infocenter/idshelp/v111/topic/com.ibm.relnotes.doc/relnotes_jdbc.html] (Type : Information center) 
+To know the additional new features and changes introduced before the latest version. This is useful if the version of the JDBC driver you are upgrading from is not the one immediately preceding the current version. 
+
+Installation instructions [http://pic.dhe.ibm.com/infocenter/informix/v121/topic/com.ibm.jdbc_pg.doc/ids_jdbc_022.htm] (Type : Information center) 
+This document will guide through the requirement and the instructions on how to install the JDBC driver. Note that the latest version of the driver requires JDK 1.5 or newer. 
+
+
+[/support/docview.wss?uid=swg21272034&amp;aid=21] Back to top 
+
+
+
+[/support/docview.wss?uid=swg21272034&aid=22] [/support/docview.wss?uid=swg21272034&aid=22] 
+[/support/docview.wss?uid=swg21272034&amp;aid=23] Education 
+[/support/docview.wss?uid=swg21272034&aid=24] [/support/docview.wss?uid=swg21272034&aid=24] 
+
+Informix JDBC developer's documentation [http://pic.dhe.ibm.com/infocenter/informix/v121/topic/com.ibm.jdbc_pg.doc/jdbc.htm] (Type : Information center) 
+The developer's manual is available online and is updated automatically when a new fixpack is released. You can have the complete Informix JDBC documentation in PDF format at Publications for the IBM Informix 12.10 family of products [http://www-01.ibm.com/support/docview.wss?uid=swg27023505] . 
+
+Informix JDBC and PAM [http://www.ibm.com/developerworks/db2/library/techarticle/dm-0704anbalagan/index.html] (Type: Article) 
+Find out how to use PAM with the Informix JDBC driver. 
+
+IBM Informix Developer's Handbook [http://www.redbooks.ibm.com/redpieces/abstracts/sg247884.html] (Type : RedBook ) 
+Learn more about Informix application development using the various APIs available, including JDBC. 
+
+IBM training [http://www-304.ibm.com/jct03001c/services/learning/ites.wss/zz/en?pageType=page&c=a0011023] (Type : Web page) 
+Search for training on specific products and look what certifications are available. You can search for courses worldwide and have country specific information by selecting your own country from the list in the page. 
+
+
+[/support/docview.wss?uid=swg21272034&amp;aid=25] Back to top 
+
+
+
+[/support/docview.wss?uid=swg21272034&aid=26] [/support/docview.wss?uid=swg21272034&aid=26] 
+[/support/docview.wss?uid=swg21272034&amp;aid=27] Troubleshooting 
+[/support/docview.wss?uid=swg21272034&aid=28] [/support/docview.wss?uid=swg21272034&aid=28] 
+
+Removed feature : debug version of the JDBC driver. 
+Starting from JDBC 3.00.JC1 the debug version of the packages (compiled with the -g option) is not provided anymore. Consequently it's not possible to enable method tracing and the parameters TRACE and TRACEFILE have no effect. 
+
+Changed feature : ISQL tracing. 
+Starting from version 3,x the ISQL trace generation has been modified. To enable it you now need to use the parameter IfxSQLIDEBUG instead of IfxPROTOCOLTRACE and IfxPROTOCOLTRACEFILE. 
+The parameter IfxSQLIDEBUG will point to the path and filename where to store the ISQL trace. Check the manual for more information. 
+
+Informix Support Site [http://www-306.ibm.com/software/data/informix/support/] 
+On the Informix Support site, you can view  * News alerts 
+ * FAQs 
+ * Redbooks 
+ * White papers 
+ * Presentations 
+ * Hints and tips
+
+
+
+[/support/docview.wss?uid=swg21272034&amp;aid=29] Back to top 
+
+
+
+[/support/docview.wss?uid=swg21272034&aid=30] [/support/docview.wss?uid=swg21272034&aid=30] 
+[/support/docview.wss?uid=swg21272034&amp;aid=31] Miscellaneous 
+[/support/docview.wss?uid=swg21272034&aid=32] [/support/docview.wss?uid=swg21272034&aid=32] 
+
+IIUG 
+The International Informix User Group (IIUG) web site [http://www.iiug.org] [http://www.iiug.org] supports a Forums, FAQ, a Software Archive [http://www.iiug.org/software] , and links to many areas of interest related to IBM® Informix® Dynamic Server (IDS) and the related client software and tools. Membership to the IIUG is free. 
+
+Visit developerWorks [http://www.ibm.com/developerworks/db2/products/informix/index.html] (Site) 
+You can take advantage of IBM's technical resource for Informix developers. It offers a range of tools, code sample, education, and newsgroups to help you. 
+
+[/support/docview.wss?uid=swg21272034&amp;aid=33] Back to top

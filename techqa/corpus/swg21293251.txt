@@ -1,0 +1,17 @@
+Title: IBM Why do I get the following error message when I try to view several documents combined in the thick client:  "The documents are incompatible.  Do you wish to view them separately?" - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I have one folder containing two application groups. These application groups have identical definitions, and they contain applications that have identical definitions, too. I select Options -> View Combined Documents in the thick client to concatenate the selected documents and display them as a single document in one viewing window. After I query the folder and get multiple returned hits, I select several of them and click on View All Selected. I am then prompted with a dialog box: "The documents are incompatible. Do you wish to view them separately?" Why do I receive this message? 
+
+CAUSE
+To use the View Combined Documents option, the following criteria must be met. Otherwise, you will receive the error message: 
+
+ * All selected documents need to be from the same application group and the same application 
+ * All selected documents need to have the data type of line 
+ * No selected documents can have large object support
+
+ANSWER
+The error message is probably generated because your selected hits do not come from the same application group and the same application.

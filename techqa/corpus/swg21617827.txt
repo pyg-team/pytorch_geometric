@@ -1,0 +1,69 @@
+Title: IBM TEPS login fails - United States
+
+Text:
+CWWIM4538E; multiple ; principals ; LDAP authentication; TEPS; Login; log in; fails; distinguished name; DEFAULTWIMITMBASEDREALM; auth102; validation failed; TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After having performed some recovery steps on TEPS to correct another problem, all the TEPS users fail authentication and so login is not allowed.
+
+Only sysadmin is able to complete login and see TEP workspaces. 
+
+SYMPTOM
+The TEPS logs shows the following error messages: 
+
+----------------------------
+(5077D0BA.000A-1C:ctrashelper.cpp,65,"RAS_CORBA_UserException") Rep Id: IDL:candle.com/CTProperty/PropertyBasedException:1.0 
+(5077D0BA.000B-1C:ctpropertysequence.cpp,716,"CTPropertySequence::Dump") ---> name = Property Based Exception
+(5077D0BA.000C-1C:ctpropertysequence.cpp,716,"CTPropertySequence::Dump") -----> -1020 = "userABC"
+(5077D0BA.000D-1C:ctpropertysequence.cpp,716,"CTPropertySequence::Dump") -----> -2101a = -12000 L
+(5077D0BA.000E-1C:ctpropertysequence.cpp,716,"CTPropertySequence::Dump") -----> -2102 = "Login validation failed"
+(5077D0BA.000F-1C:ctpropertysequence.cpp,716,"CTPropertySequence::Dump") -----> -2105 = "AUTH102" 
+
+----------------------------
+
+indicating a problem with the authentication feature, that is executed by the eWAS. 
+
+
+The eWAS SystemOut.log shows the message:
+
+10/11/12 17:22:53:645 GMT+01:00é 0000001c exception E 
+com.ibm.ws.wim.ProfileManager loginImpl CWWIM4538E Multiple principals were found for the 'userABC' principal name.
+
+
+CAUSE
+TEPS is using LDAP as authentication method.
+The message issued into SystemOut.log appears to be a classic example of duplicate userids.
+The Virtual Member Manager (VMM) does not allow you to use the same user ID more than once in a realm. For example, you cannot have the same user ID in different LDAP directories, even under different organizational structures.
+Hence, the user ID must be unique across the different repositories. It is possible that the affected users have an entry in the local repository which is kept in the file identified with DEFAULTWIMITMBASEDREALM.
+
+
+DIAGNOSING THE PROBLEM
+Even if the user entries are present into the local repository file and into LDAP database, this does not explain the error because it was the same also in the past, when error was not occurring. 
+
+So most likely something has changed in the ITM configuration. 
+
+After having logged in with sysadmin user and having launched the "Administer Users" panel, you can see that all the users have the default value in the "Distinguished Name" field:
+UID=userABC,O=DEFAULTWIMITMBASEDREALM
+
+This is not correct as the TEPS was previously configured to authenticate through LDAP.
+DEFAULTWIMITMBASEDREALM identifies the local file repository instead.
+The field "Distinguished Name" should shows something like:
+
+CN=user AAA BBB CCC,OU=Users,OU=IBM-Support,OU=Rome,o=LabBase
+
+that identifies the LDAP notation.
+
+So the problem seems to be that the "Distinguished Name" fields have been someway reset to default after the actions issued to correct a previous problem.
+The LDAP mapping information are contained into the TEPS table KFWUSERALIAS.
+It is possible that during a migrate-export/migrate-import something went wrong, causing the table KFWUSERALIAS not to be properly populated.
+
+
+RESOLVING THE PROBLEM
+By using sysadmin, launch "Administer Users" and modify the "Distinguished Name" field for all the users, by providing the expected value for LDAP authentication. 
+
+If you have a backup copy of the DB table called KFWUSERALIAS, and if it contains the expected values into "Distinguished Name" fields, you can restore the table and restart TEPS.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Tivoli Monitoring 6.2.3

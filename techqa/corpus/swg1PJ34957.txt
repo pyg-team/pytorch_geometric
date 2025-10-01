@@ -1,0 +1,175 @@
+Title: IBM PJ34957: P8AE-4.0.1 - TRANSPORT SERVLET ISLOGGEDON METHOD FAILED WHEN CAL LED FROM MY INBOX PORTLET - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Unable to call java  transport servlet from custom HTML step
+   processor when opened from Workplace-> My Workplace-> My Inbox
+   Portlet
+   
+   Steps to Reproduce:
+   1. Deploy the Workplace Basic Processor Sample Application for
+   P8 4.0
+   2. Launch the workflow, go to Workplace -> My Inbox, open the
+   work item and verify the custom step HTML worked as expected.
+   3. Close the custom step, do not complete it.
+   4. Modify the CustomStepModuleJSP.jsp to include the following
+   javascript at the end of the file.
+   ===
+   Transport servlet output:
+   <script type="text/javascript">
+   // Additional customization to make a browser side call to the
+   transport servlet
+   var url =
+   "http://server:port/Workplace/transport";
+   var input = "<?xml version='1.0' ?><methodcall
+   xmlns='http://filenet.com/namespaces/wcm/apps/1.0'><method>isLog
+   gedOn</method><parameters/></methodcall>";
+   var xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+   try
+   {
+   xmlhttp.open("POST", url, false);
+   }
+   catch(e)
+   {
+   alert("Document search servlet call failed, please notify your
+   administrator " + e.description );
+   }
+   xmlhttp.Send(input);
+   output = xmlhttp.ResponseText;
+   document.write(output);
+   </script>
+   ===
+   5. Go to Workplace -> My Inbox, re-open the same work item and
+   verify that the custom step HTML agai now has additional
+   information at the bottom.
+   6. Verify that the Transport servlet output is correct, e.g.
+   "isLoggedOn 0 Success".
+   7. Configure My Workplace in Site Preferences with My Inbox
+   portlet in a new page.
+   8. Go to Workplace -> My Workplace -> Page
+   9. Open the same work item thru My Inbox portlet. Verify that
+   the custom HTML step opens up, but the Transport servlet output
+   at the bottom of the step processor now has the following
+   message: "IsLoggedOn -2147467263 Function not defined ".
+   Actual Results:
+   IsLoggedOn -2147467263 Function not defined
+   Expected Results:
+   isLoggedOn 0 Success
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * P8 application programmers writing custom workflow steps     *
+   * that are deployed in Workplace.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * An error response is returned from the Transfport servlet    *
+   * that says "FunctionNotDefined".                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Install/upgrade to 4.0.2.2-P8AE-FP002                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix checked in for 4.0.2.2-P8AE-FP002.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ34957
+   
+   
+ * REPORTED COMPONENT NAME
+   APPLICATION ENG
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7610
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-30
+   
+   
+ * CLOSED DATE
+   2009-05-08
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APPLICATION ENG
+   
+   
+ * FIXED COMPONENT ID
+   5724R7610
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

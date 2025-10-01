@@ -1,0 +1,63 @@
+Title: IBM Defining and loading Interval data from Teradata - United States
+
+Text:
+Netezza; NPS; IBM Netezza; Netezza SQL TECHNOTE (FAQ)
+
+QUESTION
+ How do l define in NPS and load Interval data into NPS from Teradata? 
+
+ANSWER
+Method 1
+Create a table with a TIME datatype column and then use nzload to load the sample data into that column.
+
+However, a TIME datatype is not the same thing as an INTERVAL. INTERVAL values are very hard to work with.
+
+Method 2
+If you need to have the datatype on the resulting table as a true INTERVAL value, do the following:
+
+1. Create a staging table with a column defined as VARCHAR(100). In this way, nzload can load the INTERVAL data without any problems. For example,
+
+ANONYMOUS(ADMIN)=> create table staging_interval (col1 varchar(100));
+CREATE TABLE
+
+ANONYMOUS(ADMIN)=> insert into staging_interval values ('0:01:18.000000');
+INSERT 0 1
+
+NOTE: For illustration purposes, we used INSERT instead of nzload to load the data.
+
+2. Use an INSERT ("insert into production_table select * from staging_table") to cause NPS to automatically convert the corresponding VARCHAR columns into their INTERVAL equivalents.
+
+For example, create a production table (production_interval) with an INTERVAL type column (col4).
+
+ANONYMOUS(ADMIN)=> create table production_interval (col1 int, col2 datetime, col3 time, col4 interval);
+CREATE TABLE
+
+
+ANONYMOUS(ADMIN)=> \d production_interval
+Table "production_interval"
+Attribute | Type | Modifier | Default Value
+-----------+-----------+----------+---------------
+COL1 | INTEGER | |
+COL2 | TIMESTAMP | |
+COL3 | TIME | |
+COL4 | INTERVAL | |
+Distributed on hash: "COL1"
+
+Move the loaded data from the staging table to the production table:
+
+
+ANONYMOUS(ADMIN)=> insert into production_interval select 1, now(), '0:01:18.000000', col1 from staging_interval;
+INSERT 0 1
+
+
+ANONYMOUS(ADMIN)=> select * from production_interval;
+
+COL1 | COL2 | COL3 | COL4
+------+---------------------+----------+----------
+1 | 2008-08-06 11:15:39 | 00:01:18 | 00:01:18
+(1 row)
+
+
+
+HISTORICAL NUMBER
+ NZ205507

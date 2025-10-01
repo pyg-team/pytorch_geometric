@@ -1,0 +1,73 @@
+Title: IBM How to change the hostname of a virtual portal - United States
+
+Text:
+virtual portal; hostname; task.xml; change; host; host name; vp TECHNOTE (FAQ)
+
+QUESTION
+ After creating a virtual portal with a particular hostname, you wish to update the virtual portal configuration to use a different hostname. Is this possible? 
+
+ANSWER
+
+The hostname of the virtual portal is not a configurable option once the virtual portal has been created. Thus, the only method for achieving a new hostname for a virtual portal would be: 
+
+
+1) Take a backup of the Portal database. Engage your database administrator on the exact steps needed for your database.
+
+2) Use XMLAccess to take an export of the virtual portal using ExportUniqueRelease.xml. For example:
+
+<wp_profile_root>/PortalServer/bin/xmlaccess.sh -user <PortalAdminID> -password <PortalAdminPwd> -url http://oldvphostname.domain.com:10039/wps/config [http://oldvphostname.domain.com:10039/wps/config]-in <PortalServer_root>/doc/xml-samples/ExportUniqueRelease.xml-out /tmp/oldvphostname_out.xml
+
+Note:if you are using Portal 7.0 or earlier, use Export.xml instead of ExportUniqueRelease.xml.
+
+3) Take an export of the WCM libraries.
+
+<wp_profile_root>/ConfigEngine/ConfigEngine.sh export-wcm-data -DWasPassword=password -DPortalAdminPwd=password -DVirtualPortalHostName=oldvphostname.domain.com -Dexport.allLibraries=true -Dexport.singledirectory=true -Dexport.directory=/tmp/content/wcm/allLibraries
+
+4) Run 'list-all-virtual-portals' command to retrieve information about the virtual portal.
+
+<wp_profile_root>/CofnigEngine/ConfigEngine.sh list-all-virtual-portals -DWasPassword=password -DPortalAdminPwd=password
+
+Make a note of the virtual portal parameters:
+
+[wsadmin] _____________________________________________________
+[wsadmin] VirtualPortal:
+[wsadmin] Title: VirtualPortal1
+[wsadmin] Description:
+[wsadmin] Realm: defaultWIMFileBasedRealm
+[wsadmin] Object ID: Z18_000000000000GCF74A9BG00000
+[wsadmin] Hostname: oldvphostname.domain.com
+[wsadmin] Context:
+[wsadmin] Short ID: 33199
+[wsadmin] _____________________________________________________
+
+
+5) Delete the virtual portal via the Virtual Portal Manager portlet:
+Administration > Manage Virtual Portals
+
+or by using the ConfigEngine task:
+
+<wp_profile_root>/ConfigEngine/ConfigEngine.sh delete-virtual-portal -DVirtualPortalObjectId=<VirtualPortalOID>
+
+Note: you will need to determine the objectID of the virtual portal you want to delete from the output of the 'list-all-virtual-portals' command.
+
+6) Use XMLAccess to clean up the database using Task.xml. This is important since you are going to recreate the virtual portal with the same context name.
+
+<wp_profile_root>/PortalServer/bin/xmlaccess.sh -user <PortalAdminID> -password <PortalAdminPwd> -url http://baseportal.domain.com:10039/wps/config [http://baseportal.domain.com:10039/wps/config]-in <PortalServer_root>/doc/xml-samples/Task.xml -out /tmp/Task_out.xml
+
+7) Create an empty virtual portal by populating the appropriate parameters in wkplc.properties including VirtualPortalHost or passing them in on the command line, and executing ConfigEngine create-virtual-portal. For example:
+
+<wp_profile_root>/ConfigEngine/ConfigEngine.sh create-virtual-portal -DVirtualPortalTitle=<VirtualPortalTitle> -DVirtualPortalHostName=<VirtualPortalHostName> -DVirtualPortalID=<VirtualPortalShortID> -DVirtualPortalObjectId=<VirtualPortalOID>
+
+Note: you can use the same values that were configured on the old virtual portal (see the previous execution of 'list-all-virtual-portals'). Only the hostname will be different - the new one you want to use.
+
+8) Import the XML from step #2 into the newly created virtual portal.
+
+<wp_profile_root>/PortalServer/bin/xmlaccess.sh -user <PortalAdminID> -password <PortalAdminPwd> -url http://newvphostname.domain.com:10039/wps/config [http://newvphostname.domain.com:10039/wps/config]-in /tmp/oldvphostname_out.xml -out /tmp/newvphostname_result.xml
+
+9) Import the WCM libraries to the new virtual portal.
+
+<wp_profile_root>/ConfigEngine/ConfigEngine.sh import-wcm-data -DWasPassword=password -DPortalAdminPwd=password -DVirtualPortalHostName=newvphostname.domain.com -Dimport.directory=/tmp/content/wcm/allLibraries
+
+RELATED INFORMATION
+ Administering Virtual Portals [https://www.ibm.com/support/knowledgecenter/en/SSHRKX_8.5.0/mp/admin-system/advp_adm.html]
+Virtual Portal Reference [https://www.ibm.com/support/knowledgecenter/en/SSHRKX_8.5.0/mp/admin-system/advpref.html]

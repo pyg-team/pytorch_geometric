@@ -1,0 +1,17 @@
+Title: IBM Tivoli Access Manager for e-business / Access Manager versions that are NOT affected by CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277 and CVE-2014-6278 ("Shellshock Bug") - United States
+
+Text:
+PSIRT FLASH (ALERT)
+
+ABSTRACT
+ Six Bash vulnerabilities were disclosed in September 2014, including the vulnerabilities that have been referred to as “Bash Bug” or “Shellshock” and two memory corruption vulnerabilities. 
+
+CONTENT
+
+The following IBM products do not ship or otherwise provide Bash:
+
+
+ * Tivoli Access Manager for e-business versions: 5.1, 6.0, 6.1, 6.1.1 
+ * IBM Security Access Manager for Web version 7.0 software version 
+
+However, these products use the Bash version provided by the operating system. IBM recommends that you review your entire environment to identify vulnerable releases of Bash including your Operating Systems and take appropriate mitigation and remediation actions. Please contact your Operating System provider for more information.

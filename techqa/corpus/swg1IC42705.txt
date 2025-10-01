@@ -1,0 +1,207 @@
+Title: IBM IC42705: ROSE: CORBA GENERATOR IGNORES NAMESPACES FOR A MODEL THAT CONTAI NS 2 CLASSES WITH THE SAME NAME - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Rational Rose(TM) 2003.06.00 and 2003.06.12 when generating
+   code for a Corba class under a nested package, Rose produces
+   both classes in the code.
+   
+   Below are the steps to reproduce:
+   
+   1. Open Rose and set the languague to Corba
+   a. Go to Tools / Options / Notations
+   b. Change the default languague to be Corba
+   
+   2. Create a package called Testing under the logical view and
+   stereotype that as CORBAModule
+   a. Right click on the Logical View and select New Package
+   b. Right click on the new package and select Open Specification
+   c. Change the Stereotype to be a CORBAModule
+   
+   3. Create 2 packages a and b under the Testing package and
+   stereotype type as CORBAModule
+   a. Right click on teh Testing package and select New Package
+   b. Open the specification of the package and name the package a
+   c. Right click on the new package and select Open Specification
+   d. Change the Stereotype to be a CORBAModule
+   Do the same for package b
+   
+   4. Create 2 classes with the same name, one under package a and
+   the other under package b, stereotype one as a CORBAStruct and
+   the other as a CORBATypedef
+   a. Right click on package a and select New / Class
+   b. Right click on the class and open the specification
+   c. Name the class Test and set the stereotype to CORBATypedef
+   d. Right click on package b and select New / Class
+   e. Right click on the class and open the specification
+   f. Name the class Test and set the stereotype to CORBAStruct
+   
+   Note: A warning message will be displayed, but just click okay.
+   
+   5.Create two components and assign each class to a component
+   a. Right click on the Component View and select New / Component
+   b. Name the first component a
+   c. Name the second component b
+   d. Right click on the component a and open the
+   standard specification and go to the Realizes tab
+   e. Right click on the test class in package a and select assign
+   f. Click Apply and ok
+   g. Right click on the component b and open the standard
+   specification and go to the Realizes tab
+   h. Right click on the test class in package b and select assign
+   i. Click Apply and ok
+   
+   6. Now generate code for the test class under package b
+   a. Right click on the test class in package b
+   b. Select the Corba / Generate Code
+   
+   7. Browse the code for this class and you will see the code for
+   class test in package a
+   a. Right click on the test class in package a and select Browse
+   code
+   b. Below is the code that gets generated:
+   //Source file: C:/test/b.idl
+   #ifndef __B_DEFINED
+   #define __B_DEFINED
+   
+   /* CmIdentification
+     %X% %Q% %Z% %W% */
+   
+   module x {
+   
+    module b {
+   
+     struct test {
+     };
+   
+    };
+   
+    module a {
+   
+     typedef  test;
+   
+    };
+   
+   };
+   
+   #endif
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None Available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ROSE: CORBA GENERATOR IGNORES NAMESPACES FOR A MODEL THAT CONTAI
+   NS 2 CLASSES WITH THE SAME NAME
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix Pack 1 for 2003.06.13/2003.06.14
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Fix Pack 1 for 2003.06.13/2003.06.14
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC42705
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL ROSE ENT V
+   
+   
+ * REPORTED COMPONENT ID
+   5724F4300
+   
+   
+ * REPORTED RELEASE
+   ALL
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-09-14
+   
+   
+ * CLOSED DATE
+   2005-06-24
+   
+   
+ * LAST MODIFIED DATE
+   2005-06-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL ROSE ENT V
+   
+   
+ * FIXED COMPONENT ID
+   5724F4300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RALL PSY
+   UP

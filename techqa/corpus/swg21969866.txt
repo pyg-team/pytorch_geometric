@@ -1,0 +1,55 @@
+Title: IBM After TCR 2.1.1/TIP 2.2.0 installation, WebSphere is unable to stay running. - United States
+
+Text:
+NSSRAWHASH; TCR; TIP; TIPL2INST; logfreebl3.so; Unable; PID TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After the TCR 2.1.1 installation with embedded TIP, WebSphere starts up, but dies soon after, with this error in the SystemOut.log: PMRM0114E: Unable to determine pid. 
+
+SYMPTOM
+WebSphere will start up successfully with the "open for e-business" message in the startServer.log, but soon after will die, with "Unable to determine pid" message in SystemOut.log
+
+
+CAUSE
+WebSphere was trying to use an older version of libfreebl3.so library
+
+ENVIRONMENT
+Unix OS with TCR 2.1.1 with embedded TIP 2.2.0.0 upgrade.
+
+DIAGNOSING THE PROBLEM
+Checking the startServer.log, you will see this message:
+
+
+server1 open for e-business; process id is <PID #>, this message should also be in the SystemOut.log 
+
+Errors in the <TIP_HOME>/profile/TIPProfile/logs/server1/SystemOut.log: 
+
+
+[10/29/15 10:25:54:181 CDT] 00000000 PmiRmProcessL E PMRM0114E: Unable to determine pid.
+[10/29/15 10:25:54:218 CDT] 00000000 StartUpServic I STUP0008I: The Startup Beans service is disabled. 
+[10/29/15 10:25:54:224 CDT] 00000000 I18nService I I18N0010I: The Internationalization service is created on server1. 
+[10/29/15 10:25:54:225 CDT] 00000000 I18nServiceSe I I18N0010I: The Internationalization service is disabled on server1. 
+[10/29/15 10:25:54:247 CDT] 00000000 WsServerImpl W WSVR0100W: An error occurred initializing, server1 [class com.ibm.ws.runtime.component.ServerImpl] 
+com.ibm.ws.exception.ConfigurationWarning: Exception caught when initializing component 
+The actual cause of the issue was this error: 
+
+Caused by: java.lang.UnsatisfiedLinkError: Ws60ProcessManagement (/opt/ibm/tivoli/tipComponents/TCRComponent/cognos/bin64/libfreebl3.so: 
+version `NSSRAWHASH_3.12.3' not found (required by /lib64/libcrypt.so.1))
+
+
+RESOLVING THE PROBLEM
+Check to make sure the libfreebl3.so used by TCR 2.1.1 is the correct version, use the "strings" command to determine this: 
+
+$ strings /opt/ibm/tivoli/tipComponents/TCRComponent/cognos/bin64/libfreebl3.so | grep NSSRAWHASH 
+
+It should return this: 
+
+NSSRAWHASH_3.12.3 
+
+ If not, then check /lib for another version of libfreebl3.so and use the "string command to determine if the version is "NSSRAWHASH_3.12.3". If the version in /lib is correct then do the following: 
+
+1) Make a backup of /opt/ibm/tivoli/tipComponents/TCRComponent/cognos/bin64/libfreebl3.so 
+
+2) Copy /lib/libfreebl3.so to /opt/ibm/tivoli/tipComponents/TCRComponent/cognos/bin64 
+
+Start TIP using the startTCRserver.sh command.

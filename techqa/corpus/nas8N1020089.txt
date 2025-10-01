@@ -1,0 +1,170 @@
+Title: IBM i support for Samba - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ The open-source Samba package for installation on IBM i 
+
+RESOLVING THE PROBLEM
+ 
+
+================================================================================
+The freeware packages ("Code") provided here are distributed by IBM as a
+convenience to our customers. IBM does not own the Code, and did not develop
+or exhaustively test the Code. IBM does not provide support for the Code.
+IBM has compiled the Code so that it will run in the Portable Application
+Solutions Environment (PASE) on IBM i.
+
+Each Code package is distributed by IBM subject to the terms of the license
+that is included in the Code package. IBM has extracted the license
+information associated with the Code packages for viewing convenience, but
+in all cases the actual licenses delivered with the Code package govern the
+use of the Code package. By downloading a particular package you agree to
+accept and comply with the license terms that accompany such package.
+
+No Warranty:
+
+The Code is provided by IBM "AS IS." TO THE EXTENT PERMITTED BY APPLICABLE
+LAW, IBM MAKES NO WARRANTIES OR CONDITIONS EITHER EXPRESS OR IMPLIED,
+INCLUDING WITHOUT LIMITATION ANY WARRANTY OF NON-INFRINGEMENT AND THE
+IMPLIED WARRANTIES OF MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE
+REGARDING THE CODE OR TECHNICAL SUPPORT, IF ANY.
+
+This exclusion also applies to any of IBM's subcontractors,
+suppliers, or program developers (collectively called "Suppliers").
+
+Limitation of Liability:
+
+NEITHER IBM NOR ITS SUPPLIERS ARE LIABLE FOR ANY DIRECT OR INDIRECT DAMAGES,
+INCLUDING WITHOUT LIMITATION, LOST PROFITS, LOST SAVINGS, OR ANY INCIDENTAL,
+SPECIAL, OR OTHER ECONOMIC CONSEQUENTIAL DAMAGES, EVEN IF IBM IS INFORMED OF
+THEIR POSSIBILITY. SOME JURISDICTIONS DO NOT ALLOW THE EXCLUSION OR
+LIMITATION OF INCIDENTAL OR CONSEQUENTIAL DAMAGES, SO THE ABOVE EXCLUSION OR
+LIMITATION MAY NOT APPLY TO YOU.
+
+================================================================================
+
+Testing Statement
+
+The software is "as-is" and does not receive the same extensive testing as
+IBM i software, nor does the software necessarily have the same degree
+of support for standards, internationalization, accessibility, scalability
+as found with IBM i software.
+
+================================================================================ 
+
+ 
+
+ 
+
+Mapping network drives to the IBM has long been possible thanks to the IBM i NetServer. Starting with 7.2 of OS/400, IBM i administrators now have an alternative to NetServer with the Samba project. 
+
+The following is excerpted from: https://www.ibm.com/developerworks/ibmi/library/i-ibmi-7_2-the-great-beyond/ [https://www.ibm.com/developerworks/ibmi/library/i-ibmi-7_2-the-great-beyond/]
+
+"Samba is an open source SMB-based networking protocol for providing fast, stable, and secure file access. File serving, something we have had on IBM i for a long time is provided with IBM i NetServer IBM i NetServer has many great features when it comes to file serving, although in some instances performance has been an issue. Samba is a server that uses TCP/IP on IBM i to interact with Microsoft® Windows® clients or servers as if it is a Windows file and print server. Samba is not intended to be a full replacement for file serving on IBM i, but rather give customers an additional option. For example, Samba does not support Kerberos, automatic CCSID conversions, or integration with the IBM i QIBM_QPWFS_FILE_SERV exit point. For those features, IBM i NetServer is the best choice. But, if you require just basic file serving with performance, then Samba might be the choice for you. Consider the following key features: 
+
+ * A fast, modern, lightweight Common Internet File System (CIFS) file server 
+ * An FTP style CIFS client (smbclient) 
+ * NTLM and NTLMv2 authentication with session security enhancements 
+ * Enhanced error code reporting 
+ * Better protocol compatibility with current Windows clients 
+ * SMB 2.0 protocol support"
+
+
+
+APAR SE58417 documents the availability of the open-source samba package for IBM i 7.2. 
+IBM i samba support is provided in PTFs SI65094 (IBM i 7.2) and SI65096 (IBM i 7.3). 
+These PTF include fixes for https://www.samba.org/samba/security/CVE-2017-7494.html [https://www.samba.org/samba/security/CVE-2017-7494.html] 
+
+Installation of the Samba PTF places the Samba 3.6 package and install archive Samba.zip into directory: /QIBM/ProdData/OS  
+
+INSTALL STEPS: 
+
+
+1) Sign on to an IBM i command line with a user ID that has *ALLOBJ authority and run the PASE environment health-check tool:
+
+===> call pgm(qsys/qhcrprechk) PARM('-V')
+
+Hit <F6> to print the output before <Enter> to end the terminal session. 
+
+Resolve any errors found before continuing.
+
+
+2) Open a PASE session (CALL QP2TERM), create "samba" directory and extract the Samba package into the samba directory : 
+
+> mkdir samba 
+
+> cd samba 
+
+> jar xvf /QIBM/ProdData/OS/Samba.zip
+
+
+3) The installation script utilizes rpm and wget, so, those must be installed before running the install script. Follow the instructions to do so from the README.txt extracted from the Samba.zip.
+Alternatively, try the RPM beta documented here:
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/RPMs%20-%20Getting%20Started [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/RPMs%20-%20Getting%20Started]
+
+Verify they are installed by executing them each on the PASE command line with no parameters. 
+
+
+4) Once rpm and wget are installed, the samba_setup.sh script can then be used to install the Samba RPM package and its requisites. It may be necessary to grant execute permission to the script:
+
+
+> chmod 775 samba_setup.sh 
+
+> ./samba_setup.sh install
+
+
+Post-install instructions to run the Samba server instead of NetServer :
+
+1) ===> CRTUSRPRF NOBODY
+2) ===> ENDTCPSVR *NETSVR (The samba daemon will fail to allocate port 445 if this is not done)
+3) From PASE shell, call the Samba server start command and background it: 
+> smbd &
+Note: The above must be executed as any USRPRF that has *ALLOBJ authority but which does not have UID == 0 (I.E., not QSECOFR)
+
+4) The Samba server UIDs are not integrated with OS/400, so, the 'pdbedit' command must be used to add Samba server users and their passwords: 
+> pdbedit -a <userID>
+
+5) By default, the /QIBM path is shared by the packaged Samba code. To add new shares, administrators will need to edit file /opt/samba/lib/smb.conf . For example, to add a "home" share:
+[home]
+comment = This is the home dir share
+path = /home
+guest ok = no
+
+
+To end the Samba server find the process id # and kill it. For example:
+
+> ps -ef | grep smbd 
+qsecofr 1195 1 0 May 15 - 0:00 smbd 
+$ 
+> kill 1195 
+$ 
+
+Note that NetServer will fail to start while the Samba server is active.
+
+
+Troubleshooting :
+
+Please see the link to the "5733-OPS Open Source software support statement" below for software support guidelines.
+
+Also note limit 
+
+For errors, check log:
+/QOpenSys/var/opt/samba/var/log.smbd
+
+The README.txt file within Samba.zip contains additional installation details.
+
+RELATED INFORMATION
+ New features in OS400 v7.2 [https://www.ibm.com/developerworks/ibmi/library/i-ibmi-7_2-the-great-beyond/]
+5733-OPS Open Source software support statement [http://www-01.ibm.com/support/docview.wss?uid=nas8N1021450]
+chroot scripts [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/Chroot%20Scripts]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.3

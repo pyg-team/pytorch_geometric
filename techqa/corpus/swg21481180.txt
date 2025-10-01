@@ -1,0 +1,25 @@
+Title: IBM How can I stop/start Clementine Server on Windows from a command line? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I stop/start Clementine Server on Windows from a command line? 
+
+ANSWER
+Please run the following command to stop Clementine Server for Windows from a command line:
+net stop "Clementine Server 10.1"
+
+Please run the following command to start Clementine Server for Windows from a command line:
+net start "Clementine Server 10.1"
+
+(The quotations must be included in the command.
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 56428

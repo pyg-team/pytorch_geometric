@@ -1,0 +1,228 @@
+Title: IBM License feature codes, Procedures included in the IBM SPSS Statistics options and their corresponding Syntax commands - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I am working with IBM SPSS Statistics Product and I know that I can buy additional options for the software. Upon licensing I see that these additional options do have different feature codes. Can I get more information about this and the additional options? What procedures are included in which options and where can I find them in the menus? 
+
+ANSWER
+When you launch IBM SPSS Statistics and open a new syntax file with -> File -> New -> Syntax you can run the following command:
+SHOW LICENSE.
+
+You will then get a table with the name of the additional options you have purchased and licensed with an authorization code. 
+If you have licensed all available options this list would look like below:
+
+IBM SPSS Statistics ('Core Base')
+IBM SPSS Regression
+IBM SPSS Advanced Statistics
+IBM SPSS Categories
+IBM SPSS Exact Tests
+IBM SPSS Missing Values
+IBM SPSS Conjoint
+IBM SPSS Custom Tables
+IBM SPSS Complex Samples
+IBM SPSS Decision Trees
+IBM SPSS Data Preparation
+IBM SPSS Forecasting
+IBM SPSS Neural Networks
+IBM SPSS Direct Marketing
+IBM SPSS Bootstrapping
+IBM SPSS Statistics Base ('Extended Base')
+
+Most of all procedures and menus of Statistics are included in the main option. The number before the option name below is the license feature code, for example 00 is the code for the core system and 21 the code for the extended base option with Frequency tables, Crosstabs and so on.
+
+
+1200 IBM SPSS Statistics 
+
+1221 IBM SPSS Statistics Base 
+So if you have not licensed any additional modules the list for SHOW LICENSE is: 
+
+IBM SPSS Statistics 
+IBM SPSS Statistics Base 
+
+and you will get the majority of all available features and (statistical) procedures of IBM SPSS Statistics with these two options. 
+
+However, there are additional options which can be licensed with Statistics. Below is a list of the additional module names, their feature codes and what procedures are included in these additional options. The corresponding Syntax command name for the procedure is included in brackets. 
+Detailed information about the options can be found in the Online Help menu of IBM SPSS Statistics. 
+
+1202 IBM SPSS Regression Option 
+-> Menu Analyze -> Regression: 
+ * Binary Logistic Regression (LOGISTIC REGRESSION) 
+ * Multinomial Logistic Regression (NOMREG) 
+ * Probit Analysis (PROBIT) 
+ * Nonlinear Regression (NLR) 
+ * Weight Estimation (WLS) 
+ * Two-Stage Least-Squares Regression (2SLS)
+
+
+1203 IBM SPSS Advanced Statistics Option 
+-> Menu Analyze -> General Linear Model: 
+ * GLM Multivariate Analysis (GLM) 
+ * GLM Repeated Measures (GLM) 
+ * Variance Components Analysis (VARCOMP)
+
+
+-> Menu Analyze -> Generalized Linear Models: 
+ * Generalized Linear Models (GENLIN) 
+ * Generalized Estimating Equations (GENLIN)
+
+
+-> Menu Analyze -> Mixed Models: 
+ * Linear Mixed Models (MIXED) 
+ * Generalized Linear Mixed Models (GENLINMIXED) 
+
+
+-> Menu Analyze - Loglinear: 
+ * General Loglinear Analysis (GENLOG) 
+ * Logit Loglinear Analysis (GENLOG) 
+ * Model Selection Loglinear Analysis (HILOGLINEAR)
+
+
+-> Menu Analyze -> Survival: 
+ * Life Tables (SURVIVAL) 
+ * Kaplan-Meier Survival Analysis (KM) 
+ * Cox Regression Analysis (COXREG) 
+ * Cox Regression with Time Dependent Covariates (COXREG)
+
+
+1205 IBM SPSS Exact Tests Option 
+Exact Tests is incorporated as a subdialog in Crosstabs procedure 
+
+1206 IBM SPSS Categories Option 
+
+-> Menu Analyze -> Regression: 
+ * Optimal Scaling (CATREG) 'Categorical Regression'
+
+
+-> Analyze > Dimension Reduction > Correspondence Analysis 
+ * Correspondence Analysis (CORRESPONDENCE)
+
+
+-> Menu Analyze -> Dimension Reduction -> Optimal Scaling 
+ * Categorical Principal Components Analysis (CATPCA) 
+ * Nonlinear Canonical Correlation Analysis (OVERALS) 
+ * Multiple Correspondence Analysis (MULTIPLE CORRESPONDENCE)
+
+
+-> Menu Analyze -> Scale 
+ * Multidimensional Unfolding (PREFSCAL) 
+ * Multidimensional Scaling (PROXSCAL) 
+
+
+1207 IBM SPSS Missing Values Option 
+-> Menu Analyze -> Missing Value Analyis 
+ * Missing Value Analyis (MVA)
+
+
+-> Menu Analyze -> Multiple Imputation 
+ * Analyze Patterns (MULTIPLE IMPUTATION) 
+ * Impute Missing Data Values ((MULTIPLE IMPUTATION)
+
+
+1208 IBM SPSS Conjoint Option 
+-> Menu Data -> Orthogonal Design > Generate 
+ * Generating an Orthogonal Design (ORTHOPLAN)
+
+
+-> Menu Data -> Orthogonal Design > Display 
+ * Display an Orthogonal Design (PLANCARDS)
+
+
+Conjoint Analysis (CONJOINT) 
+Note: Conjoint Analysis can be performed via command syntax CONJOINT only 
+
+1210 IBM SPSS Custom Tables Option 
+-> Menu Analyze -> Custom Tables 
+ * Custom Tables (CTABLES) 
+ * Multiple Response Sets for Custom tables (MRSETS) 
+
+1211 IBM SPSS Complex Samples Option 
+-> Menu Analyze -> Complex Samples 
+ * Select a sample (CSSELECT, CSPLAN) 
+ * Create for Analysis (CSPLAN) 
+ * Frequencies (CSTABULATE) 
+ * Descriptives (CSDESCRIPTIVES) 
+ * Crosstabs (CSTABULATE) 
+ * Ratios (CSDESCRIPTIVES) 
+ * General Linear Model (CSGLM) 
+ * Logistic Regression (CSLOGISTIC) 
+ * Ordinal Regression (CSORDINAL) 
+ * Cox Regression (CSCOXREG) 
+
+1212 IBM SPSS Decision Trees Option 
+-> Menu Analyze -> Classify -> Trees 
+ * Trees (TREE)
+
+
+1213 IBM SPSS Data Preparation Option 
+-> Menu Data -> Validation -> Validate Data 
+ * Validate Data (VALIDATEDATA)
+
+
+-> Menu Transform -> Prepare Data for Modeling -> Automatic 
+ * Automated Data Preparation (ADP)
+
+
+-> Menu Transform -> Prepare Data for Modeling -> Interactive 
+ * Interactive Data Preparation (using several syntax commands)
+
+
+-> Menu Data -> Identify Unusual Cases 
+ * Identify Unusual Cases (DETECTANOMALY)
+
+
+-> Menu Transform -> Optimal Binning 
+ * Optimal Binning (OPTIMAL BINNING)
+
+
+
+1216 IBM SPSS Forecasting Option 
+-> Menu Analyze -> Forecasting 
+ * Create Models (TSMODEL) 
+ * Apply Models (TSAPPLY) 
+ * Seasonal Decomposition (SEASON) 
+ * Spectral Analysis (SPECTRA)
+
+
+1218 IBM SPSS Neural Networks Option 
+-> Menu Analyze -> Neural Networks 
+ * Multilayer Perceptron (MLP) 
+ * Radial Basis Function (RBF)
+
+
+1219 IBM SPSS Direct Marketing Option 
+-> Menu Direct Marketing -> Choose Technique 
+
+Avalable techniques :  * RFM Analysis 'Help identify my best contacts' (using several syntax commands) 
+ * Cluster analysis 'Segment my contacts into cluster' (DMCLUSTER) 
+ * Prospect Profiles 'Generate profiles of my contacts who responded to an offer' (DMTREE) 
+ * Postal Code Response Rates 'Identify the top responding postal codes' (using several syntax commands) 
+ * Propensity to purchase 'Select contacts most likely to purchase' (using several syntax commands e.g. DMLOGISTIC and DMROC) 
+ * Control Package Test 'Compare effectiveness of campaigns' (using several syntax commands e.g. DMTABLES)
+
+
+1220 IBM SPSS Bootstrapping Option 
+Bootstrapping is incorporated as a subdialog in procedures that support bootstrapping. The following procedures support bootstrapping: 
+
+- Frequencies 
+- Descriptives 
+- Explore 
+- Crosstabs 
+- Means 
+- One-Sample T Test 
+- Independent-Samples T Test 
+- Paired-Samples T Test 
+- One-Way ANOVA 
+- Bivariate Correlations 
+- Partial Correlations 
+- Linear Regression 
+- Ordinal Regression 
+- Discriminant Analysis 
+- GLM Multivariate 
+- Linear Mixed Models 
+- Generalized Linear Models 
+- Cox Regression 
+- Multinomial Logistic Regression RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]

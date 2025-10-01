@@ -1,0 +1,80 @@
+Title: IBM Error 'Culture ID 0 (0x0000) is not a supported culture' when running Standard Reports - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User launches a 'standard report' (also known as a 'system report'). User receives error message. 
+
+SYMPTOM
+IBM Cognos 8 Controller 
+
+Unhandled exception has occurred in a component in your application. If you click Continue, the application will ignore this error and attempt to continue.
+If you click Quit, the application will close immediately.
+Culture ID 0 (0x0000) is not a supported culture.
+Parameter name: culture.
+[Details] [Continue] [Quit]
+
+See the end of this message for details on invoking 
+just-in-time (JIT) debugging instead of this dialog box.
+
+************** Exception Text **************
+System.ArgumentException: Culture ID 0 (0x0000) is not a supported culture.
+Parameter name: culture
+at System.Globalization.CultureInfo..ctor(Int32 culture, Boolean useUserOverride)
+at Cognos.Controller.Forms.Common.frmRnViewer.frmRnViewer_Load(Object eventSender, EventArgs eventArgs)
+at System.Windows.Forms.Form.OnLoad(EventArgs e)
+at System.Windows.Forms.Form.OnCreateControl()
+at System.Windows.Forms.Control.CreateControl(Boolean fIgnoreVisible)
+at System.Windows.Forms.Control.CreateControl()
+at System.Windows.Forms.Control.WmShowWindow(Message& m)
+at System.Windows.Forms.Control.WndProc(Message& m)
+at System.Windows.Forms.ScrollableControl.WndProc(Message& m)
+at System.Windows.Forms.ContainerControl.WndProc(Message& m)
+at System.Windows.Forms.Form.WmShowWindow(Message& m)
+at System.Windows.Forms.Form.WndProc(Message& m)
+at System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
+at System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+at System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+
+
+************** Loaded Assemblies **************
+mscorlib
+Assembly Version: 2.0.0.0
+Win32 Version: 2.0.50727.3615 (GDR.050727-3600)
+CodeBase: file:///c:/WINDOWS/Microsoft.NET/Framework/v2.0.50727/mscorlib.dll [file:///c:/WINDOWS/Microsoft.NET/Framework/v2.0.50727/mscorlib.dll]
+----------------------------------------
+IEExecRemote
+Assembly Version: 2.0.0.0
+Win32 Version: 2.0.50727.3053 (netfxsp.050727-3000)
+CodeBase: file:///C:/WINDOWS/assembly/GAC_MSIL/IEExecRemote/2.0.0.0__b03f5f7f11d50a3a/IEExecRemote.dl [file:///C:/WINDOWS/assembly/GAC_MSIL/IEExecRemote/2.0.0.0__b03f5f7f11d50a3a/IEExecRemote.dl]<.....>
+
+
+
+CAUSE
+Corrupt settings inside end user's ccr.config configuration file.
+
+
+
+RESOLVING THE PROBLEM
+Reset the end user's ccr.config file to the default settings. 
+
+TIP: Some user-specific settings (for example 'local preferences') will be lost by doing this. Therefore, as a precaution, take a backup of the old file (or entire folder) in case the user requires those settings to be manually copied over again. 
+
+ 
+
+Steps: 
+
+Ask the 'bad' end user to do the following, when logged onto the 'bad' client device (for example Windows XP laptop) as his/her normal Windows user: 
+
+ 1. Close Controller (if it is running) 
+ 2. Click "Start - Run" 
+ 3. Type the following: %APPDATA% <enter> 
+ 4. Open the subfolder "Cognos" 
+ 5. Rename the subfolder "CCR" to "CCR.old" 
+ 6. Test
+
+
+
+HISTORICAL NUMBER
+ 1033768

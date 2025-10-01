@@ -1,0 +1,207 @@
+Title: IBM IZ31413: CALLS TO SQL PROCEDURES COMPILED IN V8.1 WITH DEBUG MODE WILL   CAUSE THE INSTANCE TO TERMINATE ABNORMALLY. - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+DB2 Version 9.1 Fix Pack 7 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24022678]
+DB2 Version 9.1 Fix Pack 6 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24020890]
+DB2 Version 9.1 Fix Pack 6a for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24021876]
+DB2 Version 9.1 Fix Pack 7a for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24024113]
+DB2 Version 9.1 Fix Pack 8 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24024502]
+DB2 Version 9.1 Fix Pack 9 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24026384]
+DB2 Version 9.1 Fix Pack 10 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24029027]
+DB2 Version 9.1 Fix Pack 11 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24031281]
+DB2 Version 9.1 Fix Pack 12 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033023]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you call an SQL procedure compiled in Version 8.1 with debug
+   mode, the instance is stopped and generates a trap file.
+   
+   The following text is an extract of an stack trace file:
+   
+   <StackTrace>
+   -------Frame------ ------Function + Offset------
+   0xDDA8F2D0 pda_EnterRoutineC + 0x68
+   0xD7B49550 pgsjmp + 0x21C
+   0xD9DDE834 sqloInvokeFnArgs + 0x74
+   0xD9DDB9B8
+   sqlriInvokerTrusted__FP10sqlri_ufobP21sqlriRoutineErrorIntf +
+   0x58C
+   0xD9DD7150 sqlriInvokeInvoker__FP10sqlri_ufob + 0x100
+   0xD9DD6FAC sqlricall__FP8sqlrr_cb + 0x9C
+   0xD9CC5B40 sqlriSectInvoke__FP8sqlrr_cbP12sqlri_opparm + 0xC4
+   0xD9BC94B0 sqlrr_execute__FP7UCintfcP9UCstpInfo + 0xA00
+   0xD9BC8D78 sqlrr_execute__FP7UCintfcP9UCstpInfo + 0x2C8
+   0xD9B549E8 sqljs_ddm_excsqlstt__FP7UCintfcP14sqljsDDMObject +
+   0x358
+   0xD9B46074
+   sqljsParseRdbAccessed__FP13sqljsDrdaAsCbP14sqljsDDMObjectP7UCint
+   fc +
+   0x58
+   0xD9B45F14 sqljsParse__FP13sqljsDrdaAsCbP7UCintfc + 0x250
+   0xD9B4A950 sqljsSqlam__FP7UCintfcP13sqle_agent_cbb + 0x8C
+   0xD9B4AEF4 sqljsDriveRequests__FP13sqle_agent_cbP11UCconHandle +
+   0x88
+   0xD9B4AD98 sqljsDrdaAsInnerDriver__FP17sqlcc_init_structb + 0xB0
+   0xD9B4AB48 sqljsDrdaAsDriver__FP17sqlcc_init_struct + 0x84
+   0xD9C20B40 sqleRunAgent__FPcUl + 0x260
+   0xD99BD1F4 sqloCreateEDU__FPFPcUl_vPcUlP13SQLO_EDU_INFOPl +
+   0x1A8
+   0xD99BCDB4 sqloRunGDS__Fv + 0x78
+   0xD99BD844 sqloInitEDUServices + 0x14C
+   0xD99C11E0 sqloRunInstance + 0x4E4
+   0x10002910 DB2main + 0x888
+   0x100035A0 main + 0xC
+   </StackTrace>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Recompile the SQL procedures using Version 8.2 or later, or
+   using Version 8.1 without the debug mode.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The following trap may occur if a SQL SP is called that
+   was created in v8.1 in debug mode
+   
+   The following stacktrace will be observed:
+   
+   <StackTrace>
+   -------Frame------ ------Function + Offset------
+   0xDDA8F2D0 pda_EnterRoutineC + 0x68
+   0xD7B49550 pgsjmp + 0x21C
+   0xD9DDE834 sqloInvokeFnArgs + 0x74
+   0xD9DDB9B8
+   sqlriInvokerTrusted__FP10sqlri_ufobP21sqlriRoutineErrorIntf +
+   0x58C
+   0xD9DD7150 sqlriInvokeInvoker__FP10sqlri_ufob + 0x100
+   0xD9DD6FAC sqlricall__FP8sqlrr_cb + 0x9C
+   0xD9CC5B40 sqlriSectInvoke__FP8sqlrr_cbP12sqlri_opparm + 0xC4
+   0xD9BC94B0 sqlrr_execute__FP7UCintfcP9UCstpInfo + 0xA00
+   0xD9BC8D78 sqlrr_execute__FP7UCintfcP9UCstpInfo + 0x2C8
+   0xD9B549E8 sqljs_ddm_excsqlstt__FP7UCintfcP14sqljsDDMObject +
+   0x358
+   0xD9B46074
+   sqljsParseRdbAccessed__FP13sqljsDrdaAsCbP14sqljsDDMObjectP7UCint
+   fc +
+   0x58
+   0xD9B45F14 sqljsParse__FP13sqljsDrdaAsCbP7UCintfc + 0x250
+   0xD9B4A950 sqljsSqlam__FP7UCintfcP13sqle_agent_cbb + 0x8C
+   0xD9B4AEF4 sqljsDriveRequests__FP13sqle_agent_cbP11UCconHandle +
+   0x88
+   0xD9B4AD98 sqljsDrdaAsInnerDriver__FP17sqlcc_init_structb + 0xB0
+   0xD9B4AB48 sqljsDrdaAsDriver__FP17sqlcc_init_struct + 0x84
+   0xD9C20B40 sqleRunAgent__FPcUl + 0x260
+   0xD99BD1F4 sqloCreateEDU__FPFPcUl_vPcUlP13SQLO_EDU_INFOPl +
+   0x1A8
+   0xD99BCDB4 sqloRunGDS__Fv + 0x78
+   0xD99BD844 sqloInitEDUServices + 0x14C
+   0xD99C11E0 sqloRunInstance + 0x4E4
+   0x10002910 DB2main + 0x888
+   0x100035A0 main + 0xC
+   </StackTrace>
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in DB2 UDB Version 9.1, FixPak 6
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ31413
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4100
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-08
+   
+   
+ * CLOSED DATE
+   2008-11-03
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ24277 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ24277]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IZ31414 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ31414]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * FIXED COMPONENT ID
+   5765F4100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSN
+   UP

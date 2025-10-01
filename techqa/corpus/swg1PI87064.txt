@@ -1,0 +1,179 @@
+Title: IBM PI87064: DFHSR0601 DURING CICS START-UP WITH JOURNAL ARCHIVING - United States
+
+Text:
+z/os SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are starting CICS with journal archiving.  CICS cancels
+   during start-up.  You receive messages:
+   DFHSR0601 Program interrupt occurred with system task III in
+   control.
+   DFHKE1800 ABNORMAL TERMINATION OF CICS IS COMPLETE.
+   
+   The kernel shows CSSY running and has abended.
+   The stack shows the error in DFHJAP:
+   KE_NUM @STACK   LEN  TYPE ADDRESS  LINK REG OFFS ERROR NAME
+   0005   07C80020 0110 Bot  87CAFC60 87CAFF30 02D0       DFHKETA
+   0005   07C80130 01E0 Dom  87CD47E0 87CD48CE 00EE       DFHDSKE
+   0005   07C80310 03E0 Dom  87D50600 87D5111E 0B1E       DFHXMTA
+   0005   07C806F0 0380 Dom  83C40A78 83C41424 09AC       DFHPGPG
+                        Int     +00D4 83C40B06 008E  INITIAL_LINK
+   0005   07C80A70 04D0 Dom  83E00000 806C5020 0000       DFHAPLI1
+   0005   0060C0A0 01D0 Lifo 040D1B70 806A02C8 0000       DFHAPATT
+   0005   07C80F40 0300 Dom  83C4F570 83C50052 0AE2       DFHPGLK
+                        Int     +03C4 83C4F612 00A2  COMMON_LINK
+   0005   07C81240 04D0 Dom  83E00000 806C5020 0000       DFHAPLI1
+   0005   07C81710 0408 Lifo 04494090 8449423E 01AE       DFHJCRP
+   0005   0075D020 06A8 Lifo 03CACE40 83B6D726 0000 *YES* DFHJAP
+                        Int     +0616 00000000 31C0  ENDREQ_JACD
+   0005   07C81B18 03A0 Sub  83B6D930 83B6E13C 080C       DFHSRP
+   0005   07C81EB8 0F50 Dom  87D045F0 87D07BB8 35C8       DFHMEME
+                        Int     +2CD2 87D0476A 017A       SEND
+                        Int     +14A8 87D073B0 2DC0 CONTINUE_SEND
+                        Int     +350C 87D05B0E 151E
+                                  TAKE_DUMP_AND_TERMINATE_CICS
+   
+   Trace shows a program check:
+   AP 0790 SRP  *EXC* - PROGRAM_CHECK
+   TASK-III   KE_NUM-0005 TCB-003FD000 RET-83B6D726
+   TIME-13:03:24.4990917136 INTERVAL-00.0000720625    =032079=
+   1-0000  F0C3F461 C1D2C5C1 010400C4 0000FFFF  C4C6C8D1
+           C1D74040 03CACE40 0776D080  *0C4/AKEA...D....DFHJAP  .
+   
+   The TASK III TCA address seems to have been changed after the
+   VSAM EXCPAD has completed.  On return from VSAM, DFHJAP needs
+   to switch register 13 back correctly to the CSA stack.
+   Additional Symptom(s) Search Keyword(s): KIXREVRJL
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Using Journal Archiving causes a        *
+   *                      program check in DFHJAP and CICS is     *
+   *                      terminated.                             *
+   ****************************************************************
+   When Journal Archiving is used, the following messages
+   are seen and CICS is terminated.
+   
+   DFHSI1510I applid Journal control subtask is being
+   attached/entered
+   
+   DFHSR0601 applid Program interrupt occurred with system task
+   III in control
+   
+   The problem is caused by register corruption when the DFHJAP
+   VSAM EXCPAD exit is invoked, causing a program check in DFHJAP
+   when the exit completes.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHJAP has been corrected to avoid the register corruption.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI87064
+   
+   
+ * REPORTED COMPONENT NAME
+   CICSTS FOR ZVSE
+   
+   
+ * REPORTED COMPONENT ID
+   5655VSE00
+   
+   
+ * REPORTED RELEASE
+   B2P
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-08
+   
+   
+ * CLOSED DATE
+   2018-03-15
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI91697 UI54480 UI54481
+   
+   
+
+MODULES/MACROS
+ *  DFHJAP
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICSTS FOR ZVSE
+   
+   
+ * FIXED COMPONENT ID
+   5655VSE00
+   
+   
+
+APPLICABLE COMPONENT LEVELS

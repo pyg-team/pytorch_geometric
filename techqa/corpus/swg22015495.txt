@@ -1,0 +1,14 @@
+Title: IBM Datacap Rulerunner repeatedly restarts - United States
+
+Text:
+rulerunner restart TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Tasks run by Rulerunner either fail to get started or are observed to be picked up at a very slow rate. The Rulerunner logs show that Rulerunner is continually restarting every few seconds. 
+
+CAUSE
+Rulerunner can detect that configuration changes have been made and perform an automatic restart to allow it to pick up those changes. However, if it does not have write access to the registry it cannot turn off the flag telling it to restart.
+
+RESOLVING THE PROBLEM
+The identity account that Rulerunner is running under must be given write access to the Datacap folders and subfolders in the registry. A temporary workaround is to manually set the following registry key value to 0.
+HKEY_LOCAL_MACHINE\Software\Wow6432Node\Datacap\Rulerunner\Misc\Settings Changed

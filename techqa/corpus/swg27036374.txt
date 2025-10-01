@@ -1,0 +1,28 @@
+Title: IBM WebSphere Cast Iron planned maintenance release dates - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The purpose of this document is to publish the planned maintenance availability dates for the WebSphere Cast Iron products. These dates are guidelines highlighting when future maintenance should be released to enable customers to plan maintenance upgrades to their machines. 
+
+These published dates are subject to change. IBM intends to keep this web page current and modify it as soon as any changes to release dates are known. You should periodically check this page so that you are aware of any changes. 
+
+If you need to find out which maintenance delivery an APAR (code fix) is targeted for, you should speak to your IBM Service representative. 
+
+CONTENT
+ 
+
+IBM WebSphere Cast Iron V7.*
+IBM WebSphere Cast Iron V6.4
+IBM WebSphere Cast Iron V6.3
+
+
+
+
+
+
+Product & Version Planned Release Date Comments IBM WebSphere Cast Iron V7.* Release 7.5.0.0 Now available! [http://www.ibm.com/support/docview.wss?uid=swg21963355] [/support/docview.wss?uid=swg27036374&amp;aid=1] Fix Pack 7.0.0.2 Now available! [http://www.ibm.com/support/docview.wss?uid=swg21686987] [/support/docview.wss?uid=swg27036374&amp;aid=1] Fix Pack 7.0.0.1 Now available! [http://www.ibm.com/support/docview.wss?uid=swg21678176] [/support/docview.wss?uid=swg27036374&amp;aid=1] Release 7.0.0 Now available! [http://www.ibm.com/support/docview.wss?uid=swg21656428] [/support/docview.wss?uid=swg27036374&amp;aid=1] 
+Product & Version Planned Release Date Comments IBM WebSphere Cast Iron V6.4 Fix Pack 6.4.0.1 Now available! [http://www-01.ibm.com/support/docview.wss?uid=swg21647655] [/support/docview.wss?uid=swg27036374&amp;aid=1] Release 6.4.0.0 Now available! [http://www-01.ibm.com/support/docview.wss?uid=swg21641628] [/support/docview.wss?uid=swg27036374&amp;aid=1] 
+Product & Version Planned Release Date Comments IBM WebSphere Cast Iron V6.3 Fix Pack 6.3.0.2 Now available! [http://www-01.ibm.com/support/docview.wss?uid=swg21650993] [/support/docview.wss?uid=swg27036374&amp;aid=1] Fix Pack 6.3.0.1 Now available! [http://www.ibm.com/support/docview.wss?uid=swg21625115] [/support/docview.wss?uid=swg27036374&amp;aid=1] 
+Back to Top

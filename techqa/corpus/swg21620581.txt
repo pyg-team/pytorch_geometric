@@ -1,0 +1,41 @@
+Title: IBM Portal 8 installation fails with CRIMA1076E and adminPassword empty - United States
+
+Text:
+CRIMA1076E; manageprofiles.sh; manageprofiles.bat; cw_profile; com.ibm.websphere.cw.profile.create TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When installing WebSphere Portal v8, the installation fails when creating the cw_profile (Config Wizard). 
+
+SYMPTOM
+In the IBM Installation Manager log, the failure will occur here:
+
+===========================
+ERROR CRIMA1076E 12:45.50 Error executing the /opt/IBM/WebSphere/AppServer/bin/manageprofiles.sh command: status=1. For more information, see the agent log file: /var/ibm/logs/native/20121211_0900b.log The installation operation failed due to an error executing the exec command. An issue has occurred with the package that cannot be resolved by Installation Manager. Identify the package that has the issue. Contact IBM Support.
+===========================
+
+In the native log file mentioned by the error (in this case, /var/ibm/logs/native/20121211_0900b.log), you can see the root cause:
+
+=====================
+The following validation errors were present with the command line arguments: 
+adminPassword: adminPassword cannot be empty.
+=====================
+
+
+CAUSE
+In this case, the user was performing a silent installation of WebSphere Portal v8 and had left the password property blank:
+
+<data key='user.wp.password,com.ibm.websphere.PORTAL.SERVER.v80' value=''/>
+
+RESOLVING THE PROBLEM
+To correct the problem, you must set a password in the response file. The password must be encrypted. To encrypt the password, follow these steps:
+
+1. From the InstallationManager/eclipse/tools directory, execute this command:
+
+Windows: imutilsc encryptString <password>
+Unix: ./imutilsc encryptString <password>
+
+2. The encrypted password will be returned. Copy this value to the response file for the user.wp.password property.
+
+3. Launch the Portal installation.
+
+NOTE: If the PortalServer and ConfigEngine directories are present, remove them before reinstalling. Do NOT remove the AppServer directory, as the installation has successfully installed WAS at this point.

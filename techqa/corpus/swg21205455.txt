@@ -1,0 +1,60 @@
+Title: IBM Specifying a runtime DB2 z/OS DataSource Schema for a CMP EJB Project with a NULLID mapped Schema - United States
+
+Text:
+WSAD; RAD; CMP; EJB; map; DB2; db2 connect; z/OS; zOS; os/390; datasource; schema; sqlid; nullid; currentSQLID; racf; racf id; current; resource property; PMR 87875 370 000; PMR 76770 49R 000; 1205455 TECHNOTE (FAQ)
+
+QUESTION
+ How do I specify another schema name to be used at runtime with a CMP EJB created with a NULLID Schema ID targeting a z/OS DB2® version 8 datasource other then using the database login id specified on the WebSphere® Test Environment (WTE) version 5.x server datasource. 
+
+CAUSE
+ An EJB project in WebSphere Studio Application Developer (WSAD) version 5.1.x or Rational® Application Developer (RAD) version 6.x/7.x targeting a WTE version 5.1.x server (would also apply to WTE 5.0.2.x or 6.x) has CMP EJBs mapped to tables associated with a DB2 z/OS version 8.x datasource. DB2 Connect Edition version 8.1.8.762 with the legacy JDBC™ driver (db2java.zip) was used.
+The CMP EJBs were mapped to z/OS DB2 8.x tables using the NULLID schema name (NULLID.tablename). As a consequence, the generated code at runtime (such as the SQL statements), when sent by the WebSphere Application Server (WAS) version 5.x using the JDBC driver, is given a schema name corresponding to the database login id (the JAAS Authentication ID) defined in the datasource. The CMP EJB-specific SQL statements that arrive at the DB2 instance on z/OS are qualified with the login id (for example, login-id.tablename).
+
+On z/OS DB2 the common practice is to have a separate login id and a different table owner id ( or schema). It is not a good practice to hard code the schema name into the EJB mapping for reasons of flexibility. This requires the WTE/WAS version 5 server to have the capability to specify a schema name, other then the login-id of the datasource, to replace the NULLID prefix of the generated SQL statements at runtime.
+
+This is a common requirement for clients using CMP EJBs and targeting z/OS DB2.
+
+See also Related information section, item:
+
+About the NULLID schema and EJB 1.x/2.x CMP mappings
+
+
+ANSWER
+ You can specify a specific z/OS DB2 schema (such as SQLID) on a WTE/WAS version 5.x datasource as following: 
+
+ 
+
+ 1. It is necessary to use DB2 Connect 8.1 FP7 or higher, with either the legacy JDBC driver (db2java.zip) or the Universal JDBC driver (db2jcc*.jar).
+    
+    
+ 2. On the WTE/WAS 5.x datasource resource properties, create the DB2 z/OS property currentSQLID and set its value to the required schema name. The currentSQLID property causes the JDBC driver to flow a directive: exec sql set current sqlid =nnnn. This ID should be a racf primary id or RACF group id associated with the user primary id. To create a new resource property go to Server Settings in the Data Sources tab of the Server Configuration Editor, highlight the z/OS DB2 datasource and add an additional resource property using the section Resource properties defined in the data source selected above:
+    Name: currentSQLID
+    Value: {target schema/sqlid} 
+    Type: java.lang.String 
+
+
+For this specific datasource it would be useful to check the required checkbox to serve as a reminder that it is required by the CMP EJBs. The required checkbox is preset by default on an existing minimal set of DB properties required by the datasource connection at runtime. 
+
+In the case of WTE/WAS version 6 and a J2EE version 1.4 EAR, you can do this in a c similar manner using the Deployment Tab of the EAR Deployment Descriptor (a WebSphere Rapid Deploy extension) or directly using the Administration Console. Consult the Related URL items: Education:RAD Server Tools and the WSAS v6 Information Center , for details. 
+
+
+Note: 
+DB2 Connect Personal Edition (PE) does not allow 2PC (Two Phase Commit)/XA transaction support with z/OS DB2. The 2PC scenario might come up at some point in many enterprise applications. PE is useful for development , unless 2PC/XA is involved. DB2 Connect Enterprise Edition (EE) is required if 2PC scenario is present with z/OS DB2 (also for iSeries DB2). Additionally, the Enterprise Edition is typically used in multi-tier (more than 2 tier) applications. You should always test with whatever DB2 Connect edition and stand-alone WebSphere server that you will be using in production. The latest documentation should always be consulted regarding XA support for DB2 Connect editions. 
+RELATED INFORMATION
+#CurrentSQLID CLI/ODBC configuration keyword [http://publib.boulder.ibm.com/infocenter/db2help/index.jsp?topic=/com.ibm.db2.udb.doc/ad/r0008780.htm]
+Properties for the DB2 Universal JDBC Driver [http://publib.boulder.ibm.com/infocenter/db2help/index.jsp?topic=/com.ibm.db2.udb.doc/ad/rjvdsprp.htm]
+DB2 Universal JDBC Driver properties [http://publib.boulder.ibm.com/infocenter/db2help/index.jsp?topic=/com.ibm.db2.udb.doc/ad/rjvjdb2o.htm]
+DB2 Information Center [http://publib.boulder.ibm.com/infocenter/db2help/index.jsp]
+DB2 Connect [http://publib.boulder.ibm.com/infocenter/db2help/index.jsp?topic=/com.ibm.db2.udb.doc/conn/r0004771.htm]
+DB2 Connect with an XA [http://publib.boulder.ibm.com/infocenter/db2help/index.jsp?topic=/com.ibm.db2.udb.doc/conn/c0006168.htm]
+WAS51 Vendor-Specific Datasource requirements [http://publib.boulder.ibm.com/infocenter/wasinfo/v5r1//index.jsp?topic=/com.ibm.websphere.base.doc/info/aes/ae/rdat_minreq.html]
+WAS v6 Information Center [http://publib.boulder.ibm.com/infocenter/ws60help/index.jsp]
+About the NULLID schema and EJB 1.x/2.x CMP mappings [http://www.ibm.com/support/docview.wss?uid=swg21304887]
+WAS61 Data source minimum required settings by vendor [http://publib.boulder.ibm.com/infocenter/wasinfo/v6r1/index.jsp?topic=/com.ibm.websphere.base.doc/info/aes/ae/rdat_minreq.html]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development WebSphere Studio Application Developer EJB Tools Linux, Windows 5.1.2

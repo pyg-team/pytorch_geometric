@@ -1,0 +1,195 @@
+Title: IBM IC99000: "ANS0324E PARTIALOBJLENGTH VALUE ... IS INVALID" ERROR ON 'RESTORE VM' - United States
+
+Text:
+AIX  A FIX IS AVAILABLE
+IBM Tivoli Storage Manager (TSM) Client 7.1.1 Downloads and READMEs [http://www-01.ibm.com/support/docview.wss?uid=swg24038141]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A 'RESTORE VM' operation for VM guests with incorrect backup
+   images might return the following errors :
+   
+   ANS0324E partialObjLength value for partial object retrieve is
+            invalid.
+   ANS4177E Full VM restore of VMware Virtual Machine 'vmname'
+            failed with RC=34 target node name=
+            '<target node name>',
+            data mover node name='<agent node name>'
+   
+   The problem was found for VM guest backups performed with the
+   testflag VMRESTORE_INCVMDKSIZE.
+   
+   The 'RESTORE VM' error will be seen with any available VMware
+   transport mode (VMVSTORTRANSPORT SAN, HOTADD,NBD,NBDSSL)
+   When one backup image using the Incremental Forever backup mode
+   was generated using the above testflag, and even if following
+   image backups are correctly done, the 'RESTORE VM' still might
+   fail.
+   
+   Tivoli Storage Manager Versions Affected:
+   Tivoli Storage Manager Client 6.4 and later on Windows and Linux
+   
+   Initial Impact: High
+   
+   Additional Keywords: restore VMware TDP4VE corruption
+   partialObjLength
+   
+   | MDVPARTL 6.4.1.0 5698ISMCL |
+   | MDVPARTL 7.1.0.0 5698ISMCL |
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1. Contact support to get the needed VM guest restored
+   and
+   2. Start new series of backups for that VM guest with a IFFULL
+      VM backup to avoid future occurrences
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: * Backup-Archive client versions 6.3 on      *
+   *                   Microsoft Windows                          *
+   *                 * Backup-Archive client versions 6.4 and     *
+   *                   7.1 on Microsoft Windows and Linux         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See ERROR DESCRIPTION                   *
+   ****************************************************************
+   * RECOMMENDATION: Apply fixing level when available. This      *
+   *                 problem is currently projected to be fixed   *
+   *                 in levels 6.4.2 and 7.1.1. Note that until   *
+   *                 the fixing levels are available, this        *
+   *                 information is subject to change at          *
+   *                 the discretion of IBM.                       *
+   ****************************************************************
+   *
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The backup-archive client now verifies each disk before vm
+   restore and if the testflag is set fixes the disk size.
+   
+   The error message is still issued to indicate there was
+   an issue before the client fixed the disk size to restore it.
+   In the future, we will consider whether a warning message
+   instead of an error message would be a better design.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC99000
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM FOR VE DP V
+   
+   
+ * REPORTED COMPONENT ID
+   5725TVEVM
+   
+   
+ * REPORTED RELEASE
+   64W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-01-27
+   
+   
+ * CLOSED DATE
+   2014-04-21
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  DSMAGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMCL
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R64L PSY
+   UP
+   
+   
+ * R64W PSY
+   UP
+   
+   
+ * R71L PSY
+   UP
+   
+   
+ * R71W PSY
+   UP

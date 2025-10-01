@@ -1,0 +1,184 @@
+Title: IBM IZ15685: ADD RAS1 TRACING TO KDSTSNS CALLS FROM MANAGE TIVOLI ENTERPRISE MONITORING SERVICES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When adding Application Support to a remote HUB TEMS, program
+   KDSTSNS is called to actually perform the task. RAS1 tracing is
+   necessary if any errors are encountered during the operation.
+   Without RAS1 tracing it is almost impossible to diagnose and
+   correct any remote seed issue.
+   
+   Environment:
+     Windows environment where adding Application Support to a
+   remote HUB TEMS usually z\OS is required. This can also apply
+   to adding Application Support to remote HUB TEMS on Unix/Linux
+   or Windows from a Windows machine.
+   
+   Detailed Recreation Procedure:
+     To recreate:
+   
+     1. From Manage Tivoli Enterprise Monitoring Services, right
+   click on any shown application then select Advanced - Add TEMS
+   Application Support.
+   
+     2. Provide the information requested to connect to the HUB
+   TEMS
+   
+     3. Select the Application Support SQL files to seed, to select
+   multiple files, depress and hold the Ctrl key. Press OK to
+   perform the operation.
+   
+     4. After the operation is complete, check the
+   %CANDLE_HOME%\logs directory for the RAS1 tracing logs with
+   KDSTSNS in their name.
+   
+   Related Files and Output:
+     None.
+   
+   Approver:CM
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To add RAS1 tracing to a current environment and perform this
+   APAR manually do the following:
+   
+     1. Open a DOS Prompt.
+   
+     2. CD to the ITM directory: cd %CANDLE_HOME%\InstallITM
+   
+     3. Set the following environment variables.
+   
+        set KBB_RAS1=ERROR (UNIT:KDS ALL)
+   
+        set KBB_VARPREFIX=%
+   
+        set
+   KBB_RAS1_LOG=c:\IBM\ITM\logs\%(computername)_kdstsns-.log
+   INVENTORY=C:\IBM\ITM\logs\%(computername)_kdstsns.inv COUNT=03
+   LIMIT=5 PRESERVE=1 MAXFILES=9
+   
+     4. Make sure all files in the %CANDLE_HOME%\logs directory
+   with KDSTSNS in their name have been deleted.
+   
+     5. Launch kinconfg.exe from this directory as follows:
+   
+        kinconfg.exe -L%CANDLE_HOME%\InstallITM\NEWKDSTSNS.log
+   
+     6. Collect from the %CANDLE_HOME%\logs directory all the files
+   that have KDSTSNS in their name. Also, file NEWKDSTSNS.log from
+   the %CANDLE_HOME%\InstallITM directory.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ITM seed program (KDSTSNS.EXE) does not provide tracing to aid
+   debugging.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added code to establish RAS tracing for KDSTSNS. when used to
+   Add Application Support through MTEMS.
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+       | interim fix | 6.1.0.7-TIV-ITM-IF0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ15685
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-02-15
+   
+   
+ * CLOSED DATE
+   2008-12-15
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

@@ -1,0 +1,253 @@
+Title: IBM IZ68512: NEED SOME CORRECTIONS IN TSAM INSTALL AND ADMIN GUIDE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Following documentation problems are found in GA version of
+   TSAM 7.2 Installation and Administration Guide:
+   http://publib.boulder.ibm.com/infocenter/tivihelp/v10r1/index.js
+   p?topic=/com.ibm.tsam.doc_7.2/tsam_welcome.html [http://publib.boulder.ibm.com/infocenter/tivihelp/v10r1/index.jsp?topic=/com.ibm.tsam.doc_7.2/tsam_welcome.html]
+   
+   The install of the TSAM management server on was on:
+    SUSE Linux Enterprise Server 10 (x86_64)
+    VERSION = 10
+    PATCHLEVEL = 2
+   
+   Here is a list of eight issues in the document that need to be
+   addressed:
+   
+   1. On page 47, there is a section called ?Disable /tmp cleanup
+   (tmpwatch and anacron)?.  The steps provided are specific to Red
+   Hat linux, and we were using SUSE.  Information should be
+   provided for both.  For SUSE, the
+   ?/etc/cron.daily/suse.de-clean-tmp? file needs to be renamed.
+   
+   2. On page 48, there is a section called ?Enable the WebSphere
+   Application Server SOAP port.?  The steps provided here are
+   specific to Red Hat.  Information should be provided for SUSE.
+   We executed "chkconfig SuSEfirewall2_setup off" and "chkconfig
+   SuSEfirewall2_init off", and also used the GUI (YaST -> Security
+   -> Firewall) and disabled it there.
+   
+   3. On page 48, it is mentioned that swap space should be at
+   least twice the amount of memory.  This is not always necessary.
+   When running the script to verify operating system requirements
+   on the TSAM management server, the following warning is given.
+   The installation guide should explain more about the reason for
+   this requirement, and state that the warning can most likely be
+   ignored.
+   
+   4. On page 49, there is a list of required packages that must be
+   available on the TSAM management server.  There is a pre-install
+   step that runs a script to verify that the packages exist, but
+   it does not check for the required versions of the packages.
+   The TSAM installation guide says doesn't say what documentation
+   to check to verify that I have the correct versions of these
+   packages.  There needs to be a link to somewhere (another
+   document, a technote, etc.) so that the user can verify the
+   versions. The current documentation only says:
+   
+   Note: The script can make only general decisions about whether a
+   required package is installed. Successful execution of the
+   script does not necessarily mean that the version of an existing
+   package is a proper one. This must be verified by the user.
+   
+   5. On page 60, the steps to install Tivoli SRM are provided.
+   When installing FP4, the process may end with a ?serious error?
+   (see screen shot below) which can actually be ignored.  The TSAM
+   install guide mentions an informational message that can be
+   ignored (CTGIN2252I:  Cannot connect to base services web
+   application), but it does not mention this ?serious error?.
+   
+   
+   
+   Below is a note (from TSAM Test &
+   Installation Support in Germany) explaining the issue.  The TSAM
+   install guide should be updated to say that the serious error
+   can be ignored if the user can log into Maximo and check the
+   system information to verify that FP4 has been applied.
+   
+   Hi,
+   
+   the problem here is/was, that at the end of the installation of
+   SRM FP4, the installer restarts the server and tries to connect
+   to verify that the installation succeeded.
+   I some cases, the check times out before the server has started
+   and presents this error.
+   
+   I logged on to maximo and checked the installed versions (help
+   -> System Information).
+   
+   
+   
+   It presents the SRM Service Catalog in version 7.1.0.4.
+   This means, that FP4 was applied.
+   
+   Your system looks good and I suggest to ignore the error panel
+   and continue.
+   
+   Best regards,
+   
+   
+   
+   6. On page 64, after installing Tivoli Service Automation
+   Manager for WebSphere Application Server, there is a section for
+   ?Completing the installation segment?.  This information is
+   missing.  The document looks like:
+   
+   Completing this installation segment:
+   1. Verify the installation by ...
+   Note: Do not continue until all problems or discrepancies have
+   been resolved.
+   
+   Something needs to be filled in after ?Verify the installation
+   by ...?
+   
+   7. On page 70, step 8 says to shutdown TPM by running tio.sh
+   (this is the last step in ?Configuring WebSphere Application
+   Server on the TPM server?).  There should be another step listed
+   to say to restart TPM.  This must be done prior to executing the
+   next section (?Configuring the SSH key?).
+   
+   8. On page 205, there is a section for ?Configuring and running
+   Discovery on a TPM server.?  It says to log on to TPM at:
+   
+   https://hostname:<port>/tcWebUI (where port is either 9045 or
+   9046)
+   
+   This URL is incorrect.  We found out that TPM 7.2 now uses the
+   Maxmio UI. The old TPM URLs are not valid.  The entire TSAM
+   installation guide should be reviewed to ensure that the URLs
+   are correct as follows:
+   
+   WAS Console
+   https://<hostname>:9043/ibm/console/logon.jsp [https://<hostname>:9043/ibm/console/logon.jsp]
+   userid = wasadmin
+   
+   TSAM User GUI
+   https://<hostname>:9443/SimpleSRM/login.jsp [https://<hostname>:9443/SimpleSRM/login.jsp]
+   userid = PMRDPCAUSR
+   
+   TPM GUI
+   https://<hostname>:9443/maximo/ui/login [https://<hostname>:9443/maximo/ui/login]
+   userid = maxadmin
+   
+   From the 8 issues described above, issues 1, 6, 7, and 8 have
+   already been resolved with TSAM version 7.2.0.1.
+   
+   This DOC APAR is to address issues 2, 3, 4, and 5.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Administrators during product installation
+   ****************************************************************
+   * PROBLEM DESCRIPTION: TSAM install documentation in TSAM 7.2
+   Installation and Administration Guide is incomplete or
+   inconsistent.
+   ****************************************************************
+   * RECOMMENDATION: Technote 21419433 is available for
+   clarification:
+   http://www.ibm.com/support/docview.wss?uid=swg21419433 [http://www.ibm.com/support/docview.wss?uid=swg21419433]
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  TSAM 7.2 Installation and Administration Guide does not have
+   complete installation steps for SUSE Linux platform. Some of the
+   documentation was already provided by the 7.2.0.1 version of the
+   document. The technote provides some further information.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ68512
+   
+   
+ * REPORTED COMPONENT NAME
+   TSAM (& INSTALL
+   
+   
+ * REPORTED COMPONENT ID
+   5724W7800
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-21
+   
+   
+ * CLOSED DATE
+   2010-03-18
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

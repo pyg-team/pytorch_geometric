@@ -1,0 +1,136 @@
+Title: IBM InfoSphere Information Server 11.3.1.2 installation fails on Solaris machines with SPARC T5 processors - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installation of InfoSphere Information Server 11.3.1.2 for Solaris may fail on a machine with SPARC T5 processors. The failure happens at a point in the installation where the WebSphere ND application server is restarted to activate the Information Server services that have been deployed into the application server. 
+
+The failure happens if the user tells the Information Server installer to install the WebSphere ND that is bundled with the Information Server suite. It will also happen if the user specifies a pre-installed WebSphere ND that does not contain the iFix for APAR PI161187. It will not happen if the pre-installed WebSphere ND contains the JDK iFix for APAR PI161187. 
+
+It is unknown whether this problem can happen if the WebSphere Liberty Profile is chosen in the application server selection panel of the Information Server installer. 
+
+SYMPTOM
+The install progresses normally until it reaches an installation action called "start.was.to.complete.config" (installation actions are displayed in the installation progress panel). Then an exception window appears, offering the user options to retry the failed action, continue with the next action, or exit the install. The Information Server install log will contain an exception like this: 
+
+2016-06-27T10:27:00.621, INFO: CDIIN4480I:Begin: [actionId = start.was.to.complete.config, installUnitId = ISFServer]
+2016-06-27T10:27:00.649, INFO: CDIIN2753I:Command Array: /ds01/IBM/WebSphere/AppServer/profiles/InfoSphere/bin/serverStatus.sh server1 -username wasadmin -password ********, env = null, workingDir =/ds01/IBM/WebSphere/AppServer/profiles/InfoSphere/bin
+2016-06-27T10:27:10.128, INFO: Exit Code: 0, Info: ADMU0116I: Tool information is being logged in file 
+/ds01/IBM/WebSphere/AppServer/profiles/InfoSphere/logs/server1/serverStatus.log 
+ADMU0128I: Starting tool with the InfoSphere profile 
+ADMU0500I: Retrieving server status for server1 
+ADMU0509I: The Application Server "server1" cannot be reached. It appears to be 
+stopped. 
+2016-06-27T10:27:10.128, INFO: CDIIN2753I:Command Array: /ds01/IBM/WebSphere/AppServer/profiles/InfoSphere/bin/startServer.sh server1, env = null, workingDir =null
+2016-06-27T10:28:21.643, INFO: CDIIN2808I: Return: #
+# A fatal error has been detected by the Java Runtime Environment:
+#
+# Internal Error (output.cpp:1576), pid=788, tid=25
+# guarantee((int)(blk_starts[i+1] - blk_starts[i]) >= (current_offset - blk_offset)) failed: shouldn't increase block size
+#
+# JRE version: Java(TM) 2 Runtime Environment, Standard Edition (7.0_51-b13) (build 1.7.0_51-b13 17_Jan_2014_19_17 solaris sparcv9(SR6 FP1))
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (24.51-b03 mixed mode solaris-sparc compressed oops)
+# Core dump written. Default location: /ds02/software/datastage/11.3.1.2/is-suite/core or core.788
+#
+# An error report file with more information is saved as:
+# /ds02/software/datastage/11.3.1.2/is-suite/hs_err_pid788.log
+#
+# If you would like to submit a bug report, please visit:
+# http://bugreport.sun.com/bugreport/crash.jsp [http://bugreport.sun.com/bugreport/crash.jsp]
+#
+2016-06-27T10:28:21.644, INFO: Abort - core dumped
+2016-06-27T10:28:21.645, SEVERE: com.ibm.is.install.engine.runtime.InstallEngine
+com.ibm.is.install.exception.InstallException: Failed while trying to start the server.
+at com.ibm.is.install.engine.action.builtin.was.StartAppServerAction.execute(StartAppServerAction.java:41)
+at com.ibm.is.install.engine.runtime.InstallEngine.executeAction(InstallEngine.java:1430)
+at com.ibm.is.install.engine.runtime.InstallEngine.processInstallActionStep(InstallEngine.java:1370)
+at com.ibm.is.install.engine.runtime.InstallEngine.processActionStep(InstallEngine.java:1254)
+at com.ibm.is.install.engine.runtime.InstallEngine.processInstallStep(InstallEngine.java:419)
+at com.ibm.is.install.engine.runtime.InstallEngine.processAllSteps(InstallEngine.java:399)
+at com.ibm.is.install.engine.runtime.InstallEngine.run(InstallEngine.java:235)
+at com.ibm.is.install.engine.runtime.InstallEngine.execute(InstallEngine.java:715)
+at com.ibm.is.install.atlasinstaller.ui.control.InstallEngineMonitor.execute(InstallEngineMonitor.java:368)
+at com.ibm.is.install.atlasinstaller.ui.control.InstallEngineMonitor.beginInstall(InstallEngineMonitor.java:252)
+at com.ibm.is.install.atlasinstaller.ui.control.InstallEngineMonitor.access$100(InstallEngineMonitor.java:40)
+at com.ibm.is.install.atlasinstaller.ui.control.InstallEngineMonitor$1.run(InstallEngineMonitor.java:119)
+at java.lang.Thread.run(Thread.java:745)
+Caused by: com.ibm.is.install.exception.InstallException: Failed while trying to start the server.
+at com.ibm.is.install.engine.action.builtin.was.StartAppServerAction.execute(StartAppServerAction.java:36)
+... 12 more
+
+
+CAUSE
+This failure happens because the WebSphere Application Server ND software bundled with InfoSphere Information Server 11.3.1.2 for Solaris contains a Java JDK that is too old to support the SPARC T5 processor, which was introduced in 2013. 
+
+
+
+ENVIRONMENT
+Solaris on a machine with SPARC T5 processors. It is unknown whether the problem occurs on processor models later than the T5.
+
+
+
+DIAGNOSING THE PROBLEM
+The problem is indicated if the install log contains the following output from the attempt to invoke the startServer.sh script: 
+
+
+2016-06-27T10:27:10.128, INFO: CDIIN2753I:Command Array: /ds01/IBM/WebSphere/AppServer/profiles/InfoSphere/bin/startServer.sh server1, env = null, workingDir =null
+2016-06-27T10:28:21.643, INFO: CDIIN2808I: Return: #
+# A fatal error has been detected by the Java Runtime Environment:
+#
+# Internal Error (output.cpp:1576), pid=788, tid=25
+# guarantee((int)(blk_starts[i+1] - blk_starts[i]) >= (current_offset - blk_offset)) failed: shouldn't increase block size
+#
+# JRE version: Java(TM) 2 Runtime Environment, Standard Edition (7.0_51-b13) (build 1.7.0_51-b13 17_Jan_2014_19_17 solaris sparcv9(SR6 FP1))
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (24.51-b03 mixed mode solaris-sparc compressed oops)
+# Core dump written. Default location: /ds02/software/datastage/11.3.1.2/is-suite/core or core.788
+#
+# An error report file with more information is saved as:
+# /ds02/software/datastage/11.3.1.2/is-suite/hs_err_pid788.log
+#
+# If you would like to submit a bug report, please visit:
+# http://bugreport.sun.com/bugreport/crash.jsp [http://bugreport.sun.com/bugreport/crash.jsp]
+#
+
+
+RESOLVING THE PROBLEM
+The problem can be resolved by (1) upgrading the WebSphere JDK to a later version that supports the SPARC T5 processor; and (2) resuming the Information Server install. 
+
+To upgrade the WebSphere JDK, do the following: 
+
+
+1. Download Installation Manager. The following site contains a link to where to get it from:
+
+http://www-01.ibm.com/support/docview.wss?uid=swg24041188 [http://www-01.ibm.com/support/docview.wss?uid=swg24041188]
+
+The distribution archive for Solaris is agent.installer.solaris.gtk.sparc_1.8.5000.20160506_1125.zip. 
+
+ 2. Install Installation Manager in command-line mode using the installc command. Instructions are here: 
+http://www.ibm.com/support/knowledgecenter/SSDV2W_1.8.5/com.ibm.silentinstall12.doc/topics/t_silent_installIM_IMinst.html [http://www.ibm.com/support/knowledgecenter/SSDV2W_1.8.5/com.ibm.silentinstall12.doc/topics/t_silent_installIM_IMinst.html] 
+
+ 3. Download the WebSphere iFix for APAR PI161187. The archive is called 7.0.1.0-WS-WASJavaSDK7-SolarisSparc64-IFPI61187.zip. 
+
+ 4. Use Installation Manager to apply APAR PI161187. The command-line procedure to do this looks like this: 
+
+ *  Unzip the patch archive to a scratch directory, e.g. /tmp/mypatch cd /eclipse/tools ./imcl install patchname -installationDirectory WASInstallDirectory -repositories repositoryLocation/repository.config -acceptLicense -sP
+   
+   where patchname = 7.0.1.0-WS-WASJavaSDK7-SolarisSparc64-IFPI61187_7.0.1000.20160426_1214
+   WASInstallDirectory is /ds01/IBM/WebSphere/AppServer
+   
+   repositoryLocation = /tmp/mypatch or whatever directory you unzipped the patch into
+   
+
+e) Verify that WebSphere can be started and stopped. Leave it in the stopped state when resuming the Information Server install. To resume the Information Server install after upgrading the WebSphere JDK, do the following: 
+
+ a) If the IIS suite installer was left up during the WebSphere upgrade, then it should be sitting at the exception dialog box for the WebSphere restart failure. It should be possible to retry the failed operation, which should work and allow the install to continue. 
+
+ b) If the suite installer was exited or shut down during the WebSphere upgrade, it will be necessary to start the installer again in such a way that it will pick up where it left off. Here’s how to do that: 
+
+· Edit the response file that was generated during the original install interview. By default this will be called “response.txt” and will be located in the InformationServer home directory. 
+
+· Replace all occurrences of the token <CHANGE_TO_YOUR_PASSWORD> with the actual passwords. 
+
+· Resume the install from the is-suite directory by running the setup program with the following arguments:
+
+./setup -force -rsp path-to-response-file -verbose
+
+This will cause the suite installer to resume the install, in silent mode (no GUI), starting with the last step that was started but not finished. This will be the start-up of WebSphere. All output that gets logged to the ISInstall<timestamp>.log in /tmp/ibm_is_logs will also be echoed to standard output so progress can be monitored.

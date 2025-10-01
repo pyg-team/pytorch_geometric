@@ -1,0 +1,69 @@
+Title: IBM 'Java exception' encountered using Java Swift Validation with WebSphere Message Broker. - United States
+
+Text:
+WMB; Swift Java Validation; ZOS; JVC; JExit exception; com.ibm.websphere.dtx.ip.swift.JVCWrapper TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ERROR: JExit exception encountered - when using WTX for Integration Servers and performing Java Swift Validation with WebSphere Message Broker. 
+
+SYMPTOM
+The following Java Exception is contained within the JNI log.
+
+<2700-3776-01/09/13 13:59:22>: *ERR: java.lang.Exception: 
+java.lang.Exception: java.lang.Exception: 
+java.lang.ClassNotFoundException: 
+com.ibm.websphere.dtx.ip.swift.JVCWrapper 
+<2700-3776-01/09/13 13:59:22>: ERROR: JExit exception encountered: 
+<2700-3776-01/09/13 13:59:22>: *ERR: Java exception occured (-305) in 
+MjpiCheckJavaException() 
+
+
+CAUSE
+Using Java Swift Validation with WebSphere Message Broker (WMB).
+
+ENVIRONMENT
+Running a WebSphere Transformation Extender (WTX) Map using Swift Java Validation with WTX Map Node. 
+
+DIAGNOSING THE PROBLEM
+The following Java Exception error is contained within the JNI log.
+
+<2700-3776-01/09/13 13:59:22>: *ERR: java.lang.Exception: 
+java.lang.Exception: java.lang.Exception: 
+java.lang.ClassNotFoundException: 
+com.ibm.websphere.dtx.ip.swift.JVCWrapper 
+<2700-3776-01/09/13 13:59:22>: ERROR: JExit exception encountered: 
+<2700-3776-01/09/13 13:59:22>: *ERR: Java exception occured (-305) in 
+MjpiCheckJavaException() 
+
+RESOLVING THE PROBLEM
+1. Copy jval.jar and jvcwrap.jar to the WMB shared-classes directory.
+
+
+
+
+For more details of the shared-classes directories available and the effects of each please use the following link [http://publib.boulder.ibm.com/infocenter/wmbhelp/v7r0m0/topic/com.ibm.etools.mft.doc/bk58210_.htm]
+[http://publib.boulder.ibm.com/infocenter/wmbhelp/v7r0m0/topic/com.ibm.etools.mft.doc/bk58210_.htm]
+http://publib.boulder.ibm.com/infocenter/wmbhelp/v7r0m0/index.jsp?topic=%2Fcom.ibm.etools.mft.doc%2Fan09140_.htm [http://publib.boulder.ibm.com/infocenter/wmbhelp/v7r0m0/topic/com.ibm.etools.mft.doc/bk58210_.htm]
+
+
+2. Introduce DTX_SWIFT_CONFIG_DIR environment variable in WMB for looking at jvalnnn.prop.
+
+a. Use the following Message Broker command to add the JVM Option to the Message Broker Execution Group. 
+
+mqsichangeproperties <BrokerName> -e <ExecutionGroupName> -o 
+ComIbmJVMManager -n jvmSystemProperty 
+-v"-DDTX_SWIFT_CONFIG_DIR=<absolute_directory>" 
+
+b. Use the following Message Broker command to check the jvmSystemProperty value of the JVM Option that is defined for the Message Broker Execution Group. 
+
+mqsireportproperties <BrokerName> -e <ExecutionGroupName> -o 
+ComIbmJVMManager -n jvmSystemProperty " 
+
+3. Restart the Broker. 
+
+Please note the Java Validation Component properties file is called jval.prop prior to SWIFT Pack v4.3.1 and is called jvalnnn.prop in SWIFT Pack v4.3.1 and later (where nnn indicates the version number of the Pack for SWIFT) .
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Ascential Datastage TX

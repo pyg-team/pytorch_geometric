@@ -1,0 +1,39 @@
+Title: IBM Query extension for obtaining rules referenced by a Rule flow in Rule Studio - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ How can I write a query to retrieve all the rules that are referenced in a Rule Flow? 
+
+CAUSE
+Users will have to develop their own query extensions to accomplish this task. This document aims to ease this process by providing a sample.
+
+ANSWER
+You can achieve this by creating a Query Extension (an eclipse plug-in). By creating an extender class and verbalizing its method, you can expose this functionality to be used in the query editor. The process of integrating the plug-in is described in the following section of the documentation: 
+
+WebSphere ILOG JRules BRMS V7.1 > Customizing > Customizing Rule Studio > Customizing business rule management > Customizing queries > Extending Queries
+
+WebSphere ILOG JRules BRMS V7.1 > Customizing > Customizing Rule Studio > Customizing business rule management > Customizing queries > Integrating Query Extensions into Rule Studio
+
+The attached sample can be tested in two ways:
+
+
+ 1. Deploying the project as an eclipse plug-in 
+ 2. Running the project as an Eclipse application
+
+
+Steps to test this sample: 
+ 1. Extract the archive"Querying-rules-from-ruleflow-Plugin" and import "MyQueryExtension" project into the Rule Studio 
+ 2. Change the perspective to "Plug-in Development" in Eclipse 
+ 3. Run the plug-in project as an "Eclipse Application" with JVM arguments: -Xmx1024m -Xms512m -XX:PermSize=128m 
+ 4. In the new instance that is launched, import the "multipleprojects" sample from ILOG samples wizard 
+ 5. Open the rule project "loanvalidation-eligibility" and create a query of this sort: Find all business rules such that each business rule is referenced by ruleflow "eligibility.evaluation" 
+ 6. Inspect the rule flow "eligibility.evaluation" 
+ 7. Run the query 
+ 8. Notice that the results displayed are the rule artifacts that are connected to the rule flow
+
+Querying-rules-from-ruleflow-Plugin.zip [/support/docview.wss?uid=swg21422330&aid=2]Querying-rules-from-ruleflow-Plugin.zip [/support/docview.wss?uid=swg21422330&aid=1]

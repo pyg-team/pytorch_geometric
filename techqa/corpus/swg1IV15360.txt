@@ -1,0 +1,201 @@
+Title: IBM IV15360: REMOTE CONTROL CONSOLE SEARCH FILTERING ERROR - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Remote Control Interim Fix 5.1.2-TIV-TRC512-IF0012 [http://www-01.ibm.com/support/docview.wss?uid=swg24033711]
+Tivoli Endpoint Manager for Remote Control Fix pack 8.2.1-TIV-TEMRC821-IF0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24033728]
+Tivoli Endpoint Manager for Remote Control Fix pack 8.2.1-TIV-TEMRC821-FP0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24032562]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is using TEM TRC 82.044 (but problem exist also in TRC
+   512
+   Issue reproduction steps:
+   1. Logon to TEM for Remote Control Console -> Targets -> Search
+   2. Enter "Roy" in "Search Targets" box (see 1.jpg)
+   3. Press "Submit" button, 23 records returned (see 2.jpg)
+   4. Click "Show SQL":
+   SQL for Current Report
+   SQL for Current Report
+   SELECT DISTINCT A.HWKEY , A.MANUFACTURER , A.MODEL , A.SERIAL_NO
+   ,
+   A.COMPUTERNAME , B.IP_ADDRESSES , B.LAST_UPDATE , B.LOGGED_USER
+   FROM ASSET.ASSET A LEFT OUTER JOIN ASSET.LIVEPOINTS B ON A.HWKEY
+   =
+   B.HWKEY
+   WHERE UPPER (A.MANUFACTURER) LIKE '%ROY%' OR UPPER (A.MODEL)
+   LIKE
+   '%ROY%' OR UPPER (A.SERIAL_NO) LIKE '%ROY%' OR UPPER
+   (B.LOGGED_USER) LIKE '%ROY%'
+   ORDER BY A.HWKEY
+   .
+   5. Based on the 23 returned records, click "LENOVO" under
+   "Manufacturer"
+      column (see 3.jpg)
+   6. Then, search result is shown as 4.jpg.  "Limited by
+   MANUFACTURER =
+      LENOVO" is shown clearly on top of it.
+   7. Note that there is an unexpected record which Hardware Key is
+   10067,
+      i.e. it's MANUFACTURER is NOT "LENOVO", it is
+   "Hewlett-Packard".
+   8. Click "Show SQL":
+   .
+   SQL for Current Report
+   SELECT DISTINCT A.HWKEY , A.MANUFACTURER , A.MODEL , A.SERIAL_NO
+   ,
+   A.COMPUTERNAME , B.IP_ADDRESSES , B.LAST_UPDATE , B.LOGGED_USER
+   FROM ASSET.ASSET A LEFT OUTER JOIN ASSET.LIVEPOINTS B ON A.HWKEY
+   B.HWKEY
+   WHERE UPPER (A.MANUFACTURER) LIKE '%ROY%' OR UPPER (A.MODEL)
+   LIKE
+   '%ROY%' OR UPPER (A.SERIAL_NO) LIKE '%ROY%' OR UPPER
+   (A.COMPUTERNAME)
+   LIKE '%ROY%' OR UPPER (B.IP_ADDRESSES) LIKE '%ROY%' OR UPPER
+   (B.LOGGED_USER) LIKE '%ROY%' AND A.MANUFACTURER = 'LENOVO'
+   ORDER BY A.HWKEY
+   9. According to SQL, we found that the filtering condition "AND
+      A.MANUFACTURER = 'LENOVO'" is just added to the end without
+   any
+      bracketing on the conditions prior to it.
+      i.e. bracketing should be added as: ...... WHERE ( UPPER
+      (A.MANUFACTURER) LIKE '%ROY%' OR ...... ) AND A.MANUFACTURER
+   =
+      'LENOVO'. That's why we got the wrong search result
+   .
+   problem replicated - opening with l3 agreement
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  na
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users affected
+   Controller : N/A
+   Server: 5.1.2 from IF0003, 8.2.0 GA
+   Target: N/A
+   CLI: N/A
+   Gateway: N/A
+   
+   Problem Description
+   
+   After doing a search for targets, target groups, users or
+   sessions, the TRC server displays a new report with the results
+   of the search. Elsewhere in the server, when a report is
+   displayed, it is possibl to click on a column value and the
+   report will be filtered to display only the items where that
+   column contains the selected value. However, there is an problem
+   with the search results report that causes this filtering to
+   fail.
+   Problem Summary
+   
+   After doing a search for targets, target groups, users or
+   sessions, it is not possible to filter the returned results by
+   clicking on the column value, as with any other report.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this issue will be included in Tivoli Endpoint
+   Manager for Remote Control interim fixpack 0001.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV15360
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV EP MGR REM
+   
+   
+ * REPORTED COMPONENT ID
+   5725C43RC
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-09
+   
+   
+ * CLOSED DATE
+   2012-03-27
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV EP MGR REM
+   
+   
+ * FIXED COMPONENT ID
+   5725C43RC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSN
+   UP

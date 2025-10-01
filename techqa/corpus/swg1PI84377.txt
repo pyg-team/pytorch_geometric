@@ -1,0 +1,192 @@
+Title: IBM PI84377: RENDERING TABLE VIEWS TAKING MUCH LONGER IN RHAPSODY 8.1.5 - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Rational Rhapsody 8.3.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24044061]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   
+   Rhapsody 8.1.5 64-bit
+   Windows 7
+   
+   Description:
+   
+   Customer has been loading table views in Rhapsody 8.1.3 without
+   issues. They have migrated to 8.1.5, and have noticed the same
+   tables take much much longer to load.
+   
+   Reproduction:
+   
+   Please unzip the attached project.
+   In the FuncArch folder (under the Tables folder) are two SYSC
+   prefixed models.
+   One is an 8.1.5 model, the other is 8.1.3 (suffixed with 813).
+   The rest of the content in the Tables folder is referenced into
+   the models. Some references will be missing, but you can ignore.
+   
+   
+   
+   Open Rhapsody 8.1.3, and open the "SYSC_AAA_Table813" model
+   Once in the model, expand the MDK_References_Pkg package and
+   then the UtilityPkg_FNCM package.
+   Under that you will see several Table Views, double click the
+   SYSCView.
+   Notice this takes about 1 second to load.
+   
+   Open Rhapsody 8.1.5, and open the "SYSC_AAA_Table" model
+   In the model, navigate to the same Table View
+   (MDK_References_Pkg/UtilityPkg_FNCM/Table Views/SYCSView)
+   Notice this takes a much longer time to load. On my own tests,
+   Rhapsody sometimes crashes.
+   
+   Additional Information:
+   
+   - The bigger the table, the longer it takes to load in Rhapsody
+   8.1.5
+   - I tried the model in Rhapsody 8.2, and saw the same lag. 8.2
+   also crashed on me once loading the table (MFC Application
+   Error)
+   
+   
+   
+   --------------
+   
+   
+   4. Shy Matza1 Jul 5, 2017 5:59 AM
+   @aratzloff@us.ibm.com Sure, we will need a testfix request work
+   item, with @andreas.themis@uk.ibm.com approval. Please set
+   @omer.shadmi@il.ibm.com  as owner of testfix request item
+   
+   
+   3. Alexander A. Ratzloff Jul 5, 2017 5:32 AM
+   Hi @Shy.Matza@il.ibm.com,
+   
+   The customer would like a testfix for 8.1.5. Their build number
+   is 9738229 64bit iFix2
+   
+   Thanks!
+   
+   2. Shy Matza1 Jun 28, 2017 1:35 AM
+   @aratzloff@us.ibm.com Hi Alex, we believe we have a fix for
+   that. The fix will be available with 8.2iFix003, which should be
+   available by end of this week.
+   If required, we can also suggest a testfix on top of 815 steam.
+   In that case please provide the 815 exact version (32/64 bit)
+   and build number on which the testfix is required.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Rhapsody                                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Rendering Table Views taking much longer in Rhapsody 8.1.5   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The reported problem was fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI84377
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   815
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-07-12
+   
+   
+ * CLOSED DATE
+   2017-12-04
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R815 PSY
+   UP

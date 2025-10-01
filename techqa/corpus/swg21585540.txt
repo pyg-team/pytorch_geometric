@@ -1,0 +1,24 @@
+Title: IBM JDBC Adapter does not connect to Microsoft SQL Server after database is restarted - United States
+
+Text:
+JDBC; JDBC Adapter; SQLServer; MSSQL; J2CA0056I; SQLServerException; Connection reset TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using the inbound process of a JDBC Adapter with a Microsoft SQL Server database, the JDBC Adapter is unable to re-establish connection with the database after Microsoft SQL Server is restarted. 
+
+SYMPTOM
+If the JDBC Adapter inbound process is configured to use a pre-defined data source to connect to a Microsoft SQL Server database, JDBC Adapter is unable to re-establish the connection with the database after Microsoft SQL Server is restarted. The following error is encountered at runtime: 
+
+J2CA0056I: The Connection Manager received a fatal connection error from the Resource 
+Adapter for resource jdbc/MSSQL. The exception which was received is com.microsoft.sqlserver.jdbc.SQLServerException: Connection reset
+
+
+CAUSE
+The problem occurs because a stale connection is used by the data source to establish the database connection.
+
+
+RESOLVING THE PROBLEM
+Use Microsoft SQL Server JDBC Driver 3.0 to connect to the database when configuring JDBC Adapter to use a Microsoft SQL Server: 
+
+
+http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=21599 [http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=21599]

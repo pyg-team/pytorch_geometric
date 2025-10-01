@@ -1,0 +1,20 @@
+Title: IBM Troubleshooting - "Out of local transaction identifiers." - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why is my SFS server crashing with a trace message of "Out of local transaction identifiers?
+
+
+RESOLVING THE PROBLEM
+There are at least 2 reasons why your SFS may run out of local transaction identifiers. One is that you are running a large batch program with sfs_SetOfdErrorIsolation enabled. This option causes the SFS to create a sub-transaction for each read or write request. This sub-transaction requires a transactional OFD even if the request is non-transactional. sfs_SetOfdErrorIsolation has two benefits -- it gives better information to the user in the event of errors, and it also enables an individual read or write to fail without dooming the entire top level transaction. However, it is costly in terms of transaction identifiers. The maximum number of transactional identifiers is 64,000. To avoid this form of the issue, you can either turn off error isolation, or else break your batch transaction into smaller pieces so that you do less than the 64,000 reads or writes per transaction. 
+
+ 
+Another possible cause for this error is that your SFS contains a transaction that is not resolving properly. Transactions can sometimes be left in an SFS server for an extended period for a variety of reasons. In order to troubleshoot and resolve stale transactions, please use the document "Troubleshooting - Transaction - Resolving a Stuck Transaction" in the Hints and Tips section on the support web page. 
+
+
+
+
+RELATED INFORMATION
+#TXSeries Support Web Page [http://www-4.ibm.com/software/ts/txseries/support/]

@@ -1,0 +1,34 @@
+Title: IBM Cannot publish a Microsoft Word document using Microsoft Office 2003 SP3 on P8 Rendition Engine - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+A Microsoft (MS) Word document is submitted to be published on IBM FileNet P8 Rendition Engine (RE) from IBM FileNet P8 Application Engine (AE) Workplace or IBM FileNet P8 WorkplaceXT (XT). You select the document from within AE or XT and right click on it to select the publish option. This is submitted to the RE to be published to a PDF file.
+
+This doesn't happen when you submit a MS Powerpoint file; ppt; or a MS Excel .xls spreadsheet to the RE. They publish everytime. 
+
+SYMPTOM
+
+The following error on RE's Domain Manager\Status Viewer Tab and in RE's BusinessServiceRender.log located in RE's logs folder.
+
+Description: Unable to render document '\\{RE Server}\VistaTempDir\Temp20551\word.doc': Error code: 0x80004005 (16389)
+Source: CTransformer.TransformToPDF
+File: .\Transformer.cpp: 179
+Description: Plugin 'esword.dll' unable to transform to PDF.
+
+Error code: 0x80004005 (16389)
+Source: CTransformer::CreatePDF
+File: .\Transformer.cpp: 322
+Description: Unable to create PDF file.
+
+Error code: 0x80004005 (16389)
+Source: CPlugin.TransformSuppDocs
+File: ..\..\..\Plugins\Plugins/plughelp.h: 309
+Description: Unable to transform: Error Code: 0x80020005 (5)
+Type mismatch.
+
+
+RESOLVING THE PROBLEM
+Need to upgrade MS Office 2003 SP2 to MS Office 2003 SP3

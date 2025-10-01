@@ -1,0 +1,45 @@
+Title: IBM Configuring Rational Test Workbench licenses results in an error license key cannot be found - United States
+
+Text:
+“IBM Rational test workbench license key cannot be found”; Installation manager and IBM RTW8.5.0; Installation manager and RTW 8.5.0.2; RTW8.5.0 and licensing TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to configure IBM Rational Test Workbench (RTW) 8.5 floating licenses results in the error "The IBM Rational Test Workbench license key cannot be found". 
+
+SYMPTOM
+Symptoms include: 
+
+ * Perform Status Enquiry (shows that the license is served fine).
+   
+   
+ * Lmgrd.log shows the following error when IBM Rational RTW client is launched.
+   
+   “15:15:58 (ibmratl) DENIED: "ibmrtw_ec" Administrator@citmx124
+   [#u#Administrator#u#] (License server system does not support this
+   version of this feature. (-25,334:10053 ""))”
+   
+   Note: ibmrtw_ec is available in the package line.
+
+
+
+The full error message is as follows: 
+
+The "IBM Rational Test Workbench" license key cannot be found.
+CLick Manage Licenses to apply a license or uninstall the product. If you click Exit Workbench, you can resolve this issue later via the Installation Manager or by restarting the product and clicking Manage Licenses.
+
+
+image 
+[/support/docview.wss?uid=swg21670973&amp;aid=1] 
+CAUSE
+IBM Rational Test Workbench 8.5 is unable to pick the licenses.
+
+
+RESOLVING THE PROBLEM
+Procedure: 
+
+ 
+
+ 1. Update Rational Test Workbench to version 8.5.0.2 or later
+    
+    
+ 2. Apply the licenses from the Installation Manager.

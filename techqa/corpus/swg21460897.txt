@@ -1,0 +1,29 @@
+Title: IBM Take Action commands fail to start or stop a Tomcat application server - United States
+
+Text:
+Tomcat; start; stop; take action; Start_Application_Server; Stop_Application_Server; application server; TEP; TEMA; portal TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Start_Application_Server Take Action command fails to start a Tomcat application server. The Stop_Application_Server Take Action command fails to stop a Tomcat application server. 
+
+CAUSE
+For starting and stopping Tomcat application servers from the Tivoli Enterprise Portal server, the Monitoring Agent uses the scripts startup.sh and shutdown.sh. These scripts must be present in your Tomcat home directory.
+These scripts are provided with typical Tomcat distributions. However, if you use a non-typical setup with a custom starting script (for example, the version of Tomcat provided by the Red Hat or SuSE Linux distribution), these files are not present. In this case, the Monitoring Agent is unable to start or stop the application server.
+
+
+DIAGNOSING THE PROBLEM
+Check whether the startup.sh and shutdown.sh scripts are present in your Tomcat home directory.
+
+
+
+RESOLVING THE PROBLEM
+Create the startup.sh and shutdown.sh scripts in your Tomcat home directory. They can be simple calls to start and stop the application server using your custom script. 
+
+ 
+
+You can also check the content of these scripts in the standard Tomcat distribution. You can download it from the Apache web site: http://tomcat.apache.org [http://tomcat.apache.org]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for Application Diagnostics ITCAM for APPLICATION DIAGNOSTICS Agent for J2EE AIX, HP-UX, Linux, Solaris, Windows 7.1

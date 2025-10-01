@@ -1,0 +1,34 @@
+Title: IBM WebSphere Transformation Extender V8.4.1.1 and Q4 Industry Packs are available - United States
+
+Text:
+8.4.1.2; 4.4.1.2; HIPAA 4.4.1.2 NEWS
+
+ABSTRACT
+ December 6th, 2013 
+
+IBM WebSphere® Transformation Extender V8.4.1.1 and Q4 Industry Packs are now available through Passport Advantage.
+
+Build ID: 8.4.1.1(37)
+
+
+Industry Pack releases: 
+
+Pack for HIPAA EDI 4.4.1.2
+Pack for HL7 4.4.1.2
+Pack for NCPDP 4.4.1.2 
+
+CONTENT
+ 
+
+Fix List WebSphere Transformation Extender V8.4.1.1 Fix List [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg27040396] 
+Main Release Notes page WebSphere Transformation Extender product release notes [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg27008337] 
+WTX 8.4.1.1 Core Release Notes Release Notes for IBM WebSphere Transformation Extender V8.4.1.1 [http://www.ibm.com/support/docview.wss?uid=swg27040326] Release Notes for WebSphere Transformation Extender Launcher Agent V8.4.1.1 [http://www.ibm.com/support/docview.wss?uid=swg27040398] Release Notes for WebSphere Transformation Extender for Integration Servers V8.4.1.1 [http://www.ibm.com/support/docview.wss?uid=swg27040416] Release Notes for WebSphere Transformation Extender Secure Adapter Collection V8.4.1.1 [http://www.ibm.com/support/docview.wss?uid=swg27040397] 
+WTX 8.4.1.1 Core Download Documents WebSphere Transformation Extender with Command Server V8.4.1.1 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036554] WebSphere Transformation Extender Design Studio V8.4.1.1 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036555] WebSphere Transformation Extender Online Library V8.4.1.1 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036556] WebSphere Transformation Extender with Launcher Hypervisor Edition V8.4.1.1 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036559] WebSphere Transformation Extender with Launcher Hypervisor Edition V8.4.1.1 - AIX [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036557] WebSphere Transformation Extender with Launcher V8.4.1.1 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036560] WebSphere Transformation Extender Launcher Agent V8.4.1.1 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036561] WebSphere Transformation Extender for Application Programming V8.4.1.1 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036562] WebSphere Transformation Extender Secure Application Collection V8.4.1.1 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036564] WebSphere Transformation Extender for Integration Servers V8.4.1.1 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036565] 
+
+WTX Pack Release Notes Release Notes for WebSphere Transformation Extender Pack for Pack for HIPAA EDI 4.4.1.2 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg27040435] Release Notes for WebSphere Transformation Extender Pack for HL7 4.4.1.2 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg27040439] Release Notes for WebSphere Transformation Extender Pack for NCPDP 4.4.1.2 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg27040437] 
+WTX Pack Download Documents WebSphere Transformation Extender Pack for HIPAA EDI 4.4.1.2 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036535] WebSphere Transformation Extender Pack for HL7 4.4.1.2 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036534] WebSphere Transformation Extender Pack for NCPDP 4.4.1.2 [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg24036536] 
+WTX Pack Fix Lists WebSphere Transformation Extender Pack for HIPAA 4.4.1.2 Fix List [http://www.ibm.com/support/docview.wss?rs=2320&uid=swg27040440] 
+
+
+
+IBM PassPort Advantage Online [http://www-01.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]

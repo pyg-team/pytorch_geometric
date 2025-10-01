@@ -1,0 +1,257 @@
+Title: IBM PK24611: CAPTURE RETURNS ERROR ASN0057E. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Capture returns error ASN0057E.
+   ASN0057E CAPTURE "ASN" :  "WorkerThread".  The Capture program
+   encountered error "27" on "seek" for file "dd:A0000001".
+   2006-05-04-18.10.05.499459 ASN8999D "Capture" :  "ASN" :
+   "WorkerThread" :  error seeking spillfile
+   Capture is hitting 2gig spill file limit.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Try increasing the IBMSNAP_CAPPARMS MEMORY_LIMIT to 1500 and
+   restarting Capture in a 0M region.  This will allow Capture to
+   use more memory and perhaps writing less data to the CAPSPILL
+   file and avoid hitting the 2G boundary.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: 1- ALL                                       *
+   *                 2- z/OS SQL Apply                            *
+   *                 3- Q Capture users                           *
+   *                 4- ALL                                       *
+   *                 5- z/OS Replication customers                *
+   *                 6- Q Apply                                   *
+   *                 7- z/OS Replication customers                *
+   *                 8- ALL                                       *
+   *                 9- SQL capture, apply and alert monitor      *
+   *                 users and for 8.2 also Q Replication         *
+   *                 programs Q capture, Q apply users.           *
+   *                 10- SQL Apply users                          *
+   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 1- Codepage 4396 was not supported.     *
+   *                      2- multiple Apply instances if it's     *
+   *                      started more than 1 times               *
+   *                      3- Q Capture got SIGSEGV on z/Linux     *
+   *                      with LOADDONE msgs                      *
+   *                      4- If the codepage is the same but      *
+   *                      hardware has different endian between   *
+   *                      source and target, then Q Apply was     *
+   *                      not converting data correctly for DBCS  *
+   *                      codepages.                              *
+   *                      5- spill file cannot be more than 2     *
+   *                      giga                                    *
+   *                      6- The monitor table reports bad        *
+   *                      statistics (i.e. large negative         *
+   *                      numbers)                                *
+   *                      7- Capture was terminated with E60865.  *
+   *                      8- Q Apply program should stop when it  *
+   *                      detects that MQ Queue Manager is down.  *
+   *                      9- MONITOR_INTERVAL can be changed by   *
+   *                      using asnqacmd CHGPARMS command.        *
+   *                     10- IBM service most of the times needs  *
+   *                      to know the service level of the        *
+   *                      replication programs. Sometimes, the    *
+   *                      users do not know or think they are at  *
+   *                      a different level then the programs     *
+   *                      really are. Users can know for sure by  *
+   *                      using asntrc statlong but most users    *
+   *                      don't know how to do that or are        *
+   *                      concerned because they don't want to    *
+   *                      turn on the trace.                      *
+   *                      10- SQL Apply packages are not          *
+   *                      versioned when generated. Users that    *
+   *                      want to keep multiple version have to   *
+   *                      create and manage collection of         *
+   *                      packages. Users don't have to do that   *
+   *                      for other replication packages.         *
+   *                      11 - SIGNAL_LIMIT overriden at start-up *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   1- Codepage 4396 was not supported.
+   2- Apply removes PID file when it's started more than 1 time
+   3- Q Capture should use memcpy to copy the MQ msgid instead of
+   sprintf
+   4- Q Apply did not convert data correctly for DBCS codepages.
+   This would result in an SQL error as the SQLDA element length
+   was incorrect.
+   5- capture spill file cannot be more than 2 gig.
+   6- Monitoring statistics are lost when a spill agent or agent
+   terminates.  The statistics are not properly saved.
+   7- The monitor trace was stopped by a vendor utility.
+   8- Only the Q Apply Browser stopped when Queue Manager was
+   down. Now Q Apply program will stop.
+   9) MONITOR_INTERVAL could not be changed with CHGPARMS.
+   
+   10 Cannot tell APAR level of SQL Replication programs.
+   Cannot easily maintain different version of SQL Apply
+   packages.
+   
+   11 - SIGNAL_LIMIT was being overriden by mistake at start-up.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  1- Support codepage 4396 by using codepage 16684.
+   2- keep the PID file when Apply is active
+   3- Q Capture now uses memcpy to copy the MQ msgid instead of
+   sprintf
+   4- The problem has been fixed.
+   5- each row set is spilled to a separate file which is limited
+   to a gig.
+   6- Monitoring will properly handle cases where spill agents or
+   agents terminate or shut down.
+   7- The log reader state is not changed when monitor trace is
+   restarted.
+   8- QAPPLY will terminate when MQ MGR is down.
+   9- MONITOR_INTERVAL can be changed with CHGPARMS now.
+   10-With this defect, the replication programs (capture, apply,
+   and alert monitor), will include their service APAR number in
+   an information start up message (ASN0600) they issue. The APAR
+   information will also be visible in the asntrc formatted header
+   information in the program release information section.
+   Changed SQL Apply precompile options to use VERSION(AUTO).
+   That generates packages are versioned and so will not conflict
+   with prior versions of packages that may exist on the DB2
+   su bsystem. Note, that users will have to implement a procedure
+   to remove old packages that are no longer needed.
+   11- QCAPTURE modified to not override SIGNAL_LIMIT at startup.
+       Value from CAPPARMS will be used.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK24611
+   
+   
+ * REPORTED COMPONENT NAME
+   WS REPLICATION
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8800
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-05-08
+   
+   
+ * CLOSED DATE
+   2006-05-17
+   
+   
+ * LAST MODIFIED DATE
+   2007-01-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK14577 UK14578 UK14579 UK14580
+   
+   
+
+MODULES/MACROS
+ *     ASNACMD  ASNADMSP ASNAMAN  ASNAPPLY ASNAPRS
+   ASNCAP   ASNCCMD  ASNMCMD  ASNMIG8  ASNMON   ASNPLXFY ASNQACMD
+   ASNQADMT ASNQAHKT ASNQAPAG ASNQAPP  ASNQBRWZ ASNQCAP  ASNQCCMD
+   ASNQDEP  ASNQMFMT ASNQSPIL ASNQSUB  ASNQSUBM ASNRBASE ASNTDIFF
+   ASNTRC   ASNTREP  ASNTXS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS REPLICATION
+   
+   
+ * FIXED COMPONENT ID
+   5655L8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSY UK14577 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK14577]
+   UP06/05/25 P F605
+   
+   
+ * R821 PSY UK14578 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK14578]
+   UP06/05/26 P F605
+   
+   
+ * R822 PSY UK14579 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK14579]
+   UP06/05/26 P F605
+   
+   
+ * R823 PSY UK14580 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK14580]
+   UP06/05/26 P F605
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

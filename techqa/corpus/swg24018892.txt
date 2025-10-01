@@ -1,0 +1,89 @@
+Title: IBM PK63273; 1.3.28.1: IBM HTTP Server 1.3.28 Cumulative Interim Fix - United States
+
+Text:
+PK63273; PK63273; PK63273 DOWNLOADABLE FILES
+
+ABSTRACT
+ CVE-2007-5000 and CVE-2007-6388 
+
+DOWNLOAD DESCRIPTION
+PK63273 resolves the following problem:
+
+ERROR DESCRIPTION: 
+Address CVE-2007-6388 and CVE-2007-5000 for IBM® HTTP Server 1.3.28. 
+
+USERS AFFECTED:
+IBM HTTP Server 1.3.28.1 users
+
+PROBLEM DESCRIPTION:
+CVE-2007-5000 and CVE-2007-6388
+
+RECOMMENDATION:
+This cumulative fix is recommended for all IBM HTTP Server 1.3.28.1 installations.
+
+This addresses two security issues corrected after the previous cumulative fix for this release, PK55141.
+
+
+
+- PK58024 CVE-2007-5000 mod_imap cross-site scripting error with server side image maps
+- PK59667 CVE-2007-6388 mod_status cross-site scripting vulnerability
+
+Changes with previous cumulative fixes, included here:
+
+- PK49295 CVE-2006-5752 mod_status cross-site scripting vulnerability
+- PK50467 CVE-2007-3304 MPM signalling vulnerability.
+- PK50469 CVE-2007-3847 proxy buffer over-read vulnerability
+- PK44754 mod_ibm_ssl incompatibility with GSKit 7.0.3.25 and higher
+- PK19060 Retry connection to LDAP server immediately after connection drop
+- PK24631 CVE-2006-3918 Escape value of Expect header in error response to invalid Expect
+- PK28587 LDAP cache expiration time was not always honored
+- CMVC 84947 Fix crash in mod_ibm_ssl when using client certificate authentication
+- PK29157 CVE-2006-3747 mod_rewrite defect which could cause crashes on HP-UX® and Windows®
+- PK13959 CVE-2005-2088 HTTP proxy vulnerability
+- CVE-2005-3352 mod_imap cross-site scripting vulnerability
+- resolve Linux/x86 startup failures when /etc/nsswitch.conf specifies LDAP for name resolution,
+caused by dropped library support in RedHat Advanced Server 3.0 Update 4 and SLES 9
+- mod_ibm_ldap: When user id is locked, return 401 instead of 503 and record the problem in error log
+- mod_ibm_ldap: Provide LdapReferralHopLimit directive to control how many referrals are allowed
+- mod_ibm_ldap: improve tracing
+- allow mod_net_trace to trace writev error
+- mod_ibm_ssl on Linux® and UNIX®: resolve double-free error when interfacing with sidd
+- PK07747: IHS VIRTUAL HOST NO LONGER WORKS AFTER INSTALLATION OF MICROSOFT® SECURITY PATCH MS05-019
+- PK05084 CAN-2004-0940 mod_include possible buffer overflow
+- UNIX: Log errno string for sidd connect failures
+- Track active plug-in module when ExtendedStatus in On "/server-status/?showmodule" can display it.
+- Linux for pSeries® and zSeries®: Remove dependency on external expat library
+- CAN-2003-0020 Strip control characters before logging to ErrorLog
+- PK03424 Windows: Fix mod_rewrite RewriteLog reliability problem on Windows
+- CAN-2003-0987 mod_digest nonce exposure
+- SSL in FIPS mode: Do not allow SSLv2 ciphers
+- Windows include files reference missing file
+- mod_log_config sometimes logged "0" instead of "-" for %b format
+- AIX®: enable full core dump automatically for httpd crashes
+- Fix child process crash in ap_bhalfduplex().
+- PQ89899 CAN-2004-0492 crash in mod_proxy
+- PQ90262 Misuse of gsk_secure_sock_close causes child process crash
+- PQ90562 mod_ibm_ssl storage leak across restart
+- mod_snmp limit on virtual hosts was raised to 1500
+- PQ92124 HTTP POSTs fail or hang when Afpa is enabled; When Afpa is enabled on Windows, HTTP POST requests may occasionally appear to hang and eventually time out with an error.
+- PQ98444 Mod_ibm_ldap fails to UTF-8 encode the filter string
+
+PREREQUISITES
+1.3.28.1
+
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/ihs/support/fixes/PK63273/readme.txt] US English 6382 
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 1.3.28.1-PK63273.aix 04-10-2008 US English 5324800 FTP [ftp://public.dhe.ibm.com/software/websphere/ihs/support/fixes/PK63273/1.3.28.1-PK63273.aix.tar] 1.3.28.1-PK63273.hpux 04-10-2008 US English 6676480 FTP [ftp://public.dhe.ibm.com/software/websphere/ihs/support/fixes/PK63273/1.3.28.1-PK63273.hpux.tar] 1.3.28.1-PK63273.linux 04-10-2008 US English 4812800 FTP [ftp://public.dhe.ibm.com/software/websphere/ihs/support/fixes/PK63273/1.3.28.1-PK63273.linux.tar] 1.3.28.1-PK63273.linux390 04-10-2008 US English 5447680 FTP [ftp://public.dhe.ibm.com/software/websphere/ihs/support/fixes/PK63273/1.3.28.1-PK63273.linux390.tar] 1.3.28.1-PK63273.linuxppc 04-10-2008 US English 6123520 FTP [ftp://public.dhe.ibm.com/software/websphere/ihs/support/fixes/PK63273/1.3.28.1-PK63273.linuxppc.tar] 1.3.28.1-PK63273.nt 04-10-2008 US English 1538517 FTP [ftp://public.dhe.ibm.com/software/websphere/ihs/support/fixes/PK63273/1.3.28.1-PK63273.nt.zip] 1.3.28.1-PK63273.sun 04-10-2008 US English 5818880 FTP [ftp://public.dhe.ibm.com/software/websphere/ihs/support/fixes/PK63273/1.3.28.1-PK63273.sun.tar] 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the IBM HTTP Server Support Web site (http://www.ibm.com/software/webservers/httpservers/support/ [http://www.ibm.com/software/webservers/httpservers/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24018892&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24018892&aid=2]Problems (APARS) fixed
+PK05084, PK07747, PK16139, PK27875, PK55141, PK63273, PQ76168, PQ87084, PQ89899, PQ90262, PQ92124, PQ98444

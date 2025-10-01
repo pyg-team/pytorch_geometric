@@ -1,0 +1,143 @@
+Title: IBM How to enable/disable/verify FIPS 140-2 mode in AppScan Source - United States
+
+Text:
+1626684; AppScan; AppScan Source; FIPS; Federal Information Processing; 140-2; Windows; Linux; compliance; validation; validated; enabling; disabling; verifying TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do you enable, disable, or verify Federal Information Processing Standard 140-2 (FIPS 140-2) mode in IBM Security AppScan Source version 8.7 or later on Windows and Linux? 
+
+RESOLVING THE PROBLEM
+ 
+
+ * How to enable and disable FIPS 140-2 mode in AppScan Source 
+ * How to determine if AppScan Source is operating in FIPS 140-2 mode
+
+
+
+How to enable and disable FIPS 140-2 mode in AppScan Source: 
+
+ 1. Ensure that AppScan Source is not running.
+    
+ 2. Open <data_dir>/config/ounce.ozsettings (where <data_dir> is the location of your AppScan Source program data) and locate the fips_mode setting. By default, the setting looks like this:
+    <Setting
+    description_id=""
+    name="fips_mode"
+    read_only="false"
+    default_value="1"
+    value="1"
+    description="FIPS Mode"
+    type="text"
+    display_name="FIPS Mode"
+    display_name_id=""
+    available_values=""
+    hidden="false"
+    force_upgrade="false"
+    />
+    
+ 3. In the setting, the value attribute determines whether FIPS is enabled or disabled. Set value="1" to enable FIPS 140-2 mode. Set value="0" to disable FIPS 140-2 mode. Save the changes to the file.
+    
+ 4. Open <install_dir>/jre/lib/security/java.security (where <install_dir> is the location of your AppScan Source installation) and locate the List of providers and their preference orders section. By default, the section looks like this:
+    # List of providers and their preference orders (see above):
+    #
+    
+    security.provider.1=com.ibm.crypto.fips.provider.IBMJCEFIPS
+    security.provider.2=com.ibm.jsse2.IBMJSSEProvider2
+    security.provider.3=com.ibm.crypto.provider.IBMJCE
+    security.provider.4=com.ibm.security.cert.IBMCertPath
+    security.provider.5=sun.security.provider.Sun
+    
+    #original:
+    #security.provider.1=com.ibm.jsse2.IBMJSSEProvider2
+    #security.provider.2=com.ibm.crypto.provider.IBMJCE
+    #security.provider.3=com.ibm.security.jgss.IBMJGSSProvider
+    #security.provider.4=com.ibm.security.cert.IBMCertPath
+    #security.provider.5=com.ibm.security.sasl.IBMSASL
+    #security.provider.6=com.ibm.xml.crypto.IBMXMLCryptoProvider
+    #security.provider.7=com.ibm.xml.enc.IBMXMLEncProvider
+    #security.provider.8=com.ibm.security.jgss.mech.spnego.IBMSPNEGO
+    #security.provider.9=sun.security.provider.Sun
+    
+    This section, in the above default state, indicates that FIPS is enabled. To disable FIPS, complete steps 5 and 6.
+    
+ 5. The section is divided into two lists:  * Change all security.provider.* entries in the first list so that they are commented out (preceded by #) - and remove the comment markers (#) from the security.provider.* entries in the second list. 
+     * Locate the first line in the first list (security.provider.1=com.ibm.crypto.fips.provider.IBMJCEFIPS). Copy this line (without its comment marker) to the end of the second list, and change the line to security.provider.10=com.ibm.crypto.fips.provider.IBMJCEFIPS so that its number follows the numbering scheme of the items above it.
+       
+    
+    
+ 6. After making all changes, the section should look like this:
+    # List of providers and their preference orders (see above):
+    #
+    
+    #security.provider.1=com.ibm.crypto.fips.provider.IBMJCEFIPS
+    #security.provider.2=com.ibm.jsse2.IBMJSSEProvider2
+    #security.provider.3=com.ibm.crypto.provider.IBMJCE
+    #security.provider.4=com.ibm.security.cert.IBMCertPath
+    #security.provider.5=sun.security.provider.Sun
+    
+    #original:
+    security.provider.1=com.ibm.jsse2.IBMJSSEProvider2
+    security.provider.2=com.ibm.crypto.provider.IBMJCE
+    security.provider.3=com.ibm.security.jgss.IBMJGSSProvider
+    security.provider.4=com.ibm.security.cert.IBMCertPath
+    security.provider.5=com.ibm.security.sasl.IBMSASL
+    security.provider.6=com.ibm.xml.crypto.IBMXMLCryptoProvider
+    security.provider.7=com.ibm.xml.enc.IBMXMLEncProvider
+    security.provider.8=com.ibm.security.jgss.mech.spnego.IBMSPNEGO
+    security.provider.9=sun.security.provider.Sun
+    security.provider.10=com.ibm.crypto.fips.provider.IBMJCEFIPS
+    
+    Save the changes to the file.
+    
+ 7. Open <data_dir>/config/osa.cp and locate this line:
+    -Dcom.ibm.jsse2.usefipsprovider=true
+    
+ 8. When this is set to true, FIPS 140-2 is enabled. To disable FIPS, set this to false (change the line to -Dcom.ibm.jsse2.usefipsprovider=false) and then save the changes to the file. 
+ 9. If you have installed the AppScan Source Command Line Interface, repeat the above two steps for the <data_dir>/config/cli.cp file.
+
+
+
+How to determine if AppScan Source is operating in FIPS 140-2 mode:
+
+
+ 1. Ensure that AppScan Source is not running.
+    
+ 2. Open <data_dir>/config/ounce.ozsettings (where <data_dir> is the location of your AppScan Source program data) and modify the log_level setting so that its value is 3 (Info). By default, the setting looks like this:
+    <Setting
+    name="log_level"
+    default_value="5"
+    description="Error log level"
+    type="list"
+    value="5"
+    display_name="Log level"
+    available_values="1:Trace,2:Debug,3:Info,4:Warn,5:Error,6:Fatal"
+    />
+    Modify the setting so that value="3".
+    
+ 3. Launch AppScan Source and run a scan.
+    
+ 4. Open <data_dir>/logs/scanner_exceptions.log, where you will notice these log entries, which are indicators that AppScan Source is operating in FIPS 140-2 mode:
+    02/01/13 11:10:57 Info(30082) from PlService.cpp(276)
+    Current FIPS Mode: 1
+    
+    ....
+    
+    02/01/13 11:12:05 Info(60015) from AppScanServerClient.cpp(91)
+    FIPS initialiazed correctly for client
+    
+    02/01/13 11:12:05 Info(30082) from AppScanServerClient.cpp(94)
+    Current FIPS Mode from Client: 1
+    
+ 5. Open <data_dir>/logs/osa.log, where you will notice these log entries, which are indicators that AppScan Source is operating in FIPS 140-2 mode:
+    WARN 02:42:31 02/01/2013 util.PrexisLogger - Java FIPS: SHA-1 Provider: IBMJCEFIPS
+    WARN 02:42:33 02/01/2013 util.PrexisLogger - Java FIPS: RSA Provdier:IBMJCEFIPS version 1.7
+    WARN 02:42:33 02/01/2013 util.PrexisLogger - Java FIPS: com.ibm.jsse2.usefipsprovider: null
+    WARN 02:42:33 02/01/2013 util.PrexisLogger - Java FIPS: SSL Context exists
+    WARN 02:42:33 02/01/2013 util.PrexisLogger - Java FIPS: TLSv1 Context exists
+    WARN 02:42:33 02/01/2013 util.PrexisLogger - Java FIPS: TrustManager Default Algorithm:IbmX509
+    WARN 02:42:33 02/01/2013 util.PrexisLogger - Java FIPS: TrustManager Default Provider:IBMJSSE2 version 1.7
+    WARN 02:42:33 02/01/2013 util.PrexisLogger - Java FIPS: SecureRandom provider:IBMJCEFIPS version 1.7
+
+RELATED INFORMATION
+#Operating in FIPS 140-2 mode on OS X [http://www.ibm.com/support/docview.wss?uid=swg21625556]
+Background information [http://www.ibm.com/support/docview.wss?uid=swg21626701]
+"Algorithm Missing" error [http://www.ibm.com/support/docview.wss?uid=swg21634101]

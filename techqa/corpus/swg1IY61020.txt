@@ -1,0 +1,161 @@
+Title: IBM IY61020: s13310 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Envrionment:
+   
+   Operating System: WIN 2000 Server
+   Product or Service: IBM Tivoli Identity Manager
+   Component ID: 5724C3402
+   Product Version/Release: 4.5.1
+   Product Fix Level: SAP Agent 4.5.1-1009
+   Environment:
+   Single server with dual cpu and 2GB  memory
+   
+   Problem: When doing a recon against a SAP CUA Server where sap
+   roles exists in multiple languages, warnings will always be
+   generated as the language is not part of the data transferred to
+   ITIM.
+   
+   
+   Steps to Reproduce:
+   The problem is very easy to recreate if you have a SAP system
+   availabl
+   the  contains roles in more than on language (I would assume
+   that this cove
+   99.99% or more of all SAP systems as they have roles in german
+   and
+   english in the default installation as far as I know...)
+   To recreate the problem just run a reconcilation against the SAP
+   syste without any filters - there will be warning that some
+   roles cannot be loaded (because they are already loaded) as the
+   table it reads in the  SAP system contains a row for each
+   language the role has a description  for... Whether this will
+   doomed an enhancement request or an APAR is not  anything I can
+   decide - but clearly from a customer point of view a
+   reconciliation should be possible without any warnings on
+   correctly setup system - it
+   is not now....
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  s13310
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   Fix shipped in SAP agent for Windows v4.5.4
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   Fix shipped in SAP Agent for Windows v4.5.4
+    Gold Master created on Sept 1 with GA posting to Passport Advan
+   tage expected on or before Sept 30.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY61020
+   
+   
+ * REPORTED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C34AG
+   
+   
+ * REPORTED RELEASE
+   451
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-08-24
+   
+   
+ * CLOSED DATE
+   2004-09-01
+   
+   
+ * LAST MODIFIED DATE
+   2004-09-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     AGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * FIXED COMPONENT ID
+   5724C34AG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R450 PSY
+   UP

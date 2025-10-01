@@ -1,0 +1,48 @@
+Title: IBM Access denied - java.net.SocketPermission error with IBM FileNet IDM Web Services - United States
+
+Text:
+Java; JRE; jvm; access denied; SocketPermission TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to log in to IDM Web Services (IdmWs), users see an error message instead of the logon dialog box. The error states:
+
+Unexpected error - access denied (java.net.SocketPermission 
+<IP Address>:<Port number> connect,resolve) 
+
+SYMPTOM
+Some users may report that IdmWs was working, and then just stopped working.
+
+
+CAUSE
+Oracle's Java Runtime Environment (JRE) 6.0, as of Update 10, may create separate instances to run some tasks, instead of performing all tasks in the Java Virtual Machine (JVM) instance. In some situations, this may cause IdmWs to fail.
+
+RESOLVING THE PROBLEM
+Restrict Java to run in a single instance:
+
+
+ 1. Start the Java Console by opening the Microsoft Windows Control Panel, and clicking on the Java icon. 
+ 2. Select the Advanced Tab. 
+ 3. Expand the Java Plug-In branch. 
+ 4. Uncheck Enable the next-generation Java Plug-in (requires browser restart). 
+ 5. Close the console. 
+ 6. Close all browsers. 
+ 7. Launch a new browser and connect to IdmWs.
+
+
+Note: If the box is already unchecked, try checking the box, and shut down all browsers. Launch the browser, uncheck the box, shut down the browser, then launch a new browser and connect to IdmWs.  
+
+In some cases, the above steps did not resolve the issue. If Microsoft Internet Explorer is used, an alternative solution is to modify the IDMWS application so it uses an Active X control for posting callbacks to the web server. Instructions for setting up this configuration can be found in the IDMWS 4.0.2 Release Notes. The following excerpt pertains to a similar issue and documents how to change the IDMWS application to use Active X:
+ecmdb00897052: When unified logon is configured on WS server, and the URL is accessed from a Windows 7 client, the user is unable to browse through the libraries. On clicking the libraries, Java script error occurs.
+Please follow the steps below to login and browse through the libraries without any error: 
+
+ 1. Navigate to …FileNet\IDM\Web\idmws\global.asa, then open the global.asa file in a text editor. 
+ 2. Find: Application("IDMWS_RemoteScriptingClientFile") = "FNRS.HTM". 
+ 3. Change the text above to: Application("IDMWS_RemoteScriptingClientFile") = "FNRS2.HTM"
+
+RELATED INFORMATION
+ IBM FileNet IDM 4.0.2 Release Notes [ftp://ftp.software.ibm.com/software/data/cm/filenet/docs/wsopendoc/40x/relnotes402.htm]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management FileNet IDM Desktop/WEB Services/Open Client WEB Services/IDM Toolkit Windows 4.0.0, 4.0.1, 4.0.2

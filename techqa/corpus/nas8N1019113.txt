@@ -1,0 +1,36 @@
+Title: IBM SFTP and SCP Do Not Work with QP2TERM or QP2SHELL Without Use Of SSH-Agent or Public Keys - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SFTP and SCP do not work with QP2TERM or QP2SHELL without the use of ssh-agent or public keys. This document provides information on available options. 
+
+RESOLVING THE PROBLEM
+SFTP will not work with our QP2TERM or QP2SHELL, even if -T is specified. 
+
+To configure key based authentication, view this link: . To trouble shoot any issues with public keys, view this link: Database 'DCF Technotes (IBM i)', View 'Products', Document 'Debugging Unattended SFTP Using Public-Key Authentication without a Passphrase' [http://www-01.ibm.com/support/icons/doclink.gif] [</font></b>http://www-01.ibm.com/support/docview.wss?uid=nas8N1015378].
+
+The Web site http://www-1.ibm.com/servers/enable/site/porting/tools/openssh.html [http://www-1.ibm.com/servers/enable/site/porting/tools/openssh.html] states:
+
+The "green screen" 5250 terminal sessions started by using the STRQSH or CALL QP2TERM CL commands are not true TTY devices. This can cause problems when trying to use ssh, sftp or scp within one of these sessions. 
+
+Possible work-arounds: 
+
+o For ssh: use the -T option to not allocate a tty when connecting o For sftp and scp: use the ssh-agent utility or public key authentication to avoid sftp and scp prompting for passwords or passphrases o Use the utilities from a true tty session (such as xterm) 
+Another alternative is to connect to the iSeries SSH server with a true TTY device.
+
+If you do not have PuTTY utility installed on your workstation, you can load it from the openssh Web site. Refer to the Web site:
+
+www.openssh.org/windows.html
+
+If you open a PuTTY session to the IBM eServer i5, you should be able to make the sftp and scp work because the eServer i5 is a server and your PC is the client. The eServer i5 behaves as a client of the sftp server when the commands are issued from the PC PuTTY session because the commands are actually processed on the eServer i5.
+
+If this is not an option, you should load 5799-PTL because this includes VNCSERVER. This allows an IBM AIX-like environment to run all of the OpenSSH commands. For additional information on this option, refer to the following Web site:
+
+http://www-1.ibm.com/servers/enable/site/porting/tools/vnc.html [http://www-1.ibm.com/servers/enable/site/porting/tools/vnc.html] 
+
+ 
+
+HISTORICAL NUMBER
+ 376144602

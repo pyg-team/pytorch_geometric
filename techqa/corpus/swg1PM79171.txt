@@ -1,0 +1,258 @@
+Title: IBM PM79171: ADMA5060E ERROR OCCURS WHEN INSTALLING APPLICATION CONTAINING AN EJB MODULE CONFIGURED WITH ENVIRONMENT VARIABLES. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.0.2: WebSphere Application Server V8.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24034672]
+8.0.0.6: WebSphere Application Server V8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034673]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Application installation fails for an EAR which contains
+   a message-driven bean (MDB) configured with environment
+   variables.
+   
+   Consider the following simple scenario:
+   -> J2EE 6.0 EAR, EJB 3.0 JAR, single MDB
+   -> MDB contains an environment variable which is
+      written to the ejb-jar.xml like this:
+        <env-entry>
+        <description>The test environment var</description>
+        <env-entry-name>
+            test/some_arbitrary_string
+        </env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>some_value</env-entry-value>
+       </env-entry>
+      The variable can either have an empty value or specify a
+      value like above.
+   
+   -> Admin console is used to install the EAR file using these
+      steps
+   1. Choose to install myApp.ear EAR as a new Enterprise
+      Application
+   2. Select "Detailed" and the checkbox to "Generate default
+      bindings"
+   3. Use the default installation options
+   4. Use default module-server mappings
+   5. On "Map environment entries for EJB modules", change or enter
+      a value for "test/some_arbitrary_string" for the EJB module.
+   6. Do not select metadata complete attribute for any modules
+   7. Press Finish to perform the install
+   
+   
+   The install will fail with this message displayed to the
+   console:
+   
+   ADMA5060E: Resource validation for application myApp failed due
+   to unexpected exception
+   com.ibm.websphere.management.application.client.AppDeploymentExc
+   eption:
+   org.eclipse.jst.j2ee.commonarchivecore.internal.exception.Resour
+   ceLoadException: IWAE0007E Could not load resource
+   "META-INF/ibm-ejb-jar-bnd.xml" in archive "myEJB.jar"
+   [Root exception is
+   org.eclipse.jst.j2ee.commonarchivecore.internal.exception.Resour
+   ceLoadEx ception: IWAE0007E Could not load resource
+   "META-INF/ibm-ejb-jar-bnd.xml" in archive "myEJB.jar"]
+   
+   
+   An FFDC file is created containing this error:
+   
+   [12/7/12 11:12:22:063 EST]     FFDC
+   Exception:org.eclipse.jst.j2ee.commonarchivecore.internal.except
+   ion.ResourceLoadException
+   SourceId:com.ibm.websphere.management.application.client.Archive
+   DeploymentInfo.createModuleConfig ProbeId:503
+   Reporter:java.lang.Class@9ec10372
+   org.eclipse.jst.j2ee.commonarchivecore.internal.exception.Resour
+   ceLoadException: IWAE0007E Could not load resource
+   "META-INF/ibm-ejb-jar-bnd.xml" in archive "myEJB.jar"
+   Stack trace of nested exception:
+   org.eclipse.jst.j2ee.internal.WrappedRuntimeException: Exception
+   occurred loading META-INF/ibm-ejb-jar-bnd.xml
+   Stack trace of nested exception:
+   org.eclipse.emf.ecore.resource.impl.ResourceSetImpl$1$Diagnostic
+   WrappedException:
+   org.eclipse.emf.ecore.xmi.FeatureNotFoundException:
+   Feature 'env-entry' not found.
+   (file:///C:/WAS85/profiles/AppSrv01/META-INF/ibm-ejb-jar-bnd.xml
+   , 5, 64)
+   
+   ...
+   
+   Caused by: org.eclipse.emf.ecore.xmi.FeatureNotFoundException:
+   Feature 'env-entry' not found.
+   (file:///C:/WAS85/profiles/AppSrv01/META-INF/ibm-ejb-jar-bnd.xml
+   , 5, 64)
+    at
+   org.eclipse.emf.ecore.xmi.impl.XMLHandler.reportUnknownFeature(X
+   MLHandler.java:1747)
+    at
+   com.ibm.ejs.models.base.bindings.commonbnd.serialization.Commonb
+   ndSAXXMLHandler.handleUnknownFeature(CommonbndSAXXMLHandler.java
+   :238)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  During application installation, do not change the value of the
+   environment variable configured for the MDB.  Provide the value
+   during application assembly time and then install the
+   application without changing it.  This will workaround the
+   problem.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V8.0 and V8.5 using Message Driven   *
+   *                  beans                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Message Driven beans with Env Entry     *
+   *                      or Data Source bindings fail to deploy  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Deploying a Message Driven bean with Env Entry or Data Source
+   bindings causes a FeatureNotFound exception. The Message
+   Driven bean bindings do not properly handle the tags
+   'env-entry' and 'data-source'.
+   These bindings are specified in the "Map environment entries
+   for EJB modules" step of deployment, and will cause the
+   application installation to fail.
+   The failure will show SystemErr messages like the following:
+   Caused by: org.eclipse.emf.ecore.xmi.FeatureNotFoundException:
+   Feature 'env-entry' not found.
+   (file:///C:/WAS85/profiles/AppSrv01/META-INF/ibm-ejb-jar-
+   bnd.xml
+   , 5, 64)
+   at
+   org.eclipse.emf.ecore.xmi.impl.XMLHandler.reportUnknownFeature(X
+   MLHandler.java:1747)
+   at
+   com.ibm.ejs.models.base.bindings.commonbnd.serialization.Commonb
+   ndSAXXMLHandler.handleUnknownFeature(CommonbndSAXXMLHandler.java
+   :238)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Bindings metadata handler was updated to properly handle
+   Env Entry and Data Source bindings in Message Driven beans.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 8.0.0.6 and 8.5.0.2.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM79171
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-12-14
+   
+   
+ * CLOSED DATE
+   2012-12-26
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

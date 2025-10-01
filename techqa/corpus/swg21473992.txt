@@ -1,0 +1,74 @@
+Title: IBM Improving Rational Synergy query-based performance - United States
+
+Text:
+CLI; GUI; performance; query TECHNOTE (FAQ)
+
+QUESTION
+ How to improve the performance of your queries and other query-based operations in IBM Rational Synergy? 
+
+CAUSE
+Performance within Rational Synergy Graphical User Interface (GUI) and Command Line Interfaces (CLI) are heavily dependent on the number of attributes that are displayed and the sorting algorithm used. 
+
+Performance problems can arise from various sources, from the underlying Informix database to a mis-configuration of the operating system kernel. However, the most basic problem is due to displaying an unnecessary amount of attributes for the need of the operation being performed. 
+
+ 
+
+Ideally, displaying all attributes of an object, task, Change Request etc would not have a cost, but invariably there is a cost for every attribute selected in all of the Rational Synergy clients. 
+
+Comparisons between Rational Synergy releases and the different clients should not be made as each client has a format appropriate for the expected needs of that client. This is also true of the sorting algorithm used.
+
+
+ANSWER
+Rational Synergy CLI and Rational Synergy Classic CLI: 
+
+Although the default output differs for each client, when using the CLI it is important to understand what results are required from the query. 
+
+Quite often a query is run where only the objectname is really desired, or, the result may only be needed for using with a subsequent command. 
+
+ 
+
+For example: 
+
+ 
+
+
+ccm query -type task -state completed 
+
+ ... 
+
+ ccm folder -modify -add_tasks @
+
+
+
+
+ 
+
+ 
+
+In this example, the query will return the default number of attributes for the CLI in use. However, there is no need for any output with this query as the purpose is for populating a folder. Therefore a much more efficient query is to run: 
+
+ 
+
+
+ccm query -type task -state completed -format "" -no_sort
+
+
+ 
+
+The difference between the two queries is likely to be at least 600% faster when running without formatting and sorting. 
+
+ 
+
+Understandably, other queries are run with the formatting heavily used. In these instances, choosing only those attributes which are necessary will ensure that the time to achieve the data is optimum. 
+
+ 
+
+Rational Synergy client and Rational Synergy Classic client (GUI): 
+
+This same principle applies to the Rational Synergy client GUI and the Rational Synergy Classic client. The project view allows for users to define which attributes should be displayed. If performance is a problem, it is advisable that the user reduces the number of attributes to just those necessary to work efficiently. Once data has been returned to the GUI, then adding back attributes does not cause much of a delay. 
+
+This is especially important when running query-based functions within Rational Synergy. In the Rational Synergy client this is usually an action performed from the Find menu. In the Rational Synergy Classic client, this is usually an option under Actions -> Query. 
+
+RELATED INFORMATION
+#Improving performance in Synegy GUI on Linux [http://www.ibm.com/support/docview.wss?uid=swg21472746]
+Error "java.lang.OutOfMemoryError" in Rational Synergy [http://www.ibm.com/support/docview.wss?uid=swg21414224]

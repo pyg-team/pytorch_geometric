@@ -1,0 +1,13 @@
+Title: IBM SNMP probe not starting under Process Automation Daemon after reboot - United States
+
+Text:
+nco_pad; PA; process; automation; probe TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to configure a probe to start automatically via nco_pad, the probe will not startup after system reboot, but does start manually. 
+
+DIAGNOSING THE PROBLEM
+Double check the owner and file permissions of $NC_RULES_HOME directory.
+
+RESOLVING THE PROBLEM
+Verify the Netcool/Omnibus environment variable for NC_RULES_HOME is properly set in the nco_pad.env file.

@@ -1,0 +1,47 @@
+Title: IBM In Process Center Environment Setting EPV Values through Process Admin Console does not take effect for IBM Stewardship Center - United States
+
+Text:
+[KickstartTemplateField]mdmrnv114; mdm11.4.0.3 fix pack TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While running IBM Stewardship Center on BPM Process Center 8.5.6, applications fail to run. 
+
+SYMPTOM
+While running IBM Stewardship Center in BPM Process Center 8.5.6 environment, the following error is thrown in the browser: 
+
+….Internal Script error: com.lombardisoftware.core.TeamWorksRuntimeException: String "null" cannot be converted to "Integer" type. The value is not integer
+
+
+CAUSE
+This issue is due to the manner in which EPVs are handled by BPM Process center 8.5.6.
+
+
+RESOLVING THE PROBLEM
+Use these steps to resolve this issue. 
+
+
+1. Open the Process Admin Console (PAC). The typical URL to access PAC is https://<hostname>:<port>/ProcessAdmin/login.jsp
+2. For each of the following applications, complete the steps 3 to 9 
+
+ * MDM Party Maintenance 
+ * Physical MDM Suspected Duplicates 
+ * MDM Virtual Suspected Duplicates 
+ * MDM DataStewardship Dashboard 
+ * MDM Hybrid Data Quality
+
+3. In the Process Admin Console (PAC), under Installed Apps tab, activate the latest snapshot for the application. 
+4. Navigate back to the Server Admin tab. 
+5. Select Admin Tools -> Manage EPVs from the left navigation menu. 
+6. Choose the tip entry for the applications from the drop down. 
+7. Set the EPV values for MDM_Connection_Details, if the values are not already set. 
+8. Choose the named snapshot of the applications from the drop down. 
+9. Set the EPV values for MDM_Connection_Details. Ensure that the values set in the tip entry and snapshot entry are same. 
+
+The steps above are required only on process center environment. On process server environment, running the install scripts alone is sufficient. RELATED INFORMATION
+ Product documentation - Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSWSR9_11.4.0]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management Initiate Master Data Service Information Management InfoSphere Master Data Management Server Information Management InfoSphere Master Data Management Server for Product Information Management

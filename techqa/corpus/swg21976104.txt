@@ -1,0 +1,234 @@
+Title: IBM INFORMIX EXIT IN IBM GUARDIUM V10 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I monitor Informix 12.10 traffic ? Do I use Guardium ATAP or Informix Exit with Unix STAP ? 
+
+Can Informix Exit capture all types of protocol connections Informix Dynamic Server supports ? 
+
+ANSWER
+ 
+
+Starting with Informix version 12.10.xC6, Informix provides a new utility called ifxguard, which locates under $INFORMIXDIR/bin. 
+
+A special shared library called Informix Exit is part of the Guardium Unix S-TAP installation is loaded at runtime by ifxguard. Currently 32bit and 64bit .so are available. Static libraries are inclusive as well. 
+
+They are located under <guardium_installation_directory>/guard_stap 
+
+eg /usr/local/guardium/guard_stap 
+
+ 
+
+ * /usr/local/guardium/guard_stap/libguard_informix_exit_32.so
+ * 
+ * /usr/local/guardium/guard_stap/libguard_informix_exit_64.so
+
+Informix Exit allows Guardium v10 to audit all protocols of Informix SQL activities. This includes TCP, Shared Memory and Named Pipe protocols. There is no limit on Informix Exit. It can support all Guardium features (S-gate, UID chain, Redaction, query-rewrite, etc). 
+
+The Linux platform is a special case where you can use Informix Exit to replace Informix ATAP to capture shared memory traffic. 
+
+You can still capture Informix 12.10 through KTAP by setting db type to Informix. If multiple Informix instances exist in the same database host (eg.. IDS 11.70 and IDS 12.10), you only need either Informix Exit or Informix KTAP. You do not need to configure another inspection engine for Informix KTAP. 
+
+On installing Informix patches or OS fix packs, it is recommended to stop the ifxguard agent first (using -kill $INFORMIXSERVER). 
+
+ 
+
+To configure Informix Exit with Guardium v10 STAP: 
+
+ 
+
+ * 
+ * 
+ *   * its instance name (INFORMIXSERVER) 
+    * installation directory (INFORMIXDIR). 
+   
+   
+ *  
+   Refer to the following article to Locate Informix instance name and directory [http://www-01.ibm.com/support/docview.wss?uid=swg21975738] 
+ * 
+ * 2. Install and start up S-TAP in the db host. 
+ *  
+ * 3. As user root, make sure user informix is in group guardium. 
+ *  
+   You can add user from unix: 
+    * 
+   
+   
+   Or add user using guardctl: 
+    * 
+   
+   
+ * 
+ * 
+ * 
+ *  $ id 
+   uid=501(informix) gid=205(informix) groups=215(guardium) 
+ *  
+ * 5. copy Informix Exit .so file from STAP directory to Informix library path $INFORMIXDIR/lib
+   
+ *  $ cp /usr/local/guardium/guard_stap/libguard_informix_exit_64.so $INFORMIXDIR/lib/libguard_informix.so 
+ *  
+ * 6. Setup ifxguard 
+ *  
+   Create a config file under $INFORMIXDIR/etc/ifxguard.$INFORMIXSERVER Content of the file: 
+   
+    
+   
+    * NAME ol_informix1210
+    * 
+    * WORKERS 2
+    * 
+    * LIBPATH /home/informix/12.10.FC6/lib/libguard_informix.so
+    * 
+    * DEBUG 1
+    * 
+    * LOGFILE /home/informix/12.10.FC6/etc/ifxguard.msg.txtg.txt
+   
+   
+   Note: INFORMIXDIR=/home/informix/12.10.FC6
+   
+   
+ * 
+ * 
+ * 
+ * 
+ *  $ id 
+   uid=501(informix) gid=205(informix) groups=215(guardium) 
+   
+   $ onstat - 
+   
+   IBM Informix Dynamic Server Version 12.10.FC6 -- On-Line -- Up 6 days 00:22:25 -- 253104 Kbytes 
+   
+   If the ifxguard config file is setup according to step 5, bring up ifxguard this way: 
+    * $ ifxguard
+    * 
+    * 15:20:17 ifxguard set instance name ol_informix1210
+    * 
+    * Starting ifxguard ol_informix1210 ...
+    * 
+    * check log file: /home/informix/12.10.FC6/etc/ifxguard.msg.txt
+   
+   
+   You should not see any error. In case of error, check file indicated in LOGFILE. 
+   
+   If the ifxguard config file is kept somewhere and not under $INFORMIXDIR/etc, specify the file's full path with -c option: - for example 
+    * $ ifxguard -c /mnt/conf/ifxguard.ol_informix1210
+   
+   
+   If ifxguard config file is not set up at all, you can still bring up the agent but must specify the .so library using full-path with -p option and message log file with -l option: - for example 
+    * $ ifxguard -p /home/informix/12.10.FC6/lib/libguard_informix.so -l home/informix/12.10.FC6/etc/ifxguard.msg.txt
+   
+   
+   
+ * 
+ * 
+ * 
+ *  $ ps -ef|grep guard 
+   root 15401210 1 1 15:14:11 - 0:00 /usr/local/guardium/guard_stap/guard_stap /usr/local/guardium/guard_stap/guard_tap.ini 
+   informix 22609968 1 0 15:20:17 - 0:00 ifxguard 
+   You should see the following msg in /home/informix/12.10.FC6/etc/ifxguard.msg.txt.
+   
+   
+    * Wed Feb 3 15:20:17 2016
+    * 
+    * 15:20:17 INFORMIX-ESQL Version 12.10.FC6
+    * 
+    * 15:20:17 Build Number: N253
+    * 
+    * 15:20:17 Build Host: cxp01007
+    * 
+    * 15:20:17 Build OS: AIX 6.1
+    * 
+    * 15:20:17 Build Date: Wed Nov 4 21:55:13 CST 2015
+    * 
+    * 15:20:17 GLS Version: glslib-6.00.FC7
+    * 
+    * 15:20:17
+    * 
+    * 15:20:17 Starting ifxguard ol_informix1210 ...
+    * 
+    * 15:20:17 DEBUG[TID1]:Password File /home/informix/12.10.FC6/etc/
+    * passwd_file failed error:No
+    * 
+    * such file or directory
+    * [2] [onguard_main.c:onguard_pw_init:518]
+    * 
+    * 15:20:17 DEBUG[TID1]:ifxguard ol_informix1210 connect to trusted host, Password Manager is i
+    * 
+    * gnored. [onguard_main.c:onguard_run:2391]
+    * 
+    * 15:20:17 pcbms = 110023688, spt_fn=ffffffffffff300
+    * 
+    * 
+    * 15:20:17 CBMS: cbms_initialize()
+    * 
+    * 15:20:17 Attached /.guard_writer0 shmem[0] 8001000a0000de8
+    * 
+    * 15:20:17 Attached /.guard_writer1 shmem[1] 8001000a0000eb8
+    * 
+    * 15:20:17 Attached /.guard_writer2 shmem[2] 8001000a0000f88
+    * 
+    * 15:20:17 Attached /.guard_writer3 shmem[3] 8001000a0001058
+    * 
+    * 15:20:17 Attached /.guard_writer4 shmem[4] 8001000a0001128
+    * 
+    * 15:20:17 Attached /.guard_writer5 shmem[5] 8001000a00011f8
+    * 
+    * 15:20:17 Attached /.guard_writer6 shmem[6] 8001000a00012c8
+    * 
+    * 15:20:17 Attached /.guard_writer7 shmem[7] 8001000a0001398
+    * 
+    * 15:20:17 Attached /.guard_writer8 shmem[8] 8001000a0001468
+    * 
+    * 15:20:17 Attached /.guard_writer9 shmem[9] 8001000a0001538
+    * 
+    * 15:20:17 Attached to /.guard_reader
+    * 
+    * 15:20:17 guard_conf_message=70000000149b000: my_ip=96eb8b7, intercept_type=1c, debug_level=0
+    * 
+    * , ignore_response_db_list=NONE
+    * 
+    * 15:20:17 comm exit shm initialization successful
+    * 
+    * 15:20:17 DEBUG[TID1]:new daemon pid is 22609968 [onguard_main.c:onguard_daemonize:2350]
+    * 
+    * 15:20:17 ifxguard ol_informix1210 started
+    * 
+    * 15:20:17 The connection attempt from ifxguard ol_informix1210 to server ol_informix1210 suc
+    * 
+    * ceeded. Process id: 22609968:258
+    * 
+    * 15:20:17 Attached to /.guard_reader
+    * 
+    * 15:20:17 The connection attempt from ifxguard ol_informix1210 to server ol_informix1210 succeeded. Process id: 22609968:515
+   
+   
+   Note: You can ignore the password file error, it's a DEBUG message. You can define one password file and run 'onpassword' to encrypt it. Ifxguard reads user informix's password from the encrypted file and connects to Informix Dynamic Server (IDS). If the password file is not defined, then ifxguard connects to IDS as trusted host connection (no password). 
+ * 
+ * 9. Setup INFX_EXIT inspection engine per the following example 
+ *  
+ *   * Go to GUI, click Manage-> Activity Monitoring->S-TAP Control, 
+    * look for STAP host IP, 
+    * click Modify to add inspection engine 
+    * Protocol: Informix Exit 
+    * DB Install Dir: /home/informix 
+    * Process Name: /INFORMIXTMP/.inf.sqlexec 
+    * Intercept Types: <blank or null> 
+    * Idenitifier: <blank or null> 
+    * click Apply 
+    * then click Send Command icon, choose Restart STAP.
+   
+   
+
+
+
+
+
+Suggested reading material: 
+
+
+About Informix EXIT [http://www-01.ibm.com/support/knowledgecenter/SSMPHH_10.0.0/com.ibm.guardium.doc.stap/stap/unix_stap_install.html]
+
+Informix 12.10 - Auditing with Guardium : [http://www-01.ibm.com/support/knowledgecenter/SSGU8G_12.1.0/com.ibm.sec.doc/ids_au_116.htm?lang=en]

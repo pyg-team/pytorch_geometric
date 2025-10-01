@@ -1,0 +1,50 @@
+Title: IBM Unable to Login to InfoSphere Information Server Web Console--Error CDIHT0403E - United States
+
+Text:
+CDIHT0403E; SessionFactory; CDISF0174E; CDISF0178E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SystemOut.log shows the following over and over:
+
+CDIHT0403E: The server understood the request, but is refusing to fulfill it.
+at com.ibm.iis.isf.security.impl.SessionFactory.checkAccess(SessionFactory.java:176)
+
+
+SYMPTOM
+For example SystemOut.log may show the following: 
+
+WebClientBean E CDISF0174E: Failed to get default tab for primary tab administrator Tab:
+java.rmi.AccessException: CDIHT0403E: The server understood the request, but is refusing to fulfill it.
+... 
+
+Exception checking directory admin service for password changeability:
+java.rmi.AccessException: CDIHT0403E: The server understood the request, but is refusing to fulfill it.
+... 
+
+WebClientBean E CDISF0180E: 
+Failed to get left pane tabs: 
+
+ java.lang.IllegalStateException
+...
+WebClientBean E CDISF0178E:
+Failed to retrieve the primary tab list: java.rmi.AccessException:
+CDIHT0403E: The server understood the request, but is refusing to fulfill it. 
+
+...
+ServletWrappe E com.ibm.ws.webcontainer.servlet.ServletWrapper service SRVE0014E:
+Uncaught service() exception root cause com.ibm.iis.isf.web.common.home_jsp: java.rmi.AccessException: 
+
+...
+CDIHT0403E: The server understood the request, but is refusing to fulfill it.
+at com.ibm.iis.isf.security.impl.SessionFactory.checkAccess(SessionFactory.java:176)
+
+
+CAUSE
+Application Security turned off in WebSphere Application Server (WAS) administration console. 
+
+
+RESOLVING THE PROBLEM
+Enabling the Application Security within the WebSphere Application Server console and restarting WAS, ASB Agent and Engine Information Server services and also running AppServerAdmin.sh with correct password resolves the issue.
+
+
+[/support/docview.wss?uid=swg21990894&aid=1] [/support/docview.wss?uid=swg21990894&aid=1]

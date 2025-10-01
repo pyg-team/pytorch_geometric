@@ -1,0 +1,60 @@
+Title: IBM OMEGAMON XE for IMS on z/OS 
+Fixpack 2 (5.3.0-TIV-KIP-FP0002) - United States
+
+Text:
+I5530 I5 XE OA49177 UA79549 TEP Java certificate expired DOWNLOADABLE FILES
+
+ABSTRACT
+ 5.3.0-TIV-KIP-FP0002
+This is a cumulative fix pack for Tivoli OMEGAMON XE for IMS on z/OS V530 
+
+DOWNLOAD DESCRIPTION
+Tivoli OMEGAMON XE for IMS on z/OS V530 fix pack 2 consists of the following files:
+
+
+
+
+Fix pack file name Description 5.3.0-TIV-KIP-FP0002_README.txt Contains the README for Tivoli OMEGAMON XE for IMS on z/OS V530 Fixpack 2. 5.3.0-TIV-KIP-FP0002.tar.gz Contains the Fix Pack 2 updates to Tivoli OMEGAMON XE for IMS on z/OS V530 application support for TEMS, TEPS, or TEP deployed on the AIX, Linux, HP-UX, and Solaris platforms. 5.3.0-TIV-KIP-FP0002.zip Contains the Fix Pack 2 updates to Tivoli OMEGAMON XE for IMS on z/OS V530 application support for TEMS, TEPS, or TEP deployed on Windows platforms. 5.3.0-TIV-KIP-LP0002.tar Contains the Language Fix Pack 2 updates to Tivoli OMEGAMON XE for IMS on z/OS V530 application support for TEMS, TEPS, or TEP deployed on the AIX, Linux, HP-UX, and Solaris platforms. 5.3.0-TIV-KIP-LP0002.zip Contains the Language Fix Pack 2 updates to Tivoli OMEGAMON XE for IMS on z/OS V530 application support for TEMS, TEPS, or TEP deployed on Windows platforms. 
+The following PTF supplies the corresponding z/OS catalog and attribute files and can be ordered via ShopzSeries: 
+
+UA79549. 
+
+Contains Self-Describing agent data updates PREREQUISITES
+1. This fixpack requires IBM Tivoli Monitoring Version 6.3.0 FP2 which was the minimum level prerequisite for OMEGAMON XE for IMS on z/OS V530. IBM Tivoli Monitoring Version 6.3.0 FP6 is preferred as it has the matching Java certificate.
+2. This fixpack requires z/OS PTF UA79549 to be installed.
+
+INSTALLATION INSTRUCTIONS
+Please consult the readme file 5.3.0-TIV-KIP-FP0002-README.txt (download below via Fix Central) for detailed installation instructions.
+
+DOWNLOAD PACKAGE
+Fix Central is a new way to acquire fixes and it is the only download option.
+You will need to use an IBM registered ID to acquire the files; this allows us to update you on any critical issues with the fix. Privacy is always maintained.
+Fix Central will offer three choices:
+- Download using Download Director.
+- Download using bulk FTP.
+- Download using your browser (HTTP) which will allow you to download files individually
+
+
+HOW CRITICAL IS THIS FIX?
+Recommended. This provides an updated Java certificate good till November 1, 2018
+
+
+
+PROBLEMS SOLVED
+The Java certificate used by the Tivoli Enterprise Portal is expiring in April 2016
+
+
+
+KNOWN SIDE EFFECTS
+None
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 5.3.0-TIV-KIP-FP0002 on Fix Central 2 Nov 2015 US English 72676372 FC [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%2FTivoli&product=ibm/Tivoli/Tivoli+OMEGAMON+XE+for+IMS+on+zOS&release=5.3.0&platform=All&function=all] [ ] 
+PRODUCT ALIAS/SYNONYM
+ I5530 I5 XE 
+
+ [/support/docview.wss?uid=swg24041165&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24041165&aid=2]Problems (APARS) fixed
+OA49177

@@ -1,0 +1,138 @@
+Title: IBM Client Access Data Transfer - Description of File Types - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes the file types available in Client Access and IBM iSeries Access Data Transfer. 
+
+RESOLVING THE PROBLEM
+ 
+
+Important Note: This document discusses Client Access for Microsoft Windows 95 and Windows NT, Client Access Express, IBM iSeries Access, and IBM System i Access products. These names essentially refer to the same product; however, the functionality and name changed over the last several releases. For the purposes of this document, the terms Client Access, Client Access Express, iSeries Access, and System i Access can be used interchangeably. Where a difference is important, the version of the product is used to identify the differences. 
+Description of File Types 
+
+Client Access, iSeries Access, and System i Access data transfer supports a number of file types. Here is a file type list and a sample of what some of the file types will look like after the file is transferred to the PC: 
+
+o ASCII Text 
+o Basic Random 
+o Basic Sequential 
+o BIFF3 (Microsoft® Excel® 3) 
+o BIFF4 (Microsoft Excel 4) 
+o BIFF5 (Microsoft Excel 5) 
+o Comma Separated Variable (CSV) 
+o DIF (IBM® Lotus®) 
+o DOS Random 
+o DOS Random Type 2 
+o No Conversion 
+
+New file types introduced in Client Access Express V4R4M0: 
+
+o Tab Delimited Text 
+o WK4 (Lotus) 
+
+New file types introduced in Client Access Express V5R1M0: o BIFF7
+o BIFF8
+o IBM® 1-2-3® Lotus®
+
+New file type introduced in iSeries Access V5R2M0:
+
+o 1-2-3 Lotus Version 9
+
+New file type introduced in iSeries Access V5R3M0:
+
+o Unicode Text
+
+New file type introduced in iSeries Access V5R4M0:
+
+o Microsoft Excel XML Spreadsheet
+
+
+ASCII Text 
+
+Data transfer download in ASCII Text file format is the most basic transfer available. When transferring a file as ASCII Text, you are creating the most basic file there is on a PC. Below is a sample of a file that was downloaded as ASCII Text.
+
+This image shows what ASCII text looks like. [/support/docview.wss?uid=nas8N1018297&aid=1] [/support/docview.wss?uid=nas8N1018297&aid=1]
+
+Basic Random
+
+Basic Random transfers are a general purpose BASIC file type. They contain fixed length records with no delimiters between fields, no delimiters between records, and no end-of-file markers. When transferring a file as Basic Random, hexadecimal fields do not get converted.
+
+This image shows what Basic Random data will look like. [/support/docview.wss?uid=nas8N1018297&aid=2] [/support/docview.wss?uid=nas8N1018297&aid=2]
+
+Basic Sequential
+
+Basic Sequential file format looks like the following. The downloaded file looks similar to CSV. The main difference between Basic Sequential and CSV is the handling of numeric values. In Basic Sequential, decimal positions are truncated where as in the CSV transfers, they are maintained.
+
+This image shows what Basic Sequential looks like. [/support/docview.wss?uid=nas8N1018297&aid=3] [/support/docview.wss?uid=nas8N1018297&aid=3]
+
+
+BIFF3 (Microsoft Excel 3), BIFF4 (Microsoft Excel 4), BIFF5 (Microsoft Excel 5)
+
+BIFF3, BIFF4 and BIFF5 all transfer data down and create files in a native Microsoft Excel file format. BIFF3 will create a file in an Excel 3.0 format, BIFF4 will create an Excel 4.0 file, and BIFF5 will create a file in an Excel 5.0 format. It is important to note the version of the Excel file. While Excel 7.0 or Excel 97 will read any of these formats, Excel 4.0 will not read an Excel 5.0 worksheet. Excel 3.0 will only read BIFF3 files.
+
+Comma Separated Variable (CSV)
+
+Comma Separated Variable files (also referred to as Comma Delimited files) are another common format for transferring data. In a CSV file, the string values are surrounded by quotation marks and numeric values are not. A comma separates every field. There is much similarity between CSV and Basic Sequential. The main difference is how numeric values are handled.
+
+This image shows Comma Seperated Variable data. [/support/docview.wss?uid=nas8N1018297&aid=4] [/support/docview.wss?uid=nas8N1018297&aid=4]
+
+DIF (Lotus)
+
+DIF stands for Data Interchange Format. It was originally instated by Lotus long ago. It is still a valid file format that can be used by several different packages. The data representation of a DIF File is not very meaningful when displayed.
+
+DOS Random/DOS Random Type 2
+
+When using DOS Random file type, data transfer downloads the data exactly as it is on the IBM® Power™ Systems. It has no concept of a carriage return/line feed (CR/LF). It is similar to No Conversion except that it does translate the EBCDIC values to ASCII. DOS Random was the only transfer method that would fill in leading zeros on numeric values until V5R1 Client Access Express added a switch on ASCII file format to pad leading zeros.
+
+This image shows DOS Random Type 2 data. [/support/docview.wss?uid=nas8N1018297&aid=5] [/support/docview.wss?uid=nas8N1018297&aid=5]
+
+No Conversion
+
+No Conversion will bring a file down to the PC in EBCDIC. It will not convert the EBCDIC code to ASCII and will result in unreadable data. You will, however, be able to transfer the unconverted file back to the Power Systems and read it there. A file that has not undergone conversion looks like this:
+
+This image shows No Conversion data. [/support/docview.wss?uid=nas8N1018297&aid=6] [/support/docview.wss?uid=nas8N1018297&aid=6]
+
+
+
+Tab Delimited Text
+
+Client Access Express includes support for the Tab Delimited Text file format. In a Tab Delimited Text file, the fields are separated by tabs. Each row ends with a line ending combination of carriage return line feed.
+
+
+This image shows Tab Delimited Text data. [/support/docview.wss?uid=nas8N1018297&aid=7] [/support/docview.wss?uid=nas8N1018297&aid=7] 
+
+
+WK4 (Lotus)
+
+Client Access Express data transfer includes the capability to transfer files with the Lotus 1-2-3 .WK4 file format. The Lotus 1-2-3 .WK4 file format can handle a maximum of 8192 rows per sheet. The data is not readable when viewed from a DOS editor.
+
+BIFF7 (Excel 97) and BIFF8 (Excel 2000)
+
+Support has been added in Client Access Express V5R1 for Microsoft Excel BIFF7 and BIFF8 file formats.
+
+BIFF7 is an extension of the BIFF5 file format supported on earlier versions of data transfer. BIFF5 and BIFF7 support have both been expanded to allow multiple sheets to be written to an Excel workbook. To take advantage of this new functionality, select BIFF5 or BIFF7 for the PC file type, then select Details and then Create extra sheets when first sheet overflows. 16,384 records will be allowed per sheet and overflow sheets will be created as necessary. This option is turned OFF by default for the BIFF5 file type. The option is turned ON by default for the BIFF7 file type.
+
+The major difference between BIFF7 and BIFF8 is that BIFF8 character data is stored in UNICODE. Like BIFF5 and BIFF7, BIFF8 support allows multiple sheets to be saved within a workbook. 65,535 records will be allowed per sheet and overflow sheets will be created as necessary.
+
+1-2-3 Lotus (Lotus 1-2-3 97 Edition)
+
+Support has also been added in V5R1 for the Lotus 1-2-3 file type, which is the standard type used in the 97 edition of Lotus 1-2-3. Lotus WK4 and Lotus 1-2-3 file types use the same LMBCS (Lotus Multi-Byte Character Set) character conversion routines so the existing WK4 selectively installed option has been expanded to include 1-2-3 support. The Lotus 1-2-3 file type also includes support for the UNICODE character set and new 1-2-3 numeric storage types. Like WK4 file support, Lotus 1-2-3 file support includes the capability to read and write records to multiple sheets within a single workbook.
+
+1-2-3 Lotus Version 9
+
+Support has been added in V5R2 for the Lotus 1-2-3 Version 9 file type. Lotus 1-2-3 Version 9 can handle a maximum of 65536 rows per sheet. Data Transfer supports only NUMBER, LABEL (character), and FORMULA cells resulting in numeric data for this file type.
+
+Unicode Text
+
+Support has been added in V5R3 for the Unicode Text file type. The Unicode file type can be modified to: 
+
+o Truncate spaces from the end of records. This eliminates the trailing spaces from rows in ASCII and Unicode text files. o Pad numeric fields with leading zeroes. This replaces the spaces by padding numeric fields with zeroes. o Add ByteOrder Mark(BOM). This includes a BOM at the beginning of the file. By examining the BOM, some applications can determine if the file is UTF-8, Unicode Little Endian, or Unicode Big Endian. 
+Microsoft Excel XML Spreadsheet 
+
+Support has been added in iSeries Access V5R4 for the Microsoft Excel XML Spreadsheet file type. With this file type all data will be written as UTF-8. The translate from and CCSID options will be disabled when this file type is selected. This file type can be modified to: o Create extra sheets when the first sheet overflows o Include column headings o Include column headings on extra sheets  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 
+HISTORICAL NUMBER
+ 13020750

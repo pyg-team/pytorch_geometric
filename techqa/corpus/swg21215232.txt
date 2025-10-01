@@ -1,0 +1,77 @@
+Title: IBM Using the onstat command to obtain Thread profile counters to make Performance Analysis - United States
+
+Text:
+Thread profile counters onstat -p performance TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ To keep a system healthy it is important to know the type of activity a session thread is doing; activities that can be evaluated based on operations such as reads, writes, updates, deletes, commits, rollbacks, lock requests, lock waits or sequential scans. 
+
+RESOLVING THE PROBLEM
+
+INTRODUCTION
+
+In IBM® Informix® Dynamic Server™ (IDS), you can use the onstat command to get system activity information in general, or by thread. Using onstat -p you can obtain overall system information that allows the detection of a sudden increase in workload.
+If you want to analyze the system workload by thread, you can use the onstat -g tpf command. With these two commands you can find an unusual application behavior associated to slow performance or bottleneck. Or you could simply evaluate the system impact with the launch of a new application. 
+
+
+STEPS
+
+1. To display overall system profile information use the following:
+
+
+
+ * onstat –p
+ * 
+ * 
+ * [/support/docview.wss?uid=swg21215232&amp;aid=1]
+ * 
+ * 
+ * 
+
+Take a look at the values displayed in read, write, rewrite, delete, commit and rollbk fields to analyze operations coming from select, insert, update, delete, commit and rollback SQL Statements. If these counters increase rapidly in a short period of time, this can indicate that there is a thread taking an important amount of system resources. It can be a new application recently implemented or an user doing something unusual. Then you would possibly would want to look at this information by thread. 
+
+
+2. To obtain information by thread you can use the following command: 
+
+ * onstat –g tpf 
+ * 
+ * 
+ * [/support/docview.wss?uid=swg21215232&amp;aid=2]
+
+
+
+ * tid thread Identifier
+ * 
+ * lkreqs number of lock requests
+ * 
+ * lkw number of lock waits
+ * 
+ * isrd number of reads 
+ * 
+ * iswr number of writes
+ * 
+ * isrw number of updates
+ * 
+ * isdl number of deletes
+ * 
+ * isct number of commits
+ * 
+ * isrb number of rollbacks
+ * 
+ * seq number of sequential scans
+
+
+From data analysis you can detect the following: 
+
+A. Session threads doing most work reading data (Select queries) or modifying data (insert, update or delete sentences). 
+
+B. Many sequential scans can be a symptom of bad index definition that affect system performance. 
+
+C. Number of transactions processed in a period of time. 
+
+D. Lock use and lock efficiency. 
+
+A thread consuming a lot of system resources and running for a long time can be detected monitoring the ready queue ( onstat -g rea), before using onstat -g tpf to see what it is doing. 
+
+Once you have obtained a thread id or thread ids, you might need to identify the session that a thread belongs to. To find this, refer to the related information. RELATED INFORMATION
+ How to find the session id (sessid) of a thread (tid) [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21209924]

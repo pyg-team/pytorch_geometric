@@ -1,0 +1,47 @@
+Title: IBM HTTP Error 28 Timeout was reached - United States
+
+Text:
+HTTP 28; IEM; TEM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This issue is seen in V9 installations or upgrades. It is due to the console timeout being only 30 seconds. 
+
+Example :
+
+When attempting to create custom content from wizards such as a software distribution wizard (MSI) or Windows Registry Wizard, I am unable to create the task and get a message of "Failed to import 
+content: HTTP Error 28 Timeout was reached". 
+
+This also happens under BigFix Labs -- Cache Management. When I attempt to adjust the cache size on my relay servers, I get the error "Failed to import content: HTTP Error 28 Timeout was reached". I am 
+unable to change this value. 
+
+This can be seen in almost any application that is run from the Console. 
+
+SYMPTOM
+ "***************************************: HTTP Error 28 Timeout was reached". 
+
+The asterisks can will be a message to do with the task you are attempting :
+
+ie:
+
+unable to create the task and get a message of "Failed to import content: HTTP Error 28 Timeout was reached". when trying to import an XML file.
+
+CAUSE
+_BESData_Comm_TimeoutSeconds is set to 30 seconds.
+
+
+
+DIAGNOSING THE PROBLEM
+Look in the BESRelay.log for HTTP 28 errors.
+
+
+
+RESOLVING THE PROBLEM
+This should be done on the TEM server and ALL machines that will run the console remotely. 
+
+
+in the BES Console, go to All Content, then computer. 
+right click on the computer you wish to change the setting for and then choose Edit Settings. 
+If the variable is not in the list available click the Add button type (or cut and paste) the variable name into the setting name box and put 120 in the Setting value box then click ok 
+
+Check that the setting and value now appear in the display box, then click on OK. 
+The setting will take effect as soon as the client evaluates it. You can right click and press the Refresh option to speed it up a little, if you wish.

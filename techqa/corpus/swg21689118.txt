@@ -1,0 +1,25 @@
+Title: IBM Workplace XT can only bring up 'My Workplace' menu - United States
+
+Text:
+Tools; Application Engine Administrators Access Roles TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After bootstrapping Site Preferences to a new object store, users can only see My Workplace menu in IBM FileNet WorkplaceXT 
+
+SYMPTOM
+Administrator can no longer see Tools menu, instead only sees My Workplace menu.
+
+
+CAUSE
+Old Access Role was stored in the Primary Views page for "My Workplace". 
+
+RESOLVING THE PROBLEM
+Remove the old Access Role from Primary Views and create a new Access Role: 
+
+ 1. Log on to WorkplaceXT as an administrator 
+ 2. From Site Preferences, select Primary Views and remove the old Access Role listed for "My Workplace. 
+ 3. Click Apply 
+ 4. From Site Prefereces, select Access Roles and recreate the needed role, adding in the group needed. 
+ 5. Click apply 
+ 6. Return to Primary Views, clicking the link "Apply access roles" under "My Workplace" and add the newly created Access Role. 
+ 7. Click apply to complete.

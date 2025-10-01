@@ -1,0 +1,22 @@
+Title: IBM 升级到 WebSphere Message Broker V7.0 后，出现IDocConversionException错误 - United States
+
+Text:
+BIP3450E; mqiinfo; SAP; Adapters; com.sap.conn.idoc; IDocConversionException TECHNOTE (TROUBLESHOOTING)
+
+问题（摘要）
+ 如果Message flow包含SAP节点并正常运行在WebSphere Message Broker (WMB) V7.0, 但当升级运行在IBM Integration Bus (IIB) V9 或 WebSphere Message Broker V8中却出现错误 
+
+症状
+运行时环境里出现下面的错误消息：
+
+BIP3450E: An adapter error occurred during the processing of a message. The adapter error message is: 
+'com.ibm.j2ca.sap.exception.SapIdocException: com.sap.conn.idoc.IDocConversionException: (6) 
+IDOC_ERROR_FIELD_CONVERSION: Value of segment field "PCKG_NO" cannot be converted to datatype NUMERIC. 
+DOCUMENT: type=PORDCR101, number=0000000000000001; SEGMENT: type=E1BPMEPOITEM, definition=E2BPMEPOITEM001; FIELD: name=PCKG_NO, datatype=NUMERIC, value=CY/CY'. 
+
+
+ 
+
+产品别名/同义词
+ WMB
+IIB

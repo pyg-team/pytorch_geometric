@@ -1,0 +1,127 @@
+Title: IBM IV47424: PERFORMANCE DEGRADATION MIGHT BE SEEN DURING REMOTE INVOCATION P OST JAVA 1.5_SR16 -20130521_01 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: N/A
+   .
+   Stack Trace: N/A
+   .
+   First seen from build  after Java 1.5 SR16
+   Build DATE - 20130521_01
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Added System.getProperty in constructor call of
+   org.omg.CORBA_2_3.portable.OutputStream
+   The exorbitant call is causing this performance degradation.
+   WebSphere tests has found degradation of throughput by 9%.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   5.0.0 SR16 FP4
+   .
+   Call this property initially  and based on it set
+   a private static final boolean variable.
+   Use a check of that boolean variable on the constructor.
+   There are performance changes which is causing current ( fixed)
+   626SR6 orb performing better than 626SR5 ORB.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV47424
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA 5 ORB
+   
+   
+ * REPORTED COMPONENT ID
+   620500123
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-22
+   
+   
+ * CLOSED DATE
+   2013-08-28
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA 5 ORB
+   
+   
+ * FIXED COMPONENT ID
+   620500123
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

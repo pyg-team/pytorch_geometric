@@ -1,0 +1,16 @@
+Title: IBM WebSphere eXtreme Scale Is Leap Year Compliant - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ We have had questions from clients asking if WebSphere eXtreme Scale is Leap Year Compliant, and if any problems are expected stemming from WebSphere eXtreme Scale or associated IBM products due to Leap Year. 
+
+There are no known or expected problems.
+(Details below) 
+
+ANSWER
+WebSphere eXtreme Scale and the SDK are leap year and leap second compliant. IBM Java (SDK/JDK) has been doing leap year and leap second testing/verification since 1996, including the non-leap year 2000 without a problem. 
+Leap years and leap seconds in Java are explicitly supported by the public class GregorianCalendar class. This Java class is tested in every release of Java as is part of Java's core functionality. Any Java code that uses the GregorianCalendar class will calculate and determine if a year is a leap year or not.
+
+WebSphere eXtreme Scale does not perform explicit testing for leap year and leap second compliance since it runs on top of the Java SDK which already provides this verification for us. We are not aware of any issues in the past with WebSphere eXtreme Scale associated with leap year or leap second.

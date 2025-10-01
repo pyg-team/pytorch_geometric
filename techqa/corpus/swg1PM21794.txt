@@ -1,0 +1,143 @@
+Title: IBM PM21794: ONE CHAR CAN BE TYPED IN TO CELL IN TM1 WEB AGINST FIREFOX - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The TM1 version is 9.5.1.??The issue is that when we access to
+   the TM1Web through Firefox web browser to open a cube view and
+   try to type numbers or characters in a cell, sometimes the
+   typing characters or numbers are not inserted correctly, only
+   leaving just one last character or number in a cell.??I attach a
+   screen cam.?In this screen cam, we tried to populate 4 cells in
+   a cube view by key typing. We typed '12345' in each cell. The
+   first three cells worked fine. However, the last cell, as you
+   can see, had only '5' after all because 1,2,3,4 characters were
+   deleted by subsequent typing.??I don't catch the rule regarding
+   in what circumstance this unexpected display occurs, but this
+   happens often.??As long as I tested, IE seems okay without this
+   bug.??Many users are using Firefox because TM1 Web shows poor
+   performance in IE. (Actually the poor performance in IE was also
+   main issue on this site and we recommended Firefox for TM1 Web).
+   So this can be a critical if this is not resolved.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the IE, but the cusotmer do not want this for the performace
+   .
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Cannot use the firefox                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See error description.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM Cognos TM1 9.5.2                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code Fix
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM21794
+   
+   
+ * REPORTED COMPONENT NAME
+   TM1 WEB
+   
+   
+ * REPORTED COMPONENT ID
+   5724W49WB
+   
+   
+ * REPORTED RELEASE
+   951
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-02
+   
+   
+ * CLOSED DATE
+   2011-03-17
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TM1 WEB
+   
+   
+ * FIXED COMPONENT ID
+   5724W49WB
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R952 PSN
+   UP

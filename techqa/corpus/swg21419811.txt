@@ -1,0 +1,45 @@
+Title: IBM ITCAM TEMA does not connect to Data Collector. - United States
+
+Text:
+ITCAM TEP Navigator tree DC not connecting TEMA TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ ITCAM DC is connected to the Managing Server, but does not appear to be connected to the TEMA. The ITCAM agent is online in the TEP, but the JVM does not appear under it in the navigation tree. There are no workspaces. 
+
+SYMPTOM
+Unable to expand ITCAM WebSphere navigator in TEP. The JVM does not appear under the navigator tree. 
+
+
+CAUSE
+The Data Collector MBeans that are required for the TEMA are not loading correctly due to permission issue. Look at the following directory and make sure the "read" permission is present for toolkit_config_kwj.xml (and also other files.) Ensure the owner and group that is for the Websphere process is the same for the below files as well. 
+
+ 
+/opt/candle/itcam/WebSphere/DC/itcamdc/etc: 
+toolkit_config_ctg.xml 
+toolkit_config_ims.xml 
+toolkit_config_jdo.xml 
+toolkit_config_kwj.xml 
+toolkit_config_mqi.xml 
+toolkit_config_ra.xml 
+toolkit_custom.properties 
+
+
+
+DIAGNOSING THE PROBLEM
+Check Permission's as well as owner/group for file: 
+
+/opt/candle/itcam/WebSphere/DC/itcamdc/etc/tookit_config_kwj.xml 
+
+to make sure the owner/group is same as WebSphere. 
+
+
+RESOLVING THE PROBLEM
+Changed owner/group for all files and directories to match the owner and group for the WebSphere Process.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMforWebSphere

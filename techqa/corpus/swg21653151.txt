@@ -1,0 +1,124 @@
+Title: IBM Dashboards and queries fail with CLM product versions prior to 4.0.3 - United States
+
+Text:
+alert; flash; dashboard; Query timed out while waiting for index to update; queries; query; We're Sorry... An error occurred while retrieving the dashboard; We're Sorry; An error occurred while retrieving the dashboard TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote provides information about an issue which causes dashboards and queries to fail when using IBM Rational Team Concert (RTC), Rational Requirements Composer or Rational Quality Manager (RQM) versions prior to 4.0.3. 
+
+SYMPTOM
+Note: This issue does not impact versions prior to 4.0.1. 
+
+Symptoms may include the following: 
+
+ 
+
+ * Browser error when trying to access any IBM Rational Collaborative Lifecycle Management (CLM) project area:
+   
+   We're Sorry... An error occurred while retrieving the dashboard:
+   HTTP/1.1 500 Internal Server Error
+   /qm/web/dojo/../../service/com.ibm.team.dashboard.common.internal.service.IDashboardRestService/dashboard?projectName=QM_pop&dojo.preventCache=1365799145000 
+   
+   
+ * JTS.log and CLM application log report errors indicating: Query timed out while waiting for index to complete.
+   
+   The error is similar to the following:
+   
+   
+   WebContainer : 2] ERROR board.service.internal.ProcessWidgetCatalogService -
+
+
+Exception: com.ibm.team.jfs.app.http.HttpInternalServerErrorException: 
+
+Query timed out while waiting for index to update.Please verify that the indexing service is running properly and has finished indexing, and try again. 
+
+at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method) 
+
+at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:56) 
+
+at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:39) 
+
+at java.lang.reflect.Constructor.newInstance(Constructor.java:527) 
+
+at com.ibm.team.jfs.app.util.ErrorUtils.handleErrorResponse(ErrorUtils.java:475) 
+
+at com.ibm.team.jfs.app.util.ErrorUtils.handleErrorResponse(ErrorUtils.java:400)..... 
+
+
+
+
+CAUSE
+One change notifier was used for all CLM applications which could cause the following scenario to fail:
+
+
+ 
+
+ 1. A Requirements Management (RM) resource started to be created
+    
+    
+ 2. A dashboard resource was created at the same time
+    
+    
+ 3. Since the RM resource was still being created, the dashboard resource could not be notified
+    
+    
+ 4. The RM resource creation completed
+    
+    
+ 5. The RM resource was notified
+    
+    
+ 6. The dashboard resource remained in pending state 
+
+
+This issue has been reported as APAR PM89015 [http://www.ibm.com/support/docview.wss?uid=swg1PM89015] and tracked in Jazz Defect Work item 26056 [https://jazz.net/jazz/web/projects/Jazz%20Foundation#action=com.ibm.team.workitem.viewWorkItem&id=260564] 
+DIAGNOSING THE PROBLEM
+Steps to verify that you are facing this defect 
+
+ 
+
+ 1. Access https://clmserver:port/jts/indexing. This will bring up the index status xml file.
+    
+    
+ 2. Search for<jazz:backlog rdf:datatype="http://www.w3.org/2001/XMLSchema#int" >. 
+    
+    See if the value is set to 1 or higher number, similar to this:
+    
+    <jazz:backlog rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</jazz:backlog>
+    
+    If yes, then:
+    
+    
+ 3. Wait for a few seconds
+    
+    
+ 4. Refresh the indexing page
+    
+    
+ 5. Search for the same string
+    
+    
+ 6. Check to see if the value remains at 1 or a higher number
+    If yes, then you are most likely facing the issue
+
+RESOLVING THE PROBLEM
+ 
+
+Upgrade the CLM server to version 4.0.3 or above. 
+
+
+Workaround
+
+A temporary workaround is to run repotools -suspendIndexer command to suspend the index service, then immediately restart it by running repotools -resumeIndexer command. This will help clear the pending query for a period of time. Note that the problem will return when someone tries to create an RM resource again. For detailed syntax of the above two repotools commands, refer to the Repository tools command to temporary stop the indexing service [http://pic.dhe.ibm.com/infocenter/clmhelp/v4r0m4/index.jsp?re=1&topic=/com.ibm.jazz.install.doc/topics/r_repotools_suspendindexer.html&scope=null] section of the IBM Rational Collaborative Lifecycle Management (CLM) Information Center . 
+
+ 
+
+ 
+
+Leverage the Jazz Community The Jazz based products have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://ibm.com/support/docview.wss?uid=swg21319600] for details and links.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Quality Manager Team Server AIX, Linux, Solaris, Windows, z/OS 4.0.1, 4.0.2 Software Development Rational Requirements Composer Team Server Windows, Linux, z/OS 4.0.1, 4.0.2

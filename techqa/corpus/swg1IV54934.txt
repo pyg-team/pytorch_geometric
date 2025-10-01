@@ -1,0 +1,177 @@
+Title: IBM IV54934: THE WINDOWS OS AGENT REPORTS INCORRECT MAXIMUN SIZE OF EVENT LOGS - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 3 (6.3.0-TIV-ITM-FP0003) [http://www-01.ibm.com/support/docview.wss?uid=swg24036775]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the Maximum Log Size of a Windows Event Log is configured
+   to a value equal or greater than 4GB, both Maximum Size and
+   Maximum Size (Superseded) attributes in the Monitored Logs
+   Report attribute group  are reported incorrectly. The 64 bit
+   attribute (Maximum Size) is expected to report it correctly,
+   but it does not.
+   
+   
+   Affected Platforms / Versions:
+   
+    This issue affects all Windows OS agent versions since 6.21 and
+    all supported Windows operating system versions.
+   
+   Diagnostics:
+    set KBB_RAS1=ERROR (UNIT:KNT ALL) (UNIT:KRA ALL) (UNIT:KNL ALL)
+   
+   Example:
+    TBD
+   
+   Initial Impact:
+   Low, single attribute incorrect
+   
+   Additional Keywords:
+   NTLOGINFO
+   MAXSIZE8
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Incorrect Maximum Size attribute in Monitored Logs Report
+   attribute group.
+   
+   
+   When the Maximum log size property of a Windows Event Log is
+   configured to a value equal to or greater than 4GB the Windows
+   OS Agent reports incorrect Maximum Size and Maximum Size
+   (Superseded) attributes in the Monitored Logs Report attribute
+   group.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Internal interface changed to support 64-bit variables and fixed
+    the value of Maximum Size attribute.  Maximum Size (Superseded)
+    now reports Value Exceeds Maximum.
+   
+   
+   
+   The fix for this APAR will be contained in the following
+   maintenance packages:
+   
+   | FixPack | 6.3.0-TIV-ITM-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV54934
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040W
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-02-03
+   
+   
+ * CLOSED DATE
+   2014-02-14
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * FIXED COMPONENT ID
+   5724C040W
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP
+   
+   
+ * R630 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R621 PSN
+   UP
+   
+   
+ * R622 PSN
+   UP

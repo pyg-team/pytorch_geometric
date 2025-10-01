@@ -1,0 +1,29 @@
+Title: IBM Open Mic "What's New in IBM Domino Designer Social Edition" - United States
+
+Text:
+ WEBCAST
+
+ABSTRACT
+ In this Open Mic session, the presenter walked through a 30 minute presentation on "What's New in IBM Domino Designer Social Edition" followed by a Question & Answer session. 
+
+CONTENT
+Questions and Answers from the Open Mic call: 
+
+1.If there is http hang, the entire server has to be restarted? What is the solution for it? We have to restart 
+the server every time in case if http is hung. Is there any improvement in this case? 
+
+Ans : Please create a PMR for the same to analyze the Http hangs.
+
+2. After release of Domino 9.0, is there any bugs reported in the design elements? I had one Java code, 
+it works in 8.5.3 and I am trying to include it domino 9.0 version and I have to check whether it is bug 
+or issue with code. 
+
+Ans : There are no bugs reported so far with the design elements in Domino 9.0 Social Edition
+
+3.The application build in 8.5 will run on 9.0? is there any back ward compatibility?
+
+Ans : Yes. The applications built on 8.5.x will run on 9.0.
+
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]What's New in Designer.pdf [/support/docview.wss?uid=swg27039698&aid=2]What's New in Designer.pdf [/support/docview.wss?uid=swg27039698&aid=1]

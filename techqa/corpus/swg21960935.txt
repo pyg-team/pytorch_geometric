@@ -1,0 +1,64 @@
+Title: IBM Security Bulletin: Vulnerability in DH ciphers affects IBM Security key lifecycle manager (CVE-2015-4000) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The LogJam Attack on Diffie-Hellman ciphers (CVE-2015-4000) affects some configurations of IBM Security Key lifecycle Manager. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-4000 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-4000]
+DESCRIPTION: 
+The TLS protocol could allow a remote attacker to obtain sensitive information, caused by the failure to properly convey a DHE_EXPORT ciphersuite choice. An attacker could exploit this vulnerability using man-in-the-middle techniques to force a downgrade to 512-bit export-grade cipher. Successful exploitation could allow an attacker to recover the session key as well as modify the contents of the traffic. This vulnerability is commonly referred to as "Logjam".
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103294 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103294] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+The following IBM Security Key Lifecycle Manager versions may be affected. 
+· IBM Tivoli Key Lifecycle Manager V1.0, V2.0, V.2.0.1 
+· IBM Security Key Lifecycle Manager V2.5 on distributed platforms
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix TKLM 1.0 IV74817 1.0.0-TIV-TKLM-FP0008 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FIBM+Tivoli+Key+Lifecycle+Manager&fixids=1.0.0-TIV-TKLM-FP0008.&source=SAR] TKLM 2.0 IV74818 2.0.0-ISS-TKLM-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FIBM+Tivoli+Key+Lifecycle+Manager&fixids=2.0.0-ISS-TKLM-FP0010&source=SAR] TKLM 2.0.1 IV74819 2.0.1-ISS-TKLM-FP0008 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FIBM+Tivoli+Key+Lifecycle+Manager&fixids=2.0.1-ISS-TKLM-FP0008&source=SAR] SKLM 2.5 IV74820 2.5.0-ISS-SKLM-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FIBM+Tivoli+Key+Lifecycle+Manager&fixids=2.5.0-ISS-SKLM-FP0006&source=SAR] WORKAROUNDS AND MITIGATIONS
+There are multiple workaround cases: 
+
+Case 1: TKLM/SKLM configuration file has the TransportListener.ssl.ciphersuites property set with DHE or DH cipher suites. 
+
+Workaround: Remove DHE and DH ciphers and set only non-DH ciphers in this property. If only one cipher is mentioned which is DHE or DH and user is unsure about which ciphers to use then comment out this property or specify JSSE_ALL and move to Case 2. 
+
+Case 2: TKLM/SKLM configuration file does not have the TransportListener.ssl.ciphersuites property specified or TransportListener.ssl.ciphersuites property is set to a value of JSSE_ALL. 
+
+Workaround: Specify this property with non-DH ciphers or create a custom Cipher suite group with no DHE and DH ciphers by logging into Websphere Application Server. Users can create custom cipher suites in the WAS console UI from SSL certificate and key management > SSL configurations > NodeDefaultSSLSettings > Quality of protection (QoP) settings 
+
+Case 3: TKLM/SKLM configuration file has the TransportListener.ssl.ciphersuites property set to cipher suites which does not include DHE and DH cipher suites 
+
+Workaround: Users are safe from this vulnerability and nothing needs to be done. 
+
+Name of TKLM/SKLM config file for TKLM v1.x to v2.0.x is TKLMgrConfig.properties and for SKLM v2.5.x it is SKLMConfig.properties 
+
+For details, see link: http://www-01.ibm.com/support/docview.wss?uid=swg21960261 [http://www-01.ibm.com/support/docview.wss?uid=swg21960261] 
+
+You should verify applying this configuration change does not cause any compatibility issues. Not disabling the DHE/DH cipher will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the DHE/DH cipher and take appropriate mitigation and remediation actions.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] ACKNOWLEDGEMENT
+The vulnerability was reported to IBM by The WeakDH team at https://weakdh.org [https://weakdh.org] 
+
+CHANGE HISTORY
+ 12 June 2015: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

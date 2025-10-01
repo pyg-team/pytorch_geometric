@@ -1,0 +1,80 @@
+Title: IBM Debugging TEPS Eclipse Help Server problems - United States
+
+Text:
+tepsiehs TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to access Help pages from within the TEP Client, it connects to a link like "http://<hostname>:9999/ . . . "; but the link does not work, failing to connect to the host on port 9999. On the TEPS, the IBM Eclipse Help Server (IEHS) appears to be running. 
+
+SYMPTOM
+Trying to access Help menus from within the TEP client fails to render pages correctly because the Help Server component is not running. Starting the TEPS is supposed to start the Eclipse Help Server automatically, but afterwards it does not appear. An "itmcmd agent start kf" command says it is started, but the "netstat -na | grep 9999" command does not show the default port 9999 in the LISTEN state.
+
+
+DIAGNOSING THE PROBLEM
+Checking running components using "cinfo -R" shows the "kf" component running ("kf" is the product code for the TEPS IEHS). Attempting to stop it using "itmcmd agent stop kf" will fail. If the process is manually stopped using the kill command, and an attempt is made to restart it using "itmcmd agent start kf", it will state that the Agent is started. A "netstat -na | grep 9999" command will show that the default port is not in a LISTEN state. If this is the case, then it's likely that the IEHS process is running, but it is not initializing completely. 
+
+To debug the startup to confirm if it's hanging, edit <InstallDirectory>/<architecture>/kf/IC_start.sh, where <InstallDirectory> is the directory where ITM is installed (sometimes called CANDLEHOME) and <architecture> is the abbreviation code for the platform it is running on. For example, "/opt/IBM/ITM/li6263/kf/IC_start.sh".
+
+Within IC_start.sh, on the line that shows:
+
+$javaExe -classpath eclipse/plugins/org.eclipse.help.base_3.1.0/helpbase.jar org.eclipse.help.standalone.Infocenter -eclipsehome eclipse -plugincustomization plugins/com.ibm.fw.doc/plugin_customization.ini -port 9999 -command start -noexec
+
+add "-debug -consoleLog" just after where it has "-port 9999". It should appear like this:
+
+$javaExe -classpath eclipse/plugins/org.eclipse.help.base_3.1.0/helpbase.jar org.eclipse.help.standalone.Infocenter -eclipsehome eclipse -plugincustomization plugins/com.ibm.fw.doc/plugin_customization.ini -port 9999 -debug -consoleLog -command start -noexec
+
+Make sure the TEPS IEHS Eclipse Help Server is not running. You can check the process table using "ps -ef" and confirm it's not there. It appears similar to the following:
+
+root 25852 25842 0 Sep10 ? 00:00:16 /opt/IBM/ITM/li6263/iw/java/jre/bin/java -Dserver_port=9999 -cp startup.jar org.eclipse.core.launcher.Main -nosplash -application org.eclipse.help.base.infocenterApplication -data /opt/IBM/ITM/li6263/kf/eclipse/workspace -plugincustomization plugins/com.ibm.fw.doc/plugin_customization.ini
+
+If it is running, and an "itmcmd agent stop kf" command does not stop it, then do a "kill <PID>" of the process ID to force it to stop. Then retry an "itmcmd agent start kf" to restart it. It will indicate afterwards that it started. 
+
+Review the newest <InstallDirectory>/logs/<hostname>_kf_1*.log file. You can issue "ls -ltr *kf*.log", which does a reverse-sorted listing with the most recent file at the bottom of the list to find it easier. On a working system where IEHS starts correctly, it has these lines: 
+
+...
+isApplicationRunning? false
+isApplicationRunning? false
+isApplicationRunning? true
+Eclipse launched
+Lock released.
+
+On a system where IEHS is not starting completely, it never shows "isApplicationRunning? true". Instead, it repeatedly shows the "isApplicationRunning? false" message. 
+
+If this is the case, review the <InstallDirectory>/<archictecture>/kf/eclipse/workspace/.metadata/.log file. Look for entries mentioning SAXParseException errors similar to the following, and note the directories it identifies: 
+
+!ENTRY org.eclipse.help 4 0 2012-05-15 21:42:22.366 
+!MESSAGE Failed to parse Table of Contents file, URL: 
+file:///com.ibm.kdp.doc/kdp.xml at line: 194, column: 6. 
+The element type "toc" must be terminated by the matching end-tag 
+"</toc>". 
+!STACK 0 
+org.xml.sax.SAXParseException: The element type "toc" must be terminated 
+by the matching end-tag "</toc>". 
+.... 
+!ENTRY org.eclipse.help 4 0 2012-05-15 21:42:22.486 
+!MESSAGE Failed to parse Table of Contents file, URL: 
+file:///com.ibm.kp1.doc/toc.xml at line: 87, column: 3. 
+The element type "toc" must be terminated by the matching end-tag 
+"</toc>". 
+!STACK 0 
+org.xml.sax.SAXParseException: The element type "toc" must be terminated 
+by the matching end-tag "</toc>". 
+at 
+org.apache.xerces.util.ErrorHandlerWrapper.createSAXParseException(Unkno 
+wn Source) 
+...
+</code>
+
+
+
+RESOLVING THE PROBLEM
+In the examples above, it identifies the com.ibm.kdp.doc and com.ibm.kp1.doc directories. To address the issue for this particular example: 
+
+
+1. Make a backup copy of <InstallDirectory>/<architecture>/kf/eclipse/plugins/com.ibm.fw.doc/plugin_customization.ini to another filename/path for safekeeping. Edit the original file. Each line references a path to a toc.xml or other XML file that it wants to try to load when initializing. Remove lines from this file that the toc.xml lists that were referenced in the errors above. You can also remove lines that represent Agents that the users have never used, or those that have been uninstalled and are left-behind, since the uninstall does not automatically remove the entries from plugin_customization.ini.
+
+2. Since the SAXParseException references com.ibm.kdp.doc, look at the <InstallDirectory>/<architecture>/kf/eclipse/plugins/com.ibm.kdp.doc directory. It likely has a bad or missing toc.xml. If this is the case, move the com.ibm.kdp.doc and its contents away somewhere else so that it won't be used when IEHS starts.
+
+3. Since the SAXParseException also references com.ibm.kp1.doc, move <InstallDirectory>/<architecture>/kf/eclipse/plugins/com.ibm.kp1.doc somewhere else so it won't be used by IEHS. 
+
+4. Make sure IEHS is not running; then restart it. Afterwards, confirm the <InstallDirectory>/logs/<hostname>_kf_1*.log file shows it is running this time. If not, again review the <InstallDirectory>/<archictecture>/kf/eclipse/workspace/.metadata/.log file to see if there are any new SAXParseException errors or other errors you might have missed the first time.

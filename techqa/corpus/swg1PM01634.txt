@@ -1,0 +1,245 @@
+Title: IBM PM01634: USER GETTING - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  User getting "AccessDeniedException" and "Failed to retrieve
+   the
+   node for identity" when trying to create draft from expired
+   content.
+   
+   Other Details :-
+   ----------------------------------------------------------------
+   
+   Recreation steps was done on 6.0.1.6 with cf26
+   
+   I did not use any links in my test.
+   
+   I created a 3 stage workflow (draft, publish, expire)
+   
+   I gave a testgroup delete access at the draft stage and
+   no
+   access anywhere else.
+   
+   I gave this same user Editor access to the WCM library.
+   
+   I created a piece of content using admin user.
+   
+   I logged on as a user from testgroup, edited and saved
+   the
+   content (still in draft)
+   
+   I logged back on as admin, moved content to published,
+   then
+   expired and I then created a draft.
+   
+   I logged on as the user in testgroup. I could open the
+   item for
+   edit, but when trying to save, I received message in
+   browser
+   
+   "Unable to access item from repository.
+   Failed to unlock "PMR 80617 content 1":"
+   
+   and this in SystemOut.log
+   ----------------------------------------------------------------
+   
+   
+   [21/10/09 13:40:11:268 BST] 000000d1 ContentServic E   Failed
+   to
+   retrieve the node for identity
+   {f425ac804004b856b88afda1d466b998,
+   com.aptrix.pluto.content.Content} from workspace
+   f425ac804004b856b88afda1d466b998
+   
+   com.ibm.icm.jcr.access.AccessDeniedException: The requested
+   operation
+   violates one or more access constraints.
+   at
+   com.ibm.icm.jcr.NodeImpl.checkPermissions(NodeImpl
+   .java(Compiled
+   Code))
+   at
+   com.ibm.icm.jcr.WorkspaceImpl.getNodeByUuid(WorkspaceImpl
+   .java(C
+   ompiled
+   Code))
+   at
+   com.ibm.icm.jcr.WorkspaceImpl.getNodeByUuid(WorkspaceImpl
+   .java(C
+   ompiled
+   Code))
+   at
+   com.ibm.workplace.wcm.services.repository.RepositoryServiceImpl
+   .
+   getNodeB
+   yUUID(RepositoryServiceImpl.java:432)
+   ...
+   
+   [21/10/09 13:40:11:314 BST] 000000d1 CommandUtils  W   <Null
+   Message>
+   
+   com.ibm.workplace.wcm.services.repository.RepositoryException:
+   IWKMU1062X: Message: The requested operation violates one or
+   more access
+   constraints., Cause:
+   com.ibm.icm.jcr.access.AccessDeniedException: The
+   requested operation violates one or more access constraints.
+   at
+   com.ibm.workplace.wcm.services.content.ContentServiceImpl
+   .lock(C
+   ontentSe
+   rviceImpl.java:3604)
+   ...
+   Caused by: com.ibm.icm.jcr.access.AccessDeniedException: The
+   requested
+   operation violates one or more access constraints.
+   at
+   com.ibm.icm.jcr.NodeImpl.checkPermissions(NodeImpl
+   .java(Compiled
+   Code))
+   at
+   com.ibm.icm.jcr.WorkspaceImpl.getNodeByUuid(WorkspaceImpl
+   .java(C
+   ompiled
+   Code))
+   ----------------------------------------------------------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Problem Summary:
+   PM01634 Unable to access draft from repository,after creating a
+   draft item from an existing item.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Detailed Problem Description:
+   When a draft is created from an existing content item that is in
+   some other stage with different permissions the current stages
+   permissions will be applied to the draft item.  For example, if
+   an item exists in an expired stage and there are no permissions
+   set for that stage.  (Only admin user has access) and the Admin
+   user creates a draft and the draft stage grants groupX edit
+   access  'Unable to access item from repository.' when users in
+   groupX try to access the item.
+   
+   In some cases edit will fail with 'Unable to access item from
+   repository.' in other cases (levels) the item will open and
+   allow for edit but when the user tries to save the item they
+   will get 'Unable to access item from repository.'
+   
+   Problem Analysis:
+   Permission not being set on the draft summary.
+   
+   Problem Solution:
+   WCM has been updated to correctly set the Draft Summary
+   permissions.
+   
+   Affected Users:
+    All Users
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM01634
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   60K
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-20
+   
+   
+ * CLOSED DATE
+   2010-05-25
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60H PSY
+   UP
+   
+   
+ * R60J PSY
+   UP
+   
+   
+ * R60K PSY
+   UP
+   
+   
+ * R60M PSY
+   UP

@@ -1,0 +1,144 @@
+Title: IBM Problems installing NMA agent  (N4 agent) on Linux x86-64 - United States
+
+Text:
+ITM Virtual environments install NMA N4 unable find bundle prerequisites CI addbundles TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The installation of NMA agent from package ITM for Virtual Environment V7.2.0.3 is failing with both remote or local installation on Linux x86-64. 
+
+SYMPTOM
+1) The import of the whole bundle using command: 
+
+/opt/IBM/ITM/bin/tacmd addbundles -i <inst_media>/ITMfVE_Agents/unix
+
+will fail with message:
+
+Unable to find bundle prerequisite: ci 06.22.04.000 li6263
+
+--
+
+2) Even if you succeed in importing the bundle, the remote deploy of N4 agent on a Linux X86_64 fails because the installer recognizes the target node as a 64bit while the agent comes with a different architecture (li6263).
+
+--
+
+3) If you try to install the ITM for VE agents locally on a Linux x86_64, the usual installation procedure does not work for the same reason of point 2.
+The installer recognizes the target node as a 64bit platform and the agents are 32bit and so it does not show the expected list of agents.
+
+
+CAUSE
+The causes for the three scenarios depends on wrong prerequisite levels packaged into ITM for VE 7.2.0.3 for NMA agent, and on unexpected architecture recognized by the installer when trying to install the agent on the target node, if this one is a Linux x86-64.
+
+
+RESOLVING THE PROBLEM
+The issues should be corrected at Installer level, APAR IV84919 has been opened to fix them. 
+
+Anyway, since the correction involves the installation component, it will not be available until next release, when the Installation package will be built again. 
+
+Until then, you can bypass the issue with some manual steps. 
+
+--------------- 
+
+1) If the import of agent bundle using command tacmd addbundles fails with message: 
+
+Unable to find bundle prerequisite: ci 06.22.04.000 li6263
+
+this occurs because some agents, particularly N4 agent, have old prerequisites for shared components (ax, ui, gs,jr) that are not part of the ITM_for_VE bundle. 
+
+There is actually a workaround to correctly import the bundle in the depot, but it will not be of any help because remote installation of N4 agent will then fail due to the problem described in item number 2. 
+
+It can be anyway useful to know the workaround as it can be applied to other agents for which remote installation instead correctly works.
+
+You must verify if the prerequisites mentioned in the error message are already present in your depot by using command tacmd viewdepot.
+Beside of the one mentioned in the error message, you must be sure that also the other wanted prerequisites are already present in the depot.
+
+N4 agent has the following prerequisites:
+
+Product Code : n4 
+Deployable : True 
+Version : 062200000 
+Description : Monitoring Agent for Network Devices 
+Host Type : li6263 
+Host Version : li6263,lx8266 
+Prerequisites: ci:062204000 la:ipaddr05400 gs:074027000 jr:051201000 
+ui:062204000 ax:062204000
+
+If all of them are already in the depot, then you can run the tamcd addbundles using flag "-n" (ignore prerequisites), this will allow to correctly import the agent bundle.
+
+If you do not have the wanted prerequisite levels, you have two possible options:
+
+a) retrieve and add them into depot from other ITM installation packages
+b) modify the agent dsc files and change the level of the components required by the agent to match the level delivered with the bundle.
+
+For example, ITM for Virtual Environment 7.2.0.3 delivers CI component at level 06.30.05.000, so if we consider N4 agent, you may need to change the file n4li6263.dsc in the rows:
+
+<PrereqProdCode>ci</PrereqProdCode>
+
+<PrereqVersion>
+
+<Version>06</Version>
+
+<Release>22</Release>
+
+<Mod>04</Mod>
+
+<Level>000</Level>
+
+
+to 
+
+
+<PrereqProdCode>ci</PrereqProdCode>
+
+<PrereqVersion>
+
+<Version>06</Version>
+
+<Release>30</Release>
+
+<Mod>05</Mod>
+
+<Level>000</Level> 
+
+ 
+
+The same for other components in case they are also missing from your depot. 
+
+The dsc files are into <installation_media>/ITMfVE_Agents/unix folder. 
+
+Repeat the tacmd addbundles command and it should now work fine. 
+
+As previously said, please consider that this scenario may occur also for agents different than N4, and the workaround is applicable also for them. 
+
+Of course the target dsc file name changes accordingly to the agent type and related architecture. 
+
+ 
+
+2) The above workaround can help in case the issue is only related to backleveled prerequisite packages. 
+
+Anyway, once you applied it, if the target node for the N4 agent is a Linux x86-64, you will anyway not be able to install it remotely.
+The remote deploy of N4 agent on a Linux X86_64 fails because the installer recognizes the target node as a 64bit while the agent comes with a different architecture (li6263). 
+The quickest workaround in this case is to install the agent locally.
+
+3) If you try to install the ITM for VE agents locally on a Linux x86_64, the usual installation procedure does not work for the same reason of point 2. 
+The installer recognizes the target node as a 64bit platform and the agents are 32bit. 
+So the installer menu will show no available agents to be installed.
+
+You need to proceed as follow:
+
+a) Run the local installation of N4 agent on target machine and proceed as usual when you are prompted with Installer initial questions.
+b) Select Other operating systems when you are showed this panel
+
+[/support/docview.wss?uid=swg21983839&aid=1] [/support/docview.wss?uid=swg21983839&aid=1]
+
+c) Then select Linux Intel R2.6 R3.0 (32 bit)
+
+[/support/docview.wss?uid=swg21983839&aid=2] [/support/docview.wss?uid=swg21983839&aid=2]
+
+d) At this point you will see the list of agents that can be installed on the machine. Select the option for the n4 agent and installation will be completed successfully
+
+[/support/docview.wss?uid=swg21983839&aid=3] [/support/docview.wss?uid=swg21983839&aid=3]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Tivoli Monitoring for Virtual Environments V7.2.0.3

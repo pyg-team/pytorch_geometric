@@ -1,0 +1,21 @@
+Title: IBM Maximo 7.6 support for Oracle 12.2  ( 12c Rel 2 ) - United States
+
+Text:
+TPAEDATABASE; oracle; 12; rel; release; 2; database; support; standard; enterprise; edition; supported; maximo TECHNOTE (FAQ)
+
+QUESTION
+ Is Maximo 7.6 supported with an Oracle 12c Rel 2 database. 
+
+ANSWER
+Yes, development have confirmed support for 12c Rel 2, both Standard and Enterprise server versions with a provision that the driver used must be changed. The support Matrix will be updated to reflect this. 
+
+The 11.2.0.3 driver must be download from
+http://www.oracle.com/technetwork/apps-tech/jdbc-112010-090769.html [http://www.oracle.com/technetwork/apps-tech/jdbc-112010-090769.html] and
+used to replace the current driver.
+
+you will need to replace oraclethin.jar in the MAXIMO folder.
+First download the correct version of JDBC driver from Oracle website
+and then rename it to oraclethin.jar and then copy it to
+maximo\applications\maximo\lib
+
+You will then need to rebuild and redeploy the maximo ear file.

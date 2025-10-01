@@ -1,0 +1,131 @@
+Title: IBM WebSphere MQ for multiplatforms V7.5 readme - United States
+
+Text:
+readme WMQ v7.5 WMQ 7.5 MQSeries 7.5 PRODUCT README
+
+ABSTRACT
+ This document contains the WebSphere MQ readme for product version 7.5.0.0 
+
+CONTENT
+Abstract
+
+
+------------
+This document contains the WebSphere MQ readme for product version 7.5.0.0
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+DESCRIPTION
+-------------------
+The latest version of this file can be found at:
+http://www.ibm.com/support/docview.wss?uid=swg27006097 [http://www.ibm.com/support/docview.wss?uid=swg27006097]
+or translated versions at:
+ftp://public.dhe.ibm.com/software/integration/wmq/docs/V7.5/readme/ [ftp://public.dhe.ibm.com/software/integration/wmq/docs/V7.5/readme/]
+It describes product limitations and known problems.
+
+In addition to this file, you can find more information on the WebSphere MQ Web 
+site: http://www.ibm.com/software/integration/wmq/ [http://www.ibm.com/software/integration/wmq/]
+
+The SupportPac Web page is at: 
+http://www.ibm.com/support/docview.wss?uid=swg27007205 [http://www.ibm.com/support/docview.wss?uid=swg27007205]
+
+For current information about known problems and available fixes, see the Support 
+page of the WebSphere MQ Web site at: 
+http://www.ibm.com/software/integration/wmq/support/ [http://www.ibm.com/software/integration/wmq/support/]
+
+Web documentation updates
+The latest updates to the Web-based WebSphere MQ documentation are available from
+the WebSphere MQ Web site at: 
+http://www.ibm.com/software/integration/wmq/library/ [http://www.ibm.com/software/integration/wmq/library/]
+
+Announcement letter
+The announcement letter for WebSphere MQ Version 7.5 (US English) is available at:
+http://www-01.ibm.com/common/ssi/cgi-bin/ssialias?infotype=AN&subtype=CA&htmlfid=897/ENUS212-091&appname=USN#h2-availx [http://www-01.ibm.com/common/ssi/cgi-bin/ssialias?infotype=AN&subtype=CA&htmlfid=897/ENUS212-091&appname=USN#h2-availx]
+
+See the announcement letter for the following types of information: 
+- Detailed product description, including description of new function 
+- Product-positioning statement 
+- Ordering details 
+- Hardware and software requirements 
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+UPDATE HISTORY
+18 May 2012 - Updates for WebSphere MQ version 7.5.0.0
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++ ++
+++ Limitations and known problems ++
+++ ++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+JMS and Java client applications using AMS in client mode
+--------------------------------------------------------------------------
+Any JMS or Java client application (including WebSphere MQ Explorer and Managed File Transfer Agents) cannot use Advanced Message Security in client mode with a Queue Manager earlier than version 7.5. In order to use message protection policies, these applications either need to interact with a v7.5 Queue Manager, or connect in local bindings mode to a Queue Manager on the same machine as the application.
+
+
+AMS deployment limitations for Java applications
+-------------------------------------------------------------
+The WebSphere MQ 7.5.0.0 JCA resource adapter does not contain the AMS classes,
+and AMS is not supported in client mode when using this RA.
+For applications running in Java EE application servers, you can use AMS in one
+of the following ways:
+Use bindings mode to connect to a 7.5 queue manager on the same machine as the
+application server.
+Use a previous release of the WebSphere MQ JCA RA with a previous release of
+WebSphere MQ Advanced Message Security as a client to connect to a 7.5 queue
+manager.
+
+
+Coexistence with other products using GSKit security on AIX
+---------------------------------------------------------------------------
+On AIX systems, if there is a global GSKit installation in /usr/lib[64]
+there might be a clash when WebSphere MQ attempts to load its GSKit libraries.
+To solve this issue, set the LIBPATH environment variable to point to the 
+directory where the WebSphere MQ GSKit libraries are located. You must set the 
+LIBPATH variable before running the WebSphere MQ application and queue manager.
+
+
+AIX uninstallation
+---------------------
+On certain levels of AIX, it is possible to uninstall WebSphere MQ while 
+queue managers are still running. Our intention is to prevent this situation 
+where possible to help customers avoid unintentional breakages.
+This issue is resolved in latest AIX maintenance:
+
+http://www.ibm.com/support/docview.wss?uid=isg1IV13738 [http://www.ibm.com/support/docview.wss?uid=isg1IV13738]
+This fix is in: Package name: 6100-06 Service Pack 7 Release date: April 2012
+
+http://www.ibm.com/support/docview.wss?uid=isg1IV08698 [http://www.ibm.com/support/docview.wss?uid=isg1IV08698]
+This fix is in: Package name: 6100-07 Service Pack 2 Release date: December 2011
+
+http://www.ibm.com/support/docview.wss?uid=isg1IV14774 [http://www.ibm.com/support/docview.wss?uid=isg1IV14774]
+This fix is in: Package name: 7100-00 Service Pack 5 Release date: April 2012
+
+http://www.ibm.com/support/docview.wss?uid=isg1IV08782 [http://www.ibm.com/support/docview.wss?uid=isg1IV08782]
+This fix is in: Package name: 7100-01 Service Pack 2 Release date: December 2011
+
+
+Platform notes
+------------------
+WebSphere MQ Version 7.5 is not available for IBM i and z/OS.
+
+The latest version of WebSphere MQ for these platforms is:
+WebSphere MQ for z/OS Version 7.1
+WebSphere MQ for IBM i Version 7.1
+
+For information about the latest versions of WebSphere MQ for IBM i and z/OS,
+see: http://www.ibm.com/software/integration/wmq/ [http://www.ibm.com/software/integration/wmq/].
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2012/6/15 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

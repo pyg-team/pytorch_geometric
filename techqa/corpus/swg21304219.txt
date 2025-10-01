@@ -1,0 +1,41 @@
+Title: IBM java.io.NotSerializableException is thrown by WebSphere Application Server Community Edition, when the applications are stopped - United States
+
+Text:
+WASCE; HttpSession; HttpSession; HttpSession; java.io.NotSerializableException; java.io.NotSerializableException; java.io.NotSerializableException; WAS CE; WAS CE; WAS CE; WASCE; WASCE; WASCE; JBoss; JBoss; JBoss; Glassfish; Glassfish; Glassfish; App Server; App Server; WebSphere CE; WebSphere CE; WebSphere CE; WebSphere Community Edition; WebSphere Community Edition; WebSphere Community Edition; IBM CE; IBM CE; IBM CE; Open Source; Open Source; Open Source TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Web applications use javax.servlet.http.HttpSession to store objects pertaining to a client's session. The Web components (Servlets/JSPs) use HttpSession.setAttribute() method to store objects specific to a client's session. If the objects being inserted are not serializable, (that is, the corresponding classes do not implement java.io.Serializable interface) WebSphere Application Server Community Edition might throw a java.io.NotSerializableException exception when the applications are stopped in the administrative console. 
+
+CAUSE
+When Web applications using javax.servlet.http.HttpSession are stopped, the server might throw the following exception:
+
+
+
+12:02:58,671 WARN [[/<web context>]] Cannot serialize session attribute
+<class name> for session <session id>
+java.io.NotSerializableException: 
+at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1081)
+at java.io.ObjectOutputStream.defaultWriteFields(ObjectOutputStream.java:1375)
+at java.io.ObjectOutputStream.writeSerialData(ObjectOutputStream.java:1347)
+at java.io.ObjectOutputStream.writeOrdinaryObject(ObjectOutputStream.java:1290)
+at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1079)
+at java.io.ObjectOutputStream.writeObject(ObjectOutputStream.java:302)
+at org.apache.catalina.session.StandardSession.writeObject(StandardSession.java:1515)
+at org.apache.catalina.session.StandardSession.writeObjectData(StandardSession.java:959) 
+The cause of the exception is due to presence of non-serializable objects in the HttpSession objects. 
+RESOLVING THE PROBLEM
+The preceding exception does not cause any harm to the application or any server components. However, the exception can be avoided by the following work-around. 
+
+ 1. Create a META-INF/context.xml file in the Web application archive.
+    
+    
+ 2. Place the following content in the context.xml file:
+    
+    <Context reloadable="false">
+    <Manager pathname="" /> 
+    </Context> 
+    
+ 3. Redeploy the application.
+
+
+The preceding configuration will eliminate the exception from being thrown by the server.

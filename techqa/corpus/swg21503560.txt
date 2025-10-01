@@ -1,0 +1,42 @@
+Title: IBM How to add Business Insight dashboard into Cognos Connection portal tab. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ When a user attempts to add Business Insight Dashboard to Cognos Connection tab, they cannot see the previously created dashboard in the navigator to add directly to new tab. 
+
+SYMPTOM
+After creating a Business Insight dashboard, users are unable to find the dashboard when using Cognos Connection tab page directly.
+
+ENVIRONMENT
+Cognos 10.1 Business Insight, dashboards created under Business Insight can be added to Cognos Connection tab using Cognos Navigator and Cognos Viewer this is documented in user guides, to add dashboard created in Business insight to Cognos Connection tab outright without using Cognos navigator follow described steps. 
+
+RESOLVING THE PROBLEM
+Step 1 - This task is to get URL for Business Insight Portlet that you want to display in Cognos Connection: 
+
+Open your Business Insight portlet that you want to display in a Cognos Connection Tab copy URL from address bar of a web browser and paste it in a text editor for later uses. If you cannot see the address in your web browser Click on Actions Menu (blue circle with an arrow on top left) and select either of:
+
+* Copy Link to Clipboard (this will show popup window with URL link displayed within which you can copy and paste for later use.)
+* Email Link (this should open your email client and you should be able to see link in your email text, copy and paste it in a text editor for later use.)
+
+Note that you have to check URL obtained from Copy Link to Clipboard or Email text as it might have different starting string as it is likely to be in format that facilitates access from outside of your network and intended for external users so you would have to check and edit parts between http:// and /cognos10/... (if cognos10 is you default web folder for 
+your cognos installation) to match string that is displayed in Address bar when you initially access Cognos Connection.
+
+Alternatively if you are using firefox open this portlet in firefox address should be displayed in the firefox address bar.
+
+Step 2 - in Cognos Connection: 
+
+a) In Cognos Connection -> Create New Page 
+b) Enter Name and Select location -> Next 
+c) Number of Columns -> select at least one
+d) At the bottom right of that screen select -> Add-> new window opens.
+Select -> IBM Cognos Utility -> new window opens select -> HTML Viewer and click green arrow to add it to the Selection pane (this should be the only entry displayed in there) click -> OK then Next 
+e) Style window opens here you can customize title and other properties 
+Click next
+f) Window opens asking for action after closing the wizard, select -> Add the page to portal tabs -> Finish
+g) Open newly created tab -> Edit, dialog window opens.
+h) In this window go to HTML content: inside this box you have to enter the URL of you desired Business Insight portlet that you want to see, this is the URL that we obtained in Step 1.

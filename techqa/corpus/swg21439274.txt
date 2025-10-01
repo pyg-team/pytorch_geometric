@@ -1,0 +1,35 @@
+Title: IBM Data source connection not available for resource jdbc/wbe/repository under heavily loaded cluster configurations - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When installed into a pre-existing cluster and configured to use DB2 as a data source, WebSphere Business Events V7.0.1 runs out of data source connections while processing large numbers of events (10,000 or more) under a stress load condition. 
+
+SYMPTOM
+The following error message is logged in the WebSphere Business Events SystemOut.log: 
+
+ BEER5319W: An error occurred processing event: com.ibm.wbe.server.ProcessingException: BEER3143E: An error occurred while dispatching an event to the grid: com.ibm.websphere.objectgrid.TransactionException: rolling back transaction, see caused by exception.
+BEER0883E: An error occurred while you were attempting to connect to the database jdbc/wbe/repository: com.ibm.websphere.ce.cm.ConnectionWaitTimeoutException: Connection not available, Timed out waiting for ...
+
+
+CAUSE
+The number of database connections is set too low for large volume numbers of event transactions.
+
+
+ENVIRONMENT
+Using DB2 as a configured data source.
+
+
+
+DIAGNOSING THE PROBLEM
+Check the number of Maximum Connections property defined in the Connection Pools section in the WebSphere Business Events DataSource Resource in the WebSphere Application Server Administration Console.
+
+
+
+RESOLVING THE PROBLEM
+Increase the value for WebSphere Application Server Maximum connections property: 
+
+ 1. Start the WebSphere Application Server administration console. 
+ 2. Select Resources > JDBC > JDBC providers > {JDBC provider name} > Data sources > WBE Datasource > Connection pools. [http://l3e2087.hurmqnt.hursley.ibm.com:9060/ibm/console/navigatorCmd.do?forwardName=JDBCProvider.content.main&WSC=true] [http://l3e2087.hurmqnt.hursley.ibm.com:9060/ibm/console/jDBCProviderCollection.do?EditAction=true&refId=JDBCProvider_1183122153343&contextId=cells%3AL3E2087Node01Cell%3Anodes%3AL3E2087Node01%3Aservers%3Aserver1&resourceUri=resources.xml&perspective=tab.configuration] [http://l3e2087.hurmqnt.hursley.ibm.com:9060/ibm/console/com.ibm.ws.console.resources.database.forwardCmd.do?forwardName=DataSource.content.main.old&sfname=factories&scopetile=false&resourceUri=resources.xml&parentRefId=JDBCProvider_1183122153343&contextId=cells%3AL3E2087Node01Cell%3Anodes%3AL3E2087Node01%3Aservers%3Aserver1&perspective=tab.configuration] [http://l3e2087.hurmqnt.hursley.ibm.com:9060/ibm/console/dataSourceCollection.do?EditAction=true&refId=DataSource_1277017114554&contextId=cells%3AL3E2087Node01Cell%3Anodes%3AL3E2087Node01%3Aservers%3Aserver1&resourceUri=resources.xml&perspective=tab.configuration] 
+ 3. Change the value of the Maximum connections property (default 10) to 50 or more for cluster configurations.

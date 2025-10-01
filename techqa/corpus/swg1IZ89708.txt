@@ -1,0 +1,151 @@
+Title: IBM IZ89708: ABILITY TO STITCH ITCAM FOR AD DATA TO ITCAM FOR SOA - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Support transaction tracking of web service requests between
+   
+   WebSphere Application Server and WebSphere Message Broker where
+   the web service client is monitored by ITCAM for AD
+   
+   
+   FITS MR1015106556 Description
+   =============================
+   Ability to stitch ITCAM for AD data to ITCAM for SOA data in TT
+   Topology View when using the Apache AXIS2 SOAP engine
+   Customer would like to see an end to end view of a transaction
+   that passes through the following components
+   .
+   [MQ on Z]  ---> [MQ on Distributed] ---> [MB on Distributed*]
+   ---(SOAP calls)---> [Apache Axis2 SOAP engine in embedded HTTP
+   server in WAS ]  ---(SOAP calls)---->  [MB on Distributed*]
+   *=same server
+   .
+   At the moment it is not possible to stitch such a transaction
+   together in the TT topology view
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  At the moment it is not possible to stitch such a transaction
+   together in the TT topology view
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   
+   * USERS AFFECTED: Those monitoring message flows that use JMS
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Empty horizontal links for JMS messages
+   cause broker to core dump
+   
+   
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Empty horizontal links are checked, preventing an access
+   violation.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+           | LA interim fix | ITCAM for SOA 7.1.1 LA 0011
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ89708
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * REPORTED COMPONENT ID
+   5724SOA00
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-29
+   
+   
+ * CLOSED DATE
+   2010-12-02
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * FIXED COMPONENT ID
+   5724SOA00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

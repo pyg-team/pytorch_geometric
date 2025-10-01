@@ -1,0 +1,46 @@
+Title: IBM Removed Host HBA Ports Still Shown in Views - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Removed host HBA ports may still be shown in the output of certain svcinfo view commands. 
+
+SYMPTOM
+The following commands provide information about host HBA ports which have logged into an SVC cluster: 
+
+ * svcinfo lshost 
+ * svcinfo lshbaportcandidate 
+ * svcinfo lsfabric
+
+
+There are situations when the output of these commands may include host HBA ports which are no longer logged in or even part of the SAN fabric. These stale entries can be safely ignored. 
+
+For example, a host HBA port which has been unplugged from a switch could result in the following behaviour: 
+
+lshost 
+If the host HBA is configured in a host definition then the lshost output may still show the HBA WWPN logged in to SVC nodes. 
+
+lshbaportcandidate 
+If the host HBA is not configured in a host definition then the lshbaportcandidate may still show the HBA WWPN as a candidate. 
+
+lsfabric 
+The host HBA WWPN may still be shown as "inactive". 
+
+RESOLVING THE PROBLEM
+Stale HBA WWPN entries will be removed when one of the following occurs: 
+
+ * Another device logs into the SAN fabric using the same nportid as the stale WWPN 
+ * The SVC port login tables are cleared by either of the following means:  * switch port reset (disable/enable), for each node port that received a login from the stale WWPN 
+    * node reset (shutdown/startup), for each node in the cluster that received a login from the stale WWPN
+   
+   
+ * A software upgrade is applied to the cluster, since this will reset each node in the cluster as part of the installation process
+
+
+This behaviour was addressed in the V5.1.0 release of the SAN Volume Controller software, where stale HBA port entries are automatically removed when the cluster performs a device discovery. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Storage Virtualization SAN Volume Controller V4.2.x Platform Independent V4.2.x

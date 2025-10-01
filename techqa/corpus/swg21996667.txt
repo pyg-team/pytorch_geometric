@@ -1,0 +1,102 @@
+Title: IBM DB2 configuration when installing BigFix on Linux - United States
+
+Text:
+database DB2 connection connect TECHNOTE (FAQ)
+
+QUESTION
+ BigFix Server cannot connect to DB2 database. What to check? 
+
+ANSWER
+You need to perform following checks:
+1. If DB2 is remote, the db2 agent has to be installed on local.
+
+2. The Bigfix Server installer creates the BFENT and BESREPOR databases. 
+
+Note: if you need to create them manually before installing Bigfix Server, then you need to ask for a script with specific instructions to IBM Support. Once the databases have been successfully created, then they can launch the installer with "-reuseDb" option.
+
+3. BigFix installer supports DB2 instances having different names on db2 client and db2 server, but we suggest to use same username for both.
+
+4. BigFix installer supports installation with "db2username" different from "db2instancename" on local, but we suggest to use same username for both.
+
+5. The DB2 instance on both server and client side has to be create correctly.
+Commands to use:
+$DB2SETUP/instance/db2ilist
+$DB2DIR/instance/db2icrt -s client db2inst1
+$DB2DIR/instance/db2icrt -a server -u db2fenc2 db2inst2
+
+6. On DB2 server, the DB2 service has to be correctly created. Check content of file /etc/services as below:
+
+grep -i db2 /etc/services
+
+DB2_db2inst2 60000/tcp
+DB2_db2inst2_1 60001/tcp
+DB2_db2inst2_2 60002/tcp
+DB2_db2inst2_3 60003/tcp
+DB2_db2inst2_4 60004/tcp
+DB2_db2inst2_END 60005/tcp
+
+7. On DB2 server, the "svcname" has to be correctly configured. Check and configure it using commands below:
+
+db2 get dbm cfg | grep -i svcename
+db2 update dbm cfg using svcename db2c_db2inst2
+
+8. On DB2 server, the variable DB2COMM has to be correctly set. Check and set it using commands below:
+
+db2set | grep -i db2comm
+db2set DB2COMM=tcpip
+
+Note: need to stop/start DB2 services ( db2 stop/start )
+
+9. On DB2 server, the Linux Firewall has to be stopped
+
+service iptables status
+
+Rhel 7 and later:
+
+service firewalld status
+
+10. During the installation you will be aked to specify the name of two local users "db2username" and "db2instancename", then you will need to specify the name and password of DB2 remote instance.
+
+Example: "db2inst1" is the local instance and "db2inst2" is the remote instance. Below the installation sequence and the correct way to specify requested information:
+
+===========================================
+
+####################
+DB2 instance name
+The DB2 instance used by the IBM BigFix requires specific configuration for performance optimization.
+It is therefore suggested that you use a dedicated DB2 instance.
+Specify the name of the DB2 instance that you want to use or press <Enter> to accept the default value: db2inst1
+db2inst1
+
+####################
+DB2 local administrative user
+The remote database creation requires the installation of at least one DB2 Client.
+Specify the user name of the local DB2 instance owner that you want to use or press <Enter> to accept the default value: db2inst1
+db2inst1
+
+===========================================
+
+####################
+Remote DB2 connection:
+Specify the hostname of the remote DB2 system:
+remotedb2host
+
+####################
+Remote DB2 connection:
+Specify the remote DB2 port number or press <Enter> to accept the default value: 50000
+60000
+
+####################
+DB2 remote administrative user:
+Specify the username for the remote DB2 administrative user or press <Enter> to accept the default value: db2inst1
+db2inst2
+
+####################
+DB2 remote administrative user password:
+Specify the password of the remote DB2 administrative user:
+
+===========================================
+
+
+RELATED INFORMATION
+ Steps to install BigFix databases before installing Ser [https://eclient.lenexa.ibm.com:9445/search/?fetch=source/TechNote/1994917]

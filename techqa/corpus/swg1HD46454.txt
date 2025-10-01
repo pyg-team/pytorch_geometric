@@ -1,0 +1,175 @@
+Title: IBM HD46454: PART EDITOR: UNABLE TO ADD/MODIFY/CUT SUPPLEMENTARY DOCUMENTS F ROM PART IF PART IS INSTANCED AND INSTANCE LOCKED BY SOMEONE EL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PART EDITOR: UNABLE TO ADD/MODIFY/CUT
+   SUPPLEMENTARY DOCUMENTS FROM PART IF PART
+   IS INSTANCED AND INSTANCE LOCKED BY
+   SOMEONE ELSE.
+   .
+   Step1 User1:  Create a new Part with a new
+   Primary Document
+   Step2 User1:  Attach a new Document to the Part
+   as "supplementary"
+   Step3 User1:  Save
+   Step4 User2:  Instance the new Part into a Product
+   Step5 User2:  Lock the new Part Instance
+   Step6 User2:  Save
+   Step7 User1:  Right click on Primary document,
+   select Modify Document Role, Select Secondary,
+   select OK .
+   .
+   Result:  The result is dependent on which interface
+   you are in.  From the Product Editor you will get the
+   error (even if you own the instance/reference
+   selected) "Another usage of this part has been
+   locked by <userid> so cannot modify document
+   role".  If you send the part reference to the part
+   editor window and attempt the same modify
+   document role function it accepts the request and
+   immediately moves the document to the requested
+   role folder.  The inconsistency between editors will
+   be a source of confusion for the ENOVIA users.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  PART EDITOR: UNABLE TO ADD/MODIFY/CUT SUPPLEMENTARY DOCUMENTS F
+   ROM PART IF PART IS INSTANCED AND INSTANCE LOCKED BY SOMEONE EL
+   S
+   PART EDITOR: UNABLE TO ADD/MODIFY/CUT
+   SUPPLEMENTARY DOCUMENTS FROM PART IF PART
+   IS INSTANCED AND INSTANCE LOCKED BY
+   SOMEONE ELSE.
+   .
+   Step1 User1:  Create a new Part with a new
+   Primary Document
+   Step2 User1:  Attach a new Document to the Part
+   as "supplementary"
+   Step3 User1:  Save
+   Step4 User2:  Instance the new Part into a Product
+   Step5 User2:  Lock the new Part Instance
+   Step6 User2:  Save
+   Step7 User1:  Right click on Primary document,
+   select Modify Document Role, Select Secondary,
+   select OK .
+   .
+   Result:  The result is dependent on which interface
+   you are in.  From the Product Editor you will get the
+   error (even if you own the instance/reference
+   selected) "Another usage of this part has been
+   locked by <userid> so cannot modify document
+   role".  If you send the part reference to the part
+   editor window and attempt the same modify
+   document role function it accepts the request and
+   immediately moves the document to the requested
+   role folder.  The inconsistency between editors will
+   be a source of confusion for the ENOVIA users.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON ENOVIA
+   VERSION 5 RELEASE 17 GA level.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED
+   ON V5R16SP02.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD46454
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA LCA NT>X
+   
+   
+ * REPORTED COMPONENT ID
+   569151700
+   
+   
+ * REPORTED RELEASE
+   515
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-11-10
+   
+   
+ * CLOSED DATE
+   2005-11-21
+   
+   
+ * LAST MODIFIED DATE
+   2006-01-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ENOVIA LCA NT>X
+   
+   
+ * FIXED COMPONENT ID
+   569151700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R516 PSN SP51602
+   UP06/01/04 I 1000

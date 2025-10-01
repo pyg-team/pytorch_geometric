@@ -1,0 +1,77 @@
+Title: IBM HPDJA0116E Cannot contact server. (0x307a8074) - United States
+
+Text:
+HPDJA0116E (0x307a8074) TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We can't login to pdadmin webpage, but via command line we can log in.
+Comes up with following message 
+HPDJA0116E Cannot contact server. (0x307a8074) 
+
+CAUSE
+The certificate stored in WPM's Java keystore, pdwpm.ks, has expired. We can verify this by looking at the pdwpm.properties file that stores the "configured on" date and the 
+Policy Server's ssl-cert-life parameter in the ivmgrd.conf. 
+
+The default certificate lifetime for a certificate signed by the 
+Policy Server is 365 days. 
+
+The easiest means to recover WPM from an expired certificate is to 
+reconfigure WPM. 
+
+To confirm this you could do the following 
+
+To verify this please check: 
+
+1) the file date for pdwpm.ks 
+2) in the pdwpm.properties what is the Config date? 
+
+ie 
+#Config last generated on 
+#Mon Mar 22 14:29:09 CST 2004 
+
+3) what is the parameter "ssl-cert-life" equal to in the ivmgrd.conf? 
+
+If "ssl-cert-life = 365" and the pdwpm.ks file is older than 365 days,
+then we have confirmed that the cert in the pdwpm.ks has expired. 
+
+
+RESOLVING THE PROBLEM
+To fix this problem, you can unconfigure and reconfigure Web Portal 
+
+Manager using the Access Manager for e-business Configuration utility 
+(pdconfig). You can run pdconfig from the command prompt.
+
+With the pdconfig tool, you can simply unconfigure and re-configure the web portal
+manager.
+
+Or you can manually run Java SvrSslCfg to 
+unconfigure/configure WPM into the Access Manager domain to generate a 
+new certificate. 
+
+example, 
+
+Performing SvrSslCfg unconfiguration for Web Portal Manager: 
+
+/usr/WebSphere/AppServer/java/jre/bin/java com.tivoli.pd.jcfg.SvrSslCfg 
+-action unconfig -admin_id sec_master -admin_pwd **** -appsvr_id amwpm 
+-policysvr xyz:7135:1 -cfg_file 
+/opt/PolicyDirector/java/export/pdwpm/pdwpm.properties 
+
+Performing SvrSslCfg configuration for Web Portal Manager: 
+
+/usr/WebSphere/AppServer/java/jre/bin/java com.tivoli.pd.jcfg.SvrSslCfg 
+-action config -admin_id sec_master -admin_pwd **** -appsvr_id amwpm 
+-mode remote -port 9090 -policysvr xyz:7135:1 -authzsvr xyz:7136:1 
+-cfg_file /opt/PolicyDirector/java/export/pdwpm/pdwpm.properties 
+-key_file /opt/PolicyDirector/java/export/pdwpm/pdwpm.ks -cfg_action 
+replace 
+
+The examples are single-line commands and you will need to change to 
+reflect the hostnames of your Policy Server and Authorization Server. 
+The hostname for the Policy Server and Authorization server in the above 
+a commands was "xyz". 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TAM

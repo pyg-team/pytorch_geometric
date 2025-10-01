@@ -1,0 +1,42 @@
+Title: IBM Configuring JRules Execution Unit (XU) transaction support on JBoss - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to configure the JRules XU for no transaction support when deployed in JBoss application server? 
+
+ANSWER
+The XU resource adapter only supports the following two modes of operation: NoTransaction and LocalTransaction . As indicated in this document [http://www-01.ibm.com/support/docview.wss?uid=swg21419201] it is generally recommended to configure the XU for no transaction support. To do so you can follow these steps: 
+
+ 1. Edit in the XU resource adapter (.rar) the file META-INF/ra.xml and set the value of the tag transaction-support to NoTransaction 
+ 2. Edit the JBoss specific deployment descriptor for the XU and make the following changes compared to the default file in the product distribution :  * change the tag tx-connection-factory for the tag no-tx-connection-factory 
+     * remove the tag local-transaction
+    
+    
+ 3. Restart the application server(s)
+
+
+A JBoss 4.2 specific deployment descriptor with no transaction support for JRules 6.7 XU (example for the step 2 above) 
+ <?xml version="1.0" encoding="UTF-8"?>
+ <connection-factories>
+   <no-tx-connection-factory>
+     <jndi-name>eis/XUConnectionFactory</jndi-name>
+     <application-managed-security/>
+     <rar-name>jrules-bres-xu-JBOSS42.rar</rar-name> 
+     <connection-definition>javax.resource.cci.ConnectionFactory</connection-definition>
+ 
+     <config-property name="ConcurrentOpenClose" type="java.lang.Boolean">true</config-property>
+     <adapter-display-name>XU</adapter-display-name>
+ 
+     <min-pool-size>0</min-pool-size>
+     <max-pool-size>50</max-pool-size>
+     <blocking-timeout-millis>50000</blocking-timeout-millis>
+     <idle-timeout-minutes>15</idle-timeout-minutes>
+   </no-tx-connection-factory>
+ </connection-factories>
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0.1, 8.0, 7.5

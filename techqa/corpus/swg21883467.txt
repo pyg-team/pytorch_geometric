@@ -1,0 +1,141 @@
+Title: IBM How to configure SSO between DWC 9.x and TWS 9.x - United States
+
+Text:
+Cross-cell; single sign-on; TWS; TDWC; ltpa; key TECHNOTE (FAQ)
+
+QUESTION
+ What are the steps to configure single sign (SSO) between Dynamic Workload Console (DWC) and the Tivoli Workload Scheduler (TWS) Engine? 
+
+ANSWER
+To configure single sign-on between DWC v9.2 and TWS v9.2 Master Domain Manager (MDM), perform the following steps:
+1. Backup the WebSphere configuration for both WebSphere instances:
+
+As root:
+
+a. [TWS]
+
+cd /opt/IBM/TWA/wastools; bash ./backupConfig.sh -nostop
+
+NOTE: For DWC (b.) If you have not done this already, prior to running the following step run the <TWAUI_Home>/wastools/updateWas.sh script to update the soap.client.props file with the WebSphere admin user, tws_jazz for example, and its password so that scripts like backupConfig.sh and stopServer.sh will not require user credentials to be supplied at the command line. 
+
+For example:
+
+cd /opt/IBM/TWAUI/wastools
+./updateWas.sh -user tws_jazz -password pa55w0rd 
+
+b. [DWC]
+
+cd /opt/IBM/TWAUI/wastools; bash ./backupConfig.sh -nostop
+
+
+2. Update the "Realm name" for the federated registry to the same value for both DWC's and TWS's WebSphere:
+
+a. [TWS]
+Access WebSphere Administrator Console URL:
+
+https://<hostname>:31124/ibm/console
+
+(Where <hostname> is the actual hostname where TWS is installed.)
+
+Login as twsuser
+Navigate to "Security" -> "Global Security"
+Select the [ Configure ] button
+Update the "* Realm name" field to your desired value. For example: TWSRealm
+Select [ Apply ]
+Select the word "Save" in the Message box at the top of the panel.
+
+b. [DWC]
+
+Access WebSphere Administrator Console URL: 
+
+https://<hostname>:16316/ibm/console
+
+(Where <hostname> is the actual hostname where DWC is installed.)
+
+Login as tws_jazz
+
+*Continue with the same steps performed in a. after the Login step.
+** The "* Realm name" field needs to have the same value here as was specified in 2a. ie. TWSRealm
+
+3. Disable automatic LTPA key generation:
+
+a. [TWS]
+
+Access WebSphere Administrator Console URL:
+
+https://<hostname>:31124/ibm/console
+
+Login as twsuser
+Navigate to "Security" -> "Global Security" -> "LTPA" 
+Select the blue words "Key set groups "
+For the row named "NodeLTPAKeySetGroup " inspect the column
+named "Automatically Generate Keys"
+If the value if "false" then there is nothing to do here.
+If the value if "true"
+Select on the word "NodeLTPAKeySetGroup"
+Uncheck the box labled "Automatically generate keys"
+Select [Apply] at the bottom of the panel
+Select the word "Save" at the top in the Messages text box.
+
+b. [DWC]
+
+Access WebSphere Administrator Console URL:
+
+https://<hostname>:16316/ibm/console
+
+Login as tws_jazz
+
+*Continue with the same steps performed in a. after the Login step.
+
+4. Restart WebSphere for both TWS and DWC:
+
+a. [TWS]
+
+As twsuser: /opt/IBM/TWA/wastools/stopWas.sh
+As twsuser: /opt/IBM/TWA/wastools/startWas.sh
+
+b. [DWC]
+
+As root: /opt/IBM/JazzSM/profile/bin/stopServer.sh server1
+As root: /opt/IBM/JazzSM/profile/bin/startServer.sh server1
+
+NOTE: The startServer.sh script retrieves the tws_jazz user and password from soap.client.props.
+
+5. Export and Import a new LTPA key.
+
+a. [DWC]
+
+Access WebSphere Administrator Console URL:
+
+https://<hostname>:16316/ibm/console
+
+Login as tws_jazz
+Navigate to "Security" -> "Global Security" -> "LTPA" )
+In the section named "Cross-cell single sign-on"
+Enter a new password
+Confirm the password
+Enter a new filename including an existing path. For example: /tmp/ltpakey
+Select [Export Keys]
+Select the word "Save" at the top in the Messages text box.
+
+b. [TWS]
+
+Copy the ltpa key file that was exported in step 5a. to the TWS Master server.
+
+Access WebSphere Administrator Console URL:
+
+https://<hostname>:31124/ibm/console
+
+Login as twsuser
+
+NOTE: Follow the same steps as in a. above, but select [Import Keys] instead of [Export Keys]
+
+At this point, the user credentials (userid and password) will be automatically forwarded with connection requests to the desired Engine.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Maestro
+TWS
+IWS
+TWA

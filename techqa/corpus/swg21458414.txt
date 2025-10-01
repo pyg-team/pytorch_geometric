@@ -1,0 +1,88 @@
+Title: IBM Importing DataStage jobs using dscmdimport.exe and received the error:  Unable to save EditServ.impl.JobDefnImpl@bea0bea - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Importing DataStage jobs using dscmdimport.exe and received the error: 
+
+Unable to save EditServ.impl.JobDefnImpl@bea0bea
+
+The job designs seem to look OK in Designer and the jobs are running, but would like to know if there is any impact. The log from dscmdimport.exe shows:
+
+"checksum for C:\exports\myExport.dsx "
+4252570820 37897982 C:\exports\myExport.dsx
+"server="myServer "
+"project="myProj"
+"import C:\exports\myExport.dsx"
+"checksum for C:\exports\myExport.dsx "
+4252570820 37897982 C:\exports\myExport.dsx
+Attaching to 'server/Prod' ...
+Importing 'C:\exports\myExport.dsx' to project 'Prod' ... DSImport started at: 23:37:30 2010-12-10
+Importing Job designs
+Importing myJob
+Line 182398: Unable to save EditServ.impl.JobDefnImpl@bea0bea.Object=ROOT.Class=CJobDefn.
+Importing Job executables
+DSImport ended at: 03:17:33 2010-12-11
+
+
+SYMPTOM
+The following is seen in the systemOut.log. See markups in bold below for the actual completion time of of the transaction in process. The "may be hung" warnings are logged by WAS every 10 minutes or so that a thread is inactive. This is typically because the database operation is still ongoing. The transaction does not timeout until 3600 seconds for inactivity and 7200 seconds overall. The underlined entries below are the thread that times out (00000048). You will see that it was already idle for 10.5 minutes at 23:51:03, its transaction timed out after an hour of inactivity at 0:39:48, then the operation actually completed 10 minutes later at 0:49:06. When the thread returns though, there is no active transaction any longer and thus the error. 
+
+[12/10/10 23:51:03:102 CST] 00000026 ThreadMonitor W WSVR0605W: Thread "ORB.thread.pool : 4" (00000048) has been active for 634069 milliseconds and may be hung. There is/are 1 thread(s) in total in the server that may be hung.
+...
+[12/11/10 0:49:06:382 CST] 00000048 ExceptionUtil E CNTR0019E: EJB threw an unexpected (non-declared) exception during invocation of method "saveAndDelete". Exception data: com.ibm.websphere.csi.CSITransactionRolledbackException: Failed to resume transaction, possibly rolled back; nested exception is: 
+com.ibm.websphere.csi.CSIException: ; nested exception is: 
+javax.transaction.InvalidTransactionException
+at com.ibm.ejs.csi.BeanManaged.preInvoke(BeanManaged.java(Compiled Code))
+at com.ibm.ejs.csi.TransactionControlImpl.preInvoke(TransactionControlImpl.java(Compiled Code))
+at com.ibm.ejs.container.EJSContainer.preInvokeActivate(EJSContainer.java(Compiled Code))
+at com.ibm.ejs.container.EJSContainer.preInvoke(EJSContainer.java(Compiled Code))
+at com.ascential.xmeta.shared.repository.core.EJSRemoteStatefulSandboxRemoteStatefulService_4baa4bb1.saveAndDelete(Unknown Source)
+at com.ascential.xmeta.shared.repository.core._EJSRemoteStatefulSandboxRemoteStatefulService_4baa4bb1_Tie.saveAndDelete(_EJSRemoteStatefulSandboxRemoteStatefulService_4baa4bb1_Tie.java(Compiled Code))
+at com.ascential.xmeta.shared.repository.core._EJSRemoteStatefulSandboxRemoteStatefulService_4baa4bb1_Tie._invoke(_EJSRemoteStatefulSandboxRemoteStatefulService_4baa4bb1_Tie.java(Compiled Code))
+at com.ibm.CORBA.iiop.ServerDelegate.dispatchInvokeHandler(ServerDelegate.java(Compiled Code))
+at com.ibm.CORBA.iiop.ServerDelegate.dispatch(ServerDelegate.java(Compiled Code))
+at com.ibm.rmi.iiop.ORB.process(ORB.java(Compiled Code))
+at com.ibm.CORBA.iiop.ORB.process(ORB.java(Compiled Code))
+at com.ibm.rmi.iiop.Connection.respondTo(Connection.java(Compiled Code))
+at com.ibm.rmi.iiop.Connection.doWork(Connection.java(Compiled Code))
+at com.ibm.rmi.iiop.WorkUnitImpl.doWork(WorkUnitImpl.java(Compiled Code))
+at com.ibm.ejs.oa.pool.PooledThread.run(ThreadPool.java(Compiled Code))
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java(Compiled Code))
+Caused by: com.ibm.websphere.csi.CSIException: ; nested exception is: 
+javax.transaction.InvalidTransactionException
+at com.ibm.ejs.csi.TranStrategy.resumeGlobalTx(TranStrategy.java(Compiled Code))
+... 16 more
+Caused by: javax.transaction.InvalidTransactionException
+at com.ibm.ws.Transaction.JTA.TranManagerImpl.resume(TranManagerImpl.java(Compiled Code))
+at com.ibm.ws.Transaction.JTA.TranManagerSet.resume(TranManagerSet.java(Compiled Code))
+at com.ibm.ejs.csi.TransactionControlImpl.resumeGlobalTx(TransactionControlImpl.java(Compiled Code))
+... 17 more 
+
+[12/11/10 0:49:06:479 CST] 00000048 ThreadMonitor W WSVR0606W: Thread "ORB.thread.pool : 4" (00000048) was previously reported to be hung but has completed. It was active for approximately 4117446 milliseconds.
+
+
+
+RESOLVING THE PROBLEM
+The exceptions in the logs show the save operations were taking longer than an hour which resulted in a transaction time-out in WebSphere. That being said the transaction semantics guarantee that the job was either imported entirely or was not imported at all. So if the job is present, then it is fine - if it is not present, it needs to be imported again. This is assuming that this was an import of new jobs. 
+
+
+If this was an import of existing jobs (i.e., a re-import with updated job designs), then you would need to check the job designs to see if the updates are present or not. Again, if any update is present, then it is safe to assume that the entire job was updated. The same is true in regards to the executable also.
+
+To avoid the errors in the future you can:
+1. Create smaller dsx files that would import within the current time-out
+2. Increase your WAS transaction time-outs and your ISF global session timeout as well.
+
+How to change WAS transaction timeout setting: 
+
+ 1. Go to WAS Admin Console. 
+ 2. On the navigation to the left, select Servers-> Server Types -> Websphere application servers 
+ 3. Go to server1(default)-> Container Services -> Transaction service. 
+ 4. Change the client inactivity timeout.
+
+
+How to change the ISF timeout.  1. Go to IS Web Console. 
+ 2. Under the Administration tab Session Management -> Active Sessions. 
+ 3. Click on Global Session Properties. 
+ 4. Change Inactive Session Timeout.

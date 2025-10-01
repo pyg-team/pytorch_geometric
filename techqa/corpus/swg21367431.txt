@@ -1,0 +1,98 @@
+Title: IBM ** Troubleshooting ** "Method '~' of object '~' failed" / "(0x800A01B8): Automation error" errors when running consolidation - United States
+
+Text:
+tilde split loadbalance TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User clicks 'Group - Consolidate with Status'. User starts a consolidation. However, when the user opens the batch queue afterwards, they notice that the consolidation job has failed with an error message. 
+
+If the end user disables the batch queue, then a different error message appears on the screen. 
+
+SYMPTOM
+Batch queue details: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Method '~' of object '~' failed
+
+
+Screen (if the batch queue is disabled):  * 
+ * 
+ * Standard Error
+ * 
+ * 
+ * 5
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * (0x800A01B8): 
+ * Automation error
+ * 
+ * RunConsol
+ * 
+ * 
+ * 
+
+
+
+CAUSE
+There are several potential causes for similar errors: 
+
+ 
+
+ * Scenario #1 - The Controller application server has run out of system resources (memory etc.)  * Typically this is caused by a memory leak (building up over time).
+   
+   
+ * Scenario #2 - The Controller environment has been configured to have a dedicated 'COGNOSVFP' consolidation COM+ package/application  * However, there is a problem with this package. 
+   
+   
+ * Scenario #3 - Customer has modified the "Memory Limit" setting inside the "Application Recycling" section for the COM+ application (for example "COGNOSVFP") which is running the consolidation processes.  * For more details see separate IBM Technote #1502814.
+   
+   
+ * Scenario #4 - Controller application server has a problem reading the VFP DLL file components.  * For more details see separate IBM Technote #1442198.
+   
+   
+
+ENVIRONMENT
+Scenario #2 - Controller has been set up with a separate application server for consolidation *or* the consolidation components have been isolated into a separate COM+ package.
+
+
+
+RESOLVING THE PROBLEM
+Scenario #1: 
+
+ * Fix - Upgrade to latest version of Controller, to take advantage of latest memory leak fixes. 
+ * Workaround - Reboot the Controller application server (to resolve the problem in the short term)  * Customers may also benefit from isolating the consolidation components into a separate COM+ package (by convention called 'COGNOSVFP'), to provide even greater stability. 
+    * For instructions, see separate IBM Technote #1440369.
+   
+   
+
+
+Scenario #2: 
+Make sure that the settings (especially the configured 'identity') for the COM+ application/package' called 'COGNOSVFP' is correct.  * For more information, see separate article IBM Technote #1367281.
+
+
+Scenario #3: 
+See separate IBM Technote #1502814. 
+
+Scenario #4: 
+See separate IBM Technote #1442198. 
+RELATED INFORMATION
+#1367281 - 'Standard Error 5 - automation error' when ru [http://www.ibm.com/support/docview.wss?uid=swg21367281]
+1347511 - Error message 'Argument number is not a valid [http://www.ibm.com/support/docview.wss?uid=swg21347511]
+Proven Practices Cognos documentation [http://www.ibm.com/developerworks/data/library/cognos/cognosprovenpractices.html]
+1502814 - "(0x800A01B8): Automation error ... RunConsol [http://www.ibm.com/support/docview.wss?uid=swg21502814]
+1440369 - How to split the Controller COM+ to enable lo [http://www.ibm.com/support/docview.wss?uid=swg21440369]
+1442198 [http://www.ibm.com/support/docview.wss?uid=swg21442198]
+
+
+
+
+HISTORICAL NUMBER
+ 1042015

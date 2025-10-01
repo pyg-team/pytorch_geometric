@@ -1,0 +1,147 @@
+Title: IBM RS02472: UNABLE TO DOWNLOAD THE SCENARIO FOR TEST SCENARIO WITH JAPANESE NAMES (ERROR_CODE=0X38B9A4B2) - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Operational Decision Manager V8.8.1.1: Interim Fix 52 [http://www-01.ibm.com/support/docview.wss?uid=swg24043634]
+Operational Decison Manager z/OS 8.8.1.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24043654]
+Operational Decision Manager V8.8.1.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24043530]
+Operational Decision Manager V8.8.1.1: Interim Fix 54 [http://www-01.ibm.com/support/docview.wss?uid=swg24043708]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the Business Console, create a new test scenario and run it.
+   
+   if the test scenario file name has some Japanese character, the
+   test execution works fine but we cannot download the scenario
+   excel file after execution.
+   
+   Note that this error is seen in two places:
+   1) In the report page, on the summary section
+   2) In the "Test Suite" page, when clicking on the scenario file.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Modify the file name used for the scenario to have an english
+   name instead of Japanese.
+   <= you will be able to download the report.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  We're unable to download the scenario for Japanese Test
+   Scenario because of filename error when downloading the
+   input/output report for Japanese Test scenario in Internet
+   Explorer. So the fix would be to fix the encoding of the
+   filename.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02472
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6900
+   
+   
+ * REPORTED RELEASE
+   880
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-26
+   
+   
+ * CLOSED DATE
+   2016-09-30
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * FIXED COMPONENT ID
+   5725B6900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R881 PSY
+   UP

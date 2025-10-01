@@ -1,0 +1,25 @@
+Title: IBM It is possible to use R scripting with Modeler 15.0 FP2 or higher? - United States
+
+Text:
+r-project TECHNOTE (FAQ)
+
+QUESTION
+ It is possible to use R scripting with Modeler 15.0 FP2 or higher? What are the steps and in what order do I install the applications? 
+
+
+ANSWER
+R scripting is supported with the release of Modeler 15 Fix pack 2. Following are the steps needed to enable R. 
+1) Download and install Modeler 15 Fix Pack 2 from the IBM Support Portal [https://www-947.ibm.com/support/entry/myportal/Overview]
+
+2) Download and install IBM SPSS Modeler Client Extensions 15.0 for SPSS Analytic Server 1.0 (CIL0TML) from Passport Advantage [www.ibm.com/software/lotus/passportadvantage]
+
+**Note: While the IBM SPSS Modeler Client Extensions 15.0 are needed, the Analytic Server does not need to be installed 
+
+3) Download and install R version 2.15.3 from (External to IBM)
+WIN http://cran.r-project.org/bin/windows/base/old/2.15.3/ [http://cran.r-project.org/bin/windows/base/old/2.15.3/]
+LINUX http://cran.at.r-project.org/src/base/R-2/ [http://cran.at.r-project.org/src/base/R-2/]
+
+4) Download and install IBM SPSS Modeler version 15 - Essentials for R from the IBM Webpage Tools for SPSS Products [https://www14.software.ibm.com/webapp/iwm/web/reg/pick.do?source=swg-tspssp&lang=en_US]. 
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]

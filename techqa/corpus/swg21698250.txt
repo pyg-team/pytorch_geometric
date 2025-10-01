@@ -1,0 +1,44 @@
+Title: IBM taddm db installation failure - United States
+
+Text:
+TADDM; install; migration TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DB2 error when trying to run make_db2_sb.sh 
+
+SYMPTOM
+"SQL20319N The SET TABLESPACE CONTAINERS command is not allowed on an 
+automatic storage table space. SQLSTATE=55061" 
+
+
+DIAGNOSING THE PROBLEM
+We are trying to spread the DB on a new install of 7.2.2.2 with DB2 v10.1 fp3 
+We are getting this error. 
+"SQL20319N The SET TABLESPACE CONTAINERS command is not allowed on an 
+automatic storage table space. SQLSTATE=55061" 
+
+From what we have seen it appears that the table spaces are set to 
+automatic during the "make_db2_db.sh" script. 
+
+
+RESOLVING THE PROBLEM
+This is the command they are trying to run when they get the error. 
+
+db2 restore db <DB_NAME> redirect without rolling forward without 
+prompting 
+db2 "SET TABLESPACE CONTAINERS FOR 0 USING (PATH 
+'/home/<DB_ID>/syscat/db')" 
+
+This can only be revered by restoring one more time with the 'TO' 
+statement and than try to install taddm 
+
+As long as the tablespaces are on automatic-storage pools they don't 
+need to (or can) use 'set tablespace containers'. The install_db2 taddm 
+script uses 'set tablepace containers' 
+--- 
+Need to put the TO clause in there 
+
+12:10:40: db2 RESTORE DATABASE <DB_NAME> TAKEN AT <TIMESTAMP> TO 
+"</PATH....>" WITHOUT ROLLING FORWARD WITHOUT PROMPTING 
+
+TAKEN AT is optional, TO clause is a must

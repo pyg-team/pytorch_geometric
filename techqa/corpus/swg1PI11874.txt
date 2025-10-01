@@ -1,0 +1,166 @@
+Title: IBM PI11874: INCORRECT MAP RULE CONTAINING =XMLLIB->XPATH WITH ONLY 2 ARGUMENTS COMPILES SUCCESSFULLY IN MAP DESIGNER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The XMLLIB XPATH function requires three arguments. When an
+   incorrect XPATH map rule is used with only two arguments the
+   Design Studio map compiles the map successfully with no compile
+   error.  The command line mcompile utility does report the error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTXCQ -WTX00044414
+   EJ / EJ
+   Circumvention: Correct the map rule to use 3 arguments.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   WebSphere Transformation Extender Design Studio users
+   
+   Problem Description:
+   Design Studio fails to validate map rules using dynamic library
+   functions with insufficient parameters provided by the user and
+   map compilation succeeds when it should fail the same.
+   
+   Platforms Affected:
+   Win32
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem Conclusion:
+   Fixed a problem with Design Studio where it now validates the
+   rules properly when the map rule uses any of the dynamic library
+   functions and insufficient number of parameters has been
+   provided by the user.
+   
+   Applies to:
+   8.3.0.6, 8.4.0.4, 8.4.1.1
+   
+   Fixed in the next service packs and releases.
+   
+   To obtain the fix for this APAR:
+   
+   To see if the next service pack or product release is available,
+   check the WebSphere Transformation Extender Downloads page:
+   http://www.ibm.com/support/entry/portal/product/other_software/t [http://www.ibm.com/support/entry/portal/product/other_software/t]
+   ransformation_extender
+   
+   If the service pack or product release is available, download it
+   from PassportAdvantage:
+   http://www.ibm.com/software/howtobuy/passportadvantage/pao_custo
+   mers.htm [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]
+   
+   If the service pack or product release is not available and you
+   require the APAR fix immediately, request a Limited Availability
+   Interim Fix (LAIF) by opening a PMR:
+   https://www.ibm.com/support/servicerequest/Home.action [https://www.ibm.com/support/servicerequest/Home.action]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI11874
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE LAUNC
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4011
+   
+   
+ * REPORTED RELEASE
+   840
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-02-18
+   
+   
+ * CLOSED DATE
+   2014-04-23
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE LAUNC
+   
+   
+ * FIXED COMPONENT ID
+   5724M4011
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R830 PSY
+   UP
+   
+   
+ * R840 PSY
+   UP
+   
+   
+ * R841 PSY
+   UP

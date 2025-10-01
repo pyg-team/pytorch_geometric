@@ -1,0 +1,40 @@
+Title: IBM CWWBD0000E - uninstallation of an application fails to remove process templates from the Business Process Choreographer database for WebSphere Process Server (WPS) - United States
+
+Text:
+CWWBD0000E CWWBE0043E Process model stopped already exists BPC uninstall Process_template_b_T BPEDB JR37091 PM13877; v602rnotes; v61rnotes; v612rnotes; v62rnotes; v70rnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The uninstalling of an application that contains a business process or human task fails to remove the template data from the Business Process Choreographer database (BPEDB) for WebSphere Process Server (WPS). You might see CWWBD0000E or CWWBE0043E errors after a reinstall of the application. 
+
+SYMPTOM
+You might see one of the following exceptions in the SystemOut.log file after you reinstall the application: 
+
+ * CWWBD0000E: The process model with name 'MyProcessName' and valid from date '2009-06-10T06:24:51' already exists. 
+ * CWWBE0043E: Process model 'MyProcessName' stopped. 
+   
+
+
+You might also see one of these behaviors:  * If you check the PROCESS_TEMPLATE view in the BPEDB, you see that the template still exists after the uninstall process. 
+ * If you are doing an uninstall and reinstall, you might notice that changes to the business process are not being applied due to the fact that the old template still exists. 
+ * In the node agent SystemOut.log file, you see that the node synchronization fails during the uninstall tasks. 
+
+
+CAUSE
+Applications that contain business processes use a two-stage deployment process. 
+
+ * The first stage removes the application from the WebSphere Process Server configuration files. 
+
+ * The second stage synchronizes the nodes and removes the business process template data from the Business Process Choreographer database.
+
+
+If there is a problem with the node synchronization, the second stage of the uninstall process can fail. 
+
+Note: Node synchronization failures can also occur because of configuration or procedural issues. For example, a failure can occur if the correct servers are not running or if node synchronization is not set up properly. 
+
+In WebSphere Process Server Version 7.0, two APARs, JR37091 and PM13877, describe the causes of node synchronization failure. 
+RESOLVING THE PROBLEM
+If you are using WebSphere Process Server Version 7.0, make sure that you install the interim fixes for APARs JR37091 [http://www.ibm.com/support/docview.wss?uid=swg1JR37091] (WebSphere Process Server fix) and PM13877 [http://www.ibm.com/support/docview.wss?uid=swg1PM13877] (WebSphere Application Server fix). These interim fixes are available on Fix Central [http://www-933.ibm.com/support/fixcentral/]. 
+
+You can also have this issue if you do not have the right servers running or node synchronization setup properly. The 2nd stage of the uninstall process, which is run on an application server, only occurs after the 1st stage completes successfully and is triggered by node synchronization. During the uninstall and node synchronization, you must have an application server running where the BPE and Task containers are located. For more information, see the Installing business process and human task applications [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/index.jsp?topic=/com.ibm.websphere.bpc.doc/doc/bpc/t3inovr.html] section of the product documentation. 
+
+If you have an issue with removal of the template data, use the deleteInvalidProcessTemplate.py script to clean up the invalid process templates. Run the script after a partial uninstall and before you reinstall the application. For more information, see Deleting process templates that are no longer valid [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/topic/com.ibm.websphere.bpc.doc/doc/bpc/tadmin_deleting_zombies.html] in the product documentation.

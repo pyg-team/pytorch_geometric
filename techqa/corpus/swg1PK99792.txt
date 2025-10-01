@@ -1,0 +1,193 @@
+Title: IBM PK99792: DFHUS0150 OCCURS REPEATEDLY AFTER CHANGING THE OWNER OF THE     CICS DEFAULT USERID VIA RACF AND SIT PARM IS SEC=NO. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You change the owner of the CICS default userid
+   (DFLTUSER=CICSUSER) with RACF command :
+   
+   CO CICSUSER GROUP(NEWGROUP) OWNER(OWNERXX).
+   
+   You receive the following error message repeatedly from the
+   CICSPlex SM CMAS:
+   
+   DFHUS0150
+   An attempt to establish security has failed for userid CICSUSER
+   in group , no terminal,  applid APPLID. Unable to initialize the
+   transaction XDNR. SAF codes are (X'00000000',X'00000000'). ESM
+   codes are (X'00000000',X'00000000').
+   
+   The CMAS region has been started with SIT parameter SEC=NO, and
+   DFHUS0150 should not be issued.
+   
+   Additional Symptom(s) search Keyword(s):
+   KIXREVSWM
+   
+   CICS trace:
+   US 0302 USAD  EXIT - FUNCTION(ADD_USER_WITHOUT_PASSWORD)
+              RESPONSE(EXCEPTION) REASON(SECURITY_INACTIVE)
+              SAF_RESPONSE(0) SAF_REASON(0)
+              ESM_RESPONSE(0) ESM_REASON(0) USER_TOKEN(00000000)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Restart the region.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: DFHUS0150 occurs repeatedly after       *
+   *                      changing the owner of the CICS default  *
+   *                      userid via RACF when the CICS SIT       *
+   *                      specifies SEC=NO.                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   CICS is started with SIT parameter SEC=NO. Even though security
+   is inactive CICS stores the default userid in the User domain
+   directory and all transactions run under this id.
+   Whilst CICS is running, the security administrator changes the
+   attributes of the default userid. This causes the MVS Event
+   Notification Facility (ENF) to invoke DFHUSES (the ENF exit) for
+   RACF_USERID_CHANGED. This in turn sets an indicator to say that
+   the userid should be refreshed.
+   A new transaction is STARTed under the default userid and CICS
+   finds that the id needs to be refreshed. It therefore deletes
+   the userid from the User domain directory and then attempts to
+   add it back in. This fails with SECURITY_INACTIVE and message
+   DFHUS0150 ('An attempt to establish security has failed for
+   userid ...') is issued.
+   All subsequent transactions will fail in the same manner and
+   CICS has to be recycled.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHUSES has been changed to ignore a NOTIFY event if SEC=NO.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+               * HIPER *
+               *********
+   FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK99792
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-28
+   
+   
+ * CLOSED DATE
+   2010-01-15
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK53606
+   
+   
+
+MODULES/MACROS
+ *  DESUSES  DFHUSES
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY UK53606 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK53606]
+   UP10/01/22 P F001
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

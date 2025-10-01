@@ -1,0 +1,31 @@
+Title: IBM Changing the Web Service Proxy response type - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Web Service Proxy response-type defaults to SOAP. How can I change this? I don't see any WebGUI field where I can do so. 
+
+CAUSE
+Normally it is not a good idea to change Web Service Proxy (WSP) types, as its main function is SOAP processing. However, if you are sure you want to change the response-type you can do so.
+
+DIAGNOSING THE PROBLEM
+Click on the Web Service Proxy icon to display the WSP list for your domain. The Resp-Type is in the rightmost column of the table. 
+
+RESOLVING THE PROBLEM
+In the WebGUI, select the Objects > Service Configuration > Web Service Proxy menu choice (rather than the Web Service Proxy icon). Then you should find a Response Type field on the Proxy Settings tab.
+
+
+
+
+Or, in the CLI, switch to the application domain where your Web Service Proxy is located:
+switch domain <app_domain_name>
+Enter configuration mode:
+config
+then prepare to modify the web service proxy:
+wsgw <ws proxy name>
+response-type <unprocessed | preprocessed | xml | soap>
+exit
+write mem
+
+Your response-type modification is made and saved. For Pass through, choose "unprocessed" in the CLI.

@@ -1,0 +1,59 @@
+Title: IBM Security Bulletin: IBM WebSphere MQ potential denial of service vulnerability in command server (CVE-2014-4771) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There is a potential for a malicious user to increase the time it takes for the command server to process PCF response messages which could be exploited in such a way to cause a denial of service. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2014-4771 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-4771]
+DESCRIPTION: IBM WebSphere MQ could allow a malicious privileged user with access to put PCF inquiries to the command input queue, to craft a query that would create an artificially full reply queue. This would prevent other users from submitting queries to the system.
+CVSS Base Score: 2.1
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/94842 [http://xforce.iss.net/xforce/xfdb/94842] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:S/C:N/I:N/A:P) 
+
+AFFECTED PRODUCTS AND VERSIONS
+All IBM WebSphere MQ distributed server platforms are affected at the following releases; 
+
+ * IBM WebSphere MQ 7.0.1 server 
+ * IBM WebSphere MQ 7.1 server 
+ * IBM WebSphere MQ 7.5 server 
+ * IBM WebSphere MQ 8 server
+
+REMEDIATION/FIXES
+The recommended solution is to apply the fix for each named product as soon as practical. Please see below for information on the fixes available. 
+
+IBM WebSphere MQ 7.0.1
+Apply fix pack 7.0.1.13 or later maintenance when available. In the interim contact your IBM support representative requesting an ifix for APAR IV69190
+
+IBM WebSphere MQ 7.1
+Apply fix pack 7.1.0.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24038863] or later maintenance.
+
+IBM WebSphere MQ 7.5
+Apply fix pack 7.5.0.5 or later maintenance when available. In the interim contact your IBM support representative requesting an ifix for APAR IV69190
+
+IBM WebSphere MQ 8
+Apply fix pack 8.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg21682233] or later maintenance.
+
+WORKAROUNDS AND MITIGATIONS
+None known; apply fixes.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS Guide [http://www.first.org/cvss/cvss-guide.html] 
+On-line Calculator V2 [http://nvd.nist.gov/cvss.cfm?calculator&adv&version=2] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 5th February 2015: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+RELATED INFORMATION
+#A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21696889]

@@ -1,0 +1,23 @@
+Title: IBM Why do surviving members in a pureScale instance hang until GPFS recovery completion when a member is doing restart light due to its host outage even they don't request any of the retained locks ? - United States
+
+Text:
+surviving members pureScale instance hang GPFS recovery restart light TECHNOTE (FAQ)
+
+QUESTION
+ Why do surviving members in a pureScale instance hang until GPFS recovery completion when a member is doing restart light due to its host outage even they don't request any of the retained locks ?
+
+
+ANSWER
+Check DIAGPATH directory and change it to a directory on a local file system if it is on GPFS as defined in the installation default. 
+
+
+Writing db2diag.log message from surviving member may hang until GPFS recovery completion which leads hang of other db2agents in the member when they tried to write db2diag.log and serialized as the result. 
+
+
+Note, this is for integrity of GPFS, GPFS needs to keep integrity of writing out GPFS buffer to disks from multiple members. 
+
+
+When a host outage happens, GPFS cluster also needs to recovery to evict out the host and establish a new leader as needed. 
+
+
+In this period, requests to GPFS are suspended until the completion of the GPFS recovery. You can check these activities and the timestamps in mmfs.log files.

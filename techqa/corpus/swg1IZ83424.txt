@@ -1,0 +1,155 @@
+Title: IBM IZ83424: BMXAA4176E - ATTRIBUTE EMAILTO DOES NOT EXIST. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Maximo 7116. create an incident QBR report, check save and close
+   bottons. Schedule it in Submit Tab as recurring.
+   Access the scheduled report from Reports->Incident menu and view
+   schedule details. Try to lookup another email address and select
+   any from the list. you will rexeive an error :
+   " BMXAA4176E - Attribute EMAILTO does not exist."
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Report users                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Schedule a report. Then try to change   *
+   *                      the Email To field of the scheduled     *
+   *                      report. It will throw "BMXAA4176E:      *
+   *                      Attribute                               *
+   *                                                              *
+   *                      EMAILTO does not exist." error.         *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   Changing Email to field on a already scheduled report throws
+   "BMXAA4176E: Attribute
+   
+   EMAILTO does not exist." error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   
+   fix pack | REL 7.1.1.8 - BS
+   
+   release  | REL 7.5.0.0 - BS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ83424
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO REPORTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46RP
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-23
+   
+   
+ * CLOSED DATE
+   2010-09-14
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO REPORTS
+   
+   
+ * FIXED COMPONENT ID
+   5724R46RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

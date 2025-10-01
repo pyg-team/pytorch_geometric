@@ -1,0 +1,167 @@
+Title: IBM PI38286: CANCEL AND SAVE AND CLOSE BUTTONS IN THE OSLC CREATIONDIALOG SPIN INDEFINITELY AND NEVER CLOSE THE WINDOW. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational ClearQuest Fix Pack 8 (8.0.1.8) for 8.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24039864]
+Rational ClearQuest Fix Pack 9 (8.0.1.9) for 8.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24040515]
+Rational ClearQuest Fix Pack 10 (8.0.1.10) for 8.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24041281]
+Rational ClearQuest Fix Pack 11 (8.0.1.11) for 8.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042127]
+Rational ClearQuest Fix Pack 12 (8.0.1.12) for 8.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042613]
+Rational ClearQuest Fix Pack 13 (8.0.1.13) for 8.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042972]
+Rational ClearQuest Fix Pack 14 (8.0.1.14) for 8.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043342]
+Rational ClearQuest Fix Pack 15 (8.0.1.15) for 8.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043917]
+Rational ClearQuest Fix Pack 16 (8.0.1.16) for 8.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24044300]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Steps to reproduce:
+   1.  Use SAMPL defect tracking schema and db (example assumes
+   running WAS on port 9082)
+   2.  POST the following (you can use firefox poster):
+   URL:
+   http://localhost:9082/cqweb/oslc/repo/bs/db/SAMPL/record-type/16
+   777224/creationDialog?dc:type=Defect?contentType=application/jso [http://localhost:9082/cqweb/oslc/repo/bs/db/SAMPL/record-type/16777224/creationDialog?dc:type=Defect?contentType=application/jso]
+   n
+   content type: application/json
+   header: OSLC-Core-Version=2.0
+   content:
+   {
+      "prefixes":{
+         "dcterms":"http://purl.org/dc/terms/",
+   
+   "cq":"http://www.ibm.com/xmlns/prod/rational/clearquest/1.0/"
+      },
+      "dcterms:title":"spelling error in login screen",
+      "dcterms:description":"some descr",
+      "cq:Severity":"1-Critical",
+   }
+   3.  Paste location response in browser (example:
+   http://localhost:9082/cqweb/oslc/repo/bs/db/SAMPL/record-type/16
+   777224/creationDialog?prefill_cache_id=1427901366646) [http://localhost:9082/cqweb/oslc/repo/bs/db/SAMPL/record-type/16777224/creationDialog?prefill_cache_id=1427901366646)]
+   4.  Click "Save and Close"  record is saved to db, then spinning
+   icon/hang
+   5.  Alternative to #4, just click cancel - spinning icon/hang
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ClearQuest Web OSLC                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The Cancel and Save/Close buttons on a ClearQuest Web OSLC   *
+   * creation dialog form no longer actually close the form, and  *
+   * clicking them causes a persistent spin icon.  Also, the      *
+   * window.name property is never updated in the case of the     *
+   * "Cancel" operation so it's difficult to figure out when the  *
+   * actual action is complete.                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available in ClearQuest 8.0.1.8.
+   ClearQuest Web has been updated so that the window.name property
+   is properly updated upon cancel.  In addition, the dialog itself
+   is automatically closed which removes that burden from the
+   caller.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI38286
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3600
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-01
+   
+   
+ * CLOSED DATE
+   2015-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724G3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

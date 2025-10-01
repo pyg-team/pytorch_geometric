@@ -1,0 +1,36 @@
+Title: IBM 0x80040E37 / ORA-00942 error running Optimise Database on Cognos with Analyse Schema - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Optimise Database function, with Analyze Schema option selected, has been working fine. Then the following error appears and an Optimise cannot be performed:
+
+Standard Error
+Number: 5
+Source: Fran goDirect . Optimize. AnalyzeSchema#ControllerProxyClient
+Description: System.Web.Services.Protocols.SoapException: Server was
+unable to process request. --->
+System.Runtime.InteropServices,COMException (0x80040E37): ORA-00942:
+table or view does not exist
+ORA-06512: at “<SCHEMA_OWNER>_ANALYZE$CHEMA”, line 9
+ORA-06512: at line 1
+at FrDatabaseBT . OptimizeTCiass. AnalyzeSchema(String sGuid, String
+sUser)
+at Cognos. Controller. Proxy. CCR WS . OptimizeT_AnalyzeSchema(String
+sGuid, String sUser)
+End oF inner exception stack trace
+at Microsoft.VisualBasic.ErrObject.Raise(1nt32 Number, Object Source,
+Object Description, Object HelpFile, Object HelpContext)
+at Cognos.Controller.Common.RaiseErrCli.RaiseError(1nt32 lErrNo, String
+sErrSource, String sErrDesc, String sErrHelpFile, 1nt32
+lErrHelpContext)
+at Cognos. Controller. Direct. Optimize. AnalyzeSchema()
+at Cognos. Controller. Forms. Form. IrmOptimize. IRun_DoRunO 
+
+RESOLVING THE PROBLEM
+Workaround: Run the Optimisation with the Analyse Schema option un-ticked. 
+
+It will still perform all needed actions for everyday purposes, all that will be missing is a deeper re-indexing action that can help performance. 
+
+Fix: Reboot the Oracle database server.

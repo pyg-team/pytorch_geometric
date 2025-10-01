@@ -1,0 +1,153 @@
+Title: IBM PK83325: AN INCONSISTENT BEHAVIOR OF THE WCM AUTHORING - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  portlet. the UI of the The siteare select dialog is differnt,
+   when you
+   create a new
+   content and when you save an existing content as new content
+   (save as..)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem Summary:
+   Confusing error message when attempting to 'Save As' in WCM
+   authoring.
+   
+   Detailed Problem:
+   When a client attempts to save a new content item and in
+   the 'Select  a Site Area' dialog chooses a content item and
+   selects the 'First Child' option,
+    a reasonable error message is shown: "IWKAU2007E: Only site
+   areas may be selected if using First child or Last child
+   position." However, when a client attempts to perform
+   a 'Save As' on an existing content item in the scenario above, a
+   generic/confusing error message is displayed: "Operation failed
+   due to an exception."
+   In addition, a null pointer exception is thrown in the
+   SystemOut.log file.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem Analysis:
+   In the 'Save As' case, WCM attempts to handle the mistake made
+   by the client by performing a transformation that would result
+   in content item
+   being added as an immediate sibling of the selected content
+   item. However, it is using a sibling value of null, which is the
+   default when the 'First Child' or 'Last Child' option
+   is selected. This was resulting in the null pointer exception.
+   
+   Problem Solution:
+   It was determined that a successful transformation would not be
+   consistent with the behavior in the 'Save' case for a new
+   content item, where an appropriate
+   error message is displayed. The 'Save As' case has been modified
+   to generate the same error message for the same scenario.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK83325
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   60J
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-03-26
+   
+   
+ * CLOSED DATE
+   2009-08-19
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60J PSY
+   UP

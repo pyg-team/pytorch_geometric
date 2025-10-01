@@ -1,0 +1,64 @@
+Title: IBM InfoSphere Information Server V11.3.1 detailed system requirements - United States
+
+Text:
+ DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ This page contains a table and links that identify the V11.3.1 release of IBM InfoSphere Information Server from which you can select specific detailed system requirements. 
+
+CONTENT
+ 
+
+TAB NAVIGATION
+ * 11.5.0.1 [http://www.ibm.com/support/docview.wss?uid=swg27047977]
+ * 11.5 [http://www.ibm.com/support/docview.wss?uid=swg27046843]
+ * 11.3.1 [http://www.ibm.com/support/docview.wss?uid=swg27042919]- selected tab,
+ * 11.3 [http://www.ibm.com/support/docview.wss?uid=swg27042304]
+ * 9.1.2 [http://www.ibm.com/support/docview.wss?uid=swg27042496]
+ * 9.1 [http://www.ibm.com/support/docview.wss?uid=swg27036191]
+ * 8.7 [http://www.ibm.com/support/docview.wss?uid=swg27021833]
+ * 8.5 [http://www.ibm.com/support/docview.wss?uid=swg27016382]
+ * 8.1 [http://www.ibm.com/support/docview.wss?uid=swg21315971]
+
+
+IBM has provided customers with a Software Product Compatibility Reports (SPCR) tool where you can locate and find complete lists of supported operating systems, system requirements, prerequisites, and optional supported software for InfoSphere Information Server versions, including V11.3.1. 
+
+The SPCR tool links to information about the minimum product levels that must be installed before opening a problem report with IBM InfoSphere Information Server Technical Support. The software versions and any maintenance levels listed in the tool have been explicitly verified as working.
+
+
+Table of Supported System Requirements: 
+The links in the table below are located in the SPCR tool and go directly to the supported operating systems, prerequisites, system requirements, and optional supported software for the specific operating system. 
+
+
+
+IBM InfoSphere Information Server IBM InfoSphere Blueprint Director 11.3.1 by platform  * AIX [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1405010119112&osPlatforms=AIX&duComponentIds=D004%7CS002%7CS003%7CS001&mandatoryCapIds=30%7C47%7C9%7C16%7C26&optionalCapIds=7%7C9%7C1%7C24%7C186%7C61] 
+ * Linux [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1405010119112&osPlatforms=Linux&duComponentIds=D004%7CS002%7CS003%7CS001&mandatoryCapIds=30%7C47%7C9%7C16%7C26&optionalCapIds=7%7C9%7C1%7C24%7C186%7C61] 
+ * Windows [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1405010119112&osPlatforms=Windows&duComponentIds=D004%7CS002%7CS003%7CS001&mandatoryCapIds=30%7C47%7C9%7C16%7C26&optionalCapIds=7%7C9%7C1%7C24%7C186%7C61] 
+ * Solaris [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1405010119112&osPlatforms=Solaris&duComponentIds=D004%7CS002%7CS003%7CS001&mandatoryCapIds=30%7C47%7C9%7C16%7C26&optionalCapIds=7%7C9%7C1%7C24%7C186%7C61]
+
+11.3.1 by platform  * Windows [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1339434881547&osPlatforms=Windows&duComponentIds=D001&optionalCapIds=130%7C136]
+
+11.3.1 by product component  * Client tier [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1405010119112&osPlatforms=AIX%7CLinux%7CSolaris%7CWindows&duComponentIds=D004&mandatoryCapIds=30%7C47%7C9%7C16%7C26&optionalCapIds=7%7C9%7C1%7C24%7C186%7C61] 
+ * Engine tier [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1405010119112&osPlatforms=AIX%7CLinux%7CSolaris%7CWindows&duComponentIds=S002&mandatoryCapIds=30%7C47%7C9%7C16%7C26&optionalCapIds=7%7C9%7C1%7C24%7C186%7C61] 
+ * Metadata repository tier [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1405010119112&osPlatforms=AIX%7CLinux%7CSolaris%7CWindows&duComponentIds=S003&mandatoryCapIds=30%7C47%7C9%7C16%7C26&optionalCapIds=7%7C9%7C1%7C24%7C186%7C61] 
+ * Services tier [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1405010119112&osPlatforms=AIX%7CLinux%7CSolaris%7CWindows&duComponentIds=S001&mandatoryCapIds=30%7C47%7C9%7C16%7C26&optionalCapIds=7%7C9%7C1%7C24%7C186%7C61]
+
+11.3.1 by product component  * Client [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1339434881547&osPlatforms=Windows&duComponentIds=D001&optionalCapIds=130%7C136]
+
+
+************************************************** 
+SPCR tool available for all software products: 
+The generic link to the IBM Software Product Compatibility Reports (SPCR) tool is below. You can access the tool for any product and obtain the supported operating systems, system requirements, and optional supported software for your product version. 
+
+Click the link below to reach the front page of SPCR: 
+Detailed system requirements for a specific product in SPCR [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity/softwareReqsForProduct.html] 
+
+Then choose the following options to obtain the supported operating systems, system requirements, and optional supported software for your product version. 
+
+1. Select the desired product. 
+2. Select the desired version. 
+3. Select your operating system. 
+
+RELATED INFORMATION
+ IBM Support Portal [http://www.ibm.com/support]
+IBM Software Product Support [http://www.ibm.com/software/support/lifecycle/]

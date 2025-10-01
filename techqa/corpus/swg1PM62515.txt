@@ -1,0 +1,236 @@
+Title: IBM PM62515: BF WILL USE THE NAME GIVEN TO THE LDAP DOMAIN AS THE USER'S DOMAIN - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  BF will use the Name given to the LDAP domain as the user's
+   domain
+   
+   When you define an LDAP Domain in the MC, when you authenticate
+   the LDAP Domain's 'Name' will be used as the user's Domain name.
+   
+   <LDAP-Domain-Name>/<sAMAccountName>
+   
+   
+   Reproduced on a 7.1.3.2-0-0106 host, running on Windows Server
+   2008 R2.
+   MySQL DB 5.0.x
+   
+   A)  Configure the MC with an LDAP Domain, using a Name different
+   than the (Windows) domain you are in:
+   
+   
+   1)  Configure an LDAP Domain in BF:
+   Example (for the European lab)
+   
+   Name:     RCSNL_LDAP (note this is
+   NOT the same name as the domain in which the test is done)
+   Admin DN:    CN=Lonnie
+   Roscillo,OU=NewAccounts,DC=rcsnl,DC=ams,DC=nl,DC=ibm,DC=com
+   Host:
+   RCSNL-DC1.rcsnl.ams.nl.ibm.com:389
+   Display Name:   CN
+   Distinguished Name:  DN
+   Group name:    memberof
+   Search Base:
+   OU=NewAccounts,DC=rcsnl,DC=ams,DC=nl,DC=ibm,DC=com
+   Mail Name:    mail
+   Unique Identifier:  sAMAccountName=%  (In this case
+   'lonnie.roscillo')
+   
+   2) Log out
+   
+   3) Log in as the created user
+   
+   Result:
+   
+   Apr 5, 2012 7:15:12 AM
+   com.buildforge.services.server.sso.SSOManager authenticate
+   INFO: CRRBF1414I: Authenticating user
+   'RCSNL_LDAP/lonnie.roscillo' for UI access.
+   Apr 5, 2012 7:15:12 AM
+   com.buildforge.services.server.ldap.LdapSession findMultiple
+   WARNING: Exception during
+   LdapSession.findMultiple(OU=NewAccounts,DC=rcsnl,DC=ams,DC=nl,DC
+   =ibm,DC=com, sAMAccountName=lonnie.rosci
+   llo) : javax.naming.NameNotFoundException: [LDAP: error code 32
+   - 0000208D: NameErr: DSID-03151F00, problem 2001 (NO_OBJECT),
+   data
+    0, best match of:
+    'DC=rcsnl,DC=ams,DC=nl,DC=ibm,DC=com'
+    ]; Remaining name:
+   'OU=NewAccounts,DC=rcsnl,DC=ams,DC=nl,DC=ibm,DC=com'
+   Apr 5, 2012 7:15:12 AM
+   com.buildforge.services.server.ldap.LdapSession findMultiple
+   WARNING: Exception during
+   LdapSession.findMultiple(OU=NewAccounts,DC=rcsnl,DC=ams,DC=nl,DC
+   =ibm,DC=com, sAMAccountName=lonnie.rosci
+   llo) : javax.naming.NameNotFoundException: [LDAP: error code 32
+   - 0000208D: NameErr: DSID-03151F00, problem 2001 (NO_OBJECT),
+   data
+    0, best match of:
+    'DC=rcsnl,DC=ams,DC=nl,DC=ibm,DC=com'
+    ]; Remaining name:
+   'OU=NewAccounts,DC=rcsnl,DC=ams,DC=nl,DC=ibm,DC=com'
+   Apr 5, 2012 7:15:12 AM
+   com.buildforge.services.server.api.AuthContext loginLdap
+   WARNING: Login failed - no LDAP record
+   Apr 5, 2012 7:15:12 AM
+   com.buildforge.services.server.sso.SSOManager authenticate
+   WARNING: CRRBF1417I: An exception occurred authenticating user
+   'RCSNL_LDAP/lonnie.roscillo'.  The message is: 'API:
+   Authentication
+    Error.'.
+   Throwable occurred:
+   com.buildforge.services.common.api.APIException: API:
+   Authentication Error.
+   
+   Note:
+   
+   INFO: CRRBF1414I: Authenticating user
+   'RCSNL_LDAP/lonnie.roscillo' for UI access.
+   
+   
+   
+   
+   B)  Configure the MC with an LDAP Domain, using a Name the same
+   as the (Windows) domain you are in:
+   
+   
+   1)  Configure an LDAP Domain in BF:
+   Example (for the European lab)
+   
+   Name:     RCSNL (note this is the
+   same name as the domain in which the test is done)
+   Admin DN:    CN=Lonnie
+   Roscillo,OU=NewAccounts,DC=rcsnl,DC=ams,DC=nl,DC=ibm,DC=com
+   Host:
+   RCSNL-DC1.rcsnl.ams.nl.ibm.com:389
+   Display Name:   CN
+   Distinguished Name:  DN
+   Group name:    memberof
+   Search Base:
+   OU=NewAccounts,DC=rcsnl,DC=ams,DC=nl,DC=ibm,DC=com
+   Mail Name:    mail
+   Unique Identifier:  sAMAccountName=%  (In this case
+   'lonnie.roscillo')
+   
+   2) Log out
+   
+   3) Log in as the created user
+   
+   Result:
+   
+   INFO: check: MISS
+   Apr 5, 2012 7:09:56 AM
+   com.buildforge.services.server.sso.SSOManager authenticate
+   INFO: CRRBF1414I: Authenticating user 'RCSNL/lonnie.roscillo'
+   for UI access.
+   Apr 5, 2012 7:09:56 AM
+   com.buildforge.services.server.api.AuthContext loginLdap
+   INFO: Authenticated LDAP user: lonnie.roscillo
+   Note:  'RCSNL/lonnie.roscillo'
+   RCSNL is the name you gave to the LDAP domain in BF.
+   
+   Note:
+   
+   INFO: CRRBF1414I: Authenticating user 'RCSNL/lonnie.roscillo'
+   for UI access.
+   
+   
+   Side effect of the defect:
+   
+   When using _USE_BFCREDS, the authentication to *NIX Agents
+   fails, due to the domain being added to the user.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This defect is invalid. Customer said, after entering the
+   password for the copied ldap entry in buildforge, this ldap
+   can work
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM62515
+   
+   
+ * REPORTED COMPONENT NAME
+   BUILD FORGE SE
+   
+   
+ * REPORTED COMPONENT ID
+   5724S2705
+   
+   
+ * REPORTED RELEASE
+   713
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-04-16
+   
+   
+ * CLOSED DATE
+   2012-05-21
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

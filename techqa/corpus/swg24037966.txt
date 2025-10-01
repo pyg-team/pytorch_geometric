@@ -1,0 +1,95 @@
+Title: IBM Download IBM Case Manager V5.2.1 Platform Installation Tool components - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ Download all software for a single-server installation of IBM Case Manager and IBM FileNet P8 Platform. 
+
+DOWNLOAD DESCRIPTION
+
+
+ The Case Manager Platform Installation Tool installs and configures a full IBM Case Manager V5.2.1 and IBM FileNet P8 Platform environment on a single server. This tool requires specific versions of the IBM Case Manager and FileNet P8 Platform components and supporting software. Use the information in this download document to obtain the software packages required by the Case Manager Platform Installation Tool.
+
+Although IBM Case Manager supports AIX, Linux, Linux on System Z, and Windows, the IBM Case Manager Platform Installation Tool for single-server installation is supported for RedHat Linux, and Windows. To download software for a standard distributed installation of the product, see Download IBM Case Manager, Version 5.2.1 [http://www.ibm.com/support/docview.wss?uid=swg24037965]. Downloading the packages
+
+After you download all of the software, you can use the IBM Case Manager Platform Installation Tool to install the single-server FileNet P8 Platform and IBM Case Manager environment.
+
+ 
+
+ 1. From a browser, navigate to the Find Downloads and Media [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] page on the IBM Passport Advantage Online website. You must log in to continue.
+ 2. Select the Find by part number search option under Download finder options.
+ 3. From the following table, search for the operating system that you want and then download the the following software: 
+    
+    Software Linux Microsoft Windows IBM Tivoli Directory Server 6.3 Client-Server CZK9IML CZKG4ML GSKit for Tivoli Directory Server 6.3 (This package is required only for RHEL Linux) CZK9MML IBM WebSphere Application Server V8.5.5 (1 of 3) CIK1QML CIK1QML IBM WebSphere Application Server V8.5.5 (2 of 3) CIK1RML CIK1RML IBM WebSphere Application Server V8.5.5 (3 of 3) CIK1SML CIK1SML IBM FileNet Content Platform Engine 5.2.1 CN214ML CN216ML IBM FileNet Content Platform Engine Client 5.2.1 CN223EN CN225EN IBM Case Foundation 5.2.1 CN20JML CN20LML IBM Content Navigator 2.0.3 CN0PTML CN0PVML IBM DB2 9.7 Restricted License CZL3UML CZL3UML IBM Case Manager 5.2.1 CN0LHML CN0LIML IBM Installation Manager 1.6.2 64 bit CIK2GML CIL0DML 
+    
+ 4. From a browser, navigate to Fix Central [http://www.ibm.com/support/fixcentral/], and download the following software. 
+    You can search in the following ways: 
+    
+     - Use the Select Product or Find Product tabs in Fix Central by choosing appropriate values for fields. For example, Product Selector: DB2; Installed Version: 9.7.*; Platform: Windows 64-bit,x86.
+    
+     - Use the Search Fix Central field on the top-right part of the Fix Central page. Enter the Name given for the DB2 fix pack for your platform from the following table in the Search Fix Centralfield, and click on the link in the results page that matches with the Name field.
+    
+     - To download the Workplace XT interim fix, select the Find Product tab in Fix Central, and from the Product selector, choose Filenet Workplace XT Installed version: 1.1.5.*, Platform: All
+    
+    
+    Software Linux Microsoft Windows IBM DB2 9.7 Fix Pack 11 DB2-linuxx64-server-9.7.0.11-FP011
+    Executable: v9.7fp11_linuxx64_server.tar.gz Important: After you download the executable file, you must rename it to db2.tar.gz.
+    
+    DB2-ntx64-server-9.7.1100.352-FP011
+    Executable: v9.7fp11_ntx64_server.exe Important: After you download the executable file, you must rename it to db2.zip.
+    
+    GSKit 8.0.50 Fix Pack 57 8.0.50.57-ISS-GSKIT-LinuxX64-FP0057 IBM WebSphere Application Server 8.5.5 Fix Pack 7 Part 1 8.5.5-WS-WAS-FP0000007-part1 8.5.5-WS-WAS-FP0000007-part1 IBM WebSphere Application Server 8.5.5 Fix Pack 7 Part 2 8.5.5-WS-WAS-FP0000007-part2 8.5.5-WS-WAS-FP0000007-part2 IBM Case Manager 5.2.1 Fix Pack 4 5.2.1.4-ICM-LINUX-FP004 5.2.1.4-ICM-WIN-FP004 IBM Case Manager Platform Installation Tool 5.2.1 Fix Pack 4 5.2.1-FP004-CMPIT-LINUX (CN0LLML.tar.gz) 5.2.1-FP004-CMPIT-WIN (CN0LMML.zip) IBM FileNet Content Platform Engine 5.2.1 Fix Pack 3 5.2.1.3-P8CPE-LINUX-FP003 5.2.1.3-P8CPE-WIN-FP003 IBM FileNet Content Platform Engine Client 5.2.1 Fix Pack 3 5.2.1.3-P8CPE-CLIENT-LINUX-FP003 5.2.1.3-P8CPE-CLIENT-WIN-FP003 IBM Case Foundation 5.2.1 Fix Pack 3 5.2.1.3-P8CaseFoundation-LINUX-FP003 5.2.1.3-P8CaseFoundation-WIN-FP003 IBM Content Navigator 2.0.3 Fix Pack 6 2.0.3-ICN-FP006-LINUX 2.0.3-ICN-FP006-WIN IBM FileNet Workplace XT 1.1.5.2 1.1.5.2-WPXT-IF002-Linux Important: After you download the executable file, you must rename it to WorkplaceXT-1.1.5.2-LINUX.bin then gzip and rename it to wpxt.tar.gz
+    
+    1.1.5.2-WPXT-IF002-Windows Important: After you download the executable file, you must rename it to WorkplaceXT-1.1.5.2-WIN.exe then zip and rename to wpxt.zip.
+    
+     
+    
+    
+    Tip: On some Windows machines file extensions might be hidden by default. To show extensions, use Windows Explorer. Click Tools > Folder options. On the View tab, deselect Hide extensions for known file types, and click Apply. This will ensure that you do not incorrectly rename the DB2 package for Windows to db2.exe.zip.
+    
+    
+ 5. Before you use the IBM Case Manager Platform Installation Tool to install the software that you downloaded, rename the components as listed in the following table: 
+    
+    Software Rename to this: IBM Case Manager icm IBM Case Manager Fix Pack 4 icmfp Content Platform Engine ce Content Platform Engine Fix Pack 3 cefp Content Platform Engine Client cec Content Platform Engine Client Fix Pack 3 cecfp IBM Case Foundation icf IBM Case Foundation Fix Pack 3 icffp IBM Content Navigator icn IBM Content Navigator Fix Pack 6 icnfp Workplace XT wpxt WebSphere Application Server WAS_V8.5.5_1_OF_3WAS_V8.5.5_2_OF_3
+    
+    WAS_V8.5.5_3_OF_3
+    
+    WebSphere Application Server Fix Pack 7 WAS_V8.5.5.7_1_OF_2WAS_V8.5.5.7_2_OF_2
+    
+    Tivoli Directory Server Client-Server tds GSKit for Tivoli Directory Server (This package is required only for Red Hat Linux.) tdsgskit DB2 Version 9.7 Fix Pack 11 db2 DB2 Restricted License db2lic IBM Installation Manager im For more information, see the instructions in the following topic: Downloading FileNet P8 system and IBM Case Manager software components [http://www.ibm.com/support/knowledgecenter/SSCTJ4_5.2.1/com.ibm.casemgmt.installing.doc/acmin009.htm]
+    
+    
+ 6. Be aware of the following known issues:  - You might not be able to log in to Workplace XT even after successfully completing the installation. Use the information in the following topic to resolve this login issue: Running P8 Client Applications with WebSphere Application Server 8.0.0.x [http://www-01.ibm.com/support/docview.wss?uid=swg27023814]
+    
+    
+ 7. After you complete the installation, change the privileges of the users that were created by the Case Manager Platform Installation Tool according to your organization's policies in order to prevent authentication and password expirations issues.
+ 8. The Case Manager Platform Installation Tool provides only a restricted DB2 license, which expires 90 days after installation. Plan to replace the DB2 license before the expiration.
+
+
+
+Release notes
+
+The Release Notes [http://www.ibm.com/support/knowledgecenter/SSCTJ4_5.2.1/com.ibm.casemgmttoc.doc/relnoteslanding.htm] document provides links to known problems that are documented in separate topic in the Support knowledge base.
+
+The following link runs a customized query of the Support knowledge base: View all known problems for IBM Case Manager 5.2.1 [http://www.ibm.com/support/search.wss?&tc=SSCTJ4&atrn1=SWVersion&atrv1=5.2.1.0&rankprofile=8&dc=DA440&dtm].
+
+PREREQUISITES
+See the following links for software prerequisites:
+
+URL LANGUAGE SIZE(Bytes) Hardware and software requirements (Linux) [http://www-01.ibm.com/support/docview.wss?uid=swg27042449] English 1000 Hardware and software requirements (Windows) [http://www-01.ibm.com/support/docview.wss?uid=swg27042449] English 1000 
+INSTALLATION INSTRUCTIONS
+Click the links below to go to the single-server installation instructions for IBM Case Manager V5.2.1. To view the Planning, Installation, and Upgrade Guide in a language other than English, open the IBM Case Manager publication library.
+
+URL LANGUAGE SIZE(Bytes) Installing IBM Case Manager single server [http://www.ibm.com/support/knowledgecenter/SSCTJ4_5.2.1/com.ibm.casemgmt.installing.doc/acmin001.htm] English 1000 Planning Installation and Upgrade Guide (GC19-3273-05 [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=GC19-3273-05] English 1000 IBM Case Manager publication library [http://www.ibm.com/support/docview.wss?uid=swg27042450] English 1000 
+DOWNLOAD PACKAGE
+On the Passport Advantage website [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm], all entitled products are listed on the Software Download and Media Access page. This page provides a guided process for selecting an operating system and the product version that you want to download.
+
+Before you download software, you can visit the Passport Advantage Online Help Center [http://www.ibm.com/software/lotus/passportadvantage/pao_instructional_videos.html] and view the Software download and media access tutorial (about 10 minutes). This tutorial shows you how to use Passport Advantage, including how to set preferences, such as your preferred download method and your preferred products, operating system, and language.
+
+
+
+TECHNICAL SUPPORT
+ Passport Advantage Online support [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]
+
+IBM Case Manager support portal [http://www.ibm.com/support/entry/portal/Software/Information_Management/Case_Manager]

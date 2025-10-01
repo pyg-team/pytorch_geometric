@@ -1,0 +1,73 @@
+Title: IBM Planning to upgrade to IBM i 7.1 (Software) - United States
+
+Text:
+ PLANNING
+
+ Planning to upgrade to IBM i 7.1 (Software) 
+
+
+
+IBM i Support [http://www.ibm.com/support/entry/portal/product/ibm_operating_systems/ibm_i] Planning [//www.ibm.com/support/docview.wss?uid=nas8N1022012] Upgrade planning [//www.ibm.com/support/docview.wss?uid=nas8N1022013] Technology Refresh [//www.ibm.com/support/docview.wss?uid=nas8N1022014] Resaves [//www.ibm.com/support/docview.wss?uid=nas8N1022015] Customer Notices [//www.ibm.com/support/docview.wss?uid=nas8N1022016] Technical databases [//www.ibm.com/support/docview.wss?uid=nas8N1022017] 
+
+ *  Planning [//www.ibm.com/support/docview.wss?uid=nas8N1022012 ] 
+ *  Upgrade planning [//www.ibm.com/support/docview.wss?uid=nas8N1022013] 
+
+ * IBM i 7.3 [//www.ibm.com/support/docview.wss?uid=nas8N1022023] 
+ * IBM i 7.2 [//www.ibm.com/support/docview.wss?uid=nas8N1022024] 
+ * IBM i 7.1 [//www.ibm.com/support/docview.wss?uid=nas8N1022025] 
+ * Future Software/Hardware [//www.ibm.com/support/docview.wss?uid=nas8N1022026] 
+ * Releases [//www.ibm.com/support/docview.wss?uid=nas8N1022027] 
+
+
+
+
+SOFTWARE PLANNING
+The following products and functions which were supported on IBM i 6.1 are not supported on IBM i 7.1. Plans should be made to replace or discontinue use of these products and functions prior to upgrading to i 7.1.
+
+Software Suggested replacement IBM Navigator for i Due to changes in how browsers handle self-signed certificates, IBM Navigator for i will no longer be shipped with SSL enabled by default. Users can configure SSL using the instructions found at this link: http://ibm.co/2f1vzYU [http://ibm.co/2f1vzYU]. In addition, any saved URL's for IBM Navigator for i will not work by default because we are now using HTTP and port 2004 instead of HTTPS and port 2005. 5722-WE2 IBM Web Enablement for i Migrate to IBM WebSphere Application Server V8.5.5 or higher. Older versions of WebSphere Application Server require Java 6 which will be going out of service in December 2017. 5733-W80 IBM WebSphere Application Server V8.0 Migrate to IBM WebSphere Application Server V8.5.5 or higher. Older versions of WebSphere Application Server require Java 6 which will be going out of service in December 2017. 5733-CY2 System i Cryptographic Device Manager Upgrade to 5733-CY3 Cryptographic Device Manager for i. 5761-DG1 HTTP Server HTTP Server (Powered by Apache) is out of service as of December 2017. Move to a new version of the IBM i operating system.
+
+5761-DG1 HTTP Server Option 1 Trigger Cache Manager Use clustering and load balancing capabilities in WebSphere Application Server. 5722-DR1 IBM Director 5.2 Use IBM Systems Director 6.1 [//www.ibm.com/systems/management/director/] or later. Download the latest version [//www.ibm.com/systems/management/director/downloads/]. 5761-JC1 Toolbox for Java Use Toolbox for Java shipped in IBM i (5770-SS1) Option 3 Extended Base Directory Support. There is also an open source version of Toolbox for Java available: JTOpen [//jt400.sourceforge.net/] 5761-JV1 Developer Kit for Java Option 6 Java Developer Kit 1.4
+
+Note: Java 1.4 is no longer in support. Upgrade to newer Java level using Option 13 of Developer Kit for Java (5761-JV1). 5761-JV1 Developer Kit for Java Option 7 Java Developer Kit 5.0
+
+Note: Java 5.0 is no longer in support (as of May 2015). Upgrade to newer Java level using Option 14 of Developer Kit for Java (5761-JV1). 5761-JV1 Developer Kit for Java Option 10 Java SE Development Kit 6
+
+Note: Java 6.0 will go out of support in December 2017. Upgrade to newer Java level using Options 11 & 12 of Developer Kit for Java (5761-JV1).
+
+Note: Options 11 & 12 of Developer Kit for Java (5761-JV1) are going out of service in December 2017. Upgrade to a newer level of Java using Options 14 or higher. Lotus products for IBM i (Domino, Quickr, Sametime, etc.) Most of the currently available Lotus products require the most recent release for use on IBM i 7.1. The required releases may not be available when IBM i 7.1 is available but are expected to be available within 90 days of 7.1 availability. Do not upgrade to 7.1 until confirming that a supported release of the product is available.  * Lotus Domino - Domino 7.x, 8.0.x and 8.5.0 are not supported on i 7.1.
+ * Lotus Enterprise Integrator - LEI 7.x, 8.0.x and 8.5.0 are not supported on i 7.1.
+ * Lotus Sametime - requires a release available after Sametime 8.5
+ * Lotus Quickr - requires a release available after Quickr 8.2
+
+The following products will not be supported on i 7.1:
+
+ * Lotus Learning Accelerator was withdrawn from marketing on August 11, 2009 and end of support is September 9, 2013. For more information see IBM Learning Accelerator [//www.ibm.com/software/lotus/portal/value/learningaccelerator.html].
+ * Lotus Domino Document Manager was withdrawn from marketing in May, 2009, and support ends September 30, 2012. For information about migration alternatives and tools, see Lotus Domino Document Manager [//www.ibm.com/software/lotus/products/dominodocumentmgr/].
+
+For the latest information, see the Lotus Software for IBM i Compatibility Guide [//www.ibm.com/systems/resources/releasesupport.pdf].
+
+5761-LSV Extended Integrated Server Support For Linux on iSCSI attached BladeCenter and System x servers, IBM recommends that customers migrate the Linux server to a Virtual Machine on VMware ESX using IBM i support for VMware ESX running on iSCSI attached BladeCenter and System x. However, the VMware ESX hosted Linux servers would not support save while active, file level backup, or virtual optical and tape support. For Linux running in IBM i hosted partitions, IBM continues to support hosting of Linux partitions on the i operating system but save while active and file level backup is not supported with the IBM i 7.1 release.
+
+5733-OPS – Option 1 Option 1, Node.js enablement, has been deprecated and will no longer receive support or fixes. It is recommended that newer versions of Node.js be used. 5733OPS Option 5 has delivered Node.js v4, and Option 10 has delivered Node.js v6. For more information about the Node.JS offerings, see the product page on developerWorks: https://ibm.co/1Jr4VDl [https://ibm.co/1Jr4VDl] 5733-PS1 5724-PS1 Secure Perspective Secure Perspective for IBM i is available as a custom offering delivered by the IBM Systems Lab Services and Training Power Services team. Support and enhancements for this tool on future releases of IBM i will be offered as part of the Security Services offering. For more information, please reference the IBM Systems Lab Services and Training web site [//www.ibm.com/systems/services/labservices/platforms/labservices_power.html]. 5761-SS1 AnyNet Upgrade to Enterprise Extender which is included in IBM i (5770-SS1). 5761-SS1 WRKORDINF RQSORDAST WRKORDRQS IBM recommends that customers use IBM Electronic Service Agent Inventory to collect system information and send to IBM. Electronic Service Agent ships with the IBM i operating system. 5761-SS1 Option 41 (Clusters GUI only) High availability environments (clusters) can to be managed either via GUI or CL command using the PowerHA SystemMirror for i (5770-HAS) product. 5733-W60 WebSphere Application Server V6.0 Upgrade to WebSphere Application Server V6.1 (5733-W61), V7.0 (5733-W70), or newer. 5722-XP1 System i Access for Wireless Customers who have Internet access on their wireless devices may use a browser based solution to access their IBM i system. For example:  * Use i Access for Web for a 5250 session
+ * Use IBM Systems Director Navigator for administration functions
+
+5761-XE1 System i Access for Windows Direct Attach Operations Console The Operations Console is included in the IBM i Access for Windows product, 5770-XE1. For i 7.1, Operations Console will only support the local console on a network (LAN) configuration. The local console on a network configuration, commonly referred to as LAN console, connects the PC and system using a network adapter on the PC and system. Back to top
+
+
+
+
+
+
+ADDITIONAL RESOURCES
+ * Entitled Systems Support (License keys and software) [//www.ibm.com/eserver/ess/]
+ * IBM Power Systems Redbooks [//www.redbooks.ibm.com/portals/power]
+ * IBM i Redbooks publications [http://www.redbooks.ibm.com/redbooks.nsf/searchsite?SearchView&query=%22ibm+i%22]
+ * IBM i storage solutions [//www.ibm.com/systems/power/software/i/management/storage/index.html]
+ * IBM i Knowledge Center [//www.ibm.com/support/knowledgecenter/ssw_ibm_i/welcome]
+ * IBM Knowledge Center [//www.ibm.com/support/knowledgecenter/]
+ * developerWorks for IBM i [https://www.ibm.com/developerworks/learn/ibmi/]
+ *  
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1

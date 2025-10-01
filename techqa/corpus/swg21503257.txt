@@ -1,0 +1,42 @@
+Title: IBM Error EQQPH26E USER ID MISSING IN TME USER TO RACF USERID MAPPING TABLE - United States
+
+Text:
+tws; z/os; connector TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ AWSUI0766E and AWSUI0833E errors are received accessing a z/OS engine though Tivoli Dynamic Workload Console (TDWC). 
+
+SYMPTOM
+AWSUI0766E Test connection to [ENGINENAME] : failed.
+AWSUI0833E The operation could not be completed. There has been a communication failure.
+The internal message is: EQQPH26E TME USER ID MISSING IN TME USER TO RACF USERID MAPPING TABLE: MYUSERID@MYCOMPANY.COM
+
+
+RESOLVING THE PROBLEM
+Edit TWSZOSConnConfig.properties file in the $TWSHOMEDIR/eWAS/profiles/twaprofile/properties directory: 
+
+=> cat TWSZOSConnConfig.properties
+
+com.ibm.tws.conn.engine.type = TWSZ
+com.ibm.tws.conn.engine.version = 8.5.1
+com.ibm.tws.conn.engine.apiLevel = 1
+com.ibm.tws.conn.engine.featureLevel=2
+com.ibm.tws.conn.engine.revision = 8.5.1
+com.ibm.tws.zconn.usr.mapping.hostName = shorthostname
+
+Change the parameter mapping.hostname to the hostname set in the Job Scheduling Console (JSC) Task on z/OS:
+
+Example:
+com.ibm.tws.zconn.usr.mapping.hostName = shorthostname.ibm.com
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Workload Scheduler for z/OS Platform Independent 8.5, 8.5.1 
+PRODUCT ALIAS/SYNONYM
+ Maestro
+TWS
+TWA

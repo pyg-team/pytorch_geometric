@@ -1,0 +1,146 @@
+Title: IBM PM00543: LOGGER RUNTIMEEXCEPTION IN MA-COMPOUND.LOG - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM SUMMARY:
+   ****************************************************************
+   * USERS AFFECTED: ITCAM Managing Server's Visual Engine
+   * component that is installed on any supported WebSphere
+   application
+   * server
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   * 1. Cannot save PAR report;
+   * 2. See exception in VE trace log (please reference defect
+   summary)
+   ****************************************************************
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: ITCAM Managing Server's Visual Engine
+   * component that is installed on any supported WebSphere
+   application
+   * server
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   * 1. Cannot save PAR report;
+   * 2. See exception in VE trace log (please reference defect
+   summary)
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  1. Removed incorrect logger definition;
+   2. Corrected database connection rollback logic for
+   non-container managed transactions.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+   | interim fix | 6.1.0.5-TIV-ITCAMfWAS_SVR-IF0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM00543
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62MS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-05
+   
+   
+ * CLOSED DATE
+   2009-11-06
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * FIXED COMPONENT ID
+   5724L62MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

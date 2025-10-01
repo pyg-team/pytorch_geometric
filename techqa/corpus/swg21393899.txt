@@ -1,0 +1,142 @@
+Title: IBM Enabling a IBM FileNet Object Store to support IBM FileNet CFS for Content Integrator lockdown requests - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How is an IBM® FileNet® Object Store enabled to support lockdown when using it as a source repository for IBM FileNet CFS for Content Integrator? 
+
+ANSWER
+
+Starting with version 4.5.1, FileNet Content Federation Services (CFS) supports the capability for allowing IBM Infosphere Enterprise Records to declare documents that have been federated from another P8 repository as records. 
+
+When a federated document is declared a record, the associated document in the source repository must be locked down. If the source repository is another P8 repository, you must first enable it for CFS lockdown before this can take place. 
+
+Enabling a P8 repository to support lockdown requires the creation of the several custom metadata extensions including: Marking Set, a Property Template, and a Property Definition on the Document class.
+
+ENABLING A VERSION 4.5.1 OR LATER REPOSITORY TO SUPPORT LOCKDOWN
+
+Version 4.5.1 or later repositories can be enabled by applying the CFS ICI Lockdown Extensions AddOn. The CFS ICI Lockdown Extensions AddOn creates the necessary metadata extensions on which Lockdown depends. After applyi the AddOn you must then update the security on the Locked Marking to grant full control to the CFS User.
+
+PROCEDURE FOR APPLYING THE CFS ICI LOCKDOWN EXTENSIONS ADDON TO A NEW OBJECT STORE:
+
+Step 1 Log in via FileNet Enterprise Manager Administration Tool to the P8 domain where you want to create the new object store. 
+
+Step 2 Right click on the Object Stores node and select ‘New Object Store’ 
+
+Step 3 Using ‘Create an Object Store’ wizard, enter the appropriate values for your new object store on each panel and select next until you get to the ‘Select AddOns to install now’ panel 
+
+Step 4 Make sure the check box for the ‘4.5.1 CFS ICI Lockdown Extensions’ is checked on the ‘Select AddOns to install now panel’ 
+
+Step 5 Select ‘next’ to continue with the wizard 
+
+Step 6 Select ‘finish’ to complete the object store creation.
+
+PROCEDURE FOR UPDATING THE SECURITY OF THE LOCKED MARKING:
+
+Step 1 Log in via FileNet Enterprise Manager to the P8 domain that includes the Object Store that will be your Source Repository. 
+
+Step 2 Navigate to the Marking Sets node and left click to open the folder 
+
+Step 3 Select the ‘CmFederatedLockMarkings’ Marking Set, right click and select ‘Properties’ from the pop-up menu to invoke the Properties dialog 
+
+Step 4 Select the “Locked” marking and click on the ‘Edit’ button 
+
+Step 5 Select the ‘Security’ tab 
+
+Step 6 Click on the ‘Add’ button to invoke the ‘Select Users and Groups’ dialog 
+
+Step 7 Locate the User that has been designated as the ‘CFS User’ (The ‘CFS User’ is specified in the Fixed Content Provider for the source P8 repository in the Target P8 system. ) 
+
+Step 8 Click on the ‘OK’ button 
+
+Step 9 Ensure that the ‘Full Control’ radio button is selected and click on ‘Add’ 
+
+Step 10 Click on ‘OK’ save the changes
+
+ENABLING A VERSION 4.0.1 REPOSITORY TO SUPPORT LOCKDOWN
+
+Version 4.0.1 repositories do not support the CFS ICI Lockdown Extensions AddOn, however it can still be enabled for lockdown by creating the required metadata extensions manually from P8 Content Engine Enterprise Manager administration Tool. 
+
+A step by step procedure for creating each required metadata object is provided below.
+
+PROCEDURE FOR CREATING CMFEDERATEDLOCKMARKINGS MARKING SET:
+
+Step 1 Log in via FileNet Enterprise Manager Administration Tool to the P8 domain that includes the Object Store that will be your Source Repository. 
+
+Step 2 Navigate to the Marking Sets node and left click to open the folder 
+
+Step 3 Select the ‘New Marking Set’ from the context menu to invoke the ‘Create a Marking Set’ wizard 
+
+Step 4 Select the ‘List – non-ordered’ radio button on the Markings Set Type panel 
+
+Step 5 Enter ‘CmFederatedLockMarkings’ in the Marking Set Name field on the Add Markings panel 
+
+Step 6 Click on the ‘New Marking’ button to invoke the ‘Create New Marking’ dialog 
+
+Step 7 Enter ‘Locked’ in the Marking Value field on the General tab 
+
+Step 8 Select the Constraint Mask tab and make sure that only the following access rights are check and the others are cleared: 
+
+ * Modify all properties 
+ * Delete 
+ * Modify permissions 
+ * Modify owner 
+ * Change state
+
+
+Step 9 Click on the ‘Add’ button to invoke the ‘Select Users and Groups’ dialog Step 10 Locate the user that has been designated as the ‘CFS User’ (The ‘CFS User’ is specified in the Fixed Content Device of the source P8 repository in the target P8 system.) 
+
+Step 11 Click on the ‘OK’ button 
+
+Step 12 Ensure that the ‘Full Control’ radio button is selected and click on ‘Add’ 
+
+Step 13 Click on ‘OK’ save the changes 
+
+Step 14 Ensure that the ‘Full Control’ radio button is selected and click on ‘Add’ 
+
+Step 15 Click on ‘OK’ to return to the ‘Create a Marking Set’ wizard 
+
+Step 16 Click the ‘Next’ button 
+
+Step 17 Click on the ‘Finish’ button to save the new Marking set and complete the operation 
+
+ 
+
+Important: You only need to create one instance of the CmFederatedLockStatus Marking Set per P8 domain, although you may use it to enable more then one object store in that domain. 
+
+
+
+PROCEDURE FOR CREATING CMFEDERATEDLOCKSTATUS PROPERTY TEMPLATE:
+
+Step 1 Log in via FileNet Enterprise Manager to the P8 domain that includes the Object Store that will be your Source Repository. 
+
+Step 2 Navigate to the object store that you want to federate document from and expand the node 
+
+Step 3 Right click on the ‘Property Templates’ node and select ‘New Property Template’ to invoke the ‘Create a Property Template’ wizard 
+
+Step 4 Enter ‘CmFederatedLockStatus’ in the Name and Symbolic Name fields and select the Next button 
+
+Step 5 Select ‘String’ for the Data Type and click on the Next button 
+
+Step 6 Click on the ‘Assign a marking set’ radio button and select the ‘CmFederatedLockMarkings’ marking set from the drop down list. Select Next. 
+
+Step 7 Select the ‘Single’ radio button on ‘Single or Multi-Value?’ panel. Select Next. 
+
+Step 8 Click the ‘Finish’ button to complete the operation. 
+
+
+
+PROCEDURE FOR CREATING THE CMFEDERATEDLOCKSTATUS PROPERTY DEFINITION ON THE DOCUMENT CLASS:
+
+Step 1 Log in via FileNet Enterprise Manager to the P8 domain that includes the Object Store that will be your Source Repository. 
+
+Step 2 Navigate to the object store that you want to federate document from and expand the node 
+
+Step 3 Right click on the ‘Document Class’ node and select ‘Add Properties to Class’ to invoke the ‘Add Properties to a Class’ wizard 
+
+Step 4 Select the ‘CmFederatedLockStatus’ string Property Template from the left pane and click on the [>>] button to add it to the Document class. Select Next button 
+
+Step 5 On the ‘Select Property Attributes’ panel, just click on the Next button 
+
+Step 6 Click the ‘Finish’ button to complete the operation.

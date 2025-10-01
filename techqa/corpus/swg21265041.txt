@@ -1,0 +1,44 @@
+Title: IBM ITCAM for WebSphere z/OS Data Collector IP address binding properties. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The ITCAMfWAS z/OS Data Collector(DC) has several properties that can be used to associate specific DC host IP addresses for TCP/IP communication. 
+
+RESOLVING THE PROBLEM
+These properties are normally needed only when there are multiple IP stacks on the same system image / LPAR. They should be set to the specific host name or IP address of the desired network interface of the Data Collector. 
+
+am.socket.bindip
+This property is used to bind DC “server” type network traffic to a specific IP address.
+In ITCAM 6.0, effective with PTF UK22033, it is supported as a WebSphere servant JVM custom property.
+In ITCAM 6.1, included with base function, it is automatically added by setupwas.sh to the datacollectors.properties file. 
+
+java.rmi.server.hostname
+This RMI property is used to specify the IP address or hostname of the DC remote stub for RMI communication with the Managing Server. 
+
+In ITCAM 6.0, it should be added as a WebSphere servant JVM custom property.
+In ITCAM 6.1, it is automatically added as a WebSphere servant JVM custom property by the setupwas.sh script. 
+
+networkagent.socket.ip
+Available only in ITCAM 6.1 or higher, this property can be used in situations where you need to route “client” socket network traffic from the data collector through a specific IP address. Add the property to your region’s datacollector.properties file.
+
+am.socket.exportip 
+Also only available in ITCAM 6.1 or higher, it indicates the IP address or fully qualified host name that will be used by the Data Collector to communicate with certain components of the Managing Server. It is automatically added by the setup script, setupwas.sh. 
+
+Format when used in the data collector properties file.
+am.socket.bindip=<IP address of Data Collector>
+am.socket.exportip=<IP address of Data Collector>
+java.rmi.server.hostname=<IP address of Data Collector>
+networkagent.socket.ip=<IP address of Data Collector>
+
+
+This table summarizes by version, the properties and location where defined. 
+
+Version 6.0 
+
+Property name Location am.socket.bindip JVM custom property of the WebSphere servant region java.rmi.server.hostname 
+Version 6.1 Property name Location am.socket.bindip Data collector properties file am.socket.exportip networkagent.socket.ip java.rmi.server.hostname JVM custom property of the WebSphere servant region 
+
+
+For a description how to add WebSphere custom properties, refer to the ITCAM Version 6 documentation: ITCAM for WebSphere V6.0 Installation and Customization Guide, GC32-9506, Part 7 Data Collector for z/OS, Chapter 40 Configuration for features of Data Collector on z/OS, Adding Multiple Host Support.

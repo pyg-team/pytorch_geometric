@@ -1,0 +1,151 @@
+Title: IBM IV86033: CICS EXPLORER V5.2.0 IS NOT FORWARD COMPATIBLE WITH CICS TRANSACTION SERVER FOR Z/OS VERSION V5.3 - United States
+
+Text:
+  READMES ARE AVAILABLE
+IBM CICSEX-5.2.0-FP0007 [http://www-01.ibm.com/support/docview.wss?uid=isg400002747]
+IBM CICSEX-5.2.0-FP0008 [http://www-01.ibm.com/support/docview.wss?uid=isg400003495]
+IBM CICSEX-5.2.0-FP0009 [http://www-01.ibm.com/support/docview.wss?uid=isg400003659]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CICS Explorer V5.2.0 is unable to connect to a a CICSPlex SM or
+   single CICS region (SMSS) running CICS Transaction Server for
+   z/OS V5.3. CICS Explorer is backwards compatible with earlier
+   CICS releases, but not forward compatible with newer CICS
+   releases. Attempts to connect CICS Explorer V5.2 to a CICS TS
+   V5.3 server produce message IZE0106E Connect failed with
+   "Unsupported CICS release"
+   This APAR adds support for CICS Explorer V5.2 to make a CMCI
+   connection to a CICS TS V5.3 server.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  CICS Explorer V5.2 can connect to CICS regions running CICS TS
+   V5.2 or earlier. It is not able to connect to a a CICSPlex SM or
+   single CICS region (SMSS) running CICS Transaction Server for
+   z/OS V5.3. Any attempt to do so receives message:
+   IZE0106E Connect failed with "Unsupported CICS release"
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CICS Explorer V5.2 has been enhanced so that it can create a
+   CMCI connection to CICS Transaction Server for z/OS 5.3.
+   Connections to CICSPlex SM or to single CICS regions (SMSS) are
+   supported.
+   When connected to a CICS TS V5.3 system, CICS Explorer V5.2 will
+   function as if the CICS system were at V5.2 or lower. CICS
+   Explorer V5.2 cannot be used to manage resources added at CICS
+   TS V5.3.
+   This fix will be made available in Version 5.2.0.7 of the CICS
+   Explorer.
+   For installation instructions please see:
+   Ordering maintenance for IBM CICS Explorer and CICS Explorer
+   plug-ins
+   http://www.ibm.com/support/docview.wss?uid=swg21380083 [http://www.ibm.com/support/docview.wss?uid=swg21380083]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV86033
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS EXPLORER V
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0401
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-21
+   
+   
+ * CLOSED DATE
+   2016-07-13
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     EXPLORER
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS EXPLORER V
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0401
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY
+   UP

@@ -1,0 +1,24 @@
+Title: IBM FSR/BCD Error: Exception has been thrown by the target of an Invocation - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ FSR/BCD Error: Exception has been thrown by the target of an Invocation 
+
+RESOLVING THE PROBLEM
+Symptom:
+When navigating from one object to another the following error is received:
+
+"The following Exception occurred:
+Type: TargetInvocationException
+Message: Exception has been thrown by the target of an invocation.
+Stack Trace: at System.RuntimeType.InvokeDispMethod(String name, BindingFlags invokeAttr, Object target, Object[] args, Boolean[] byrefModifiers, Int32 culture, String[] namedParameters)" 
+
+Possible Solution:
+Find the object that is causing this error to be thrown when navigating from one object to another. Delete/recreate this object.
+
+
+
+HISTORICAL NUMBER
+ 436

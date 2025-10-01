@@ -1,0 +1,76 @@
+Title: IBM Security vulnerability interim fix for embedded WebSphere Application Server - Install procedure - United States
+
+Text:
+CVE-2015-1920; PI38302; vulnerability; embedded WAS; eWAS; embedded WebSphere Application Server; IDSWebApp; fix pack; IDSWebApp; TDS WebAdmin; TDS Web Administration Tool; upgrade eWAS TECHNOTE (FAQ)
+
+QUESTION
+ How to install Security vulnerability interim fix for embedded WebSphere Application Server provided by Directory Server? 
+
+CAUSE
+Security Vulnerability CVE-2015-1920 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1920] [http://www.oracle.com/technetwork/topics/security/alert-cve-2010-4476-305811.html]requires that the embedded WebSphere Application Server(eWAS) provided by Directory Server be updated with the interim fix PI38302 [http://www-01.ibm.com/support/docview.wss?uid=swg24039898] (umbrella APAR for all WebSphere).
+
+ANSWER
+The tables on the Directory server recommended fixes [http://www.ibm.com/support/docview.wss?uid=swg27009778] page provides the latest recommended eWAS fix levels. 
+
+This Security Vulnerability CVE-2015-1920 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1920] problem is fixed in eWAS (and WAS) with the interim fix PI38302 [http://www-01.ibm.com/support/docview.wss?uid=swg24039898]. 
+
+This document provides installation procedure for interim fix for PI38302 [http://www-01.ibm.com/support/docview.wss?uid=swg24039898] with embedded WebSphere Application Server provided by Tivoli Directory Server(TDS). 
+
+1. Identify the eWAS install location. (eWAS_install_location) 
+
+Here is the default install location of eWAS if TDS provided install shield GUI was used during products installations.
+
+V6.4: 
+
+Note: V6.4 provided full WAS 8.5.5, Use instructions provided in PI38302 [http://www-01.ibm.com/support/docview.wss?uid=swg24039898]. 
+
+V6.3.1: 
+
+AIX, Solaris: /opt/IBM/ldap/V6.3.1/appsrv
+Linux: /opt/ibm/ldap/V6.3.1/appsrv
+Windows: <ITDS_V6.3.1_install_location>\appsrv 
+
+V6.3: 
+
+AIX, Solaris: /opt/IBM/ldap/V6.3/appsrv
+Linux: /opt/ibm/ldap/V6.3/appsrv
+Windows: <ITDS_V6.3_install_location>\appsrv 
+
+V6.2: 
+
+AIX, HP-UX, Solaris: /opt/IBM/ldap/V6.2/appsrv
+Linux: /opt/ibm/ldap/V6.2/appsrv
+Windows: <ITDS_V6.2_install_location>\appsrv 
+
+V6.1: 
+
+AIX, HP-UX, Solaris: /opt/IBM/ldap/V6.1/appsrv
+Linux: /opt/ibm/ldap/V6.1/appsrv
+Windows: <ITDS_V6.1_install_location>\appsrv 
+
+2. Find the eWAS version that is in use and determine the need for fix pack installation: 
+
+# for AIX, HP-UX, Solaris and Linux, open a login shell
+cd <eWAS_install_location>/bin
+./versionInfo.sh 
+
+# for Windows open a command prompt:
+cd <eWAS_install_location>\bin
+versionInfo.bat 
+
+ 
+
+3. Install the eWAS and WASSDK fix packs: 
+
+3. a. For eWAS 7.0 provided by SDS 6.3.1 or TDS 6.3, install latest recommended eWAS fix pack [http://www.ibm.com/support/docview.wss?uid=swg27009778] (that is 7.0.0.39 or later fix level: current latest fix level is 7.0.0.41).
+
+
+3. b. For eWAS 6.1 provided by TDS 6.2 or TDS 6.1, install eWAS fix pack 6.1.0.47 [http://www.ibm.com/support/docview.wss?uid=swg21672499]. 
+
+ 
+
+4. Install required interim fix for eWAS (choose one of the following based on the eWAS fix pack level installed in step 3.): 
+
+4. a. For eWAS 7.0.0.41 refer "embedded WebSphere Application Server 7.0 Fix Pack 41 (7.0.0.41) [http://www.ibm.com/support/docview.wss?uid=swg21981056]" 
+
+4. b. For eWAS 6.1.0.47 download the interim fix file "6.1.0.47-WS-WAS-IFPI38302" from PI38302 [http://www-01.ibm.com/support/docview.wss?uid=swg24039898] and install using Update installer procedure - step 5 [http://www.ibm.com/support/docview.wss?uid=swg21404270].

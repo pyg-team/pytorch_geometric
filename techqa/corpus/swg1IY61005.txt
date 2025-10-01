@@ -1,0 +1,156 @@
+Title: IBM IY61005: s13305 - Uninstall function of ITIM agent does not work correctl y with Windows 2003 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITIM Server Release: 4.5.1
+   Notes Agent: 4.5.5 (4.4.1033) on Windows 2003 Standard and
+   Enterprise
+   
+     Un-install functionality
+   
+   I have tested this function on Windows 2003 standard edition and
+   Windows
+   2003 Enterprise Edition and it failed to un-install so I could
+   re-create
+   your error. As a result I will need to raise and Apar and take
+   this
+   forward.
+   
+   
+   Problem
+   Un-install function of ITIM agent does not work correctly.
+   NT's native un-install application does not function properly
+   with this
+   agent as well.
+   Desired behaviour
+   
+   is for it to un-install using the Tivoli utility, or
+   the Microsoft un-install application.
+   
+   Can you re-create the problem?
+   I have re-created the customers problem in command line mode and
+   using
+   Windows Explorer and it still does not Un-install.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  s13305
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   ISMP Uninstaller failes to run on Windows 2003
+   platform.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   ISMP v4.5 does not officially recognize Win2
+   003 but the uninstall program will excute properly once started.
+    To run the uninstall program please follow these steps....
+   1. From the the command prompt, change the directory to
+           <AgentName>\_uninst
+   2. Execute the command: java -jar uninstall.jar
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *   Run unistall manually.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY61005
+   
+   
+ * REPORTED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C34AG
+   
+   
+ * REPORTED RELEASE
+   451
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-08-24
+   
+   
+ * CLOSED DATE
+   2004-09-10
+   
+   
+ * LAST MODIFIED DATE
+   2004-09-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     UINSTALL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

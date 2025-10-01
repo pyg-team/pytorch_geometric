@@ -1,0 +1,18 @@
+Title: IBM Detailed System Requirements: IBM InfoSphere Optim Test Data Management Solution and Starter Edition for JD Edwards EnterpriseOne v11.3 - United States
+
+Text:
+ DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ This document summarizes the hardware, platforms, and software supported by v11.3 of the IBM® Infosphere® Optim™ Test Data Management Solution for JD Edwards EnterpriseOne, and the TDM Starter Edition for JD Edwards Applications. 
+
+CONTENT
+
+
+The Test Data Management solutions for JD Edwards EnterpriseOne support JD Edwards EnterpriseOne version 8.10. Support for other EnterpriseOne versions may be available through a Professional Services agreement with IBM.
+
+Version 11.3 of the Test Data Management solutions for JD Edwards are tested and distributed with the Optim Test Data Management Solution v11.3. Detailed hardware and software requirements for the Optim Solution are at http://www.ibm.com/support/docview.wss?uid=swg27041700 [http://www.ibm.com/support/docview.wss?uid=swg27041700] [http://www.ibm.com/support/docview.wss?uid=swg27024294] [http://www.ibm.com/support/docview.wss?uid=swg27041700].
+
+RELATED INFORMATION
+ TDM Download [http://www.ibm.com/support/docview.wss?uid=swg24037436]
+Starter Edition Download [http://www.ibm.com/support/docview.wss?uid=swg24037435]

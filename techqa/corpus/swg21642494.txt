@@ -1,0 +1,86 @@
+Title: IBM Error -922 reported by buildsmi script and/or dbaccess - United States
+
+Text:
+Dbaccess permissions working directory TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Informix Server initialization can fail to build the sysmaster database because the underlying calls of dbaccess fail with error -922 
+
+SYMPTOM
+If you initialize the instance for the first time, the building of the sysmaster database can fail with following message in the Informix Server message log: 
+
+16:39:28 Building 'sysmaster' database ...
+...
+16:39:28 On-Line Mode
+...
+16:39:34 Error building 'sysmaster' database.
+16:39:34 See '/tmp/buildsmi.9109652'.
+
+And the '/tmp/buildsmi.9109652' file shows errors -922:
+
+922: Cannot get name of current working directory.
+Error in line 28
+Near character position 1
+
+The same error is reported if you run the dbaccess utility from command line.
+
+
+CAUSE
+One of the possible causes is that one of directories in the path where the dbaccess utility is installed is not searchable, in other words it is missing the 'x' permission
+
+
+DIAGNOSING THE PROBLEM
+If the "dbaccess sysmaster" command returns the error -922, run in using the truss (AIX, Solaris), strace (Linux) or tusc (HP-UX) commands: 
+
+$ truss -o dbaccess.trc dbaccess sysmaster 
+
+ 
+
+Search the dbaccess.trc command for EACCESS errors: 
+
+$ grep EACCES dbaccess.trc
+
+If you notice error similar to:
+
+statx("./../../../../../../../", 0x0FFFFFFFFFFFB400, 176, 010) Err#13 EACCES 
+
+ 
+
+it means one of the directories is not searchable. In that case run 'ls -ld' for every directory in the path to dbaccess. For example, if the Informix Server is installed in /opt/IBM/tivoli/netcool/platform/aix5/informix directory, run:
+ls -ld /
+ls -ld /opt
+ls -ld /opt/IBM
+ls -ld /opt/IBM/tivoli
+ls -ld /opt/IBM/tivoli/netcool
+ls -ld /opt/IBM/tivoli/netcool/platform
+ls -ld /opt/IBM/tivoli/netcool/platform/aix5
+ls -ld /opt/IBM/tivoli/netcool/platform/aix5/informix
+ls -ld /opt/IBM/tivoli/netcool/platform/aix5/informix/bin
+
+and check the permissions:
+
+drwxr-xr-x ... /
+drwxr-xr-x ... /opt
+drwxrwxrwx ... /opt/IBM
+drwxr-xr-- ... /opt/IBM/tivoli
+drwxrwxr-x ... /opt/IBM/tivoli/netcool
+drwxr-xr-x ... /opt/IBM/tivoli/netcool/platform
+drwxr-xr-x ... /opt/IBM/tivoli/netcool/platform/aix5
+drwxr-xr-x ... /opt/IBM/tivoli/netcool/platform/aix5/informix
+drwxr-xr-x ... /opt/IBM/tivoli/netcool/platform/aix5/informix/bin
+
+In this case the '/opt/IBM/tivoli' directory is missing the 'x' permission for 'others'.
+
+Sometime the problem might not be visible at the first glance. In that case check the permissions of the underlying mountpoints as well. For example, in the example above the whole /opt is a mounted filesystem:
+
+$ df -k /opt
+/dev/hd10opt 1048576 764572 28% 10187 6% /opt
+
+If you unmount it and run ' ls -ld /opt', the real permissions of the /opt mountpoint are shown. If the mountpoint lacks the 'x' permission, it will also lead to the -922 error.
+
+
+ 
+
+
+RESOLVING THE PROBLEM
+Get sure all the directories (and underlying mountpoints, if any exist) are searchable, in other words they do have the 'x' permission set correctly.

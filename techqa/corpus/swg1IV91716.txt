@@ -1,0 +1,323 @@
+Title: IBM IV91716: ISSUES WITH IBM MQ CLASSES FOR JAVA TRACE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The WebSphere MQ V7.1 classes for Java use the WebSphere MQ
+   common services trace facility.  The topic:
+   
+     Tracing WebSphere MQ classes for Java programs
+   
+   in the WebSphere MQ V7.1 section of IBM Knowledge Center that
+   describes how to use this trace facility can be found at the
+   following URI:
+   
+   https://www.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm
+   .mq.doc/ja11410_.htm [https://www.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm.mq.doc/ja11410_.htm]
+   
+   This topic is confusing, and does not provide enough detail for
+   users to turn on trace.
+   
+   In addition to this, the WebSphere MQ V7.5 classes for Java, and
+   IBM MQ V8.0 and V9.0 classes for Java, write trace to a file
+   called mqjms_%PID%.trc. The filename is confusing, as it implies
+   that the application being traced is using the IBM MQ classes
+   for JMS, and not the IBM MQ classes for Java.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of:
+   
+   - The WebSphere MQ V7.1 classes for Java.
+   
+   - The WebSphere MQ V7.5 classes for Java.
+   - The WebSphere MQ V7.5 classes for Java OSGi bundle
+         com.ibm.mq.osgi.java_<version number>.jar
+   
+   - The IBM MQ V8.0 classes for Java.
+   - The IBM MQ V8.0 classes for Java OSGi bundle
+         com.ibm.mq.osgi.java_<version number>.jar
+   - The IBM MQ V8.0 relocatable JAR file
+         com.ibm.mq.allclient.jar.
+   - The IBM MQ V8.0 OSGi bundle
+         com.ibm.mq.osgi.allclient.java_<version number>.jar
+   
+   
+   - The IBM MQ V9.0 classes for Java.
+   - The IBM MQ V9.0 classes for Java OSGi bundle
+         com.ibm.mq.osgi.java_<version number>.jar
+   - The IBM MQ V9.0 relocatable JAR file
+         com.ibm.mq.allclient.jar.
+   - The IBM MQ V9.0 OSGi bundle
+         com.ibm.mq.osgi.allclient.java_<version number>.jar
+   
+   who are asked by the IBM Support Organization to collect a
+   trace.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   This APAR addresses a number of issues with MQ classes for Java
+   trace:
+   
+   Issue 1:
+   ----------------------------------------------------------------
+   The topic called "Tracing WebSphere MQ classes for Java
+   programs" in the WebSphere MQ V7.1 section of IBM Knowledge
+   Center described how to configure the WebSphere MQ classes for
+   Java to use the WebSphere MQ Common Services trace facility in
+   order to collect a trace. The instructions were not very clear,
+   and IBM Support had to regularly help customers collect the
+   trace.
+   
+   Issue 2:
+   ----------------------------------------------------------------
+   The WebSphere MQ V7.5 classes for Java were changed to use the
+   WebSphere MQ messaging client trace mechanism rather than the
+   WebSphere MQ Common Services trace facility. However, the
+   "Tracing WebSphere MQ classes for Java programs" topic in the
+   WebSphere MQ V7.5 section of IBM Knowledge Center was not
+   updated to document how to configure and use the WebSphere MQ
+   messaging client trace mechanism. The topic still informed users
+   that they had to use the WebSphere MQ Common Services trace
+   facility. Although following these instructions would still
+   result in a trace file being created, users were not able to
+   take advantage of some of the functionality provided by the
+   WebSphere MQ messaging client trace mechanism, such as wrapping
+   trace.
+   
+   Issue 3:
+   ----------------------------------------------------------------
+   When using the WebSphere MQ V7.5 classes for Java, and the IBM
+   MQ V8.0 and V9.0 classes for Java, the default trace filename
+   started with the mqjms prefix. This was confusing, as it implied
+   that the trace file actually contained trace information from
+   the MQ classes for JMS rather than the MQ classes for Java.
+   
+   Issue 4:
+   ----------------------------------------------------------------
+   The "Tracing IBM WebSphere MQ classes for Java applications"
+   topic in the IBM MQ V8.0 and V9.0 sections of IBM Knowledge
+   Center, which described how to enable MQ classes for Java trace
+   using the WebSphere MQ messaging client trace mechanism, linked
+   to another topic, called "The IBM MQ classes for Java
+   configuration file". This topic contained information about the
+   configuration file used to control tracing, and stated the
+   following:
+   
+   A sample configuration file called mqjava.config is supplied in
+   the bin subdirectory of the IBM MQ classes for Java installation
+   directory.
+   
+   The sample configuration file was only shipped as part of MQ for
+   z/OS V8 and V9. The configuration file was missing in MQ V8 and
+   V9 on distributed platforms.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following changes have been made as a result of this APAR:
+   
+   Change 1:
+   ----------------------------------------------------------------
+   The information in the topic called:
+   
+     Tracing WebSphere MQ classes for Java programs
+   
+   in the WebSphere MQ V7.1 section of IBM Knowledge Center have
+   been updated to provide more detailed instructions on how to
+   collect trace of the WebSphere MQ classes for Java.
+   
+   The URI for this topic is shown below:
+   
+   https://www.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm
+   .mq.doc/ja11410_.htm [https://www.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm.mq.doc/ja11410_.htm]
+   
+   Change 2:
+   ----------------------------------------------------------------
+   The information in the topic:
+   
+     Tracing WebSphere MQ classes for Java programs
+   
+   in the WebSphere MQ V7.5 section of IBM Knowledge Center have
+   been updated to describe how to collect trace using the
+   WebSphere MQ messaging client trance mechanism. The URI for this
+   topic is shown below:
+   
+   http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.
+   mq.dev.doc/q031310_.htm [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.mq.dev.doc/q031310_.htm]
+   
+   Change 3:
+   ----------------------------------------------------------------
+   The:
+   
+   - WebSphere MQ V7.5 classes for Java
+   - IBM MQ V8.0 classes for Java
+   - IBM MQ V8.0 classes for Java OSGi bundle
+         com.ibm.mq.osgi.java_<version number>.jar
+   - IBM MQ 9.0 classes for Java
+   - IBM MQ V9.0 classes for Java OSGi bundle
+         com.ibm.mq.osgi.java_<version number>.jar
+   
+   have been updated so that, by default, MQ classes for Java trace
+   is written to a file called:
+   
+     mqjava_%PID%.trc
+   
+   where %PID% is the process identifier of the MQ classes for Java
+   application that is being traced.
+   
+   Change 4:
+   ----------------------------------------------------------------
+   The:
+   
+   - IBM MQ V8.0 relocatable JAR file
+         com.ibm.mq.allclient.jar
+   - IBM MQ V8.0 OSGi bundle
+         com.ibm.mq.osgi.allclient.java_<version number>.jar
+   - IBM MQ V9.0 relocatable JAR file
+         com.ibm.mq.allclient.jar
+   - IBM MQ V9.0 OSGi bundle
+         com.ibm.mq.osgi.allclient.java_<version number>.jar
+   
+   have been modified so that if either MQ classes for Java or MQ
+   classes for JMS trace is enabled for an application that is
+   using the relocatable JAR file, the default name of the trace
+   file is:
+   
+     mqjavaclient_%PID%.trc
+   
+   where %PID% is the process identifier of the application that is
+   being traced.
+   
+   Change 5:
+   ----------------------------------------------------------------
+   The file:
+   
+     mqjava.config
+   
+   is now shipped on all  platforms for WebSphere MQ V7.5, MQ V8.0
+   and V9.0.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.9
+   v8.0       8.0.0.7
+   v9.0 CD    9.0.5
+   v9.0 LTS   9.0.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV91716
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7224
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-12-22
+   
+   
+ * CLOSED DATE
+   2017-05-23
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7224
+   
+   
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,54 @@
+Title: IBM Preventing XML Signature Wrapping attacks on WebSphere DataPower appliances - United States
+
+Text:
+signature; wrapping; encryption; attack; verify; decrypt; security TECHNOTE (FAQ)
+
+QUESTION
+ How do I prevent XML Signature Wrapping attacks against my service running on an IBM WebSphere DataPower appliance? 
+
+CAUSE
+XML Signature Wrapping allows a malicious client to modify or forge a digitally signed document without breaking the included signature. This attack is accomplished by moving the original nodeset to another location within the document and replacing the contents.
+A similar approach can be used for XML Encryption Wrapping.
+
+
+ANSWER
+Verify and decrypt actions have settings to specify an XPath expression filter. These settings ensure that the target nodeset is protected. As a best practice, use absolute expressions that include namespaces. 
+
+For example, to protect the SOAP Body element:
+/*[local-name()='Envelope' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*[local-name()='Body' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']
+
+The following tasks describe how to configure XPath filters in verify and decrypt actions.
+
+
+Protecting against XML Signature Wrapping with a verify action 
+
+ 1. Edit the verify action 
+ 2. Click the Advanced tab 
+ 3. In the XPath Expressions Which Must be Signed list, add an expression for each nodeset that must be signed. 
+ 4. Click Apply
+
+
+Protecting against XML Encryption Wrapping with a decrypt action 
+
+ 1. Edit the decrypt action 
+ 2. Click the Advanced tab 
+ 3. In the XPath Expressions Requiring Element Encryption list, add an expression for each nodeset that must have element encryption. 
+ 4. In the XPath Expressions Requiring Content Encryption list, add an expression for each nodeset that must have content encryption. 
+ 5. Click Apply 
+
+
+Protecting SAML Assertions against XML Signature Wrapping with a verify action
+
+Variants of XML Signature Wrapping Attacks can be used on SAML Assertions. These variant attacks are prevented with a verify action. 
+
+If you use the AAA framework to extract the identity from SAML Assertions and to verify the signature on SAML Assertions, you must add a verify action with the following configuration, before the AAA action. This configuration prevents the AAA action from processing any SAML Assertion that does not contain a valid signature. 
+
+ 1. Add a verify action before the AAA action. 
+ 2. Edit the verify action 
+ 3. Click the Advanced tab 
+ 4. In the XPath Expressions Which Must be Signed list, add the expression /descendant-or-self::*[local-name()='Assertion'], which denotes that all SAML Assertions in the document must be signed. 
+ 5. Click Apply
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower Integration Appliance XI50 Firmware 4.0.2, 4.0.1, 4.0, 3.8.2, 3.8.1, 3.8, 5.0.0 All Editions Business Integration WebSphere DataPower Integration Appliance XI52 Firmware 4.0.2, 4.0.1, 4.0, 5.0.0 All Editions Business Integration WebSphere DataPower B2B Appliance XB60 Firmware 4.0.2, 4.0.1, 4.0, 3.8.2, 3.8.1, 3.8, 5.0.0 All Editions Business Integration WebSphere DataPower B2B Appliance XB62 Firmware 4.0.2, 4.0.1, 4.0, 5.0.0 All Editions Business Integration WebSphere DataPower Integration Blade XI50B Firmware 4.0.2, 4.0.1, 4.0, 3.8.2, 3.8.1, 5.0.0 Edition Independent Business Integration WebSphere DataPower Service Gateway XG45 Firmware 4.0.2, 5.0.0 All Editions Business Integration WebSphere DataPower XML Security Gateway XS40 Firmware 4.0.2, 4.0.1, 4.0, 3.8.2, 3.8.1, 3.8, 5.0.0 All Editions

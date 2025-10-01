@@ -1,0 +1,42 @@
+Title: IBM TPMfOSd Cannot get multicast deployments to work with kernel free mode - United States
+
+Text:
+network trace validate network traffic wireshark TECHNOTE (FAQ)
+
+QUESTION
+ Why am I unable to get Multicast deployments to work when I'm using kernel free mode? 
+
+ANSWER
+When using the LinuxDE with kernel free mode, you have to take some additional steps in order to be able to use multicast during deployments.
+
+
+1. Modify only one of your targets so that it works in the Rembo kernel mode. All the other targets can stay in kernel free mode.
+2. In the target monitor , display targets by subnet. Select the subnet of the target in kernel mode, then click on "Force redetection of subnet settings".
+3. Verify "multicast support" = "auto-probe" is displayed.
+4. PXE boot the target that's configured for rembo kernel mode.
+5. Refresh the target monitor. 
+6. Verify that the target monitor now displays "multicast support" = "enabled".
+7. Deploy your system profile to all the other targets configured for kernel free
+mode. The deployments will occur using multicast.
+
+You can verify that multicast has been used by looking at the TPMfOSd logs. The File.trc server log will contain references to MCAST and PCAST, indicating multicast traffic coming from the TPMfOSd server. TPMfOSd multicast is implemented as a layer on top of the standard multicast protocol. It is called PubliCast (PCAST).
+
+[2013/06/26 19:26:30] <NOT> PCAST[fa85a6e3]: Initializing PCAST session
+[2013/06/26 19:26:31] <NOT> PCAST[fa85a6e3]: New client 172.31.101.113,
+now 1 clients
+[2013/06/26 19:26:42] <NOT> PCAST[fa85a6e3]: New client 172.31.101.38,
+now 2 clients
+
+
+The bom.trc task log file will indicated multicast traffic on the target.
+
+[2013/06/27 10:15:37] W <INF> Downloading installation files, using
+multicast
+...
+[2013/06/27 11:33:35] Batch completed, 8050115 KB transferred and stored
+in 4278.77 seconds
+[2013/06/27 11:33:35] (99.8% efficiency, average block size=16065 KB)
+
+
+Note that there is one other limitation when using multicast with kernel free mode.
+The LinuxDE deployment engine download to the targets will not be performed using multicast, but by unicast.

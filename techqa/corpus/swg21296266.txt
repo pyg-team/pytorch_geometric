@@ -1,0 +1,66 @@
+Title: IBM Timeouts and Related Attributes in TSAMP - United States
+
+Text:
+TSA; TSAMP; TimeOut; RetryCount; ResourceRestartTimeOut; Heartbeat; sensitivity; MonitorCommandPeriod; MonitorCommandTimeout; StartCommandTimeout; StopCommandTimeout TECHNOTE (FAQ)
+
+QUESTION
+ What timeout settings exist within the TSAMP solution that would affect how long it would take to detect a problem and failover to a standby node ? 
+
+ANSWER
+From a TSA MP perspective, there are three categories of timeouts:
+1) TSA MP defined/managed Resource specific attributes:
+Consider the following attributes for each resource ( lsrsc -Ab IBM.Application Name MonitorCommandPeriod MonitorCommandTimeout StartCommandTimeout StopCommandTimeout ) :
+Name = "db2hadr_database-rs"
+MonitorCommandPeriod = 19
+MonitorCommandTimeout = 17
+StartCommandTimeout = 120
+StopCommandTimeout = 12
+
+For the above example, you need to consider how long the monitor polling interval is, and even how long it takes the MonitorCommand to execute. The total time between polls is actually "MonitorCommandPeriod + Execution_time_of_MonitorCommand", in other words, the polling period countdown does not start until the last MonitorCommand completes its execution. Obviously a failure immediately after the last poll finished will lead to the maximum latency in detection of a problem, since it would not be detected for another "MonitorCommandPeriod + Execution_time_of_MonitorCommand" seconds.
+
+The time it takes for the execution of the StartCommand is also a factor during a failover.
+
+
+2) TSA MP global settings:
+The "lssamctrl" command to view your current settings:
+Displaying SAM Control information:
+
+SAMControl:
+TimeOut = 60
+RetryCount = 3
+Automation = Auto
+ExcludedNodes = {}
+ResourceRestartTimeOut = 3
+ActiveVersion = [2.2.0.5,Tue Jan 15 16:27:10 PST 2008]
+EnablePublisher = Disabled
+TraceLevel = 31
+
+ResourceRestartTimeOut = time in seconds TSA MP waits to restart resources which were located on a failed node on another node. This is to ensure there is some time available for the resource to be handled (offlined) on the other node before it is started on a new node, even if it is just enough time to allow for a forced shutdown of the original node. I wouldn't suggest going any lower. 
+
+TimeOut = value in seconds for a start control operation executed by TSA MP. After the timeout expires, the operation is repeated if the RetryCount is not exceeded. However, this value is not used for resources which are of the class IBM.Application. The IBM.Application class provides its own timeout values as shown in the example described above.
+
+RetryCount = number of allowed attempts if a control operation fails or times out. The default is 3 attempts. In general, if it did not work the first time, the chances of it working on the second or subsequent attempt is fairly low.
+
+The samctrl command can be used to change these global settings. Refer to its man pages or the TSA MP Admin & Users Guide.
+
+
+3) Cluster (RSCT) heartbeat
+This is the time is takes one node to declare that it cannot communicate with the other. It affects QUORUM and thus when SA MP can take failover actions. The default is 1 second timeout and 4 retries, thus 4 seconds total.
+
+You can obtains the cluster (RSCT) heartbeat settings using the command "lscomg" :
+Name Sensitivity Period Priority Broadcast SourceRouting NIMPathName NIMParameters 
+CG1 4 1 1 Yes Yes 
+
+
+Summary:
+A) Given a two node cluster, in the case where both nodes are fine, the maximum failover time would be approximately :
+MonitorCommandPeriod + Execution_time_of_MonitorCommand + ResourceRestartTimeOut + BINDER_execution_time + StartCommand_operation_time
+
+where "BINDER_execution_time" is the time it take for the automation engine (TSA MP's IBM.RecoveryRM process) to determine where to place a constituent of a resource, and "StartCommand_operation_time" is the time it takes for the StartCommand script to start the underlying resource.
+
+B) Primary and Standby nodes loose connectivity (NIC failure or primary system power loss), the maximum failover time would be:
+(Cluster_heartbeat_timeout X heartbeat_retries) + TieBreaker_reserve_time + MonitorCommandPeriod + Execution_time_of_MonitorCommand + ResourceRestartTimeOut + BINDER_execution_time + StartCommand_operation_time
+
+where "Cluster_heartbeat_timeout" is the 1 second and "heartbeat_retries" is 4, thus 4 seconds total by default, and "TieBreaker_reserve_time" is how long it takes to ping the network TieBreaker IP address and get a successful response so that the surviving node can obtain QUORUM.
+
+C) Both nodes go down ... mostly dependent on reboot time and time for the clustering and automation software to start, obviously a lot longer than the two above scenarios.

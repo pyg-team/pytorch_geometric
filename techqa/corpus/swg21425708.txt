@@ -1,0 +1,16 @@
+Title: IBM WebSphere Flat File Adapter processes failing async mediation event after server re-start - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to get the fix for WebSphere Flat File Adapter for failing asynchronous mediation event after server re-start. 
+
+SYMPTOM
+When WebSphere Flat File Adapter is configured for assured once delivery and events are being processed asynchronously, a failing event will be processed and archived successfully after server re-start. 
+
+This is a known issue and a fix has been created to address it.
+
+
+RESOLVING THE PROBLEM
+Contact IBM WebSphere Flat File Adapter support to get the fix.

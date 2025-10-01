@@ -1,0 +1,19 @@
+Title: IBM TXSeries CICS-WebSphere MQ application fails with reason code 2018 for MQOPEN calls - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The TXSeries region can run CICS-WebSphere MQ applications that are written in languages like C, IBM COBOL and Micro Focus COBOL. In an environment where a CICS-WebSphere MQ application written in Micro Focus COBOL runs after a CICS-WebSphere MQ application written in C, the COBOL application may fail with Reason Code 2018 for MQOPEN call . The applications fail when the COBOL and C programs run on the same CICSAS process. 
+
+CAUSE
+The applications fail as there are restrictions from the WebSphere MQ product, which does not allow C and COBOL MQI share a single process space. When the same CICS application server runs C and Micro Focus COBOL applications, you will see an MQOPEN failure with Reason Code 2018 (MQRC_HOBJ_ERROR) while executing the second application. 
+
+This is a limitation imposed by the use of runtime linking by WebSphere MQ. TXSeries uses runtime linking as a requirement placed upon TXSeries by Micro Focus COBOL. When you link your C and COBOL applications, you have to link with their corresponding MQ libraries (libmqm and libmqmcb respectively). If these applications are loaded into the same CICSAS process, then the MQI call's made by the application executing later will fail with MQ Reason Code, MQRC_HOBJ_ERROR. This is because the application's MQI call starts from the wrong library.
+
+
+RESOLVING THE PROBLEM
+If you have CICS applications written in both C and COBOL, then you must only make MQI call's from either C or COBOL applications. If you want to run C and COBOL applications which use MQIs, you can consider the option of partitioning your transactions to two CICS regions and host your C applications in one CICS region and your COBOL applications on another. 
+
+
+This problem however is not seen with IBM COBOL and C applications working with WebSphere MQ.

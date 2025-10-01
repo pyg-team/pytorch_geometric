@@ -1,0 +1,242 @@
+Title: IBM Domino 8.5 for i: Unsupported features - United States
+
+Text:
+i5/OS; OS/400; i5; IBM i; IBM; Lotus; Domino; 8.5; unsupported; not supported; feature; RELNOTE85; RELNOTE85; RELNOTE85 TECHNOTE (FAQ)
+
+QUESTION
+What features are not available or not supported with Domino 8.5 for i? 
+
+ANSWER
+The following features are not available or not supported with Domino for i: 
+Domino 8.5.3 (September 2011):
+
+
+ * The Lotus Domino for i Navigator plugin (GUI) and corresponding functions provided by System i Navigator Tasks on the Web are deprecated. These features continue to be available in the Lotus Domino product (i Navigator Domino plugin) and IBM i (Navigator Tasks on the Web) but IBM Support will not escalate any issues reported. Customers are advised to use the fully-functional command language (CL) interface to administer Domino servers (STRDOMSVR, WRKDOMSVR, et.al.) or the Domino Server administration interface. Further, the Lotus Domino for i Navigator plugin will no longer be translated into a subset of Server Language Packs (SLPs). 
+
+ * The HTTP Server (powered by Apache) plugin for Domino for i is supported on IBM i V5R4, V6R1, and V7R1 but will be removed from the IBM i HTTP product (DG1) in future releases of the IBM i operating system and thus no longer supported. Customers wishing to continue to use the Apache HTTP server in place of the Domino HTTP server will be able to do so using WebSphere Portal Portlets for Domino.
+   
+
+
+Domino 8.5.2 (September 2010): 
+ * The Domino Server Setup configuration option to copy a replica of the Directory Assistance database is not available with IBM i in 8.5.2. See the information "Setting Up Directory Assistance" for information on how to enable Directory Assistance for an existing (new or upgraded) server.
+
+ * http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/index.jsp?topic=/com.ibm.help.domino.admin.doc/DOC/H_SETTING_UP_DIRECTORY_ASSISTANCE_OVER.html
+
+
+Domino 8.5.1 (October 2009): 
+ * IBM is no longer distributing Domino for i5/OS Single Logon [http://www.ibm.com/systems/i/software/domino/devtools/singlelogon.html]. Support for existing installations of NNSLINST.NSF will be discontinued on November 30, 2009. 
+
+ * Domino configuration setup wizard will not launch from System i Navigator. 
+   System i Navigator 5.4 does not support launching the Domino 8.5.1 server setup configuration wizard (Domino - New - New Domino Server) due to Java version incompatibility. An addition, there is an issue with System i Navigator 6.1 (with any System i Navigator service packs applied) described in technote 1404371 [http://www.ibm.com/support/docview.wss?rs=463&uid=swg21404371] that also impacts launching the wizard from System i Navigator. 
+   
+   The alternative methods for configuring a Domino server are: 
+    *  Launch the standalone Domino configuration setup wizard (domwzd.exe) from the physical media DVD or Web kit.
+      Use the Configure Domino Server (CFGDOMSVR) command. 
+      
+   
+   
+ * JavaUseClassicJVM notes.ini setting is not supported with Domino 8.5.1 for i. If specified in the notes.ini file, the following message will display on the server console during startup. 
+
+ * Notes .INI setting JavaUseClassicJVM in use. The Classic JVM is not tested or supported in this release of Domino and is not available in the release following IBM i 6.1. Removing this .INI setting now to use J9, the default JVM, is strongly recommended. 
+ * 
+ * 
+ * Software Requirements
+ * 
+ * 
+ * Several new Directory SDK API interfaces are added in Domino 8.5.1. The interfaces are included in the QNOTES/LIBNOTES wrapper *SRVPGM that supports Domino multi-versioning, but the new Directory API functions are not supported on IBM i at this time. 
+   
+   Hide details for Directory APIs not supported by IBM i 8.5.1 [/support/docview.wss?uid=swg21315471&amp;aid=1]Directory APIs not supported by IBM i 8.5.1  * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * Considerations when developing Domino C and C++ API applications
+    * 
+   
+   
+   Domino 8.5.0 (January 2009) 
+    * DB2 datastore and related Query View and Domino Access View capabilities
+      
+    * Integration with and forwarding events to the Tivoli Enterprise console
+      
+    * Activities server. To use Activities with Notes 8 and later releases, the Activities server must be deployed to a supported platform. Refer to the Lotus Connections documentation for more information on Activities server configuration options and deployment. 
+      
+    * The feature Fault Recovery restart in less than 30 seconds with Full NSD
+   
+    * The OS400/INTLENG/BATCH directory and files were removed from the physical media when the Domino product grew beyond 1 physical CD. As a consequence, Domino for i no longer supports the BATCH INSTALL feature of LODRUN as described in Installing and Managing Domino 6 (i400help) Appendix B [http://www.lotus.com/ldd/doc/AS400/6.0/i400help.nsf/b3266a3c17f9bb7085256b870069c0a9/66d9d801d74c9be886256c3a005a7ee8?OpenDocument]. 
+      
+      The LODRUN command may still be used to install the Domino product interactively using physical media. Place the media in the IBM i system's optical drive and issue the command: 
+      
+      lodrun dev(<optical-device-name>) dir('/os400/')
+   
+    * 
+    * 
+    * Installation and upgrade
+    * 
+    * Checklist for upgrading
+    * 
+   
+    * The IBM i "cluster-enabled" Domino capability provided with the CFGDOMCRG and related DOMCRG commands is removed beginning with Domino release 7.0. For more information on IBM i High Availability (HA), see http://www-03.ibm.com/systems/power/software/availability/i/index.html? [http://www.ibm.com/systems/power/software/availability/i/index.html?] 
+      
+      Domino clustering is fully supported and is the preferred failover solution. 
+      
+    * xSP hosting has been removed. If the CFGDOMSVR or CHGDOMSVR commands specify XSP(*YES), the setting is ignored.
+      
+    * SNMP Agent
+      
+    * IPv6 support on IBM i varies depending on the release, as indicated in the table below: 
+      Feature i 5.4 i 6.1 Domino server configuration (*) IPv4 / IPv6 IPv4 & IPv6 i Navigator and i Navigator Tasks on the Web IPv4 only IPv4 & IPv6 HTTP (Apache) Plugin IPv4 only IPv4 & IPv6 FTP IPv4 only IPv4 & IPv6 Java console IPv4 only IPv4 & IPv6 
+      (*) You can configure a Domino server to communicate using IPv6 using the CFGDOMSVR CL command or configuration wizard (domwzd).
+   
+    * RMEVal is not supported with the "classic" Java option 10; it is supported with Java SE 32 bit (J9), option 11 only.
+   
+   
+
+RELATED INFORMATION
+ Considerations when developing Domino C and C++ API App [http://www.ibm.com/support/docview.wss?uid=swg21238494]
+Domino configuration setup wizard exits after splash sc [http://www.ibm.com/support/docview.wss?uid=swg21404371]

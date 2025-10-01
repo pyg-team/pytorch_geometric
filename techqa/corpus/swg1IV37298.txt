@@ -1,0 +1,179 @@
+Title: IBM IV37298: KUXAGENT PROCESS CAN CRASH DUE TO TIMEOUT ON PIPE COMMUNICATION - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 4 (6.2.3-TIV-ITM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24034252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description: On Solaris the Monitoring Agent for UNIX OS
+   kuxagent can crash if it is experiencing delays in
+        communication on pipes with other OS Agent processes (like
+   stat_daemon or mount_stat), generating a crash with the
+   following
+     stack trace:
+   
+     /opt/IBM/ITM/sol296/ux/bin/kuxagent:stacktrace_handler+0x58
+     /lib/sparcv9/libc.so.1:0xd8684
+     /lib/sparcv9/libc.so.1:0xcc1f8
+     /lib/sparcv9/libc.so.1:0xcc404
+     /lib/sparcv9/libc.so.1:0xd85fc [ Signal 14 (ALRM)]
+     /lib/sparcv9/libc.so.1:0xd1de4
+     /lib/sparcv9/libc.so.1:cond_wait+0x10
+     /lib/sparcv9/libc.so.1:_pthread_cond_wait+0x8
+     /opt/IBM/ITM/tmaitm6/sol286/lib/libkdc.so:0x36f88
+     /opt/IBM/ITM/tmaitm6/sol286/lib/libkdc.so:0x37520
+     /opt/IBM/ITM/tmaitm6/sol286/lib/libkdc.so:rpc__listen+0x330
+     /opt/IBM/ITM/tmaitm6/sol286/lib/libkra.so:0x2a399c
+     /opt/IBM/ITM/tmaitm6/sol286/lib/libkra.so:kglpsrvr+0x6a8
+   /opt/IBM/ITM/tmaitm6/sol286/lib/libkra.so:kramain+0x684
+     /opt/IBM/ITM/sol296/ux/bin/kuxagent:main+0x3a4
+     /opt/IBM/ITM/sol296/ux/bin/kuxagent:_start+0x17c
+     Fatal Error (14) Detected. Exiting
+     This process is not in the root of the chain. Just to be sure
+   send a
+     SIGTERM to the parent.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The kuxagent process can crash due to timeout on pipe
+   communication.
+   
+   
+   On Solaris,the Monitoring Agent for UNIX OS kuxagent can crash
+   if it is experiencing delays in communication on pipes with
+   other OS Agent processes (like stat_daemon or mount_stat),
+   generating a crash with the following stack trace:
+   
+   /opt/IBM/ITM/sol296/ux/bin/kuxagent:stacktrace_handler+0x58
+   /lib/sparcv9/libc.so.1:0xd8684
+   /lib/sparcv9/libc.so.1:0xcc1f8
+   /lib/sparcv9/libc.so.1:0xcc404
+   /lib/sparcv9/libc.so.1:0xd85fc [ Signal 14 (ALRM)]
+   /lib/sparcv9/libc.so.1:0xd1de4
+   /lib/sparcv9/libc.so.1:cond_wait+0x10
+   /lib/sparcv9/libc.so.1:_pthread_cond_wait+0x8
+   /opt/IBM/ITM/tmaitm6/sol286/lib/libkdc.so:0x36f88
+   /opt/IBM/ITM/tmaitm6/sol286/lib/libkdc.so:0x37520
+   /opt/IBM/ITM/tmaitm6/sol286/lib/libkdc.so:rpc__listen+0x330
+   /opt/IBM/ITM/tmaitm6/sol286/lib/libkra.so:0x2a399c
+   /opt/IBM/ITM/tmaitm6/sol286/lib/libkra.so:kglpsrvr+0x6a8
+   /opt/IBM/ITM/tmaitm6/sol286/lib/libkra.so:kramain+0x684
+   /opt/IBM/ITM/sol296/ux/bin/kuxagent:main+0x3a4
+   /opt/IBM/ITM/sol296/ux/bin/kuxagent:_start+0x17c
+   Fatal Error (14) Detected.  Exiting
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been changed in order to improve code strength on
+   possible communication issues.
+   
+   The fix for this APAR is going to be included in the following
+   maintenance vehicle:
+       | fix pack | 6.2.3-TIV-ITM-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV37298
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040U
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-27
+   
+   
+ * CLOSED DATE
+   2013-04-29
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * FIXED COMPONENT ID
+   5724C040U
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP

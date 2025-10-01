@@ -1,0 +1,34 @@
+Title: IBM "Content Manager" error when launching TCR from TIP. - United States
+
+Text:
+ITNCM; TIP; TCR; Content Manager; ulimit TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Some customers may receive a "Content Manager" error when launching Tivoli Common Reporting (TCR) from the TIP portal.
+
+
+
+SYMPTOM
+Customers may receive the following error in the cogserver.log file 
+
+CM-CFG-5065 A Content Manager configuration error was detected while attempting to execute the content initialization script. Content Manager cannot access the configuration file "{File}".; Resource=/WEB-INF/cm/cmMetadata.xml 
+CAUSE
+There are not enough file descriptors available for TCR to launch this file. 
+
+ 
+
+
+DIAGNOSING THE PROBLEM
+If you get this error in the cogserver.log, then you need to check the ulimit to make sure its value is set high enough. Enter "ulimit -a" on the server to see if the value is less than 8192 (maximum per user). 
+
+ 
+
+ 
+
+
+RESOLVING THE PROBLEM
+If the ulimit value returned from the "ulimit -a" is less than 8192, then increase the ulimit for open files to 8192 using the following command: 
+
+ 
+
+ulimit -n 8192

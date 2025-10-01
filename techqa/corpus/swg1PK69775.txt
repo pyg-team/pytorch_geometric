@@ -1,0 +1,171 @@
+Title: IBM PK69775: THE VERSION 6.0.X AND 6.1 DOCUMENTATION DOES NOT LIST THE CORRECT APPLICABILITY FOR THE -XLP PARAMETER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Information Center for WebSphere Application Server
+   Version 6.0.x incorrectly lists the -Xlp Java virtual machine
+   (JVM) parameter for operating systems other than AIX. In
+   addition, the Version 6.1 documentation lists the -XLP JVM
+   parameter for the AIX operating system only. The parameter
+   applies to the AIX and Windows operating systems with
+   WebSphere Application Server Version 6.1.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  (none)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  This APAR affects administrators who are    *
+   *                  reading the tuning documentation for        *
+   *                  Windows operating systems in the            *
+   *                  Information Centers for WebSphere           *
+   *                  Application Server Version 6.0.x.           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The "Tuning Windows systems" topic      *
+   *                      within the Version 6.0.x Information    *
+   *                      Center describes the -Xlp parameter     *
+   *                      for tuning Windows operating systems.   *
+   *                      This Java virtual machine (JVM)         *
+   *                      parameter description says that you     *
+   *                      can use it for large page support.      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The "Tuning Windows systems" topic within the Version 6.0.x
+   Information Center incorrectly describes the -Xlp JVM
+   parameter. This parameter is available for Windows operating
+   systems with WebSphere Application Server Version 6.1.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  For WebSphere Application Server Version 6.0.x, the following
+   changes will be made:
+   - The "Tuning Windows systems" topic within the Version 6.0.x
+   Information Center will be updated so that it does not list
+   the -Xlp JVM parameter.
+   - This parameter will be removed from the "Tuning Linux
+   Systems" topic.
+   For WebSphere Application Server Version 6.1, the following
+   change will be made:
+   The -Xlp JVM parameter description in the "Tuning Java virtual
+   machines" topic for WebSphere Application Server Version 6.1
+   will be updated so the description states that it applies to
+   the AIX and Windows operating systems.
+   
+   Date that the information will be available externally to
+   customers:
+   Periodically, we update the documentation in our information
+   centers. Thus, the changes might have been made before you
+   read this text. To access the latest on-line documentation,
+   complete the following steps:
+   1. Go to the product library page at the following Web site:
+   http://www.ibm.com/software/webservers/appserv/library [http://www.ibm.com/software/webservers/appserv/library]
+   2. Locate the appropriate version and product.
+   3. Under "Documentation - Information center format", click
+   the appropriate link. In most cases, the WebSphere Application
+   Server documentation is available in both an online version
+   and in an IBM Eclipse Help System version. For more
+   information on the IBM Eclipse Help system, see the following
+   Web site: http://www.alphaworks.ibm.com/tech/iehs [http://www.alphaworks.ibm.com/tech/iehs]
+   
+   If you install the IBM Eclipse Help System, you must also
+   install the appropriate help system plug-in for the WebSphere
+   Application Server documentation in its eclipse/plugins
+   directory. The plug-in is available from our product library
+   page.
+   
+   The modified documentation will be available in the September
+   2008 update to the information centers.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK69775
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   61I
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-29
+   
+   
+ * CLOSED DATE
+   2008-07-31
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

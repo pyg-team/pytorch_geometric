@@ -1,0 +1,23 @@
+Title: IBM CAC  ( Common Access Card ) authentication for TIP. - United States
+
+Text:
+CAC; ( Common Access Card ); authentication for TIP; TIPL2FAQ TECHNOTE (FAQ)
+
+QUESTION
+ Does the Tivoli Intergrated Portal (TIP) support CAC ( Common Access Card ) authentication logins? If not, are there plans for such support? 
+
+CAUSE
+US Government is starting to require CAC authentication
+
+ANSWER
+Common Access Card authentication is supported by means of TAM, which is certified for use with TIP. 
+
+OpenTrust SCM which integrated with Tivoli Identity Manager
+
+
+
+Tivoli Identity Manager is built to work with Tivoli Access Manager 
+publib.boulder.ibm.com/infocenter/tivihelp/v2r1/index.jsp?topic=%2Fcom.ibm.itame2.doc_5.1%2Fam51_tim_guide68.htm 
+
+Tivoli Integrated Portal has been certified to work with Tivoli Access Manager. 
+publib.boulder.ibm.com/infocenter/tivihelp/v15r1/topic/com.ibm.tip.doc_2.1/ctip_config_tam.html

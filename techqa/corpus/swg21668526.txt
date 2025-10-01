@@ -1,0 +1,156 @@
+Title: IBM WinCollect error code: 0x0005 Access denied - United States
+
+Text:
+wincollect; access denied; remote poll; remote collection; 0x0005; error message; user permission TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ My WinCollect agents are generating error codes for 0x0005 access denied. Why am I seeing error code 0x0005 from my WinCollect agents? 
+
+SYMPTOM
+If the user specified in the log source cannot read the registry of the remote system, then the agent generates access denied messages either in the device log messages or through syslog events. The location of the error message is dependent on your WinCollect version. 
+
+
+
+FOR WINCOLLECT AGENTS AT V7.1.2 AND BELOW
+The following message is displayed in the device log on the remote Windows host in C:\Program Files(x86)\IBM\WinCollect\logs:
+
+ERROR Device.WindowsLog.EventLogMonitor : Failed to open event log IP address [\\IP address:System]; will try again in approx 60 seconds. Reason: Error code 0x0005: Access is denied.
+
+
+
+
+
+
+FOR WINCOLLECT AGENTS AT V7.2.0 AND ABOVE
+For WinCollect 7.2.0 agents send syslog messages that can be viewed from the Log Activity tab. 
+
+ 
+
+Note: The easiest way to filter events by WinCollect agent is to: 
+
+ 1.  Click the Admin tab. 
+ 2. Click the WinCollect icon. 
+ 3. Select an agent from the list. 
+ 4. Click Show Events.
+    
+    The Log Activity tab is displayed and filtered by the log sources associated with the agent you selected. The following are sample syslog events that can be displayed or are associated with the Access Denied error:
+    
+     1. LEEF:1.0|IBM|WinCollect|7.2|4|src=Hostname dst=IP address sev=3 log=Code.RegistryCacheInfo.\\IPaddress.InitializeRegistryInfo msg=Failed to query installation language on \\ IP address (Error: Error code 0x0005: Access is denied.). Defaulting to US English.
+        
+        
+        
+     2. LEEF:1.0|IBM|WinCollect|7.2|4|src=Hostname dst=IP address sev=4 log=Device.WindowsLog.RegistryCacheInfo.\\IPaddress.InitializeEnvironmentInfo msg=Couldn't retrieve environment on machine \\IP address
+        
+        
+        
+     3. LEEF:1.0|IBM|WinCollect|7.2|4|src=Hostname dst=IP address sev=4 log=Device.WindowsLog.RemoteMessageFormatter::GetMessageA.IPaddress msg=We can retrieve logs for this machine (\\IP address) but we can't seem to access the machine's registry. This means that the 'Message=' portion of the payload will contain only the insertion values (no formatting will be present). This could adversely affect the parsing of the log by the receiver.
+    
+    
+
+
+CAUSE
+The error code 0x0005 Access denied can be caused by the following: 
+
+ 1. The user configured in the log source does not have the permissions required to read the remote registry for the system it is trying to poll for events. 
+    
+ 2. The Remote Registry service is disabled on the Windows host you are polling.
+    
+    
+
+
+ENVIRONMENT
+WinCollect agents at version 7.1.0 and above.
+
+
+
+DIAGNOSING THE PROBLEM
+WinCollect agents that remotely poll other systems for events use the remote registry to determine the operating system of the remote event source. This agent reads the remote registry to collect information on how to properly format events in to name=value pairs as event formats have changed between Windows operating system versions over the years. When a WinCollect agents cannot retrieve this information, then error code 0x0005: Access denied can be displayed. 
+
+
+
+TEST THAT THE USER YOU CONFIGURED IN YOUR LOG SOURCE CAN REMOTELY READ THE REGISTRY WITHOUT AN ERROR. 
+
+If you are remotely polling another Windows host for events, you can try to remotely open the event viewer from the system running the WinCollect agent. 
+Procedure 
+
+ 1. Log on to the Windows host that has the WinCollect agent locally installed. 
+ 2. Select Start > Programs > Administrative Tools, and then click Event Viewer. 
+ 3. Click Action > Connect to another computer. 
+ 4. Select the Another computer option and type the IP address or host name of the server you want to remotely poll for events. 
+ 5. Click the Connect as another user check box. 
+ 6. Click Set User. 
+ 7. In the User name field, type the domain\username for the user you specified in your log source configuration. For example, test.qradar.com\JonathanP. 
+ 8. Type the password for the user and click OK. 
+
+
+This test can be used to detemermine if your log source user can display the remote registry of another Windows host. If this test fails, then the administrator can review permissions or verify that the remote registry permission and services are enabled. 
+
+
+RESOLVING THE PROBLEM
+Administrators should review the material below to assist with troubleshooting access denied error messages. 
+
+ 
+
+
+
+1. VERIFY THAT THE REMOTE REGISTRY SERVICE ARE ENABLED ON THE REMOTE SYSTEM
+
+If the remote registry service is disabled, then the access denied error can generate as the 0x0005 error messages. Procedure 
+
+ 1. Log in to the remote system. 
+ 2. Select Start > Programs > Administrative Tools, and then click Services. 
+ 3. In the Status column, the Remote Registry service must display Started.
+
+
+
+
+
+
+
+2. VERIFY THE USER IN YOUR LOG SOURCE INCLUDES THE CORRECT USER RIGHT ASSIGNMENT 
+
+The user defined in your log source must include the ability to read the remote registry of the Windows host that you are polling for events. 
+
+IMPORTANT: Most administrators can resolve domain related permission issues by assigning the log source user to the " Remote Event Log Readers" group. This group typically includes permissions required to read events from remote systems. 
+
+The access denied error message is common when administrators create a specific user to remotely poll for events, but do not give the user permissions to read the remote registry. This issue can be resolved by updating the Group Policy Object or local policy on the remote system to give the user the proper permission level to read the remote registry. 
+
+For additional information on managing remote access to the registry on Windows systems, see http://support.microsoft.com/kb/314837 [http://support.microsoft.com/kb/314837]. 
+
+
+
+
+
+
+
+3. IF THE REMOTE OPERATING SYSTEM IS WINDOWS 2003, ADMINISTRATORS CAN VERIFY THAT THE ERROR IS NOT AN OPERATING SYSTEM ISSUE 
+
+
+Administrators who remotely poll for events from Windows 2003 operating systems should review the attached Microsoft KnowledgeBase article. There is a resolved issue where the remote registry in Windows 2003 cannot not be accessed, even when enabled. For more information, see http://support.microsoft.com/kb/555335 [http://support.microsoft.com/kb/555335]. 
+
+
+
+
+
+
+4. GROUP POLICY AND REGISTRY KEYS 
+
+If the group policy object is updated for the domain account by granting "Manage auditing and security log" permission, then the administrator should verify that access to the account can read the HKEY_LOCAL_MACHINE registry hive. 
+
+The goal of this procedure is to verify if you can open the remote Windows registry as the domain user specified in the WinCollect log source. If successful, then that user should have no issues attempting to remote poll for events. 
+
+How to verify a user can poll the remote server for events 
+
+ 1. Log in to the Windows system that is hosting the WinCollect agent. 
+ 2. Click Start and in the search window, type regedit. 
+ 3. Press Shift + Right-click, and select Run as different user. 
+ 4. Type the username and password for your log source user. 
+    The Registry Editor is started with the credentials specified in the log source. 
+ 5. From the registry, select File > Connect Network Registry. 
+ 6. In the Enter the object name to select, type the hostname of the remote Windows system and click Check Names. 
+ 7. Click OK.
+    If the remote registry opens successfully, then you have validated that your log source user can remotely poll for events. 
+
+RELATED INFORMATION
+ Microsoft KB for remote registry & Windows 2003 [http://support.microsoft.com/kb/555335]
+Manage Remote Registry Access [http://support.microsoft.com/kb/314837]

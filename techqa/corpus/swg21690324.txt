@@ -1,0 +1,114 @@
+Title: IBM Re-enabling a Domain or Security Administrator in Guardium Data Encryption Expert - United States
+
+Text:
+Guardium Data; Encryption; domain administrator; security administrator; enabled; disabled; domain TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Guardium Data Encryption Expert ("GDEE" or Guardium "DEE") offers security groupings known as "security domains". Each domain has one or more domain administrator, who is responsible for managing the privileges of the security administrators. In order for a domain or security administrator to be active in a domain, the user must be added to the domain and enabled within the domain. Certain actions by other administrative users (typicaly a password reset) may cause a user to be disabled within the domain. 
+
+SYMPTOM
+Symptoms that the password has been reset: 
+
+ * User may be informed of new password by the system administrator, and... 
+ * User is prompted to change password during next login. Note that a user may also be prompted to change a password when the password has expired in accordance with the configured password policy.
+
+
+Symptoms that the user is no longer enabled in a domain:  * Security administrators of a single domain are not switched into the domain. Default behavior is to automatically switch a security administrator of a single domain into that domain. 
+ * Radio button for the domain on "Switch Domains" page in the Management Console shows the domain yet the domain cannot be selected. 
+ * Radio button for the domain on "Switch Domains" page in the Management Console can be selected; clicking button "Switch to Domain" displays an error message: "Unable to switch domain "domain". You are either not in the domain or are disabled in the domain." 
+ * "Enabled" checkbox next to administrator account is unchecked when viewing "Domain Administrators" from the account of an enabled Domain Administrator in that domain.
+
+
+CAUSE
+If a domain or security administrator password is reset by the system administrator, that domain or security administrator is disabled within the security domain. This function is a security feature to protect against a system administrator usurping the authority of a domain or security administrator by manipulation of authentication credentials. .
+Domain administrators can also manually disable other domain or security administrators within the domain.
+
+
+DIAGNOSING THE PROBLEM
+No conclusive determination that a password has been reset is possible but may be inferred from the system log files: 
+
+.
+DAO0091I: Administrator "sys_admin" updated administrator "domain_admin" in the Security Server.
+. 
+
+Determining if a user is currently disabled cannot be performed from outside of the security domain. Conclusive determination can be found by a Domain Administrator viewing the "Administrators" window for the security domain.
+.
+Causative determination that a password reset triggered the user to become disabled is not possible. Administrative action generates a log entry:
+.
+DAO0424I: Administrator domain_admin disabled user security_admin in the domain.
+
+
+
+RESOLVING THE PROBLEM
+Method 1 
+
+Contact an enabled Domain Administrator for the security domain. Any enabled Domain Administrator can add additional Domain or Security Administrators to the domain or re-enable a disabled Domain or Security Administrator. 
+
+. 
+
+Steps performed by the disabled user: 
+
+ 1. If the password has been reset, log in to the Management Console and set a permanent password. Certain versions of the software require this step while others do not. 
+
+
+. Steps performed by the enabled Domain Administrator: 
+
+ 1. Log in to the Management Console. 
+ 2. Switch to the security domain if necessary. 
+ 3. Pull down the "Administrators" menu and select "Domain". 
+ 4. Select the checkbox on the left of the administrator account name and click the button "Enable". Note that the checkboxes to the right under the "Enabled" column are NOT selectable.
+
+
+. Method 2 
+
+Contact a System Administrator if an enabled Domain Administrator for the domain exists but is not known. The System Administrator can provide a list of all Domain Administrator users. 
+
+. 
+
+Steps performed by the System Administrator: 
+
+ 1. Log in to the Management Console. 
+ 2. Pull down the "Domains" menu and select "Manage Domains". If the field "Domain Administrator Assignment" reads "Assigned", then an enabled Domain Administrator exists. If not, proceed to Method 3. 
+ 3. Pull down the "Administrators" menu and select "All". 
+ 4. Scan through the list of users and identify every Domain Administrator. 
+ 5. Contact each administrator to determine if he/she has administrative control over the chosen security domain. If an account maps to a user that has left the company, reset that user password and verify the domain assignment in Step 2. 
+ 6. Once a Domain Administrator has been found, return to Method 1.
+
+
+. Method 3 
+
+Contact a system administrator if no enabled domain administrator exists. The system administrator can assign a new Domain Administrator. The new Domain Administrator cannot already exist as a disabled administrator within the domain. 
+
+. 
+
+Steps performed by the System Administrator: 
+
+ 1. Log in to the Management Console as the system administrator. 
+ 2. Pull down the "Domains" menu and select "Manage Domains". 
+ 3. Under the list of domains, click on the name of the domain to assign. If the field "Domain Administrator Assignment" reads "Assigned", then an enabled domain administrator exists. Identify that domain administrator as described in Method 2, step 3. 
+ 4. Verify that the "Domain Administrator Assignment" field reads "No enabled administrator is assigned to this domain". 
+ 5. Select the domain by clicking on the name of the domain. 
+ 6. On the "Edit Domain" page, there are three tabs. Select the "Assign Admin" tab. Select the radio button next to the new Domain Administrator and click the button labelled "Ok". Note that clicking "Apply" followed by "Cancel" does not cancel the assignment. If no user names are available, all available domain administrators have been added to the domain already and are disabled. Create a new Domain Administrator:  1. Pull down the "Administrators" menu and select "All". 
+     2. Click on the button labelled "Add". 
+     3. Create a name for the new user, assign an initial password and for "User Type", select "All", "Domain Administrator", or "Domain and Security Administrator". 
+     4. Restart from Step 2.
+    
+    
+ 7. Contact the new Domain Administrator and proceed to Method 1. 
+ 8. If a new user account was created, the new user must be removed from the domain prior to deletion. Removal of an administrator from a security domain can only be performed by another domain administrator.
+
+
+. Method 4 
+
+Sometimes the brute-force approach is all that is left. This approach violates the principle of Separation of Duties and is only feasible for loosely controlled or development environments. 
+
+Steps performed as the System Administrator: 
+
+ 1. Create a new user of type "All".  1. Pull down the "Administrators" menu and select "All". 
+     2. Click on the button labelled "Add". 
+     3. Create a name for the new user, assign an initial password and select "All".
+    
+    
+ 2. Reset the password of every user of type "All", "Domain Administrator", and "Domain and Security Administrator". 
+ 3. For every domain, assign the new user as the initial Domain Administrator as described in Method 3. 
+ 4. For every domain, switch into the domain and enable every Domain Administrator as described in Method 1.

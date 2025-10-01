@@ -1,0 +1,55 @@
+Title: IBM Map Test Error "Unknown content-type of 'text/html' returned by server; IDispatch error #16897" - United States
+
+Text:
+Database Performance; Mapping; Translation; Purge; house keeping; STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Map Test Error "Unknown content-type of 'text/html' returned by server; IDispatch error #16897" 
+
+SYMPTOM
+
+
+Receiving an error when running the Map Test.
+Map Test was previously able to complete successfully
+
+Error Message ---Error return by Map Test:
+Unknown content-type of 'text/html' returned by server
+IDispatch error #16897
+
+--- Error in system log:
+[YYYY-MM-DD HH:MM:SS.SSS] ERROR 000110011401 WORKFLOW.WORKFLOW.ERR_SQLException191 WorkFlowContext.persist() caught SQLException while attempting to persist data
+SQL Error Code: 1536
+SQL State: 72000
+java.sql.SQLException: ORA-01536: space quota exceeded for tablespace 'EDI_DATA'
+
+at oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError.java:112)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:331)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:288)
+at oracle.jdbc.driver.T4C8Oall.receive(T4C8Oall.java:743)
+at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java:216)
+at oracle.jdbc.driver.T4CPreparedStatement.executeForRows(T4CPreparedStatement.java:955)
+at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1168)
+at oracle.jdbc.driver.OraclePreparedStatement.executeInternal(OraclePreparedStatement.java:3285)
+at oracle.jdbc.driver.OraclePreparedStatement.executeUpdate(OraclePreparedStatement.java:3368)
+at com.sterlingcommerce.woodstock.workflow.WorkFlowContext.doArchive(WorkFlowContext.java:4931)
+at com.sterlingcommerce.woodstock.workflow.WorkFlowContext.persist(WorkFlowContext.java:4173)
+at com.sterlingcommerce.woodstock.workflow.WorkFlowContext.persist(WorkFlowContext.java:3597)
+at com.sterlingcommerce.woodstock.workflow.engine.WEHelper.dispatch(WEHelper.java:1171)
+at com.sterlingcommerce.woodstock.workflow.engine.WEHelper.dispatch(WEHelper.java:1025)
+at com.sterlingcommerce.woodstock.workflow.engine.WorkFlowEngineRMIImpl.dispatch(WorkFlowEngineRMIImpl.java:960)
+at com.sterlingcommerce.woodstock.workflow.Dispatcher.run(Dispatcher.java:72)
+at java.lang.Thread.run(Thread.java:801)
+
+
+
+
+RESOLVING THE PROBLEM
+
+
+Space Issue. Increase the space on the DB.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling B2B Integrator Data management - house keeping Commerce Sterling B2B Integrator Mapping and Translation 
+HISTORICAL NUMBER
+ NFX2421

@@ -1,0 +1,55 @@
+Title: IBM Mustgather: Gathering data for diagnosing Java VerifyError on AIX®, Linux, Windows and z/OS® - United States
+
+Text:
+Java verifyError mustgather gather TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If your Java application experiences a Java VerifyError on any one of the operating systems such as AIX®, Linux, Windows and z/OS®, there are a number of diagnostic data files that are useful for diagnosing the problem. This mustgather document describes about the diagnostic data files to be collected and the procedure to collect the same. 
+
+RESOLVING THE PROBLEM
+The following set of diagnostic data files need to be collected to diagnose a Java VerifyError in the Java application: 
+
+1. Javacores 
+2. Core dumps (At least one core dump is required)
+3. Snap traces 
+4. Standard error logs
+5. Relevant .class and .jar files 
+
+For these diagnostic data files to be created, check that the system is configured correctly as per the setup [http://www-01.ibm.com/support/docview.wss?uid=swg21676297]document. 
+
+Please collect the diagnostic data files for a Java VerifyError in the Java application as per the below steps: 
+
+ 
+
+1. Collect the javacore, core dump and snap trace file generated specific to the Java VerifyError exception. 
+
+Please note that all the javacores and snap traces generated can be found in the current path and the names of them will follow the below format:
+Javacore : javacore.<time stamp>.<id>.txt
+Snap trace : snap.<time stamp>.<id>.trc 
+
+For AIX®, Linux and Windows operating systems, the core dumps generated can be found in the current path and the names of them will follow the below format:
+Core dump : core.<time stamp>.<id>.dmp
+
+Run the JExtract tool against the generated core dump file using the following command:
+<installpath>/jre/bin/jextract [coredump] 
+
+
+For 64bit JVM enabled with -Xcompressedrefs option, please use
+<installpath>/jre/bin/jextract -J-Xcompressedrefs [coredump] 
+
+Save the resulting archive file, which has a name in the format of
+core.<time stamp>.<id>.dmp.zip
+
+
+For z/OS® operating system, the transaction dumps will be generated as standard MVS™ Dump data sets and the names of them will follow the below format:
+Transaction dump : %uid.JVM.TDUMP.%job.D%y%m%d.T%H%M%S 
+
+2. Collect the standard error logs 
+
+3. Collect the relevant .class and .jar files 
+
+The .class file is useful because very often IBM can use it to reproduce the VerifyError encountered. 
+
+The .class file for which Java VerifyError reported can be easily identified from the top of the Javacore file or sometimes from application logs. 
+
+After collecting all the above diagnostic data files, you can submit them for help with diagnosing the problem.

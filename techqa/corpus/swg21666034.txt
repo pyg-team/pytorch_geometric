@@ -1,0 +1,27 @@
+Title: IBM DB2TSCHG.HIS corruption - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DB2TSCHG.HIS file may get corrupted and dump error messages in the db2diag.log 
+
+SYMPTOM
+The following messages can be seen in the db2diag.log
+
+FUNCTION: DB2 UDB, recovery manager, sqlpVerifyEntry, probe:41
+MESSAGE : Checksum violation in DB2TSCHG.HIS file
+
+
+FUNCTION: DB2 UDB, recovery manager, sqlpPruneTsChgHistoryFile, probe:24
+DATA #1 : <preformatted>
+File corruption in DB2TSCHG.HIS file, size is: 17236096
+
+
+
+
+CAUSE
+Corrupt DB2TSCHG.HIS file
+
+RESOLVING THE PROBLEM
+Rename the existing DB2TSCHG.HIS file and let DB2 recreate a new one

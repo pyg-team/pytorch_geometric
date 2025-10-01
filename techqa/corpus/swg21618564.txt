@@ -1,0 +1,36 @@
+Title: IBM Batches left in running state by Rulerunner with IBM Datacap Taskmaster Capture - United States
+
+Text:
+rule runner; batches; multiple; running TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running batch creation tasks, such as VScan, with Rulerunner, multiple batches may be created and/or left in the running state. 
+
+CAUSE
+Rulerunner is a very efficient service and will overdrive the Rulerunner Server if too many tasks or threads are assigned.
+
+RESOLVING THE PROBLEM
+Turn off Mixed Queuing 
+
+ 1. Run Rulerunner Manager. 
+ 2. On the Rulerunner tab, stop the service. 
+ 3. On the Rulerunner Login tab, click Connect. 
+ 4. Select the Workflow tab. 
+ 5. On the Rulerunner Settings subtab, uncheck Mixed Queuing. 
+ 6. Click Save, then go back to the Rulerunner tab and start the service.
+
+
+Set skipsamebatch for VScan tasks  1. Run Rulerunner Manager. 
+ 2. On the Rulerunner tab, stop the service. 
+ 3. On the Rulerunner Login tab, click Connect. 
+ 4. On the Workflow tab, expand the hierarchy on the right and highlight VScan. 
+ 5. In the Settings section in the lower right, set skipsamebatch to 1. 
+ 6. Highlight the line labeled <dbs> above VScan in the thread hierarchy. 
+ 7. Set skipsamebatch to 1 there also. 
+ 8. Click Save, then go back to the Rulerunner tab and start the service.
+
+
+For Datacap Taskmaster 8.0.1, the procedures are the same but some tabs will have different names. 
+
+If you are still experiencing this issue the problem may be with your DataCap Object (DCO). Correcting DCO issues will resolve batches left in running state. RELATED INFORMATION
+ VScan Intermittently Aborts [http://www.ibm.com/support/docview.wss?uid=swg21573034 ]

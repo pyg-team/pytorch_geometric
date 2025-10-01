@@ -1,0 +1,23 @@
+Title: IBM How to monitor SharePoint with Rational tools - United States
+
+Text:
+ITCAM; monitor robotic; T6; TEP TECHNOTE (FAQ)
+
+QUESTION
+ How do you monitor SharePoint through IBM Tivoli Composite Application Manager for Microsoft Applications and IBM Rational tools? 
+
+CAUSE
+You are using IBM Rational Functional Tester to monitor SharePoint, but ran into recording or playback issues.
+
+ANSWER
+Replace IBM Rational Functional Tester (RFT) with IBM Rational Performance Tester (RPT).
+
+Unlike RFT, RPT works with standard network protocols. RFT works with GUI elements. These elements can cause object recognition issues.
+
+RELATED INFORMATION
+#Which Rational monitor for ITCAM would you choose? [https://ibm.biz/BdXymj]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Performance Tester Systems and Asset Management Tivoli Composite Application Manager for Transactions ITCAM for RT 5724-S23 v620 Windows 7.3

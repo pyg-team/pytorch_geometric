@@ -1,0 +1,29 @@
+Title: IBM IMM Reports Login failure alert every minute - N3001-001 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ With both $ and # characters in the IMM password, the IMM will log a login failure every minute. 
+
+SYMPTOM
+Security: Userid: USERID had 1 login failures from IPMI client at IP address when IMM password contains both characters $ and #.
+
+
+ENVIRONMENT
+N3001-001
+
+DIAGNOSING THE PROBLEM
+The crm_mon reported fencing_route_to_ha1 (or fencing_route_to_ha2) resource error. Alerts are generated as IMM login failures.
+
+RESOLVING THE PROBLEM
+Using the /nzlocal/scripts/immnetcfg script, update the IMM passwords, making sure they do not contain both $ and # characters but can contain one or the other.
+
+
+
+
+ 1. The immnetcfg script can be used to modify the IMM passwords with NPS online and heartbeat services running. 
+ 2. Clear any errors reported in crm_mon.
+
+
+If alerts continue to be generated, contact IBM Support via PMR.

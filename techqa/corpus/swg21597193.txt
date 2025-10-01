@@ -1,0 +1,50 @@
+Title: IBM ITCAM4Tx : ISM  snmp monitor - Internal error (SnmpSync status) - United States
+
+Text:
+ISM SNMP monitor 71ISM-CONF; 71ISM-GEN; 71ISM-TS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using ITCAM for Transactions, ISM snmp monitor fails as seen in ITM TEP GUI, 
+under "Internet Service Monitors" -> "profile statistics" workspace view. 
+
+SYMPTOM
+ Looking at ITM TEP GUI, Under "Internet Service Monitors" -> "profile statistics" workspace view shows the following results :
+- Elements : 1
+- Good : 0
+- Marginal : 0
+- Bad : 1
+
+snmp.log file with 'debug' tracing enabled previously in snmp.props property file shows messages like :
+
+Debug: Selecting '.1.3.6.1.2.1.1.5.0'
+where '1'
+Warning: Invalid selector string: '1'
+Debug: snmpGetNext: '1' added to pdu
+Debug: SnmpLib: snmp_build: unknown failure
+Debug: snmpSync: Status Errror:
+reason Unknown Error 1919906418 (Unknown error 1696624247), lib 16966 24247 sys 1919906418
+Error: Internal error (SnmpSyncstatus)
+Warning: '1' does not contain ''
+Error: Failed to resolve index selectors
+
+
+CAUSE
+Possible cause is that the OID Group value was setup incorrectly or was invalid, in the ISM snmp monitor settings, while using the ISM GUI configuration tool for example.
+
+ENVIRONMENT
+ITCAM for Tx V7.3
+ISM agent
+SNMP monitor
+
+DIAGNOSING THE PROBLEM
+Use 'snmpget' or 'snmpwalk' commands or similar, from a system that would have SNMP commands package, against the same OID that was defined in the ISM snmp monitor settings, e.g.
+'.1.3.6.1.2.1.1.5.0'
+to validate if it's a valid OID that is returning data, or not.
+
+RESOLVING THE PROBLEM
+Correct the defined oid group value setting for your ISM SNMP monitor if it was invalid, using the ITM TEP ISM Internet Service Monitoring Configuration.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM4TX ITCAM for Transactions ISM Internet Service Monitoring

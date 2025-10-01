@@ -1,0 +1,14 @@
+Title: IBM How can I get the latest version of the Optim products ? - United States
+
+Text:
+optim download passport advantage ShopZ TECHNOTE (FAQ)
+
+QUESTION
+ How can I get the latest version of the Optim products ? 
+
+ANSWER
+The latest version of products for which you have support can be downloaded as follows : 
+
+ * For Optim on LUW (Linux Unix Windows ) - passport advantage website [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] 
+ * For Optim zOS 7.1.0 - use ShopZ [https://www14.software.ibm.com/webapp/ShopzSeries/ShopzSeries.jsp] 
+ * For Optim zOS through release 6.1.1 - use this link [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=swg-optim]

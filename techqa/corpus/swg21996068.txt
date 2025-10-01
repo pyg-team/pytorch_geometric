@@ -1,0 +1,19 @@
+Title: IBM What do I do if I see error SQL0805N on a package NULLID.SYSLH231 or higher - United States
+
+Text:
+SQL0805N; bind; NULLID.SYSLH231 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Here is an example of a error you may see: 
+
+com.ibm.db2.jcc.a.SqlException: DB2 SQL error: SQLCODE: -805, SQLSTATE: 51002, SQLERRMC: NULLID.SYSLH232 0X5359534C564C3031 
+
+RESOLVING THE PROBLEM
+You can't have more than 30 package bound to the database. You can try the DB2Binder utility and increase the size to 100. Please see the link below for more information on the DB2Binder utility. 
+
+Being able to create NULLID.SYSLH231 or higher maybe masking the actual problem. The actual problem is that your application is using too many statement handles at one time, and that you need to close your statement objects when they are finished. An application should generally never need more than 3 large packages (which is the default). An application which uses more usually has an application defect and is leaving the statement handles open. 
+
+RELATED INFORMATION
+ SQL0805N Package NULLID.SYSLH21E was not found. [http://www-01.ibm.com/support/docview.wss?uid=swg21366855]
+DB2Binder utility [http://www.ibm.com/support/knowledgecenter/SSEPGG_11.1.0/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_r0023708.html]
+How JDBC applications connect to a data source [http://www.ibm.com/support/knowledgecenter/SSEPGG_11.1.0/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_cjvjdcon.html]

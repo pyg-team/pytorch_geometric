@@ -1,0 +1,155 @@
+Title: IBM TIP Upgrade failure "Failed! Not enough disk space" - United States
+
+Text:
+TIPL2INST; diskspace; memory; validatePrereq; install; fail; Not enough disk space TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Depending on the platform, the Tivoli Integrated Portal upgrade must have a minimum amount of diskspace available. This error indicates that there is not enough disk space available: Failed ! Not enough disk space in C:\Program Files\IBM\TIP 
+
+SYMPTOM
+The TIP overall install fails with a return value of -1. This error is from the $TIP_HOME\logs\validatePrequisit.out file: 
+
+"Checking for Installation Requirements" 
+C: 
+C: 
+"Windows_TOTAL="957200 
+"Failed ! Not enough disk space in C:\Program Files\IBM\TIP (13566464.5 
+KB vs 957200 KB) to this installation. at 15:32:48.62"
+
+
+CAUSE
+The error claims that there isn't enough diskspace to do the upgrade: 
+
+"Failed ! Not enough disk space in C:\Program Files\IBM\TIP (13566464.5 
+KB vs 957200 KB) to this installation. at 15:32:48.62" 
+
+
+ENVIRONMENT
+Install if Tivoil Integrated Portal on Windows server.
+
+
+
+DIAGNOSING THE PROBLEM
+The initial error to stdout will be similar to this: 
+
+"The overall Tivoli Integrated Portal install failed with return value of -1" 
+
+Checking the TIPFPInstaller-00.log indicates a problem with the PreCheck portion of the installation: 
+
+2014-09-16 15:32:50.686-04:00 : STDERR : The following error occurred 
+while executing this line: 
+$TIP_HOME\_uninst\TIPInstall2207\plan\checks\MachinePlan_localhost\0 
+0001_TIPInstall_PreCheck-FP7\TIPInstall_PreCheck-FP7.xml:318: The 
+following error occurred while executing this line: 
+$TIP_HOME\_uninst\TIPInstall2207\plan\checks\MachinePlan_localhost\0 
+0001_TIPInstall_PreCheck-FP7\TIPInstall_PreCheck-FP7.xml:593: CTGWA0058E 
+The current prerequisites of Tivoli Integrated Portal are not satisfied. 
+See detailed logs in $TIP_HOME\logs\validatePrereqs.out. 
+
+The $TIP_HOME\logs\validatePrereqs.out. file shows that there is not enough 
+enough diskspace on the server for the upgrade: 
+
+"Checking for Installation Requirements" 
+C: 
+C: 
+"Windows_TOTAL="957200 
+"Failed ! Not enough disk space in $TIP_HOME (13566464.5 KB vs 957200 KB) 
+to this installation. at 15:32:48.62" 
+
+The "Windows_TOTAL=957200" value comes from the configuration file: 
+
+cdimage.fixpack\COI\PackageSteps\TIPInstall_PreCheck-FP7\FILES\TIPInstall_PreCheck-FP7.cfg: 
+
+"DISKSPACE_Minimum:Windows_TOTAL:957200" 
+
+To confirm the amount of diskspace available on the TIP Windows server you can execute this command:
+fsutil volume diskfree C:\
+example result:
+
+[/support/docview.wss?uid=swg21685740&aid=1] [/support/docview.wss?uid=swg21685740&aid=1]
+
+Important Note: This is a known bug and will only manifest itself if the amount of free disk space from the TIP server is a decimal number, i.e. 13566464.5 
+
+
+RESOLVING THE PROBLEM
+The TIPInstall_PreCheck-FP7.bat script is not returning the correct result. You can see from the error above, that the minimum amount needed for the install is 957200 KB, and the amount on the server is 13566464.5 KB. It's clear that there is enough diskpace to do the install. 
+
+The current work around is to comment out the Diskspace checks in the following two scripts: 
+
+1) cdimage.fixpack\install.bat 
+
+2) cdimage.fixpack\COI\PackageSteps\TIPInstall_PreCheck-FP7\FILES\ 
+
+TIPInstall_PreCheck-FP7.bat 
+
+Here are the lines you need to comment out in both scripts. You can also attach the scripts to the PMR, and the Support Engineer will comment out the lines and return you the altered scripts, either way, when you have the alatered scripts, you can them move to the proper directory in the cdimage.fixpack listed in #1 and #2 above. Remember to take a backup of the scripts before any changes are made. After this is done, you are ok to rerun the install.
+
+Hide details for TIPInstall_PreCheck-FP7.bat [/support/docview.wss?uid=swg21685740&amp;aid=2]TIPInstall_PreCheck-FP7.bat
+TIPInstall_PreCheck-FP7.bat
+
+REM ===============================================================
+REM Check disk space on this machine
+REM ===============================================================
+
+
+REM del %temp%\diskspace.tmp 1>nul 2>&1
+REM set a=%INSTALL_LOCATION:~0,2%
+REM set b=%temp:~0,2%
+REM echo %a%
+REM echo %b%
+REM if "%a%" == "%b%" (
+REM for /f "tokens=2-3 delims=:" %%i in ('findstr /B /C:"DISKSPACE_Minimum:Windows_TOTAL:" %PRQCHKCFG%') do (
+REM echo "Windows_TOTAL="%%j
+REM for /f "tokens=2 delims==" %%i in ('type "%TEMP%\system.tmp" ^| find "C:"') do (
+REM if %%j gtr %%i (
+REM Call :Error "Not enough disk space in %INSTALL_LOCATION% (%%i KB vs %%j KB) to this installation."
+REM set /A Status=%Status%+1
+REM ) else (
+REM Call :Verbose "Checked and passed %%i: to %%a KB of space." 
+REM )
+REM )
+REM )
+REM ) else (
+REM for /f "tokens=2-3 delims=:" %%i in ('findstr /B /C:"DISKSPACE_Minimum:Windows_TIPHOME:" %PRQCHKCFG%') do (
+REM for /f "tokens=2 delims==" %%i in ('type "%TEMP%\system.tmp" ^| find "%b%"') do (
+REM if %%j gtr %%i (
+REM Call :Error "Not enough disk space in %INSTALL_LOCATION% (%%i KB vs %%j KB) to this installation."
+REM set /A Status=%Status%+1
+REM ) else (
+REM Call :Verbose "Checked and passed %%i: to %%j KB of space." 
+REM )
+REM )
+
+REM for /f "tokens=2-3 delims=:" %%i in ('findstr /B /C:"DISKSPACE_Minimum:Windows_TMP:" %PRQCHKCFG%') do (
+REM for /f "tokens=2 delims==" %%i in ('type "%TEMP%\system.tmp" ^| find "%a%"') do (
+REM if %%j gtr %%i (
+REM Call :Error "Not enough disk space in %b% (%%i KB vs %%j KB) to this installation."
+REM set /A Status=%Status%+1
+REM ) else (
+REM Call :Verbose "Checked and passed %%i: to %%j KB of space." 
+REM )
+REM )
+REM )
+REM )
+REM )
+
+REM if %Status% gtr 0 (
+REM set /A Total=%Total%+%Status%
+REM set /A Status=0
+REM set /a AbortCode=104
+REM ) else (
+REM call :Pass "Disk space prerequisite check"
+REM )
+
+
+Hide details for install.bat [/support/docview.wss?uid=swg21685740&amp;aid=2]install.bat
+install.bat
+
+REM :CHECKDISK
+REM the minimum size of disk space, space is given in Megabytes
+REM set pathname=%tmp%
+REM set minsize=251
+REM for /f "tokens=2* delims=:" %%a in ('fsutil volume diskfree "%pathname%"') do set ds=%%a
+REM set ds=%ds: =%
+REM set ds=%ds:~0,-6%
+REM if %ds% lss %minsize% goto ERRORDISK

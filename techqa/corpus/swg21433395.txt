@@ -1,0 +1,61 @@
+Title: IBM How to suppress FFDC files in WebSphere Application Server V6 when using MQ V7 classes for JMS: com.ibm.msg.client.commonservices.ffst.suppress - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installing WebSphere MQ V7 on a System running WebSphere Application Server V6.0 or V6.1, if an error occurs, then several FFDC files can be produced. If the error repeatedly occurs, many FFDC files will be created, which may be undesirable. 
+
+SYMPTOM
+The FFDC files are generated under the following directory:
+WAS_HOME/profiles/profileName/FFDC
+
+Note that this path is different than where the WebSphere Application Server normally writes FFDC files:
+WAS_HOME/profiles/profileName/logs/ffdc 
+
+The FDCs are those created using the Client Commonservices module. This is used by the WebSphere MQ classes for JMS, so the FDCs are those produced by the JMS client code. By default, these would be output to the directory in which the JVM was run. However, these can be redirected to other directories depending on the particular environment in which the JMS client code is running.
+
+
+RESOLVING THE PROBLEM
+The following APAR was created to address this problem:
+
+IZ73363: FFDCS WITH JMSCC0033 ERROR AFTER INSTALLING WEBSPHERE MQ V7 [http://www.ibm.com/support/docview.wss?uid=swg1IZ73363]
+Included in: Fix Pack 7.0.1.3 and later
+
+For z/OS, this APAR IZ73363 is also included in the following cumulative APAR PM09662 (PTF UK59811):
+PM09662: CUMULATIVE MAINTENANCE FIXPACK 7.0.1.3 FOR THE JMS FEATURE OF WEBSPHERE MQ FOR Z/OS VERSION 7.0.1 [http://www.ibm.com/support/docview.wss?rs=171&uid=swg1PM09662]. 
+
+
+The APAR introduces a new custom property that enables WebSphere MQ FFDC files to be suppressed. This property is a Java Virtual Machine (JVM) system property:
+
+-Dcom.ibm.msg.client.commonservices.ffst.suppress=-1
+
+This property will alter the First Failure Support Technology (FFST) components in the WebSphere classes for JMS to enable suppression of FFDCs. 
+
+There are three modes of operation: 
+
+ * The default of 0 is to output all FFDCs. 
+ * Specifying -1 causes only the first FFDC of a particular type to be output 
+ * Specifying any other positive number suppresses all FFDCs except those that are multiples of the positive number.
+
+
+WebSphere MQ classes for JMS FFDC output can be redirected by altering the WebSphere MQ classes for JMS trace file name. An FFDC directory is created in the same directory as the trace file. 
+
+For example, the JVM property (specified in a single line): 
+
+-Dcom.ibm.msg.client.commonservices.trace.outputName= 
+c:\progra~1\ibm\websphere\appserver61\profiles\Appsrv01\logs\mqjms%pid%.trc 
+
+... will generate output FFDC files to the directory: 
+c:\progra~1\ibm\websphere\appserver61\profiles\Appsrv01\logs\FFDC 
+
+This APAR applies to the V7 WMQ JMS client, and so is applicable when this level of client is running, even if it is being used to connect remotely to an MQ V6 queue manager. 
+
+Additional notes  * In the MQ V6 JMS client, no client FDCs were produced, so the only FDCs that would be output would be those produced by either WAS or the WMQ server. These would be output to the normal location for these products. 
+ * The default location for CommonClient FDCs is in a subdirectory of the trace output directory. If the following property is not specified to alter this location, then the default location is used: com.ibm.msg.client.commonservices.trace.outputName
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Java Message Service (JMS) AIX, HP-UX, Linux, Solaris, Windows 6.1 
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ WebSphere Application Server WAS WSAS

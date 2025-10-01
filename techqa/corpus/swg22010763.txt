@@ -1,0 +1,50 @@
+Title: IBM How to avoid Sweet32 Vulnerability in SKLM on port 443 - United States
+
+Text:
+sweet32 port 443 sklm WAS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Vulnerability scan shows port 443 is vulnerable to sweet32 attack.
+CVE CVE-2016-2183 
+
+
+SYMPTOM
+The following vulnerability have been scanned in the SKLM server: 
+
+ [Port 443] SSL 64-bit Block Size Cipher Suites Supported (SWEET32)
+
+The SKLM server is found to support the following 64-bit block cipher suites:
+- Medium Strength Ciphers (> 64-bit and < 112-bit key, or 3DES) DES-CBC3-SHA(FIPS) Kx=RSA Au=RSA Enc=3DES-CBC(168) Mac
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+If port 443 is opened for the web console of SKLM then its SKLM is the one experiencing the sweet32 vulnerability attack. Try below steps for WAS:
+
+
+WAS side steps:
+For the WAS servers, you can remove any 3DES ciphers from the SSL configurations being used by the servers:
+
+How to change strength/customize cipher suite groups in WebSphere Application Server
+https://www.youtube.com/watch?v=dheizcFimX0 [https://www.youtube.com/watch?v=dheizcFimX0]
+
+1. Go to "Quality of protection (QoP) settings" panel by going ...SSL certificate and key management > SSL configurations > (SSL config
+name) > Quality of protection (QoP) settings
+
+2. On the panel, select "Strong" in "Cipher suite settings" and press "Update selected ciphers" so that in "Cipher suites" section, you will
+see strong ciphers in "Selected ciphers" (Right hand side) "
+
+3. Examine the list of "Selected ciphers" one by one to make sure none of them contain the following strings
+
+_3DES_
+
+If any do, select them and press "Remove" button to remove it from Selected ciphers.
+
+4. Once we have good ciphers in "Selected ciphers", press "Apply" or "OK" and save the ciphers.
+
+5. Use this SSL configuration for SSL communication.
+--> if it still does not resolve the issue try on IHS side
+FOR IHS side steps:
+http://www-01.ibm.com/support/docview.wss?uid=swg21991548 [http://www-01.ibm.com/support/docview.wss?uid=swg21991548]

@@ -1,0 +1,209 @@
+Title: IBM PI23365: DFHZC0001 AN ABEND (CODE 0C4/AKEA) HAS OCCURRED AT OFFSET X'FFFF' IN MODULE DFHZGTA - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You were experiencing SOS above the line. The region was found
+   to contain muliple CEMT task all waiting on storage.
+   You are receiving DFHZC2404 (VTAM detected an error in a
+   request) followed by:
+   DFHZC0001 An abend (code ---/AKEG) has occurred at offset
+   X'2BFE' in module DFHZGTA. CICS then continued with repeated
+   with 0C4 in DFHZGTA:
+   DFHZC0001 An abend (code 0C4/AKEA) has occurred at offset
+    X'FFFF' in module DFHZGTA.
+   As the errors continued, there was also an AKEG in DFHTBSB
+   DFHAP0001 An abend (code ---/AKEG) has occurred at offset
+   X'00000AFA'
+   Then, later, you received the failures in MVS GETMAINS.
+   DFHME0006 Insufficient storage to satisfy GETMAIN
+   (code x'0342') in module DFHMEME. MVS code 0004.
+   The region eventually has to be cancelled.
+   .
+   ZC0001 dump shows the task running in error is CATA.
+   .
+   Looking into the last abend0C4/AKEA.
+   Program DFHZGTA  was in control, but the PSW was elsewhere.
+   Error happened under the CICS RB.
+   .
+   CICS Registers and PSW
+     PSW:  078D0001 80000000 00000000 000150E1
+     Instruction Length:  2  Interrupt Code:  38
+     Exception Address:  000A0000_00015800
+     Execution key at Program Check/Abend: 8
+     Addressing Mode:  64
+     Space at Program Check/Abend: Basespace
+     Breaking Event Address: 00000000_1EC5A93C - offset 0000033C
+                                                in module DFHZGTA
+   64-BIT REGISTERS 0-15,
+   R0:        0000028A  1398 bytes of storage addressable
+   R1:        00876B5D  25763 bytes of storage addressable
+   R2:        00000000  2048 bytes of storage addressable
+   R3:        1EC5A600  Module DFHZGTA + X'0'
+   R4:        008761A8  KE STACK Entry, TranNum n/a .
+                        Module ........ + X'0'
+   R5:        1EC5B5FF  Module DFHZGTA + X'FFF'
+   R6:        1EC5C5FE  Module DFHZGTA + X'1FFE'
+   R7:        1EC5D5FD  Module DFHZGTA + X'2FFD'
+   R8:        1EC5E5FC  Module DFHZGTA + X'3FFC'
+   R9:        1EC5F5FB  Module DFHZGTA + X'4FFB'
+   R10:       1EC605FA  Module DFHZGTA + X'5FFA'
+   R11:       1DCC1990  SM Domain Table Entry + X'190'
+   R12:       22517700  Task 46435 User TCA + X'0'
+   R13:       1DCC1990  SM Domain Table Entry + X'190'
+   R14: A0000_000150E1  Storage invalid
+   R15:       00000000  2048 bytes of storage addressable
+   .
+   Further diagnosis, the problem is that CICS picks up a bad value
+   of KERNPOWN in DFHZGTA HCI6700 at offset x'330' for CATA.
+   This leads to abend0C4 at offset x'33C' where we did  0B0E or
+   BSM   0,14 r14: A0000_000150E1 contains an invalid branch
+   address.
+   .
+   Additional Symptom(s) Search Keyword(s): KIXREVSWM
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Abend 0C4 occurs following an abend     *
+   *                      when DFHZGTA is in control.             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An abend occurs when DFHZGTA is running. This results in the
+   recovery routine being driven. On exit from the recovery
+   routine, control is passed to the module exit point. If
+   register 11, which is used as a saved stack address, has
+   become invalid, DFHZGTA will experience an 0C4 abend.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHZGTA has been changed so that the saved stack address is
+   correct before control is passed to the module exit point.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI23365
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / CST
+   
+   
+ * SUBMITTED DATE
+   2014-08-06
+   
+   
+ * CLOSED DATE
+   2014-08-13
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI22925 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI22925]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI20479 UI20480
+   
+   
+
+MODULES/MACROS
+ *  DFHZGTA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY UI20479 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI20479]
+   UP14/08/21 P F408
+   
+   
+ * R900 PSY UI20480 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI20480]
+   UP14/08/21 P F408
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

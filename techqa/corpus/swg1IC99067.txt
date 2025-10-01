@@ -1,0 +1,223 @@
+Title: IBM IC99067: 5.2 UPGRADE FAILS TO CREATE WEBSPHERE PROFILE FOR THE WEB-BASED GUI. - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+Refresh Pack 5.2.2 (June 2014) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24037733]
+Refresh Pack 5.2.3 (August 2014) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24038227]
+Fix Pack 5.2.4 (November 2014) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24038840]
+Fix Pack 5.2.4.1 (December 2014) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24039099]
+Refresh Pack 5.2.5 (March 2015) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24039584]
+Fix Pack 5.2.5.1 (April 2015) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24039840]
+Refresh Pack 5.2.6 (June 2015) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24040111]
+Refresh Pack 5.2.7 (August 2015) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24040451]
+IBM Spectrum Control V5.2.8 (December 2015) [http://www-01.ibm.com/support/docview.wss?uid=swg24041108]
+IBM Spectrum Control V5.2.9 (February 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24041547]
+IBM Spectrum Control V5.2.10 (May 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24041940]
+IBM Spectrum Control V5.2.10.1 (July 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24042484]
+IBM Spectrum Control V5.2.11 (August 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24042489]
+IBM Spectrum Control V5.2.12 (November 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24042717]
+IBM Spectrum Control V5.2.13 (March 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043142]
+IBM Spectrum Control V5.2.14 (May 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043414]
+IBM Spectrum Control V5.2.15 (August 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043749]
+IBM Spectrum Control V5.2.15.2 (November 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24044286]
+IBM Spectrum Control V5.2.16 (March 2018) [http://www-01.ibm.com/support/docview.wss?uid=swg24044454]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  5.2 upgrade installer fails to complete, logging the following
+   fileNotFound exception while configuring the WebSphere profile
+   for the web-based GUI (failure seen in traceTPCInstall.log
+   file):
+   YYYY-MM-DD HH:MM:SS.xxx-xxx ERROR
+   com.ibm.tpc.install.frontend.ia.actions.StatusUpdater
+   targetFinished org.apache.tools.ant.BuildException The following
+   error occurred while executing this line:
+   <TPC_Install_dir>\config\install\tpcshared.xml:982: Execute
+   failed: java.io.IOException: Cannot run program
+   "<TPC_Install_dir>\ewas\profiles\WebServerProfile\bin\wsadmin.ba
+   t" (in directory "<TPC_Install_dir>\config\install"):
+   CreateProcess error=2, The system cannot find the file
+   specified.
+   This fileNotFound exception is the result of a failure to create
+   the required WebSphere profile in an earlier step (which in turn
+   should have copied the referenced wsadmin.bat file into the
+   referenced directory, among other files).  The 5.2 installer
+   proceeds after that failure then tries to configure the profile
+   that isn't there, as noted above.  Confirmation of this earlier
+   problem is also seen in the same traceTPCInstall.log file,
+   appearing slightly before the fileNotFound exception shown
+   above:
+   YYYY-MM-DD HH:MM:SS.xxx-xxx INFO
+   com.ibm.tpc.install.frontend.ia.actions.ProgressBarUpdater
+   setPercentageComplete
+   <TPC_Install_dir>\config\install\tpcgui.xml: Percent = 22.222223
+        [exec] INSTCONFFAILED: The profile could not be created.
+   For more information, consult the
+   <TPC_Install_dir>\ewas\logs\manageprofiles\WebServerProfile_crea
+   te.log file.
+   Observe that the 5.2 installer logs only an INFO message instead
+   of an error when it fails to create the needed WebSphere
+   "WebServerProfile" for the 5.2 web-based GUI - this allows the
+   installer to proceed with trying to issue configuration commands
+   to the wsadmin.bat file, which doesn't exist.  Troubleshooting
+   this failure is confusing as it is not clear why there are
+   missing files in the expected eWas directory structure.  5.2
+   installer needs to halt progress upon failure to create the
+   WebSphere profile, not later when it tries to configure software
+   that is not installed.
+   RECREATE STEPS:
+   Root cause appears to be remnants from previous installations
+   and/or installation attempts present prior to launching the
+   upgrade installer.  Actual re-create scenario difficult to
+   reproduce.
+   ________________________________________________________________
+   DB2 Version used for Server:    N/A
+   The defect is against component:   5608TPC00
+   Server/Manager build/release (TPC):   5.2.0.0
+   Agent build/release (TPC):    N/A
+   Server/Manager (OS):     N/A
+   Agent (OS):       N/A
+   ________________________________________________________________
+   Problem as described by customer:    5.2 upgrade failure
+   Initial customer impact (low/med/high):   high
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manual cleanup steps available from support upon request; once
+   complete, re-running the installer will then successfully create
+   the required WebSphere profile and complete the 5.2 upgrade.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * TPC users upgrading to 5.2.0.                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See ERROR DESCRIPTION.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Wait and upgrade to fix maintenance when available.          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is targeted for the following maintenance
+   package:
+   
+   | refresh pack | 5.2-TIV-TPC-RP0001 - target March 2014
+   
+   http://www-01.ibm.com/support/docview.wss?&uid=swg21320822 [http://www-01.ibm.com/support/docview.wss?&uid=swg21320822]
+   
+   The target dates for future refresh packs or fix packs do not
+   represent a formal commitment by IBM. The dates are subject to
+   change without notice.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC99067
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPC00
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-01-29
+   
+   
+ * CLOSED DATE
+   2014-02-13
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  INSTALL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC
+   
+   
+ * FIXED COMPONENT ID
+   5608TPC00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY
+   UP

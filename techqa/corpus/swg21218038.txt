@@ -1,0 +1,50 @@
+Title: IBM Configuring a scheduled agent to read a directory in the IFS of another server - United States
+
+Text:
+mount remote directory; NFS; i5/os; i5os; iseries; system i; ifs; read remote directory; remove directory; path/file access error; agent; scheduled; QNTC; systemi TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+ 
+
+You want a scheduled agent on a Lotus Domino server for i5/OS to be able to read, write, and delete files in a directory on a remote iSeries or System i machine.
+
+You create a share on the destination system, setting DIR$ to \\system\share or /QNTC/system/share. But an agent using that share returns a "path/file access error." You verify that *PUBLIC has *RWX and *ALL object authorities on the destination folder and objects. How can you configure access to this remote directory?
+
+
+RESOLVING THE PROBLEM
+ 
+
+To access the directory, you need to use the Network File System (NFS) functionality that is part of i5/OS. The i5/OS operating system does not contain a way to map a network drive in the same manner as Microsoft Windows. 
+
+
+The following commands show you how to use the MOUNT *NFS command to create a link to the desired IFS directory on the second System i.
+
+On source system: 
+
+
+ * 
+
+ * 
+ * 
+ * 
+
+
+
+On target system: 
+ * 
+ * 
+ * 
+
+
+You should now see the contents of the SourceDir directory on the local system under abc dir in this example. 
+
+NOTE: Read-Write authority is given or restricted to the target system on the EXPORTFS command. 
+RELATED INFORMATION
+#V5R4 Infocenter: NFS [http://publib.boulder.ibm.com/infocenter/iseries/v5r4/index.jsp?topic=/ifs/rzaaxnfs.htm]
+Configuring Domino for i5/OS to use a remote file syste [http://www-1.ibm.com/support/docview.wss?rs=0&uid=swg21294557]
+
+
+
+
+ * 
+ *

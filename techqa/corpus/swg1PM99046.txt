@@ -1,0 +1,178 @@
+Title: IBM PM99046: HADOOP FAILED TO START DUE TO NAMENODE IS STILL IN SAFEMODE. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With more disks for the datanodes, after upgrade to BI 2.1.0.1,
+   start.sh hadoop may fail with following errors:
+   
+   [ERROR] @<hostname> - tasktracker failed to start because
+   namenode is still in safemode probably because of too many
+   blocks missing. Please check namenode log file under
+   /var/ibm/biginsights/hadoop/logs on <hostname>
+   [INFO] Progress - 19%
+   [ERROR] @<hostname> - tasktracker failed to start because
+   namenode is still in safemode probably because of too many
+   blocks missing. Please check namenode log file under
+   /var/ibm/biginsights/hadoop/logs on <hostname>
+   [INFO] Progress - 25%
+   [ERROR] @<hostname> - tasktracker failed to start because
+   namenode is still in safemode probably because of too many
+   blocks missing. Please check namenode log file under
+   /var/ibm/biginsights/hadoop/logs on <hostname>
+   [INFO] Progress - 31%
+   [ERROR] @<hostname> - tasktracker failed to start because
+   namenode is still in safemode probably because of too many
+   blocks missing. Please check namenode log file under
+   /var/ibm/biginsights/hadoop/logs on <hostname>
+   [INFO] Progress - 38%
+   [ERROR] @<hostname> - tasktracker failed to start because
+   namenode is still in safemode probably because of too many
+   blocks missing. Please check namenode log file under
+   /var/ibm/biginsights/hadoop/logs on <hostname>
+   [INFO] Progress - 44%
+   [ERROR] @<hostname> - tasktracker failed to start because
+   namenode is still in safemode probably because of too many
+   blocks missing. Please check namenode log file under
+   /var/ibm/biginsights/hadoop/logs on <hostname>
+   [INFO] Progress - 50%
+   [INFO] Progress - 100%
+   [ERROR] DeployManager -
+   [ERROR] DeployManager - OPERATION ERROR -- Start [hadoop]:
+   [ERROR] DeployManager -
+   -------------------------------------------------------
+   [ERROR] DeployManager - hadoop failed
+   com.ibm.xap.mgmt.DeployException: HDFS failed to start because
+   number of available datanodes:[0] is less than
+   dfs.replication.min:[1]
+           at
+   com.ibm.xap.mgmt.hdm.HadoopDeployer.startService(HadoopDeployer.
+   java:455)
+           at
+   com.ibm.xap.mgmt.DeployManager$StartThread.work(DeployManager.ja
+   va:2595)
+           at
+   com.ibm.xap.mgmt.DeployManager$WorkerThread.run(DeployManager.ja
+   va:2387)
+   [ERROR] DeployManager - Start; SUCCEEDED components: []; FAILED
+   components: [hadoop]; Consumes : 44276ms
+   Error exit.
+   
+   Defect 51920 has created to track this issue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  run start.sh hadoop twice (once to start HDFS, and once to
+   start mapred which fails the first time).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  See error description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem is fixed in Version 2.1.0.2 and later fix packs.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM99046
+   
+   
+ * REPORTED COMPONENT NAME
+   INFO BIGINSIGHT
+   
+   
+ * REPORTED COMPONENT ID
+   5725C0900
+   
+   
+ * REPORTED RELEASE
+   210
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-14
+   
+   
+ * CLOSED DATE
+   2014-12-31
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INFO BIGINSIGHT
+   
+   
+ * FIXED COMPONENT ID
+   5725C0900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R212 PSY
+   UP

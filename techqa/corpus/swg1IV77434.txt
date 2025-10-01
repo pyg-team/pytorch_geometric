@@ -1,0 +1,110 @@
+Title: IBM IV77434: ENSURE SUA/ILMT USES THE SAME SEQUENCE VALUE AS THE BIGFIX SERVER TO TRIGGER SCAN DATA GET IMPORTED BY SUA/LMT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Why does SUA/LMT Data Import process check the
+   sequence # in dbo.uploads instead of dbo.uploads_availability
+   when the IEM scan data for an client in the sha1 does not
+   change?
+   
+   This apar was opened to ensure SUA/ILMT uses the same sequence
+   value as the BigFix server to trigger scan data get imported
+   by SUA/LMT.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  After file upload sequence number changes as desribed in
+   documentation
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV77434
+   
+   
+ * REPORTED COMPONENT NAME
+   IEM SW USE ANL
+   
+   
+ * REPORTED COMPONENT ID
+   5725F57MT
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-09-25
+   
+   
+ * CLOSED DATE
+   2015-10-20
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,42 @@
+Title: IBM CEC agent showing an LPAR as Unmonitored - United States
+
+Text:
+RSiErrno 289 DNS /etc/hosts hosts name resolution unmonitored CEC agent ITM TECHNOTE (FAQ)
+
+QUESTION
+ Why is an LPAR showing up as "Unmonitored" although all requirements are met and xmtopas is behaving normally? 
+
+CAUSE
+Tracing the cecDataProvider will show that any of the following errors is generated for the concerned LPAR:
+RSiErrno = 288
+RSiErrno = 289
+
+This can mean:
+
+
+
+RSiBadArg 288 NULL or empty hostname passed to RSiOpen. RSiBadHost 289 A valid host address cannot be constructed from an IP address or the nameservice doesn't know the hostname. 
+ANSWER
+In the HMC environments, during the CEC agent start-up, the full hostname is obtained with this command (on the HMC): 
+
+
+lspartition -c <managed system>
+E.g. lspartition -c XXXX-YYY_ZZZZZZZ
+
+Make sure that the DNS is setup correctly on the HMC and that the HMC can resolve the IP to a full hostname. Also make sure that you have checked the box "DNS enabled" for the HMC. Here is how to get to it:
+From the HMC web console, click "HMC Management". On the right panel, click "Change Network Settings". Go to the "Name Services" tab and that check box should be present.
+Also, make sure that the "Domain Suffix Search order" has entries.
+
+On the other hand, in IVM environments the lspartition command does not exist, and the CEC agent relies on the LPAR name to contact the LPARs. In this case, there are 2 options: add the LPAR name to the /etc/hosts file on the CEC agent, or give the LPARs an LPAR name that matches the hostname.
+
+With this in mind, you should check the name resolution, and correct the info in /etc/hosts or in the DNS database. Testing with the "host" and "nslookup" commands on the LPAR hostname (as it appears in the TEP) may help here.
+Basically, you should be able to ping the (un)monitored LPARs by using their hostname on the CEC agent.
+
+RELATED INFORMATION
+ List of RSi Error Codes [https://www.ibm.com/support/entdocview.wss?uid=swg21442530]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Tivoli Monitoring SystemP CEC Agent

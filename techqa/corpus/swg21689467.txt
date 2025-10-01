@@ -1,0 +1,34 @@
+Title: IBM Policy Monitor XML Import option in QRadar Risk Manager erases Windows settings - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In the QRadar Risk Manager Policy Monitor, the XML Import action erases all windows settings. 
+
+SYMPTOM
+When you follow these steps, submitted questions do not return results and no warning messages are issued: 
+
+
+1. In QRadar Risk Manager, export Windows Security / Setting Questions in an XML file.
+
+2. Import the XML file from one appliance to another.
+
+3. Open a Question. If you view settings under the question, the settings are blank.
+
+There is no warning for the user, and submitted questions do not return any results. 
+
+The expected behavior is that the import and export function properly on all appliances. The customer cannot use this feature. 
+
+
+RESOLVING THE PROBLEM
+To work around this issue, follow these steps: 
+
+
+1. Review the Status column for warnings. 
+
+2. If a question contains a warning, open the question and edit the dependent parameters. 
+
+3. After you configure the parameters, you can save the question. 
+
+4. Create the components and content, such as assets, saved searches, and references sets, or re-select the windows settings.

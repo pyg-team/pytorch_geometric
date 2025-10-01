@@ -1,0 +1,85 @@
+Title: IBM "An error occurred while tring to access the server .. 500 - Internal server error" caused by not registering ASP.NET 2.0 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User launches Controller. User receives error. 
+
+SYMPTOM
+An error occurred while tring to access the server. 
+
+http://servername/ibmcognos/controllerserver [http://servername/ibmcognos/controllerserver] 
+
+ 
+
+Details:
+Client found response content type of 'text/html', but expected 'text/xml'.
+The request failed with the error message:
+--
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd [http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd]">
+<html xmlns="http://www.w3.org/1999/xhtml [http://www.w3.org/1999/xhtml]">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<title>500 - Internal server error.</title>
+<style type="text/css">
+<!--
+body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}
+fieldset{padding:0 15px 10px 15px;} 
+h1{font-size:2.4em;margin:0;color:#FFF;}
+h2{font-size:1.7em;margin:0;color:#CC0000;} 
+h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} 
+#header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:"trebuchet MS", Verdana, sans-serif;color:#FFF;
+background-color:#555555;}
+#content{margin:0 0 0 2%;position:relative;}
+.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}
+-->
+</style>
+</head>
+<body>
+<div id="header"><h1>Server Error</h1></div>
+<div id="content">
+<div class="content-container"><fieldset>
+<h2>500 - Internal server error.</h2>
+<h3>There is a problem with the resource you are looking for, and it cannot be displayed.</h3>
+</fieldset></div>
+</div>
+</body>
+</html> 
+
+ 
+
+When running diagnostic website (http://servername/ibmcognos/controllerserver/ccrws.asmx [http://servername/ibmcognos/controllerserver/ccrws.asmx]):
+[/support/docview.wss?uid=swg21662306&aid=1] [/support/docview.wss?uid=swg21662306&aid=1]
+500 - Internal server error
+
+
+CAUSE
+There are many possible causes for a similar error. 
+
+ * TIP: For more examples, see separate IBM Technote #1986254.
+
+
+This Technote specifically relates to the scenario where the cause is that the I.T. person has forgotten to register ASP.NET 2.0 on the Controller application server. 
+ENVIRONMENT
+Controller 10.2 on Windows 2012.
+
+
+
+RESOLVING THE PROBLEM
+Register ASP.NET 2.0 on the Controller application server. 
+
+ 
+Steps:
+1. Logon to Controller application server
+2. Launch a command prompt
+3. Run the following command: 
+
+ * CD C:\Windows\Microsoft.NET\Framework64\v2.0.50727
+
+
+4. Run the following command:  * aspnet_regiis /i
+
+
+[/support/docview.wss?uid=swg21662306&aid=2] [/support/docview.wss?uid=swg21662306&aid=2] RELATED INFORMATION
+ 1986254 - ** Troubleshooting ** "An error occured while [http://www.ibm.com/support/docview.wss?uid=swg21986254]

@@ -1,0 +1,23 @@
+Title: IBM Error maximum number of expressions in a list is 1000, when opening a  Project using RequisiteWeb - United States
+
+Text:
+ORA-01795; 01795; maximum number of expressions in a list is 1000; 1000; 0x80004005; Reqweb; RequisiteWeb; Packagecom.rational.rjcb.ComException; An error has occurred; Exception; occurred; expanding; HRESULT; 0x80004005; RqlPOS.IPOS.getPackageData; RqlPOS.PackageBuilder.getPackageData; Microsoft; OLE; DB; ODBC; Drivers:[Microsoft][ODBC driver for Oracle][Oracle]; RequisitePro; Oracle; HRESULT=0x80004005; RATLC00765818; RATLC00375378; APAR# IC42025; RATLC00016736; 1244695 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote identifies a defect that has been logged against IBM® Rational® RequisitePro®, where opening a project from RequisiteWeb, hosted on an Oracle database, returns the error: maximum number of expressions in a list is 1000. 
+
+CAUSE
+The full error message that is displayed when a user attempts to open a package folder in RequisiteWeb is displayed below:
+
+An error has occurred:
+Exception occurred while expanding the Packagecom.rational.rjcb.ComException:
+HRESULT=0x80004005: RqlPOS.IPOS.getPackageData RqlPOS.PackageBuilder.getPackageData Microsoft OLE DB Provider for ODBC Drivers:[Microsoft][ODBC driver for Oracle][Oracle]ORA-01795: maximum number of expressions in a list is 1000.
+
+
+This error occurs when using Oracle as a back-end database and there are over 1,000 requirements in a single package.
+
+
+RESOLVING THE PROBLEM
+This issue has been logged as a defect under APAR IC42025 [http://www-1.ibm.com/support/docview.wss?uid=swg1IC42025] which is resolved in IBM Rational RequisitePro version 7.0. 
+
+If you are using an older version of RequisitePro, upgrade to the 7.0 release. The workaround RequisitePro version 2003.06 is to arrange the project's Requirements so that no package, including the root package, contains over 1,000 requirements.

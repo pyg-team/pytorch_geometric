@@ -1,0 +1,65 @@
+Title: IBM Storage announces the end of support for back versions of specified Cloud Storage Solutions and no longer supported ISV versions, effective July 31, 2018. - United States
+
+Text:
+ PRODUCT LIFECYCLE
+
+ABSTRACT
+ IBM Storage announces the end of support for back versions of specified Cloud Storage Solutions and no longer supported ISV versions, effective July 31, 2018. Please review the list of solutions and recommended actions. 
+
+CONTENT
+IBM announces the end of support for back versions of following Cloud Storage solutions, effective July 31, 2018. Updated cloud storage solutions versions deliver new features, bug fixes, microcode revisions, and updated ISV software and platform support.
+
+The following solutions with support for IBM FlashSystems A9000R, XIV, and Spectrum Accelerate Storage Systems will reach end of support on July 31, 2018.
+-IBM Storage Management Console for VMware vCenter, version 3.2.2
+-IBM Storage Provider for VMware VASA, versions 1.2.0, 1.5.0
+-IBM Storage Integration Server, versions 1.2.0, 1.2.1, and 1.5.0
+-VMware vRealize Operations Manager (vROps), versions earlier than v6.3 and VMware vRealize Orchestrator (vRO), versions earlier than v7.x
+-IBM Storage Management Pack for Microsoft System Center Operations Manager version 2.2.1
+-IBM Storage Provider for Microsoft Windows VSS, version 2.6.0
+-IBM OpenStack Driver for XIV and DS8K, versions 1.3.1.1 (Havana), 1.4.x (IceHouse), 1.5.0 (Juno), 1.6.0 (Kilo), 1.7.0 Liberty), 1.8.0 (Newton) - through the OpenStack Newton release
+-IBM Storage Host Attachment Kit, version 2.3.0
+-IBM Storage Host Attachment Kit, operating systems REHEL 5.9, 5.11, 6.3, and SLES 11.2
+-Microsoft Azure Site Recovery (ASR) support
+
+IBM Storage Management Console for VMware vCenter, version 3.2.2
+Customers of version 3.2.2 or below should upgrade to the latest version of IBM Spectrum Control Base
+Note: 
+
+ * Upgrade is not supported from VC Plugin to Spectrum Control Base because these are different products, but no reboot to customer server is required. 
+
+
+IBM Storage Provider for VMware VASA, versions 1.2.0 and 1.5.0 
+Customers of these versions should upgrade to the latest version of IBM Spectrum Control Base 
+
+The following IBM storage solution components are included in IBM Spectrum Control Base: 
+1) IBM Storage Provider for VMware VASA – Improves the ability to monitor and automate storage-related operations on VMware platforms and adds support for the SVC/Storwize family. 
+2) IBM Storage Enhancements for VMware vSphere Web Client – Integrate into the VMware vSphere Web Client platform and enable VMware administrators to independently and centrally manage their storage resources on IBM storage systems. 
+3) VROPs - integration to VMware® vCRealize™ Operations Management Suite™ automates operations management using patented analytics and an integrated approach to performance, capacity and configuration management. 
+4) VRO - VMware® vRealze Orchestrator™ - enhanced cloud-scale architecture, out-of-the box high availability of the platform, and REST API. 
+
+IBM Storage Integration Server version s 1.2.0, 1.2.1, and 1.5.0 
+Customers currently using these versions will have to upgrade to the latest version of Spectrum Control Base. IBM Storage Integration Server is no longer supported. 
+
+VMware vRealize Operations Manager (vROps), versions earlier than v6.3 and VMware vRealize Orchestrator (vRO), versions earlier than v7.x 
+These plugins are delivered in IBM Spectrum Control Base Edition. Refer to the VMware Lifecycle Product Matrix -> https://www.vmware.com/content/dam/digitalmarketing/vmware/en/pdf/support/product-lifecycle-matrix.pdf [https://www.vmware.com/content/dam/digitalmarketing/vmware/en/pdf/support/product-lifecycle-matrix.pdf] 
+
+IBM Storage Management Pack for Microsoft System Center Operations Manager versions 2.2.1 
+Customers of versions 2.2.1 and below should upgrade to the latest version 
+Note that after the upgrade, you need to delete and then re-import the management packs. For more information, see "Removing a specific management pack" and "Importing management packs to Microsoft SCOM" [http://dhemppub03.mul.ie.ibm.com/infocenter/strhosts/ic/topic/com.ibm.help.strghosts.doc/SCOM/2.1.0/UG/scom_ug_ch2_remove_mgmt_pack.html] [http://dhemppub03.mul.ie.ibm.com/infocenter/strhosts/ic/topic/com.ibm.help.strghosts.doc/SCOM/2.1.0/UG/scom_ug_ch3_import_mgmt_packs.html]sections in the User Guide. You can find the guide online in the IBM Knowledge Center [https://www-01.ibm.com/support/knowledgecenter/]. 
+In order to restore the earlier configurations, run the upgrade_config.cmd CLI utility after the updated version is installed. 
+
+IBM XIV Provider for Microsoft Windows VSS, versions 2,6,0 
+Customers using versions 2.6.0 or below should upgrade to the latest version. 
+
+IBM OpenStack Driver for XIV and DS8K, versions 1.3.1.1 (Havana), 1.4.x (IceHouse), 1.5.0 (Juno), 1.6.0 (Kilo), 1.7.0 Liberty), 1.8.0 (Newton) - through the OpenStack Newton release 
+OpenStack community support is for two years. See OpenStack releases [https://releases.openstack.org/]. All relevant OpenStack versions will be EOL. 
+Starting with Ocata, the driver is contributed to the OpenStack open source community. 
+
+IBM Storage Host Attachment Kit, version 2. 3.0 
+Customers of versions 2.3.0 and earlier should upgrade to the latest supported version. To reduce server footprint, the portable HAK versions are recommended. Windows and Solaris might require host reboot due to 3rd party software installation. 
+
+IBM Storage Host Attachment Kit, operating systems REHEL 5.9, 5.11, 6.3, and SLES 11.2 
+These versions of the operating systems are no longer supported by the vendor. IBM customers should use IBM Storage Host Attachment Kit, version 2.7 (GA Dec 2016). To reduce server footprint, the portable HAK versions are recommended. Windows and Solaris might require host reboot due to 3rd party software installation. 
+
+Microsoft Azure Site Recovery (ASR) support 
+Microsoft dropped SAN replication in the new portal. The ASR support is part of the CIM component, included in the storage microcode. See information on the Microsoft web site -> https://docs.microsoft.com/en-us/azure/site-recovery/site-recovery-support-matrix-to-azure [https://docs.microsoft.com/en-us/azure/site-recovery/site-recovery-support-matrix-to-azure]

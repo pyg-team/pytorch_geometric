@@ -1,0 +1,184 @@
+Title: IBM Rational License Server Delivery and Support - United States
+
+Text:
+License Server; delivery; support; Rational License Server; FLEXlm; Macrovision; licensing; 1265239 PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ The IBM Rational License Server is an application that serves floating license keys to the IBM Rational products running on remote client machines or on the same machine as the license server. The license server is built with FLEXlm, a third-party component developed by Flexera. This technote outlines how Rational delivers the license server and the platforms it supports. 
+
+CONTENT
+The Rational License Server
+The Rational License Server is an application that serves floating license keys to the Rational products running on remote client machines or on the same machine as the license server. The license server is built with FLEXlm, a third party component, developed by Flexera. 
+
+
+
+
+
+
+Rational products that use the Rational License Key Server 
+
+All Rational tools that use license keys use the Rational License Key Server. This includes the Rational team and desktop products: 
+
+ * Rational Ada Developer 
+ * Rational Application Developer ** 
+ * Rational AppScan 
+ * Rational Asset Analyzer 
+ * Rational Asset Manager 
+ * Rational Build Forge 
+ * Rational Business Developer Extension ** 
+ * Rational ClearCase, ClearCase MultiSite, and ClearCase LT 
+ * Rational ClearQuest and ClearQuest MultiSite 
+ * Rational Developer for Power Systems** 
+ * Rational Functional Tester ** 
+ * Rational Integration Tester 
+ * Rational Lifecycle Package 
+ * Rational Manual Tester ** 
+ * Rational Modeling Extension for Microsoft .NET ** 
+ * Rational Performance Tester (base product) ** 
+ * Rational Performance Test Virtual Tester Packs 
+ * Rational Performance Tester Extension for Citrix 
+ * Rational Performance Tester Extension for SAP 
+ * Rational Performance Tester Extension for Siebel 
+ * Rational Performance Tester Extension for SOA 
+ * Rational Professional Bundle ** 
+ * Rational ProjectConsole 
+ * Rational PurifyPlus 
+ * Rational RequisitePro 
+ * Rational Robot 
+ * Rational Rose 
+ * Rational Software Architect ** 
+ * Rational Software Modeler ** 
+ * Rational SoDA 
+ * Rational Suite 
+ * Rational Systems Developer ** 
+ * Rational Test RealTime 
+ * Rational Tester for SOA Quality **
+
+
+**Use of floating license keys with this product is optional 
+
+ Back to top 
+
+
+
+
+
+For the following products (former Telelogic products), you should use Rational License Server Telelogic v2.0 or Rational License Key Server 8.1.x.
+
+
+ * Rational Change 
+ * Rational Directory Server for Change/Doors/Synergy 
+ * Rational DOORS family 
+ * Rational Focal Point 
+ * Rational Logiscope 
+ * Rational Publishing Engine 
+ * Rational Rhapsody 
+ * Rational Statemate 
+ * Rational Synergy 
+ * Rational System Architect 
+ * Rational Systems Tester 
+ * Rational Tau family 
+ * Rational TTCN Suite
+
+These products can only get floating license keys from Rational License Server v7.1 or later 
+
+ * Rational Asset Manager 
+ * Rational Application Developer 
+ * Rational Business Developer Extension 
+ * Rational Functional Tester 
+ * Rational Manual Tester 
+ * Rational Modeling Extension for Microsoft .NET 
+ * Rational Performance Tester (base product) 
+ * Rational Performance Tester for SOA Quality 
+ * Rational Professional Bundle 
+ * Rational Software Architect 
+ * Rational Software Modeler 
+ * Rational Systems Developer
+
+Note for Rational License Key Server v8.1.x: 
+
+ * Rational License Key Server v 8.1.x is compatible with all shipping version Rational Products that use Flex based licensing.
+   
+   
+ * You cannot install Rational License Key Server version 8.1.x on the same server that has Rational License Key Server 7.1.x or earlier installed.
+   
+   
+ * You must upgrade the license server to version 8.1.x if you are upgrading to Rational ClearCase, Rational ClearQuest or Rational RequisitePro version 7.1.2.
+   
+   
+ * From Rational License Key Server version 8.1.1, the individual Rational TL (Telelogic) License server has been integrated to Rational License Server. Review the following technotes for more details:  * 1496441: How to configure Rational Telelogic based license keys in Rational License Server 8.1.x on Microsoft Windows [http://www.ibm.com/support/docview.wss?uid=swg21496441] 
+    *  1411515: Rational License server versions and the corresponding FLEXnet versions [http://www.ibm.com/support/docview.wss?uid=swg21411515] 
+   
+   
+ * If v8.1.x is used as the license server, the license files have a single VENDOR/DAEMON* line with just VENDOR ibmratl , which can serve licenses for both rational and telelogic products.
+   
+   
+ * Rational License Key Server v8.1.4 uses FlexNet Publisher v11.10 (ibmratl daemon v11.10)
+   
+
+ Back to top 
+
+
+
+
+How do I download the Rational License Server? 
+
+The latest version of the Rational License Server (on Windows, Linux, and UNIX platforms) is available as one of the components you can download from your Passport Advantage [https://www-112.ibm.com/software/howtobuy/softwareandservices]account when you purchase any of the products listed above. 
+
+For example. if you bought IBM Rational Application Developer, you will see the Rational License Server as one of the items you can download from the Rational Application Developer "eAssembly". The license server is also available on CD when you order physical media. 
+
+For Rational Build Forge, the license server is included in the Build Forge download itself. 
+
+If you are unable to download the Rational License Key Server 8.1.x through your Passport Advantage [https://www-112.ibm.com/software/howtobuy/softwareandservices]account, you can also download it from Fix Central. [http://www-01.ibm.com/support/docview.wss?uid=swg27035665] 
+
+Guidance on how to obtain new and renewal licenses from the License Key Center can be found in Technote 21250433 [http://www-01.ibm.com/support/docview.wss?uid=swg21250433] or Technote 21250403 [http://www-01.ibm.com/support/docview.wss?uid=swg21250403]. 
+
+If you are using tokens, contact your IBM sales representative for guidance on the number of tokens required. 
+
+Where can I get evaluation software? 
+
+To obtain evaluation software, visit the developerWorks Evaluation software [http://www.ibm.com/developerworks/downloads/] site.
+
+
+
+ Back to top 
+
+
+
+
+How do I install and configure the Rational License Key Server? 
+
+Guidance on how to install and configure the Rational License Key Server can be found in the Rational Common Licensing Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSSTWP_8.1.4/com.ibm.rational.license.doc/helpindex_RCL.html] topic, Configure the Rational License Key Server [http://www.ibm.com/support/knowledgecenter/SSSTWP_8.1.4/com.ibm.rational.license.doc/topics/t_setup_rcl.html]. 
+
+
+
+ Back to top 
+
+
+
+
+What platforms does the Rational License Server support? 
+
+See Software Product Compatibility Reports [https://www.ibm.com/software/reports/compatibility/clarity/index.html] for supported Operating Systems.
+
+Click Operating systems for a specific product and enter product name Rational License Key Server or Telelogic License Key Server, specify the version to check and click submit.
+
+Notes and known limitations
+
+
+ 1. Rational License Server is a 32-bit application and runs in 32 bit mode on 64 bit operating systems.
+    
+    
+ 2. Earlier versions of FLEXlm were implemented on AIX and HP-UX in order to maintain support for older versions of the operating system
+    
+    
+ 3. lmutil fails on Windows 2008 and Windows 7 OS. 
+    
+    WORKAROUND: Edit the hosts file in the system32 folder (C:\Windows\System32\Drivers\etc\hosts) to contain the IP address and the machine name (for example, 9.X.X.X hostname)
+    
+    
+ 4. Dongles are not supported on Windows 2008 and Windows 7. 
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21472389]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21452120]

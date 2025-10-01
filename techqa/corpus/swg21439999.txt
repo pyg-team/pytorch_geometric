@@ -1,0 +1,38 @@
+Title: IBM Configure security for JRules modules on WebSphere Application Server - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are the JRules application specific requirements to consider when configuring security for Rule Team Server/Rule Execution Server on WebSphere Application Server? 
+
+CAUSE
+The Rule Team Server/Rule Execution Server installation documentation explains how to configure security with a federated repository. Does JRules support any other custom authentication mechanism? If so, are there any requirements that are specific to Rule Team Server/Rule Execution Server in regards to the security configuration?
+
+ANSWER
+Configuring the security for JRules applications is no different from that for any other Enterprise application. The authentication mechanism is handled at the application server level. 
+
+The only thing specific to JRules are the user roles defined by the application. Adherence to these roles determines the parts of the application that a user can access. You can employ any custom authentication mechanism, as long as the user (or the user's group, as defined in the user registry) is mapped to at least one of the mandatory roles defined by the JRules applications . 
+
+ * For Rule Team Server, the mandatory roles are: rtsAdministrator, rtsConfigManager, rtsInstaller, and rtsUser. 
+   Create users/groups in the application server user registry and map each user or the group of users to at least one of these mandatory roles. 
+   It is not necessary for the user or group names to be identical to the role names. You can define your own user or group names, as long as they are mapped to the mandatory roles. 
+ * For Rule Execution Server, the user roles are resAdministrators ,resDeployers, and resMonitors. 
+   On a WebSphere Application Server, the group with the resAdministrators role should also be mapped to the Monitor role in order to have access to the MBeans of the model. 
+
+
+On a WebSphere Application Server (WAS), the mapping between the role and user/group is configured on WAS console. 
+When a user logs in to Rule Team Server or Rule Execution Server, 
+
+ 1. Rule Team Server or Rule Execution Server relies on the application server to authenticate the user. This is accomplished through the communication between the server and the user registry, based on the user credentials defined in the user registry. 
+ 2. An authenticated user is then authorized based on their role.
+
+RELATED INFORMATION
+#Rule Execution Server diagnostics failure [http://www.ibm.com/support/docview.wss?uid=swg21584856]
+Rule Execution Server diagnostic MBean execution fails [http://www.ibm.com/support/docview.wss?uid=swg21461650]
+Authorization failed Not granted required roles [http://www-01.ibm.com/support/docview.wss?uid=swg21578192]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise Business Integration IBM Operational Decision Manager Installation Platform Independent 8.0 Enterprise Business Integration IBM Operational Decision Manager Installation Platform Independent 8.5.1, 8.5 Enterprise

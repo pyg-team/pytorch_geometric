@@ -1,0 +1,77 @@
+Title: IBM Unsolicited SQL updates from User Defined Function - United States
+
+Text:
+netcool; impact; nci; policy; Unsolicited SQL updates; SQL updates; passing a field; SQL result; user-defined function; user-defined; userdefined; function; userdefinedfunction; udf; user; defined; custom; customfunction TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a field from the result of any SQL Query operation (for example, DirectSQL or GetByFilter) is passed to a User Defined Function within a Policy, Impact outputs an SQL Update to update that field back in the database table.
+
+
+
+SYMPTOM
+Impact runs an unexpected SQL Update to update a field from a look-up with the value it already has.
+
+
+CAUSE
+The result from an SQL query operation is an SQLOrgNode. When passing an SQLOrgNode to a User Defined Function, the function assigns the same value to the variable, causing Impact to call an action to update the field. 
+
+This is recorded as IZ67227: UNSOLICITED SQL UPDATE STATEMENT PRODUCED BY FUNCTION CALL WHEN LOOPING THROUGH GETBY* RESULT SET with more information available from the link below.
+
+
+
+
+DIAGNOSING THE PROBLEM
+Create a simple Policy with a User Defined Function (UDF) that performs a simple action against a String. In the same Policy, create a DirectSQL() Function to query some field from a database, then pass a suitable field to the UDF. You will see in the PolicyLogger log file that Impact runs an SQL Update to update that same field with the same value. 
+
+
+Here's a simple Policy example:
+
+
+
+ * 
+ * 
+ * 
+ * NodeLength=Length(MyString); 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  MyEvent=MyEvents[LoopCount]; 
+   MyFunction(MyEvent.Node); 
+   LoopCount=LoopCount+1; 
+ * 
+
+
+
+RESOLVING THE PROBLEM
+Do not pass a field directly to a user-defined function. Instead, assign the value of the field to a variable, then pass that variable to the user-defined function. 
+
+
+From the While{} section of the example above, use:
+
+
+
+ * 
+ * 
+ * 
+ *  MyEventNode=MyEvents[LoopCount].Node; 
+   MyFunction(MyEventNode); 
+   LoopCount=LoopCount+1; 
+ * 
+
+RELATED INFORMATION
+ APAR IZ67227 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ67227]
+
+
+ 
+
+HISTORICAL NUMBER
+ 38861 660 706

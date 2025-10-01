@@ -1,0 +1,56 @@
+Title: IBM Electronic Software Delivery help - SHA-1 checksums for AIX - United States
+
+Text:
+ PLANNING
+
+ Electronic Software Delivery help - SHA-1 checksums for AIX 
+
+
+
+IBM i Support [http://www.ibm.com/support/entry/portal/product/ibm_operating_systems/ibm_i] Planning [//www.ibm.com/support/docview.wss?uid=nas8N1022012] Upgrade planning [//www.ibm.com/support/docview.wss?uid=nas8N1022013] Technology Refresh [//www.ibm.com/support/docview.wss?uid=nas8N1022014] Resaves [//www.ibm.com/support/docview.wss?uid=nas8N1022015] Customer Notices [//www.ibm.com/support/docview.wss?uid=nas8N1022016] Technical databases [//www.ibm.com/support/docview.wss?uid=nas8N1022017] 
+
+ *  Overview [//www.ibm.com/support/docview.wss?uid=nas8N1022012] 
+ *  Walkthrough [//www.ibm.com/support/docview.wss?uid=nas8N1022013] 
+ *  Tips &. FAQs [//www.ibm.com/support/docview.wss?uid=nas8N1022013] 
+ *  Help [//www.ibm.com/support/docview.wss?uid=nas8N1022013] 
+
+ * Ordering [//www.ibm.com/support/docview.wss?uid=nas8N1022012] 
+ * Downloading [//www.ibm.com/support/docview.wss?uid=nas8N1022148] 
+ * Preparing to install [//www.ibm.com/support/docview.wss?uid=nas8N1022089] 
+ * Installing [//www.ibm.com/support/docview.wss?uid=nas8N1022021] 
+
+
+
+
+THIS STEP IS OPTIONAL
+This step is only necessary if you want to verify the file you downloaded is complete and matches what IBM provides.
+
+The next step is to choose the method to install on AIX [//www.ibm.com/support/docview.wss?uid=nas8N1022097].
+
+
+
+
+COMPUTE AND COMPARE THE CHECKSUM
+Use any software to compute the SHA-1 checksum of the downloaded images. If you do not have software to compute the SHA-1 checksum, search the Internet using the following criteria.
+
++"SHA-1 checksum" +utility
+
+Compare your checksum with the value listed in the text file. If the checksums match, the downloaded image is complete.
+
+ * System i SHA-1 checksums text file [//www-947.ibm.com/systems/support/resources/systemp.txt]
+
+The next step is to choose the method to install on AIX [//www.ibm.com/support/docview.wss?uid=nas8N1022097].
+
+
+
+
+
+ADDITIONAL RESOURCES
+ * Entitled Systems Support (License keys and software) [//www.ibm.com/eserver/ess/]
+ * IBM Power Systems Redbooks [//www.redbooks.ibm.com/portals/power]
+ * IBM i Redbooks publications [http://www.redbooks.ibm.com/redbooks.nsf/searchsite?SearchView&query=%22ibm+i%22]
+ * IBM i storage solutions [//www.ibm.com/systems/power/software/i/management/storage/index.html]
+ * IBM i Knowledge Center [//www.ibm.com/support/knowledgecenter/ssw_ibm_i/welcome]
+ * IBM Knowledge Center [//www.ibm.com/support/knowledgecenter/]
+ * developerWorks for IBM i [https://www.ibm.com/developerworks/learn/ibmi/]
+ *

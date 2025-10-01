@@ -1,0 +1,180 @@
+Title: IBM IV33581: REPORTING TIME DUPLICATED IN SUMMARY DATA TABLE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 4 (6.2.3-TIV-ITM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24034252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM DESCRIPTION:
+   If a table view is configured to display historical summarized
+   data and the view-level page size is changed from 'Use default'
+   to 'Return all rows', the 'Recording Time' column will appear 3
+   times and the last two data columns will not appear.
+   
+   RECREATE INSTRUCTIONS:
+   Experimentation shows that replacing a bar chart does not need
+   to be part of the scenario. Minimal scenario:
+   
+   1-Enable history, warehouse and S&P for some attribute group (I
+   used Windows OS, Memory (superseded)) and allow data to
+   accumulate and be summarized. MTEMS S&P agent configure can be
+   used to force frequent summarization.
+   
+   2-Select and place a table adapter on a workspace and configure
+   to display data from the attribute group enabled in step 1.
+   Leave 'View-level Page Size' at 'Use default'
+   
+   3-Open timespan dialog and set to display summarized data
+   
+   4-Open Properties dialog and change to either 'Return all rows'
+   or set 'Number of rows to return'.
+   
+   5-Click OK
+   Observe that Recording Time is repeated 3 times and the last
+   two data columns before 'Time Stamp' and 'Server Name' are
+   removed. In my test, the 'Committed kBytes' and 'Free System
+   Page Table Entries' were lost.
+   
+   Despite testing and trace analysis, I am still not sure where
+   the problem lies although it looks more and more like TEP.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set the table to show realtime data.
+   Set the view-level page size to the desired value.
+   Set the timespan to display the desired summarized data.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The Recording Time column appears more than once in a historical
+   summarized view.
+   
+   
+   If the View-level page size for a historical view of summarized
+   data is changed, the Recording Time column will appear more than
+   once.  A data column will be removed from the end of the table
+   for each extra Recording Time column that appears.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The logic was changed to prevent the extra Recording Time
+   columns from being added and forcing other columns to be
+   removed.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.2.3-TIV-ITM-FP0004
+     | fix pack | 6.3.0-TIV-ITM-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Set the desired View-level page size while the view is
+   displaying detail data and then configure the view to display
+   summarized data.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV33581
+   
+   
+ * REPORTED COMPONENT NAME
+   TEP
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04EP
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-12-18
+   
+   
+ * CLOSED DATE
+   2013-02-24
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEP
+   
+   
+ * FIXED COMPONENT ID
+   5724C04EP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP

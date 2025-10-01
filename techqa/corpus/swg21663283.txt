@@ -1,0 +1,36 @@
+Title: IBM Executing a WebSphere Transformation Extender map from Sterling B2B Integrator generates a CMpiStreamFile::_EnsureFileOpen error - United States
+
+Text:
+CMpiSteamFile EnsureFileOpen WTXMapService BP Sterling B2B Integrator TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Executing a WebSphere Transformation Extender (WTX) map from Sterling B2B Integrator generates a CMpiStreamFile::_EnsureFileOpen error. 
+
+SYMPTOM
+The Sterling B2B Integrator WTX Map Service fails with a "File open failed - Native function: CMpiSteamFile::_EnsureFileOpen" error.
+
+
+CAUSE
+StreamMaxMemLimit is not set high enough, StreamMaxMemDirectory does not exist and / or StreamMaxMemDirectory does not have appropriate write permissions.
+
+DIAGNOSING THE PROBLEM
+The Sterling B2B Integrator Business Process (BP) Detail will display an error of "File open failed - Native function: CMpiSteamFile::_EnsureFileOpen" for an Advanced Status. The error is also observed in that particular BP's steps Process Data and Status Report.
+
+RESOLVING THE PROBLEM
+Review the contents of the WTX dtx.ini file. For Windows, it is located in the WTX installation directory and for UNIX environment, it is located in the config subdirectory of the WTX installation.
+
+
+
+
+Review the value of StreamMaxMemLimit and SteamMaxMemDirectory. Ensure there is only one set of these values uncommented. An uncommented value does not have a semicolon in column 1 of the dtx.ini file. 
+
+Make sure the directory name associated with SteamMaxMemDirectory exists and that the user id associated with the Sterling B2B Integrator services has write permission to that directory. 
+
+Alternatively you can increase the value of StreamMaxMemLimit to be greater than the size of your input data. 
+
+If any changes are made to the dtx.ini parameters, you must restart the Sterling B2B Integrator services.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Ascential Mercator TX DTX WTX

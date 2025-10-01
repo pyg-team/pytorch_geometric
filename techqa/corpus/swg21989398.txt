@@ -1,0 +1,17 @@
+Title: IBM Error Message while creating a Atlas Hold Notice - United States
+
+Text:
+Atlas Roles Insufficient privileges TECHNOTE (FAQ)
+
+QUESTION
+ Why do I get a Insufficient privileges error while creating a Atlas Hold Notice? 
+
+CAUSE
+This is caused by a product defect
+
+ANSWER
+ 
+
+When creating a Hold Notice or adding a courtesy copy recipient to a Notice, you sometimes get a server side error: " You have insufficient privileges to a MatterNotice" 
+
+This is caused by APAR HE12584. Please contact IBM Atlas support for assistance.

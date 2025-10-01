@@ -1,0 +1,18 @@
+Title: IBM How do I use IBM Information Server Datastage to stop reading MQ messages - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I gracefully tell a DataStage job to stop reading data from an MQ Series queue? 
+
+ANSWER
+While some DataStage jobs are setup to process all data on an MQ queue and then exit, other jobs may be setup to read from the MQ queue continuously, processing each new record as it is added to the MQ queue.
+In the latter case, the DataStage job is typically setup to watch for an "end of data" message to be placed in the queue by a second job. So when site wants the job reading MQ data to stop, they run a second DataStage job which places an end of data message into the MQ queue.
+
+In this scenario, both jobs have setup the MQ stage properties to set "End of Data Message Type" to a specific value that is the same in both jobs, such as unique 6-digit number 998899.
+
+In job 2, it is only important that the end of data message type be set to the same value as job 1...the actual message content is not important. Job 2, when run, should place that message into the MQ queue. Additionally, "Process End of Data Message" should be set to "No" since this message usually is only a trigger and does not contain useful message content.
+
+Please also note that if the DataStage job is a parallel job running on multiple nodes and reads MQ messages destructively, then the job sending stop message must send a number of stop messages equal to the number nodes the MQ stage runs on, as discussed in the following technote, to ensure that all nodes see the stop message:
+DataStage Job with MQ stage hangs after end-of-data message put on queue. [http://www-01.ibm.com/support/docview.wss?uid=swg21600044]

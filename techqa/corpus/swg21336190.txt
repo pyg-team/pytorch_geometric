@@ -1,0 +1,49 @@
+Title: IBM Changing your gateways to use ssl - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do you change your PowerPlay Enterprise Server and Upfront applications from normal Http to use ssl? 
+
+RESOLVING THE PROBLEM
+The first thing that you will need to do is to enable ssl on your Web server and have an ssl certificate supplied. You will have to be able to hit https://<servername> in a browser. If you cannot hit this then ssl is not yet configured correctly on the Web server. 
+
+Step 1. 
+In the PowerPlay Enterprise Server Administration utility select the server name in the left hand pane and go to the edit menu and select Properties.
+
+Step 2.
+In this property sheet you will want to change the gateway to reflect using ssl. For example, I would change my gateway from http://wottharrisb/cognos/cgi-bin/ppdscgi.exe to https://wottharrisb/cognos/cgi-bin/ppdscgi.exe. Notice the S after http.
+
+Step 3.
+You can now apply these changes and close the PowerPlay Enterprise Server administration utility.
+
+Step 4.
+Go into the Upfront Server administration tool and log on to the server. Select Upfront in the left pane and go to the edit menu and select Properties.
+
+Step 5.
+On the General Tab change the gateway to reflect using ssl. Add the S to the end of Http. Then click on the gateways tab.
+
+Step 6:
+On the gateways tab you will have to change all of the gateways to reflect the ssl gateway.
+
+Step 7:
+In the <drive<:\program files\cognos\cer1\bin directory you will see a file named upfgateways.conf. Open this file in Notepad. At the bottom of that file there should be a gateway entry which looks like the following:
+http://wottharrisb/cognos/cgi-bin/ppdscgi.exe cogx://wottharrisb:8010 x001
+You will have to change this entry to reflect the ssl gateway and save the file.
+When all of these have been changed you will have to stop and restart all of the Cognos services.
+
+Step 8:
+All of your Upfront newsitems will still be pointing to the old gateway so we will have to change those items to point to the new gateway. To do this you will have to log into Upfront in the browser as administrator.
+
+Step 9:
+Click on the //Newsindex/Administration/Newsitem Gateway Manager. If this is not present, go to the personalize option and select show hidden items. In the Newsitem Gateways manager insert the old gateway and the new gateway and click OK. This will point all of your newsitems to the new gateway. 
+
+
+This will change the gateways for PPES and Upfront to use ssl.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Cognos Connection Business Analytics Cognos 8 Business Intelligence Install and Config Business Analytics Cognos Series 7 PowerPlay Business Analytics Cognos Series 7 PowerPlay Enterprise Server Business Analytics Cognos Series 7 Upfront 
+HISTORICAL NUMBER
+ 90558

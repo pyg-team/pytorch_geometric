@@ -1,0 +1,45 @@
+Title: IBM How to get the datatrim.sh trimming tool to script a non-default table? - United States
+
+Text:
+CAMADALL CAMADINST PMIJMXENGINESTATS datatrim.sh MS adding new tables to xml deletesingletable.xml octigate db TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ How to get the datatrim.sh trimming tool to script a non-default table? 
+
+ANSWER
+The default datatrim.sh script comes with a set of pre-defined tables that it will trim data from. These tables are defined in the deletesingletable.xml and deleterelatedtables.xml files in the $MS_HOME/etc directory. 
+
+If you notice that you have other tables that need to be trimmed, you can add this to the xml file and run the script again. 
+
+For example, you notice that the table PMIJMXENGINESTATS has a large number of records and needs to be trimmed. You can manually trim the table or have the datatrim.sh script do it for you. If you want the datatrim.sh script to trim data from the table PMIJMXENGINESTATS, follow these steps. 
+
+First do a "describe table PMIJMXENGINESTATS" and get the table schema, it will look like this:
+[/support/docview.wss?uid=swg21701045&aid=1] [/support/docview.wss?uid=swg21701045&aid=1]
+
+Next you need to add a new stanza in the $MS_HOME/etc/deletesingletable.xml file. Make a backup of this file, then add this stanza after the "pmistats" table stanza as follows:
+
+
+
+<table>
+<name>pmijmxenginestats</name>
+<daystokeep>7</daystokeep>
+<!-- timestamp column name -->
+<columnname>creationtime</columnname>
+<!-- The format of startdate and enddate is mm/dd/yy hh:mm:ss. -->
+<startdate></startdate>
+<enddate></enddate>
+<!-- If a user would like to trim data based on appserver, then use adminserver and appserver elements -->
+<adminserver></adminserver>
+<appserver></appserver>
+<serverid>probeid</serverid>
+<delayinterval>5</delayinterval>
+</table> 
+Save the file changes, then run your datatrim.sh script again. Check your datatrim.log logfile for any errors after the datatrim.sh script completes. Then log back into the database and see if the PMIJMXENGINESTATS table has been trimmed. 
+
+Similarly, you can add other tables to the deletesingletable.xml file but you should be careful which table you add here. You do not want to delete data from some tables like SERVERS, GROUPS, USERS, ROLES, etc.. as this will lead to data integrity issues. So, choose carefully.  
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM for App Diagnostics ITCAMfAD

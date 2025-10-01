@@ -1,0 +1,18 @@
+Title: IBM Viewing Policy Execution Reports in StoredIQ - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do we view Policy Execution Reports in StoredIQ? 
+
+CAUSE
+Unable to find the location to view generated Policy Execution Reports
+
+ANSWER
+ 
+
+ 1. Login to StoredIQ Dataserver 
+ 2. Navigate to the Inbox link located next to help icon on the top right corner 
+ 3. Clicking the link brings up a list with links to the reports 
+ 4. Clicking on one of the report links will allow you to download the report

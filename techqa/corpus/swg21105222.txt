@@ -1,0 +1,15 @@
+Title: IBM Determining if CICS VR batch logging was successful - United States
+
+Text:
+batch logging successfully completed ; successful ; no errors ; 4.2 5655P3000 R420 R42E R42K 5655-P30 5655P30 FMID HCCV420 JCCV42E JCCV42K ; 4.3 5655P3000 R430 R43E R43K 5655-P30 5655P30 FMID HCCV430 JCCV43E JCCV43K ; 5655Y2400 R510 R51E R51K R520 R52E R52K 5655-Y24 ; 5655Y24 FMID HCCV510 JCCV51E JCCV51K HCCV520 JCCV52E JCCV52K TECHNOTE (FAQ)
+
+QUESTION
+ How do you determine if CICS VSAM Recovery for z/OS (CICS VR) batch logging was successful for a batch job step? 
+
+ANSWER
+Examine the JOBLOG for the message DWW264I [http://www.ibm.com/support/knowledgecenter/SSQJMU_5.1.0/dwwmd/opmsg.html] VSAM BATCH LOGGING COMPLETED SUCCESSFULLY.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICSVR CICS VR CICS/VR

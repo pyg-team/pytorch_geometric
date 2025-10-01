@@ -1,0 +1,265 @@
+Title: IBM RTM Data Migration - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to migrate RTM data from old host to new host ? 
+
+CAUSE
+There can be many reasons for this migration :
+RTM server host is out of memory, need to migrate to newer hardware, need to create a separate RTM environment in order to upgrade to newer RTM version on new server...etc
+
+
+
+ANSWER
+ 
+
+SCOPE : 
+
+Migrate RTM from one Host to another. At the end of the migration, you will have the old RTM and new RTM both working, collecting, displaying same data, graphs, alerts,..... Once you have your new RTM environment working for some time without any errors, you can remove the old environment. 
+
+Note:
+
+- All commands below require root access.
+- This migration technote was created for RTM 9.1.3 host migration from a RHEL 6 to another RHEL 6 server. However it should work (with minor changes) for newer RTM versions. It should also work (with minor changes) for newer RHEL versions (7.X).
+
+- Assuming the source and destination RTM installation directory is/opt/IBM. If destination directory is not the default/opt/IBM, change the paths below accordingly.
+
+
+On Old Server 
+
+1. Check to see if the old RTM server is configured to use a service account. You can check this by reviewing the contents of the file/opt/IBM/rtm/etc/lsfpollerd.conf for the word Daemon_user. If different than apache or wwwrun, you are using a service account and need to adjust the procedures below and use the new user. 
+
+2. Force an RTM backup from the old server (Console->Grid Utilities->Force Cacti Backup) 
+
+
+On New Server
+3. Install RTM on new server having SAME RTM version as your old environment. Follow the installation guide. 
+
+4. Stop all the below services
+# service lsfpollerd stop
+# service licpollerd stop
+# service advocate stop
+# service crond stop
+# service httpd stop
+# service mysqld stop 
+
+Wait for 1 minute 
+
+# Check the status of the services, for e.g. # service lsfpollerd status 
+
+5. On new server, create a new directory /opt/IBM/cacti/scripts.origand move ALL files (including php and pl extension files) from/opt/IBM/cacti/scripts to new directory 
+
+# mkdir /opt/IBM/cacti/scripts.orig 
+
+# mv /opt/IBM/cacti/scripts/* /opt/IBM/cacti/script.orig/ 
+
+6. Create a new directory/opt/IBM/cacti/resource/script_queries.origand move all files from /opt/IBM/cacti/resource/script_queries to a new directory 
+
+# mkdir /opt/IBM/cacti/resource/script_queries.orig 
+
+# mv /opt/IBM/cacti/resource/script_queries/* /opt/IBM/cacti/resource/script_queries.orig/ 
+
+7. Create a new directory/opt/IBM/cacti/resource/script_server.orig and move all files from /opt/IBM/cacti/resource/script_server to a new directory 
+
+# mkdir /opt/IBM/cacti/resource/script_server.orig 
+
+# mv /opt/IBM/cacti/resource/script_server/* /opt/IBM/cacti/resource/script_server.orig/ 
+
+8. Create a new directory /opt/IBM/cacti/resource/snmp_queries.orig and move all files from /opt/IBM/cacti/resource/snmp_queries to a new directory 
+
+# mkdir /opt/IBM/cacti/resource/snmp_queries.orig 
+
+# mv /opt/IBM/cacti/resource/ snmp_queries/* /opt/IBM/cacti/resource/ snmp_queries.orig/ 
+
+9. Create a new directory /opt/IBM/cacti/resource/plugins.orig and move all files from /opt/IBM/cacti/plugins/ to a new directory 
+
+# mkdir /opt/IBM/cacti/plugins.orig 
+
+# mv /opt/IBM/cacti/plugins/* /opt/IBM/cacti/plugins.orig/ 
+
+ 
+
+On Old Server 
+
+From old server, copy the files to new server (with permission, so remember to use –p option) 
+
+10. Rsync all the above directories : 
+
+# rsync -av /opt/IBM/cacti/scripts/* new_host:/opt/IBM/cacti/scripts/ 
+
+# rsync -av /opt/IBM/cacti/resource/script_server/* new_host:/opt/IBM/cacti/resource/script_server/ 
+
+# rsync –av /opt/IBM/cacti/resource/snmp_queries/* new_host:/opt/IBM/cacti/resource/snmp_queries/ 
+
+# rsync -av /opt/IBM/cacti/resource/script_queries/* new_host:/opt/IBM/cacti/resource/script_queries/ 
+
+# rsync -av /opt/IBM/cacti/plugins/* new_host:/opt/IBM/cacti/plugins/ 
+
+# rsync -av /opt/IBM/cacti/rra/* new_host:/opt/IBM/cacti/rra/ #Copy all RRD files from old host to new host 
+
+# rsync –av /opt/IBM/rtm/etc/<cluster id>/* new_host:/opt/IBM/rtm/etc/<cluster id>/ #Copy the lsf info with cluster id from old to new server 
+
+ 
+
+On Old Server
+
+
+11. Backup mysql database on old server : 
+
+Note : Please make sure ,/tmp should have enough space to take the full database backup or take it under nfs share available for both new and old server. Copy the fulldump.sql to the new host. 
+
+# mysqldump -u cacti -p cacti > /tmp/fulldump.sql 
+
+Note: Password for mysql user cacti can be found at /opt/IBM/rtm/etc/lsfpollerd.conf 
+
+
+On New Server
+
+12. Start mysqld daemon on new server and restore the database (taken from old server) on new server 
+
+# /etc/init.d/mysqld start 
+
+# mysql -u cacti -p cacti < /tmp/fulldump.sql 
+
+ 
+
+On LSF Cluster 
+
+13. Update the lsf.conf file on lsf cluster with the name of the new server under the old host. 
+
+Like : 
+
+#berry DEC3100 ! 1 3.5 1 2 (ultrix fs bsd mips dec) 
+
+#orange ! SUNSOL 1 3.5 1 2 (sparc bsd) #Example 
+
+#prune ! ! 1 3.5 1 2 (convex) 
+
+Old_host ! ! 1 3.5 1 2 
+
+New_host ! ! 1 3.5 1 2 
+
+
+After updating the above file , run the below command to make it effective :
+# lsadmin reconfig 
+
+# badmin reconfig 
+
+ 
+
+Also check the connectivity if both (lsf host and new_host)can ping each other. 
+
+On New Server
+
+14. Compare below files in old host and new migrated host.: 
+
+ * 
+ * 
+ * /etc/my.cnf
+ * b. memory_limit and date.timezone in/etc/php.ini 
+ * c. Update the appkey in db to be consistent with the one on file system. 
+ *  # cat /opt/IBM/rtm/etc/.appkey 
+ * # mysql cacti -u cacti -p -e "select * from settings where name = 'app_key'" 
+ *  If the values are different, then update the db with appkey from the file. 
+ *  # mysql cacti -u cacti -p -e "update settings set value='<actual_appkey_from_file>' where name='app_key'" 
+ * d. Check/etc/security/access.conf file, if there are any restriction for non-root user
+
+
+15. To enable spine poller, if migrating to the same Linux OS version, copy spine poller binary (spine) and spine.conf to new host Grid -> Settings -> Paths -> Spine Poller File Path . If the Linux OS versions are different between old RTM host and new RTM host , need to rebuild spine poller binary in new host (Spine poller binary is OS specific). 
+
+Download from (http://www.cacti.net/downloads/spine/ [http://www.cacti.net/downloads/spine/]) and extract it in a tmp directory/ 
+
+Run:
+# ./configure
+# make
+
+This will build spine binary. You may have to install mysql-devel and net-snmp-devel packages using yum to be able to compile spine.
+
+
+16. Start the below services :
+# service httpd start
+# service advocate start
+# service lsfpollerd start
+# service licpollerd start
+# service crond start 
+
+ 
+
+17. Do the following steps ONLY IF installation directory on new host IS DIFFERENT from old host 
+
+ * 
+ * 
+ * b. Check Console(TAB)->Configuration->Grid Settings->Paths(TAB), change the path to new installation directory location. 
+ * c. Check the DB to ensure all paths are set correctly: 
+ *  
+   # mysql -u cacti -p cacti -e "select * from settings" | grep -i '/opt/cacti' Assuming old installation directory is /opt/cacti
+   
+   
+ * 
+ * 
+ * 'path_webroot
+ * 
+ * /opt/IBM/cacti
+ * 
+ *  
+   # mysql -u cacti -p cacti -e "update settings set value='/opt/IBM/cacti' where name='path_webroot'" This step updates old path with new path in Database. Update value above with new RTM_TOP
+   
+   
+ * 
+ * 
+ *  
+   # mysql -u cacti -p cacti -e "update grid_pollers set poller_lbindir='/opt/IBM/rtm/lsf91/bin/' where lsf_version=1010" # mysql -u cacti -p cacti -e "update grid_pollers set poller_lbindir='/opt/IBM/rtm/lsf91/bin/' where lsf_version=91"
+   
+   
+ * 
+ * 
+ *  
+   # cd /opt/IBM/rtm/etc/1 # vi lsf.conf # correct the paths, then save and quit vi 
+   
+   LSF_EGO_ENVDIR="/opt/IBM/rtm/etc/1" # <correct the path>
+   LSF_LOGDIR="/opt/IBM/rtm/etc/1" # <correct the path>
+   LSF_CONFDIR="/opt/IBM/rtm/etc/1" # <correct the path>
+   
+   cd to each cluster's directory ... i.e. 1, 2, 3.... and correct paths for each clusterid
+   
+   
+ * 
+ * 
+ *  
+   # mysql cacti -e "select clusterid, clustername, lsf_envdir from grid_clusters" For each cluster listed above, put the correct path as example below: 
+   
+   # mysql cacti -e "update grid_clusters set lsf_envdir='/opt/IBM/rtm/etc/1' where clusterid=1" 
+   
+   # mysql cacti -e "update grid_clusters set lsf_envdir='/opt/IBM/rtm/etc/2' where clusterid=2" 
+   
+   and so on for all the clusters
+   
+   
+ * 
+ * 
+ *  
+   # cd /opt/IBM/cacti/cli # php push_out_hosts.php # this may take several minutes or more depending on data volume
+   
+   
+
+18. If you see following error repeating every 5 mins in cacti log: 
+
+ GRIDPOLLER: Poller[0] NOTE: TASK:LICHIST, TASKID:0, Another Task is already runnining. Exiting! 
+
+Run the following command and then wait for an hour to see if the error problem goes away: 
+
+# mysql cacti 
+
+mysql> insert into settings values ("lichist_poller_last_run", now()-interval 1 day) on duplicate key update value=now()-interval 1 day;
+
+
+19. check the status of collector cluster under “Console>Grid management > Clusters”, Check the graphs if you get all the previous graph data and current data post migration after a few minutes. Check if newly submitted jobs can be seen in RTM under the Grid tab->Job Info->Details page. 
+
+If everything seems to be fine, then data migration is successful. Keep both old and new servers up and running for some time to check if new host is working as per expectation. Check if LSF data is being collected, License data is being collected (if license monitoring set up), graphs are graphing, all thresholds/alerts are working, and clog is green (no repeating red errors or yellow warnings).
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF RTM IBM Spectrum Computing IBM Spectrum LSF RTM

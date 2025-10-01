@@ -1,0 +1,24 @@
+Title: IBM Compatibility of Dynamic Scripting Feature Pack 1.0 with CICS TS 4.2 - United States
+
+Text:
+compatible compatibility ; CICS TS 4.1 Dynamic Scripting Feature pack ; WebSphere Application Server Dynamic Scripting Feature Pack ; CICS Transaction Server for z/OS 4.2 ; 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 KIXINFO retention42 kixdcfcic670 TECHNOTE (FAQ)
+
+QUESTION
+ Is the CICS Transaction Server Feature Pack for Dynamic Scripting V1.0, that was available with CICS Transaction Server for z/OS (CICS TS) V4.1, compatible with CICS TS V4.2? 
+
+ANSWER
+No, the CICS TS Feature Pack for Dynamic Scripting V1.0 is not compatible with CICS TS 4.2. This is because V1.0 of the feature pack has environment variables set for using the 31bit JVM and CICS TS 4.2 only uses a 64bit JVM.
+
+You must use CICS Transaction Server Feature Pack for Dynamic Scripting V1.1 with CICS TS V4.2 [http://www.ibm.com/support/docview.wss?uid=swg21566483] and CICS Transaction Server Feature Pack for Dynamic Scripting V1.0 with CICS TS V4.1.
+
+Do *NOT* attempt to deploy the V1.0 Dynamic Scripting Feature Pack into your CICS TS V4.2 environment.
+
+RELATED INFORMATION
+#.CWPZI8840E Failed to enable CICS JVMSERVER [http://www.ibm.com/support/docview.wss?uid=swg21505483]
+CICS TS Feature Pack for Dynamic Scripting [http://www.ibm.com/software/htp/cics/scripting/]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

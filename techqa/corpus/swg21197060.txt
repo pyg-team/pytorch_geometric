@@ -1,0 +1,31 @@
+Title: IBM Unable to login to ClearQuest Web: login screen repeatedly appears after entering log-on info - United States
+
+Text:
+CQWeb; DNS; Login; ClearQuest Web; Internet Explorer; Netscape; server name; NCQW; CQWJ; 1197060 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote discusses an issue that can occur when attempting to login to IBM® Rational® ClearQuest® Web if the server hostname contains an underscore. After entering your username, password and schema repository, the login screen might reappear with all three fields blank. 
+
+CAUSE
+This problem can occur if the ClearQuest Web server name contains an underscore or other non-DNS supported characters, when used with Microsoft Internet Explorer (IE). 
+
+RFC 952 [http://tools.ietf.org/html/rfc952] specifically states underscores are not allowed in Internet server Host names. IE enforces this rule and will refuse to set a cookie belonging to a hostname with an underscore in it, which forces ClearQuest to generate a new session ID for the user on each page load, since the user never accepts a session id. 
+
+This behavior is seen after entering a username and password at the ClearQuest Web login page and clicking the Logon button, the login page simply refreshes itself and clears the Username, Password and Schema Repository fields without displaying any error.
+
+
+RESOLVING THE PROBLEM
+This situation is known to occur when using Microsoft Internet Explorer to access a ClearQuest Web server, when the servers hostname contains an underscore. 
+
+To resolve this issue, try 1 of the following solutions: 
+
+ 1. Rename the ClearQuest Web server host to a name that does not contain any non-DNS supported Characters. DNS names are restricted to the characters A to Z and the hyphen, ( - ). 
+    Note: See: http://en.wikipedia.org/wiki/Hostname [http://en.wikipedia.org/wiki/Hostname] under the "Restrictions" section for more information. 
+ 2. Use a non-Microsoft browser such as Firefox to access the ClearQuest Web Server. See technote number 1144624 [http://www-1.ibm.com/support/docview.wss?rs=988&uid=swg21144624] to view all supported browsers.
+
+
+
+
+RELATED INFORMATION
+#Supported Web Browsers with ClearQuest Web [http://www.ibm.com/support/docview.wss?uid=swg21156271]
+How to upgrade ClearQuest [http://www.ibm.com/support/docview.wss?uid=swg21216521]

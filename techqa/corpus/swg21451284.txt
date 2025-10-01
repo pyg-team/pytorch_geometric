@@ -1,0 +1,43 @@
+Title: IBM Upgrading Rational Software Architect from 7.5 to 8.0 results in license failure - United States
+
+Text:
+RSA 8; license key; feature name; ibmrsaf; 1451284; licensing TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Rational Software Architect version 8 fails to check out license which works fine with version 7.5. 
+
+SYMPTOM
+After upgrading Rational Software Architect version from 7.5 to 8, license check out for the product fails. 
+
+Other products, including Rational Software Architect Extensions, have no problems. 
+
+
+CAUSE
+Usually, an existing license for Rational products can be used on newer versions' products; however, for Rational Software Architect v8, the feature name in the license key was changed from ibmrsa to ibmrsaf as shown below:
+
+Rational Software Architect 8: 
+
+INCREMENT ibmrsafibmratl 8.00000 15-jan-2011 1 DUP_GROUP=UH \
+vendor_info="0|IBM Rational Software Architect Single Install \
+
+
+Rational Software Architect 7.5 and lower:
+
+INCREMENT ibmrsaibmratl 7.00000 permanent 1 DUP_GROUP=UH \
+vendor_info="0|IBM Rational Software Architect Floating \
+
+
+RESOLVING THE PROBLEM
+Obtain a new license using the following steps to resolve the problem: 
+
+ 1. Log into IBM Rational License Key Centre [https://licensing.subscribenet.com/control/ibmr/login]
+    
+    
+ 2. Return your current license key from "view and return keys" menu
+    
+    
+ 3. Generate a new license key using "IBM Rational Software Architect single install floating lic" link
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Standard Edition Licensing Windows

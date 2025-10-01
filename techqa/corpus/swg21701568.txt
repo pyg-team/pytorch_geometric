@@ -1,0 +1,16 @@
+Title: IBM Maximo full support for IE11 in 7.5.0.8 and 7.6 - United States
+
+Text:
+TPAEUI; internet; explorer; 11; 11.0; ie; browser; support; compatibility; compatible; supported; mode; full; jaws TECHNOTE (FAQ)
+
+QUESTION
+ Maximo support for Internet Explorer 11. 
+
+ANSWER
+Full support for Internet Explorer 11 will be made available within Maximo Asset Management fixpack 7.5.0.8. Full support is also available in Maximo Asset Management 7.6. 
+
+IE11 support will not be backported to any previous fixpack level of 7.5.0.x 
+
+Full IE11 support does not include JAWS compatibility. 
+
+Full IE11 support does not require Internet Explorer compatibility mode.

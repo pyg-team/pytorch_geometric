@@ -1,0 +1,32 @@
+Title: IBM SPSS Custom Tables does not appear in the Analyze menu - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have IBM SPSS Statistics installed. I purchased the Custom Tables module and installed that module. When I pull down the Analyze menu, though, I don't see a menu item for Tables? Why is this? I ran SHOW LICENSE and it shows that the Custom Tables module is installed. How can I get the Custom Tables dialog box? 
+
+RESOLVING THE PROBLEM
+In the directory where SPSS is installed you'll find a file called SPSSPROD.INF. This is a text file that you may edit. You'll find a line that says [setup] and a list of the modules that SPSS has installed. 
+
+For example:
+[Setup]
+Setup=BasTabProAdvTrdCytCatMvaConMapMsaCspTreVldPrgViz 
+
+ 
+
+If you do not see Msa on this line add to that list of modules Msa.
+
+This refers to Mesa, a "code-name" for SPSS Custom Tables. Save this file, exit SPSS if it's already open, and start SPSS. You should then see the Tables item in the Analyze menu. This is a one-time fix as well, so you shouldn't have to do this every time you start SPSS.
+
+If Msa is already in the file, make sure the code was generated as "10" for the feature code of the Custom tables module.
+If you have IBM SPSS Statistics 20.0, the correct feature code for Custom Tables would be "1210"
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 48312

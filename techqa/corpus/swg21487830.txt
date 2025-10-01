@@ -1,0 +1,29 @@
+Title: IBM Modeler does not insert data into fields with type of VARCHAR(MAX) in SQL Server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am using Modeler 14.0.1 and am trying to write data into a SQL Server 2005 database. I am using the Microsoft SQL Server 2005 Native ODBC Driver. This issue does not occur with the SQL server driver that comes with Windows and the SPSS SQL server wire protocol driver.
+
+I have defined a field in a table with the type varchar(max). However, if I try to insert data into this table with the database export node, the column is not populated at all. 
+
+The column is populated if I define it as varchar(8000) but that is undesirable since means any cases that are more than 8000 characters long get their data truncated. SQL Server also as text and ntext data types but Microsoft says those field types are deprecated and should not be used (http://msdn.microsoft.com/en-us/library/ms187993(v=SQL.90).aspx [http://msdn.microsoft.com/en-us/library/ms187993(v=SQL.90).aspx]). Also, the performance of the stream with the text data type was extremely slow. 
+
+Thus, I want to be able to write to the database with a column of type varchar(max). 
+
+RESOLVING THE PROBLEM
+This problem has been reported to SPSS Development - Workaround Available
+
+Please download and install the SPSS Data Access Pack 6.0 onto your local machine. Create a new ODBC Data Source using the SQL Server Wire Protocol driver. Use this ODBC source when executing the Modeler stream and the string values will then be added into the 'VARCHAR(MAX)' field.
+
+SPSS would like to apologise for the inconvenience caused
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 91421

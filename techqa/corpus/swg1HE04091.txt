@@ -1,0 +1,211 @@
+Title: IBM HE04091: SMARTEAM CWI SAVE IS NOT POSSIBLE WITH WINDOWS AUTHENTICATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer Problem :- SmarTeam CWI save is not possible with
+   Windows Authentication
+   Scenario:
+   ---------
+   0. Launch CATIA V5.
+   1. Connect to SmarTeam through CWI.
+   ==> We are using Windows Authentication
+   2. Open a New Product / Part in CATIA V5.
+   3. Save through CWI.
+   ==> The web page is redirected (The SmarTeam Web Editor
+   window opens with a logon panel)
+   Actual Result: Web Editor screen is redirected to a blank
+   "Default" screen and doesn't proceed further. The Save is not
+   completed.
+   Expected Result: The CATProduct should be saved through
+   SmarTeam CWI.
+   Addtional information received from Customer:
+   ------
+   1. The scenario is not reproducible in SmDemo R19 but
+   reproducible on the customer's database (DB is attached)
+   2. Customer has checked the issue noted in APAR HD85119 [http://www-01.ibm.com/support/docview.wss?uid=swg1HD85119] /
+   BR10000070175 which referred to the analysis that
+   TDM_APPL_MAPPING table for a customer database did not
+   contain any values, therefore causing a problem with the CWI
+   Save. They checked the TDM_APPL_MAPPING table in their
+   database and it contains the values defined for Integration
+   Mapping.
+   Please let us know if there is anything more to be checked in
+   TDM_APPL_MAPPING table apart from values...?
+   3. While working in SmarTeam Authentication for CWI, if the
+   customer switches databasees (during logon) from their
+   production Db to SMDemo_R19, connect and disconnect again.
+   And then again, switch back to their production Db, then the
+   Save Panel comes up and they are able to Save the document.
+   However, this works for some time and not all the time. If
+   the user tries connecting the session the next day, then the
+   old issue comes back again.
+   ==> The customer cannot use this as a bypass for this issue
+   since we are using using Windows Authentication and also they
+   don't want users to accidentally conenct to SmDemo env
+   instead of the Production env.
+   If Switching of the DB at Login works for some time, has this
+   issue something to do with the http cookies etc. ?
+   Can you tell us how the Save action is performed from DB
+   point of view?
+   Is there any setting the customer can do to perform the
+   action mentioned above (and prevent the issue)?'
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  empty
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Customer Problem :- SmarTeam CWI save is not possible with
+   Windows Authentication
+   Scenario:
+   ---------
+   0. Launch CATIA V5.
+   1. Connect to SmarTeam through CWI.
+   ==> We are using Windows Authentication
+   2. Open a New Product / Part in CATIA V5.
+   3. Save through CWI.
+   ==> The web page is redirected (The SmarTeam Web Editor
+   window opens with a logon panel)
+   Actual Result: Web Editor screen is redirected to a blank
+   "Default" screen and doesn't proceed further. The Save is not
+   completed.
+   Expected Result: The CATProduct should be saved through
+   SmarTeam CWI.
+   Addtional information received from Customer:
+   ------
+   1. The scenario is not reproducible in SmDemo R19 but
+   reproducible on the customer's database (DB is attached)
+   2. Customer has checked the issue noted in APAR HD85119 [http://www-01.ibm.com/support/docview.wss?uid=swg1HD85119] /
+   BR10000070175 which referred to the analysis that
+   TDM_APPL_MAPPING table for a customer database did not
+   contain any values, therefore causing a problem with the CWI
+   Save. They checked the TDM_APPL_MAPPING table in their
+   database and it contains the values defined for Integration
+   Mapping.
+   Please let us know if there is anything more to be checked in
+   TDM_APPL_MAPPING table apart from values...?
+   3. While working in SmarTeam Authentication for CWI, if the
+   customer switches databasees (during logon) from their
+   production Db to SMDemo_R19, connect and disconnect again.
+   And then again, switch back to their production Db, then the
+   Save Panel comes up and they are able to Save the document.
+   However, this works for some time and not all the time. If
+   the user tries connecting the session the next day, then the
+   old issue comes back again.
+   ==> The customer cannot use this as a bypass for this issue
+   since we are using using Windows Authentication and also they
+   don't want users to accidentally conenct to SmDemo env
+   instead of the Production env.
+   If Switching of the DB at Login works for some time, has this
+   issue something to do with the http cookies etc. ?
+   Can you tell us how the Save action is performed from DB
+   point of view?
+   Is there any setting the customer can do to perform the
+   action mentioned above (and prevent the issue)?'
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM IS PERMANENT RESTRICTION IN I-PLM Collaborative
+   Innovation
+   Additional Closure Information:
+   This issue is closed as Permanent Restriction with below
+   details -
+   Incident Diagnosis: SmarTeam CWI save is not possible with
+   Windows Authentication
+   Reason: Configuration and trash in database table of WED
+   By-Pass:
+   1. Enable anonymous access for ?IntegrationServices?
+   2. Delete from TDM_PROP_GROUPS where OBJECT_ID=211
+   and CLASS_ID=255
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE04091
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   519
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-08
+   
+   
+ * CLOSED DATE
+   2011-05-23
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

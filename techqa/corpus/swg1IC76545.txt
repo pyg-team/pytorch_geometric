@@ -1,0 +1,255 @@
+Title: IBM IC76545: REORGS FAIL TO START AFTER REORG(TBLPAUSE) FAILED WITH -2219 DURING DATABASE BACKUP - United States
+
+Text:
+AIX  A FIX IS AVAILABLE
+IBM Tivoli Storage Manager (TSM) server V6.1.5.x interim fix downloads [http://www-01.ibm.com/support/docview.wss?uid=swg24030520]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description:
+   After reorganization finishes on a table or indices for a
+   table, runstats is run on that table.  For small tables,
+   since the runstats completes in a few seconds this is not a
+   problem.  For large tables, this can take many hours.   This
+   is being done on a thread which also monitors whether an
+   automatic server database backup should be initiated.   A
+   long-running runstats could prevent a needed backup from
+   occurring.
+   
+   
+   
+   Tivoli Storage Manager Versions Affected:
+   Tivoli Storage Manager Server version 6.1.5.0 on all platforms
+   
+   
+   
+   Initial Impact:
+   low
+   
+   
+   
+   Additional Keywords:
+   zz61 TSM table index indices reorg database backup space
+   monitor IC76543 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC76543] IC76546 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC76546] IC76547 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC76547]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Running runstats after performing a reorganization is crucial
+   to ensure that the rows in those tables can be accessed
+   optimally.  Not running runstats might negatively and severely
+   impact server performance.
+   
+   The running of runstats from the server after reorganization
+   can be disabled, but the server administrator should manually
+   run runstats for tables which have been reorganized.  This
+   will allow the server monitor thread to run automatic database
+   backups, and will ensure that runstats are run for reorganized
+   tables.
+   
+   The running of runstats can be disabled while the server is
+   running.  Issue the following commands from a DB2 command line
+   processor window as the instance owner:
+   1) db2 connect to tsmdb1
+   2) db2 set schema tsmdb1
+   3) db2 "insert into global_attributes
+   (owner,name,type,length,int32)
+   values('RDB','REORG_RUNSTATS_RUNFLAGS',3,0,4) "
+   
+   Please note that RDB and REORG_RUNSTATS_RUNFLAGS must be
+   specified in upper-case.
+   
+   To restore runstats being run from the server, issue the
+   following commands from a DB2 command line processor window
+   as the instance owner.   This can be done while the server
+   is running.
+   1) db2 connect to tsmdb1
+   2) db2 set schema tsmdb1
+   3) db2 "delete from global_attributes where owner='RDB' and
+   name='REORG_RUNSTATS_RUNFLAGS' "
+   
+   Please note that RDB and REORG_RUNSTATS_RUNFLAGS must be
+   specified in upper-case.
+   
+   When a table reorganization completes, message ANR0294I is
+   issued to the server activity log.   When a reorganization
+   of the indices for a table completes, message ANR0317 is
+   issued to the server activity log.
+   
+   For example:
+    ANR0294I Reorganization for table PROFILES ended.
+    ANR0317I Reorganization for indices for table ADMINISTRATORS
+   ended with sqlCode 0.
+   
+   For each reorganization completion message, issue the following
+   commands from a DB2 command line processor window as the
+   instance owner.   This is to be done while the server is
+   running and as soon as possible after the reorganization
+   completes.
+   1) db2 connect to tsmdb1
+   2) db2 set schema tsmdb1
+   3) db2 "RUNSTATS ON TABLE <tablename> WITH DISTRIBUTION AND
+   SAMPLED DETAILED INDEXES ALL "
+   where tableName is as indicated in the ANR0294I and ANR0317I
+   message from the server activity log.
+   
+   For example,
+   db2 "RUNSTATS ON TABLE PROFILES WITH DISTRIBUTION AND
+   SAMPLED DETAILED INDEXES ALL"
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Tivoli Storage Manager server users.     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See error description.                  *
+   ****************************************************************
+   * RECOMMENDATION: Apply fixing level when available. This      *
+   *                 problem is currently projected to be fixed   *
+   *                 in levels 6.1.5.1, 6.1.6, and 6.2.3.         *
+   *                 Note that this is subject to change at the   *
+   *                 discretion of IBM.                           *
+   ****************************************************************
+   *
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem was fixed.
+   
+   Affected platforms:  AIX, HP-UX, Solaris, Linux and Windows.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC76545
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   61L
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-23
+   
+   
+ * CLOSED DATE
+   2011-05-25
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMSV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61L PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R62A PSY
+   UP
+   
+   
+ * R62H PSY
+   UP
+   
+   
+ * R62L PSY
+   UP
+   
+   
+ * R62S PSY
+   UP
+   
+   
+ * R62W PSY
+   UP

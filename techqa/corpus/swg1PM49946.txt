@@ -1,0 +1,221 @@
+Title: IBM PM49946: SUBNET POLICY CAUSES NULLPOINTEREXCEPTION - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.2-TIV-ITCAMAD-IF0007: ITCAM for Application Diagnostics V7.1 FP2 IF7 [http://www-01.ibm.com/support/docview.wss?uid=swg24031710]
+7.1.0.2-TIV-ITCAMAD-IF0010: ITCAM for Application Diagnostics V7.1 FP2 IF10 [http://www-01.ibm.com/support/docview.wss?uid=swg24032110]
+7.1.0-TIV-ITCAMAD-FP0003: ITCAM for Application Diagnostics V7.1 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032604]
+7.1.0.3-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP3 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032985]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WHen you turn on the subnet policy with multiple kernels the MS
+   throws
+   
+   java.lang.NullPointerException
+   
+   <Trace Level="ERROR">
+    <Time Millis="1313448228766"> 2011-08-15
+   17:43:48.766-05:00</Time>
+    <Server Format="IP">ccixkl-nprd1-01</Server>
+    <ProductId>CYN</ProductId>
+    <Component>CYN.trc.kernel</Component>
+    <ProductInstance>6</ProductInstance>
+    <LogText><![CDATA[]]></LogText>
+    <Source FileName="com.cyanea.kernel.core.LookupPSAgent"
+   Method="lookupPSBySubnetPolicy"/>
+    <Thread>KernelRMIThreadPool-1313448107226.ExecutorThread</Threa
+   d>
+    <Exception><![CDATA[java.lang.NullPointerException
+           at java.util.Hashtable.get(Hashtable.java:460)
+           at
+   com.cyanea.kernel.core.LookupPSAgent.lookupPSBySubnetPolicy(Look
+   upPSAgent.java:564)
+           at
+   com.cyanea.kernel.core.LookupPSAgent.getPSServiceProxy(LookupPSA
+   gent.java:200)
+           at
+   com.cyanea.kernel.core.KernelRMIDelegate.lookup(KernelRMIDelegat
+   e.java:1756)
+           at sun.reflect.GeneratedMethodAccessor37.invoke(Unknown
+   Source)
+           at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:43)
+           at java.lang.reflect.Method.invoke(Method.java:618)
+           at
+   com.cyanea.kernel.rmi.CynRMITask.run(CynRMITask.java:53)
+           at
+   com.cyanea.kernel.rmi.CynExpThreadPool$ThreadPoolExecutor.run(Cy
+   nExpThreadPool.java:933)
+   ]]></Exception>
+    <Principal>ccixkl-nprd1-01/72.163.53.71</Principal>
+   </Trace>
+   
+   <Trace Level="ERROR">
+    <Time Millis="1313448228766"> 2011-08-15
+   17:43:48.766-05:00</Time>
+    <Server Format="IP">ccixkl-nprd1-01</Server>
+    <ProductId>CYN</ProductId>
+    <Component>CYN.trc.kernel</Component>
+    <ProductInstance>6</ProductInstance>
+    <LogText><![CDATA[]]></LogText>
+    <Source FileName="com.cyanea.kernel.core.LookupPSAgent"
+   Method="getPSProxy"/>
+    <Thread>KernelRMIThreadPool-1313448107226.ExecutorThread</Threa
+   d>
+    <Exception><![CDATA[java.rmi.RemoteException:
+   java.lang.NullPointerException
+           at
+   com.cyanea.kernel.core.LookupPSAgent.lookupPSBySubnetPolicy(Look
+   upPSAgent.java:648)
+           at
+   com.cyanea.kernel.core.LookupPSAgent.getPSServiceProxy(LookupPSA
+   gent.java:200)
+           at
+   com.cyanea.kernel.core.KernelRMIDelegate.lookup(KernelRMIDelegat
+   e.java:1756)
+           at sun.reflect.GeneratedMethodAccessor37.invoke(Unknown
+   Source)
+           at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:43)
+           at java.lang.reflect.Method.invoke(Method.java:618)
+           at
+   com.cyanea.kernel.rmi.CynRMITask.run(CynRMITask.java:53)
+           at
+   com.cyanea.kernel.rmi.CynExpThreadPool$ThreadPoolExecutor.run(Cy
+   nExpThreadPool.java:933)
+   ]]></Exception>
+    <Principal>ccixkl-nprd1-01/72.163.53.71</Principal>
+   </Trace>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   *
+   * ITCAM Managing Server installations that use load balancing
+   * feature to distribute the DC connections to various publish
+   * servers.
+   *
+   ****************************************************************
+   *
+   * PROBLEM DESCRIPTION:
+   *
+   * A NullPointerException results when the Kernel component tries
+   * to assign a Publish server to a DC using one of the policies
+   * (e.g. round-robin) specified (subnet policy).
+   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   pakcage:
+   
+     | interim fix | 7.1.0.2-TIV-ITCAMAD-IF0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM49946
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62MS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-12
+   
+   
+ * CLOSED DATE
+   2011-12-09
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * FIXED COMPONENT ID
+   5724L62MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

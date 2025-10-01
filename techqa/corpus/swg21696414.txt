@@ -1,0 +1,23 @@
+Title: IBM How IBM Notes & Domino handle leap seconds - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+How do Notes and Domino handle leap second insertions that occasionally occur to keep UTC aligned with mean solar time? 
+
+ANSWER
+
+As detailed below, Notes and Domino gracefully handle leap second insertions. As such, there is no action required for administrators to prepare for leap seconds.
+
+Notes/Domino polls the OS once per minute to refresh its internal clock. So once a leap second is observed, any difference between the OS time and the Notes/Domino time will automatically be corrected within the minute, when Notes/Domino next polls the OS. 
+
+Additionally, if the polling happens to occur at the exact time a leap second is recorded, Notes/Domino is capable of handling seconds values (hh:mm:ss) greater than 59 seconds, with no ill effect. 
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21961134]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Messaging Applications IBM Notes

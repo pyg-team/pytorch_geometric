@@ -1,0 +1,58 @@
+Title: IBM SECJ0053E: Authorization failed for /UNAUTHENTICATED - United States
+
+Text:
+SECJ0053E; UNAUTHENTICATED; Mapped Users; MAXIMOUSER; LDAP Roles; error 500; TPAELDAP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ With Application Server Security (LDAP) enabled with WebSphere, "/UNAUTHENTICATED" errors show in the SystemOut and/or SystemErr log files. 
+
+SYMPTOM
+These errors may cause problems with user login or group membership and could impact Maximo functionality. 
+
+This document will also resolve the following error :
+SECJ0129E: Authorization failed for username while invoking GET on maximo_host:/maximo/ui/login, Authorization failed, Not granted any of the required roles: maximouser 
+
+
+DIAGNOSING THE PROBLEM
+When Maximo has been running and users have been logging in, users may start to be unable to login. May see the following error:
+Error 500: BMXAA4188E - The system could not connect to an application server on the specified host. Please ensure that the application server is running. CORBA NO_PERMISSION 0x0 No; nested exception is: org.omg.CORBA.NO_PERMISSION: java.rmi.AccessException: ; nested exception is: 
+com.ibm.websphere.csi.CSIAccessException: SECJ0053E: Authorization failed for /UNAUTHENTICATED while invoking (Bean) 
+ejb/maximo/remote/accesstokenprovider getAccessToken:1 securityName: 
+/UNAUTHENTICATED;accessID: UNAUTHENTICATED is not granted any of the required roles: maximouser vmcid: 0x0 minor code: 0 completed: No 
+
+If users have been mapped to maximouser role and the issue happens when Maximo has been running there may have been a communication issue with the directory server.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+To resolve: 
+
+1. Stop the Maximo Server(s) from the WebSphere Integrated Console 
+
+2. Stop the node agent. If running as a Windows service, stop the node agent service. Otherwise, from a command prompt change to ibm\websphere\appserver\profiles\<node profile>\bin and run 
+
+ stopnode 
+
+3. Stop the deployment manager. If running as a Windows service, stop the deployment manager service. Otherwise, from a command prompt change to ibm\websphere\appserver\bin and run 
+
+ stopmanager 
+
+4. Start the deployment manager. If running as a Windows servcie, start the deployment manager service. Otherwise, from a command prompt change to ibm\websphere\appserver\bin and run 
+
+ startmanager 
+
+5. Start the node agent. If running as a Windows service, start the node agent service. Otherwise, from a command prompt change to ibm\websphere\appserver\profiles\<node profile>\bin and run 
+
+ startnode 
+
+6. Start the Maximo Server(s) from the WebSphere Integrated Console 
+
+Users should now be able to login.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Maximo Asset Management Essentials Systems and Asset Management Tivoli Asset Management for IT Systems and Asset Management Tivoli Change and Configuration Management Database Systems and Asset Management Tivoli Service Request Manager Systems and Asset Management Control Desk

@@ -1,0 +1,37 @@
+Title: IBM Excel 2007 and the iSeries Access Data Transfer Add-in for Excel - Number of Rows Supported - United States
+
+Text:
+data transfer; EXCEL; MSGCWBTF0012 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Microsoft Excel 2007 and Excel 2010 support a maximum of 1,048,576 rows of data per spreadsheet. Before V5R4 iSeries Access service pack SI31388, the iSeries Access V5R4 Data Transfer Add-in for Excel had a limitation of 65,536 rows per spreadsheet. The Data Transfer GUI can transfer larger amounts of data when using BIFF7, BIFF8, and CSV formats. 
+
+RESOLVING THE PROBLEM
+Microsoft Excel 2007 and Excel 2010 support a maximum of 1,048,576 rows of data per spreadsheet. This number is greatly increased from previous Excel versions which supported a maximum of 65,536 rows per spreadsheet (16,384 in versions prior to Excel 97). 
+
+Before V5R4 iSeries Access service pack SI31388, the V5R4 iSeries Access Data Transfer Add-in for Excel (and previous iSeries Access versions) was limited to transferring 65,536 rows of data. This limit was put in place to support the pre-2007 limitation of Excel. The Add-in limitation has been changed in the V5R4 Service Pack SI31388 and now complies with the Excel 2007 limit. 
+
+Note: The V5R4 Excel data transfer add-in does not support more then 65,536 rows when using Excel 2010. This is because the V5R4 iSeries Access code is written to only determine whether Excel 2007 is being used so that it will increase the number of records to 1,048,576 rows. The V5R4 code is not written to determine whether Excel 2010 is being used. The V5R4 code will not be enhanced because no additional service packs are planned for V5R4. V6R1 System i Access and IBM i Access V7R1 comply with the Excel 2007/2010 limit starting with V6R1 service pack SI41053 (APAR SE44637) and V7R1 service pack SI41054 (APAR SE45766). Previous to these service packs, the limit of 65,536 was used.
+
+Other options are available to transfer more the 65,536 rows. The transfer can be done using the iSeries Access for Windows Data Transfer from iSeries GUI interface. Data Transfer's BIFF7 and BIFF8 formats are capable of creating multiple spreadsheets, with each spreadsheet containing up to 65,536 rows. Data Transfer's Comma Separated Variable (CSV) format can be used to download an unlimited number of rows. The resulting CSV file can be opened with Excel 2007/2010, and Excel will separate the data into multiple spreadsheets, if necessary.
+
+It has also been reported that even after V5R4 service pack SI31388, downloads in Excel 2007 of more then 65,536 rows may fail with message CWBTF0012 - An unexpected error has been detected while processing transfer request. This error occurred when the default Excel save format was Excel 97-2003 workbook (*.xls) instead of Excel Workbook (*.xlsx). This default setting can be changed from within Excel 2007/2010.
+
+You can change the file type that is used by default when you save a workbook:
+
+1. On the File tab, click Options.
+2. In the Save category, under Save workbooks, in the Save files in this format box, click the file format that you want to use by default.
+
+Another way to make this change is by following these steps to change the default so Excel opens as XLSX: 
+
+1. Open Excel (you should get Book1 [Compatibility Mode] by default)
+2. Save-As (F12) and save it as Book1.xlsx (the 2007 format) in the following location: 
+C:\Program Files\Microsoft Office\Office12\XLSTART
+3. Restart Excel
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 
+HISTORICAL NUMBER
+ 446139857

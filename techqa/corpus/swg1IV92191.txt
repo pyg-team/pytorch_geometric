@@ -1,0 +1,150 @@
+Title: IBM IV92191: HUAWEIMPLSTELNET AGENT INCORRECTLY PROCESSESTHE OUTPUT OF THE DISPLAY IP VPN-INSTANCE COMMAND - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+4.2.0-TIV-NOIHD-Linux-FP0003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-NOIHD-Linux-FP0003&source=SAR]
+4.2.0-TIV-NOIHD-AIX-FP0003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-NOIHD-AIX-FP0003&source=SAR]
+4.2.0-TIV-ITNMIP-Linux-FP0003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-Linux-FP0003&source=SAR]
+4.2.0-TIV-ITNMIP-AIX-FP0003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-AIX-FP0003&source=SAR]
+4.2.0_README_FP0003.txt [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0_README_FP0003&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Product: Tivoli Network Manager
+   Version: 4.2
+   Component: HuaweiMPLSTelnet agent
+   
+   
+   Symptoms: The most recent format of the command 'display ip
+   vpn-instance verbose' is not parsed correctly.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ITNM-IP 4.2 on all platform, i.e. Linux and AIX              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * HuaweiMPLSTelnet parse the recent 'display ip vpn-instance   *
+   * verbose' format incorrectly. This result in incorrect        *
+   * association of VPN Name and the respective interface         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to ITNM-IP | fix pack | 4.2.0-ITNMIP-FP0003          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Modify HuaweiMPLSTelnet to parse the recent 'display ip
+   vpn-instance verbose' format correctly including earlier format.
+   So that the agent remains backward compatible to older Huawei
+   device.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV92191
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S4500
+   
+   
+ * REPORTED RELEASE
+   420
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-11
+   
+   
+ * CLOSED DATE
+   2017-03-03
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * FIXED COMPONENT ID
+   5724S4500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R420 PSY
+   UP

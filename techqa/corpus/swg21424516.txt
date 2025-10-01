@@ -1,0 +1,21 @@
+Title: IBM File contents are not extracted when relative path is used for "INSERT FILE" - United States
+
+Text:
+INSERT FILE; extract; template; word; report; PM10064 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A relative path given for "Insert File" command in a IBM Rational Rhapsody ReporterPLUS template does not work for reports generated using "Report on all model elements" from Rhapsody Tools menu. 
+
+SYMPTOM
+When the document is generated inside Reporter PLUS, the content of the referred file is extracted correctly but when it is generated using Rhapsody Tools > Reporter Plus > Report on all model elements, the content of the file does not get extracted.
+
+CAUSE
+This issue has been identified as a product defect under APAR PM10064.
+
+RESOLVING THE PROBLEM
+
+
+
+WORKAROUND: 
+
+Open the template in Reporter Plus and generate the report.

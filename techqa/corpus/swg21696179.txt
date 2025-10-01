@@ -1,0 +1,73 @@
+Title: IBM JAZZ 1.1.0.3 for WebGUI (Pre-Req) not installing. - United States
+
+Text:
+TIPL2INST; DASHL2INST; CRIMA1217E; prereq_checker.bat; prereq_checker.bat TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installation of Dashboard Application Service Hub (DASH) and Jazz for Service Management (JazzSM) components is failing even though the installation prerequisite scan apparently passed. 
+
+CAUSE
+Upon further investigation, it was discovered the customer had only used the product code for DASH during prerequisite scan. 
+
+DIAGNOSING THE PROBLEM
+During installation the following error is seen in the GUI installation window and logs: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+The above error typically means there is not enough room on the system for software to deploy and the installation to complete successfully. 
+RESOLVING THE PROBLEM
+In order to accurately determine if the installation prerequisites have been met, the user must pass both product codes to the prerequisite scanner. In this case, the user must pass the codes for DASH and Jazz simultaneously to the prerequisite scanner script. 
+
+The following table contains the product codes for the various integration services:
+[/support/docview.wss?uid=swg21696179&aid=1] [/support/docview.wss?uid=swg21696179&aid=1] 
+
+In this particular case, in order to properly run the prerequisite scanner, the codes for DASH and JazzSM should be passed like this: 
+
+ * 
+ * 
+ * 
+
+
+The above will provide a detailed listing of the prerequisites for both products along with which items have passed and which items have failed and need to be addressed before the installation will succeed.

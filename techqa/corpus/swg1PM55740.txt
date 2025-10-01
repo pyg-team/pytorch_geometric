@@ -1,0 +1,176 @@
+Title: IBM PM55740: ASYNCHRONOUS CONSUMER FAILS WITH MQRC_CALL_IN_PROGRESS (2219) OR HANGS AFTER EXECUTING MQCTL TO SUSPEND OR RESUME CONSUMER THREAD - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer reported the following error:
+   I have a COBOL batch application.  The applications use the
+   asynchronous message consumer . Sometime the MQ API "SUSPEND
+   gets rc 2219, sometimes the application hangs.
+   .
+   The change team found that there is a problem with the
+   Asynchronous Consumer, where the main and consumer threads hang
+   or the main receives unexpected MQRC_CALL_IN_PROGRESS (2219)
+   after executing MQCTL to suspend or resume the consumer thread.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ Version 7          *
+   *                 Release 1 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Applications using MQ asynchronous      *
+   *                      consume hang waiting indefinitely or    *
+   *                      fail with unexpected reason code        *
+   *                      MQRC_CALL_IN_PROGRESS (2219).           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Applications using MQ asynchronous consume can experience a loss
+   of the synchronization between the main and the callback threads
+   causing one of the following conditions:
+   
+   1- MQCTL calls fail with reason code MQRC_CALL_IN_PROGRESS
+   (2219).
+   2- Application hangs with the main and callback threads in
+   permanent wait.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Asynchronous consume support modules have been fixed to use
+   additional serialization and to do more detailed checks of state
+   flags after the wait macros that control the interactions
+   between the main and callback threads.
+   100Y
+   CSQBLB1
+   CSQBLB1X
+   CSQBLB16
+   CSQBLB2
+   CSQBLB2X
+   CSQBLB26
+   CSQBLB3
+   CSQBLB3X
+   CSQBLB36
+   CSQBLB4X
+   CSQBLB46
+   CSQBLB5X
+   CSQBLB56
+   CSQBMCSM
+   CSQBSRV
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM55740
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2012-01-11
+   
+   
+ * CLOSED DATE
+   2012-08-15
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM54114 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM54114]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK81098
+   
+   
+
+MODULES/MACROS
+ *     CSQBLB1  CSQBLB1X CSQBLB16 CSQBLB2  CSQBLB2X
+   CSQBLB26 CSQBLB3  CSQBLB3X CSQBLB36 CSQBLB4X CSQBLB46 CSQBLB5X
+   CSQBLB56 CSQBMCSM CSQBSRV
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY UK81098 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK81098]
+   UP12/09/20 P F209
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

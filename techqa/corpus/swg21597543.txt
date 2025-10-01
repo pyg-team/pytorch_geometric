@@ -1,0 +1,21 @@
+Title: IBM Middleware configuration errors occur when using InstallSheild MulitPlatform to install IBM Security Identity Manager on Red Hat Linux 5.0 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using InstallSheild MultiPlatform to install IBM Security Identity Manager might cause configuration errors on Red Hat Enterprise Linux Version 5.0 
+
+CAUSE
+Middleware configuration errors occur if you use InstallShield MultiPlatform to install IBM Security Identity Manager on Red Hat Enterprise Linux Version 5.0, which provides a 64-bit JVM. For example, an error message might be:
+- The installer is unable to run in graphical mode.
+- Try running the installer with the -console or -silent flag.
+- Additionally, some X display programs might not work.
+
+RESOLVING THE PROBLEM
+During installation on Red Hat Enterprise Linux Version 5.0, the InstallShield MultiPlatform middleware configuration tool requires a 32-bit JVM, including the 32-bit version of libXmu.so.6, which must reside in the /usr/lib directory. These 32-bit libraries are not installed by default. Before installing IBM Security Identity Manager, obtain the following files and write them to the /usr/lib directory: 
+
+– 64-bit zLinux systems
+libXmu-1.0.2-5.s390.rpm
+– 64-bit X86 systems
+libXmu-1.0.2-5.i386.rpm

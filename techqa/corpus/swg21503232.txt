@@ -1,0 +1,42 @@
+Title: IBM FileNet CFS for Content Integrator exception when specifying a date/time value as federation rule criteria - United States
+
+Text:
+content integrator; federated documents; data map; datetime; rule builder TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ FileNet Content Federation Services (CFS) for Content Integrator exception when specifying a date/time value as federation rule criteria 
+
+SYMPTOM
+When specifying a date/time value as criteria for a property when building a federation a rule using FedAdmin an exception is displayed indicating : 
+
+ An error has occurred...
+
+* For input string: "MMM d,yyyy h:mm:ss tt"
+
+java.lang.NumberFormatException: For input string: "Jan 1,2011 12:00:00 PM"
+at java.lang.NumberFormatException.forInputString(Unknown Source)
+at java.lang.Long.parseLong(Unknown Source)
+at java.lang.Long.parseLong(Unknown Source)
+at com.venetica.vbr.ejb.bridge.contentmgr.ContentMgrBridge.getExpressionString(ContentMgrBridge.java:12929)
+at com.venetica.vbr.ejb.bridge.contentmgr.ContentMgrBridge.buildQueryString(ContentMgrBridge.java:12274)
+at com.venetica.vbr.ejb.bridge.contentmgr.ContentMgrBridge.executeQuery(ContentMgrBridge.java:4249)
+at com.venetica.vbr.ejb.bridge.rmibridge.RMIBridgeProxyImpl.executeQuery(RMIBridgeProxyImpl.java:559)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+at java.lang.reflect.Method.invoke(Unknown Source)
+at sun.rmi.server.UnicastServerRef.dispatch(Unknown Source)
+at sun.rmi.transport.Transport$1.run(Unknown Source)
+at java.security.AccessController.doPrivileged(Native Method)
+at sun.rmi.transport.Transport.serviceCall(Unknown Source)
+at sun.rmi.transport.tcp.TCPTransport.handleMessages(Unknown Source)
+at sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(Unknown Source)
+at java.lang.Thread.run(Unknown Source)
+
+
+CAUSE
+This behavior occurs if the property being used for the criteria is not defined with a datatype of DATETIME in the IBM Content Integrator Admin Tool data map.
+
+
+RESOLVING THE PROBLEM
+If the property from the federation source repository is a date/time datatype then modify the ICI data map to reflect a datatype of DATETIME, restart the source repository RMI bridge and attempt to recreate the rule in FedAdmin.

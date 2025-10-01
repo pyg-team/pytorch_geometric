@@ -1,0 +1,32 @@
+Title: IBM What versions of Connect:Direct for Unix support Solaris version 7? (SCI74737) - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ What versions of Connect:Direct for Unix support Solaris version 7? (SCI74737) 
+
+ANSWER
+Connect:Direct for Unix version 3.5 does support Sun SPARC systems running Solaris 2.6, 7.0, 8.0, or 9.0.
+
+ 
+
+HISTORICAL NUMBER
+ PRI27941 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Connect:Direct UNIX
+Release 3.5.00 
+Solaris 7 
+SCI74737
+
+
+Goal
+
+
+FAQ: What versions of Connect:Direct for Unix support Solaris version 7?

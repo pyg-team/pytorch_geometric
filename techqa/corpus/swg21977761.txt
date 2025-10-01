@@ -1,0 +1,35 @@
+Title: IBM Event search and conditional operator AND does not automatically enter a query in the search box and does not display - United States
+
+Text:
+Event Search; scala.version = 1.2.0.3; Search Operators; Show keywords and event count; Netcool Operations Insight 1.3.1 TECHNOTE (FAQ)
+
+QUESTION
+ The Netcool/Omnibus Insight Pack enables you to view and search both historical and real time event data from Netcool/Omnibus in the IBM Operations Analytics - Log Analysis product. 
+In WEB GUI AEL Page
+Conditions does not automatically enter a query in the search box and does not display
+Event search : shows keywords and number of events count be called normal search page
+1)Event Search->Show Keywords and event count cannot be used
+2) Search operators: AND cannot be used 
+
+CAUSE
+This error is caused by incompatibility between the version of the Insight Pack and the version of the Operations Analytics - Log Analysis product. For example, if Operations Analytics - Log Analysis is at V1.2.0.3 and the Insight Pack is at V1.1.0.1, the error is displayed.
+
+ANSWER
+To resolve this problem: 
+
+1. Check that the version of the Operations Analytics - Log Analysis is V1.2.0.3.
+2. In the file set the scala.version property as follows:
+scala.version = 1.2.0.3
+3. Restart the Dashboard Application Services Hub server.
+(Note : After restart we should see the following url which is mentioned below)
+
+RELATED INFORMATION
+ After Restart of Dashboard Services follow this url [http://www-01.ibm.com/support/knowledgecenter/SSSHTQ_8.1.0/com.ibm.netcool_OMNIbus.doc_8.1.0/webtop/wip/task/web_adm_server_restart.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 36337
+141
+672

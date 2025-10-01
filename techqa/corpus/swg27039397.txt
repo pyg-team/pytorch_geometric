@@ -1,0 +1,96 @@
+Title: IBM Case Manager Platform Installation Tool updates for V5.2.0.1 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Use the IBM Case Manager Platform Installation Tool V5.2.0.1 to install a single-server installation that includes the FileNet P8 Platform. 
+
+CONTENT
+The IBM Case Manager Platform Installation Tool V5.2.0.1 provides an updated and improved version of the single-server installation program. This version of the tool replaces the V5.2.0 version. 
+
+
+To view the download information for the IBM Case Manager Platform Installation Tool V5.2.0.1, see the following link: 
+
+Download IBM Case Manager V5.2 Platform Installation Tool Components [http://www-01.ibm.com/support/docview.wss?uid=swg24035076]
+
+Use the instructions in the attached document to run the tool for a single-server installation. 
+
+[/support/docview.wss?uid=swg27039397&aid=2]IBMCaseManagerSingleServerInstall_5.2.0.1.pdf [/support/docview.wss?uid=swg27039397&aid=1] 
+
+When you plan for your single-server installation, be aware of the following known issues. 
+
+
+
+
+
+
+Known Issue: Case History Visualizer and Case History not functional due to Content Platform Engine client installer issue. 
+
+The Content Platform Engine client installer updates the Content Navigator client files incorrectly, which leads to a client file mismatch. Case History and the Case History Visualizer cannot be used, and user will receive an error stating that a class is missing or not supported. 
+
+Workaround: To resolve this issue, complete the following procedure: 
+
+ 1. Start the Content Navigator Configuration and Deployment Tool:  * Windows: Click Start Menu -> Programs -> IBM Content Navigator -> IBM Content Navigator Configuration and Deployment Tool 
+     * AIX and Linux: Open /opt/IBM/ECMClient/configure/congifmgr
+    
+    
+ 2. Close the Welcome window, and click File -> Open. Browse to the following file and click Open:  * Windows: C:\Program Files (x86)\IBM\cmpit\install-scripts\profiles\NexusConfig\NexusConfig.cfgp 
+     * AIX and Linux: /opt/IBM/cmpit/install-scripts/profiles/NexusConfig/NexusConfig.cfgp 
+    
+    
+ 3. If you receive a dialog window that asks for the type of system to which you are deploying, select FileNet P8 and click Finish. 
+ 4. Double-click the Update Content Platform Engine Client Connector Files task. If the task is not listed, right-click the profile name, click Add, and select the task. Enter the required values and run the task. 
+ 5. When the task is completed, close and re-open the IBM Content Navigator Configuration and Deployment Tool to the same profile. You may want to check the application server properties to make sure that the password is still there. 
+ 6. Double-click Build the Web Application and click Run task in the task pane. When the task is completed, double-click Deploy the Web Application and click Run task in the task pane. 
+ 7. Restart WebSphere Application Server.
+
+
+
+
+
+Known Issue: The Case Manager Platform Installation Tool does not configure Business Rules by default, which limits many of the features available in Case Manager. 
+
+Workaround: To manually configure the Business Rules: 
+
+
+
+ 1. Start the Case Manager Configuration Tool:
+    
+     * Windows: Click Start Menu -> Programs -> IBM Case Manager -> Case Manager Configuration Tool
+     * AIX and Linux: Open /opt/IBM/CaseManagement/configure/configmgr
+    
+    
+    
+    
+ 2. Open the deployicm.cgfp configuration tool profile located in the following directory: 
+    
+    <cmpit installation directory>/install-scripts/profiles/DeployICM/
+    
+    
+ 3. Right-click the profile in the navigation pane, click New Task, and click Configure Business Rules.
+    
+    
+ 4. Enter the required information, save the task, and click Run.
+
+
+
+
+For more information on Business Rules, see the Business Rules [http://pic.dhe.ibm.com/infocenter/casemgmt/v5r2m0/topic/com.ibm.casemgmt.help.doc/acmsdh48.htm] topic in the Case Manager information center. 
+
+
+
+
+
+
+Known Issue: The Case Manager Platform Installation Tool creates a file, accounts.txt, that provides an incorrect URL for the Content Platform Engine ping page. 
+
+Correction: The correct URL for the Content Platform Engine ping page is: 
+
+http://server:port/peengine/IOR/ping 
+
+The accounts.txt file is located in the following directory:
+
+
+ * Windows: C:\Program Files (x86)\IBM\cmpit\ 
+ * AIX/Linux: /opt/IBM/cmpit/

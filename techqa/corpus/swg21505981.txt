@@ -1,0 +1,48 @@
+Title: IBM What are the command line switches available for the BigFix Client installer? - United States
+
+Text:
+222 Client Installation; cmd line; switches; Client Installer; googlebigfix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Listing of command line switches for use with the BigFix Client installer. 
+
+RESOLVING THE PROBLEM
+
+
+BIGFIX VERSIONS 8+ 
+ The BigFix Client has the following behavior for these flags: 
+
+ * Silent Install to default location (c:\Program Files\BigFix Enterprise \BES Client)
+   Setup.exe /s /v/qn
+ * Silent install to non-default location
+   setup.exe /s /v"INSTALLDIR=\"Install Path\" /qn"
+   
+ * Silent Uninstall
+   Setup.exe /s /x /v/qn
+ * Create an MSI log file
+   BigFixAgent.msi /l* "path to log file\install.log" /qn
+   The location for the logfile path must exist and be writable by the user running the installation in order for the installer to complete. Otherwise, the InstallShield installer will try to write the file to a directory with restricted permissions and silently fail. To fix this issue, add a command-line parameter to the installer to write the logfile to a writable location.
+
+BIGFIX VERSIONS 7.2 AND LOWER
+ The BigFix Client has the following behavior for these flags: 
+
+ * Silent Install to default location (c:\Program Files\BigFix Enterprise\BES Client)
+   Setup.exe /s
+ * Silent install to non-default location
+   Setup.exe /s --InstallFolder="InstallPath"
+ * InstallShield log
+   Setup.exe -DebugLogDir="log path"
+ * Silent Uninstall
+   Setup.exe /s --uninstallsilent
+ * Set a log file
+   Setup.exe /s /f2"log path"
+   The location for the logfile path must exist and be writable by the user running the installation in order for the installer to complete. Otherwise the InstallShield installer will try to write the file to a directory with restricted permissions and silently fail. To fix this issue, add a command-line parameter to the installer to write the logfile to a writable location. For example: Setup.exe /s /f2"C:\tempinstall.log"
+
+In addition, if the BigFix Client is already installed then running the silent install will re-install the BigFix Client. That is to say, "Setup.exe /s" run once will install the BigFix Client and when run again will update the installation to a new version or to a new masthead. 
+
+Note: these switches are applicable to the Windows BigFix Client only. 
+
+
+
+HISTORICAL NUMBER
+ 222

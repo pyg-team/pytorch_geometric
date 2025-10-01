@@ -1,0 +1,160 @@
+Title: IBM PM09457: CSV002I REQUESTS FOR EQADDXXT EXCEED MAX USE COUNT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  -Language Environment User Exit:
+   CSV002I REQUESTS FOR MODULE EQADxXXT EXCEED MAXIMUM USE COUNT.
+    This could be issued for these exits for these module names:
+      EQADBCXT EQADBXXT
+      EQADDCXT EQADDXXT
+      EQADICXT EQADIXXT
+   
+    CSV002I REQUESTS FOR MODULE DSNWLIR EXCEED MAXIMUM USE COUNT.
+    This could be issued for the exit:
+      EQADDCXT
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  (none)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Debug Tool Utilities and Advanced Functions  *
+   *                 7.1 users who have the problems described    *
+   *                 in the Problem Description.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: -Language Environment User Exit:        *
+   *                       CSV002I REQUESTS FOR MODULE EQADxXXT   *
+   *                       EXCEED MAXIMUM USE COUNT.              *
+   *                       This could be issued for these exits   *
+   *                       for these module names:                *
+   *                                                              *
+   *                         EQADBCXT EQADBXXT                    *
+   *                         EQADDCXT EQADDXXT                    *
+   *                         EQADICXT EQADIXXT                    *
+   *                                                              *
+   *                       CSV002I REQUESTS FOR MODULE DSNWLIR    *
+   *                       EXCEED MAXIMUM USE COUNT.              *
+   *                       This could be issued for the exit:     *
+   *                                                              *
+   *                         EQADDCXT                             *
+   ****************************************************************
+   * RECOMMENDATION: Debug Tool Utilities and Advanced Functions  *
+   *                 7.1 users that need these problem fixes      *
+   *                 should install this service.                 *
+   ****************************************************************
+   Miscellaneous service.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Service available.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM09457
+   
+   
+ * REPORTED COMPONENT NAME
+   DEBUG TOOL UTIL
+   
+   
+ * REPORTED COMPONENT ID
+   5655R4500
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-09
+   
+   
+ * CLOSED DATE
+   2010-03-25
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK55591
+   
+   
+
+MODULES/MACROS
+ *  EQADBCXT EQADDCXT EQADDXXT EQADICXT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DEBUG TOOL UTIL
+   
+   
+ * FIXED COMPONENT ID
+   5655R4500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY UK55591
+   UP10/03/27 P F003 ½

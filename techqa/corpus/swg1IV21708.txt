@@ -1,0 +1,323 @@
+Title: IBM IV21708: CEC AGENT MANUAL NEEDS TO CLARIFY "CFGSVC" COMMAND SYNTAX FOR USE ON VIOS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ENVIRONMENT:
+   
+   IBM Tivoli Monitoring for System p - CEC Base Agent v6.2.2
+   Interim
+   Feature 2 running on VIOS 2.2.1
+   
+   PROBLEM DESCRIPTION:
+   
+   Documentation for use of "cfgsvc" command to configure ITM_cec
+   agent
+   service on VIOS is unclear.
+   
+   The following is documented in the current manual:
+   IBM Tivoli Monitoring: CEC Base Agent
+   User's Guide
+   Version 6.2.2.1
+   SC23-5239-07
+   In Chapter:
+   Requirements and agent-specific installation and configuration
+   information for the monitoring agent
+   
+   Under section:
+   Agent-specific installation and configuration -> Configuration
+   *******
+   VIOS
+   Although the CEC agent is now preinstalled on the VIOS V2.2.0.0,
+   Fix
+   Pack 24, you must configure the CEC Base agent with the cfgsvc
+   command.
+   cfgsvc ITM_cec -attr hostname=name_or_address1,
+   mirror=name_or_address3,
+   Restart_On_Reboot=value cec=cec_name
+   managing_system=name_or_address2 OR hmcuser@name_or_address2
+   DIRECTOR_HOST_ADDRESS=<director_hostname> (optional),
+   DIRECTOR_PORT_NUMBER=8422 (optional) DIRECTOR
+   _AUTHENTICATION=Yes
+   (optional)
+   Where:
+   ITM_cec
+   Name of the monitoring agent.
+   name_or_address1
+   Either the host name or IP address of the Tivoli Enterprise
+   Monitoring
+   Server to which ITM_agent_name sends data.
+   name_or_address3
+   Secondary Tivoli Enterprise Monitoring Server host name or IP
+   address.
+   cec_name
+   Name of the CEC that the agent is monitoring.
+   value
+   Either TRUE or FALSE as follows:
+   TRUE
+   ITM_cec restarts when the Virtual I/O Server restarts.
+   FALSE
+   ITM_cec does not restart whenever the Virtual I/O Server
+   restarts.
+   name_or_address2
+   Either the host name or IP address of the Hardware Management
+   Console
+   (HMC) attached to the managed system on which the Virtual I/O
+   Server
+   with the monitoring agent is located.
+   hmcuser
+   User on the HMC computer (with authority equivalent to
+   "hscroot").
+   director_hostname
+   IBM Systems Director Server to which to navigate using the IBM
+   Systems
+   Director workspace links.
+   Note:
+   If hmcuser is not specified, the default user is "hscroot".
+   
+   Note:  The parameters must be specified in the order indicated.
+   *******
+   The command syntax for the "cfgsvc" command syntax includes
+   commas which
+   will result in the ITM_cec agent service not working due to
+   invalid
+   values for parameters.
+   
+   The "cfgsvc" command syntax needs to be clarified to remove the
+   commas,
+   and the (optional) flags from within the actual command syntax.
+   
+   The above would be clearer if documented as:
+   
+   ***
+   VIOS
+   Although the CEC agent is now preinstalled on the VIOS V2.2.0.0,
+   Fix
+   Pack 24, you must configure the CEC Base agent with the cfgsvc
+   command.
+   cfgsvc ITM_cec -attr hostname=name_or_address1
+   mirror=name_or_address3
+   Restart_On_Reboot=value cec=cec_name
+   managing_system=hmcuser@name_or_address2
+   DIRECTOR_HOST_ADDRESS=<director_hostname>
+   DIRECTOR_PORT_NUMBER=8422
+   DIRECTOR_AUTHENTICATION=Yes
+   Where:
+   ITM_cec
+   Name of the monitoring agent.
+   name_or_address1
+   Either the host name or IP address of the Tivoli Enterprise
+   Monitoring
+   Server to which ITM_cec sends data.
+   name_or_address3
+   Secondary Tivoli Enterprise Monitoring Server host name or IP
+   address.
+   cec_name
+   Name of the CEC that the agent is monitoring.
+   The value of the cec-name can be determined from running the
+   following
+   command on the HMC and choosing the correct CEC from the list
+   that the
+   HMC manages:
+    lssyscfg -r sys -F name
+   value
+   Either TRUE or FALSE as follows:
+   TRUE
+   ITM_cec restarts when the Virtual I/O Server restarts.
+   FALSE
+   ITM_cec does not restart whenever the Virtual I/O Server
+   restarts.
+   name_or_address2
+   Either the host name or IP address of the Hardware Management
+   Console
+   (HMC) attached to the managed system on which the Virtual I/O
+   Server
+   with the monitoring agent is located.
+   hmcuser
+   User on the HMC computer (with HMC viewer authority).  Defaults
+   to
+   hscroot if not specified.
+   director_hostname
+   IBM Systems Director Server to which to navigate using the IBM
+   Systems
+   Director workspace links.
+   
+   Note:  The parameters must be specified in the order indicated.
+              The following parameters are optional:
+                     mirror
+                     DIRECTOR_HOST_ADDRESS
+                     DIRECTOR_PORT_NUMBER
+                     DIRECTOR_AUTHENTICATION
+                     hmcuser@ on managing_system parameter
+   
+   
+   RECREATE INSTRUCTIONS: None.
+   Additional Keywords:
+   IZ73124 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ73124]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The IBM Tivoli Monitoring: CEC Base Agent User's Guide Version
+   6.2.2.1 SC23-5239-07 is unclear in documenting the use of the
+   "cfgsvc" command to configure ITM_cec agent service on VIOS.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The documentation will be updated in the next release of the
+   User's Guide as follows:
+   
+   In Chapter:
+   Requirements and agent-specific installation and configuration
+   information for the monitoring agent
+   
+   Under section:
+   Agent-specific installation and configuration -> Configuration
+   *******
+   VIOS
+   
+   Although the CEC agent is now preinstalled on the VIOS V2.2.0.0,
+   Fix
+   Pack 24, you must configure the CEC Base agent with the cfgsvc
+   command.
+   cfgsvc ITM_cec -attr hostname=name_or_address1
+   mirror=name_or_address3
+   Restart_On_Reboot=value cec=cec_name
+   managing_system=hmcuser@name_or_address2
+   DIRECTOR_HOST_ADDRESS=<director_hostname>
+   DIRECTOR_PORT_NUMBER=8422
+   DIRECTOR_AUTHENTICATION=Yes
+   Where:
+   ITM_cec
+   Name of the monitoring agent.
+   name_or_address1
+   Either the host name or IP address of the Tivoli Enterprise
+   Monitoring
+   Server to which ITM_cec sends data.
+   name_or_address3
+   Secondary Tivoli Enterprise Monitoring Server host name or IP
+   address.
+   cec_name
+   Name of the CEC that the agent is monitoring.
+   The value of the cec-name can be determined from running the
+   following
+   command on the HMC and choosing the correct CEC from the list
+   that the
+   HMC manages:
+    lssyscfg -r sys -F name
+   value
+   Either TRUE or FALSE as follows:
+   TRUE
+   ITM_cec restarts when the Virtual I/O Server restarts.
+   FALSE
+   ITM_cec does not restart whenever the Virtual I/O Server
+   restarts.
+   name_or_address2
+   Either the host name or IP address of the Hardware Management
+   Console
+   (HMC) attached to the managed system on which the Virtual I/O
+   Server
+   with the monitoring agent is located.
+   hmcuser
+   User on the HMC computer (with HMC viewer authority).  Defaults
+   to
+   hscroot if not specified.
+   director_hostname
+   IBM Systems Director Server to which to navigate using the IBM
+   Systems
+   Director workspace links.
+   
+   Note:  The parameters must be specified in the order indicated.
+              The following parameters are optional:
+                     mirror
+                     DIRECTOR_HOST_ADDRESS
+                     DIRECTOR_PORT_NUMBER
+                     DIRECTOR_AUTHENTICATION
+                     hmcuser@ on managing_system parameter
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV21708
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM SE SYSP CEC
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04CB
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-23
+   
+   
+ * CLOSED DATE
+   2012-05-29
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

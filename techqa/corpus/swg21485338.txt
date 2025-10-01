@@ -1,0 +1,37 @@
+Title: IBM SPSS Statistics appears to freeze when running a syntax file - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have received a fairly large dataset and am currently running my syntax against it. When I do so, it appears that it causes SPSS Statistics to freeze. I am not able to do anything within the application and the performance of my PC degrades when running this syntax.
+
+The dataset I am working on contains 8 cases (test file) and 13,000 variables. The syntax file contains approx 100000 lines of commands specifying the variable labels and value labels. No analysis are being conducted during this time.
+
+I have confirmed that my PC specifications more than meets the requirements of SPSS Statistics. 
+
+DIAGNOSING THE PROBLEM
+There is a chance that the IBM SPSS Statistics program is still executing in the background. To determine this, there are a couple of different methods to confirm that the SPSS Statistics engine is still processing in the background: 
+
+
+* The first is to view the SPSS Statistics status bar. if you see commands displayed (such as VALUE LABEL) that means the processor is still busy executing commands. If you see the message: "SPSS Statistics Processor is ready" it means that the application has completed executing its commands and is ready for the next user interaction. 
+
+
+* The second method is to open up Task Manager within Windows. This can be done by pressing the keyboard combination (Ctrl + Alt +Delete) or right-clicking on the Windows Taskbar area and choosing Task Manager. Switch to the Processes tab and look for 'stats.exe' and 'spssengine.exe'.
+
+
+RESOLVING THE PROBLEM
+If any of these executables are utilising CPU and memory, then the SPSS Statistics engine is still running and should not be interrupted. 
+
+ 
+
+If the above tests does not apply, please raise a Service Request for the IBM SPSS Technical Support team.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 87168

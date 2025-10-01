@@ -1,0 +1,130 @@
+Title: IBM IC53728: LISTENER AND CHANNEL STOPPED WHEN TCP/IP PROCESS WAS PRIMARIED T TO ANOTHER CPU. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ for HP NonStop Server v5.3.1, Fix Pack 5.3.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24017102]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24025461]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24027369]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.8 [http://www-01.ibm.com/support/docview.wss?uid=swg24030009]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Listener and channels stopped when the TCP/IP process was
+   primaried to another CPU.
+   Socket Error 4120 (ECONNRESET) is returned for OSS socket
+   application
+   when takeover occurs on conventional TCP/IP.
+   The listener should not exit when receiving error 4120 and the
+   channels
+   should not end on changing primary CPU of conventional TCP/IP.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *   A ECONNRESET error on the socket caused the
+   listener and channels processes to exit when the TCPIP process
+   primary was changed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   Handle a ECONNRESET status returned for a
+   socket.
+   Change released in V5.3.1.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC53728
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ NSS ITA
+   
+   
+ * REPORTED COMPONENT ID
+   5724A3902
+   
+   
+ * REPORTED RELEASE
+   531
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-09-11
+   
+   
+ * CLOSED DATE
+   2007-09-25
+   
+   
+ * LAST MODIFIED DATE
+   2007-10-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ NSS ITA
+   
+   
+ * FIXED COMPONENT ID
+   5724A3902
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY
+   UP

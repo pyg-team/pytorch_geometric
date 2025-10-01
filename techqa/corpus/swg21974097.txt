@@ -1,0 +1,39 @@
+Title: IBM 'DB User Name', 'OS User' and 'Source Program' fields are empty in my IBM Security Guardium reports when using SPAN port on MS SQL SERVERS - United States
+
+Text:
+'Guardium'; 'SPAN'; 'SPAN ports'; 'MS SQL'; 'DB User Name'; 'OS User'; 'Source Program'; 'dbuser'; 'osuser'; empty; blank; missing; null; space; spaces TECHNOTE (FAQ)
+
+QUESTION
+ I am using a SPAN port and no STAP to record and pass data to my IBM Security Guardium appliances but all my traffic is missing data in the 'DB User Name', 'OS User' and 'Source Program' fields. Why is that and how do I solve this so that I can see that data 
+
+CAUSE
+
+MS SQL Servers by default use encrypted login authentication - meaning that the login packets for all traffic, which contain the DB User, OS User and Source Program information, are ssl encrypted. This means that Guardium cannot read that data. 
+
+To solve this issue Guardium uses the STAP to inject a dll into the SQL server, which then sends the collector the login packets after they've been decrypted by the database engine itself. 
+
+However if a SPAN port is used to mirror the network database traffic, the login packets sent by SPAN are still encrypted and unreadable by Guardium. 
+
+
+ANSWER
+ 
+
+Therefore the solution to this issue is to install an STAP on the MS SQL Server which will then send Guardium the decrypted login packets. This allows Guardium to correlate the decrypted login packet with the traffic it belongs to so that in your Guardium reports you will be able to see the 'DB User', 'OS User' and 'Source Program' data 
+
+ 
+
+ 
+
+
+
+RELATED INFORMATION
+ MS SQL Server - blank DB User Name / Source Program [http://www.ibm.com/support/docview.wss?uid=swg21606231]
+Delay when detecting DB user name in MS SQL Server [http://www.ibm.com/support/docview.wss?uid=swg21700680]
+DB USER NAME / SOURCE PROGRAM occasionally missing [http://www.ibm.com/support/docview.wss?uid=swg21580664]
+Teradata ATAP - Missing OS User and Source Program [http://www.ibm.com/support/docview.wss?uid=swg21963770]
+Teradata does not show DB user correctly [http://www.ibm.com/support/docview.wss?uid=swg21651589]
+Blank source Program for Informix [http://www.ibm.com/support/docview.wss?uid=swg21698109]
+Informix shared memory - Blank DB User/Source Program [http://www.ibm.com/support/docview.wss?uid=swg21685290]
+DB USER NAME shows "?" and blank SOURCE PROGRAM [http://www.ibm.com/support/docview.wss?uid=swg21655219]
+Sybase IQ - DB User Name and Source Program missing [http://www.ibm.com/support/docview.wss?uid=swg21611905]
+Guardium Application User Translation [http://www.ibm.com/developerworks/data/library/techarticle/dm-1105fivemethods/]

@@ -1,0 +1,22 @@
+Title: IBM Modeler 13.0 license not recognized when added to the Clementine 12.0 Sentinel License Manager. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have installed Modeler 13.0 client (network license install.) I have the Sentinel RMS license manager installed from the Clementine 12.0 CD to the same machine as my Modeler 13.0 client. I have added the Modeler 13.0 license to the Clementine 12.0 version of the Sentinel license manger using the licenseactivator command. When I attempt to launch Modeler 13.0 I get the following error message: No license key found: sub-code 18. 
+
+RESOLVING THE PROBLEM
+Please note: If you intend on using the License Manager installed from the Clementine 12.0 CD, you will have to use the spssactivator command to license the license manager. The command licenseactivator was only introducted with the License Manager install from the Modeler 13.0 DVD.
+
+To avoid the confusion, we always recommend upgrading the license manager when you upgrade your Clementine/ Modeler product
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 83954

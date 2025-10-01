@@ -1,0 +1,195 @@
+Title: IBM PM77066: ABEND04E RC00C90101 DSNIDBHK ERQUAL500C AFTER APPLYING PM53155 (V10 UK77362, V9 UK77364, V8 UK77363) 12/11/15 PTF PECHANGE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With apar PM53155 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM53155] , the following abend could occur during
+   group restart:
+     DSN ABND 04E 00C90101 U=SYSOPR M=(N) C=910 DMC
+     DSNIDBLG M DSNTFRCV LOC DSNIDM DSNIDBHK 500C
+   A portion of the DBET base SCA record(s) was accidentally
+   deleted which resulted in the local DBET being built
+   incorrectly.
+   From the dump, for the dbet_db being processed, the lowest
+   partition number was higher than the highest partition number ,
+   and that highest partition number ' dbedhpnc ' was zeroes .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All DB2 10 for z/OS data sharing users with  *
+   *                 PM53155 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM53155] / UK77362, DB2 9 for z/OS data       *
+   *                 sharing users with PM53155 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM53155] / UK77364 and     *
+   *                 DB2 V8 for z/OS data sharing users with      *
+   *                 PM53155 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM53155] / UK77363 applied                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: ABEND04E RC00C90101 DSNIDBHK ERQUAL500C *
+   *                      during several data sharing members'    *
+   *                      DB2 checkpoint after group restart,     *
+   *                      leading to their DB2 crash with         *
+   *                      MSGDSNV086E RC00D95001                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   During group restart, while updating the group DBET in SCA,
+   a subset of the DBET base SCA record(s) for an object was
+   accidentally deleted, which resulted in local DBET entry for the
+   object being built incorrectly.
+   
+   In this case, there were more than 200 partitions with diverse
+   exception states such that the DBET entry for this object had
+   multiple DBET blocks. During internal DBET rectify, at the
+   beginning of forward log apply phase, the group DBET in SCA
+   needed to be updated since local DBET had to reset an internal
+   extend-in-progress state.
+   
+   However, when copying the local DBET blocks to the group DBET in
+   SCA, by mistake not all the DBET blocks were copied. This
+   resulted in an incomplete group DBET in SCA for this object.
+   
+   When other members of the data sharing group came up, their
+   local DBET was built incorrectly, eventually leading to the
+   aforementioned ABEND04E.
+   
+   The first member that performed the rectify was able to come
+   up successfully because his local DBET was not corrupted. Any
+   subsequent DBET updates that this member performed after the
+   group restart automatically cleaned up the group DBET in SCA,
+   which is why the originally failed members were able to restart
+   on their second restart attempt.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DB2 code has been modified such that the group DBET in SCA is
+   updated correctly during DBET rectify.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM77066
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-14
+   
+   
+ * CLOSED DATE
+   2013-01-31
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK91321 UK91322 UK91323
+   
+   
+
+MODULES/MACROS
+ *  DSNIDBNG DSNIDBNI
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY UK91321 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK91321]
+   UP13/02/16 P F302 ®
+   
+   
+ * R810 PSY UK91322 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK91322]
+   UP13/02/16 P F302 ®
+   
+   
+ * R910 PSY UK91323 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK91323]
+   UP13/02/16 P F302 ®
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

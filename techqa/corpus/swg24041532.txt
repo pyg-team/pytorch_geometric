@@ -1,0 +1,50 @@
+Title: IBM Tivoli Monitoring Privileges Escalation through Authorization Bypass (IV77992) - United States
+
+Text:
+IV65774 DOWNLOADABLE FILES
+
+ABSTRACT
+ This fix addresses a security vulnerability for remote code execution (CVE-2014-7411), 
+
+DOWNLOAD DESCRIPTION
+This fix addresses the security vulnerability listed in the IBM Tivoli Monitoring Security Bulletin: http://www.ibm.com/support/docview.wss?uid=swg21973559. [http://www.ibm.com/support/docview.wss?uid=swg21973559] 
+
+
+The following patches are provided which remediate the vulnerability across the releases below: 
+
+VRMF Fix 6.30 6.3.0-TIV-ITM-FP0006-IV77992 
+6.3.0-TIV-ITM-FP0005-IV77992 6.23 6.2.3-TIV-ITM-FP0005-IV77992 6.22 6.2.2-TIV-ITM-FP0009-IV77992 
+NOTE 1: The fix for IV77992 requires the patch be installed on the portal server. In addition to this, the patch needs to be installed on the systems where the tacmd CLI is installed and utilized. The CLI is installed as part of the "ue" component. 
+
+NOTE 2: The fix for IV77992 supercedes and includes the fix for IBM Tivoli Monitoring Remote Code Execution [http://www-01.ibm.com/support/docview.wss?uid=swg21970361] as addressed [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566]by APAR fix IV77742. Once the patch above for IV77992 is installed, the patch for IV77442 is not needed and should not be installed afterwards. PREREQUISITES
+The prerequisite level for these fixes are as follows:
+
+6.3.0-TIV-ITM-FP0006-IV77742 requires IBM Tivoli Monitoring, version 6.3.0 Fix Pack 6 (6.3.0-TIV-ITM-FP0006)
+6.3.0-TIV-ITM-FP0005-IV77742 requires IBM Tivoli Monitoring, version 6.3.0 Fix Pack 5 (6.3.0-TIV-ITM-FP0005)
+6.2.3-TIV-ITM-FP0005-IV77742 requires IBM Tivoli Monitoring, version 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005)
+6.2.2-TIV-ITM-FP0009-IV77742 requires IBM Tivoli Monitoring, version 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009)
+
+URL LANGUAGE SIZE(Bytes) 6.3.0-TIV-ITM-FP0006 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.3.0&function=fixId&fixids=6.3.0-TIV-ITM-FP0006] English 1 6.3.0-TIV-ITM-FP0005 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.3.0&function=fixId&fixids=6.3.0-TIV-ITM-FP0005] English 1 6.2.3-TIV-ITM-FP0005 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.2.3&function=fixId&fixids=6.2.3-TIV-ITM-FP0005] English 1 6.2.2-TIV-ITM-FP0009 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.2.2&function=fixId&fixids=6.2.2-TIV-ITM-FP0009] English 1 
+INSTALLATION INSTRUCTIONS
+Refer to the README file located in Fix Central for additional information.
+
+DOWNLOAD PACKAGE
+
+
+
+
+CHANGE HISTORY
+2016-02-29: Original Publish 
+
+2016-03-14: Corrected typo in "NOTE 2" for APAR IV77742. 
+
+2016-03-17: Added link for patch for 6.30 FP6.
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 6.3.0-TIV-ITM-FP0006-IV77992 17 Mar 2016 English 1 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.3.0.6&function=fixId&fixids=6.3.0-TIV-ITM-FP0006-IV77992] [ ] 6.3.0-TIV-ITM-FP0005-IV77992 10 Jan 2016 English 1 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.3.0.5&function=fixId&fixids=6.3.0-TIV-ITM-FP0005-IV77992] [ ] 6.2.3-TIV-ITM-FP0005-IV77992 10 Jan 2016 English 1 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.2.3.5&function=fixId&fixids=6.2.3-TIV-ITM-FP0005-IV77992] [ ] 6.2.2-TIV-ITM-FP0009-IV77992 10 Jan 2016 English 1 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.2.2.9&function=fixId&fixids=6.2.2-TIV-ITM-FP0009-IV77992] [ ] 
+PRODUCT ALIAS/SYNONYM
+ ITM 
+
+ [/support/docview.wss?uid=swg24041532&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24041532&aid=2]Problems (APARS) fixed
+IV77992

@@ -1,0 +1,56 @@
+Title: IBM Collecting Data: IBM Connections 5.0 Widget for Microsoft SharePoint - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Gathering this information before calling IBM Support will reduce the time that it takes to understand and resolve your problem.
+
+DIAGNOSING THE PROBLEM
+I. Information:
+1. What version of IBM Connections is installed? Include which CRs and/or iFixes that are installed.
+2. Is this a pilot or production installation?
+3. Is this a new installation or an upgrade from an earlier version?
+4. How many nodes in the cluster and are components installed to a single or multiple jvm's?
+5. Is the problem reproducible on all nodes?
+6. What browser types and versions are in use and is the issue reproducible on the supported browsers? 
+7. Is there a SSO solution in front of IBM Connections (Siteminder, TAM, Spnego)?
+8. Please outline any customization that you may have.
+9. Does the problem impact one or multiple machines?
+10. Does the problem impact one or multiple users?
+11. Was something recently updated on the workstation?
+12. Was something recently updated on the servers?
+13. What steps are taken to reproduce the problem?
+14. What type of Authentication is the SharePoint Widget configured to use?
+15. Do any errors appear in the Event Viewer of the Server hosting Microsoft SharePoint?
+16. Is a Custom Authenticator or TAI utilized on the IBM WebSphere Application Server hosting your IBM Connections Communities application?
+
+II. Data
+
+a. SharePoint Widget tracing:
+1. Log in to the IBM WebSphere Application Server (WAS) administration console using an administrator ID
+2. Go to Troubleshooting -> Logs and Trace -> Logging and Tracing -> Server 1 (or server SharePoint Widget is installed on) -> Diagnostic Trace Server -> Change Log Detail Levels -> please add the following *string and click Apply -> OK
+
+com.ibm.connections.sp.*=all:com.ibm.connections.sp.servlet.*=all
+
+3. Reproduce the problem.
+Note: If the issue can be reproduced on a single node, shut down all other nodes prior to reproducing the problem.
+
+4. Remove trace-options added in Step 2.
+
+5. Provide support a compressed copy of the logs directory %WAS_HOME%/profiles/appSrv01/logs (trace.log, systemout.log, systemerr.log and FFDC logs) from the node.
+along with LotusConnections-config.xml located in directory %WAS_HOME%\profiles\(your profile)\config\cells\(your cell)\LotusConnections-config
+
+
+6. Collect a Fiddler-trace file:
+The Fiddler-client is utilized to capture traffic exchanged from the Web-browser to the WebSphere Application Server hosting the IBM Connections Communities application that has the SharePoint widget:
+It can be downloaded at the following URL:
+http://www.telerik.com/download/fiddler [http://www.telerik.com/download/fiddler]
+Close all other browser windows before opening fiddler, log into connections. Run the fiddler application. Have the user perform the operation that is causing the error. When the action has been completed, save the results in fiddler by choosing “File”->”Save”->”All Sessions”. 
+
+[/support/docview.wss?uid=swg21683248&amp;aid=1]
+
+Please configure fiddler to decrypt the https request:
+Select "Decrypt HTTP traffic" and ""Ignore server Certificate errors
+
+[/support/docview.wss?uid=swg21683248&aid=2] [/support/docview.wss?uid=swg21683248&aid=2]

@@ -1,0 +1,55 @@
+Title: IBM ITCAM4Tx: RRT not producing RFT response time data, no arm .dat files - United States
+
+Text:
+71RRT-RFTPLAN; 71RRT-RFTCONF; 71RRT-RFTREC; 71RRT-RFTUPLOAD; 71RRT-RFTPLAY; 71RRT-RFTWV; 71RRT-RFTTS TECHNOTE (FAQ)
+
+QUESTION
+ Why is my Rational Functional Tester test robotic script not producing response time data under "Applications" and "Transactions" views in TEP robotic workspaces? 
+
+CAUSE
+One possible cause is that the ARM instrumentation is not effective in the script during playback, so no arm .dat file is created by Rational Functional Tester (RFT) during playback on the robotic T6 agent system. 
+<ITM_HOME>\TMAITM6\arm\log\kt6 directory doesn't contain any "ARM_xxxx.dat" file as it should.
+
+ANSWER
+First, ensure the RFT script is enabled to generate "Response Time Breakdown" data in the RFT Workbench.
+
+A) On the RFT workbench recorder machine: 
+start RFT workbench :
+Start -> All Programs -> IBM Software Delivery Platform -> IBM Rational Functional Tester -> Eclipse Integration (with RFT v8.6) [ or IBM Rational Functional Tester ->Java Scripting (with RFT v8.2) ]
+
+1) Verify "Response Time Breakdown"
+Follow these steps to check the enable "Response Time Breakdown" 
+
+ 
+Window > Preferences 
+Expand "Functional Test" 
+Expand "Playback" 
+Select "Response Time Breakdown" 
+Make sure "Enable Response Time Breakdown" is checked 
+Click [Apply] + [OK] 
+
+[/support/docview.wss?uid=swg21989573&aid=1] [/support/docview.wss?uid=swg21989573&aid=1] 
+
+ 
+
+2) Enable "Response Time Breakdown"
+After you have recorded a RFT script, while playing it back manually inside RFT Workbench, and prior to exporting it to ITCAM4 Tx AMC depot system, make sure "Response Time Breakdown" is enabled as follows: 
+
+After selecting "Run" of Functional Test Script, the "Select Log" window is displayed. Select [Next >] 
+
+In the "Specify Playback Options" make sure "Enable Response Time Breakdown" is checked 
+
+ 
+
+[/support/docview.wss?uid=swg21989573&aid=2] [/support/docview.wss?uid=swg21989573&aid=2]
+Click [Finish] to run the script 
+
+Export the script to ITCAMfTx and distribute it to the T6 agent via a robotic profile. 
+
+
+B) On the robotic T6 agent test player where RFT is also installed, if still no arm .dat file is created by RFT during playback, enable "Response Time Breakdown" option on the RFT workbench playback machine, as described above.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itcam itcam4t itcam4trans itcamfort robotic response time rational functional tester

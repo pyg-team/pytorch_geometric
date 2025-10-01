@@ -1,0 +1,60 @@
+Title: IBM InfoSphere Content Collector V2.1.1 Fix Pack 1 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document contains links to the download page for IBM InfoSphere Content Collector V2.1.1 Fix Pack 1. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+IBM CONTENT COLLECTOR DOWNLOADS
+ *  All versions [http://www.ibm.com/support/docview.wss?uid=swg27040223] 
+ *  Version 2.1.1 Fix Pack 1- selected tab, 
+
+Apply IBM InfoSphere Content Collector V2.1.1 Fix Pack 1 to upgrade from IBM InfoSphere Content Collector V2.1.1.0 to IBM InfoSphere Content Collector V2.1.1.1. 
+
+Below is a list of the problems that were fixed in this fix pack. 
+
+APAR number APAR title HD85552 [http://www.ibm.com/support/docview.wss?rs=3613&uid=swg1HD85552] IBM InfoSphere Content Collector for File systems could not create the target directory HD86404 [http://www.ibm.com/support/docview.wss?rs=3613&uid=swg1HD86404] After applying Fix Pack 2, IBM InfoSphere Content Collector displays an error window at system startup HD86550 [http://www.ibm.com/support/docview.wss?rs=3613&uid=swg1HD86550] IBM InfoSphere Content Collector for File systems continues to process files after loss of communication with target server HD86620 [http://www.ibm.com/support/docview.wss?rs=3613&uid=swg1HD86620] IBM InfoSphere Content Collector for File systems continues to move files to post processing folder after loss of target server HD90138 [http://www.ibm.com/support/docview.wss?rs=3613&uid=swg1HD90138] The Indexer for Text Search reports an unexpected general exception "STRINGINDEXOUTOFBOUNDS" HD90449 [http://www.ibm.com/support/docview.wss?rs=3613&uid=swg1HD90449] CM attribute ICCEJRCPADDRS is not handled correctly HD90468 [http://www.ibm.com/support/docview.wss?rs=3613&uid=swg1HD90468] Due to a memory buffer overflow the E-Mail Server Connector for Exchange crashes sometimes when opening mailboxes HD90566 [http://www.ibm.com/support/docview.wss?rs=3613&uid=swg1HD90566] DB2 connection error is incorrectly displayed as "out of memory" error in afuIndexer HD90609 [http://www.ibm.com/support/docview.wss?rs=3613&uid=swg1HD90609] Legacy restore job creation fails for non-english Exchange organizations HD90615 [http://www.ibm.com/support/docview.wss?rs=3613&uid=swg1HD90615] During life cycle stubbing, the E-Mail Server Connector produces a severe error HD90729 [http://www.ibm.com/support/docview.wss?rs=3613&uid=swg1HD90729] Restore with IBM InfoSphere Content Collector may fail if a large number of e-mails was selected for restore HD90819 [http://www.ibm.com/support/docview.wss?rs=3613&uid=swg1HD90819] IBM InfoSphere Content Collector Offline Repository install - DXL Import step fails if ACL is not set to "Manager" HD90980 [http://www.ibm.com/support/docview.wss?rs=3613&uid=swg1HD90980] Installation fails on a Windows 2003 machine that has KB968930 installed LO46806 [http://www.ibm.com/support/docview.wss?rs=3613&uid=swg1LO46806] Notes C++ throw error:Couldn't perform conversion on specific document (If an APAR link does not work, the detailed information for that APAR is not yet available from the Support page. Try again in a day or two.)
+
+PREREQUISITES
+View the IBM InfoSphere Content Collector system requirements document at:
+
+URL LANGUAGE SIZE(Bytes) IBM InfoSphere Content Collector 2.1.1 prerequisites [http://www-01.ibm.com/support/docview.wss?rs=3613&uid=swg27016442] English 1 
+INSTALLATION INSTRUCTIONS
+Read the fix pack readme file for specific information about installing the fix pack. The readme file is part of the fix pack package.
+
+DOWNLOAD PACKAGE
+The IBM InfoSphere Content Collector V2.1 Fix Pack 2 download package consists of the following files: 
+
+ * 2.1.1.1-IBM-ICC-FP001.txt: The readme file 
+ * 2.1.1.1-IBM-ICC-OE-FP001.zip: Contains IBM InfoSphere Content Collector Outlook Extension 
+ * 2.1.1.1-IBM-ICC-Server-FP001.zip: Contains IBM InfoSphere Content Collector Server 
+ * 2.1.1.1-IBM-ICC-CM8Text-WIN-FP001.zip: Contains Text Search support for Content Manager 8 on Windows 
+ * 2.1.1.1-IBM-ICC-CM8Text-Linux32-FP001.tar.gz: Contains Text Search support for Content Manager 8 on Linux 
+ * 2.1.1.1-IBM-ICC-CM8Text-Linuxz-FP001.tar.gz: Contains Text Search support for Content Manager 8 on Linux for zSeries 
+ * 2.1.1.1-IBM-ICC-CM8Text-AIX-FP001.tar.gz: Contains Text Search support for Content Manager 8 on AIX 
+ * 2.1.1.1-IBM-ICC-CM8Text-Solaris-FP001.tar.gz: Contains Text Search support for Content Manager 8 on Solaris 
+ * 2.1.1.1-IBM-ICC-P8Text-FP001.zip containing:  * \P8ContentSearchEngine\ICC_FileSystem_PushAPI2.zip: Contains Text Search support for FileNet P8 versions before Version 4.5.1 
+    * \P8ContentSearchEngine\ICC_FileSystem_PushAPI_2.1_p8cse_4.5.1.zip: Contains Text Search support for FileNet P8 Version 4.5.1
+   
+   
+ * 2.1.1.1-IBM-ICC-SharePoint-FP001.zip: Contains IBM InfoSphere Content Collector Microsoft SharePoint Support
+
+
+Downloading the fix pack 
+
+When you click the download link below, a sign-in page opens. Enter your IBM ID and password to proceed. If you have forgotten your IBM ID or have never registered, follow the instructions on the sign-in page. 
+
+After signing in: 
+1. Select IBM InfoSphere Content Collector V2.1.1 Fix Pack 1. 
+2. Accept the license agreement to proceed. 
+3. Download the readme file and the fix pack deliverables that are required for your environment. 
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options Fix Pack 1 12/14/2009 Language Independent 1 HTTP [http://www.ibm.com/services/forms/preLogin.do?source=swg-icc] 
+ [/support/docview.wss?uid=swg24025350&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24025350&aid=2]Problems (APARS) fixed
+HD85552, HD86404, HD86550, HD86620, HD90138, HD90449, HD90468, HD90566, HD90609, HD90615, HD90729, HD90819, HD90980, LO46806

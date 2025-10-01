@@ -1,0 +1,43 @@
+Title: IBM Passing string argument to Oracle stored procedure - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to pass a character argument to an Oracle stored procedure in DecisionStream ?
+
+If the string is Enclosed in single quotes:
+Sql('Oracle','BEGIN norproc('ONE');END;')
+
+You would receive this error:
+
+DS-EXP-E001: Expression parse error at position 30;
+expecting operator
+
+Sql('Oracle','BEGIN norproc('>>>ONE');END;')
+
+If the string is Enclosed in double quotes you would receive these errors:
+
+Sql('Oracle','BEGIN norproc(&#34;ONE&#34;);END;')
+
+DS-DBMS-E400: ORACLE driver reported the following on connection 'Oracle':
+
+ORA-06550: line 1, column 15:
+PLS-00201: identifier 'ONE' must be declared
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+
+DS-DBMS-E390: SQL statement in error at position 15:
+
+BEGIN norproc( -->&#34;ONE&#34;);END; 
+
+RESOLVING THE PROBLEM
+Use a pair of single quotes on both sides of the string:
+
+Sql('Oracle','BEGIN norproc(''ONE'');END;')
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Data Manager Business Analytics Cognos Series 7 DecisionStream 
+HISTORICAL NUMBER
+ 101748

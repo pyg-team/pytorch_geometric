@@ -1,0 +1,182 @@
+Title: IBM JR57588: DOCUMENT LIST COACH FROM IBM BPM V8.5.6 CONTENT MANAGEMENT TOOLKIT DOESN'T WORK IN IBM BPM V8.5.7 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you use the Document List control from the IBM Business
+   Process Manager (BPM) V8.5.6 Content Management toolkit with IBM
+   BPM V8.5.7, you see the message "Error retrieving documents" for
+   a Document List coach control instead of the list of documents.
+   
+      The error 'Error Retreiving Documents' occurs is when using
+   the Document List control for use with 'ECM Documents'. However,
+   when it is configured to 'BPM Documents' this error does not
+   occur.
+   
+   
+      This is the tcp trace of the request and response for the
+   servlet call to request the document.
+   .
+   [22/Feb/2017:13:22:04 +0100] "GET
+   /my/portal/jsp/callService.do?serviceRef=1.458aa3a5-2d40-4629-b1
+   46-
+   75cb8dcf6569&snapshotId=t/bpm/wle/v1/service/1.458aa3a5-2d40-462
+   9-b146-
+   75cb8dcf6569?action=start&input=%3Cinput
+   name%3D%22elementValue%22%3E%
+   3Cvariable name%3D%22cmisQuery%22%3ESELECT cmis%3Aname%2C
+   IBM_BPM_Document_FileNameURL%2C MajorVersionNumber%2C cmis%
+   3AlastModificationDate%2C IBM_BPM_Document_UserId%2C
+   IBM_BPM_Document_FileType%2C cmis%3AobjectId%2C
+   cmis%3AversionSeriesId
+   FROM IBM_BPM_Document  ORDER BY cmis%3Aname
+   ASC%3C%2Fvariable%3E%
+   3Cvariable
+   name%3D%22maxItems%22%3E10%3C%2Fvariable%3E%3Cvariable name%
+   3D%22skipCount%22%3E0%3C%2Fvariable%3E%3Cvariable name%3D%
+   22searchAllVersions%22%3Efalse%3C%2Fvariable%3E%3Cvariable
+   name%3D%
+   22useBPMDocuments%22%3EBPM%3C%2Fvariable%3E%3C%2Finput%3E
+   HTTP/1.1" 200
+   -
+   
+   <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http:
+   //www.w3.org/TR/html4/loose.dtd">
+   (http://www.w3.org/TR/html4/loose.dtd%
+   27%3E)
+    <html>
+    <head>
+     <TITLE> Error Page </TITLE>
+     <meta http-equiv="Content-Type" content="text/html;
+   charset=UTF-8" />
+    </head>
+       <body>
+     <h2>An exception occured while processing your request!</h2>
+       </body>
+   </html>
+   
+   PRODUCTS AFFECTED:
+   IBM BPM Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue is resolved in the IBM BPM V8.5.7 cumulative fix
+   2016.12. Upgrade to that level of the product and ensure you are
+   using the V8.5.7 level of the toolkit.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM 8.5.7 cumulative fix 2016.12 and
+   2017.03 that allows the Document List coach control from the
+   V8.5.6 Content Management toolkit to display documents.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR57588
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-13
+   
+   
+ * CLOSED DATE
+   2017-03-24
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

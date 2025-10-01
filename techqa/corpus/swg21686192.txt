@@ -1,0 +1,71 @@
+Title: IBM Unable to stop TIP using itnm_stop command - United States
+
+Text:
+itnm; stop; TIPL2; TIPL2CONFallowOperationIfReposDown; file; object server; repo; repository TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempt to stop IBM Tivoli Integrated Portal (TIP) from ITNM using itnm_stop command failed with error "ADMN0022E: Access is denied for the stop operation on Server MBean because of insufficient or empty credentials" 
+
+SYMPTOM
+When you supply a correct password for user "tipadmin", the stop operation fails. Sometimes, it works well. This issue is intermittent.
+
+
+CAUSE
+User authentication configuration in wimconfig.xml. Customer have multiple repositories configured, such as Object Server, LDAP and the local file repository.
+
+ENVIRONMENT
+IBM Tivoli products that uses IBM Tivoli Integrated Portal (TIP).
+
+DIAGNOSING THE PROBLEM
+Review the security configuration (user authentication) in wimconfig.xml. Check if you have multiple repositories configured.
+
+RESOLVING THE PROBLEM
+VMM component in TIP checks all repositories before allowing authentication to succeed. As such, TIP authenticates all users against all repositories. 
+
+
+
+
+When TIP server is stopped using TIPADMIN user, TIP checks local file repository and Object Server. This happens even though there is no TIPADMIN user in the Object Server. When ObjectServer authentication reaches the time out, the attempt to authenticate TIPADMIN user fails and TIP does not stop. This happens even though TIPADMIN user authenticated successfully against local file repository. 
+
+This is a known issue logged under WebSphere PK78677 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK78677] and technotes exist on how to alter the behaviour so that if authentication attempts are made against unavailable repositories, the shutdown/stop operation can continue. 
+
+The parameter introduced by the above mentioned APAR is "allowOperationIfReposDown". When we set this parameter to "true", this parameter changes authentication behaviour. When true, TIP authentication will be successful even if some repositories are unavailable. So successful authentication of TIPADMIN against local file repository will allow TIP shutdown to complete even if ObjectServer repository is unavailable. 
+
+If you have disabled "allowifreposdown" parameter, TIP will verify all the repos configured. For example, we have multiple repositories configured (such as LDAP, OS and Object Server) - if we set Object Server to "false" and other repositories (such as LDAP and OS) to "true", meaning LDAP and OS can still be down but TIP users will be allowed/authenticated. 
+
+
+To enable the said paramater - follow steps noted below:
+
+Step to enable allowOperationIfReposDown 
+1. Copy and backup $TIPHOME/profiles/TIPProfile/config/cells/TIPCell/wim/config/wimconfig.xml 
+2. Edit $TIPHOME/profiles/TIPProfile/config/cells/TIPCell/wim/config/wimconfig.xml 
+
+alter line this line: 
+<config:realmConfiguration defaultRealm="TIPRealm"> 
+<config:realms delimiter="/" name="TIPRealm" securityUse="active"> 
+
+... to read like this 
+
+<config:realmConfiguration defaultRealm="TIPRealm"> 
+<config:realms delimiter="/" name="TIPRealm" securityUse="active" allowOperationIfReposDown="true"> 
+
+.. and save the changes.
+
+3. Ensure ObjectServer is running and stop and restart TIP for changes to take effect. 
+4. Stop ObjectServer 
+5. Run itnm_stop tip -password <tipdmin_password> 
+6. Command completes in the expected time 
+7. "itnm_status tip" shows NOT RUNNING 
+
+You can normally find the wimconfig.xml at the location below - for further assistance on editting the wimconfig , please review information at IBM Knowledge Center [http://www-01.ibm.com/support/knowledgecenter/] : 
+<TIPHOME>/profiles/TIPProfile/config/cells/TIPCell/wim/config/wimconfig.xml 
+
+The allowOperationIfReposDown parameter is documented here: 
+http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.wim.doc%2FUnableToAuthenticateWhenRepositoryIsDown.html [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.wim.doc%2FUnableToAuthenticateWhenRepositoryIsDown.html] 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Network Manager IP Edition AIX, Linux, Solaris, Windows 3.9 
+PRODUCT ALIAS/SYNONYM
+ TIP

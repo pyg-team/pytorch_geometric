@@ -1,0 +1,124 @@
+Title: IBM Multiple vulnerabilities in feature Document Connect for ASF on LUW platforms - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ The web client functionality of feature ‘Document Connect for ASF’ (aka DC4ASF) of Application Support Facility for z/OS contains the following vulnerabilities: 
+· Cross-Site-Scripting (CVE-2013-0571)
+· Link Injection, Phishing through Frames (CVE-2013-0572) 
+
+CONTENT
+Security Bulletin: Multiple vulnerabilities exist in Application Support Facility for z/OS, potential Cross-Site-Scripting (CVE-2013-0571, CVE-2013-0572, CVE-2013-0572) 
+
+Abstract 
+
+The web client functionality of feature ‘Document Connect for ASF’ (aka DC4ASF) of Application Support Facility for z/OS contains the following vulnerabilities: 
+
+· Cross-Site-Scripting (CVE-2013-0571) 
+
+· Link Injection, Phishing through Frames (CVE-2013-0572)
+
+
+
+
+VULNERABILITY DETAILS
+
+
+CVE ID: CVE-2013-571
+
+
+DESCRIPTION: 
+
+A DC4ASF user could be tricked into inserting a mal-formed URL address into their browser or clicking on a mal-formed URL link allowing an attacker to collect sensitive data. 
+
+
+
+
+CVSS: 
+
+CVSS Base Score: 2.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/83246 [https://exchange.xforce.ibmcloud.com/vulnerabilities/83246] for the current score
+CVSS Environmental Score: Undefined
+CVSS Vector: (AV:A/AC:M/Au:S/C:N/I:P/A:N)
+
+
+
+
+CVE ID: CVE-2013-572
+
+
+DESCRIPTION: 
+
+A DC4ASF user could be tricked into inserting a mal-formed URL address into their browser or clicking on a mal-formed URL link allowing an attacker to collect sensitive data. 
+
+
+
+
+CVSS: 
+
+CVSS Base Score: 2.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/83247 [https://exchange.xforce.ibmcloud.com/vulnerabilities/83247] for the current score
+CVSS Environmental Score: Undefined
+CVSS Vector: (AV:A/AC:M/Au:S/C:N/I:P/A:N)
+
+
+
+
+AFFECTED PRODUCTS: 
+
+Versions of Document Connect for ASF 1.0.0.1204 or earlier are affected. 
+
+REMEDIATION: 
+
+ The recommended solution is to install version 1.0.0.1218. Please see below for information on the availability of the fixes.
+
+
+
+
+Fix: 
+
+For DC4ASF with a build number less or equal to 1.0.0.1204 apply the fixpack with build number 1.0.0.1218 (or higher). 
+
+
+
+
+Workaround: 
+
+None.
+
+
+
+
+Mitigation: 
+
+None.
+
+
+
+
+REFERENCES: 
+
+Complete CVSS 2 Guide [http://www.first.org/cvss/v2/guide] 
+
+On-line Calculator V2 [http://nvd.nist.gov/cvss.cfm?calculator&adv&version=2] 
+X-Force Vulnerability Database [http://xforce.iss.net/]
+CVE-2013-571 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-571]
+CVE-2013-572 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-572]
+
+
+
+
+CHANGE HISTORY: 
+
+24-April-2013: Original version published 
+
+27-June-2013: CVE-Links in section "References:" corrected
+
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Flash. 
+
+
+Note: According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+20-August-2015: CVSS Guide link corrected

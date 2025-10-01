@@ -1,0 +1,78 @@
+Title: IBM S1000 [DataDirect][Oracle Wire Protocol driver] ServerName cannot be used with HostName - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have installed Clementine 12 on a Solaris 10 server with an Oracle 9.2.0.8 database on a different server (myserver1, myserver2, myserver3).
+I am getting the following error messages when selecting my datasource and attempting to connect the Clementine Server to the Oracle databases.
+
+Failed to connect to data source me@MyData Oracle Wire Protocol
+S1000 [DataDirect][Oracle Wire Protocol driver] ServerName cannot be used with HostName, PortNumber, SID, or ServiceName.
+Failed to connect to datasource: MyData Oracle Wire Protocol; UID=me;PWD=***** 
+
+RESOLVING THE PROBLEM
+Below is a sample of the Oracle Data Source being used on this Solaris machine. In this particular case the message is stating the ServerName can not be used with HostName. 
+
+[SRADB Oracle Wire Protocol]
+Driver=/opt/app/clementine/12/client/lib/XEora23.so
+Description=SPSS 5.3 Oracle Wire Protocol
+AlternateServers=
+ApplicationUsingThreads=1
+ArraySize=60000
+AuthenticationMethod=1
+CachedCursorLimit=32
+CachedDescLimit=0
+CatalogIncludesSynonyms=1
+CatalogOptions=0
+ConnectionRetryCount=0
+ConnectionRetryDelay=3
+DefaultLongDataBuffLen=1024
+DescribeAtPrepare=0
+EnableDescribeParam=0
+EnableNcharSupport=0
+EnableScrollableCursors=1
+EnableStaticCursorsForLongData=0
+EnableTimestampWithTimeZone=0
+EncryptionMethod=0
+GSSClient=native
+HostName=servername.spss.edu
+HostNameInCertificate=
+KeyPassword=
+KeyStore=
+KeyStorePassword
+LoadBalancing=0
+LocalTimeZoneOffset
+LockTimeOut=-1
+LogonID=
+Password=
+PortNumber=1536
+ProcedureRetResults=0
+ReportCodePageConversionErrors=0
+ReportRecycleBin=0
+ServerName=<server_name in tnsnames.ora>
+ServerType=0
+ServiceName=
+SID=SRADB
+TimestampeEscapeMapping=0
+TNSNamesFile=<tnsnames.ora_filename>
+TrustStore=
+TrustStorePassword=
+UseCurrentSchema=1
+ValidateServerCertificate=1
+WireProtocolMode=1
+
+First, remove the shipped information within the < > symbols including the symbols and value that are not being used for example ServerName, TNSNamesFile and others as well. 
+
+If using a definied TNSNamesFile for the Oracle database, you want to specify the TNSNamesFile and the ServerName which is definied within the TNSNamesFile.
+
+If a TNSNameFile is not being used by Oracle database, then you must specify a HostName, PortNumber, SID, ServiceName. The HostName may need to be domain qualified depending on your network setup
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 78651

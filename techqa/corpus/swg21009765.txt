@@ -1,0 +1,23 @@
+Title: IBM Why am I getting data mapping errors from the AS/400 Capture journal job? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why am I getting data mapping errors from the AS/400 Capture journal job? 
+
+ANSWER
+If bad data is put into the source table (for example, bad packed decimal data), the Capture program reads the incorrect data and tries to insert that data into the Change Data (CD) table. The Capture program will not be able to insert the data into the CD table because the data is not valid for the given column's data type. Instead, the Capture program receives message number CPF5035 and cannot proceed until the data is corrected. 
+
+The Capture program does not verify the data that it reads from the journal, it only checks that the source and CD table have the same attributes. Since the source and CD columns have the same attributes, the Capture program attempts to write the bad data into the CD table and gets the data mapping error. 
+
+To correct this problem: 
+
+ 1. Fix the application that is inserting bad data into the source table. 
+ 2. Force the Apply program to perform a full refresh for the target table. 
+
+
+The full refresh resolves the problem for the Capture program because the Apply program starts the refresh by telling the Capture program that it can skip to the end of the journal and start reading new journal entries as they arrive. This causes the Capture program to skip past the problem journal entries.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management Data Management Tools Misc

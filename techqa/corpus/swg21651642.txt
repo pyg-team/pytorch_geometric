@@ -1,0 +1,61 @@
+Title: IBM ODR not able to route HTTP request to dynamic cluster in WAS v8.5 resulting in "HTTP 404 File Not Found" error - United States
+
+Text:
+HTTP 404 ODR TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ On Demand Router (ODR) not able to route HTTP request to dynamic cluster in WAS v8.5 resulting in HTTP 404 File Not Found error 
+
+SYMPTOM
+The Intelligent Management functions were added to WebSphere Application Server Version 8.5. A type of server included in the WebSphere Application Server Version 8.5 is the On Demand Router (ODR). The ODR is a specialized Java-based proxy server that classifies incoming HTTP requests, and then dispatches the requests across the application server or Web server environment. 
+
+You followed the instructions in the WebSphere Application Server Version 8.5 InfoCenter to create and configure ODRs to route requests to Intelligent Management nodes. By default, the ODR binds to ports 80 and 443 for listening on HTTP and HTTPS. 
+
+You created a DMGR profile, a profile for the ODR, and a profile for the dynamic cluster. The target.xml file contains the dynamic cluster member where the Default Application was installed. You are having trouble getting the ODR to route the HTTP request to the dynamic cluster you created.
+As a test, in a browser, you send an HTTP request:
+
+http://myhost01.ibm.com/snoop
+
+to try to reach the Default Application Snoop servlet you installed on the dynamic cluster but you receive an "HTTP 404 File Not Found" error in the browser. 
+
+However if you send the same HTTP request directly to the dynamic cluster via port 9082 (or the default port for your dynamic cluster):
+
+http://myhost01.ibm.com:9082/snoop
+
+the request is routed directly to the dynamic cluster, bypassing the ODR, and the Snoop servlet displays in your browser without the HTTP 404 error.
+
+
+CAUSE
+A possible cause of the HTTP 404 error could be that the host name in the HTTP request url sent to the ODR is not able to resolve to the external IP address bound to the network interface. It resolves to the internal IP address (ie loopback address) 127.0.0.1 instead. 
+
+
+DIAGNOSING THE PROBLEM
+In troubleshooting the issue you run the odrDebug.py script to debug the 404 error. You discover the following entry in the ODR server SystemOut.log 
+
+
+[8/25/13 10:29:38:676 EDT] 0000004b Peer I ODCF8517I: The unstructured overlay is operational, with security: 127.0.0.1 udp_port=11013 tcp_port=11014. 
+
+notice the 127.0.0.1 entry in the log output and not the external IP address
+
+
+RESOLVING THE PROBLEM
+A possible cause of the HTTP 404 error could be that the host name used in the HTTP request url sent to the ODR is not able to resolve to the external IP address bound to the network interface on the machine. Make sure the host name of the machine where the ODR server resides can resolve to the external IP address and not the internal loopback address (ie 127.0.0.1). 
+
+
+There is a restriction on the use of the 127.0.0.1 loopback IP address when using the ODR in WebSphere Application Server Version 8.5. By design, the On Demand Configuration (ODC) component recognizes the use of 127.0.0.1 and the local host loopback address as a failure condition and attempts to find the external IP address bound to an available network interface on the operating system from which to communicate out information. In the case where 127.0.0.1 is intentional, this causes members of the cell using this address to not communicate with the other members over ODC (though other communications, such as the HA manager do continue).
+
+The recommendation is that when using an environment where you are planning on implementing an ODR, to use host names bound to external IP addresses on existing network interfaces and not the internal loopback address 127.0.0.1. 
+
+Check the machines hosts file to make sure the fully qualified host name is listed and associated with the external IP address of the network interface and not just the internal loopback address 127.0.0.1. 
+
+On Linux/Unix the hosts file is typically located in the /etc/ directory
+On Windows the hosts file is typically located in the C:\Windows\System32\drivers\etc\ directory
+
+Add the external IP address to the hosts file and restart the machine so the host name is bound to the external IP address of the network interface and not the internal loopback address 127.0.0.1. An example entry of an external IP address in the hosts file from a Windows machine could be similar to the following:
+
+10.9.132.127 mytest.ibm.com mytest
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WAS V8.5

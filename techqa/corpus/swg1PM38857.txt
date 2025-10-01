@@ -1,0 +1,167 @@
+Title: IBM PM38857: ACCESSING A STATFUL SESSION BEAN MULTIPLE TIMES WITHIN THE SAME TRANSACTION CONTEXT MAY RESULT IN A HANG CONDITION. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.0.0.1: WebSphere Application Server V8.0 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24030916]
+8.0.0.2: WebSphere Application Server V8.0 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031368]
+8.0.0.3: WebSphere Application Server V8.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032315]
+8.0.0.4: WebSphere Application Server V8.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033190]
+8.0.0.5: WebSphere Application Server V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033754]
+8.0.0.6: WebSphere Application Server V8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034673]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When accessing the same stateful session bean instance multiple
+   times within the same transaction context, a hang condition may
+   occur.
+   
+   This condition may occur for stateful beans configured with
+   container managed transactions where remote interfaces are used.
+   
+   
+   This may also occur for stateful beans configured with bean
+   managed persistence and a global transaction is started
+   within the scope of one method call, but not completed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of IBM WebSphere Application Server   *
+   *                  V8.0 with applications that may             *
+   *                  concurrently  access Stateful Session       *
+   *                  Enterprise Java Beans.                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Accessing the same stateful session     *
+   *                      bean multiple times within the same     *
+   *                      transaction context, a hang condition   *
+   *                      may occur.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In prior releases, any attempt to concurrently access a
+   stateful bean instance would result in an exception (either
+   BeanNotReentrantException or ConcurrentAccessException). With
+   WebSphere Applicaiton Server V8, access is now blocked until
+   the current thread accessing the bean completes, however there
+   have been some scenarios where this may result in a thread
+   being blocked indefinitely.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Corrections have been made to the stateful session bean state
+   management and concurrency locking to correct the hang
+   conditions. Concurrently accessing stateful bean instances
+   will no longer result in hang conditions.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.0.0.1.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM38857
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-10
+   
+   
+ * CLOSED DATE
+   2011-07-26
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

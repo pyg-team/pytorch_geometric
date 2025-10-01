@@ -1,0 +1,29 @@
+Title: IBM RFC tracing in WMB/IIB adapters - United States
+
+Text:
+mqiinfo; RFC tracing; Adapters; RFC TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Instructions for capturing RFC tracing in IBM Integration Bus (IIB) or WebSphere Message Broker (WMB)?
+
+RFC traces are used to track the remote calls of an application to a SAP System. 
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Launch the Adapter Connection Wizard in WMB/IIB Toolkit 
+ 2. Go to the 'Service Generation and Deployment Configuration' window. 
+ 3. In the SAP RFC trace configuration section:
+    a. Set the RFCTraceOn property to 'true' 
+    b. Set the RFC Trace Level property to '8'. This outputs verbose debug messages, full execution path, info messages, errors and warnings.
+    c. Set the Folder for RFC trace files property to the directory location where the RFC Traces will be created.
+
+RELATED INFORMATION
+#Troubleshooting data for WebSphere Adapter for SAP [http://www.ibm.com/support/docview.wss?uid=swg21438193#wmb]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Message Broker with Rules and Formatter Extension for Multiplatforms Linux, Windows All Editions Business Integration WebSphere Message Broker Documentation Linux, Windows 7.0, 8.0 
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

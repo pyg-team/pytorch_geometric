@@ -1,0 +1,79 @@
+Title: IBM HMC V8R8 NIST mode - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ With HMC V8 R8.1.0, HMC introduces support for the more secure cipher sets defined in NIST 800-131a. The more secure cipher sets are supported on the HMC user web and SSH interfaces as well as the HMC REST API interface used by PowerVC. In addition, the more secure ciphers are also used for communications to all supporting servers (HMC ports). 
+
+
+RESOLVING THE PROBLEM
+ 
+
+With HMC V8 R8.1.0, HMC introduces support for the more secure cipher sets defined in NIST 800-131a. The more secure cipher sets are supported on the HMC user web and SSH interfaces as well as the HMC REST API interface used by PowerVC. In addition, the more secure ciphers are also used for communications to all supporting servers (HMC ports). 
+
+The chhmc command has been enhanced to allow NIST SP 800-131A mode to be enabled for the HMC, and the lshmc command has been enhanced to display the current mode. 
+
+To list the current security mode run the following command: lshmc –r
+In the command output, look for the security attribute:
+- If it shows security=legacy, then you are in legacy mode.
+- If it shows security=nist_sp800_131a, then you are in NIST mode.
+
+To change the security mode, run the following command to change specifying the desired mode. Note that a reboot of the HMC is required to activate the new setting: chhmc -c security -s modify --mode nist_sp800_131a
+
+
+Restrictions
+Note: Check the release notes (readme) for release/PTF specific information.
+
+1. Local HMC GUI restrictions
+For Version 8 Release 8.3, the local GUI vterm task is not available in NIST mode. Use CLI instead.
+
+For Version 8 Release 8.2 and earlier, when NIST compliant ciphers are enabled the local HMC GUI console will not be available. The admin should ensure remote connectivity is available via ‘ssh’ and remote browser prior to enabling NIST mode.
+
+In strict mode, the local GUI will show the Web browser window with title "Problem loading page". The window will display the error "The connection was interrupted. The connection to 127.0.0.1:12443 was interrupted while the page was loading."
+
+local web page [/support/docview.wss?uid=nas8N1020147&aid=1] [/support/docview.wss?uid=nas8N1020147&aid=1]
+
+2. Firefox compatibility
+Version 8 Release 8.3 and later supports NIST mode with Mozilla Firefox Version 31 Extended Support Release (ESR); Firefox ESR version 24 is not supported.
+
+With Version 8 Release 8.2 and earlier, Firefox is not supported for remote access when NIST compliant ciphers are enabled. Supported browsers include Internet Explorer and Chrome. JRE 7 is required. See the HMC release notes for the latest list of supported browsers.
+
+
+3. RMC 
+Support for the NIST mode secure cipher sets on the RMC interface requires HMC V8R8.2.0 and later; both HMCs must be set to the same security mode. In addition, it requires RSCT 3.2 on all partitions; 3.2.0.3 or later is recommended. For further information on requirements and configuring NIST security mode for RMC see the following:
+Reliable Scalable Cluster Technology 3.2 IBM Knowledge Center > Configuring security compliance mode:
+https://www-01.ibm.com/support/knowledgecenter/SGVKBA_3.2.0/com.ibm.rsct320.admin/configure_sec_compl_mode.htm [https://www-01.ibm.com/support/knowledgecenter/SGVKBA_3.2.0/com.ibm.rsct320.admin/configure_sec_compl_mode.htm]
+Power8 IBM Knowledge Center > Resource Monitoring and Control connections: [http://www-01.ibm.com/support/knowledgecenter/8247-22L/p8ha1/p8ha1_rmcnist.htm?lang=en]
+http://www-01.ibm.com/support/knowledgecenter/8247-22L/p8ha1/p8ha1_rmcnist.htm?lang=en [http://www-01.ibm.com/support/knowledgecenter/8247-22L/p8ha1/p8ha1_rmcnist.htm?lang=en]
+
+4. Server firmware support of NIST mode.
+Only POWER8 and POWER7 servers with server firmware levels that support NIST mode are capable of enforcing NIST compliant connections. POWER6 servers do not support NIST mode. 
+
+Server firmware levels that support NIST mode include the following: 
+
+Release Firmware level SP - 770.30 770_062 or later SP - 773.10 773_051 or later Release - 780 780_040 or later Release - 810 810 and later The current server setting can be checked in ASM using System Configuration > Security Configuration. The setting can only be changed using the HMC. 
+
+In the initial implementation, (HMC V8R8.1 and V8R8.2 base code), non-NIST capable servers connect in a compatibility mode using weaker non-compliant ciphers. 
+
+Staring with V8R8.1.0.1 + MH01481 and V8R8.2.0.0 + MH01486 (POODLE fix), the HMC enforces NIST compliant ciphers on the HMC-Server FSP interface. Any server that does not support NIST mode will show no connection with error code of " 02FF-0003-008087E9" instead of SSL Version mismatch. 
+resource_type=sys,type_model_serial_num=7998-61X*0617ABA,sp=unavailable,sp_phys_loc=unavailable,ipaddr=9.5.65.18,alt_ipaddr=unavailable,state=No Connection,connection_error_code=Connecting 02FF-0003-008087E9 
+
+An enhanced is planned for a future fix level to return a more meaningful error code "SSL version mismatch": 
+igscfsm:/var/hsc/log # lssysconn -r all 
+resource_type=sys,type_model_serial_num=0-0*9.5.66.38,sp=unavailable,sp_phys_loc=unavailable,ipaddr=9.5.66.38,alt_ipaddr=deprecated,state=No Connection,connection_error_code=SSL version mismatch 0010-FFFF-008087E9 
+
+
+To resolve the no connection to downlevel servers, you should do the following: 
+
+1. Set the HMC security back to "legacy": 
+chhmc -c security -s modify --mode legacy 
+
+2. Upgrade the server firmware to a level that supports NIST (if applicable) . 
+
+3. After the upgrade is completed, the FSM can be set to NIST mode again. 
+
+5. Missing "update password" task 
+When NIST mode is enabled and the server is in state "Pending Authentication - Password Updates required", the HMC does not show the update password option. 
+
+Use ASMI or the HMC chsyspwd command to set the passwords. If ASM is used, remove and readd the server after setting passwords.

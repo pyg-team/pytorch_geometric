@@ -1,0 +1,12 @@
+Title: IBM How to Configure Sterling Connect:Direct Server Adapter with TLS1.1 as Security Protocol in SB2Bi 5.2.5.0_x? - United States
+
+Text:
+Sterling Connect:Direct Server Adapter; TLS1.1; Sterling Connect:Direct Node TECHNOTE (FAQ)
+
+QUESTION
+ How to Configure Sterling Connect:Direct Server Adapter with TLS1.1 as Security Protocol in SB2Bi 5.2.5.0_x? 
+
+ANSWER
+It is not possible to configure Sterling Connect:Direct Server Adapter with TLS1.1 option in SB2Bi 5.2.5.0_x. It offers SSL, TLS1.0 & TLS.12 as options.
+
+However, SB2Bi 5.2.6.0 offers TLS1.1 option in Sterling Connect:Direct Server Adapter as well as Sterling Connect:Direct Node. Precisely, Protocol options in 5.2.6.0 fixpack release are TLS1.0, TLS1.1 & TLS1.2. Note SSL no longer exists.

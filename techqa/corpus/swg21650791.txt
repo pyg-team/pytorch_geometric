@@ -1,0 +1,35 @@
+Title: IBM Non root upgrade of Global DE from DE 1.3 to DE 1.4 fails - United States
+
+Text:
+Upgrade; DE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A non-root user tries to install DE 1.4 on a machine which has DE 1.3 already installed as root , DE upgrade fails. 
+
+SYMPTOM
+This is a permanent limitation of DE 
+
+
+The root cause for the same is explained below:
+Non-root user does not have authority/permissions to stop the "IBM ADE Service" which is running as part DE 1.3 version. The only workaround for this is to login as root and upgrade to DE 1.4. Once upgrade is completed , switch to non-root user and continue with installation. The non-root user will now re-use the global instance of DE and will not install a local copy.
+
+
+
+RESOLVING THE PROBLEM
+Example scenario:
+DE 1.3.1.17 is installed as root.
+You are now attempting to install DE 1.4.1.3 as non-root.
+The non-root user fails to upgrade the Global DE (1.3.1.17) for reasons mentioned above.
+
+Workaround:
+
+Login as root and install DE 1.4.1.3
+(NOTE: You have to install exactly same version , which the non-root user is trying to install, DE 1.4.1.3 in this case.) 
+
+
+Switch to non-root user and continue with installation.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ DE

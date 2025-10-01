@@ -1,0 +1,53 @@
+Title: IBM Error after upgrading Installation Manager from v1.6.1 to v1.6.3.1: java.lang.NoClassDefFoundError: org.eclipse.swt.widgets.Display - United States
+
+Text:
+IIM; IBM IM; IM; launcher; launcher.exe TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ On AIX 6.1.7 after upgrading IBM Installation Manager (IM) from version 1.6.1 to 1.6.3 (or fix pack 1.6.3.1) and launching IM, the splash screen briefly appears and then IM errors out with:
+"java.lang.NoClassDefFoundError: org.eclipse.swt.widgets.Display" in the IM log file from /opt/IBM/InstallationManager/eclipse/configuration. 
+
+SYMPTOM
+IM log file shows: 
+
+
+!SESSION 2013-07-24 14:32:07.575 -----------------------------------------------
+eclipse.buildId=unknown
+java.fullversion=JRE 1.6.0 IBM J9 2.4 AIX ppc-32 jvmap3260sr9-20110203_74623 (JIT enabled, AOT enabled)
+J9VM - 20110203_074623
+JIT - r9_20101028_17488ifx3
+GC - 20101027_AA
+BootLoader constants: OS=aix, ARCH=ppc, WS=motif, NL=en_US
+Framework arguments: -toolId ibmim -accessRights admin
+Command-line arguments: -os aix -ws motif -arch ppc -toolId ibmim -accessRights admin
+
+!ENTRY org.eclipse.equinox.ds 4 0 2013-07-24 
+14:32:12.363
+!MESSAGE [SCR] Exception while activating instance org.eclipse.e4.ui.css.swt.internal.theme.ThemeEngineManager@27b027b0 of component org.eclipse.e4.ui.css.swt.theme
+
+!STACK 0
+java.lang.NoClassDefFoundError: org.eclipse.swt.widgets.Display
+at java.lang.Class.getDeclaredMethodsImpl(Native Method)
+at java.lang.Class.getDeclaredMethods(Class.java:680)
+at 
+org.eclipse.equinox.internal.ds.model.ServiceComponent.getMethod(ServiceComponent.java:126)
+at org.eclipse.equinox.internal.ds.model.ServiceComponent.activate(ServiceComponent.java:213)
+at
+...
+
+CAUSE
+This only occurs when using /opt/IBM/InstallationManager/eclipse/launcher
+
+
+
+ENVIRONMENT
+AIX v6.1.7. 
+
+All of the required RPM's were installed according to technote 1631478: Required gtk libraries for Installation Manager on AIX [http://www.ibm.com/support/docview.wss?uid=swg21631478].
+
+
+RESOLVING THE PROBLEM
+IBM Installation Manager should be used to launch IBM Installation Manager (IM). Using IM resolved the problem in this scenario. "launcher" is being kept mostly for backward compatibility and historical reasons. It is the very first launcher that was used for IM since v1.0. The use of launcher is no longer documented. IM should be started as instructed in the IM 1.6.3 Information Center item: Starting Installation Manager [http://pic.dhe.ibm.com/infocenter/install/v1r6/index.jsp?topic=%2Fcom.ibm.cic.agent.ui.doc%2Ftopics%2Fm_starting_im.html] 
+
+
+It has been a long time since introducing IBM Installation Manager as the new launcher. Deprecating "launcher" in some next release of IM is being considered as part of IBM Internal WI 63569. Contact IBM Support for IBM Installation Manager if there are further questions.

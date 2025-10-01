@@ -1,0 +1,48 @@
+Title: IBM What does the error message "Could not create field %1" mean? - United States
+
+Text:
+Could not create field %1; lotusscript error; invalid array TECHNOTE (FAQ)
+
+QUESTION
+While running LotusScript code, the following error message occurs: 
+
+ * 
+ * 
+
+
+What does this error mean? 
+ANSWER
+This error is displayed when you try to assign an invalid array to a field. Examples of invalid arrays would be an array containing different data types, or an array that would exceed the storage capacity of the field. 
+
+A simple example code that generates this error would be as follows:
+Sub Initialize
+Dim sess As New notesSession
+Dim db As NotesDatabase 
+Dim doc As NotesDocument
+Dim arr(1) As Variant
+
+Set db = sess.CurrentDatabase
+Set doc = db.CreateDocument
+
+arr(0) = ""
+arr(1) = Datevalue("1 Jan 2004")
+doc.NewField = arr
+End Sub
+
+Note that a different error is displayed if you use the ReplaceItemValue method of the NotesItem class, rather than the "dot" notation that treats the field as a property of the document. If you replace this line:
+
+
+ * 
+
+
+in the example above with: 
+ * 
+
+
+you see the error message: 
+ * 
+
+
+In the case of an array that would exceed the capacity of the field, the error message when using ReplaceItemValue is 
+ * 
+ *

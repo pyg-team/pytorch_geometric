@@ -1,0 +1,42 @@
+Title: IBM How to get File Manager CO function to span multiple lines? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I am trying to implement File Manager and am having trouble with CONTAINS. I try to use it like the book describes and it doesn't work. The problem seems to be with multiple 'needles'. If I use just one, it works fine. It appears that the example is trying to say that multiple 'needles' separated by a comma is an 'or' function. Is that right? I have found that if the CONTAINS spans multiple lines it fails and if it is all in one line it works. How should the following be coded to work, and where is it documented:
+
+If CO(FLD(7,8),''USER1'',
+''USER2'',
+''USER3'')
+Then exit ''drop'' 
+
+CAUSE
+Missing REXX continuation character.
+
+ANSWER
+When spanning multiple lines, the REXX processing requires a comma as a continuation character (in addition to the comma needed as part of File Manager syntax). So, in your example, you would need 2 commas between each of the strings to be compared. For example, with this COntains [http://publibfp.boulder.ibm.com/cgi-bin/bookmgr/BOOKS/fmnu1l02/2.3.5.9?DT=20111012002410]: 
+
+ * 
+ * If CO(FLD(7,8),''USER1'',,
+ * 
+ *  ''USER2'',,
+ * 
+ *  ''USER3'')
+
+
+....the first comma is part of what you would use for File Manager, whether it is on one or more than one line. As the coding you are doing is in the REXX language, the second comma in the example is required as a line continuation character per REXX syntax, not File Manager syntax. Therefore, besides the File Manager required comma, the second comma is required REXX syntax to continue onto the next line. 
+
+You can find this documented in the TSO/E REXX Reference [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/IKJ4A3A0/CCONTENTS?SHELF=ikj4bkc0&DN=SA22-7790-10&DT=20110621111559] located on the TSO/E bookshelf at: 
+
+http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/Shelves?filter=tso&SUBMIT=Find [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/Shelves?filter=tso&SUBMIT=Find] 
+
+If you will be using REXX coding as part of your use of File Manager, it would be a good idea to have a REXX Reference handy to help with the REXX syntax. RELATED INFORMATION
+#File Manager Library [http://www.ibm.com/software/awdtools/filemanager/library/]
+z/OS V1R13.0 TSO/E Bookshelf [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/Shelves/ikj4bkc0]
+
+
+
+
+HISTORICAL NUMBER
+ 17733-082-000

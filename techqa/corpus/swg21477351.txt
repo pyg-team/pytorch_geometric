@@ -1,0 +1,19 @@
+Title: IBM Is there a limit on the number of cases and variables in SPSS for Windows? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Is there a limit on the number of cases and variables in SPSS for Windows? 
+
+RESOLVING THE PROBLEM
+In SPSS 11.0 for Windows (and later), there is no case or variable limit on data sets. The only limits will come from your computer's ability to process large data files
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 24930

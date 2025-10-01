@@ -1,0 +1,236 @@
+Title: IBM PM45015: BLOCK CREATION OF VIEW, MQT, AND SQL UDF WITH PERIOD SPECIFICATION FOR TEMPORAL TABLE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Block creation of view, MQT, and SQL udf with period
+   specifications for temporal table.
+   
+   This is to enforce new restrictions on the use of period
+   specifications on creating view, MQT, and SQL UDF.
+   
+   We're doing so to prevent a possible incorrout with the
+   future release.                           (DM1560)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All DB2 users who would like to use period   *
+   *                 specification or period clause during        *
+   *                 creation of view, SQL user-defined function, *
+   *                 or materialized query table.                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Add restrictions on creation of view,   *
+   *                      SQL user-defined function, and          *
+   *                      materialized query table when period    *
+   *                      specification or period clause is       *
+   *                      specified.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   DB2 has been changed to restrict creation of view, SQL user-
+   defined function, and materialized query table when period
+   specification or period clause is specified.
+   
+   PM45015 introduces the following changes to externals:
+   
+   Suppose POLICY_INFO is a temporal table.
+   
+   CREATE VIEW VW1 AS (SELECT * FROM POLICY_INFO
+                       FOR BUSINESS_TIME AS OF '2008-06-15'
+                       WHERE POLICY_ID = 'A123') ;
+   
+   CREATE FUNCTION UDF (C1 INTEGER)
+          RETURNS INTEGER
+          RETURN (SELECT COVERAGE FROM POLICY_INFO
+                  FOR SYSTEM_TIME AS OF TIMESTAMP('2008-06-15'));
+   
+   CREATE TABLE MQT (mqt_id, mqt_coverage, mqt_bvs, mqt_bve) AS
+      (SELECT * FROM POLICY_INFO
+       FOR BUSINESS_TIME AS OF '2008-06-15')
+       DATA INITIALLY DEFERRED
+       REFRESH DEFERRED
+       DISABLE QUERY OPTIMIZATION ;
+   
+   
+   After applying this APAR, the above creations will fail with
+   SQL error code(-4736 or -20058).
+   
+   
+   ADDITIONAL KEYWORDS: SQLCODE4736  SQLCODE20058
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  ++HOLD COMMENT FOR RELEASE A10, TYPE DOC:
+   ***Action for PM45015:
+   
+   All the views, SQL user-defined functions, and materialized
+   query tables that were created with period specification or
+   period clause need to be dropped.
+   
+   How to find the above objects:
+   
+   1. For views and materialized query tables that were created
+      with period specification:
+   
+      SELECT * FROM SYSIBM.SYSVIEWDEP
+      WHERE BTYPE IN ('W', 'Z') AND DTYPE IN ('V', 'M');
+   
+   2. For SQL table functions that were created with period
+      specification:
+   
+      SELECT * FROM SYSIBM.SYSDEPENDENCIES WHERE BTYPE = 'Z';
+   
+   3. For SQL scalar functions that were created with period
+      specification or period clause:
+   
+      SELECT * FROM SYSIBM.SYSPACKDEP
+      WHERE BTYPE IN ('W', 'Z') AND DTYPE = 'N';
+   
+   
+   PM45015 introduces the following changes to externals:
+   
+   Suppose POLICY_INFO is a temporal table.
+   
+   CREATE VIEW VW1 AS (SELECT * FROM POLICY_INFO
+                       FOR BUSINESS_TIME AS OF '2008-06-15'
+                       WHERE POLICY_ID = 'A123') ;
+   
+   
+   CREATE FUNCTION UDF (C1 INTEGER)
+          RETURNS INTEGER
+          RETURN (SELECT COVERAGE FROM POLICY_INFO
+                  FOR SYSTEM_TIME AS OF TIMESTAMP('2008-06-15')) ;
+   
+   
+   CREATE TABLE MQT (mqt_id, mqt_coverage, mqt_bvs, mqt_bve) AS
+     (SELECT * FROM POLICY_INFO
+      FOR BUSINESS_TIME AS OF '2008-06-15')
+      DATA INITIALLY DEFERRED
+      REFRESH DEFERRED
+      DISABLE QUERY OPTIMIZATION ;
+   
+   
+   After applying this APAR, the above creations will fail with
+   SQL error code(-4736 or -20058).
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM45015
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / New Function
+   
+   
+ * SUBMITTED DATE
+   2011-08-03
+   
+   
+ * CLOSED DATE
+   2011-10-12
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK72814
+   
+   
+
+MODULES/MACROS
+ *  DSNTIAM  DSNXOP0  DSNXOTL  DSNXOW2D
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY UK72814 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK72814]
+   UP11/10/27 P F110
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

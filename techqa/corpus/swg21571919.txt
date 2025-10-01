@@ -1,0 +1,39 @@
+Title: IBM Configuring the cache size for sequences - United States
+
+Text:
+Netezza; NPS; IBM Netezza TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure the cache size for sequences? 
+
+ANSWER
+When a sequence is defined, it pre-allocates sequence numbers to each SPU.
+
+1. To control the number of pre-allocations, set the enable_sequence_cachesize parameter inoneof the following ways:
+
+---at the nzsql command line:
+Set enable_sequence_cachesize=1;
+
+---orwithin the/nz/data/postgresql.conffile:
+enable_sequence_cachesize=1
+
+If you chose to enable the parameter by modifying thepostgresql.conffile and you want to make the change effective immediately, you need to restart the database as follows:
+
+nzstop
+
+nzstart
+
+If a database restart is unacceptable, refer to "How do I enable changes to postgresqlconf without causing a database outage?"
+
+2. After theenable_sequence_cachesizeparameter is enabled, use the following syntax to control the cache size when defining a sequence:
+
+Create sequence seq1 as integer cache 1000; 
+
+RELATED INFORMATION
+ How do I enable changes to postgresql.conf without caus [http://www.ibm.com/support/docview.wss?uid=swg21567339]
+
+
+
+
+HISTORICAL NUMBER
+ NZ098450

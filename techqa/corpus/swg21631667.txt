@@ -1,0 +1,72 @@
+Title: IBM How should you configure the VMM context pool when VMM accesses LDAP through a proxy? - United States
+
+Text:
+LDAP sprayer; proxy; connection; hang; timeout; poolTimeOut; contextPool; WTRN0006W; WTRN0124I TECHNOTE (FAQ)
+
+QUESTION
+How should you configure the VMM context pool when VMM accesses LDAP through a proxy?
+
+CAUSE
+WebSphere Portal accesses LDAP through an intermediary, the WebSphere Application Server (WSAS) sub-component Virtual Member Manager (VMM). To improve performance and limit the total number of open connections at a given time, VMM maintains a pool of TCP connections to the LDAP server called the context pool. 
+
+Certain networking configurations require VMM to access the LDAP server through a proxy, such as a firewall or LDAP load balancer. If such a proxy breaks TCP connections without notifying the endpoints, the connections can remain active on the endpoints for some time. Eventually, the operating system may recognize these as stale connections and clean them up. 
+
+However, most operating systems with default settings take on the order of hours to recognize and clean up stale connections. In the interim, these connections remain in the context pool of VMM. If VMM makes requests to LDAP over such broken connections, then hangs, transaction timeouts, or VMM timeouts will occur because the LDAP server can never respond. 
+
+Such transaction timeouts will be logged with: 
+
+TimeoutManage I WTRN0006W: Transaction X has timed out after Y seconds.
+...
+TimeoutManage I WTRN0124I: When the timeout occurred the thread with which the transaction is, or was most recently, associated was Thread[WebContainer : 6,5,main]. The stack trace of this thread when the timeout occurred was:
+java.lang.Object.wait(Native Method)
+java.lang.Object.wait(Object.java:196)
+com.sun.jndi.ldap.Connection.readReply(Connection.java:464)
+
+
+ANSWER
+This is fundamentally a networking issue, primarily on the proxy. You should ensure that when the proxy breaks a TCP connection, that it notify the endpoints so that they can close the connections as well (TCP FIN or TCP RST). You could also reconfigure the operating system of the endpoints to identify and clean up stale connections more quickly. 
+
+If you cannot immediately address this from networking perspective, you can adjust the context pool configuration for VMM to accommodate the limitations in your network. Determine which of these two options best suits your environment: 
+
+ 
+
+Option 1 
+
+Disable VMM context pooling altogether. This forces VMM to create a new TCP connection for each LDAP request. This is the simpler option and does not require you to determine conditions under which the proxy breaks connections. 
+
+Be aware that this option removes any limits on the number of connections VMM attempts to make to the LDAP. This can overwhelm the LDAP or exhaust open file limits. Be aware that some computational overhead is associated with creating TCP connections, so this can result in performance degradation as well. This option is more suitable to development and functional test environments, and less suitable for production or load test environments. 
+
+To disable VMM context pooling: 
+
+ 1. Log in to the WAS Integrated Solutions Console (ISC). 
+ 2. Go to Global security > Federated repositories > (repository definition for an LDAP accessed through a proxy) > Performance 
+ 3. Under "Context pool", un-check "Enable context pool". 
+ 4. Save the configuration change. Synchronize, if clustered. Restart WebSphere Portal to pick up the change.
+
+
+These steps update <profile>/config/cells/<cell name>/wim/config/wimconfig.xml to contain: <config:contextPool enabled="false" ... 
+
+ 
+
+Option 2 
+
+Determine the conditions that result in the proxy breaking these connections and adjust the VMM context pool configuration accordingly. For example, a proxy might break every connection after 5 minutes, in which case VMM should never use connections nearing 5 minutes old. Or a proxy might break every inactive connection after 3 minutes, in which VMM should never use connections older than 3 minutes. 
+
+When determining the appropriate configuration, allow time for network delays and the processing of the LDAP server. For example, if the proxy breaks every connection after 4 minutes, you would not want VMM to make a request on a connection that is 3 minutes and 59 seconds old. 
+
+To configure VMM context pooling: 
+
+ 1. Log in to the WAS ISC. 
+ 2. Go to Global security > Federated repositories > (repository definition for an LDAP accessed through a proxy) > Performance 
+ 3. Under "Context pool", check "Enable context pool", check "Context pool times out", and set the Timeout in seconds. 
+ 4. Save the configuration change. Synchronize, if clustered. Restart WebSphere Portal to pick up the change.
+
+
+These steps update <profile>/config/cells/<cell name>/wim/config/wimconfig.xml (where 180 is an example value for step 3): <config:contextPool enabled="true" ... poolTimeOut="180" ... 
+
+RELATED INFORMATION
+ VMM and open file limits [http://www.ibm.com/support/docview.wss?uid=swg21452549]
+Limiting LDAP connections [http://www.ibm.com/support/docview.wss?uid=swg21392092]
+VMM poolTimeOut [http://www.ibm.com/support/docview.wss?rs=180&ca=portall2&uid=swg21295288]
+WMM - for older versions of WebSphere Portal [http://www-01.ibm.com/support/docview.wss?uid=swg21293777]
+WebSphere Portal Security [www.lotus.com/ldd/portalwiki.nsf/dx/Web_security_concepts_and_considerations_for_IBM_WebSphere_Portal_administrators]

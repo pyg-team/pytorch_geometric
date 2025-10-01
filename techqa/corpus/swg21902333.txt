@@ -1,0 +1,102 @@
+Title: IBM Replacing the SiteProtector default certificate using the Certificate Management Tools - United States
+
+Text:
+rsa; cert; tool TECHNOTE (FAQ)
+
+QUESTION
+ How can you replace the SiteProtector default certificate? 
+
+ANSWER
+A user may want to replace the default self-signed certificate of SiteProtector with one issued from the Certificate Authority (CA). The CertificateReplacementTool.exe provides a way to generate Certificate Signing Requests (CSR) and to import Certificate Authority (CA) Signed Certificates that are received through a CSR Response to replace the default certificate in the keystore of relevant SiteProtector components.
+
+
+Note: Changing the certificates on SiteProtector Appliance is unsupported. as per Technote: SiteProtector Certificate Manager Tools 3.1.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg21689000]
+
+The SiteProtector Certificate Manager Tools can be downloaded from the IBM Download Center [https://ibmss.flexnetoperations.com/control/ibms/login?nextURL=%2Fcontrol%2Fibms%2Fpurchases] under My software > Download > IBM Security SiteProtector System > SiteProtector 3.1.1 > Accessories > under SiteProtector 3.1.1.1 Certificate Management Tools click link CertificateManagerTools_3_1_1_1.zip to download.
+
+Note: The current tools version, 3.1.1.1, supports both Strict mode configuration and Compatible mode. The older version, 3.1.1, still available for download, will work only with the SiteProtector Strict mode configuration. 
+
+Important: The following certificate file formats are currently supported:
+
+
+ * DER encoded binary X.509 
+ * PEM encoded Base64 X.509 
+ * PKCS#7 encoded Base64 X.509
+
+
+The key length of all certificates must be 2048 bits, the signing algorithm that is used for Strict mode certificates must be SHA256, and Compatible mode certificates must be SHA1. 
+
+Instructions: 
+
+ 1.  The Certificate Authority (CA) should be listed in the SiteProtector keystore (\Program Files\ISS\SiteProtector\Keystore). If not done at this stage, it is suggested to add the CA root certificate using the CertificateAddRemoveTool.exe now. However, this can be done later provided it is done before the system is restarted; otherwise, the SiteProtector services may not function properly when the system is started.
+     
+     
+ 2.  Run the CertificateReplacementTool.exe executable and enter the SiteProtector IP or FQDN on the first screen.
+     
+     
+ 3.  Log in as a user with the “manage SSL certificates” policy as defined in Global Permissions (e.g. administrator account), click Next.
+     
+     
+ 4.  Review the SiteProtector keystore state of installed certificates, click Next.
+     
+     
+ 5.  Select the Certificate Signing Request option, click Next.
+     
+     
+ 6.  Specify the path to the location where you want the tool to save the Certificate Signing Request (CSR) file.
+     
+     
+ 7.  Enter the X.509 Distinguished Name (DN) of the request.
+     
+     Note: The tool is actually creating a command for the gsk8capicmd command-line tool. This tool expects the DN to have a specific format.
+     
+     The X.500 distinguished name that uniquely identifies the certificate. The input must be a quoted string of the following format (only CN is required): 
+     
+     CN=common name O=organization OU=organization unit L=location ST=state, province C=country DC=domain component EMAIL=email address
+     
+     Example: “CN=weblinux.Raleigh.ibm.com,O=ibm,OU=IBM HTTP Server,L=RTP,ST=NC,C=US”
+     
+     Our tool is expecting the DN to start with the 'CN=hostname' which is all that is required.
+     
+     
+ 8.  Specify the path where the tool will make a backup copy of the keystore files before creating the sign request. Click Next and wait for the operation to complete.
+     
+     
+ 9.  Review the new state of the SiteProtector keystore, click Next.
+     
+     
+ 10. Send the sign request file to the Certificate Authority (CA) for a new certificate to be issued. This new certificate will be the new default certificate for the SiteProtector instance.
+     
+     
+ 11. Run the CertificateAddRemoveTool.exe executable.
+     
+     
+ 12. Log in as a user with the “manage SSL certificates” policy as defined in Global Permissions (e.g. administrator account), click Next.
+     
+     
+ 13. Review the SiteProtector keystore state of installed certificates, click Next.
+     
+     
+ 14. Select the Replace default certificate option, click Next.
+     
+     
+ 15. Specify the path to the new certificate issued by the Certificate Authority in response to the sign request; this certificate must correspond to the most recent pending request by the tool or the tool will reject the certificate and stop. Click Next once done.
+     
+     
+ 16. Specify the path where the tool will make a backup copy of the keystore files before the default certificate is replaced. Click Next and wait for the operation to complete.
+     
+     
+ 17. Review the new state of the SiteProtector keystore and check that the certificate is the new default certificate siteprotectorkeys-rsa , and that the previous default certificate has been relabeled with a time-stamp, click Next.
+     
+     
+ 18. Restart the system for the changes to persist in the SiteProtector instance. However, this can be done later once all certificate configuration has been completed.
+
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21902333&aid=1] [https://ibm.biz/BdHdjw] [/support/docview.wss?uid=swg21902333&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21902333&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21902333&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21902333&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21902333&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21902333&aid=7] [http://ibm.biz/ContactSecSupport] 
+RELATED INFORMATION
+ SiteProtector Certificate Management Tools 3.1.1.1 [http://www.ibm.com/support/docview.wss?uid=swg21689000]

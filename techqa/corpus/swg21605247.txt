@@ -1,0 +1,67 @@
+Title: IBM Changing Portal administration users fails with ADMF0004E: Invalid parameter name CN for command searchUsers - United States
+
+Text:
+ADMF0004E; Invalid; parameter; searchUsers; wp-change-portal-admin-user; wp-change-was-admin-user TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM WebSphere Portal is successfully installed and configured. The ConfigeEngine tasks wp-change-was-admin-user or wp-change-portal-admin-user are run to change one of the administration users on the system. The configuration task fails with an error message of ADMF0004E: Invalid parameter name CN for command searchUsers. This Technote will document how to resolve this error message and allow the configuration tasks to run successfully. 
+
+SYMPTOM
+Reviewing ConfigTrace.log, the following messages are observed: 
+
+[wplc-validate-user-exists] cn="CN=NewAdminUser,dc=example,dc=com"
+[wplc-validate-user-exists] com.ibm.websphere.management.cmdframework.InvalidParameterNameException: ADMF0004E: Invalid parameter name CN for command searchUsers.
+
+
+CAUSE
+WebSphere Portal invokes the WebSphere Application Server (WAS) management framework when running either the wp-change-was-admin-user or wp-change-portal-admin-user configuration tasks. The WAS management framework is unable to process users or groups that begin with an uppercase "CN" in their full distinguished name.
+
+
+ENVIRONMENT
+Any Portal 6.1, 7.0, or 8.0 environment.
+
+
+
+DIAGNOSING THE PROBLEM
+Collect and review the files as noted in the following document: 
+
+Configuring Security for WebSphere Portal [http://www.ibm.com/support/docview.wss?uid=swg21447938]
+
+
+RESOLVING THE PROBLEM
+If specifying the newAdminId via the wkplc.properties file 
+
+1) Backup the wkplc.properties file 
+
+2) Open the wkplc.properties file in a text editor 
+
+3) Update the property 
+
+ 
+
+from: 
+
+newAdminId=CN=NewAdminUser,dc=example,dc=com 
+
+ 
+
+to:
+newAdminId=cn=NewAdminUser,dc=example,dc=com
+
+4) Save changes.
+5) Rerun either the wp-change-was-admin-user or wp-change-portal-admin-user configuration task which was previously failing.
+
+
+
+If specifying the newAdminId via the command line, perform a similar change to the command line interface, updating from uppercase "CN" to lowercase "cn" for the -DnewAdminId paramater.
+
+RELATED INFORMATION
+ Configuring Security for WebSphere Portal [http://www-01.ibm.com/support/docview.wss?uid=swg21447938]
+Replacing the WebSphere Portal administrator user ID [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Replacing_the_WebSphere_Portal_administrator_user_ID_wp7]
+Replacing the WAS administrator user ID [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Replacing_the_WebSphere_Application_Server_administrator_user_ID_wp7]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products AIX, HP-UX, IBM i, Linux, Solaris, Windows, z/OS 7.0, 6.1

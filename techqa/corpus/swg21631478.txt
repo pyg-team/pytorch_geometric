@@ -1,0 +1,183 @@
+Title: IBM Required gtk libraries for IBM Installation Manager on AIX - United States
+
+Text:
+gtk; motif TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Installation Manager requires gtk libraries to support the graphical user interface (GUI). 
+
+SYMPTOM
+Installation Manager reports errors when the gtk libraries are not installed. 
+
+Examples of the reported errors:
+
+
+ * SWT library could not be loaded:
+
+
+
+# ./install
+00:00.92 ERROR [main] org.eclipse.equinox.log.internal.ExtendedLogReaderServiceFactory safeLogged
+Could not load SWT library. Reasons:
+/root/Desktop/InstallationManager/configuration/org.eclipse.osgi/bundles/633/1/.cp/libswt-pi-gtk-4234.a (A file or directory in the path name does not exist.)
+swt-pi-gtk (Not found in java.library.path)
+/root/.swt/lib/aix/ppc/libswt-pi-gtk-4234.a (A file or directory in the path name does not exist.)
+/root/.swt/lib/aix/ppc/libswt-pi-gtk.a (A file or directory in the path name does not exist.)
+java.lang.UnsatisfiedLinkError: Could not load SWT library. Reasons:
+/root/Desktop/InstallationManager/configuration/org.eclipse.osgi/bundles/633/1/.cp/libswt-pi-gtk-4234.a (A file or directory in the path name does not exist.)
+swt-pi-gtk (Not found in java.library.path)
+/root/.swt/lib/aix/ppc/libswt-pi-gtk-4234.a (A file or directory in the path name does not exist.)
+/root/.swt/lib/aix/ppc/libswt-pi-gtk.a (A file or directory in the path name does not exist.)
+java.lang.UnsatisfiedLinkError: Could not load SWT library. Reasons:
+/root/Desktop/InstallationManager/configuration/org.eclipse.osgi/bundles/633/1/.cp/libswt-pi-gtk-4234.a (A file or directory in the path name does not exist.)
+swt-pi-gtk (Not found in java.library.path)
+/root/.swt/lib/aix/ppc/libswt-pi-gtk-4234.a (A file or directory in the path name does not exist.)
+/root/.swt/lib/aix/ppc/libswt-pi-gtk.a (A file or directory in the path name does not exist.)
+at org.eclipse.swt.internal.Library.loadLibrary(Library.java:331)
+at org.eclipse.swt.internal.Library.loadLibrary(Library.java:240)
+at org.eclipse.swt.internal.gtk.OS.<clinit>(OS.java:22)
+at java.lang.J9VMInternals.initializeImpl(Native Method)
+...
+The displayed failed to initialize. See the log /root/Desktop/InstallationManager/configuration/1361168761043.log for details. 
+ * Segmentation error occurs when the gtk libraries are installed but are not at the required versions
+
+
+
+Unhandled exception
+Type=Segmentation error vmState=0x00040000
+J9Generic_Signal_Number=00000004 Signal_Number=0000000b Error_Value=00000000 Signal_Code=00000033
+Handler1=F0739208 Handler2=F05F5F1C
+R0=D3D9FDCC R1=3013EEF0 R2=F077B69C R3=F0779450
+R4=00000000 R5=00000000 R6=00000000 R7=00000000
+R8=1220000F R9=1220000F R10=F0687A0C R11=000034E0
+R12=03222C60 R13=30C7DD00 R14=31FAA028 R15=F05851EC
+R16=00000007 R17=00000000 R18=F073B388 R19=30C7DD50
+R20=32935C30 R21=31FAA040 R22=00000000 R23=30000BC8
+R24=10010E04 R25=F05F7130 R26=30148364 R27=0000007E
+R28=CFACCBB8 R29=F073AB7C R30=D3DC1410 R31=F0779430
+IAR=D3DB63A8 LR=D3D9FDE8 MSR=0000D032 CTR=D3DE0E70
+CR=22004084 FPSCR=82000000 XER=0000001B TID=00000000
+MQ=00000000
+FPR0 329d3fd000000110 (f: 272.000000, d: 6.943460e-65)
+FPR1 41e0000000000000 (f: 0.000000, d: 2.147484e+09)
+FPR2 c1e0000000000000 (f: 0.000000, d: -2.147484e+09)
+FPR3 4330000001e00000 (f: 31457280.000000, d: 4.503600e+15)
+FPR4 4330080000000000 (f: 0.000000, d: 4.512396e+15)
+FPR5 4133851800000000 (f: 0.000000, d: 1.279256e+06)
+FPR6 4133851800000000 (f: 0.000000, d: 1.279256e+06)
+FPR7 4330080000138518 (f: 1279256.000000, d: 4.512396e+15)
+FPR8 005f0031002e0034 (f: 3014708.000000, d: 6.897895e-307)
+FPR9 002e0038002e0076 (f: 3014774.000000, d: 8.344265e-308)
+FPR10 0032003000310033 (f: 3211315.000000, d: 1.001324e-307)
+FPR11 0030003200320035 (f: 3276853.000000, d: 8.900720e-308)
+FPR12 3fe8000000000000 (f: 0.000000, d: 7.500000e-01)
+FPR13 4028000000000000 (f: 0.000000, d: 1.200000e+01)
+FPR14 0000000000000000 (f: 0.000000, d: 0.000000e+00)
+FPR15 0000000000000000 (f: 0.000000, d: 0.000000e+00)
+FPR16 0000000000000000 (f: 0.000000, d: 0.000000e+00)
+FPR17 0000000000000000 (f: 0.000000, d: 0.000000e+00)
+FPR18 0000000000000000 (f: 0.000000, d: 0.000000e+00)
+FPR19 0000000000000000 (f: 0.000000, d: 0.000000e+00)
+FPR20 0000000000000000 (f: 0.000000, d: 0.000000e+00)
+FPR21 0000000000000000 (f: 0.000000, d: 0.000000e+00)
+FPR22 0000000000000000 (f: 0.000000, d: 0.000000e+00)
+FPR23 0000000000000000 (f: 0.000000, d: 0.000000e+00)
+FPR24 0000000000000000 (f: 0.000000, d: 0.000000e+00)
+FPR25 0000000000000000 (f: 0.000000, d: 0.000000e+00)
+FPR26 0000000000000000 (f: 0.000000, d: 0.000000e+00)
+FPR27 0000000000000000 (f: 0.000000, d: 0.000000e+00)
+FPR28 0000000000000000 (f: 0.000000, d: 0.000000e+00)
+FPR29 0000000000000000 (f: 0.000000, d: 0.000000e+00)
+FPR30 0000000000000000 (f: 0.000000, d: 0.000000e+00)
+FPR31 0000000000000000 (f: 0.000000, d: 0.000000e+00)
+Target=2_40_20110203_074623 (AIX 7.1)
+CPU=ppc (8 logical CPUs) (0xc0000000 RAM)
+----------- Stack Backtrace -----------
+(0xD3D9F81C)
+(0xD43D5E48)
+(0xD43D8698)
+(0xD43D1D38)
+(0xD43D1B24)
+(0xD3E4ABA0)
+(0xD43D3058)
+(0xD43D3200)
+(0xD0F0ED18)
+(0xD0F1536C)
+(0xD0F19438)
+(0xD2B1DF48)
+(0xD2AE7780)
+(0xD2AE7A30)
+(0xD1516BAC)
+(0xD2AE78E4)
+(0xD2AE7E24)
+(0xD2AEC6C4)
+(0x100013C0)
+(0xD04FCD88)
+---------------------------------------
+JVMDUMP006I Processing dump event "gpf", detail "" - please wait.
+JVMDUMP032I JVM requested System dump using '/opt/IBM/InstallationManager/eclipse/core.YYYY0318.095945.7798784.0001.dmp' in response to an event
+Note: "Enable full CORE dump" in smit is set to FALSE and as a result there will be limited threading information in core file.
+JVMDUMP010I System dump written to /opt/IBM/InstallationManager/eclipse/core.YYYY0318.095945.7798784.0001.dmp
+JVMDUMP032I JVM requested Java dump using '/opt/IBM/InstallationManager/eclipse/javacore.YYYY0318.095945.7798784.0002.txt' in response to an event
+JVMDUMP010I Java dump written to /opt/IBM/InstallationManager/eclipse/javacore.YYYY0318.095945.7798784.0002.txt
+JVMDUMP032I JVM requested Snap dump using '/opt/IBM/InstallationManager/eclipse/Snap.YYYY0318.095945.7798784.0003.trc' in response to an event
+JVMDUMP010I Snap dump written to /opt/IBM/InstallationManager/eclipse/Snap.YYYY0318.095945.7798784.0003.trc
+JVMDUMP013I Processed dump event "gpf", detail "".
+Segmentation fault (core dumped)
+
+CAUSE
+Installation Manager is an Eclipse Rich Client Program application based on the open source project found at http://www.eclipse.org [http://www.eclipse.org]. Eclipse changed the window system requirement from motif to gtk on UNIX operating systems. For AIX, this Eclipse window system change requires the gtk libraries to be installed to support the GUI. For Installation Manager, the GUI is the wizard mode of operation. 
+
+You can use Installation Manager without the gtk libraries. For information on console mode, command-line mode, or silent mode; see the Installation Manager Information Center [http://pic.dhe.ibm.com/infocenter/install/v1r6/topic/com.ibm.cic.agent.ui.doc/topics/c_modes.html]. Silent mode uses a response file and command-line mode is supported by all packages. For console mode, check your product documentation to verify that the product supports console mode.
+
+
+RESOLVING THE PROBLEM
+To use the GUI, the gtk+ RPM and dependencies must be available on AIX. 
+
+
+Install this set of RPMs on AIX:
+
+
+atk-1.12.3-2.aix5.2.ppc.rpm
+cairo-1.8.8-1.aix5.2.ppc.rpm
+expat-2.0.1-1.aix5.2.ppc.rpm
+fontconfig-2.4.2-1.aix5.2.ppc.rpm
+freetype2-2.3.9-1.aix5.2.ppc.rpm
+gettext-0.10.40-6.aix5.1.ppc.rpm
+glib2-2.12.4-2.aix5.2.ppc.rpm
+gtk2-2.10.6-4.aix5.2.ppc.rpm
+libjpeg-6b-6.aix5.1.ppc.rpm
+libpng-1.2.32-2.aix5.2.ppc.rpm
+libtiff-3.8.2-1.aix5.2.ppc.rpm
+pango-1.14.5-4.aix5.2.ppc.rpm
+pixman-0.12.0-3.aix5.2.ppc.rpm
+xcursor-1.1.7-3.aix5.2.ppc.rpm
+xft-2.1.6-5.aix5.1.ppc.rpm
+xrender-0.9.1-3.aix5.2.ppc.rpm
+zlib-1.2.3-3.aix5.1.ppc.rpm
+
+The installed RPMs must be of the minimum versions listed above.
+
+To install the RPM versions specified above take the following steps: 
+
+
+ 1. Download the gtk2_bundle_v2.tar package [ftp://ftp.software.ibm.com/aix/freeSoftware/aixtoolbox/ezinstall/ppc/] (version 'v2') containing all the RPMs and the install script to a new directory. 
+    
+    
+ 2. Decompress the tar file. 
+    You can use the command tar -xvf gtk2_bundle_<version>.tar to decompress the file.
+    
+    
+ 3. Open the decompressed directory gtk2_bundle_<version> and run the install.sh script.
+    
+    The script will check if the required RPMs are installed at the compatible level. If they are not, the script will prompt to install the compatible versions.
+    
+    
+ 4. Verify the environment variable LIBPATH contains a path to the installed libraries. 
+    For example LIBPATH=/opt/freeware/lib/
+
+
+Note that if you download and install RPMs individually, we have found that the following libraries are incompatible:  * glib2-2.14.6-2 and gtk2-2.10.6-5 
+
+RELATED INFORMATION
+#Unreadable characters in the GUI when using X11 [http://www.ibm.com/support/docview.wss?uid=swg21661861]

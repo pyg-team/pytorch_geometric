@@ -1,0 +1,30 @@
+Title: IBM Disable RC4 for DataPower WebSphere Java Message Service (JMS) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ With the recent attention to RC4 “Bar Mitzvah” Attack for SSL/TLS, IBM recommends to disable RC4 in DataPower WebSphere Java Message Service (JMS) 
+
+CONTENT
+Disable RC4 ciphers in DataPower configuration referring to the steps below.
+First make sure to Quiesce all domains and services to stop traffic to the appliance. System quiesce and unquiesce commands can be invoked by navigating to Administration --> Main --> System Control. 
+
+Next, for WebSphere Java Message Service (JMS) configuration, in DataPower Control Panel, navigate to "Configure WebSphere JMS" page. Under the "SSL" tab, navigate to the referenced Crypto Profile, and select SSL Option "Disable SSL version 3". Then navigate back to the "SSL" tab of "Configure WebSphere JMS" page , configure the parameter "WebSphere JMS SSL Cipher Specification" to use one of the cipher specifications listed below. The selected specification replaces the cipher suite that is assigned as part of the SSL Proxy Profile configuration.
+
+For DataPower versions 6.0.1 and later:
+
+TLS_RSA_WITH_3DES_EDE_CBC_SHA
+TLS_RSA_WITH_AES_128_CBC_SHA
+TLS_RSA_WITH_AES_256_CBC_SHA
+TLS_RSA_WITH_AES_128_CBC_SHA256
+TLS_RSA_WITH_AES_256_CBC_SHA256
+
+For DataPower versions prior to 6.0.1:
+
+TLS_RSA_WITH_3DES_EDE_CBC_SHA
+
+You should verify applying this configuration change does not cause any compatibility issues. Not disabling the RC4 stream cipher will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the RC4 stream cipher and take appropriate mitigation and remediation actions.
+
+RELATED INFORMATION
+#Vulnerability in RC4 impacts DataPower [http://www-01.ibm.com/support/docview.wss?uid=swg21702165]

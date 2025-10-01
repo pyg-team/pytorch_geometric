@@ -1,0 +1,56 @@
+Title: IBM Deployment Engine fails due to connection authentication failure - United States
+
+Text:
+TIPL2INST; install fails; connection; authentication failure TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While installing Tivoli Integrated Portal fix pack DE fails with below errors: 
+
+Caused by: org.apache.derby.client.am.SqlException: Connection authentication failure occurred. Reason: userid or password invalid. 
+
+SYMPTOM
+The de_trace.log was showing below exceptions: 
+
+11:11:29.339+01:00 1 IURegAPIController IURegAPIController test-server01 IP com.ibm.ac.si.iuregistry.IURegException: IURegistryServiceUnavailable 
+at com.ibm.ac.si.iuregistry.IUTypeDatabaseImpl.<init>(IUTypeDatabaseImpl.java:432)
+.........
+.........
+Caused by: org.apache.derby.client.am.SqlException: Connection authentication failure occurred. Reason: userid or password invalid.
+at org.apache.derby.client.net.NetConnection.mapSecchkcd(UnknownSource) 
+
+
+CAUSE
+Take a look into below technote which may help resolve the issue:
+http://www-01.ibm.com/support/docview.wss?uid=swg21449484 [http://www-01.ibm.com/support/docview.wss?uid=swg21449484]
+
+This issue can also occur due to port conflict, if there are multiple instances of DE running on the server using same port (the default DE port # is: 4130):
+
+
+
+DIAGNOSING THE PROBLEM
+1. Go to the DE installation dir and run below command to determine if there are multiple instance of DE running on the server: 
+
+ * 
+ * 
+
+
+2. If there are multiple instance of DE then check below files for each instance and see if both are using same port #:  * 
+ * 
+ * 
+
+RESOLVING THE PROBLEM
+If same port is being used by more than once DE instance then follow below steps to resolve this issue: 
+
+ 1. Change port # in ACUApplication.properties and derby.properties file for one instance. Pick a port # which is not in used by any other application on the server. See below example; 
+ 2. In <DE_INSTALL_DIR>/ACUApplication.properties file change port value to 4131 as shown below
+    acu.urlprefix=jdbc\:derby\://localhost\:4131 
+ 3. Go to /acsi/repos and open derby.properties file 
+ 4. In <DE_INSTALL_DIR>/repos/derby.properties file change port value to 4131 as shown below.
+    derby.drda.portNumber=4131 
+ 5. Try Install again.
+    
+
+If install still fails then provide latest installation log as described in below technote, 
+and ACUApplication.properties and derby.properties file. 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21439183 [http://www-01.ibm.com/support/docview.wss?uid=swg21439183]

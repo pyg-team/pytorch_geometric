@@ -1,0 +1,279 @@
+Title: IBM SE25204: MQM400 - QUICKCELL ISSUE OF PROBE ID XC014030 XCSALLOCATEQUICKCE LL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The FDC with probeID XC014030 indicates corrupted quickcell.
+   The most probable cause of the problem was that when the
+   queue manager was shut down prior to installing FP12 not all
+   the shared memory being used by the previous qmgr session was
+   capable of being cleared/released.
+   XC014030 xcsAllocateQuickCell  LVLS :- 530.12 CSD12 FP12
+   Additional symptom: WRKMQM returns UNKNOWN status for qmgr
+   WebSphere MQ First Failure Symptom Report
+   =========================================
+   Date/Time         :- Tuesday April 04 09:22:54  2006
+   Host Name         :- xxxxxx.SYSTEMS.xx.xxxx
+   PIDS              :- 5724B4106
+   LVLS              :- 530.12  CSD12
+   Product Long Name :- WebSphere MQ for iSeries
+   Vendor            :- IBM
+   Probe Id          :- XC014030
+   Application Name  :- MQM
+   Component         :- xcsAllocateQuickCell
+   Build Date        :- Dec 12 2005
+   UserID            :- 00000108 (QMQM)
+   Job Name          :- 487652/QMQM/AMQZLAA0
+   Job Description   :- QMPQMUKxxy/AMQZLAA0
+   Submitted By      :- 487633/QMQM/AMQZXMA0
+   Activation Group  :- 115 (QMQM) (QMQM/AMQZLAA0)
+   Max File Handles  :- 1540
+   Process           :- 00000125
+   Thread            :- 00002192
+   QueueManager      :- PQMUKxxy
+   Major Errorcode   :- STOP
+   Minor Errorcode   :- OK
+   Probe Type        :- HALT6109
+   Probe Severity    :- 1
+   Probe Description :- AMQ6109: An internal WebSphere MQ error
+                                 has occurred.
+   FDCSequenceNumber :- 0
+   Arith1            :- 0
+   Arith2            :- 0
+   Comment1          :- Detected Corrupted Quickcell
+   ----------------------------------------------------------------
+   
+   MQM Function Stack
+   zlaMainThread
+   xcsInitialize
+   xcsConnectExistingSharedSubpool
+   xcsAllocateQuickCell
+   xcsFFST
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Replace with FP11 which can be downloaded with marker ptf
+   SI18375
+   an alternative to going to FP11 would be :
+    (signed on as QSECOFR or a User Profile with all object
+     authority...)
+   .
+    1) End each Queue Manager
+        a) ENDMQM MQMNAME(<qmgr>) OPTION(*CNTRLD)
+              Repeat for each Queue Manager
+        b) ENDMQM MQMNAME(*ALL) OPTION(*IMMED) ENDCCTJOB(*YES)
+           TIMEOUT(05)
+    2) End any applications that use WMQ
+    3) ENDMQM *ALL *IMMED *YES 30
+    4) verify that all jobs have ended in the QMQM
+        subsystem, and then end the subsystem
+        ENDSBS sbs     i.e.
+        ENDSBS SBS(QMQM)
+         Repeat for each WMQ subsystem.
+    5) CALL QP0ZIPCS PARM('-a')
+       if any reference to QMQM or QMQMADM, rerun step 4
+       if still references to QMQM/QMQMADM, "manually clean
+       shared memory"
+       Verify the following directories do not have Stream Files
+       in them
+       (subdirectories are ok...)
+       If there are stream files, delete them...
+        /qibm/userdata/mqm/qmgrs/&SYSTEM/esem
+        /qibm/userdata/mqm/qmgrs/&SYSTEM/isem
+        /qibm/userdata/mqm/qmgrs/&SYSTEM/msem
+        /qibm/userdata/mqm/qmgrs/&SYSTEM/shmem
+        /qibm/userdata/mqm/qmgrs/&SYSTEM/ssem
+        /qibm/userdata/mqm/qmgrs/<Your_Q_Mgr>/esem
+        /qibm/userdata/mqm/qmgrs/<Your_Q_Mgr>/isem
+        /qibm/userdata/mqm/qmgrs/<Your_Q_Mgr>/msem
+        /qibm/userdata/mqm/qmgrs/<Your_Q_Mgr>/shmem
+        /qibm/userdata/mqm/qmgrs/<Your_Q_Mgr>/ssem
+        /qibm/userdata/mqm/qmgrs/<Your_Q_Mgr>/&ipcc/esem
+        /qibm/userdata/mqm/qmgrs/<Your_Q_Mgr>/&ipcc/isem
+        /qibm/userdata/mqm/qmgrs/<Your_Q_Mgr>/&ipcc/msem
+        /qibm/userdata/mqm/qmgrs/<Your_Q_Mgr>/&ipcc/shmem
+        /qibm/userdata/mqm/qmgrs/<Your_Q_Mgr>/&ipcc/ssem
+        /qibm/userdata/mqm/qmgrs/<Your_Q_Mgr>/&qmpersist/esem
+        /qibm/userdata/mqm/qmgrs/<Your_Q_Mgr>/&qmpersist/isem
+        /qibm/userdata/mqm/qmgrs/<Your_Q_Mgr>/&qmpersist/msem
+        /qibm/userdata/mqm/qmgrs/<Your_Q_Mgr>/&qmpersist/shmem
+        /qibm/userdata/mqm/qmgrs/<Your_Q_Mgr>/&qmpersist/ssem
+      ** Note : <Your_Q_Mgr> will be replaced with the name of
+                the real queue manager **
+    6) If the CALL QP0ZIPCS PARM('-a')   still shows QMQM or
+       QMQMADM in the splf,
+       CALL PGM(QMQM/AMQICLEN) PARM('-v' '-x' '-F')    --yes,
+       this is case sensitive on the parms
+       If CALL QP0ZIPCS PARM('-a') still shows  QMQM/QMQMDATA,
+       don't bother continuing...send us the output and the
+       joblog
+       If a semaphore is still listed in the spooled file we
+       can remove it using these steps
+       a) record the Semaphore ID...for example, if the last
+          output from QP0ZIPCS showed QMQM owned semaphores
+          with IDs of  8, 9, 10 and 11.
+       b) start qshell  QSH
+       c) ipcrm -s 8     <enter>   this should remove
+          semaphore ID number 8....the you would repeat for
+          IDs of  9, 10 and 11 in this example
+       d) exit qsh and call QP0ZIPCS again to verify that all
+          MQ resources are released...just search for QMQM and
+          if not found, we can continue.
+    7) Capture the DSPPTF screen for us, verify all PTFs are
+       applied
+    8) Start the QMQM subsystem and your Queue Managers
+    9) Signoff the interactive job *LIST, send in the joblog
+       of this job (so we have timestamps to cross reference
+       QHST)
+   .
+    If we deviate from the above process, please note it.
+    If any errors occur, please note them and resolution steps.
+   .
+    If the problem still exist after re starting the queue
+    manager after cleaning up shared memory please provide
+    the following docs:-
+    1) Detail trace captured when QMGR in ending (capturing
+       the problem)
+    a. To start trace issue the following command from the
+       command line:
+       TRCMQM TRCEARLY(*NO) SET(*ON)TRCLEVEL(*DETAIL)
+           MQMNAME(<Your_Q_Mgr>)
+       where <Your_Q_Mgr> is the exact name of the WebSphere
+       MQ Queue Manager. If there is upper and lower case
+       letters, enclose the name in quotes
+    b. Recreate failure/problem.
+    c. To end trace issue the following command from the
+       command line:
+       TRCMQM TRCEARLY(*NO) SET(*OFF) MQMNAME(<Your_Q_Mgr>)
+    d. To Save all unformatted trace files to a savefile:
+        - CRTSAVF FILE(QGPL/PNNNNNTRC)
+           TEXT('Save file for PMR Pnnnnn')
+          where nnnnn is the pmr number
+        - SAV DEV('/qsys.lib/qgpl.lib/pnnnnntrc.file')
+              OBJ(('/qibm/userdata/mqm/trace' *INCLUDE))
+    2) FDC's and all MQ Error log.
+    3) History log when qmgr is ending
+    4) DSPMSG MSGQ(QMO<Your_Q_Mgr>/QMQMMSG)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The FDC with probeID XC014030 indicates corrupted quickcell
+   which will most probably terminate the queue manager session.
+   
+   <USERS_AFFECTED>
+   All users running WMQ applications with fix pack 12 installed.
+   
+   Platforms affected:  iSeries,Unix and Windows
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR fixes the iSeries PTF-in-Error (PE) for SI21726 and
+   will be shipped in a refreshed fixpack 12 group PTF.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SE25204
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB MQ FOR ISER
+   
+   
+ * REPORTED COMPONENT ID
+   5724B4106
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-04-07
+   
+   
+ * CLOSED DATE
+   2006-04-11
+   
+   
+ * LAST MODIFIED DATE
+   2008-02-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    SI23625
+   
+   
+
+MODULES/MACROS
+ *     ROCSMGR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB MQ FOR ISER
+   
+   
+ * FIXED COMPONENT ID
+   5724B4106
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY SI28658
+   UP08/02/27 I 1000

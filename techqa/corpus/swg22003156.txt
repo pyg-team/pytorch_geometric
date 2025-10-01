@@ -1,0 +1,34 @@
+Title: IBM InfoSphere Information Server report generation fails after upgrading WebSphere Application Server Liberty profile to versions 8.5.5.9 or later - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Behavior changes in the WAS Liberty Class Loader causes Information Server report generation to fail. 
+
+CAUSE
+Unexpected classes are loaded due to behavior changes in the WAS Liberty Class Loader.
+
+ENVIRONMENT
+Installation with a WebSphere Application Server Liberty profile
+
+DIAGNOSING THE PROBLEM
+Report generation aborts with error
+
+
+com.ibm.wsspi.uow.UOWException: java.lang.NoSuchFieldError: jet/cs/util/APIConst.TAG_ENABLE_NLS at com.ibm.ws.uow.embeddable.EmbeddableUOWManagerImpl.runUnderNewUOW(EmbeddableUOWManagerImpl.java......
+
+
+RESOLVING THE PROBLEM
+Do not upgrade WebSphere Application Server Liberty profile to versions 8.5.5.9 or later. If the upgrade has been done, downgrade to version 8.5.5.8 or earlier. 
+
+
+Fix JR57893 [https://www.ibm.com/support/entdocview.wss?uid=swg1JR57893] is available:
+Information Server 11.5 users can install Information Server Framework 11.5 Rollup Patch 8 [http://www.ibm.com/support/fixcentral/swg/quickorder?&product=ibm/Information+Management/IBM+InfoSphere+Information+Server&function=fixId&fixids=is11502_isf_ru8_services_engine_client_multi] or Information Server 11.5 Service Pack 2 [http://www.ibm.com/support/docview.wss?uid=swg22008267] to get the fix. After the fix is applied, WebSphere Application Server Liberty may be updated to version 8.5.5.9 or later. 
+
+Information Server 11.3 users can install Information Server Framework 11.3 Rollup Patch 8 [http://www.ibm.com/support/fixcentral/swg/quickorder?&product=ibm/Information+Management/IBM+InfoSphere+Information+Server&function=fixId&fixids=is11312_isf_ru8_services_engine_client_multi] to get the fix. After the fix is applied, WebSphere Application Server Liberty may be updated to version 8.5.5.9 or later.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Information Server AIX, Linux, Solaris, Windows 11.5, 11.3

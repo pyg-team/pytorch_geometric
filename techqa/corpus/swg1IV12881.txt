@@ -1,0 +1,164 @@
+Title: IBM IV12881: KINCONFG.EXE (MTEMS) NOT SHUTDOWN DURING AGENT DEPLOY. DEPLOY FAILS AS A RESULT. MAY BE RELATED TO WIN 2008 X64. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   Windows 2008 64-bit OS and ITM 64-bit Windows OS Agent.
+   
+   Problem Description:
+     Customer attempted to upgrade the NT 64-bit OS agent on Win
+   2008 x64 and the deploy failed because MTEMS could not be
+   shutdown (locked).
+     Checked the provided log and Terminate Process was not
+   attempted so MTEMS was still locked when rechecked 2 seconds
+   later.
+   
+   Recreate Instructions:
+     1. Install ITM 6.2.2 FP2 64-bit OS Agent on Win 2008 x64 using
+   tacmd createnode.
+     2. Signon on remote machine and start METMS
+     3. Try to upgrade ITM.6.2.2 64-bit OS agent to latest fixpack.
+     4. METMS will not shutdown and Remote Deploy updateagent
+   fails.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Be sure MTEMS is not active when Remote Deploy is attempted or
+   run upgrade in GUI mode locally and verify all ITM processes are
+   shutdown before attempting the upgrade.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  On Windows, the installation of monitoring components or agents
+   may fail if the Manage Tivoli Enterprise Monitoring Services
+   (MTEMS) is also running.  This affects both local or remote
+   installations, pristine or upgrade.  This is particularly
+   prevalent in installations done through Windows Remote Desktop
+   or other virtual clients.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The behavior of the installer has been updated to terminate all
+   running instances of the MTEMS before installation begins.
+   
+   APAR IV12881 does not support Windows 2000. The APAR uses
+   taskkill.exe which is not available on Windows 2000.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+     | fix pack | 6.2.2-TIV-ITM-FP0009
+     | fix pack | 6.2.3-TIV-ITM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  The Windows taskkill command can be used to terminate running
+   MTEMS processes before starting the installation. This can
+   optionally be done remotely as long as administrator privileges
+   on the remote system are enabled.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV12881
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-09
+   
+   
+ * CLOSED DATE
+   2012-03-23
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

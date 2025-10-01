@@ -1,0 +1,68 @@
+Title: IBM WebSphere Partner Gateway(WPG) Messaging engine is not starting. - United States
+
+Text:
+WPG MASDB DB2 9.5 FP5 SQLCODE: -443; SQLSTATE: 38553; SQLERRMC: TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When WPG MASDB is hosted on DB2, the messaging engine does not start after upgrading DB2 to DB2 v9.1 FP5 and restarting the MAS cluster. 
+
+SYMPTOM
+WPG applications or messaging engine is not starting.
+
+
+CAUSE
+ 
+
+After upgrading DB2 to 9.1 FP5, and restarting MAS clusters, the following exceptions might be seen in the bcgmas Server system MAS logs.
+
+SibMessage E [BCGBus:bcgmasCluster.000-BCGBus] CWSIS0002E: The messaging engine encountered an exception while starting. Exception: com.ibm.ws.sib.msgstore.PersistenceException: CWSIS1501E: The data source has produced an unexpected exception: com.ibm.db2.jcc.a.SqlException: DB2 SQL error: SQLCODE: -443, SQLSTATE: 38553, SQLERRMC: SYSIBM.SQLTABLES;TABLES;SYSIBM:CLI:-805
+ConnectionEve A J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adapter for resource datasources/bcgMASDS. The exception which was received is (none) 
+RESOLVING THE PROBLEM
+ 
+
+To resolve the issue bind db2schema.bnd file against each database by following the below mentioned steps.
+
+NOTE: These steps need to be carried out for both of WPG Messaging database (BCGMAS) and WPG application database (BCGAPPS)
+
+Related DB2 product technote [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp?topic=%2Fcom.ibm.etools.mft.doc%2Fau16620_.htm].
+
+When using Non-Windows operating systems:
+
+1. Open a terminal, switch to db2 instance owner, su - <db2 instance owner>
+e.g. su - db2inst1
+
+2. Execute the below command
+db2 terminate
+
+3. Connect to the database
+db2 connect to <BCGMAS/BCGAPPS>
+e.g. To connect to application database: db2 connect to bcgapps
+
+4. Bind the databases 
+db2 bind <path to sqllib location>/bnd/db2schema.bnd blocking all grant public sqlerror continue
+e.g. db2 bind /home/db2inst4/sqllib/bnd/db2schema.bnd blocking all grant public sqlerror continue
+
+5. Execute the below command
+db2 terminate
+
+When using Windows operating systems:
+
+1. Open a db2 command prompt
+
+2. Execute the below command
+db2 terminate
+
+3. Connect to the database
+db2 connect to <BCGMAS/BCGAPPS> user <db2admin user> using <db2admin user password>
+e.g. Application db, db2 connect to bcgapps user db2admin using db2admin
+Mas db, db2 connect to bcgmas user db2admin using db2admin
+
+4. Bind the databases 
+db2 bind <path to sqllib location>\bnd\db2schema.bnd blocking all grant public sqlerror continue
+e.g. db2 bind "C:\Program Files\IBM\SQLLIB\bnd\db2schema.bnd" blocking all grant public sqlerror continue
+
+5. Execute the below command
+db2 terminate  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Partner Gateway Advanced Edition AIX, HP-UX, Linux, Solaris, Windows, Linux pSeries 6.2.1.1, 6.2.1.0, 6.2.1, 6.2.0.5, 6.2.0.4, 6.2.0.3, 6.2.0.2, 6.2.0.1, 6.2, 6.1.1.2, 6.1.1.1, 6.1.1, 6.1.0.3, 6.1.0.2, 6.1.0.1, 6.1, 6.2.1.2 Advanced, Enterprise

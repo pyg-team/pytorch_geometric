@@ -1,0 +1,11 @@
+Title: IBM Deployment of interactive channel fails in SSL enabled environment in IBM Interact - United States
+
+Text:
+What is this document:
+This document has the abstract of a technical article that is available to authorized users after you have logged on. Please use the link to actual document below to access the full document. You will be asked to log on if you are not already logged in. After log in, if you do not have the right authorization for this document, there will be instructions on what to do next.
+
+abstract text
+Attempts to deploy the interactive channel in SSL enabled environment results in below error on UI even when correct credentials are provided: "Authentication failed. You may have entered invalid login information or the server group is not available or the server group was restarted." Below error is seen in Campaignweb.log when deployment action is in process: WARN actions.AuthenticateAndDeployAction [167] - Failed authenticating with remote server group, instance URL: https://&lt;host&gt;:&lt;port&gt;
+
+link to actual document
+http://www.ibm.com/support/docview.wss?uid=swg21970021 [http://www.ibm.com/support/docview.wss?uid=swg21970021]

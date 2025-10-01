@@ -1,0 +1,25 @@
+Title: IBM Is there a list of configuration files that TM1 uses that can be saved, monitored and compared between different environments? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Is there a list of configuration files that TM1 uses that can be saved, monitored and compared between different environments? 
+
+CAUSE
+Would like to save the TM1 configuration and monitor for any changes or differences between environments.
+
+ENVIRONMENT
+TM1 10.2.2
+
+RESOLVING THE PROBLEM
+C:\Program Files\ibm\cognos\tm1_64\cmplst.txt
+
+
+C:\Program Files\ibm\cognos\tm1_64\datadirectory\tm1s.cfg
+C:\Program Files\ibm\cognos\tm1_64\bin64\tm1p.ini
+C:\Program Files\ibm\cognos\tm1_64\bin64\tm1admsrv-log.properties
+C:\Program Files\ibm\cognos\tm1_64\configuration\cogstartup.xml
+C:\Program Files\ibm\cognos\tm1_64\webapps\tm1web\WEB-INF\configuration\tm1web_config.xml 
+C:\Program Files\ibm\cognos\tm1_64\webapps\pmpsvc\WEB-INF\configuration\pmpsvc_config.xml 
+C:\Program Files\ibm\cognos\tm1_64\webapps\pmpsvc\WEB-INF\configuration\fpmsvc_config.xml

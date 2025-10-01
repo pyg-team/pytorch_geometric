@@ -1,0 +1,29 @@
+Title: IBM DataStage parallel job receives, Couldn't create user preferences directory. User preferences are unusable. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DataStage parallel job generates the warning message:
+
+Couldn't create user preferences directory. User preferences are unusable. 
+
+SYMPTOM
+DataStage parallel job receives the following messages: 
+
+
+Message: RecordType,0: Nov 3, 2011 10:44:56 AM java.util.prefs.FileSystemPreferences$2 run 
+Message: RecordType,0: WARNING: Couldn't create user preferences directory. User preferences are unusable. 
+Message: RecordType,0: Nov 3, 2011 10:44:56 AM java.util.prefs.FileSystemPreferences$2 run 
+Message: RecordType,0: WARNING: java.io.IOException: No such file or directory
+
+CAUSE
+The DataStage user does not have proper permission to user home directory.
+
+
+
+RESOLVING THE PROBLEM
+The DataStage user must have access to user $HOME directory. This is a java requirement. Java needs to write some preferences in the .java subdirectory under the directory specified as $HOME. $HOME can be found in the Environment variable settings log entry of the detailed job log. 
+
+
+Please make sure the user has proper permission to the $HOME/.java directory.

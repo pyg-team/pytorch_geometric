@@ -1,0 +1,41 @@
+Title: IBM Why can I not delete a subnet route from the routing table? - United States
+
+Text:
+% Subnet Route Removal failed; error: Subnet route not found; subnet; route; routing; removal; failed; subnet route; subnet removal; removing route; remove route; remove; route not found TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+I am trying to delete an entry from the routing table, but I receive the following error: 
+
+% Subnet Route Removal failed, error: Subnet route not found 
+
+SYMPTOM
+I am trying to delete an entry from the routing table as in this example: 
+
+Destination Device Interface Type Device Interface Name Gateway Metric Route Type Route Protocol 0.0.0.0/0 Ethernet eth0 1.2.3.4 0 Remote Management 1.2.3.0/24 Ethernet eth0 0.0.0.0 0 Local Local  
+
+Using the following command:
+
+XI50(config-if[eth0])# no ip route 1.2.3.0/24 0.0.0.0 0 
+
+But I receive the following error: 
+
+% Subnet Route Removal failed, error: Subnet route not found
+
+
+RESOLVING THE PROBLEM
+What we see here is an implied subnet route. 
+
+It is a route to 1.2.3.0/24. The next hop of 0.0.0.0 indicates that this subnet is local. And the subnet needs to be local to the interface if you're aliasing an IP address on the interface, no matter if it's primary, secondary, vip, or secondary vip. 
+
+You will automatically see an implied subnet route for the subnet that says it's local.
+
+This behavior is the same across all operating systems and it is not DataPower specific. 
+
+An IP address for example used in a standby group, such as an auxiliary IP, or a secondary IP is initiating DataPower to generate this implied subnet route. This route cannot be deleted as DataPower does require it. 
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower SOA Appliances Firmware

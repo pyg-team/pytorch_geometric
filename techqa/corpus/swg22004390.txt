@@ -1,0 +1,46 @@
+Title: IBM ジョブが実行されるとプロジェクトディレクトリ以下にjavacore.20170607.091336.6704.0001.txtというようなファイルが作成される - United States
+
+Text:
+ 技術情報(FAQS)
+
+質問
+ ジョブが実行されるとプロジェクトディレクトリ以下にjavacore.20170607.091336.6704.0001.txtというようなファイルが毎回作成されます。このようなファイルを出力を抑止する方法はありませんか。
+
+
+
+回答
+内部でJAVAが実行されるステージを持つジョブが実行され正常終了しても、DataStageプロジェクトディレクトリ以下に、javacore.20170607.091336.6704.0001.txt というようなjavacoreファイルが作成されることがあります。
+javacoreファイルのTITLEセクションの出力例：
+
+0SECTION TITLE subcomponent dump routine
+NULL ===============================
+1TICHARSET 932
+1TISIGINFO Dump Event "user" (00004000) received 
+1TIDATETIME Date: 2017/06/07 at 09:13:36
+1TIFILENAME Javacore filename: C:\IBM\InformationServer\Server\Projects\dstage1\javacore.20170607.091336.6704.0001.txt
+1TIREQFLAGS Request Flags: 0x81 (exclusive+preempt)
+1TIPREPSTATE Prep State: 0x104 (exclusive_vm_access+trace_disabled)
+NULL ------------------------------------------------------------------------
+
+(*) 1TISIGINFOは、Dump Event "user" (00004000) received となります。もし、1TISIGINFO のメッセージが違う場合は、別の問題でjavacoreファイルが出力されたことになります。
+
+以下の環境変数をジョブレベルまたはプロジェクトレベルで指定することにより、ジョブが正常終了した場合のjavacoreファイルの出力を抑止することができます。
+
+環境変数：JAVA_DUMP_OPTS
+設定する文字列："ONDUMP(NONE)"
+(*) 設定する文字列の最初と最後のダブルクォーテーション(")も必要です。
+
+該当するステージとしては、以下のステージなどがあります。
+Hierarchical Data
+Java Transformer
+Java Client
+JDBC Connector
+Unstructured Data
+Web Services Client 
+Web Services Transformer
+...
+
+
+関連情報
+ 環境変数 JAVA_DUMP_OPTS に関して [https://www.ibm.com/support/knowledgecenter/ja/SSYKE2_7.0.0/com.ibm.java.win.70.doc/diag/tools/dumpagents_env.html]
+Large numbers of "user" event javacores being generated [http://www-01.ibm.com/support/docview.wss?uid=swg21991210]

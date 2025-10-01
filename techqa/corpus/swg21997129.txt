@@ -1,0 +1,26 @@
+Title: IBM How to define ICM properties as "long string" - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ According to Knowledge Center below, properties as "long string" can be defined to make allocation size to less size. How do you define them concretely ?
+
+Adding and reusing properties
+https://www.ibm.com/support/knowledgecenter/en/SSCTJ4_5.2.1/com.ibm.casemgmt.help.doc/acmsdh02.htm [https://www.ibm.com/support/knowledgecenter/en/SSCTJ4_5.2.1/com.ibm.casemgmt.help.doc/acmsdh02.htm]
+
+Minimize database row sizes
+http://www.ibm.com/support/knowledgecenter/en/SSNW2F_5.2.1/com.ibm.p8.ce.admin.tasks.doc/objectstores/os_minimize_db_row_size.htm [http://www.ibm.com/support/knowledgecenter/en/SSNW2F_5.2.1/com.ibm.p8.ce.admin.tasks.doc/objectstores/os_minimize_db_row_size.htm]
+
+"Consider the data type used for a string property because it can affect the row size. A string property with a large allocation size takes far less space in the row if it is created as a long string data type; however, long strings have functional limitations. Using an integer for representing values takes less space compared to a string. For more information about the differences between short and long string data types, see "Short or long custom string properties" in Selected property descriptions." 
+
+ANSWER
+Case Manager Builder does not allow for the creation of Long String properties as a part of the solution, but we do support re-using long string properties. 
+The steps are as follows:
+
+1. Start the New Property Template wizard uing ACCE.
+2. Specify "String" data type for the property.
+3. Set check on "Set other attributes" check box on "Single or Multi-Value?" panel.
+4. Set check on "Use long-string table column" check box on "Additional Property Template Attributes" panel.
+
+As re-using properties are not included the solution package when exported and included, IBM FileNet Deployment Manager (FDM) must be used to migrate the long string properties (like any externally defined reused property).

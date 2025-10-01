@@ -1,0 +1,50 @@
+Title: IBM Cannot Export BMP Images - United States
+
+Text:
+LCMS Premier Static HTML Export SCORM mime type Bitmap bmp image PRODUCT README
+
+ABSTRACT
+ This note describes how to configure IBM Premier LCMS to export BMP images.
+
+
+CONTENT
+Symptom : 
+
+When exporting to SCORM or Static HTML BMP Images used in content will not export and display a place holder when viewed. 
+
+Cause : 
+Use of BMP images in elearning is not considered a best practice. Mime type support for BMP Images is therefore not enabled by default
+
+Environment : 
+IBM Premier LCMS
+
+Diagnosing The Problem : 
+You are facing this specific issue if : 
+- The exported content does not contain BMP images that are contained in the original content
+- The export displays 'complete' in the Process Monitor
+- The process monitor log file (click on 'completed' link in Process Monitor) contains this error message :
+Error replacing reference
+java.lang.IllegalArgumentException: 'mimeType' cannot be null or
+consist of whitespace characters only.
+
+Resolving The Problem : 
+The BMP file mime type needs to be added. 
+(Note : this configuration requires Server Access and will therefore have to be requested via our Managed Services Team in case Your LCMS is hosted by IBM)
+in [installation_directory]\appweb\evsfiles\properties\mediaconfig.xml
+
+-> ensure that the string
+<extension>bmp</extension> in the <mediaPlayers> section
+
+in [installation_directory]/appcfg/configfiles/mime.properties :
+add this line
+bmp=image/bmp
+
+After this services will need to be restarted and content to be re-exported. 
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Smarter Workforce IBM Kenexa LCMS Premier Smarter Workforce IBM Kenexa LCMS Premier on Cloud

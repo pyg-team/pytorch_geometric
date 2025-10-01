@@ -1,0 +1,39 @@
+Title: IBM Rational Team Concert displays error ""Can't Query Interface Object for IRPApplication" when trying to connect to Rhapsody client (Rhapsody Model Manager). - United States
+
+Text:
+Can't Query Interface Object for IRPApplication; rtc; rmm TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using Rhapsody Model Manager, the Rational Team Concert client fails to connect to the Rhapsody client with the error: "Error while trying to connect to Rhapsody client. Can't Query Interface Object for IRPApplication". 
+
+CAUSE
+Rational Team Concert uses the Rhapsody API to connect to the Rhapsody client. This is done from a Java plug-in installed in the Rational Team Concert client. This error can occur for the following reasons:
+
+
+ 1. The Rhapsody SCM Integration plug-in is not installed in RTC. 
+ 2. The Rhapsody SCM Integration plugin is installed in RTC but does not match the version of Rhapsody installed. 
+ 3. Rhapsody 64bit Windows registry defect - PI92377: DELETE REGISTRY KEYS ABOUT TLB ON UNINSTALL [http://www-01.ibm.com/support/docview.wss?crawler=1&uid=swg1PI92377]
+
+DIAGNOSING THE PROBLEM
+In Rational Team Concert, check Help > About RTC > Installation Details > Plug-ins tab. Look for the version number on theSCM Integration Plug-in(com.ibm.rational.rhapsody.rtc.integration.
+
+[/support/docview.wss?uid=swg22016025&aid=1] [/support/docview.wss?uid=swg22016025&aid=1]
+
+In Rhapsody, this should match the version in the help menu > About Rhapsody.
+
+[/support/docview.wss?uid=swg22016025&amp;aid=2]
+
+
+ 1. Same as above. 
+ 2. Check the registry key - Computer\HKEY_CLASS_ROOT\TypeLib\{47DBF9D5-F318-11D2-B825-00104B3E6572}\1.0\0\ - for redundant Rhapsody paths.
+    
+    [/support/docview.wss?uid=swg22016025&aid=3] [/support/docview.wss?uid=swg22016025&aid=3]
+    
+    The path shown in the screen shot no longer exists on the operating system but this registry key is left behind when uninstalling Rhapsody 8.3 64bit. If you are using the Rhapsody 64bit SCM plugin in Rational Team Concert 64bit then this will prevent Rhapsody 32bit from connecting to Rational Team Concert.
+    
+
+RESOLVING THE PROBLEM
+Copy the Rhapsody SCM plug-in from the "RTCIntegration" directory in the Rhapsody installation into the RTC Dropins directory. 
+
+ 1. Replace the existing Rhapsody SCM plug-in with the correct one from the Rhapsody "RTCIntegration" directory. 
+ 2. Delete the "win64" key if Rhapsody 64bit is no longer installed on the system.

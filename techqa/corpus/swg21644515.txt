@@ -1,0 +1,75 @@
+Title: IBM Database Table Space Folder in SQL Server Database - United States
+
+Text:
+Database Table Space Folder; configure; MS SQL; RTC; tablespace; DB folder TECHNOTE (FAQ)
+
+QUESTION
+ What is the purpose of the Database Table Space Folder in IBM Rational Team Concert? 
+
+CAUSE
+There is a need to know more details about the 'Database Table Space Folder' like:
+
+
+
+ * How to configure it.
+   
+   
+ * What is stored there.
+   
+   
+ * How big it will get.
+
+
+ANSWER
+Database Table Space in case of MS SQL Server is a place where database stores logical groups of data files. 
+
+ 
+
+During Jazz Team Server (JTS), setup with MS SQL Server database, you can enter the Database Table Space Folder. 
+
+ 
+
+ 
+
+Follow the steps:
+
+
+ 1. Create a folder in MS SQL Server path and name it DBbase.
+    
+    For example:
+    
+    C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\DBbase
+    
+    
+ 2. Provide this path to the JTS set-up page, when you will be asked for Database Table Space Folder and click Continue. 
+    
+    
+ 3. Check if the following SQL Server Database Table Space files, were added to that folder:
+    
+    VNF_32k, VNF_IDX, VSTR_32K, VSTR_32K2, VSTR_IDX
+    
+    This files contain details about the Database Table Space Folder, for example what it contains and what is his growth pattern.
+    
+
+
+
+
+Even though MS SQL Server does not have the concept of a 'tablespace', it does have backing storage for the database objects. The 'tablespace' directory is just the place where MS SQL Server puts those data files. 
+
+
+Example: You have seen instances, where a development database started at a small size and now is around 150GB. This has been after 6 years or so.
+
+There is not really any method for permanently deleting anything of the more important artifacts in the system such as workitems and source control. There are many transitory artifacts. Therefore the database seems to grow and then shrink when these artifacts pass through the system. An example is a change event that comes and goes. 
+
+
+Consider the following cases.
+
+
+
+
+ * If you use the system is lightly or there are few users and groups of users, the database grows slowly.
+   
+   
+ * If you use the system heavily, the database grows much quicker. 
+   
+   Growth also depends on what you do with the system. If you only create workitems that mostly contain text, that data is fairly compact. On the other hand if the users attach 50 MB files to their workitems for example then it may grow much faster.

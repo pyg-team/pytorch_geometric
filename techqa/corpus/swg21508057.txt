@@ -1,0 +1,56 @@
+Title: IBM Installing and updating IBM Business Monitor development toolkit and WebSphere test environment V7.5.1 on Windows 7 - United States
+
+Text:
+Windows 7; toolkit; WebSphere; test environment; 7.5; 7.5.0.1; install TECHNOTE (FAQ)
+
+QUESTION
+ On Windows 7, how do I install IBM Business Monitor development toolkit and WebSphere test environment V7.5.1 and update them to V7.5.1.2? 
+
+ANSWER
+If you are installing the IBM Business Monitor development toolkit version 7.5.1.2 on the Microsoft Windows 7 operating system, there are some special installation requirements that you need to consider. You will need to install the IBM Business Monitor development toolkit version 7.5.1.0 using Launchpad and then use IBM Installation Manager to update both the IBM Business Monitor development toolkit and WebSphere test environment to version 7.5.1.2. 
+
+To install and update the IBM Business Monitor development toolkit and the WebSphere test environment, you must be logged into Windows 7 with the Administrator ID or with a non-Administrator ID that is part of the Administrators group. 
+
+If you are not already familiar with installation practices for the IBM Business Monitor development toolkit, you should review the information in the topic Installing and removing the toolkit [http://pic.dhe.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=%2Fcom.ibm.wbpm.wid.tkit.doc%2Finst%2Ftkit.html] and its subtopics before you use the instructions below to install the development toolkit on Windows 7. 
+
+If you have previously installed version 7.5.1.0 or version 7.5.1.1 of the development toolkit and WebSphere test environment on Windows 7, proceed to the section Updating the development toolkit and WebSphere test environment on Windows 7 to update them to version 7.5.1.2. Otherwise, start with the section Installing the development toolkit and WebSphere test environment on Windows 7.
+
+
+
+Installing the development toolkit and WebSphere test environment on Windows 7 
+ 1. In the root directory of your product installation image, start the installation program using launchpad.exe. (If you are logged into Windows 7 as a non-administrative user in the Administrators group, you need to elevate your Microsoft Windows user account privileges by right-clicking launchpad.exe and selecting Run as administrator.) 
+ 2. In the Rational Application Developer product Launchpad, click Install IBM Business Monitor Development Toolkit V7.5.1. In the IBM Integration Designer product Launchpad, click Install IBM Integration Designer V7.5.1. When IBM Installation Manager starts, install version 7.5.1 of the IBM Business Monitor development toolkit. When you install the toolkit, Installation Manager will issue a warning that the operating system is not supported. However, you can safely ignore the warning message. 
+ 3. Close the Launchpad and then start it again. (If you are logged into Windows 7 as a non-administrative user in the Administrators group, you need to elevate your Microsoft Windows user account privileges by closing Launchpad and then right-clicking launchpad.exe and selecting Run as administrator.) 
+ 4. Install WebSphere Application Server. 
+ 5. Close the Launchpad and then start it again. (If you are logged into Windows 7 as a non-administrative user in the Administrators group, you need to elevate your Microsoft Windows user account privileges by closing Launchpad and then right-clicking launchpad.exe and selecting Run as administrator.) 
+ 6. Install version 7.5.1.0 of the WebSphere test environment. When you install the WebSphere test environment, do not select the option to create a profile and ensure that you clear the check boxes for the Rational Application Developer profile qmwas and the IBM Integration Designer profiles qmwps and qmesb. 
+ 7. Close Installation Manager. 
+
+
+Updating the development toolkit and WebSphere test environment on Windows 7 
+ 1.  If you are performing the development toolkit and WebSphere test environment updates for IBM Integration Designer, first update IBM Business Process Manager and the WebSphere Application Server V7 Feature Pack for XML. 
+ 2.  If you are performing the development toolkit and WebSphere test environment updates for Rational Application Developer, update the XML Feature Pack. 
+ 3.  Close IBM Installation Manager and then open it again. (If you are not logged onto Windows as Administrator, you will need to open Installation Manager with elevated privileges by selecting Start > All Programs > IBM Installation Manager > IBM Installation Manager > Run as Administrator.) 
+ 4.  Click Update. 
+ 5.  From the Update Packages panel, select the package group that has the IBM Business Monitor development toolkit 7.5.1 installed and then click Next. 
+ 6.  Under the installed IBM Business Monitor development toolkit 7.5.1, select Version 7.5.1.2 and click Next. 
+ 7.  Continue clicking Next until you are on the final update panel and then click Update. 
+ 8.  Close Installation Manager. 
+ 9.  Using IBM Installation Manager, update the WebSphere test environment to version 7.5.1.2. You must be logged into Windows 7 as Administrator or as an administrative user in the Administrators group. (If you are logged onto Windows 7 as a non-Administrator user in the Administrators group, you will need to launch Installation Manager with elevated privileges by selecting Start > All Programs > IBM Installation Manager > IBM Installation Manager > Run as Administrator.)
+     
+     Note: On Windows 7, there is no support for updating the WebSphere test environment to 7.5.1.2 with a non-root or non-administrative user ID that is not listed in the Administrators group.
+     
+ 10. Click Update. 
+ 11. Update IBM Business Monitor to Version 7.5.1.2. Ensure that you select the option to create a profile. Select either the check box for the Rational Application Developer profile qmwas or select one or both check boxes for the WebSphere Integration Developer profiles qmwps and qmesb.
+
+
+Running other commands and tools under non-administrative accounts 
+If you want to run any of the following commands and tools, you might need to explicitly elevate Microsoft Windows user account privileges if you are not using the built-in administrator account to run them: 
+ * startServer 
+ * stopServer 
+ * firststeps 
+ * update (for the Update Installer for WebSphere Software) 
+ * Profile Management Tool
+
+
+Additional information is found in the technote Running WebSphere Application Server command-line tools on the Microsoft Windows Server 2008 R2 and Windows 7 [http://www-01.ibm.com/support/docview.wss?uid=swg21414525].

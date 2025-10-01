@@ -1,0 +1,40 @@
+Title: IBM Assembling ldapsearch commands from values taken from the wimconfig.xml - United States
+
+Text:
+TIPL2; TIPL2LDAP; Tivoli Integrated Portal; LDAP; ldapsearch; wimconfig.xml TECHNOTE (FAQ)
+
+QUESTION
+ What information from the wimconfig.xml file in Tivoli Integrated Portal can be used to test an LDAP configuration using ldapsearch? 
+
+ANSWER
+When troubleshooting a failed LDAP configuration in TIP it can be helpful to ensure that the configuration information passed to TIP will work in an ldapsearch command. Using ldapsearch to test the bind and search parameters before retrying the TIP configuration will save considerable time and effort. 
+
+The following simple ldapsearch command can be used to test the bind and search parameters:
+
+ldapsearch -x -h <HOST_NAME> -p <PORT> -D "<BIND USER>" -w "<BIND_PASSWORD>" -b "<SEARCH BASE IN LDAP>" CN=*
+
+Sample xml block for an LDAP configuration in a wimconfig.xml file:
+
+- <config:repositories xsi:type="config:LdapRepositoryType" id="LDAP1" supportPaging="true" supportSorting="false" ldapServerType="AD2003">
+<config:baseEntries name="cn=users,dc=company,dc=com" nameInRepository="CN=People,DC=wim,DC=ibm,DC=com" /> 
+<config:baseEntries name="cn=groups,dc=yourco,dc=com" nameInRepository="CN=Groups,DC=wim,DC=ibm,DC=com" /> 
+<config:loginProperties>uid</config:loginProperties> 
+- <config:ldapServerConfiguration>
+- <config:ldapServers bindDN="CN=JohnS" bindPassword="******" sslEnabled="false">
+<config:connections host="myhost.company.com" port="389" />
+
+Using the above xml block as an example, the corresponding ldapsearch command would be: 
+
+ldapsearch -x -h myhost.company.com -p 389 -D "CN=JohnS" -w "<BIND_PASSWORD>" -b "cn=users,dc=company,dc=com" CN=* 
+
+ 
+
+Note: Replace <BIND PASSWORD> with the actual password for the bind user. 
+
+ 
+
+Once you have the ldapsearch command running without errors, update the ldap configuration in TIP with the working parameters.
+
+RELATED INFORMATION
+ Recovering from a failed LDAP configuration in Tivoli I [http://www-01.ibm.com/support/docview.wss?uid=swg21613035]
+Disable security for Tivoli Integrated Portal [http://www-01.ibm.com/support/docview.wss?uid=swg21499504]

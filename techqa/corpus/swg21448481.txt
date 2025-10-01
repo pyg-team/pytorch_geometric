@@ -1,0 +1,36 @@
+Title: IBM Credential (LTPA) token expired - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The LTPA token that is exchanged between the Tivoli Integrated Portal and the Tivoli Security Policy Manager server expires after 90 days. 
+
+SYMPTOM
+The Tivoli Integrated Portal cannot connect to the Tivoli Security Policy Manager server. Various messages might be displayed on the console that indicate a connection cannot be made or that the session timed out. Error log messages indicate SSL errors or that the credential token expired.
+
+
+RESOLVING THE PROBLEM
+1. Log in to the Tivoli Security Policy Manager console. 
+
+2. Click Security --> Security administration, applications and infrastructure --> Authentication mechanisms and expiration. 
+
+3. Click Key set group in the Key generation section. 
+
+4. Click NodeLTPAKeySetGroup. 
+
+5. Clear the Automatically generate keys check box in the Key generation section. Click OK and then click Save. 
+
+6. Click Security --> Security administration, applications and infrastructure --> Authentication mechanisms and expiration. 
+
+7. Provide a password, a confirmation password, and a location where the LTPA key should be exported. Then, click Export key. 
+
+8. Copy the exported key to a location that is accessible by the Tivoli Security Policy Manager server. 
+
+9. Log in to the WebSphere Application Server console where Tivoli Security Policy Manager is installed. 
+
+10. Import the key: 
+
+a. Click Security --> Security administration, applications and infrastructure --> Authentication mechanisms and expiration (on WebSphere Application Server 6.1) or LTPA (on WebSphere Application Server 7.0). 
+
+b. Provide a password, a confirmation password, and a location where the LTPA key should be imported. Then, click Import key.

@@ -1,0 +1,193 @@
+Title: IBM PM08982: ELEMENT IN HTML ELEMENT NOT RENDERED FOR ANONYMOUS USER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+Recommended Updates for WebSphere Portal and Web Content Management V6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24023835]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+Fixes integrated in WebSphere Portal V7.0 Combined Cumulative Fix [http://www-01.ibm.com/support/docview.wss?uid=swg24027254]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Site framework:
+   
+     SITE (Site access user: anonymous)
+       ANONYMOUS      (Site Area access user: anonymous)
+       AUTHENTICATED  (Site Area access user: all autenthicated)
+   Authoring templates with 2 elements :
+     Rich Text - rt.body
+     HTML  - ht.bottom
+   Presentation template :
+     <html>
+     <h1><IDCmpnt context="current" type="content"
+   field="title"/></h1>
+     <Element context="current" type="content" key="rt.body"/>
+     </br></br>
+     <Element context="current" type="content" key="ht.bottom"/>
+     </html>
+   
+   create 3 content items :
+   1. Content Anonymous One (Acces user: anonymous, all
+   authenticated)
+     value rt.body
+       Body Content Anonymous Two
+     value ht.bottom
+       <empty>
+   save under SITE/ANONYMOUS
+   2. Content Authenticated One (Acces user: all authenticated)
+     value rt.body
+       Body Content Authenticated One
+     value ht.bottom
+       <empty>
+   save under SITE/AUTHENTICATED
+   3. Content Anonymous Two (Acces user: user anonymous, all
+   authenticated)
+     value rt.body
+       Body Content Anonymous Two
+     value ht.bottom
+       <Element context="selected"
+   name="library/site/anonymous/content
+   anonymous one" type="content" key="rt.body"/>
+       <Element context="selected"
+   name="library/site/authenticated/content
+   authenticated one" type="content" key="rt.body"/>
+   save under SITE/ANONYMOUS
+   
+   Now open
+   http://<server>/wps/wcm/connect/<library>/SITE/ANONYMOUS/Content [http://<server>/wps/wcm/connect/<library>/SITE/ANONYMOUS/Content]
+   Anonymous Two
+   
+   Result :
+   Only rt.body of the content item Content Anonymous Two is
+   displayed :
+    Body Content Anonymous Two
+   
+   Expected bahaviour :
+   rt.body for both of the 2 content items stored under the
+   ANONYMOUS
+   SiteArea should be displayed, ie. the element <Element
+   context="selected" name="library/site/anonymous/content
+   anonymous one"
+   type="content" key="rt.body"/> in ht.bottom should be displayed
+   as well
+   :
+    Body Content Anonymous Two
+    Body Content Anonymous One
+   
+   Note :
+   When granting additionally anonymous access for user for
+   SITE/AUTHENTICATED, then ht.bottom is rendered completely :
+    Body Content Anonymous Two
+    Body Content Anonymous One
+    Body Content Authenticated One
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  APAR is included in Cumulative iFix 29 for WCM V6.1.0.1 and WCM
+   V6.1.0.2.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  APAR is included in Cumulative iFix 29 for WCM V6.1.0.1 and WCM
+   V6.1.0.2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM08982
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   60A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-04
+   
+   
+ * CLOSED DATE
+   2010-04-19
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61B PSY
+   UP

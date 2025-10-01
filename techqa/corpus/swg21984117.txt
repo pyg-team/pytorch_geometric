@@ -1,0 +1,38 @@
+Title: IBM CDM - Solvency II bv137_2 rule validation fails. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The rule BV137-2 (Solvency II 1.1.X ) is failing. This rule is found in the S.06.02.01.02 form - Information on assets.
+
+
+SYMPTOM
+During the solo submission for Q1 reporting with Algo Reporting for Solvency II 1.1.X, the rule BV137-2 is failing.
+
+
+CAUSE
+The bv137_2 rule was deactivated by EIOPA on 18.03.2016 and deactivated by CDM in the EIOPA_Final_v7 package as well.
+
+
+ENVIRONMENT
+CDM 10.2.4 IF16
+
+DIAGNOSING THE PROBLEM
+
+
+
+1. Run the report validation 
+2. Notice that there is an error referring to the rule BV137-2 which fails. 
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+Even if this is shown as an error (because the rule fails), the values should be properly generated in the XBRL instance, therefore the error can be ignored.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Disclosure Management Cognos Disclosure Management

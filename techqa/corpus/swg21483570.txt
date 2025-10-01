@@ -1,0 +1,39 @@
+Title: IBM Getting 'error 2070 specific Symptom 5' when launching SPSS but Sentinel RMS  shows user taking a license token - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I installed the Sentinel RMS License manager on my server. After having installed PASW Statistics 17.0 and the PASW Statistics 17.0.2 patch and launching of the application I see in the Sentinel RMS License manager the user appearing.
+However on the users workstation we get the error.
+Error # 2070 
+>The license server is down. Please check to see that the license server is 
+>running or ask your local site coordinator to check the license server. 
+>This command not executed. 
+>Specific symptom number: 5 End of job: 7 command lines 1 errors 0 warnings 0 CPU seconds 
+I used a sniffer to find out what could be the cause of this and see 
+-------------------------- 
+Source port : stt Destination port : sentinel -lm
+Fragmented IP protocol 
+Time -to-live exceeded(fragment reassembly time exceeded) 
+
+RESOLVING THE PROBLEM
+Due to issues with re-transmission the maximum packet size that can be sent over the Network Interface Card has been changed from 1500 (which is the standard) to 1300.
+The Sentinel RMS sends a packet back that is bigger then 1300 and the first part of the package will be received , the second part gets lost.
+This gives the Fragmented IP protocol in the sniffer.
+Possible solutions are :
+
+1/ Install Sentinel RMS on a server where this modification of the maximum packet size isn't needed.
+2/ Change the maximum packet size back to 1500
+This needs to be done on the server in the following registry key.
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces\{A0109189-48E3-4BD1-B811-112D7AB2E495} MTU RegDword 1300 (Dec)
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 83536

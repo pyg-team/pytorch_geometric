@@ -1,0 +1,163 @@
+Title: IBM IV18465: V731FP2: INACTIVITY IN THE LDAP CONNECTION TO THE MS AD LDAP SERVER CAUSES LOGIN ISSUES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer is using Netcool/OMNIbus v7.3.1 with an LDAP
+   connection to a MicroSoft Active Directory LDAP Server.
+   
+   When a user attempts to login to the object server they are
+   unable to and the object server logs;
+   
+   Error: E-AUT-102-007: Failed to bind to LDAP
+   server for user udiederich@dt.ept.lu. (81:Can't contact LDAP
+   server)
+   Error: E-AUT-102-008: The LDAP Server is not reachable
+   
+   This appears to have been raised a bug in v7.3.0 but the
+   solution does not appear to have been ported to the newer v7.3.1
+   code, else there is a new issue.
+   
+   Related APAR is
+   
+   IZ70104 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ70104]: INITIAL USER LOGIN ATTEMPT TO LDAP server FAILING
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The issue can be worked around by keeping the connection active
+   or by adjusting the LDAP servers timeout setting.
+   
+   To keep the connection active write a script to login to the
+   object server as an LDAP user periodically, then logout.
+   This will ensure the connection is maintained.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Omnibus 7.3.1/Linux                                          *
+   * Microsoft Active Directory                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The customer is using Netcool/OMNIbus v7.3.1 with an LDAP    *
+   * connection to a MicroSoft Active Directory LDAP Server.      *
+   *                                                              *
+   * When a user attempts to login to the object server they are  *
+   * unable to and the object server logs;                        *
+   *                                                              *
+   * Error: E-AUT-102-007: Failed to bind to LDAP                 *
+   * server for user udiederich@dt.ept.lu. (81:Can't contact LDAP *
+   * server)                                                      *
+   * Error: E-AUT-102-008: The LDAP Server is not reachable       *
+   *                                                              *
+   
+   
+   
+   
+   
+   * Related APAR is                                              *
+   *                                                              *
+   * IV08834 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV08834]: OMNIBUS AIX LDAP AUTHENTICATION FAILING WITH SSL    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 7.3.1-TIV-NCOMNIbus-linux2x86-FP0004              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   7.3.1-TIV-NCOMNIbus-linux2x86-FP0004
+   
+   Login should occur on initial login attempt with correct login
+   information
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV18465
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   731
+   
+   
+ * STATUS
+   CLOSED UR5
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-29
+   
+   
+ * CLOSED DATE
+   2012-06-01
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R731 PSY
+   UP

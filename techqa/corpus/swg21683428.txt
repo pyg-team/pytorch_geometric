@@ -1,0 +1,33 @@
+Title: IBM Business Process Manager (BPM) family of products support statement for virtual environments - United States
+
+Text:
+virtual environment; hypervisor; BPM; Monitor NEWS
+
+ABSTRACT
+ You can use different applications to provide an emulated or virtual operating environment that meets various needs, such as to consolidate servers, centralize management, or host dynamic test environments. The virtual environment provides transparency to the operating systems, applications, and middleware that operate above it. What is the support policy regarding IBM Business Process Manager (BPM) family of products deployment on such virtualized environments?
+
+This document applies to IBM Business Process Manager, IBM Business Monitor, IBM Integration Designer, and IBM Process Designer. 
+
+CONTENT
+IBM, VMWare, Citrix, Microsoft, Hewlett-Packard, Xen, and other providers not specifically mentioned in this document offer virtualized or emulated environment solutions. 
+
+Not all virtual environments are included in the official testing of the IBM Business Process Manager family of products. Therefore, note the following considerations before you deploy your product in a virtualized environment. 
+
+The IBM Business Process Manager family of products complies with the Virtualization Policy for IBM Software [http://www.ibm.com/software/support/virtualization_policy.html]. Search Software Product Compatibility Reports [https://www.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html] for your product and your hypervisor versions to verify whether they are included in that policy. If they are not included, the following statement applies: 
+
+You are encouraged to test problems yourself on a native installation of the operating system to exclude a virtualized or emulated environment as a possible cause before you contact IBM Support. IBM Support has no performance benchmarking or tuning guidance that is unique to such environments. Account for additional memory or other hardware requirements when you plan for or deploy these IBM Business Process Manager products in a virtualized or emulated environment. 
+
+If you contact IBM Support with a standard usage or defect-related service request and are running in a virtualized or emulated environment, IBM will make commercially reasonable efforts to resolve the issue. IBM will assume that the problem is common to both native and virtual environments. However, if the problem is unique to the virtualized or emulated environment, IBM might require you to re-create the problem in a native environment to proceed with the investigation. If the problem is unique to the virtualized or emulated environment and IBM cannot resolve the problem, IBM Support will expect you to work with the support organization for the virtualization or emulation product in question to determine a resolution. 
+
+If the support organization for the virtualization or emulation product cannot resolve the problem, IBM Support reserves the right to deem that version, release, or fix pack level of the virtualization or emulation product in question to be explicitly “Not Supported”. 
+
+Consider this risk when you deploy any one of the affected products in the IBM Business Process Manager family in a virtualized or emulated environment.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Not Applicable AIX, Linux, Solaris, Windows 8.5.7, 8.5.6, 8.5.5, 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Express Not Applicable Linux, Windows 8.5.7, 8.5.6, 8.5.5, 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Monitor Not Applicable AIX, Linux, Solaris, Windows 8.5.7, 8.5.6, 8.5.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Integration Designer Not Applicable Linux, Windows 8.5.7, 8.5.6, 8.5.5, 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Process Designer Not Applicable Windows 8.5.7, 8.5.6, 8.5.5, 8.5, 8.0.1, 8.0, 7.5.1 
+PRODUCT ALIAS/SYNONYM
+ BPM
+IID
+Monitor

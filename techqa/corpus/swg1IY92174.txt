@@ -1,0 +1,119 @@
+Title: IBM IY92174: MEMORY LEAK MAY OCCUR IN DBHEAP WHEN A CONNECT TO THE DATABASE  FAILS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a user attempts to connect to the database and if there
+   is a failure, there may be a memory leak in DBHEAP.
+   
+   For example, user with no connect privilege when attempting to
+   connect fails with -1060. Connect initiates some monitor control
+   blocks which does not get cleaned up when the connect fails and
+   may cause a leak in dbheap
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  MEMORY LEAK MAY OCCUR IN DBHEAP WHEN A CONNECT TO THE DATABASE
+   FAILS
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in DB2 UDB Version 9.1, FixPak 2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY92174
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE HP-
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4103
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-11-27
+   
+   
+ * CLOSED DATE
+   2008-12-01
+   
+   
+ * LAST MODIFIED DATE
+   2008-12-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IY87157 [http://www-01.ibm.com/support/docview.wss?uid=swg1IY87157]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE HP-
+   
+   
+ * FIXED COMPONENT ID
+   5765F4103
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY
+   UP

@@ -1,0 +1,39 @@
+Title: IBM What is the equivalent in the CCDT for the DefRecon parameter in the Channels stanza in the mqclient.ini? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ WebSphere MQ 7.0.1 introduced the client configuration file or mqclient.ini and in the CHANNELS stanza there is an attribute to control default reconnection for client connections, for example:
+
+CHANNELS:
+DefRecon=YES
+ServerConnectionParms=SVRCONN1/TCP/HOST1(1414)
+
+You want to know what is the equivalent parameter in the Client Channel Definition Table (CCDT) for the DefRecon parameter in the Channels stanza in the mqclient.ini?
+
+
+ANSWER
++ MQ 7.0.1: 
+The DefRecon is not available in the DEFINE or ALTER statements for Client Connection Channels.
+
++ MQ 7.1 and later: 
+The DEFRECON was made available in the DEFINE or ALTER statements for Client Connection Channels, and it is available in the MQ Explorer.
+
+WebSphere MQ > Reference > Administration reference > MQSC reference > The MQSC commands > DEFINE CHANNEL >> Client-connection channel [http://pic.dhe.ibm.com/infocenter/wmqv7/v7r1/index.jsp?topic=%2Fcom.ibm.mq.doc%2Fsc11000_.htm]
+Syntax diagram for a client-connection channel when using the DEFINE CHANNEL command. 
+
+.-DEFRECON(NO)-------. .-DESCR(' ')----------. 
+>--+--------------------+--+---------------------+-------------->
++-DEFRECON(YES)------+ '-DESCR--(--string--)-' 
++-DEFRECON(QMGR)-----+
+'-DEFRECON(DISABLED)-' 
+
+When using the MQ 7.1 Explorer, DefRecon is shown at the bottom of the General tab for the properties of a client connection channel:
+
+[/support/docview.wss?uid=swg21585496&aid=1] [/support/docview.wss?uid=swg21585496&aid=1]
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ MQSeries

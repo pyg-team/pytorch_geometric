@@ -1,0 +1,87 @@
+Title: IBM WebSphere MQ Clustering - Cluster hints and tips - United States
+
+Text:
+cluster cluster cluster Cluster clustering 2085 2189 MQRC_CLUSTER_RESOLUTION_ERROR Workload balancing round robin queue DEFBIND(*NOTFIXED) default bind not fixed MQOO_BIND_NOT_FIXED repository common problems Cluster clustering 2085 2189 MQRC_CLUSTER_RESOLUTION_ERROR Workload balancing round robin queue DEFBIND(*NOTFIXED) default bind not fixed MQOO_BIND_NOT_FIXED repository common problems Cluster clustering 2085 2189 MQRC_CLUSTER_RESOLUTION_ERROR Workload balancing round robin queue DEFBIND(*NOTFIXED) default bind not fixed MQOO_BIND_NOT_FIXED repository common problems Cluster clustering 2085 2189 MQRC_CLUSTER_RESOLUTION_ERROR Workload balancing round robin queue PremiumSupportTips TECHNOTE (FAQ)
+
+QUESTION
+ This is a compilation of the most common problems and questions regarding WebSphere MQ Clustering and it is intended for new MQ Cluster users. 
+
+CAUSE
+1. You are new to WebSphere MQ Clustering
+
+2. You have questions regarding WebSphere MQ Clustering
+
+3. You are experiencing a WebSphere MQ Cluster problem
+
+ANSWER
+This article is intended for new MQ Cluster users and contains the following sections: 
+
+ [/support/docview.wss?uid=swg21229905&amp;aid=1] Clustering hints and tips 
+[/support/docview.wss?uid=swg21229905&amp;aid=1] Workload balancing - round robin processing
+[/support/docview.wss?uid=swg21229905&amp;aid=1] Collecting documentation
+[/support/docview.wss?uid=swg21229905&amp;aid=1] Learning more about this problem / component
+
+
+Clustering hints and tips 
+
+ * Review the cluster manual. [http://publibfp.boulder.ibm.com/epubs/pdf/csqzah07.pdf]This book describes how to create and use clusters. It explains the concepts, terminology, and benefits of clustering. It shows a number of examples that you can perform to set up and maintain clusters of queue managers. 
+ * Stay current on MQ maintenance. 
+ * Remember to include the cluster parameter on all of the cluster object definitions (queues, channels, queue manager, and so on). 
+ * Verify that your cluster channels connecting to the repository queue manager go to running status when the queue manager starts. Access to the repository queue manager is the key to clustering. 
+ * Getting messages from remote cluster queues is not supported within the clustering component. 
+   Back to top
+   
+   
+
+
+
+
+Workload balancing - round robin processing 
+
+An MQ cluster can have more than one definition for the same queue, and can therefore benefit from increased availability and workload balancing in your network. If you are going to use round robin processing to several instances of the same queue on different queue managers, then consider the following:  * Your cluster queue should specify the parameter DEFBIND(*NOTFIXED) and the queue should be opened with the open option MQOO_BIND_NOT_FIXED. 
+ * If you have a local instance of the cluster queue, then all messages are routed to that local instance of the cluster queue. You can get around this by disabling the queue for puts in WebSphere MQ V6.0 by using the CLWLUSEQ object attribute. 
+ * You will get a fairly even distribution of messages to a given cluster queue only when all relevant cluster channels are running or inactive, and all instances of that cluster queue is enabled for puts. 
+ * When you have clusters containing more than one instance of the same queue, WebSphere MQ uses a workload management algorithm to determine the best queue manager to route a message to. The workload management algorithm selects the local queue manager whenever possible, unless in WebSphere MQ V6.0 you modify the CLWLUSEQ attribute. If the workload algorithm routes messages to remote queue manager, then it chooses destinations based on the state of the channel (including any priority you might have assigned to the channel) and the availability of the queue manager and queue. The algorithm uses a round-robin approach to finalize its choice between the suitable queue managers. 
+
+
+Back to top
+
+
+ Collecting documentation
+
+
+Documentation required by the support team. 
+
+ 1. Go to the MustGather: Read First document. [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg21229861] 
+ 2. Select the operating system where the problem occurs. 
+ 3. Select the clustering component
+    
+    Back to top
+    
+    
+
+
+
+Learning more about this problem / component 
+
+How long does cluster information remain in the cluster repository? [http://publibfp.boulder.ibm.com/epubs/html/csqzah06/csqzah0618.htm#Header_129] 
+
+YouTube MQonTV - WebSphere MQ Clustering [http://www.youtube.com/watch?v=BXsfKIWMTK8] 
+
+WebSphere MQ - Graphical Clustering Demo [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg24006438] 
+
+MQSeries - Design considerations for large Clusters [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg24006367] 
+
+WebSphere MQ Information Center [http://www.ibm.com/software/integration/wmq/library/] [http://www-1.ibm.com/support/docview.wss?rs=171&context=SSFKSJ&dc=DB520&uid=swg21229905] 
+
+Back to top
+
+RELATED INFORMATION
+#WebSphere MQ Library [http://www.ibm.com/software/integration/wmq/library/]
+WebSphere MQ Queue Manager Clusters Manual [http://publibfp.boulder.ibm.com/epubs/pdf/csqzah07.pdf]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

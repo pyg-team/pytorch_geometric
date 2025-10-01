@@ -1,0 +1,27 @@
+Title: IBM SNMP probe stops running - United States
+
+Text:
+mttrapd; traps; UDP; snmp_open: Invalid local port; Address already in use TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The SNMP probe (mttrapd) was not able to collect traps Error: SNMP Message (priority=3): UDP snmp_open: Invalid local port (Address already in use) 
+
+RESOLVING THE PROBLEM
+There is another process binding to that port. It may be another instance of the probe started previously or a different trap receiver already listening on that port. One way of confirming if another instance of the probe is already running can be achieved by using the ps command on UNIX: 
+
+ps -ef | grep nco_p_mttrapd 
+
+Another possibility of finding the process binding to the port would be to use the UNIX lsof utility (if installed on the system) 
+
+lsof -i protcol@hostname_or_ip:port 
+
+lsof -i tcp@hostA:162 
+
+ 
+
+In some systems there might be another process already binding to that port (SNMP agent or Trap forwarder are examples of these processes). In these situations the probe can be configured to use a different port either via the properties file of the probe using the Port property, or on the command line when starting the probe using the -port option. 
+
+ 
+
+HISTORICAL NUMBER
+ LON0118939

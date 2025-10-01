@@ -1,0 +1,38 @@
+Title: IBM IndexRegenerator errors while running migrateDataToXml.sh after migrating to version 10.0 Fix Pack 1 - United States
+
+Text:
+Invalid or missing entry versionId TECHNOTE (FAQ)
+
+QUESTION
+ Why am I getting errors of the following form while trying to run migrateDataToXml.sh? How can I fix them?
+[Index Regenerator Thread 3] ERROR com.ibm.ccd.content.common.IndexRegenerator - 
+CWPCT0310E:Error occurred when regenerating the index : 
+
+CAUSE
+These errors are a result of data corruption in your database. There are records in the "Item Data" (ITD) table without a corresponding entry in the "Item" (ITM) table.
+
+ANSWER
+Here are the steps to fix this issue:
+1) Back up your database 
+
+
+2) Run the following commands: 
+
+perl $PERL5LIB/runSQL.pl --sql_command="delete from itd where itd_item_id not in (select itm_id from itm);" 
+
+perl $PERL5LIB/runSQL.pl --sql_command="delete from itd where itd_next_version_id <> 999999999;" 
+
+3) Run the migrateDataToXml.sh script again.
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ MDMCS
+Infosphere Master Data Management Collaboration Server
+WPC 
+MDMPIM
+MDM Server for PIM
+WebSphere Product Center
+InfoSphere MDM Server for PIM
+InfoSphere Master Data Management Server for Product Information Management

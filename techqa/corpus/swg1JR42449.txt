@@ -1,0 +1,207 @@
+Title: IBM JR42449: RELEASE NOTES SHOULD BE MODIFIED TO INCLUDE CRITERIA FOR SELECTING THE OPTIMUM NUMBER OF THREADS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Background:
+   To improve the performance of resource intensive scripts, we
+   use the concept of background threads. One command initiates a
+   specified number of background processes enabling the script to
+   complete faster. e.g.
+   ./migrateDataToXml.sh --company=ibm --threads=4
+   Here the system will use 4 background processes to do the
+   necessary conversion instead of just 1.
+   
+   Release Notes:
+   Currently, the release notes define these threads and specify
+   other necessary changes to use these threads; but there is no
+   mention of how to decide the number of threads. The example
+   given is:
+   migrateDataToXml.sh --company=ibm --threads=4
+   The customers are assuming that they should use four threads or
+   use the default of 2.
+   
+   The problem:
+   Most customers have a hardware which can support a lot more
+   than 4 threads, e.g. 50. The number of threads determines how
+   long the scripts will take to complete. With only 4 threads and
+   a large number of items in the database, this script can run
+   for days. This means production down for days. Migrating
+   customers are unnecessarily running into this less than ideal
+   scenario.
+   
+   The proposed fix:
+   Modify the release notes to indicate that the customers should
+   analyze their hardware and chose the optimum number of that
+   their system can support i.e. processors, the rate of data
+   insert that their database can handle etc. They should be
+   encouraged to test their system performance(in non production
+   environment) with increasing number of threads to use a value
+   that they are comfortable with, since this has a direct impact
+   on performance.
+   
+   Keywords: "XML DB", XDB, ITM, ITX, hung, stuck
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Master Data Management Collaboration Server              *
+   * implementations are affected by this issue.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Background:                                                  *
+   * To improve the performance of resource intensive scripts, we *
+   * use the concept of background threads. One command initiates *
+   * a                                                            *
+   * specified number of background processes enabling the script *
+   * to                                                           *
+   * complete faster. e.g.                                        *
+   * ./migrateDataToXml.sh --company=ibm --threads=4              *
+   * Here the system will use 4 background processes to do the    *
+   * necessary conversion instead of just 1.                      *
+   *                                                              *
+   * Release Notes:                                               *
+   * Currently, the release notes define these threads and        *
+   * specify                                                      *
+   * other necessary changes to use these threads; but there is   *
+   * no                                                           *
+   * mention of how to decide the number of threads. The example  *
+   * given is:                                                    *
+   * migrateDataToXml.sh --company=ibm --threads=4                *
+   * The customers are assuming that they should use four threads *
+   * or                                                           *
+   * use the default of 2.                                        *
+   *                                                              *
+   * The problem:                                                 *
+   * Most customers have a hardware which can support a lot more  *
+   * than 4 threads, e.g. 50. The number of threads determines    *
+   * how                                                          *
+   * long the scripts will take to complete. With only 4 threads  *
+   * and                                                          *
+   * a large number of items in the database, this script can run *
+   * for days. This means production down for days. Migrating     *
+   * customers are unnecessarily running into this less than      *
+   * ideal                                                        *
+   * scenario.                                                    *
+   *                                                              *
+   * The proposed fix:                                            *
+   * Modify the release notes to indicate that the customers      *
+   * should                                                       *
+   * analyze their hardware and chose the optimum number of that  *
+   * their system can support i.e. processors, the rate of data   *
+   * insert that their database can handle etc. They should be    *
+   * encouraged to test their system performance(in non           *
+   * production                                                   *
+   * environment) with increasing number of threads to use a      *
+   * value                                                        *
+   * that they are comfortable with, since this has a direct      *
+   * impact                                                       *
+   * on performance.                                              *
+   *                                                              *
+   * Keywords: "XML DB", XDB, ITM, ITX, hung, stuck               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * IBM recommends that customers facing the issue reported by   *
+   * this APAR look into the Information Center of  Master Data   *
+   * Management Collaboration Server                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for this problem has been included in Master Data
+   Management Collaboration Server version 10.0.0-FP003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR42449
+   
+   
+ * REPORTED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5100
+   
+   
+ * REPORTED RELEASE
+   A00
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-04-04
+   
+   
+ * CLOSED DATE
+   2012-10-16
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

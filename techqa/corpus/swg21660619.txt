@@ -1,0 +1,21 @@
+Title: IBM DataStage job with ODBC Connector stage reports error "SQLSTATE = 25000: Native Error Code = 3,932" in job log while inserting data into Teradata table - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DataStage job with ODBC Connector stage reports error "SQLSTATE = 25000: Native Error Code = 3,932" in job log while inserting data into Teradata database table with replace table action. 
+
+CAUSE
+DataStage job using ODBC Connector stage using Teradata Native ODBC Driver instead of using the DataDirect driver VMTeraxx.so provided along with the product DataStage job log reports below error while inserting data into Teradata database table with replace table action.
+
+Message Id: IIS-CONN-ODBC-00013 
+Message: odbc_FIC_CODE_TRANSLATOR_0181: ODBC Info: SQLSTATE = 25000: 
+Native Error Code = -3,932: Msg = [Teradata][ODBC Teradata Driver][Teradata Database] Only an ET or null statement is legal after a DDL Statement. 
+
+RESOLVING THE PROBLEM
+- Recommendation is to use DataDirect driver VMTeraxx.so provided along with the product.
+
+- If planning to continue with Teradata Native ODBC driver tdata.so, then make below changes to resolve the issue.
+1) Set Auto Commit Mode to On in ODBC Connector Stage.
+2) Set the SESSIONMODE=ANSI in the ODBC DSN for Teradata in the odbc.ini file.

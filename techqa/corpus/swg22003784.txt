@@ -1,0 +1,38 @@
+Title: IBM "The query processor ran out of internal resources and could not produce a query plan" when trying to export data - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User clicks "Transfer - Export Data". User chooses selections, and presses 'Run'.
+
+An error appears. 
+
+SYMPTOM
+[/support/docview.wss?uid=swg22003784&aid=1] [/support/docview.wss?uid=swg22003784&aid=1] 
+
+ 
+Event Viewer (application log):
+Log Name: Application
+Source: Cognos Controller
+Date: 22/05/2017 11:38:33
+Event ID: 0
+Task Category: None
+Level: Warning
+Keywords: Classic
+User: N/A
+Computer: VBRACONT8AP7
+Description:
+Error occured at 22/05/2017 11:38:33 in IBM Cognos Controller, Error No=5, Source=FrangoDirect.ExportDataD.SelectPeriodVal#System.Web.Services, Description=System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.Exception: The query processor ran out of internal resources and could not produce a query plan. This is a rare event and only expected for extremely complex queries or queries that reference a very large number of tables or partitions. Please simplify the query. If you believe you have received this message in error, contact Customer Support Services for more information.
+at Cognos.Controller.Proxy.CCRWS.ExportDataT_SelectPeriodVal(String[] varPer, String[]& varAkt, Boolean bGroup, String sConsType, String[] varCompany, Boolean bIncludeSub, Boolean bFormAll, Boolean bForm, String[] varForm, Boolean bAllClosVer, String sClosVer, Boolean bAllContVer, String sContVer, Boolean bAllCurrencies, String sReconcileChar, Boolean bUseTransferTable, String sGuid, String sUser, String sLocation, Boolean bLockExportedData, Boolean bCompanyLock, Boolean& bErr, Int32& lErr, String& sErr)
+--- End of inner exception stack trace ---
+
+
+CAUSE
+Limitation of Controller (caused by a limitation in Microsoft SQL) which is triggered by choosing too many periods to export at once.
+
+
+RESOLVING THE PROBLEM
+Reduce the number of separate periods to be exported. 
+
+ * In other words, export the data in separate chunks (each with fewer periods) rather than in one go (with all periods selected).

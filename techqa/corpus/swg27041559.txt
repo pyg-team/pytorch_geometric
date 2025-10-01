@@ -1,0 +1,28 @@
+Title: IBM Using SSL to connect MQ Explorer and MQ java clients to a queue manager in WebSphere MQ 7.1/7.5 - United States
+
+Text:
+ WHITE PAPER
+
+ABSTRACT
+ The objective of this document is to provide the step-by-step details for connecting the WebSphere MQ Explorer and MQ Java™ clients V7.1 or V7.5 from one workstation (such as running in Windows) to a queue manager running on another workstation, using SSL. 
+
+CONTENT
+To provide better background, because the MQ Explorer uses the MQ classes for Java, it is necessary to cover also the setup for an MQ client that uses the MQ classes for Java. 
+
+The chapters are:
+Chapter 1: Connecting MQ Java client to a single-instance queue manager with SSL
+Chapter 2: Connecting MQ Explorer to a single-instance queue manager with SSL
+
+See the following companion techdoc:
+Using SSL to connect MQ C-based client to a queue manager in WebSphere MQ 7.1 and 7.5 [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27041551]
+
+This document uses the SSL commands that are provided in MQ 7.1 and 7.5. The SSL commands in MQ 7.0 were renamed in MQ 7.1 and 7.5. 
+
+The following techdoc shows the SSL commands used in MQ 7.0:
+Using SSL to connect MQ Explorer to Single-instance and Multi-Instance queue managers in WebSphere MQ 7.0 [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27038221]
+
+
+
+Attached file: Using SSL to connect MQ Explorer and MQ Java client to a queue manager in MQ 7.5.pdf 
+
+Using SSL to connect MQ Explorer and MQ Java client to a queue manager in MQ 7.5.pdf [/support/docview.wss?uid=swg27041559&aid=2]Using SSL to connect MQ Explorer and MQ Java client to a queue manager in MQ 7.5.pdf [/support/docview.wss?uid=swg27041559&aid=1]

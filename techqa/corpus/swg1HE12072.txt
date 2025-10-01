@@ -1,0 +1,133 @@
+Title: IBM HE12072: MOUSE-OVER ON ANY FIELDS DOES NOT PROVIDE A POP-UP. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Download IBM Atlas Policy Suite Version 6.0.3 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24038397]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Under request --> Add Employees , the mouse-over on any fields
+   does not provide a pop-up. Where as the same works under People
+   in Scope.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Mouse-over popup missing in Request->Add Employees search
+   results page
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  fixed in 6032
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12072
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   603
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-15
+   
+   
+ * CLOSED DATE
+   2015-01-05
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  Ui
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R603 PSY
+   UP

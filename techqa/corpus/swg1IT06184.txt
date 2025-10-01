@@ -1,0 +1,151 @@
+Title: IBM IT06184: EXPOSE OPEN/CLOSE TERMINALS ON HL7DFDLINPUT NODE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In order to enforce a 'one connection per client' rule, you need
+   to be able to control the opening of TCP/IP connections by the
+   HL7DFDLInput node. This is not possible unless the
+   TCPIPServerInput node's 'open' and 'close' terminals are exposed
+   in the HL7DFDLInput node.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Connection testing can be done using TCPIPServerInput nodes.
+   The logic can be transferred to the HL7DFDLInput node later.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of IBM Integration Bus Healthcare Pack who need to
+   manage their TCP/IP connections for HL7 applications in ways
+   that are not supported by the TCPIP configurable service
+   parameters.
+   
+   
+   Platforms affected:
+   MultiPlatform, z/OS
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   If you want to enforce a 'one connection per client' rule, there
+   is no means of intercepting the connection attempt via the
+   'open' terminal of the TCPIPServerInput node, because that node
+   is hidden within a subflow UDN ( the HL7DFDLInput node).
+   
+   There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0. For details
+   visit
+   http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.e
+   tools.mft.doc/bb23814_.htm [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/bb23814_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Two extra terminals have been provided on the HL7DFDLInput node,
+   wired directly to the open/close terminals of the internal
+   TCPIPServerInput node.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT06184
+   
+   
+ * REPORTED COMPONENT NAME
+   IIB HEALTHCARE
+   
+   
+ * REPORTED COMPONENT ID
+   5725C1820
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-19
+   
+   
+ * CLOSED DATE
+   2015-01-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IIB HEALTHCARE
+   
+   
+ * FIXED COMPONENT ID
+   5725C1820
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R300 PSY
+   UP

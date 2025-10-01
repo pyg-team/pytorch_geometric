@@ -1,0 +1,18 @@
+Title: IBM FileNet Image Services supports AIX 7.1 - United States
+
+Text:
+AIX; AIX 7.1; FileNet; Image Services; Oracle NEWS
+
+ABSTRACT
+ AIX 7.1 is supported with FileNet Image Services as of Image Services 4.1.2 FP10 and Image Services 4.2.0 FP4.
+
+
+FileNet Image Services automatically supports all AIX 7.1. TL and Servies Pack releases. 
+
+CONTENT
+ Known issues:
+1. The IBM AIX 7.1 APARs, IZ87216 and IZ87564, are required if no AIX TL packages have been installed.
+
+2. On the AIX 7.1 hardware platform, FileNet Image Services supports Oracle 11gR2 (11.2.0) and Oracle 12c. FileNet Image Services also supports all patch sets released after Oracle 11gR2 and Oracle 12c.
+
+3. The lsdev -C listing displays "N/A" instead of "FileNet Optical Disk Drive" when optical disk drives are present. This cosmetic issue might be seen when the environment variable is not set correctly on the server. The 'primary cultural convention' and the 'primary language translation' should be set to the appropriate local language, for example, ISO8859-1 English (United States) (en_US). That would set LANG to en_US and then lsdev -C will display sod devices correctly. If the LANG variables are set incorrectly it does not affect the functionality of the driver only the display output of lsdev -C.

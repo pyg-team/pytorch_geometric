@@ -1,0 +1,30 @@
+Title: IBM Considerations before reinstalling the Agent Manager - United States
+
+Text:
+AS; reinstall; reinstallation; uninstall; AppServer; app server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Reinstalling an Agent Manager that resides on the same server as the Application Server on SiteProtector 3.0 or earlier can result in a catastrophic failure to the site and sometimes necessitate an Application Server reinstallation. 
+
+SYMPTOM
+During the Agent Manager uninstallation process, if the JavaEE ProductCount registry key happens to be set to 1, the JavaEE component of the Application Server will also be uninstalled. If a new Agent Manager is then installed on the same server, the installation would detect that no JavaEE component is installed and proceed to install a new instance of JavaEE. This new JavaEE version is incompatible with the existing Application Server causing the Application Server to no longer function.
+
+
+On SP1001, SP2001, and SP3001 appliances, this issue can be even more complicated as there is not an installation package for the Application Server that includes the Firmware, MasterService, and ISSLCD components (all of which are unique to the SiteProtector appliances). The end result is a reimage of the appliance and loss of events in the SiteProtector database.
+
+
+RESOLVING THE PROBLEM
+Before reinstalling the Agent Manager at version 3.0 or earlier, it is best to get a backup of the server if it's a physical box or take a snapshot for a virtual machine. You should also confirm in the registry that the ProductCount key in HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\ISS\JavaEE\Geronimo2.1.x (omit the Wow6432Node for 32-bit OS version) matches the number of SiteProtector components (this should be 2 or higher) on the server before uninstalling the Agent Manager. If it is set to 1, the condition explained in the Symptom section occurs.
+
+Before attempting to reinstall the Agent Manager component, contact IBM Security Systems Customer Support [http://www.ibm.com/support/customercare/sas/f/handbook/contacts.html] to ensure it is required and to take the necessary precautions before proceeding.
+
+Note: Agent Manager at version 3.1 or higher removes the dependency on JavaEE so it is not affected by this. However, it is always prudent to back up the server before any reinstall.
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21685758&aid=1] [https://ibm.biz/BdHdjw] [/support/docview.wss?uid=swg21685758&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21685758&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21685758&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21685758&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21685758&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21685758&aid=7] [http://ibm.biz/ContactSecSupport] 
+RELATED INFORMATION
+ A Spanish translation is available [http://www.ibm.com/support/docview.wss?uid=swg21883156]

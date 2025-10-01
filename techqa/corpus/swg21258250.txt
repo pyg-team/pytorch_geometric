@@ -1,0 +1,132 @@
+Title: IBM How to move the VOB server process to the same system as the VOB storage - United States
+
+Text:
+move; vob storage; vob_server; vob server; vob move; 1258250; remote TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to align the IBM® Rational® ClearCase® VOB server processes with the host from which the VOB storage resides on UNIX® and Linux® in the event you created a VOB incorrectly. 
+
+CAUSE
+ 
+
+Scenario: 
+
+You have created a VOB from a UNIX or Linux server and stored the VOB on a remote host. 
+
+Here is an example of how the situation could occur. 
+
+Note: Both the newvobserver and oldvobserver are UNIX VOB servers.
+
+[oldvobserver] cleartool mkvob -tag /vobs/remtest -nc -public -host oldvobserver -hpath /net/newvobserver/vobstore/remtest.vbs -gpath /net/newvobserver/vobstore/remtest.vbs /net/newvobserver/vobstore/remtest.vbs
+cleartool: Warning: Storage pathname "/net/newvobserver/vobstore" may not reside on host "oldvobserver".
+Registry password:
+Created versioned object base.
+Host-local path: oldvobserver:/net/newvobserver/vobstore/remtest.vbs
+Global path: /net/newvobserver/vobstore/remtest.vbs
+VOB ownership:
+owner atria.com/user1
+group atria.com/users
+Additional groups:
+group atria.com/othergroup
+
+VOBs have special data backup considerations. For more information on how to
+back up your VOB properly, see the documentation for administering ClearCase.
+If the backups aren't done properly, you are putting your data at risk!
+
+Note: The -host option references the oldvobserver, where the VOB server processes will reside. The rest of the command references newvobserver where the VOB will be stored.
+
+[oldvobserver] cleartool lsvob /vobs/remtest
+/vobs/remtest /net/newvobserver/vobstore/remtest.vbs public
+
+
+Running ClearCase in this configuration is unsupported.
+
+Rational does not support any exported storage from a UNIX/Linux system for remote storage.
+
+Note: The only remote storage supported is with Network Attached Storage.
+
+
+RESOLVING THE PROBLEM
+ 
+
+
+You need to align the VOB storage with the host on which the VOB server processes run (or vice versa).
+
+
+ 1. Decide on which host the VOB server processes and VOB storage should reside.
+    
+    Note: In this example the VOB processes will be configured to run on the host where the VOB storage resides (newvobserver)
+    
+    
+ 2. Describe the VOB to obtain the pathnames.
+    
+    On oldvobserver:
+    
+    [oldvobserver]> cleartool describe vob:/vobs/remtest
+    versioned object base "/vobs/remtest"
+    created 20-Mar-07.17:07:04 by vobowner (vobowner@oldvobserver)
+    VOB family feature level: 4
+    VOB storage host:pathname "oldvobserver:/net/newvobserver/vobstore/remtest.vbs"
+    VOB storage global pathname "/net/newvobserver/vobstore/remtest.vbs"
+    database schema version: 54
+    VOB ownership:
+    owner vobowner
+    group rational
+    Additional groups:
+    group rcsdata1
+    Attributes:
+    FeatureLevel = 4
+    
+    
+ 3. Unmount, Unregister, and remove the VOB tag as follows:
+    
+    [oldvobserver]> cleartool umount /vobs/remtest
+    
+    [oldvobserver]> cleartool unregister -vob /net/newvobserver/vobstore/remtest.vbs
+    
+    [oldvobserver]> cleartool rmtag -vob /vobs/remtest
+    
+    
+ 4. Stop ClearCase services on both servers (oldvobserver & newvobserver):
+    
+    /opt/rational/clearcase/etc/clearcase stop
+    
+    
+ 5. Kill any VOB server processes (oldvobserver)
+    
+    
+ 6. Start ClearCase on both servers.
+    
+    /opt/rational/clearcase/etc/clearcase start
+    
+    
+ 7. Register, tag and mount the VOB (newvobserver)
+    
+    Note: ClearCase must be installed on this host.
+    
+    [newvobserver]> cleartool register -vob /vobstore/remtest.vbs
+    
+    [newvobserver]> cleartool mktag -vob -tag /vobs/remtest -public /vobstore/remtest.vbs
+    
+    [newvobserver]> cleartool mount /vobs/remtest
+    
+    IMPORTANT: The VOB must be re-mounted on all clients.
+    
+    
+ 8. Describe the VOB to ensure the hosts are the same.
+    
+    [newvobserver]> cleartool describe vob:/vobs/remtest
+    versioned object base "/vobs/remtest"
+    created 2007-03-20T16:07:04-05 by vobowner (vobowner@oldvobserver)
+    VOB family feature level: 4
+    VOB storage host:pathname "newvobserver:/vobstore/remtest.vbs"
+    VOB storage global pathname "/net/newvobserver/vobstore/remtest.vbs"
+    database schema version: 54
+    modification by remote privileged user: allowed
+    VOB ownership:
+    owner vobowner
+    group rational
+    Additional groups:
+    group rcsdata1
+    Attributes:
+    FeatureLevel = 4

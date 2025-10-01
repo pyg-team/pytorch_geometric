@@ -1,0 +1,186 @@
+Title: IBM PM10732; 7.0.0.9: intermittent deadlock on startup using java2 security - United States
+
+Text:
+PM10732; PM10732; PM10732 DOWNLOADABLE FILES
+
+ABSTRACT
+ When Java 2 Security is enabled an intermittent deadlock occurs upon startup of the application server. 
+
+DOWNLOAD DESCRIPTION
+PM10732 resolves the following problem:
+
+
+ERROR DESCRIPTION:
+When enabling Java 2 security an intermittent deadlock can occur upon startup of the application server.
+
+LOCAL FIX: 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+All users of IBM WebSphere Application Server V7.0
+
+PROBLEM DESCRIPTION:
+When Java 2 Security is enabled an intermittent deadlock can occurs upon startup of the application server.
+
+RECOMMENDATION:
+None
+
+The symptom of this problem is a deadlock on the application classloader thread. For example:
+
+1LKDEADLOCK Deadlock detected !!!
+NULL ---------------------
+NULL 
+2LKDEADLOCKTHR Thread "Component Resolve Thread (Bundle 5)" (0x9F9E1100)
+3LKDEADLOCKWTR is waiting for:
+4LKDEADLOCKMON sys_mon_t:0xA191DBB4 infl_mon_t: 0xA191DBEC:
+4LKDEADLOCKOBJ sun/misc/Launcher$AppClassLoader@0xA6DD8EA8/0xA6DD8EB4: 
+3LKDEADLOCKOWN which is owned by:
+2LKDEADLOCKTHR Thread "pool-1-thread-3" (0x9F56DF00)
+3LKDEADLOCKWTR which is waiting for:
+4LKDEADLOCKMON sys_mon_t:0x099B0FC4 infl_mon_t: 0x099B0FFC:
+4LKDEADLOCKOBJ java/util/HashMap@0xA7177428/0xA7177434: 
+3LKDEADLOCKOWN which is owned by:
+2LKDEADLOCKTHR Thread "Component Resolve Thread (Bundle 5)" (0x9F9E1100)
+
+3XMTHREADINFO "Component Resolve Thread (Bundle 5)" TID:0x9F9E1100,
+j9thread_t:0x099FC304, state:B, prio=10
+3XMTHREADINFO1 (native thread ID:0x3EAC, native priority:0xA, native policy:UNKNOWN)
+3XMTHREADINFO2 (native stack address range from:0x9F1FE000, to:0x9F1BD000, size:0x41000)
+4XESTACKTRACE at
+java/lang/ClassLoader.loadClass(ClassLoader.java:609(Compiled Code))
+4XESTACKTRACE at
+org/eclipse/osgi/internal/loader/BundleLoader.findClass(BundleLoader.java:406)
+4XESTACKTRACE at
+org/eclipse/osgi/internal/loader/BundleLoader.findClass(BundleLoader.java:398)
+4XESTACKTRACE at
+org/eclipse/osgi/internal/baseadaptor/DefaultClassLoader.loadClass(DefaultClassLoader.java:105)
+4XESTACKTRACE at
+java/lang/ClassLoader.loadClass(ClassLoader.java:609(Compiled Code))
+4XESTACKTRACE at
+org/osgi/service/event/TopicPermissionCollection.<init>(TopicPermission.java:407)
+4XESTACKTRACE at
+org/osgi/service/event/TopicPermission.newPermissionCollection(TopicPermission.java:313)
+4XESTACKTRACE at
+org/eclipse/osgi/framework/internal/core/ConditionalPermissionSet.implies(ConditionalPermissionSet.java:208(Compiled Code))
+
+... lines omitted ...
+
+org/eclipse/osgi/internal/serviceregistry/FilteredServiceListener.serviceChanged(FilteredServiceListener.java:104(Compiled Code))
+4XESTACKTRACE at
+
+... lines omitted ...
+
+org/eclipse/equinox/internal/ds/Resolver.enableComponents(Resolver.java:176)
+4XESTACKTRACE at
+org/eclipse/equinox/internal/ds/SCRManager.performWork(SCRManager.java:791)
+4XESTACKTRACE at
+org/eclipse/equinox/internal/ds/SCRManager$QueuedJob.dispatch(SCRManager.java:758)
+4XESTACKTRACE at
+org/eclipse/equinox/internal/ds/WorkThread.run(WorkThread.java:90)
+4XESTACKTRACE at
+org/eclipse/equinox/internal/util/impl/tpt/threadpool/Executor.run(Executor.java:70)
+
+And:
+
+3XMTHREADINFO "pool-1-thread-3" TID:0x9F56DF00, j9thread_t:0x099FCAC0, state:B, prio=5
+3XMTHREADINFO1 (native thread ID:0x3EAF, native priority:0x5, native policy:UNKNOWN)
+3XMTHREADINFO2 (native stack address range from:0x9F13B000, to:0x9F0FA000, size:0x41000)
+4XESTACKTRACE at
+org/eclipse/osgi/framework/internal/core/ConditionalPermissionSet.implies(ConditionalPermissionSet.java:205(Compiled Code))
+4XESTACKTRACE at
+org/eclipse/osgi/framework/internal/core/BundleCombinedPermissions.implies(BundleCombinedPermissions.java:124(Compiled Code))
+4XESTACKTRACE at
+java/security/ProtectionDomain.implies(ProtectionDomain.java:168(Compiled Code))
+4XESTACKTRACE at
+java/security/AccessController.checkPermission(AccessController.java:98(Compiled Code))
+4XESTACKTRACE at
+java/lang/SecurityManager.checkPermission(SecurityManager.java:533(Compiled Code))
+4XESTACKTRACE at
+com/ibm/ws/security/core/SecurityManager.checkPermission(SecurityManager.java:197(Compiled Code))
+4XESTACKTRACE at
+java/lang/SecurityManager.checkRead(SecurityManager.java:872(Compiled Code))
+4XESTACKTRACE at java/io/File.exists(File.java:731(Compiled Code))
+4XESTACKTRACE at
+sun/misc/URLClassPath$FileLoader.getResource(URLClassPath.java:1215(Compiled Code))
+4XESTACKTRACE at
+sun/misc/URLClassPath.getResource(URLClassPath.java:276(Compiled Code))
+4XESTACKTRACE at
+java/net/URLClassLoader$ClassFinder.run(URLClassLoader.java:983(Compiled Code))
+4XESTACKTRACE at
+java/security/AccessController.doPrivileged(AccessController.java:284)
+4XESTACKTRACE at
+java/net/URLClassLoader.findClass(URLClassLoader.java:416(Compiled Code))
+4XESTACKTRACE at
+java/lang/ClassLoader.loadClass(ClassLoader.java:643(Compiled Code))
+4XESTACKTRACE at
+sun/misc/Launcher$AppClassLoader.loadClass(Launcher.java(Compiled Code))
+4XESTACKTRACE at
+java/lang/ClassLoader.loadClass(ClassLoader.java:609(Compiled Code))
+4XESTACKTRACE at
+org/eclipse/osgi/internal/loader/BundleLoader.findClassInternal(BundleLoader.java:426)
+4XESTACKTRACE at
+org/eclipse/osgi/internal/loader/BundleLoader.findClass(BundleLoader.java:410)
+4XESTACKTRACE at
+org/eclipse/osgi/internal/loader/BundleLoader.findClass(BundleLoader.java:398)
+4XESTACKTRACE at
+org/eclipse/osgi/internal/baseadaptor/DefaultClassLoader.loadClass(DefaultClassLoader.java:105)
+4XESTACKTRACE at
+java/lang/ClassLoader.loadClass(ClassLoader.java:609(Compiled Code))
+4XESTACKTRACE at
+org/apache/aries/blueprint/container/BlueprintContainerImpl.getRepository(BlueprintContainerImpl.java:431)
+4XESTACKTRACE at
+org/apache/aries/blueprint/container/BlueprintContainerImpl.doRun(BlueprintContainerImpl.java:268)
+4XESTACKTRACE at
+org/apache/aries/blueprint/container/BlueprintContainerImpl.run(BlueprintContainerImpl.java:213)
+4XESTACKTRACE at
+java/util/concurrent/Executors$RunnableAdapter.call(Executors.java:453)
+4XESTACKTRACE at
+java/util/concurrent/FutureTask$Sync.innerRun(FutureTask.java:315)
+4XESTACKTRACE at
+java/util/concurrent/FutureTask.run(FutureTask.java:150)
+4XESTACKTRACE at
+java/util/concurrent/ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:98)
+4XESTACKTRACE at
+java/util/concurrent/ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:207)
+4XESTACKTRACE at
+java/util/concurrent/ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+4XESTACKTRACE at
+java/util/concurrent/ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+4XESTACKTRACE at java/lang/Thread.run(Thread.java:736)
+
+PROBLEM CONCLUSION:
+
+The deadlock occurs because of synchronization of the method to obtain a new permission collection (method newPermissionCollection(), as shown in the sample stacks), and because calls to the method newPermissionCollection() can cause new class loads. The new class loads can cause a call to obtain a new method permission collection from a different thread.
+
+For additional information, see the Equinox framework bug 306219 at https://bugs.eclipse.org/bugs/show_bug.cgi?id=306219 [https://bugs.eclipse.org/bugs/show_bug.cgi?id=306219].
+
+This problem was fixed by migrating the fix for the Equinox framework bug 306219 to the level of code as present in the application server installation image.
+
+That fix provides a code update which avoids deadlock by ensuring that the call to newPermissionCollection() is not made within a synchronization block. The update was made to the class org.eclipse.osgi.framework.internal.core.ConditionalPermissionSet, present in a application server installation at WAS_HOME/plugins/org.eclipse.osgi_.jar, which was originally obtained as org.eclipse.osgi_3.2.1.R32x_v20060919.jar.
+
+The fix for this APAR is currently targeted for inclusion in fix pack 7.0.0.11. Please refer to the recommended Updates page for delivery information:
+
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+Please download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PM10732/readme.txt] US English 6120 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 7.0.0.0-WS-WAS-MultiOS-IFPM10732 4/22/2010 US English 14733 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.0.0.0-WS-WAS-MultiOS-IFPM10732&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PM10732/7.0.0.0-WS-WAS-MultiOS-IFPM10732.pak] DD 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24026970&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24026970&aid=2]Problems (APARS) fixed
+PM10732

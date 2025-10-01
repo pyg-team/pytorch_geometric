@@ -1,0 +1,150 @@
+Title: IBM PN59611: NEW FUNCTION - EPDM DIALOG NOW SUPPORTS 'CURRENT DATE' - United States
+
+Text:
+AIX z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  new function - epdm now supports 'current date' in the data
+   selection panel for date variables.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: ALL EPDM R1M1 INSTALLATIONS.                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The variable prompting on the Report    *
+   *                      Data Selection panel for DATE-type      *
+   *                      variables (such as FROM_DATE and        *
+   *                      TO_DATE) can not handle expressions     *
+   *                      with 'CURRENT DATE'.                    *
+   *                      If entered with enclosing quotes, the   *
+   *                      quotes are passed to DB2 which fails.   *
+   *                      If entered without enclosing quotes,    *
+   *                      the EPDM dialog complains that only     *
+   *                      one value must be entered.              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Date-type variables can now be substituted with an expression
+   containing the string 'CURRENT DATE'. When promted for such
+   variables, the user may for example enter this expression on
+   the data selection panel:
+            CURRENT DATE - 7 DAYS
+   The expression is not case sensitive. Enclosing quotes are
+   allowed but not required. CURRENT DATE expressions are also
+   supported for BATCH reports; however, when used in DRLEBATR
+   calls, the expression must be enclosed in quotes:
+            &FROM_DATE='CURRENT DATE - 7 DAYS'
+              &TO_DATE='CURRENT DATE'
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PN59611
+   
+   
+ * REPORTED COMPONENT NAME
+   EPDM 1.1
+   
+   
+ * REPORTED COMPONENT ID
+   569510100
+   
+   
+ * REPORTED RELEASE
+   101
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   1994-07-07
+   
+   
+ * CLOSED DATE
+   1994-07-13
+   
+   
+ * LAST MODIFIED DATE
+   1994-10-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UN64902 PN66349 PN66350 [http://www-01.ibm.com/support/docview.wss?uid=swg1PN66350]
+   
+   
+
+MODULES/MACROS
+ *  DRLEBATR DRLERBAT DRLERDIR DRLERQUE
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   EPDM 1.1
+   
+   
+ * FIXED COMPONENT ID
+   569510100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R101 PSY UN64902 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UN64902]
+   UP94/07/14 P F407
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

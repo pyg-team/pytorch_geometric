@@ -1,0 +1,173 @@
+Title: IBM PK51289: AT TIMES, THE ODR WILL RETURN A 503 HTTP STATUS CODE WHEN A 504 IS EXPECTED. - United States
+
+Text:
+  A FIX IS AVAILABLE
+PK51289; 6.1: At times, the ODR will return a 503 http status code [http://www-01.ibm.com/support/docview.wss?uid=swg24017190]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When load balancing, a particular target server is unavailable.
+   Searching for an alternate server returns no target servers.
+   In this case, the ODR at times will return a 503 http status
+   code.  A status code of 504 (gateway timeout) is the
+   appropriate code.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere Extended Deployment   *
+   *                 6.0.2.1 and 6.1 using the On Demand Router.  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A request times out while waiting on    *
+   *                      a server, and the http response code    *
+   *                      is a 503, but a 504 was expected.       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The ODR sends a request to a targetted server. The request
+   times out. At this point the ODR is expected to load balance,
+   and try another server.  However, if no other server is
+   available, then the request is returned with http status code
+   503.  A http status code of 504 (GATEWAY_TIMEOUT) is expected.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was fixed to handle the case where a targetted
+   server times out. When load balancing, the ODR cannot retarget
+   the same server, because this may cause an infinite loop
+   condition.  In thise case, where at least one server is tried,
+   the code was changed to return a 504, and not a 503.
+   
+   The fix will be included in Service Pack 6.0.2.2 and 6.1.0.1
+   for WebSphere Extended Deployment.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK51289
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS EXTENDED D
+   
+   
+ * REPORTED COMPONENT ID
+   5724J3400
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-08-20
+   
+   
+ * CLOSED DATE
+   2007-09-26
+   
+   
+ * LAST MODIFIED DATE
+   2007-09-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  XDDWLMCL XDTARGET
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS EXTENDED D
+   
+   
+ * FIXED COMPONENT ID
+   5724J3400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R610 PSY
+   UP

@@ -1,0 +1,35 @@
+Title: IBM Issue installing the Japanse specific module SURYOKA into SPSS 16.0J - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have successfully installed SPSS 16.0J for Windows and I am now trying to install the Japanese specific module SURYOKA V2.2.4 program into SPSS 16.0J for Windows. However, my installation fails with the following errors:
+
+1. "The language dll VB6jp.dll could not be found"
+2. "Path or file not found"
+
+What is the correct path name or directory I should install the program to?
+Why is my installation failing? 
+
+Please provide details on how to successfully install SURYOKA on my machine. 
+
+RESOLVING THE PROBLEM
+The SURYOKA V2.2.4 program module supports both Windows XP and VISTA.
+
+The default install directory for SURYOKA with SPSS 16.0J is "C:\Program Files\SPSSInc\SPSS16JA". Please make sure you set the install directory to SPSS16JA folder.
+
+If you encounter the errors "The language dll VB6jp.dll could not be found" and "Path or file not found" whilst installing, then manually installing the program will resolve the problem. Please see the instructions below to manually install SURYOKA.
+
+1.Log into the machine with local administrative authority.
+
+2.Create the "HYASI" folder in the diectory that SPSS installed to (Default install path is: C:\Program Files\SPSSInc\SPSS16JA). Copy the following files (sample folder and hayasi.exe, HAYASI1.DLL, HAYASI2.DLL, and HAYASI3.DLL) that were included in the extracted files after downloading the program into the "HAYASI" folder. 
+
+3.To start the GUI version SURYOKA double click on the hayasi.exe that was copied into the newly created folder on the SPSS install directory. You can also create a short for the application and add it to programs in the Start menu or copy paste onto your desktop for ease of use.
+
+Note: To add SUURYOKA to the SPSS menu for SPSS for Windows version via Menu Editor, scroll down to the Add-ons and click on the "Insert Item" button and browse to the "GUIHYS.DOC" that is found GUI SURYOKA program CD or download and add it to the menu by clicking on the OK button
+
+
+
+HISTORICAL NUMBER
+ 76568

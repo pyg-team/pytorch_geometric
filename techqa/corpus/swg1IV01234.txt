@@ -1,0 +1,169 @@
+Title: IBM IV01234: JOBTASKSPEC ARE NOT DELETED AFTER JOBPLAN OR JOBTASK ARE DELETED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  replicated in 7116
+   JobTaskSpec are not deleted after JobPlan or JobTask are deleted
+   
+   Steps to reproduce the issue:
+   1. Go to -> Planning -> Job Plan
+   2. Create a Job Plan named TEST1.
+   3. Associate a Classification with it (one Classification that
+   got
+   Attributes). Add a Job Plan Task and associate the same
+   Classification.
+   4. Save.
+   5. Click at Select Action -> Delete Job Plan.
+   6. Create a new Job Plan named TEST1.
+   7. Associate a Classification with it (one Classification that
+   got
+   Attributes).
+   8. Save and the error will happen.
+   
+   BMXAA4129E The record already exists to Job Plan=x, Task=y,
+   Attribute=z,
+   Secction=.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: maximo                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: JOBPLANSPEC/JOBTASKSPEC ARE NOT DELETED *
+   *                      AFTER JOBPLAN OR JOBTASK ARE DELETED    *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   JOBPLANSPEC/JOBTASKSPEC ARE NOT DELETED AFTER JOBPLAN OR
+   JOBTASK ARE DELETED
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  <This is fixed. The root cause: the jobplanspec/jobtaskspec
+   were not deleted when jobplan/jobtask are deleted. >
+   
+   
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | REL 7.1.1.9 - BS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV01234
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO PLANNING
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46PL
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-01
+   
+   
+ * CLOSED DATE
+   2011-06-03
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO PLANNING
+   
+   
+ * FIXED COMPONENT ID
+   5724R46PL
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

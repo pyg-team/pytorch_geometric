@@ -1,0 +1,189 @@
+Title: IBM IV15081: TEBS: UNIT AND FILTER LIMITS TO RAS1 TRACE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   
+     This defect applies to all Tivoli Monitoring platforms.
+     Platform i5 shows particular sensative to this restriction.
+   
+   Problem Description:
+     RAS1 tracing hangs and the Tivoli Monitoring process becomes
+     unresponsive when KBB_RAS1 is configured with excessive UNIT
+     parameters and/or a predominant use of the "ALL" filter.
+     These symptoms are realized during product runtime or
+     shutdown.
+     KBB_RAS1=ALL, for example, is likely to suffer this defective
+     behavior on any platform as it results in intensive filtering.
+     This is a permenant restriction with Basic Services KBB RAS1.
+     Product documentation will be amended to warn of this
+     limitation.
+   
+   Detailed Recreation Procedure:
+     Configure i5 agent with KBB_RAS1=ALL and shutdown that agent.
+   
+   Related Files and Output:
+     RAS1 log
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Below work arounds applicable only for Tivoli Monitoring: i5/OS
+   Agent
+   Work Around 1:
+   1. Set KBB_RAS1=NONE in QAUTOTMP/KMSPARM(KBBENV) for i5/OS
+      agent.
+   2. Recycle the agent.
+   
+   Note: This will produce only limited RAS1 log and agent will
+   end gracefully during shutdown.
+   
+   Work Around 2:
+   1) Set KBB_RAS1=ERROR
+   
+   
+   2) Comment the following 2 lines in QAUTOTMP/KMSPARM(KBBENV)
+       file by adding the * at the beginning of the lines
+      KBB_RAS1_LOG=(QAUTOTMP/KA4AGENT01 QAUTOTMP/KA4AGENT02
+                                         QAUTOTMP/KA4AGENT03) \
+      INVENTORY=QAUTOTMP/KA4RAS.INV LIMIT=5 PRESERVE=1
+   
+      The resulting lines would like the following
+      *KBB_RAS1_LOG=(QAUTOTMP/KA4AGENT01 QAUTOTMP/KA4AGENT02
+                                       QAUTOTMP/KA4AGENT03) \
+      *INVENTORY=QAUTOTMP/KA4RAS.INV LIMIT=5 PRESERVE=1
+   
+   3) Recycle the agent
+      This would create a spool file under QAUTOMON user with trace
+      data which can be discarded unless requested by IBM support.
+   
+   4) Verify if agent ending normally with ENDOMA or Option 3 on GO
+        OMA with default options.
+   
+   Note that there is a possibility of spool file may become
+   full based on the trace configuration settings of the
+   Agent.
+   
+   This can cause the system to generate a message in
+   QSYSOPR message queue to extend the space.
+   When this occurred, agent can go to wait state and may not exist
+   gracefully.
+   It is advisable to not enable trace during the normal operation
+   of the agent with KBB_RAS1=NONE as specified in work around 1.
+   If there is a need to enable trace for some reason, then can
+   enable by directing to spool file as specified in work around 2
+   and watch for messages in QSYSOPR message queue and respond
+   quickly  to avoid any problems with agent operation.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This APAR is intended to document RAS1 limitations with
+   excessive UNIT and filter specifications.
+   While this defect applies to all Tivoli Monitoring platforms, i5
+   shows particular sensative to this restriction.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Documentation has been updated to include the following
+   limitation:
+   
+   
+   Note: Avoid configuring RAS1 tracing with excessive UNIT
+   parameters or a predominant use of the ALLfilter. Otherwise,
+   RAS1 tracing might be suspended or the Tivoli Monitoring process
+   becomes unresponsive during product runtime or shutdown. Such
+   behavior can be caused by a setting of KBB_RAS1=ALL, for
+   example, because it results in intensive filtering. This
+   limitation can be circumvented by using more restrictive filters
+   (ERROR or STATE) or fewer UNIT keywords. The i5 OS monitoring
+   agent process is particularly sensitive to overload
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV15081
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-06
+   
+   
+ * CLOSED DATE
+   2012-03-26
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

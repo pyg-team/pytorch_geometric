@@ -1,0 +1,32 @@
+Title: IBM Will my Single User Notes install be migrated to Multi-user if I install Notes Browser Plugin? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+Will my Single User Notes install be migrated to Multi-user if I install Notes Browser Plugin?
+
+ANSWER
+There are six possible scenarios that can occur when installing Notes Browser Plugin over Notes client:
+Notes Client Only (Single-user) 8.x to 9.x Client WITH Notes Browser Plugin add-on: Supported but will not convert single to multi-user since the plugin is only an addon. 
+
+Notes Client Only (Multi-user) 8.x to 9.x Client WITH Notes Browser Plugin add-on: Supported and will stay multi-user.
+
+AllClient 8.x to 9.x (can only be single-user) WITH Notes Browser Plugin add-on: 
+Supported but will not convert to multi-user because the plugin is only an addon, and AllClient can not be multi-user. 
+
+The following scenarios require upgrade to Notes Browser Plugin 9.0.1.
+
+Notes Client Only (Single-user) 8.x to 9.x Notes Browser Plugin STANDALONE: 
+Supported and will be converted to multi-user as the user is left with the browser plugin standalone only, which can only be multi-user. Users will see MUMA (Multi-user Migration Assistant) run right before the install starts to convert the installation. 
+
+Notes Client Only (Multi-user) 8.x to 9.x Notes Browser Plugin STANDALONE: 
+Supported and will stay multi-user as the user is left with the browser plugin standalone only, which can only be multi-user.
+
+AllClient 8.x to 9.x Notes Browser Plugin STANDALONE: 
+Not supported. As you cannot upgrade from client-only to AllClient and vice versa, you cannot upgrade from AllClient to Browser Plugin Standalone. Users will see MUMA start to run to try to convert the install, and silently fail at 25% because it detects AllClient install.
+
+
+
+RELATED INFORMATION
+ Using the Lotus Notes single user to multi-user migrati [http://www.ibm.com/support/docview.wss?uid=swg21459627]

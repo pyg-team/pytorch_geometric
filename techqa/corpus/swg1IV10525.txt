@@ -1,0 +1,132 @@
+Title: IBM IV10525: BPC ERROR RESILIENCY ENHANCEMENT FOR UNEXPECTED BPEDB DATABASE INCONSISTENCIES - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere Process Server V7.0.0 Fix Pack 5 (V7.0.0.5) [http://www-01.ibm.com/support/docview.wss?uid=swg24032709]
+WebSphere Enterprise Service Bus V7.0.0 Fix Pack 5 (7.0.0.5) [http://www-01.ibm.com/support/docview.wss?uid=swg24032713]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With Workmanager-based navigation, the BPC engine can be caught
+   in infinite message processing loops, if process context
+   information for certain instances in the BPEDB has been
+   corrupted. The fix will change the handling
+    of database errors to avoid such loops and to allow for the
+   continued processing of unaffected instances.  Rationale: If
+   there is no database corruption, then this Fix is not needed.
+   But if there is a database corruption, then without the fix the
+    whole system can be rendered unusable, while with the fix only
+   the affected process instances stop working.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  avoid database corruption
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem fixed
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix will be included in V7005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV10525
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * REPORTED COMPONENT ID
+   5655FLW11
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-14
+   
+   
+ * CLOSED DATE
+   2012-03-12
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IV10523
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * FIXED COMPONENT ID
+   5655FLW11
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

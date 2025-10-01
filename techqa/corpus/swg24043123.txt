@@ -1,0 +1,173 @@
+Title: IBM Host On-Demand 11.0.15 - United States
+
+Text:
+FIXLIST; V17; AnchorTagProblems; AnchorTagText DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM Host On-Demand 11.0.15 has been made generally available and contains new features as well as fixes for client-reported and internally found defects. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+Table of Contents Sections Description  * What's new
+
+The Change history section provides an overview on what is new in this release with a description of any new functions or enhancements when applicable.
+
+ * Impact assessment
+
+The How critical is this fix section provides information related to the impact of this release to allow you to assess how your environment may be affected.
+
+ * Prerequisites
+
+The Prerequisites section provides important information to review prior to the installation of this release.
+
+ * Download package
+
+The Download package section provides the direct link to obtain the download package for installation in your environment.
+
+ * Installation instructions
+
+The Installation instructions section provides the installation instructions necessary to apply this release into your environment.
+
+ * Known problems
+
+The Known side effects section contains a link to the known problems (open defects) identified at the time of this release.
+
+Supporting Documentation Document Description  * Detailed System Requirements [http://www.ibm.com/software/products/en/rationalhostondemand#tab_othertab1]
+
+Click to review the detailed system requirements information for a complete list of hardware requirements, supported operating systems, prerequisites and optional supported software, with component-level details and operating system restrictions.
+
+ * IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSS9FA/welcome]
+
+IBM Knowledge Center provides an entry point to product documentation. You can view, browse, and search online information related to the product.
+
+ * Fix List [http://www.ibm.com/support/docview.wss?uid=swg27037920]
+
+Click to review a complete list of the defects (APARs) resolved in this release including a list of resolved defects for the entire version family.
+
+PREREQUISITES
+ 
+
+Prerequisites include: No prerequisites required.
+
+Back to top
+
+INSTALLATION INSTRUCTIONS
+ 
+
+Review the Installation [http://www.ibm.com/support/knowledgecenter/en/SSS9FA_12.0.0/com.ibm.hod.doc/doc/install/install.html?pos=2] page in the IBM Knowledge Center. The certificate used to sign Host On-Demand 11.0.15 Jar files is valid until Jan 23, 23:59:59 GMT 2020.
+
+Back to top
+
+DOWNLOAD PACKAGE
+ 
+
+The following sections provide detailed information related to this release.
+
+Click the FC link below to obtain the release from Fix Central.
+
+
+HOW CRITICAL IS THIS FIX?
+ 
+
+Impact Assessment Impact Description Recommended This is a service release. It contains new features as well as fixes for client-reported and internally found defects.
+
+Test Results
+
+Close [x]
+
+DEFINITIONS
+Regression: An error in the Maintenance Delivery Vehicle [http://www.ibm.com/support/docview.wss?uid=swg27008656] (MDV) that produces incorrect or unexpected behavior causing a supported feature to stop functioning as designed. 
+This includes: 
+
+ * Coding errors that cause a regression
+ * Documentation or packaging problems that cause a regression
+ * Errors reported in a new function delivered in a MDV that cause a regression
+
+Incomplete: An error in the MDV has not regressed, but does not work as designed. 
+This includes: 
+
+ * Fixed APARs which did not solve the original problem but did not break anything new
+ * APARs reporting documentation errors, such as readme errors, that cause problems applying an MDV but do not lead to a regression
+
+
+
+
+Notes:  * Regression and incomplete APARs are considered fix-in-error or MDV-in-error
+ * Definitions above apply only to valid APARs that result in product fixes (APARs returned as working-as-designed are not assessed for being fix-in-error)
+ * Issues in major releases due to new functionality do not apply in this definition
+
+There are no known regressions to report.
+
+Back to top
+
+PROBLEMS SOLVED
+ 
+
+Defects resolved Click the Fix List link in the table of contents above to review a list of the problems solved in this release.
+
+KNOWN SIDE EFFECTS
+ 
+
+Review the following list of known issues and open defects: There are no known issues report.
+
+OPEN DEFECTS
+Review the following list of open defects for Rational Host On-Demand [https://www-947.ibm.com/support/entry/myportal/search_results/rational/rational_host_on-demand?sn=spe&q=%22APAR%20status%22%20OPEN&prod=A750072O98941P08&filter=language:en&productContext=-1807958514#q%3D%22APAR%20status%22%20OPEN%26hpp%3D100%26filter%3Dlanguage%3Aen%2BDC.Type%3ACT748%26prod%3DA750072O98941P08] on the IBM Support Portal.
+
+Review technote 1461170: Open APARs for Rational products available on the Web [http://www.ibm.com/support/docview.wss?uid=swg21461170] for information on how to configure your MyNotifications subscription account and subscribe to the APARs you are interested in following.
+
+Back to top
+
+CHANGE HISTORY
+ 
+
+What's new Review the Readme file [http://pic.dhe.ibm.com/infocenter/hodhelp/v11r0/topic/com.ibm.hod.doc/doc/readme/readme.html] and click Changes in Version 11.0.15 for details.
+
+Back to top
+
+Click the link in the Download Options column:
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] HOD 11.0.15.0 zOS Referesh Pack 2016-11-30 English 16000 FC [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Rational&product=ibm/Rational/IBM+Host+On-Demand&release=11.0.15.0&platform=All&function=all] [ ] HOD 11.0.15 Windows Refresh Packs 2016-11-30 English 11000 FC [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Rational&product=ibm/Rational/IBM+Host+On-Demand&release=11.0.15.0&platform=All&function=all] [ ] HOD 11.0.15 OS400 Refresh Packs 2016-11-30 English 5000 FC [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Rational&product=ibm/Rational/IBM+Host+On-Demand&release=11.0.15.0&platform=All&function=all] [ ] HOD 11.0.15 Linux Refresh Packs 2016-11-30 English 16000 FC [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Rational&product=ibm/Rational/IBM+Host+On-Demand&release=11.0.15.0&platform=All&function=all] [ ] HOD 11.0.15 AIX Refresh Pack 2016-11-30 English 16000 FC [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Rational&product=ibm/Rational/IBM+Host+On-Demand&release=11.0.15.0&platform=All&function=all] [ ] 
+TECHNICAL SUPPORT
+ 
+
+TAB NAVIGATION
+ * General Support Information- selected tab,
+ * Support Resources [http://www.ibm.com/support/docview.wss?uid=swg27020747]- selected tab,
+
+
+
+
+IBM Rational Software Support Communities 
+
+ * Visit the IBM Support Portal [http://www.ibm.com/support/entry/portal/Overview/Software/Rational/product] to configure your support portal experience and review FAQs, lists of known problems, fixes, and a wealth of important support information.
+   
+   
+ * Visit developerWorks [http://www.ibm.com/developerworks/rational/] to access an online collection of tutorials, sample code, standards, forums and other resources provided by experts at IBM to assist software developers using Rational tools including access to the IBM RFE Community [http://www.ibm.com/developerworks/rfe/].
+   
+   
+ * Visit the Jazz Community [http://jazz.net/] if you use a Rational product created using the Jazz platform to interact directly with the Jazz development team and other community members, download product trials and betas and track developement progress. 
+
+
+
+
+HELPFUL HINTS FOR OBTAINING TECHNICAL ASSISTANCE:
+Before you contact IBM Rational Software Support, gather the background information that you need to describe the problem. When you describe a problem to an IBM software support specialist, be as specific as possible and include all relevant background information so that the specialist can help you solve the problem efficiently. To save time, know the answers to these questions: 
+
+ * What software versions were you running when the problem occurred? 
+ * Do you have logs, traces, or messages that are related to the problem? 
+ * Can you reproduce the problem? If so, what steps do you take to reproduce it? 
+ * Is there a workaround for the problem? If so, be prepared to describe the workaround. 
+
+If you have helpful information to diagnose or identify the problem on your system, you can provide this data by following the instructions to exchange information with IBM Technical Support [http://www.ibm.com/software/support/exchangeinfo.html]. 
+
+ 
+
+Follow IBM Rational Client Support on Twitter [http://twitter.com/rationalsupport] | Facebook [http://facebook.com/rationalsupport] | YouTube [http://www.youtube.com/ibmrationalsupport] | devWorks Blog [https://www.ibm.com/developerworks/mydeveloperworks/blogs/nfrsblog/?lang=en]
+
+
+ Back to top 
+
+ [/support/docview.wss?uid=swg24043123&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24043123&aid=2]Problems (APARS) fixed
+OA50745, OA50473, OA51402, IT16413, IT15957, IT15062, IT14814, IT13496, IT11267, IT14904, IT14749

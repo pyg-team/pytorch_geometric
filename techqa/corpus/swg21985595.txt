@@ -1,0 +1,46 @@
+Title: IBM ICC task route does not archive email from Exchange, no email connector log is created - United States
+
+Text:
+Errorcode: 87; afu_mailconnector_MAPI; ICC upgrade; exchange TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Content Collector (ICC) does not archive any email and no afu_mailconnector log is generated. 
+
+SYMPTOM
+Despite the ICC Windows services running as expected, no emails are archived. While retrieval is working, the archiving task route does not archive as expected. There are no mailconnector logs generated which would normally suggest the service is not started. 
+
+The Task Route Service log also does not indicate any started connectors. 
+In this log we can see that the Email service is started: 
+
+2016-06-08T06:15:23Z Info 0x1808 Starting 2 connectors . ibm::ctms::taskrouting::ConnectorManager::startConnectors (connectormanager.cpp:2552) 
+2016-06-08T06:15:23Z Info 0x11ac Attempting to start service 'ibm.ctms.lotusconnector' 
+2016-06-08T06:15:30Z Info 0x11ac Waiting for service to enter running state : ibm.ctms.lotusconnector 
+2016-06-08T06:15:32Z Info 0x11ac Attempt to start service 'ibm.ctms.lotusconnector' succeeded 
+
+We then may see emails being sent to the blacklist: 
+2016-06-08T06:15:32Z Info 0x1808 Sending 160 black list entries to connector ibm.ctms.lotusconnector. 
+
+However the connector then goes into a sleeping state: 
+2016-06-08T06:15:32Z Trace2 0x1808 Sleeping because create pipe \\.\pipe\ibm.ctms.lotusconnector.config returned with code : 231 
+and no afu_mailconnector log is produced. 
+
+At the same time the afu_monitor log shows the following: 
+2016-06-08T06:15:56.396Z SEVERE [14] Error in Method: LogonUserW() - Errorcode: 87 - Errormessage: The parameter is incorrect.
+
+
+CAUSE
+Following an upgrade of ICC, the Email Connector service user name stored in the Email Connector, Connections tab, in the ICC Configuration Manager may be empty.
+
+
+ENVIRONMENT
+ICC (single node) 
+
+Microsoft Exchange
+
+
+RESOLVING THE PROBLEM
+Check the user that starts the ICC Email Connector Windows service and compare it to the ICC Configuration Manager, Email Connector, Connection tab, Credentials Area. 
+
+Make sure these are both correct with a valid password assigned.
+Then restart ICC Services.
+The afu_mailconnector log should now be produced after making the changes and ICC should successfully process email.

@@ -1,0 +1,31 @@
+Title: IBM The number of TCP/IP idle connections continuously increase with IBM Business Process Manager (BPM) - United States
+
+Text:
+ICP/IP; idle; connection; SocketException; Too many open files TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When the IBM Business Process Manager Server is running, the number of TCP/IP connections continuously increase. finally you may see "Too many open files" error. 
+
+SYMPTOM
+On the command line, run the netstat -a command to check the TCP/IP connections status on the operating system. You see that the TCP/IP connections continuously increase. In the SystemOut.log file, you might see the following error message: 
+
+java.net.SocketException: Too many open files 
+
+
+CAUSE
+This issue is documented as APAR JR44413 [http://www.ibm.com/support/docview.wss?uid=swg1JR44413].
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, upgrade to the IBM Business Process Manager Version 8.0.1 products or download and install the interim fix [http://www-947.ibm.com/support/entry/portal/search_results/software/websphere/ibm_business_process_manager_standard?sn=spe&filter=keywords:ibmsupportfixcentralsearch&q=JR44413#q%3DJR44413%26filter%3DDC.Subject%3ASSFTN5%2CSSFTBX%2CSSFTDH%2Blanguage%3Aen%2Bkeywords%3Aibmsupportfixcentralsearch%26spew%3Dtrue] from IBM Fix Central. After you upgrade your IBM Business Process Manager product, add a value, in milliseconds, for the "idle-connection-timeout" parameter in the 100Custom.xml file. This parameter allow IBM Business Process Manager to close old connections after a specified amount of time has elapsed. 
+
+ 
+
+For more information on the 100Custom.xml file, see The 99Local.xml and 100Custom.xml configuration files [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r0mx/index.jsp?topic=/com.ibm.wbpm.admin.doc/topics/managing_twks_config_settings.html] topic in the information center.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Web Services AIX, Linux, Linux zSeries, Solaris, Windows 8.0, 7.5.1.1, 7.5.1 Business Integration IBM Business Process Manager Express Web Services Linux, Linux zSeries, Windows 8.0, 7.5.1.1, 7.5.1 
+PRODUCT ALIAS/SYNONYM
+ BPM

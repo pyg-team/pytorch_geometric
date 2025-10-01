@@ -1,0 +1,170 @@
+Title: IBM PK50091: JMS ADAPTER LISTENER DOES NOT RECOVER AND FAILS TO PICK UP MESSAGES, AFTER THE JMS SERVER IS STOPPED AND RESTARTED. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the JMS Server is shutdown or stopped and then restarted,
+   then the JMS Adapter Listener running under the Websphere
+   Transformation Extender Launcher, is unable to recover and
+   restablish a connection to the JMS Server until the Websphere
+   Transformation Extender Launcher is restarted.
+   
+   The JMS Adapter Listener may fail with an error message in the
+   JMS adapter trace file similar to the following example.
+   
+   <4520-4312>: [m4jms:MAdapterImpl.listen]
+   <4520-4312>: | [m4jms:MAdapterImpl.listenMsgPTPMode]
+   <4520-4312>: | | Browsing/listening to messages
+   <4520-4312>: | | ****Warning, while listening to or browsing
+   messages:org.jboss.mq.SpyJMSException: Cannot browse the Queue;
+   - nested throwable: (java.io.IOException: Client is not
+   connected)
+   <4520-4312>: | | >>>>Creating a new browser...
+   <4520-4312>: | | >>>>New browser created:
+   org.jboss.mq.SpyQueueBrowser@60d706c9
+   <4520-4312>: | | ****Error, while trying to create new
+   browser:org.jboss.mq.SpyJMSException: Cannot browse the Queue; -
+   nested throwable: (java.io.IOException: Client is not connected)
+   <4520-4312>: | | Validating connection....
+   <4520-4312>: | | [m4jms:MAdapterImpl.validateConnection]
+   <4520-4312>: | | [m4jms:MAdapterImpl.validateConnection] (rc =
+   0) OK
+   <4520-4312>: | [m4jms:MAdapterImpl.listenMsgPTPMode] (rc = -3)
+   *** ERROR ***
+   <4520-4312>: | ****Error_while_listening_to_or_browsing_messages
+   <4520-4312>: [m4jms:MAdapterImpl.listen] (rc = -2) *** ERROR ***
+   <4520-4312>: [m4jms:MAdapterImpl.validateConnection]
+   <4520-4312>: [m4jms:MAdapterImpl.validateConnection] (rc = 0) OK
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTXCQ - WTX00001282
+   RN / RN
+   Circumvention: Stop and Restart the Websphere Transformation
+   Extender Launcher
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The JMS adapter's listener process now handles the
+   InvalidDestinationException error, which is raised once the
+   JBOSS server has been recycled.  Before this fix, this error was
+   handled later in the mapping sequence.  But by that time, the
+   validation logic couldn't detect that there was any problem with
+   the connection.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The JMS adapter's listener process now handles the
+   InvalidDestinationException error, which is raised once the
+   JBOSS server has been recycled.  Before this fix, this error was
+   handled later in the mapping sequence.  But by that time, the
+   validation logic couldn't detect that there was any problem with
+   the connection.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK50091
+   
+   
+ * REPORTED COMPONENT NAME
+   WSTX
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4000
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2007-07-31
+   
+   
+ * CLOSED DATE
+   2008-02-01
+   
+   
+ * LAST MODIFIED DATE
+   2008-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WSTX
+   
+   
+ * FIXED COMPONENT ID
+   5724M4000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP
+   
+   
+ * R810 PSY
+   UP
+   
+   
+ * R820 PSY
+   UP

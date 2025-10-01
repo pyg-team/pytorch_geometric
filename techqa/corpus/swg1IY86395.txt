@@ -1,0 +1,180 @@
+Title: IBM IY86395: WMQ messages written to AIX error log have a resource name that is not quite right - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+WebSphere MQ V6.0 for iSeries Fix Pack 6.0.2.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24013915]
+WebSphere MQ V6.0 Fix Pack 6.0.2.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24013914]
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 14 (CSD14) [http://www-01.ibm.com/support/docview.wss?uid=swg24017668]
+WebSphere MQ V5.3 for iSeries - Fix Pack 14 (CSD14) [http://www-01.ibm.com/support/docview.wss?uid=swg24017684]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If WMQ reports an FDC, on AIX it also reports this problem to
+   the AIX error log. The error log entry identifies the resource
+   name, which was intended to be "MQSeries".
+   
+   However, certainly under recent releases of AIX (5.2, 5.3, ...),
+   the Resource Name in the error log entry is reported as:
+   
+     Resource Name:   MQSeries        NONE
+   
+   I.e. there is an unexpected "NONE" part. This means that
+   the "errpt -N MQSeries" command does not work - it does not
+   find any "MQSeries" entries. There appear to be no variations
+   of the name given to errpt (e.g. "MQSeries        NONE") that
+   will make it work either.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Experimentation shows that AIX is probably actually
+   expecting a null-terminated string within this 16 char
+   field, because simply copying the null-terminated
+   string "MQSeries" to the resource_name field works; errpt
+   displays it correctly and errpt -N MQSeries then works
+   as expected.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users expecting to be able to filter the AIX errlog
+   for "MQSeries" generated error reported, using errpt -N.
+   
+   Platforms affected:
+   AIX
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   This problem is possibly due to a change at some point in AIX
+   development as to how the "Resource Name" parameter to the AIX
+   errlog function is handled.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Modified the WMQ call to the AIX errlog function to pass a null-
+   terminated "MQSeries" resource name rather than a blank-padded
+   name.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v5.3
+   Platform           Fix Pack 14
+   --------           --------------------
+   AIX                U808477
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.1
+   --------           --------------------
+   AIX                U807983
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY86395
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB MQ FOR AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724B4101
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-06-27
+   
+   
+ * CLOSED DATE
+   2006-06-27
+   
+   
+ * LAST MODIFIED DATE
+   2007-07-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB MQ FOR AIX
+   
+   
+ * FIXED COMPONENT ID
+   5724B4101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY
+   UP

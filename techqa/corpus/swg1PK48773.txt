@@ -1,0 +1,260 @@
+Title: IBM PK48773: PROVIDE NEW SET OF WEBSERVICES CONSUMER UDFS. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The current version of webservice UDFs allow webservice
+   endpoint, soap action and SOAP body (operation name and its
+   parameters) to be provided as an input and returns the SOAP body
+   received from the webservice provider's response as a result. It
+   does not allow to specify optional SOAP headers as input and
+   does not include optional SOAP headers received from webservice
+   provider in the result.  The new set of webservice UDFs will
+   allow users to specify the complete SOAP message as an input and
+   the UDFs will return complete SOAP message received from
+   webservice provider's response as a result.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No Work Around
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users interested in using a new set of   *
+   *                 DB2 Web Services user-defined functions for  *
+   *                 DB2 z/OS version 8 and 9 are affected.       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A new set of DB2 user-defined functions *
+   *                      have been added that can be used as     *
+   *                      Web Services Client to invoke services  *
+   *                      offered by Web Services Providers.      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   DB2 for z/OS can act as a client for Web Services, which will
+   allow users to consume Web Services in their DB2 applications.
+   
+   This APAR provide tools, in the form of four User Defined
+   Functions (UDFs), that the users can use to consume Web Services
+   through SQL statements. The UDFs send SOAP(Simple Object Access
+   Protocol) request over HTTP/HTTPS to access Web Services.
+   
+   When the UDF receives the result of Web Service request, the
+   HTTP header is stripped off and the complete XML document
+   containing the SOAP response is returned as an output to the
+   UDF.
+   
+   Setup
+   
+   1. For DB2 V8, follow the job prolog to customize and run job
+      DSNTIJSP.
+   2. For DB2 V9, follow the ++HOLD actions below to customize
+      and run DSNTIJSG.
+   Please see the PTF cover letter comments(++HOLD data) for
+   details.
+   
+   Web Service Consumer UDFs :
+   The Web Service Consumer can be invoked in one of four ways,
+   depending on the size of input data and the result data.
+   SOAPHTTPNV returns a VARCHAR(32672) and SOAPHTTPNC returns a
+   CLOB(1M). Both functions can accept either a VARCHAR(32672) or a
+   CLOM(1M) as the SOAP input. The UDFs are defined under DB2XML
+   schema.
+   
+        DB2XML.SOAPHTTPNV (
+               ENDPOINT_URL VARCHAR(256),
+               SOAP_ACTION VARCHAR(256),
+               SOAP_INPUT  VARCHAR(32672))
+        RETURNS VARCHAR(32672)
+   
+        DB2XML.SOAPHTTPNV (
+               ENDPOINT_URL VARCHAR(256),
+               SOAP_ACTION VARCHAR(256),
+               SOAP_INPUT  CLOB(1M))
+        RETURNS VARCHAR(32672)
+   
+        DB2XML.SOAPHTTPNC (
+               ENDPOINT_URL VARCHAR(256),
+               SOAP_ACTION VARCHAR(256),
+               SOAP_INPUT  VARCHAR(32672))
+        RETURNS CLOB(1M)
+   
+        DB2XML.SOAPHTTPNC (
+               ENDPOINT_URL VARCHAR(256),
+               SOAP_ACTION VARCHAR(256),
+               SOAP_INPUT  CLOB(1M))
+        RETURNS CLOB(1M)
+   
+   The three parameters are as follows and their values can be
+   found in WSDL (Web Services Description Language) document
+   published by Web Service Providers:
+   
+   1. ENDPOINT_URL
+      The URL of the Web Service. It is of the form:
+      proto:// user :password @ hostname :port / path
+   2. SOAP_ACTION
+      Used as part of the SOAP request. Depending on the Web
+      Service, this parameter can be optional.
+   3. SOAP_INPUT
+      XML document containing the complete SOAP message. It may
+      contain optional SOAP headers but must contain a mandatory
+      SOAP body that contains the operation name and the parameters
+      to the web service. The data in this parameter should be
+      well-formed XML.
+   
+   NOTE: In order to use HTTPS during runtime, minimum level of
+   z/OS 1.7 is required. Support for HTTPS has been added through
+   AT-TLS (Application Transparent-Transport Layer Security) which
+   is a new feature introduced with z/OS 1.7. Please consult z/OS
+   IP Configuration Guide and z/OS Cryptographic Services for
+   details.
+   
+   Example:
+   Assuming getEmp is the operation name offered as Web Service by
+   some Web Service Provider that takes a employee id number as
+   an input and returns employee details as an output, then it can
+   be invoked as follows:
+   
+   SELECT DB2XML.SOAPHTTPNC(
+   'http://www.mydb2webservice.com/EmpDetails',
+   '',
+   '<?xml version="1.0" encoding="UTF-8" ?>
+   <soapenv:Envelope xmlns:q0="urn:example"
+   xmlns:soapenv=
+   "http://schemas.xmlsoap.org/soap/envelope/"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   xmlns:xsi=
+   "http://www.w3.org/2001/XMLSchema-instance">
+   <soapenv:Body>
+   <q0:getEmp>
+   <empno>000010</empno>
+   </q0:getEmp>
+   </soapenv:Body>
+   </soapenv:Envelope>')
+   FROM SYSIBM.SYSDUMMY1;
+   
+   The new set of DB2 Web Services user-defined functions will
+   provide more flexibility to the users while invoking the
+   services offered by Web Services Providers.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK48773
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-07-11
+   
+   
+ * CLOSED DATE
+   2007-12-03
+   
+   
+ * LAST MODIFIED DATE
+   2008-01-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK31856 UK31857
+   
+   
+
+MODULES/MACROS
+ *  DSNCIM   DSNCIMX  DSNTIJSG DSNTIJSP DSNTINS1
+   DSNWSCCC DSNWSCCV DSNWSCVC DSNWSCVV DSNWSHLP DSNWSUDH HDB8810J
+   HDB9910J
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY UK31856 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK31856]
+   UP07/12/21 P F712
+   
+   
+ * R910 PSY UK31857 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK31857]
+   UP07/12/21 P F712
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,148 @@
+Title: IBM HE12083: When resolving all user mailboxes for a Domino server, IBM Content Collector might run into in an infinite loop - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.0.0.3-IBM-ICC-FP003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Collector&fixids=4.0.0.3-IBM-ICC-FP003&source=SAR]
+IBM Content Collector V3.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24037618]
+IBM Content Collector V4.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24039003]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When trying to connect to the Domino server, IBM Content
+   Collector might hang. An error similar to the following message
+   is logged in the Email Connector log file:
+   2014-04-16T16:36:53.355Z INFO     [291518] CRT Out of memory
+   exception: :  ("bad allocation")
+   [com.ibm.afu.mailconnector.collector.resolver.automatic.Automati
+   cResolver resolve] [RMI TCP Connection(1)-10.130.39.95
+   0]Exception
+   [com.ibm.afu.mailinterface.MailOutOfMemoryException]: CRT Out
+   of memory exception: :  ("bad allocation")
+   
+   com.ibm.afu.mailinterface.domino.DominoDirectoryService.nLNApiOb
+   tainMailboxesForServer(Native Method)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When connecting to the Domino server, IBM Content Collector
+   scans the Domino address book to resolve all mailboxes on the
+   server. This is done in a paged approach, because the address
+   book contains a large number of entries. If the last call to the
+    address book returns only a single entry, Content Collector
+   runs into an infinite loop, which in turn results in an out of
+   memory exception.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with IBM Content Collector 3.0.0 Fix Pack 5 and 4.0.0
+   Fix Pack 3, the problem of running into an infinite loop when
+   accessing the Domino address book has been fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12083
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-06
+   
+   
+ * CLOSED DATE
+   2014-12-29
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R300 PSY
+   UP
+   
+   
+ * R400 PSY
+   UP

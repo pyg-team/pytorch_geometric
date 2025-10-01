@@ -1,0 +1,261 @@
+Title: IBM IV67087: SSL HANDSHAKE FAILURE WHEN THE VM MANAGER TOOL ATTEMPTS TO CONNECT TO RHEV-M CONFIGURED TO ONLY SUPPORT TLS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  VM Manager tool fails when attempting to connect to a RedHat
+   Red Hat Entreprise Virtualization Manager (RHEV-M)
+   configured to support only TLS.
+   
+   The SSL connection fails with the following error:
+   
+   "2014-11-07 21:18:26 : (pool-1-thread-2)  ERROR:
+   com.ibm.license.mgmt.vmmanager.kvm.rhevm.RhevmConnector::connect
+   :org.apa
+   che.wink.client.ClientRuntimeException:
+   java.lang.RuntimeException:
+   javax.net.ssl.SSLHandshakeException: Received fatal alert:
+   handshake_failure
+    at
+   org.apache.wink.client.internal.ResourceImpl.invoke(ResourceImpl
+   .java:24
+   0)
+    at
+   org.apache.wink.client.internal.ResourceImpl.invoke(ResourceImpl
+   .java:18
+   9)
+    at
+   org.apache.wink.client.internal.ResourceImpl.invokeNoException(R
+   esourceI
+   mpl.java:181)
+    at
+   org.apache.wink.client.internal.ResourceImpl.get(ResourceImpl.ja
+   va:310)
+    at
+   com.ibm.license.mgmt.vmmanager.kvm.rhevm.RhevmConnector.connect(
+   RhevmCon
+   nector.java:110)
+    at
+   com.ibm.license.mgmt.datacollector.tasks.VMCollectorTask.process
+   Task(VMC
+   ollectorTask.java:205)
+    at
+   com.ibm.license.mgmt.datacollector.tasks.CollectorTask.process(C
+   ollector
+   Task.java:89)
+    at
+   com.ibm.license.mgmt.scheduler.impl.SchedulerServiceImpl$TimerLi
+   stenerIm
+   pl.timerExpired(SchedulerServiceImpl.java:159)
+    at
+   com.ibm.license.mgmt.scheduler.timemanager.impl.TimerManagerImpl
+   $TimerIm
+   pl.run(TimerManagerImpl.java:76)
+    at
+   java.util.concurrent.Executors$RunnableAdapter.call(Executors.ja
+   va:471)
+    at
+   java.util.concurrent.FutureTask$Sync.innerRunAndReset(FutureTask
+   .java:35
+   1)
+    at
+   java.util.concurrent.FutureTask.runAndReset(FutureTask.java:178)
+    at
+   java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFuture
+   Task.acc
+   ess$301(ScheduledThreadPoolExecutor.java:178)
+    at
+   java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFuture
+   Task.run
+   (ScheduledThreadPoolExecutor.java:293)
+    at
+   java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExec
+   utor.jav
+   a:1145)
+    at
+   java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExe
+   cutor.ja
+   va:615)
+    at java.lang.Thread.run(Thread.java:781)
+   Caused by: java.lang.RuntimeException:
+   javax.net.ssl.SSLHandshakeException: Received fatal alert:
+   handshake_failure
+    at
+   org.apache.wink.client.internal.handlers.HttpURLConnectionHandle
+   r.handle
+   (HttpURLConnectionHandler.java:58)
+    at
+   org.apache.wink.client.internal.handlers.HandlerContextImpl.doCh
+   ain(Hand
+   lerContextImpl.java:52)
+    at
+   org.apache.wink.client.internal.handlers.AcceptHeaderHandler.han
+   dle(Acce
+   ptHeaderHandler.java:76)
+    at
+   org.apache.wink.client.internal.handlers.HandlerContextImpl.doCh
+   ain(Hand
+   lerContextImpl.java:52)
+    at
+   com.ibm.license.mgmt.vmmanager.kvm.rhevm.BasicAuthSecurityNoOpHa
+   ndler.ha
+   ndle(BasicAuthSecurityNoOpHandler.java:53)
+    at
+   org.apache.wink.client.internal.handlers.HandlerContextImpl.doCh
+   ain(Hand
+   lerContextImpl.java:52)
+    at
+   org.apache.wink.client.internal.ResourceImpl.invoke(ResourceImpl
+   .java:22
+   7)
+    ... 16 more
+   
+   It seems that it is releated with ssl configuration with vm
+   managers.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Please locate the attached test jar file:
+   ftp://ftp.ecurep.ibm.com/fromibm/tivoli/com.ibm.license.mgmt.vmm
+   anager.jar
+   
+   1) Stop the VM Manager tool.
+   2) Make a backup copy of the existing
+   com.ibm.license.mgmt.vmmanager.jar
+   file in the <VMMAN>/lib directory.
+   3) Replace this jar file with the test jar file supplied
+   (removing
+   the PMR number from the beginning of the name).
+   4) Now, perform the exact testing (using the debug SSL Handshake
+   settings) for each of these VM managers (as before, one at a
+   time)
+   
+   
+   Be sure to turn off the SSL debug logging again when the test is
+   complete.
+   If both of the -runonce testing is successful this time, you can
+   leave the test jar file in place for now.  But, if you encounter
+   any issue, you need to replace the original version.
+   *******************************************************
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * SSL connection fails because the VM manager tries to connect
+   * to RHEV-M that is configured to only support TLS.
+   * BEHAVIOR AFTER YOU INSTALL THE UPDATE:
+   * The VM manager connects to RHEV-M by using TLS.
+   ****************************************************************
+   * RECOMMENDATION: Apply appropriate update when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+    | Update | SUA 9.0.1.2 site version 38
+    | Update | ILMT 9.0.1.2 site version 52
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV67087
+   
+   
+ * REPORTED COMPONENT NAME
+   LIC METRIC TOOL
+   
+   
+ * REPORTED COMPONENT ID
+   5724LMTEM
+   
+   
+ * REPORTED RELEASE
+   901
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-20
+   
+   
+ * CLOSED DATE
+   2015-01-20
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIC METRIC TOOL
+   
+   
+ * FIXED COMPONENT ID
+   5724LMTEM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R901 PSY
+   UP

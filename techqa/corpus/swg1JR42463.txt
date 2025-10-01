@@ -1,0 +1,197 @@
+Title: IBM JR42463: BPD ENGINE HANG CAUSED BY DB LOCKING - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Pri Key generation with autotracking can cause a the server to
+   stop processing the BPD processes. Symptoms in the logs are
+   repeated lock wait timeout such as the following:
+   
+   CWLLG2068E: An unexpected exception occurred during an attempt
+   to generate the next primary key.   Error:
+   org.springframework.jdbc.BadSqlGrammarException:
+   PreparedStatementCallback; bad SQL grammar [select high_key from
+   lsw_pri_key where table_id=? for update]; nested exception is
+   java.sql.
+   SQLSyntaxErrorException: ORA-02049: timeout: distributed
+   transaction waiting for lock
+   
+   
+      One DB2, the exception would look like this:
+   [3/15/16 6:59:34:055 EDT] 0001ca7f wle           E   CWLLG2068E:
+    An unexpected exception occurred during an attempt to generate
+   the next primary key.   Error:
+   com.lombardisoftware.core.TeamWorksRuntimeException:
+   [jcc][t4][2041][11392][4.11.69] Error executing
+   XAResource.start().  Server returned XAER_PROTO.
+   ERRORCODE=-4203, SQLSTATE=null
+   
+   com.lombardisoftware.core.TeamWorksRuntimeException:
+   [jcc][t4][2041][11392][4.11.69] Error executing
+   XAResource.start().  Server returned XAER_PROTO.
+   ERRORCODE=-4203, SQLSTATE=null
+    at
+   com.lombardisoftware.server.ejb.pk.PKGeneratorCore.getNextHighIn
+   ternal(PKGeneratorCore.java:156)
+    at
+   com.lombardisoftware.server.ejb.pk.PKGeneratorCore.access$000(PK
+   GeneratorCore.java:42)
+    at
+   com.lombardisoftware.server.ejb.pk.PKGeneratorCore$1.call(PKGene
+   ratorCore.java:95)
+    at
+   com.lombardisoftware.server.ejb.pk.PKGeneratorCore$1.call(PKGene
+   ratorCore.java:93)
+    at
+   com.lombardisoftware.utility.spring.ProgrammaticTransactionSuppo
+   rt$1.doInTransaction(ProgrammaticTransactionSupport.java:436)
+    at
+   org.springframework.transaction.jta.WebSphereUowTransactionManag
+   er$UOWActionAdapter.run(WebSphereUowTransactionManager.java:306)
+    at
+   com.ibm.ws.uow.embeddable.EmbeddableUOWManagerImpl.runUnderNewUO
+   W(EmbeddableUOWManagerImpl.java:790)
+    at
+   com.ibm.ws.uow.embeddable.EmbeddableUOWManagerImpl.runUnderUOW(E
+   mbeddableUOWManagerImpl.java:369)
+    at
+   org.springframework.transaction.jta.WebSphereUowTransactionManag
+   er.execute(WebSphereUowTransactionManager.java:252)
+    at
+   com.lombardisoftware.utility.spring.ProgrammaticTransactionSuppo
+   rt.executeInNewTransaction(ProgrammaticTransactionSupport.java:4
+   31)
+    at
+   com.lombardisoftware.utility.spring.ProgrammaticTransactionSuppo
+   rt.execute(ProgrammaticTransactionSupport.java:294)
+    at
+   com.lombardisoftware.utility.spring.ProgrammaticTransactionSuppo
+   rt.execute(ProgrammaticTransactionSupport.java:225)
+    at
+   com.lombardisoftware.server.ejb.pk.PKGeneratorCore.getNextHigh(P
+   KGeneratorCore.java:91)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  ---
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Pri Key generation with autotracking can cause the server to
+   stop processing the BPD processes.
+   Symptoms in the logs are repeated lock wait timeout such as the
+   following:
+   
+   CWLLG2068E: An unexpected exception occurred during an attempt
+   to generate the next primary key.
+   Error: org.springframework.jdbc.BadSqlGrammarException:
+   PreparedStatementCallback; bad SQL grammar
+   [select high_key from lsw_pri_key where table_id=? for update];
+   nested exception is
+   java.sql.SQLSyntaxErrorException: ORA-02049: timeout:
+   distributed transaction waiting for lock
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem fixed
+   iFix available on top of V7501
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR42463
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2012-04-05
+   
+   
+ * CLOSED DATE
+   2012-07-09
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

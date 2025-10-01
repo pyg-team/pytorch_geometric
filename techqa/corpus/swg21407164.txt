@@ -1,0 +1,38 @@
+Title: IBM Permanently unmanage devices using TagManagedEntities.stch - United States
+
+Text:
+TagManagedEntities.stch TECHNOTE (FAQ)
+
+QUESTION
+ We have Provider and End Customer devices in our subnets that we do not want to monitor. What is the best practice to unmanage these devices permanently? 
+
+ANSWER
+ To permanently unmanage devices is, tag them via TagManagedEntities.stch. Take a look at it in $NCHOME/precision/disco/stitchers directories. Below is the excerpt where you add a condition for some common field within devices you want to unmanage. As always make sure to backup original stitcher first. 
+
+//-------------------------------------------------------------- 
+// Modify this statement to unmanaged specific types of interface
+//--------------------------------------------------------------
+oqlUpdate = oqlUpdate + interfaceFilter + rediscoveryFilter + 
+" AND 
+( 
+ExtraInfo->m_IfDescr like 'Dialer' 
+OR 
+ExtraInfo->m_IfDescr like 'Async' 
+OR 
+ExtraInfo->m_IfDescr like 'Virtual' 
+OR 
+ExtraInfo->m_IfDescr like 'Null' 
+OR 
+ExtraInfo->m_IfDescr like 'NULL' 
+OR 
+ExtraInfo->m_IfDescr like 'Vlan' 
+OR 
+ExtraInfo->m_IfDescr like 'VLAN' 
+OR 
+ExtraInfo->m_IfAlias like 'NoMon' 
+//Lets say - Provider devices are of specific model e.g. OID being '1.3.6.1.4.1.9.1.278'- then you could add something like below:
+OR
+EntityOID like '1.3.6.1.4.1.9.1.278'
+) 
+);"; 
+ExecuteOQL(oqlUpdate);

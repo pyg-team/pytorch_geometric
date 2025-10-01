@@ -1,0 +1,88 @@
+Title: IBM Unable to connect using network services: WebGUI or ssh after upgrading WebSphere DataPower firmware - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why can't I access the Web managment or ssh after upgrading firmware? 
+
+CAUSE
+This can occur if you are using a custom certificate or authentication for the management services and any of the associated certificates are expired. Expired certificates are removed at upgrade time.
+
+ANSWER
+The first step is to verify that the network is functioning correctly using these commands: 
+
+show int 
+
+show int mode 
+
+show route 
+
+ 
+
+Those commands will show if there is any network activity as well as the ethernet link speed. 
+
+Once the network is confirmed, the quickest way to recover the web management and ssh services is to delete and recreate them with the default settings using the serial console. 
+
+The following commands will reset the RBM's, ACL's, WebGUI and SSH services to the default settings. 
+
+Note: If the ssh is working, you may omit any commands with the ssh. 
+
+ 
+
+config 
+
+web-mgmt 
+
+no ssl 
+
+exit 
+
+write mem 
+
+y 
+
+no web-mgmt 
+
+no ssh 
+
+rbm 
+
+reset 
+
+exit 
+
+acl web-mgmt 
+
+reset 
+
+exit 
+
+acl ssh 
+
+reset 
+
+exit 
+
+write mem (key step to remove the current settings) 
+
+y 
+
+web-mgmt <ip to listen on or 0.0.0.0 for all> <port to use default is9090> 
+
+ssh <ip to listen on or 0.0.0.0 for all> <port to use default is22> 
+
+write mem 
+
+y 
+
+ 
+
+Once complete, test the service and confirm you can now access the appliance. Then you may work to configure any custom certificates or authentication settings desired. 
+
+If this does not resolve the issue Contact DataPower Support [http://www.ibm.com/support/docview.wss?uid=swg21236322]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower B2B Appliance XB60 4.0.2, 4.0.1, 5.0.0, 6.0.0 All Editions Business Integration WebSphere DataPower SOA Appliances Firmware 4.0.2, 4.0.1, 5.0.0, 6.0.0, 6.0.1 Edition Independent Business Integration WebSphere DataPower XML Security Gateway XS40 Firmware 4.0.2, 4.0.1, 5.0.0, 6.0.0 All Editions

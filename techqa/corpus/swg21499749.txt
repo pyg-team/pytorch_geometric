@@ -1,0 +1,235 @@
+Title: IBM MustGather: DNS issues using WebSphere DataPower SOA Appliance - United States
+
+Text:
+Domain Name Server DNS 0x0810002d2 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DNS issues generally will trigger an explicit "Failed to resolve" error log message when using IBM WebSphere DataPower SOA Appliances.
+
+However, if several DNS servers have been configured in the DNS server list, an error message may not be triggered if at least one of the DNS servers configured responds within the configured retry and timeout settings.
+
+If there is an intermittent latency observed for transactions that use DNS lookups over the network, it is recommended to validate the DNS servers are responding properly.
+
+This technotes provides information on how to troubleshoot suspected DNS issues using WebSphere DataPower SOA Appliances and what data should be gathered to help expedite problem resolution when engaging IBM Support. 
+
+CAUSE
+If a configured DNS server does not respond, responds incorrectly, or takes too long to respond, transactions depending on the DNS resolution of a hostname may be affected. The following steps can be used to validate the DNS server configuration and further isolate a suspected DNS issue.
+
+RESOLVING THE PROBLEM
+This document contains four sections:
+
+I. Troubleshooting Steps
+II. Considerations Before Collecting Data III. Data to collect to submit to IBM SupportIV. Sample CLI commands to collect DNS MustGather
+
+
+ 
+
+I. Troubleshooting Steps: 
+
+
+
+
+
+
+
+
+To begin Troubleshooting a suspected DNS issue, try the following steps : 
+ * Verify connectivity to the configured DNS servers using the available network connectivity tools found in the Troubleshooting section of the WEBGUI such as Ping or TCP Connection Test.
+   
+   Some examples from the CLI:
+   
+   show dns
+   ping <dns server IP address>
+   traceroute <dns server IP address>
+   test tcp-connection <dns server IP address> 53
+   
+ * Using the same tools as above, verify connectivity to the destination server IP address and hostname that is having the problem.
+   
+ * Review the error logs for log messages with the following strings:
+   
+   dns
+   resolve
+   0x0810002d2
+   
+ * Examine the DNS cache to see if the expected hostname and IP address mappings are displayed:
+   
+   WEBGUI: Status -> IP-Network -> DNS Cached Hosts
+   CLI: show dns-cache
+   
+ * Try configuring a static host to see if this resolves the issue:
+   
+   WEBGUI: Network -> DNS Settings -> Static Hosts tab -> Add
+   
+   This can rule out whether if external DNS resolution is the problem.
+   
+
+II. Considerations Before Collecting Data:
+
+
+
+
+
+
+
+If a DNS issue is suspected, getting the appropriate tracing is vital in order to determine exactly how the configured DNS server query is behaving over the network. 
+
+In particular, getting a packet capture and debug loglevel default-log during the issue are very important to correlate the issue and see the actual DNS query behavior over the network. 
+
+The first step is to determine how to capture the DNS network traffic. Depending on the network configuration, there may be several different approaches. 
+
+Here are some possibilities: 
+ * Get a packet capture from the switch directly in front of the DataPower appliance. This can help to capture all traffic flowing from the DataPower appliance despite which interface the traffic is leaving.
+   
+ * Examine the routing table of the DataPower appliance and determine which interface should be expected to handle the DNS Server IP Address destination traffic.
+   
+   This can be done by examining the routing table:
+   
+   WEBGUI: Status -> IP-Network -> Routing Table
+   CLI: show route
+   
+   An example routing table could look similar to:
+
+
+Destination Device Interface Type Device Interface Gateway Metric Route Type Route Protocol 0.0.0.0/0 Ethernet eth0 2.2.2.1 0 remote netmgmt 1.2.3.4/32 Ethernet eth0 2.2.2.1 1 remote netmgmt 10.10.10.0/24 Ethernet eth2 0.0.0.0 0 local local 
+Refer to the Destination column to find an IP range that matches the DNS server IP Address and check which interface this route is mapped to in the Device Interface column. 
+
+If there isn't a match, look for which interface/interfaces have a default route configured with a 0.0.0.0 under the Destination column. 
+
+Get a packet capture on the interface/interfaces that handle the DNS server IP Address destination traffic. 
+
+From the example routing table above, if the DNS server IP Address is 10.10.10.10, then the eth2 interface would need to have the packet capture. If the DNS server IP Address is 9.9.9.9, then eth0 would need to have the packet capture since the "default" route would be used for this destination traffic. 
+
+ * Getting packet captures for the DNS traffic may be difficult if there is a high volume of traffic, multiple default routes, or if the interface handling the DNS traffic has not been determined.
+   
+   Here are some scenarios and examples to help get the proper data:
+   
+   Due to high traffic volume or filesystem space limitations, the packet capture may need to be filtered. 
+   In Firmware Versions 3.8.1+, the packet-capture utility on the DataPower appliance can use a filter string to limit which packets are captured in the pcap.
+   
+   It may be useful to filter on a specific DNS server IP Address or the DNS traffic port, for example:
+   
+   packet-capture temporary:///DNS.pcap -1 10000 "port 53"
+   
+   The above command issued from an interface's configuration mode will capture a continuous pcap that rotates 3 times (each file will be 10Mb) and only capture traffic using port 53 (which is the default DNS port). 
+   
+   packet-capture temporary:///DNS.pcap -1 10000 "host <DNS server IP Address>"
+   
+   The above command issued from an interface's configuration mode will capture a continuous pcap that rotates 3 times (each file will be 10Mb) and only capture traffic using the specified DNS server IP Address(which is the default DNS port). 
+   
+   Multiple packet captures may need to be started via CLI (one on each interface) or use the packet-capture across all interfaces available in 3.8.2+ Firmware.
+   
+
+
+III. Data to collect to submit to IBM Support 
+
+
+
+
+
+Collect the following documentation to submit to IBM Support to help proceed with proper problem determination. 
+ 1. Error-report: An error-report may be generated in the WEBGUI in the Troubleshooting section
+    
+    
+ 2. Network-related CLI commands to get the output of:
+    
+    show clock 
+    show version 
+    show int 
+    show int mode
+    show network 
+    show route 
+    show netarp
+    show dns 
+    show dns-cache
+    show ip hosts 
+    show load
+    show throughput
+    show tcp 
+    
+ 3. Correlating Debug Loglevel default-log and packet capture of DNS traffic:
+    
+    a) Debug loglevel default-log or Off-device logging: Often, the key to understanding the underlying processing and behavior may only be revealed by enabling debug loglevel for the default-log. Debug loglevel can be set in the WEBGUI in the Troubleshooting section.
+    If local debug logging is a concern, then off-device logging may need to be considered. Please refer to DataPower off-device logging: a configuration example. [http://www.ibm.com/support/docview.wss?uid=swg21269136]
+    
+    b) Packet capture: A packet capture can be started in the WEBGUI in the Troubleshooting section
+    
+ 4. Contacting IBM Support and sending your MustGather information to IBM support
+    
+    Reference our technote for information on Contacting IBM WebSphere DataPower SOA Appliance Support [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21236322]. If this is a production system down, use the phone numbers under "Contact Support: telephone numbers for WebSphere DataPower SOA Appliances."
+    
+    After you have contacted IBM Support, a PMR number will be assigned. 
+    
+    Reply to the email, or attach to the PMR via the SR, tool the information in the preceding sections. 
+    
+    Do not send any proprietary or confidential information from your company.
+    
+
+
+IV. Sample CLI commands to collect DNS MustGather: 
+
+
+
+
+ * 
+ * 
+ * 
+ * co 
+   show clock
+   loglevel debug 
+   show version 
+   show int 
+   show int mode
+   show network 
+   show route 
+   show netarp
+   show dns 
+   show dns-cache
+   show ip hosts
+   clear dns-cache
+   show dns-cache
+   show ip hosts
+   int eth0
+   packet-capture temporary:///eth0trace.pcap -1 10000
+   exit
+   show clock 
+   ping <FAILING HOSTNAME>
+   <Wait for the console to return before continuing>
+   show dns-cache
+   show ip hosts
+   show clock 
+   ping <IP Address of FAILING HOSTNAME.
+   <Wait for the console to return before continuing>
+   show dns-cache
+   show ip hosts
+   clear dns-cache
+   show dns-cache
+   show ip hosts
+   show clock 
+   int eth0
+   no packet-capture temporary:///eth0trace.pcap
+   exit 
+   save internal-state
+   <Wait for the console to return before continuing>
+   save error-report
+   <Wait for the console to return before continuing>
+   loglevel error
+   exit
+ * 
+   
+ * 
+ * 
+ * 
+ * 
+ * 
+
+ 1. The output of the CLI commands above, 
+    
+ 2. The default-log from the logtemp: directory, 
+    
+ 3. From the temporary directory:
+    a) the error-report
+    b) temporary:///internal-state.txt
+    c) the eth0trace.pcaps 
+
+
+NOTE: The above sample CLI commands for gathering the MustGather are just for reference purposes and may need to be modified for your specific environment or specific data collection needs.

@@ -1,0 +1,41 @@
+Title: IBM Error when saving dataset to external database using SAVE TRANSLATE and ODBC in SPSS - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ NOTE: This technote applies to versions that pre-date the File->Export To Database dialog. In those versions you needed to write your own custom SAVE TRANSLATE command syntax to save data back out to a database using ODBC. The versions of SPSS Statistics for which this information is relevant are no longer supported, but this technote is being left available as a courtesy. 
+
+
+I'm using SPSS for Windows to import a table from an external database such as Oracle or SQL Server, make some modifications, and then save a table back out to the database using the SAVE TRANSLATE command and ODBC.
+
+The import works just fine, and I have created the SAVE TRANSLATE command using the /CONNECT string that was created for the GET DATA command then performed the import. The problem is that when I run the SAVE TRANSLATE command, I get the following error:
+
+>Error # 6492
+>The ODBC subsystem has issued an error which prevents the processing of
+>SAVE TRANSLATE ODBC request.
+>This command not executed.
+
+>[Microsoft][ODBC SQL Server Driver][SQL Server]Login failed for user 'sa'.
+>[Microsoft][ODBC Driver Manager] Driver's SQLSetConnectAttr failed
+
+>Error # 6452
+>An error occurred while the output file was being written.
+
+This was from an attempt to save to a SQL Server database.
+
+What's wrong? 
+
+RESOLVING THE PROBLEM
+You may be using an encrypted database password. If you weren't able to configure the DSN using NT authentication, the /CONNECT string created by the database wizard will, by default, contain your database User ID (UID) and password (PWD), but the password string will be encrypted. GET DATA works with encrypted passwords, but SAVE TRANSLATE does not. You must edit the pasted /CONNECT string in the SAVE TRANSLATE command to reflect a PWD value that contains your password in plaintext.
+
+We apologize for the inconvenience. Beginning in version 15.0.1 SAVE TRANSLATE was fully enabled to work with encrypted passwords
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 63788

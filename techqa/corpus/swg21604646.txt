@@ -1,0 +1,29 @@
+Title: IBM Lotus 产品支持的 Java 版本有哪些？ - United States
+
+Text:
+Java; JDK; 版本 TECHNOTE (TROUBLESHOOTING)
+
+问题
+IBM Lotus 产品支持的 Java 版本有哪些？
+
+解决问题
+Notes®/Domino 8.5,9.0 在除 Mac 以外的操作系统支持 Java 6 。(注: Java 6 也被称作为 JDK 1.6 和 JDK 1.6.0). 
+Notes®/Domino 8 支持 Java 5 。(备注：Java 5也被称作为 JDK 1.5 和 JDK 1.5.0)。 相关信息请查阅 Notes/Domino 8.x 版本说明 [http://www.ibm.com/developerworks/lotus/documentation/releasenotes/?S_TACT=105AGX13&S_CMP=LPLOTUS] 文档中下列标题：
+
+“Notes/Domino 8 upgrade to JDK (Java Development Kit) 1.5”
+“System i: Software requirements”
+
+
+
+产品 支持的浏览器版本 客户端支持的Java版本 服务器支持的Java版本 备注 Notes/Domino 8.5 IE 6.0 (XP)
+IE 6.0, 7.0 (XP, Vista)
+Firefox 3 (XP, Vista) W/32 IBM JDK/JRE 1.6 W/32 IBM JDK/JRE 1.6
+c Firefox 3.0 (SLED 10, RHEL 5) Linux Sun JRE 1.6 Linux: IBM JRE 1.6
+zLinux (OS/390) IBM JDK 1.5 Firefox 3.0 (OS X 10.5)
+Safari 3.0 Java 1.5 for Mac OS X 10.5 zSeries (OS/390) IBM JDK 1.6 iSeries (IBM i5/OSTM V5R4) IBM JDK 1.6 
+Notes/Domino 8 IE 6.0 (XP)
+IE 6.0, 7.0 (XP, Vista)
+Firefox 1.5, 2.0 (XP) W/32 IBM JDK/JRE 1.5 W/32 IBM JDK/JRE 1.5
+Notes 8.0.1版本说明 [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=GC23597601] Firefox 1.5, 2.0 (RHEL 5 desktop)
+Firefox 1.8 (SLED 10 XGL2) Linux Sun JRE 1.5 Linux: IBM JRE 1.5 [/support/docview.wss?uid=swg21604646&amp;aid=1] zLinux (OS/390) IBM JDK 1.5 zSeries (OS/390) IBM JDK 1.5 iSeries (IBM i5/OSTM V5R4) IBM JDK 1.5 相关信息
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21188789]

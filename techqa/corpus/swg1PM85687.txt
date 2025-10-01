@@ -1,0 +1,287 @@
+Title: IBM PM85687: MODULE TO DELETE MULTIPLE LIBRARIES FOR WCM 8.0 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.0 Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24033155]
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The DeleteMultipleLibraries module allow multiple libraries on
+   the system to be deleted (even if there are references between
+   the selected libraries). The module is executed via a
+   ConfigEngine task.
+   
+   This APAR will be included in CF05 for 8.0.0.0 and 8.0.0.1.
+   
+   
+   IMPORTANT POINTS TO BE NOTED BEFORE USING THE MODULE:
+   ----------------------------------------------------
+   You should back up your database prior to running the module as
+   a precaution if required. The task must only be run by the
+   server administrator.
+   
+   By default, the task will execute the module against the base
+   Portal instance. If the libraries being deleted are inside a
+   specific virtual portal, be sure to identify the relevant
+   virtual portal instance by including either the virtual portal
+   hostname or virtual portal context parameter in the command (see
+   the usage section for further details).
+   
+   
+   CONFIGURATION STEPS TO ENABLE THE MODULE:
+   -----------------------------------------
+   1. Log into the WAS administration console (WebSphere Integrated
+   Solutions Console).
+   2. Locate the custom properties for WCM WCMConfigService
+   eg: Resources --> Resource Environment --> Resource Environment
+   Proviers --> WCM WCMConfigService --> Custom properties
+   3. For the "connect.businesslogic.module" property, append
+   ",deletemultiplelibraries" to the end of the comma separated
+   list.
+   4. Add a new custom property "connect.businesslogic.module
+   .deletemultiplelibraries.class" with value
+   "com.aptrix.pluto.util.DeleteMultipleLibrariesModule"
+   5. Add another custom property "connect.businesslogic.module
+   .deletemultiplelibraries.remoteaccess" with value "true"
+   6. Add another custom property "connect.businesslogic.module
+   .deletemultiplelibraries.autoload" with value "false"
+   7. Save the configuration.
+   8. Restart the server
+   
+   
+   USING THE TASK TO DELETE MULTIPLE LIBRARIES:
+   -------------------------------------------
+   1. Navigate to the ConfigEngine directory from the
+   console/terminal/command prompt:
+   2. Then run the following ConfigEngine task:
+   ConfigEngine.sh|bat run-wcm-admin-task-delete-libraries
+   -Dlibraries=library1,library2 -DPortalAdminId=username
+   -DPortalAdminPwd=password
+   
+   Note: For the libraries parameter, specify the name of each
+   library that requires deletion separated by a comma. For
+   example, -Dlibraries=library1,library2,library3
+   
+   If libraries from a specific virtual portal needs to be deleted,
+   then identify the virtual portal using either the
+   VirtualPortalContext or VirtualPortalHost parameter
+   ConfigEngine.sh|bat run-wcm-admin-task-delete-libraries
+   -Dlibraries=library1,library2 -DVirtualPortalContext=SampleVPCon
+   text -DPortalAdminId=username -DPortalAdminPwd=password
+   or
+   ConfigEngine.sh|bat run-wcm-admin-task-delete-libraries
+   -Dlibraries=library1,library2 -DVirtualPortalHost=SampleVPHostna
+   me -DPortalAdminId=username -DPortalAdminPwd=password
+   
+   The execution time of the task depends on the size of the data
+   set. A "Build Successful" message will be displayed once the
+   task has completed. Please check SystemOut.log to see the
+   extended results.
+   
+   NOTE : The eventlog entries for the deleted libraries need to be
+   removed to avoid future errors. So please run the
+   wcm-reset-event-log task to drop all the eventlog tables and
+   recreate them. Please restart the server once this task has
+   completed. The eventlog entries for all remaining libraries on
+   your system will be recreated when the server is restarted.
+   
+   
+   
+   
+   
+   If the items within the specified libraries are referenced by
+   other items within non-deleted libraries, the deletion will
+   fail. SystemOut.log will also list the references that needs to
+   be cleared or replaced to resolve the external references.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The DeleteMultipleLibraries module allow multiple libraries on
+   the system to be deleted (even if there are references between
+   the selected libraries). The module is executed via a
+   ConfigEngine task.
+   
+   This APAR will be included in CF05 for 8.0.0.0 and 8.0.0.1.
+   
+   
+   IMPORTANT POINTS TO BE NOTED BEFORE USING THE MODULE:
+   ----------------------------------------------------
+   You should back up your database prior to running the module as
+   a precaution if required. The task must only be run by the
+   server administrator.
+   
+   By default, the task will execute the module against the base
+   Portal instance. If the libraries being deleted are inside a
+   specific virtual portal, be sure to identify the relevant
+   virtual portal instance by including either the virtual portal
+   hostname or virtual portal context parameter in the command (see
+   the usage section for further details).
+   
+   
+   CONFIGURATION STEPS TO ENABLE THE MODULE:
+   -----------------------------------------
+   1. Log into the WAS administration console (WebSphere Integrated
+   Solutions Console).
+   2. Locate the custom properties for WCM WCMConfigService
+   eg: Resources --> Resource Environment --> Resource Environment
+   Proviers --> WCM WCMConfigService --> Custom properties
+   3. For the "connect.businesslogic.module" property, append
+   ",deletemultiplelibraries" to the end of the comma separated
+   list.
+   4. Add a new custom property "connect.businesslogic.module
+   .deletemultiplelibraries.class" with value
+   "com.aptrix.pluto.util.DeleteMultipleLibrariesModule"
+   5. Add another custom property "connect.businesslogic.module
+   .deletemultiplelibraries.remoteaccess" with value "true"
+   6. Add another custom property "connect.businesslogic.module
+   .deletemultiplelibraries.autoload" with value "false"
+   7. Save the configuration.
+   8. Restart the server
+   
+   
+   USING THE TASK TO DELETE MULTIPLE LIBRARIES:
+   -------------------------------------------
+   1. Navigate to the ConfigEngine directory from the
+   console/terminal/command prompt:
+   2. Then run the following ConfigEngine task:
+   ConfigEngine.sh|bat run-wcm-admin-task-delete-libraries
+   -Dlibraries=library1,library2 -DPortalAdminId=username
+   -DPortalAdminPwd=password
+   
+   Note: For the libraries parameter, specify the name of each
+   library that requires deletion separated by a comma. For
+   example, -Dlibraries=library1,library2,library3
+   
+   If libraries from a specific virtual portal needs to be deleted,
+   then identify the virtual portal using either the
+   VirtualPortalContext or VirtualPortalHost parameter
+   ConfigEngine.sh|bat run-wcm-admin-task-delete-libraries
+   -Dlibraries=library1,library2 -DVirtualPortalContext=SampleVPCon
+   text -DPortalAdminId=username -DPortalAdminPwd=password
+   or
+   ConfigEngine.sh|bat run-wcm-admin-task-delete-libraries
+   -Dlibraries=library1,library2 -DVirtualPortalHost=SampleVPHostna
+   me -DPortalAdminId=username -DPortalAdminPwd=password
+   
+   The execution time of the task depends on the size of the data
+   set. A "Build Successful" message will be displayed once the
+   task has completed. Please check SystemOut.log to see the
+   extended results.
+   
+   NOTE : The eventlog entries for the deleted libraries need to
+   be
+   removed to avoid future errors. So please run the
+   
+   wcm-reset-event-log task to drop all the eventlog tables and
+   
+   recreate them. Please restart the server once this task has
+   
+   completed. The eventlog entries for all remaining libraries on
+   
+   your system will be recreated when the server is restarted.
+   
+   If the items within the specified libraries are referenced by
+   other items within non-deleted libraries, the deletion will
+   fail. SystemOut.log will also list the references that needs to
+   be cleared or replaced to resolve the external references.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  As above, the module can be executed via a ConfigEngine task to
+   delete multiple libraries from the system
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM85687
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-26
+   
+   
+ * CLOSED DATE
+   2014-02-05
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

@@ -1,0 +1,36 @@
+Title: IBM Connection problems with Clementine Server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm using Clementine Client (version 9.x or 10.x) while connected to a Clementine Server service installed on a remote server machine. I often fail to connect to Clementine Server and/or at intermittent times I lose connection. Why? 
+
+RESOLVING THE PROBLEM
+There is a generic error message "Lost Connection to Server" that can occur when the Clementine Server has crashed. It is hoped the following information resolves some problems caused by networking issues. Please contact Technical Support if you require further assistance. 
+
+The most common reason for Clementine Client to fail to connect to Clementine Server is permissions. Either the Clementine Server service was not installed with administrator or root permissions, or the username supplied at connection time cannot be authenticated by the server machine or domain. If there are multiple domains, we suggest ensuring that usernames can be authenticated directly on the server machine where Clementine Server is installed (each user logging directly onto the server machine and therefore creating user accounts should allow this).
+
+Check that the Clementine Server service has actually started on the server machine. On a Windows operating system you can view 'Services' via the windows Control Panel. On a Unix variant, Solaris for example, you can use a standard command (ps -ef | grep sclemd) to search for any programs called 'sclemd' (the Clementine Server demon).
+
+There are security features on server operating systems that can prevent the starting of or connection to system services such as Clementine Server. On a Windows 2000 Server, for example, it is possible to stop a user being able to log on a service (and spawning a Clementine Server service slave session). Ask the network Administrator to check that users can 'log on as a service' (this can be found via Start->Programs->Administrative Tools->Local Security Policy. Within here is a directory called Local Polices->User Rights Assignment. Examine the following keys in particular;
+- 'Deny log on as a service' 
+- 'Log on as a service'
+- 'Access this machine from the network'
+
+Be aware that if the domain server security is different it may override these options.
+
+It may be possible that connection between Clementine Client and Clementine Server encounters problems as a result of networking issues that do not commonly arise with other software. Although Clementine Server does not make any particularly special calls for TCP/IP communications, there have been cases reported where the network card was failing to correctly handle connection requests. In these cases updating the network card driver has resolved the TCP/IP communication problems.
+
+If there is a large distance between the client computer and server computer, or the network is very busy at this specific time then communication could be lost. In a Windows NT network, the default timeout for TCP/IP communications is 32 seconds. For Windows 2000, it is 128 seconds. If a communication request cannot reach the server and back to the client in this time, then connection is not possible and data may be lost. This timeout can be increased to 255 seconds, if required. There are likely to be other networking related problems if the network is this slow.
+
+Clementine does not usually pass a lot of data between the Client and Server. Refer to other Knowledgebase resolutions for further guidance about which data processing operations you should avoid in a slow networked environment (for example ID's 21424 and 21081). Do not try Plot graphs and wide Tables when possible
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 24342

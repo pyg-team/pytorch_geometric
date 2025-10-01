@@ -1,0 +1,67 @@
+Title: IBM Installing WebSphere Development Studio Client V7 is Not Supported on Windows 7 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installing IBM WebSphere Development Studio Client V7 is not supported on Microsoft Windows 7. However, this document provides installation instructions that can be tried. 
+
+RESOLVING THE PROBLEM
+ 
+
+Disclaimer: IBM WebSphere Development Studio Client V7.0 is not supported on Microsoft Windows 7 or later; however, these instructions could help with installation problems. 
+Important Note: These instructions are provided as is. If the instructions do not work, there is no support for them. IBM WebSphere Development Studio is out of support as of April 2010. 
+
+The following instructions have worked for some customers. 
+
+You will want to follow the clean up instructions if you previously tried installing and this is your second attempt. If this is your first attempt to install, you should skip this section. 
+
+The following document contains steps to clean up a previous installation of WDSC from Windows XP. The same instructions should work in Windows 7: 
+
+New, WebSphere Development Studio Client and WebSphere Development Studio Client Advanced Edition V7.0 Cleanup: Database 'DCF Technotes (IBM i)', View 'Products', Document 'WebSphere Development Studio Client and WebSphere Development Studio Client Advanced Edition V7.0 Cleanup' [http://www-01.ibm.com/support/icons/doclink.gif] [http://www-01.ibm.com/support/docview.wss?uid=nas8N1014449] 
+
+After the clean up instructions have been followed, try to re-install. 
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+1. Download V 1.3.3 of Installation Manager. As of 4/9/2010 it could be found at this Web site: 
+
+http://www-01.ibm.com/support/docview.wss?rs=3352&context=SSDV2W&context=SSCZQKL&context=SSSTY3&dc=D400&uid=swg24024682&loc=en_US&cs=UTF-8%C3%A2n%C2%A9=en [http://www-01.ibm.com/support/docview.wss?rs=3352&context=SSDV2W&context=SSCZQKL&context=SSSTY3&dc=D400&uid=swg24024682&loc=en_US&cs=UTF-8%C3%A2n%C2%A9=en] 
+
+There are instructions on how to install it. You will want to download the Win32 version. Follow the instructions under the heading: 
+Install IBM Installation Manager for the first time 
+
+2. You will now download the fixpack to install directly to V7.0.0.8 
+
+Note: These are large but necessary downloads that may be removed after installation. 
+
+o If you are installing WDSC Standard Edition, go to the following site: 
+
+http://download.boulder.ibm.com/ibmdl/pub/software/awdtools/wdsc/v7/7008/zips/ [http://download.boulder.ibm.com/ibmdl/pub/software/awdtools/wdsc/v7/7008/zips/] 
+
+Download the fixpack and unzip it. 
+
+o If you are installing WDSC Advanced Edition, go to the following site: 
+
+http://download.boulder.ibm.com/ibmdl/pub/software/awdtools/wdscae/v7/7008/zips/ [http://download.boulder.ibm.com/ibmdl/pub/software/awdtools/wdscae/v7/7008/zips/] 
+
+Download the 4 fixpack files and unzip them into the same folder. Example: C:\WDSCAE 
+
+
+3. Once installed, open Installation Manager. Pull down the File menu and select Preferences. You will need to add two repositories: 
+
+a. Add a repository pointing to the disktag.inf file in the folder for Disk1 of the WDSC disk set. 
+
+b. For Standard Edition installations: Add a repository pointing to repository.config in the unzipped WDSC 7.0.0.8 update. 
+For Advanced Edition installations: Add a repository pointing to disktag.inf in the unzipped Disk1 of the WDSCAE 7.0.0.8 update. 
+
+c. Click Apply, and then click OK. 
+
+d. Next, click Install and follow the Installation Manager prompts. 
+
+Note: Do not click the button that says Check for latest updates and versions. 
+
+e. Once the installation is complete, you should start WDSC to verify it is successful.  
+
+HISTORICAL NUMBER
+ 557386786

@@ -1,0 +1,78 @@
+Title: IBM TIP fixpack install fails, error LockNotAllowedException: lock_not_allowed - United States
+
+Text:
+TIPL2INST TIPL2 installation fail lock_not_allowed LockNotAllowedException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installation of Tivoli integrated Portal fix pack fails with below errors:
+Caused by: com.ibm.ac.si.runtime.lock.LockNotAllowedException: lock_not_allowed
+at:com.ibm.ac.si.runtime.lock.LockUtil.createLock) 
+
+SYMPTOM
+Look for below exceptions in the IA log. The location of IA log varies by product so please check below technote as a guideline for location and name of the log file. 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21620473 [http://www-01.ibm.com/support/docview.wss?uid=swg21620473] 
+
+
+FINER : THROW (from com.ibm.ac.coi.ext.ia.DaemonRestart.run)
+Caused by: java.lang.RuntimeException: com.ibm.ac.si.iuregistry.IURegException: IURegistryServiceUnavailable
+at: com.ibm.ac.si.runtime.impl.IURegAPIController.<init>(IURegAPIController.java:121)
+at: com.ibm.ac.si.runtime.impl.SIRuntimeImpl.createIURegistryView(SIRuntimeImpl.java:488)
+at: com.ibm.ac.coi.ext.ia.DaemonRestart.run(DaemonRestart.java:89)
+at: com.ibm.ac.coi.ext.ia.plugin.DEBootstrapAction.Result(DEBootstrapAction.java:272)
+at: com.ibm.ac.coi.ext.ia.DEBootstrapWorkerThread$ResultDispatch.run(DEBootstrapWorkerThread.java:218)
+at: java.util.Timer$TimerImpl.run(Timer.java:296)
+Caused by: com.ibm.ac.si.iuregistry.IURegException: IURegistryServiceUnavailable
+at: com.ibm.ac.si.iuregistry.IUTypeDatabaseImpl.<init>(IUTypeDatabaseImpl.java:432)
+
+Caused by: com.ibm.ac.si.iuregistry.IURegistryServiceException: IURegistryServiceUnavailable
+at: com.ibm.ac.si.iuregistry.IURegistryConnection.initialize(IURegistryConnection.java:119)
+at: com.ibm.ac.si.iuregistry.IURegistryConnection.getConnection(IURegistryConnection.java:77)
+at: com.ibm.ac.si.iuregistry.DatabaseMgr.<init>(DatabaseMgr.java:110)
+at: com.ibm.ac.si.iuregistry.IUTypeDatabaseImpl.<init>(IUTypeDatabaseImpl.java:417)
+at: sun.reflect.NativeConstructorAccessorImpl.newInstance0(NativeConstructorAccessorImpl.java:-2)
+
+Caused by: com.ibm.ac.si.nls.SIRuntimeException: Unable to obtain database connection at jdbc:derby://localhost:4130/IURegistryDB
+at: com.ibm.ac.si.util.Utilities.getConnection(Utilities.java:500)
+at: com.ibm.ac.si.iuregistry.IURegistryConnection.initialize(IURegistryConnection.java:109)
+
+at: java.util.Timer$TimerImpl.run(Timer.java:296)
+Caused by: com.ibm.ac.si.runtime.lock.LockNotAllowedException: lock_not_allowed
+at: com.ibm.ac.si.runtime.lock.LockUtil.createLock(LockUtil.java:212)
+at: com.ibm.ac.si.util.Utilities.getConnection(Utilities.java:479)
+at: com.ibm.ac.si.iuregistry.IURegistryConnection.initialize(IURegistryConnection.java:109)
+
+
+CAUSE
+The installation process creates lock files to prevent other installation processes from being started before it finishes. If the installation is killed or it died un-expectedly then lock files may not get deleted. When installation is initiated again the following exception occurs, thus preventing the installation to proceed. 
+
+ "com.ibm.ac.si.runtime.lock.LockNotAllowedException: lock_not_allowed" 
+
+
+RESOLVING THE PROBLEM
+To resolve this issue perform below steps:
+
+
+1. Login to the server from command line. 
+
+2. Go to the following directory:
+
+[/support/docview.wss?uid=swg21632006&amp;aid=1]
+cd "C:\Program Files\IBM\common\acsi\logs" 
+
+[/support/docview.wss?uid=swg21632006&amp;aid=2]
+Root user: 
+
+ * 
+
+Non-root user:  * 
+
+
+
+3. Check if there are any lock files. Delete the lock files by running one of the following commands depending on your operating system:  * Windows: del .lock* 
+ * UNIX: rm *.lock 
+
+
+Before trying the installation again, run DE health checker to find the status of DE. If you find any issue during the health check then that issue should be corrected before proceeding with the installation. See below technote for health check: 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21591305 [http://www-01.ibm.com/support/docview.wss?uid=swg21591305]

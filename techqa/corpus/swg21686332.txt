@@ -1,0 +1,16 @@
+Title: IBM Endpoint Manager for Remote Control  is not affected by the Bash vulnerabilities (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278) - United States
+
+Text:
+Bash vulnerability; IBM Endpoint Manager for Remote Control FLASH (ALERT)
+
+ABSTRACT
+ IBM Endpoint Manager for Remote Control is not directly vulnerable to the Bash vulnerabilities that have been referred to as “Bash Bug” or “Shellshock” and the two memory corruption vulnerabilities. IBM Endpoint Manager for Remote Control however could be misused to exploit an underlying Bash vulnerability. 
+
+CONTENT
+IBM Endpoint Manager for Remote Control in all editions and all platforms is NOT vulnerable to the Bash vulnerabilities (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278). 
+
+IBM Endpoint Manager for Remote Control however could be misused to exploit an underlying Bash vulnerability. 
+
+IBM recommends that you review your entire environment to identify vulnerable releases of Bash including your Operating Systems and take appropriate mitigation and remediation actions. Please contact your Operating System provider for more information.
+
+As an interim measure customers can disable the pre/post script policies until the underlying bash vulnerability has been addressed.

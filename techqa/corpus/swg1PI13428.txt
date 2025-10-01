@@ -1,0 +1,261 @@
+Title: IBM PI13428: THREADS HANG DUE TO DEADLOCK WHEN STOPPING AN APPLICATION THAT INCLUDES A RESOURCE ADAPTER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.3: WebSphere Application Server V8.5.5 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038133]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A deadlock may occur when stopping an application
+   that contains a resource adapter module, which causes two
+   threads to hang and the application to fail to stop.
+   .
+   The SystemOut.log will show the following hung thread detection
+   messages:
+   .
+   WSVR0605W: Thread "HAManager.thread.pool : 1" (00000017) has
+   been active for 628025 milliseconds and may be hung.  There
+   is/are 1 thread(s) in total in the server that may be hung.
+   at
+   com.ibm.ejs.j2c.ConnectionFactoryBuilderImpl.getObjectInstance(C
+   onnectionFactoryBuilderImpl.java:436)
+   at
+   javax.naming.spi.NamingManager.getObjectInstanceByFactoryInRefer
+   ence(NamingManager.java:501)
+   at
+   javax.naming.spi.NamingManager.getObjectInstance(NamingManager.j
+   ava:365)
+   at
+   com.ibm.ws.naming.util.Helpers.processSerializedObjectForLookupE
+   xt(Helpers.java:927)
+   ...
+   
+   WSVR0605W: Thread "Default : 4" (0000003e) has been active for
+   627799 milliseconds and may be hung.  There is/are 2 thread(s)
+   in total in the server that may be hung.
+   at
+   com.ibm.ejs.j2c.RALifeCycleManagerImpl.shutdown(RALifeCycleManag
+   erImpl.java:1483)
+   at
+   com.ibm.ejs.j2c.RALifeCycleManagerImpl.stop(RALifeCycleManagerIm
+   pl.java:782)
+   at
+   com.ibm.ws.runtime.component.ApplicationMgrImpl.stop(Application
+   MgrImpl.java:1151)
+   ...
+   
+   A Javacore will show that a deadlock has occurred:
+   .
+   ***WARNING*** Deadlock detected in  [HAManager.thread.pool : 1]
+   [Default : 2]
+   
+   HAManager.thread.pool : 1
+   State
+   Deadlock/Blocked
+   Monitor
+   Owns Monitor Lock on
+   com/ibm/ejs/j2c/RAWrapperImpl@0x000000074E493120/0x000000074E493
+   12C
+   Waiting for Monitor Lock on
+   java/lang/Object@0x00000007443ADCF8/0x00000007443ADD04
+   Java Stack
+   at
+   com/ibm/ejs/j2c/ConnectionFactoryBuilderServerImpl.createCFD_Com
+   mon(ConnectionFactoryBuilderServerImpl.java:330)
+   at
+   com/ibm/ejs/j2c/ConnectionFactoryBuilderServerImpl.processObject
+   Instance(ConnectionFactoryBuilderServerImpl.java:1027)
+   at
+   com/ibm/ejs/j2c/ConnectionFactoryBuilderImpl.getObjectInstance(C
+   onnectionFactoryBuilderImpl.java:664)
+   at
+   javax/naming/spi/NamingManager.getObjectInstanceByFactoryInRefer
+   ence(NamingManager.java:501)
+   ...
+   
+   Default : 2
+   State
+   Deadlock/Blocked
+   Monitor
+   Owns Monitor Lock on
+   java/lang/Object@0x00000007443ADCF8/0x00000007443ADD04
+   Waiting for Monitor Lock on
+   com/ibm/ejs/j2c/RAWrapperImpl@0x000000074E493120/0x000000074E493
+   12C
+   Java Stack
+   at
+   com/ibm/ejs/j2c/RALifeCycleManagerImpl.shutdown(RALifeCycleManag
+   erImpl.java:1483)
+   at
+   com/ibm/ejs/j2c/RALifeCycleManagerImpl.stop(RALifeCycleManagerIm
+   pl.java:782)
+   at
+   com/ibm/ws/runtime/component/ApplicationMgrImpl.stop(Application
+   MgrImpl.java:1151)
+   ...
+   
+   This is a timing/synchronization issue that can occur when
+   running WebSphere Application Server with a fix pack level
+   that includes apar PM93319 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM93319].
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server with applications that include a     *
+   *                  resource adapter.                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Threads hang due to a deadlock when     *
+   *                      stopping an application that includes   *
+   *                      a resource adapter.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A deadlock can occur between the application stop thread and
+   the j2c resource adapter work thread doing a lookup due to
+   synchronization and issues which can prevent stopping the
+   application.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere Application Server J2C code has been corrected
+   to properly synchronize the locking objects.
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 7.0.0.35, 8.0.0.10 and 8.5.5.3.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI13428
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-10
+   
+   
+ * CLOSED DATE
+   2014-07-15
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

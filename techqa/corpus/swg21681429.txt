@@ -1,0 +1,56 @@
+Title: IBM nzstart fails, complaining cannot find: /nz/data/base/.../pg_sorttempPPP.OOO files - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ nzstart fails with many errors like this:
+
+find: /nz/data.1.0/base/550692/pg_sorttemp29640.107649: No such file or directory
+find: /nz/data.1.0/base/550692/pg_sorttemp29783.75656: No such file or directory
+
+
+CAUSE
+ 
+
+The pg_sorttemp files under /nz/data come from "bridge queries". These are selects that join tables in the system catalog (under /nz on both the central managing hosts) with tables on the blades, such as
+_V_RELATION_COLUMN (on the host) and _V_TABLE_DIST_MAP (on each blade). 
+
+To match rows from different tables for joining we need them both in memory on the same machine, so we send the relevant data from each blade to the current active host and put it in a temp file called pg_sorttemp~, and then join that the the system catalog table. NPS creates these files as needed, and then deletes them when they are no longer needed. 
+
+In the event of an ungraceful shutdown, some pg_sorttemp files may be left behind. To deal with those there nzstart executes this command to find and delete any such files:
+
+find "$NZ_DATA_DIR/base" "$NZ_DATA_DIR/global" -name 'pg_sorttemp*' \-exec rm -f '{}' ';'
+
+There is a defect (SWS-75887) where we did not automatically vacuum _t_dist_map, and that would cause the optimizer to create a very large number of pg_sorttemp files. An unplanned shutdown involving a bridge query with _t_dist_map will then lead nzstart attempting to delete several hundred thousands files with a single rm command. that will fail with errors like:
+-bash: /bin/rm: Argument list too long
+because the rm command cannot process that many parameters.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+You need to delete all (or at least most) of the pg_sorttemp files first, then nzstart will complete OK, but you to keep the length of the parameters string passed to the rm command below the linux bash shell ARG_MAX config parameter. That parameter has been increased in later Linux releases from the 128KB to 2048KB. You can check the current value with this command: 
+
+getconf ARG_MAX
+
+The simplest solution is to delete them one at a time with a script like this:
+ls pg_sorttemp* > /tmp/pgstlist
+for aa in `cat /tmp/pgstlist`
+do
+echo $aa
+rm $aa
+done
+
+The "echo $aa" is just so you can keep track of progress. This is not the most efficient solution, but it will likely complete in less time than it takes you to work out what combination of wildcards will delete the files in small enough batches.
+
+Another solution is what we changed the NPS code to in 6.0.8 and 7.0 when fixing defect 50833 (or SWS-72105), which is to use the-delete option of the find command, rather than the -exec option to run the rm command. So you run 
+find /nz/data -name pg_sorttemp* -type f -delete
+and that will delete all the files in a single command, though with no ongoing progress notification.
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management PureData System for Analytics Information Management PureData System for Analytics N1001-020

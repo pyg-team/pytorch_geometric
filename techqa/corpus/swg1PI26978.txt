@@ -1,0 +1,159 @@
+Title: IBM PI26978: CHANGING STATE OF A TEST SUITE RESULT TO "REJECT" SHOWS THE ACTION AS "APPROVE" INSTEAD - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Quality Manager 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24038339]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Changing state of a Test Suite Result to "Reject" shows  the
+   action as  "Approve" instead.
+   
+   Steps to reproduce:
+   1. Create a Test Suite and run it.
+   2. Bring up the Test Suite Result from Execution-> Browse ->
+   Test Suite Results
+   3. Change the state  using  "Ready for Review" action button
+   and save.
+   4.  Change the state  again and choose  "Reject" action.  It
+   immediately  shows up "Approve" as action.  In the drop-down, it
+   adds an option "Return to Draft". If you click "Reject"  again,
+   it shows up as 'Approve" and another instance of "Return to
+   Draft" gets added to the drop-down.
+   
+   Review the following work item on Jazz.net for details:
+   https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manage
+   r#action=com.ibm.team.workitem.viewWorkItem&id=125304 [https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manager#action=com.ibm.team.workitem.viewWorkItem&id=125304]
+   
+   Workaround:  There is no known workaround at this time.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Test Suite Results showing multiple "Return to Draft" and    *
+   * reverting from "Reject"  Action to "Approve"                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Steps to reproduce:                                          *
+   * 1. Create a Test suite and run it.                           *
+   * 2. Bring up the Test suite result from Execution-> Browse -> *
+   * Test Suite Results                                           *
+   * 3. Change the state  using  "Ready for Review" action button *
+   * and save.                                                    *
+   * 4.  Change the state  again and choose  "Reject" action.  It *
+   * immediately  shows up "Approve" as action.  In the           *
+   * drop-down, it adds an option "Return to Draft". If you click *
+   * "Reject"  again, it shows up as 'Approve" and another        *
+   * instance of "Return to Draft" gets added to the drop-down.   *
+   * The state does change back to "Draft" if saved and not to    *
+   * "Approved".                                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.0.2
+   See Jazz defect for additional information
+   https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manage
+   r#action=com.ibm.team.workitem.viewWorkItem&id=125304 [https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manager#action=com.ibm.team.workitem.viewWorkItem&id=125304]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI26978
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL QUALITY MG
+   
+   
+ * REPORTED COMPONENT ID
+   5724V1000
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-03
+   
+   
+ * CLOSED DATE
+   2014-12-05
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL QUALITY MG
+   
+   
+ * FIXED COMPONENT ID
+   5724V1000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

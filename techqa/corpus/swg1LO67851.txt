@@ -1,0 +1,148 @@
+Title: IBM LO67851: COMMUNITY FILE-UPLOAD BOX CONTAINS EMBEDDED STYLE ELEMENTS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Community File-upload box contains embedded style elements
+   in HTML instead of CSS which prevent us from changing dark blue
+   colors to the light blue color of our company intranet. This
+   upload box looks like the default LC3 one and we can't really do
+   anything with it.
+   
+   Example of the embedded HTML styling is:
+   
+   
+   <a role="treeitem"
+   aria-controls="lconn_files_widget_FilePicker_0_content"
+   href="javascript:;" style="display: block; white-space: nowrap;
+   text-decoration: none; font-weight: bold; font-size: 1.1em;
+   margin: 0px
+   1px; clear: both; position: relative; outline-color: rgb(0, 0,
+   0);
+   background-color: rgb(50, 79, 118); color: rgb(255, 255, 255);
+   padding-left: 15px;" title="Recent Files" tabindex="0"
+   aria-selected="true"><span style="display: inline-block;
+   padding-bottom: 3px; padding-top: 3px; padding-right: 5px;
+   background-color: rgb(50, 79, 118);">Recent Files</span></a>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  As a workaround, the customer can make the manual changes:
+   
+   
+   In the following files:
+   
+   <WAS_PROFILE_HOME>/installedApps/WASSPCell01/Files.ear/qkr.share
+   .files.war/js/built/bundle_actions.js
+   
+   <WAS_PROFILE_HOME>/installedApps/WASSPCell01/Files.ear/qkr.share
+   .files.war/js/built/community-widget.js
+   
+   
+   You will find the following line of code, and just change the
+   color as you wish:
+   
+   colors:{divider:"#EAECEE",separator:"#E5E5E5",background:"#FFFFF
+   F"
+   ,foreground:"#000000",menuText:"#000000",secondaryText:"#848484"
+   ,selectedBackground:"#324f76",selectedMenuText:"#FFFFFF"}
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Issue to be addressed in the next major version of the product.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# ETEC8S5SGB.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO67851
+   
+   
+ * REPORTED COMPONENT NAME
+   CONNECT COMMUNI
+   
+   
+ * REPORTED COMPONENT ID
+   5724S6802
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-06
+   
+   
+ * CLOSED DATE
+   2012-05-31
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R301 PSY
+   UP

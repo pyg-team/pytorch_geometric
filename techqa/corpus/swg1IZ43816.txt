@@ -1,0 +1,138 @@
+Title: IBM IZ43816: TOTAL CPU TIME (SEC.) VALUE IS WRONG - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring for Database Microsoft SQL Server 6.2.0-TIV-ITM_SQL-IF0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24023163]
+IBM Tivoli Monitoring for Database Microsoft SQL Server 6.2.0-TIV-ITM_SQL-IF0007 [http://www-01.ibm.com/support/docview.wss?uid=swg24024095]
+IBM Tivoli Monitoring for Database Microsoft SQL Server 6.2.0-TIV-ITM_SQL-IF0010 [http://www-01.ibm.com/support/docview.wss?uid=swg24027415]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   Windows 2003 R2 Enterprise x64 Edition, MSSQL 2005 Enterprise
+   Edition.
+   ITM 6.20, SQL Agent 06.21.00.00.
+   
+   
+   Problem Description:  The "Total CPU Time (Sec.)" attribute was
+   calculated incorrectly.
+   The problem is seen with all versions of the SQL server.
+   
+   
+   Detailed Recreation Procedure:
+   Open Process Detail View and check the value for Total CPU Time
+   (Sec)
+   column.
+   This value shown in seconds is incorrect.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  TOTAL CPU TIME (SEC.) VALUE IS WRONG
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  NOW CORRECT TOTAL CPU TIME (SEC.) VALUE IS DISPLAYED.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   6.2.1-TIV-ITM_SQL-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ43816
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON MS SQL
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96MO
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-13
+   
+   
+ * CLOSED DATE
+   2009-02-27
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON MS SQL
+   
+   
+ * FIXED COMPONENT ID
+   5724B96MO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R621 PSY
+   UP

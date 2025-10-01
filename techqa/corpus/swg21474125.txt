@@ -1,0 +1,50 @@
+Title: IBM Importing an SAP IDOC or DXOB with WebSphere Transformation Extender results in a cannot open ttmaker.log error. - United States
+
+Text:
+Importer SAP IDOC DXOB ttmaker TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere® Transformation Extender (WTX) generates a "Cannot open ttmaker.log" error when importing an SAP® IDOC or DXOB. 
+
+CAUSE
+The incorrect version of SAP was selected in the WTX SAP IDOC or DXOB Importer, Select Versions screen,
+
+ENVIRONMENT
+Windows
+
+RESOLVING THE PROBLEM
+Review the contents of the IDOC or DXOB being imported and if each field has a definition for CHARACTER_FIRST, then when you are presented with the "Select the version of SAP that created this data:"in the SAP IDOC or DXOB Importer, Select Versions screen, select either Enterprise or mySAP ERP"
+
+
+
+
+If each field has a definition for BYTE_FIRST, select a version of 4.x, 4.5x or 4.6x 
+
+ 
+
+As an example, if an IDOC contains content similar to: 
+
+ 
+
+[/support/docview.wss?uid=swg21474125&amp;aid=1]
+NAME [/support/docview.wss?uid=swg21474125&amp;aid=1]
+DOCREL [/support/docview.wss?uid=swg21474125&amp;aid=1]
+TEXT [/support/docview.wss?uid=swg21474125&amp;aid=1]
+SAP Release for IDoc [/support/docview.wss?uid=swg21474125&amp;aid=1]
+TYPE [/support/docview.wss?uid=swg21474125&amp;aid=1]
+CHARACTER [/support/docview.wss?uid=swg21474125&amp;aid=1]
+LENGTH [/support/docview.wss?uid=swg21474125&amp;aid=1]
+000004 [/support/docview.wss?uid=swg21474125&amp;aid=1]
+FIELD_POS [/support/docview.wss?uid=swg21474125&amp;aid=1]
+0004 [/support/docview.wss?uid=swg21474125&amp;aid=1]
+CHARACTER_FIRST [/support/docview.wss?uid=swg21474125&amp;aid=1]
+000030 [/support/docview.wss?uid=swg21474125&amp;aid=1]
+CHARACTER_LAST [/support/docview.wss?uid=swg21474125&amp;aid=1]
+000033 
+then select "Enterprise" in the SAP IDOC Importer, Select Versions screen 
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ Ascential DataStage TX Mercator WTX

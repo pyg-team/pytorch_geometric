@@ -1,0 +1,139 @@
+Title: IBM MustGather: IBM HTTP Server SSL handshake and configuration problems - United States
+
+Text:
+mustgather; mustgather; mustgather; HTTP Server; IHS; troubleshooting; debug; autopd; auto pd; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collect troubleshooting data for SSL handshake and configuration problems with IBM® HTTP Server. Gathering this information before calling IBM support will help familiarize you with the troubleshooting process and save you time. 
+
+RESOLVING THE PROBLEM
+
+
+Collect troubleshooting data for SSL handshake and configuration problems with IBM® HTTP Server. Gathering this information before calling IBM support will help familiarize you with the troubleshooting process and save you time..
+
+COLLECTING DATA MANUALLY
+ 
+If you have already contacted support, continue on to the component-specific MustGather information. Otherwise, click: MustGather: Read first for IBM HTTP Server [http://www.ibm.com/support/docview.wss?uid=swg21192683].
+
+SSL handshake and configuration specific MustGather information
+The following contains a list of files that are needed for debugging SSL handshake and configuration issues.
+
+Enabling traces for GSKit and SSL:
+
+
+ 1. Stop IBM HTTP Server.
+    
+ 2. Clear all logs in the install_root/logs directory.
+    
+    If you elect to not clear all of the logs, be sure to remove gsktrace*
+    
+ 3. Turn on IBM HTTP Server verbose logging for SSL  * Change LogLevel in httpd.conf  * IBM HTTP Server 7.0, 8.0, 8.5 
+          Change Loglevel to "debug". 
+        * IBM HTTP Server 9.0:
+          Change LogLevel to "debug ibm_ssl:trace8"
+          After 9.0.0.3, it will be setup automatically in either direction. If ibm_ssl:trace8 is set, SSLTrace will be set. If SSLTrace is set but no ibm_ssl:trace1 or higher was set, ibm_ssl:trace8 will be set automatically. [/support/docview.wss?uid=swg21141302&amp;aid=1] 
+       
+       
+     * Append the SSLTrace directive to the bottom at the httpd.conf file.
+       
+     * If the issue may relate to interaction with the application server, edit the plugin-cfg.xml file and change Loglevel to Trace (Plug-in Trace); for example:
+       
+       <Log LogLevel="Trace" Name="/pathto/logs/http_plugin.log"/>
+       
+       
+    
+    
+ 4. Enable GSKit trace:
+     *  For Windows, create the following system variables:
+       
+       1) GSK_TRACE_FILE
+       
+       Set the value with the name for the log file; for example: 
+       
+       c:\install_root\logs\gsktrace.log.
+       
+       
+       2) Set additional variables: 
+       GSK_TRACE_FILE_SIZE=104857600
+       GSK_TRACE_FILE_NUMBER=5
+       For UNIX, as the user ID that starts the IBM HTTP Server, create the following environment variables in the install_root/bin/envvars file:
+       
+       GSK_TRACE_FILE=install_root/logs/gsktrace_log
+       GSK_TRACE_FILE_SIZE=104857600
+       GSK_TRACE_FILE_NUMBER=5
+       export GSK_TRACE_FILE
+       export GSK_TRACE_FILE_SIZE
+       export GSK_TRACE_FILE_MUMBER 
+       
+    
+    
+ 5. Enable a packet trace on the IBM HTTP Server machine to capture IP traffic between the web server and the client browser. For a description of available packet trace tools, see Using packet trace tools iptrace, snoop, tcpdump, wireshark, and nettl [http://www.ibm.com/support/docview.wss?uid=swg21175744].
+    
+    
+ 6. Start IBM HTTP Server and recreate the problem.
+    
+    
+ 7. Capture a netstat -na > netstat.out.
+    
+    
+ 8. Collect the following information and data files:
+     *  httpd.conf, error_log, access_log (or your customized equivalents) netstat.out gsktrace_log* (gsktrace_log, gsktrace_log.1, ...) Binary output of packet capture (*.pcap) key.kdb, key.crl, key.rdb, key.sth (include password) http_plugin.log, plugin-cfg.xml plugin-key.kdb, plugin-key.sth (include password) Include the date and time of failure along with the browser version and the full URL that resulted in the SSL failure. 
+       For example:
+       https://www.mycompany.com/mystuff/goodies/index.html WebSphere Application Server logs and trace where applicable IBM HTTP Server version. 
+       
+       Type one of the following commands to display the full IBM HTTP Server version:
+        * For Windows: ihs_install_root/apache -v 
+        * For UNIX: ihs_install_root/bin/apachectl -V
+       
+       Global Security Kit (GSKit) version. Execute the following command and capture the output:
+       
+       ihs_install_root/bin/gsk*ver
+       
+       
+    
+    
+ 9. Follow instructions to send diagnostic information to IBM support [http://www.ibm.com/support/docview.wss?uid=swg21153852].
+
+ * 
+ * 
+ * 
+ * IBM HTTP Server support site
+ * 
+ * 
+ * 
+ * Related information
+ * 
+ * Submitting information to IBM support
+ * 
+ * Steps to getting support
+ * 
+ * MustGather: Read first for WebSphere Application Server
+ * 
+ * Troubleshooting guide for WebSphere Application Server
+ * 
+
+
+EXCHANGING DATA WITH IBM SUPPORT
+To diagnose or identify a problem, it is sometimes necessary to provide Technical Support with data and information from your system. In addition, Technical Support might also need to provide you with tools or utilities to be used in problem determination. You can submit files using one of following methods to help speed problem diagnosis: 
+
+ * Service Request (SR)
+ * E-mail 
+ * FTP to the Enhanced Customer Data Repository (ECuRep)
+
+
+
+
+Instructions for exchanging information with IBM Support [http://www.ibm.com/support/docview.wss?uid=swg21153852]
+
+READ FIRST AND RELATED MUSTGATHERS
+MustGather: Read first for IBM HTTP Server [http://www.ibm.com/support/docview.wss?uid=swg21192683]
+
+
+
+
+ MustGather: Web server configuration problems with IBM HTTP Server [http://www.ibm.com/support/docview.wss?uid=swg21141301] MustGather: Request failure (500, 404, 400, etc.) problems [http://www.ibm.com/support/docview.wss?uid=swg21141306] MustGather: WebSphere Application Server HTTP plug-in problems [http://www.ibm.com/support/docview.wss?uid=swg21174894] MustGather: IBM HTTP Server SSL handshake and configuration problems [http://www.ibm.com/support/docview.wss?uid=swg21141302] 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server IBM HTTP Server

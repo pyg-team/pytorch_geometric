@@ -1,0 +1,161 @@
+Title: IBM JR55455: UPGRADE APACHE HTTPCOMPONENTS VERSION TO ADDRESS APACHE HTTPCOMPONENTS VULNERABILITIES CVE-2012-6153 CVE-2014-3577 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Download ISF roll-up 5 for InfoSphere Information Server Version 11.3.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24042883]
+Download ISF roll-up 3 for InfoSphere Information Server Version 11.5.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042884]
+Download ISF roll-up 6 for InfoSphere Information Server Version 11.3.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24043173]
+Download ISF roll-up 5 for InfoSphere Information Server Version 11.5.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043279]
+Download ISF roll-up 7 for InfoSphere Information Server Version 11.3.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24043280]
+Download ISF roll-up 6 for InfoSphere Information Server Version 11.5.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043373]
+Download Data Integration Rollup 1 for InfoSphere Information Server 11.5.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043187]
+Download ISF roll-up 8 for InfoSphere Information Server Version 11.3.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24044352]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Upgrade Apache HttpComponents version to address Apache
+   HttpComponents vulnerabilities CVE-2012-6153 CVE-2014-3577
+   
+   WebSphere addressed this issue in IFix PI50993, and that fix
+   will be included in 8.5.5.9. Per the information in the
+   WebSphere Security bulletin
+   https://www-01.ibm.com/support/docview.wss?uid=swg21969251 [https://www-01.ibm.com/support/docview.wss?uid=swg21969251]
+   installing either of these fixes will cause Information Server
+   to report java.lang.NoClassDefFoundError, for example:
+   ... webapp E com.ibm.ws.webcontainer.webapp.WebApp
+   logServletError  SRVE0293E: [Servlet Error]-[REST2]:
+   java.lang.NoClassDefFoundError:
+   org.apache.http.impl.client.DefaultHttpClient at
+   java.lang.Class.getDeclaredMethodsImpl(Native Method) at
+   java.lang.Class.getDeclaredMethods(Class.java:1001) at
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of Information Server
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Security vulnerability in Apache HttpComponents affects
+   Information Server
+   ****************************************************************
+   RECOMMENDATION:
+   Refer to Security bulletin
+   http://www.ibm.com/support/docview.wss?uid=swg21982420 for
+   actions to perform.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  update version of Apache HttpComponents
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR55455
+   
+   
+ * REPORTED COMPONENT NAME
+   INFO SRVR PLATF
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q3612
+   
+   
+ * REPORTED RELEASE
+   870
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-14
+   
+   
+ * CLOSED DATE
+   2016-10-14
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INFO SRVR PLATF
+   
+   
+ * FIXED COMPONENT ID
+   5724Q3612
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R870 PSY
+   UP
+   
+   
+ * R912 PSY
+   UP
+   
+   
+ * RB31 PSY
+   UP
+   
+   
+ * RB50 PSY
+   UP

@@ -1,0 +1,139 @@
+Title: IBM PI74468: UPDATE IBM WEBSPHERE MQ JCA RESOURCE ADAPTER TO VERSION 7.0.1.14 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+PI74468: Update IBM WebSphere MQ JCA Resource Adapter to version 7.0.1.14 [http://www-01.ibm.com/support/docview.wss?uid=swg24043424]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  UPDATE IBM WEBSPHERE MQ JCA RESOURCE ADAPTER TO VERSION 7.0.1.14
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Update IBM WebSphere MQ JCA Resource    *
+   *                      Adapter to version 7.0.1.14             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Update IBM WebSphere MQ JCA Resource Adapter to version
+   7.0.1.14
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Update IBM WebSphere MQ JCA Resource Adapter to version 7.0.1.14
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 7.0.0.43 and 8.0.0.14.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI74468
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-06
+   
+   
+ * CLOSED DATE
+   2017-02-22
+   
+   
+ * LAST MODIFIED DATE
+   2017-02-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP

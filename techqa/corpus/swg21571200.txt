@@ -1,0 +1,36 @@
+Title: IBM Configure WebSphere Business Monitor to receive events from WebSphere Message Broker and custom WebSphere MQ applications - United States
+
+Text:
+Business Activity Monitoring; BAM; Business Process Monitoring; WMQ; WMB; WBM; Integration Bus; Message Broker; Business Monitor MQ; IBM_WBM_EMITTER SERVICES; WBEventEmitter TECHNOTE (FAQ)
+
+QUESTION
+ Where can I find instructions on how to configure WebSphere MQ, WebSphere Message Broker, and WebSphere Business Monitor for business activity monitoring (BAM)? 
+
+ANSWER
+ 
+1. WebSphere MQ applications can send custom event messages formatted as Common Base Events (CBE). 
+The developerWorks article "Enabling WebSphere Business Monitor to receive events via WebSphere MQ" [http://public.dhe.ibm.com/software/dw/sampleit/i-bam618/i-bam618-pdf.pdf] describes how to enable a Business Monitor server to receive XML-formatted Common Base Events (CBE) using IBM WebSphere MQ as the transport mechanism. 
+
+2. WebSphere MQ applications can send custom event messages as plain XML (non-CBE). 
+The IBM_WBM_EMITTER SERVICES [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r0m1/topic/com.ibm.wbpm.mon.admin.doc/admin/admin_emit_xml_messages_to_jms.html] application (in Business Monitor V7.0 and higher) includes a message-driven bean which acts as a listener for incoming messages on a predefined JMS queue named MonitorEventEmitterQueue. It then wraps the custom event XML in a CBE envelope, and sends it to the Common Event Infrastructure (CEI) server for the Business Monitor server to process. Configuration is similar as in the Message Broker sample application (see below), or you may use the description in InfoCenter [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5mx/topic/com.ibm.wbpm.mon.admin.doc/admin/mq_send_xml.html]. 
+
+3. Message flows in WebSphere Message Broker can optionally emit event messages for business activity monitoring.
+InfoCenter [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/topic/com.ibm.etools.mft.doc/ac37850_.htm] describes this. The events emitted by message flows are plain XML. They have to be transformed to CBE in order for CEI to consume them. This can be done using the WMBEventEmitterEAR.zip message-driven bean which is shipped with WebSphere Message Broker.
+All configuration steps in WebSphere Message Broker, WebSphere MQ, and Business Monitor are described in the Business Monitor sample [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp?topic=%2Fcom.ibm.etools.mft.samples.WBMonitor.doc%2Fdoc%2Frunning.htm] 
+Note: You can obtain sample files and run the samples only when you use the information center that is integrated with the WebSphere Message Broker Toolkit. 
+An alternative configuration can be found in the technote "Configure Business Monitor for durable event messages from WebSphere Message Broker " [http://www-01.ibm.com/support/docview.wss?uid=swg21571062]. 
+
+
+RELATED INFORMATION
+ Enabling WebSphere Business Monitor to receive events [http://public.dhe.ibm.com/software/dw/sampleit/i-bam618/i-bam618-pdf.pdf]
+Configuring the JMS event emitter service to use the We [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r0m1/topic/com.ibm.wbpm.mon.admin.doc/admin/mq_event_emitter.html]
+Using the JMS event emitter to emit events without CBE [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r0m1/topic/com.ibm.wbpm.mon.admin.doc/admin/admin_jms_event_emitter.html]
+Business-level monitoring in WebSphere Message Broker [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/topic/com.ibm.etools.mft.doc/ac37850_.htm]
+WebSphere Message Broker sample application for Busines [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp?topic=%2Fcom.ibm.etools.mft.samples.WBMonitor.doc%2Fdoc%2Frunning.htm]
+Configuring WebSphere Business Monitor for durable even [http://www.ibm.com/support/docview.wss?uid=swg21571062]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere MQ Documentation 7.1, 7.0 All Editions Business Integration WebSphere Message Broker Documentation 8.0, 7.0, 6.1 All Editions Application Servers WebSphere Application Server Java Message Service (JMS) Business Integration IBM Business Monitor Java Message Service (JMS) AIX, HP-UX, Linux, Linux zSeries, Solaris, Windows 8.5, 8.0.1.1, 8.0.1, 8.0, 7.5.1.1, 7.5.1, 7.5.0.1, 7.5

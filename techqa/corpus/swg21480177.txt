@@ -1,0 +1,17 @@
+Title: IBM Unable to check out commuter license for Statistics 16.0 or higher from Sentinel License Manager 8.1 when it monitors non-SPSS programs - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am running the Sentinel 8.1 License Manager to manage my licenses for SPSS 16, a few older versions of SPSS and some non-SPSS programs. I have set up my license manager to allow for commuter licenses. I am able to check out commuter licenses on machines running older versions of SPSS, but not for SPSS 16. There is no error message - I simply click on the commuter option and nothing happens.
+
+For troubleshooting purposes I used a # character to comment out the non-SPSS licenses from the lservrc file in the license manager, restarted the license manager service, and I was then was able to check out Statistics commuter licenses. This, however, is inconvenient because I really need to have all of my programs monitored by the same server. How can I get around this problem? 
+
+RESOLVING THE PROBLEM
+This issue was resolved in SPSS Statistics version 18.0.
+
+ 
+
+HISTORICAL NUMBER
+ 77043

@@ -1,0 +1,179 @@
+Title: IBM PI14116: MOVING A ITEM TO ANOTHER LIBRARY IS NOT SYNDICATED ON SUBSCRIBER - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Under certain circumstances, moved items may fail to syndicate
+   to the subscriber server.
+   
+   An example scenario:
+   1. Create two libraries:
+   Lib1 --> with default item
+   Lib2 --> empty library with no default items
+   2. Setup a syndication pair and include both libraries with the
+   All Items scope
+   3. Wait for the syndication complete and then disable the
+   syndicator
+   4. Create two top-level site areas under Lib2
+   Lib2
+   + S1
+   + S2
+   5. Move the Articles site area from Lib1 to the root of Lib2
+   6. Move S1 into Articles
+   7. Move Articles into to S2
+   8. Enable the syndication. Wait for complete
+   
+   Expected: The structure of Lib2 on subscriber will be
+   Lib2
+   + S2
+   ++ Articles
+   +++ Sample Article
+   +++ Sample Article 2
+   +++ S1
+   
+   Actual:
+   Some of the items are missing unless the syndication is rebuilt.
+   There are also no failed items and no errors in the logs.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Under certain circumstances, moved items may fail to syndicate
+   to the subscriber server.
+   
+   An example scenario:
+   1. Create two libraries:
+   Lib1 --> with default item
+   Lib2 --> empty library with no default items
+   2. Setup a syndication pair and include both libraries with the
+   All Items scope
+   3. Wait for the syndication complete and then disable the
+   syndicator
+   4. Create two top-level site areas under Lib2
+   Lib2
+   + S1
+   + S2
+   5. Move the Articles site area from Lib1 to the root of Lib2
+   6. Move S1 into Articles
+   7. Move Articles into to S2
+   8. Enable the syndication. Wait for complete
+   
+   Expected: The structure of Lib2 on subscriber will be
+   Lib2
+   + S2
+   ++ Articles
+   +++ Sample Article
+   +++ Sample Article 2
+   +++ S1
+   
+   Actual:
+   Some of the items are missing unless the syndication is rebuilt.
+   There are also no failed items and no errors in the logs.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The EventLog was not being updated correctly when the items were
+   being moved.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI14116
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-20
+   
+   
+ * CLOSED DATE
+   2014-07-17
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

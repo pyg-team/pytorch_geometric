@@ -1,0 +1,277 @@
+Title: IBM IC75312: REDEFINING TEMP SMS TABLESPACE TO USE AUTOMATIC STORAGE WILL NOT SUCCEED UNTIL SECOND CONNECT - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.7 Fix Pack 5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24031181]
+DB2 Version 9.7 Fix Pack 6 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032754]
+DB2 Version 9.7 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033685]
+DB2 Version 9.7 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24034634]
+DB2 Version 9.7 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036646]
+DB2 Version 9.7 Fix Pack 9a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037559]
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A) When doing a redirected restore if we redefine a TEMP SMS
+   tablespace to use Automatic storage, the first connection will
+   bring the tablespace offline if the old directory is not
+   available. The tablespace will only be redefined to use
+   automatic storage on the second connect to the database.
+   
+   To reproduce:
+   
+   1. database sample (db2sampl)
+   
+   
+   
+   2. db2 "create user temporary tablespace test_tbsp managed by
+   
+   system using  ('/tmp/tbsp_cont')"
+   
+   3. db2 "backup database sample to /tmp/BK"
+   
+   
+   4. db2 restore database sample from /tmp/BK redirect generate
+   
+   script red.out
+   
+   5.
+   
+   The script contains the following:
+   
+   --
+   ****************************************************************
+   *************
+   -- ** Tablespace name                            = TEST_TBSP
+   -- **   Tablespace ID                            = 7
+   -- **   Tablespace Type                          = System
+   managed space
+   -- **   Tablespace Content Type                  = User
+   Temporary data
+   -- **   Tablespace Page size (bytes)             = 8192
+   -- **   Tablespace Extent size (pages)           = 32
+   -- **   Using automatic storage                  = No
+   -- **   Total number of pages                    = 1
+   --
+   ****************************************************************
+   *************
+   SET TABLESPACE CONTAINERS FOR 7
+   -- IGNORE ROLLFORWARD CONTAINER OPERATIONS
+   USING (
+     PATH   '/tmp/tbsp_cont'
+   );
+   
+   
+   
+   Changed it to
+   SET TABLESPACE CONTAINERS FOR 7 using Automatic storage;
+   
+   6.
+   When the restore script is run we get
+   
+   $ db2 "set tablespace containers for 7 using automatic storage"
+   DB20000I  The SET TABLESPACE CONTAINERS command completed
+   successfully.
+   
+   
+   When we run the restore we do not fail, even if the path
+   /tmp/tbsp_cont does not exist in the system.
+   If the path /tmp/tbsp_cont exists in the system, then we will
+   get the tablespace ok but if the path does not exist then we
+   will get this tablespace offline when connecting to the database
+   for the first time after the restore:
+   
+   db2 connect to sample
+   
+   EDUID   : 6006                 EDUNAME: db2agent (SAMPLE)
+   FUNCTION: DB2 UDB, buffer pool services,
+   sqlbStartPoolsErrorHandling, probe:65
+   MESSAGE : ADM6081W  The table space "TEST_TBSP" (ID "7") is in
+   the OFFLINE
+             state and is not accessible. The table space state is
+   0x"00004000".
+             Refer to the documentation for SQLCODE -293.
+   SQL0293N  Error accessing a table space container.
+   
+   db2 list tablespace containers for 7 show detail
+   
+               Tablespace Containers for Tablespace 7
+   
+    Container ID                         = 0
+    Name                                 = /tmp/tbsp_cont
+    Type                                 = Path
+    Total pages                          = 0
+    Useable pages                        = 0
+    Accessible                           = No
+   
+   Tablespace ID                        = 7
+    Name                                 = TEST_TBSP
+    Type                                 = System managed space
+    Contents                             = User Temporary data
+    State                                = 0x4000
+      Detailed explanation:
+        Offline
+   
+   We need to terminate the connection to the database and connect
+   back to get the Automatic path defined for this tablespace
+   
+   B) When migrating a database using a restore operation,
+   redefining SMS temp space to use Automatic Storage, if the old
+   path for the SMS temp space is not available the migration will
+   fail with
+   
+   After step 6) above (having redefined the containers):
+   
+   RESTORE DATABASE SAMPLE FROM '/home/mariaj/TEMP/BK' TAKEN AT
+   20110328074610 INTO SAMPLE REDIRECT WITHOUT ROLLING FORWARD
+   SQL0902C  A system error (reason code = "") occurred.
+   Subsequent SQL
+   statements cannot be processed.  SQLSTATE=58005
+   
+   Upgrade database command will also fail with :
+   
+   $ db2 upgrade database sample
+   SQL0902C  A system error (reason code = "") occurred.
+   Subsequent SQL
+   statements cannot be processed.  SQLSTATE=58005
+   
+   The migration will only work if we have the old TEMP SMS path
+   with its original SQLTAG.NAM file available in the system.
+   
+   Once the upgrade has finished the TEMP SMS will be redefined as
+   Automatic Storage on the first connection.
+   
+   It is important to note that if we are restoring into an already
+   existing database to proceed with the upgrade, then the error
+   -902 is expected behaviour:
+   
+   In order to be able to restore into an existing database, we
+   must initiate an implicit connection to the existing database
+   first. This is well before the restore can take place.
+   If the existing database is from an older release, the first
+   connect will initiate an automatic database upgrade.
+   
+   The database upgrade cannot proceed if one of the tablespace
+   containers is misssing, so the -902 is expected. The workaround
+   is to drop the existing database and initiate a fresh restore.
+   In this case, the implicit connect will not be needed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * On first connection to the database we redefine all          *
+   * Temporary SMS Automatic storage tablespace.                  *
+   * Redefinition does not take place just after a restore, we    *
+   * will clear the restore flag on the second activation of the  *
+   * database.                                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 Version 9.7 and Fix Pack 5                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem was first fixed in DB2 Version 9.7 and Fix Pack 5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC75312
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-28
+   
+   
+ * CLOSED DATE
+   2011-12-09
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSY
+   UP

@@ -1,0 +1,52 @@
+Title: IBM AMQ9535 User Exit not valid in WMQ - United States
+
+Text:
+AMQ9535 User exit not valid channel mqminfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have written and compiled a channel exit on WebSphere MQ for AIX. During a test with an MQ client you receive error reason code 2059 on the client side and the following errors on the server side: 
+
+AMQ9535: User exit not valid. 
+AMQ9999: Channel program ended abnormally. 
+
+SYMPTOM
+The exit was compiled with following call: 
+
+
+cc -o TestEx -e MQStart TestEx.c 
+
+You are getting the following loader errors: 
+ld: 0711-319 WARNING: Exported symbol not defined: vTermConnection 
+ld: 0711-319 WARNING: Exported symbol not defined: vBeginConnection 
+ld: 0711-319 WARNING: Exported symbol not defined: vCutWhitespace 
+ld: 0711-319 WARNING: Exported symbol not defined: bCheckAuth 
+ld: 0711-319 WARNING: Exported symbol not defined: vAddCharToString 
+ld: 0711-319 WARNING: Exported symbol not defined: vSaveKeyValuePair 
+ld: 0711-318 ERROR: Undefined symbols were found. 
+
+
+The following symbols are in error:
+(after this it listed a lot of error calls for strcpy, strlen, strcat, strcmp, fopen, time, localtime, strftime, fprintf, fclose and fgets.)
+
+In your exit program you have the following include statements: 
+#include <stdlib.h> 
+#include <string.h> 
+#include <stdio.h> 
+#include <time.h> 
+#include <cmqc.h> 
+#include <cmqxc.h> 
+
+
+RESOLVING THE PROBLEM
+If you are using the raw ld command, and your program makes use of functions in the C runtime library, then you need to add -lc to the ld command:
+
+ld ... -lc 
+
+If you are using xlc, then it arranges that the linker is automatically invoked including this library. 
+
+Channel exit functions should be neither "static" nor "extern", and only they should be in the export list. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ MQSeries

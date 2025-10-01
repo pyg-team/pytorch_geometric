@@ -1,0 +1,59 @@
+Title: IBM Installation of WebSphere Transformation Extender Design Studio on Windows may require disabling the anti-virus software - United States
+
+Text:
+Anti-virus; Install; Windows; Java; Exception; Application ID TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installation (or re-installation) of WebSphere® Transformation Extender Design Studio 8.3.0.x / 8.4.0.x / 8.4.1.x could lead to Design Studio being non-functional. No error message is displayed during install, though the product fails to function after installation. 
+
+SYMPTOM
+Clicking on the Design Studio icon, the following message may be displayed:
+
+!SESSION 2012-09-07 13:12:36.434
+-----------------------------------------------
+eclipse.buildId=
+java.fullversion=JRE 1.6.0 IBM J9 2.4 Windows 7 x86-32 jvmwi3260sr9-
+20110624_85526 (JIT enabled, AOT enabled)
+J9VM - 20110624_085526
+JIT - r9_20101028_17488ifx17
+GC - 20101027_AA
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en_US
+Framework arguments: -nl -user=C:\IBM\WebSphere Transformation Extender 8.4 OFF
+Command-line arguments: -os win32 -ws win32 -arch x86 -nl -user=C:\IBM\WebSphere Transformation Extender 8.4 OFF
+
+!ENTRY org.eclipse.equinox.app 0 0 2012-09-07 13:12:37.833
+!MESSAGE Product com.ibm.websphere.dtx.product.designstudio could not be found.
+
+!ENTRY org.eclipse.osgi 4 0 2012-09-07 13:12:38.105
+!MESSAGE Application error
+!STACK 1
+java.lang.RuntimeException: No application id has been found.
+at org.eclipse.equinox.internal.app.EclipseAppContainer.startDefaultApp
+(EclipseAppContainer.java:242)
+at org.eclipse.equinox.internal.app.MainApplicationLauncher.run(MainApplicationLauncher.java:29)
+at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication (EclipseAppLauncher.java:110)
+at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:369)
+at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:179)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:620)
+at org.eclipse.equinox.launcher.Main.basicRun(Main.java:575)
+at org.eclipse.equinox.launcher.Main.run(Main.java:1408)
+at org.eclipse.equinox.launcher.Main.main(Main.java:1384)
+
+
+CAUSE
+Anti-virus software preventing some of the installation scripts from performing their intended functions.
+
+ENVIRONMENT
+Windows
+
+DIAGNOSING THE PROBLEM
+Error messages displayed such as 'Product com.ibm.websphere.dtx.product.designstudio could not
+be found' or 'No application id has been found' when trying to start the Design Studio.
+
+RESOLVING THE PROBLEM
+Disable anti-virus software during the product install.

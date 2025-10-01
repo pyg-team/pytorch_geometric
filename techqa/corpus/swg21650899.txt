@@ -1,0 +1,48 @@
+Title: IBM Preventing Work Orders From Closing - United States
+
+Text:
+TPAEWORK TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This documentation will give you some information about preventing work order records from being closed by users accidentally. 
+
+RESOLVING THE PROBLEM
+In Maximo you can't change a Work Order in a status of "CLOSE" (or as it's commonly referred to: "closed") by default. Once the record changes status to "CLOSE" it's locked at the front end. 
+
+If you have the necessary security permissions however you can select "Edit History" from the "Select Actions" drop down - once selected you can change the record until you hit "Save". On save the record will "re-lock" and you will have to re-select "Edit History" to make additional changes. 
+
+Go into any work order record that has a status of CLOSE and you will notice that all the fields are grayed out so you can’t edit it or even add labor hours. To edit a closed work order, go to Select Action -> Edit History Work Order.
+
+But there are some considerations that you need to take, based in previous reports :
+
+How do I stop my users from accidentally closing their work orders? 
+I had a user who accidentally closed 350 work orders, what should I do? 
+How can I un-close a work order? 
+
+The main question here is closed work orders are closed, that is the purpose for that status.
+
+Its meant to say this work order is done and we do not want anyone making any more changes to it. 
+
+The bottom line is: If you give users the authority to close work orders, sometimes they may accidentally close a work order (or 350 of them) on accident. So what can we do about it? 
+
+You could even consider not giving any users the ability to close work orders. The main recommendation that we provide to the customers who bring this topic is related to managing the security profile for users. 
+
+Check the steps below :
+
+1- Go into the Security Group application. 
+
+2- Go into all of your work order applications (Work Order Tracking, Quick Reporting, Activities and Tasks, etc), any application your users use and might change statuses in, and take away the Change Status to CLOSE option from everyone. (Even from the system administrator users. If you ever need it, just go into Signature Security and grant it on a temporary basis, then take it back away afterward)
+
+3- The next thing is to create a synonym status of complete (COMP). You can do this in the Domains application – just bring up the statuses for the WOSTATUS domain. Make that new status a synonym of COMP. Call this synonym status something like PRECLOSE or something like that. Make sure the users who should be able to "close" work orders have authority to this new synonym.
+
+When a user needs to "close" a work order, they will change the status to PRECLOSE or whatever you decided to call it. Since this is a synonym to the COMP status, you would still be able to make changes to the work order. If anyone accidentally changes the status of 350 work orders to PRECLOSE, this will not be a problem. 
+
+4- Now the last step is to create an escalation in the Escalations application that runs every night at 3am. 
+
+This escalation finds all work orders in the PRECLOSE status and changes their status to CLOSE if they have been in the PRECLOSE status for 72 hours or some duration that you are comfortable with. 
+
+This duration represents the ‘window of opportunity’ to correct an accidentally closed work order. 
+
+Once all of this is done, you may need to update some reports or saved queries to filter out PRECLOSE work orders where you were filtering out CLOSED work orders. 
+
+Should you need any assistance please contact IBM Maximo Support

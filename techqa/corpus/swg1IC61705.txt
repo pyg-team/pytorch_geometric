@@ -1,0 +1,163 @@
+Title: IBM IC61705: FAN SPEED REPORTED INCORRECTLY BY IBM WEBSPHERE DATAPOWER SOA APPLIANCE 9235/9004 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM WebSphere DataPower SOA Appliance.
+   -
+   Fan Speed is incorrectly reported on the 9235/9004 appliances by
+   the firmware.
+   -
+   Note: Always check the temperature LED to insure the appliance
+   is operating correctly, along with the output of these commands:
+   
+   
+   -
+   show sensors-fans
+   show sensors-temperature
+   show sensors-other
+   test hardware
+   --
+   This APAR reports the problem where fan 3 and fan 4 in tray 1
+   or 2 report the problem as follows:
+   Model: (config)# show sensors-fans
+   
+   Fan ID Speed Minimum Status
+   ------ ----- ------- ------
+   fan-tray-1-fan-1 4320 2000 ok
+   fan-tray-1-fan-2 5200 2000 ok
+   fan-tray-1-fan-3 4160 2000 ok
+   fan-tray-1-fan-4 5280 2000 ok
+   fan-tray-2-fan-1 4560 2000 ok
+   fan-tray-2-fan-2 4880 2000 ok
+   fan-tray-2-fan-3 0 2000 lowerCritical
+   fan-tray-2-fan-4 0 2000 lowerCritical
+   hard-disk-tray-fan-1 4640 2000 ok
+   hard-disk-tray-fan-2 5200 2000 ok
+   
+   This APAR updates the reporting of the fan speeds.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  You can try the following to reduce the messages until the
+   firmware can be installed.
+   1. Reload the firmare
+   or
+   2. Safely power off and unplug the power, on the appliance, per
+   the product publications.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Address a fan failure log message.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Enhanced the logging of the fan failure message.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC61705
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   371
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-25
+   
+   
+ * CLOSED DATE
+   2009-06-26
+   
+   
+ * LAST MODIFIED DATE
+   2009-07-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R371 PSY
+   UP
+   
+   
+ * R372 PSY
+   UP
+   
+   
+ * R373 PSY
+   UP

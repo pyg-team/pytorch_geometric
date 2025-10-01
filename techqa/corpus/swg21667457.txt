@@ -1,0 +1,72 @@
+Title: IBM Bluepages LDAP and SCO integration - United States
+
+Text:
+bluepages; LDAP; SmartCloud Orchestrator TECHNOTE (FAQ)
+
+QUESTION
+ How do you integrate bluepages LDAP with IBM SmartCloud orchestrator V2.3? 
+
+ANSWER
+You can use either a non-SSL connection or an SSL connection. 
+
+NON-SSL CONNECTION
+Complete the following steps: 
+
+ 1. Add the following lines of code to the /etc/keystone/keystone.conf file on the keystone server:
+    [ldap_pre_auth]
+    # Base Config
+    url = ldap://bluegroups.ibm.com:389
+    
+    #User Schema
+    user_tree_dn = "ou=bluepages,o=ibm.com"
+    user_attribute_name = "mail"
+    
+    [filter:ldapauth]
+    paste.filter_factory = keystone.middleware.ldapauth:LdapAuthAuthentication.factory
+    
+    [auto_population]
+    default_project = admin
+    default_role = Member
+    #default_tenant_id =
+    ##default_role_id =
+    
+    [filter:autopop]
+    paste.filter_factory = keystone.middleware.autopop:AutoPopulation.factory
+    
+    
+ 2. Restart the keystone service using the following command:
+    # service openstack-keystone restart
+    
+    
+ 3. Use the following command to determine whether bluegroups.ibm.com can be pinged in your keystone server:
+    # ping bluegroups.ibm.com
+    
+    
+    If the output of the previous command is unknown host bluegroups.ibm.com, add the following line to the /etc/hosts file on your keystone server:
+    9.17.186.253 bluegroups.ibm.com
+    
+    
+ 4. Attempt to log into IBM SmartCloud Orchestrator with your IBM intranet ID and password.
+
+
+SSL CONNECTION
+
+Based on the non-SSL configuration steps, complete the following steps to use SSL: 
+
+ 1. Copy the bluepages.cer file to the /etc/openldap/certs directory.
+    
+    
+ 2. Add the following lines of code to the /etc/openldap/ldap.conf file:
+    TLS_CACERTDIR /etc/openldap/certs/bluepages.cer
+    #TLS_CACERTDIR /etc/openldap/certs
+    TLS_REQCERT ALLOW
+    
+    
+ 3. Change the URL in the "ldap_pre_auth" section of the /etc/keystone/keystone.conf file to the following value:
+    url = ldaps://bluegroups.ibm.com:636
+    
+    
+ 4. Save the changes to the /etc/keystone/keystone.conf file.
+    
+    
+ 5. Restart the keystone service.

@@ -1,0 +1,21 @@
+Title: IBM Enabling IBM Content Collector (ICC) to communicate with the FileNet Content Engine (CE) via https/TLS v1.2 - United States
+
+Text:
+ICC TLS 1.2 TECHNOTE (FAQ)
+
+QUESTION
+ How can TLS v1.2 be enabled between CE and ICC? 
+
+ANSWER
+The .NET framework does not enable TLS 1.2 by default. To enable TLS 1.2 in .NET, create a registry key with the following values:
+-Name 'SchUseStrongCrypto' 
+-Value '1' 
+-Type 'DWord'
+
+The registry key can be created in the following locations:
+"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319"
+and
+"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\.NETFramework\v4.0.30
+319".
+
+The above registry keys will enable TLS 1.2 on all .NET 4.0 applications installed on the system.

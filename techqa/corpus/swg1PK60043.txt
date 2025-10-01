@@ -1,0 +1,147 @@
+Title: IBM PK60043: PROFILE AUGMENTATION IS FAILING ON A FEATURE PACK FOR EJB       3.0 INSTALLATION WITH A 'JAVA.LANG.ILLEGALARGUMENTEXCEPTION'. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Augmenting a dmgr profile with the parameter -profilePath will
+   fail with a Exception in thread "main"
+   java.lang.IllegalArgumentException: can't parse argument
+   number wsadmin.output
+   at java.text.MessageFormat.makeFormat(MessageFormat.java:1350)
+   at java.text.MessageFormat.applyPattern(MessageFormat.java:470)
+   at java.text.MessageFormat.<init>(MessageFormat.java:365)
+   at java.text.MessageFormat.format(MessageFormat.java:823)
+   at com.ibm.ws.install.configmanager.utils.MessageFormatUtils.
+   formatMessage(MessageFormatUtils.java:66)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of the Feature Pack for EJB 3.0 for    *
+   *                 IBM WebSphere Application Server version     *
+   *                 6.1.                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A java.lang.IllegalArgumentException    *
+   *                      is caused when you attempt to           *
+   *                      augment a profile when specifying the   *
+   *                      parameter -profilePath <path>.          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A java.lang.IllegalArgumentException is caused when the user
+   attempts to augment a profile when specifying the
+   parameter -profilePath <path>. The underlying code should be
+   creating a file that is then read and parsed for further
+   information. In the case where the -profilePath parameter is
+   specified the file is not being created and thus the reading
+   and parsing fails.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  With this fix, the code which caused the creation of the file
+   to not happen will be removed. The file will now always be
+   generated.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack for 6.1.0.15 of the Feature Pack for EJB 3.0.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK60043
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS EJB3 FEATUR
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0851
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-28
+   
+   
+ * CLOSED DATE
+   2008-01-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-01-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS EJB3 FEATUR
+   
+   
+ * FIXED COMPONENT ID
+   5724J0851
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

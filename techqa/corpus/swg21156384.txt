@@ -1,0 +1,76 @@
+Title: IBM How to use a Stored Procedure to return a recordset in a Visual Basic ADO program - United States
+
+Text:
+Using Stored Procedure return recordset Visual Basic ADO program TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This article describes how to use a Stored Procedure to return a recordset in a Visual Basic ADO program via ODBC 
+
+RESOLVING THE PROBLEM
+
+INTRODUCTION
+
+The following steps describe how to use a stored procedure to return a recordset in a Microsoft® Visual Basic (VB) ADO program, via an ODBC connection.
+
+
+STEPS
+
+1. Create the Stored Procedure on your database server. The following Stored Procedure Language (SPL) creates a function on an IBM® Informix® Dynamic Server database, 
+
+ * 
+ * 
+ * CREATE FUNCTION customer_name( ) RETURNING VARCHAR(30), VARCHAR(30);
+ * 
+ * 
+   DEFINE firstname VARCHAR(30);
+   DEFINE surname VARCHAR(30);
+ * 
+ * 
+   FOREACH cursor1 FOR
+   SELECT fname, lname INTO firstname, surname FROM customer
+   RETURN firstname, surname WITH RESUME;
+   END FOREACH
+ * 
+ * 
+   END FUNCTION;
+ * 
+
+
+2. Create a DSN entry (within your ODBC driver) to connect to the required database server. The example code below will connect to an Informix instance using the Informix 3.82 32 bit driver that is provided with IBM® Informix® Client-SDK. 
+
+3. Create a VB application and included the Microsoft® ADO 2.7 library into the project. Do this by selecting "Project" then "References" from the menu bar, then selecting the ADO 2.7 library. 
+
+4. Add a command and list box to the form and add the following code to the list box: 
+ * Dim strConnection As String
+   Dim conADO As ADODB.Connection
+   Dim resADO As ADODB.Recordset
+   Dim strUID As String
+   Dim strPWD As String
+   
+   strUID = "<user name>"
+   strPWD = "<password>"
+   
+   'ODBC Connection String
+   strConnection = "driver={IBM INFORMIX 3.82 32 BIT}" & _
+   ";uid=" & strUID & _
+   ";pwd=" & strPWD & _
+   ";database=<db_name>" & _
+   ";host=<host>" & _
+   ";server=<server>" & _
+   ";service=<service>" & _
+   ";protocol=onsoctcp"
+   
+   Set conADO = New ADODB.Connection
+   Set resADO = New ADODB.Recordset
+   conADO.Open strConnection
+   resADO.Open "Execute function customer_name()", conADO, , , adCmdTxt
+   While Not resADO.EOF
+   List1.AddItem (resADO(0) & " " & resADO(1))
+   resADO.MoveNext
+   Wend
+
+
+Note: 
+All text within the angled brackets (<>) should be substituted with the relevant values from the corresponding DSN entry. The command Execute function customer_name runs the Stored Procedure, opens the recordset and adds the rows to the listbox. resADO(0) refers to the first field returned by the Stored Procedure (firstname) and resADO(1) refers to the second field (surname).
+
+5. Execute the program and click on the command button to populates the list box with a list of names.

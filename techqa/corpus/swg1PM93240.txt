@@ -1,0 +1,169 @@
+Title: IBM PM93240: BUILD FORGE 8.0 STEP TIMEOUT IN 5 MINUTES REGARDLESS OF STEP TIMEOUT SETTING - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Build Forge Fix Pack 1 (8.0.0.1) for 8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24035921]
+Rational Build Forge Fix Pack 2 (8.0.0.2) for 8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037483]
+Rational Build Forge Interim Fix 3 for 8.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039254]
+Rational Build Forge Fix Pack 3 (8.0.0.3) for 8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24040282]
+Rational Build Forge Fix Pack 4 (8.0.0.4) for 8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24042449]
+Rational Build Forge Fix Pack 5 (8.0.0.5) for 8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24044012]
+Rational Build Forge Fix Pack 6 (8.0.0.6) for 8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24044077]
+Rational Build Forge Fix Pack 7 (8.0.0.7) for 8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24044596]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Build step under Build Forge 8.0 fail with 'TMO Timeout after
+   300 seconds' after 5 minutes regardless of the step 'Timeout in
+   minutes' setting.
+   
+   Steps to reproduce:
+   
+   - Configure UNIX/Linux agent to run local 'sleep' command for
+   test.
+   
+   - Configure selector for UNIX/Linux agent and create project
+   with said selector.
+   
+   - Setup project with single step using the following.
+   All other step settings should be default.
+   
+   Step Name: Sleep for 10 minutes
+   Step Command: sleep 3000
+   Timeout in minutes: 60
+   
+   - Start project build.
+   
+   Expected result:
+   
+   Build step passes with 10 minutes of execution.
+   
+   Actual result:
+   
+   Build step fails with error 'TMO Timeout after 300
+   seconds'.
+   
+   125 12/07/2013 16:22  EXEC spawning shell
+   [/bin/bash]
+   126 12/07/2013 16:22  SCRIPT sleep 3000
+   127 12/07/2013 16:22  EXEC start
+   [/homes/build/Build_Step_timeout_setting/BUILD_1@saberchan]
+   128 12/07/2013 16:22  EXEC Sun Microsystems
+   Inc.   SunOS 5.10      Generic January 2005
+   129 12/07/2013 16:27  TMO Timeout after
+   300 seconds.
+   130 12/07/2013 16:27  RESULT 999
+   131 12/07/2013 16:27  MJC CRRBF1576I:
+   Sleept for 10 minutes completed (999)
+   
+   Workaround:
+   
+   None
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  step timeout setting is not passed to agent side
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Need pass the step timeout setting to Agent side
+   Fixed in 8.0.0.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM93240
+   
+   
+ * REPORTED COMPONENT NAME
+   BUILD FORGE EE
+   
+   
+ * REPORTED COMPONENT ID
+   5724S2702
+   
+   
+ * REPORTED RELEASE
+   713
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-17
+   
+   
+ * CLOSED DATE
+   2013-11-25
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUILD FORGE EE
+   
+   
+ * FIXED COMPONENT ID
+   5724S2702
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R713 PSY
+   UP

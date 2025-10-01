@@ -1,0 +1,146 @@
+Title: IBM PK82905: Defect: Time not editable on existing date/time field in all CQ clients - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On all CQ clients, the time is not editing properly on existing
+   date/time fields.
+   
+   For example, if I have a date/time field of March 19, 2009 1:00:
+   00 PM and I try to change it to 12:00:00 PM, I cannot add the 2.
+    It seems like it ran out of character limit.
+   
+   Steps to reproduce:
+   1. Restore SQL Server 2000 databases from escalation #  RATLC012
+   39294.
+   The file is called ReproductionDatabase.zip
+   
+   Schema repository ? masterNan.bak
+   User database ? userNan.bak
+   Customer?s schema name: CQ_SCHEMA at version 166.
+   
+   NOTE: CQ superuser/password is cqadmin/rt!cqadm1n
+   You HAVE to login to CQ using this user id.
+   
+   2. Run All Change Requests query.
+   
+   3. On any Change Request record, go to Development Phase, perfor
+   m Admin-Modify action, add any date/time field and put 1 PM and
+   save. Then, perform Admin-Modify action again, and try to edit t
+   he date/time field (the one you just edited) by adding a 2 to ma
+   ke it 12 PM. You will not be able to edit it.
+   
+   Workarounds:
+   1. Increase the size of the field so that it can handle MM/DD/YY
+   YY HH:MM:SS
+   
+   2. Enter the date as MM/DD/YY and then the full time - I tested
+   this and after you hit submit, it will give the full date and ti
+   me.
+   
+   3. Enter the time in miliary time. 23:11:12 will show up as 11:1
+   1:12 PM after you hit submit.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The time is not directly editable on date/time fields on all
+   CQ client.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Eclipse client, the pre-7.1 Web client, and the 7.1 Web
+   client all require use of the calendar control to modify
+   date/time values.  This is the intended design and we do not
+   plan to change that.   Because the Native Client for Windows
+   will be discontinued in a future major release, we are not
+   making further investments in this client.  The Eclipse and
+   Web clients are our strategic clients going forward, so use
+   them.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK82905
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3600
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-03-19
+   
+   
+ * CLOSED DATE
+   2009-08-11
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

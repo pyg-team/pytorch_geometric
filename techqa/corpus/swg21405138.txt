@@ -1,0 +1,77 @@
+Title: IBM Stuck stored messages on SCA module destination - United States
+
+Text:
+stuck messages; stored messages; wpsv6rnotes; v601rnotes; v602rnotes; v61rnotes; v612rnotes; v62rnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Stored messages are stuck in the Service Component Architecture (SCA) module destination because of an exception during retrieval of messages. 
+
+SYMPTOM
+Messages can be left in a SCA module destination when runtime exceptions, such as RollbackException, are thrown by the underlying messaging layer (service integration bus, or SIB) that is used by SCA run time. The following stack trace shows an example of the problem:
+
+Method enlist caught javax.transaction.RollbackException: Transaction rolled back
+at com.ibm.ws.Transaction.JTA.TransactionImpl.enlistResource(TransactionImpl.java(Compiled Code))
+at com.ibm.ws.Transaction.JTA.TranManagerSet.enlist(TranManagerSet.java(Compiled Code))
+at com.ibm.ejs.j2c.XATransactionWrapper.enlist(XATransactionWrapper.java(Compiled Code))
+at com.ibm.ejs.j2c.ConnectionManager.lazyEnlist(ConnectionManager.java(Compiled Code))
+at com.ibm.ws.sib.ra.impl.SibRaManagedConnection.getContainerTransaction(SibRaManagedConnection.java:734)
+at com.ibm.ws.sib.ra.impl.SibRaConnection.getContainerTransaction(SibRaConnection.java:1628)
+at com.ibm.ws.sib.ra.impl.SibRaConnection.mapTransaction(SibRaConnection.java:1730)
+at com.ibm.ws.sib.ra.impl.SibRaConsumerSession.receiveNoWait(SibRaConsumerSession.java:158)
+at com.ibm.ws.sca.internal.async.sib.SIBAsyncHandler.receiveMessage(SIBAsyncHandler.java:669)
+at com.ibm.ws.sca.internal.async.sib.SIBAsyncHandler.retrieveStoredMessage(SIBAsyncHandler.java:364)
+at com.ibm.ws.sca.internal.async.impl.AbstractAsyncInboundHandler.processLastRetryMessage(AbstractAsyncInboundHandler.java:297)
+at com.ibm.wsspi.sca.async.bean.impl.ServiceSIBusMessageBean.processMessage(ServiceSIBusMessageBean.java(Compiled Code))
+at com.ibm.wsspi.sca.async.bean.impl.ServiceSIBusMessageBean.access$000(ServiceSIBusMessageBean.java(Inlined Compiled Code))
+at com.ibm.wsspi.sca.async.bean.impl.ServiceSIBusMessageBean$1.onMessage(ServiceSIBusMessageBean.java(Compiled Code))
+at com.ibm.wbiserver.manualrecovery.ejb.RecoveryMDBHandler.onMessage(RecoveryMDBHandler.java(Compiled Code))
+at com.ibm.wsspi.sca.async.bean.impl.ServiceSIBusMessageBean.onMessage(ServiceSIBusMessageBean.java(Compiled Code))
+at sun.reflect.GeneratedMethodAccessor98.invoke(Unknown Source)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java(Compiled Code))
+at java.lang.reflect.Method.invoke(Method.java(Compiled Code))
+at com.ibm.ejs.container.MessageEndpointHandler.invokeMdbMethod(MessageEndpointHandler.java(Compiled Code))
+at com.ibm.ejs.container.MessageEndpointHandler.invoke(MessageEndpointHandler.java(Compiled Code))
+at $Proxy12.onMessage(Unknown Source)
+at com.ibm.ws.sib.ra.inbound.impl.SibRaEndpointInvokerImpl.invokeEndpoint(SibRaEndpointInvokerImpl.java(Compiled Code))
+at com.ibm.ws.sib.ra.inbound.impl.SibRaDispatcher.dispatch(SibRaDispatcher.java(Compiled Code))
+at com.ibm.ws.sib.ra.inbound.impl.SibRaSingleProcessListener$SibRaWork.run(SibRaSingleProcessListener.java(Compiled Code))
+at com.ibm.ejs.j2c.work.WorkProxy.run(WorkProxy.java(Compiled Code))
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java(Compiled Code))
+
+
+CAUSE
+The SCA creates stored messages to capture runtime exception details. These messages are later retrieved for reporting purposes. If a system failure occurs during message retrieval (a failure that is caused by an unstable system environment, an out-of-memory situation, a lost database connection, and so on), stored messages might be left in the SCA module destination.
+
+DIAGNOSING THE PROBLEM
+When you suspect that stored messages are stuck in the SCA module destination, check the system log for relevant stack traces. For example, the system log indicates that a problem occurred at a time that correlates to the age of the stuck message. 
+
+If you see the method SIBAsyncHandler.retrieveStoredMessage in the stack trace, the SCA has encountered a problem while retrieving stored messages.
+
+
+RESOLVING THE PROBLEM
+Stored messages do not contain business data. They can be safely deleted or moved to another queue. 
+
+
+To locate the stuck stored messages, follow these steps:
+
+
+ 1. Look in the message dumps, including in SCA headers from the SCA module destination. 
+ 2. Check for the property scaStoredMsgId. If it is not null and has an associated value, then it is a stored message. 
+ 3. Note of the age of the messages. 
+ 4. Allow sufficient time for the messages to be processed. The amount of time depends on the application content and the server retry configuration. Following is a formula to use to compute the approximate life span of a stored message:
+    
+    Lifespan = X * Y * Z 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+ * 
+
+
+Use caution when deleting or moving messages from the SCA module destination so that you do not accidentally delete messages that contain business data. If you have a question or are unsure about determining whether the message is a stored message, contact IBM Software Support. For performing actions such as gathering message dumps and moving messages to a temporary queue, you can use the SIBDestination tool. For information about this tool, click the following link:
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg24021439 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg24021439].

@@ -1,0 +1,17 @@
+Title: IBM Default Deviant Fields in OMNIbusEventReader - United States
+
+Text:
+netcool; impact; netcool/impact; nci; event; reader; eventreader; omnibus; object; server; objectserver; omnibuseventreader; default; required; require; need; needs; needed; deviant; field; fields; deviantfield; deviantfields; getupdates; get; updates; updated; event; events; getupdatedevents TECHNOTE (FAQ)
+
+QUESTION
+ What are the default Deviant Fields in an ObjectServer EventReader? 
+
+ANSWER
+The default Deviant Fields are: 
+
+ * 
+ * 
+
+
+Tally being required for use in conjunction with the "Get updated events" radio button. RELATED INFORMATION
+ Deviant Field checking in EventReaders [http://www-01.ibm.com/support/docview.wss?uid=swg21592308]

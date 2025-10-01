@@ -1,0 +1,40 @@
+Title: IBM i2 Intelligence Analysis Platform deployment fails with an XML format error - United States
+
+Text:
+Extensible Markup Language; CFM; IAP Deployment TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running the IAP deployment script, the deployment fails with an XML Failed Resource Type error. 
+
+SYMPTOM
+create-database-storage: 
+
+ [mkdir] Created dir: /IBM/iap-3.0.5.0/IAP-Deployment-Toolkit/application/temp 
+
+ [java] BUILD FAILED 
+
+ [java] Failed Resource Type: [FILE] from the source class [XmlDataLoader] with additional context [[/IBM/iap-3.0.5.0/IAP-Deployment-Toolkit/configuration/environment/topology.xml, ModelTopology.xsd, ModelSchema.xsd]]: Failed to load XML data from resource named '/IBM/iap-3.0.5.0/IAP-Deployment-Toolkit/configuration/environment/topology.xml' into class named 'Topology'. 
+
+ [java] Caused by: 
+
+ [java] javax.xml.bind.UnmarshalException 
+
+ [java] - with linked exception: 
+
+ [java] [org.xml.sax.SAXParseException: Content is not allowed in prolog.]
+
+
+CAUSE
+This error is caused if the file described in the error message has erroneous characters which break the XML format,
+
+
+RESOLVING THE PROBLEM
+Check the XML file in the error message (the example given above is Topology.xml) for erroneous characters. In the example below, there is an erroneous 'x' character in the prolog section of the XML file: 
+
+ 
+
+<?xml version="1.0" encoding="UTF-8"?>x 
+
+The correct section should be: 
+
+<?xml version="1.0" encoding="UTF-8"?>

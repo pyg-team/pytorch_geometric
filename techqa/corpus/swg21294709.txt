@@ -1,0 +1,46 @@
+Title: IBM nco_confpack fails to import tools when required OSfile exists - United States
+
+Text:
+ObjectServer configuration; export; import; confpack TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Confpack fails to import tools when tools depend on an external operating system file that already exists. 
+
+SYMPTOM
+Unable to import external file, /directory/filename, it already exists 
+
+
+CAUSE
+By default, any external file referenced in a tool or stored procedure is export and imported with the associated tool or stored procedure. The intent is to copy all external files from the source to the target, so the tool will not be missing any prerequisites. 
+
+RESOLVING THE PROBLEM
+The file can be listed as an exclusion on export. 
+
+
+When nco_confpack exports packages, it checks the exclusion file $NCHOME/omnibus/etc/exclusions.xml. Any files in the directories excluded in exclusions.xml are not included in the export, and will not be imported. 
+
+$NCHOME/omnibus/etc/exclusions.xml has the following format, note the Solaris platform is listed in this example - 
+
+<Platform Name="SunOS" Type="UNIX">
+<Dir Name="/bin"/>
+<Dir Name="/etc"/>
+<Dir Name="/lib"/>
+<Dir Name="/sbin"/>
+<Dir Name="/usr"/>
+</Platform>
+
+Add the directory that contains the existing file to the appropriate platform section.
+
+For Solaris, assuming the existing file is /directory/filename,
+<Platform Name="SunOS" Type="UNIX">
+<Dir Name="/bin"/>
+<Dir Name="/etc"/>
+<Dir Name="/lib"/>
+<Dir Name="/sbin"/>
+<Dir Name="/usr"/>
+<Dir Name="/directory"/>
+</Platform>
+
+This change must be made on the server that nco_confpack is used to export configuration information from. The exclusions.xml file is not used on import.
+
+Export the configuration package again, and import the new configuration package.

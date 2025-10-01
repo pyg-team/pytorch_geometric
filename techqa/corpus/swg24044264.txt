@@ -1,0 +1,63 @@
+Title: IBM Downloading IBM Business Process Manager Version 8.6 Cumulative Fix 2017.12 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This download is Version 8.6 Cumulative Fix 2017.12 (V8.6.0 CF2017.12) for the IBM Business Process Manager products. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+TAB NAVIGATION
+ * Fix list [http://www.ibm.com/support/docview.wss?uid=swg27050527]
+ * What's new [http://www.ibm.com/support/docview.wss?uid=swg27050528]
+ * Downloading [http://www.ibm.com/support/docview.wss?uid=swg24044264]- selected tab,
+ * Installing [http://www.ibm.com/support/docview.wss?uid=swg27050517]
+ * Upgrading profiles from V8.6 [http://www.ibm.com/support/docview.wss?uid=swg27050522]
+ * Upgrading profiles from V8.5.x [http://www.ibm.com/support/docview.wss?uid=swg27050523]
+ * Post-upgrade tasks [http://www.ibm.com/support/docview.wss?uid=swg27050529]
+
+The download link in the Change History section links to the download package required to install IBM Business Process Manager V8.6 for upgrading the following products on all applicable operating systems: 
+
+ * IBM Business Process Manager Server 
+ * IBM Business Process Manager Server Express 
+ * IBM Business Process Manager Advanced 
+ * IBM Business Process Manager Advanced - Process Server 
+ * IBM Business Process Manager Standard 
+ * IBM Business Process Manager Express
+
+
+After you download the package, see the Installing instructions. 
+Note: This page includes only the downloads for the IBM BBM cumluative fix. For other downloads that might be needed for the upgrade, see Downloading the repositories to the local system [http://www.ibm.com/support/docview.wss?uid=swg27050517#download] on the Installing page. 
+If you have Internet access on the system where you are installing the cumulative fix, you do not need to manually download the download packages. IBM Installation Manager will find the cumulative fix in the live repository. 
+
+A separate download is not available for the desktop IBM Process Designer. You can update the desktop Process Designer from the Process Center after installing the upgrade. 
+
+For the list of fixed APARs, see the Fix list [http://www.ibm.com/support/docview.wss?uid=swg27050235]. 
+
+INSTALLATION INSTRUCTIONS
+The following links contain the installation and upgrade instructions. Read these documents before you install the upgrade. 
+
+
+
+
+URL LANGUAGE SIZE(Bytes) Installing the cumulative fix [http://www.ibm.com/support/docview.wss?uid=swg27050517] English 140000 Upgrading profiles from V8.6 [http://www.ibm.com/support/docview.wss?uid=swg27050522] English 150000 Upgrading profiles from V8.5.x [http://www.ibm.com/support/docview.wss?uid=swg27050523] English 150000 Post-upgrade tasks [http://www.ibm.com/support/docview.wss?uid=swg27050529] English 100000 Process Federation Server [http://www.ibm.com/support/docview.wss?uid=swg24044361] English 100000 
+DOWNLOAD PACKAGE
+IBM Business Process Manager V8.6 Cumulative Fix 2017.12
+
+
+HOW CRITICAL IS THIS FIX?
+Recommended
+
+
+
+CHANGE HISTORY
+First cumulative fix for the IBM Business Process Manager Version 8.6 products
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options IBM BPM 8.6 CF2017.12 15 Dec 2017 English 2055272127 HTTP [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%2FWebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Standard&release=All&platform=All&function=fixId&fixids=bpm.8600.cf2017.12.delta.repository&includeSupersedes=0&source=fc] 
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Installation / Configuration AIX, Linux, Solaris, Windows, z/OS 8.5.7.CF201706, 8.5.7.CF201703, 8.5.7.CF201612, 8.5.7.CF201609, 8.5.7.CF201606, 8.5.7, 8.5.6.2, 8.5.6.1, 8.5.6, 8.5.5 Business Integration IBM Business Process Manager Standard Installation / Configuration AIX, Linux, Solaris, Windows 8.5.7.CF201706, 8.5.7.CF201703, 8.5.7.CF201612, 8.5.7.CF201609, 8.5.7.CF201606, 8.5.7, 8.5.6.2, 8.5.6.1, 8.5.6, 8.5.5 Business Integration IBM Business Process Manager Express Installation / Configuration Linux, Windows 8.5.7.CF201706, 8.5.7.CF201703, 8.5.7.CF201612, 8.5.7.CF201609, 8.5.7.CF201606, 8.5.7, 8.5.6.2, 8.5.6.1, 8.5.6, 8.5.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

@@ -1,0 +1,256 @@
+Title: IBM PM45011: APPLICATION SERVER HANG CAN OCCUR IF A THREAD LOGGING AN FFDC HANGS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.0.0.3: WebSphere Application Server V8.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032315]
+7.0.0.23: WebSphere Application Server V7.0 Fix Pack 23 [http://www-01.ibm.com/support/docview.wss?uid=swg24032493]
+8.0.0.4: WebSphere Application Server V8.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033190]
+7.0.0.25: WebSphere Application Server V7.0 Fix Pack 25 [http://www-01.ibm.com/support/docview.wss?uid=swg24033267]
+8.0.0.5: WebSphere Application Server V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033754]
+7.0.0.27: WebSphere Application Server V7.0 Fix Pack 27 [http://www-01.ibm.com/support/docview.wss?uid=swg24033882]
+8.0.0.6: WebSphere Application Server V8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034673]
+7.0.0.29: WebSphere Application Server V7.0 Fix Pack 29 [http://www-01.ibm.com/support/docview.wss?uid=swg24034966]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+7.0.0.31: WebSphere Application Server V7.0 Fix Pack 31 [http://www-01.ibm.com/support/docview.wss?uid=swg24036768]
+7.0.0.27: Java SDK 1.6 SR13 FP2 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035324]
+7.0.0.33: WebSphere Application Server V7.0 Fix Pack 33 [http://www-01.ibm.com/support/docview.wss?uid=swg24037573]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An application server JVM can hang if a thread logging an FFDC
+   hangs.
+   
+   The problem can be detected by observing the WSVR0605W hung
+   thread notifications in the SystemOut.log.
+   
+   One thread will be running the FFDCFilter.processException()
+   which can be invoked from any WebSphere Application Server
+   component.  The thread will get stuck doing its work.
+   In the following example, the thread which invoked
+   FFDCFilter.processException() is stuck waiting on a response to
+   the OracleConnectionWrapper.getMetaData() method call:
+   
+   [05/24/12 12:06:35:286 EST] 00000016 ThreadMonitor W
+   WSVR0605W: Thread "ORB.thread.pool : 32" (000000d6) has
+   been active for 304721 milliseconds and may be hung.  There
+   is/are 16 thread(s) in total in the server that may be hung.
+    at
+   oracle.jdbc.OracleConnectionWrapper.getMetaData(OracleConnection
+   Wrapper.java:150)
+    at
+   com.ibm.ws.rsadapter.spi.WSRdbManagedConnectionImpl.introspectSe
+   lf(WSRdbManagedConnectionImpl.java:1480)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:60)
+    at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:37)
+    at java.lang.reflect.Method.invoke(Method.java:611)
+    at
+   com.ibm.ws.ffdc.impl.Formatters$IntrospectSelfFormatter$1.run(Fo
+   rmatters.java:99)
+    at
+   com.ibm.ws.ffdc.impl.Formatters$IntrospectSelfFormatter$1.run(Fo
+   rmatters.java:96)
+   
+   ...
+   
+    at
+   com.ibm.ffdc.util.provider.IncidentEntry.log(IncidentEntry.java:
+   96)
+    at com.ibm.ffdc.util.provider.Ffdc.log(Ffdc.java:90)
+    at
+   com.ibm.ws.ffdc.FFDCFilter.processException(FFDCFilter.java:114)
+    at
+   com.ibm.ejs.j2c.FreePool.createOrWaitForConnection(FreePool.java
+   :1671)
+    at com.ibm.ejs.j2c.PoolManager.reserve(PoolManager.java:2496)
+   
+   
+   Looking later in the SystemOut.log, there will be more hung
+   thread notifications which show that the
+   FFDCFilter.processException() method is stuck waiting on an
+   Ffdc.<init> call to complete.  The stack trace of such a thread
+   will look like this:
+   
+   [05/24/12 12:42:35:914 EST] 00000003 ThreadMonitor W
+   WSVR0605W: Thread "ORB.thread.pool : 29" (000007f4) has been
+   active for 224151 milliseconds and may be hung.  There is/are 23
+   thread(s) in total in the server that may be hung.
+    at com.ibm.ffdc.util.provider.Ffdc.<init>(Ffdc.java:64)
+    at
+   com.ibm.ffdc.util.provider.FfdcProvider.getFfdc(FfdcProvider.jav
+   a:289)
+    at com.ibm.ffdc.impl.Ffdc.getFfdc(Ffdc.java:188)
+    at
+   com.ibm.ws.ffdc.FFDCFilter.processException(FFDCFilter.java:112)
+    at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.pmiExecuteUpda
+   te(WSJdbcPreparedStatement.java:1179)
+    at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.executeUpdate(
+   WSJdbcPreparedStatement.java:816)
+   
+   
+   It is possible that the first FFDC thread which got hung (in
+   this example, "ORB.thread.pool : 32") will eventually complete.
+   If it does complete, the threads will start moving and the hang
+   will clear up.  However, if it never completes, then it is the
+   same as if a true thread deadlock had occurred.
+   
+   
+   This same type of analysis can be performed using a
+   javacore/thread dump, however, javacores are not always
+   available.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V7.0 and V8.0                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Syncrhonization between FFDC            *
+   *                      incidents can cause a server hang       *
+   *                      when an unrecoverable problem           *
+   *                      occurs in a given incident.             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Syncrhonization between FFDC incidents can cause a server hang
+   when an unrecoverable problem occurs in a given incident.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  FFDC has been modified to ensure that incidents can continue
+   to be logged from other components when a given component's
+   incident-handling hangs a thread.  The impact to this is that
+   the FFDC summary log may indicate that the incident file of a
+   bad thread was created, while the thread may not have returned
+   so the incident file will not exist.  Therefore, a missing
+   incident entry that might have appeared in a summary file is
+   an indication that the component logging to FFDC did not
+   return control.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 7.0.0.23 and 8.0.0.3.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM45011
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-03
+   
+   
+ * CLOSED DATE
+   2011-12-15
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP

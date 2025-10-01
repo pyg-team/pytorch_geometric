@@ -1,0 +1,159 @@
+Title: IBM JR49861: WHITE SPACE ADDED BELOW WIDGETS IN BUSINESS SPACE WHEN USING INTERNET EXPLORER 9 - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Business Monitor V8.0.1 Fix Pack 3 (8.0.1.3) [http://www-01.ibm.com/support/docview.wss?uid=swg24037735]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In some cases, when you hover or move the mouse pointer over a
+   widget displayed in Business Space, extra white space is added
+   below the widget.  This happens when the Internet Explorer 9
+   browser is used to display Business Space.
+   
+   PRODUCTS AFFECTED:
+   IBM Business Monitor
+   IBM Business Process Manager (BPM) Advanced
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually set the height of the widget to prevent extra white
+   space from being displayed under the widget.  The height can be
+   set by dragging the bottom of the widget or using the Resize
+   option from the widget drop-down menu.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Extra white space is added below widgets in some cases when the
+   Internet Explorer 9 browser is used to display Business Space.
+   The additional white space can grow in size over time, causing
+   you to scroll down considerably to reach a widget farther down
+   on the page.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for Business Space in IBM Business Monitor
+   V8.0.1.2 and IBM BPM Advanced V8.0.1.2 that adds a style
+   definition for Internet Explorer 9 that ensures that no extra
+   white space is displayed below widgets.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR49861:
+   
+   1. Select either IBM Business Process Manager Advanced or IBM
+   Business Monitor from the product selector, the installed
+   version to the fix pack level, and your platform, and then click
+   Continue."
+   2. Select APAR or SPR, enter JR49861, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR49861
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB BUS MONITOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724M2400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-02
+   
+   
+ * CLOSED DATE
+   2014-07-02
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUSINESS SPACE
+   
+   
+ * FIXED COMPONENT ID
+   AIMBUSSPC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

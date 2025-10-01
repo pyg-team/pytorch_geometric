@@ -1,0 +1,43 @@
+Title: IBM Basic Rulerunner configuration with IBM Datacap Taskmaster Capture - United States
+
+Text:
+rulerunner quattro configuration settings threads TECHNOTE (FAQ)
+
+QUESTION
+ I am setting up a new Datacap Rulerunner server. What is a good initial configuration to start with? 
+
+CAUSE
+Rulerunner is highly customizable to allow it to be tuned to process a high volume of images very quickly. However, determining the configuration that will provide the absolute maximum throughput that the Rulerunner server is capable of requires a considerable amount of testing using different configuration settings. Until thorough testing has been done to confirm which settings give the best performance while maintaining reliable operations, the following basic configuration may be used. 
+
+The guidelines presented here do not represent specific limits in Rulerunner, which can be optimized to significantly increase the throughput. For more information on optimizing Rulerunner, see the references in the Additional Information section below.
+
+
+
+ANSWER
+For a starting Rulerunner configuration, run Rulerunner Manager and set as follows: 
+
+ * Threads  * Create one thread containing all batch creation tasks. Set SkipSameBatch to 1 both for the task and for the dbs line. 
+    * Create one or more threads for all remaining tasks to be executed by Rulerunner. Total thread count should not exceed two, or the total number of processors running on the Rulerunner server, whichever is higher.
+   
+   
+ * Rulerunner Settings Subtab  * Thread Timeout - From Job Monitor or some other source, determine the approximate maximum time it takes for batches to run any task that Rulerunner will be executing, then set it to a value in seconds that is about 50% higher. For example, if the longest task takes about 30 minutes, set the value to 2700 seconds (45 minutes). 
+    * Sleep For - Leave at 10 seconds. 
+    * Mixed Queuing - Unchecked if there are multiple batch creation tasks being processed, otherwise checked.
+   
+   
+ * Advanced Settings Subtab  * Restart Interval - Set to 86400 seconds (1 day). Automatic Restarting of Rulerunner is a safety mechanism to periodically clear memory or provide it with an opportunity to recover from a previous failure. A shutdown/restart cycle may take as long as the longest running task, and while waiting for the last task to complete, all other processing is stopped. So setting this option more frequently can lower the number of tasks it can process per day. 
+    * Stop on Termination - Unchecked for Production, but may be checked in Test or QA environments. It causes Rulerunner to shut down when a batch aborts. For most situations, this is an undesired behavior. 
+    * Write to Debug - Unchecked, unless specifically using the Debug table for troubleshooting.
+   
+   
+ * Logging Tab  * Logging can be set as desired, recognizing that higher logging levels will cause additional overhead, reducing throughput. Therefore, set to higher levels in a Test environment for troubleshooting, then use lower settings in a Production environment. There are two exceptions for settings on the Rulerunner Log and RRS Log subtabs:  * Reflush Buffer (Log Reflush) - Always unchecked unless troubleshooting an issue that specifically requires this feature. System overhead is extremely high with this checked. 
+       * Overwrite Log (Log Override) - Always checked unless specifically troubleshooting an issue that requires this feature to be unchecked. It prevents log files from becoming overly large.
+      
+      
+   
+   
+
+Additional Information 
+
+ * IBM Datacap Information Center [http://pic.dhe.ibm.com/infocenter/datacap/v8r1m0/index.jsp] - Provides information on Installing Rulerunner and how to use Rulerunner Manager 
+ * IBM Datacap Taskmaster Capture Redbook [http://www.redbooks.ibm.com/abstracts/SG247969.html?Open] - Provides guidance for more advanced configuration of Rulerunner servers.

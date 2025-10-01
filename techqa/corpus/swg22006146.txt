@@ -1,0 +1,51 @@
+Title: IBM MQ support position for 4K physical sector drives on Microsoft Windows systems - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ Current versions of Microsoft Windows provide support for hard disk drives with a 4KB physical sector size. On IBM MQ versions prior to 9.0.4, this technology is not supported by IBM MQ for drives used to store the queue manager's recovery logs. 
+
+CONTENT
+Current versions of Microsoft Windows provide support for hard disk drives with a 4KB physical sector size. This includes "Advanced Format " hard disk drive functionality also known as "512E", which allows 512-byte sector size emulation on disks with a 4K sector size. 
+
+For MQ versions prior to 9.0.4, this technology is not supported by IBM MQ for drives used to store the queue manager's recovery logs. 
+
+ 
+
+Drives used for queue managers' recovery logs on Microsoft Windows must use 512-byte native physical and logical sector size. 
+
+This restriction does not apply to supported UNIX operating systems. 
+
+ 
+
+Additional Information 
+
+On Microsoft Windows systems, a queue manager's transaction log is written as a series of 1KB-aligned 512-byte pages. These are unbuffered writes, and confirmation from the OS of successful completion of the write to persistent storage is required by IBM MQ in order to advance the transaction log. 
+
+Because these writes are not 4KB-aligned, it is possible that the Microsoft Windows Advanced Format emulation layer may re-write sectors for which a successful write confirmation has already been returned for IBM MQ. A failure during such a re-write could invalidate IBM MQ's transactional integrity and so this technology is not appropriate for IBM MQ recovery logs. 
+
+ 
+
+To confirm if a drive is suitable for a queue manager's recovery logs, the following Microsoft Windows command can be issued: 
+
+fsutil fsinfo ntfsinfo <drive letter> 
+In the resulting output, both the "Bytes Per Sector" and "Bytes Per Physical Sector" must report 512: 
+
+[/support/docview.wss?uid=swg22006146&aid=1] [/support/docview.wss?uid=swg22006146&aid=1] 
+
+Update for IBM MQ version 9.0.4 
+
+IBM MQ version 9.0.4 adds new support for the queue manager's recovery logs to be stored on an Advanced Format disk. This support applies only to 9.0.4 and later releases. 
+
+Queue managers that are created at IBM MQ version 9.0.4 can be used on an Advanced Format disk without any additional action. A queue manager created at an earlier version of IBM MQ and migrated to IBM MQ version 9.0.4 will require its logs to be migrated prior to startup. 
+
+Information on performing the migration of queue manager logs is documented in the IBM MQ Knowledge Center: 
+
+Migrating logs to an Advanced Format disk [https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.mig.doc/q130830_.htm] 
+
+The migmqlog utility [https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.ref.adm.doc/q130420_.htm] 
+
+RELATED INFORMATION
+ Microsoft: Advanced format disk compatibility update [https://msdn.microsoft.com/en-us/windows/compatibility/advanced-format-disk-compatibility-update ]
+Microsoft support policy for 4K sector hard drives [https://support.microsoft.com/en-gb/help/2510009/microsoft-support-policy-for-4k-sector-hard-drives-in-windows]

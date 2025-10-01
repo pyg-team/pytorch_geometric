@@ -1,0 +1,22 @@
+Title: IBM Portal Installer fails to find all WAS runtimes in Rational Application Developer 7.5.5.x - United States
+
+Text:
+portal installer; unable to find WAS instances TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When attempting to install Portal, the Portal Installer fails to find all WAS runtimes that exist on the system.
+
+SYMPTOM
+Portal Installer provides a truncated list when looking for existing WAS runtimes on the system.
+
+
+CAUSE
+Portal uses a combination of methods to try to find WAS because there is not one method that works universally. It's different on every platform, and for a given OS, WAS uses different types of registries with different releases. In addition, there are different ways of installing WAS, and some of them don't leave any standard footprint in a well-known place.
+
+DIAGNOSING THE PROBLEM
+In the following location for WinXP, C:\Documents and Settings\<user_name>\Local Settings\Temp, a file called installmessages.txt will be generated which lists the WAS locations found.
+
+RESOLVING THE PROBLEM
+The recommended solution is to use the "-W wasListPanel.existingWasLocation" or "-W was.undetectedWas" parameters to pass the location of the existing WAS location. 
+
+i.e. install.bat -W was.undetectedWas=<AppServer location>

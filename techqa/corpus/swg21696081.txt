@@ -1,0 +1,34 @@
+Title: IBM Jazz TCR requires web access in a locked down environment - United States
+
+Text:
+Jazz; Port; Internet; web; access; WebSphere; update TECHNOTE (FAQ)
+
+QUESTION
+ During the installation of 1.1.1.-TIV-JazzSM-multi available from this link
+http://www-01.ibm.com/support/docview.wss?uid=swg24038326 [http://www-01.ibm.com/support/docview.wss?uid=swg24038326]
+
+The installation instructions do not contain details on how to install without an external internet
+connection. During the update of WebSphere application server 8.5 we cannot connect to www.ibm.com on port 433.
+
+Our company firewall rules do not allow for external connections and we cannot open port 433. 
+
+How can this be installed without internet access?
+
+
+CAUSE
+The installation process checks for updates which can be disabled.
+
+ANSWER
+The following work around should apply to all versions of JazzSM starting with version 1.1.0.1 and all OS platforms. 
+
+(1) Start Installation Manager using command
+/opt/IBM/InstallationManager/eclipse/IBMIM
+
+(2) Go to Menu "File -> Preferences -> Repositories"
+Uncheck the option "Search service repositories during installation and
+updates"
+
+(3) Go to Menu "File -> Preferences -> Updates"
+Uncheck the option "Search for Installation Manager updates"
+
+(4) Restart Installation Manager and then try the JazzSM update

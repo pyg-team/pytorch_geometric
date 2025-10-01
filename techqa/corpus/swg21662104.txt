@@ -1,0 +1,55 @@
+Title: IBM How to view DXL attribute in DOORS - United States
+
+Text:
+DXL attribute definition; edit attribute; attribute contents TECHNOTE (FAQ)
+
+QUESTION
+ How do you view the details of a DXL Attribute created in IBM Rational DOORS ? 
+
+CAUSE
+You can not use the attribute editor to determine the contents for a DXL attribute definition from a DOORS module baseline. 
+
+ANSWER
+You can view the contents of a DXL attribute from the DXL editor; but you must be in exclusive edit mode. 
+
+Steps to view DXL attribute contents
+
+
+ 1. Open the module exclusive edit
+    
+    
+ 2. Click Edit > Attributes
+    
+    image
+    [/support/docview.wss?uid=swg21662104&aid=1] [/support/docview.wss?uid=swg21662104&aid=1]
+    
+    
+ 3. Select the DXL attribute
+    
+    
+ 4. Click Edit
+    
+    
+ 5. Check the DXL Attribute box
+    
+    image
+    [/support/docview.wss?uid=swg21662104&aid=2] [/support/docview.wss?uid=swg21662104&aid=2]
+    
+    
+ 6. Click Browse
+    
+    image
+    [/support/docview.wss?uid=swg21662104&aid=3] [/support/docview.wss?uid=swg21662104&aid=3]
+    
+    
+ 7. Click Current
+    
+    image
+    [/support/docview.wss?uid=swg21662104&aid=4] [/support/docview.wss?uid=swg21662104&aid=4]
+    
+    The DXL attribute definition loads to show the content.
+    
+    
+
+
+For DXL attribute values stored only in a baseline you can copy the basline which creates a new module that can be opened exclusively. An alternative is to provide support the attribute definition file from the baseline.Discuss with support how to locate the attribute definition file, attrs.dtc, in the baseline subdirectory of the module and send it to support who will decrypt the file and provide you a text copy of the contents.

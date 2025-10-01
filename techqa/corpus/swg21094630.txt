@@ -1,0 +1,258 @@
+Title: IBM Semaphores and Semaphore Timeouts - United States
+
+Text:
+Domino Server; Notes; Server; Performance; semaphone; time-out; timeout; time out TECHNOTE (FAQ)
+
+QUESTION
+What are semaphores and semaphore timeouts?
+
+ANSWER
+What is a semaphore and a semaphore timeout? 
+
+ * 
+ * 
+
+
+Example of a semaphore timeout in Notes/Domino 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Reasons for semaphore timeouts 
+ * 
+ * 
+ * 1. A heavy load on the server is causing processes to be delayed from releasing semaphores. 
+   
+   2. A process has crashed while holding a semaphore, causing other processes to block when trying to acquire the semaphore. 
+   
+   3. Deadly embrace, semaphore contention where two tasks are waiting on each other and neither task is able to break the loop. In the simplest case, thread A is trying to get a semaphore which is owned by B, while B is trying to get a different semaphore which is owned by A. More complex combinations are also possible: A wants a semaphore owned by B, who wants a semaphore owned by C, who wants a semaphore owned by A, etc. 
+   
+   4. If a process was to fail to set a semaphore during execution, another process dependent on the semaphore will be blocked awaiting the semaphore. 
+
+
+Determining if a semaphore timeout has occurred 
+ * 
+ * 
+ * 
+ * 1. Sem.Timeouts
+ * 
+ * At the server console, you will see the Sem.Timeouts statistic. To view this statistic, type the following: 
+   
+   sh stat sem.timeouts 
+   
+   If the problem has occurred, you will see something similar to the following, depending upon the nature of the semaphore timeout 
+   
+   Sem.Timeouts = 430D:58 0A13:42 030B:28 0116:26 0A12:21 
+   
+   NOTE: The statistic Sem.Timeouts will not appear in the Statrep if the customer is not experiencing semaphore timeouts. 
+   
+   The first number is the semaphore ID. The ID tells us what the semaphore is used for. For example, 0x030B is the collection semaphore used by NIF. The second number is a decimal number which shows the number of times the semaphore timeout occurred. It is not unusual in a heavily used server to get semaphore timeouts. 
+   
+   The following table lists some of the semaphores you may encounter: 
+   
+   Semaphore Function 0244 NSF per-database semaphore 410F OS File system semaphore 0266 NSF per-database full-text semaphore 4245 NSF database opening semaphore 030B NIF collection semaphore 430D NAMELookup semaphore 0A13 Log commit semaphore 0116 console semaphore 0A12 Buffered log package semaphore 030B Collection semaphore 4117 Handle table free chain consistency semaphore 0A0B Session table semaphore 4113 Handle table movement semaphore 33d5 New to Domino 4.5, AdminP's semaphore for ACL modification 4253 internal control semaphore 5708 BSAFE semaphore (RSA encryption stuff) 0255 NSF B-Tree semaphore 0294 Directory Manager Queue semaphore 1120 Transfer queue lock semaphore 0931 Task sync semaphore 0256 NSF buffer pool container 03A8 DBCONT page zero semaphore 
+ * 2. Error: "Session semaphore held for [n] seconds"
+ * 
+ * The second way of determining if there is a semaphore issue, is when you see (at the server console) the following message: 
+   
+   "Session semaphore held for [n] seconds." 
+   
+   Note: This error does not print to the log file. 
+
+
+
+Troubleshooting Semaphore Timeouts 
+ * 
+ * 
+ * 
+ * NOTE:
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * #1089976
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Output of SEMDEBUG.TXT:
+ * 
+ * THREAD [02AB:0123] WAITING FOR FRWSEM 0x030B Collection semaphore (@0BE65A20) 
+   (R=0,W=1,WRITER=0080:015E,1STREADER=0000:0000) FOR 30000 ms 
+   
+   THREAD [01FE:0220] WAITING FOR FRWSEM 0x0244 open database semaphore (@00ECBDD2) 
+   (R=0,W=1,WRITER=0080:015E,1STREADER=0000:0000) FOR 30000 ms 
+ * 
+ * Output of SEMDEBUG.TXT for Unix:
+ * 
+ * THREAD [01676:00001] WAITING FOR RWSEM 0x412C (@EE100210) (R=0,W=1,WRITER=05067:00001,1STREADER=05067:00001) FOR 30000 ms 
+   
+   THREAD [01684:00001] WAITING FOR RWSEM 0x412C (@EE100210) (R=0,W=1,WRITER=05067:00001,1STREADER=05067:00001) FOR 30000 ms 
+ * 
+ * What does the output mean?
+ * 
+ * 0x030B - Indicates the type of semaphore 
+   
+   [01FE:0220] 
+   
+   The first number (01FE) indicates the process ID. This number is in hex and must be converted to decimal. This number 
+   will be completely different when the server is rebooted. 
+   
+   The second number (0220) is the thread ID. 
+ * 
+ * What does the output mean (in Unix example):
+ * 
+ * 0x412C - Indicates the type of semaphore 
+   
+   [01684:00001] 
+   
+   The first number (01684) indicates the process ID. This number is the PID as indicated in the NSD output and will be completely different when the server is rebooted. 
+   
+   The second number (00001) is the thread ID. 
+ *   * NSD output:
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * From the Process Tree section:
+      
+    * 
+    * 
+    * 
+    * 
+    * 
+   
+   
+ * 
+ * 
+ * What other information should be collected?
+ * 
+ * 
+ * For Windows NT:
+ * 
+ * 1. A screenshot of the Windows NTs Task Manager, or the output of the PSTAT utility in the NT resource kit, redirected to a file. (PSTAT > somefile.txt) 
+    * 
+   
+   
+   2. Issue a "Show Task Debug" command as soon as the semphores begin to scroll on the Domino server console. 
+   
+   Example: sh task debug>debug.txt 
+ * 
+ * For Unix:
+ * 
+ * 1. Run NSD under root. Make sure "KillProcess=1" is removed from the NOTES.INI to prevent the server from killing the process when the server crashes, thus preventing mapping of PID and semdebug.txt. 
+    * 
+   
+   
+   2. Issue a "Show Task Debug" command as soon as the semphores begin to scroll on the Domino server console. 
+ *   * 
+   
+    * 
+   
+   
+
+
+
+How to utilize SEMDEBUG.TXT and Task Manager 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * The Process ID must be converted from hex to decimal.
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Sample SEMDEBUG.TXT
+ * 
+ * 
+ * 
+ * OWNER
+ * 
+ * 009A
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Figure 1 (Task Manager): 
+ * 
+
+
+[/support/docview.wss?uid=swg21094630&aid=1] [/support/docview.wss?uid=swg21094630&aid=1] 
+
+Figure 2 (Task Manager): 
+
+[/support/docview.wss?uid=swg21094630&aid=2] [/support/docview.wss?uid=swg21094630&aid=2] RELATED INFORMATION
+ How to Turn on Semaphore Debugging Parameters [http://www.ibm.com/support/docview.wss?uid=swg21089976]
+How To Utilize SEMDEBUG.TXT and Task Manager [http://www.ibm.com/support/docview.wss?uid=swg21089279]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21604032]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Messaging Applications IBM Notes 8.5, 8.0, 7.0 
+HISTORICAL NUMBER
+ 112710

@@ -1,0 +1,138 @@
+Title: IBM JR41778: CREATING A STAND-ALONE PROFILE FOR USE WITH MICROSOFT SQL SERVER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Here is the link for the topic
+   
+   http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/index.j
+   sp?topic=%2Fcom.ibm.wbpm.imuc.ebpmps.doc%2Ftopics%2Ftcfg_sa_prof [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=%2Fcom.ibm.wbpm.imuc.ebpmps.doc%2Ftopics%2Ftcfg_sa_prof]
+   ile_sql.html
+   
+   The command for creae the DBs are wrong
+   "
+   Create the CMNDB (CommonDB) and BPEDB (Business Process
+   Choreographer), BPMDB (Process Server) and PDWDB (Performance
+   Data Warehouse) databases. The following example command is
+   used to create a database for Microsoft SQL Server:
+   
+   osql -b -d database_name -S hostname -U db_user_account -P
+   db_user_password
+   -Q "CREATE DATABASE database_name COLLATE
+   SQL_Latin1_General_CP1_CI_AS"
+   "
+   the -d option is to connect to a exsisting database, how are we
+   supposed to connect to the database when it has not yet been
+   created.  The command above is trying to connect to and create
+   a database at the same time in the same command.  Of course
+   this is going to fail , you cant connect to a DB before
+   creating it!
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use
+   osql -b  -S hostname -U db_user_account -P db_user_password
+   -Q "CREATE DATABASE database_name COLLATE
+   SQL_Latin1_General_CP1_CI_AS"
+   
+   Or better yet
+   osql -b  -S hostname -U db_user_account -P db_user_password
+   -i full_path_to_input_file.sql
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The command for creating the DBs is wrong in InfoCenter.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Closing APAR, RTC work items created for tracking.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR41778
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-26
+   
+   
+ * CLOSED DATE
+   2012-03-06
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

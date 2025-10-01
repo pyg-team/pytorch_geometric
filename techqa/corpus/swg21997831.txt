@@ -1,0 +1,24 @@
+Title: IBM FIPS 140-2 レベル 3について - United States
+
+Text:
+ 技術情報(FAQS)
+
+質問
+ SKLM 2.5は FIPS 140-2 レベル 3に対応していますか。 
+
+回答
+SKLM 自体は暗号化機能を備えていないため、FIPS 140-2 認証の取得は必要ありません。
+ただし、SKLM では、IBM Java Cryptographic Extension（JCE） コンポーネントの IBM JVM の暗号機能が利用されています。 
+この機能により、FIPS 140-2レベル1 認証を取得している IBMJCEFIPS 暗号プロバイダーの選択および利用が可能になります。
+
+参考
+Federal Information Processing Standard
+http://www.ibm.com/support/knowledgecenter/ja/SSWPVP_2.5.0/com.ibm.sklm.doc_2.5/cpt/cpt_ic_release_oview_fips.html [http://www.ibm.com/support/knowledgecenter/ja/SSWPVP_2.5.0/com.ibm.sklm.doc_2.5/cpt/cpt_ic_release_oview_fips.html]
+
+IBMJCEFIPS につきまして、下記を参照してください。
+Introduction
+http://www.ibm.com/support/knowledgecenter/ja/SSYKE2_6.0.0/com.ibm.java.security.component.60.doc/security-component/fipshowto_intro.html [http://www.ibm.com/support/knowledgecenter/ja/SSYKE2_6.0.0/com.ibm.java.security.component.60.doc/security-component/fipshowto_intro.html]
+
+関連情報
+ Original URL [http://www-01.ibm.com/support/docview.wss?uid=swg21693685]
+An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21693685]

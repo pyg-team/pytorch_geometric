@@ -1,0 +1,39 @@
+Title: IBM Configuration Manger upgrader step fails after installing IBM Content Collector 4.0.1 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why upgrading IBM Content Collector 4.0.1 is failing at the configuration upgrader step after the installation? 
+
+SYMPTOM
+When the Configuration Manager is first launched, It is failing at File System Source Connector step, and the problem is indicated as "invalid signature". 
+
+
+CAUSE
+The upgrade code has some logic to parse and upgrade an XML fragment associated with each task route (the XML fragment contains position and size of each tasks/collector/rule). In this case, the xml fragment for one or several task routes is null, so the upgrade of configuration database fails or errors, and then configuration Manager fails to show the task route
+
+ENVIRONMENT
+ICC 4.0.1
+Windows
+
+DIAGNOSING THE PROBLEM
+Error messages in log files: 
+
+
+
+
+ibm.ctms.filesystem_connector.ConfigurationException: invalid signature
+
+at ibm.ctms.filesystem_connector.ConnectorConfigNET.fromBytes(Byte[] bytes) in d:\builds\fsc\ctms_filesystem_connector_201501122311\svn\connectors\filesystem\filesystemconnector\c_src\connectorconfig.cpp:line 350
+
+
+RESOLVING THE PROBLEM
+- Start configuration manager again 
+- When prompted to upgrade, hit CTRL+SHIFT+ALT+D. This will show a new option to not run the upgrade for now 
+- Navigate to the datastore screen and export your database to an xml file 
+- Locate and remove the bad taskroute. 
+
+ -Then you can try to import the corrected XML datastore OR 
+
+ - If you prefer, using IBM Content Collector 2.2 remove the bad task routes and then use ICC 4.0.1 fixpack to connect again.

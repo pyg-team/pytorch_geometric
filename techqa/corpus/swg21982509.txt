@@ -1,0 +1,54 @@
+Title: IBM How can I convert a DB2 LUW ESE installation to an AESE one? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I currently have DB2 For Linux, Unix and Windows ESE installation on Unix/Linux. I would like to convert this installation to AESE. I already have the license file. How can I do this? 
+
+ANSWER
+With DB2 version 10.5 and version 11.1, all you need to do is apply the AESE license. When DB2 was installed, all libraries for AESE were installed, and the only determining factor of whether you had ESE or AESE was the license file.
+
+With DB2 version 10.1 and lower, when you install the product, you have to choose ESE or AESE. So there are 2 choices to move to AESE:
+
+A. First option - Uninstall/Re-install:
+
+1. Take a backup of the database(s) just in case these are issues.
+
+2. Uncatalog all of your databases using "db2 uncatalog db <dbname>". Note this will NOT remove them, they will still be there.
+
+3. Stop the instance
+
+4. As root, drop the instance.
+
+5. As root, uninstall DB2.
+
+6. Now you need to re-install, this time choosing "AESE" instead of "ESE". 
+
+7. Once the installation completes, you need to recreate the instance. You MUST use the same instance name/user as before, with the same home directory! 
+
+8. Once that completes, you can log in as the instance owner and start the instance. Then you can complete the remaining tasks:
+
+8.1. Modify any database manager configuration parameters to match what they were before. You only need to do this if they are different.
+
+8.2. Stop and restart the instance so that all of your changes from above take effect.
+
+8.3. Add your AESE license file.
+
+8.4. Re-catalog all of your databases.
+
+9. You should now be able to connect to all of your databases.
+
+B. Second option - Fresh installation, then db2iupdt:
+
+1. Take a backup of the database(s) just in case these are issues.
+
+2. Do a fresh installation of AESE in a separate installation directory than ESE. When you get to the part that asks you to "Specify one of the following keywords to install DB2 products.", choose AESE. NOTE you cannot install it in the same directory as ESE. If you want to do this, see option 1 above.
+
+3. Once the installation completes, you need to run db2iupdt from the AESE installation against your instance(s).
+
+4. Install your AESE license.
+
+5. Start the instance and connect to the database(s).
+
+The main difference between the 2 is that with the first option, you will not have a mixed environment with 2 DB2 installations, which could cause confusion down the road, since the AESE will not be installed in the default directory (presumably ESE is already there). The advantage to the second one is that you can do one instance at a time if you have multiple instances.

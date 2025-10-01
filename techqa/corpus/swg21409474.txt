@@ -1,0 +1,40 @@
+Title: IBM IEF196I Invalid structure size RC0C RSN02010C08 No suitable coupling facility found in preference list - United States
+
+Text:
+5655P3000 R420 R42E R42K 5655-P30 5655P30 FMID HCCV420 JCCV42E JCCV42K R430 R43E R43K HCCV430 JCCV43E JCCV43K 5655Y2400 R510 R51C R51E R51K 5655-Y24 5655Y24 FMID HCCV510 JCCV51E JCCV51K TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are running CICS VSAM Recovery for z/OS (CICS VR) and receive messages about invalid structure size. You want to know if there is a way to determine if the logstream is built large enough to accommodate a particular VSAM file for CICS VR. 
+
+SYMPTOM
+IEF196I [http://publib.boulder.ibm.com/infocenter/zos/v1r13/topic/com.ibm.zos.r13.ieam800/iea2m8c119.htm] Invalid structure size RC0C RSN02010C08 No suitable coupling facility found in preference list.
+
+IXGLOGR CONADIAG0: 00000002
+IXGLOGR CONADIAG1: 00000008
+IXGLOGR CONADIAG2: 00000C08
+IXGLOGR IEF196I IXG206I [http://publib.boulder.ibm.com/infocenter/zos/v1r13/topic/com.ibm.zos.r13.ieama00/ixgmes.htm] CONNECT FAILED FOR LOGSTREAM CICSVR.FILELOG
+ERR R= CICSVR DWW280I CICSVR FAILED PROCESSING
+ERR R= CICSVR BATCH LOGGING REQUEST: CONNECT
+
+
+CAUSE
+The structure size specified for the CFRM policy is insufficient for the CICS VR logstream.
+
+RESOLVING THE PROBLEM
+Coupling facility (CF) policy parameters for logstream structures vary, depending on each operational environment. CICS VR is generally intended for recovery of CICS VSAM files. It uses CICS definitions for VSAM recovery logstreams and CICS structure of logstream blocks.
+
+A general recommendation is to use INITSIZE(10000) and SIZE(16000).
+
+You can check the structure size for the CFRM policy with the command:
+DISPLAY XCF,STR,STRNM=LOG_CICSVR
+
+The POLICY SIZE string in the answer will display the defined SIZE for the structure. If the size is too small, change it to SIZE(16000), or a suitable size, with the IXCMIAPU program.
+
+For additional guidance and more precise values, see Sizing log streams [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.installation.doc/topics/dfha13b.html] in the CICS Transaction Server for z/OS (CICS TS) information center.
+
+The CFSizer [http://www.ibm.com/systems/support/z/cfsizer/] tool can also help you calculate the structure sizes.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICSVR CICS VR CICS/VR

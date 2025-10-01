@@ -1,0 +1,13 @@
+Title: IBM Information Server QualityStage Agreement Weight value question. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I specify an Agreement Weight of 0.001? 
+
+CAUSE
+In the QualityStage Match Specification, in previous versions, prior to version 8.5, an Agreement Weight with a scale of 3, for example 0.001, could be specified. In version 8.5 and beyond, the only Agreement Weight that can be specified is a weight with a scale of 2 like 0.99. This is a change of behavior in version 8.5. There was an issue addressed in version 8.5 whose summary was: "Cannot type Comma (punctuation) in the Match Cutoff Text Box in Match Designer". As part of correcting that issue, all numeric data entry in Match Designer was reviewed and, for the overrides, the scale set to 2, as in .01.
+
+ANSWER
+An override value of 0.001 was always considered a "special" value. To get the 0.001 override value, the user should enter "0" as the override weight. There will be a warning message: "Weight override(s) of 0 not valid; changed to .001." and the value will be set to ".001"

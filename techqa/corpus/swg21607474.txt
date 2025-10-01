@@ -1,0 +1,31 @@
+Title: IBM Docs incorrectly indicate how to uninstall the ITCAM YN agent. - United States
+
+Text:
+Uninstalling YN uninstall Windows ITCAM CAMADALL CAMADINST TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ The ITCAM docs incorrectly reference a non-existent file when uninstalling the YN agent. 
+
+ANSWER
+The ITCAM docs (see below) wrongly indicate how to uninstall the ITCAM YN agent. The docs indicate to use this file: $DC_HOME//installer/_uninst/uninstaller.exe to remove the ITCAM for AD 
+7.1 program. However, the _uninst dir does not exist in ITCAM for AD 7.1 on Windows.
+
+Here is where its documented in the docs:
+
+http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp] 
+- Composite Application Manager for Application Diagnostics 
+- Agent for J2EE Data Collector Installation and Configuration Guide 
+- Uninstalling and unconfiguring ITCAM for J2EE Data Collector 
+- Uninstalling the Data Collector
+- Step 1: Launch the InstallShield Wizard 
+- (on the right panel) you see the first line under Step 1 to run the uninstaller.exe file to uninstall. This does not exist on a Windows environment.
+
+This is corrected in the next documentation review cycle. The correct way to uninstall the YN agent is to use the standard Windows Add/Remove programs from the Control Panel.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfAD ITCAM4AD ITCAM for Application Diagnostics

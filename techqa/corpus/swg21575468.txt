@@ -1,0 +1,45 @@
+Title: IBM Tivoli Storage Manager V6 install fails to install DB2 - United States
+
+Text:
+tsm Deploy label international install wizard TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A Tivoli Storage Manager V6 installation is launched and installs the server sucessfully but fails to install DB2. 
+
+CAUSE
+Installation is launched from a folder with a non-alphanumeric name
+
+DIAGNOSING THE PROBLEM
+The installation creates the logs.zip file in the installation directory 
+
+ (default = C:\Program Files\Tivoli\TSM\logs.zip).
+In the logs.zip, examined the ia\log.txt to identify the step that fails. For example :
+
+Wed Dec 14 16:14:05.802 CET 2011 : FINE : PlanStepEventOccurred(Failed target 'step_00002_DB2_2_1') (from com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl$SimpleListener.eventOccurred)
+
+Examine the coi\plan\install\MachinePlan_localhost\logs\[INSTALL_XXX]\MachinePlan_localhost.log file. For example :
+
+step_00002_DB2_2_1:
+...
+executePackage:
+[echo] de.descriptor.source.file is install_input.xml
+[echo] Running command: C:/Program Files/IBM/Common/acsi/bin/de_processreq.cmd
+[exec] Result: 100
+[echo] Command ended with RC: 100
+[echo] product.log.file is: C:\Program Files\Tivoli\TSM\_uninst\plan\install\MachinePlan_localhost\00002_DB2_2_1/logs
+
+Examine the de\xxx\de_trace.log file. For example :
+
+2011-12-14 16:14:04.507+01:00 1 DECLICommon validateXML EUMAHAR26.xxx IP org.xml.sax.SAXParseException: The reference to entity "Firmware" must end with the ';' delimiter.
+at org.apache.xerces.parsers.DOMParser.parse(Unknown Source)
+...etc
+
+
+
+RESOLVING THE PROBLEM
+In this example, the installation fails because there is an invalid character in the folder name from which the installation is launched. Review the ia\log.txt file to obtain the folder name. For example : 
+
+
+Wed Dec 14 16:11:01.160 CET 2011 : INFO : $INSTALLER_LAUNCH_DIR$=D:\Backup_Software&Firmware\TSM_6_2\TSM Server\TSM 6.2.1 Full (from com.ibm.ac.coi.ext.ia.plugin.DEBootstrapPanel.InstallDE)
+
+In this example, the installation was launched from the "D:\Backup_Software&Firmware" folder. This caused the installation to fail. In this instance, renaming the folder to "D:\Backup_Software" (removing the ampersand "&" sign) allowed the installation to subsequently run successfully.

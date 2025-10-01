@@ -1,0 +1,39 @@
+Title: IBM CSQX630E and WMQ channel fails to start - United States
+
+Text:
+MQMINFO; MQ390L2; SSL; 5655F1000; 530; R300; RACDCERT; sslciph TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your WebSphere MQ (WMQ) channel fails to start.
+
+You receive the following errors on the z/OS sending side: 
+
+CSQX630E CSQXRESP Channel ???? requires SSL
+CSQX642E =MQX8 CSQXRCTL No SSL certificate for channel ....
+CSQX620E =MQX8 CSQXRESP System SSL error, channel ????, function 'gsk_secure_soc_init' RC=-2 
+
+The following messages were seen on the AIX receiving side:
+
+AMQ9637: Channel is lacking a certificate. 
+AMQ9665:SSL connection closed by remote end of channel ....
+AMQ9209: Connection to host 'mqx8chin (123.45.67.89)' closed. 
+
+CAUSE
+When importing a certificate the case of the label name does not matter. The imported certificate from AIX with an all lower case name (ibmwebspheremq) to z/OS, works fine on z/OS. However, the certificate was created on z/OS. 
+
+RESOLVING THE PROBLEM
+You must adhere to the case required for the z/OS label ibmWebSphereMQ 
+
+The label-name [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r1/index.jsp?topic=%2Fcom.ibm.mq.doc%2Fsy12570_.htm]must be in the correct WebSphere MQ format for a WMQ on z/OS queue manager: ibmWebSphereMQ followed by the name of your queue manager. 
+
+Example: ibmWebSphereMQCSQ1.
+
+
+
+HISTORICAL NUMBER
+ 17953
+001
+866 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

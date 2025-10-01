@@ -1,0 +1,24 @@
+Title: IBM Using WTX 8.4.1.1 with IIB 9.0 may result in ABEND S2C1 under load - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An ABEND S2C1 may be experienced, resulting in an IIB Execution Group crash when the Broker is under load on the z/OS platform (64 bit) if the flows use IBM WebSphere TX nodes. 
+
+SYMPTOM
+ABEND S2C1 REASON=000000C4 is issued. On analysis of the ABEND it can be seen to be occurring in the 
+__preFormat code. Register 10 is bad, as it's set to FFFFFFFF FF3D1370.
+
+
+CAUSE
+This has been identified as a product defect under APAR PI20801
+
+ENVIRONMENT
+Only occurs on z/OS platform(64 bit) when IIB 9.0 is using WTX 8.4.1.1 nodes
+
+DIAGNOSING THE PROBLEM
+Unwind the ABEND, to review the __preFormat code.
+
+RESOLVING THE PROBLEM
+Obtain and apply fix for APAR PI20801

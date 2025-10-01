@@ -1,0 +1,126 @@
+Title: IBM PI31563: DBOUTPUTFORMAT.JAVA APPENDING EXTRA SEMICOLON TO QUERY WHICH IS INCOMPATIBLE WITH DB2 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DBOutputFormat is used for writing output of mapreduce jobs to
+   the database. When used with db2 jdbc driver, it fails with
+   following error
+   
+   com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error:
+   SQLCODE=-104, SQLSTATE=42601, SQLERRMC=;;,COUNT) VALUES
+   (?,?);END-OF-STATEMENT, DRIVER=4.16.53 at
+   com.ibm.db2.jcc.am.fd.a(fd.java:739) at
+   com.ibm.db2.jcc.am.fd.a(fd.java:60) at
+   com.ibm.db2.jcc.am.fd.a(fd.java:127)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  See Error Description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem is fixed in Version 4.0.0 Sprint15 and later fix
+   packs
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI31563
+   
+   
+ * REPORTED COMPONENT NAME
+   INFO BIGINSIGHT
+   
+   
+ * REPORTED COMPONENT ID
+   5725C0900
+   
+   
+ * REPORTED RELEASE
+   212
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-15
+   
+   
+ * CLOSED DATE
+   2015-07-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INFO BIGINSIGHT
+   
+   
+ * FIXED COMPONENT ID
+   5725C0900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

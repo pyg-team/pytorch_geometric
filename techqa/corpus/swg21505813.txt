@@ -1,0 +1,44 @@
+Title: IBM Computers are grayed out in the console - United States
+
+Text:
+googlebigfix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Computers that are grayed out in the console are considered to be offline as their agents have not reported within the "Mark as offline after" time. 
+
+RESOLVING THE PROBLEM
+
+
+Computers that are grayed out in the console are considered to be offline because their agents have not reported within the "Mark as offline after" time. Computers will be considered offline if the agent has not reported in a specified amount of time. By default, the clients send a heartbeat every 15 minutes and if the main BigFix server has not received a report within 45 minutes, by default, from a particular client, the computer will be marked offline in the console (it will turn gray).
+
+The length of time between heartbeats and the amount of time to wait before marking a computer offline are both configurable in the console under "File > Preferences".
+
+The heartbeat interval is set by changing the value for the "Send heartbeat every" setting. And, the amount of time to wait before marking a computer offline by changing the value for the "Mark as offline after" setting.
+
+
+[/support/docview.wss?uid=swg21505813&aid=1] [/support/docview.wss?uid=swg21505813&aid=1] 
+
+You could try sending the client a send refresh command by right clicking on the computer and selecting "Send Refresh". If the command is received by the client it will generate a full report and post this full report back up to the server. 
+
+Caution: There are potential problems that may occur when selecting many clients in the console and issuing them all a Send Refresh command at the same time. Please see the following article that discusses this potential abuse that may occur: Preventing Send Refresh abuse in a large deployment [http://www-01.ibm.com/support/docview.wss?uid=swg21688336] which may cause a cascading relay failure condition where reports are backed up down the chain of relays from the main server to the clients. 
+
+You will want to limit this to only a dozen or so computers within a 15 minutes time frame to prevent this condition from happening. 
+
+If all of the computers are gray in your console, there may be a problem on the main BigFix server with the FillDB service. The FillDB service is responsible for inserting reports into the database. Check to see that the FillDB process is started and running (try restarting it once). Monitor the FillDB buffer folder (\BES Server\FillDBData\BufferDir). Watching it over the course of a few minutes you should see reporting files enter and then leave the folder as they are getting inserted into the database. If the reports in the FillDB bufferdir folder are hours old this indicates a problem with the FillDB service inserting the current set of files in the BufferDir directory into the database. 
+
+Another way you can see if the FillDB service might be having problems inserting reports into the database is from the relay diagnostics page. On the main BigFix server open a browser and go to http://127.0.0.1:52311/relaydiagnostics or from a remote machine open a browser and go to: http://<SERVER ADDRESS>:52311/relaydiagnostics 
+
+[/support/docview.wss?uid=swg21505813&aid=2] [/support/docview.wss?uid=swg21505813&aid=2] 
+
+The BufferDir hold up to 3MB of data and up to 10000 files in it. If these numbers are at their max, it is an indication the FillDB service is having problems inserting reports into the database either in a timely manner (or at all). There may also be a condition called a cascading relay failure [https://www.youtube.com/watch?v=bTkE4HCMRZA] in which reporting is backed up down the chain of relays. It may take several hours or a few days for this condition to cease depending on the size of the deployment and other factors. 
+
+Also check the FillDB.log for errors (\BES Server\FillDBData\FillDB.log). If there are errors indicating the FillDB service is having problems connecting to the database, you will want to verify the ODBC connection settings and ensure that the NT user the FillDB service is logging in as has dbo level access to the BFEnteprise database and also that the users password has not expired. If the users password has expired, you will want to update the password in the FillDB service settings and restart the service. If SQL authentication is the method of database authentication being used, you will want to ensure the SQL user and password is still valid and properly set in the registry settings. 
+
+If there are a high number of messages in the FillDB.log indicating reports are being rejected then this could point to the likely cause of the problem. If this is the case, something in the data of the reports is not liked by the FilllDB insertion process requiring further investigation. 
+
+If a large part (or large parts of your deployment) are gray and computers have not reported, there may be an issue with a relay, some of the relays, or one of the top level relays. The first thing you will want to check is that relays are assigned to their correct parent relays all the way up the chain of relays starting at one of the clients. This can be easily checked in the results of the BES Relay Status analysis in the BES Support site. Start by finding one of the problematic clients and check the "BES Client's Parent Relay" property to find the client's parent. Then find this parent's parent by looking at its BES Relay's Parent Relay, and so on and so forth up the chain. If you can't get to the main server by following the path, then relays need to be re-assigned properly so that client reports have a complete path relay to relay all the way up to the main server. 
+
+There may also be a problem with the database. Check that the database services are running and that the database is healthy and can receive connections. Also confirm that maintenance jobs are not hung or taking too long to create a condition which would make the database unavailable.  
+
+HISTORICAL NUMBER
+ 100

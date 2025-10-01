@@ -1,0 +1,147 @@
+Title: IBM PI19483: SYNDICATION: RENAME OF LIBRARY NOT SYNDICATED - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Recreation steps:
+   As admin, create a library and syndicate to a second Portal.
+   Second Portal can be base or VP.
+   On the syndicator server, rename the library, and wait for
+   syndication.
+   When syndication is complete, check the name of the library on
+   the subscriber.
+   The library name should now be the new name.
+   On the syndicator, add a new content item to the renamed
+   library
+   and wait for syndication to complete.
+   On the subscriber, confirm the content does syndicate but the
+   library rename has still not been applied to the library on
+   the
+   subscriber.
+   Note the add content step is not currently do by the test
+   RenameLibrary
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Recreation steps:
+   As admin, create a library and syndicate to a second Portal.
+   Second Portal can be base or VP.
+   On the syndicator server, rename the library, and wait for
+   syndication.
+   When syndication is complete, check the name of the library on
+   the subscriber.
+   The library name should now be the new name.
+   On the syndicator, add a new content item to the renamed
+   library
+   and wait for syndication to complete.
+   On the subscriber, confirm the content does syndicate but the
+   library rename has still not been applied to the library on
+   the
+   subscriber.
+   Note the add content step is not currently do by the test
+   RenameLibrary
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When a library was updated the event log entry on the
+   WCM_LIBRARIES table was updated, but the entry on the
+   WCM_CONTROLLABLES table was not. This fix ensures both are
+   updated when a library is modified.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI19483
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-06
+   
+   
+ * CLOSED DATE
+   2015-02-05
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

@@ -1,0 +1,200 @@
+Title: IBM IY57198: s12962 SAP agent to handle old naming conventions for SAP - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ***********IBM DEUTSCHLAND SW TIV*********
+   
+   ITIM SERVER RELEASE: 4.5.1 on win2k3
+   SAP Agent
+   Problem Description:
+   SAPAGENT, Version 4.5.1009
+   Agent Development Kit - Version 4.33
+   enRole Resource Management API - Version 4.33
+   enRole Encryption Library API - Version 4.23
+   
+   The recon completes with warnings and they have around 30% of
+   their sap
+   profiles which do not
+   get pulled into itim.  These profiles utilize the old naming
+   convention.
+   =====================
+   From customer:
+   we don't get the following single profiles out of the SAP:
+   ZF_TEST
+   Z:FA_SP
+   Z.TEST
+   
+   It seems so, that all single profiles beginning with ZF_ and Z:
+   don't
+   work. These are the profiles with the old naming convention.
+   
+   It seems so that only the single profiles beginning with Z_
+   seems to
+   work. These are the new profiles with the new naming convention.
+   All of the collection profiles seem to work.
+   
+   We have several hundred profiles and we don't get access to
+   about 30
+   percent of all profiles.
+   ======================
+   
+   Should there be a problem with using the old naming conventions?
+   I do not have a SAP agent not SAP setup to test this, but the
+   customer
+   did
+   provide the transports they are using.
+   
+   All information in PMR_Attachments\IBM-Deutschland\70394 which
+   include
+   SAPagent log, transports, and itim log.
+   
+   Desired Behavior (Be Specific): Customer needs the SAP agent to
+   handle the old naming conventions for SAP
+   
+   
+   INFORMATION FROM CUSTOMER
+   why are the IDS logfiles are important to you to recreate the
+   error ? The customer defined profiles according to the olds SAP
+   conventions with two leading characters (ZF_*,  Z:*, Z.*)  did
+   not occur in the agents logfile. So it is highly  probable that
+   the TIM profile on the SAP side does not collect them. This is
+   long before they can occur in the TIM directory server.
+   
+   In addition to this technical question I would like to ask you,
+   why we spend again so much time in collecting information which
+   might not be so important to recreate the problem.
+   
+   We had a very good status at the POC by the customer until this
+   problem occured. I would like to ask you to help us to prevent a
+   longer disucssion rather then finding a quick solution so that
+   the customer will see we are working on it and we are making
+   progress.
+   We had  a similar situation at the end of last year with another
+   customer concerning the SAP agent were we have discussed over
+   four weeks about logfile entries rather a working solution.
+   
+   Please support us with development help to fix this problem very
+   soon.
+   Thank you very much in advance for your support and
+   understanding.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  S12962
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   Fix available in SAP 4.5.3 agent
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   Fix available in SAP 4.5.3 agent
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY57198
+   
+   
+ * REPORTED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C34AG
+   
+   
+ * REPORTED RELEASE
+   451
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-05-20
+   
+   
+ * CLOSED DATE
+   2004-06-22
+   
+   
+ * LAST MODIFIED DATE
+   2004-06-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     AGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * FIXED COMPONENT ID
+   5724C34AG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R450 PSY
+   UP

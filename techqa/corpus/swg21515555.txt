@@ -1,0 +1,56 @@
+Title: IBM Old SAP instances discovered and registered after 6.2.0-TIV-ITM_SAP-IF0013 - United States
+
+Text:
+5724B97SOTR; SAP old instance defined discovered ITM offline RZ04 MySAP agent 6.2 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After 6.2.0-TIV-ITM_SAP-IF0013 installation, ITM V6.2 MySAP Agent always add a SAP instance subnode that no longer exists on SAP system.
+This also causes error messages to be written into SAP log because of queries issued against not active SAP instances.
+The error may occurs also on V7.1 and later versions. 
+
+SYMPTOM
+When agent is started, it adds also one or more old instances that are supposed to be no longer defined on the monitored SAP system. 
+
+Even if you try stopping the agent, clearing the offline entries and then restarting the agent, the unwanted instance subnode(s) is created again.
+
+
+CAUSE
+If the unwanted instance is still defined into the monitored SAP system, using below steps you should be able to see it listed in the transaction output:
+
+1) Logon to SAPGUI and run the RZ04 TCode
+2) Click on the "Instances/operation modes" button: you will be shown with some configured instances in the SAP R/3 System.
+If no instances are shown here, mySAP agent retrieves the instances using "default mode".
+3) To retrieve the instances using the default mode, run the SE37 TCode, and type TH_SERVER_LIST for the function module name.
+
+In this specific scenario anyway, the unwanted SAP instance is not shown by RZ04 and SE37 TCode output.
+Something changed after 6.2.0-TIV-ITM_SAP-IF0013 installation and mySAP agent is gathering SAP instance information also from other places.
+
+
+RESOLVING THE PROBLEM
+In order to avoid this behavior, you need to follow these steps: 
+
+
+A) Stop mySAP agent 
+
+B) 
+1. Log on to SAP GUI 
+2. Select transaction code "SE16" 
+3. Enter Table name "/IBMMON/ITM_CNFG" and press Enter key 
+4. Press F8 
+5. Press F5 and Enter values as below, 
+5a. Param name : OFFLINEFORINACTIVESERVER 
+5b. Value Char : YES 
+5c. Value Int : 1 
+5d. Save this setting (you can use shortcut keys "ctrl+s") 
+
+C) Remove Offline Entries from TEP
+
+D) Start mySAP agent. 
+
+The agent will discover the unwanted instance but will not register it to TEMS, so it is not showed in the TEP tree.
+When the SAP system is recycled, the instance will no longer be discovered at all.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Tivoli Monitoring V6.2 MySAP Agent

@@ -1,0 +1,161 @@
+Title: IBM PI63566: MIGRATION FROM 2.1 TO 2.2 ADDS TLS 1.1 TO SECURITY LEVELS UNEXPECTEDLY - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After migrating his CA backing store from V2.1 to V2.2,
+   two security levels custmer had defined in V2.1,
+   which he had explicitly specified as TLS V1.2 only, mistakenly
+   included TLS V1.1, in addition to TLS V1.2.
+   The customer can successfully remove TLS V1.1 from the security
+   levels in the 2.2 backing store using the CA panels. so the
+   problem appears to be just with the migration process, not the
+   CA panels.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use CA to remove TLS V1.1 from Security Levels after the
+   migration process is complete.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of V2R1 and V2R2 IBM z/OS Management Facility for  *
+   * HSMA21A and HSMA22A Configuration Assistant using AT-TLS     *
+   * SecurityLevels.                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When migrating a backing store to V2R1 or V2R2 Configuration *
+   * Assistant the Security Level turned on TLS V1.1 during the   *
+   * migration of the backing store.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply PTF                                                    *
+   ****************************************************************
+   None
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem has been fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI63566
+   
+   
+ * REPORTED COMPONENT NAME
+   Z/MF CONFIG ASS
+   
+   
+ * REPORTED COMPONENT ID
+   5655S28CA
+   
+   
+ * REPORTED RELEASE
+   21A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-03
+   
+   
+ * CLOSED DATE
+   2016-07-06
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI39198 UI39199
+   
+   
+
+MODULES/MACROS
+ *  IZUCAWFT IZUCAPAX IZUCAHLP
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   Z/MF CONFIG ASS
+   
+   
+ * FIXED COMPONENT ID
+   5655S28CA
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R21A PSY UI39198 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI39198]
+   UP16/07/09 P F607
+   
+   
+ * R22A PSY UI39199 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI39199]
+   UP16/07/09 P F607
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,59 @@
+Title: IBM How does an expire vm operation affect policy in Tivoli Storage Manager for Virtual Environments: Data Protection for VMware - United States
+
+Text:
+IBM Tivoli Storage Manager; IBM Spectrum Protect TECHNOTE (FAQ)
+
+QUESTION
+ IBM Tivoli Storage Manager for Virtual Environments: Data Protection for VMware V7.1 introduced a command to expire a backup of vm; how does this affect the policy settings for the vm backups, especially copygroup 
+
+ANSWER
+Tip: The product now known as IBM Spectrum Protect™ was named IBM Tivoli® Storage Manager in releases earlier than Version 7.1.3. To learn more about the rebranding transition, see technote 1963634. [http://www.ibm.com/support/docview.wss?uid=swg21963634] 
+
+Tivoli Storage Manager for Virtual Environments - Data Protection for VMware V6 did not have a mechanism to mark an active version of a vm backup as inactive, either through an explicit command or through implicit incremental backup processing. Since a vm always had an active version on the Tivoli Storage Manager server, copygroup parameters such VERDELETED and RETONLY were never interrogated or used. 
+
+Data Protection for VMware V7 now provides an explicit command to expire the most recent version of a virtual machine backup: dsmc expire <vmname> -objtype= vm. Use of this command will now create situations where there is no active version on the Tivoli Storage Manager server and the copygroup parameters VERDELETED and RETONLY will now be interrogated and honored. 
+
+
+See the Tivoli Storage Manager Expire [http://pic.dhe.ibm.com/infocenter/tsminfo/v7r1/topic/com.ibm.itsm.client.doc/r_cmd_expire.html?resultof=%22%65%78%70%69%72%65%22%20%22%65%78%70%69%72%22%20%22%6f%62%6a%74%79%70%65%22%20%22%6f%62%6a%74%79%70%22%20] command documentation for more information about using this command in conjunction with vm backups. 
+
+ 
+
+The following summarizes the copygroup parameters that are interrogated and honored when taking vm backups.
+
+
+VEREXISTS 
+
+Specifies the maximum number of backup versions to retain for virtual machine backups. This parameter is optional. The default value is 2. 
+
+The number of backup versions to retain is controlled by this parameter until versions exceed the retention time specified by the RETEXTRA parameter. 
+
+RETEXTRA 
+
+Specifies the number of days to retain a backup version after that version becomes inactive. A version of a virtual machine becomes inactive when a more recent backup version is created, The server deletes inactive versions based on retention time even if the number of inactive versions does not exceed the number allowed by the VEREXISTS or VERDELETED parameters. This parameter is optional. The default value is 30 days 
+
+VERDELETED 
+
+Specifies the maximum number of backup versions to retain for virtual machine backups after the active version has been expired using the vm expiration command. This parameter is optional. The default value is 1.
+
+If the user issues an vm expiration command, the next virtual machine backup causes the server to expire the oldest versions of the virtual machine backup in excess of this number. The expiration date for the remaining versions is determined by the retention time specified by the RETEXTRA or RETONLY parameter. 
+
+RETONLY 
+
+Specifies the number of days to retain the last backup version of a virtual machine that does not have an active version because the user explicitly issued an EXPIRE VM command. This parameter is optional. The default value is 60 
+
+Other considerations 
+
+ * Note that the default value for VERDELETED is 1. It is strongly advisable to check the value of this parameter before issuing an EXPIRE VM command to avoid unwanted side-affects of expiring multiple backup versions. 
+ * Data Protection for VMware does not honor the following copygroup parameters: frequency, mode, serialization 
+ * When using the incremental forever backup modes (IFFull and IFIncremental) each vm backup constitutes a new backup version in the context of the copygroup parameters listed above. 
+ * When using the legacy backup modes (Full and Incremental), only the full backups constitute a new backup version in the context of the copygroup parameters listed above. 
+ * Below is a summary of the copygroup settings as they pertain to vm backups COPYGROUP 
+   Setting Default Value Data Protection
+   for VMware 
+   V6.x Data Protection
+   for VMware 
+   V7.1, V8.1 VEREXISTS 2 versions honored honored RETEXTRA 30 days honored honored VERDELETED 1 version not applicable honored when using vm expiration command RETONLY 60 days not applicable honored when using vm expiration command 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Storage Management Tivoli Storage Manager

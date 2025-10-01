@@ -1,0 +1,73 @@
+Title: IBM How to break up a large scan into several smaller ones in AppScan Standard - United States
+
+Text:
+1299939; large; scan; smaller; multiple; several TECHNOTE (FAQ)
+
+QUESTION
+ How do you divide a single large scan into multiple smaller sites when using IBM Security AppScan Standard? 
+
+CAUSE
+Although AppScan Standard can scan larger sites, in the interest of report readability and scan speed time, it is often recommended that you break up a large scan into several smaller scans. 
+
+This will provide a faster overall scan time, and will also produce several smaller reports that are more easily acted upon by development teams.
+
+
+ANSWER
+Here are three suggested ways for breaking up large scans: 
+
+ * By test Type or Severity 
+ * By Application Section
+   
+
+
+Break up a scan by test Type: 
+
+ 1. Load your scan. 
+ 2. Open Scan Configuration > Test Policy. 
+ 3. In the first pull down menu select Type. 
+    A good place to start is to have one scan running Application Tests, and another running Infrastructure Tests, as we do here. You may further restrict the tests by customizing the test policy. 
+ 4. Deselect Infrastructure and Third-Party Web Components and click OK for the Scan Configuration dialog. 
+ 5. Save the scan as Scan-Application or some other filename clearly indicating it is an application scan. 
+ 6. Load the original scan again. 
+ 7. Open the Scan Configuration -> Test Policy dialog again, and select Type from the first pull down menu. 
+ 8. Deselect Application and click OK for the Scan Configuration dialog. 
+ 9. Save the scan as Scan-Infrasctructure or some other filename clearly indicating it is an infrastructure scan. 
+    
+
+
+You can then run each scan separately. Not only will this improve scan time, but it generates reports that can be sent to specific groups within the organization. Infrastructure Tests are typically resolved by system administrators, whereas Application Tests are typically resolved by web developers.  
+
+ 
+
+Break up a scan by test Severity: 
+
+ 1. Load your scan. 
+ 2. Open Scan Configuration > Test Policy. 
+ 3. In the first pull down menu select Severity. 
+    In this example you will split the scan in two scan, one reporting High and Medium vulnerabilities, and another reporting Low and Informational vulnerabilities. 
+ 4. Deselect Low and Informational and click OK for the Scan Configuration dialog. 
+ 5. Save the scan as Scan_High_Medium or some other filename clearly indicating it is an High-Medium scan. 
+ 6. Load the original scan again. 
+ 7. Open the Scan Configuration -> Test Policy dialog again, and select Severity from the first pull down menu. 
+ 8. Deselect High and Medium and click OK for the Scan Configuration dialog. 
+ 9. Save the scan as Scan_Low_Informational or some other filename clearly indicating it is an Low-Informational scan. 
+    
+
+
+You can then run each scan separately, running the High-Medium scan first and reporting the most important vulnerabilities faster.  
+
+ 
+
+Break up a scan by Application Section: 
+
+ 1. Load your scan 
+ 2. Look at your web application, and see if it divides itself into logical sections (like www.url.com\sales [www.url.com/sales], www.url.com\support [www.url.com/support], www.url.com\contact [www.url.com/contact]). 
+ 3. Right-click sections of the site in the application tree on the left, which you do not want to test, and select Exclude from Scan 
+ 4. Save the scan as Scan-Sales or some other file name clearly indicating it is a scan of the sales section 
+ 5. Load the original scan, and repeat this process for each other section of the web site
+    
+
+
+You can then run each scan separately. Not only will this improve scan time, but it generates easily readable reports highlighting the flaws in each section of the web site. RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21626946]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21501372]

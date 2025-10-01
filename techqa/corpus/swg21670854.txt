@@ -1,0 +1,65 @@
+Title: IBM Security Bulletin:  Vulnerabilities in IBM Tivoli Monitoring agents with potential for privilege escalation (CVE-2014-0907) - United States
+
+Text:
+privilege CVE-2014-0907 SECURITY BULLETIN
+
+SUMMARY
+ Privilege escalation vulnerability in IBM Tivoli Monitoring (ITM) agents could be exploited by a local user to gain elevated privilege of another user. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2014-0907 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0907]
+CVSS Base Score: 6.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91869 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91869] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:M/Au:N/C:C/I:C/A:C)
+
+AFFECTED PRODUCTS AND VERSIONS
+Monitoring Agent for UNIX OS version 6.3.0 through 6.3.0 Fix Pack 01
+Monitoring Agent for UNIX OS version 6.2.3 through 6.2.3 Fix Pack 05
+Monitoring Agent for UNIX OS version 6.2.2 through 6.2.2 Fix Pack 09 
+Monitoring Agent for UNIX OS version 6.2.1 through 6.2.1 Fix Pack 04
+Monitoring Agent for UNIX OS version 6.2.0 through 6.2.0 Fix Pack 03 
+
+Universal Agent version 6.2.3 through 6.2.3 Fix Pack 01
+Universal Agent version 6.2.2 through 6.2.2 Fix Pack 09
+Universal Agent version 6.2.1 through 6.2.1 Fix Pack 04
+Universal Agent version 6.2.0 through 6.2.0 Fix Pack 03 
+
+REMEDIATION/FIXES
+
+The following fixes are for the Monitoring Agent for UNIX OS: 
+
+Fix VRMF How to acquire fix 6.3.0-TIV-ITM-FP0002 6.3.0 http://www.ibm.com/support/docview.wss?uid=swg24035402 [http://www-01.ibm.com/support/docview.wss?uid=swg24035402] 6.2.3.5-TIV-ITM_UNIX-IF0001 6.2.3 http://www.ibm.com/support/docview.wss?uid=swg24037447 [http://www-01.ibm.com/support/docview.wss?uid=swg24037447] 6.2.2.9-TIV-ITM_UNIX-IF0006 6.2.2 http://www.ibm.com/support/docview.wss?uid=swg24037446 [http://www-01.ibm.com/support/docview.wss?uid=swg24037446] For versions 6.20 and 6.21, contact IBM Support. 
+
+
+The following fixes are for the Universal Agent: Fix VRMF How to acquire fix N/A 6.3.0 Does not ship in 6.3.0. 6.2.3-TIV-ITM-FP0002 6.2.3 http://www.ibm.com/support/docview.wss?uid=swg24032429 [http://www-01.ibm.com/support/docview.wss?uid=swg24032429] 6.2.2-TIV-ITM-FP0009-IV56858 6.2.2 http://www.ibm.com/support/docview.wss?uid=swg24037389 [http://www.ibm.com/support/docview.wss?uid=swg24037389] For versions 6.20 and 6.21, contact IBM Support. WORKAROUNDS AND MITIGATIONS
+Contact IBM Support for options.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+This vulnerability was reported by Tim Brown from Portcullis Computer Security Ltd. 
+
+CHANGE HISTORY
+ 31 July 2014 Original Copy Published.
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITM

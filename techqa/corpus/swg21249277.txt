@@ -1,0 +1,33 @@
+Title: IBM Errors on console: java.util.prefs.FileSystemPreferences checkLockFile0ErrorCode WARNING: Could not lock System prefs. Unix error code - United States
+
+Text:
+error; java; console; system; Java.util.prefs.FileSystemPreferences checkLockFile0ErrorCode WARNING: Could not lock System prefs. Unix error code TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The following error is written to the Lotus Domino server console: 
+
+"Java.util.prefs.FileSystemPreferences checkLockFile0ErrorCode WARNING: Could not lock System prefs. Unix error code"
+
+
+RESOLVING THE PROBLEM
+The following is a release note that details an issue with Java errors within Domino on UNIX (AIX, z/OS, Solaris): 
+
+This error occurs because the JRE looks for security settings in /etc/.java and $HOME/.java by default. However, Domino installs its own JRE within the Notes Executable directory (/opt/lotus/notes/latest/PLAT/jvm), and installs System Preferences files there. 
+
+On some UNIX platforms if a JDK/JRE is installed locally for the Operating System, then this install may create a /etc/.java directory which is owned/writeable by root. Since Domino does not run as root, it is unable to lock the preferences file in this directory hierarchy, resulting in the above error message.
+
+Additionally, the deinstallation of a JDK/JRE on a UNIX platform may leave behind this directory structure, but with incomplete/missing files/hierarchy, causing the same or similar error. For example, it may leave behind /etc/.java/.systemPrefs without containing the files .system.lock and .systemRootModFile.
+
+Currently, there is no clear way to deal with this issue programmatically in Domino, due to the many ways Domino accesses Java functionality. It is recommended that you either: 
+
+ * Remove /etc/.java and use local user preferences only, either in $HOME or just with what comes packaged with Domino (preferred) 
+ * Recursively make /etc/.java globally readable/writeable/executable, but you will still be susceptible to the incomplete/missing files/hierarchy issue described above.
+
+RELATED INFORMATION
+#Lotus Domino Release notes [http://www.lotus.com/ldd/notesua.nsf/0b345eb9d127270b8525665d006bc355/8313e8d10f025dee8525698100541f6d?OpenDocument]
+
+
+
+
+ * 
+ *

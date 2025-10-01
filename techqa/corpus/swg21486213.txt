@@ -1,0 +1,26 @@
+Title: IBM Scoring Configuration fails in single node Websphere setup. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collaboration and Deployment Services (C&DS) / Decision Management scoring configuration failed. In the C&DS log we see the following error
+
+"com.spss.psapi.session.SessionException: Unable to connect to the repository." 
+
+In addition, the log of the load balancer (C:\IBM\HTTPServer\logs\error.log) showed the following message: 
+
+[Mon May 03 16:03:34 2010] [error] ws_common: websphereExecute: Failed to read from a new stream; App Server may have gone down during read
+[Mon May 03 16:03:34 2010] [error] ws_server: serverSetFailoverStatus: Marking mia-bench1Node01_server1 down
+
+Note: it may also be possible that jobs may fail as well if the Load Balancer believes the Application Server is down. 
+
+RESOLVING THE PROBLEM
+This issue was caused by the load balancer (HTTP SErver) within Websphere timing out. The C&DS server was setup to use only a single node cluster within Websphere. It is the expectation that if there were multiple nodes the score would have been picked up by another node.
+
+Websphere provides a plugin to use with this load balancer. The configuration for the plugin is in plugin-cfg.xml (C:\IBM\HTTPServer\Plugins\config\webserver1\plugin-cfg.xml). Increasing the ServerIOTimeout value from 60 to 180 resolved the problem.
+
+
+
+HISTORICAL NUMBER
+ 93143

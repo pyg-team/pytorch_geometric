@@ -1,0 +1,136 @@
+Title: IBM System Storage N Series FASTPATH Version 1.1.0.1 image for CN1610 Cluster Switch - United States
+
+Text:
+DoNotDisplayThisDocInPortal PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document provides instructions for downloading and upgrading to IBM System Storage N series CN1610 Cluster Switch FASTPATH version 1.1.0.1. The instructions are provided for the system image, Management Information Base (MIB) files, and reference configuration file (RCF). 
+
+CONTENT
+ 
+
+FASTPATH version 1.1.0.1 changelog:
+
+This release addresses some minimal code changes and minor fixes. These changes do not impact the user. 
+
+Installation prerequisites:
+
+To install the FASTPATH image, you need to have access to the following set of devices. 
+
+ * A serial console connected to the storage controller. 
+
+FASTPATH Version 1.1.0.1 Download and installation instructions: To download and install the FASTPATH version 1.1.0.1 image to your switch, follow these steps:
+
+
+
+Step Action 1 Enter user privilege mode. When prompted for password, enter your password. No password is 
+required by default: (CN1610)> enable 
+
+ Password: 
+
+(CN1610)#
+
+2 Before downloading the image you can save the current image to be a backup image: (CN1610)#copy active backup
+
+(CN1610)#show bootvar
+Image Descriptions
+active :
+backup :
+Images currently available on Flash
+--------------------------------------------------------------------
+unit active backup current-active next-active
+--------------------------------------------------------------------
+1 1.1.0.1 1.0.0.4 1.0.0.4 1.1.0.1
+
+
+
+3 Download the image to the CN1610 switch: (CN1610)#copy tftp://tftpserver/image filename.stkactive
+
+4 You can also save the current boot image if it is different by rebooting the switch. Note that the switch must be rebooted in order for the command in Step 4 to reflect the new image. There are two possible views for a response that you may see once you enter thereloadcommand: (CN1610)#reload
+Are you sure you would like to reset thesystem? (y/n) 
+
+or: 
+
+(CN1610)#reload
+The system has unsaved changes.
+
+Are you sure you would like to reset the system? (y/n)
+
+5 To verify the current version of the image: (CN1610)#show version
+Switch: 1
+
+System Description............................. NetApp CN1610, 1.1.0.1, Linux
+2.6.21.7
+Machine Type................................... NetApp CN1610
+Machine Model.................................. CN1610
+Serial Number.................................. 11111200042
+Burned In MAC Address.......................... 00:A0:98:4B:B6:26
+Software Version............................... 1.1.0.1
+Operating System............................... Linux 2.6.21.7
+Network Processing Device...................... BCM56820_B0
+Part Number.................................... 111-00893
+
+
+6 You can check the images with theshow bootvarcommand. The new image should now appear in theactive,current-active, andnext-activecolumns: (CN1610)# show bootvar
+Image Descriptions
+active :
+backup :
+
+Images currently available on Flash
+--------------------------------------------------------------------
+unit active backup current-active next-active
+--------------------------------------------------------------------
+
+1 1.1.0.1 1.0.0.4 1.1.0.1 1.1.0.1
+
+
+
+For this release it is recommended that the bootcode be updated. The update bootcodecommand is issued after the OS upgrade is completed. Another reboot will be required once the update bootcodecommand is issued. This example shows how to update the boot code: 
+
+(CN1610)#update bootcode
+Updating boot code, please wait a few seconds... BOOT_PART = /dev/mtd2 Success!
+
+(CN1610)#reload
+Are you sure you would like to reset the system? (y/n)y
+
+System will now restart!
+
+Reference platform resetting ...
+Starting pid 896, console /dev/ttyS0: '/etc/rc.d/rc.reboot' 
+
+Downloading and applying RCF Version 1.0 To download and apply the RCF file, follow these steps:
+
+
+
+Step Action 1 Save the running-config file as a script to the switch to save the current configuration: (CN1610)#show running-configscriptname.scr
+
+Config script created successfully. 
+
+Note:The last argument, the script being created, can be any name but itmusthave the.scrextension.
+
+2 Download the RCF to the switch: (CN1610)#copy tftp://tftpserver/scriptnamenvram:scriptscriptname.scr 
+
+The.scrextensionmustbe appended to the lastscriptnameinstance in the command. The.scris the extension to indicate the script on this switch. 
+
+Note:The script will attempt to automatically validate.
+
+3 To verify that the RCF script is recognized on the switch: (CN1610)#script list
+Configuration Script Name Size(Bytes)
+---------------------------- ----------- 
+scriptname.scr6960
+
+1 configuration script(s) found.
+2041 Kbytes free.
+
+
+4 Apply the RCF configuration to the CN1610 cluster switch: (CN1610)#script applyscriptname.scr 
+
+Note that the script output will go to the console. 
+
+After the script is applied, those settings will be active in therunning-configfile. To save them to thestartup-configfile, you must use thewrite memorycommand, or if you used thereloadansweryeswhen asked if you want to save the changes.
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2013/12/6

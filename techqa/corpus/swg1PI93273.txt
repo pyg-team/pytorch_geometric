@@ -1,0 +1,180 @@
+Title: IBM PI93273: WMQ VER.8.0 ABN=5C6-00D40017,C=W9700.800.MMC -CSQMGET, M=CSQGFRCV, LOC=CSQMLPLM.CSQMGET +00003200, MQCC=2 MQRC=2195 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer has migrated to WMQ V8 and started to experience
+   the following problems when using MQGET running with WebSphere
+   MQ V8. MQPUT is successful with V8 and the same MQGET is
+   successful with V7.1. They receive the following abend:
+   
+   IEA794I SVC DUMP HAS CAPTURED:  041
+   DUMPID=007 REQUESTED BY JOB (QTS3CHIN)
+   DUMP TITLE=QTS3,ABN=5C6-00D40017,U=TECMQS01,C=W9700.800.MMC -CS
+              QMGET ,M=CSQGFRCV,LOC=CSQMLPLM.CSQMGET +00003200
+   IEA794I SVC DUMP HAS CAPTURED:  068
+   DUMPID=008 REQUESTED BY JOB (QTS3CHIN)
+   DUMP TITLE=QTS3,ABN= 5C6-00E7014F,C=W9700.800.CHIN           ,L
+              OC=CSQXADPM.CSQXADPM+051E2
+   +CSQX191I |QTS3 CSQXRCTL Channel CLUST.TO.QTS4 beginning
+    message reallocation
+   +CSQX037E |QTS3 CSQXRCTL Unable to get message from  070
+    SYSTEM.CLUSTER.TRANSMIT.QUEUE, MQCC=2 MQRC=2195
+   
+   It is caused by the large number of message properties causing
+   the message headers to be split across multiple pages.  We
+   incorrectly process these split headers and this causes the
+   abend to occur.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No local fix.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of IBM MQ for z/OS Version 8       *
+   *                 Release 0 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Abend 5C6-00D40017 in CSQMLPLM.CSQMGET  *
+   *                      when getting a messages with a large    *
+   *                      amount of properties.                   *
+   ****************************************************************
+   While getting the message, CSQMHDRS converts the properties into
+   an RFH2 message, as requested by either the application or
+   the PROPCTL setting on the queue definition, and copies it to
+   the message buffer.
+   On return from CSQMHDRS, the buffer contains any headers that
+   need to be ahead of the RFH2 (e.g. MQXQH, MQRFH), followed by
+   the RFH2 header. CSQIMGE9 then attempts to copy the remainder
+   of the message into the buffer.
+   However, if the message data (including the headers already
+   copied) starts in an IRHA page addressed by the IRH9, and the
+   start of the data to be copied is in a subsequent IRHA that is
+   addressed by an IRH3, CSQIMGE9 incorrectly determines that the
+   message is unexpectedly truncated.
+   This leads to the reported abend when control returns to CSQMGET
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CSQIMGE9 is changed to correctly locate the start of the data
+   to be copied in this scenario.
+   
+   MQMSGPROP/K
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI93273
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ Z/OS V8
+   
+   
+ * REPORTED COMPONENT ID
+   5655W9700
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-02-06
+   
+   
+ * CLOSED DATE
+   2018-05-14
+   
+   
+ * LAST MODIFIED DATE
+   2018-06-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI55800
+   
+   
+
+MODULES/MACROS
+ *  CSQIMGE9
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM MQ Z/OS V8
+   
+   
+ * FIXED COMPONENT ID
+   5655W9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI55800 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI55800]
+   UP18/06/12 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,43 @@
+Title: IBM Running the mttrapd probe as SUID root - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Unable to start the mttrapd probe after SUID root privileges configuration.It thows the following error,
+/opt/IBM/tivoli/netcool/omnibus/platform/linux2x86/probes64/nco_p_mttrapd: error while loading shared libraries: libncrypt.so.1: cannot open shared object file: No such file or directory
+
+
+CAUSE
+The ld.so.conf cannot accept environment variable
+
+ANSWER
+The following procedure shows you how to configure SUID root for the SNMP Probe : 
+
+As the root user, run the following command from the $NCHOME/omnibus/probes/arch directory to make root the owner of the probe binary:
+chown root nco_p_mttrapd
+
+Note: On 64-bit systems, run the chown command from the $NCHOME/omnibus/platform/arch/probes64 directory.
+As the root user, run the following command from the same directory to enable the probe binary to be run as SUID root:
+chmod +s nco_p_mttrapd
+
+For Linux operating system
+As the root user, Edit/etc/ld.so.conf and add the following lines to the end of the file:
+
+/opt/IBM/tivoli/netcool/omnibus/platform/linux2x86/lib
+/opt/IBM/tivoli/netcool/platform/linux2x86/lib
+
+Note: On 64-bit systems, use the lib64 path:
+
+/opt/IBM/tivoli/netcool/omnibus/platform/linux2x86/lib64
+/opt/IBM/tivoli/netcool/platform/linux2x86/lib64
+
+As the root user, 
+Runldconfig -v to create the necessary links and cache to the shared libraries.
+
+ 
+
+HISTORICAL NUMBER
+ 56238
+999
+744

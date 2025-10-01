@@ -1,0 +1,39 @@
+Title: IBM How to minimize the occurrence of database deadlocks on Microsoft SQL Server when used with GIS - United States
+
+Text:
+STERLINGFAQ TECHNOTE (FAQ)
+
+QUESTION
+ How to minimize the occurrence of database deadlocks on Microsoft SQL Server when used with GIS 
+
+ANSWER
+
+
+1) The collation *must* be set to 'SQL_Latin1_General_CP850_BIN' for the GIS database. Our documentation requires it and it is very important for best performance. For best performance, the default collation for the entire SQL Server should be set to 'SQL_Latin1_General_CP850_BIN'.
+
+2) For the GIS database, in the Options tab of the Properties, the recommendation is that the 'Auto update statistics', 'Auto create statistics' and 'Torn page detection' be turned Off.
+
+3) 3. A Maintenance Plan should be created to run on a scheduled basis, via the SQL Server agent. As part of the Plan, we should be doing 'Reorganize data and index pages', usually with the 'Change free space per page percentage to:' setting at 10%. The 'Remove unused space from the database files' should be set to a low threshold (default is 50Mb) and normally 'Amount of free space to remain after shrink:' should be 10% as well. Integrity checks can be done as part of that Plan, or can be done in a separate plan, as can backups and transaction log backups. This plan should be executed around weekly, usually on a low volume night to prevent locking issues (most customers choose Saturdays), and should be set to not interfere with the Archive/Backup Service that runs in GIS.
+
+4) Make sure that if a virus scan software must be installed on the SQL Server that it is not actively scanning the database files. That can dramatically affect I/O performance on the database files.
+
+5) De-fragmenting the volume(s) the database files are on can help overall performance of the database, as with any software installed on Windows.
+
+6) Under some circumstances, changing the Compatibility level of the GIS database to '70' will help (but only on SP4 of SQL Server 2000). 
+
+7) Ensure that SQL Server has enough memory and disk space, and that it isn't running on a machine where it is contending with other software for those resources.
+
+Additional considerations to maximize performance:
+
+a) Parallelism should not be enabled on SQL Server 2000. 
+
+b) Ensure that it is 32bit SQL Server 2000 on 32bit Windows. There can be performance issues with running the 32bit SQL Server in the WOW (Windows On Windows) mode on 64bit Windows.
+
+c) Put the Log (.ldf) and Data (.mdf) files on different disks to maximize I/O throughput.
+
+d) Ensure the memory is not capped on the SQL Server, but also make sure that enough is available for the Operating System.
+
+e) Always ensure that it is the correct JDBC driver version and Service Pack version of SQL Server 2000. For example, GIS 4.1.1 requires driver version 2.2.0040 and SP4 (8.00.2039) for SQL Server 2000.  
+
+HISTORICAL NUMBER
+ FAQ1561

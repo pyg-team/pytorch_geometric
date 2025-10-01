@@ -1,0 +1,29 @@
+Title: IBM FileNet Content Manager support with NetApp storage - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Does Linux-based IBM Content Platform Engine supported to communicate with a NetApp storage via CIFS? 
+
+CAUSE
+Netapp storage is supported as a Fixed Content Device and CIFS is not relevant to that configuration.
+
+If you are looking to configure it as a file storage area, and mount it via CIFS from Linux system, then per our hardware/software requirements the answer is "no".
+
+From the report: CIFS and NFS-compatible storage devices
+
+Content Platform Engine supports Magnetic Network Attached Storage (NAS) devices that enable access through the Network File System (NFS) or Common Internet File System (CIFS). However, NAS heads fronting Hierarchical Storage Management (HSM) systems are not supported.
+
+File locking must be enabled. For NFS v3 this is usually provided by Network Lock Manager which is a separate service which much be enabled.
+
+To ensure reliable operation and prevent possible corruption or loss of data, use 
+
+•NFS version 3 or NFS version 4 with at least an Uninterruptible Power Supply (UPS) backup device for mitigating power-off scenarios.
+
+•Implement a highly available storage system.
+
+Connections to remote file stores must use NFS for UNIX and CIFS for Windows.
+
+ANSWER
+No, it isn't supported

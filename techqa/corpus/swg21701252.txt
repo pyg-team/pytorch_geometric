@@ -1,0 +1,48 @@
+Title: IBM Security Bulletin: Vulnerability in IBM WebSphere Application Server may affect Tivoli Netcool Service Quality Manager (CVE-2015-0138) - United States
+
+Text:
+TNSQM SECURITY BULLETIN
+
+SUMMARY
+ The “FREAK: Factoring Attack on RSA-EXPORT keys" TLS/SSL client and server vulnerability may affect IBM WebSphere Application Server Version 6.0 that is used by Tivoli Netcool Service Quality Manager. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-0138 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0138]
+DESCRIPTION: A vulnerability in various IBM SSL/TLS implementations could allow a remote attacker to downgrade the security of certain SSL/TLS connections. An IBM SSL/TLS client implementation could accept the use of an RSA temporary key in a non-export RSA key exchange ciphersuite. This could allow a remote attacker using man-in-the-middle techniques to facilitate brute-force decryption of TLS/SSL traffic between vulnerable clients and servers. 
+
+This vulnerability is also known as the FREAK attack.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See http://exchange.xforce.ibmcloud.com/#/vulnerabilities/100691 [http://exchange.xforce.ibmcloud.com/#/vulnerabilities/100691] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+These vulnerabilities may affect Tivoli Netcool Service Quality Manager 4.1.4
+
+REMEDIATION/FIXES
+None
+
+WORKAROUNDS AND MITIGATIONS
+By default, the WebSphere Application Server SSL configuration in Tivoli Netcool Service Quality Manager is set to use the "STRONG" or "HIGH" secure cipher list which does not use RSA Export ciphers, so you would not be affected if you have not changed your ciphers.
+
+If you have overridden the default configuration to use the "MEDIUM" secure cipher list then it will contain the RSA Export Ciphers. You should change this configuration to use "STRONG" or "HIGH".
+
+If you have configured to use "CUSTOM" list of ciphers that includes an RSA Export cipher, then you should remove those RSA Export ciphers from the Application Server configuration.
+
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TNSQM

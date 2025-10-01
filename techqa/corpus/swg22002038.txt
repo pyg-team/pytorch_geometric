@@ -1,0 +1,121 @@
+Title: IBM Cognos Anlytics 11.0.4 or higher: Redirect IIS custom website to the Cognos Analytics - United States
+
+Text:
+IIS; redirect url; website TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ IBM Cognos Anlytics 11.0.4 or higher: how can we set up IIS custom website that when users enter the server Name this is automatically directed to the Cognos Analytic?
+iis-host:80/bi/ or iis-host:8080/bi/ 
+
+CAUSE
+Configuring the IIS web server for versions 11.0.4+, it describes the configuration with creating an application Alias is ibmcognos
+
+iis-host:80/ibmcognos/bi/ 
+
+https://www.ibm.com/support/knowledgecenter/en/SSEP7J_11.0.0/com.ibm.swg.ba.cognos.inst_cr_winux.doc/t_gateway_iis.html#gateway_iis [https://www.ibm.com/support/knowledgecenter/en/SSEP7J_11.0.0/com.ibm.swg.ba.cognos.inst_cr_winux.doc/t_gateway_iis.html#gateway_iis]
+
+Customer wants to set up iis-host:8080 or iis-host:80
+
+ANSWER
+Install the Application Request Routing extension for IIS by going to the following URL: 
+
+http://www.iis.net/downloads/microsoft/application-request-routing [http://www.iis.net/downloads/microsoft/application-request-routing]. This will also install the URL Rewrite extension
+
+1. Create a new, dedicated application pool. For example, named CAPool.
+
+Right-click on Application Pools. Click Add Application Pool.
+
+2. Using a new Website
+
+Right-click on Site. Click Add Website
+Site name: cognos website
+Application Pool: select CAPool
+Physical Path: install_location\webcontent
+Binding port, please use open port as 8080 or 80 
+Click ok
+
+2-a. Enable Web Content expiry
+
+Select ibmcognos and double-click HTTP Response Headers.
+Click Set Common Headers.
+Check Expire Web Content and set an expiry that works best for you.
+
+2-b. Select ibmcognos and double-click Mime Types.
+
+Add the following Mime Types to your IIS configuration if they are not already present.
+
+.svg : image/svg+xml
+.woff : application/x-font-woff
+.json : application/json
+.woff2 : font/woff2
+.template : text/html
+. : text/plain
+
+3. Right-click cognos website and click Add Application.
+
+Alias to sso.
+Application pool is the one you created in step 1(CAPool).
+Physical path is install_location\cgi-bin
+
+4. Select sso and double-click Handler Mappings.
+5. Click Add Module Mapping in the right Actions pane.
+Request path is cisapi.
+Module is IsapiModule.
+Executable is install_location\cgi-bin\cognosisapi.dll
+Name is sso.
+Click Request Restrictions and ensure that Invoke Handler is unchecked.
+Click OK twice.
+
+6. Create URL-rewrite rules to map requests to the correct handlers.
+
+Click on bi directory under cognos website.
+Double-click URL Rewrite.
+Add a server variable to identify the Cognos Analytics location by clicking View Server Variables.
+Click Add.
+Name the variable HTTP_X_BI_PATH.
+Click Back to Rules.
+Click Add.
+Name the variable HTTP_X_FORWARDED_HOST.
+Click Back to Rules.
+
+7. Add a rule to pass the Cognos Analytics location to the ca-host machines by clicking Add Rules > Inbound Rules > Blank Rule.
+
+Name is Headers.
+Pattern is (.*)
+Action type is none.
+Expand Server variables and
+Click Add. Select HTTP_X_BI_PATH and set the value to /bi/v1.
+Click Add. Select HTTP_X_FORWARDED_HOST and set the value to {HTTP_HOST}.
+Uncheck Stop processing of subsequent rules.
+Click Apply and Back to Rules.
+
+8. Add a rule to map Cognos Analytics REST service requests to the backend Cognos Analytics servers .
+
+Click Add Rules > Inbound Rules > Reverse Proxy .
+If proxies are not already enabled, you are prompted to enable. Click OK.
+Server name is ca-host:9300/bi
+
+Select the newly created rule and click Edit.
+Pattern is (^$)|(^v1(/.*)?)|(^[^/]+\.jsp)
+Action type is Rewrite.
+Rewrite URL is http://ca-host:9300/bi/ [http://ca-host:9300/bi/]{R:0}
+
+9. Adjust request size limits.
+
+Select the bi directory under the cognos website created earlier.
+Double-click Request Filtering.
+Click Edit Feature Settings... from the right-hand panel.
+Set Maximum URL length (bytes) to 8192.
+Set Maximum query string (bytes) to 4096.
+Click OK.
+
+
+Cognos Analytics should now be available at: http://iis-host:8080/ [http://iis-host:8080/]
+This will redirect to http://iis-host:8080/bi/ [http://iis-host:8080/bi/]
+
+
+RELATED INFORMATION
+ Cognos analytics user guide [https://www.ibm.com/support/knowledgecenter/en/SSEP7J_11.0.0/com.ibm.swg.ba.cognos.inst_cr_winux.doc/t_gateway_iis.html#gateway_iis]

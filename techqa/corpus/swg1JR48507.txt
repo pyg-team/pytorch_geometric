@@ -1,0 +1,225 @@
+Title: IBM JR48507: PROVIDE SCRIPTS AND ADMINISTRATIVE TASKS TO MANUALLY TRIGGER GROUP MEMBERSHIP REFRESH - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8560.cf1.delta.repository.2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.2&source=SAR]
+bpm.8560.cf1.delta.repository.1 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.1&source=SAR]
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Group membership for users is currently refreshed upon logging
+   in to the Process Portal. In certain scenarios, it is necessary
+   to update group membership triggered by a script or
+   administrative task to avoid time consuming refresh operations
+   upon login. This interim fix provides such scripts and
+   administrative tasks.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Provide scripts and administrative tasks to manually trigger
+   group membership refresh
+   
+   PROBLEM DETAILED DESCRIPTION:
+   During login into the portal, group membership that is stored in
+   the WebSphere Application Server's User Registry is updated for
+   the user that logs. If a change is detected, this change is
+   reflected in the database and relevant participant groups. Task
+   specific or participant group specific expressions, so called
+   dynamic groups, might also be affected by this change in the
+   group membership. Therefore, all dynamic groups are updated to
+   reflect the correct membership and authorization. In certain
+   scenario or if there are many dynamic groups in the system, the
+   login into the portal might take very long.
+   
+   To get around this performance issue, there are two
+   administrative actions to execute:
+   I. Disable refresh of dynamic groups during login.
+   1. Locate the configuration file 100Custom.xml in your server /
+   cluster environment and add this configuration option:
+      <server merge="mergeChildren">
+        <update-dynamic-groups-on-login>false
+        </update-dynamic-groups-on-login>
+      </server>
+   2. Synchronize all nodes so the updated configuration is
+   applied to all servers.
+   3. Restart the server / cluster members to allow them to pick
+   up the updated configuration.
+   4. You can verify the correct configuration by inspecting the
+   file TeamWorksConfiguration.running.xml in your profile's
+   config directory.
+   
+   II. Execute the administrative script groupMembershipFullUpdate
+   that is provided by this interim fix to update group membership
+   and dynamic groups by an administrator.
+   This interim fix provides four new administrative scripts
+   and AdminTasks for usage by wsadmin which were originally
+   introduced in version 8.5:
+   
+   groupMembershipFullUpdate [options]
+   Updates the User Registry group membership of all users that
+   are known to BPM. At the end of the group membership update,
+   dynamic groups are updated once if at least one group
+   membership update was detected.
+   
+   groupMembershipUpdate [options] <userID1> <userID2> ...
+   <userIDn>
+   Updates the User Registry group membership of the users passed
+   with this command. If an user ID is passed that is unknown to
+   BPM, this users is created within BPM. At the end of the group
+   membership update, dynamic groups are updated once if at least
+   one group membership update was detected.
+   
+   usersFullSync [options]
+   Synchronizes all users available from the User Registry. No
+   group membership is updated. This admin task is equivalent to
+   the "Full Synchronize" command in the Process Admin Console.
+   
+   usersSync [options] <userID1> <userID2> ... <userIDn>
+   Synchronizes the passed users from LDAP. No group membership is
+   updated. This admin task is equivalent to the "Synchronize"
+   command in the Process Admin Console.
+   
+   Options:
+     -username <username> -password <password> -host
+       <server host name> -port <server SOAP port number>
+   
+   Usage sample on a node running a windows version of Business
+   Process Manager:
+   1. switch to <profile>\bin and execute setupCmdLine.bat
+   2  stay in directory <profile>\bin and execute
+     <install>\BPM\Lombardi\tools\security\
+      groupMembershipFullUpdate.bat
+   
+   For other scripts and other platforms, execute similar steps
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The administrative scripts and tasks allow you to synchronize
+   users and group membership when necessary.
+   
+   FIX AVAILABILITY:
+   iFix for 7.5.1.0 is available on Fix Central, search for APAR
+   JR48507 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   iFix for 8.0.1.1 is available on Fix Central, search for APAR
+   JR48507 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   iFix for 8.0.1.2 is available on Fix Central, search for APAR
+   JR48507 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   Fix is also targetted for inclusion in next fixpack for
+   BPM V7.5.1, BPM 8.0.1
+   
+   When obtaining any of the above fixes, be sure to download the
+   accompanying readme, for itself, and any prerequisite fixes, and
+   review them thorougly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR48507
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-15
+   
+   
+ * CLOSED DATE
+   2014-01-23
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP
+   
+   
+ * R801 PSY
+   UP

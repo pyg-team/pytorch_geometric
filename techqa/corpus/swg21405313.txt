@@ -1,0 +1,49 @@
+Title: IBM Check-in or deliver code using Rational Team Concert results in vcs.tmpdir error message - United States
+
+Text:
+vcs.tmpdir; RTC; Rational Team Concert; The versioned content service temp directory has been deleted; tmp; temp; checkin; check-in; deliver TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to check-in or deliver code using IBM Rational Team Concert results in the error "Failed to upload File". 
+
+SYMPTOM
+After you finish modifying your code and check-in the code, you see the following error message during upload: 
+
+
+Failed to upload File /filename/src/lib/jaxb1-impl.jar The versioned content service temp directory has been deleted. This often can happen if the property 'vcs.tmpdir' is a directory within /tmp.
+
+
+
+CAUSE
+The property vcs.tmpdir was a directory within /tmp.
+
+
+RESOLVING THE PROBLEM
+Procedure: 
+
+ 1. Stop the server. 
+ 2. Create a backup copy of the teamserver.properties file. 
+ 3. Create the following temp directories in the directory the teamserver.properties file is located.
+    jazz_tmp/repository 
+    jazz_tmp/vcs
+    jazz_tmp/scm 
+    
+ 4. Set the configuration variables in the teamserver.properties files.
+    
+
+ * 
+ * com.ibm.team.repository.tmpdir=/jazz_tmp/repository
+   com.ibm.team.scm.vcs.tmpdir=/jazz_tmp/vcs
+   com.ibm.team.scm.tmpdir=/jazz_tmp/scm
+   
+ * On Linux: 
+ * com.ibm.team.repository.tmpdir=jazz_tmp/repository
+   com.ibm.team.scm.vcs.tmpdir=jazz_tmp/vcs
+   com.ibm.team.scm.tmpdir=jazz_tmp/scm
+   
+ * 1. Start the server and try to check-in or deliver the files again.
+ *  [/support/docview.wss?uid=swg21405313&amp;aid=1] 
+
+
+Leverage the Jazz Community Jazz and Rational Team Concert have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://ibm.com/support/docview.wss?uid=swg21319600] for details and links.

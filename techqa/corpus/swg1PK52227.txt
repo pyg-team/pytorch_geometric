@@ -1,0 +1,279 @@
+Title: IBM PK52227: WSWS0024E OCCURS WHEN AN APPLICATION CONTAINING BOTH WEBSERVICES EJB AND ROUTER APPLICATION IS MAPPED TO MULTIPLE SERVERS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24020073]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24021203]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WSWS0024E error occurrs when an EAR is deployed which
+   contains both a web services EJB and a router application and
+   they are mapped to different servers.  If they are mapped
+   separately after deployment, works fine.
+   
+   So the EAR file contains both an EJB jar file and a WEB module.
+   The EJB jar should not be deployed to a WebServer but should be
+   deployed to the AppServer.  The Web module should be deployed to
+   the both the AppServer and the WebServer. This does not appear
+   to be possible in a single deployment process or step.
+   The EAR file can be deployed to both AppServer and WebServer and
+   then the EJB removed from WebServer or deployed to just the
+   AppServer and then the Web module later deployed to the
+   WebServer.
+   
+   Relevant Exception Stacks:
+   
+   [14/08/07 11:45:20:558 BST] 00000096 SystemErr     R
+   AppDeploymentException: [ADMA0093E: An unexpected exception
+   occurred while completing task GetServerName. Check the server
+   machine First Failure Data Capture tool (FFDC) for more
+   information.]
+   AppDeploymentException: [WSWS0024E: A Web services enabled
+   EJB-JAR module must be deployed to the same server as its router
+   module.
+   
+   However the EJB-JAR module
+   "MS_Bridge_1_0_0EJB.jar,META-INF/ejb-jar.xml" is
+   deployed to "WebSphere:cell=Ce10,cluster=GPNWOM1-CL" while its
+   router module. "MS_Bridge_1_0_0Web.war" is deployed to
+   "WebSphere:cell=Ce10,node=No10-kwtwas12,server=WebServer-INT+Web
+   Sphere:cell=Ce10,cluster=GPNWOM1-CL".]
+   
+   Unable to map router module to both webserver and appserver
+   cluster.
+   
+   We are looking at how we can change the rules for the exception
+   that is currently being thrown for mismatched servers.  The
+   approach we are evaluating is if the strings do not match,
+   determine the server type for the server where the router
+   module (WAR) is mapped. If it is actually a web sever instead
+   of an application server, consider it a match.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround to this is to change the Module to Server mapping
+   after installing the EAR application and binding Web Module to
+   both WPS Cluster and Web Server.
+   
+   On step "Step 2: Map Modules to Servers" you simply check the
+   box of the EJB module, and highlight the AppServer and click
+   Apply.  Then check the WEB module and highlight BOTH the
+   AppServer and WebServer, and click Apply.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: IBM WebSphere Application Server versions    *
+   *                 6.0.2 and 6.1 users of web services.         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: WSWS0024E error occurrs when an         *
+   *                      Enterprise Archive file (EAR) is        *
+   *                      deployed which contains both a web      *
+   *                      services Enterprise Java Bean (EJB)     *
+   *                      and a router application and they are   *
+   *                      mapped to different servers.            *
+   *                      If they are mapped separately after     *
+   *                      deployment, works fine.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The EAR file contains both an EJB jar file and a WEB module.
+   The EJB jar should not be deployed to a WebServer but should be
+   deployed to the AppServer. The Web module should be deployed
+   to both the AppServer and the WebServer. This does not appear
+   to be possible in a single deployment process or step.
+   The EAR file can be deployed to both an AppServer and WebServer
+   and then the EJB removed from WebServer or deployed to just the
+   AppServer and then the Web module later deployed to the
+   WebServer.
+   
+   
+   Relevant Exception Stacks:
+   
+   
+   [14/08/07 11:45:20:558 BST] 00000096 SystemErr     R
+   AppDeploymentException: [ADMA0093E: An unexpected exception
+   occurred while completing task GetServerName. Check the server
+   machine First Failure Data Capture tool (FFDC) for more
+   information.]
+   AppDeploymentException: [WSWS0024E: A Web services enabled
+   EJB-JAR module must be deployed to the same server as its router
+   module.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The logic to determine if they were on the server was too
+   simple and did not correctly compare the server information
+   for each mapping.
+   
+   This fix is currently scheduled for fix packs 6.0.2.25 and
+   6.1.0.15.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK52227
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-09-05
+   
+   
+ * CLOSED DATE
+   2007-10-22
+   
+   
+ * LAST MODIFIED DATE
+   2008-02-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP
+   
+   
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

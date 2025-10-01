@@ -1,0 +1,134 @@
+Title: IBM PI08358: DOCUMENTID IS NOT SERIALIZABLE - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The javadoc for WCM states that the interface DocumentId is
+   serializable. However, the serialization of a DocumentId fails
+   with a
+   java.io.NotSerializableException as at least one of its fields
+   seems to
+   be not serializable (DocumentType).
+   
+   
+   java.io.NotSerializableException:
+   com.ibm.workplace.wcm.api.WCM_DocumentType at
+   java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:
+   1184)
+   at
+   java.io.ObjectOutputStream.defaultWriteFields(ObjectOutputStream
+   .java:15
+   38)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Code fix needed
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  WCM DocumentId is not Serializable
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Exceptions are coming because interface DocumentType is not
+   serialized
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI08358
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-18
+   
+   
+ * CLOSED DATE
+   2014-03-18
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

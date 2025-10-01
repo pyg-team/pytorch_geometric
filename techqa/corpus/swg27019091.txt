@@ -1,0 +1,51 @@
+Title: IBM System Requirements for IBM WebSphere eXtreme Scale Version 7.1 on Solaris x64 - United States
+
+Text:
+SystemRequirementsDocument; prereq; coreq; installation prerequisites; DSRdoc wxs wxd xs xtreme extended deployment PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains Solaris x64 system requirements for IBM® WebSphere® eXtreme Scale. 
+
+CONTENT
+
+
+
+
+
+[/support/docview.wss?uid=swg27019091&amp;aid=1] Back to all V7.1 detailed system requirements [http://www-01.ibm.com/support/docview.wss?uid=swg27019121] 
+This document describes the minimum product levels that need to be installed before opening a problem report with the WebSphere eXtreme Scale Support team. Because other products frequently ship fixes, updates, and new releases, testing every configuration is not possible. In general, you can install and run with updates to supported products if those updates are forward compatible. For additional information about available support for configurations that are not included in the following list, see additional information on WebSphere Application Server support. [http://www-1.ibm.com/support/docview.wss?rs=180&context=SSEQTP&uid=swg27004311] 
+
+
+Operating Systems supported with 64-bit WebSphere eXtreme Scale [/support/docview.wss?uid=swg27019091&amp;aid=2] 64-bit  * Sun Solaris operating environment Version 10 Patch Cluster dated 1/07/08 or later (64-bit kernel support)
+
+
+Sun product site [http://www.sun.com/products/index.jsp] Hardware Requirements [/support/docview.wss?uid=swg27019091&amp;aid=2]  * AMD Opteron or Intel EM64T 
+ * Minimum 512MB physical memory; 1 GB recommended 
+ * DVD-ROM drive
+
+Software Requirements [/support/docview.wss?uid=swg27019091&amp;aid=2] To integrate WebSphere eXtreme Scale with WebSphere Application Server, your system must meet one of the following minimum requirements:  * WebSphere Application Server Version 6.0.2.39 or higher [http://www.ibm.com/support/docview.wss?rs=180&context=SSEQTP&uid=swg27004980] 
+ * WebSphere Application Server Version 6.1.0.31 or higher [http://www.ibm.com/support/docview.wss?rs=180&context=SSEQTP&uid=swg27004980] 
+ * WebSphere Application Server Version 7.0.0.9 or higher [http://www.ibm.com/support/docview.wss?rs=180&context=SSEQTP&uid=swg27004980]
+
+Note: In addition to the minimum WebSphere Application Server level, you must install PM15818 [http://www.ibm.com/support/docview.wss?uid=swg24027104] to use SSL Transport Layer security with a WebSphere eXtreme Scale server running in stand-alone mode.
+
+To run WebSphere eXtreme Scale with Java™ Platform, Standard Edition, your system must contain a JVM at JRE Version 1.4.2 or higher. The version that you use must be currently supported by the JRE vendor.
+
+Note: Errors occur when SSL Transport Layer security is used when eXtreme Scale is running with any Java 6 run time unless eXtreme Scale is running integrated with WebSphere Application Server. 
+
+The WebSphere eXtreme Scale REST data service requires a web server that implements the Java Servlet specification V2.3 or higher. 
+
+The WebSphere eXtreme Scale REST data service client is compatible with Open Data Protocol V1.0. The client library Microsoft .NET Framework 3.5 with Service Pack 1 has been tested. See the Microsoft .NET Framework web site [http://www.microsoft.com/downloads/details.aspx?FamilyID=%20AB99342F-5D1A-413D-8319-81DA479AB0D7&displaylang=en] for more information. 
+
+To use the IBM Tivoli® Monitoring Agent for WebSphere eXtreme Scale, your system must contain IBM Tivoli Monitoring Version 6.2.1 or higher. 
+
+To use Hyperic HQ agents with WebSphere eXtreme Scale, your system must contain Hyperic HQ Version 4.0 or higher. 
+
+WebSphere eXtreme Scale Product Documentation 
+WebSphere eXtreme Scale Library page [http://www.ibm.com/software/webservers/appserv/extremescale/library/index.html] 
+
+Back to top 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Extended Deployment General Solaris

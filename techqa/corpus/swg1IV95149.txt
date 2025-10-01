@@ -1,0 +1,129 @@
+Title: IBM IV95149: SYBASE AGENT PREREQ CHECKER SCRIPT USED FOR FINDING VERSION TAKES TOO LONG ON SYSTEMS WITH LARGE DISK/HIGH VOLUME MOUNTS. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Tivoli Composite Application Manager for Applications 721 FP2: Monitoring Agent for Sybase Server 620 FP2 (6.2.0-TIV-ITM_SYB-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24044440]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  While installing Sybase agent, prereqchecker invokes the
+   SybaseVersion_plug.sh script which executes the "find" command
+   from root for finding Sybase server version.
+   This "find /" command takes a long time on systems with large
+   disks, high volume of mounts.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Run a silent install with PREREQ_CHECK=NO in the response file.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  While installing Sybase agent, prereqchecker invokes the
+   SybaseVersion_plug.sh
+   script which executes the "find" command from root for finding
+   Sybase server version. modfiied script to
+   minimize search time.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in
+   06.20.02.00
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV95149
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON SYBASE
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96SO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-04-14
+   
+   
+ * CLOSED DATE
+   2018-04-20
+   
+   
+ * LAST MODIFIED DATE
+   2018-04-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON SYBASE
+   
+   
+ * FIXED COMPONENT ID
+   5724B96SO
+   
+   
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,53 @@
+Title: IBM The Essbase® 9.3.1.4 Excel Addin causes an Alphablox "Export to Excel" error - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why is the "Microsoft Office Excel" error dialog displayed after an Alphablox user does the following steps to request an Alphablox export data to Microsoft® Excel: 
+
+1. Opens an Alphablox PresentBlox or GridBlox in the Microsoft® Internet Explorer . 
+2. Requests the Blox to perform an "Export to Excel" operation.
+3. Clicks the "OK" button in the "Export Data to Excel -- Webpage Dialog ". 
+4. Clicks the "Open" button in the Microsoft® Internet Explorer "File Download" dialog.
+
+
+CAUSE
+Microsoft® Excel, configured to use the Essbase® 9.3.1.4 Excel Addin, causes the "Microsoft Office Excel" error dialog to be displayed when an Alphablox user issues an "Export to Excel" operation then clicks on the "Open" button in the Microsoft® Internet Explorer's "File Download" dialog. The Essbase® 9.3.1.4 Excel Addin by default sets the “LoadBehavior" value for the registry key 
+
+ * 
+ * 
+
+
+to 3. The “LoadBehavior" value 3 setting causes the "Microsoft Office Excel" error dialog to display when an Alphablox user requests an "Export to Excel" operation. 
+
+ANSWER
+An Alphablox user requesting an "Export to Excel" operation, causes the "Microsoft Office Excel" dialog to appear, as shown in the image below, if Microsoft® Excel has been configured to use the Essbase® 9.3.1.4 Excel Addin. 
+
+
+[/support/docview.wss?uid=swg21428019&aid=1] [/support/docview.wss?uid=swg21428019&aid=1]
+
+The user's "Export to Excel" operation completes without any additional errors after clicking the "Microsoft Office Excel" dialog's "Don't Send" button.
+
+The user can prevent appearance of the "Microsoft Office Excel" dialog during an "Export to Excel" operation by changing the LoadBehavior value for the Microsoft Registry key 
+
+
+ * 
+
+
+The user changing the LoadBehavior value from Hexadecimal 3 to Hexadecimal 0 stops the Alphablox "Export to Excel" operation from producing the "Microsoft® Office Excel" error. 
+
+The following steps allows users to change the LoadBehavior registry key value: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * HKEY_CURRENT_USER\Software\Microsoft\Office\Excel\Addins\Hyperion.EssbaseAddin. 
+ * 
+ * 
+
+[/support/docview.wss?uid=swg21428019&aid=2] [/support/docview.wss?uid=swg21428019&aid=2] 
+ * 
+ * 
+ *

@@ -1,0 +1,290 @@
+Title: IBM Secure Socket Layer (SSL) Configuration for Data Server Manager (DSM) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to configure Secure Socket Layer (SSL) for Data Server Manager (DSM)? 
+
+ANSWER
+ 
+
+1. What is Secure Socket Layer (SSL)? Secure Sockets Layer (SSL) is a protocol that lets services communicate over a network without compromising security. It creates a secure connection between a client and a server. 
+
+
+2. What is a Certificate Authority (CA)? A certificate authority (CA) is a trusted entity that issues electronic documents that verify a digital entity’s identity on the Internet. The electronic documents, which are called digital certificates [http://searchsecurity.techtarget.com/definition/digital-certificate], are an essential part of secure communication and play an important part in the public key infrastructure ( PKI [http://searchsecurity.techtarget.com/definition/PKI]). Certificates typically include the owner's public key [http://searchsecurity.techtarget.com/definition/public-key], the expiration date of the certificate, the owner's name and other information about the public key owner. 
+Certification authority (CA) certificates are issued by a CA to itself or to a second CA for the purpose of creating a defined relationship between the two CAs. A certificate that is issued by a CA to itself is referred to as a trusted root certificate, because it is intended to establish a point of ultimate trust for a CA hierarchy. Once the trusted root has been established, it can be used to authorize subordinate CAs to issue certificates on its behalf. Operating systems ( OSes [http://whatis.techtarget.com/definition/operating-system-OS]) and browsers [http://searchwindevelopment.techtarget.com/definition/browser]maintain lists of trusted CA root certificates to verify certificates that a CA has issued and signed. 
+
+
+3. Common Certificate types You can request a certificate from a third party signer, such as GeoTrusts. You can receive the certificate in different ways. Most of the certificates mainly contains: 
+a) public key of your site, e.g. your_cert.crt 
+b) private key of your site, e,g, your_cert.key 
+c) public key of root CA, e.g. ca_cert.crt 
+
+Most certificates are of type of X.509 which follows ITU-T X509 of Public Key Infrastructure (PKI). 
+The certificates can include other types of files, for different encodings or based on different OS. (Example *.cer, *.pem, *.der, etc.) 
+These files will contain information about public or private keys that pertain to encoding like "Base64-encoded ASCII data". 
+For example:  * 
+ * XXXXXXXXX 
+ * 
+
+and  * 
+ * XXXXXXXXX 
+ * 
+
+You may need to paste these encoding sections into the three files (.crt .key) mentioned above. 
+
+Note: If you had forgotten your request information, you can use ikeyman or keytools to view detail information of certificate files and get information about requestor and signer (like CN=common name O=organization OU=organization unit L=locality ST=state C=country). 
+
+You may also get a key store file. Examples of key store files are: 
+a. *.jks (Java Key Store), 
+b. *.jck (JCEKS Java Cryptography Extension Key Store), 
+c. *.p12 (PKCS12 PKCS12S2 The Public-Key Cryptography Standards) 
+d. or PFX. 
+
+These files contain all the public and private key information and the certificate. 
+Note: You can use ikeyman.exe (IBM Key Management) to view and extract public keys. ikeyman and keytool are in the <DSM install directory>/java/jre/bin directory. 
+
+
+4. How are CAs implemented for DSM? Basically, a certificate, created on either the data source server; in the DSM server, called a self-signed certificate; or purchased from Certificate Authorities (CA) are shared with the client (DSM) to secure the connection between DSM and the server. There is also enabling of the DSM Web UI needed to specify the secure port. (see Figure 1.) 
+[/support/docview.wss?uid=swg21997164&amp;aid=1] 
+
+
+5. Enable HTTPS for the Data Server Manager Console After you run the setup script, you can optionally enable HTTPS for accessing the web browser. You can enable HTTPS with or without configuring SSL communication for DB2. To enable HTTPS, add two settings in <DSM install directory>/Config/dswebserver.properties:  * 
+ * 
+ * 
+
+[/support/docview.wss?uid=swg21997164&amp;aid=2] 
+
+6. Configure SSL on the DSM server DSM needs a key store file to configure SSL. Below are the steps to configure SSL both in Windows and Linux. 
+
+6.1. Import the signed certificate  * Step 1:
+ * 
+ * 
+ * 
+ * Step 2:
+ * 
+ * 
+ * 
+ * <DSM install directory>\bin
+ * 
+ * 
+ * 
+ * <DSM install directory>/bin 
+ * 
+
+
+6.2. Create a trusted keystore or truststore  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * https://www.openssl.org/
+ * 
+ * 
+ * 
+ * 
+ * http://gnuwin32.sourceforge.net/packages/openssl.htm
+ * 
+ * 
+ * 
+ * https://slproweb.com/products/Win32OpenSSL.html
+ * 
+ * 
+ * 
+ * Step 3:
+ * 
+ * 
+ * 
+ * 
+ * 
+ * your_cert.crt 
+ * 
+ * your_cert.key 
+ * 
+ * your_keystore.p12 
+ * 
+ * ca_cert.crt 
+ * 
+ * your_pass
+ * 
+ * 
+ * 
+ * your_keystore.p12
+ * 
+ * 
+ * Note:
+ * 
+ * Error unable to get issuer certificate getting chain.
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+6.3. Configure keystore in DSM  * Step 4: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Step 5:
+ * 
+ * 
+ * 
+ * 
+ * 
+ * your_location
+ * 
+ * your_keystore.p12
+ * 
+ * your_pass
+ * 
+ * 
+ * 
+ * Step 6:
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 127.0.0.1 localhost 
+   127.0.0.1 dsm.ibm.com 
+ * 
+ * 
+ * 
+ * Step 7:
+ * 
+ * 
+ * 
+ * <DSM install directory>\bin
+ * 
+ * 
+ * 
+ * <DSM install directory>/bin 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Step 8:
+ * 
+ * 
+ * 
+
+
+7. Configuring SSL connectivity from DSM to managed databases If you want to secure the connection from DSM to this database, first, follow the steps in Sections 1-6 to import and configure the server certificate in DSM. Next, you will need to create a certificate in the managed database and import the certificate to DB2. 
+There is a technote: [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/W377e39cb6e13_42a7_b752_005b67cb913f/page/How%20to%20enable%20SSL%20connectivity%20from%20Data%20Server%20Manager%20to%20managed%20databases%20%28LUW%29] How to enable SSL connectivity from Data Server Manager to managed databases (LUW) [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/W377e39cb6e13_42a7_b752_005b67cb913f/page/How%20to%20enable%20SSL%20connectivity%20from%20Data%20Server%20Manager%20to%20managed%20databases%20%28LUW%29] [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/W377e39cb6e13_42a7_b752_005b67cb913f/page/How%20to%20enable%20SSL%20connectivity%20from%20Data%20Server%20Manager%20to%20managed%20databases%20%28LUW%29], which discusses in details how to create a certificate in the DB2 database server and use it in DSM. 
+
+7.1. Set up SSL on the Database Server (managed database or DSM repository)  * 
+ * 
+ * Step 1:
+ * 
+ * 
+ * 
+ * 
+ * NOTE:
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Step 2:
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Step 3:
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Step 4:
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * [/support/docview.wss?uid=swg21997164&amp;aid=6]
+ * 
+ * 
+ * Step 5:
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Step 6:
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+7.2. Create a managed connection  * Step 7:
+ * 
+ * 
+ * 
+ * Step 8:
+ * 
+ * 
+ * 
+ * Step 9: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Step 10:
+ * 
+ * 
+
+
+Resources 1. How to enable SSL connectivity from Data Server Manager to managed databases (LUW) [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/W377e39cb6e13_42a7_b752_005b67cb913f/page/How%20to%20enable%20SSL%20connectivity%20from%20Data%20Server%20Manager%20to%20managed%20databases%20%28LUW%29] [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/W377e39cb6e13_42a7_b752_005b67cb913f/page/How%20to%20enable%20SSL%20connectivity%20from%20Data%20Server%20Manager%20to%20managed%20databases%20%28LUW%29] 
+
+2. Secure Sockets Layer (SSL) support in DB2 for Linux, UNIX, and Windows [https://www.ibm.com/developerworks/data/library/techarticle/dm-1306securesocketlayers/] 
+
+3. Configuring the Java Runtime Environment to use SSL [http://www.ibm.com/support/knowledgecenter/SSEPGG_11.1.0/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_t0054066.html] 
+
+4. Configuring Secure Sockets Layer (SSL) support in non-Java DB2 clients [http://www.ibm.com/support/knowledgecenter/en/SSEPGG_11.1.0/com.ibm.db2.luw.admin.sec.doc/doc/t0053518.html] 
+
+5. DB2 technical tip: Set up Secure Sockets Layer (SSL) for DB2 on Windows [http://www.ibm.com/developerworks/data/library/techarticle/dm-0806sogalad/index.html] 
+
+6. Connect DSM to dashDB Using SSL [http://www.db2dean.com/Previous/dsmSSLdashDB.html] 
+
+7. Most common Java keytool keystore commands [https://www.sslshopper.com/article-most-common-java-keytool-keystore-commands.html] 
+
+8. GSKCapiCmd User’s Guide [ftp://ftp.software.ibm.com/software/webserver/appserv/library/v80/GSK_CapiCmd_UserGuide.pdf] 
+
+9. OpenSSL Cookbook, with links to OpenSSL Manpages [https://www.feistyduck.com/books/openssl-cookbook/]

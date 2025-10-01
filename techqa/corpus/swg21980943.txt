@@ -1,0 +1,56 @@
+Title: IBM DASH startup failed when attempting to initialize the JVM. - United States
+
+Text:
+DASHL2; Java; virtual; memory; server.xml; initialHeapsize JVM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DASH failed to initialize because there was not enough native memory to create the Java Virtual Machine (JVM). Partial error: ADMU3011E: Server launched but failed 
+
+SYMPTOM
+"startServer.sh server1" failed with this error: 
+
+ADMU3011E: Server launched but failed initialization. Server logs, startServer.log, and other log files under /opt/ibm/JazzSM/profile/logs/server1 should contain failure information.
+
+
+CAUSE
+Not enough memory for the DASH instance to create the Java Virtual Machine (JVM). This could be caused by the initialHeapsize being to large.
+
+
+ENVIRONMENT
+DASH 3.1.2.1 installed on a Linux 64bit server.
+
+
+
+DIAGNOSING THE PROBLEM
+Error in the startServer.log: 
+
+
+[4/7/16 19:15:53:328 EDT] 00000001 AdminTool A ADMU3011E: Server launched but failed initialization. Server logs, startServer.log, and other log files under /opt/ibm/JazzSM/profile/logs/server1 should contain failure information. 
+
+ 
+
+Error in the native_stderr.log 
+
+
+JVMJ9VM015W Initialization error for library j9gc26(5): Failed to allocate default memory space
+Error: Could not create the Java Virtual Machine.
+Error: A fatal exception has occurred. Program will exit.
+
+
+RESOLVING THE PROBLEM
+Change the initialHeapSize and maximumHeapSize in the JVM settings in the server.xml file, which is located in this directory: 
+
+
+<JazzSM_HOME>/config/cells/JazzSMNode01Cell/nodes/JazzSMNode01/servers/server1
+
+In this case, the initialHeapSize and maximumHeapSize was to large:
+
+initialHeapSize="5028" maximumHeapSize="9028" 
+
+Change the values to the following:
+
+initialHeapSize="512" maximumHeapSize="1024" 
+
+As an alternative to manually editing the server.xml file, here is a technote detailing how to change the Heap using WebSphere commands:
+
+www-01.ibm.com/support/docview.wss?uid=swg21575329 [http://www-01.ibm.com/support/docview.wss?uid=swg21575329]

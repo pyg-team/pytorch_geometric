@@ -1,0 +1,64 @@
+Title: IBM Installation Instructions for Cast Iron Version 5 Fix Packs - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Steps to apply fix packs for various form factors of Cast Iron 5 
+
+CONTENT
+ 
+
+Full documentation for Cast Iron 5 is available from the Cast Iron Legacy Downloads site. See the Downloads page of the Support Portal [http://www-947.ibm.com/support/entry/portal/Downloads/Software/WebSphere/WebSphere_Cast_Iron_Cloud_integration] for a link to this site.
+
+Upgrading an Integration Appliance
+
+Standalone
+To upgrade a standalone Integration Appliance you can apply an upgrade or apply a fresh install.
+
+The following steps document upgrading the integration appliance using the WMC:
+
+
+ 1.  Use the WMC to log into the integration appliance running Cast Iron Operating System Version 5 
+ 2.  Stop any running orchestration jobs on the integration appliance using the WMC. 
+ 3.  Undeploy any projects using the WMC. 
+ 4.  In the WMC, select Set Up > Install/Upgrade. The Install/Upgrade Integration Appliance panel displays. 
+ 5.  In the Appliance OS tab, click Install Upgrade. The Upgrade Wizard displays. 
+ 6.  Click Next. 
+ 7.  Click Next to check for running projects.  * If projects are running on the integration appliance, the Upgrade Wizard asks for confirmation to stop the projects before proceeding. Click Continue to proceed. 
+      * If there are no projects running on the integration appliance, a green checkmark displays. Click Next to proceed.
+     
+     
+ 8.  In the text field, do one of the following:  * Specify the path to the Appliance Upgrade Image file 
+      * Browse to locate the Appliance Upgrade Image file.
+     
+     
+ 9.  Click Next. In the Upgrade panel, the following message displays: Upload in progress. Please wait.  * A progress bar displays the status of the upload. When the upload completes, the WMC validates the upgrade.
+     
+     
+ 10. Confirm the patch version number and click Install.  * A series dialog boxes display asking for confirmation to stop any running orchestrations. Click OK and then OK again. The Upgrade Appliance panel displays. After the upgrade completes in about 5 minutes, the Integration appliance reboots and the following message displays in the Upgrade Appliance panel:  * Installation Successful! Please wait. The Integration Appliance is rebooting...
+        
+        
+      * If a console window to the integration appliance is open, rebooting messages display.
+     
+     
+ 11. Use the WMC to log into the integration appliance. You might need to click the refresh button of the browser. 
+ 12. Using the WMC, redeploy any projects that were undeployed.
+
+
+For more information about installation procedures including a fresh installation of the integration appliance, see the Upgrading the Integration Appliance chapter of the Installation Guide for your platform. 
+After you upgrade the Integration Appliance verify all connector licenses are installed. For more information about installing connector licenses, see the WMC help. 
+
+High Availability Pair 
+To upgrade a High Availability Pair you can apply an upgrade or apply a fresh install to the active machine using the steps in the standalone section above. As part of the upgrade procedure, the active machine in the HA pair automatically upgrades the standby machine. 
+
+Upgrading Cast Iron Studio 
+
+If you have an earlier version of Studio installed, use the following procedure to install Studio: 
+ 1. Uninstall the previous version of Studio:
+    a. Open the Windows Control panel by selecting Start > Settings > Control Panel from the Windows toolbar menu. The Control Panel displays.
+    b. Select the Add or Remove Programs icon.
+    c. Select the Cast Iron Studio program.
+    d. Click Change/Remove.
+    e. Click Yes. 
+ 2. Install the new Studio Version by following the Studio installation instructions provided in the Installation Guide.

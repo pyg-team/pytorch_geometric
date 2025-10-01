@@ -1,0 +1,175 @@
+Title: IBM SA94952: MQM400 AMQCLMAA IS THE DEFAULT LISTENER JOB STARTED BY STRMQMLSR- THUS MQ R520 HAS DIFFERENT DEFAULT ACTION TO MQ R510 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer is trying to make use of the following:
+   MQSeries Release Guide Version 5.2 Document Number GC34-5761-
+   V5.2 the STRMQMLSR command is changed to submit by default a
+   non-threaded listener job called AMQCLMAA that starts each
+   TCPIP receiver channel as an AMQCRSTA job.
+   .
+   MQSeries for AS/400(R) Quick Beginnings Version 5 Release 2
+   Document Number GC34-5557-01 Chapter 6. Using MQSeries for
+   AS/400 discusses using the command STRMQMLSR
+   .
+   MQSeries for AS/400 System Administration Version 5 Release 1
+   Document Number SC34-5558-00 Chapter 4. Work management
+   Description of MQSeries Tasks MQSeries work management objects
+   How MQSeries uses the work management objects
+   has information on
+   
+   Table 1. MQSeries tasks.
+   Job name  Function
+   AMQZXMA0  The execution controller is the first job started by t
+             with MQCONN requests, and starts agent processes to pr
+   AMQZLAA0  Queue manager agents perform the bulk of the work for
+             to the queue manager using MQCNO_STANDARD_BINDING
+   AMQALMPX  The checkpoint processor periodically takes journal ch
+   AMQRRMFA  Repository manager for clusters
+   RUNMQCHL  This Sender Channel job will be started for each sende
+   RUNMQCHI  The Channel Initiator
+   AMQPCSEA  PCF command processor handles PCF and remote administr
+   AMQCRS6B  LU62 Receiver channel and client connection. (See note
+   RUNMQLSR  TCP/IP Channel listener
+   but at MQSeries 5.2 the AMQCLMAA is the default TCP/IP Channel
+   listener. So it should replace references to RUNMQLSR. When
+   customers want to have it participate in work management they
+   should mention that the QMQMJOBD in the queue manager library
+   should contain the JOBQ/LIBRARY the customer wishes to use and
+   the routing entryfor the run priority of the job.
+   
+   The subsystem should have the JOBQ (ADDJOBQE) and routing
+   entries (ADDRTGE) that the customer has selected attached.
+   .
+   Quick Beginnings Guide V52 should have a section under 'After
+   migration from V51' to point the customer to the V52 Release
+   Guide.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The customer is trying to make use of the following:  MQSeries
+   Release Guide Version 5.2 Document Number GC34-5761-V5.2 the
+   STRMQMLSR command is changed to submit by default a non-threaded
+   listener job called AMQCLMAA that starts each TCPIP receiver
+   channel as an AMQCRSTA job.  . MQSeries for AS/400(R) Quick
+   Beginnings Version 5 Release 2 Document Number GC34-5557-01
+   Chapter 6.  Using MQSeries for AS/400 discusses using the
+   command STRMQMLSR . MQSeries for AS/400 System Administration
+   Version 5 Release 1 Document Number SC34-5558-00 Chapter 4.
+   Work management Description of MQSeries Tasks MQSeries work
+   management objects How MQSeries uses the work management objects
+   has information on Table 1.  MQSeries tasks.  Job name Function
+   AMQZXMA0 The execution controller is the first job started by t
+             with MQCONN requests, and starts agent processes to pr
+   AMQZLAA0 Queue manager agents perform the bulk of the work for
+             to the queue manager using MQCNO_STANDARD_BINDING
+   AMQALMPX The checkpoint processor periodically takes journal ch
+   AMQRRMFA Repository manager for clusters RUNMQCHL This Sender
+   Channel job will be started for each sende RUNMQCHI The Channel
+   Initiator AMQPCSEA PCF command processor handles PCF and remote
+   administr AMQCRS6B LU62 Receiver channel and client connection.
+   (See note RUNMQLSR TCP/IP Channel listener but at MQSeries 5.2
+   the AMQCLMAA is the default TCP/IP Channel listener.  So it
+   should replace references to RUNMQLSR.  When customers want to
+   have it participate in work management they should mention that
+   the QMQMJOBD in the queue manager library should contain the
+   JOBQ/LIBRARY the customer wishes to use and the routing entryfor
+   the run priority of the job.  The subsystem should have the JOBQ
+   (ADDJOBQE) and routing entries (ADDRTGE) that the customer has
+   selected attached.  . Quick Beginnings Guide V52 should have a
+   section under 'After migration from V51' to point the customer
+   to the V52 Release Guide.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Documentation changes for SC34-5558-00 MQ Series for AS/400
+   System Administration V5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SA94952
+   
+   
+ * REPORTED COMPONENT NAME
+   MQSERIES FOR AS
+   
+   
+ * REPORTED COMPONENT ID
+   5733A3800
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2002-01-30
+   
+   
+ * CLOSED DATE
+   2002-03-28
+   
+   
+ * LAST MODIFIED DATE
+   2002-03-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC34555800 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,30 @@
+Title: IBM How to convert a Rational Rhapsody model from C to C++, or from C++ to Java - United States
+
+Text:
+convert; language; multi-language TECHNOTE (FAQ)
+
+QUESTION
+ How can you convert a IBM Rational Rhapsody model from one language to another language, for example, from C to C++, or from C++ to Java? 
+
+CAUSE
+You want to continue modeling in another language
+
+ANSWER
+Sample for C++ to Java: 
+
+ 1. open the C++ model in Rhapsody Development edition 
+ 2. right-click the top node (project name) in Rhapsody browser, select Edit Unit 
+ 3. change the language from C++ to Java 
+ 4. save the model 
+ 5. then open the model in Rhapsody in Java
+
+
+Note that only Rhapsody model elements are converted, function implementation with user code, and so on, is not touched. 
+
+Also, property settings, which are specific for a language e.g. CPP_CG, predefined types, and similar are not converted, and not available in the new model. 
+
+If there are references (for example, to profiles, external packages) which exist in the wrong language they may fail to load (especially when continuing in Rhapsody Architect edition, which does not allow multi language units) 
+
+To convert a model in another edition than Rhapsody Developer is not possible. 
+
+Alternatively you can convert single units (packages) and add them by Add to Model into your new model.

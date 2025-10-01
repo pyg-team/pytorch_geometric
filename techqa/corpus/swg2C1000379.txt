@@ -1,0 +1,72 @@
+Title: IBM Security Bulletin: A security vulnerability has been identified in WebSphere Application Server Admin Console shipped with IBM Cloud Orchestrator and IBM Cloud Orchestrator Enterprise edition (CVE-2017-1731) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ WebSphere Application Server Admin Console shipped with IBM Cloud Orchestrator and IBM Cloud Orchestrator Enterprise edition. Information about a security vulnerability affecting WebSphere Application Server has been published in a security bulletin. 
+
+VULNERABILITY DETAILS
+Please consult the security bulletin Potential Privilege Escalation in WebSphere Application Server Admin Console [http://www-01.ibm.com/support/docview.wss?uid=swg22012345] for vulnerability details and information about fixes.
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+ * Principal Product and Version(s)
+
+ * Affected Supporting Product and Version
+
+ * 
+
+ * WebSphere Application Server V8.5.5 through V8.5.5.11 
+
+ * 
+
+ * WebSphere Application Server V8.5.0.1 through V8.5.5.12 
+
+
+REMEDIATION/FIXES
+Refer to the following security bulletins for information about fixes addressed by IBM WebSphere Application Server which is shipped with IBM Cloud Orchestrator and IBM Cloud Orchestrator Enterprise edition. 
+
+Principal Product and Version(s) Affected Supporting Product and Version Affected Supporting Product and Version 
+IBM Cloud Orchestrator and IBM Cloud Orchestrator Enterprise edition 2.5, 2.5.0.1, 2.5.0.2, 2.5.0.3, 2.5.0.4, 2.5.0.5  * IBM WebSphere Application Server V8.5.5 through V8.5.5.11 
+ * IBM Tivoli System Automation Application Manager 4.1 
+ * IBM Business Process Manager Standard 8.5.5 - 8.5.6.2
+
+ * Security Bulletin: Potential Privilege Escalation in WebSphere Application Server Admin Console (CVE-2017-1731) [http://www-01.ibm.com/support/docview.wss?uid=swg22012345] 
+ * Security Bulletin: A security vulnerability has been identified in WebSphere Application Server shipped with IBM Tivoli System Automation Application Manager (CVE-2017-1731) [http://www-01.ibm.com/support/docview.wss?uid=swg22013942]
+
+ * Security Bulletin: A security vulnerability has been identified in IBM WebSphere Application Server shipped with IBM Business Process Manager, WebSphere Process Server, WebSphere Enterprise Service Bus, and WebSphere Lombardi Edition (CVE-2017-1731) [http://www-01.ibm.com/support/docview.wss?uid=swg22013084]
+
+
+IBM Cloud Orchestrator and IBM Cloud Orchestrator Enterprise edition 2.4, 2.4.0.1, 2.4.0.2, 2.4.0.3, 2.4.0.4, 2.4.0.5  * IBM WebSphere Application Server V8.5.5 through V8.5.5.12 
+ * IBM Tivoli System Automation Application Manager 4.1 
+ * IBM Business Process Manager Standard 8.5.5 - 8.5.6.2
+
+ * Security Bulletin: Potential Privilege Escalation in WebSphere Application Server Admin Console (CVE-2017-1731) [http://www-01.ibm.com/support/docview.wss?uid=swg22012345] 
+ * Security Bulletin: A security vulnerability has been identified in WebSphere Application Server shipped with IBM Tivoli System Automation Application Manager (CVE-2017-1731) [http://www-01.ibm.com/support/docview.wss?uid=swg22013942]
+
+ * Security Bulletin: A security vulnerability has been identified in IBM WebSphere Application Server shipped with IBM Business Process Manager, WebSphere Process Server, WebSphere Enterprise Service Bus, and WebSphere Lombardi Edition (CVE-2017-1731) [http://www-01.ibm.com/support/docview.wss?uid=swg22013084]
+
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 28 May 2018: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,127 @@
+Title: IBM How to configure dynamic group support in WebSphere Portal - United States
+
+Text:
+vmm; dynamic groups; PK69720; group; group membership; federated TECHNOTE (FAQ)
+
+QUESTION
+How can you enable IBM WebSphere Portal to fully support dynamic groups for group membership queries? Your sample use cases may include one or more of the following:
+
+-- Confirming group memberships via Manage Users and Groups portlet.
+-- Giving users access to a Portal resource by assigning their dynamic group to a role on the resource.
+
+ANSWER
+Before pursing the configuration in WebSphere Portal on WebSphere Application Server 6.1, you must install the interim fix for the WebSphere Application Server, APAR PK69720, [http://www-01.ibm.com/support/docview.wss?uid=swg1PK69720] to ensure that the Virtual Member Manager (VMM) component used during login and administrative functions (such as Manage Users and Groups portlet) retrieves the group membership correctly. PK69720 is included in the WebSphere Application Server 6.1.0.23 release. If you are unable to upgrade to WebSphere Application Server 6.1.0.23 or later, contact IBM Product Support to obtain the interim fix for a previous version of WebSphere Application Server.
+Note 1: Be aware of the support statement [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?topic=/com.ibm.wp.ent.doc_v6101/overview/inst_req_supt.html] regarding advanced features such as dynamic groups in the WebSphere Portal 6.1 Information Center.
+
+Note 2: The actual values for the ObjectClasses and attributes used for dynamic group membership will differ between LDAP servers. IBM Support recommends obtaining an LDIF [http://www.ietf.org/rfc/rfc2849.txt] of a sample dynamic group and group member so that you can confirm the values. The instructions below will assume the LDAP in question uses groupOfUrls as the object class for dynamic groups and memberURL as the dynamic membership attribute.
+
+The configuration changes can be performed via the WebSphere administrative console for federated repository environments or directly to the <wp_home>/cells/cellname/wim/config/wimconfig.xml for both standalone LDAP and federated repository environments. 
+
+Via WebSphere administrative console (Federated repository environments only):
+
+
+ * 
+ * 
+ * 
+ * Security --> Secure administration, applications, and infrastructure
+ * 
+ * 
+ * 
+ * Federated repositories
+ * 
+ * Available realm definitions
+ * 
+ * Configure
+ * 
+ * 
+ * 
+ * Manage repositories
+ * 
+ * 
+ * 
+ * repository identifier
+ * 
+ * 
+ * 
+ * Group attribute definition
+ * 
+ * Additional Properties
+ * 
+ * 
+ * 
+ * Dynamic member attributes
+ * 
+ * Additional Properties
+ * 
+ * 
+ * 
+ * New 
+ * 
+ * Name: memberUrl 
+   Object class: groupOfUrls 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Ldap entity types 
+ * 
+ * Additional Properties
+ * 
+ * 
+ * Group.
+ * 
+ * 
+ * ;groupOfUrls
+ * 
+ * Object classes
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Via wimconfig.xml: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * <config:groupConfiguration
+ * 
+ * . . . .
+ * 
+ * <config:dynamicMemberAttributes name="memberUrl" objectClass="groupOfUrls"/>
+ * 
+ * </config:groupConfiguration>
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * <config:ldapEntityTypes name="Group" searchFilter="">
+ * 
+ * <config:objectClasses>groupOfUniqueNames</config:objectClasses>
+ * 
+ * 
+ * <config:objectClasses>groupOfUrls</config:objectClasses> 
+ * 
+ * 
+ * </config:ldapEntityTypes>
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+RELATED INFORMATION
+#WebSphere Portal 6.1.5 Information Center [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1/index.jsp?topic=/com.ibm.wp.ent.doc_v615/install/ldap_dyngrp_win.html]
+WP 7.0: Configure Portal to use dynamic groups [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Linux_standalone_Configuring_WebSphere_Portal_to_use_dynamic_groups_wp7]
+WP 8.0: Configure Portal to use dynamic groups [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Linux_standalone_Configuring_your_portal_to_use_dynamic_groups_wp8]

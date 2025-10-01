@@ -1,0 +1,49 @@
+Title: IBM HPDMG0759W error when creating the AMJRTE properties file - United States
+
+Text:
+TAM; run-svrssl-config; svrssl; HPDMG0759W; AMJRTE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When executing the "run-svrssl-config" task via the ConfigEngine to create the AMJRTE properties file, you receive the following error:
+
+Command to run is: java com.tivoli.pd.jcfg.SvrSslCfg -action config -admin_id sec_master -admin_pwd ****** -appsvr_id myserverid -port 7223 -mode remote -policysvr <hostname>:7135:1 -authzsvr <hostname>:7136:1 -cfg_file C:\IBM\WebSphere\AppServer\java\jre/PdPerm.properties -key_file C:\IBM\WebSphere\AppServer\java\jre/lib/security/pdperm.ks
+[java] Exception in thread "main" 
+[java] [
+[java] HPDMG0759W The user name already exists in the registry.
+[java] ]
+[java] at com.tivoli.pd.jutil.bo.a(bo.java:98)
+
+
+ENVIRONMENT
+Configuring WebSphere® Portal 6.1 with Tivoli® Access Manager 6.0
+
+DIAGNOSING THE PROBLEM
+ 
+
+The user name referenced in the error message refers to the appsvr id used in the SvrSslCfg command. The value for this user name is set via the following parameter in wkplc_comp.properties:
+
+wp.ac.impl.PDServerName
+
+
+RESOLVING THE PROBLEM
+ 
+
+To avoid the error, do one of the following steps before executing the run-svrssl-config task:
+
+a) Use a unique value for wp.ac.impl.PDServerName
+
+or
+
+b) Run the following command manually from a command prompt on the portal server to remove the appsvr_id value from Tivoli Access Manager's repository: 
+
+java com.tivoli.pd.jcfg.SvrSslCfg -action unconfig-admin_id sec_master -admin_pwd ****** -appsvr_id myserverid -port 7223 -mode remote -policysvr <hostname>:7135:1 -authzsvr <hostname>:7136:1 -cfg_file C:\IBM\WebSphere\AppServer\java\jre/PdPerm.properties -key_file
+
+
+RELATED INFORMATION
+#Creating the AMJRTE properties file [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?topic=/com.ibm.wp.ent.doc/security/cfg_tam_auth.html]
+
+
+
+
+ * 
+ *

@@ -1,0 +1,152 @@
+Title: IBM PM19671: TOO MANY JIT BUFFERS. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: Heavy applications (mostly on WAS application
+   servers) ran for days causes the JIT buffers to increase the
+   consumption of native memory leading to an eventual native OOM.
+   Though there is no standard way of telling there are too many
+   JIT buffers, normal applications with anything more than 20 JIT
+   buffers can be thought of affected with the issue.
+   .
+   Stack Trace: N/A
+   .
+   None.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Heavy applications (mostly on WAS application servers, only on
+   zOS) ran for days causes the JIT buffers to increase the
+   consumption of native memory leading to an eventual native OOM.
+   Though there is no standard way of telling there are too many
+   JIT buffers, normal applications with anything more than 20 JIT
+   buffers can be thought of affected with the issue. The leak was
+   seen to grow upto 75 MB when the native memory usage was around
+   200 MB.
+   The problem is fixed in SR13-FP6. After upgrading to this
+   version, it is also required to export this JIT compiler option
+   for the fix to take effect:
+   JITC_COMPILEOPT=JIT_FRAGMENTATION_FIX
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   1.4.2 SR13 FP6
+   .
+   JIT causes fragmentation in the JVM subpool on heavy
+   applications with peculiar JIT compilation patterns (for
+   example, reduced MMI threshold). The problem is fixed in JIT.
+   .
+   To obtain the fix:
+   Install build 20100821 or later
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM19671
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA(1.3/1.4 CO
+   
+   
+ * REPORTED COMPONENT ID
+   5648C9800
+   
+   
+ * REPORTED RELEASE
+   42A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2010-08-03
+   
+   
+ * CLOSED DATE
+   2010-08-25
+   
+   
+ * LAST MODIFIED DATE
+   2010-08-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM20703
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA(1.3/1.4 CO
+   
+   
+ * FIXED COMPONENT ID
+   5648C9800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R42A PSN
+   UP
+   
+   
+ * R42L PSN
+   UP
+   
+   
+ * R42W PSN
+   UP
+   
+   
+ * R420 PSN
+   UP

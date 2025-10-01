@@ -1,0 +1,126 @@
+Title: IBM HE12136: CONFUSING DOCUMENTATION FOR REP_PEOPLE_INSCOPE_VW - United States
+
+Text:
+  A FIX IS AVAILABLE
+Download IBM Atlas Policy Suite Version 6.0.3 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24038397]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ERROR DESCRIPTION:
+   When a request is deactivated that status does not cascade down
+   to the people who are in scope for that request (their status
+   remains at 'In Progress'). This means that to get a true view
+   of everyone that is in scope for a matter you have to combine
+   the request status & the status of the individual
+   e.g. WHERE pscp_scope_target_status = 'In Progress and
+   req_status = 'In Progress'.
+   If this is the case page 334 of the
+   managing_data_with_IBM_Atlas_Policy_Suite.pdf should be updated
+   to say that you also need to consider the request status to
+   truly understand if someone is in scope of an active request.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   update the doc to say that you also need to consider the
+   request status to truly understand if someone is in scope of an
+   active request
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  fixed in 6032 documentation (
+   managing_data_with_IBM_Atlas_Policy_Suite.pdf )
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12136
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   603
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-25
+   
+   
+ * CLOSED DATE
+   2015-01-06
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

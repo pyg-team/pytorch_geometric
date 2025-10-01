@@ -1,0 +1,202 @@
+Title: IBM IY78429: Channel process (amqrmppa) may fail due to bad data from pre- CSD10 Java client - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V6.0 for iSeries Fix Pack 6.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24012223]
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 12 (CSD12) [http://www-01.ibm.com/support/docview.wss?uid=swg24011423]
+WebSphere MQ V6.0 Refresh Pack 6.0.2.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24013482]
+WebSphere MQ V5.3 for iSeries - Fix Pack 12 (CSD12) [http://www-01.ibm.com/support/docview.wss?uid=swg24011422]
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 13 (CSD13) [http://www-01.ibm.com/support/docview.wss?uid=swg24014128]
+WebSphere MQ V6.0 Fix Pack 6.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24011320]
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 14 (CSD14) [http://www-01.ibm.com/support/docview.wss?uid=swg24017668]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WMQ 5.3 GA through to CSD09 Java JMS clients may send bad data
+   to a WMQ queue manager. This was corrected by Java APAR IY67371 [http://www-01.ibm.com/support/docview.wss?uid=swg1IY67371]
+   at CSD10 level.
+   
+   This bad data may cause failure of an amqrmppa (channel
+   pooling) process. The process may lockup (hang), report FDCs,
+   exit prematurely, or fail in other ways.
+   
+   Some FDCs that could be produced from amqrmppa are: probes
+   XC006001, XC130003 and CO400001.
+   
+   The failure scenario is dependent on the size of messages
+   requested by the client, together with the size of messages
+   available to be sent back to the client. The problem occurs at
+   sizes within 512 bytes of 4k multiples, starting with sizes
+   greater than 32k.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of JMS clients are recommended to apply a fix for this
+   APAR, or to apply at least CSD10 at the client end, to
+   eliminate what may be a highly intermittent failure at the
+   server end.
+   
+   Platforms affected:
+    All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   Insufficient checking of data sent from JMS clients, coupled
+   with this data not being correct in every aspect.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added additional server checks to avoid corruption: if the
+   server is sent inconsistent data it will report a protocol
+   error FDC (probe RM046004 or RM046005) and close the channel.
+   
+   However, in order to avoid causing problems for existing
+   systems which may have been working successfully and not
+   actually failing, an additional change has been introduced to
+   compensate for the bad information from the Java client.
+   
+   Thus, in practice, the overall effect of this APAR should be to
+   allow existing Java clients at whatever level, to communicate
+   with the server, without causing corruption. Thus, the new
+   probe RM046004 and RM046005 FDCs are not expected to be seen.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v5.3
+   Platform           Fix Pack 12
+   --------           --------------------
+   Windows            U200242
+   AIX                U803326
+   HP-UX (PA-RISC)    U803577
+   Solaris (SPARC)    U803579
+   iSeries            SI21715
+   Linux (x86)        U803580
+   Linux (zSeries)    U803582
+   Linux (Power)      Not applicable
+   
+                      v6.0
+   Platform           Fix Pack 6.0.1.1
+   --------           --------------------
+   Windows            U200247
+   AIX                U804921
+   HP-UX (PA-RISC)    U805233
+   HP-UX (Itanium)    U805767
+   Solaris (SPARC)    U805234
+   Solaris (x86-64)   U805768
+   iSeries            SI21854
+   Linux (x86)        U805235
+   Linux (x86-64)     U805770
+   Linux (zSeries)    U805236
+   Linux (Power)      U805237
+   Linux (s390x)      U805769
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY78429
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ FOR SUN
+   
+   
+ * REPORTED COMPONENT ID
+   5724B4103
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-11-02
+   
+   
+ * CLOSED DATE
+   2005-11-16
+   
+   
+ * LAST MODIFIED DATE
+   2007-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ FOR SUN
+   
+   
+ * FIXED COMPONENT ID
+   5724B4103
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY
+   UP

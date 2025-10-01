@@ -1,0 +1,17 @@
+Title: IBM Support for multi-content files in IBM Content Navigator (ICN) FileNet Viewers - United States
+
+Text:
+multicontent; multi-content; multi content; Daeja; Filenet viewer; FN Viewer TECHNOTE (FAQ)
+
+QUESTION
+ Do the IBM Content Navigator (ICN) FileNet Viewer (also known as Daeja viewer in ICN v2.0.2 and as IBM Daeja ViewONE Professional Edition viewer in ICN v2.0.3) and IBM Daeja ViewONE Virtual viewer, support multi-content files? 
+
+ANSWER
+Yes, the IBM Daeja ViewONE Professional Edition viewer and the IBM Daeja ViewONE Virtual viewer both support multi-content files. In previous versions of IBM Content Navigator, the FileNet viewer supports multi-content files. To display the images in the multi-content files, ensure that the viewer map that you want to use is configured correctly for the viewer to open all the MIME types for images contained in the multi-content file.
+
+The first page of each content element of the multi-content file is displayed as a thumbnail in the document info pane. To open an image element in the viewer, use the browse view, right-click the element, and select Open. The image element will open in the viewer. 
+
+For earlier versions of IBM Content Navigator, when using the IBM FileNet (Daeja) viewer, only the first page of the image is displayed. For IBM Content Navigator Version 2.0.2.5 or later or Version 2.0.3, when an image is opened in the main viewer area, you can use the navigation arrows in the viewer to navigate through all pages of that image.
+
+RELATED INFORMATION
+ Content Navigator Welcome Page [http://www-01.ibm.com/support/knowledgecenter/SSEUEX/welcome?lang=en]

@@ -1,0 +1,175 @@
+Title: IBM JR28114: CLR STORED PROCEDURES DEPLOYED WITH IBM DATABASE ADD-INS FOR VIS UAL STUDIO CANNOT BE RUN - United States
+
+Text:
+  FIXES ARE AVAILABLE
+DB2 Version 9.1 Fix Pack 7 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24022678]
+DB2 Version 9.1 Fix Pack 5 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24019146]
+DB2 Version 9.1 Fix Pack 6 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24020890]
+DB2 Version 9.1 Fix Pack 6a for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24021876]
+DB2 Version 9.1 Fix Pack 7a for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24024113]
+DB2 Version 9.1 Fix Pack 8 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24024502]
+DB2 Version 9.1 Fix Pack 9 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24026384]
+DB2 Version 9.1 Fix Pack 10 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24029027]
+DB2 Version 9.1 Fix Pack 11 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24031281]
+DB2 Version 9.1 Fix Pack 12 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033023]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I tried creating a CLR SP with VS2005 v9.5 tooling, but when I
+   run it no data is being returned and error -
+   Error occurred: ERROR [42724] [IBM][DB2/NT] SQL20282N  .NET
+   procedure or user-defined function "ERICJ.GETSTAFFEMPLOYEE",
+   specific name "GETSTAFFEMPLOYEENA" could not load .NET class
+   "DB2ClassLibrary1.DB2Class1". Reason code "1".
+   SQLSTATE=42724
+   : IBM.Data.DB2: -2147467259
+   is being displayed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  IBM Database add-ins for Visual Studio deploys CLR stored proced
+   ures to the incorrect location on the database server.  The stor
+   ed procedures are deployed to the install path, but they should
+   be deployed to the instance profile path.  The user may work aro
+   und the problem by manually moving the CLR assembly after deploy
+   ing it.
+   The CLR assembly is installed to the function directory installa
+   tion path, usually c:\program files\ibm\sqllib\function.  The CL
+   R assemblies are the files inside the CLR directory at this loca
+   tion.  They should be moved to the function directory in the ins
+   tance profile path, which is usually something like c:\documents
+    and settings\all users\application data\ibm\db2\db2copy1\functi
+   on.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users are unable to run CLR stored procedures after deployment
+   to a DB2 server using IBM Database add-ins for Visual Studio
+   2005.  The reason is that in DB2 v9.1, the location changed to
+   which CLR stored procedures need to be deployed.  The stored
+   procedure that IBM Database add-ins for Visual Studio uses for
+   deploying CLR stored procedures needs to be updated to deploy to
+   the correct location.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Project db2_v91fp5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  IBM Database add-ins for Visual Studio deploys CLR stored proced
+   ures to the incorrect location on the database server.  The stor
+   ed procedures are deployed to the install path, but they should
+   be deployed to the instance profile path.  The user may work aro
+   und the problem by manually moving the CLR assembly after deploy
+   ing it.
+   The CLR assembly is installed to the function directory installa
+   tion path, usually c:\program files\ibm\sqllib\function.  The CL
+   R assemblies are the files inside the CLR directory at this loca
+   tion.  They should be moved to the function directory in the ins
+   tance profile path, which is usually something like c:\documents
+    and settings\all users\application data\ibm\db2\db2copy1\functi
+   on.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR28114
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4101
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-12-13
+   
+   
+ * CLOSED DATE
+   2008-07-15
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE WIN
+   
+   
+ * FIXED COMPONENT ID
+   5765F4101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY
+   UP

@@ -1,0 +1,14 @@
+Title: IBM Support of ARA 5.0 for Windows 10 browser called "Edge" - United States
+
+Text:
+edge; microsoft; browser; compatibility; ARA; IE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Our IT is planning to move to Windows 10 with the browser Edge.
+
+Does ARA 5.0 support the new browser? 
+
+RESOLVING THE PROBLEM
+As of October 2016: Only IE 11 is supported in the present releases. 
+
+My understanding is that there may yet be a long tail of IE 11 support from Microsoft, especially in corporate environments, so we have time.

@@ -1,0 +1,146 @@
+Title: IBM IJ03900: IN SERVICE PORTAL, SR IS CREATED EVEN THOUGH WE NEVER CLICKED ON THE SUBMIT BUTTON. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  APAR created for PC TS000071068 (SC TS000072255)
+   
+   PROBLEM: In ICD Service Portal, if user just looks at the
+   offering and leaves the page a SR is created even though we
+   never clicked on the submit button. Customer said problem does
+   not occur if they login as maxadmin.
+   
+   PERFORMANCE ISSUE:NO
+   SECURITY ISSUE: YES
+   
+   STEPS TO REPRODUCE:
+   Step 1 In  ICD Service portal UI (for Self service center)
+   click on 'Request a Service'
+   Step 2 Click on a offering for example  in this demo Ramal
+   (which is under  Telefonia)
+   Step 3 When the 'Ramal' offering  is on screen,  Don't do
+   anything  (don't type anything) just watch it
+   Step 4 Leave this page (offering) by clicking on the higher
+   link (for example Telefonia above)
+   Step 5 As expected you left the offering page and now  you are
+   on the previous  screen
+   Step 6 Now go look for newly created service request.   Notice
+   a new SR is created (even thought we never submitted the
+   'Ramal' offering). This is the problem in this case
+   
+   CURRENT ERRONEOUS RESULT:
+   In service portal, SR is created even though we never clicked
+   on the submit button.
+   
+   EXPECTED RESULT:
+   In service portal, SR should only be created if user clicks on
+   the submit button.
+   
+   ADDITIONAL INFO:
+   
+   ENVIRONMENT:
+   - ICD:  7.6.0.3257 Build 201709140546
+   - TPAE: 7.6.0.8 - IFIX20170914-1342
+   - Service Portal version: 7.6.0.3
+   - OS  : Linux 2.6.32-696.6.3.el6.x86_64
+   - DB  : Oracle 12.1 (Oracle Database 12c Enterprise Edition
+   Release 12.1.0.2.0 -64bit
+   - Base Language: Portuguese
+   - Additional Language: English
+   - Browser:  IE/FF and version  IE 11, FF 23, 31
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  fixed
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ03900
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTROL DESK/SC
+   
+   
+ * REPORTED COMPONENT ID
+   5725E2400
+   
+   
+ * REPORTED RELEASE
+   760
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-02-05
+   
+   
+ * CLOSED DATE
+   2018-04-23
+   
+   
+ * LAST MODIFIED DATE
+   2018-04-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

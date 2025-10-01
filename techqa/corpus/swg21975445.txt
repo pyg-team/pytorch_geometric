@@ -1,0 +1,144 @@
+Title: IBM HPDBA0609E Unable to automatically refresh keystore file - United States
+
+Text:
+HPDBA0609E; refresh; keystore TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Having implemented a custom made management application running on top of WebSphere Application Server (WAS) 8 for Access Manager user management (the WAS server runs as non-root), when trying to run a management operation using the application the action fails with the following error:
+
+HPDBA0609E Unable to automatically refresh keystore file.
+
+In the past the management application had been working. 
+
+SYMPTOM
+Error message in the application message log (e.g. msg__test-WAS855.log) 
+
+PROGRAM ERROR null null com.tivoli.pd.jutil.PDSslServices refreshCert WebContainer : 1
+[
+HPDBA0609E Unable to automatically refresh keystore file:/var/PolicyDirector/keytab/java.ks.
+]
+
+at com.tivoli.pd.jras.pdjlog.PDJLogger.exception(PDJLogger.java:143)
+at com.tivoli.pd.jras.pdjlog.PDJMessageLogger.exception(PDJMessageLogger.java:79)
+at com.tivoli.pd.jutil.PDSslServices$2.run(PDSslServices.java:1584)
+at java.security.AccessController.doPrivileged(Native Method)
+at com.tivoli.pd.jutil.PDSslServices.refreshCert(PDSslServices.java:1445)
+at com.tivoli.pd.jutil.PDSslServices.checkAndRefreshCert(PDSslServices.java:897)
+.....
+PROGRAM ERROR null null com.tivoli.pd.jutil.PDSslServices refreshCert WebContainer : 1 java.lang.IllegalStateException:
+[
+HPDBA0609E Unable to automatically refresh keystore file:/var/PolicyDirector/keytab/java.ks.
+]
+at com.tivoli.pd.jutil.PDSslServices$2.run(PDSslServices.java:1568)
+at java.security.AccessController.doPrivileged(Native Method)
+at com.tivoli.pd.jutil.PDSslServices.refreshCert(PDSslServices.java:1445)
+at com.tivoli.pd.jutil.PDSslServices.checkAndRefreshCert(PDSslServices.java:897)
+at com.tivoli.pd.jutil.PDSslServices.checkWrappedSSLContext(PDSslServices.java:938)
+.....
+
+
+CAUSE
+Automatic refresh of the certificate fails because the userid which is running the WAS java process does not have sufficient access rights to write to the directory where the keystore file exists. 
+
+
+ENVIRONMENT
+Environment: 
+
+
+ISAM 7.0.0.16 
+WAS 8 
+Solaris
+
+IBM support recreated issue with following environment:
+ISAM 7.0.0.10
+WAS 8.5.5
+Linux
+
+
+DIAGNOSING THE PROBLEM
+The following error indicates that the certificate has NOT been expired. Instead the certificate has reached its midlife and an automatic refresh of the certificate is tried. However an attempt to refresh the certificate has failed. 
+
+
+PROGRAM ERROR null null com.tivoli.pd.jutil.PDSslServices refreshCert 
+WebContainer : 2 java.lang.IllegalStateException: 
+[ 
+HPDBA0609E Unable to automatically refresh keystore file: 
+/var/PolicyDirector/keytab/java.ks. 
+] 
+
+
+Determing if a certificate has reached its midlife:
+
+Check the ivmgrd.conf for certificate lifetime:
+# SSL certificate lifetime in days. 
+ssl-cert-life = 365
+
+
+Check the certificate from the keystore to compare if it has reached the midlife:
+
+keytool -list -v -keystore <keystore file name with path> -storetype JCEKS
+
+Example:
+keytool -list -v -keystore /var/PolicyDirector/keytab/testautocertrefresh.ks -storetype JCEKS
+Enter keystore password: <-just hit enter here, no need for password for listing certificates
+
+***************** WARNING WARNING WARNING *****************
+* The integrity of the information stored in the keystore *
+* has NOT been verified! In order to verify its integrity, *
+* you must provide the srckeystore password. *
+***************** WARNING WARNING WARNING *****************
+
+Keystore type: JCEKS
+Keystore provider: IBMJCE
+
+Your keystore contains 1 entry
+
+Alias name: appsvr
+Creation date: Dec 16, 2015
+Entry type: keyEntry
+Certificate chain length: 2
+Certificate[1]:
+Owner: CN=testautocertrefresh/WAS855, OU=Default, O=Policy Director, C=US
+Issuer: CN=pdca, O=Policy Director, C=US
+Serial number: 10001593
+Valid from: 12/15/15 12:02 AM until: 12/17/16 12:02 AM
+Certificate fingerprints:
+MD5: 29:F1:37:E7:7C:8F:79:C5:22:6F:FA:48:88:D5:52:8D
+SHA1: FE:CF:BF:F6:B2:8D:6E:E1:10:B5:A3:76:F0:70:CD:B1:E3:25:32:BC
+Certificate[2]:
+Owner: CN=pdca, O=Policy Director, C=US
+Issuer: CN=pdca, O=Policy Director, C=US
+Serial number: 7a3896d80bfd99e1
+Valid from: 1/13/15 2:13 PM until: 1/9/35 2:13 PM
+Certificate fingerprints:
+MD5: F4:5C:45:6A:10:0B:74:48:96:52:B5:B5:F6:CB:77:B8
+SHA1: 83:7A:7D:D2:DE:CA:C1:ED:0E:71:A6:C2:0B:7E:F4:36:1E:A4:6E:01
+....
+
+
+Simulation Recreation steps: 
+- Manually refresh the certificate using SvrSslCfg -action replcert command 
+- Modify the system clock on the Policy Server and on the server where java application is run so that the certificate midlife is reached but less than the certificate expiration time 
+- Run test with a Java application as a non-root user (e.g. ibmuser)
+- Run test application which has code "new PDContext(args[1], args[2].toCharArray(), configURL);" to initiate the certificate refresh 
+- Check that the user running the Java application does not have access rights to write to the directory where the key store file exists (e.g. /var/PolicyDirector/keytab). 
+
+Check directory access rights:
+
+ls -l /var/PolicyDirector/ 
+total 8 
+drwxr-xr-x 2 ivmgr ivmgr 4096 Dec 21 00:00 keytab <- ibmuser does not have write access to the keytab directory 
+drwxrwxrwx 2 ivmgr ivmgr 4096 Dec 16 00:02 log
+
+
+
+
+RESOLVING THE PROBLEM
+Correct the access rights of the directory where the keystore file exists for the Java process to write to the keystore file.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ TAM
+ISAM
+ITAM

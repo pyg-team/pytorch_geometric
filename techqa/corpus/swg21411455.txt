@@ -1,0 +1,89 @@
+Title: IBM Loading .dll plugins into IBM Rational Rhapsody project - United States
+
+Text:
+dll; load plugin; plugin; rhapsody.ini; helper; .hep TECHNOTE (FAQ)
+
+QUESTION
+ How to load dll plugins into a Rhapsody project ? 
+
+ANSWER
+Dll plugins can be loaded into the project in two ways : 
+
+ * From the rhapsody.ini file.
+
+
+You can add plugin entries in the rhapsody.ini file in the below format : 
+
+ 
+
+ * 
+ * 
+ * Plugins=<plugin item names> 
+ *  
+ * Name=<plugin name> 
+ * RhpVersion=<Rhapsody version> 
+ * DLL=<path to the plugin DLL> 
+ * MenuItem=<plugin menu item name>
+ * 
+
+
+where : 
+
+<plugin item names>: A list of all plugins separated by comma (<plugin1 item name>[,<plugin2 item name>])
+
+
+<plugin item name>: The plugin subject name in the INI file
+
+
+<plugin name>: The plugin display name
+
+
+<Rhapsody version>: The Rhapsody version that the plugin should work with.
+
+
+<path to the plugin DLL>: A full path to the plugin DLL
+
+
+<plugin menu item name>: Optional menu item name that is added in Rhapsody tools menu. 
+
+ 
+
+Example : 
+
+ 
+
+ * 
+ * 
+ * Plugins=UserPlugin 
+ * [UserPlugin] 
+ * Name=MyPlugin 
+ * RhpVersion=7.5 
+ * DLL=C:\MyProject\debug\MyPlugin.dll 
+ * MenuItem=Invoke MyPlugin
+
+
+ * From the .hep file 
+
+
+
+You can define the helper entries in the .hep file and associate it with a project. 
+ * 
+ * 
+ * numberOfElements=1 
+ * name1=<PluginName> 
+ * command1=<path to the plugin DLL> 
+ * isVisible1=1 
+ * isPlugin1=1 
+
+
+Example : 
+
+ 
+
+ * 
+ * 
+ * numberOfElements=1 
+ * name1=MyPlugin 
+ * command1=.\MyProject\debug\MyPlugin.dll 
+ * isVisible1=1 
+ * isPlugin1=1

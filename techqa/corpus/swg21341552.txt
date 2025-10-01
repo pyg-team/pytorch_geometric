@@ -1,0 +1,36 @@
+Title: IBM Unable to Publish Package: BMT-MDC-0001 CCL-RCI-0002 CM-REQ-4192 CM-REQ-4232 CAM-AAA-0032 - United States
+
+Text:
+Cannot; does not; publishing; modeling; modelling; permissions; obsolete; defunct; missing; gone TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to publish a package from Framework Manager, you receive the errors below. 
+
+SYMPTOM
+In Framework Manager:
+
+BMT-MDC-0001 Unable to publish.
+CCL-RCI-0002 The Soap server returned a Soap fault.
+CM-REQ-4192 The property 'policies' (for an object of class 'Model') is incorrect.
+CM-REQ-4232 Your request contains a search path having an invalid object reference. The external directory search failed while looking for the object 'CAMID('Default:r:authid=224103456')'.
+CAM-AAA-0032 Unable to retrieve the object attributes because the specified object class is invalid
+
+
+CAUSE
+Under the 'Package Access' property of the package, there exists a reference to a security namespace that no longer exists.
+
+RESOLVING THE PROBLEM
+Remove the invalid namespace reference using Edit Package Access . . . in Framework Manager and if necessary, replace it with a valid reference.
+
+Steps:Steps for Cognos Reportnet:  1. In the Framework Manager model, expand Packages.
+ 2. Right-click the package you wish to publish and select Edit Package Access . . .
+ 3. Remove any references to invalid security namespaces on the User Access and Administrator Access tabs.
+ 4. If required, re-add objects to both tabs from a valid security namespace.
+
+Steps for Cognos 8:
+
+ 1. In the Framework Manager model, expand Packages.
+ 2. Highlight the package you wish to publish
+ 3. Click on Actions menu from the top, point to Package then select Edit Package Access.
+ 4. Remove any references to invalid security namespaces on the User Access and Administrator Access tabs.
+ 5. If required, re-add objects to both tabs from a valid security namespace.

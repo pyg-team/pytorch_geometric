@@ -1,0 +1,25 @@
+Title: IBM CAD Integrator connecting with Tririga - Encrypted vs Clear Text passwords - United States
+
+Text:
+TRIINSTALL; TRICONFIG; TRISECURITY; TRIVULNERABILITY; TRICI; . password; passwords; login; SSL; HTTPS; security; encrypt; encryption; encrypted TECHNOTE (FAQ)
+
+QUESTION
+ Is there a means of configuring IBM TRIRIGA CAD Integrator so that the user passwords do not appear as clear text?
+
+NOTE: The clear text concern is when the information is transmitted over the network. The password is not readable as the user enters it in the login dialog. 
+
+CAUSE
+By default, CAD Integrator (in fact all web technologies) will send the user password in clear text. In environments where security is a very strong concern, this is typically not permitted.
+
+ANSWER
+Implementing Secure Socket Layer (SSL) will cause traffic transmitted over the network (including passwords) to be encrypted allowing for the desired level of security. 
+
+It is common for clients to use Single Sign On (SSO) and SSL together but it is possible to use just SSL if only password encryption is necessary. 
+
+ 
+
+For more information about SSL as it relates to TRIRIGA, view the FAQ at the following URL:
+http://www-01.ibm.com/support/docview.wss?uid=swg21685881 [http://www-01.ibm.com/support/docview.wss?uid=swg21685881]
+
+RELATED INFORMATION
+ Does IBM TRIRIGA support HTTPS SSL and TLS? [http://www-01.ibm.com/support/docview.wss?uid=swg21685881]

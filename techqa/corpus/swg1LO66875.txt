@@ -1,0 +1,128 @@
+Title: IBM LO66875: NEW-LINE IS NOT DISPLAYED WHEN INPUTTING ENTER KEY AT THE TOP LEFT IN BODY BY WEB BROWSER. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A new-line is not displayed when inputting Enter key at the top
+   left, so scroll bar is falls.  In correct case, new-line is
+   displayed and cursor bar does not move.  Internet explorer 6, 7,
+   8 reproduce it.  In Firefox, a new-line is collapses.
+   This issue does not reproduce in Domino 8.5.2.  It is a
+   regression in Domino 8.5.3.
+   
+   Steps to reproduce:
+   1. Create new form which has a rich text field using JavaScript
+   control for web access.
+   2. Internet Explorer opens the form.
+   3. Put some characters in the field and press "Shift + Enter"
+   key to input new-line.  Or, Notes client creates a document.
+   4. Step 3 is repeated until a vertical scroll bar is displayed.
+   5. Move your cursor to top left (it is the leftmost cursor point
+   on the 1st line. )
+   6. Press "Enter" key several times.
+   New-line is not displayed.  Scroll bar is falls.
+   
+   When using Firefox 3.6, in Domino 8.5.2, no problem.  But in
+   8.5.3, a new-line collapses. The following picture is Enter key
+   is pressed 1 times.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# YSAI8QVCRQ.
+   This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO66875
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-26
+   
+   
+ * CLOSED DATE
+   2012-02-09
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R851 PSN
+   UP

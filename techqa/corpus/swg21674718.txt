@@ -1,0 +1,55 @@
+Title: IBM OMNIbusEventReader use of Serial or StateChange - United States
+
+Text:
+netcool; impact; netcool/impact; nci; event; reader; omnibus; eventreader; omnibuseventreader; broker; eventbroker; object; server; objectserver; serial; state; change; statechange; serverserial; sql TECHNOTE (FAQ)
+
+QUESTION
+ Default conditions in the outgoing SQL from the EventReader. The "why, when and how" of it. 
+
+ANSWER
+The outgoing SQL from an OMNIbusEventReader by default contains a clause against the Serial field of the ObjectServer. These are seen in the log file messages of the format: 
+
+ * 
+ * 
+
+
+Where [DateTimeStamp] is the date and time the log message was recorded in the format: 
+
+ * 
+
+
+and [Filter] is the conglomerate or all the active Filter conditions defined in the EventReader. 
+The "select top 1000" limitation is designed to prevent the EventReader from overloading the EventQueue in any one poll. 
+The "Class != 10500" condition prevents the EventReader from acquiring by default the Status events created by Impact SelfMonitoring - for further information please visit the TechNote "EventReader filters out Class 10500 event by default" [ link below]. 
+
+The "Serial > 12345" condition is the default tool used in combination with the Filters to ensure only newly inserted events are captured. The value (for example: 12345) is the highest Serial value of the events successfully captured in the previous poll. 
+
+When started for the very first time the EventReader uses the value of 0 (zero) to ensure it captures all pertinent events; thereafter it will use the highest last captured value. 
+
+The alternate configuration is to use the StateChange value to capture events upon insert and/or update. This is enabled by ticking the "Actions: [ ] Get updated events" option: 
+
+ * [/support/docview.wss?uid=swg21674718&amp;aid=1]
+
+
+This alters the log file messages to the format: 
+
+ * 
+
+
+showing that the outgoing SQL now uses the StateChange value as oppose to the Serial value. Again, when started for the very first time the EventReader uses the value of 0 (zero) to ensure it captures all pertinent events; thereafter it will use the highest last captured value. 
+
+If the EventReader does not capture any events for successive polls it will increment the value by 1 every second poll. 
+
+The values used by the EventReader are stored in the file: 
+
+ * 
+
+
+One can clear (reset to zero) these values via the GUI by stopping the EventReader Service, opening the EventReader Service for edit and clicking the "Clear State" button: 
+
+ * 
+
+
+Upon restarting the Service the EventReader will then act as if it is starting for the very first time. 
+RELATED INFORMATION
+ EventReader filters out Class 10500 event by default [http://www-01.ibm.com/support/docview.wss?uid=swg21459392]

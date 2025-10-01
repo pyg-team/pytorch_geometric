@@ -1,0 +1,27 @@
+Title: IBM Install of "Java EE Connector (J2C) tools" feature shows "Tools for WebSphere Application Server v7.0" as a dependency - United States
+
+Text:
+RAD; v7.5; install; J2C; JCA; Connector; modify; server tools; test environment; websphere; installation; tools; manager; J2EE; Java EE TECHNOTE (FAQ)
+
+QUESTION
+ Is the install of "Java EE Connector (J2C) tools" feature in IBM Rational Software Architect or Rational Application Developer for WebSphere Software enabled by default or was it renamed from a former feature? 
+
+CAUSE
+You are unable to find the J2EE Connector (J2C) framework feature that is present in version 7.0.0.x of Rational Software Architect or Rational Application Developer for WebSphere Software, specifically for WebSphere Application Server v6.1 Test Environment in Rational Application Developer v7.5.x. 
+
+The following selection in IBM Installation Manager for Rational Application Developer v7.5 is displayed as follows:
+[/support/docview.wss?uid=swg21426517&aid=1] [/support/docview.wss?uid=swg21426517&aid=1]
+
+
+Tools for WebSphere Application Server, version 7.0 located under Java EE Connector (J2C) tools is not that same as selecting Tools for WebSphere Application Server, version 7.0 located under WebSphere Application Server development.
+
+
+This means that the IBM Installation Manager is not forcing you to install WebSphere Test Environment (WTE) v7.0 server. 
+
+
+ANSWER
+The server tools are required before you can install WebSphere Application Server v7.0 Test Environment, since they contain some items required for using and integrating with the WebSphere Application Server v7.0 Test Environment in Rational Application Developer v7.5. To use J2C with WebSphere Application Server 6.1, select "Tools for WebSphere Application Server, version 6.1", in addition to the default selected "Tools for WebSphere Application Server, version 7.0". 
+
+ * 
+ * Note:
+ *

@@ -1,0 +1,56 @@
+Title: IBM CMB2174E - C:E TCP THREAD TERMINATION ERROR DETECTED ON FTPC0001 BY STFTPC00. ERROR CODE=S906. (SCI72236) - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CMB2174E - C:E TCP THREAD TERMINATION ERROR DETECTED ON FTPC0001 BY STFTPC00. ERROR CODE=S906. (SCI72236) 
+
+SYMPTOM
+CMB2174E - C:E TCP THREAD TERMINATION ERROR DETECTED ON FTPC0001 BY STFTPC00. ERROR CODE=S906. 
+CMB2115E - C:E TCP/IP TASK/THREAD FTPC0001 HAS TERMINATED WITH COMPLETION CODE=S906 . 
+CSV002I REQUESTS FOR MODULE STDSPLY EXCEED MAXIMUM USE COUNT 
+CMB2140I - C:E TCP RESTARTING THREAD FTPC0001. 
+S906-08 
+Exceeded maximum use count STDSTLY
+
+
+CAUSE
+
+
+Running over a month on CUM1205, When the S906 ABENDs started it looked like it was in a loop. The SCDSPLY repetitive LOAD which caused the client subtask to abend S906-08 along with message CSV002I REQUESTS FOR MODULE STDSPLY EXCEED MAXIMUM USE COUNT when 32K LOADs are reached. A LOAD occurs once for every client (C50) or server session (S30) initialization. The solution is to load SCDSPLY once at C:E initialization, save the EPA in the SCB, and copy that into the SMTCB STDSPLY field at client and server initialization. The customer had to cancel the job & recycle both tasks.
+
+
+
+All running well now.
+Note: Secondary error found after abend. Parm DIALOG_FTP=* was on in the ODF causing excessive TRACE data and flooded the JES pool with messages of CEDEBUG (ITCQE tracing output).
+
+RESOLVING THE PROBLEM
+
+
+Work-a-round:
+Do NOT use DIALOG_FTP=* parameter in the ODF. Turn it on manually to debug an issue as needed (directed by Customer Support only)
+NOTE if S906 occurs you will have to Cancel both jobs & Recycle both tasks. send both tasks & associated SVCDUMPS to Sterling Commerce.
+
+
+
+Fix F34284 - is to be applied after Maintenance POST1205.P122704 and CUM1205 to resolve S90608 abend.
+
+
+
+
+
+Subsequent fixes will address the other problems;ie messages of CEDEBUG (ITCQE tracing output).  
+
+HISTORICAL NUMBER
+ PRI31704 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Connect:Enterprise OS/390, Release 1.2.00 
+CUM1205 
+SCI72236

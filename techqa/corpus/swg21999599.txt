@@ -1,0 +1,39 @@
+Title: IBM Event Notification causing Out of Memory Crash - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Our server crashes with out of memory messages and javacore and heap dump. When we shut down event notification or truncate the history table, the engine runs fine but when there is a lot of data to send, say millions of rows in history table, it crashes. Why do we see this and how may we prevent it? 
+
+ANSWER
+To remedy out of memory crash, the options are to reduce the number of threads (which may decrease throughput) or increase the maximum heapsize. I would recommend increasing the heap size since memory is cheap and it's a safe practive. If you increase that, you wouldn't get out of memory. If you have 4 GB, increase it to 8GB and if you have 8, then 16 GB. It's possible the messages sent get so big, that the memory is no longer enough to send or process them.
+WAS Admin Console > Servers > All Servers > MDMAppSrv01 > Process definition > Java Virtual Machine > Maximum heap size 
+
+
+Reducing the number of threads can reduce throughput but it is an option. The contextPoolSize in com.ibm.mdm.mds.net.logic.cfg would determine engine's memory footprint, workerThreads in com.ibm.mdm.mds.event.manager.cfg footprint. If the event manager causes the OOM, then reducing the threads would reduce the memory requirement. 3 threads use 3 times as much memory as 1 thread. Each worker thread has it's own memory area, and so the number of threads determine memory used. The default is 1.
+
+There is no optimal value on setting these performance parameters; it's just a matter of tuning through trial and error. Specifics depend on your hardware, data model, and workload and other factors. This is usually done prior to go-live. Settings:
+com.ibm.mdm.mds.event.manager.cfg
+workerThreads=12
+com.ibm.mdm.mds.entity.manager.cfg
+workerThreads=10
+com.ibm.mdm.mds.net.logic.cfg
+contextPoolSize = 50
+com.ibm.mdm.mds.callback.manager.cfg
+contextPoolSize = 50
+
+
+
+PRODUCT ALIAS/SYNONYM
+ MDM
+MDM SE
+MDM AE
+MDS
+PME
+Master Data Management
+Master Data Management Standard Edition
+Master Data Management Advanced Edition
+Master Data Service
+Initiate
+Probabilistic Matching Engine

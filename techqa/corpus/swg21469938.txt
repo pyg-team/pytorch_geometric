@@ -1,0 +1,88 @@
+Title: IBM How to install and configure the Sybase Agent to monitor 32-bit Sybase databases on 64-bit operating systems - United States
+
+Text:
+32-bit database; 5724B96SO; 64-bit operating system; Sybase Agent TECHNOTE (FAQ)
+
+QUESTION
+ If 32-bit Sybase databases are on 64-bit operating systems, the Sybase Agent collector process terminates after the Sybase agent starts.
+
+How can the Sybase agent monitor 32-bit Sybase databases on 64-bit operating systems? 
+
+CAUSE
+The Sybase agent by default supports 64-bit Sybase databases on 64-bit operating systems. The 64-bit Sybase Agent by default is installed on 64-bit operating systems. 
+If the Sybase databases are 32-bit on the 64-bit operating systems, the Sybase Agent collector process terminates because it tries to load 64-bit Sybase database libraries, but cannot find them. 
+
+Check the collector log file, $CANDLEHOME/logs/<hostname>_oy_<sid>_col.log, we can see a similar error message: 
+
+"koycoll: fatal: libct64.so: open failed: No such file or directory". 
+
+
+ANSWER
+This document includes the solutions and workarounds for the IBM Tivoli Monitoring for Databases: Sybase Server Agent to monitor 32-bit Sybase databases on 64-bit operating systems. 
+
+
+Do the following steps to install 32-bit Sybase agent on 64-bit operating systems to support 32-bit Sybase databases.
+
+1) Check Sybase Agent support matrix, confirm that the Sybase Agent supports the 64-bit operating systems and corresponding 64-bit Sybase databases.
+
+Sybase Agent support matrix:
+
+http://www-969.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html [http://www-969.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html]
+
+2) Confirm that the Sybase database is 32-bit by checking the bit-ness of Sybase database with the following ISQL:
+select @@version;
+
+3) Install the 32-bit Sybase agent on the 64-bit operating system by manually selecting corresponding 32-bit operating system during the installation.
+
+This is an example to select "Solaris R10 (32 bit)" on "Solaris R10 (64 bit)" systems.
+
+......
+Type the number for the OS or component support category you want, or type "q" to quit selection
+[ number "23" or "Solaris R10 (64 bit)" is default ]: 22
+
+You selected number "22" or "Solaris R10 (32 bit)"
+
+Is the operating system or component support correct [ 1=Yes, 2=No ; default is "1" ]
+......
+
+4) Before the configuration, update the following registry files: 
+$CANDLEHOME/registry/oy<arch of the 32bit agent>.ver 
+$CANDLEHOME/registry/dd<arch of the 32bit agent>.ver 
+
+Copy support architectures, and change the last character from 3 to 6.
+
+Before the change:
+# Supported architectures.
+runArch = sol283
+runArch = sol293
+runArch = sol503
+
+After the change:
+# Supported architectures.
+runArch = sol283
+runArch = sol293
+runArch = sol503
+# Add the following lines into supported architectures list.
+runArch = sol286
+runArch = sol296
+runArch = sol506
+
+5) If there is a kddos64 program in the $CANDLEHOME/<arch> directory, replace the kddos program with the kddos64 program by running the following commands.
+
+cd $CANDLEHOME/<arch>/bin
+cp kddos kddos.orig
+cp kddos64 kddos -f
+
+6) Configure and start the Sybase Agent.
+
+Note:
+
+1) The 32-bit Sybase Agent and 64-bit Sybase Agent cannot be installed into the same $CANDLEHOME directory. Remote deployment and remote configuration is not supported. 
+
+2) This scenario does not apply to Windows systems. No Win64 image is provided for Sybase Agent. The 32-bit Sybase agent is installed on Windows systems by default, and it can monitor 32-bit Sybase databases on 64-bit Windows systems. 
+
+
+
+PRODUCT ALIAS/SYNONYM
+ KOY
+OY

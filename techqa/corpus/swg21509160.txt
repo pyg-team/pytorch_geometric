@@ -1,0 +1,64 @@
+Title: IBM Tivoli Monitoring for Databases: Sybase Server Agent V6.2.0 - Why IBM Tivoli Monitoring user needs 'sa_role' role and workaround - United States
+
+Text:
+5724B96SO TECHNOTE (FAQ)
+
+QUESTION
+ IBM Tivoli Monitoring for Databases: Sybase Server Agent V6.2.0 needs IBM Tivoli Monitoring user to have 'sa_role' role. This document explains the root cause and the workaround. 
+
+CAUSE
+The Sybase Server Agent V6.2.0 depends on the Sybase DBCC MONITOR function to collect data for the following attribute groups: 
+* Sybase Cache Detail (KOYCACD)
+* Sybase Cache Summary (KOYCACS)
+* Sybase Database Detail (KOYDBD)
+* Sybase Engine Detail (KOYENGD)
+* Sybase Engine Summary (KOYENGS)
+* Sybase Lock Detail (KOYLCKD)
+* Sybase Lock Summary (KOYLCKS)
+* Sybase Log Detail (KOYLOGD)
+* Sybase Log Summary (KOYLOGS)
+* Sybase Physical Device Detail (KOYSDEVD)
+* Sybase SQL Detail (KOYSQLD)
+* Sybase Task Detail (KOYTSKD)
+
+In the previous version of Sybase ASE, Sybase ASE requires the user to have the 'sa_role' role to execute the DBCC MONITOR function. 
+
+You can create a user without granting the sa_role role to it, and execute the DBCC MONITOR command with the user:
+
+1> dbcc monitor("select","all","on") 
+2> go
+You must have any of the following role(s) to execute this command/procedure: 'sa_role' . Please contact a user with the appropriate role for help. 
+
+This limitation is from Sybase ASE, not from the agent.
+
+
+ANSWER
+Because the 'sa_role' role is critical and many customers are concerned about it, Sybase Case 11573580 was opened for this problem. Sybase said that they will propose a fix for this issue and will allow DBCC MONITOR to be executed by non-sa_role users after being granted permission to execute it. 
+
+
+In Sybase ASE 15.0.3 ESD #4, Sybase ASE provides a solution, Bug ID:172714 
+Description: New feature request to make DBCC MONITOR a grantable command.
+
+If you are using ASE 15.0.3 ESD #4 or above, you can grant the IBM Tivoli Monitoring user permission for the DBCC MONITOR command instead of granting the IBM Tivoli Monitoring user the 'sa_role' role. For example:
+
+1> grant dbcc monitor to tivoli
+2> go
+
+You also need to grant the IBM Tivoli Monitoring user the 'oper_role' role; otherwise, the agent reports an error when executing 'dump tran tempdb with truncate_only' command. For example:
+
+1> exec sp_role "grant", oper_role, tivoli
+2> go
+
+You also need to add IBM Tivoli Monitoring user into database which Tivoli Monitoring user had no access before; otherwise it will have "ESQ0060E (002603) The server encountered an error connecting to database <databasename>" error in agent collector log. It will also affect data monitoring for 'Allocated Size In KB', 'Index Size In KB', 'Unallocated Size In KB', and 'Used Size In KB' attributes in 'Database Detail' attribute group. Please run below steps on each database which Tivoli Monitoring user had no access.
+1> use <database>
+2> go
+1> sp_adduser tivoli,tivoli
+2> go 
+...
+
+Note: Change tivoli to the real IBM Tivoli Monitoring user that you use.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ KOY

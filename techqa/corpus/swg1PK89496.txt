@@ -1,0 +1,142 @@
+Title: IBM PK89496: The online help should state that Deploy Portlet should not be m ixed with Run On Server for the Portlet Project - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Application Developer for WebSphere Software, Version 7.5.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24024367]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Product:
+   Rational Application Developer 7.5.2
+   Rational Software Architect for WebSphere 7.5.2
+   Problem description:
+   The following Chapter of the Product Help and InfoCenter:
+   http://publib.boulder.ibm.com/infocenter/radhelp/v7r5/topic/com.
+   ibm.etools.portal.doc/topics/tpublishportlet.html [http://publib.boulder.ibm.com/infocenter/radhelp/v7r5/topic/com.ibm.etools.portal.doc/topics/tpublishportlet.html]
+   should explain that there are three (not two) ways of deploying
+   a Portlet Project:
+   Export
+   Deploy
+   Run On Server
+   It should add a link to a page that explains what exactly Run On
+    Server does, compared to Deploy Portlet.
+   It should clarify that the two approaches should not be mixed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  1. Help should explain that there are three (not two) ways
+   of deploying a Portlet Project: Export, Deploy, and Run On
+   Server. Run on Server method was not avaible.
+   2. Help should have a page that explains what exactly Run On
+   Server does and
+   3. Help should clarify that the two approaches should not be
+   mixed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  1. Documenated three ways of deploying a Portlet Project:
+   Export, Deploy, and Run On Server. Added the missing Run on
+   Server method.
+   2. Added a new page that explains what exactly Run On Server
+   does.
+   3. And added a note stating that the Depolyment and Run on
+   Server publishing methods are different from each other.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK89496
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-22
+   
+   
+ * CLOSED DATE
+   2009-09-25
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSN
+   UP

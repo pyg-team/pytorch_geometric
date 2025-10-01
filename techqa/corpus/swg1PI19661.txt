@@ -1,0 +1,228 @@
+Title: IBM PI19661: An incorrect package name is used for hung threads. The package name com.ibm.nws.ejs.ras.Tr is used instead of com.ibm.ejs.ras. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Hung threads in a WebSphere eXtreme Scale process display a pack
+   
+   3XMTHREADINFO      "Thread-7" J9VMThread:0x000000008522D600, j9t
+   3XMJAVALTHREAD            (java/lang/Thread getId:0xC, isDaemon:
+   3XMTHREADINFO1            (native thread ID:0x3834, native prior
+   3XMTHREADINFO2            (native stack address range from:0x000
+   3XMTHREADINFO3           Java callstack:
+   4XESTACKTRACE                at java/util/logging/LogManager$Log
+   4XESTACKTRACE                at java/util/logging/LogManager$Sys
+   4XESTACKTRACE                at java/util/logging/LogManager.dem
+   4XESTACKTRACE                at java/util/logging/Logger.demandL
+   4XESTACKTRACE                at java/util/logging/Logger.getLogg
+   4XESTACKTRACE                at com/ibm/nws/ejs/ras/Tr.register(
+   4XESTACKTRACE                at com/ibm/ws/objectgrid/io/objectp
+   4XESTACKTRACE                at java/lang/J9VMInternals.initiali
+   4XESTACKTRACE                at java/lang/J9VMInternals.initiali
+   4XESTACKTRACE                at com/ibm/ws/objectgrid/io/XsByteB
+   4XESTACKTRACE                at com/ibm/ws/objectgrid/io/XsByteB
+   4XESTACKTRACE                at com/ibm/ws/objectgrid/io/XsByteB
+   4XESTACKTRACE                at com/ibm/ws/objectgrid/io/XsByteB
+   4XESTACKTRACE                at com/ibm/ws/objectgrid/plugins/io
+   4XESTACKTRACE                at com/ibm/ws/objectgrid/map/BaseMa
+   4XESTACKTRACE                at com/ibm/ws/objectgrid/ObjectGrid
+   4XESTACKTRACE                at com/ibm/ws/objectgrid/ObjectGrid
+   4XESTACKTRACE                at com/ibm/ws/objectgrid/config/Obj
+   4XESTACKTRACE                at com/ibm/ws/objectgrid/config/Obj
+   4XESTACKTRACE                at com/ibm/ws/objectgrid/config/Obj
+   4XESTACKTRACE                at com/ibm/ws/objectgrid/ObjectGrid
+   4XESTACKTRACE                at com/ibm/ws/objectgrid/ObjectGrid
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  WebSphere eXtreme Scale users.              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Threads are displayed in a thread dump  *
+   *                      listing the eXtreme Scale class,        *
+   *                      com/ibm/nws/ejs/ras/Tr or               *
+   *                      com.ibm.nws.ejs.ras.Tr.                 *
+   ****************************************************************
+   * RECOMMENDATION:  Apply the interim fix.                      *
+   ****************************************************************
+   The wrong logging package was included in some WebSphere eXtreme
+   Scale classes. Logging still functions; however, the preferred
+   logging package is com/ibm/ejs/ras/Tr (no nws).
+   Example of incorrect package usage:
+   3XMTHREADINFO      "Thread-7" J9VMThread:0x000000008522D600,
+   j9thread_t:0x0000000085228F30,
+   java/lang/Thread:0x000003FFE0094B98, state:B, prio=5
+   3XMJAVALTHREAD            (java/lang/Thread getId:0xC,
+   isDaemon:true)
+   3XMTHREADINFO1            (native thread ID:0x3834, native
+   priority:0x5, native policy:UNKNOWN)
+   3XMTHREADINFO2            (native stack address range
+   from:0x000003FFF5F2F000, to:0x000003FFF602F000, size:0x100000)
+   3XMTHREADINFO3           Java callstack:
+   4XESTACKTRACE                at
+   java/util/logging/LogManager$LoggerContext.addLocalLogger(LogMan
+   ager.java:860(Compiled Code))
+   4XESTACKTRACE                at
+   java/util/logging/LogManager$SystemLoggerContext.demandLogger(Lo
+   gManager.java:1050(Compiled Code))
+   4XESTACKTRACE                at
+   java/util/logging/LogManager.demandSystemLogger(LogManager.java:
+   985(Compiled Code))
+   4XESTACKTRACE                at
+   java/util/logging/Logger.demandLogger(Logger.java:525)
+   4XESTACKTRACE                at
+   java/util/logging/Logger.getLogger(Logger.java:410)
+   4XESTACKTRACE                at
+   com/ibm/nws/ejs/ras/Tr.register(Tr.java:61)
+   4XESTACKTRACE                at
+   com/ibm/ws/objectgrid/io/objectpool/TwoTierObjectPool.<clinit>
+   (TwoTierObjectPool.java:92)
+   4XESTACKTRACE                at
+   java/lang/J9VMInternals.initializeImpl(Native Method)
+   4XESTACKTRACE                at
+   java/lang/J9VMInternals.initialize(J9VMInternals.java:200(Compil
+   ed Code))
+   4XESTACKTRACE                at
+   com/ibm/ws/objectgrid/io/XsByteBufferPool.<init>
+   (XsByteBufferPool.java:133)
+   4XESTACKTRACE                at
+   com/ibm/ws/objectgrid/io/XsByteBufferManagerImpl.initializePools
+   (XsByteBufferManagerImpl.java:694)
+   4XESTACKTRACE                at
+   com/ibm/ws/objectgrid/io/XsByteBufferManagerImpl.<init>
+   (XsByteBufferManagerImpl.java:480)
+   4XESTACKTRACE                at
+   com/ibm/ws/objectgrid/io/XsByteBufferManagerImpl.getInstance(XsB
+   yteBufferManagerImpl.java:401)
+   4XESTACKTRACE                at
+   com/ibm/ws/objectgrid/plugins/io/SerializerAccessorImpl.<init>
+   (SerializerAccessorImpl.java:74)
+   4XESTACKTRACE                at
+   com/ibm/ws/objectgrid/map/BaseMap.<init>(BaseMap.java:1043)
+   4XESTACKTRACE                at
+   com/ibm/ws/objectgrid/ObjectGridImpl.createNewMap(ObjectGridImpl
+   .java:1640)
+   4XESTACKTRACE                at
+   com/ibm/ws/objectgrid/ObjectGridImpl.defineTemplateMap(ObjectGri
+   dImpl.java:1684)
+   4XESTACKTRACE                at
+   com/ibm/ws/objectgrid/config/ObjectGridConfigurationImpl.complet
+   eInitialization(ObjectGridConfigurationImpl.java:1073)
+   4XESTACKTRACE                at
+   com/ibm/ws/objectgrid/config/ObjectGridConfigurationImpl.getClus
+   teredObjectGrid(ObjectGridConfigurationImpl.java:581)
+   4XESTACKTRACE                at
+   com/ibm/ws/objectgrid/config/ObjectGridConfigurationImpl.getClus
+   teredObjectGrid(ObjectGridConfigurationImpl.java:556)
+   4XESTACKTRACE                at
+   com/ibm/ws/objectgrid/ObjectGridManagerImpl.getObjectGrid(Object
+   GridManagerImpl.java:1657)
+   4XESTACKTRACE                at
+   com/ibm/ws/objectgrid/ObjectGridManagerImpl.getObjectGrid(Object
+   GridManagerImpl.java:1519)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The package for the Tr logger is now correct.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI19661
+   
+   
+ * REPORTED COMPONENT NAME
+   WS EXTREME SCAL
+   
+   
+ * REPORTED COMPONENT ID
+   5724X6702
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-09
+   
+   
+ * CLOSED DATE
+   2014-07-29
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS EXTREME SCAL
+   
+   
+ * FIXED COMPONENT ID
+   5724X6702
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

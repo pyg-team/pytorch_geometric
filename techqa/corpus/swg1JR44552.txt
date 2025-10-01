@@ -1,0 +1,135 @@
+Title: IBM JR44552: JNDI ERROR THROWN WHEN SERVER STARTED AFTER MIGRATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  JNDI error thrown when server started after migration
+   
+   Error -
+   
+   [10/12/12 14:59:23:880 NZDT] 00000000 DetectDatabas E
+   
+   com.ibm.bpmcommon.upgrade.database.DetectDatabaseUpgrade start
+   Context:
+   BPMCell/clusters/Support, name: jdbc/TeamWorksDB: First
+   component in
+   name
+   TeamWorksDB not found.
+   [10/12/12 14:59:23:887 NZDT] 00000000 FfdcProvider  W
+   com.ibm.ws.ffdc.impl.FfdcProvider logIncident FFDC1003I: FFDC
+   Incident
+   emitted
+   on
+   /appl/ibm/websphere/bpmps/profiles/BPM/logs/ffdc/SupportMember01
+   _1683058
+   1_12.10.12_14.59.23.8837220737257910478791.txt
+    com.ibm.bpmcommon.upgrade.database.DetectDatabaseUpgrade.start
+   100
+   
+    from ffdc
+    javax.naming.NameNotFoundException:
+   Context:
+   BPMCell/clusters/AppTarget, name: jdbc/PDWDB: First component in
+   name
+   PDWDB
+   
+   
+   Similar errors can be found in all the clusters trying to access
+   BPM related data sources which are configured in other cluster
+   scopes.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is a duplicate of JR44551 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR44551]
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR44552
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-25
+   
+   
+ * CLOSED DATE
+   2013-02-20
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

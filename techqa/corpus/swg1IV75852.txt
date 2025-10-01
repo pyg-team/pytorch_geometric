@@ -1,0 +1,147 @@
+Title: IBM IV75852: DATA POWER DATA COLLECTOR MAY STOP COMMUNICATING WITH DATA POWER APPLIANCE - United States
+
+Text:
+  READMES ARE AVAILABLE
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 7 README 7.2.0.1-TIV-ITCAMSOA-IF0007 [http://www-01.ibm.com/support/docview.wss?uid=isg400002451]
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 9 README 7.2.0.1-TIV-ITCAMSOA-IF0009 [http://www-01.ibm.com/support/docview.wss?uid=isg400002627]
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 12 README 7.2.0.1-TIV-ITCAMSOA-IF0012 [http://www-01.ibm.com/support/docview.wss?uid=isg400003852]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description :
+   Data Power Data Collector requests may hang whilst connecting
+    or  reading from Data Power.
+    HTTP connections to the Data Power don't currently have a
+    connect or read time out.
+    An read or write requests operation on a connection will block,
+    indefinitely, whilst waiting for a response.
+    This might mean that the WSM Buffer Completed Records may reach
+    the maximum size and cease to grow.
+    Any other Data Power Data Collections will continue to operate
+    as they are independent and run in different threads.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of the Data Power Data Collector on
+   * all platforms.
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Data Power Data Collector requests may
+   * hang whilst connecting or  reading from Data Power. HTTP
+   * connections to the Data Power don't currently have a connect
+   * or read time out. Any read or write operations on a
+   * connection will block indefinitely, whilst waiting for a
+   * response.
+   *
+   * Interim Fix 7 fixes this by adding a read timeout to the Data
+   * Power Data Collector. Is a session is not established in this
+   * time frame an exception is raised and it retries in the next
+   * poll interval. The default read timeout is 10 seconds.
+   ****************************************************************
+   * RECOMMENDATION: Apply IFix 7 when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Apply the IFix when it is available.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   | interim fix | 7.2.0.1-TIV-ITCAMSOA-IF0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV75852
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * REPORTED COMPONENT ID
+   5724SOA00
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-08-07
+   
+   
+ * CLOSED DATE
+   2015-11-13
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * FIXED COMPONENT ID
+   5724SOA00
+   
+   
+
+APPLICABLE COMPONENT LEVELS

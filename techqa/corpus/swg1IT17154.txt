@@ -1,0 +1,286 @@
+Title: IBM IT17154: Java client fails to connect to z/OS with exception 'AMQ6047: conversion not supported' in a non-IBM Java runtime - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When an MQ V8.0 or V9.0 Java client running in a non-IBM Java
+   Runtime Environment tries to connect to a queue manager on z/OS,
+   the connection attempt fails with an exception indicating that
+   data conversion to the queue manager's CCSID (e.g. CCSID 924) is
+   not supported:
+   
+   com.ibm.msg.client.jms.DetailedJMSException: JMSWMQ0018: Failed
+   to connect to queue manager 'QM1' with connection mode 'Client'
+   and host name 'localhost(1914)'.
+   Check the queue manager is started and if running in client
+   mode, check there is a listener running. Please see the linked
+   exception for more information.
+   	at
+   com.ibm.msg.client.wmq.common.internal.Reason.reasonToException(
+   Reason.java:595)
+   	at
+   com.ibm.msg.client.wmq.common.internal.Reason.createException(Re
+   ason.java:215)
+   	at
+   com.ibm.msg.client.wmq.internal.WMQConnection.<init>(WMQConnecti
+   on.java:412)
+   	at
+   com.ibm.msg.client.wmq.factories.WMQConnectionFactory.createV7Pr
+   oviderConnection(WMQConnectionFactory.java:8475)
+   	at
+   com.ibm.msg.client.wmq.factories.WMQConnectionFactory.createProv
+   iderConnection(WMQConnectionFactory.java:7814)
+   	at
+   com.ibm.msg.client.jms.admin.JmsConnectionFactoryImpl._createCon
+   nection(JmsConnectionFactoryImpl.java:299)
+   	at
+   com.ibm.msg.client.jms.admin.JmsConnectionFactoryImpl.createConn
+   ection(JmsConnectionFactoryImpl.java:236)
+   	at
+   com.ibm.mq.jms.MQConnectionFactory.createCommonConnection(MQConn
+   ectionFactory.java:6024)
+   	at
+   com.ibm.mq.jms.MQConnectionFactory.createConnection(MQConnection
+   Factory.java:6049)
+   Caused by: com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ call
+   failed with compcode '2' ('MQCC_FAILED') reason '2195'
+   ('MQRC_UNEXPECTED_ERROR').
+   	at
+   com.ibm.msg.client.wmq.common.internal.Reason.createException(Re
+   ason.java:203)
+   	... 8 more
+   Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2195;AMQ9204:
+   Connection to host 'localhost(1914)' rejected.
+   [1=com.ibm.mq.jmqi.JmqiException[CC=2;RC=2195;AMQ6047:
+   Conversion not supported.
+   [1=924,5=???]],3=localhost1914),5=RemoteConnection.initSess]
+   	at
+   com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:
+   2282)
+   	at
+   com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:
+   1294)
+   	at
+   com.ibm.mq.ese.jmqi.InterceptedJmqiImpl.jmqiConnect(InterceptedJ
+   mqiImpl.java:376)
+   	at
+   com.ibm.mq.ese.jmqi.ESEJMQI.jmqiConnect(ESEJMQI.java:560)
+   	at
+   com.ibm.msg.client.wmq.internal.WMQConnection.<init>(WMQConnecti
+   on.java:345)
+   	... 7 more
+   Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2195;AMQ6047:
+   Conversion not supported. [1=924,5=???]
+   	at
+   com.ibm.mq.jmqi.remote.impl.RemoteConnection.initSess(RemoteConn
+   ection.java:1285)
+   	at
+   com.ibm.mq.jmqi.remote.impl.RemoteConnection.connect(RemoteConne
+   ction.java:866)
+   	at
+   com.ibm.mq.jmqi.remote.impl.RemoteConnectionSpecification.getSes
+   sionFromNewConnection(RemoteConnectionSpecification.java:409)
+   	at
+   com.ibm.mq.jmqi.remote.impl.RemoteConnectionSpecification.getSes
+   sion(RemoteConnectionSpecification.java:305)
+   	at
+   com.ibm.mq.jmqi.remote.impl.RemoteConnectionPool.getSession(Remo
+   teConnectionPool.java:146)
+   	at
+   com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:
+   1730)
+   	... 11 more
+   Caused by: java.io.UnsupportedEncodingException: 924
+   	at
+   com.ibm.mq.jmqi.remote.impl.RemoteConnection.initSess(RemoteConn
+   ection.java:1270)
+   	... 16 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use an IBM Java Runtime that has broader support for EBCDIC
+   CCSIDs.  Ensure the Java Runtime in use supports the CCSID
+   configured on the queue manager.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects all users of the:
+   
+     - IBM MQ V8 classes for JMS
+     - IBM MQ V8 classes for Java
+     - IBM MQ V8 JCA Resource Adapter
+   
+     - IBM MQ V9 classes for JMS
+     - IBM MQ V9 classes for Java
+     - IBM MQ V9 JCA Resource Adapter
+   
+   who are connecting to queue managers that use a coded character
+   set identifier (CCSID) that cannot be mapped to a Java codepage
+   supported by the Java Runtime in which the application is
+   running.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When an MQ classes for JMS or classes for Java application
+   connects to a queue manager, a negotiation takes place to
+   determine the CCSID used to encode the TSH flow communication
+   between the client and queue manager.  The MQ classes for JMS
+   and MQ classes for Java attempt to encode the data in queue
+   manager's native CCSID.   Once the initial negotiation response
+   from the queue manager has been received, the MQ classes for JMS
+   or MQ classes for Java will attempt to map the CCSID used by the
+   queue manager into a Java "java.nio.charset.Charset", that can
+   then be used to interpret the TSH flows received from the queue
+   manager and encode the TSH flows sent to the queue manager.
+   
+   If the CCSID used by the queue manager cannot be mapped to a
+   Java Charset that is known to the Java Runtime Environment, for
+   example if the queue manager is using the EBCDIC CCSID 924 and
+   the application is running within an Oracle JRE that does not
+   support this CCSID, then the MQ classes for JMS and MQ classes
+   for Java were intended re-negotiate the CCSID to be used by
+   requesting that the queue manager does character conversion into
+   a CCSID which the Java Runtime Environment does understand, such
+   as CCSID 819.
+   
+   From MQ V8.0.0.1, the re-negotiation was not attempted by the MQ
+   classes for JMS or MQ classes for Java.  Instead, an exception
+   was thrown to the application and the connection attempt failed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The IBM MQ V8 and V9 classes for JMS and classes for Java have
+   been updated such that if they are unable to map the queue
+   manager's CCSID to a codepage supported by the Java Runtime
+   environment, they will attempt to re-negotiate the CCSID used
+   for the TSH flows into a CCSID which is understood by the Java
+   Runtime Environment, returning the behaviour back to that used
+   prior to MQ 8.0.0.1.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.7
+   v9.0 CD    9.0.2
+   v9.0 LTS   9.0.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT17154
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-21
+   
+   
+ * CLOSED DATE
+   2016-12-16
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

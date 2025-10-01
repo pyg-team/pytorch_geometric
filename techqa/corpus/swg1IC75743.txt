@@ -1,0 +1,142 @@
+Title: IBM IC75743: SSLENCRYPTIONTYPE OF IMSCONNECT CONFIGURABLE SERVICE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Documentation(an60170_) on IMSConnect configurable service
+   says the following to set the property SSLEncryptionType to
+   'strong' .
+   
+   +++++++
+   To enable Strong encryption, you must alter your Java virtual
+   machine (JVM) policy files to refer to unrestricted versions.
+   For more information about how to alter your JVM policy files,
+   and for policy file downloads, see the developerWorks article
+   about Java security.
+   ++++++
+   
+   This is no longer a restriction and users can set the property
+   SSLEncryptionType to 'strong' without modifying anything else.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of WebSphere Message Broker using the IMSRequest Node.
+   
+   Platforms Affected:
+   All Platforms
+   ****************************************************************
+   PROBLEM SUMMARY:
+   IMSConnect Configurable service has a property named
+   SSLEncryptionType which the user can set when they want to
+   enable SSL for their IMSRequest nodes communication.  The value
+   set for SSLEncryptionType decides the cipher suites that the
+   SSL handshake will use. The documentation(an60170_) says that in
+   order to set SSLEncryptionType to 'strong', the user must alter
+   the Java virtual machine (JVM) policy files as suggested below:
+   
+   +++++++
+   To enable Strong encryption, you must alter your Java virtual
+   machine (JVM) policy files to refer to unrestricted versions.
+   For more information about how to alter your JVM policy files,
+   and for policy file downloads, see the developerWorks article
+   about Java security.
+   ++++++
+   
+   This is no longer a restriction and needs to be removed from
+   the documentation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere Message Broker InfoCenter topic an60170_ has been
+   updated to remove the restriction from the documentation.
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC75743
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB MESSAGE BRO
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0510
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-12
+   
+   
+ * CLOSED DATE
+   2011-04-28
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

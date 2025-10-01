@@ -1,0 +1,43 @@
+Title: IBM Starting the IBM WebSphere Test Environment (WTE) v6.1 in debug mode within IBM Rational Application Developer (RAD) fails with BeanCreationException and GenericSignatureFormatError exceptions - United States
+
+Text:
+Debug; WTE 6.1; Spring; BeanCreationException; GenericSignatureFormatError; Bugzilla; 207186; 1289491 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running Junits tests in conjunction with the Spring framework, starting the IBM® WebSphere® Test Environment (WTE) v6.1 in debug mode within IBM® Rational® Application Developer (RAD) fails with BeanCreationException and GenericSignatureFormatError exceptions.
+
+This technote explains how these exceptions can be prevented. 
+
+SYMPTOM
+Here is an example of the exception that gets raised: 
+
+ * 
+ * 
+ * 
+ * Exception caught while initializing context org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'valueListDao' defined in ServletContext resource [/WEB-INF/context/applicationContext.xml]: Initialization of bean failed;nested exception is java.lang.reflect.GenericSignatureFormatError Caused by:java.lang.reflect.GenericSignatureFormatError
+ * 
+
+
+CAUSE
+The cause of the problem is a defect in IBM Java™ Virtual Machine (JVM) versions prior to v5.0.0 SR6, as detailed in the Bugzilla links in the Related information section.
+
+
+
+RESOLVING THE PROBLEM
+ To resolve this error, update the WTE 6.1 with fixpack 13 or above (see the links in the Related information) and the related Java™ SDK 1.5.0 SR6 using the associated v6.1 Maintenance Download Wizard from the related link. 
+
+ 
+
+
+
+
+RELATED INFORMATION
+#Bugzilla 207186 [https://bugs.eclipse.org/bugs/show_bug.cgi?id=207186]
+WebSphere fixpacks [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Debugging Applications Windows 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4 All Editions

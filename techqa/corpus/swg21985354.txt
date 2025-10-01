@@ -1,0 +1,64 @@
+Title: IBM Custom Cognos reports fail under Oracle 12c, with ORA-01792 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading an OpenPages install to 7.1, 7.2 or 7.3, and migrating the database to Oracle 12c, large reports may start to fail with the following error:
+UDA-SQL-0107 A general exception has occurred during the operation "prepare".
+ORA-01792: maximum number of columns in a table or view is 1000 
+
+CAUSE
+Oracle has imposed new limitations in version 12c on certain SQL syntax. Oracle 11g would allow these statements without error.
+
+RESOLVING THE PROBLEM
+To work around this limitation, you must alter the connection session parameters in the Cognos OpenPages DataSource. Refer to technote #1622684 (http://www.ibm.com/support/docview.wss?uid=swg21622684 [http://www.ibm.com/support/docview.wss?uid=swg21622684])
+
+
+Use this in place of the "Open session commands" XML:
+<commandBlock> 
+<commands>
+<sqlCommand> 
+<sql>begin OP_SESSION_MGR.SET_ACTOR_ID_PRIVATE 
+(#$account.parameters.openPagesUserId#); end;</sql> 
+</sqlCommand>
+<sqlCommand>
+<sql> alter session set "_fix_control"='17376322:OFF'</sql> 
+</sqlCommand>
+</commands> 
+</commandBlock> 
+
+ 
+
+If performance becomes unacceptably slow, then you may need to further modify the session commands like this:
+<commandBlock> 
+<commands>
+<sqlCommand> 
+<sql>begin OP_SESSION_MGR.SET_ACTOR_ID_PRIVATE 
+(#$account.parameters.openPagesUserId#); end;</sql> 
+</sqlCommand>
+<sqlCommand>
+<sql> alter session set "_fix_control"='17376322:OFF'</sql> 
+</sqlCommand>
+<sqlCommand> 
+<sql> alter session set optimizer_features_enable = '11.2.0.4';</sql> 
+</sqlCommand>
+</commands> 
+</commandBlock>
+
+Update for version 7.3:
+The standard command block has changed, so the new result will look like this:
+<commandBlock><commands><sqlCommand>
+<sql>begin OP_SESSION_MGR.SET_ACTOR_ID_PRIVATE (#$account.parameters.openPagesUserId#); 
+OP_CRYPT_MGR.SET_ENCRYPTION_PARAMS (#$account.parameters.openPagesEncryptKey#,#$account.parameters.openPagesEncryptAlgorithm#,#$account.parameters.openPagesEncryptPrefix#); end;</sql>
+</sqlCommand>
+<sqlCommand>
+<sql> alter session set "_fix_control"='17376322:OFF'</sql> 
+</sqlCommand>
+<sqlCommand> 
+<sql> alter session set optimizer_features_enable = '11.2.0.4';</sql> 
+</sqlCommand>
+</commands></commandBlock>
+
+RELATED INFORMATION
+ Technote #1622684 [http://www.ibm.com/support/docview.wss?uid=swg21622684]

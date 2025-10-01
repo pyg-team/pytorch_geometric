@@ -1,0 +1,39 @@
+Title: IBM Cognos 10.2.2 CM failover not working and entire hang-up when stop one of the dispatcher - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CM failover does not work in the way that session is not shared, RMI/JMX does not work and as soon as Active CM is down and CM switch to Standby a logon prompt happen.
+
+Second thing is the entire system hang-up when one of the dispatcher stop in the way the network interface will be disabled to simulate a hardware crash. 
+
+SYMPTOM
+Logon prompt during CM failover, RMI error in pogo log when cognos start, hang-up of entire system
+
+
+CAUSE
+Cognos need to start and run on first IP address of primary network interface otherwise get in trouble where RMI/JMX ports cannot be bind and CM failover does not work in terms of session sharing.
+If AIX TCP settings/timeouts are set too high Cognos hang-up for a while if one dispatcher crash in the way no longer reachable/pingable
+
+ENVIRONMENT
+Cognos 10.2.2 FP2 on AIX 6 or 7, distributed install with 2 CM and multiple Dispatcher on multiple AIX physical system or LPAR
+
+DIAGNOSING THE PROBLEM
+CM Failover:
+Look at pogo log during start of Cognos, if you see an error like "
+[gnos.pdc.core.ehcache.CacheManagerProvider] Timer-14: CacheManager
+created but replication has been disabled: Problem starting listener
+for RMICachePeer //<hostname>:<port>/CAM_Grid.PassportMap. Initial cause
+was non-JRMP server at remote endpoint" then RMO cannot start hence CM Failover session sharing does not work.
+Cognos hang-up:
+Stop one of the many dispatcher and entire Cognos stuck for a few minutes, navigation is slow, open Cognos Administration is slow, click on System and see a sand clock forever or blank page after a few minutes
+
+RESOLVING THE PROBLEM
+CM Failover: Check the IP configuration of the system, on AIX it is "ifconfig -a", see if Cognos uses the first IP of the primary NIC and if not reconfigure Cognos
+Hang-up when one Dispatcher is down: 
+check the following AIX OS TCP settings (command is no -a) and see if the values are set as follows, these are the values recommened by Websphere and these values even improve the Cognos environment:
+TCP_TIMEWAIT set to 15 seconds
+TCP_KEEPIDLE set to 5 minutes
+TCP_KEEPINTVL set to 5 seconds
+TCP_KEEPINIT set to 20 seconds

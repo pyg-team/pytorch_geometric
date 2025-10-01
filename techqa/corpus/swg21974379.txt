@@ -1,0 +1,75 @@
+Title: IBM High CPU Noticed After Patching to IBM Sterling B2b Integrator 5.2.6.0 - United States
+
+Text:
+5260; High CPU TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After patching IBM Sterling B2b Integrator (ISBI) to version 5260, high CPU was noticed on the application server in which ISBI is installed on. 
+
+SYMPTOM
+Sustained CPU spike, of the noapp process. In this case the CPU was spiking 30-40% higher than noted in 525. 
+
+On Linux platforms this is captured with the "top" command. 
+
+Using "top -H" (show threads) the offending thread within the noapp JVM was found to be a perimeter dispatcher thread
+
+3XMTHREADINFO "Dispatcher" J9VMThread:0x00000000C1E87B00, j9thread_t:0x000000018384C580, java/lang/Thread:0x000000004814BED8, state:R, prio=5
+3XMJAVALTHREAD (java/lang/Thread getId:0x169, isDaemon:false)
+3XMTHREADINFO1 (native thread ID:0x49F0E1, native priority:0x5, native policy:UNKNOWN, vmstate:CW, vm thread flags:0x00000001)
+3XMCPUTIME CPU usage total: 343.139513000 secs, user: 93.042105000 secs, system: 250.097408000 secs
+3XMHEAPALLOC Heap bytes allocated since last GC cycle=30243608 (0x1CD7B18)
+3XMTHREADINFO3 Java callstack:
+4XESTACKTRACE at java/lang/Thread.sleep(Native Method)
+4XESTACKTRACE at java/lang/Thread.sleep(Thread.java:922(Compiled Code))
+4XESTACKTRACE at com/sterlingcommerce/perimeter/dispatcher/nio/NioDispatcher.block(NioDispatcher.java:147(Compiled Code))
+4XESTACKTRACE at com/sterlingcommerce/perimeter/dispatcher/AbstractDispatcher.doRun(AbstractDispatcher.java:425(Compiled Code))
+4XESTACKTRACE at com/sterlingcommerce/perimeter/dispatcher/AbstractDispatcher$2.run(AbstractDispatcher.java:175)
+4XESTACKTRACE at java/lang/Thread.run(Thread.java:798)
+
+
+
+
+CAUSE
+5260 introduced a new parameter into perimeter.properties:
+
+perimeter.niodispatcher=true
+
+Toggling this parameter to false, drops the CPU back to normal levels
+
+ENVIRONMENT
+Can occur on all Platforms (Windows, Unix, Linux, IBMi) once on ISBI version 5260
+
+DIAGNOSING THE PROBLEM
+The process varies from platform to platform for monitoring high CPU. 
+
+For Linux "top -H" was used to correlate CPU usage to a particular thread within the JVM, following this process:
+
+
+
+
+
+Correlating CPU usage from top output to a particular thread in the JVM [http://www-01.ibm.com/support/docview.wss?uid=swg21158192]
+
+For IBMi:
+MustGather: Java Virtual Machine High CPU Issues: How to Collect Data for the IBM Technology for Java VM [http://www-01.ibm.com/support/docview.wss?uid=nas8N1012570]
+
+AIX:
+tprof command [https://www-01.ibm.com/support/knowledgecenter/SSYKE2_7.0.0/com.ibm.java.aix.71.doc/diag/problem_determination/aix_perf_bottleneck_cpu.html]
+
+
+Windows:
+
+A method to correlate a particular thread within a JVM to the CPU is not known. However, monitoring Task Manager and some Windows "Sysinternals [https://technet.microsoft.com/en-us/sysinternals/bb545021.aspx]" tools can be used to help diagnose CPU issues.
+
+
+
+RESOLVING THE PROBLEM
+Issue is fixed in 52601. 
+
+Patching to 5261 will resolve the issue by reverting the perimeter property (perimeter.niodispatcher=true) to false
+
+Workaround in 5260 is adding the following to customer_overrides.properties
+
+perimeter.perimeter.niodispatcher=false
+
+Please note this is different than the high CPU usage caused by the jetty "btpools [http://www-01.ibm.com/support/docview.wss?uid=swg21695739]"

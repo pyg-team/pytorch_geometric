@@ -1,0 +1,65 @@
+Title: IBM Collecting Data: ITCAM for Applications - United States
+
+Text:
+5724B97SOIN; 5724V09ORIN; 5724B96OOIN; 5724B96DOIN; 5724B96SOIN; 5724B98D0IN; 5724V09STIN; 5724B96DoIN; 5724B97SOTR; 5724V09ORTR; 5724B96OOTR; 5724B96DOTR; 5724B96SOTR; 5724B98D0TR; 5724V09STTR; must gather; mustgather; 5724B96DOMGX; MustGatherReadFirstDocument; CSILandingPage; SupportLandingPage TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ For every problem, collecting data can aid in problem determination and save time resolving issues.
+Gathering this data before calling IBM support helps understand the problem and provides data for analysis. 
+
+RESOLVING THE PROBLEM
+ 
+
+ If your problem is related to one of these product components, click on the agent name and read the related material for assistance. 
+
+Each of these items provides a link to the Collecting Data instructions for the set of agents included in this package
+
+
+TAB NAVIGATION
+ * ITCAM for Applications [http://www.ibm.com/support/docview.wss?uid=swg21568133]
+ * DB2 ud [http://www.ibm.com/support/docview.wss?uid=swg21569123]
+ * DataPower bn [http://www.ibm.com/support/docview.wss?uid=swg21568133]
+ * HTTP ht [ http://www.ibm.com/support/docview.wss?uid=swg21568133]
+ * J2EE yj [http://www.ibm.com/support/docview.wss?&uid=swg21321514]
+ * Lotus Domino gb [ http://www.ibm.com/support/docview.wss?uid=swg21569304]
+ * Lotus Sametime s1 [http://www.ibm.com/support/docview.wss?uid=swg21569306]
+ * Oracle or [http://www.ibm.com/support/docview.wss?uid=swg21568862]
+ * Extended agent for Oracle rz [http://www.ibm.com/support/docview.wss?uid=swg21568279]
+ * PeopleSoft Enterprise Application Domain Agent p8 [http://www.ibm.com/support/docview.wss?uid=swg21568133]
+ * PeopleSoft Enterprise Process Scheduler Agent p9 [http://www.ibm.com/support/docview.wss?uid=swg21568133]
+ * SAP sa [http://www.ibm.com/support/docview.wss?uid=swg21569308]
+ * Siebel ub [http://www.ibm.com/support/docview.wss?uid=swg21568133]
+ * SOA d4 [http://www.ibm.com/support/docview.wss?uid=swg21407069]
+ * Sybase oy [http://www.ibm.com/support/docview.wss?uid=swg21569130]
+ * VMWare VI vm [ http://www.ibm.com/support/docview.wss?uid=swg21568133]
+ * WebSphere Applications yn [ http://www.ibm.com/support/docview.wss?uid=swg21443621]
+ * WebSphere Message Broker Monitoring Agent qi [http://www.ibm.com/support/docview.wss?uid=swg21686466]
+ * WebSphere MQ Configuration Agent mc [http://www.ibm.com/support/docview.wss?uid=swg21686466]
+ * WebSphere MQ Monitoring Agent mq [http://www.ibm.com/support/docview.wss?uid=swg21686466]
+ * WebSphere MQ Monitoring Agent File Transfer m6 [http://www.ibm.com/support/docview.wss?uid=swg21686466]
+
+Additional References
+
+ 
+
+Monitoring Community [https://www.ibm.com/developerworks/community/wikis/home?/wiki/Tivoli%20Monitoring/page/Home]
+
+Document Central [http://www.ibm.com/support/knowledgecenter/SSDKXQ_6.3.1/com.ibm.itcamms.doc_6.3.1/welcome_msapps631.html]
+
+Support Portal [http://www.ibm.com/support/electronicsupport/]
+
+Fix Central [http://www.ibm.com/support/fixcentral/]
+
+[/support/docview.wss?uid=swg21568133&amp;aid=1] Do you need additional information for an agent? Connect with experts in the SmartCloud Monitoring Community [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Monitoring/page/Home]. Search the [http://www.ibm.com/developerworks/wikis/display/maximo/Maximo+Asset+Management]blogs [https://www.ibm.com/developerworks/community/blogs/home/tags/itm?lang=en] and the forum [https://www.ibm.com/developerworks/community/forums/html/category?id=33333333-0000-0000-0000-000000000507]. Watch videos at IBM Education Assistant [http://www.ibm.com/software/info/education/assistant/index.shtml]or Tivoli Media Gallery [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Composite%20Application%20Manager/page/Media%20Gallery%20for%20ITCAM%20for%20Applications]. [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Composite%20Application%20Manager/page/ITCAM%20for%20Applications] Do you need more information about SmartCloud products? The [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Composite%20Application%20Manager/page/ITCAM%20for%20Applications]Information Center [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcama.doc_7.2.1%2Fwelcome_apps721.html] provides a broader range of software documentation. Documentation Central provides easy access to the information you need for each available release of ITCAM. Have you used the IBM Support Portal to find what you need?IBM Support Portal [http://www.ibm.com/support/electronicsupport/] helps you customize the IBM support pages to find the information you need. Do you want to find a fix?FixCentral [http://www.ibm.com/support/fixcentral/] is the IBM repository for updates to be applied to the agents listed above. If you are directed to apply a fix or you believe your agent is not at the current level, visit FixCentral for the available updates. [/support/docview.wss?uid=swg21568133&amp;aid=2]
+
+RELATED INFORMATION
+[ITCAM for Transactions [http://www.ibm.com/support/docview.wss?uid=swg21551421]
+ITCAM for SOA [http://www.ibm.com/support/docview.wss?uid=swg21422031]
+SmartCloud APM ITCAM for Applications documentation [http://pic.dhe.ibm.com/infocenter/tivihelp/v63r1/index.jsp?topic=%2Fcom.ibm.itcama.doc_7.2%2Fwelcome_itcamfapps72.html]
+Gateway to APM Resources [http://www.ibm.com/support/docview.wss?uid=swg21646900]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ itcam4apps

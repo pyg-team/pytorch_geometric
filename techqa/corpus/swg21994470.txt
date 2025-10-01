@@ -1,0 +1,72 @@
+Title: IBM Where can I get information about acquiring IBM SPSS software and licensing IBM SPSS products? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I have questions or a problem with acquiring IBM SPSS software and licensing IBM SPSS products? Where can I go for more information? 
+
+ANSWER
+Where and how do I download and start using my IBM SPSS Software? [http://www.ibm.com/software/analytics/spss/support/get_spss.html]
+How can I access my SPSS software downloads through IBM Passport Advantage online? [http://www.ibm.com/software/passportadvantage/PassportAdvantageOnlinevideos.html]
+
+How do I get assistance with my software download problem? [http://www.ibm.com/support/docview.wss?uid=swg21981178]
+
+How do I get my activation key (authorization code)? 
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  I do not have access to the License Key Center. [http://www.ibm.com/support/docview.wss?uid=swg21980071] 
+   
+   I do have access to the License Key Center. [http://www.ibm.com/support/docview.wss?uid=swg21980065] 
+
+
+I need additional information about using the License Key Center: 
+ * Self-help tutorials 
+
+ * Self-help video instruction
+
+
+Frequently Asked General Questions about IBM SPSS product licensing 
+ * How do I transfer software and license from one machine to another?
+ * 
+ * 
+ * How do I create an SPSS authorization code as stand-alone versus an add-on module?
+ * 
+ * 
+ * What is the difference between an authorization code and a license code?
+ * 
+ * 
+ * What is a 'lock code' and where can I find it?
+ * 
+ * 
+ * How do I change the Primary and/or the Technical Contact?
+ * 
+ * 
+ * Is my authorization code good for any operating system?
+
+
+I have a question/issue with applying/using an authorization or license code 
+
+How do I activate my desktop SPSS Statistics product? [http://www.ibm.com/support/docview.wss?uid=swg21991408] 
+
+How do I install an additional IBM SPSS Statistics module or function to an existing Statistics product installation? [http://www.ibm.com/support/docview.wss?uid=swg21985980] 
+
+What are the steps to add an authorization code to License Manager on Linux, Solaris or AIX operating systems? [http://www.ibm.com/support/docview.wss?uid=swg21702183] 
+
+What can I do to fix a message with 'authorization failed' and 'you are not allowed to generate any more new licenses'? [http://www.ibm.com/support/docview.wss?uid=swg21480566] 
+
+What can I do about a message with 'authorization failed' and 'authorization code entered is not for this product/version'? [http://www.ibm.com/support/docview.wss?uid=swg21486143] 
+
+Why am I receiving a message 'You do not have the correct administrator privileges to license this product' when I try to license my SPSS Statistics product? [http://www.ibm.com/support/docview.wss?uid=swg21966637] 
+
+Why am I receiving a message with 'Error Code 201' and ' License generation failed'? [http://www.ibm.com/support/docview.wss?uid=swg21486099] 
+
+Why am I receiving 'Authorization failed the server was unable to establish communication with the data base'? [http://www.ibm.com/support/docview.wss?uid=swg21482869] 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Modeler Not Applicable Business Analytics SPSS SamplePower Not Applicable Business Analytics SPSS Text Analytics for Surveys Not Applicable Business Analytics SPSS AnswerTree Not Applicable Business Analytics SPSS Visualization Designer Not Applicable

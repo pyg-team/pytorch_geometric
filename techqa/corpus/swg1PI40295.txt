@@ -1,0 +1,187 @@
+Title: IBM PI40295: COM.HP.HPL.JENA.SHARED.CANNOTENCODECHARACTEREXCEPTION WHEN IMPORTING CSV CONTAINING CONTROL CHARACTERS (WI 97082) - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Collaborative Lifecycle Management Interim Fix 1 for 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24040306]
+Rational DOORS Next Generation Interim Fix 3 for 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24040966]
+Collaborative Lifecycle Management Interim Fix 5 for 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24041368]
+Collaborative Lifecycle Management Interim Fix 6 for 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24041709]
+Rational DOORS Next Generation Interim Fix 6 for 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24041710]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CSV Import fails with the following error when attempting to
+   import data containing control characters (ie - line feed,
+   escape, etc..).  When attempting to import to a module, the
+   import seems to fail silently
+   
+   Steps to Reproduce:
+   
+   1)  Attempt to import the attached CSV (see work item for
+   attachment).  Try the normal path of importing it with the
+   defaults, then again with importing in to a module
+   
+   Expected Results:
+   
+   The CSV is imported without errors (or perhaps warnings about
+   the invalid characters)
+   
+   Actual Results:
+   
+   The UI shows the following error, but only in the case you use
+   the default import path.  In the case of importing in to a
+   module, there is no error and you have to rely on the error in
+   the server log.
+   
+   ID CRRRW7571E  You might not have permission to import an
+   artifact type that is in the file, or the file might not meet
+   the requirements to be imported. For example, one or more rows
+   might contain a type that is not in the type system. Update the
+   file, the project type system, your user permissions, or all. To
+   learn more about the CSV format and importing CSV files, see the
+   product documentation.
+   Errors were received while importing the CSV file:
+   
+   Validation Errors:
+   Row Number: 2
+   Error Message: CRRRS4212E The server encountered an exception :
+   Error serializing model
+   Row Number: 4
+   Error Message: CRRRS4212E The server encountered an exception :
+   Error serializing model
+   
+   Server log:
+   java.lang.RuntimeException: Error serializing model
+     Caused by:
+   com.hp.hpl.jena.shared.CannotEncodeCharacterException: cannot
+   encode (char)<char> in context XML
+       at
+   com.hp.hpl.jena.rdf.model.impl.Util.substituteEntitiesInElementC
+   ontent(Util.java:175)
+       at
+   com.hp.hpl.jena.xmloutput.impl.Unparser.wValueString(Unparser.ja
+   va:559)
+   
+   Refer to the following defect work item for details:
+   
+   https://jazz.net/jazz03/resource/itemName/com.ibm.team.workitem. [https://jazz.net/jazz03/resource/itemName/com.ibm.team.workitem.]
+   WorkItem/97082
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users/environments affected                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * CSV Import fails with an error when attempting to import     *
+   * data containing control characters (ie - line feed, escape,  *
+   * etc).  When attempting to import to a module, the import     *
+   * fails silently.                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is fixed in the Rational DOORS Next Generation 6.0.1
+   release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI40295
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DOORS NG
+   
+   
+ * REPORTED COMPONENT ID
+   5724W87NG
+   
+   
+ * REPORTED RELEASE
+   502
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-01
+   
+   
+ * CLOSED DATE
+   2015-12-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DOORS NG
+   
+   
+ * FIXED COMPONENT ID
+   5724W87NG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R502 PSN
+   UP

@@ -1,0 +1,258 @@
+Title: IBM IV62606: HTTPS support added for the "tacmd tepslogin" command. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 3 (6.3.0-TIV-ITM-FP0003) [http://www-01.ibm.com/support/docview.wss?uid=swg24036775]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Add HTTPS support for the "tacmd tepslogin" command.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  HTTPS support added for the "tacmd tepslogin" command.
+   
+   In order for this APAR to be properly implemented in your
+   environment, a new environment variable and new command options
+   have been added.  For proper certificate handling, the portal
+   server certificate also needs to be installed to the Java CA
+   store on all systems from which "tacmd tepslogin" will be run.
+   See the "Install Actions" section of the APAR conclusion for
+   more details.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Install Actions:
+   
+   Certificate preparation:
+   ------------------------
+   To enable HTTPS connection you need to first extract the portal
+   server certificate and then install it into the Java CA store on
+   the system(s) you intend run tacmd tepslogin (and subsequent
+   portal server related client commands).
+   
+   You can extract the portal server certificate one of 2 ways
+   using either GSKit commands or openssl.
+   
+   Using GSKIT:
+   
+   If the portal server system running on UNIX or Linux:
+   
+      (Assume IBM Tivoli Monitoring installation directory is
+      located at /opt/IBM/ITM in the examples below)
+   
+       export CANDLEHOME=/opt/IBM/ITM
+       $CANDLEHOME/bin/GSKitcmd.sh gsk8capicmd -cert -extract -db
+         $CANDLEHOME/keyfiles/keyfile.kdb -stashed -label
+         IBM_Tivoli_Monitoring_Certificate -target /tmp/itm_key.pub
+         -format ascii
+   
+   If the portal server is running on Windows:
+   
+      %CANDLE_HOME%\InstallITM\gskitcmd gsk8capicmd.exe -cert
+      -extract -db C:\IBM\ITM\keyfiles\keyfile.kdb -stashed -label
+      IBM_Tivoli_Monitoring_Certificate -target c:\itm_key.pub
+      -format ascii
+   
+   
+   Using openssl:
+   
+   On UNIX or Linux:
+   
+   openssl s_client -connect <TEPS hostname>:<TEPS port> -showcerts
+   </dev/null 2>/dev/null |sed -ne "/-----BEGIN
+   CERTIFICATE-----/,/-----END CERTIFICATE-----/p"
+   >/tmp/itm_key.pub
+   
+   
+   Now import the certificate to the Java CA store on the client
+   system(s) that you run "itacmd tepslogin" from
+   
+   If your client system is different from your portal server
+   system then copy /tmp/itm_key.pub (c:\itm_key.pub for Windows)
+   to that system.
+   
+   To import on UNIX/Linux:
+   
+   Set CANDLEHOME to your ITM installation directory then run
+   ikeycmd from your CANDLEHOME JRE.  For example (assuming
+   /opt/IBM/ITM is
+   ITM installation directory):
+   
+   export CANDLEHOME=/opt/IBM/ITM
+   $($CANDLEHOME/bin/CandleGetJavaHome)/bin/ikeycmd -cert -add
+   -file /tmp/itm_key.pub -db
+   $($CANDLEHOME/bin/CandleGetJavaHome)/lib/security/cacerts -pw
+   changeit -type jks -format ascii
+   
+   To import on Windows from a command prompt:
+   
+   for /F %i in ('%CANDLE_HOME%\InstallITM\GetJavaHome.bat') do set
+   JAVAHOME=%i
+   %JAVAHOME%\bin\ikeycmd -cert -add -file c:\itm_key.pub -db
+   %JAVAHOME%\lib\security\cacerts -pw changeit -type jks -format
+   ascii
+   
+   
+   Command setup and usage:
+   ------------------------
+   A new environment variable (KUI_JAVA_PARMS) has been introduced
+   which must be set on the system where the "tacmd tepslogin"
+   command is issued to utilize HTTPS. This can be set in the
+   kuienv file (on Windows) or in profile of the user (on Linux and
+   UNIX):
+   
+   KUI_JAVA_PARMS=-Dtep.sslcontext.protocol=TLSv1.2
+   
+   
+   Command usage:
+   -------------
+   To utilize HTTPS with the "tacmd tepslogin" command, the server
+   name must include "https".  For example:
+   
+   tacmd tepslogin -s https://localhost:15201 -u ..... -p .....
+   
+   If the port number is not specified, the HTTPS default 15201
+   will be used.
+   
+   
+   A new command line option has been added to ignore invalid
+   certificate.
+   tacmd tepsLogin
+   {-s|--server} TEPS_HOSTNAME
+   {-u|--username} USERNAME
+   {-p|--password} TEPS_PASSWORD
+   [{-t|--timeout} TIMEOUT ]
+   [{-i|--ignore} IGNORE ]
+   ....
+   where:
+   ....
+   -i|--ignore
+   Ignore invalid certificate.
+   
+   If the user specifies the -i option during tepslogin:
+   
+   - tacmd tepslogin will try to connect even if the certificate is
+     invalid
+   - the ignore option will be stored in the security file together
+     with the other information to connect to TEPS
+   - the subsequent tacmd portal server commands will automatically
+     use the -i option  (without  the need to specify it for each
+     command).
+     Important: all tacmd commands toward portal server have been
+     modified to read the value for ignore option from the stored
+     security file
+   
+   The new  -i|--ignore option has been added to "tacmd tepslogin"
+   command only.
+   In order to ignore an invalid certificate when running the other
+   tacmd commands, the only way is to run tacmd tepslogin with
+   ignore option and then run the command itself; example:
+   
+   tacmd tepslogin -s ... -u ... -p .... -i
+   tacmd listusers
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+      | fix pack | 6.3.0-TIV-ITM-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV62606
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-17
+   
+   
+ * CLOSED DATE
+   2014-08-08
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEMS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

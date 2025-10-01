@@ -1,0 +1,209 @@
+Title: IBM PI28605: PUBLISHING SERVLET "DOGET" CHANGE HANGS WLP, SYSTEM REPORTS CWWK E0405W - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using non-loose config and modifying a servlet doGet method
+   while the server is running results in the following warning
+   message in the console view and the tools publish hangs
+   because there is no message indicating that the application
+   was updated:
+   
+   [WARNING ] CWWKE0405W: An exception occurred while notifying
+   a monitor of the following file creations, modifications,
+   and deletions: [],
+   [C:\home\work\lwas\wlp\usr\servers\defaultServer\apps\WebPro
+   ject.war\WEB-INF\classes\test\Servlet1.class], []. The
+   monitor class is class
+   com.ibm.ws.artifact.file.internal.FileArtifactNotifier$FileA
+   rtifactMonitor. The exception message was:
+   C:\home\work\lwas\wlp\usr\servers\defaultServer\apps\WebProj
+   ect.war\WEB-INF\classes\test\Servlet1.class
+   c:\home\work\lwas\wlp\usr\servers\defaultServer\apps\WebProj
+   ect.war
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All Microsoft Windows users of IBM          *
+   *                  WebSphere Application Server Liberty        *
+   *                  Profile                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Publishing servlet change hangs WLP,    *
+   *                      system reports CWWKE0405W: An exception *
+   *                      occurred while notifying a monitor of   *
+   *                      the following file creations,           *
+   *                      modifications, and deletions            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Typical scenario: Using the WLP tools,
+   
+   1. Create a Liberty profile server in the tools
+   2. Edit the Liberty profileserver and uncheck the Run
+   applications directly from the workspace checkbox
+   3. Create a new dynamic web project (do not add to ear)
+   4. Create a servlet in the web project
+   5. Put something such as follows in the doGet for the servlet:
+       response.getWriter().println("Hello");
+   6. Run the servlet on the server
+   7. Now modify the servlet to something like
+       response.getWriter().println("Hello again");
+   
+   The publish hangs, and the server logs an error resembling the
+   following (though of course with different paths and
+   classnames)
+   
+       [WARNING ] CWWKE0405W: An exception occurred while notifying
+   a monitor of the following file creations, modifications, and
+   deletions:
+   [],[C:\home\work\lwas\wlp\usr\servers\defaultServer\apps\WebProj
+   ect.war\WEB-INF\classes\test\Servlet1.class], []. The monitor
+   class is class
+   com.ibm.ws.artifact.file.internal.FileArtifactNotifier$FileArtif
+   actMonitor. The exception message was:
+   C:\home\work\lwas\wlp\usr\servers\defaultServer\apps\WebProject.
+   war\WEB-INF\classes\test\Servlet1.class
+   c:\home\work\lwas\wlp\usr\servers\defaultServer\apps\WebProject.
+   war
+   
+   An ffdc logfile will also be generated, resembling:
+   
+       ------Start of DE processing------ = [4/29/13 15:44:56:883
+   EDT]
+       Exception = java.lang.IllegalStateException
+       Source =
+   com.ibm.ws.kernel.filemonitor.internal.MonitorHolder
+       probeid = 836
+       Stack Dump = java.lang.IllegalStateException:
+   C:\home\work\lwas\wlp\usr\servers\defaultServer\apps\WebProject.
+   war\WEB-INF\classes\test\Servlet1.class
+   c:\home\work\lwas\wlp\usr\servers\defaultServer\apps\WebProject.
+   war
+   	at
+   com.ibm.ws.artifact.file.internal.FileArtifactNotifier.convertAb
+   sToRelative(FileArtifactNotifier.java:443)
+           at ...
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This was caused by an error when monitoring for filename
+   changes. Specifically, the code was case-sensitive when matching
+   the drive letter, so on Microsoft Windows (or other case-
+   insensitive filesystems) it was confused when it was seeing both
+   "C:" and "c:". The filename comparison is fixed to prevent this
+   error.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 8.5.5.4.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Using uppercase for drive letters when notifying the monitor of
+   file changes would probably work around this.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI28605
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * REPORTED COMPONENT ID
+   5725L2900
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-10-29
+   
+   
+ * CLOSED DATE
+   2015-02-23
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * FIXED COMPONENT ID
+   5725L2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

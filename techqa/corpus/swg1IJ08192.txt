@@ -1,0 +1,163 @@
+Title: IBM IJ08192: CHANGE IN THE DEFAULT COLUMN VALUE IN CASE OF FRESHLY REGISTERED MACHINES - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There are newly installed machines, with no scan run so
+   far...hence I would not expect to see YES for Catalog scan
+   successful.
+   When I look at Reports > Computers and filter with no "Last Scan
+   Attempt", the resulting columns of "Catalog Scan Successful,
+   Software Tags Scan Successful, File System Scan Successful, and
+   Package Scan Successful all show "Yes", even though no scan has
+   been ran.
+   
+   ENV: BFI 9.2.12 ON WINDOWS
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   
+   * ERROR DESCRIPTION:
+   *
+   * There are newly installed machines, with no scan run so
+   *
+   * far...hence I would not expect to see YES for Catalog scan
+   *
+   * successful.
+   *
+   * When I look at Reports > Computers and filter with no "Last Sc
+   *
+   * Attempt", the resulting columns of "Catalog Scan Successful,
+   *
+   * Software Tags Scan Successful, File System Scan Successful, an
+   *
+   * Package Scan Successful all show "Yes", even though no scan ha
+   *
+   * been ran.
+   *
+   *
+   *
+   * ENV: BFI 9.2.12 ON WINDOWS
+   *
+   * **************************************************************
+   *
+   * EXPECTED RESULTS:
+   * The issue does not occure.
+   ****************************************************************
+   * RECOMMENDATION: Apply appropriate update when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+    | Update | BFI 9.2.13
+    | Update | ILMT 9.2.13
+   ****************************************************************
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ08192
+   
+   
+ * REPORTED COMPONENT NAME
+   IEM SW USE ANL
+   
+   
+ * REPORTED COMPONENT ID
+   5725F57MT
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-08-03
+   
+   
+ * CLOSED DATE
+   2018-08-13
+   
+   
+ * LAST MODIFIED DATE
+   2018-08-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IEM SW USE ANL
+   
+   
+ * FIXED COMPONENT ID
+   5725F57MT
+   
+   
+
+APPLICABLE COMPONENT LEVELS

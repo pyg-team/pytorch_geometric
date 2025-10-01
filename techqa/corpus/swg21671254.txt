@@ -1,0 +1,57 @@
+Title: IBM Patch codes not read with IBM Datacap Taskmaster Capture - United States
+
+Text:
+patch code; GetBarcode patchcode barcode TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempting to get patch code and other barcode types to be recognized using IBM Datacap Taskmaster results in no barcodes being found. 
+
+SYMPTOM
+The rrs logs show something similar to: 
+
+09:00:58.41 (0) t:32C p:51F8B8 Running barcode recognition for the entire page.
+09:00:58.57 (16) t:32C p:51F8B8 Attempting to read barcode of type(s) 'CODE 128,Patch Code,'
+09:00:58.57 (0) t:32C p:51F8B8 Confidence required (Datacap): 6
+09:00:58.57 (0) t:32C p:51F8B8 Confidence required (converted to Barcode Reader confidence range): 61
+09:00:58.353 (296) t:32C p:51F8B8 Recognition time: 0.296875
+09:00:58.353 (0) t:32C p:51F8B8 0 barcode(s) found.
+
+
+However, barcode recognition does work when only one type of barcode is selected. 
+
+When a page is configured to have both options chosen, the other barcode types are recognized, but the patch codes are not.
+
+
+CAUSE
+Barcode recognition uses an alternate recognition method to recognize patch codes that is only run if the only specified barcode type is Patch Code.
+
+
+RESOLVING THE PROBLEM
+To resolve the issue, do the following:
+
+
+First, locate the code for the barcode type: 
+
+ 1. Open Datacap Studio. 
+ 2. Go to the Zones tab. 
+ 3. Lock the DCO. 
+ 4. Select one of the DCO nodes. 
+ 5. Under the BAR/P tab, select the only the barcode type to be recognized. Do not select Patch Code. 
+ 6. Right click on the DCO node previously selected and click Manage variables. 
+ 7. Make a note of the value under the bp_tp variable.  * For Code 128, the value is 2048. 
+     * For Patch Code, the value is 524288.
+    
+    
+ 8. Save and unlock the DCO.
+    
+
+
+Next, add the following actions to the GetBarcode ruleset:  1. Go to the GetBarcode ruleset and add the following actions:  * SaveAsCurrentObjVariable () and assign it bp_tp,2048 
+     * call GetBarcodeBP() 
+     * SaveAsCurrentObjVariable () and assign it bp_tp,524288 
+     * call GetBarcodeBP()
+    
+    
+ 2. Repeat for any other barcode types that need to be detected.
+
+[/support/docview.wss?uid=swg21671254&aid=1] [/support/docview.wss?uid=swg21671254&aid=1]

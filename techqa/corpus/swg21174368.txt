@@ -1,0 +1,25 @@
+Title: IBM Out of Office agent does not run returning error: Cannot find external name:
+TIMEGETFROMITEM - United States
+
+Text:
+out of office agent; ooo; error; cannot find external name; welcome back message; is not delivered; is not sent; notifications TECHNOTE (FAQ)
+
+QUESTION
+A user set up an Out of Office agent correctly, however, no out of office notifications are sent and the welcome back message is also not sent. The server's log noted the following error: 
+
+AMgr: Agent ('OutOfOffice | OutOfOffice' in 'mail\jdoe.nsf') error message: Cannot find external name: TIMEGETFROMITEM
+
+
+ANSWER
+Replacing the Design of the database should fix the problem. If the issue still persists use the Designer Client to locate and delete the script library called TimeUtilities in the user's mail file and then refresh the mail file design. The script libraries are found in the listing Shared Code -> Script Libraries.
+
+In cases where simply deleting the TimeUtilities script library does not resolve the error, the following steps may be necessary:
+1. Using a Domino Designer client, delete these three design elements from the user's mail database: 
+
+ * the TimeUtilities script library 
+ * the Common script library 
+ * the user's Out of office agent 
+
+2. Delete the user's OutOfOffice Profile document via a LotusScript agent (as in technote # 1088892 [http://www.ibm.com/support/docview.wss?rs=203&uid=swg21088892]) 
+3. File -> Database -> Refresh design, to add all the script libraries and agent back to the mail file. 
+4. Re-enable the Out of office agent.

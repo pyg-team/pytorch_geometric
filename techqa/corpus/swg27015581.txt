@@ -1,0 +1,44 @@
+Title: IBM Detailed system requirements for IBM Forms - United States
+
+Text:
+dsrdoc; ibm forms PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The following detailed system requirments are available for the supported versions of IBM Forms. 
+
+CONTENT
+IBM Forms 
+
+Open the detailed system requirements to see complete descriptions of hardware requirements, supported operating systems, prerequisites and optional supported software.
+
+
+
+TAB NAVIGATION
+ * Version 8.2.1- selected tab,
+ * 8.2
+ * 8.1
+ * 8.0
+
+ * 
+ *   *  Forms Server [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=50A15C20106D11E58E7C5F10B0A7B6E3] Forms Viewer [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=073D1A00106E11E58E7C5F10B0A7B6E3] 
+   
+   
+
+
+ * 
+ *   *  Forms Designer [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1415393630766&osPlatforms=Windows&duComponentIds=D000&mandatoryCapIds=24%7C25&optionalCapIds=125%7C121%7C74] Forms Server [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1415393304255&osPlatforms=AIX%7CIBM%20i%7CLinux%7CMac%20OS%7CMobile%20OS%7CSolaris%7CWindows&duComponentIds=S001%7CS004%7CS002%7CS003&mandatoryCapIds=30%7C9%7C13%7C39%7C25%7C26&optionalCapIds=126%7C125%7C1%7C46%7C74%7C27] Forms Viewer [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1415393741321&osPlatforms=Windows&duComponentIds=D000&mandatoryCapIds=26&optionalCapIds=25%7C46%7C33] 
+   
+   
+
+ * 
+ *   *  Forms Server [http://www.ibm.com/support/docview.wss?uid=swg27041909] Forms Viewer [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1342452735477] 
+   
+   
+
+ * 
+ *   *  Forms Designer 8.0.1 [http://www.ibm.com/support/docview.wss?uid=swg27039075] Forms Server 8.0.1 [http://www.ibm.com/support/docview.wss?uid=swg27039073] Forms Viewer 8.0.1 [http://www.ibm.com/support/docview.wss?uid=swg27039074] 
+   
+   
+ * 
+ * 
+ *   *  Forms Designer 8.0.0.1 [http://www.ibm.com/support/docview.wss?uid=swg27036304] Forms Designer 8.0.0 [http://www.ibm.com/support/docview.wss?uid=swg27024201] Forms Server 8.0.0 [http://www.ibm.com/support/docview.wss?uid=swg27024231] (fix packs: 8.0.0.1, 8.0.0.2) Forms Viewer 8.0.0 [http://www.ibm.com/support/docview.wss?uid=swg27024232]

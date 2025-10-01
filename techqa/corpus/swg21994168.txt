@@ -1,0 +1,46 @@
+Title: IBM Security Bulletin: Vulnerability in nginx affects IBM StoredIQ (CVE-2016-4450) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ A denial of service vulnerability was disclosed on May 31, 2016 by nginx. Nginx is used by StoredIQ. StoredIQ has addressed the applicable CVE 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2016-4450 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-4450] 
+Description: nginx is vulnerable to a denial of service, caused by a NULL pointer dereference error in ngx_chain_to_iovec(). By sending a specially-crafted request, a remote attacker could exploit this vulnerability to cause the worker process to crash.
+CVSS Base Score: 5.300
+CVSS Temporal Score: https://exchange.xforce.ibmcloud.com/vulnerabilities/113746 [https://exchange.xforce.ibmcloud.com/vulnerabilities/113746] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+AFFECTED PRODUCTS AND VERSIONS
+Stored IQ v7.6.
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix StoredIQ 7.6 N/A Fix is available in 7.6.0 Fix Pack 9 on Fix Central. [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=Enterprise%2BContent%2BManagement&product=ibm/Information+Management/StoredIQ&release=All&platform=All&function=all] WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+http://nginx.org/en/security_advisories.html [http://nginx.org/en/security_advisories.html] 
+http://nginx.org/ [http://nginx.org/] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 10 July 2016: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

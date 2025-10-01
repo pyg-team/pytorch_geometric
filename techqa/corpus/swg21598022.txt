@@ -1,0 +1,35 @@
+Title: IBM xmllib->XPATH cannot find default namespace elements - United States
+
+Text:
+xmllib->XPATH; XPATH TECHNOTE (FAQ)
+
+QUESTION
+ When using XPATH with WebSphere® Transformation Extender, why do I get "xmllib->XPATH cannot find default namespace elements"? How can I resolve this message? 
+
+CAUSE
+According to the XPath FAQ located here: 
+http://xml.apache.org/xalan-j/faq.html#faq-N10207 [http://xml.apache.org/xalan-j/faq.html#faq-N10207]
+
+Trying to use a standard XPATH XML path on default namespaces does not work.
+
+
+
+ANSWER
+Trying to use a standard XPATH XML path on default namespaces does not work. 
+
+
+1. Avoid use of default namespaces.
+2. Use the "local-name()" construct. For example, do not use the following: 
+
+xmllib->XPATH(XMLIn, "//MSH.12/VID.1/text()", "/")
+
+Use this syntax instead: 
+
+xmllib->XPATH(XMLIn, "//*[local-name() = 'VID.1' and local-name(..) = 'MSH.12']", "/") 
+
+Both will return the same data, however the "local-name()" construct is not as efficient. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Mercator Ascential DataStage TX

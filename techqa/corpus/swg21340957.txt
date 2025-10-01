@@ -1,0 +1,54 @@
+Title: IBM Getting error when trying to call a couple of reports in an I-Frame - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While accessing more than one report via a HTML page using I-Frames several error messages appear.
+Sometimes all reports run without a problem, other times one or more reports result in error messages. 
+
+SYMPTOM
+
+
+
+
+>  
+System error [2] occurred when trying to open run time model file
+/websphere/Cognos/tw/e2e/reportnet/./bin/../data/cqe/RTModels/URLID1d1XMTkyOToxMTI2Mzg3Mjk4MTA3OjYzOTU1o1X1e20051i091i11T051l211l381j73
+2Z.rtm.
+
+
+
+
+
+
+
+>  
+Fehler beim Aufrufen von Content Store und der Anforderung von Informationen zur Identit?t.
+
+UT-DEF-0047
+Fehler: 2 aufgetreten beim ?ffnen der Laufzeit-Modelldatei: '/opt/cognos/c8/./bin/../data/cqe/RTModels/466392A3DABFCDA0//opt/cognos/c8/./bin/../data/cqe/RTModels/466392A3DABFCDA0
+
+RSV-BBP-0028
+Die sekund?re Anforderung ist fehlgeschlagen. Die angeforderte Sitzung ist nicht vorhanden, und die sekund?re Anforderung enth?lt nicht gen?gend Informationen zum Neuerstellen der Sitzung. Bitte wenden Sie sich an Ihren Administrator.
+
+
+CAUSE
+There will only be one cookie for every browser session, which will be sent through both I-Frames.
+This causes problems when trying to run more than one report with regards to our internal security components.
+
+RESOLVING THE PROBLEM
+
+
+Use portlets to execute more than one report in one window. Every portlet will create it's own cookie.
+
+When using one browser window to execute more than one report via I-Frames one or more reports can fail because of the usage of only one browser cookie. This causes problems with the internal authentication. If one of the reports gets in Async-mode the cookie will be sent and mix up things. As long as one report hits the Async-mode an error will be generated because of a mix-up of cookie entries.
+
+Why is it working sometimes?
+Because the reports do not get in Async-mode or the timing of the execution and the sending of the cookie avoids the problem. Steps:Access the portlets in Cognos Connection via "Tools"->"Portal Administration"
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Cognos Connection Business Analytics Cognos 8 Business Intelligence Framework Manager Business Analytics Cognos 8 Business Intelligence Report Studio 
+HISTORICAL NUMBER
+ 1026713

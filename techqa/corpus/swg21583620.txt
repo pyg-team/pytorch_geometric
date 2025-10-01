@@ -1,0 +1,45 @@
+Title: IBM Clarity Server - Error loading template: Invalid column name 'Relationship' - United States
+
+Text:
+Relationship; PO; UserDefault; invalid TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There is an error generated when loading a template that has Page Options even if the template validates correctly in Clarity Studio 
+
+SYMPTOM
+The error message: "Invalid column name 'Relationship' " is displayed after the template is opened before the Page Option dialog pops up.
+
+
+CAUSE
+There is an upgrade script called Upgrade.sql in the install package located in the \Server_7_2_0_269\Prerequisites\Database\Upgrade\SQL\7.0.1 folder that was not run on the database. 
+
+The following columns are missing from the Clarity relational database:
+
+
+ * From the PageOptionUserDefaults table - missing 'Relationship' column 
+ * From the ActivityTrackingLog table - missing 'ActionDetails' column
+
+ENVIRONMENT
+ 
+
+IBM Clarity Server 7.2 
+
+IBM Clarity Studio 7.x 
+
+SQL Server 2005/2008
+
+
+DIAGNOSING THE PROBLEM
+Load IBM Clarity 7.2 
+
+ *  Open a template that has Page Options set up Notice the error message that pops up: Invalid column name 'Relationship' 
+
+RESOLVING THE PROBLEM
+The script Upgrade.sql is a prerequisite for the upgrade process, running it will fix the issue (it is available in the install package). To run the script: 
+
+ *  Locate the Clarity database - check the configuration file located on the application server: install_drive:\Clarity Systems\ClarityServer\Web\bin\config.xml; Look for the default alias as this indicates the tag for the correct database and this is the one you need to apply the script to; Open Microsoft SQL Server Management Studio; Connect to the SQL server hosting the relational Clarity Database; Start a new query on the Clarity database; Open the \Server_7_2_0_269\Prerequisites\Database\Upgrade\SQL\7.0.1\Upgrade.sql file located in the install package; Add the statements to the query window and execute the statements; Make sure that they are executed without any errors and manually check that the PageOptionUserDefaults table has the Relationship column; After the column is added, restart the browser and load the template again, it should not generate the error anymore. 
+
+
+
+HISTORICAL NUMBER
+ 2815

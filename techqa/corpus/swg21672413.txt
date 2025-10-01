@@ -1,0 +1,50 @@
+Title: IBM Upgrading your Managing Server Database - United States
+
+Text:
+OCTIGATE; DB2; 10.5; 10.x; CAMADMSALL CAMADMSDB TECHNOTE (FAQ)
+
+QUESTION
+ How can you upgrade the DB2 system hosting the Octigate DB, from version 9.x to version 10.5? 
+
+ANSWER
+In general, if the initial DB2 version is lower than 9.7 (e.g. v9.1 or v9.5) then you first need to upgrade from current v9.x to v9.7. 
+
+Otherwise, you can upgrade the DB2 system directly from v9.7 to target version (v10.5). The process will preserve all the tables and is described in the DB2 Infocenter at this link [http://pic.dhe.ibm.com/infocenter/db2luw/v10r5/topic/com.ibm.db2.luw.qb.%0Aupgrade.doc/doc/c0011933.html]. 
+
+From the ITCAM point of view, please consider the following recommendations and best-practices. 
+
+Before upgrading DB2:
+
+
+ 1. Back up OCTIGATE database or export data from OCTIGATE tables 
+ 2. Save a copy of database management configurations as follows:
+    
+    Be DB2 instance user and issue the command:
+    
+    db2 get dbm cfg > dbm.cfg
+    (dbm.cfg is a text file, you can give any name)
+    
+ 3. Save a copy of OCTIGATE database settings:
+    
+    db2 get db cfg for octigate > db.cfg
+
+
+As for database settings, it is critical to check at least the following two, as they may affect MS/DB connection: 
+
+a) DB2 instance tcp/ip port 
+
+The value can be found in /etc/services file, the service name is defined in DB2 dbm cfg, for example: 
+
+TCP/IP Service name (SVCENAME) = db2c_db2inst1 
+
+b) DB2 authentication setting 
+
+It must be set to "server", as follows: 
+
+update dbm cfg using authentication server; 
+
+for example: 
+
+Database manager authentication (AUTHENTICATION) = SERVER 
+
+With regards to the other settings, please note that newer versions of DB2 has greatly improved its internal optimizer. A certain amount of tuning can rely on DB2 self tuning mechanisms introduced in newer 10.x release. So, you can start with default dbm and db configuration (except for the above two settings) and use the two saved configurations above only if really needed.

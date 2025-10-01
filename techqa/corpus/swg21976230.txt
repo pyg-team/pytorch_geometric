@@ -1,0 +1,31 @@
+Title: IBM Wire for opening a new page, does open the same page in DASH - United States
+
+Text:
+DASHL2; DASHL2CONF; wire ; multiple instance; page TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Wire definition does not behave as expected, opening always the same instance of a page, instead of another instance of a page when a different node in a table is selected. 
+
+SYMPTOM
+A wire is defined between a HUB page and a target page. When a node is selected from a table widget on the HUB page, the target page will opened due to the wire definition. 
+The target page has been defined as " Allow users to open multiple instances of this page", but if a second node is selected on the HUB page, the wire reloads the same/initially opened target page and only updates the content based on the new payload. It behaves like the target page had been defined as " Allow users to open only a single instance of this page", which is not the case. 
+
+
+CAUSE
+DASH is not honoring the switchPage flag in NewPortletEvents
+
+ENVIRONMENT
+DASH 3.1.2 and 3.1.2.1
+
+DIAGNOSING THE PROBLEM
+See symptom section. 
+
+RESOLVING THE PROBLEM
+Apply cumulative patch 4 to DASH 3.1.2.1
+
+
+
+
+
+Please see this link for further details: 
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/W8b1151be2b42_4819_998e_f7de7db7bfa2/page/Download%20Cumulative%20Patches%20-%20UI%20Services%20(DASH) [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/W8b1151be2b42_4819_998e_f7de7db7bfa2/page/Download%20Cumulative%20Patches%20-%20UI%20Services%20(DASH)]

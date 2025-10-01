@@ -1,0 +1,17 @@
+Title: IBM Action required for IBM MobileFirst Platform Quality Assurance for the GNU C library (glibc) vulnerability (CVE-2015-0235) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ IBM MobileFirst Platform Quality Assurance requires customer action for the GNU C library (glibc) vulnerability that has been referred to as “GHOST”. 
+
+CONTENT
+IBM MobileFirst Platform Quality Assurance ships with a Red Hat Enterprise Linux (RHEL) image that is vulnerable to the GNU C library (glibc) vulnerability (CVE-2015-0235).
+Remediation: 
+IBM strongly recommends you should contact Red Hat to obtain fixes and install fixes for Red Hat Enterprise Linux. IBM MobileFirst Platform Quality Assurance 6.3.0.1 will contain RHEL image with fixes.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Worklight Quality Assurance

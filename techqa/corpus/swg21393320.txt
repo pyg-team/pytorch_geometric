@@ -1,0 +1,112 @@
+Title: IBM Tivoli Common Reporting installation fails on AIX - United States
+
+Text:
+TCR; Tivoli Common Reporting; reporting; reporter TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM® Tivoli® Common Reporting installation program fails on some AIX platforms. The Deployment Engine (DE) component is not able to fully initialize which causes problems during the Tivoli Common Reporting server installation. A newer version of the DE component is required, and a manual clean up before restarting the installation program. 
+
+SYMPTOM
+When the installation program fails, review the installer log files. 
+
+The log.zip archive is created during the installation in the destination directory specified by the user:
+
+
+ * Default value for UNIX - /opt/IBM/tivoli/tip
+
+
+The archive file contains the following files: 
+ia/IA-TIPInstall-00.log and de/USER/de_trace.log. 
+
+Note: In case the archive file is not created, locate the following files in your system: 
+ * USER_HOME_DIR/IA-TIPInstall-00.log (information logged by the Tivoli Integrated Portal installer)
+ * de_trace.log (information logged by DE):  * for a root type installation 
+      /usr/ibm/common/acsi/logs/root/de_trace.log
+    * for a non-root type installation 
+      USER_HOME_DIR/.acsi_USER/logs/USER/de_trace.log, 
+      for example /home/users/tipadmin/.acsi_tipadmin/logs.de_trace.log
+   
+   
+
+
+
+The following errors are the symptoms of the installation problem on AIX: 
+
+de_trace.log 
+
+Caused by: com.ibm.ac.si.ap.action.ExternalCommandActionException: 
+ACUOSI0050E External command action failed with return code 139. 
+Invocation string: [/home/users/tipadmin/.acsi_tipadmin/bin/wscanhw, 
+-o, /tmp/collector8434.tmp, -c, 
+/home/users/tipadmin/.acsi_tipadmin/dat/config/scanconfig.xml]
+at com.ibm.ac.tp.basehost.ActionHandler.handlePhase(ActionHandler.java:233)
+... 35 more 
+
+
+IA-TIPInstall-00.log 
+
+Fri May 22 15:10:57.864 CEST 2009 : FINER : THROW 
+(from com.ibm.tivoli.tip.install.ia.COIWrapperAction.install)
+Caused by: com.ibm.tivoli.tip.install.ia.COIWrapperException: 
+COIEventType.ERROR reported
+at: com.ibm.tivoli.tip.install.COIWrapperWorkerThread$SimpleListener.
+eventOccurred(COIWrapperWorkerThread.java:156)
+at: com.ibm.ac.coi.impl.COIRuntimeImpl.notifyListener(COIRuntimeImpl.java:207)
+at: com.ibm.ac.coi.impl.COIRuntimeImpl.notifyListeners(COIRuntimeImpl.java:193)
+at: com.ibm.ac.coi.impl.MachinePlanImpl.process(MachinePlanImpl.java:596)
+at: com.ibm.ac.coi.impl.utils.MachinePlanRunner.run(MachinePlanRunner.java:44)
+at: java.lang.Thread.run(Thread.java:801)
+Caused by: com.ibm.ac.coi.api.exception.WrappedException: The ANT ant task failed. 
+BaseDir = /opt/IBM/tivoli/tip/_uninst/TIPInstall/plan/install/MachinePlan_localhost 
+AntFile = MachinePlan_localhost.xml
+at: com.ibm.ac.coi.impl.utils.AntHelper.ant(AntHelper.java:93)
+at: com.ibm.ac.coi.impl.MachinePlanImpl.process(MachinePlanImpl.java:577)
+at: com.ibm.ac.coi.impl.utils.MachinePlanRunner.run(MachinePlanRunner.java:44)
+at: java.lang.Thread.run(Thread.java:801)
+Caused by: The following error occurred while executing this line:
+/opt/IBM/tivoli/tip/_uninst/TIPInstall/plan/install/
+MachinePlan_localhost/MachinePlan_localhost.xml:185: 
+The following error occurred while executing this line:
+/opt/IBM/tivoli/tip/_uninst/TIPInstall/plan/install/
+MachinePlan_localhost/MachinePlan_localhost.xml:248: 
+The following error occurred while executing this line:
+/opt/IBM/tivoli/tip/_uninst/TIPInstall/plan/install/
+MachinePlan_localhost/MachinePlan_localhost.xml:482: 
+The following error occurred while executing this line:
+/opt/IBM/tivoli/tip/_uninst/TIPInstall/plan/install/
+MachinePlan_localhost/00001_IAGLOBAL_COI_STEP_eWAS/
+IAGLOBAL_COI_STEP_eWAS.xml:292: 
+java.io.FileNotFoundException: /opt/IBM/tivoli/tip/properties/
+TIPPortDef.properties (A file or directory in the path name does not exist.)
+at: org.apache.tools.ant.ProjectHelper.
+addLocationToBuildException(ProjectHelper.java:539)
+at: org.apache.tools.ant.taskdefs.Ant.execute(Ant.java:384)
+at: org.apache.tools.ant.Task.perform(Task.java:364)
+at: com.ibm.ac.coi.impl.utils.AntHelper.ant(AntHelper.java:88)
+at: com.ibm.ac.coi.impl.MachinePlanImpl.process(MachinePlanImpl.java:577)
+at: com.ibm.ac.coi.impl.utils.MachinePlanRunner.run(MachinePlanRunner.java:44)
+at: java.lang.Thread.run(Thread.java:801) 
+
+RESOLVING THE PROBLEM
+To fix the problem replace the Deployment Engine component in the IBM Tivoli Common Reporting installation media. A newer version of Deployment Engine (1.3.1.9) is available as an interim fix 3 for IBM Tivoli Common Reporting 1.2.0.1. Download the upgrade and follow the instructions to fix the IBM Tivoli Common Reporting installation program: 
+
+ 
+http://www.ibm.com/support/docview.wss?uid=swg24023685 [http://www.ibm.com/support/docview.wss?uid=swg24023685]
+
+Before you start the fixed installer, remove all the previously installed files. The procedure of manual uninstallation of TCR is described in a separate Technote - Manual uninstallation of IBM Tivoli Common Reporting 1.2:
+
+http://www.ibm.com/support/docview.wss?uid=swg21392921 [http://www.ibm.com/support/docview.wss?uid=swg21392921]
+
+After cleaning your environment, start the installation program again with the Deployment Engine upgraded.
+
+
+RELATED INFORMATION
+#1.2.0.1-TIV-TCR-IF0003 [http://www.ibm.com/support/docview.wss?uid=swg24023685]
+Manual uninstallation of TCR 1.2 [http://www.ibm.com/support/docview.wss?uid=swg21392921]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ TCR
+Tivoli Common Reporting

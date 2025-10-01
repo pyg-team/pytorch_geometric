@@ -1,0 +1,172 @@
+Title: IBM IZ50302: SAP ADMINISTRATORS DESKTOPS HANG EVERY 3-4 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS RETURNED (APAR CANNOT BE RESOLVED WITHOUT ADDITIONAL INFO FROM IBM OR CUSTOMER.)
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TAMESSO agent: SAP administrators desktops hang every 3-4
+   days Desktop computers used by SAP Administrators (that use more
+   than 6
+   SAPGUI windows opened in the same time and probably they leave
+   them
+   opened for a long time)  hangs up every 3-4 days.
+   When this event happens, they need to stop the desktop
+   unplugging the
+   AC power supply because it is not possible to reboot.
+   The operating system is hung.
+   They switched off the agent and the problem disappeared, so the
+   problem
+   seems related to the TAMESSO agent and SAP profile.
+   Everyday the customer reboot the systems where the problem
+   arises with
+   the agent on.
+   So, it is not related to a leak problem I think.
+   
+   Normal sap users does not open 20/25 saplogon windows ... so
+   they
+   haven't the problem
+   Steps to Duplicate:
+   See Problem Description -  after 3 or 4 days ... it is randomly
+   reproduced.
+   
+   
+   Desired Behavior:
+   This should not happen and TAM E-SSO needs to handle Multiple
+   SAP
+   windows
+   
+   
+   Environment:
+   4. Which version of the Product(s) do you have installed ?
+    >>> 8.0.0
+   
+   5. OS the IMS Server is running on (include service pack level)
+   ?
+   >>> Windows 2003 Server
+   
+   6. OS the AccessAgent is running on (include service pack level)
+   ?
+   >>> Windows 2000
+   
+   7. OS the AccessStudio is running on (include service pack
+   level) ?
+   
+   8. Which type of Enterprise Directory are you using (include
+   version),
+   >>> AD, yes.
+   
+   9. Which type of configuration is the AccessAgent running under
+   ?
+   >>> Personal Desktop
+   
+   10. Which Database are you using (include version), eg
+   
+   >>> MSSQL
+   
+   11. Does the problem occur on multiple machines ?
+   >>> Yes, it does.
+   
+   12. Does the problem occur on multiple operating systems ?
+   >>> Don't know
+   
+   13. Does the problem occur to more than one user ?
+   >>> Yes it does.
+   
+   14. Does the problem occur if an Administrator logs into this
+   machine ?
+   >>> no, it doesn't.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Waiting for over a month for dump from the customer
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ50302
+   
+   
+ * REPORTED COMPONENT NAME
+   SSO ACCESS AGEN
+   
+   
+ * REPORTED COMPONENT ID
+   5724V67AG
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED RET
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-04-29
+   
+   
+ * CLOSED DATE
+   2010-01-26
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

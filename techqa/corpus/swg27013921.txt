@@ -1,0 +1,31 @@
+Title: IBM Fix list for IBM Informix Client Software Development Kit 3.50.xC3 - United States
+
+Text:
+Fix list Fix list Fix list Fixlist Fixlists List of Updates List of Updates List of Updates list of defects list of defects list of defects FixListDocument FixListDocument maintenance refresh pack cumulative fix fix pack service pack 3.50 3.50.xC3 PRODUCT DOCUMENTATION
+
+ABSTRACT
+ IBM Informix Client Software Development Kit provides periodic fixes for release 3.50. The following list is the most recent report of fixes for customer-reported defects in Version 3.50.xC3. This report combines both Windows- and UNIX-specific defect fixes, and is more current than the defect information included in the product release. 
+
+CONTENT
+ 
+
+
+
+
+
+
+
+
+
+Fix Pack 3.50.xC3 Fix release date: 30 October 2008
+Last modified: 8 April 2014
+Status: Recommended
+
+[/support/docview.wss?uid=swg27013921&aid=1]Download information [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?&productid=Informix%20Client%20Software%20Development%20Kit&brandid=1]
+[http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?&productid=Informix%20Client%20Software%20Development%20Kit&brandid=1] Back to Top 
+
+
+NOTE: some detail links below have been disabled as they are not available. 
+APAR Description IC56242 EXECUTING A PROCEDURE WITH MULTISET PARAMETER FAILS WITH HY000 (-202 / 21000) ERROR IC56411 .NET/ODBC: CLIENT DOES NOT RECOGNIZE AN ERROR FROM INSERT INTO SMART LARGE OBJECT UNTIL ALL DATA IS TRANSFERRED TO THE SERVER IC56881 CLIENTSDK DOES NOT ACCEPT DATES IN TAIWAN MIN GUO YEAR 100 OR LATER WITHOUT DATE SEPARATORS IF DBDATE IS YYYMMDDC1 IC57163 LINKED STMT_TIMEOUT CHAIN COULD LEAD TO AN APPLICATION HANG IC57437 OUTOFMEMORYEXCEPTION WHEN RUNNING VB.NET CODE IC57452 OLEDB X64 DRIVER RETURNS ERROR MESSAGE IN UDL PROPERTY MANAGER IC57479 PROCESSING ON ANALYSIS SERVICES USING 64BIT OLEDB DRIVER FAILS IC57604 CONNECTION LIFETIME PROPERTY IN CONNECTION STRING NOT WORKING AS DOCUMENTED IC57697 MSDTC CAN GET INTO A DEADLOCK SITUATION WHEN LOCAL AND GLOBAL TRANSACTION ACQUIRE THE SAME MUTEX IC57698 CLIENTSDK: COMPILATION FAILS DUE TO MULTIPLE DECLARATIONS OF XID IC57731 SOME DLLS IN 3.50.TC1 SHOW WRONG THE FILE VERSION IC57778 CONNECTING TO AN ALIAS WITH CSM-PAM IMPLEMENTED RETURNS ERROR 5009 WITH IDS 10.00.XC8/ SDK 3.50.TCX IC57793 DATA FROM TEXT COLUMN TRUNCATED WHEN DB SET TO EN_US.UTF8 IC57861 -201 SYNTAX ERROR ON CALLING STORED PROCEDURE VIA OLEDB IC57944 SETNET/ILOGIN RETURNS ERROR 25555 WITH ER / HDR OVER A GROUP ENTRY IC58188 ERROR -200 IDENTIFIER IS TOO LONG WHEN USING A CURSOR WITH ODBC IC58268 SLOW PERFORMANCE NOTED WHEN SENDING SQL STATEMENTS PACKED IN ONE SINGLE STRING. IC58269 DOC FOR .NET PROVIDER IMPLIES THAT GETSCHEMA METHOD IS SUPPORTED, IN FACT IT IS NOT SUPPORTED. 
+
+Back to Top

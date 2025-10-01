@@ -1,0 +1,21 @@
+Title: IBM How to run the IBM FileNet Composite Platform Installation Tool (CPIT) from a failed task - United States
+
+Text:
+CPIT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Sometimes when try to install and configure the IBM FileNet P8 Platform by using CPIT, it is failed at some tasks. After identifying the issue on the specific task, it is suggested to clean up the system and re-run the CPIT to perform a new install, which is losting your time to setup the FileNet P8 platform. 
+
+DIAGNOSING THE PROBLEM
+Actually we can continue to run the CPIT from the failed task to only run the tasks that are not executed.
+
+RESOLVING THE PROBLEM
+To do this, we need to use the cpit.properties file that generated last time, refer to the detailed steps below: 
+
+1. Resolve your issue of the last failure occurred on CPIT specific task. 
+
+2. Remove the cpit.properties file from the cpit folder where you are running the 5.2.0-CPIT-WIN.exe and replace it with the cpit.properties from <Last_CPIT_Installed_Directory>\install-scripts. This will allow the install to start at the last failed step.
+
+NOTE: You can verify the cpit.properties file to verify which task is not executed, then modify the file to set the specific task to yes (That means you will not run the task at this time) 
+
+3. Run 5.2.0-CPIT-WIN again.

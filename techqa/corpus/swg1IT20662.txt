@@ -1,0 +1,189 @@
+Title: IBM IT20662: amqrmppa process terminates due to SIGSEGV in lpiSPICheckPrivileged function - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM MQ monitoring tool fails to connect to a queue manager with
+   2009  - MQRC_CONNECTION_BROKEN.
+   
+   There is also an FDC being cut against amqrmppa process as
+   follows:
+   
+   Probe Id          :- XC130003
+   Application Name  :- MQM
+   Component         :- xehExceptionHandler
+   Program Name      :- amqrmppa
+   Major Errorcode   :- STOP
+   Minor Errorcode   :- OK
+   Probe Type        :- HALT6109
+   Probe Severity    :- 1
+   Probe Description :- AMQ6109: An internal WebSphere MQ error has
+   occurred.
+   Arith1            :- 11 (0xb)
+   Comment1          :- SIGSEGV: address not mapped(0)
+   
+   MQM Function Stack
+   ccxResponder
+   rrxResponder
+   ccxReceiveThreadFn
+   cciProcessOne
+   cciProcessUserData
+   cciProcessAsyncRcv
+   rriServerAsyncRcv
+   rriMQIServerReceive
+   rriMQIServerCall
+   rriCheckUserBlocked
+   rsxIsUserAllowed
+   lpiSPICheckPrivileged
+   xcsFFST
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The FFST can be avoided by switching off MQ trace.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of of WebSphere MQ 7.5 on Solaris
+   x86-64 who have configured queue manager access controls using
+   Channel Authentication (CHLAUTH) rules of type BLOCKUSER and who
+   enable MQ trace using the strmqtrc command.
+   
+   
+   Platforms affected:
+   Solaris x86-64
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The problem occurred when MQ trace was started on the queue
+   manager and a client application was connected.  To trace the
+   connection the queue manager attempted to print a string whose
+   value was a 0 (null) pointer which resulted in a SIGSEGV and the
+   queue manager's amqrmppa process terminating.  The client
+   connection attempt was unsuccessful.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQ queue manager logic has been corrected to prevent a null
+   pointer access in this scenario.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.9
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT20662
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-05-18
+   
+   
+ * CLOSED DATE
+   2017-05-31
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7241
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

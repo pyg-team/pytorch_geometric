@@ -1,0 +1,150 @@
+Title: IBM IV16531: AGENT-SIDE EIF EMITTER CANNOT BIND TO A LOCAL INTERFACE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 2 (6.2.3-TIV-ITM-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24032429]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 4 (6.2.3-TIV-ITM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24034252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Autonomous Agents using private situations have EIF emitter
+   functionality for sending event information directly from the
+   Agent to an EIF receiver (OMNIbus for example). When using the
+   EIF emitter functionality, there was not a mechanism to bind to
+   a particular interface on a multi-honed machine.
+   In that configuration, it was possible that EIF events could not
+   be delivered because they were sent on a local network
+   interface that could not route to the destination server.
+   
+   The EIF emitter library was enhanced to add access to the
+   KDEB_INTERFACELIST environment variable, which sets the local IP
+   address interface.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Autonomous Agents using private situations have EIF emitter
+   functionality for sending event information directly from the
+   Agent to an EIF receiver (OMNIbus for example).  When using the
+   EIF emitter functionality, there was not a mechanism to bind to
+   a particular interface on a multi-honed machine.
+   In that configuration, it was possible that EIF events could not
+   be delivered because they were sent on a local network
+   interface that could not route to the destination server.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The EIF emitter library was enhanced to add access to the
+   KDEB_INTERFACELIST environment variable, which sets the local IP
+   address interface.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+      | fix pack | 6.2.3-TIV-ITM-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV16531
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMA
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04TE
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-29
+   
+   
+ * CLOSED DATE
+   2012-03-13
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEMA
+   
+   
+ * FIXED COMPONENT ID
+   5724C04TE
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP

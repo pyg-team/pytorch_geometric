@@ -1,0 +1,98 @@
+Title: IBM Potential native memory use in WebSphere Application Server thread pools - United States
+
+Text:
+NOOM step 1B ThreadLocal native memory TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The WebSphere Application Server thread pools can leak ThreadLocal objects when threads are destroyed (java.lang.ThreadLocal). ThreadLocal objects can have a significant native memory component, so you can see a native memory leak if there is a ThreadLocal leak. 
+
+SYMPTOM
+The process size for the application server will grow quite large. You might also see the following symptoms: 
+
+ * OutOfMemoryError’s thrown
+   
+   
+ * Malloc errors in the SystemOut.log file:
+   
+   JVMDBG001: malloc failed to allocate … 
+   
+ * Errors creating threads:
+   
+   Failed to fork OS thread 
+   Or 
+   cannot create anymore threads 
+
+
+CAUSE
+The WebSphere Application Server thread pools can leak ThreadLocal objects when thread pool threads are destroyed. ThreadLocal objects are Java™ heap objects, but they have a native memory component which is not released until the ThreadLocal object is garbage collected. Since the ThreadLocals of the destroyed threads are not always garbage collected, you end up with a leak of native components
+
+
+ENVIRONMENT
+WebSphere Application Server versions 7.0, 8.0, 8.5.5 and 9
+
+
+
+DIAGNOSING THE PROBLEM
+Check javacores for high index WebContainer threads, or default thread pool threads, anything over 300 is a potential leak:
+
+"WebContainer : 1003" (TID:0x37D62000
+"Default : 338" (TID:109934D0 
+
+"TCPChannel.DCS : 303" (TID:0x4D720000
+
+The number beside the thread name is the index, the number of threads that have been created for that thread pool.
+
+So, there have been 1004 WebContainer threads created in the first example (starts at 0). This does not mean that there are this many still alive, as most of them will have been destroyed. An index is never reused.
+
+
+RESOLVING THE PROBLEM
+Using a fixed size thread pool, will avoid thread pool shrinking, which will avoid threads from being destroyed. If they are not destroyed then no ThreadLocal objects will get left behind and the native memory leak should no longer occur.
+
+To set a thread pool to be fixed sized, set the minimum size to be the same as the maximum size. This will eliminate the thread pool from shrinking once it has reached its maximum size. Keep the maximum pool size the same as it was previously, as it is the maximum size which is the throttle for threads. Changing the max size, would be changing the performance of the application.
+
+Depending on which thread pool is leaking, you will need to change the pool size in the administrative console for that pool. The two most common threads pools are the WebContainer and the Default thread pool, and instructions for each are below. The TCPChannel.DCS thread pool is also one which may cause problems, but is not as common. 
+
+
+IBM support will be able to tell you which thread pool to set to a fixed size. You will also be fine in setting both the Default thread pool and the WebContainer thread pool to be fixed size pools, if you are not sure which one to change.
+
+Web container thread pool: 
+
+ 1. In the administrative console click Servers > Application Servers > server_name.
+    
+    
+ 2. Near the bottom of the page, open Additional Properties, Thread Pools.
+    
+    
+ 3. Click on WebContainer.
+    
+    
+ 4. Change the Minimum Size field to whatever the Maximum is set to, probably 50.
+    
+    
+ 5. Ensure that the "Allow thread allocation ?" checkbox is not checked.
+    
+    
+ 6. Click OK and then save the configuration.
+
+
+The application server will need to be restarted for the setting to take effect. 
+
+Default thread pool:  1. In the administrative console click Servers > Application Servers > server_name.
+    
+    
+ 2. Near the bottom of the page, open Additional Properties, Thread Pools.
+    
+    
+ 3. Click on Default.
+    
+    
+ 4. Change the Minimum Size field to whatever the Maximum is set to, probably 30.
+    
+    
+ 5. Ensure that the "Allow thread allocation ?" checkbox is not checked.
+    
+    
+ 6. Click OK and then save the configuration.
+
+
+The application server will need to be restarted for the setting to take effect.

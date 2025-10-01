@@ -1,0 +1,175 @@
+Title: IBM IZ63202: COMMUNICATION PROBLEM BETWEEN RECRM AND GBLRESRM, RECRM CANNOT VERIFY RESOURCE STATUS AFTER STARTUP .. NO AUTOMATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Support Engineer:  GBH
+   Change Team Eng:   EJ
+   
+   Environment:
+   Reported against v2.2.0.8, but the problem would be possible in
+   all versions/releases/fixpacks up to and including 3.1.0.4
+   
+   
+   Problem:
+   TSAMP does not start / stop the resource in automatic mode even
+   though conditions are met.
+   
+   The problem is a result of a communication issue between
+   RecoveryRM (that drives the automation decisions) and
+   the GblResRM (that controls the Application and ServiceIP
+   resources).
+   
+   From the trace we see, that the RecoveryRM cannot successfully
+   verify the resources after startup, because it cannot talk to
+   the GblResRM ... here is the message which is found for each
+   individual constituent in the trace:
+   
+   [00] 07/07/09 15:08:45.903231 T(4149912800)
+   _RCDQryClsPAttrResp::processResponse Error. error=0x4000a,
+   msg=2610-422 Cannot execute the command on node
+   node1.domain.com. The resource manager IBM.GblResRM
+   is not available.
+   
+   IBM.GblResRM is running and tracing. In this situation, the
+   resources can be listed using the commands 'lsrg' or 'lssam',
+   but the resources are still 'invalid' from the point of view of
+   the automation manager, and so the samdiag reports the resources
+   are not loaded, and thus will not be automated.
+   
+   In this situation, it is best to restart the RecoveryRM, so that
+   the communication can be established again from the beginning.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  In this situation, it is best to restart the RecoveryRM, so that
+   the communication can be established again from the beginning.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: System Automation for Multiplatforms 3.1
+   * users
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   * During startup of System Automation a communication problem
+   * may happen in very rare cases between the IBM.RecoveryRM and
+   * the IBM.GblResRM. As a result, the resources of System
+   * Automation can be listed with 'lssam', but there will be no
+   * automation (start), as the resources are still seen as invalid
+   * internally.
+   ****************************************************************
+   * RECOMMENDATION:
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The internal communication between the System Automation daemons
+   IBM.RecoveryRM and IBM.GblResRM has been modified to address
+   this issue.
+   .
+   The official fix is included in fix pack 5 of System
+   Automation for Multiplatforms 3.1.
+   .
+   Additional Search Keywords.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ63202
+   
+   
+ * REPORTED COMPONENT NAME
+   SA MULTIPLATFOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724M0000
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-16
+   
+   
+ * CLOSED DATE
+   2010-01-18
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SA MULTIPLATFOR
+   
+   
+ * FIXED COMPONENT ID
+   5724M0000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY
+   UP

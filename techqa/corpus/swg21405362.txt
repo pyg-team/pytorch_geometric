@@ -1,0 +1,53 @@
+Title: IBM How to use the dump formatter to view Java threads. - United States
+
+Text:
+sdff java dump formatter jextract procstack gencore CAMADALL CAMADINST TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Is there a quick and easy way to view JVM threads using a dump formatter? 
+
+RESOLVING THE PROBLEM
+
+The cross-platform dump formatter is the main debugging tool for the IBM JVM. It is a Java™ tool that runs on all the IBM supported platforms. The dump formatter is not a debugger; it is a dump analysis tool that is usually used to analyze crash dumps. 
+
+The dump formatter takes an SDFF file as input or, for z/OS®, an SVC dump. An SDFF file is created by running jextract on a core dump. This SDFF file contains all the information that relates to the JVM being used. Because of the information about types, the dump formatter knows all about the JVM data structures. It can interpret the data that is in the dump and present it in a form that can be understood. The dump formatter makes it easier to: 
+
+ * look inside the JVM 
+ * look at the state of the heap 
+ * trace down the loaded classes and methods 
+ * trace through the stack of the JVM threads 
+ * check the locks state 
+ * find what addresses refer to
+
+
+Here are the simple steps to get a SDFF file. 1. Get the process id of the TEMA agent first. 
+
+ps -aef | grep $PWD | grep kynagent 
+
+2. Use 'procstack' to get all the hex addresses and symbolic names for the threads for the kynagent process as follows: 
+
+procstack <pid> > /tmp/procstack.out 
+
+For example: procstack 10820 > /tmp/procstack.out (where, 10820 = process id of the agent) 
+
+3. Now use 'gencore' to generate a core file as follows: 
+
+For example: gencore 10820 /tmp/core.10820 
+
+4. Now use the jextract dump formatter as follows: 
+
+./$TEMA_HOME/JRE/aix13/bin/jextract /tmp/core.10820 
+
+This will generate a /tmp/core.10820.sdff file which will contain all the data from the core file, including Java specific data. Send this file to Support including the /tmp/procstack.out file from Step 2 above. 
+
+Note: The /tmp/core.10820.sdff file may be a very large file so allow for disk space.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for Application Diagnostics ITCAM for APPLICATION DIAGNOSTICS Agent for WebSphere AIX, HP-UX, Linux, Solaris 7.1 
+PRODUCT ALIAS/SYNONYM
+ ITCAM for AD ITCAM4AD

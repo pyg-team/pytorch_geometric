@@ -1,0 +1,204 @@
+Title: IBM HD94720: SEARCH RESULTS ARE DIFFERENT WITH "_ " AND " _" - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ENV: ENOVIA / CATIA V5R19SP5
+   Server AIX 5.3 TL6 SP11
+   Client WinXP SP3
+   Prob: Search results are different with "_*" and "*_".
+   Operation:
+   1. Create 200 Document by Content Management
+   Document ID is like as follows:
+   AA_[Number]_AA
+   * Input original value at the [Number]
+   2. Create 1 Document by Content Management
+   Document ID is like as follows:
+   AA[Number]AA
+   3. Click Open icon in Content Management
+   Search window appears
+   Search for: Document Revision
+   Input "*_AA" at Document ID
+   Click Search button
+   4. Search resuts are 201 on Confirmation window
+   5. Click Yes on Confirmation window
+   Click Export icon
+   The results are 200 on Export window
+   (Step2 document is not searched)
+   6. Click Open icon in Content Management again
+   Search window appears
+   Search for: Document Revision
+   Input "AA_*" at Document ID
+   Click Search button
+   7. Search results are 201 on Confirmation window
+   8. Click Yes on Confirmation window
+   Click Export icon
+   The results are 201 on Export window
+   (Step2 document is searched)
+   ==> The results are different with "_*" and "*_".
+   Expected Result:
+   The results should be same even if "_" position is different.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  empty
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ENV: ENOVIA / CATIA V5R19SP5
+   Server AIX 5.3 TL6 SP11
+   Client WinXP SP3
+   Prob: Search results are different with "_*" and "*_".
+   Operation:
+   1. Create 200 Document by Content Management
+   Document ID is like as follows:
+   AA_[Number]_AA
+   * Input original value at the [Number]
+   2. Create 1 Document by Content Management
+   Document ID is like as follows:
+   AA[Number]AA
+   3. Click Open icon in Content Management
+   Search window appears
+   Search for: Document Revision
+   Input "*_AA" at Document ID
+   Click Search button
+   4. Search resuts are 201 on Confirmation window
+   5. Click Yes on Confirmation window
+   Click Export icon
+   The results are 200 on Export window
+   (Step2 document is not searched)
+   6. Click Open icon in Content Management again
+   Search window appears
+   Search for: Document Revision
+   Input "AA_*" at Document ID
+   Click Search button
+   7. Search results are 201 on Confirmation window
+   8. Click Yes on Confirmation window
+   Click Export icon
+   The results are 201 on Export window
+   (Step2 document is searched)
+   ==> The results are different with "_*" and "*_".
+   Expected Result:
+   The results should be same even if "_" position is different.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THE PROBLEM WAS SUBMITTED ON :VERSION V5R19.
+   THIS PROBLEM IS NOT REPRODUCIBLE ON VERSION V5R21 GA level
+   Additional Closure Information:
+   Incident Diagnosis:
+   IR reported that results should be same for "*_" and "_*".
+   Technical Reason:
+   Regarding the question "Can you please explain why names
+   without '_' are returned by query?":
+   Because '_' is a wildcard.
+   Available wildcards are '*' and '_'.
+    '*' means "any number of any character"
+    '_' means "one occurrence of any character"
+   The underscore is a special character, meaning "one
+   occurrence of any character".
+   For example, querying "*_AA" may return "Part-AAAAA":
+   1. "Part-AA" matches "*" (any number of any character)
+   2. "A" matches "_" (one occurrence of any character)
+   3. "AA" matches "AA"-> all put together: "Part-AAAAA" matches
+   "*_AA"
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD94720
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA LCA AIX
+   
+   
+ * REPORTED COMPONENT ID
+   569101700
+   
+   
+ * REPORTED RELEASE
+   519
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-19
+   
+   
+ * CLOSED DATE
+   2010-06-10
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ENOVIA LCA AIX
+   
+   
+ * FIXED COMPONENT ID
+   569101700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R521 PSN
+   UP

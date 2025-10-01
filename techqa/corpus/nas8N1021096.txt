@@ -1,0 +1,111 @@
+Title: IBM Security Bulletin: Vulnerability in MD5 Signature and Hash Algorithm affects IBM i (CVE-2015-7575). - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The MD5 “SLOTH” vulnerability on TLS 1.2 affects IBM i. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-7575 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7575]
+DESCRIPTION: The TLS protocol could allow weaker than expected security caused by a collision attack when using the MD5 hash function for signing a ServerKeyExchange message during a TLS handshake. An attacker could exploit this vulnerability using man-in-the-middle techniques to impersonate a TLS server and obtain credentials.
+CVSS Base Score: 7.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/109415 [https://exchange.xforce.ibmcloud.com/vulnerabilities/109415] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:L/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+Releases 6.1, 7.1 and 7.2 of IBM i are affected. 
+
+REMEDIATION/FIXES
+The issue can be fixed by applying a PTF to the IBM i Operating System and products.
+Releases 6.1, 7.1 and 7.2 of IBM i are supported and will be fixed. 
+
+http://www-933.ibm.com/support/fixcentral/ [http://www-933.ibm.com/support/fixcentral/]
+Release 6.1.1 – MF60292
+Release 7.1 – SI59229, MF61242, MF60291
+Release 7.2 – SI59230, MF61243, MF60290
+
+5770UME:
+CIM 1.3: SI59244
+CIM 1.4: SI59193
+
+
+Important note: IBM recommends that all users running unsupported versions of affected products upgrade to supported and fixed version of affected products.
+
+WORKAROUNDS AND MITIGATIONS
+You should verify applying this configuration change does not cause any compatibility issues. Not disabling the MD5 signature hash will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the MD5 signature hash and take appropriate mitigation and remediation actions. 
+
+Mitigation instructions for IBM i:
+
+IBM i System SSL/TLS 
+
+IBM i System SSL/TLS is a set of generic services provided in the IBM i Licensed Internal Code (LIC) to protect TCP/IP communications using the SSL/TLS protocol. 
+
+System SSL/TLS is accessible to application developers from the following programming interfaces and JSSE implementation: 
+
+- Global Security Kit (GSKit) APIs 
+- Integrated IBM i SSL_ APIs 
+- Integrated IBM i JSSE implementation (IBMi5OSJSSEProvider)
+
+TLS applications created by IBM, IBM business partners, independent software vendors (ISV), or customers that use one of the three System SSL/TLS interfaces listed above will use System SSL/TLS. For example, FTP and Telnet are IBM applications that use System SSL/TLS. Not all TLS enabled applications running on IBM i use System SSL/TLS.
+
+The TLSv1.2 protocol made the signature and hash algorithms that are used for digital signatures an independent attribute. Previously the negotiated cipher suite determined these algorithms. System SSL/TLS has the infrastructure to support multiple signature algorithms. The signature and hash algorithm RSA_MD5 is allowed in the System SSL/TLS default configuration. 
+
+The application developer determines which signature algorithms are supported by the application when it is designed. 
+- Few if any applications expose the signature algorithm configuration to the end user. For those applications RSA_MD5 can be disabled through that application specific configuration. 
+- Most applications do not provide a configuration option for controlling the signature and hash algorithms. It is difficult to determine if these applications support RSA_MD5 however it is likely they do support it.
+- Almost all applications use the System SSL/TLS default signature algorithms such as FTP and Telnet.
+
+After loading the System SSL/TLS fixes listed in this bulletin, applications coded to use the default values will no longer negotiate TLSv1.2 secure sessions that use RSA_MD5. The fix has no impact on TLSv1.1, TLSv1.0, or SSLv3 connections. It is unlikely that RSA_MD5 is being used for any handshake message digital signatures in your environment. However, if an RSA_MD5 digital server or client certificate is configured, it will no longer work. The MD5 based certificate should be replaced with a SHA2 based certificate. RSA_SHA1 certificates are not recommended for continued use however this fix does not remove RSA_SHA1 from the default signature algorithm list. 
+
+If RSA_MD5 support is required by an application after this PTF is applied, RSA_MD5 can be added back in two ways: 
+
+1. If the dependent application has a DCM application definition, update the "SSL signature algorithms" application definition field for that application to explicitly include RSA_MD5. 
+
+2. RSA_MD5 can be added back to the System SSL/TLS default signature algorithm list using System Service Tools (SST) Advanced Analysis Command SSLCONFIG. To change the System SSL/TLS settings with the Start System Service Tools (STRSST) command, follow these steps:
+
+1. Open a character based interface.
+2. On the command line, type STRSST.
+3. Type your service tools user name and password.
+4. Select option 1 (Start a service tool).
+5. Select option 4 (Display/Alter/Dump).
+6. Select option 1 (Display/Alter storage).
+7. Select option 2 (Licensed Internal Code (LIC) data).
+8. Select option 14 (Advanced analysis).
+9. Select option 1 (SSLCONFIG).
+10. Enter -h
+
+This will show the help screen that describes the input strings to change the System SSL/TLS setting for -signatureAlgorithmList which determines the default list. 
+
+System SSL/TLS’s support of RSA_MD5 can be completely disabled at the system level using SSLCONFIG. Follow the above SSLCONFIG instructions but change the setting for -supportedSignatureAlgorithmList.
+
+
+OpenSSL 
+
+
+Existing versions of OpenSSL used on IBM i are not affected. It is recommended that you apply all fixes from the IBM i security PTF group in order to stay current on all fixes. 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+Reported to IBM by Karthikeyan Bhargavan at INRIA in Paris, France. 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1

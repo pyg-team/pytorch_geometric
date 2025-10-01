@@ -1,0 +1,16 @@
+Title: IBM SPSS AMOS version support for Microsoft Windows 10 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is IBM AMOS release 23 (or any earlier version) supported on Microsoft Windows 10? I'd like to upgrade my system to Windows 10, but I have AMOS version 23 installed and need to make sure it works. 
+
+ANSWER
+Yes, IBM supports the use of IBM AMOS on Microsoft Windows 10 starting with version AMOS 23 GA (i.e., 23.0.0.0). Please see the Software Product Compatibility Reports [http://www-969.ibm.com/software/reports/compatibility/clarity/index.jsp].
+AMOS 23 has been tested and there's one known minor issue with the Japanese edition of the software. On last step of License Authorization Wizard some Japanese text is not fully visible but that issue does not affect functionality and the software can be licensed on Windows 10 without problem (see APAR PI47791 [https://www-304.ibm.com/support/entdocview.wss?uid=swg1PI47791]).
+
+RELATED INFORMATION
+ Get more Statistics answers [https://developer.ibm.com/answers/search.html?f=&type=question&redirect=search%2Fsearch&sort=relevance&q=%2B[amos]]
+IBM Compatibility Report Page [http://www-969.ibm.com/software/reports/compatibility/clarity/index.jsp]
+APAR PI47791 [https://www-01.ibm.com/support/entdocview.wss?uid=swg1PI47791]

@@ -1,0 +1,31 @@
+Title: IBM The Map Analyzer encounters error M113 when using an expression type argument - United States
+
+Text:
+WTX ITX M113 TEXT addition subtraction division multiplication TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM Transformation Extender (ITX) Map Analyzer encounters error M113 when using an expression type argument. 
+
+SYMPTOM
+Map Analyzer does not handle the expression type argument properly.
+
+
+CAUSE
+This has been identified as a product defect under APAR PI84570.
+
+ENVIRONMENT
+Using 'addition, subtraction, division or multiplication' operators in an IBM Transformation Extender (ITX) map rule when provided as an argument to functions that take expression type as an argument (for example: TEXT).
+
+DIAGNOSING THE PROBLEM
+Using 'addition, subtraction, division or multiplication' operators rejects the expression type even though it is valid for numeric expressions (for example: 1 + 1 + 1 and "1" + "1") when provided as an argument to functions that take expression type as an argument (for example: TEXT), subsequently results in M113 error(s) when a map rule / map source is analyzed and compiled for any platform that the ITX supports.
+
+For example: 
+
+=TEXT(1+1) should be considered valid when the map rule is analyzed, but returns M113 error.
+
+The map analyzer displays the following error.
+
+Argument #1 for function TEXT is invalid.
+
+RESOLVING THE PROBLEM
+Obtain patch for APAR PI84570.

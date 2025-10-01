@@ -1,0 +1,182 @@
+Title: IBM PK94083: PORTAL DOES NOT GENERATE URLS THAT SWITCH FROM HTTPS TO HTTP WHE N COMBINED WITH HTTP SERVER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When Portal is used in combination with an HTTP server,
+   WebSphere Portal does not generate URLs (most notably,
+   URLGenerationTag) that enforce a protocol switch from HTTPS to
+   HTTP. Hence, once Portal is switched to HTTPS it cannot revert
+   back to HTTP unless the user logs out.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When WebSphere Portal is used in combination with an HTTP
+   server, it does not generate URLs (most notably,
+   URLGenerationTag) that enforce a protocol switch from HTTPS to
+   HTTP. Hence, once Portal is switched to HTTPS it cannot revert
+   back to HTTP unless the user logs out.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When an incoming request is routed from an HTTP Server to
+   WebSphere Application Server, the protocol is typically changed
+   to an unsecure connection. The information whether the original
+   incoming request was secure or not cannot be detected by looking
+   at the protocol of the URL. Instead, the code that generates
+   URLs needs to check request.isSecure().
+   
+   Manual Steps:
+      None
+   
+   Failing Module(s):
+      Engine: URL Generation
+   
+   Affected Users:
+      End users
+   
+   Version Information:
+       Portal Version(s): 6.0.1.5
+        Pre-Requisite(s): PK85065 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK85065]
+         Co-Requisite(s): ---
+   
+       Portal Version(s): 6.0.1.6
+        Pre-Requisite(s): PK85065 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK85065]
+         Co-Requisite(s): ---
+   
+       Portal Version(s): 6.1.0.0
+        Pre-Requisite(s): PK85065 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK85065]
+         Co-Requisite(s): ---
+   
+       Portal Version(s): 6.1.0.1
+        Pre-Requisite(s): PK85065 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK85065]
+         Co-Requisite(s): ---
+   
+       Portal Version(s): 6.1.0.2
+        Pre-Requisite(s):
+         Co-Requisite(s): ---
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   A fix is available from Fix Central:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PK94083&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PK94083&productid=WebSphere%20Portal&brandid=5]
+   
+   You may need to type or paste the complete address into your Web
+   browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK94083
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-18
+   
+   
+ * CLOSED DATE
+   2009-09-03
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60J PSY
+   UP
+   
+   
+ * R60K PSY
+   UP
+   
+   
+ * R610 PSY
+   UP
+   
+   
+ * R61A PSY
+   UP
+   
+   
+ * R61B PSY
+   UP

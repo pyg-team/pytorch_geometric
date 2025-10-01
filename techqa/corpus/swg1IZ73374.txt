@@ -1,0 +1,220 @@
+Title: IBM IZ73374: LDR THROWS ORA-06520 ERROR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The initial problem was happening on the customer's DEV
+   platform (4.4.3.3 on AIX
+   Oracle 10g with IF0010 applied):
+   
+   2010.03.15-18.14.53 UTC LDR.1-1577172   3
+   FM_END_DISK_USAGE
+   finished calculating disk usage (bytes: 10925629440  ms: 11)
+   2010.03.15-18.14.53 UTC LDR.1-1577172   2       STOREDPROCOK
+   CHECKLOADREMERGESTATE - (1,BASE,000,'2010031118'->NEW)
+   2010.03.15-18.14.54 UTC LDR.1-1577172   2       STOREDPROCOK
+   STARTREMERGE - (1,BASE,000,H0,'2010031118') -> false
+   2010.03.15-18.14.56 UTC LDR.1-1577172   W       [DC10107]
+   STOREDPROCERR   ADDRESIZETABLESPACE -   ORA-06520: PL/SQL: Error
+   loading
+   external library ORA-06522:  0509-022 Cannot load module .
+   0509-026
+   System error: A file or directory in the path name does not
+   exist.
+   ORA-06512: at "PV_ADMIN.PVM_DATALOAD", line 3158 ORA-06512: at
+   line 1
+   2010.03.15-18.14.56 UTC LDR.1-1577172   F       [DC10004]
+   ERROR
+   Shutting down the image with error:   ORA-06520: PL/SQL: Error
+   loading
+   external library ORA-06522:  0509-022 Cannot load module .
+   0509-026
+   System error: A file or directory in the path name does not
+   exist.
+   ORA-06512: at "PV_ADMIN.PVM_DATALOAD", line 3158 ORA-06512: at
+   line 1
+   2010.03.15-18.14.56 UTC LDR.1-1577172   F       [DC10004]
+   ERROR
+   Walkback written to:
+   /opt/datachannel/log/walkback-LDR.1-1577172-2010.03.15-18.14.56.
+   log
+   2010.03.15-18.14.56 UTC LDR.1-1577172   F       [DC10004]
+   ERROR
+   Shutting down the image with error:   ORA-06520: PL/SQL: Error
+   loading
+   external library ORA-06522:  0509-022 Cannot load module .
+   0509-026
+   System error: A file or directory in the path name does not
+   exist.
+   ORA-06512: at "PV_ADMIN.PVM_DATALOAD", line 3158 ORA-06512: at
+   line 1
+   2010.03.15-18.14.56 UTC LDR.1-1577172   1       SHUTDOWN
+   Shutting
+   down the image
+   
+   Once the permissions on 'libpvmextc.so'  were changed (it seems
+   they had
+   been wrong), the error that was occrring changed to this:
+   
+   010.03.15-19.54.33 UTC LDR.1-2138230   W       [DC10107]
+   STOREDPROCERR   ADDRESIZETABLESPACE -   ORA-06502: PL/SQL:
+   numeric or
+   value error: character string buffer too small ORA-06512: at
+   "PV_ADMIN.PVM_DATALOAD", line 3158 ORA-06512: at line 1
+   2010.03.15-19.54.33 UTC LDR.1-2138230   F       [DC10004]
+   ERROR
+   Shutting down the image with error:   ORA-06502: PL/SQL: numeric
+   or
+   value error: character string buffer too small ORA-06512: at
+   "PV_ADMIN.PVM_DATALOAD", line 3158 ORA-06512: at line 1
+   2010.03.15-19.54.33 UTC LDR.1-2138230   F       [DC10004]
+   ERROR
+   Walkback written to:
+   /opt/datachannel/log/walkback-LDR.1-2138230-2010.03.15-19.54.33.
+   log
+   2010.03.15-19.54.33 UTC LDR.1-2138230   F       [DC10004]
+   ERROR
+   Shutting down the image with error:   ORA-06502: PL/SQL: numeric
+   or
+   value error: character string buffer too small ORA-06512: at
+   "PV_ADMIN.PVM_DATALOAD", line 3158 ORA-06512: at line 1
+   2010.03.15-19.54.33 UTC LDR.1-2138230   1       SHUTDOWN
+   Shutting
+   down the image
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Error was from PVM_DATALOAD when it was trying to gather stats
+   on the
+   metric tables:
+   
+   ORA-20005: object statistics are locked (stattype = ALL)
+   
+   But the tables were all locked.
+   
+   select table_name
+   from dba_tab_statistics
+   where owner like 'PV_%'
+   and stattype_locked = 'ALL'
+   
+   showed about 3000 tables owned by Proviso who's table statistics
+   were all locked.  Probably from the export/import or Data Pump
+   of the XenoBridge tool...
+   
+   The import has to be done with a statistics=none (or with an
+   exclude clause with DataPump) otherwise the statistics are
+   locked on import.
+   
+   
+   Unlocked all the schemas using dbms_stats.unlock_schema_stats
+   for all PV schemas, restarted the loader and it caught up and is
+   loading into the DB.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The LDR would encounter an issue and throw an Oracle error when
+   running on AIX, the problem was traced to a an oracle library
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  4.4.3.3-TIV-PROV-IF0050
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ73374
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PROV DATACHA
+   
+   
+ * REPORTED COMPONENT ID
+   5724P59DC
+   
+   
+ * REPORTED RELEASE
+   443
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-24
+   
+   
+ * CLOSED DATE
+   2010-05-13
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/PROV DATACHA
+   
+   
+ * FIXED COMPONENT ID
+   5724P59DC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R443 PSY
+   UP

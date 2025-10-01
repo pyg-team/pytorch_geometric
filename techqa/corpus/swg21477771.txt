@@ -1,0 +1,26 @@
+Title: IBM Is it possible for license administrators to control the maximum duration of commuter licenses for SPSS for Windows? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm making use of the commuter license functionality that's part of the functionality of the new Sentinel License Manager that came with our SPSS for Windows version 14.0 network license. I see from the documentation that the "MaxLife" parameter that controls the maximum duration of a checked-out license can be altered in the client or workstation registry. I want to be able to configure this parameter on the License Manager end rather than setting this value on each client.
+
+My concern is that any user with Administrative privileges on their local machine can change this value assuming they know the registry location -- which is available in a published resolution on the SPSS Support website. This means that users have the ability to set the duration of their own commuter licenses to 180 days (30 days max in v16.0).
+
+As administrator of licenses, I would like to have the ability to enforce the duration of commuter licenses and not give users the ability to change that duration. Is that possible? 
+
+RESOLVING THE PROBLEM
+The only known workaround at this time would be to restrict the permissions on the specific registry key (HKEY_LOCAL_MACHINE\Software\SPSS\SPSSCommute) to give write/modify access only to a specific user login or a Domain or Network Administrator group -- or any security scheme that will deny even a Local Administrator login write/modify permission on that key.
+
+This has been filed with SPSS Development for remediation in a future release. We apologize for any inconvenience
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 62298

@@ -1,0 +1,176 @@
+Title: IBM IV02207: FILTER ANALYZER INCORRECTLY REPORTS AN ERROR WITH FILTER FORM: FIELDA NOT LIKE 'ABC' AND FIELDB != '' - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.1.0-TIV-BSM-FP0004-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-zlinux&source=SAR]
+6.1.0-TIV-BSM-FP0004-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-windows&source=SAR]
+6.1.0-TIV-BSM-FP0004-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-solaris&source=SAR]
+6.1.0-TIV-BSM-FP0004-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-linux&source=SAR]
+6.1.0-TIV-BSM-FP0004-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-aix&source=SAR]
+6.1.0-TIV-NCI-FP0004-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-zlinux&source=SAR]
+6.1.0-TIV-NCI-FP0004-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-windows&source=SAR]
+6.1.0-TIV-NCI-FP0004-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-solaris&source=SAR]
+6.1.0-TIV-NCI-FP0004-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-aix&source=SAR]
+6.1.0-TIV-NCI-FP0004-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-linux&source=SAR]
+6.1.0-TIV-NCI-FP0003-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-zlinux&source=SAR]
+6.1.0-TIV-NCI-FP0003-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-windows&source=SAR]
+6.1.0-TIV-NCI-FP0003-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-solaris&source=SAR]
+6.1.0-TIV-NCI-FP0003-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-linux&source=SAR]
+6.1.0-TIV-NCI-FP0003-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-aix&source=SAR]
+6.1.0-TIV-BSM-FP0003-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-solaris&source=SAR]
+6.1.0-TIV-BSM-FP0003-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-aix&source=SAR]
+6.1.0-TIV-BSM-FP0003-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-zlinux&source=SAR]
+6.1.0-TIV-BSM-FP0003-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-windows&source=SAR]
+6.1.0-TIV-BSM-FP0003-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-linux&source=SAR]
+IBM Tivoli Business Service Manager V6.1.0 Fix Pack 2(6.1.0-TIV-BSM-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24032540]
+IBM Tivoli Netcool/Impact V6.1.0 Fix Pack 2(6.1.0-TIV-NCI-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24032739]
+IBM Tivoli Netcool/Impact V6.1.0 Fix Pack 4(6.1.0-TIV-NCI-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24042500]
+IBM Tivoli Business Service Manager V6.1.0 Fix Pack 4(6.1.0-TIV-BSM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24042501]
+IBM Tivoli Netcool/Impact V6.1.0 Fix Pack 4(6.1.0-TIV-NCI-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24042516]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using a Filter of the form:
+   
+   FieldA not like 'ABC' AND FieldB != ''
+   
+   produces an error in the Filter Analyzer although the
+   EventReader does work,
+   but one does have to apply the two EventReader properties:
+   
+   impact.[EventReaderName].consolidatefilters=false
+   impact.[EventReaderName].uselikeoperator=true
+   
+   first the get the EventReader to run with such a Filter and then
+   to get it to use the Filter in its SQL select statement.
+   
+   The Filter Ananlyzer error is of the format:
+   
+   Filter contains the following syntax error
+   FieldA not like 'ABC' AND FieldB != '' : rule includes an
+   unsupported expression
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A - The EventReader and Filter work fine with the application
+   of the properties:
+   
+   impact.[EventReaderName].consolidatefilters=false
+   impact.[EventReaderName].uselikeoperator=true
+   
+   Just the Filter Analyzer will report this error - it will not
+   adversely affact operation.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  FILTER ANALYZER INCORRECTLY REPORTS AN ERROR WITH FILTER FORM:
+   FIELDA NOT LIKE 'ABC' AND FIELDB != ''
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  As a result, the filter analyzer throws an error and event
+   reader doesn't start.
+   
+   This APAR is fixed in the following maintenace release:
+   5.1.1.1-TIV-NCI-IF0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV02207
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/IMPACT EVENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59ER
+   
+   
+ * REPORTED RELEASE
+   511
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2011-06-21
+   
+   
+ * CLOSED DATE
+   2011-06-28
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/IMPACT EVENT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59ER
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R511 PSY
+   UP

@@ -1,0 +1,169 @@
+Title: IBM IZ31604: ITIM PASSWORD IS RANDOMLY GENERATED SOMETIMES EVEN WHEN IT IS MANUALLY PROVIDED. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When creating users via the ITIM admin console sometimes, even
+   when choosing to manually enter a new password (as opposed to
+   letting ITIM generate one for the user), ITIM actually set the
+   person's password to a randomly generated password. This can be
+   observed in the ITIM directory, where the erpersonpassword and
+   ersynchpassword attributes for a newly created person with
+   password entered manually are different. Most notably
+   erpersonpassword is set to the correct value but ersynchpassword
+   is set to a different(incorrect) value. All accounts for that
+   person are then provisioned with the randomly generated
+   password.
+   
+   Note that this issue is not absolutely constant - some
+   environments on which this problem was tested did not show that
+   behaviour. It is not known why.
+   
+   Customer has the environment:
+   
+   Red Hat Enterprise Linux ES release 4 (Nahant Update 6)
+   ITIM 5.0, FP2
+   TDS java client version:6.1.0.17
+   TDS Web-admin  server version:6.1.0.17
+   64-bit TDS client version:6.1.0.17
+   64-bit TDS server version:6.1.0.17
+   TDS base client version:6.1.0.17
+   TDS base server version:6.1.0.17
+   TDS language(en) package version:6.1.0.17
+   IBM WebSphere Application Server - ND 6.1.0.9
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is being closed as a USER Configuration
+   error.
+   For the customers policy configuration;
+   When persons are created, the following accounts are provisioned
+   automatically to the users:
+   - ITIM Account
+   - ITAM Account
+   - ADAM Account
+   The C/T investigated the reported issue in depth and found that
+   the issue reported using these three policy configurations is
+   not an ITIM defect, but is a user error in configuration.
+   The user is expecting the new accounts to have the same password
+   that they enter during user creation. Note that, in a default
+   configuration, the entered password is set as 'erPersonPassword'
+   and ITIM will allow you to enter this password only when the
+   'Setting a password when a user is created'  property is set to
+   'true' in 'Set System Security > Set Security Properties'.
+   By default the ITIM account created through automatic policy
+   will use the 'erPersonPassword' as the ITIM account password.
+   Please see this configuration under 'Account Defaults' for
+   ITIM service.
+   So with the default policy configuration everything works fine.
+   The problem appears only when they have some other Services
+   provisioned automatically during the user creation. In this
+   case, customer is expected to provide the account defaults for
+   'erPassword' attribute for those Services too. This is clearly
+   explained in the ITIM 5.0 InfoCenter at the following URL:
+   http://publib.boulder.ibm.com/infocenter/tivihelp/v2r1/topic/
+   com.ibm.itim.doc/tsk/tsk_ic_admin_pwsetonusercreate.htm [http://publib.boulder.ibm.com/infocenter/tivihelp/v2r1/topic/com.ibm.itim.doc/tsk/tsk_ic_admin_pwsetonusercreate.htm]
+   Regarding the inconsistence behavior:
+   Since the erPassword is configured to use 'erPersonPassword' in
+   the ITIM Service account default, you will not see the issue
+   when the ITIM account creation operation is performed first
+   and then other accounts are provisioned sequentially during
+   person creation. If ITIM accounts is not provisioned first
+   and other services do not have the 'erPassword' account
+   default, then you can see the behavior reported here.
+   To correct the configuration, the user needs to confirm that
+   they have configured all the requirements to use
+   'Setting a password when a user is created' property
+   as mentioned in the above given InfoCenter URL.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ31604
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM TIV IDENT M
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3404
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-09
+   
+   
+ * CLOSED DATE
+   2008-09-11
+   
+   
+ * LAST MODIFIED DATE
+   2008-09-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

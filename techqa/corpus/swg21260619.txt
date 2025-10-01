@@ -1,0 +1,72 @@
+Title: IBM MustGather: SIP container errors on WebSphere Application Server - United States
+
+Text:
+mustgather; mustgather; mustgather; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting data for problems with any IBM WebSphere Application Server Session Initiation Protocol (SIP) errors logged in WebSphere Application Server logs. Gathering this MustGather information before calling IBM support will help you understand the problem and save time analyzing the data. 
+
+RESOLVING THE PROBLEM
+
+Session initiation protocol engine specific MustGather information
+If possible, provide a simple testcase that has no external dependencies. If a testcase cannot be provided, collect the following data.
+
+
+ 1. Run genHistoryReport.bat or genHistoryReport.sh, which is located in the following directory:
+    
+    install_root/profiles/profile_name/bin
+    
+    The historyreport.html file will be generated in your working directory.
+    
+    
+ 2. Clear all Application Server logs:  * native_stderr 
+     * native_stdout 
+     * SystemErr 
+     * SystemOut
+       
+       The log files are located in the following directory:
+       
+       install_root/profiles/profile_name/logs/server_name
+       
+       Note: If you have configured to write Application Server log files into a different location, then clear them accordingly.
+       
+       
+    
+    
+ 3. Clear all WebSphere Application Server FFDC logs. FFDC files are located in the following directory:
+    
+    install_root/profiles/profile_name/logs/ffdc
+    
+    Note: If you have configured to write FFDC log files into a different location, then clear them accordingly.
+    
+    
+ 4. Enable and collect Application Server traces with the following trace string:
+    
+    *=info:com.ibm.ws.sip.*=all:com.ibm.wsspi.sip*=all
+    
+    For detailed instructions on enabling trace, see How to setup a Trace [http://www.ibm.com/support/docview.wss?uid=swg21254706].
+
+
+
+When you recreate problem: 
+Collect the Application Server logs, such as the following logs:  * native_stderr 
+ * native_stdout 
+ * SystemErr 
+ * SystemOut 
+ * trace 
+ * FFDC logs with the current date from the following directory:
+   
+   install_root/profiles/profile_name/logs/ffdc
+   
+   
+ * The server.xml file that is located in the directory:
+   
+   install_root/profiles/profile_name/config/cells/cell_name/nodes/node_name/servers/server_name
+   
+   
+ * The historyReport.html file from running genHistoryReport.bat or genHistoryReport.sh.
+
+
+
+Follow instructions to send diagnostic information to IBM support [http://www.ibm.com/support/docview.wss?uid=swg21153852]. RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]

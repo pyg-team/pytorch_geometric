@@ -1,0 +1,59 @@
+Title: IBM Changing the default ports - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When changing the default ports that the WebSphere Application Server listens on requires some configuration. The default ports are 80 for HTTP and 443 for HTTPS, but these can be customized. 
+
+RESOLVING THE PROBLEM
+The following example shows how to change the WebSphere Commerce ports from 80 (HTTP) and 443 (HTTPS) to 8080 and 8443, respectively. 
+
+
+1. Edit the httpd.conf file in the WebServer_installdir/conf directory to add the virtual hosts for ports 8080 and 8443 by adding a "Listen port_number" and <Virtual host> section for each port: 
+
+########## IBM WebSphere Commerce (Do not edit this section) - Any changes made may be overridden at any time #################
+#Instance name : demo
+
+Listen 8080
+<VirtualHost myhost:8080>
+ServerName myhost.com
+Alias /wcsstore "C:\WebSphere\AppServer\installedApps\myhost\WC_demo.ear/Stores.war"
+Alias /wcs "C:\WebSphere\AppServer\installedApps\myhost\WC_demo.ear/CommerceAccelerator.war"
+</VirtualHost>
+
+Listen 8443
+<VirtualHost myhost:8443>
+Keyfile "C:\WebSphere\IBMHttpServer\ssl\keyfile.kdb"
+SSLEnable
+SSLClientAuth 0
+ServerName myhost.com
+Alias /wcsstore "C:\WebSphere\AppServer\installedApps\myhost\WC_demo.ear/Stores.war"
+Alias /wcs "C:\WebSphere\AppServer\installedApps\myhost\WC_demo.ear/CommerceAccelerator.war"
+
+
+2. Ensure that virtual hosts exist in WebSphere Application Server Administration Console for these two new ports on your WC_instance_name server: 
+
+ *  Open the WebSphere Application Server Administration Console. Click Environment. Click Virtual Hosts. Click on the virtual host for your WebSphere Commerce Server (VH_instance_name). Under Additional Properties, click Host Aliases. Ensure a host name and port combination exists for both of the HTTP and HTTPS ports for your server. If one is missing, click New and then add in the host name and port for your WebSphere Commerce Server, then click Save. 
+
+3. Regenerate the XML plug-in (plugin-cfg.xml) through the WebSphere Application Server Administration console:  *  Open the WebSphere Application Server Administration Console. Click Environment. Click Update Web Server Plugin. Click OK. 
+
+4. Edit the WC_installdir/instances/ instance_name/ instance_name.xml file. Under the <WebServer> section, change ServerPort to point the new HTTP port (8080) and add SSLPort to point to the new HTTPS/SSL port (8443)  <WebServer 
+....
+ServerPort="8080"
+SSLPort="8443" 
+....
+> 
+
+5. Ensure that there are no firewalls blocking these new ports, and that there are no conflicts with the new ports.
+
+
+6. Restart the Web server and the WebSphere Commerce Server.
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce WebSphere Commerce Professional Edition Configuration Commerce WebSphere Commerce - Express Configuration Commerce WebSphere Commerce Professional Edition AIX, Linux, Linux iSeries, Linux pSeries, Linux xSeries, Linux zSeries, Solaris, Windows 5.6, 5.6.0.1, 5.6.0.2, 5.6.0.3, 5.6.0.4, 5.6.0.5, 5.6.0.6, 5.6.1, 5.6.1.1, 5.6.1.2 Professional Edition

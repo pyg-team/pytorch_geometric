@@ -1,0 +1,42 @@
+Title: IBM SPSS Statistics licensed modules not available in distributed mode - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm using SPSS Statistics and have the SPSS Statistics Server installed as well. We have licenses for several different modules on both the client and server ends, but when I'm working in distributed mode I don't seem to have access to modules I thought I had licensed. How does the module licensing for SPSS Statitics Server work? 
+
+RESOLVING THE PROBLEM
+In order for the modules to be available when working in Distributed mode (i.e., when connected to SPSS Server), you need to have the module licenses on both the client and server side. 
+
+To see what licenses you actually have loaded and available on each side, do this:
+
+1) Launch SPSS Statistics at the local machine in Local mode. Select File->New->Syntax and type:
+
+SHOW LICENSE.
+
+Then select Run->All. You'll get a table in your output showing the available licenses for that local installation.
+
+
+2) At the server, or while Remote Desktop'ed to the server with SPSS Statistics Server, browse to the Server installation directory (the default for v17 would be C:\Program Files\SPSSInc\Server17) and double-click on statisticsb.exe (spssb.exe in versions earlier than 17).
+
+A command prompt window will open, and after a moment it will give you this:
+
+SPSS>
+
+At the prompt, type:
+
+SPSS>SHOW LICENSE.
+
+You will get a text table of the licenses available for the Server. (enter the command FINISH to close the batch processing window).
+
+Only those modules that are licensed at both ends will be available for use while that client installation is working in Distributed Mode
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 80853

@@ -1,0 +1,227 @@
+Title: IBM IC76544: WEBSPHERE MQ V7 JMS NON-DURABLE SUBSCRIBER IS ONLY ABLE TO RECEIVE ONE MESSAGE. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ v7.0.1.7 Hypervisor for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24031715]
+WebSphere MQ V7.0 Fix Pack 7.0.1.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24030911]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24030912]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A WebSphere MQ V7.0.1.5 JMS application that is using an
+   asynchronous message listener on an auto-acknowledged session
+   only processes one message. The message listener receives the
+   first message published on its topic, but does not receive any
+   subsequent messages.
+   
+   This problem only occurs on WebSphere MQ V7.0.1.4, V7.0.1.5 and
+   V7.0.1.6, and not on V7.0.1.3.
+   
+   Also, only stand-alone JMS applications are affected.
+   Applications running within an application server, such as
+   WebSphere Application Server, that take out non-durable
+   subscriptions receive messages as expected.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Make the session transacted, or client-acknowledged (or change
+   the ConnectionFactory to say SyncpointAllGets = true).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of:
+   
+   - The WebSphere MQ V7 classes for JMS
+   
+   that have applications which connect to a WebSphere MQ V7 queue
+   manager and take out non-durable subscriptions on a topic.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The WebSphere MQ V7.0.1.4 classes for JMS included some
+   internal changes that affected the mechanism that the classes
+   for JMS used to request messages from a WebSphere MQ V7 queue
+   manager.
+   
+   A side effect of these changes was that applications which took
+   out a non-durable subscription would only ever request one
+   message from a queue manager. After this message had been
+   delivered to the application for processing, the classes for
+   JMS would wait for the queue manager to send additional
+   messages automatically, without requesting any more to be sent.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ V7 classes for JMS have been updated so that
+   they request additional messages to be sent by the queue
+   manager after the first message has been delivered to an
+   application that has taken out a non-durable subscription.
+   
+   | MDVREGR 7.0.1-WS-MQ-AixPPC64-FP0004       |
+   | MDVREGR 7.0.1-WS-MQ-HpuxIA64-FP0004       |
+   | MDVREGR 7.0.1-WS-MQ-HpuxPaRISC64-FP0004   |
+   | MDVREGR 7.0.1-WS-MQ-LinuxIA32-FP0004      |
+   | MDVREGR 7.0.1-WS-MQ-LinuxPPC64-FP0004     |
+   | MDVREGR 7.0.1-WS-MQ-LinuxS390X-FP0004     |
+   | MDVREGR 7.0.1-WS-MQ-LinuxX64-FP0004       |
+   | MDVREGR 7.0.1-WS-MQ-SolarisSparc64-FP0004 |
+   | MDVREGR 7.0.1-WS-MQ-SolarisX64-FP0004     |
+   | MDVREGR 7.0.1-WS-MQ-Windows-FP0004        |
+   | MDVREGR SI41689 (7.0.1.4) |
+   
+   | MDVREGR 7.0.1-WS-MQ-AixPPC64-FP0005       |
+   | MDVREGR 7.0.1-WS-MQ-HpuxIA64-FP0005       |
+   | MDVREGR 7.0.1-WS-MQ-HpuxPaRISC64-FP0005   |
+   | MDVREGR 7.0.1-WS-MQ-LinuxIA32-FP0005      |
+   | MDVREGR 7.0.1-WS-MQ-LinuxPPC64-FP0005     |
+   | MDVREGR 7.0.1-WS-MQ-LinuxS390X-FP0005     |
+   | MDVREGR 7.0.1-WS-MQ-LinuxX64-FP0005       |
+   | MDVREGR 7.0.1-WS-MQ-SolarisSparc64-FP0005 |
+   | MDVREGR 7.0.1-WS-MQ-SolarisX64-FP0005     |
+   | MDVREGR 7.0.1-WS-MQ-Windows-FP0005        |
+   | MDVREGR SI42603 (7.0.1.5) |
+   
+   | MDVREGR 7.0.1-WS-MQ-AixPPC64-FP0006       |
+   | MDVREGR 7.0.1-WS-MQ-HpuxIA64-FP0006       |
+   | MDVREGR 7.0.1-WS-MQ-HpuxPaRISC64-FP0006   |
+   | MDVREGR 7.0.1-WS-MQ-LinuxIA32-FP0006      |
+   | MDVREGR 7.0.1-WS-MQ-LinuxPPC64-FP0006     |
+   | MDVREGR 7.0.1-WS-MQ-LinuxS390X-FP0006     |
+   | MDVREGR 7.0.1-WS-MQ-LinuxX64-FP0006       |
+   | MDVREGR 7.0.1-WS-MQ-SolarisSparc64-FP0006 |
+   | MDVREGR 7.0.1-WS-MQ-SolarisX64-FP0006     |
+   | MDVREGR 7.0.1-WS-MQ-Windows-FP0006        |
+   
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.7
+   --------           --------------------
+   Windows            U200333
+   AIX                U843721
+   HP-UX (PA-RISC)    U844089
+   HP-UX (Itanium)    U844094
+   Solaris (SPARC)    U844090
+   Solaris (x86-64)   U844096
+   iSeries            tbc_p700_0_1_7
+   Linux (x86)        U844091
+   Linux (x86-64)     U844095
+   Linux (zSeries)    U844092
+   Linux (Power)      U844093
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC76544
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-23
+   
+   
+ * CLOSED DATE
+   2011-07-06
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

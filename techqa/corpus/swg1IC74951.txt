@@ -1,0 +1,173 @@
+Title: IBM IC74951: EXECUTION OF "CREATE DATABASE" MAY FAIL WITH ERROR SQL0964C (THE TRANSACTION LOG FOR THE DATABASE IS FULL). - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.7 Fix Pack 5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24031181]
+DB2 Version 9.7 Fix Pack 6 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032754]
+DB2 Version 9.7 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033685]
+DB2 Version 9.7 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24034634]
+DB2 Version 9.7 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036646]
+DB2 Version 9.7 Fix Pack 9a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037559]
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This issue will likely only be seen under special conditions
+   such as:
+   
+     1. DB2_USE_ALTERNATE_PAGE_CLEANING=ON
+     2. DB2_ENABLE_AUTOCONFIG_DEFAULT=NO
+     3. "create database" statement is special, for example:
+   
+     db2 "create database test2 AUTOMATIC STORAGE NO using codeset
+   UTF-8 territory US pagesize 16384 with 'xxxx.xxxx.xxxxxxx'
+   AUTOCONFIGURE APPLY NONE" ;
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1. DB2_USE_ALTERNATE_PAGE_CLEANING=OFF
+   or
+   2. DB2_ENABLE_AUTOCONFIG_DEFAULT=YES
+   or
+   3. To rewrite the "create database" statement.
+   
+     db2 "create database test2 AUTOMATIC STORAGE NO using codeset
+   UTF-8 territory US with 'xxxx.xxxx.xxxxxxx' AUTOCONFIGURE APPLY
+   NONE" ;
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of version 9.7 on Linux, Unix and Windows          *
+   * platforms.                                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The issue will be found in critical conditions only:         *
+   *                                                              *
+   * 1. DB2_USE_ALTERNATE_PAGE_CLEANING=ON                        *
+   * 2. DB2_ENABLE_AUTOCONFIG_DEFAULT=NO                          *
+   * 3. "create database" statement is special, for example:      *
+   *                                                              *
+   * db2 "create database test2 AUTOMATIC STORAGE NO using        *
+   * codeset UTF-8 territory US pagesize 16384 with               *
+   * 'xxxx.xxxx.xxxxxxx' AUTOCONFIGURE APPLY NONE" ;              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 V97FP5 or higher version                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The APAR was fixed on DB2 V97FP5 and higher version
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  1. Avoid using "AUTOCONFIGURE NONE" in CREATE DB command to    l
+   et DB2 pick the right values
+   2. Or make other small changes to the CREATE DB command, such  a
+   s changing the page size, tablespace types, etc: all of these  h
+   ave an impact on timing, and the problem may go away.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC74951
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-10
+   
+   
+ * CLOSED DATE
+   2012-01-02
+   
+   
+ * LAST MODIFIED DATE
+   2012-01-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC75701
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSN
+   UP

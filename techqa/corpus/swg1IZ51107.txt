@@ -1,0 +1,152 @@
+Title: IBM IZ51107: ITM6.2-MSSQL AGENT CREATES TEMP FILES IN %WINDIR%\TEMP - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring for Database Microsoft SQL Server 6.2.0-TIV-ITM_SQL-IF0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24023163]
+IBM Tivoli Monitoring for Database Microsoft SQL Server 6.2.0-TIV-ITM_SQL-IF0007 [http://www-01.ibm.com/support/docview.wss?uid=swg24024095]
+IBM Tivoli Monitoring for Database Microsoft SQL Server 6.2.0-TIV-ITM_SQL-IF0010 [http://www-01.ibm.com/support/docview.wss?uid=swg24027415]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Windows 2000 SP4 server
+   ITM 6.2
+   In the C:\Winnt\system32 directory we also found approx 20,000+
+   files
+   named "to??????"  that contain the same error message.
+   Note : we are aware that our collector is crashing as well - and
+   are
+   investigating IF4 of the 6.2 agent to address this. The customer
+   would like a provisional fix to address the following issues:
+   
+   
+   
+   1.) temp files accumulating when there is a transaction error,
+   collector/cursor/database or odbc problem. In the customers
+   case, they
+   were accumulating in the winnt\system32 directory. It was
+   mentioned that
+   this was fixed in 6.1.2 and 6.2.1 but not 6.2.0.
+   
+   2.) If there is an error with any of the above (in the customers
+   case it
+   was a transaction error), the agent should still effectively
+   clean up
+   the temp files from the saved location.
+   
+   
+   Additional info:
+   
+   The defect the addresses the temp file location is d69735. This
+   defect seems to have been placed in v6.2.1 and 6.2.1 but not
+   6.2.0.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ITM6.2-MSSQL AGENT CREATES TEMP FILES IN %WINDIR%\TEMP
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Now the temp files are created in the proper place.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+                        | interim fix | 6.2.0-TIV-ITM_SQL-IF0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ51107
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON MS SQL
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96MO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-12
+   
+   
+ * CLOSED DATE
+   2009-08-24
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON MS SQL
+   
+   
+ * FIXED COMPONENT ID
+   5724B96MO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

@@ -1,0 +1,34 @@
+Title: IBM EIF probe not able to run from PA on Windows platform - United States
+
+Text:
+probe; not; startup; process; agent; PA; fails; come; up; windows TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ EIF probe configured to run through PA does not come up as expected even thought its configured correctly. 
+
+SYMPTOM
+EIF Probe will not start up from PA. 
+
+
+DIAGNOSING THE PROBLEM
+The PA log shows that its trying to start the probe but it can not. The following message get repeated again and again in the PA log file. 
+
+: Debug: Launch process, argv[0] = C:\IBM\Tivoli\Netcool\omnibus\probes\win32\nco_p_tivoli_eif.bat : Debug: Launch process, uid = 0 
+
+: Debug: Signal event object '69c' in thread 5. 
+: Debug: Reset event object '69c' in thread 4. 
+: Debug: Process 'EIFPROBE' has stopped. Start time 1302120629, Stop time 1302120629 
+
+
+
+RESOLVING THE PROBLEM
+The following command using bat file in PA config will NOT work:
+
+Command '%OMNIHOME%\probes\win32\nco_p_tivoli_eif.bat -pa NCO_PA -propsfile %OMNIHOME%\probes\win32\tivoli_eif.props' run as 'user' 
+
+The workaround is to either use Windows Service or use below command in PA config file to start up probe from PA.
+
+Command '%OMNIHOME%\probes\win32\nco_p_nonnative %NCHOME%\platform\win32\jre_1.5.6\jre\bin\javaw -Xrs -cp 
+
+%OMNIHOME%\probes\win32\nco_p_tivoli_eif.jar;%OMNIHOME%\probes\win32\NSP
+robe.jar;%OMNIHOME%\java\jars\evd.jar;%OMNIHOME%\java\jars\log.jar nco_p_tivoli_eif' run as 'user'

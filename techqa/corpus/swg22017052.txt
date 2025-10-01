@@ -1,0 +1,39 @@
+Title: IBM How Enable tls 1.2 dynamic agent REST API plugin - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ REST API plugin not able to connect to server configured with tls 1.2 enabled 
+
+SYMPTOM
+after configure with TLS 1.2 not able to connect to server configured with tls 1.2 enabled
+
+
+CAUSE
+missing configuration 
+
+ENVIRONMENT
+Server with tls 1.2 Enabled
+
+DIAGNOSING THE PROBLEM
+the plugin do not work and unauthorised message is present in the logs under javaExt folder. 
+
+RESOLVING THE PROBLEM
+The following are the parameters should be added in the JobManager.ini, JVMOptions parameter:
+
+
+
+
+
+
+-Dhttps.protocols=TLSv1.1,TLSv1.2 
+
+-Djdk.tls.client.protocols="TLSv1,TLSv1.1,TLSv1.2" 
+
+The settings above are java settings to force a Java Client to connect to the (REST) server using TLS 1.1 or TLS 1.2. 
+
+This setting impact all others plug-in running the same jvm

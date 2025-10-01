@@ -1,0 +1,210 @@
+Title: IBM PI13677: WHEN LOGGED IN AS THE ADMIN USER, UNABLE TO VIEW PROJECTS PAGE -4.3.1 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The uBuild admin user cannot view Projects page due to
+   PersistenceException:
+   
+   Output from the logs:
+   com.urbancode.ubuild.domain.persistent.PersistenceException:
+   Error restoring Project objects : ORA-01795: maximum number of
+   expressions in a list is 1000
+   
+           at
+   com.urbancode.ubuild.domain.persistent.DaoSql.restoreRangeForSQL
+   Query(DaoSql.java:471)
+           at
+   com.urbancode.ubuild.domain.persistent.DaoSql.restoreFirstResult
+   sForSQLQuery(DaoSql.java:394)
+           at
+   com.urbancode.ubuild.domain.persistent.DaoSql.restoreAllForSQLQu
+   ery(DaoSql.java:358)
+           at
+   com.urbancode.ubuild.domain.project.ProjectDaoSql.restoreAll(Pro
+   jectDaoSql.java:142)
+           at
+   com.urbancode.ubuild.domain.project.ProjectDaoSql.restoreAll(Pro
+   jectDaoSql.java:45)
+           at
+   com.urbancode.ubuild.persistence.UnitOfWorkDefault.restoreAll0(U
+   nitOfWorkDefault.java:755)
+           at
+   com.urbancode.ubuild.persistence.UnitOfWork.restoreAll(UnitOfWor
+   k.java:669)
+           at
+   com.urbancode.ubuild.domain.project.ProjectFactory.restoreAll(Pr
+   ojectFactory.java:70)
+           at
+   com.urbancode.ubuild.web.dashboard.DashboardTasks.viewDashboard(
+   DashboardTasks.java:81)
+   Caused by: java.sql.SQLSyntaxErrorException: ORA-01795: maximum
+   number of expressions in a list is 1000
+   
+           at
+   oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:445)
+           at
+   oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:396)
+           at
+   oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:879)
+           at
+   oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:450)
+           at
+   oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:192)
+           at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:531)
+           at
+   oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedState
+   ment.java:207)
+           at
+   oracle.jdbc.driver.T4CPreparedStatement.executeForDescribe(T4CPr
+   eparedStatement.java:884)
+           at
+   oracle.jdbc.driver.OracleStatement.executeMaybeDescribe(OracleSt
+   atement.java:1167)
+           at
+   oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleSt
+   atement.java:1289)
+           at
+   oracle.jdbc.driver.OraclePreparedStatement.executeInternal(Oracl
+   ePreparedStatement.java:3584)
+           at
+   oracle.jdbc.driver.OraclePreparedStatement.executeQuery(OraclePr
+   eparedStatement.java:3628)
+           at
+   oracle.jdbc.driver.OraclePreparedStatementWrapper.executeQuery(O
+   raclePreparedStatementWrapper.java:1493)
+           at
+   org.apache.commons.dbcp.DelegatingPreparedStatement.executeQuery
+   (DelegatingPreparedStatement.java:92)
+           at
+   com.p6spy.engine.logging.P6LogPreparedStatement.executeQuery(P6L
+   ogPreparedStatement.java:172)
+           at
+   com.urbancode.ubuild.domain.persistent.DaoSql.restoreRangeForSQL
+   Query(DaoSql.java:448)
+           ... 161 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None at this time
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Adminstrators                                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Issues were encountered with viewing projects page as Admin  *
+   * user.                                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is provided in IBM uBuild 5.0.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI13677
+   
+   
+ * REPORTED COMPONENT NAME
+   UBUILD
+   
+   
+ * REPORTED COMPONENT ID
+   5725M7500
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-13
+   
+   
+ * CLOSED DATE
+   2014-04-02
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UBUILD
+   
+   
+ * FIXED COMPONENT ID
+   5725M7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSN
+   UP
+   
+   
+ * R500 PSY
+   UP

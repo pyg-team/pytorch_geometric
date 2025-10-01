@@ -1,0 +1,69 @@
+Title: IBM Security Bulletin: Multiple security vulnerabilities exist in the IBM SDK, Java Technology Edition provided with WebSphere eXtreme Scale - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Three security vulnerabilities were identified in the IBM® SDK, Java™ Technology Edition provided with WebSphere eXtreme Scale. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2014-0878 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0878]
+
+DESCRIPTION: A vulnerability in the IBMSecureRandom implementation of the IBMJCE and IBMSecureRandom cryptographic providers potentially allows an attacker to predict the output of the random number generator under certain circumstances. Refer to the Workarounds and Mitigation section below for additional information.
+
+CVSS:
+CVSS Base Score: 5.8
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91084 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91084] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:P/A:N) 
+
+CVEID: CVE-2014-0453 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0453]
+
+DESCRIPTION: An unspecified vulnerability related to the Security component has partial confidentiality impact, partial integrity impact, and no availability impact.
+
+CVSS:
+CVSS Base Score: 4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/92490 [https://exchange.xforce.ibmcloud.com/vulnerabilities/92490] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:P/I:P/A:N) 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Flash. 
+
+
+Note: According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+AFFECTED PRODUCTS AND VERSIONS
+WebSphere eXtreme Scale Version 7.1.0
+WebSphere eXtreme Scale Version 7.1.1
+WebSphere eXtreme Scale Version 8.5.0
+WebSphere eXtreme Scale Version 8.6.0
+
+REMEDIATION/FIXES
+Apply an interim fix, according to the table below. 
+
+
+
+Product Version APAR Link to interim fix WebSphere eXtreme Scale 7.1.0 PI21158 http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=7.1.0.3&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=7.1.0.3&platform=All&function=all] WebSphere eXtreme Scale 7.1.1 PI20286 http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=7.1.1.1&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=7.1.1.1&platform=All&function=all] WebSphere eXtreme Scale 8.5.0 PI20286 http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=8.5.0.3&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=8.5.0.3&platform=All&function=all] WebSphere eXtreme Scale 8.6.0 PI21237 http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=8.6.0.5&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=8.6.0.5&platform=All&function=all] WORKAROUNDS AND MITIGATIONS
+There is no workaround. The interim fix must be applied to correct the problem.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None. 
+
+CHANGE HISTORY
+ 31 July 2014: Original Copy Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

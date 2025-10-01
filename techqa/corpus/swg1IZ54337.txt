@@ -1,0 +1,175 @@
+Title: IBM IZ54337: TEP DOESN'T SHOW DATA AFTER KOQCOLL.EXE CRASHES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Severity:   2
+   Approver: Steven Barnett
+   Compid: 5724B96MO
+   Abstract: TEP doesn't show data after KOQCOLL.EXE crashes.
+   
+   Environment:
+   All windows versions.
+   All Microsoft SQL Server versions.
+   
+   Microsoft SQL Server Agent 6.2.1.
+   
+   Problem Description:
+   SQL Server agent does not show data on portal due to
+   KOQCOLL.EXE crash having error at c0000005 (Access Violation).
+   
+   Here is a snippet of KOQCOLL.ras:
+   ---
+   Exception 0xC0000005 (ACCESS_VIOLATION)
+   
+          Computer: *****                   Windows: 5.2-SP2
+      Current Time: 2009/06/26, 12:44:32    Start Time: 2009/06/26,
+   12:44:21
+     Current Clock: 0x4A444420             Start Clock: 0x4A444415
+        Process ID: 0x00001554               Thread ID: 0x000011B8
+           Program: C:\IBM\ITM\TMAITM6\KOQCOLL.EXE
+            Origin: koqsqld.dll<>execSqlRequest+0x688F
+   
+   Call Stack
+   
+      IP:100078EF  BP:00A97EDC  koqsqld.dll<>execSqlRequest+0x688F
+      IP:1000194A  BP:00A98764  koqsqld.dll<>execSqlRequest+0x8EA
+      IP:00446CF4  BP:00A98768  KOQCOLL.EXE<>0x0001:0x00045CF4
+   ...
+   ---
+   
+   Detailed Recreation Procedure:
+   1. Start Microsoft SQL Server Agent.
+   2. Open TEP.
+   3. Stop SQL Server service while MSSQL Agent is running
+   4. Notice MSSQL Agent recycling
+   5. Restart SQL Server service
+   6. Notice MSSQL Agent goes down with Appication Error
+   7. Click on any of the workspaces, it will not show data.
+   Although this crash does not occure all the times.
+   
+   Related Files and Output:
+   Directory: /ecurep/pmr/1/7/17006,999,760
+   File Name: 17006,999,760.20090626a.zip.
+   
+   Search for 'Application error' in Windows Event Viewer
+   Application log
+   which shows message
+   KOQCOLL.EXE crashed having error at c0000005 (Access Violation).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  TEP DOESN'T SHOW DATA AFTER KOQCOLL.EXE CRASHES.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Now no more koqcoll crashes and all the data is displayed on
+   TEP.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+         | interim fix | 6.2.1-TIV-ITM_SQL-IF0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ54337
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON MS SQL
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96MO
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-30
+   
+   
+ * CLOSED DATE
+   2009-07-24
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON MS SQL
+   
+   
+ * FIXED COMPONENT ID
+   5724B96MO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R621 PSY
+   UP

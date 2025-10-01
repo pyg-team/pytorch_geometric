@@ -1,0 +1,268 @@
+Title: IBM Adding graphics to the ITAM/ISAM 6.x forms based login page - United States
+
+Text:
+Pics Pic Unauth photo graphic login page html display TECHNOTE (FAQ)
+
+QUESTION
+ While editing the login.html page used during Forms Based Authentication to IBM Tivoli Access Manager for eBusiness WebSEAL 6.x.x, the graphics do not get displayed. Can this be resolved? 
+
+ANSWER
+STATEMENT OF INTENT 
+
+This document serves as a 'How to' example of adding graphics in IBM Tivoli Access Manager for eBusiness 6.1 when accessing the forms based login page for WebSEAL. This example, should also work with other versions including, IBM Security Access Manager for Web 7.0. 
+
+For this example, the ITAM Server is installed and running on a Windows 2003 Server; however, this example will work the same for any ITAM supported operating system. Also, it is assumed that the ITAM Web Portal Manager (WPM) server is already configured, if using WPM for creation of the ACL, or the PDADMIN command line tool works properly . Also, please install the latest patches and the latest version of the Web Portal Manager (See Related Information for link). This example, also assumes that an Unauthenticated ACL has already been created. See Related Information for link to DCF article "Creating an UnAuth ACL for ITAM 6.1" if needed and that forms-based authentication is already setup on WebSEAL. 
+
+ 
+
+ 
+
+EXPLANATION 
+
+ 
+
+This issue is caused by the fact that, when accessing the forms based login page for WebSEAL, the user is not authenticated at this time. Therefore, photos or graphics placed behind WebSEAL will inherit the default-webseal ACL, which does not allow access to these objects until authenticated. To resolve this issue, an Unauthenticated ACL must be created and attached to the objects that must be viewable when the user is not yet authenticated. This article does not go into how to create the ACL, just on how to apply it (See Related Information). 
+
+ 
+
+ 
+
+SETUP 
+
+ 
+
+For this example, the default graphics already setup within ITAM will be used, specifically the amlogo.gif file. This file, and other graphics files, are located in the 'pics' directory. This directory will be used to store all graphics to be used for the login page and should be used to store specific graphic files.
+
+C:\>cd C:\Program Files\Tivoli\PDWeb\www-default\docs\pics
+
+C:\Program Files\Tivoli\PDWeb\www-default\docs\pics>dir
+Volume in drive C has no label.
+Volume Serial Number is 38A4-BDF0
+
+Directory of C:\Program Files\Tivoli\PDWeb\www-default\docs\pics
+
+08/03/2009 03:22 PM <DIR> .
+08/03/2009 03:22 PM <DIR> ..
+03/25/2008 04:46 PM 22,146 amlogo.gif
+03/25/2008 04:46 PM 46,498 iv30.gif
+2 File(s) 68,644 bytes
+2 Dir(s) 1,437,777,920 bytes free
+
+or
+
+
+[/support/docview.wss?uid=swg21406226&amp;aid=1]
+
+
+ 
+
+Example of graphic being used:
+[/support/docview.wss?uid=swg21406226&aid=2] [/support/docview.wss?uid=swg21406226&aid=2] 
+
+ 
+
+The default login.html, if setup looks like this via a browser display. 
+
+
+[/support/docview.wss?uid=swg21406226&amp;aid=3]
+
+
+This is the file that must be edited to display the graphic. This file, being default is located here:
+
+C:\Program Files\Tivoli\PDWeb\www-default\lib\html\C
+
+[/support/docview.wss?uid=swg21406226&amp;aid=4] 
+
+
+Editing this file via a text editor, a basic IMG SRC was used to add the graphic to the login.html page.
+
+
+<BR><INPUT TYPE="SUBMIT" VALUE="Login">
+</FORM>
+<center><img src="/pics/amlogo.gif" alt=""></center>
+
+</BODY>
+</HTML>
+
+
+The next step is to see if the graphic fails to be displayed. Accessing WebSEAL shows the icon of the missing graphic.
+
+
+[/support/docview.wss?uid=swg21406226&amp;aid=5]
+
+
+*NOTE* IE and Firefox behaves differently in this situation. IE, will show the 'X' where the graphic failed to display. In Firefox, the graphic is just not displayed. 
+
+ 
+
+ 
+
+ATTACHING UNAUTHENTICATED ACL USING PDADMIN 
+
+ 
+
+This guide assumes that an Unauthenticated ACL has already been created. For this example, the ACL 'UnAuthACL' has been created and is ready to be used. 
+
+First access the PDADMIN command from a command window and login as sec_master, the ITAM administrator account.
+
+C:\>pdadmin
+pdadmin> login
+Enter User ID: sec_master
+Enter Password:
+pdadmin sec_master>
+
+The 'pics' directory is located right off the root directory of WebSEAL, so an object list is accomplished to show that the graphics are listed properly.
+
+pdadmin sec_master> object list /WebSEAL/itam61-default/pics
+/WebSEAL/itam61-default/pics/amlogo.gif
+/WebSEAL/itam61-default/pics/iv30.gif
+pdadmin sec_master>
+
+For this example, the entire 'pics' directory, and all child objects will be set for unauthenticated access. This will allow all the graphics files within this directory to inherit the UnAuthACL properties.
+
+To display what ACLs, if any, are attached an object show is needed for that specific directory.
+
+
+pdadmin sec_master> object show /WebSEAL/itam61-default/pics
+Name: /WebSEAL/itam61-default/pics
+Description: Object from host ITAM61.
+Type: 16 (Management Object)
+Is Policy Attachable: Yes
+Extended Attributes:
+Attached ACL:
+Attached POP:
+Attached AuthzRule:
+
+Effective Extended Attributes:
+Effective ACL: default-webseal
+Effective POP:
+Effective AuthzRule:
+
+
+It shows that no ACL is attached, but it inherits the default-webseal which is what was expected.
+
+By issuing an ACL attach command, the UnAuthACL can be attached to the 'pics' directory.
+
+
+pdadmin sec_master> acl attach /WebSEAL/itam61-default/pics UnAuthACL
+
+
+To verify that this was completed successfully, another object show is required.
+
+
+pdadmin sec_master> object show /WebSEAL/itam61-default/pics
+Name: /WebSEAL/itam61-default/pics
+Description: Object from host ITAM61.
+Type: 16 (Management Object)
+Is Policy Attachable: Yes
+Extended Attributes:
+Attached ACL: UnAuthACL
+Attached POP:
+Attached AuthzRule:
+
+Effective Extended Attributes:
+Effective ACL: UnAuthACL
+Effective POP:
+Effective AuthzRule:
+
+
+As shown, the Attached ACL is the UnAuthACL.
+
+
+ 
+
+ATTACHING UNAUTHENTICATED ACL USING WPM 
+
+ 
+
+This guide assumes that an Unauthenticated ACL has already been created. For this example, the ACL 'UnAuthACL' has been created and is ready to be used. 
+
+As in the above example, an Unauthenticated ACL needs to be attached to the 'pics' directory. But this time, the Web Portal Manager will be used to attach the ACL. 
+
+This is done by first logging into the Integrated Solution Console and then logging in with the sec_master administrator ID while accessing and expanding the Web Portal Manager section. 
+
+Once, the administrator is authenticated, expand the Object Space section and then select the 'Browse Object Space' link. 
+
+
+[/support/docview.wss?uid=swg21406226&amp;aid=6]
+
+
+Again, if not already authenticated, the login prompt will be displayed and the administrator must login with the sec_master account.
+
+
+
+[/support/docview.wss?uid=swg21406226&amp;aid=7]
+
+
+
+Once browsing the object space, expand out the individual WebSEAL that is being used. As shown below, the pics directory is listed along with the 'amlogo.gif' that is being used in this example.
+
+To attach an ACL to the pics directory, select the 'pics' object......
+
+
+
+[/support/docview.wss?uid=swg21406226&amp;aid=8]
+
+
+
+This will bring up the 'pics' object. From this screen, an ACL can be attached. Selecting the 'Attach...' button next to the ACL Attached section will allow the administrator to select the ACL that need to be attached.
+
+
+[/support/docview.wss?uid=swg21406226&amp;aid=9]
+
+
+
+As stated, in this example, the UnAuthACL ACL has already been created, highlight this ACL and select 'Apply' to attach the ACL.
+
+
+
+[/support/docview.wss?uid=swg21406226&amp;aid=10]
+
+
+
+Press 'Apply' to continue.
+
+
+
+[/support/docview.wss?uid=swg21406226&amp;aid=11]
+
+
+
+Going back to browse the object space on the 'pics' directory, it shows the 'UnAuthACL' attached.
+
+
+
+[/support/docview.wss?uid=swg21406226&amp;aid=12]
+
+
+
+
+
+TESTING AND CONFIRMATION 
+
+ 
+
+After the Unauthenticated ACL has been attached, nothing else to do but to test. 
+
+ 
+
+Accessing WebSEAL from a browser now shows the Graphic. 
+
+
+[/support/docview.wss?uid=swg21406226&aid=13] [/support/docview.wss?uid=swg21406226&aid=13]
+
+
+Success!!! 
+
+
+*WARNING* An unauthenticated ACL, attached to a specific object will bypass all ITAM security for that object and all child objects. Use with extreme care.
+
+RELATED INFORMATION
+ Recommended Fixes for ITAM [http://www.ibm.com/support/docview.wss?uid=swg27010627]
+Creating an UnAuth ACL [http://www.ibm.com/support/docview.wss?uid=swg21406125]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITAM TAM AM ISAM SAM

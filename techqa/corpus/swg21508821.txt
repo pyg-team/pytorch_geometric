@@ -1,0 +1,28 @@
+Title: IBM WebSphere Business Monitor Data Movement Service (DMS) fails on z/OS server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After WebSphere Business Monitor attempts to run DMS on DB2 for z/OS, the SystemOut.log reports errors. 
+
+SYMPTOM
+The SystemOut.log contains errors similar to the following errors:
+
+[5/13/11 12:00:13:604 GMT] 00000037 ConnectionEve A BBOO0222I: J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adapter for resource jdbc/wbm/MonitorDMSDatabase. The exception is: com.ibm.db2.jcc.am.SqlException: [jcc][50053][12312][4.12.57] T2zOS exception: [jcc][T2zos]z.readExecuteCallInternal:nativeExecuteCall:10415: Abend occurred in DB2, Driver successfully retry, SQLCODE = -4499, SQLSTATE = null, error tokens = signal:18,acode:0004E000,reas:00D91044,con:15C2DC10,tcb:1223D070 ERRORCODE=-4499, SQLSTATE=null
+[5/13/11 12:00:13:606 GMT] 00000037 DMSServiceSPI E com.ibm.wbimonitor.dmsservice.DMSServiceSPI logSPFailure() <Null Message>
+com.ibm.websphere.ce.cm.StaleConnectionException: [jcc][50053][12312][4.12.57] T2zOS exception: [jcc][T2zos]z.readExecuteCallInternal:nativeExecuteCall:10415: Abend occurred in DB2, Driver successfully retry, SQLCODE = -4499, SQLSTATE = null, error tokens = signal:18,acode:0004E000,reas:00D91044,con:15C2DC10,tcb:1223D070 ERRORCODE=-4499, SQLSTATE=null
+
+CAUSE
+APAR PM31624 on DB2 for z/OS V9 and DB2 z/OS V10 causes this problem when a Type 2 JDBC driver is used against DB2 for z/OS.
+
+ENVIRONMENT
+Business Monitor server V7 or V7.5 on z/OS, using a Type 2 JDBC driver against DB2 for z/OS.
+
+RESOLVING THE PROBLEM
+To resolve the problem, get the PTF fix for DB2 for z/OS V9 or V10.
+
+RELATED INFORMATION
+#PM31624: SQLCODE904 RC00E30083 00000801 ON DROP SQLPL S [https://www.ibm.com/support/docview.wss?uid=swg1PM31624 ]
+PTF for DB2 V9 [https://www14.software.ibm.com/webapp/set2/ordermedia/shopCart?ptfs=UK69747 ]
+PTF for DB2 V10 [https://www14.software.ibm.com/webapp/set2/ordermedia/shopCart?ptfs=UK69746]

@@ -1,0 +1,69 @@
+Title: IBM Downloading IBM Cognos Disclosure Management 10.2.2 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This page describes how to download IBM Cognos Disclosure Management. 
+
+DOWNLOAD DESCRIPTION
+IBM Cognos Disclosure Management is a unified financial governance solution that focuses on improving financial processes and controls, particularly in the final stages before disclosure. 
+
+
+
+
+Downloading and assembling the product
+
+Download all of the parts that you need, both required and optional.
+
+
+ 1. Access the IBM Passport Advantage® web site [http://www.ibm.com/software/passportadvantage] (www.ibm.com/software/passportadvantage). [http://%20www.google.com/]
+    Tip: If you get an error, try using a different web browser to access Passport Advantage. 
+ 2. Sign in and navigate to the software downloads page. 
+ 3. Find the eAssembly or eAssemblies for your product.
+    The eAssembly part numbers to search for are listed in this document. An eAssembly groups individual product parts (eImages) together. 
+ 4. Download all parts in an eAssembly by selecting the check box beside the name of the eAssembly or download individual parts of an eAssembly by expanding the eAssembly and selecting the check box for a part.
+    When the download finishes, a Download Complete message displays. The location of the downloaded files displays in the message window. 
+ 5. Unpack each of the parts into a single, temporary directory on your system. 
+ 6. Follow the instructions in the IBM Cognos Disclosure Management Version 10.2.2 Installation Guide to install the product. 
+
+
+If you need help with downloading a product, contact eCustomer Care. There are links to eCustomer Care on the IBM Passport Advantage web site. 
+
+
+Click or double-click the arrow preceding the product name to see the product parts to install.
+
+ *  - [http://www.ibm.com/i/c.gif] IBM Cognos Disclosure Management 10.2.2 Microsoft Windows Multilingual eAssembly
+   
+   Parts and Platforms Details eAssembly IBM Cognos Disclosure Management 10.2.2 Microsoft Windows Multilingual eAssembly [/support/docview.wss?uid=swg24035833&amp;aid=1] CRPU0ML Parts and Platforms Details eImage IBM Cognos Disclosure Management Quick Start Guide 10.2.2 Multilingual Optional CIT0MML IBM Cognos Disclosure Management 10.2.2 Microsoft Windows Multilingual Required CIVW4ML IBM Cognos Financial Statement Reporting (FSR) 6.6.1 Microsoft Windows Multilingual Required CI8PYML IBM Cognos Disclosure Management Samples 10.2.2 Microsoft Windows Multilingual Required CITZ0ML 
+   
+   
+   
+ *  - [http://www.ibm.com/i/c.gif] IBM Cognos Disclosure Management with Data Aggregation 10.2.2 Microsoft Windows Multilingual eAssembly
+   
+   
+   Parts and Platforms Details eAssembly IBM Cognos Disclosure Management with Data Aggregation 10.2.2 Microsoft Windows Multilingual eAssembly [/support/docview.wss?uid=swg24035833&amp;aid=1] CRPT9ML Parts and Platforms Details eImage IBM Cognos Disclosure Management Quick Start Guide 10.2.2 Multilingual Optional CIT0MML IBM Cognos Disclosure Management with Data Aggregation 10.2.2 Microsoft Windows Multilingual Required CIVW5ML IBM Cognos Financial Statement Reporting (FSR) 6.6.1 Microsoft Windows Multilingual Required CI8PYML IBM Cognos Disclosure Management Samples 10.2.2 Microsoft Windows Multilingual Required CITZ0ML IBM Cognos TM1 32-bit 10.2.0 Microsoft Windows Multilingual Required CIPW1ML IBM Cognos TM1 64-bit 10.2.0 Microsoft Windows Multilingual Required CIPW2ML IBM Cognos TM1 Client 10.2.0 Microsoft Windows Multilingual Required CIPW3ML IBM Cognos TM1 10.2.0 AIX Multilingual Required CIPV5ML IBM Cognos TM1 10.2.0 Linux x86 Multilingual Required CIPV7ML IBM Cognos TM1 10.2.0 Linux on System z Multilingual Required CIPV9ML 
+   
+   
+   
+   
+ *  - [http://www.ibm.com/i/c.gif] IBM Cognos Disclosure Management XBRL User 10.2 eAssembly
+   
+   
+   Parts and Platforms Details eAssembly IBM Cognos Disclosure Management XBRL User 10.2 eAssembly [/support/docview.wss?uid=swg24035833&amp;aid=1] CRK8CML Parts and Platforms Details eImage IBM Cognos Disclosure Management XBRL Enablement Key 10.2 Required CIL3CZZ IBM Cognos Financial Statement Reporting (FSR) XBRL Enablement Script 6.6.1 Microsoft Windows English Required CI8PWEN 
+   
+   
+   
+   
+ *  - [http://www.ibm.com/i/c.gif] IBM Cognos Disclosure Management EDGAR Engine 10.2 eAssembly
+   
+   
+   Parts and Platforms Details eAssembly IBM Cognos Disclosure Management EDGAR Engine 10.2 eAssembly [/support/docview.wss?uid=swg24035833&amp;aid=1] CRK8DML Parts and Platforms Details eImage IBM Cognos Disclosure Management EDGAR Engine Enablement Key 10.2 Required CIL3DZZ IBM Cognos Financial Statement Reporting (FSR) EDGAR Enablement Script 6.6.1 Microsoft Windows English Required CI8PXEN 
+   
+   
+   
+   
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Disclosure Management Cognos Disclosure Management Windows 10.2.2 All Editions

@@ -1,0 +1,206 @@
+Title: IBM PM99397: PROVIDE TLSV1.1 AND TLSV1.2 PROTOCOL SUPPORT FOR DAEMON SYSTEM SSL - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+7.0.0.33: WebSphere Application Server V7.0 Fix Pack 33 [http://www-01.ibm.com/support/docview.wss?uid=swg24037573]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.5.5.3: WebSphere Application Server V8.5.5 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038133]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Provide TLSv1.1 and TLSv1.2 protocol support for Daemon System
+   SSL
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of z/OS IBM WebSphere Application *
+   *                  Server V8.0, and V8.5                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: z/OS Daemon does not have               *
+   *                      protocol TLS1.1 and TLS1.2 support.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Customers wanting to implement TLS1.1 and TLS1.2 protocol
+   communications between clients and the z/OS Location Server
+   Daemon can not.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  TLS1.1 and TLS1.2 protocol communications to the z/OS Location
+   Server Daemon have been enabled. The Infocenter has been
+   update with the following enablement instructions:
+   
+   The SSL and TLS protocols can be set in the z/OS Daemon using
+   the following WebSphere variables. Setting the variable to 1
+   enables the protocol, while 0 disables it.
+   DAEMON_com_ibm_DAEMON_protocol_TLSv1_enabled    //* default 1
+   DAEMON_com_ibm_DAEMON_protocol_TLSv1_1_enabled  //* default 0
+   DAEMON_com_ibm_DAEMON_protocol_TLSv1_2_enabled  //* default 0
+   
+   DAEMON_com_ibm_DAEMON_protocol_SSLv2_enabled    //* default 0
+   DAEMON_com_ibm_DAEMON_protocol_SSLv3_enabled    //* default 1
+   
+   APAR PM99397 requires a change to documention.
+   
+   Note: We update our information centers monthly. The following
+   modifications will be available in the April 2014
+   update to the Information Centers. To access the latest
+   on-line documentation, go to the product library page at
+   http://www.ibm.com/software/webservers/appserv/library and
+   select the version and product that is appropriate for your
+   WebSphere Application Server environment.
+   
+   The following issue will be addressed:
+   
+   Problem: New function has been added to enable the TLS1.1 and
+   TLS1.2 protocols
+   
+   Resolution: a new paragraph has been added to the topic that
+   states the following:
+   
+   The SSL and TLS protocols can be set in the z/OS Daemon using
+   the following WebSphere variables. Setting the variable to 1
+   enables the protocol, while 0 disables it.
+   DAEMON_com_ibm_DAEMON_protocol_TLSv1_enabled    //* default 1
+   DAEMON_com_ibm_DAEMON_protocol_TLSv1_1_enabled  //* default 0
+   DAEMON_com_ibm_DAEMON_protocol_TLSv1_2_enabled  //* default 0
+   
+   DAEMON_com_ibm_DAEMON_protocol_SSLv2_enabled    //* default 0
+   DAEMON_com_ibm_DAEMON_protocol_SSLv3_enabled    //* default 1
+   
+   This update applies also to the Version V8.0, V8.5, and
+   V8.5.5 information centers.
+   
+   APAR PM99397 is currently targeted for inclusion in
+   Service Level 8.0.0.9 and 8.5.5.3 of WebSphere
+   Application Server
+   
+   Sysroute APAR PI19036 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI19036] will be used to deliver the fix in
+   WebSphere Application Server Fix Pack 7.0.0.33.
+   
+   Please refer to URL:
+   //www.ibm.com/support/docview.wss?rs=404&uid=swg27006970
+   for Fix Pack availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM99397
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-17
+   
+   
+ * CLOSED DATE
+   2014-03-04
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI19036 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI19036]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

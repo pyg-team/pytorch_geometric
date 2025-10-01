@@ -1,0 +1,133 @@
+Title: IBM IV53447: FISTNAME, LASTNAME AND EMAIL ID OF LOGGED IN USER DOES NOT APPEAR IN COMMON REPORTING->MY PREFERENCES PAGE UNDER PERSO - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  (Gateway and Dispatcher setup does not support to get user
+   details into
+   Cognos My preferances page)
+   1. As per the design the current
+   
+   installation scenario i,e Gateway
+   and dispatcher installation does not support to get user
+   details in to
+   cognos my preferances
+   2. So as an alternate, customer can go with single computer
+   installation
+   with TCR single box installation and next they can apply
+   Interim fix
+   what we are going to upload
+   as part of new APAR.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Issue: FISTNAME, LASTNAME AND EMAIL ID OF LOGGED IN USER DOES
+   NOT APPEAR IN COMMON REPORTING->MY PREFERENCES PAGE UNDER
+   PERSONEL
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Issue is fixed with Tivoli Common Reporting 2.1.1 Interim Fix12
+   (2.1.1.0-TIV-TCR-IF12)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV53447
+   
+   
+ * REPORTED COMPONENT NAME
+   TIVOLI COMMON R
+   
+   
+ * REPORTED COMPONENT ID
+   5724T6900
+   
+   
+ * REPORTED RELEASE
+   211
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-18
+   
+   
+ * CLOSED DATE
+   2014-02-24
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IV55275 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV55275]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIVOLI COMMON R
+   
+   
+ * FIXED COMPONENT ID
+   5724T6900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R211 PSY
+   UP

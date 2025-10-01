@@ -1,0 +1,242 @@
+Title: IBM IT10369: SCHEDULE VIEW FOREVER IN LOADING STATUS WHEN ANY SCHEDULE DEFINITION HAS NO '-ASNODE' OPTION - United States
+
+Text:
+  A FIX IS AVAILABLE
+Download Information: Version 7.1.4 IBM Spectrum Protect for Virtual Environments [http://www-01.ibm.com/support/docview.wss?uid=swg24041094]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  For VM backup schedules that are part of the Tivoli Storage
+   Management for Virtual Environment - Data Protection for VMware
+   configuration being managed through the Data Protection for
+   VMware GUI, if any schedule definition is missing the '-asnode'
+   option, the scheduler view in the GUI will stay forever in a
+   loading status.
+   The expected behaviour would be to get an error that indicates
+   the problem.
+   The error will however be found in the GUI message.log file :
+   "Detected task: <affected schedule name>:<taskid>:<domain name>
+   has no datacenter info."
+   The forever loading scheduler view will not prevent the user to
+   switch to any other view or use the other functionalities of
+   the GUI.
+   Schedules defined through the GUI will not have the problem as
+   these always are created with the '-asnode' option.
+   
+   One reported case was because of an unexpected manual
+   configuration on the TSM server :
+   
+   For example, there are two schedules :
+   
+   Schedule Name         Action Subaction  Options
+   --------------------- ------ ---------- --------------------
+   sched_1               Backup VM
+   sxhed_2               Backup VM         -vmfulltype=vstor
+                                           -vmbackuptype=fullvm
+                                           -asnodename=DC1
+   
+   -domain.vmfull="VM=vm1,vm2"
+                                           -MODE=IFIncremental
+   
+   query assoc is as follows :
+   
+   Policy Domain Name Schedule Name         Associated Nodes
+   ------------------ --------------------- ------------------
+   DOMAIN_VM          sched_1               dm1 dm2
+   DOMAIN_VM          sched_2               dm2
+   
+   SCHED_1 used by nodes : dc1, dm1, dm2 and there is no -asnode
+   option used, so the backups done by these nodes
+   are also stored on the TSM server under these respective node
+   names.
+   
+   SCHED_2 on the other hand is using the datamover node DM1 and
+   target node DC1 via the -asnode option.
+   
+   So far this is not a problem, BUT the proxy relationships were
+   defined as follows :
+   
+   Target   Agent
+   -------  -------------
+   vcenter  vmcli DC1
+   DC1      vmcli DM1 DM2
+   
+   This means that when we try to display the schedules in the TDP
+   for VE GUI, to populate that screen, the GUI will query all the
+   nodes found in the configuration that relate to the target node
+   DC1. This means with the above proxy relationships : all the
+   datamovers and not only DM1. This query will find the two
+   schedules :
+   SCHED_1 and SCHED_2
+   Since SCHED_1 was not meant to be used in the first place with
+   the GUI and does not have the -asnode option set explicitly, we
+   see the forever loading error.
+   
+   The corrective action here was to remove the proxy relationship
+   between DC1 and DM1 so that SCHED_1 is not queried by the GUI.
+   
+   Tivoli Storage Manager Versions Affected: Tivoli Storage
+   Management for Virtual Environment - Data Protection for VMware
+   version 6.4 and higher on Windows and Linux.
+   
+   Initial Impact: Medium
+   
+   Additional Keywords: zztsm tsm4ve tdp4ve GUI hang load forever
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Ensure that the 'asnode' option is used for any backup VM
+   schedule that is managed through the GUI and that the nodes
+   proxy relationships are correct.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Tivoli Storage Manager for Virtual Environments component    *
+   * Data Protection for VMware GUI version 7.1.1, 7.1.2 and      *
+   * 7.1.3, running on Microsoft Windows and Linux x86 platforms. *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See ERROR DESCRIPTION                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fixing level when available.  This problem is          *
+   * currently projected to be fixed in level 7.1.4. Note that    *
+   * this is subject to change at the discretion of IBM.          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Backup Schedules panel code was changed so that any
+   schedules without an option string or an -asnodename parameter
+   are not displayed when loading the backup schedules table.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT10369
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM VE DP MS HY
+   
+   
+ * REPORTED COMPONENT ID
+   5725TVEHV
+   
+   
+ * REPORTED RELEASE
+   71W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-28
+   
+   
+ * CLOSED DATE
+   2015-09-24
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  VMGUI
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM FOR VE DP V
+   
+   
+ * FIXED COMPONENT ID
+   5725TVEVM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R71W PSY
+   UP
+   
+   
+ * R71L PSY
+   UP
+   
+   
+ * R64W PSN
+   UP
+   
+   
+ * R64L PSN
+   UP
+   
+   
+ * R63W PSN
+   UP
+   
+   
+ * R63L PSN
+   UP

@@ -1,0 +1,301 @@
+Title: IBM PK52559: NULLPOINTEREXCEPTION CAUSED BY A REFERENCE IN AN EJB JAR TO A NON-EXISTENT RESOURCE WITH ACCOMPANYING CNTR0035E - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24020073]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24021203]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The ibm-ejb-jar-ext.xmi of an EJB may contain resource
+   references to resources, such as a data source.  If the
+   referenced resource (that is the xmi:id of specified in the
+   reference) does not exist, then a java.lang.NullPointerException
+   [4.7.2007 0:14:19:940 CEST] 0000001b BeanMetaData  E
+   CNTR0035E: EJB
+   container caught java.lang.NullPointerException
+   at com.ibm.ejs.csi.ResRefListImpl.findByName(ResRefListImpl.
+   java:432) is logged.
+   .
+      The reference that caused the NullPointerException is
+   example of wrong link:
+         <resourceRef href="META-INF/ejb-jar.
+   xml#ResourceRef_118349958WRONG"/>
+   .
+   There are two messages that are likely to be observed in the
+   WebSphere AppServer SystemOut.log.
+   1.  CNTR0035E: EJB container caught
+   java.lang.NullPointerException
+    at com.ibm.ejs.csi.ResRefListImpl.findByName(ResRefListImpl.
+   java:432)
+    at com.ibm.ejs.csi.ResRefListImpl.initializeIsolationLevel
+   (ResRefListImpl.java:227)
+    at
+   com.ibm.ejs.csi.ResRefListImpl.<init>(ResRefListImpl.java:146)
+    at
+   com.ibm.ejs.container.BeanMetaData.populateEJBComponentMetaData(
+   BeanMetaData.java:3283)
+    at com.ibm.ejs.container.BeanMetaData.completeInitialization
+   (BeanMetaData.java:1802)
+    at
+   com.ibm.ws.runtime.component.EJBContainerImpl.createBeanMetaData
+   (EJBContainerImpl.java:1996)
+    at com.ibm.ws.runtime.component.EJBContainerImpl.
+   createDeferredBeanMetaData(EJBContainerImpl.java:4655)
+    at com.ibm.ws.runtime.component.EJBContainerImpl.access$000
+   (EJBContainerImpl.java:440)
+    at com.ibm.ws.runtime.component.EJBContainerImpl$3.run
+   (EJBContainerImpl.java:4446)
+    at com.ibm.ws.security.util.AccessController.doPrivileged
+   (AccessController.java:118)
+    at com.ibm.ws.runtime.component.EJBContainerImpl.
+   initializeDeferred EJB(EJBContainerImpl.java:4443)
+    and is throwing com.ibm.ejs.container.ContainerException:
+   Failed to initialize BeanMetaData instance - caught Throwable;
+   nested exception is:
+    java.lang.NullPointerException.
+   
+   2.  WSVR0068E: Attempt to start EnterpriseBean
+   WrongrefEAR#WrongrefServiceEJB.jar#WrongrefService failed with
+   exception: com.ibm.ejs.container.ContainerException: Failed to
+   initialize BeanMetaData instance - caught Throwable; nested
+   exception is: java.lang.NullPointerException
+    at com.ibm.ejs.container.BeanMetaData.completeInitialization
+   (BeanMetaData.java:2300)
+    at com.ibm.ws.runtime.component.EJBContainerImpl.
+   createBeanMetaData(EJBContainerImpl.java:1996)
+    at com.ibm.ws.runtime.component.EJBContainerImpl.
+   createDeferredBeanMetaData(EJBContainerImpl.java:4655)
+    at com.ibm.ws.runtime.component.EJBContainerImpl.access$000
+   (EJBContainerImpl.java:440)
+    at com.ibm.ws.runtime.component.EJBContainerImpl$3.run
+   (EJBContainerImpl.java:4446)
+    at com.ibm.ws.security.util.AccessController.doPrivileged
+   (AccessController.java:118)
+    at com.ibm.ws.runtime.component.EJBContainerImpl.
+   initializeDeferredEJB(EJBContainerImpl.java:4443)
+    at com.ibm.ejs.container.HomeOfHomes.getHome
+   (HomeOfHomes.java:345)
+   ...
+   Caused by: java.lang.NullPointerException
+    at com.ibm.ejs.csi.ResRefListImpl.findByName
+   (ResRefListImpl.java:432)
+   .
+     The most likely cause of this is cloning a project in IBM
+   Rational Application Developer from an existing project, where
+   the existing project has references not needed by the new
+   project.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  remove or correct the invalid referneces.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of IBM WebSphere Application Server    *
+   *                 versions 6.0.2 and 6.1.                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A java.lang.NullPointerException is     *
+   *                      caused when an invalid resource         *
+   *                      reference entry is contained in meta    *
+   *                      data (i.e. ibm-ejb-jar-ext.xmi file).   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In this case, the resource reference points to a resource
+   which no longer exists, or never existed, in the deployment
+   files (that is, ejb-jar.xml). Examples of, but may not be
+   limited to, ways that an invalid resource reference may be
+   created or contained in meta data are:
+   1) You hand edit deployment files in such a way as to cause a
+   resource which is pointed to by a resource reference to no
+   longer exist in the deployment files. You should never hand
+   edit deployment files; instead tooling should be used to edit
+   these files.
+   2) You clone (re-use) files from an existing application when
+   creating new applications. In doing so, the new application
+   may not contain all the resource for which the resource
+   references point to.
+   
+   The NullPointerException (NPE) is caused in Enterprise Java
+   Beans (EJB) Container code.  The NPE is a side effect of the
+   errant meta data entry, however, the EJB Container should not
+   cause the NPE; rather it should handle this errant meta data
+   entry by printing a warning message.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  With this fix, code will be added to guard against the NPE and
+   instead a warning message will be printed to the system logs.
+   
+   The fix for this APAR is currently targeted for
+   inclusion in fix packs 6.0.2.25 and 6.1.0.15.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK52559
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   61W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-09-10
+   
+   
+ * CLOSED DATE
+   2007-11-01
+   
+   
+ * LAST MODIFIED DATE
+   2007-11-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP
+   
+   
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

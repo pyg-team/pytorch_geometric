@@ -1,0 +1,231 @@
+Title: IBM IZ26644: LACK OF /TMP SPACE DURING 62FP1 UPGRADE - CANNOT LOGIN TO TEPS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   
+   ITM 6.2 FP1 Upgrade to TEPS on Unix/Linux
+   
+   Problem Description:
+   
+   After installing ITM 6.2 FP1, it is no longer possible to log in
+   to
+   the TEPS from the TEP console (browser or client).  Note: There
+   are
+   no obvious signs during the upgrade that anything went wrong.
+   
+   After the TEPS server has been restarted, trying to log in to
+   the
+   TEPS will result in the error message below:
+   
+   KFWITM009I The Tivoli Enterprise Portal Server is still being
+   initialized and is not ready for communications.
+   
+   To prove that the problem is due to a lack of /tmp space, first
+   examine the file
+   $CANDLEHOME/<arch>/iw/properties/version/EWAS.product
+   and check the version information.  If the version is 6.1.0.3 as
+   shown below, then EWAS did not get upgraded, and is still at the
+   6.2GA
+   level.
+   
+   <?xml version="1.0" encoding="UTF-8"?>
+   <!DOCTYPE product SYSTEM "product.dtd">
+   <product name="IBM Embeddable WebSphere Application Server">
+     <id>embeddedEXPRESS</id>
+     <version>6.1.0.3</version>
+     <build-info
+       date="10/31/06"
+       level="cf40644.23"/>
+   </product>
+   
+   If however EWAS has the version <6.1.0.13>, then EWAS did get
+   upgraded
+   to the 6.2 FP1 level and this APAR is not applicable for your
+   problem.
+   
+   If EWAS is still at level 6.1.0.3, then check the directory:
+   
+   /tmp/niflogs
+   
+   in this directory will be files similar to
+   
+   log_20080709.135102.txt.gz    trace_20080709.135102.txt.gz
+   
+   Examine the log*.gz file with the following command:
+   
+   gunzip -c log_20080709.135102.txt.gz
+   
+   If the EWAS upgrade failed due to insufficient space in /tmp,
+   then
+   an error similar to that below will be shown:
+   
+   (Jul 9, 2008 1:51:02 PM), Install,
+   com.ibm.ws.install.ni.ismp.actions.MaintenancePrereqCheckAction,
+   err,
+   CWUPI0033E: There is insufficient free disk space on the system:
+   /data/ewas-issues/installed/UpdateInstaller/: Required: 293 MB
+   Available: 6371 MB /tmp/: Required: 100 MB Available: 71 MB
+   /usr/.ibm/.nif: Required: 1 MB Available: 127 MB Please ensure
+   that
+   there is enough free disk space on all required filesystems and
+   restart
+   the installation. If /tmp/
+   ,/data/ewas-issues/installed/UpdateInstaller/
+   and /usr/.ibm/.nif are on the same partition, then the amount of
+   space
+   required is the sum of the space required on /tmp/ ,
+   /data/ewas-issues/installed/UpdateInstaller/ and /usr/.ibm/.nif.
+   
+   
+   The above error shows that there was insufficient space in /tmp
+   and
+   as a result the update of EWAS failed.  If you have this
+   situation this
+   APAR addresses this issue.
+   
+   
+   Detailed Recreation Procedure:
+   
+   Do this all as the root user.
+   
+   1) Install TEMS and TEPS from ITM 6.2 GA.
+   2) Start TEMS (bin/CandleServer start TEMS)
+   3) Configure TEPS (bin/CandleConfig -A cq)
+   4) Start TEPS (bin/CandleAgent start cq)
+   5) Log into TEPS using TEP browser client - to verify login
+   works.
+   6) Stop TEPS (bin/CandleAgent stop cq)
+   7) Stop TEMS (bin/CandleServer stop TEMS)
+   8) Fill up /tmp with dummy files, so that there is about 50MB
+   free space
+   9) Upgrade TEMS and TEPS from 6.2 FP1. - Notice lack of any
+   errors.
+   10) Start TEMS (bin/CandleServer start TEMS)
+   11) Start TEPS (bin/CandleAgent start cq)
+   12) Observe that you cannot log into TEPS, receive errror
+   KFWITM009I
+   13) Observe EWAS.product file still reports version 6.1.0.3
+   14) Observe the /tmp/niflogs/log_*.gz contains error CWUPI0033E
+   as above
+   
+   Related Files and Output:
+   n/a
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  EWAS upgrade fails because Update Installer requires minimum 250
+   MB of free space in the /tmp directory. UpdateInstaller 6.1.0.13
+   (which upgrade TEPS extension) checks if there is at least 250
+   MB of free space in the /tmp directory. If there is not enough
+   free space, it exits and not upgrade TEPS extension.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A simple free space checking in the /tmp directory was added. If
+   there is not enough free space in the /tmp directory the TEPS
+   upgrade is not started. TEPS and TEPS extension component is not
+   upgraded and the proper message is displayed.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+     | fix pack | 6.2.0-TIV-ITM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ26644
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-09
+   
+   
+ * CLOSED DATE
+   2008-10-31
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

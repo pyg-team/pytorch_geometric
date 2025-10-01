@@ -1,0 +1,523 @@
+Title: IBM Installation instructions for IBM Business Process Manager Version 8.5 Refresh Pack 5 - United States
+
+Text:
+8.5.5 Installation Instructions; install; 8.5 refresh pack PRODUCT README
+
+ABSTRACT
+ This document provides instructions for installing V8.5 Refresh Pack 5 for the IBM Business Process Manager products. The same instructions should be used to update the Process Center and the Process Server. 
+
+CONTENT
+
+
+TAB NAVIGATION
+ * Refresh Pack download [http://www.ibm.com/support/docview.wss?uid=swg24037683 ]
+ * Refresh pack installation instructions [http://www.ibm.com/support/docview.wss?uid=swg27042065]- selected tab,
+ * Profile upgrade instructions [http://www.ibm.com/support/docview.wss?uid=swg27042066]
+ * Recommended interim fixes [http://www.ibm.com/support/docview.wss?uid=swg24037612]
+
+This refresh pack is a cumulative maintenance package for a specific product and applies to all distributed operating systems. It is a single package that bundles a number of individual fixes.
+
+V8.5 Refresh Pack 5 is intended to be used on IBM Business Process Manager Express, IBM Business Process Manager Standard, IBM Business Process Manager Advanced, and IBM Business Process Manager Advanced - Process Server installations.
+
+By installing V8.5 Refresh Pack 5, you will raise the fix level of your product, either IBM Business Process Manager Express, IBM Business Process Manager Standard, IBM Business Process Manager Advanced, or IBM Business Process Manager Advanced - Process Server, to Version 8.5.5.
+
+Note: You can roll out maintenance incrementally in an IBM Business Process Manager installation that consists of a Process Center and multiple Process Servers. This approach allows you to continually run production applications during the upgrade and regression test period. See [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=matt&product=was-nd-mp&topic=trun_svr_conf_backup] Performing a rolling upgrade [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.doc/topics/tmig_rolling_upgrade.html] in the product documentation.
+
+Table of Contents 
+
+ * Problems addressed in this refresh pack 
+ * Refresh pack prerequisites 
+ * Installing the refresh pack 
+ * Upgrade instructions for installations with existing profiles 
+ * Installing V8.5 Refresh Pack 5 
+ * Upgrading the Process Designer 
+ * Refresh pack install verification 
+ * Rolling back V8.5 Refresh Pack 5 
+ * Reference 
+ * Trademarks and service marks
+
+
+
+© Copyright International Business Machines Corporation 2014. All rights reserved. 
+US Government Users Restricted Rights – Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. 
+
+ 
+
+PROBLEMS ADDRESSED IN THIS REFRESH PACK
+
+
+The fixes addressed in V8.5 Refresh Pack 5 are explained in the Fix List for the IBM Business Process Manager Version 8.5 products [http://www.ibm.com/support/docview.wss?uid=swg27039722]document. 
+Back to top
+
+
+Refresh pack prerequisites
+
+To use this refresh pack, you must have Version 8.5 for the IBM Business Process Manager Express, IBM Business Process Manager Standard, IBM Business Process Manager Advanced, or IBM Business Process Manager Advanced - Process Server product installed.
+
+You must have WebSphere Application Server V8.5.5 Fix Pack 2 [http://www.ibm.com/support/docview.wss?uid=swg24037250] installed or you must install WebSphere Application Server V8.5.5 Fix Pack 2 during the upgrade process. This fix pack must be downloaded using FTP. In addition, you must install the fix pack image for all operating systems and platforms.
+
+When you decompress the following two files to the same location, it creates the full WebSphere Application Server V8.5.5 Fix Pack 2 repository that includes all WebSphere Application Server packages for all supported operation systems and architectures: 
+
+ * 8.5.5-WS-WAS-FP0000002-part1.zip 0.814 GB 
+ * 8.5.5-WS-WAS-FP0000002-part2.zip 1.59 GB
+
+
+
+Hardware and software prerequisites for IBM Business Process Manager Express [http://www.ibm.com/software/integration/business-process-manager/express/sysreqs/], IBM Business Process Manager Standard [http://www.ibm.com/software/integration/business-process-manager/standard/sysreqs/], IBM Business Process Manager Advanced [http://www.ibm.com/software/integration/business-process-manager/advanced/sysreqs/], and IBM Business Process Manager Advanced - Process Server [http://www.ibm.com/software/integration/business-process-manager/advanced/sysreqs/]are available on the web on their respective Hardware and Software Support pages. Important: If you receive a message warning that the ulimit setting is lower than recommended, set the ulimit value to 8192. Refer to Warnings about GTK or ulimit on Linux or UNIX when installing or migrating [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.admin.doc/topics/rins_trbl_warnings.html].
+
+
+Back to top
+
+
+
+INSTALLING THE REFRESH PACK
+
+
+
+Upgrade instructions for installations with existing profiles 
+
+If you have been using IBM Business Process Manager Express, IBM Business Process Manager Standard, IBM Business Process Manager Advanced, or IBM Business Process Manager Advanced - Process Server V8.5 and you have created profiles, additional steps are required. Also, if you installed the product using the Typical installation, a profile was created and you must follow these steps. These steps include backing up the profile, stopping all Java™ processes, and sequencing the upgrade. Before you continue with the refresh pack installation, follow the appropriate documentation for details and return to this document, when instructed, to complete the Version 8.5 Refresh Pack 5 installation. 
+
+Important: 
+Depending on the source version and topology, instructions for updating the database vary. The product might not continue to run successfully if you do not follow the instructions. 
+
+If you are upgrading the environment from an IBM Business Process Manager 8.5 product to V8.5 Refresh Pack 5, follow the steps in Profile upgrade instructions for IBM Business Process Manager Version 8.5 Refresh Pack 5 [http://www.ibm.com/support/docview.wss?uid=swg27042066]. 
+
+Back to top
+
+
+ 
+
+ 
+
+Installing V8.5 Refresh Pack 5 
+
+
+
+If you have existing profiles under this installation, before you continue with the refresh pack installation, see [http://www.ibm.com/support/docview.wss?uid=swg27038089]Profile upgrade instructions for IBM Business Process Manager Version 8.5 Refresh Pack 5 [http://www.ibm.com/support/docview.wss?uid=swg27042066] for details on the steps to follow for the various topologies. Return to this document, when instructed, to complete the Version 8.5 Refresh Pack 5 installation.
+
+
+Download repositories to the local system
+The IBM Installation Manager must be at a minimum level of Version 1.6.0 before you start the IBM Business Process Manager 8.5 Refresh Pack 5 installation updates. The Installation Manager detects an available update if you are connected to the Internet on the workstation on which you are planning to complete the IBM Business Process Manager 8.5 Refresh Pack 5 update activities. WebSphere Application Server V8.5.5 Fix Pack 2 [http://www.ibm.com/support/docview.wss?uid=swg24037250] is a prerequisite to IBM Business Process Manager Express, IBM Business Process Manager Standard, IBM Business Process Manager Advanced, or IBM Business Process Manager Advanced - Process Server V8.5 Refresh Pack 5.
+
+If the machine where you are upgrading the product has Internet access, skip the following steps. 
+
+ 1. Download the appropriate refresh pack using the Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www.ibm.com/support/docview.wss?uid=swg24037683] document. Download bpm.8550.delta.repository.zip to a temporary disk location. 
+    
+    
+ 2. Download and installWebSphere Application Server Version 8.5.5 Fix Pack 2 [http://www.ibm.com/support/docview.wss?uid=swg24035935], if it is not yet installed. IBM Business Process Manager no longer bundles the WebSphere Application Server fix pack. This fix pack, which is required for IBM Business Process Manager, is available through Fix Central.
+    
+    
+    When you decompress the following two files to the same location, it creates the full WebSphere Application Server V8.5.5 Fix Pack 2 repository that includes all WebSphere Application Server packages for all supported operation systems and architectures:
+    
+    
+    8.5.5-WS-WAS-FP0000002-part1.zip 0.814 GB
+    8.5.5-WS-WAS-FP0000002-part2.zip 1.59 GB
+    
+    
+ 3. Unpack the repositories to any directories that you choose. Note where you have unpacked the repositories. You should unpack each repository to its own directory.
+
+
+You can install the fix packs by using one of the following options: 
+Graphical user interface (GUI) of IBM Installation Manager to update an installation 
+Command line interface of IBM Installation Manager for a silent installation 
+
+Graphical user interface (GUI) of IBM Installation Manager to update an installation 
+
+ 1. Start the Installation Manager. 
+    
+    
+    On Windows operating systems with Internet access, click Start > Programs > IBM > IBM_BUSINESS_MANAGER_PRODUCT > Update. Then skip to step 3b.
+    
+    
+    If you are on a Linux or UNIX-based system, start IBM Installation Manager using the install_location/IBMIM command. On Windows operating systems, use the install_root\IBMIM.exe command. See Installation directories for the product and profile [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.doc/topics/rins_installation_paths.html] for more information on where Installation Manager is installed.
+    
+    
+    Note: On Microsoft Windows operating systems, right-click install_root\IBMIM.exe and select Run as administrator.
+    
+    
+ 2. Add repositories to the IBM Installation Manager preferences.
+    
+    
+    Click File > Preferences. Under Repositories, select one of the following options:  * If you have Internet access, ensure that the Search service repositories during installation and updates option is selected.
+       
+       
+     * If you do not have Internet access, add the location of all the local repositories that you downloaded from the Download repositories to local system section.  1. Click Add Repository. 
+           
+           
+        2. Type or browse to the repository.config file for the IBM Business Process Manager repository that you have unpacked.
+           
+           
+        3. Click OK. 
+           
+           
+        4. Repeat this process for the interim fix repositories and the WebSphere Application Server fix pack repository, if necessary.
+           
+           
+        5. Click OK to save the new repository settings.
+           
+           
+       
+       
+    
+    
+ 3. Use the following steps to install graphically:  1. Click Update.
+        
+        
+     2. Select the Package Group where you have installed IBM Business Process Manager Express, IBM Business Process Manager Standard, IBM Business Process Manager Advanced, or IBM Business Process Manager Advanced - Process Server.
+        
+        
+     3. Click Next > to continue.
+        
+        
+        After Installation Manager checks the service repositories, the Update Packages window opens and the IBM Business Process Manager Express, IBM Business Process Manager Standard, IBM Business Process Manager Advanced, or IBM Business Process Manager Advanced - Process Server Version 8.5 Refresh Pack 5 is shown, unless there is a later fix pack available from the live update repository.
+        
+        
+        If you are installing WebSphere Application Server Version 8.5.5 Fix Pack 2, that is also shown.
+        
+        
+     4. Ensure that the refresh pack and fix pack are selected. Clear the Show recommended only check box, so that you will be able to see the WebSphere Application Server interim fixes in the next step. Click Next >. If you have Internet connectivity or have added local interim fix repositories, another Update Packages window opens. A list of interim fixes is displayed. 
+        
+        
+     5. Select all the recommended interim fixes for IBM Business Process Manager V8.5.5 and all the recommended interim fixes for WebSphere Application Server. Refer to Recommended interim fixes for IBM Business Process Manager V8.5 Refresh Pack 5 [http://www.ibm.com/support/docview.wss?uid=swg24037612]. 
+        
+        
+     6. Ensure that the interim fixes are all selected and then click Next > to continue. The Licenses window opens.
+        
+        
+     7. Read and accept the terms of the license agreements by selecting the appropriate button and click Next > to continue. The Features window opens. All of the installed features will be selected.
+        
+        
+     8. Click Next > to continue. The Summary window opens. All of the features that need to be updated are shown. The disk space that is required to perform the update is shown at the bottom.
+        
+        
+     9. Click Update to start the update. The updates are downloaded either from the live update repository or from your local repository. The updates are installed. After the installation of the updates is complete, you receive a confirmation.
+    
+    
+
+ * 
+
+Note:During a full installation when you have Internet access, follow the normal installation instructions for a full installation. Go to Install Packages> Check for Other Versions and Extensions. All of the latest versions are discovered. Follow the instructions to select the Show all versionscheck box, and then proceed with the full installation as normal. 
+Back to top
+
+
+
+
+Command line interface of IBM Installation Manager for a silent installation 
+
+Installation Manager offers a command-line interface to update your product installation silently. 
+ 1. Use the following command to update your IBM Business Process Manager product to V8.5 Refresh Pack 5:
+    
+    
+    IM_INSTALL_LOCATION/tools/imcl install PACKAGE_IDS FIX_IDS -acceptLicense -installationDirectory INSTALL_DIR-repositories REPOSITORIES-log LOG_FILE
+    
+    
+    Update the variables in the previous command specifically for your installation using the following information:
+    
+     * IM_INSTALL_LOCATION
+       This variable represents the location where Installation Manager is installed. See Installation directories for the product and profile [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.doc/topics/rins_installation_paths.html] for more information on Installation Manager default installation directories.
+       
+       
+     * PACKAGE_IDS
+       This variable represents the list of packages to be updated. Package IDs are separatedby spaces. Use the following list to get the correct package IDs for your product.
+       
+        * IBM Business Process Manager Express
+          com.ibm.bpm.EXP.v85
+          com.ibm.websphere.ND.v85 
+        * IBM Business Process Manager Standard
+          com.ibm.bpm.STD.v85
+          com.ibm.websphere.ND.v85 
+        * IBM Business Process Manager Advanced
+          com.ibm.bpm.ADV.v85
+          com.ibm.websphere.ND.v85 
+        * IBM Business Process Manager Advanced - Process Server
+          com.ibm.bpm.PS.v85
+          com.ibm.websphere.ND.v85
+          
+          
+       
+       
+     * FIX_IDS
+       This variable represents the interim fix IDs for any interim fixes that you need to install.
+       
+       
+     * INSTALL_DIR
+       This variable represents the installation directory of the product.
+       
+       
+     * REPOSITORIES
+       This variable represents the location of the refresh pack and interim fix repositories.
+       
+       
+       Note: Use commas to separate multiple locations.
+       
+       
+     * LOG_FILE
+       This variable represents the location and name of the silent log file to write.
+       
+       
+       By including the -acceptLicense parameter, you agree to the terms and licenses of this product.
+       
+       
+    
+    
+ 2. After updating the command for your environment, run the command from the tools directory under the Installation Manager install location. 
+    
+    The following command is an example in which only the IBM Business Process Manager refresh pack needs to be applied:
+    C:\Program Files (x86)\IBM\Installation Manager\eclipse\tools\imcl install com.ibm.bpm.PS.v85 -acceptLicense -installationDirectory C:\IBM\BPM\v8.5 -repositories C:\BPM855_repository -log silent_update.txt 
+ 3. When the silent refresh pack installation completes, check the log files to ensure that the installation completes successfully. A success message that is similar to the following text displays on the command line:
+    
+    Updated to com.ibm.bpm.ADV.v85_8.5.5000.20140604_1130 in the C:\IBM\BPM\v8.5 directory
+    
+
+
+
+For additional information about silent installations, visit the product documentation links in the following table: Product Content Links IBM Business Process Manager Express [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r0m1/topic/com.ibm.wbpm.imuc.stbpm.doc/topics/inst_sil_cmd_lin.html]AIX [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.stbpm.doc/topics/inst_sil_cmd_aix.html]
+Linux [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.stbpm.doc/topics/inst_sil_cmd_lin.html]
+Windows [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.stbpm.doc/topics/inst_sil_cmd_win.html] IBM Business Process Manager Standard AIX [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.sbpm.doc/topics/inst_sil_cmd_aix.html]
+Linux [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.sbpm.doc/topics/inst_sil_cmd_lin.html]
+Solaris [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.sbpm.doc/topics/inst_sil_cmd_sol.html]
+Windows [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.sbpm.doc/topics/inst_sil_cmd_win.html] IBM Business Process Manager Advanced AIX [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.ebpm.doc/topics/inst_sil_cmd_aix.html]
+Linux [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.ebpm.doc/topics/inst_sil_cmd_lin.html]
+Solaris [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.ebpm.doc/topics/inst_sil_cmd_sol.html]
+Windows [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.ebpm.doc/topics/inst_sil_cmd_win.html] IBM Business Process Manager Advanced - Process Server AIX [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.ebpmps.doc/topics/inst_sil_cmd_aix.html]
+Linux [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.ebpmps.doc/topics/inst_sil_cmd_lin.html]
+Solaris [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.ebpmps.doc/topics/inst_sil_cmd_sol.html]
+Windows [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.ebpmps.doc/topics/inst_sil_cmd_win.html] 
+
+Alternatively, you can use the Interactive Installation and Configuration Guide [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.doc/topics/bpm_roadmap_form.html]and follow the instructions. 
+Back to top
+
+
+ 
+
+Upgrading the Process Designer 
+
+After you update your Process Center with a fix pack, refresh pack, or interim fix, you must update the Process Designer to the same level. To make the updates, download the Process Designer file again and run the installation. Only the fixes or changes are applied.
+
+
+About this task
+When you install the fix pack, refresh pack, or interim fix, the IBM Process Designer.zip file is updated also. You must download it and install the updated Process Designer to the directory where you already installed Process Designer.
+
+
+Procedure 
+
+ 1. Open the Process Center.
+    
+    
+ 2. Click the IBM Process Designer Download option. 
+    
+    
+ 3. When you are prompted, save the IBM Process Designer.zip file to your file system. This file contains everything that you need to install and run IBM Process Designer. Depending on your network connection, the download might take several minutes to complete.
+    
+    
+ 4. Extract the contents of the IBM Process Designer.zip file to a temporary directory on your file system.
+    
+    
+ 5. Open a command window and change to the directory where you extracted the contents of the IBM Process Designer.zip file. 
+    
+    
+    Important: If you are running Microsoft Windows 7, Windows Vista, or Windows Server 2008, right-click the command prompt and select Run as administrator.
+    
+    
+ 6. Run one of the following commands to update the Process Designer. Use the same command that you used to install the Process Designer.  * Default location (C:\IBM\ProcessDesigner\v8.5)  * installProcessDesigner_admin.bat 
+        * installProcessDesigner_nonadmin.bat
+          
+          
+       
+       
+     * Different location  * installProcessDesigner_admin.bat install_location 
+        * installProcessDesigner_nonadmin.bat install_location
+          
+          
+       
+       If the location has spaces in the directory name, put the whole location in quotation marks. The following examples show how to install to a different location.  * installProcessDesigner_admin.bat D:\IBM\PD 
+        * installProcessDesigner_admin.bat "D:\Process Designer\"
+       
+       
+    
+    
+
+
+Results 
+IBM Process Designer is updated. Only the fixes or changes are applied. Installation messages are recorded in the %TEMP%\IBMProcessDesignerInstall.log file, where the %TEMP% variable is typically set to C:\Documents and Settings\current_user_name\Local Settings\Temp.
+
+
+Back to top
+
+
+
+Refresh pack install verification 
+
+For upgrades of installations with existing profiles, refer to the Identifying profile update errors [http://www.ibm.com/support/docview.wss?uid=swg27042066#identify] section under the Profile upgrade tab for details on verifying the refresh pack installation. 
+
+Note: Installation Manager on the Microsoft Windows operating system does not recognize profile update errors. When you upgrade an installation on Windows, you must look at the Identifying profile update errors [http://www.ibm.com/support/docview.wss?uid=swg27042066#identify] section, even if Installation Manager ends with the following message: The packages are updated. 
+Back to top
+
+
+
+Rolling back V8.5 Refresh Pack 5 
+
+You can roll back the refresh pack to a previous version by using one of the following options:
+Graphical user interface (GUI) of IBM Installation Manager to roll back an installation
+Command line interface of IBM Installation Manager for a silent roll back of a refresh pack
+
+Note: The following procedure rolls back only the product binary. Any existing profiles that were upgraded during a refresh pack installation are not rolled back; you must restore the profiles from the backup you took before you upgraded the product. Any new profiles created after the upgrade cannot be reused; you must delete and recreate the profiles after you have completed the rollback process.
+
+
+Graphical user interface (GUI) of IBM Installation Manager to roll back an installation
+
+
+ 1.  Close all programs that were installed using Installation Manager before rolling back.
+     
+     
+ 2.  Start Installation Manager. See Installation directories for the product and profile [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.doc/topics/rins_installation_paths.html] for more information on where Installation Manager is installed.
+     
+     
+ 3.  From the Start page of the Installation Manager, click Roll back to start the Roll back packages wizard.
+     
+     
+ 4.  On the Roll Back Packages page, from the Package Group Name list, select the package group that contains the packages that you want to roll back and click Next.
+     
+     
+ 5.  Select the version of the package to which you want to roll back and click Next. 
+     
+     
+ 6.  Read the summary information and click Roll Back to roll back the package. 
+     
+     
+     When the rollback process completes, a message that confirms the success of the process is displayed near the top of the page. 
+     
+     
+ 7.  Optional: Click View log file to open the log file for the current session in a new window. 
+     
+     
+ 8.  Click Finish to close the wizard. 
+     
+     
+ 9.  Close Installation Manager. 
+     
+     
+ 10. Restore the backed up data from the original version.
+
+
+
+Back to top
+
+
+
+Command line interface of IBM Installation Manager for a silent rollback of a refresh pack 
+
+Installation Manager offers a command-line interface to silently roll back your product installation to the previous version. In the instructions, it is assumed that you completed all of the necessary profile, database, and refresh pack-specific data backup tasks, which are described in Profile upgrade instructions [http://www.ibm.com/support/docview.wss?uid=swg27042066], before you migrated to Version 8.5 Refresh Pack 5. This data is restored after you complete the rollback task. 
+
+ 1. Use the following command to roll back your IBM Business Process Manager product to V8.5.0.0.
+    
+    
+    IM_INSTALL_LOCATION/tools/imcl rollback PACKAGE_IDVERSION-installationDirectory INSTALL_DIR-log LOG_FILE
+    
+    
+    Update the following variables for your installation:  * IM_INSTALL_LOCATION
+       This variable represents the location where Installation Manager is installed. See Installation directories for the product and profile [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.imuc.doc/topics/rins_installation_paths.html] for more information on Installation Manager default installation directories.
+       
+       
+     * PACKAGE_ID
+       This variable represents the package ID of the product installed.
+       
+       
+     * VERSION
+       This variable represents the original version of the product. Rolling back returns your installation to this version. This version will be Version 8.5.0.0. If you have upgraded directly from Version 8.5.0, see the Details for rolling back to Version 8.5.0.0 information. 
+       
+        * Details for rolling back to Version 8.5.0.0  * IBM Business Process Manager Express
+             Package ID: com.ibm.bpm.EXP.v85
+             Version: 8.5.0.20130504_0134 
+           * IBM Business Process Manager Standard
+             Package ID: com.ibm.bpm.STD.v85
+             Version: 8.5.0.20130504_0135 
+           * IBM Business Process Manager Advanced 
+             Package ID: com.ibm.bpm.ADV.v85
+             Version: 8.5.0.20120504_0137 
+           * IBM Business Process Manager Advanced - Process Server
+             Package ID: com.ibm.bpm.PS.v85
+             Version: 8.5.0.20120504_0137
+          
+          
+        * Details for rolling back to Version 8.5.0.1
+          IBM Business Process Manager Express
+          Package ID: com.ibm.bpm.EXP.v85
+          Version: 8.5.1.20131107_1830
+          
+          IBM Business Process Manager Standard
+          Package ID: com.ibm.bpm.STD.v85
+          Version: 8.5.1.20131107_1830
+          
+          IBM Business Process Manager Advanced
+          Package ID: com.ibm.bpm.ADV.v85
+          Version: 8.5.1.20131107_1830
+          
+          IBM Business Process Manager Advanced - Process Server
+          Package ID: com.ibm.bpm.PS.v85
+          Version: 8.5.1.20131107_1830 
+          
+          
+          
+        * INSTALL_DIR
+          This variable represents the installation directory of the product.
+          
+          
+        * LOG_FILE
+          This variable represents the location and name of the silent log to write.
+          
+          
+       
+       
+    
+    
+ 2. After updating the command for your environment, run the command from the tools directory under the Installation Manager installation location. 
+    
+    The following command is an example:
+    
+    C:\Program Files (x86)\IBM\Installation Manager\eclipse\tools\imcl rollback com.ibm.bpm.EXP.v85_8.5.1.20131107_1830 -installationDirectory C:\IBM\BPM\v8.5 -log silent_rollback.txt
+    
+    
+ 3. When the rollback completes, check the log files to ensure that the rollback completed successfully. A success message displays on the command line:
+    
+    Rolled back to com.ibm.bpm.EXP.v85_8.5.1.20131107_1830 in the C:\IBM\BPM\v8.5 directory. 
+    
+    
+ 4. Restore the profile and the database backup taken prior to installing Refresh Pack 5.
+    
+
+Back to top
+
+
+Reference
+
+You can find additional information on any of these topics in the IBM Business Process Manager [http://www.ibm.com/support/knowledgecenter/SSFPJS/welcome] product documentation.
+
+For further information on the update strategy or obtaining updates, see the support page for your product.
+
+IBM Business Process Manager Express Support page [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Express]
+IBM Business Process Manager Standard Support page [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Standard]
+IBM Business Process Manager Advanced Support page [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Advanced]
+IBM Business Process Manager Advanced Process Server Support page [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Advanced]
+
+
+Back to top
+
+
+Trademarks and service marks: 
+For trademark attribution, visit the IBM Terms of Use [http://www.ibm.com/legal] Web site. 
+Back to top
+
+
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2013/11/15 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Installation / Configuration AIX, Linux, Linux zSeries, Solaris, Windows 8.5.5 Business Integration IBM Business Process Manager Express Installation / Configuration Linux, Windows 8.5.5 PRODUCT ALIAS/SYNONYM
+ BPM

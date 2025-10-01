@@ -1,0 +1,60 @@
+Title: IBM Spectrum Protect for Workstations V8.1.x Hardware and Software Requirements - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are the hardware and software requirements for IBM Spectrum Protect for Workstations V8.1.x? 
+
+ANSWER
+Hardware, Software, and Browser Support
+Client: Desktop and laptop systems only 
+
+ * 
+ * Hardware requirements:
+ * 
+ * 
+ *  
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Software requirements:
+   The minimum hardware configuration for Windows workstations must be compatible with that stated by Microsoft for the respective operating systems. The following platforms are supported for this release of the IBM Spectrum Protect for Workstations Client:
+   Microsoft Windows 8.1 (x86-64)
+   Microsoft Windows 10 (x86-64)
+   Microsoft Windows Server 2012 (x64)
+   Microsoft Windows Server 2012 R2 (x64)
+   Microsoft Windows Server 2016 (x64) 
+   
+ * Supported Browsers
+   The IBM Spectrum Protect for Workstations Client GUI supports the following browsers:
+   Microsoft/Internet Explorer V11
+   Firefox/Mozilla V45, V47
+   Google Chrome V52, V53 
+   
+
+
+Central Administration Console  * Hardware requirements
+ * 
+ * 
+ * 
+ *  CPU: Dual core CPU with a clock speed of 3 GHz or higher RAM: 8 GB capacity or greater Free disk space total of the following amounts: 50 GB on the installation drive 2 GB of temporary space during the installation on the system drive 
+ * 
+ * Software requirements
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Supported Browsers
+   The Central Administration Console supports the following browsers:
+   Microsoft/Internet Explorer V11
+   Firefox/Mozilla, V45, V47

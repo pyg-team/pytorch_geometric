@@ -1,0 +1,241 @@
+Title: IBM PI72187: CUMULATIVE MAINTENANCE FIXPACK 7.1.0.8 FOR THE JMS FEATURE OF WEBSPHERE MQ FOR Z/OS VERSION 7.1.0. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Fixpack 7.1.0.8 for WebSphere MQ for z/OS Version 7.1.0
+   provides fixes for the problems described in this APAR.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 1 Modification 0 with the MQ Java    *
+   *                 Feature.                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Service offering 7.1.0.8 for WebSphere  *
+   *                      MQ for z/OS V7.1.0 provides fixes for   *
+   *                      the problems described in this APAR.    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   IC90089 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC90089] - WebSphere MQ Java classes for Windows running in a
+             64-BIT jvm are unable to connect to a queue manager in
+             bindings mode
+   IT08889 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT08889] - A WebSphere MQ JMS client reports a MQJMS3023
+             exception when thequeue manager has ended abruptly
+   IT09266 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT09266] - A classcastexception is issued when connection is
+             broken between a classes for Java client and a queue
+             manager.
+   IT09436 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT09436] - WebSphere MQ classes for java/jms produces excessive
+             trace when receiving and interpreting larger MQ
+             messages
+   IT09449 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT09449] - Running MQ command "dspmqver -a" from a WebSphere MQ
+             V7.5 server incurred a
+             "java.lang.nullpointerexception"
+   IT09749 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT09749] - Jmsmessageid deserialised to a value of null vs
+             original message.
+   IT10170 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT10170] - JMS pubsub message selector lost after multi-instance
+             queue manager failover
+   IT10777 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT10777] - WebSphere MQ JMS trace displays incorrect numerical
+             date format
+   IT10837 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT10837] - WebSphere MQ channel start fails with AMQ9637 when
+             using a tls 1.2 cipher running in an Oracle JRE
+   IT10863 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT10863] - WebSphere MQ classes for java/jms applications can not
+             use ccdt files generated on a newer level queue
+             manager
+   IT11393 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT11393] - Activation spec endpoint pauses before the sequential
+             message failure limit has been reached
+   IT12137 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT12137] - Wmq-jms trace date stamp displays invalid month field
+             for october, november and december
+   IT13497 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT13497] - WMQ fte V7.0.4.4 agent reports a BFGEL0007E error,
+             generates an FDC containing probeid JO000010 and then
+             shuts itself down
+   IT13886 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT13886] - Classnotfoundexception when using ibm MQ classes for
+             jmsapplications inside of CICS osgi jvm server.
+   IT14943 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT14943] - WMQ JMS fails to deliver large messages when
+             connecting to queuemanager in migration mode
+   IT15408 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT15408] - JMS client hangs during reconnect to a queue manager
+             after a ha failover
+   IT15559 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT15559] - WebSphere MQ activation specification deadlocks when
+             pool scavenger thread closes a serversession
+   IT17200 - WMQ V7.0.1.12 classes for java: bufferlength doubled
+             if mqgmo_convert is active resulting in 2010 error
+   IV72011 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV72011] - A WebSphere application server listener port fails to
+             consume messages from WebSphere MQ when using message
+             selectors
+   IV72963 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV72963] - Wmq: class load errors with the osgi bundle result in
+             errors such as mqrc_header_error 2142
+   IV74821 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV74821] - When upgrading MQ client from 6.0.2 to 7.1 message
+             data in is unreadable and only "?" are displayed.
+   IV75404 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV75404] - WMQ java/jms application using Java security throw
+             accesscontrolexception error.
+   IV75442 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV75442] - JMS client connected to EBCDIC queue-manager fails to
+             open the backout queue and the message is put to the
+             dlq
+   IV76399 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV76399] - Setting a bigdecimal into a message causes "invalid
+             xml" written into the message without incurring a
+             Java exception
+   IV78400 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV78400] - WMQ classes for JMS returns mqrc 2003
+             'mqrc_backed_out' when option
+             mqgmo_syncpoint_if_persistent is used
+   IV83747 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV83747] - Deadlock closing JMS session in automatic client
+             reconnection after APAR IV57472 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV57472]
+   IV83785 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV83785] - Wmq-java/jms classes may send data to the qmgr which
+             is not 4-BYTE aligned
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Java level info:
+   
+   Name:        WebSphere MQ classes for Java
+   Version:     7.1.0.8
+   Level:       k710-008-161107
+   Build Type:  Production
+   
+   
+   JMS level info:
+   Name:        Java Message Service Client
+   Version:     7.1.0.8
+   Level:       k710-008-161107
+   Build Type:  Production
+   
+   Name:        WebSphere MQ classes for Java Message Service
+   Version:     7.1.0.8
+   Level:       k710-008-161107
+   Build Type:  Production
+   
+   Name:        IBM WebSphere MQ JMS Provider
+   Version:     7.1.0.8
+   Level:       k710-008-161107 mqjbnd=k710-008-161107
+   Build Type:  Production
+   
+   Name:        Common Services for Java Platform, Standard Edition
+   Version:     7.1.0.8
+   Level:       k710-008-161107
+   Build Type:  Production
+   108Y
+   CSQ8JTR1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI72187
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   108
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-11-11
+   
+   
+ * CLOSED DATE
+   2017-01-16
+   
+   
+ * LAST MODIFIED DATE
+   2017-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI43928
+   
+   
+
+MODULES/MACROS
+ *  CSQ8JTR1
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R108 PSY UI43928 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI43928]
+   UP17/01/20 P F701 ¢
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

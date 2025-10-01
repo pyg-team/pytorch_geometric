@@ -1,0 +1,96 @@
+Title: IBM Security Network Protection (XGS) SensorStatistics - United States
+
+Text:
+performance; Sensor; Statistics; Cumulative; pam; interval; parameter; inspection; inspected TECHNOTE (FAQ)
+
+QUESTION
+ How do you enable the SensorStatistics audit events on the XGS? 
+
+CAUSE
+SensorStatistics can be used to troubleshoot an XGS performance issue, verify that traffic is being inspected, or verify that the XGS is actually working.
+
+ANSWER
+Description of the audit events SensorStatistics and SensorStatistics_Cumulative 
+
+
+SensorStatistics
+
+This signature displays sensor statistics at the configured interval (see the pam.statistics.interval parameter). Values are reported as changes since the last event. That is, the TCP packet count is the number of TCP packets received since the last SensorStatistics event.
+
+SensorStatistics_Cumulative
+
+This signature displays sensor statistics at the configured interval (see the pam.statistics.interval parameter). Values are reported as totals since the start of the sensor. That is, the TCP packet count is the total number of TCP packets that are seen since the sensor started.
+
+
+
+Enable SensorStatistics and SensorStatistics_Cumulative
+
+
+
+ 1. Open the Intrusion Prevention policy.
+     * From the LMI: under Secure Policy Configuration open the Intrusion Prevention Policy 
+     * From SiteProtector Console: open the Agent View tab, right-click click the agent, and select Manage Policy, open the Intrusion Prevention Policy
+       
+    
+    
+ 2. Under IPS Objects (left side), select the Default IPSObject.
+    Note: In this example I have used the Default IPS [Default], your default IPS Object might be named different. 
+    
+ 3. Once the policy loads, click theDefine filterbutton in the top left corner. Use the following to create a filter to only display these events:
+    
+    Column:Event Name
+    Condition:Contains
+    Value:SensorStatistics
+    
+    
+ 4. Check the Enable box for SensorStatistics and SensorStatistics_Cumulative.
+    
+    [/support/docview.wss?uid=swg21968189&aid=1] [/support/docview.wss?uid=swg21968189&aid=1]
+    
+    
+ 5. Save and deploy the policy changes.
+
+
+Note:  *  This event will use the statistics data that is already being collected to generate an event every 15 minutes 
+ *  View events triggered by IPS object activity in the LMI:Monitor > Logs > Event Log > IPS Events
+
+
+
+Export sensor statistics events from Site Protector analysis view
+
+ 1. Open the SiteProtector Console and the Analysis View tab. 
+    
+    
+ 2. On the left, expand the site tree and select the group that you would like see the SensorStatistics for. 
+    
+    
+ 3. Select the Event Analysis - Details (Agent) in the Load View link. 
+    
+    
+ 4. Select the Start and End time or use the drop-down to select a predetermine timeline (Current Hour, Previous Day,…).
+    
+    
+ 5. In the Tag Name field, enter SensorStatistics and SensorStatistics_Cumulative, then click Apply.
+    
+    [/support/docview.wss?uid=swg21968189&aid=2] [/support/docview.wss?uid=swg21968189&aid=2]
+    
+    
+ 6. To export events, right-click on the displayed events, and click export from the menu or click the Export the current view button. 
+    
+    
+ 7. In the Export window, create a file name and browse to the location you would like to save the exported events. 
+    
+    
+ 8. To add detailed information of each event, in the exported document make sure that the Include Security Information is checked. 
+    
+    
+    [/support/docview.wss?uid=swg21968189&amp;aid=3]
+    
+    
+ 9. Click OK.
+
+
+
+
+
+[/support/docview.wss?uid=swg21968189&aid=4] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21968189&aid=5] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21968189&aid=6] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21968189&aid=7] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21968189&aid=8] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21968189&aid=9] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21968189&aid=10] [http://ibm.biz/ContactSecSupport]

@@ -1,0 +1,170 @@
+Title: IBM IC42942: TSM HP SERVER CRASHES WHEN IT FAILS TO OPEN THE MESSAGE FILE - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On an HP system, when the total number of open files reaches
+   the  value of nfile, TSM HP server crashes when it fails to
+   open dsmameng.txt
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IBM TSM HP server users                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: On an HP system, when the value of      *
+   *                      nfile or maxfiles is reached, TSM HP    *
+   *                      server crashes when it fails to open    *
+   *                      dsmameng.txt.  The error messages       *
+   *                      look like this:                         *
+   *                      ANR2017I Administrator SERVER_CONSOLE   *
+   *                      issued command: HELP anr88888           *
+   *                      ANR9999D Mutex previously acquired      *
+   *                      by output.c(4830).                      *
+   *                      ANR9999D Mutex acquisition failure,     *
+   *                       rc=45 (Lockf deadlock detection),      *
+   *                      OUTV->mutex; thread 45 (tid 84).        *
+   *                      ANR7824S Server operation terminated    *
+   *                      by thread 45 (SmLocalConsoleSession,    *
+   *                       tid 84).                               *
+   *                      ANR9999D Trace-back of called           *
+   *                      Functions:                              *
+   *                      U_STACK_TRACE: Too many open files      *
+   *                      Can't open executable file ./dsmserv    *
+   *                      U_STACK_TRACE: Too many open files      *
+   *                      Can't open executable file ./dsmserv    *
+   *                      U_STACK_TRACE: Too many open files      *
+   *                      Can't open executable file ./dsmserv    *
+   *                      U_STACK_TRACE: Too many open files      *
+   *                      Can't open executable file ./dsmserv    *
+   *                      U_STACK_TRACE: Too many open files      *
+   *                      Can't open executable file ./dsmserv    *
+   *                      U_STACK_TRACE: Too many open files      *
+   *                      Can't open executable file ./dsmserv    *
+   ****************************************************************
+   * RECOMMENDATION: Apply fixing level when available.           *
+   *                 This problem is currently projected to be    *
+   *                 fixed in levels 5.2.5, and 5.3.1. Note       *
+   *                 that this is subject to change at the        *
+   *                 discretion of IBM.                           *
+   ****************************************************************
+   The server crashes when it fails to open dsmameng.txt due to
+   the system limit.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The server code has been modified to handle this situation
+   properly. The server will issue messages to explain the
+   problem and also provide steps to resolve it.
+   The following messages will be displayed:
+   "ANR9999D psmsgnls.c(1352) Error 24 There are too many files
+    open.  The server cannot open language file dsmameng.txt
+   
+   ANR8224W The Tivoli Storage Manager server has reached the
+   system limit for open files. Use the System Administrator
+   Manager program (SAM) to change the value of the maxfiles
+   parameter. Increasing this value will increase the maximum
+   number of files a process is allowed to open."
+   
+   HP customers should increase the default value of the
+   maxfiles parameter. The HP Installation Guide will be updated
+   with the following text:
+   "The maxfiles parameter specifies the number of files a
+   process is allowed to open at any given time. The default
+   value for HP is 60.  However, this value is very low
+   and can cause server problems.  To ensure proper server
+   operation, increase the maxfiles value to at least 512."
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC42942
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER 510
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   52H
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-12-16
+   
+   
+ * CLOSED DATE
+   2005-02-22
+   
+   
+ * LAST MODIFIED DATE
+   2005-02-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R52H PSY
+   UP
+   
+   
+ * R53H PSY
+   UP

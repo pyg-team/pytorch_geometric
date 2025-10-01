@@ -1,0 +1,41 @@
+Title: IBM Virtual portal template may appear empty if used with Portal theme - United States
+
+Text:
+virtual portal; Manage Virtual Portals; portlet; theme; base option; Portal theme; appears empty; empty; doesn't show; doesn't display; does not show TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+In IBM WebSphere Portal, when a virtual portal is created using the Manage Virtual Portals portlet, a theme chosen by the administrator is applied to the virtual portal. If the portal is installed using the "base" option and the administrator chooses the "Portal" theme for the virtual portal, it may appear empty.
+
+SYMPTOM
+The virtual portal is not empty. It only appears empty because the highest level page is marked hidden.
+
+CAUSE
+The "Page Builder" and "Portal" theme treat hidden pages slightly differently. The "Portal" theme hides other navigation options when showing a hidden page. The "Page Builder" theme does not. So when the "Portal" theme is used, the navigation is hidden and you cannot move to other pages in the virtual portal.
+
+RESOLVING THE PROBLEM
+There are several solutions. 
+
+ 1. Use the Manage Virtual Portals portlet to apply the Page Builder theme to the virtual portal. Then navigate to the administration area inside the virtual portal and use the Manage Pages portlet to move the "Hidden Pages" down in the page list. You may then switch the theme for the virtual portal back to the "Portal" theme.
+    
+ 2. Use a xmlaccess script to move the Hidden Pages. Refer to thexmlaccess documentation for full details but check the following example: 
+    
+    xmlaccess.bat -in HiddenLast.xml -url http: //localhost:10039/wps/config/myvirtp -user admin -password mypassword
+    
+    Where HiddenLast.xml looks like this:
+    
+    <request xmlns:xsi="http: //www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="PortalConfig_7.0.0.xsd"
+    type="update" 
+    create-oids="true">
+    
+    <portal action="locate">
+    <content-node action="update" ordinal="last" uniquename="ibm.portal.HiddenPages" />
+    </portal>
+    </request>
+    
+ 3. If you intend to use the InitAdminVirtualPortal.xml sample script or a script based on InitAdminVirtualPortal.xml to create more virtual portals, edit the ordinal for the hidden pages. Refer to the virtual portal documentation for how to export your script. Edit the script, find the unique name, "ibm.portal.HiddenPages", and change the ordinal value to "last".
+
+
+
+ * 
+ *

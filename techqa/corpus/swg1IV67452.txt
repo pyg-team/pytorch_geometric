@@ -1,0 +1,167 @@
+Title: IBM IV67452: REDUNDANT STG ERROR MESSAGES FLOODING RAS1 LOGS ON AIX - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 5 (6.3.0-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24039236]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  RAS1 logs at default tracing level get flooded by two error
+   messages while monitoring network interfaces. These messages
+   are related to the loopback and the aggregate interfaces and
+   are not really errors.
+   
+   Affected Platforms / Versions:
+     This issue affects all the UNIX OS agent versions since 6.23
+     FP1, only on the AIX platform.
+   
+   Diagnostics:
+     (545D00DA.0002-C:kux04agt.cpp,256,"addSTGValues") No STG data
+     found for:  'lo0                             '
+     (545D01D9.0000-C:kux04agt.cpp,256,"addSTGValues") No STG data
+     found for: 'Aggregate                       '
+   
+   Initial Impact:
+     Low, RAS1 logs become harder to review
+   
+   Additional Keywords:
+     UNIXNET
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Problem Description: Useless messages flooding RAS1 logs on AIX
+    Problem/Problem Summary: RAS1 logs of the Monitoring Agent for
+   UNIX OS may become unreadable due to a repeated couple of error
+    messages printed while it monitors Network interfaces on AIX:
+     "addSTGValues") No STG data found for: 'lo0'
+     "addSTGValues") No STG data found for: 'Aggregate'
+    They should not be printed at all, as they are of no value.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The agent no longer prints these messages.
+   
+   The fix for this APAR will be contained in the following
+   maintenance packages:
+   
+   | FixPack    | 6.3.0-TIV-ITM-FP0005
+   | InterimFix | 6.3.0.4-TIV-ITM_UNIX-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV67452
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040U
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-02
+   
+   
+ * CLOSED DATE
+   2014-12-19
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * FIXED COMPONENT ID
+   5724C040U
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R621 PSN
+   UP
+   
+   
+ * R622 PSN
+   UP
+   
+   
+ * R623 PSN
+   UP

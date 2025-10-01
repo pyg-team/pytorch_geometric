@@ -1,0 +1,61 @@
+Title: IBM OK and Cancel Buttons are hidden for Sticky Notes - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The sticky note annotation text entry dialog covers the OK and Cancel buttons. The sticky note annotation does not display as expected with the OK and Cancel buttons rendered at the foot of the standard text entry dialog. 
+
+SYMPTOM
+When a Sticky Note is added, it displays like this:
+[/support/docview.wss?uid=swg22005044&amp;aid=1] 
+
+This is incorrect and means that the annotation cannot be used since the text cannot be committed with the OK button. 
+
+
+The expected standard Sticky note dialog looks like this:
+[/support/docview.wss?uid=swg22005044&amp;aid=2] 
+
+This is the correct display for the sticky note annotation dialog since it allows text entry to be committed. 
+
+ 
+
+
+
+
+
+CAUSE
+There is a stylesheet in the HTML page that is defining a style for input boxes and this style cascades down to affect elements of the viewer because it is housed in the same HTML page. 
+
+
+
+ENVIRONMENT
+Any
+
+
+
+DIAGNOSING THE PROBLEM
+Remove or comment out all stylesheets from the HTML page, reload the page and confirm that this resolves the problem and means the sticky note annotation is displayed as expected with the OK and Cancel buttons rendered at the foot of the standard text entry dialog.
+
+The stylesheet and specific area of code that is causing the effect can be isolated by a process of elimination. In this example the sticky note annotation input dialog is affected by the following code in a stylesheet:
+
+textarea { 
+
+padding:2pt;
+position:fixed;
+}
+
+input {
+/*border:1 solid black;*/
+background-color: white;
+text-transform: uppercase;
+color:black;
+font-family:verdana;
+font-size:9pt;
+}
+
+The specific code and effect it has may be different but the cause and diagnosis is the same.
+
+
+RESOLVING THE PROBLEM
+Adjust the stylesheet implementation to have it only affect specific dialogs that it should apply to instead of a single generic cascading style that will affect viewer elements where the viewer is contained within the same HTML page.

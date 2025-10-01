@@ -1,0 +1,97 @@
+Title: IBM How to upgrade Tomcat bundle with Rational Jazz Team Server - United States
+
+Text:
+1448666; RTC; tomcat; upgrade; RQM. RRC; How to upgrade Tomcat ; unzip; zip TECHNOTE (FAQ)
+
+QUESTION
+ How do you upgrade Tomcat to a newer version when using IBM Rational Team Concert? 
+
+CAUSE
+The bundled Tomcat version for IBM Rational Collaborative Lifecycle Management (CLM) 3.x is Tomcat 5.5, CLM 4.x is Tomcat 7. Tomcat may need to be updated to a later version (such as 5.5.35 or Tomcat 7.0.35) for security updates.
+
+ANSWER
+To upgrade the Tomcat server, follow these steps: 
+
+ 1.  If you are running CLM 3.x, download Tomcat 5.5 core zip file from this Apache Tomcat archive download site [http://archive.apache.org/dist/tomcat/tomcat-5/]. 
+     
+     If you are running CLM 4.x, download Tomcat 7 core zip file from Apache Tomcat 7 Archive download site [http://archive.apache.org/dist/tomcat/tomcat-7/]
+     
+     
+     
+ 2.  Backup the entire Tomcat directory under: ..\JazzTeamServerInstall\server\tomcat to a temporary location. 
+     
+     
+ 3.  Delete folders as follows:
+      1. If you are upgrading from Tomcat 5.5 to Tomcat 5.5.x, such as Tomcat 5.5.35, delete the following folders from ..\JazzTeamServerInstall\server\tomcat directory after backing them up as instructed in step #2.
+         
+         bin
+         common
+         conf
+         logs
+         server
+         shared
+         
+      2. If you are upgrading from Tomcat 7 to Tomcat 7.x release, such as Tomcat 7.0.35, delete the following folders from ..\JazzTeamServerInstall\server\tomcat directory after backing them up as instructed in step #2:
+         
+         bin
+         conf
+         lib
+         logs
+         
+         
+     
+     
+ 4.   Extract the Tomcat core compressed file to a temporary location.
+     
+     
+ 5.  There will be a list of folders with the same name as the deleted folders from Step #3a or 3b, copy them to: ..\JazzTeamServerInstall\server\tomcat
+     
+     
+ 6.  Rename the server.xml under ..\JazzTeamServerInstall\server\tomcat\conf to something like serverdefaulttomcat.xml
+     
+     
+ 7.  Copy the server.xml from the backup location at step #2 to ..\JazzTeamServerInstall\server\tomcat\conf
+     
+     
+ 8.  Rename the existing tomcat-users.xml file under JazzTeamServerInstall\server\tomcat\conf directory to something like tomca-usersdefaulttomcatxxx.xml
+     
+     
+ 9.  Copy the tomcat-users.xml file in the backup location at step #2 to JazzTeamServerInstall\server\tomcat\conf
+     
+     NOTE: If you are using the default Tomcat UserDatabaseRealm for user authentication, you may need to reset the password for each user by editing the tomcat-user.xml file, if they are unable to sign in. To do this, type in the same password as the original one then save the changes. This is caused by the password encryption in the Tomcat instance before the upgrade, and might not be recognized after the Tomcat upgrade.
+     
+     
+ 10. Start Jazz team server by running server.startup.bat under ..\JazzTeamServerInstall\server, or by means of starting the tomcat service
+     
+ 11. Check tomcat catalina.log, and ensure tomcat is upgraded to the targeted version. For example, if you are upgrading to 5.5.35, you should see the following line:
+     
+     Starting Servlet Engine: Apache Tomcat/5.5.35
+     
+     
+ 12. Ensure you can login to the RTC Server from the following URL:
+     
+     For CLM 3.x or later release, use: https://<hostname>:9443/jts/admin
+     For RTC/RQM/RRC 2.x, use: https://<hostname>:9443/jazz/admin
+     
+
+
+
+
+Note: Tomcat 6.x is not supported by Rational Team Concert. 
+Click here [https://jazz.net/library/article/811] for detailed system requirements for CLM 4.x 
+Click here [https://jazz.net/library/article/632] for detailed systems requirements for CLM 3.x. 
+Click here [http://www-01.ibm.com/support/docview.wss?rs=3488&uid=swg27015746#HTTP] for a list of the detailed systems requirements for Rational Team Concert 2.x. 
+
+ 
+
+Leverage the Jazz Community Jazz and Rational Team Concert have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://ibm.com/support/docview.wss?uid=swg21319600] for details and links.
+
+RELATED INFORMATION
+#A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21646029]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Quality Manager Team Server Software Development Rational Requirements Composer Team Server Software Development Rational Quality Manager AIX, Linux, Windows 2.0, 2.0.0.1, 2.0.0.2, 2.0.1, 2.0.1.1, 3.0.1, 3.0.1.1, 3.0.1.2, 3.0.1.3, 3.0.1.4, 3.0.1.5, 4.0, 4.0.0.1, 4.0.0.2, 4.0.1 Software Development Rational Requirements Composer Windows, Linux 2.0, 2.0.0.1, 2.0.0.2, 2.0.0.3, 2.0.0.4, 3.0.1, 3.0.1.1, 3.0.1.2, 3.0.1.3, 3.0.1.4, 3.0.1.5, 4.0, 4.0.0.1, 4.0.0.2, 4.0.1

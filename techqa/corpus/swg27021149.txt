@@ -1,0 +1,64 @@
+Title: IBM Open Mic Webcast replay:  Best Practices and Performance Tuning for IBM Lotus Sametime Meetings - 26 April 2011 - United States
+
+Text:
+STEwebcastDocument; lste_webcast; Tech Exchange; openmic call; open microphone call; discussion; conference call; customer call; meetings; web conferences; functionality; issues; problems; submit; ask the experts; discuss; sametime 8.5.1; 8.5.2; open mic; questions; answers; questions and answers; q&a; replay; recording; webcast; FAQ; best practice; transcript; April 26th WEBCAST
+
+ABSTRACT
+ The recording and presentation are available for the Open Mic Webcast on "Best Practices and Performance Tuning for IBM Lotus Sametime Meetings" held on April 26, 2011. 
+
+CONTENT
+Topic: Best Practices and Performance Tuning for IBM Lotus Sametime Meetings
+
+
+
+
+Date recorded: 26 April 2011 
+
+Duration: 56:23
+
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]meetingPerformance.pdf [/support/docview.wss?uid=swg27021149&aid=2] [/support/docview.wss?uid=swg27021149&aid=1]
+
+
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]Audio: MP3 file, size of 11,963,952 bytes [ftp://public.dhe.ibm.com/software/lotus/info/sametime/meetingPerformance.mp3] 
+
+ * 
+ * 
+
+
+Approximate time index: Time Question & answer summary 0:00 Introduction and presentation 30:15 Question: Can you describe some basic signals or symptoms an administrator would see that indicate performance tuning might be needed?
+
+Let me give an example: For a problem with IBM's Sametime implementation, the symptom reported was users having trouble with meetings, being kicked out or unable to join. One of the first things I do is to make sure I understand the server's vital signs: CPU, number of sockets, and so on. In this case, the server had virtually no CPU but plenty of memory. I reviewed the I/O and determined we made the common mistake of deploying on a server that had a very low file descriptor limit. Increasing that limit resolved the problem. 
+
+In terms of signs, I usually go to the server vital signs as covered in the presentation. Where we see one of those vital signs being out of bounds, so for example 100% CPU, next go to the logs on the server. If you work with IBM Support, we request the entire logs directory for analysis. You as an administrator should also review these logs. Any concerns or warnings written to the console or log have a Message ID as a prefix. You can search on that Message ID; search results lead you to the Information Center page for that Message ID. There you can find the issue and the action to take.
+
+Even if you're not having any problems reported from your users, you should review those logs regularly. If you do have a performance issue, there's going to be a pain period before it shows up to users. Sametime will write warnings well before the "red zone" where performance is affected. Regular log review helps you see where your baseline is. Then if you do have problem reports, next time you look at the logs, you can say "there's a warning I haven't seen before" and those may help you drill down on where you may need to make some adjustments.
+
+It's also handy, as in the presentation, to enable Verbose garbage collection (GC). Once that's enabled, over time the memory usage of the server is tracked in a file. You can retrieve the Verbose GC logs and use some of the tools available to analyze memory usage over time. If there's a leak, you'll see increased memory usage as you move along. It may take weeks or months before the server exhibits a problem, but in the meantime you can be troubleshooting long before there's an outage. 37:25 Question: For another HTTP server application, in addition to increasing the ulimit, I had to add the following setting to the profile to address performance when running out of file handles making Oracle calls over to a WebSphere Application Server: "export LD_PRELOAD_32=/usr/lib/extendedFILE.so.1"
+Would a heavily used Sametime server need that same setting?
+
+While not familiar with that setting, the panel does not think that setting is necessary for Sametime. In our performance testing for Sametime, we've seen certain limits compromised or challenged but not seen this one. 39:00 Question: Does the Meeting Server logging generate SNMP or other traps that can be used with an external monitoring program?
+
+Because Sametime is built on the WebSphere platform, WebSphere gives us PMI, Performance Monitoring Infrastructure. PMI is built into WebSphere and it's the UI that lets you monitor things. PMI is based on a lower-level technology known as JMX, an industry standard that defines a wire protocol that allows some remote technology to bind in and speak to the server. So you can bind in remotely with all sorts of tools to monitor WebSphere using JMX. 
+
+I prefer IBM tooling like those in the Tivoli product line. You mentioned a specific product name that I'm not familiar with, but if that product has the ability to do JMX then you should be able to bind in and use it for Sametime. To my knowledge, SNMP is not supported out of the box. Rather than that, we have the JMX approach.
+
+In the presentation, I mentioned the caches that we use. Those caches are an example of a good thing to monitor; each cache has a unique name and is tunable. For example, real-time session is a meeting room. So if there are a 1000 of those in the cache, then you have 1000 active rooms. Likewise, you can monitor CPU, heap, etc. 42:20 Are there particular LDAP adjustments to look at when configuring your Meeting server?
+
+For baseline, let's be clear on the purpose of LDAP servers. For the most part, Sametime looks to LDAP as the directory or repository of users so that it can validate them and log them in. It's an important part of the enterprise that we tap in to.
+
+A challenge is the many different brands of LDAP server out there. What WebSphere gives us is a technology called VMM. We program to VMM and VMM figures out what type of directory am I talking to. The Meeting server speaks to the intermediate layer known as VMM, then VMM speaks to your LDAP server. 
+
+What we run in to are cases where, for example, the Sametime ID doesn't map to the DN that's over in the LDAP server. In those cases, there's a file you can manipulate to map attributes, where you say what's used in your environment or your approach to attribute naming. 
+For those interested, the file name is wimconfig.xml. You can read about VMM and wimconfig.xml in the WebSphere Information Center and other documentation.
+
+Out of the box, we've found that the WebSphere team has done a good job with these mappings. So if you bind to say a Domino server, you're going to get the right mappings, and likewise if you bind to Tivoli Directory Server, you'll get the right mappings. A handful of situations might need adjustment. If the out-of-the-box settings do not work for your unique situation, you can get details of what's not mapping in the logs, then based on what you see in the logs, adjust in wimconfig.xml. 46:55 Pause for poll question for live attendees 47:40 Question: At what point would I break off a cell to its own server? Currently I'm running the meeting server, proxy, etc. on the same machine, on Windows 2003, namely a single-cell install. We are in pilot mode.
+
+First look at capacity. Go to the Admin page and keep an eye on the daily usage, the number of users on the meeting server. Capacity can be an indicator of when you need to split to multiple nodes and multiple hardware. Consider roughly 2000 users as a high end. When you reach 1000 users, keep an eye on the server vital signs to see if they stay within normal boundaries. At 2000, your server is getting popular, and it's likely time to split and balance the load. As well, you want to monitor the vital signs for the other Sametime servers, like proxy, media, not just meeting server.
+
+Also, Windows 2003 is an older operating system, one where you have to make adjustments such as increasing the default number of sockets or decreasing the idle time out for sockets. In IBM testing, we do see better performance in more recent releases of the Windows OS. 54:00 Follow up to the prior question. If I also move to Windows 2008 R2 operating system when cutting over from pilot to production, I don't want to lose the meeting rooms and so on. Can we take the DB2 backend and copy over and reconnect it?
+
+You don't have to copy it over; you can keep the DB2 server running on Windows 2003 and point to it. Or you can put your DB2 on a different hardware, backup then import it to the new DB2 on Windows 2008.

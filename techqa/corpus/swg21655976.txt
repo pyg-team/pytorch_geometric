@@ -1,0 +1,13 @@
+Title: IBM Setting TIP session time-out for single user. - United States
+
+Text:
+Setting; TIP; session; time-out; single; user; timeout; TIPL2FAQ TECHNOTE (FAQ)
+
+QUESTION
+ Can the time-out session variable be set for a single user in Tivoli Integrated Portal? 
+
+CAUSE
+Session time-out settings are done via the TIP configurations. This time-out setting can be done for users system wide, but not for single users. 
+
+ANSWER
+No, the session timeout setting is a WAS server setting and can't be different for any particular user.

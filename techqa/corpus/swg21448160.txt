@@ -1,0 +1,38 @@
+Title: IBM Impact EventListener cannot login to ObjectServer in Secure Mode - United States
+
+Text:
+Impact; Omnibus Event Listener; Secure Mode TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Impact omnibus event listener fails to connect to an ObjectServer running on secure mode 
+
+SYMPTOM
+13 apr 2010 10:51:08,240: Attempting to connect for IDUC notifications
+13 apr 2010 10:51:08,251: Could not establish connection to the Data Source defaultobjectserver
+13 apr 2010 10:51:08,251: Failed to Subscribe to the IDUC feed
+13 apr 2010 10:51:12,385: Stopping the Service
+13 apr 2010 10:51:12,385: Service Stopped
+
+
+CAUSE
+This has been identified as a product defect under APAR IZ81959 - see the 'Related Information' section below.
+
+DIAGNOSING THE PROBLEM
+Event listener log file shows a message stating it is unable to subscribe to IDUC
+
+RESOLVING THE PROBLEM
+The issue was fixed initially IBM Tivoli Netcool/Impact V5.1.1.1 Interim Fix 1 (5.1.1.1-TIV-NCI-IF0001) and has subsequently been added in all existing Interim Fixes and Fixpacks being the latest FixPack 3
+
+Please find the link for FP3 in the 'Related Information' section below.
+
+
+
+
+
+After installing the fix, three new properties are available for the event listener properties file 
+
+impact.<lowercase listenername>.objectserver.securemode=true 
+impact.<lowercase listenername>.objectserver.secureusername=<username> 
+impact.<lowercase listenername>.objectserver.securepassword=<nco_crypt password>
+
+The values in these properties will be used to connect to the ObjectServer

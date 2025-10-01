@@ -1,0 +1,36 @@
+Title: IBM How does LDAP-BIND authentication work with IBM Mobile Connect? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+How does LDAP-BIND authentication work with IBM Mobile Connect?
+
+ANSWER
+IBM Mobile Connect (IMC) looks in its configured data store for a user account. That data store can be any of the supported methods (Local/Remote Relational Database, Local File System, Local/Remote LDAP Server). 
+
+ * If the user account is found AND has the ibm-wlPrincipalPtr attribute set IMC will use that value as the DN (distinguished name) for the user AND IMC will perform an authenticated BIND to the LDAP server.
+   
+   Note** - The ibm-wlPrincipalPtr attribute is exposed externally on a User Record and can be seen, modified with the Gatekeeper. The value is called Principal User Account and is on the Account tab for each User Record.
+   The dn may also be seen with the command lswg -s ibm-wlUser 
+ * If the user account is not found or the ibm-wlPrincipalPtr attribute is not set in the user record then IMC will query the LDAP server based on the LDAP-BIND Authentication Profile and DSS (Directory Services Server) configuration within IMC. 
+ * IMC will get the DN from the result of this query and it will store the value in the user record in the data store so that future authentication requests do not require a search. 
+ * IMC will not query LDAP again unless we get a response from the authenticated bind (where IMC supplies the DN) that the DN is no longer valid.  * When using Single Sign On (SSO) in conjunction with the LDAP-BIND it is possible to configure the LTPA token which is created to use a different attribute other than the DN/PrincipalPtr to pass to the application server. This is mostly relevant when using Domino as the LDAP server where you might want to pass the "NOTESID" instead of the distinguished name. The screen shot here shows an example of how it could be used from the LTPA/SSO Tab on the Authentication Profile:
+      
+      [/support/docview.wss?uid=swg21675083&aid=1] [/support/docview.wss?uid=swg21675083&aid=1]
+      
+    * There are some situations where it is desirable for IMC to perform an account lookup to ensure that an account exists, but NOT to ask for the password supplied to be validated. Perhaps there is another network node or device manager performing the account authentication. In this case, on the LDAP Tab in the LDAP-BIND authentication profile check the box which says "Disable Password verification". 
+    * Another feature of the LDAP-BIND Authentication Profile from the LDAP Tab is the ability to perform "Additional distinguished name validation' on Groups or add additional search criteria to the account lookup. The example here shows the account lookup will use a configured LDAP Server called BlueGroups to check for unique members of a group. The X.500 syntax inside the Syntax box for this example follows the format of:
+      (&(objectclass=groupOfUniqueNames)(cn=serverhostname))
+      
+      [/support/docview.wss?uid=swg21675083&aid=2] [/support/docview.wss?uid=swg21675083&aid=2]
+   
+   
+ * Re-authentication for a user account is dependent on the life of the session token which, by default is 240 minutes. This can be configured on the LTPA/SSO Tab of the Authentication Profile in the LTPA Token Lifetime field. 
+ * A new feature with the 6.1.6.0 release is a Multiple LDAP Query Mode. On the LDAP Tab for the Authentication Profile is a Directory Server Query Mode setting which can be: Failover, Round Robin or Sequential.  * FAILOVER - Only try other DSS definitions when unable to physically connect to the current directory services server. The method will only switch definitions in the event of a connection failure. 
+    * ROUND ROBIN - Change DSS definitions on every query / authentication request. DSS selection is random. In the event of a connection failure, an alternate DSS definition will be selected and tried. 
+    * SEQUENTIAL - Similar to Failover mode in behavior with the added function of trying alternate DSS definitions when a search for a given user returns a user not found return code. Each DSS in the list will be attempted until one succeeds. If the user is not found on any server, a bad user id return code will be generated.
+   
+   
+
+[/support/docview.wss?uid=swg21675083&amp;aid=3]

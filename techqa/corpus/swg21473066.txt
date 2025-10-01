@@ -1,0 +1,75 @@
+Title: IBM Must Gather: Linux OS agent is greyed out in the TEP navigator - United States
+
+Text:
+Linux TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Linux OS agent is not active in the TEP. When a user attempts to start the Linux OS agent it fails to show online in the TEP. 
+
+SYMPTOM
+
+
+
+
+
+
+
+ * The Agent is greyed out in the navigator 
+ * The agent is not seen in the portal 
+ * The user is unable to perform any actions or right-click functions on the agent. 
+ * Situations are not firing when expected on the agent.
+
+
+
+
+
+CAUSE
+ 
+
+Below are a list of possible causes and potential user actions:  * The agent process (klzagent) is not running. Running the command:
+   ps -ef | grep klzagent 
+   shows if the agent is running. If the agent process is not running, check if the agent dumped a core. 
+ * Attempting to start the agent with the incorrect userid. 
+ * Permission on the install directory could be wrong, have been changed, or locked down. Please ensure the <candlehome/bin> directory permission's are set correctly.  * cd <candlehome> 
+    * find . -ls to show the directory tree permissions. 
+      If the agent is not running as root, ensure that $CANDLEHOME/bin/SetPerm has been run as root.
+   
+   
+ * nosuidenabled on the server Filesystem housing the candlehome directory. 
+ * Agent could be running but it is not connected to the TEMS because of a network or Firewall issue, so the TEP doesn't see it connected. Heartbeat is not getting to the TEMS. 
+ * From the server where the agent is installed, check to see if the agent is running  * cd <candlehome/bin> 
+    * ./cinfo -r 
+   
+   
+ * Server owner performing maintenance on this server and possibly removed part of the code.
+
+
+
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+Trace Required  * Agent trace required KBB_RAS1=(UNIT:klz all) ERROR 
+ * Basic Service trace KBS_DEBUG=Y
+
+
+Logs and Configuration Data Needed 
+Perform a PDCollect will gather the following required log files, or you may collect them manually.  * Agent logs for LZ (All the _lz_ and *:LZ.LG* log files in the <candlehome>/logs directory. 
+ * Agent configuration files – lz.config and lz.ini files in <candlehome>/config directory. 
+ * Need Linux messages log - /var/log/messages 
+ * Need directory listing including permission of ITM install directory find <candlehome> -ls 
+ * Need listing of filesystem mounts (mount output) 
+ * Need the standard out listings from command line where the agent was started.
+
+
+
+
+
+
+
+Back to top 
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITM Linux OS Agent

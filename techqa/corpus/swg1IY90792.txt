@@ -1,0 +1,184 @@
+Title: IBM IY90792: TADDM: CHANGE HISTORY MISSING CURRENT VERSION CHANGE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I'm installing another Linux box with CCMDB / CDT function, I
+   discover the Linux with config files => /etc/hosts, change the
+   content of /etc/hosts, then scan again, I see nothing when I
+   right-click the Linux box and select "Change History", If I
+   save each scan into different versions, then I can see changes
+   between each version, this means it can capture its latest
+   content, but why can't I see the change in current version, do
+   you know why ??
+   
+   
+   
+   The problem has to do with how we choose the default date for
+   the change history.
+   
+   Recreate steps:
+   
+   1) added a config file (/etc/hosts) to the CollationProcesses
+   custom server template
+   
+   2) ran discovery
+   
+   3) changed /etc/hosts
+   
+   4) ran discovery
+   
+   5) right click on one of the CollationProcesses and chose
+   "change history"
+   
+   6) clicked on run report - no change shows up
+   
+   7) look at the dates for the change history. notice that the
+   DEFAULT date range is from about a week ago until the time the
+   UI was launched! This is not a bug, but its certainly not
+   intuitive.
+   
+   8) When I changed the end date to one that was AFTER the last
+   discovery run, the correct changes are shown. BTW, the way we
+   show changes to config files is poorly layed out.
+   
+   
+   
+   CMVC defects 8111, 8110, and 8116 have been opened for aspects
+   of all this.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Of course, the workaround is just to restart the UI which
+   re-sets the default date.
+   
+   This APAR is scheduled for FP1, due January 2007.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: CDT/TADDM 5.1.1 Users.                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When installing CCMDB / CDT function,   *
+   *                      if one discovers the Linux with config  *
+   *                      files => /etc/hosts                     *
+   *                      then changes the content of             *
+   *                      /etc/hosts, then scans again,           *
+   *                      nothing appears when right-clicking     *
+   *                      the Linux box and                       *
+   *                      selecting "Change History". If one      *
+   *                      saves each scan into                    *
+   *                      different versions, then they can see   *
+   *                      changes between                         *
+   *                      each version.                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When we bring up the change history report gui, we now
+   set the to time to be current instead of the gui launch time.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following
+   maintenance packages:
+   | fix pack | 1.1.1.0-TIV-CCMDB-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY90792
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-10-18
+   
+   
+ * CLOSED DATE
+   2006-12-22
+   
+   
+ * LAST MODIFIED DATE
+   2006-12-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * FIXED COMPONENT ID
+   5724N5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R511 PSY
+   UP

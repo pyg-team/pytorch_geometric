@@ -1,0 +1,121 @@
+Title: IBM Add Red Hat Enterprise Linux 7 Platform Support (6.2.3-TIV-ITM-FP0003-IV65616, 6.2.3-TIV-ITM-FP0005-IV65616) - United States
+
+Text:
+RHEL 7 DOWNLOADABLE FILES
+
+ABSTRACT
+ This fix repairs the media to allow local and Remote Deploy installation on Red Hat Enterprise Linux (RHEL) 7 platforms. 
+
+DOWNLOAD DESCRIPTION
+The following fixes are provided to allow installation on RHEL 7 platforms. 
+
+Patch Name Release Description 6.2.3-TIV-ITM-FP0003-IV65616
+Required 6.2.3 Fix Pack 03 Repair product installation media to allow installation on RHEL 7 platforms. 6.2.3-TIV-ITM-FP0003-IV65616.1
+Optional 6.2.3 Fix Pack 03 Update "tacmd exportbundles" "-os LINUX" option to correctly generate the silentInstall.sh script contained in the exported bundle. 6.2.3-TIV-ITM-FP0005-IV65616
+Required 6.2.3 Fix Pack 05 Repair product installation media to allow installation on RHEL 7 platforms. 6.2.3-TIV-ITM-FP0005-IV65616.1
+Optional 6.2.3 Fix Pack 05 Update "tacmd exportbundles" "-os LINUX" option to correctly generate the silentInstall.sh script contained in the exported bundle. There is no patch for any 6.30.XX release. 6.3.0 Fix Pack XX Refer to the following technote for 6.30.XX support.
+http://www-01.ibm.com/support/docview.wss?uid=swg21692457 [http://www-01.ibm.com/support/docview.wss?uid=swg21692457] 
+Version 6.2.3 FP03 : 
+
+Provisional Fix 6.2.3-TIV-ITM-FP0003-IV65616 is required to repair the product installation media, before installation is attempted, on RHEL 7 platforms. This fix is always required before installation on RHEL 7 platforms can be successful. 
+
+This patch should be applied to the following entities of your IBM Tivoli Monitoring environment.  * IBM(R) Tivoli(R) Monitoring, Version 6.2.3: Fix Pack 03 Agents installation media 
+ * Other product installation media containing the ITM Common Installer component versions 06.22.00.00 - 06.23.04.00 which has been certified for installation on RHEL 7 platforms.
+
+
+This patch can be applied directly to the installation media, or it can be applied to the installation media after it has been added to a Monitoring Server depot. 
+
+After applying the fix directly to the installation media, you can use the updated media image for any of the following purposes: 
+- Run install.sh from the updated media. 
+- Run tacmd exportbundles with -i pointing to the updated media. 
+- Run tacmd addbundles with -i pointing to the updated media. 
+- Transport the new tar file generated from the updated media and 
+transport it to another system, expand it and run install.sh. 
+
+If you intend to use "tacmd exportbundles" with the "-os LINUX" option, after applying this provisional, you must also apply the provisional 6.2.3-TIV-ITM-FP0003-IV65616.1 before you run "tacmd exportbundles". Failure to do this will result in the generation of a silentInstall.sh in the exported bundle directory which will not execute successfully on RHEL 7 platforms. 
+
+After applying the fix to the installation media already loaded into a monitoring server depot, you can use the updated image in the depot age for any of the following purposes: 
+- Run tacmd createnode. 
+- Run tacmd updateagent. 
+- Run tacmd addsystem. 
+- Run tacmd exportbundles using the "-p" option without the "-i" option. 
+
+
+
+
+Provisional Fix 6.2.3-TIV-ITM-FP0003-IV65616.1 is required only when you will be using "tacmd exportbundles" with the "-os LINUX" option to generate exported bundles. If you will not be using the "-os LINUX" option or even the "tacmd exportbundles" command, then this patch is not required. 
+
+This patch should be applied to the following entities of your IBM Tivoli Monitoring environment.  * IBM(R) Tivoli(R) Monitoring, Version 6.2.3: Fix Pack 03 Enterprise Services User Interface Extensions component installed at IBM(R) Tivoli(R) Monitoring, Version 6.2.3: Fix Pack 03 monitoring servers.
+
+
+If you intend to use "tacmd exportbundles" with the "-os LINUX" option after applying this provisional to install on RHEL 7 platforms, you must also apply the provisional 6.2.3-TIV-ITM-FP0003-IV65616 to repair the installation media which will be referenced with the "-i" option before you run "tacmd exportbundles". Failure to do this will result in the generation of an exported bundle directory which will not install successfully on RHEL 7 platforms. 
+
+This patch can be installed locally or through remote deploy. 
+
+After the Enterprise Services User Interface Extensions component has been updated, "tacmd exportbundles" with the "-os LINUX" option will generate a silentInstall.sh script which will execute correctly on RHEL 7 platforms. 
+
+
+Version 6.2.3 FP05: 
+
+Provisional Fix 6.2.3-TIV-ITM-FP0005-IV65616 is required to repair the product installation media, before installation is attempted, on RHEL 7 platforms. This fix is always required before installation on RHEL 7 platforms can be successful. 
+
+This patch should be applied to the following entities of your IBM Tivoli Monitoring environment.  * IBM(R) Tivoli(R) Monitoring, Version 6.2.3: Fix Pack 05 Agents installation media 
+ * Other product installation media containing the ITM Common Installer component version 06.23.05.00 which has been certified for installation on RHEL 7 platforms.
+
+
+This patch can be applied directly to the installation media, or it can be applied to the installation media after it has been added to a Monitoring Server depot. 
+
+After applying the fix directly to the installation media, you can use the updated media image for any of the following purposes: 
+- Run install.sh from the updated media. 
+- Run tacmd exportbundles with -i pointing to the updated media. 
+- Run tacmd addbundles with -i pointing to the updated media. 
+- Transport the new tar file generated from the updated media and 
+transport it to another system, expand it and run install.sh. 
+
+If you intend to use "tacmd exportbundles" with the "-os LINUX" option, after applying this provisional, you must also apply the provisional 6.2.3-TIV-ITM-FP0005-IV65616.1 before you run "tacmd exportbundles". Failure to do this will result in the generation of a silentInstall.sh in the exported bundle directory which will not execute successfully on RHEL 7 platforms. 
+
+After applying the fix to the installation media already loaded into a monitoring server depot, you can use the updated image in the depot age for any of the following purposes: 
+- Run tacmd createnode. 
+- Run tacmd updateagent. 
+- Run tacmd addsystem. 
+- Run tacmd exportbundles using the "-p" option without the "-i" option. 
+
+
+
+
+Provisional Fix 6.2.3-TIV-ITM-FP0005-IV65616.1 is required only when you will be using "tacmd exportbundles" with the "-os LINUX" option to generate exported bundles. If you will not be using the "-os LINUX" option or even the "tacmd exportbundles" command, then this patch is not required. 
+
+This patch should be applied to the following entities of your IBM Tivoli Monitoring environment.  * IBM(R) Tivoli(R) Monitoring, Version 6.2.3: Fix Pack 05 Enterprise Services User Interface Extensions component installed at IBM(R) Tivoli(R) Monitoring, Version 6.2.3: Fix Pack 05 monitoring servers.
+
+
+If you intend to use "tacmd exportbundles" with the "-os LINUX" option after applying this provisional to install on RHEL 7 platforms, you must also apply the provisional 6.2.3-TIV-ITM-FP0005-IV65616 to repair the installation media which will be referenced with the "-i" option before you run "tacmd exportbundles". Failure to do this will result in the generation of an exported bundle directory which will not install successfully on RHEL 7 platforms. 
+
+This patch can be installed locally or through remote deploy. 
+
+After the Enterprise Services User Interface Extensions component has been updated, "tacmd exportbundles" with the "-os LINUX" option will generate a silentInstall.sh script which will execute correctly on RHEL 7 platforms. PREREQUISITES
+6.2.3-TIV-ITM-FP0003-IV65616
+Product installation media containing the ITM Common Installer component versions 06.22.00.00 - 06.23.04.00 which has been certified for installation on RHEL 7 platforms. 
+
+6.2.3-TIV-ITM-FP0003-IV65616
+IBM(R) Tivoli(R) Monitoring, Version 6.2.3: Fix Pack 03
+
+6.2.3-TIV-ITM-FP0005-IV65616
+Product installation media containing the ITM Common Installer component version 06.23.05.00 which has been certified for installation on RHEL 7 platforms.
+6.2.3-TIV-ITM-FP0005-IV65616
+IBM(R) Tivoli(R) Monitoring, Version 6.2.3: Fix Pack 05
+
+INSTALLATION INSTRUCTIONS
+Please refer to the full READMEs contained in the Download package section below for general installation instructions for each patch.
+
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 6.2.3-TIV-ITM-FP0003-IV65616 1 Dec 2014 English 1 FC [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FIBM+Tivoli+Monitoring&fixids=6.2.3-TIV-ITM-FP0003-IV65616] [ ] 6.2.3-TIV-ITM-FP0003-IV65616.1 1 Dec 2014 English 1 FC [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FIBM+Tivoli+Monitoring&fixids=6.2.3-TIV-ITM-FP0003-IV65616.1] [ ] 6.2.3-TIV-ITM-FP0005-IV65616 22 Jan 2016 English 1 FC [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FIBM+Tivoli+Monitoring&fixids=6.2.3-TIV-ITM-FP0005-IV65616] [ ] 6.2.3-TIV-ITM-FP0005-IV65616.1 22 Jan 2016 English 1 FC [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FIBM+Tivoli+Monitoring&fixids=6.2.3-TIV-ITM-FP0005-IV65616.1] [ ] 
+PRODUCT ALIAS/SYNONYM
+ ITM 
+
+ [/support/docview.wss?uid=swg24038956&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24038956&aid=2]Problems (APARS) fixed
+IV65616

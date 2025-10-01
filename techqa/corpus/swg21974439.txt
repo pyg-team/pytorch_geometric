@@ -1,0 +1,57 @@
+Title: IBM CreateGCD May Fail to Run Successfully, after Changing the Default Server and Cluster Names - United States
+
+Text:
+creategcd; Cannot connect to any Content Platform Engine URI. Check whether the Connections Content Manager server has started TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After installing a large deployment of Connections Content Manager, the createGCD fails trying to connect to the default server names CCMCluster_server1 instead of the ones entered during the install.
+
+SYMPTOM
+When configuring CCM, the createGCD.sh/bat cannot connect to the server and reports it is using the default server name instead of the server name assigned to the CCM cluster during installation:
+
+server: CCMCluster_server1
+==================================================
+Domain name : ICDomain
+Domain administrator user : icsadmin
+Directory service provider name : IBM Connections Directory Service
+Content Platform Engine webservice : FileNetP8WSI
+JNDI data source : FNOSDS
+JNDI XA data source : FNOSDSXA
+Object store display name : ICObjectStore
+Object store name : ICObjectStore
+Object store administrator user : icsadmin
+File Storage Area root path : /data/shared/ccm
+Possible Content Platform Engine Connection URIs:
+==================================================
+
+Cannot connect to any Content Platform Engine URI. Check whether the
+Connections Content Manager server has started.
+
+
+
+CAUSE
+This issue appears to be caused by the installer populating the default server name in the config.properties during installation. The default server name then gets picked up during the createGCD script and fails to connect to the CCM server. 
+
+ENVIRONMENT
+Connections Content Manager 5.5 with custom or changed server names.
+
+RESOLVING THE PROBLEM
+ Open the config.properties located in:
+WasUserHome: /websphere/AppServer/profiles/Dmgr01 
+
+Find the line that contains the default Server name: 
+ccm.servernamNode01.ServerName: CCMCluster_server1 
+
+
+ 1. Change that line in the file to reflect the actual name of the CCM server node. 
+ 2. Delete the following files before running the script again.  1. \IBM\Connections\Data\Shared\CCM. (Do not delete the CCM directory itself) 
+     2. opt/data/IBM/WebSphere/AppServer/profiles/CCM01/logs/ 
+     3. clear TEMP and WSTEMP files from the node <WAS directory>\profiles\AppSrv01\ 
+     4. content in <WAS directory>\profiles\AppSrv01\FileNet 
+     5. dminfo.properties file from...\IBM\WebSphere\AppServer\Profiles\Dmgr\bin 
+    
+    
+ 3. Restart the server and rerun the createGCD, make sure everything is running by using the ping page before performing the script again. 
+
+RELATED INFORMATION
+ Troubleshooting CCM domain creation [http://www-01.ibm.com/support/docview.wss?uid=swg21654424]

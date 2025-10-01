@@ -1,0 +1,21 @@
+Title: IBM How can one set and control query timeouts for Application Console screens for the Sterling MCF product? - United States
+
+Text:
+Performance; STERLINGFAQ TECHNOTE (FAQ)
+
+QUESTION
+ How can one set and control query timeouts for Application Console screens for the Sterling MCF product? 
+
+ANSWER
+
+
+There are two ways to achieve this:  * 
+ * Through property files: yfs.properties has an option to set the query timeout parameter for console/UI screens: 
+
+The default UI Query timeout value is set in yfs.properties: yfs.ui.queryTimeout=60 In SCA v7.x, one can edit the above to override the console/UI query timeouts. In MCF/MCSF/SFS v8.0 and higher, one can override this in customer_overrides.properties: yfs.yfs.ui.queryTimeout=  * 
+ *  Through the application server settings: The application server configuration will have an option to set the query timeout for database queries. 
+
+Which of the above takes precedence for query timeouts? The least value among the two will take precedence for query timeout scenarios. E.g. If the query timeout is set to 60 sec through yfs.properties and 180 sec through the application server, then the console screens will timeout after 60 sec. Even if the application server allows queries to wait for more than 60 sec, the application will abort the session after 60 sec. 
+
+HISTORICAL NUMBER
+ FAQ3804

@@ -1,0 +1,50 @@
+Title: IBM How can I determine the version of Host On-Demand on a server? - United States
+
+Text:
+HOD; version; HODVersion; Host On-Demand TECHNOTE (FAQ)
+
+QUESTION
+ How do you determine which version of IBM Rational Host On-Demand is on the server? 
+
+CAUSE
+When Host On-Demand is installed on some platforms such as z/OS, AIX, Linux, and iSeries servers, the level of Host On-Demand might not be easily determined.
+
+ANSWER
+A utility was added to Host On-Demand to determine the exact service level on the server. 
+
+For z/OS: 
+
+ 1. Logon to TSO on z/OS and open omvs. 
+ 2. Navigate to the Host On-Demand install directory, default path is /usr/lpp/HOD/ 
+ 3. Enter the following command:
+    
+    java -classpath /usr/lpp/HOD/hostondemand/lib/sm.zip com.ibm.eNetwork.HODUtil.services.admin.HODVersion
+
+
+ 
+
+For AIX and Linux: 
+
+ 1. Logon to AIX or Linux and open a terminal command prompt. 
+ 2. Navigate to the Host On-Demand install directory, default path is /opt/IBM/HostOnDemand 
+ 3. Enter the following command:
+    
+    java -classpath /opt/IBM/HostOnDemand/lib/sm.zip com.ibm.eNetwork.HODUtil.services.admin.HODVersion
+
+
+ 
+
+For iSeries: 
+
+ 1. Logon to iSeries and open qsh. 
+ 2. Navigate to the Host On-Demand install directory, default path is /QIBM/ProdData/HostOnDemand 
+ 3. Enter the following command:
+    
+    java -classpath /QIBM/ProdData/HostOnDemand/lib/sm.zip com.ibm.eNetwork.HODUtil.services.admin.HODVersion 
+
+
+ 
+
+For Windows servers: 
+
+Open Add/Remove Programs to see what level of Host On-Demand is installed.

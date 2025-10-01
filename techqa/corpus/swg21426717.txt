@@ -1,0 +1,104 @@
+Title: IBM RRT Robotic Content Capture environment checks - United States
+
+Text:
+Robotic Screen Capture; Captured Content; RPT; 71GEN-TEPWV; 71GEN-ITM; 71RRT-RPTWV; 71RRT-RPTTS; 71RRT-RFTWV; 71RRT-RFTTS; SRVE0255E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Robotic Content Capture option in TEPS->Robotic Response Time->Playback Status does not display the Captured Content. 
+
+SYMPTOM
+The Captured Content Location field has a value, but it is not displayed in the browser. An error is displayed in the browser window. Possible errors are SRVE0255E or 404. 
+
+
+CAUSE
+The system configuration may need to be updated
+
+DIAGNOSING THE PROBLEM
+Verify these items 
+
+ * The version of ITCAM for Transactions is a minimum of ITCAMfT 7.4. 
+ * The version of Rational Performance Tester is a minimum of RPT 8.2.1. 
+ * The platform for ITM and the T6 agent are supported. See link below for compatibility reports. 
+ * The "Enable Screen Content Capture" is set to true in the Robotic Monitoring Configuration on the T6 RRT agent. 
+ * The "Enable Screen Content Capture" is not set to false in the script profile in the AMC (Application Management Configuration) Editor. 
+ * <ITM_HOME>\kt1depot\T6\CONTENT\ contains .zip files from the last 8 hours if Verification Point errors have occurred. 
+ * On the TEPS, netstat -a | find "1520" shows at least port 15200 is listening. 
+ * The browser is Internet Explorer v7+ or Firefox v3.2+. 
+ * The popup blocker is turned OFF for the browser on the system where Tivoli Enterprise Portal Server is located. 
+ * The T6 agent is running on LINUX or Windows. 
+ * The Eclipse Server is running on the TEPS server.
+
+RESOLVING THE PROBLEM
+If the items above are in place, 
+
+ * Upgrade to the latest fixpack available for the installed version of ITCAM for Transactions 
+   
+ * Reconfigure the TEPS. 
+ * Verify <ITM_HOME>\CNPSJ\profiles\ITMProfile\installedApps\ITMCell\ContentCapture.ear exists. 
+ * Verify symlink from <ITMHOME>/<arch>/cq/filexfer/<arch>/lib/ to <ITMHOME>/<arch>/cq/lib for libkt1.so and KfwFileXfer 
+ * Try the Robotic Screen Capture option again. Use http url and https url to verify if secure setting is needed or not needed.
+   
+
+If the problem persists, send the following information to IBM Support with a PMR:  * In IE, select "Internet Options" on the Tools menu. Click the Advanced tab. Under the Browsing settings, uncheck the option "Show friendly HTTP error messages" . This shows the actual HTTP error code in the browser. 
+   
+   
+ * Try a different client to access the captured content. If you are using the browser, try the native client and java web start. Also try using a different machine with the client.
+   
+   
+ * Does this directory exist and are there files in the directory?  * cq/data/FILETRANSFER 
+      (for Unix) 
+    * CNPS/filexfer 
+      (for Windows)
+      
+      
+   
+   
+ * Add debugging to the TEPS  * In the <ITMHOME>/<arch>/cq/bin/lnxenv file add or verify the line : KFW_LOADLIB=KfwMain KfwFileXfer 
+      and add this tracing to <ITMHOME>/config/cq.ini 
+      KBB_RAS1: ERROR (UNIT:CTFileXfer ALL) 
+      (for UNIX) 
+    * In the <ITMHOME>\CNPS\kfwenv file add or verify the line : KFW_LOADLIB=KfwMain KfwFileXfer 
+      and add this tracing to <ITMHOME>/CNPS/kfwenv 
+      KBB_RAS1: ERROR (UNIT:CTFileXfer ALL) 
+      (for Windows)
+      
+      
+   
+   
+ * Follow the t6 debugging steps found in the ITCAM 7.4 collecting data Collecting data: ITCAM for Transactions link below  *  For RFT enable tracing for these variables
+      BWM.trc.playback.rft
+      BWM.trc.playback.common
+      and send any data contained in IBM\ITM\TMAITM6\app\RFT\ For RPT enable tracing for these variables
+      BWM.trc.rpt.rpttest
+      BWM.msg.rpt.rpttest
+      BWM.trc.rpt.pc
+      BWM.msg.rpt.pc
+      BWM.trc.rpt.util
+      BWM.msg.rpt.util
+      BWM.trc.playback.common
+      BWM.msg.playback.common
+      
+      
+   
+   
+ * Send the SystemOut.log and SystemErr.log found in the ITM platform specific directory  * <ITMHOME>/<arch>/iw/profiles/ITMProfile/logs/ITMServer 
+      (for UNIX) 
+    * <ITMHOME>\CNPSJ\profiles\ITMProfile\logs\ITMServer 
+      (for Windows)
+      
+      
+   
+   
+ * Send the HTTP error code, T6 logs, and TEPS logs to Tivoli support along with a PMR. Enable tracing for the TEP interface whether you are using the browser, native or java web start client.
+
+RELATED INFORMATION
+ Collecting data: ITCAM for Transactions T6 [http://www.ibm.com/support/docview.wss?uid=swg21326667 ]
+ITCAM for Transactions - Interim Fixes and Fixpacks [https://www.ibm.com/developerworks/community/blogs/0587adbc-8477-431f-8c68-9226adea11ed/entry/itcamft_how2_find_fixes?lang=en]
+ITCAM for Transactions compatibiity report [http://www.ibm.com/software/reports/compatibility/clarity/prereqsForProduct.html]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for Transactions
+ITCAMfT

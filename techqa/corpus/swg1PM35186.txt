@@ -1,0 +1,181 @@
+Title: IBM PM35186: DRLCTABD NEEDS TO INCLUDE CICS TS 4.1 OFFSET INFORMATION. ALSO ABEND OCCURS RUNNING TABLE FILE DELETE AGAINSTUPDATED TABLE. - United States
+
+Text:
+AIX z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The sample copy of DRLCTABD shipped with TDS z/OS should
+   include the CICS/TS 4.1 offset information.  Also when
+   updates are made for existing DRLCTABD table entries, only the
+   offset index is updated in the identification record, and not
+   the CICS version.
+   Finally, an ABEND has been seen when running with TABLE FILE
+   DELETE against an updated table.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of the TDSz UAC component          *
+   *                 processing CICS TS 3.2 or CICS TS 4.1 data.  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 1. The default CICS dictionary          *
+   *                      identification and offset tables in     *
+   *                      DRLCTABD do not include entries for     *
+   *                      CICS TS 3.2 and CICS TS 4.1.            *
+   *                      2. When DRLCTABD is updated by running  *
+   *                      DRLCCMFP and an existing entry is       *
+   *                      updated, only the offset index is       *
+   *                      changed and not the CICS version.       *
+   *                      When the TABLE FILE PRINT control       *
+   *                      statement is used with DRLCCMFP to      *
+   *                      check the effect of the update, it      *
+   *                      appears not to have worked.             *
+   *                      3. Abend running DRLCCMFP TABLE FILE    *
+   *                      DELETE control statement when DRLCTABD  *
+   *                      contains unreferenced entries.          *
+   ****************************************************************
+   * RECOMMENDATION: APPLY THE PTF FIXING THIS APAR               *
+   ****************************************************************
+   1. DRLCTABD was not updated to include default CICS dictionary
+   identification and offset table entries for CICS TS 3.2 and
+   CICS TS 4.1.
+   2. DRLCCMFP did not update the CICS version in the
+   identification table entry in DRLCTABD when updated dictionary
+   records were processed for a CICS system that was already
+   present.
+   3. Entries added to DRLCTABD by running DRLCCMFP to process
+   CICS dictionary records contain an invalid last accessed date
+   until they are referenced.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  1. DRLCTABD is updated to include default CICS dictionary
+   identification and offset table entries for CICS TS 3.2 and
+   CICS TS 4.1.
+   2. DRLCCMFP is updated to always save the CICS version in the
+   identification table entry in DRLCTABD when updated dictionary
+   records are processed for a CICS system that is already present.
+   3. DRLCCMFP is updated to delete unreferenced entries regardless
+   of the date specified on the TABLE FILE DELETE statement.
+   801Y
+   810Y
+   DRLCCMFP
+   DRLCTABD
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM35186
+   
+   
+ * REPORTED COMPONENT NAME
+   TDS FOR Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   569510100
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2011-03-18
+   
+   
+ * CLOSED DATE
+   2011-05-17
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK67938 UK67939
+   
+   
+
+MODULES/MACROS
+ *  DRLCCMFP DRLCTABD
+   
+   
+    
+   
+   
+
+Publications Referenced SC23796600 SC23796601 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TDS FOR Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   569510100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY UK67938 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK67938]
+   UP11/05/24 P F105
+   
+   
+ * R810 PSY UK67939 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK67939]
+   UP11/05/24 P F105
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

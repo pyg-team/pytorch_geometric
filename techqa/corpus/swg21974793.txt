@@ -1,0 +1,80 @@
+Title: IBM Security Bulletin: Vulnerability in MD5 Signature and Hash Algorithm affects IBM FileNet System Monitor/IBM Enterprise Content Management System Monitor (CVE-2015-7575) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The MD5 “SLOTH” vulnerability on TLS 1.2 affects IBM FileNet System Monitor/IBM Enterprise Content Management System Monitor 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-7575 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7575%22%20%5Ct%20%22_blank] 
+
+DESCRIPTION:The TLS protocol could allow weaker than expected security caused by a collision attack when using the MD5 hash function for signing a ServerKeyExchange message during a TLS handshake. An attacker could exploit this vulnerability using man-in-the-middle techniques to impersonate a TLS server and obtain credentials. 
+
+CVSS Base Score: 7.1 
+
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/109415 [https://exchange.xforce.ibmcloud.com/vulnerabilities/109415%22%20%5Ct%20%22_blank]for the current score 
+
+CVSS Environmental Score*: Undefined 
+
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:L/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Enterprise Content Management System Monitor v5.2
+IBM Enterprise Content Management System Monitor v5.1
+IBM Enterprise Content Management System Monitor v4.5
+
+REMEDIATION/FIXES
+For IBM Enterprise Content Management System Monitor v5.2: 
+
+To avoid the described security issues the following configuration changes are required:
+Edit the file <ECM-SM-InstallationDirectory>/jre/lib/security/java.security on each ECM-SM server
+1) Add MD5 to jdk.certpath.disabledAlgorithms - e.g.jdk.certpath.disabledAlgorithms=MD2, RSA keySize < 1024, MD5
+2) Add MD5withRSA to jdk.tls.disabledAlgorithms - e.g. jdk.tls.disabledAlgorithms=SSLv3, RC4, DH keySize < 768,MD5
+You should verify applying this configuration change does not cause any compatibility issues. Not disabling the MD5 signature hash will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the MD5 signature hash and take appropriate mitigation and remediation actions.
+
+
+For IBM Enterprise Content Management System Monitor v5.1 & v4.5 :
+
+To avoid the described security issues the following configuration changes are required:
+Edit the file <InstallationDirectory>/jre/lib/security/java.security on each ECM-SM / FSM server
+1) Add MD5 to jdk.certpath.disabledAlgorithms - e.g.jdk.certpath.disabledAlgorithms=MD2, RSA keySize < 1024, MD5
+2) Add MD5withRSA to jdk.tls.disabledAlgorithms - e.g. jdk.tls.disabledAlgorithms=SSLv3, RC4, DH keySize < 768,MD5
+
+Edit the files <InstallationDirectory>/gui/cfg/gui-cfg.xml and <InstallationDirectory>/server/cfg/server-start.xml on the FSM / ECM-SM server and add or adjust the following line to the file right after the entry <arg value="-Djava.awt.headless=true"/>)
+<arg value="-Dhttps.cipherSuites=SSL_RSA_WITH_AES_128_CBC_SHA,SSL_DHE_RSA_WITH_AES_128_CBC_SHA,SSL_DHE_DSS_WITH_AES_128_CBC_SHA,SSL_RSA_WITH_3DES_EDE_CBC_SHA,SSL_RSA_FIPS_WITH_3DES_EDE_CBC_SHA,SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA,SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA,SSL_RSA_WITH_DES_CBC_SHA,SSL_RSA_FIPS_WITH_DES_CBC_SHA,SSL_DHE_RSA_WITH_DES_CBC_SHA"/>
+
+Edit the files <InstallationDirectory>/gui/cfg/finca-cfg.xml and <InstallationDirectory>/server/cfg/finca-cfg.xml on the FSM / ECM-SM server and insert the following block to the file right after the end of the <security>-Tag:
+<hashcodeservice>
+<algorithm name="SHA-1"/> 
+</hashcodeservice>
+
+
+You should verify applying this configuration change does not cause any compatibility issues. Not disabling the MD5 signature hash will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the MD5 signature hash and take appropriate mitigation and remediation actions. 
+
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+IBM Secure Engineering Web Portal [https://www-304.ibm.com/jct03001c/security/secure-engineering/] IBM Product Security Incident Response Blog [https://www.ibm.com/blogs/PSIRT]
+
+
+ACKNOWLEDGEMENT
+Reported to IBM by Karthikeyan Bhargavan at INRIA in Paris, France 
+
+CHANGE HISTORY
+ 14 Jan 2016: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

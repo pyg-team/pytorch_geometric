@@ -1,0 +1,131 @@
+Title: IBM XL C/C++ Utilities for AIX 13.1.3 - United States
+
+Text:
+service release; modpack; mod pack; upgrade; refresh; refresh pack DOWNLOADABLE FILES
+
+ABSTRACT
+ This page contains the Utilities package for use with applications developed using the IBM XL C/C++ for AIX 13.1.3 compiler. 
+
+DOWNLOAD DESCRIPTION
+The Utilities package contains files that may be required by some third-party applications. 
+
+
+Only download and install the Utilities package if instructed by your application provider. 
+
+The IBM XL C/C++ for AIX 13.1.3 Utilities are compatible with the XL C/C++ for AIX 11.1 compiler or later. 
+
+ 
+
+Table of Contents Sections Description  * What's new
+
+The Change history section provides an overview on what is new in this release with a description of any new functions or enhancements when applicable.
+
+ * Prerequisites
+
+The Prerequisites section provides important information to review prior to the installation of this release.
+
+ * Download package
+
+The Download package section provides the direct link to obtain the download package for installation in your environment.
+
+ * Installation instructions
+
+The Installation instructions section provides the installation instructions necessary to apply this release into your environment.
+
+PREREQUISITES
+ 
+
+Prerequisites include: OPERATING SYSTEM:
+ * IBM AIX V6.1 TL 2 Service Pack 5, or later
+ * IBM AIX V7.1
+ * IBM AIX V7.2
+ * IBM i V7.1 PASE V7.1
+ * IBM i V7.2 PASE V7.2
+
+ 
+
+DISK SPACE:
+ *  20 MB
+
+Back to top
+
+INSTALLATION INSTRUCTIONS
+ 
+
+Review the installation instructions. Terms and Conditions: By downloading, installing, copying, accessing or using this software you agree to the terms and conditions outlined in the License Agreement. Please review the License Agreement [ftp://public.dhe.ibm.com/aix/products/ccpp/xlc.rte.aix.13.1.3/LicenseAgreement.pdf] and License Information [ftp://public.dhe.ibm.com/aix/products/ccpp/xlc.rte.aix.13.1.3/license.pdf] documents prior to proceeding with download or installation.
+
+INSTALLATION INSTRUCTIONS
+You can install this software using the System Management and Installation Tool (SMIT) utility.
+
+You must log on as root or have the superuser authority.
+
+To install this software using the SMIT interface, follow these steps:
+
+
+
+ 1. Download the desired package.
+ 2. 
+ 3. Uncompress and untar each package into a separate empty directory, using the following command:zcat .tar.Z | tar -xf - 
+    
+    
+ 4. 
+ 5. Run the following command:smit install_latest
+    
+    This command invokes SMIT, which presents a menu-driven user interface for the installation process.
+    First specify the INPUT device/directory of the software by typing in the name of the directory that contains the extracted package.
+    
+    
+ 6. 
+ 7. If you have read the license agreement and agree to its terms, you must select yes next to Accept new LICENSE agreements? to continue with the installation.
+ 8. 
+ 9. The default values can be modified according to your preferences.
+
+
+Notes: 
+
+ * You must install the Runtime environment package before installing the Utilities package, if you install both packages.
+ * To ensure that all necessary filesets are installed, keep the default setting of SOFTWARE to install as _all_latest; otherwise, you have to specify the filesets individually.
+ * You can preview the installation process without installing the software by selecting yes next to the Preview only? field.
+ * Press Enter when you are done customizing the options to start the installation process.
+   Installation starts and messages are displayed as each part is installed. The installation log is stored to the $HOME/smit.log file.
+ * If you select _all_latest, SMIT will attempt to install all runtime filesets. As a result, you might see the failed installation status for some message catalog filesets because of missing prerequisites. Ignore those errors if you do not need the runtime message catalog(s) for the national language(s).
+ * If you do not have the associated filesets (bos.loc.*) installed for a specific locale, the runtime message filesets (xlC.msg.*) will fail to install. 
+
+Back to top
+
+DOWNLOAD PACKAGE
+The Utilities package IBM_XL_CPP_UTILITIES_V13.1.3.0_AIX.tar.Z contains the following files:
+
+
+ * LicenseAgreement.pdf
+ * 
+ * README
+ * 
+ * README.ja_JP
+ * 
+ * license.pdf
+ * 
+ * notices
+ * 
+ * xlCcmp.13.1.3.lib
+ * 
+ * xlCcmp.13.1.3.tools
+ * 
+ * xlccmp.13.1.3.lib
+
+CHANGE HISTORY
+ 
+
+What's new For information about new features and enhancements, review the Announcement letter [http://www.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/7/897/ENUS215-517/index.html&lang=en&request_locale=en].
+
+Back to top
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options IBM_XL_CPP_UTILITIES_V13.1.3.0_AIX.tar.Z 11 Dec 2015 English 28327706 FTP [ftp://public.dhe.ibm.com/aix/products/ccpp/xlc.rte.aix.13.1.3/IBM_XL_CPP_UTILITIES_V13.1.3.0_AIX.tar.Z] 
+TECHNICAL SUPPORT
+ The IBM XL C/C++ Utilities for AIX is not supported as a stand-alone software product. 
+
+If you suspect a problem with the IBM XL C/C++ Utilities while using it with a third-party application, contact your application provider for support. 
+
+Full support (installation, defect support and general questions) for the IBM XL C/C++ Utilities is available with the software subscription and support agreement for the XL C/C++ Compilers [http://www.ibm.com/software/products/en/ccompfami].

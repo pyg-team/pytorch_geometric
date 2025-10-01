@@ -1,0 +1,143 @@
+Title: IBM PI17467: SITEMAP.XML IS EMPTY - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Users use 'Search Sitemap portlet' to export sitemap.xml for
+   their Portal. The sitemap.xml is exported successfully, but the
+   sitemap.xml file does not contain any URLs.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users use 'Search Sitemap portlet' to export sitemap.xml for
+   their Portal. The sitemap.xml is exported successfully, but the
+   sitemap.xml file does not contain any URLs.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code changes are in CF13, but the customer must run the
+   action-deploy-portlets-wp.ap.sitemap task to deploy the
+   changes to profile.
+   In addition, the task will automatically run in CF14.
+   So if the customer applies CF14 there are no manual tasks.
+   
+   A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 13 (PI17735 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI17735]) for Portal
+   8.0.0.1 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI17735
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI17467
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-07
+   
+   
+ * CLOSED DATE
+   2014-07-31
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

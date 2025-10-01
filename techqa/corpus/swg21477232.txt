@@ -1,0 +1,36 @@
+Title: IBM Error # 15676.  Command name: CREATE - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am using SPSS Base 14.0.x on my machine. When I try running the SPSS Command Syntax: 
+
+CREATE var2 = LEAD(var1,1) 
+
+with a file of a million cases, I get the following errors:
+
+Error # 15676. Command name: CREATE
+There are too many cases to fit into memory at one time. If multiple result variables are being generated, you can reduce the memory requirements by breaking up the problem into multiple procedure invocations. Otherwise, use SET WORKSPACE to increase the memory available. This command not executed.
+
+Warning # 552
+Possibly due to another error, a procedure has defined more new variables than it has added to the file. All those which have been defined but not added will be discarded and will be unavailable for further processing.
+
+Even though my machine has plenty of memory, and I have increased my WORKSPACE memory to 2024, SPSS still gives me these error messages. What am I doing wrong? 
+
+RESOLVING THE PROBLEM
+CREATE is behaving as designed. CREATE requires more than 2 bytes per case and fewer than 17 to generate LEADs. 
+
+As a work around, we recommend the following:
+
+1. Break your data file up into smaller files and run the CREATE command on each file.
+
+2. Increase your WORKSPACE memory to 16,384 KB. Beginning with version 11.0, WORKSPACE can only be adjusted through syntax. The syntax command would be SET WORKSPACE = 16384. After you have finished processing your data, remember to reset the WORKSPACE memory back to the default value of 6148 KB.
+
+
+CQ = 5821
+
+
+
+HISTORICAL NUMBER
+ 24351

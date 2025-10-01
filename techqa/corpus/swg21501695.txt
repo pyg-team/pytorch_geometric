@@ -1,0 +1,176 @@
+Title: IBM Aged timeout MQJMS1023 JMSCMQ0002 J2CA0081 - United States
+
+Text:
+2012 (MQRC_ENVIRONMENT_ERROR). TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running WebSphere Application Server for z/OS, you notice the exception symptoms below while processing JMS transactions. 
+
+SYMPTOM
+Trace: 2011/04/1309:52:17.677 01 t=8B7108 c=UNK key=P8 (13007002) 
+
+ ThreadId: 0000001b 
+
+ FunctionName: com.ibm.ejs.j2c.MCWrapper 
+
+ SourceId: com.ibm.ejs.j2c.MCWrapper 
+
+ Category: FINEST 
+
+ ExtendedMessage: hasAgedTimedOut is true 
+
+Trace: 2011/04/13 09:52:17.677 01 t=8B7108 c=UNK key=P8 (13007002) 
+
+ ThreadId: 0000001b 
+
+ FunctionName: com.ibm.ejs.j2c.FreePool 
+
+ SourceId: com.ibm.ejs.j2c.FreePool 
+
+ Category: FINEST 
+
+ ExtendedMessage: Aged timeout exceeded, removing connection MCWrapper id 59975997 Managed connection com.ibm.ejs.jms.JMSManagedQueueConnection@5080508 
+
+ managed connection factory = com.ibm.ejs.jms.WMQJMSRAManagedConnectionFactory@57df57df 
+
+ physical connection = com.ibm.mq.jms.MQQueueConnection@56c056c 
+
+ connectorName = JMS$IGN_WQI1_GariFactory$JMSManagedConnection@89 
+
+ credential = null open connection handles = [] State:STATE_ACTIVE_INUSE Thread Id: 
+
+0000001b Thread Name: WebSphere:ORB.thread.pool t=008b7108 Handle count 0 
+
+... 
+
+ Trace: 2011/04/13 09:52:17.678 01 t=8B7108 c=UNK key=P8 (13007002) 
+
+ ThreadId: 0000001b 
+
+ FunctionName: destroy 
+
+ SourceId: com.ibm.ejs.jms.JMSManagedConnection 
+
+ Category: FINER 
+
+ ExtendedMessage: Entry 
+
+ Trace: 2011/04/13 09:52:17.681 01 t=8B7108 c=UNK key=P8 (13007002) 
+
+ ThreadId: 0000001b 
+
+ FunctionName: com.ibm.ejs.jms.JMSManagedConnection 
+
+ SourceId: com.ibm.ejs.jms.JMSManagedConnection 
+
+ Category: FINE 
+
+ ExtendedMessage: Caught exception:; com.ibm.msg.client.jms.DetailedJMSException: JMSCMQ0002: The method 
+
+'MQBACK' failed. A WebSphere MQ call failed. Please see the linked exception for more information. 
+
+at com.ibm.msg.client.wmq.common.internal.Reason.reasonToException(Re 
+
+at com.ibm.msg.client.wmq.common.internal.Reason.createException(Reas 
+
+at com.ibm.msg.client.wmq.common.internal.Reason.createException(Reas 
+
+at com.ibm.msg.client.wmq.internal.WMQSession.syncpoint(WMQSession.ja 
+
+at com.ibm.msg.client.wmq.internal.WMQSession.rollback(WMQSession.jav 
+
+at com.ibm.msg.client.jms.internal.JmsSessionImpl.rollbackTransaction 
+
+at com.ibm.msg.client.jms.internal.JmsSessionImpl.close(JmsSessionImp 
+
+at com.ibm.msg.client.jms.internal.JmsConnectionImpl.close(JmsConnect 
+
+at com.ibm.mq.jms.MQConnection.close(MQConnection.java:93) 
+
+at com.ibm.ejs.jms.JMSManagedConnection.destroy(JMSManagedConnection. 
+
+at com.ibm.ejs.j2c.MCWrapper.destroy(MCWrapper.java:1852) 
+
+at com.ibm.ejs.j2c.FreePool.cleanupAndDestroyMCWrapper(FreePool.java: 
+
+at com.ibm.ejs.j2c.FreePool.returnToFreePool(FreePool.java:495) 
+
+at com.ibm.ejs.j2c.PoolManager.release(PoolManager.java:1845) 
+
+.... 
+
+Trace: 2011/05/26 15:22:21.514 01 t=9BD6D8 c=UNK key=P8 (13007002) 
+
+ ThreadId: 0000001b 
+
+ FunctionName: com.ibm.ejs.jms.JMSManagedConnection 
+
+ SourceId: com.ibm.ejs.jms.JMSManagedConnection 
+
+ Category: FINE 
+
+ ExtendedMessage: Caught exception:; javax.jms.JMSException: MQJMS1023: rollback failed. 
+
+ at com.ibm.msg.client.wmq.v6.jms.internal.ConfigEnvironment.newException(ConfigEnvironment.java:374) 
+
+ at com.ibm.msg.client.wmq.v6.jms.internal.MQSession.rollbackQ(MQSession.java:5167) 
+
+ at com.ibm.msg.client.wmq.v6.jms.internal.MQSession.rollback(MQSession.java:5077) 
+
+ at com.ibm.msg.client.jms.internal.JmsSessionImpl.rollbackTransaction(JmsSessionImpl.java:2334) 
+
+ at com.ibm.msg.client.jms.internal.JmsSessionImpl.close(JmsSessionImpl.java:361) 
+
+ at com.ibm.msg.client.jms.internal.JmsConnectionImpl.close(JmsConnectionImpl.java:294) 
+
+ at com.ibm.mq.jms.MQConnection.close(MQConnection.java:93) 
+
+ at com.ibm.ejs.jms.JMSManagedConnection.destroy(JMSManagedConnection.java:1154) 
+
+ at com.ibm.ejs.j2c.MCWrapper.destroy(MCWrapper.java:1855) 
+
+ 
+
+ Trace: 2011/04/13 09:52:17.686 01 t=8B7108 c=UNK key=P8 (13007002) 
+
+ ThreadId: 0000001b 
+
+ FunctionName: com.ibm.ejs.j2c.MCWrapper 
+
+ SourceId: com.ibm.ejs.j2c.MCWrapper 
+
+ Category: SEVERE 
+
+ ExtendedMessage: BBOO0220E: J2CA0081E: Method destroy failed while trying to execute method destroy on ManagedConnection com.ibm.ejs.jms.JMSManagedQueueConnection@5080508 
+
+managed connection factory = com.ibm.ejs.jms.WMQJMSRAManagedConnectionFactory@57df57df 
+
+physical connection = com.ibm.mq.jms.MQQueueConnection@56c056c 
+
+connectorName = JMS$IGN_WQI1_GariFactory$JMSManagedConnection@89 
+
+credential = null 
+
+open connection handles = [] from resource No longer available. Caught exception: javax.resource.spi.ResourceAdapterInternalException: Failed to close connection
+
+
+CAUSE
+This happens due to transactional implications of Aged timeout on a JMS connection. The Aged timeout property specifies how long a connection to the JMS provider remains open before the Connection Manager closes it. It's default value is 0, which means that the connection will never be closed because it is too old. It is best to leave the property at this value, because enabling Aged timeout can have transactional implications when using JMS inside of EJBs.
+
+In JMS, the unit of a transaction is a JMS session, which is created from a JMS connection. It is the JMS session that is enlisted into transactions, and not the JMS connection. Due to the design of the application server, JMS connections can be closed because the Aged timeout has elapsed, even if JMS sessions created from that connection are involved in a transaction. Closing a JMS connection causes any outstanding transactional work on JMS sessions to be rolled back (as described in the JMS Specification). However, the application server will be unaware that the JMS sessions created from the connection are no longer valid. When it tries to use the session to commit or rollback a transaction, an IllegalStateException will occur. If you wish to use Aged timeout with JMS connections from within EJBs, ensure that any JMS work is explicitly committed on the JMS session before the EJB method that performs the JMS operations exits. 
+
+In bindings mode on z/OS, the symptoms are slightly different, because WebSphere Application Server and MQ use RRS contexts to coordinate transactions. If an Aged connection is closed while a session is part of an incomplete RRS transaction, then the JMS session tries to roll back the inflight work. However, MQ expects RRS to control transaction resolution, so the MQBACK is rejected with 2012 (MQRC_ENVIRONMENT_ERROR). 
+More details can be found in the below article posted by JMS Development
+http://www.ibm.com/developerworks/websphere/library/techarticles/0707_titheridge/0707_titheridge.html [http://www.ibm.com/developerworks/websphere/library/techarticles/0707_titheridge/0707_titheridge.html] 
+
+
+DIAGNOSING THE PROBLEM
+Traces used to diagnose 
+
+MDB=all:Messaging=all:JMSServer=all:WAS.j2c=all:RRA=all
+
+
+RESOLVING THE PROBLEM
+Disable 'Aged Timeout' property for the JMS QCF. 
+
+https://www.ibm.com/support/knowledgecenter/SS7K4U_8.5.5/com.ibm.websphere.zseries.doc/ae/udat_conpoolset.html [https://www.ibm.com/support/knowledgecenter/SS7K4U_8.5.5/com.ibm.websphere.zseries.doc/ae/udat_conpoolset.html]

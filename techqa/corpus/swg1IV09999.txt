@@ -1,0 +1,129 @@
+Title: IBM IV09999: RESOURCEBUNDLE FAILED TO FIND THE RESOURCE FOR BUNDLE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: An MissingResourceException is throwed when
+   execute the problem.
+   .
+   Stack Trace: The Stack Trace may look like:
+   java.util.MissingResourceException: Can't find resource for ***
+   at java.util.ResourceBundle.getBundle(ResourceBundle.java:267)
+    at java.util.ResourceBundle.getBundle(ResourceBundle.java:200)
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Wrong classloader is used when loading the resource bundle
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   7.0.0 SR1
+   6.0.1 SR2
+   6.0.0 SR11
+   .
+   The classlib has been updated to use the correct classloader to
+   load the resource bundle
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV09999
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA CLASS LIBS
+   
+   
+ * REPORTED COMPONENT ID
+   620700130
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-02
+   
+   
+ * CLOSED DATE
+   2011-12-08
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA CLASS LIBS
+   
+   
+ * FIXED COMPONENT ID
+   620700130
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R600 PSY
+   UP

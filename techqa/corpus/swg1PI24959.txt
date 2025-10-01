@@ -1,0 +1,228 @@
+Title: IBM PI24959: DFHPC0409 ' ABENDS AD3K AND AEXZ WHILE PROCESSING AEXZ ' WHEN AN OPENAPI PROGRAM GETS AICA'D OUT OF A LOOP. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Your CICS region abends with the following message:
+   .
+   DFHPC0409 DBDCCICS Abends AD3K and AEXZ have been issued while
+   processing abend AEXZ for the same task, transaction TRN1.
+   .
+   This happens for a transaction that has been initiated as a Web
+   Service, has made SQL calls, and has an OPENAPI program that
+   loops solidly until ICVR processing initiates an abendAICA .
+   .
+   In the PC0409 dump, here are the kernel error entries
+   pertaining to this transaction:
+   .
+   KE_NUM  ERROR TYPE           ERR_CODE  MODULE    OFFSET
+   ======  ==========           ========  ======    ======
+    0031   ABEND                ---/0999  -noheda-  0002C27C
+    0031   TRAN_ABEND_PERCOLATE ---/AICA  DFHSR1    00000778
+    0031   TRAN_ABEND_PERCOLATE ---/AEXZ  DFHPCP    00000696
+    0031   TRAN_ABEND_PERCOLATE ---/AEXZ  DFHEPC    00001CD0
+    0031   TRAN_ABEND_PERCOLATE ---/AEXZ  DFHEPC    00000226
+    0031   ABEND                04E/AKEB  UNKNOWN   UNKNOWN
+    0031   TRAN_ABEND_PERCOLATE ---/AD3K  DFHPCP    00000696
+    0031   TRAN_ABEND_PERCOLATE ---/AD3K  DFHD2EX1  00000D64
+    0031   TRAN_ABEND_PERCOLATE ---/AD3K  DFHERM    0000150A
+    0031   TRAN_ABEND_PERCOLATE ---/AD3K  DFHERMSP  00000EEC
+   .
+   The 0999 and AICA happen because an OPENAPI program was in
+   non-yielding loop for more CPU time than is specified in ICVR.
+   This leaves the transaction's L8 TCB unusable.
+   .
+   The next group of 3 AEXZs happens when trying to return to the
+   program that called (via EXEC CICS LINK) the looping program.
+   That calling program is also OPENAPI so DFHEPC wants to
+   change_mode back to the L8 TCB.  That fails because the L8 is
+   unusable and that causes DFHEPC to initiate the abendAEXY.
+   .
+   Control percolates to DFHPITP which is the CICS Web Service
+   program that invoked the target application program.  DFHPITP
+   initiates a syncpoint rollback.  That involves talking with DB2
+   which needs to happen on the L8 which is unusable.  So the
+   talking to DB2 happens on the QR which is the cause of the
+   04E/AKEB and the AD3Ks.  That abend percolates back to DFHPITP
+   where it does an EXEC CICS SOAPFAULT CREATE.  That works fine
+   until DFHEIP wants to return to DFHPITP (which is also defined
+   OPENAPI) and change_mode to the L8.  That fails and initiates
+   the final AEXZ that causes the DFHPC0409 .
+   .
+   
+   Additional Symptom(s) Search Keyword(s): KIXREVDWZ
+   AbendAD2R AD2R AbendAKEH AKEH DSAT-CHANGE-MODE-FAILED
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If you can not prevent the loop in the OPENAPI program, define
+   that program as QUASIRENT.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CICS issues message DFHPC0409 after an  *
+   *                      AICA abend on an open TCB.              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   CICS is acting as a web service provider. The CICS web service
+   pipeline runs under an L8 TCB. The web service target program
+   links to other threadsafe openapi programs, which issue DB2
+   requests. One of these programs enters a loop, which is
+   trapped with an abend AICA.
+   .
+   The program running at the time of the abend was defined to be
+   CONCURRENCY(THREADSAFE), API(OPENAPI). The L8 TCB is therefore
+   marked unclean, and can no longer be used.
+   During the course of recovering from the AICA, a number of other
+   abends are issued including AEXZ abends brought about by
+   attempting to switch back to the L8 TCB. There is also an AD3K
+   abend, during the attempt to dissociate from DB2. This is
+   because the L8 TCB is unavailable, and this is now driven under
+   the QR TCB.
+   .
+   CICS now appears to be in a recursive abend loop, and is
+   terminated with message DFHPC0409.
+   .
+   Additional keywords: abendAICA abendAD3K abendAEXZ
+                        PC0409 msgDFHPC0409
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHEIP and DFHEPC have been updated to avoid the AEXZ abend if
+   the required TCB is no longer available.
+   DFHPITL has been updated to ensure that CICS changes to the
+   QR TCB if the original open TCB is no longer available.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+               * HIPER *
+               *********
+   FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI24959
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-02
+   
+   
+ * CLOSED DATE
+   2014-12-05
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI19853 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI19853]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI23766 UI23767
+   
+   
+
+MODULES/MACROS
+ *  DFHEIP   DFHEPC   DFHPITL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY UI23766 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI23766]
+   UP14/12/18 P F412 ½
+   
+   
+ * R900 PSY UI23767 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI23767]
+   UP14/12/18 P F412 ½
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

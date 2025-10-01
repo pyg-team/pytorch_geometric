@@ -1,0 +1,59 @@
+Title: IBM Collecting Data: Configuration Wizard for WebSphere Portal 8.5 - United States
+
+Text:
+Collecting Data; Collecting Data; Collecting Data; MustGather; MustGather; MustGather; MustGatherDocument; DS; Configuration Wizard; Config Wizard RECOMMENDED RESOURCES
+
+ABSTRACT
+ Collecting troubleshooting data for Configuration Wizard (Config Wizard) issues with IBM® WebSphere® Portal 8.5 expedites time to resolution by enabling IBM Support to provide informed problem analysis. 
+
+CONTENT
+If you have already contacted IBM Support and must collect data to determine the nature of a problem in WebSphere Portal, review the information below for the available methods of data collection. Otherwise, review Collecting Data: Read first for WebSphere Portal 8.5 [http://www-01.ibm.com/support/docview.wss?uid=swg21672901]. 
+
+Collecting Configuration Wizard information 
+
+Config Wizard issues include problems encountered when executing a Config Wizard task, especially during the installation of WebSphere Portal. 
+
+ 
+
+Option A: Automated collection of troubleshooting data 
+
+Automated log collection is the recommended method for improving accuracy of the data collection. 
+
+Complete the following steps if the configuration wizard failed before it created the wp_profile/ConfigEngine instance:
+
+1. Open a command prompt and change to the AppServer_root [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/reference/wpsdirstr.html?lang=en-us#wpsdirstr__was_root]/ConfigEngine directory.
+
+2. Run the following task to collect the configuration wizard logs:
+
+Tip: The logs are compressed and placed into the AppServer_root [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/reference/wpsdirstr.html?lang=en-us#wpsdirstr__was_root]/filesForAutoPD directory.
+
+
+ * AIX: ./ConfigEngine.sh collect-cw-logs -DPortalBinaryLocation=/usr/IBM/WebSphere/PortalServer -DWasPassword=password 
+ * HP-UX Linux Solaris: ./ConfigEngine.sh collect-cw-logs -DPortalBinaryLocation=/opt/IBM/WebSphere/PortalServer -DWasPassword=password 
+ * IBM i: ConfigEngine.sh collect-cw-logs -DPortalBinaryLocation=/QIBM/ProdData/WebSphere/PortalServer/V85/Server -DWasPassword=password 
+ * Windows: ConfigEngine.bat collect-cw-logs -DPortalBinaryLocation=C:/IBM/WebSphere/PortalServer -DWasPassword=password 
+
+Tip: The collect-cw-logs script can automatically FTP the logs to IBM so that you do not need to manually transfer them. To begin the collection and FTP the results to IBM correctly, use the -Dpmr= pmr_number parameter to identify the collection with your information. Format the number either with periods or commas. 
+
+Attention: If the collect-cw-logs task fails, run the stopserver server1 command from the AppServer_root [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/reference/wpsdirstr.html?lang=en-us#wpsdirstr__was_root]/bin directory. Then, rerun the collect-cw-logs task. 
+
+3. If you did not automatically FTP your results, locate the cw.mustgather.zip file or the pmr-cw.mustgather- timestamp.zip file in the AppServer_root [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/reference/wpsdirstr.html?lang=en-us#wpsdirstr__was_root]/filesForAutoPD directory. Follow the instructions in Exchanging information with IBM Technical Support for problem determination [http://www-01.ibm.com/support/docview.wss?rs=688&uid=swg21201571] to manually FTP your results. Note: When sending in logs for review, include any console output from the Config Wizard task that might be useful. 
+
+ 
+
+Option B: Manual collection of troubleshooting data 
+
+If you are unable to use collect-cw-logs for WebSphere Portal for automatic log collection, use the following instructions for manually collecting the necessary information. 
+
+1. Collect the following log directory: 
+
+ * <AppServer>/profiles/cw_profile/logs/*
+
+
+2. Send the files to IBM Support by using the instructions outlined in Exchanging information with IBM Technical Support for problem determination [http://www-01.ibm.com/support/docview.wss?rs=688&uid=swg21201571].  
+
+Related Information 
+
+ * IBM Support Portal: WebSphere Portal Troubleshooting [http://www.ibm.com/support/entry/portal/Troubleshooting/Software/WebSphere/WebSphere_Portal] [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571] 
+ * WebSphere Portal Knowledge Center: Troubleshooting [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/trouble/troubleshooting.dita] 
+ * Collecting Data: Read first for WebSphere Portal [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21672901]

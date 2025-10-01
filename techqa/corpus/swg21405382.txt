@@ -1,0 +1,57 @@
+Title: IBM Error SQL6048N received when starting DB2 instance if rsh daemon is not running - United States
+
+Text:
+SQL6048N; rsh TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I received the the following error when starting DB2 instance in a multiple partition environment:
+SQL6048N A communication error occurred during START or STOP DATABASE MANAGER processing. 
+
+SYMPTOM
+ 
+
+You can find more details in db2diag.log. 
+The following is the snippet from db2diag.log:
+
+PID : 123456 TID : 1 PROC : db2start
+INSTANCE: db2inst1 NODE : 000
+FUNCTION: DB2 UDB, oper system services, sqloPdbExecuteRemoteCmd,probe:50
+DATA #1 : Hexdump, 19 bytes
+0x0FFFFFFFFFFF9F38 : 5065 726D 6973 7369 6F6E 2064 656E 6965 Permission denie
+0x0FFFFFFFFFFF9F48 : 642E 0A d.. 
+
+Use the rsh command to check if rsh works in your environment. The following
+is an example that rsh returns an error.
+
+$ rsh <remotehostname> date 
+hostname: A remote host refused an attempted connect operation. 
+
+
+CAUSE
+The RSH daemon is not started or not working properly.
+
+
+RESOLVING THE PROBLEM
+(1) Verify that rsh daemon is enabled and running 
+
+Check the configuration file /etc/inetd.conf or config file for xinetd to see if rsh is enabled. 
+
+You can use the following command to see if rsh daemon is running:
+$ netstat -a|grep shell 
+
+On AIX, you can also run the following to verify: 
+
+$ lssrc -t shell 
+
+The "Status" in the output should be "active". 
+
+(2) Verify the entries in $HOME/.rhosts or /etc/hosts.equiv and file permissions are correct 
+
+File ".rhosts" should have entries of hostname and username for the remote partitions. 
+
+(3) Verify host names are defined in /etc/hosts correctly and they match with entries in db2nodes.cfg 
+
+You may need to check the host names especially when it is a new system or when host names have just been changed.
+
+RELATED INFORMATION
+ SQL6048N [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.messages.sql.doc/doc/msql06048n.html]

@@ -1,0 +1,44 @@
+Title: IBM How to disable SSLv2 and SSLv3 in SnapManager for SharePoint - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Disabling SSLv2 and SSLv3 in SnapManager for SharePoint 
+
+SYMPTOM
+Perform the following steps to disable SSL versions 2 and 3 for use by SnapManager for SharePoint (SMSP) to remove exposure to CVE-2014-3566 [https://kb.netapp.com/support/index?page=content&id=9010008], also known as POODLE. 
+
+How does CVE-2014-3566 affect SMSP?
+
+
+The ideal candidate for this threat is content being accessed over public Wi-Fi or unsecure networks. In this case, a man-in-the-middle attack is a potential risk, since communications over SSL between an end-user and software could expose user credentials, passwords, and other information. While this issue is not fundamentally with SMSP, it leverages Microsoft technology such as Internet Information Services (IIS) server and Microsoft Windows security provider which have SSLv3 and TLS enabled by default. The SMSP Manager-Agent or Agent-Agent communication will always negotiate communications over TLSv1 or later.
+
+[/support/docview.wss?uid=ssg1S1009320&amp;aid=1]
+
+Take the following precautionary measures to remove exposure to CVE-2014-3566: 
+
+ * Follow Microsoft best practices for disabling SSL on SMSP 7.x / 8.x Manager and Agent servers: 
+ * To disable SSLv3, see Microsoft Security Advisory 3009008 [https://technet.microsoft.com/library/security/3009008] 
+ * To disable SSLv2, see How to Disable SSLv2 on a Windows Server 2008 and Windows Server 2008 R2 Domain Controller (dsforum2wiki) [http://social.technet.microsoft.com/wiki/contents/articles/2249.how-to-disable-sslv2-on-a-windows-server-2008-and-windows-server-2008-r2-domain-controller-dsforum2wiki.aspx]
+
+
+Note: SMSP Agents always communicate over TLS and are not subject to this vulnerability.  * As an end-user, update Internet Explorer (IE) browser settings to disable SSL:
+
+1. Launch Internet Options from the Start Menu
+2. Click the Advanced tab
+3. Uncheck Use SSL 2.0 and Use SSL 3.0 [/support/docview.wss?uid=ssg1S1009320&amp;aid=2] 
+
+
+How to disable SSL in SMOSS V6.x or earlier legacy software 
+
+For the Apache/Tomcat based platforms, modify the Tomcat settings on the SMOSS Manager server following these steps:
+1. Use the service management tool to 'stop' the Web Service.
+2. Edit the 'server.xml' document in the …\ZeusWeb\conf folder. 
+3. Find the 'sslProtocol' flag, which is set to 'TLS' by default.
+Note: This setting also allows SSLv3.
+4. Add the argument 'sslEnabledProtocols=”TLSv1”' as seen in the example below, to prevent SSL from being used.
+[/support/docview.wss?uid=ssg1S1009320&amp;aid=3]
+5. Save the 'server.xml' file and change the file to 'read-only' to prevent other tools from modifying or reverting this change.
+6. Start the Web Service in the service management tool.
+7. Test this configuration change by accessing the SMOSS management interface using a browser with only SSLv3 enabled - a successful result will be a failed connection.

@@ -1,0 +1,130 @@
+Title: IBM JR53675: MULTIPLE SIBUS CONFIGURATION AFTER MIGRATING WPS 6.X STANDALONE ENVIRONMENT TO BPM 7.5.1 ENVIRONMENT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After  migrating stand-alone environment from WPS 6.0x to BPM
+   7.5.1 environment following exceptions are seen during servers
+   startup
+   
+    SibMessage    E
+   [CommonEventInfrastructure_Bus:mydevNode03.server1-CommonEventIn
+   frastructure_Bus] CWSIS1544E: Multiple previous owner ids found
+   in the messaging engines data store.
+   
+   SibMessage    I
+   [CommonEventInfrastructure_Bus:mydevNode03.server1-CommonEventIn
+   frastructure_Bus] CWSIS1593I: The messaging engine,
+   ME_UUID=CA42D7BCF068E50F, INC_UUID=61FC61FCC605B7FC, has failed
+   to gain an initial lock on the data store.
+   
+    Same error seen for  SCA.APPLICATION.mydevNode03Cell.Bus and
+   SCA.APPLICATION.mydevNode03Cell.Bus
+   
+   
+   The above is caused by duplicate SIBUS created during target
+   profile creation and one during WAS post upgrade.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  You can delete one of the SIBUS created during Target profile
+   creation  and thin complete the migration step
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  duplicate BUS member
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The issue only happened on WPS standalone and workaround is
+   simply to remove the dulicate one.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR53675
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-06-23
+   
+   
+ * CLOSED DATE
+   2015-10-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,48 @@
+Title: IBM DFHAP0701 0C4 at offset 6AC in CIUXCCO1 when running CICS IA with an interactive debug tool - United States
+
+Text:
+DFHAP0701 0C4 AKEA abend0C4 abendAKEA CIUXCCO1 DFHAP0001 X'000006AC' 6AC ; MSGDFHAP0701 MSG DFHAP0001 ; Compuware Xpediter for CICS 8.3.1 ; Computer Associates InterTest for CICS r8.5; CICSIA 3.1 ; 5655U8600 5655U8601 R310 R31E R31K 5655-U86 5655U86 FMID H274310 J27431E J27431K; H274320 J27432E J27432K TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are using Compuware Xpediter/CICS V8.3.1 or Computer Associates InterTest for CICS r8.5 in your CICS Transaction Server for z/OS (CICS TS) region with the CICS Interdependency Analyzer for z/OS (CICS IA) V3.1. When the CICS IA collector is active, you receive an abend 0C4 ( abend0C4 ) at offset x'6AC' into CICS IA exit program CIUXCCO1 at exit point XEIOUT. 
+
+SYMPTOM
+These are the messages you receive: 
+
+DFHAP0701 An abend (code 0C4/AKEA) has occurred in exit program CIUXCCO1 at exit point XEIOUT.
+DFHAP0001 An abend (code 0C4/AKEA) has occurred at offset X'000006AC' in module CIUXCCO1.
+DFHME0116 nnn
+(Module:DFHMEME) CICS symptom string for message DFHAP0001 is
+PIDS/5655M1500 LVLS/650 MS/DFHAP0001 RIDS/DFHSRP PTFS/HCI6500
+AB/S00C4 AB/UAKEA RIDS/CIUXCCO1 ADRS/000006AC
+
+
+
+CAUSE
+Missing Compuware Xpediter/CICS PTF XDOJ173 or debugging a dynamically called CICS COBOL program using CA InterTest for CICS r8.5.
+
+
+
+ENVIRONMENT
+CICS IA V3.1; CICS TS V3.2 RSU0910; z/OS V1.11; Compuware Xpediter/CICS V8.3.1; Computer Associates InterTest for CICS r8.5;
+
+
+
+DIAGNOSING THE PROBLEM
+Analysis of the dump shows either Xpediter module XDPILLS or XDPICSS getting called dynamically to issue an INQUIRE PROGRAM request and the expected DSA is not supplied or CA InterTest module IN25LETX as the top level program. 
+
+The S0C4 occurs in CICS IA module CIUXCCO1 (level UK56030) for the XEIOUT GLUE at offset x'6AC' performing a CLC for the LE prolog string. This is at label LE_CHECK. The failure occurs as the RSA back chain pointer taken from the XEIOUT UEPRSA +4 is not zeros and is not a valid RSA. In this instance, the RSA value is 2BA47700 and at offset +4 is 00000011 for the CEEDSABACK which causes the 0C4. 
+
+The standard LE DSA layout is described in section 1.1.2 Language Environment Dynamic Storage Area - Non-XPLINK [http://publibfi.dhe.ibm.com/cgi-bin/bookmgr/BOOKS/ceev11a0/1.1.2] of the Language Environment Vendor Interface manual.
+
+
+
+RESOLVING THE PROBLEM
+Upgrade to CICS IA [http://www-01.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS211-266] (General Availability date 2 September 2011) that utilizes the CICS LOADER domain IDENTIFY_PROGRAM [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.doc/dfha3/topics/dfha344a.html] XPI call to determine the program name. If you are using CICS IA V3.1 apply Compuware Xpediter/CICS PTF XDOJ173. Contact [/support/docview.wss?uid=swg21452209&amp;aid=1]Compuware [http://www.compuware.com/] if you need additional assistance with Xpediter/CICS. Contact [/support/docview.wss?uid=swg21452209&amp;aid=2]CA Technologies [http://www.ca.com/] if you are running InterTest for CICS R8.5.
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICSIA CICS IA

@@ -1,0 +1,250 @@
+Title: IBM PI95423: JOB CSQ45CTB DSNT408I SQLCODE = -876, ERROR: INDEX CANNOT BE CREATED OR ALTERED, REASON 6 SQLSTATE = 53092 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are running JOB CSQ45CTB with DB2 V12.
+   JOB CSQ45CTB
+   CREATE TYPE 2 INDEX CSQ.CLUS_INDEX
+                      ON CSQ.ADMIN_B_MESSAGES
+                      (BASEPART ASC)
+                      USING STOGROUP MQ2
+                      PRIQTY 16384
+                      SECQTY 16384
+                      CLUSTER
+                       (PART 1 VALUES(X'3FFF'),
+                        PART 2 VALUES(X'7FFF'),
+                        PART 3 VALUES(X'BFFF'),
+                        PART 4 VALUES(X'FFFF'))
+                      CLOSE NO
+     SQL ERROR DURING EXECUTE IMMEDIATE
+    DSNT408I SQLCODE = -876, ERROR:  INDEX CANNOT BE CREATED OR
+    ALTERED, REASON 6
+    DSNT418I SQLSTATE   = 53092 SQLSTATE RETURN CODE
+    DSNT415I SQLERRP    = DSNXICIX SQL PROCEDURE DETECTING ERROR
+    DSNT416I SQLERRD    = 77  0  0  -1  0  0 SQL DIAGNOSTIC
+    INFORMATION
+    DSNT416I SQLERRD    = X'0000004D'  X'00000000'  X'00000000'
+    X'FFFFFFFF'  X'00000000'  X'00000000' SQL DIAGNOSTIC
+             INFORMATION
+   .
+   CREATE TYPE 2 INDEX CSQ.CLUS_INDEX, TYPE 2 incorrect syntax for
+   CREATE INDEX at DB2 V12.
+   .
+   https://www.ibm.com/support/knowledgecenter/SSEPEK_12.0.0/sqlref
+   /src/tpc/db2z_sql_createindex.html [https://www.ibm.com/support/knowledgecenter/SSEPEK_12.0.0/sqlref/src/tpc/db2z_sql_createindex.html]
+   .
+   
+   
+   
+   JOB CSQ45CTB includes other references for "CREATE TYPE 2 INDEX"
+   and "CREATE TYPE 2 UNIQUE INDEX ..." which complete without
+   error. DSNT400I SQLCODE = 000,  SUCCESSFUL EXECUTION
+   .
+   The only one with an error is
+   CREATE TYPE 2 INDEX CSQ.CLUS_INDEX
+          ON CSQ.ADMIN_B_MESSAGES
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Changing PREVENT_NEW_IXCTRL_PART in macro DSN6SPRM to be "NO"
+   should allow the Db2 indexes to be created.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of IBM MQ for z/OS Version 8       *
+   *                 Release 0 Modification 0 using DB2 V12.      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Sample job CSQ45CTB to create DB2       *
+   *                      tables for a new QSG fails with message *
+   *                      DSNT408I SQLCODE = -876, ERROR: INDEX   *
+   *                      CANNOT BE CREATED OR ALTERED, REASON 6  *
+   *                      SQLSTATE = 53092 when run against DB2   *
+   *                      V12.                                    *
+   ****************************************************************
+   In DB2 V12 the PREVENT_NEW_IXCTRL_PART subsystem parameter has
+   changed to a default value of YES which disallows the creation
+   of new index-controlled partitioned tables. The sample JCL in
+   CSQ45CTB attempts to create table CSQ.ADMIN_B_MESSAGES of this
+   type, which leads to the error seen.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  New sample JCL, with prefix CSQ4X, is provided for use with DB2
+   V12.
+   
+   The following pages in the IBM MQ 8.0.0 Knowledge Center are
+   updated:
+   IBM MQ
+    Configuring
+     Configuring queue managers on z/OS
+      Customizing IBM MQ for z/OS
+       Set up the Db2 environment
+   
+   https://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm
+   .mq.con.doc/q019210_.htm [https://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.con.doc/q019210_.htm]
+   
+   IBM® MQ provides two equivalent sets of jobs. Those with the
+   CSQ45 prefix are for compatibility with earlier versions of IBM
+   MQ and for use with Db2 version 11 and earlier. If you are
+   setting up a new data-sharing group with Db2 V12 or later, the
+   jobs with CSQ4X prefix must be used. These jobs exploit more
+   recent Db2 capabilities for dynamic sizing and Universal Table
+   Spaces.
+   
+   1. Customize and execute sample JCL CSQ45CSG (or CSQ4XCSG) to
+   create the storage group that is to be used for the IBM MQ
+   database, table spaces, and tables.
+   2. Customize and execute sample JCL CSQ45CDB (or CSQ4XCDB) to
+   create the database to be used by all queue managers that are
+   connecting to this Db2 data-sharing group.
+   3. Customize and execute sample JCL CSQ45CTS (or CSQ4XCTS) to
+   create the table spaces that contain the queue manager and
+   channel initiator tables used for queue-sharing groups (to be
+   created in step 1 ).
+   4. Customize and execute sample JCL CSQ45CTB (or CSQ4XCTB) to
+   create the 12 Db2 tables and associated indexes. Do not change
+   any of the row names or attributes.
+   
+   
+   In the event of a failure during Db2 setup, the following jobs
+   can be customized and executed:
+   CSQ45DTB to drop the tables and indexes.
+   CSQ45DTS (or CSQ4XDTS) to drop the table spaces.
+   CSQ45DDB (or CSQ4XDDB) to drop the database.
+   CSQ45DSG (or CSQ4XDSG) to drop the storage group.
+   
+   IBM MQ
+    Planning
+     Planning your IBM MQ environment on z/OS
+      Planning your Db2 environment
+   
+   https://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm
+   .mq.pla.doc/q006030_.htm [https://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.pla.doc/q006030_.htm]
+   
+   IBM MQ provides sample jobs for defining the Db2 tablespaces,
+   tables, and indexes. Two sets of sample jobs are provided:
+       One for compatibility with earlier versions of IBM MQ
+       (CSQ45CDB,CSQ45CSG,CSQ45CTB & CSQ45CTS)
+       One for use with Db2 V12 and later, which exploits
+       Universal Table Spaces (UTS) (CSQ4XCDB,CSQ4XCSG,
+       CSQ4XCTB & CSQ4XCTS)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI95423
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ Z/OS V8
+   
+   
+ * REPORTED COMPONENT ID
+   5655W9700
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-03-20
+   
+   
+ * CLOSED DATE
+   2018-03-29
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI88274 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI88274]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI54835
+   
+   
+
+MODULES/MACROS
+ *  CSQ4XCDB CSQ4XCSG CSQ4XCTB CSQ4XCTS CSQ4XDDB CSQ4XDSG CSQ4XDTS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM MQ Z/OS V8
+   
+   
+ * FIXED COMPONENT ID
+   5655W9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI54835 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI54835]
+   UP18/04/24 P F804
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

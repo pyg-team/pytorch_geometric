@@ -1,0 +1,108 @@
+Title: IBM Glass box agent installation issues - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ If the AppScan glass box agent installation fails, the log files can help troubleshoot the issue. 
+
+ANSWER
+ 
+
+>   * 
+ * Contents:
+ * 
+ * .NET server issues
+ * 
+ * Java server issues
+ * 
+ * 
+ * Other AppScan Standard glass box troubleshooting technotes [http://www.ibm.com/support/docview.wss?uid=swg21567723]
+   
+   
+
+
+
+
+.NET server issues 
+
+Problem:
+
+
+Installation of agent on .NET server failed
+
+
+Solution:
+
+
+If the installation fails for any reason, the final dialog will provide a link to the installation log for use in troubleshooting. It may be worth attempting to install on a different or new site on the server, even a different site that was labeled "not recommended". In all cases you must uninstall before attempting installation again. The location of the two installation logs is the %temp% folder. The names of the two installation logs are: 
+glassbox_setup_api.txt
+glassbox_setup_msi.txt 
+
+
+
+
+
+
+
+
+Java server issues 
+Important: JRE 8 is not supported, so ensure you are using JRE 6 or 7.
+
+
+
+Problem:
+
+
+Automatic installation of agent on a JBoss server failed
+
+
+Solution:
+
+
+There is sometimes a problem when using the automatic installer on a JBoss server, but following the instructions for manual installation should be successful in these cases:
+Install manually on a JBoss or JBoss Service server [http://www-01.ibm.com/support/knowledgecenter/SSPH29_9.0.0/com.ibm.help.common.infocenter.aps/t_GlassBoxAgentInstall_JBoss.html?lang=en]
+
+
+
+Problem:
+Installation of agent on Java server failed
+
+
+Solution:
+
+
+The log name is: IBM_Security_AppScan_Glass_Box_Agent_Java_Install_[month]_[day]_[year]_[hr]_[min]_[sec].log
+
+
+ * If the installation ends successfully or reached the final stage, the log is saved to the "<installdir>/Logs" folder.
+   
+ * If the installation failed before that, or was aborted by the user, the log is saved to:  * Windows: Desktop 
+    * Linux: "/root" folder
+      
+      
+   
+   
+
+Problem: 
+When following the user guide instructions for installing manually on a Tomcat server, I am unable to log in to Tomcat Manager in order to deploy GBootStrap web application.
+
+
+Possible solution:
+
+
+Try this alternate method: 
+
+ 1. Copy the file GBootStrap.war from the glass box folder you extracted 
+ 2. Paste it into the webapps folder, default location:
+    C:\apache-tomcat-[version]\webapps
+    
+    
+    
+    
+    
+    
+    
+
+
+Other AppScan Standard glass box troubleshooting technotes [http://www.ibm.com/support/docview.wss?uid=swg21567723]

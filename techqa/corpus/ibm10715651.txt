@@ -1,0 +1,34 @@
+Title: IBM Installing the 5.5.0 or 5.5.1 version of the Content Platform Engine (CPE) .NET Client - United States
+
+Text:
+ HOW TO
+
+SUMMARY
+The installation of the .NET client can fail for a variety of reasons. This tech note provides workarounds for the various issues that can prevent the successful installation of the .NET client.
+
+OBJECTIVE
+The objective is to install the .NET Client on a Windows server or client machine.
+
+STEPS
+
+
+THE FOLLOWING INFORMATION DESCRIBES THE STEPS REQUIRED TO INSTALL THE .NET CLIENT FOR CONTENT PLATFORM ENGINE (CPE) 5.5.0 OR 5.5.1:
+ 1.  Ensure that the .NET Framework 3.5.1 is either installed (Windows Servers) or enabled (Windows clients).
+    
+    Note that while the installation process requires .NET Framework 3.5.1, any .NET client applications must use .NET Framework 4.5.2 or above.
+    
+    
+ 2.  If upgrading to CPE 5.5.0 or to 5.5.1, if the .NET client is already installed, uninstall the IBM FileNet Content Engine .NET API program using the Windows control panel.
+    
+    
+ 3.  For a P8 5.5.0 installation, install the .NET client by launching Setup.msi instead of the 5.5.0-P8CPE-WIN.EXE program.
+    
+    The Setup.msi file is in the same folder as the 5.5.0-P8CPE-WIN.EXE program on the installation media.
+    
+    
+ 4.  For a P8 5.5.1 installation, install the .NET client by launching the 5.5.1-P8CPE-WIN.EXE program and select the .NET client option.
+    
+    
+
+
+Cross reference information Product Component Platform Version Edition Content Foundation .Net Client Windows 5.5.0, 5.5.1

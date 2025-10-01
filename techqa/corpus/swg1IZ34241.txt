@@ -1,0 +1,270 @@
+Title: IBM IZ34241: CLARIFICATION ON HOW EVENTTYPE IN SCE WORKS IS REQUIRED - United States
+
+Text:
+AIX  A FIX IS AVAILABLE
+3.9.0.8-TIV-TEC-IF0102 IBM Tivoli Enterprise Console Version 3.9 Interim Fix [http://www-01.ibm.com/support/docview.wss?rs=0&uid=swg24021250]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The eventType attribute is not very well documented in the
+   following manual:
+   
+   Title of the Manual that talks about the State Based Correlation
+   Engine:
+   
+   TEC 3.9 State Correlation Engine
+   How to prevent TEC from being flooded
+   
+   Version 1.1
+   
+   Title of the Manual that talks about the State Based Correlation
+   Engine:
+   
+   TEC 3.9 State Correlation Engine
+   How to prevent TEC from being flooded
+   
+   Version 1.1
+   
+   This section should be changed (Page 11)
+   
+   From:
+   
+   Event Type
+   
+   The Event Type field ? which is equal to the TEC Class ? may be
+   specified. If no Event Type line is specified in the rule, then
+   the rule will be evaluated for all Events. Multiple Event Type
+   lines may be specified to trigger the same Action for different
+   Event Types. Hint: The SCE is not aware of any BAROC definitions
+   at TEC and it doesn?t know about inheritance Therefore all leaf
+   classes must be specified at SCE instead of the parent class at
+   TEC. The rules do trigger on leaf class events as well as on
+   non-leaf class events.
+   
+   Example:
+   
+    <eventType>NT_Diskfull</eventType>
+    <eventType>NT_Share_Dir_Missing</eventType>
+   
+   To:
+   
+   The Event Type field ? which is equal to the TEC Class ? may be
+   specified. If no Event Type line is specified in the rule, then
+   the rule will be evaluated for all Events. Multiple Event Type
+   lines may be specified to trigger the same Action for different
+   Event Types. Hint: The SCE is not aware of any BAROC definitions
+   at TEC and it doesn?t know about inheritance Therefore all leaf
+   classes must be specified at SCE instead of the parent class at
+   TEC. The rules do trigger on leaf class events as well as on
+   non-leaf class events.  If multiple Event Type lines are
+   specified, then the XML rule being used will process the desired
+   action once the sum of the seperate Event Types has been
+   reached.
+   
+   Below is a DUPLICATE rule that will demonstrate how this works:
+   
+   <rule id="test1.duplicate">
+    <eventType>TEC_Notice</eventType>
+    <eventType>TEC_Error</eventType>
+    <duplicate timeInterval="20000">
+     <cloneable attributeSet="hostname msg sub_source"
+                ignoreMissingAttributes="true"/>
+     <predicate>
+      <![CDATA[true]]>
+     </predicate>
+    </duplicate>
+    <triggerActions>
+     <action function="TECSummary" singleInstance="false"/>
+    </triggerActions>
+   </rule>
+   
+   In this particular case, the Time Interval is set to 20000 (20
+   Seconds),and the attribute set is set to hostname, msg, and
+   sub_source. If 200 events with a class that matches any of the
+   eventType definitions come in within a 20 second period, and
+   they all have the same hostname, msg, and subsource, then the
+   first event that matches the eventType definition will be sent
+   to the TEC Server, and all other events that match the eventType
+   definitions will be dropped until the 20 second Time Interval
+   expires.
+   
+   This is not a function that is only confined to the DUPLICATE
+   rule, the eventType definitions will work the same for all
+   COLLECTOR, and THRESHOLD rules as well.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If the eventType definition is not specified in the rule, then
+   each class will be processed seperately instead of being
+   combined.  This means that if in the 20 second period, you
+   receive 200 events of class A, and 300 events of class B, if
+   this were a duplicate rule, then you would receive the first
+   event of Class A, and the first event of Class B on the TEC
+   Server
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All TEC users writing State Correlation rules
+   ****************************************************************
+   * PROBLEM DESCRIPTION:  The eventType attribute for State
+   *   Correlation Engine rules is not well documented.
+   ****************************************************************
+   * RECOMMENDATION: Refer to the documentation update below
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Add the following example to the "Attributes common to all
+   rules" section on page 288 of the Rule Developer's Guide:
+   
+   
+   eventType
+   
+   Specifies an event class to which this rule applies. A rule can
+   include
+   multiple eventType elements, each one specifying a different
+   event class;
+   the rule will process events of any matching class (see example
+   below).
+   If a rule includes no eventType elements, it processes events of
+   any type.
+   This can affect performance, so whenever possible, use eventType
+   elements
+   to limit rule processing to relevant event classes.
+   
+   Note: The state correlation engine does not have access to the
+   BAROC files
+   defining event classes and therefore cannot analyze events
+   according
+   to inheritance hierarchies. You must include a separate
+   eventType
+   element for each specific event class you want to process,
+   regardless
+   of inheritance relationship. Subclasses of specified classes are
+   not
+   automatically processed.
+   
+   Multiple eventType example:
+   In the following example, the first event that matches either of
+   the
+   eventType entries will be sent to the TEC Server.  Then, all
+   events of
+   either class TEC_Notice or class TEC_error received within the
+   next
+   20 seconds will be discarded.
+   
+   <rule id="multET.duplicate">
+     <eventType>TEC_Notice</eventType>
+     <eventType>TEC_Error</eventType>
+     <duplicate timeInterval="20000">
+       <predicate>
+         <![CDATA[true]]>
+       </predicate>
+     </duplicate>
+     <triggerActions>
+       <action function="TECSummary" singleInstance="false"/>
+     </triggerActions>
+   </rule>
+   
+   Note: If you use the above duplicate example and remove the two
+   eventType
+   entries, then you only get one event per 20 seconds regardless
+   of the
+   classes that are sent.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+     | interim fix | 3.9.0.8-TIV-TEC-IF0102
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ34241
+   
+   
+ * REPORTED COMPONENT NAME
+   TIVOLI ENT.CONS
+   
+   
+ * REPORTED COMPONENT ID
+   5698TEC00
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-09
+   
+   
+ * CLOSED DATE
+   2008-11-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

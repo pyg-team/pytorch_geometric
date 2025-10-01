@@ -1,0 +1,50 @@
+Title: IBM C&DS Jobs with JMS or Email notifications receive error when saving to the repository. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Users receive an error when attempting to save a C&DS job that has a notification added. 
+
+spssemgr.log: 
+
+Mar 22 2013 13:15:45 [main] ERROR com.spss.mgmt.prms.ui.editors.PrmsClusterEditor - Saving Job
+java.lang.reflect.InvocationTargetException
+at com.spss.mgmt.common.ui.UIExceptionHandlingRunnable$RunnableWithContextWrapper.run(UIExceptionHandlingRunnable.java:150)
+at org.eclipse.jface.operation.ModalContext$ModalContextThread.run(ModalContext.java:121)
+Caused by: 
+Traceback (most recent call last):
+File "<string>", line 15, in <module>
+NameError: name 'RuntimeException' is not defined 
+
+SYMPTOM
+Customer is unable to save a Job that had a Notification added to it , Notification - email address or JMS subscriber. The same issue is seen when attempting to add a Folder Event Notification to an existing Folder. 
+
+
+CAUSE
+Errors in C&DS startup process:. 
+
+01:14:26,210 INFO [NotificationStartup] Notification Service component directory: /opt/workbench/IBM/SPSS/Deployment/5.0/Server/components/notification
+01:14:26,211 INFO [NotificationStartup] Notification Service providers directory: /opt/workbench/IBM/SPSS/Deployment/5.0/Server/components/notification/providers
+01:14:26,211 ERROR [[/notification]] StandardWrapper.Throwable: java.lang.NullPointerException
+
+and then a number of the following messages:
+
+01:14:26,283 WARN [FileDirContext] Could not get dir listing for /opt/workbench/jboss-6.0.0.Final/server/default/tmp/vfs/automount5d484b9743264a48/peb-job.war-c08c388931445770/WEB-INF/lib
+01:14:26,287 WARN [ManagerBase] Error reading /dev/urandom: java.io.FileNotFoundException: /dev/urandom (Too many open files)
+
+ENVIRONMENT
+C&DS 5.0 - Linux; Jboss
+
+RESOLVING THE PROBLEM
+Determined that the ulimit was set too low for the environment
+
+
+
+
+Using command: ulimit -n 
+
+After updating the value to 65535 for the 'cads_startup' user and restarting JBoss, customer is able to add Notifications to jobs / job steps and add Folder Event notifications to folders and save those jobs. 
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]

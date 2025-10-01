@@ -1,0 +1,144 @@
+Title: IBM SDK Java Technology Edition Critical Patch Update - January 2016 - United States
+
+Text:
+ifix; interim fix; i-fix; fix; patch; update; fixes; upgrade; jdk; java; development; psirt; vulnerability; vulnerable DOWNLOADABLE FILES
+
+ABSTRACT
+ This is an update for IBM Rational Application Developer for WebSphere Software to address vulnerabilities in the IBM SDK Java Technology Edition used by the product. 
+
+DOWNLOAD DESCRIPTION
+
+
+Table of Contents Sections Description  * Impact assessment
+
+The How critical is this fix section provides information related to the impact of this release to allow you to assess how your environment may be affected.
+
+ * Prerequisites
+
+The Prerequisites section provides important information to review prior to the installation of this release.
+
+ * Installation instructions
+
+The Installation instructions section provides the installation instructions necessary to apply this release into your environment.
+
+ * Download package
+
+The Download package section provides the direct link to obtain the download package for installation in your environment.
+
+PREREQUISITES
+
+
+Prerequisites include: One of the following IBM Rational Application Developer for WebSphere Software versions must be installed: 
+
+ * Rational Application Developer for WebSphere Software 8.5.x [http://www.ibm.com/support/docview.wss?uid=swg24032855]
+ * Rational Application Developer for WebSphere Software 9.0.x [http://www.ibm.com/support/docview.wss?uid=swg24034833]
+ * Rational Application Developer for WebSphere Software 9.1.x [http://www.ibm.com/support/docview.wss?uid=swg24037182]
+ * Rational Application Developer for WebSphere Software 9.5.x [http://www.ibm.com/support/docview.wss?uid=swg24040573]
+
+The update will need 260MB of free disk space to install the interim fix.
+
+To download and extract the compressed installation files, an additional 575MB of disk space is required.
+
+Back to top
+
+INSTALLATION INSTRUCTIONS
+ 
+
+For instructions on installing this update using Installation Manager, review the topic Updating Installed Product Packages [http://www.ibm.com/support/knowledgecenter/SSRTLW_9.5.0/com.ibm.rad.install.doc/topics/t_update.html] in the IBM Knowledge Center. Important: By default, you do not need to download the compressed files that contain the update; the update is downloaded and installed by IBM Installation Manager directly from the IBM update repository.
+
+
+
+INSTRUCTIONS TO DOWNLOAD AND INSTALL THE UPDATE FROM THE COMPRESSED FILES
+ 1. Download the update files from Fix Central by following the link listed in the download table below
+ 2. 
+ 3. Extract the compressed files in an appropriate directory. For example, choose to extract to C:\temp\update
+ 4. 
+ 5. Add the update's repository location in IBM Installation Manager:  1. Start IBM Installation Manager.
+     2. On the Start page of Installation Manager, click File > Preferences, and then click Repositories. The Repositories page opens.
+     3. On the Repositories page, click Add Repository.
+     4. In the Add repository window, browse to or enter the file path to the repository.config file, which is located in the directory where you extracted the compressed files and then click OK. For example, enter C:\temp\updates\repository.config.
+     5. Click OK to close the Preference page.
+     6. 
+    
+    
+ 6. Install the update as described in the the topic "Updating Installed Product Packages" in the information center for your product and version
+
+Back to top
+
+DOWNLOAD PACKAGE
+ 
+
+Click the FC link below to download the updates from Fix Central. 
+
+FOR IBM RATIONAL APPLICATION DEVELOPER FOR WEBSPHERE SOFTWARE VERSIONS 8.5, 9.0, AND 9.1
+ 1. On the Select Fixes page, expand Show contained fixes under interim fix: Rational-RAD-Java7SR9FP30-ifix (IBM Java Platform Standard Edition Version 7 SR9 FP30 iFix)
+ 2. Select Rational-IDE-Java7SR9FP30-ifix-zip (IBM Java Platform Standard Edition Version 7 SR9 FP30 iFix)
+
+
+FOR IBM RATIONAL APPLICATION DEVELOPER FOR WEBSPHERE SOFTWARE VERSIONS 9.5
+ 1. On the Select Fixes page, expand Show contained fixes under interim fix: Rational-RAD-Java8SR2FP10-ifix (IBM Java Platform Standard Edition Version 8 SR2 FP10 iFix)
+ 2. Select Rational-IDE-Java8SR2FP10-ifix-zip (IBM Java Platform Standard Edition Version 8 SR2 FP10 iFix)
+
+
+Back to top
+
+HOW CRITICAL IS THIS FIX?
+ 
+
+Impact Assessment Impact Description Critical This download provides an update for IBM Rational Application Developer for WebSphere Software to address the vulnerabilities outlined in the following security bulletins:
+
+
+Security Bulletin: Multiple vulnerabilities in IBM Java SDK affect IBM Rational Application Developer for WebSphere Software (CVE-2015-7575, CVE-2016-0466, CVE-2016-0475, CVE-2016-0448) [http://www.ibm.com/support/docview.wss?uid=swg21976651] 
+
+The fix upgrades the IBM SDK Java Technology Edition for Rational Application Developer for WebSphere Software to the following versions: 
+
+ * Versions 8.5, 9.0, 9.1: Updates to IBM Java 7 SR9-FP30
+ * Version 9.5: Updates to IBM Java 8 SR2-FP10
+
+Back to top
+
+Click the link in the Download Options column:
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Java 7.0 Update 23 Feb 2016 English 1 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Rational&product=ibm/Rational/IBM+Rational+Application+Developer+for+WebSphere+Software&release=8.5.0&platform=All&function=fixId&fixids=Rational-RAD-Java7SR9FP30-ifix&includeSupersedes] [ ] Java 8.0 Update 23 Feb 2016 English 1 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Rational&product=ibm/Rational/IBM+Rational+Application+Developer+for+WebSphere+Software&release=9.5.0&platform=All&function=fixId&fixids=Rational-RAD-Java8SR2FP10-ifix&includeSupersedes] [ ] 
+TECHNICAL SUPPORT
+ 
+
+TAB NAVIGATION
+ * General Support Information- selected tab,
+ * Support Resources [http://www.ibm.com/support/docview.wss?uid=swg27020747]- selected tab,
+
+
+
+
+IBM Rational Software Support Communities 
+
+ * Visit the IBM Support Portal [http://www.ibm.com/support/entry/portal/Overview/Software/Rational/product] to configure your support portal experience and review FAQs, lists of known problems, fixes, and a wealth of important support information.
+   
+   
+ * Visit developerWorks [http://www.ibm.com/developerworks/rational/] to access an online collection of tutorials, sample code, standards, forums and other resources provided by experts at IBM to assist software developers using Rational tools including access to the IBM RFE Community [http://www.ibm.com/developerworks/rfe/].
+   
+   
+ * Visit the Jazz Community [http://jazz.net/] if you use a Rational product created using the Jazz platform to interact directly with the Jazz development team and other community members, download product trials and betas and track developement progress. 
+
+
+
+
+HELPFUL HINTS FOR OBTAINING TECHNICAL ASSISTANCE:
+Before you contact IBM Rational Software Support, gather the background information that you need to describe the problem. When you describe a problem to an IBM software support specialist, be as specific as possible and include all relevant background information so that the specialist can help you solve the problem efficiently. To save time, know the answers to these questions: 
+
+ * What software versions were you running when the problem occurred? 
+ * Do you have logs, traces, or messages that are related to the problem? 
+ * Can you reproduce the problem? If so, what steps do you take to reproduce it? 
+ * Is there a workaround for the problem? If so, be prepared to describe the workaround. 
+
+If you have helpful information to diagnose or identify the problem on your system, you can provide this data by following the instructions to exchange information with IBM Technical Support [http://www.ibm.com/software/support/exchangeinfo.html]. 
+
+ 
+
+Follow IBM Rational Client Support on Twitter [http://twitter.com/rationalsupport] | Facebook [http://facebook.com/rationalsupport] | YouTube [http://www.youtube.com/ibmrationalsupport] | devWorks Blog [https://www.ibm.com/developerworks/mydeveloperworks/blogs/nfrsblog/?lang=en]
+
+
+
+
+ Back to top

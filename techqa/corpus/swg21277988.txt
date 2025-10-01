@@ -1,0 +1,46 @@
+Title: IBM Search Performance in FEM is slow - United States
+
+Text:
+FEM search performance TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Search Performance in FEM is slow 
+
+RESOLVING THE PROBLEM
+This section identifies performance tuning options for the FileNet P8 Content Engine (CE). 
+
+Query Options 
+If customers are experiencing high response times when browsing and/or searching an object store, adjusting the CE query options may prove beneficial. Two parameters may be tuned, and can be accessed as follows: 
+
+1. Load FileNet Enterprise Manager 
+2. Expand the Object Stores node 
+3. Right click on your Object Store, and select Properties 
+4. Select the Query tab 
+
+Under the Query tab, the following parameters can be changed. 
+
+Enumeration Batch Size 
+The Enumeration Batch Size parameter refers to how may enumerated items the CE will fetch in one request. By default, the Enterprise Manager shows this value as zero. The actual batch size value used by the CE in this situation is 20. Tests performed in the FileNet test lab showed improved performance by increasing the parameters value to 50. 
+
+Default Query Batch Size 
+The Default Query Batch Size parameter refers to how many items the CE will fetch per roundtrip to the server. By default, the Enterprise Manager shows this value as zero. The actual batch size value used by the CE in this situation is 20. Tests performed in the FileNet test lab showed improved performance by increasing the parameters value to 50. 
+
+Indexes 
+This section defines composite indexes that may improve the performance of the system. Although only two suggestions are made, users may find that additional indexes will benefit their system. Microsoft's SQL Server Profiler and Oracle's Statspack should be used to profile to the system to determine if further indexes should be applied. 
+
+Indexing the docversion Table 
+The docversion table contains the object identifiers for all documents stored in the Content Engine. When the number of records in the table exceeds 1 million, users may begin to see performance degradation across common functionality (browsing, searching, creating documents, etc.). To reduce this effect, a composite index should be applied to the object_class_id, searchtype, and is_current columns, in that order. Additionally, if you have folders that contain 2000 or more items you may experience increased response times when browsing those folders. To alleviate this problem add an index to the Mime Type system property using your respective RDBMS management software. 
+
+Indexing for Stored Searches 
+The docversion table contains the object identifiers for all documents stored in the Content Engine including stored seaches. If your object store contains 1 million or more documents you will experience slow performance when searching for stored searches even if you only have a few stored searches. This is due to the way they are stored in the database along with documents. To alleviate this performance issue apply an index searchtype property in the doc_version table using your respective RDBMS management software. 
+
+Indexing for Searches 
+If there are parameters that users commonly search against, it is suggested that a composite index is applied to span the attributes being searched on. System DBAs should use Microsoft's SQL Profiler or Oracle's Statspack to identify which attributes should be indexed.
+
+
+
+HISTORICAL NUMBER
+ 20004391 
+
+PRODUCT ALIAS/SYNONYM
+ P8 CONTENT ENGINE

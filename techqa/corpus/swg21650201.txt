@@ -1,0 +1,57 @@
+Title: IBM Troubleshooting SSL Configuration Issues for the OpenPages GRC Platform - United States
+
+Text:
+SSL https secure encryption rsa TECHNOTE (FAQ)
+
+QUESTION
+ What kind of things can an OpenPages IT administrator review when troubleshooting SSL issues? 
+
+CAUSE
+When setting up SSL for an OpenPages environment, there are multiple methods for defining secure connections / protocols.
+
+ANSWER
+In an OpenPages environment, SSL connections can be implemented at various junction points / nodes. Here are some examples:
+
+
+ *  Secure connection (HTTPS) between the browser and the load-balancer Secure connection between the load-balancer and the OpenPages application server(s) Secure connection between the browser and the IBM Cognos reporting server Secure connection between the OpenPages application server(s) and the IBM Cognos reporting server(s) 
+
+When troubleshooting / testing SSL connections with the OpenPages application, an OpenPages administrator should test and review TechNote # 1611070 and the following: Identify and Test the OpenPages HTTPS URL Used by the End Users: 
+
+ *  Open a supported browser. Go to the OpenPages HTTPS URL that will be used by end users  * Note: Other URLs could be used (but the URLs must be defined in the server certificate otherwise certificates errors / warnings will occur).
+   
+   Verify that there are NO browser warnings.  * If warnings do occur, utilize the browser to review and download the certificates which can include a server certificate, intermediate certificate, and a root certificate. 
+    * Review the certificate's:  * Valid from Date 
+       * Valid to Date 
+       * Review the common name (CN), organization (O), organizational unit (OU)
+      
+      
+    * Review the installed certificates on the application server(s) and/or load-balancer(s)
+   
+   
+
+Identify and Test the IBM Cognos HTTPS URL Configured in the Properties:  *  Open a supported browser. Go to the IBM Cognos HTTPS URL that will be used by end users  * Note: Other URLs could be used (but the URLs must be defined in the server certificate otherwise certificates errors will occur).
+   
+   Verify that there are NO browser warnings.  * If warnings do occur, utilize the browser to review and download the certificates which can include a server certificate, intermediate certificate, and a root certificate. 
+    * Review the certificate's:  * Valid from Date 
+       * Valid to Date 
+       * Review the common name (CN), organization (O), organizational unit (OU)
+      
+      
+    * Review the installed certificates on the application server(s) and/or load-balancer(s)
+   
+   
+
+Identify and Test the IBM Cognos HTTPS URL Configured in the Properties:  *  Open a supported browser. Go to the IBM Cognos HTTP or HTTPS URL Attempt to login with a valid username and password  * If the login fails, review the Cognos log files. 
+    * If the login fails, review the URLs defined in OpenPagesSecurityProvider_OpenPagesSecurityRealm.propertiesfile. 
+    * If the login fails and using SSL, verify that the Java cacerts has all the appropriate certificates installed.
+   
+   
+
+Identify and Test the Cognos SDK Connection:  *  Open a supported browser. Go to the OpenPages URL. Login with an administrator id. Configure a computed field (if using computed fields). Test out of the computed field and verify it displays properly.  * If the computed field fails, review the standard set of log files. 
+    * If the computed field fails, review the aurora.properties to make sure the proper Cognos URLs are defined. 
+    * If the computed field fails and the properly URLs are defined, review the the Java cacerts has all the appropriate certificates installed.
+   
+   
+
+RELATED INFORMATION
+#Steps to Update OpenPages to Use a Fully Qualified URL [http://www.ibm.com/support/docview.wss?uid=swg21611070]

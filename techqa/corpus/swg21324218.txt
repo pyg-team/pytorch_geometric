@@ -1,0 +1,30 @@
+Title: IBM How to setup VxWorks Real Time process environment within Rhapsody? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to setup VxWorks Real Time process environment within Rhapsody? 
+
+ANSWER
+
+
+ If using VxWorks version above 6.2, Rhapsody framework needs to be rebuilt using the adapter files. 
+Below are the steps to configure Rhapsody for a VxWroks RTP (Real Time Process) environment 
+
+ Step1. Extract the adapter files into Rhapsody installation directory. 
+Step2. Replace the PRP file Sample_SiteC++ to SiteC++. 
+Step3. Run the Rebuild_VxWorks_verNo_RTP_SIMPENTIUM_so_Libraries.bat avaliable under Rhapsody_Installtion_Dir\Share\LangCpp. 
+Step4. Develop a simple Hello World Project in Rhapsody. 
+Step5. Right Click on Default Configuration, Select Setting tab. 
+Step6. Change the Environment to VxWorks_VerNo, Save 
+Step7. Build the project in Rhapsody. 
+Step8. Connect to the Target Server running by clicking on Code->Target->Connect under Rhapsody. 
+Step9. Run the RTP application by clicking on Code->Target->Run 
+
+ Since Rhapsody Supports VxWorks 6.2 RTP, VxWorks 6.2 RTP compiler options are readily available within Rhapsody under Default config->Settings->Environment . Setting the Right Environment and building is all that is required for v6.2. 
+
+7.1AnswerProduct versionPartner ContentInternal ContentCategoryReference IDAutho 
+
+HISTORICAL NUMBER
+ 11496

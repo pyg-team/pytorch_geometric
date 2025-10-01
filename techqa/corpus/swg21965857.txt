@@ -1,0 +1,96 @@
+Title: IBM JDBC trace for WebSphere Message Broker or IBM Integration Bus - United States
+
+Text:
+mustgather TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This procedure is typically run to track down problems in IBM Integration Bus (IIB) or WebSphere Message Broker (WMB) with database connectivity such as user access and dropped database connections. Gathering this information before calling IBM Support will help familiarize you with the troubleshooting process and save you time. 
+
+RESOLVING THE PROBLEM
+
+
+
+JDBC TRACING ON DB2
+
+ 1. Create a properties file to contain the trace settings.
+    Name this file 'jcprops.txt' and note the path location.
+    Place these line items in this file:
+    db2.jcc.traceDirectory=<path>***
+    db2.jcc.traceFile=jdbctrace.txt
+    db2.jcc.traceFileAppend=true
+    db2.jcc.traceLevel=-1
+ 2. 
+ 3. Enable tracing by setting an environment variable to point to this properties file:
+    IBM_JAVA_OPTIONS=-Ddb2.jcc.propertiesFile=<path>/jcprops.txt
+ 4. 
+ 5. Stop and restart the broker/node to pick up the environment variable.
+ 6. 
+ 7. Collect a WMB/IIB service level trace [http://www.ibm.com/support/docview.wss?rs=849&uid=swg21177321#2] while recreating the JDBC issue.
+ 8. 
+ 9. Disable JDBC tracing by unsetting the environment variable and restarting the broker/node.
+    
+
+
+
+
+
+Notes:
+Please ensure:
+
+ * the path of the trace file is not the IIB installation or working directory.
+ * the trace file entry points to a file system that has enough disk space.
+ * the user running the trace has write permissions to the directory where trace file is written.
+
+*** On Windows, the file path separator, backslash ("\"), needs to be escaped.
+The file path should look similar to:
+db2.jcc.traceDirectory=C:\\temp\\jdbctrace.txt
+
+
+
+JDBC TRACING ON ORACLE
+
+ 1.  Download the Oracle JDBC debug driver.
+     This is provided by Oracle, and can be found on their website:
+     http://www.oracle.com/technetwork/database/enterprise-edition/jdbc-112010-090769.html [http://www.oracle.com/technetwork/database/enterprise-edition/jdbc-112010-090769.html]
+     Note: The debug driver should be named ojdbcX_g.jar, where X is the version being used (eg. ojdbc6_g.jar).
+     
+ 2.  
+ 3.  Place the debug driver jar file into the jarsUrl directory, defined in the IIB JDBCProvider configurable service.
+     mqsireportproperties <brokerName> -c JDBCProviders -o <JDBCProviderName> -r
+     
+ 4.  
+ 5.  Disable the standard JDBC driver.
+     Rename the standard jar file 'ojdbc6.jar' to 'ojdbc6.jar_orig'.
+     It is necessary to rename the extension of this file to prevent WMB/IIB from loading the wrong JAR file.
+     Note: WMB/IIB will need to be stopped if this this jar file is currently in use.
+     
+ 6.  
+ 7.  Enable JDBC tracing by setting a jvmSystemProperty on the Execution Group:
+     mqsichangeproperties <brokerName> -e <egName> -o ComIbmJVMManager -n jvmSystemProperty -v '"-Doracle.jdbc.Trace=true"'
+     
+ 8.  
+ 9.  Stop and restart the broker/node to pick up the new JVM setting.
+ 10. 
+ 11. Collect a WMB/IIB service level trace [http://www.ibm.com/support/docview.wss?rs=849&uid=swg21177321#2] while recreating the JDBC issue.
+     Note: You can check that the formatted trace contains JDBC trace entries by searching for the string "JavaRootLogger: oracle.jdbc".
+     
+ 12. 
+ 13. Disable JDBC tracing by unsetting the jvmSystemProperty:
+     mqsichangeproperties <brokerName> -e <EGName> -o ComIbmJVMManager -n jvmSystemProperty -v ''
+     
+ 14. 
+ 15. Disable JDBC tracing by stopping the broker/node and:
+      * Rename/remove the debug jdbc jar
+      * Revert the original jar file name in the jarsUrl directory
+     
+     
+
+
+
+Note:
+Please ensure:
+
+ * the path of the trace file is not the IIB installation or working directory.
+ * the trace file entry points to a file system that has enough disk space.
+ * the user running the trace has write permissions to the directory where trace file is written.
+ *

@@ -1,0 +1,49 @@
+Title: IBM Configuring LDAP fails with java.net.SocketTimeoutException - United States
+
+Text:
+java.net.SocketTimeoutException; standalone; federated; wp-modify-ldap-security; wp-create-ldap TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM WebSphere Portal is successfully installed. When attempting to configure Portal against an enterprise LDAP server by running the wp-modify-ldap-security or wp-create-ldap configuration task, the configuration task fails with an error message of java.net.SocketTimeoutException. This Technote will describe how to diagnose and resolve this error message. 
+
+SYMPTOM
+ The ConfigTrace.log file will display messages similar to the following: 
+
+[wplc-create-federated-ldap-server] com.ibm.websphere.wim.exception.WIMConfigurationException: CWWIM5020E Could not connect to the ldap://myldapserver.example.com:389 repository
+using properties:[derefAliases=always],[authentication=simple],[sslConfiguration=], [connectTimeout=0],[sslEnabled=false],[id=myldap],[certificateMapMode=EXACT_DN],
+[certificateFilter=],[ldapServerType=IDS],[bindPassword=****],[referal=ignore],[bindDN=cn=root],[host=myldapserver.example.com],[connectionPool=true],[port=389],
+[wplc-create-federated-ldap-server] Caused by: javax.naming.CommunicationException:myldapserver.example.com:389 [Rootexception is java.net.SocketTimeoutException: connect timed out]
+[wplc-create-federated-ldap-server] Caused by: java.net.SocketTimeoutException: connect timed out
+
+
+CAUSE
+In a standalone configuration, the Portal server is unable to communicate with the LDAP server. 
+
+In a clustered configuration, the Portal server and/or the Deployment Manager are unable to communicate with the LDAP server.
+
+
+DIAGNOSING THE PROBLEM
+1) Collect and submit logs and configuration data as outlined in the following document: [http://www-304.ibm.com/support/docview.wss?uid=swg21447938] 
+
+Configuring Security for Portal [http://www-304.ibm.com/support/docview.wss?uid=swg21447938] 
+
+ 
+
+2) Recommended but optional: Download a third-party tool (such as the ldapsearch [http://www-01.ibm.com/support/docview.wss?uid=swg21113384] tool) that can verify your server(s) are able to communicate with the LDAP server independent of the Portal ConfigEngine configuration task. Run the tool directly from the Portal server (and Deployment Manager if clustered) to verify all servers can communicate with the LDAP server.
+
+
+
+RESOLVING THE PROBLEM
+In this particular use case, a network firewall was configured to block all traffic to the LDAP server except from IP addresses that were explicitly whitelisted / permitted to connect. The primary Portal server had been configured in the network firewall to communicate with the LDAP server, but the Deployment Manager had not been configured. Adding the Deployment Manager IP address to the firewall rules allowed the configuration task to complete successfully.
+
+RELATED INFORMATION
+ Portal v7 Infocenter: Configure Federated LDAP [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Adding_an_LDAP_user_registry_on_AIX_wp7]
+Portal v7 Infocenter: Configure Standalone LDAP [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Configuring_a_standalone_LDAP_user_registry_on_AIX_wp7]
+ldapsearch [http://www-01.ibm.com/support/docview.wss?uid=swg21113384]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products AIX, HP-UX, IBM i, Linux, Solaris, Windows, z/OS 7.0, 6.1

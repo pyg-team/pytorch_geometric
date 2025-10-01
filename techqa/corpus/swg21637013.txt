@@ -1,0 +1,40 @@
+Title: IBM Logs created in /tmp/.com_ibm_tools_attach not removed on Launcher stop - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When stopping the IBM WebSphere TX Launcher (killing process) these log files are not removed anymore. 
+
+SYMPTOM
+When starting the IBM WebSphere TX Launcher processes on Unix platforms, some log files may be created in the sub-directory /tmp/.com_ibm_tools_attach. These log files are not removed on Launcher stop. 
+
+These logs should be disabled by default, when using the JVM supplied with the WTX product (http://www-01.ibm.com/support/docview.wss?uid=swg21407964 [http://www-01.ibm.com/support/docview.wss?uid=swg21407964])
+
+
+CAUSE
+Using an alternative JVM where this option may not be disabled by default.
+
+ENVIRONMENT
+IBM WebSphere TX Launcher on Unix platforms
+
+RESOLVING THE PROBLEM
+Disabling logging option is possible, when using Java system property: Dcom.ibm.tools.attach.enable=no
+
+This change needs to be made in the launcher.sh and dtx.ini files:
+
+Line 102 of launcher.sh from
+
+$JAVA $WTX_JES_HEAP_OPTIONS
+com.ibm.websphere.dtx.launcher.core.EventServerManager &
+to
+$JAVA -Dcom.ibm.tools.attach.enable=no $WTX_JES_HEAP_OPTIONS
+com.ibm.websphere.dtx.launcher.core.EventServerManager &
+
+and
+
+Options in dtx.ini:
+
+[JVM Options]
+option1=-Dcom.ibm.tools.attach.enable=no
+;option2=

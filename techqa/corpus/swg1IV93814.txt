@@ -1,0 +1,190 @@
+Title: IBM IV93814: WHEN IMPORTING JPBPLANS, MIF DOES NOT POPULATE VALUE OF NESTEDJOBPLANID FIELD IN JOBTASK TABLE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   
+   IBM Maximo Asset Management 7.5.0.5 Build 20130903-1504 DB
+   Build V7505-00
+   IBM Maximo for Transportation 7.5.0.0-20160311-1450 Build
+   20110415-1936 DB Build V7500-06 HFDB Build HF7500-31
+   Tivoli's process automation engine 7.5.0.5-IFIX20160817-0750
+   Build 20130903-1504 DB Build V7505-43 HFDB Build HF7505-39
+   Mobile 7.5.0.0-20150311-1242 Build 20110421-1725 DB Build
+   V7500-07 HFDB Build HF7500-00
+   IBM Maximo for Service Providers 7.5.1.2-20160422-1605 Build
+   20130520-1027 DB Build V7512-13 HFDB Build HF7512-04
+   IBM Maximo Asset Configuration Manager 7.5.0.2-20160106-0712
+   Build 20121213-0030 DB Build V7502-19 HFDB Build HF7502-14
+   IBM Maximo Asset Management Scheduler 7.5.2.0 Build
+   20130903-1504 DB Build V7520-151 HFDB Build HF7520-14
+   IBM Maximo Calibration 7.5.0.0 Build $build$ DB Build V7501-01
+   IBM TPAE Integration Framework 7.5.1.0 Build 20130829-1209 DB
+   Build V7510-28
+   
+   Concerns/Problem:
+   When importing Jpbplans, MIF Does not populate value of
+   Nestedjobplanid field in Jobtask table.
+   
+   Steps to reproduce the issue:
+   1, create a new object structure in Maximo Object Structure
+   application:
+   Parent    child   relationship
+   JOBPLAN
+   JOBPLAN   JOBTASK  JOBTASK
+   JOBPLAN  JOBLABOR  JOBLABOR
+   JOBPLAN  JOBITEM  JOBITEM
+   JOBPLAN  JPASSETSPLINK JPASSETSPLINK
+   
+   From the application - select action menu, Advanced
+   Configuration, clear the check box "Exclude Parent Key
+   Attributes?" for all objects.
+   From the application - select action menu, Inbound Setting
+   Restriction, set Nestedjobplanid field in Jobtask
+   table,HASNESTEDJOBPLAN in Jobplan table be restricted.
+   2, create a new enterprise service using the above OS in
+   Enterprise Services application
+   3, Add this new enterpriser service in the External System.
+   4, Import the scv file to import jobplan with next jobplan, the
+   Nestedjobplanid field does not have a value entered.
+   5, If use the UI (Jobplan to create a new jobplan with nested
+   job plan, the Nestedjobplanid field is automatically populated.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Maximo MIF users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * "nestedjobplanid" field on the jobtask table was blank after *
+   * MIF import of nested job plans. If user uses the Job Plans   *
+   * application, the nestedjobplanid is populated correctly.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is fixed in code.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   	 | release\fix pack | Interim Fix for Release 7.6.0.8 Product
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV93814
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO PLANNING
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46PL
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-02-28
+   
+   
+ * CLOSED DATE
+   2017-04-04
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  Maximo
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO PLANNING
+   
+   
+ * FIXED COMPONENT ID
+   5724R46PL
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R760 PSY
+   UP

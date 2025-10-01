@@ -1,0 +1,159 @@
+Title: IBM JR52950: SECURITY APAR CVE-2014-6953/2015-0410 - MULTIPLE VULNERABILITIES IN IBM SDK FOR JAVA SHIPPED WITH INTEGRATION DESIGNER - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.0.0.5-WS-IID-IFJR52950 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Integration+Developer&fixids=7.0.0.5-WS-IID-IFJR52950&source=SAR]
+7.5.1.2-WS-IID-IFJR52950 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Integration+Designer&fixids=7.5.1.2-WS-IID-IFJR52950&source=SAR]
+8.0.1.3-WS-IID-IFJR52950 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Integration+Designer&fixids=8.0.1.3-WS-IID-IFJR52950&source=SAR]
+8.5.0.1-WS-IID-IFJR52950 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Integration+Designer&fixids=8.5.0.1-WS-IID-IFJR52950&source=SAR]
+8.5.5.0-WS-IID-IFJR52950 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Integration+Designer&fixids=8.5.5.0-WS-IID-IFJR52950&source=SAR]
+8.5.6.0-WS-IID-IFJR52950 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Integration+Designer&fixids=8.5.6.0-WS-IID-IFJR52950&source=SAR]
+8.5.7.0: IBM Integration Designer V8.5 Refresh Pack 7 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24041577]
+8.5.7.0: IBM Integration Designer V8.5 Refresh Pack 7 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24041578]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There are multiple vulnerabilities in IBM SDK Java Technology
+   Edition, which IBM Integration Designer and IBM WebSphere
+   Integration Developer use. These issues were disclosed as part
+   of the IBM SDK Java Technology Edition updates in January 2015.
+   This bulletin also addresses the "FREAK: Factoring Attack on
+   RSA-EXPORT keys" TLS/SSL client and server vulnerability.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for the latest fix pack of all supported
+   releases of Integration Designer and WebSphere Integration
+   Developer.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR52950:
+   
+   Select IBM Integration Designer or IBM WebSphere Integration
+   Developer from the product selector, the installed version to
+   the fix pack level, and your platform, and then click Continue.
+   Select APAR or SPR, enter JR52950, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR52950
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION DES
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9702
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-03-26
+   
+   
+ * CLOSED DATE
+   2015-04-17
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION DES
+   
+   
+ * FIXED COMPONENT ID
+   5725C9702
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP
+   
+   
+ * R801 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP
+   
+   
+ * R855 PSY
+   UP
+   
+   
+ * R856 PSY
+   UP

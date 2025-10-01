@@ -1,0 +1,60 @@
+Title: IBM How to Locate Which "User directories" are Using the Most Space in the IFS - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I find what user directories are using the most space in the IFS. 
+
+ANSWER
+A common problem is DASD usage getting higher on the system and IBM i administrators needing to quickly determine where the large (or many) files or directories are located. 
+
+The first step is to obtain a disk report:
+===> PRTDSKINF RPTTYPE(*SYS)
+
+You should review the resulting QPEZDISK spooled file output. If the "User directories" value is high, you will want to retrieve information regarding the storage allocated to the user directories. This will show which user directories in particular have allocated the most space. 
+
+First, a job is submitted that will execute RTVDIRINF on all user directories on the system. This can take some time, depending on many system configuration and usage variables:
+
+===>SBMJOB CMD(RTVDIRINF DIR('/') INFFILEPFX(MYROOTDIR) SUBTREE(*ALL)
+OMIT('/QNTC' '/QFilesvr.400' '/QDLS' '/QSYS.lib' '/QOPT')) JOB(JRTVDIRINF)
+
+The above command retrieves directory information about the root and all nested subdirectories and stores it in the database files MYROOTDIRO and MYROOTDIRD in library QUSRSYS. 
+
+Notes: 
+1. If a particular user directory (such as /QIBM) is suspected of allocating a lot of space, time can be saved by running the RTVDIRINF on that specific directory instead ((RTVDIRINF DIR('/QIBM')).
+2. Any NFS mount points should be added to the omit list as well. 
+
+
+When finished, the following message will be generated: 
+
+ * "Database files MYROOTDIRO and MYROOTDIRD created in library QUSRSYS.
+ * 
+
+
+Those tables are then queried using an SQL interface such as IBM Access Client Solutions' "Run SQL Scripts" function. 
+The IBM ACS client is available here: 
+http://www-03.ibm.com/systems/power/software/i/access/solutions.html [http://www-03.ibm.com/systems/power/software/i/access/solutions.html] 
+
+To see total size retrieved within the SQL session, issue the following SQL statement:  * SELECT sum(QEZALCSIZE), sum(QEZDTASIZE) FROM QUSRSYS.MyRootDirO
+
+
+For a listing of directories with the largest directories listed first, issue the following SQL statement:  * SELECT sum(O.QEZALCSIZE), D.QEZDIRNAM1, D.QEZDIRIDX
+ * 
+ * FROM QUSRSYS.MyRootDirD d join QUSRSYS.MyRootDirO o on d.qezdiridx = o.qezdiridx
+ * 
+ * GROUP BY d.qezdiridx, qezdirnam1
+ * 
+ * ORDER BY 1 desc, 3, 2
+
+
+Sample output when the above SQL statements were run using ACS Run SQL Scripts functionality :
+[/support/docview.wss?uid=nas8N1021607&aid=1] [/support/docview.wss?uid=nas8N1021607&aid=1]
+
+
+In the example above, disk cleanup could start with the user directory "/rick" and proceed down the list. 
+
+RELATED INFORMATION
+ Working with output of the RTVDIRINF and PRTDIRINF [http://www.ibm.com/support/knowledgecenter/ssw_ibm_i_72/ifs/rzaaxwwcomm.htm]
+Alternative for RTVDIRINF and PRTDIRINF [http://www.ibm.com/support/docview.wss?uid=nas8N1010779]
+Find and list large files in IFS [http://www.ibm.com/support/docview.wss?uid=nas8N1021607]

@@ -1,0 +1,76 @@
+Title: IBM J2C Performance Issue With Annotation Builder - United States
+
+Text:
+RAD; v6; v7; J2C; annotation builder; performance; hang; vmargs; ejb; eclipse.ini; rationalsdp.ini; command line; eclipse; heap size; heap; paging file; swap file; virtual memory; paging; RSA; 1254349 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In Rational® Application Developer (RAD) version 6.x and 7.x, projects having many EJBs that require use of the Annotation Builder will drive CPU busy at or near 100%, often resulting in Out Of Memory errors (and failed builds). 
+
+CAUSE
+When the annotation builder is invoked it ends up generating a lot of new (uncompiled) Java™ classes and when the Eclipse® Java builder is invoked on these files it takes up a lot of CPU and memory usage.
+
+RESOLVING THE PROBLEM
+Here are several solutions that you can apply to resolve this problem:
+
+
+1. Set the maximum heap size for the JVM - this seems to slightly help with the performance as well as help to reduce the OutOfMemoryExceptions that can occur. 
+
+To change the maximum heap size you can add the following or higher value to the rationalsdp.ini file in RAD 6.x (based on Eclipse 3.0.x):
+VMArgs=-Xmx768m
+
+RAD 7.x uses the eclipse.ini file to store the default startup settings and uses 768m as the Xmx value. The value mentioned above should be sufficient for most situations; however, you might need to test different values. The Related Information item: Optimizing Multi-Project Builds Using Dependent Project JARs in WebSphere Studio Application Developer , can be helpful in explaining heap size settings.
+
+NOTE:
+It is not a recommended practice to change the RAD V6 default supported startup values in rationalsdp.ini (RAD 6.x) since it affects every workspace. It might be best to start RAD 6.x by passing in those VMargs on the command line, for example:
+
+rationalsdp.exe -showlocation -setworkspace -vmargs -Xmx1024m -Xms150m
+
+These settings would replace or be added to the values of the same settings in rationalsdp.ini on startup.
+
+In the case of RAD 7.x, it is not a good idea to pass vmargs on the command line, for example:
+
+eclipse.exe -product com.ibm.rational.rad.product.ide
+-showlocation -setworkspace -vmargs -Xmx1024m -Xms150m
+
+. . . since it is based on Eclipse 3.2.x which uses eclipse.ini to set 
+Eclipse command line arguments. Passing vmargs on the command line 
+would replace all of the vmargsin the eclipse.ini file on startup. Any 
+other Eclipse command line settings, not involving vmargs, would replace 
+or be added to the values of the same settings in eclipse.ini on startup.
+
+2. Increase your paging file (swap file or "virtual memory") size.
+
+In a user scenario that had one project with 60 EJBs requiring the use of the Annotation Build, the error disappeared when the paging file size was changed from 1 GB to 2 GB. Afterward, the RAD processes had grabbed > 1 GB of memory and would not release it; exiting and restarting RAD at that point returned things to normal. 
+
+Again, you might need to use a different value for the maximum pagefile / swap file size, depending on your scenario.
+
+To do this in Windows:
+right-click on My Computer,
+select Properties,
+select the Advanced tab,
+[/support/docview.wss?uid=swg21254349&aid=1] [/support/docview.wss?uid=swg21254349&aid=1]
+
+Click the settings button in the section marked Performance,
+select the Advanced tab (again),
+[/support/docview.wss?uid=swg21254349&amp;aid=2]
+
+and increase the size of your paging file ("virtual memory") accordingly:
+[/support/docview.wss?uid=swg21254349&amp;aid=3]
+
+
+3. Reorganize the workspace so that no single project has many EJBs, then build each project separately. For example, rather than 1 project with 60 EJBs, you could have 4 separate projects with15 EJBs each. In such a scenario, the last project to be built would also use elements built by the first 3 to finish the build.
+
+
+
+
+
+
+RELATED INFORMATION
+#Optimizing Multi-Project Builds Using Dependent Project [http://www7b.software.ibm.com/wsdd/library/techarticles/0204_searle/searle.html]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Java Connector Development Linux, Windows 6.0, 6.0.0.1, 6.0.1, 6.0.1.1, 7.0, 7.0.0.1

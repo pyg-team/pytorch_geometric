@@ -1,0 +1,63 @@
+Title: IBM Passport Advantage downloads for WebSphere MQ File Transfer Edition V7.0.4 - United States
+
+Text:
+V7.0.4 7.0.4 704 DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM WebSphere MQ File Transfer Edition Version 7.0.4 eAssembly images from the Passport Advantage website. 
+
+DOWNLOAD DESCRIPTION
+
+
+Terminology
+
+WebSphere MQ File Transfer Edition Version 7.0.4 is supplied in an eAssembly. 
+
+Contents
+
+This document provides a list of the installation images available in the eAssembly, and describes how to download the eAssembly images from the Passport Advantage website. 
+
+Related product documentation
+
+For information about the installation process, refer to Installing WebSphere MQ File Transfer Edition [http://www.ibm.com/support/knowledgecenter/SSEP7X_7.0.4/com.ibm.wmqfte.doc/installing_planning.htm] in the product documentation. 
+
+Downloading the relevant eAssembly images from the Passport Advantage website
+
+ 1. To get started with WebSphere MQ File Transfer Edition, download the following eAssembly images:  * WebSphere MQ File Transfer Edition V7.0.4 Quick Start Guide for Multiplatform Multilingual
+     * WebSphere MQ File Transfer Edition V7.0.4 Server for your platform
+     * WebSphere MQ File Transfer Edition V7.0.4 Documentation and Tools for your platform
+     * WebSphere MQ V7.0.1 for your platform
+    
+    
+    
+ 2. Go to the Download package table below and follow the link to the Passport Advantage website. 
+ 3. Sign in to download all of the images that you need. 
+ 4. Unpack each of the parts onto your system. 
+    eAssembly images Assembly Part Number Assembly Description Images Image Description CRE54ML WebSphere MQ File Transfer Edition V7.0.4 for Multiplatform Multilingual eAssembly WebSphere MQ File Transfer Edition Quick Start Guide: 
+    CZXT0ML WebSphere MQ File Transfer Edition V7.0.4 Quick Start Guide for Multiplatform Multilingual WebSphere MQ File Transfer Edition Server: CZXT1ML WebSphere MQ File Transfer Edition V7.0.4 Server for AIX Multilingual CZXT2ML WebSphere MQ File Transfer Edition V7.0.4 Server for HP-UX on PA-RISC Multilingual CZXT3ML WebSphere MQ File Transfer Edition V7.0.4 Server for HP-UX on Itanium Multilingual CZXT4ML WebSphere MQ File Transfer Edition V7.0.4 Server for IBM i Multilingual CZXT5ML WebSphere MQ File Transfer Edition V7.0.4 Server for Linux for System x Multilingual CZXT6ML WebSphere MQ File Transfer Edition V7.0.4 Server for Linux for System p 64-bit Multilingual CZXT7ML WebSphere MQ File Transfer Edition V7.0.4 Server for Linux for System z Multilingual CZXT8ML WebSphere MQ File Transfer Edition V7.0.4 Server for Solaris SPARC Multilingual CZXT9ML WebSphere MQ File Transfer Edition V7.0.4 Server for Solaris on x86 Multilingual CZXU0ML WebSphere MQ File Transfer Edition V7.0.4 Server for Windows Multilingual WebSphere MQ File Transfer Edition Client: CZXU1ML WebSphere MQ File Transfer Edition V7.0.4 Client for AIX Multilingual CZXU2ML WebSphere MQ File Transfer Edition V7.0.4 Client for HP-UX on PA-RISC Multilingual CZXU3ML WebSphere MQ File Transfer Edition V7.0.4 Client for HP-UX on Itanium Multilingual CZXU4ML WebSphere MQ File Transfer Edition V7.0.4 Client for IBM i Multilingual CZXU5ML WebSphere MQ File Transfer Edition V7.0.4 Client for Linux for System x Multilingual CZXU6ML WebSphere MQ File Transfer Edition V7.0.4 Client for Linux for System p 64-bit Multilingual CZXU7ML WebSphere MQ File Transfer Edition V7.0.4 Client for Linux for System z Multilingual CZXU8ML WebSphere MQ File Transfer Edition V7.0.4 Client for Solaris SPARC Multilingual CZXU9ML WebSphere MQ File Transfer Edition V7.0.4 Client for Solaris on x86 Multilingual CZXV0ML WebSphere MQ File Transfer Edition V7.0.4 Client for Windows WebSphere MQ File Transfer Edition Documentation and Tools: CZXV1ML WebSphere MQ File Transfer Edition V7.0.4 Documentation and Tools for AIX Multilingual CZXV2ML WebSphere MQ File Transfer Edition V7.0.4 Documentation and Tools for HP Itanium Multilingual CZXV3ML WebSphere MQ File Transfer Edition V7.0.4 Documentation and Tools for HP-UX on PA-RISC Multilingual CZXV4ML WebSphere MQ File Transfer Edition V7.0.4 Documentation and Tools for Linux for System x Multilingual CZXV5ML WebSphere MQ File Transfer Edition V7.0.4 Documentation and Tools for Linux for System p Multilingual CZXV6ML WebSphere MQ File Transfer Edition V7.0.4 Documentation and Tools for Linux for System z Multilingual CZXV7ML WebSphere MQ File Transfer Edition V7.0.4 Documentation and Tools for Solaris SPARC Multilingual CZXV8ML WebSphere MQ File Transfer Edition V7.0.4 Documentation and Tools for Solaris on x86 Multilingual CZXV9ML WebSphere MQ File Transfer Edition V7.0.4 Documentation and Tools for Windows Multilingual WebSphere MQ: CZJ3PML WebSphere MQ V7.0.1.3 Quick Start Guide for Multiplatform Multilingual CZ4V4ML WebSphere MQ V7.0.1 Documentation for Windows Multilingual CZ4V5ML WebSphere MQ V7.0.1 Documentation for Linux Multilingual CZ4V6ML WebSphere MQ V7.0.1 for Windows Multilingual CZ4V7ML WebSphere MQ V7.0.1 for AIX Multilingual CZ4V8ML WebSphere MQ V7.0.1 for i5/OS Multilingual CZ4V9ML WebSphere MQ V7.0.1 for Solaris on SPARC Multilingual CZ4VAML WebSphere MQ V7.0.1 for Solaris on x86-64 Multilingual CZ4VBML WebSphere MQ V7.0.1 for HP-UX on PA-RISC Multilingual CZ4VCML WebSphere MQ V7.0.1 for HP-UX on Itanium Multilingual CZ4VDML WebSphere MQ V7.0.1 for Linux on x86 32-bit Multilingual CZ4VEML WebSphere MQ V7.0.1 for Linux on x86-64 Multilingual CZ4VFML WebSphere MQ V7.0.1 for Linux on POWER Multilingual CZ4VGML WebSphere MQ V7.0.1 for Linux on System z 64-bit Multilingual CZ4VHML WebSphere MQ Client V7.0.1 for Windows Multilingual CZ4VIML WebSphere MQ Client V7.0.1 for AIX Multilingual CZ4VJML WebSphere MQ Client V7.0.1 for i5/OS Multilingual CZ4VMML WebSphere MQ Client V7.0.1 for Solaris on SPARC Multilingual CZ4VNML WebSphere MQ Client V7.0.1 for Solaris on x86-64 Multilingual CZ4VPML WebSphere MQ Client V7.0.1 for HP-UX on PA-RISC Multilingual CZ4VQML WebSphere MQ Client V7.0.1 for HP-UX on Itanium Multilingual CZ4VRML WebSphere MQ Client V7.0.1 for Linux on x86 32-bit Multilingual CZ4VSML WebSphere MQ Client V7.0.1 for Linux on x86-64 Multilingual CZ4VTML WebSphere MQ Client V7.0.1 for Linux on Power Multilingual CZ4VUML WebSphere MQ Client V7.0.1 for Linux on System z 64-bit Multilingual 
+
+URL LANGUAGE SIZE(Bytes) WebSphere MQ File Transfer Edition System Requirements [http://www.ibm.com/software/integration/wmq/filetransfer/requirements/index.html] English 1 
+INSTALLATION INSTRUCTIONS
+The Quick Start Guide provides a brief introduction to WebSphere MQ File Transfer Edition. The US English language version is available below. Quick Start Guides for other languages are available from the download site as part no. CZXT0ML.
+CF30JML.pdf [/support/docview.wss?uid=swg24029869&aid=2] CF30JML.pdf [/support/docview.wss?uid=swg24029869&aid=1] 
+
+Full installation instructions are provided in the product documentation starting with the following topic:
+
+URL LANGUAGE SIZE(Bytes) WebSphere MQ File Transfer Edition product documentatio [http://www.ibm.com/support/knowledgecenter/SSEP7X_7.0.4/com.ibm.wmqfte.doc/installing_planning.htm] English 1 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options IBM Passport Advantage Online 3/6/11 English 1 HTTP [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] 
+TECHNICAL SUPPORT
+ For Passport Advantage Online support, see:
+http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]
+
+To access technical resources for this product, see the WebSphere MQ File Transfer Edition product home page at: http://www.ibm.com/software/integration/wmq/filetransfer/index.html [http://www.ibm.com/software/integration/wmq/filetransfer/index.html]
+
+To see latest information and technotes, go to the WebSphere MQ support Web site:
+http://www.ibm.com/software/integration/wmq/support/ [http://www.ibm.com/software/integration/wmq/support/] 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ FTE WMQFTE

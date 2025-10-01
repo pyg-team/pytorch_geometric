@@ -1,0 +1,34 @@
+Title: IBM App Connect Enterprise, IBM Integration Bus, IBM Integration Bus Healthcare Pack, IBM Integration Bus Manufacturing Pack, IBM Integration Bus Retail Pack, WebSphere Message Broker, and WebSphere Message Broker Connectivity Pack for Healthcare readme - United States
+
+Text:
+product readme read me w/ RFE Rules and formatter extensions extension release notes PRODUCT README
+
+ABSTRACT
+ The readme files and release notes shipped with IBM App Connect Enterprise, IBM Integration Bus and WebSphere Message Broker products contain information that is as up-to-date as possible at that time, but later information sometimes becomes available. This document gives you access to the latest readme files and release notes. 
+
+CONTENT
+ 
+
+IBM App Connect Enterprise Version 11.0  * IBM App Connect Enterprise [http://www.ibm.com/support/docview.wss?uid=swg27050926]
+
+
+IBM Integration Bus Version 10.0  * IBM Integration Bus [http://www.ibm.com/support/docview.wss?uid=swg27045067] 
+ * IBM Integration Bus Healthcare Pack V4.0 [http://www.ibm.com/support/docview.wss?uid=swg27046040] 
+ * IBM Integration Bus Manufacturing Pack V1.0 [http://www.ibm.com/support/docview.wss?uid=swg27042383]
+
+
+IBM Integration Bus Version 9.0  * IBM Integration Bus [http://www.ibm.com/support/docview.wss?uid=swg27040543] 
+ * IBM Integration Bus Healthcare Pack V3.0 [http://www.ibm.com/support/docview.wss?uid=swg27041697] 
+ * IBM Integration Bus Manufacturing Pack V1.0 [http://www.ibm.com/support/docview.wss?uid=swg27042383] 
+ * IBM Integration Bus Retail Pack V1.0 [http://www.ibm.com/support/docview.wss?uid=swg27040700]
+
+
+IBM WebSphere Message Broker Version 8.0  * WebSphere Message Broker [http://www.ibm.com/support/docview.wss?uid=swg27023600] 
+ * WebSphere Message Broker Connectivity Pack for Healthcare [http://www-01.ibm.com/support/docview.wss?uid=swg27038191]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Message Broker Documentation AIX, HP-UX, Linux, Solaris, Windows, z/OS 8.0 Business Integration WebSphere Message Broker Connectivity Pack for Healthcare Linux, Windows 8.0.0.0 Business Integration IBM Integration Bus AIX, HP-UX, Linux, Solaris, Windows, z/OS 10.0, 9.0 Business Integration IBM Integration Bus Retail Pack AIX, HP-UX, Linux, Solaris, Windows 1.0 Business Integration IBM Integration Bus Healthcare Pack AIX, HP-UX, Linux, Solaris, Windows 4.0.0.0, 3.0 Business Integration IBM Integration Bus Manufacturing Pack AIX, HP-UX, Linux, Solaris, Windows 1.0 Business Integration IBM App Connect Enterprise Documentation Windows, Linux All Editions PRODUCT ALIAS/SYNONYM
+ IIB WBIMB WBIEB WBIMB with RFE MQSI WMQI WMB WEB

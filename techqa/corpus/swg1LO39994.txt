@@ -1,0 +1,170 @@
+Title: IBM LO39994: 211.161 FIX CAUSES ISSUE OPENING MAIL FOR USER WITH UMLAUT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customers environment is at follows:
+   The server is Windows 2003 eng server
+   Domino 8.0.1 english with 211.161 fix applied on Win XP and IE 6
+   
+   
+   I reproduced used Domino 8.0.1 english with 211.161 fix applied
+   on Win XP and IE
+   6.
+   1) I open the mail file of a user whos name does not contain any
+   umlaut
+   or special characters. For this example I used a user called
+   "Ronan
+   Redican"
+   
+   2) I choose the option "Open Mail for...", this is located at
+   the bottom
+   of the options in the left frame underneath "Tools".
+   
+   3) This opens a small seperate window which asks "Select whose
+   mail to
+   open". I select the drop down menu and this opens another
+   seperate
+   window allowing me to select addresses.
+   
+   4) I navigate until I find my desired user named "test       ".
+   I select
+   this user and chose ok. This name is now seen in the "Select
+   whose mail
+   to open" window. I now choose ok.
+   
+   5) This window now hangs, without opening the mailfile. The
+   status bar
+   at the bottom of that window oscillates between "Opening page
+   
+   http://..." and "Done". This appears to be an infinite loop.
+   
+   
+   
+   Using a user without any umlaut in their name shows no issue.
+   
+   
+   This issue lies with fix 211.161
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If HTTP output character set is set to UTF-8, the problem can be
+   avoided.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+ *  A programming error was found but will not be corrected. It will
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# RREN7RJDC4.
+   This is fixed in the upcoming 8.5.1 release.  A hotfix is
+    available through support for 8.0.2 or 8.5
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO39994
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES/DOMINO 7X
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED UR3
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-04-28
+   
+   
+ * CLOSED DATE
+   2009-06-19
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NOTES/DOMINO 7X
+   
+   
+ * FIXED COMPONENT ID
+   5724E6200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R802 PSN
+   UP

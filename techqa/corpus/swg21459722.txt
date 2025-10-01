@@ -1,0 +1,70 @@
+Title: IBM NullPointerException when running ConfigEngine task wp-create-base-entry - United States
+
+Text:
+NullPointerException; ConfigEngine; ADMC0001E; ADMC0008E; LdapCtx; CWWIM5018E; LDAP error code 32; no such object TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The WebSphere Portal ConfigEngine task "wp-create-base-entry" fails with java.lang.NullPointerException. 
+
+SYMPTOM
+ConfigTrace.log contains: 
+
+Add base entry command result: [java.lang.NullPointerException]
+[wplc-create-base-entry] java.lang.NullPointerException
+[wplc-create-base-entry] at org.apache.soap.transport.TransportMessage.read(TransportMessage.java:206)
+[wplc-create-base-entry] at org.apache.soap.util.net.HTTPUtils.post(HTTPUtils.java:682)
+[wplc-create-base-entry] at org.apache.soap.transport.http.SOAPHTTPConnection.send(SOAPHTTPConnection.java:419)
+[wplc-create-base-entry] at org.apache.soap.rpc.Call.WASinvoke(Call.java:451)
+[wplc-create-base-entry] at com.ibm.ws.management.connector.soap.SOAPConnectorClient$8.run(SOAPConnectorClient.java:831)
+[wplc-create-base-entry] at com.ibm.ws.security.util.AccessController.doPrivileged(AccessController.java:118)
+[wplc-create-base-entry] at com.ibm.ws.management.connector.soap.SOAPConnectorClient.invokeTemplateOnce(SOAPConnectorClient.java:824)
+[wplc-create-base-entry] at com.ibm.ws.management.connector.soap.SOAPConnectorClient.invokeTemplate(SOAPConnectorClient.java:669)
+...
+
+The Deployment Manager's SystemOut.log showed the following:
+[datetime] 00000023 JMXObjectOutp E ADMC0001E: Unable to serialize object: com.sun.jndi.ldap.LdapCtx
+[datetime] 00000023 GenericSerial E ADMC0008E: The system failed to marshall the object of type com.ibm.websphere.management.cmdframework.provider.CommandResultImpl: com.sun.jndi.ldap.LdapCtx
+[datetime] 00000022 JMXObjectOutp E ADMC0001E: Unable to serialize object: com.sun.jndi.ldap.LdapCtx
+[datetime] 00000022 GenericSerial E ADMC0008E: The system failed to marshall the object of type com.ibm.websphere.management.cmdframework.provider.CommandResultImpl: com.sun.jndi.ldap.LdapCtx
+
+
+CAUSE
+Invalid LDAP objects
+
+
+DIAGNOSING THE PROBLEM
+Inspect the wkplc.properties to verify correctness of the repository ID, the base entry, the Deployment Manager's hostname, SOAP port, CellName, admin user IDs and passwords. If all settings appear correct, enable the following tracing on the Deployment Manager: 
+
+com.ibm.ws.security.*=all:com.ibm.ws.wim.*=all:com.ibm.websphere.wim.*=all:com.ibm.ws.wsspi.wim.*=all 
+
+ 
+
+Review the trace.log file generated. Observe:
+[datetime] 0000003e ConfigValidat 2
+com.ibm.ws.wim.config.ConfigValidator validateBaseEntryNameInRepository
+validating nameInRepository [\base-entry\]
+[datetime] 0000003e exception 1
+com.ibm.ws.wim.config.ConfigValidator validateBaseEntryNameInRepository
+CWWIM5018E Distinguished name [\<base-entry\>] for base entry in the
+repository is not valid. Root cause is: [LDAP: error code 32 - No Such Object].
+
+
+RESOLVING THE PROBLEM
+After closely reviewing the base entry itself, the base entry was found to be invalid. In this particular case, an "ou=users" was mistyped as "dc=users". After the base entry is corrected and verified, the task was successfully run and the base entry was added. Although this particular case occurred in a cluster, it could also happen in a single server configuration. 
+
+ 
+
+Technical notes: 
+
+1.Certain ConfigEngine tasks do not validate property values, particularly those that specify LDAP-specific entries. Take great caution when you run tasks like "wp-create-base-entry." 
+
+2. Even when the task validates a property, it may not validate all aspects for the supported LDAP server types. When the LDAP returns an error code, verify the property file contents (mainly wkplc.properties) with the LDAP administrator. Use LDAP tools such as ldapsearch for this verification.
+
+RELATED INFORMATION
+ Collecting Data: ConfigEngine for WebSphere Portal [http://www-01.ibm.com/support/docview.wss?uid=swg21636350]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products AIX, HP-UX, IBM i, Linux, Solaris, Windows, z/OS 7.0, 6.1

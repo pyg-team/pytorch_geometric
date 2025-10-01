@@ -1,0 +1,56 @@
+Title: IBM QRadar: Working with QRadar Support over Webex or conference bridge - United States
+
+Text:
+ QUESTION/ANSWER
+
+QUESTION
+What do you need to know about working with QRadar Support over Webex or conference bridge?
+
+ANSWER
+What support can do during a Webex or conference bridge? 
+
+ * Collaborative discussion across teams (DBA, Network team, Windows admin)
+ * Share findings
+ * Discussion of next steps after sharing findings
+ * Periodic checkpoints or recaps on QRadar appliance status, data collection, or action items.
+ * Clarification of data request or steps
+
+
+What support cannot do during a Webex? 
+
+ * Support will not join for no reason. There needs to be a specific task to be accomplished beforehand.
+ * Collecting data where the instructions are well documented.
+ * Analyzing data. Support is most effective with data in hand, reviewing it offline. This is generally the best use of time for both support and the user.
+ * Basic solution implementation. If a workaround or process is well documented, support is not required to be on a Webex to implement this. This is the responsibility of the QRadar administrator.
+ * Waiting on progress of an upgrade or rebuild (or other time consuming process) to monitor when there is nothing that is broken. If something were to happen during the process, update the case and an engineer will contact you back as soon as possible.
+
+
+You cannot use Webex for security purposes, how do you proceed? 
+If Webex is not an option in your environment, it's best to make note of this at the beginning of the case so the engineer knows up-front. When Webex is not an option, it is important to provide a clear, precise description of the problem, including exact error messages when available.
+
+If logs are able to be uploaded to the case, the engineer is able to review these offline and provide you with further details after review. If you cannot upload logs due to security reasons, a phone call is generally required to troubleshoot the issue together.
+
+What do you need to know before requesting a conference call or Webex? 
+Before requesting a Webex or conference call with multiple parties, it is best to give a thorough explanation of the issue you are facing. Provide problem details and appropriate data in the case before requesting this (or over a direct call with the engineer). This ensures that the engineer has a clear understanding of the problem and is able to begin troubleshooting the issue right away when on Webex or explaining over a conference call.
+
+How to reschedule a meeting? 
+If you are unable to attend a Webex meeting that was previously scheduled with an engineer, update the case to let the engineer know about this. The earlier you can alert them, the better it is for support. If you need to reschedule, provide your availability so that another session can be arranged.
+
+Before you begin and who is required? 
+Depending on the issue, it might be necessary to align with other teams before the meeting. For example, if you are working an issue with accounts not working, it might be required to have the LDAP/AD admins available. If there is a certain network issue that you are troubleshooting, having a network administrator available might be required. Generally, support will mention this beforehand but the issue might not surface until after the meeting is started.
+
+Security (screen captures) and what you need to know. 
+Screen captures are sometimes required to help your Support Representative reproduce or resolve an issue. Support Representatives are not permitted to record or copy from a remote session at any time. The customer can opt to record or share screen captures that are taken and upload them to the case.
+
+What to do if your Webex or conference bridge is disconnected? 
+
+ * If your Webex meeting ends unexpectedly, wait a few minutes and try to join the meeting again. If it is still not active, update the case
+ * If conference bridge information was shared prior, rejoin the call
+ * If you provided a direct phone number to reach you, the engineer will try to reach you directly
+
+Where do you find more information? 
+
+
+
+
+[https://www-prd-trops.events.ibm.com/sites/default/files/support/swg/sectech.nsf/0/b0c3bf589b7386d285257c8c0049b8b7/Content/0.E6C.png] [http://ibm.biz/QRadar-KC][https://www-prd-trops.events.ibm.com/sites/default/files/support/swg/sectech.nsf/0/b0c3bf589b7386d285257c8c0049b8b7/Content/0.1B74.png] [https://ibm.biz/qradarforums][https://www-prd-trops.events.ibm.com/sites/default/files/support/swg/sectech.nsf/0/b0c3bf589b7386d285257c8c0049b8b7/Content/0.2780.png] [http://ibm.biz/qradarknowledge][https://www-prd-trops.events.ibm.com/sites/default/files/support/swg/sectech.nsf/0/b0c3bf589b7386d285257c8c0049b8b7/Content/0.3408.png] [http://ibm.biz/SecSuptUTube][https://www-prd-trops.events.ibm.com/sites/default/files/support/swg/sectech.nsf/0/b0c3bf589b7386d285257c8c0049b8b7/Content/0.4044.png] [http://ibm.biz/qradarsoftware][https://www-prd-trops.events.ibm.com/sites/default/files/support/swg/sectech.nsf/0/b0c3bf589b7386d285257c8c0049b8b7/Content/0.4F9C.png] [http://ibm.biz/MyNotification][https://www-prd-trops.events.ibm.com/sites/default/files/support/swg/sectech.nsf/0/b0c3bf589b7386d285257c8c0049b8b7/Content/0.5CC6.png] [http://ibm.biz/SuptRegQuikStart]

@@ -1,0 +1,28 @@
+Title: IBM Unable to find the data source ' ' in the content store - United States
+
+Text:
+datasource QE-DEF-0288 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Checking the data source properties of the package will show no value even though the data source exist in Cognos administration's data source and test of such data source return successful. 
+
+SYMPTOM
+Check of data source properties of the package will show no value.
+Run a simple report studio query against the package using system administrator will return QE-DEF-0288 Unable to find the data source ' ' in the content store.
+
+
+CAUSE
+The name of the data source as used by the package has html special characters ?? tagged to the name of the data source used. 
+
+ENVIRONMENT
+Windows
+
+DIAGNOSING THE PROBLEM
+(1) Check to ensure that the data source exist and have the relevant permissions and will test connection without issue.
+(2) Check the properties of the data source properties of the package
+(3) Run a simple query against the package in Report Studio when login as a system administrator 
+(4) Check the cogserver.log and the datasource nameofdatasourceâ€- was query successfully but noted special characters tag at the end of the name as defined. Such html special characters may not show in any html session but will cause abnormal result by any html or xml parser.
+(5) Do a deployment export of the package including the datasource and verify the details of the datasource in the dataSource.xml. Check for the name of the datasource involved and it shows nameofdatasourceâ€- while we expect the name should be nameofdatasource.
+
+RESOLVING THE PROBLEM
+Delete the problematic datasource as defined cognos administration->configuration->datasource and recreate the datasource by manually typing in the values. Once done check the properties of the datasource for the package and ensure it does show the name of the datasource used by the package. Then run a simple query against the package to ensure it properly resolve the datasource name.

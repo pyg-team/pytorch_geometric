@@ -1,0 +1,17 @@
+Title: IBM Unable to select an interview questionnaire when creating a new interview. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to create a new interview, an existing interview questionnaire that is active does not show up in the Resource Chooser list. 
+
+SYMPTOM
+An active interview questionnaire does not show up in the Resource Chooser to be selected.
+
+
+CAUSE
+A question in the interview questionnaire is of type "Confirmation" question.
+
+RESOLVING THE PROBLEM
+A confirmation question is only valid for a hold created with a virtual interview. If you are trying to create a standalone interview, make sure that the interview questionnaire does not have any confirmation question(s). If they do, you can edit the question to make it a choice question instead. After making the change and saving the questionnaire, you will be able to see it in the interview plan.

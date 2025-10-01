@@ -1,0 +1,49 @@
+Title: IBM A large number of amqrmppa processes spawn very quickly in a WebSphere MQ system - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A large number of amqrmppa channel pooling processes are spawned in a WebSphere MQ (WMQ) V7.0 or V6.0 system. 
+
+SYMPTOM
+The number of spawned amqrmppa processes increases and can reach the maxuproc limit of the operating system, which can cause a queue manager outage.
+
+
+CAUSE
+IPCC resource issues could be a common cause. 
+When a MQCONN request is received by the runmqlsr process, and there no active amqrmppa processes listed in shared memory segments, the runmqlsr process starts a new amqrmppa process. However, the runmqlsr process fails to communicate with the newly started amqrmppa process because of shared memory communication issues. The runmqlsr process instead starts a new thread and writes an error message. The amqrmppa process is left orphaned waiting for a connect request that will never arrive. This process is repeated for each MQCONN request, with a new amqrmppa process started for each client MQCONN. 
+
+There are two possible scenarios that cause this problem.
+
+Scenario 1:
+The last time the queue manager ended, the system V shared memory was manually cleaned-up using ipcrm, and the WMQ listener was left running. When the queue manager restarts it has no knowledge of the original listener process. The original runmqlsr process still attaches to the original shared memory segment, however, the amqrmppa process started by the original runmqlsr process attaches to a new shared memory segment. The original runmqlsr process can not communicate with a new amqrmppa process because different shared memory segments are used for each process.
+
+Scenario 2:
+Two queue managers are running on both nodes or the MQ IPCC directory is not stored in a local disk in a HA setup.
+
+
+RESOLVING THE PROBLEM
+If this problem occurs, a solution is as follows:
+
+
+1) Stop listener and queue manager, and ensure that no orphaned listener processes exist.
+#runmqsc <qmgr name>
+stop listener( listener name)
+or
+endmqlsr -m <qmgr name>
+then
+#endmqm -i < qmgr name>
+
+2) Clear orphaned WebSphere MQ shared memory resources. For further information see the following Knowledge Center topic, "Clearing WebSphere MQ shared memory resources [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.0.1/com.ibm.mq.amqzag.doc/fa22720_.htm]":
+
+
+3) Restart the queue manager.
+#strmqm <qmgr name>
+
+Note: For scenario 2, you must correct the initial trigger factor first. The queue manager should be running on only one node, and the MQ IPCC directory should be stored in a local disk in an HA set up before implementing the solution.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ MQSeries

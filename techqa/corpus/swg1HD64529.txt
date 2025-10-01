@@ -1,0 +1,215 @@
+Title: IBM HD64529: DOCUMENTATION: EXPORTING CLASH RESULTS GEOMETRY - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DOCUMENTATION: EXPORTING CLASH RESULTS &
+   GEOMETRY IN XML FORMATS NOT CLEAR.
+   .
+   SCENARIO.
+   Documentation:
+   CATIA Documentation- > Product Synthesis- >
+   DMU Space Analysis- > Exporting Clash Results &
+   Geometry in XML Format
+   .
+   .
+   Observation.
+   1. The role and relevance of "First XML Type"
+   and "Second XML Type" are not clear
+   2. The relevance of "First XML Type, Second XML
+   Type" and "UnifiedStyleSheet.xsl, Clash.xsl" is not
+   clear
+   3. The result of the combination of "XML Export for
+   clash process purpose" and "Federated XML output"
+   is not clear
+   4. Can not understand the meaning of the
+   described Filter
+   5. Explanation of "XML Export for clash process
+   purpose" is not clear
+   6. Explanation of Filter Options is not clear
+   .
+   .
+   Expected Results.
+   .
+   1. The role of First XML Type and Second XML Type
+   should be clear.
+   2. The relevance of "First XML Type, Second XML
+   Type" and "UnifiedStyleSheet xsl, Clash xsl" should
+   be clear.
+   3. The result of the combination of "XML Export for
+   clash process purpose" and "Federated XML output"
+   should be clear.
+   4. Filter used in the First XML Types should be clear.
+   5. Explanation of XML files for standalone clash
+   process and not standalone clash process should
+   be clear.
+   6. Filter used in the Second XML Type should be
+   clear.
+   .
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  DOCUMENTATION: EXPORTING CLASH RESULTS  GEOMETRY
+   IN XML FORMATS NOT CLEAR.
+   DOCUMENTATION: EXPORTING CLASH RESULTS &
+   GEOMETRY IN XML FORMATS NOT CLEAR.
+   .
+   SCENARIO.
+   Documentation:
+   CATIA Documentation- > Product Synthesis- >
+   DMU Space Analysis- > Exporting Clash Results &
+   Geometry in XML Format
+   .
+   .
+   Observation.
+   1. The role and relevance of "First XML Type"
+   and "Second XML Type" are not clear
+   2. The relevance of "First XML Type, Second XML
+   Type" and "UnifiedStyleSheet.xsl, Clash.xsl" is not
+   clear
+   3. The result of the combination of "XML Export for
+   clash process purpose" and "Federated XML output"
+   is not clear
+   4. Can not understand the meaning of the
+   described Filter
+   5. Explanation of "XML Export for clash process
+   purpose" is not clear
+   6. Explanation of Filter Options is not clear
+   .
+   .
+   Expected Results.
+   .
+   1. The role of First XML Type and Second XML Type
+   should be clear.
+   2. The relevance of "First XML Type, Second XML
+   Type" and "UnifiedStyleSheet xsl, Clash xsl" should
+   be clear.
+   3. The result of the combination of "XML Export for
+   clash process purpose" and "Federated XML output"
+   should be clear.
+   4. Filter used in the First XML Types should be clear.
+   5. Explanation of XML files for standalone clash
+   process and not standalone clash process should
+   be clear.
+   6. Filter used in the Second XML Type should be
+   clear.
+   .
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS MODIFICATION WILL BE INCLUDED IN
+   CATIA DOCUMENTATION DELIVERED WITH
+   CATIA VERSION 5 RELEASE 18.
+   Documentation Reference.
+   DMU Space Analysis User Tasks
+   Exporting Clash Results and Geometry in
+   XML  Format
+   Modification.
+   Topic First XML modified ?
+   Exporting Clash Results Using First XML-
+   Example
+   Exporting Clash Results Using First XML -
+   Products from ENOVIA V5 database
+   Batch Processing XML Export
+   Topic Second XML modified ?
+   Customizing Second XML Format Type
+   Options Visualizing clash results
+   Filtering Clash Results XML Grammar
+   Exporting Clash Results - Example
+   Exporting Clash Results Using Second XML -
+   Products from ENOVIA V5 database
+   Batch Processing XML Export
+   Topic XML Export: Recommendations and
+   Warnings added ? Recommendations
+   Important Warnings
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD64529
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   517
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-05-24
+   
+   
+ * CLOSED DATE
+   2007-05-30
+   
+   
+ * LAST MODIFIED DATE
+   2007-05-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

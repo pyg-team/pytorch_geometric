@@ -1,0 +1,67 @@
+Title: IBM How does a Full Merge impact performance and distributed indexing rebasing? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ A customer has a collection that totals over 90GB and they are using 7.5-8.
+
+They have multiple index files and the 'full merge' option would obviously merge them into one.
+
+What are implications on the following:
+
+<ol>
+<li>Performance - Does having a single index file make query performance worse? Does having a single index affect the optimal configuration for the # of document readers?</li>
+<li>Distributed Indexing - After doing a full merge... we have one index file... so if the customer has to do a manual rebase, does this mean the entire index file will be sent at once during the rebase or will it be broken into chunks and sent to the collection that is being rebased? The customer seems to believe that the entire index file will be sent and that would be bad to send that large of a file all at once. (I simply don't know)</li>
+</ol>
+
+What other caveats are there for using full merge on a large index? (I already know it will take a while) How is performance impacted after the full merge is done? Does doing a full merge save disk space?
+
+Why is doing a full merge a good thing? Is there any time it is a bad thing? 
+
+ANSWER
+
+
+First to address your two points:
+
+
+
+ 1. 
+ 2. Performance should probably improve but worst case it would be exactly the same as having many indices. Either way you shouldn't make performance worse. The reason it might actually improve could be due to deletes being purged (see below) and documents having their data relocated in the index so that it's "closer together" proximity-wise which could help with IO. This will especially be true on a machine that doesn't have super fast disks.
+ 3. 
+ 4. Yes if a rebase occurs at any point in time all index files need to be sent in their entirety. I can't speak to the internals but I'm pretty sure that rebasing is very similar to old-school remote push and I believe in both instances that if an error is encountered during the process there isn't a "recover from where I left off" mechanism AFAIK. This means that it would need to start over and copy all index files - even if there were multiple. 
+ 5. 
+
+
+
+Doing a full merge will actually result in "saving" disk space but that is only true if your index had updates / deletes prior to the merge. Imagine a scenario where you have 1 million documents in a single index and then you delete 999k documents and each of those deletes were in a separate index from the one I previously mentioned (yes this is contrived, I know). Since we don't actually remove something from an index when an item is updated / deleted until it is merged with its delete reference you're still left with the space from the 1 million documents + any space required for the 999k delete references that tell the index to ignore those documents. Also you incur a performance hit of having to check which documents are / aren't deleted (even if it's small). 
+
+
+
+In the above scenario doing a full merge would end up completely removing 999k documents and their delete references and only leave you with an index that contains the 1k documents that remain.
+
+
+
+If your index files didn't actually contain any delete references then I don't think there is any significant storage benefit.
+
+
+
+Merging is essentially a background optimization task and usually you don't need intervene with the automatic process. However depending on the specific customer requirements around data being added, removed, updated (remember updates append to an index but don't actually remove the previous data until it's merged - similar to how deletes work), etc. it could be useful to perform weekly / monthly / regular full merging.
+
+>  
+Yes if a rebase occurs at any point in time all index files need to be sent in their entirety. I can't speak to the internals but I'm pretty sure that rebasing is very similar to old-school remote push and I believe in both instances that if an error is encountered during the process there isn't a "recover from where I left off" mechanism AFAIK. This means that it would need to start over and copy all index files - even if there were multiple. 
+
+
+
+
+
+This is correct. The rebase operation is essentially a way to initiate the old-school remote push at any point in the server's crawl. When a rebase is requested, the server drops into a pseudo 'read-only' mode, copies all of its .sqlt and index files to a temporary directory, exits the pseudo 'read-only' mode, sends all of copied files to the client, and then deletes the temporary files after the transfer finishes (or fails). 
+
+
+
+I'm not sure why the customer is worried about sending a large file at once vs. smaller files. We mention the recovery case, but if we encounter any error along the way the rebase will need to start from scratch, regardless of the successful transfer of some subset of the files.
+
+ 
+
+HISTORICAL NUMBER
+ 1379

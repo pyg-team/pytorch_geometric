@@ -1,0 +1,151 @@
+Title: IBM OA40445: ITM6.2.3 FP1 HUB SDA RACE CONDITION - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An SDA Agent connected to either a HUB TEMS or a Remote TEMS
+   (i.e. IP
+   xx.xx.xx.03) that is a higher version than the
+   agent currently SDA installing (i.e. IP xx.xx.xx.00) at either
+   the HUB
+   or this local Remote TEMS, can be mistakenly rejected
+   as not being needed for SDA install.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All TEMS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: SELF DESCRIBING AGENT (SDA)             *
+   *                      INSTALLATION REJECTED.                  *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   If a Self Describing Agent (SDA) connected to a monitoring
+   server is a higher version (i.e. IP xx.xx.xx.03) than
+   another Self Describing Agent (i.e. IP xx.xx.xx.00)
+   currently being installed on the monitoring server, then
+   Self Describing Agent currently being installed can be
+   mistakenly rejected as not being needed because it is
+   backlevel. Multiple versions of a Self Describing Agent are
+   allowed to be installed on the same system.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been changed to properly install all unique
+   versions.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA40445
+   
+   
+ * REPORTED COMPONENT NAME
+   MGMT SERVER DS
+   
+   
+ * REPORTED COMPONENT ID
+   5608A2800
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-21
+   
+   
+ * CLOSED DATE
+   2012-10-03
+   
+   
+ * LAST MODIFIED DATE
+   2012-11-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IV20904 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV20904]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  KFACOM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MGMT SERVER DS
+   
+   
+ * FIXED COMPONENT ID
+   5608A2800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY UA66835 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA66835]
+   UP12/10/15 P F210
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,28 @@
+Title: IBM ITCAM for SOA (Service Oriented Architecture) Agent will not start - United States
+
+Text:
+CAMSOAALL CAMSOAAGENT CAMSOARF SOA Agent start "7.2" "7.2 FP1" TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ITCAM for SOA Agent (D4 Agent) simply will not start or crash after processing few metric logs. 
+
+SYMPTOM
+Start D4 Agent failed 
+
+
+CAUSE
+Small amount of metric logs can be a reason in ITCAM for SOA 7.2 and 7.2 FP1 version
+
+ENVIRONMENT
+ITCAM for SOA 7.2, and 7.2 FP1
+
+RESOLVING THE PROBLEM
+The actual fix is with ITCAM for SOA 7.2 FP1 ifix 1.
+Workaround :
+1. Delete all the entry under KD4.DCA.CACHE directory.
+2. Start SOA Agent.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for SOA

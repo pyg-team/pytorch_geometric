@@ -1,0 +1,181 @@
+Title: IBM IT20227: DELETION OF A DATASOURCE ERRORS WITH: BPCUI0002E 'FAILED TO RETRIEVE THE REQUESTED DATA BECAUSE THE SERVICE IS UNAVAILABLE'. - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+IBM Spectrum Control V5.2.15 (August 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043749]
+IBM Spectrum Control V5.2.15.2 (November 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24044286]
+IBM Spectrum Control V5.2.16 (March 2018) [http://www-01.ibm.com/support/docview.wss?uid=swg24044454]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Attempting to delete a DataSource (i.e. Vcenter) in Web UI
+   will produce error:  BPCUI0002E
+   
+   web ui trace:
+   
+   2017-04-11 10:35:15.569-05:00 0
+   com.ibm.tpc.gui.filter.RESTSaaSFilter doFilter Exit
+   Thread[WebContainer : 11,5,main]
+   2017-04-11 10:35:15.600-05:00 -8855084028915006031
+   com.ibm.tpc.internal.api.services.impl.DeviceManagerServiceImpl
+   deleteDevices Exception occured: HWN021802E Experienced SQL
+   problems while working with database: DB2 SQL Error:
+   SQLCODE=-104, SQLSTATE=42601, SQLERRMC=(;26 AND CFG_VALUE
+   IN;<in_predicate_value>, DRIVER=4.19.49.
+     com.ibm.tpc.common.api.TPCServerException: HWN021802E
+   Experienced SQL problems while working with database: DB2 SQL
+   Error: SQLCODE=-104, SQLSTATE=42601, SQLERRMC=(;26 AND CFG_VALUE
+   IN;<in_predicate_value>, DRIVER=4.19.49.
+   ...
+   ...
+   ...
+   2017-04-11 10:35:15.600-05:00 -8855084028915006031
+   com.ibm.tpc.gui.rest.asset.DeleteTask run Exception while
+   running task: null
+     com.ibm.tpc.internal.api.TPCInternalAPIException: BPCUI0002E
+   ________________________________________________________
+   DB2 Version used for Server:  N/A
+   The defect is against component:  Servers
+   Server/Manager build/release (TPC):  5.2.12
+   Agent build/release (TPC):  N/A
+   Server/Manager (OS):  WIN2008
+   Agent (OS):   N/A
+   ________________________________________________________________
+   Problem as described by customer:  Unable to delete datasource
+   Initial customer impact (low/med/high): low
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Fix is available in v.5.2.13+
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * IBM Spectrum Control 5.2.x users who have vCenters with no   *
+   * hypervisors.                                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Deletion of empty vCenters from IBM Spectrum Control may     *
+   * fail because of an SQL exception.                            *
+   * This APAR fixes the SQL exception.                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fix maintenance when available                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is targeted for the following maintenance
+   package:
+   
+   | refresh pack | 5.2-TIV-TPC-RP0015 - target August 2017
+   
+   Fixed in IBM Spectrum Control 5.2.15
+   
+   http://www.ibm.com/support/docview.wss?&uid=swg21320822 [http://www.ibm.com/support/docview.wss?&uid=swg21320822]
+   
+   The target dates for future refresh packs do not represent a
+   formal commitment by IBM. The dates are subject to change
+   without notice.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT20227
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPCA0
+   
+   
+ * REPORTED RELEASE
+   52D
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-04-26
+   
+   
+ * CLOSED DATE
+   2017-06-23
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5608TPCA0
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R52C PSY
+   UP

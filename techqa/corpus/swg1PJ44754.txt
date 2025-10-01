@@ -1,0 +1,181 @@
+Title: IBM PJ44754: CANNOT CREATE INDEX JOBS FOR DOCUMENTS WITH TITLES LONGER THAN 64 CHARACTERS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ACCE cannot create index jobs for documents with titles longer
+   than 64 characters.
+   
+   When trying to index a single document with a long
+   DocumentTitle, the following error occurs:
+   2017-03-07T09:52:00.045 45F0ABCB ENG  FNRCE0010E - ERROR method
+   name: validatePropertyValue principal name: p8iccuser Global
+   Transaction: true User Transaction: false Exception Info: The
+   value given for a property or list element lies outside the
+   permitted range or value set, or exceeds the maximum length
+   allowed. The length of the value (65) specified for property
+   DescriptiveText exceeds the maximum permitted length (64).
+   \ncom.filenet.api.exception.EngineRuntimeException: FNRCE0010E:
+   E_BAD_VALUE: The value given for a property or list element lies
+   outside the permitted range or value set, or exceeds the maximum
+   length allowed. The length of the value (65) specified for
+   property DescriptiveText exceeds the maximum permitted length
+   (64)
+   
+   The reason for the failure is that when creating the index job,
+   CPE tries to copy the DocumentTitle into the DescriptiveText
+   property of the index job, which is limited to 64 characters.
+   
+   Steps to reproduce:
+   1. Create a new document with a DocumentTitle property longer
+   than 64 characters.
+   2. Access the document in ACCE
+   3. Go to Action -> Index -> Index for Content Search
+   Result:  No error in ACCE, but the error is displayed in the
+   logs, and the requested document is not indexed.
+   
+   ACCE should truncate the Document Title property to 64
+   characters when it is copied into the Descriptive Text property
+   of the index job.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround: Create a search for this specific document and
+   enable Bulk Actions -> Index for Content Search.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ACCE users of 5.2.1.7-P8CPE-IF002 and prior.                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When trying to index a single document with a long           *
+   * DocumentTitle, the following error occurs:                   *
+   * 2017-03-07T09:52:00.045 45F0ABCB ENG  FNRCE0010E - ERROR     *
+   * method name: validatePropertyValue principal name: p8iccuser *
+   * Global Transaction: true User Transaction: false Exception   *
+   * Info: The value given for a property or list element lies    *
+   * outside the permitted range or value set, or exceeds the     *
+   * maximum length allowed. The length of the value (65)         *
+   * specified for property DescriptiveText exceeds the maximum   *
+   * permitted length (64).                                       *
+   * \ncom.filenet.api.exception.EngineRuntimeException:          *
+   * FNRCE0010E: E_BAD_VALUE: The value given for a property or   *
+   * list element lies outside the permitted range or value set,  *
+   * or exceeds the maximum length allowed. The length of the     *
+   * value (65) specified for property DescriptiveText exceeds    *
+   * the maximum permitted length (64)                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.2.1.7-P8CPE-IF003 or 5.5.0.0-P8CPE or higher.   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.2.1.7-P8CPE-IF003and 5.5.0.0-P8CPE and higher.
+   When creating the index job, CPE tries to copy the DocumentTitle
+   into the DescriptiveText property of the index job, while
+   copying truncated the DescriptiveText more than 64characters.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ44754
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   521
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-05-01
+   
+   
+ * CLOSED DATE
+   2018-01-11
+   
+   
+ * LAST MODIFIED DATE
+   2018-06-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,161 @@
+Title: IBM HD64596: CATALOG : GHOST LINK ARE DISPLAYED WITH EXISITING CATALOG FILES - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CATALOG : GHOST LINK ARE DISPLAYED WITH
+   EXISITING CATALOG FILES.
+   .
+   Scenario:
+   1. Open the Catalog File in CATIA
+   2. Click on File ? Send to
+   .
+   OBSERVATION:
+   1. A ghost ling with the other catalog file is
+   observed.
+   .
+   EXPECTED RESULT:
+   There should not be any ghost link to the other
+   catalog file
+   .
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  CATALOG : GHOST LINK ARE DISPLAYED WITH EXISITING CATALOG FILES
+   CATALOG : GHOST LINK ARE DISPLAYED WITH
+   EXISITING CATALOG FILES.
+   .
+   Scenario:
+   1. Open the Catalog File in CATIA
+   2. Click on File ? Send to
+   .
+   OBSERVATION:
+   1. A ghost ling with the other catalog file is
+   observed.
+   .
+   EXPECTED RESULT:
+   There should not be any ghost link to the other
+   catalog file
+   .
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  null
+   ==========*===========*==========
+   THIS PROBLEM WILL BE FIXED ON CATIA VERSION
+   5 RELEASE 19 GA level.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED
+   ON V5R18SP01 AND ON V5R17SP07.
+   .
+   Incident Diagnosis
+   GHOST LINK ARE DISPLAYED WITH EXISITING
+   CATALOG FILES
+   .
+   Correction Explanation
+   A description instance has a reference in another
+   document. A new CATDUA rule CCL_6 cleans the
+   existing ghost link.
+   .
+   Answer and By-Pass
+   None
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD64596
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   516
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-05-28
+   
+   
+ * CLOSED DATE
+   2007-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2007-10-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569151000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R518 PSN SP51801
+   UP07/10/01 I 1000

@@ -1,0 +1,33 @@
+Title: IBM What characters cannot be used for a FileNet Content Engine bootstrap user password? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Issues encountered when changing the bootstrap user password to include special characters. 
+
+Attempts to [activity performed] result in [what happened - 'error'] when using FileNet Platform.
+We had to change password for Bootstarp admin user and we are running into issues with the password that has special characters but it is working fine with a password that has no special characters. 
+As per our company policy password should have at least one special character. Current password with which we are running into issues has special characters (' = ; $ !). 
+
+SYMPTOM
+The password verification for the 'uszdmadm1' principal name failed. Root cause: 'javax.naming.AuthenticationException: [LDAP: error code 49 - 80090308: LdapErr: DSID-0C090334, comment: AcceptSecurityContext error, data 52e, vece]; Resolved object: 'com.sun.jndi.ldap.LdapCtx@25282528''.. 
+
+[3/28/12 14:24:35:344 CDT] 0000003b SystemOut O [WSIAuthenticatorImpl] login exception: CWWIM4529E The password verification for the 'uszdmadm1' principal name failed. Root cause: 'javax.naming.AuthenticationException: [LDAP: error code 49 - 80090308: LdapErr: DSID-0C090334, comment: AcceptSecurityContext error, data 52e, vece]; Resolved object: 'com.sun.jndi.ldap.LdapCtx@25282528''.
+
+
+CAUSE
+Could not authenticate the user trying to login. This is a result of an incorrect username or password, or an incorrect prefix and/or suffix specified in the Settings tab, depending on the type of LDAP/AD system. Could also mean the authentication type is incorrect. Also an incorrect username attribute or incorrect name attribute can cause this. Common cause of this error is a user trying to login with DOMAIN\login instead of just login. 
+
+
+RESOLVING THE PROBLEM
+There is a limitation in the name and/or password used for the WebSphere accounts. 
+
+If the user ID contains a special character (namely, "#", "," , "+", """, "\", "", "<", ">" or ";"), the unique name that is generated has an escape sequence consisting of a backslash (\) preceding the special character. 
+
+The above characters, which also include the ";", should be avoided from the password. 
+
+This is not a defect but a documented limitation in WebSphere.
+
+RELATED INFORMATION
+ Related WAS 8.5.5 documentation [https://www-01.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.nd.doc/ae/csec_chars.html]

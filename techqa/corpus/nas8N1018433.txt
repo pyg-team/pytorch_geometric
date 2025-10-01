@@ -1,0 +1,28 @@
+Title: IBM Multiple File Join Download Using Client Access/400 Data Transfer - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes how to download more than two files and return records with missing fields when using Client Access or IBM iSeries Access Data Transfer. 
+
+RESOLVING THE PROBLEM
+How can I download three or more files through Client Access or IBM iSeries Access Data Transfer and return records with missing fields? 
+
+Important Note: This document discusses Client Access for Microsoft Windows 95 and Windows NT, Client Access Express, IBM iSeries Access, and IBM System i Access products. These names essentially refer to the same product; however, the functionality and name changed over the last several releases. For the purposes of this document, the terms Client Access, Client Access Express, iSeries Access, and System i Access can be used interchangeably. Where a difference is important, the version of the product is used to identify the differences. 
+Occasionally, you might want to transfer multiple files to the PC using Data Transfer and the Join By option when clicking on the Data Options button and bringing up the Change Data Options pane. In cases where you want to join more than two files and do not want to receive records with missing fields, this method works. In cases where you want to join only two files, this method also works. However, in cases where you must join three or more files on a download and wish to return records with missing fields, this method does not work. There are no error messages, and the transfer completes normally. However, you do not receive all the records you expect. Data transfer runs as though you had not selected the option to return records with missing fields. 
+
+Note: This document is offered as an example of how to perform a multiple file left outer join. Assistance with designing custom transfer requests and SQL select statements is the responsibility of the user. 
+
+Because Client Access and iSeries Access Data Transfer now use the optimized database server, it is based on SQL and follows the same syntax rules. If Return records with missing fields is not selected, an Inner Join is performed by Data Transfer. However, if Return records with missing fields is selected, a Left Outer Join is performed. Data Transfer is not currently able to perform the level of parsing required for such a download of three or more files and, therefore, performs an Inner Join. This has been a permanent restriction for V3R1M0, V3R1M1, V3R1M2, V3R1M3, and V3R2M0 versions of Client Access for Windows 95/NT. This is also a restriction when using all versions of Client Access Express and iSeries Access for Windows. To perform such a download, you must be running at least V3R1M3 or create a logical file that handles the join first. 
+
+Starting with V3R1M3 version of Client Access, a new option to send the request by manually typing in your own SQL statement is now available. To download more than two files including missing fields, you must select the option to process as native SQL (available by selecting Properties and the SQL tab). When you select Details from the transfer screen, you are shown the Change SQL Select Options screen. In the SQL Select statement section, type the SQL statement for your transfer request. Returning records with missing fields for three or more files should be the only time you have to use this option. Following is an example of an SQL statement that uses LEFT OUTER JOIN to return missing records when joining three files. 
+
+SELECT * FROM lib1/file1 as T1 LEFT OUTER JOIN lib2/file2 as T2 on T1.fieldnam=T2.fieldnam LEFT OUTER JOIN lib3/file3 as T3 ON T2.fieldnam=T3.fieldnam 
+
+where lib1, lib2, and lib3 are the libraries and file1, file2, and file3 are the files that you wish to download. Additional options are supported in conjunction with the above select statement, for example, WHERE, ORDER BY, and GROUP BY. Refer to the SQL Programming Guide and the SQL Reference for additional information regarding implementation of native SQL.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 
+HISTORICAL NUMBER
+ 11222442

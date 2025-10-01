@@ -1,0 +1,52 @@
+Title: IBM Noapp service fails to start after enabling verbose gc in Sterling Integrator - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Noapp service fails to start after enabling verbose gc log through performance.properties, that is, setting ENABLE_VERBOSE_GC=true.
+
+
+
+
+
+
+ENVIRONMENT
+Sterling Integrator 5.2.4 running with IBM JDK
+
+RESOLVING THE PROBLEM
+This is a known issue and has been fixed in Sterling Integrator 5.2.4.1. 
+
+
+For patch versions prior to 5.2.4.1 use the following workaround: 
+
+Manually edit the InstallNoappsWindowsService.cmd.in as stated below:
+
+1. Traverse to <SI_INSTALL>\bin directory 
+2. Stop Sterling Integrator
+3. Under <SI_INSTALL>\bin look for InstallNoappsWindowsService.cmd.in
+4. Make a backup of the file and store it for recovery purposes 
+
+5.Search for the below content: 
+
+if "&ENABLE_VERBOSE_GC;" EQU "true" ( echo -verbose\:gc>> %PARAM_FILE% 
+set out_path=&LOG_DIR_WIN;\verbosegc.log 
+set out_path=%out_path:\=\\% 
+set out_path=%out_path::=\:% 
+if "%IBM_JDK%" EQU "true" (
+
+Replace as follows:
+
+set out_path=&LOG_DIR_WIN;\verbosegc.log
+set out_path=%out_path:\=\\%
+set out_path=%out_path::=\:% 
+
+if "&ENABLE_VERBOSE_GC;" EQU "true"
+( echo -verbose\:gc >> %PARAM_FILE% if %IBM_JDK% EQU
+"true" ( 
+
+ 
+
+6. Edit Performance.properties.in to add EnableVerboseGc=true
+7. Run setupfiles.cmd
+8. Start Sterling Integrator

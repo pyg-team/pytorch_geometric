@@ -1,0 +1,27 @@
+Title: IBM Unable to take thread dump and verbose gc log together. - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to take thread dump and verbose gc log together. 
+
+SYMPTOM
+
+
+Customer is on GIS 4.3 on Solaris. 
+
+Customer is taking thread dump periodically using a cronjob and the thread dump goes into the noapp.log properly. Though GC information logged initially once thread dump is taken it’s stopped logging GC info.
+
+Error Message No Error Message. Once thread dump is taken no more GC information logged.
+
+
+RESOLVING THE PROBLEM
+
+
+Taking thread dump with root user caused the problem. So make sure whether you are taking thread dump with correct user.
+
+ 
+
+HISTORICAL NUMBER
+ NFX7950

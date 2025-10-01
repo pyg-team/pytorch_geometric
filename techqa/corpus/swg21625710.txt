@@ -1,0 +1,75 @@
+Title: IBM Migrating user roles and settings in TDWC v8.6 - United States
+
+Text:
+migrate; TDWC; 8.6; user; roles; userroles; customizations; settings; preferences; move; copy; replicate TECHNOTE (FAQ)
+
+QUESTION
+ In a non-High Availability (HA) Tivoli Dynamic Workload Console (TDWC) v8.6 configuration, how can the user roles and specific settings be migrated from one TDWC v8.6 instance to another TDWC v8.6 instance? 
+
+ANSWER
+There are two export utilities in TDWC v8.6: 
+
+Option 1. To export and import "... user settings such as user preferences, saved tasks, and engine connections" the following documentation applies:
+
+Manage User Settings - Documentation Link [http://pic.dhe.ibm.com/infocenter/tivihelp/v47r1/topic/com.ibm.tivoli.itws.doc_8.6.0.2/distr/src_tsweb/General_Help/importexport.htm]
+
+Procedure
+1. Click Settings > Manage Settings.
+2. In the Manage Settings panel, click Export Settings and save the XML file in a directory of your choice.
+3. Optionally, edit the file using an XML editor and save it.
+4. Log in to the Dynamic Workload Console where you want to import the settings and open the Manage Settings panel.
+5. Click Import Settings and browse to the XML file containing the settings you want to import. During the import operation, you choose to update or to overwrite the existing settings with the new settings.
+6. If you are using a local file as repository, restart the Dynamic Workload Console to make the change effective or click Undo before restarting it to restore previous settings. This is not required if you are using a database as your repository, but in this case you must ensure that during the import operation there are no other users connected to the Dynamic Workload Console while the repository content is being updated.
+
+
+Option 2. To export and import the user settings that include user roles settings the Export Wizard in Tivoli Integrated Portal can be used to perform the export step. However; TDWC v8.6 does not have an Import Wizard and import actions must take place at the command line.
+
+TIP Exporting all customization data - Documentation Link [http://pic.dhe.ibm.com/infocenter/tivihelp/v15r1/topic/com.ibm.tip.doc/ttip_export_all.html]
+TIP Importing previously exported data - Documentation Link [http://pic.dhe.ibm.com/infocenter/tivihelp/v15r1/topic/com.ibm.tip.doc/ttip_import.html]
+
+Example of export and import using tipcli.sh(bat):
+
+Export:
+
+# cd /opt/ibm/TWA1/eWAS/profiles/TIPProfile/bin
+# ./tipcli.sh Export --username t86 --password t86Password
+CTGWA4159W Extra parameter: password will be passed to plug-ins.
+CTGWA4159W Extra parameter: username will be passed to plug-ins.
+starting CMS export...
+archiving the files..
+CMS Export completed successfully.
+
+The data was successfully exported to the directory /opt/ibm/TWA1/eWAS/profiles/TIPProfile/output/data.zip
+CTGWA4017I The command completed successfully.
+
+# ls -l /opt/ibm/TWA1/eWAS/profiles/TIPProfile/output/data.zip
+-rw-r--r-- 1 root root 168842 Feb 15 16:25 /opt/ibm/TWA1/eWAS/profiles/TIPProfile/output/data.zip
+
+Import:
+
+Ensure that you have run the export operation on an originating instance of the Tivoli Integrated Portal Server and that you have copy the output file (data.zip) to the following directory on the other instance:
+<eWAS_Home>/profiles/TIPProfile/input
+
+NOTE: The TIP documentation names .../output as the directory that needs the data.zip file for an import step, but it seems to be in error. If the data.zip file is not in the input directory, then a message like this will be displayed after running the tipcli.sh Import ... command:
+
+CTGWA4064E File not found: /opt/ibm/TWA_NEW/eWAS/profiles/TIPProfile/input/data.zip
+
+Commands:
+# cd /opt/ibm/TWA_NEW/eWAS/profiles/TIPProfile/bin
+# ls -l ../input
+-rw-r--r-- 1 root root 168843 Feb 15 16:27 data.zip
+# ./tipcli.sh Import --username tN86 --password tN86Password
+
+CTGWA7099I Backup file saved to /opt/ibm/TWA1/eWAS/profiles/TIPProfile/backups.
+CMS datasource is used to work with remote launch entries and is an optional setting. It will not be created since required parameters are missing.
+
+CTGWA4017I The command completed successfully.
+
+NOTE: There is no need to restart the WebSphere Application Server.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Maestro
+TWS
+TWA

@@ -1,0 +1,213 @@
+Title: IBM PM60387: The JVM may crash in org.eclipse.swt.internal.win32.OS.ScriptStringOut - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Software Architect Standard Edition 7.5.5.5 Interim Fix 001 [http://www-01.ibm.com/support/docview.wss?uid=swg24033791]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract: Attempts to stream text to the Console result in a
+   crash in module: GDI32.dll using IBM Rational Software Architect
+   v7.5.5.5
+   Problem: Using using IBM Rational Software Architect v7.5.5.5 on
+   Microsoft Windows XP Professional SP3 (the issue is not
+   reproducible on Microsoft Windows 7):
+   
+   - Publish an application to IBM WebSphere Application Server
+   - The application produces a large amount of logging information
+   that is visible in the Console View
+   - At some point Rational Software Architect crashes.
+   - In the installation directory you find a file called
+   'javacore...txt' containg this text:
+   
+   NULL
+   ----------------------------------------------------------------
+   --------
+   0SECTION       TITLE subcomponent dump routine
+   NULL           ===============================
+   1TISIGINFO     Dump Event 'gpf' (00002000) received
+   
+   1TIFILENAME    Javacore filename:    C:\Program
+   Files\IBM\SDP\javacore.20120214.170212.1772.0002.txt
+   
+   NULL
+   ----------------------------------------------------------------
+   --------
+   0SECTION       GPINFO subcomponent dump routine
+   NULL           ================================
+   2XHOSLEVEL     OS Level         : Windows XP 5.1 build 2600
+   Service Pack 3
+   ............
+   NULL
+   1XHEXCPMODULE  Module: C:\WINDOWS\system32\GDI32.dll
+   1XHEXCPMODULE  Module_base_address: 77EF0000
+   1XHEXCPMODULE  Offset_in_DLL: 00013BC4
+   
+   1XMCURTHDINFO  Current thread
+   NULL           ----------------------
+   3XMTHREADINFO      'main' J9VMThread:0x419F1300,
+   j9thread_t:0x008B5414, java/lang/Thread:0x00982568, state:R,
+   prio=6
+   3XMTHREADINFO1            (native thread ID:0xFBC, native
+   priority:0x6, native policy:UNKNOWN)
+   3XMTHREADINFO3           Java callstack:
+   4XESTACKTRACE                at
+   org/eclipse/swt/internal/win32/OS.ScriptStringOut(Native Method)
+   4XESTACKTRACE                at
+   org/eclipse/swt/graphics/TextLayout.shape(Bytecode
+   PC:328(Compiled Code))
+   4XESTACKTRACE                at
+   org/eclipse/swt/graphics/TextLayout.computeRuns(Bytecode
+   PC:71(Compiled Code))
+   4XESTACKTRACE                at
+   org/eclipse/swt/graphics/TextLayout.getLineCount(Bytecode
+   PC:6(Compiled Code))
+   4XESTACKTRACE                at
+   org/eclipse/swt/custom/StyledTextRenderer.getTextLayout(Bytecode
+   PC:1945(Compiled Code))
+   4XESTACKTRACE                at
+   org/eclipse/swt/custom/StyledTextRenderer.getTextLayout(Bytecode
+   PC:23(Compiled Code))
+   4XESTACKTRACE                at
+   org/eclipse/swt/custom/StyledText.getPointAtOffset(Bytecode
+   PC:100)
+   4XESTACKTRACE                at
+   org/eclipse/swt/custom/StyledText.setCaretLocation(Bytecode
+   PC:5)
+   4XESTACKTRACE                at
+   org/eclipse/swt/custom/StyledText.scrollVertical(Bytecode
+   PC:285)
+   4XESTACKTRACE                at
+   org/eclipse/swt/custom/StyledText.setTopIndex(Bytecode PC:114)
+   4XESTACKTRACE                at
+   org/eclipse/ui/console/TextConsoleViewer$3.runInUIThread(Bytecod
+   e
+   PC:28)
+   4XESTACKTRACE                at
+   org/eclipse/ui/progress/UIJob$1.run(Bytecode PC:51(Compiled
+   Code))
+   
+   
+   This issue is related to the Eclipse defect:
+   https://bugs.eclipse.org/bugs/show_bug.cgi?id=239477 [https://bugs.eclipse.org/bugs/show_bug.cgi?id=239477]
+   
+   
+   Local fix:
+   None available
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The JVM may crash in
+   org.eclipse.swt.internal.win32.OS.ScriptStringOut
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The JVM may crash in
+   org.eclipse.swt.internal.win32.OS.ScriptStringOut
+   This problem has now been resolved.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM60387
+   
+   
+ * REPORTED COMPONENT NAME
+   SW ARCHITECT WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724I7001
+   
+   
+ * REPORTED RELEASE
+   755
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-14
+   
+   
+ * CLOSED DATE
+   2012-12-15
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SW ARCHITECT WI
+   
+   
+ * FIXED COMPONENT ID
+   5724I7001
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R755 PSN
+   UP

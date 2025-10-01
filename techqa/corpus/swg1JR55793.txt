@@ -1,0 +1,150 @@
+Title: IBM JR55793: ORACLE 12C NOT SUPPORTED FOR IBM BPM DOCUMENT STORE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+bpm.8570.cf2016.06.delta.repository.2of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.06.delta.repository.2of2&source=SAR]
+bpm.8570.cf2016.06.delta.repository.1of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.06.delta.repository.1of2&source=SAR]
+8.5.0.2-WS-BPM-IFJR55793 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.0.2-WS-BPM-IFJR55793&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Although you want to use Oracle 12c as the database with IBM
+   Business Process Manager (BPM) V8.5.0, you see Oracle 12c is not
+   being supported according to the Detailed System Requirements
+   (http://www.ibm.com/software/reports/compatibility/clarity-repor
+   ts/report/html/softwareReqsForProduct?deliverableId=133309938856
+   5).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The IBM BPM document store component within IBM BPM does not
+   support Oracle 12c.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.0.2 that updates the version
+   of the IBM BPM document store to a version that supports Oracle
+   12c.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR55793:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR55793, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR55793
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-21
+   
+   
+ * CLOSED DATE
+   2016-05-12
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

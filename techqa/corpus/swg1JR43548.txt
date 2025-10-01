@@ -1,0 +1,136 @@
+Title: IBM JR43548: SUPPORT FILTERS FROM COGNOS REPORT PROMPT WIDGET FOR SHOW INSTANCES FUNCTION IN COGNOS REPORT VIEWER WIDGET - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Business Monitor V8.0 Refresh Pack 1 (8.0.1) [http://www-01.ibm.com/support/docview.wss?uid=swg24033765]
+IBM Business Monitor V8.0.1 Fix Pack 1 (8.0.1.1) [http://www-01.ibm.com/support/docview.wss?uid=swg24034357]
+IBM Business Monitor V7.5.1 Fix Pack 2 (7.5.1.2) [http://www-01.ibm.com/support/docview.wss?uid=swg24036470]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Cognos Report Studio can be used to add prompts
+   (user-selectable filters on dimensions) to a Cognos Report
+   Viewer widget (accessible in Business Space, supplied by IBM
+   Business Monitor).  The Show Instances function, however, when
+   executed on this widget, does not filter instances displayed in
+   a wired Instances widget based on the filters selected in the
+   prompts.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of IBM Business Monitor Version       *
+   *                  7.5.1 and Version 8.0.                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Cognos Report Studio can be used to     *
+   *                      add prompts (user-selectable filters    *
+   *                      on dimensions) to a Cognos Report       *
+   *                      Viewer widget (accessible in Business   *
+   *                      Space, supplied by IBM Business         *
+   *                      Monitor).  The Show Instances           *
+   *                      function, however, when executed on     *
+   *                      this widget, does not filter            *
+   *                      instances displayed in a wired          *
+   *                      Instances widget based on the           *
+   *                      filters selected in the prompts.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Support for the Show Instances function is being added for
+   prompts that meet the following conditions:
+   - The filter includes no more than one prompt (dimension).
+   - The filter includes one of the following operators: "=",
+   "in", or "not in".
+   - If a date dimension is specified, the year, month, and day
+   (in that order) must be included.
+   This support will be included in future maintenance releases
+   of IBM Business Monitor Version 7.5.1 and Version 8.0.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR43548
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB BUS MONITOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724M2400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-24
+   
+   
+ * CLOSED DATE
+   2012-10-12
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

@@ -1,0 +1,174 @@
+Title: IBM IC58203: MULTI-THREADED WEBSPHERE MQ JAVA CLIENTS FAIL TO CONNECT TO     QUEUE MANAGER WHEN USING SHARED CONNECTIONS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 for i5/OS Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022812]
+WebSphere MQ V7.0 Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022810]
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24025627]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a WebSphere MQ Java or JMS application attempts to create
+   many connections to the same queue manager at the same time,
+   with a connection configured to use shared connections, one or
+   more of the connections may not complete (i.e. hang), and the
+   queue manager may create FDCs containing cciFindConv and probe
+   id CO398008.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disable shared connections.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects WebSphere MQ Java/JMS applications that
+   create multiple connections concurrently and use shared
+   connections.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The WebSphere MQ Java/JMS client code responsible for beginning
+   a shared connection did not always initiate correctly with the
+   queue manager when multiple concurrent connection attempts were
+   made.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ Java/JMS client code has been updated to
+   ensure the initiation takes place correctly when necessary.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.0.1
+   --------           --------------------
+   Windows            U200301
+   AIX                U821414
+   HP-UX (PA-RISC)    U820765
+   HP-UX (Itanium)    U821296
+   Solaris (SPARC)    U820766
+   Solaris (x86-64)   U820880
+   iSeries            tbc_p700_0_0_1
+   Linux (x86)        U821407
+   Linux (x86-64)     U821295
+   Linux (zSeries)    U821294
+   Linux (Power)      U820881
+   
+   The latest available maintenance can be obtained from
+   'Websphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'Websphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC58203
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-01
+   
+   
+ * CLOSED DATE
+   2008-10-23
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

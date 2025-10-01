@@ -1,0 +1,143 @@
+Title: IBM PI83984: CICS DYNAMIC SCRIPTING V2.0 APPLICATION CAN NOT BE INSTALLED. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A CICS Dynamic Scripting V2.0 application cannot be installed
+   due to a java.lang.NoSuchMethodError for a CICS internal API.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of CICS TS Feature Pack for        *
+   *                 Dynamic Scripting V2.0                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CICS Dynamic Scripting V2.0             *
+   *                      applications cannot be installed.       *
+   ****************************************************************
+   CICS Dynamic Scripting V2.0 applications cannot be installed in
+   CICS TS v5.4.  A CWWKZ0402E message is written to messages.log
+   for the Liberty JVM server and an FFDC incident is raised.
+   The FFDC log contains a message Caused by:
+   java.lang.NoSuchMethodError:
+   com/ibm/cics/php/CICSLogger.getSJTraceLevel()I
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CICS internal Java APIs are corrected to provide the required
+   method to allow CICS Dynamic Scripting applications to install.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI83984
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   10D
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-07-04
+   
+   
+ * CLOSED DATE
+   2017-08-02
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI49273 PI87914
+   
+   
+
+MODULES/MACROS
+ *  DFJ@H351
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R10D PSY UI49273 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI49273]
+   UP17/08/05 P F708
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

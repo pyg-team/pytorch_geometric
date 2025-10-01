@@ -1,0 +1,132 @@
+Title: IBM IZ53467: CANNOT STORE CUSTOM BPC EXPLORER QUERIES IF USERID IS TOO LONG. - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 2 (6.2.0.2) [http://www-01.ibm.com/support/docview.wss?uid=swg24024407]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The internal name for storing custom queries in the BPC Explorer
+   also contains the userID that logged on to BPC Explorer. In case
+   this userID gets too long, the field for the name to store the
+   custom query on the DB is too short.
+   This results then in an SQL error message and the user cannot
+   store any custom view within the BPC Explorer anymore.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Saving BPC Explorer personalized/customized views requires a
+   unique name.
+   The user ID was part of the generated name, but with a long user
+   ID the length of the name exceeds the allowed maximum.
+   Name generation has been improved to make sure that the maximum
+   length is not exceeded.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem will be fixed with V6202
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ53467
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * REPORTED COMPONENT ID
+   5655FLW11
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-17
+   
+   
+ * CLOSED DATE
+   2009-07-20
+   
+   
+ * LAST MODIFIED DATE
+   2009-07-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ53464
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * FIXED COMPONENT ID
+   5655FLW11
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

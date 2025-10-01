@@ -1,0 +1,114 @@
+Title: IBM Attempting to start Cognos Services results in error CFG-ERR-0103 Unable to start IBM Cognos service. Execution of the external process returns an error code value of -1 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Starting up Cognos Services within Cognos Configuration fails with error.
+
+
+SYMPTOM
+CFG-ERR-0103 Unable to start IBM Cognos service. Execution of the external process returns an error code value of -1
+
+
+CAUSE
+Multiple scenarios why this error could occur: 
+
+Scenario 1: 
+Content Store got corrupt due to switching of the users or check the dispatcher port. This may be in use.
+
+Scenario 2:
+Ping retries have been set too low
+
+Scenario 3: 
+The file path 'file:///C:/path' for the external object store contains a space.
+
+[/support/docview.wss?uid=swg22008614&aid=1] [http://www-01.ibm.com/support/docview.wss?uid=swg21972312&aid=2]
+Scenario 4: 
+cogstartup.xml gets corrupted somehow 
+
+Scenario 5:
+After 10.2.2 was installed, the application server was set to use the default WebSphere Liberty Profile where as it should have been set up to use the Tomcat profile as used in the previous 10.2.1 version. 
+
+Scenario 6: 
+Invalid credentials specified for the Cognos service. 
+
+
+
+RESOLVING THE PROBLEM
+Scenario 1; 
+
+Consult the Database Administrator to create a new database to be used as Content Store. Configure this new database as Content Store in Cognos Configuration and then start the Cognos service: 
+1. In the Explorer window, under Data Access, Content Manager, click Content Store. 
+2. In the Properties window, for the Database name property, type the name of the new database created for the Content Store. 
+3. Change the logon credentials to specify a valid user ID and password: 
+4. Click the Value box next to the User ID and password property and then click the edit button when it appears. 
+5. Type the appropriate values and click OK. 
+6. Confirm there are no hung processes and that the port is available.
+
+Windows: 
+netstat -a | find "9300" 
+
+Unix: 
+netstat -a | grep 9300
+
+Scenario 2:
+
+1. Edit the <cognos_10>/bin64/bootstrap_win64.xml for 64-bit installations or <cognos_10>/bin64/bootstrap_win32.xml for 32-bit installations 
+2. Modify the following line to:
+<bootstrap startupDelaySec="25" >
+
+To:
+
+<bootstrap startupDelaySec="25" pingRetries="300" >
+3. Edit the cognos/c8/configuration/cogconfig.prefs (or cognos/c10/configuration/cogconfig.prefs) 
+4. Add the following lines (if they are missing) :
+ServiceWaitInterval=1500 
+ServiceMaxTries=1000
+5. Save 
+6. Open Cognos Configuration and Start. 
+
+Scenario 3:
+Ensure the configured file path doesn't contain any spaces. Use underscores (_) or hyphens (-) if necessary. 
+
+Scenario 4:
+Ensure that the content store database has all the prerequisites met (see the documentation according to the database used)
+
+1. Recreate new configuration file : 
+- close Cognos Configuration, 
+- for Cognos 10.2.0 and 10.2.1: rename the folders csk, encryptkeypair and signkeypair
+- for Cognos 10.2.2: rename only csk folder + CAMCrypto.status, CAMKeystore , CAMKeystore.lock under certs folder
+- Rename the file cogstartup.xml under the configuration folder, 
+- open IBM Cognos Configuration as Administrator (right-click and choose Open as Administrator)(it will create a new cogstartup.xml file), 
+- fill in all the settings. 
+- save the configuration
+2. Start the IBM Cognos BI service
+
+Scenario 5:
+1. Open 'Cognos Configuration'. 
+
+2. Select the service name (default "IBM Cognos") under 'IBM Cognos Services' then right click and select 'Delete'. 
+
+3. Once the service has been deleted, right click on 'IBM Cognos Services' and then 'New resource > Configuration...' 
+
+4. Enter a suitable name for your Cognos service and then the required 'Type' ie. Tomcat, (Server used in the previous 10.2.1 version before migration) 
+
+5. Change settings to your preferred settings and then 'Save' and restart the service 
+
+Scenario 6:
+Re-enter the credentials for the Cognos service in Windows Services. 
+
+Steps:
+1. Go to the START menu, click "Run...", type in "SERVICES.MSC" and click OK.
+2. Windows Services should appear. Double-click the Cognos service and click the "Log On" tab.
+3. Re-enter the account name and password to be used by the Cognos Service and click OK. 
+
+Note that this error can also occur if the Cognos Service in Windows is disabled.
+
+RELATED INFORMATION
+ Scenario1 Corrupt Content Store [http://www-01.ibm.com/support/docview.wss?uid=swg21599720]
+Scenario2 PING retries too low [http://www-01.ibm.com/support/docview.wss?uid=swg21634247]
+Scenario3 File path error [http://www-01.ibm.com/support/docview.wss?uid=swg21972312]
+Scenario4 Corrupted cogstartup.xml [http://www-01.ibm.com/support/docview.wss?uid=swg21601240]
+Scenario5 Incorrect Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg21969029]
+Scenario6 Invalid Credentials [http://www-01.ibm.com/support/docview.wss?uid=swg21370764]

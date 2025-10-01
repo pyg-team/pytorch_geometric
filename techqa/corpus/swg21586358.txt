@@ -1,0 +1,52 @@
+Title: IBM Compile errors on rules in Decision Center and Rule Team Server (RTS) - United States
+
+Text:
+migration; synchronization; compile; Decision Center; RTS; Rule Team Server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Rules do not compile in WebSphere Operational Decision Management (WODM) Decision Center or Rule Team Server (RTS). 
+
+SYMPTOM
+The rules show errors like the following: 
+
+ * The word 'foo' is expected instead of the word 'bar'. 
+
+ 
+
+and the following warning may be seen in the log: 
+
+
+WARNING: The BOM type test.MyClass is unknown. It will be considered as a string in the syntactic editor
+
+
+RESOLVING THE PROBLEM
+ 
+
+This document addresses how to resolve rule compilation errors when working with WODM Decision Center or RTS. For the purposes of this document, we will use RTS to refer to both entities, unless explicitly stated otherwise. 
+
+Compile errors on rules in RTS may occur for a number of reasons. The following is a non-exhaustive list of recommendations that may be applicable to your environment: 
+
+ * Verify that the corresponding Business Object Model (BOM) has been published to RTS and is up-to-date in RTS. 
+ * Verify that the required BOM artifact (class, attribute or method) has been verbalized in the BOM. 
+ * Empty the RTS cache to ensure a rebuild of the rules. 
+ * Check the order of BOM entries. If you have multiple BOM entries, it is possible that they are ordered so that the required BOM artifact is eclipsed by another artifact of the same name in another BOM entry, which is ordered before the BOM entry with the required artifact. It is also possible that the artifact in the other BOM entry is not verbalized. You can check the order of the BOM entries by navigating to Project > View BOM Path. Change the order of BOM entries so that the BOM entry containing the required definitions appears first. 
+ * If you migrated [http://www.ibm.com/support/docview.wss?uid=swg21591798] from older versions that use two-letter locales (v6.5 - v6.7) to versions that support four-letter locales (v7.1 and later), follow the instructions in this document [http://www.ibm.com/support/docview.wss?uid=swg21462137] to properly migrate the BOM. 
+ * If the above recommendations do not help, it is possible that this behavior occurs when the rule project has a dependency on another project that has the BOM entries (or is dependent on another project that has the BOM entries). The problem could be resolved by explicitly removing the dependency of the rule project in RTS, and then adding it back, as follows:  * Navigate to the Project tab 
+    * Click on Edit Project Dependencies under Manage Project 
+    * Check the checkbox beside the project that contains the BOM entries (or that depends on another project that has the BOM entries) 
+    * Click on Delete, and then Save 
+    * Click on Edit Project Dependencies under Manage Project 
+    * Click on New 
+    * Choose the project whose dependency you deleted in the step above 
+    * Click on Apply and then Save 
+   
+   At this point, the compilation errors on the rules should disappear. Note that we are aware of this issue and are investigating it. If you have a scenario that reproduces this issue, please contact IBM support so we can help you.
+
+RELATED INFORMATION
+ Synchronization issues between Rule Studio and RTS [http://www.ibm.com/support/docview.wss?uid=swg21427772]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere ILOG Rule Team Server Maintenance Platform Independent 7.1, 7.0, 6.7, 6.6, 6.5

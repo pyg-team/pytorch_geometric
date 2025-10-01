@@ -1,0 +1,44 @@
+Title: IBM TEPS DB2 instance failed to start - United States
+
+Text:
+SQLO_NOMEM DIA8300C DIA8305C TEPS WPA TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A standalone test/development Windows system is running the TEPS, Warehouse Proxy Agent, and other components sharing a DB2 instance. When the system starts, the DB2 service starts, but soon stops afterwards. Usually manually restarting the instance works fine, but sometimes that fails also. 
+
+SYMPTOM
+When the system starts, the DB2 service starts, but it soon stops afterwards. 
+
+The Windows System Event Log shows that the DB2 instance failed to start after an extended timeout, so the service was stopped. Other DB2 services like the License Manager and Admin Server are running ok. The DB2 instance had to be manually started later. The problem seems to always happen after startup, even though the DB2 services are set to "Automatic". 
+
+Customer tried changing from "Automatic" to "Automatic (Delayed Start)" and rebooting, to see if a delay would help, but it makes no difference. 
+
+Occasionally, even restarting at a later time will fail to work, so the instance cannot be started at all. 
+
+When it does manage to start successfully and stay started, there are continuous DIA8305C errors in db2diag.log when trying to access a particular database like the TEPS database, and the related application (the TEPS) fails to run. However, it is noticed that the affected database and application changes depending on which applications are launched at startup, and which ones are running later. So sometimes it will be the TEPS, other times it will be the Warehouse Proxy Agent, other times it will be another application that uses a database within that DB2 instance. 
+
+The user tried changing DB_MEMORY values, even using AUTOMATIC settings, but it was still having problems starting the DB2 instance and/or connecting to the database. 
+
+This is Windows, so Technotes describing adjustments to "ulimit -a" for data size are not applicable.
+
+
+CAUSE
+While there can be multiple reasons for this failure, this technote documents one particularly difficult case caused by a low INSTANCE_MEMORY value. In an attempt to restrict the amount of memory allocated to DB2, someone had unknowingly changed the INSTANCE_MEMORY value too low. Apparently they had been reviewing memory utilization in Task Manager, and seeing that db2sysc.exe was always using a large amount of memory, they looked for a quick way to reduce the utilization. 
+
+Making this difficult is that, depending on which DBs were started first, the DB that is affected can change. For example, if databaseA, databaseB, and databaseC are active, and an application using databaseD is started and tries to access databaseD, but there is not enough available configured instance memory, it will not be able to activate the database due to memory allocation errors, and will show the DIA8305C error. It will repeatedly show the error as it retries over time, sometimes filling the db2diag.log with DIA8305C errors. Again, depending on which applications are started first, or in which order they are restarted, different applications will be affected. And depending on what applications continue to run later and have active database connections, the problem may or may not occur.
+
+Even though DB_MEMORY values were adjusted for all the separate databases using "db2 UPDATE DB CFG FOR <DatabaseName> USING DATABASE_MEMORY <value>", INSTANCE_MEMORY was still too low to allow for those multiple databases to be activated and have active connections to their corresponding applications. 
+
+
+ENVIRONMENT
+Windows running a standalone ITM V6 environment, with TEPS, Warehouse Proxy Agent, and other non-ITM applications that all used the same DB2 instance.
+
+
+
+DIAGNOSING THE PROBLEM
+From a db2cmd shell, use "db2 get dbm cfg" to verify the current INSTANCE_MEMORY value. It defaults to a value with an "AUTOMATIC" indication after it. If it is not showing "AUTOMATIC" or the equivalent translation next to the numeric value, then it might have been manually changed to a fixed value that is too low to handle all the multiple databases in the instance. 
+
+
+
+RESOLVING THE PROBLEM
+Adjust the instance memory to a larger value. Or set it to an automatic dynamic value from a db2cmd shell, using "db2 update dbm cfg using INSTANCE_MEMORY AUTOMATIC IMMEDIATE", and restart the instance. Verify the DB2 instance remains running, and verify the new value afterwards using "db2 get dbm cfg" to see the current INSTANCE_MEMORY value and confirm it has changed. Start the applications that use the underlying DB2 databases in this instance, and confirm they connect successfully, and that the db2diag.log no longer reports DIA8305C errors.

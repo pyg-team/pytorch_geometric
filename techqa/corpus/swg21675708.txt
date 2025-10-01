@@ -1,0 +1,54 @@
+Title: IBM How to change database password used by CLM products - United States
+
+Text:
+Password; password change; database; db TECHNOTE (FAQ)
+
+QUESTION
+ How can you change the database password used by IBM Rational Collaborative Lifecycle Management (CLM) products? 
+
+CAUSE
+Your company policy requires changing the passwords regularly.
+
+ANSWER
+Procedure: 
+
+ * First option
+    1. Open the application Admin page, click Server in the top menu and Database Connection from the left-hand menu.
+       
+       
+    2. Change the value for JDBC Password and hit Save.
+       
+       
+    3. Click Reports and select Database Warehouse Connection from the left-hand menu.
+       
+       
+    4. Change the value for JDBC Password and hit Save.
+       
+       
+    5. Repeat steps 1 to 4 for each application. There is no need to stop and start the server, but If you first change to an incorrect password and then correct it, you do need to restart the server.
+       
+       
+    6. Verify the password is correct: Check the diagnostics page for each application's admin page. If there are any errors related to missing or failing services, the database password may be incorrect.
+       
+       
+   
+   
+ * Second option
+    1. Stop the CLM application servers.
+       
+       
+    2. Open the following files in a text editor (one file for each application): <Jazz-install-directory>\server\conf\<application>\teamserver.properties 
+       
+       
+    3. Change following lines:
+       com.ibm.team.repository.db.jdbc.password=<new-database-password> and 
+       com.ibm.team.datawarehouse.db.jdbc.password=<new-warehouse-password> 
+       
+       
+    4. Save the changes to all open files
+       
+       
+    5. Start the CLM application servers.
+   
+   
+   IMPORTANT: The password is not encrypted by the tool once the server is restarted. After the restart, teamserver.properties will still display the password. Therefore, after the restart, you must go through admin > database connections to encrypt it. The DB related tasks will then be restarted again.

@@ -1,0 +1,67 @@
+Title: IBM EJB Deploy Error:  java.lang.IllegalStateException: Unable to acquire application service - United States
+
+Text:
+EJB Deploy Error; EJBDeploy; java.lang.IllegalStateException; IllegalStateException; Unable to acquire application service; ejbdeploy.bat; ejbdeploy.sh; CoreException; BatchExtension; com.ibm.etools.ejbdeploy.batch.plugin.BatchExtension; org.eclipse.core.runtime.CoreException; eclipse; osgi; cache TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ EJBDeploy fails with "java.lang.IllegalStateException: Unable to acquire application service." 
+
+SYMPTOM
+This error can occur when running ejbdeploy.bat or ejbdeploy.sh scripts from the command line, or it can be seen in the logs of other IBM software that make use of ejbdeploy. 
+
+Besides IllegalStateException, the following is another possible EJBDeploy error(s):
+
+
+* Error executing deployment: org.eclipse.core.runtime.CoreException. Error is Plug-in com.ibm.etools.ejbdeploy was unable to load class com.ibm.etools.ejbdeploy.batch.plugin.BatchEx
+tension..
+org.eclipse.core.runtime.CoreException: Plug-in com.ibm.etools.ejbdeploy was unable to load class com.ibm.etools.ejbdeploy.batch.plugin.BatchExtension.
+at ...
+
+
+
+CAUSE
+This problem may occur when Enterprise JavaBeans Deploy is updated as part of a Fix Pack install and there are files in the EJB Deploy configuration directory from the previous EJB Deploy install.
+
+
+
+RESOLVING THE PROBLEM
+To resolve this problem, delete all of the files in the EJB Deploy configuration directory except for the config.ini file. 
+
+To determine the location of the EJB Deploy configuration directory, run the ejbdeploy command with the -log option like this: 
+
+ 
+
+On Windows:
+cd "C:\Program Files\IBM\WebSphere\AppServer\bin"
+ejbdeploy.bat input_EAR working_DIR output_EAR-log 
+
+ 
+
+On Linux:
+cd /opt/IBM/WebSphere/AppServer/bin
+./ejbdeploy.sh input_EAR working_DIR output_EAR-log 
+
+ 
+
+In the commands, input_EAR is the input EAR file, output_EAR is the output EAR file, and working_DIR is the temporary working directory. 
+
+Similar ejbdeploy commands can be issued on any other platforms on which IBM WebSphere Application Server V6.1 is supported. This is also applicable to WebSphere Application Server v7.x. 
+
+ 
+
+The output of the ejbdeploy command, with -log option, will show the location of the EJB Deploy configuration directory. Go do that directory and delete all files except for the config.ini file. Now, re-run your ejbdeploy command and it should no longer have the error. 
+
+ 
+
+As an example, on a Linux platform with WebSphere Application Server Network Deployment (ND) installed in /usr/WebSphere/AppServer , you may have two locations: 
+
+ 1. /usr/WebSphere/AppServer/deploytool/itp/configuration 
+ 2. /usr/WebSphere/AppServer/profiles/Dmgr01/ejbdeploy/configuration/ 
+
+
+The second location corresponds to the deployment manager machine/profile. 
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Linux, Windows 6.1.0.9, 6.1.0.7, 6.1.0.5, 6.1.0.3, 6.1.0.2, 6.1.0.11, 6.1.0.1, 6.1

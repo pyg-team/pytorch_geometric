@@ -1,0 +1,22 @@
+Title: IBM Issues with Microsoft Edge and Cognos Analytics - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The compatibility tool website shows that MS Edge is not supported.
+
+Since IE is now phased out, what is the expected timeframe for Cognos to be compatible with the new browser? 
+
+CAUSE
+Microsoft Edge is not supported
+
+ANSWER
+Microsoft Edge is not supported as of the time of writing this document. 
+
+A list of current supported browsers can be found here...
+http://www-01.ibm.com/support/docview.wss?uid=swg27047186 [http://www-01.ibm.com/support/docview.wss?uid=swg27047186]
+
+
+There is no given time for when this will be supported. However you can vote on the following RFE for this to be a potential future enhancement...
+https://www.ibm.com/developerworks/rfe/execute?use_case=viewChangeRequest&CR_ID=78839 [https://www.ibm.com/developerworks/rfe/execute?use_case=viewChangeRequest&CR_ID=78839]

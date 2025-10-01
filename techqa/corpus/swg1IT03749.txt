@@ -1,0 +1,290 @@
+Title: IBM IT03749: WMQ V7.5 JAVA APPLICATION THROWS "JAVA.IO.UNSUPPORTEDENCODINGEXCEPTION" WHEN OPENING A QUEUE - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fix Pack 8.0.0.2 for WebSphere MQ V8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24039436]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A WebSphere MQ V7.5 classes for Java application reported the
+   exception:
+   
+   java.io.UnsupportedEncodingException
+   
+   when using an Oracle JRE running in an environment where LANG
+   was set to:
+   
+       ja_JP.eucJP
+   
+   The FDC file generated showed the error message:
+   
+   | | Cause:1 :- java.lang.NoClassDefFoundError:
+   com/ibm/security/pkcs7/Content
+    | | Message:1 :- com/ibm/security/pkcs7/Content
+    | StackTrace:1 :- java.lang.NoClassDefFoundError:
+   com/ibm/security/pkcs7/Content
+   
+   
+   
+   Additional Symptom(s) Search Keyword(s):
+   " java.io.UnsupportedEncodingException: 0; 'ja_JP.eucJP; AMS
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There are two work around methods which can be used to
+   circumvent this issue:
+   
+   (1) Change the JRE's 'file.encoding' value to one which the
+   WebSphere MQ classes for Java understands how to map to a CCSID
+   integer value.
+   This can be achieved by using the LANG variable on the JVM
+   command startup, for example:
+   
+   LANG=ja_JP.UTF-8 java
+   
+   
+   (2) A second option is to disable the AMS component in the queue
+   manager, assuming that the application does not want to make use
+   of this feature of WebSphere MQ. AMS can be disabled by
+   uninstalling the AMS component on the queue manager. For example
+   on a Linux 7.5.0.3 queue manager installation, you can remove
+   the AMS package using the command:
+   
+   rpm -e MQSeriesAMS-7.5.0-3.x86_64
+   
+   After this is done, the application will be able to access the
+   queues in the expected manner.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of WebSphere MQ classes for Java/JMS who are using
+   applications with all of the following conditions:
+   
+     (a) Are opening WebSphere MQ Queues and Topics.
+     (b) Connecting to a queue manager which has the AMS (Advanced
+   Message Security) component installed.
+     (c) Are running with a JRE which has its "file.encoding"
+   property set to a value which is not recognised by the WebSphere
+   MQ classes for Java/JMS, such as "EUC-JP-LINUX" which is set on
+   an Oracle JRE when the Linux environment's LANG setting is set
+   to "ja_JP.eucjp".
+   
+   
+   Platforms affected:
+   MultiPlatform, z/OS, Windows, Solaris x86-64, Solaris SPARC,
+   Linux on zSeries, Linux on x86-64, Linux on x86, Linux on S390,
+   Linux on Power, IBM iSeries, HP-UX Itanium, HP-UX PA-RISC, AIX
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   If the WebSphere MQ AMS component is installed in the queue
+   manager's installation, when a AMS aware client application
+   attempts to open a queue on the queue manager, for example then
+   when the WebSphere MQ classes for Java API method:
+   
+       com.ibm.mq.MQQueueManager.accessQueue(...)
+   
+   then the communication flow between the client classes and queue
+   manager includes a data structure which contains information
+   about the AMS policy for that particular queue/topic.
+   
+   This data structure contains character data which the WebSphere
+   MQ classes for Java/JMS must interpret, however a code defect
+   meant that the Java CharacterSet which was used to interpret the
+   bytes representing the characters in the structure was the
+   default JVM's character set, as dictated by the JVM's
+   'file.encoding' property.
+   
+   
+   If the 'file.encoding' was set to a value which was not
+   recognised by the WebSphere MQ classes for Java/JMS, then an
+   exception was generated and thrown, and the queue open operation
+   would fail. The exception stack seen was of the form (example
+   stack taken from a WebSphere MQ classes for Java 7.5.0.3
+   application):
+   
+   java.lang.RuntimeException:
+   java.io.UnsupportedEncodingException: 0
+           at
+   com.ibm.mq.headers.internal.MQCharFieldVariableLength.getValue(M
+   QCharFieldVariableLength.java:133)
+           at
+   com.ibm.mq.headers.internal.Header.getStringValue(Header.java:36
+   3)
+           at
+   com.ibm.mq.headers.pcf.MQCFST.getString(MQCFST.java:288)
+           at
+   com.ibm.mq.headers.pcf.MQCFST.getStringValue(MQCFST.java:318)
+           at
+   com.ibm.mq.ese.service.PolicyServiceImpl.policyFromPcf(PolicySer
+   viceImpl.java:567)
+           at
+   com.ibm.mq.ese.intercept.JmqiOpenInterceptorImpl.storeSecurityIn
+   foInSmqiObject(JmqiOpenInterceptorImpl.java:357)
+           at
+   com.ibm.mq.ese.intercept.JmqiOpenInterceptorImpl.afterSpiOpen(Jm
+   qiOpenInterceptorImpl.java:209)
+           at
+   com.ibm.mq.ese.jmqi.InterceptedJmqiImpl.spiOpen(InterceptedJmqiI
+   mpl.java:411)
+           at com.ibm.mq.ese.jmqi.ESEJMQI.spiOpen(ESEJMQI.java:513)
+           at com.ibm.mq.MQDestination.open(MQDestination.java:320)
+           at com.ibm.mq.MQQueue.(MQQueue.java:250)
+           at
+   com.ibm.mq.MQQueueManager.accessQueue(MQQueueManager.java:2799)
+   ... ... ...
+   Caused by: java.io.UnsupportedEncodingException: 0
+           at
+   com.ibm.mq.headers.CCSID.getJmqiCodepage(CCSID.java:86)
+           at com.ibm.mq.headers.CCSID.getDecoder(CCSID.java:127)
+           at
+   com.ibm.mq.headers.Charsets.findDecoder(Charsets.java:143)
+           at
+   com.ibm.mq.headers.Charsets.getDecoder(Charsets.java:136)
+           at
+   com.ibm.mq.headers.Charsets.convert(Charsets.java:198)
+           at
+   com.ibm.mq.headers.Charsets.convert(Charsets.java:185)
+           at
+   com.ibm.mq.headers.internal.store.ByteStore.getString(ByteStore.
+   java:200)
+           at
+   com.ibm.mq.headers.internal.MQCharField.getStringValue(MQCharFie
+   ld.java:130)
+           at
+   com.ibm.mq.headers.internal.MQCharFieldVariableLength.getValue(M
+   QCharFieldVariableLength.java:127)
+           ... 13 more
+   
+   
+   
+   If the queue manager did not have the AMS component installed,
+   then this specific data structure was not returned to the client
+   application which circumvented the problem.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ classes for Java/JMS have been updated to use
+   the appropriate CharacterSet value when interpreting the AMS
+   data structure, instead of falling back to use the JVM's
+   'file.encoding' property.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.5
+   v8.0       8.0.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT03749
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-13
+   
+   
+ * CLOSED DATE
+   2014-10-22
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7241
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

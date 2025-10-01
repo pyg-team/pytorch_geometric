@@ -1,0 +1,163 @@
+Title: IBM PI92581: VIEW PERMALINK DOES NOT RESULT IN DISPLAY OF THE VIEW CORRECTLY (WI 104064) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description of Problem:
+   In Rational DOORS Next Generation, the permalink of a view does
+   not display the view correctly in IE or Chrome browser.  The
+   problem is seen when clicking on the link in an email or by
+   copying the link and pasting it in the browser address bar. It
+   works in Firefox, but not in IE 11 or Chrome.
+   
+   Steps to Reproduce:
+   1. Using IE or Chrome browser, click on a folder to view some
+   artifacts.
+   2. Click on the Views tab on the left hand side
+   3. Click on the pencil icon next to a view
+   4. Select Show Permalink and copy the URL.
+   5. Open IE or Chrome and paste this into its address bar
+   
+   IMPORTANT: This works in IE or Chrome if you have already logged
+   in to DNG in that browser in a current session. So, to reproduce
+   this, make sure to paste the URL into a fresh session of IE or
+   Chrome where it will be forced to ask you to log in.
+   
+   Expected Results:
+   The view should have displayed properly.
+   
+   Actual Results:
+   Shows a mostly blank screen.
+   
+   Refer to the following work item on Jazz.net for further
+   details:
+   https://jazz.net/jazz03/web/projects/Requirements%20Management#a
+   ction=com.ibm.team.workitem.viewWorkItem&id=104064 [https://jazz.net/jazz03/web/projects/Requirements%20Management#action=com.ibm.team.workitem.viewWorkItem&id=104064]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround for this is to do the following:
+   1. When the issue occurs (i.e., view is not displayed), click
+   the Browse Artifacts option from the Artifacts menu at the top
+   of the window.
+   2. Paste the view link into the browser url area and press
+   enter.
+   3. Then execute the browser refresh/reload page option.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of Chrome and IE 11 are affected                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * In Rational DOORS Next Generation, the permalink of a view   *
+   * does not display the view correctly in IE or Chrome browser. *
+   * The problem is seen when clicking on the link in an email or *
+   * by copying the link and pasting it in the browser address    *
+   * bar. It works in Firefox, but not in IE 11 or Chrome.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is fixed in the DOORS Next Generation 6.0.3 release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI92581
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DOORS NG
+   
+   
+ * REPORTED COMPONENT ID
+   5724W87NG
+   
+   
+ * REPORTED RELEASE
+   602
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-01-17
+   
+   
+ * CLOSED DATE
+   2018-01-17
+   
+   
+ * LAST MODIFIED DATE
+   2018-01-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DOORS NG
+   
+   
+ * FIXED COMPONENT ID
+   5724W87NG
+   
+   
+
+APPLICABLE COMPONENT LEVELS

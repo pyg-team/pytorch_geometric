@@ -1,0 +1,274 @@
+Title: IBM ZZ00389: PROBLEM WITH THE OFFERING FAILING IMMEDIATELY AFTER SUBMISSION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Application: SCOrchestrator_IAAS_Assets
+   Process: Run Service Deployment Template
+   Human Service: Deploy Service Template
+   When the "Run Service Deployment Template"
+   process is used to deploy a
+   pattern (VSYS next) the empty
+   start date value is not set correctly
+   (to null) this causes a subsequent process to
+   continue without waiting until the VSYS is deployed
+   before continuing. The offering now fails as
+   it attempts to access the virtual machines too early.
+   The offering fails with the message:
+   .
+   "CTJCO0003E: Business process instance 27 of process
+   Run Service Deployment Template did not complete
+   successfully. Status: Failed. Reason: CTJCA2100: The
+   operation failed. See the mail report for additional
+   details. "
+   .
+   The BPM log file shows the following output & error:
+   00000d49 wle_javascrip I   GenericRest - Exit
+   00000d49 wle_javascrip I   Get Virtual Machines - Entry
+   00000d49 wle_javascrip I   virtualSystem = %ID%
+   00000d49 wle_javascrip I   restURL =
+    /resources/virtualSystemInstances/%ID%/virtualMachines/
+   00000d49 wle_javascrip I   GenericRestCall - HasCurrentUser:
+    user=tw_admin
+   00000d49 wle_javascrip I   GenericRestCall - delimiter = / user
+   = admin
+    - domain = Default
+   00000d49 wle_javascrip I   GenericRest - Entry
+   00000d49 wle_javascrip I   GenericRest - method=GET
+   00000d49 wle_javascrip I   GenericRest -
+    uri=/resources/virtualSystemInstances/%ID%/virtualMachines/
+   00000d49 wle           E   CWLLG0594E: An exception occurred
+   while
+    initializing the runnable thread. Error:
+   com.lombardisoftware.component.common.workflow
+   .WorkflowProcessItemException: java.io.IOException:     <div
+    id='results'>    <span class='error'>No matching
+   pattern instance</span>    </div>
+   Reading GET
+   https://%CS_2%:8443/resources/virtualSystemInstances/%ID%/vi [https://%CS_2%:8443/resources/virtualSystemInstances/%ID%/vi]
+   rtualMachines/ received unexpected response: 404 : Not Found in
+   com.ibm.orchestrator.restcall.GenericREST
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of SmartCloud Orchestrator 2.4
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Offering reports as failed but is
+   actually successful.
+   Offering created with "Create an offering to deploy a cloud
+   service"
+   
+   Application: SCOrchestrator_IAAS_Assets
+   Process: Run Service Deployment Template
+   Human Service: Deploy Service Template
+   
+   When the "Run Service Deployment Template" process is used to
+   deploy a pattern (VSYS classic or VSYS next) the empty start
+   date value is not set correctly (to null) this causes a
+   subsequent process to continue without waiting until the VSYS is
+   deployed before continuing. The offering now fails as it
+   attempts to access the virtual machines too early. The offering
+   fails with the message:
+   
+   "CTJCO0003E: Business process instance 27 of process Run Service
+   Deployment Template did not complete successfully. Status:
+   Failed.
+   Reason: CTJCA2100: The operation failed. See the mail report for
+   additional details. "
+   
+   The BPM log file shows the following output & error:
+   00000d49 wle_javascrip I   GenericRest - Exit
+   00000d49 wle_javascrip I   Get Virtual Machines - Entry
+   00000d49 wle_javascrip I   virtualSystem = %ID%
+   00000d49 wle_javascrip I   restURL =
+   /resources/virtualSystemInstances/%ID%/virtualMachines/
+   00000d49 wle_javascrip I   GenericRestCall - HasCurrentUser:
+   user=tw_admin
+   00000d49 wle_javascrip I   GenericRestCall - delimiter = / user
+   = admin - domain = Default
+   00000d49 wle_javascrip I   GenericRest - Entry
+   00000d49 wle_javascrip I   GenericRest - method=GET
+   00000d49 wle_javascrip I   GenericRest -
+   uri=/resources/virtualSystemInstances/%ID%/virtualMachines/
+   00000d49 wle           E   CWLLG0594E: An exception occurred
+   while initializing the runnable thread. Error:
+   com.lombardisoftware.component.common.workflow.WorkflowProcessIt
+   emException: java.io.IOException:     <div id='results'>
+   <span
+   class='error'>No matching pattern instance</span>    </div>
+   Reading GET
+   https://%CS_2%:8443/resources/virtualSystemInstances/%ID%/virtua [https://%CS_2%:8443/resources/virtualSystemInstances/%ID%/virtua]
+   lMachines/ received unexpected response: 404 : Not Found in
+   com.ibm.orchestrator.restcall.GenericREST
+   
+   ****************************************************************
+   * RECOMMENDATION:
+   
+   See Technote for details:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21693715 [http://www-01.ibm.com/support/docview.wss?uid=swg21693715]
+   
+   
+   For permanent resolution apply IBM Cloud Orchestrator 2.4
+   Fixpack 2 when available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  See Technote for details:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21693715 [http://www-01.ibm.com/support/docview.wss?uid=swg21693715]
+   
+   Resolving the problem
+   Modify the Deploy Single VSysNext Pattern process of the
+   SCOrchestrator_Support_vSys_Next_Toolkit toolkit and update the
+   toolkit dependencies by performing the following steps:
+   
+   1. Download and install Process Designer as described in
+   https://www.ibm.com/support/knowledgecenter/SS4KMC_2.4.0.1/com.i
+   bm.sco.doc_2.4/t_proc_des_nav.html [https://www.ibm.com/support/knowledgecenter/SS4KMC_2.4.0.1/com.ibm.sco.doc_2.4/t_proc_des_nav.html]
+   2. Log on to Process Designer as admin user and select the
+   Toolkits tab. Select the
+   SCOrchestrator_Support_vSys_Next_Toolkit (SCOVSYN) toolkit.
+   3. Select the Manage menu and mark the Allow users to update
+   toolkit check box. Then select the Snapshots menu and click Open
+   in Designer.
+   4. From the navigation bar on the left side, select Processes >
+   Deploy Single VSysNext Pattern.
+   5. On the Variables tab, create a new private variable by
+   clicking Add Private.
+   6. Enter the name futureStartTime, select Boolean as the
+   Variable Type, mark the Has Default check box, and enter false
+   in the field below.
+   7. Save your changes.
+   8. Go back to the Diagram tab and select the Parse response step
+   in the process.
+   9. Go to Implementation in the Properties view below.
+   10. Add the following lines to the script:
+   
+   if ((tw.local.inputParameterObject.starttime != null) &&
+   (tw.local.inputParameterObject.starttime != "")) {
+       tw.local.futureStartTime = true;
+   }
+   
+   11. Select the Future Start Time ? Gateway element in the
+   process diagram and go to Implementation in the Properties view.
+   12. Change the Yes (End) decision by setting the first operand
+   to tw.local.futureStartTime, the operator to == , and the second
+   operand to true
+   13. Save the changes.
+   14. Take a snapshot of the changed toolkit by selecting Snapshot
+   in the upper right side of the window. Enter a name for the
+   snapshot and provide a description to document the change.
+   15. Update the referenced version (dependency) of the modified
+   toolkit in the SCOrchestrator_IEM_SW_Integration_Toolkit
+   (ICIEMSW) toolkit and then update an additional toolkit that
+   depends on both the SCOVSYN and ICIEMSW toolkits:
+   a. Make the SCOrchestrator_IEM_SW_Integration_Toolkit toolkit
+   editable and open it in Process Designer as described in steps 2
+   and 3.
+   b. In the navigation on the left side, a yellow triangle icon
+   next to the SCOrchestrator_Support_vSys_Next_Toolkit indicates
+   that a newer toolkit version is available. Click the triangle
+   icon and select Upgrade dependency to <your_snapshot_name>. The
+   icon disappears and your snapshot name is displayed in
+   parenthesis.
+   c. Make a snapshot of the ICIEMSW toolkit as described in step
+   14.
+   d. In the SCOrchestrator_IAAS_Assets toolkit (ICIAASA) toolkit,
+   update the toolkit dependencies for SCOVSYN and ICIEMSW to the
+   new versions by repeating the steps from a to c.
+   
+   The changes are effective immediately.
+   
+   
+   For permanent resolution apply IBM Cloud Orchestrator 2.4
+   Fixpack 2 when available.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00389
+   
+   
+ * REPORTED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2800
+   
+   
+ * REPORTED RELEASE
+   240
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-01
+   
+   
+ * CLOSED DATE
+   2015-04-01
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R240 PSY
+   UP

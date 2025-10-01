@@ -1,0 +1,138 @@
+Title: IBM JR29803: USING WPS 6.0.2.4 SOME NODES IN CLUSTER DO NOT PICK UP AN OVERRIDDEN WEB SERVICE ENDPOINT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When starting the node an error is seen in the logs and the node
+   is marked as non-managed.  This results in the overridden
+   endpoint (changed via admin console) to not take effect on this
+   node.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  downgrade to version 6.0.2.2
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Websphere Process Server V6.0.2.4 users      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Error creating component                *
+   *                      com.ibm.ws.sca.internal.managed.        *
+   *                      ManagedServerComponentImpl              *
+   *                      java.lang.IllegalStateException:        *
+   *                      The LogFactoy has already been set.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   During the process server startup there is a possible race
+   condition that causes failure while loading certain Service
+   Component Architecture classes, and later causes runtime
+   issues when using Webservices binding and using the o
+   verwridden endpoint reference.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Applying this interim fix resolves the startup issues and
+   ensures that all the required Service Component Architecture
+   classes are loaded correctly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR29803
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   602
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-03
+   
+   
+ * CLOSED DATE
+   2008-07-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R602 PSY
+   UP

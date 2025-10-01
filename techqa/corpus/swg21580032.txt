@@ -1,0 +1,85 @@
+Title: IBM ACUINI0029E The install version, $(acu.compatibleVersions), is not valid. - United States
+
+Text:
+deployment engine; fails to install; installed with serious errors. TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When attempting to install the Webform Server, the installation fails with serious errors.
+
+SYMPTOM
+When reviewing the DE logs in the logs.zip, the following error is observed: 
+
+2012-01-25 13:48:33.080-06:00 : STDERR : 
+
+com.ibm.ac.si.install.InvalidVersionStringException: ACUINI0029E The 
+
+install version, $(acu.compatibleVersions), is not valid. 
+
+2012-01-25 13:48:33.081-06:00 : STDERR : at 
+
+com.ibm.ac.si.install.SIInstaller.normalizeVersion(SIInstaller.java:3504) 
+
+2012-01-25 13:48:33.081-06:00 : STDERR : at 
+
+com.ibm.ac.si.install.SIInstaller.buildCompatibilityMap(SIInstaller.java 
+
+:1113) 
+
+2012-01-25 13:48:33.082-06:00 : STDERR : at 
+
+com.ibm.ac.si.install.SIInstaller.isVersionOnCompatibilityList(SIInstall 
+
+er.java:1031) 
+
+2012-01-25 13:48:33.083-06:00 : STDERR : at 
+
+com.ibm.ac.si.install.SIInstaller.compatibilityInternal(SIInstaller.java 
+
+:3167) 
+
+2012-01-25 13:48:33.084-06:00 : STDERR : at 
+
+com.ibm.ac.si.install.SIInstaller.installInternal(SIInstaller.java:3639) 
+
+2012-01-25 13:48:33.085-06:00 : STDERR : at 
+
+com.ibm.ac.si.install.SIInstaller.install(SIInstaller.java:852) 
+
+2012-01-25 13:48:33.086-06:00 : STDERR : at 
+
+com.ibm.ac.coi.ext.ia.DEBootstrapInstall.install(DEBootstrapInstall.java:211) 
+
+2012-01-25 13:48:33.087-06:00 : STDERR : at 
+
+com.ibm.ac.coi.ext.ia.DEBootstrapWorkerThread.run(DEBootstrapWorkerThread.java:330)
+
+
+CAUSE
+Deployment Engine fails to initialize.
+
+
+ENVIRONMENT
+*nix, Windows
+
+
+
+RESOLVING THE PROBLEM
+To remove and re-install the Deployment Engine so that you can successfully in the Webform Server, follow the steps below. 
+
+. 
+
+1. Open command prompt 
+
+2. execute # mv /usr/ibm/common/acsi /usr/ibm/common/acsi_bkp 
+
+3. execute # mv /var/ibm/common/acsi /var/ibm/common/acsi_bkp 
+
+4. Clean up the /tmp directory, by removing the acu_de.log file, if it is exists. 
+
+5. Reinstall the DE using the Webform Server installer. 
+
+Note: Stop the installer once you pass the Deployment Engine installation panel (it is recommended to cancel the install on the Pre-Installation Summary Panel). 
+
+At this point, you have installed an updated version of the Deployment Engine and can proceed to install any of the Forms products. 
+
+.

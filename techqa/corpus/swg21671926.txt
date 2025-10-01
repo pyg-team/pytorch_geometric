@@ -1,0 +1,91 @@
+Title: IBM Exception "javax.security.auth.login.LoginException: Incorrect authDataEntry and alias is: SCA_Auth_Alias" - United States
+
+Text:
+iid; ibm integration designer; exception; security; login TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You receive the exception message javax.security.auth.login.LoginException: Incorrect authDataEntry and alias is: SCA_Auth_Alias when you run a SCA module with a MQ or a JMS import binding. 
+
+SYMPTOM
+In IBM Business Process Manager (BPM) V8.5, when you run a SCA module with a MQ or a JMS import binding, the following error is thrown by the server in SystemOut.log: 
+
+
+[1/22/14 16:15:39:892 CST] 00000152 WSDefaultPrin W SECJ4062W: Cannot
+find the credential information.
+[1/22/14 16:15:39:892 CST] 00000152 PrivExAction E J2CA0044E: The
+Connection Manager failed to get a Subject from the security service
+associated with ConnectionFactory sca/resource/mqjms/SCA.
+MQJMS/Callback_CF. Received exception javax.security.auth.login.
+LoginException: Incorrect authDataEntry and alias is: SCA_Auth_Alias
+at com.ibm.ws.security.auth.j2c.WSDefaultPrincipalMapping.
+getMappedSubject(WSDefaultPrincipalMapping.java:529)
+at com.ibm.ejs.j2c.PrivExAction.run(PrivExAction.java:158)
+at com.ibm.ws.security.util.AccessController.doPrivileged
+(AccessController.java:118)
+at com.ibm.ejs.j2c.ServerFunction.getSubject(ServerFunction.java:1202)
+at com.ibm.ejs.j2c.ServerFunction.getFinalSubject(ServerFunction.java:
+1290)
+at com.ibm.ejs.j2c.ConnectionManager.allocateConnection
+(ConnectionManager.java:988)
+at com.ibm.ws.sib.api.jmsra.impl.JmsJcaConnectionFactoryImpl.
+createConnection(JmsJcaConnectionFactoryImpl.java:289)
+at com.ibm.ws.sib.api.jms.impl.JmsManagedConnectionFactoryImpl.
+createConnection(JmsManagedConnectionFactoryImpl.java:162)
+at com.ibm.ws.sib.api.jms.impl.JmsManagedConnectionFactoryImpl.
+createConnection(JmsManagedConnectionFactoryImpl.java:135)
+
+
+
+CAUSE
+The generated web project for this module containing the ibm-web-bnd.xmi file still has a reference to SCA_Auth_Alias, which is an alias that was created by IBM Business Process Manager in a previous release. The alias has been removed in V8.5 and therefore no longer valid in V8.5.
+
+This has been identified as a product defect under APAR JR50028.
+
+
+DIAGNOSING THE PROBLEM
+Log into the WebSphere Administrative Console, click "Resources > JMS > connection factories", and check if there is a connection factory with JNDI "sca/resource/mqjms/SCA.MQJMS/Callback_CF". 
+
+If it exists, click the connection factory name. You should see that the authentication alias in the
+configuration page is an alias other than the SCA_Auth_Alias, which is the authentication alias defined in the deployed module.
+
+
+RESOLVING THE PROBLEM
+Workaround 1: 
+
+ 
+
+ 1. Log into the WebSphere Administrative Console, create the old SCA_Auth_Alias on the server with an ID that has administrative authority. 
+ 2. Under "Resources > JMS > connection factories", look for the connection factory with JNDI "sca/resource/mqjms/SCA.MQJMS/Callback_CF", click the connection factory name, and modify the authentication alias in the configuration page to SCA_Auth_Alias. 
+ 3. Re-install the SCA module.
+
+
+Workaround 2: 
+ 1. Update the generated web project's ibm-web-bnd.xmi file in the SCA module from 'SCA_Auth_Alias' to 'DeAdminAlias', or to another user-defined administrative alias that exists in the WebSphere Administrative Console. 
+ 2. Save the file and do not build the module again. The change to the ibm-web-bnd.xmi file must be applied again after the module is rebuilt, as the build will overwrite the change. 
+ 3. Re-install the SCA module.
+
+
+For instance, 
+
+Change: 
+
+<resRefBindings xmi:id="ResourceRefBinding_1390586116336" 
+jndiName="sca/resource/mqjms/SCA.MQJMS/Callback_CF" loginConfigurationName= "DefaultPrincipalMapping"> 
+<bindingResourceRef href="WEB-INF/web.xml#ResourceRef_1390586116336"/> 
+<properties xmi:id="Property_1390586116333" name="com.ibm.mapping.authDataAlias" 
+value="SCA_Auth_Alias"/> 
+</resRefBindings> 
+
+To this: 
+
+<resRefBindings xmi:id="ResourceRefBinding_1390586116336" 
+jndiName="sca/resource/mqjms/SCA.MQJMS/Callback_CF" loginConfigurationName= 
+"DefaultPrincipalMapping"> 
+<bindingResourceRef href="WEB-INF/web.xml#ResourceRef_1390586116336"/> 
+<properties xmi:id="Property_1390586116333" name="com.ibm.mapping.authDataAlias" 
+value="DeAdminAlias"/> 
+</resRefBindings> 
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Service Component Architecture (SCA) AIX, Linux, Linux zSeries, Solaris, Windows, z/OS 8.5.0.1, 8.5

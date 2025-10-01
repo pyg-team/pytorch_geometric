@@ -1,0 +1,134 @@
+Title: IBM PJ37247: UNABLE TO EXECUTE A SQL STATEMENT WHICH INCLUDES SINGLE QUOTES USING ADMIN_CMD() PROCEDURE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When invoking a SQL statement which includes single quotation
+   (For example: NULLIF(A.DATE,'0001-01-01') AS DATE) using the
+   ADMIN_CMD() procedure, the execution will fail with the
+   following error message:
+   
+   Data-Flows  Call ADMIN_CMD: SQL0104N: An unexpected token
+   "0001" was found following "ULLIF(A.DATE,''". Expected tokens
+   may include:  "<space>".  SQLSTATE=42601
+   Data-Flows  Call ADMIN_CMD : SQL20397W: Errors occur during
+   the calling process
+   Data-Flows  Error messages dump: Call ADMIN_CMD: SQL20397W:
+   Errors occur during the calling process
+   Data-Flows  Error messages dump: SQL0104N: An unexpected token
+   "0001" was found following "ULLIF(A.DATE,''".  Expected tokens
+   may include:  "<space>".  SQLSTATE=42601
+   Data-Flows  SQW03563E: Failure to execute Java class
+   <class_name>.
+   Exception: Call ADMIN_CMD : SQL20397W : Errors occur during the
+   calling process
+   
+   Defect#: 275240
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  SQL statement include single quotation invoked by ADMIN_CMD will
+   fail.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is resolved with InfoSphere Warehouse v9.7.0 interim fix
+   build SQW_9.7.0.v20091211.zip.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ37247
+   
+   
+ * REPORTED COMPONENT NAME
+   DWE DESIGN STUD
+   
+   
+ * REPORTED COMPONENT ID
+   5724DWEDS
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-23
+   
+   
+ * CLOSED DATE
+   2010-03-18
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DWE DESIGN STUD
+   
+   
+ * FIXED COMPONENT ID
+   5724DWEDS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSY
+   UP

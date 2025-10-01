@@ -1,0 +1,46 @@
+Title: IBM Security Bulletin: OpenSSL vulnerability in current release of the IBM® SDK for Node.js™ - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ OpenSSL ECDSA FLUSH+RELOAD cache side-channel attack 
+
+VULNERABILITY DETAILS
+CVE ID: CVE-2014-0076 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0076] 
+
+DESCRIPTION: OpenSSL could allow a local attacker to obtain sensitive information, caused by an implementation error in ECDSA (Elliptic Curve Digital Signature Algorithm). An attacker could exploit this vulnerability using the FLUSH+RELOAD cache side-channel attack to recover ECDSA nonces. 
+
+CVSS Base Score: 2.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91990 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91990] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:L/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM SDK for Node.js v1.1.0.2
+
+REMEDIATION/FIXES
+IBM SDK for Node.js v1.1.0.3
+
+IBM SDK for Node.js can be downloaded, subject to the terms of the developerWorks license, from here [http://www.ibm.com/developerworks/web/nodesdk/]
+
+IBM customers requiring an update for an SDK shipped with an IBM product should contact IBM support [http://www.ibm.com/support/], and/or refer to the appropriate product security bulletin. 
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

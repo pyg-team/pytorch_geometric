@@ -1,0 +1,34 @@
+Title: IBM Request to obtain Application Service setting failed with IBM Datacap Taskmaster Capture - United States
+
+Text:
+rulerunner; could not load; application service; dcapp TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Rulerunner threads fail or do not start. Log entries show:
+
+
+16:34:40.995 t:1294 p:7470D8 InitRoamer: Error: Application [APT]. Could not load [tmservers/tms:retry]. Request to obtain Application Service setting failed. Attempt:#[0]. Error From DCApp:[]. 
+
+CAUSE
+This message is caused by one of the following: 
+
+ * The app file for the application could not be located. 
+ * The app file for the application was locked or otherwise could not be read. 
+ * Could not connect to the server because of incorrect protocol. 
+ * Could not connect to the server because of insufficient permissions. 
+ * Could not connect to the server because it was not immediately available.
+
+DIAGNOSING THE PROBLEM
+Examine Rulerunner and batch logs to verify that there is nothing to indicate this is other than a connection problem. A certain number of occurrences of this error are normal in a Rulerunner log and do not automatically indicate that there is a connection issue. Apply this resolution only if there is nothing to indicate this is other than a connection issue.
+
+
+
+RESOLVING THE PROBLEM
+To resolve the issue, check the following: 
+
+ * In Application Manager, verify that the server information on the Taskmaster tab is correct. 
+ * In Application Manager, verify that the Service tab points to the correct datacap.xml file and that the file correctly points from there to the application folder. 
+ * When starting Rulerunner, verify that Application Manager and Datacap Studio are either not running or specifically in a state that does not lock any files. 
+ * If not specified, Rulerunner will attempt to connect through both IPv4 and IPv6. The error will be generated in the log when the unused protocol is tried. For this situation, the error can be ignored. However, the protocol can be set through the Taskmaster tab in Application Manager to eliminate this cause of the error. 
+ * Verify that the Rulerunner service is running under an account that has at least read permissions to the application folder. 
+ * With multiple threads all attempting to establish connections, some attempts may fail because the server is momentarily busy processing another request. Verify that in the app file, tmservers section, all servers have retry="3".

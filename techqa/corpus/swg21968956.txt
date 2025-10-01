@@ -1,0 +1,20 @@
+Title: IBM Error TM1-ERR-0050 in Metadata Wizard when trying to create a new project. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A new FM has been installed on a client machine : it is able to open existing projects that are based on a TM1 data source and these projects can be modified and packages can be republished.
+Old packages already published are working fine with Report Studio.
+But when trying to create a new project based on a TM1 data source, the Metadata Wizard is unable to access any of the TM1 datasources. the error is :
+TM1-ERR-0050 An attempt to initialize the TM1 API failed. The TM1 error code is 502. 
+The TM1 error message is "Could not load tm1api.dll due to: The specified module could not be found."
+
+
+CAUSE
+- On existing projects, for any operations except Metadata Wizard, the data source is queried by the BI Server : the tm1api.dll installed on the server is used.
+- But the Metadata Wizard has its own java.exe running and accessing the data source locally : because of this, it has to use a local tm1api.dll.
+
+
+RESOLVING THE PROBLEM
+Install TM1 API locally on the client machine running Framework Manager.

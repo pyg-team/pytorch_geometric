@@ -1,0 +1,39 @@
+Title: IBM Support Assistant clients receive Handshake errors when negotiating connection with server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Some client browsers or Java WebStart versions may experiance Handshake errors when negotiating connections with IBM Support Assistant v5 servers, due to changes with TLS requirements with the server connection. 
+
+SYMPTOM
+[ERROR ] CWWKO0801E: Unable to initialize SSL connection. Unauthorized access was denied or security settings have expired. Exception is javax.net.ssl.SSLHandshakeException: Client requested protocol TLSv1 not enabled or not supported
+at com.ibm.jsse2.C.z(C.java:532)
+at com.ibm.jsse2.ap.b(ap.java:476)
+at com.ibm.jsse2.ap.c(ap.java:112)
+at com.ibm.jsse2.ap.wrap(ap.java:277)
+at javax.net.ssl.SSLEngine.wrap(SSLEngine.java:21)
+at com.ibm.ws.channel.ssl.internal.SSLUtils.handleHandshake(SSLUtils.java:682)
+at [internal classes] 
+
+
+CAUSE
+Due to continuing security enhancements, all inbound and outbound connections to ISA Team Server have now been configured to accept and only use the TLSv1.2 protocol. This means by default, the client systems web browser will need to be configured to use TLSv1.2 in order to connect to a Team Server instance. Please also note that if clients wish to use desktop tools, then the client system will need to have TLSv1.2 enabled for Java Webstart.
+
+DIAGNOSING THE PROBLEM
+View the IBM Support Assistant console.log. If you see client server handshake connections closed due to the client requesting to use any protocol below TLSv1.2
+
+RESOLVING THE PROBLEM
+For Desktop tools using Java WebStart, be sure to upgrade to the latest Java version, where TLSV1.2 is enabled by default. In earlier versions of Java (Java 1.7 and prior), TLSv1.2 was not enabled by default. Recently IBM Support Assistant changed the server to exclusively use TLSv1.2. This will not allow ISA5 to complete the client to server handshake if TLSv1.2 is not enabled on the client side.
+
+
+
+
+
+To verify if TLSv1.2 is enabled look in the Advanced settings in Java and verify that TLSv1.2 is checked. 
+
+[/support/docview.wss?uid=swg21989760&aid=1] [/support/docview.wss?uid=swg21989760&aid=1] 
+
+ 
+
+When the client is connecting to the ISA 5 server with the browser, make sure that you are using a browser that can be configured to use TLSv1.2. If you are receiving the handshake error, please verify that the client system browser has TLSv1.2 enabled.

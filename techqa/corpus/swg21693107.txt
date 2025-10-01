@@ -1,0 +1,26 @@
+Title: IBM DB2 HADR and TSAMP with multiple databases on same host - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ In a DB2 HADR environment with several databases Tivoli System Automation for Multiplatforms(TSAMP) should be used for high availability. 
+
+CAUSE
+A scenario was planned with 4 HADR databases and one single ServiceIP address. It was asked if that will work
+
+ANSWER
+The normal procedure to make DB2 databases high available is to use db2haicu command. 
+
+The interactive procedure allows to enter the required values. 
+
+ 
+
+It is not recommended to have only one virtual IP address for a number of HA databases. 
+
+Each database should have assigned a ServiceIP address. In case of takeover the ServiceIP is moved to the peer node and allows to continue without interruption. 
+
+Assign an IP address for each database.
+
+RELATED INFORMATION
+ db2haicu [http://www.ibm.com/developerworks/data/library/techarticle/dm-1409hadr-db2-tivoli/index.html#cacr]

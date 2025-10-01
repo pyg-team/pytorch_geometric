@@ -1,0 +1,131 @@
+Title: IBM IZ39234: DB2FMCD COMMAND DOES NOT WORK IF BLANK LINES ARE APPENDED AFTER FMC ENTRY IN  /ETC/INITTAB FILE. - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+DB2 Version 9.5 Fix Pack 6a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027747]
+DB2 Version 9.5 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028731]
+DB2 Version 9.5 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24030302]
+DB2 Version 9.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032087]
+DB2 Version 9.5 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033308]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Fault monitor entry will be inserted into /etc/inittab when we
+   run ./db2fmcu command,
+   Fault monitor entry should be deleted when we execute ./db2fmcd
+   command.
+   
+   The problem is when we have a blank line immediately after fmc
+   entry in /etc/inittab file, we were not able to delete the fmc
+   entry (blank lines were not taken care).
+   
+   This caused problems during uninstall of TSM products.  This fix
+   will take care of the blank lines in the /etc/inittab file.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  DB2FMCD COMMAND DOES NOT WORK IF BLANK LINES ARE APPENDED AFTER
+   FMC ENTRY IN  /ETC/INITTAB FILE.
+   
+   ERROR DESCRIPTION:
+   
+   Fault monitor entry will be inserted into /etc/inittab when we
+   run ./db2fmcu command,
+   Fault monitor entry should be deleted when we execute ./db2fmcd
+   command.
+   
+   The problem is when we have a blank line immediately after fmc
+   entry in /etc/inittab file, we were not able to delete the fmc
+   entry (blank lines were not taken care).
+   
+   This caused problems during uninstall of TSM products.  This fix
+   will take care of the blank lines in the /etc/inittab file.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ39234
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4100
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-12-03
+   
+   
+ * CLOSED DATE
+   2009-11-17
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IZ62492 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ62492] IC66238 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC66238]
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSY
+   UP

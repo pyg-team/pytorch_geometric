@@ -1,0 +1,203 @@
+Title: IBM PM52894: 701 BACKWARDS MIGRATION FROM 710 AND COEXISTENCE WITH 710 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Allow a V701 queue-manager backwards migration from V710, and
+   coexistence with a V710 queue-manager in a queue-sharing group.
+   .
+   Additional keywords:
+   MQ0710C/K
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 0 Modification 1                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Enable backward migration to version    *
+   *                      7.0.1 after a queue manager has been    *
+   *                      started with version 7.1.0 code.        *
+   *                                                              *
+   *                      Enable version 7.0.1 and version 7.1.0  *
+   *                      queue managers to coexist in a queue    *
+   *                      sharing group.                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   PTFs for the backward migration APAR must be applied on version
+   7.0.1 prior to attempting fallback from WebSphere MQ for z/OS
+   version 7.1.0.
+   
+   Attempting to restart a queue manager, which has been run with
+   version 7.1.0 libraries, at version 7.0.1 without this PTF will
+   result in abnormal termination of the queue manager with reason
+   code 00C90D01.
+   
+   When reverting to Version 7.0.1 after running a queue manager at
+   version 7.1.0 the following should be considered.
+   
+   - It will NOT be possible to backwards migrate to V701 from V710
+     if the new functions available in V710 have been activated by
+     the OPMODE parameter. Refer to the WebSphere MQ Version 7.1
+     infocenter section b
+     manager to version 7.0.1b
+   
+   - If V710 has been started with OPMODE=NEWFUNC then any attempt
+     to restart the queue manager at V701 will result in abnormal
+     termination of the queue manager with reason code 00C90D01.
+   
+   - CHLAUTH objects are stored on the SYSTEM.CHLAUTH.DATA.QUEUE.
+     They will not be visible at V701 but will reappear when the
+     queue manager is subsequently restarted at V710
+   
+   - New object attributes introduced in V710 will not be present
+     in V701, and when you subsequently migrate to V710 they will
+     be reset to default values.
+   
+   - If the queue manager is a cluster repository queue manager,
+     then after backward migration, any other V710 queue managers
+     in the cluster will not receive information about new V710
+     attributes on clustered queues, topics and queue managers from
+     this full repository.
+   
+   - If you are using the MQ Explorer to administer your queue
+     manager then after migration between releases the following
+     Explorer actions must be performed:
+     o Remove the migrated z/OS queue manager
+     o Add Remote Queue Manager
+   
+   This APAR also provides coexistence aspects when migrating queue
+   sharing groups to V710.
+   
+   The coexistence aspects of this APAR allow a V701 queue manager
+   in a queue sharing group to handle DISPLAY command responses
+   from a V710 queue manager that contain new attributes that exist
+   only in V710.
+   .
+   Following the application of the PTF for this APAR, the queue
+   manager must be restarted if coexistence with any V710 queue
+   managers in the same QSG is required.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  &#158;**** PE12/11/26 FIX IN ERROR. SEE APAR PM72079 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM72079]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM52894
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   010
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-25
+   
+   
+ * CLOSED DATE
+   2012-03-07
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK76760
+   
+   
+
+MODULES/MACROS
+ *  CMQXZMUC CSQECONN CSQIDPUT CSQIECUR CSQIERS3
+   CSQIMGEK CSQMCNSB CSQMNMMS CSQMQDEF CSQOKYTB CSQORINI CSQOXATR
+   CSQUDEFS CSQUXPRM CSQXRFIC CSQ45BPL CSQ45GEX CSQ5AUOB CSQ5PLNU
+   CSQ5PQSG CSQ5READ CSQ5UPDT CSQ5U701
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R010 PSY UK76760 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK76760]
+   UP12/03/22 P F203
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

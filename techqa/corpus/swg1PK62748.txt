@@ -1,0 +1,236 @@
+Title: IBM PK62748: CLUSTER-SCOPED RESOURCES REMOVED WHEN FIRST MEMBER IS CREATED   FROM A TEMPLATE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24021203]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The problem was due to a bug in a resource merge logic that we
+   had that promotes resources from server/template to cluster
+   scope when first cluster member is added.
+   
+   In V6.1, when the first cluster member is added either from
+   a template or by using an existing server, we try to take
+   resources at the server or template scope and copy them to
+   server scope for the entire cluster to use. That logic has a
+   bug and it overwrites cluster level resources. We should not
+   copy resources from server to cluster scope if a cluster
+   already has any resources defined and it should not overwrite
+   anything in the cluster resources.xml.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of IBM WebSphere Application Server   *
+   *                  V6.0.2. and V6.1                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: During addition of the first cluster    *
+   *                      member the resources defined at the     *
+   *                      cluster scope are overwritten and lost. *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The problem was due to a bug in resource merge logic that
+   promotes resources from a server or template to cluster scope
+   when first cluster member is added.
+   
+   When the first cluster member is added either from a template
+   or by using an existing server, we try to take resources at
+   the server or template scope and copy them to the server
+   scope for the entire cluster to use. We should not copy
+   resources from server to cluster scope if the cluster already
+   has any resources defined. It should not overwrite anything in
+   the cluster resources.xml.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A New custom property,
+   com.ibm.websphere.management.disableResourcePromotion,  has
+   been introduced to disable promotion of resources from server
+   to cluster scope while creating a cluster member from a server
+   with existing resources.
+   
+   The property has to be set in deployment manager. The property
+   need to be defined as a JVM property in Deployment manager.
+   
+   In the administrative console, navigate to:
+   System administration --> Deployment manager --> Process
+   Definition --> Java Virtual Machine --> Custom Properties
+   Name :
+   com.ibm.websphere.management.disableResourcePromotion
+   Value : true
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 6.1.0.21 and 6.0.2.31.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK62748
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   61I
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-13
+   
+   
+ * CLOSED DATE
+   2008-07-16
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP
+   
+   
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

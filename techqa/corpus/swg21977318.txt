@@ -1,0 +1,26 @@
+Title: IBM How to increase the session timeout for IBM InfoSphere MDM Collaboration Server User Interface - United States
+
+Text:
+session timeout "inactive interval" "times-out" TECHNOTE (FAQ)
+
+QUESTION
+ How can I increase the session timeout value for IBM InfoSphere MDM Collaboration Server User Interface 
+
+CAUSE
+During time intensive item or category insert / update work it may happen that the session times out and unsafed work is lost. The message window that pops up when this happens shows: 
+
+ * 
+ * 
+ * "Your session times-out in 0 minutes. Would you like to reset your session with the server ?"
+ * 
+
+ANSWER
+You need to increase the value in $TOP/etc/default/common.properties for following parameter: 
+
+ * 
+ * max_inactive_interval=1800
+ * 
+
+
+The max_inactive_interval parameter specifies the inactive session duration in seconds. By default it is set to 1800 (30 minutes). 
+The server needs to be restarted so the new setting is used

@@ -1,0 +1,36 @@
+Title: IBM Error message "Too many open files" - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error message "Too many open files" in the Unix server were CEHTTP and TOMCAT is installed.
+TOMCAT Log message:
+java.io.FileNotFoundException: 
+/centerprise/apache/apache-tomcat-5.5.25/work/Catalina/localhost/tomcat-docs/SESSIONS.ser (Too many open files)
+SEVERE: IOException while saving persisted sessions: java.io.FileNotFoundException: 
+/centerprise/apache/apache-tomcat-5.5.25/
+work/Catalina/localhost/tomcat-docs/SESSIONS.ser (Too many open files) 
+
+RESOLVING THE PROBLEM
+It is not a Sterling Connect:Enterprise for UNIX problem, but an environment problem. 
+
+This message is coming from TOMCAT. 
+
+It means the exceeded number of open files that is configured to an user. 
+
+It is limited by nofiles parameter. 
+
+$ ulimit -an
+time(seconds) unlimited
+file(blocks) unlimited
+data(kbytes) unlimited
+stack(kbytes) 8192
+coredump(blocks) unlimited
+nofiles(descriptors) 256
+memory(kbytes) unlimited
+
+ 
+
+HISTORICAL NUMBER
+ NFX4675

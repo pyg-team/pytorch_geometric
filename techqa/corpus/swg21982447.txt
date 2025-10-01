@@ -1,0 +1,37 @@
+Title: IBM Rulerunner Unable to process batches - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After setting up Datacap Rulerunner, batches are not processing. 
+
+SYMPTOM
+The Rulerunner log states: "Establish Connection Failure" and " External exception while Establish connection, failed to connect to server."
+
+
+CAUSE
+The service account is not set to local.
+
+DIAGNOSING THE PROBLEM
+Logon to the service account and run CMD. Navigate to the C:\Datacap\Taskmaster folder and try to import the keys (dcskey.exe -i) and you will get error: "Key's couldn't be imported. The profile for the user is a temporary profile."
+
+To verify this is the issue go to Control Panel > system > View advanced system settings > Advanced tab > User Profiles : Settings > {locate the service account}. It should say Type=local and status=local.
+A status=backup will cause this issue.
+
+RESOLVING THE PROBLEM
+
+
+
+
+
+ 1.  Login to a local account 
+ 2.  Goto Control panel > System > View advanced system settings > Advanced tab > User Profiles : Settings > {locate the service account} 
+ 3.  Delete the problem service account 
+ 4.  Log out 
+ 5.  Log back in with the domain service account 
+ 6.  Goto Control panel > System > View advanced system settings > Advanced tab > User Profiles : Settings > {locate the service account} 
+ 7.  Verify it says say Type=local and status=local 
+ 8.  Test manually generating keys using CMD > CD c:\Datacap\Taskmaster > dcskey.exe -i 
+ 9.  Go to Services and retype the service account name and password using browse 
+ 10. Restart Rulerunner and verify the issue is resolved

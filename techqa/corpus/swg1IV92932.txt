@@ -1,0 +1,154 @@
+Title: IBM IV92932: CT_EXECUTE IS NOT SUPPORTED ON NON WINDOWS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CT_Execute is not supported on non Windows platforms
+   
+   Details:  This area of Admin Guide to be updated.
+   ----------------
+   Issuing SOAP requests as system commands
+   
+   You can use the Take Action feature in the Tivoli Enterprise
+   Portal to
+   issue SOAP requests as system commands in policies or in
+   situations.
+   The SOAP requests are stored in a text file.  For details, see
+   the
+   Specifying an action and Action Settings topics in the Tivoli
+   Enterprise
+   Portal User's Guide.
+   
+   The soap command is:
+   
+   soap:CT_Execute,filename=SOAPREQ
+   
+   where:
+   
+   CT_Execute is the name of the SOAP method that allows you to
+   run a SOAP
+   request that is stored in a file.
+   
+   SOAPREQ is the name of the file you created that contains the
+   CT_EMail
+   SOAP request
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  There are no updates being done anymore to ITM Guides.
+   
+   L2 may create a TechNote to show the desired edit to Admin
+   Guide.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  There are no updates being done anymore to ITM Guides.
+   
+   L2 may create a TechNote to show the desired edit to Admin
+   Guide.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  There are no updates being done anymore to ITM Guides.
+   
+   L2 may create a TechNote to show the desired edit to Admin
+   Guide.
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  There are no updates being done anymore to ITM Guides.
+   
+   L2 may create a TechNote to show the desired edit to Admin
+   Guide.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV92932
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-31
+   
+   
+ * CLOSED DATE
+   2017-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

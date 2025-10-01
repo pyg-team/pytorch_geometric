@@ -1,0 +1,24 @@
+Title: IBM Why MS SQL Server transaction log file gets too big quickly if WF_INSTANCE_SAVE is set to "ALWAYS"? - United States
+
+Text:
+TRICONFIG; TRILOGGING; TRIDATABASE; TRISQLSERVER; Transaction; Log; WF_INSTANCE_SAVE; disk TECHNOTE (FAQ)
+
+QUESTION
+ Why MS SQL Server transaction log file gets too big quickly if WF_INSTANCE_SAVE is set to "ALWAYS" on IBM TRIRIGA product? 
+
+CAUSE
+We have set WF_INSTANCE_SAVE to "ALWAYS" on TRIRIGAWEB.properties file and we see Microsoft SQL Server Transaction log file getting too big really quickly, and then consuming all available disk space on database server disk. Why does it happen?
+
+
+ANSWER
+When you set WF_INSTANCE_SAVE to "ALWAYS" in the TRIRIGAWEB.properties file, code will start recording all Workflow actions & details in on specific tracing log BOs / Tables in TRIRIGA. This will increase drastically database activity due to all the inserts in this tracing table, and the MS SQL Server Transaction log file will quickly start getting bigger and bigger as time goes by, and you may run into lack of disk space on database server.
+
+Our IBM TRIRIGA Best Practice for System Performance guide does not recommend you to set WF_INSTANCE_SAVE to "ALWAYS" in the TRIRIGAWEB.properties file at all, this needs to be set to "ERRORS ONLY" to reduce database activity regarding any tracing information due to Workflow runs. 
+
+With WF_INSTANCE_SAVE to "ERRORS ONLY", only the Workflows failing into ERROR condition will save some tracing information on the IBM TRIRIGA log / tracing tables. 
+
+If you run into lack of disk space due the condition above, stop IBM TRIRIGA servers, request your DBA to have a backup of the MS SQL Server Transaction log (this will truncate the log file to small file), open the TRIRIGAWEB.properties file for each of your IBM TRIRIGA servers, make sure to set WF_INSTANCE_SAVE property to "ERRORS ONLY" and restart the IBM TRIRIGA servers after that. 
+
+
+RELATED INFORMATION
+ IBM TRIRIGA Best Practices for System Performance [https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=9e3a5b9d-6a06-4796-a6c1-5137b626e39c#fullpageWidgetId=W89a8af160e64_4167_a047_b5bc553dcaf4&file=89ba4acf-8ae6-44e7-b176-c457d465d1f1]

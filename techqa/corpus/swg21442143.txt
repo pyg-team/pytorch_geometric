@@ -1,0 +1,13 @@
+Title: IBM InfoSphere Warehouse Backward Compatibility - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is InfoSphere Warehouse backward Compatible? 
+
+ANSWER
+
+Since each release typically introduces new operators or new properties for existing operators with added functionality which previous versions are unaware of, we do not support any kind of backwards compatibility. For example, Design Studio V9.5 will not be able to load a control flow or data flow that was created by V9.7. The same applies for applications developed using Design Studio - they will not be able to be deployed on application server with different version.
+
+The migration tool would allow the user to migrate the Design Studio files from previous versions. Users may also install multiple versions of the Design Studio to maintain flows with different versions.

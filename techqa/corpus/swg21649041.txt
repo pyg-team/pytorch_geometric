@@ -1,0 +1,60 @@
+Title: IBM SSL Certificate Domain Validation Failure if SubjectAltName Is Missing - United States
+
+Text:
+TPAEMOBSUITE; TPAEMOBILEWORK; TPAEMOBILEINV TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Mobile users are unable to connect over any connection for PDA devices configured with SSL. Users receive a login failure error and the device log displays “Communication Failed Error”. 
+
+SYMPTOM
+The problem will occur with the HostNameResolver not validating the certificate host when wildcards are in place (e.g.: *.mydomain.com). The problem happens when the hostnameverifier has to validate a domain in the pattern above. If the domain has no * it will validate successfully. Also, the error does not occur in the old JVM, due to a defect where hostname verification was not being carried out. 
+
+
+CAUSE
+Issue is only applicable to customers using the new JVM, J9 file needed for Windows Mobile devices on version release 6.5.3. This is in combination of using a *Wildcard Domain, which adds a wildcard value for the hostname in your SSL certificate. They are in the format of asterix symbol, prefixed in domain (i.e. =*.domainname.com). 
+
+*The Wildcard Domain is an extra feature available from your Certification Authority that adds a Wildcard SSL certificate entry as " *.domainname.com" which gives you the control to add your own sub-domains for your https prefix address in the form of : 
+
+mxtest.domainname.com, email.domainname.com, blog..domainname.com and more. 
+
+The Wildcard SSL certificate registration form would have been completed using the 
+Common Name (CN) method as below: 
+
+subjectDN name CN=*.domainname.com 
+
+Although the use of the "Common Name" is an existing practice, it is deprecated and Certification Authorities are encouraged to use the "dNSName" instead, thereby making the certificate compliant in accordance with the RFC 2818 definition. The RFC2818 is specific to HTTPS standards and generalises the practice to all protocols for SSL certificates. This is an external change that our latest JVM J9 now conforms to. 
+
+For more information, you may refer to the RFC-2818 at www.ietf.org/rfc/rfc2818.txt
+
+This issue does not impact standard domain/hostname registration where specific entries are registered (domain or sub domain =domainname.com, =maxtest.domainname.com) . 
+
+
+DIAGNOSING THE PROBLEM
+In Mobile device log, the following is displayed:
+
+Communication Failed error.
+
+And also 
+Tue Oct 09 21:40:06 BST 2011 [INFO] URL: 
+mxtest.domainname.com:443/maximomobile/mobileservice/MOBILEWO 
+
+
+(please note, the prefix of https:// has been removed from the above example for security reasons) 
+
+
+HostName: mxtest.domainname.com 
+
+SubjectDN: CN=*.domainname.com,OU=Domain Control Validated,O=*.domainname.com 
+
+Value for key CN: *.domainname.com 
+*** Failed because hostName (mxtest.domainname.com) and server name (*.domainname.com) does not match 
+
+
+RESOLVING THE PROBLEM
+Do not use WM653 with SSL if you have Wildcard SSL certificate from a Certificate Authority 
+that does not use "subjectAltName" in the SSL certificate registration process. If in doubt, contact your SSL certificate issuer for confirmation of whether "dNSName" in subjectAltName extension of the certificate is included or not. 
+
+Additional information:
+Maximo Mobile version 7.5 is supported on Windows Mobile 5, 6.0, 6.1, 6.5.1 and Windows XP/Vista/7. Maximo Mobile will work with Windows Mobile 6.5.3 with a modified JVM which is available upon request from IBM. This constraint is the result of changes made by Microsoft in Windows Mobile 6.5.3. 
+
+Customers should note that new PDA type devices are likely to be supplied with Windows Mobile 6.5.3 and because of rules set by Microsoft they cannot usually be downgraded. Although not officially supported, IBM will make reasonable efforts to address any issues with Maximo Mobile running on Windows Mobile 6.5.3. However, issues may arise with Windows Mobile 6.5.3 that will be out of IBM's control or ability to address, (such as the issue described in this TechNote). IBM recommends that clients planning to use Windows Mobile 6.5.3 based devices should test Maximo Mobile on the intended device to ensure it works properly for the intended use cases. IBM is willing to provide evaluation licences for Maximo Mobile for this purpose.

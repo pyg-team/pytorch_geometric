@@ -1,0 +1,51 @@
+Title: IBM ALSCAL returns error 14651 : data file has too few cases. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am trying to do a non-parametric multidimensional scaling analysis on a dissimilarity matrix from the data editor window. How should I set up this matrix? I tried putting each set of sample variables into its own separate column. When I run ALSCAL I receive this error message:
+
+"Error # 14651
+ALSCAL encountered an error reading the working SPSS file. The
+observations data file has too few cases.
+This command not executed. " 
+
+RESOLVING THE PROBLEM
+In cases where ALSCAL users have reported this error, the data file was usually comprised of one or more proximity matrices, as opposed to raw data. In these situations, there were rows of system missing (sysmis) values in the .sav file. This occurrence often involved data that had been created by exporting a database or spreadsheet file, such as an Excel file. If you were reading in a file with proximity matrices for 15 variables for each of 10 cases (for an individual differences, or INDSCAL, model), ALSCAL would expect 150 rows of data. If extra lines were read at the bottom of the file, ALSCAL would interpret these rows as part of the data for case 11. If the data matrix for case 11 is incomplete, you get the error message that you mentioned. Check for any such extra lines in the data file and delete them. The extra lines would not necessarily be at the end of the file. Sometimes, people put blank lines between each pair of matrices. 
+
+This error message has also been reported in cases where the data was comprised of raw data, (such as respondent ratings on each variable, with each row in the data file representing a respondent and each variable representing an attribute that was rated), but where the user's syntax or dialog choices indicated that the data was comprised of one or more proximity matrices. If the number of rows of data did not equal a multiple of the number of variables (or exactly the number of variables when an INDSCAL model was not chosen), then the last matrix would be considered incomplete and the error message would be printed. In this situation, however, a more serious misrepresentation of the data (case-level vs. matrix) would underlie the message. 
+
+The error has also been reported in cases where the user has analyzed a subset of the variables in a proximities matrix but did not filter out or delete the rows that correspond to the unused variables. For example, suppose that you had a proximities matrix with 60 variables, item1 to item60, and 60 rows corresponding to those variables. If you ran ALSCAL with only 50 of the variables named in the variable list, but did not filter the cases for the unused variables, ALSCAL would try to analyze a 60X50 matrix and interpret the 10 extra rows as belonging to an incomplete second subject matrix. Thus, you would get the "too few cases" message when you really had too many cases. You can run ALSCAL in this situation by first filtering out or deleting the cases that correspond to unused variables. You can filter cases from the 'Data->Select' Cases' menu. If you are using the first 50 variables, for example, you could then choose to select cases "Based on time or case range" and choose a range of 1 to 50. The equivalent command syntax would be:
+
+FILTER OFF.
+USE 1 thru 50.
+EXECUTE.
+
+If your unused variables are scattered among the used variables, rather than in a block at the end or beginning of the dictionary, then you would need to construct a more complex filter condition under "If case satisfies condition",. If there was a VARNAME_ variable in the proximities file (which is not necessary for ALSCAL), with values ranging from "ITEM1 to ITEM60 (for example), you could filter out the cases to be omitted by a condition such as
+NOT(ANY(VARNAME_,'ITEM24','ITEM35','ITEM43','ITEM52')). The equivalent syntax commands are:
+
+USE ALL.
+COMPUTE filter_$=NOT(ANY(VARNAME_,'ITEM24','ITEM35','ITEM43','ITEM52')). 
+VARIABLE LABEL filter_$ 'NOT(ANY(VARNAME_,'ITEM24','ITEM35','ITEM43','ITEM52')) (FILTER)'.
+VALUE LABELS filter_$ 0 'Not Selected' 1 'Selected'.
+FORMAT filter_$ (f1.0).
+FILTER BY filter_$.
+EXECUTE.
+
+For a single analysis with the reduced proximities matrix, you could use this simple command set just before your ALSCAL command:
+temporary.
+select if NOT(ANY(VARNAME_,'ITEM24','ITEM35','ITEM43','ITEM43')). 
+* Your alscal command here.
+
+If you don't have a VARNAME_ variable, you could create an id variable based on the case number and filter on that variable. (Don't include the id variable in the ALSCAL command.
+
+compute id = $casenum.
+execute.
+temporary.
+select if NOT(ANY(id,24,35,43,52)).
+
+
+
+HISTORICAL NUMBER
+ 24536

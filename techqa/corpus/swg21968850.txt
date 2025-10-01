@@ -1,0 +1,25 @@
+Title: IBM The "Open with Report Studio" Icon from Cognos Connection is missing - United States
+
+Text:
+Icon Disappeared; Icon Missing; Cognos Viewer icon missing. TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The "Open With Report Studio" iIcon (Inverted Triangle Icon) in the Cognos Connection is no longer visible. 
+
+CAUSE
+This is usually observed when the following advanced parameters are enabled for the entire dispatcher, instead of just the ReportService and/or BatchReportService:
+1. VIEWER_ENABLE_SORT=TRUE
+2. VIEWER_DISABLE_SECONDARY_SORT_FOR_LISTS=TRUE
+
+ENVIRONMENT
+Cognos 10.2.2
+
+DIAGNOSING THE PROBLEM
+In IBM Cognos Administration > Configuration > Dispatchers and Services > Set Properties Configuration > Settings > Environment > Advance Setting check to see if the below settings exists:
+1. VIEWER_ENABLE_SORT=TRUE
+2. VIEWER_DISABLE_SECONDARY_SORT_FOR_LISTS=TRUE.
+If they are set then while running the reports the Open With Report Studio Inverted Triangle disappears.
+
+
+RESOLVING THE PROBLEM
+Removed these advanced parameters from the dispatcher's advanced settings and keep them only for the ReportService and BatchReportService.

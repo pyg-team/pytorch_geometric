@@ -1,0 +1,79 @@
+Title: IBM Security Bulletin: IBM Security Access Manager for Web is affected by multiple NTP vulnerabilities - United States
+
+Text:
+PSIRT SECURITY BULLETIN
+
+SUMMARY
+ The Network Time Protocol (NTP) is used to synchronize a computer's time with another referenced time source.
+
+IBM Security Access Manager for Web uses NTP and is affected by multiple NTP vulnerabilities. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2014-9297 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-9297]
+DESCRIPTION: Network Time Protocol (NTP) Project NTP daemon (ntpd) could allow a remote attacker to conduct spoofing attacks, caused by insufficient entropy in PRNG. An attacker could exploit this vulnerability to spoof the IPv6 address ::1 to bypass ACLs and launch further attacks on the system.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/#/vulnerabilities/100004 [https://exchange.xforce.ibmcloud.com/#/vulnerabilities/100004] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:P/A:N) 
+
+CVEID: CVE-2014-9298 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-9298]
+DESCRIPTION: Network Time Protocol (NTP) Project NTP daemon (ntpd) could allow a remote attacker to obtain sensitive information, caused by the improper validation of the length value in extension field pointers. An attacker could exploit this vulnerability to obtain sensitive information.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/#/vulnerabilities/100005 [https://exchange.xforce.ibmcloud.com/#/vulnerabilities/100005] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N) 
+
+CVEID: CVE-2015-1798 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1798]
+DESCRIPTION: Network Time Protocol (NTP) Project NTP daemon (ntpd) could allow a remote attacker to bypass security restrictions, caused by the acceptance of packets that do not contain a message authentication code (MAC) as valid packets wen configured for symmetric key authentication. An attacker could exploit this vulnerability using man-in-the-middle techniques to bypass the authentication process.
+CVSS Base Score: 5.4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/#/vulnerabilities/102051 [https://exchange.xforce.ibmcloud.com/#/vulnerabilities/102051] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:A/AC:M/Au:N/C:P/I:P/A:P) 
+
+CVEID: CVE-2015-1799 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1799]
+DESCRIPTION: Network Time Protocol (NTP) Project NTP daemon (ntpd) is vulnerable to a denial of service, caused by an error when using symmetric key authentication. By sending specially-crafted packets to both peering hosts, an attacker could exploit this vulnerability to prevent synchronization.
+CVSS Base Score: 5.4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/#/vulnerabilities/102052 [https://exchange.xforce.ibmcloud.com/#/vulnerabilities/102052] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:A/AC:M/Au:N/C:P/I:P/A:P) 
+
+CVEID: CVE-2015-3405 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-3405]
+DESCRIPTION: Network Time Protocol (NTP) could allow a remote attacker to conduct spoofing attacks, caused by the generation of MD5 symmetric keys on big-endian systems by the ntp-keygen utility. An attacker could exploit this vulnerability using the generated MD5 keys to spoof an NTP client or server.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/#/vulnerabilities/104387 [https://exchange.xforce.ibmcloud.com/#/vulnerabilities/104387] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:P/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Security Access Manager for Web 7.0 appliances, all firmware versions
+IBM Security Access Manager for Web 8.0 appliances, all firmware versions 
+IBM Security Access Manager 9.0 appliances, all firmware versions
+
+REMEDIATION/FIXES
+The table below provides links to patches for all affected versions. Follow the installation instructions in the README file included with the patch. 
+
+
+
+Product VRMF APAR Remediation IBM Security Access Manager for Web 7.0 - 7.0.0.20 (appliances) IV80982 1. Apply Interim Fix 21: 
+7.0.0-ISS-WGA-IF0021 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Tivoli/Tivoli+Access+Manager+for+e-business&release=7.0&platform=All&function=all] IBM Security Access Manager for Web 8.0 - 8.0.1.3 IV80905 1. For 8.0-8.0.1.2 environments, upgrade to 8.0.1.3:
+8.0.1-ISS-WGA-FP0003 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Tivoli/Tivoli+Access+Manager+for+e-business&release=8.0&platform=All&function=all] 
+2. Apply 8.0.1.3 Interim Fix 4:8.0.1.3-ISS-WGA-IF0004 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Tivoli/Tivoli+Access+Manager+for+e-business&release=8.0.1.3&platform=All&function=all] IBM Security Access Manager 9.0 - 9.0.0.1 IV80905 1. For 9.0 environments, upgrade to 9.0.0.1:
+9.0.0-ISS-ISAM-FP0001 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Tivoli/Tivoli+Access+Manager+for+e-business&release=9.0.0.0&platform=Linux&function=all]
+2. Apply 9.0.0.1 Interim Fix 1:
+9.0.0.1-ISS-ISAM-IF0001 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Tivoli/Tivoli+Access+Manager+for+e-business&release=9.0.0.0&platform=All&function=all] WORKAROUNDS AND MITIGATIONS
+None.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ February 1, 2016: Original version published. 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

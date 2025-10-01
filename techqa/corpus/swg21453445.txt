@@ -1,0 +1,23 @@
+Title: IBM Unable to connect to database: Error Message: Communications link failure Last packet sent to the server was 0 ms ago. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to connect to database: Error Message: Communications link failure Last packet sent to the server was 0 ms ago. 
+
+CAUSE
+One of the possible causes for this error message could be due to a network issue or due to the firewall not configured properly.
+
+RESOLVING THE PROBLEM
+Please ensure to open all the required ports on the firewall to overcome this issue.
+
+
+
+HISTORICAL NUMBER
+ 00001364 
+
+PRODUCT ALIAS/SYNONYM
+ Cast Iron Solution
+Cast Iron Operating System
+Cast Iron Studio

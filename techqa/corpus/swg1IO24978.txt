@@ -1,0 +1,129 @@
+Title: IBM IO24978: IBM CONTENT NAVIGATOR THROWS ACL ERROR WHEN SHARING SEARCH WITH ALLPRIVS CONTENT MANAGER USER. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+3.0.1-ICN-WIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-WIN&source=SAR]
+3.0.1-ICN-zLINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-zLINUX&source=SAR]
+3.0.1-ICN-LINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-LINUX&source=SAR]
+3.0.1-ICN-AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-AIX&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Content Navigator V2.0.3, when creating new search and
+   share, a user with insufficient CM8 privileges will receive ACL
+   error when adding another user with AllPrivs privilege set to
+   share the new search.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Users that do not have the UserACLOwner privilege receive an
+   error when sharing a new search with other users.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This has been addressed in IBM Content Navigator V3.0.1. With
+   this fix, users that do not have the UserACLOwner privilege can
+   share a new search with other users.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO24978
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   ISCONTNAV
+   
+   
+ * REPORTED RELEASE
+   203
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-11-23
+   
+   
+ * CLOSED DATE
+   2017-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   ISCONTNAV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R203 PSY
+   UP

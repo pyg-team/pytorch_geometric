@@ -1,0 +1,55 @@
+Title: IBM Guardium STAP message "Not FIPS 140-2 compliant" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In the STAP event log in the GUI you see an entry like LOG_ERR: Not FIPS 140-2 compliant - use_tls=0 failover_tls=1. 
+
+CAUSE
+FIPS 140-2 is a US government security standard for cryptographic modules. If you see this message it indicates that the STAP is configured in a way that does not meet the standard. 
+
+Note - This message does not indicate any error with the STAP
+
+If you wish to enable FIPS compliance, the guard_tap.ini file must have:
+
+
+ * use_tls=1
+ * 
+ * failover_tls=0
+
+
+Any other combination will turn off FIPS mode and result in the message as above. 
+ENVIRONMENT
+You will only see a FIPS message if FIPS mode is implemented on your STAP type. As of April 2013 and subject to future changes: 
+
+ 
+
+ * 
+ *  
+   - all Solaris 
+   - all AIX 
+   - all Linux, except for PowerPC (RHEL 5 ppc64 and SUSE 10 ppc64) 
+ * 
+ * 
+ * not 
+ * 
+ *  
+   - Linux - Red Hat 5 PowerPC and SUSE 10 PowerPC 
+   - HPUX 
+
+RESOLVING THE PROBLEM
+You can change the configuration by one of the methods below: 
+
+
+A - In the GUI->Administration Console->STAP Control page. 
+
+ * 
+ * 
+ * 
+
+
+B - Edit the guard_tap.ini file on the DB server directly and restart the STAP. 
+
+
+NOTE : If you do not want to use TLS in your environment it is safe to ignore the message.

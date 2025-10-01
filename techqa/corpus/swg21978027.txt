@@ -1,0 +1,20 @@
+Title: IBM 'Driver is not configured for integrated authentication' message is received when you configure a deployment environment for IBM Business Process Manager - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you configure a deployment environment for IBM Business Process Manager (BPM) on a system that uses IBM WebSphere SDK Java Technology Edition 7 (Java 7) and Microsoft SQL Server with Windows authentication enabled, you receive a message 'Driver is not configured for integrated authentication'. 
+
+CAUSE
+Thesqljdbc_auth.dll file is not installed on a system that uses Java 7 and Microsoft SQL Server with Windows authentication enabled. This is an IBM BPM limitation.
+
+RESOLVING THE PROBLEM
+Copy the sqljdbc_auth.dll file from the install_root\jdbcdrivers\SQLServer\auth\x64 directory to the install_root\lib\native\win\x86_64 directory. 
+
+This issue can also occur when you use IBM WebSphere SDK Java Technology Edition 6 (Java 6) and apply a fix for it. The update process might remove thesqljdbc_auth.dll file, and you receive the same error message. As instructed in the preceding step, copy the file to the specified location where it will not be removed by the Java update.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Installation / Configuration Windows 8.5.6, 8.5.5 Business Integration IBM Business Process Manager Standard Installation / Configuration Windows 8.5.6, 8.5.5

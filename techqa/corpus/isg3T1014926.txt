@@ -1,0 +1,19 @@
+Title: IBM What is the meaning of the value of REQUEUE_EXIT_VALUES? - United States
+
+Text:
+REQUEUE_EXIT_VALUES TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What is the meaning of the value of REQUEUE_EXIT_VALUES? 
+
+RESOLVING THE PROBLEM
+What is the meaning of the value of REQUEUE_EXIT_VALUES?You can configure a queue to automatically requeue a job if it exits with a specified exit code by defining this parameter for certain queue in lsb.queues
+To configure automatic job requeue, set REQUEUE_EXIT_VALUES in queue definition and specify the exit code that will cause the job to be requeued.
+Example:
+
+
+Begin Queue...REQUEUE_EXIT_VALUES 99 100...End Queue
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

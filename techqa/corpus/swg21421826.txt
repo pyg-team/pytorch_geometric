@@ -1,0 +1,19 @@
+Title: IBM Unable to launch eDiscovery Manager web client - United States
+
+Text:
+eDM; LDAP; LTPA; federated repository; can't launch eDM; http 500 error TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have installed eDiscovery Manager with FileNet P8 as the back-end repository. I am not able to launch my eDiscovery Manager web client. I have imported the LTPA key and followed the LDAP instructions per the information center. We are using 'Federated Repositories' instead of 'Standalone LDAP registry' as our realm definition. 
+
+SYMPTOM
+Your WebSphere Application Server SystemOut.log shows errors similar to the following. 
+
+[2/16/10 13:54:33:065 EST] 00000015 E com.ibm.icm.edc.ral.p8.impl.RepositoryImpl loginRepos Failed to establish a connection to P8.
+com.filenet.api.exception.EngineRuntimeException: E_NOT_AUTHENTICATED: The user is not authenticated.
+at com.filenet.apiimpl.core.UserPasswordToken.getSubject(UserPasswordToken.java:127)
+at com.filenet.api.util.UserContext.createSubject(UserContext.java:240)
+
+
+RESOLVING THE PROBLEM
+If you have selected 'Federated Repositories' instead of 'Standalone LDAP registry' in the 'Available realm definitions' list in your WebSphere Application Server administration console, then make sure the federated repository (LDAP server) that your eDM admin user is a part of, is listed in the realm. Restart your WebSphere Application Server after making the change and launch your eDiscovery Manager web client.

@@ -1,0 +1,34 @@
+Title: IBM Is there a way to change DAEMONHOST value in SPSSPROD.INF with OSX? - United States
+
+Text:
+OSX; daemonhost; spssprod.inf TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If your server with Sentinel RMS Licence Manager details have changed you will need to tell the IBM SPSS application that is using the Licence Manager where it needs to get the licences from after the change. 
+
+ENVIRONMENT
+OSX client
+
+RESOLVING THE PROBLEM
+When you need to change the IP or server address of where Sentinel RMS Licence Manager is installed you can edit the SPSSPROD.INF file.
+
+This is the same process for Windows based installations of IBM SPSS Statistics, however to get to the location with OSX is a little more detailed.
+
+You will need to:
+1. Select Application>IBM>SPSS>Statistics>(Your Version)
+2. Hold Control whilst clicking on SPSSStatistics.app
+3. Select Show Package Contents
+4. select Contents>bin
+5. Locate the SPSSPROD.INF file and edit with TextEdit or similar.
+6. Locate the line:
+DAEMONHOST=
+7. Adjust the value and save the file.
+8. Re-Start IBM SPSS Statistics and it should now get a licence from the new Licence Manager.
+
+
+Please note: 
+
+You are not attempting to execute/run the spssprod.inf file, you are opening it with a text editor so that you can edit the file, then save it again as the contents are in plain text.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

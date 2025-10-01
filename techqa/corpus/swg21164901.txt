@@ -1,0 +1,68 @@
+Title: IBM Slow channel performance and CSQX209E due to a shortage of buffpool space in the MSTR - United States
+
+Text:
+performance channel slow response buffpool buffer pool Slow channel performance CSQX209E CSQX208E shortage buffpool space AMQ9213 CSQX213E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Intermittently, channels to and from an AIX queue manager unexpectedly terminate on a z/OS queue manager with message CSQX209E.
+
+The problem starts with slow transmission of messages from the remote queue manager and eventually ends up with error messages:
+
++CSQX500I MQP1 CSQXRESP Channel <channel name> started
++CSQX209E MQP1 CSQXRESP Connection unexpectedly terminated,
+channel ????,
+connection <name> (<ipaddress>)
+(queue manager ????)
+TRPTYPE=TCP
++CSQX599E MQP1 CSQXRESP Channel <channel name> ended abnormally
+
+
+
+SYMPTOM
+Other symptoms may include CSQX208 on the z/OS side and AMQ9213 TCP/IP select return code 11 (x'B') on the AIX side. The channel restarts or gets adopted, but the slow performance causes problems for end users. The problem seems to be load related. 
+
+In the reported case, the other queue manager was on an AIX box, but it could be on any other distributed platform or could be another z/OS queue manager. The z/OS equivalent for AMQ9213 is CSQX213E.
+
+
+CAUSE
+A dump shows that the MQ buffer pools need to be tuned.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ * Examine the allocation of page sets and buffer pools and the size of the buffers. Refer to the topic Planning your page sets and buffer pools [https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.pla.doc/q005980_.html]. Look for message CSQP020E in the MSTR joblog. 
+   
+   MQ V8 allows for up to 100 buffer pools and for buffer pools being located above the bar. These options allow for better tuning of the buffers. 
+ * Place a heavily used queue, such as an xmitq, in its own buffer pool to avoid contention with other queues, including the initq. 
+ * See whether some type of processing is causing a greater need for buffers than usual:
+   
+   - Is the getting application or channel running?
+   - Does a queue need to be indexed? See Performance issues getting messages from a queue with a large CURDEPTH [http://www.ibm.com/support/docview.wss?rs=171&uid=swg21028497]. If you capture SMF 116 CLASS(3) [https://developer.ibm.com/answers/questions/404466/why-am-i-see-no-mq-class03-smf-116-accounting-reco.html] accounting records, check the GETSMSG field of the WQST block, which is the "skip" value in the output of SupportPac MP1B [http://www.ibm.com/support/docview.wss?uid=swg24005907].
+   - Are there sufficient channel adapter and dispatcher TCBs to handle the channel workload? For more information about the relationship between CHIADAPS, CHIDISPS and MAXCHL, see Task 18: Tailor the channel initiator parameters [https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.con.doc/q019330_.html]. 
+
+
+
+Diagnosis details Getting a dump and trace: 
+
+In the case of most CSQX20n messages, MQ is merely reporting an error condition, and an MQ defect is generally not the cause of the problem. To get a starting place to tell whether the problem is in the transport layer between the queue managers (network, router, firewall, TCP/IP) or is a resource problem on one of the queue managers, you can set a slip for the CSQX20n message. Reference technote 1040434 [http://www-1.ibm.com/support/docview.wss?uid=swg21040434] for details of getting a trace and dump. Get a TCP/IP ctrace with packet trace (using II12014 [http://www-1.ibm.com/support/docview.wss?uid=isg1II12014]). MQ MSTR and CHIN tracing should be active, and the dump should include MSTR, CHIN, and TCP/IP jobs plus the TCPIPDS1 and CSQXTRDS dataspaces. A matching MQ and TCP/IP trace at the other end of the channel will complete the picture of the message flows and delays. 
+
+
+Dump and trace analysis:
+
+Analysis of an IP trace on the AIX side showed the IP AIX machine sent a FIN after just over two minutes of inactivity. According to the packet trace, the ID structure for each channel starting up showed a heartbeat interval of 0x0000003c (or 60) seconds. In MQ, ccxSetTimeout doubles this to 120 seconds to account for delay in the network. Therefore the problem was that the z/OS machine failed to send data or to respond to a heartbeat or commit request within the "heartbeat + grace interval" of 120 seconds. Packet traces from both ends did not show network delays in this case, so the delay was in the CHIN.
+
+MQ SMF Class 3 records (Queue and WTAS stats) indicate elongated response times between the CHIN and the MSTR but not in application MQ connections. They also show additional latch wait times. At the time of error there was no evidence of system constraints tying up MQ on the MVS level, or of the CHIN being swapped out or having too low of a priority. In this customer's case, the problem involved contention in the queue manager relating to a buffer pool.
+
+The deferred write processor (DWP) had been invoked as buffer pool 1 had reached its limit with less than 15% of its buffer being stealable. Buffer pool 1 was used by pageset 1, pageset 3 and pageset 6. The initq used pageset 3 and the xmitq used pageset 6.
+
+A dump of MSTR, CHIN, and CSQXTRDS during the slowdown was needed to diagnose the cause of this problem. The EB for the channel was waiting for the queue extension latch of the initq. The CHIN was trying to get the latch to put a trigger message to the initq because the application queue was defined with TriggerType EVERY. The putting application, in this case the CHIN, will put a trigger message to the initq as part of the processing of putting the message onto the application queue.
+
+The latch was held by the EB for another channel which was waiting for the latch for page buffer 1 of pageset 3 (the space map page). The latch for page buffer 1 of pageset 3 was being held by the deferred write processor, DWP, which was trying to get the number of stealable buffers up to 25% of the total number of buffers (30000 buffers defined for buffer pool 1). The DWP had issued a write for page 1 of pageset 3 and this I/O operation had completed. However, the latch had not been released (CSQP4DWP not invoked) as the DWP still needed to process many buffers associated with pageset 6 in order to increase the number of stealable buffers. This was the reason for the delay that was seen.
+
+It looks as though there may have been a 'burst' of messages onto the xmitq which caused this condition, or the channel was sending messages at a slow-rate. The dump showed that the xmitq was using most of the buffers of buffer pool 1 due to the size of the messages (they looked to be over 28K in length).
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

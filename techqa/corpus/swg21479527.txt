@@ -1,0 +1,21 @@
+Title: IBM What is the Maximum Number of Columns / Variables in Statistics? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What is the maximum number of columns, or variables, in SPSS Statistics? 
+
+RESOLVING THE PROBLEM
+The limit is 2 billion which, for most purposes, is "unlimited" for SPSS Statistics.
+
+The largest number of columns that can be stored is 2**(31)-1 (2 to the 31st power minus one), or 2,147,493,647
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 26153

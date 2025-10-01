@@ -1,0 +1,42 @@
+Title: IBM UNIX script in a run TASK/JOB fails with XSMG402I (SCI33218) - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ UNIX script in a run TASK/JOB fails with XSMG402I (SCI33218) 
+
+SYMPTOM
+Script specified in run task does not execute properly 
+XSMG402I 
+Error: A user RUNTASK step completed.0
+
+
+CAUSE
+When the pstmt.run_dir is specified for a user not only does it restrict the 
+user to only ability to execute scripts and programs that are in the run_dir 
+but it also changes the user's shell to the restricted shell.
+
+RESOLVING THE PROBLEM
+User reset the PATH variable in the script to include the directories where the UNIX commands he was trying to use were located
+
+ 
+
+HISTORICAL NUMBER
+ PRI776 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Change
+
+
+Added a value to pstmt.run_dir parmeter to the user's record in the 
+userfile.cfg.
+
+
+Fact
+
+
+CONNECT:Direct for UNIX all versions 
+SCI33218

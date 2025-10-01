@@ -1,0 +1,32 @@
+Title: IBM Unable to copy packages in Packaging Utility tool as Websphere Application Server (WAS) fixpack fails to find base offering - United States
+
+Text:
+packaging utility; PU exception; base offering missing; custom package TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Unable to copy packages in Packaging Utility tool as Websphere Application Server (WAS) fixpack fails to find base offering
+
+SYMPTOM
+In the Copy Packages section, the following message is displayed:
+
+"The update com.ibm.websphere.ND.v80_8.0.0.5 does not have its base offering(com.ibm.websphere.ND.v80_8.0.0.20110503_0200) in the open set of repositories"
+
+The Packaging Utility will grey out the Next button preventing the user from proceeding.
+
+
+CAUSE
+The WAS Packaging Utility cannot create a new package out of an custom package. This is a limitation of the WAS Packaging Utility. The WebSphere Application Server Network Deployment (ND) included with the Portal installation media is a custom package (com.ibm.websphere.ND.v80_8.0.3.20120320_0536). Thus, Portal's custom package of WAS ND cannot be included in a new custom package
+
+ENVIRONMENT
+Portal 8
+WAS 8.0.0.3
+WAS fixpack
+
+DIAGNOSING THE PROBLEM
+This exception will be encountered every time the Packaging Utility tool attempt to package a WAS fixpack with the WAS install package that is bundled with Portal.
+
+RESOLVING THE PROBLEM
+The recommended solution is to use a base WAS ND 8.0 package and not the custom WAS package bundled with Portal 8.0 media.
+
+RELATED INFORMATION
+ Wiki article on how to use Packaging Utility with Porta [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Steps_to_create_a_single_repository_for_WebSphere_Portal_using_IBM_Packaging_Utility]

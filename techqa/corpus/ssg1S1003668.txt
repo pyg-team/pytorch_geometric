@@ -1,0 +1,28 @@
+Title: IBM 2145-CF8 Nodes May Stall on Error 231 During Upgrade to V5.1.0.4 - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ 
+Upgrading to SVC V5.1.0.4 on 2145-CF8 nodes, or performing a node-replacement of an older node type with 2145-CF8 nodes at this code level, may lead to a node reporting Error 231, which in turn can lead to the upgrade process stalling. 
+
+CONTENT
+ 
+
+2145-CF8 nodes booting up at V5.1.0,4 code level may sometimes stop at Error 231. This error indicates that the SVC Crossed Cable Test has failed: the test detects cases where the Uninterruptible Power Supply (UPS) connected to the SVC node via serial cable is the same UPS that is providing power to both of the node's Power Supply Units (PSUs) via the two power cables that come bundled as part of the 2145-CF8 power cable assembly.
+
+In some cases, a node can stop on this error even when it is correctly cabled up to a single UPS. This only occurs on 2145-CF8 nodes, since the dual redundant PSUs can provide a less evenly distributed power supply than the node is expecting, and this in turn can lead to the Crossed Cable Test failing unexpectedly.
+
+Fix
+
+This issue has been addressed by APAR IC68891 in the SVC V5.1.0.5 PTF release.
+
+Workaround
+
+If customers with 2145-CF8 nodes have a requirement to upgrade to V5.1.0.4 before V5.1.0.5 is available, there is a possibility that they may encounter this issue. In this case, the node that reported the error should be powered down cleanly by a single press and immediate release of the front-panel power button.
+Once the node has completely powered down, remove the power cable from one of the Power Supply Units in the node (note: do not remove any cables supplying input power to the UPS device).
+The node can then be powered up again with a single press and release of the front panel power button.
+Once the node has booted up successfully and rejoined the cluster, the power cable that was removed should be re-attached, to restore power supply redundancy.
+
+If this workaround is not effective in resolving this boot issue, please contact IBM Support for further assistance.

@@ -1,0 +1,33 @@
+Title: IBM ITCAM for Application Diagnostics Support Resources (Home) - United States
+
+Text:
+CSILandingPage "Support Resources" PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ This is the Support Resources home page for IBM Tivoli Composite Application Manager for Application Diagnostics. It can be used to find technotes and information targeted at specific topics of interest. 
+
+CONTENT
+ 
+
+TAB NAVIGATION
+ * Home
+ * Managing Server [http://www.ibm.com/support/docview.wss?uid=swg21661409]
+ * WebSphere Agent (yn) [http://www.ibm.com/support/docview.wss?uid=swg21660979]
+ * J2EE Agent (yj) [http://www.ibm.com/support/docview.wss?uid=swg21660984]
+ * HTTP Servers Agent (ht) [http://www.ibm.com/support/docview.wss?uid=swg21661410]
+ * ITCAMforApps [http://www.ibm.com/support/docview.wss?uid=swg21568133]
+ * More [http://www.ibm.com/support/docview.wss?uid=swg21663842]
+
+ITCAM FOR APPLICATION DIAGNOSTICS COMPONENTS
+ The Managing Server provides detailed ("deep dive") diagnostic information through the Visualization Engine, a component of the Managing Server.
+
+The WebSphere Applications Agent provides monitoring, diagnostics, and server management for IBM WebSphere servers.
+
+The J2EE Agent provides monitoring, diagnostics, and server mgmt for IBM WebSphere CE, JBoss, Apache Tomcat, WebLogic, SAP NetWeaver, Oracle Application Server, J2SE.
+
+The HTTP Servers Agent provides monitoring and server management for Apache, IBM HTTP Server, and Sun Java System Web Server (Sun ONE Web Server) servers.
+
+ALL PRODUCT SUPPORT CONTENT FOR ITCAM FOR APPLICATION DIAGNOSTICS
+ If you have researched the problem you are experiencing and have not found a solution, please gather the documentation requested by going to this link and then open a PMR. 
+
+Click on the button to the left if you want to see all of the product support content associated with ITCAM for Application Diagnostics.

@@ -1,0 +1,24 @@
+Title: IBM Install Debug Tool via z/OS Explorer Aqua - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ There are 3 IBM Debug Tool for z/OS (Debug Tool) 13.3.6 packages available in the IBM Explorer for z/OS (z/OS Explorer) Aqua 3.0.0 released in December 2015. How do I choose the right package? 
+
+ANSWER
+The 3 packages delivered in December 2015 are: 
+
+ * IBM Debug Tools for z/OS Explorer: Includes DTCN, Debug Tool Utilities, and Debug Dependencies. This package applies to z/OS Explorer only. 
+ * IBM Debug Tool Utilities: Includes DTSP, Code Coverage, Load Module Analyzer, and JCL Wizard. This package applies to Rational Developer for z Systems (RDz) only. 
+ * IBM Debug Tool DTCN plug-in for CICS: Applies to RDz only.
+   
+
+However, since the April refresh of z/OS Explorer that delivered Debug Tool 13.5.7, those 3 separate packages were replaced with one. 
+
+To upgrade from an installed package from 13.5.6 to 13.5.7, take one of the following actions: 
+ * If your package group didn’t include RDz, use the Update button in Installation Manager to move from 13.5.6 to 13.5.7. 
+ * If you installed RDz, ensure that RDz is at 9.5.1 iFix2, and install 13.5.7. Note: This action only applies to RDz users who installed 13.5.6 and are moving to 13.5.7. RDz users don't need to take this action for future releases of Debug Tool. You can use the Update button in the Installation Manager to upgrade Debug Tool in the future.
+
+
+For more information, see IBM Debug Tool for z/OS – Three plugins become one – using this with RD/z and z/OS Explorer [https://developer.ibm.com/mainframe/2016/05/17/ibm-debug-tool-for-zos-three-plugins-become-one-joewibm/] .

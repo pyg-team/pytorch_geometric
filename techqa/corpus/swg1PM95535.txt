@@ -1,0 +1,184 @@
+Title: IBM PM95535: CORRECT EVENT DNPO0006E AND MAKE SURE, THAT THE USER GETS AN ERROR RESPONSE, WHEN SAVING A FILTER FAILS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When saving a filter in the Admin&Operations facility, events
+   DNPO0007E nested with event DNPO0006E can occur, if the filter
+   cannot be saved.
+   The event DNPO0006E, reporting the underlaying error, doesn't
+   contain information like date, time, service and OU, which is
+   mandatory information for an event.
+   
+   Furthermore, the user must get an error response when saving his
+   filter fails. This is currently not the case.
+   
+   Last, the WBIFN administrator needs to know for problem
+   analysis, that the table, where a filter is stored (DNI_UPREF)
+   contains an identity column, however, the table is not mentioned
+   in the related section in the WBIFN System admin guide ("When
+   saving a filter in the Admin&Operations facility, events
+   DNPO0007E nested with event DNPO0006E can occur, if the filter
+   cannot be saved.
+   The event DNPO0006E, reporting the underlaying error, doesn't
+   contain information like date, time, service and OU, which is
+   mandatory information for an event.
+   
+   Furthermore, the user must get an error response when saving his
+   filter fails. This is currently not the case.
+   
+   Last, the WBIFN administrator needs to know for problem
+   analysis, that the table, where a filter is stored (DNI_UPREF)
+   contains an identity column, however, the table is not mentioned
+   in the related section in the WBIFN System admin guide ("When
+   saving a filter in the Admin&Operations facility, events
+   DNPO0007E nested with event DNPO0006E can occur, if the filter
+   cannot be saved.
+   The event DNPO0006E, reporting the underlaying error, doesn't
+   contain information like date, time, service and OU, which is
+   mandatory information for an event.
+   
+   Furthermore, the user must get an error response when saving his
+   filter fails. This is currently not the case.
+   
+   Last, the WBIFN administrator needs to know for problem
+   analysis, that the table, where a filter is stored (DNI_UPREF)
+   contains an identity column, however, the table is not mentioned
+   in the related section in the WBIFN System admin guide
+   ("Maintaining tables that contain an identity column").
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CORRECT EVENT DNPO0006E AND MAKE        *
+   *                      SURE, THAT THE USER GETS AN ERROR       *
+   *                      RESPONSE, WHEN SAVING A FILTER FAILS    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Formerly, when a DB2 error occured during the 'save filter'
+   action for events in AO Facility, an event with ID DNPO0007E
+   was issued, containing the text of MPU DNPO0006E as error text.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Now, there are two separated events. One with ID DNPO0006E
+   followed by an additional event with ID DNPO0007E. The user
+   gets a response, that the runtime database was not accessible.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM95535
+   
+   
+ * REPORTED COMPONENT NAME
+   WBI FOR FN ZOS
+   
+   
+ * REPORTED COMPONENT ID
+   5655FIN00
+   
+   
+ * REPORTED RELEASE
+   11B
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-21
+   
+   
+ * CLOSED DATE
+   2013-12-11
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM96676 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM96676]
+   
+   
+
+MODULES/MACROS
+ *  DNI00010
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WBI FOR FN ZOS
+   
+   
+ * FIXED COMPONENT ID
+   5655FIN00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R11B PSY UI13178 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI13178]
+   UP13/12/19 P F312
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

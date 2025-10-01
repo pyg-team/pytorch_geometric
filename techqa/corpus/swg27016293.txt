@@ -1,0 +1,29 @@
+Title: IBM WebSphere Portal Support Statement Addendum - Web browsers - United States
+
+Text:
+browsers; web browsers; versions; old versions; new; newer; new versions; newer versions; support statement PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document describes the extent of IBM remote technical support available for Web browsers used to view and interact with the content served in an environment hosted on IBM WebSphere Portal. 
+
+CONTENT
+IBM WebSphere Portal Technical Support will make every reasonable effort to fully support newer versions and updates to Web browsers, even if not listed as having been tested as documented in the Detailed System Requirements pages [http://www.ibm.com/support/docview.wss?rs=688&uid=swg27007791]. In some cases, this support might include some limitations.
+
+
+Newer versions and updates to supported Web browsers do not always work as expected with content served by WebSphere Portal. As documented in the WebSphere Portal Support Statement ( [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r0/index.jsp?topic=/com.ibm.wp.ent.doc/wpf/inst_req_supt.html]V6.1 [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/topic/com.ibm.wp.ent.doc_v6101/overview/inst_req_supt.html], V7.0, V8.0, V8.5 [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/WebSphere_Portal_Support_Statement_wp7]), these updates are considered to be "Newer Versions and Releases of Supported Products." IBM product development, test and support teams must wait for the official release of the Web browser to be able to provide full support so there is often a gap between the time a Web browser is released and when full support is available with current releases of WebSphere Portal and its associated products. 
+
+We recognize the impact this has on your portal's user community and we are committed to providing solutions that allow your content to be viewed by your clients. In order to effectively provide this support, thorough testing of the generally available and final release of the Web browser will be performed in the next available service release cycle, typically delivered in a cumulative fix, fix pack or refresh pack of current releases. More than one fix might be required. There can be cases where code updates are more than can be delivered in a simple fix and will have to be integrated into a fix pack.
+
+Remote software support provided for WebSphere Portal and IBM Web Content Manager will provide support for such documented Web browsers as referenced in the version's Detailed System Requirements pages [http://www.ibm.com/support/docview.wss?rs=688&uid=swg27007791] available from the product support page, and will also accept customer problem reports (PMRs or SRs) for the newer, untested Web browser versions. Sometimes the changes in the Web browser can affect the rendering of content served with advanced themes and skins and can lead to unexpected results depending on other customizations made to portlets, themes and other elements. 
+
+In order to expedite problem resolution and to efficiently address any problems found, IBM Remote software support will focus on standard "out of the box" themes and portlets. After these elements render and function properly, the changes can be extended to any customized work in your own environment. In the event that a newer Web browser cannot be supported, it will be documented as "Unsupported."
+
+Versions of WebSphere Portal that reach the end of general support in the product lifecycle will not have support for newer Web browsers (this is not covered in a service extension contract).
+
+Versions of Web browsers that were supported with an initial release of WebSphere Portal (such as V6.1.0.0) that reach the end of their product lifecycle are no longer tested in subsequent service releases of WebSphere Portal. Support for older browser releases will be provided as best-effort only.
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal Maintenance 8.0, 7.0 Enterprise Content Management IBM Web Content Manager Portal Integration AIX, HP-UX, i5/OS, IBM i, Linux, Solaris, Windows, z/OS 8.0, 7.0, 6.1 Java edition

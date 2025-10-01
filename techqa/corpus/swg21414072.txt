@@ -1,0 +1,15 @@
+Title: IBM Multiple, unused directories are created in the %TEMP%\.com_ibm_tools_attach directory with WebSphere Transformation Extender Version 8.3 - United States
+
+Text:
+WTX; TX; attachInfo; attachNotificationSync; %TEMP%\.com_ibm_tools_attach TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Multiple, unused directories and files are created at runtime in the %TEMP%\.com_ibm_tools_attach directory. 
+
+CAUSE
+The Attach API is enabled by default in Java™ 2 Runtime Environment, Standard Edition, Version 1.6.0 SR6, which is installed by WebSphere Transformation Extender Version 8.3. The API is not used by WebSphere Transformation Extender.
+
+RESOLVING THE PROBLEM
+Set the following environment variable to disable the Attach API: 
+
+IBM_JAVA_OPTIONS="-Dcom.ibm.tools.attach.enable=no"

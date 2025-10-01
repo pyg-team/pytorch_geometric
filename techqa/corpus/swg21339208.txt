@@ -1,0 +1,57 @@
+Title: IBM What is the difference between Excel 2000 Single Sheet, Excel 2002/2003 and CSV - United States
+
+Text:
+Excel workbook TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes the difference between Excel 2000 Single Sheet, Excel 2003, and CSV format. 
+
+RESOLVING THE PROBLEM
+There are multiple versions of Excel output for backwards compatibility reasons. 
+
+ * CSV - raw data, no formatting, only possible with single Query reports. Delivered in email as a .CSV file. 
+ * Excel 2000 Single Sheet - all report pages rendered to one Excel 2000 worksheet. Delivered in email as a .HTML file. 
+ * Excel 2002/2003 - each report page is rendered to its own Excel 2002/2003 worksheet, in a single Excel 2002/2003 workbook. Delivered in email as a .MHT file.
+
+
+It is best to use the format that all target users can view on their browsers or systems. It always best to test this in advance. 
+
+The Excel types are delivered as .HTML and .MHT files (supported Excel file types) instead of .XLS files for several reasons: 
+ 1. The .XLS format is proprietary to Microsoft. 
+ 2. .XLS files are prone to macro viruses and as such are blocked by many email servers. 
+ 3. Using HTML/MHT files (supported Excel file types) permits users without Excel installed locally to view the files as well as those who have Excel available. Thus, potentially increasing a reports target audience.
+
+
+Because applications generally see these files as HTML files, email readers and Windows will often open them in a browser or HTML editor rather than in Excel. We have added an option in the latest ReportNet hot site that may make this less of an issue. This may provide a partial solution for some users: 
+
+The advanced parameter below was recently added to ReportNet 1.1 MR4. This is set by the Server Administrator in the Report Server advanced properties and forces ReportNet to change the file extension on single sheet HTML and MHT format files to .xls file, and to set the MIME type to Excel. 
+
+RSVP.FILE.EXTENSION.XLS = TRUE 
+
+Steps: 
+
+For IBM Cognos ReportNet 1.1 MR4 and IBM Cognos 8 BI 8.1 MR1 
+ *  Open Cognos Connection. Click Tools menu in the portal and select Server Administration. Select the Configure tab Select the Set Properties button on the toolbar across the top of the window (the icon looks like a hand holding a piece of paper) Select the Settings tab Find the property named Advanced Settings, and click the Edit... link In the first empty set of boxes, type in the parameter name RSVP.FILE.EXTENSION.XLS and set the value to TRUE. Press OK. Restart the service. 
+
+
+For IBM Cognos 8 BI 8.1 MR2 and IBM Cognos 8 BI 8.2 
+ *  Open Cognos Connection. Click Tools menu in the portal and select Server Administration. Check the services box and select Batch Report Service. Click the Set Properties button on the right-hand side (the icon looks like a hand holding a piece of paper) Select the Settings tab Find the property named Advanced Settings, and click the Edit... link In the first empty set of boxes, type in the parameter name RSVP.FILE.EXTENSION.XLS and set the value to TRUE. Press OK. Restart the service. 
+
+
+Notes: 
+ * If this does not work, verify that there are no trailing spaces or anything else added within the Advanced Settings configuration. 
+ * In some cases, this may result in improved usability as Windows/Email readers will open Excel as the default application for these files. 
+ * This does not change the files to binary XLS - they are still in HTML and MHT format. This switch is applied globally to all reports, and not on a report by report basis. As the multiple file HTML file depends on the file extensions, this is not applied to them. 
+ * Some Email readers and some versions of Excel will fail when this is used as the files are really still HTML and MHT files, and these applications have issues with those formats. In that case, do not use this switch.
+
+RELATED INFORMATION
+#Excel Output Support [http://support.cognos.com/en/support/products/crn11mr2_software_environments.html#eft]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Analysis Studio Business Analytics Cognos 8 Business Intelligence Cognos Connection Business Analytics Cognos 8 Business Intelligence Cognos Viewer Business Analytics Cognos 8 Business Intelligence Install and Config Business Analytics Cognos 8 Business Intelligence Report Studio Business Analytics Cognos 8 Business Intelligence Software Development Kit Business Analytics Cognos ReportNet ReportNet 
+HISTORICAL NUMBER
+ 1016822

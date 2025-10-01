@@ -1,0 +1,35 @@
+Title: IBM Operational Decision Manager V8.6.0.2: Interim Fix 17 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This interim fix provides a solution for several APARs. 
+
+DOWNLOAD DESCRIPTION
+The following list shows the components in Operational Decision Manager that are directly affected by this interim fix:
+
+
+ * Decision Center 
+ * Rule Designer
+
+
+You can find more information on the problems in the following APAR descriptions:  *  [http://www.ibm.com/support/docview.wss?uid=swg1RS01879] [http://www.ibm.com/support/docview.wss?uid=swg1RS01891]RS01848 [http://www.ibm.com/support/docview.wss?uid=swg1RS01848] 
+ * RS01893 [http://www.ibm.com/support/docview.wss?uid=swg1RS01893] 
+ * RS01895 [http://www.ibm.com/support/docview.wss?uid=swg1RS01895] 
+ * RS01910 [http://www.ibm.com/support/docview.wss?uid=swg1RS01910] 
+ * RS01911 [http://www.ibm.com/support/docview.wss?uid=swg1RS01911] 
+ * RS01957 [http://www.ibm.com/support/docview.wss?uid=swg1RS01957]
+
+SEE ALSO
+Operational Decision Manager Interim Fixes [http://www.ibm.com/support/docview.wss?uid=swg21640630] 
+
+URL LANGUAGE SIZE(Bytes) Readme [http://download4.boulder.ibm.com/sar/CMA/WSA/05bef/0/Readme.html] English 1694 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 8.6.0.2-WS-ODM-IF017 04 Apr 2015 Language Independent 17930000 FC [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.6.0.2&platform=All&function=fixId&fixids=8.6.0.2-WS-ODM-IF017&includeRequisites=1&includeSupersed] [ ] DD

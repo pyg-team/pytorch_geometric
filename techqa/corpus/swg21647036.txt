@@ -1,0 +1,120 @@
+Title: IBM ITCAM4Tx : ISM profile migration example using xml2cli and ismconfig CLI - United States
+
+Text:
+71ISM-PLAN; 71ISM-INS; 71ISM-CONF; 71ISM-GEN; 71ISM-TS TECHNOTE (FAQ)
+
+QUESTION
+ Describe how to migrate an ISM profile an from earlier version of ITCAM4Tx to ITCAM4Tx 7.3x 
+
+CAUSE
+Official documentation is missing some important information.
+
+ANSWER
+http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcamt.doc_7.3%2Fism%2Fdita%2Fag%2Ftask%2Fmigrating.html [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcamt.doc_7.3%2Fism%2Fdita%2Fag%2Ftask%2Fmigrating.html]
+
+http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcamt.doc_7.3%2Fism%2Fdita%2Fag%2Fconcept%2Fkis_configcli_xml2cli.html [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcamt.doc_7.3%2Fism%2Fdita%2Fag%2Fconcept%2Fkis_configcli_xml2cli.html]
+
+
+
+The following example uses the ICMP monitor:
+
+1. On Windows, copy C:\IBM\ITM\TMAITM6\ism\profiles\active\icmp.xml from your old ISM 7.x agent to
+
+C:\IBM\ITM\TMAITM6\ism\profiles\active\icmp.xml new freshly installed 7.3 agent.
+
+
+your icmp.xml file contains for example lines like :
+<element active="true" checksum="1254317852_22465"
+datalogpath="icmp80_7_83_53_1254317852_22465" profile="<Profile Name>">
+
+<element active="true" checksum="1254317955_18968"
+datalogpath="icmp80_37_33_5_1254317955_18968" profile="<Profile Name>">
+
+
+2. On your new ISM 7.3 agent, launch the CLI command xml2cli, like for example :
+C:\IBM\ITM\TMAITM6\ism\platform\win32\bin>xml2cli -p <Profile Name> -f ISMoldProfile.txt
+
+ISMoldProfile.txt is created under local directory if successful.
+
+For your info, ISMoldProfile.txt file
+should contain X occurrences of <Profile Name> profile lines, like line :
+-add monitor=icmp profile=<Profile Name> active=active description="ICMP
+1.2.3.4 element.".....
+
+Remark: xml2cli will not work if, for example: 
+
+- <monitor>.xml file name is incorrect; it must be "icmp.xml", "http.xml" etc (<monitor>.xml) as its file name, and nothing else 
+
+- <monitor>.xml file name was copied into the wrong directory, like C:\IBM\ITM\TMAITM6\ism\profiles\default 
+
+it must be copied into the ISM profile active directory, 
+
+on Windows for example: C:\IBM\ITM\TMAITM6\ism\profiles\active\ 
+
+
+
+3. on the TEPS system, run the ismconfig CLI command, like for example :
+C:\IBM\ITM\CNP>ismconfig.cmd -config -file ISMoldProfile.txt
+Internet Service Monitoring Configuration
+Copyright (c) IBM 2011, 2012
+Version: ITCAM_ISM_7.3_0417
+
+
+it may happen that it displays the following type of error message : 
+
+
+Specified Checksum is already in use
+Error on line: xxx
+Fail to apply command: FILE
+
+If that's the case, verify the content of the ISMoldProfile.txt and remove duplicate checksum entries like for example :
+-add monitor=icmp profile=<Profile Name> active=active description="ICMP
+1.2.3.4" failureretests=3 hostnamelookuppreference=Default
+numberofpings=5 packetinterval=1 packetsize=64 poll=600
+retestinterval=5 retries=1 server="1.2.3.4" timeout=10
+typeofservice=0 @Identifiers checksum="1262257509_3710"
+
+-add monitor=icmp profile=<Profile Name> active=active description="ICMP
+5.6.7.8" failureretests=3 hostnamelookuppreference=Default
+numberofpings=5 packetinterval=1 packetsize=64 poll=600
+retestinterval=5 retries=1 server="5.6.7.8" timeout=10
+typeofservice=0 @Identifiers checksum="1262257509_3710"
+
+
+So delete one of the 2 above lines, and you will have to re-create later manually this element using TEP ISM GUI configuration tool
+
+Once ISMoldProfile.txt is correct, re launch ismconfig if needed:
+
+C:\IBM\ITM\CNP>ismconfig.cmd -config -file ism71ISM3Profile.txt 
+
+
+Internet Service Monitoring Configuration
+Copyright (c) IBM 2011, 2012
+Version: ITCAM_ISM_7.3_0417
+
+
+it should return to error message.
+
+4. verify the results you obtained using the following command : 
+
+C:\IBM\ITM\CNP>ismconfig.cmd -config -listprofiles
+Internet Service Monitoring Configuration
+Copyright (c) IBM 2011, 2012
+Version: ITCAM_ISM_7.3_0417
+
+Profiles
+---------------
+<Profile Name>
+
+C:\IBM\ITM\CNP>
+
+it should display the profile name that you imported.
+
+5. Check in TEP, ISM GUI configuration, that you can see all the elements associated to the newly imported profile elements, and that are present in the TEPS DB, in 'KIS.PROFILES' and 'KIS.<monitor>' tables.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for Internet Service Monitoring AIX, HP-UX, Linux, Solaris, Windows 2.4, 2.3 
+PRODUCT ALIAS/SYNONYM
+ itcam itcam4ism internet services monitoring

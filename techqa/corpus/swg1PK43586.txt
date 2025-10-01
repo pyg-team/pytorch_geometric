@@ -1,0 +1,215 @@
+Title: IBM PK43586: WSSECURITY CANNOT GET TOKEN REFERENCE PART - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.1.5: WebSphere Application Server Toolkit Version 6.1.1 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24017816]
+6.1.1.4: WebSphere Application Server Toolkit Version 6.1.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24017088]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   - Windows XP
+    - RSA 7.0.02
+   Reproducible Y/N: Y
+   Description of problem:
+   This problem is related to use of different ports for the same
+   service
+   definition.
+   
+   wssecurity cannot get token reference part
+   
+   This means that this service definition has 7 port definitions.
+   This
+   is normal because I'm testing several security configuration.
+   So you will see that there are indeed several security
+   configuration
+   already done. One is using User name token.
+   
+   The problem comes that RSA is confused with the port
+   definitions. When
+   you go in the Web Service binding definition (tab) in web DD,
+   and you edit the Token
+   Generator configuration for a port under "Port Qualified Name
+   Bindings", for the
+   SecurityToken (option menu) you should be able to refer to the
+   token
+   that was defined in the WS extension. Right now the list is
+   always empty.
+   
+   This is a big problem because it is not possible to cannot
+   complete the configuration.
+   The by-pass is to manually edit the
+   ibm-webservicesclient-bnd.xmi
+   file. But this is tricky because first the file is complex and
+   second
+   it is error prone. It is working when only one port is defined.
+   
+   
+   Step to reproduce:
+   a)Please create a J2EE project containing a WEB module, open the
+   Web DD
+   b)click on WS Extension tab and create some ports under "Port
+   Qualified Name Bindings".
+   c)select a port under "Port Qualified Name Bindings".
+   d)under Security Token, you must have a token say for example:
+   "BA"
+   e)now click on "WS Binding", again select the same a port
+   under "Port Qualified Name Bindings".
+   f)click on Token Generator, click on "Add"
+   g)In the Token Generator window, there is nothing in drop down
+   list of
+   "Security Token:"
+   
+   If you remove all bindings("Port Qualified Name Bindings") and
+   only
+   leave the above selected port, then you will see in drop down
+   list of
+   "Security Token:" BA.
+   
+   Workaround:
+   To manually edit the ibm-webservicesclient-bnd.xmi,
+   but it is very much error prone because it can be a large file.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To manually edit the ibm-webservicesclient-bnd.xmi,
+   but it is very much error prone because it can be a large file.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All webservice developers using Rational     *
+   *                 Application Developer v7.0 and WebSphere     *
+   *                 Application Server Toolkit v6.1.1.           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Security Token combobox found in    *
+   *                      the 'Port Qualified Naming Bindings'    *
+   *                      section of the 'WS Bindings'            *
+   *                      deployment descriptor page is always    *
+   *                      empty.                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The combobox field for a Token Generator on the 'Port
+   Qualified Naming Bindings' section found on the 'WS Bindings'
+   page is always empty even if a token has been already defined.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The logic to retrieve the security token has been corrected to
+   properly retrieve any security tokens already defined.  The
+   fix for this APAR is currently scheduled for inclusion into
+   Rational Application Developer v7.0.0.4 and WebSphere
+   Application Server Toolkit v6.1.1.4.  Please refer to the
+   Recommended Updates page for WebSphere Application Server
+   Toolkit delivery information:
+   http://www.ibm.com/support/docview.wss?uid=swg27004980 [http://www.ibm.com/support/docview.wss?uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK43586
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBAPP SERVER A
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0820
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-04-19
+   
+   
+ * CLOSED DATE
+   2007-06-15
+   
+   
+ * LAST MODIFIED DATE
+   2007-06-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  ASTWS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBAPP SERVER A
+   
+   
+ * FIXED COMPONENT ID
+   5724J0820
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

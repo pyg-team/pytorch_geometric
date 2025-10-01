@@ -1,0 +1,86 @@
+Title: IBM Linux clients experience cleartext lookup failures and I/O Errors when accessing newly created cleartext or view private files - United States
+
+Text:
+cleartext; nfs; cache; Red Hat; no such file; MVFS; no such file or directory; I/O error; Input/Output TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why newly created IBM Rational ClearCase elements or view private files may not be visible in dynamic view when using Red Hat or SUSE Linux clients and servers. 
+
+SYMPTOM
+ 
+
+Newly created files cannot be accessed from a Linux client. Attempts to cat the element or dump it result in errors. 
+
+No such file or directory 
+
+There are no other errors in the logs. 
+
+ 
+
+Attempts to access the cleartext cdft file in the error after the failure has occurred are successful so it does not seem to be invalid Multi-version File System (MVFS) cache. The time listed on the cleartext file is the exact time that the attempt to access it fails.
+
+CAUSE
+ 
+
+Linux treats cache differently than Solaris.
+
+If an element is created on one server and you try to immediately read it on a Red Hat client, it may fail because there can be a 60 second delay in NFS cache refresh on Red Hat. Whereas Solaris NFS cache times out quicker. 
+
+
+ENVIRONMENT
+ 
+
+Linux clients using dynamic views which access cleartext using NFS and MVFS. View and VOB servers are Solaris. Problem clients are SUSE or Red Hat linux.
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+You can try to reproduce the issue as follows: 
+
+
+cd /view/<viewname>/<vob location> 
+$ cleartool dump build.log 
+... 
+source cont ="/vhost/vobstore/rel.vbs/s/s12/d/2f/6ee333a030303033333" (oid) clrtxt cont="/net/nas/vobstore/rel.vbs/c/c06/b/2d/55555555555" 
+$ ls /net/nas/vobstore/rel.vbs/c/c06/b/2d/1a44c692d
+ls: 
+/net/nas/rel.vbs/c/c06/b/2d/1a44c692d 
+No such file or directory 
+$ file build.log 
+build.log: regular file, no read permission 
+$cat build.log 
+
+generates the missing cleartext.
+
+$ ls -l 
+total 6165 
+-r--r--r-- 1 vobman sw 6308700 Mar 3 09:06 build.log 
+...
+$ id
+uid=123 (uname) gid=500(sw) groups=500(sw),504(releng),550(fem) 
+...
+$ cat build.log | more
+Working directory view "viewname" does not match set view "night"
+Will set view to "viewname"
+
+
+RESOLVING THE PROBLEM
+ 
+
+Troubleshooting 
+
+There are a couple of ways to test whether this is what you are seeing. 
+
+ 
+
+ * If this is the issue, you should see the same problem for an NFS export even without ClearCase involved. 
+ * Set default and maximum NFS protocol to version 3, and not the default of 4. Change the max version setting or invoke rpc.mountd with the option --no-nfs-version 4. A reboot is needed for the changes to take effect. 
+   
+ * You could change your script to sleep 60 seconds and retry the operation. 
+   
+ * You can mount the VOBs on the Red Hat with -noac (as a test) and see if you no longer see the problem. 
+   
+ * Another possible workaround is to refresh the view prior to running a build or trying to access the newly created files.
+   
+   cleartool setcs -current -tag <view-tag>

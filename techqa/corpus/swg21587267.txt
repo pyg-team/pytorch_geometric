@@ -1,0 +1,18 @@
+Title: IBM What is the mpi_entlkem_id table? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is the mpi_entlkem_id table and why am I seeing locks on it? 
+
+ANSWER
+The mpi_entlkem_id table is used to indicate that one of the Entity Managers currently has a lock on the mpi_entique_id table to perform its work. We use this method since you can have multiple Entity Managers across multiple servers working on the same mpi_entique_id table and we need to prevent them from making changes to the table at the same time. 
+
+There should only be a lock on the mpi_entlkem_id table while one of the Entity Managers is getting work from the mpi_entique_id table. If you are seeing locking contentions on this table, the typical causes are: 
+
+ 
+
+ 1. The work unit for each Entity Manager is too low, so they are having to go back to the mpi_entique_id table to look for work too often. 
+ 2. The wait time is too low, so if the mpi_entique_id table is empty or near empty, the Entity Managers are constantly going to look for more work and are fighting for a lock on the mpi_entlkem_id table. 
+ 3. You have more Entity Managers running than needed which will cause them to fight for a lock on mpi_entlkem_id.

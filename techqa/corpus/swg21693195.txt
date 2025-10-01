@@ -1,0 +1,77 @@
+Title: IBM How to change dump file location from default <installation>\tm1_64\bin64 (to another location) via using System Variables - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer has noticed huge files (especially the ones with DMP extension) being created on the TM1 application server.
+- They are generated whenever TM1 application server crashes.
+
+Customer would like to modify the system so that (in the future) they get created in a different location (for example a different hard drive which has more free space).
+- How can they achieve this? 
+
+SYMPTOM
+Example File Names: 
+
+ * heapdump.20141025.145811.5592.0004.phd (150Mb) 
+ * core.20141120.150644.6020.0001.dmp (13Gb) 
+ * javacore.20141025.145811.5592.0008.txt (2Mb) 
+
+
+CAUSE
+Large 'dump files' are automatically generated when the TM1 application server crashes. 
+
+These files get created inside the relevant IBM JAVA folder. 
+Specifically, by default these files are located inside here: <installation>\tm1_64\bin64
+
+More Information
+The location for the dump is selected from these options, in this order:
+1. The location specified on the command line.
+2. The location specified by the relevant environment variable.
+3. IBM_JAVACOREDIR for Javadump. _CEE_DMPTARG on z/OS.
+4. IBM_HEAPDUMPDIR for Heapdump. _CEE_DMPTARG on z/OS.
+5. IBM_COREDIR for system dump, JAVA_DUMP_TDUMP_PATTERN on z/OS..
+6. IBM_COREDIR for snap traces, _CEE_DMPTARG on z/OS.
+7. The current working directory of the JVM process.
+8. If the directory does not exist, it will be created.
+
+If the dump cannot be written to the selected location, the JVM will fall-back to the following locations, in this order:  * On Windows platforms only, the system default location is C:\WINDOWS. 
+ * The location specified by the TMPDIR environment variable. 
+ * The /tmp directory. 
+ * C:\Temp on Windows® platforms. 
+
+RESOLVING THE PROBLEM
+There are several methods available to change the path of the dump files: 
+
+ 
+Method #1 - System Environment Variables
+Modify the folder (where the dump files to be created in the future) by creating/using the relevant system environment variables (most importantly IBM_JAVACOREDIR and IBM_HEAPDUMPDIR ). 
+
+ * TIP: For more information on these variables, see link at the end of this Technote.
+
+
+Steps: 
+1. Obtain some downtime (no users on the system) 
+2. Logon to the TM1 server as a Windows administrator 
+3. Right-click on "Computer" and choose "Properties" 
+4. Click "Advanced system settings" 
+5. Click "Environment Variables" 
+6. Create a new system environment variable called: IBM_JAVACOREDIR 
+7. Configure its value to point to the directory where you want these files to be created  * For example: D:\TEMP_dumpfiles
+
+
+8. Create a new system environment variable called: IBM_HEAPDUMPDIR 
+9. Configure its value to point to the directory where you want these files to be created  * For example: D:\TEMP_dumpfiles
+
+
+10. Reboot the TM1 application server 
+11. Test. 
+
+Method #2 - 
+Redirect the Tomcat DMP files by:  * using the Tomcat Java configuration utility 
+ * modifying the relevant settings in the Java settings tab.
+
+
+For more information, see separate IBM Technote #1968185. RELATED INFORMATION
+ IBM SDK - Advanced control of dump agents - file option [http://www-01.ibm.com/support/knowledgecenter/SSYKE2_5.0.0/com.ibm.java.doc.diagnostics.50/diag/tools/dumpagents_filenames.html]
+1968185 - How to set the location of Java dump files fo [http://www.ibm.com/support/docview.wss?uid=swg21968185]

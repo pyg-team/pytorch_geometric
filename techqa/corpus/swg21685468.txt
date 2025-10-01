@@ -1,0 +1,30 @@
+Title: IBM Recipe to Deploy OMNIbus Failover Object Server Pair - United States
+
+Text:
+quick start; quick deployment; recipe; cookbook; deploy; configure; failover pair; object server; omnibus TECHNOTE (FAQ)
+
+QUESTION
+ Where can I find a quick start guide to deploy an Object Server failover pair for OMNIbus 7.4? 
+
+ANSWER
+The following document provides a quick deployment guide to get OMNIbus up and running in 10 steps. The example deployment configures two Object Servers as a failover pair with a bi-directional Object Server gateway configured to run under the Process Agent. The example configuration is completed on Linux, but the same steps can be applied to all operating systems. 
+
+Quick Deployment 7.4 Create Netcool OMNIbus Failover Object Server Pair.doc [/support/docview.wss?uid=swg21685468&aid=2]Quick Deployment 7.4 Create Netcool OMNIbus Failover Object Server Pair.doc [/support/docview.wss?uid=swg21685468&aid=1] 
+
+
+Step 1: Set environment variables on each system
+Step 2: Configure the omni.dat file on each system
+Step 3: Create Primary Object Server
+Step 4: Create Backup Object Server
+Step 5: Configure bi-directional Object Server failover gateway
+Step 6: Configure the Process Agents
+Step 7: Start Process Agents
+Step 8: Configure the Object Server to connect to the Process Agent
+Step 9: Test Failover
+Step 10: Test Failback
+
+More information is available for setting up the Omnibus Multitier architecture at
+http://www-01.ibm.com/support/knowledgecenter/SSSHTQ_8.1.0/com.ibm.netcool_OMNIbus.doc_8.1.0/omnibus/wip/install/task/omn_esf_settingupstandardmultitier.html [http://www-01.ibm.com/support/knowledgecenter/SSSHTQ_8.1.0/com.ibm.netcool_OMNIbus.doc_8.1.0/omnibus/wip/install/task/omn_esf_settingupstandardmultitier.html]
+
+In Omnibus 8.1, the initial configuration has been automated with the configuration wizard nco_icw
+http://www-01.ibm.com/support/knowledgecenter/SSSHTQ_8.1.0/com.ibm.netcool_OMNIbus.doc_8.1.0/omnibus/wip/install/reference/omn_ins_ict.html [http://www-01.ibm.com/support/knowledgecenter/SSSHTQ_8.1.0/com.ibm.netcool_OMNIbus.doc_8.1.0/omnibus/wip/install/reference/omn_ins_ict.html]

@@ -1,0 +1,26 @@
+Title: IBM How to modify Portal 8 theme to open a new window for external url - United States
+
+Text:
+external url; external link; portal 8; theme; navigation.jsp; new window; new browser TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to open a new window for external url when using Portal 8 theme in Websphere Portal 8x envirnoment. 
+
+RESOLVING THE PROBLEM
+One could add the following bold and italics lines in the navigation.jsp in the out of the box (OOB) or custom theme based of Portal 8 theme:
+<li class="wpthemeNavListItem wpthemeLeft<c:if test="${wp.selectionModel
+[node] != null}"> wpthemeSelected</c:if>" >
+<c:set var="externalURL" value="EXTERNALURL" />
+
+<a href="?uri=nm:oid:${nodeID}" <c:if test="${node.contentNode.contentNodeType == externalURL}">target="_blank"</c:if>
+class="wpthemeLeft<c:if>
+....
+</a>
+
+This will check to see if the contentNode is an external URL and open it in a new window if needed.
+
+Either update your custom theme by redeploying it and restarting the custom theme or have jsp reloading enabled and touch the Default.jsp. 
+
+Also clear the browser cache before testing.
+
+Note: Changes to the out of the box default themes and skins may be overwritten when applying a service pack. It is suggested not to make changes to the OOB theme. Create a custom theme based on the OOB theme and make changes there.

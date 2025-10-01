@@ -1,0 +1,60 @@
+Title: IBM Logging into Rational Change or Synergy results in "License Server unavailable" error - United States
+
+Text:
+Unable; to; re-open; lock; file; ((null)):; No; such; file; directory; EXITING; DUE; TO; SIGNAL; 41; locktelelogic; lockiload; lockstmmd TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to login to IBM Rational Change or Rational Synergy results in the "License Server unavailable" error. 
+
+SYMPTOM
+You are unable to Login to Rational Change or Rational Synergy and the license log file records the following message:
+
+---------------------------------
+Unable to re-open lock file ((null)): No such file directory EXITING DUE TO SIGNAL 41
+Exited because another server was running 
+---------------------------------
+
+CAUSE
+Cause 1: The lock files locktelelogic,lockiload or lockstmmd located at /var/tmp/ directory are deleted or write protected. 
+
+The possible reasons for the files to get locked or get write protected are due to some backup operation, or some clean job or any scheduled activities in IT (admin). 
+
+For example:
+A cleanup job issued by the "root" user and written to the default "cron tab" deletes all files located at /var/tmp directory causing the lock files to be deleted and thus stopping the License Server. 
+
+
+Cause 2: Multiple License Server's are running on the same machine.
+
+
+RESOLVING THE PROBLEM
+Solution 1: Check if the lock files are not available to the license server any point of time.
+
+
+ * The lock files are created and located at:
+   /var/tmp/locktelelogic
+   /var/tmp/lockiload
+   /var/tmp/lockstmmd
+
+
+If any of these lock files are removed or made write protected the observed failure can occur. 
+
+If the lock files are deleted, stop and restart the License Server. 
+
+
+
+Solution 2: Check if there are multiple instances of lmgrd running on the same server. 
+
+For example: IBM Rational Rhapsody and IBM Rational ClearCase are some of the product that uses its own instance of Flex. 
+
+Run the following commands to check for multiple running lmgrd's 
+ * List all lmgrd process: ps -ef | grep lmgrd 
+ * Lists the Telelogic daemons running:ps -ef | grep telelogic 
+ * List the process running on the specified port:netstat -an | grep <license server port number>
+
+
+If there are multiple instances of the server that is running, stop all the servers and start only the required License server alone. 
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Synergy Licensing

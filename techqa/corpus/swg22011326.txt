@@ -1,0 +1,18 @@
+Title: IBM Creating a license string from an authorization code in the SPSS License Key Center - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I need to create a license string for a user from an authorization code in the SPSS License Key Center. I have access to the License Key Center but I am unsure how to do this. What are the steps? 
+
+RESOLVING THE PROBLEM
+1. Ask the user to start the License Authorization Wizard on their PC.
+2. Ask the user to click Next and proceed to the second screen in the wizard.
+3. Ask the user to read the code from the bottom of the screen. It should be next to the words “Lock Code for this machine is: “ and be a 6 character code in the following format: 4-20D31 or 10-4E762
+4. Enter the code into the Locking Code field below. It is important to include the dash in the code.
+5. Optionally, enter a locking code description or comment associated to this code.
+6. Click the Activate button.
+7. Click the license code that was generated and provide the code to the user by putting it in an email or file.
+8. Have the user complete the License Authorization Wizard with the key you provide.
+If your code has already been activated, in addition to the authorization code details, you will see the details of the activation below. You may click on the License Code to retrieve the entire code. Please note that the Activated By field will only be filled in if you activated on this site.

@@ -1,0 +1,79 @@
+Title: IBM Using libumem to diagnose Native OutOfMemoryErrors or leaks on Solaris - United States
+
+Text:
+WebSphere Solaris native outofmemory libumem TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote details how to set up and use libumem to track native memory usage for IBM WebSphere Application Server processes on Solaris. 
+
+SYMPTOM
+Suspicious or excessive native memory usage.
+
+
+ENVIRONMENT
+Solaris 9 and later
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Set the libumem environment variables as WebSphere custom properties
+    
+    "Setting environment entries in WebSphere Application Server"
+    http://www.ibm.com/support/docview.wss?rs=180&uid=swg21254153 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21254153]
+    
+    Set libumem library to the LD_PRELOAD environment variable:
+    Name: LD_PRELOAD
+    Value: libumem.so.1
+    
+    Set the libumem debugging environment variable:
+    Name: UMEM_DEBUG
+    Value: default
+    
+    
+ 2. Collect multiple system cores using gcore
+    The following command will generate a system core dump...
+    
+    gcore [JVM PID]
+    
+    How often system cores are collected depends on how long it takes for the process to critically fail due to native memory exhaustion. An appropriate interval should be used with the understanding that better results come from longer running processes. Ideally the last (or only) system core is generated just before the process fails, or from the failure itself.
+    
+    IBM support can advise on how often a core dump should be generated.
+    
+    
+ 3. For Each Generated System Core Dump  1. Run the attached script as follows...
+        
+        ./probenativeheap.sh [ core ]
+        
+        This will create five files for the core file
+        probenativeheap.[core file].findleaks.out
+        probenativeheap.[core file].umausers.out
+        probenativeheap.[core file].umastat.out
+        probenativeheap.[core file].umalog.out
+        probenativeheap.[core file].umausers_oversize.out
+        
+        
+     2. Extract the Java heap dump from each system core using jmap. The output of this command will create a memory dump named "heap.bin".
+        
+        32bit*
+        <JavaHome>/bin/jmap -heap:format=b <JavaHome>/bin/java [ core ]
+        
+        64bit*
+        <JavaHome>/bin/jmap -J-d64 -heap:format=b <JavaHome>/bin/java [ core ]
+        
+        
+        <JavaHome> = JVM running under WebSphere Application Server
+        *32bit or 64bit should be selected based on the installed JVM version
+        
+        
+     3. Combine the heap.bin and *.out files into a single compressed archive, named appropriately Example. 
+        [PMR_Number].dump1.<timestamp>.tar.gz
+        
+        
+    
+    
+
+Notes: 
+-Each system core dump should be processed as they are created since there is no control of the name "heap.bin". This would make overwriting heap dumps possible. 
+
+"Exchanging information with IBM Support" 
+http://www.ibm.com/support/docview.wss?uid=swg21153852 [http://www.ibm.com/support/docview.wss?uid=swg21153852] probenativeheap.sh [/support/docview.wss?uid=swg21504345&aid=2] [/support/docview.wss?uid=swg21504345&aid=1]

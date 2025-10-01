@@ -1,0 +1,189 @@
+Title: IBM PK49272: CLASS 'WSBINDING' NOT FOUND - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   - Win XP SP2
+    - Rational Application Developer 7.0.0.3
+   Reproducible Y/N:
+   Y
+   Description of problem:
+   
+   Class 'WSBinding' not found messages occurs in .log file when
+   rebuild
+   projects on workspace
+   also when clean and rebuild projects.
+   
+   !ENTRY org.eclipse.wst.validation 4 0 2007-07-05 12:41:50.245
+   !MESSAGE
+   *** ERROR ***: Thu Jul 05 12:41:50 CEST 2007
+   org.eclipse.emf.ecore.
+   resource.impl.ResourceSetImpl$1$DiagnosticWrappedException:
+   org.eclipse.
+   emf.ecore.xmi.ClassNotFoundException: Class 'WSBinding' not
+   found.
+   (platform:/resource/LogEJB/ejbModule/META-INF/ibm-webservices-bn
+   d.xmi,
+   2, 233) at
+   
+   Steps to reproduce:
+   when you have a project with webservices, with WSDL,
+   try to clean -> Build project,
+   then you will see errors in ./metadata/.log
+   
+   org.eclipse.emf.ecore.xmi.ClassNotFoundException: Class
+   'WSBinding' not found.
+   (platform:/resource/LogEJB/ejbModule/META-INF/ibm-webservices-bn
+   d.xmi
+   
+   Workaround:
+   yes, to open the webservices.xml in the Web service editor
+   and then close the file.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  to open the webservices.xml in the Web service editor
+   and then close the file.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of the webservice validation       *
+   *                 tools in Rational Application Developer      *
+   *                 v7.0 and WebSphere Application Server        *
+   *                 Toolkit v6.1.1.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An error stating the WSBinding class    *
+   *                      is not found occurs when validating a   *
+   *                      project containing a webservice         *
+   *                      application.                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The following error occurs in the workspace .log file when
+   invoking the validation on a project containing a webservice
+   application:
+   
+   !ENTRY org.eclipse.wst.validation 4 0 2007-07-05 12:41:50.245
+   !MESSAGE
+   *** ERROR ***: Thu Jul 05 12:41:50 CEST 2007
+   org.eclipse.emf.ecore.
+   resource.impl.ResourceSetImpl$1$DiagnosticWrappedException:
+   org.eclipse.
+   emf.ecore.xmi.ClassNotFoundException: Class 'WSBinding' not
+   found.
+   platform:/resource/LogEJB/ejbModule/META-INF/ibm-webservices-b
+   nd.xmi
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The error is happening because the underlying webservice model
+   is not being initialized in the validator.  The fix for this
+   APAR is to ensure initialization of the model occurs and is
+   currently targeted for inclusion into Rational Application
+   Developer fixpack v7.0.0.5 and WebSphere Application Server
+   Toolkit fixpack v6.1.1.5.  Please refer to the Recommended
+   Updates page for WebSphere Application Server Toolkit delivery
+   information:
+   http://www.ibm.com/support/docview.wss?uid=swg27004980 [http://www.ibm.com/support/docview.wss?uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK49272
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBAPP SERVER A
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0820
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-07-19
+   
+   
+ * CLOSED DATE
+   2007-09-26
+   
+   
+ * LAST MODIFIED DATE
+   2007-09-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBAPP SERVER A
+   
+   
+ * FIXED COMPONENT ID
+   5724J0820
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

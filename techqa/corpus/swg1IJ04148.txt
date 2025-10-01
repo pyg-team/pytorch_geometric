@@ -1,0 +1,159 @@
+Title: IBM IJ04148: PATCHED ORACLE DATABASE EXTENDED AGENT DOESN'T SUPPORT GRAPHICAL REMOTE CONFIGURATION - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Installing the Oracle Database Extended agent patch's
+   application support prevents graphical remote configuration of
+   any version of the agent. The following Oracle Database Extended
+    agent patches include new configuration parameters that are not
+    present in the 'base' version 6.3.1 Fix pack 2 of the agent.
+   The depot needs to be patched for the base version of an agent
+   when new configuration parameters are added.
+   
+   Affected patches:
+   - 6.3.1.2-TIV-ITM_KRZ-IF0005
+   - 6.3.1.2-TIV-ITM_KRZ-IF0004
+   - 6.3.1.2-TIV-ITM_KRZ-IF0003
+   - 6.3.1.2-TIV-ITM_KRZ-IF0002
+   
+   This is a known problem listed as follows in the
+   6.3.1.2-TIV-ITM_KRZ-IF0005 patch:
+     - Problem: 6.3.1.2-TIV-ITM_KRZ-IF0005 includes new
+   configuration items. After upgrading the agent support file to
+   06.31.02.05, click 'Add Managed System' from portal or brower,
+   no matter what you select in the 'Select a Monitoring Agent'
+   panel - version 06.31.02000 or 06.31.02000, the 'New Managed
+   System Configuration' panel always shows new configuration items
+   in 6.3.1.2-TIV-ITM_KRZ-IF0005.
+   
+         As a result, GUI remote deployment fails on a freshly
+   installed system with the following error message:
+         KDY0015E The property advanced.KRZ_SUBNODE_ONLINE is
+   incorrect for version 063102000 of the rz agent
+   
+       Workaround:
+         Use 'tacmd addSystem' command to deploy the Oracle
+   Database Extended agent 'base' version 6.31 Fix pack 2.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No local fix.
+   
+   Workaround:
+   Use 'tacmd addSystem' command to deploy the Oracle
+   Database Extended agent 'base' version 6.31 Fix pack 2.c
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The agent was unable to remotely install an agent after
+   installing IF0002 due to a change in configuration. The
+   application support expected a new configuration variable that
+   was not available in the base version. The installation process
+   has been updated to account for this.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is released in 6.3.1.2-TIV-ITM_KRZ-IF0006
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ04148
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM EXT AGNT
+   
+   
+ * REPORTED COMPONENT ID
+   5724V09OR
+   
+   
+ * REPORTED RELEASE
+   631
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-02-21
+   
+   
+ * CLOSED DATE
+   2018-03-06
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM EXT AGNT
+   
+   
+ * FIXED COMPONENT ID
+   5724V09OR
+   
+   
+
+APPLICABLE COMPONENT LEVELS

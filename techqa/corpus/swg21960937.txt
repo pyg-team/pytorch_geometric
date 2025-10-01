@@ -1,0 +1,58 @@
+Title: IBM Attempting to connect to Oracle RAC from Rational Application Developer (RAD) results in error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Rational Application Developer for WebSphere Software (RAD) cannot establish a connection to Oracle Real Application Clusters (RAC) Database using various connection methods. 
+
+SYMPTOM
+When you attempt to connect to Oracle Real Application Clusters (RAC) via "Oracle XX - Oracle Thin Driver Default", if you enter correct database properties, you may get the following error: 
+
+"Listener Refused the connection with the following error:
+ORA-12505, TNS:listener does not currently know of SID given in connect descriptor" 
+
+ 
+
+When you attempt to connect to Oracle RAC via "Oracle XX - Other Driver Default", you may get the following error: 
+
+"The driver class was not found in the specified driver JAR/Zip file. Please update the jar list in the driver definition"
+
+
+CAUSE
+Rational Application Developer does not provide a database manager for Oracle RAC and therefore, connection must be configured manually.
+
+You cannot use "Oracle XX - Oracle Thin Driver Default" method to connect to Oracle RAC because the connection URL is different for Oracle and Oracle RAC. 
+Oracle Connection URL:
+jdbc:oracle:thin:@" + hostid + ":" + dbport + ":" + dbid
+
+Oracle RAC Connection URL:
+jdbc:oracle:thin:@//" + hostid + ":" + dbport + "/" + dbid
+
+Since you are not allowed to modify the connection URL, connecting to Oracle RAC using this method fails.
+
+Connecting to Oracle RAC using "Oracle XX - Other Driver Default" allows you to enter your custom URL. However additional configuration is needed. Without the additional required configuration, this method fails as well. 
+
+
+RESOLVING THE PROBLEM
+In order to establish a connection to Oracle RAC Database using Rational Application Developer data tools, you must follow these steps: 
+
+1. In your workbench, navigate to Window > Preferences > Data Management > Connectivity > Driver Definitions. 
+
+2. From the list of drivers, select "Oracle xx - Other Driver Default" and then click on "Edit". 
+
+3. Under the "Jar List", add the correct ojdbc Jar provided by Oracle. 
+
+4. Under the "Properties" tab, enter required details such as "Catalog", "Connection URL", "Database Name", "Driver Class". The driver class can be pulled from the Jar you added in the previous step and is usually "oracle.jdbc.driver.OracleDriver". 
+
+Note: You will be able to edit all of these properties later when you attempt to connect, except for the "Driver Class 
+
+5. Save the configuration and return to workbench. 
+
+6. In "Data Source Explorer" view, click on "New Connection Profile" 
+
+7. From the list of database managers, select Oracle and then select "Oracle XX - Other Driver Default" for JDBC Driver. 
+
+8. Enter or modify database properties including the connection URL. 
+
+9. Click on Test Connection. You will now be able to connect to Oracle RAC

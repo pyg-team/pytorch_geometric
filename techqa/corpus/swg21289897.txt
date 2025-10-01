@@ -1,0 +1,43 @@
+Title: IBM Why netmon.cf is important - United States
+
+Text:
+TSA; TSAMP; netmon.cf; heartbeat; cthats; RSCT TECHNOTE (FAQ)
+
+QUESTION
+ Why is netmon.cf file important in a small cluster, especially a two node cluster ? 
+
+CAUSE
+Firstly lets briefly discuss some of the limitations of the heartbeat mechanism and how netmon works, so we can then plan a netmon.cf file properly.
+The cthats subsystem handles heartbeating between nodes, which is how RSCT monitors network interface states most of the time. When in steady state, there is a "ring" formed where each member is sending heartbeats (HBs) to their downstream neighbor, and monitoring for HBs arriving from their upstream neighbor (a higher IP address is your upstream neighbor).
+
+NOTE: In the case with only two nodes, both members of the HB ring are sending to and receiving from the same neighbor, but the code isn't really aware of that fact and doesn't need to be.
+
+There are three times when heartbeating just isn't enough:
+
+1) Immediately after a problem occurs, at which point the heartbeats first begin failing to arrive at a neighbor. The member registering that HBs are being missed needs to make a decision -- are the missed heartbeats due to its own adapter's failure, or because of something else (both a failure of its neighbor and a network problem between them are treated the same, as "not a local failure").
+A local failure and a perceived failure of the neighbor will mean different things to the clients such as Tivoli's System Automation code.
+
+2) When the interfaces are first being used after startup (or after a failure recovery), prior to the initialization of heartbeating (RSCT needs to first verify it has a healthy adapter to use before it can begin to try heartbeating across it).
+
+3) During sustained periods when heartbeating is not possible -- such as when only one node is alive and thus has nobody else to heartbeat with.
+
+
+ANSWER
+In order to make the decision between a local or remote problem in #1, or verify the local adapter's health in #2/#3, RSCT call a thread of one of the child processes, called "netmon" (network monitor). 
+
+This thread's only purpose is to look at the local interface and decide whether it appears to be alive or not. It makes this decision based on whether the local interface's inbound byte count can be seen to be increasing over time, indicating some sort of traffic is able to arrive on the interface, and thus that the local adapter is working at least to that extent.
+
+If there is already naturally occurring traffic on the interface then the netmon thread will have little work to do, and it will simply report the local interface as good. However, we can't simply accept the absence of traffic as a failed adapter, since the network could simply be quiet at that time. So in that case, netmon will generate pings in the hopes of generating inbound traffic on the interface. RSCT does *not* watch specifically for responses to these pings -- it merely sends them out and then watches the interface again for any new traffic coming in.
+
+The targets which are pinged are:
+
+A. *All* other recognized interfaces on the local node, regardless of whether they are part of any cluster configuration.
+For this to be effective, brief and temporary manipulations of the routing table are done to ensure the local pings generate external traffic.
+
+B. Any interfaces on remote nodes which are defined to the cluster (TSA/RPD in this case) and part of the same logical network as the monitored adapter.
+
+C. Any interfaces provided by the customer via the netmon.cf file.
+
+As you can see, on small clusters such as a two node cluster and only one ethernet interface on each, the netmon process has a limited number of targets it can ping to verify the local adapter's health. This is especially important if you expect/need to be able to run with just one of your nodes for some period of time, although even if that's not the case it is still important for startup times (and proper failure reaction).
+
+It is generally recommend that there be 5-10 targets for pinging (if you have that many available). These IP addresses do not need to be part of your cluster or know what your cluster is; they just need to be pingable from the nodes in the cluster.

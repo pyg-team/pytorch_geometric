@@ -1,0 +1,75 @@
+Title: IBM How To Modify The Sort Sequence For Data Transfer and Create A Custom Sort Sequence - United States
+
+Text:
+collate sort order xfer transfer TECHNOTE (FAQ)
+
+QUESTION
+ How can I modify the sort sequence for a data transfer download. For example, I want numbers to be ahead of letters and upper-case letters ahead of lower-case letters. Is it possible to create your own sort sequence? 
+
+ANSWER
+By default the sort order used in a IBM i Access data transfer is *HEX. What that means is that the order applied to ordered columns will be based on the order of the characters in the code page (CCSID) that the host job is running under. That will be an EBCDIC code page so numbers will be after characters and lower-case letters are ahead of upper-case letters.
+There are a few options for setting the sort order applied to the result and they are set and modified by clicking on the "Format Options..." button in the main data transfer panel then selecting the "Misc" tab. (See Fig. 1 below) In the Access Client Solutions (ACS) data transfer the process is similar, press the "Format Options" button then click on the "Other" tab (See Fig. 2 below).
+Misc tab for IBM i Access For Windows Data Transfer Format Options [/support/docview.wss?uid=nas8N1020580&amp;aid=1] Other tab for IBM Access Client Solutions Data Transfer Format Options [/support/docview.wss?uid=nas8N1020580&amp;aid=2]
+
+The default has already been described, note that the Access Client Solutions interface gives you two options that will result in that default (IBM i Default and Hexadecimal). The other options are to pick a unique weight table or shared weight table and then select a language. The difference between shared and unique weight is how the case of a letter is treated. In a shared weight table, upper and lower case letters are treated equally so the case of the letters will not affect the order of the sorted rows; see Fig 4 below as an example of how ordering the result on the DATA column and using a shared weight column can have what look like varying results due to the shared weight sort. A unique weight table will assign different values to upper and lower case letters and that will normally be that all upper-case letters are either ahead of all the lower-case letters or vice versa.
+
+The option 'User Specified Table' or "Unique specified table' in the ACS client gives you the option to select a specific sort sequence table from a library on IBM i that defines the sort sequence to be used. You can create your own sort sequence (more on that later) but the ones provided for you with the operating system are likely to be all that you will ever need. 
+
+So where are these tables and how do I know what they are? What I do to see a list of them is to use the command WRKTBL Q* (you could view all the tables but the standard sort sequence tables all start with a Q). That will net you a list of two types of tables, sort sequence tables (what you are looking for, and conversion tables). The sort sequence tables all start their text description with "SRTSEQ"; the remainder of the description text on the tables tells you what sort of a sequence it has. Note that there are many that have the same or similar text descriptions. Use option 5 on the WRKTBL command to view the table and you can see how the characters are ordered and weighted for a particular table. Let me give you some examples of how easy this really is.
+
+Our assignment is to sort the results so that numbers ahead of letters as they would be in ASCII, ANSI or UNICODE, and upper-case letters are ahead of lower-case letters. Let's try the QSYS/QALA101F4S sort table first; it's a shared weight sort sequence based on ASCII. First step is to set the Sort sequence option to use a specific table and then specify the table (see Fig. 3).
+
+Setting the sort sequence to QSYS/QALA101F4S [/support/docview.wss?uid=nas8N1020580&amp;aid=3]
+
+This simple example is using a table that I created with two columns, an integer primary key that is also the order that the data were entered and a character column named DATA. The query is simple: SELECT * FROM MIKSWENS/SORTTEST ORDER BY DATA
+Here is the result using the QALA101F4S sort sequence table:
+
+Result set based on the QSYS/QALA101F4S sort sequence table. [/support/docview.wss?uid=nas8N1020580&amp;aid=4]
+
+Note that with this shared weight sort order, the capitalization of letters makes no difference. We didn't want that result, we want upper-case letters ahead of lower case so the last two rows of that result are in the wrong order. I'll try using the table QSYS/QBLA101F4U whose description says, "SRTSEQ FOR LATIN 1 UNIQUE REPRESENTING ASCII". The result is shown in Fig 5 below. Note that now the order of the rows matches what we were looking for.
+
+Result set based on the the QSYS/QBLA101F4U sort sequence table. [/support/docview.wss?uid=nas8N1020580&amp;aid=5]
+
+To put lower-case letters ahead of upper-case letters and numbers ahead of letters is a bit tricker. For that you want to pick a Latin 1 sort sequence that is based on a language whose code page puts the lower case letter ahead of the upper case, like German. I quick scan of the available tables shows me one with the text, "SRTSEQ FOR LATIN 1 UNIQUE CCSID 00273" on table QSYS/QLA10111U. I set that to be my sort table and here's my output:
+
+Result set based on the QSYS/QLA10111U sort sequence table. [/support/docview.wss?uid=nas8N1020580&amp;aid=6]
+
+Creating your own sort sequence table
+
+A circumstance may arise in which none of the existing tables will sort the data in the manner required. In that case, it is possible to make your own table. It is likely that there is already a table that is very close to what you need so it is easiest to start by retrieving the source of the one that is close to what you need and modifying that. 
+
+For my contrived example, I want to sort with a unique weight but sort upper-case letters in ascending order (A-Z) and lower case letters in descending order (z-a). So I will start with the existing table, QSYS/QBLA20366U. I want to retrieve the source of this table so I will need to have a source physical file to put that into:
+CRTSRCPF MIKSWENS/MYTBLSRC
+
+Then I can retrieve the source into a member in that table:
+RTVTBLSRC TBL(QSYS/QBLA20366U) SRCFILE(MIKSWENS/MYTBLSRC)
+
+Then I can rename that source member to call it BACKWARDS
+
+If I view the sort sequence (option 5 from the WRKTBL command), the first couple of screens looks like figures 7 and 8 below, easy to read and understand.
+
+Display sort sequence QBLA20366U [/support/docview.wss?uid=nas8N1020580&aid=7] [/support/docview.wss?uid=nas8N1020580&aid=7] 
+Display sort sequence QBLA20366U [/support/docview.wss?uid=nas8N1020580&aid=8] [/support/docview.wss?uid=nas8N1020580&aid=8]
+
+But when we view the source for that sort sequence table, it is anything but simple to comprehend (See Fig. 9 below).
+
+Editing source for new sort sequence table. [/support/docview.wss?uid=nas8N1020580&aid=9] [/support/docview.wss?uid=nas8N1020580&aid=9]
+
+The key to editing these is to grasp that this represents a grid of the code page. Since this sort table represents CCSID 870 (Note that the display of the sort sequence tells you that in the upper right corner of the display), it helps to have a copy of that handy too. You can download it in PDF form from here: http://www-01.ibm.com/software/globalization/cp/cp00870.html [http://www-01.ibm.com/software/globalization/cp/cp00870.html] [http://www-01.ibm.com/software/globalization/cp/cp00870.html]
+This grid is laid out in 8 rows of 32 characters the characters are determined by the row/column position and their order in the sort is the value at that grid position.
+So for example let's look for the lower case 'a' which has a hex value in CCSID 870 (and almost every EBCDIC CCSID) of 0x81. Each row has 32 characters (0x20 characters) so to quickly find that position, we simply divide 0x81 by 0x20 and get 4 full rows plus 1 position. Look that Fig. 9 and that is the row with sequence number 0000.05 and it would be the second value in that row. The first value is 'F4' so the position in the sort for the letter 'a' in our original sort sequence is '81', 'b' is in sort position '82', etc. The EBCDIC code page splits the alphabet into 3 parts so a-i are in consecutive positions from 0x81-0x89, j-r are at positions 0x91-0x99, and s-z are at positions 0xA2-0xA9. Those are the positions that I've circled ed in Fig. 10. Once again, those circled values represent the order that the characters a-z have in this sort order. What we want to do is reverse them so that where the value 81 is, we put 9A, where 82 is, we put 99, etc. until it looks like the Fig. 11
+
+SEU editor showing unmodified sort sequence table source. [/support/docview.wss?uid=nas8N1020580&aid=10] [/support/docview.wss?uid=nas8N1020580&aid=10]
+
+SEU editor showing modified sort sequence table source. [/support/docview.wss?uid=nas8N1020580&aid=11] [/support/docview.wss?uid=nas8N1020580&aid=11]
+
+Now I need to compile my new sort sequence table using the CRTTBL command:
+CRTTBL TBL(QSYS/BACKWARDS) SRCFILE(MIKSWENS/MYTBLSRC) TBLTYPE(*SRTSEQ) TEXT('QBLA20366U with a-z reversed')
+
+We can view this table using the command WRKTBL BACKWARDS and using option 5 to display it. Note in Fig. 12 that the order of the lower case letters has been reversed.
+
+Viewing the BACKWARDS sort sequence table. [/support/docview.wss?uid=nas8N1020580&aid=12] [/support/docview.wss?uid=nas8N1020580&aid=12]
+
+Finally, I've inserted a few more rows into this small table to prove the effect of this new sort sequence. It still sorts capital letters from A-Z but small letters are sorted in the reverse order as in Fig. 13 below.
+
+The result of a transfer of data showing the effect of the new sort sequence table. [/support/docview.wss?uid=nas8N1020580&amp;aid=13]

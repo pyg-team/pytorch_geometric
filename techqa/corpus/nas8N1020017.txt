@@ -1,0 +1,40 @@
+Title: IBM i Access Clients and TLS1.2 connections - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I connect IBM i Access clients to my IBM i using the current TLS 1.s for the connection? 
+
+ANSWER
+The IBM i Access client, IBM i Access for Windows and IBM i Access Client Solutions can now connect to an IBM i v7.1 using TLS 1.2.
+
+Requirements
+o Access for Windows v7.1 and Service Pack SI50567 or later. Older Service Packs do not enable TLS 1.2. The latest available Service Pack is recommended
+o IBM i Access Client Solutions has supported TLS 1.2 since the product release. The currently available IBM i Access Client Solutions update running on a current Java 8 is recommended.
+o IBM i at v7.1 with Technology Refresh 8 and MF58175 installed. (For IBM i at v7.2, TLS1.1 and 1.2 are already enabled, no additional steps are needed)
+o IBM i Access client already connecting secured to the IBM i (SSL already set up).
+
+To use the newer TLS 1.2 protocol, you must enable the IBM i. You should do the following: 
+
+1. Change system value QSSLPCL to add *TLSV1.2 and *TLSV1.1 at the top of the list. 2. Change system value QSSLCSLCTL to *usrdfn 3. Change system value QSSLCSL, add ciphers *RSA_AES_256_CBC_SHA256 and *RSA_AES_128_CBC_SHA256 to the top of the list. While this is not required, it is a good idea. These two ciphers are TLS 1.2 specific. 4. Start DCM, open the *SYSTEM keystore. 5. In the left hand navigation pane, choose Manage Applications and then Update Application Definition.
+
+Repeat the next step for each of the following Server Applications:
+
+o Central Server
+o Database Server
+o Data Queue Server
+o Network Print Server
+o Remote Command Server
+o Signon Server
+o IBM i TCP/IP Telnet Server
+o i5/OS DDM/DRDA Server - TCP/IP
+o File Server 6. Choose Server Applications, choose the application, and select Update Application Definition. 7. In the SSL Protocols setting, change from *PGM to Define protocols supported. Select TLS 1.2, TLS 1.1, and any other protocols you wish to use (or select the protocols that match the QSSLPCL system value). 8. In the SSL Cipher specification options, change from *PGM to Define cipher specification list. Choose the ciphers you wish to use, or match the QSSLCSL system value. It is recommended to keep the strong ciphers at the top of the list (see Step 3 above). 9. Click Apply. 
+Note: If DCM settings specify a protocol or cipher that is not enabled in the System Values, the setting is silently ignored. 10. Once the Host Servers and Telnet are restarted, they will be enabled to use the newer TLS protocols and ciphers. 11. After the servers have been restarted, Connect the IBM i Access client. RELATED INFORMATION
+ Enabling Telnet to use TLS 1.2 [ http://www-01.ibm.com/support/docview.wss?uid=nas8N1019971]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i Access for Windows IBM i 7.1.0 Operating System IBM i 7.1 IBM i 7.1.0

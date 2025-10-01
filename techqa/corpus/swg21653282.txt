@@ -1,0 +1,41 @@
+Title: IBM My Process Engine server log has vwtime won't shutdown within time limit entries - United States
+
+Text:
+Stack: java.net.SocketOutputStream.socketWrite; [Info] Thread 'vwtime' won't shutdown within time limit TECHNOTE (FAQ)
+
+QUESTION
+ Why does my IBM Case Foundation Process Engine (PE) server's pesvr_system.log contain occasional vwtime won't shutdown within time limit entries when PE is shutting down? 
+
+CAUSE
+The PE server's pesvr_system.log may contain [Info] entries similar to the following:
+2013/10/04 17:04:11.736-0700 7476:PESvr.Main [Info] Thread 'vwtime' won't shutdown within time limit. 
+
+These entries will be found ~1 minute from when the PE Server software shutdown is initiated.
+
+ANSWER
+The 'vwtime' won't shutdown within time limit message is logged as "info" and not "warning" or "error", indicating that the situation is considered interesting, worth logging, but not a serious problem. The shutdown info message will only be logged during a shutdown of the PE server.
+
+The PE code that shuts down the worker threads waits for 60 seconds for the threads to shutdown. The 60 seconds is hard coded (not configurable), and is considered enough time for all the threads to finish. 
+
+If, after waiting for a minute, there are still active threads left, the code generates the shutdown info entry, documenting that a thread was not finished. The shutdown info message includes the stack trace of the thread so one can see what the thread was doing. The process then exits and therefore all treads will be stopped. This is why the shutdown info entry appears to be an error related stack trace, but is actually [Info].
+
+One minute is normally long enough for the vwtime daemon to finish processing its work, so if there are no other issues/problems related to the shutdown info message, the PE server will be able to pick up where it left off when it next starts up again. The shutdown info message(s) can be ignored.
+
+If further investigation into the shutdown info entries is warranted, however, the exact data in the shutdown info stack trace will provide some specific thread information which might be useful in determining what process was stopped. 
+
+For example, looking at the following data:
+2013/10/04 17:03:11.041-0700 7476:PESvr.Main [Info] PESVR: shutting down worker threads..
+...
+This entry documents that "PESVR" (PID 7476) initiated shutting down threads at 17:03:11
+
+
+Further down in the log:
+...
+2013/10/04 17:04:11.736-0700 7476:PESvr.Main [Info] Thread 'vwtime' won't shutdown within time limit. Stack: java.net.SocketOutputStream.socketWrite0(Native Method) 
+java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:92) 
+java.net.SocketOutputStream.write(SocketOutputStream.java:136) 
+oracle.net.ns.DataPacket.send(DataPacket.java:199) 
+oracle.net.ns.NetOutputStream.write(NetOutputStream.java:176) 
+oracle.jdbc.driver.T4CSocketOutputStreamWrapper.flush(T4CSocketOutputStreamWrapper.java:98) 
+
+One minute later, PID 7476 generated the vwtime shutdown info entry, related to the database server. In this example, a DBA might examine the database for long running processes or other symptoms, since one minute would normally be enough time for vwtime to finishing processing database related work.

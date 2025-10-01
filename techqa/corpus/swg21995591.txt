@@ -1,0 +1,20 @@
+Title: IBM Jazz for Service Management Installation Version - United States
+
+Text:
+DASHL2; install ; version; JazzSM; 1.1.2.1; 1.1.3 TECHNOTE (FAQ)
+
+QUESTION
+ Why does the installation manager list JazzSM version 1.1.3.0 as version 1.1.2.1? 
+
+
+CAUSE
+ Jazz for Service Management extension for IBM WebSphere 8.5 is listed as version 1.1.2.1:
+[/support/docview.wss?uid=swg21995591&aid=1] [/support/docview.wss?uid=swg21995591&aid=1]
+
+
+ANSWER
+Please see the following Readme for details on the packages included with 1.1.3 
+
+https://www-01.ibm.com/support/docview.wss?uid=swg24042190 [https://www-01.ibm.com/support/docview.wss?uid=swg24042190]
+
+It appears that this JazzSM extension for WebSphere does not have a 1.1.3 version.

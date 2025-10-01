@@ -1,0 +1,68 @@
+Title: IBM Questions, Answers, and Tips on RGZPFM - Improving Its Performance - United States
+
+Text:
+N1016784 DB_RGZPFM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides questions, answers, and tips on RGZPFM. 
+
+RESOLVING THE PROBLEM
+Question 1: How Can I Speed Up the RGZPFM? 
+
+A1: When RGZPFM is used with the option to RBDACCPTH(*YES), it will render a faster reorganization of your file; however, the rebuild of the access paths of the physical file has been reorganized will be very CPU-intensive. See Question 2 below. RBDACCPTH(*NO) will maintain all logical files as the physical file is reorganized.
+
+To speed up the rebuild step, you should allocate as much memory as possible to memory pool *BASE prior to starting the RGZPFM and to leave as much CPU as possible for this task. 
+
+Tip 1: For a faster reorganization of the physical file, you should consider using the KEYFILE(*RPLDLTRCD) option with RGZPFM. 
+
+If the file is "Reuse deleted records" REUSEDLT(*YES) this option is safe to use. Check via DSPFD. 
+
+With this option, the deleted records space in the beginning of the file will be replaced with valid records from the end of the file. If the file is REUSEDLT(*NO), note that using this option will not preserve the arrival sequence and will not preserve the FIFO (first in, first out) or LIFO (last in, first out) order among duplicate keys. 
+
+
+Tip 2: The data movement phase of the reorganize can run in parallel if Option 26 of SS1 - SMP (DB2 Symmetric Multiprocessing) installed and one specifies that the RGZPFM should run in parallel. For example, we typically recommend using CHGQRYA DEGREE(*NBRTASKS n) where n is the number of parallel threads you want the OS to use. We do not recommend using DEGREE(*OPTIMIZE) for parallel reorganize, because it will typically underestimate a reasonable number of tasks for parallel reorganize. 
+
+For more details about performance of various RGZPFM options, you should refer to the following URL: 
+http://www-01.ibm.com/support/knowledgecenter/ssw_ibm_i_72/dbp/rbaforeorgtypes.htm [http://www-01.ibm.com/support/knowledgecenter/ssw_ibm_i_72/dbp/rbaforeorgtypes.htm]
+[http:///]
+
+Tip 3: RGZPFM will run faster if the files are placed on SSD (solid-state drive), and then RGZPFM is run on them while they are on SSD. 
+The first part of RGZPFM is quite read intensive as it searches for empty record space, and if reorganizing in in keyed order, the key lookup will go faster as well. 
+
+
+Tip 4: Try to not have any jobs running in contention with the RGZPFM job.
+
+
+Tip 5: Use SETOBJACC to put the file in memory.
+
+
+Question 2: How Can I Rebuild the Invalid Access Paths and Avoid Performance Problems for Users?
+
+A2: When you cancel a RGZPFM that was set to rebuild the access path -or- you used RBDACCPTH(*YES) and your job is in the rebuild access path stage, you will be left with a list of access paths that need to be rebuilt. The following steps are written assuming you ended the RGZPFM but the concepts can be applied to all rebuilds of access paths.
+
+The system will rebuild the access paths at first touch; however, that may render some performance impact on your users. The following steps can be used to rebuild the invalid access paths in a controlled manner:
+
+1. EDTRBDAP will provide a list of access paths that were marked as invalid/need to be rebuilt. Change each access path to *HLD. 
+
+[http://www.mcpressonline.com/images/stories/ArticleImages/2010/121010CabralFigure1.JPG_]2. Add memory to *BASE memory pool (batch jobs normally run in this pool).
+
+3. Submit individual batch jobs with the OPNDBF command for each access path above.
+
+Example: SBMJOB CMD(OPNDBF FILE(-your IBM i library-/-your IBM i logical file-) OPTION(*INP)) JOB(-your IBM i logical file-)
+
+Note: Each access path will be rebuilt under a separate batch job. 
+You can have several submitted jobs in the queue; however, make sure there are no concurrent batch jobs running to avoid resource contention during the access path rebuild. It is will be SIGNIFICANTLY faster to rebuild one at a time than rebuild many concurrently. 
+
+4. EDTRBDAP changes the access paths to *OPN. Each access path will be rebuilt under a different batch user job.
+
+
+Question 3 - Are there other tips for improving the performance?
+
+A3. When using ALWCANCEL(*YES) consider setting the QDBFSTCCOL system value to *NONE. This will prevent the automatic column statistics collection being refreshed every time 15% of the data is changed. After the RGZPFM set this back to *ALL or the previous value.
+
+[http://www.mcpressonline.com/images/stories/ArticleImages/2010/121010CabralFigure2.JPG_]
+
+
+
+HISTORICAL NUMBER
+ 590089723

@@ -1,0 +1,244 @@
+Title: IBM IV52938: TEP CONNECTION PROTOCOL HTTPS FAILS TO LAUNCH TEP CLIENT. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 3 (6.3.0-TIV-ITM-FP0003) [http://www-01.ibm.com/support/docview.wss?uid=swg24036775]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  APAR Type:            Field
+   Approver Initials:    BS
+   Severity:             2
+   Reported Release:     630
+   Compid:               5724C04PS Tivoli Enterprise Portal Server
+   
+   PROBLEM DESCRIPTION:
+   ===============
+   When setting the tep.connection.protocol environment variable
+   in the Tivoli Portal client to https it fails to start.
+   
+   RECREATE INSTRUCTIONS:
+   Add the following parameter to any of the Tivoli Portal client
+   modes.
+   
+   tep.connection.protocol=https
+   
+   Attempt to start the tep client, it will fail to start.
+   Theclient log will show the following exception.
+   
+   javax.net.ssl.SSLHandshakeException: Received fatal alert:
+   handshake_failure
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  In the Tivoli Portal server the htpd.conf file needs to be
+   modified to enable sslv3. Edit the http.conf file and search
+   for the folloing string:
+   
+   SSLProtocolDisable SSLv3
+   
+   Comment out the above line using the "#" sign. Recycle the
+   Tivoli Enterprise Portal server.
+   
+   
+   
+   The above mentioned change to the http.conf file is a work
+   around only. The permanent fix will be done in the
+   tep.jnlp and tep.jnlpt files. The following parameter will
+   be updated with the correct level of SSL.
+   
+   <property name="tep.sslcontext.protocol" value="SSL_TLSv2"/>
+   
+   The update above to the tep.jnlp file is the preferred fix over
+   updating the http.conf file, it allows for a greater level of
+   security in the tep client when using the http interface.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Enhancements in IBM Tivoli Monitoring 6.30 FP2 were made to use
+   a more secure SSL context. This causes the Tivoli Portal client
+   to fail a connection to the Tivoli Portal server when the https
+   protocol is used for client to server connection.
+   
+   
+   Enhancements in IBM Tivoli Monitoring 6.30 FP2 were made to use
+   a more secure SSL context. This causes the Tivoli Portal client
+   to fail a connection to the Tivoli Portal server when the https
+   protocol is used for client to server connection.
+   
+   The Tivoli Portal Client will not start if IBM Runtime
+   Environment for Java(TM) Technology Edition Version 6 or 7 is
+   being used and https is set as TEP connection protocol.
+   
+   The TEP connection protocol is enabled for the browser client by
+   setting the parameter in the applet.html file:
+   
+   'tep.connection.protocol' : 'https'
+   
+   For reference see:
+   http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ib
+   m.itm.doc_6.3fp2/install/browser_rest.htm?lang=en [http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ibm.itm.doc_6.3fp2/install/browser_rest.htm?lang=en]
+   
+   
+   The TEP connection protocol is enabled for the Java webstart
+   client by adding the property in the tep.jnlpt file:
+   
+   <property name="jnlp.tep.connection.protocol" value="https"/>
+   
+   For reference see:
+   http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ib
+   m.itm.doc_6.3fp2/install/webstart_rest.htm?lang=en [http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ibm.itm.doc_6.3fp2/install/webstart_rest.htm?lang=en]
+   
+   Note: When adding properties to the tep.jnlpt file you should
+   insert them between the custom parameter tags.  For example:
+   
+   <!-- Custom parameters -->
+   <property name="jnlp.tep.connection.protocol" value="https"/>
+   <!-- /Custom parameters -->
+   
+   An additional setting is required to be added when using IBM
+   Runtime Environment for Java Technology Edition Version 6 or 7
+   and https is set as TEP connection protocol. See the "Install
+   Actions" section of the APAR conclusion for more details.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Install Actions:
+   An additional setting is required to be added when using IBM
+   Runtime Environment for Java Technology Edition Version 6 or 7.
+   However this new setting does not work with Oracle Java 6 but
+   does work with Oracle Java 7. So when using https protocol
+   either all clients need to be using IBM Runtime Environment for
+   Java Technology Edition Version 6 or 7 and/or Oracle Java 7:
+   
+   To enable IBM Runtime Environment for Java Technology Edition
+   Version 6 or 7 add the following parameter to the applet.html
+   for browser client support:
+   
+   'tep.sslcontext.protocol': 'TLSv1.2'
+   
+   and the following property to the tep.jnlpt file for the Java
+   webstart client support:
+   
+   <property name="jnlp.tep.sslcontext.protocol" value="TLSv1.2"/>
+   
+   Note this property should also be inserted between the custom
+   parameter tags when added to tep.jnlpt.  For example:
+   
+   < !-- Custom parameters -->
+   <property name="jnlp.tep.connection.protocol" value="https"/>
+   <property name="jnlp.tep.sslcontext.protocol" value="TLSv1.2"/>
+   < !-- /Custom parameters -->
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.3.0-TIV-ITM-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Manually add the parameters to the applet.html and tep.jnlpt
+   files as described in the APAR Conclusion.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV52938
+   
+   
+ * REPORTED COMPONENT NAME
+   TEPS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04PS
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-06
+   
+   
+ * CLOSED DATE
+   2014-04-16
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEPS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04PS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

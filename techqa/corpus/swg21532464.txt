@@ -1,0 +1,18 @@
+Title: IBM What is the meaning of the values in the Interchanges Browser, Network Status column? - Sterling Gentran:Server for Microsoft Windows - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is the meaning of the values in the Interchanges Browser, Network Status column? 
+
+ANSWER
+On Network -- Indicates that the document was successfully delivered to a value-added network. (To obtain this status using Sterling B2B Collaboration Network (VAN) you must have your mailbox configured to receive the 20 report in data format).
+
+Network Warning -- Indicates that the document was delivered to a value-added network and the network detected non-critical errors in the data. The data is available to be picked up by the designated trading partner. (To obtain this status using Sterling B2B Collaboration Network (VAN) you must have your mailbox configured to receive the 30 report in data format).
+
+Network Error -- Indicates that the document was delivered to a value-added network and the network detected critical errors in the data. The data is not available to be picked up by the designated trading partner. (To obtain this status using Sterling B2B Collaboration Network (VAN) you must have your mailbox configured to receive the 30 report in data format).
+
+Picked Up -- Indicates that the document was successfully delivered to a trading partner via a value-added network. (To obtain this status using Sterling B2B Collaboration Network (VAN) you must have your mailbox configured to receive the 70 report in data format).
+
+Third-party network -- Indicates that the document was transmitted to a third-party network.

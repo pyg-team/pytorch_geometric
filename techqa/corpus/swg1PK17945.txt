@@ -1,0 +1,176 @@
+Title: IBM PK17945: DFHXS1203 USERID REVOKED MESSAGE POSSIBLE WHEN USERID IS NOT REV OKED. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In DFHXSSB, in order to test to see if a userid is revoked, CICS
+   moves the 3-byte revoked date passed back by RACF to a 4-byte
+   work area, and uses the extra high-order byte as a century
+   indicator.  There are cases where RACF will pass back a revoked
+   date of x'00000F', indicating that the userid is not revoked.
+   When CICS moves that to a work field it becomes x'0100000F' with
+   the x'01' at the front indicating the 21st Century.  When this
+   work area is used in comparisons to see if the userid is
+   revoked, CICS may incorrectly return a 'userid revoked' status
+   to the caller.  The exception trace entry will look like the
+   following:
+   .
+   XS FE04 XSSB  *EXC* FUNCTION(INQUIRE_PASSWORD_DATA)
+                       RESPONSE(EXCEPTION) REASON(USERID_REVOKED)
+                       SAF_RESPONSE(0) SAF_REASON(0)
+                       ESM_RESPONSE(0) ESM_REASON(0)
+   .
+   If the problem on the customer's system is readily recreatable,
+   an IF SLIP trap on DFHXSSB+x'BAE' (UK06431) can be used to
+   validate that this is indeed the case.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Message DFHXS1203 is issued against     *
+   *                      a transaction request for a userid      *
+   *                      which is not revoked.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   DFHXSSB tests the revoke date of a userid by extracting
+   the date from the external security manager, generating a
+   century flag and testing the resultant 4 byte field.
+   In certain instances the external security manager can
+   return a null data value of 000000, 00000C, 00000D, 00000F
+   or FFFFFF. DFHXSSB incorrectly processes this data as a
+   valid revoke date which will cause message DFHXS1203 The
+   userid supplied in the verification request userid uuuuuu
+   is revoked. This occurred in transaction tttt when userid
+   uuuuuuuu was signed on at netname nnnnnnnn.
+   
+   Additional Keywords: MSGDFHXS1203
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHXSSB has been changed to handle values of 000000,
+   00000C, 00000D, 00000F and FFFFFF as valid null dates.
+   This will prevent message DFHXS1203 being issued.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK17945
+   
+   
+ * REPORTED COMPONENT NAME
+   CICSTS 3.1 Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655M1500
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / Pervasive
+   
+   
+ * SUBMITTED DATE
+   2006-01-16
+   
+   
+ * CLOSED DATE
+   2006-06-09
+   
+   
+ * LAST MODIFIED DATE
+   2006-07-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK15320
+   
+   
+
+MODULES/MACROS
+ *     DESXSSB  DFHXSSB
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICSTS 3.1 Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5655M1500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY UK15320 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK15320]
+   UP06/06/14 P F606
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

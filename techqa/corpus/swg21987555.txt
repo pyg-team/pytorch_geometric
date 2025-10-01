@@ -1,0 +1,41 @@
+Title: IBM Atlas cannot load users via the HR loader without a first or last name. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When trying to load users in IBM Atlas via the HR loader that do not have a first or last name, Atlas Extensions throws the following error:
+
+
+
+firstName cannot be NULL or lastName cannot be NULL
+
+
+
+How can this be avoided? 
+
+CAUSE
+While it is typically expected that every user has a first and last name, this may not be the case if the source data was inputted in an unexpected manner, or other reasons. 
+
+ANSWER
+It is recommended to use the Oracle NVL2 function for this. The format is:
+
+NVL2( columnname, value_if_NOT_null, value_if_null ) 
+
+So, in an otherwise default incremental query, you could do this for first name: 
+
+SELECT PERSONID, NVL2(FIRSTNAME, FIRSTNAME,'x'), LASTNAME, LOGINID, 
+EMAIL, TITLE, STATUS, CUSTOMFIELD1, CUSTOMFIELD2, LASTMODIFIED, 
+CUSTOMFIELD3, TERMINATEDON, DIVISIONID, DIVISIONNAME, CLUSTERCD, 
+CLUSTERDESC, PRODUCTLINEID, PRODUCTLINEDESC, DEPTID, DEPTDESC, 
+MANAGERID, ASSISTANTID, CUSTOMFIELD5, CUSTOMFIELD4 from ATLAS_PERSON 
+WHERE LASTMODIFIED > ? ORDER BY LASTMODIFIED ASC 
+
+So, when the HR load runs, it wouldn't see this: 
+
+
+FIRSTNAME LASTNAME John Smith Jane Jones [/support/docview.wss?uid=swg21987555&amp;aid=1] Jackson 
+But this: 
+FIRSTNAME LASTNAME John Smith Jane Jones x Jackson 
+
+This will allow your source data to remain the same, while satisfying the Atlas requirements.

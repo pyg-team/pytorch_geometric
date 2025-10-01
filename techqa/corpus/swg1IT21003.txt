@@ -1,0 +1,161 @@
+Title: IBM IT21003: AFTER A NETWORK FAILURE WITH TWO OR MORE MQ CONNECTIONS, REMOTE MQ QUEUE MANAGER REQUIRES REACTIVATION - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix packs for DataPower Gateway version 7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038524]
+Fix packs for DataPower Gateway version 7.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039783]
+Fix packs for DataPower Gateway version 7.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041543]
+Fix packs for DataPower Gateway version 7.5.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042194]
+Fix packs for DataPower Gateway version 7.5.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24042699]
+Fix packs for DataPower Gateway version 7.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24043675]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The mq-qm state machine may stop if there are more than 2
+   events transiting the same mq-qm object to down at the same
+   time.
+   For example, there are more than 2 connections established for
+   the mq-qm. When the network suddenly goes down, both of the
+   connections break and then transit the mq-qm to down at the
+   same time. In this case, the mq-qm state machine may stop. It
+   will need manual restart the mq-qm object to reactivate.
+   Only these or later firmware version are affected:  7.0.0.17,
+   7.1.0.14, 7.2.0.11, 7.5.0.5, 7.5.1.4, 7.5.2.2
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually restart the mq-qm object to reactivate it.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The state of mq-qm might not change when there are more than
+   two external events fired in a short time.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is available in 7.1.0.18, 7.2.0.15, 7.5.0.9, 7.5.1.8,
+   7.5.2.8 and 7.6.0.0.
+   
+   For a list of the latest fix packs available, please see:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21237631 [http://www-01.ibm.com/support/docview.wss?uid=swg21237631]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT21003
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-06-13
+   
+   
+ * CLOSED DATE
+   2017-07-27
+   
+   
+ * LAST MODIFIED DATE
+   2017-08-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP
+   
+   
+ * R720 PSY
+   UP
+   
+   
+ * R750 PSY
+   UP
+   
+   
+ * R751 PSY
+   UP
+   
+   
+ * R752 PSY
+   UP
+   
+   
+ * R760 PSY
+   UP

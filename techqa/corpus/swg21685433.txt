@@ -1,0 +1,45 @@
+Title: IBM HTTP Server and IBM WebSphere Application Server (Bash vulnerabilities) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ IBM HTTP Server and WebSphere Application Server are not vulnerable to the Bash vulnerabilities as shipped out of the box, but action is required to ensure no vulnerable scripts have been added to IBM HTTP Server. 
+
+CONTENT
+CVE-2014-6271 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6271], CVE-2014-6277 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6277], CVE-2014-6278 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6278], CVE-2014-7169 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7169], CVE-2014-7186 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7186] and CVE-2014-7187 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7187] vulnerabilities (also called Shellshock) affect Bash that is delivered in Unix platforms. Fixes for Bash will come from Unix distribution. IBM HTTP Server (IHS) does not ship bash nor ship any CGI scripts. IHS does not provide any vulnerable bash-based usage that could be tainted with user supplied data, but several modules included with IHS could be vulnerable. 
+
+If you have scripts that contain a bash dependency either directly or indirectly you may be vulnerable to a remote attack if they are configured to be invoked by the following Apache modules: mod_cgi, mod_cgid, mod_fastcgi, mod_include or mod_ext_filter. 
+
+By default: 
+
+ * mod_cgid/mod_cgi will execute any scripts added to $IHSROOT/cgi-bin/ (which is shipped empty) and can be configured to execute scripts from other directories via ScriptAlias or "Options" directives including ExecCGI (including "Options All") 
+ * mod_include is loaded but not configured to process any includes (Options +Includes, XbitHack ON) 
+ * mod_ext_filter is not loaded or configured 
+ * mod_fastcgi is not loaded or configured 
+
+
+Use of these modules or directives may be via httpd.conf, an "Include"ed configuration file, or in an .htaccess file. You can confirm the list of loaded modules by running apachectl -M (or httpd.exe -M) with any additional arguments (such as -f) that you normally use.  
+
+Remediation: 
+
+IBM highly recommends upgrading your bash from your operating system vendor. If you cannot apply the fixes for bash, unload the following IBM HTTP Server modules: mod_cgid, mod_cgi, mod_fastcgi, mod_include and mod_ext_filter until you can apply the bash fix or determine that the scripts these modules have been configured to execute do not use bash directly or indirectly. 
+
+ 
+
+ Change History: 
+
+ 25 September 2014: original document published 
+
+ 26 September 2014: added mod_include and mod_ext_filter, clarified some vulnerable instances 
+
+ 29 September 2014: removed IBM i from listed platforms 
+
+ 2 October 2014: fixed typo - should be apachectl 
+
+ 9 October 2014: added links to other bash CVEs
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server

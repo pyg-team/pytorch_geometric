@@ -1,0 +1,177 @@
+Title: IBM PK73810: CPSM API PERFORM OBJECT RETURNS FAILED EXCPEPTION WHEN THE LENGTH FIELD IS INCORRECT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using the CPSM API to issue a PERFORM OBJECT(DSNAME) command
+   with action=QUIESCE with an invalid LENGTH specified, a
+   RESPONSE=FAILED AND REASON=EXCEPTION is returned.
+   When a PERFORM OBJECT is issued, CPSM performs a GET to build
+   the result set to apply the action against.  EYU0XDP3 allocates
+   1024 bytes for the GET command descriptor.  However, if it is
+   larger, CSPM incorrectly fails the request with RESPONSE=FAILED
+   and REASON=EXCEPTION.
+   Additional Symptom(s) Search Keyword(s):
+   KIXREVRJS
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICSPlex SM V3R2M0 Users                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Users may receive RESPONSE=FAILED,      *
+   *                      REASON=EXCEPTION when issuing an API    *
+   *                      PERFORM OBJECT command, if a CRITERIA   *
+   *                      and/or PARM is specified in the command *
+   *                      and the combined LENGTH and/or PARMLEN  *
+   *                      specified is greater than 736.          *
+   ****************************************************************
+   * RECOMMENDATION: After applying the PTF that resolves this    *
+   *                 APAR, all CMASes must be restarted.  Note    *
+   *                 that the restarts do not need to occur at    *
+   *                 the same time.                               *
+   ****************************************************************
+   When a PERFORM OBJECT command is issued, method EYU0XDP3 (XDP3)
+   creates a GET command descriptor to pass to method EYU0XDP1
+   (XDP1) to build the result set of records to change for the
+   PERFORM OBJECT action.  XDP3 reserves 1024 bytes of working
+   storage for the GET command descriptor.  The fixed portion of
+   the GET command descriptor is 288 bytes.  If CRITERIA is
+   specified in the PERFORM OBJECT command, this is also included
+   in the GET command descriptor.  If PARM is specified in the
+   PERFORM OBJECT command, this may also be included in the GET
+   command descriptor.  If the LENGTH of the CRITERIA is greater
+   than 736 or if the PARM is included in the GET command
+   descriptor and the combined value of LENGTH and PARMLEN is
+   greater than 736, then this plus the fixed portion would exceed
+   the 1024 bytes allocated by XDP3 for the GET command descriptor,
+   resulting in FAILED/EXCEPTION being returned to the user.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  XDP3 has been updated to check if the size required for the GET
+   command descriptor will exceed the 1024 bytes allocated in its
+   working storage.  If it does, XDP3 will getmain and use an area
+   large enough to hold the GET command descriptor and will free
+   the area on exit.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK73810
+   
+   
+ * REPORTED COMPONENT NAME
+   CICSTS V3 Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655M1500
+   
+   
+ * REPORTED RELEASE
+   50M
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-14
+   
+   
+ * CLOSED DATE
+   2008-10-17
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK40816
+   
+   
+
+MODULES/MACROS
+ *     EYU0XDP3
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICSTS V3 Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5655M1500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R50M PSY UK40816 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK40816]
+   UP08/10/18 P F810
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

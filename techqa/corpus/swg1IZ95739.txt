@@ -1,0 +1,217 @@
+Title: IBM IZ95739: SNAPSHOT TAKE FAILS WITH SQLCODE -302 IN DB2 OR ORA-12899 IN ORACLE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A snapshot take operation fails with messages similar to
+   following:
+   
+          snapshot.bat take
+   
+   >> MSG : Found 1843 sensor errors in 85 discovery runs
+   >> MSG : Found 8165 scope ips in 10 discovery runs
+   >> ERROR : Exception in take
+   >> MSG : snapshot ended with errors.
+   >> MSG : check for errors in E:\IBM\cmdb\dist\log\snapshot.log.
+   
+   In the snapshot.log, there is SQL -302 error in a DB2 database:
+   
+   2011-02-14 13:54:51,494  [main]  ERROR custom.UpdateAction -
+   Exception in take
+   com.ibm.db2.jcc.b.yn: DB2 SQL Error: SQLCODE=-302,
+   SQLSTATE=22001, SQLERRMC=null, DRIVER=3.53.95
+    at com.ibm.db2.jcc.b.bd.a(bd.java:668)
+   ...
+    at com.ibm.db2.jcc.b.hm.executeUpdate(hm.java:602)
+    at
+   com.collation.cdm.reports.custom.ChangeHelper.executeInsert(Chan
+   geHelper.java:116)
+    at
+   com.collation.cdm.reports.custom.UpdateAction.take(UpdateAction.
+   java:797)
+    at
+   com.collation.cdm.reports.custom.Snapshot.execute(Snapshot.java:
+   298)
+    at
+   com.collation.cdm.reports.custom.Snapshot.run(Snapshot.java:89)
+    at
+   com.collation.cdm.reports.custom.Snapshot.main(Snapshot.java:71)
+   2011-02-14 13:54:51,494  [main]  INFO custom.Snapshot - Ended
+   Snapshot
+   
+   This defect is caused by the fact that the SERVER_TYPE column in
+   CT_SNAPSHOT_COMPSYS table is restricted to 180 characters, while
+   the incoming data for this column has 229 characters:
+   2011-02-14 13:54:51,463  [main]  DEBUG custom.ChangeHelper -
+   set#23
+   (SERVER_TYPE) = TECUserInterfaceServer
+   TivoliStorageManager-Client
+   TivoliWorkloadScheduler TECGateway TECDispatchEngine JavaServer
+   TivoliManagementFramework-Agent TivoliManagementFramework
+   TECReceptionEngine TECTaskEngine TECRuleEngine TECServer
+   
+   Similar problem occurs in Oracle. In the snapshot.log, there is
+   ORA-12899:
+   
+   2011-02-25 16:46:53,395 [main] ERROR custom.UpdateAction -
+   Exception in take java.sql.SQLException: ORA-12899: value too
+   large for column "CMDBUSER"."CT_SNAPSHOT_COMPSYS"."SERVER_TYPE"
+   (actual: 210, maximum: 180)
+   
+   at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:439)
+   ...
+   at
+   oracle.jdbc.driver.OraclePreparedStatementWrapper.executeUpdate(
+   OraclePreparedStatementWrapper.java:1062)
+   at
+   com.collation.cdm.reports.custom.ChangeHelper.executeInsert(Chan
+   geHelper.java:116)
+   at
+   com.collation.cdm.reports.custom.UpdateAction.take(UpdateAction.
+   java:797)
+   at
+   com.collation.cdm.reports.custom.Snapshot.execute(Snapshot.java:
+   298)
+   at
+   com.collation.cdm.reports.custom.Snapshot.run(Snapshot.java:89)
+   at
+   com.collation.cdm.reports.custom.Snapshot.main(Snapshot.java:71)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  For DB2:
+   
+   From a DB2 command line, redefine the column length in the
+   table:
+   
+   db2 alter table ct_snapshot_compsys alter server_type set data
+   type varchar (380)
+   
+   
+   For Oracle:
+   
+   In dist/bin place this one line in a file, change dbuser to your
+   primary schema userid:
+   
+   alter table dbuser.ct_snapshot_compsys modify server_type
+   VARCHAR2(380)
+   
+   Then run:
+   
+   ./dbupdate.sh <filename>
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The database schema did not allow a large enough SERVER_TYPE
+   column in CT_SNAPSHOT_COMPSYS table to hold actual customer
+   data. Any Server Type data longer than 180 characters triggered
+   the error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  After this fix, the SERVER_TYPE column in CT_SNAPSHOT_COMPSYS
+   table is automatically updated to a capacity of 380 characters.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   | Fix Pack | 7.2.0.0-TIV-ITADDM-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ95739
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-25
+   
+   
+ * CLOSED DATE
+   2011-04-05
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * FIXED COMPONENT ID
+   5724N5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

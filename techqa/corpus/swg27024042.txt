@@ -1,0 +1,61 @@
+Title: IBM Collection of WebSphere Adapter for Siebel Technotes - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This technical document is an index of the available WebSphere Adapter for Siebel technical notes, technical documentation and important flash messages. 
+
+CONTENT
+1. Providing access to the Siebel File System through WebSphere Adapter for Siebel Business Applications v7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg21505125]
+
+
+2. Handling business errors with fault. [http://www-01.ibm.com/support/docview.wss?uid=swg21501355] 
+
+3. Connecting to a clustered Siebel server with WebSphere Adapter for Siebel [http://www-01.ibm.com/support/docview.wss?uid=swg21498460] 
+
+4. WebSphere Adapter for Siebel Business Applications fails to connect to Siebel Server [http://www-01.ibm.com/support/docview.wss?uid=swg21458056] 
+
+5. How to discover Siebel Integration Objects [http://www-01.ibm.com/support/docview.wss?uid=swg21457649] 
+
+6. Siebel adapter business service not generating output xml [http://www-01.ibm.com/support/docview.wss?uid=swg21456496] 
+
+7. Collect troubleshootong data for problems with the WebSphere Adapter for Siebel [http://www-01.ibm.com/support/docview.wss?uid=swg21438194] 
+
+8. Adapter generates NullPonterException while discovering the business services during inbound processing [http://www-01.ibm.com/support/docview.wss?uid=swg21395487] 
+
+9. WebSphere Adapter for Siebel Business Applications V6.1. Connectivity Problem due to Codepage Error [http://www-01.ibm.com/support/docview.wss?uid=swg21393552] 
+
+10. Exception thrown when deleting 100 records concurrently [http://www-01.ibm.com/support/docview.wss?uid=swg21390515] 
+
+11. Connection retry settings for WebSphere Adapter for Siebel Business Applications V6.1.0.5 [http://www-01.ibm.com/support/docview.wss?uid=swg21384525] 
+
+12. WebSphere Adapter for Siebel eBusiness Applications does not support multiple endpoints [http://www-01.ibm.com/support/docview.wss?uid=swg21375367] 
+
+13. Inbound component of Siebel Adapter stop working after the number of event entries passes 10,000 [http://www-01.ibm.com/support/docview.wss?uid=swg21370056] 
+
+14. How to change Siebel connection settings using the siebel.properties file in WebSphere Adapter for Siebel eBusiness Applications [http://www-01.ibm.com/support/docview.wss?uid=swg21366662] 
+
+15. Sample artifacts to create event table are not provided by Adapter for Siebel Business Applications V6.1 and V6.2 [http://www-01.ibm.com/support/docview.wss?uid=swg21330157] 
+
+16. Rational Application Developer V7.5.1 Universal Test Client cannot construct a proper business object [http://www-01.ibm.com/support/docview.wss?uid=swg21326361] 
+
+17. Error running the query upon a filter in JCA Siebel adapter EMD wizard [http://www-01.ibm.com/support/docview.wss?uid=swg21306527] 
+
+18. Adapter does not generate artifacts properly for all the Siebel business components selected. [http://www-01.ibm.com/support/docview.wss?uid=swg21289328] 
+
+19. Adapter generates multiple container attributes in the business object for simple link relationships [http://www-01.ibm.com/support/docview.wss?uid=swg21288654] 
+
+20. Adapter does not throw exception when the call to a Siebel business service method fails [http://www-01.ibm.com/support/docview.wss?uid=swg21288615] 
+
+21. Currency support provided for Siebel V8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg21268310] 
+
+22. WebSphere Business Integration Adapter for Siebel eBusiness Applications, version 4.6.3 and later supp8rts Siebel 8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg21266500] 
+
+23. Adapter does not generate WebSphere business objects for child Siebel business components if the rela8ed link is inactive [http://www-01.ibm.com/support/docview.wss?uid=swg21251339] 
+
+24. The Prefix setting of Siebel EMD is hidden by Show Advanced button [http://www-01.ibm.com/support/docview.wss?uid=swg21251177] 
+
+25. Adapter does not generate a WebSphere business object for 'Simple Link' Siebel child business component if the 'Destination' field of the simple link is not set [http://www-01.ibm.com/support/docview.wss?uid=swg21251176] 
+
+26. Adapter does not check for the required fields to be set when creating Siebel business components [http://www-01.ibm.com/support/docview.wss?uid=swg21251175]

@@ -1,0 +1,87 @@
+Title: IBM How to use IBM WebSphere DataPower CLI copy command without password prompt - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The IBM WebSphere DataPower CLI copy command requires a password by default. If you want to use this copy command to copy files from DataPower to an external Linux/UNIX server without password prompt, the default User Agent has to be configured with the Pubkey_Auth_Policy containing the private key of the user. 
+
+CAUSE
+The CLI copy command fails if the default User Agent is not configured with the Pubkey_Auth_Policy containing the private key of the user.
+
+ANSWER
+Here are the steps: 
+
+ 1. Make sure the sshd daemon is configured to accept Public Key to authenticate client credential. If you have root access to the Linux/UNIX server, then you can modify the sshd_config file in the /etc/ssh directory and add PubKeyAuthentication yes in that file. If not, ask your system administer to do this for you. 
+ 2. Login to your user account with your id/pw. For an example, we will assume joe as the user and foo.dp.com as the host for illustration purposes only. 
+ 3. Generate SSH key pair with no password: 
+    
+    $ ssh-keygen -t dsa 
+    Click <enter> to accept the default location and key. Click <enter> to accept an empty passphrase. This is important since the DataPower appliance does not support keys encrypted with password. Click <enter> again to confirm the empty passphrase. 
+    
+    Example command to generate key pair: 
+    $ ssh-keygen -t dsa 
+    Generating public/private dsa key pair.
+    Enter file in which to save the key (/home/datapow/.ssh/id_dsa), click <enter>.
+    Created directory '/home/datapow/.ssh'.
+    Enter passphrase (empty for no passphrase), click <enter> . 
+    Enter same passphrase again and click <enter> 
+    Your identification has been saved in /home/joe/.ssh/id_dsa.
+    
+    Your public key has been saved in /home/joe/.ssh/id_dsa.pub. The key fingerprint is: 40:b4:ad:8d:93:a6:3c:5b:ad:9a:9b:42:95:62:ce:21 joe@foo.dp.com<mailto:joe@foo.dp.com [joe@foo.dp.com]>
+    
+ 4.  Append the public key to authorized_keys in the .ssh directory
+    If the authorized_keys file exits, then use the following command to append the public key:
+    $ cd .ssh
+    $ cat id_dsa.pub >> authorized_keys
+    
+    If the authorized_keys file does not exist in the .ssh directory, then use the following command to create and the append the public key to it.
+    $ touch authorized_keys
+    $ cat id_dsa.pub >> authorized_keys 
+    $ chmod 700 . (allow read, write, and execute access to owner and disable access to world and group for the .ssh dir)
+    $ chmod 600 authorized_keys (allow read and write access to owner and disable access to world and group for the authorized_keys file)
+    
+ 5. Copy the private key to the cert: directory of DataPower device by using WebGui and save as "id_dsa_<hostname>" to allow multiple private keys to co-exist in the cert: directory. 
+ 6. Make the DataPower crypto key object out of this private key file using the Crypto Key tool in the WebGUI. 
+ 7.  Configure the default User Agent under Network Menu of the WebGUI to use PubKey_Auth _Policy as the authentication method for the copy command. The URL of the copy command should represent the key object you created in the previous steps for the host foo.dp.com. Note that default User Agent must be configured for the CLI "Copy" command to work correctly. 
+    
+    You can configure multiple URLs with their associated private keys for the Pubkey_Auth_Policy. These URLs should be unique so that it can be saved in the URL matching expression. Note that the copy command only supports the scp or sftp protocols to copy from DataPower appliance to a local machine running the sshd daemon with PubKeyAuthentication as the client authentication method. Do not use http to copy files from the DataPower device to a local machine. You can use http to copy from the local machine to the DataPower device if your http server is configured correctly. 
+ 8. Example commands to use CLI copy command:
+    Logon to the DataPower appliance using ssh and with id/pw. Make sure the user has privileged access to invoke CLI command.
+    login: admin
+    Password: ********
+    
+    Welcome to DataPower XI50 console configuration.
+    Copyright IBM Corporation 1999-2010
+    Version: XI50.3.8.0.8 build 191146 on 2010/10/18 21:25:10
+    Serial number: XXXXXXX
+    
+    xi50# co
+    Global configuration mode
+    
+    xi50(config)# copy local:///myWork.xml sftp://joe@foo.dp.com/myWork2.xml
+    File copy success 
+    
+    This command copies a file myWork.xml from the local: directory to joe's home directory with file name "myWork2.xml" using "sftp" command
+    
+    xi50(config)# copy local:///myWork.xml scp://joe@foo.dp.com/myWork2.xml 
+    File copy success
+    
+    This command copies a file myWork.xml from the local: directory to joe's home directory with file name myWork2.xml using scp command
+    
+    xi50(config)# copy scp://joe@foo.dp.com/myWork2.xml local:///myWork3.xml
+    File copy success 
+    
+    This command copies a file from joe's home directory with file name myWork2.xml to local: directory with the file name "myWork3.xml" using the scp command.
+    
+    xi50(config)# copy sftp://joe@foo.dp.com/myWork2.xml local:///work4.jar
+    File copy success 
+    
+    This command copies a file from joe's home directory with file name myWork2.xml to "local:" directory with the file name work4.jar using the sftp command.
+    
+    xi50(config)# copy local:///myWork.xml sftp://joe@foo.dp.com/test/myWork2.xml
+    File copy success 
+    
+    This command copies a file myWork.xml from the local: directory to thetest sub-directory under joe's home directory with file name myWork2.xml using the sftp command.
+    
+    Note that the test sub-directory must exist injoe's home directory, otherwise the copy command will fail.

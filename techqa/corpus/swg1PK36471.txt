@@ -1,0 +1,262 @@
+Title: IBM PK36471: APPLICATION WPSMGR FAILED TO START ON NETWORK DEPLOYMENT CLUSTER - United States
+
+Text:
+  A FIX IS AVAILABLE
+PK36471; 6.0.2.17: Application WPSMGR failed to start on ND cluster [http://www-01.ibm.com/support/docview.wss?uid=swg24014590]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Application WPSMGR failed to start on Network Deployment
+   cluster
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Application Server version 6.0.2   *
+   *                 users who have applications installed on a   *
+   *                 cluster.                                     *
+   *                                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: DataSource created by WebSphere         *
+   *                      Process Server extension code at the    *
+   *                      cluster scope during cluster member     *
+   *                      creation does not exist after the       *
+   *                      command is completed.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Application fails to start on a Network Deployment cluster.
+   The application works correctly on a single server and
+   standalone server.
+   
+   You would see an exception in the dmgr trace.
+   Expected result:
+    wpsFEMgr should be started correctly.
+   Actual result:
+    wpsFEMgr can not be started correctly.
+   You will see the following message in SystemOut.log
+   [12/6/06 14:55:07:766 CST] 0000002b RALifeCycleMa E  J2CA0052E:
+   The lookup of the ActivationSpec with JNDI Name  manual
+   recovery failed due to exception javax.naming.
+   NameNotFoundException: Context: idler1Cell01/clusters/clustera,
+   name: manualrecovery: First component in name manualrecovery
+   not found.
+   Root exception is
+   org.omg.CosNaming.NamingContextPackage.NotFound:
+   IDL:omg.org/CosNaming/NamingContext/NotFound:1.0
+   at com.ibm.ws.naming.ipcos.WsnOptimizedNamingImpl.do_resolve
+   _complete_info(WsnOptimizedNamingImpl.java:543)
+   at com.ibm.ws.naming.cosbase.WsnOptimizedNamingImplBase.reso
+   lve_complete_info(WsnOptimizedNamingImplBase.java:2213)
+   at com.ibm.WsnOptimizedNaming._NamingContextStub.resolve_com
+   plete_info(Unknown Source)
+   at com.ibm.ws.naming.jndicos.CNContextImpl.cosResolve(CNCont
+   extImpl.java:4043)
+   at com.ibm.ws.naming.jndicos.CNContextImpl.doLookup(CNContex
+   tImpl.java:1746)
+   at com.ibm.ws.naming.jndicos.CNContextImpl.doLookup(CNContex
+   tImpl.java:1707)
+   at com.ibm.ws.naming.jndicos.CNContextImpl.lookupExt(CNConte
+   xtImpl.java:1412)
+   at com.ibm.ws.naming.jndicos.CNContextImpl.lookup(CNContextI
+   mpl.java:1290)
+   at com.ibm.ws.naming.util.WsnInitCtx.lookup(WsnInitCtx.java:
+   145)
+   at javax.naming.InitialContext.lookup(InitialContext.java:36
+   1)
+   at com.ibm.ejs.j2c.RALifeCycleManagerImpl.activateEndpoint(R
+   ALifeCycleManagerImpl.java:1345)
+   at com.ibm.ejs.container.MessageEndpointFactoryImpl.activate
+   Endpoint(MessageEndpointFactoryImpl.java:256)
+   at com.ibm.ws.runtime.component.EJBContainerImpl.install(EJB
+   ContainerImpl.java:2886)
+   at com.ibm.ws.runtime.component.EJBContainerImpl.start(EJBCo
+   ntainerImpl.java:3548)
+   at com.ibm.ws.runtime.component.ApplicationMgrImpl.start(App
+   licationMgrImpl.java:1245)
+   at com.ibm.ws.runtime.component.DeployedApplicationImpl.fire
+   DeployedObjectStart(DeployedApplicationImpl.java:1067)
+   at com.ibm.ws.runtime.component.DeployedModuleImpl.start(Dep
+   loyedModuleImpl.java:547)
+   at com.ibm.ws.runtime.component.DeployedApplicationImpl.star
+   t(DeployedApplicationImpl.java:751)
+   at com.ibm.ws.runtime.component.ApplicationMgrImpl.startAppl
+   ication(ApplicationMgrImpl.java:909)
+   at com.ibm.ws.runtime.component.ApplicationMgrImpl$AppInitia
+   lizer.run(ApplicationMgrImpl.java:2020)
+   at com.ibm.ws.runtime.component.ComponentImpl$_AsynchInitial
+   izer.run(ComponentImpl.java:304)
+   at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:147
+   1)
+   
+   WebSphere Process Server code extends createApplicationServer
+   command to insert cluster scope resources when a cluster
+   member is created. When a cluster member is created using
+   createClusterMember command, the createApplicationServer
+   command is called first. At this time the WebSphere Process
+   Server extension code adds a cluster scope resource. Later,
+   when the createApplicationServer command completes, the
+   createClusterMember command copies a different set of
+   resources and overwrites what was added by WebSphere Process
+   Server code.
+   
+   This is the sequence of flow:
+   
+   createClusterMember ( member1)
+   1. beforeStepsExecuted() of createClusterMember command calls
+      createApplicationServer command to create the member first
+   2. createApplicationServer ( member1) is called.
+   3. beforeStepsExecuted() method of createApplicationServer
+      creates the member and then all the extended steps are
+      called.
+   4. Extension steps is creating resource under cluster scope
+   5. beforeStepsExecuted() method of createClusterMember(member1)
+      calls promoteServerResources() to cluster scope.
+   
+   This copies the server side resources to cluster scope. This
+   does not contain the new resources created by WebSphere Process
+   Server. This overwrites what was created in step 4.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The solution to this problem is: Do not promote the server
+   scope resources to cluster scope when a cluster member is
+   created. Step 5. above is removed from the code.
+   
+   The fix for this APAR is currently targeted for inclusion
+   in fixpack 6.0.2.19.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK36471
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   61W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-12-19
+   
+   
+ * CLOSED DATE
+   2007-01-10
+   
+   
+ * LAST MODIFIED DATE
+   2007-01-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  ADMIN    CONFIG
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP

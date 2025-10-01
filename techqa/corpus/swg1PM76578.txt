@@ -1,0 +1,148 @@
+Title: IBM PM76578: ROLL THE ODR CUSTOM LOGS OVER WITH ANY NEWER LOG FILES CREATED. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.0.2: WebSphere Application Server V8.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24034672]
+IBM WebSphere Virtual Enterprise Version 7.0 Fix Pack 4, also known as Version 7.0.0.4 is available for download. [http://www-01.ibm.com/support/docview.wss?uid=swg24035621]
+IBM WebSphere Virtual Enterprise Version 7.0 Fix Pack 5, also known as Version 7.0.0.5 is available for download. [http://www-01.ibm.com/support/docview.wss?uid=swg24037897]
+IBM WebSphere Virtual Enterprise Version 7.0 Fix Pack 6, also known as Version 7.0.0.6 is available for download. [http://www-01.ibm.com/support/docview.wss?uid=swg24039270]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Roll the ODR custom logs over with any newer log files created.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V8.5                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: ODR does not count existing custom      *
+   *                      log files (ones that were created       *
+   *                      from previous run) towards history      *
+   *                      limit.                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The On demand router (ODR) does not scan the log directory for
+   pre-existing custom logs. This can leave old history files in
+   the directory between restarts which could build up and fill
+   up available storage.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Modified ODR custom logging code to add support for the
+   custom property 'http.log.history.backup.list'. This custom
+   property must be set to 'true' to make ODR count existing
+   custom log files towards history limt and they are rolled
+   over with any newer log files created when history limit is
+   reached.
+   
+   This property can be set in the administrative console:
+   
+   On Demand Routers > {odr name} > On Demand Router settings  >
+   Custom Properties
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.0.2.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM76578
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-06
+   
+   
+ * CLOSED DATE
+   2013-01-17
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

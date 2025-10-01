@@ -1,0 +1,56 @@
+Title: IBM Integration Designer causes locked LDAP account - United States
+
+Text:
+ibm integration designer; iid; ldap; locked; account TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to change your password in an LDAP user repository result in that account being locked out when using IBM Integration Designer.
+
+
+
+
+
+
+SYMPTOM
+When a user name and password managed in an LDAP repository is used to authenticate to Process Center in the context of Integration Designer the user name can be locked. The user name is locked due to an excessive number of attempts to authenticate using an invalid password. This happens when the user starts up Integration Designer after having changed the user name's password in LDAP.
+
+
+CAUSE
+Integration Designer automatically creates a Process Center server object in the servers view. The user needs to provide a user name and password to authenticate to Process Center. Difficulties can arise when the user name is managed in an LDAP repository.
+
+When the user is required to change their password in accordance with local security requirements they may use a method not related to Integration Designer. After the user changes their password in this way they start Integration Designer.
+
+When Integration Designer starts up it attempts to update the servers view and so it needs to authenticate. Since Integration Designer has not been updated with the new password the authentication fails. Integration Designer then continues to authenticate every 5 seconds according to the schedule set in the server view object. In less than a minute Integration Designer may try to authenticate with the old password so many times that the user is locked out of the LDAP repository. 
+
+ENVIRONMENT
+Integration Designer and Process Center where the user authenticates using a user name managed in an LDAP repository.
+
+DIAGNOSING THE PROBLEM
+This problem is encountered after the user changes the password in the LDAP repository and then starts Integration Designer. The problem is that the user account is locked out in LDAP.
+
+RESOLVING THE PROBLEM
+To avoid this problem the Integration Designer users should not use their LDAP user name and passwords to authenticate to the Process Center in the servers view. They should use a common user name like admin which is not subject to password expiry.
+
+
+
+
+
+If you must use an LDAP user name there are two options: 
+
+Option 1:
+1. Start IID
+2. Open the IID preferences > Business Integration > Process Center
+3. Clear the password field. Hit Apply. At this point the process apps in the workspace will be marked as disconnected.
+4. Close IID
+===> CHANGE THE LDAP PASSWORD
+5. Now if you start IID, you'll get prompted for login information for that server. Enter the login info.
+
+If you don't clear the PWs in IID before the LDAP change, then simply starting IID will lead to the issue because IID starts to communicate with PC immediately if PAs/TKs are in the workspace.
+
+Option 2:
+1. Open the <Windows user folder e.g. C:\Users\Administrator\ > \.eclipse\org.eclipse.equinox.security.security\secure_storage file in text editor 
+2. Remove all the entries that start with '/OneBPM_PC/' and contain the PC whose password was changed (e.g. /OneBPM_PC/http\:\\2f\\2fnitmah6.canlab.ibm.com\:9080\\2fProcessCenter/OneBPM_PC_pwd=org.eclipse.equinox.security.windowspasswordprovider\tvtd7OSAbjRo\=,J55rHVyOO+YpKPpsCYkvvg\=\= )
+3. Now if you start IID, you'll get prompted for login information for that server. Enter the login info.
+4. Restart IID once more to connect.
+
+But note that this is useful if the LDAP PW has already been changed, and the PWs in IID have not been cleared. This will prevent IID from logging into PC on startup.

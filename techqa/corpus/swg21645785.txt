@@ -1,0 +1,13 @@
+Title: IBM Applying a Fixpack to TSAMP v3.2.x.x in an Automated HADR Environment - United States
+
+Text:
+tsa; tsamp; fixpack; upgrade; migration TECHNOTE (FAQ)
+
+QUESTION
+ The attached whitepaper is written for a DB2 v9.5/9.7/10.1 Automated Failover HADR environment, however the core upgrade and migration steps apply to any TSAMP v3.2 or v4.1environment. 
+
+ANSWER
+This whitepaper details the installation of a v3.2.x.x fixpack in a IBM Tivoli System Automation for Multiplatforms (TSAMP) v3.2.x.x environment, tailored for a DB2 v9.5/9.7/10.1 high availability disaster recovery (HADR) environment. This procedure keeps database service available throughout the upgrade process, however automated failover and other automated recovery actions would not be available.
+This document assumes the initial environment is a HADR pair running DB2 v9.7 GA and TSAMP v3.2.0.1 on Linux. However, the same migration procedure will apply to any DB2 v9.5 or v9.7 or v10.1 deployment with TSAMP v3.2.x.x.
+
+Applying a Fixpack to TSAMP v3.2.x.x in an Automated HADR Environment - March 2014.pdf [/support/docview.wss?uid=swg21645785&aid=2]Applying a Fixpack to TSAMP v3.2.x.x in an Automated HADR Environment - March 2014.pdf [/support/docview.wss?uid=swg21645785&aid=1]

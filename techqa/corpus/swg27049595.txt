@@ -1,0 +1,91 @@
+Title: IBM TPF Family Products: Drivers for z/TPF 1.1 & z/TPFDF 1.1 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Drivers for z/TPF 1.1 & z/TPFDF 1.1 
+
+CONTENT
+ 
+
+Driver Last Update API5 driver [http://www.ibm.com/support/docview.wss?uid=swg24020772&rs=400&context=SSZL53] The API5 driver executes test cases for APIs such as macros, C function interfaces, and grouped functional interfaces.
+
+Updated: 
+26 Mar 2012 BEVD driver [http://www.ibm.com/support/docview.wss?uid=swg24037998] The business events driver is a sample application that demonstrates creating business events in z/TPF. Information is included about the IBM z/TPF Business Events Starter Kit.
+
+Updated: 
+21 Nov 2107 CHER driver [http://www.ibm.com/support/docview.wss?uid=swg24020773&rs=400&context=SSZL53] The CHER driver exercises and tests TPF's I-stream SHARING ability by manipulating program AFFINITY values.
+
+Updated:
+26 Mar 2012 CONN Driver [http://www.ibm.com/support/docview.wss?uid=swg24043067] The z/TPF high speed connector driver provides a sample z/TPF server, Linux server, and driver program for issuing the tpf_send_message API.
+
+Added:
+22 Nov 2016 CORO driver [http://www.ibm.com/support/docview.wss?uid=swg24020775&rs=400&context=SSZL53] The CORO test driver uses and verifies the commit rollback support on the z/TPF system.
+
+Updated:
+26 Mar 2012 DEB5 driver [http://www.ibm.com/support/docview.wss?uid=swg24020776&rs=400&context=SSZL53] The DEB5 driver is used to build, maintain, and modify a subsystem user unique database.
+
+Updated:
+26 Mar 2012 DEVT driver [http://www.ibm.com/support/docview.wss?uid=swg24039597] The z/TPF data event starter kit contains an end-to-end data event example from deploying and creating data events on the z/TPF system to processing the data events on a remote system.
+
+Updated:
+21 Nov 2107 ECBM driver [http://www.ibm.com/support/docview.wss?uid=swg24044119] The resource monitor test driver tests that the TPF system will take a designated action when the ECB usage of a certain system resource is exceeded. 
+
+Added:
+29 Sep 2017 HOTx driver [http://www.ibm.com/support/docview.wss?uid=swg24020777&rs=400&context=SSZL53] The HOTX driver tests the z/TPF DASD support by creating a 'hot record' to blast channels and to test cache.
+
+Updated:
+26 Mar 2012 Java sample applications [http://www.ibm.com/support/docview.wss?uid=swg24043225] The Java™ sample applications demonstrate how to build and load Java applications for the z/TPF system.
+
+Updated:
+21 Nov 2107 KPTS driver [http://www.ibm.com/support/docview.wss?uid=swg24020796&rs=400&context=SSZL53] The KPTS driver is used to test the C APIs and assembler macros that provide support for >4K keypoints.
+
+Updated:
+26 Mar 2012 LISH driver [http://www.ibm.com/support/docview.wss?uid=swg24020797&rs=400&context=SSZL53] The LODIC/input list shutdown driver (LISH) is used as a test tool to create background activity in a z/TPF system.
+
+Updated:
+26 Mar 2012 MEM5 driver [http://www.ibm.com/support/docview.wss?uid=swg24020798&rs=400&context=SSZL53] The MEM5 driver tests ECB and system heap test cases.
+
+Updated:
+26 Mar 2012 MPIF driver [http://www.ibm.com/support/docview.wss?uid=swg24020799&rs=400&context=SSZL53] The MPIF driver generates communications across a channel-to-channel (CTOC) device.
+
+Updated:
+26 Mar 2012 MQSeries driver (MQS1) for z/TPF [http://www.ibm.com/support/docview.wss?uid=swg24020842&rs=400&context=SSZL53] The MQS1 driver is a generic test driver that tests various capabilities of MQSeries support on z/TPF.
+
+Updated:
+26 Mar 2012 Name-value pair exit logging [http://www.ibm.com/support/docview.wss?uid=swg24044716]
+
+Sample code that shows how to log ECBs that do not have name-value pairs defined when the ECB exits. Added:
+3 Apr 2018 Pool driver [http://www.ibm.com/support/docview.wss?uid=swg24020801&rs=400&context=SSZL53] The pool driver allows users of systems to cycle through available pools quickly.
+
+Updated:
+26 Mar 2012 Service applications in Java starter kit [http://www.ibm.com/support/docview.wss?uid=swg24043353] The service applications in Java™ starter kit demonstrates how to create service applications that can be called by remote clients or native programs.
+
+Added:
+10 Mar 2017 SOCK driver [http://www.ibm.com/support/docview.wss?uid=swg24028774&rs=400&context=SSZL53] The socket (SOCK) driver provides code to do socket testing for Linux, SSL and TCP/IP.
+
+Added:
+20 Dec 2010 SOLD driver [http://www.ibm.com/support/docview.wss?uid=swg24020803&rs=400&context=SSZL53] The shared object linkage driver (SOLD) is used to test intra- and inter-module calls between various shared objects.
+
+Updated:
+26 Mar 2012 SIPC driver [http://www.ibm.com/support/docview.wss?uid=swg24020804&rs=400&context=SSZL53] The SIPC driver tests IPC by generating IPC traffic as well as background activity.
+
+Updated:
+26 Mar 2012 Tape driver [http://www.ibm.com/support/docview.wss?uid=swg24020806&rs=400&context=SSZL53] The tape driver is a test tool that exercises the z/TPF tape macros.
+
+Updated:
+26 Mar 2012 TRAG driver [http://www.ibm.com/support/docview.wss?uid=swg24020805&rs=400&context=SSZL53] The TRAG driver verifies that an ECB will use the first trace group buffer (IBM_DEFT) after exceeding the number of allocated trace group buffers for the ECB.
+
+Updated:
+26 Mar 2012 UrbanCode Deploy plug-ins for IBM z/TPF [http://www.ibm.com/support/docview.wss?uid=swg24042652] IBM UrbanCode Deploy is a tool for automating application deployments through your environments. The tool is designed to facilitate rapid feedback and continuous delivery in agile development while providing the audit trails, versioning, and approvals needed in production.
+
+Added:
+22 Aug 2016 z/TPF rules engine driver for Java [http://www.ibm.com/support/docview.wss?uid=swg24044692] The z/TPF rules engine driver for Java™ demonstrates how a traditional z/TPF application can be extended by calling a rules engine that is written in Java and running on your z/TPF system.
+
+Added:
+27 Mar 2018 z/TPF support for MongoDB starter kit [http://www.ibm.com/support/docview.wss?uid=swg24041510] The z/TPF support for MongoDB starter kit provides a set of instructions, sample database definitions, and driver programs to enable you to explore z/TPF support for MongoDB.
+
+Added:
+17 Dec 2015 
+-> Return to TPF Family Products: Downloads [http://www.ibm.com/support/docview.wss?uid=swg27049660]

@@ -1,0 +1,37 @@
+Title: IBM Could not determine the process ID of the Java process - United States
+
+Text:
+Java process TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Login page for Tivoli Integrated Portal displays an error indicating that the Java process ID could not be determined 
+
+SYMPTOM
+Administration Center error: Could not determine the process ID of the Java process
+
+
+DIAGNOSING THE PROBLEM
+Get the output from the pdcollect, review the TIP logs for errors. The reported error may not be seen in the log data, but the data should be reviewed for errors.
+
+RESOLVING THE PROBLEM
+Temporarily disable the windows service for TIP and try restarting the 
+
+instance from the command line to see if it restores access to the TIP login
+page. 
+
+1. Disable the Windows service. In the Windows Services control 
+panel find the Windows service for TIP. Right click on it and choose 
+"Properties", and then change the "Startup type" value to "Disabled". 
+
+2. Open the Windows Command Prompt (as administrator) and change 
+directories to: <TIP Home>/profiles/TIPProfile/bin 
+
+3. Start the server process. Execute: 
+startServer.bat server1 
+
+Once the process is started, retry loading the TIP login page in your browser.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ TSM

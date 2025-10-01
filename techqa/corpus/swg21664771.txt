@@ -1,0 +1,64 @@
+Title: IBM Mixed platform with content services and process services on Solaris or HP servers and Case Analyzer on a Windows server in Content Platform Engine V5.2 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you configure a mixed platform environment with content services and process services on a Solaris or HP server and Case Analyzer on a Windows server in Content Platform Engine V5.2? 
+
+ANSWER
+The purpose of this document is to allow existing FileNet P8 Solaris and HP customers to continue to use Case Analyzer (formerly Process Analyzer) after upgrading to Content Platform Engine V5.2.
+
+This document provides steps to configure Content Platform Engine V5.2 on a mixed platform environment where the content and process services are running on a UNIX system-based server and the Case Analyzer service is running on a Windows server. 
+
+The testing environment was configured with the content and process services on a Solaris 10 server and the Case Analyzer service on a Windows 2008 Enterprise R2 server. The HP platform is supported but not tested. 
+
+The configuration that was tested is as follows: 
+
+ * Content and process services (Content Platform Engine V5.2 FixPack 2) deployed to Solaris 10 with WebSphere 7 Network Deployment FixPack23. 
+ * Case Analyzer (Content Platform Engine 5.2 FixPack 2) deployed to Windows 2008 with WebSphere 7 Network Deployment FixPack23. Both of the components are configured to use an Oracle 11gR2 RAC remote database and configured with a two-node WebSphere Cluster.
+
+
+The following instructions were used to test the Solaris 10 and Windows 2008 R2 Enterprise configuration specifically.  * Install the application server by following the application server installation documentation. In this test environment, WebSphere 7 Network Deployment FixPack23 [http://www.ibm.com/support/knowledgecenter/SSZLC2_7.0.0/landing/wc_welcome.html] and IBM HTTP Server were installed on two Solaris 10 servers for Content Platform Engine and two Windows 2008 R2 enterprise servers for Case Analyzer. 
+ * From the client component perspective, this test environment was set up with Workplace XT 1.1.5 FixPack2 on WebSphere 7 Network Deployment FixPack23 on Windows 2008 R2 Enterprise. 
+ * Install and configure Content Platform Engine V5.2 components. For instructions, see Installing and configuring Content Platform Engine [http://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.install.doc/p8pin009.htm] for a Solaris or Windows environment. 
+ * When you run the Content Platform Engine “Bootstrap” task, specify the appropriate Content Platform Engine platform. In this test environment, it is configured with “Solaris”. 
+ * Deploy the Content Platform Engine application. For instructions, see Installing and configuring Content Platform Engine [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.install.doc/p8pin009.htm?lang=en] for a Solaris environment. 
+ * Complete the configuration for the Content Platform Engine post-deployment steps. For instructions, see Installing and configuring Content Platform Engine [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.install.doc/p8pin009.htm?lang=en] for a Solaris environment. 
+ * Create the FileNet P8 domain by using Administration Console for Content Platform Engine. 
+ * Configure the object store by using Administration Console for Content Platform Engine. 
+ * Enable the Case Analyzer service on the domain level on the FileNet P8 domain > Workflow Subsystem tab. 
+ * Disable the Case Analyzer service for the Content Platform Engine server instance or cluster JVM instances (on the virtual server level) for the Solaris configuration.  * Go to the FileNet P8 domain > Sites > Virtual Servers > Solaris Server Node1 > Workflow Subsystem tab. 
+    * Check your Solaris Server Virtual Server for the configuration source. 
+    * Disable the Case Analyzer service. 
+    * Repeat the same steps to disable the Case Analyzer service in the remaining Solaris cluster servers.
+   
+   
+ * Deploy the Content Platform Engine application. For instructions, see Installing and configuring Content Platform Engine [http://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.install.doc/p8pin009.htm] for Windows environments. 
+ * Log in to Administration Console for Content Platform Engine and disable the following services on the Case Analyzer application server instance or cluster JVM instances (on the virtual server level) for the Window configuration:  * Go to FileNet P8 domain > Sites > Virtual Servers > Windows Server Node. 
+    * Disable indexing on the Text Search Subsystem tab. 
+    * Disable sweeping on the Sweep Subsystem tab. 
+    * Disable the outbound and inbound dispatcher on the Replication Subsystem tab. 
+    * Disable the dispatcher on the Publishing Subsystem tab. 
+    * Disable the dispatcher on the Asynchronous Processing Subsystem tab. 
+    * Disable the dispatcher on the CFS Import Agent Subsystem tab.
+   
+   
+ * Configure the rollfwd.properties file for the Case Analyzer application server instances on the Windows environment. 
+ * Create the rollfwd.properties file in the application server directory if the file does not exist. For example, in this test configuration, the application server is WebSphere 7; therefore, the directory is \WebSphereInstallationLocation\AppServer\profiles\AppSrv01. Add the following entry: 
+   selectExpiredPlan=9 
+ * Configure the hardware/software load balancer for HTTP connection to use the Solaris Content Platform Engine application server instance or cluster only for client connections. 
+ * Configure client applications that use the Content Platform Engine EJB interface to connect only to the Solaris Content Platform Engine application server instance or clusters. As an example, the Workplace XT WcmApiConfig.properties file for a WebSphere deployment is configured as follows: 
+   corbaloc::node1_hostname:BOOTSTRAP_ADDRESS,:node2_hostname:BOOTSTRAP_ADDRESS/cell/clusters/your_websphere_cluster_name/FileNet/Engine 
+ * Configure client applications that use the Content Platform Engine EJB interface for the other application server. For instructions, see Content Platform Engine in an application server cluster by using EJB transport [http://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.install.doc/p8phx004.htm].
+
+
+[/support/docview.wss?uid=swg21664771&aid=1] [/support/docview.wss?uid=swg21664771&aid=1] Figure 1 Mixed platform system configuration 
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Foundation Content Platform Engine 5.2

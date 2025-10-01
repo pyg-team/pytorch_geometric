@@ -1,0 +1,26 @@
+Title: IBM DWW180E unexpected error during CICS VR server processing - United States
+
+Text:
+IEF196I IEC212I 414-08 IGG0201B IEESYSAS ABEND414 S414 ; close macro ; flush buffers ; I/O error ; cicsvr 5655P300 5655-P30 5655P30 R410 5655H9101 5655H91 5655-H91 R320 R330 R410 R420 R430 HCCV420 HCCV430 HCCV410 HCCV320 HCCV330 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You receive message DWW180E for the CICS VSAM Recovery for z/OS (CICS VR) server address space after browsing the DWWMSG dataset from TSO ISPF. The TSO ISPF panels for CICS VR share the same DWWMSG dataset as the CICS VR server address space. 
+
+SYMPTOM
+You allocate the same DWWMSG dataset that the CICS VR server address space uses to your TSO ISPF session. Then after you browse the DWWMSG dataset, the CICS VR server receives one or more DWW180E error messages.
+
+
+CAUSE
+Allocating the CICS VR Server address space DWWMSG dataset to any other TSO ISPF user or any other CICS VR batch utility.
+
+RESOLVING THE PROBLEM
+Ensure no other TSO ISPF users or address spaces allocate the same DWWMSG, DWWDMSG, or DWWDUMP datasets used by the CICS VR server address space. See Creating the DWWMSGA, DWWMSGB, DWWDMSG, and DWWDUMP data sets [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.cvr.doc/dwwig/allocds3.html] in the CICS information center for details.
+
+RELATED INFORMATION
+#Identifying preallocation errors [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.cvr.doc/dwwig/dwwig00072.html]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICSVR CICS/VR CICS VSAM RECOVERY

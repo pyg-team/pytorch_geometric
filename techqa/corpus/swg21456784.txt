@@ -1,0 +1,139 @@
+Title: IBM idsimgr fails to migrate the tds instance - United States
+
+Text:
+idsimigr; GLPICR135E; GLPICR024W; SQL1092N; GLPSCH025E; migrate; upgrade TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ idsimgr fails to migrate the tds instance 
+
+SYMPTOM
+TDS 6.2 provided idsimigr tool is used to migrate a 6.0 instance and fails. 
+
+The following is observed on the console where idsimigr is done, or even via the idsxinst tool where the migration was attempted:
+GLPICR135E Failed to set the DB2 registry for database 'tdsinst' to allow DB2 SELECTIVITY.
+
+idsadm.log (from /var/idsldap/V6.2/ folder) shows the following:
+12/04/10 22:19:13 GLPICR135E Failed to set the DB2 registry for database 'tdsinst' to allow DB2 SELECTIVITY.
+12/04/10 22:19:13 GLPICR024W The program did not complete successfully. View earlier error messages for information about the exact error.
+
+idsadmdb2cmds.log shows the following:
+SQL1092N "ROOT" does not have the authority to perform the requested command.
+
+ibmslapd startup shows the following:
+12/05/10 07:28:06 GLPSCH025E MAY attribute type 'passwordMaxConsecutiveRepeatedChars' not found when processing object class 'AIXAccount'.
+
+idsilist -a command showed that the tds instance is at 6.0 level:
+Instance 1:
+
+Name: tdsinst
+Version: 6.0
+Location: /home/tdsinst
+Description: IBM Tivoli Directory Server Instance V6.0
+IP Addresses: All available
+Port: 389
+Secure Port: 636
+Admin Server Port: 3538
+Admin Server Secure Port: 3539
+Type: Directory Server
+
+But the ibmslapd.conf file showed that the config file is at 6.2 level:
+==> head -35 ibmslapd.conf
+
+# IBM Directory Server Configuration File Version 6.2 for AIX
+#
+# See the "Configuration Schema" appendix in the
+# IBM Directory Server Version 6.2 Installation and 
+# Configuration for Multiplatforms Guide. 
+# 
+
+charset: ISO-8859-1
+version: 1
+
+dn: cn=Configuration
+cn: Configuration
+ibm-slapdAdminDN: cn=root
+ibm-slapdAdminGroupEnabled: true
+ibm-slapdAdminPW: {AES256}60Y5SgbWgHMHhipVrf8mKg==
+ibm-slapdCryptoSync: VCXXZWTive68onUk
+ibm-slapdDerefAliases: always
+ibm-slapdPort: 389
+ibm-slapdPtaEnabled: false
+#ibm-slapdPwEncryption must be one of none/aes128/aes192/aes256/crypt/sha/ssha/md5
+ibm-slapdPwEncryption: aes256
+ibm-slapdServerBackend: RDBM
+ibm-slapdServerId: 3f9a80c0-4593-102f-964f-98f60a75aa73
+ibm-slapdSizeLimit: 5000
+ibm-slapdStartupTraceEnabled: false
+ibm-slapdSupportedWebAdmVersion: 3.0
+ibm-slapdTimeLimit: 900
+ibm-slapdTraceMessageLevel: 0xFFFF
+ibm-slapdTraceMessageLog: /home/tdsinst/idsslapd-tdsinst/logs/traceibmslapd.log
+ibm-slapdVersion: 6.2
+objectclass: top
+objectclass: ibm-slapdConfigEntry
+objectclass: ibm-slapdTop
+
+Associated db2 instance and db2 database were migrated to DB2 9.5 level (supported by 6.2).
+# su - tdsinst
+$ db2level
+DB21085I Instance "tdsinst" uses "64" bits and DB2 code release "SQL09051" with level identifier "03020107".
+Informational tokens are "DB2 v9.5.0.1", "s080328", "U814639", and Fix Pack "1".
+Product is installed at "/opt/IBM/tdsV6.2db2".
+
+$ db2 connect to tdsdb
+
+Database Connection Information
+
+Database server = DB2/AIX64 9.5.1
+SQL authorization ID = TDSINST
+Local database alias = TDSDB
+
+
+CAUSE
+/etc/group file containing few groups which had thousands of users as members. The db2 was failing to process this file.
+
+
+
+ENVIRONMENT
+AIX operating system
+
+
+
+DIAGNOSING THE PROBLEM
+The idsimigr failed with the following message: 
+
+GLPICR135E Failed to set the DB2 registry for database 'tdsinst' to allow DB2 SELECTIVITY.
+
+The idsimigr tool must be run as root user for the instance migration, and it was attempting the following:
+". /home/tdsinst/sqllib/db2profile; db2set DB2_SELECTIVITY=YES"
+
+When we tried the same commands directly as root, the same error occurred:
+SQL1092N "ROOT" does not have the authority to perform the requested command.
+
+
+
+RESOLVING THE PROBLEM
+1. Take a backup copy of the /etc/group file which contains large groups. 
+
+
+2. Edit the /etc/group file to do one of the following (temporarily):
+- Modify the large group(s) to contain only a small number of users.
+OR
+- Delete the large group(s) 
+
+3. Verify the db2set command as root user: (Notice the dot/period in the command below.
+# . /home/tdsinst/sqllib/db2profile; db2set DB2_SELECTIVITY=YES
+
+4. Copy back the 6.0 level schema and conf files from the BackupV6.0 folder from with in the instance's etc folder.
+# cd /home/tdsinst/idsslapd-tdsinst/etc
+# cp BackupV6.0/etc/ibmslapd.conf .
+# cp BackupV6.0/etc/V3.* .
+
+5. Redo the migration using idsimigr command as root user to upgrade the schema and conf correctly.
+# /opt/IBM/ldap/V6.2/sbin/idsimigr -I tdsinst
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Tivoli Directory Server
+TDS

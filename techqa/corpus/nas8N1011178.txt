@@ -1,0 +1,31 @@
+Title: IBM Increasing the FTP Server Inactivity Timeout Value with Quote Time - United States
+
+Text:
+FTP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document explains how an FTP client can increase the amount of time before the FTP session is closed by the server for inactivity. 
+
+RESOLVING THE PROBLEM
+How can an FTP client increase the amount of time before the FTP session is closed by the server for inactivity? 
+
+After the FTP control connection is established between the FTP client and the FTP server, the FTP server controls the timeout for this connection. This is the inactivity timeout value.
+
+There is also a timeout value for the data connection, known as the transfer timeout.
+
+inactivity timeout
+The number of seconds the server waits before ending the connection with the client. Inactivity timeout values can range from 1-9,999,999 seconds. The default inactivity timeout value is 300 seconds.
+
+transfer timeout
+The file transfer timeout in seconds. This parameter is optional. If you do not specify this parameter, then the server does not change the current value. Transfer timeout values can range from 1-9,999,999 seconds. The default transfer timeout value is 420 seconds.
+
+The FTP client command is QUOTE TIME <inactivity timeout value> <transfer timeout value>. This FTP subcommand will change the server side inactivity timeout for this session only. For example: QUOTE TIME 600 600 will set server inactivity timeout and tranfer timeout to 10 minutes. 
+
+If the iSeries is the FTP server, the default timeout value can be changed by changing the INACTTIMO parameter in the FTP attributes (CHGFTPA).
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 
+HISTORICAL NUMBER
+ 623014031

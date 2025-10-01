@@ -1,0 +1,178 @@
+Title: IBM IC96648: CONNECT:DIRECT SERVER ADAPTER RETRIES THROW SSL EXCEPTIONS FOR SECURE+ SESSIONS - United States
+
+Text:
+  DIRECT LINK TO FIX
+patch_SI_5020500 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FSterling+B2B+Integrator&fixids=5.2.5-OtherSoftware-B2Bi-All&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After applying an iFix, business processes where a Connect
+   Direct Server Adapter connects to a particular Connect:Direct
+   Windows v 4.4 node go into an infinite loop.
+   An initial error causes a retry and signals the BP to restart.
+   Each one of the restarts causes the loop counters in our system
+   BP (CDInterop_CopyToWithLoop) to reset to zero, but each
+   subsequent copy to errors, and resets the loop counters again,
+   causing an infinitely looping BP.  There are transfers that
+   finish successfully to this server on the first try, so it does
+   not appear to be an SSL or Secure+ configuration issue.  It
+   only appears when this retry loop happens.
+   SSL errors are present in the logs when this situation occurs:
+   [2013-09-26 15:11:25.368] ERRORDTL
+   [1380208285368]com.sterlingcommerce.cd.oemglue.ConnectionExcepti
+   on:
+   MSGID=JMGR020E,RC=8,FDBK=1,CLMTHNAME=SecureConnectStep.execute,
+   CDTXT="SSL/TLS handshake failure. Protocol send or receive
+   failed during handshake.
+   If error persists check for possible SSL/TLS configuration
+   issues.
+   Low-level protocol error message ID is: JMGR012I
+    at
+   com.sterlingcommerce.cd.oemglue.SecureConnectStep.execute(Secure
+   ConnectStep.java:226)
+    at
+   com.sterlingcommerce.cd.oemglue.PnodeSessionMediator.execute(Pno
+   deSessionMediator.java:344)
+    at
+   com.sterlingcommerce.woodstock.cdinterop.impl.serverImpl.PNodeCo
+   nnection.execute(PNodeConnection.java:327)
+    at
+   com.sterlingcommerce.woodstock.cdinterop.impl.serverImpl.PNodeCo
+   nnection$1.run(PNodeConnection.java:637)
+    at java.lang.Thread.run(Thread.java:736)
+   However, there are no problems with the SSL configuration, as
+   documents will go through on the initial try most times.
+   During the retry, the FMH71 messages is sent twice in a row,
+   causing the handshake failure.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  STRRTC - 398860
+   BS / BS
+   
+   Terminate active process and resend the document. If no
+   problems are encountered which initiate a retry, the document
+   will go through successfully.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   All
+   Problem Description:
+   After applying V5.2.4.1, business processes where a Connect
+   Direct Server Adapter connects to a remote CD Node may go
+   into an infinite loop.   After some initial error that causes
+   the copy service to restart, the session enters an infinite loop
+   sending the FMH71 message to the remote CDNode.
+   Platforms affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Resolution Summary:
+   The adapter no longer sends an erroneous FMH71 message during a
+   restart of a transmission that sends a document to a remote CD
+   Node.
+   Delivered In:
+   5020500
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC96648
+   
+   
+ * REPORTED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * REPORTED COMPONENT ID
+   5725D0600
+   
+   
+ * REPORTED RELEASE
+   524
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-04
+   
+   
+ * CLOSED DATE
+   2014-11-20
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * FIXED COMPONENT ID
+   5725D0600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R524 PSY
+   UP

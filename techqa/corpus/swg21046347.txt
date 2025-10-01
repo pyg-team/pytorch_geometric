@@ -1,0 +1,37 @@
+Title: IBM CICS UNIVERSAL CLIENT/Desktop Edition INITIAL TRANSACTION ASRA Abend - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This customer configures the client to execute CESN as the
+first transaction. But this is causes cicsprnt to attempt to execute
+this transaction which results in an ASRA abend in CESN. If we remove
+this initial transaction from the client, the abend ASRA goes away.
+The problem with this is this the user gets a blank screen with cicsterm
+and has to type CESN to sign in.
+
+The customer wants to know how to enforce CESN for cicsterm but not
+cicsprnt. 
+
+RESOLVING THE PROBLEM
+If no initial transaction is defined in the server definition then
+cicsterm could be started with 'cicsterm -t=CESN etc.' and cicsprnt
+started without this parameter.
+
+Alternatively you could have 2 server definitions defined in the
+CTG.INI file with identical IP addresses and port numbers. One could
+have an initial transaction defined and the other not. cicsprnt and
+cicsterm would then have different transactions.
+
+
+The above method of adding the -t parameter to the cicsterm and cicsprnt command is not recommended in a secure environment. It can be altered on the user's system negating the signon. In the CTG.ini the INITIALTRANSID parameter in the Server definition triggers the initial transaction like the -t parameter. 
+
+For TXSeries specifically:
+When the CESN transaction abends the ATI switch for the terminal is turned off requiring it to be set again on for the printers which have CESN abended. The solution is printers can not have the CESN ransaction run on them. The CESN requires a screen and a keyboard to provide a reply. Since the printers do not have that the abends happen. 
+
+In CICS TS you could have the terminal sign on by supplying a user id in the printer definition. TXSeries does not suport that option thus printers can not be assigned a user. The default user id is used to run transaction on them. 
+
+Securing transactions on printers is done through using the TSLkeys parameter for the user ids and the terminal definitions
+. 
+The CTG connection is configured to have all the terminals run the CESN transaction on startup. For the printers you can eliminate the CESN from flowing by adding switch "-t=" to the cicsprnt commands that start the printers.

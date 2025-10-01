@@ -1,0 +1,53 @@
+Title: IBM EJB clients like Content Navigator or Workplace XT cannot connect to P8 Content Engine on default iiop port - United States
+
+Text:
+CLOSE_WAIT; CORBA.NO_RESPONSE; iiop connection refused; ce client connection failed TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to connect to a P8 Content Engine from any CE client (e.g. ICN, ICM, Workplace, WorkplaceXT) or custom client application, result in connection failures. 
+
+SYMPTOM
+There may be a number of different errors depending on the client application. For example: 
+
+The Repository is not available. 
+
+failed to establish connection using iiop://<server>:port/FileNet/Engine 
+
+CORBA.NO_RESPONSE
+
+WebSphere may report ORB thread starvation or multiple ORB hung threads, for example:- 
+
+
+WSVR0606W: Thread "ORB.thread.pool : 90" (000000e0) was previously reported to be hung but has completed. It was active for approximately 1626228 milliseconds. There is/are 4 thread(s) in total in the server that still may be hung.
+
+
+CAUSE
+Excessive load balancer health monitor calls against the default WebSphere EJB port may use all available ORB threads and may leave TCP connections in the CLOSE_WAIT state, resulting in connection failures from other clients.
+
+
+ENVIRONMENT
+High availability IBM FileNet P8 Content Engine load balanced farm.
+
+
+
+DIAGNOSING THE PROBLEM
+Check the WebSphere systemout.log for messages relating to hung threads or thread starvation.
+Use netstat to collect information about port usage and remote connections.
+Collect the load balancer health monitor configurations for all target P8 CE ports.
+
+
+
+RESOLVING THE PROBLEM
+Review the following points in order to prevent this problem from occurring: 
+
+ * Avoid using a health monitor against the EJB/bootstrap port. 
+ * The preferred load balancer health monitor for P8 Content Engine is to use the CE start-up context page, also known as the CE ping page. This should be configured against the HTTP port: 
+   http://<<server>>:<<port>>/FileNet/Engine 
+ * A typical load balancer HTTP health monitor configuration will only require the context path string:
+   /FileNet/Engine 
+ * The monitor interval should be set to the largest practical time interval, typically greater than 5 seconds. and a time-out value of not less than 15 seconds. 
+ * The Content Engine application server instance will need to be re-started to close the accumulated open connections.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server

@@ -1,0 +1,29 @@
+Title: IBM Reverting the Navigation Bar from Left Pane to the Toolbar - United States
+
+Text:
+navbar; Go To; left pane; Navigation; bar; TPAECUSTOMIZATION TECHNOTE (FAQ)
+
+QUESTION
+ How can the Navigation Bar functionality be reverted to the toolbar instead of the 'Left Pane'? 
+
+ANSWER
+Within SmartCloud 7.5, out of the box, the Navigation Bar is now a 'Left Pane' within the UI:
+[/support/docview.wss?uid=swg21593096&aid=1] [/support/docview.wss?uid=swg21593096&aid=1]
+
+To enable the Navigation Bar to be contained within the Toolbar, please follow the below steps:
+
+1) Go To – System Configuration – Platform Configuration – System Properties – within the Global Properties pane, filter for 'mxe.webclient.systemNavBar':
+
+[/support/docview.wss?uid=swg21593096&aid=2] [/support/docview.wss?uid=swg21593096&aid=2]
+
+2) Change the Global Property 'mxe.webclient.systemNavBar' from 1 to 0, click on Save – click on the checkbox corresponding with the 'mxe.webclient.systemNavBar' – click on the 'Live Refresh' on the toolbar:
+
+[/support/docview.wss?uid=swg21593096&aid=3] [/support/docview.wss?uid=swg21593096&aid=3]
+
+Click 'OK' to commit the changes:
+
+[/support/docview.wss?uid=swg21593096&aid=4] [/support/docview.wss?uid=swg21593096&aid=4]
+
+3) Navigate to the Start Center. The 'Left Pane' will now be removed and the functionality of the Navigation Bar will be contained within the toolbar for all Applications:
+
+[/support/docview.wss?uid=swg21593096&aid=5] [/support/docview.wss?uid=swg21593096&aid=5]

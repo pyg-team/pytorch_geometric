@@ -1,0 +1,65 @@
+Title: IBM Technology Preview: -updateFromVersion option for Packaging Utility - United States
+
+Text:
+preview PRODUCT DOCUMENTATION
+
+ABSTRACT
+ You can use the -updateFromVersion option to specify the version of the package that you are updating from. 
+
+CONTENT
+For IBM Packaging Utility versions 1.5.2 and later, the -updateFromVersion option is a technology preview. 
+
+Information about the -updateFromVersion option
+
+-updateFromVersion version
+
+Use the -updateFromVersion option to copy only the files that are required to update to a later version. The version value is the version of the package that you are updating from. The package that you are copying is the version that you are updating to. An update might require files from a base offering. Use the -repositories option to list the repository for the base offering. 
+
+Use with the command: 
+
+ * copy
+
+
+This option works only with packages. This option does not work with fixes. 
+
+Copy a package using the -updateFromVersion option 
+ 1. Install IBM Packaging Utility versions 1.5.2 or later. You also can use the stand-alone version of Packaging Utility versions 1.5.2 or later.
+    
+    
+ 2. Open a command-line utility.
+    
+    Note: The -updateFromVersion option is available only for the Packaging Utility command line (PUCL).
+    
+    
+ 3. Open the Packaging Utility directory:
+    
+    Windows: install_dir\IBM\Packaging Utility
+    
+    Linux, UNIX, and z/OS: install_dir/IBM/PackagingUtility
+    
+    
+ 4. Identify the repository that you are copying from.
+    
+    
+ 5. If you do not know the ID and version for the package, run the listAvailablePackages command: 
+    
+    PUCL listAvailablePackages -repositories source_repository
+    
+    The returned information is a list of packages in the format:
+    
+    packageID_version
+    
+    
+ 6. Copy the files to update from one version to another version:
+    
+    PUCL copy packageID_version -updateFromVersion version -repositories source_repository -target destination_repository 
+
+
+
+Example: 
+
+Windows: PUCL.exe copy com.ibm.package_1.2 -updateFromVersion 1.1 -repositories http://server/repository/package -target "C"\IBM\IBM Packages\" 
+
+Linux, UNIX and z/OS: ./PUCL copy com.ibm.package_1.2 -updateFromVersion 1.1 -repositories http://server/repository/package -target /var/ibm/ibm_packages 
+
+After you run the command, a repository is created that contains the files for updating from the specified version.

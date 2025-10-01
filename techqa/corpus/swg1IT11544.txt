@@ -1,0 +1,197 @@
+Title: IBM IT11544: V7 JMS CLIENT APPLICATIONS CONNECTING TO WMQ V8 QUEUE MANAGER FLOW INCORRECT PASSWORD DATA. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When an MQ V7.5 JMS client is connecting to an MQ V8 queue
+   manager and the application provides a userid and password to
+   the ConnectionFactory.createConnection(user,password) method,
+   the JMS client correctly overrides the userid provided by the
+   application with the logged on user id, but it incorrectly flows
+    the password provided by the application leading to a
+   mismatched
+   userid and password being provided to the queue manager.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the WebSphere MQ V7.5 Classes for
+   JMS connecting to a V8 queue manager which is using the CONNAUTH
+   feature to authenticate passwords.  Users are affected if they
+   have applications which:
+   
+   - Specify a userid and password in the JMS ConnectionFactory
+   WMQConstants.USERID and WMQConstants.PASSWORD properties which
+   are different to the user running the application;
+   - And call the method ConnectionFactory.createConnection()
+   rather than ConnectionFactory.createConnection(String username,
+   String password).
+   - And do not use a client-side security exit to pass the
+   credentials in a MQCSP flow to the queue manager.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The application was running as one user - for example
+   "RUNTIMEuser" - and set the JMS ConnectionFactory
+   WMQConstants.USERID and WMQConstants.PASSWORD property
+   credentials for another user - for example "APIuser" and
+   "APIpassword".  The application invoked the
+   ConnectionFactory.createConnection() method with no parameters.
+   
+   When the connection attempt was processed the MQ Classes for JMS
+   incorrectly replaced the userid provided in the JMS
+   ConnectionFactory WMQConstants.USERID property ("APIuser") with
+   the null userid from the JMS
+   ConnectionFactory.createConnection() method and did not replace
+   the password.
+   
+   Before connecting the Classes for JMS then replaced the null
+   userid with the logged-on user id but again did not replace the
+   password.  This resulted in a mismatched set of credentials
+   (userid: "RUNTIMEuser" and password:  "APIpassword") being sent
+   to the V8 queue manager.
+   
+   The queue manager attempted to authenticate the user Id and
+   password using the MQ V8 CONNAUTH feature which led to
+   unexpected results.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQ V7.5 Classes for JMS have been updated to use the userid
+   from the ConnectionFactory property WMQConstants.USERID when the
+   method ConnectionFactory.createConnection() is called.  If the
+   method ConnectionFactory.createConnection(String username,
+   String password) is called, then the userid passed in the method
+   is used as expected and the value of the ConnectionFactory
+   property WMQConstants.USERID is ignored.
+   
+   In addition to this, the MQ V7.5 and V8.0 Classes for JMS have
+   been changed to ensure that if the method
+   ConnectionFactory.createConnection() is called and the
+   ConnectionFactory properties WMQConstants.USERID and
+   WMQConstants.PASSWORD are not set, then the logged-on user is
+   sent to the queue manager with an empty password string.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.7
+   v8.0       8.0.0.5
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT11544
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-10-02
+   
+   
+ * CLOSED DATE
+   2016-01-11
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7241
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

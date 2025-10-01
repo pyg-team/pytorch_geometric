@@ -1,0 +1,47 @@
+Title: IBM Security Bulletin: GNU C library (glibc) vulnerability affects IBM WebSphere Cast Iron Solution (CVE-2015-0235) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ GNU C library (glibc) vulnerability that has been referred to as GHOST affects IBM WebSphere Cast Iron Solution. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-0235 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0235] 
+
+DESCRIPTION:The gethostbyname functions of the GNU C Library (glibc) are vulnerable to a buffer overflow. By sending a specially crafted, but valid hostname argument, a remote attacker could overflow a buffer and execute arbitrary code on the system with the privileges of the targeted process or cause the process to crash. The impact of an attack depends on the implementation details of the targeted application or operating system. This issue is being referred to as the "Ghost" vulnerability. 
+
+CVSS Base Score: 7.6
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/100386 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100386] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:C/I:C/A:C)
+
+AFFECTED PRODUCTS AND VERSIONS
+This vulnerability affects all versions of the product
+WebSphere Cast Iron v 7.0,0,x, 
+WebSphere Cast Iron v 6.4.0.x
+WebSphere Cast Iron v 6.3.0.x
+WebSphere Cast Iron v 6.1.0.x
+WebSphere Cast Iron v 6.0.0.x
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix Cast Iron Appliance 7.* LI78411 iFix 7.0.0.2-CUMUIFIX-008 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=7.0.0.2&platform=All&function=fixId&fixids=7.0.0.2-WS-WCI-20150205-1015_H12_64-CUMUIFIX-008.scrypt2,7.0.0.2-WS-WCI-20150205-1015_H12_64-CUMUIFIX-008.vcrypt2&includeSupersedes=0] Cast Iron Appliance 6.4.0.x LI78411 iFix 6.4.0.1-CUMUIFIX-026 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=6.4.0.1&platform=All&function=fixId&fixids=6.4.0.1-WS-WCI-20150206-1710_H4-CUMUIFIX-026.scrypt2,6.4.0.1-WS-WCI-20150206-1710_H4-CUMUIFIX-026.vcrypt2&includeSupersedes=0] Cast Iron Appliance 6.3.0.x LI78411 iFix 6.3.0.2-CUMUIFIX-011 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=6.3.0.2&platform=All&function=fixId&fixids=6.3.0.2-WS-WCI-20150206-1011_H4-CUMUIFIX-011.scrypt2,6.3.0.2-WS-WCI-20150206-1011_H4-CUMUIFIX-011.vcrypt2&includeSupersedes=0] Cast Iron Appliance 6.1.0.x LI78411 iFix 6.1.0.15-CUMUIFIX-018 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=6.1.0.15&platform=All&function=fixId&fixids=6.1.0.15-WS-WCI-20150209-1021_H4-CUMUIFIX-018.scrypt2,6.1.0.15-WS-WCI-20150209-1021_H4-CUMUIFIX-018.vcrypt2&includeSupersedes=0] WORKAROUNDS AND MITIGATIONS
+Customers on Cast Iron v6.0.0.x should contact IBM Support to migrate to one of the remediated releases.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

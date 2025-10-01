@@ -1,0 +1,34 @@
+Title: IBM Unconfigure WebSEAL instances having shared object space - United States
+
+Text:
+ISAM; ITAM; TAM; WebSEAL TECHNOTE (FAQ)
+
+QUESTION
+ How to unconfigure WebSEAL instances with shared object space? 
+
+CAUSE
+NA
+
+ANSWER
+Here is a scenario where two webseal instances shared1, shared2 are created. 
+After creating the instance, server-root of shared2 instance modified to point to shared1. 
+
+How to unconfigure both shared1 and shared2?
+
+Approach 1 : When we unconfigure the shared2 instance then all the objects of shared1 instance are still present. 
+Approach 2 : When we unconfigure the shared1 instance first then we do not see the shared2 instance in the list of configured webseal instances. Since there are references in the registry, so when we try to configure a new instance with shared2 name it will fail.
+
+To make sure a clean unconfiguration we should follow the Approach 1), where the webseal instance which shares the "server-root" with all other instances is unconfigured at the end.
+
+Alternate approach: If there are multiple webseal instances sharing the objectspace another approach to unconfigure would be:
+
+1. First take the complete backup of webseal,the policy server and ldap before unconfiguration. 
+2. Once the backup is done, identify the main webseal instance which is sharing the object space with webseals. 
+3. First you can unconfigure the other instances which are pointing to the objectspace of the webseal 
+A 
+
+The recommended approach would be: 
+-> Stop a webseal instance
+-> Modify the config file and change the server-name back to the original, even the server-root to original value, that was there before we changed it to shared object space. 
+-> Now unconfigure the webseal instance. 
+4. Repeat step 3, for all other webseal instances and at last if you need then unconfigure the webseal instance which shared the objectspace.

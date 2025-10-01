@@ -1,0 +1,45 @@
+Title: IBM For compiling JMS programs, you can use either the MQ Resource Adapter in WAS or the stand-alone MQ Classes - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You want to compile a WebSphere MQ (WMQ) JMS program that will run under the WebSphere Application Server (WAS). You notice that the MQ JMS jar files provided with WAS have different sizes than the corresponding MQ JMS far files from a stand-alone installation of the MQ client, even though the jar files are for the same version of MQ. You have some questions such as:
+- Why is there a difference in size?
+- Which set of MQ JMS jar files are you recommended to use?
+- Is it OK to compile the JMS program under the stand-alone MQ installation and then run the program under WAS?
+
+To give a specific example, you are using WAS 8.5.0.1, which provides the MQ JMS Resource Adapter at level 7.1.0.1 (signature in the traces: 7.1.0.1-k710-001-120424)
+Notice the difference in file sizes:
+
+* Shipped with WAS 8.5.0.1 (MQ 7.1.0.1): 
+/opt/IBM/WebSphere85/AppServer/InstalledConnectors/wmq.jmsra.rar
+782569 com.ibm.mq.commonservices.jar 
+339105 com.ibm.mq.headers.jar 
+449302 com.ibm.mq.jar 
+1117105 com.ibm.mq.jmqi.jar 
+357075 com.ibm.mqjms.jar 
+
+* Shipped with stand-alone MQ 7.1.0.1: 
+/opt/mqm7101/java/lib 
+780403 com.ibm.mq.commonservices.jar 
+357997 com.ibm.mq.headers.jar 
+447374 com.ibm.mq.jar 
+2088256 com.ibm.mq.jmqi.jar 
+3357971 com.ibm.mqjms.jar 
+
+
+
+ANSWER
+The WebSphere MQ Resource Adapter shipped with WAS is packaged based on the JCA interface so that it can be used for J2EE compliant environments. 
+The WebSphere MQ Resource Adapter contains the WebSphere MQ classes for JMS with the addition of some additional classes to provide the J2EE capability. Hence the size of MQ library files in the WebSphere MQ client (that is, WebSphere MQ classes for JMS) and the WebSphere MQ library files in WebSphere Application Server (that is, WebSphere MQ Resource Adapter) are different sizes. 
+
+Both of these clients (WebSphere MQ client and WebSphere MQ Resource Adapter) provide the same WebSphere MQ API and so the code compiled against the WebSphere MQ classes for JMS will run inside an application server with WebSphere MQ Resource Adapter at the same level. 
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Java Message Service (JMS) AIX, HP-UX, Linux, Solaris, Windows 8.5, 8.0, 7.0 
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

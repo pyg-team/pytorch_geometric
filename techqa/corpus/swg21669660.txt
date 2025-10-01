@@ -1,0 +1,55 @@
+Title: IBM Link Rational ClearQuest record to work item fails with "8096 Java exit code" - United States
+
+Text:
+eclipse; crash; 8096; access violation TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to link an IBM Rational Clear Quest (CQ) record to an IBM Rational Team Concert (RTC) work item using RTC Eclipse Client results in the error "Java was started but returned exit code=8096". 
+
+SYMPTOM
+Steps to reproduce:
+
+
+
+ 1. Try to link a CQ record to an RTC work item through the RTC Eclipse client.
+    
+    
+ 2. Bring up the CQ dialog window.
+    
+    
+ 3. Observe that Eclipse halts with the error.
+
+
+CAUSE
+You use 64-bit Eclipse. 64-bit Eclipse cannot fulfil this task.
+
+ENVIRONMENT
+Windows 7, RTC 4.0.x
+
+
+
+
+DIAGNOSING THE PROBLEM
+You can see a text in the javacore file that is similar to:
+
+
+Windows_ExceptionCode: C0000005 (access violation)
+Module: C:\Windows\System32\mshtml.dll
+
+Current thread:
+"main" J9VMThread:0x0000000002868500, j9thread_t:0x00000000007397B0,
+java/lang/Thread:0x000007FFBE6F1B60, state:R, prio=6
+(java/lang/Thread getId:0x1, isDaemon:false)
+(native thread ID:0xDC0, native priority:0x6, native policy:UNKNOWN)
+Java callstack:
+at org/eclipse/swt/internal/win32/OS.DispatchMessageW(Native Method)
+
+
+
+
+
+
+RESOLVING THE PROBLEM
+WORKAROUND: 
+
+Use a 32-bit Eclipse instance.

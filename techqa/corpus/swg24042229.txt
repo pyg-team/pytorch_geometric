@@ -1,0 +1,61 @@
+Title: IBM Operational Decision Manager V8.7.1.1: Interim Fix 48 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This interim fix provides a solution for several APARs. 
+
+DOWNLOAD DESCRIPTION
+The following list shows the components in Operational Decision Manager that are directly affected by this interim fix:
+
+
+ * Rule Designer 
+ * Decision Center 
+
+You can find more information on the problems in the following APAR descriptions:  *  [http://www.ibm.com/support/docview.wss?uid=swg1RS01879] [http://www.ibm.com/support/docview.wss?uid=swg1RS01891] [http://www.ibm.com/support/docview.wss?uid=swg1RS02327]RS02104 [http://www.ibm.com/support/docview.wss?uid=swg1RS02104]: A USER WITH NO GROUP ASSIGNED SHOULD NOT BE AUTHORIZED BY DC 
+ * RS02184 [http://www.ibm.com/support/docview.wss?uid=swg1RS02184]: XSD FILES REMAINING IN THE SYNCHRONIZATION VIEW 
+ * RS02194 [http://www.ibm.com/support/docview.wss?uid=swg1RS02194]: CUSTOM ROLES ARE AUTOMATICALLY REMOVED FOR USERS 
+ * RS02208 [http://www.ibm.com/support/docview.wss?uid=swg1RS02208]: CANNOT ADD PERMISSION ON THE RESOURCE TYPE 
+ * RS02222 [http://www.ibm.com/support/docview.wss?uid=swg1RS02222]: PERFORMANCE ISSUE WITH RULESET GENERATION WHEN HANDLING A LARGE SET OF PACKAGES 
+ * RS02223 [http://www.ibm.com/support/docview.wss?uid=swg1RS02223]: EVENT SYNCHRONIZATION DOES NOT CONSIDER DEPENDENCIES 
+ * RS02233 [http://www.ibm.com/support/docview.wss?uid=swg1RS02233]: DEPLOYMENT SNAPSHOT FROM A DECISION SERVICE DOES NOT INCLUDE REFERENCED RULE PROJECT 
+ * RS02237 [http://www.ibm.com/support/docview.wss?uid=swg1RS02237]: INVALID VALUE TYPE FOR A REFERENCE, EXPECTING A : 'ILOG.RULES. TEAMSERVER.MODEL.IMPL.ILRIDENTIFIEDOBJECT'. 
+ * RS02244 [http://www.ibm.com/support/docview.wss?uid=swg1RS02244]: SYNCHRONIZATION PERFORMANCE ISSUE RETRIEVING PROJECT INFORMATION 
+ * RS02245 [http://www.ibm.com/support/docview.wss?uid=swg1RS02245]: SOME SUMMAY LINKS CAN BE INACTIVE WHEN COMPARING LARGE DECISION TABLES 
+ * RS02247 [http://www.ibm.com/support/docview.wss?uid=swg1RS02247]: DECISION CENTER: ENTERPRISE : REPORT IS GENERATED WITH WRONG LINKS 
+ * RS02248 [http://www.ibm.com/support/docview.wss?uid=swg1RS02248]: DEPLOYMENT MODEL FOLDER IS NOT CREATED WHEN EXPORTING A PROJECT FROM DC OR WHEN USING THE SYNCHRONIZE ANT TASK 
+ * RS02249 [http://www.ibm.com/support/docview.wss?uid=swg1RS02249]: ERROR WHEN SYNCHRONIZING A PROJECT WHERE A FOLDER WITH RULES IN IT HAS BEEN DELETED 
+ * RS02250 [http://www.ibm.com/support/docview.wss?uid=swg1RS02250]: TEST SUITE STILL POINTS TO A REPORT FROM AN OLDER CLOSED ACTIVITY 
+ * RS02262 [http://www.ibm.com/support/docview.wss?uid=swg1RS02262]: PERFORMANCE ISSUE SWITCHING TO A DIFFERENT PROJECT IF IT CONTAINS MANY BASELINES 
+ * RS02267 [http://www.ibm.com/support/docview.wss?uid=swg1RS02267]: PROVIDE A WAY TO CONTROL VIRTUAL SCROLLING SO THAT ALL THE ROWS OF A DECISION TABLE ARE LOADED 
+ * RS02268 [http://www.ibm.com/support/docview.wss?uid=swg1RS02268]: PERFORMANCE ISSUE SWITCHING TO ENTERPRISE CONSOLE EXPLORE TAB 
+ * RS02273 [http://www.ibm.com/support/docview.wss?uid=swg1RS02273]: PERFORMANCE ISSUE SWITCHING TO A DIFFERENT PROJECT IF IT CONTAINS MANY BASELINES 
+ * RS02281 [http://www.ibm.com/support/docview.wss?uid=swg1RS02281]: PANEL "DIFF AND MERGE" DOES NOT DISPLAY CONTENT OF DECISION TABLES 
+ * RS02283 [http://www.ibm.com/support/docview.wss?uid=swg1RS02283]: PERFORMANCE ISSUE WHEN TRYING TO DISPLAY AN ELEMENT HISTORY USING THE ENTERPRISE CONSOLE 
+ * RS02299 [http://www.ibm.com/support/docview.wss?uid=swg1RS02299]: PERFORMANCE ISSUE COMPLETING A DECISION SERVICE CHANGE ACTIVITY 
+ * RS02347 [http://www.ibm.com/support/docview.wss?uid=swg1RS02347]: EMPTY DECISION SERVICE PROJECT CREATED FROM DECISION CENTER 
+ * RS02348 [http://www.ibm.com/support/docview.wss?uid=swg1RS02348]: CANNOT PUBLISH EVENT OBJECT CONTAINED IN A FOLDER TO DC BRANCHES 
+ * RS02352 [http://www.ibm.com/support/docview.wss?uid=swg1RS02352]: UNEXPECTED ERROR PANEL BEFORE DISPLAYING LIST OF DIFFERENCES BETWEEN TWO BRANCHES TO MERGE 
+ * RS02355 [http://www.ibm.com/support/docview.wss?uid=swg1RS02355]: CANNOT DROP A BRANCH IF IT CONTAINS A DELETED TESTSUITE 
+ * RS02356 [http://www.ibm.com/support/docview.wss?uid=swg1RS02356]: PERFORMANCE ISSUE COMPLETING A DECISION SERVICE CHANGE ACTIVITY 
+ * RS02367 [http://www.ibm.com/support/docview.wss?uid=swg1RS02367]: [BC] UNABLE TO LOAD /DECISIONCENTER/S/CREATEACTIVITY STATUS: 500 CREATING ACTIVITY 
+ * RS02376 [http://www.ibm.com/support/docview.wss?uid=swg1RS02376]: ERROR "ORA-01000 : MAXIMUM OPEN CURSORS EXCEEDED" MAY BE THROWN IF THE REPOSITORY CONTAINS A LARGE SET OF BASELINES 
+
+SEE ALSO
+Operational Decision Manager Interim Fixes [http://www.ibm.com/support/docview.wss?uid=swg21640630] 
+
+INSTALLATION INSTRUCTIONS
+Follow the instructions in the readme.
+
+URL LANGUAGE SIZE(Bytes) Readme [http://download4.boulder.ibm.com/sar/CMA/WSA/065yr/1/Readme.html] English 2098 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 8.7.1.1-WS-ODM-IF048 26 May 2016 Language Independent 54540000 FC [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm%2FWebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=All&platform=All&function=fixId&fixids=8.7.1.1-WS-ODM-IF048&includeRequisites=1&includeSupersedes=0] [ ] DD 
+ [/support/docview.wss?uid=swg24042229&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24042229&aid=2]Problems (APARS) fixed
+RS02104 RS02184 RS02194 , RS02208 RS02222 RS02223 RS02233 RS02237 RS02244 RS02245 RS02247 RS02248 RS02249 RS02250 RS02262 RS02267 RS02268 RS02273 RS02281 RS02283 RS02299 RS02347 RS02348 RS02352 RS02355 RS02356 RS02367 RS02376

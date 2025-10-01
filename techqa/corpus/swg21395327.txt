@@ -1,0 +1,63 @@
+Title: IBM The Key Management Utility bundled with IBM HTTP Server V7.0 32-bit, and the WebSphere Application Server Web server plug-in 32-bit V7.0, displays an error when creating a PKCS12 keystore file - United States
+
+Text:
+p12; pkcs12; ikeyman; v7.0; Plugin; Plug-in; JCE policy file TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Java version "1.6.0" new install with IBM HTTP Server V7.0 and the Web server plug-in V7.0 contains restricted policy files. 
+
+SYMPTOM
+An error message displays when performing the following steps: 
+
+ 1. Start the Key Management Utility.
+    
+    
+ 2. Select Key Database File > New. For Key database type, select PKCS12 and then click OK.
+    
+    [/support/docview.wss?uid=swg21395327&amp;aid=1]
+    
+    
+ 3. Enter a new password and click OK.
+
+
+The following error message is displayed: 
+
+The command cannot complete because your JRE is using restricted policy files. 
+CAUSE
+Restricted JCE Policy files
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, select either option: 
+
+ * Download and install a later Java 32-bit x86 AMD/Intel Java SDK from [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg24023707]the WebSphere Support web site [http://www.ibm.com/support/docview.wss?uid=swg24028881] to the IBM HTTP Server java and plug-ins java folder.
+   
+   
+ * Download and install the files from the Unrestricted JCE policy files [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=jcesdk] site. 
+   
+   After downloading the unrestricted JCE policy files, follow the instructions below to replace the restricted JCE policy files with the unrestricted JCE policy files.
+
+
+Instructions: 
+1. Rename and move the restricted JCE Policy files indicated below from the <ihsinst>/java/jre/lib/security/ directory to a directory that is outside the JDK class path, extdirs, or bootclasspath. 
+
+local_policy.jar 
+US_export_policy.jar 
+
+2. Next, place the unrestricted JCE policy files in the <ihsinst>/java/jre/lib/security/ directory. They should be named local_policy.jar and US_export_policy.jar 
+
+3. Finally, restart the ikeyman utility to pick up the unrestricted JCE policy files now located in the security directory 
+
+Very Important Note: You will be offered two options to download. See screen shot below. The correct Unrestricted JCE policy files will depend on the JAVA SR version. This can be verified, Run java -version command from the <ihsinst>/java/jre/bin directory. The output will display the Java SR version. 
+For example: Java 1.6..0 version with SR12 
+[/support/docview.wss?uid=swg21395327&aid=2] [/support/docview.wss?uid=swg21395327&aid=2] 
+
+[/support/docview.wss?uid=swg21395327&aid=3] [/support/docview.wss?uid=swg21395327&aid=3] 
+
+Replacing the wrong Unrestricted JCE policy files, when retry to manage a PKCS12 keystore file the ikeyman utility will fail to open.the keystore file reporting the following error. 
+
+[/support/docview.wss?uid=swg21395327&amp;aid=4] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server IBM HTTP Server Windows 7.0.0.5, 7.0.0.3, 7.0.0.1, 7.0

@@ -1,0 +1,110 @@
+Title: IBM Diagnosing Native OutOfMemory in Windows Using Debug Diagnostic Tool (DebugDiag) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Native OutOfMemory problems become easier to diagnose using the Microsoft Debug Diagnostic Tool, (DebugDiag). 
+
+SYMPTOM
+Some indications that you have a native memory problem are as follows. If you have any uncertainty about these points, you should contact IBM Support: 
+
+ * failure to create/fork new operating system threads (messages in SystemOut.log) 
+ * JVMDBG001 (malloc) errors in native_stderr.log
+
+
+ENVIRONMENT
+Windows
+
+DIAGNOSING THE PROBLEM
+Download Debug Diagnostic Tool 
+
+ * 
+ *  
+ * 
+ * Download:
+ * 
+ * https://www.microsoft.com/en-us/download/details.aspx?id=26798
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Install:
+ *  Install and take the defaults 
+ * 
+ * Set-up 
+ * DebugDiag "Analysis"
+ *  
+ * :
+ *  Start DebugDiag Analysis: Start->All Programs->Debug Diagnostics Tool ->DebugDiag Analysis Click Settings -> Preferences
+   select the option: Save reports in relative subfolders when possible. To configure the symbol path that DebugDiag uses: 
+   Symbol Search Path for Analysis:
+   
+   srv*c:\symcache*http://msdl.microsoft.com/download/symbols
+   and
+   <java-home>\jre\bin
+   
+   For more information about symbol tables see:
+   Use the Microsoft Symbol Server to obtain debug symbol files 
+ *  http://support.microsoft.com/kb/311503
+ * 
+ *  Note: Replace <java-home> with the actual path where the JRE is installed.This is required to give the path for all the JRE PDB files so that DebugDiag can pick up the necessary JRE symbols. 
+ * 
+ * Set-up DebugDiag "Collection":
+ *  Start DebugDiag Collection: Start->All Programs->Debug Diagnostics Tool->DebugDiag Collection Click "Cancel" on the "Select Rule Type" Dialog Box. To configure the symbol path that Debug Diagnostic Tool uses for Debugging:
+   Go to Tools->Options and Settings..., which brings up a dialog box.
+   Enter the following text under Folders and Search Paths->Symbol Search Path for Debugging:
+   
+   <java-home>\jre\bin
+   
+   For more information about symbol tables see:
+   Use the Microsoft Symbol Server to obtain debug symbol files
+   http://support.microsoft.com/kb/311503 [http://support.microsoft.com/kb/311503]
+   
+   Note: Replace <java-home> with the actual path where the JRE is installed.This is required to give the path for all the JRE PDB files so that DebugDiag can pick up the necessary JRE symbols. Enter the path where you want to save the userdumps under - Manual Userdump Save Folder. Go to the Preferences Tab  * select the option: Include source and line information in analysis report. 
+    * select the option: Use fixed initial folder for data files. 
+    * select the option: Record call stacks immediately when monitoring for leaks. 
+    * Click OK to save and close the Dialog box.
+      
+   
+   
+ * 
+ * Use DebugDiag for tracking memory leaks:
+ *  Start DebugDiag Collection: Start->All Programs->Debug Diagnostics Tool ->DebugDiag Collection In the main window, activate the Processes tab. Locate the process (process id) that is suspected to be leaking memory, Right click the process and choose "Monitor For Leaks". After choosing this option, let the process run and leak memory. It is suggested the process runs for a minimum of 15 minutes with the tracking DLL in place in order to get valid results. Let the process be monitored for the entire growth period (say some X minutes). After every X/4 minutes right click the process and choose "Create Full Userdump". This will generate a userdump. 
+ * 
+ * Note
+ *  - Dumps should be collected as follows:
+ *  At least 15 min after the start of the application (1 dump). During initial run of the application (1 dump). Gradual increase in the memory (2 dumps at certain intervals). On hitting OOM or when memory has grown very large (1 dump).
+   
+ * *
+ * 
+ * 
+ * 
+ * Review dumps(optional for self analysis):
+ *  Start DebugDiag Analysis: Start->All Programs->Debug Diagnostics Tool ->DebugDiag Analysis Click the "Add Data Files" button. Locate dumps (default: <Debug_Diag_Install_Dir>\Logs\Misc or where you set: "Manual Userdump Save Folder" in preferences). Select the dumps from the same PID that you are tracking memory (all PIDs should match). Check the box for Memory Analysis under Memory Pressure Analyzers Click "Start Analysis". This will produce a html page (*.mht) in the <USER>\Documents\DebugDiag\Reports folder with leak "suspects" at the top among other memory statistics. 
+
+
+
+
+RESOLVING THE PROBLEM
+Check the report at <USER>\Documents\DebugDiag\Reports for the reported leak suspect. 
+
+
+For further diagnosis, submit the following to IBM: 
+
+ * DebugDiag report (*.mht) 
+ * The matching system core dumps (jextracted)
+   IBM How to process an IBM SDK core dump with Jextract
+   http://www-01.ibm.com/support/docview.wss?uid=swg21577379 [http://www-01.ibm.com/support/docview.wss?uid=swg21577379] 
+ * SystemOut.log, systemErr.log, native_stdout.log, native_stderr.log, matching javacores and matching heapdumps (if created).
+
+
+"Exchanging information with IBM Technical Support for problem determination" 
+http://www.ibm.com/support/docview.wss?uid=swg21153852 [http://www.ibm.com/support/docview.wss?uid=swg21153852] RELATED INFORMATION
+ Exchanging information with IBM Technical Support for p [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852]
+MustGather: OOM errors on AIX Linux or Windows [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21138587]
+MustGather: Native Out Of Memory on Windows [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21313578]
+How to Use the Debug Diagnostic Tool [https://support.microsoft.com/en-us/kb/2580960]
+How to process an IBM SDK core dump with Jextract [http://www-01.ibm.com/support/docview.wss?uid=swg21577379]

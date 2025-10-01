@@ -1,0 +1,62 @@
+Title: IBM Channel Hanging While Initializing Secure Socket Layer(SSL) for Client Channel - United States
+
+Text:
+SSL hang AMQ9626 channel TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ Your client application fails to connect to your WebSphere MQ (WMQ) queue manager over a SSL channel. You get error messages reporting MQRC_SSL_INITIALIZATION_ERROR CompCode: 2, Reason: 2393 is returned 
+
+SYMPTOM
+Failed to queue message for license plate '[REMOVED]'. 
+
+System.Runtime.InteropServices.SEHException: External component has thrown an exception.
+at IBM.WMQ.Nmqi.Native.MQCONNX(String qMgrName, MQCNO& mqcno, Int32&
+pHconn, Int32& pCompCode, Int32& pReason)
+at IBM.WMQ.Nmqi.UnmanagedNmqiMQ.MQCONNX(String pQMgrName, MQCNO&
+pConnectOpts, Hconn parentHconn, Phconn phconn, Int32& pCompCode,
+Int32& pReason)
+at IBM.WMQ.Nmqi.UnmanagedNmqiMQ.MQCONNX(String pQMgrName,
+MQConnectOptions pConnectOpts, Phconn phconn, Int32& pCompCode, Int32&
+pReason)
+at IBM.WMQ.MQQueueManager.Connect(String queueManagerName)
+at BestBuy.Retail.Business.ERAMQProcessor.QueueMessage(ERAMQMessage
+eraMQMessage)
+
+*Error Logged in application*
+Error Message: MQRC_SSL_INITIALIZATION_ERROR CompCode: 2, Reason: 2393
+
+MQ Error Log shows:
+AMQ9626: Channel hanging while initializing SSL.
+
+
+CAUSE
+Incorrect path to gsk7ssl.dll in Windows registry
+
+
+DIAGNOSING THE PROBLEM
+Concurrent WebSphere MQ(WMQ) and Process Monitor traces while duplicating the problem will provide information to help determine why the channel is failing. 
+
+
+
+RESOLVING THE PROBLEM
+The analysis of Procmon output shows that the GSKIT component was not initialized properly due to the missing gsk7ssl_64.dll, accounting for the improper shutdown of the thread during SSL initialization. 
+
+
+The library path was located from the registry key 
+
+ * HKLM\SOFTWARE\Wow6432Node\IBM\MQSeries\CurrentVersion\GSKitPath64 
+
+whose value returned was  * C:\Program Files (x86)\ibm\gsk7\IBM\GSK7_64.
+
+The Procmon output shows that this dll was not found in any of the directories in the path and failed with NAME NOT FOUND/PATH NOT FOUND. 
+
+The default path for this dll is  *  C:\ProgramFiles (x86)\ibm\GSK7_64\lib64
+ * 
+
+If gsk7ssl_64.dll is not present in this location then please change the value of the above registry key to reflect the right value and restart the client application. 
+
+PRODUCT ALIAS/SYNONYM
+ IBM MQ WebSphere MQ WMQ

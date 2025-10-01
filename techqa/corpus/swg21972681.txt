@@ -1,0 +1,32 @@
+Title: IBM In FileNet Workplace XT .csv files open as a text file instead of using MS Excel - United States
+
+Text:
+Mime type TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ The .csv file was created through WorkplaceXT and it only can be opened as the text file instead of the Excel file 
+
+SYMPTOM
+The .csv file can be opened as the Excel from ACCE and outside of WorkplaceXT but not from inside of the WorkplaceXT
+
+
+CAUSE
+Mime Type was not set correctly when creating the .csv documents via WorkplaceXT
+
+DIAGNOSING THE PROBLEM
+When creating a .csv document through ACCE, the mime Type is "application/vnd.ms-excel" shown under the Properties tab and Content Element tab. 
+
+ * When adding a .csv document through WorkplaceXT, the mime Type shows "text/csv" from the Properties tab and Content Element tab in ACCE. 
+ * Verify if the .csv document with the mime Type "application/vnd.ms-excel" is opened as Excel file in WorkplaceXT
+
+RESOLVING THE PROBLEM
+Add a section to Web.xml mapping the extension to the mime type: 
+
+ * 
+ * <mime-mapping>
+   <extension>csv</extension>
+   <mime-type>application/vnd.ms-excel</mime-type>
+   </mime-mapping>

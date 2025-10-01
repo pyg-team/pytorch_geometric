@@ -1,0 +1,129 @@
+Title: IBM LO55307: DUMP EVENT "SYSTHROW" (00040000) DETAIL "JAVA/LANG/OUTOFMEMORYER ROR" RECEIVED WHILE SHUTTING DOWN NOTES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  JVM ran out of memory during client shutdown.  There are no
+   known steps to
+   reproduce, other than shutting down Lotus Notes.
+   
+   NULL
+   ----------------------------------------------------------------
+   --------
+   0SECTION       TITLE subcomponent dump routine
+   NULL           ===============================
+   1TISIGINFO     Dump Event "systhrow" (00040000) Detail
+   "java/lang/OutOfMemoryError" received
+   1TIDATETIME    Date:                 2010/09/23 at 14:31:32
+   1TIFILENAME    Javacore filename:
+   Y:/LNTDATA/workspace/logs\javacore.20100923.143125.13928.0003.tx
+   t
+   
+   2CIUSERARG               -Xms48m
+   2CIUSERARG               -Xmx256m
+   
+   1STHEAPFREE    Bytes of Heap Space Free: 1A5DA0 ===> 1727904
+   bytes were free
+   ==> 1MB was free
+   1STHEAPALLOC   Bytes of Heap Space Allocated: 10000000 ===>
+   268435456 allocated
+   ==> 256 MB was used (hence the java dump creation)
+   
+   
+   3XMTHREADINFO      "main" TID:0x001F2700, j9thread_t:0x00A051C4,
+   state:R, prio=6
+   3XMTHREADINFO1            (native thread ID:0x366C, native
+   priority:0x6, native
+   policy:UNKNOWN)
+   R - Runnable - the thread is able to run when given the chance
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# TMDS89WUX8.
+   The problem was caused by a user error or user misunderstanding.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO55307
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-04
+   
+   
+ * CLOSED DATE
+   2012-04-18
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,42 @@
+Title: IBM setup_run_as_setuid_root.sh causes incorrect library links - United States
+
+Text:
+setup_run_as_setuid_root.sh; wrong library links TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ On a non-root installation, when you run setup_run_as_setuid_root.sh, it creates incorrect soft links based on the cache overwriting newly created links of a FixPack Installation causing ncp_poller to die/malfunction. 
+
+SYMPTOM
+After installing FixPack, but before running setup_run_as_setuid_root.sh the files for one of the shared libraries looks as below: 
+
+
+$NCHOME/precision/platform/linux2x86/lib> ls libNcpMonitor.*
+lrwxrwxrwx 1 netcool ncoadmin 20 2009-11-23 14:13 libNcpMonitor.so -> libNcpMonitor.so.1.0
+lrwxrwxrwx 1 netcool ncoadmin 20 2009-11-23 14:13 libNcpMonitor.so.1 -> libNcpMonitor.so.1.0
+-r--r--r-- 1 netcool ncoadmin 5747437 2009-11-23 14:13 libNcpMonitor.so.1.0
+-r--r--r-- 1 netcool ncoadmin 5738395 2009-11-23 14:13 libNcpMonitor.so.1.0_save*
+
+After running setup_run_as_setuid_root.sh as root the incorrect link appears:
+
+$NCHOME/precision/platform/linux2x86/lib> ls libNcpMonitor.*
+lrwxrwxrwx 1 netcool ncoadmin 20 2009-11-23 14:13 libNcpMonitor.so -> libNcpMonitor.so.1.0
+lrwxrwxrwx 1 root root 25 2009-11-23 14:20 libNcpMonitor.so.1 -> libNcpMonitor.so.1.0_save*
+-r--r--r-- 1 netcool ncoadmin 5747437 2009-11-23 14:13 libNcpMonitor.so.1.0
+-rwxr-xr-x 1 netcool ncoadmin 5738395 2009-11-23 14:13 libNcpMonitor.so.1.0_save*
+
+
+CAUSE
+On linux /sbin/ldconfig holds the cache of most recent shared libraries, resulting in the incorrect link as shown above.
+
+
+RESOLVING THE PROBLEM
+Before running $NCHOME/precision/scripts/setup_run_as_setuid_root.sh , modify the following line: 
+
+
+/sbin/ldconfig
+
+To
+
+/sbin/ldconfig -X
+
+By adding "-X" argument, you are saying not to update the links using Cached data.

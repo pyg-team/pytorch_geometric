@@ -1,0 +1,24 @@
+Title: IBM How to monitor two IBM FileNet Content Platform Engine instances' log on same IBM Enterprise Content Management System Monitor? - United States
+
+Text:
+ECMSM TECHNOTE (FAQ)
+
+QUESTION
+ Using IBM Enterprise Content Management System Monitor (ECM SM) 5.2, we want to monitor 2 FileNet Content Platform Engine (CPE) instances installed on the same Windows server. We created two WebSphere Application Server (WAS) profiles - AppSrv01 and AppSrv02, and FileNet CPE instances are deployed on these profiles. I want to know how to use ECM SM to monitor the two CPE logs in different path, for example: 
+
+
+
+C:/Program Files/IBM/WebSphere_8.5.0/AppServer/profiles/AppSrv01/FileNet/CE510UATServer1
+
+
+
+and
+
+
+
+C:/Program Files/IBM/WebSphere_8.5.0/AppServer/profiles/AppSrv02/FileNet/CE510UATServer2 
+
+ANSWER
+You can use wildcards "*" or "?" in the "P8 Logfile directory" entry to cover both paths:
+
+C:/Program Files/IBM/WebSphere_8.5.0/AppServer/profiles/AppSrv0?/FileNet/*

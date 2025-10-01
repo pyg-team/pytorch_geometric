@@ -1,0 +1,36 @@
+Title: IBM Maven deployment fails with duplicate JARs error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When deploying a Maven EAR to the server in Rational Application Developer, you see that the tool is including the target files in addition to the automated deployment which is causing duplicate JAR files to be deployed to the server and causing errors. 
+
+CAUSE
+This might be happening when you are using "Run server with resources within workspace" and some JARs can be deployed twice: once as part of the EAR and one as part of the Web project (inside WEB-INF/lib).
+
+RESOLVING THE PROBLEM
+When you generate a Maven project in Rational Application Developer, the archetype generates a parent project with modules, including an EAR and a Web project.
+The parent project includes some dependencies, which are inherited by all the children modules . 
+
+
+When an EAR has dependencies in its pom (either explicitly specified in the pom.xml, or inherited), they are added to the deployment assembly page of the EAR. For this reason, when the EAR is deployed to the server, those jars are deployed as well.
+
+On the other hand, the Web project also inherits the dependencies from the parent project, and they are reflected in the Maven Dependencies library.
+For Web projects, the Maven Dependencies library is added to the Deployment Assembly page, to deploy all the dependencies in WEB-INF/lib.
+
+To remove this duplicity of JARs, the declaration of the dependency needs to be modified. You need to decide which dependencies must be installed as part of the EAR, and which in the WAR. For example, if you would like to remove myJAR from WEB-INF/lib of the WAR, you can add this line to the pom.xml of the web project:
+
+<dependency>
+<groupId>myJAR</groupId>
+<artifactId>myJAR</artifactId>
+<version>myJARversion</version>
+<optional>true</optional>
+</dependency>
+
+The key point here is the <optional> element. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Application Developer for WebSphere Software

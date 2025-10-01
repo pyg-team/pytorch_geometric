@@ -1,0 +1,103 @@
+Title: IBM The upgrade database command fails to clean up the SIBus tables during a database upgrade for IBM Business Process Manager (BPM) - United States
+
+Text:
+upgrade; bpm751; upgrade7x; database upgrade; oracle TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The upgrade7x command or the upgradeProcessData fails during the SIBus tables cleanup task while upgrading the Process Server database to IBM Business Process Manager 
+
+SYMPTOM
+When you run the upgrade7x command to upgrade the Process Server database, the script ends when it is cleaning the SIBus tables. For example: 
+> upgrade_7x.sh -profileName myProfile -nodeName myNode -serverName myserver 
+
+Process Server database is now version 7.5.1. 
+
+Performance Data Warehouse database is now version 7.5.1. 
+
+Database upgrade completed successfully. 
+
+IBM Business Process Manager V7.5.1 Enterprise database upgrade program finished. 
+
+Loading system data 
+
+Cleaning SIB tables 
+
+ 
+
+The following exception is seen in the upgrade log file, such as the C:\IBM\WebSphere\AppServer\BPM\Lombardi\tools\upgrade\upgrade_7x\logs file: 
+
+Jan 11, 2012 10:37:32 AM INFO: com.lombardisoftware.tools.dbupgrade.UpgradeDatabase - IBM Business Process Manager V7.5.1 Enterprise database upgrade program finished. 
+
+Jan 11, 2012 10:40:48 AM FINE: com.lombardisoftware.tools.dbclean.CleanDatabase - ORA-00942: table or view does not exist 
+
+java.sql.SQLSyntaxErrorException: ORA-00942: table or view does not exist 
+
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:439) 
+
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:395) 
+
+at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:802) 
+
+at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:436) 
+
+at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:186) 
+
+at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:521) 
+
+at oracle.jdbc.driver.T4CStatement.doOall8(T4CStatement.java:194) 
+
+at oracle.jdbc.driver.T4CStatement.executeForDescribe(T4CStatement.java:853) 
+
+at oracle.jdbc.driver.OracleStatement.executeMaybeDescribe(OracleStatement.java:1145) 
+
+at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1267) 
+
+at oracle.jdbc.driver.OracleStatement.executeQuery(OracleStatement.java:1469) 
+
+at oracle.jdbc.driver.OracleStatementWrapper.executeQuery(OracleStatementWrapper.java:389) 
+
+at com.lombardisoftware.tools.dbclean.AbstractCleanDatabase.getUserTables(AbstractCleanDatabase.java:152) 
+
+at com.lombardisoftware.tools.dbclean.AbstractCleanDatabase.clean(AbstractCleanDatabase.java:49) 
+
+at com.lombardisoftware.tools.dbclean.CleanDatabase.clean(CleanDatabase.java:92) 
+
+at com.lombardisoftware.tools.dbclean.CleanDatabase.main(CleanDatabase.java:176)
+
+
+CAUSE
+If you are using a new profile to migrate from WebSphere Lombardi Edition or a previous IBM Business Process Manager version, you cannot reuse the messaging engine database due to the unique ID that is saved in the messaging engine database. The upgrade database command attempts to drop the SIB tables after upgrading the database. 
+
+The database user ID that is configured for the Messaging Engine Data Store for the Process Server and Performance Data Warehouse does not have enough privileges to delete the Messaging Engine tables.
+
+If the user ID does not have privileges that are documented in the "Installation privileges" column in the Database Privileges [http://www.ibm.com/support/knowledgecenter/SSFTDH_7.5.1/com.ibm.wbpm.imuc.doc/topics/rpln_db_privileges.html] topic within the information center, you see the previously listed exceptions during the database upgrade process. You can avoid the exceptions by adding the required "installation" privileges to the respective database users. [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=%2Fcom.ibm.wbpm.imuc.doc%2Ftopics%2Frpln_db_privileges.html] 
+
+
+RESOLVING THE PROBLEM
+If you are unable to provide administrative privileges to the messaging engine data store database user before upgrading the database, take the following actions: 
+
+ * After you run the upgrade database command , check the appropriate log files.  * The IBM Business Process Manager V7.5.X log files are saved under the install_root\BPM\Lombardi\tools\upgrade\upgrade_7x\logs directory. 
+    * The IBM Business Process Manager V7.5.1 Fix Pack 1 and later upgrade log files are saved under the profile_root/logs directory with a time stamp in the suffix. For example: upgradeProcessData_serverName_Thu-May-02-12.38.31-GMT-2013_0.log
+   
+   
+
+Make sure there are no other errors during the database upgrade and the system data loading processes. If you see exceptions only during the "cleaning SIB tables," take one of the following actions: 
+
+ * If you are upgrading the same profile or a cluster (an in-place upgrade or after installing interim fixes ), you can ignore the failure because the messaging engine database can be reused. It is not necessary to truncate the SIB tables. 
+ * If you are migrating, you have created a new profile, and you are reusing the existing database, you have to truncate all the rows from the SIB tables that are used for previous Process Server and Performance Data Warehouse components.
+
+
+You might encounter a problem starting the Messaging Engine if the database user is unable to recreate the tables. Refer to the Messaging Engine does not start after upgrading to a new version [http://www.ibm.com/support/docview.wss?uid=swg21635822] document to resolve the start up problems. RELATED INFORMATION
+ Upgrading a stand-alone environment [http://www.ibm.com/support/knowledgecenter/SSFTDH_7.5.1/com.ibm.wbpm.imuc.doc/topics/tmig_upgrading_bpm_standalone.html]
+Upgrading clusters [http://www.ibm.com/support/knowledgecenter/SSFTDH_7.5.1/com.ibm.wbpm.imuc.doc/topics/tmig_upgrading_bpm_nd_clusters.html]
+Database design tool examples [http://www.ibm.com/support/knowledgecenter/SSFTDH_7.5.1/com.ibm.wbpm.imuc.ebpm.doc/topics/cins_db_ddt_example.html]
+Database privileges [http://www.ibm.com/support/knowledgecenter/SSFTDH_7.5.1/com.ibm.wbpm.imuc.doc/topics/rpln_db_privileges.html]
+Messaging Engine does not start after upgrading... [http://www.ibm.com/support/docview.wss?uid=swg21635822]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Migration AIX, Linux, Solaris, Windows 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Express Migration Linux, Windows 8.0.1, 8.0, 7.5.1, 7.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

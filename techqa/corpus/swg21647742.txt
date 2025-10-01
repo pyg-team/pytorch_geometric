@@ -1,0 +1,38 @@
+Title: IBM Registering Poller in a failover environment - United States
+
+Text:
+additional poller in failover TECHNOTE (FAQ)
+
+QUESTION
+ When registering additional pollers in a failover setup - does the domain name on the failover need to be against Primary domain or Backup domain? 
+
+ANSWER
+Let's say the naming convention of failover setup is as follows: 
+
+Primary domain= 'NCOMSP' 
+
+Backup domain = 'NCOMSB' 
+
+Virtual domain = 'NCOMSV' 
+
+There are two scenarios to consider: 
+
+1) ITNM Failover with Shared NCIM(i.e. Both Primary & Backup domains are connecting to same NCIM database) 
+
+In this case, you only need to register once the additional Poller either from Primary or Backup but not on both. 
+
+e.g. ncp_poller -domain <PRIMARYDOMAINNAME> -name poller_name -register 
+
+i.e. #ncp_poller -domain NCOMSP -name PINGPoller -register 
+
+In above example, the Poller name being 'PINGPoller' and one must register additional poller against primary domain name and never on failover domain name. 
+
+2) ITNM Failover with NCIM replication (i.e. Primary and Backup domains have their own instances of NCIM database) 
+
+In this case, one need to register additional Poller from both Primary and Failover servers but against primary domain name. i.e. you would run below command on both servers: 
+
+#ncp_poller -domain NCOMSP -name PINGPoller -register 
+
+Make sure you have a DbLogins.NCOMSB.cfg and DbLogins.NCOMSP.cfg on failover server pointing to the Backup NCIM db prior to running the command above. 
+
+Once poller is registered, one should continue rest of the steps listed @ https://ibm.biz/BdDRic [https://ibm.biz/BdDRic]

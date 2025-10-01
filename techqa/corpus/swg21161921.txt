@@ -1,0 +1,35 @@
+Title: IBM SQLCODE526 on REVOKE of specific authorities on a created temporary table - United States
+
+Text:
+new2004; REVOKE; created temp temporary table; revoking specific authorities privileges; SQLCODE526 TECHNOTE (FAQ)
+
+QUESTION
+ I tried to run the following REVOKE statement, where SYSIBM.SQTCOLPRIVILEGES is a created temporary table:
+
+REVOKE ALTER ,DELETE , INSERT , SELECT
+ON TABLE SYSIBM.SQTCOLPRIVILEGES
+FROM PUBLIC BY UTRAR01
+
+The preceding statement returned the following error:
+DSNT408I SQLCODE = -526, ERROR: ?THE REQUESTED OPERATION OR USAGE DOES NOT APPLY TO CREATED TEMPORARY TABLE SYSIBM.SQTCOLPRIVILEGES 
+DSNT418I SQLSTATE = 42995 SQLSTATE RETURN CODE 
+DSNT415I SQLERRP = DSNXA09 SQL PROCEDURE DETECTING ERROR 
+DSNT416I SQLERRD = -250 ?0?0 ?0 ?0 ?0 SQL DIAGNOSTIC INFORMATION 
+DSNT416I SQLERRD = X'FFFFFF06' X'00000000' X'00000000' X'00000000' 
+X'00000000' ?X'00000000'SQL DIAGNOSTIC INFORMATION 
+
+CAUSE
+For a created temporary table or view of a created temporary table, you can revoke 
+only ALL or ALL PRIVILEGES. You cannot revoke specific table or view privileges.
+
+ANSWER
+Change your REVOKE statement to: 
+
+ 
+REVOKE ALL 
+ON TABLE SYSIBM.SQTCOLPRIVILEGES
+FROM PUBLIC BY UTRAR01;
+
+
+RELATED INFORMATION
+ DB2 for z/OS and OS/390 library [http://www.ibm.com/software/data/db2/os390/library.html]

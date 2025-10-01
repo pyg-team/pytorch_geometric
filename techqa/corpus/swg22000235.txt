@@ -1,0 +1,149 @@
+Title: IBM WebSphere MQ Java component fails with java.io.IOException: Invalid encoding: redundant leading 0s - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A recent change in Java runtimes supported by IBM WebSphere MQ (both IBM and Oracle) to address a security vulnerability has the potential to break both product function and applications that use SSL/TLS or Advanced Message Security (AMS) if the truststore/keystore contains a certificate that contains a leading zero in the certificate serial number.
+
+Some examples of Java environments that may be configured to use keystores and therefore affected by this problem are (but not exclusively);
+- IBM Key Management (iKeyman)
+- IBM MQ Java/JMS client applications using SSL/TLS or AMS
+- IBM MQ Explorer
+- IBM MQ Managed File Transfer (MFT)
+- IBM MQ Telemetry Transport (MQTT)
+- IBM MQ Light (AMQP)
+- IBM MQ Web Console & REST API
+
+Action should be taken before upgrading Java runtimes to an affected version to prevent the possibility of an outage. 
+
+SYMPTOM
+A leading zero encoded in a X.509 certificate serial number now fails stricter checking under the newer levels of Java runtime maintenance, whilst the certificate encoding is tolerated by other tools, including older levels of Java. 
+
+Should any certificate in the keystore be affected, the newer Java runtime will be unable to open and access any certificates within the keystore. 
+
+Any MQ installation that uses certificate keystores and is about to upgrade to one of the Java runtime maintenance levels identified below, should check to see if the keystores contain affected certificates.
+
+
+CAUSE
+Distinguished Encoding Rules (DER) used in certificate encoding require that integer values are represented in the shortest byte representation possible, this effectively prohibits the use of leading zeroes in certificate serial numbers.
+
+
+ENVIRONMENT
+It is believed that the following Java runtimes that are supported by various IBM WebSphere MQ and IBM MQ releases contain the stricter certificate encoding checks introduced under CVE-2016-5546; 
+
+ 
+
+IBM JRE/JDK
+6.0.16.41
+6.1.8.41
+7.0.10.1
+7.1.4.1
+8.0.4.1 
+
+ 
+
+Oracle JRE/JDK
+1.6.0_141
+1.7.0_131
+1.8.0_121 
+
+ 
+
+The syntax for checking the level of java is; 
+
+ java -version
+
+
+DIAGNOSING THE PROBLEM
+Should a certificate be encountered when opening the keystore/truststore, an exception similar to the following will be generated;
+
+An IO Exception has occurred:
+java.io.IOException: Invalid encoding: redundant leading 0s 
+
+ 
+
+You can use Java based keystore tools such as IBM iKeyMan or keytool to open a keystore to see if it contains any affected certificates. The following error when opening either a CMS or JKS keystore in iKeyman is an indicator that at least one certificate in the store is affected by this problem; 
+
+
+[/support/docview.wss?uid=swg22000235&amp;aid=1]
+
+Once it has been established that a keystore contains one or more affected certificates, the next step is to identify the affected certificate(s). Each certificate in the keystore must be extracted and examined.
+
+Unfortunately, most certificate keystore management tools (including iKeyman and keytool) omit leading zeroes when displaying certificate serial numbers and so these cannot be easily used to identify which of the certificates in the keystore are affected. 
+
+The affected certificate(s) in the keystore can be identified by extracting each certificate from the keystore, using GSKit native tools for CMS keystores or an older level of JRE for JKS stores and then using 3rd party tooling to identify leading zeroes in the encoded certificate serial numbers.
+
+Extracting certificates from a JKS keystore (.jks) into .DER format
+The syntax for listing all certificates and their labels in a JKS keystore with keytool is;
+
+keytool -list -keystore <keystorename>
+
+The syntax for extracting a labelled certificate from a JKS keystore to a file named 'certificate.der' with Java keytool is;
+
+keytool -export -keystore <keystorename> -alias <certificate-label> -file certificate.der
+
+Extracting certificates from a CMS keystore (.kdb) into DER format
+The syntax for displaying a list of the certificates and their labels in a CMS keystore with runmqakm is;
+
+runmqakm -cert -list -db <keystorename>
+
+The syntax for extracting a labelled certificate from a CMS keystore to a file named 'certificate.der' with runmqakm is;
+
+runmqakm -cert -extract -db <keystorename> -label <certificate-label> -target certificate.der -format binary
+
+Discovering whether the extracted certificate contains leading zeroes then requires the use of 3rd party tooling. Examples are given below for importing the certificate into a Windows keystore or, alternatively, using openssl asn1parse.
+
+Importing DER certificate into a Microsoft Windows keystore
+Refer to the following article [https://technet.microsoft.com/en-us/library/cc754489%28v=ws.11%29.aspx] on how to import a certificate into a Windows keystore.
+
+Microsoft keystores do display leading zeroes in certificate serial numbers, so importing the certificates into a Windows certificate store will provide the ability to check for leading zeroes;
+[/support/docview.wss?uid=swg22000235&amp;aid=2]
+
+Checking a DER certificate using OpenSSL asn1parse (Alternative) 
+Whilst openssl asn1parse will not display the leading zero in a certificate serial number, it does give an indirect indication that a leading zero is present in its output. 
+
+The syntax for displaying the ASN.1 encoding for a certificate with openssl is;
+
+openssl asn1parse -inform DER -in certificate.der
+
+The following is an example of the openssl asn1parse output for a certificate that contains a leading zero in the serial number. The 5th line represents the encoded serial number. Note that openssl has indicated that the length of the encoded value is 8 bytes; however there are only 7 bytes of data displayed after:
+
+0:d=0 hl=4 l= 822 cons: SEQUENCE
+4:d=1 hl=4 l= 542 cons: SEQUENCE
+8:d=2 hl=2 l= 3 cons: cont [ 0 ]
+10:d=3 hl=2 l= 1 prim: INTEGER :02
+13:d=2 hl=2 l= 8 prim: INTEGER :6B6E950DC363F9 <== (7 bytes)
+23:d=2 hl=2 l= 13 cons: SEQUENCE
+25:d=3 hl=2 l= 9 prim: OBJECT :sha1WithRSAEncryption
+36:d=3 hl=2 l= 0 prim: NULL
+38:d=2 hl=2 l= 42 cons: SEQUENCE
+40:d=3 hl=2 l= 11 cons: SET
+42:d=4 hl=2 l= 9 cons: SEQUENCE
+44:d=5 hl=2 l= 3 prim: OBJECT :countryName
+49:d=5 hl=2 l= 2 prim: PRINTABLESTRING :US
+53:d=3 hl=2 l= 12 cons: SET
+55:d=4 hl=2 l= 10 cons: SEQUENCE
+57:d=5 hl=2 l= 3 prim: OBJECT :organizationName
+62:d=5 hl=2 l= 3 prim: PRINTABLESTRING :ibm
+67:d=3 hl=2 l= 13 cons: SET
+69:d=4 hl=2 l= 11 cons: SEQUENCE
+71:d=5 hl=2 l= 3 prim: OBJECT :commonName
+76:d=5 hl=2 l= 4 prim: PRINTABLESTRING :Fred
+
+This is an indication of the presence of a leading zero in the encoded value.
+
+
+RESOLVING THE PROBLEM
+A temporary fix to relax some of the certificate encoding checks is now available for IBM MQ 9.0.2. The relaxation of the encoding checks is enabled by setting a system property and has been added to the IBM JRE provided for use with IBM MQ 9.0.2, for further details refer to the following security bulletin [http://www-01.ibm.com/support/docview.wss?uid=swg22000304]. 
+
+Permanent fixes are expected to be made available for other Java runtimes shortly, for further details refer to the Oracle bug report [http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8175251&cm_mc_uid=87449282098914885480912&cm_mc_sid_50200000=1489575177]. 
+
+It is also possible to work around the problem by regenerating the affected certificates, or by using an older version of the JRE. 
+
+Note that older maintenance levels of the JRE are known to contain security vulnerabilities.
+
+RELATED INFORMATION
+ CVE-2016-5546 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5546]
+Oracle Bug JDK-8175251 [http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8175251]
+IBM MQ Java Security Bulletin [http://www-01.ibm.com/support/docview.wss?uid=swg22000304]

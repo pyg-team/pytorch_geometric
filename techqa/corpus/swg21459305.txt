@@ -1,0 +1,60 @@
+Title: IBM Unexpected Java XOM error when generating the WSDL for a hosted transparent decision service - United States
+
+Text:
+parsing; XOM; complex; type; WSDL; HTDS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Getting an error message saying that Java XOMs with complex types are not supported for the generation of a WSDL file for the hosted transparent decision service (HTDS) if the ruleset is based on a Java XOM that contains Java complex types. 
+
+SYMPTOM
+Although the ruleset does not use a Java XOM with complex types, the following error is thrown and prevents the generation of the WSDL file from the Rule Execution Server Console for a deployed ruleset: 
+
+This ruleset cannot be parsed. It uses a Java XOM with complex types, which is not supported by the hosted transparent decision service.
+
+
+CAUSE
+With HTDS, Rule Execution Server exposes as a web service any deployed ruleset that uses an XML schema or a Java eXecution Object Model (XOM) with simple types. The decision service generates a Web Services Description Language (WSDL) file for each deployed ruleset archive. The WSDL file is then used by client applications to call the service. For more information, see Rule Execution Server Console online help > Viewing and managing rulesets > Viewing the WSDL for a ruleset in the JRules 7.1 documentation [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1078.html]. 
+
+The above error message is expected if the ruleset uses a Java XOM with complex types, because the classes that define the complex types are not available to the HTDS when the ruleset is parsed. As HTDS is not designed to work with complex Java XOMs, use a monitored transparent decision service (MTDS) instead.
+
+But this message is also used to report any other ruleset parsing error, because the WSDL generator assumes that the ruleset has been tested beforehand and that, therefore, a ruleset is always valid when it is deployed and should parse unless type definitions are missing.
+
+
+DIAGNOSING THE PROBLEM
+Two reasons can explain why a ruleset does not parse and the HTDS throws this error: 
+
+ 1. Classes are missing: for example, you might be using utility classes in the BOM-to-XOM mapping. 
+ 2. The ruleset itself contains a syntax error.
+
+
+To find what the root cause of the error is in your specific scenario, investigate the exceptions listed the application server logs. 
+
+ 
+
+If you do not have access to the application logs, or if they do not show any relevant error, you can execute the ruleset by using the Test Ruleset feature of the Rule Execution Server Console. For more information, see Rule Execution Server Console online help > Monitoring ruleset execution > Testing ruleset execution in the JRules 7.1 documentation [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1084.html]. 
+
+This requires to have the Scenario Service Provider (SSP), execution component of the Decision Validation Services (DVS), deployed. For more information, see WebSphere ILOG JRules BRMS V7.1: Java EE add-ons > Installing on <your application server> > Installing Decision Validation Services > Deploying the Decision Validation Services archive in the JRules 7.1 documentation [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.install.doc/Content/Business_Rules/Documentation/_pubskel/JRules_Application_Servers/ps_Installing_JRules_IC.html]. 
+
+ 
+
+The test result will show the real cause of the error in the Rule Execution Server Console and allow you to fix the problem. Because the problem occurs during compilation, it does not matter that you provide valid ruleset parameters for the test execution. 
+
+ 
+
+Notes: If your ruleset internally uses Java utility classes (used in the XOM but not passed as parameters), the Test Ruleset feature might not show the error if the utility classes are packaged in the SSP application (used to perform the execution test). In this case, you must package them into the HTDS EAR file and redeploy the EAR file. For more information, see WebSphere ILOG JRules BRMS V7.1: Java EE add-ons > Installing on <your application server> > Installing Rule Execution Server > Installing Rule Execution Server on WebSphere Application Server V7.0 > Deploying the hosted transparent decision service EAR in the JRules 7.1 documentation [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.install.doc/Content/Business_Rules/Documentation/_pubskel/JRules_Application_Servers/ps_Installing_JRules_IC.html].
+
+
+RESOLVING THE PROBLEM
+Fix the parsing error revealed by the logs or by testing the execution of the ruleset, and then redeploy the ruleset to Rule Execution Server. 
+
+If the problem is with a utility class, you will need to repackage the HTDS web application to embed those classes. Try to avoid that practice since the HTDS application is shared by all the rulesets deployed to Rule Execution Server. You might consider using MTDS instead in that case (see the link below for more information on HTDS and MTDS). 
+
+
+Note: 
+
+ * It is recommended that you always test a ruleset before you deploy it to Rule Execution Server, either in Studio, or in Rule Team Server with the Decision Validation Services testing feature. This preliminary test will allow to find any syntax error in the ruleset. 
+ * Starting in V7.5 of the product (now called Operational Decision Management or ODM), HTDS does support parameters of complex types, and the WSDL generation returns any parsing error that may occur at that point (for example "Cannot find execution class "test.Foo" for translating business class "test.Foo"")
+
+RELATED INFORMATION
+#Transparent decision services and rule execution [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global926.html]
+Choosing between HTDS and MTDS [http://www.ibm.com/support/docview.wss?uid=swg21612907]

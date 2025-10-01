@@ -1,0 +1,234 @@
+Title: IBM PJ41209: CLICK THE CASE ASSIGNED TO OTHER USER, MET THE ERROR MESSAGE 'TH IS ITEM IS NO LONGER IN THIS INBASKET AND CAN NOT BE OPENED...' - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ***PLEASE PROVIDE THE FOLLOWING INFORMATION
+   THIS FIELD IS REQUIRED.***
+   
+   Description of Problem (full details)
+   
+   When queue filter set like '...F_boubdUser='%' order by
+   %ORDERBY%, F_EnqueueTime, F_UniqueId asc', customer click the
+   case which assign to other user, met the error message 'This
+   item is no longer in this Inbasket and can not be opened. It
+   might have been already processed by somebody else.'
+   
+   How long has the problem been occurring (recent changes)? :
+   
+   Since customer apply BPF FP 4.1.0-008.
+   
+   Does this occur on more than one station / server? :
+   
+   Yes.
+   
+   Is there a workaround? :
+   
+   No
+   
+   What is the impact to the customer/system? :
+   
+   Met the error message make their business design which used for
+   4 years fail.
+   
+   Can the problem be replicated on an internal system?  Y or N
+   By Who (L3, Support, customer)
+   
+   Steps to Reproduce:
+   1. BPF users, User1, User2
+   Question: what's the two users configured, has which inbaskets?
+   Answer: BPF Inbasket is configured to have cases corresponding
+   to Inbox (0) queue i.e. all work items in user inboxes. No
+   special setting for User1 and User2.
+   
+   2. Change the Queue Filter as the F_BoundUser = '%'
+   Question: which queue filter, and the queue filter is configured
+   for which inbasket?
+   Answer: Configure the queue filter for inbasket queue for User1
+   and User2.
+   
+   3. (Any user can create a case) Create a case and assign it to
+   User1 (i.e. F_BoundUser = User1)  (i.e. F_BoundUser = User1)
+   Question: who create a case and assign it to User1?
+   Answer: Any one can create a case and assign it to User1, for
+   example, p8admin or User2
+   
+   5. If User1 login BPF, he can open case successfully,
+   Question: he open which inbasket? here is Inbox, after he create
+   a case, he need to do some action to make the case to Inbox
+   Answer: After other user (for example User2) create case for
+   User1 and assign to User1, the case will appear in the Inbox of
+   User1
+   
+   6. If User2 login BPF, he can't open and met the same error
+   message in this case
+   Question: The same as above, open case in which inbasket?
+   Answer: User2 open case in his inbasket, got the error message
+   described in this case 'This item is no longer in this Inbasket
+   and can not be opened. It might have been already processed by
+   somebody else. '
+   Actual Results:
+   
+   If User2 login BPF, he can't open and met the same error message
+   in this PMR
+   
+   We ever suggest customer to set
+   Set the queue filter to 'F_boubdUser=%USERID% and
+   F_StepName='%StepName%' order by %ORDERBY%, F_EnqueueTime,
+   F_UniqueId asc'
+   But customer refused for this will impact on their business
+   logic which has already used for 4 years.
+   
+   Expected Results:
+   
+   If User2 login BPF, he can open and no error message pop-up
+   
+   Are there any similar or related Defects?
+   
+   One defect which fixed in 4.1.0-004, L3 has researched for it.
+   This means this problem existed since 4.1.0-004.
+   
+   What logs were collected and where are they located?
+   
+   
+   Configuration/Environment :
+   Old Environment:
+   4.0.2.4-P8AE-FP004
+   P8CE-4.0.1-013
+   JDBC Driver: Microsoft SQL Server 2005 JDBC Driver 1.2.2828.203
+   P8PE-4.0.3-003
+   BPF 4.1.0
+   JBoss Version: 4.2.1.GA (build: SVNTag=JBoss_4_2_1_GA
+   date=200707131606).
+   Windows Server 2003 R2 Enterprise Service Pack 2.
+   
+   
+   New Environment:
+   4.0.2.13-P8AE-FP013
+   5.1.0.0-P8CE-IF004
+   JDBC Driver: Microsoft JDBC Driver 4.0 for SQL Server
+   4.0.2206.100
+   5.0.0.4-P8PE-FP004
+   JBoss Version: 4.2.1.GA (build: SVNTag=JBoss_4_2_1_GA
+   date=200707131606).
+   BPF 4.1.0.8-P8BPF-FP008
+   Windows Server 2008 R2 Enterprise Service Pack 1 64-bit
+   operating System.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * BPF web application users                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When open the case assigned to other user, met the error     *
+   * message "This item is no longer in this Inbasket and can not *
+   * be opened. It might have been already processed by somebody  *
+   * else".                                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply the BPF-4.1.0-010 GA FixPack.                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The issue is fixed in BPF-4.1.0-010.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ41209
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PROC FRAMEW
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7500
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-06
+   
+   
+ * CLOSED DATE
+   2014-01-23
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PROC FRAMEW
+   
+   
+ * FIXED COMPONENT ID
+   5724R7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R410 PSY
+   UP

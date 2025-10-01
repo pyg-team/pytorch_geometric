@@ -1,0 +1,184 @@
+Title: IBM IT17824: A CLIENT APPLICATION FAILS TO CONNECT TO A QUEUE MANAGER WITH ERROR AMQ9777(CHANNEL WAS BLOCKED) WHEN CLIENT SIDE EXIT IS USED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A client application fails to connect to a queue manager with
+   error AMQ9777: Channel was blocked.
+   
+   AMQ9777: Channel was blocked
+   The inbound channel 'A.TO.B' was blocked from address 'abc
+   (xxx.xxx.xxx.xxx)' because the active values of the channel
+   matched a record configured with USERSRC(NOACCESS). The active
+   values of the channel were 'CLNTUSER('.
+   
+   This error is reported when there is a usermap rule which maps
+   CLNTUSER 'XYZ' to 'ABC' and when there is a addressmap rule that
+   blocks all the address. Along with the above CHLAUTH rule,  when
+   CONNAUTH and a client-side exit are used, MQ is unable to honor
+   USERMAP rule. The CLNTUSER in this case is a MQCSP user.
+   
+   Along with the above CHLAUTH rule, when CONNAUTH and a
+   client-side exit are used, MQ is unable to honor USERMAP rule.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users who use a client-side exit along with CHLAUTH and CONNAUTH
+   rules.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When an exit is used in the client side (e.g: mqccred exit)
+   along with CHLAUTH and CONNAUTH rules, IBM MQ was unable to
+   assert the client user and hence was failing to honour a USERMAP
+   rule.
+   
+   This resulted in valid user credentials being incorrectly
+   rejected by the queue manager.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  IBM MQ code has been updated such that it is able to assert the
+   right user so that it could honour the USERMAP rule.
+   
+   Fix for APAR IT12825 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT12825] has to be included along with this.
+   
+   To have the queue manager use this new behaviour, set the
+   ChlauthEarlyAdopt attribute under the Channels stanza to 'e' or
+   'E',
+   e.g.
+   
+   Channels:
+      ChlauthEarlyAdopt=e
+   
+   Note that setting ChlauthEarlyAdopt to 'e' or 'E' when security
+   exits are not in use will have the same effect as setting it to
+   'y' or 'Y'.
+   
+   APAR IT18052 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT18052] made further changes to the new ChlauthEarlyAdopt
+   parameter and so it is recommended that users review the details
+   of that APAR in combination with this one.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.7
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT17824
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-11-07
+   
+   
+ * CLOSED DATE
+   2017-04-11
+   
+   
+ * LAST MODIFIED DATE
+   2017-07-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

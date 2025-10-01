@@ -1,0 +1,16 @@
+Title: IBM APAR IZ98659 Duplicate rows in Channel Performance cause false situation alert - United States
+
+Text:
+IZ98659; Messaging V7.0.0 FP03 LA01 FLASH (ALERT)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+ABSTRACT
+ The issue reported by APAR IZ98659 causes erroneous behavior of MQ monitoring agent. It is highly recommended to apply this flash if you use OMEGAMON XE for Messaging 7.0.0 FP3 for distributed platforms. 
+
+CONTENT
+When a receiver, cluster receiver, or server connection channel is started, there will be an invalid "inactive" entry in the "Channel Performance" workspace in addition to the correct entries showing the active channels. If there are situations based on this data (Channel Statistics attribute group), this extra row for "Inactive" status could generate false alerts. 
+
+This problem occurs on distributed platforms only, not z/OS. The official fix is in 7.0.0.3-TIV-XEforMsg-LA0001 which can be downloaded from the following link.
+https://www-304.ibm.com/support/docview.wss?uid=swg24029747 [https://www-304.ibm.com/support/docview.wss?uid=swg24029747]

@@ -1,0 +1,79 @@
+Title: IBM GetByFilter backslash issue - United States
+
+Text:
+netcool; impact; netcool/impact; nci; back; slash; backslash; escape; getbyfilter; getby; get; by; filter TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ GetByFilter() function does not return rows when the variable being used in the Filter contains backslash characters - the created SQL does not automagically escape the characters 
+
+CAUSE
+Successive parsing layers strip backslash (escape) characters to output the actual end character being escaped.
+
+RESOLVING THE PROBLEM
+If there is the chance that a GetByFilter Filter variable value could contain a backslash, one should use the Replace() function to insert the required escape characters (backslashes) to make the SQL work. For example:
+
+
+For an event where the Node is "cro\nus" an example Policy section might read:
+
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+this is then adapted to include the Replace() function: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+and then using this new Filter in the GetByFilter: 
+
+ * 
+
+
+one ends up with: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+One then gets the PolicyLogger SQL output like: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Thus one gets a valid SQL select statement to acquire the target event and that allows one to update it. 
+
+This huge use of backslash characters comes from the need to successively escape the escape characters at each parsing layer and is noted in the Policy Reference Guide specifically for backslash characters: 
+
+_________________________________________ 
+
+To replace a backslash character (\) in a string, you must escape the character twice in the expression, resulting in a string with four backslash characters (\\\\). For example, to replace the substring first\second in a string, you must specify it as first\\\\second. 
+
+_________________________________________

@@ -1,0 +1,184 @@
+Title: IBM IY67005: CUMULATIVE MAINTENANCE #10 (CSD11) FOR WEBSPHERE MQ FOR SOLARIS V5.3 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SERVICE OFFERING #10 (CSD11) FOR WEBSPHERE MQ FOR SOLARIS V5.3
+   provides fixes for the problems described in this APAR.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Service offering #10 (CSD11) includes fixes to the following
+   problems:
+   .
+   SE19814 - MQM400: Diagnostic testfix for providing additional
+             debugs inside XCSWAITEVENTSEM.
+   SE19791 - MQM400-channel pair remains in retrying/binding
+             status after a network change and does not recover.
+   SE19719 - Channel gets disconnected when committing a batch of
+             messages.
+   IY74278 - SIGSEGV FDC with AQHIMAGESIZE in the call stack, at
+             fix pack 10 level.
+   IY73014 - Build up of AMQRMPPA processes.
+   IY72849 - Message corruption getting messages > 4K in Java.
+   IY71943 - Channel agent thread accumulation.
+   IY71335 - Channel remains in stopping status after stop
+             channel MODE(TERMINATE) command has been issued.
+   IY71223 - SIGSEGV XAopen XC130003 extended transactional
+             client.
+   IY71204 - Damaged temporary dynamic queue inadvertently added
+             to pool of reusable queues at startup.
+   IY71004 - MQ logs fill up and the queue manager will not
+             restart after many AO084010 FDCs.
+   IY70415 - Incorrect message may be returned to mqget with
+             MQGMO_WAIT and MQGMO_MSG_UNDER_CURSOR.
+   IY70366 - FDC ZD008040 from ZDMOPENDEFERREDQ when starting
+             queue manager.
+   IY70233 - RCDMQIMG command to re-create a damaged object
+             unresponsive with FFSTs with probeID XC307070.
+   IY69886 - PCF command MQCMD_INQUIRE_Q_STATUS does not return
+             any data if only the default parameters are
+             supplied.
+   IY69885 - Running out of semaphores does not output a useful
+             error message.
+   IY69883 - FFST with probe ID XC130003, COMMENT1 :- SIGSEGV and
+             ATMQUERYACTIVE in MQM function stack.
+   IY69753 - Hang in XIHQUERYTHREADENTRY on Solaris.
+   IY69464 - With pipelining enabled, the channel synchronisation
+             file may not be closed by the second thread - no
+             external symptoms known.
+   IY68875 - WebSphere MQ is not properly re-owning a spinlock
+             from a dead owner. FFST probe ID: XC028018 is
+             generated.
+   IY68798 - The 2nd thread of pipelined channels fails to return
+             messages to XMITQ when channel fails, leaving XMITQ
+             in UNCOM(YES) status.
+   IY68509 - Customer is receiving FDC with XC015001 from
+             XCSFREEQUICKCELL. Fix for APAR IY60472 was supposed
+             to resolve problem.
+   IY68487 - UserIDs between 9 and 12 characters on UNIX WMQ
+             clients are passed to WMQ server as 'UNKNOWN'.
+   IY67891 - MQ cluster repository process fails with probe ID
+             RM220005.
+   IY67232 - Slow MQ channel startup/shutdown due to status table
+             locking.
+   IY67176 - Command server crash with SIGSEGV XC130003 when
+             processing channel PCF commands with no OAM.
+   IY67021 [http://www-01.ibm.com/support/docview.wss?uid=swg1IY67021] - Handle leak in JMS producing application (2017-
+             MQRC_HANDLE_NOT_AVAILABLE).
+   IC47044 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC47044] - SSL authentication with JMS realtime node fails from
+             JMS client when JDK1.4.2 is used at client side with
+             LEGALARGUMENTEXCEPTION.
+   IC46238 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC46238] - Channel terminates on client connected to server at
+             5.3 FP10 or higher with probe RM046002 FDCs -
+             invalid data format.
+   IC46074 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC46074] - Client channel to z/OS never times out after a
+             connection drop.
+   IC45816 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC45816] - FDC files with probe IDs XC130031 and HL081010 but
+             no message when the logpath is set incorrectly.
+   IC45414 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC45414] - AMQZLAA0 uses 100% CPU while loading a queue with
+             persistent and non-persistent messages.
+   IC43749 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC43749] - SHIFT-OUT character truncated when message data ends
+             with DBCS.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Cumulative maintenance #10.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY67005
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ FOR SUN
+   
+   
+ * REPORTED COMPONENT ID
+   5724B4103
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-01-25
+   
+   
+ * CLOSED DATE
+   2005-01-26
+   
+   
+ * LAST MODIFIED DATE
+   2005-08-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IC44500 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC44500]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    U802142
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ FOR SUN
+   
+   
+ * FIXED COMPONENT ID
+   5724B4103
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY
+   UP

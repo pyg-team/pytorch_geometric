@@ -1,0 +1,60 @@
+Title: IBM Non-administrative users cannot launch Sales Center - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Non-administrative users cannot launch sales center after local administrative user has completed the Sales Center installation. 
+
+SYMPTOM
+When local administrative user follows the steps below, Sales Center hangs on the splash screen without any error messages or notification: 
+
+1. Installs the WebSphere Commerce V7.0 Sales Center client on Windows XP or Windows 7. 
+
+2. Log on as a non-administrative user. 
+
+3. Launch Sales Center.
+
+CAUSE
+Windows XP or Windows 7 multi-user permission to write/execute files.
+
+
+
+DIAGNOSING THE PROBLEM
+By looking at the trace-log-X (number of logs).xml files, we can see the following errors:
+
+Caused by: org.eclipse.core.runtime.CoreException: CWPIH0029E: The attempt to perform a file copy specified by the feature com.ibm.esupport.client.product.SSC4TNF.feature install handler failed. The requested operation was file.copy.2=C:\IBM\WebSphere\SalesCenter70\rcp/startcollector.bat C:\IBM\WebSphere\SalesCenter70\rcp/eclipse/plugins/com.ibm.esupport.client.product.SSC4TNF_4.0.0.20090318-1704/payload/startcollector.bat.
+....
+Caused by: java.io.FileNotFoundException: C:\IBM\WebSphere\SalesCenter70\rcp\startcollector.bat (Access is denied.)
+
+The local user does not have necessary permissions on the working directory.
+
+Local users must have "execute" privilege to run the C:\IBM\WebSphere\SalesCenter70\rcp\startCollector.bat. in this case.
+
+The error log shows that the user ( non-administrator ) has insufficient access to the file. So we need to ensure that the user who is launching Sales Center has sufficient access to the working directory. 
+
+
+
+RESOLVING THE PROBLEM
+Follow these steps to fix the problem (Solution A or Solution B):
+
+Solution A
+1. Uninstall Sales Center.
+2. Remove workspace folder (C:\Documents and Settings\Administrator\Application Data\Lotus\XPD).
+3. Remove the Sales Center install directory as well.
+4. Follow the Information Center URL to re-install the sales center by using local admin user: Installing the Sales Center client using Lotus Expeditor Client Management [http://publib.boulder.ibm.com/infocenter/wchelp/v7r0m0/topic/com.ibm.commerce.telesales.admin.doc/tasks/ttr_xcminstall.htm]. 
+
+5. Launch the sales center with a non-admin local user.
+
+
+
+If Solution A does not work, then try Solution B below: 
+
+
+Solution B
+1. Open C:/Documents and Settings/<user-logon id>/Application Data/Lotus/XPD/.configrcpinstall.properties.
+2. Modify the property install.configuration from user to multiuser. For example: install.configuration=multiuser.
+3. Clear the workspace generated during installation (C:\Documents and Settings\Administrator\Application Data\Lotus\XPD).
+4. Launch sales center with non-admin local user.
+
+For more information: Multi-user configuration [http://publib.boulder.ibm.com/infocenter/ledoc/v6r2/index.jsp?topic=/com.ibm.rcp.tools.doc.admin/cutlassintromultiuser.html]

@@ -1,0 +1,44 @@
+Title: IBM Hints and tips for installing IBM Tape Manager for z/VM - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Are there any hints or tips for installing IBM Tape Manager for z/VM? 
+
+ANSWER
+Following are some hints and tips for installing IBM Tape Manager for z/VM for the first time on a z/VM system: 
+
+ 1.  If you are also installing Operations Manager for z/VM, IBM recommends you install that product first. It will make it easier to look at service machine consoles when you are ready to start and test Tape Manager. I.e.you can use XAUTOLOG and then view the console from MAINT or MAINT640. See these hints and tips for installing Operations Manager for z/VM [http://www.ibm.com/support/docview.wss?uid=swg21997589].
+     
+ 2.  Before you install Tape Manager, you must install the REXX Library or Alternate Library if you haven't already done it. See these hints and tips for installing a REXX Library. [http://www.ibm.com/support/docview.wss?uid=swg21997587]
+     
+ 3.  If you are using an Automated Tape Library or Virtual Tape Server, install and configure any prerequisite software:  *  IBM tape libraries and virtual tape servers require DFSMSRMS for z/VM (a free but separately installed component of z/VM.) IBM recommends you test the RMS command to successfully mount a tape before proceeding with the Tape Manager installation:
+        DFSMSRM MOUNT VOL xxxxxx Oracle STK tape libraries require software from Oracle. Refer to the Tape Manager Administration Guide for more details. EMC and Luminex Virtual Tape Libraries do not require any additional software on z/VM. Tape Manager interacts with them as manual mount devices. The VTL is designed to automatically mount volumes when manual mount display messages are in a specific format.
+        
+     
+     
+ 4.  Make sure you have Tape Manager for z/VM V1.3 plus all recent PTFs. The PSP for Tape Manager [http://www.ibm.com/support/docview.wss?uid=isg1_TAPEZVM130_TAPE130] lists the PTFs. You will install the PTFs as part of step 8 below.
+     
+ 5.  If you are installing Tape Manager on more than one z/VM system, see these FAQs about sharing a tape catalog [http://www.ibm.com/support/search.wss?q=SSI&tc=SSMR3B] and running Tape Manager in an SSI or non-SSI environment.
+     
+ 6.  Installing Tape Manager is straightforward if you know how to create user IDs, define minidisks, format minidisks, etc. Follow the instructions in the Program Directory, which you can find on the Resources tab of the Tape Manager web site [http://www.ibm.com/software/products/en/tape-manager-for-zvm]. If you are using IBM Operations Manager for z/VM, IBM recommends updating the CONSOLE statement in the directory entry for each service machine to reflect a secondary user. For example:
+     CONSOLE 0009 3215 T OPMGRM1 
+     
+ 7.  In the Program Directory, the instructions start in Chapter 6. If this is a new install of Tape Manager, skip topics 6.2 and 6.9.1.. In topic 6.8.1, IBM highly recommends you put the Tape Manager user code on the Y-disk (MAINT 19E) and the helps on MAINT 19D. 
+     
+ 8.  The instructions will also take you to Chapter 7 to install the PTFs. Install any UKnnnnn PTFs first, then the UInnnnn PTFs - installing in lowest to highest number order (oldest to newest). That way you won't run into any pre-req issues between the PTFs.
+     
+ 9.  Once you complete the steps in the Program Directory, go to the Administration Guide, also on the Tape Manager web site [http://www.ibm.com/software/products/en/tape-manager-for-zvm].
+     
+ 10. In the Administration Guide, start with Chapter 2 and follow the steps. Note the following:  * Most customers can skip "Tailor the Command Management Machine" - this is for advanced installations that need to implement exit processing on Tape Manager commands. 
+      * If you don't plan to integrate Tape Manager with RMM on z/OS, you can skip  * "Tailor the RMM Machine (RMM mode only)". 
+         * "Install the Tape Manager z/OS Agent (RMM mode only)"
+           
+        
+        
+     
+     
+ 11. Continue with Chapter 3 in the Administration Guide, creating the configuration file. Be sure to use the correct sample files based on the type of catalog you are using (Shared, Dedicated, etc.)
+     
+ 12. After you've created a configuration file, continue with Chapter 4 to bring up all the service machines and do an installation verification test. Remember, you can use the VIEWCON function in Operations Manager to look at the consoles of the Tape Manager service machines.

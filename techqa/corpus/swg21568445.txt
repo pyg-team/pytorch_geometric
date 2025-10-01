@@ -1,0 +1,34 @@
+Title: IBM Mttrapd probe: Invalid EngineID argument - United States
+
+Text:
+SNMP probe; SNMP v3; invalid engineid; netcool; probe; omnibus; mttrapd TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After configuring the Mttrapd probe to accept SNMP v3 traps by adding the createUser command to the mttrapd.conf file, receive an error that the engine id is invalid. 
+
+SYMPTOM
+This error message in the mttrapd log file 
+
+2011-09-28T14:34:57: Error: E-UNK-000-000: SNMP Message (priority=3): 
+
+/opt/netcool/omnibus/var/mttrapd.conf: line 30: Error: invalid EngineID argument to -e 
+
+ 
+
+2011-09-28T14:34:57: Error: E-UNK-000-000: SNMP Message (priority=3): 
+
+net-snmp: 1 error(s) in config file(s) 
+
+
+CAUSE
+The Engine ID specified must conform with RFC
+
+
+RESOLVING THE PROBLEM
+RFC 2571 defines the format for SNMP Engine IDs 
+
+(http://www.ietf.org/rfc/rfc2571.txt [http://www.ietf.org/rfc/rfc2571.txt]) 
+
+ 
+
+When the engine ID starts with 0, the Engine ID should have a length of 12 octets.

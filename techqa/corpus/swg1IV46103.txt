@@ -1,0 +1,206 @@
+Title: IBM IV46103: JOBMAN IS NOT ABLE TO FIND THE LJUSER DEFINITION IN R3BATCH.OPTS - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.5.1-TIV-TDWC-WINDOWS-X86-64-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-WINDOWS-X86-64-FP0006&source=SAR]
+8.5.1-TIV-TDWC-WINDOWS-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-WINDOWS-FP0006&source=SAR]
+8.5.1-TIV-TDWC-LINUXS390-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-LINUXS390-FP0006&source=SAR]
+8.5.1-TIV-TDWC-LINUX-I386-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-LINUX-I386-FP0006&source=SAR]
+8.5.1-TIV-TDWC-LINUX-X86-64-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-LINUX-X86-64-FP0006&source=SAR]
+8.5.1-TIV-TDWC-LINUXPPC-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-LINUXPPC-FP0006&source=SAR]
+8.5.1-TIV-TDWC-SOLARIS-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-SOLARIS-FP0006&source=SAR]
+8.5.1-TIV-TDWC-AIX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-AIX-FP0006&source=SAR]
+8.5.1-TIV-TDWC-SOLARIS-I386-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-SOLARIS-I386-FP0006&source=SAR]
+8.5.1-TIV-TDWC-HPUX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-HPUX-FP0006&source=SAR]
+8.5.1-TIV-TDWC-HPUXIA64-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-HPUXIA64-FP0006&source=SAR]
+8.5.1-TIV-TWS-AIX-FP0006.TAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-AIX-FP0006.TAR&source=SAR]
+8.5.1-TIV-TWS-HPIA64-FP0006.TAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-HPIA64-FP0006.TAR&source=SAR]
+8.5.1-TIV-TWS-HPUX-FP0006.TAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-HPUX-FP0006.TAR&source=SAR]
+8.5.1-TIV-TWS-LINUX_I386-FP0006.TAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-LINUX_I386-FP0006.TAR&source=SAR]
+8.5.1-TIV-TWS-LINUX_PPC-FP0006.TAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-LINUX_PPC-FP0006.TAR&source=SAR]
+8.5.1-TIV-TWS-LINUX_S390-FP0006.TAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-LINUX_S390-FP0006.TAR&source=SAR]
+8.5.1-TIV-TWS-LINUX_X86_64-FP0006.TAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-LINUX_X86_64-FP0006.TAR&source=SAR]
+8.5.1-TIV-TWS-SOLARIS_I386-FP0006.TAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-SOLARIS_I386-FP0006.TAR&source=SAR]
+8.5.1-TIV-TWS-SOLARIS-FP0006.TAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-SOLARIS-FP0006.TAR&source=SAR]
+8.5.1-TIV-TWS-WIN_X86_64-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-WIN_X86_64-FP0006&source=SAR]
+8.5.1-TIV-TWS-WIN-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-WIN-FP0006&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  JOBMAN process, on the MDM or the FTA where the job runs,
+   according to job definition, is not able to
+   find the LJuser definition in r3batch.opts file. Since the
+   LJuser is not found the job is launched by the streamlogon user.
+   If the streamlogon user does not belong to TWS user group, he
+   has problems to run r3batch process.
+   
+   As a result, as an example, a job successfully run on SAP is
+   flagged as abended  on TWS, with RC=139, and the following
+   joblog:
+   
+   +++ EEWO1048I Retrieving the joblog of a job::
+   SAP_CHECK_ACTIVE_JOBS
+          , 16365100
+   07/11/2013 16:37:01 00                   516Job lancç351
+   
+   07/11/2013 16:37:01 00                   550Etape 001 lancç351e
+   (programme BTCAUX07, variante CUS&001, utilisateur AN_ADM)
+   
+   07/11/2013 16:37:01 BT                   353Le statut des jobs
+   actifs
+   est cohç351rent.
+   
+   07/11/2013 16:37:01 00                   517Job terminç351
+   
+   
+   +++ EEWO1049I The program has reached the end of the joblog of a
+   job::
+   SAP_CHECK_ACTIVE_JOBS           , 16365100
+   +++ EEWO1012I BDC sessions are complete at: 07/11-16:37 : 0
+   +++ EEWO1017I The job completed normally at the following date
+   and time:
+   07/11-16:37
+   ===============================================================
+   = Exit Status           : 139
+   = System Time (Seconds) : 0     Elapsed Time (Minutes) : 0
+   = User Time (Seconds)   : 0
+   = Thu 07/11/13 16:37:32 MEST
+   /////////////////////////////////
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Add the LJuser to the tws group
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The problem is that JOBMAN process, on the MDM or the FTA,
+   according
+   to job definition (where it runs), is not able to find the
+   LJuser
+   definition in r3batch.opts file. Since the LJuser is not found
+   the
+   job is launched by the streamlogon user. If he doesn't belong to
+   TWS user group it can happen that if the job fails, r3batch
+   process could have an abnormal end.
+   This because in TWS for Apps 8.6 additional checks have been
+   implemented and
+   these checks fail if the user that is running r3batch is not the
+   correct
+   one.
+   JOBMAN needs to be fixed in order to find LJuser definition in
+   r3batch.opts file.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This apar will be fixed   9.1-TIV-TWS-FP0001,
+   8.6.0-TIV-TWS-FP0003,
+   8.5.1-TIV-TWS-FP0006 and 8.5.0-TIV-TWS-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  The workaround is to use tws user as streamlogon of the
+   r3batch job or use a streamlogon belonging to the same tws
+   user group.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV46103
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV WKLD SCHDL
+   
+   
+ * REPORTED COMPONENT ID
+   5698WKB85
+   
+   
+ * REPORTED RELEASE
+   8S5
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-07-25
+   
+   
+ * CLOSED DATE
+   2013-08-26
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV WKLD SCHDL
+   
+   
+ * FIXED COMPONENT ID
+   5698WKB85
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R8S5 PSY
+   UP

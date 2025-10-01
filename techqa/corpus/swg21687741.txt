@@ -1,0 +1,130 @@
+Title: IBM WMB/IIB MustGather: Problems with Global Cache (on Windows) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are developing an application solution with WebSphere Message Broker (WMB) or IBM Integration Bus (IIB) and are having problems with the Global Cache feature. 
+
+This MustGather document explains how to troubleshoot this problem by yourself, how to generate diagnostic data when the problem is happening, how to collect the available data from your system, and how to share that data with IBM support.
+
+
+ENVIRONMENT
+These instructions are for WebSphere Message Broker or IBM Integration Bus on Windows systems.
+Return to the WMB / IIB MustGather index [http://www-01.ibm.com/support/docview.wss?uid=swg21209857] for other systems.
+
+RESOLVING THE PROBLEM
+
+
+
+STEP 1: SELF-GUIDED TROUBLESHOOTING
+
+ 1. Understand the problem that is occurring.  * Consider using the Test Client in trace and debug mode [http://www.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/com.ibm.etools.mft.doc/af52260_.htm].
+     * A user level trace [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321#1] is intended to assist users with understanding how their ESQL is processed.
+       It will also show a high level view of the message flow behavior.
+     * The product documentation contains several suggestions for Monitoring the Global Cache [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bn23786_.htm].
+    
+    
+ 2. 
+ 3. Locate the errors.  * Global Cache interactions are logged in the Global Cache Activity Log [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bj23784_.htm].
+     * Informational messages and unhandled exceptions are written to the Windows Application Event Log.
+       This will also contain a number of BIP71** messages relating to startup/connection of cache components, and whether any of them have failed.
+       
+     * Some messages may be written to the 'console.out [http://www.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/com.ibm.etools.mft.doc/au14165_.htm]' file, located under the Broker's (Integration Node's) workpath.
+    
+    
+ 4. 
+ 5. Check for known issues and solutions.  * General information regarding the Global Cache [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bc23789_.htm] is available in the product documentation, as well as instructions on how to configure the cache [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bn23780_.htm] via the provided tooling.
+     * Review how to access the Global Cache from a JavaCompute node [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bc23770_.htm].
+     * The IIB development and support teams regularly update the IIB DeveloperWorks Blog with Global Cache solutions [https://developer.ibm.com/integration/blog/].
+     * Your problem may have been discussed on the IIB dWAnswers forum [https://developer.ibm.com/answers/?community=iib].
+     * 
+     * 
+     * WebSphere Message Broker support site
+    
+    
+
+
+
+STEP 2: COLLECT DATA
+
+ 1.  mqsidc
+     See: mqsidc usage instructions [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/bu46012_.htm]
+      * When running the tool, select the option for 'Broker Collector', when prompted.
+     
+     
+ 2.  
+ 3.  
+ 4.  Global Cache details
+     Export a current view of your Global Cache with these commands.
+     See: mqsicacheadmin command [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bn23783_.htm]  * mqsicacheadmin <broker> -c listHosts
+      * mqsicacheadmin <broker> -c showMapSizes
+      * mqsicacheadmin <broker> -c showPlacement
+      * mqsireportproperties <broker> -b cachemanager -o CacheManager -r
+      * mqsireportproperties <broker> -e <EG> -o ComIbmCacheManager -r
+     
+     
+ 5.  
+ 6.  
+ 7.  Traces
+     If the problem occurs during a runtime test or with the Toolkit test facility,
+     an Execution Group service level trace [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321#2] can be used to gain a better understanding of the problem.
+     
+     Note: For issues with Global Cache, broker service trace contains WXS trace. However, you may sometimes be advised to set a specific WXS trace string. Moreover, for startup issues, a WXS trace string must be specified, as well as enabling service trace.  * For startup issues, run this command prior to tracing:
+        mqsichangeproperties <broker> -e <EG> -o ComIbmCacheManager -n overrideTraceSpec -v ObjectGrid*=fine=enabled
+      * To capture all information (very verbose), run this command prior to tracing:
+        mqsichangeproperties <broker> -e <EG> -o ComIbmCacheManager -n overrideTraceSpec -v ObjectGrid*=all=enabled
+     
+     
+ 8.  
+ 9.  
+ 10. Project Interchange files for the problematic message flow
+      * You can export your Message Flow and Java project(s) into an archive file for easy transmission to IBM Support.
+        See: Exporting your message flow projects from the Toolkit [http://www-01.ibm.com/support/docview.wss?uid=swg21418121] 
+     
+     
+ 11. 
+ 12. 
+ 13. General Broker information
+     If the mqsidc tool was not run, then capture this information manually.  * Record the IBM Integration Bus version, release, and maintenance level.
+        This can be captured using the command 'mqsiservice -v'..
+      * Record the operating system version, release, and maintenance level.
+      * Record the version, release, and maintenance level of any related products and components for the problematic application.
+      * Collect the local error log.
+        On Window systems, the local error log is the Windows Application Event Log.
+        You can find the Event Viewer from the Windows Control Panel.
+        See: Event viewer logs [http://www.ibm.com/support/docview.wss?rs=849&uid=swg21295454]
+      * Collect the Standard Output/Error logs.
+        On Window systems, IIB writes information to a 'console.out' file.
+        This file is located under the Integration Node workpath.
+        See: Standard System Logs [http://www.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/com.ibm.etools.mft.doc/au14165_.htm]
+     
+     
+
+
+
+ATTENTION: A good problem description is one of the most important tools IBM needs to analyze your data!
+When sending data to IBM, be sure to update your PMR or send a note with the following information:
+
+ *  Tell us what errors you saw, where you saw them, and what time they happened Let us know if you made any changes to WebSphere Message Broker or the system before the problem Share any other observations which you think will help us to better understand the problem 
+
+
+
+STEP 3: SUBMIT DATA TO IBM
+
+ * Use IBM Service Request [http://www.ibm.com/support/servicerequest/] to open or view a problem record with IBM.
+ * Send your data to IBM [http://www.ibm.com/support/docview.wss?uid=swg21392217] for further analysis.
+
+
+
+
+Please see the IBM Software Support Handbook [http://www14.software.ibm.com/webapp/set2/sas/f/handbook/home.html] for more information on working with IBM support.
+
+
+
+Back to top
+
+
+
+PRODUCT ALIAS/SYNONYM
+ IIB WMB WXS GC

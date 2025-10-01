@@ -1,0 +1,242 @@
+Title: IBM IZ38407: CHART CUSTOMIZATIONS LOST WHEN AGENT ONLINE BUT NON RESPONSIVE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Severity: 2
+   Approver: EA
+   Compid:   5724C04EP Tivoli Enterprise Portal
+   Abstract: Chart customizations lost when agent online but non
+   responsive
+   
+   Environment:
+   TEMS/TEPS: AIX 5.3 TL7 - ITM 6.2 FP01
+   TEP: Windows 2003 - ITM 6.2 FP01 with the Provisional Fix
+   6.2.0.1-TIV-ITM-IF0001-d8202a-IZ31827 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ31827]-IZ31919 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ31919]-IZ32529 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ32529].
+                       (using Java Web Start)
+   Agent: OMEGAMON XE on zOS 4.1
+   
+   Problem Description:
+   The customer creates plot chart views to show two zOS agents
+   (HH21 and HH22) data simultaneously.  One plot chart is "Average
+   CPU Percent" and the other is "Total Memory Allocated (KB)."
+   They customize the graph color and the legend text, however the
+   chart customizations lost whey they performed their system test
+   scenario below.
+   
+   [1] Start only HH21, but stop HH22 agent.  Plot graph of HH21 is
+       correctly shown in green with 'REAL21' (in Japanese) legend
+       label.
+   [2] Stop HH21, and notice that Plot Chart goes blank with the
+       error KFWITM454E.
+   [3] Start HH22 agent at 20:20.
+   
+   After a period of time (about three minutes later), the plot
+   graph of HH22 is shown in incorrect color yellow, and incorrect
+   text "MONOPLEX:HH22:MVSSYS;\Average CPU Percent" or
+   "MONOPLEX:HH22:MVSSYS;\Total Kilobytes Allocated" is added in
+   the Legend box.  Expected graph color is blue, and legend text
+   is "REAL22"(in Japanese).
+   
+   L3 analysis:
+   The problem appears to be that the request for plot data times
+   out when the agent is online but too busy to respond and this
+   causes an empty result set to be returned to the TEP.  This
+   appears to reset the legend information maintained by the
+   adapter.
+   
+   Detailed Recreation Procedure:
+   This problem can be recreated on the internal system.  The
+   recreation steps are identified as below:
+   
+   [1] Change the WLM service class of OMEGAMON RTEMS/Agent to LOW.
+   [2] Prepare JOB which invokes the program which has infinite
+       LOOP for consuming high CPU.
+   [3] Start OMEGAMON RTEMS/Agent
+   [4] Confirm zOS RTEMS/Agent connects to TEMS.
+   [5] Start 4 JOBs in parallel to consume high CPU.
+   
+   [6] Login to TEPS
+   [7] Switch to the 'Average CPU Percent' view
+   [8] Notice that TEP doesn't draw the plot graph, and is waiting
+       for receive the data from the agent
+   [9] Wait for two minutes, and then stop high CPU JOBs
+   [10] Notice that TEP draws the plot chart incorrectly with the
+        default color (yellow) and the default legend text
+        ('INSTANCE1\Average CPU Percent').
+   [11] Switch to another workspace, and then switch back.
+   [12] Notice that TEP draws the plot chart with correct color
+        (blue) and
+   
+   Related Files and Output:
+   The following log files are put into
+   86817.6X2.760.20081121a.zip, it is stored in
+   /ecure/pmr/8/6/86817,6X2,760 in ecurep.
+   - ipa035_cq_492758a4-01.log.JST : TEPS RAS1 with ERROR
+     (UNIT:ctsql IN ER) (UNIT:ctdata IN ER) (UNIT:ctcmw IN ER)
+     (UNIT:kv4 IN ER)
+   - ipa035_ms_1227313241.log : TEMS operation log
+   - ipa035_ms_49275059-01.log.JST : TEMS RAS1 with ERROR (UNIT:kpx
+     ERROR STATE) (UNIT:kdsruc1 ERROR STATE)
+   - javaws50210.trace : TEP RAS1 with ERROR
+     (UNIT:JCChartMdlAbstractRow Detail) (UNIT:DataBus ALL)
+     (UNIT:JCChart ALL) (UNIT:JCLine ALL) (UNIT:Style Detail)
+   - JRCRTEMS.txt : zOS RTEMS/Agent Job Log
+   - TEMS_TEPS_all_logs : All log files of TEMS and TEPS under
+     $CANDLEHOME/logs
+   - TEP_screen_images : TEP Screen Captures
+   
+   Operation Timestamp:
+   16:36 Start zOS
+   16:39 Log in to TEPS
+   16:41 Notice that TEP doesn't show the plot graph, and is
+         waiting for receive the data from the agent (image
+         WS09.jpg)
+   16:43 Stop high CPU JOBs (image WS12.jpg)
+   16:43 Switch to another workspace, and then switch back. (image
+         WA15.jpg)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The legend customizations for chart views are lost if the agents
+   are online but fail to return any data rows.
+   
+   The legends for a chart view are customized while it is charting
+   data from two agents.  Later, the agents fail to return any data
+   rows even though they remain online.  Later still, the agents
+   begin returning data again.  The legends are reset to their
+   default state and the customizations are lost.  This is most
+   noticeable with Plot Charts of realtime data but it may affect
+   other chart views as well.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The logic was changed to preserve legend customizations when
+   agents are online but return no data rows.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+      | interim fix | 6.2.0.2-TIV-ITM-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  In some cases it may be possible to change the environment to
+   ensure that data rows are always returned.  For example, if the
+   monitored systems are so busy that the agent does not get enough
+   resources to respond with data, it may be possible to
+   redistribute the load or adjust priorities to ensure adequate
+   agent resources.  If filters are being used to restrict the rows
+   being returned, it may be possible for them to sometimes exclude
+   all rows.  If this is the case, consider adjusting the filter
+   specifications to ensure at least one row is always returned.
+   Lastly, if the legend customizations are lost, do not save the
+   workspace.  This will preserve the stored customizations and
+   they will be restored if the workspace is closed and reopened.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ38407
+   
+   
+ * REPORTED COMPONENT NAME
+   TEP
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04EP
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-11-22
+   
+   
+ * CLOSED DATE
+   2009-02-17
+   
+   
+ * LAST MODIFIED DATE
+   2009-02-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEP
+   
+   
+ * FIXED COMPONENT ID
+   5724C04EP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

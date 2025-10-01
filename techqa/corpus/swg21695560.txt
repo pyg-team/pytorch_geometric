@@ -1,0 +1,227 @@
+Title: IBM Sending Null or Nil or Empty Strings or Omitted Fields in XML from Rational Integration Tester - United States
+
+Text:
+Null; Nil; Empty String; Omitted Field TECHNOTE (FAQ)
+
+QUESTION
+ What are the options for sending Null, Nil, Empty Strings or Omitted Fields when using tag values to generate XML in IBM Rational Integration Tester (RIT)? 
+
+ANSWER
+The three possibilities
+
+Imagine that we have a set of guest names which we read or receive and must then send as XML to our system under test. For each name there is a first name, middle name and last name. In the general case we send the name in the XML in this structure:
+
+
+ * 
+   <guest>
+   <firstname>James</firstname>
+   <middlename>Toby</middlename>
+   <lastname>Smith</lastname>
+   </guest>
+   
+
+
+To achieve this we place the received name parts into three RIT tags %%firstname%% , %%middlename%% and %%lastname%% and then create our message action to send: 
+ * 
+   <guest>
+   <firstname>%%firstname%%</firstname>
+   <middlename>%%middlename%%</middlename>
+   <lastname>%%lastname%%</lastname>
+   </guest>
+   
+
+
+However if a given guest who has no middlename then the system under test could reasonably demand any of these formats: 
+
+1. Sending a null or nil value (which are the same thing in XML). 
+ * 
+   <guest>
+   <firstname>Ralph</firstname>
+   <middlename xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"></middlename>
+   <lastname>Cook</lastname>
+   </guest>
+   
+
+
+(Which is the XML syntax for including a nil value.) 
+
+2. Sending an empty string. 
+ * 
+   <guest>
+   <firstname>Ralph</firstname>
+   <middlename></middlename>
+   <lastname>Cook</lastname>
+   </guest>
+   
+
+
+
+3. Omitting the node with no contents. 
+ * 
+   <guest>
+   <firstname>Ralph</firstname>
+   <lastname>Cook</lastname>
+   </guest>
+   
+
+
+
+The following three sections explain how each of these objectives may be met. 
+
+For solutions which avoid sending an unnecessary closing tag see "The normalised versions" below. 
+
+How to send a null or nil 
+
+Ensure that the tag (e.g. %%middlename%%) contains the value null. 
+
+In your message action (e.g. Publish) right click the "text (String) {XML}" node and select "Properties". 
+
+[/support/docview.wss?uid=swg21695560&aid=1] [/support/docview.wss?uid=swg21695560&aid=1] 
+
+Set the check box "Send NULL values". 
+
+[/support/docview.wss?uid=swg21695560&amp;aid=2] 
+
+Your message action should now send an XML nil as the node value. 
+
+How to send an empty string 
+
+Ensure that the tag (e.g. %%middlename%%) contains an empty string. 
+
+In your message action (e.g. Publish) right click the "text (String) {XML}" node and select "Properties". 
+
+Clear the check box "Send NULL values". 
+
+[/support/docview.wss?uid=swg21695560&amp;aid=3] 
+
+Your message action should now include an empty string as the node value. 
+
+How to omit the node when sending 
+
+Ensure that the tag (e.g. %%middlename%%) contains the value null. There are a number of ways to set a tag to null 
+ *  Setting a tag to null in the Tag Store using the default value:
+   [/support/docview.wss?uid=swg21695560&amp;aid=4]
+   Setting a tag to null in a Function Action using ECMAScript:
+   tags["middlename"] = null
+   Setting a tag to null in a Function Action using the Legacy Language:
+   setTag( middlename , null() )
+   Retrieving a null value from a data set, which is explained in "Considerations when using a RIT data source" below.
+   Retrieving a null value from an SQL query, see "Considerations when using a database query" below. 
+
+
+In your message action (e.g. Publish) right click the "text (String) {XML}" node and select "Properties". 
+
+Clear the check box "Send NULL values". 
+
+[/support/docview.wss?uid=swg21695560&amp;aid=5] 
+
+Your message action should now omit the node when sending. 
+
+The normalised versions 
+
+The normalised form of the null or nil value is: 
+ * 
+   <guest>
+   <firstname>Ralph</firstname>
+   <middlename xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+   <lastname>Cook</lastname>
+   </guest>
+   
+
+
+The normalised version of the empty strings is: 
+ * 
+   <guest>
+   <firstname>Ralph</firstname>
+   <middlename/>
+   <lastname>Cook</lastname>
+   </guest>
+   
+
+
+The normalised version of an omitted node is identical to the standard version. 
+
+To have RIT produce the normalised versions of the XML right click the "text (String) {XML}" node, select "Properties" and then check the box "Normalise the document". 
+
+Considerations when using a RIT data source 
+
+When iterating a RIT data source the fields from each row are gathered into tags as described above. 
+
+Look at the above simple description for the sending option you have chosen to determine whether your blank values need to be read in as empty strings or as nulls. Then set the options on the data source accordingly so that nulls or empty strings are read in as required. 
+
+[/support/docview.wss?uid=swg21695560&aid=6] [/support/docview.wss?uid=swg21695560&aid=6] 
+
+The above image shows the settings to use where all empty strings in the data source are to be read in as null. 
+
+The above options are available for Excel and File data sources. For Database and Directory data sources you may need to use a function action at the start of each to manipulate the relevant value. e.g. 
+ * 
+   if (middlename == null) middlename = ''
+   
+
+or  * 
+   if (middlename == '') middlename = null
+   
+
+
+For a database data source based on a query it is often preferable to do the transformation in the SQL. However not all database systems distinguish between an empty string and a null so sometimes the function action is required even when an SQL query is used. 
+
+Considerations when using a database query 
+
+When retrieving values from a database with an SQL Query Action such as: 
+ * 
+   select firstname, middlename, lastname from guestlist
+   
+
+
+Which returns  *  firstname middlename lastname "James" "Toby" "Smith" "Ralph" null "Cook" "Sandra" "Louise" "Jenkins" 
+
+Then each column should be gathered into a list tag: 
+
+[/support/docview.wss?uid=swg21695560&aid=7] [/support/docview.wss?uid=swg21695560&aid=7] 
+
+Note that all the rows have been removed from the expected results, and that we have disabled cell assertions and column assertions so that we are only validating the column types. For column we store the value to a tag and have checked "append to list of values". This will mean that after the SQL Query action we will have a set of list tags each of the same length, representing the series of rows returned by the query. 
+
+At this point we may need to use a Function Action to manipulate nulls into empty strings or vice versa. e.g. 
+ * 
+   function removeNulls(list) {
+   for (var i=0; i<list.size(); i++) {
+   if (list.get(i) == null) {
+   list.set(i,'')
+   }
+   }
+   }
+   removeNulls(tags["firstname"])
+   removeNulls(tags["middlename"])
+   removeNulls(tags["lastname"])
+   
+ * 
+ * 
+ * 
+ *  Tip: The Oracle database considers an empty string and a null to be identical so queries run against Oracle will always return null where a field was populated with an empty string. 
+
+
+It is then possible to iterate over the first list tag. 
+ * 
+
+
+This will iteration will execute once for each item in the list. However because we wish to access matching elements from multiple lists, and since these lists are zero based, we should create a tag which can be used to access the iterated item. For example this Function Action sets row as the index value. 
+ * 
+   row = "" + (Number(tags["TEST/ITERATION/NUMBER"])-1)
+   
+
+
+So we can access the list elements as: 
+ * 
+   %%firstname[row]%%
+   %%middlename[row]%%
+   %%lastname[row]%%
+   
+
+
+And can now publish our guest XML: 
+ * 
+   <guest>
+   <firstname>%%firstname[row]%%</firstname>
+   <middlename>%%middlename[row]%%</middlename>
+   <lastname>%%lastname[row]%%</lastname>
+   </guest>

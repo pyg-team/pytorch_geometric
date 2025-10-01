@@ -1,0 +1,36 @@
+Title: IBM How to extract a Private Key from the Key database using the IBM iKeyman?. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to extract a Private Key from the Key database using the IBM iKeyman? 
+
+ANSWER
+To extract the private key using IBM iKeyman ( select the pkcs12 format ) and then import it into the server you will be working with.
+
+The following procedure has been verified to work. 
+
+1. Start the IBM iKeyman GUI. 
+Go to Start menu and open All Programs >> IBM Sterling Connect Direct v4.7.0 >> IBM Key Manager 
+2. From the Key Database File menu, click Open. The Open window displays. 
+3. Click Key database type and select CMS (Certificate Management system). 
+4. Click Browse to navigate to the directory that contains the key database files. 
+5. Select the key database file to which you want to add the certificate, for example cdkeystore.kdb 
+6. Click Open. You will be prompted for the key database password.
+
+7. Enter the password you set when you created the key database and click OK. 
+The name of your key database file displays in the File Name field.
+
+8. In the Key database content field, select Personal Certificates and select the certificate label. 
+9. Click Export/Import (button at right).
+
+10. A window displays to choose whether you want to Export or Import the key - select Export Key. 
+11. Complete the following: 
+a. Select the Key file type as PKCS12. 
+b. Select a file name - the default extension is .p12. 
+c. Select a location where you want to save the key, or click Browse to select the name and location. 
+12. Click OK. At the Password Prompt, enter the Password for this key and confirm the password. 
+You must remember this password. It will be used again when you import the this key.
+
+13. Click OK. The private key is then written to the file specified.

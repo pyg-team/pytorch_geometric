@@ -1,0 +1,106 @@
+Title: IBM The import task failed with "The datasource is not available" error in the import (ETL) log. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The import task failed with "The datasource is not available" error in the import (ETL) log. 
+
+CAUSE
+After dropping the existing SUADB database and recreated a new database called "TEMADB", the import task failed with such errors below in ETL log.
+com.ibm.license.mgmt.etl.core.actions.AbstractEtlAction::process()::Starting execution of step: MergeComputersAction
+2015-09-27 21:43:05 (+0:00:00.000) ERROR: (ImportThread) com.ibm.license.mgmt.dao.util.DBDefaultPoolerManager::getConnection:The datasource is not available
+2015-09-27 21:43:05 (+0:00:00.003) ERROR: (ImportThread) execute failed com.ibm.license.mgmt.util.exceptions.TransactionException
+.
+.
+.
+
+2015-09-27 21:43:06 (+0:00:00.003) DEBUG: Launching LMT ETL returned response code: 200
+2015-09-27 21:43:06 (+0:00:00.000) INFO: ETL from UpdateComputerSystems: Success
+.
+.
+.
+2015-09-27 21:43:07 (+0:00:00.002) INFO: Calling Model.after_snapshot: Start
+2015-09-27 21:43:10 (+0:00:02.103) INFO: Calling Model.after_snapshot: Success
+2015-09-27 21:43:10 (+0:00:00.001) INFO: Calling SAM::Catalog.after_snapshot: Start
+2015-09-27 21:43:14 (+0:00:03.960) INFO: Calling SAM::Catalog.after_snapshot: Success
+2015-09-27 21:43:17 (+0:00:03.067) INFO: Import succeeded in 0:21:51
+2015-09-27 21:43:17 (+0:00:00.000) INFO: Import contains 67 errors.
+
+
+More interesting the SW scan results are imported and showing no sign of error in the Home page. The Computers report is showing computers and their discovered software. 
+
+[/support/docview.wss?uid=swg21968183&amp;aid=1]
+
+However, no HW scan results are imported and the Hardware Inventory report is showing BLANK. There is a No Data stamped under the IBM Capacity Data Completeness section. See below.
+
+
+
+[/support/docview.wss?uid=swg21968183&amp;aid=2]
+
+
+The tema.log in DEBUG mode showed the following errors as well and noticed it was referencing to SUADB database name instead of TEMADB:
+
+
+
+O 2015-09-28 18:47:29 LMT [DEBUG] (Default Executor-thread-43) com.ibm.license.mgmt.dao.util.DatabaseJndiLookup::getService::Datasource found com.ibm.ws.rsadapter.jdbc.WSJdbcDataSource
+[9/28/15 18:47:29:846 UTC] 00000075 com.ibm.ws.logging.internal.impl.IncidentImpl I FFDC1015I: An FFDC Incident has been created: "com.ibm.db2.jcc.am.DisconnectNonTransientConnectionException: [jcc][t4][2057][11264][3.64.104] The application server rejected establishment of the connection.
+An attempt was made to access a database, SUADB, which was either not found or does not support transactions. ERRORCODE=-4499, SQLSTATE=08004 com.ibm.ws.rsadapter.spi.InternalGenericDataStoreHelper.getPooledCon 1298" at ffdc_15.09.28_18.47.29.0.log
+[9/28/15 18:47:29:987 UTC] 00000075 com.ibm.ws.logging.internal.impl.IncidentImpl I FFDC1015I: An FFDC Incident has been created: "com.ibm.ws.rsadapter.exceptions.DataStoreAdapterException: DSRA8100E: Unable to get a PooledConnection from the DataSource. com.ibm.ejs.j2c.poolmanager.FreePool.createManagedConnectionWithMCWrapper 199" at ffdc_15.09.28_18.47.29.1.log
+[9/28/15 18:47:30:007 UTC] 00000075 com.ibm.ws.logging.internal.impl.IncidentImpl I FFDC1015I: An FFDC Incident has been created: "javax.resource.spi.ResourceAllocationException: DSRA8100E: Unable to get a PooledConnection from the DataSource. com.ibm.ws.rsadapter.jdbc.WSJdbcDataSource.getConnection 299" at ffdc_15.09.28_18.47.29.2.log
+[9/28/15 18:47:30:008 UTC] 00000075 SystemOut O 2015-09-28 18:47:30 LMT [ERROR] (Default Executor-thread-43) com.ibm.license.mgmt.dao.util.DBDefaultPoolerManager::init:Unable to initialize datasource jdbc/ilmtDatabaseConnection
+
+
+
+ANSWER
+A few items to check: 
+
+ 
+
+1) Ensure the database name defined in /opt/IBM/SUA/wlp/usr/servers/server1/config/database.yml is correct. 
+
+ 
+
+Example: 
+
+
+production:
+host: localhost
+database: temadb
+username: db2inst1
+database_type: db2
+port: '50000'
+encrypted_password: '{xor}O2tvbTNvPDQqLw=='
+
+
+2) Ensure database name defined in /opt/IBM/SUA/wlp/usr/servers/server1/server.xml is also correct and matches what is in the database.yml as shown above.
+
+Example:
+
+<dataSource id="DB2Connection" jndiName="jdbc/ilmtDatabaseConnection">
+<jdbcDriver libraryRef="DB2JCC4Lib"/>
+<properties.db2.jcc databaseName="SUADB" driverType="4" enableExtendedIndicators="2" password="{xor}O2tvbTNvPDQqLw==" portNumber="50000" serverName="localhost" user="db2inst1"/>
+</dataSource>
+
+
+For this exercise, the databaseName setting is still showing the old database name called "SUADB". The tema.log was also referencing this SUADB database as it could not establish the database connection.
+
+
+To fix the issue, update the databaseName setting in the /opt/IBM/SUA/wlp/usr/servers/server1/server.xml to be the same database name "TEMADB". 
+
+Important to make a backup copy of this server.xml file prior making any updates.
+
+
+Example:
+
+
+<dataSource id="DB2Connection" jndiName="jdbc/ilmtDatabaseConnection">
+<jdbcDriver libraryRef="DB2JCC4Lib"/>
+<properties.db2.jcc databaseName="TEMADB" driverType="4" enableExtendedIndicators="2" password="{xor}O2tvbTNvPDQqLw==" portNumber="50000" serverName="localhost" user="db2inst1"/>
+</dataSource>
+
+
+3) Afterward, restart the SUA server service and it should fix the issue.
+
+
+Note: This problem has been seen up to SUA v9.2.0.2 and it could also be used for ILMT up to v9.2.0.2 as well if it is applicable to ILMT.

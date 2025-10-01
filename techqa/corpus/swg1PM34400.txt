@@ -1,0 +1,244 @@
+Title: IBM PM34400: AE PM28625 FIX COMPLETION - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DB2 workloads may experience poor insert performance during
+   INSERTS.  Performance traces could show excessive amount of lock
+   requests per insert. Incorrect hash value used for the lock
+   table, which was already in use for other long duration
+   resources causes rejections of very conditional lock requests
+   from DB2 with reason code IxlRsnCodeNoDelay.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IRLM230(HIR2230), IRLM220 (HIR2220)      *
+   *                 and IRLM210(HIR2210) users datasharing       *
+   *                 SYSPLEXDS.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Poor INSERT performance in DB2. Large   *
+   *                      number of Getpage requests per INSERT.  *
+   *                      Higher XES False contention reported    *
+   *                      by monitoring tools.                    *
+   ****************************************************************
+   * RECOMMENDATION: INSTALL CORRECTIVE SERVICE FOR APAR/PTF      *
+   ****************************************************************
+   DB2 workloads may experience poor INSERT performance as number
+   of Getpage requests could be very high per INSERT. This could
+   happen if the very conditional lock that DB2 is trying to get,
+   has the hash entry that collides with another lock.
+   This is normal, but due to an error in IRLM, a long duration
+   lock could be incorrectly using the same hash class in XES,
+   causing resource contentions and rejection of these very
+   conditional lock requests. By design all the long duration
+   locks are restricted to only one section of the lock table
+   leaving remaining section ( 96%) of the lock table for all
+   other locks. The error in calculation of the hash values for
+   the lock resources could send the long duration locks in the
+   section of other ( short duration) locks. This may also result
+   in high number of False Contentions reported by online
+   monitoring tools.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  GEN:
+   KEYWORDS:
+    SYSPLEXDS
+   
+   *** END IMS KEYWORDS ***
+   This APAR fixes the logic error in IRLM in calculation of hash
+   values for lock resources that is used to determine the actual
+   hash entry in the XES lock table.
+   
+   To have the new hashing fix enabled across the data sharing
+   group, all members in a data sharing group need to have PM28625 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM28625]
+   fix on and the group needs to be operating at new IRLM function
+   level (28).
+   
+   ---------------------------------------------------------------
+   Rolling Installs:
+   ---------------------------------------------------------------
+   
+   This fix can be applied in rolling fashion to all members of a
+   group. A group restart is not necessary. Until all of the
+   members in a datasharing group have this fix ON, the group
+   will continue to operate at a lower group level that will be
+   using the old hashing mechanism. When the last member is
+   bounced with the PM28625 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM28625] fix and joins the group where
+   all existing members already have the fix ON, it will
+   trigger the lock structure rebuild for coexistence. The group
+   will start operating with the new hashing mechanism after a
+   successful rebuild is completed.
+   
+   
+   --------------------------------------------------------------
+   Group restart with ALL members having the PM28625 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM28625] applied
+   --------------------------------------------------------------
+   The datasharing group will come up with all members operating at
+   the new IRLM function level(28). There is no restriction on
+   coexistence of members with different DB2/IRLM release levels.
+   as long as all of them have the PM28625 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM28625] fix on.
+   
+   ALERT:
+   -----
+   Once a group is up with all members having the fix ON, the group
+   would be using the new hashing mechanism. From this point onward
+   any new member attempting to join the group WITHOUT the fix,
+   will NOT be allowed in the group. This is to prevent data
+   integrity as we require all members in a group to be using the
+   same hashing algorithm.
+   To prevent a down level member joining the up level(PM28625 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM28625])
+   group, existing members of the data sharing group will issue
+   MSGDXR158I.
+   
+   DXR158I irlmnA CANNOT COEXIST WITH AT LEAST ONE EXISTING MEMBER.
+   ALL DBMS IDENTIFY REQUESTS TO THAT IRLM WILL BE DENIED.
+   
+   The down level DB2 attempting to join the PM28625 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM28625] level group
+   would issue MSGDXR133I as it would not be able to complete its
+   global initialization.
+   DXR133I irlmnmB TIMEOUT DURING GLOBAL INITIALIZATION
+   WAITING FOR irlmnA
+   This member will finally timeout and Abend u2025. Users will
+   require to upgrade this member with PM28625 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM28625] fix to be able to
+   bring this member in the group.
+   
+   
+   ---------------------------------------------------------------
+   Group restart WITHOUT all members being upgraded:
+   ---------------------------------------------------------------
+   
+   Special Steps:
+   -Start one member which does NOT have the PM28625 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM28625] fix on, first.
+   This will preset the data sharing group level to lower value.
+   
+   -Bring up rest of the group members having or not having PM28625 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM28625]
+   fix, in any order. Users can upgrade remaining members
+   later on. Until every member in the group gets the PM28625 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM28625] fix,
+   the group will not be operating with this hashing fix and may
+   continue to see the noted symptoms of the original problem.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM34400
+   
+   
+ * REPORTED COMPONENT NAME
+   IRLM V2
+   
+   
+ * REPORTED COMPONENT ID
+   569516401
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-09
+   
+   
+ * CLOSED DATE
+   2011-03-22
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     DXRRC2V1 DXRRC754 DXRRC755 DXRRL2V1 DXRRL755
+   DXRRS2V1 DXRRS754 DXRRS755
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IRLM V2
+   
+   
+ * FIXED COMPONENT ID
+   569516401
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R101 PSY UK65360 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK65360]
+   UP11/03/30 P F103
+   
+   
+ * R220 PSY UK65361 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK65361]
+   UP11/03/30 P F103
+   
+   
+ * R230 PSY UK65362 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK65362]
+   UP11/03/30 P F103
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

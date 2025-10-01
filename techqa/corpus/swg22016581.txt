@@ -1,0 +1,59 @@
+Title: IBM Case Manager Builder displays blank screen when opening Process Designer - United States
+
+Text:
+missing; unable TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Case Manager Builder displays blank screen when opening Process Designer 
+
+SYMPTOM
+When trying to open Process Designer in Case Manager Builder, an empty browser window is displayed.
+
+
+CAUSE
+Incompatible CPEAppletsPlugin.jar file.
+
+ENVIRONMENT
+This problem can happen with the Chrome, Firefox and Internet Explorer browsers.
+
+DIAGNOSING THE PROBLEM
+On the Content Navigator server, check the version of the CPEAppletsPlugin.jar file that is used by the IBM Content Platform Engine Applets Support plug-in.
+
+
+
+
+ 1. Log into the Content Navigator admin console, and navigate to the Plug-ins -> IBM Content Platform Engine Applets Support screen. 
+ 2. Check the location of the CPEAppletsPlugin.jar file. For example:  1. [/support/docview.wss?uid=swg22016581&aid=1] [/support/docview.wss?uid=swg22016581&aid=1]
+    
+    
+ 3. Open the CPEAppletsPlugin.jar file in a file compression utility, such as 7-zip, and extract the CPEAppletsPlugin-ver.properties file. 
+ 4. Open the CPEAppletsPlugin-ver.properties file in a text editor. 
+ 5. Take a note of the value in the buildLine=xxx line.
+
+. On the Content Platform Engine ping page, check the version of the Content Platform Engine. 
+
+ 1. Open the Content Platform Engine ping page in a browser (http://[CPE server name]:[CPE port]/FileNet/Engine). 
+ 2. Check the Content Platform Engine software level in the Build Version entry close to the top of the page. (For example: dap521.007.390)
+
+
+NOTE: If the CPEAppletsPlugin.jar file version does not match the Content Platform Engine software level, then the symptom in this tech note may be the result. 
+
+
+RESOLVING THE PROBLEM
+ 
+
+If there is a mismatch between the CPEAppletsPlugin.jar file version and the Content Platform Engine software level, then synch up the CPEAppletsPlugin.jar file version with the Content Platform Engine software level with the following steps: 
+
+ 1. On the Case Manager server, check the version of the CPEAppletsPlugin.jar file by extracting the CPEAppletsPlugin-ver.properties file at the following location :  * ../CaseManagement/configure/properties/plugins folder
+    
+    
+ 2. If the CPEAppletsPlugin.jar file version does not match the Content Platform Engine software level, then run the following two tasks in the Case Manager configuration tool:  * Update the Content Platform Engine Client Connector files 
+     * Register the Content Platform Engine Applets Support Plug-in 
+     * NOTE: when running the Register the Content Platform Engine Applets Support Plug-in task, make sure that the 'Download' check box is checked. For example:
+       1. [/support/docview.wss?uid=swg22016581&aid=2] [/support/docview.wss?uid=swg22016581&aid=2]
+    
+    
+ 3. Copy the CPEAppletsPlugin.jar file from the ../CaseManagement/configure/properties/plugins folder on the Case Manager server to its location for the IBM Content Platform Engine Applets Support plugin, which you looked up above under the Diagnosing the problem section. 
+ 4. Stop the Content Navigator WebSphere server(s), clear the WAS temp and wstemp directories. 
+ 5. Restart the Content Navigator WebSphere server(s). 
+ 6. Clear the browser cache on your workstation where you run Case Manager Builder.

@@ -1,0 +1,232 @@
+Title: IBM PM72402: CORRECTIOINS ARE NEEDED TO THE DOCUMENTATION IN THE INFORMATION CENTR FOR IBM WEBSPHERE APPLICATION SERVER VERSION 8.5 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR describes the issues that customers encountered with
+   IBM WebSphere Application Server Version 8.5.  These issues were
+   resolved as information center updates in September, 2012.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  This APAR provides a cumulative list of     *
+   *                  the documentation issues for September      *
+   *                  2012 that affect users of IBM WebSphere     *
+   *                  Application Server Version 8.5.             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Information Centers for             *
+   *                      WebSphere Application Server Version    *
+   *                      8.5 need to reflect customer            *
+   *                      enhancement requests received in        *
+   *                      problem management records (PMRs).      *
+   *                      These enhancements can include fixing   *
+   *                      technical inaccuracies or clarifying    *
+   *                      vague information.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   See the Problem conclusion section for a description of the
+   issues, which are described in customer PMRs, and the
+   documentation change or changes that will address these issues.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Note: We update our information centers monthly. The
+   following Version 8.5 modifications will be available in the
+   September 2012 update to the Information Centers. To access the
+   latest on-line documentation, go to the product library page
+   at http://www.ibm.com/software/webservers/appserv/library and
+   select the version and product that is appropriate for your
+   WebSphere Application Server environment.
+   
+   The following Version 8.5 issues will be addressed:
+   
+   ID: PM72402
+   Problem:  In topic, Creating a fine-grained administrative
+   authorization group using the administrative console, Step 6,
+   associates a group to the new user role, and indicates that
+   you should select the option EVERYONE if you want to select
+   special subjects. However the option EVERYONE is not supported
+   in Version 8.0 of WebSphere Application Server.
+   
+   Resolution:  References to the EVERYONE option will be removed
+   from Step 6 of the topic, Creating a fine-grained
+   administrative authorization group using the administrative
+   console.
+   
+   This update also applies to the Versions 8.0 information
+   center.
+   ------------
+   ID: 739255
+   Problem: There is missing and erroneous help information for
+   proxy settings in the WebSphere Application Server information
+   center for the administrative console page located by
+   navigating as follows:
+   Servers > Server Types > Proxy Servers > server_name > HTTP
+   Proxy Server Settings > Proxy settings
+   
+   Resolution: Topic, Proxy server settings, is updated to
+   include the sections Static file serving and Workload
+   Management. Also, terminology inconsistencies have been
+   corrected.
+   
+   This update also applies to the Version 7.0, and 8.0
+   information centers.
+   -------------
+   ID: 741497
+   Problem: If, when attempting to use the Installation Manager
+   to install ifixes on WebSphere Application Server Version 8.5,
+   you select the "update All" option, you will get the
+   following error:
+   
+   "No Updates or fixes were found for the packages that are
+   installed in the selected locations"
+   
+   This error occurs even though the fix is included in the
+   list of repositories that the Installation Manager reports to
+   be searching.  The information center does not adequately
+   explain this condition.
+   
+   Resolution: The topics:
+   
+   - Installing fix packs on the Web Server Plug-ins using the
+   GUI
+   - Installing fix packs on the WebSphere Customization
+   Toolbox using the GUI
+   - Installing fix packs on the DMZ Secure Proxy Server using
+   the GUI
+   - Installing fix packs on distributed operating systems
+   using the GUI
+   - Installing fix packs on IBM WebSphere SDK Java Technology
+   Edition Version 7.0 using the GUI
+   - Installing fix packs for the Web 2.0 and Mobile Toolkit
+   on distributed operating systems using the GUI
+   
+   will be updated to include the following TIP for the task
+   step that selects the package  group to update:
+   
+   Tip: If you select Update all, Installation Manager will
+   search all of the added and predefined repositories for
+   recommended updates to all of the package groups that it has
+   installed. Use this feature only if you have full control over
+   which fixes are contained in the targeted repositories. If you
+   create and point to a set of custom repositories that include
+   only the specific recommended fixes that you want to install,
+   you should be able to use this feature confidently. If you
+   enable searching service repositories or install fixes
+   directly from other live web-based repositories, then you
+   might not want to select this option so that you can select
+   only the fixes that you want to install for each offering on
+   subsequent panels.
+   ------------------
+   ID: 741518
+   
+   Problem: Topic, Web server configuration, describes the Service
+   name property for the Windows operating systems. The propety
+   description is inaccurate.
+   
+   Resolution:  Topic, Web server configuration is updated to
+   include the following description of the Service name property:
+   
+   Specifies the Microsoft Windows operating system name for the
+   web server service. The name is the "Display name" of the
+   service and you can find it by opening the General properties
+   tab of the web server service
+   
+   This update also applies to the Version 7.0, and 8.0
+   Information Centers.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM72402
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-07
+   
+   
+ * CLOSED DATE
+   2012-09-26
+   
+   
+ * LAST MODIFIED DATE
+   2012-11-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

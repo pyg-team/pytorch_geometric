@@ -1,0 +1,36 @@
+Title: IBM Listening activity on ports 60001 to 600020 - United States
+
+Text:
+IBM Rational Compare and Merge Server. RTC; ClearCase; UML Visualization Tools; uml ; modelling; compare and merge; security; netstat; workspace preference. emx; dnx TECHNOTE (FAQ)
+
+QUESTION
+ What are the port numbers 60001 to 600020 used for in IBM Rational Application Developer for WebSphere Software (RAD)? 
+
+CAUSE
+If you run command netstat -a - b after RAD is started, it shows LISTENING on port 60001 to 60003 (depending on the user).
+This was also observed when running security scans.
+
+
+ANSWER
+These ports are used when RAD is installed with the UML Visualization Tools feature. 
+
+ 
+
+For example in RAD 8.0.4, it corresponds to feature/plugin com.ibm.xtools.comparemerge.team. 
+
+This is the "IBM Rational Compare and Merge Server". 
+
+To see plugin details click Help > About > ...RAD.. : Installation Details : Plugins 
+
+The corresponding workspace preference is:
+
+Window > Preferences > General > Compare/Patch > Modeling Compare/Merge > Compare/Merge Server 
+
+: Alternate Port Range Configuration
+: Default Port Range: 60001-600020
+: Alternate Port range:
+: The compare and merge server is using port: 60001
+
+The plugin is configured to automatically start ( == auto launch) when the product launches.
+
+It is a daemon that listens for Compare/Merge requests that could come from Rational ClearCase (CC) or Rational Team Concert (RTC) and ensures that the Rational Software Architect (RSA) Compare and Merge functionality is invoked whenever those external tools want to compare/merge model files (.emx, only in RSA) or diagram files (.dnx, these files are also available in RAD when the above functionality is installed). Without this functionality, a merge invoked in RTC or CC would treat models and diagrams as bare xml and would corrupt them.

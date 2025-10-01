@@ -1,0 +1,54 @@
+Title: IBM Cognos Disclosure Management 10.3 Supported System Environments - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document provides links to the system compatibility reports for your product. These reports provide up-to-date information about the supported environments. 
+
+CONTENT
+Always up-to-date system requirement reports can be dynamically generated using the Software Product Compatibility Reports (SPCR) tool [http://www-969.ibm.com/software/reports/compatibility/clarity/index.html]. 
+
+
+
+
+
+For your convenience, the sections below offer detailed system requirement reports for different contexts (by Operating System, by component). Note that clicking a link will always generate a new, up-to-date report. 
+
+
+
+
+
+
+
+Requirements
+by platform · Windows [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=C6327340D8C911E696821F2CAD9E9BCA&osPlatforms=Windows] 
+
+· Supported Hypervisors [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/vesForProduct?deliverableId=C6327340D8C911E696821F2CAD9E9BCA] 
+
+
+
+
+
+
+
+Requirements
+by component  * Application Server [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=C6327340D8C911E696821F2CAD9E9BCA&duComponentIds=Server_C8BE4E40D8C911E696821F2CAD9E9BCA] 
+ * Client [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=C6327340D8C911E696821F2CAD9E9BCA&duComponentIds=Desktop_C8BFADD0D8C911E696821F2CAD9E9BCA] 
+ * Database Server [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=C6327340D8C911E696821F2CAD9E9BCA&duComponentIds=Server_C8B79780D8C911E696821F2CAD9E9BCA] 
+   
+   
+   
+
+Related requirements No related requirements. 
+
+
+
+
+
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2017/6/13

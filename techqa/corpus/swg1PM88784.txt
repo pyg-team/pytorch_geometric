@@ -1,0 +1,149 @@
+Title: IBM PM88784: REMEMBER ME COOKIE - FAILING INSTANTIATION OF CUSTOM CODE NOT LOGGED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.0 Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24033155]
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The failing instantiation of custom code in the context of
+   remember me cookies is not logged. Only tracing reveals that
+   a fallback code path is used resulting in the remember me
+   cookie always being set.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 23 (PM89415 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM89415]) for Portal
+   7.0.0.2 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?
+   parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&rele [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&rele]
+   ase=7.0.0.2&platform=All&function=aparId&apars=PM89415
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 23 (PM89415 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM89415]) for Portal
+   7.0.0.2 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?
+   parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&rele [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&rele]
+   ase=7.0.0.2&platform=All&function=aparId&apars=PM89415
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM88784
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-10
+   
+   
+ * CLOSED DATE
+   2013-07-18
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP

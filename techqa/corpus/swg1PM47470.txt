@@ -1,0 +1,227 @@
+Title: IBM PM47470: CERTIFICATES HAVE EXPIRED IN WS-SECURITY SAMPLES KEYSTORES - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  We are getting the following error, 10's of thousands of times
+   (Log is 10 Million lines after a day or so) when a certificate
+   is about to expire:
+   
+   CWWSS5189W: The certificate, which is owned by
+   CN=SOAPRequester, OU=TRL, O=IBM, ST=Kanagawa, C=JP, uses the
+   soaprequester alias, and is located in the
+   /WebSphere/V6R1M0E/AppServer1/profiles/default/etc/ws-security/
+   samples/dsig-sender.ks keystore,expires in 38 days.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V6.1                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The certificates in the WS-Security     *
+   *                      digital signature sample keystores      *
+   *                      have expired.                           *
+   ****************************************************************
+   * RECOMMENDATION:  Install a fix pack that includes this APAR  *
+   ****************************************************************
+   The certificates in the WS-Security digital signature sample
+   keystores expired on 08/26/2011.  The sample keystores are
+   dsig-sender.ks, dsig-receiver.ks and intca2.cer and are
+   located in the <PROFILE_ROOT>/etc/ws-security/samples
+   directory.
+   When one of the expired certificates in these keystores is
+   used by the WS-Security runtime, messages similar to the
+   following will be logged to the SystemOut.log:
+   [08/26/11 13:02:03:455 BST]   3f5426 KeyStoreKeyLo E
+   WSEC5156E: An exception while retrieving the key from KeyStore
+   object: java.security.cert.CertificateExpiredException:
+   NotAfter: Fri Aug 26 06:09:12 BST 2011
+   [8/30/11 15:42:24:198 EDT] 4a7a6588 KeyStoreKeyLo E WSEC5181E:
+   The certificate (Owner: "EMAILADDRESS=maruyama@jp.ibm.com,
+   CN=SOAP 2.1 Test CA, OU=TRL, O=IBM, L=Yamato, ST=Kanagawa,
+   C=JP") with alias "soapca" from keystore
+   "/opt/WebSphere/AppServer/etc/ws-security/samples/dsig-
+   sender.ks
+   " has expired: java.security.cert.CertificateExpiredException:
+   NotAfter: Fri Aug 26 01:09:12 EDT 2011 at
+   com.ibm.security.x509.CertificateValidity.valid(Unknown Source)
+   If a certificate has is close to expiring, a message similar
+   to the following will be logged:
+   [8/30/11 14:07:31:326 EDT] 0000001e KeyStoreManag W
+   CWWSS5189W: The certificate, which is owned by
+   CN=SOAPRequester, OU=TRL, O=IBM, ST=Kanagawa, C=JP, uses the
+   soaprequester alias, and is located in the
+   /opt/IBM/WebSphere/AppServer61/profiles/AppSrv02/etc/ws-
+   security
+   /samples/dsig-sender.ks keystore, expires in 31 days.
+   Since the runtime logs the messages each time the certificates
+   are accessed, it is possible to log the messages excessively.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WS-Security sample digital signature certificates and
+   encryption keys that are located in the following files are
+   updated:
+   
+   dsig-receiver.ks
+   dsig-sender.ks
+   enc-receiver.jceks
+   end-sender.jceks
+   intca2.cer
+   
+   When new profiles are created, the new keystores will be used.
+   
+   Since it is possible that the keystores that are located in
+   existing profiles had been updated after creation, the
+   keystores in existing profiles will not be replaced.  Refer to
+   the following technote for more information on how to update
+   the sample keystores in existing profiles:
+   
+   http://www-01.ibm.com/support/docview.wss?uid=swg21507405 [http://www-01.ibm.com/support/docview.wss?uid=swg21507405]
+   
+   The WS-Security runtime is also updated to log the WSEC5156E,
+   WSEC5181E, and CWWSS5189W messages only once for each
+   expired/about to expire certificate.
+   
+   IMPORTANT NOTE:
+   The signing certificates and encryption keys that are being
+   replaced by this APAR are used in the JAX-WS and JAX-RPC Web
+   Services Default Bindings for Web Services Security.  They are
+   provided for testing/example purposes only and should not be
+   used on production systems.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 6.1.0.41.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM47470
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSERVIC FEATU
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0850
+   
+   
+ * REPORTED RELEASE
+   61W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-09
+   
+   
+ * CLOSED DATE
+   2011-10-17
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM47701 PM47702
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

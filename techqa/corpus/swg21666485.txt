@@ -1,0 +1,26 @@
+Title: IBM TCR 2.1.1 FP2 installation fails - United States
+
+Text:
+ACUOSI0050E; TCR FP2; FixPack 2; installation; failure; tcr211_Core_FP2; /run_WASUI_SDKFIX_Install.sh; WAS UI; return code 127 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installation of TCR 2.1.1 FixPack 2 fails with message:
+InterimFix installation failed.
+Check details in /tmp/IBM_Tivoli_Common_Reporting_2.1_1_FP2.log 
+
+DIAGNOSING THE PROBLEM
+In /tmp/IBM_Tivoli_Common_Reporting_2.1_1_FP2.log, you can find the following error message:
+ACUOSI0050E External command action failed with return code 127. Invocation string: [/opt/IBM/tivoli/tipv2Components/TCRComponent/conf/tcr211_Core_FP2/run_WASUI_SDKFIX_Install.sh, /opt/IBM/tivoli/tipv2, /opt/IBM/tivoli/tipv2Components/WASUIHome]
+
+This problem can happen if the WAS UI folder requested by the installation program already exists before installing the FixPack.
+In this case, /opt/IBM/tivoli/tipv2Components/WASUIHome folder was created by mistake before invoking the FixPack installation program.
+FixPack Installation creates itself the needed WAS UI folder and you just need to pass the name of the folder that must be created as parameter for the installation program.
+
+
+RESOLVING THE PROBLEM
+Delete the WAS UI folder if already exists, and re-run FixPack installation program.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Tivoli Common Reporting V2.1.1

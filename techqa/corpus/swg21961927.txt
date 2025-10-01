@@ -1,0 +1,82 @@
+Title: IBM Unable to start the connection point in Case Foundation Component Manager (CM) Process Task Manager when using secure Content Engine URI - United States
+
+Text:
+Connection Point; SSLHandshakeException; SSL TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to start the connection point in Process Task Manager result in SSLHandshakeException 
+
+SYMPTOM
+After upgrading WebSphere to a newer fix pack, the Component Manager that is using secure connection to Content Engine failed to start due to SSLHandshakeException. 
+
+Here is the excerpt from the CM log : 
+
+
+VWAdaptorControlEx.WorkflowDispatcher.WSRequest(0).72223 adaptor is stopped due to exception: com.filenet.api.exception.EngineRuntimeException: FNRCA0031E: 
+API_UNABLE_TO_USE_CONNECTION: The URI for server communication cannot be determined from the connection object https://<servername>:<port>/wsi/FNCEWS40MTOM/. 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+
+Caused by: com.filenet.api.exception.EngineRuntimeException: FNRCA0031E: 
+API_UNABLE_TO_USE_CONNECTION: The URI for server communication cannot be determined from the connection object https://<servername>:<port>/wsi/FNCEWS40MTOM/.  * 
+ * 
+ * 
+
+Caused by: javax.net.ssl.SSLHandshakeException: Remote host closed connection during handshake  * 
+ * 
+ * 
+ * 
+ * 
+
+Caused by: java.io.EOFException: SSL peer shut down incorrectly  * 
+ * 
+ * 
+ * 
+ * 
+
+. Last status=null 
+CAUSE
+The issue is caused by SSLv3 being disabled on the WebSphere Application Server because the protocol contains a vulnerability that has been referred to as the Padding Oracle On Downgraded Legacy Encryption (POODLE) attack. In the past, SSLv3 is enabled by default in IBM WebSphere Application Server, but with recent WebSphere Application Fix Pack, SSLv3 is being disabled by default.
+
+Here are the related TechNotes :
+
+TechNote / Security Bulletin for WebSphere (mentions the IBM Jave shipped with WAS 7.0.0.37 disables SSLv3)
+http://www-01.ibm.com/support/docview.wss?uid=swg21687173 [http://www-01.ibm.com/support/docview.wss?uid=swg21687173]
+
+TechNote / Security Bulletin for FileNet BPM:
+http://www-01.ibm.com/support/docview.wss?uid=swg21688638 [http://www-01.ibm.com/support/docview.wss?uid=swg21688638] (mentions 5.0.0.7-P8PE-IF001 which shipped with JRE 1.6 SR16 FP2). 
+
+TechNote / Security Bulletin for IBM Java / SDK (mentions which version of JDK/ JRE contains the POODLE fix to disable SSLv3, includes JRE 1.6 SR16 FP2) 
+https://www-304.ibm.com/support/docview.wss?uid=swg21688165 [https://www-304.ibm.com/support/docview.wss?uid=swg21688165]
+
+
+ENVIRONMENT
+Process Engine 4.5.1, 5.0.0, 5.2.1
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+A. For Process Engine 4.5.x and 5.0, apply minimum 4.5.1.4-P8PE-IF007 and 5.0.0.7-P8PE-IF001 respectively. 
+
+Alternatively you can just update the private JRE for Process Task Manager on the application server to JRE 1.6 SR16 FP2 by using the procedure below. 
+
+ 
+
+ 1. Download and install IBM JRE 1.6 SR16 FP2 from 4.5.1.4-P8PE-IF007 or 5.0.0.7-P8PE-IF001. 
+ 2. Create a new folder in the Application Engine to and extract the content
+    (NOTE do not override your existing under install_path\FileNet\AE\Router) 
+ 3. Bring up Process Task and Manager and create a new Connection Point just for the custom adaptor 
+ 4. Under the connection point's general tab, specify the custom component queue name. 
+ 5. Add the necessary jar files needed by the custom adaptor in the Required Libraries tab. 
+ 6. In the Advanced tab, specify the location of the new JRE\bin in the "Preferred JRE Bin Path". 
+ 7. Ensure that you copy the keystore and trust store files from the default JRE location to the new JRE location (located under Web Services tab -> JSSE Settings). 
+ 8. Start the connection point using using CE HTTPS. Instead of SSLv3, TLS v1.0 protocol will be used when connecting to the application server.
+
+
+B. For Content Platform Engine 5.2.1, apply minimum 5.2.1.0-P8CPE-IF002.

@@ -1,0 +1,65 @@
+Title: IBM Supported platforms for Tivoli Key Lifecycle Manager 1.0 (TKLM 1.0)
+Distributed & System z - United States
+
+Text:
+EKM; TKLM TECHNOTE (FAQ)
+
+QUESTION
+ Supported platforms for Tivoli Key Lifecycle Manager 1.0 (TKLM 1.0)
+Distributed & System z [includes latest fix pack] 
+
+ANSWER
+IBM Tivoli Key Lifecycle Manager 1.0
+Distributed Platforms
+
+Requires Operating Systems 
+
+Operating System Attributes Notes AIX Platform listing of supported OS AIX 6.1 System i/p Version 6.1 Bitness: 64-Tolerate
+Deployment Role: Agent/Endpoint, Server
+Hardware platform: System i/p Recommended technology level 6100-01 AIX 5.3 System i/p Version 5.3 Bitness: 64-Tolerate
+Deployment Role: Agent/Endpoint, Server
+Hardware platform: System i/p Recommended technology level 5300-04 and service pack 5300-04-02 Linux Platform listing of supported OS Red Hat Enterprise Linux (RHEL) 5.0 Server/Advanced Plaform x86-32 Server/Advanced Plaform Version 5.0 Bitness: 32-bit
+Deployment Role: Agent/Endpoint, Server
+Hardware platform: x86-32 Supported with Fixpack 1 (or higher) Installed Red Hat Enterprise Linux (RHEL) 5.0 Server/Advanced Platform x86-64 Server/Advanced Platform Version 5.0 Bitness: 64-Tolerate
+Deployment Role: Agent/Endpoint, Server
+Hardware platform: x86-64 Supported with Fixpack 1 (or higher) Installed SUSE Linux 10.0 Enterprise Server x86-32 Enterprise Server Version 10.0 Bitness: 32-bit
+Deployment Role: Agent/Endpoint, Server
+Hardware platform: x86-32 Supported at GA SUSE Linux 10.0 Enterprise Server x86-64 Enterprise Server Version 10.0 Bitness: 64-Tolerate
+Deployment Role: Agent/Endpoint, Server
+Hardware platform: x86-64 Supported with Fixpack 1 (or higher) Installed Red Hat Enterprise Linux (RHEL) 4.0 AS/ES x86-32 AS/ES Version 4.0 Bitness: 32-bit
+Deployment Role: Agent/Endpoint, Server
+Hardware platform: x86-32 Supported at GA SuSE Linux (SLES) 9.0 Enterprise Server x86-32 Enterprise Server Version 9.0 Bitness: 32-bit
+Deployment Role: Agent/Endpoint, Server
+Hardware platform: x86-32 Supported at GA Solaris Platform listing of supported OS Solaris 10 SPARC Version 10 Bitness: 64-Tolerate
+Deployment Role: Agent/Endpoint, Server
+Hardware platform: SPARC Supported at GA Solaris 9 SPARC Version 9 Bitness: 64-Tolerate
+Deployment Role: Agent/Endpoint, Server
+Hardware platform: SPARC Supported with Fixpack 1 (or higher) Installed Windows Platform listing of supported OS Windows Server 2008 Enterprise Edition x86-32 Enterprise Edition Bitness: 32-bit
+Deployment Role: Agent/Endpoint, Server
+Hardware platform: x86-32 Supported with Fixpack 1 (or higher) Installed - and - new installation image required, see TKLM Fixpack 1 README Windows Server 2008 Enterprise Edition x86-64 Enterprise Edition Bitness: 64-Tolerate
+Deployment Role: Agent/Endpoint, Server
+Hardware platform: x86-64 Supported with Fixpack 1 (or higher) Installed - and - new installation image required, see TKLM Fixpack 1 README Windows Server 2003 Enterprise Edition x86-32 Enterprise Edition Bitness: 32-bit
+Deployment Role: Agent/Endpoint, Server
+Hardware platform: x86-32 Supported at GA Windows Server 2003 Enterprise Edition x86-64 Enterprise Edition Bitness: 64-Tolerate
+Deployment Role: Agent/Endpoint, Server
+Hardware platform: x86-64 Supported with Fixpack 1 (or higher) Installed - and - new installation image required, see TKLM Fixpack 1 README zOS
+
+Requires Operating Systems 
+
+Operating System Attributes z/OS Platform listing of supported OS z/OS 1.10 System z Version 1.10 Bitness: 64-Exploit
+Deployment Role: Agent/Endpoint, Server 
+Hardware platform: System z z/OS 1.9 System z Version 1.9 Bitness: 64-Exploit
+Deployment Role: Agent/Endpoint, Server
+Hardware platform: System z 
+Other Software Requirements 
+
+Group Product Applicable OS Notes Browsers Mozilla Firefox Version 3.0 All supported OS Supported with Fixpack 1 (or higher) Installed RELATED INFORMATION
+ Fix Central [download fixpack and readme] [http://www.ibm.com/support/fixcentral]
+TKLM Support Center [http://www.ibm.com/software/tivoli/support/key-lifecycle-mgr/]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ EKM
+TKLM

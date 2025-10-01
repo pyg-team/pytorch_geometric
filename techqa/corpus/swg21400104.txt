@@ -1,0 +1,47 @@
+Title: IBM Compatibility guidelines for running IBM ILOG Products on different versions of Linux - United States
+
+Text:
+Linux; compatibility TECHNOTE (FAQ)
+
+QUESTION
+ On what versions of Linux will my IBM ILOG product run? 
+
+ANSWER
+ The number of GNU/Linux distributions continues to grow, raising questions about their compatibility with the IBM/ILOG product line. As of this writing, the list of GNU/Linux distributions includes Red Hat, Debian, Gentoo, Fedora, Mandriva, MEPIS, Slackware, Ubuntu, Knoppix, openSUSE, and PCLinuxOS. 
+
+Most IBM/ILOG products are officially supported on at least one Linux distribution. IBM's support web site contains lists of supported hardware and platforms, including GNU/Linux. For example, for CPLEX, http://www.ibm.com/support/docview.wss?uid=swg27019100 [http://www.ibm.com/support/docview.wss?uid=swg27019100] contains the list of supported platforms. For IBM/ILOG BRMS, click here [http://www-01.ibm.com/support/docview.wss?rs=4043&uid=swg27018135] for the list of supported platforms. 
+
+ If a variant of GNU/Linux is absent from the supported versions listed in those places, it still may work, but IBM does not officially support it. This situation means that we will still answer users' questions if they are current on maintenance, but that if an issue appears to relate to the operating system (for example, the problem cannot be reproduced with a small sample on an officially supported GNU/Linux operating system), we won't be able to help. In this case users need to assess whether this limitation is a concern for the project they have in mind. 
+
+ One must also assess the compatibility of the specific operating system version and the IBM/ILOG product version. Even for a supported vendor (for example, Red Hat) numerous versions are available, and one must verify that the version on which the IBM/ILOG product was built is compatible with the user's GNU/Linux version. Fortunately, the following procedure can help users assess compatibility.
+
+ *  Determine the glibc, C/C++ compiler, and (if relevant) C++ ABI version of the IBM/ILOG product distribution you wish to use. The operating system version is available in the port name or the previously cited list of supported platforms. From that information, you can point your web browser to http://www.distrowatch.com [http://www.distrowatch.com]. When you connect to this web site, select the GNU/Linux operating system name of interest. For each distribution name, you will find a detailed table that provides the compiler (typically g++ or gcc, which usually have the same version number) and glibc versions for each different operating system version released. For example, to determine the gcc and glibc associated with Fedora Core 8, you select Fedora for the Distribution Name. This choice leads you to http://distrowatch.com/table.php?distribution=fedora [http://distrowatch.com/table.php?distribution=fedora]. The table at the bottom of this page indicates that Fedora Core 8 uses gcc 4.1.2 and glibc 2.7. Similar information is available for Fedora Core versions 1-9. Now that you have the compiler and glibc versions, all that remains is to determine the C++ ABI. There are numerous ways to do this; here is one. Use the readelf command to extract the standard C++ library version, from which the ABI is available. For example, with your CPLEX 12.2 distribution, use the command 
+   
+   readelf -d libcplex122.so | grep libstdc 
+   
+   You see a version number at the end, for example, libstdc++.so.6 means version 6. This version must match the version when you obtain the corresponding information for the GNU/Linux version on which you want to run the IBM/ILOG product version (as described subsequently). Adjust the name of the shared library accordingly for your particular version of CPLEX. 
+   
+   
+ * 
+ * 
+ *  Determine the glibc, compiler, and C++ ABI of the GNU/Linux variant in question. If you have the GNU/Linux variant installed on a computer, use 'g++ -v' to obtain the compiler version. To find the glibc version, type the command 'rpm -qa glibc' (or use the -qi option to obtain more verbose information). If you don't have the GNU/Linux variant installed, once again the tables at http://www.distrowatch.com [http://www.distrowatch.com] provide the glibc and compiler versions. If the glibc and compiler versions are >= the versions used to build the relevant IBM/ILOG product distribution, this step establishes compatibility for all executables and APIs except for C++. 
+   
+   For example, with CPLEX, this information means that Interactive CPLEX, the C API, and the Java API will be compatible. Of course, Java users must also use a Java version at least as recent as the one used to build the ILOG product in question. In addition to these conditions, compatibility for the C++ API requires that the C++ ABIs of the ILOG Product distribution and operating system match. 
+   
+   To determine the C++ ABI associated with the operating system, use the readelf command in conjunction with the compiler on the GNU/Linux variant; for example: (Note this command uses `, not '.) 
+   
+   readelf -d `gcc -print-file-name=libstdc++.so` | grep SONAME 
+   
+   
+   
+    This step gives you the version number associated with libstdc++.so. If it matches the version obtained from the IBM/ILOG Product distribution in step 1, then the C++ ABIs match. If they don't match, then the ILOG Product distribution will not run on the Linux version in question. 
+   
+   
+
+ All that said, keep in mind that if this test determines the IBM/ILOG product is compatible with the particular GNU/Linux variant, it remains unsupported unless explicitly listed among our supported platforms. Furthermore, some GNU/Linux distributions have limited vendor support. That means that a GNU/Linux distribution might satisfy the compatibility test outlined above, but issues may arise because of some other limitation of that particular GNU/Linux distribution. (For example, it uses the correct C++ ABI but doesn't fully implement it.) So, you still want to encourage customers to use officially supported versions of GNU/Linux. 
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Commerce IBM ILOG CPLEX Optimization Studio General AIX, HP-UX, Linux, Solaris, Windows, Mac OS 12.2 All Editions 
+HISTORICAL NUMBER
+ cplex/FAQ/188

@@ -1,0 +1,131 @@
+Title: IBM RS00963: BAD SUPPORT OF DECIMAL VALUES IN NON-ENGLISH LOCALES - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere Operational Decision Management V7.5.0.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24032435]
+WebSphere ILOG Decision Validation Services V7.1.1.5 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24033604]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When executing in Rule Studio in French, a DVS Excel file
+   pre-filled with decimal values in French (values using "," as
+   the decimal separator), some errors are raised, stating that
+   values with "," are invalid values.
+   For example, we get error messages such as:
+   * Valeur incorrecte (12,6) dans la cellule F10 de la feuille
+   Excel Sc&#65410;narios. = Invalid value 12,6 in cell F10 of the Excel
+   sheet Scenarios.
+   * Valeur incorrecte (12,4) dans la cellule D14 de la feuille
+   Excel Sc&#65410;narios. = Invalid value 12,4 in cell D14 of the Excel
+   sheet Scenarios.
+   
+   This problem occurs when using decimal values written in a
+   format that is not the Java format for numbers. In the Java
+   format, numbers are represented with "." as decimal separator.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The code does not apply the locale formatting on numbers
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix the code
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS00963
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6900
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-19
+   
+   
+ * CLOSED DATE
+   2012-04-20
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * FIXED COMPONENT ID
+   5725B6903
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

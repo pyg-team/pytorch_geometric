@@ -1,0 +1,37 @@
+Title: IBM Solutions to Out Of Memory conditions in Content Manager resource manager - United States
+
+Text:
+OutOfMemory Out-Of-Memory Crash TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Content Manager (CM) resource manager can crash with Java core dumps showing Out Of Memory as the root cause. 
+
+CAUSE
+The resource manager runs using a combination of Java virtual memory, and physical memory allocated by the IBM WebSphere Application Server (WAS). When this is exceeded, java core dumps can occur.
+
+RESOLVING THE PROBLEM
+ 
+
+ *  Do not deploy the resource manager on a server with other applications on it, so that the maximum amount of resources can be allocated to the resource manager.
+   
+ *  Use the latest Content Manager version and fix pack. 
+   
+ * Ensure the Tivoli Storage Manager (TSM) server is connected and set the JVM Option -Xjni:arrayCacheMax=0 in WAS JVM properties. 
+   
+ * The resource manager uses the Java Native Interface (JNI) to access the TSM client library. For certain workloads, the JNI memory caching algorithm can cause a substantial increase in the native memory consumption of the JVM. 
+   The following JVM option may alleviate the leak symptoms: 
+   -Xjni:arrayCacheMax=0 
+   
+   This JNI option must be set for each resource manager using the WAS Administrator Console: 
+   Application servers > <application server with icmrm deployed> > Process Definition > Java Virtual Machine 
+   The option must be placed in the "Generic JVM arguments" edit box and the resource manager needs to be restarted for the change to take effect. 
+ * Enable synchronous mode in WAS to reduce the amount of memory used to store responses.
+   Go to Servers -> Application Servers -> serverName -> Web Container Settings -> Web Container -> Custom Properties: Click New and add the following pair:
+   Name: com.ibm.ws.webcontainer.channelwritetype
+   Value: sync Press OK, and then save the configuration.
+   The application server must be recycled to pick up the property. 
+
+RELATED INFORMATION
+ Do not deploy the resource manager on a server with... [http://www.ibm.com/support/docview.wss?uid=swg21367124]
+RM with TSM connection crashes with OOM [http://www.ibm.com/support/docview.wss?uid=swg21425419]
+Better memory management through WAS synchronous mode [http://www.ibm.com/support/docview.wss?uid=swg21317658 ]

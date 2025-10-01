@@ -1,0 +1,120 @@
+Title: IBM PM31155: LOSS OF FUNCTIONALITY IN REPORTS UPGRADED FROM COGNOS 8.3 TO COGNOS 8.4.1 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On a report migrated from 8.3 to 8.4.1, client gets an
+   error:?OP-ERR-0263 Unsupported FOR clause in detail filters. It
+   must reflect the left to right order of query items on edge
+   'edge="13" 'dataItem=""', 'expression="total([#Managed Client
+   Groups] for any [CREW POID] ) > 0"'.??The root cause of this
+   error was a summary filter using the expression FOR. The way the
+   filter was used would have worked in a report running against a
+   relational package, but not OLAP.?In previous versions Cognos
+   will allow the usage of relational expressions for reports
+   running against multidimensional databases, however that has
+   changed in later versions.?The solution was to change the filter
+   and use an MDX expression that will filter summary totals. So
+   for example, instead of using a summary filter like this
+   one:?total([Actual Revenue] for [Retailer Site])<200000??we
+   replaced the column edge expression to filter the total
+   values:?filter([great_outdoors_company].[Years].[Years].[Year],[
+   Total(Retailer?Site)]<200000)??Client
+   sees the changes as a loss of functionality and he would like
+   to?log a defect or an enhancement to have the same functionality
+   as in 8.3?for any migrated reports. In client's words:?" I
+   reported back to the team the findings from this PMR, concerning
+   the?"loss of functionality" in using relational expressions on
+   OLAP data?items.?We are interested in persuing a fix or similar
+   "correction" (enhancement?) for Cognos 8.4.1 so our users will
+   not be affected by this change.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  No additional comments.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM31155
+   
+   
+ * REPORTED COMPONENT NAME
+   COG8 BI REPORT
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12RS
+   
+   
+ * REPORTED RELEASE
+   841
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-01-25
+   
+   
+ * CLOSED DATE
+   2012-05-02
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

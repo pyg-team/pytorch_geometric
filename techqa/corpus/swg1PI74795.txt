@@ -1,0 +1,157 @@
+Title: IBM PI74795: PROBLEMS DURING PE AGENT UPGRADE - United States
+
+Text:
+z/os  DIRECT LINKS TO FIXES
+db2pe.agent.v5.4.0.0.zLinux.E9027 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+OMEGAMON+XE+for+DB2+Performance+Monitor+on+zOS&fixids=db2pe.agent.v5.4.0.0.zLinux.E9027&source=SAR]
+db2pe.agent.v5.4.0.0.xlinux.E9027 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+OMEGAMON+XE+for+DB2+Performance+Monitor+on+zOS&fixids=db2pe.agent.v5.4.0.0.xlinux.E9027&source=SAR]
+db2pe.agent.v5.4.0.0.win.E9027 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+OMEGAMON+XE+for+DB2+Performance+Monitor+on+zOS&fixids=db2pe.agent.v5.4.0.0.win.E9027&source=SAR]
+db2pe.agent.v5.4.0.0.solaris.E9027 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+OMEGAMON+XE+for+DB2+Performance+Monitor+on+zOS&fixids=db2pe.agent.v5.4.0.0.solaris.E9027&source=SAR]
+db2pe.agent.v5.4.0.0.plinux.E9027 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+OMEGAMON+XE+for+DB2+Performance+Monitor+on+zOS&fixids=db2pe.agent.v5.4.0.0.plinux.E9027&source=SAR]
+db2pe.agent.v5.4.0.0.hpux.E9027 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+OMEGAMON+XE+for+DB2+Performance+Monitor+on+zOS&fixids=db2pe.agent.v5.4.0.0.hpux.E9027&source=SAR]
+db2pe.agent.v5.4.0.0.aix.E9027 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+OMEGAMON+XE+for+DB2+Performance+Monitor+on+zOS&fixids=db2pe.agent.v5.4.0.0.aix.E9027&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problems during PE Agent upgrade
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When upgrading the PE Agent from V530   *
+   *                      to V540, the Installer replaces the old *
+   *                      Java Runtime to the new java runtime    *
+   *                      delivered with V540. The file bin/e2e   *
+   *                      however is left intact.                 *
+   ****************************************************************
+   * RECOMMENDATION: Apply the provided PTF.                      *
+   ****************************************************************
+   When upgrading the PE Agent from V530 to V540, the Installer
+   replaces the old Java Runtime files with the new java runtime
+   delivered with V540. During this process the file bin/e2e
+   however is left intact, while it should be changed accordingly
+   to match the new Java Runtime location.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The program code executed during upgrade has been corrected to
+   address the issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI74795
+   
+   
+ * REPORTED COMPONENT NAME
+   OM XE DB2PE/PM
+   
+   
+ * REPORTED COMPONENT ID
+   5655OPE00
+   
+   
+ * REPORTED RELEASE
+   540
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-12
+   
+   
+ * CLOSED DATE
+   2017-06-13
+   
+   
+ * LAST MODIFIED DATE
+   2017-07-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI47995
+   
+   
+
+MODULES/MACROS
+ *     DGOK$INF
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OM XE DB2PE/PM
+   
+   
+ * FIXED COMPONENT ID
+   5655OPE00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R540 PSY UI47995 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI47995]
+   UP17/06/14 P F706
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,29 @@
+Title: IBM 'The expert modeller could not fit a model.' printed when automatic outlier detection added to successful ARIMA model - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using the Time Series Modeler (TSMODEL command) in SPSS/PASW Statistics, I was able to estimate an ARIMA(1,0,0) model with 11 time points and forecast the value for the 12th time point. However, if I added a request for automatic outlier detection to the same model, a warning box appeared with the message:
+
+"Subcommand MODEL 1: Dependent series y: The expert modeler could not fit a model.
+Model cannot be built.
+No model could be built."
+
+The procedure stopped without estimating or forecasting.
+
+Why would a request for automatic outlier detection cause the modedl to fail? Is the failure related to the short series length? 
+
+RESOLVING THE PROBLEM
+A program defect was filed with SPSS Development to determine why the model failed under these circumstances and to request that a more informative warning be printed. It is not clear why the model failed when outlier detection was requested. 
+
+The following fix was applied for Statistics 18.0.1: If automatic outlier detection is on and TSMODEL fails to estimate a model with a given structure, the procedure will now try to estimate the same model without outlier detection. A request has been added for a warning message that would alert the user that the model could not be fit with outlier detection and that there may be outliers in the data
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 90945

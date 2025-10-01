@@ -1,0 +1,67 @@
+Title: IBM cogserver.log file spammed with java.lang.IndexOutOfBoundsException when using DB2 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The cogserver.log is filling up rapidly with an error message. 
+
+SYMPTOM
+While the product is executing, the cogserver.log file will fill rapidly with the following error repeatedly. 
+
+The following is an excerpt of the error:
+
+java.lang.IndexOutOfBoundsException at 
+java.nio.CharBuffer.wrap(CharBuffer.java:375) at 
+com.ibm.db2.jcc.b.u.a(u.java:38) at 
+com.ibm.db2.jcc.b.hg.a(hg.java:210) at 
+com.ibm.db2.jcc.b.j.a(j.java:38) at 
+com.ibm.db2.jcc.b.h.read(h.java:43) at 
+java.io.FilterReader.read(FilterReader.java:85) at 
+java.io.Reader.read(Reader.java:151) at com.cognos.cm.util.io.TimedReader.read(TimedReader.java:58) at com.cognos.cmutils.io.CMStreamUtils.readReaderIntoString(CMStreamUtils.java:157) 
+
+
+CAUSE
+The issue is due to using an IBM DB2 JDBC Universal Driver that is from an older version of the DB2 database and not for the IBM DB2 version that is current in use.
+
+
+ENVIRONMENT
+Cognos Analytics 11.x (R5 at time of writing).
+IBM DB2 on z/OS v11.x
+
+
+
+DIAGNOSING THE PROBLEM
+To diagnose the issue, find the current version of the IBM DB2 JDBC Universal Driver and ensure it is supported against the IBM DB2 database that is currently in use. 
+
+ 
+
+To determine the version of the IBM DB2 JDBC Universal Driver: 
+
+1. Launch a command line session or command prompt: 
+
+2. Change directory into the <cognos install>/drivers directory via the command line. 
+
+3. Execute the following command: java -cp ./db2jcc.jar com.ibm.db2.jcc.DB2Jcc -version 
+
+ 
+
+An example of the output is:
+
+/usr/cognos/analytics/ca11_0_5/drivers=>java -cp ./db2jcc.jar com.ibm.db2.jcc.DB2Jcc -version
+IBM DB2 JDBC Universal Driver Architecture 3.53.95
+
+The driver version in this case was 3.53.95, which was released with IBM DB2 9.5 FP4 
+
+
+RESOLVING THE PROBLEM
+Determine the correct version of the IBM DB2 JDBC Universal Driver for your version of the IBM DB2 Database by visiting the page entitled: DB2 JDBC Driver Versions and Downloads
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21363866 [http://www-01.ibm.com/support/docview.wss?uid=swg21363866]
+
+Download the correct driver.
+Backup the existing drivers. 
+
+Replace the existing with the correct.
+
+At this point, the product should function.

@@ -1,0 +1,186 @@
+Title: IBM IC65699: Turning logarchmeth off will cause log file not to be reused. - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.5 Fix Pack 6a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027747]
+DB2 Version 9.5 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028731]
+DB2 Version 9.5 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24030302]
+DB2 Version 9.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032087]
+DB2 Version 9.5 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033308]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Turning logarchmeth off will cause log files not to be reused if
+   at the time database was activated
+   and it found that at least one of the tablespaces is in either
+   
+    - Load pending
+    - Delete pending
+    - Restore pending
+    - Recovery pending
+    - Disable pending
+    - Reorg in progress
+    - storage must be defined
+    - restore in progress
+    - offline and not accessible
+    - only action is drop
+    - redistribute in progress
+    - storeage may be defined
+    - storage Definition is in finla
+    - storage Deffinition was chaged prior to rollforward
+    - Tablespace in progression in progress
+    - tablespace creating in progress
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Turning logarchmeth off will cause log files not to be       *
+   * reused if                                                    *
+   * at the time database was activated                           *
+   *                                                              *
+   * and it found that at least one of the tablespaces is in      *
+   * either                                                       *
+   *                                                              *
+   *                                                              *
+   * - Load pending                                               *
+   *                                                              *
+   * - Delete pending                                             *
+   *                                                              *
+   * - Restore pending                                            *
+   *                                                              *
+   * - Recovery pending                                           *
+   *                                                              *
+   * - Disable pending                                            *
+   *                                                              *
+   * - Reorg in progress                                          *
+   *                                                              *
+   * - storage must be defined                                    *
+   *                                                              *
+   * - restore in progress                                        *
+   *                                                              *
+   * - offline and not accessible                                 *
+   *                                                              *
+   * - only action is drop                                        *
+   *                                                              *
+   * - redistribute in progress                                   *
+   *                                                              *
+   * - storeage may be defined                                    *
+   *                                                              *
+   * - storage Definition is in finla                             *
+   *                                                              *
+   * - storage Deffinition was chaged prior to rollforward        *
+   *                                                              *
+   * - Tablespace in progression in progress                      *
+   *                                                              *
+   * - tablespace creating in progress                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply V95 FP6.                                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Apply V95 FP6.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC65699
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-20
+   
+   
+ * CLOSED DATE
+   2010-05-25
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IC65151 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC65151]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSY
+   UP

@@ -1,0 +1,41 @@
+Title: IBM 3GPP REBUILT event causes probe resynchronisation - United States
+
+Text:
+NOTIFY_FM_ALARM_LIST_REBUILT; rebuild; 3gpp; synchronisation; synchronization; resynch TECHNOTE (FAQ)
+
+QUESTION
+ NOTIFY_FM_ALARM_LIST_REBUILT : Why does the probe keep resynchronising? 
+
+CAUSE
+When the NOTIFY_FM_ALARM_LIST_REBUILT alarm is seen by the probe, it will perform a synchronisation with the 3GPP server.
+
+ANSWER
+The 3GPP specification states the NOTIFY_FM_ALARM_LIST_REBUILT event is used to notify clients that alarm list re-alignment is required to avoid event loss. 
+
+As a client, the probe performs a full resynchronization whenever a NOTIFY_FM_ALARM_LIST_REBUILT event is received.
+
+
+Check the probe log file for these types of messages:
+
+Received a NOTIFY_FM_ALARM_LIST_REBUILT Event
+Processing Alert...
+Event Processor] domain_name: ALARM IRP V1.0.0
+Sending Alert...
+Event Processor] EVENT_TYPE: x6
+Event Processor] EVENT_NAME:
+Event Processor] NV_NOTIFICATION_ID: 11223344556677
+Event Processor] NV_REASON: <data>
+Event Processor] NV_ALARM_LIST_ALIGNMENT_REQUIREMENT: <data>
+Event Processor] NV_MANAGED_OBJECT_CLASS: <data>
+Event Processor] NV_MANAGED_OBJECT_INSTANCE: <data>
+Event Processor] NV_EVENT_TIME: <MM/DD/YY hh:mm:ss AM/PM>
+Event Processor] NV_SYSTEM_DN: <data>
+
+Determine why the 3GPP REBUILT event is being sent, and discuss the behaviour with the Network Administrator responsible for the equipment being managed by the 3GPP server.
+
+As a workaround you can discard events based on the events reported time, at the 3GPP server [see attached example]. In this example rules file, the events @EventTime value, which must be calculated by your rules file, is stored in an array, to allow events to be discarded if they are replayed.
+
+The $process_event_flag token can be used to turn on or off this discard feature.
+You can use the clear[eventTime_lookup] function to clear the array using a specific event, such as a ProbeWatch event.
+
+EXAMPLE_RESYNC_ZTE.rules [/support/docview.wss?uid=swg21969105&aid=2]EXAMPLE_RESYNC_ZTE.rules [/support/docview.wss?uid=swg21969105&aid=1]

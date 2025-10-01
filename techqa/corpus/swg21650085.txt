@@ -1,0 +1,19 @@
+Title: IBM WebSphere Transformation Extender Integration Flow Designer may not report the failure status when the export of the system definition fails - United States
+
+Text:
+MSDEXPORT; Integration Flow Designer; WTX; PM92235 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere Transformation Extender (WTX) Integration Flow Designer or msdexport command line utility may not report the failure status when the export of the system definition fails during system definition export and there is no indication of the failure. 
+
+CAUSE
+Server definition's 'Password' is invalid or corrupt which results in an export failure when saving the exported system definition in XML format. Invalid XML characters during XML output generation results in export failure (0 bytes) or exception thrown in the command console when running the msdexport command line utility. 
+
+RESOLVING THE PROBLEM
+Please contact IBM WebSphere Transformation Extender support to request a patch for APAR PM92235. The fix will be included in next release.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WTX
+DataStage TX

@@ -1,0 +1,117 @@
+Title: IBM Controller Performance vs Database Size - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer would like to know if there is a link between the size of the Controller application repository database and the speed/performance of Controller. 
+
+SYMPTOM
+Customer is experiencing slow performance in Controller, and would like to know if reducing the size (compacting) the database will help. 
+
+ 
+
+Example: 
+
+A typical (average) customer’s Controller SQL database (after being in production/use for a small number of years) will be approximately 10Gb to 40Gb in size 
+
+ * However, the largest size of a customer’s database that the author has seen is approximately 160Gb.
+
+
+CAUSE
+There are many potential causes for slow performance in Controller. As a starting point, customers should consider looking at the following separate Technotes as starting points: 
+
+How to improve Excel link report speed - Technote 1347497 How to improve consolidation speed - Technote 1371240 
+This Technote shall concentrate only on the topic of 'Controller Performance vs Database Size'.
+
+General Discussion:
+In general terms:  * The more complex a financial structure (financial configuration) that the customer uses, the larger their database will be  * For example, the more (optional) dimensions that the customer uses, the larger the database will be 
+    * In other words, a system used by a relatively small ($ turnover) company, with only 10 users, could potentially have a much larger database compared to a large ($ turnover) corporation with 100 users. This could be true if the small company had a complex financial structure and wanted to report in minute detail all of its financial details.
+   
+   
+ * Naturally, over time the database will grow.  * Specifically, each period (typically a month) will have data stored inside it. Each month the database will grow because that month's financial records will have been stored inside the Controller database. 
+    * Specifically, there is an XDB table that corresponds with each year (e.g. XDB14 = 2014). As data is added into the system that year, these tables grow in size.
+   
+   
+
+DIAGNOSING THE PROBLEM
+FAQ: 
+
+
+Q1 - How large is my database currently?
+
+Ask your I.T. department's DBA. 
+
+ * For example, if using Microsoft SQL then inside "SQL Server Management Studio" right-click on the database, and choose 'properties':
+
+[/support/docview.wss?uid=swg21681197&aid=1] [/support/docview.wss?uid=swg21681197&aid=1] 
+ * The 'data' is stored inside the MDF file. This is the amount of space allocated to the Controller data (253Mb in the above example). 
+ * The SQL 'log' is stored inside the LDF file (1Mb in the above picture). This is used by Microsoft SQL for its backup/recovery functionality. It is not used by Controller.
+
+
+Q2 - What is currently using the biggest amount of space in my database? 
+
+By looking at the sizes of the individual tables (inside the database), it is easy to see where most of the space is being used.  * For instructions, see separate IBM Technote #1345780
+
+
+Q3 - Is there anything 'useless' that I can delete to immediately free up space? 
+
+In many customer's cases, the answer is YES.  * Old/redundant TM1 trickle data can often easily be deleted from XDBTRICKLE. See separate IBM Technote #1624409 for more details. 
+ * Old Audit log can often easily be deleted from XDBAUDIT. See separate IBM Technote #1696796 for more details. 
+ * Old/redundant account locking information can often be deleted from XACCLOCK. Please contact IBM Support for more details.
+
+
+Q4 - Can I use SQL tools to shrink the MDF and LDF files (to reduce the hard drive space used) 
+
+Yes, but be aware that shrinking the database (specifically the MDF) can lead to database fragmentation, which can reduce performance. 
+
+In general terms:  * Shrinking the MDF should only be done after you have made large changes to the system (e.g. reduced XACCLOCK). 
+ * Shrinking the LDF can safely be done regularly (e.g. after every database full backup). 
+ * For more details on this topic, see separate IBM Technote #1367388.
+
+
+Q5 - Can I delete some old financial information (e.g. old years that we no longer use) from my Controller database? 
+
+Yes, it is possible to delete old data (for example all information older than 5 years old) from inside the database.  * Naturally you should create a backup of the database (before the deletion) and retain this (archive it somewhere safe) in case of future need.
+
+
+Contact IBM Support for more information on this topic. 
+RESOLVING THE PROBLEM
+Q6 - Will making my Controller database smaller speed up Controller? 
+
+
+There is not a simple answer to this question:
+
+General SQL operations: 
+
+ * Database backups 
+ * Database optimisations (especially re-indexes)
+
+In general, the smaller the database the quicker the SQL server will be able to perform backup and optimisation tasks. For example, when a superuser performs a 'database optimisation' (inside Controller) this will run quicker on a smaller Controller database. 
+
+Excel link reports: 
+There is no direct link between a smaller database and faster Excel link performance. Instead, the speed of the Excel link report depends on a huge number of factors.  * Perhaps the most important factor is the spreadsheet/report design. 
+ * See separate Technote 1347497 for more details.
+
+
+Consolidations: 
+There is no direct link between a smaller database and faster consolidation performance. Instead, the speed of the consolidation depends on a huge number of factors.  * Perhaps the most important factors are the financial complexity and the version of Controller used. 
+ * See separate Technote 1371240 for more details.
+
+
+Other Controller functions: 
+There is no direct link between a smaller database and the speed of other individual Controller functions (for example the speed of opening/changing the account structure). Instead, the speed of other individual Controller functions depend on a huge number of factors.  * Perhaps the most important factors are the financial complexity and the version of Controller used.
+
+
+As an overall comment, it is recommended that a customer:  * Creates a copy of their production database 
+ * Connects Controller to this new copy, and takes measurements for the speed/performance of their current database 
+ * Makes changes (for example deletes old data, and/or reduces the dimensions/complexity of their financial configuration). 
+ * Afterwards, re-take measurements for the speed/performance of their changes/reduced database.
+
+By doing this, the customer can find the direct effect of these changes to their system (before they perform those changes in the real 'production' database). RELATED INFORMATION
+ 1345780 - How to find out the size of each table inside [http://www.ibm.com/support/docview.wss?uid=swg21345780]
+1624409 - How to reduce the size of a Controller databa [http://www.ibm.com/support/docview.wss?uid=swg21624409]
+1367388 - How to shrink a Microsoft SQL database transa [http://www.ibm.com/support/docview.wss?uid=swg21367388]
+1347497 - Controller Excel Report Performance Tips [http://www.ibm.com/support/docview.wss?uid=swg21347497]
+1371240 - ** Troubleshooting ** How to improve Controll [http://www.ibm.com/support/docview.wss?uid=swg21371240]
+1696796 - "XDBAudit" database table - used by auditing [http://www.ibm.com/support/docview.wss?uid=swg21696796]

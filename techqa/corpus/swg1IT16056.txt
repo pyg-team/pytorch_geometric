@@ -1,0 +1,262 @@
+Title: IBM IT16056: JMS applications using the MQ V8 JCA resource adapter running inLiberty cannot establish secure TLS connections - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using the IBM MQ V8 JCA Resource Adapter (RA), an attempt
+   to establish a secure TLS client connection to an IBM MQ queue
+   manager from a classes for JMS application running inside
+   WebSphere Liberty fails.  The following exception is reported:
+   
+   [ERROR   ] J2CA8802E: The message endpoint activation failed for
+   resource adapter wmqJms due to exception:
+   com.ibm.mq.connector.DetailedResourceAdapterInternalException:
+   MQJCA1011: Failed to allocate a JMS connection., error code:
+   MQJCA1011 An internal error caused an attempt to allocate a
+   connection to fail. See the linked exception for details of the
+   failure.
+   	at
+   com.ibm.mq.connector.services.JCAExceptionBuilder.buildException
+   (JCAExceptionBuilder.java:174)
+   	at
+   com.ibm.mq.connector.services.JCAExceptionBuilder.buildException
+   (JCAExceptionBuilder.java:135)
+   	at
+   com.ibm.mq.connector.inbound.ConnectionHandler.allocateConnectio
+   n(ConnectionHandler.java:393)
+   	at
+   com.ibm.mq.connector.inbound.MessageEndpointDeployment.acquireCo
+   nnection(MessageEndpointDeployment.java:288)
+   	at
+   com.ibm.mq.connector.inbound.MessageEndpointDeployment.<init>(Me
+   ssageEndpointDeployment.java:228)
+   	at
+   com.ibm.mq.connector.ResourceAdapterImpl.endpointActivation(Reso
+   urceAdapterImpl.java:531)
+   	at
+   com.ibm.ws.jca.service.EndpointActivationService.activateEndpoin
+   t(EndpointActivationService.java:508)
+   	Caused by: com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ
+   call failed with compcode '2' ('MQCC_FAILED') reason '2397'
+   ('MQRC_JSSE_ERROR').
+   	at
+   com.ibm.msg.client.wmq.common.internal.Reason.createException(Re
+   ason.java:203)
+   	... 13 more
+   Caused by (repeated) ... : com.ibm.mq.jmqi.JmqiException:
+   CC=2;RC=2397;AMQ9204: Connection to host 'localhost(8484)'
+   rejected. [1=com.ibm.mq.jmqi.JmqiException[CC=2;RC=2397;AMQ9771:
+   SSL handshake failed.
+   [1=javax.net.ssl.SSLHandshakeException[com.ibm.jsse2.util.j:
+   PKIX path building failed:
+   java.security.cert.CertPathBuilderException: unable to find
+   valid certification path to requested
+   target],3=localhost/127.0.0.1:8484
+   (localhost),4=SSLSocket.startHandshake,5=default]],3=localhost(8
+   484),5=RemoteTCPConnection.protocolConnect]
+   	at
+   com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:
+   2282)
+   	at
+   com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:
+   1294)
+   	at
+   com.ibm.mq.ese.jmqi.InterceptedJmqiImpl.jmqiConnect(InterceptedJ
+   mqiImpl.java:376)
+   	at
+   com.ibm.mq.ese.jmqi.ESEJMQI.jmqiConnect(ESEJMQI.java:560)
+   	at
+   com.ibm.msg.client.wmq.internal.WMQConnection.<init>(WMQConnecti
+   on.java:345)
+   	... 12 more
+   Caused by: javax.net.ssl.SSLHandshakeException:
+   com.ibm.jsse2.util.j: PKIX path building failed:
+   java.security.cert.CertPathBuilderException: unable to find
+   valid certification path to requested target
+   	at com.ibm.jsse2.j.a(j.java:7)
+   ...
+   	at com.ibm.jsse2.qc.startHandshake(qc.java:828)
+   	at
+   com.ibm.mq.jmqi.remote.impl.RemoteTCPConnection$6.run(RemoteTCPC
+   onnection.java:1298)
+   	at
+   com.ibm.mq.jmqi.remote.impl.RemoteTCPConnection$6.run(RemoteTCPC
+   onnection.java:1290)
+   
+   
+   This issue occurs regardless of the version of WebSphereLiberty
+   in use.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the:
+   
+     - IBM MQ V8 JCA Resource Adapter
+     - IBM MQ V9 JCA Resource Adapter
+   
+     who have JMS applications running inside WebSphere Liberty
+   application server and are attempting to create secure TLS
+   connections to MQ queue managers.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When using the IBM MQ JCA Resource Adapter (RA) within WebSphere
+   Liberty, the expectation is that secure TLS connections to a
+   queue manager established by the IBM MQ RA (via a JMS Connection
+   Factory retrieved via the JNDI store or Activation
+   Specification) will use the key and trust certificate stores
+   defined within the SSL default Liberty server configuration
+   (sslDefault element in the Liberty server.xml file).
+   
+   However, the JKS key and trust stores defined within the
+   sslDefault XML configuration element were not used.  The default
+   certificate store (the cacerts file from the JRE) was being used
+   and if this did not contain the required certificates for the
+   secure socket handshaking to succeed, the connection would fail
+   with the exception:
+   
+     java.security.cert.CertPathBuilderException:
+       PKIXCertPathBuilderImpl could not build a valid CertPath.
+   
+   The root cause of the issue was because the IBM MQ RA was
+   creating its own SSLContext object with a call to
+   SSLContext.getInstance(String) and initialising it with the JRE
+   default key and trust certificate stores.  An SSLSocketFactory
+   was created from this SSLContext object which, in turn, was used
+   to created a secure socket to an MQ queue manager.
+   
+   The IBM MQ RA was not using the the default SSLContext object
+   created by the Liberty server from the sslDefult configuration
+   element, which is defined by the administrator in the server.xml
+   file  and initialised with the user defined key and trust
+   certificate store locations.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR updates the IBM MQ JCA Resource Adapter (RA) such that
+   when it is used within WebSphere Liberty, the SSLContext object
+   created by the Liberty runtime, which is based off the
+   sslDefault configuration element within the server.xml file, is
+   used by Activation Specifications and JMS Connection Factories
+   retrieved from JNDI when an attempt is made to establish a
+   secure connection to an MQ queue manager.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.6
+   v9.0 CD    9.0.2
+   v9.0 LTS   9.0.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT16056
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-25
+   
+   
+ * CLOSED DATE
+   2016-10-28
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS

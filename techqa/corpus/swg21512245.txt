@@ -1,0 +1,27 @@
+Title: IBM domain_create.pl - United States
+
+Text:
+domain_create.pl TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The domain create perl script fails with 'ORA-00942: table or view does not exist' when using 'schema' parameter - how to correct it? 
+
+SYMPTOM
+When domain_create.pl is run with following parameters - it fails with following error: 
+
+#ncp_perl domain_create.pl -domain XYZ -clone ABC -username ncim -password ncim -server oracle -host serverA.ibm.com -dbname NCIM -schema NCIM 
+
+Level: info Msg: Attempting to connect to database (DBI:Oracle:host=sea-sol-10b;sid=NCIM;port=1521)...
+DB prepare failed: ORA-00942: table or view does not exist (DBD ERROR: error possibly near <*> indicator at char 14 in 'select * from <*>templateType') at /opt/IBM/tivoli/netcool/precision/scripts/perl/scripts/get_policies.pl line 58
+
+
+
+
+CAUSE
+Basically when you supply parameters with schema 'NCIM' - the script is executing few sql queries to copy Poll policies from tables that doesn't exist in NCIM (which are of schema NCMONITOR) - as a result - you get above error.
+
+
+RESOLVING THE PROBLEM
+If you pass complete parameter list to access both NCMONTOR as well as NCIM schemas- that will work in-order to create new domain successfully, so the correct syntax is :
+
+#ncp_perl domain_create.pl -domain KRISHNA -clone ABC -username ncim -password ncim -server oracle -host serverA.ibm.com -dbname NCIM -schema NCIM -ncmonitor_password ncim

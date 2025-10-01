@@ -1,0 +1,105 @@
+Title: IBM LO52311: DUMP EVENT "SYSTHROW" (00040000) DETAIL "JAVA/LANG/OUTOFMEMORYERROR" RECEIVED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS RETURNED (APAR CANNOT BE RESOLVED WITHOUT ADDITIONAL INFO FROM IBM OR CUSTOMER.)
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Standard Client 85FP1HF161 crashed and threw the following
+   exception:
+   
+   Dump Event "systhrow" (00040000) Detail
+   "java/lang/OutOfMemoryError" received
+   
+   
+   The crash stack matches MALK85NHPJ.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# MALK85NHPJ.
+   The record was returned to the person who created it for more
+    information.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO52311
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED RET
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-07
+   
+   
+ * CLOSED DATE
+   2010-07-01
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,61 @@
+Title: IBM Error 'DPR-ERR-2079 Firewall Security Rejection' when running standard report - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User runs a standard report (also known as a 'system report'), such as 'Reconcile - Between Accounts/Opening Balances'. User receives error message. 
+
+SYMPTOM
+Reconcile - Between Accounts/Opening Balances (Preview) 
+
+Cognos 8
+An error has occurred
+DPR-ERR-2079 Firewall Security Rejection. Your request was rejected by the security Firewall.
+CAF rejection details are available in the log. Please contact your administrator.
+
+
+
+CAUSE
+There are several potential causes for this error message. However, they broadly fall into two catagories: 
+
+ * Scenario #1 - System was working OK for many weeks/months. Problem appeared one morning (for example, first thing on Monday morning after the weekend).  * In this scenario, it is possible that a change was made to at least one of the servers  * for example a Microsoft patch was applied to the database server 
+       * or there was a period of temporary network connection failure (for example DNS changes were made etc. 
+      
+      
+    * This would have caused the 'Report Server' (which is typically the same as the Controller application server, for small to medium systems) to lose connectivity to the database ('ContentStore') where it stores its configuration settings 
+    * This would lead to instability with the Report Server ('IBM Cognos 8 BI') service, which is involved with user logons and running 'standard reports' for Controller. 
+   
+   
+ * Scenario #2 - Reports have never worked successfully in the past  * Cognos Configuration has been incorrectly configured.
+   
+   
+
+RESOLVING THE PROBLEM
+Scenario #1 
+
+Obtain a short period of downtime, and restart the Cognos 8 BI (report) Windows service 
+
+Steps: 
+
+ 1. Ensure no users using the system 
+ 2. Logon to the Controller application server (or dedicated Cognos 8 BI Report Server, as appropriate) as an administrator 
+ 3. Launch 'Cognos Configuration' from the Start Menu 
+ 4. Click the 'Restart Service' icon (at the top left corner). TIP: This will take approx 1 or 2 minutes to complete. 
+ 5. Test.
+
+
+Scenario #2 
+Ensure that the Cognos Configuration (for example, the URI names / DNS names etc.) are correct. 
+
+Steps: 
+See separate IBM Technotes (such as those listed below) and follow their advice. 
+RELATED INFORMATION
+#1384521 - Getting DPR-ERR-2079 when hit import or disp [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21384521]
+1343027 - Error modifying pacakges in Framework Manager [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21343027]
+
+
+
+
+HISTORICAL NUMBER
+ 1040891

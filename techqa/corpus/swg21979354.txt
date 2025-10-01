@@ -1,0 +1,16 @@
+Title: IBM Usage of wildcards for Person CSV report in Atlas - United States
+
+Text:
+atlas; wildcard TECHNOTE (FAQ)
+
+QUESTION
+ How do you use wildcards in Person CSV report in Atlas ? 
+
+CAUSE
+The search results does not change with or without using wildcards in Person CSV report.
+
+ANSWER
+In Person CSV report with or without using wildcards you will get the same results for the search string. 
+
+For example : If you are searching for "ABC" as Firstname and you are expecting 4 results . 
+With (ABC%) or without (ABC using wildcards you will get same set of results.

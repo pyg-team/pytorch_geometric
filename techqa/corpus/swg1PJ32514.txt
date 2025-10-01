@@ -1,0 +1,123 @@
+Title: IBM PJ32514: THE PROCESS TASK MANAGER DISPLAYS A 'COULD NOT LOCK SYSTEM PREFS' ERROR WHEN RUNNING ON AIX PROCESS ENGINE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This is error message is seen when running the Process Task
+   Manager on an AIX Process Engine.  The fix is to disable the
+   Java system preferences since this functionality is not used by
+   the Process Task Manager.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  P8 4.0 user using Process Task Manager on AIX serverRECEIVE 'WAR
+   This error message is seen when running the Process Task Manager
+   =======================================================
+   WARNING: Could not lock System prefs. Unix error code -247294656
+   Aug 6, 2007 9:09:51 AM java.util.prefs.FileSystemPreferences che
+   WARNING: Could not lock System prefs. Unix error code -247294656
+   =======================================================Upgrade t
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is to disable the Java system preferences since this fun
+   ctionality is not used by the Process Task Manager.
+   Fixed provided in P8PE-4.0.2-001 or above.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ32514
+   
+   
+ * REPORTED COMPONENT NAME
+   PROCESS ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7607
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-12-10
+   
+   
+ * CLOSED DATE
+   2008-02-12
+   
+   
+ * LAST MODIFIED DATE
+   2008-02-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PROCESS ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R7607
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R402 PSY
+   UP

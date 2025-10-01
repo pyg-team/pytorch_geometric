@@ -1,0 +1,179 @@
+Title: IBM IV60378: WINCOLLECT AGENTS MIGHT STOP REPORTING EVENTS DUE TO THE CONFIGURATION SERVER NOT CLOSING SOCKETS CORRECTLY. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WinCollect agents use the configuration server to open
+   connections from the remote agent to the Console to check for
+   log source updates or configuration changes. An issue in the
+   configuration server is not closing sockets correctly, which
+   can cause ECS issues. This issue only affects WinCollect agents
+   at version 7.2.0.
+   
+   This issue can lead to messages in both the qradar.error or
+   qradar.log file for: ECS host.token "too many open files".
+   
+   When this issue occurs, administrators might notice the
+   following:
+   - Existing WinCollect deployments might notice that new agent
+   installations do not register with the Console correctly.
+   - Some WinCollect log sources might time out and stop reporting
+   events.
+   - On the Console, the logs might display an error message "too
+   many open files", which can stop the ECS service.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Administrators who experience any of these issues with
+   WinCollect 7.2.0 agents can download the latest WinCollect
+   Configuration Server Protocol rpm file from IBM Fix Central.
+   
+   Latest versions:
+   - PROTOCOL-WinCollectConfigServer-7.1-835960.noarch.rpm
+   or
+   - PROTOCOL-WinCollectConfigServer-7.2-835963.noarch.rpm
+   
+   Procedure
+   1. Download the appropriate WinCollect Configuration Server rpm
+   for your QRadar Console.
+   2. Copy the rpm file to the Console.
+   3. To install the rpm file, type: rpm -Uvh
+   PROTOCOL-WinCollectConfigServer-7.<version>.noarch.rpm
+   4. Log in to the Console.
+   5. Click the Admin tab.
+   6. Click Deploy Full Configuration and wait for the deploy to
+   complete.
+   Note: The next step logs off current users.
+   7. Click Advanced > Restart Web Server.
+   The installation is complete.
+   
+   If log sources for WinCollect agents continue to time out,
+   contact Customer Support for assistance.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  WinCollect agents use the configuration server to open
+   connections from the remote agent to the Console to check for
+   log source updates or configuration changes. An issue in the
+   configuration server is not closing sockets correctly, which
+   can cause ECS issues. This issue only affects WinCollect agents
+   at version 7.2.0.
+   
+   This issue can lead to messages in both the qradar.error or
+   qradar.log file for: ECS host.token "too many open files".
+   
+   When this issue occurs, administrators might notice the
+   following:
+   - Existing WinCollect deployments might notice that new agent
+   installations do not register with the Console correctly.
+   - Some WinCollect log sources might time out and stop reporting
+   events.
+   - On the Console, the logs might display an error message "too
+   many open files", which can stop the ECS service.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A protocol source RPM was released that closed a file handle
+   leak in ecs that happened when WinCollect Agents timed out.
+   PROTOCOL-WinCollectConfigServer-7.1-835960.noarch.rpm
+   PROTOCOL-WinCollectConfigServer-7.2-835963.noarch.rpm
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV60378
+   
+   
+ * REPORTED COMPONENT NAME
+   QRADAR SOFTWARE
+   
+   
+ * REPORTED COMPONENT ID
+   5725QRDSW
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-12
+   
+   
+ * CLOSED DATE
+   2014-05-13
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   QRADAR SOFTWARE
+   
+   
+ * FIXED COMPONENT ID
+   5725QRDSW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

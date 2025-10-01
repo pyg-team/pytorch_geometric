@@ -1,0 +1,41 @@
+Title: IBM How to enable hostname resolution for the New ClearQuest Web Server log files - United States
+
+Text:
+New ClearQuest Java Web ; Logging ; Users ; WebAccess ; NCQW ; hostname; resolution; clearquest; 1166437 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to enable the hostname resolution on New IBM® Rational® ClearQuest® Web. By default, the hostname resolution is disabled for better performance. However, if you need to know who is logged on to the server, hostname resolution can be enabled. 
+
+CAUSE
+By default, only the IP address gets noted in the log file. 
+
+RESOLVING THE PROBLEM
+The main ClearQuest Web Server configuration file is called: 
+
+Rational\common\rwp\conf\rwp.conf
+
+In this file, there is an entry called "HostnameLookups" : 
+
+ 1. Open it with WordPad so you get it formatted 
+ 2. Search for the entry "HostnameLookups" 
+ 3. You will find it below the comment:
+
+
+# 
+# HostnameLookups: Log the names of clients or just their IP addresses 
+# e.g., www.apache.org (on) or 204.62.129.132 (off). 
+# The default is off because it'd be overall better for the net if people 
+# had to knowingly turn this feature on, since enabling it means that 
+# each client request will result in AT LEAST one lookup request to the 
+# nameserver. 
+# 
+
+By default this has the value "off". This means that only the IP address gets noted in the logfile, and to get the machine name noted you have to change this value to "on". 
+
+There is another possible value for this entry: "double". The downside is that this takes more time because the IP address now has to be matched with the machine name. When a connection is made to a Web Server, only the IP address of the browser is known. The fully qualified domain name has to be looked up or resolved if it is needed. 
+
+The HostnameLookups directive controls the lookup of the hostname. If it is enabled, the server will contact the DNS server and request the hostname for a given IP address. This process can be slow, taking 10 seconds, if it is possible to resolve at all. The request from the client will be stalled until either the hostname is resolved or the request times out, making response times seem very slow. 
+
+Once an IP address is resolved to a hostname, it will be cached on the DNS server. Subsequent requests for the same IP address will occur much faster, but it still takes time and slows down the Web Server. Setting HostnameLookups to double lengthens response times. After the reverse name lookup of the browser's IP address is completed the name returned is converted back to an IP address. The two IP addresses are compared to make sure they are the same. It does add a little extra security, but at the expense of response time. 
+
+The entries will be logged in a logfile called: "acces.log(+ a number)" under rational/rwp/logs/.

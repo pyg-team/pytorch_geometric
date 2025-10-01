@@ -1,0 +1,33 @@
+Title: IBM How to use Recurrent Timeouts from Reaction in State in Rational Rhapsody - United States
+
+Text:
+Rational Rhapsody State Chart Timeout TECHNOTE (FAQ)
+
+QUESTION
+ How do you get recurrent timeouts from Reaction in State in IBM Rational Rhapsody? 
+
+ANSWER
+When a time-out is added within Reaction in State, the code handles it for 1 time execution only. 
+
+Any action code for Reaction in State is generated within notify transition start and terminate. 
+
+In contrast when a time-out is added to a state as a transition then schedule Transition is called. 
+
+Also, rootstate_substate and rootstate_active is reset to itself. 
+
+The code appears as: 
+
+NOTIFY_TRANSITION_STARTED("1");
+if(rootState_timeout != NULL)
+{
+rootState_timeout->cancel();
+rootState_timeout = NULL;
+}
+NOTIFY_STATE_EXITED("ROOT.state_0");
+NOTIFY_STATE_ENTERED("ROOT.state_1");
+rootState_subState = state_1;
+rootState_active = state_1;
+rootState_timeout = scheduleTimeout(100, "ROOT.state_1");
+NOTIFY_TRANSITION_TERMINATED("1");
+
+Therefore its better to show recurrent timeout as transition than as Reaction in State.

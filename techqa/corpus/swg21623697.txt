@@ -1,0 +1,18 @@
+Title: IBM AAA-SYS-0002 during restart with Custom Java Authentication Provider (CJAP) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ During restart, a system with a Customer Java Authentication Provider returns "AAA-SYS-0002 The service cannot process the request because it has not been initialized." 
+
+CAUSE
+Missing key definition in cjap.properties
+
+ANSWER
+It was determined through the cogserver.log that the full error message being received was as follows: 
+
+AAA-SYS-0002 The service cannot process the request because it has not been initialized.
+java.util.MissingResourceException: Can't find resource for bundle java.util.PropertyResourceBundle, key securitydb.sql_custom_props 
+
+On examination of the cjap.properties file, it was noted that there was no entry present for the key "securitydb.sql_custom_props" due to an accidental deletion. Restoration of the cjap.properties file resolved the error, and Cognos 10 was again able to start properly.

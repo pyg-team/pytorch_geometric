@@ -1,0 +1,42 @@
+Title: IBM How to clear nzhealthcheck SHC132 rule in N1001/N200x/N3001 systems - United States
+
+Text:
+pda; netezza; nzhealthcheck; nps; cluster; restriction TECHNOTE (FAQ)
+
+QUESTION
+ How can I clear nzhealthcheck SHC132 rule on my N1001/N200x/N3001 appliance? 
+
+CAUSE
+Sometimes heartbeat is marking one of the hosts as unsuitable to ever perform roles as a master due to side-effect of host migration. This effectively disables HA and needs to be repaired as soon as possible.
+The rule in nzhealtcheck is marked as High severity and looks like below:
+
+Rule : SHC132
+Issue Detected : Heartbeat resource "nps" has restriction on host choice
+Severity : High
+Components : Host nzhost2 is blocked from becoming master
+
+
+ANSWER
+First, please make sure that the issue with host marked as unsuitable to run cluster resources is resolved. 
+Once this is done, please login as a root user to the host you need to fix and run below command:
+
+crm_resource -U -r nps 
+
+ 
+
+To test if the failover works and both hosts can manage the NPS resource group, you will need to arrange a downtime window of at least 30 minutes. 
+
+ 
+
+Once downtime is confirmed, please execute below commands to test NPS failover: 
+
+ 
+
+1. as nz user run: 
+
+nzstop 
+
+2. as root user on either of the hosts run:
+/nzlocal/scripts/heartbeat_admin.sh --migrate
+
+NPS should came online on the second host without issues. You can monitor cluster with command "crm_mon -i3"

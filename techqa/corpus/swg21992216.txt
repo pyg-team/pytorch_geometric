@@ -1,0 +1,39 @@
+Title: IBM ClassCastException after deployment of OSGi extension - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After deploying an OSGi extension, ClassCastException gets thrown 
+inconsistently. 
+
+SYMPTOM
+ClassCastException sometimes occurs after deployment of OSGi extension. 
+
+
+[15/08/16 14:39:58:985 EDT] 00000166 NativeLoader I 
+com.ibm.mdm.mds.jni.NativeLoader <clinit> Loading native libraries 
+
+[15/08/16 14:39:58:986 EDT] 00000166 NativeLoader I 
+com.ibm.mdm.mds.jni.NativeLoader loadLibrary Trying to load native 
+library 'mad'... 
+
+[15/08/16 14:39:59:795 EDT] 00000166 NativeLoader I 
+com.ibm.mdm.mds.jni.NativeLoader loadLibrary Trying to load native 
+library 'mad'...failed (library is loaded by another defunct 
+classloader), retrying (60s remaining) 
+... ... 
+
+DWLExceptionU E java.lang.ClassCastException: 
+ca.gg.ccc.commercial.extensions.entityObject.EObjIdXReference 
+incompatible with 
+ca.gg.ccc.commercial.extensions.entityObject.EObjIdXReference 
+... ...
+
+
+
+RESOLVING THE PROBLEM
+Restarting server will resolve the issue. It is part of the deployment. See more details in the following Knowledge center link: 
+http://www.ibm.com/support/knowledgecenter/en/SSWSR9_11.3.0/com.ibm.mdmhs.wb.tools.models.doc/c_Addition_and_Extension_Deployment_in_OSGi_Framework.html [http://www.ibm.com/support/knowledgecenter/en/SSWSR9_11.3.0/com.ibm.mdmhs.wb.tools.models.doc/c_Addition_and_Extension_Deployment_in_OSGi_Framework.html] 
+
+Also you can restart servers one by one in cluster.

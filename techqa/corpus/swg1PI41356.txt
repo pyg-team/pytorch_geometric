@@ -1,0 +1,148 @@
+Title: IBM PI41356: APPLYING FIX PI21973 FAILS WHILE INSTALLING CF14 (8.0.0.1) OR CF02 (8.5.0.0) - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following error can occur while applying the fix PI21973
+   which is part of CF14 (8.0.0.1) or CF02 (8.5.0.0):
+   
+   [wsadmin] WASX7017E: Exception received while running file
+   "/opt/IBM/WebSphere/AppServer/profiles/wp_profile/ConfigEngine/c
+   
+   onfig/work/wp_UpdateWcmLibPortalCommandExtension.jacl";
+   exception information: com.ibm.bsf.BSFException: error while
+   eval'ing Jacl expression:
+   [wsadmin] cannot open file: Web_Content_Templates-PI21973_[YYYYM
+   
+   MDD-HHMMSS].nochange
+   [wsadmin]     while executing
+   [wsadmin] "open $reportFile w+"
+   ....
+   
+   where [YYYYMMDD-HHMMSS] is the time stamp of script execution.
+   
+   This error is likely to happen in case of virtual portals.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 17 (PI38621 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI38621]) for Portal
+   8.0.0.1 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI38621
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Correcting path handling for report files during wsadmin calls
+   to Virtual Portals.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI41356
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-19
+   
+   
+ * CLOSED DATE
+   2015-07-01
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

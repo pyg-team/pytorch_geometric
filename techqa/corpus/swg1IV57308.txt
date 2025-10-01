@@ -1,0 +1,152 @@
+Title: IBM IV57308: CREWWORKGROUP MISSED IN JOBTASK TABLE AND UI - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  in 7503 Crews brought into Core the  Work Group should have
+   been added to the task level of the Job Plan to match old
+   Utilities functionality
+   
+   Fix required:
+   Core will need to add  CREWWORKGROUP  to the JOBTASK table
+   CREWWORKGROUP will need to be added to UI for Jobtask for both
+   Job Plans and Work Order Tracking (Plans tab)
+   
+   Note: the field is there as acitivies in the same table as
+   workorders but it is not displayed in the UI for WO, Plans, Task
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Maximo 7.5 users that also use Utilities                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * in 7503 Crews brought into Core the  Work Group should have  *
+   * been added to the task level of the Job Plan to match old    *
+   * Utilities functionality                                      *
+   *                                                              *
+   * Fix required:                                                *
+   * Core will need to add  CREWWORKGROUP  to the JOBTASK table   *
+   * CREWWORKGROUP will need to be added to UI for Jobtask for    *
+   * both                                                         *
+   * Job Plans and Work Order Tracking (Plans tab)                *
+   *                                                              *
+   * Note: the field is there as acitivies in the same table as   *
+   * workorders but it is not displayed in the UI for WO, Plans,  *
+   * Task                                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to the latest fixes.                                 *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem has been fixed to address the missing columns from
+   Utilities.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV57308
+   
+   
+ * REPORTED COMPONENT NAME
+   WORK ORDERS
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46WO
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-21
+   
+   
+ * CLOSED DATE
+   2014-04-03
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORK ORDERS
+   
+   
+ * FIXED COMPONENT ID
+   5724R46WO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

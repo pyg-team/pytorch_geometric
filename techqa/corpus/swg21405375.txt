@@ -1,0 +1,49 @@
+Title: IBM SSL connection terminates with alert 21 after connection is established on Web Services Proxy with an 'Invalid SSL bulk encryption algorithm' error. - United States
+
+Text:
+alert 21; wsp; ws-proxy; ws proxy; web service proxy; Invalid SSL bulk encryption algorithm; datapower; 9345; 9004; 9003 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An IBM WebSphere DataPower Web Service Proxy (WSP) configured for SSL, terminates successful SSL connection with alert 21 just after it is established. 
+
+SYMPTOM
+A Web Service Proxy (WSP) may close an SSL connection with SSL Alert #21 with an 'Invalid SSL bulk encryption algorithm' error
+
+
+CAUSE
+This error occurs when the algorithm defined in the security policy used by the Web services Proxy does not match with the algorithm used in the SSL handshake done by the HTTPS Front side handler attached to the WSP
+
+ENVIRONMENT
+WSP services that use SSL connections
+
+DIAGNOSING THE PROBLEM
+Depending on log target and configuration the log may show something like:
+
+
+ * Execution of 'store:///dp/transport-check.xsl aborted: Invalid SSL bulk encryption algorithm 
+ * Reject set (but skipped): Invalid digest algorithm 
+ * Reject set (but skipped): Invalid SSL bulk encryption key length 
+ * Reject set: Invalid SSL bulk encryption algorithm 
+ * Cipher suite in transport check:RC4-MD5 <<== [algorithm already chosen during first SSL connection] 
+ * Found in cache (store:///dp/transport-check.xsl) 
+
+RESOLVING THE PROBLEM
+In 3.8.0 a new policy parameter value 'Disable SSL Cipher Suite Check' is added to the policy parameter 'DataPower Specific Features'. If it's enabled then the Web Services Proxy will not perform any checks on the cipher suite used by the HTTPS Front side handler in the SSL handshake. This parameter should be disabled to avoid the error. 
+
+After disabling the parameter, the following steps are also needed to complete the change:
+
+1. Save the change. 
+2. Edit the local endpoint and Apply. 
+3. Click Apply on the WS-Proxy main page. 
+
+These steps force the security policy to rebuild all the dynamic actions with the correct parmaters.
+
+
+Note that prior to 3.8.0, the security policy can be modified to allow the algorithm used in the SSL handshake. For example, the following log message indicates that the HTTPS FSH has negotiated the SSL algorithm as RC4-MD5: "Cipher suite is transport check:RC4-MD5" which is a 128 bit key algorithm. Hence the security policy must be modified to state Basic128 instead of Basic256 :
+<sp:AlgorithmSuite>
+<wsp:Policy>
+<sp:Basic128 />
+</wsp:Policy>
+</sp:AlgorithmSuite> 
+
+If the security policy cannot be modified, or if one requires that the SSL encryption algorithm needs to be 256 bit key, then the "Ciphers" parameter in the HTTPS FSH configuration can be modified to support only specific 256 bit key algorithms while performing the SSL handshake.

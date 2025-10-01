@@ -1,0 +1,236 @@
+Title: IBM PI34462: CUMULATIVE MAINTENANCE FIXPACK 7.1.0.7 FOR THE JMS FEATURE OF WEBSPHERE MQ FOR Z/OS VERSION 7.1.0. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Fixpack 7.1.0.7 for WebSphere MQ for z/OS Version 7.1.0
+   provides fixes for the problems described in this APAR.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 1 Modification 0 with the MQ Java    *
+   *                 Feature.                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Service offering 7.1.0.7 for WebSphere  *
+   *                      MQ for z/OS V7.1.0 provides fixes for   *
+   *                      the problems described in this APAR.    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   PI32277 - GPF ABEND OCCURS AT COM/IBM/MQ/JMQI/LOCAL/INTERNAL/
+             BASE/NATIVE.MQCONNX
+   PI28869 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI28869] - AN MQRC_HOBJ_ERROR (2019) WAS CAUSED BY AN ERROR IN
+             DISCONNECT IN THE MQ JAVA CLASSES FOR A CICS
+             TRANSACTION
+   PI38735 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI38735] - CICS JAVA REGION UNRESPONSIVE AFTER A JAVA TRANSACTION
+             ABEND MQMANAGEDCONNECTIONJ11 FOR MQ CALL IN CICS
+             ENVIRONMENT
+   IT08520 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT08520] - MQ RA PROPERTY STARTUPRETRYCOUNT IS SET TO 10 INSTEAD
+             OF 0 WHEN AN INVALID VALUE IS SPECIFIED
+   IV59316 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV59316] - A WEBSPHERE MQ JMS APPLICATION GOT A NULLPOINTER
+             EXCEPTION WHEN IT ATTEMPTED TO RETRIEVE AN EVENT/PCF
+             MESSAGE.
+   IV61537 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV61537] - AFTER JRE UPGRADE, NULLPOINTEREXCEPTION THROWN BY
+             APPLICATION WHEN ACCESSING MESSAGE DATA USING
+             WMQ-JAVA CLASSES
+   IV65687 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV65687] - MQMANAGEDOBJECT FINALIZE METHOD SHOULD NOT TRY TO
+             CLOSE A QUEUE THAT HAS HAD A PREVIOUS CLOSE FAILURE
+   IT03021 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT03021] - JAVA/JMS CLIENT CONNECTION TO QUEUE MANAGER APPEARS
+             TO HANG WHEN QUEUE MANAGER IS NOT ABLE TO RESPOND
+   IV65990 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV65990] - WEBSPHERE MQ RESOURCE ADAPTER V701 CAUSING OUTOFMEMORY
+             ERROR ON WAS WHILE TRYING TO PERFORM "CLEAN" SHUTDOWN.
+   IT05061 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT05061] - THE TIMESTAMP ON STANDALONE WEBSPHERE MQ CLASSES FOR
+             JMS TRACES AND WEBSPHERE MQ FTE/MFT TRACES DOES NOT
+             CONTAIN A DATE FIELD.
+   IV66241 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV66241] - JMSWMQ1017 "NON-LOCAL MQ QUEUE NOT VALID" ERROR
+             MESSAGE ISSUED WHEN IT IS USED AUTO-RECONNECT WITH
+             TEMPORARY QUEUES
+   IV66840 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV66840] - ADD SUPPORT FOR SELECTED TLS CIPHERSPECS WHEN RUNNING
+             IN NON-IBM JAVA RUNTIME ENVIRONMENT
+   IV67687 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV67687] - MDB ON Z/OS USING ACTSPEC WITH TRANSPORT MODE
+             "BINDINGS, THEN CLIENT" THROWS
+             DETAILEDILLEGALSTATEEXCEPTION
+   IV68120 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV68120] - A WEBSPHERE MQ MESSAGE CANNOT BE RESENT IF THE RFH2
+             HEADER IN THE ORIGINAL MESSAGE CONTAINS A BLANK VALUE
+             IN THE FIELD
+   IT06660 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT06660] - WEBSPHERE APPSERVER ON Z/OS ACTIVATION SPEC DEADLOCKS
+             WHILE BEING PAUSED
+   IT06939 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT06939] - SSLFIPSREQUIRED PROPERTY FOR AN ACTIVATION
+             SPECIFICATION USING THE WEBSPHERE MQ JMS PROVIDER IS
+             NOT HONORED.
+   IV69447 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV69447] - MQCLIENT.INI FILE ATTRIBUTE NAME VALUES MAY NOT BE
+             READ IF ATTRIBUTE IS PRECEDED BY A TAB CHARACTER.
+   IT05839 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT05839] - WAS RESOURCE ADAPTER HANGS WHEN 2 OR MORE LISTENER
+             PORTS USE SAME CONNECTION FACTORY AND HAVE MAXIMUM
+             SESSIONS SET TO 1
+   IV70660 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV70660] - A REBROWSE FAILS WITH 2033 (MQRC_NO_MSG_AVAILABLE),
+             WHICH CAUSES A JMSEXCEPTION TO BE GENERATED.
+   IT07964 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT07964] - WMQ MULTITHREADED JAVA APPLICATION THROWS
+             NULLPOINTEREXCEPTION WHEN USING CCDT
+   IC93973 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC93973] - JEE APPLICATION RUNNING IN WEB LOGIC IS UNABLE TO AUTO
+             RECONNECT TO STANDBY INSTANCE ON QMGR FAILOVER
+   IT08444 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT08444] - MQCONNECTIONFACTORYFACTORY.GETOBJECTINSTANCE() FFSTS
+             AND THROWS NPE IF PASSED UNREFERENCED OBJECT
+   IT08520 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT08520] - MQ RA PROPERTY STARTUPRETRYCOUNT IS SET TO 10 INSTEAD
+             OF 0 WHEN AN INVALID VALUE IS SPECIFIED
+   IT09423 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT09423] - NOT ABLE TO CONNECT TO A SSLV3 SECURED CHANNEL WHEN
+             USING A NON-IBM JRE WITH IV66840 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV66840] ACTIVATED
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Java level info:
+   
+   Name:        WebSphere MQ classes for Java
+   Version:     7.1.0.7
+   Level:       k710-007-151026
+   Build Type:  Production
+   
+   
+   JMS level info:
+   
+   Name:        Java Message Service Client
+   Version:     7.1.0.7
+   Level:       k710-007-151026
+   Build Type:  Production
+   
+   Name:        WebSphere MQ classes for Java Message Service
+   Version:     7.1.0.7
+   Level:       k710-007-151026
+   Build Type:  Production
+   
+   Name:        IBM WebSphere MQ JMS Provider
+   Version:     7.1.0.7
+   Level:       k710-007-151026 mqjbnd=k710-007-151026
+   Build Type:  Production
+   
+   Name:        Common Services for Java Platform, Standard Edition
+   Version:     7.1.0.7
+   Level:       k710-007-151026
+   Build Type:  Production
+   108Y
+   CSQ8JTR1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI34462
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   108
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-09
+   
+   
+ * CLOSED DATE
+   2015-11-19
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI33113
+   
+   
+
+MODULES/MACROS
+ *  CSQ8JTR1
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R108 PSY UI33113 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI33113]
+   UP15/11/20 P F511 ½
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

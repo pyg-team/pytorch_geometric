@@ -1,0 +1,74 @@
+Title: IBM Is Domino supported on Windows Server Clustering Technology - United States
+
+Text:
+supported; microsoft; certified; statement; policy; position; fail over; fail-over; Microsoft Clustering TECHNOTE (FAQ)
+
+QUESTION
+Is Domino supported on Microsoft Cluster Service (MCSC)? 
+
+ANSWER
+IBM Domino 6.x and later releases are fully supported running under Microsoft Cluster Service. However, Microsoft Cluster Service should only be used for operating system and hardware failure scenarios. New features in Domino 6 and beyond allow for faster and more efficient recovery of Domino, and should be used instead of Microsoft Cluster Service for Domino Application availability. Be sure to read the rest of this document to understand how the Domino functions NSD and Fault Recovery might interact with Microsoft Cluster Service. 
+(This statement is applicable to Domino 6.x and later releases running on a Windows Server 2003, Enterprise Edition and Windows Server 2008.)
+
+In Domino 5.0.x and prior, Domino used the QNC debugger as an exception handler and it worked well on Windows Clustering technology. However, beginning with 6.0, Domino now uses the NSD exception handler and it has been found that NSD does not work well with Windows Clustering. See below for more details.
+
+Summary of Interaction between NSD, Fault Recovery, and MS Cluster Manager
+
+What is NSD? 
+
+NSD is the core First Failure Data Capture (FFDC) Tool. In the case of an exception or Panic in the Domino code, the Domino exception handler gets control and invokes NSD to collect diagnostic information on the failure. This information includes environmental data, process information, thread/process call stacks, local and shared memory dumps, file system information, etc. When data collection is complete, NSD will clean up memory, files and processes and generally prepare the Domino server for a clean restart. (This is true for Windows only. On Unix, the cleanup is done internally, but conceptually, the principle is the same.) 
+
+What is Fault Recovery?
+
+The Fault Recovery feature was new to Domino 6. Fault Recovery enables a server that has terminated abnormally to shut itself down and restart automatically, without any administrator intervention. When Domino encounters a situation that is considered a fatal error, diagnostic information is collected via NSD, each Domino process is terminated, and all associated resources are released. There is a good deal of information on Fault Recovery in the Domino Administrator Guide and the Release Notes:
+
+IBM Documentation [http://www.lotus.com/ldd/doc] 
+
+ 
+
+What happens when MS Cluster Manager is used for Domino Application Failover? 
+
+
+ * If the Domino Server fails (takes an exception) NSD gets control for FFDC as described above. 
+ * MS Clustering will take away the file system while NSD is running. 
+ * NSD will NOT be able to capture diagnostic data about the Domino failure. 
+ * NSD will NOT have an opportunity to clean up the processes. 
+ * The Domino server will be left in a "bad" state and the MS Cluster Manager will not be able to fail back (sometimes described as "ghost" Domino processes on the failed server.) 
+   
+
+Why not just disable NSD and Fault Recovery? 
+
+There has been some discussion that NSD and Fault Recovery can be disabled on the server. This may allow MS Cluster Manager to perform application failover ( although this has NOT been tested or certified by IBM ). However, disabling NSD makes Domino fundamentally "unserviceable" because we capture no data concerning product failures. This is the basis of the statement that MS Cluster Manager is not supported for Domino failover. 
+
+Furthermore, we believe that the fastest and most efficient way to recover from an abnormal termination of the Domino server is Domino Fault Recovery. This feature allows for efficient FFDC, proper clean-up of processes and other resources, and efficient restart of the server. 
+
+Can MS Cluster Manager be used for Hardware, Network and Operating System Failover? 
+
+Yes. There is no known reason why MS Cluster Manager can not be used for hardware, network and operating system failover, and continues to be supported. Domino development does not provide scripts to enable this functionality. If technical help is required in writing these scripts, contact your IBM representative to engage IBM Software Services for assistance. 
+
+How can I terminate the Domino server on Windows? 
+
+1. Quit at the console or "nserver -q" 
+ * 
+ * 
+
+2. nsd -dumpandkill 
+ * 
+ * nsd -dumpandkill
+ * 
+ * 
+
+3. nsd -kill 
+ * 
+ * nsd -kill
+ * 
+ * 
+
+Excerpt from the Release Notes 
+
+It should additionally be noted that the Release Notes (starting in 6.0.4 and 6.5.2) make the following statement on this issue: 
+ * 
+
+
+Note, however, that the Release Notes are currently contradictory in the statement of support for Windows Server Clustering. This technote supersedes the information in the Release Notes. The Release Notes for a future Domino release will be updated to correct this inconsistency. RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21604035]

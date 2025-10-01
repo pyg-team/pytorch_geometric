@@ -1,0 +1,51 @@
+Title: IBM BigFix System Requirements - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Links to resources which outline system requirements for the various BigFix components 
+
+RESOLVING THE PROBLEM
+Up-to-date system requirement reports can be found using the Software Product Compatibility Reports (SPCR) tool, click on the version of BigFix you need to search for in the SPCR: 
+
+ * IBM BigFix Version 9.5 [http://www-01.ibm.com/support/docview.wss?uid=swg21976664] 
+ * IBM BigFix Version 9.2.6 to current [http://www-01.ibm.com/support/docview.wss?rs=1015&uid=swg21968624] 
+ * IBM BigFix Version 9.2.0 to 9.2.5 [http://www-01.ibm.com/support/docview.wss?rs=1015&uid=swg21684809] 
+ * IBM BigFix Version 9.1 [http://www-01.ibm.com/support/docview.wss?rs=1015&uid=swg21652841] (this version has reached its end of support) 
+ * IBM BigFix Version 9.0 [http://www-01.ibm.com/support/docview.wss?uid=swg21626404] (this version has reached its end of support)
+
+
+Note: For a full guide on capacity planning, performance, and management see the following:  * IBM BigFix Version 9.x: Capacity Planning, Performance, and Management Guide [http://www-01.ibm.com/support/docview.wss?uid=swg27048326]
+
+
+The Software Product Compatibility Reports (SPCR) tool you will be able to look to see if the application components are compatible on a certain platforms as well as look at the specific system level requirements recommended for each BigFix component or application. 
+
+As an example, if you wanted to see what the hardware requirements for the BigFix Server are, under the IBM BigFix Platform 9.5.0 section you would first click on BigFix Server: 
+
+[/support/docview.wss?uid=swg21505691&aid=1] [/support/docview.wss?uid=swg21505691&aid=1] 
+
+Then click on the Hardware tab: 
+
+[/support/docview.wss?uid=swg21505691&aid=2] [/support/docview.wss?uid=swg21505691&aid=2] 
+
+And finally look at the various requirements and recommendations for the BigFix Server component on each of the supporting operating systems (Windows or RHEL). 
+
+[/support/docview.wss?uid=swg21505691&aid=3] [/support/docview.wss?uid=swg21505691&aid=3] 
+
+
+For other BigFix components and applications, click on their specific links. 
+
+Note: The system requirements for the IBM BigFix Server are specified for a single dedicated server machine. It assumes that the main server machine will host the IBM BigFix Server software, IBM BigFix Web Reports, and the database server application. The requirements and specifications may change if your IBM BigFix deployment uses an advanced configuration like a separate database server, a separate Web Reports server, a SAN (Storage Area Network), or you have configured DSA (Distributed Server Architecture) to run a mutli-server deployment. The following articles may also help you in the planning of your BigFix deployment. 
+
+ * BigFix Supported Database Versions [http://www-01.ibm.com/support/docview.wss?uid=swg21972180] (SQL Express Edition not recommended for production deployments) 
+ * IBM BigFix Platform Support Policy [http://www-01.ibm.com/support/docview.wss?uid=swg21570458] (legacy) 
+ * Recommended RAID configuration for the BigFix Server [http://www-01.ibm.com/support/docview.wss?uid=swg21506188] (Note: RAID arrays must support using the disk cache for both reading and writing. The disk cache should be set to 50/50 read write.) 
+ * Performance Configurations [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Endpoint%20Manager/page/Performance%20Configurations] 
+ * System Requirements for BigFix Server (evaluation install) [http://www-01.ibm.com/support/docview.wss?uid=swg21505622] 
+ * System Requirements for the BigFix Console [http://www-01.ibm.com/support/docview.wss?uid=swg21505693] 
+ * Windows Installer requirements for installing BigFix components [http://www-01.ibm.com/support/docview.wss?uid=swg21505716] 
+ * Network Requirements: Network Traffic Guide [https://www.ibm.com/developerworks/community/wikis/home?lang=en#/wiki/Tivoli%20Endpoint%20Manager/page/Network%20Traffic%20Guide] 
+ * BigFix (TEM) Requirements [http://www-01.ibm.com/support/docview.wss?uid=swg21505796] 
+ * BigFix Relay System Requirements [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Endpoint%20Manager/page/BigFix%20Relay%20System%20Requirements] 
+ * What are the privileges required by the IBM Bigfix components/users on Windows? [http://www-01.ibm.com/support/docview.wss?uid=swg21506066]

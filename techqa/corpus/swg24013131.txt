@@ -1,0 +1,28 @@
+Title: IBM PK29976; 6.0.2.11: timing/synchronization issue with multiple EJB JAR files - United States
+
+Text:
+PK29976; PK29976; PK29976 DOWNLOADABLE FILES
+
+ABSTRACT
+ A potential synchronization issue may arise when two or more EJB jars in the same EAR are accessed at about the same time. 
+
+DOWNLOAD DESCRIPTION
+PK29976 resolves the following problem: ERROR DESCRIPTION: When there are two or more EJB Jars in the same EAR there is the potential to encounter a synchronization issue because. the EJB Jar files are beneath a common parent, simultaneous calls to different EJB Jar files can result in simultaneous calls to retrieve the deployment descriptor of the shared parent EAR. Concurrent access to EJBs is causing concurrent access through to application data. An example of the exception seen in the log file: EJBContainerI E WSVR0068E: Attempt to start EnterpriseBean MyBean#MyEJB.jar#Mytest failed with exception: com.ibm.etools.j2ee.commonarchivecore.exception. DeploymentDescriptorLoadException: META-INF/application.xml !Stack_trace_of_nested_exce! com.ibm.etools.j2ee.commonarchivecore. exception.EmptyResourceException: META-INF/application.xml LOCAL FIX: PROBLEM SUMMARY USERS AFFECTED: WebSphere Application Service users on versions 6.0.2 and 6.1. PROBLEM DESCRIPTION: A potential synchronization issue may arise when two or more EJB jars in the same EAR are accessed at about the same time. RECOMMENDATION: None When there are two or more EJB Jars in the same EAR, and at least two or more are being accessed at roughly the same time, there is the potential to encounter a synchronization issue. This issue can arise because the EJB Jar files are beneath a common parent and thus simultaneous calls may be made to retrieve the deployment descriptor of the shared parent EAR. Concurrent access to EJBs is causing concurrent access through to application data. An example of the exception seen in the log file: EJBContainerI E WSVR0068E: Attempt to start EnterpriseBean MyEar#MyEJB.jar#MyTestBean failed with exception: com.ibm.etools.j2ee.commonarchivecore.exception. DeploymentDescriptorLoadException: META-INF/application.xml !Stack_trace_of_nested_exce! com.ibm.etools.j2ee.commonarchivecore. exception.EmptyResourceException: META-INF/application.xml PROBLEM CONCLUSION: This fix provided the code necessary to avoid the synchronization issues described above. The fix for this APAR is currently targeted for inclusion in fixpacks 6.0.2.17 and 6.1.0.4. Please refer to the recommended updates page for delivery information: http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980
+
+PREREQUISITES
+Please download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK29976/readme.txt] US English 6644 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 6.0.2.11-WS-WAS-IFPK29976 08-21-2006 US English 73629 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK29976/6.0.2.11-WS-WAS-IFPK29976.pak] DD 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www-306.ibm.com/software/support/probsub.html [http://www-306.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server Support Web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV(U.S. only). 
+
+Cross Reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK Application Servers WebSphere Application Server for z/OS z/OS 6.0

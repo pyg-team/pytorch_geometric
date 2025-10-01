@@ -1,0 +1,114 @@
+Title: IBM "Failed to stat plugin config file" error message in plug-in trace - United States
+
+Text:
+plugin; plug-in; refresh TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Some customer cases have reported that overall performance degraded, and lots of Failed to stat plugin config file errors were observed within the plug-in trace. 
+
+CAUSE
+Due to incorrect permissions, the WebSphere Application Server plug-in module is unable to stat() the plugin-cfg.xml file for possible refresh.
+
+RESOLVING THE PROBLEM
+The example mentioned in the Abstract is from an AIX® platform, but it applies to all UNIX®, Linux®, and Windows® platforms running the Apache/IBM HTTP Server Web server. 
+
+Background:
+When the RefreshInterval expires and a new request is received, the WebSphere plug-in first checks if it needs to reload theplugin-cfg.xml. The plug-in has to stat() the plugin-cfg.xml file to see when the file was last modified. If this fails, the plug-in continues the same check on each subsequent request, because the RefreshInterval has expired and has not successfully reloaded theplugin-cfg.xml file.
+
+Solution:
+For the stat() to succeed, the userID that runs IBM HTTP Server must have read and execute permissions on all the directories included in the path to the plugin-cfg.xml and read and execute permissions on the plugin-cfg.xml itself. Normally, the IBM HTTP Server parent process is started as root, but its children switch to nobody/nobody (user/group). You have to verify that the user/group that owns the IBM HTTP Server children processes have the correct permissions to stat() plugin-cfg.xml. This eliminates the stat() error, and makes the plug-in check only after the RefreshInterval has expired. 
+
+Customer case: 
+
+ * After configuring a remote IBM HTTP Server instance on an AIX 5.2 ML2 using plug-in, the WebSphere plug-in initialized properly when IBM HTTP Server started up as root; however, after the RefreshInterval expired, these events and errors were observed in the plug-in trace at every new http request. Following is a snippet of a full plug-in trace, when LogLevel directive was set to 
+   
+   Trace:
+   
+   TRACE: ws_common: websphereConfigIsNew: New config detected
+   TRACE: ws_common: websphereShouldHandleRequest: Attempting to reload the config
+   TRACE: ws_common: websphereUpdateConfig: begin updating configuration
+   ERROR: ws_common: websphereUpdateConfig: Failed to stat plug-in config file: /opt/WebSphere/AppServer/config/plugin-cfg.xml
+   ERROR: ws_common: websphereShouldHandleRequest: Config reloading FAILED; using old config
+   
+ * WebSphere Application Server performance degraded due to repeated attempts to stat() the plugin-cfg.xml file.
+   
+ * IBM HTTP Server started as root and all children ran under nobody/nobody. These directives were configured in IBM HTTP Server httpd.conf, which caused IBM HTTP Server children to switch to nobody/nobody (user/group):
+   
+   User nobody
+   Group nobody
+
+ * Plugin-cfg.xml was owned by root/other (user/group) and was located in this directory:
+   
+   opt/WebSphere/AppServer/config/plugin-cfg.xml
+
+ * These two plug-in directives were configured in the IBM HTTP Server httpd.conf:
+   
+   LoadModule was_ap20_module /opt/WebSphere/AppServer/bin/mod_was_ap20_http.so
+   WebSpherePluginConfig /opt/WebSphere/AppServer/config/plugin-cfg.xml
+
+ * The plugin-cfg.xml correctly had 755 permissions for user/group/others:
+   
+   rwxr-x-r-x
+
+ * All directories but one in the path to the plugin-cfg.xml had correct 755 permissions:
+   
+   rwxr-x-r-x
+
+ * The config directory had 754 permissions:
+   
+   rwxr-x-r-x
+
+ * The missing execute permissions for user/nobody that belonged to the others category caused IBM HTTP Server children running under the user nobody to not stat() the plugin-cfg.xml file. After the customer updated the config directory with 755 permissions, the problem was resolved.
+
+
+
+Test case: 
+Following is a test case you can use to confirm that the missing incorrect permissions is the cause of the Failed to stat plugin config file errors in the plug-in trace. It is not necessary to change permissions of the directories in the path to the plugin-cfg.xml and the plug-in configuration file. 
+ 1. Create a directory (for example,/opt/plugintest) outside of the WebSphere Application Server/IBM HTTP Server installation directory.
+    
+    
+ 2. Copy the plugin-cfg.xml into the /opt/plugintest directory.
+    
+    
+ 3. Set 755 permissions in the /plugintest directory and the plugin-cfg.xml file.
+    
+    
+ 4. Update the IBM HTTP Server httpd.conf so that the WebSphere plug-in points to the /plugintest directory; for example, WebSpherePluginConfig/opt/plugintest/plugin-cfg.xml.
+    
+    
+ 5. Start IBM HTTP Server and perform the required tests.
+
+
+MustGather (Collecting Data): 
+If the problem does not occur, verify and update all required permissions to the directory or directories in the path to the real plugin-cfg.xml and the plug-in configuration file. If the problem still persists: 
+ 1. Collect the following information: 
+     1. httpd.conf
+        
+        
+     2. IBM HTTP Server access and error logs
+        
+        
+     3. Full plug-in trace (LogLevel="Trace" in the plugin-cfg.xml)
+        
+        
+     4. plugin-cfg.xml
+        
+        
+     5. List of all directory permissions in the path to the plugin-cfg.xml
+        
+        
+     6. Permissions of the plugin-cfg.xml
+        
+    
+    
+ 2. See Submitting diagnostic information to IBM Technical Support for problem determination [http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg21153852] for directions to send in this data.
+
+RELATED INFORMATION
+ MustGather: Read first for WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21145599]
+MustGather: Read first for IBM HTTP Server [http://www.ibm.com/support/docview.wss?rs=177&uid=swg21192683]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

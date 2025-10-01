@@ -1,0 +1,146 @@
+Title: IBM JR31888: STORED PROCEDURE STAGE: WHEN STORED PROCEDURE DOES NOT UPDATE   ANY ROWS, IT RETURNS CLI_NO_DATA AND ABORTS THE JOB. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Download Fix Pack 2 for InfoSphere Information Server Version 8.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24028376]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Stored procedure stage: When stored proc does not update any
+   rows, it returns CLI_NO_DATA and aborts the job.
+   
+   Customer is running server job with STP stage. The STP stage
+   invokes a stored procedure that updates a table. If the update
+   actually updates rows, the call completes successfully. However,
+   if the update does not update any rows, CLI_NO_DATA is returned
+   and the entire job fails. The customer does not want the job to
+   fail when this happens.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This fix is included in 8.0.1 fixpack 3
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All Users of Stored Procedure Stage in both Server and Parallel
+   Canvas
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When Stored Procedure does not update any rows, the job aborts
+   with the error message CLI_NO_DATA. As the Stored Procedure got
+   executed properly, this condition should be treated as a
+   successful condition and the job should finish without error.
+   ****************************************************************
+   RECOMMENDATION:
+   Apply this APAR.
+   The fix has been included in the IS 8.1 FP1. Apply the FixPack1
+   for IS 8.1.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When the Stored Procedure does not update any rows, the job
+   will finish OK.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR31888
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36DS
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-03
+   
+   
+ * CLOSED DATE
+   2009-03-17
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * FIXED COMPONENT ID
+   5724Q36DS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSN
+   UP

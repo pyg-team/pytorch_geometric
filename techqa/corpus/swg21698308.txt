@@ -1,0 +1,82 @@
+Title: IBM Security Bulletin: IBM® DB2® contains a file disclosure vulnerability in the database automated maintenance feature (CVE-2015-1883) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM DB2 contains a file disclosure vulnerability in the database automated maintenance feature. A remote, authenticated DB2 user with elevated privilege could exploit this vulnerability by manipulating an automated maintenance policy stored procedure to view any files owned by the DB2 fenced ID on Unix/Linux or Windows administrator on Windows 
+
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2015-1883 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1883]
+DESCRIPTION: 
+IBM DB2 contains a file disclosure vulnerability in the database automated maintenance feature. A remote, authenticated DB2 user with elevated privilege could exploit this vulnerability by manipulating an automated maintenance policy stored procedure to view any files owned by the DB2 fenced ID on Unix/Linux or Windows administrator on Windows. 
+
+CVSS Base Score: 4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/101239 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101239] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:S/C:P/I:N/A:N) 
+
+
+AFFECTED PRODUCTS AND VERSIONS
+All fix pack levels of IBM DB2 V9.7, V10.1 and V10.5 editions listed below and running on AIX, Linux, HP, Solaris or Windows are affected. 
+
+
+IBM® DB2® Express Edition
+IBM® DB2® Workgroup Server Edition
+IBM® DB2® Enterprise Server Edition
+IBM® DB2® Advanced Enterprise Server Edition
+IBM® DB2® Advanced Workgroup Server Edition
+IBM® DB2® Connect™ Application Server Edition 
+IBM® DB2® Connect™ Enterprise Edition
+IBM® DB2® Connect™ Unlimited Edition for System i® 
+IBM® DB2® Connect™ Unlimited Edition for System z®
+
+The DB2 Connect products mentioned are affected only if a local database has been created. 
+
+IBM® DB2® pureScale™ Feature for Enterprise Server Edition, V9.8, running on AIX or Linux is affected.
+
+REMEDIATION/FIXES
+The recommended solution is to apply the appropriate fix for this vulnerability. 
+
+FIX:
+
+The fix for DB2 and DB2 Connect release V9.7 is in FP11, V10.1 is in V10.1 FP5 and V10.5 is in V10.5 FP6, available for download from Fix Central. 
+
+Customers running any vulnerable fixpack level of an affected Program, V9.8 can contact support to obtain a special build containing an interim fix for this issue. These special builds are available based on the most recent fixpack level for each impacted release: DB2 V9.8 FP5. They can be applied to any affected fixpack level of the appropriate release to remediate this vulnerability. Additionally fixes based on V9.7 FP10, DB2 V10.1 FP4 or V10.5 FP5 will be made available on request. 
+
+Refer to the folowing chart to determine how to proceed to obtain a needed fixpack or special build. 
+
+Release Fixed in fix pack APAR Download URL V9.7 FP11 IT08086 [https://www-304.ibm.com/support/entdocview.wss?uid=swg1IT08086] http://www-01.ibm.com/support/docview.wss?uid=swg24040935 [http://www-01.ibm.com/support/docview.wss?uid=swg24040935] V9.8 TBD IT08085 [https://www-304.ibm.com/support/entdocview.wss?uid=swg1IT08085] Please contact technical support. V10.1 FP5 IT08080 [https://www-304.ibm.com/support/entdocview.wss?uid=swg1IT08080] http://www-01.ibm.com/support/docview.wss?uid=swg24040170 [http://www-01.ibm.com/support/docview.wss?uid=swg24040170] V10.5 FP6 IT08075 [https://www-304.ibm.com/support/entdocview.wss?uid=swg1IT08075] http://www-01.ibm.com/support/docview.wss?uid=swg24040522 [http://www-01.ibm.com/support/docview.wss?uid=swg24040522] 
+Contact Technical Support: In the United States and Canada dial 1-800-IBM-SERV 
+View the support contacts for other countries [http://www.ibm.com/planetwide/] outside of the United States. 
+Electronically open a Service Request [http://www.ibm.com/software/data/db2/support/db2_9/probsub.html] with DB2 Technical Support. 
+
+Note: IBM’s statements regarding its plans, directions, and intent are subject to change or withdrawal without notice at IBM’s sole discretion. Information regarding potential future products is intended to outline our general product direction and it should not be relied on in making a purchasing decision. The information mentioned regarding potential future products is not a commitment, promise, or legal obligation to deliver any material, code or functionality. Information about potential future products may not be incorporated into any contract. The development, release, and timing of any future features or functionality described for our products remains at our sole discretion.
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+Kopylenko, Igor McAfee 
+
+CHANGE HISTORY
+ July 10, 2015: Original Version Published
+Aug 13, 2015: Updated with V10.5 FP6 fix info.
+Oct 2, 2015: Updated with V9.7 FP11 fix info 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

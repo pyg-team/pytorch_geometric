@@ -1,0 +1,62 @@
+Title: IBM Launch a page in TIP 2.x without providing login credentials - United States
+
+Text:
+TIPL2; TIPL2CONF Launch page without login TECHNOTE (FAQ)
+
+QUESTION
+ How can I open a page in Tivoli Integrated portal 2.x (and later versions) without login credentials? 
+
+ANSWER
+Assume there is an html page "sample.html" you want to launch in TIP.
+1. If you are already logged into TIP you can open it as below. Before you open this page the page should exist in below directory on the server. In this example we are using Webgui public folder to demonstrate this functionality. Please replace <TIPHOME> with actual path based on your installation.
+
+<TIPHOME>/profiles/TIPProfileinstalledApps/TIPCell/isc.ear/OMNIbusWebGUI.war
+
+https://localhost:16316/ibm/console/webtop/sample.html
+
+In above example 16316 is the port number. Change this port number based on your installation.
+
+2. If you are not logged into TIP and want to open "sample.html" page without logging into TIP, we need to create an iFrame (Inline Frame) portlet and then pass the URL of sample.html page to the iFrame. To access iFrame porltet without providing credentials we will use the xLaunch command provided by TIP. We are assuming that sample.html page is already created in below directory:
+
+<TIPHOME>/profiles/TIPProfileinstalledApps/TIPCell/isc.ear/OMNIbusWebGUI.war
+
+Follow below steps to accomplish this.
+
+a). Create an iFrame portlet.
+i). Login to TIP and then Go to Settings-> Pages.
+ii). Click on the New Page
+iii). Enter page name (say sampleiFrame) and Location, and then click on OK to go to next page.
+iv). Look for "Inline Frame" portlet in the list of portlets, then drag and drop it into the page.
+v). Click on the Edit options button (down arrow) on the top right hand side of the portlet and then select Personalize.
+vi). In the URL field type in the URL name you want to open (For example; https://localhost:16316/ibm/console/webtop/sample.html) 
+vii). Click on Save to save the page.
+
+b). Now we need to get page Id of sampleiFrame created above. 
+In TIP console go to Settings->Pages. Click on sampleiFrame we created above to view it. The "Page unique name" field contains the page Id. Make a note of it.
+
+c). Login to the server from the command line and execute the following command. In the following tipadmin and password is the Id and password which will be used to login to TIP while launching the page.
+
+When you run below command, please ensure that the command is in one line.
+
+For Windows :
+<TIPHOME>\java\jre\bin\java -cp "<TIPHOME>\profiles\TIPProfile\installedApps\TIPCell\isc.ear\xlaunchapi.jar" com.ibm.isc.api.xlaunch.LaunchPropertiesHelper$Encode com.ibm.isc.xlaunch.username tipadmin com.ibm.isc.xlaunch.password password
+
+For Unix: We need to escape the dollar sign.
+<TIPHOME>/java/jre/bin/java -cp <TIPHOME>/profiles/TIPProfile/installedApps/TIPCell/isc.ear/xlaunchapi.jar
+com.ibm.isc.api.xlaunch.LaunchPropertiesHelper\$Encode com.ibm.isc.xlaunch.username tipadmin com.ibm.isc.xlaunch.password password
+
+Above command will generate an encoded string with username and password like below:
+L2NvbS5pYm0uaXNjLnhsYXVuY2gudXNlcm5hbWUvd2ViYWRtaW4vY29tLmlibS5pc2MueGxhdW5jaC5wYXNzd29yZC9uZXRjb29s
+
+d). Now we can access the iFrame page by using the encoded string and page id as follows. You will not be prompted for user Id and password.
+
+https://<hostname>:16316/ibm/action/launch/<page id>/<encoded string>
+
+For example :
+https://<hostname>:16316/ibm/action/launch/com.ibm.isclite.admin.PortletPicker.navigationElement.pagelayoutA.modified.1305613146812/ L2NvbS5pYm0uaXNjLnhsYXVuY2gudXNlcm5hbWUvd2ViYWRtaW4vY29tLmlibS5pc2MueGxhdW5jaC5wYXNzd29yZC9uZXRjb29s
+
+e). To test this logout from TIP and then launch the sampleIFrame as above. The page should open without requiring user Id and password. 
+
+For earlier versions of TIP (1.x) use below technote.
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21502893 [http://www-01.ibm.com/support/docview.wss?uid=swg21502893]

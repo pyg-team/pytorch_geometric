@@ -1,0 +1,17 @@
+Title: IBM Rational DOORS crashes while trying to repeatedly change the open mode using DXL script - United States
+
+Text:
+DOORS; DXL; sPath TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to change the open mode of the same module (which is setup for sharing) repeatedly using a DXL script IBM Rational DOORS crashes. 
+
+SYMPTOM
+It happens only when it is executed repeatedly with different display state. That is, opened in exclusive edit with 'display' parameter set as True and downgraded to shared mode with 'display' parameter is set to False.
+
+RESOLVING THE PROBLEM
+The problem is due to the conflicting mode of opening. 
+
+If the module is visible but the share() perm is executed with the 'display' parameter set to false, thereby indicating that the module should be opened ("upgraded") invisibly. Ideally while performing an "upgrade", the module should not become visible. 
+
+If you open the module invisibly to start with, then run "share(sPath, false)" there will be no error. Similarly, if you open the module visibly, then run "share(sPath)" there will be no error.

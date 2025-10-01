@@ -1,0 +1,122 @@
+Title: IBM PK19971: PDD ERROR,FIELD LENGTH MORE THAN 132 CHARACTERS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  error happened when using PDD produce the cdrom.When using the
+   field length more than 132 characters.There are following
+   error message "An unexpected error occurred.  Contact your
+   System Administrator and/or consult the System Log.
+   File=arsadmin.c, Line=1845 "
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Release 7.1.2.6
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Release 7.1.2.6
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK19971
+   
+   
+ * REPORTED COMPONENT NAME
+   CM OD V830 SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J3300
+   
+   
+ * REPORTED RELEASE
+   830
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-02-16
+   
+   
+ * CLOSED DATE
+   2006-04-17
+   
+   
+ * LAST MODIFIED DATE
+   2006-04-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK13613
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CM OD V830 SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J3300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R830 PSY
+   UP

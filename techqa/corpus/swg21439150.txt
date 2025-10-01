@@ -1,0 +1,28 @@
+Title: IBM Getting error ""TM1-550" "Tm1 server <name> is not longer responding" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We get the following error ""TM1-550" "Tm1 server <name> is not longer responding" while trying to access TM1 publish cube in Cognos 8 BI - Analysis Studio 
+
+SYMPTOM
+One can successfully make a datasource connection to TM1 and view the TM1 cube Data in Framework Manager. They can publish the package as well without any issues. 
+
+When a user tries to access the same package in Analysis Studio, they get error ""TM1-550" "Tm1 server <name> is not longer responding". The same error can also be received in Report Studio/Query Studio when the same package is referenced.
+
+
+ENVIRONMENT
+Windows, Unix
+
+
+RESOLVING THE PROBLEM
+Set the TM1_PATH environment variable to <C8 install location>/bin for the service account .profile which is running TM1 on Unix system. 
+
+
+On Windows system set the TM1_PATH environment variable to <C8 install location>\bin directory.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Business Intelligence Analysis Studio AIX, HP-UX, HP Itanium, Linux, Solaris, Windows 8.4, 8.4.1

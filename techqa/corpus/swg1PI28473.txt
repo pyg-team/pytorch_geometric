@@ -1,0 +1,187 @@
+Title: IBM PI28473: FIX USABILITY DEFECTS IN JMS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Fix several usability issues that have been found within the JMS
+   feature.These include:
+   .
+   1) Messaging flows should ignore the Bus Name, because there is
+   no Bus concept in Websphere Application Server Liberty Profile.
+   2) Rectify the jmsMajorVersion and jmsMinorVersion in
+   JMS-Connection metadata.
+   3) Print high-message threshold in logs when queue's max depth
+   have been reached.
+   4) User-name must be printed in logs when there is an
+   authentication failure.
+   5) Remov duplicate CWSID0122I messages in logs when messaging
+   engine id is not provided in the server configuration file.
+   6) Rename "WebSphere Embedded Queue Connection Factory" to
+   "Embedded Messaging" and in the same way for Topic Connection
+   factory and Connection Factory
+   7) Prevent destination UUID's from being printed in the logs
+   when a destination is deleted.
+   8) Fix NullPointerException when wasJmsServer-1.0 feature is
+   removed.
+   9) Remove irrelevant messages like CWSIP0181W and CWSIU0006I
+   from appearing in logs when a RECEIVE operation is being
+   performed in queue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty Profile                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Fix several usability issues for JMS    *
+   *                      feature                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Fix several usability issues:
+   
+   1) Messaging flows should ignore
+   the Bus Name, because there is no Bus concept in Websphere
+   Application Server Liberty Profile.
+   2) Rectify the
+   jmsMajorVersion and jmsMinorVersion in JMS-Connection
+   metadata.
+   3) Print high-message threshold in logs when queue's
+   max depth have been reached.
+   4) User-name must be printed in
+   logs when there is an authentication failure.
+   5) Remov duplicate
+   CWSID0122I messages in logs when messaging engine id is not
+   provided in the server configuration file.
+   6) Rename "WebSphere
+   Embedded Queue Connection Factory" to "Embedded Messaging" and
+   in the same way for Topic Connection factory and Connection
+   Factory
+   7) Prevent destination UUID's from being printed in the
+   logs when a destination is deleted.
+   8) Fix NullPointerException
+   when wasJmsServer-1.0 feature is removed.
+   9) Remove irrelevant
+   messages like CWSIP0181W and CWSIU0006I from appearing in logs
+   when a RECEIVE operation is being performed in queue.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  All the usability issues reported are fixed.
+   
+   The fix for this
+   APAR is currently targeted for inclusion in fix pack 8.5.5.4.
+   Please refer to the Recommended Updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI28473
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * REPORTED COMPONENT ID
+   5725L2900
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-10-28
+   
+   
+ * CLOSED DATE
+   2014-10-29
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * FIXED COMPONENT ID
+   5725L2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

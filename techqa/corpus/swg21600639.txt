@@ -1,0 +1,13 @@
+Title: IBM WebSphere Adapter for Flat File Adapter V7.5.0.1 gets CWYFF0026F: The specified value for EventDirectory does not have read or write (or both) permission - United States
+
+Text:
+adapter; cwyff0026f; eventdirectory TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere Adapter for Flat File Adapter V7.5.1 gets CWYFF0026F: The specified value for EventDirectory does not have read or write (or both) permission even the logon user ID has control authority to the directory. 
+
+CAUSE
+Code defect in the WebSphere Adapter for Flat File Adapter V7.5.0.1.
+
+RESOLVING THE PROBLEM
+Apply the WebSphere Adapter for Flat File V7.5.0.1 IF06.

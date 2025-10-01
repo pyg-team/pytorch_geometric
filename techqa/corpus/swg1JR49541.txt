@@ -1,0 +1,187 @@
+Title: IBM JR49541: THERE IS AN UNUSED PARAMETER INITIALPORTASSIGNMENT IN THE ADDNODETODEPLOYMENTENVDEF ADMIN COMMAND. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you select "help" on the addNodetoDeploymentEnvDef
+   command, the following parameters are listed:
+   nodeRuntime - Comma separated runtimes for the Deployment
+   environment, supported values are WPS, WESB, WBM or WBSF
+   *topologyRole - Deployment Environment (Topological) role name
+   *nodeName - Node Name for the runtime node.
+   serverCount - Number of server that this node will have in the
+   Deployment Environment
+   topologyName - Deployment Environment Name
+   initialPortAssignment - WBITOPOLOGY_PROPFILE
+   
+   However, you will not see usage information for
+   "initialPortAssignment" in the Information Center or in other
+   IBM BPM documentation. This is because the parameter is not
+   actually used in the addNodetoDeploymentEnvDef command.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA - from L3 communiation, this option is not currently
+   supported.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM Business Process Manager (BPM)          *
+   *                  Advanced                                    *
+   *                  IBM BPM Standard                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When you select "help" on the           *
+   *                      addNodetoDeploymentEnvDef command,      *
+   *                      the following parameters are listed:    *
+   *                      nodeRuntime - Comma separated           *
+   *                      runtimes for the Deployment             *
+   *                      environment, supported values are       *
+   *                      WPS, WESB, WBM or WBSF                  *
+   *                      *topologyRole - Deployment              *
+   *                      Environment (Topological) role name     *
+   *                      *nodeName - Node Name for the           *
+   *                      runtime node.                           *
+   *                      serverCount - Number of server that     *
+   *                      this node will have in the Deployment   *
+   *                      Environment                             *
+   *                      topologyName - Deployment               *
+   *                      Environment Name                        *
+   *                      initialPortAssignment -                 *
+   *                      WBITOPOLOGY_PROPFILE                    *
+   *                      However, you will not see usage         *
+   *                      information for                         *
+   *                      "initialPortAssignment" in the          *
+   *                      Information Center or in other IBM      *
+   *                      BPM documention. This is because the    *
+   *                      parameter is not actually used in the   *
+   *                      addNodetoDeploymentEnvDef command.      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When you select "help" on the addNodetoDeploymentEnvDef
+   command, a listing is displayed for a parameter
+   "initialPortAssignment  &#162;&#226;&#130;&#172;&#226;€&#156; WBITOPOLOGY_PROPFILE", but there
+   no usage information in the information center.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.0.1.1 that removes the
+   initialPortAssignment parameter from the help for the
+   addNodetoDeploymentEnvDef admin command.
+   On Fix Central (
+   http://www.ibm.com/support/fixcentral), search for JR49541:
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2.Select APAR or SPR, enter JR49541, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR49541
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-05
+   
+   
+ * CLOSED DATE
+   2014-05-08
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

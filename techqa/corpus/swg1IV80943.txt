@@ -1,0 +1,148 @@
+Title: IBM IV80943: DOCUMENTATION SHOULD CLARIFY THE WAY POLICIES ACTIVATED BY POLICY ACTIVATORS OPERATE IN A CLUSTER. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Unlike events read by event readers, events processed by a
+   policy launched by a policy activator are not processed by the
+   event processor.  The implication of that is that in a
+   normally-functioning cluster, events processed via an activated
+   policy will only ever be processed on the current primary
+   server.
+   
+   The Impact documentation should state this in order to avoid
+   confusion.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Question re policy activator: Q: Why doesn't the policy      *
+   * activator run on the secondary cluster                       *
+   * member? Can I do anything about it?                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * It's expected behaviour that policy activators run only on   *
+   * the primary.                                                 *
+   *                                                              *
+   * The only service normally active on a secondary server in    *
+   * the cluster is the event processor.  The event processor     *
+   * does not handle                                              *
+   * events from policies activated by a policy activator, only   *
+   * events read from event reader queues.  Therefore an event    *
+   * processed via a policy activator will only ever be processed *
+   * on the Impact server where the policy activator service is   *
+   * running.                                                     *
+   *                                                              *
+   * There is no way of configuring this to behave differently in *
+   * Impact itself currently.  However, it is possible to         *
+   * activate a policy to run on the secondary by using a cron    *
+   * job to run nci_trigger at intervals.  But the risk with this *
+   * approach is that it will have no failover                    *
+   * capability.  Another idea is to put the policies inside an   *
+   * event reader of their own and set that event reader to have  *
+   * a very                                                       *
+   * long polling interval - the same frequency as your policy    *
+   * activator.                                                   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Documentation will be updated with next Service Release
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV80943
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-28
+   
+   
+ * CLOSED DATE
+   2016-03-09
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC23883404 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

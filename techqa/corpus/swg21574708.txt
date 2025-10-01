@@ -1,0 +1,36 @@
+Title: IBM How to set the object prefix in DOORS - United States
+
+Text:
+object prefix; setting the prefix TECHNOTE (FAQ)
+
+QUESTION
+ How do you set the prefix for objects in IBM Rational DOORS? 
+
+CAUSE
+The Object Identifier is composed of the Module Prefix concatenated with the Object's absolute number. It is generally desirable that objects in different modules have different identifiers; so when you copy a module you often want to change the new module's Prefix and therefore all its objects identifier
+
+ANSWER
+The following steps will change the object prefix in a DOORS module:
+
+
+ 1. Open the module exclusive edit
+    
+    
+ 2. Click the File menu > Module Properties...
+    
+    
+ 3. Select the attribute name Prefix on the general tab 
+    The background color will darken
+    
+    
+ 4. Click View/Edit button
+    This loads the attribute window
+    
+    
+ 5. Add your desired prefix in the value field 
+    
+    
+ 6. Click OK to close the attribute window 
+    
+    
+ 7. Click OK to close the properties window

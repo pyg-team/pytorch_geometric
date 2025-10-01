@@ -1,0 +1,180 @@
+Title: IBM IZ56673: JVM CRASHES IF USER MOVES MORE THAN 300 ASSETS FROM ONE OERATING LOCATION TO ANOTHER. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  At Oncor the cliet constantly move thousands of meters from one
+   operating location to another by using the Move Asset
+   functionality. We
+   found the it will crash the server if they move somewhere
+   between 200 to
+   300. After removing the customization code, and turn off the
+   publishing
+   channel for the interface on this MBO, we get the same result.
+   Thus we
+   suspect this is an OOTB issue associated with Move Asset
+   functionality.
+   This is a critical issue for this solution and please help us to
+   engage
+   the proper development resource to troubleshoot this. Thanks!
+   
+   Below are the steps to reproduce the mass move Out of Memory
+   issue.
+   
+   1. Create 7000 rotating assets in an operating location
+   2. List all these assets within asset application list screen
+   3. Select the move/modify action on the list page
+   4. Try to move these assets to another operating location. (
+   Enter the
+   new location value at the bottom of the dialog box and apply the
+   new
+   location to all assets that are listed within the dialog box and
+   click
+   ok)
+   After about 3-4 mins the available memory drop down to 0%
+   percent and
+   eventually crashes the server with out of memory exception.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: maximo users                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: JVM CRASHES IF USER MOVES MORE THAN 300 *
+   *                      ASSETS FROM ONE OERATING  LOCATION TO   *
+   *                      ANOTHER.                                *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   JVM CRASHES IF USER MOVES MORE THAN 300 ASSETS FROM ONE
+   OERATING  LOCATION TO ANOTHER.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  <There were a large number of ASSETSPEC and LOCATIONS objects
+   loaded into the memory in the mass move of assets from one
+   location to another location.  They should not be loaded
+   unnecessarily. Fixed the problem. The client tested the java
+   objects sent and said now they can move 7000 rotating assets
+   successfully without jvm crashing. It took 80 minutes for them
+   to complete the move of 7000. The particular case was that each
+   asset has on average 50 attributes(ASSETSPEC) records.>
+   
+   
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | REL 7.1.1.6 - BS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ56673
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO INSTALL
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46IT
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-04
+   
+   
+ * CLOSED DATE
+   2009-08-21
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO INSTALL
+   
+   
+ * FIXED COMPONENT ID
+   5724R46IT
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

@@ -1,0 +1,21 @@
+Title: IBM Microsoft Internet Explorer 11 support by SCORE - United States
+
+Text:
+IBMSCORE; IBM_SCORE; MICROSOFT; INTERNET EXPLORER; IE; UI; User Interface; Client TECHNOTE (FAQ)
+
+QUESTION
+ Is Microsoft Internet Explorer 11 supported by IBM Solution for Compliance in a Regulated Environment (SCORE)? 
+
+ANSWER
+Microsoft Internet Explorer 11 is not supported by SCORE, up to and including SCORE 6.1.1.7
+
+
+
+HISTORICAL NUMBER
+ 36185
+033
+724 
+
+PRODUCT ALIAS/SYNONYM
+ Solution for Compliance in a Regulated Environment (SCORE)
+Internet Explorer (IE)

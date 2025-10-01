@@ -1,0 +1,233 @@
+Title: IBM PK74678: CSV002I REQUESTS FOR MODULE EZASOH03 EXCEED MAXIMUM USE COUNT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer got the following error situation:
+   
+   ONTOP.GS842.P52498.C758.DB2K2310:
+   . . .
+   22.39.04 STC03818  FPEV0114I  PTF BUILD IS 08.280 10:23:33
+   . . .
+   11.24.58 STC03818  FPEV0162W  DSNS 11:24:58.29 TRACES ARE
+               STARTED FOR FURTHER ANALYSIS OF HIGH CPU USAGE
+   11.30.25 STC03818  CSV002I REQUESTS FOR MODULE EZASOH03 EXCEED
+                              MAXIMUM USE COUNT
+   11.30.25 STC03818  CSV002I REQUESTS FOR MODULE EZASOH03 EXCEED
+                              MAXIMUM USE COUNT
+   11.30.25 STC03818  CSV002I REQUESTS FOR MODULE EZASOH03 EXCEED
+                              MAXIMUM USE COUNT
+   11.30.25 STC03818  KO2O0951E OMEM - Private Storage Exhausted
+   11.30.25 STC03818  CSV002I REQUESTS FOR MODULE EZASOH03 EXCEED
+                              MAXIMUM USE COUNT
+   . . .
+   11.30.27 STC03818  CSV002I REQUESTS FOR MODULE EZASOH03 EXCEED
+                              MAXIMUM USE COUNT
+   11.30.27 STC03818  KO2O0951E OMEM - Private Storage Exhausted
+   11.30.30 STC03818  CSV002I REQUESTS FOR MODULE EZASOH03 EXCEED
+                              MAXIMUM USE COUNT
+   11.30.30 STC03818  KO2O0951E OMEM - Private Storage Exhausted
+   11.30.30 STC03818  KO2X0453I UNSUBSCRIBING COMMON SERVICES
+   11.30.30 STC03818  KO2I0170U S0C3  ABEND IN MODULE KO2OCNTB
+                           PERCOLATED TO D5API MODULE KO2ACONB
+   11.30.30 STC03818  CI0970: OMEGAMON SUBTASK ABEND CODE=040C3000
+                              PSW=077D2000A3C00F44  TCB=008CD348
+   11.30.30 STC03818  CI0971: PROGRAM NAME=KO2ACONB
+   11.30.30 STC03818  BPXP018I THREAD 225F59C000000002, IN PROCESS
+                               33620132, ENDED WITHOUT BEING
+                               UNDUBBED WITH COMPLETION CODE
+                               940C3000, AND REASON CODE 00000003.
+   
+   11.30.38 STC03818  CSV002I REQUESTS FOR MODULE EZASOH03 EXCEED
+                              MAXIMUM USE COUNT
+   . . .
+   11.30.39 STC03818  CSV002I REQUESTS FOR MODULE EZASOH03 EXCEED
+                              MAXIMUM USE COUNT
+   11.30.39 STC03818  KO2O0951E OMEM - Private Storage Exhausted
+   11.30.39 STC03818  OMEGAMON:   >> OB0930: Unexpected Program
+                                     Check - OMEM+076C <<
+   11.30.39 STC03818  OMEGAMON:  OB0933 OMEGAMON resource cleanup
+                            initiated for abend U0930 RC=00000000
+   11.30.39 STC03818  OMEGAMON:  OB0935 OMEGAMON resource cleanup
+                                 complete
+   11.30.39 STC03818  KO2X0453I UNSUBSCRIBING COMMON SERVICES
+   11.30.39 STC03818  OMV996I  SESSION TERMINATED  FOR
+                               ONSVDB2K/ONSVD295
+   . . .
+   0FPEV0158W  DSNS 11:24:58.29 DATA SERVER DETECTED HIGH CPU USAGE
+   (43%) OF TASK FPEVDB2I
+   . . .
+   
+   0________________  ZALLU    VTM LOG O2       V410./C DSNS
+   10/23/08 11:30:25   2
+    >.LOGPOP   >> LOG STATUS RESTORED TO INACTIVE. <<
+    >.LOC
+   >> DONE <<
+    > HELP PF1      BACK PF3       UP PF7      DOWN PF8     SORT
+   PF10    ZOOM PF11
+    > U.A
+    >         THREAD ACTIVITY:  ENTER A SELECTION LETTER ON THE TOP
+   LINE.
+   
+    > *-ALL-IDLE    B-TSO      C-CICS      D-IMS     E-BACKGROUND
+   F-DIST ALLIED
+    > G-DIST DBAC   H-UTIL     I-INACT     J-FILTER  K-FUNCTIONS
+   L-STORED PROC
+    > M-TRIGGERS    N-SYSPLEX  O-ENCLAVES  P-WORKSTA Q-ALL+IDLE
+    ===============================================================
+   =================
+    >                    THREADS SUMMARY EXCLUDING IDLE THREADS
+    PTHDA
+    +       >> OB0910: PROGRAM CHECK - RECOVERY
+   SUCCESSFUL-OMEM+076C <<
+   . . .
+   Customer told that this problem does not produce any dump
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: OMEGAMON XE for DB2 PE/DB2PM                 *
+   *                 users of component:                          *
+   *                 -   OMEGAMON collector                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CSV002I REQUESTS FOR MODULE EZASOH03    *
+   *                      EXCEED MAXIMUM. Macro EZASMI does not   *
+   *                      delete EZASOH03 on TERMAPI.             *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION: Apply this PTF                               *
+   ****************************************************************
+   PROBLEM SUMMARY:
+   Module EZASOH03 loaded but never deleted.
+   
+   PROBLEM CONCLUSION:
+   Used updated version of EZASMI macro which does delete of
+   EZASOH03.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Used updated version of EZASMI macro which does delete of
+   EZASOH03.
+   
+   KEYWORDS : CSV002I EZASOH03 EXCEED MAXIMUM.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK74678
+   
+   
+ * REPORTED COMPONENT NAME
+   OM XE DB2PE/PM
+   
+   
+ * REPORTED COMPONENT ID
+   5655OPE00
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2008-10-29
+   
+   
+ * CLOSED DATE
+   2008-10-31
+   
+   
+ * LAST MODIFIED DATE
+   2017-02-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK41244
+   
+   
+
+MODULES/MACROS
+ *     KO2CTHIA KO2CTHIS KO2CTHI2
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OM XE DB2PE/PM
+   
+   
+ * FIXED COMPONENT ID
+   5655OPE00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R410 PSY UK41244 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK41244]
+   UP08/11/11 P F811
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

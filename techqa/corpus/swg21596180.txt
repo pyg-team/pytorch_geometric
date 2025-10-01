@@ -1,0 +1,69 @@
+Title: IBM Structured logging in Policies - United States
+
+Text:
+netcool; impact; netcool/impact; nci; log; logging; log(); statement; debug; structure; structured; policy; policies; design; layout; format TECHNOTE (FAQ)
+
+QUESTION
+ Getting the best out of Log() messages in your Policies 
+
+ANSWER
+The preferred Log() statement style: taken from the start of an example Policy showing the use of event flagging to indicate Impact processing is under-way: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+This introduces the utilisation of the log level capability of the PolicyLogger. The use of log levels in the PolicyLogger allows one the ability to dynamically control the log output from a Policy without having to edit the Policy itself. Log() statements of the style: 
+
+ * 
+
+
+this is equivalent to: 
+
+ * 
+
+
+which is essentially "always log". The higher levels: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+give you definable levels of information reporting. PolicyLogger log level 0 would log both A1 and A2, log level 1 would log A1, A2 and B, level 2 would log A1, A2, B and C and 3 would log A1, A2, B, C and D. 
+
+The style I tend to employ is to use level 1 for major way-point marking for process flow through Policies. Level 2 for further way-point marking (wherever a decision point, value assignment or action is made) and level 3 for recording values being assigned, being used for data acquisition and the results of data acquisition. 
+
+My ID and WP stuff is simply setting locater values to be reported with each Log() statement. ID - a unique record of the event/policy process (Serial or ServerName/ServerSerial or Random() and/or GetDate() or combination thereof - for the purposes of EventReader launched Policies I would suggest sticking with Serial and StateChange to tie up the PolicyLogger output with that of the EventReader log file in debug *) and WP – WayPoint ** where one names the section of Policy code pertinent to an action or goal of a series of actions. They give me the ability to grep Policy and/or event and/or section pertinent log statements from a PolicyLogger log file to finely track the progress and path of an event through the Policy. 
+
+I also tend to employ the WP as a micro-comment and keep actual lines of comment to a minimum. Although the overhead of the comment lines is minimal I tend to eschew their use in favour of combining their purpose with the reporting capability of Log() statements. The converse argument is that Log() statements carry a heavier overhead than comments, this is especially the case when the log level is low and most of them are not reporting, but I think the pay off in potential functionality is worth it. I would then have a fully commented and annotated version of the Policy held in the documentation of the configuration. 
+
+* - Please see the TechNote "Enabling EventReader debug" [ link below]. 
+** - I previously entitled this variable ANN - ActionNodeName (a hangover from Impact 2.x). I first started using this style with Impact 2.0 and had kept in through 3.1 and beyond, even following the introduction of the very useful "Append Policy Name" utility in the PolicyLogger (which led to me dropping another additional variable: PN - PolicyName ***). But now I feel it is time to drop this old version for something more in line with my current thinking. 
+*** - Although PolicyName is still useful and valid in the default Policy run by the PolicyLogger upon encountering an unhandled exception. Please see the TechNote "Variables reporting error and Policy name in ExceptionHandler" [ link below]. 
+
+RELATED INFORMATION
+ Enabling EventReader debug [http://www-01.ibm.com/support/docview.wss?uid=swg21596162]
+Variables reporting error and Policy name in ExceptionH [http://www-01.ibm.com/support/docview.wss?uid=swg21515394]

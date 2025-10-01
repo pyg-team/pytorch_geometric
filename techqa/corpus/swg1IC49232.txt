@@ -1,0 +1,133 @@
+Title: IBM IC49232: CHANGES MADE TO THE MQ V53 NSS INSTMQM PROGRAM FOR OSS SOCKET VALIDATION. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Download and Installation of WebSphere MQ for HP NonStop Server, V5.3.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24014780]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24025461]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24027369]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.8 [http://www-01.ibm.com/support/docview.wss?uid=swg24030009]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  instmqm fails when it is trying to compile a test program for
+   checking OSS socket available with the following error:
+   c89: error: Can't access executable "/usr/lib/ccombe": No such
+   file or directory.
+   **** FATAL ERROR **** [1081] - linker halting:
+      Cannot open /tmp/instmqm-060417-181236/socketbind.o: No such
+   file ordirectory.
+   .
+   instmqm needs to be modified if compile fails to continue with
+   the install.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *   instmqm fails trying to check OSS socket
+   availability
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   If the c89 utility is installed but the
+   compiler is not installed instmqmaborts the installation
+   because OSS socket validationsfailed. instmqm should continue
+   the installation.
+   Released in efix3 for HP NSS 53.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC49232
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ NSS ITA
+   
+   
+ * REPORTED COMPONENT ID
+   5724A3902
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-04-26
+   
+   
+ * CLOSED DATE
+   2006-05-11
+   
+   
+ * LAST MODIFIED DATE
+   2006-05-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ NSS ITA
+   
+   
+ * FIXED COMPONENT ID
+   5724A3902
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY
+   UP

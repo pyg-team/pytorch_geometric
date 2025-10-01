@@ -1,0 +1,20 @@
+Title: IBM Exceptions starting WAS 8.5 as non root user on Solaris - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You notice the exceptions below at start up. 
+
+SYMPTOM
+Exception: command /usr/sbin/zonecfg failed with 1
+and 
+FFDC Exception:java.lang.Exception SourceId:com.ibm.ws.xd.vv.nodedetect.NetworkInterfaceUtil.getMacAddresses ProbeId:2
+java.lang.Exception: dlopen() returned error; rc=128
+
+
+CAUSE
+When WebSphere Application Server is run as a non-root user it will not be able to run native commands. This limited access causes the exceptions.
+
+RESOLVING THE PROBLEM
+To resolve the problem, run WebSphere Application Server under a root user. If the environment is not virtualized, that is if Solaris zones are not being used then the errors can be ignored as these will only occur at start up and will not affect a non-virtualized environment

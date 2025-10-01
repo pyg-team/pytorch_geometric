@@ -1,0 +1,262 @@
+Title: IBM JR40692: WPS STARTUP ERROR - DB2 DUPLICATEKEYEXCEPTION. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 7.5 Refresh Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24031230]
+WebSphere Enterprise Service Bus V7.5 Refresh Pack 1 (7.5.1.0) [http://www-01.ibm.com/support/docview.wss?uid=swg24031270]
+WebSphere Process Server V7.0.0 Fix Pack 5 (V7.0.0.5) [http://www-01.ibm.com/support/docview.wss?uid=swg24032709]
+WebSphere Enterprise Service Bus V7.0.0 Fix Pack 5 (7.0.0.5) [http://www-01.ibm.com/support/docview.wss?uid=swg24032713]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ----------------------------------------------------------------
+   User meet "DuplicateKeyException" when WPS7 started.
+   
+   By our analyzation,This is a timing issue that
+   duplicate key exception happened because all the cluster members
+   start
+   at the same time and these members try to insert the data in to
+   table
+   w_version during the cluster start up.
+   
+   Duplicate issue persists when restarting cluster after executing
+   Ripple Start.
+   
+   According to user feedback, use want to know whether any fix
+   need to be provided on WPS7(WAS7),because no same cluster issue
+   happened on WPS6(WAS6).
+   ----------------------------------------------------------------
+   
+   DuplicateKeyException Log:
+   
+   ----------------------------------------------------------------
+   
+   [2/20/11 1:23:46:571 PST]     FFDC
+   Exception:org.springframework.dao.DataIntegrityViolationExceptio
+   n
+   SourceId:com.ibm.ws.lifecycle.runtime.component.LifeCycleCompone
+   ntImpl.s
+   tart ProbeId:108
+   Reporter:com.ibm.ws.lifecycle.runtime.component.LifeCycleCompone
+   ntImpl@2
+   9372937
+   org.springframework.dao.DataIntegrityViolationException:
+   PreparedStatementCallback; SQL [INSERT INTO
+   w_version(id,username,change_time,cl_gid,cl_lid,schema_rev,schem
+   a_ns_id,
+   partition_id) VALUES (?,?,?,?,?,?,?,?)]; DB2 SQL Error:
+   SQLCODE=-803,
+   SQLSTATE=23505, SQLERRMC=1;WEBSPHE.W_VERSION, DRIVER=3.57.82;
+   nested
+   exception is com.ibm.websphere.ce.cm.DuplicateKeyException: DB2
+   SQL
+   Error: SQLCODE=-803, SQLSTATE=23505,
+   SQLERRMC=1;WEBSPHE.W_VERSION,
+   DRIVER=3.57.82
+    at
+   org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.
+   translat
+   e(SQLStateSQLExceptionTranslator.java:114)
+    at
+   ----------------------------------------------------------------
+   
+   ----------------------------------------------------------------
+   
+   Caused by: com.ibm.websphere.ce.cm.DuplicateKeyException: DB2
+   SQL Error:
+   SQLCODE=-803, SQLSTATE=23505, SQLERRMC=1;WEBSPHE.W_VERSION,
+   DRIVER=3.57.82
+    at
+   sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native
+   Method)
+    at
+   sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeCons
+   tructorA
+   ccessorImpl.java:44)
+    at
+   sun.reflect.DelegatingConstructorAccessorImpl.newInstance(Delega
+   tingCons
+   tructorAccessorImpl.java:27)
+    at
+   java.lang.reflect.Constructor.newInstance(Constructor.java:516)
+    at
+   com.ibm.websphere.rsadapter.GenericDataStoreHelper.mapExceptionH
+   elper(Ge
+   nericDataStoreHelper.java:605)
+    at
+   com.ibm.websphere.rsadapter.GenericDataStoreHelper.mapException(
+   GenericD
+   ataStoreHelper.java:667)
+    at
+   com.ibm.ws.rsadapter.AdapterUtil.mapException(AdapterUtil.java:2
+   111)
+    at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcUtil.mapException(WSJdbcUtil.jav
+   a:1034)
+    at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.executeUpdate(
+   WSJdbcPr
+   eparedStatement.java:826)
+    at
+   org.springframework.jdbc.core.JdbcTemplate$2.doInPreparedStateme
+   nt(JdbcT
+   emplate.java:798)
+    at
+   org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.
+   java:591
+   ----------------------------------------------------------------
+   
+   The commmand line as workaround can't fix issue
+   ---------------------------------------------------------------
+   1. Stop all the cluster servers.
+   
+   .
+   2. Execute the following using db2 command utility:
+   .
+   db2 connect to <dbname>
+   .
+   db2 update db cfg using cur_commit DISABLED
+   .
+   db2 connect reset
+   .
+   Note: the <dbname> is the database name where the repository
+   tables
+   .
+   (starting with w_)  are present.
+   .
+   3. Start the cluster servers starting with Dmgr and then the
+   individual
+   nodes.
+   --------------------------------------------------------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No any workaround/IFix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users suffering fron lifecycle duplicate    *
+   *                  key exceptions on servers tartup            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: User get "DuplicateKeyException" in     *
+   *                      Lifecycle component when WPS is         *
+   *                      started.                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   By our analyzsis, this is a timing issue that duplicate key
+   exceptions happen because all the cluster members start at the
+   same time. Whe this happens, these members all try to insert
+   their data in to the w_version table at the same time during
+   the cluster start up. The first member to insert this data
+   does so successfully, whiel the others throw a
+   duplicatekeyexception.
+   Duplicate issue persists when restarting cluster after
+   executing
+   Ripple Start.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The provided ifix resolves this issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR40692
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-21
+   
+   
+ * CLOSED DATE
+   2013-02-20
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

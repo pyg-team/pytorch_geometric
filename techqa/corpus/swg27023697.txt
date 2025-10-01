@@ -1,0 +1,249 @@
+Title: IBM Frequently asked questions (FAQ) about Operational Decision Manager, Decision Server Events (last updated October 22, 2014) - United States
+
+Text:
+FAQ; IBM WebSphere Decision Server Events; installation; usage; troubleshooting; support; software; hardware; requirements; WebSphere Application Server; recognize; Business Space; install PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The following list includes frequently asked questions (FAQ) about Decision Server Events (formerly WebSphere Decision Server Events) to help you troubleshoot problems and enhance your use of the product. 
+
+CONTENT
+
+Note: As of March 2015, this FAQ is no longer updated. To find answers to your Operational Decision Manager questions, see the developerWorks Answers site at https://developer.ibm.com/answers/smartspace/odm/ [https://developer.ibm.com/answers/smartspace/odm/] or follow the ibmodm tag [https://developer.ibm.com/answers/topics/ibmodm.html]. To learn more about how to connect with the Operational Decision Manager community and get support, see https://developer.ibm.com/odm/home/connect/ [https://developer.ibm.com/odm/home/connect/]. 
+
+
+
+
+
+
+Do you have ideas for other FAQ about Decision Server Events? Give us your feedback in the Rate this page section.
+Additional FAQ documents are available in the Related information section.
+
+
+
+
+FAQ table of contents
+
+
+TAB NAVIGATION
+ * Installing
+
+ * Usage
+
+ * Troubleshooting
+
+
+
+
+Installing 
+
+Where can I find the software and hardware requirements for Decision Server Events?
+
+
+
+Why do I get MD5 checksum errors during the installation of WebSphere Operational Decision Management V7.5?
+
+
+
+Why does the launchpad hang when I click Typical Installation?
+
+
+
+How do I install the product from from the DVD?
+
+
+
+What do I do if the install fails because Business Space isn't recognized?
+
+
+Back to top
+
+
+
+Usage 
+
+Where can I find information about using Decision Server Events?
+
+
+
+How do I deploy more than one Event project to Decision Server?
+
+
+Back to top
+
+
+
+Troubleshooting 
+
+Where can I find support information about Decision Server Events?
+
+
+
+I have an installation of WebSphere Application Server 7.0, update 15 or later, that I want to reuse with Decision Server Events; however, Installation Manager does not recognize the WebSphere Application Server installation and cannot install Business Space. How can I continue the installation?
+
+
+
+After I updated Decision Server Events to fix pack 1, the runtime view in the Event Designer does not open. How I can resolve this problem?
+
+
+
+Why does a warning message about the objectGrid.xml file appear when I start WebSphere Application Server?
+
+
+Back to top
+
+
+
+
+
+
+FAQ questions and answers
+
+
+TAB NAVIGATION
+ * Installing
+
+ * Usage
+
+ * Troubleshooting
+
+
+
+Installing 
+
+The following problems and answers refer to installation. 
+
+
+ 
+FAQ: Where can I find the software and hardware requirements for Decision Server Events?
+Answer: See IBM Operational Decision Manager detailed system requirements [http://www-01.ibm.com/support/docview.wss?uid=swg27023067].
+
+
+ 
+FAQ: Why do I get MD5 checksum errors during the installation of WebSphere Operational Decision Management V7.5?
+Answer: Errors can occur if you extract the installation TAR file by using the WinZip product. When WinZip extracts a TAR file, it converts UNIX and Linux formatted files into Windows format. As a result, the text files in the WebSphere Operational Decision Management TAR file are modified during the extraction and are found to have an incorrect MD5 checksum. 
+
+To resolve this issue, configure WinZip:
+
+1. Open WinZip.
+2. Click Options > Configuration, and click the Miscellaneous tab.
+3. Clear the TAR file smart CR/LF conversion check box. 
+4. Extract the TAR file.
+
+For more information about using WinZip, see the item about TAR file smart CR/LF conversion in the WinZip Knowledge Base at http://kb.winzip.com/help/help_config_misc.htm [http://kb.winzip.com/help/help_config_misc.htm].
+
+Alternatively, you can extract the installation TAR file by using a different product, such as 7-Zip.
+
+
+ 
+FAQ: Why does the launchpad hang when I click Typical Installation?
+Answer: See the following technote: The Typical Installation option is extremely slow on Windows [http://www.ibm.com/support/docview.wss?uid=swg21590801].
+
+
+ 
+FAQ: How do I install the product from the DVD?
+Answer: See the following technote: Installing WebSphere Operational Decision Management V7.5 using DVDs [http://www.ibm.com/support/docview.wss?uid=swg21571751].
+
+
+ 
+FAQ: What do I do if the install fails because Business Space isn't recognized?
+Answer: See the following technote: WODM 7.5 installer can not recognize business space [http://www.ibm.com/support/docview.wss?uid=swg21580515] [http://www.ibm.com/support/docview.wss?uid=swg21571751].
+
+
+Back to top
+
+
+
+Usage 
+
+The following problems and answers refer to using this product. 
+
+
+ 
+FAQ: Where can I find information about using Decision Server Events?
+Answer: See the online documentation [http://publib.boulder.ibm.com/infocenter/dmanager/v7r5/topic/com.ibm.wbe.doc/welcome.htm].
+
+
+ 
+FAQ: How do I deploy more than one Event project to Decision Server?
+Answer: See the following technote: Deploy multiple Event projects to the Decision Server (for WebSphere Operational Decision Management) [http://www.ibm.com/support/docview.wss?uid=swg21588213]. 
+
+
+Back to op
+
+
+
+Troubleshooting 
+
+The following problems and answers refer to troubleshooting. 
+
+
+ 
+FAQ: Where can I find support information about Decision Server Events?
+Answer: See the support site [http://www.ibm.com/support/entry/portal/Troubleshooting/Software/WebSphere/WebSphere_Operational_Decision_Management] for WebSphere Operational Decision Management.
+
+
+ FAQ: I have an installation of WebSphere Application Server 7.0, update 15 or later, that I want to reuse with Decision Server Events; however, Installation Manager does not recognize the WebSphere Application Server installation and cannot install Business Space.
+
+
+I receive the following error: 
+
+
+The installation package 'IBM Business Space powered by WebSphere' requires components supplied by other packages. The required components might be supplied by the following installation packages: 
+Package: WebSphere Application Server 7.0.0.15
+
+
+How can I continue the installation? 
+Answer: Most likely, you did not use Installation Manager to install your instance of WebSphere Application Server and, therefore, Installation Manager is not aware of this installation. You must import the installation into Installation Manager. In the main menu of Installation Manager, click Import and follow the instructions in the wizard. For more information, see Import installed packages in Installation Manager [http://publib.boulder.ibm.com/infocenter/install/v1r5/topic/com.ibm.cic.agent.ui.doc/topics/t_import_pkg.html].
+
+
+
+FAQ: After I updated Decision Server Events to fix pack 1, the runtime view in the Event Designer does not open. The following message is displayed:
+
+
+Unable to create view ID com.ibm.wbe.ui.views.RuntimeTableView: Plug-in &quot;com.ibm.wbe.ui.eventstudio&quot; was unable to instantiate class &quot;com.ibm.wbe.ui.views.RuntimeTableView&quot;
+How I can resolve this problem?
+Answer: See Event Designer Stops Working after application of WODM Fixpack 7.5.0.1 [http://www.ibm.com/support/docview.wss?uid=swg21578958].
+
+
+ 
+FAQ:Why does a warning message about the objectGrid.xml file appear when I start WebSphere Application Server?
+Answer: If you use WebSphere Operational Decision Management on the Linux operating system in a WebSphere eXtreme Scale environment, the following warning message might be displayed when the application server is starting:
+
+ObjectGridApp W CWOBJ0002W: ObjectGrid component, ObjectGridApplicationComponent, is ignoring an unexpected exception: java.security.PrivilegedActionException:
+com.ibm.websphere.objectgrid.ObjectGridException: Problem detected with ObjectGrid XML file:
+file:/opt/IBM/WebSphere/AppServer/profiles/testProfile/config/cells/
+testCell/applications/wberuntimeear.ear/deployments/wberuntimeear/
+wberuntimewar.war/META-INF/objectGrid.xml
+at java.security.AccessController.doPrivileged(AccessController.java:255)
+at com.ibm.ws.objectgrid.integration.ObjectGridApplicationComponentImpl.
+stateChanged(ObjectGridApplicationComponentImpl.java:716) 
+at com.ibm.ws.runtime.component.ApplicationMgrImpl.stateChanged
+(ApplicationMgrImpl.java:1075) 
+at com.ibm.ws.runtime.component.DeployedApplicationImpl.
+fireDeployedObjectEvent(DeployedApplicationImpl.java:1302) 
+...
+
+The message is displayed because WebSphere eXtreme Scale looks for the objectGrid.xml file while it identifies the components that it must manage. However, the file is not required for every deployed component, and the products will run correctly. Therefore, you can ignore the warning message.
+
+
+
+Back to top
+
+
+RELATED INFORMATION
+ FAQ - Business Space powered by WebSphere [http://www.ibm.com/support/docview.wss?rs=0&uid=swg27020117]
+FAQ - IBM Business Monitor [http://www.ibm.com/support/docview.wss?rs=0&uid=swg27017940]
+FAQ - IBM Business Process Manager [http://www.ibm.com/support/docview.wss?uid=swg27021829]
+FAQ - WebSphere Business Compass [http://www.ibm.com/support/docview.wss?rs=0&uid=swg27017900]
+FAQ - WebSphere Integration Developer [http://www.ibm.com/support/docview.wss?rs=0&uid=swg27016440]
+FAQ - WebSphere Decision Center [http://www.ibm.com/support/docview.wss?uid=swg27023698]
+FAQ - WebSphere Decision Server Rules [http://www.ibm.com/support/docview.wss?uid=swg27023696]
+FAQ - WebSphere ILOG Decision Validation Services [http://www.ibm.com/support/docview.wss?uid=swg27023725]
+FAQ - WebSphere ILOG Rule Team Server [http://www.ibm.com/support/docview.wss?uid=swg27023695]
+FAQ - WebSphere ILOG JRules [http://www.ibm.com/support/docview.wss?uid=swg27023694]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ IBM WebSphere Decision Server Events

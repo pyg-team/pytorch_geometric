@@ -1,0 +1,223 @@
+Title: IBM PI33038: CUMULATIVE MAINTENANCE FIXPACK 8.0.0.2 FOR THE JMS FEATURE OF IBM MQ FOR Z/OS VERSION 8.0.0. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Fixpack 8.0.0.2 for IBM MQ for z/OS Version 8.0.0
+   provides fixes for the problems described in this APAR.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 8 *
+   *                 Release 0 Modification 0 with the MQ Java    *
+   *                 Feature.                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Service offering 8.0.0.2 for WebSphere  *
+   *                      MQ for z/OS V8.0.0 provides fixes for   *
+   *                      the problems described in this APAR.    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   IT01469 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT01469] - PCF response messages are written to the dead letter
+             queue when using a PCF message agent
+   IT02707 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT02707] - WMQ V7.5 java: add support to use mqclient.ini to
+             configure com.ibm.mq.cfg.amq_disable_client_ ams
+             property
+   IT02814 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT02814] - JMSCC0051: the property
+             'jms_ibm_report_pass_correl_id' should set using type
+             'java.lang.integer', not 'java.lang.string'.
+   IT03021 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT03021] - WMQ java/jms client connection to queue manager
+             appears to hang when queue manager is not able to
+             respond
+   IT03749 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT03749] - WMQ V7.5 Java application throws
+             "java.io.unsupportedencodingexception" when opening a
+             queue
+   IT04736 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT04736] - MS0T WMQ 8.0.0.1 explorer reports authentication
+             errors when attempting to authenticate a username and
+             password
+   IT05061 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT05061] - The timestamp on standalone WebSphere MQ classes for
+             JMS traces and WebSphere MQ fte/mft traces does not
+             contain a date field.
+   IT05314 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT05314] - JMS durable subscription cannot be re-opened after
+             connection broken when clone support is enabled
+   IT05441 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT05441] - JMS consumer application is unable to recover after
+             getting an illegal character in MQRFH2 header.
+   IT06013 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT06013] - WMQ java/jms 7.5 application hung when creating a
+             connection to queue manager and using a daemon
+             threadgroup
+   IV59316 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV59316] - A WebSphere MQ JMS application got a nullpointer
+             exception when it attempted to retrieve an event/pcf
+             message.
+   IV60008 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV60008] - Add support to the WebSphere MQ classes for JMS for
+             the characterset "CP1166" (ccsid 1166)
+   IV65687 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV65687] - Wmq: mqmanagedobject finalize method should not try to
+             close a queue that has had a previous close failure
+   IV65990 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV65990] - WebSphere MQ resource adapter V701 causing outofmemory
+             error on was while trying to perform "clean" shutdown.
+   IV66840 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV66840] - WMQ V7 java/jms: add support for selected tls
+             cipherspecs when running in non-ibm Java runtime
+             environment
+   IV68120 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV68120] - A WebSphere MQ message cannot be resent if the RFH2
+             header in the original message contains a blank value
+             in the field
+           - MQ Java component changes to implement support for MQ
+             classes for JMS in CICS OSGi JVM servers. See PI28482 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI28482]
+             for additional details.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Java level info:
+   
+   Name:        WebSphere MQ classes for Java
+   Version:     8.0.0.2
+   Level:       V800-PI33038-L150224
+   Build Type:  Production
+   
+   
+   JMS level info:
+   
+   Name:        Java Message Service Client
+   Version:     8.0.0.2
+   Level:       V800-PI33038-L150224
+   Build Type:  Production
+   
+   Name:        WebSphere MQ classes for Java Message Service
+   Version:     8.0.0.2
+   Level:       V800-PI33038-L150224
+   Build Type:  Production
+   
+   Name:        IBM WebSphere MQ JMS Provider
+   Version:     8.0.0.2
+   Level:       V800-PI33038-L150224 mqjbnd=V800-PI33038-L150224
+   Build Type:  Production
+   
+   Name:        Common Services for Java Platform, Standard Edition
+   Version:     8.0.0.2
+   Level:       V800-PI33038-L150224
+   Build Type:  Production
+   008Y
+   CSQ8JTR1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI33038
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * REPORTED COMPONENT ID
+   5655W9700
+   
+   
+ * REPORTED RELEASE
+   008
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-01-20
+   
+   
+ * CLOSED DATE
+   2015-03-06
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI25683
+   
+   
+
+MODULES/MACROS
+ *  CSQ8JTR1
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * FIXED COMPONENT ID
+   5655W9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R008 PSY UI25683 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI25683]
+   UP15/03/10 P F503 ¢
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

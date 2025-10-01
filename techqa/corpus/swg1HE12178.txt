@@ -1,0 +1,134 @@
+Title: IBM HE12178: The next AutoReminder date is calculated incorrectly after deleting and re-adding a custodian. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.0.1-ATLAS-WINDOWS-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-WINDOWS-FP0007&source=SAR]
+6.0.1-ATLAS-SOLARIS-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-SOLARIS-FP0007&source=SAR]
+6.0.1-ATLAS-LINUX-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-LINUX-FP0007&source=SAR]
+6.0.1-ATLAS-FP0007-README.pdf [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-FP0007-README&source=SAR]
+Download IBM Atlas Suite V6.0.1 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24039392]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The next auto-reminder date is being calculated from the date
+   the custodian was removed and re-added to a hold notice instead
+   of using the most recent date the auto-reminder notice was sent
+   to the larger custodian list.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When a new recipient is added to a hold notice after the
+   initial notice is sent, the auto-reminder next date is
+   recalculated incorrectly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix is available now from FixCentral in fixpack 6.0.1.7.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12178
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-18
+   
+   
+ * CLOSED DATE
+   2015-03-11
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     None
+   Reminder
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY
+   UP

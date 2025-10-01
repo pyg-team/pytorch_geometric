@@ -1,0 +1,91 @@
+Title: IBM Recommendations for a TSAMP controlled DB2 HA/HADR environment - United States
+
+Text:
+tsa; tsamp; rsct; recommendation; best practice; chcomg; chrsrc; critrsrcprotmethod; period; sensitivity; syslog; netmon.cf; ct_management_scope; db2; hadr; db2ha; best pratices; recommendations; syslog-ng TECHNOTE (FAQ)
+
+QUESTION
+ Best practices for a DB2 HADR environment managed by Tivoli System Automation for Mutliplatforms (TSAMP). 
+
+ANSWER
+The purpose of this technote is to provide common recommendations for configuring environments with DB2 HADR or DB2 HA Shared Disk when managed by TSAMP (the 'cluster manager'). This technote applies to all DB2 versions that use TSAMP as a high availability manager from 9.5 and above. Unless otherwise stated, all commands are assumed to be issued by the "root" userid. 
+
+1. Relaxing Heartbeat Sensitivity settings 
+
+The default values of 4 (sensitivity) and 1 (period) allow for 8 seconds of network latency before RSCT decides that the heartbeat attempt between two nodes is unsuccessful and thus recover actions are necessary. We have found that in clusters where the servers are heavily utilized that the default heartbeat values are to stringent and need to be relaxed. Relaxing these settings can prevent unwanted behavior such as an unexpected reboot. We recommend leaving the Sensitivity at 4 and changing the Period to 4 which will allow for 32 seconds before RSCT declares a problem. 
+
+To determine your clusters "CommGroup Name" issue the "lscomg" command. To modify the settings to our recommended values, issue the following from any node: 
+
+chcomg -s 4 -p 4 <CommGroup_Name> 
+
+Apply the change to all configured communication groups listed in the "lscomg" output. 
+
+ 
+
+2. Set CT_MANAGEMENT_SCOPE=2 for all users 
+
+This environmental variable is set at execution time within all the DB2 automation scripts but this does not cover commands entered by users. Although a lot of cluster configuration & management is done via db2haicu, there are always times where native TSAMP or RSCT commands need to be run and thus require the correct CT_MANAGEMENT_SCOPE to be able to provide cluster wide results. Without this environmental variable set, a user will only get a valid response from the node where they are issuing the command from. 
+
+Set the following within the default profile for all users, or at least any user who might issue TSAMP or RSCT commands (for example, root and DB2 instance owners): 
+
+export CT_MANAGEMENT_SCOPE=2 
+
+ 
+
+3. Change CritRsrcProtMethod setting from 1 to 3 
+
+By default, whenever RSCT invokes CritRsrcProtMethod it issues a kernel panic that causes a hard reset and reboot of the OS. Often, with DB2 clusters this happens when there is an extreme load on a server causing heartbeats to be missed making RSCT think that it is no longer communicating with the rest of the cluster and ending up with a reboot. When this happens, any in-memory log/trace data is lost because there is no opportunity to flush it to disk with the default CritRsrcProtMethod setting of 1. Changing this value to 3 allows for a sync of what is in memory to be written to the disk prior to the reboot occurring ... this means that valuable syslog, error report, trace and db2diag.log messages will be saved. 
+
+chrsrc -c IBM.PeerNode CritRsrcProtMethod=3 
+
+ 
+
+4. Create a netmon.cf file on each clustered server 
+
+The netmon.cf file is used by RSCT whenever it thinks there is a communication failure on the local network. If there appears to be a communication issue between a node and its neighbors in the cluster then the netmon.cf file will be used to determine if the local node really has a problem or not. The netmon.cf file contains either a single IP address or a list of IP Addresses (1 per line) that are pingable on the local subnet so when a node thinks that there maybe a network issue it attempts to ping the IP(s) listed in the netmon.cf file. If the pings go out, the local NIC is considered to be working (regardless of any ping responses that do or don't come back) and thus RSCT knows that the network issue is with the other node. 
+
+touch /var/ct/cfg/netmon.cf 
+
+echo [ip_on_local_subnet] > /var/ct/cfg/netmon.cf 
+
+ 
+
+5. Enable effective Syslog logging 
+
+Syslogs are a critical part of understanding what is happening with the application being kept highly available by TSAMP. DB2 has coded their start/stop/monitor scripts to write messages to the syslog. We recommend configuring your /etc/syslog.conf to enable logging for the following facility and priorities into a single file which will catch all syslog messages regardless of source: 
+
+*.debug 
+
+On a single line in the syslog.conf you could enable log rotation and specify the target file:
+*.debug /var/log/syslog.out rotate time 1d files 14 
+
+This would rotate the file every day and keep the last 14 files (two weeks of historical data) and delete everything older.
+
+For information on setting up syslog-ng please refer to the following technote:
+http://www-01.ibm.com/support/docview.wss?uid=swg21675952 [http://www-01.ibm.com/support/docview.wss?uid=swg21675952]
+
+6. Keep an updated copy of getsadata on hand
+The "getsadata" script provides an automated means of collecting all the diagnostic data needed for 99% of TSAMP problems. Not only does getsadata collect information about TSAMP, but it also collects some DB2 information and captures a CTSNAP for RSCT troubleshooting as well. 
+We recommend that you keep an updated copy of getsadata on each node so in case of trouble you can quickly run it and then later decide if you need to engage IBM Support and send in the collected data. It is preferable that the latest version of getsadata be used instead of the copy that ships with the base product or fixpack, especially if you are well behind the later release/fixpack levels for TSAMP.
+
+The latest version of getsadata along with updated mustgather instructions can be found here:
+http://www.ibm.com/support/docview.wss?rs=820&uid=swg21285496 [http://www.ibm.com/support/docview.wss?rs=820&uid=swg21285496]
+
+7. Set your HADR_TIMEOUT and HADR_PEER_WINDOW
+Default values of these two DB2 configuration attributes are typically set to 0 and need to be adjusted when HADR is implemented. We are recommending that you refer to DB2 documentation and your own specific environmental needs in setting these values. DB2 documentation on this subject can be found here: http://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.db2.luw.admin.ha.doc/doc/c0056394.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.db2.luw.admin.ha.doc/doc/c0056394.html?lang=en]
+
+To change these values use the following commands as the DB2 instance owner.
+
+db2 update db cfg for <DB_NAME> using HADR_TIMEOUT XXX
+db2 update db cfg for <DB_NAME> using HADR_PEER_WINDOW XXX
+
+After both commands you will need to deactivate and activate the DB for the changes to be activated.
+
+8. Have a second network adapter on each server participating in heartbeating
+We recommend that you allow cluster heartbeating across a 2nd set of network adapters, in addition to the network adapters typically found in the "db2_public_network". This allows there to be two network paths over which the cluster nodes can heartbeat across, reducing the likelihood of a reboot if there is a loss of communication via one of the public network adapters.
+
+9. Ensure that the Cluster Manager (CLUSTER_MGR) parameter in the dbm config is set to TSA on both/all cluster nodes when automation is enabled 
+
+When disabling or enabling automation, please ensure that the corresponding db2haicu command is issued on both cluster nodes. For example, you would run the following command on both cluster nodes to disable automation (and un-set the parameter in the dbm config):
+db2haicu -disable 
+To then re-enable automation (and set the parameter to "TSA" in the dbm config) you would run the following command on both cluster nodes and follow the prompts to re-enable automation:
+db2haicu

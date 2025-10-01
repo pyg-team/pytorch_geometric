@@ -1,0 +1,16 @@
+Title: IBM Rational Application Developer v7.0.0.7 is not compatible with WebSphere Portal 6.0.1.4 - United States
+
+Text:
+1315511; rad; publish TECHNOTE (FAQ)
+
+QUESTION
+ Why after upgrading IBM WebSphere Portal to version 6.0.1.4 is Rational Application Developer for WebSphere Software v7 no longer able to publish to the server? 
+
+CAUSE
+In WebSphere Portal 6.0.1.4, a change to the communication protocol that Rational Application Developer uses to speak to the server was made. Rational Application Developer v7.0.0.7 and below do not yet support this protocol change.
+
+ANSWER
+A fix for this is available in Rational Application Developer v7.0.0.8 and later. 
+
+
+Compatibility with WebSphere Portal 6.0.1.4 can be restored by upgrading to the latest version of Rational Application Developer v7.

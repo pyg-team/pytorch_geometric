@@ -1,0 +1,91 @@
+Title: IBM FAQs About Word Pro and HTML Documents - United States
+
+Text:
+FAQs; frequently asked questions; HTML; export; import; Word Pro; Word Pro for OS/2; Word Pro for Windows; Internet; Web Publishing TECHNOTE (FAQ)
+
+QUESTION
+Below are some of the most commonly asked questions regarding using Word Pro with HTML documents.
+
+ANSWER
+Q. What are HTML documents?
+A. HTML (HyperText Markup Language) is used to create web pages for the Internet. Basically a HTML document is an ASCII document with tags embedded in the text to control formatting, provide links to graphics, create hyperlinks that allow you to jump to another location in the document or another document on the Internet, and other types of formatting layouts. 
+
+Q. Can you create HTML documents using Word Pro?
+
+A. Yes. Word Pro includes a HTML SmartMaster. This SmartMaster has character and paragraph styles already created that allow you to format pages without the need to manually insert the tags for formatting. 
+
+Q. Why does my Word Pro HTML document look different when I view the document in my web browser?
+
+A. Because the HTML file is in ASCII, the fonts are supplied by the browser. Some HTML documents look different when viewed in one web browser versus another.
+
+Q. Is Word Pro a WYSIWYG HTML editor?
+
+A. Technically no. Word Pro is WYSIWYG in the printed medium (What You See Is What You Get) when you print it, but it is semi-WYSIWYG when it comes to HTML. Here are the reasons why it's not fully WYSIWYG: 
+
+- HTML is an electronic medium, not bound by printed page layout parameters, such as page width and height. When you edit in Word Pro, you are bound by page width and height. 
+
+- HTML rendition is generic and therefore inexact. A web page may look different in different browsers or even between different releases of the same browser. HTML defines a generic guideline on how things look. If a browser does not understand a particular tag, that tag is ignored. 
+
+- Page layout and presentation in HTML is generally a small subset of word processing capability. HTML does not provide a way to indent text arbitrarily, does not have text frames, does not have table cell watermarks, drop caps, margins, etc. When you use these formats in a Word Pro document, they won't export to HTML. 
+
+Q. What happens if I import an HTML document into Word Pro that has tags not understood by Word Pro? 
+
+A. The HTML filter places such tags in comment notes. The end result is that you do not lose content that Word Pro does not understand. 
+
+Q. Can I turn my existing documents into HTML documents?
+
+A. Yes, you can convert existing documents by importing the document into the HTML SmartMaster.
+
+Q. What happens if I link or embed graphics that are not .GIF or .JPG format? 
+
+A. Word Pro automatically converts such graphics to the .JPG format for you. For example, if you link to a graphic named "ROCK.BMP," it exports as "ROCK.JPG." 
+
+Q. I am editing an item in an ordered list in Word Pro, and want to insert other data in the middle of the list, such as tables, images, etc. Because a new paragraph was inserted, the numbering in my list is out of sequence. How do I prevent this problem? 
+
+A. If you insert a non-list paragraph in the middle of a list, you can change the new paragraph's document level to a level higher than the list item's document level. The HTML filter moves the document level for such paragraphs to the maximum value (9). 
+
+Q. Does Word Pro exclusively use styles to convert to HTML tags? 
+
+A. No. Local attributes such as bold, italic, underline, font size, font color, superscript, etc., do not require styles. The HTML filter detects local attributes and exports the appropriate HTML tags. 
+
+Q. Word Pro has certain features that are not found in the HTML format, and vice versa. What sort of features in Word Pro can I not import to HTML? 
+
+A. Here's a partial list: 
+
+- Paragraph indentions, excluding numbered and bulleted list paragraphs which are displayed as indented by browsers.
+- Text frames; contents of the frame export as though they flowed with the contents before them. 
+- Watermarks; for those not on a page (for example, a table cell watermark). 
+- Paragraph lines.
+- Paragraph spacing 
+- Font typeface
+- Overstrike attribute 
+- White space; HTML compresses multiple white spaces (spaces and tabs) into a single white space, unless the text is declared preformatted. Word Pro has a preformatted (.PRE) style for this purpose. 
+- Newspaper columns; contents export as though there were no columns. 
+- Power fields. 
+- Equations; export as graphic images. 
+- Header/footer contents.
+
+Q. How do Word Pro parallel columns export to HTML? 
+
+A. They are treated as and export as tables. 
+
+Q. Where can I learn more about HTML documents?
+
+A. The Internet contains many web sites that provide information about HTML. Consult Word Pro's online Help (Help, Help Topics or Ask the Expert).
+
+Supporting Information:
+
+
+
+Related Documents:
+
+How to Create an HTML Document in Word Pro
+Document #: 135760 
+
+What HTML Tags does Word Pro Support?
+Document #: 135759
+
+
+
+HISTORICAL NUMBER
+ 133120

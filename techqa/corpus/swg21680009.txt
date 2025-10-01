@@ -1,0 +1,23 @@
+Title: IBM Question for Survey - United States
+
+Text:
+SCCDSUR; SCCD TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ How to create Question for Survey? 
+
+ANSWER
+Procedure to create Question for Survey
+1 Click Administration -> Survey Management -> Questions
+2 Click New Question
+3 Fill following fields 
+a) Question (required)
+b) Type (required) There are three types CHECKBOX, FREEFORM, or RADIO
+An answer is also required if you select CHECKBOX or RADIO
+c) Site 
+d) Organization
+4 Click Save Question
+5 Click Change Status, and make it Active

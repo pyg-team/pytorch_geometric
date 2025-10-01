@@ -1,0 +1,251 @@
+Title: IBM JR46508: CMVC 228414 - Linking categories, with a large amount of child entries, results in a transaction time out. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Linking categories, with a large amount of child entries,
+   results in a transaction time out. In the logs you will see:
+   
+    [4/24/13 14:04:34:664 EDT] 00000004 TimeoutManage I
+   WTRN0006W: Transaction
+   0000013E3D335605000000010000060D864BE9C2E6D87C7FD4117528236ECD4D
+   4F0633800000013E3D335605000000010000060D864BE9C2E6D87C7FD4117528
+   236ECD4D4F06338000000001 has timed out after 300 s
+   econds.
+    [4/24/13 14:04:34:666 EDT] 00000004 TimeoutManage I
+   WTRN0124I: When the timeout occurred the thread with which the
+   transaction is, or was most recently, associated was
+   Thread[WebContainer : 8,5,main]. The stack trace of this thread
+   when the timeout occu
+   rred was:
+      com.ibm.ejs.ras.TraceNLS.worker(TraceNLS.java:593)
+   
+   com.ibm.ejs.ras.TraceNLS.getStringFromBundle(TraceNLS.java:409)
+   
+   com.ibm.ws.logging.TraceLogFormatter.formatLocalized(TraceLogFor
+   matter.java:687)
+   
+   com.ibm.ws.logging.TraceLogFormatter.formatMessageWSLR(TraceLogF
+   ormatter.java:378)
+   
+   com.ibm.ws.logging.TraceLogFormatter.getFormattedMessage(TraceLo
+   gFormatter.java:836)
+   
+   com.ibm.ws.logging.TraceLogFormatter.getFormattedMessageAndStack
+   Trace(TraceLogFormatter.java:812)
+   
+   com.ibm.ws.logging.TraceLogFormatter.formatBasic(TraceLogFormatt
+   er.java:434)
+      com.ibm.ejs.ras.TraceLogger.doLog(TraceLogger.java:328)
+   
+   com.ibm.ejs.ras.TraceLogger.processEvent(TraceLogger.java:319)
+   
+   com.ibm.ws.logging.WsHandlerWrapper.publish(WsHandlerWrapper.jav
+   a:43)
+      java.util.logging.Logger.log(Logger.java:1131)
+   
+   com.ibm.ws.logging.WsLogger.deliverOrBuffer(WsLogger.java:279)
+      com.ibm.ws.logging.WsLogger.log(WsLogger.java:257)
+      com.ibm.ws.logging.WsLogger.logp(WsLogger.java:459)
+      com.ibm.ws.logging.WsLogger.exiting(WsLogger.java:653)
+   
+    and a hung thread message:
+   
+    [4/24/13 14:30:45:933 EDT] 00000018 ThreadMonitor W
+   WSVR0605W: Thread "WebContainer : 8" (00000059) has been active
+   for 1871292 milliseconds and may be hung.  There is/are 1
+   thread(s) in total in the server that may be hung.
+      at
+   com.ibm.ws.logging.object.WsLoggerRuntimeData.populate(WsLoggerR
+   untimeData.java:42)
+      at
+   com.ibm.ws.logging.object.WsLogRecordFactory.createWsLogRecord(W
+   sLogRecordFactory.java:534)
+      at
+   com.ibm.ws.logging.WsLogger.createLogRecord(WsLogger.java:330)
+      at com.ibm.ws.logging.WsLogger.logp(WsLogger.java:458)
+      at com.ibm.ws.logging.WsLogger.entering(WsLogger.java:606)
+      at
+   com.ibm.commerce.foundation.internal.server.services.dataaccess.
+   template.SQLStatement.getSQL(SQLStatement.java:231)
+      at
+   com.ibm.commerce.foundation.server.services.dataaccess.JDBCQuery
+   Service.getSQLStatementWithParameterMarkers(JDBCQueryService.jav
+   a:1283)
+      at
+   com.ibm.commerce.foundation.server.services.dataaccess.JDBCQuery
+   Service.executeQuery(JDBCQueryService.java:825)
+      at
+   com.ibm.commerce.catalog.facade.server.helpers.SearchUpdateHelpe
+   r.registerIndexing(SearchUpdateHelper.java:697)
+      at
+   com.ibm.commerce.catalog.facade.server.event.consumer.CatalogNav
+   igationViewEventConsumerForRequestReindexing.registerDeltaIndexi
+   ngEvent(CatalogNavigationViewEventConsumerForRequestReindexing.j
+   ava:207)
+      at
+   com.ibm.commerce.catalog.facade.server.event.consumer.CatalogNav
+   igationViewEventConsumerForRequestReindexing.performEmergencyUpd
+   ate(CatalogNavigationViewEventConsumerForRequestReindexing.java:
+   161)
+      at
+   com.ibm.commerce.catalog.facade.server.event.consumer.CatalogNav
+   igationViewEventConsumerForRequestReindexing.processEvent
+   
+   
+    The thread is not hung, it is still working. In the traces a
+   similar message is seen repeated again and again, for different
+   catentries:
+   
+    [4/24/13 15:04:18:511 EDT] 00000059 dataaccess    >
+   com.ibm.commerce.foundation.server.services.dataaccess.JDBCQuery
+   Service executeUpdate(String, Map, Long) ENTRY
+   INSERT_TI_DELTA_CATENTRY {java.util.HashMap :
+    masterCatalogId=[10551]
+    catalogEntryId=[192822]
+    action=[U]
+    lastupdate=[2013-04-24 15:04:18.512656]}
+   
+    During this time, the the delta index tables are being updated
+   so that changes made in management center will be reflected in
+   index after the next index build. If the category you linked has
+   a large amount of child entries, this process can take a very l
+   ong time resulting in the messages above and and error in
+   management center.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+    Users running WebSphere Commerce V7 with Feature Pack 5 or
+   later who link categories, with a large number of child entries,
+   between catalogs.
+   
+    PROBLEM ABSTRACT:
+    Linking categories, with a large amount of child entries,
+   results in a transaction time out.
+   
+    BUSINESS IMPACT:
+    This issue will result in the entries not being referenced in
+   the sales catalog
+   
+    RECOMMENDATION:
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The event handler that is used for detecting re-parenting or
+   linking categories has been corrected to respect the indexing
+   threshold, DeltaIndexingThreshold, defined in wc-component.xml
+   file.  If the total number of products affected by this
+   operation is
+   more than this threshold, a full re-indexing will be performed
+   instead.
+   
+   
+    -------------------------------------------------------------
+    The latest available maintenance information can be obtained
+   from the Recommended Fixes for WebSphere Commerce technote:
+    http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296 [http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Comments:
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR46508
+   
+   
+ * REPORTED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * REPORTED COMPONENT ID
+   5724I3800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / Pervasive
+   
+   
+ * SUBMITTED DATE
+   2013-04-30
+   
+   
+ * CLOSED DATE
+   2013-07-18
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * FIXED COMPONENT ID
+   5724I3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

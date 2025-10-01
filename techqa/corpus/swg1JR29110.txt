@@ -1,0 +1,168 @@
+Title: IBM JR29110: STANDALONE PORTAL V6.1 CANT BE FEDERATD INTO WPS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description: WPS 6101 fails with an exception when trying to
+   federate a stand alone portal server (i.e. a plain WAS profile)
+   into a Process Server Cell that already contains a process
+   server. The exception is "A new instance of the WorkManagerInfo
+   object cannot be created because the jndiName attribute of an
+   existing WorkManagerInfo object has the same
+   value as wm/AppScheduler." This breaks the main install path for
+   setting up a single cell process portal. This issue has already
+   been discussed with development. The problem appears to be
+   caused by the AppScheduler (specifically AppSchedulerImportStepE
+   xt.java appears to not take the federation of plain WAS profiles
+   into account).
+   
+   the scenario used to generate the traces / error:
+   1. Installed 6.1.0.1 Process Server DM (Dmgr01)  (Box A)
+   2. Created custom profile (custom01) on Dmgr01 (Box A)
+   3. Create a Process Server in custom01
+   4. Enabled SCA and process/task containers
+   5. Enabled BPCExplorer
+   6. Process Server Cell is operating ok.
+   7. Installed portal 6.1. stand alone (portal default install)
+   -->
+   wp_profile (plain WAS profile) (Box B)
+   8. Tried to federate portal node into Dmgr01 --> Exception.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WPS changeTeam engaged
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Process Server V6.1 customer who   *
+   *                 trying to federate a portal node on other    *
+   *                 machine to Dmgr.                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: WebSphere Process Server V6.1.0.1       *
+   *                      fails with an exception when trying to  *
+   *                      federate a stand alone portal server    *
+   *                      (i.e. a plain WebSphere Application     *
+   *                      Server profile) into a Process Server   *
+   *                      Cell that already contains a process    *
+   *                      server.                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   After code changes problem has been resolved.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Apply this interim fix to resolve the issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR29110
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-04-24
+   
+   
+ * CLOSED DATE
+   2008-05-08
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP
+   
+   
+ * R601 PSN
+   UP
+   
+   
+ * R602 PSN
+   UP
+   
+   
+ * R610 PSY
+   UP

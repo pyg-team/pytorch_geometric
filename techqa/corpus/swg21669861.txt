@@ -1,0 +1,12 @@
+Title: IBM Microsoft Internet Explorer version 10 and 11 support on IBM FileNet IDM Desktop/Web Services /Open Client - United States
+
+Text:
+IE; IDM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Will Internet Explorer 10 and 11 be supported on IDM Web Services version 4.02 or 4.03? 
+
+RESOLVING THE PROBLEM
+During the qualification of Internet Explorer10, a few issues were encounter due to Internet Explorer10 . After upgrading IE10 to IE11, those issues got resolved and hence IBM FileNet IDM Web Services is directly qualifying IE11 instead of IE10. 
+
+The IE11 will be qualified with IDM 403/FP5 and IDM 402/FP15. And the tentative ETA for this will be end of May,2014.

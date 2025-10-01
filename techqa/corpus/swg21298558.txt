@@ -1,0 +1,45 @@
+Title: IBM CICS-MQ adapter and bridge documentation is missing from CICS TS 3.2 Migration manuals - United States
+
+Text:
+CICS MQ adapter ; CICS MQ bridge ; migrating migration upgrade upgrading ; manuals guides 5655M1500 R650 650 R500 500 HCI6500 5655-M15 R640 640 R400 400 HCI6400 5697E9300 R200 200 R620 620 R300 300 R630 630 HCI6300 HCI6200 5697-E93 5697E93 GC34-6855-01 GC34-6855 GC346855 GC34-6856-01 GC34-6856 GC346856 GC34-6857-01 GC34-6857 GC346857 GC34-6858-01 GC34-6858 GC346858 kixinfo ; kixdcfcic650 retention32 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are upgrading to CICS Transaction Server for z/OS (CICS TS) V3.2 using the Migration manuals. The components to connect CICS and WebSphere MQ for z/OS (the CICS-MQ adapter and the CICS-MQ bridge) are now integrated with CICS TS V3.2. However, information for the CICS-MQ adapter function, is not provided in Migration manuals. You would like to know where to find this information. 
+
+CAUSE
+Migration manuals (guides) werre missing information for the CICS-MQ adapter function. This is documented in the CICS TS V3.2 Announcement Letter [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS207-051&#@2h@89@] as follows:
+
+
+Publications: The following publications are provided within the Information Center in PDF format. These publications are not separately available, but if hardcopy is required, they can be printed from the PDF files. 
+
+Note that the information in the Information Center is derived from the same source material as for these publications; in general, concerning any particular topic, the same material can be found either in the Information Center or in the applicable publication. However, information for the CICS-MQ adapter function, newly introduced in this release, will only be provided in the Information Center.
+
+Form
+Title number
+
+CICS Transaction Server for z/OS V3.2: Program 
+Directory GI13-0515
+CICS Transaction Server for z/OS V3.2: Migration 
+from CICS Transaction Server for OS/390 V1.3 GC34-6855
+CICS Transaction Server for z/OS V3.2: Migration 
+from CICS Transaction Server for z/OS V2.2 GC34-6856
+CICS Transaction Server for z/OS V3.2: Migration 
+from CICS Transaction Server for z/OS V2.3 GC34-6857
+CICS Transaction Server for z/OS V3.2: Migration 
+from CICS Transaction Server for z/OS V3.1 GC34-6858
+. . .
+
+
+RESOLVING THE PROBLEM
+Refer to the section entitled Migration for the CICS-WebSphere MQ connection [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS207-051&#@2h@89@] in the CICS TS 3.2 Information Center.
+
+The Migration Guide has been updated by an Electronic Reader's Comment Form. If your version does not contain chapter 21 "Migration for the CICS-WebSphere MQ connection", you can find the updated PDF [http://publib.boulder.ibm.com/infocenter/cicsts/v3r2/index.jsp?topic=/com.ibm.cics.ts.doc/InformationCenter/Library/Library_pdf.html] or HTML [http://publib.boulder.ibm.com/infocenter/cicsts/v3r2/index.jsp?topic=/com.ibm.cics.ts.doc/InformationCenter/Library/Library_html.html] document in the CICS TS 3.2 Information Center.
+
+Refer to the CICS Transaction Server for z/OS V3.2 Announcement Letter [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS207-051] for additional information on CICS TS 3.2.
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

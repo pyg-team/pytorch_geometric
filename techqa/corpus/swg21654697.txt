@@ -1,0 +1,43 @@
+Title: IBM An E_OBJECT_NOT_FOUND error occurs when saving changes to the FileNet Workplace Site Preferences - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When saving changes to the Site Preferences, an error stack appears with E_OBJECT_NOT_FOUND. The Preferences document class is using a file storage area for the storage policy. 
+
+CAUSE
+The physical file store location where the Site Preferences is stored did not have the proper rights to allow the Content Engine operating system account write access to folder and files.
+
+DIAGNOSING THE PROBLEM
+Review the application server logs to find the Permission denied error.
+
+The Workplace stack trace:
+
+
+Error Message:
+com.filenet.api.exception.EngineRuntimeException;The requested item was not found. Object identity: /Preferences/Site Preferences for Workplace. Class name: Versionable. [Code=null] ... Object Reference [DOCUMENT:1] ID "/Preferences/Site Preferences for Workplace" in ObjectStore "OS1"; OMFC/Document/GetProperties//E_OBJECT_NOT_FOUND
+...
+Caused by: com.filenet.api.exception.EngineRuntimeException: FNRCE0051E: E_OBJECT_NOT_FOUND: The requested item was not found. Object identity: /Preferences/Site Preferences for Workplace. Class name: Versionable. errorStack={
+
+
+
+The SystemOut.log shows the E_OBJECT_NOT_FOUND error trying to load the Site Preferences. The subsequent error that is logged shows the "Caused by" as the "Permission denied" error. 
+
+
+[11/20/13 17:29:02:574 EDT] 00000035 SystemOut O loaded user preferences - User Preferences for S-1-1-11-11111111-111111111-1111101111-11111 on Workplace (p8admin)
+[10/25/13 17:29:02:581 EDT] 00000035 SystemOut O cannot load preferences document - com.filenet.wcm.api.BadReferenceException: com.filenet.api.exception.EngineRuntimeException;The requested item was not found. Object identity: /Preferences/Site Preferences for Workplace. Class name: Versionable. [Code=null] ... Object Reference [DOCUMENT:1] ID "/Preferences/Site Preferences for Workplace" in ObjectStore "OS1"; OMFC/Document/GetContent//E_OBJECT_NOT_FOUND 
+
+
+[11/20/13 17:29:02:639 EDT] 00000035 SystemOut O Cannot save new preferences document: com.filenet.wcm.api.RemoteServerException: com.filenet.api.exception.EngineRuntimeException;Start upload failed /predev/folder1/inbound/FN{AABB1C11-A111-1111-1111-C06EC8A11111}{A111009D-C022-40A5-AB9F-EA111E111AA7}. [Code=null] ... Object Reference [DOCUMENT:1] ID "{AABB1C11-A111-1111-1111-C06EC8A11111}" in ObjectStore "OS1"; OMFC/Document/SetContent//CONTENT_CA_START_UPLOAD_FAILED
+Caused by: java.io.FileNotFoundException: /dev/folder1/inbound/FN{AABB1C11-A111-1111-1111-C06EC8A11111}{A111009D-C022-40A5-AB9F-EA111E111AA7} (Permission denied)
+
+
+RESOLVING THE PROBLEM
+The Content Engine operating system user (ce_os_user) who logs on to the Content Engine server and starts the local application server process is the account that is used to secure the folders and files in a file storage area. 
+
+To resolve the issue, check that the ce_os_user has full control access to the root directory on the physical storage area folder. In the above example, the ce_os_user did not have the proper permission on the /predev folder. 
+
+In a Windows-based file storage area, make this inheritable by all folders and files created under root. 
+
+In an Unix-based file storage area, grant read, write, and execute permission for USER and GROUP.

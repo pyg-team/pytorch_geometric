@@ -1,0 +1,137 @@
+Title: IBM IT21154: DATA STUDIO REVERSE ENGINEERING MISSING TABLES - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  using data studio 4.1.2 on windows , when trying to reverse
+   engineer a DB2 Z/OS database, only some tables are being
+   returned.  We can see all Tablespaces - but only SOME of
+   tables. When trying to convert models from an old tool to this
+   product and we cannot proceed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  A temoprary fix provided to customer
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In IBM Data Studio v4.1.2, while reverse engineering only few
+   tables gets imported in DB2 Zos.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue was fixed in IBM Data Studio v 4.1.2 APAR7 so that
+   while reverse engineering all the tables from DB2 Zos database
+   gets imported.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT21154
+   
+   
+ * REPORTED COMPONENT NAME
+   DS FULL CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724DST06
+   
+   
+ * REPORTED RELEASE
+   412
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-06-23
+   
+   
+ * CLOSED DATE
+   2017-10-02
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  000
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DS FULL CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5724DST06
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R412 PSY
+   UP

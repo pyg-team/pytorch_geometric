@@ -1,0 +1,44 @@
+Title: IBM Excessive signons when using CICS Web support and CA ACF2 - United States
+
+Text:
+excessive signons ; extra ; verify ; verifies ; additional writes ; update requests to the logon ID database ; CICS Web support ; ACF2 ; CA-ACF2 ; CAACF2 ; 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 kixinfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Every transaction from the WEB incurs an extra security signon call. You are not reentering your user ID and password but in the process a verify is being done under the covers. This is causing tens and thousands of update requests to the logon ID database updating signon date, times, and access counts. You are using CA ACF2. 
+
+CAUSE
+CA ACF2 front-ends the DFHUSAD domain call when processing an HTTP request with AUTHENTICATE: BASIC specified on the TCPIPSERVICE definition. The sockets listener task (CSOL) attaches CWXN. This results in a non terminal signon (for example ADD_USER_WITHOUT_PASSWORD) for the region userid. 
+
+The additional processing involving CA ACF2 is occurring on the USAD calls for CWXN and the alias task. CICS Transaction Server (CICS TS) processing on these calls (like the code that runs in DFHUSAD) makes a full security call if the user is not already signed on.
+
+
+DIAGNOSING THE PROBLEM
+CA ACF2 LEVEL 2 support provided a SLIP trap and a dump was taken. Following is the CA ACF2 LEVEL 2 analysis from the SLIP DUMP:
+
+The dump shows that the trap hit within the following CICS TS process: 
+07672 RO XS FE01 XSSB ENTRY INQUIRE_PASSWORD_DATA U840153,0,... 
+Following is what occurs during that process: 
+
+ 1. CICS TS issues a RACROUTE TYPE=EXTRACT to obtain the users (encrypted) password from the External Security Manager (ESM), CA-ACF2 in this case. 
+ 2. CICS TS asks the ESM to then ENCRYPT the clear-text password it has using one of three different algorithms: DES, HASH and INST. 
+ 3. CICS TS manually compares:
+    a) the encrypted password returned from the EXTRACT 
+    b) the result of the ENCRYPT request 
+ 4. If encrypted clear-text result matches the EXTRACTed password, the user-supplied password is deemed correct. 
+ 5. If the passwords compare NOT EQUAL, CICS TS returns to (2) above asking for another ENCRYPTion algorithm to be used. 
+ 6. If all three algorithms are exhausted, the clear-text password is deemed to INCORRECT, and CICS TS issues RACROUTE TYPE=VERIFYX to generate an audit trail of the unsuccessful system entry attempt. This call is generating the System Entry Validation (Signon) that is causing this problem.
+
+RESOLVING THE PROBLEM
+To ensure that CICS TS manual password validation will be successful when appropriate change the CA ACF2 [http://ca.com/] configuration as follows: 
+
+ 1. Set the PSWDXTR in the CA ACF2 GSO PSWD record to enable Password Extract requests. 
+ 2. Change the passwords of the LOGONIDs going through these signons once the PSWDXTR is effective. 
+
+
+Once the passwords have been changed with PSWDXTR in effect, the LOGONIDs will gain the PSWD-XTR attribute, and a password that is 'extractable'. See documentation on the PSWDXTR parm of the GSO PSWD record in the "Password Maintenance and Support (PSWD)" section in Chapter 14 of the ACF2 Administrator Guide for additional details. 
+
+Contact [/support/docview.wss?uid=swg21225846&amp;aid=1] CA Technologies [http://www.ca.com/] if you need additional assistance. 
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

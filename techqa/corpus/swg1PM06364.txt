@@ -1,0 +1,186 @@
+Title: IBM PM06364: JAVA.LANG.CLASSCASTEXCEPTION: COM.IBM.JMS.JMSTEXTMESSAGE INCOMPATIBLE WITH [LJAVA.LANG.OBJECT WHEN USING SCA FEATURE PACK - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using WebSphere Application Server v7.0 with the Feature
+   Pack for Service Component Architecture (SCA) on a 64-bit
+   system, the following error can occur:
+   
+   
+   1/22/10 14:51:31:524 EST] 00000041 SystemOut O
+   
+   java.lang.ClassCastException: com.ibm.jms.JMSTextMessage
+   incompatible with [Ljava.lang.Object;
+   at
+   org.apache.tuscany.sca.binding.jms.wireformat.jmstext.runtime.Wi
+   reFormatJMSTextReferenceInterceptor.invokeRequest(WireFormatJMST
+   extReferenceInterceptor.java:84)
+   at
+   org.apache.tuscany.sca.binding.jms.wireformat.jmstext.runtime.Wi
+   reFormatJMSTextReferenceInterceptor.invoke(WireFormatJMSTextRefe
+   renceInterceptor.java:66)
+   at
+   org.apache.tuscany.sca.binding.jms.wireformat.jmstext.runtime.Wi
+   reFormatJMSTextReferenceInterceptor.invoke(WireFormatJMSTextRefe
+   renceInterceptor.java:69)
+   at
+   org.apache.tuscany.sca.binding.jms.provider.RRBJMSBindingInvoker
+   .invoke(RRBJMSBindingInvoker.java:230)
+   at
+   com.ibm.ws.soa.sca.runtime.impl.RuntimeExtensionManager.invokeNe
+   xtInterceptor(RuntimeExtensionManager.java:237)
+   at
+   com.ibm.ws.soa.sca.runtime.impl.RuntimeExtensionManager.processM
+   essage(RuntimeExtensionManager.java:98)
+   at
+   com.ibm.ws.soa.sca.runtime.impl.RuntimeTuscanyInterceptor.invoke
+   (RuntimeTuscanyInterceptor.java:206)
+   at
+   org.apache.tuscany.sca.core.invocation.JDKInvocationHandler.invo
+   ke(JDKInvocationHandler.java:340)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Run WebSphere Application Server v7.0 with the SCA Feature Pack
+   on a 32-bit system
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of WebSphere Application Server v7    *
+   *                  Feature Pack for Service Component          *
+   *                  Architecture (SCA) Refresh Pack v1.0.1      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: ClassCastException occurs when using    *
+   *                      <ts:wireFormat.jmsText/> from SCA       *
+   *                      Feature Pack.                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   There is no equals() method implementation for
+   WireFormatJMSText. As a result, in
+   JMSBindingReferenceBindingProvider.configureBindingChain(),
+   the check to ensure that we don't add the
+   WireFormatJMSTextReferenceInterceptor twice is failing. In the
+   case where we are adding the intepretor twice, the
+   classCastException occurs since it's already a JMSMessage
+   after the first interceptor.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  dded equals() method implementation to WireFormatJMSBytes and
+   WireFormatJMSText to address the issue.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 1.0.1.3.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM06364
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-29
+   
+   
+ * CLOSED DATE
+   2010-02-24
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  SCA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS SCA FEATURE
+   
+   
+ * FIXED COMPONENT ID
+   5724J0854
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

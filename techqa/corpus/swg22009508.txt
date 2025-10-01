@@ -1,0 +1,12 @@
+Title: IBM Changing the Password of System user in TRIRIGA - United States
+
+Text:
+TRIRIGA; My Profile; System User; Password; TriPeople; Associations; #IoT_Support; #SUPIWMS; TRIADMIN TECHNOTE (FAQ)
+
+QUESTION
+ How can I change the Password of the System User in IBM TRIRIGA? 
+
+ANSWER
+The User can check this in My Profile [Application] --> My Profile [Tab]-->Account Details [Section] for system password change.
+Although, you can create a manual Association in TriPeople , it is best and easiest for the user to simply run a query against the My Profile records in the System Reports.
+You can do this by selecting the system My Profile record and edit to the correct password as required.

@@ -1,0 +1,45 @@
+Title: IBM How to perform a complete uninstall of Rational Method Composer - United States
+
+Text:
+HKLM; HKEY; installation; upgrade; uninstall; RMC; RUP; deinstall; un-install; method; composer; composeur; 1239142 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to perform a complete uninstall of IBM® Rational® Method Composer (RMC) in case the upgrade from RMC failed. 
+
+CAUSE
+It might be necessary to uninstall RMC when a previous upgrade attempt for RMC has failed. This is especially true when attempting an upgrade to a localized non-English version of RMC 7.0.1 fails. 
+
+If the RMC installation failed during an upgrade from a previous version, then you might encounter one or more of the following symptoms: 
+
+
+ 1. Attempts to re-install fail. Attempts to re-install will fail because the existing failed install is detected which prevents further action. 
+ 2. The library is only available in English and not in the desired localized language. This is caused because the upgrade is incomplete and the old 7.0 library in English is being used instead of the desired new library. 
+ 3. Uninstall through Add or Remove Programs fails.
+
+RESOLVING THE PROBLEM
+The following procedure will "clean" the system, and the RMC installation should proceed normally. To perform these actions, you must have local administrator rights to the machine. When performing the uninstall steps below, please note that in place of the path, 7.x, you will see the file structure for your current installed version. 
+
+ 
+
+ 1. Save and back-up the library file(s)library.xmi
+    (The default library can be found under C:\Program Files\IBM\Rational\SDP\Rational Method Composer 7.x\library. The default directory of custom libraries is C:\Documents and Settings\<user>\IBM\RMC\Method Libraries)
+    
+ 2. Delete RMC directory (C:\Program Files\IBM\Rational\SDP\Rational Method Composer 7.x)
+    
+ 3. Delete desktop icons (C:\Documents and Settings\All Users\Desktop)
+    
+ 4. Delete Start Menu icons (C:\Documents and Settings\All Users\Start Menu\Programs\IBM Rational\IBM Rational Method Composer 7.x)
+    
+ 5. Run regedit, delete HKEY_LOCAL_MACHINE\Software\IBM\Rational\Software Development Platform\products\com.ibm.rational.method.composer 
+    
+ 6. Remove InstallShield References to RMC  1. If other programs are installed by InstallShield MultiPlatform/Universal, then remove all lines containing "Method Composer" references in the file C:\Program Files\Common Files\InstallShield\Universal\common\Gen1\_vpddb\vpd.script
+        Note: If, during the install, a destination directory other than the default is chosen, remove lines containing the chosen destination. 
+        
+     2. If no other programs are installed by InstallShield MultiPlatform/Universal, then delete the C:\Program Files\Common Files\InstallShield\Universal folder.
+        
+    
+    
+ 7. Clear the TEMP folder
+
+
+NOTE: This solution contains information about modifying the system registry. Before making any modifications to the Microsoft® Registry Editor, it is strongly recommended that you make a backup of the existing registry. For more information describing how to back up the registry, refer to the Microsoft Knowledge Base article 256986 http://support.microsoft.com/kb/256986 [http://support.microsoft.com/kb/256986].

@@ -1,0 +1,21 @@
+Title: IBM Rulerunner skips over tasks with IBM Datacap Taskmaster Capture - United States
+
+Text:
+skip task; RuleRunner. TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Datacap Rulerunner intermittently skips over task for some batches with no error in the Rulerunner log or Taskmaster log. 
+
+SYMPTOM
+Even though the task did not get executed, the Job Monitor displays that the task has been finished for that batch. The same Rulerunner server can process other batches with the same job properly.
+
+
+CAUSE
+This can be occur after having made changes in the Rulerunner Configuration Manager, then saving and closing it while the Rulerunner service is running.
+
+RESOLVING THE PROBLEM
+To resolve the issue:
+
+
+ 1. Most of the time restarting the affected Rulerunner service will correct the issue. 
+ 2. If the behavior persists, a registry key must be manually changed. Run regedit and reset the key as follows, then restart the Rulerunner service.  * HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Datacap\Rulerunner\Misc\Settings Change to 0

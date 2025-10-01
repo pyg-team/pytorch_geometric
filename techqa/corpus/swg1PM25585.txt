@@ -1,0 +1,209 @@
+Title: IBM PM25585: EXPLAIN THE CAUSE OF SLOW REPORTS WITH ADAPTIVE ANALYTICS WORKFORCCE PERFORMANCE ON AIX - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Adaptive Analytics reports running against the Workforce
+   Performance model are taking 10x longer to load the prompt page
+   on AIX than on Windows server.  When the "Use For Parameter
+   Info" property on the report fact query is set to No then
+   performance is equally as good on AIX.  With this property left
+   at the default value the performance tracing log indicates that
+   RQP is consuming the bulk of the processing time refining
+   queries and resolving join paths.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See error description.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * - Customer has applied AIX Tuning recommendataions.          *
+   * - Customer will consider applying more physical memory.      *
+   * - Customer will consider patching up their AIX OS version to *
+   * a more current version.                                      *
+   * - Customer will consider taking AA HotSite so manual         *
+   * modifications of their generated reports will not be         *
+   * required going forward.                                      *
+   * - Customer will consider upgrading to a Power 7 system       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Two tests were run on several packaged reports.  Results for one
+    of these reports are typical across all reports tested. The two
+    tests that were run are described below:
+   
+   1) Performance and execution logs were gathered by IBM Cognos 8
+   BI Server while running the report to the prompt page
+   2) CPU Statistics were gathered by the operating system while ru
+   nning the report to the prompt page
+   
+   The results from the first test have been analyzed for all test
+   platforms by the IBM Cognos query framework development team and
+    they have confirmed the following:
+   
+   a) The same execution steps are being performed on all systems t
+   ested
+   b) AIX running on a Power 5 and 6 system is taking more time in
+   each execution step (i.e. there is no step that stands out as a
+   culprit) for both of the AIX systems tested.
+   
+   The results from the second test clearly demonstrate that the CP
+   U resources are being fully consumed by the report service proce
+   sses and that loading the prompt page requires these resources f
+   or a longer duration on AIX systems than on the non-AIX system.
+   It should be noted that while the report service can handle mult
+   iple report requests concurrently, each report request will only
+    execute within one thread and therefore cannot consume more tha
+   n 50% of the 2 CPUs available.  This is true on all platforms.
+   
+   Traces were run on both the St. Gobain server and an AIX server
+   located in the Ottawa Lab.  Three observations were made by the
+   AIX team in reviewing the content of the trace files:
+   
+   a) There is a lot of paging activity when these reports are gene
+   rated
+   b) An older version of AIX 5.3 was installed at Saint Gobain
+   c) Tuning the system may improve the performance.
+   
+   Based on our analysis of various factors such as AIX system perf
+   ormance tracing and IBM Cognos performance tracing and architect
+   ure we recommend the following:
+   a) IBM deliver a Hotsite build of IBM Cognos Adaptive Analytics
+   that explicitly sets the value of the &#212;&#199;&#163;Use For Prompt Info&#212;&#199;?
+   query parameter to &#212;&#199;&#163;No&#212;&#199;? to avoid the unnecessary, symptomati
+   c processing
+   b) A minimum of 4GB of additional physical memory is added to th
+   e St. Gobain production server
+   c) Memory performance tuning on the production server be reviewe
+   d and adjustments be made where deemed necessary.
+   
+   Additionally in future releases of the Analytic Applications; en
+   gineering work has been done to
+   a) Explicitly set the value of the &#212;&#199;&#163;Use For Prompt Info&#212;&#199;? que
+   ry parameter to &#212;&#199;&#163;No&#212;&#199;? to avoid the unnecessary, symptomatic p
+   rocessing
+   b) Reduce the size of the reporting package
+   
+   Results from the hardware testing also indicate from a best prac
+   tice perspective the following hardware configuration
+   a) CPU: Power7
+   b) Memory: 20+ GB
+   c) OS Version: AIX 6.1
+   
+   Additional physical memory will ease the memory paging activity.
+     Adjustments to some recommended AIX server settings will also
+   decrease paging activity.  Combined, this is likely to increase
+   report performance by up to 10%
+   
+   As a result of this investigation it has been determined that IB
+   M Cognos Adaptive Analytics does not need to rely on the prompt
+   checking safe guards that are symptomatic of this performance pr
+   oblem.  Since the reports are generated the type-safety of the p
+   rompt controls is already enforced.  The next generation of this
+    product will explicitly set the value of the &#212;&#199;&#163;Use For Prompt
+   Info&#212;&#199;? query parameter to &#212;&#199;&#163;No&#212;&#199;? to avoid this redundant chec
+   k.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM25585
+   
+   
+ * REPORTED COMPONENT NAME
+   COG AN AP WORKB
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y77AW
+   
+   
+ * REPORTED RELEASE
+   841
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2010-10-29
+   
+   
+ * CLOSED DATE
+   2011-06-20
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   COG AN AP WORKB
+   
+   
+ * FIXED COMPONENT ID
+   5724Y77AW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R842 PSN
+   UP

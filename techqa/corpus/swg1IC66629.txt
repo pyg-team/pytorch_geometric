@@ -1,0 +1,246 @@
+Title: IBM IC66629: UPDATE DB CFG PARAMETERS MORE THAN 64 AT A TIME, MAY RESULT     IN UNEXPECTED BEHAVIOUR. - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.5 Fix Pack 6a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027747]
+DB2 Version 9.5 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028731]
+DB2 Version 9.5 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24030302]
+DB2 Version 9.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032087]
+DB2 Version 9.5 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033308]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  While updating more than 64 DB CFG parameters at a
+   time, unexpected behaviour may occur such as infinite loops, or
+   even traps.
+   
+   For eg:
+   UPDATE DB CFG FOR TEST USING
+                                              DYN_QUERY_MGMT
+   DISABLE
+                                                 DISCOVER_DB
+   ENABLE
+                                                DFT_QUERYOPT    5
+                                                  DFT_DEGREE    1
+                                             DFT_SQLMATHWARN    NO
+                                             DFT_REFRESH_AGE    0
+                                              DFT_MTTB_TYPES
+   SYSTEM
+                                              NUM_FREQVALUES    10
+                                               NUM_QUANTILES    20
+                                             SELF_TUNING_MEM    ON
+                                             DATABASE_MEMORY
+   AUTOMATIC
+                                               DB_MEM_THRESH    10
+                                                    LOCKLIST
+   AUTOMATIC
+                                                    MAXLOCKS
+   AUTOMATIC
+                                                  PCKCACHESZ
+   AUTOMATIC
+                                              SHEAPTHRES_SHR
+   AUTOMATIC
+                                                    SORTHEAP
+   AUTOMATIC
+                                                      DBHEAP
+   2422
+                                             CATALOGCACHE_SZ    260
+                                                    LOGBUFSZ    98
+                                                UTIL_HEAP_SZ
+   5000
+                                                    BUFFPAGE
+   1000
+                                             APPGROUP_MEM_SZ
+   41573
+                                             GROUPHEAP_RATIO    70
+                                             APP_CTL_HEAP_SZ    512
+                                                    STMTHEAP
+   4096
+                                                  APPLHEAPSZ    256
+                                                STAT_HEAP_SZ
+   4384
+                                                   DLCHKTIME
+   10000
+                                                 LOCKTIMEOUT    10
+                                              CHNGPGS_THRESH    80
+                                              NUM_IOCLEANERS
+   AUTOMATIC
+                                               NUM_IOSERVERS
+   AUTOMATIC
+                                                   INDEXSORT    YES
+                                                   SEQDETECT    YES
+                                             DFT_PREFETCH_SZ
+   AUTOMATIC
+                                                    TRACKMOD    ON
+                                               DFT_EXTENT_SZ    32
+                                                    MAXAPPLS
+   AUTOMATIC
+                                                   AVG_APPLS
+   AUTOMATIC
+                                                    MAXFILOP    64
+                                                   LOGFILSIZ
+   1024
+                                                  LOGPRIMARY    13
+                                                   LOGSECOND    4
+                                                  NEWLOGPATH
+   <new_log_path>
+                                               MIRRORLOGPATH
+   <new_mirror_path>
+                                             BLK_LOG_DSK_FUL    NO
+                                                     MAX_LOG    0
+                                                NUM_LOG_SPAN    0
+                                                   MINCOMMIT    1
+                                                     SOFTMAX    520
+                                                   LOGRETAIN    OFF
+                                                    USEREXIT    OFF
+                                                HADR_TIMEOUT    120
+                                               HADR_SYNCMODE
+   NEARSYNC
+                                                LOGARCHMETH1    TSM
+                                                 LOGARCHOPT1    ''
+                                                LOGARCHMETH2    OFF
+                                                NUMARCHRETRY    5
+                                              ARCHRETRYDELAY    20
+                                                 AUTORESTART    ON
+                                                    INDEXREC
+   SYSTEM
+                                               LOGINDEXBUILD    OFF
+                                             DFT_LOADREC_SES    1
+                                              NUM_DB_BACKUPS    2
+                                             REC_HIS_RETENTN    14
+                                                  AUTO_MAINT    ON
+                                              AUTO_DB_BACKUP    OFF
+                                              AUTO_TBL_MAINT    ON
+                                               AUTO_RUNSTATS    ON
+                                             AUTO_STATS_PROF    OFF
+                                               AUTO_PROF_UPD    OFF
+                                                  AUTO_REORG    OFF
+   ;
+   
+   This query is trying to update more than 64 DB CFG parameters at
+   a time. It will not return to command line or may trap the
+   instance.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Please update less than 64 DB CFG parameters to avoid the
+   unexpected behavior.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users prior to DB2 V95 FP6                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * UPDATE DB CFG PARAMETERS MORE THAN 64 AT A TIME, MAY         *
+   * RESULTIN UNEXPECTED BEHAVIOUR.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 V95 FP6.                                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem is first fixed in DB2 V95 FP6.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC66629
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-24
+   
+   
+ * CLOSED DATE
+   2010-06-22
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ69877 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ69877]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSY
+   UP

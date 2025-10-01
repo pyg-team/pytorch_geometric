@@ -1,0 +1,154 @@
+Title: IBM SSL (HTTPS mode) on Rational Directory Administration - United States
+
+Text:
+RDA; RDS 5.1; SRX; HTTPS; SSL; RDA; RDS; Directory Server; Directory Administration; LDAPS; Secure mode; 5.1; RN5.1; How to setup TECHNOTE (FAQ)
+
+QUESTION
+ How can you set up SSL (HTTPS mode) on IBM Rational Directory Administration? 
+
+CAUSE
+An administrator may need to run Rational Directory Administration on SSL/HTTPS mode for security reasons.
+
+ANSWER
+ The IBM Rational Directory Server administrator can modify Rational Directory Administration to support SSL/HTTPS secure communication with a 128-bit encryption key. The following steps help you configure SSL/HTTPS. 
+
+1. Generate a self-signed certificate Keystore file using the standard JDK keytool utility. 
+Note: If you already have a keystore file, copy the existing file in the following location: <RDA_HOME/RDS_HOME>\WebAccessServer\apache-tomcat-6.0.16\binand go to step 3. 
+
+ * 
+ * 
+ *  <RDS_HOME/RDA_HOME>\jre\bin
+ * b) Type the following command: 
+
+
+keytool -genkey -keystore "<path to keystore file>" -keyalg RSA –alias <yourAlias*> Where, <*yourAlias> can be the hostname of your machine where you have installed the Rational Directory Administration. 
+
+2. Enter the certificate information and the passwords to protect both the keystore and the keys within the information: 
+
+ * 
+ * 
+ * <path to keystore file>.
+ * 
+ * b) Enter the hostname or ipaddress of the machine where Rational Directory Administration is installed as the first and last name. This is done so that the key is issued to the URL of the website, matches the site name.
+
+
+For example: 
+Rational Directory Administration is installed on 192.168.10.11(hostname=win2k3rds) 
+C:\Program Files\rds\RDS_5.1\jre\bin>keytool -genkey -keystore "C:\Program Files\IBM\Rational\rds\RDS_5.1\WebAccessServer\apache-tomcat-6.0.16\bin\rda.keystore" -keyalg RSA –alias win2k3rds 
+
+Enter keystore password: <type a password> 
+What is your first and last name?
+[Unknown]: 192.168.10.11 
+
+What is the name of your organizational unit?
+[Unknown]: Rational 
+
+What is the name of your organization?
+[Unknown]: IBM 
+
+What is the name of your City or Locality?
+[Unknown]: 
+
+What is the name of your State or Province?
+[Unknown]: 
+
+What is the two-letter country code for this unit?
+[Unknown]: 
+
+Is CN=192.168.10.11, OU=Rational, O=IBM, L=Unknown, ST=Unknown, C=Unknown correct?
+[no]: yes 
+
+Enter key password for (RETURN if same as keystore password): choose a password 
+
+ 
+
+3. Stop the Tomcat Server by using the following command: <RDA_HOME/RDS_HOME>\WebAccessServer\apache-tomcat-6.0.16\bin\catalina.bat stop 
+
+4. Go to <RDA_HOME/RDS_HOME>\WebAccessServer\apache-tomcat-6.0.16\conf 
+
+5. Create a backup copy of the server.xml file in a different location. 
+
+6. Open the server.xml file in a text editor. 
+
+7. Locate the following section in the server.xml file and make sure it is not commented out: 
+
+<Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true" 
+
+maxThreads="150" scheme="https" secure="true" 
+
+clientAuth="false" sslProtocol="TLS" /> 
+
+Note: 8443 is the default https port for Tomcat. 
+
+Replace this content with the following: 
+
+ <Connector port="8443" 
+protocol="HTTP/1.1" 
+SSLEnabled="true"
+maxThreads="150" 
+scheme="https" 
+secure="true"
+keystoreFile="<keystoreFile path>" 
+keystorePass="<keystore-password>"
+clientAuth="false" 
+sslProtocol="TLS" /> 
+
+Note: You can either use 8443 or 8080 or any other port of your choice. If you are using 8080 (the default HTTP port), comment out the following section in the server.xml file. 
+
+<Connector port="8080" protocol="HTTP/1.1" 
+connectionTimeout="20000" 
+redirectPort="8443" />
+
+For example: 
+<Connector port="8443"
+protocol="HTTP/1.1" 
+SSLEnabled="true"
+maxThreads="150" 
+scheme="https" 
+secure="true" 
+keystoreFile="C:\Program Files\IBM\Rational \RDS_5.1\WebAccessServer\apache-tomcat-6.0.16\bin\rda.keystore" 
+keystorePass="Password123"
+clientAuth="false" 
+sslProtocol="TLS" /> 
+
+8. Start the web access server using the following command: <RDA_HOME/RDS_HOME>\WebAccessServer\Start_RDAWebServer.bat 
+
+19. Login to RDS using the following URL in IE or Firefox browser: https: //yourhost:<your ssl port>/webrda/rda 
+
+11. If the login page in https mode does not open when using Internet Explorer 6, do the following: 
+
+ * 
+ * 
+ * Tools 
+ * 
+ * Internet Options
+ * 
+ * Advanced
+ * 
+ * b) Scroll down to Security. 
+ * c) Select Use TLS 1.0 and click Apply. 
+ * d) Refresh the page.
+
+
+
+Known defects in SSL Mode: 
+
+1) With Mozilla FireFox browser: 
+Logout prompts for downloading a file called logout; this is a known defect which will be resolved in a future release. However, the tdsadmin user logs out successfully though it is not evident. 2) With Internet Explorer:
+Sometimes logout action loads a page with junk characters, you can ignore this as the logout action is successful and the tdsadmin user is logged out successfully. 
+
+3) Help menu: 
+
+If you click Help and the help content does not load, you can manually access the help. 
+
+ * 
+ * 
+ * b) Replace http with https and click ENTER.
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Change Directory Server

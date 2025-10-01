@@ -1,0 +1,20 @@
+Title: IBM Content Collector initial configuration fails - United States
+
+Text:
+validation TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Content Manager validation fails during initial configuration due to error "The database 
+connection failed due to an error in the DriverManager.getConnection() or the equivalent C++ method" 
+
+SYMPTOM
+The following error can be found in initial configuration trace:
+
+DGL7333A: The database connection failed due to an error in the DriverManager.getConnection() or the equivalent C++ method. The exception message was: [jcc][t4][2043][11550][3.53.95] Exception java.net.ConnectException: Error opening socket to server XXXXXX on port 50,000 with message: Connection refused: connect. ERRORCODE=-4499, SQLSTATE=08001 (STATE)
+
+
+CAUSE
+CM API cannot connect to CM server
+
+RESOLVING THE PROBLEM
+Confirm the information in cmbicmsrvs.ini file which is located in %IBMCMROOT%\connectors on ICC server is correct. After that. re-run initial configuration

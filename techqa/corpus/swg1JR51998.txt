@@ -1,0 +1,158 @@
+Title: IBM JR51998: ADDITIONAL ACCESSIBILITY ISSUES IN IBM PROCESS PORTAL - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.5.0.1-WS-BPM-IFJR51998 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.0.1-WS-BPM-IFJR51998&source=SAR]
+Version 8.5 Refresh Pack 6 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24039185]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You might encounter the following accessibility issues in IBM
+   Process Portal, beyond what was previously addressed in APAR
+   JR48814 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR48814]. These issues were found by using JAWS V15.0.1.2085,
+   which is screen-reading software from Freedom Scientific.
+   
+   In the Modify Task window
+    -The "Escalate or modify the settings" description is not read.
+    -When the focus is in the Assignee field, and you press the Esc
+   key, the window does not close.
+   
+   In Work > My Tasks
+     -When you tab to the task link, "Task Subject button" is read,
+   but the name of the task is not read.
+     -The task priority is not read.
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Testing with JAWS V15.0.1.2085 revealed the accessibility issues
+   reported in the ERROR DESCRIPTION. Previous versions of JAWS
+   did not reveal these issues.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.0.1 that fixes the reported
+   accessibility issues.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR51998:
+   
+    1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+    2. Select APAR or SPR, enter JR51998, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR51998
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-09
+   
+   
+ * CLOSED DATE
+   2015-02-20
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

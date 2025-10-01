@@ -1,0 +1,95 @@
+Title: IBM WebSphere Application Server Version 7.0 might not recognize Windows 7 or Windows Server 2008 R2 as a supported operating system - United States
+
+Text:
+Win7_2008_R2 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you install IBM WebSphere Application Server Version 7.0 on a machine that runs the Microsoft® Windows® 7 or Windows Server 2008 R2 operating systems, you might encounter the following error message:
+
+Warning: A supported operating system was not detected. Support for your operating system might have been added after the release of the product. You can continue with the installation, but the installation or product operation might not succeed without applying maintenance.
+
+
+If you install the product silently, you might encounter the following error message: 
+
+Process, com.ibm.ws.install.ni.ismp.actions.
+OSPrereqCheckAction, err, System Prerequisites Check
+Warning: A supported operating system was not detected.
+
+
+This document explains how to address the issue without setting the disableOSPrereqChecking option value to true. 
+
+CAUSE
+Windows 7 and Windows Server 2008 R2 are newly supported operating systems for WebSphere Application Server Version 7.0. The original maintenance.xml file might not list Windows 7 and Windows Server 2008 R2 as supported operating systems.
+
+RESOLVING THE PROBLEM
+As a workaround for this problem, complete the steps in the following procedure. You can use these steps to update WebSphere Application Server, Application Client for WebSphere Application Server, IBM HTTP Server, the Web server plug-in, or the WebSphere DMZ Secure Proxy Server. 
+
+
+Note: The WebSphere DMZ Secure Proxy Server applies to WebSphere Application Server Network Deployment only. 
+
+
+ 1. Remove the temporary log directories that might have been created by previous installations. 
+    
+    If you do not remove the log files, you might encounter messages from previous installations. Remove the following directories:  * user_home/waslogs 
+       
+       
+     * user_home/plglogs 
+       
+       
+     * user_home/cltlogs 
+       
+       
+     * user_home/ihslogs 
+       
+       
+     * user_home/nddmzlogs
+       
+       
+       
+    
+    
+ 2. Copy the image to a temporary directory if you are installing WebSphere Application Server from a CD or DVD.
+    
+    
+ 3. Make a backup copy of the maintenance.xml file.
+    
+    The following table lists the locations of the existing maintenance.xml files on your system.
+    
+    Installation type Directory WebSphere Application Server temp_directory/WAS/was.primary.pak/ Application Client for WebSphere 
+    Application Server temp_directory/AppClient/client.primary.pak/ IBM HTTP Server temp_directory/IHS/ihs.primary.pak/ Web server plug-in temp_directory/Plugin/plg.primary.pak/ WebSphere DMZ Secure Proxy Server temp_directory/NDDMZ/nddmz.primary.pak/ 
+    
+ 4. Copy the appropriate maintenance.xml file from the following table and overwrite the original file in the temporary directory.
+    
+    
+    Note: The Product Edition column within the following table refers to the product edition for your WebSphere Application Server-related product and not the system processor type.
+    
+    Product Product Edition File WebSphere Application Server IA32 maintenance.xml [/support/docview.wss?uid=swg21413124&aid=2] [/support/docview.wss?uid=swg21413124&aid=1] AMD64 for 64-bit WebSphere Application Server 
+    maintenance.xml [/support/docview.wss?uid=swg21413124&aid=4] [/support/docview.wss?uid=swg21413124&aid=3]
+    Application Client for 
+    WebSphere Application 
+    Server IA32 
+    maintenance.xml [/support/docview.wss?uid=swg21413124&aid=6] [/support/docview.wss?uid=swg21413124&aid=5]
+    IBM HTTP Server IA32 
+    maintenance.xml [/support/docview.wss?uid=swg21413124&aid=8] [/support/docview.wss?uid=swg21413124&aid=7]
+    AMD64 for 64-bit 
+    IBM HTTP Server 
+    maintenance.xml [/support/docview.wss?uid=swg21413124&aid=10] [/support/docview.wss?uid=swg21413124&aid=9]
+    Web server plug-in IA32 
+    maintenance.xml [/support/docview.wss?uid=swg21413124&aid=12] [/support/docview.wss?uid=swg21413124&aid=11]
+    AMD64 for 64-bit plug-in 
+    maintenance.xml [/support/docview.wss?uid=swg21413124&aid=14] [/support/docview.wss?uid=swg21413124&aid=13]
+    WebSphere DMZ 
+    Secure Proxy Server IA32 
+    maintenance.xml [/support/docview.wss?uid=swg21413124&aid=16] [/support/docview.wss?uid=swg21413124&aid=15]
+    AMD64 for 64-bit DMZ 
+    secure proxy server 
+    maintenance.xml [/support/docview.wss?uid=swg21413124&aid=18] [/support/docview.wss?uid=swg21413124&aid=17]
+    
+    
+ 5. Start the installation interface or the silent installation process.
+    
+    
+ 6. Update your WebSphere Application Server Version 7.0 installation to Version 7.0.0.7 or later. This update puts your environment at a supported level for the product that is being hosted on the Windows 7 or Windows Server 2008 R2 operating system.
+    
+    
+    Note: If you encounter a system prerequisites warning when you install the Feature Pack for Service Component Architecture (SCA) Version 1.0.1, ignore the warning and proceed with the installation process.

@@ -1,0 +1,32 @@
+Title: IBM Why is my IBM Datacap Start Batch Panel causing a failure when I run DotScan? - United States
+
+Text:
+start batch; start panel TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Start Batch Panel was implemented and it shows the fields properly when DotScan is started. After entering the proper field data and pressing the Submit button, DotScan continues to the Document Entry step. When images are selected to create a batch, the following exception is thrown:
+
+"Index was out of range. Must be non-negative and less than the size of the collection"
+
+Removing the Start Batch Panel allows DotScan to run properly.
+
+
+
+CAUSE
+The Start Batch panel is used for field data validation and the application was configured to use VScan for manual ingestion with DotScan. But the application was also configured to use VScan for automatic ingestion via Rulerunner. This is a conflict and is causing the problem. 
+
+DIAGNOSING THE PROBLEM
+Please check the VScan rules setting in TMWeb.net. 
+
+1. Under the Administrator tab, Select the Demo Doc workflow, Main Job, VScan. 
+2. Click "Setup" and change the Rulerunner setting for Main Task Profile from "VScan" to "Verify". 
+
+The start batch panel should now run correctly with DotScan. 
+
+Rulerunner is designed to execute automated tasks, with no user interactions. Because VScan is now configured to present a dialog box (the Start Batch panel), an internal conflict exists, which manifests itself with the exception that is displayed. 
+
+You can also test this by leaving VScan in the Rulerunner setting and turning off the start batch panel. DotScan will run properly. 
+
+
+RESOLVING THE PROBLEM
+The solution is to change the Rulerunner setting for Main Task Profile from "VScan" to "Verify", or create a new Task Profile for Rulerunner that does not have the start batch panel activated.

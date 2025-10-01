@@ -1,0 +1,179 @@
+Title: IBM PM56148: PORTAL FP 7.0.0.2 INSTALL FAIL - ICM.PROPERTIES FOR DB2_ISERIES INCORRECTLY UPDATED DURING INSTALL. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Description&#65496;
+   Error that is seen in ConfigTrace.log:
+   
+   ================================================================
+   
+   action-update-icm-properties-db2_iseries:
+        [echo] Updating 'icm.properties' for db2_iseries
+   Target finished: action-update-icm-properties-db2_iseries
+   Target finished: action-update-icm-properties
+        [echo] Migrating JCR schema from JCR7.0.0.0 to JCR7.0.0.2
+   ...
+        [echo]
+   traceDDL=false,ddlscript.name=<wp_profile>/PortalServer/DBMigrat
+   ionScripts/db2_iseries/jcr/db2_iseries_jcr_dbmi g_jcr.sql
+        [java] Executing java with empty input string
+        [java] Please refer to log
+   File::<wp_profile>/ConfigEngine/log/Migration.log
+        [java] Java Result: 1
+   
+   ================================================================
+   
+   
+   Error that is seen in Migration.log:
+   
+   ================================================================
+   
+   Migration: TRACE -> Executing :: SELECT
+   DATABASETYPE FROM WPSJCRDB.ICMSTSYSCONTROL WHERE
+   LIBRARYSERVERID=1
+   Migration: TRACE -> SQL Execution Failed:SELECT
+   DATABASETYPE FROM WPSJCRDB.ICMSTSYSCONTROL WHERE
+   LIBRARYSERVERID=1
+   MigrationSQLExecutor: ERROR ->[SQL0204]
+   ICMSTSYSCONTROL in WPSJCRDB type *FILE not found.
+   
+   ================================================================
+   
+   
+   After the upgrade fails at this point, the jcr.Schema in
+   icm.properties will be set to the jcr.DbName.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix&#65496;
+   Edit the jcr.install_cfg.xml file located in the following
+   directory:
+   
+   <PortalServer_root>/jcr/wp.content.repository.install/config/inc
+   ludes/
+   
+   Change the following line (line 1324) from:
+   
+   <setvariable name="jcr.database.schema" value="${jcr.dbname}" />
+   
+   to:
+   
+   <setvariable name="jcr.database.schema" value="${jcr.DbSchema}"
+   />
+   
+   
+   Also, set the correct value in icm.properties for jcr.Schema.
+   Then rerun the upgrade.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fix will be provided
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix will be in Portal Cumulative Fix 11
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM56148
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-17
+   
+   
+ * CLOSED DATE
+   2012-02-02
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

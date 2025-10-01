@@ -1,0 +1,36 @@
+Title: IBM Using SHA-2 or salted SHA-2 encryption scheme with Tivoli Directory Server Version 6.3 fix pack 10 (6.3.0.10) - United States
+
+Text:
+using SHA-2 or salted SHA-2 family of encryption scheme in Tivoli Directory Server 6.3 fix pack 10; SHA-2; salted SHA-2 PRODUCT LIFECYCLE
+
+ABSTRACT
+ This document describes how to use SHA-2 or salted SHA-2 encryption scheme with Tivoli Directory Server Version 6.3 fix pack 10 (6.3.0.10). 
+
+CONTENT
+Tivoli Directory Server uses the IBM Global Security Kit (GSKit) crypto package for encryption. By default, Tivoli Directory Server uses GSKit in Federal Information Processing System (FIPS) compliant mode. 
+
+For communication over SSL or TLS, user must use GSKit version 8.0.14.11 (minimum required version) or higher level of fix pack versions with Tivoli Directory Server version 6.3 fix pack 10 (6.3.0.10). In the 8.0.14.11 and above fix pack versions of GSKit, ICC libraries used by SHA-2 or salted SHA-2 are available under FIPS certified branch.
+
+Tivoli Directory Server v6.3 fix pack 10 with GSKit 8.0.14.11 or higher level of fix pack versions provide ICC libraries required for the SHA-2 or salted SHA-2 family of algorithms for encryption under the FIPS certified mode. In Tivoli Directory Server v6.3 fix pack 10, this feature is enabled by default. On root DSE search, the result displays the OID 1.3.18.0.2.32.99 for the configuration attributes ibm-supportedCapabilties, ibm-enabledCapabilities, and supportedFeatures.
+
+To summarize the behavior and the mode under which the ICC libraries are available for using SHA-2 or salted SHA-2 with GSKit 8.0.14.11 is shown in the table.
+
+Table1. Working of SHA-2 feature with different values for the ibm-slapdUseNonFIPSCrypt attribute 
+
+Tivoli Directory Server version GSKit version Attribute ibm-slapdUseNonFIPSCrypt set ICC version used Availability of SHA-2 or salted SHA-2 family of algorithm v6.3 fix pack 10 8.0.14.11 FALSE / Not present FIPS certified ICC library 8.0.0.0 YES v6.3 fix pack 10 8.0.14.11 TRUE non-FIPS certified library 8.1.4.0 YES 
+If a user has already configured an instance of v6.3 version earlier than fix pack 10 to use SHA-2 or salted SHA-2 family of algorithms for encryption by setting the ibm-slapdUseNonFIPSCrypt attribute to TRUE, then even after upgrading to Tivoli Directory Server v6.3 fix pack 10 and GSKit 8.0.14.11 the user continues to use the ICC libraries for SHA-2 or salted SHA-2 in non-FIPS mode. If a user has configured the ibm-slapdUseNonFIPSCrypt attribute to TRUE, then the user must either set the attribute to FALSE or remove the attribute to use the ICC libraries for SHA-2 or salted SHA-2 in FIPS certified mode. To set the ibm-slapdUseNonFIPSCrypt attribute under the "cn=configuration" DN entry to FALSE, run the idsldapmodify command. For example: 
+# idsldapmodify -h <host_name> -p <port> -D <adminDN> -w <adminPWD> 
+dn: cn=Configuration 
+changetype: modify 
+replace: ibm-slapdUseNonFIPSCrypt 
+ibm-slapdUseNonFIPSCrypt: false 
+
+To remove the ibm-slapdUseNonFIPSCrypt attribute from the "cn=configuration" DN entry, run the idsldapmodify command. For example: 
+# idsldapmodify -h <host_name> -p <port> -D <adminDN> -w <adminPWD> 
+dn: cn=Configuration 
+changetype: modify 
+delete: ibm-slapdUseNonFIPSCrypt 
+
+Note: To effect the changes made, user must restart the directory server instance. 
+
+Attention: Consider a scenario where a user is not using GSKit and has upgraded to Tivoli Directory Server v6.3 fix pack 10. And, later if the user installs GSKit 8.0.14.10 or lower level versions on the computer. In this case, if the user configures v6.3 fix pack 10 instance to use SHA-2 or salted SHA-2 family of algorithms for encryption with the ibm-slapdUseNonFIPSCrypt attribute set to FALSE or the attribute is not present in the configuration file, then this encryption scheme does not work and the encryptable attribute values gets stored in clear text.

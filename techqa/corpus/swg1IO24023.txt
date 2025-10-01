@@ -1,0 +1,178 @@
+Title: IBM IO24023: IF CUSTOMER OPENS A DOC WITH SPECIAL CHARACTERS (NON ENGLISH) THEN GARBLED CHARACTERS APPEAR IN THE HTML DOCUMENT PREVIEW - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+2.0.3.6-ICN-FP006a-zLINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=2.0.3.6-ICN-FP006a-zLINUX&source=SAR]
+2.0.3.6-ICN-FP006a-WIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=2.0.3.6-ICN-FP006a-WIN&source=SAR]
+2.0.3.6-ICN-FP006a-LINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=2.0.3.6-ICN-FP006a-LINUX&source=SAR]
+2.0.3.6-ICN-FP006a-AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=2.0.3.6-ICN-FP006a-AIX&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer has raised an issue with IBM Support stating that when
+   they open a Word Document which contains Italian Characters in
+   Preview Mode that the information presented is garbage
+   characters. Now what is interesting is if the customer opens
+   the document using Daeja Viewer Virtual there is no issue.
+   
+   When we try to load the document into a WebSphere App Server
+   deployment there is no issue so it seems that this issue is
+   exclusive to WebLogic in HTML Preview Mode.
+   
+   This has not been reproduced by IBM as all our VMs are
+   WebSphere App Server deployments but we did verify the issue is
+   not present on this App Server.
+   
+   Here is how the document looks when there is no Encoding
+   problem (i.e. viewed from a WebSphere App Server Deployment
+   preview)
+   -
+   https://servrtc.canlab.ibm.com:10100/ccm/resource/itemOid/com.ib [https://servrtc.canlab.ibm.com:10100/ccm/resource/itemOid/com.ib]
+   m.team.workitem.Attachment/_k81i4YoXEeWmyaUJ4DOQMA
+   
+   Here is the same document when there is an Encoding problem
+   (i.e. viewed from a WebLogic App Server Deployment preview)
+   -
+   https://servrtc.canlab.ibm.com:10100/ccm/resource/itemOid/com.ib [https://servrtc.canlab.ibm.com:10100/ccm/resource/itemOid/com.ib]
+   m.team.workitem.Attachment/_lPs0gYoXEeWmyaUJ4DOQMA
+   
+   Researching Wellspring for this issue we discovered an
+   identical issue for another customer who also uses a WebLogic
+   App Server and the special characters behave the same as they
+   do in this instance. In fact in this other case customer has
+   deployed Navigator on Websphere as a test and the encoding
+   issue disappears thus verifying once again that this issue is
+   exclusive to WebLogic
+   -
+   https://w3-01.sso.ibm.com/software/servdb/crm/secure/l3PmrRecord
+   1.do?&pmrno=02374&bno=SGC&cno=668&createDate=O15%2f09%2f04&metho [https://w3-01.sso.ibm.com/software/servdb/crm/secure/l3PmrRecord1.do?&pmrno=02374&bno=SGC&cno=668&createDate=O15%2f09%2f04&metho]
+   d=retrieveCRMWithDate
+   
+   In the above CRM Ku Chang mentioned that they discovered a way
+   to force the OutsideIn module to use UTF-8 by default but they
+   needed to clarify it with development. I think this will be
+   helpful and kindly request the same work around to be shared
+   with this customer urgently
+   
+   ***Important***
+   if customer opens a doc with italian characters which do not
+   encode correctly we can click the source code of the preview
+   and see that the charset is windows 1252
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Dev/Engineering provide a code fix via a test module which
+   forces the OutsideIn Module to force the usage of UTF-8
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  fixed
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO24023
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   ISCONTNAV
+   
+   
+ * REPORTED RELEASE
+   203
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-11-16
+   
+   
+ * CLOSED DATE
+   2016-01-05
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   ISCONTNAV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R203 PSY
+   UP

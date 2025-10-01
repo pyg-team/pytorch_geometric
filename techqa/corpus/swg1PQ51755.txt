@@ -1,0 +1,180 @@
+Title: IBM PQ51755: MSGASMA163W OPERAND NOT PROPERLY ENCLOSED IN QUOTES WHEN USING THE XINIT PARAMETER - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MSGASMA163W operand not properly enclosed in quotes, when using
+   the XINIT fields in BMS conversion to HTML. The error from the
+   TEMPLATE generator which states an invalid hexadecimal digit has
+   happened. The digits are 0s (low-values).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: MSGASMA163W and MNOTE with RC 8 from    *
+   *                      template generation of a DFHMDF         *
+   *                      macro with a XINIT value surrounded     *
+   *                      by quotes.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   DFHPRMCK is called to validate the hexadecimal value supplied
+   on the XINIT operand of a DFHMDF macro by DFHWBTLG. It does
+   not recognise a hexadecimal value surrounded by quotes as a
+   valid hexadecimal value. An MNOTE RC8 is issued from the
+   template generation stage for the BMS map: 'XINIT value 'xxxx'
+   has invalid hexadecimal digits'. Also MSGASMA163W operand not
+   properly enclosed in quotes, is issued.
+   Additional keywords: ASMA163W ASMA163
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHPRMCK has been altered to allow a hexadecimal value
+   surrounded by quotes as valid.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  CICS/VSE ARB0P
+   // JOB PQ51755
+   // EXEC MSHP,SIZE=600K
+    CORRECT 5648-05-400 : PQ51755
+      /* ARB0P     NO APAR PREREQS */
+      /* MODULE: DFHPRMCK --- TYPE: MACRO */
+    AFFECTS MACRO = DFHPRMCK SUBLIB = A
+    REPLACE :050050       /*          LCLB  &Q              */
+            LCLB  &Q,&XQ              QUOTE-DELIMITED
+                                  STRINGS     @BA51755 05005000
+   /$
+    INSERT  281535        /* .HEXADEC ANOP  ,               */
+   &XQ      SETB  ('&VALUE.XX'(1,2) EQ 'X''') Xquoted
+                                  text indic  @BA51755 28153800
+   /$
+    REPLACE 281542:281556 /* &Q       SETB  ('&VAL */
+   &Q       SETB  ('&VALUE.X'(1,1) EQ '''') Quoted text
+                                    indicator @BA51755 28154200
+   &L       SETA  K'&VALUE-3*&XQ-2*&Q     Length of
+                                unquoted text @BA51755 28154900
+   &RES     SETC  '&VALUE'(1+&Q+2*&XQ,&L) Remove Xquotes
+                                     or quotes@BA51755 28155600
+   /$
+   /*
+   /&
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ51755
+   
+   
+ * REPORTED COMPONENT NAME
+   CICSTS FOR VSE
+   
+   
+ * REPORTED COMPONENT ID
+   564805400
+   
+   
+ * REPORTED RELEASE
+   B0P
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2001-08-23
+   
+   
+ * CLOSED DATE
+   2002-02-01
+   
+   
+ * LAST MODIFIED DATE
+   2002-06-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ62441
+   
+   
+
+MODULES/MACROS
+ *     DFHPRMCK
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICSTS FOR VSE
+   
+   
+ * FIXED COMPONENT ID
+   564805400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB0P PSY UQ62441 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ62441]
+   UP02/02/08 P E261
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

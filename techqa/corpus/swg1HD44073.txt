@@ -1,0 +1,165 @@
+Title: IBM HD44073: WEB EDITOR HANGS ON THE LOGON SCREEN - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  hi
+   When login on to Web Editor, The system hangs on
+   the logon screen.
+   Then if you go to the LUM server and check the
+   BASIC License Tool, all of the ST Editor
+   Licenses are used by the same user; the user
+   that was trying to log onto the Web Client. To
+   see the detailed list of Editor Users, go to
+   Selected Open as Detail Concurrent User Tab.
+   To fix this, we have to do the following:
+   1. Restart the LUM services
+   2. On the Web Client, open IE and go to
+   Tools Internet Options Delete Cookies &
+   Clear Files.
+   3. Reset IIS on the Web Server
+   Thnaks
+   Baruch
+   ** IMPORTANT NOTE: Please refer to Bugs:
+   BID-74156 Sometimes Web Editor cannot find WED
+   licenses and takes all available EDR or NAV
+   licenses on LUM serve - and  BID-75963  1 Web
+   Editor and 1 Navigator license taken when the
+   connection to database fails
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Web Editor hangs on the logon screen
+   hi
+   When login on to Web Editor, The system hangs on
+   the logon screen.
+   Then if you go to the LUM server and check the
+   BASIC License Tool, all of the ST Editor
+   Licenses are used by the same user; the user
+   that was trying to log onto the Web Client. To
+   see the detailed list of Editor Users, go to
+   Selected Open as Detail Concurrent User Tab.
+   To fix this, we have to do the following:
+   1. Restart the LUM services
+   2. On the Web Client, open IE and go to
+   Tools Internet Options Delete Cookies &
+   Clear Files.
+   3. Reset IIS on the Web Server
+   Thnaks
+   Baruch
+   ** IMPORTANT NOTE: Please refer to Bugs:
+   BID-74156 Sometimes Web Editor cannot find WED
+   licenses and takes all available EDR or NAV
+   licenses on LUM serve - and  BID-75963  1 Web
+   Editor and 1 Navigator license taken when the
+   connection to database fails
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON
+   SMARTEAM
+   VERSION 5 RELEASE 17 GA level.
+   NOTE THAT THIS PROBLEM WILL ALSO BE
+   FIXED
+   ON V5R16SP01
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD44073
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   514
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-09-06
+   
+   
+ * CLOSED DATE
+   2005-12-20
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569199970
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R516 PSN SP51601
+   UP05/12/01 N 1000

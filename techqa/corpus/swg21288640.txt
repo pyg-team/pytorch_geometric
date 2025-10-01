@@ -1,0 +1,39 @@
+Title: IBM Launchpad console might not open when you try to install WebSphere Application Server on the AIX operating system - United States
+
+Text:
+AIX 6.1; AIX61Cert; AIX71Cert TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you run the launchpad.sh command on IBM AIX Version 6.1 or 7.1, it might not bring up a launchpad console that you can use to install IBM WebSphere Application Server Version 6.0 or Version 6.1. 
+
+CAUSE
+Shell security enhancements in AIX Version 6.1 cause some commands to produce results that are different from those produced in earlier versions of AIX, including a command that is processed when you run the launchpad.sh command. Because of a difference in the processing of the 'typeset +r LOGNAME' command, the launchpad.sh command fails to produce a console window for installing WebSphere Application Server Version 6.0 or Version 6.1.
+
+RESOLVING THE PROBLEM
+For WebSphere Application Server Version 6.0, run the ./install command instead of the ./launchpad.sh command. 
+
+For WebSphere Application Server Version 6.1, use one of the following solutions to solve the issue: 
+
+ * Obtain the WebSphere Application Server V6.1 for AIX 5L V5 installation images from the IBM Passport Advantage site as downloads or through ordering the physical media. Those images, which were updated on January 16, 2009, contain a fix for this launchpad issue. 
+ * Run the ./install command instead of the ./launchpad.sh command if you are still using the original installation images from 2006 and not the January 2009 images. 
+ * Use the launchpad to facilitate the installation of WebSphere Application Server Version 6.1 if you are using the original 2006 images. To use this solution, complete the following steps:  1. Extract the WebSphere Application Server installation image to a location on your AIX Version 6.1 or 7.1 system disk. 
+    2. Install the bash rpm on your AIX system if it is not already installed. 
+       
+       You can download the bash rpm from the following Web site: http://www.ibm.com/systems/p/os/aix/linux/toolbox/download.html [http://www.ibm.com/systems/p/os/aix/linux/toolbox/download.html]. 
+    3. Download and unzip the attached launchpad_v2.0_fixpack18.zip file to a new directory of your choice on your AIX system.
+       
+       launchpad_v2.0_fixpack18.zip [/support/docview.wss?uid=swg21288640&aid=2] [/support/docview.wss?uid=swg21288640&aid=1] 
+    4. Change to the launchpad_v2.0_fixpack18 subdirectory that contains the launchpad.sh command file and issue the following commands:
+       
+       chmod +x *.sh
+       chmod +x launchpad/*.sh
+       chmod +x launchpad/content/*
+       chmod +x /usr/sbin/bootinfo 
+       
+       Note: The last chmod command is only needed if a nonroot user will be installing WebSphere Application Server Version 6.1. 
+    5. From here, copy all the files in this directory over the top of your existing launchpad installation.
+       
+       cp -r * your_directory/disk1/ 
+    6. Go to the WebSphere Application Server Version 6.1 installation-image directory and run the ./launchpad.sh command. 
+       
+       You should now see a launchpad console that you can use to install WebSphere Application Server Version 6.1.

@@ -1,0 +1,46 @@
+Title: IBM Setting up database schemas and users for the Data Quality Exception Events component, 11.3 Fix Packs and 11.3 to 11.5 In Place Update Patch - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ If you installed the metadata repository on an Oracle database or Microsoft SQL Server, you must set up database schemas and users before you install the subscriptionManagerAndDataQualityUpdates patch or update any Fix Packs. 
+
+CONTENT
+The Data Quality Exception Events component includes the Data Quality Exception Console, Subscription Manager, and the events and notification services that support these applications. In order to use these applications and services, you must first install and configure the Data Quality Exception Events component. 
+
+If you installed the metadata repository on an Oracle database or Microsoft SQL Server, you must create new database schemas and users before you install any of the following patches or Fix Packs.
+
+-All 11.3 Fix Packs
+-The subscriptionManagerAndDataQualityUpdates patch
+-The version of 11.5.0.0 in place upgrade from 11.3x patch
+
+
+Note: If you installed the metadata repository on DB2®, no additional configurations are required. The steps outlined in this procedure are specific to installations of the metadata repository on an Oracle database or Microsoft SQL Server. 
+
+ 
+
+ 1. Download the install script for your database system. 
+     * Oracle database - rem_oracle_pre_install.sql 
+     * Microsoft SQL Server - rem_sqlserver_pre_install.sql
+       
+    
+    
+ 2. Create the CEFVIEWS and REMVIEWS database users by applying the sql script for your database system.
+
+
+Note: The result of MS SQL Server command is written to rem_sqlserver_pre_install.log Database system Commands Oracle database sqlplus -S -L <SYS_USER_NAME>/<SYS_USER_PASSWORD>@<SYS_SERVICE_NAME> AS SYSDBA @rem_oracle_pre_install.sql <XMETA_DATABASE_USER_NAME> <XMETA_TABLESPACE_NAME>
+Microsoft SQL Server sqlcmd -U <XMETA_DATABASE_USER_NAME> -P <XMETA_DATABASE_USER_PASSWORD> -b -i rem_sqlserver_pre_install.sql -o rem_sqlserver_pre_install.log -S SERVER_NAME -v XMETA_DATABASE_USER_NAME=<XMETA_DATABASE_USER_NAME>  
+
+
+
+
+
+RELATED INFORMATION
+ Installing the Data Quality Exception Events component [http://www.ibm.com/support/knowledgecenter/SSZJPZ_11.3.0/com.ibm.swg.im.iis.stwdcntr.inst.doc/topics/installing_event_exception_components.html]
+
+
+rem_oracle_pre_install.sql [/support/docview.wss?uid=swg27044449&aid=2]rem_oracle_pre_install.sql [/support/docview.wss?uid=swg27044449&aid=1]rem_sqlserver_pre_install.sql [/support/docview.wss?uid=swg27044449&aid=4]rem_sqlserver_pre_install.sql [/support/docview.wss?uid=swg27044449&aid=3]
+
+ORIGINAL PUBLICATION DATE
+ 2014/9/8

@@ -1,0 +1,65 @@
+Title: IBM Security Bulletin:Vulnerability in RC4 stream cipher affects IBM WebSphere Cast Iron Solution (CVE-2015-2808) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The RC4 “Bar Mitzvah” Attack for SSL/TLS affects IBM WebSphere Cast Iron Solution(CVE-2015-2808) 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-2808 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2808]
+DESCRIPTION: The RC4 algorithm, as used in the TLS protocol and SSL protocol, could allow a remote attacker to obtain sensitive information. An attacker could exploit this vulnerability to remotely expose account credentials without requiring an active man-in-the-middle session. Successful exploitation could allow an attacker to retrieve credit card data or other sensitive information. This vulnerability is commonly referred to as "Bar Mitzvah Attack".
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/101851 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101851] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+This vulnerability affects all versions of the product
+WebSphere Cast Iron v 7.0,0,x, 
+WebSphere Cast Iron v 6.4.0.x
+WebSphere Cast Iron v 6.3.0.x
+WebSphere Cast Iron v 6.1.0.x
+WebSphere Cast Iron v 6.0.0.x 
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix Cast Iron Appliance 7.* LI78552 iFix 7.0.0.2-CUMUIFIX-011 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=7.0.0.2&platform=All&function=fixId&fixids=7.0.0.2-WS-WCI-20150420-1128_H10_64-CUMUIFIX-011.scrypt2,7.0.0.2-WS-WCI-20150420-1128_H10_64-CUMUIFIX-011.vcrypt2,7.0.0.2-WS-WCI-20150420-1128_H10_64-CUMUIFIX-011.32bit.sc-linux,7.0.0.2-WS-WCI-20150420-1128_H10_64-CUMUIFIX-011.32bit.sc-win,7.0.0.2-WS-WCI-20150420-1128_H10_64-CUMUIFIX-011.sc-linux,7.0.0.2-WS-WCI-20150420-1128_H10_64-CUMUIFIX-011.sc-win,7.0.0.2-WS-WCI-20150420-1521_H8_64-CUMUIFIX-011.32bit.studio,7.0.0.2-WS-WCI-20150420-1521_H8_64-CUMUIFIX-011.studio&includeSupersedes=0] Cast Iron Appliance 6.4.0.x LI78552 iFix 6.4.0.1-CUMUIFIX-028 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=6.4.0.1&platform=All&function=fixId&fixids=6.4.0.1-WS-WCI-20150420-1612_H6-CUMUIFIX-028.scrypt2,6.4.0.1-WS-WCI-20150420-1612_H6-CUMUIFIX-028.vcrypt2,6.4.0.1-WS-WCI-20150420-1706_H5-CUMUIFIX-028.studio&includeSupersedes=0] Cast Iron Appliance 6.3.0.x LI78552 iFix 6.3.0.2-CUMUIFIX-013 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=6.3.0.2&platform=All&function=fixId&fixids=6.3.0.2-WS-WCI-20150420-1521_H4-CUMUIFIX-013.scrypt2,6.3.0.2-WS-WCI-20150420-1521_H4-CUMUIFIX-013.vcrypt2,6.3.0.2-WS-WCI-20150420-1606_H5-CUMUIFIX-013.studio&includeSupersedes=0] Cast Iron Appliance 6.1.0.x LI78552 iFix 6.1.0.15-CUMUIFIX-020 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=6.1.0.15&platform=All&function=fixId&fixids=6.1.0.15-WS-WCI-20150420-1501_H3-CUMUIFIX-020.vcrypt2,6.1.0.15-WS-WCI-20150420-1501_H3-CUMUIFIX-020.scrypt2,6.1.0.15-WS-WCI-20150420-1525_H5-CUMUIFIX-020.studio&includeSupersedes=0] 
+You should verify applying this fix does not cause any compatibility issues. The fix disables RC4 stream cipher by default. If you change this setting you will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the RC4 stream cipher and take appropriate mitigation and remediation actions. WORKAROUNDS AND MITIGATIONS
+Customers on Cast Iron v6.0.0.x should contact IBM Support for migrating to one of the remediated releases. 
+
+Appliance is upgraded with script changes.
+For Studio and Secure connectors, to disable the RC4 stream cipher do the following:
+
+Studio
+Go to the the location studio is installed
+<installation directory>\jre\lib\security\java.security 
+Add RC4 to the list of disabled TLS algorithms specified by the property jdk.tls.disabledAlgorithms. For example:
+jdk.tls.disabledAlgorithms=SSLv3, RC4 
+
+
+For Secure connectors
+Go to the the location where secure connector is installed
+Windows: <installation directory>\jre\jre\lib\security\java.security 
+Linux : <installation directory>\jre\lib\security\java.security
+
+Add RC4 to the list of disabled TLS algorithms specified by the property jdk.tls.disabledAlgorithms. For example:
+jdk.tls.disabledAlgorithms=SSLv3, RC4 
+
+You should verify applying this configuration change does not cause any compatibility issues. Not disabling the RC4 stream cipher will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the RC4 stream cipher and take appropriate mitigation and remediation actions.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 20-April-2015: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

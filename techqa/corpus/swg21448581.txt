@@ -1,0 +1,60 @@
+Title: IBM Configuring the WebSphere Application Server hung thread detector to automatically produce a javacore or thread dump on a WSVR0605W message - United States
+
+Text:
+WSVR0605W; hung thread javacore TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The SystemOut.log contains a WSVR0605W message, also called a hung thread message. A javacore, or thread dump on Solaris and HP-UX, is needed in order to determine how to resolve the potentially hung threads. 
+
+CAUSE
+WebSphere Application Server attempts to report potentially hung threads using the hung thread detector. Depending on how the hung thread detector policy is configured, a thread running for a certain interval (default 10 minutes) might be reported as hung and a WSVR0605W message is printed in the SystemOut.log file:
+WSVR0605W: Thread <threadname>has been active for <time>and may be hung. There are <totalthreads>in total in the server that may be hung.
+
+
+
+By setting a WebSphere custom property, the hung thread detector will automatically generate a javacore, or print a thread dump in the native_stdout.log for Solaris and HP-UX, when a WSVR0605W message is written out to the SystemOut.log file. Javacores/thread dumps are needed for determining what code is running in the potentially hung thread, if the reported hung thread is blocked by other threads, and/or if bottlenecks exist in the JVM.
+
+NOTE: Depending on the application, it might be normal for certain threads to be running for long periods of time and these could be falsely reported as hung threads.
+
+
+ENVIRONMENT
+The com.ibm.websphere.threadmonitor.dump.java property was enabled in WebSphere Application Server V6.0.2.29, 6.1.0.19, 7.0, 8.0, 8.5 and later.
+
+
+
+RESOLVING THE PROBLEM
+Set the com.ibm.websphere.threadmonitor.dump.java property to true: 
+
+
+Application Servers: 
+
+ 1. From the administrative console, click Servers > Application Servers > server_name. 
+ 2. Under Server Infrastructure, click Administration > Custom Properties. 
+ 3. Click New and add the following property:
+    
+    Name: com.ibm.websphere.threadmonitor.dump.java
+    Value: true
+    
+    
+ 4. Click Apply. 
+ 5. Click OK and save the configuration changes. 
+ 6. Restart the Application Server for the changes to take effect.
+    
+    
+
+Node Agent:  1. From the administrative console, click System Administration > Node Agents > nodeagent. 
+ 2. Under Additional Properties, click Administration Services 
+ 3. Under Additional Properties, click Custom Properties 
+ 4. Click New and add the following property:
+    
+    Name: com.ibm.websphere.threadmonitor.dump.java
+    Value: true
+    
+    
+ 5. Click Apply. 
+ 6. Click OK and save the configuration changes. 
+ 7. Restart the Node Agent for the changes to take effect.
+
+
+
+NOTE: Starting in WebSphere Application Server 7.0.0.25, 8.0, 8.5, and later you can now specify an integer in the 'Value' field of this custom property, making it possible to limit the number of javacores/thread dumps produced. For example, setting "10" as the value, it will only generate javacores on the first 10 hung thread messages reported.

@@ -1,0 +1,18 @@
+Title: IBM Action required for IBM WebSphere Application Server Hypervisor Edition for the GNU C library (glibc) vulnerability (CVE-2015-0235) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ IBM WebSphere Application Server Hypervisor Edition requires customer action for the GNU C library (glibc) vulnerability that has been referred to as “GHOST”. 
+
+CONTENT
+IBM WebSphere Application Server Hypervisor Edition ships with Red Hat Enterprise Linux (RHEL) and SUSE Linux Enterprise Server (SLES) Operating systems that are vulnerable to the GNU C library (glibc) vulnerability (CVE-2015-0235 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0235]). 
+Remediation: 
+IBM strongly recommends you should contact your vendors to obtain fixes and install fixes for RHEL and/or SLES. 
+
+Red Hat Enterprise Linux GHOST article [https://access.redhat.com/articles/1332213]
+SUSE Linux Enterprise Server Support [https://www.suse.com/support/update/] 
+
+Change History: 
+28 January 2015: original version published

@@ -1,0 +1,30 @@
+Title: IBM PureData System for Analytics REINDEX DATABASE command - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I vacuum and reindex the catalog tables for a Netezza Platform Software (NPS) user database to improve query performance? 
+
+CAUSE
+When you create, use, and delete SQL objects in a user database, the IBM Netezza Platform Software (NPS) database creates entries in the system catalog for those objects. The system catalog tables contain indexes to accelerate the catalog access. If the database users create, use, and delete objects frequently, which often happens by using third-party SQL reporting applications, the index entries for the deleted objects can grow very large and impact query performance.
+
+ANSWER
+Starting in NPS release 7.0.4.4, 7.1.0.1-P1, and in later releases, you can use the REINDEX DATABASE command to remove (or vacuum) entries for deleted objects within the catalog tables, and then recreate the catalog table indexes within the user database. 
+
+You must have permission to connect to the SYSTEM database as the admin user to run the command. The user database cannot have any active sessions or connections. The NPS database can remain online while the REINDEX DATABASE command runs. The reindexing process is usually very fast. The command typically requires a few seconds to update a small user database, and very large databases could require a few minutes to complete.
+
+For example, to reindex the user database named emp:
+
+SYSTEM.ADMIN(ADMIN)=> REINDEX DATABASE emp;
+REINDEX DATABASE
+
+
+NOTE: Earlier NPS releases included an undocumented REINDEX DATABASE command for Support troubleshooting tasks. If you run REINDEX DATABASE on a system that is running NPS releases earlier than 7.0.4.4 or 7.1.0.1-P1, the command displays the following error message:
+
+SYSTEM(ADMIN)=> REINDEX DATABASE test;
+ERROR: Must be called under standalone postgres with -O -P options.
+
+This error is normal and expected for those earlier NPS releases. The new REINDEX DATABASE command is available starting in NPS 7.0.4.4, 7.1.0.1-P1, and later.
+
+Note: The REINDEX DATABASE command does not require an NPS restart to process or complete the vacuum.

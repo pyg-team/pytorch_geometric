@@ -1,0 +1,104 @@
+Title: IBM SPSS product(s) displays message including 88 and/or 2084 on start or when licensed. - United States
+
+Text:
+2084 88; 2084/88; error 2084; specific symptom 88; terminal: server: services; statistics TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM SPSS product(s) displays message including 88 and/or 2084 on start or when licensed. 
+
+SYMPTOM
+Error 2084 Specific Symptom 88
+
+
+ENVIRONMENT
+All supported operating systems.
+
+DIAGNOSING THE PROBLEM
+IF error/symptom '88' presents when starting or licensing a desktop product installation, THEN see (A)
+IF error/symptom '88' presents when attempting to check out a commuter license, THEN see (B).
+IF error/symptom '88' presents when attempting to license a License Manager, THEN see (G)
+
+RESOLVING THE PROBLEM
+(A)
+
+
+The '88' error/symptom message indicates the license type being used to license the installed product not authorized for use on a host machine that facilitates multiple simultaneous remote connections, such as Windows Terminal Services/Server. This also includes Linux operating systems using the 'DISPLAY' environment variable. For details on the Linux 'DISPLAY' variable, see (B) below.
+
+License types not authorized for use with multiple concurrent remote connections are:
+
+Authorized/Single User
+Site
+
+License types authorized for use with multiple simultaneous remote connections are:
+
+Concurrent/Network
+
+To determine the license type an installed product is currently configure to use see (D):
+
+IF you wish to use a license type not authorized for use on a host machine that is currently configured for multiple simultaneous remote connections, that facility will have to be disabled on the host machine in order to use that type of license.
+
+While disabling the multiple simultaneous remote connections facility on the product host is an option in some cases, it is not an option for those intending to allow multiple simultaneous uses of the installed product. 
+
+In such cases, licensing via a License Manager using the Concurrent/Network license type is required.
+
+
+ * IF you do NOT have a License Manager installed and licensed for the product to be used with a host machine that facilitates multiple simultaneous remote connections, THEN see (E) below for options. 
+ * IF you DO have a License Manager licensed for a product to be used with a host machine that facilitates multiple simultaneous remote connections and you are receiving this error, THEN see (F) below.
+
+
+(B)  1. Locate the following file in the desktop product installation directory: spssprod.inf 
+ 2. Open the 'spssprod.inf' file in a simple text editor (example: Notepad). 
+ 3. Locate the 'DaemonHost' configuration variable in the 'spssprod.inf' file'. 
+ 4. Change the 'DaemonHost' configuration value from the current value to the IP address or Fully Qualified Domain Name of a License Manager host licensed for the product version. 
+ 5. Save the 'spssprod.inf' file. 
+
+
+(C) 
+To determine the value of the DISPLAY environment variable, execute the following Terminal command: echo $DISPLAY 
+ * IF the response contains a colon (:) followed by a value that is equal to zero (0), THEN a Single/Site License can be used to license the product. 
+ * IF the response contains a colon (:) followed by a value that is not equal to zero (0), THEN:
+
+ 1. The 'DISPLAY system environment variable must be set to zero (0) to disable multiple simultaneous remote connections, OR 
+ 2. The installed product will require licensing via License Manager licensed for the product.
+    
+
+(D)  1. Locate the following file in the product installation directory: spssprod.inf 
+ 2. Open the 'spssprod.inf' file in a simple text editor (example: Notepad). 
+ 3. Locate the 'DaemonHost' configuration variable in the 'spssprod.inf' file'. 
+ 4. 
+
+ * IF the 'DaemonHost' value is equal to (=) the following value, THEN the product is configured to use a Authorized/Single User or Site license: no-net 
+ * IF the 'DaemonHost' value is equal to (=) either the IP address or Fully Qualified Domain Name of a License Manager, THEN the product is configured to use a License Manager for licensing. 
+ * IF the 'DaemonHost' is not equal (=) to anything (blank), THEN the installed product is not properly configured to any license and the correct value should be entered and the 'spssprod.inf' value saved.
+
+
+(E)  1. Install a License Manager. 
+ 2. License the License Manager with a Concurrent/Network license for the product. 
+ 3. Configure the installed product to use the License Manager for licensing.
+
+
+(F)  1. Locate the following file in the desktop product installation directory: spssprod.inf 
+ 2. Open the 'spssprod.inf' file in a simple text editor (example: Notepad). 
+ 3. Locate the 'DaemonHost' configuration variable in the 'spssprod.inf' file'. 
+ 4. Change the 'DaemonHost' configuration value from the current value to the IP address or Fully Qualified Domain Name of a License Manager host licensed for the product version. 
+ 5. Save the 'spssprod.inf' file. 
+ 6. Delete the 'lservrc' file located in the desktop product installation directory.
+
+
+(G) 
+In general the License Manager cannot be installed on a host machine that facilitates multiple simultaneous remote connections. In order for the License Manager to function properly, this facility will have to be uninstalled. 
+ * Windows operating systems
+ *  Uninstall Remote Desktop Services (Terminal Services). 
+   Stop the 'Sentinel RMS License Manager' service. Start the ''Sentinel RMS License Manager' service. 
+ * 
+ * 
+ *  Create the following System Environment variable: LSHOST Set the value for the variable to the IP address of the License Manager host machine. Stop the 'Sentinel RMS License Manager' service. Start the ''Sentinel RMS License Manager' service. 
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Amos Business Analytics SPSS AnswerTree Business Analytics SPSS Modeler Business Analytics SPSS SamplePower Business Analytics SPSS Text Analytics for Surveys

@@ -1,0 +1,53 @@
+Title: IBM Firmware 4.0.0 changes the default behavior for DataPower SSL connectivity - United States
+
+Text:
+400change 401change xs xi xb xm ssl; RFC 5746; insecure; renegotiate TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ With firmware version 4.0.0, the default behavior has changed to reject when the DataPower appliance acts as the SSL client connecting to an insecure server. An insecure server is a server that does not support RFC 5746. You can allow connections to insecure servers with a new option in the SSL Proxy Profile. 
+
+SYMPTOM
+Starting with DataPower firmware 4.0.0, connections to servers which do not support RFC 5746 are rejected. 
+
+The log shows the following error: 
+
+
+SSL handshake aborted due to detection of insecure SSL server
+
+
+CAUSE
+The default behavior, starting with firmware 4.0.0, is to reject connections with insecure servers.
+
+
+ENVIRONMENT
+DataPower firmware 4.0.0 with connections to insecure servers.
+
+
+
+RESOLVING THE PROBLEM
+If you have such failures, patch the insecure server to support RFC 5746. As a temporary fix, until you patch the insecure server, configure the appliance to permit insecure connections by turning on "Permit Connections to Insecure SSL Servers" in the SSL proxy profile. 
+
+ 
+
+To allow connections to servers which do not support RFC 5746, complete the following steps: 
+
+ 1. From the DataPower WebGUI, navigate to Objects > Crypto Configuration > SSL Proxy Profile. 
+ 2.  Select the SSL Proxy Profile from the list. 
+ 3. Set Permit Connections to Insecure SSL Servers to on. 
+ 4. Click Apply. 
+ 5. Click Save Config.
+
+
+
+For an XML Firewall with a client crypto profile:  1. Click the XML Firewall icon on the Control Panel. 
+ 2. Select the XML Firewall service to edit. 
+ 3. Click the Advanced tab. 
+ 4. Set Permit Connections to Insecure SSL Servers to on. 
+ 5. Click Apply. 
+ 6. Optional: Click Save Config.
+
+
+Without a defined client crypto profile, the Permit Connections to Insecure SSL Servers property is not available. 
+
+It should be noted that DataPower scripts can be implemented to automatically have the setting as it was before the 4.0.x.x. upgrade, instead of doing manual changes via the WebGUI or SSH. RELATED INFORMATION
+#RFC 5746 [http://tools.ietf.org/html/rfc5746]

@@ -1,0 +1,70 @@
+Title: IBM How to serve static files from both IBM HTTP Server and an application in WebSphere Application Server - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I configure IBM HTTP Server (IHS), and the IBM web server Plug-in, and my web application running in WebSphere Application Server (WAS), to serve some of my static files (JPG, GIF, CSS, JS, etc) from the IHS web server, but serve other static files from my web app running in WAS? 
+
+CAUSE
+The "fileServingEnabled" property in the ibm-web-ext.xmi file in the web application, is like an ON / OFF switch.
+A setting of fileServingEnabled="true" means that ALL static files will be served from the web application in WAS only. In this case, the plug-in config will use a wildcard with the application context-root like "/myapp/*". That way every URL starting with /myapp/* will be routed to the application in WAS.
+
+On the other hand, fileServingEnabled="false" means NO static files will be served from the application in WAS. In this case, a wildcard will NOT be used in the plugin-cfg.xml file. Instead, there will be several URI entries matching the URL-Patterns from <servlet-mappings> in the web.xml, like "/myapp/servlet1" and "/myapp/index.jsp". Requests for dynamic content matching the URI entries in the Plug-in config, will be routed to the application in WAS. But everything else (static content) will be handled by the IHS web server itself.
+
+
+ANSWER
+If you want to serve any static files (JPG, GIF, CSS, JS, etc) from your web application in WAS, you must use fileServingEnabled="true" in the ibm-web-ext.xmi file. That will cause the plug-in to use a wildcard entry for the context-root of your web application. For example, if the context-root is "myapp", then there will be a URI entry for "/myapp/*" in the plug-in config, and everything starting with "myapp" will be routed to the application in WAS. 
+
+
+Now, if you also want to be able to serve some of the static files from the IHS web server itself, you will need to do a trick using RewriteRule in the IHS config. Here is how the trick works:
+
+1) Create a subdirectory called "static" under the IHS DocumentRoot directory. And put the static files that you want IHS to serve into that directory. For example in the IHS document root directory (HTTPServer/htdocs/) create a subdirectory called "static". Something like this:
+/usr/IBM/HTTPServer/htdocs/static/
+
+2) In your web application, you will reference those files using relative references like "static/picture.jpg", or "static/mystyles.css".
+
+Those relative references will be interpreted as URLs like this:
+/myapp/static/picture.jpg
+/myapp/static/mystyles.css
+
+Keep in mind that there really is NOT any "static" subdirectory in the application. But that is ok.
+
+3) Now, in the IHS config, you must use RewriteCond and RewriteRule to watch for these references, and redirect to get them from IHS. For example, look at these directives...
+
+<ifModule mod_rewrite.c>
+RewriteEngine on
+RewriteRule ^/myapp/static/(.*) /static/$1 [PT]
+</ifModule>
+
+It means, if the URI begins with /myapp/static/* then IHS will rewrite it to just /static/* and "pass-through". Since /static/* does NOT match anything in the Plug-in config, the request will be handled by IHS, and the file will be served from the static directory under IHS DocumentRoot.
+
+To the user looking at the URL in the browser they will see this:
+/hostname/myapp/static/picture.jpg
+
+But, the file will really be served by IHS from here:
+/hostname/static/picture.jpg
+
+Here is another example:
+
+If you just want to match and serve *.gif files from IHS, use:
+
+RewriteCond %{REQUEST_URI} \.(gif)$ [NC]
+RewriteRule ^/myapp/(.*) /static/$1 [PT]
+
+If you just want to match and serve *.gif, *.css and *.js files from IHS, use:
+
+RewriteCond %{REQUEST_URI} \.(gif|css|js)$ [NC]
+RewriteRule ^/myapp/(.*) /static/$1 [PT]
+
+Which assumes the files themselves are placed in [IHS_DOC_ROOT]/static/.
+
+4) For the static files in the application, you will need to put them in some other directory that is NOT called "static", for example "images/sunset.jpg" would be a directory and file in the myapp application. This URL request, would be handled by the Plug-in and sent to the application in WAS:
+hostname/myapp/images/sunset.jpg
+
+
+So, by using the trick described above, some static files will be served from IHS, like:
+/hostname/myapp/static/picture.jpg
+
+But other static files will be served from the web application running in WAS, like:
+/hostname/myapp/images/sunset.jpg

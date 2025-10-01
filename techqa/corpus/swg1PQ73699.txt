@@ -1,0 +1,181 @@
+Title: IBM PQ73699: ALL THE CPUTZ VALUES AND HOW TO USE THEM MUST BE CLARIFIED IN THE DOCUMENTAION. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The list of time zones (CPUTZ values) should be expanded to
+   include all possible values.
+   This should include not only three character abbreviations,
+   but also time zones like Europe/Stockholm.
+   This list should be included in both the TWS Reference Guide
+   and the TWS for z/OS Customization and Tuning Guide.
+   For each time zone, details about how DST is handled in that
+   time zone should be included.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All TWS for z/OS 8.1.0 users.                *
+   *                 Function=E2E.                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When the option                         *
+   *                      'Daylight saving changes'               *
+   *                      is specified on a fault-tolerant-       *
+   *                      workstation, in the keyword CPUTZ       *
+   *                      there is not a list of valid            *
+   *                      timezones to specify.                   *
+   ****************************************************************
+   * RECOMMENDATION: APPLY THE PTF FIXING THIS APAR               *
+   ****************************************************************
+   The list of time zones (CPUTZ values) should be expanded to
+   include all possible values when the DST is active on a
+   fault-tolerant-agent.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The manual "Customization and Tuning"
+   has been updated in order to specify
+   better in the keyword CPUTZ all the
+   values allowed when the DST option is
+   set on a fault-tolerant-agent.
+   
+   
+    THE FOLLOWING TIVOLI OPC PUBLICATIONs WILL BE UPDATED:
+                            - - -
+   +--------------------------------------------------------------+
+   |                                                              |
+   |TITLE:  Tivoli Workload Scheduler for z/OS                    |
+   |             Customization and Tuning        SH19-4544-00     |
+   |                                                              |
+   |CHAPTER: 1              Paragraph: "CPUREC"                   |
+   |                                                              |
+   |PAG. 31                                                       |
+   |                                                              |
+   |  In the CPUTZ parameter change the description with the      |
+   |  following sentence:                                         |
+   |                                                              |
+   |  "Specifies the local timezone of the fault-tolerant         |
+   |   workstation. It must match the timezone in which the       |
+   |   agent will run.                                            |
+   |   If the fault-tolerant-workstation has the option of        |
+   |   of "Daylight saving changes" automatically set,            |
+   |   the values that you have to put in the CPUTZ parameter     |
+   |   are the following specified under the bindir               |
+   |   ../zoneinfo/                                               |
+   |                                                              |
+   |   'Africa/....'                                              |
+   |   'America/....'                                             |
+   |   'Antarctica/....'                                          |
+   |   'Arctic/....'                                              |
+   |   'Asia/....'                                                |
+   |   'Atlantic/....'                                            |
+   |   'Australia/....'                                           |
+   |   'Brazil/....'                                              |
+   |   'Canada/....'                                              |
+   |   'Chile/....'                                               |
+   |   'Europe/....'                                              |
+   |   'Indian/....'                                              |
+   |   'Mexico/....'                                              |
+   |   'Mideast/....'                                             |
+   |   'Pacific/....'                                             |
+   |   'US/....'                                                  |
+   |                                                              |
+   |   where you can replace .... with the files that you find in |
+   |   every subdirectory previously mentioned.                   |
+   |   (it depends on the geographical place where you are)       |
+   |   If the fault-tolerant-workstation doesn't have the option  |
+   |   "Daylight saving changes" automatically set, you can refer |
+   |   to Appendix A of the reference Guide. If the timezone does |
+   |   not match that of the agent, the message AWS22010128E is   |
+   |   displayed in the batchman stdlist (log file) of the        |
+   |   distributed agent. The default is UTC (universal           |
+   |   coordinated time)".                                        |
+   +--------------------------------------------------------------+
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ73699
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV WRKLD SCHD
+   
+   
+ * REPORTED COMPONENT ID
+   5697WSZ01
+   
+   
+ * REPORTED RELEASE
+   102
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2003-04-30
+   
+   
+ * CLOSED DATE
+   2003-07-04
+   
+   
+ * LAST MODIFIED DATE
+   2005-03-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PQ90090 [http://www-01.ibm.com/support/docview.wss?uid=swg1PQ90090]
+   
+   
+
+Publications Referenced SH19454400 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

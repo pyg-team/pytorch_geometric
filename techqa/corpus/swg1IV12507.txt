@@ -1,0 +1,134 @@
+Title: IBM IV12507: ITM LINUX OS AGENT REPORTS NFS4 FILESYSTEMS WHEN KBB_SHOW_NFS=FALSE IN THE LZ.INI FILE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring: Linux (R) OS Agent 6.2.3.1-TIV-ITM_LINUX-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24033467]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 2 (6.2.3-TIV-ITM-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24032429]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 4 (6.2.3-TIV-ITM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24034252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment: The Monitoring Agent for Linux OS 6.2.3
+   
+    Problem Description: On Linux the Monitoring Agent for Linux OS
+   reports metrics for NFS4 filesystems when the NFS feature is
+   disabled (by adding  KBB_SHOW_NFS=FALSE in the lz.ini file).
+   This issue occurs because the ITM OS Agent is not able to
+   correctly detect NFS4 filesystems.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Linux OS Agent reports NFS4 filesystems when KBB_SHOW_NFS=FALSE
+   int the lz.ini file.
+   
+   When the NFS feature is disabled by KBB_SHOW_NFS=FALSE, the
+   Linux Agent continues to report metrics for NFS4 file systems.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was changed to correctly detect NFS4 file systems.
+   
+   The fix for this APAR is going to be included in the following
+   maintenance vehicle:
+       | fix pack | 6.2.2-TIV-ITM-FP0008
+       | fix pack | 6.2.3-TIV-ITM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV12507
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04LN
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-21
+   
+   
+ * CLOSED DATE
+   2012-01-27
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * FIXED COMPONENT ID
+   5724C04LN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

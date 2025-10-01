@@ -1,0 +1,144 @@
+Title: IBM IT11159: MAP VERSION DOES NOT UPDATE CORRECTLY ON CLUSTER WHEN THERE IS AN AMPERSAND (&) IN THE MAP NAME - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using a map with an ampersand (&) in the name on a
+   clustered instance of IBM Sterling B2B Integrator, the version
+   of the map does not update when changed until after a restart.
+   
+   An error will show up in noapp.log with part of the map name.
+   For example, if you have a map named "A&BMap" and you try to
+   change the version you will see an error in the noapp log that
+   looks like:
+   
+   ALL 000000000000 GLOBAL_SCOPE [Fatal Error] :1:381: The
+   reference to entity "BMap:999:" must end with the ';' delimiter.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  STRRTC - 476298
+   JPM/JPM
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   Map Editor users
+   
+   PROBLEM DESCRIPTION:
+   Map version does not update correctly on cluster.
+   
+   PLATFORMS AFFECTED:
+   ALL
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  RESOLUTION SUMMARY:
+   a code fix has been provided.
+   
+   DELIVERED IN:
+   5020601
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT11159
+   
+   
+ * REPORTED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * REPORTED COMPONENT ID
+   5725D0600
+   
+   
+ * REPORTED RELEASE
+   525
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-09-10
+   
+   
+ * CLOSED DATE
+   2015-12-10
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * FIXED COMPONENT ID
+   5725D0600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R526 PSY
+   UP

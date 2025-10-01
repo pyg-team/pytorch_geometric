@@ -1,0 +1,19 @@
+Title: IBM TR0117 Transformer can't open the file <path.file>. No such file or directory. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error
+
+TR0117 Transformer can't open the file <path.file>. No such file or directory
+
+when building a Powercube in a multiple cube model where other cubes are disabled in order to prevent their generation. 
+
+RESOLVING THE PROBLEM
+Confirm that all queries (or source data files) for associated powercubes, even if disabled, are currently available in the location specified by either the primary query location (Query Property Sheet,Source Tab) or alternate source location (Powercube Property Sheet, Data Sources Tab). This is required as Transformer runs a check model process before processing a Powercube and as such will verify all queries even if the associated Powercube has been disabled.
+
+ 
+
+HISTORICAL NUMBER
+ 60460

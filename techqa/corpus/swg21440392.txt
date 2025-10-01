@@ -1,0 +1,117 @@
+Title: IBM Recycling agents using Situation Action commands including OS Agents - United States
+
+Text:
+OS Agent recycle TECHNOTE (FAQ)
+
+QUESTION
+ How can Windows/Linux/Unix OS Agents be recycled? 
+
+ANSWER
+Agents can be recycled via several documented facilities 
+
+1) itmcmd agent stop/start <pc> 
+
+2) tacmd stopagent/startagent 
+
+3) Portal Client Take Action commands. 
+
+All have the limitation that the OS Agent must be recycled locally. This can be inconvenient if there are many OS agents that need recycling. That can occur if you are changing some agent environment variables en masse such as mentioned in the end of document
+
+ITM Protocol Usage and Protocol Modifiers [https://ibm.biz/BdEZps]
+
+In addition, these require one by one action which can be labor intense and error prone.
+
+Overview
+
+Here are examples you can use to recycle Windows/Linux/Unix OS Agents and any agents running on those platforms. There are models and you will need to adapt them to your current environment and test thoroughly. Think of this as a do-it-yourself kit. Because of this there are no example situation xml files attached. 
+
+The following technique works using two always true situations. The first one creates a shell or cmd file in the target environment and then executes it in the background. If the shell or cmd file already exists, then the logic is skipped. The second situation deletes the shell or cmd file, so the first situation can be used again. The first situation is autostarted so that any agents not currently online will be recycled later on.
+
+There is some worry that the TEMSes could be overwhelmed when thousands of Agents are restarted at the same moment. The situations involved can use distributions with Managed System Lists or MSL to limit the scope. After the recycle situation runs, you then create a situation which alerts when the file is missing and thus identify the cases that need more work. When you are satisfied, you can stop the first situation and run the second, which deletes the shell/cmd file.
+
+Model Recycle situation. 
+
+This created in Linux OS agent and uses the LocalTime attribute group.
+
+[/support/docview.wss?uid=swg21440392&aid=1] [/support/docview.wss?uid=swg21440392&aid=1]
+
+A good "Always True" formula is LocalTime.Time <= 250000. Note the sampling interval of 999 days so it effectively runs once. For initial development, turn off Run at startup, The distribution in this case is the single node used for testing. For production use, set the distribution to a MSL of the agents you want to recycle.
+
+The reset situation uses an identical formula and is named IBM_recycle_lz_reset.
+
+The interesting work is in the action tab system command. You will likely have to adapt this to your environment. For example, Linux/Unix uses a path name to the Korn shell that might be different. The Windows parallel has an install path. Treat these as models or examples and do the needed development and testing to make work in your environment.
+
+Model Linux/Unix Recycle system command
+
+CH="$CANDLEHOME" ; cd $CH/tmaitm6 && [ -f lzcycle.sh ] || (echo '#!/bin/ksh' && echo -e "$CH/bin/itmcmd agent stop lz\nsleep 20\n$CH/bin/itmcmd agent start lz" > lzcycle.sh && chmod 755 lzcycle.sh && $CH/tmaitm6/lzcycle.sh &)
+
+Here is a rundown of how it works.
+
+1) set a short name for the current $CANDLEHOME value
+CH="$CANDLEHOME" ;
+
+2) Make current directory in a well known location and continue. /tmp might be a better location but it may not exist in an Agent only installation.
+cd $CH/tmaitm6 &&
+
+3) Check for file, if present, then skip processing. This is needed because when the agent starts up again, the ITM_lzcycle situation will still be in START status and so the situation will run again. With this logic, the second time it will skip rest of processing and thus avoid an infinite recycle condition.
+[ -f lzcycle.sh ] ||
+
+4) Create the recycle command shell file. Note the last 3 steps are within () which means they are subject to the skip or || in step (2)
+(echo '#!/bin/ksh' && echo -e "$CH/bin/itmcmd agent stop lz\nsleep 20\n$CH/bin/itmcmd agent start lz" > lzcycle.sh &&
+
+5) Make the new shell file executable
+chmod 755 lzcycle.sh &&
+
+6) Run the command in the background. This is important because the OS Agent itself may be stopping and restarting
+$CH/tmaitm6/lzcycle.sh &) 
+
+Model Linux/Unix Recycle reset system command
+
+rm - f $CANDLEHOME/tmaitm6/lzcycle.sh
+
+which deletes the recycle shell file and thus allows the recycle command to be effective again.
+
+Model Windows Recycle system command
+
+cd c:\ibm\itm\tmaitm6 && type ntcycle.cmd 1>nul 2>&1 || ((echo net stop /y "Monitoring Agent for Windows OS - Primary" && echo ping 1.1.1.1 -n 1 -w 20000 && echo net start "Monitoring Agent for Windows OS - Primary") > ntcycle.cmd && start /MIN cmd /c c:\ibm\itm\tmaitm6\ntcycle.cmd)
+
+The use of a short environment variable name is not usable in Windows by default since environment variables are processed during initial scan. There is a way to enable "delayed expression evaluation" but it requires a registry change. Thus in this example you will need to alter the action command based on installation directory.
+
+Here is a rundown of how it works.
+
+1) Make current directory in a well known location and continue.
+cd c:\ibm\itm\tmaitm6 &&
+
+2) Attempt to type out file contents. If this fails, if present, then skip processing. This is needed because when the agent starts up again, the ITM_ntcycle situation will still be in START status and so the situation will run again. The second time it will skip rest of processing and thus avoid an infinite recycle condition.
+type ntcycle.cmd 1>nul 2>&1 ||
+
+3) Create the recycle command. Note the last 3 steps are within () which means they are subject to the skip or || in step (2). Three different echo commands are used because the Windows echo command does not process the \n control to be new line. The net command parameter will have to be determined separately for each agent type. This is correct for Windows OS Agent - see the Windows services display for other agents. The ping command is a way to delay processing for 20 seconds and assumes that 1.1.1.1 is an illegal ip address in this environment.
+((echo net stop /y "Monitoring Agent for Windows OS - Primary" && echo ping 1.1.1.1 -n 1 -w 20000 && echo net start "Monitoring Agent for Windows OS - Primary") > ntcycle.cmd &&
+
+4) Run the command in the background. This is important because the OS Agent itself may be stopping and restarting. The start command starts a separate process and /MIN means no window will be visible. The cmd /c option means that the command will exit after running.
+start /MIN cmd /c c:\ibm\itm\tmaitm6\ntcycle.cmd)
+
+Model Windows Recycle reset system command
+
+erase /q c:\ibm\itm\tmaitm6\ntcycle.cmd 
+
+The /q suppresses error messages.
+
+Model Situation formula to check for missing shell/cmd files
+
+Linux: ( Path == '/opt/IBM/ITM/tmaitm6' AND MISSING(File) == ('lzcycle.sh'))
+
+Windows: ( Watch Directory == 'c:\ibm\itm\tmaitm6' AND MISSING(Watch File) == ( 'ntcycle.cmd' ))
+
+For Windows, you have to create this via the toolbar Situation Editor icon, since there is no default Windows OS File workspace.
+
+Summary
+
+This gives you some examples to achieve the object of restarting OS Agents - and any other agents - using situation Action commands. The same thing could be accomplished using Workflow Policy Take Action activities.
+
+From ITM 622 FP2, you could also use
+
+tacmd putfile
+tacmd execcommand
+
+to place a shell/cmd file on a server and then run that command. Of course this is one managed system at a time, might be more labor intensive and take more elapsed time.

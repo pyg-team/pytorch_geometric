@@ -1,0 +1,33 @@
+Title: IBM What's ODBC in IBM SPSS Statistics? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I've heard about ODBC, but don't really know what it is. 
+Can you tell me what it is and where to get it? 
+
+RESOLVING THE PROBLEM
+ODBC stands for Open DataBase Connectivity. It is a programming standard by which applications can read in foreign databases without having actually written a routine to read them. An application (such as IBM SPSS Statistics), provides a way to get to ODBC, and then ODBC does all of the work of translating the database. On the simplest level, this is how ODBC works:
+
+1) IBM SPSS Statistics makes a call to the ODBC driver manager.
+2) The ODBC driver manager tells Statistics what databases it knows how to handle (what database drivers are installed).
+3) The customer chooses the kind of database to bring in.
+4) The customer chooses which table from the database to bring in.
+5) The customer chooses which fields from that table to bring in.
+6) The ODBC driver manager and the driver do all of the translating and drop the information into Statistics within an SQL query.
+
+Depending on the database and ODBC driver you are using, you may need to also install the appropriate database client. 
+
+The IBM SPSS Data Access Pack with the current SPSS OEM ODBC drivers needs to be downloaded from the IBM software download site where you download the IBM SPSS Statistics program files as well. 
+
+For example, when you work with IBM SPSS Statistics 20 the relevant SPSS OEM ODBC drivers you would need to download is 'IBM SPSS Data Access Pack 6.1 Multiplatform English' with part number (CI07QEN). 
+
+[/support/docview.wss?uid=swg21476019&amp;aid=1] RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 12906

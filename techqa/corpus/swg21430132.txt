@@ -1,0 +1,33 @@
+Title: IBM Error launching System Settings dialog: CNS-CNS-198200 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Upon logging into the Cognos Now! Workbench for the first time, the System Settings dialog returns an error:
+
+Can't find resource for bundle com.cognos.cognos.obi.plugin.PluginLocator$1, key com.cognos.cognos.obi.properties.group.SessionTimeout 
+
+SYMPTOM
+The System Settings dialog returns the following error: 
+
+Can't find resource for bundle com.cognos.cognos.obi.plugin.PluginLocator$1, key com.cognos.cognos.obi.properties.group.SessionTimeout 
+
+The Details tab displays the following stack:
+
+com.cognos.cognos.obi.exception.VCRuntimeException: CNS-CNS-198200 Fatal error while retrieving the localized translation of a log message. The error occurred while looking up the translation of [com.cognos.cognos.obi.properties.group.SessionTimeout] in the com.cognos.cognos.obi.properties.Messages.properties file. The parameters passed to the message being logged were . CNS-CNS-198200 Fatal error while retrieving the localized translation of a log message. The error occurred while looking up the translation of [com.cognos.cognos.obi.properties.group.SessionTimeout] in the com.cognos.cognos.obi.properties.Messages.properties file. The parameters passed to the message being logged were . 
+Caused by: 
+Can't find resource for bundle com.cognos.cognos.obi.plugin.PluginLocator$1, key com.cognos.cognos.obi.properties.group.SessionTimeout 
+
+
+
+CAUSE
+This issue can occur if an incorrect separator is used to distinguish the entries in the CLASSPATH in the Application Server JVM settings. For example, using a semi-colon rather than a colon.
+
+
+
+RESOLVING THE PROBLEM
+Use the proper separator in the CLASSPATH, for example (where <PATH> is a valid path): 
+
+
+<PATH>/CognosNow/logj4-1.2.7.jar:<PATH>/obiProperties.jar

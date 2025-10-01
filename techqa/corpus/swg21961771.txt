@@ -1,0 +1,39 @@
+Title: IBM MS 7.1.0.4 - Embedded WAS installation fails with CYNCR8358E - United States
+
+Text:
+ITCAM; Managing Server; image; refresh; CAMADMSALL; CAMADMSINST; CAMMSENV TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Embedded WAS installation fails with ITCAM for AD MS 7.1.0.4 installation image. 
+
+SYMPTOM
+Installation fails when trying to discover a WAS 7 installation image with the following error message: 
+
+CYNCR8358E The WebSphere Application Server installation image directory that was specified is not valid. 
+
+[/support/docview.wss?uid=swg21961771&aid=1] [/support/docview.wss?uid=swg21961771&aid=1]
+
+
+CAUSE
+The MS 7.1.0.4 GUI installer does not support any WAS embedded installation/uninstallation.
+
+
+ENVIRONMENT
+Server with no WAS already installed on it
+
+
+
+RESOLVING THE PROBLEM
+If a user wants to use the MS GUI installer, WAS has to be installed before running MS installer. 
+
+
+Supported WAS versions with MS 7.1.0.4 are 7.0 and above.
+
+To install MS using WAS 8.x, the user has to download both IBM Installation Manager & WAS 8.x, perform IBM Installation Manager installation, then use the IBM Installation Manager to install WAS 8.x.
+
+Silent embedded installation is supported for WAS 8.5.5, provided that users install IM first.
+In any case, the MS installer cannot install IBM Installation Manager (IM), so even if a user wants to use the MS silent installer to install WAS 8.5.5, he/she has to install IBM IM first, then run IM to generate WAS silent installation response file.
+The sample MS silent installation response files installation_image_directory/silent/MS_Sample.opt or MS.opt contain instructions of how to reference WAS silent installation response file.
+Detailed information about how to create a WebSphere silent installation response file can be found in WebSphere documentation, e.g. for WAS 8.5.5 at: https://www-01.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.installation.base.doc/ae/cins_WASv85_base_install_Win32.html [https://www-01.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.installation.base.doc/ae/cins_WASv85_base_install_Win32.html]"
+
+Silent WAS uninstallation from the MS uninstaller is not supported for any WAS version. If the user wants to uninstall WAS, he/she has to uninstall WAS manually himself/herself. To uninstall WAS, the user has to use IBM IM to do it.

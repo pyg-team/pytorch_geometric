@@ -1,0 +1,182 @@
+Title: IBM IT08214: ABEND IN DFDL PROCESSINGERROR_SETVALUES METHOD - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Intermittent abends in DFDL with a traceback stack as follows:
+   
+   ProcessingError_setValues
+   @77@SequenceGroupItem_processValue
+   DFDLUnparserImpl_elementStringValue
+   DFDLSerializer_elementStringValue
+   ImbDFDLWriter::writeElement(ImbSyntaxElement*)
+   ImbDFDLWriter::writeElement(ImbSyntaxElement*)
+   ImbDFDLWriter::writeElement(ImbSyntaxElement*)
+   ImbDFDLWriter::writeRootElement(ImbSyntaxElement*)
+   ImbDFDLWriter::writeAll(bool)
+   ImbDFDLParser::refreshBitStreamFromElementsInner(const ImbMe
+   
+   
+   
+   Additional Symptom(s) Search Keyword(s):
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  abends resolved with dfdl1.1.1.0-ifix004, which is delivered in
+   v9.0.0.3.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of IBM Integration Bus V9.0 serializing a model in
+   DFDL that includes groups or choices.
+   
+   
+   Platforms affected:
+   z/OS, MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Intermittent abends can occur in the Integration Node during
+   DFDL serialization. The abends have the following traceback
+   stack:
+   
+   ProcessingError_setValues
+   @77@SequenceGroupItem_processValue
+   DFDLUnparserImpl_elementStringValue
+   DFDLSerializer_elementStringValue
+   ImbDFDLWriter::writeElement(ImbSyntaxElement*)
+   ImbDFDLWriter::writeElement(ImbSyntaxElement*)
+   ImbDFDLWriter::writeElement(ImbSyntaxElement*)
+   ImbDFDLWriter::writeRootElement(ImbSyntaxElement*)
+   ImbDFDLWriter::writeAll(bool)
+   ImbDFDLParser::refreshBitStreamFromElementsInner(const ImbMe
+   
+   There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0. For details
+   visit
+   http://www-01.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.i
+   bm.etools.mft.doc/bb23814_.htm [http://www-01.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bb23814_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product intermittent abends described no longer occur.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v9.0       9.0.0.3
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available,information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT08214
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION BUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0530
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-04-10
+   
+   
+ * CLOSED DATE
+   2015-04-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IT08178 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT08178]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION BUS
+   
+   
+ * FIXED COMPONENT ID
+   5724J0530
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

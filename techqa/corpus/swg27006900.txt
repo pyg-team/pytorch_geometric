@@ -1,0 +1,32 @@
+Title: IBM Featured documents for CICS Transaction Server and CICS Tools - United States
+
+Text:
+CICS featured documents ; FeaturedDocument; PremiumSupportTips; top10; top ten; most useful; popular; helpful; most accessed ; proactive email ; 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 5655-Y04 5655Y04 KIXINFO NEWSLETTER
+
+ABSTRACT
+ CICS Support is increasingly focused on delivering content that is social. As a result, this document will no longer contain a quarterly summary of content. We would like to encourage you to engage with the CICS Team in our social channels. 
+
+CONTENT
+Recent industry surveys show a trend towards social content that allows clients to collaborate with companies like IBM. As part of becoming more social, CICS Support will no longer be sending out emails for the quarterly Support Newsletters or updating the associated featured links that were previously in this on-line document. 
+
+In addition to blogging, tweeting, and posting to Facebook and YouTube, the CICS support team is now posting questions and answers on developerWorks Answers (dW Answers ) [https://developer.ibm.com/answers/questions/] where anyone can contribute easily. You can "Like", "Unlike", or "Comment" on any question or answer. You can post questions and receive responses from the community of users, many of which are IBMers. You can also share your expertise by answering questions from others in the community.
+
+dW Answers makes it easy to view content in different ways. For example, you can view the Newest content tagged with CICS on dW Answers [https://developer.ibm.com/answers/topics/cics/?sort=newest]or view theCICS content with the most Likes on dW Answers [https://developer.ibm.com/answers/topics/cics/?sort=votes]. From any question with the CICS tag, you can click the tag then click "+Follow" to be notified by email of things like new questions asked or new answers accepted. You define the email notifications that you want and the frequency by setting up "My preferences" within dW Answers. You can also follow tags using the RSS feed. 
+
+If you would like to see IBM CICS content and other related content shortly after it is published to the various social channels including dW Answers, make sure that you followIBM_CICS on Twitter [https://twitter.com/IBM_CICS].
+
+As a result of these changes, this document will be removed from the web in January of 2016 so please bookmark the new pages.
+
+
+RELATED INFORMATION
+ Social media channels for CICS Support [http://www.ibm.com/support/docview.wss?uid=swg21402518]
+Systems Middleware Support Social Media Channels [http://www.ibm.com/support/docview.wss?uid=swg21410956]
+CICSBuzz - CICS e-Newsletter from Hursley [http://www.ibm.com/software/htp/cics/enews/]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Configuration Manager for z/OS Maintenance z/OS 5.3, 5.2, 5.1, 2.1 Host Transaction Processing IBM Session Manager Maintenance z/OS 3.2, 3.1, 2.2, 2.1 Host Transaction Processing CICS Performance Analyzer for z/OS Maintenance z/OS 5.3, 5.2, 5.1, 3.2, 3.1 Host Transaction Processing CICS Online Transmission Time Optimizer Maintenance z/OS 1.2 Host Transaction Processing CICS Interdependency Analyzer for z/OS Migration z/OS 5.3, 5.2, 5.1, 3.2, 3.1 Host Transaction Processing CICS VSAM Recovery for z/OS Not Applicable z/OS 5.2, 5.1, 4.3, 4.2 Host Transaction Processing CICS Batch Application Control for z/OS Documentation z/OS 1.1, 1.1.1 Host Transaction Processing CICS Performance Monitor for z/OS Documentation z/OS 1.2 Host Transaction Processing CICS VSAM Transparency for z/OS Documentation z/OS 1.2, 2.1 Host Transaction Processing IBM CL/Conference Documentation z/OS 1.4.1 Host Transaction Processing IBM CL/SuperSession Documentation z/OS 1.4.7 Host Transaction Processing CICS Deployment Assistant for z/OS Not Applicable z/OS 5.3, 5.2, 5.1, 1.1 Host Transaction Processing IBM Explorer for z/OS Maintenance Linux, Windows, z/OS 2.1.0 PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

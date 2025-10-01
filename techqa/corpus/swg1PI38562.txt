@@ -1,0 +1,160 @@
+Title: IBM PI38562: CGI RESOURCES ARE BRIEFLY UNAVAILABLE JUST AFTER A RESTART - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Requests for CGI resources just after a restart sometimes
+   result in a 503 error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All IBM HTTP Server users serving CGI       *
+   *                  scripts using mod_cgid.                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: IBM HTTP Server sometimes returns a     *
+   *                      503                                     *
+   *                      response for CGI scripts shortly after  *
+   *                      startup/restart.                        *
+   ****************************************************************
+   * RECOMMENDATION:  Apply this fix if clients are experiencing  *
+   *                  503 errors just after a server restart.     *
+   ****************************************************************
+   If a CGI request came in after the server was started but
+   before the mod_cgi daemon was started, a 503 error would be
+   displayed to the client.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CGI requests at startup are now served correctly even if the CGI
+   daemon startup is delayed.
+   
+   This fix is targeted for IBM HTTP Server fix packs:
+   - 7.0.0.39
+   - 8.0.0.11
+   - 8.5.5.7
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI38562
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM HTTP SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0801
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-04-08
+   
+   
+ * CLOSED DATE
+   2015-05-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM HTTP SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724J0801
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

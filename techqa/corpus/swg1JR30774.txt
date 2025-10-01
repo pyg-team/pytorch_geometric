@@ -1,0 +1,146 @@
+Title: IBM JR30774: EXPIRED SIB MESSAGES ARE NOT REMOVED FROM BUS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere Process Server V6.2.0 Fix Pack 1 (V6.2.0.1) [http://www-01.ibm.com/support/docview.wss?uid=swg24022185]
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 1 (6.2.0.1) [http://www-01.ibm.com/support/docview.wss?uid=swg24022868]
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 2 (6.2.0.2) [http://www-01.ibm.com/support/docview.wss?uid=swg24024407]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The client is facing issue on SIBus destination queue after it
+   expired.
+   They have set the Request Expiration and Reponse Expiration
+   setting.
+   The expired messages are not deleted from the SI Bus queue and
+   also not found in the Failed event manager.
+   The generated messages are report messages from SIB due to Timed
+   out response messages, which are not processed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Process Server v6.1.0.x, v6.1.2.x, *
+   *                 and 6.2.0.x users.                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Customer set the "Response expiration"  *
+   *                      qualifier, but the expired messages     *
+   *                      are not deleted from the SIB            *
+   *                      destination.                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The expired messages are not deleted from the SI Bus queue.
+   The customer is seeing messages on SIB after a response has
+   expired.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Apply this interim fix to resolve the issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR30774
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-31
+   
+   
+ * CLOSED DATE
+   2009-02-04
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP
+   
+   
+ * R612 PSY
+   UP
+   
+   
+ * R620 PSY
+   UP

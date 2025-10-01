@@ -1,0 +1,31 @@
+Title: IBM Detailed System Requirements (DSR) for IBM WebSphere Adapter, version 7.0 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Hardware and software requirements are provided for IBM WebSphere Adapters and IBM WebSphere Business Integration Adapters. 
+
+RESOLVING THE PROBLEM
+Announcement letters: 
+
+IBM WebSphere Process Server, WebSphere Enterprise Service Bus, and WebSphere Integration Developer V7.0 help optimize business performance 
+
+ * IBM United States Software Announcement 209-309 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS209-309] 
+ * IBM Europe, Middle East, and Africa Software Announcement ZP09-0359 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=877&letternum=ENUSZP09-0359] [/support/docview.wss?uid=swg21405567&amp;aid=1] 
+
+
+The information provided here describes the minimum product levels you need installed before opening a problem report with the WebSphere Adapters support team. Hardware requirements 
+[/support/docview.wss?uid=swg21405567&amp;aid=2] IBM WebSphere Adapters, Version 7.0 [http://www-01.ibm.com/support/docview.wss?rs=695&uid=swg27016916]
+
+Software requirements:
+
+
+
+[/support/docview.wss?uid=swg21405567&amp;aid=1] Version 7.0 IBM WebSphere Adapters [/support/docview.wss?uid=swg21405567&amp;aid=3] Adapter for Email, Version 7.0 [http://www-01.ibm.com/support/docview.wss?rs=695&uid=swg27016751] [/support/docview.wss?uid=swg21405567&amp;aid=4] Adapter for Flat Files, Version 7.0 [http://www-01.ibm.com/support/docview.wss?rs=695&uid=swg27016750] [/support/docview.wss?uid=swg21405567&amp;aid=5] Adapter for FTP, Version 7.0 [http://www-01.ibm.com/support/docview.wss?rs=695&uid=swg27016749] [/support/docview.wss?uid=swg21405567&amp;aid=6] Adapter for IBM i, Version 7.0 [http://www-01.ibm.com/support/docview.wss?rs=695&uid=swg27016760] [/support/docview.wss?uid=swg21405567&amp;aid=7] Adapter for JD Edwards EnterpriseOne, Version 7.0 [http://www-01.ibm.com/support/docview.wss?rs=695&uid=swg27016754] [/support/docview.wss?uid=swg21405567&amp;aid=8] Adapter for JDBC, Version 7.0 [http://www-01.ibm.com/support/docview.wss?rs=695&uid=swg27016752] [/support/docview.wss?uid=swg21405567&amp;aid=9] Adapter for Oracle E-Business Suite, Version 7.0 [http://www-01.ibm.com/support/docview.wss?rs=695&uid=swg27016748] [/support/docview.wss?uid=swg21405567&amp;aid=10] Adapter for PeopleSoft Enterprise, Version 7.0 [http://www-01.ibm.com/support/docview.wss?rs=695&uid=swg27016753] [/support/docview.wss?uid=swg21405567&amp;aid=11] Adapter for SAP Software, Version 7.0 [http://www-01.ibm.com/support/docview.wss?rs=695&uid=swg27016759] [/support/docview.wss?uid=swg21405567&amp;aid=12] Adapter for Siebel Business Applications, Version 7.0 [http://www-01.ibm.com/support/docview.wss?rs=695&uid=swg27016761] [/support/docview.wss?uid=swg21405567&amp;aid=13] Adapter for Lotus Domino, Version 7.0 [http://www-01.ibm.com/support/docview.wss?rs=695&uid=swg27016762] 
+
+
+Related information 
+IBM WebSphere Adapters information center [http://www.ibm.com/software/integration/wbiadapters/library/infocenter/] 
+IBM WebSphere Adapters: hardware requirements [http://www-01.ibm.com/support/docview.wss?uid=swg27013389] 
+Supported software for IBM WebSphere Adapters and IBM WebSphere Business Integration Adapters [http://www.ibm.com/support/docview.wss?rs=695&uid=swg27006249]

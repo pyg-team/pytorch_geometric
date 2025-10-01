@@ -1,0 +1,71 @@
+Title: IBM Security Bulletin: IBM Content Navigator affected by dojox/form/resources/*.swf and dojox/av/resources/*.swf XSS vulnerability (CVE-2014-8917) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The dojox/form/resources/fileuploader.swf, dojox/form/resources/uploader.swf, dojox/av/resources/audio.swf and dojox/av/resources/video.swf files exhibit an XSS vulnerability. IBM Content Navigator uses the IBM Dojo Toolkit and might be subject to XSS. 
+
+VULNERABILITY DETAILS
+
+CVEID: CVE-2014-8917 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-8917]
+
+IBM Dojo Toolkit is vulnerable to cross-site scripting, caused by improper validation of user-supplied input. A remote attacker could exploit this vulnerability using a specially crafted URL to execute script in a victim's web browser within the security context of the hosting web site, once the URL is clicked. An attacker could use this vulnerability to steal the victim's cookie-based authentication credentials. 
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/99303 [https://exchange.xforce.ibmcloud.com/vulnerabilities/99303] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: AV:N/AC:M/Au:N/C:N/I:P/A:N 
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Content Navigator 2.0.0, 2.0.1, 2.0.2 and 2.0.3
+
+IBM Content Navigator is a component that is available to customers in these products (and the products that contain them):
+
+
+ * IBM Content Manager 
+ * IBM FileNet Content Manager 
+ * IBM Content Foundation 
+ * IBM Content Manager OnDemand
+
+REMEDIATION/FIXES
+Version 2.0.0: 
+Upgrade to Content Navigator 2.0.3 and apply fix pack 2.0.3-ICN-FP003 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Enterprise%2BContent%2BManagement&product=ibm/Other+software/Content+Navigator&release=2.0.3.2&platform=All&function=all], or higher 
+Version 2.0.1: 
+
+ * 
+ * 2.0.1.2-ICN-IF004
+ * 
+ * Fliter your content
+ * 
+ * And Applies to
+ * 
+
+
+Version 2.0.2:  * 
+ * 2.0.2-ICN-FP007
+ * 
+
+
+Version 2.0.3:  * 
+ *  2.0.3-ICN-FP003
+ * 
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+http://xforce.iss.net/xforce/xfdb/99303 [http://xforce.iss.net/xforce/xfdb/99303] 
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

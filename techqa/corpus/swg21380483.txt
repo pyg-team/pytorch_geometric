@@ -1,0 +1,33 @@
+Title: IBM CICS-MQ TCB time usage high after upgrading to CICS TS 3.2 or 4.1 - United States
+
+Text:
+MULC ; TCB usage time MQ usage charges ; increased ; higher; PK73461 PK82806 5655M1500 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 migrate migrates migration migrating upgrades upgrade upgrading kixinfo kixdcfcic650 kixdcfcic660 retention41 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You see a large increase in Measured Usage Licence Charging (MULC) TCB time for WebSphere MQ for z/OS. This occurs after upgrading to CICS Transaction Server for z/OS (CICS TS) V3.2 or V4.1. 
+
+RESOLVING THE PROBLEM
+With CICS TS V3.1 and earlier, all MQ work is performed on dedicated threads in the queue manager (qmgr) address space, and all work on those threads is chargeable against MQ. Starting with CICS TS V3.2, there are changes to the way CICS connects to MQ. MQ work can now run on open transaction environment (OTE) threads that also perform non-MQ work, and this requires a change in where MQ begins and ends collection of MULC data [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/topic/com.ibm.mq.csqsat.doc/zc13850_.htm].
+
+See MQ APAR PK73461 [http://www.ibm.com/support/docview.wss?uid=swg1PK73461] and PM20880 [http://www.ibm.com/support/docview.wss?uid=swg1PM20880] (MQ V6) or PK82806 [http://www.ibm.com/support/docview.wss?uid=swg1PK82806] and PM22549 [http://www.ibm.com/support/docview.wss?uid=swg1PM22549] (MQ V7) for additional details. Apply the PTFs for your release of MQ to fix the problem.
+
+If you are running WebSphere MQ for z/OS V7.0.1, see technote WebSphere MQ for z/OS V7.0.1 migration and installation--important information including highlights of new function [http://www.ibm.com/support/docview.wss?uid=swg21406779] that says: 
+
+ * 
+ * 
+ * MULCCAPT
+ * 
+
+
+MQ 6.0.0 and 7.0.0 need a service parm (provided by the support center for MQ) to activate the function, but in MQ 7.0.1, you can use the MULCCAPT parameter. 
+RELATED INFORMATION
+#Upgrading information for CICS [http://www.ibm.com/support/docview.wss?uid=swg21207399]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere MQ APAR / Maintenance z/OS 7.0, 6.0 Edition Independent 
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

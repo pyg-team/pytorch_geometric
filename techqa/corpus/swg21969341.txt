@@ -1,0 +1,17 @@
+Title: IBM CYNCR8242I message, while configuration of the ITCAM for J2EE - United States
+
+Text:
+CYNCR8242I J2EE Configure TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When we are attempting to Configure DC/TEMA we get error - CYNCR8242I Failed to initialize system. 
+
+CAUSE
+The cause of it is due to Windows OS Agent installation affected existing installed J2EE Agent. 
+
+RESOLVING THE PROBLEM
+Follow these steps to resolve the issue. 
+1. Uninstalling J2EE agent first 
+2. Uninstalling Win OS agent 
+3. Reinstalling J2EE agent 
+4. Reinstalling OS agent

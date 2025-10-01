@@ -1,0 +1,147 @@
+Title: IBM IV99602: INSTALLING IMPACT 7.1.0.4 BASE PLUS FP10 CORRUPT - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-ZLINUX-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0012&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0012&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0012&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0012&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0012&source=SAR]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 12 (7.1.0-TIV-NCI-FP0012) [http://www-01.ibm.com/support/docview.wss?uid=swg24044312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you install Impact 7.1.0.4 plus FP10 from Installation
+   Manager in one hit, the resultant installation is slightly
+   corrupt because the the data types SocketData and SocketInfo
+   (which seem to be new at FP10) are not correctly linked to the
+   data source: SocketMediatorDataSource.
+   Same happens with 7.1.0.4 + FP11
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Install Impact 7.1.0.4 base first and then FP10 separately
+   afterwards.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * During the installation of Impact 7.1.0.4 and 7.1.0.10       *
+   * (combined) installed,                                        *
+   * The introduction of the data types SocketData and SocketInfo *
+   * are not                                                      *
+   * correctly linked to the data source:                         *
+   * SocketMediatorDataSource.                                    *
+   * This leads to the following error message being generated on *
+   *                                                              *
+   * the wlp/usr/servers/ImpactUI/logs/messages.log:              *
+   *                                                              *
+   * error is Error 400: DataSource with number: 5 does not       *
+   * exist. This might have happened because of the wrong         *
+   * configuration of DataType: SocketData or the DataSource      *
+   * might have been removed.                                     *
+   * java.lang.Exception: Error 400: DataSource with number: 5    *
+   * does not exist. This might have happened because of the      *
+   * wrong configuration of DataType: SocketData or the           *
+   * DataSource might have been removed.                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Please note that this issue does not happen if a gradual (or
+   separte)
+   install of Impact 7.1.0.4 and 7.1.0.10 are performed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV99602
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-04
+   
+   
+ * CLOSED DATE
+   2017-12-15
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

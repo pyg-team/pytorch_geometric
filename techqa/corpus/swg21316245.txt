@@ -1,0 +1,151 @@
+Title: IBM Idle timeout for LTPA token not working - United States
+
+Text:
+ERROR: token is expired due to idle timeout.; idle time out; token expires; log in; login; sso; idle timeout fails; token expiration TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+A Lotus® Domino® Web Server is set up for single sign-on (SSO) using Domino-generated keys and has an idle timeout enabled. The server fails to renew the token. As a result, the Web user's session expires, and the user is required to log in again. 
+
+Note: An idle timeout with WebSphere-imported keys is not supported.
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+If you work with IBM Support to collect SSO debug, you can see in the debug output that a token is being set, as shown in bold font below: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * CN=web admin/O=LTSwebserver
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+The idle timeout in this example is 5 minutes, so the token should be renewed before 7:36 AM (the interval is basically double the idle time out; for more information, refer to Technote #1160458 [http://www.ibm.com/support/docview.wss?rs=899&uid=swg21160458]). 
+
+Because it has been longer than 5 minutes, you expect the SSO debug to show that the token should be renewed, but it returns an error: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * [025C:000A-0CD8] 08/07/2008 07:27:20.69 AM SSO API> ERROR: token should be renewed.
+ * 
+ * 
+ * 
+ * 
+
+
+Lastly, the SSO debug shows the session is expired: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * ERROR: token is expired due to idle timeout.
+
+RESOLVING THE PROBLEM
+ 
+
+
+This issue is now fixed in Lotus Notes and Domino 8.0.2 FP5.
+
+Fix details: SPR# MKIN7HFUSE [http://www.lotus.com/ldd/r5fixlist.nsf/SPR/MKIN7HFUSE] 
+
+Refer to the Upgrade Central [http://www.ibm.com/software/lotus/support/upgradecentral/index.html] site for details on upgrading Notes/Domino.
+
+A workaround is to discontinue use of the idle timeout.
+
+RELATED INFORMATION
+#

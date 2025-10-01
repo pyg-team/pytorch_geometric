@@ -1,0 +1,128 @@
+Title: IBM PI15205;8.5.5: cannot connect to messaging engine after failover - United States
+
+Text:
+PI15205; PI15205; PI15205 DOWNLOADABLE FILES
+
+ABSTRACT
+ Client cannot connect to messaging engine after it fails over 
+
+DOWNLOAD DESCRIPTION
+PI15205 resolves the following problem:
+
+ERROR DESCRIPTION: 
+A messaging engine stopped on one cluster member due to database errors. The messaging engine subsequently started successfully on another cluster member. However other servers within the cell cannot connect to it. 
+
+Possible symptom message: 
+CWSIT0019E: No suitable messaging engine is available on bus <bus name> that matched the specified connection properties <props name> 
+
+Traces for WLM*=all, show the following exception occurring repeatedly: 
+
+com.ibm.ws.cluster.selection.NoAvailableTargetExceptionImpl 
+
+Within the detailed exception message, the string "removed: no CFEndPoint matching criteria" appears. 
+
+LOCAL FIX: 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+All users of IBM WebSphere Application Server
+
+PROBLEM DESCRIPTION:
+Client cannot connect to messaging engine after it fails over
+
+RECOMMENDATION:
+None
+
+A messaging engine stopped due to database errors. It subsequently started successfully on another cluster member. However clients cannot connect to it. Possible symptom message:
+
+
+
+
+
+CWSIT0019E: No suitable messaging engine is available on bus <bus name> that matched the specified connection properties <props name>. 
+
+
+Traces for WLM*=all show the following exception occurring repeatedly: 
+
+
+com.ibm.ws.cluster.selection.NoAvailableTargetExceptionImpl Within the detailed exception message, the string "removed: no CFEndPoint matching criteria" appears.
+
+PROBLEM CONCLUSION: 
+The code has been changed to correct a specific cause of this problem. 
+
+This is a difficult problem to identify because there are other valid causes for the symptom message CWSIT0019E to appear. There are also other valid causes for the exception NoAvailableTargetExceptionImpl to appear in traces with the reason "removed: no CFEndPoint matching criteria". 
+
+The problem occurs because an incorrect relationship forms between two objects, the RuleEtiquette and the ChannelTargetRule. It may only be possible to observe the incorrect relationship by having WLM traces active at the time the messaging engine fails over. The specific trace sequence 
+is shown below. 
+
+[3/25/14 23:06:08:106 CST] 00000024 RuleEtiquette > handleNotification Entry 
+{CELL=PSCell1, COMPONENT=CF, 
+NAME=InboundSecureMessaging, NODE=Node2, 
+SERVER=MEClusterMember2, TYPE=CHANNEL} 
+type.memento.updated 
+
+[EndPointImpl$MementoImpl#-415927217{CELL=PSCell1, 
+COMPONENT=CF, NAME=InboundSecureMessaging, NODE=Node2, 
+SERVER=MEClusterMember2, TYPE=CHANNEL}][true::{CELL=PSCell1, 
+COMPONENT=CF, NAME=InboundSecureMessaging, NODE=Node2, 
+SERVER=MEClusterMember2, TYPE=CHANNEL}:false] 
+<null> 
+[3/25/14 23:06:08:106 CST] 00000024 RuleEtiquette 3 working 
+on rule 
+com.ibm.ws.cluster.channel.ChannelTargetRule@b4338b5com.ibm.ws.c
+luster.channel.ChannelTargetRule@-9250769 
+[cfEndPointCriteria=com.ibm.wsspi.cluster.adapter.channel.Channe
+lSelectionCriteria@de6b082a [clusterIdentity={bus=BPM.De1.Bus, 
+name=MECluster, type=WSAF_SIB_BUSMEMBER}] [criteria = 
+com.ibm.ws.cluster.selection.SelectionCriteriaImpl@472ee3c0[{bus
+=BPM.De1.Bus, name=MECluster, 
+type=WSAF_SIB_BUSMEMBER}:{rules.precedence=[Lcom.ibm.wsspi.clust
+er.selection.SelectionRule;@3e68712a, 
+AcceptableStates=[B@b23436e3, 
+rules.restriction=[Lcom.ibm.wsspi.cluster.selection.SelectionRul
+e;@8d7df22b}]] [chainName=InboundSecureMessaging] 
+[sslRequired=false] [accessor=null] [channelFactories={null}] 
+[3/25/14 23:06:08:106 CST] 00000024 RuleEtiquette 3 rule 
+class name is com.ibm.ws.cluster.channel.ChannelTargetRule 
+[3/25/14 23:06:08:106 CST] 00000024 ChannelTarget > subset 
+Entry 
+[{bus=BPM.De1.Bus, 
+name=MECluster.000-BPM.De1.Bus, subnet=, 
+type=WSAF_SIB_ME_LONG_NAME}] 
+[3/25/14 23:06:08:106 CST] 00000024 ChannelTarget < subset Exit
+[{bus=BPM.De1.Bus, 
+name=MECluster.000-BPM.De1.Bus, subnet=, 
+type=WSAF_SIB_ME_LONG_NAME}] 
+
+The key points in this trace are: 
+
+1) Entry to RuleEtiquette.handleNotification() with one of the arguments being type.memento.updated. 
+
+followed by: 
+
+2) Entry to ChannelTargetRule.subset() with a cluster identity that does not represent an application server (i.e. something like [{CELLNAME=PSCell1, MEMBERNAME=MEClusterMember2, 
+NODENAME=Node2}]). This shows the incorrect relationship exists between the RuleEtiquette and ChannelTargetRule objects. 
+
+The fix for this APAR is currently targeted for inclusion in fix pack 8.5.5.3. Please refer to the Recommended Updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+None
+
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI15205/8.5.5.2/readme.txt] US English 8727 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 8.5.5.0-WS-WASND-IFPI15205 06-10-2014 US English 262977 HTTP [http://www-933.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?fixes=8.5.5.0-WS-WASND-IFPI15205&productid=WebSphere%20Application%20Server&brandid=5] 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24037769&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24037769&aid=2]Problems (APARS) fixed
+PI15205

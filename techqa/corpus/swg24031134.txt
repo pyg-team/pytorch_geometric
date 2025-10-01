@@ -1,0 +1,92 @@
+Title: IBM InfoSphere Information Server Data Quality Pack v8.5 for Netezza HCA, AIX - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM InfoSphere Information Server Data Quality Pack v8.5 for Netezza High Capacity Appliance, for AIX from IBM Passport Advantage. 
+
+DOWNLOAD DESCRIPTION
+
+
+To learn about the installation process:
+
+
+ 1. Review the system requirements [https://www.ibm.com/support/docview.wss?uid=swg27016382], and if necessary, download the product..
+ 2. Read the quick start guide [https://www.ibm.com/support/docview.wss?rs=14&uid=swg27016910] for the process overview.
+ 3. Review the release notes [http://publib.boulder.ibm.com/infocenter/iisinfsv/v8r5/topic/com.ibm.swg.im.iis.productization.iisinfsv.relinfo.doc/topics/iisihrinfo_infsv_rnote_v85.html] for the latest information to ensure successful installations.
+
+InfoSphere Information Server combines the technologies of IBM InfoSphere Business Glossary, IBM InfoSphere DataStage, IBM InfoSphere FastTrack, IBM InfoSphere Information Analyzer, IBM InfoSphere Information Services Director, IBM InfoSphere Metadata Workbench, and IBM InfoSphere QualityStage into a single unified platform that enables companies to understand, cleanse, transform, and deliver trustworthy and context-rich information.
+
+Downloading the product
+
+Your proof of entitlement instructs you on the products that you have purchased and can therefore install and run.
+
+To download the product: 
+
+ 1. Go to the Find Downloads and Media [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] Web page and log in.
+ 2. Under the Download finder options, select the Find by part number search option.
+ 3. Search for each downloadable image by the part number.
+ 4. Download all the required images.
+ 5. Extract each of the images into a single, temporary directory on your system. Use a file extracting utility that supports large file extractions.
+ 6. Download the Quick Start Guide [http://www.ibm.com/support/docview.wss?uid=swg27020975]. Follow the instructions to perform the basic installation of the product.
+
+After receiving a proof of entitlement, you can download any or all of the installation images listed below.
+
+Installation images Only the Microsoft Windows installation image contains both the server and the client installation software. To install the product on operating systems other than Microsoft Windows, you must download both the Microsoft Windows installation image, for the client installation, and the installation image for the operating system onto which you want to install the server.
+
+Go to the Microsoft Windows download document [http://www.ibm.com/support/docview.wss?uid=swg24029570] to download the installation image for Microsoft Windows.
+
+
+TAB NAVIGATION
+ * AIX [http://www.ibm.com/support/docview.wss?uid=swg24031134]- selected tab,
+ * HP-UX [http://www.ibm.com/support/docview.wss?uid=swg24031136]
+ * Linux [http://www.ibm.com/support/docview.wss?uid=swg24031137]
+ * Solaris [http://www.ibm.com/support/docview.wss?uid=swg24031135]
+ * Windows [http://www.ibm.com/support/docview.wss?uid=swg24031138]
+
+SUPPORTED OPERATING SYSTEMS
+ * AIX
+
+REQUIRED IMAGES
+Product description File name Part number InfoSphere Information Server v8.5 AIX Multilingual InfoSvr_v8.5_AIX.tar.gz CZG5GML InfoSphere Information Server v8.5 Fix Pack 1 AIX Multilingual InfoSvr_v8.5_FP1_AIX.ispkg CI0IHML 
+CLIENT IMAGES
+
+ IBM InfoSphere Information Server Windows Client 
+Download these images to install the InfoSphere Information Server Windows Client. Install these images on a machine that is running Microsoft Windows. 
+
+Product description File name Part number InfoSphere Information Server v8.5 Windows Client Multilingual InfoSvr_Client_v8.5_Win.zip CI0IFML IBM InfoSphere Information Server 8.5 Fix Pack 1 Windows Server and Client Multilingual InfoSvr_v8.5_FP1_WinSvr_32_64.zip CI0IGML DOCUMENTATION
+
+ Quick Start Guide 
+This guide describes the basic installation of InfoSphere Information Server. 
+
+Product description File name Part number IBM InfoSphere Information Server 8.5 Quick Start Guide InfoSvr_v8.5_QuickStartGuide.pdf CZG5PML  InfoSphere Information Server product documentation (PDF) 
+This image contains the complete set of product documentation provided as PDF files. 
+
+Product description File name Part number IBM InfoSphere Information Server v8.5 Product Documentation (PDF) Multilingual InfoSvr_v8.5_PDF.zip CZG5QML 
+OPTIONAL IMAGES
+The following images are optional:
+
+ * InfoSphere Information Analyzer Exception Manager
+ * InfoSphere Discovery for Information Integration
+ * WebSphere Application Server
+ * IBM DB2 Enterprise Server Edition Version 9.7
+
+INFOSPHERE INFORMATION ANALYZER EXCEPTION MANAGER
+ Download the following image to work with the InfoSphere Information Analyzer Exception Manager 8.5 client and the InfoSphere DataStage and QualityStage Designer client.
+
+Product description File name Part number IBM InfoSphere Information Analyzer Exception Manager v8.5 Windows English IAEM_WDWS_8.5.zip CZP11EN INFOSPHERE DISCOVERY FOR INFORMATION INTEGRATION
+ Download the following images to work with InfoSphere Discovery for Information Integration.
+
+Product description File name Part number IBM InfoSphere Discovery V4.5 Quick Start Guide Windows English IS_Discovery_v4.5_QuickStartGuide.pdf CZRV2EN InfoSphere Discovery Information Integration v4.5.1 Windows English N/A CZZ1FEN WEBSPHERE APPLICATION SERVER
+ Download these images to install IBM WebSphere Application Server. 
+
+Product description File name Part number IBM WebSphere Application Server Network Deployment V7.0 for AIX on PowerPC 64-bit, Multilingual N/A C1G2QML IBM WebSphere Application Server Network Deployment V7.0 Supplements (1 of 2) for AIX on PowerPC 64-bit (IBM HTTP Server, Web Server Plug-ins and Update Installer) Multilingual N/A C1G2RML IBM WebSphere Application Server Network Deployment V7.0 Supplements (2 of 2) for AIX on PowerPC 64-bit (Migration Tool) Multilingual N/A C1G2SML DB2
+ Download this image to install IBM DB2. 
+
+Product description File name Part number IBM DB2 Enterprise Server Edition V9.7 for AIX English DB2_ESE_97_AIX.tar.gz CZ19JEN 
+DOWNLOAD PACKAGE
+
+You can download or request a media pack for this product from the Passport Advantage site by clicking the link in the following table. 
+
+DOWNLOAD RELEASE DATE LANGUAGE SIZE(Bytes) Passport Advantage Online web site [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] 10/25/2011 English 11842

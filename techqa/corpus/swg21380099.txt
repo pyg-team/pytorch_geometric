@@ -1,0 +1,143 @@
+Title: IBM How to Configure Controller to use Single Sign On (SSO) logon authentication with Cognos BI - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Customer is using Controller with Cognos BI (not Cognos Analytics).
+- TIP: For instructions on using Cognos Analytics (CA), see separate IBM Technote #2002465.
+
+When using Cognos (CAM) security, when a user launches Cognos Connection (http://servername/ibmcognos [http://servername/ibmcognos]) by default the user will be prompted to logon. After logging in, the user can launch Controller from a link on the Cognos Connection website. However, after you have done this, you will then be *again* prompted to logon to Controller.
+
+Customer would like to enable Single Sign On for Controller (so users do not receive multiple logon prompts). How can they do this?
+
+* This Technote will demonstrate how to remove these prompts for authentication, by implementing "Single Signon" (SSO).
+* In other words, the end user will *never* be prompted to logon to Cognos since the system will simply pass-through the username/password that they used to logon to their Windows desktop/laptop PC in the morning. 
+
+CAUSE
+SSO is defined as where a user logs in once (in this case in the morning onto their PC using their Windows username and password) and gains access to all systems without being prompted to log in again at each of them.
+
+
+ * 
+ *  There is a common misunderstanding where some people believe that SSO is the same as enabling Windows authentication for their Cognos product(s). This is not true. Instead, SSO means configuring the Cognos so that it *automatically* uses Windows authentication *without prompting the end user to put in their username/password again*. 
+
+
+How does the SSO mechanism work? 
+When a user logs in to their PC (which is that is part of a Windows domain) they are authenticated against a Microsoft Active Directory. Windows identifies the user using the domain logon in the form DOMAIN\USERNAME. A web server can pass this user's credentials to other systems, so (when a Cognos gateway is in the same domain as the user) Cognos security can 'piggy-back' on the user's existing Windows logon, and therefore can open Cognos Connection or other Cognos platform products without prompting for any credentials at all. 
+
+Naturally this SSO process can only happen if *all* of the following three conditions are true: 
+
+(1) The web server (IIS ) is in the same Windows domain (or in a trusted domain ) as the user.  * If the user wishes to log on to Cognos from a different Active Directory domain (i.e. not trusted by the domain in which the Web Server resides) then some kind of login prompt is inevitably needed (because the IIS web server has no Microsoft mechanism to allow it to talk to the untrusted domain). 
+ * In this scenario (because automatic Windows authentication would fail) the user would be prompted by a 'Cognos' authentication logon page. The Cognos (CAM) mechanism can talk to multiple (unconnected) Active Directories (so long as that Active Directory has been configured as a separate namespace in Cognos Configuration). In other words, the user can still logon to Cognos but they must manually type in their Windows username/password (therefore not SSO).
+
+
+(2) IIS has been configured to use 'Integrated Windows Authentication'.  * Without this, all users will be logging onto the IIS webserver as the 'anonymous user' and therefore will be indistinguishable from each another.
+
+
+(3) The end user's Internet Explorer has been configured to 'Automatic logon with current username and password' (in the security zone the web site belongs to ). 
+
+What if I am using Firefox? 
+Firefox is only supported for accessing Controller Web.  * Instructions on how to configure SSO for Firefox are included inside separate IBM Technote #1997785.
+
+ANSWER
+==================================================== 
+
+The following instructions are based on using Controller with Cognos BI (not Cognos Analytics). 
+
+ * TIP: For instructions on using Cognos Analytics (CA), see separate IBM Technote #2002465.
+
+===================================================== 
+
+
+Ensure that all of the following is configured correctly: 
+
+(1) The web server (IIS ) is in the same Windows domain (or in a trusted domain ) as the user. 
+In other words, when using Active Directory you must make sure that the Windows domain (that the IIS web server belongs to) can see/use/trust the Windows user accounts that the end users are trying to use to authenticate with. 
+
+(2) IIS has been configured to use 'Integrated Windows Authentication'. 
+The following instructions are based on Windows 2012 and Controller 10.2.  * Naturally the settings/instructions may be slightly different on different versions of Windows and Controller.
+
+ * 
+ * 
+ * 
+ * ibmcognos
+ * 
+ * 
+ * 
+ * Authentication
+ * 
+ * 
+ * [/support/docview.wss?uid=swg21380099&amp;aid=1]
+ * 
+ * 
+ * 
+ * 
+ * [/support/docview.wss?uid=swg21380099&amp;aid=2]
+ * 
+ * 
+ * 
+ * Anonymous Authentication
+ * 
+ * Disable
+ * 
+ * 
+ * 
+ * Windows Authentication
+ * 
+ * Enable
+ * 
+ * 
+ * 
+ * 
+ * 
+ * [/support/docview.wss?uid=swg21380099&amp;aid=3]
+
+
+(3) The end user's Internet Explorer has been configured to 'Automatic logon with current username and password' (in the security zone the web site belongs to ). 
+The following instructions are based on Internet Explorer 10.  * Naturally the settings/instructions may be slightly different on different versions of IE.
+
+
+1. On your client device, logon to Windows as the same Windows user that is wants to enable SSO 
+2. Launch Internet Explorer 
+3. Click "Tools - Internet Options" 
+4. Click the tab 'Security' 
+
+If you already know which IE zone your Controller application server's website is located in, you can skip some of the next steps. If you are unsure, it is recommended to put your website(s) into the 'trusted zone'. 
+
+5. Click ' Trusted sites' 
+6. Click ' Sites' 
+7. Untick the box ' Require server verification (https:)...' 
+8. Type the name of the relevant webserver(s) that you are using (for example: http://myserver.mycompany.com [http://myserver.mycompany.com/]) for Controller, and then click ' Add' 
+ * IMPORTANT: You must use the exact same nomenclature (e.g. FQDN or NetBIOS) that the client device will use to connect to Controller with 
+ * In other words, make sure that you use the long name (myserver.mycompany.com) or short name (myserver) that you have configured the client device to use.
+
+[/support/docview.wss?uid=swg21380099&aid=4] [/support/docview.wss?uid=swg21380099&aid=4] 
+
+9. Click 'Close' 
+10. Make sure that 'Trusted Sites' is still highlighted 
+11. Click 'Custom Level' 
+12. Change to 'Medium-Low' 
+13. Click "Reset": 
+[/support/docview.wss?uid=swg21380099&aid=5] [/support/docview.wss?uid=swg21380099&aid=5] 
+
+14. Click "Yes" to confirm 
+15. Scroll down the bottom, and change 'User Authentication' to the setting: Automatic Logon with current user name and password 
+[/support/docview.wss?uid=swg21380099&amp;aid=6]  * TIP: For an automated method of enabling this step automatically (via a batch file) see separate IBM Technote #2001307.
+
+
+16. Click OK, Yes, OK 
+17. Test. 
+
+=========================================== 
+TIP: For more in-depth information about older Controller versions and environments, see attached document ("04c. Configuring Controller 8 to use Single Sign-on - v1.0.pdf"). This document is based on :  * Controller 8.2 
+ * Windows 2003
+
+However, the concept/solution is similar for all versions of Controller/Windows, so it may be useful for later Controller/Windows versions. RELATED INFORMATION
+ 1380097 - How to configure Controller 8.x to use Active [http://www.ibm.com/support/docview.wss?uid=swg21380097]
+1380098 - How to Configure Controller 8 to use Access M [http://www.ibm.com/support/docview.wss?uid=swg21380098]
+1997785 - How to configure Controller Web to use SSO (s [http://www.ibm.com/support/docview.wss?uid=swg21997785]
+2001307 - How to automatically enable 'Automatic logon [http://www.ibm.com/support/docview.wss?uid=swg22001307]
+2002465 - How to configure SSO (single sign on) for Con [http://www.ibm.com/support/docview.wss?uid=swg22002465]
+
+
+04c. Configuring Controller 8 to use Single Sign-on - v1.0.pdf [/support/docview.wss?uid=swg21380099&aid=8] [/support/docview.wss?uid=swg21380099&aid=7]

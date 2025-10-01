@@ -1,0 +1,72 @@
+Title: IBM Switch MDM from Activation Spec to use a Listener Port - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ We are currently experiencing issue with the usage of Activation Specification and would like to temporarily switch to Listener Port. We know this isn't recommended and may be unsafe/unsupported, but it gives us uptime till we fix our Activation Spec issues. WAS only provides a way to go from Listener Port to Activation Spec. How do we go from Activation Spec to Listener Port?
+
+
+ANSWER
+The steps are as follows:
+
+
+1)Modify the original ejb-jar.xml and comment following section.
+<activation-config>
+<activation-config-property>
+<activation-config-property-name>acknowledgeMode</activation-config-property-name>
+<activation-config-property-value>Auto-acknowledge</activation-config-property-value>
+</activation-config-property>
+</activation-config>
+--> 
+
+
+2)Modify the original ibm-ejb-jar-bnd.xml by comment activation spec and add listener
+<jca-adapter activation-spec-binding-name="eis/ScheduledWork_ActivationSpec" destination-binding-name="com/dwl/base/work/queued/ScheduledWorkQueue"/> 
+-->
+<!-- Add listener port to replace activation config-->
+<listener-port name="ScheduledWork"/>
+
+3)Modify the original MANIFEST.MF file for bundle version, example below
+Bundle-Version: 11.0.0.FP00IF001_20170118-1914
+
+4)Now repackage the ejb jar for example and have the name match bundle version in manifest file.
+com.ibm.mdm.server.dwlcommonservices.ejb_11.0.0.FP00IF001_20170118-1914
+
+5)Now stop the MDM WAS instance and Upload the above repackaged jar to WAS from admin console under Environment->OSGi bundle repositories->Internal bundle repository. Make sure you save your changes to master configuration.
+
+6)Update the com.ibm.mdm.server.dwlcommonservices.ejb bundle version to the version you just uploaded in application on WAS admin console. It is under Applications->Application Types-> Assets > com.ibm.mdm.hub.server.app-[INSTANCE_Name].eba > Update bundle versions in this application. Make sure you save your changes to master configuration.
+
+7)Update to the latest deployment under Applications -> Business-level applications > MDM-operational-server-EBA-[INSTANCE_Name] > com.ibm.mdm.hub.server.app-[INSTANCE_Name]_0001.eba, click the update to latest deployment button (it should be enabled). You will be asked to review multiple binding panel. Click next for all of them until finish. Make sure you save your changes to master configuration.
+
+8)Due to limitation in WAS the above binding panel do not allow you bind the listener port to QueuedWorkProcessor message bean under OSGi. We will need to make change in WAS config. Otherwise it will still be bound to ScheduledWork_ActivationSpec automatically. Go to config of your WAS MDM profile for example: /usr/IBM/WebSphere/AppServer8.5/profiles/Node01/config, you can type a grep command looking for ScheduledWork activation spec binding:
+grep -R eis/ScheduledWork_ActivationSpec
+
+It should find two places one from the original version of bundle and one from the new version of bundle, go to the new bundle to edit the ibm-ejb-jar-bnd.xml for example
+/usr/IBM/WebSphere/AppServer8.5/profiles/Node01/config/cells/mdmaix010dso.torolab.ibm.comCell01/cus/com.ibm.mdm.hub.server.app-ARU201310050518AIXDB2BE01_0001.eba/cver/BASE/meta/com.ibm.mdm.server.dwlcommonservices.ejb_11.0.0.FP00IF001_20170118-1914/META-INF/ibm-ejb-jar-bnd.xml
+
+Edit this file and same as step 2)
+
+9)Now start server and wait for server to come up, and you should see a similar message below
+[1/18/17 21:42:26:854 EST] 000000b4 MDBListenerIm I WMSG0042I: MDB Listener ScheduledWork started successfully for JMSDestination com/dwl/base/work/queued/ScheduledWorkQueue
+
+If you didn't modify the config in step 8), you server log may still show below
+[1/18/17 21:12:49:937 EST] 000000b6 AbstractEJBRu I CNTR0180I: The QueuedWorkProcessor message-driven bean in the com.ibm.mdm.server.dwlcommonservices.ejb..11.0.0.FP00IF001_20170118-1914.war module of the com.ibm.mdm.hub.server-ARU201310050518AIXDB2BE01..11.0.0..com.ibm.mdm.server.dwlcommonservices.ejb..11.0.0.FP00IF001_20170118-1914.war application is bound to the eis/ScheduledWork_ActivationSpec activation specification.
+
+Note: If you want to go back check on WAS console under below, you will still see that QueuedWorkProcessor is bound to eis/ScheduledWork_ActivationSpec. This should be fine and this is a WAS limitation on config listener port for OSGi
+Business-level applications > MDM-operational-server-EBA-ARU201310050518AIXDB2BE01 > com.ibm.mdm.hub.server.app-ARU201310050518AIXDB2BE01_0001.eba > Listeners for message-driven beans
+
+
+
+PRODUCT ALIAS/SYNONYM
+ MDM
+MDMSE
+MDMAE
+MDM AE
+MDM SE
+MDS
+MDM Server
+Master Data Management Standard Edition
+Master Data Management Advanced Edition
+Master Data Service
+Initiate

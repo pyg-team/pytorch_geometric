@@ -1,0 +1,27 @@
+Title: IBM DataStage Designer client startup fails with error:  folder content for '\': Input string was not in a correct format. - United States
+
+Text:
+occured TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DataStage Designer client startup fails with repository access error: 
+
+An error occurred retrieving the folder content for '\': Input string was not in a correct format.
+
+
+
+The error typically only affects one user machine, not all users. 
+
+CAUSE
+The primary cause for this issue is that some regional settings for the client machine are set to values which cause a numeric parsing error when when the Advanced Find query used to build repository tree calls .NET.
+
+RESOLVING THE PROBLEM
+Open the Windows Regional settings dialog (Control Panel -> Regional and Language Options), ensure that the desired language such as English is selected, and then click the Customize button. 
+
+This will display the Customize Regional Options dialog which contains several settings which can cause problems when not set correctly. 
+
+If you are using U.S. English, confirm that "Decimal symbol" is set to the period character, and "Digit grouping symbol" is set to a comma. Also ensure that "Negative sign symbol" is set to a short dash character / minus sign.
+
+Setting any of these values to other characters (like double quote, equal sign, etc) or multiple character strings have caused this error at other sites. 
+
+After correcting any incorrect values click the Apply button on both dialogs, then start a new Designer client session and confirm it can now start up without the input string format error.

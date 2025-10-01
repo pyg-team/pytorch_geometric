@@ -1,0 +1,27 @@
+Title: IBM date_days_difference with @TODAY fails with Oracle on Modeler 13.0.3 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am using a derive node with the following function:
+
+date_days_difference(to_date(HIREDATE), to_date(@TODAY))
+
+and I use an Oracle data source.
+
+When I run the stream, the derive node turns purple, but then I get the error:
+
+S1000[1830] [DataDirect][ODBC Oracle Wire Protocol driver][Oracle]ORA-01830: date format picture ends before converting entire input string. 
+
+RESOLVING THE PROBLEM
+This problem has been fixed in Modeler 13.0.5
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 87204

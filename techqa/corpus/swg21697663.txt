@@ -1,0 +1,89 @@
+Title: IBM When adding documents from FileNet Workplace XT, the add document interface does not display the document classes - United States
+
+Text:
+Document Class WPXT Paged Query TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ From Workplace XT, when trying to add a document to a Content Engine object store, the user defined document classes are not displayed in the selection list for classes. Only the following two document classes are displayed:
+
+Form Template
+Workflow Definition
+
+
+SYMPTOM
+The issue occurs on a Content Engine Object store that contains a large number of user defined document classes. 
+
+Here are the steps to reproduce the issue:
+
+
+ *  Login to Workplace XT as an admin user with full control access to all document classes. Click on the Add Document icon to add a document to the object store. Choose a file or use the "No Content" option for the type of document. Choose the object store and folder for the document. Click on the "Class" hyperlink to display the document classes. 
+ * The only document classes listed are:  * 
+    * Form Template
+      Workflow Definition
+   
+   
+
+Additional notes: 
+
+ * The top level Document class was set as the Document Starting Class in the Site Preferences for the object store. 
+ * The "Change" option for the Document Starting Class in the Site Preferences will show all of the document classes. 
+ * The Tools > Advanced Add Document option will show the document classes. 
+ * The same admin user can login to FEM and see the doc classes and add docs to those classes.
+
+
+CAUSE
+The search for classes was limited to 100 and is a non-continuable search. The missing document classes were not returned in the list of 100 class definitions.
+
+Workplace XT log shows: 
+
+
+2015-02-11 22:36:42,443 [ebContainer : 4] ContainerNode.java:32 ContainerNode:loadChildren() - Load children up to 100 
+CE p8_server_trace.log (EJB trace logging enabled) shows:
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+ENVIRONMENT
+P8 Content Engine 5.1.0.4
+Workplace XT 1.1.5 FP 002
+
+
+
+RESOLVING THE PROBLEM
+The default value for Non Paged Query Max Size is 5000. The value according to the trace output showed that the value had been lowered to 100.
+
+To change the Non Paged Query Max Size value: 
+
+ *  Open the FileNet Content Engine Enterprise Manager (FEM) Right-click on the P8 Domain and select Properties Select the Properties tab In the list of properties, find the Subsystems Configurations property Click on the pull down for the property value selection list Select Server Cache Configuration Select the Properties tab Find the Non Paged Query Max Size property Select the property value and type in a new value greater than the current value 
+
+
+The Non Paged Query Max Size property was likely lowered from the default value of 5000 to 100 for performance tuning. However, this property needs to be set to a value that will allow all of the document classes to be returned by the search. The value was increased from 100 to 500 which resolved the issue.

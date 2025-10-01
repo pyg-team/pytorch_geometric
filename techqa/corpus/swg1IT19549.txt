@@ -1,0 +1,149 @@
+Title: IBM IT19549: SECURITY MECHANISM NOT SUPPORTED EXCEPTION WHEN AUTHENTICATION=CLIENT AND PASSWORD AND USER ARE PROVIDED. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+DB2 Version 10.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24044110]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When there are following setting on the remote server:
+   
+   Database manager authentication        (AUTHENTICATION) = CLIENT
+   Alternate authentication           (ALTERNATE_AUTH_ENC) =
+   NOT_SPECIFIED
+   Cataloging allowed without authority   (CATALOG_NOAUTH) = YES
+   Trust all clients                      (TRUST_ALLCLNTS) = YES
+   Trusted client authentication          (TRUST_CLNTAUTH) = SERVER
+   Bypass federated authentication            (FED_NOAUTH) = NO
+   
+   in that case when the user and password is provided then
+   authentication should take place on the server side.
+   When no credentials are provided then client authentication
+   should take place.
+   However instead the following exceptions are raised:
+   
+   com.ibm.db2.jcc.am.SqlWarning: Origination unknown:
+   [10228][11541][4.18.60] Security exceptions occurred while
+   loading driver. ERRORCODE=4223, SQLSTATE=null
+   
+   and:
+   
+   [jcc][t4][201][11237][4.18.60] Connection authorization failure
+   occurred.  Reason: Security mechanism not supported.
+   ERRORCODE=-4214, SQLSTATE=28000
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to Db2 10.5 Fix Pack 9 or higher                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in Db2 10.5 Fix Pack 9
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT19549
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-06
+   
+   
+ * CLOSED DATE
+   2017-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IT22621
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA50 PSN
+   UP

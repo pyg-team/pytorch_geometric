@@ -1,0 +1,29 @@
+Title: IBM Java heap space error while trying to save Studio project - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why is the "Java heap space error" observed while trying to save the Studio project? 
+
+RESOLVING THE PROBLEM
+This issue happens due to a lack of memory in Studio while saving the project. To resolve this issue, run the following command on the command prompt from the directory location where CastIronStudio.exe file resides: 
+
+CastIronStudio.exe -J-Xmx1024m
+
+
+Alternatively, the Studio shortcut can be edited to use this option as shown below: 
+
+[/support/docview.wss?uid=swg21453077&amp;aid=1]
+
+Note: The above command will allow Studio to use memory up to 1024M.
+
+ 
+
+HISTORICAL NUMBER
+ 00000228 
+
+PRODUCT ALIAS/SYNONYM
+ Cast Iron Solution
+Cast Iron Operating System
+Cast Iron Studio

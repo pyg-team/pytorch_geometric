@@ -1,0 +1,30 @@
+Title: IBM Designing V7 Reports - United States
+
+Text:
+reports; data analysis; v7; qbr; kpi; ad hoc; ibmeam; maximo; TPAEREP TECHNOTE (FAQ)
+
+QUESTION
+ What components should be analyzed when creating a custom V7 Report? 
+
+ANSWER
+Maximo reports come in a variety of configurations including graphs, detail and analysis reports. 
+Depending on the Maximo Based Products that you are licensed for, you may receive over 150 of these Out of the Box Reports.
+
+However, you may need to create custom reports to meet your individual business requirements. Because of these individual requirements, this document will present some items to consider when designing a report.
+
+A few of the items that will be reviewed include:
+What Data Analysis Tool will best meet the needs of my requirement?
+What types of Report Parameters will best filter the data for my report?
+What report template should the report design utilize?
+Should application toolbar access be enabled?
+
+For more details on other reporting features, access the Maximo Report Wiki Pages available here [https://www.ibm.com/developerworks/community/wikis/home?lang=en#/wiki/IBM%20Maximo%20Asset%20Management/page/Reporting] 
+or the Maximo Report Reference Materials located here [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Maximo%20Asset%20Management/page/Reporting%20Documentation] 
+
+Revision History
+April 2015 - Updated links in document
+
+V7_designing reports_rev4.pdf [/support/docview.wss?uid=swg21305009&aid=2]V7_designing reports_rev4.pdf [/support/docview.wss?uid=swg21305009&aid=1] 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management for IT All 7.1.1 Systems and Asset Management IBM Maximo Asset Management Essentials All 7.1.1 Systems and Asset Management IBM Maximo Asset Management Essentials All 7.1

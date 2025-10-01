@@ -1,0 +1,45 @@
+Title: IBM Unable to connect to the JMS Provider from a Windows Broker when the Provider is known to be available - United States
+
+Text:
+7604 XA Resource Manager Event 2616 jms broker tcf topic connection factory Event 7604 XA Resource Manager Event 2616 commit transaction Event 7625 XA Resource Manager available TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The default Logon Userid for the Broker service in IBM Integration Bus (IIB) or WebSphere Message Broker (WMB) is the user ID provided on the mqsicreatebroker command, when the Broker was first created. This user ID sometimes gives rise to JMS Provider connection problems. 
+
+SYMPTOM
+This following, repeating error messages are written to the Windows Event Log: 
+
+Event 7604. The XA Resource Manager was not available ... 
+
+Event 2616. Unable to commit a WMQ transaction ... 
+
+Event 7625. The XA Resource Manager has become available again ...
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Ensure that:  * User ID used to create the broker has full administrator authority 
+     * Location of JNDI bindings specified on the JMS Nodes is valid 
+     * Connection Factory references the correct JMS Provider 
+     * JMS Provider is available
+    
+    
+ 2. If the problem still occurs, change the Logon Userid on the Broker service from the user ID with which the Broker was created, to "Local System Account". You can do this using Control Panel > Admin tools > Services. Select the service for the Broker, right click on the service, select Properties and, in the Log On tab, select Local System account. 
+ 3. Restart the Broker
+
+
+Additional information
+If a JMS XA message flow is deployed to a Windows Message Broker, the JMS Connection is sometimes lost even though it is known to be available. 
+
+A JMS XA message flow is one that contains a JMSInput node, a JMSOutput node, or both, and is deployed with the Coordinated Transaction message flow configuration property set on.
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere MQ Java Windows 7.5, 7.1, 7.0, 6.0, 5.3 Business Integration IBM Integration Bus Java Windows 9.0 All Editions 
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

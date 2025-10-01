@@ -1,0 +1,40 @@
+Title: IBM Error: ...libnzmutex.so.1: cannot open shared object file: No such file or directory - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why am I getting "error while loading shared libraries: libnzmutex.so.1: cannot open shared object file: No such file or directory' after re-initializing system to a new kit? 
+
+ANSWER
+Two versions of this mutex library are shipped: one for LAS4 and one for LAS2. In the /nz/kit/lib directory, a symbolic link that points to the appropriate version of this shared object should exist. If the link does not exist, nzstart cannot start the system. The full error message is as follows: 
+
+ * 
+ * error while loading shared libraries: libnzmutex.so.1: cannot open shared object file: No such file or directory
+ * 
+ * nzstart: Error: unable to start system (startupsvr failed)
+
+
+To create the symbolic link, do the following: 
+
+1. If needed, determine the version of Red Hat that you are running: 
+ * cat /etc/redhat-release
+
+
+2. Change directory as follows: 
+ * cd /nz/kit/lib 
+
+
+3. Create the symbolic link as follows, where # is the version of Red Hat that you are running: 
+ * ln -s libnzmutex_LAS#0.so.1.0 libnzmutex.so.1
+
+
+A long listing for this file should look like the following: 
+ * [nz@cs-spubox3 lib]$ ls -l libnzmutex.so.1
+ * 
+ * lrwxrwxrwx 1 nz nz 23 Sep 24 21:27 libnzmutex.so.1 -> libnzmutex_LAS40.so.1.0
+
+
+
+HISTORICAL NUMBER
+ NZ742908

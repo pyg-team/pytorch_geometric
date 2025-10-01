@@ -1,0 +1,25 @@
+Title: IBM Content Navigator documentation correction: Deploying IBM Content Navigator and IBM Enterprise Records to the same JVM - United States
+
+Text:
+IO19843; defect 35237 PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The "Collocating IBM Content Navigator with other applications" section in the IBM Content Navigator V2.0.2 documentation has incorrect information about collocation with IBM Enterprise Records. 
+
+CONTENT
+In Planning for your web application server [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.2/com.ibm.installingeuc.doc/eucpl006.dita], the information in the "Collocating IBM Content Navigator with other applications" section has incorrect information. This section indicates that IBM Content Navigator and IBM Enterprise Records can be deployed to the same JVM. However, that deployment scenario will not work. Instead, consider the following options for the appropriate deployment scenario: 
+
+ *  Installing IBM Enterprise Records: 
+   If you are installing the full IBM Enterprise Records solution, you must install and deploy IBM Enterprise Records to a separate JVM from IBM Content Navigator. 
+ *  Deploying the IBM Enterprise Records plug-in interface:
+   If you want to use record declaration capabilities in the IBM Content Navigator web client, you can deploy the IBM Enterprise Records plug-in interface by loading the IBM Enterprise Records plug-in to an existing IBM Content Navigator installation. 
+
+RELATED INFORMATION
+ Planning for your web application server [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.2/com.ibm.installingeuc.doc/eucpl006.dita]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Enterprise Records

@@ -1,0 +1,41 @@
+Title: IBM Self-Describing Agent Register/Install failed - United States
+
+Text:
+5724G70UITR IBM Tivoli Monitoring TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Self-Describing Agent Register/Install failed with STATUS (1024/SDA Install Blocked) for PRODUCT "XX", 
+
+SYMPTOM
+You cannot see the agent in the APM UI, but you are able to see the agent and data in the TEPS. You may not see the data in either APM UI nor TEPS.
+
+
+CAUSE
+Application Support on the TEMS does not match the installed agent.
+
+DIAGNOSING THE PROBLEM
+The typical scenario is the agents are online in the TEPS but there is no data for the agent in the APM UI.
+
+RESOLVING THE PROBLEM
+The error seen in the logs 
+
+
+
+
+Self-Describing Agent Register/Install failed with STATUS (1024/SDA Install Blocked) for PRODUCT "XX", with TEMS "<temsname>: CMS", 
+
+VERSION_INFO "product_vrmf= 0yy00000;tms_package_vrmf=0yy00000;tps_package_vrmf=0yy00000; 
+tpw_package_vrmf=0yy00000;"., Producer(SDA_ Install) 
+
+ 
+
+XX is the product code for the agent 
+
+yy is the version of the agent that is installed. The application support on the TEMS must match. 
+
+Install the Application Support files on the TEMS. These are provided in the agent installation package.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ SCAPM

@@ -1,0 +1,77 @@
+Title: IBM Updating ICU code page used by WebSphere Transformation Extender 8.1 for maps executing on z/OS. - United States
+
+Text:
+ICU code page z/OS <LF> ICU_DATA TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ If WebSphere® Transformation Extender maps need to be modified to run on z/OS due to the difference in the hex value of <LF> on z/OS, what needs to be done to be able to have one map source file that when compiled, will run both on Windows and z/OS without validation problems? 
+
+CAUSE
+The hexadecimal value for <LF> is different on z/OS than on Windows.
+
+ANSWER
+WTX 8.1.0 uses an International Components for Unicode (ICU) method for code pages. The standard ICU code pages can be modified using the following method: 
+
+1. Obtain a reference copy of ICU 3.2.1 and associated tools. The link for this site is listed under "Related Information" at bottom of page.
+
+2. Obtain the .UCM (converter source) file from the ICU source directory for the code page you wish to amend. The UCM file for the MVS Native code page is 'ibm-1047_P100-1995.ucm'. The link for this site is listed under "Related Information" at bottom of page.
+
+3. Open the UCM file in any editor (notepad/wordpad, for example) and alter the file in the appropriate way. These files have Unicode Code points on the left and the appropriate code page code point on the right.
+
+e.g.
+
+<U000D> \x0D |0
+
+Maps the code point \x0D to U000D unicode point, and vice versa.
+
+You cannot map multiple code points to the same value.
+
+i.e.
+
+<U000D> \x0D |0
+<U000E> \x0D |0
+
+This would be invalid.
+
+
+4. After correctly editing and saving the .UCM file, run the following command line to create the .CNV (converter binary) file:
+
+makeconv -p ICUDATA <ucm_file>.UCM
+
+This will produce a file with an extension of .CNV.
+
+For example, running the following command...
+
+makeconv -p ICUDATA ibm-1047_P100-1995.ucm
+
+will create the following file:
+
+icudt32l_ibm-1047_P100-1995.cnv
+
+
+5. Move the .CNV file to the WTX 8.1 installation directory.
+
+
+6. Set a Windows Environment Variable called ICU_DATA as a System variable with a value of the WTX 8.1 installation directory.
+
+
+7. Build a map for the specific platform (in this case MVS) and test the compiled map
+
+Please note that the use of the modified ICU code page will not work for map rules that use the value of <LF> in the function being called. An example of a function that would not be affected by the modified code page is WORD,if <LF> is used as the delimiter.
+
+A replacement for this option has been developed that also works with functions in rules that use the delimiter <LF>. Please see Technote titled "Replacement option for ICU code page change for maps executing on z/OS [http://www-01.ibm.com/support/docview.wss?uid=swg21429548]" for details.
+
+
+
+RELATED INFORMATION
+#International Components for Unicode Download [http://icu.sourceforge.net/download/3.2.html]
+ICU Project [http://icu-project.org]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ Ascential DataStage TX

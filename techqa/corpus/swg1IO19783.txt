@@ -1,0 +1,142 @@
+Title: IBM IO19783: CONTENT NAVIGATOR 2.0.2 USES SYMBOLIC NAME AS "ID", NOT GUID WHEN DEPLOYING SEARCH TEMPLATES. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Download IBM Content Navigator Version 2.0.2 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24038083]
+Download IBM Content Navigator Version 2.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038160]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When deploying search templates using FileNet Deployment
+   Manager, the deploy fails on the Covert Assets step with this
+   error:
+   ---------------------------------------------
+   Unable to convert the assets.
+   Mapping error encountered while processing the following object
+   -
+   Class: StoredSearch, Id: ....
+   Unable to convert the environment-specific data in the content
+   file:
+   (path to the file).
+   Unable to find replacement value. type='Object Store', source
+   item='Name', source value='[Symbolic Name]'
+   
+   ----------------------------------------------
+   
+   It is requested that ICN 2.0.2 use the GUID when deploying
+   search templates as the "id", which is congruent with the
+   functionality in ICN 2.0.1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Update all deployed search template XML files with the GUID,
+   replacing the deployed symbolic name.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  fixed
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO19783
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   ISCONTNAV
+   
+   
+ * REPORTED RELEASE
+   202
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-02
+   
+   
+ * CLOSED DATE
+   2013-12-26
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   ISCONTNAV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R202 PSY
+   UP

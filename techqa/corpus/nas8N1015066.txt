@@ -1,0 +1,99 @@
+Title: IBM Debugging Java UDFs Using Graphical System Debugger Using Run SQLScripts - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides information about how to create a Java UDF that is enabled for debug and how to use the graphical system debugger. 
+
+RESOLVING THE PROBLEM
+To create a Java UDF that is enabled for debug and then use the graphical system debugger in IBM iSeries Navigator to debug it, do the following: 
+
+Step 1: Ensure that iSeries Navigator is at a minimum level V5R3M0:
+
+about iSeries Navigator [/support/docview.wss?uid=nas8N1015066&amp;aid=1]
+
+Step 2: Create Java source code for a simple UDF with an infinite loop. You must set x = 1 at some point to escape the loop. If you want to debug the Java UDF program, use the following:
+
+// You have to Compile the code using the following commands:
+Note: Square.java is located in folder /home/Java
+// 
+// 1. Start QShell (QSH)
+// 2. Use the javac command as follows (the Java file name is case sensitive!)(-g is for debug):
+// javac -g -d /qibm/userdata/os400/sqllib/function/ /home/Java/javaUDFs.java 
+//
+// For optimal performance on the iSeries, issue the CRTJVAPGM
+// command from the command line with optimize 40 (10 to debug):
+// 
+// CRTJVAPGM CLSF('/qibm/userdata/os400/sqllib/function/javaUDFs.class') OPTIMIZE(10)
+// 
+// To disable the JIT for debug:
+// ADDENVVAR ENVVAR(QIBM_SQJAVA_PROPERTIES) VALUE('java.compiler=NONE') LEVEL(*SYS)
+
+public class javaUDFs {
+public static int square(int input) throws Exception {
+for (int x = 0;x < 1;x = x)
+Thread.sleep(1000);
+int output = input * input;
+return output;
+} 
+}
+
+Step 3: Use the following SQL to register the Java program as UDF:
+
+CREATE FUNCTION qgpl.square(input int)
+RETURNS INTEGER
+EXTERNAL NAME 'javaUDFs.square'
+LANGUAGE Java
+PARAMETER STYLE Java
+FENCED
+NO SQL
+RETURNS NULL ON NULL INPUT
+SCRATCHPAD
+DETERMINISTIC
+
+Step 4: Use the following statement to call the Java program from the iSeries Navigator RunSQLScripts option:
+
+select qgpl.square(4) from sysibm.sysdummy1 
+
+Step 5: Open an iSeries Navigator session.
+
+Step 6: Connect to the system.
+
+Step 7: Click on the plus sign by Databases.
+
+Step 8: Right-click on the name of the system's connection.
+
+Step 9: Click on Run SQL Scripts from the pull-down.
+
+Step 10: From the next screen click Run.
+
+Step 11: Select Debugger.
+
+Run SQL Scipts and select Debugger [/support/docview.wss?uid=nas8N1015066&amp;aid=2]
+
+Step 12: Fill in the following screen, as shown:
+
+Start Debug [/support/docview.wss?uid=nas8N1015066&aid=3] [/support/docview.wss?uid=nas8N1015066&aid=3]
+
+Step 13: Call the Java UDF:
+
+select statement [/support/docview.wss?uid=nas8N1015066&amp;aid=4]
+
+Step 14: Press the Play button to resume, and then the source will come up (you might need to specify the client side source). Add break points where needed, and resume. After the break points hit, you can edit the variable values.
+
+debug example [/support/docview.wss?uid=nas8N1015066&aid=5] [/support/docview.wss?uid=nas8N1015066&aid=5]
+The following is an example of a screen that is seen when the break point is hit:
+
+select statement [/support/docview.wss?uid=nas8N1015066&amp;aid=6]
+
+Step 15: When you are done with debugging the program, the following SQL can be used to delete the UDF:
+
+DROP FUNCTION qgpl.square(INT)
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 
+HISTORICAL NUMBER
+ 408964355

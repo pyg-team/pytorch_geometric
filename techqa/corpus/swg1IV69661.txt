@@ -1,0 +1,168 @@
+Title: IBM IV69661: NESTED UDC USING VSUM DECODE GIVING WRONG RESULT IN REPORT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer is having troubles when selecting an UDC Cell.
+   Traffic_Speech_Erl_3g which is made from two other UDCs one
+   connected  to Nokia Utran domain and the other connected to
+   Ericsson Utran domain.
+   After running a report on Network entity level containing just
+   this UDC, it returns values only for Nokia domain even though
+   the UDC connected to Ericsson domain has data.
+   
+   Erricson UDC is nested.
+   The problem is occurring due to the UDC formulae which is
+   converted to SQL query.
+   Your UDC is nested - UDC in report -> Erricson UDc + Nokia  ->
+   another UDC + KPI .
+   
+   To take an example :
+   
+   The SQL query output you gave, consider the Cell ID : BGU01J
+   From Export 6  (Partially Aggreagted sum data ) Sum of data for
+   above cell id : 228.58
+   From Export sheet :
+   XP17 : ((( 228.58 /900) ) /900 ) /4   = 0.000070552    (Wrong)
+   XP56 : ((( 228.58 )/ (900 /900 ) ) /4   = 57.14722222 (Right)
+   228/1 228 /4
+   XP56 is the values of you UDC form erricson Domain.
+   SO if you see the difference is with bracket when it is
+   converting the UDC forumlae to SQL query.
+   With the main UDC containing Erricson UDC and Nokia UDc, the
+   Erricson UDC is getting wrong formulae in calculations.
+   
+   
+   THe problem is the expression actually stored in DB is getting
+   converted into incorrect forumlae or SQL query .
+   
+   The problem is while parsing the formulae form DB and converting
+   it into SQL during report generation.
+   The expression generated for nested UDCs(having decode and vsum)
+   are having the issue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround :
+   
+    We can avoid that issue by using formula of UDC in main UDC
+   instead of nesting UDC.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  PROBLEM DESCRIPTION:
+   
+   
+   Report may show wrong results for UDCs which contain multiple
+   divide operators
+   
+   PROBLEM SUMMARY:
+   
+   TNPM report will calculate the UDC value based on formula stored
+   in wmd_kpi_cache_expr table. But for some UDCs which contain
+   multiple divide operators, formula stored in table may be wrong
+   so operators are applied in wrong sequence during the
+   calculation thus resulting into wrong value.
+   RESOLUTION:
+   
+   Please refer to technote
+   http://www-01.ibm.com/support/docview.wss?uid=swg21967732 for
+   the fix of this issue
+   
+   Problem Conclusion:
+   This is projected to be fixed in TNPM 1.4.1 IF2. Note that this
+   is subject to change at the discretion of IBM
+   
+   RTC:
+   IV69661 NESTED UDC USING VSUM DECODE GIVING WRONG RESULT IN
+   REPORT(RTC 10795)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV69661
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL PM WIRE
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0100
+   
+   
+ * REPORTED RELEASE
+   131
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-20
+   
+   
+ * CLOSED DATE
+   2015-10-12
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R141 PSY
+   UP

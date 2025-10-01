@@ -1,0 +1,161 @@
+Title: IBM IZ18531: NIC INFORMATION IN DCM FROM REPLICATED EPS RANDOMLY MALFORMED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When initiating Compliance Scans or basic TPM Discovery
+   scans, these endpoints fail on the TPM-side with replication
+   errors (COPTMF105E Replication failed. MDIST2 for the
+   distribution on the TCM side would be successful.
+   
+   Values in input variables when problem occurred
+   1)  Full TCM replication using tcmReplicate.sh
+   2)  On a replicated TCM endpoint, step 1) select OS Patches and
+   Updates Check, step 2) run compliance scan
+   3)  Verify scan task failed with COPTMF105E replication error
+   only a problem on some endpoints
+   The activityplan console.log showed the following java errors:
+   2008-03-24 15:52:43,740 INFO  [DiscoveryStatusUpdater]
+   (TmrReplicator.
+   java:1642) replicator.TmrReplicator: COPTMF002I Start
+   Replication
+   2008-03-24 15:52:43,844 INFO  [DiscoveryStatusUpdater]
+   (TmrReplicator.
+   java:1110) replicator.TmrReplicator: COPTMF032I Starting
+   endpoint
+   HOSTNAME#c1 replication.
+   2008-03-24 15:52:44,419 ERROR [DiscoveryStatusUpdater]
+   (EndPoint.java:
+   66) dto.EndPoint: COPCOM561E The device has a management network
+   interface already.
+   com.ibm.tivoli.tpm.networking.base.model.
+   NotUniqueManagementNetworkInterface: COPCOM561E The device has a
+   management network interface already.
+           at
+   com.ibm.tivoli.tpm.networking.base.model.NetworkInterface.
+   createNetworkInterface(NetworkInterface.java:112)
+           at
+   com.ibm.tivoli.tpm.networking.base.model.NetworkInterface.
+   createNetworkInterface(NetworkInterface.java:101)
+           at
+   com.ibm.tivoli.tpm.networking.base.model.NetworkInterface.
+   createNetworkInterface(NetworkInterface.java:71)
+           at com.ibm.tivoli.tpm.infrastructure.tmf.replicator.
+   TmrReplicator.replicate(TmrReplicator.java:1149)
+           at
+   com.ibm.tivoli.tpm.infrastructure.tmf.dto.EndPoint.replicate
+   (EndPoint.java:57)
+           at com.ibm.tivoli.tpm.infrastructure.tmf.replicator.
+   TmrReplicator.replicateEndpoint(TmrReplicator.java:1680)
+           at com.ibm.tivoli.tpm.infrastructure.tmf.swd.TmfService.
+   processJobStatus(TmfService.java:251)
+           at com.ibm.tivoli.tpm.infrastructure.tmf.inv.
+   DiscoveryResultsProcessor.run(DiscoveryResultsProcessor.java:63)
+   2008-03-24 15:52:44,422 ERROR [DiscoveryStatusUpdater]
+   (TmrReplicator.
+   java:1700) replicator.TmrReplicator: COPTMF105E Replication
+   failed. See the log file for additional details.
+   2008-03-24 15:52:44,487 ERROR [DiscoveryStatusUpdater]
+   (TmfService.java:
+   301) swd.TmfService: replica failed for server HOSTNAME#c1.
+   Resetting   the status to FAILED
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This is release in interim fix 5.1.1.1-TIV-TPM-IF0001
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ18531
+   
+   
+ * REPORTED COMPONENT NAME
+   TPM FOR SW
+   
+   
+ * REPORTED COMPONENT ID
+   5724C06TS
+   
+   
+ * REPORTED RELEASE
+   511
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-25
+   
+   
+ * CLOSED DATE
+   2008-04-15
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPM FOR SW
+   
+   
+ * FIXED COMPONENT ID
+   5724C06TS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R511 PSY
+   UP

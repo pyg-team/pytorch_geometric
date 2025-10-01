@@ -1,0 +1,32 @@
+Title: IBM Displaying records in DASH Clustered Bar Chart using Query Condition - United States
+
+Text:
+DASHL2FAQ; Clustered Bar Chart; TWL; widget; JazzSM; DASH TECHNOTE (FAQ)
+
+QUESTION
+ How can I limit the number of rows displayed in the DASH Clustered Bar Chart? 
+
+CAUSE
+Limiting the number of rows displayed based on a query condition in the DASH Clustered Bar Chart widget
+
+ANSWER
+The "Query Condition" setting can be used to control the number of rows shown. In the example below, the condition is to show all records that have a value 300 or greater ( value1 > 300 ). 
+
+NOTE: This setting is in both the Bar Chart, and Clustered Bar Chart. 
+
+Before Query Condition enabled: 
+
+
+[/support/docview.wss?uid=swg21994191&aid=1] [/support/docview.wss?uid=swg21994191&aid=1] 
+
+ 
+
+[/support/docview.wss?uid=swg21994191&aid=2] [/support/docview.wss?uid=swg21994191&aid=2] 
+
+ 
+
+After Query Condition set ( see above ), notice that only records with value1 > 300 are displayed. 
+
+ 
+
+ [/support/docview.wss?uid=swg21994191&aid=3] [/support/docview.wss?uid=swg21994191&aid=3]

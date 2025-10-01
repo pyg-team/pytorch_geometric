@@ -1,0 +1,131 @@
+Title: IBM IO25072: IBM CONTENT NAVIGATOR ADDS .DAT EXTENSION TO SOME FILES - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+3.0.1-ICN-WIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-WIN&source=SAR]
+3.0.1-ICN-zLINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-zLINUX&source=SAR]
+3.0.1-ICN-LINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-LINUX&source=SAR]
+3.0.1-ICN-AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-AIX&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following MIME types are exported with .DAT extensions:
+   .au
+   .flv
+   .mp3
+   .swf
+   .cptx
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Documents stored in ECM repositories with some MIME types may
+   be downloaded from Content Navigator with an extension of
+   ".dat".
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been addressed in IBM Content Navigator V3.0
+   LA004.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO25072
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   ISCONTNAV
+   
+   
+ * REPORTED RELEASE
+   203
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-05
+   
+   
+ * CLOSED DATE
+   2017-04-27
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   ISCONTNAV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R300 PSY
+   UP

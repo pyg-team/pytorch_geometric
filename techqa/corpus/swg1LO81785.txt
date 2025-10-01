@@ -1,0 +1,141 @@
+Title: IBM LO81785: MESSAGE CONTAINING NOTES ITEMS (RADIO BUTTONS) DOES NOT DISPLAY WHEN SENT VIA MIME - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Cust is sending out messages which contain notes items (radio
+   buttons, etc)
+   which do not display when "from Notes to Plain Text and HTML" is
+   selected
+     in the Config doc. When "from Notes to Plain Text" is selected
+   although the
+   HTML portion is lost, the actual data is displayed.
+   
+     The customer understands all that is written above, although
+   he would like an
+   enhancement which would display the data even if only in plain
+   text
+      when "from Notes to Plain Text and HTML" is selected. His
+   issue is not with
+   loss of HTML Fidelity but with the loss of data, he feels it
+   should in a way
+   default
+      back to plain text if the HTML portion cannot be created.
+   
+     Note: These messages all get sent from an agent which creates
+   the message in
+   Notes Rich Text. Although my testing was done with a client
+   creating the
+   message in Notes Rich Text so I could mimic the cust
+   environment. Cust also did
+   testing with his client just to make sure he saw the same
+   behavior
+   and he did.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  In the Config doc use "from notes to Plain text" which will
+   display the data.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# DARA6MXNDM.
+   This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO81785
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   852
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-29
+   
+   
+ * CLOSED DATE
+   2014-10-24
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R852 PSN
+   UP

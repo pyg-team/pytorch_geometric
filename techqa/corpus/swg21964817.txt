@@ -1,0 +1,17 @@
+Title: IBM JazzSM/DASH HA cluster pages do not become visiable dynamically - United States
+
+Text:
+DASHL2; high availability; pages not become visiable automatically TECHNOTE (FAQ)
+
+QUESTION
+ Why aren't pages, views, filters etc. created on one node in high availability (HA) cluster do not automatically visible on other nodes in cluster until users logout and login again? 
+
+ANSWER
+This is an expected behavior of JazzSM/DASH. For pages to become visible on other nodes in cluster users need to logout and login again. 
+The content available to users is dependant on server side xml files that are only read when the user's login session is initiated. For that reason, users can only see new content when initiating a new login session. Dynamically updating the relevant information in active user sessions is a significant design challenge, and not currently a priority for the product design. 
+
+To pursue a change in the current design, open a request for enhancement using the following RFE tool:
+
+
+
+https://www.ibm.com/developerworks/rfe/?BRAND_ID=90" [https://www.ibm.com/developerworks/rfe/?BRAND_ID=90%22]

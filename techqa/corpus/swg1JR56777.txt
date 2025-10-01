@@ -1,0 +1,154 @@
+Title: IBM JR56777: TOPIC TWSERVERTOPICDESTINATION IS GETTING FILLED WITH CLIENTACTIVITYSUMMARYEVENT MESSAGES. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2016.12.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.12.delta.repository&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2016.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043062]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Following error can be seen in Process Center environment:
+   CWSIA0067E: An exception was received during the call t
+   o the method JmsMsgProducerImpl.sendMessage (#4):
+   com.ibm.ws.sib.processor.exceptions.SIMPLimitExceededException:
+   CWSIP0251E:
+   The destination TWServerTopicDestination.SingleCluster on
+   messaging engine SingleCluster.000-BPM.De1.Bus is not available
+   because the high limit 50,000 for the number of messages for
+   this destination has already been reached.
+   Upon inspecting the topic contents one can see a lot of
+   com.lombardisoftware.client.event.ClientActivitySummaryEvent
+   messages.
+   This may cause BPM to hang and make it unusable.
+   
+   PRODUCTS AFFECTED:
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Process Center restart may help temporarily.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be included in IBM BPM V8.5.7 cumulative fix 2016.12
+   that prevents
+   com.lombardisoftware.client.event.ClientActivitySummaryEvent to
+   not stay in the queue forever.
+   
+   To determine whether the cumulative fix is available and
+   download it if it is, complete the following steps on Fix
+   Central:
+   
+   1. On the Select product tab, select WebSphere as the product
+   group, IBM Business Process Manager with your edition from the
+   WebSphere options, All as the installed version, and All as the
+   platform, and then click Continue.
+   2. In the Text field, enter "cumulative fix", and click
+   Continue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56777
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-06
+   
+   
+ * CLOSED DATE
+   2016-10-06
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

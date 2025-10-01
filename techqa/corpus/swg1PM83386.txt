@@ -1,0 +1,182 @@
+Title: IBM PM83386: DB2 OBJECT COMPARISON TOOL FOR Z/OS PRODUCES CREATE STATEMENTS IN WSL OUT OF SEQUENCE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DB2 Object Comparison Tool for z/OS produces
+   CREATE Statements in WSL out of sequence
+   .
+   OC generates WSL to define all objects on target system. But the
+   creates are not generated in correct sequence.
+   VIew WPINV.VWIV142_AGG2 refers to   MQT WPINV.TWIV240_WPSEKNODE.
+   But
+   the CREATE for the MQT is located after the CREATE for the VIEW.
+   Therefore WSL abends with SQLCODE204.
+   .
+   DSNT408I SQLCODE = -204, ERROR:  WPINV.TWIV240_WPSEKNODE IS AN
+   UNDEFINED NAME
+   DSNT418I SQLSTATE   = 42704 SQLSTATE RETURN
+   CODE
+   DSNT415I SQLERRP    = DSNXOTL SQL PROCEDURE DETECTING
+   ERROR
+   DSNT416I SQLERRD    = -500  0  0  -1  0  0 SQL DIAGNOSTIC
+   INFORMATION
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *    USERS AFFECTED: Users of the DB2 Object Comparison Tool for
+                     z/OS who compare objects that contain a
+                     view that relies on a Materialized Query
+                     Table (MQT  and the MQT also relies on
+                     other views.
+   
+     PROBLEM DESCRIPTION: DB2 Object Comparison Tool for z/OS
+                          produces CREATE Statements in the
+                          Work Statement List (WSL  out of
+                          sequence.
+   
+                          Object Compare generates WSL to define
+                          all objects on the target system
+                          however the CREATE statements are not
+                          generated in the correct sequence.
+   
+                          VIew >VIEW_SCHEMA<.>VIEW_NAME<
+                          refers to MQT >MQT_SCHEMA<.>MQT_NAME<.
+   
+                          As the CREATE statement for the MQT
+                          is located after the CREATE statement
+                          for the VIEW the WSL ends with a
+                          SQLCODE204 / SQLCODEN204:
+   
+                          DSNT408I SQLCODE = -204,
+                          ERROR:  >VIEW_SCHEMA<.>VIEW_NAME< IS
+                          AN UNDEFINED NAME
+                          DSNT418I SQLSTATE   = 42704
+   
+     RECOMMENDATION:
+   
+   Object Compare should generate the correct sequencefor a view
+   that relies on an MQT, and the MQT also relies on other views.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem has been resolved.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM83386
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 ADMIN TOOL
+   
+   
+ * REPORTED COMPONENT ID
+   568851500
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-21
+   
+   
+ * CLOSED DATE
+   2013-06-17
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  ADB2CMP
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 ADMIN TOOL
+   
+   
+ * FIXED COMPONENT ID
+   568851500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY UK95037 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK95037]
+   UP13/06/19 P F306
+   
+   
+ * RA20 PSY UK95055 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK95055]
+   UP13/06/19 P F306
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

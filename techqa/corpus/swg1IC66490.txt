@@ -1,0 +1,180 @@
+Title: IBM IC66490: EXCESSIVE MEMORY USAGE WHEN USING MEDIATION SUBFLOWS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere Enterprise Service Bus V7.0.0 Fix Pack 2 (7.0.0.2) [http://www-01.ibm.com/support/docview.wss?uid=swg24026462]
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 3 (6.2.0.3) [http://www-01.ibm.com/support/docview.wss?uid=swg24027123]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a WebSphere Enterprise Service Bus or WebSphere Process
+   Server v6.2 or V7 flow contains a mediation module with one or
+   more subflow mediation primitives with multiple paths through
+   the flow to reach that primitive this will involve a large
+   memory usage and may result in an OutofMemoryError exception.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of WebSphere Enterprise Service Bus    *
+   *                 or WebSphere Process Server v6.2 or v7 who   *
+   *                 use a mediation module with subflow          *
+   *                 mediation primitives that can be invoked     *
+   *                 by multiple paths in the flow and who are    *
+   *                 seeing OutOfMemoryError exceptions.          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When a mediation module contains a      *
+   *                      subflow that can be invoked through     *
+   *                      multiple paths this can result in       *
+   *                      excessive memory usage as a copy of     *
+   *                      the subflow is loaded into memory for   *
+   *                      each possible branch of the flow that   *
+   *                      can invoke it. This can result in an    *
+   *                      OutOfMemoryError exception being seen.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If a WebSphere Enterprise Server Bus or WebSphere Process
+   Server flow contains a mediation module with a subflow
+   mediation primitive where there are multiple paths through the
+   flow to reach that primitive then on first invocation of the
+   mediation flow, a copy of the subflow is loaded in to memory
+   for each path.
+   This results in excessive memory usage. This may result in an
+   OutOfMemoryError Exception depending on the number of subflow
+   mediation primitives, by the complexity of those subflows, and
+   by having multiple concurrent requests. A heap dump will show
+   large numbers of RequestFlowModel objects.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified such that each subflow is only loaded
+   into memory once.
+   
+   There are no known side effects associated with this fix.
+   There is no known alternative workaround should you encounter
+   this problem.
+   
+   This code fix was targeted to be included in the following fix
+   packs:
+        6.2.0 Fix Pack 3 (v6.2.0.3)
+        7.0.0 Fix Pack 2 (v7.0.0.2)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC66490
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724I8200
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-19
+   
+   
+ * CLOSED DATE
+   2010-03-02
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724I8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSN
+   UP
+   
+   
+ * R200 PSN
+   UP
+   
+   
+ * R300 PSN
+   UP
+   
+   
+ * R612 PSN
+   UP
+   
+   
+ * R620 PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

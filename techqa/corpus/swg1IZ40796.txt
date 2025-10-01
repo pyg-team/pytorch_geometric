@@ -1,0 +1,168 @@
+Title: IBM IZ40796: ITNMV3.7/6 - DUPLICATES PRE-DISCO FILTERS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITNMv3.7/6 - Duplicates Pre-Disco Filters
+   
+   All O/S, ITNMv3.7 FP6.
+   
+   When a Pre-Disco filter is created and the "advanced tab"
+   completed with CAPITAL "AND OR" within the definition. A
+   duplicate is created and the filter is copied if you log out
+   then back in again.
+   
+   e.g. filter 1 once saved would now appear as filter2
+   
+   Test Steps:
+   
+   For some reason the name given to a "Pre disco filter" with a
+   number in it, re-creates itself incrementing its name if a
+   number is present in the name.
+   
+   
+   Pre-disco filter 1selected
+   logout of ngf
+   login and goto filters tab
+   Current enabled filter is now Pre-disco filter 2
+   Pre-disco filter 1 is now in the list of available but disabled
+   filters.
+   SEE the attached zip folder and double click on the .html doc
+   for demonstration of issue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do not use Capitals in Pre-Disco filter definition.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All platforms. GUI-Disco GUI - Pre Filters
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Discovery duplicates teh pre- filters.
+   The problem used to occur whenever the key words are typed in
+   uppercase. In this case, the filter stored into OQL will be of
+   the same case as user entered, while the filter is store into
+   filterLbrary.xml after converting any uppercase OQL keywords
+   like AND,OR,LIKE, IS,NOT, NULL into lower case key words.
+   In the code,  the filter stored in oql table and the filter
+   stored in filterLibrary.xml are checked for equality. Siince the
+   type of check is case sensitive, it fails in the above scenario
+   and in such cases, Disco creates a duplicate filter.
+   
+   ****************************************************************
+   RECOMMENDATION:
+   Upgrade to Fixpack that contains this fix.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Resolution: The comparison is now made case insensitive. OQL
+   accepts upper case keywords, so, this way users can coniue to
+   have upper case keywords in their filter definition .
+   
+   File
+   affected:/export/src/ncp/ncp_GUI/src/com/micromuse/precision/dis
+   co/bean/ConfigFiltersBean.java
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ40796
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PREC TPL SV
+   
+   
+ * REPORTED COMPONENT ID
+   5724O6000
+   
+   
+ * REPORTED RELEASE
+   360
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-05
+   
+   
+ * CLOSED DATE
+   2009-01-16
+   
+   
+ * LAST MODIFIED DATE
+   2009-01-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/PREC TPL SV
+   
+   
+ * FIXED COMPONENT ID
+   5724O6000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R360 PSN
+   UP

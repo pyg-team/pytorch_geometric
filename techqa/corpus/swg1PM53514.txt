@@ -1,0 +1,218 @@
+Title: IBM PM53514: NAMESTORE.XML CORRUPTION MAY OCCUR WHEN DEPLOYMENT MANAGER IS STOPPED, PREVENTING SUBSEQUENT APPLICATION SERVER STARTUP - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.0.0.23: WebSphere Application Server V7.0 Fix Pack 23 [http://www-01.ibm.com/support/docview.wss?uid=swg24032493]
+8.0.0.4: WebSphere Application Server V8.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033190]
+7.0.0.25: WebSphere Application Server V7.0 Fix Pack 25 [http://www-01.ibm.com/support/docview.wss?uid=swg24033267]
+8.0.0.5: WebSphere Application Server V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033754]
+7.0.0.27: WebSphere Application Server V7.0 Fix Pack 27 [http://www-01.ibm.com/support/docview.wss?uid=swg24033882]
+8.0.0.6: WebSphere Application Server V8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034673]
+7.0.0.29: WebSphere Application Server V7.0 Fix Pack 29 [http://www-01.ibm.com/support/docview.wss?uid=swg24034966]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+7.0.0.31: WebSphere Application Server V7.0 Fix Pack 31 [http://www-01.ibm.com/support/docview.wss?uid=swg24036768]
+7.0.0.27: Java SDK 1.6 SR13 FP2 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035324]
+7.0.0.33: WebSphere Application Server V7.0 Fix Pack 33 [http://www-01.ibm.com/support/docview.wss?uid=swg24037573]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Exception seen on JVM Startup from corruption of Namestore.xml
+   occuring due to possible Race condition is:
+   
+   [9/22/11 11:50:11:095 CEST] 00000000 WsServerImpl  E
+   
+   WSVR0009E: Error occurred during startup...
+   Caused by:
+   com.ibm.ws.naming.distcos.NameSpaceConstructionException:
+    Unexpected error reading name store document.
+    at
+   com.ibm.ws.naming.distcos.PersistentNameStoreManager.readInRootC
+   txFromXm
+   l(PersistentNameStoreManager.java:397)
+   ...
+   Caused by: com.ibm.ws.exception.ConfigurationError:
+   org.xml.sax.SAXParseException: Premature end of file.
+    at
+   com.ibm.ws.runtime.config.ConfigDocumentImpl.load(ConfigDocument
+   Impl.jav
+   a:193)
+   ...
+   Caused by: org.xml.sax.SAXParseException: Premature end of file.
+    at
+   org.apache.xerces.util.ErrorHandlerWrapper.createSAXParseExcepti
+   on(Unknown Source)
+   
+   
+   Nameserver shutdown should force a Wait until Write operation
+   has completeed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V7.0 and V8.0                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The persistent name bindings file,      *
+   *                      namestore.xml, becomes corrupted in     *
+   *                      the master repository.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The persistent name bindings file, namestore.xml, becomes
+   corrupted in the master repository. It is not clear how this
+   condition occurs unless the deployment manager or standalone
+   server is stopped with an operating system command, for
+   example, with "kill -9", instead of through the stopManager or
+   stopServer shell script. Frequent persistent binding updates
+   make the condition more likely to occur, although the
+   Information Center states that the persistent binding
+   implementation is not designed for frequent binding updates.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The new custom property, naming.persistent.ignoreReadError,
+   can be set to "true" so that read errors on namestore.xml are
+   ignored when it is read during process startup. This causes
+   the corrupted file to be replaced if a persistent binding
+   update request is later received. The binding data in the
+   corrupted file is then lost. If all persistent binding data is
+   regenerated automatically, as is often the case, the lost
+   binding data should not cause a problem. If loss of binding
+   data is a problem, this property should not be used.
+   
+   The property can be set as a cell, node, or name server custom
+   property. If set as a cell custom property, all server
+   processes in the cell will respond to the setting. Likewise,
+   if set as a node custom property, all server processes in the
+   node will respond to the setting. Settings at narrower scopes
+   override settings at wider scopes. For example, a setting at
+   the name server scope will override settings at the node or
+   cell scope.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 7.0.0.23 and 8.0.0.4.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM53514
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-05
+   
+   
+ * CLOSED DATE
+   2012-03-12
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP

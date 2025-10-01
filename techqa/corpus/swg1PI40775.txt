@@ -1,0 +1,167 @@
+Title: IBM PI40775: Symbolic links to server directories from Liberty usr/servers di rectory do not work as expected - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  It should be possible to put the server directory elsewhere
+   in the system, making it available to Liberty via a symbolic
+   link from usr/servers. However, in the current code, if the
+   name of the link and the name of the actual directory are
+   different, this will fail due to confusion over which name
+   to use as the actual "server name".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty Profile                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Symbolic links to server directories    *
+   *                      from Liberty usr/servers directory do   *
+   *                      not work as expected                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   It should be possible to put the server directory elsewhere in
+   the system, making it available to Liberty via a symbolic link
+   from usr/servers. However, in the current code, if the name of
+   the link and the name of the actual directory are different,
+   this will fail due to confusion over which name to use as the
+   actual "server name".
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem arose due to the use of filename canonicalization,
+   which unfortunately "unwraps" symbolic links. We have added a
+   special-case which recognizes when this specific directory is a
+   symbolic link and uses other mechanisms to canonicalize its
+   name. Caveat: Symbolic links from locations _within_ the server
+   directory may still be unwrapped; addressing that has been
+   deferred as future work since that may make sense in some use
+   cases but not others.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 8.5.5.6.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  If the name of the symlink _exactly_ matches the name of the
+   file it points to -- for example, if the symlink is
+   .../wlp/user/servers/MyServer and the directory it points to is
+   .../some/other/path/MyServer -- the previously existing code
+   should correctly access the server definition. The bug becomes
+   visible when the two names differ, even if the differences are
+   just uppercase versus lowercase.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI40775
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * REPORTED COMPONENT ID
+   5725L2900
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-05-11
+   
+   
+ * CLOSED DATE
+   2015-05-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * FIXED COMPONENT ID
+   5725L2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

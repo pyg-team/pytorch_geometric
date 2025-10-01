@@ -1,0 +1,65 @@
+Title: IBM UCM deliver requires delivery of independent integration activities - United States
+
+Text:
+ucm deliver mkbl integration activity independent; 1180235; RATLC00717855; RATLC00683283; RATLC00717857; UCM deliver Dependency TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote provides information about a IBM® Rational® ClearCase® 2003.06.00 defect that caused a regression in UCM deliver functionality and provides information on how to resolve the issue. 
+
+SYMPTOM
+ 
+
+During a UCM delivery operation there is a requirement to deliver independent integration activities.
+
+CAUSE
+ 
+
+In providing a fix for defect RATLC00683283 in ClearCase 2003.06.00 there were behavior changes to some incorrect UCM functionality on which a number of users had grown dependent. 
+
+Defect RATLC00717857 has been opened to investigate this issue.
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+ 1. Set up a project with a single component, an integration stream (int), a task stream (task1), with two child development streams (dev1 and dev2)
+    
+    
+ 2. Make non-conflicting changes in dev1 and dev2 (such as make changes to two different elements)
+    
+    
+ 3. Deliver dev1 and dev 2 to task1
+    
+    Task1 now contains two integration activities that are independent of each other.
+    
+    
+ 4. As a result of the RATLC00683283 fix in ClearCase 2003.06.00, if you attempt to deliver just one of these integration activities, you will get an error message indicating that the two integration activities are dependent on each other.
+
+RESOLVING THE PROBLEM
+ 
+
+ 
+
+Defect RATLC00717857 has been resolved in ClearCase version 7.0 [http://www-01.ibm.com/support/docview.wss?rcss=rtlbpnews&uid=swg24012293] with the introduction of feature level 5. 
+
+The PVOB and all associated Component VOBs should be upgraded to feature level 5 to take advantage of this change (see note below).
+
+For more information About Feature Levels and ClearCase, refer to technote 1119269 [http://www.ibm.com/support/docview.wss?rs=984&uid=swg21119269].
+
+Note: In a UCM environment, Component VOBs associated with a Project VOB should all be at a consistent Feature Level. This will ensure consistent behavior with all projects and components. In UCM some metadata resides in the Project VOB (such as branch types and hlinks), while other types (such as label types, local copies of Global brtypes), exist in the Component VOBs. 
+
+For the Available iFixes and Fix Packs for ClearCase Family 7.x, refer to technote 1265307 [http://www-1.ibm.com/support/docview.wss?rcss=rtlbpnews&uid=swg21265307]. 
+
+WORKAROUND
+
+Contact IBM Rational Client Support for optional workarounds for the desired behavior.
+
+
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase UCM: Stream Software Development Rational ClearCase Environment Variables

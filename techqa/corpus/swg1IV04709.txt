@@ -1,0 +1,160 @@
+Title: IBM IV04709: UNRESOLVED RECURSIVE TYPE CODE(CORBA BAD_TYPECODE EXCEPTION) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: Occassioanlly, the customer is seeing
+   org.omg.CORBA.BAD_TYPECODE: Invoked operation on unresolved
+   recursive type code! (1)  vmcid: IBM  minor code: 283
+   completed: No being logged into Error logs.
+   .
+   Stack Trace: Exception Trace:
+   Trace from server: 1394880515 at host abc.def.in.com >>
+   org.omg.CORBA.BAD_TYPECODE: Invoked operation on unresolved
+   recursive
+   type code! (1)  vmcid: IBM  minor code: 283  completed: No
+    at
+   com.ibm.rmi.corba.TypeCodeImpl.indirectType(TypeCodeImpl.java(In
+   lined Compiled Code))
+    at
+   com.ibm.rmi.corba.TypeCodeImpl.writeValueOpt(TypeCodeImpl.java(C
+   ompiled Code))
+    at
+   com.ibm.rmi.corba.TypeCodeImpl.write_value(TypeCodeImpl.java(Inl
+   ined Compiled Code))
+    at
+   com.ibm.rmi.corba.TypeCodeImpl.writeValueOpt(TypeCodeImpl.java(C
+   ompiled Code))
+   ......
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The CORBA BAD_TYPECODE exception, is thrown when the specified
+   typecode is invalid. The issue seen by the customer is because
+   of, the application code is invoking operations on the recursive
+   TypeCode before it has been embedded in the enclosing TypeCode,
+   and hence it results in a BAD_TYPECODE exception.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   5.0.0 SR13
+   .
+   In Java 142:
+   The issue can be resolved by Synchronizing the getTypeCode
+   Method, which will in turn ensure that the get() call on HashMap
+   is Synchronized.
+   In Java 50 & Java 60:
+   We have ported the fix from the 626 line where
+   conconcurrenthashmap is used to store the typecode which has
+   synchronised get and put.
+   As there is no concurrenthashmap in 142, we have used a simple
+   hashmap and synchronised get and put calls.
+   .
+   To obtain the fix:
+   Install build 20110815 or later
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Please see APAR IV13379 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV13379] for a complete fix to this issue.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV04709
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA 5 ORB
+   
+   
+ * REPORTED COMPONENT ID
+   620500123
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-11
+   
+   
+ * CLOSED DATE
+   2011-09-12
+   
+   
+ * LAST MODIFIED DATE
+   2012-01-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA 5 ORB
+   
+   
+ * FIXED COMPONENT ID
+   620500123
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

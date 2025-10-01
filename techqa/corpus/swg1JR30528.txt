@@ -1,0 +1,195 @@
+Title: IBM JR30528: USING WSADMIN TO INSTALL AN SCA APPLICATION TO A ND TOPOLOGY THAT CONTAINS UNMANAGED NODES (WEBSERVERS) FAILS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This scenario has a Network Deployment topology. This
+   topology also has unmanaged nodes, specifically
+   webservers. When installing an application .EAR using wsadmin
+   script, the install fails.
+   
+   Installing the same application using AdminConsole is
+   successful.
+   
+   An interim fix will be created for this issue.
+   ===========
+   Explanation:
+   The unmanaged node has no nodeagent. So there should be a
+   defect in WPS during SCA app installation. It does not consider
+   the situation that the node maybe unmanaged node and have no
+   servers at all. In fact, if a SCA app is being installed a
+   cluster, it will find a node randomly and read its
+   server info. I is actually unnecessary. In this case, it just
+   selected the webservr02 which is a unmanaged node and have no
+   server. So the installation failed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  A)Install using admin console instead of wsadmin
+   
+   B) remove webservr01 and webservr02 from the ND env,
+   then install the ear file. After the installation finished,
+   create the two unmanaged nodes again.
+   
+   C) Create a dummy server under the webservr02 node so
+   that the installation can continue. Below are the steps to
+   create the dummy server:
+    1) In the deploy manager profile dir, create dir named servers
+   under
+   WPSRoot/Profiles/DMGRNODE01/config/cells/ift2wps3Cell01/nodes/we
+   bservr0
+   
+    2) create a dir named nodeagent under the servers dir created
+   in step 1);
+   
+    3) copy the server.xml file under the nodeagent dir of another
+   node to the nodeagent dir created in step 2);
+   
+    5) re-enter the wsadmin and run the $AdminApp install command,
+   it should be fine this time.
+   
+    6) remove the servers dir and its subdirs created in the
+   workaround.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Process Server 6.0.2  users        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If there is unmanaged node(s) in a ND   *
+   *                      environment, when deploying Service     *
+   *                      Component Architecture applications,    *
+   *                      there can be exceptions thrown out      *
+   *                      and the deployment will be failed.      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If there is unmanaged node(s) in ND environment, when
+   deploying Service Component Architecture applications, there
+   can be exceptions thrown out and the deployment will fail.
+   Because, the deployment process will try to read the
+   configrations of the unmanaged nodes, but they are unvailable.
+   
+   Following exceptions occur java.lang.IllegalArgumentException
+   
+   at com.ibm.ws.sca.internal.deployment.management.AdminBase.
+      showAttribute(AdminBase.java:266)
+   at com.ibm.ws.sca.internal.deployment.management.AdminCommand.
+      <init>(AdminCommand.java:61)
+   at com.ibm.ws.sca.internal.deployment.eis.EISAdmin.
+      <init>(EISAdmin.java:81)
+   at com.ibm.ws.sca.internal.deployment.eis.EISArchiveTask.
+      install(EISArchiveTask.java:119)
+   at com.ibm.ws.sca.internal.deployment.SCAInstallTask.
+      performInstallTasks(SCAInstallTask.java:117)
+   at com.ibm.ws.sca.internal.deployment.SCAInstallTask.
+      performTask(SCAInstallTask.java:61)
+   at com.ibm.ws.management.application.SchedulerImpl.
+      run(SchedulerImpl.java:253)
+   at java.lang.Thread.run(Thread.java:570)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem has been fixed. Apply the Interim Fix, deploy the
+   Service Component Architecture applications, the deployment
+   will be successful.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR30528
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   602
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-18
+   
+   
+ * CLOSED DATE
+   2008-10-13
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R602 PSY
+   UP

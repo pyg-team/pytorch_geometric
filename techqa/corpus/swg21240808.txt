@@ -1,0 +1,25 @@
+Title: IBM What is the equivalent of nnotes.dll (W32) on a Unix system - United States
+
+Text:
+nnotes.dll; UNIX; AIX; Linux; Redhat; SuSE; Ubuntu; libnotes_r.a on AIX; libnotes.so on Solaris; Linux; nnotes.dll TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+You run IBM Lotus Domino on a Linux or UNIX-based operating system and need to know what is your platform's equivalent of the nnotes.dll file on Microsoft Windows.
+
+RESOLVING THE PROBLEM
+There are no .dll files on Unix - the equivalent for nnotes.dll on W32 platform is: 
+
+ * libnotes_r.a on AIX 
+ * libnotes.so on Solaris, Linux 
+
+
+
+
+Modules 
+C API routines live in shared libraries that are named differently depending on the platform 
+
+Library name NotesSession.platform nnotes.dll Windows/32 (intel) anotes.dll Windows/32 (alpha) Inotes.dll OS/2v1, OS/2v2 libnotes_r.a UNIX (AIX) libnotes OS/390 libnotes.so UNIX (Solaris, Linux) libnotes.sl UNIX (HP-UX) NotesLib Macintosh /qsys.lib/qnotes.lib/libnotes.svrpgm OS/400 
+
+
+ * 
+ *

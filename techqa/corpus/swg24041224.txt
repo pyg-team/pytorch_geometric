@@ -1,0 +1,144 @@
+Title: IBM Downloading IBM SPSS Statistics 24 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ Downloading IBM SPSS Statistics 24 
+
+DOWNLOAD DESCRIPTION
+IBM® SPSS® Statistics is the world’s leading statistical software used to solve business and research problems by means of ad-hoc analysis, hypothesis testing, and predictive analytics. Organizations use IBM SPSS Statistics to understand data, analyze trends, forecast and plan to validate assumptions and drive accurate conclusions. 
+
+If you are looking for a free trial version of SPSS Statistics, go here: Free Trial Version [http://www.ibm.com/analytics/us/en/technology/predictive-analytics/#ibm-spss-stats-modeler-trials]
+
+Detailed information on getting started, managing your account, downloading and installing, and licensing is available here: GetSPSS [http://www.ibm.com/software/analytics/spss/support/get_spss.html]
+
+Complete documentation for IBM SPSS Statistics 24.0 is available here: IBM SPSS Statistics 24 Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSLVMB_24.0.0]
+
+PDF versions of the installation instructions and manuals are also available here: IBM SPSS Statistics 24 Documentation [http://www.ibm.com/support/docview.wss?uid=swg27047033]
+
+
+To download a product, go to the IBM Passport Advantage® Web Site [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] and then:
+
+
+ 1.  Do one of the following:
+     If you are a returning customer, sign in.
+     If you are a new customer, register. 
+ 2.  If the Software download & media access window appears, click I agree. 
+ 3.  In the Find downloads & media window, click Download finder. 
+ 4.  Under Download finder, select the download you want, and click Continue. 
+ 5.  Under Select criteria, select a language and one or more platforms. 
+ 6.  Under Download options, select the options you want, and click Continue. 
+ 7.  Under Review “Current version” downloads, expand Current version and under Description, select the download you want, expand it and select the items you want. 
+ 8.  If applicable, under Select optional downloads, expand and select the items you want. 
+ 9.  Under Review downloading specifics, update the Download method or the Download location, if you want, and then click I agree, and click Download now. 
+ 10. In the Initial Setup dialog, change the Default download location, if you want. 
+ 11. If you are prompted, click OK to create the directory where you want the downloaded items to be stored. 
+ 12. Click OK to begin the download.
+
+
+Use the plus sign icon to expand the files in the download of your choice in order to avoid downloading unnecessary files. 
+
+When the download has finished, Download complete appears in the Download Director dialog. The required and optional parts for each product are listed and described in detail. There is an option to download each licensed eAssembly. Each eAssembly contains all of the required and optional downloads needed for a particular product and platform combination.
+
+Downloading and assembling the product
+1. Download all of the parts that you need, both required and optional.
+2. Unpack each of the parts into a single temporary directory on your system. 
+3. Follow the installation instructions provided in the download to install the product. 
+
+For assistance with all questions on generating and accessing authorization codes, including how to enable additional add-on modules that you purchase, go to:
+http://public.dhe.ibm.com/software/analytics/spss/licensing/Auth_Codes_092910_2.html [http://public.dhe.ibm.com/software/analytics/spss/licensing/Auth_Codes_092910_2.html]
+
+Any customer with an active support contract can seek activation assistance by logging a support request online or by phone via links available at www.ibm.com/planetwide.
+
+Download Options
+You can download entire eAssemblies or individual eImages. The eAssemblies contain all required and optional eImages for each download package. This section lists the eAssemblies. The complete list of eAssemblies and associated eImages is provided below.
+
+IBM SPSS Statistics 24.0 Desktop
+Multilingual
+Windows: CRZ0ZML
+Mac OS: CRZ10ML
+Linux: CRZ11ML
+
+For Windows, there are 32-bit and 64-bit versions of the product eImage. You only need the one that is appropriate for your computer.
+
+
+IBM SPSS Statistics Developer
+Multilingual
+Windows: CRZ1AML
+Mac OS: CRZ1BML
+Linux: CRZ1CML
+
+For Windows, there are 32-bit and 64-bit versions of the product eImage. You only need the one that is appropriate for your computer.
+
+IBM SPSS Desktop and Developer Documentation
+Multilingual
+All platforms: CRZ0WML
+The installation instructions and manuals for IBM SPSS Statistics Desktop and Developer. This includes installation instructions for all supported platforms for single user installation, site license installation and administration, network license (concurrent license) installation and administration, and data access pack installation (for database access).
+
+Installation instructions for all platforms and all languages are contained in a single eImage. Manuals in PDF form are available in separate eImages for each language.
+
+IBM SPSS Statistics Data Drivers
+Multilingual
+All platforms: CRZ0XML
+Drivers to support various data sources in IBM SPSS Statistics Desktop, Developer, and Server. 
+
+Note: This eAssembly also contains “IBM SPSS Statistics Data File Drivers”. The Statistics data file drivers allow you to read SPSS Statistics (.sav) data files in applications that support Open Database Connectivity (ODBC) or Java Database Connectivity (JDBC). This is optional. Only download it if you need it.
+
+IBM SPSS Statistics Concurrent User Licensing Server 
+Multilingual
+All platforms: CRZ0YEN
+License managers and hardware keys for IBM SPSS Statistics Desktop and Developer. 
+
+You will need this if you purchased software that requires a hardware key, or you are an SPSS administrator at a site that purchased concurrent licenses. If you are not aware of either of those conditions, then you don’t need it.
+
+If you are an SPSS administrator at a site that purchased concurrent licenses, download the Sentinel License Manager corresponding to the operating system of the computer where you plan to install it. 
+
+IBM SPSS Statistics Server
+English
+Windows: CRZ15ML
+Linux for System z: CRZ16ML
+Linux: CRZ18ML
+Linux for System p LE: CRZ17ML
+AIX: CRZ19ML
+
+IBM SPSS Statistics Server is available only in English.
+
+You need to download the correct eImage for your server computer’s operating system. 
+
+IBM SPSS Visualization Designer 1.0.3 
+English
+Windows: CRCQ9EN
+
+IBM SPSS SamplePower 3.0.1
+English
+Windows: CRNK7EN
+A desktop application that helps you to find the best sample size for your research.
+
+Complete list of all eAssemblies and eImages
+The following table list all the parts available for IBM SPSS Statistics 24.0.
+
+
+
+
+Parts and Platform Part Number Category IBM SPSS Statistics Desktop 24.0 Documentation Multilingual eAssembly CRZ0WML IBM SPSS Statistics Client/Developer Installation Documentation 24.0 Multilingual CN99SML Documentation IBM SPSS Statistics Client/Developer Documentation 24.0 English CN99HEN Documentation IBM SPSS Statistics Client/Developer Documentation 24.0 French CN99IFR Documentation IBM SPSS Statistics Client/Developer Documentation 24.0 German CN99JDE Documentation IBM SPSS Statistics Client/Developer Documentation 24.0 Italian CN99KIT Documentation IBM SPSS Statistics Client/Developer Documentation 24.0 Japanese CN99LJA Documentation IBM SPSS Statistics Client/Developer Documentation 24.0 Russian CN99MRU Documentation IBM SPSS Statistics Client/Developer Documentation 24.0 Chinese-simplified CN99FSC Documentation IBM SPSS Statistics Client/Developer Documentation 24.0 Spanish CN99NES Documentation IBM SPSS Statistics Client/Developer Documentation 24.0 Chinese-traditional CN99GTC Documentation IBM SPSS Statistics Client/Developer Documentation 24.0 Korean CN99PKO Documentation IBM SPSS Statistics Client/Developer Documentation 24.0 Polish CN99QPL Documentation IBM SPSS Statistics Client/Developer Documentation 24.0 Portuguese Brazilian CN99RBP Documentation 
+IBM SPSS Statistics Data Drivers 24.0 Multilingual Multiplatform eAssembly CRZ0XML IBM SPSS Statistics Data File Drivers 24.0 Multiplatform Multilingual CN9ADML Optional IBM SPSS Data Access Pack 7.1.1 Multiplatform English CN8IUEN Optional IBM SPSS Statistics - Integration Plug-In for Microsoft .NET 32-bit 24.0 for Microsoft Windows CN98XML Optional IBM SPSS Statistics - Integration Plug-In for Microsoft .NET 64-bit 24.0 for Microsoft Windows CN98YML Optional 
+IBM SPSS Statistics Concurrent User Licensing Server 24.0 English Multiplatform eAssembly CRZ0YEN IBM SPSS Concurrent Licensing Tools 9.6 - License Manager 64-bit AIX English CN997EN Required IBM SPSS Concurrent Licensing Tools 9.6 - License Manager Linux x86-64 English CN998EN Required IBM SPSS Concurrent Licensing Tools 9.6 - License Manager Microsoft Windows English CN99AEN Required IBM SPSS Concurrent Licensing Tools 9.6 - License Manager Mac English CN99BEN Required IBM SPSS Concurrent Licensing Tools 9.6 - Hardware Key Microsoft Windows English CN99CEN Optional IBM SPSS Concurrent Licensing Tools 9.6 - Hardware Key Linux x86-64 English CN99DEN Optional IBM SPSS Concurrent Licensing Tools 9.6 - Hardware Key Mac English CN99EEN Optional 
+IBM SPSS Statistics Desktop 24.0 for Base and all Modules Microsoft Windows Multilingual eAssembly CRZ0ZML IBM SPSS Statistics Client 32-bit 24.0 Microsoft Windows Multilingual CN98SML Required IBM SPSS Statistics Client 64-bit 24.0 Microsoft Windows Multilingual CN98TML Required IBM SPSS Statistics Client 24.0 Microsoft Windows Multilingual (ISO Version) CNA15ML Optional IBM SPSS Statistics Diagnostic Utility 24.0 Microsoft Windows Multilingual CN98ZML Recommended 
+IBM SPSS Statistics Desktop 24.0 for Base and all Modules Mac OS Multilingual eAssembly CRZ10ML IBM SPSS Statistics Client 24.0 Mac OS Multilingual CN98UML Required IBM SPSS Statistics Client 24.0 Mac OS Silent Multilingual CN98VML Required IBM SPSS Statistics Client 24.0 Mac OS Multilingual (ISO Version) CNA16ML Optional 
+IBM SPSS Statistics Desktop 24.0 for Base and all Modules Linux x86-64 Multilingual eAssembly CRZ11ML IBM SPSS Statistics Client 24.0 Linux x86-64 Multilingual CN98WML Required IBM SPSS Statistics Client 24.0 Linux x86-64 Multilingual (ISO version) CNA17ML Optional 
+IBM SPSS Statistics Desktop 24.0 for Base and all Modules Academic Microsoft Windows Multilingual eAssembly CRZ12ML IBM SPSS Statistics Client 32-bit 24.0 Microsoft Windows Multilingual CN98SML Required IBM SPSS Statistics Client 64-bit 24.0 Microsoft Windows Multilingual CN98TML Required IBM SPSS Statistics Diagnostic Utility 24.0 Microsoft Windows Multilingual CN98ZML Recommended 
+IBM SPSS Statistics Desktop 24.0 for Base and all Modules Academic Mac OS Multilingual eAssembly CRZ13ML IBM SPSS Statistics Client 24.0 Mac OS Multilingual CN98UML Required IBM SPSS Statistics Client 24.0 Mac OS Silent Multilingual CN98VML Required 
+IBM SPSS Statistics Desktop 24.0 for Base and all Modules Academic Linux x86-64 Multilingual eAssembly CRZ14ML IBM SPSS Statistics Client 24.0 Linux x86-64 Multilingual CN98WML Required 
+IBM SPSS Statistics Server 24.0 Microsoft Windows Multilingual eAssembly CRZ15ML IBM SPSS Statistics Server 24.0 Microsoft Windows Multilingual CN99TML Required IBM SPSS Statistics Server Documentation 24.0 English CN99YEN Documentation 
+IBM SPSS Statistics Server 24.0 Linux on System z Multilingual eAssembly CRZ16ML IBM SPSS Statistics Server 24.0 Linux on System z Multilingual CN99UML Required IBM SPSS Statistics Server Documentation 24.0 English CN99YEN Documentation 
+IBM SPSS Statistics Server 24.0 Linux x86-64 Multilingual eAssembly CRZ18ML IBM SPSS Statistics Server 24.0 Linux x86-64 Multilingual CN99WML Required IBM SPSS Statistics Server Documentation 24.0 English CN99YEN Documentation 
+IBM SPSS Statistics Server 24.0 AIX Multilingual eAssembly CRZ19ML IBM SPSS Statistics Server 24.0 AIX Multilingual CN99XML Required IBM SPSS Statistics Server Documentation 24.0 English CN99YEN Documentation 
+IBM SPSS Statistics Server 24.0 Linux on System p LE Multilingual eAssembly CRZ17ML IBM SPSS Statistics Server 24.0 Linux on System p LE Multilingual CN99VML Required IBM SPSS Statistics Server Documentation 24.0 English CN99YEN Documentation 
+IBM SPSS Statistics Developer 24.0 Microsoft Windows Multilingual eAssembly CRZ1AML IBM SPSS Statistics Developer 32-bit 24.0 Microsoft Windows Multilingual CN99ZML Required IBM SPSS Statistics Developer 64-bit 24.0 Microsoft Windows Multilingual CN9A0ML Required IBM SPSS Statistics Diagnostic Utility 24.0 Microsoft Windows Multilingual CN98ZML Recommended 
+IBM SPSS Statistics Developer 24.0 Mac OS Multilingual eAssembly CRZ1BML IBM SPSS Statistics Developer 24.0 Mac OS Multilingual CN9A1ML Required IBM SPSS Statistics Developer 24.0 Mac OS Silent Multilingual CN9A2ML Required 
+IBM SPSS Statistics Developer 24.0 Linux x86-64 Multilingual eAssembly CRZ1CML IBM SPSS Statistics Developer 24.0 Linux x86-64 Multilingual CN9A3ML Required 
+IBM SPSS Statistics Desktop Integrated Student Edition 24.0 Multiplatform English eAssembly CRZ1MEN IBM SPSS Statistics Desktop Integrated Student Edition 24.0 Microsoft Windows English CN994EN Required IBM SPSS Statistics Desktop Integrated Student Edition 24.0 Mac OS English CN995EN Required IBM SPSS Statistics Desktop Integrated Student Edition 24.0 Multiplatform English (ISO Version) CN996EN Required 
+IBM SPSS Visualization Designer 1.0.3 Microsoft Windows English eAssembly CRCQ9EN IBM SPSS Visualization Designer 1.0.3 License Instructions English CI20GEN Required IBM SPSS Visualization Designer 1.0.3 Microsoft Windows Installer English CZN4JEN Required IBM SPSS Visualization Designer Documentation 1.0.3 Microsoft Windows English CZN4KEN Documentation 
+IBM SPSS SamplePower 3.0.1 Microsoft Windows English eAssembly CRNK7EN IBM SPSS SamplePower 3.0.1 Microsoft Windows English CIP6XEN Required IBM SPSS SamplePower Documentation 3.0 Microsoft Windows English CZN4IEN Documentation 
+IBM SPSS Statistics 24.0 Collaboration and Deployment Services 8.0 Multiplatforms Multilingual eAssembly CRZ0VML IBM SPSS Statistics 24.0 Collaboration and Deployment Services Adapter 8.0 Multiplatforms Multilingual CN9ACML Optional IBM SPSS Collaboration and Deployment Services Deployment Manager 8.0 Microsoft Windows Multilingual CN9D6ML Optional

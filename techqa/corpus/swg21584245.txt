@@ -1,0 +1,86 @@
+Title: IBM TargetInvocationException error when copying charts - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a chart from an Excel object is copied to the clipboard, FSR crashes when clicking a Word object with a "TargetInvocationException" error. 
+
+SYMPTOM
+When copying a chart from an Excel object and then clicking a Word object, FSR crashes with the following error: 
+
+Type: TargetInvocationException
+Message: Exception has been thrown by the target of an invocation.
+Stack Trace: at System.RuntimeType.InvokeDispMethod(String name,
+BindingFlags invokeAttr, Object target, Object[] args, Boolean[]
+byrefModifiers, Int32 culture, String[] namedParameters)
+at System.RuntimeType.InvokeMember(String name, BindingFlags
+bindingFlags, Binder binder, Object target, Object[] providedArgs,
+ParameterModifier[] modifiers, CultureInfo culture, String[] namedParams)
+at System.Type.InvokeMember(String name, BindingFlags invokeAttr, Binder
+binder, Object target, Object[] args)
+at Clarity.FSR.UI.Controls.WordControl.LoadDocument(String Title, String
+filename)
+at Clarity.FSR.UI.Forms.LayoutForm.ProcessWordContent(Int32 ObjID,
+String XmlData)
+at Clarity.FSR.UI.Editors.ObjectEdit.SetContentType(ContentType
+contentType)
+at Clarity.FSR.UI.Editors.ObjectEdit.HandleSectionObjectSelection
+(ObjectRow or, Int32 currentObjectID, Boolean isAdministrator)
+at Clarity.FSR.UI.Forms.LayoutForm.HandleSectionObjectSelection()
+at Clarity.FSR.UI.Forms.LayoutForm.InitControls(DataView dv)
+at Clarity.FSR.UI.Forms.LayoutForm.tlObj_AfterFocusNode(Object sender,
+NodeEventArgs e)
+at DevExpress.XtraTreeList.TreeList.RaiseAfterFocusNode(TreeListNode
+node)
+at DevExpress.XtraTreeList.TreeList.InternalSetFocusedRowIndex(Int32
+newFocusedRowIndex)
+at DevExpress.XtraTreeList.TreeList.set_FocusedRowIndex(Int32 value)
+at
+DevExpress.XtraTreeList.Handler.TreeListHandler.NodePressedState.ChangeSelection
+(RowInfo pressRowInfo)
+at DevExpress.XtraTreeList.Handler.TreeListHandler.NodePressedState.Init
+()
+at DevExpress.XtraTreeList.Handler.TreeListHandler.SetControlState
+(TreeListState state)
+at
+DevExpress.XtraTreeList.Handler.TreeListHandler.NormalState.OnPressNode()
+at DevExpress.XtraTreeList.Handler.TreeListHandler.NormalState.MouseDown
+(MouseEventArgs e, TreeListHitTest ht)
+at DevExpress.XtraTreeList.Handler.TreeListHandler.OnMouseDown
+(MouseEventArgs e)
+at DevExpress.XtraTreeList.TreeList.OnMouseDown(MouseEventArgs e)
+at System.Windows.Forms.Control.WmMouseDown(Message& m, MouseButtons
+button, Int32 clicks)
+at System.Windows.Forms.Control.WndProc(Message& m)
+at DevExpress.XtraEditors.Container.EditorContainer.WndProc(Message& m)
+at System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message&
+m)
+at System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+at System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg,
+IntPtr wparam, IntPtr lparam) 
+
+CAUSE
+This is a product issue.
+
+
+
+ENVIRONMENT
+FSR 6.6.0.454 up to 6.6.1.147
+
+
+
+DIAGNOSING THE PROBLEM
+Open an Excel object that contains a chart. Click the said chart and copy it (either right click and select "Copy", either by pressing Ctrl + C). Click a Word object. 
+
+
+
+RESOLVING THE PROBLEM
+The issue was confirmed by development and it will be fixed in a future release (the issue is present in FSR 6.6.1.147).
+
+
+
+
+
+HISTORICAL NUMBER
+ 3480

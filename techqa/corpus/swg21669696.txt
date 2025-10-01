@@ -1,0 +1,40 @@
+Title: IBM Incorrect behavior occurs when you use Microsoft Internet Explorer 10 with IBM Business Process Manager (BPM) and IBM Business Monitor - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you use IBM Business Process Manager V7.5.1 Fix Pack 2, IBM Business Process Manager V8.0.1 Fix Pack 2, IBM Business Monitor V7.5.1 Fix Pack 2, or IBM Business Monitor V8.0.1 Fix Pack 2 with Microsoft Internet Explorer 10, you might experience problems with widgets and see messages about the browser being unsupported. 
+
+SYMPTOM
+For information about the symptoms of the problem, refer to the table of interim fixes in the Resolving the problem section.
+
+
+CAUSE
+The following products do not support the use of Microsoft Internet Explorer 10: 
+
+ * IBM Business Process Manager V7.5.1 Fix Pack 2 
+ * IBM Business Process Manager V8.0.1 Fix Pack 2 
+ * IBM Business Monitor V7.5.1 Fix Pack 2 
+ * IBM Business Monitor V8.0.1 Fix Pack 2
+
+RESOLVING THE PROBLEM
+The following interim fixes must be installed for IBM BPM and IBM Business Monitor to function properly when you use these products with Internet Explorer 10: 
+
+
+
+
+Version APAR Description IBM Business Process Manager 
+V7.5.1 Fix Pack 2 JR49603 [http://www.ibm.com/support/docview.wss?uid=swg1JR49603] WIDGETS DELETED FROM BUSINESS SPACE V7.5.1 FIX PACK 2 NOT PERMANENTLY DELETED JR50007 [http://www.ibm.com/support/docview.wss?uid=swg1JR50007] WHEN YOU LOG IN TO BUSINESS SPACE V7.5.1 FIX PACK 2 ON INTERNET EXPLORER 10, YOU ARE NOTIFIED THAT THE BROWSER VERSION IS NOT SUPPORTED JR50021 [http://www.ibm.com/support/docview.wss?uid=swg1JR50021] ISSUES WITH BUSINESS SPACE HUMAN TASK MANAGEMENT WIDGETS WHEN INTERNET EXPLORER 10 USED JR50022 [http://www.ibm.com/support/docview.wss?uid=swg1JR50022] ISSUES WITH BUSINESS PROCESS CHOREOGRAPHER EXPLORER WHEN INTERNET EXPLORER 10 IS USED AS THE BROWSER [http://www-01.ibm.com/support/docview.wss?uid=swg1JR50007]JR50050 [http://www.ibm.com/support/docview.wss?uid=swg1JR50050] NUMBER SPINNER ON A BUSINESS SPACE WIDGET IS UNUSABLE IN INTERNET EXPLORER 10 AND INTERNET EXPLORER 11 IBM Business Process Manager 
+V8.0.1 Fix Pack 2
+
+JR49085 [http://www.ibm.com/support/docview.wss?uid=swg1JR49085] UNABLE TO USE INTERNET EXPLORER 10 AS THE BROWSER WITH PROCESS PORTAL V8.0.1 FIX PACK 2 JR49086 [http://www.ibm.com/support/docview.wss?uid=swg1JR49086] UNABLE TO USE INTERNET EXPLORER 10 AS THE BROWSER WITH BUSINESS SPACE AND PROCESS PORTAL V8.0.1 FIX PACK 2 JR50021 [http://www.ibm.com/support/docview.wss?uid=swg1JR50021] ISSUES WITH BUSINESS SPACE HUMAN TASK MANAGEMENT WIDGETS WHEN INTERNET EXPLORER 10 IS USED JR50022 [http://www.ibm.com/support/docview.wss?uid=swg1JR50022] ISSUES WITH BUSINESS PROCESS CHOREOGRAPHER EXPLORER WHEN INTERNET EXPLORER 10 IS USED AS THE BROWSER [http://www-01.ibm.com/support/docview.wss?uid=swg1JR50007]JR50050 [http://www.ibm.com/support/docview.wss?uid=swg1JR50050] NUMBER SPINNER ON A BUSINESS SPACE WIDGET IS UNUSABLE IN INTERNET EXPLORER 10 JR50218 [http://www.ibm.com/support/docview.wss?uid=swg1JR50218] BUSINESS SPACE INTERIM FIXES JR49086 AND JR50050 RESULT IN PAGES NOT BEING LISTED IN INTERNET EXPLORER 10 OR 11 IBM Business Monitor V7.5.1 Fix Pack 2 JR49603 [http://www.ibm.com/support/docview.wss?uid=swg1JR49603] WIDGETS DELETED FROM BUSINESS SPACE V7.5.1 FIX PACK 2 NOT PERMANENTLY DELETED JR50007 [http://www.ibm.com/support/docview.wss?uid=swg1JR50007] WHEN YOU LOG IN TO BUSINESS SPACE V7.5.1 FIX PACK 2 ON INTERNET EXPLORER 10, YOU ARE NOTIFIED THAT THE BROWSER VERSION IS NOT SUPPORTED IBM Business Monitor V8.0.1 Fix Pack 2 JR49086 [http://www.ibm.com/support/docview.wss?uid=swg1JR49086] UNABLE TO USE INTERNET EXPLORER 10 AS THE BROWSER WITH BUSINESS SPACE AND PROCESS PORTAL V8.0.1.2 JR49087 [http://www.ibm.com/support/docview.wss?uid=swg1JR49087] IBM BUSINESS MONITOR V8.0.1 WIDGET ISSUES IN INTERNET EXPLORER 10 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR50007]JR50218 [http://www.ibm.com/support/docview.wss?uid=swg1JR50218] BUSINESS SPACE INTERIM FIXES JR49086 AND JR50050 RESULT IN PAGES NOT BEING LISTED IN INTERNET EXPLORER 10 OR 11 
+
+Notes:  * If you use Internet Explorer 10 and you have problems accessing or using IBM Process Center, the Process Admin Console, the Performance Admin console, or IBM Process Portal, refer to the following troubleshooting topic in the documentation: Resolving browser display problems with administration tools [http://www.ibm.com/support/knowledgecenter/search/Resolving%20browser%20display%20problems%20with%20administration%20tools] 
+ * When you use heritage coaches in Internet Explorer 10, you might experience layout and style issues. To avoid these issues, use another supported browser.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Process Application AIX, Linux, Linux zSeries, Solaris, Windows 8.0.1.2, 7.5.1.2 Business Integration IBM Business Process Manager Express Process Application Linux, Windows 8.0.1.2, 7.5.1.2 Business Integration IBM Business Monitor General AIX, Linux, Solaris, Windows 8.0.1.2, 7.5.1.2 
+PRODUCT ALIAS/SYNONYM
+ BPM

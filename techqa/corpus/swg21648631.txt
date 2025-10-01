@@ -1,0 +1,22 @@
+Title: IBM How do I update 7.6 RRX libraries for 8.0.1 use in IBM Datacap Taskmaster Capture? - United States
+
+Text:
+updating custom scripts; script; update; custom; RRX; 7.6 scripts TECHNOTE (FAQ)
+
+QUESTION
+ 7.6 libraries do not seem to work when the application was migrated to 8.0.1. How do I update custom Datacap 7.6 RRX libraries so they will work with 8.0.1? 
+
+CAUSE
+RRX extensions in custom scripts cause issues in 8.0.1
+
+ANSWER
+In old customized scripts, the include tags at the top of the file specifies an extension for the RRX libraries that you want to pre-load. For example, <i=validaions.rrx/> would be in the 7.6 RRX files.
+
+In 8.0.1, many rrx files have been updated to a DLL.
+
+
+To resolve this issue, simply change old scripts from using the rrx extension to a dll extension in the 8.0.1/8.1.0 application (e.g. validations.rrx to validations.dll) . Or remove the extention completely. If there is no extension, it will look for a .dll first, and if it doesn't find it, it will look for the rrx file. Therefore, changing the include tag to <i=validations/> will resolve the issue as well.
+
+
+ 1. Search for custom actions put into your /dco_appname/rules folder. 
+ 2. Examine all of the RRX files there for the <i> tags, typically on the second or third line, and remove any extensions from file names.

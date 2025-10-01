@@ -1,0 +1,111 @@
+Title: IBM Collect MustGather data for IBM API Connect Toolkit - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Gather the following MustGather information for IBM Support to use in troubleshooting problems with IBM API Connect Toolkit. 
+
+ENVIRONMENT
+
+
+ * MustGather: IBM API Connect Version 5.0 [http://www.ibm.com/support/docview.wss?uid=swg22013512]
+
+RESOLVING THE PROBLEM
+The following information describes the basic documentation needed by IBM Support to investigate questions or problems when using IBM API Connect Developer Toolkit. 
+
+Please DO NOT send any confidential information from your company.
+
+If not yet done, please provide the information requested in the General MustGather to help IBM Support to collect all the data necessary to troubleshoot your problem. This will expedite problem resolution. 
+
+General MustGather Gathering general problem description information [http://www-01.ibm.com/support/docview.wss?uid=swg22005938#2] 
+
+In addition, please provide the information requested below, when applicable to your issue, to complete the data collection necessary to troubleshoot your problem. 
+
+Environment  * What is the Operating System you are using and what is the version? 
+ * Which Node.js runtime distribution are you using (Nodejs.org [https://nodejs.org/en/download/], IBM Node.Js SDK [https://developer.ibm.com/node/sdk/] or any other source)? 
+   Send a screen image of the last part of the result (for example from the environment variable) of the command: node -h 
+ * What are the versions of the following component installed on your machine 
+   (use the corresponding command to get the exact version installed on your system):  * node js (node -v / node --version) 
+    * npm (npm -v / npm --version) 
+    * java (java -version) 
+    * apic (apic --ext-version or apic -v / apic --version) 
+   
+   
+
+
+Gathering situation specific information For specific instructions related to problem(s) with the installation of the toolkit, the execution of commands from the CLI, the use of the Micro Gateway or DataPower Gateway, click on one of the specific sections below to get a listing of the documentation that the support team requires to diagnose your problem.
+
+API CONNECT TOOLKIT - INSTALLATION TROUBLESHOOTING 
+For every installation problem of the API Connect Developer Toolkit, please send us:
+
+
+ *  the npm log file called npm-debug.log. The npm-debug.log is usually in the folder where the install command was initiated (it can also be in the user profile home directory or the system tmp directory).
+   (Tip: if no npm-debug.log can be found, append the following " > toolkit-install.txt 2>&1 " to the end of the command). the exact npm command used to install the toolkit. the type of user (admin, non admin, etc...) that was running the installation command. 
+ *  
+   
+   
+   
+
+API CONNECT TOOLKIT - COMMAND LINE TROUBLESHOOTING
+For every issue while using the API Connect Toolkit command line interface (CLI) tell us:
+
+ * What is the action/purpose you are trying to achieve with the command line? 
+ * What command(s) have you run? 
+ * What is the current log-level set for your toolkit?  * 
+    * 
+    * 
+   
+   
+ * If the current log-level is not set to debug, please set it to debug.  * 
+    * debug
+    * 
+    * 
+    * 
+   
+   
+ * Once the log-level is set to debug, try running the command again. 
+   Share the apic.log from the following location: 
+   /Users/<username>/.apiconnect 
+
+Verify the command line usage in section Getting started with the developer toolkit command-line tool [https://www.ibm.com/support/knowledgecenter/SSMNED_5.0.0/com.ibm.apic.toolkit.doc/capim-toolkit-cli-getting-started.html] of the product documentation.
+
+
+
+
+ 
+
+API CONNECT TOOLKIT - TESTING WITH MICROGATEWAY TROUBLESHOOTING 
+For every problem related to the usage of the MicroGateway, follow the steps outlined in the document:
+Collect MustGather data for IBM API Connect MicroGateway [http://www.ibm.com/support/docview.wss?uid=swg22006449]
+
+
+
+
+ 
+
+API CONNECT TOOLKIT - TESTING WITH DATAPOWER GATEWAY TROUBLESHOOTING
+For every issue while using the API Connect Toolkit with IBM DataPower Gateway provide us with the version of the following:
+
+ * 
+ * Docker 
+ * Docker Compose 
+ * Docker for Linux®, MacOs or Windows®
+
+Verify that these versions meet the requirements outlined in section API Connect Toolkit - Testing with DataPower Gateway [https://www.ibm.com/support/knowledgecenter/en/SSMNED_5.0.0/com.ibm.apic.toolkit.doc/tapim_apic_test_with_dpdockergateway.html] of the product documentation, especially the Docker settings (the share of the C: drive is enabled, the Proxies information is correctly matching your company requirements and at least 4 GB RAM and 2 CPUs were allocated).
+
+
+
+
+
+How to submit diagnostic data to IBM Support After you have collected the preceding information, and the PMR is opened, you can exchanging information with IBM Technical Support for problem determination [http://www-01.ibm.com/support/docview.wss?uid=swg21153852]. 
+
+For more details see submit diagnostic data to IBM (ECuRep) [http://www-05.ibm.com/de/support/ecurep/index.html] and Enhanced Customer Data Repository (ECuRep) [https://www.ecurep.ibm.com/app/upload] secure upload.
+
+If you are using Service Request [https://www.ibm.com/support/servicerequest/](SR), update the PMR to indicate that data has been sent.
+
+
+
+
+
+Back to top

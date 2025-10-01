@@ -1,0 +1,152 @@
+Title: IBM PI24013: JAVA HEAP SIZE ISSUE WHEN USING JAQL ADHOC APPLICATION - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer receives the following error message when using a Jaql
+   Adhoc query app to pull a big table from a DBMS via JDBC
+   connection.
+   JVMDUMP039I Processing dump event "systhrow", detail
+   "java/lang/OutOfMemoryError" at 2014/08/07 15:54:23 - please
+   wait.
+   JVMDUMP032I JVM requested Heap dump using
+   '/opt/ibm/biginsights/jaql/bin/heapdump.20140807.155423.3658788.
+   0001.phd' in response to an event
+   JVMDUMP010I Heap dump written to
+   /opt/ibm/biginsights/jaql/bin/heapdump.20140807.155423.3658788.0
+   001.phd
+   JVMDUMP032I JVM requested Java dump using
+   '/opt/ibm/biginsights/jaql/bin/javacore.20140807.155423.3658788.
+   0002.txt' in response to an event
+   JVMDUMP010I Java dump written to
+   /opt/ibm/biginsights/jaql/bin/javacore.20140807.155423.3658788.0
+   002.txt
+   JVMDUMP032I JVM requested Snap dump using
+   '/opt/ibm/biginsights/jaql/bin/Snap.20140807.155423.3658788.0003
+   .trc' in response to an event
+   JVMDUMP010I Snap dump written to
+   /opt/ibm/biginsights/jaql/bin/Snap.20140807.155423.3658788.0003.
+   trc
+   JVMDUMP013I Processed dump event "systhrow", detail
+   "java/lang/OutOfMemoryError". encountered an exception during
+   the evaluation of a statement
+   java.lang.OutOfMemoryError: Java heap space
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set the java heap setting for the jaql process using the
+   following command and then run it in jaqlshell.
+   
+   export JAQL_JAVA_OPTS="-Xmx2048m"
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  See Error Description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem is fixed in Version 3.0.0.1 and later fix packs
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI24013
+   
+   
+ * REPORTED COMPONENT NAME
+   INFO BIGINSIGHT
+   
+   
+ * REPORTED COMPONENT ID
+   5725C0900
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-17
+   
+   
+ * CLOSED DATE
+   2015-07-24
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INFO BIGINSIGHT
+   
+   
+ * FIXED COMPONENT ID
+   5725C0900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R300 PSY
+   UP

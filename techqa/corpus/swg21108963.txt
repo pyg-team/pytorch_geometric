@@ -1,0 +1,24 @@
+Title: IBM How to setup the CCFLAGS - United States
+
+Text:
+how to; setup; precedence; CCFLAGS; onmode -f; environment; variable; onconfig TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document will describe how to set the CCFLAGS. 
+
+RESOLVING THE PROBLEM
+The CCFLAGS is an internal tool that is used for debugging various processes within the Informix database server. The CC stands for consistency check.
+A CCFLAGS is an integer value in a hexadecimal format that can be passed to the engine in any of the ways discussed below. Each CCFLAGS will cause a different effect in the engine.
+
+There are three ways to set or unset CCFLAGS:
+
+
+
+ * Set CCFLAGS in the ONCONFIG file and stop and restart the engine. To unset the CCFLAGS, you need to remove the value from the ONCONFIG file and stop and restart the engine.
+
+ * Set the CCFLAGS environment variable and stop and restart the engine. The environment variable takes precedence over the ONCONFIG parameter setting. Unseting the CCFLAGS environment variable will unset it.
+
+ * Use the onmode command to set or unset the CCFLAGS without taking the database server down. The onmode command takes precedence over the environment variable settings and ONCONFIG parameter setting.
+
+
+The CCFLAGS settings can impact operating system resource and Informix server performance. Please contact IBM Technical support before considering CCFLAGS for your environment.

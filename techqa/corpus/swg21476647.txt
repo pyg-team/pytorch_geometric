@@ -1,0 +1,53 @@
+Title: IBM How can I change the language of my Deployment Manager (PEM) installed on my PC? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I change the language of my Deployment Manager (PEM) installed on my PC? 
+I installed SPSS Collaboration And Deployment Services Deployment Manager (PEM) Windows 32 Multilingual on my pc. 
+
+ANSWER
+Change the local settings on your pc via control panel > regional and language options > regional options tab > standards and formats panel > select the appropriate setting (for example English) and click on the apply button. 
+
+If you don't want the change these settings on your PC , add the line osgi.nl=<language> to the config.ini file of your deployment manager installation (for a 4.2 installation this file is located by default at C:\Program Files\IBM\SPSS\Collaboration and Deployment Services\4.2\Deployment Manager\configuration). 
+To activate this change you have to close and restart your Deployment Manager.
+
+Note: Replace the <language> value of the osgi.nl parameter by the language of your choice. For example osgi.nl=en_EN will set the language to English. 
+
+
+Below you find a part of the osgi.ini file illustrating how it could look like. The # at the first position means that the line is put in comment. 
+.....
+# The comma-separated list of locations to search for the splash screen file (splash.bmp).
+# For each list element a subdirectory structure based on the pattern nl/<locale> is searched.
+# The system binds to the first matching file. There is no default value.
+osgi.splashPath = platform:/base/plugins/com.spss.mgmt.common.application.product
+
+# The location of the splash screen file. If this value is set at system startup it is used 
+# in favour of the osgi.splashPath searching outlined above. If the value is not set 
+# the searching is done and this key is bound to the result of the search.
+#osgi.splashLocation =
+
+#language settings
+osgi.nl=fr_FR
+#osgi.nl=en_EN
+
+# The comma-separated list of bundles which are automatically installed and optionally started
+# once the system is up and running. Each entry if of the form
+# <URL | simple bundle location>[@ [":start"]] 
+# If the startlevel is omitted then the framework will use the default start level for the bundle. 
+# If the "start" tag is added then the bundle will be marked as started after being installed. 
+# Simple bundle locations are interepreted as relative to the framework's parent directory. 
+# The startlevel indicates the OSGi start level at which the bundle should run. 
+# If this value is not set, the system computes an appropriate default. 
+osgi.bundles=org.eclipse.equinox.common@2:start, org.eclipse.update.configurator@3:start, org.eclipse.core.runtime@start 
+.... 
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 92520

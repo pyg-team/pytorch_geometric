@@ -1,0 +1,64 @@
+Title: IBM Security Network Protection Manager 1.0 release notes - United States
+
+Text:
+release notes TECHNOTE (FAQ)
+
+QUESTION
+ What are the new features and known issues included in IBM Security Network Protection Manager 1.0 release? 
+
+ANSWER
+Description 
+
+ * 
+ * 
+
+
+Features
+
+ * Advanced searching and faceted filtering
+ * 
+ * 
+ * 
+ * 
+ * OneClick policy editing
+ * 
+ * 
+ * 
+ * 
+ * Agent Status
+ * 
+ * 
+ * 
+ * 
+ * Notifications
+ * 
+ * 
+
+
+Compatibility 
+
+Review the following requirements before you install and use IBM Security Network Protection Manager 1.0: 
+ *  IBM Security SiteProtector System 3.1.1 with Database Service Pack (DBSP) 3.1.1.41 or newer VMWare ESXi 5.5 and newer Google Chrome 51 and newer 
+
+
+Installation and Configuration
+
+ * 
+ * 
+ * ftp://public.dhe.ibm.com/software/security/products/infrastructure_protection/NetworkProtectionManager/docs/1.0.0/
+
+
+Known issues 
+
+ * 
+
+
+Copyright statement
+
+ * 
+
+
+
+
+
+[https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21990088&aid=1] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21990088&aid=2] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21990088&aid=3] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21990088&aid=4] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21990088&aid=5] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21990088&aid=6] [http://ibm.biz/ContactSecSupport]

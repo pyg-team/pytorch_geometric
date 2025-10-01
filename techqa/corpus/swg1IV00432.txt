@@ -1,0 +1,180 @@
+Title: IBM IV00432: TADDM INSTALLER PROMPTS FOR INCORRECT ORACLE DRIVER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TADDM 7.2.1 Installer does not prompt for the correct level of
+   Oracle JDBC driver.  For a fresh install, the GUI presents a
+   prompt that asks user for the location of ojdbc14.jar, which
+   does not work with Oracle 11 and TADDM  7.2.1.
+   
+   For the fresh install, the installer window that prompts for the
+   Oracle driver should be changed to something that says "Specify
+   the path to the correct Oracle JDBC Driver used by your Oracle
+   database"   There should be help text adding that the jars are
+   different for Oracle 10 to 11, or it could point to the Install
+   guide which lists the JDBC drivers needed for Oracle 10 and 11.
+   
+   For an upgrade install, the problem is complicated by the fact
+   that the older Oracle 10 JDBC driver may have worked for Oracle
+   11 on 7.2, but now does not work on 7.2.1.  So, there needs to
+   be a prompt and some kind of check performed of the Oracle
+   driver level, to make sure it is correct for the level of Oracle
+   database.  If an automated check is not feasible, then a warning
+   screen with advice on which JDBC driver levels are needed for
+   Oracle 10 and 11.
+   
+   This is a high severity defect because the upgrade installer
+   will run successfully, even with a  back level Oracle JDBC
+   driver, and user will not see any problems for a while.  When
+   problems occur, it is very difficult to diagnose back to the
+   root cause of incorrect JDBC driver level.
+   
+   
+   
+   
+   The following information should be gathered to help determine
+   if this defect is the cause of the issue:
+   
+   output from ls -lR of dist/  directory
+   
+   the following sqlplus command will provide the exact db version:
+   select * from v$version;
+   
+   output ls -l $ORACLE_HOME/jdbc/lib from Oracle database server
+   (jdbc driver will be compared to that installed on TADDM)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the same jdbc driver as found on the Oracle Server under
+   $ORACLE_HOME/jdbc/lib
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Release 7.2.1 installer prompts user for path to Oracle JDBC
+   driver, and specifies the name of the driver file: ojdbc14.jar.
+   The named JDBC driver file is only appropriate for Oracle 10.
+   For Oracle 11, ojdbc5.jar should be used.
+   
+   The installer has been changed to prompt user for "the path to
+   the Oracle JDBC Driver used by your Oracle database."
+   
+   Please refer to Install Guide for instructions describing which
+   JDBC driver to use with an Oracle database.
+   
+   http://publib.boulder.ibm.com/infocenter/tivihelp/v46r1/topic/co
+   m.ibm.taddm.doc_721fp1/InstallGuide/c_cmdb_dbswreqs.html [http://publib.boulder.ibm.com/infocenter/tivihelp/v46r1/topic/com.ibm.taddm.doc_721fp1/InstallGuide/c_cmdb_dbswreqs.html]
+   
+   Appropriate Oracle JDBC drivers can be copied to the TADDM
+   server from the Oracle server in path $ORACLE_HOME/jdbc/lib.
+   Oracle JDBC drivers may also be downloaded from:
+   
+   
+   http://www.oracle.com/technetwork/database/features/jdbc/index-0
+   91264.html [http://www.oracle.com/technetwork/database/features/jdbc/index-091264.html]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   | Fix Pack | 7.2.1.0-TIV-ITADDM-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV00432
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   721
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-13
+   
+   
+ * CLOSED DATE
+   2011-08-29
+   
+   
+ * LAST MODIFIED DATE
+   2012-01-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * FIXED COMPONENT ID
+   5724N5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R721 PSY
+   UP

@@ -1,0 +1,33 @@
+Title: IBM LWJDBC Oracle: How to avoid DST (Daylight Saving Time) problems based on old session time zones - United States
+
+Text:
+Extensions; Adapters; STERLINGHTG TECHNOTE (FAQ)
+
+QUESTION
+ LWJDBC Oracle: How to avoid DST (Daylight Saving Time) problems based on old session time zones 
+
+ANSWER
+
+
+Queries which compare column entries (timestamp w/o time zone) with system time of the DB server could lead to problems after changing the DST settings.
+
+Solutions:
+
+- Change the table to store the time zone OR
+
+- restart GIS after time change OR
+
+- Use following commands to refresh the idle connection of the pool: 
+
+<install_dir>bin\opscmd -nnode1 -cREFRESHPOOL -ppoolname=<Pool> (Windows)
+<install_dir>./bin/opscmd -nnode1 -cREFRESHPOOL -ppoolname=<Pool> (Unix)
+
+ 
+
+ 
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling B2B Integrator Adapters 
+HISTORICAL NUMBER
+ HTG1870

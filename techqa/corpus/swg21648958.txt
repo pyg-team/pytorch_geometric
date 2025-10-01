@@ -1,0 +1,23 @@
+Title: IBM Disks needed to install Rational Developer for i 9.0.0 RPG and Cobol Development Tools - United States
+
+Text:
+download; IBM i; RPG; Cobol; Passport Advantage; Xtreme Leverage; RDi 9.0; install; disks TECHNOTE (FAQ)
+
+QUESTION
+ What disks need to be downloaded to install IBM Rational Developer for i 9.0.0 RPG and Cobol Development Tools only from Passport Advantage? 
+
+CAUSE
+There are four disks each over 1 GB each listed as the core installation disks. 
+Not all of these disks are required if installing only the IBM i RPG and Cobol Development Tools.
+
+
+ANSWER
+Note: This information only applies to IBM Rational Developer for i 9.0.0. IBM Rational Developer for i 9.0.1 and 9.1 have different packaging. 
+
+Download Disks 1 and 2 labelled include the IBM i RPG and Cobol Development Tools: 
+
+ * IBM Rational Developer for i v9.0 Core Product Install 1 Multiplatform Multilingual(CIMP8ML) 
+ * IBM Rational Developer for i v9.0 Core Product Install 2 Multiplatform Multilingual(CIMP9ML)
+
+
+Download the RDi 9.0 IBM i RPG and Cobol Development Tools license from the Rational License Key Center at http://www-01.ibm.com/software/rational/support/licensing/ [http://www-01.ibm.com/software/rational/support/licensing/], if you downloaded the product from Passport Advantage. Apply the license to the product using the IBM Installation Manager.

@@ -1,0 +1,52 @@
+Title: IBM Launching Rational Rhapsody with dongle license keys results in "Flexnet error -9,57 invalid host" error - United States
+
+Text:
+PM91954; Dongle; Invalid; Host; Flexnet; FlexLM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to launch IBM Rational Rhapsody 8.0.3 with dongle license keys results in the error "Flexnet error -9,57 invalid host". 
+
+SYMPTOM
+The error message pops up when you are launching Rational Rhapsody 8.0.3. 
+
+The full error message:
+
+License Error : Invalid Host. 
+
+The hostid of this system does not match the hostid specified in the license file, 
+
+Feature: dev_ed 
+
+Hostid: FLEXID=123456789 
+
+License path: C:\IBM\license.dat; 
+
+FLEXnet Licensing error:-9,57 
+
+For further information, refer to the FLEXnet Licensing documentation, available at "www.flexerasoftware.com" 
+
+
+Image:
+[/support/docview.wss?uid=swg21642090&aid=1] [/support/docview.wss?uid=swg21642090&aid=1]
+
+Note: The same error message also appears when there is a real conflict with dongle ID or dongle driver. In this case, the dongle ID and dongle driver software is installed correctly and working with other Rational Rhapsody versions.
+
+
+CAUSE
+This issue was identified as a product defect in Rational Rhapsody 8.0.3.
+
+
+RESOLVING THE PROBLEM
+The defect has been resolved in Rational Rhapsody Fix Pack 8.0.4 [http://www.ibm.com/support/docview.wss?uid=swg24035609] 
+
+ 
+
+WORKAROUND: 
+
+Use one of the following types of license keys: 
+
+ * node locked (IBM Rational Rhapsody AUTH USER LIC) 
+   
+   or
+   
+ * floating (IBM Rational Rhapsody FLOATING LIC)

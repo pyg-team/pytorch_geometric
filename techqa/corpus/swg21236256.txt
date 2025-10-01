@@ -1,0 +1,49 @@
+Title: IBM Login to the ITCAM browser using 'root' instead of another id. - United States
+
+Text:
+ITCAM login GUI am-db2.sql root browser db2 users login TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Is it possible to login to the ITCAM browser using 'root' user-id. 
+
+RESOLVING THE PROBLEM
+If you want to use the 'root' id to login to the ITCAM browser on AIX (or any windows platform), you first need to create the id in the "users" table in the "octigate" database. The root id is not recommended to be used, ideally its best to use "amuser" or another admin id. 
+
+However, you can use "root" as long as you insert the id into the "users" tables. Do the following steps: 
+
+* go to $MS_HOME/etc 
+
+* make a copy of the "am-db2.sql" script. 
+
+* edit the "am-db2.sql" and search for "insert into USERS" in the script 
+
+* you need to add another line in here in with the "root" values so do something like this: 
+
+insert into USERS values (3,'root', 'Am', 'Administrator', 'active', 'root', .........) 
+
+The easiest way to do this would be to cut-n-paste the other lines and then just change the values directly. 
+
+* also change the line following the "insert" clause to reflect the new entry:
+insert into TABLEKEYS values ('USERS', 3); 
+
+Once you have made these changes, save your script. 
+
+Now you need to drop the tables and recreate them again. You have to recreate the tables with the right permissions. So, connect to the database as follows: 
+
+$> db2 connect to octigate user <user-name> using <password> 
+
+$> db2 -tvf am-db2.sql 
+
+This will drop all the tables and recreate again with the right permisions and the right tables. 
+
+Restart your MS server and then you should be able to login to the ITCAM browser with "root" id.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for Application Diagnostics ITCAM for APPLICATION DIAGNOSTICS Managing Server AIX, AIX 6.1, HP-UX, Linux, Solaris, Windows 7.1 
+PRODUCT ALIAS/SYNONYM
+ ITCAM for AD ITCAM for Application Diagnostics WSAM ITCAM4AD WAS

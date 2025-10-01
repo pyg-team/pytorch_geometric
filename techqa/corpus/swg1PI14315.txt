@@ -1,0 +1,146 @@
+Title: IBM PI14315: [wi 301864] ADMIN USER SHOULD NOT BE ABLE TO EDIT OTHER USERS' PRIVATE QUERIES - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Team Concert 5.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037463]
+Rational Team Concert 4.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24037746]
+Rational Team Concert 5.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24037765]
+Rational Team Concert 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24038338]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Issue : Users should not be able to edit other users queries
+   unshared queries
+   
+   Steps to Reproduce:
+   1.  From web UI, open a Dahsboard in a Project Area
+   2.  click on any query which was created by another user
+   3.  edit and save > it is saved successfully even if this query
+   is not shared <<<<< deviation
+   
+   Expected is not to allow edit by other users.
+   
+   Jazz.net Work Item URL :
+   https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo]
+   rkItem/301864
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * all users/environments affected                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * even though I have admin privileges, I should not be able to *
+   * modify someone else's queries at least in the case where     *
+   * they have not been shared, or that I have not explicitly     *
+   * been given permission to do so by the owner of the query. It *
+   * make more sense that the admin create a copy of the query    *
+   * and edit the copy, not the original.                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in code; verified and delivered in Rational Team Concert
+   version 5.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI14315
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * REPORTED COMPONENT ID
+   5724V0400
+   
+   
+ * REPORTED RELEASE
+   402
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-24
+   
+   
+ * CLOSED DATE
+   2014-06-04
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * FIXED COMPONENT ID
+   5724V0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

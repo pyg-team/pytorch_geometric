@@ -1,0 +1,137 @@
+Title: IBM JR48205: START OF A BPD MUST BE REJECTED IF THE SNAPSHOT IS INACTIVE - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.5.1.2-WS-BPM-IFJR48205 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=7.5.1.2-WS-BPM-IFJR48205&source=SAR]
+Version 8.5.0 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035702]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you start a BPD in an inactive snapshot, the snapshot is
+   silently made active.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  IBM BPM silently activates a snapshot if a BPD from this
+   snapshot is started. The correct behaviour is to allow running
+   instances in deactivated snapshots to run to completion, and to
+   prevent new instances in deactivated snapshots from being
+   started from the portal or by an API call. However, the Process
+   Designer should still be able to playback instances in
+   deactivated snapshots.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is/will be available for IBM BPM that rejects the start
+   of BPD instances in deactivated snapshots unless the request
+   originates in the Process Designer.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR48205
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-25
+   
+   
+ * CLOSED DATE
+   2015-03-12
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP
+   
+   
+ * R801 PSY
+   UP

@@ -1,0 +1,58 @@
+Title: IBM How to resolve a WebSphere Transformation Extender memory reallocation error on z/OS - United States
+
+Text:
+reallocation memory 0C1 abend TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to resolve a WebSphere Transformation Extender memory reallocation error on z/OS. 
+
+SYMPTOM
+When executing a WebSphere Transformation Extender (WTX) map, a 0C1 abend can occur with CEEDUMP and SYSDUMP log messages referencing: 
+
+ 
+
+Memory reallocation failed 
+
+CEE3201S The system detected an operation exception (System Completion Code=0C1). From entry point SetUpRDH 
+
+The termination of a thread was signaled due to an unhandled condition. 
+
+
+
+
+
+This condition can arise with any input file but is typically observed when processing large (several GB's) input files.
+
+
+CAUSE
+The z/OS operating system is not releasing unused memory resulting in fragmentation that prohibits sufficient contiguous blocks of memory to be allocated when needed.
+
+
+
+DIAGNOSING THE PROBLEM
+Review the JES output, SYSDUMP and/or CEEDUMP logs for messages similar to those described above.
+
+
+
+RESOLVING THE PROBLEM
+Add the following JCL to the JOB stream: 
+
+ 
+
+
+//CEEOPTS DD * 
+HEAPPOOLS64(ON) 
+HEAP64(150M,10M,FREE,1M,1M,FREE) 
+/* 
+
+
+Ensure your REGION size is set to 0M or large enough to process your data.
+
+HEAPPOOLS64(ON) specifies that the AMODE 64 heappools algorithm is used.
+
+HEAP64 controls the allocation of user heap storage for AMODE 64 applications and specifies how that storage is managed. Click on this HEAP64 [http://www-01.ibm.com/support/knowledgecenter/SSLTBW_2.1.0/com.ibm.zos.v2r1.ceea500/clheap64.htm] link to learn more about HEAP64.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WTX DataStage Mercator Ascential

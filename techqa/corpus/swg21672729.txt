@@ -1,0 +1,28 @@
+Title: IBM Display issues in InfoSphere Metadata Asset Manager after update - United States
+
+Text:
+imam81relnotes imam91relnotes imam113relnotes imam115relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrade or migration to a new release, or after installation of a patch, the Infosphere Metadata Asset Manager user interface exhibits display problems. 
+
+SYMPTOM
+The nature and location of issue may vary, but the issue is usually manifested as a problem with displaying certain elements of the user interface. The user interface may also fail to function as expected or display an unexpected client-side error. 
+
+Possible problems could be: 
+
+ * Bridge or connector parameters fail to display properly in the import wizard when you perform a new import or a reimport. 
+ * Error when browsing in the Assets to import parameter in the import wizard: [CDIMR3702E] Missing required parameter: channelSrvrId_ 
+
+
+CAUSE
+Web client code has been cached and is not refreshed properly.
+
+RESOLVING THE PROBLEM
+Press CTRL+F5 to reload the application. This should resolve the problem in most cases. If that does not work, explicitly clear the browser cache and then reload the application.
+
+
+To clear the browser cache: 
+
+ * For Firefox: From the History (or Tools) menu, select Clear Recent History. Select Everything for Time range to clear, and select Cache, then click Clear Now. 
+ * For Internet Explorer: From the Tools menu and from the Safety sub-menu in later versions, select Delete Browsing History. Select Temporary Internet Files, and click Delete.

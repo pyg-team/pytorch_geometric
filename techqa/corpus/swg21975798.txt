@@ -1,0 +1,56 @@
+Title: IBM Attempts to generate a report results in an "Invalid Keystore Format" error in IBM Rational DOORS Next Generation - United States
+
+Text:
+certificate; ssl; rrdg; RPE; reporting; keystore; cacerts TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to "Create and Print" and "Generate a Document Style Report" in IBM Rational DOORS Next Generation (RDNG) results in an "Invalid keystore format" in the rm.log and "Cannot initialize SSL" in the rrdg.log. 
+
+SYMPTOM
+The following are the errors that will show up in the rm.log and the rrdg.log file when the problem occurs. 
+
+rm.log
+
+2016-01-28 13:37:54,112 [ WebContainer : 8] ERROR ibm.rdm.fronting.server.rrs.publish.PublishService - com.ibm.rational.rpe.common.template.api.TemplateException: Could not load template https://SERVER:PORT/rm/publish/templateLibrary/printModuleBook. Error is: <Invalid keystore format>
+at com.ibm.rational.rpe.engine.core.CoreUtils.loadTemplateImpl(CoreUtils.java:108)
+
+
+
+rrdg.log
+
+2016-01-28 13:37:54,112 [ WebContainer : 8] DEBUG com.ibm.rational.rrdg - CRRPE3005E The template could not be loaded.
+Cannot initialize SSL.
+com.ibm.rational.rpe.common.utils.conn.ConnectionException: Cannot initialize SSL 
+
+
+CAUSE
+The cacerts file in the WebSphere installation is using the wrong format or is corrupted.
+
+<WAS_HOME>\AppServer\java\jre\lib\security\cacerts
+
+
+ENVIRONMENT
+The environment is deployed on WebSphere Application Server.
+
+
+
+DIAGNOSING THE PROBLEM
+The Rational Reporting for Document Generation (RRDG) feature in RDNG uses Rational Publishing Engine (RPE) for the features to generate reports and print PDF/Word documents. RPE expects a cacerts file in JKS format under the java lib\security directory. 
+
+Use the keytool command to determine the keystore format. The following is an example that pipes the output to a text file. 
+
+ C:\IBM\WebSphere\AppServer\java\jre\bin>keytool -list -v -keystore C:\IBM\WebSphere\AppServer\java\jre\lib\security\cacerts >> keystoreOutput.txt 
+
+There will be a prompt for the password for the keystore. The default password is 'changeit', but may be changed. 
+
+The expected output should show: 
+
+ Keystore type: jks 
+
+An output like the following error, or a different keystore type will cause the problem. 
+
+ java.io.IOException: Invalid keystore format
+
+
+RESOLVING THE PROBLEM
+To resolve the issue you can copy an out of the box version of the cacerts file from another WebSphere system.

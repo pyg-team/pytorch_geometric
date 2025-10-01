@@ -1,0 +1,142 @@
+Title: IBM IZ17149: STARTUP OF AGENT CAUSES LARGE AMOUNTS OF PAGE FAULTS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   Windows
+   
+   Problem Description:  During startup of the agent it makes three
+   separate calls for a 'Global' snapshot to determine the counters
+   needed to monitor.   These 'Global' calls are very expensive
+   Windows operations that take a long time to process.  To speed
+   up this startup the code should only request snapshots of the
+   counters it needs.  This reduces the amount of data that has to
+   be retrieved and processed.
+   
+   
+   Detailed Recreation Procedure:  On a heavy loaded system,
+   start the agent and monitor the CPU spike and length that is
+   occuring for the kntcma process.  This CPU spike is the
+   processing of the 'Global' snapshots.
+   
+   
+   Related Files and Output:
+     Indicate log location, trace levels used, command output,
+     configuration files, coredumps, etc.
+   
+   Approver:  TH
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Using the 'Global' parameter to read all perfmon counters caused
+   page faults.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR has been fixed and delivered in a limited availability
+   fix 6.1.0.6-TIV-ITM_WIN-LA0050. This maintenance delivery
+   vehicle is a limited availability patch and therefore is in a
+   "hidden directory." Level 2 Support can provide down load
+   instructions to you. Contact level 2 support at:
+   
+   http://www.ibm.com/software/sysmgmt/products/support/Contact_L2
+   Support.html [http://www.ibm.com/software/sysmgmt/products/support/Contact_L2Support.html]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ17149
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040W
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-07
+   
+   
+ * CLOSED DATE
+   2008-04-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * FIXED COMPONENT ID
+   5724C040W
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

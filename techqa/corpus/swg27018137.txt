@@ -1,0 +1,69 @@
+Title: IBM WebSphere ILOG JRules Business Rule Management System Version 7.1, hardware and software requirements - HP-UX on PA-RISC - United States
+
+Text:
+DSRdoc PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document lists the hardware and software requirements for WebSphere ILOG JRules BRMS V7.1 on the HP-UX operating system on PA-RISC platforms. 
+
+CONTENT
+This page describes the minimum product levels that must be installed before opening a problem report with the WebSphere ILOG JRules support team. Because other products frequently ship fixes, updates, and new releases, testing every configuration is not possible. In general, you can install and run with minor updates to supported products if those updates are forward compatible. 
+
+Supporting software (for example Databases) can run, but does not need to run, on the same computer or operating system where the product runs. For additional information: 
+
+ * Check supporting software requirements to determine whether the supporting software runs locally or is connected remotely to the product. 
+ * Refer to the document corresponding to the operating system on which you want to run the supporting software, see List of supported operating systems for WebSphere ILOG JRules Version 7.1. [http://www.ibm.com/support/docview.wss?rs=4043&uid=swg27018135]
+
+
+This document identifies supporting software that runs on the HP-UX operating system on PA-RISC platforms. This table applies to WebSphere ILOG Decision Validation Services, JRules (Rule Execution Server module) and Rule Team Server. 
+
+Operating Systems 
+(supported with a 32-bit platform) [/support/docview.wss?uid=swg27018137&amp;aid=1]  * HP-UX 11iv2 and future modification releases and fix packs
+   
+
+Hardware Requirements [/support/docview.wss?uid=swg27018137&amp;aid=1]  * PA-RISC processor 
+ * Minimum 1 GB physical memory; 2 GB recommended 
+ * DVD/CD-ROM drive
+
+[/support/docview.wss?uid=swg27018137&amp;aid=1] [/support/docview.wss?uid=swg27018137&amp;aid=1] [/support/docview.wss?uid=swg27018137&amp;aid=1] Application Server 
+
+[/support/docview.wss?uid=swg27018137&amp;aid=1]  * IBM WebSphere Application Server 6.1.0.21, 7.0 and future fix packs
+   (Base, Express, Network Deployment, Developers Edition)
+   IBM WebSphere Application Server product site [http://www.ibm.com/software/webservers/appserv/was/index.html] 
+ * IBM WebSphere Application Server Community Edition 2.1.1.3 and future fix packs 
+ * JBoss Application Server 4.2.3, 5.0.1, JBoss Enterprise Application Platform 4.3 and future fix packs
+   For JRules 7.1.1 and future fix packs, JBoss Application Server 5.1, JBoss Enterprise Application Platform 5.0 and future fix packs are supported 
+ * WebLogic Server 9.2.3, 10.0.1, 10.3.0, 11g R1 (10.3.1, 10.3.2, 10.3.3) and future fix packs
+   
+
+Process Server [/support/docview.wss?uid=swg27018137&amp;aid=1]  * WebSphere Process Server 6.1, 6.2, 7.0 or later patch release
+
+Java™ [/support/docview.wss?uid=swg27018137&amp;aid=1]  * HP SDK 5.0, 6.0
+
+[/support/docview.wss?uid=swg27018137&amp;aid=1] [/support/docview.wss?uid=swg27018137&amp;aid=1] [/support/docview.wss?uid=swg27018137&amp;aid=1] Databases [/support/docview.wss?uid=swg27018137&amp;aid=1]  * Apache Derby 10.4 [http://www.ibm.com/software/data/db2/support/db2zos/] [http://www.ibm.com/software/data/db2/support/db2zos/]and future modification releases and fix packs and the version shipped with supported WebSphere Application Server [http://www.ibm.com/software/data/db2/support/db2zos/] 
+ * IBM DB2 for LUW 8.2, 9.1, 9.5, 9.7 and future modification releases and fix packs IBM DB2 product site [http://www.ibm.com/software/data/db2/] [http://www.ibm.com/systems/i/software/db2/index.html] 
+ * MySQL 5.0 and future modification releases and fix packs 
+ * Oracle 10g, 11g and future modification releases and fix packs Oracle product site [http://www.oracle.com/database/index.html] 
+ * PostgreSQL 8.3 and future modification releases and fix packs 
+ * Sybase 12.5(reached its end of service life), 15 and future modification releases and fix packs
+   
+
+Java Database Connectivity (JDBC) Drivers [/support/docview.wss?uid=swg27018137&amp;aid=1]  * Derby JDBC Provider (XA) 10.4 [http://www.ibm.com/software/data/db2/support/db2zos/]or the version shipped with supported WebSphere Application Server [http://www.ibm.com/software/data/db2/support/db2zos/] 
+ * IBM DB2 Universal JDBC Provider (XA) from DB2 for z/OS 
+ * IBM DB2 Universal JDBC Provider (XA) 2.8 (type 4) [http://www.ibm.com/servers/eserver/iseries/toolbox/overview.html] 
+ * IBM Toolbox (XA) for Java/JTOpen JDBC Driver (type 4) 
+ * jTDS, jconnect Driver 
+ * JDBC3 Postgresql Driver 
+ * MySQL Connector/J 5.0 
+ * Oracle JDBC (XA) Driver 10g, 11g Oracle JDBC product site [http://www.oracle.com/technology/software/tech/java/sqlj_jdbc/index.html] 
+ * Microsoft SQL Server JDBC Driver 1.2 
+ * WebLogic Type 4 JDBC Driver for DB2 
+ * WebLogic Type 4 JDBC Driver for SQL Server
+
+[/support/docview.wss?uid=swg27018137&amp;aid=1] [/support/docview.wss?uid=swg27018137&amp;aid=1] [/support/docview.wss?uid=swg27018137&amp;aid=1] 
+Note: A modification release is a fix that delivers new functionality for a particular version and release. A fix pack is a cumulative collection of all fixes available up to that point for the base release. A fix pack can include fixes that have not been previously released and can span multiple products or components. A fix pack can be applied on top of any previously shipped maintenance to bring the system up to the current fix pack level. 
+
+WebSphere ILOG JRules Related information 
+WebSphere ILOG JRules Support Page [http://www.ibm.com/support/entry/portal/overview/software/websphere/websphere_ilog_jrules] 
+WebSphere ILOG JRules Documentation [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp] 
+WebSphere ILOG JRules Trial [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=swg-iwilogjt70&S_TACT=105AGX10&S_CMP=LP]

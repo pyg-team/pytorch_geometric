@@ -1,0 +1,36 @@
+Title: IBM Running Host On-Demand 11.0.8 as a local client using Oracle JRE 1.7.0_25 fails to launch - United States
+
+Text:
+HOD; java 7; 1.7.0_25; update 25 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to launch the IBM Rational Host On-Demand local client with Oracle JRE 1.7.0_25 results in a pop-up window indicating the application is blocked by security settings. 
+
+SYMPTOM
+The following pop-up displays when launching the Host On-Demand local client indicating 'Application Blocked by Security Settings': 
+
+image
+[/support/docview.wss?uid=swg21648495&aid=1] [/support/docview.wss?uid=swg21648495&aid=1]
+
+Additionally, the Java console might display the following exception:
+
+java.lang.NullPointerException
+at com.ibm.eNetwork.HOD.DetectClientPropertiesApplet.getCodeBase(Unknown Source)
+at com.ibm.eNetwork.HOD.DetectClientPropertiesApplet.init(Unknown Source)
+at com.sun.deploy.uitoolkit.impl.awt.AWTAppletAdapter.init(Unknown Source)
+at sun.plugin2.applet.Plugin2Manager$AppletExecutionRunnable.run(Unknown Source)
+at java.lang.Thread.run(Unknown Source)
+
+CAUSE
+When using Oracle's JRE 1.7 Update 25 you experience unexpected behavior when trying to launch Host On-Demand on local client. This behavior is a known issue introduced by changes in the Oracle's new JRE 1.7 Update 25. The issue is documented at Oracle 's JRE Update Release Notes [http://www.oracle.com/technetwork/java/javase/7u25-relnotes-1955741.html]. 
+
+
+
+RESOLVING THE PROBLEM
+Host On-Demand 11.0.8 cumulative refresh pack does not support Oracle's JRE 1.7.0_25. 
+
+The highest Oracle's JRE supported by Host On-Demand is 1.7.0_21. 
+
+
+RELATED INFORMATION
+#Update Release Notes Java 1.7 Update 25 [http://www.oracle.com/technetwork/java/javase/7u25-relnotes-1955741.html]

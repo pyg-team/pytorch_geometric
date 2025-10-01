@@ -1,0 +1,134 @@
+Title: IBM HE12170: The IBM Content Collector Email Connector for Lotus Domino does not flag a failed collection correctly in the event log - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.0.0.3-IBM-ICC-FP003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Collector&fixids=4.0.0.3-IBM-ICC-FP003&source=SAR]
+IBM Content Collector V4.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24039003]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the collection of documents from a Lotus Domino source fails,
+   the Email Connector logs an incorrect message.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If the collection of documents from a Lotus Domino source fails,
+    the Email Connector incorrectly logs this event:
+   
+       129 Collector "Collector" finished search started on
+   StartTime.
+   
+   However, the following message should be logged:
+   
+       132 Collector "Collector" halted run started on StartTime
+   due to the following error:
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with IBM Content Collector 4.0.0 Fix Pack 3, the Email
+   Connector logs the correct event.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12170
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-06
+   
+   
+ * CLOSED DATE
+   2014-12-30
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

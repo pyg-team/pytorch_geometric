@@ -1,0 +1,51 @@
+Title: IBM How do I set the Geolocation global parameter for web applications on iOS devices? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ My web application (dashboard) no longer supports the Refresh geolocation event action to set the Geolocation global parameter on my iOS device. Why is this occurring and how do I remedy this situation? 
+
+CAUSE
+Geolocation restrictions for security purposes in iOS 10 and later. 
+
+ANSWER
+To enable Geolocation functionality for your web application (dashboard) for iOS devices (iPad, MacBook, iPhone, etc.), complete one of the following actions: 
+
+ * Enable HTTPS instead of HTTP. This solution is preferable for public web applications because it provides a secure connection with content encryption.
+
+ * If your application is under development and enabling HTTPS is not an option, use Google Maps Geolocation API and enter the following code:
+
+ * var url = "
+ * https://www.googleapis.com/geolocation/v1/geolocate?key=
+ * <your_google_api_key>";
+ * 
+ * var request = new XMLHttpRequest();
+ * 
+ * var response = '';
+ * 
+ * request.open('POST', url, false);
+ * 
+ * request.onreadystatechange = function() {
+ * 
+ * if (request.readyState === 4) {
+ * 
+ * response = request.responseText;
+ * 
+ * if (response != '') {
+ * 
+ * var json = JSON.parse(response);
+ * 
+ * changeGlobalParameters('Geolocation_Global_Param"' + '('+json.location.lat+','+json.location.lng+')');
+ * 
+ * }
+ * 
+ * }
+ * 
+ * }
+ * 
+ * request.send(null);
+
+
+
+By using this script, you can set a global parameter from geolocation values.

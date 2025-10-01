@@ -1,0 +1,121 @@
+Title: IBM Recommended fixes for Jazz for Service Management - United States
+
+Text:
+jazzsm11relnotes; jazzsm1101relnotes; jazzsm1102relnotes; jazzsm1103relnotes; jazzsm1110relnotes; jazzsm1120relnotes; jazzsm1121relnotes; RecommendedFixesDocument; Recommended Updates PRODUCT DOCUMENTATION
+
+ABSTRACT
+ A comprehensive list of fixes for Jazz™ for Service Management versions, including any interim fixes between scheduled releases. 
+
+CONTENT
+
+
+TAB NAVIGATION
+ * Fix lists [http://www.ibm.com/support/docview.wss?uid=swg27038022]
+ * Recommended fixes
+
+
+
+
+Version 1.1 Integration service Fix Level Type Released Comments Base + Modification 3
+
+The following integration services have been deprecated in this release:
+
+ * Administration Services in Jazz for Service Management
+ * Security Services in Jazz for Service Management
+ * Registry Services in Jazz for Service Management
+
+ [javascript:void()]Important: Only fresh installations of Jazz for Service Management Version 1.1.3.0 will not include the deprecated services. Customers upgrading from earlier versions of Jazz for Service Management that utilize any of the deprecated services can upgrade without losing access to those services. For fresh installations that require one of more of the deprecated services, you must install Jazz for Service Management Version 1.1.2.1 and then upgrade to the latest version.
+
+Jazz for Service Management Version 1.1.3.0 1.1.3.0 Refresh release 15 June 2016 Jazz for Service Management Version 1.1.3.0 Download document [http://www.ibm.com/support/docview.wss?uid=swg24042191] 
+
+Fixed APARs: Fix list for 1.1.3.0 [http://www.ibm.com/support/docview.wss?uid=swg27038022]
+
+Base + Modification 2 + Fix Pack 1 Jazz for Service Management Version 1.1.2.1 1.1.2.1 Refresh release 28 August 2015 Jazz for Service Management Version 1.1.2.1 Download document [http://www-01.ibm.com/support/docview.wss?uid=swg24040467] 
+
+Fixed APARs: Fix list for 1.1.2, Fix Pack 1 [http://www.ibm.com/support/docview.wss?uid=swg27038022]
+
+Modification 2, Fix Pack 1 only
+Update the following integration services: 
+Administration Services, IBM Dashboard Application Services Hub, Registry Services, Security Services, and Reporting Services 1.1.2-TIV-JazzSM-multi-FP001 Available from IBM Fix Central [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Jazz+for+Service+Management&release=All&platform=AIX&function=fixId&fixids=1.1.2-TIV-JazzSM-multi-FP001&includeSupersedes=0]
+
+1.1.2.1 Fix Pack 28 August 2015  Jazz for Service Management Version 1.1.2.1 Readme [http://www-01.ibm.com/support/docview.wss?uid=swg24040447]
+
+Fixed APARs: Fix list for Jazz for Service Management Version 1.1 and fix packs [http://www.ibm.com/support/docview.wss?uid=swg27038022]
+
+Base + Modification 2 Jazz for Service Management Version 1.1.2.0 1.1.2.0 Refresh release 13 May 2015 Jazz for Service Management Version 1.1.2.0 Download document [http://www-01.ibm.com/support/docview.wss?uid=swg24039873] 
+
+Fixed APARs: Fix list for 1.1 Modification 2 [http://www.ibm.com/support/docview.wss?uid=swg27038022]
+
+Modification 2 only
+Update the following integration services: 
+Administration Services, IBM Dashboard Application Services Hub, Registry Services, and Security Services Note: Contains Tivoli Common Reporting Version 3.1 Fix Pack 2, which is the latest available fix pack.
+
+1.1.2.0-TIV-JazzSM-multi Available from IBM Fix Central [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Jazz+for+Service+Management&release=1.1&platform=All&function=fixId&fixids=1.1.2.0-TIV-JazzSM-multi&includeSupersedes=0]
+
+1.1.2.0 Modification 13 May 2015  Jazz for Service Management Version 1.1.2.0 Readme [http://www-01.ibm.com/support/docview.wss?uid=swg24039724]
+
+Fixed APARs: Fix list for Jazz for Service Management Version 1.1 and fix packs [http://www.ibm.com/support/docview.wss?uid=swg27038022]
+
+Modification 1 only
+Update the following integration services: 
+Administration Services, IBM Dashboard Application Services Hub, Registry Services, and Security Services Note: Contains Tivoli Common Reporting Version 3.1 Fix Pack 2, which is the latest available fix pack.
+
+1.1.1-TIV-JazzSM-multi Available from IBM Fix Central [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/Jazz+for+Service+Management&release=1.1&platform=All&function=fixId&fixids=1.1.1-TIV-JazzSM-multi&includeSupersedes=0&source=fc]
+
+1.1.1.0 Modification 10 September 2014  Jazz for Service Management Version 1.1.1.0 Readme [http://www.ibm.com/support/docview.wss?uid=swg24038326]
+
+Fixed APARs: Fix list for Jazz for Service Management Version 1.1 and fix packs [http://www.ibm.com/support/docview.wss?uid=swg27038022]
+
+Base + Fix Pack 3 Jazz for Service Management Version 1.1.0.3 1.1.0.3 Refresh release 4 April 2014 Jazz for Service Management Version 1.1.0.3 Download document [http://www.ibm.com/support/docview.wss?uid=swg24036990] 
+
+Fixed APARs: Fix list for 1.1 Fix Pack 3 [http://www.ibm.com/support/docview.wss?uid=swg27038022]
+
+Fix Pack 3 only
+Update the following integration services: 
+Administration Services, IBM Dashboard Application Services Hub, Registry Services, and Security Services Note: Contains Tivoli Common Reporting Version 3.1 Fix Pack 2, which is the latest available fix pack. It was refreshed since its original release in Jazz for Service Management Fix Pack 2.
+
+1.1.0-TIV-JazzSM-multi-FP003 Available from IBM Fix Central [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/Jazz+for+Service+Management&release=1.1&platform=All&function=fixId&fixids=1.1.0-TIV-JazzSM-multi-FP003&includeSupersedes=0&source=fc]
+
+1.1.0.3 Fix pack 28 March 2014 Fix Pack 3 Readme [http://www.ibm.com/support/docview.wss?uid=swg24036883]
+
+Fixed APARs: Fix list for Fix Pack 3 [http://www.ibm.com/support/docview.wss?uid=swg27038022]
+
+Base + Fix Pack 2 Jazz for Service Management Version 1.1.0.2 1.1.0.2 Refresh release 31 January 2014 Jazz for Service Management Version 1.1.0.2 Download document [http://www.ibm.com/support/docview.wss?uid=swg24035742] 
+
+Fixed APARs: Fix list for 1.1 Fix Pack 2 [http://www.ibm.com/support/docview.wss?uid=swg27038022]
+
+Fix Pack 2 only
+Update all integration services 1.1.0-TIV-JazzSM-multi-FP002 Available from IBM Fix Central [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/Jazz+for+Service+Management&release=1.1&platform=All&function=fixId&fixids=1.1.0-TIV-JazzSM-multi-FP002&includeSupersedes=0&source=fc]
+
+1.1.0.2 Fix pack 20 December 2013 Fix Pack 2 Readme [http://www.ibm.com/support/docview.wss?uid=swg24035741]
+
+Fixed APARs: Fix list for Fix Pack 2 [http://www.ibm.com/support/docview.wss?uid=swg27038022]
+
+Base + Fix Pack 1 Jazz for Service Management Version 1.1.0.1 1.1.0.1 Refresh release 13 September 2013 Jazz for Service Management Version 1.1.0.1 Download document [http://www.ibm.com/support/docview.wss?uid=swg24034990] 
+
+Fixed APARs: Fix list for 1.1 Fix Pack 1 [http://www.ibm.com/support/docview.wss?uid=swg27038022]
+
+Fix Pack 1 only
+Update all integration services 1.1.0-TIV-JazzSM-multi-FP001 Available from IBM Fix Central [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Jazz+for+Service+Management&release=1.1&platform=All&function=all]
+
+1.1.0.1 Fix pack 13 September 2013 Fix Pack 1 Readme [http://www.ibm.com/support/docview.wss?uid=swg24034990]
+
+Fixed APARs: Fix list for Fix Pack 1 [http://www.ibm.com/support/docview.wss?uid=swg27038022]
+
+Registry Services 1.1 1.1.0.0-Tivoli-JazzSM-Registry-multi-IF0001 [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Jazz+for+Service+Management&release=1.1&platform=All&function=fixId&fixids=+1.1.0.0-Tivoli-JazzSM-Registry-multi-IF0001&includeSupersedes=0] 1.1.0.0 Interim fix 8 April 2013 Fixed APARs: IV38038, IV38039, IV38040, IV38042, IV38043, IV38077
+
+Readme for iFix [http://www.ibm.com/support/docview.wss?uid=swg24034649]
+
+IBM Dashboard Application Services Hub 3.1 1.1.0.0-Tivoli-JazzSM-DASH-multi-LA0001 3.1.0.0 Limited availability interim fix 15 March 2013 Fixed APARs: IV38001, IV37974, IV37792, IV37789
+
+Contact IBM Technical Support for more information
+
+Base Jazz for Service Management Version 1.1 1.1.0.0 Base release 8 March 2013 Jazz for Service Management Version 1.1 Download document [http://www.ibm.com/support/docview.wss?uid=swg24034360] Additional information Jazz for Service Management Version 1.1.1.0 documentation [http://www.ibm.com/support/knowledgecenter/SSEKCU_1.1.1.0/com.ibm.psc.doc_1.1.1.0/psc_ic-homepage.html]
+
+Download DB2 Fix Packs by Version for DB2 for Linux, Unix and Windows [http://www.ibm.com/support/docview.wss?uid=swg27007053]
+
+Recommended fixes for WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+
+Connect, learn, and share with the Jazz for Service Management Community Jazz for Service Management has an active community that can provide you with additional resources. Browse and contribute to the forums and the blog. Review the wiki on topics such as best practices. You can also learn more about upcoming releases, provide feedback, or suggest enhancements.
+See the Jazz for Service Management community [https://www.ibm.com/developerworks/servicemanagement/jazzsm/index.html] at Service Management Connect.

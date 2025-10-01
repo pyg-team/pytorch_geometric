@@ -1,0 +1,30 @@
+Title: IBM How to change field labels "User Name" and "Password" on login.jsp page - United States
+
+Text:
+TPAECUSTOMIZATION; TPAEUI TECHNOTE (FAQ)
+
+QUESTION
+ How can we change the field labels "User name" to desired label e.g."LDAP User
+Name" and "Password: " to "LDAP Password" on the login page? 
+
+ANSWER
+You can do this via the front end application. Try and do the following steps:
+1. Go To – System Configuration – Platform Configuration - 
+
+Database Configuration 
+
+2. Select Action - Message 
+
+3. Filter for the following Message Group= login and Message Key = 
+
+username (do the same for password) 
+
+4. Edit the Value to your desired value. 
+
+[/support/docview.wss?uid=swg21978512&aid=1] [/support/docview.wss?uid=swg21978512&aid=1] 
+
+5. Save then logout of Maximo. Verify if the desired value is displayed. 
+
+ 
+
+[/support/docview.wss?uid=swg21978512&amp;aid=2]

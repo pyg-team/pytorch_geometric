@@ -1,0 +1,86 @@
+Title: IBM How to set environment variables in InfoSphere DataStage? - United States
+
+Text:
+evironment variable parameter TECHNOTE (FAQ)
+
+QUESTION
+ Sometimes IBM technical support requests to set specific environment variables for resolution or diagnosis of DataStage issue. Can you show detailed procedure for defining an environment variable in InfoSphere DataStage? 
+
+ANSWER
+DataStage environment variables can be set in 3 levels, DataStage instance level, DataStage project level and DataStage job level, from lowest to highest precedence. 
+
+* How to set an environment variable in DataStage instance level 
+
+- In Unix and Linux, set the environment variable in $DSHOME/dsenv file as below. 
+
+ * 
+ * 
+ * export MY_ENV_VAR
+
+
+And start a fresh telnet session as the DataStage Administrator user, e.g., dsadm, source the dsenv file, and then restart the DataStage daemon as follows.  * 
+ * 
+ * bin/uv -admin -stop # N.B. make sure no active DataStage session is there before running this command. 
+ * bin/uv -admin -start # Wait about 30 seconds before running this so that the engine services stop
+
+
+- In Windows, set the variable as a Windows System Environment Variable. 
+
+ * 
+ * 
+
+
+
+Additional note: if the environment variable is supposed to affect Common Connector Access Service, the ASB Agents must be restarted too. 
+
+ 
+
+ 
+
+* How to set an environment variable in DataStage project level 
+
+In the DataStage Administrator client, open the "Project Properties" window, click "Environment..." button to open "Environment Variables" dialog box. 
+
+To change an already defined variable, select and edit it in the right pane. 
+
+To define a new variable, choose "User Defined" category in the left pane, and add it by editing the last blank line of the right pane.
+[/support/docview.wss?uid=swg21648569&aid=1] [/support/docview.wss?uid=swg21648569&aid=1]
+
+Click OK.
+
+Additional note: the change will affect all the jobs in the project running thereafter without any job modification.
+
+
+
+* How to set an environment variable in DataStage job level 
+
+In the DataStage Designer, open the job that you want to define environment variables as job parameters for. Open the "Job Properties" window and select Parameters tab, click "Add Environment Variable..." button.
+[/support/docview.wss?uid=swg21648569&aid=2] [/support/docview.wss?uid=swg21648569&aid=2] 
+
+ 
+
+Choose an environment variable you want to override, or click (New...) to define a new environment variable.
+[/support/docview.wss?uid=swg21648569&aid=3] [/support/docview.wss?uid=swg21648569&aid=3]
+
+Enter the variable name and prompt in "Create new environment variable" dialog box, then click OK.
+[/support/docview.wss?uid=swg21648569&amp;aid=4]
+
+Click the newly added variable in User Defined category.
+[/support/docview.wss?uid=swg21648569&aid=5] [/support/docview.wss?uid=swg21648569&aid=5]
+
+Set the required value in the Default Value column.
+[/support/docview.wss?uid=swg21648569&aid=6] [/support/docview.wss?uid=swg21648569&aid=6]
+
+Additional note: 
+
+ * The environment variables defined in DataStage Administrator or Designer are stored in <Project Directory>/DSParams file. 
+ * A common mistake in defining an environment variable job parameter is trying to add it by editing the Parameters grid. But the job parameter with name MY_ENV_VAR is different from the environment variable MY_ENV_VAR. An environment variable appears with a $ prefix in Job Properties window. 
+ * The environment variable set in job level takes precedence over the one set in project level which precedes the instance level setting. 
+ * Actual environment variable settings a job took can be found in the "Environment variable settings:" log item of the job log. 
+ * Information Server components may have component specific method for environment variable setting. For example, see technote 1408720 "How to turn on RFC Tracing for SAP R/3 and BW Packs for DataStage [http://www.ibm.com/support/docview.wss?uid=swg21408720]".
+
+RELATED INFORMATION
+ Configuring the dsenv file [http://pic.dhe.ibm.com/infocenter/iisinfsv/v9r1/topic/com.ibm.swg.im.iis.ds.parjob.tut.doc/install/config_dsenv_file.html]
+Setting environment variables [http://pic.dhe.ibm.com/infocenter/iisinfsv/v9r1/topic/com.ibm.swg.im.iis.ds.admin.doc/topics/t_daclref_Setting_Environment_Variables.html]
+Adding environment variables to your jobs [http://pic.dhe.ibm.com/infocenter/iisinfsv/v9r1/topic/com.ibm.swg.im.iis.ds.design.doc/topics/t_ddesref_Environment_Variables_in_Parallel_Jobs.html]
+Starting and stopping InfoSphere Information Server eng [http://pic.dhe.ibm.com/infocenter/iisinfsv/v9r1/topic/com.ibm.swg.im.iis.productization.iisinfsv.migrate.doc/topics/a_start_stop_ds_server.html]

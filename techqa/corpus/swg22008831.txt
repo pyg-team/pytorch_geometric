@@ -1,0 +1,92 @@
+Title: IBM Upgrading to IBM Sterling B2B Integrator 5.2.6.3 fails with a database error - United States
+
+Text:
+upgrade; 5.2.6.3; SI ; SBI; failed; db; error SQLCODE=-670; SQLSTATE=54010; SQLERRMC=4005 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Upgrading IBM Sterling B2B Integrator (SBI) from 5.2.4.2 to 5.2.6.3 fails with database(DB) related errors 
+
+SYMPTOM
+The below error appears in Installservice.log
+
+[saneSqlExec] Executing resource: /si/SterlingIntegrator/repository/scripts/EFrame_TableChanges.sql
+[saneSqlExec] Failed to execute: ALTER TABLE CERTS_AND_PRI_KEY ADD RAW_STORE_NEW VARCHAR (255) DEFAULT ' ' 
+/si/SterlingIntegrator/properties/entityDeployer.xml:811: The following error occurred while executing this line:
+/si/SterlingIntegrator/properties/entityDeployer.xml:791: com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: SQLCODE=-670, SQLSTATE=54010, SQLERRMC=4005;USERSPACE1, DRIVER=4.11.77
+at org.apache.tools.ant.ProjectHelper.addLocationToBuildException(ProjectHelper.java:508)
+at org.apache.tools.ant.taskdefs.MacroInstance.execute(MacroInstance.java:397)
+at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)
+at sun.reflect.GeneratedMethodAccessor5.invoke(Unknown Source)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:56)
+at java.lang.reflect.Method.invoke(Method.java:620)
+at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:106)
+at org.apache.tools.ant.Task.perform(Task.java:348)
+at org.apache.tools.ant.Target.execute(Target.java:357)
+at org.apache.tools.ant.Target.performTasks(Target.java:385)
+at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1337)
+at org.apache.tools.ant.Project.executeTarget(Project.java:1306)
+at com.sterlingcommerce.woodstock.install.deployer.AntDeployer.executeScript(AntDeployer.java:273)
+at com.sterlingcommerce.woodstock.install.deployer.AntDeployer.deploy(AntDeployer.java:217)
+at com.sterlingcommerce.woodstock.install.deployer.AntDeployer.execute(AntDeployer.java:213)
+at sun.reflect.GeneratedMethodAccessor34.invoke(Unknown Source)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:56)
+at java.lang.reflect.Method.invoke(Method.java:620)
+at com.sterlingcommerce.woodstock.install.InstallSIBootstrapper.instanciateAndRun(InstallSIBootstrapper.java:376)
+at com.sterlingcommerce.woodstock.install.EntityWrapper.processEntities(EntityWrapper.java:71)
+at com.sterlingcommerce.woodstock.install.utils.ProcessEntities.process(ProcessEntities.java:194)
+at com.sterlingcommerce.woodstock.install.utils.ProcessEntities.gatherEntities(ProcessEntities.java:96)
+at com.sterlingcommerce.woodstock.install.utils.ProcessEntities.processEntities(ProcessEntities.java:49)
+at com.sterlingcommerce.woodstock.install.module_loader.ServiceInstallDriver.doIt(ServiceInstallDriver.java:258)
+at com.sterlingcommerce.woodstock.install.module_loader.ServiceInstallDriver.main(ServiceInstallDriver.java:52)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:95)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:56)
+at java.lang.reflect.Method.invoke(Method.java:620)
+at com.sterlingcommerce.woodstock.install.module_loader.ServiceInstallBootstrapper.doIt(ServiceInstallBootstrapper.java:98)
+at com.sterlingcommerce.woodstock.install.module_loader.ServiceInstallBootstrapper.main(ServiceInstallBootstrapper.java:44)
+Caused by: /si/SterlingIntegrator/properties/entityDeployer.xml:791: com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: SQLCODE=-670, SQLSTATE=54010, SQLERRMC=4005;USERSPACE1, DRIVER=4.11.77
+at org.apache.tools.ant.taskdefs.SQLExec.execute(SQLExec.java:463)
+at com.sterlingcommerce.woodstock.install.SaneSQLExec.execute(SaneSQLExec.java:119)
+at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)
+at sun.reflect.GeneratedMethodAccessor5.invoke(Unknown Source)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:56)
+at java.lang.reflect.Method.invoke(Method.java:620)
+at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:106)
+at org.apache.tools.ant.Task.perform(Task.java:348)
+at org.apache.tools.ant.taskdefs.Sequential.execute(Sequential.java:62)
+at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)
+at sun.reflect.GeneratedMethodAccessor5.invoke(Unknown Source)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:56)
+at java.lang.reflect.Method.invoke(Method.java:620)
+at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:106)
+at org.apache.tools.ant.Task.perform(Task.java:348)
+at org.apache.tools.ant.taskdefs.MacroInstance.execute(MacroInstance.java:394)
+... 29 more
+
+
+CAUSE
+This error occurs when the DB table space page size is too small. In looking at the command ALTER TABLE CERTS_AND_PRI_KEY ADD RAW_STORE_NEW VARCHAR (255) DEFAULT ' ' 
+new column added to the table and made the total width of all columns larger than the tablespace pagesize and so this error occurs.
+
+RESOLVING THE PROBLEM
+To resolve this issue,
+
+1. First restore the DB back up and get your DBA to add the tablespaces n all 4 sizes as an SBI user. 
+
+The DBA would be running something like below to increase the tablespace in all 4 sizes. 
+. 
+/* DB2 create all pagesize temp tablespaces */ 
+CREATE BUFFERPOOL IBMSYSTEMBP4K PAGESIZE 4K 
+CREATE BUFFERPOOL IBMSYSTEMBP8K PAGESIZE 8K 
+CREATE BUFFERPOOL IBMSYSTEMBP16K PAGESIZE 16K 
+CREATE BUFFERPOOL IBMSYSTEMBP32K PAGESIZE 32K 
+CREATE SYSTEM TEMPORARY TABLESPACE TMP4K PAGESIZE 4K BUFFERPOOL 
+IBMSYSTEMBP4K 
+CREATE SYSTEM TEMPORARY TABLESPACE TMP8K PAGESIZE 8K BUFFERPOOL 
+IBMSYSTEMBP8K 
+CREATE SYSTEM TEMPORARY TABLESPACE TMP16K PAGESIZE 16K BUFFERPOOL 
+IBMSYSTEMBP16K 
+CREATE SYSTEM TEMPORARY TABLESPACE TMP32K PAGESIZE 32K BUFFERPOOL 
+IBMSYSTEMBP32K 
+
+2. Once this is done, restore the file system back up and then re-start the upgrade.

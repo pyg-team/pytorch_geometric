@@ -1,0 +1,19 @@
+Title: IBM Unable to Upgrade IBM Rational ClearQuest from version 7.1.x to version 8.0.0.1 on Microsoft Windows platforms. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When upgrading IBM Rational ClearQuest version 7.1.x to version 8.0.0.1 with the IBM Installation Manager, the following error message is displayed. Then, the upgrade fails.
+
+"Error during "install" phase:
+Unable to find custom install operation com.ibm.rational.team.install.common.win32.registry.PreserveAction
+com.ibm.rational.team.install.common.win32.registry.PreserveAction"
+
+
+
+ENVIRONMENT
+All supported Microsoft Windows Operating Systems, where IBM Rational ClearQuest is being upgraded from a 7.1.x.x version to 8.0.0.1 version.
+
+RESOLVING THE PROBLEM
+To avoid this issue, upgrade IBM Rational ClearQuest to version 7.1.2.6 or version 7.1.1.9, before upgrading to 8.0.0.1, or upgrade IBM Rational ClearQuest to version 8.0.0.2 instead of version 8.0.0.1.

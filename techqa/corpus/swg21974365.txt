@@ -1,0 +1,20 @@
+Title: IBM PTF for PM45509 must be applied to avoid DATE related issues in year 2016 - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ PM45509 is a HIPER from October 2011 that corrects some date related leap year problems. 
+
+CONTENT
+PM45509 is a HIPER from October 2011 that corrects some date related leap year problems. Since
+2016 is a leap year this fix must be installed. If you are seeing WRONG DATES, jobs scheduled on FREE DAY, etc be sure the PTF for PM45509 is applied:
+
+UK71529 8.3 
+UK71530 8.5.0 
+UK71531 8.5.1 
+UK71532 8.6
+
+The fix is in the BASE code for TWSz version 9 (9.1, 9.2, 9.3) 
+
+TWS z/OS COMPID 5697WSZ01

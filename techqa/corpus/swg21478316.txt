@@ -1,0 +1,19 @@
+Title: IBM Would it be possible for SPSS to support Windows-Eyes for a future release of SPSS? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have SPSS installed on my computer. I am aware SPSS is certified to run with JAWS, but I have Windows-Eyes installed on my machine. Would it be possible for SPSS to support Windows-Eyes for a future release of SPSS? 
+
+RESOLVING THE PROBLEM
+Enhancement Request Submitted
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 77640

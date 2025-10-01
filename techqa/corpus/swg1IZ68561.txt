@@ -1,0 +1,154 @@
+Title: IBM IZ68561: PROBE PROPS PARAMETER RAWCAPTUREFILEBACKUP - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Did not found the Probe props parameter RawCaptureFileBackup in
+   below IBM documentation
+   
+   http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/index.jsp [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/index.jsp]
+   
+   also check below link...
+   
+   http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com
+   .ibm.netcool_OMNIbus.doc/snmp-pdf.pdf [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com.ibm.netcool_OMNIbus.doc/snmp-pdf.pdf]
+   
+   Please verify and confirm (seen the parameter in V7.3 Trap
+   Probe)
+   
+   L2 Engineer:
+   
+   The ' RawCaptureFileBackup' is one of the general property for
+   the probes.
+   
+   RawCaptureFileBackup <boolean> -  Specifies whether the raw
+   capture file is backed up when it exceeds its maximum file size,
+   determined by the MaxRawFileSize property.
+   By default, the file is not backed up.
+   
+   You can find explination of 'RawCaptureFileBackup' property in
+   Cisco info center documentation (3.6)
+   http://www.cisco.com.akadns.net/en/US/docs/net_mgmt/cisco_info_c
+   enter/3.6.1/administrator/guide/aguide.pdf [http://www.cisco.com.akadns.net/en/US/docs/net_mgmt/cisco_info_center/3.6.1/administrator/guide/aguide.pdf]
+   
+   However I guess it has been missed in the documentation customer
+   is referring.
+   
+   OMNIbus L3 updated -  It looks like the RawCaptureFileBackup
+   property has not been supported since the 3.6 timeframe.  It
+   should be removed from the template .props file
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  no local fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of the SNMP Probe.
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   It has been reported that the a description for the
+   RawCaptureFileBackup property is missing from the SNMP Probe
+   Reference Guide.
+   ****************************************************************
+   RECOMMENDATION:
+   This requires no documentation changes.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The RawCaptureFileBackup property is no longer supported by
+   Netcool/OMNIbus, so requires no description in either the probe
+   guide or the core Netcool/OMNIbus guide.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ68561
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/OBUS MTTRAPD
+   
+   
+ * REPORTED COMPONENT ID
+   5724P03MT
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-22
+   
+   
+ * CLOSED DATE
+   2010-03-10
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC23608800 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

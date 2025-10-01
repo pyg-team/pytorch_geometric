@@ -1,0 +1,17 @@
+Title: IBM DataPower Gateway Firmware Release 7.5 is now available - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ The firmware for IBM DataPower Gateway firmware version 7.5 is now available. 
+
+CONTENT
+Refer to the following documents for details about firmware version 7.5. 
+
+ * IBM DataPower Gateway V7.5 Announcement [http://www.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/4/897/ENUS216-024/index.html] 
+ * IBM Knowledge Center: IBM DataPower Gateway V7.5 [http://www.ibm.com/support/knowledgecenter/SS9H2Y_7.5.0] 
+
+Refer to the Fix Packs [http://www-01.ibm.com/support/docview.wss?uid=swg24041543] for details on the Authorized Program Analysis Reports (APARs) included in this firmware version. See also:  *  [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg24014405]Link to the Fix Central website [http://www.ibm.com/support/fixcentral/]to begin the download process. 
+ * New to Fix Central? See Fix download method for IBM DataPower Gateways [http://www.ibm.com/support/docview.wss?uid=swg21376557]. 
+ * IBM DataPower Gateways Firmware Support Lifecycle [http://www.ibm.com/support/docview.wss?uid=swg21246298]

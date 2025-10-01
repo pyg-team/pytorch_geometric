@@ -1,0 +1,143 @@
+Title: IBM Datamart commands core dumping after upgrading to Oracle10g - United States
+
+Text:
+Proviso; Datamart; Oracle; coredump; core; core dump; crash; library; upgrade; 10g; Oracle 10g; LD_LIBRARY_PATH; LIBPATH TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading from Oracle 9i to Oracle 10g, none of my Netcool/Proviso 4.4.3.3 DataMart commands work anymore. It does not matter if I am running a command through the DataMart GUI or from the command line. All commands segmentation fault / core dump. 
+
+SYMPTOM
+Any DataMart command that is run crashes and a core file is generated. The following error message occurs when this happens: 
+
+ * 
+ * 
+
+
+CAUSE
+A step in the Upgrade from Oracle 9i to Oracle 10g procedure [ftp://public.dhe.ibm.com/software/tivoli_support/patches/patches_4.4.3.1/4.4.3.1-TIV-PROV-FP0003/Upgradefrom9ito10gReadMe.doc] was missed. Specifically, DataMart's LD_LIBRARY_PATH (on Solaris) or LIBPATH (on AIX) was not set up to use Oracle 10g's 32-bit libraries ($ORACLE_HOME/lib32).
+
+
+ENVIRONMENT
+Oracle 10g
+
+
+
+DIAGNOSING THE PROBLEM
+1. Run the DataMart command that is failing in debug mode and verify whether failure occurs 
+
+ * 
+ * 
+
+ * 
+
+ *  Example:  * 
+    *  
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * DBConnect::
+    * ConnectOn
+    * 
+    * 
+    * 
+   
+   
+
+ * 
+
+
+2. Use 'sqlplus' to connect to the DataBase as the PV_ADMIN user and verify that a 'select name from  * 
+ * 
+ *  Example:  * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    *   * 
+       * 
+       * 
+       * 
+       * 
+       * 
+      
+      
+   
+   
+ * 
+
+
+3. After sourcing your dataMart environmental file, check the value of your environment variable that  * 
+ *   * If you are working on Solaris, check your LD_LIBRARY_PATH environment variable value 
+    * If you are working on AIX, check your LIBPATH environment variable value
+   
+   
+ * 
+ * 
+
+RESOLVING THE PROBLEM
+1. Go back to the Upgradefrom9ito10gReadMe document that is attached to 4.4.3.1-TIV-PROV-FP0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24023735] 
+
+ * 
+ * 
+ * 
+ *  If you are working on Solaris, this is essentially what you need to do: 
+    *  Edit your dataMart environmental file and change the lines where LD_LIBRARY_PATH is set to contain $PVMHOME/lib and $ORACLE_HOME/lib to contain $PVMHOME/lib and $ORACLE_HOME/lib32 values, instead. The Upgradefrom9ito10gReadMe document provides an example of doing this. 
+    *  Source your dataMart environmental file 
+    *  Verify that your LD_LIBRARY_PATH environment variable now contains a path to the Oracle 10g 32-bit libraries. 
+    *   * For example
+       * 
+       * After performing these steps on Solaris,  * 
+          * lib32
+         
+         might appear instead of  * 
+          * 
+         
+         
+      
+      
+   
+   If you are working on AIX, this is essentially what you need to do:  *  Edit your dataMart environmental file and change the lines where LIBPATH is set to contain $PVMHOME/lib and $ORACLE_HOME/lib to contain $PVMHOME/lib and $ORACLE_HOME/lib32 values, instead. The Upgradefrom9ito10gReadMe document provides an example of doing this in the case of Solaris and LD_LIBRARY_PATH. You need to make the equivalent change using the LIBPATH environment variable. 
+    *  Source your dataMart environmental file 
+    *  Verify that your LIBPATH environment variable now contains a path to the Oracle 10g 32-bit libraries. 
+   
+    *   * For example
+       * 
+       * 
+       * 
+       * LIBPATH=/opt/datamart/lib:/opt/oracle/product/10.2.0/ lib32 
+       * 
+       * LIBPATH=/opt/datamart/lib:/opt/oracle/product/10.2.0/lib 
+         
+      
+      
+   
+   
+
+2. Rerun your DataMart command. Verify that the segmentation faults and core dumps are no longer  * 
+
+RELATED INFORMATION
+ Upgradefrom9ito10gReadMe.doc [ftp://public.dhe.ibm.com/software/tivoli_support/patches/patches_4.4.3.1/4.4.3.1-TIV-PROV-FP0003/Upgradefrom9ito10gReadMe.doc]
+Tivoli Netcool Proviso FixPack 4.4.3.1-TIV-PROV-FP0003 [http://www.ibm.com/support/docview.wss?uid=swg24023735]

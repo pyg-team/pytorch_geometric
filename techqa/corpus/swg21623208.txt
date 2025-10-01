@@ -1,0 +1,51 @@
+Title: IBM Integration Bus or WebSphere Message Broker Explorer plug-in is not loaded after installation - United States
+
+Text:
+mqiinfo; WMB Explorer; MB Explorer; com.ibm.wmadmin.broker.explorer.link TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have installed the IBM Integration Bus (IIB) or WebSphere Message Broker (WMB) Explorer plug-in for WebSphere MQ Explorer, but your brokers are not displayed in WebSphere MQ Explorer. It seems that the IIB or WMB plug-in was not installed, even though the installation completed successfully. 
+
+CAUSE
+The IBM Integration Bus or WebSphere Message Broker Explorer plug-in did not link with WebSphere MQ during the installation process.
+
+DIAGNOSING THE PROBLEM
+The installer for the IBM Integration Bus or WebSphere Message Broker Explorer plug-in writes a log file to the installation directory. To confirm that there were no errors during installation, open the log file "MBExplorer_install.log". If the plug-in did not link with WebSphere MQ correctly, the end of the log file contains the following errors:
+
+Modify Text File - Single File:
+New File C:\Program Files (x86)\IBM\WebSphere MQ\MQExplorer\eclipse\links\com.ibm.wmadmin.broker.explorer.link
+Status: ERROR 
+
+Additional Notes: ERROR - java.io.FileNotFoundException: parent did not exist when attempting touch on path:C:\Program Files (x86)\IBM\WebSphere MQ\MQExplorer\eclipse\links\com.ibm.wmadmin.broker.explorer.link
+
+
+RESOLVING THE PROBLEM
+The plug-in link file "com.ibm.wmadmin.broker.explorer.link" contains the directory path for MB Explorer installation. It is created when MB Explorer is installed. In this case, it could not be placed in the WebSphere MQ Explorer directory. This is most likely because the WebSphere MQ installation directory is not where the plug-in installer expects. 
+
+
+To resolve this problem, complete the following steps:
+
+
+ 1. Ensure that the versions of IBM Integration Bus or WebSphere Message Broker and WebSphere MQ that you are installing are compatible. WebSphere MQ V7.1 and V7.5 support custom installation paths that some versions of WebSphere Message Broker do not search for. For more information about compatible versions, see the WebSphere Message Broker System Requirement web page [http://www.ibm.com/software/integration/wbimessagebroker/requirements/] [http://www.ibm.com/support/docview.wss?uid=swg27006551&wv=1]. 
+ 2. Ensure that you are installing by using the correct WebSphere Message Broker runtime installer for your system. There are 32-bit and 64-bit versions available. 
+ 3. Ensure that both the WebSphere MQ Explorer and WebSphere Message Broker Explorer plug-in are installed on the same drive (for example C:\ or D:\). 
+ 4. If the links file directory is empty then create a file called: 
+
+com.ibm.wmadmin.broker.explorer.link in the <WMQ install>\MQExplorer\eclipse\links or <MS0TInstallLocation>\eclipse\links (if using MS0T support pack) directory with the directory location pointing to your MBExporer plugin install location. 
+
+For example, 
+path=C:/Program Files (x86)/IBM/MBExplorer 
+
+Note: You must use '/' even on a Windows system" 
+
+If you find that the plug-in link file was correctly placed in the WebSphere MQ installation directory, open the plug-in link file and verify that it correctly references the directory in which you installed the WebSphere Message Broker Explorer plug-in. RELATED INFORMATION
+#IIB and WMB System Requirements [http://www.ibm.com/software/integration/wbimessagebroker/requirements/]
+MB Explorer not loading after upgrading WebSphere MQ [http://www.ibm.com/support/docview.wss?uid=swg21668777]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Message Broker Plug-in Linux, Windows 8.0, 7.0 Business Integration WebSphere MQ Business Integration IBM Integration Bus Windows 9.0 
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker MQ Integrator WBIMB WBI-MB MQSI WMQI

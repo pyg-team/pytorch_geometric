@@ -1,0 +1,153 @@
+Title: IBM IC88020: SSL PROXY PROFILE USED BY DATAPOWER WEB SERVICE PROXY TO IMPORT REMOTE SCHEMATA IS NOT CONFIGURABLE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix packs for DataPower XML Security Gateway version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034955]
+Fix packs for DataPower B2B Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034956]
+Fix packs for DataPower Integration Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034957]
+Fix packs for DataPower Low Latency Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034958]
+Fix packs for DataPower Service Gateway version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034959]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  XSD files located on a server not supporting RFC5746, secure
+   renegotiation can not be retrieved by Datapower. Datapower
+   always requires secure renegotiation to be supported. The SSL
+   Proxy Profile controling this is not configurable.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There are  several work arounds for this issue.
+   
+   1) change the connection to backend server serving xsd files
+   to HTTP
+   2) Enable RFC5746 support on the backend server
+   3) locate the xsd files local to the Datapower Appliance
+   4) Modify the Datapower appliance so that the connection to
+   backend server is not directly accessed by the WSP
+   configuration on Datapower.  Modify the WSP configureation to
+   connect through Datapower appliance first. For example the
+   connection would be from the WSP to a Datapower front side
+   handler for a MPGW. Configure the MPGW SSL proxy to allow
+   connectivity to a insecure SSL server.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A new configurable SSL Proxy will be added to default domain and
+   used for retrieving remote Schemata (instead "system-default").
+   
+   By default it does not allow connections to insecure SSL servers
+   and results in the same error logged as before, just with a
+   different SSL Proxy name:
+   yyymmddThhmmssZ [ssl][error]
+   sslproxy(system-wsgw-management-loopback): tid(.....): SSL
+   handshake aborted due to detection of insecure SSL server
+   
+   Setting "Allow connection to insecure SSL" to "On" for
+   system-wsgw-management-loopback will allow Web Service Proxies
+   to retrieve Schemata from an insecure SSL server.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix will be available in next major releases.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC88020
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   382
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-07
+   
+   
+ * CLOSED DATE
+   2013-01-11
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSN
+   UP

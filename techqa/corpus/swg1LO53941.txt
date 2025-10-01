@@ -1,0 +1,179 @@
+Title: IBM LO53941: NOTES WON'T START AFTER INSTALLATION OF 8.0.2 + HOTFIX, RECREATING WORKSPACE FIXES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is uninstalling 6.5, then installing 8.0.2 then
+   FP2SHF53.  After installation, a small portion of users cannot
+   start Notes.  These clients work fine if the workspace folder is
+   recreated.
+   
+   ISA logs are similar, both result in:
+   
+   The following is a complete list of bundles which are not
+   resolved, see
+   the prior log entry for the root cause if it exists:
+   
+   followed by a long list of bundles that are not resolved.
+   
+   The two similar trace log severe errors I see are:
+   
+   Application error
+   java.lang.IllegalStateException: Unable to acquire application
+   service.
+   Ensure that the org.eclipse.core.runtime bundle is resolved and
+   started
+   (see config.ini).
+    at
+   org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.sta
+   rt(Unkno
+   wn Source)
+    at org.eclipse.core.runtime.adaptor.EclipseStarter.run(Unknown
+   Source)
+    at org.eclipse.core.runtime.adaptor.EclipseStarter.run(Unknown
+   Source)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown
+   Source)
+    at java.lang.reflect.Method.invoke(Unknown Source)
+    at org.eclipse.core.launcher.Main.invokeFramework(Unknown
+   Source)
+    at org.eclipse.core.launcher.Main.basicRun(Unknown Source)
+    at org.eclipse.core.launcher.Main.run(Unknown Source)
+    at com.ibm.rcp.core.internal.launcher.Main.startLaunch(Unknown
+   Source)
+    at com.ibm.rcp.core.internal.launcher.Main.main(Unknown Source)
+   
+   AND
+   
+   java.lang.RuntimeException: No application id has been found.
+    at
+   org.eclipse.core.internal.runtime.PlatformActivator$1.run(Unknow
+   n
+   Source)
+    at
+   org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.run
+   Applicat
+   ion(Unknown Source)
+    at
+   org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.sta
+   rt(Unkno
+   wn Source)
+    at org.eclipse.core.runtime.adaptor.EclipseStarter.run(Unknown
+   Source)
+    at org.eclipse.core.runtime.adaptor.EclipseStarter.run(Unknown
+   Source)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown
+   Source)
+    at java.lang.reflect.Method.invoke(Unknown Source)
+    at org.eclipse.core.launcher.Main.invokeFramework(Unknown
+   Source)
+    at org.eclipse.core.launcher.Main.basicRun(Unknown Source)
+    at org.eclipse.core.launcher.Main.run(Unknown Source)
+    at com.ibm.rcp.core.internal.launcher.Main.startLaunch(Unknown
+   Source)
+    at com.ibm.rcp.core.internal.launcher.Main.main(Unknown Source)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Recreate workspace folder.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# DCHR887GSA.
+   This issue was reported against 8.0x.  If issue persists in
+    8.5.2, recommend reporting for triage for a future 8.5.x
+    maintenance release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO53941
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   802
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-10
+   
+   
+ * CLOSED DATE
+   2010-10-01
+   
+   
+ * LAST MODIFIED DATE
+   2010-10-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R802 PSN
+   UP

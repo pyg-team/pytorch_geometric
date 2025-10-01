@@ -1,0 +1,201 @@
+Title: IBM IV80830: UNIX OS AGENT MAY CORRUPT MEMORY WHILE COLLECTING METRICS FOR THE DISK GROUP. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring: Unix(R) OS Agent 6.3.0.5-TIV-ITM_UNIX-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24041945]
+IBM Tivoli Monitoring 6.3.0 Fix Pack 7 (6.3.0-TIV-ITM-FP0007) [http://www-01.ibm.com/support/docview.wss?uid=swg24041633]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Random memory corruptions may occur in the UNIX OS Agent while
+   collecting metrics for the Disk group
+   Affected Platforms / Versions:
+    This issue affects all the UNIXX OS agent versions since 6.23
+   FP1 and
+    it does not depend on the UNIX platform.
+   
+   Diagnostics:
+    RAS1 logs at ERROR level show a sequence like this before
+   ending:
+   
+   mount_stat.cpp,446,"get_mount_info")
+     WARNING: The statvfs64 timeout expired!
+   mount_stat.cpp,447,"get_mount_info")
+     WARNING: The mounted file system "/example/file/system is
+   probably unreachable
+   .
+   With more detailed RAS1 logging enabled, RAS logs will end with
+   the thread
+   for "exec_statvfs64":
+   mount_stat.cpp,189,"exec_statvfs64") statvfs64 executed
+   successfully for "/example/file/system"
+   mount_stat.cpp,294,"exec_statvfs64") Exit: 0x0
+   .
+   The traceback of the coring thread is variable as this issue is
+   the result of
+   memory corruption when the call to statvfs64() returns and the
+   "exec_stavtfs64"
+   thread exits, where the calling thread has previously timed out.
+   .
+   Initial Impact:
+    High - monitoring agent crashes.
+   .
+   Additional Keywords:
+    UNIXDISK
+    core
+    dump
+    sigsegv
+    mount_stat
+    kuxagent
+   
+   Local Fix:
+    Increase KBB_NFS_TIMEOUT to prevent timeout of statvfs64
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Increase KBB_NFS_TIMEOUT setting to larger value than the
+   statfvs64 call takes to return. Set in lz.ini and value is
+   specified in seconds.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem Description: The Monitoring Agent for UNIX OS may
+    corrupt memory while monitoring disks.
+   Problem/Problem Summary: A condition has been identified where
+    the buffer containing data for a filesystem can be overridden
+    by those for another filesystem. This memory corruption is
+    caused by a timing condition between two agent internal threads
+    and it may occur when one or more filesystems do not respond
+    within the 2 seconds default timeout for the statvfs64 system
+    call.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix/Problem Conclusion: Memory corruption avoided.
+   
+   The fix for this APAR will be contained in the following
+   maintenance packages:
+   
+   | FixPack    | 6.3.0-TIV-ITM-FP0007
+   | InterimFix | 6.3.0.5-TIV-ITM_UNIX-IF0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV80830
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040U
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-26
+   
+   
+ * CLOSED DATE
+   2016-03-21
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IV80542 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV80542]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * FIXED COMPONENT ID
+   5724C040U
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP
+   
+   
+ * R630 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R621 PSN
+   UP
+   
+   
+ * R622 PSN
+   UP

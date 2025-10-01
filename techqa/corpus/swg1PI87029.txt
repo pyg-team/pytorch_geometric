@@ -1,0 +1,164 @@
+Title: IBM PI87029: ODR PORT UPDATE NOT REFLECTED IN HIGH AVAILABILITY PLUGIN-CFG.XML - United States
+
+Text:
+  A FIX IS AVAILABLE
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WAS ND 8.5.5.12 on Windows
+   
+   Changes made to an ODR port (PROXY_HTTP_ADDRESS /
+   PROXY_HTTPS_ADDRESS), such as modifying the port value or
+   disabling transport altogether, are not reflected in the
+   High
+   Availability Plugin. The resulting plugin-cfg.xml still
+   shows
+   the previous configuration.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1) Make desired change to the odr port.
+   2) Bounce the odr so that the associated transport chain is
+   forced to reload.
+   3) Bounce the dmgr - at that point HA plugin-cfg.xml
+   regenerates correctly.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server WAS ND using On Demand Routers.      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Disabling PROXY_HTTP(S)_ADDRESS         *
+   *                      transports of On Demand Routers is not  *
+   *                      reflected in the plugin-cfg.xml.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Disabling PROXY_HTTP_ADDRESS or PROXY_HTTPS_ADDRESS transports
+   of On Demand Routers is not reflected in the High Availability
+   Generated plugin-cfg.xml when the service has been configured to
+   include stopped ODRs i.e. cell custom property
+   'ODCPluginCfgOdrIncludeStopped_<definitionID>' with a value of
+   'true'.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The High Availability plugin-cfg.xml Generator has been altered
+   to properly handle disablement of PROXY_HTTP_ADDRESS or
+   PROXY_HTTPS_ADDRESS transports of On Demand Routers.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   packs 8.5.5.13 and 9.0.0.6.  Please refer to the Recommended
+   Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  After disabling PROXY_HTTP_ADDRESS or PROXY_HTTPS_ADDRESS
+   transports of an On Demand Router (ODR), stop the ODR processes,
+   restart the Deployment Manager, and then start the ODRs.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI87029
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-07
+   
+   
+ * CLOSED DATE
+   2017-11-01
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

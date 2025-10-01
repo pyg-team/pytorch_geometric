@@ -1,0 +1,168 @@
+Title: IBM IT23719: MQ base version is hidden when IBM MQ Virtual System Pattern Type FixPack is loaded into ?PureApplication System catalog - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MQ version 8.0.0.2 (from pattern type version 1.0.0.2) cannot be
+   selected in the virtual system pattern editor when MQ FixPack
+   pattern type version 1.0.0.6 (or later) is added to the PureApp
+   catalog.  The earliest version of MQ that is displayed is
+   8.0.0.4.  This is true even when the later FixPack pattern type
+   is disabled.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Remove all later versions of the MQ pattern type from the
+   PureApplication System catalog to re-enable the hidden MQ base
+   version in the pattern editor.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the IBM MQ Virtual System Pattern
+   Type 1.0.0.2 and later..
+   
+   
+   Platforms affected:
+   Linux on x86-64, AIX
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   MQ version 8.0.0.2 (from pattern type version 1.0.0.2) cannot be
+   selected in the virtual system pattern editor when MQ FixPack
+   pattern type version 1.0.0.6 (or later) is added to the PureApp
+   catalog.  The earliest version of MQ that is displayed is
+   8.0.0.4.  This is true even when the later FixPack pattern type
+   is disabled.
+   
+   A defect in the MQ Pattern Type metadata prevented the older MQ
+   base version (8.0.0.2) from being displayed in the PureApp
+   pattern editor when a newer base version of MQ (8.0.0.4) was
+   loaded into the PureApp catalog.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The defect has been addressed so that the older MQ base version
+   is displayed in the pattern editor when the newer FixPack
+   version is disabled in the PureApp catalog
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.9
+   v9.0 CD    9.0.5
+   v9.0 LTS   9.0.0.4
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT23719
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ BASE MP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-01-12
+   
+   
+ * CLOSED DATE
+   2018-01-31
+   
+   
+ * LAST MODIFIED DATE
+   2018-01-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM MQ BASE MP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS

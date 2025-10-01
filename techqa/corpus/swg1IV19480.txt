@@ -1,0 +1,269 @@
+Title: IBM IV19480: JMS XA FUNCTIONALITY UNAVAILABLE IN JEE APPLICATION SERVERS WHICH USE THE WEBSPHERE MQ RESOURCE ADAPTER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.10 [http://www-01.ibm.com/support/docview.wss?uid=swg24034145]
+Fix Pack 7.1.0.3 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035405]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  While loading the WebSphere MQ V7 Resource Adapter (WMQ-RA) in
+   WEBLOGIC 11G R1, the following error message is seen:
+   
+   <BEA-190091>
+   <Call to implementation of ManagedConnection.getXAResource in
+   resource adapter with
+   jndiName = jms/myConnectionFactory failed:
+   Resource Adapter returned null from
+   ManagedConnection.getXAResource() while trying to obtain
+   XAResource for recovery.>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  - Configure the application server so that it does not
+   use XA transactions when creating the connection to WebSphere
+   MQ.
+    - or -
+   - Configure WebSphere MQ Extended Transactional Client
+   onto the   same system as the WebLogic application server, XA
+   Client JAR file:
+       com.ibm.mqetclient.jar is on the application server's
+   CLASSPATH.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of the WebSphere MQ Resource Adapter which is deployed
+   into application servers, who are attempting to make use of
+   XA functionality provided by the:
+   
+   WebSphere MQ Extended Transactional Client
+   
+   This does NOT include the WebSphere Application Server, or any
+   of the IBM products which are built upon the WebSphere
+   Application Server platform such as WebSphere Process Server,
+   which are unaffected by this issue.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java +Java zOS
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The WebSphere MQ Extended Transactional Client enables
+   customers to configure their WebSphere MQ client to participate
+   in a transactional unit of work when exchanging messages to a
+   WebSphere MQ server. Use of this client without charge was
+   previously restricted to customers using WebSphere Application
+   Server, WebSphere Enterprise Service Bus, or WebSphere Process
+   Server as the Transaction Manager.
+   
+   With the announcement of WebSphere MQ V7.5, the WebSphere MQ
+   Extended Transactional Client is available for use in all
+   client deployments without additional entitlement. This
+   includes all supported versions of WebSphere MQ client
+   connecting to any supported version of WebSphere MQ queue
+   manager.
+   
+   As part of this announcement, customers using WebSphere MQ
+   V7.0.1 and V7.1 gain the benefit of use of the WebSphere MQ
+   Extended Transactional Client with no additional entitlement
+   required.
+   
+   For additional information on this, please see the WebSphere MQ
+   V7.5 announcement letter:
+   
+   http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=AN&subt
+   ype=CA&htmlfid=897/ENUS212-091 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=AN&subtype=CA&htmlfid=897/ENUS212-091]
+   
+   
+   The WebSphere MQ Resource Adapter that is currently shipped
+   with WebSphere MQ V7.0.1 and V7.1 does not contain the Extended
+   Transactional Client.
+   
+   If the WebSphere MQ V7.0.1 or V7.1 Resource Adapter is deployed
+   into a JCA compliant application server, such as:
+   
+   Oracle WebLogic
+   Oracle GlassFish
+   RedHat JBoss
+   
+   the WebSphere MQ Extended Transactional Client JAR file, which
+   is found at the WebSphere MQ installation location:
+   
+   ${MQ_INSTALL_ROOT}/java/lib/com.ibm.mqetclient.jar
+   
+   where ${MQ_INSTALL_ROOT} is the root location of the product
+   installation, for example '/opt/mqm' on Linux for WebSphere MQ
+   v7.0, must be added to the application server's configuration,
+   to allow WebSphere MQ to participate in XA transactions that
+   are coordinated by the application server.
+   
+   
+   For some application servers, this means ensuring that the
+   WebSphere MQ Extended Transactional Client JAR file is included
+   on the application server's CLASSPATH.
+   
+   However, this mechanism did not work when the WebSphere MQ
+   Resource Adapter was deployed into WebLogic 11G R1. This
+   application server expected the WebSphere MQ Resource Adapter
+   to contain all of the JAR files that it needed to run, and used
+   an isolated Classloader for the Resource Adapter which did not
+   have access to the CLASSPATH.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ Resource Adapter has been updated to include
+   the WebSphere MQ Extended Transactional Client JAR file.
+   
+   This means that it is no longer necessary to add the WebSphere
+   MQ Extended Transactional Client JAR file to an application
+   server's CLASSPATH in order to gain the use of the XA
+   functionality.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.10
+   --------           --------------------
+   Windows            U200352
+   AIX                U853055
+   HP-UX (PA-RISC)    U853082
+   HP-UX (Itanium)    U853087
+   Solaris (SPARC)    U853083
+   Solaris (x86-64)   U853089
+   iSeries            7.0.1.10
+   Linux (x86)        U853084
+   Linux (x86-64)     U853088
+   Linux (zSeries)    U853085
+   Linux (Power)      U853086
+   zOS                7.0.1.10
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.3
+   --------           --------------------
+   Windows            7.1.0.3
+   AIX                7.1.0.3
+   HP-UX (Itanium)    7.1.0.3
+   Solaris (SPARC)    7.1.0.3
+   Solaris (x86-64)   7.1.0.3
+   iSeries            7.1.0.3
+   Linux (x86)        7.1.0.3
+   Linux (x86-64)     7.1.0.3
+   Linux (zSeries)    7.1.0.3
+   Linux (Power)      7.1.0.3
+   zOS                7.1.0.3
+   
+   Platform           v7.5
+   --------           --------------------
+   Multiplatforms     7.5.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV19480
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ HP V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7222
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-04-11
+   
+   
+ * CLOSED DATE
+   2012-08-30
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ HP V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7222
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

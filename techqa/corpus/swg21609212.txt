@@ -1,0 +1,54 @@
+Title: IBM Migrating to JDBC Gateway - Initial  Synch Behavior and Performance - United States
+
+Text:
+JDBC Gateway; Gate.JDBC.Resync; DELETEDAT TECHNOTE (FAQ)
+
+QUESTION
+ Is there a way to avoid "full scan" of target database on the very first startup, and what the scan query looks like? 
+
+CAUSE
+Migrating from ODBC gateway to JDBC Gateway with large target database, and concerned about JDBC gateway initial synch behavior, and performance.
+
+ANSWER
+The first time the gateway runs, it will detect that there are no alerts in its cache and it will perform a bidirectional resynchronization. This will detect any events in the target database that were still open when the old gateway was last run, and that have subsequently been closed and deleted from the ObjectServer. This enables event deletes that were lost while the gateway was being migrated to the existing target database. On subsequent runs, when there are alerts in its cache, the gateway will perform a unidirectional resynchronization on startup. 
+
+The bidirectional resynchronization results in full table scans on the target database status table. The amount of time required for the resynchronization to finish is proportional to the size of the database table. A large amount of event history will result in a long resynchronization.
+
+The initial resync is required to detect any alerts that are open in the target database but have since been deleted from OMNIbus, else those alerts will stay open forever.
+
+The bi-directional gateway resync selects all open events from the destination database. The resync can be configured with two properties:
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+In reporter mode, the gateway will filter on the DeletedAt column being NULL, which indicates the alert has not been deleted from the ObjectServer (ie. considered open). The gateway will prime it's cache only with live alerts, so if you have 3 years of history, only the current alerts from the database will be pulled into the cache and dealt with. 
+
+If there is an index on DeletedAt column, then this query will probably be lightweight. If there is no index (more likely), then it will result in a full table scan. The query will look like (using default values): 
+ * 
+
+
+Using the filter in Gate.JDBC.ResyncFilter, for example you can specify to limit the search to, say, where FirstOccurrence > (current time - quarter year). Assuming you've partitioned the table on FirstOccurrence, this will limit the table scan to the current and last quarter partitions. For example, you can limit the scan to the last 90 days using: 
+ * 
+
+
+This will result in the query: 
+ * 
+
+
+This query will touch probably 2 partitions, doing a full scan of both partitions. 
+
+It is preferable, from a performance point of view, to take this initial synchronization hit, as with an empty cache, all alerts will be treated as new alerts, and the gateway will try to insert the new alerts causing constraint violations against the already existing alerts. These constraint violations will nullify the concurrency optimization(s) the gateway uses to improve performance, to the point of being probably slower than the initial resync in the first place, as well as resulting in the updated alert contents being discarded (which is probably not what you want.) 
+
+Given the above, you can "trial run" the scan to see how long it will take on your target database, and can even try to optimize by defining index on DeleteAt.. For example, you can run the following: 
+ * 
+
+
+and see how long it takes to complete when you run the jdbc gateway the first time. 
+
+If running in audit mode, then there is no need for the gateway to do the initial cache resync, as all updates are converted to inserts anyway with no risk of constraint violations.

@@ -1,0 +1,22 @@
+Title: IBM Use IBM Content Manager layer order to display annotations in IBM Daeja ViewONE Virtual viewer - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I display annotations saved in IBM Content Manager client viewer in the same layer order in IBM Daeja ViewONE Virtual viewer? 
+
+CAUSE
+IBM Daeja ViewONE Virtual viewer and IBM Content Manager client viewer save annotations in reverse order, so annotations saved in IBM Content Manager client viewer will display in reverse order in IBM Daeja ViewONE Virtual viewer.
+
+ANSWER
+Back up and edit the following file to set ANNOTATION_ENGINE2_useCMZorder, a new property added in IBM Content Navigator 3.0.0 Limited Availability Fix 003, to true.
+
+
+navigator.war/WEB-INF/cmbannotationengine.properties
+
+ANNOTATION_ENGINE2_useCMZorder behaviors:
+
+1. if ANNOTATION_ENGINE_useCMZorder is set to false, a default value, annotations saved in IBM Daeja ViewONE Virtual viewer will be displayed correctly but annotations saved in IBM Content Manager client viewer will be displayed in reverse order.
+
+1. If ANNOTATION_ENGINE_useCMZorder is set to true, new annotations saved in IBM Daeja ViewONE Virtual viewer and new and existing annotations saved in IBM Content Manager client viewer will be displayed correctly but existing annotations saved in IBM Daeja ViewONE Virtual viewer will be displayed in reverse order.

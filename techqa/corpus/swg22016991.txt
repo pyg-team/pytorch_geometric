@@ -1,0 +1,20 @@
+Title: IBM What is Remote Password Changing for Service Accounts - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is Remote Password Changing for Service Accounts 
+
+ANSWER
+
+TITLE: What is Remote Password Changing for Service Accounts? 
+
+ARTICLE 
+Remote Password Changing for Service Accounts includes updating all the dependencies of the account. For instance, you may have a domain account (service account) that is used on several different machines for the identity of a variety of different programs and services. What typically happens is the admin would change the domain password but not know all the other places that it was being used so those programs will simply fail to start running with the old password. As a result, the service account may have its password changed less frequently or not at all over fear of what services it will break.
+
+RPC for Service Accounts allows the admins to add all the dependent services as dependencies, so when Secret Server changes the main domain account's password it also changes it on all the dependencies as well. Secret Server has aDiscoveryfeature which will scan your network and bring in any windows services that it finds.
+What if I don't want a dependency to run after a password reset? 
+When creating or editing the dependency you can uncheck the enabled box and the dependency will not run when the password is reset.
+What if I want the password to be reset, but I don't want the service to restart? 
+When creating or editing the dependency service you can uncheck the restart box and the service will not be restarted when the password is reset.

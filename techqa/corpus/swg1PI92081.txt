@@ -1,0 +1,139 @@
+Title: IBM PI92081: UPDATE LIBRARY IDS MODULE AND UPDATE-WCM-LIBRARY-ID TASK SHOULD SUPPORT DELETED ITEMS - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The update library IDs module has been modified to support
+   
+   deleted items. ie:
+   
+   /wps/wcm/myconnect?MOD=updatelibraryids&library=TestLibrary
+   
+   
+   
+   The update-wcm-library-id ConfigEngine task, which is executed
+   
+   during migration, will also now process and update deleted
+   
+   items.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The update library IDs module has been modified to support
+   deleted items. ie:
+   /wps/wcm/myconnect?MOD=updatelibraryids&library=TestLibrary
+   
+   
+   
+   The update-wcm-library-id ConfigEngine task, which is executed
+   during migration, will also now process and update deleted
+   items.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 23 (PI77253 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI77253]) for Portal
+   8.0.0.1 available from Fix Central:
+   
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI77253
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI92081
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-01-04
+   
+   
+ * CLOSED DATE
+   2018-04-26
+   
+   
+ * LAST MODIFIED DATE
+   2018-04-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

@@ -1,0 +1,39 @@
+Title: IBM DB2 JDBC Drivers : JDBC Gateway classes - United States
+
+Text:
+nco_g_jdbc; nco_p_jdbc; Db2; driver TECHNOTE (FAQ)
+
+QUESTION
+ DB2 driver : How can you tell which driver version is being used? 
+
+ANSWER
+ 
+
+It is best to get the JDBC drivers from the DB2 database server you are connecting to, to ensure the correct drivers are in place for JDBC gateway. 
+
+When there is an SQL error reported in the log file the driver version is shown at the end:
+DB2 SQL Error: 
+e.g.
+DRIVER=4.18.60
+DRIVER=3.68.61
+DRIVER=3.50.152
+DRIVER=3.64.133
+
+
+You can manually check the driver version using the following syntax:
+cd $OMNIHOME/gates/java
+java -cp ./db2jcc.jar com.ibm.db2.jcc.DB2Jcc -version 
+
+By default the JDBC Gateway will source the JDBC drivers from $OMNIHOME/gates/java.
+
+If you want to set the classpath explicitly use the property Gate.Java.ClassPath:
+e.g.
+Gate.Java.ClassPath: '/opt/DB2DRIVERS/jdbc_sqlj-v9.7fp9/db2jcc.jar:/opt/nrv731/tivoli/netcool/omnibus/gates/java/ngtktk.jar:/opt/nrv731/tivoli/netcool/omnibus/gates/java/ngjava.jar:/opt/nrv731/tivoli/netcool/omnibus/gates/java/nco_g_jdbc.jar' 
+
+ 
+
+See the related links to determine which drivers support which DB2 database version, and for DB2 Driver JAR package downloads.
+
+RELATED INFORMATION
+ DB2 JDBC Driver Versions [http://www-01.ibm.com/support/docview.wss?uid=swg21363866]
+Download Fix Pack JARs for JDBC drivers [http://www-01.ibm.com/support/docview.wss?uid=swg27016878]

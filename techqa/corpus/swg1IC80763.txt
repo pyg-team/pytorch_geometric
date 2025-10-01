@@ -1,0 +1,154 @@
+Title: IBM IC80763: PCOM: SSL CONNECTION HANGS WITH FTP CLIENT - United States
+
+Text:
+  A FIX IS AVAILABLE
+Personal Communications 6.0.5 (V6.0, Manufacturing Refresh 5) [http://www-01.ibm.com/support/docview.wss?uid=swg24032978]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using the PCOMM FTP client
+   and attempting to establish a session with a z/OS V1R11 system
+   with SSL enabled at both sides. The connect hangs when PCOMM
+   trace is off an sometimes works when trace is on.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: PCOMM FTP Client users                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: PCOMM FTP client session with SSL       *
+   *                      (MSCAPI) enabled hangs when PComm       *
+   *                      Trace is off.                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   PCOMM FTP Client connection will fail in hand shake stage if
+   MSCAPI SSL is enabled.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When a PCOMM FTP Client session is established and trying to
+   make the hand shake with the server, the data sent from the
+   server was not received completly by PCOMM. This will cause the
+   hand shake process to fail. The PCOMM FTP client needs to wait
+   for the complete data to be sent from server before processing
+   security context. PCSFTP.EXE has been changed.
+   
+   Fix scheduled for PCOM 6.0.5 Refresh Pack
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC80763
+   
+   
+ * REPORTED COMPONENT NAME
+   PCOMM V5 COMBO-
+   
+   
+ * REPORTED COMPONENT ID
+   5639I7000
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-10
+   
+   
+ * CLOSED DATE
+   2012-01-26
+   
+   
+ * LAST MODIFIED DATE
+   2012-01-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IP23401
+   
+   
+
+MODULES/MACROS
+ *  PCSFTP
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PCOMM V5 COMBO-
+   
+   
+ * FIXED COMPONENT ID
+   5639I7000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP
+   
+   
+ * R601 PSY
+   UP

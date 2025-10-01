@@ -1,0 +1,147 @@
+Title: IBM Collecting Data: Problems with PageBuilder2-based themes in WebSphere Portal - United States
+
+Text:
+Collecting Data; Collecting Data; Collecting Data; MustGather; MustGather; MustGather; MustGatherDocument; pagebuider; API; PORTDE; theme; collecting data; collecting data; collecting data; page builder; page builder2 RECOMMENDED RESOURCES
+
+ABSTRACT
+ Collecting troubleshooting data for problems with a theme based on the PageBuilder2 Theme during runtime or creation with IBM WebSphere Portal. This expedites time to resolution by enabling IBM Support to provide informed problem analysis. If you are using a modularize PageBuilder2 theme please collect the modular theme mustgather. 
+
+CONTENT
+If you already contacted IBM Support and must collect data to determine the nature of a problem in WebSphere Portal, review the information below for the available methods of data collection. Otherwise, review Collecting Data: Read first for WebSphere Portal. [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21444911] 
+
+Collecting PageBuilder2-based themes information
+
+PageBuilder2 is the base theme for Portal that makes extensive use of Dojo and Ajax technologies. 
+
+Data Collection
+
+1. Does the problem persist after: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+2. If the problem still persists, collect the following preperation information. If the problem is with a theme in WebDav, use the following line in a browser to generate a zip of the theme files:  * http://<host>:<port>/wps/mycontenthandler/dav/themelist/
+ * <theme_dir>
+ * ?mime-type=application/zip
+
+
+If the problem is with a skin, use the following line:  * http://<host>:<port>/wps/mycontenthandler/dav/skinlist/
+ * <skin_dir>
+ * ?mime-type=application/zip
+
+ * 
+
+
+3. Answer the following questions: 
+Is the problem specific to a single browser? 
+Is the problem specific to admin or non-admin users? 
+
+4. Enable client-side logging:  * 
+ * 
+ * 
+ * 
+ * 
+ * *
+ * 
+ * 
+ * 
+ * NOTE
+ * 
+ * 
+ * 
+ * NOTE
+ * 
+ * Tools
+ * 
+ * Developer Tools
+ * 
+ * 
+ * 
+ * Example:
+ * 
+ * ["com.ibm.mashups.enabler.*","com.ibm.mashups.builder.model.ContextMenuImpl"]
+
+ * 
+
+ *   * com.ibm.mm.control.NavigationController
+      Navigation selection, figures what is the selected page using Enable APIs, manages state changes. 
+    * com.ibm.customize.*
+      Customization shelf 
+    * com.ibm.mm.builder.model.ContextMenuImpl
+      Context menu loading 
+    * com.ibm.pb.*
+      General – Page Builder 
+    * com.ibm.mm.*
+      General - Enabler 
+    * com.ibm.pb.control.RenderingController
+      Layout (portlet rendering, mode changes) 
+    * com.ibm.pb.dnd.layout.*
+      Layout DND 
+    * com.ibm.pb.decorations.*
+      com.ibm.pb.decorations.* 
+    * com.ibm.pb.contextMenu.JsonContextMenuLoader
+      Context menus (actions, user, portlet, widget) 
+    * com.ibm.pb.themes.commonInit
+      Theme bootstrap 
+    * com.ibm.pb.control.NavigationController
+      Navigation 
+    * com.ibm.mm.enabler.widget.*
+      Widgets
+   
+   
+
+5. Use Fiddler to capture http traffic for the failing scenario. 
+
+Steps to use: 
+1. Download Fiddler at http://www.fiddler2.com/Fiddler2/version.asp [http://www.fiddler2.com/Fiddler2/version.asp]. 
+
+2. Open your browser and navigate to a website.  * NOTE: 
+ * 
+ * 
+
+3. Open Fiddler. 
+
+4. Watch the HTTP traffic in Fiddler's left panel. 
+
+6. Now open your browser and recreate the issue. Document the behavior you see, either through edited screen shots or text and expected behavior. 
+
+7. Copy the output that is logged to the Java console on the browser. Make sure to get all tracing as well as the error messages that are produced. 
+
+8. Collect an xmlaccess export of your system using the instructions in Document #1260098 [https://www-304.ibm.com/support/docview.wss?uid=swg21260098], "How to generate a complete XMLAccess export of a Portal configuration." 
+
+9. Collect the resources.xml file that contains the Resource Environment property, "WP DynamicContentSpotMappings" (default location is wp_profile\config\cells\<cell name>\nodes\<node name>\servers\WebSphere_Portal). This file should be at the cell level when clustered. 
+
+10. Collecting and submitting logs and configuration data 
+
+1. Reproduce the problem. 
+
+2. Run the following script from <wp_profile>/PortalServer/bin to collect the data: 
+
+Windows: wpcollector.bat 
+Linux/Unix/i: wpcollector.sh 
+
+11. Send the following files to IBM Support by using the instructions outlined in Exchanging information with IBM Technical Support for problem determination [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571]: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+Related Information  * IBM Support Portal: WebSphere Portal Troubleshooting [http://www.ibm.com/support/entry/portal/Troubleshooting/Software/WebSphere/WebSphere_Portal] [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571] 
+ * WebSphere Portal Family wiki: Troubleshooting [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Troubleshooting_wp7] 
+ * Collecting Data: Read first for WebSphere Portal [http://www-01.ibm.com/support/docview.wss?uid=swg21591590]

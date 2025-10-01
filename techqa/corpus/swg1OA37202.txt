@@ -1,0 +1,166 @@
+Title: IBM OA37202: DB2 EVENT FEED GENERATES SQLCODE = -199/-104 WITH SQLSTATE = 42601 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Event Pump reports SQL error -199 during DB2 v9 monitoring.
+   I run event pump 422, after start, there are several errors
+   SQLCODE = -199/-104 with SQLSTATE = 42601.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Tivoli Event Pump users using DB2.       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The following SQL errors can be         *
+   *                      generated in AOPOUT output during       *
+   *                      DB2 rediscovery processing:             *
+   *                      SQLCODE  =  -104                        *
+   *                      SQLSTATE =  42601                       *
+   *                      SQLERRMC =  NAME <ERR_STMT> <WNG_STMT>  *
+   *                      GET SQL SAVEPOINT HOLD FREE ASSOCIATE   *
+   *                      SQLCODE  =  -104                        *
+   *                      SQLSTATE =  42601                       *
+   *                      SQLERRMC =  NAME <ERR_STMT> <WNG_STMT>  *
+   *                      GET SQL SAVEPOINT HOLD FREE ASSOCIATE   *
+   *                      SQLCODE  =  -104                        *
+   *                      SQLSTATE =  42601                       *
+   *                      SQLERRMC =  T <ERR_STMT> <WNG_STMT>     *
+   *                      GET SQL SAVEPOINT HOLD FREE ASSOCIATE   *
+   *                      SQLCODE  =  -104                        *
+   *                      SQLSTATE =  42601                       *
+   *                      SQLERRMC =  T <ERR_STMT> <WNG_STMT>     *
+   *                      GET SQL SAVEPOINT HOLD FREE ASSOCIATE   *
+   *                      SQLCODE  =  -104                        *
+   *                      SQLSTATE =  42601                       *
+   *                      SQLERRMC =  V <ERR_STMT> <WNG_STMT>     *
+   *                      GET SQL SAVEPOINT HOLD FREE ASSOCIATE   *
+   ****************************************************************
+   * RECOMMENDATION: Apply the applicable PTF(s).                 *
+   ****************************************************************
+   In some cases program might create and execute SQL statements
+   with incorrect syntax.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The incorrect call of internal service exec which issues SQL
+   request to DB2 has been fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA37202
+   
+   
+ * REPORTED COMPONENT NAME
+   EVENT PUMP FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5698B3400
+   
+   
+ * REPORTED RELEASE
+   422
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-04
+   
+   
+ * CLOSED DATE
+   2011-09-09
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA62117 UA62118
+   
+   
+
+MODULES/MACROS
+ *  GPZBINIT GPZDB2DR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   EVENT PUMP FOR
+   
+   
+ * FIXED COMPONENT ID
+   5698B3400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R421 PSY UA62117 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA62117]
+   UP11/11/02 P F111
+   
+   
+ * R422 PSY UA62118 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA62118]
+   UP11/11/02 P F111
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

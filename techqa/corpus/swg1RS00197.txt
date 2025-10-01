@@ -1,0 +1,141 @@
+Title: IBM RS00197: THE MODEL BOM ORIGIN IS INCORRECT FOR THE XMLBINDING SAMPLE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the xmlbinding sample, when updating bom entry model, one
+   will see message "This BOM entry cannot be updated because its
+   origin is not recognized. You can redefine it in your project
+   properties."
+   
+   The default origin is "xom:/xmlbinding-xom/data/financial.xsd",
+   once changing it to
+   "xom:/xmlbinding-rules//xmlbinding-xom/data/financial.xsd", the
+   bom can be updated.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually change the bom origin to
+   xom:/xmlbinding-rules//xmlbinding-xom/data/financial.xsd
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In the xmlbinding sample, when updating bom entry model, one
+   will see message "This BOM entry cannot be updated because its
+   origin is not recognized. You can redefine it in your project
+   properties."
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The default origin is "xom:/xmlbinding-xom/data/financial.xsd",
+   once changing it to
+   "xom:/xmlbinding-rules//xmlbinding-xom/data/financial.xsd", the
+   bom can be updated.
+    Description
+      In the xmlbinding sample, when updating bom entry model, one
+   will see message "This BOM entry cannot be updated because its
+   origin is not recognized. You can redefine it in your project
+   properties." The default origin was
+   "xom:/xmlbinding-xom/data/financial.xsd", once changed  to
+   "xom:/xmlbinding-rules//xmlbinding-xom/data/financial.xsd", the
+   bom can be updated.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS00197
+   
+   
+ * REPORTED COMPONENT NAME
+   WS ILOG JRULES
+   
+   
+ * REPORTED COMPONENT ID
+   5724X9800
+   
+   
+ * REPORTED RELEASE
+   702
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-26
+   
+   
+ * CLOSED DATE
+   2010-07-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS ILOG JRULES
+   
+   
+ * FIXED COMPONENT ID
+   5724X9800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

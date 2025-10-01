@@ -1,0 +1,144 @@
+Title: IBM HD79607: CLEANER : GHOST LINK FROM SPECIFC CATPART CAN NOT BE CLEANED WI TH CATDUA - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CLEANER : GHOST LINK FROM SPECIFC CATPART
+   CAN NOT BE CLEANED WITH CATDUA
+   .
+   Scenario:
+   1.Open attached CATPart.
+   2. Check the File>Send to directory and compare
+   its result with File>Desk. A ghost link is there.
+   2. Run CATDUA from File/Desk.
+   Problem!! Error isn't detected, we cannot remove
+   the Ghost Link.
+   .
+   Expected Result:
+   The Ghost Link should  be removed with CATDUA.
+   .
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  CLEANER : GHOST LINK FROM SPECIFC CATPART CAN NOT BE CLEANED WI
+   TH CATDUA
+   CLEANER : GHOST LINK FROM SPECIFC CATPART
+   CAN NOT BE CLEANED WITH CATDUA
+   .
+   Scenario:
+   1.Open attached CATPart.
+   2. Check the File>Send to directory and compare
+   its result with File>Desk. A ghost link is there.
+   2. Run CATDUA from File/Desk.
+   Problem!! Error isn't detected, we cannot remove
+   the Ghost Link.
+   .
+   Expected Result:
+   The Ghost Link should  be removed with CATDUA.
+   .
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM IS PERMANENT RESTRICTION IN
+   CATIA
+   After analyzing the internal structure of the
+   document (at code level), there is some features
+   aggregating under the detail views and pointing
+   some external 3D elements.
+   Such aggregation under detail views cannot be
+   possible with default installation. In order to
+   investigate further,  Development team will require
+   detail scenario which leads to current situation. As
+   this information is not available, reported scenario
+   considered as restriction
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD79607
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 WIN 64
+   
+   
+ * REPORTED COMPONENT ID
+   569165000
+   
+   
+ * REPORTED RELEASE
+   518
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-11-12
+   
+   
+ * CLOSED DATE
+   2008-12-02
+   
+   
+ * LAST MODIFIED DATE
+   2008-12-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,52 @@
+Title: IBM MQJE001 Completion Code 2 Reason 8004 - United States
+
+Text:
+5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 kixinfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are trying to run a Java™ program in a CICS Transaction Server for z/OS (CICS TS) environment that does JMS calls in bindings mode when the following error occurs: MQJE001: Completion Code 2, Reason 8004.
+
+You want to know if there is a way to run a Java program in CICS that can do JMS calls either in client mode or in bindings mode. 
+
+CAUSE
+The JMS specification requires transactional behavior which is incompatible with the MQ CICS adapter, so the MQ JMS classes are not supported for use in a CICS Java application.
+
+DIAGNOSING THE PROBLEM
+You have a JMS program that runs in the USS address space (in bindings mode). You would like to call this JMS application using an EXEC CICS LINK PROGRAM() command. You receive:
+
+MQJE001: Completion Code 2, Reason 8004
+
+You run a native java application within CICS which tries to do WebSphere MQ MQPUT or MQGET to the queue manager on the same MVS image. The attempt to connect to the queue manager fails with:
+
+caught JMSException: javax.jms.JMSException: MQJMS2005: failed to create MQQueue Manager for 'qmgr'
+linked exception: com.ibm.mq.MQException: MQJE001: Completion Code 2, Reason 8004
+
+The same java program runs without any problem in USS. There is no problem to access the MQ from the USS site.
+
+
+There are two different interfaces available for accessing MQ from Java: 
+
+ * The MQ base Java interface is a set of proprietary classes which implement MQ access based closely on the non-Java MQ API. 
+ * The MQ JMS interface is MQ's implementation of the provider-independent JMS specification.
+   
+   
+
+The MQ base Java classes are supported for use in CICS, subject to Restrictions for WebSphere MQ classes for Java under CICS Transaction Server [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r1/topic/com.ibm.mq.doc/ja11580_.htm] as documented in the Using WebSphere MQ classes for Java section of the WebSphere MQ Information Center [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r1/index.jsp]. 
+
+The JMS specification requires transactional behavior which is incompatible with the MQ CICS adapter, so the MQ JMS classes are not supported for use in a CICS Java application. 
+
+In this particular case, the error occurs when the MQ JMS interface is used, but not when the MQ base Java classes are used. As an alternative, use the MQ base Java classes. 
+
+
+RESOLVING THE PROBLEM
+MQ JMS classes are not supported for use in a CICS Java application. The Using WebSphere MQ classes for Java section does not explicitly state that the JMS classes are not supported for use in CICS. However, all the sections relating to CICS specifically refer to WebSphere MQ base Java applications.
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere MQ z/OS 7.1, 7.0, 6.0 
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

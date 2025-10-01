@@ -1,0 +1,164 @@
+Title: IBM PI06692: COX REGRESSION MODEL BUILDER CREATING FILES IN /TMP WITH MODELER SERVER ON LINUX\UNIX - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Executing the following nodes in Modeler Server on Linux\UNIX
+   you see files created in /tmp on the server
+   filesystem when expecting all files to be created in the Modeler
+   Server defined temporary directory:
+   
+   These Model Builder nodes:
+   Cox Regression
+   Logistic Regression
+   PCA\Factor
+   Genlin
+   Discriminant
+   
+   And also the Sample node in "complex" mode
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This will be addressed in a future version\Fix Pack.
+   
+   Make the following configuration edits to redirect all files
+   created by the execution of this node to the Modeler Server
+   temporary directory.
+   
+   1. edit statsenv.sh in
+   <ModelerServer>/ext/bin/spss.xd/xdexe/bin and set
+   SPSSTMPDIR_DEFAULT to the Modeler Server temp directory
+   
+   2. set and exporting a new environment variable, TEMP, to the
+   same location you set SPSSTMPDIR_DEFAULT to in step 1. above. in
+   the Modeler Server startup script, eg:
+   
+   TEMP=/usr/IBM/SPSS/ModelerServer/16.0/tmp; export TEMP
+   
+   Please ensure you perform both steps 1. and 2. as indicated.
+   
+   3. Restart Modeler Server.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * This affects all users of IBM SPSS Modeler Server on a       *
+   * Linux/Unix platform.                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * COX REGRESSION MODEL BUILDER CREATING FILES IN /TMP WITH     *
+   * MODELER SERVER ON LINUX\UNIX                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM SPSS Modeler 17.0 to resolve this      *
+   * issue.                                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been resolved in IBM SPSS Modeler 17.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI06692
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS MODELER SV
+   
+   
+ * REPORTED COMPONENT ID
+   5725A65MS
+   
+   
+ * REPORTED RELEASE
+   F00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-21
+   
+   
+ * CLOSED DATE
+   2015-04-10
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS MODELER SV
+   
+   
+ * FIXED COMPONENT ID
+   5725A65MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RF00 PSY
+   UP
+   
+   
+ * RG00 PSY
+   UP

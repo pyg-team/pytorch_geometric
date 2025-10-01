@@ -1,0 +1,22 @@
+Title: IBM InfoSphere CDC- SQL Transaction log backup plan - United States
+
+Text:
+Backup; transaction log; tlog; t-log; cdc sql TECHNOTE (FAQ)
+
+QUESTION
+ How should we configure our SQL Transaction log backup plan? 
+
+ANSWER
+InfoSphere CDC supports backups of your transaction logs with the Microsoft SQL Server Maintenance Plan or with a manual process in Microsoft SQL Server. 
+
+Note the following for transaction log backups: 
+
+- Each backup must create a new file and should not append or replace an existing file. 
+
+- Compressed or encrypted backups are not supported. 
+
+- Third party tools for backups are not supported. InfoSphere CDC for Microsoft SQL Server can only read and process files generated directly by SQL Server and not altered by any other process or procedure. InfoSphere CDC for Microsoft SQL Server cannot read files which do not correspond directly to the SQL Server transaction log format. 
+
+- Backups that are larger than 1GB may degrade InfoSphere CDC performance. InfoSphere CDC for Microsoft SQL Server will pre-parse the transaction log backup file prior to processing the file in order to build an internal map of the file, so large files will cause a large delay during the pre-parse phase. For best performance and reduced disk I/O, it may be preferable for InfoSphere CDC if the log files are stored on disk volumes which are cached by the operating systems and the log size comfortably fits within the disk cache of the operating system. 
+
+If you need more information on how to perform this task, see your database administrator or refer to your Microsoft SQL Server documentation.

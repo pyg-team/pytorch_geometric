@@ -1,0 +1,33 @@
+Title: IBM When using Internet Explorer 8 (IE8) the temporary cache folder will not be completely cleared up - United States
+
+Text:
+TPAEUI; Internet Explorer 8 (IE8); temporary cache folder; end-user machine TECHNOTE (FAQ)
+
+QUESTION
+ What may be the cause for us to see odd behavior on Maximo application's web pages (links not working, blank screen, selection boxes not being populated, etc) on an end-user's machine running IE8 after upgrading or deploying other products even if we've cleared up the IE8's temporary cache folder ? 
+
+CAUSE
+As part of recommended instructions on fix packs, hot fixes and new products deployment to Maximo environment the Internet Browser cache folder must be cleared up to remove old cache code avoiding odd issues like links not working, blank pages, selection boxes not working, etc. 
+
+
+ANSWER
+For Internet Explorer 8 (IE8) you will need to use a different way to make the temporary cache folder to be completely cleared up on an end-user's machine. Typically the regular way to clear up such directory would be :
+
+1) Open Internet Explorer;
+2) Open Tools menu;
+3) Click on Internet Options;
+4) Under Browsing History section, choose "Delete..." and choose to delete "Temporary Internet files", "Cookies", etc. Confirm with Delete;
+5) Close Internet Explorer and open it again.
+
+But for Internet Browser 8 (IE8) this may not work fine once some code may be left on the folders causing odd issues when accessing Maximo. 
+
+
+To clear all temporary cache files for IE8 please follow this new set of instructions:
+
+1) Open IE8;
+2) Open Tools menu;
+3) Click on “Developer Tools” (F12);
+4) On the Developer Tools window, click on the “Cache” menu choice at the top bar;
+5) Choose "Clear Browser Cache..." (Ctrl+R);
+6) Click on the "Yes" button when system asks you for confirmation;
+7) Close the Developer Tools windows and close IE8.

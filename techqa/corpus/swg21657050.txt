@@ -1,0 +1,54 @@
+Title: IBM Rational Test Workbench Eclipse Client 8.5 does not launch and workbench crashes even with valid RTW license - United States
+
+Text:
+SRX; RN8.5; RTWec 8.5 crash; RTWec 8.5; RTWec 8.5 license; RTW 8.5 crash; RTW 8.5; RTW 8.5 license TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After IBM Rational Test Workbench Eclipse Client (RTWec) version 8.5 is installed and a valid license is applied using Installation Manager (IM), product launch results in Manage License message or the workbench crashes. 
+
+SYMPTOM
+When RTWec 8.5 is launched the workbench crashes with JVM error 919.
+
+
+CAUSE
+The workbench is unable to fetch\checkout license from the license server even if valid RTW licenses are available on the license server. 
+
+Root cause for this is the version mismatch between the RTWec and the RTW floating license that is applied on the license server.
+
+
+RESOLVING THE PROBLEM
+Procedure: 
+
+ 1. Regenerate the RTW license if it is not done already. 
+    
+    For details, review the Enabling Licenses [http://pic.dhe.ibm.com/infocenter/rtwhelp/v8r5m0/topic/com.ibm.rational.rtw.install.doc/topics/c_enable_license.html] topic in the information center. 
+    
+    After regenerating the license, if you want to use version 8.5, you must complete the following steps.
+    
+    Note: If you upgrade RTWec to version 8.5.0.1 or later, you can ignore the following steps.
+    
+    
+ 2. Download the attached files (plugin.xml & offering.xml) locally to the machine where the workbench is set up.
+    
+    
+ 3. Copy and overwrite the existing two file into Installation Manager Shared Resources Directory \ plugins\com.ibm.rational.rtw.product directory. 
+    
+    The IM Shared directory path can be found by selecting Installation Manager > Modify > RTW package Group. 
+    
+    The Shared Resources Directory path will show up as part of details.
+    
+    
+ 4. Restart RTWec from command line with eclipse.exe -clean option.
+
+RELATED INFORMATION
+#Regenerating RTW license for 8.5 [http://pic.dhe.ibm.com/infocenter/rtwhelp/v8r5m0/topic/com.ibm.rational.rtw.install.doc/topics/c_enable_license.html]
+
+
+
+
+Disclaimer All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+
+
+offering.xml [/support/docview.wss?uid=swg21657050&aid=2]offering.xml [/support/docview.wss?uid=swg21657050&aid=1]
+plugin.xml [/support/docview.wss?uid=swg21657050&aid=4]plugin.xml [/support/docview.wss?uid=swg21657050&aid=3]

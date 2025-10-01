@@ -1,0 +1,159 @@
+Title: IBM IV14739: EXPECTED AND ACTUAL MISSING WITH RPT 8.2.X SCRIPTS - United States
+
+Text:
+  READMES ARE AVAILABLE
+IBM Tivoli Composite Application Manager for Transactions Response Time 7.3.0.1 Interim Fix 20 README 7.3.0.1-TIV-CAMRT-IF0020 [http://www-01.ibm.com/support/docview.wss?uid=isg400001541]
+IBM Tivoli Composite Application Manager for Transactions Response Time 7.3 Fix Pack 1 README 7.3.0.0-TIV-CAMRT-FP0001 [http://www-01.ibm.com/support/docview.wss?uid=isg400001238]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In ITCAM for Transactions 7.3, RPT 8.2.x scripts do not report
+   the Violated Value and Expected Value when a content
+   verification point failure occurs.
+   
+   A failure event displays in the Robotic Script Verification
+   Point Failures workspace, but the Violated Value and Expected
+   Value columns are blank.
+   
+   The trace-robotic log includes an entry like the following:
+   
+   [date-time] -  MIN  - server-name - PlaybackThreadPoolWorker-255
+   -
+   com.ibm.tivoli.transperf.playback.rpt.RPTPlaybackService.process
+   StatusEvent() - Sending RT VP event: i=|0|,
+   statusEvent=|SimTestStatusEvent Values:
+   monitorName=|monitor-name/|,URL=|application-url|,eventType=|com
+   .ibm.rational.test.lt.ContentVP|,eventId=|event-id|,parentEventI
+   d=|parent-event-id|,ownerId=|owner-id|,text=|Content
+   verification point failed.  One or more content element checks
+   failed.|,name=|Content verification
+   point|,actualValue=|null|,expectedValue=|null|,eventVerdict=|2|,
+   eventReason=|2|,eventDesc=|null|, eventProperties = [
+   [name=|Condition|,type=|String|,value=|Fail if any string is
+   missing|]  [name=|Missed0|,type=|String|,value=|Actual:
+   search-string-value|] ]|
+   
+   A special case exists where the Violated Value and the Expected
+   Value cannot be captured, because the HTTP response was
+   incomplete. In this scenario, the trace-robotic log includes an
+   entry like the following.
+   
+   [date-time] -  MIN  - server-name - PlaybackThreadPoolWorker-34
+   -
+   com.ibm.tivoli.transperf.playback.rpt.RPTPlaybackService.process
+   StatusEvent() - Sending RT VP event: i=|16|,
+   statusEvent=|SimTestStatusEvent Values:
+   monitorName=|monitor-name/|,URL=|aplication-url|,eventType=|com.
+   ibm.rational.test.lt.ContentVP|,eventId=|event-id|,parentEventId
+   =|parent-event-id|,ownerId=|owner-id|,text=|Unable to determine
+   content verification point because a complete HTTP response
+   wasn't successfully received.|,name=|Content verification
+   point|,actualValue=|null|,expectedValue=|null|,eventVerdict=|2|,
+   eventReason=|2|,eventDesc=|null||
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Rational changed the event properties that ITCAM for
+   Transactions 7.3 relies on to populate these values starting in
+   RPT 8.2.0. The 'Expected' property was changed to 'Condition'
+   and 'Actual' property was changed to 'Found0'. The resolution is
+   to add code to ITCAM for Transactions 7.3 to check for these new
+   properties.
+   
+   A fix is planned to be included in ITCAM for Transactions 7.3
+   FP01.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Targeted for 7.3.0.0-TIV-CAMRT-RRT-IF0004
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV14739
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM TRANSACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724S79RR
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-02
+   
+   
+ * CLOSED DATE
+   2012-02-22
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R730 PSY
+   UP

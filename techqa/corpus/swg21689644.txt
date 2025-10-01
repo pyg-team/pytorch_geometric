@@ -1,0 +1,43 @@
+Title: IBM Connection timed out error when setting up FileNet volume on StoredIQ - United States
+
+Text:
+FileNet domain configuration; firewall; port; timed out; time out; API_UNABLE_TO_USE_CONNECTION; FNRCA0031E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When setting up a StoredIQ volume for use with FileNet P8 Content Engine Platform it is necessary to enter configuration details of the FileNet Content Engine server and port into forms. When done on the Appstack all required properties are defined in a single form. On the Data Server it is necessary to initially define a FileNet domain configuration and then it is possible to create a volume to use with the FileNet Content Engine.
+
+A connection timed out error may display if the environment is not properly configured. 
+
+SYMPTOM
+After selecting the OK or Apply button on the configuration page there will be a short delay and then an error message will display. 
+
+The following error message will display in the Appstack volume setup configuration form or on the Dataserver Data sources -> Specify servers -> FileNet domain configurations setup page:
+
+[False, 'java.lang.String', 'fn_listPossibleEDMObjStores] 1664773366 error: java.lang.Exception: com.filenet.api.exception.EngineRuntimeException: FNRCA0031E: API_UNABLE_TO_USE_CONNECTION: The URI for server communication cannot be determined from the connection object <FileNet Content Engine Servername:9080/wsi/FNCEWS40MTOM. Message was: Connection timed out']
+
+The following error will be reported in the /deepfs/confing/siqsmb0.out file on the Dataserver:
+
+CEConnection][WARNING] CEConnection.validateURI: com.filenet.api.exception.EngineRuntimeException: FNRCA0031E: API_UNABLE_TO_USE_CONNECTION: The URI for server communication cannot be determined from the connection object :9080/wsi/FNCEWS40MTOM. Message was: Connection timed out 
+
+
+CAUSE
+The default port of 9080 for the FileNet Content Engine is closed by default on the firewall of the FileNet P8 Content Engine Platform server.
+
+ENVIRONMENT
+Dataserver and Appstack
+
+DIAGNOSING THE PROBLEM
+Use the following URL to access the Administration Console for Content Platform Engine using a browser on a platform that is not the same as the FileNet Content Engine server. :9080\acce This URL should open a browser session to permit logging into the FileNet Content Engine for administrative purposes. If the URL is not found the 9080 port may be closed on the FileNet Content Engine server firewall preventing access. 
+
+RESOLVING THE PROBLEM
+Create an Inbound Rule to open the required port of 9080 to allow the creation of the StoredIQ volume definition. If https access to the FileNet Content Engine server is configured then the Inbound Rule for the firewall should open port 9443.
+
+RELATED INFORMATION
+ [FileNet P8 ports [http://pic.dhe.ibm.com/infocenter/iconf/v5r2m0/index.jsp?topic=%2Fcom.ibm.p8.planprepare.doc%2Fp8pap057.htm]
+Content Platform Engine ports [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.planprepare.doc/p8pap058.htm]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management eDiscovery Identification and Collection StoredIQ Platform Platform Independent 7.5.1 Enterprise Content Management Policy Assessment and Compliance StoredIQ Platform Platform Independent 7.5.1 Enterprise Content Management Unstructured Data Identification and Mgmt Not Applicable Platform Independent 7.5.1

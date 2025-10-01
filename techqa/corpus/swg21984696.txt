@@ -1,0 +1,31 @@
+Title: IBM Two object stores not showing in ACCE - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Two Object Stores do not show in FileNet Content Engine ACCE and an error is seen when testing DataSource connectivity in IBM WebSphere 
+
+SYMPTOM
+The following error is seen in IBM WebSphere when the datasource tests are run.
+
+The test connection operation failed for data source <DSName>on server
+dmgr at node CellManager01 with the following exception: java.sql.
+SQLException: [jcc][t4][2043][11550][3.69.24] Exception java.net.
+ConnectException: Error opening socket to server us.ibm.com/1.1.1.1 on port 50,000 with message: A remote host refused an
+attempted connect operation.. ERRORCODE=-4499, SQLSTATE=08001
+DSRA0010E: SQL State = 08001, Error Code = -4,499. View JVM logs for
+further details.
+
+
+CAUSE
+DB2 lost tcp/ip connectivity
+
+RESOLVING THE PROBLEM
+Re-establishing db2 tcp/ip connectivity with the following db2 commands
+
+
+
+ * db2set DB2COMM=TCPIP
+   
+ * db2set –all

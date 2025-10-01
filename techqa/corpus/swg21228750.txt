@@ -1,0 +1,39 @@
+Title: IBM Error when trying to connect Rational Software Architect to DB2 UDB 8.1 or 8.2 on an AIX 64 bit server - United States
+
+Text:
+rsa; rad; db2; connection; new connection; db 2; 64 bit; IWAS0223E; IWAS0126E; problems; error; unknown; reason; RATLC00037204; JR20181; 1228750 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to connect to DB2® Universal Database (UDB) 8.1 or 8.2 on an AIX 64 bit server you see the message, "IWAS0126E Problems encountered while trying to establish connection Con2. Reason: 'unknown.'"
+This technote provides a workaround for connecting from IBM® Rational® Software Architect (RSA) to IBM DB2 64-bit installation on an AIX 64-bit server. 
+
+CAUSE
+The error occurs if the remote DB2 system is a 64-bit version on an AIX machine. This is currently a defect in RSA and is being tracked as APAR JR20181.
+
+RESOLVING THE PROBLEM
+Follow these workaround steps. 
+
+ 1. Open the Data Perspective (Windows > Open Perspective > Data) 
+ 2. In the Database Explorer, right-click and select New Connection... 
+ 3. From the New connection dialog box in the Select a database manager: section, expand DB2 UDB and select v8.2 or v8.1 
+ 4. Enter the Connection URL details and click Test Connection  1. Select the Other for the JDBC Driver instead of DB2 Universal Driver 
+     2. Enter the Database 
+     3. Enter the Host 
+     4. Enter the port number; by default DB2 V8.2 uses 5000 
+     5. The JDBC driver class should be specified according to the desired driver version; the latest DB2 drivers should be used. 
+     6. Enter the class location 
+     7. You do not need to enter anything in the Connection URL because this gets prepopulated with information from the database, host, and port 
+     8. Enter your user ID and password
+    
+    
+ 5. Click Finish
+
+
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect IBM Suite of Products - Other Windows 6.0.0.1, 6.0.1, 6.0.1.1 Data & Information Management DB2 Universal Database for Linux- UNIX and Windows IBM Suite of Products - Other AIX 8

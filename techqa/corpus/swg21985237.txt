@@ -1,0 +1,28 @@
+Title: IBM Supported Installation Manager, WebSphere Application Server and Java levels - United States
+
+Text:
+v861xsrnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Cannot install WebSphere eXtreme Scale. 
+
+SYMPTOM
+WXS 8.6.1.0 is not listed in Installation Manager, or you cannot augment WAS profiles with WebSphere eXtreme Scale.
+
+
+RESOLVING THE PROBLEM
+Install or upgrade Installation Manager, your WAS instance, and Java to supported levels: 
+
+ * Installation Manager Version 1.8.5 
+ * IBM WebSphere Application Server Version 8.5 or later 
+ * Liberty Version 8.5.5.0 or later (client only) 
+ * Java Version 7
+
+
+You cannot install the eXtreme Scale server on WebSphere Application Server Liberty or WebSphere Application Server Network Deployment Liberty. The eXtreme Scale server installation has been replaced with the new eXtreme Scale Liberty Deployment, which bundles Liberty with the WebSphere eXtreme Scale caching service and servers. 
+If you want to install WXS 8.6.1 in WAS 8.5, you need to install IBM WebSphere SDK Java Technology Edition 7.1.0.0 or later, and from <WAS_INSTALL>/bin directory, run the following commands: 
+ *  managesdk -listAvailable 
+
+- find the name of the available 1.7.x SDK  *  managesdk -enableProfileAll -sdkName <SDK_name> 
+ *  managesdk -setNewProfileDefault -sdkName <SDK_name> 
+ *  managesdk -setCommandDefault -sdkName <SDK_name>

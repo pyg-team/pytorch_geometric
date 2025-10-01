@@ -1,0 +1,27 @@
+Title: IBM Send Email feature in Sametime Connect pulls email address from incorrect location - United States
+
+Text:
+JDST6T6S9D TECHNOTE (FAQ)
+
+QUESTION
+When in a Lightweight Directory Assistance Protocol (LDAP) environment, using the Send Email feature of the Sametime Connect client pulls the email address from an attribute (possibly the uid attribute) that can put an invalid email address in the To field of the new memo. 
+
+Steps to reproduce:
+1. Set up a Sametime 7.5 environment using LDAP authentication.
+2. Login to Sametime Connect client 7.5 and connect to the server from Step 1.
+3. Add yourself to contact list, if not already there.
+4. Right-click yourself in the contact list and select Send -> Email.
+5. Notice the value entered in the "To" field of the new memo. This should be the Internet email address (or at least whatever value is in the mail attribute) so that the email can be successfully sent.
+
+It appears to pull the username value, which, in a Domino authentication environment, is the UserName field on the Person document. This is the Notes canonical name. In an LDAP environment it may pull the uid field which may be in the form CN=user name,OU=org unit,O=org. This will not work.
+
+
+ANSWER
+This issue was reported to Quality Engineering as SPR #JDST6T6S9D and has been fixed in Sametime 7.5.1.
+
+
+
+
+
+ * 
+ *

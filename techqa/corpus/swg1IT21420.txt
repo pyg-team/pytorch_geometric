@@ -1,0 +1,168 @@
+Title: IBM IT21420: TLS CONNECTION WITH TLS1.2 FROM SSP TO IBM STERLING B2B INTEGRATOR CDSA DOES NOT WORK WHEN SSP IS SET TO USE SSL-TLS1.2 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a remote Connect:Direct PNODE configures TLS 1.0, 1.1 and
+   1.2 and attempts to connect to the CDSA, (which is configured
+   for TLS 1.2) the session fails.
+   
+   Instead of choosing TLS 1.2 (which is the
+   highest configured protocol in common between the PNODE and the
+   CDSA),the CDSA fails as though the PNODE only supports
+   TLS 1.0 (the CDSA ignores the PNODE's support for TLS 1.2).
+   
+   
+   This is because the CDSA does not support the extended
+   Secure+protocol feature.
+   Consequently, only the lowest protocol in the range is
+   recognized by the CDSA.
+   The extended protocol feature was introduced in the other
+   Connect:Direct platforms when support for TLS 1.2 was released.
+   
+   The CDSA needs to support multiple Secure+ protocol selection
+   to so that it is able to successfully connect in the scenario
+   above.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  STRRTC - 523729
+   SB/SB
+   
+   Circumvention:
+   NONE
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   B2B Integrator Users V5.2
+   
+   Problem Description:
+   TLS connection with TLS 1.2 from SSP to IBM Sterling B2B
+   Integrator CDSA does not work when SSP is set to use SSL-TLS 1.2
+   
+   
+   Platforms Affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Resolution Summary:
+   The CDSA now supports the extended Secure+ protocol feature.
+   Users can now configure more than one security protocol for a
+   session.  Session negotiation will select the highest protocol
+   in common.  In addtion, a new "Connection Policy" option is
+   available for handling inbound secure connections.  The policy
+   may be set to "Restricted" (default) or "Open."  If
+   "Restricted" the CDSA requires the remote PNODE must specify at
+   least one of the securtiy protocols at the CDSA in order to
+   connect.  If "Open" the CDSA will allow a PNODE to connect
+   using any TLS protocol.
+   
+   Delivered In:
+   5020602_5
+   5020603_3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT21420
+   
+   
+ * REPORTED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * REPORTED COMPONENT ID
+   5725D0600
+   
+   
+ * REPORTED RELEASE
+   526
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-07-12
+   
+   
+ * CLOSED DATE
+   2017-09-06
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * FIXED COMPONENT ID
+   5725D0600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R526 PSY
+   UP

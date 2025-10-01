@@ -1,0 +1,61 @@
+Title: IBM Security Bulletin: Vulnerability in RC4 stream cipher affects GPFS V3.5 for Windows (CVE-2015-2808) / Enabling weak cipher suites for IBM General Parallel File System is NOT recommended - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The RC4 “Bar Mitzvah” Attack for SSL/TLS affects OpenSSH for GPFS V3.5 for Windows. Additionally, with the recent attention to RC4 “Bar Mitzvah” Attack for SSL/TLS, this is a reminder to NOT enable weak or export-level cipher suites for IBM General Parallel File System (GPFS). 
+
+VULNERABILITY DETAILS
+CVEID:CVE-2015-2808 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2808]
+DESCRIPTION: The RC4 algorithm, as used in the TLS protocol and SSL protocol, could allow a remote attacker to obtain sensitive information. An attacker could exploit this vulnerability to remotely expose account credentials without requiring an active man-in-the-middle session. Successful exploitation could allow an attacker to retrieve credit card data or other sensitive information. This vulnerability is commonly referred to as "Bar Mitzvah Attack".
+CVSS Base Score: 5
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/101851 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101851] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+OpenSSH for GPFS V3.5 for Windows
+
+REMEDIATION/FIXES
+In GPFS V3.5.0.24 dated April 2015, IBM upgraded OpenSSH for GPFS on Windows to remove RC4 ciphers to address this vulnerability. System administrators should update their systems to GPFS V3.5.0.24 by following the steps below. 
+
+
+1. Download the GPFS 3.5.0.24 update package dated April 2015 into any directory on your system. From IBM at http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Cluster%2Bsoftware&product=ibm/power/IBM+General+Parallel+File+System&release=3.5.0&platform=Windows&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Cluster%2Bsoftware&product=ibm/power/IBM+General+Parallel+File+System&release=3.5.0&platform=Windows&function=all]
+
+2. Extract the contents of the ZIP archive so that the .msi file it includes is directly accessible to your system.
+
+3. Follow the instructions in the README included in the update package in order to install the OpenSSH msi package. This updated OpenSSH msi package is built to disable RC4 ciphers.
+
+If GPFS multiclustering is configured on Windows nodes, upgrade all OpenSSL packages that may have been installed. The following can be done on a small group of nodes at each time (ensuring that quorum is maintained) to maintain file system availability:
+
+a. Stop GPFS on the node
+b. Install the version of OpenSSL 
+c. Restart GPFS on the node
+
+You should verify applying this fix does not cause any compatibility issues. The fix removes RC4 stream cipher in the OpenSSH binaries. As such, RC4 cipher cannot be enabled. IBM recommends that you review your entire environment to identify other areas where you have enabled the RC4 stream cipher and take appropriate mitigation and remediation actions.
+
+WORKAROUNDS AND MITIGATIONS
+If you enabled the RC4 stream cipher you are exposed to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the RC4 stream cipher and take appropriate mitigation and remediation actions. 
+
+
+IBM GPFS V4.1 Advanced Edition, when encrypting data at rest, by default disables RC4 stream cipher.
+
+IBM GPFS V4.1 (all Editions), when GPFS operates in NIST 800-131A mode the system is not vulnerable.
+
+In all versions of GPFS, the cipherList configuration parameter to enable transport-level security and authentication should be set to avoid using weak ciphers. In particular, EXP-RC2-CBC-MD5, EXP-RC4-MD5, RC4-MD5 and RC4-SHA should be avoided. 
+
+Note: Customers who use AUTHONLY as cipherList are not affected.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

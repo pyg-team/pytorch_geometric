@@ -1,0 +1,30 @@
+Title: IBM How can we improve Bucketing performance? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ We would like to know what options are available for helping to increase performance related to bucketing in the Master Data Engine. 
+
+ANSWER
+There are several methods to help improve performance with bucketing. These can be broken into two main categories.
+Database Performance
+
+The mpi_membktd table is where all buckets are stored for the members. This table is relatively narrow in that there are only a few columns. However, it can be very deep since each member record will create 1 or more mpi_membktd rows.
+
+To help alleviate the strain on the database when retrieving data from this table, we have indexes defined. If you are seeing a slowness in retrieving data from this table as compared to a previous time-frame, you may want to consider a couple of options.
+
+
+ 1. Try running the maddbx -optimize mpi_membktd command from the application server's command line. This will force the database to update its statistics for that table, which can help increase performance. 
+ 2. Another option would be to analyze the queries that hit the mpi_membktd table and confirm that they are using the indexes. If it is doing a full table scan, please verify that the indexes exist. It may be necessary to re-create them if they became corrupt for whatever reason.
+
+
+
+Data Depth 
+
+The next method to help increase performance is to simply decrease the amount of data that gets bucketed for each member. 
+
+For this, there are 3 common methods you can employ. 
+ 1. Enable Frequency Based Bucketing. This option lets you set a hard limit on the number of records that can exist for a given bucket. Once the number of records exceed that limit, the bucket is no longer used. 
+ 2. Find specific large buckets and add the entries to the anonymous value list. This option will eliminate the large buckets. However, we typically only recommend doing this if the value truly is anonymous. 
+ 3. Reduce the number of active and available attribute values for each member. If you have the nsExists set to 0 for a member's attributes, this means that for each attribute, the member can have unlimited values. Depending on how the algorithm is defined, this can drastically increase the number of buckets.

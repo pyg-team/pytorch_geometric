@@ -1,0 +1,22 @@
+Title: IBM Opening FileNet® Business Process Manager Process Analyzer Process Task Manager results in error driver could not establish a secure connection to SQL Server. - United States
+
+Text:
+Secure Sockets Layer (SSL) encryption; JDBC 1.2 driver; Process Task Manager TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Opening FileNet® Business Process Manager Process Analyzer Process Task Manager results in error driver could not establish a secure connection to SQL Server by using Secure Sockets Layer (SSL) encryption. 
+
+SYMPTOM
+Following a successful installation of the Process Analyzer software, user is unable to launch Process Task Manager without receiving the message: 
+
+com.microsoft.sqlserver.jdbc.SQLServerException: The driver could not establish a secure connection to SQL Server by using Secure Sockets Layer (SSL) encryption. Error: "SQL Server did not return a response. The connection has been closed."
+
+The Process Analyzer software cannot be started. 
+
+
+CAUSE
+The version of Microsoft® Windows 2008 has FIPS mode enabled.
+
+
+RESOLVING THE PROBLEM
+Install Microsoft® SQL Server JDBC 1.2 driver, sqljdbc_1.2.2828.216_enu.exe. This is a patched version of the JDBC driver 1.2 currently available on the Internet.

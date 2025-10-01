@@ -1,0 +1,56 @@
+Title: IBM How to disable TLS 1.0 in AppScan Enterprise Console - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you disable TLS 1.0 (TSLv1) in IBM Security AppScan Enterprise Console? 
+
+ANSWER
+AppScan Enterprise displays the Enterprise Console using two web servers, IIS and Liberty. If you want to disable the TLS 1.0 protocol in Enterprise Console, you need to disable it in both web servers. 
+
+Note In AppScan Enterprise version 9.0.1.1 and earlier, AppScan uses Tomcat uses instead of Liberty. 
+
+ 
+
+ 
+
+How to disable TSLv1 in IIS
+
+
+ 1. Disable it in Windows Registry, under setting: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\ 
+ 2. Add a key named enabled and set it to "00000000" which mean disabled (if you set the key to 00000001, it means enabled).
+    
+    The following docs may help:  * https://support.microsoft.com/en-us/kb/187498 [https://support.microsoft.com/en-us/kb/187498] 
+     * http://support.snapcomms.com/customer/portal/articles/1379933-how-to-enable-disable-ssl-or-other-protocols-on-iis- [http://support.snapcomms.com/customer/portal/articles/1379933-how-to-enable-disable-ssl-or-other-protocols-on-iis-] 
+    
+    
+
+ 
+
+
+How to disable TSLv1 in Liberty
+
+The change needs to be done in the Liberty 'server.xml' file. 
+
+ 1. Open server.xml in a text editor (located by default in: C:\Program Files (x86)\IBM\AppScan Enterprise\Liberty\usr\servers\ase). 
+ 2. Find the ssl node that looks like:
+    <ssl id="defaultSSLConfig" keyStoreRef="defaultKeyStore" sslProtocol="SSL_TLSv2" trustStoreRef="defaultTrustStore" enabledCiphers="TLS_ECDH_RSA_WITH_AES_128_CBC_SHA TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA TLS_RSA_WITH_AES_128_CBC_SHA"/> 
+ 3. Set the sslProtocol token to TLSv1.1 or TLSv1.2. 
+    Note The 'sslProtocol' token can have the following values:  * "SSL_TLSv2" - which is TLSv1 TLSv1.1 and TLSv1.2 (this is the AppScan default value) 
+     * "TLSv1" - which is TLSv1.0 only 
+     * "TLSv1.1" - which is TLSv1.1 only 
+     * "TLSv1.2" - which is TLSv1.2 only
+    
+    
+
+
+ 
+
+How to disable TSLv1 in Tomcat 
+
+If having AppScan Enterprise 9.0.1.1 or earlier, then AppScan is using Tomcat as the second web server. To make the change in Tomcat do as follows: 
+
+ 1. Open Open server.xml in a text editor (located by default in: C:\Program Files (x86)\IBM\AppScan Enterprise\JazzTeamServer\server\tomcat\conf\) 
+ 2. Find the sslEnabledProtocols setting and set it to: 
+    sslEnabledProtocols="TLSv1.1,TLSv1.2"

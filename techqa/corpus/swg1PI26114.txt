@@ -1,0 +1,195 @@
+Title: IBM PI26114: WIDE REPORTING MENU CAUSES SCREEN TO JUMP BETWEEN ADJACENT MENUS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the Reporting menu is too wide for the browser window, the
+   menu bar will shift left, causing the mouse to leave the
+   Reporting menu and instead hover over the adjacent menu
+   (Organization menu), which then causes the menu to shift back
+   to Reporting, and the cycle repeats.
+   
+   
+   
+   
+   Prerequisites:
+   
+   7.0.0.2 baseline
+   
+   A) Create Reporting Columns to be displayed in the Reporting
+   Menu
+   1. Login to the OPX URL,  http://servername:7009/opx , as
+   OpenPagesAdministrator user
+   2. Click on Broswse Channels in left pane, then click
+   Reporting > SOX
+   3. Click the Add Folder button, wait for the Java Applet to
+   appear and enter a Name for the new folder
+   4.    Repeat Step(3)  2 more times  (creating total of 3 new
+   Report Folders)
+   
+   5. Login to the OpenPages Application,
+   http://servername:7009/openpages , as OpenPagesAdministrator
+   user
+   6. Click on the Reporting Menu on top navigation bar and
+   confirm that you see the new report folders there
+   
+   7. Click on ALL Reports, then click on the Add button on the
+   right.
+   
+    8. Select the dropdown arrow on the report field and select
+   any report there
+   
+   9. Enter a long report name, ~ 80 characters,  in the Name
+   field and fill in the Description field, then hit the Save
+   button on the bottom of page.
+   
+   Steps to Reproduce:
+   
+   1. Login to the OpenPages Application,
+   http://servername:7009/openpages , as OpenPagesAdministrator
+   user
+   2. Hover the mouse over the Reporting Menu on top menu bar and
+   notice that the menu will jump back and forth between the
+   Organization menu and the Reporting Menu shown below.
+   3. Confirm that the horizontal scroll bar exists on bottom of
+   page when reporting menu is displayed. .  If it does not,
+   reduce the width of the browser window until it does.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Reduce the report columns and/or shorten the report names under
+   the All Reports column in the Reporting menu so that horizontal
+   scroll bar does not appear.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * OpenPages Users                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * WIDE REPORTING MENU CAUSES SCREEN TO JUMP BETWEEN ADJACENT   *
+   * MENUS                                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customers should download OpenPages 7.3 from Passport        *
+   * Advantage. See the following document for details on         *
+   * obtaining OpenPages 7.3:                                     *
+   * http://www.ibm.com/support/docview.wss?uid=swg24042596       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code Change
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI26114
+   
+   
+ * REPORTED COMPONENT NAME
+   OPENPAGES GRC
+   
+   
+ * REPORTED COMPONENT ID
+   5725D5100
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-09-19
+   
+   
+ * CLOSED DATE
+   2016-11-08
+   
+   
+ * LAST MODIFIED DATE
+   2016-11-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OPENPAGES GRC
+   
+   
+ * FIXED COMPONENT ID
+   5725D5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R730 PSY
+   UP

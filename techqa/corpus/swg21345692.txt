@@ -1,0 +1,84 @@
+Title: IBM Unable to connect: Exception has been thrown by the target of an invocation - United States
+
+Text:
+log on logon login TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error message when logging on to Controller. 
+
+SYMPTOM
+Screen Message: 
+
+ 
+Exception has been thrown by the target of an invocation
+
+Event Viewer (application log):
+
+The VB Application identified by the event source logged this Application FrSrvFunc: Thread ID: 5060 ,Logged: Error occured at 5/31/2006 10:17:08 AM in FrSrvFunc, Error No=-2147217900, Source=Server function:Dbp_PushStruc(..) , Description=Cannot resolve collation conflict for equal to operation., HelpFile= HelpContext=0
+
+CAUSE
+There are several potential causes for this error message. TIP: For more examples, see separate IBM Technote #1347234. 
+
+ 
+However, by far the most likely cause is that the Controller SQL database has been moved to a new/different SQL server. This new (target) SQL server has a different 'default collation' from the old (source) SQL server.
+
+More information:
+Controller uses the Microsoft SQL system database 'TEMPDB' extensively. Controller often transfers data to/from its own database repository and the TEMPDB. For this to be successful, the character sets of these two databases (TEMPDB and <Controller_database>) must be identical.
+
+A design feature of Microsoft SQL is that the collation setting for the TEMPDB is always the same as the SQL server's default collation setting. This is why Cognos often states that the Controller database collation must match the SQL server's default collation setting. This 'server default' collation setting is chosen during the Microsoft installation wizard, when installing SQL 2000 or 2005, as follows: 
+
+
+ * If the user chooses a 'custom' install, then they can select their preferred default collation setting during the wizard 
+ * If the user chooses a 'typical' install, then the 'default collation' is chosen for them by the installation wizard itself, based on the regional settings of the Windows server. For example:  * US English: SQL_Latin1_General_CP1_CI_AS 
+    * UK English: Latin1_General_CI_AS
+   
+   
+
+
+TIP: 
+In general, Controller should work with any case insensitive (CI) collation setting, so long this collation matches the collation of the TEMPDB of the SQL server. However, IBM Cognos best practices suggest that you should use either 'SQL_Latin1_General_CP1_CI_AS' or 'Latin1_General_CI_AS' since these are extensively used by Cognos Support and Cognos consultants, so Cognos' ability to respond quickly is increased if these collations are used. In other words, if you choose one of these 2 collations, then it means that your Cognos consultant (and Cognos support) can respond to questions/issues quickly and efficiently, since we have already got a SQL collation installed on our laptops/test systems. 
+RESOLVING THE PROBLEM
+Ensure that the Controller database is restored onto a SQL server which has a TEMPDB database that has the same collation as the Controller database itself. 
+
+ 
+Steps:
+The following instructions assume you are using SQL 2000. For SQL 2005, the concept is the same, but the screens will be slightly different.
+
+
+ * How to check what collation the Controller database has:
+   1. Logon to the SQL server
+   2. Launch SQL Enterprise Manager from the Start Menu
+   3. Navigate to the Controller database
+   4. Right-click on the database, and choose 'properties'
+   5. The collation is describe (see below for example):
+   [/support/docview.wss?uid=swg21345692&aid=1] [/support/docview.wss?uid=swg21345692&aid=1]
+
+ * How to check what collation the TEMPDB database has:
+
+Repeat the above steps, but choose the database 'tempdb' (see below for example):  * 
+
+ * How to check what the SQL 2000 server's default collation setting is:
+   1. Logon to the SQL server
+   2. Launch SQL Enterprise Manager from the Start Menu
+   3. Right-click on the SQL server name (at the top), and choose 'properties'
+   4. The collation is described (see below for example):
+   [/support/docview.wss?uid=swg21345692&amp;aid=3]
+
+
+What to do if the Controller database collation does not match the TEMPDB collation: 
+
+You cannot use a SQL server whose TEMPDB collation is different from the Controller database collation. Therefore, you need to either: 
+(a) Convert the SQL server to the 'correct' collation  * To do this, you would need to uninstall MS SQL, and re-install SQL 
+ * During the installation wizard, choose a 'custom' install and select the 'correct' collation.
+
+(b) Create a new SQL server with the 'correct' collation  * Typically, many customers create a new SQL 'instance' which has a default collation that matches the collation of the Controller database 
+ * For example, SQL 2000 supports up to 4 separate 'named' instances.
+
+RELATED INFORMATION
+#1347234 - Can not log in to Controller due to error --E [http://www.ibm.com/support/docview.wss?uid=swg21347234]
+
+
+
+
+HISTORICAL NUMBER
+ 1021466

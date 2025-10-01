@@ -1,0 +1,211 @@
+Title: IBM PK23985: ADDNODE -INCLUDEAPPS RESULTS IN "TOO MANY OPEN FILES" ERROR - United States
+
+Text:
+  A FIX IS AVAILABLE
+PK23985; 6.0.2.9: addnode -includeapps results in (too many open files) error [http://www-01.ibm.com/support/docview.wss?uid=swg24012315]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Errors similar to following will be seen in the Deployment
+   Manager SystemOut.log
+   
+   WKSP0018E: Error reading file for cells/Cell1/applications/Edit
+   page
+   _and layout_PA_1_0_39.ear/Edit page _and layout_PA_1_0_39.ear
+   --java.io.IOException: The system cannot find the specified
+   file, either
+   the filename is too long on Windows system or run out of file
+   descriptor
+   on UNIX platform. java.io.FileNotFoundException:
+   C:\wps\profiles\NDMGR\wstemp\addNode1142956396562\workspace\cell
+   s\Cell1\
+   applications\Edit page _and layout_PA_1_0_39.ear\Edit page _and
+   layout_PA_1_0_39.ear (Too many open files)
+   
+   
+   
+   
+   Errors similar to the following will be displayed in the in the
+   addnode.log
+   
+   [3/22/06 9:58:08:734 CST] 0000000a SOAPConnector <
+   handleAdminFault
+   Exit
+   
+   javax.management.MBeanException: null
+   nested exception is
+   com.ibm.websphere.management.exception.ConfigServiceException:
+   WKSP0018E
+   Error read file for
+   cells/Cell1/applications/FileServer_PA_1_0_4H.ear/deltas/FileSer
+   ver_PA_1
+   _0_4H.ear/delta-1139163900312 --java.io.IOException: The system
+   cannot
+   find the specified file, either the filename is too long on
+   Windows
+   system or run out of file descriptor on UNIX platform.
+   java.io.FileNotFoundException:
+   C:\wps\profiles\NDMGR\wstemp\addNode1143043024875\workspace\cell
+   s\Cell1\
+   applications\FileServer_PA_1_0_4H.ear\deltas\FileServer_PA_1_0_4
+   H.ear\de
+   lta-1139163900312 (Too many open files)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Application Server users of        *
+   *                 version 6.0.2.                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Running ./addNode.sh with option        *
+   *                      -includeapps results in too many open   *
+   *                      files.                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Running the addNode command with -includeapps throws
+   java.io.FileNotFoundException with too many open files
+   error message. This happens due to the large number
+   of files in the workspace which are to be synched with
+   the Master Repository.
+   DocumentContentSource encapsulates FileInputStream
+   for every document in the workspace which needs to
+   be synched up with the Master Repository. When there are a
+   large number of files to be synched up, a large number of
+   open file handles are created which is shown as a java.io.
+   FileNotFoundException : too many open files error message
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  New logic was implemented whereby the FileInputStream are
+   opened only when the file is about to be updated to the
+   Master Repository thereby preventing too many parallel
+   FileInputStream handles.
+   
+   The fix for this APAR is currently targeted for inclusion
+   in fixpack 6.0.2.13  Please refer to the recommended updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK23985
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-04-27
+   
+   
+ * CLOSED DATE
+   2006-05-15
+   
+   
+ * LAST MODIFIED DATE
+   2006-10-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  WORKSPAC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP

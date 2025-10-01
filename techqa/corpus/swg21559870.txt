@@ -1,0 +1,72 @@
+Title: IBM CSPA004E REQ=SSLSOINI RC=406 RS=GSK_ERR_IO when establishing session from C:D OpenVMS to C:D zOS - United States
+
+Text:
+Communication Security; STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CSPA004E REQ=SSLSOINI RC=406 RS=GSK_ERR_IO when establishing session from C:D OpenVMS to C:D zOS 
+
+SYMPTOM
+
+
+Unable to establish Secure+ TLS session from C:D OpenVMS to C:D zOS when Client Authentication enabled. Session established when Client Authentication disabled.
+
+C:D zOS sends a buffer containing a Certificate Message when Client Authentication is not enabled .
+
+C:D zOS sends a buffer containing a Certificate Massage AND a Certificate-Request message when Client Authentication turned on.
+
+In this case C:D VMS had been configured to use a 4K buffer - NDM$$TCP_RU_SIZE 4096 ( this is the default setting)
+
+The buffer sent by the mainframe was greater than 4K when Client authentication was enabled. This caused the error as C:D OpenVMS could not process a buffer greater than 4K. The Certificate-Request message contained entries for all the Trusted root cerificates stored in the Key Database on the zOS system.
+
+
+
+Error Message C:D zOS trace
+
+S0013 11:05:13.83 Socket Init Error. S0013 11:05:13.83 REQ=SSLSOINI RC=406 RS=GSK_ERR_IO S0013 11:05:13.83 ENDING TLS/SSL HANDSHAKE, RC=406 S0013 11:05:13.83 REQ=SSLSOINI RC=406 RS=GSK_ERR_IO S0013 11:05:13.83 SSLH FUNCTION ERROR: SEC#FUNC=11 SEC#CFUN=00 SEC#MSG=CSPA004E SEC#RC=00000008 SEC#SC=00000999 S0013 11:05:13.83 {ERROR} - SENDING SENSE CODE 0999 S0013 11:05:13.83 TAMSGID1=CSPA004E ZOS SSL trace 7/01/2009-11:18:37 Thd-5 INFO send_v3_server_messages(): Sent SERVER-HELLO-DONE message 
+07/01/2009-11:18:37 Thd-5 INFO gsk_write_v3_record(): Calling write routine for 4795 bytes 
+07/01/2009-11:18:37 Thd-5 INFO gsk_write_v3_record(): 4795 bytes written 
+07/01/2009-11:18:37 Thd-5 INFO gsk_read_v3_record(): Calling read routine for 5 bytes 
+07/01/2009-11:18:37 Thd-5 INFO gsk_read_v3_record(): 5 bytes received 
+07/01/2009-11:18:37 Thd-5 ERROR gsk_read_v3_record(): Protocol version 69.71 is not supported07/01/2009-11:18:37 Thd-5 ASCII gsk_read_v3_record(): SSL record header 
+00000000: 4245474e 63 *BEGNc * 
+07/01/2009-11:18:37 Thd-5 ERROR gsk_secure_socket_init(): SSL V3 server handshake failed with nnn.nnn.nnn.nnn[56823] 
+07/01/2009-11:18:37 Thd-5 INFO default_setsocketoptions(): TCP_NODELAY restored for socket 4 
+07/01/2009-11:18:37 Thd-5 EXIT gsk_secure_socket_init(): <--- Exit status 0x00000196 (<strong> C:D VMS Session Manager trace
+
+
+
+14:59:07.25 >>Enter: comm_clear_grflags.COMM.1127
+14:59:07.25 <<Exit: comm_clear_grflags.COMM.1148
+
+
+
+
+
+
+
+
+
+RESOLVING THE PROBLEM
+
+
+Increase the buffer size set in the C:D OpenVMS init parms e.g. NDM$$TCP_RU_SIZE 8192
+
+ 
+
+HISTORICAL NUMBER
+ NFX6469 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Severity
+
+
+Normal
+
+
+Type
+
+
+NormalFix

@@ -1,0 +1,146 @@
+Title: IBM How to Set Up Security for C:E for z/OS - United States
+
+Text:
+FTPSECURE MBXSECURE SNASECURE BSCSECURE TECHNOTE (FAQ)
+
+QUESTION
+ Customer would like to implement security in their Connect:Enterprise for z/OS. 
+
+ANSWER
+How to Set Up Security for C:E for z/OS
+
+You set up CEZ security to not allowing ANY
+USERID access and then granting access as needed.
+
+You begin with the following definition in the ODF:
+
+MBXSECURE=ALL or WARN – This will set the security for C:E globally.
+(Recommend that you initially set this to WARN until you determine if
+you have the correct settings for your users.)
+
+You can then override this global setting with the following ODF parameters:
+
+APISECURE - Activates the Sterling Connect:Enterprise for z/OS security
+interface for APPC LU6.2 connections only.
+BSCSECURE - Activates the Sterling Connect:Enterprise for z/OS security
+interface for bisync connections only.
+CSCSECURE - Activates the Sterling Connect:Enterprise for z/OS security
+interface for Cross System Client (CSC) APPC LU6.2 connections only.
+FTPSECURE - Activates the Sterling Connect:Enterprise for z/OS security
+interface for FTP connections only.
+ICOSECURE - Activates the Sterling Connect:Enterprise for z/OS security
+interface for InterConnect (ICO) APPC LU6.2 connections only.
+SNASECURE - Activates the Sterling Connect:Enterprise for z/OS security
+interface for SNA connections only.
+STLSECURE - Activates the Sterling Connect:Enterprise for z/OS security
+interface for STOUTL offline utility functions only.
+UIFSECURE - Activates the Sterling Connect:Enterprise for z/OS security
+interface for the CICS and ISPF User Interface APPC LU6.2 connections
+only.
+
+Values set for use in this explanation:
+
+mbxhlq = USER1 (MBXHLQ=MAILBOX | xxxxxxxx specified in the
+ODF)
+
+
+mbxname = MBX1 (MBXNAME=MAILBOX | xxxxxxxx specified in the
+ODF)
+
+
+All RACF security calls begin with mbxhlq.mbxname (ex. USER1.MBX1)
+
+Top level RACF Generic Dataset Profile which will prevent ANY USERID
+(except for USER1 (value of MBXHLQ in the ODF)) from accessing the CE
+mailbox from anywhere (Batch, IUI, etc).
+This profile may be created with the WARN option to temporarily grant
+access while implementing security if using MBXSECURE=ALL. This can be
+used to see what RACF access calls are being made.
+
+
+INFORMATION FOR DATASET USER1.MBX1.** (G)
+
+LEVEL OWNER UNIVERSAL ACCESS WARNING ERASE
+----- -------- ---------------- ------- -----
+00 USER1 NONE NO NO
+
+
+
+ICH408I USER(USER2 ) GROUP(TECHSERV) NAME(JOHN SMITH )
+USER1.MBX1.APPC.C$U15 CL(DATASET ) VOL(*BLANK)
+WARNING: INSUFFICIENT AUTHORITY - TEMPORARY ACCESS ALLOWED
+FROM USER1.MBX1.** (G)
+ACCESS INTENT(UPDATE ) ACCESS ALLOWED(NONE )
+
+
+If you want to give any USERID full access to do anything in the CE
+mailbox then just give that USERID UPDATE authority to that
+USER1.MBX1.** generic RACF profile.
+
+
+If you want to give USERID USER2 authority to only ADD a batch using
+STOUTL then you would create another RACF Generic Dataset Profile like:
+
+1. USER1.MBX1.OFFLINE.ADD.** (this will only allow
+USER2 to add a batch with any ID)
+
+or
+
+2. USER1.MBX1.OFFLINE.ADD.USER2* (this will only allow USER2 to add
+a batch that has an ID starting with 'USER2'.)
+
+
+
+To allow USER2 to all STOUTL functions for batches with ID of USER2
+then you could create a Generic Dataset profile and give USER2 UPDATE
+authority.
+
+
+USER1.MBX1.OFFLINE.**.USER2*
+
+You have to create a resource for each user that you want to provide
+authority to or restrict for each function that you want that user to
+have or not have. In other words if you want a user to have all of the
+available functions then you will need to create a resource for each of
+the following. That would about 15 entries.
+
+ONLINE Resource Names (remote ID auth.)
+mbxhlq.mbxname.ONLINE.$$ADD.mbxid (STOR/STOU)
+mbxhlq.mbxname.ONLINE.$$NOADD.mbxid mbxhlq.mbxname.ONLINE.$$REQ.mbxid
+(RETR)
+mbxhlq.mbxname.ONLINE.$$DEL.mbxid (DELE)
+mbxhlq.mbxname.ONLINE.$$DIR.mbxid (LIST/NLST)
+(FTP commands are mapped to a corresponding
+$$ command equivalent – e.g. RETR  $$REQ)
+
+OFFLINE Resource Names (userid ID auth.)
+mbxhlq.mbxname.OFFLINE.ADD.mbxid
+mbxhlq.mbxname.OFFLINE.DELETE.mbxid
+mbxhlq.mbxname.OFFLINE.ERASE.mbxid
+mbxhlq.mbxname.OFFLINE.EXTRACT.mbxid
+mbxhlq.mbxname.OFFLINE.LIST.mbxid
+mbxhlq.mbxname.OFFLINE.MOVE.mbxid
+mbxhlq.mbxname.OFFLINE.STATFLG.mbxid
+mbxhlq.mbxname.OFFLINE.PURGE (no mbxid)
+
+APPC Resource Names (userid ID auth.)
+mbxhlq.mbxname.APPC.C$xxx
+mbxhlq.mbxname.APPC.C$xxx
+mbxhlq.mbxname.APPC.C$xxx
+mbxhlq.mbxname.APPC.C$U22.mbxid (browse)
+mbxhlq.mbxname.APPC.C$U31.mbxid (browse)
+(where xxx = IPS request code)
+(mbxid is appended only to C$U22 and C$U31)
+
+
+
+The C$xxx values refer to IPS Trailers which are documented in the
+Application Agents and User Exits Guide.
+
+You cannot restrict any user from a panel, you can only restrict the
+user by the function that you allow or disallow that could be performed
+from that particular panel.
+
+IBM security application RACF is the security application that support
+is the most familiar with. You would do something very similar to this
+in ACF-2 or TSS.

@@ -1,0 +1,166 @@
+Title: IBM PM60116: CICS CM INITIALIZATION FAILS WITH ABEND ABM8 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CICS CM initialization fails with Abend ABM8 in program
+   CCVSMSGH, when the invocation transaction CCVI is entered as a
+   console command (e.g. /F <region>,CCVI).  The CICS CCVLOG DD
+   contains message "CCV5352W Heartbeat value in Product Anchor
+   Block is INVALID" and CICS CM startup fails to complete. CICS CM
+   is inoperable. Subsequent Abends (e.g. S0C7) may be experienced
+   in program CCVSWASH.
+   .
+   ADDITIONAL KEYWORDS: ABEND0C7 ABENDS0C7 ABENDABM8
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of CICS Configuration Manager.     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CICS CM initialisation fails with ABEND *
+   *                      ABM8.                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   CICS CM initialisation fails with Abend ABM8 in program
+   CCVSMSGH, when:
+   1. The invocation transaction CCVI is entered as a console
+   command (e.g. F <region>,CCVI); or
+   2. The CICS region has been incorrectly defined with SIT
+   parameter TCPIP=NO.
+   
+   The CICS region's DDname CCVLOG contains message "CCV5352W
+   Heartbeat value in Product Anchor Block is invalid", and CICS CM
+   start up fails to complete.  CICS CM is inoperable.  Subsequent
+   Abends (e.g. S0C7) may be experienced in program CCVSWASH.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The CICS CM initialization program (CCVIINIT) and message
+   handler (CCVSMSGH) have been corrected to suppress message
+   sending to terminal devices incapable of supporting
+   those messages, thereby resulting in ABEND ABM8.
+   The CICS CM clean-up program (CCVSWASH) is corrected to bypass
+   processing if a previous processing failure has left the
+   product anchor block flagged as initialization incomplete.
+   210Y
+   CCVIBM$0
+   CCVIINIT
+   CCVSMSGH
+   CCVSWASH
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM60116
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS CONFIG MGR
+   
+   
+ * REPORTED COMPONENT ID
+   5697P0900
+   
+   
+ * REPORTED RELEASE
+   210
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-09
+   
+   
+ * CLOSED DATE
+   2012-03-14
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK77057
+   
+   
+
+MODULES/MACROS
+ *     CCVIBM$0 CCVIINIT CCVSMSGH CCVSWASH
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS CONFIG MGR
+   
+   
+ * FIXED COMPONENT ID
+   5697P0900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R210 PSY UK77057 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK77057]
+   UP12/03/16 P F203
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,19 @@
+Title: IBM Use IBM Content Navigator plugin to make the viewer tabs wrapping - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I customize the viewer tabs to wrap in IBM Content Navigator 3.0.1? 
+
+CAUSE
+By default, the viewer tabs are displayed in a single line with navigator buttons on the left and right.
+It may not work well when there are a lot of tabs to navigate, and it could be customized to make the tabs simply wrapping instead. 
+
+
+ANSWER
+Create an IBM Content Navigator plugin, and set below attribute to true: 
+
+ecm.widget.dialog.contentViewerWindow.wrappingTabController=true 
+
+This property file is newly added in IBM Content Navigator 3.0.1.

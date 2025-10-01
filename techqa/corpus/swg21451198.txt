@@ -1,0 +1,51 @@
+Title: IBM Running reports using Report Management with SSL causes an error - United States
+
+Text:
+RN7.1.1.2; RN7.1.1.3; RN7.1.2; RN7.1.3; SRX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you run a report using the IBM Rational RequisitePro Report Management facility, an error occurs: "Username/Password Invalid". 
+
+CAUSE
+The error is caused by an incomplete configuration. Because the Report Management application runs on WebSphere, you need to import your SSL certificate into the WebSphere truststore.
+
+RESOLVING THE PROBLEM
+To run BIRT reports over HTTPS (Hypertext Transfer Protocol Secure) in Rational RequisitePro Report Management, you need to have the Rational RequisitePro client for Web (RequisiteWeb) configured to work over SSL. For information on completing this configuration, see the help topic Configuring RWP to use secure sockets [http://publib.boulder.ibm.com/infocenter/reqpro/v7r1m0/topic/com.ibm.rational.reqpro.install_upgrade.doc/topics/t_config_rwp_for_secure_sockets.html] at the Rational RequisitePro Information Center [http://publib.boulder.ibm.com/infocenter/reqpro/v7r1m0/index.jsp]. If you are running Report Management in a RequisitePro 7.1.3 version and later, see the topic Configure SSL for RequisiteWeb in Rational RequisitePro versions 7.1.3 and later [http://publib.boulder.ibm.com/infocenter/reqpro/v7r1m0/index.jsp?topic=/com.ibm.rational.reqpro.install_upgrade.doc/topics/rw_enable_ssl.html]. 
+
+After SSL is configured for RequisiteWeb, add the same SSL certificate to the WebSphere truststore (trust.p12). Also make sure that the existing reports on the server are pointing to an HTTPS-enabled RequisiteWeb server.
+
+The following steps are required to complete the configuration:
+
+
+ 1. Create a BIRT report using the BIRT RCP Report Designer (including Rational RequisitePro drivers) and select the Enable SSL option. 
+ 2. 
+ 3. Upload your report to Report Management web application using the Add Report button. You can access the Report Management application using the following URL: 
+    https://server_name:port/ReqProRptMgmt
+ 4. 
+ 5. Add the RequisiteWeb SSL certificate to the WebSphere truststore trust.p12, which is located by default in the following folder: 
+     * Version 7.1.2 and earlier: 
+       C:\Program Files\IBM\RationalSDLC\profiles\profile2\config\cells\DefaultNode\nodes\DefaultNode
+     * Version 7.1.3 and later: 
+       C:\Program Files\IBM\WebSphere\AppServer\profiles\AppSrv01\config\cells\host_nameNode01Cell\nodes\host_nameNode01
+    
+    This truststore is a PKCS12 truststore. You can use IBM Key Management tool to add the certificate to this truststore. The default password for trust.p12 is WebAS.
+ 6. 
+ 7. Open the Services windows panel by clicking:
+    Start -> Control Panel -> Administrative Tools -> Services
+    
+    Restart the following service:
+    IBM WebSphere Application Server Vx.x - RWP ReqWeb Servlet
+    
+    Note: The sample reports do not run over SSL by default, but you can manually change the HTTP protocol to HTTPS and upload them to the Report Management server again. These reports are located in the following folder by default:
+     * Version 7.1.2 and earlier:
+       C:\Program Files\IBM\RationalSDLC\RequisitePro\Reporting\Sample Reports
+     * Version 7.1.3 and later: 
+       C:\Program Files\IBM\RationalSDLC\RequisitePro\Reporting\client\SampleReports
+    
+    
+
+
+RELATED INFORMATION
+#Configuring SSL - version 7.1.2 and earlier [http://publib.boulder.ibm.com/infocenter/reqpro/v7r1m0/topic/com.ibm.rational.reqpro.install_upgrade.doc/topics/t_config_rwp_for_secure_sockets.html]
+Rational RequisitePro reporting [http://publib.boulder.ibm.com/infocenter/reqpro/v7r1m0/topic/com.ibm.reqpro.help/reporting/reporting.html]
+Enabling SSL - version 7.1.3 and later [http://publib.boulder.ibm.com/infocenter/reqpro/v7r1m0/topic/com.ibm.rational.reqpro.install_upgrade.doc/topics/rw_enable_ssl.html]

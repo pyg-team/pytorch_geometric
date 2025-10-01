@@ -1,0 +1,44 @@
+Title: IBM MP08:  WebSphere MQ - Performance Monitor - United States
+
+Text:
+mp08; performance monitor DOWNLOADABLE FILES
+
+ABSTRACT
+ With this SupportPac, you can easily collect and analyze WebSphere MQ data, track trends in the data, and troubleshoot system problems by using WebSphere MQ Explorer. 
+
+DOWNLOAD DESCRIPTION
+The SupportPac contains a Performance Monitor agent for WebSphere MQ for Windows and a Performance Monitor plug-in for MQ Explorer for Windows and Linux. The Performance Monitor agent collects data on the monitored queue manager, which is then displayed in MQ Explorer. The SupportPac provides integrated performance monitoring capability and allows trend analysis to improve service level management.
+
+
+Possible Uses
+The SupportPac allows users to collect and analyse performance data for queues, channels, and MQI calls for queue managers. System administrators can use MQ Explorer to monitor the system status of WebSphere MQ in a short period. The agent is only available for Windows, and the MQ Explorer plug-in is available for Windows and Linux.
+
+Details
+Author: Tivoli Development, China
+Category: 2
+Released: 21Dec09 
+Current SupportPac Version: 1.0
+»Please note that the version number shown in the right-hand pane is the version of the WebSphere MQ or WebSphere MB product that this SupportPac applies to. The date is the last webpage refresh. 
+
+To view the complete portfolio of WebSphere MQ SupportPacs please visit the WebSphere MQ SupportPacs homepage. [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27007205]
+
+PREREQUISITES
+WebSphere MQ v7.0 or later, with MQ Explorer v7.0 or later installed. MQ Explorer is included with an MQ server installation and is also available for download as SupportPac MS0T
+
+URL LANGUAGE SIZE(Bytes) SupportPac MS0T [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg24021041&loc=en_US&cs=utf-8&lang=en] US English 111 
+INSTALLATION INSTRUCTIONS
+Please refer to the pdf file below.
+
+URL LANGUAGE SIZE(Bytes) mp08.pdf [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/mp08.pdf] US English 118282 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options mp08.zip 21/12/2009 US English 25694799 HTTP [http://www.ibm.com/services/forms/preLogin.do?lang=en_US&source=swg-wsmqpm] 
+TECHNICAL SUPPORT
+ Category 2 SupportPacs are provided in good faith and AS-IS. There is no warranty or further service implied or committed and any supplied sample code is not supported via IBM product service channels. 
+
+You may submit a question and return email address using the 'rate this page' below, but a response is not guaranteed.
+
+Please read the license information contained within the zip file of this SupportPac to determine if you want to use it.

@@ -1,0 +1,38 @@
+Title: IBM FileNet Content Engine automatic upgrade fails during the domain upgrade phase - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The domain upgrade phase of the automatic upgrade of a FileNet P8 domain that contains dozens or more object stores might last more than a few seconds. This lag time can cause the automatic upgrade to fail if you use the CE System Health page or log on to the FileNet P8 domain from FileNet Enterprise Manager or other applications during this domain upgrade phase of the automatic upgrade from version 4.0.1, 4.5.0 or 4.5.1 to version 5.0.0 or 5.1.0. 
+
+CAUSE
+The domain upgrade phase of the automatic upgrade of a FileNet P8 domain that contains dozens or more object stores might last more than a few seconds. The automatic upgrade can fail during this phase if the CE System Health page or an application such as FileNet Enterprise Manager accesses the domain and its properties (or even attempts to log on to the domain) before the domain upgrade transaction is committed,
+
+To prevent the automatic upgrade from failing, refrain from accessing the domain until after the automatic upgrade status page shows that the domain upgrade is in the Completed state.
+
+ENVIRONMENT
+IBM FileNet Content Manager version 4.0.1, 4.5.0, or 4.5.1
+
+DIAGNOSING THE PROBLEM
+Scan the p8_server_error.log file for “Reattempting domain upgrade” messages and examine the cause of the exception that is noted in the message:
+
+
+ * If the exception is caused by a failure in accessing the LDAP provider, verify that the LDAP provider is functioning properly.
+   
+   
+ * If the exception is caused by some other system component, verify that the component is functioning properly.
+
+
+Determine if an application has accessed the FileNet P8 domain during the domain upgrade phase of the automatic upgrade. 
+
+For information about the location of the p8_server_error.log file, see the Content Engine table entry in the "Viewing the IBM FileNet P8 log files" topic in the IBM FileNet P8 5.0.0 Information Center [http://publib.boulder.ibm.com/infocenter/p8docs/v5r0m0/topic/com.ibm.p8.common.admin.doc/logs/logs_reference.htm] or the IBM FileNet P8 5.1.0 Information Center [http://publib.boulder.ibm.com/infocenter/p8docs/v5r1m0/topic/com.ibm.p8.common.admin.doc/logs/logs_reference.htm], depending on whether you are upgrading to version 5.0.0 or 5.1.0. 
+RESOLVING THE PROBLEM
+Ensure that no application accesses the FileNet P8 domain until after the automatic upgrade status web page indicates Completed status for the domain upgrade.
+
+To verify that the Content Engine is deployed, utilize the Content Engine Startup Context (Ping Page) web page and not the CE System Health page. You can view the Content Engine Startup Context web page at http://server_name:port/FileNet/Engine.
+
+server_name is the name of the computer or virtual server where the application server is installed.
+port is the port number used by the application server.
+
+If the FileNet P8 system is accessed by an application during the automatic domain upgrade phase, and a failure occurs before any object stores are upgraded, restarting the server where the Content Engine (FileNetEngine) application is deployed should successfully restart the automatic domain upgrade process.

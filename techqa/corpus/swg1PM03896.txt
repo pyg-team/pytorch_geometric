@@ -1,0 +1,200 @@
+Title: IBM PM03896: CORRECTIONS ARE NEEDED TO THE DOCUMENTATION IN THE INFORMATION CENTER FOR IBM WEBSPHERE APPLICATION SERVER VERSION 7.0 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR describes the issues that customers encountered with
+   IBM WebSphere Application Server Version 7.0.These issues were
+   resolved as information center updates in January, 2010.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  This APAR lists provides a cumulative list  *
+   *                  of the documentation issues for January     *
+   *                  2010 that affect users of IBM WebSphere     *
+   *                  Application Server Version 7.0.             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Information Centers for WebSphere   *
+   *                      Application Server Version 7.0 need     *
+   *                      to be updated to address inaccurate,    *
+   *                      imprecise, or vague information. In     *
+   *                      addition, the information centers       *
+   *                      need to include customer enhancement    *
+   *                      requests for January 2010 problem       *
+   *                      management records (PMR).               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   See the Problem Conclusion section for a description of the
+   issue, which was described in a customer PMR, and the
+   documentation change or changes that addressed the issue.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Note: We update our information centers monthly. The following
+   Version 7.0 modifications will be available in the January
+   2010 update to the Information Centers. To access the
+   latest on-line documentation, go to the product library page
+   at http://www.ibm.com/software/webservers/appserv/library and
+   select the version and product that is appropriate for your
+   WebSphere Application Server environment.
+   The modified documentation will be available in the January
+   2010 update to the Information Centers.
+   
+   The following Version 7.0 issues will be addressed:
+   
+   ID: PM03896
+   Problem: You can configure a timeout for connection validation
+   by the Java Database Connectivity (JDBC) driver through a
+   data source custom property in the data source configuration
+   panels of the administrative console. By default, connection
+   validation is disabled. When you save the configuration for
+   the data source, the administrative console supplies only the
+   option that is selected. In the case of an Oracle data
+   source, the Validation by JDBC Driver selection item in the
+   administrative console is disabled unless the
+   validateNewConnectionTimeout property is added to the custom
+   properties for the WebSphere Application Server data source.
+   
+   The Information Center for WebSphere Application Server does
+   not include information on this relationship. It might be
+   confusing that the "Validation by JDBC Driver" option in the
+   administrative console is disabled when an Oracle data source
+   is used.
+   
+   Resolution:  The "Configuring connection validation timeout"
+   and "WebSphere Application Server data source properties"
+   topics will include a note to indicate that the
+   validateNewConnectionTimeout property is required for an
+   Oracle data source. Both topics will include the following note:
+   
+   Avoid Trouble: For an Oracle data source, Validation by JDBC
+   Driver displays on the administrative console only after the
+   validateNewConnectionTimeout property is added to the custom
+   properties of WebSphere Application Server data source
+   properties. The validateNewConnectionTimeout property is used
+   for JDBC 4.0 driver validation and can be specified using the
+   administrative console.
+   
+   ------------
+   ID: 633356
+   Problem: When you use the MapEnvEntryForWebMod option for the
+   AdminApp object install, installInteractive, edit,
+   editInteractive, update, and updateInteractive commands using
+   wsadmin scripting, you need to be aware of using "null" in the
+   description. The MapEnvEntryForWebMod option edits the
+   env-entry value of the Web module and you can use this option
+   to edit the value of env-entry in the web.xml file. If you
+   leave the description as "null" after running the default
+   bindings, WASX7017E and WASX7111E exceptions occur. You must
+   change the description to "*" to avoid the exceptions. The
+   Information Center for WebSphere Application Server does not
+   describe this issue.
+   
+   Resolution: The "Options for the AdminApp object install,
+   installInteractive, edit, editInteractive, update, and
+   updateInteractive commands using wsadmin scripting" topic
+   will be updated. Specifically, the MapEnvEntryForWebMod
+   information will be updated to add a note about using a "null"
+   value for the description. The following note will be added:
+   
+   Avoid Trouble: After running the default bindings, change the
+   null value to * before you run this task. The * value is the
+   wildcard value that lets any description be a match. If you
+   leave the value as null, WASX7017E and WASX7111E exceptions
+   will occur when you run the MapEnvEntryForWebMod task.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM03896
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-18
+   
+   
+ * CLOSED DATE
+   2009-12-31
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,159 @@
+Title: IBM JR47158: FIRST COMPONENT IN NAME <DBNAME> NOT FOUND. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.0.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035701]
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Migration will do some cluster level detection in target env
+   during
+   startup of every server/cluster, it will traverse datasource of
+   every
+   component via JNDI lookup, like BPC, ProcessServer,PerformaneDW.
+   But every datasource has its specific scope, like
+   PerformanceDW(jdbc/PDWDB) was created only in Support cluster so
+   that
+   some error like "First
+   component in name PDWDB not found." would be thrown when
+   attempting to
+   look up jdbc/PDWDB during AppTarget cluster startup.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This kind of error message has no impact to any function,
+   customer can ignore it.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of BPM 7.5.1.x                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Errors in log during server start:      *
+   *                      "First component in name PDWDB not      *
+   *                      found"                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Migration will do some cluster level detection in target env
+   during startup of every server/cluster,
+   it will traverse datasource of every component via JNDI
+   lookup, like BPC, ProcessServer,PerformaneDW.
+   But every datasource has its specific scope, like
+   PerformanceDW(jdbc/PDWDB) was created only in Support cluster
+   so that some error like "First component in name PDWDB not
+   found."
+   would be thrown when attempting to look up jdbc/PDWDB during
+   AppTarget cluster startup.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The error thrown has no functional impact. The fix provided
+   logs the situation and continues starting up.
+   
+   Install/Dependency information is available in the readme.txt
+   on FixCentral. When the user goes to the download files page
+   in FixCentral, the readme will be available with the fix
+   package as a separate download.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR47158
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-08
+   
+   
+ * CLOSED DATE
+   2013-10-16
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

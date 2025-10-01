@@ -1,0 +1,140 @@
+Title: IBM MustGather: WebSphere Application Server Community Edition JVM Crash on AIX - United States
+
+Text:
+WAS CE; WAS CE; WAS CE; WASCE; WASCE; WASCE; JBoss; JBoss; JBoss; Glassfish; Glassfish; Glassfish; App Server; App Server; WebSphere CE; WebSphere CE; WebSphere CE; WebSphere Community Edition; WebSphere Community Edition; WebSphere Community Edition; IBM CE; IBM CE; IBM CE; Open Source; Open Source; Open Source; MustGatherDocument TECHNOTE (FAQ)
+
+QUESTION
+ Collecting data for problems with a WebSphere Application Server Community Edition crash on the AIX platform. Gathering this information before calling IBM support will help familiarize you with the troubleshooting process and save you time. 
+
+ANSWER
+This document details the MustGather data to be collected for WebSphere Application Server Community Edition when IBM Java 1.5 or IBM Java 1.6 Runtime crashes on the AIX operating system. 
+
+Setup for a Crash on AIX
+The information below will allow you to ensure that the required settings are in place to generate Crash data files
+
+Ensure generation of core dump files
+When a crash occurs, the most important diagnostic data to obtain is the process core file. In order to ensure this is generated for the Java Virtual Machine (JVM) on AIX there are a number of settings that need to be in place. The majority of the JVM settings are in place by default, but operating system settings also need to be in place.
+
+The following settings need to be in place: 
+
+ * Operating system settings To obtain full core files set the following ulimit options:  * ulimit -c unlimited turn on corefiles with unlimited size 
+    * ulimit -n unlimited allows an unlimited number of open file descriptors 
+    * ulimit -u unlimited sets the user memory limit to unlimited 
+    * ulimit -f unlimited sets the file limit to unlimited
+   
+   
+   The current ulimit settings can be displayed using: 
+   ulimit -a 
+   These values are the "soft" limit, and are done on a per user basis. These cannot exceed the "hard" limit value. In order to display and change the "hard" limits, the same ulimit commands can be run using the additional -H flag.
+   
+   Note: As of Java 5.0 GA, the ulimit -c value for the soft limit will be ignored and the hard limit value used in order to help ensure generation of the core file. Core file generation can be disabled by using the following Java command line option: 
+   -Xdump:system:none 
+   
+ * Java Virtual Machine settings 
+   To generate core files on crash events:
+   
+   Check that the JVM is set to produce a core file when a crash occurs, run the following:
+   
+   java -Xdump:what 
+   Which should produce the following: 
+   dumpFn=doSystemDump
+   events=gpf+abort
+   filter=
+   label=/usr/sdk/jre/bin/core.%Y%m%d.%H%M%S.%pid.dmp
+   range=1..0
+   priority=999
+   request=nodumps 
+   The values above are the default settings. At least events=gpf must be set in order to generate a core file when a crash occurs. Options can be changed and set using the command line option: 
+   -Xdump:system[:=, ...] 
+   More information about using the -Xdump option is available here [http://www.ibm.com/support/docview.wss?uid=swg21242497] 
+   
+ * Available disk space 
+   It is also important to ensure that there is enough disk space available for the core file to be written. The JVM allows the core file to be written to any directory that is specified in the label option. i.e. 
+   
+   -Xdump:system:label=/usr/sdk/jre/bin/core.%Y%m%d.%H%M%S.%pid.dmp 
+   In order for the core file to be written to this location, there must be sufficient disk space (up to 4GB might be required for a 32-bit process, and even larger for a 64-bit process), and the correct permissions for the Java process to write to that location. 
+   
+   SMIT Settings
+   The following SMIT setting also needs to be in place:  1. Start SMIT by typing "smit" as root.
+       
+       
+    2. Go to System Environments > Change/Show Characteristics of Operating System.
+       
+       
+    3. Set the Enable full CORE dump option to TRUE. This can also be done by running chdev -l sys0 -a fullcore='true' as root and can be checked with:
+       
+       $ lsattr -D \-c sys \-a fullcore \-H 
+       which should produce output similar to this: 
+       attribute deflt description user_settable 
+       
+       fullcore false Enable full CORE dump True 
+   
+   
+   
+
+Ensure dbx is installed 
+
+Ensure javacore.txt generation is setup 
+The Javadump (javacore) is a useful file to provide information about the general state of the Java runtime and the applications running on it. In order to ensure this is generated the relevant settings must be in place. Although they are set by default it is possible that the default setting has been changed so it is important to check that the correct settings are in place. 
+
+Check that the JVM is set to produce a javadump file when a user signal (SIGQUIT) or GPF (General Protection Fault, for example, SIGSEGV) occurs, by adding the following command line option: 
+
+java -Xdump:what 
+Which shows the options which are set, such as: 
+
+dumpFn=doJavaDump
+events=gpf+user+abort
+filter=java/lang/OutOfMemoryError
+label=/usr/sdk/jre/bin/javacore.%Y%m%d.%H%M%S.%pid.txt
+range=1..0
+priority=10
+request=exclusive 
+The preceding values are the default settings. At least events=gpf and events=user must be in place to generate javadumps on a crash or a user signal. Options can be changed and set using the command line option: 
+
+-Xdump:java[:=,...] 
+So, for example, to set the ability to generate javadump files on user signals you would use: 
+
+-Xdump:java:events=user 
+
+Gathering data 
+The following steps should be taken to collect the necessary diagnostic data  1. Run stackit.sh tool
+    Follow the featured link to collect the data 
+    Using stackit.sh to collect native stack trace data on AIX [http://www.ibm.com/support/docview.wss?uid=swg21222460] 
+    
+ 2. Run JExtract against the core file
+    
+    <SDK>/jre/bin/jextract [core file] 
+    Collect the .xml output along with the core.dmp output.
+    
+    Note: The jextract tool from the same SDK that crashed should be used. 
+    
+ 3. Collect the javadump (javacore) file
+    This should be in the location detailed against the label field in the -Xdump:what output as shown the in setup. 
+    
+    
+ 4. Collect any stdout and stderr generated by the Java process 
+    
+    
+ 5. Collect the system error report
+    
+    errpt -a > errpt.out 
+    
+ 6. Collect the system smt report(this must be run as root)
+    
+    smtctl > smt.out 
+    
+
+The preceding steps should leave you with the following files:  * stackit.out 
+ * core.{date}.{time}.{pid}.dmp.zip 
+ * javacore.{date}.{time}.{pid}.txt 
+ * errpt.out 
+ * smt.out 
+ * stderr/stdout files
+
+
+Additional information  * Testcase to simulate the crash (if any) 
+ * Recent changes to the environment prior to crash 
+ * Collect general information of the server as discussed here [http://www.ibm.com/support/docview.wss?uid=swg21231419#generalMustGather]
+
+
+These data files should then be submitted to IBM Support.

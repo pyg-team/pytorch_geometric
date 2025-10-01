@@ -1,0 +1,75 @@
+Title: IBM Lotus Notes Standard hangs at Splash Screen - United States
+
+Text:
+hang; splash; screen; launch; standard; symantec TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Lotus Notes fails to launch after a recent upgrade to Symantec version 12.1.x.x.
+
+SYMPTOM
+Lotus Notes Standard release fails to launch, and only shows the splash screen. This problem is not reproducible for Notes Basic.
+
+
+CAUSE
+The cause of the problem was a recent upgrade to Symantec version 12.1.2015.2015. This is a known issue, which has been reported to Symantec, and is currently under investigation. 
+
+ENVIRONMENT
+Lotus Notes 8.x/8.5.x
+IBM Notes 9.0
+Windows XP/7/Vista
+Symantec v12.x.x
+
+DIAGNOSING THE PROBLEM
+
+
+
+To quickly diagnose the issue, comment out the notes.ini parameters for Symantec:
+
+Example:
+
+REM EXTMGR_ADDINS=NLNVP 
+
+Or 
+
+Disable the "Notes Auto- Protect" feature in Symantec
+
+Advanced Troubleshooting:
+
+While Lotus Notes is hanging, run NSD manually. Starting in Lotus Notes 8.5.2, NSD is available under OS Start Menu --> Lotus Applications (or IBM Applications) --> Support --> Run Lotus Notes diagnostics and exit Notes.
+
+Once NSD completes, the resulting Javacore (stored in the .\data\workspace folder) will show the following errors for NLNVP.dll:
+
+1XHEXCPCODE J9Generic_Signal_Number: 00000004
+1XHEXCPCODE ExceptionCode: C0000005
+1XHEXCPCODE ExceptionAddress: 6DF12CB1
+1XHEXCPCODE ContextFlags: 0001003F
+1XHEXCPCODE Handler1: 0050A2A0
+1XHEXCPCODE Handler2: 0056C130
+1XHEXCPCODE InaccessibleAddress: 00090284
+NULL 
+1XHEXCPMODULE Module: c:\Program Files (x86)\IBM\Notes\NLNVP.DLL
+1XHEXCPMODULE Module_base_address: 6DED0000
+1XHEXCPMODULE Offset_in_DLL: 00042CB1
+
+
+Other reports of this issue in Symantec's forum sited Block messages/errors in the Tamper Protection logs. 
+
+ 
+
+Example:
+"","","Blocked","Process","Open","C:\PROGRAM FILES\IBM\LOTUS\NOTES\FRAMEWORK\RCP\ECLIPSE\PLUGINS\COM.IBM.RCP.BASE_6.2.3.20110915-1350\WIN32\X86\NOTES2.EXE (PID 4016)","C:\Program Files\Symantec\Symantec Endpoint Protection\12.1.1000.157.105\Bin\ccSvcHst.exe (PID 2372)","C:\Program Files\Symantec\Symantec Endpoint Protection\12.1.1000.157.105\Bin\ccSvcHst.exe (PID 2372)","23/11/2011 09:41:16" 
+
+
+
+
+
+RESOLVING THE PROBLEM
+This issue has been reported as fixed in Symantec version 12.1.2015.2015 (and above). Please contact Symantec for additional assistance. 
+
+ 
+
+To quickly workaround this issue, please remove or comment out Symantec's notes.ini parameters. 
+
+Example:
+
+REM EXTMGR_ADDINS=NLNVP

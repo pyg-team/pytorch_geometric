@@ -1,0 +1,131 @@
+Title: IBM JR44470: SRVC IF THE IS NO TIMING INTERVAL, BM PORTAL SHOULD NOT BLOW UP AND THROW/RETURN A JAVA EXCEPTION TO THE BROWSER. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Even though the BPD named BPD with TP - Process Performance
+   Errors (Issues Space) does not have any timing intervals
+   defined, a Java exception shall not be thrown to the user.
+   
+   If the is no timing interval,
+   BPM portal should not blow up and throw/return a Java exception
+   to the
+   browser. Instead, a message along the following lines should be
+   shown
+   to the user: "there are no timing intervals defined; hence
+   there is no
+   data to show on this page" .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  BPM Express, BPM Standard, BPM Advanced on  *
+   *                  7.5.1.0                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If there is no timing interval, BPM     *
+   *                      portal should not blow up and           *
+   *                      throw/return a Java exception to the    *
+   *                      browser.                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Code is needed to catch exception and display appropriate
+   message for scenario.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR44470
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-19
+   
+   
+ * CLOSED DATE
+   2012-11-01
+   
+   
+ * LAST MODIFIED DATE
+   2012-11-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

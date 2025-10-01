@@ -1,0 +1,27 @@
+Title: IBM "Error 500: ReportRequestProcessServlet Failed to process.." when running BIRT reports in Maximo 7.1.1.5, Websphere - United States
+
+Text:
+500 error; 500; ReportRequestProcessServlet; TPAEREP TECHNOTE (FAQ)
+
+QUESTION
+ Why do I see the 500 error message instead of the BIRT reports when executed from Select Action-> Run reports menu in Maximo? 
+
+ANSWER
+After an upgrade from an older Maximo version 7.1, and when running BIRT reports (in version 7.1.1.5) from Select Action>Run reports menu, all users receive "Error 500: ReportRequestProcessServlet Failed to process..". 
+
+In the Websphere log, you will find the following error message:"...SRVE0068E: Uncaught exception thrown in one of the service...ReportRequestProcessServlet Failed to process request" 
+
+
+Solution:
+
+1) Open applications/maximo/maximouiweb/webmodule/WEB-INF/birt/platform/launch-webapp/launch.ini 
+
+2) Change the 4th line from "osgi.parentClassloader=fwk" to "osgi.parentClassloader=boot"
+
+3) Rebuild and redeploy the maximo.ear file.
+
+4) Test reports by running them from the Select Action>Run Reports menu. 
+
+ 
+
+NOTE: If you require further support, please contact Maximo Support team by opening a Service Request..

@@ -1,0 +1,64 @@
+Title: IBM Updating Power System Firmware from HMC Local File System - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is there a way to stage the firmware fixes to a local HMC directory then update the firmware? 
+
+CAUSE
+There may be firewalls or other security measures in place that prevent using the HMC's automated firmware update retrieval tools to download fixes from IBM Support systems. The following procedure can be used for Power5, Power6 or Power7 systems.
+
+ANSWER
+ 
+
+The Power HMC can be used to upgrade managed system firmware with update files that are stored on a local HMC directory. Typically a user will have to download the fix updates and place on a local server or workstation then secure copy them to the HMC. The following example explains where to locate the firmware fixes on an IBM FTP repository and how to use scp and updlic commands to stage the fix and update the system firmware.
+
+Locating firmware fixes on IBM's FTP Repository 
+
+If you have Power8 or beyond then you will need to obtain the firmware update files from IBM FixCentral. The ftp site and directory that you can obtain the firmware repository for older Power5, Power6 and Power7 system firmware is as follows.
+
+ftp.software.ibm.com and directory is /software/server/firmware
+
+If you are using a web browser you can type in following URL. 
+
+ftp://ftp.software.ibm.com/software/server/firmware [ftp://ftp.software.ibm.com/software/server/firmware] 
+
+You will need to download all the files related to the firmware update you are interested in. For example, if you wanted to update a Power5 server to SF240_417 then you would need the following files. 
+
+01SF240_417_382.html 180 KB 2/2/2012 1:02:00 PM 
+01SF240_417_382.rpm 14092 KB 2/2/2012 1:02:00 PM 
+01SF240_417_382.xml 99 KB 2/2/2012 1:02:00 PM 
+
+Example of using scp to copy the files to a local HMC directory
+
+You can use your home directory or /tmp on the HMC to stage the firmware updates to then use the updlic command to perform the update using the disk staging area. 
+- Create your firmware update directory within users $HOME 
+
+mkdir fw_update 
+
+- Copy the firmware update files from remote server using scp 
+
+scp /my_firmware_repository_dir/* user@hmc:/home/<user>/fw_update 
+
+Note: If you are sending the files from your workstation to the HMC and application. If using windows, WinSCP is a very nice open source app to use for doing the scp over to the HMC and its got a graphically file manager interface that is intuitive. 
+
+Example of using updlic command to install firmware
+
+- Use the updlic command to install the firmware 
+
+updlic -m <system name> -o a -t sys -l latest -r mountpoint -d /home/<user>/fw_update
+
+You can find the system name to use in above command by running
+
+lssyscfg -r sys -F name 
+
+If the system name was MySystem-570 and the user was hscroot the uplic command would look like the following.
+
+updlic -m MySystem-570 -o a -t sys -l latest -r mountpoint -d /home/hscroot/fw_update 
+Make sure you have copied all appropriate files (RPM, XML, etc) related 
+to the firmware update prior to running the updlic command. 
+
+This completes the example. 
+
+Using scp to stage the firmware fixes to the HMC and then using the updlic command to install fixes on your servers provides an alternative method to using the HMC GUI.

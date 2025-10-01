@@ -1,0 +1,48 @@
+Title: IBM Missing Icon pulldown options in DASH main menu after 3.1.2.1 Install - United States
+
+Text:
+DASHL2; Console Settings; missing.; icons; WAS 8.5.5.9; DASH 3.1.2.1; Cumulative patch 5; CP5 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After fresh install of WAS 8.5.5.9 with JazzSM 1.1.2.1/DASH 3.1.2.1, the "Console Settings" is missing entries and other expected icons are missing from the DASH main page. 
+
+SYMPTOM
+After successful installation of JazzSM 1.1.2.1/DASH 3.1.2.1 with WebSphere 8.5.5.9, some of the icons in the main DASH window are missing on the left.
+
+
+CAUSE
+It was recently discovered that some .jar files were not included in WebSphere 8.5.5.9, that were available in previous WebSphere releases, and are required for several functions in DASH.
+
+ENVIRONMENT
+JazzSM 1.1.2.1 / DASH 3.1.2.1 WAS 8.5.5.9
+
+DIAGNOSING THE PROBLEM
+After you login to DASH and select "Console Settings", the displayed window, which should have several lines, is blank:
+
+
+[/support/docview.wss?uid=swg21981870&amp;aid=1]
+
+Also, in this case there wasn't any icons in the upper left portion of the main DASH window.
+
+
+RESOLVING THE PROBLEM
+The missing jar files are included in DASH 3.1.2.1 Cumulative Patch 5, which you can download from this site: 
+
+
+http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli∏uct=ibm/Tivoli/Jazz+for+Service+Management&release=1.1&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Jazz+for+Service+Management&release=1.1&platform=All&function=all] 
+
+[/support/docview.wss?uid=swg21981870&aid=2] [/support/docview.wss?uid=swg21981870&aid=2]
+If you have any questions as to whether DASH 3.1.2.1 Cumulative Patch 5 has been installed, please run this command:
+
+<JazzSM_HOME>/ui/bin/consolecli Version if patch 5 has been installed, it will have output showing the patch number shown in the red square in the screen shot:
+
+[/support/docview.wss?uid=swg21981870&aid=3] [/support/docview.wss?uid=swg21981870&aid=3]
+
+If installing on a UNIX server, you will see several of these messages, they indicate that the jar files are not currently on the server, but the Patch install will finish successfully.
+cp: 
+/opt/IBM/JazzSM/ui/../profile/installedApps/JazzSMNode01Cell//isc.ear/TI 
+PChangePasswd.war/js/ibm/tivoli/tip/changepasswd/nls/iw/messages.js: No 
+such file or directory 
+.
+.
+Patch 201603301212 successfully installed.

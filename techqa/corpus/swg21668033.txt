@@ -1,0 +1,60 @@
+Title: IBM DataPower Status are not showing in TEPS view - United States
+
+Text:
+CAMDPALL CAMDPINST CAMDPAGENT DataPower status statistics metric enable TEPS workspace data TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ DataPower Agent - Appliances status values are not shown in TEPS 
+
+SYMPTOM
+DataPower appliance information regarding general system health - Data not showing.
+
+
+CAUSE
+Disabled statistics on Data Power.
+
+RESOLVING THE PROBLEM
+There are 2 ways to enable the status values - Enable using GUI (graphic user interface), or using CLI (command line interface). 
+
+---------------------------------------------------------------------------------------- 
+
+1. Using GUI : 
+
+1. Log in to the Data Power machine.
+2. In the search field, enter Statistics.
+3. From the search results, click "Statistics Settings".
+4. Set Administrative State to enabled.
+5. Click Apply to save the changes to the running configuration.
+
+---------------------------------------------------------------------------------------- 
+
+2. Using CLI 
+
+Enter following command is CLI (refer "=>Example" screen shot below): 
+co 
+statistics 
+write mem 
+
+ 
+
+=>Example : 
+
+[/support/docview.wss?uid=swg21668033&amp;aid=1] 
+
+
+ 0. Enter "co" 
+1. When you enter "statistics", it will enable statistics on Data Power. This is necessary step to see data. 
+2. "write mem" will save the configuration on Data Power. When you type "write mem", it will ask if you are sure that you want to save it. You enter "y". 
+
+Note : Depending on the polling interval of the BN agent, it could take a couple minutes for the data to display. 
+
+---------------------------------------------------------------------------------------- 
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM Agent for DataPower

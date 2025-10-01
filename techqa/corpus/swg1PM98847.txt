@@ -1,0 +1,119 @@
+Title: IBM PM98847: DFT RHAPSODY X64 804 ARCHITECT FOR SOFTWARE EDITION APPEARS IN ALL PROGRAMS EVENIF RHP X64 IS INSTALLED. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Rhapsody 8.0.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24036550]
+Rational Rhapsody 8.0.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24037021]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DFT Rhapsody x64 804 Architect for Software edition appears in
+   All Programs evenif rhp x64 is installed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  DFT Rhapsody x64 804 Architect for Software edition appears in
+   All Programs evenif rhp x64 is installed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 8.0.5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM98847
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   803
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-10
+   
+   
+ * CLOSED DATE
+   2013-12-13
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R805 PSY
+   UP

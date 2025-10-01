@@ -1,0 +1,57 @@
+Title: IBM A User that is not a member of the Application Engine Administrators Group can still access the Workplace Admin Link - United States
+
+Text:
+AE; P8; security ; access roles; process configuration console; process administrator; admin link TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A user or group has access to the Admin Link in Workplace but they are not a member of the Application Engine Administrators group or in either the of the Workplace PWAdministrator or PWConfiguration roles 
+
+SYMPTOM
+A user or group can access the Admin Link in Workplace regardless of their group membership and Workplace Access Role assignments 
+
+Through the Admin link the user can view one or more of the following utilities: Site Preferences, Process Administrator and Process Configuration Console, even though they do not have permission to access or run these utilities,.
+
+
+CAUSE
+The user or a group they are a member of belongs to one or more of the following Workplace Roles:
+
+Member of Application Engine Administrators Access Role in Workplace Site Preferences
+Member of the PWAdministrator Access Role in Workplace Site Preferences
+Member of the PWConfiguration Access Role in Workplace Site Preferences
+
+or
+
+The User or Group has been granted Full Access to the Object Store that is configured for storing Site Preferences
+
+
+DIAGNOSING THE PROBLEM
+When logged into Workplace or WorkplaceXT the user can see the Admin link when they should not 
+
+
+
+RESOLVING THE PROBLEM
+In the P8 LDAP Repository determine all the Group Membership of the User that has unwanted access to the Admin Link and the Utilities 
+
+ 
+
+In Workplace, validate that the User or the Groups they belong to are not assigned to the following Site Preference Access Roles: 
+
+ * Application Engine Administrators 
+ * PWAdministrator (For access to Process Administrator Link) 
+ * PWConfiguration (For access to the Process Configuration Console)
+
+
+Finally, validate that the User or Groups are not granted Full Use Access to the Object Store that is selected in Workplace or WorkplaceXT to store the Site Preference files Based on the results, test removing the User or Group from the Access Roles and the Site Preferences Object Store Security to validate that only the utilities granted access to can be viewed 
+
+
+Additional Notes: 
+
+ * Members that are part of the Application Engine Administrators Role or that have Full Access to the Site Preferences Object Store cannot be Denied Access to any other role in Site Preferences 
+ * In addition to the Access Role membership in Site Preferences (to see the links under Admin), to be able to run the Process Administrator or Process Configuration Console utilities the user must also be a member of the of the Group(s) defined on the IBM FileNet Process Engine under Process Task Manager > Security 
+ * To run the Process Administrator utility, the user must be a member of the group defined on the Process Engine in the Process Task Manager Administrator Group 
+ * To run the Process Configuration Console utility, the user must be a member of the group defined on the Process Engine in the Process Task Manager Configuration Group 
+ * In most cases the same P8 LDAP Group will be used for the Process Engine Group and Workplace Access Role Definition (Example: PEConfigG group is defined for the Process Configuration Group and PWConfiguration role in Workplace)
+
+RELATED INFORMATION
+ P8v451 Workplace Administration Access Roles [http://publib.boulder.ibm.com/infocenter/p8docs/v4r5m1/topic/com.ibm.p8.doc/ae_help/siteprefs/WcmSitePreferences_PrefAccessRolesInfoPage.htm]
+Workplace Administrative Tools [http://publib.boulder.ibm.com/infocenter/p8docs/v4r5m1/topic/com.ibm.p8.doc/ae_help/ae_admin/aeadm_wp_admin_tools.htm]

@@ -1,0 +1,142 @@
+Title: IBM IC66550: ONSTAT - SHOWS INCORRECT NUMBER OF "UP DAYS" WHEN CHANGING      SYSTEM DATE "ON-THE-FLY" BACK TO THE PAST - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  "onstat -" shows (see Up 49345 days):
+   
+   IBM Informix Dynamic Server Version 11.50.TC5     -- On-Line --
+   Up 49345 days 06:29:04 -- 78208 Kbytes
+   after we change current system date "on-the-fly" back to the
+   past (for example, one year back 2010 -> 2009)
+   
+   IDS must show something like "Up -365 days" or something else,
+   but not such huge number of days!
+   Or we should include into the IDS documentation some
+   restrictions regarding changing system date on machines with
+   IDS.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All platforms; all users of IDS 11.50xC6 and earlier         *
+   * versions.                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The 11.50xC6 and earlier versions of the Administrator's     *
+   * Reference topic on onstat header information did not include *
+   * information stating that "Uptime Unavailable" appears in the *
+   * header if the system time is changed to the past on the fly  *
+   * and the system startup time is later than the current time.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IDS 11.50.xC7 and above.                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem is first fixed in 11.50.xC7. If the engine startup
+   time is later than the current time, uptime will be shown as
+   unavailable in the banner line in onstat outputs. Here is a
+   sample output:
+   $ onstat -
+   
+   IBM Informix Dynamic Server Version 11.50.UC7 -- On-Line --
+   Uptime Unavailable -- 144148 Kbytes
+   
+   The 11.70 Administrator's Reference will include the following
+   information in the description of the Uptime field:
+   
+   If the system time is manually changed to the past and the
+   server startup time is later than the current system time, the
+   uptime is not available. In this situation, the header displays
+   the text
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC66550
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM IDS ENTRP E
+   
+   
+ * REPORTED COMPONENT ID
+   5724L2304
+   
+   
+ * REPORTED RELEASE
+   B15
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-22
+   
+   
+ * CLOSED DATE
+   2010-11-15
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

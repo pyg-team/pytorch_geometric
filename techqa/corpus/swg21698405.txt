@@ -1,0 +1,62 @@
+Title: IBM Backup failure due to OS error EMFILE "Too many open files" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Backup may fail due to OS error EMFILE "Too many open files" 
+
+SYMPTOM
+Various symptoms may happen due to OS error EMFILE "Too many open files". Backup failure is one of them.
+
+You may see following error in db2diag.log:
+
+<timestamp> LEVEL: Error (OS)
+PID : 12345 TID : 12345678 PROC : db2sysc 0
+INSTANCE: db2inst1 NODE : 000
+EDUID : 12300 EDUNAME: db2med.12345.5 (SAMPLE) 0
+FUNCTION: DB2 UDB, oper system services, sqloexecs, probe:10
+MESSAGE : ZRC=0x83000018=-2097151976
+CALLED : OS, -, pipe OSERR: EMFILE (24)
+
+There are other similar symptoms , for example, db2pfchr may receive EMFILE as well.
+
+
+CAUSE
+Verify max number of open files settings both in OS level and DB2 instance user level(ulimit).
+User level setting can be checked by running "ulimit -n". 
+For OS level settings each operating system has different configuration file. For example, 
+on Linux, check "nofile" in /etc/security/limits.conf; 
+on AIX, check "nofiles" in /etc/security/limits
+
+
+DIAGNOSING THE PROBLEM
+Verify the effective nofiles setting in DB2 in db2diag.log. This is shown in the beginning of db2diag.log file or each time when DB2 instance starts.
+
+
+For example, 
+
+<timestamp> LEVEL: Event
+PID : 12345 TID : <tid> PROC : db2syscr
+INSTANCE: db2inst1 NODE : 000
+FUNCTION: DB2 UDB, base sys utilities, DB2main, probe:1
+START : DB2 DBM
+DATA #1 : Build Level, 152 bytes
+...
+Cur cpu time limit (seconds) = 0xFFFFFFFF
+Cur file size limit (bytes) = 0xFFFFFFFF
+Cur data size (bytes) = 0xFFFFFFFF
+Cur stack size (bytes) = 0x00A00000
+Cur core size (bytes) = 0x00000000
+Cur memory size (bytes) = 0xFFFFFFFF
+nofiles (descriptors) = 0x00001000
+
+
+
+
+RESOLVING THE PROBLEM
+If the nofiles setting appears to be low, consulting with your system Administrator to adjust the setting.
+Log out your user to verify the setting changes and restart DB2 instance to take effects.
+
+RELATED INFORMATION
+ Operating system user limit requirements (Linux and UNI [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_10.1.0/com.ibm.db2.luw.qb.server.doc/doc/r0052441.html?lang=en]

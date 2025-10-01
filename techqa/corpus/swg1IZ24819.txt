@@ -1,0 +1,141 @@
+Title: IBM IZ24819: UNABLE TO SPECIFY TASKS ARGUMENTS WHEN SCHEDULING A JOB. - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+Tivoli Framework Fix Pack 4.1.1-TMF-FP08 [http://www-01.ibm.com/support/docview.wss?uid=swg24026761]
+Tivoli Framework Patch 4.1.1-TMF-0123 [http://www-01.ibm.com/support/docview.wss?uid=swg24029907]
+Tivoli Framework Patch 4.1.1-TMF-0129 [http://www-01.ibm.com/support/docview.wss?uid=swg24032759]
+Tivoli Framework Patch 4.1.1-TMF-0118 [http://www-01.ibm.com/support/docview.wss?uid=swg24026352]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  OS AIX
+   Framework 4.1.1
+   When scheduling a job one can't specify arguments to a job which
+   are part of a task, that was created using TLL.
+   
+   Task that is created using TLL which takes 4 arguments, when
+   runnning the task it prompts for the arguments, when you
+   schedule that task as a job it doesn't prompt for those
+   arguments.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Modify the Tivoli Scheduler so that it is possible to
+   drag-and-drop a job into the scheduler and pop up a dialog
+   that enables configuring parameters to the job, if the
+   task to be executed by the job was installed via TLL.
+   To enable this, execute the following shell commands:
+     % SCHED=`wlookup -oa Scheduler`
+     % idlattr -ta $SCHED dndconfig string ' "Enabled" '
+   To disable this, execute the following shell command:
+     % idlattr -ts $SCHED dndconfig string ' "Disabled" '
+   To re-enable this, execute the following shell command:
+     % idlattr -ts $SCHED dndconfig string ' "Enabled" '
+   Each time a job is dragged-and-dropped into the scheduler,
+   this attribute is checked. Thus, it can be turned on and
+   off as needed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This will be fixed in patch 4.1.1-TMF-0104,
+   which will be released in September, 2008.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ24819
+   
+   
+ * REPORTED COMPONENT NAME
+   MGMT. FRAMEWORK
+   
+   
+ * REPORTED COMPONENT ID
+   5698FRA00
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-06-17
+   
+   
+ * CLOSED DATE
+   2008-07-18
+   
+   
+ * LAST MODIFIED DATE
+   2008-08-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MGMT. FRAMEWORK
+   
+   
+ * FIXED COMPONENT ID
+   5698FRA00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R411 PSN
+   UP

@@ -1,0 +1,79 @@
+Title: IBM Kenexa Onboard on Cloud: Franchise Management - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is franchise management and do I use it? 
+
+ANSWER
+TOPICS:
+· What is a Franchise?
+· How do I configure a Franchise?
+· How do I select a Franchise on a Job Requisition?
+· What Functionality does Franchise Management Enhance?
+
+Franchise Management
+
+Franchise Management is a functionality which allows Employers with a broad footprint - global, national, or otherwise diverse - to provide employer specific information which is used in conjunction with Form Mapping on the I-9, W-4, and State Forms, and selecting E-Verify Divisions.
+
+There is no limit to the number of Franchises a client can define.
+
+Note: For clients familiar with 'Legacy' Onboard functionality, and the ability to configure Multiple New Hire Portals, the Franchise Management functionality replaces the configuration of Employer Information and the E-Verify Division. Multiple New Hire Portals are not supported in Talent Suite Onboard, so using Franchise Management is required for functional parity.
+
+
+What is a Franchise?
+
+A Franchise can represent a franchise, division, location, or some other client defined entity that has unique Employer Information, most typically an entity with a unique Employer Identification Number.
+
+A Franchise consists the following details:
+· Street Address
+· City
+· State/Province
+· Zip/PostalCode
+· Employer Identification Number
+· Office Code
+· Division Name
+Note: Multiple Franchises can share the same information.
+
+
+How do I configure a Franchise?
+
+A system administrator user with the capability Administration > Jobs Related > Manage Franchises will be able to access the Job Settings > Franchise Management screen to add or edit Franchises.
+
+Note: Once a Franchise is created, its Name cannot be changed.
+User Type Capabilities are outlined here: User Types and Capabilities [http://www.ibm.com/support/docview.wss?uid=swg22000423]
+
+
+How do I select a Franchise on a Job Requisition?
+
+A Franchise is selected on a Job Requisition at the time of Job Creation. Jobs in Talent Suite Onboard are created either through the standard BrassRing to Onboard Integration, through custom integration, or manually in the Onboard back end.
+
+With respect to the BrassRing to Onboard Integration, a Franchise must be selected by name as part of the Job Details. This can ultimately happen in a number of ways, but should be based on Job Requisition information coming from BrassRing, either selecting a specific Franchise based on a specific field in a Requisition Template or Requisition Form, or by translating multiple field values to select the appropriate Franchise.
+
+Creating a Job Requisition manually in the Onboard back end is not a standard practice, but can be useful for sensitive hires, or other non-standard use cases. In which case, the Franchise will be selected directly when creating the Job Requisition.
+
+Note: A Job Requisition can only have a single selected Franchise. If no Franchise is select, the configuration of the Default New Hire Portal will be used. If no Default New Hire Portal configuration exists, errors may occur in activity completion or E-Verify Case creation.
+
+
+What Functionality does Franchise Management Enhance?
+
+Franchise Management is linked to the Functionality of 4 Tasks:
+1. I-9 (I-9 Section 2)
+2. W-4 (Onboard US W4)
+3. State Forms (State Form Activity)
+4. E-Verify
+In the case of the I-9, W-4, and State Form tasks, the Franchise configuration is used to map the below Employer location information to a PDF.
+· Street Address
+· City
+· State/Province
+· Zip/PostalCode
+· Employer Identification Number
+· Office Code
+
+In the case of E-Verify, the Division Name is used to execute the E-Verify Case creation against a specific client MOU.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Talent Management Solutions IBM Kenexa Talent Suite

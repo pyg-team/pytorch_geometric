@@ -1,0 +1,198 @@
+Title: IBM IZ24429: THE MEANING OF "TYPE" AND ITS APPLICABILITY TO CUSTOM SERVER TEMPLATES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This is not explained in the official documentation and should
+   be added:
+   .
+   The relevence of "Type" within a custom server template,
+   that is why a template would match if the type is e.g.
+   appserver but not match if type is oracleinstance, it's
+   the following:  if it's set to a "sensor" type then the
+   custom server template is used to "enhance" an existing
+   sensor.
+   .
+   If it's an L2 discovery the sensor doesn't even run, so
+   the template won't run : the templates will only run if
+   they are AppServer, WebServer, J2EEServer, or DatabaseServer,
+   unless a real sensor runs first.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The TADDM 7.1 publications are not clear on the meaning of the
+   field "Type" when creating custom servers.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following updates will be made to the TADDM 7.1.2
+   publications;
+   
+   User's Guide Chapter 3 section "Creating and managing custom
+   servers" Table 9, the definition of the field "Type" has been
+   updated as follows;
+   
+   The type of custom server:
+   
+   - AppServer
+   - J2EE Server
+   - Web Server
+   - Database Server
+   
+   Each of the four generic custom server types listed above can be
+   used to create a template for the discovery of server types that
+   TADDM does not automatically categorize. During discovery, any
+   unknown server is identified as a custom server of this type if
+   its runtime information matches the criteria you specified in
+   the template, and no other existing enabled sensor matches this
+   criteria. These types may also run if the matching TADDM sensor
+   runs and fails.
+   
+   Sensor-type servers
+   
+   The remaining Types correspond to the sensors that run in the
+   environment. These sensor-type custom server templates run only
+   in conjunction with an existing successful sensor, and are
+   intended to extend discovery of a server by customizing certain
+   aspects of how the sensor discovers the server. See Chapter 15
+   ?Custom servers extensions? for more information.
+   
+   Note: If a credentialed sensor and a custom server both run for
+   the same target during the course of one or more discoveries,
+   due to the different nature of the data discovered without
+   credentials, objects created by the CST may not reconcile with
+   sensor created artifacts.
+   Note: The above information is pertinent to L3 Discovery run
+   with com.collation.internalTemplatesEnabled=false. See TADDM
+   Administrator?s Guide Chapter 7 ?Properties for sensors? for
+   more information on enabling internal templates.
+   
+   
+   
+   Administrator's Guide Chapter 7 section "Properties for sensors"
+   
+   com.collation.internalTemplatesEnabled=false
+   
+   Valid values are true or false. The default is false. If you
+   change the value to true, you enable shallow discovery of
+   applications running on a target system using only the system
+   credentials.
+   
+   If you have this property set to true, you receive a
+   CustomAppServer object representing the application running on
+   the target machine. You do not need to provide application
+   credentials to enable this property. If you set this property to
+   false, the custom application server seeds for internal
+   templates will be created only when the deep sensor
+   corresponding to the application fails.
+   
+   With this feature enabled, the internal templates TADDM uses to
+   start sensors are used instead to launch CustomAppServerSensors
+   which will create Objects in TADDM representing the application
+   running on the target. These CustomAppServerSensors require no
+   credentials. In this discovery mode, since template matching is
+   only intended to launch a sensor with a high probability that
+   the sensor being launched is the correct sensor for the running
+   application, TADDM creates ?Generic? application server types,
+   such as WebServer and J2EEServer, instead of the more specific
+   types that a sensor would create, such as ApacheServer or
+   WebSphereServer. The objectType attribute will be set to the
+   ?best match? type of the running application software. Please
+   note that if a credentialed sensor and a custom server both run
+   for the same target during the course of one or more
+   discoveries, the following limitations apply:
+   
+   1. Given the different nature of the data discovered without
+   credentials, objects created by this feature may not reconcile
+   with L3 sensor created artifacts. 2. Credential free discovery
+   will not create specific classes. For example, httpd might be
+   Apache or another web server, and hence, in credential-free
+   mode, are only classified as HTTP Servers.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ24429
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-06-13
+   
+   
+ * CLOSED DATE
+   2008-10-02
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

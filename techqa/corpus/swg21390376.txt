@@ -1,0 +1,41 @@
+Title: IBM After z/OS and JAVA upgrade, z/OS TEMA abends - United States
+
+Text:
+CAMADALL CAMADAGENT TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ After upgrading z/OS operating system and JAVA runtime from 1.4.2 to 1.5.0 environment the z/OS ITCAM agent task nay abend 
+
+SYMPTOM
+The ITCAM agent task may abend with KLVOP023 SHUTDOWN STARTED BY *MASTER* AT SYS-CONS 
+
+*KLVER013 ESTAE: S0C4 U0000 AT 98D5DE30 (KLV$RSS+328)
+*KLVER013 ESTAE: SNAPPING MAIN STORAGE 
+*KLVER013 ESTAE: SNAPPING TASK INFORMATION 
+*KLVER013 ESTAE: SNAPPING SYSTEM INFORMATION 
+
+
+CAUSE
+The z/OS operating system and JAVA were upgraded and customer manually changed the ITCAM TEMA parm /TEMA/yn/config/kyn.cfg member from KYN_SUBAGENT_JAVAHOME=/usr/lpp/java/J1.4 to KYN_SUBAGENT_JAVAHOME=/usr/lpp/java/J1.5 but did not recreate the parm members via the ICAT configuration tool. 
+
+
+ENVIRONMENT
+z/OS
+
+
+
+DIAGNOSING THE PROBLEM
+After upgrading the z/OS operating system and JAVA runtime environment from 1.4.2 to 1.5.0, the z/OS ITCAMfWebsphere agent task abends.
+
+
+
+RESOLVING THE PROBLEM
+After upgrading the z/OS operating system and JAVA runtime environment from 1.4.2 to 1.5.0, the z/OS ITCAMfWebsphere agent task abends. You must go back into the ICAT configuration and customization tool and re-generate all runtime members to avoid this issue. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM4AD ITCAMfAD

@@ -1,0 +1,28 @@
+Title: IBM I'm using IBM SPSS Statistics 19.0  syntax editor, entering commands in a large syntax file appears to be very slow - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm using IBM SPSS Statistics 19.0 syntax editor and enter new syntax commands into an existing syntax file. The file contains already a high number of lines.
+The syntax editor displays the entered commands slow with some delay. 
+I already unmarked in the edit options the 'Syntax Color Coding' and 'Auto-complete Settings' options without any change in performance. is there a way to improve the performance? 
+
+RESOLVING THE PROBLEM
+This is actually functioning as designed. If you have large syntax files and you would like to have no delay when entering new commands you have to deactivate more options than you have already in order to have a Text Editor behavior in the Syntax Editor. If you turn off the options you will have no delay in the Syntax Editor.
+On the Syntax Editor tab of the Edit - Options menu please deactivate:
+1) Turn off 'Display syntax color coding'
+2) Turn off 'Display validation color coding'
+3) Turn off 'Automatically display the auto-complete control'
+4) Turn off 'Display command spans'
+Also you need to hide the navigation pane, this can be done in the Edit Options menu as well
+5) Turn off 'Display the navigation pane OR simply deselect the menu option View->Show Navigation Pane
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 86276

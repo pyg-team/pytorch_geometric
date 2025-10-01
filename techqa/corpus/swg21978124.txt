@@ -1,0 +1,19 @@
+Title: IBM Order of stop and start IBM Content Collector Services. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is the recommended order to stop and start IBM Content Collector Services? 
+
+ANSWER
+Stop services:
+1.IBM Content Collector Task Routing Engine Service
+2.IBM Content Collector Web Application.
+3.IBM Content Collector Configuration Store - this will automatically stop IBM Content Collector Configuration Store Manager and IBM Content Collector Configuration access.
+
+Start Services:
+1.IBM Content Collector Configuration Access - this will automatically start IBM Content Collector, IBM Content Collector Configuration Store and IBM Content Collector Configuration Store Manager.
+2.Wait for the 3 services above to be in Running state.
+3.IBM Content Collector Web Application.
+4.IBM Content Collector Task Routing Engine Service.

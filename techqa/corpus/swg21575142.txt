@@ -1,0 +1,43 @@
+Title: IBM Infosphere CDC: Unsupported Encoding Detected During Instance Creation - United States
+
+Text:
+CESU-8; Unsupported Encoding Detected TECHNOTE (FAQ)
+
+QUESTION
+ When creating new CDC instance for Oracle, following message occured, 
+
+Unsupported Encoding Detected 
+
+An unsupported encoding was detected. Select an alternate encoding that is compatible with your data. Selecting an incompatible encoding will result in data loss.
+
+...
+
+IBM Infosphere Change Data Capture detected the database encoding name as 871 and encoding id as CESU-8 . The encoding name 871 with encoding id CESU-8 maps to IANA encoding name {3}. 
+
+
+CAUSE
+Run the following query to determine NLS Character set, 
+
+select nls_charset_id('NCHAR_CS') from dual; 
+
+NLS_CHARSET_ID('CHAR_CS') 
+------------------------- 
+871 
+1 row selected.
+
+
+
+ANSWER
+The Oracle NCHAR_CS character set id 871 corresponds to a character set which Oracle refers to as UTF8. This Oracle character set corresponds to an encoding called CESU-8. While CESU-8 shares many similarities with the actual Unicode standard UTF-8 encoding, it is not itself part of the Unicode specification. It is not Unicode. If the data in the database were provided to a Unicode standard compliant application, that data could be corrupted. 
+
+
+It is in best interest to use a Unicode standard compliant encoding. As of Oracle 9i, Oracle requires this to be Oracle character set AL16UTF16 (id 2000). Using this encoding will avoid potential data corruption. 
+The differences between Oracle’s UTF8/CESU-8 encoding and the Unicode standard UTF-8 encoding lie in the treatment of surrogate pairs. Converting database to using the AL16UTF16 character set will have the benefit of future-proofing their data to support properly encoded surrogate pairs. Doing so will also enable CDC to work with data.The Oracle JVM that is present in CDC is unable to support the Oracle database's UTF8 encoding.
+
+There are several options available to deal with this situation:
+
+1) Correct the database encoding to AL16UTF16 . 
+
+2) Another alternative is to install CDC on a remote server for which a non-Oracle JVM is available. Examples include Linux and AIX. CDC can then be configured to remotely read the Oracle database's archive logs only. This will definitely increase latency, as CDC will not be able to read from the database's online log, but the instance could be configured and run successfully.
+
+3) You can select a “best match” alternative encoding if you know that your data will not be corrupted. In other words, for the non-standard Oracle UTF8 character set, you would be able to select the standard UTF-8 encoding, so long as you are sure that your data do not contain surrogate pairs

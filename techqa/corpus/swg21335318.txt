@@ -1,0 +1,31 @@
+Title: IBM Unable to execute the statement.The log file for database 'xxxx' is full - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An error occurs when attempting to perform any operation on an application in contributor or creating a new application. 
+
+Environment: 
+
+Microsoft SQL Server 
+
+SYMPTOM
+Unable to execute the statement.The log file for database 'xxxx' is full. Back up the transaction log for the database to free up some log space., Error number -2147217900 was raised by Microsoft OLE DB Provider for SQL Server. Native RDBMS error 9002~~~~The SQL was:~~UPDATE n_2008_lighting..adminoption SET optionvalue='STA\eplanning' WHERE optionid='CURRENT_USER'~~~~The log file for database 'xxxx' is full. Back up the transaction log for the database to free up some log space.
+
+ENVIRONMENT
+Microsoft SQL Server
+
+Error Message:
+
+Unable to execute the statement.The log file for database 'xxxx' is full. Back up the transaction log for the database to free up some log space., Error number -2147217900 was raised by Microsoft OLE DB Provider for SQL Server. Native RDBMS error 9002~~~~The SQL was:~~UPDATE n_2008_lighting..adminoption SET optionvalue='STA\eplanning' WHERE optionid='CURRENT_USER'~~~~The log file for database 'xxxx' is full. Back up the transaction log for the database to free up some log space.
+
+RESOLVING THE PROBLEM
+The transaction log for the database has reached its size limit. This cannot be altered in the Contributor Admin Console. Instead you will have to consult your IT Dept on truncating the transaction log file, which is commonly done after a full backup.
+
+If data is frequently imported and exported from Contributor applications the transaction log file can get very large, so it is advisable to schedule the truncation of this file at regular intervals.
+
+
+
+HISTORICAL NUMBER
+ 123994

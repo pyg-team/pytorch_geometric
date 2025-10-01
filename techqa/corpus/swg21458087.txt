@@ -1,0 +1,35 @@
+Title: IBM CSQX632I CSQXRCTL SSL certificate has no associated user ID,
+remote channel channelname - United States
+
+Text:
+csqx632i racdcert racf saf rc40 userid certificate CSQX_CERT_RACF_NO_UID IRRSIA00 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Where possible, WebSphere MQ uses a user ID associated with a RACF certificate as a channel user ID. Associate a user ID with a certificate by installing it under that user ID, or using a Certificate Name Filter.
+
+When an entity at one end of an SSL channel receives a certificate from a remote connection, the entity asks RACF if there is a user ID associated with that certificate. The entity uses that user ID as the channel user ID. If there is no user ID associated with the certificate, the entity uses the user ID under which the channel initiator is running.
+
+If the entity is allowed to operate under the CHIN user ID this may give unwanted access to MQ resources such as queue objects. 
+
+SYMPTOM
+A certificate name filter has been defined which is supposed to match the distinguished name presented on the remote entity's certificate, but RACF returns RC 40 even though a filter has been defined. WebSphere MQ returns CSQX632I each time the channel is started.
+
+
+CAUSE
+The RACF Certificate Name Filter for Issuer's Distinguished name (IDN) and/or Subject Distinguished Name (SDN) did not precisely match the distinguished name of the remote entity's certificate. The certificate specified SP=Ontario, however the filter was defined with ST=Ontario which causes RACF to flag a mismatch with lRACFrsncode = 40 
+
+ENVIRONMENT
+z/OS Mainframe
+
+RESOLVING THE PROBLEM
+Ensure that specifications for the State or Province name employ the correct attribute keyword. Do not confuse SSLPEER rules with those for CNFs. While SSLPEER accepts attribute types of ST, SP, and S for State or Province, this has nothing to do with the coding of IDN filters or SDN filters which need to map exactly to the contents of the remote certificate. Otherwise RACF will not be able to associate a userid with the certificate provided.
+
+
+
+
+As an alternative you could install the remote entity's certificate into the RACF database under the user ID with which you want to associate it by using the RACDCERT ADD and RACDCERT CONNECT commands documented in the RACF Command Language Reference
+
+ 
+
+HISTORICAL NUMBER
+ 65988 487 000

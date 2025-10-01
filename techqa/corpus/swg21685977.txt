@@ -1,0 +1,39 @@
+Title: IBM Security Bulletin: A security vulnerability has been identified in IBM PureApplication System shipped with IBM InfoSphere Information Server Hypervisor edition (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM PureApplication System is shipped as a component of IBM InfoSphere Information Server Hypervisor edition. Information about a security vulnerability affecting IBM PureApplication System has been published in a security bulletin. Other than the Information Server Hypervisor edition, Information Server and its components are not vulnerable. 
+
+VULNERABILITY DETAILS
+Please consult the security bulletin, Vulnerabilities in Bash affect IBM PureApplication System (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, CVE-2014-6278) [http://www-01.ibm.com/support/docview.wss?uid=swg21686246] for vulnerability details and information about fixes.
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Principal Product and Version(s) Affected Supporting Product and Version InfoSphere Information Server Hypervisor Edition version 9.1 on Red Hat Linux
+NOTE: No other versions of InfoSphere Information Server are affected by this vulnerability. PureApplication System versions 1.0.0.0 to 1.1.0.2 GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 09 October 2014: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Information Server

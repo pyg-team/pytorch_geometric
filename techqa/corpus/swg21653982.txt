@@ -1,0 +1,114 @@
+Title: IBM Collecting Data: reporting a problem with IBM Rule Execution Server - United States
+
+Text:
+Collecting Data; Collecting Data; Collecting Data; MustGather; MustGather; MustGather; MustGatherDocument TECHNOTE (FAQ)
+
+QUESTION
+ Collecting data for problems with IBM Rule Execution Server. Collecting this MustGather information before calling IBM support will help you understand the problem and save time analyzing the data. 
+
+ANSWER
+You can use Rule Execution Server Console to monitor execution traces from Decision Warehouse, test ruleset execution in Diagnostics, manage ruleapps, rulesets, and transparent decision services, and retrieve server information.
+If you already contacted support, continue on to the Collecting Rule Execution Server specific information. Otherwise, click Collecting Data: Read first for all IBM Operational Decision Management Components [http://www.ibm.com/support/docview.wss?uid=swg21653691].
+
+
+Otherwise collect the following ILOG Rule Execution Server data:
+
+
+
+
+COLLECTING RULE EXECUTION SERVER SPECIFIC INFORMATION
+
+ 1. Version and Patch information for  1. The Rule Execution Server console (About menu in the console). 
+     2. The eXecution Unit / XU (in console Diagnostic or Server info tab). 
+     3. The Rule Execution Server libraries of the client application(s) involved  *  Your application ("Implementation-Version" in the MANIFEST.MF of packaged ODM JARs). Decision Validation Services SSP (http://<hostname>:<port>/testing). Hosted Transparent Decision Service / HTDS (http://<hostname>:<port>/DecisionService).
+           For more details, see Find the version of ODM components [http://www.ibm.com/support/docview.wss?uid=swg21400738]. 
+        
+        
+     4. The Application Server or Web Server Rule Execution Server is installed on. 
+     5. The JDK used. 
+     6. The browser used. 
+     7. The database driver used for the datasource.
+        
+    
+    
+ 2. Topology of Rule Execution Server  1. The server(s) on which Rule Execution Server Console is deployed. 
+     2. The server(s) on which XUs are deployed. 
+     3. The server(s) on which the application invoking rules is deployed. 
+     4. The use of cluster, multiple nodes topology of cells or domains. 
+     5. The type of rule session used.
+        
+    
+    
+ 3. The settings used by the XU  1. Pool settings from the Application Server . 
+     2. ra.xml file if edited.
+        
+    
+    
+ 4. Log files  1. Rule Execution Server console log, if the problem is related to deployment or RuleApp management.  * For WAS, the log is by default found at <WAS_HOME>\profiles\<your profile>\logs\res-console.log.
+        
+        
+     2. XU logs if the problem is related to the rule execution.  * For WAS, those are included by default in the server logs (see below). 
+         * See section Setting the Java logging level [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/topic/com.ibm.odm.distrib.troubleshooting/shared_config_websphere_topics/tsk_was_log_for_exec_stack.html] in the product documentation.
+        
+        
+     3. All Application Server or Web Server log files.  * For WAS, those are the SystemOut.log, SystemErr.log and trace.log found under<WAS_HOME>\profiles\<your profile>\logs\<your server>. 
+         * Send the full content of the log folder to make sure so we see trace of the error as well as the last server start. 
+         * Also include the full content of the corresponding FFDC folder, <WAS_HOME>\profiles\<your profile>\logs\ffdc.
+        
+        
+     4. Hosted Transparent Decision Service / HTDS logs, if the issue occurs when executing rules with HTDS.
+    
+    
+
+ * 
+ *   * For WAS, the log is by default found at <WAS_HOME>\profiles\<your profile>\logs\res-decisionservice.log. 
+    * See Change the log level of HTDS [http://www.ibm.com/support/docview.wss?uid=swg21497154] to increase the log level.
+   
+   
+ * 
+ *   * The log is managed by your application server directly. 
+    * to change the log level read the sectionTuning the Rule Execution Server logging level
+      
+   
+   
+ * 
+ * . Follow instructions to
+ * send diagnostic data to IBM support
+ * 
+ * 
+
+
+Collecting and providing all the information relevant to the problem will significantly improve the support team's response time. 
+
+
+COLLECTING DATA AUTOMATICALLY
+STARTING THE DATA COLLECTOR
+
+
+If you are using WebSphere Application Server you can use the following tool to collect information automatically. 
+
+The IBM Support Assistant Data Collector ( ISADC) tool is bundled with the product. As a result, you can run the ISADC tool directly from the install/shared/isadc/directory. For more details, see Collecting data using the IBM Support Assistant Data Collector [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5/topic/com.ibm.wodm.family.troubleshooting/topics/con_support_isa.html]. 
+
+You can also access the IBM Support Assistant Data Collector tool online:  1. Go to the IBM Support Assistant Data Collector site for IBM Operational Decision Manager [http://public.dhe.ibm.com/software/isa/isadc/2.0/isacoreweb/2.0.1/isadc/lang/en/index.html?taxonomy=DecisionServer]. 
+ 2. Start the ISA Data Collector: 
+
+ * To run online, select the option to collect from this system using the current browser and click Start Collection. 
+ * To run locally, select the option to collect from this or another system using a downloadable utility. Download and extract the zip file to your ODM_HOME/shared/isadc directory. From a command line, run isadc.[sh|bat] to run the tool in console mode or launch index.html to use the web interface.
+
+
+COLLECTING THE DATA
+
+ 1. Select the data collector from the Rule Execution Server section 
+ 2. Select Collect XU traces if the problem can be reproduced or 
+ 3. Click Start. 
+ 4. During the collection provide the information as requested. 
+ 5. Follow the prompts to automatically submit the collected data to IBM Support.
+
+
+
+WHAT TO DO NEXT
+
+Once you have collected the preceding information, you can simply submit the diagnostic data to IBM support. 
+
+For a listing of all technotes, downloads, and educational materials specific to Rule Execution Server, visit the IBM Operational Decision Manager Support [http://www.ibm.com/support/entry/portal/overview/software/websphere/ibm_operational_decision_manager] website RELATED INFORMATION
+ Troubleshooting & support for ODM 8.5.1 [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/topic/com.ibm.odm.distrib.troubleshooting/topics/con_support_troubleshoot.html]

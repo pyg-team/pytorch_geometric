@@ -1,0 +1,143 @@
+Title: IBM LO88758: MAX SIZE MESSAGE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Lotus Domino (r) Server (64 Bit) (Release 8.5.3FP6 for
+   Windows/64)
+   I'm used to work with Domino for years... I know exactly where
+   is the
+   field to change to change mail maximum size...
+   
+   But we are currently experiencing strange issues... Maximum is
+   set
+   everywhere to 20mb, but messages under this limit are refused.
+   
+   Let me explain : there are 4 mail servers, sending external
+   mails to 2
+   mail gateways.
+   
+   They are using a "special ip", which leads to the first or the
+   second
+   gateway : it's a kind of load balancing, managed by a network
+   tool. For
+   example, you can ping it hundred times, it leads to the first
+   one or
+   the second one => it works fine.
+   
+   On the mail server I can see "552 Message size exceeds fixed
+   maximum
+   message size"
+   
+   but no information on what server did refuse... I just can see :
+   
+   Router: Message 0031BF25, 0031AE90 delivered to Emmanuel
+   
+   PIC/DIS/INFODESCA/Descours-Cabaud from Emmanuel
+   
+   PIC/DIS/INFODESCA/Descours-Cabaud  Size: 15425K Time: 00:00:00
+   Hop
+   Count: 2
+   
+   Is there a way for me to do some kind of other send test ?
+   
+   How can I try to understand better what's wrong ?
+   
+   There is no information at all on smtp servers that could help.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  increase max messag siz +33%
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# CGAR9P2K84.
+   The problem was caused by a user error or user misunderstanding.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO88758
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   853
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-25
+   
+   
+ * CLOSED DATE
+   2016-09-14
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

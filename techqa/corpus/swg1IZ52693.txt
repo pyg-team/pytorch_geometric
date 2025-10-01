@@ -1,0 +1,196 @@
+Title: IBM IZ52693: MQ V7 JAVA/JMS CLIENT 2009 ERROR AT HEARTBEAT TIME WHEN SHARING CONVERSATIONS (SHARECNV) IS DISABLED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A user running a WebSphere MQ V7 Java application who disabled
+   sharing conversations found that they would experience a broken
+   connection with a 2009 exception (MQRC_CONNECTION_BROKEN) after
+   the client had been idle for the heartbeat interval.
+   
+   The client would always disconnect after one heartbeat interval
+   of inactivity.
+   
+   Please note that other problems (particularly network
+   connectivity issues) can also cause 2009 exceptions. This APAR
+   only applies where a heartbeat control flow has been sent on a
+   client channel where sharing conversations has been disabled.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of the WebSphere MQ Java/JMS client version 7.0.0.0,
+   7.0.0.1 or 7.0.0.2 connected to a WebSphere MQ 7.0.0.0, 7.0.0.1
+   or 7.0.0.2 queue manager and who have disabled sharing
+   conversations. By default, conversation sharing is enabled, so
+   only users who have changed the default settings are affected.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The WebSphere MQ client code did not correctly implement the
+   WebSphere MQ channel heartbeating protocol. The client would
+   send a malformed heartbeat request flow which was not recognised
+   by the server side. The failure to correctly perform a heartbeat
+   flow would then cause the connection to break.
+   
+   The failure was only triggered when running a Java/JMS client
+   with sharing conversations disabled (in other words, in
+   non-multiplexed mode).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ code has been corrected so that channel
+   heartbeat flows operate correctly from version 7.0.1.0 onwards.
+   Both the client and queue manager must run at version 7.0.1.0
+   (or later) in order to resolve this issue.
+   
+   Affected users can work around the issue by one of the
+   following methods:
+   
+   1) Enabling conversation sharing, for example by setting the
+   SharingConversations (SHARECNV) attribute of the affected
+   channel to a non-zero value on both the client and server.
+   Refer to the WebSphere MQ documentation for more information
+   about sharing conversations.
+   
+   2) Disabling channel heartbeating, for example by setting the
+   HeartbeatInterval (HBINT) attribute of the affected channel to
+   zero.
+   
+   3) Lengthening the channel heartbeat interval to be longer than
+   the maximum time for which the client channel is expected to be
+   idle.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.0
+   --------           --------------------
+   Windows            U200306
+   AIX                U823774
+   HP-UX (PA-RISC)    U823665
+   HP-UX (Itanium)    U823667
+   Solaris (SPARC)    U823772
+   Solaris (x86-64)   U824344
+   iSeries            tbc_p700_0_1_0
+   Linux (x86)        U823664
+   Linux (x86-64)     U823773
+   Linux (zSeries)    U823668
+   Linux (Power)      U823666
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ52693
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7221
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-09
+   
+   
+ * CLOSED DATE
+   2009-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7221
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

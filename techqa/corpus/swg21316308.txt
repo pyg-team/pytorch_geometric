@@ -1,0 +1,66 @@
+Title: IBM WebSphere Application Server plug-in for Microsoft Internet Information Server, IIS, cannot write to plug-in log for IIS6 on Microsoft Windows Server 2003 - United States
+
+Text:
+IIS; plugin; plugin-in; IIS6; http_plugin.log TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM® WebSphere® Application Server plug-in for IIS6 Web server on Microsoft Windows Server 2003, fails to write and possibly even create the plug-in log at the path specified in the plug-in configuration file, plugin-cfg.xml. 
+
+SYMPTOM
+The plug-in cannot generate/create the plug-in log or cannot update/write to the log or both.
+
+The following actions have occurred in order to isolate the problem to a permission issue: 
+
+ * A few test requests have been sent to the Web server to start the plug-in logging.
+   
+   
+ * Plug-in configuration with IIS web server has been reviewed based on the manual configuration steps documented in the information center.
+   
+   
+ * The ISAPI Web Service Extension is set to 'allow' (not 'prohibit' which also prevents the log from being written to).
+   
+   
+ * Plug-in was possibly logging but stopped after the last time stamp seen in the log and server administrators recently hardened permission's on the server to protect against vulnerability.
+   
+   
+ * The plugin-cfg.xml file can be edited to change the path to the plug-in log to a directory with "everyone" access (for test purposes) and this allows the plug-in to start logging after IIS restart and a few test requests. This test verifies the logging is a permission's issue.
+   
+   
+ * Setting IIS to use the IIS5 type Isolation Mode allows plug-in to start logging. This also points to permission's as the issue.
+
+
+CAUSE
+With reference to Microsoft articles: 
+
+Configuring Application Pool Identity in IIS 6.0 (IIS 6.0) [http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/12a3d96c-65ea-4210-96ad-86a801f6a88c.mspx?mfr=true] Access Control Lists (IIS 6.0) [http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/27f4d33b-ab42-4705-b214-0031d37e0ef8.mspx?mfr=true] 
+For IIS6 on Server 2003 the authorizations for ISAPI filters is based on the identity being used for the Application Pool. Because ISAPI filters run inside an Application Pool, the Application Pool's identity account needs to have the needed permission's to the real ISAPI path as defined in the IIS6 metabase.xml and also the paths specified in the plugin-cfg.xml.
+
+The WebSphere Application Server plug-in itself needs to be able to read the plug-in configuration file (plugin-cfg.xml) as well as be able to write to the plug-in \LOGS directory and to create a new plug-in log if the current log is deleted. This falls to the privileges of the identity account which the Application Pool is running under.
+
+Per the two Microsoft articles above and a default install of Server 2003/IIS6 plus WebSphere Application Server plug-in the identity account for the application pool appears to be Network Service.
+
+"By default, application pools run under the Network Service user account, which has low-level user access rights, so it provides better security against attackers or malicious users who might attempt to take over the computer on which the WWW service is running."
+
+Optionally the Application Pool identity account may be set for Local Service, Local System or IIS_WPG group.
+
+Normally the plugin installation ends up with the proper authorizations for logging so either there was an installation configuration failure or permission's for the application pool identity account on the plug-in log directory path changed due to some event or action.
+
+"In earlier versions of IIS, worker processes ran as the LocalSystem account. Because the LocalSystem account has access to almost all resources of the operating system, this had serious security implications. IIS 6.0 strengthens security because the worker process runs under the new built-in Network Service account by default. IIS 6.0 also allows you to configure the account under which worker processes will run." 
+DIAGNOSING THE PROBLEM
+The plugin-cfg.xml file can be edited to change the path to the plug-in log to a directory with "everyone" access (for test purposes) and this allows the plug-in to start logging after IIS retart and a few test requests. This test verifies the logging is a permission's issue. 
+
+
+Determine the IIS6 Application Pool identity account (Network Service by default).
+
+Check the permission's to the original directory for the plug-in log to verify the privilege's for the application pool identity account.
+
+
+RESOLVING THE PROBLEM
+The permission's on the plug-in log directory path, as defined in the plugin-cfg.xml file, should have read, write and create rights for the IIS6 application pool identity account.
+
+After correcting the permission's, restart the server or Web server and send some test requests then check the plug-in log. 
+
+
+The concept of setting up a temp directory with full permission's for the plugin log to see if permission's is the issue applies to IIS7 as well.
+
+For more detail on Microsoft Windows Server permission's for IIS6 and IIS7 related to WebSphere plug-in for IIS webservers consult the technote: IIS 6/7.x - File permissions for the WebSphere Application Server Web server plug-in [http://www.ibm.com/support/docview.wss?uid=swg21443293]

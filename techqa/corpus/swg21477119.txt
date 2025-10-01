@@ -1,0 +1,23 @@
+Title: IBM What is the IBM® SPSS® Smartreader application? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have been informed about the IBM® SPSS® Smartreader application and would like more information on what it does.
+
+
+
+RESOLVING THE PROBLEM
+IBM® SPSS® Smartreader provides much of the dynamic functionality found in the IBM® SPSS® Statistics Viewer without requiring an SPSS Statistics installation. It can be installed on a machine that doesn't have SPSS Statistics installed and does not require a licence.
+
+To download the latest version of Smartreader, please go to the IBM® SPSS® developerWorks website found here [https://www.ibm.com/developerworks/mydeveloperworks/wikis/home?lang=en#/wiki/We70df3195ec8_4f95_9773_42e448fa9029/page/Downloads%20for%20IBM%C2%AE%20SPSS%C2%AE%20Statistics]
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 22860

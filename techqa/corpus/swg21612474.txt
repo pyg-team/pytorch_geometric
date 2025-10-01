@@ -1,0 +1,50 @@
+Title: IBM Announcement letter for CICS Tools for z/OS 5.1 - United States
+
+Text:
+announcement letter ; announcments letters ; general availablity ; ga ; CICS CM 5.1 ; CICS Configuration Manager ; cicscm ; retention51 ; 5697-CIC ; 5697CIC ; 5697CIC00 ; CICS DA 5.1 ; CICS Deployment Assistant ; cicsda ; retentionDA51 ; 5655-Y29 ; 5655Y29 ; 5655Y2900 ; CICS IA 5.1 ; CICS Interdependency Analyzer ; cicsia ; retentionIA51 ; 5655-Y22 ; 5655Y22 ; 5655Y2200 ; CICS PA 5.1 ; CICS Performance Analyzer ; cicspa ; retentionPA51 ; 5655-Y23 ; 5655Y23 ; 5655Y2300 ; CICS VR 5.1 ; CICS VSAM Recovery ; cicsvr ; retentionVR51 ; 5655-Y24 ; 5655Y24 ; 5655Y2400 PRODUCT LIFECYCLE
+
+ABSTRACT
+ CICS Configuration Manager for z/OS (CICS CM) V5.1, CICS Deployment Assistant for z/OS (CICS DA) V5.1, CICS Interdependency Analyzer for z/OS (CICS IA) V5.1, CICS Performance Analyzer for z/OS (CICS PA) V5.1, and CICS VSAM Recovery for z/OS (CICS VR) V5.1 general availability (GA) date was 14 December 2012. This document contains a list of the key enhancements, a link to the announcement letter, and additional ways that you can become familiar with the capabilities of the new version of these tools. 
+
+CONTENT
+These five updated core foundational CICS tools products align with CICS Transaction Server for z/OS (CICS TS) V5.1 to deliver operational efficiency and service agility with cloud enablement. These new versions of core foundational CICS tools use and augment the latest operational efficiency and service agility enhancements and can assist the creation and management of the new application, platform, and policy resources introduced in CICS TS V5.1.
+
+Key enhancements delivered by products in the CICS tools V5.1 portfolio:
+
+
+ * CICS Configuration Manager for z/OS (CICS CM) V5.1 manages the new application and platform resource definitions in CICS TS V5.1. This simplifies the management and improves the governance of the CICS environment.
+   
+   
+ * CICS Deployment Assistant for z/OS (CICS DA) V5.1 includes a new IBM System z Application Assist Processor (zAAP) -offloadable server component with enhanced discovery that creates a centralized and more complete model of your CICS infrastructure. An enhanced plug-in for CICS Explorer provides advanced visualization with tagging and filtering. This lets you view, print, and manage your CICS infrastructure as you want to see it. The model can now be exported to standard spreadsheet tools for external analysis and reporting, and a sample report is provided. The centrally-managed model (with audit logging) facilitates sharing, especially with large and distributed teams, and addresses key governance requirements.
+   
+   
+ * CICS Interdependency Analyzer for z/OS (CICS IA) V5.1 provides application discovery and dependency analysis. This includes support for the creation and analysis of applications defined using the new CICS TS V5.1 application resource. CICS IA V5.1 includes the application name when collecting dependency and command flow data. This lets you analyze and manage your new CICS TS applications more easily. Initial deployment of the product is simplified and data management is improved.
+   
+   
+ * CICS Performance Analyzer for z/OS (CICS PA) V5.1 can analyze and report on the performance of applications and platforms defined using the new CICS TS V5.1 application and platform resources. It can also assist in the establishment of policies for applications and platforms. CICS PA V5.1 includes new application, platform, and policy performance metrics in batch reports and plug-in views, to simplify application-centric and platform-centric performance analysis and reporting. The new release includes many functional and navigation improvements to its plug-in for CICS Explorer and simplifies host data management.
+   
+   
+ * CICS VSAM Recovery for z/OS (CICS VR) V5.1 delivers key enabling technology, designed to enable CICS and batch VSAM files to be used in geographically dispersed Active-Standby and Active-Query configurations. In addition, a number of batch logging, migration, and other improvements are included.
+   
+   
+
+For more information on these five core tools, see the US Announcement Letter for CICS Tools V5.1 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS212-374] (212-374). Information for other country announcements is available on the IBM Offering Information page [http://www.ibm.com/common/ssi/index.wss]. 
+
+For more information on CICS TS V5.1, see the document entitled Announcement letter for CICS Transaction Server for z/OS 5.1 [http://www.ibm.com/support/docview.wss?uid=swg21612470]. 
+
+See the IBM Software Support Lifecycle Page [http://www.ibm.com/software/support/lifecycleapp/PLCDetail.wss?synkey=L291933P44001P68&synkey=L291933P44001P68&synkey=L291933P44001P68&synkey=C556848X24740N35&synkey=C489116T29811D24&synkey=C489116T29811D24&synkey=C489116T29811D24&synkey=C489116T29811D24&synkey=C489116T29811D24&synkey=C489116T29811D24&synkey=S025140W51640Q58&synkey=O993824I90471K39&synkey=B345697Y74514P46&synkey=B345697Y74514P46&synkey=X364972D96661Q96&synkey=X364972D96661Q96&synkey=X364972D96661Q96&synkey=X364972D96661Q96&from=spf] to determine if the release of the CICS tool you are running is still supported or if there is a newer release. RELATED INFORMATION
+#Announcement letters for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21227090]
+CICS Configuration Manager for z/OS web page [http://www.ibm.com/software/htp/cics/cm/]
+CICS Deployment Assistant for z/OS web page [http://www.ibm.com/software/htp/cics/deployment/]
+CICS Interdependency Analyzer for z/OS web page [http://www.ibm.com/software/htp/cics/ianaly/]
+CICS Performance Analyzer for z/OS web page [http://www.ibm.com/software/htp/cics/panaly/]
+CICS VSAM Recovery for z/OS web page [http://www.ibm.com/software/htp/cics/vr/]
+CICS TS 5.1 documentation [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/index.jsp]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Configuration Manager for z/OS Availability z/OS 5.1 Host Transaction Processing CICS Deployment Assistant for z/OS Availability z/OS 5.1 Host Transaction Processing CICS Interdependency Analyzer for z/OS Availability z/OS 5.1 Host Transaction Processing CICS Performance Analyzer for z/OS Availability z/OS 5.1 Host Transaction Processing CICS VSAM Recovery for z/OS Availability z/OS 5.1 Host Transaction Processing CICS Transaction Server Explorer z/OS, Linux, Windows 5.1 
+PRODUCT ALIAS/SYNONYM
+ CICSCM CICS CM CICSDA CICS DA CICSIA CICS IA CICSPA CICS PA CICSVR CICS VR

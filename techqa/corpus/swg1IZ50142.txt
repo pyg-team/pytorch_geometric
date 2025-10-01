@@ -1,0 +1,233 @@
+Title: IBM IZ50142: THE PASSWORD SYNC UTILITY FOR THE AD ADAPTER (WINHTP) NEEDS TO SUPPORT SILENT INSTALL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Password sync utility for the AD Adapter
+   (WinHTP) needs
+   to support Silent install.
+    -----------------------------------------
+   
+   DESCRIPTION:
+   
+   The Design Requirements for IBM Software Installation Programs,
+   Software
+   Group requirements and best practices to follow to ensure a
+   consistent
+   behavior for
+   installation programs across IBM software products
+   -----------------------------------------
+   
+   REFERENCE:
+   
+   http://widweb.raleigh.ibm.com/install/process/widproc.htm [http://widweb.raleigh.ibm.com/install/process/widproc.htm]
+   
+   THe ENTIRE Silent Install checklist can be found at:
+   http://rtpgsa.ibm.com/projects/i/integenv/www/SWGInteg/IBMInstal [http://rtpgsa.ibm.com/projects/i/integenv/www/SWGInteg/IBMInstal]
+   lRequire
+   mentsv51SilentChecklist.doc#_Silent_install_requirement_ 1.2s
+   
+   The specific requirments identified by customer were:
+   
+   1.2s Requirement Provide silent install and uninstall
+   capabilities
+   1.3s Requirement Provide a sample silent install and uninstall
+   response
+   file that users can modify and use
+   1.4s Requirement Provide all options in silent install that are
+   present
+   for interactive installs
+   
+   ----------------------------------------
+   
+   ESR:
+   
+   The customer team needs to install the AD Adapter and Password
+   sync on
+   1000 DC's. The current released version fails but logging
+   indicates
+   successful. The pfconfig.exe is
+   executed but can not complete as it is a GUI driven application,
+   therefore hangs in the background.  This needs to be changed in
+   order to
+   comply with the IBM Software
+   Install requirements.
+   
+   STEPS TO DUPLICATE
+   
+   1.  Download ADAgent zip file. - unzip
+   2.  Execute the install with the -r param
+   
+       C:\tivoli\PW-Sync-x86-x64-5.0.1004\WinHTTP>SetupPwdSynch.exe
+   -r
+   rsp3.txt
+   
+       I get three panels:
+    Choose Install Folder
+    Software License Agreement
+    Select a CA Certificate File.
+       Then
+    PreInstall summary. >>  Click on Install
+   
+        It seems like that information is being recorded.  Then I
+   get a
+   second set of panels
+    Microsoft Visual C++ license agreement
+    Then the 2nd panel   (which is pfconfig.exe)
+   
+   
+   3.  The response file is created and contains:
+   
+   # Wed Apr 08 16:33:37 EDT 2009
+   # Replay feature output
+   # ---------------------
+   # This file was built by the Replay feature of InstallAnywhere.
+   # It contains variables that were set by Panels or Consoles.
+   
+   
+   
+   #Choose Install Folder
+   #---------------------
+   USER_INSTALL_DIR=C:\\Tivoli\\PasswordSynch
+   
+   #Select CA Certificate file.
+   #---------------------------
+   USER_CERT_FILE=oliveCert.cer
+   PATH_OF_CERT_FILE=C:\\tivoli\\
+   ----------------------------------------------------------------
+   -----
+   
+   4.  Execute on new DC
+   
+   SetupPwdSynch.exe -i silent -r c:\tivoli\rsp2.txt
+   
+   
+   At this point, the pfconfig hangs in the background, the install
+   finishes with a successful message in the log. But has not
+   installed the
+   package.
+   
+   ----------------------------------------------------------------
+   -----
+   DESIRED BEHAVIOR:
+    Silent Install works without manual steps
+   
+   ----------------------------------------------------------------
+   -----
+   ENVIRONMENT:
+                 ITIM Server : 5.0 FP 4
+                 DB2 :  9.1
+                 OS  :  ZLinux
+                 WAS :  6.1.1 Cluster (Yes)
+                 TDS :  6.1
+                 TDI :  6.1.1  FP 3
+   
+         Adapter Version and OS Information
+   
+            Adapter:  AD 5.05 (32B)
+            Reverse Sync 5.05
+            Domain Controller
+              Microsoft Windows Server 2003
+              Standard Edition
+              Service Pack 1
+   
+             regedit -> HKEY_LOCAL_MACHINE -> SOFTWARE ->
+   ->
+   ADAgent - Resource -> Agent_version ___5.0.1017
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  The adapter does not support silent installation. This
+   is a new feature request. Closed SUG (suggestion).
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ50142
+   
+   
+ * REPORTED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C34AG
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-04-27
+   
+   
+ * CLOSED DATE
+   2009-05-02
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

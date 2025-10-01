@@ -1,0 +1,258 @@
+Title: IBM PK96242: THE FILE GET SAVED WITH THE NAME"DOWNLOAD_FILEPí1ùí1ù.SH WHEN DOWNLOADING CR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  R#33997
+   
+   Customer says that when downloading files/attachments from
+   Telelogic
+   Change associated to a task, they click on the download link
+   they gets the File Donwload dialog which displays,
+   
+   the file Name with Open, Save and Cancel buttons.
+   
+   The issue is in the file Name: If the file Name is
+   "download_file.sh"
+   it is diaplayed in the dialog as "download_file&#65517;1&#65529;&#65517;1&#65529;.sh" and
+   
+   And when they click Save, the file get saved with the name
+   "download_filep&#65517;1&#65529;&#65517;1&#65529;.sh
+   
+   Because of this, they have to rename the file each and every
+   time after
+   the file is saved.
+   
+   
+   Client Business Impact:
+   
+   The customer tells that there is no significant business impact,
+   only
+   thing is the users have to rename the file each and everytime
+   they
+   download the file. Hence the severity is 3.
+   
+   
+   Other Questions/Concerns:
+   
+   - - - NIL - - -
+   
+   
+   
+   The customer said that this was encoutered on all the machines
+   and it is
+   not machine specific.
+   
+   In this regard, Support has done the following test:
+   **********************************
+   Tested the following setup:
+   Telelogic Change 4.7 patch 18
+   Telelogic Synergy 6.5 SP - 01
+   OS platform = Windows XP Professional - SP3.
+   Package Installed = dev_process
+   Internet explorer = IE7
+   
+   Support created attachments with the file name
+   'abc_def_ghi.xyz.lmn.sh' as
+   mentioned in the PMR description.
+   Support did not come across the issue that the customer was
+   currently
+   experiencing.
+   Downloading the file to the same location prompted us to replace
+   the
+   existing file, which confirms that the name of the file did not
+   add a
+   &#65517;1&#65529; to the second download attempt.
+   
+   Note: The IE version was IE7..
+   
+   ******************************************
+   
+   On further testing it was found that:
+   
+   The attachment file has multiple ( .dot) extensions.
+   ----------------------------------
+   TSTMT_ISS_DESC_LINE_FR.TD.post.sh
+   ----------------------------------
+   Upon download , the first dot in the extension that Internet
+   explorer
+   encounters is replaced by "&#65517;1&#65529;&#65517;1&#65529;".
+   
+   Here are few more observations with respect to IE and firefox.
+   
+   On Internet Explorer:
+   
+   1) The file name "TSTMT_ISS_DESC_LINE_FR_TD_post.sh" did not
+   have any
+   issues (Here the type of the file is .sh, as this saved as the
+   type sh
+   
+   type).
+   2) "TSTMT_ISS_DESC_LINE_FR.TD.post.sh" did have "&#65517;1&#65529;&#65517;1&#65529;"
+   attached in
+   the
+   file name during the download operation.
+   
+   On Mozilla Browser:
+   
+   The same when tried to download on a Mozilla browser did not
+   have any
+   issues in downloading.
+   If "TSTMT_ISS_DESC_LINE_FR.TD.post.sh~6"  is downloaded there
+   are no
+   '&#65517;1&#65529;&#65517;1&#65529;' attached, but at the end of the filename "%7E" gets
+   appended, i.e this file gets saved as
+   "TSTMT_ISS_DESC_LINE_FR.TD.post.sh%7E6", this is because the "~"
+   symbol
+   is getting converted
+   to its corresponding "ASCII" value.
+   
+   *************************************************
+   
+   Based on these, here are the customer inputs:
+   
+   They were experiencing this issue in IE 6.0sp2 and NOT in IE
+   7.0. With IE
+   7.0, there are no '&#65490;1-&#65490;1-' attached.
+   Also, with Firefox v3.0.8, I don't see what you mentioned. The
+   file
+   gets
+   downloaded as is without any additional characters.
+   So, the issue at Support's end is only with IE6.0.
+   *************************************************
+   
+   
+   
+   1) Whenever a customer tries to download any attachments from a
+   CR with
+   multiple extension or multiple dots in the file name, the file
+   gets
+   downloaded with &#65517;1&#65529;&#65517;1&#65529;'s appended to it. Because of this the
+   customer
+   has to rename the file each and everytime she downloads a
+   attachments
+   with multiple extensions.
+   
+   2) Support has also tested the same behaviour in our test
+   environment and
+   were able to reproduce it.
+   
+   As per the Supported browsers change 4.7 has the following list
+   of
+   supported browsers:
+   
+   Operating System   Browser
+   Windows Vista ->  Internet Explorer 7.0
+   Windows XP    ->  Internet Explorer 6.0 SP1 or 7.0
+   Windows 2003  ->  Internet Explorer 6.0 SP1 or 7.0
+   Windows 2000  ->  Internet Explorer 6.0 SP1
+   Red Hat Linux ->  Firefox 2.0
+   Solaris       ->  Firefox 2.0
+   HP-UX         ->  Firefox 2.0
+   IBM AIX       ->  Firefox 1.5
+   
+   2) As per the customer they are not seeing the issue is IE 7.0
+   and
+   Firefox.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Conceded as a low priority defect, no plans to fix it.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Conceded as a low priority defect, no plans to fix it.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK96242
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC CHANGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724V87CG
+   
+   
+ * REPORTED RELEASE
+   470
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-15
+   
+   
+ * CLOSED DATE
+   2010-01-15
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,93 @@
+Title: IBM The messaging engine's instance unique id (INC_UUID) does not match that found in the data store in clustering fail over environment - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are seeing the following error message generated in the SystemOut.log during a WebSphere Application Server clustering fail over scenario for your Messaging Engine. 
+
+CWSIS1535E: The messaging engine's unique id does not match that found in the data store. ME_UUID=ME1, INC_UUID=INC1, ME_UUID(DB)=ME1, INC_UUID(DB)=INC2 (ME_UUID is same, where as INC_UUID is different in this case) 
+
+SYMPTOM
+During a clustering fail over scenario, you find the following errors in the SystemOut.log: 
+
+CWSIS1538I: The messaging engine, ME_UUID=ME1, INC_UUID=INC2, is attempting to obtain an exclusive lock on the data store.
+
+CWSIS1545I: A single previous owner was found in the messaging engine's data store, ME_UUID=ME1, INC_UUID=INC1
+
+CWSIS1535E: The messaging engine's unique id does not match that found in the data store. ME_UUID=ME1, INC_UUID=INC1, ME_UUID(DB)=ME1, INC_UUID(DB)=INC2
+
+Please note that ME_UUID is same where as INC_UUID is different. 
+
+
+CAUSE
+An INC_UUID is used to identify a particular instance of a messaging engine. For example if a messaging engine is configured to fail over between two servers. In this case there is one ME_UUID (ME1) and two INC_UUIDs (INC1 and INC2). To make sure that only one of these messaging engine instances can access the data store at any one time, the INC_UUID is checked to determine which instance is currently in control. This problem happens generally in case of a cluster failover or a loss of database connectivity by the running Messaging Engine.
+
+The likely cause of this problem is a drop in communication between the database and the messaging engine. This would lead to:
+
+1. ME1,INC1 starts and gets a lock on its data store.
+2. ME1,INC1 loses its connection to the database and hence its lock.
+3. ME1,INC1 retries to get its lock, but the database is still down or not able to communicate to database.
+
+HA Manager disables the Messaging Engine on server1 (the WebSphere Application Server HA Manager terminates the JVM which lost connectivity in order to maintain data integrity) and moves the Messaging Engine to the other running server in that cluster.
+
+4. ME1,INC2 is started by the HA Manager on the other server to replace ME1,INC1.
+5. ME1,INC2 finds the database is available and acquires the lock.
+6. ME1,INC1 also finds the database is now available but notices that another instance has acquired the lock and outputs CWSIS1535E.
+
+In most of the cases the root cause of this problem is the loss of connectivity to the database or cluster fail over .
+
+
+RESOLVING THE PROBLEM
+Check the network connectivity and database server logs to determine why the problem occurred. 
+
+
+To remove the lock (owned by the first instance of the messaging engine) from the database tables you can use a short interval for keepalive on the database machine, so that the database machine will free up the socket and subsequently remove the lock from the SIBOWNER table. Please note that the default keepalive interval is 2 hours. To resolve this problem you may need to set the keepalive value to a much lower value, for example: 3 to 5 minutes.
+
+How to set the keepalive setting:
+
+The method of setting the keep alive interval is different on each platform:
+
+AIX: 
+get:
+no -a tcp_keepintvl
+no -a tcp_keepidle 
+set:
+no -o tcp_keepintvl=20
+no -o tcp_keepidle=120 
+The interval is in half-seconds 
+The parameter takes effect immediately. If the machine is rebooted the parameter is reset to the default value.
+To make the change permanent, add the no commands to the /etc/rc.net script. 
+
+Solaris 
+get:
+ndd -get /dev/tcp tcp_keepalive_interval 
+set:
+ndd -set /dev/tcp tcp_keepalive_interval 60000 
+The interval is in milliseconds 
+The parameter takes effect immediately. If the machine is rebooted the parameter is reset to the default value.
+To make the change permanent, add the ndd command to the /etc/init.d/inetinit script. 
+
+HP-UX: 
+As Solaris. The permanent change has to be made to the /etc/rc.config.d/nddconf script. 
+
+Linux: 
+Create/amend file /proc/sys/net/ipv4/tcp_keepalive_time. Insert the interval in seconds. 
+The parameter takes effect immediately. If the machine is rebooted the parameter is reset to the default value.
+To make the change permanent, add a command like:
+/#echo 60 >/proc/sys/net/ipv4/tcp_keepalive_time
+to the file /etc/rc.d/rc.local script.
+
+RELATED INFORMATION
+ Service Integration Bus Scalability Best Practices [http://www-01.ibm.com/support/docview.wss?uid=swg27021025]
+Messaging Engine Data Store Connectivity Problems and S [http://www-01.ibm.com/support/docview.wss?uid=swg27020333]
+SIB Concept and Architecture Overview [http://www-01.ibm.com/support/docview.wss?uid=swg27019098]
+SIB Message Store Overview [http://www-01.ibm.com/support/docview.wss?uid=swg27016476]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere MQ Service Integration Technologies /SIB AIX, HP-UX, Linux, Linux on Power, Solaris, Windows 7.5, 7.1, 7.0 Standard 
+PRODUCT ALIAS/SYNONYM
+ WebSphere Application Server WAS SIB SIBUS SI BUS

@@ -1,0 +1,22 @@
+Title: IBM The software distribution does not work if the package has a file name contains the Japanese characters. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The customer encounter the error meesage "transcoding error" for the action to run the software distribution. 
+
+CAUSE
+The transcoding error happens to the software should be caused by that the customer put the Japanese characters in the file name. 
+
+ And the Bigfix product does not support the full unicode before the 9.2.5 version.
+
+
+RESOLVING THE PROBLEM
+The customer can try to edit the file besclient.config to add the line _BESClient_DeploymentEncoding_IANAName=Shift_JIS, then restart the client and try the previous failed task again. 
+
+
+If the target is the windows systems, the customer can also set the parameter from the console
+
+RELATED INFORMATION
+ Software Distribution action fails on moving file to di [http://www-01.ibm.com/support/docview.wss?uid=swg21967702]

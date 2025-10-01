@@ -1,0 +1,162 @@
+Title: IBM PK20471: MAKE REQUEST OBJECTS QUERY-ABLE ON "CONNECTIONLESS" MODE - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using IBM Java SDK 1.4.2 SR4 in z/OS, the Websphere
+   Application Server does not start. The ORB trace will show
+   org.omg.CORBA.INTERNAL exception.
+   ...
+   {Exception stack is formatted to fit the view}
+   ExtendedMessage: The following exception was logged;
+   org.omg.CORBA.INTERNAL: ServerRequest has no
+   connection data minor code: 5BB  completed: No
+   .at com.ibm.rmi.iiop.ServerRequestImpl.checkServerRequest
+   Integrity(ServerRequestImpl.java:685
+   .at com.ibm.rmi.iiop.ServerRequestImpl.getObjectKeyObject
+   (ServerRequestImpl.java:254)
+   .at com.ibm.rmi.pi.ServerRequestInfoImpl.<init>
+   (ServerRequestInfoImpl.java:110)
+   .at com.ibm.rmi.pi.InterceptorManager.createServerInfo
+   (InterceptorManager.java:1047)
+   .at com.ibm.ws390.orb.CommonBridge.prepareServerRequestInfo
+   (Unknown Source)
+   .at com.ibm.ws390.orb.CommonBridge.invoke(Unknown Source)
+   .at com.ibm.ws390.orb.ORBEJSBridge.invoke(Unknown Source)
+   .at sun.reflect.NativeMethodAccessorImpl.invoke0
+   (Native Method)
+   .at sun.reflect.NativeMethodAccessorImpl.invoke
+   (NativeMethodAccessorImpl.java:64)
+   .at sun.reflect.DelegatingMethodAccessorImpl.invoke
+   (DelegatingMethodAccessorImpl.java:43)
+   .at java.lang.reflect.Method.invoke(Method.java:615)
+   .at com.ibm.ws390.orb.parameters.ORBEJSBridgeInvoke.
+   ORBEJSBridgeInvokeParmSetter
+   (ORBEJSBridgeInvoke.java:173)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  APAR PK14896 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK14896] introduced a change in the way ORB initializes
+   ServerRequestImpl. The processing done there would not
+   work in "Connection less" mode which is how ORB operates in
+   z/OS.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A check has been made to enable the code changes done in
+   PK14896 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK14896] only in "Connection" mode. This averts the problem
+   described in this APAR.
+   This APAR would be available in 142 SR5.
+   .
+   To obtain the fix:
+   Install build 20060303 or later
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK20471
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA(1.3/1.4 CO
+   
+   
+ * REPORTED COMPONENT ID
+   5648C9800
+   
+   
+ * REPORTED RELEASE
+   42A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2006-03-01
+   
+   
+ * CLOSED DATE
+   2006-03-04
+   
+   
+ * LAST MODIFIED DATE
+   2006-03-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA(1.3/1.4 CO
+   
+   
+ * FIXED COMPONENT ID
+   5648C9800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R420 PSN
+   UP
+   
+   
+ * R42A PSN
+   UP
+   
+   
+ * R42L PSN
+   UP
+   
+   
+ * R42W PSN
+   UP

@@ -1,0 +1,30 @@
+Title: IBM Infosphere CDC : Missing dbrm not coded in CHCBNDPL bind job - United States
+
+Text:
+Infosphere CDC; CDC zos; db2V8GetTableVersionInfo; CHC0102E; -805 TECHNOTE (FAQ)
+
+QUESTION
+ How to resolve CHC0102E SQL error: DSNT408I SQLCODE = -805, ERROR: DBRM OR PACKAGE NAME 
+
+CAUSE
+missing dbrm not coded in CHCBNDPL
+
+ANSWER
+A missing dbrm is not coded in the CDC bind job - CHCBNDPL.
+
+For example : 
+CHC0102E SQL error: 
+
+DSNT408I SQLCODE = -805, ERROR: DBRM OR PACKAGE NAME A51DD2P2..CHCDB2D8.18B284231F2AAEEE NOT FOUND IN PLAN CHCSDTP3. REASON 01 DSNT418I SQLSTATE = 51002 SQLSTATE RETURN CODE DSNT415I SQLERRP = DSNXEPM SQL PROCEDURE DETECTING ERROR DSNT416I SQLERRD = -251 0 0 -1 0 0 SQL DIAGNOSTIC INFORMATION DSNT416I SQLERRD = X'FFFFFF05' X'00000000' X'00000000' X'FFFFFFFF' X'00000000' X'00000000' SQL DIAGNOSTIC INFORMATION, Diagnostic information (db2V8GetTableVersionInfo;205) 
+Even if a customer is running DB2 v910, CDC requires you include the db2 v810 dbrm. 
+In the above example : 
+Your the chc bind jcl (CHCBNDPL) should look like this: 
+DSN SYSTEM(db91) /* <== 
+BIND - 
+PLAN(CHCDALDD) 
+MEMBER(CHCDALDB CHCDB2DL - 
+CHCDB2D8 /* <DB2-V8.1-NFM-UP> 
+CHCDB2D9 /* <DB2-V9.1-NFM-UP> 
+) - 
+
+If CHCDB2D8 (for CHCDB2D8) was missing from the Bind job code, cust should include all references where <DB2-V8.1-NFM-UP> is specified in the bind job

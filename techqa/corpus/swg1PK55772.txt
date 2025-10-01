@@ -1,0 +1,248 @@
+Title: IBM PK55772: NOT ABLE TO MAKE ORACLE RAC WORK EVEN WHEN SETTING CUSTOM PROPERTY FASTCONNECTIONFAILOVERENABLED. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DSRA8200W:
+   DataSource Configuration: DS
+    RA8020E: Warning: The property 'ConnectionCacheName' does not
+   exist on
+    the DataSource class
+   oracle.jdbc.pool.OracleConnectionPoolDataSource.
+    Please help to determine the root cause of and these warnings,
+   and
+    provide guides regarding FCF setup on Websphere application
+   .
+   We tried passing FastConnectionFailoverEnabled in as a custom pr
+   operty and it would not activate the ORACLE RAC and allow the RA
+   C to work properly for failover of the ORACLE databases.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: IBM WebSphere Application Server version     *
+   *                 6.0.2 users of JDBC and with Oracle pooling  *
+   *                 enabled.                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When Oracle Pooling is enabled the      *
+   *                      resource adapter was not enabled to     *
+   *                      use the Oracle fast connection          *
+   *                      failover.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Fast connection failover was not occurring with the Oracle
+   Pooling enabled.
+   
+   The resource adpater code was not using the Oracle Pooling to
+   allow the connection failover to occur.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The resource adapter fix added additional configuration
+   options to allow for Oracle pooling and connection failover.
+   
+   Additional information for Support Oracle Fast Connection
+   Failover
+   
+   Oracle pooling can be enabled in WebSphere Application Server
+   but OracleDataSource must be used (as opposed to the
+   OracleConnectionPool datasource). Application Server doesn't
+   certify with OracleDataSource but does support it (support
+   falls under other configuration part of our support statement).
+   To enable Oracle pooling in Application Server do the
+   following:
+   
+   1) create a user defined provider.  Use the following
+   configuration:
+   
+       Implementation class: oracle.jdbc.pool.OracleDataSource
+       helper:
+   com.ibm.websphere.rsadapter.Oracle10gDataStoreHelper
+   
+   2) create a datasource under the new provider created in 1
+   with the following custom properties:
+   disableWASConnectionPooling = true
+   connectionCachingEnabled=true
+   connectionCacheName=<your cache name>
+   removeExistingOracleConnectionPoolIfExists = true
+   URL = <Oracle URL>
+   
+   Note that you will need the
+   removeExistingOracleConnectionPoolIfExists  be set to have
+   Application Server remove any existing Oracle poolings.
+   Otherwise, Oracle will fail getConnection.
+   
+   
+   Limitation of the Oraclepooling:
+   1) doesn't support XA
+   2) order of who the DS custom properties  get set is
+   important.  This could become an issue as Application Server
+   passes the properties as a collection and hence the order is
+   not guaranteed.  If you hit this issue, you need to contact
+   Oracle and reference TAR:6499673.994
+   3) oracle will not display a message if the pool creation
+   fails, instead a normal connection is returned. Thus, you nee
+   to watch for that.  You can confirm that pool is created by
+   running your application and then trying to issue a
+   testConnection. Test connection should fail with an exception
+   that the oracle pool name is already used. Note however, that
+   the testConnection must be executed in the save JVM (that is,
+   server level) thus, you will need to create your datasource
+   and provider in the server scope.
+   
+   The fix for this APAR is currently targeted for inclusion
+   in fix pack for 6.0.2.27
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK55772
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-31
+   
+   
+ * CLOSED DATE
+   2008-01-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-01-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP
+   
+   
+ * R61A PSN
+   UP
+   
+   
+ * R61H PSN
+   UP
+   
+   
+ * R61I PSN
+   UP
+   
+   
+ * R61P PSN
+   UP
+   
+   
+ * R61S PSN
+   UP
+   
+   
+ * R61W PSN
+   UP
+   
+   
+ * R61Z PSN
+   UP

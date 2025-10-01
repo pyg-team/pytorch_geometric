@@ -1,0 +1,49 @@
+Title: IBM Return code: ERROR - Error encountered installing Statistics 20.0 C&DS - United States
+
+Text:
+Statistics Server IBM SPSS C&DS ERROR TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am installing IBM SPSS Statistics C&DS Adapters for IBM SPSS Statistics 20. The C&DS version is 5.0. I am seeing this error message: 
+
+SYMPTOM
+Error screen details:
+
+Title: IBM SPSS Collaboration and Deployment Services - Server Adapter for Statistics
+
+Installation Failed [Note: All other parts of the install have completed successfully:
++ Introduction
++ License Agreement
++ Choose Install Folder
++ Choose Java Virtual Machine
++ Administrator Account Credentials
++ Pre-Installation Summary
++ Installing ...
+> Install Complete
+
+The installation of IBM SPSS Collaboration and Deployment Services - Server Adapter for Statistics did not succeed. Please verify the administrative account credentials and the path to SPSS Collaboration and Deployment Services before repeating installation.
+
+User ID: admin
+
+Path: E:\Program Files\IBM\SPSS\Deployment\5.0\Server
+
+For further details, see the log file under /SPSSInc/stdout.txt
+
+Return code: ERROR
+
+
+CAUSE
+Fix Pack should be installed
+
+ENVIRONMENT
+Windows XP
+
+RESOLVING THE PROBLEM
+To remedy this problem, please apply the IBM SPSS Statistics Adapters 20.0 for C&DS 4.2 Win32 Fix Pack 1.
+
+You may find this fixpack here:
+
+http://www-01.ibm.com/support/docview.wss?uid=swg24031901 [http://www-01.ibm.com/support/docview.wss?uid=swg24031901] 
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

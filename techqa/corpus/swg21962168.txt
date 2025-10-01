@@ -1,0 +1,81 @@
+Title: IBM Using Installation Manager to install integrations packages - United States
+
+Text:
+listIU.sh; nco_id; install manager; IMHOME; installation mananger; probes; gateways TECHNOTE (FAQ)
+
+QUESTION
+ imcl : How can you install a probe or gateway package? 
+
+CAUSE
+Netcool/OMNIbus 8.1 uses the Installation Manager to install packages
+
+ANSWER
+ 
+
+The Installation Manager command imcl can be used to install downloads integration packages. 
+
+ 
+
+ * To determine the location of imcl use the nco_id command as the Netcool/OMNIbus user:
+
+
+
+nco_id 
+Netcool/OMNIbus 8.1.0 - May 2014 
+NCHOME: /opt/nrv81/tivoli/netcool 
+IMHOME: /opt/nrv81/IBM/InstallationManager/eclipse 
+IMDATA: /opt/nrv81/var/ibm/InstallationManager 
+
+Products: 
+IBM Tivoli Netcool/OMNIbus - 8.1.0 
+ * Use the nco_version command to determine which library versions are installed and to confirm the platform type
+
+
+nco_version 
+
+Netcool/OMNIbus Version 8.1.0 64-bit ObjectServer Library Versions 
+
+(C) Copyright IBM Corp. 2003, 2014 
+
+Code Revision: 5.50.20 
+Compilation Date: Tue May 27 10:36:32 BST 2014 
+Compilation Machine: redhat.ibm.com 
+Compilation System: Linux 2.6.18-274.17.1.el5 x86_64 
+Code Generation: PRODUCTION 
+Library Revisions: 
+libnetcool: 5.50.20 
+network::ipv4: 5.50.20 
+libnoam: 5.50.20 
+libnsecurity: 5.50.20 
+libnregion: 5.50.20 
+libnmemstore: 5.50.20 
+libncmd: 5.50.20 
+libnstore: 5.50.20 
+libnproc: 5.50.20 
+libnauto: 5.50.20 
+libnobjserv: 5.50.20 
+libnipc: 5.50.20 
+libnstk: 5.50.20 
+libnipc_client: 5.50.20 
+libniduc_client: 5.50.20 
+libniduc_server: 5.50.20 
+libngtk: 5.50.20 
+libngobjserv: 5.50.20 
+ * Set IMHOME to use the imcl command 
+
+export IMHOME 
+IMHOME=/opt/nrv81/IBM/InstallationManager/eclipse 
+ * List the installed packages using these commands
+
+
+$IMHOME/tools/imcl listInstalledPackages -features -long 
+$IMHOME/tools/imcl listInstalledPackages listInstalledPackages 
+ * Install probes and gateway packages by defining the dot product name and package location
+
+
+$IMHOME/tools/imcl -c install com.ibm.tivoli.omnibus.integrations. nco-p-socket -repositories 
+./ im-nco-p-socket-10_0.zip -installationDirectory /opt/nrv81/tivoli/netcool 
+ * Check the product [nco_p_socket] is installation using -version
+
+
+$NCHOME/omnibus/probes/nco_p_socket -version

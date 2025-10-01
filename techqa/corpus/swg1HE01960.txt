@@ -1,0 +1,133 @@
+Title: IBM HE01960: FTA (PART) / VALUE OF ANNOTATION IS DIFFERENT IN DRAFTING COMPAR ED TO FTA/PART DESIGN WORKBENCH - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Scenario:
+   .
+   Value of annotation is different in Drafting compared to
+   FTA/Part  Design Workbench
+   .
+   Expected Result: Value should be the same irrespective of the
+   workbench
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  empty
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Dear Customer:  we have reviewed the problem report you
+   submitted and determined that the function referenced is
+   working within the scope of the original design
+   specification. However we recognize the value of your
+   feedback and will consider including resolution of this issue
+   as a product enhancement in a future release, if one is made
+   available.  We thank you for your input.
+   Additional Closure Information:
+   Incident Diagnosis:
+   The NOA with Ditto when extracted to 2D does not
+   keep its position coordinates same as that in the 3D.
+   By-Pass:
+   In 3D change the anchor point in properties/text
+   to MiddleCenter and then extract the view to
+   drafting. Now the position will match exactly
+   .
+   Development Request Justification:
+   .
+   A ditto NOA is in fact a text with a ditto. When
+   it???s extracted in 2D, we create only a ditto.
+   That???s why the anchor points aren???t the same for
+   the 2 cases. The solution is to have the true
+   ditto feature in FTA instead of a NOA composed of
+   a text and a ditto. But that needs a lot of
+   modifications in the model and UI.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE01960
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-19
+   
+   
+ * CLOSED DATE
+   2010-11-24
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

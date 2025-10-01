@@ -1,0 +1,32 @@
+Title: IBM How to configure Synergy to automatically time-out idle CLI sessions? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to configure Synergy to automatically time-out idle CLI sessions? 
+
+CAUSE
+By default Synergy CLI sessions will remain active until "ccm stop" command is issued to the session.
+
+ANSWER
+In Synergy 7.2.1.6 and later releases, a new property is available to configure the session time-out period. Once the property is defined, any Synergy CLI sessions idle for more than configured time-out period shall automatically get stopped. 
+
+The property "ccm.client.session.timeout" in "ccm.server.properties" file in the Synergy server installation area can be used to configure the session time-out period. This property takes an integer value and treats the value in minutes. 
+
+ccm.client.session.timeout = X 
+
+ * If the property is not defined or if the property value is less than or equal to zero (X <= 0) then this feature is disabled and the sessions shall not automatically time-out. 
+ * If the value is greater than zero (X > 0) then the Synergy CLI sessions idle for more than X minutes shall get automatically timed-out and a message gets logged in the client log file as well. There will be a background thread which would be monitoring for idle sessions and checks every 3 minutes.
+
+
+NOTE: 
+
+ * This is a server side property and is applicable for all the clients connected to that server. 
+ * This behavior can be overridden by the clients, by adding the property in the "ccm.properties" file in the Synergy client installation area or adding in "ccm.user.properties" file in the user's home directory. 
+ * If the property "ccm.client.session.timeout" is not defined in any of the properties file, then this feature shall be disabled - which means the CLI sessions shall not be timed-out.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ Synergy

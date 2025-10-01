@@ -1,0 +1,57 @@
+Title: IBM Why am I getting this error:  "Unable to locate initiatews.properties file in the classpath"? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why am I getting this error: "Unable to locate initiatews.properties file in the classpath" when trying to run web services? 
+
+ANSWER
+Previously, the configuration of the web service was done via manipulation of the server-config.wsdd file inside the war archive. The new initiatews.properties file eliminates the need to augment the server-config.wsdd in any way. The values which were configured in the server-config.wsdd have been migrated to the initiatews.properties file. 
+
+The web services SDK locates the Master Data Engine server using the initiatews.properties file which resides outside the initiatews.war file. 
+
+Procedure 
+1. Install the IBM Initiate® Web Services SDK according to the installation instructions. 
+2. Using a plain text editor, create a file named initiatews.properties. (See below for contents of file) 
+
+3. Add the supported properties, adjust the values as needed and save the file. 
+
+4. Save the initiatews.properties file to the location determined by your web application server: 
+- If using Apache Tomcat, save it in the ${TOMCAT_HOME}/shared/classes directory. - If using Oracle Weblogic Server, add it to the weblogic_home/server/lib/weblogic_sp.jar file. If that file does not exist, create an archive file in that location, name it weblogic_sp.jar and place the correctly configured initiatews.properties file into it. 
+-If using IBM WebSphere, copy the initiatews.properties to the websphere_home/AppServer/properties directory. 
+
+5. Deploy the initiatews.war file 
+
+
+
+The initiatews.properties file will need to be created and populated as shown below (the values should be changed to match your environment). Note that the lines starting with a pound symbol (#) are optional comments. 
+
+Content of the initiatews.properties file: 
+
+# host on which the HUB is running 
+InitiateHostName=localhost 
+# port on which mpinet is running (your HUB port) 
+InitiateHostPort=16000 
+# User name to be used for default context creation and dictionary reads
+InitiateUsrName=pickauser 
+# Password to be used for default context creation and dictionary reads 
+InitiateUsrPass=changeme 
+# Maximum number of contexts to be used in the Context Pool 
+InitiateMaxContext=10 
+# Timeout is a value in milliseconds. This is the timeout for the 
+# underlying socket communication. 
+InitiateTimeOut=30000 
+# InitiateDump and InitiateDebug a two flags which control the level 
+# of logging. Set these to true during development/testing 
+InitiateDump=false 
+InitiateDebug=false 
+# Number of contexts to be create during initiation. 
+InitiateInitContext=3 
+# If your HUB has been configured to use SSL set InitiateUseSSL to true 
+InitiateUseSSL=false 
+# If InitiateUseSSL is set to true the three properties below need to be
+# set as well. See the product documentation for details. 
+Initiate.com.initiatesystems.sdk.sslversion=TLSv1 
+Initiate.com.initiatesystems.sdk.seclib=TLS 
+Initiate.com.initiatesystems.sdk.sslcertverify=false

@@ -1,0 +1,136 @@
+Title: IBM Unable to login: username and password are incorrect - United States
+
+Text:
+Unable to login: username and password are incorrect; ccweb; ccrc; rwp; Unable to login; username and password are incorrect; ClearCase view tag; 1251170; CRVAP0383E Logon failure: unknown user name or bad password.; CRVAP0383E Logon failure: unknown user name or bad password TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why attempts to login to the IBM Rational ClearCase Remote Client (CCRC) where the Web server is hosted on a Microsoft Windows results in the error, Unable to login: username and password are incorrect. 
+
+SYMPTOM
+ 
+
+Attempts to log into CCRC from a Windows client where the Web server is hosted on Windows fails during authentication with the error: 
+
+ 
+
+ * On ClearCase Version 7.1
+   
+   CRVAP0383E Logon failure: unknown user name or bad password.
+   
+   [/support/docview.wss?uid=swg21251170&amp;aid=1]
+
+ 
+
+ * On ClearCase version 7.0.1 and earlier:
+   ClearCase view tag: ccrc_view
+   Unable to login: username and password are incorrect
+   
+   [/support/docview.wss?uid=swg21251170&amp;aid=2]
+   
+   
+
+
+
+CAUSE
+ 
+
+ 1. This issue can occur if you are entering an incorrect username and or password.
+    
+ 2. It may also occur if the domain user does not have the right permission to authenticate on that particular Windows 2003 Server.
+    
+ 3. This can also be caused by an inability to write to the CCRC temp directory or that directory is missing.
+    
+ 4. There may be bad data in the .Rational\CCRC folder. You may observe that the same user can login from another machine but not the affected one.
+
+DIAGNOSING THE PROBLEM
+ 
+
+For Causes 1 and 2 
+
+ * The user is logging in with a Domain User account. 
+ * Other users can log into this server.
+
+
+For Cause 3 
+
+1) All Clients would receive this error.
+
+
+2) This would occur when logging into CCRC on the server itself as well as clients.
+
+
+3) When using the servers URL in a Web browser the welcome message does display the service running.
+
+[/support/docview.wss?uid=swg21251170&aid=3] [/support/docview.wss?uid=swg21251170&aid=3] 
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+For Cause 1: 
+
+Try the login again using valid login credentials. 
+
+ 
+
+For Cause 2: 
+
+Follow the instructions in the IBM Rational ClearCase Administrator's Guide to configure the Web server: 
+
+ 
+
+ * 
+ * 
+ * Configuring CM server support for the Rational ClearCase remote client [https://publib.boulder.ibm.com/infocenter/cchelp/v7r1m0/index.jsp?topic=/com.ibm.rational.clearcase.cc_admin.doc/topics/c_ccrc_config.htm] 
+ *  
+ * ClearCase 7.0.x Rational Web Platform (RWP) 
+ * Configuring server support for the Rational ClearCase remote client and Web client [http://publib.boulder.ibm.com/infocenter/cchelp/v7r0m1/index.jsp?topic=/com.ibm.rational.clearcase.cc_admin.doc/topics/c_ccrc_config.htm] 
+ * 
+
+
+Once you have verified that the Web server setup is OK, if no changes were made to your configuration, attempt the steps below. 
+Adjust the Local Security Policy on the Windows 2003 Server running the Web server to allow the appropriate Domain User (or groups) access to log on locally. 
+
+ 
+
+1. Log on as an Administrator and click Start > Run type secpol.msc. The Local Security Settings windows will appear. 
+
+
+
+2. Navigate to Local Policies > User Rights Assignment > Allow log on locally
+
+[/support/docview.wss?uid=swg21251170&amp;aid=4]
+
+
+
+
+3. Double click the Log on locally item to view the properties and click Add User or Group... to add the required users or groups. Click OK on all windows to exit.
+
+[/support/docview.wss?uid=swg21251170&amp;aid=5]
+
+
+
+4. Attempt the login from CCRC again. 
+
+Note: In some cases a restart of the server may be required.
+
+
+
+For Cause 3:
+
+Ensure that the temp directory for CCRC is available and has read write permissions.
+
+
+ 
+
+For Cause 4
+
+Have the user delete the .Rational\CCRC folder. It will be created when CCRC is restarted. 
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase ClearCase Remote Client (CCRC) Software Development Rational ClearCase ClearCase Remote Client (CCRC)

@@ -1,0 +1,45 @@
+Title: IBM LA02:  Operational Decision Manager Spatial Extension - United States
+
+Text:
+la02; spatial extension; operational decision manager DOWNLOADABLE FILES
+
+ABSTRACT
+ ODM Spatial Extension provides BOM and XOM for dealing with geospatial information in business rules. 
+
+DOWNLOAD DESCRIPTION
+Rapid expansion of mobile technologies is transforming the way businesses work making them adopt new processes and utilize new kinds of information. Location data is an example of information type that has become easily available with the recent spread of mobile devices; being utilized properly in business decisions and processes, it provides huge opportunities for business growth and optimization. While bringing new opportunities, location data also presents new challenges which hinder its full adoption and very often lead to partial or incorrect solutions that do not fully leverage the potential. 
+
+ODM Spatial Extension simplifies development of business rule applications by providing a business object model (BOM) for common geospatial data types and the corresponding executable model (XOM) that implements geospatial computation algorithms (e.g. distance, containment). Thus, the application developer can focus on the business logic while leaving the complexity of modelling and processing geospatial data to the extension modules.
+
+Possible Uses
+Create geospatial objects in a java application; calling geospatial operators in business rules; calling geospatial functions in java applications.
+
+Details
+Authors: Alexander Kofman, Eli Packer, Tali Yatzkar-Haham. IBM Research Israel
+Category: 2
+Released: 31Jul14
+Current SupportPac Version: 1.0
+»Please note that the version number shown in the right-hand pane is the version of the WebSphere Operational Decision Management product that this SupportPac applies to. The date is the last webpage refresh. 
+
+PREREQUISITES
+Java Runtime Environment v1.6 or later; Operational Decision Manager v8.5 or later
+
+INSTALLATION INSTRUCTIONS
+Extract the archive into a folder on your drive. The root folder of the SupportPac contains the following:
+doc â contains documentation for the SupportPac, the user guide and the java API samples â sample projects
+com_ibm_geospatial_bom.zip, the zipped project containing the binaries and other artifacts for the spatial extension
+
+URL LANGUAGE SIZE(Bytes) la02.pdf [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/la02.pdf] US English 230299 
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options la02.zip 31 Jul 2014 US English 880864 HTTP [http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?popup=Y&li_formnum=L-ASAY-9LR8AG&accepted_url=ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/la02.zip] 
+TECHNICAL SUPPORT
+ Category 2 SupportPacs are provided in good faith and AS-IS. There is no warranty or further service implied or committed and any supplied sample code is not supported via IBM product service channels. 
+
+You may submit a question and return email address using the 'rate this page' below, but a response is not guaranteed.
+
+Please read the license information contained within the zip file of this SupportPac to determine if you want to use it.

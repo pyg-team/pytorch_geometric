@@ -1,0 +1,10 @@
+Title: IBM Support for Connect:Express for Microsoft Windows 3.1.0 supported on Microsoft Windows Enterprise version 10 - United States
+
+Text:
+Connect:Express Windows Windows 10 TECHNOTE (FAQ)
+
+QUESTION
+ Is Connect:Express (C:X) for Microsoft Windows version 3.1.0 supported on Microsoft Windows Enterprise version 10? 
+
+ANSWER
+Connect:Express for Windows 3.1.0.11 is supported and certified on Microsoft Windows Enterprise version 10 for 64 bits.

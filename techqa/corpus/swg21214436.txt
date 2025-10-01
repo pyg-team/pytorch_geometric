@@ -1,0 +1,137 @@
+Title: IBM How to configure SSL on the IBM® HTTP Server manually after installing with SSL configuration disabled, or after upgrading from DB2® Content Manager Version 8.2 to V8.3, or after migrating to WebSphere® Application Server V6 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The IBM HTTP Server can be configured for SSL automatically by the DB2 Content Manager 8.3 installation program as an option during custom installation. However, you might not have chosen to configure it during the installation and you want now to configure and use DB2 Content Manager 8.3 with IBM HTTP Server and SSL configured.
+
+Also, you might not have the HTTP Server V6 configured for SSL if you have performed a migration from WebSphere Application Server V5 to WebSphere Application Server V6. 
+
+CAUSE
+There are multiple situations where the SSL configuration is not configured by DB2 Content Manager V8.3 installation: 
+
+ * When a "Typical Installation" was performed 
+ * When a "Custom Installation" was performed but the option to configure SSL was not selected 
+ * When an upgrade from DB2 Content Manager V8.2 to DB2 Content Manager V8.3 was performed 
+ * After the installation of DB2 Content Manager V8.3, a migration from WebSphere Application Server V5 to WebSphere Application Server V6 was performed (so only the "old" IBM HTTP Server has been configured for SSL).
+
+ANSWER
+The following instructions show how to configure SSL using the same tools used by the DB2 Content Manager V8.3 installation program and how to configure DB2 Content Manager V8.3 to access the resource manager using the HTTP Server ports. 
+
+Open a command prompt on Windows®, or a session as 'root' on UNIX® or Linux™. 
+
+1. Go to the config directory of DB2 Content Manager V8.3. For example: 
+
+ * On Windows: cd C:\Program Files\IBM\db2cmv8\config 
+ * On UNIX: cd /opt/IBM/db2cmv8/config
+
+
+2. Set the Java™ environment to use WebSphere Application Server V6 Java SDK. To do this, set the JAVA_HOME and PATH environment variables. For example: 
+
+ * On Windows: 
+   set JAVA_HOME=C:\WebSphere60\AppServer\java
+   set PATH=%JAVA_HOME%\bin;%PATH% 
+ * On UNIX: 
+   export JAVA_HOME=/usr/IBM/WebSphere60/AppServer/java
+   export PATH=$JAVA_HOME/bin:$PATH
+
+
+3. On Windows only: Add the GSK "Lib" directory in the PATH. To do this, modify the PATH environment variable to include the GSK Lib directory. For example: 
+
+set PATH=C:\Program Files\ibm\gsk7\lib;%PATH% 
+
+ 
+
+4. Call the RMUpdateSSL program to configure SSL. Run: 
+
+java RMUpdateSSL HTTPServer_conf_directory 
+
+where HTTPServer_conf_directory is the path to the conf directory of IBM HTTP Server. For example, 
+
+ * On Windows: 
+   java RMUpdateSSL C:\WebSphere60\HttpServer\conf 
+ * On UNIX: 
+   java RMUpdateSSL /usr/IBM/WebSphere60/HttpServer/conf
+
+
+An output log is saved in IBMCMROOT/config/cmcfgrmas.log where IBMCMROOT is your DB2 Content Manager 8.3 directory. 
+
+Here's an example of output :
+2005/08/12 06:42:38 RMUpdateSSL Entry
+2005/08/12 06:42:39 RMUpdateSSL adding com.ibm.spi.IBMCMSProvider
+2005/08/12 06:42:39 RMUpdateSSL adding com.ibm.crypto.fips.provider.IBMJCEFIPS
+2005/08/12 06:42:41 RMUpdateSSL pluging configured on line 844
+2005/08/12 06:42:41 RMUpdateSSL SSL is ready to be configured.
+2005/08/12 06:42:41 RMUpdateSSL os.name AIX
+
+At this point, a backup copy should have been saved in HTTPServer/conf/httpd.conf.000 and the HTTP Server's current configuration file HTTPServer/conf/httpd.conf should have the following lines added at the end of the file similar to this:
+
+LoadModule ibm_ssl_module modules/mod_ibm_ssl.so
+LoadModule was_ap20_module /usr/WebSphere60/Plugins/bin/mod_was_ap20_http.so
+WebSpherePluginConfig /usr/WebSphere60/AppServer/profiles/BaseUnmanaged/config/c
+ells/cma66Node01Cell/nodes/webserver1_node/servers/webserver1/plugin-cfg.xml
+Listen 443
+<VirtualHost cma66.svl.ibm.com:443>
+ServerName cma66.svl.ibm.com
+DocumentRoot "/usr/WebSphere60/HttpServer/htdocs/en_US"
+ErrorLog "/usr/WebSphere60/HttpServer/logs/error.log"
+TransferLog "/usr/WebSphere60/HttpServer/logs/error.log"
+ServerSignature Off
+SSLEnable
+SSLFIPSEnable
+Keyfile "/usr/WebSphere60/HttpServer/conf/key.kdb"
+SSLV2Timeout 100
+SSLV3Timeout 1000
+SSLClientAuth none
+SSLServerCert icmrm
+SSLCipherSpec 3A
+SSLCipherSpec FF
+
+In case you encounter errors while running RMUpdateSSL command, execute the RMUpdateSSL program in debug mode and contact an IBM representative for further assistance. 
+
+You can run RMUpdateSSL program in debug mode with this command: 
+
+java -Ddebug=true RMUpdateSSL HTTPServer_conf_directory 
+
+
+
+5. Start the HTTP Server. For example, 
+
+ * On Windows: 
+   Start > Programs > IBM HTTP Server 6.0 > Start HTTP Server 
+ * On UNIX: 
+   /usr/IBM/WebSphere60/HttpServer/bin/apachectl start
+
+
+6. Verify the configuration for SSL is successful. Open a browser from any machine.
+Both URLs http://hostname and https://hostname should show the IBM HTTP Server welcome page: 
+
+ 
+
+http.jpg [/support/docview.wss?uid=swg21214436&aid=2] [/support/docview.wss?uid=swg21214436&aid=1]https.jpg [/support/docview.wss?uid=swg21214436&aid=4] [/support/docview.wss?uid=swg21214436&aid=3] 
+
+ 
+
+7. Start the resource manager. Execute the startServer script to start the resource manager. For example: 
+
+ * On Windows: C:\WebSphere60\AppServer\bin\startServer.bat icmrm 
+ * On UNIX: /usr/IBM/WebSphere60/AppServer/bin/startServer.sh icmrm
+
+
+8. Verify the resource manager is now accessible through IBM HTTP Server. Open a browser from any machine. If the resource manager is deployed on the context root/icmrm, both URLs http://hostname/icmrm/snoop and https://hostname/icmrm/snoop should show the resource manager Snoop Servlet page. 
+
+rm_http.jpg [/support/docview.wss?uid=swg21214436&aid=6] [/support/docview.wss?uid=swg21214436&aid=5]rm_https.jpg [/support/docview.wss?uid=swg21214436&aid=8] [/support/docview.wss?uid=swg21214436&aid=7] 
+
+ 
+
+9. Modify the DB2 Content Manager configuration to access to the resource manager using HTTP Server ports. Open the system administration client for DB2 Content Manager V8.3.
+Open the resource manager properties and change the access ports to: 
+
+ * Port 80 for http 
+ * Port 443 for https
+
+
+Here's a example: 
+
+ cm_sys_admin_rm_prop.jpg [/support/docview.wss?uid=swg21214436&aid=10] [/support/docview.wss?uid=swg21214436&aid=9]

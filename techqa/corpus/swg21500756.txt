@@ -1,0 +1,310 @@
+Title: IBM Creating a WebSphere Commerce instance fails - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The build fails when attempting to create a WebSphere Commerce instance. 
+Error: "Could not build a list of prerequisite profile templates for profile template... " 
+
+SYMPTOM
+In the log files, an error exists resembling the following snippet: 
+
+Could not build a list of prerequisite profile templates for profile template 
+
+<AppServer_install_dir>/V7/Express/profileTemplates/default 
+
+When the ConfigCommerceServer ANT task is called to create the WebSphere Application Server profile, the ANT task fails.
+
+
+CAUSE
+In the instance_name_create.log file, an entry exists resembling the following snippet:
+
+<record>
+<date>2011-05-12T09:15:44</date>
+<millis>1305252944216</millis>
+<sequence>1</sequence>
+<logger>com.ibm.wsspi.profile.WSProfileCLI</logger>
+<level>INFO</level>
+<class>com.ibm.wsspi.profile.WSProfileCLI</class>
+<method>invokeWSProfile</method>
+<thread>0</thread>
+<message>Incoming command line is: { "-registry" ,"[WAS_INSTALL]/AppServer/V7/Express/profileRegistry/profileregistry.xml" ,"-create" ,"-profilePath" ,"[WAS_INSTALL]/AppServer/V7/Express/profiles/testportal" ,"-templatePath" ,"[WAS_INSTALL]/AppServer/V7/Express/profileTemplates/default " ,"-nodeName" ,"DEVTEST" ,"-cellName" ,"DEVTEST " ,"-hostName" ,"DEVTEST.myHostName " ,"-serverName" ,"server1" ,"-startingPort" ,"9101 " ,"-enableAdminSecurity" ,"true" ,"-adminUserName" ,"configadmin" ,"-adminPassword" ,"********" ,"-samplesPassword" ,"********" ,"-profileName" ,"testportal" }</message>
+</record>
+
+
+The -templatePath argument, while valid, contains an additional Tab or white space characters, as do other arguments supplied to the manageprofiles script. The additional white space characters are responsible for the instance creation failing with the "Could not build a list of prerequisite profile templates for profile template (<AppServer_install_dir>/V7/Express/profileTemplates/default )" error message.
+
+
+DIAGNOSING THE PROBLEM
+In the instance_name_create.log file, the arguments being sent to manageprofiles.sh are located in <AppServer>/bin. 
+
+You can manually attempt running the manageprofiles script to try and successfully create the profile with the arguments being supplied by the ConfigCommerceServer ANT task. 
+
+ 
+
+
+
+The instance_name_create.log file contains a similar entry as: 
+
+
+
+
+ <message>Incoming command line is: { "-registry" ,[WAS_INSTALL]/AppServer/V7/Express/profileRegistry/profileregistry.xml" ,"-create" ,"-profilePath" ,"[WAS_INSTALL]/AppServer/V7/Express/profiles/testportal" ,"-templatePath" ,"[WAS_INSTALL]/AppServer/V7/Express/profileTemplates/default " ,"-nodeName" ,"DEVTEST" ,"-cellName" ,"DEVTEST " ,"-hostName" ,"DEVTEST.myHostName " ,"-serverName" ,"server1" ,"-startingPort" ,"9101 " ,"-enableAdminSecurity" ,"true" ,"-adminUserName" ,"configadmin" ,"-adminPassword" ,"********" ,"-samplesPassword" ,"********" ,"-profileName" ,"testportal" }</message> 
+
+</record> 
+
+ 
+
+From this entry, the arguments can be de-constructed as: 
+
+-registry = [WAS_INSTALL]/AppServer/V7/Express/profileRegistry/profileregistry.xml 
+
+-create 
+
+-profilePath = [WAS_INSTALL]/AppServer/V7/Express/profiles/testportal 
+
+-templatePath =[WAS_INSTALL]/AppServer/V7/Express/profileTemplates/default 
+
+-nodeName = DEVTEST 
+
+-cellName = DEVTEST 
+
+-hostName = DEVTEST.myhostname 
+
+-serverName = server1" , 
+
+-startingPort = 9101 
+
+-enableAdminSecurity = true" 
+
+-adminUserName = configadmin" 
+
+-adminPassword = "********" 
+
+-samplesPassword = "********" 
+
+-profileName = myProfileName 
+
+Using the arguments as specified should show the same failure message as reported during instance creation.
+
+
+RESOLVING THE PROBLEM
+The white space or Tab characters being passed to the manageprofiles script causes the instance creation process to fail. 
+
+ 
+
+In particular, ensure that these variables do not contain any additional white space: 
+
+ 
+
+ 
+
+ 
+
+ <message>Incoming command line is: { "-registry" 
+
+,"[WAS_INSTALL]/AppServer/V7/Express/profileRegistry/profileregistry.xml" ,"-create" ,"-profilePath" 
+
+,"[WAS_INSTALL]/AppServer/V7/Express/profiles/testportal","-templatePath" 
+
+,"[WAS_INSTALL]/AppServer/V7/Express/profileTemplates/default" ,"-nodeName" ,"DEVTEST" ,"-cellName" ,"DEVTEST " 
+
+,"-hostName" ,"DEVTEST.myHostName " ,"-serverName" ,"server1" 
+
+,"-startingPort" ,"9101 " ,"-enableAdminSecurity" ,"true" 
+
+,"-adminUserName" ,"configadmin" ,"-adminPassword" ,"********" 
+
+,"-samplesPassword" ,"********" ,"-profileName" ,"myProfileName" 
+
+}</message> 
+
+</record> 
+
+ 
+
+ 
+
+ 
+
+For example: 
+
+"-templatePath" 
+
+,"[WAS_INSTALL]/AppServer/V7/Express/profileTemplates/default " 
+
+Must instead be: 
+
+"-templatePath" 
+
+,"[WAS_INSTALL]/AppServer/V7/Express/profileTemplates/default" 
+
+ 
+
+The variables listed are from the createInstance.properties file that is supplied to the given ANT task you are calling within the Instance Creation process. 
+
+ 
+
+The templatePath variable is from the createInstance.properties file in the following section: 
+
+ 
+
+######################################################################## 
+
+################# 
+
+# # 
+
+# WebSphere Application Server properties # 
+
+# # 
+
+######################################################################## 
+
+################# 
+
+ 
+
+# WebSphere Application Server profile template path 
+
+#------------------------------------- 
+
+WASProfileTemplatePath= 
+
+ 
+
+# WebSphere Application Server profile path 
+
+#------------------------------------- 
+
+WASProfilePath= 
+
+ 
+
+# WebSphere Application Server profile hostname 
+
+#------------------------------------- 
+
+WASHostName= 
+
+ 
+
+The createProfile ant task that you are currently calling and that is failing references the createProfile.xml file. The contents of this file contains a call to manageprofiles and also the associated argument list that it requires: 
+
+ 
+
+ 
+
+ 
+
+ propList="instanceName;WASProfileName;WASProfilePath;WASProfileTemplat 
+
+ePath;WASNodeName;WASCellName;WASHostName;WASProfileStartingPort" 
+
+ 
+
+ 
+
+<target name="CreateProfile" depends="CheckInstanceName" 
+
+ description="Run the wasprofile script"> 
+
+ <property file="${WCUserInstallDir}/instances/${instanceName}/properties/createInstance.properties"/> 
+
+ <taskdef name="checkProperties" 
+
+classname="com.ibm.commerce.config.ant.CheckProperties" /> 
+
+ <checkProperties wcUserInstallDir="${WCUserInstallDir}" 
+
+ instanceName="${instanceName}" 
+
+ propList="instanceName;WASProfileName;WASProfilePath;WASProfileTemplat 
+
+ePath;WASNodeName;WASCellName;WASHostName;WASProfileStartingPort" 
+
+ valueList="${instanceName};${WASProfileName};${WASProfilePath};${WASPr 
+
+ofileTemplatePath};${WASNodeName};${WASCellName};${WASHostName};${WASPro 
+
+fileStartingPort}" /> 
+
+ 
+
+ <taskdef name="getConfigIDPassword" 
+
+ classname="com.ibm.commerce.config.internal.ant.tasks.GetConfigIDPassword" /> 
+
+ <getConfigIDPassword configIDKey="WASAdminUser" 
+
+configPasswordKey="WASAdminPassword" /> 
+
+ 
+
+ <exec executable="${WASInstallDir}/bin/manageprofiles${WAS.script.ext}" 
+
+ failonerror="true"> 
+
+ <arg value="-create" /> 
+
+ <arg value="-profileName" /> 
+
+ <arg value="${WASProfileName}" /> 
+
+ <arg value="-profilePath" /> 
+
+ <arg value="${WASProfilePath}" /> 
+
+ <arg value="-templatePath" /> 
+
+ <arg value="${WASProfileTemplatePath}" /> 
+
+ <arg value="-nodeName" /> 
+
+ <arg value="${WASNodeName}" /> 
+
+ <arg value="-cellName" /> 
+
+ <arg value="${WASCellName}" /> 
+
+ <arg value="-hostName" /> 
+
+ <arg value="${WASHostName}" /> 
+
+ <arg value="-serverName" /> 
+
+ <arg value="server1" /> 
+
+ <arg value="-startingPort" /> 
+
+ <arg value="${WASProfileStartingPort}" /> 
+
+ <arg value="-enableAdminSecurity" /> 
+
+ <arg value="true" /> 
+
+ <arg value="-adminUserName" /> 
+
+ <arg value="${WASAdminUser}" /> 
+
+ <arg value="-adminPassword" /> 
+
+ <arg value="${WASAdminPassword}" /> 
+
+ <arg value="-samplesPassword" /> 
+
+ <arg value="${WASAdminPassword}" /> 
+
+ </exec> 
+
+</target> 
+
+ 
+
+To continue past this error, edit your createInstance.properties file and ensure that there are no additional white space or tab characters present in the file. Also ensure that the text editor you are using can save the file in a form that is compatible with your operating system and that the file transfer method from the editing machine onto the instance's machine does not edit the white space characters either.
+
+
+
+
+After removing the white space from the createInstance.properties file, re-run Instance creation or the subsequent ANT tasks beginning with ConfigureCommerceServer.

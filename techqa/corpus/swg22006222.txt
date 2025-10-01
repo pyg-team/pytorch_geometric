@@ -1,0 +1,31 @@
+Title: IBM Content Platform Engine 5.2.1 Process Configuration Console Commit operation fails with ORA-24816 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When large string fields are exposed on a Workflow System running on an Oracle database, the database can trigger an error. 
+
+SYMPTOM
+This occurs during transfer of a configuration change of the Workflow System (via Process Configuration Console on using the Commit command, or with ACCE) or during Workflow processing. 
+
+The error will be logged in the Process Engine Error Log file, pesvr_system.log: 
+
+
+ORA-24816: Expanded non LONG bind or LOB binds are all at the end of the bind list.
+
+
+CAUSE
+This error is triggered by the parameter being passed to database statements. 
+
+It is triggered by exposing long user-defined or system-defined fields of type string in Workflow Queues or Rosters or Logs. Oracle support states that the maximum length of an exposed string field should be around 4000 bytes. Depending on the character set used by the database, the error has already been observed with exposing of strings with slightly more than 1000 characters, with the AL32UTF8 character set. 
+
+It is important to be aware, that the error is triggered by actual rows being inserted into the database tables. So the error is triggered by actual workflows with very long string values for exposed fields. Consequently, it might not occur on exposing of a long string field, but much later when the first time a workflow record is stored in the queue or roster which has a very long value for the exposed string field.
+
+
+RESOLVING THE PROBLEM
+Reduce the length of the exposed fields of string type to avoid this problem. This will not shorten the data in the workflows, it only shortens the prefix of the string fields which are exposed.
+
+RELATED INFORMATION
+ APAR PJ44887 [https://www-304.ibm.com/support/entdocview.wss?uid=swg1PJ44887]
+Workflow System Database Size Limitations [https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.pe.user.doc/bpfcg008.htm]

@@ -1,0 +1,324 @@
+Title: IBM JR42561: 'ASSIGN ACTIVITY SEEMS TO HANG SOME CASES IF BOLAZY MODE IS USED' - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 7.5.1 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24033036]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In some situations, with BOLazy mode, an assign activitiy in a
+   long running BPEL process seem to 'hang'. In reality it is
+   running in an endless loop. After transaction timeout,
+   SystemOut.log contains the following messages:
+   
+    WTRN0006W: Transaction 0000..001 has timed out after 120
+   seconds.
+    WTRN0124I: When the timeout occurred the thread with which the
+   transaction is, or was most recently, associated was
+   Thread[WorkManager.BPENavigationWorkManager : 1,5,main]. The
+   stack trace of this thread when the timeout occurred was:
+   
+   com.ibm.bpe.xpathservice.impl.xci.XPathEvaluationUtil.getRootDat
+   aObject(XPathEvaluationUtil.java:182)
+   
+   com.ibm.bpe.xpathservice.impl.xci.XPathServiceImpl.createPathAnd
+   Set(XPathServiceImpl.java:1010)
+   
+   com.ibm.bpe.xpatheval.BasicXPathEvaluator.setValue(BasicXPathEva
+   luator.java:170)
+   
+   com.ibm.bpe.engine.BpelActivityKindAssign.copyToSpecVariablePart
+   Query(BpelActivityKindAssign.java:1502)
+   
+   com.ibm.bpe.engine.BpelActivityKindAssign.copyFromSpecVariable(B
+   pelActivityKindAssign.java:394)
+   
+   com.ibm.bpe.engine.BpelActivityKindAssign.copyFromSpecVariable(B
+   pelActivityKindAssign.java:299)
+   
+   com.ibm.bpe.engine.BpelActivityKindAssign.doActivate(BpelActivit
+   yKindAssign.java:129)
+   
+   com.ibm.bpe.engine.BpelActivityStateInactive.activateOrSkip(Bpel
+   ActivityStateInactive.java:280)
+   
+   com.ibm.bpe.engine.BpelEngineCore.continueControlLink(BpelEngine
+   Core.java:290)
+   
+   com.ibm.bpe.engine.BpelContinueLinkMessage3.execute(BpelContinue
+   LinkMessage3.java:88)
+   
+   com.ibm.bpe.engine.ProcessEngine.onMessage(ProcessEngine.java:15
+   25)
+   
+   com.ibm.bpe.framework.GenericAPIServicesImpl$7.run(GenericAPISer
+   vicesImpl.java:465)
+   
+   com.ibm.bpe.framework.infrastructure.InfrastructureServicesSuppo
+   rtBean.r
+   unInCScopeTxClassLoaderContextsWithException(InfrastructureServi
+   cesSupportBean.java:146)
+   
+   com.ibm.bpe.framework.infrastructure.EJSLocalStatelessInfrastruc
+   tureServ
+   icesSupportBea_70e9f9d4.runInCScopeTxClassLoaderContextsWithExce
+   ption(Unknown Source)
+   
+   com.ibm.bpe.framework.infrastructure.InfrastructureServicesImpl.
+   runInCSc
+   opeTxClassLoaderContextsWithException(InfrastructureServicesImpl
+   .java:352)
+   
+   com.ibm.bpe.framework.infrastructure.InfrastructureServicesImpl$
+   2.run(InfrastructureServicesImpl.java:253)
+   
+   com.ibm.bpe.framework.sca.AbstractBPCImplementationHandler.handl
+   eInvocat
+   ionEnvironmentRequest(AbstractBPCImplementationHandler.java:197)
+   
+   com.ibm.bpe.framework.sca.AbstractBPCImplementationHandler.proce
+   ssMessage(AbstractBPCImplementationHandler.java:130)
+   
+   com.ibm.ws.sca.internal.message.impl.MessageDispatcherImpl.proce
+   ssMessageWithPCI(MessageDispatcherImpl.java:755)
+   
+   com.ibm.ws.sca.internal.message.impl.MessageDispatcherImpl.proce
+   ssMessage(MessageDispatcherImpl.java:1607)
+   
+   com.ibm.ws.sca.internal.message.impl.ManagedMessageImpl.process(
+   ManagedMessageImpl.java:980)
+   
+   com.ibm.ws.sca.internal.webmodule.handler.WebModuleContextSwitch
+   Handler.processMessage(WebModuleContextSwitchHandler.java:146)
+   
+   com.ibm.ws.sca.internal.message.impl.MessageDispatcherImpl.proce
+   ssMessageWithPCI(MessageDispatcherImpl.java:766)
+   
+   com.ibm.ws.sca.internal.message.impl.MessageDispatcherImpl.proce
+   ssMessage(MessageDispatcherImpl.java:1607)
+   
+   com.ibm.ws.sca.internal.proxy.impl.ProxyInvocationHandlerImpl.in
+   voke(ProxyInvocationHandlerImpl.java:783)
+   $Proxy136.processMessage(Unknown Source)
+   
+   com.ibm.bpe.framework.sca.InvocationEnvironmentProviderImpl.runI
+   nInvocat
+   ionEnvironment(InvocationEnvironmentProviderImpl.java:160)
+   
+   com.ibm.bpe.framework.infrastructure.InfrastructureServicesImpl.
+   runInSca
+   CScopeTxClassLoaderContextsWithException(InfrastructureServicesI
+   mpl.java:259)
+   
+   com.ibm.bpe.framework.GenericAPIServicesImpl.bpc_onMessage(Gener
+   icAPIServicesImpl.java:452)
+   
+   com.ibm.bpe.framework.navigation.CScopeProviderBean$1.run(CScope
+   ProviderBean.java:169)
+   
+   java.security.AccessController.doPrivileged(AccessController.jav
+   a:202)
+   
+   com.ibm.bpe.framework.navigation.CScopeProviderBean.invokeProces
+   sSessionBean(CScopeProviderBean.java:166)
+   
+   com.ibm.bpe.framework.navigation.EJSLocalStatelessCScopeProvider
+   _19c383f5.invokeProcessSessionBean(Unknown Source)
+   
+   com.ibm.bpe.framework.navigation.NavigationWorkObject4ContextSwi
+   tch.proc
+   essV6EngineMessage(NavigationWorkObject4ContextSwitch.java:413)
+   
+   com.ibm.bpe.framework.navigation.NavigationWorkObject4ContextSwi
+   tch.proc
+   essNextMessage(NavigationWorkObject4ContextSwitch.java:303)
+   
+   com.ibm.bpe.framework.navigation.NavigationWorkObject4ContextSwi
+   tch.run(NavigationWorkObject4ContextSwitch.java:143)
+   
+   com.ibm.ws.asynchbeans.J2EEContext$RunProxy.run(J2EEContext.java
+   :268)
+   
+   java.security.AccessController.doPrivileged(AccessController.jav
+   a:202)
+   com.ibm.ws.asynchbeans.J2EEContext.run(J2EEContext.java:768)
+   
+   com.ibm.ws.asynchbeans.ExecutionContextImpl.go(ExecutionContextI
+   mpl.java:86)
+   
+   com.ibm.bpe.framework.ProcessExecutionContextImpl$2.run(ProcessE
+   xecutionContextImpl.java:171)
+   
+   java.security.AccessController.doPrivileged(AccessController.jav
+   a:251)
+   
+   com.ibm.bpe.framework.ProcessExecutionContextImpl.go(ProcessExec
+   utionContextImpl.java:161)
+   
+   com.ibm.bpe.framework.navigation.ProcessNavigationBean.processNe
+   xtMessage(ProcessNavigationBean.java:355)
+   
+   com.ibm.bpe.framework.navigation.EJSLocalStatelessProcessNavigat
+   ion_0f2917d9.processNextMessage(Unknown Source)
+   
+   com.ibm.bpe.framework.navigation.NavigationWorkObject4WorkMgrThr
+   ead.run(NavigationWorkObject4WorkMgrThread.java:103)
+   
+   
+   The problem disappears if trace with criteria
+   'com.ibm.bpe.*=all' is enabled."
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  "In some situations, with BOLazy mode used, an assign activitiy
+   in a long running BPEL process seem to 'hang'.
+   In reality it is running in an endless loop.
+   After transaction timeout, SystemOut.log contains the following
+   messages:
+      WTRN0006W: Transaction 0000...001 has timed out after 120
+   seconds.
+      WTRN0124I: When the timeout occurred the thread with which
+   the transaction is, or was most recently, associated was
+   Thread[WorkManager.BPENavigationWorkManager : 1,5,main]. The
+   stack trace of this thread when the timeout occurred was:
+   
+   com.ibm.bpe.xpathservice.impl.xci.XPathEvaluationUtil.getRootDat
+   aObject(XPathEvaluationUtil.java:182)
+   
+   com.ibm.bpe.xpathservice.impl.xci.XPathServiceImpl.createPathAnd
+   Set(XPathServiceImpl.java:1010)
+   
+   com.ibm.bpe.xpatheval.BasicXPathEvaluator.setValue(BasicXPathEva
+   luator.java:170)
+   
+   com.ibm.bpe.engine.BpelActivityKindAssign.copyToSpecVariablePart
+   Query(BpelActivityKindAssign.java:1502)
+   
+   com.ibm.bpe.engine.BpelActivityKindAssign.copyFromSpecVariable(B
+   pelActivityKindAssign.java:394)
+   
+   com.ibm.bpe.engine.BpelActivityKindAssign.copyFromSpecVariable(B
+   pelActivityKindAssign.java:299)
+   
+   com.ibm.bpe.engine.BpelActivityKindAssign.doActivate(BpelActivit
+   yKindAssign.java:129)
+   
+   com.ibm.bpe.engine.BpelActivityStateInactive.activateOrSkip(Bpel
+   ActivityStateInactive.java:280)
+   
+   com.ibm.bpe.engine.BpelEngineCore.continueControlLink(BpelEngine
+   Core.java:290)
+     ..........
+   
+   The problem disappears if trace with criteria
+   'com.ibm.bpe.*=all' is enabled."
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem fixed
+   iFix available on top of V751 GA
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR42561
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-04-18
+   
+   
+ * CLOSED DATE
+   2012-05-22
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    JR42531 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR42531]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP

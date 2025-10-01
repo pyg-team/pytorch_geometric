@@ -1,0 +1,164 @@
+Title: IBM MustGather:  DB2 Web Query for IBM i Issues - Release 2.x.x - United States
+
+Text:
+WebQuery IBM_i DB_TechNote TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document explains how to collect data for DB2 Web Query for IBM i issues. 
+
+Gathering this MustGather information before calling IBM Support will help familiarize you with the troubleshooting process and save you time. 
+
+This document is for Web Query 2.x.x 
+
+RESOLVING THE PROBLEM
+This document explains how to collect data for DB2 Web Query for IBM i issues. 
+
+Gathering this MustGather information before calling IBM Support will help familiarize you with the troubleshooting process and save you time. 
+
+
+DB2 Web Query (Release 2.x.x) for IBM i MustGather information
+
+
+
+I. Summarize by answering the following questions 1. List the errors you encounter and describe the behavior you are seeing. 2. Does the issue occur for a specific file? For a specific report? 3. What can you provide for background information? 
+Has it ever worked? 
+Did you recently upgrade to a new release or Web Query Group PTF? 
+(SF99646, SF99647, SF99747, etc depending on IBM i release) 4. Outline the steps to reproduce the issue. 
+If possible, do this step by step. 
+Step-by-step information will help us with re-creates. 
+If you can send in recreate materials, please use the Web Query Change Management TechNote to gather all the recreate materials: 
+
+http://www.ibm.com/support/docview.wss?uid=nas8N1019786 [http://www.ibm.com/support/docview.wss?uid=nas8N1019786]
+
+Also consider recording your recreate steps via a "movie"
+
+http://www.ibm.com/support/docview.wss?uid=nas8N1020974 [http://www.ibm.com/support/docview.wss?uid=nas8N1020974] 5. Are all users affected? 6. Is this issue specific to a a particular browser? Specific release? 
+II. Gather some basic information about your IBM i and version of Web Query 
+
+1. Issue the WRKPTFGRP command from an IBM i command line. Press F6 to print. 2, DSPPTF OUTPUT(*PRINT) 3. WRKLICINF PRDID(5733WQX) OUTPUT(*PRINT) 4. Print screen of Help->About on the DB2 Web Query initial display. 5. For Developer Workbench issues: Print screen of Help->About from main Developer Workbench screen. 6. DB2 Web Query Health Checker. Refer to the following URL for instructions on how to gather the Health Checker data:
+
+http://www.ibm.com/support/docview.wss?uid=nas8N1012648 [http://www.ibm.com/support/docview.wss?uid=nas8N1012648]
+
+IBM i Web Query support may also request Web Query - Collector (Web Query 1.1.x and Web Query 2.x.x) It is unlikely that we will want this information, but if you'd like to gather the information before calling in *and* you are seeing issue getting the BI Portal started / configuration issues / etc., you can use this URL for more detailed information:
+
+http://www.ibm.com/support/docview.wss?uid=nas8N1010624 [http://www.ibm.com/support/docview.wss?uid=nas8N1010624]
+7. Print screen of Help->About from the Internet browser being used. 8. Print screen of Java version used from the PC: Select Start-> Run and type Java -fullversion 
+III. Gather trace data 
+
+Note: There will be three different Web pages going during tracing. 
+
+Steps 1, 2, and 3 each have a separate Web browser page/tab. 
+
+Refer to document N1010503, Web Query 2.x.x Tracing - alternate view for a 'table view' of this step. 
+To link to document N1010503 immediately, click here: 
+
+http://www-01.ibm.com/support/docview.wss?uid=nas8N1010503 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1010503] 
+
+1. Position one click away from creating the error (open the procedure that errors, run it to confirm it still errors, and be ready to click one time to reproduce the error). 2. Open a new browser or tab. 
+Usually a different browser is best - Internet Explorer for the re-creates (Steps 1 and 4) and Firefox for this step and Step 3.
+This step will turn on Client traces.
+
+a. Log in as an administrator (for example, QWQADMIN) to the BI Portal
+
+BI Portal example URL [/support/docview.wss?uid=nas8N1010690&amp;aid=1]
+
+
+b. On the top right side, select Administration, and then select Administration Console. 
+This will bring up the Web Query Administration Console in a separate window.
+
+c. On the left hand side, you will see a function tree. 
+Click Diagnostics, and then click WFServlet (under Traces).
+
+d. Delete all old traces by clicking Select all, and then click Delete. 
+(Both are at the bottom of the screen.)
+
+e. Click Trace On (which is at the top). 
+Note: Do not close this browser session because it will be used again. 3. Open a new browser or tab. Usually a different browser is best - Internet Explorer for the re-creates (Steps 1 and 4) and Firefox for this step and Step 2.
+This step will turn on Server traces.
+
+a. Log in as an administrator (for example, QWQADMIN) to the Server Web Console
+
+
+Server Web Console example URL [/support/docview.wss?uid=nas8N1010690&amp;aid=2]
+
+- WebQuery considers this the Server Web Console, also known as Web Console or Reporting Server Console
+
+b. After signing on as an administrator, you will see a tool bar across the top. Click Workspace. 
+
+c. On the left hand side, you will see a function tree. Expand Logs and Traces. 
+Right click Traces and then right click Enable Traces. 
+Note: Do not close this browser session because it will be used again. 4. Reproduce the error by clicking the 1-click reproduction set up by Step 1. 
+Note: If you receive an Access Denied error, sign in again. 5. Turn off traces. This is important.
+
+a. For Client traces, return to the browser window from Step 2.
+
+b. Under diagnostics, WFServlet, click Trace Off.
+
+c. For Server traces, return to the browser window from Step 3. 
+
+d. Under Workspace, click Disable Traces. 6. Locate the traces and upload to the case file area.
+
+a. The WFServlet (Client) traces will be located in the following:
+
+/qibm/userdata/qwebqry/base80/logs
+
+There may be multiple files. 
+
+Using iNavigator is the easiest method, using File Systems -> Integrated File System -> Root -> QIBM. 
+
+Copy all the files with the same date and time as when the trace was run to your PC. Instructions on sending this data in is included below in Step V. Continue with Step b next.
+
+b. The Server side trace(s) will be located in the following:
+
+/qibm/userdata/qwebqry/ibi/srv77/wfs/edatemp 
+
+You can bundle the Server traces using the savediag feature. 
+Return to the browser window from Step 3.
+
+i. Under Workspace, Logs and Traces, right click Workspace Logs, and select Savediag - Report a Bug.
+ii. Change Diagnostics Options to Save Diagnostics (savediag).
+iii. Leave Copy files from catalog to savediag as Yes.
+iv. Note the directory provided for Savediag Directory.
+v. Leave List of Applications (you can change it if you would like to).
+vi. Press Submit. This will do the bundling. After a few seconds/minutes, you will see a Savediag log.
+vii. Scroll to the bottom, and you will see a message similar to the following:
+
+.... Diagnostic directory has been compressed as ...
+
+Then you will be able to use iNavigator to find it using File Systems -> Integrated File System -> Root -> QIBM and copy to your PC.
+
+You will be sending these logs into IBM as part of Step V below. 7. Gather the Web Query event.log
+
+The easiest way to gather the event.log is to use IBM i Navigator. 
+
+The event.log can be found in this IFS path /QIBM/UserData/QWEBQRY/base80/logs.
+
+Using IBM i Navigator. you should do the following: 
+
+a. Right click on event.log and select Edit.
+
+b. Select OK on the This file was opened with read only access. Changes cannot be saved to this file.
+
+c. Use CTL-A and CTL-C to 'select all' and 'copy'. You can close the event.log file.
+
+d. Open a new Notepad document and paste. Save as event.log. IV. Collect the Web Query data for this issue 
+
+This will vary based on the issue encountered. 
+For example, an issue with an InfoAssist report, start with the .fex. 
+
+If you can send in recreate materials, please use the Web Query Change Management TechNote to gather all the recreate materials: 
+
+http://www-01.ibm.com/support/docview.wss?uid=nas8N1019786 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1019786] 
+
+If you need to send in tables, etc., that require a savefile, please do both of the following 
+ * 
+ * 
+ * 
+ * 
+
+V. Attach the data gathered to the Salesforce 
+
+1. Zip the files. 2. Use the Salesforce Community Portal to upload your data to your Case 
+
+HISTORICAL NUMBER
+ 651039803

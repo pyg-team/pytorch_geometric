@@ -1,0 +1,68 @@
+Title: IBM Running the upgrade_7x command for IBM Business Process Manager Advanced (BPM) fails with a java/sql/ResultSet.isClosed()Z error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Some interim fixes require the upgrade_7x command to complete the installation process. When you run the upgrade_7x command, it might fail with the ResultSet.isClosed()Z error. This problem is related to installations that use Microsoft SQL server as the database. 
+
+SYMPTOM
+The upgrade_7x command tries to run the ResultSet.isClosed() function and this function is available in the Microsoft JDBC Version 4 driver. Running the upgrade_7x command fails. Reviewing the upgrade0.log file shows the following stack at the end of the upgrade log file: 
+
+SEVERE: com.lombardisoftware.tools.dbupgrade.UpgradeDatabase - Check the log files for details
+INFO: com.lombardisoftware.ant.JULDefaultLogger - Exception while upgrading your BPM installation
+FINE: com.lombardisoftware.tools.dbupgrade.UpgradeDatabase - java/sql/ResultSet.isClosed()Z java.lang.AbstractMethodError: java/sql/ResultSet.isClosed()Z
+
+at com.lombardisoftware.tools.dbupgrade.steps.UpdateManagedAsset$1.doInConn ection(UpdateManagedAsset.java:132)
+
+at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:342 )
+
+at com.lombardisoftware.tools.dbupgrade.steps.UpdateManagedAsset.execute(Up dateManagedAsset.java:80)
+
+at com.lombardisoftware.tools.dbupgrade.steps.JR43184.execute(JR43184.java: 29)
+
+at com.lombardisoftware.tools.dbupgrade.UpgradeDatabase.installDatabaseIFix (UpgradeDatabase.java:248)
+
+at com.lombardisoftware.tools.dbupgrade.UpgradeDatabase.main(UpgradeDatabas e.java:198)
+
+
+RESOLVING THE PROBLEM
+ IBM Business Process Manager V7.5.x ships with Microsoft SQL Driver Version 2. Upgrading to Microsoft SQL driver Version 4 resolves the issue. To upgrade, complete the following steps:
+
+
+ 1.  Download driver from Microsoft at the following URL:http://www.microsoft.com/en-us/download/details.aspx?id=11774 [http://www.microsoft.com/en-us/download/details.aspx?id=11774]
+    
+    
+ 2. Shut down all of the IBM Business Process Manager servers.
+    
+    
+ 3. Copy the existing driver (sqljdbc4.jar) to a directory outside of the IBM Business Process Manager installation for backup purposes.
+    
+    
+    [install_dir]\jdbcdrivers\SQLServer
+    
+    
+ 4. Extract the sqljdbc4.jar driver file to the following directory:
+    
+    
+    [install_dir]\jdbcdrivers\SQLServer
+    
+    
+    There is only one file in the system.
+    
+    
+ 5. Run the Upgrade_7x command again. Command will complete without errors.
+    
+    
+ 6. Install the latest JDBC driver to all IBM Business Process Manager environments. 
+ 7.  
+ 8. 
+
+Look at the SystemOut.log to confirm that the new driver is being used by the product. You will see the following information in the file: 
+DSRA8203I: Database product name : Microsoft SQL Server 
+DSRA8204I: Database product version : 10.50.1600 
+DSRA8205I: JDBC driver name : Microsoft JDBC Driver 4.0 for SQL Server 
+DSRA8206I: JDBC driver version : 4.0.2206.100 
+DSRA8218I: JDBC driver specification level : 4.0 
+
+Note: The IBM Business Process Manager Version 8.5 products use an updated version of the driver.

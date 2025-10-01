@@ -1,0 +1,25 @@
+Title: IBM How to set text wraps for an Impromptu report - United States
+
+Text:
+list frame, form list, form frame, header TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In an Impromptu 6.0 report, the database text field stores the hard return at the end of each line. However, users would like to see all the data displayed on one line in the report. Is there a way to control text wrap in Impromptu reports in order to accomplish this 
+
+RESOLVING THE PROBLEM
+To control how text wraps or number of rows displayed in an Impromptu report (Form Frame):
+
+1. Right-click on the text field and select Properties.
+
+2. Go to the Layout tab.
+
+3. To show text on a single line, click the Single Line option. With this option, text exceeding the width of the frame is not visible.
+
+4. To show text on multiple lines, click the Multi-Line option . With this option, text exceeding the width of the frame is not visible.
+
+5. To show text on multiple lines and wrap text inside the frame, click the Multi-Line with Word Wrap option. With this option, text wraps if it exceeds the width of the frame.
+
+ 
+
+HISTORICAL NUMBER
+ 101999

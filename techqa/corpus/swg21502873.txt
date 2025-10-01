@@ -1,0 +1,41 @@
+Title: IBM WebSphere DataPower SOA Appliance may consume internal resources if syslog-ng log target is unreachable on Firmware 4.0.2 or earlier - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If a syslog-ng log target becomes unavailable, the IBM WebSphere DataPower SOA Appliance internal resources may be consumed when running Firmware 4.0.2 or earlier. 
+
+SYMPTOM
+If a DataPower appliance is reporting an unexpectedly high level of internal resources is being consumed, has an unexpected restart, or the appliance becomes unresponsive when a remote syslog-ng log target has become unavailable, then this may be the possible cause.
+
+
+CAUSE
+Syslog-ng uses TCP for "more" reliable connections and syslog uses UDP in a "fire-and-forget" manner.
+
+
+When using syslog-ng, if excessive amounts of log entries are generated, multiple syslog-ng log targets, or a high rate limit is used, then internal resources may be consumed while trying to connect using the TCP protocol when the remote syslog-ng target server is unreachable over the network.
+
+
+ENVIRONMENT
+This may be seen when using an IBM WebSphere DataPower SOA Appliance with a remote syslog-ng server and configuring excessive log targets to the same remote syslog-ng server, a high rate-limit, or excessive number of log messages to be sent. 
+
+If the remote syslog-ng server goes down or becomes unreachable over the network, the DataPower appliance can consume internal resources while trying to send these many log messages using TCP and while waiting to time out.
+
+
+DIAGNOSING THE PROBLEM
+If the DataPower appliance encounters a resource issue when a syslog-ng target is simultaneously unreachable, tune the syslog-ng configuration as appropriate.
+
+
+
+RESOLVING THE PROBLEM
+There are multiple ways to resolve and work around this issue if encountered. 
+
+ * One of the problem resolutions is to use Firmware 5.0.0 or later. 
+ * Consider using the syslog (UDP) log target instead of syslog-ng (TCP). 
+ * Be sure to test/tune your environment to use reasonable resources that might get overwhelmed if the syslog-ng server has an outage. Avoid misconfiguration such as excessive rate limits, extraneous log targets, and excessive log messages to be sent. 
+ * Consider some sort of high-availability or load balancer solution for the remote syslog-ng to protect against outages.
+   
+
+
+You can find more information about DataPower Support and search for other technotes by using our Support Portal. [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_DataPower_SOA_Appliances]

@@ -1,0 +1,136 @@
+Title: IBM PJ34205: DOES WEBSERIVCES IS LIMITED TO ONE IIS WORKER PROCESS ONLY? - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ***PLEASE PROVIDE THE FOLLOWING INFORMATION
+   THIS FIELD IS REQUIRED.***
+   Description of Problem (full details)
+   Customer is asking me if IDM Webservices is limited to only one
+   IIS Worker Process and then manage the pool of threads itself
+   or can he add up to 4 IIS Worker Process?
+   This is mentioned in the performance guide sheet, however this
+   guide is about IIS 5, and the customer is using Windows 2003
+   SP2 and IDM WS 4.0.2 with IIS 6.
+   I couldn't find any performance tuning guide for IIS 6.
+   Thanks
+   How long has the problem been occurring (recent changes)? :
+   Does this occur on more than one station / server? :
+   Is there a workaround? :
+   What is the impact to the customer/system? :
+   Can the problem be replicated on an internal system?  Y or N
+   By Who (L3, Support, etc..)
+   Steps to Reproduce:
+   1
+   2
+   3
+   Actual Results:
+   Expected Results:
+   Are there any similar or related Defects? If Y provide ECMDB #s
+   What logs were collected and where are they located?
+   Configuration/Environment :
+   Server OS :
+   Client OS :
+   Database :
+   Network:
+   App Server :
+   Browser :
+   Note if non US Language:
+   Other Product Component Versions:
+   Non Web Environment  Y or N
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  New information for Users.The new information got added to the d
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  document updated with new info.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ34205
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB SERVICES
+   
+   
+ * REPORTED COMPONENT ID
+   5724S0300
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-25
+   
+   
+ * CLOSED DATE
+   2008-12-29
+   
+   
+ * LAST MODIFIED DATE
+   2008-12-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

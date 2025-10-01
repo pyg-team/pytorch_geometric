@@ -1,0 +1,33 @@
+Title: IBM Scan Health widget reports Missing Scan Results and data from scan files is not imported - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Scan Health widget shows the health of scans that are running in your infrastructure. In IBM Endpoint Manager for Software Use Analysis v9.2 or IBM License Metric Tool v9.2 it may happen that this widget reports endpoints which are Missing Scan Results. Also the data from scan files is not imported into SUA / LMT even though endpoints are working fine and data import logs does not show any errors. 
+
+SYMPTOM
+Scan Health widget reports Missing Scan Results for most, or all of the endpoints. The number of endpoints will be close to, or equal to the result of following sql query: 
+
+SELECT count(*) FROM sam.scan_files_persistent sf
+JOIN dbo.computers c ON c.id = sf.computer_id
+JOIN dbo.datasource_files df ON df.file_name = sf.file_name AND df.computer_id = sf.computer_id
+WHERE sf.deleted = 1
+AND c.deleted = 0
+AND df.deleted = 0
+
+
+RESOLVING THE PROBLEM
+Problem is resolved in SUA / ILMT 9.2 patch 1 (9.2.0.1).
+
+To apply the patch, please follow instruction from wiki pages:
+
+SUA update 9.2.0.1
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Endpoint%20Manager/page/SUA%20update%209.2.0.1 [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Endpoint%20Manager/page/SUA%20update%209.2.0.1]
+ILMT update 9.2.0.1
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20License%20Metric%20Tool/page/ILMT%20update%209.2.0.1 [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20License%20Metric%20Tool/page/ILMT%20update%209.2.0.1]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management IBM License Metric Tool Linux, Windows 9.2 Edition Independent

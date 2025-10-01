@@ -1,0 +1,214 @@
+Title: IBM Collect IBM MQ MustGather data to solve TLS channel problems on Linux, UNIX, Windows and IBM i - United States
+
+Text:
+MustGather; MustGathers Must Gather; MustGatherDocument; Collect Troubleshooting Data; Collect; Trouble; Shooting; SSL/TLS; SSL; TLS; Secure Sockets Layer; Transport Layer Security; Certificate TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An IBM MQ queue manager or client application is failing to establish a secure channel using TLS (formerly SSL), and you need to collect MustGather data to find a solution. 
+
+ENVIRONMENT
+These instructions apply only to IBM MQ V9.0 and V8.0, and WebSphere MQ V7.5, V7.1, V7.0 and V6.0 on AIX, HP-UX, Linux, Solaris and Windows, and to IBM MQ V9.0 and V8.0, and WebSphere MQ V7.1, V7.0 and V6.0 on IBM i. Refer to the IBM MQ Read First page for instructions on other operating systems and to the MQ Cluster Troubleshooting guide for self-help on this topic:
+
+
+
+ * IBM MQ Read First [http://www.ibm.com/support/docview.wss?uid=swg21229861]
+
+ * Troubleshooting MQ TLS Channels [http://www.ibm.com/support/docview.wss?uid=swg21652675]
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+Please answer these questions about the problem and then follow the steps below:
+
+
+
+ * What TLS channel problem did you observe on the system?
+ * What time did the TLS channel problem start and when did it stop?
+ * Which specific channels and certificates are involved in the problem?
+
+
+
+STEP 1: GENERATE DATA
+
+If the TLS channel problem is reproducible or is happening right now, generate data to provide more information about the problem:
+
+
+
+ 1. 
+ 2. Generate a trace of the queue manager when the TLS problem occurs:
+    
+     * Linux and UNIX [http://www.ibm.com/support/docview.wss?uid=swg21665357]
+     * Windows [http://www.ibm.com/support/docview.wss?uid=swg21666876]
+    
+     * IBM i [http://www.ibm.com/support/docview.wss?uid=swg21664990]
+    
+    
+ 3. 
+ 4. 
+ 5. Generate MQ trace simultaneously at the other end of the channel, whether it is another queue manager or a client application:
+    
+     * Linux and UNIX [http://www.ibm.com/support/docview.wss?uid=swg21665357]
+     * Windows [http://www.ibm.com/support/docview.wss?uid=swg21666876]
+     * IBM i [http://www.ibm.com/support/docview.wss?uid=swg21664990]
+     * Java and JMS Client Applications [http://www.ibm.com/support/docview.wss?uid=swg21667415]
+     * z/VSE [http://www.ibm.com/support/docview.wss?uid=swg21666814]
+    
+     * z/OS CHIN trace [http://www.ibm.com/support/docview.wss?uid=swg21665093]
+     * HP Integrity NonStop Server [http://www.ibm.com/support/docview.wss?uid=swg21667396]
+     * HP NonStop Server [http://www.ibm.com/support/docview.wss?uid=swg21667375]
+     * HP OpenVMS [http://www.ibm.com/support/docview.wss?uid=swg21667361]
+    
+    
+ 6. 
+
+
+
+STEP 2: COLLECT DATA
+ 1. 
+ 2. On UNIX and Linux, place the mqconfig data from Step 1 directly in the top-level MQ errors directory. Both the runmqras automation tool and the manual collection steps below collect files found there.
+ 3. 
+ 4. 
+ 5. Collect data automatically with the runmqras command [http://www.ibm.com/support/docview.wss?uid=swg21624944] if you are running IBM MQ V9.0 or V8.0, or WebSphere MQ V7.5, V7.1.0.1 or later, or V7.0.1.8 or later. Be sure to collect the runmqras defs and trace sections, and to specify your PMR number:
+ 6.  
+    COLLECTING RUNMQRAS OUTPUT FROM QUEUE MANAGER QMA
+    
+    runmqras -section defs,trace -qmlist QMA -pmrno 12345,67R,890 
+    
+ 7. 
+ 8. 
+ 9. Alternatively, collect the MQ data manually.
+    
+    COLLECTING MQ DATA MANUALLY
+     1.  
+     2.  If your system has more than one MQ installation, use the setmqenv command to choose the one with the problem before proceeding:
+         
+         LINUX AND UNIX
+         
+         sh> . /path/to/mqm/bin/setmqenv -n InstallationX
+         
+         WINDOWS
+         
+         C:\> "C:\ProgramFiles\IBM\MQ\bin\setmqenv" -n InstallationX
+         
+     3.  
+     4.  
+     5.  Record the MQ version and maintenance level [http://www.ibm.com/support/docview.wss?uid=swg21621707].
+     6.  
+     7.  
+     8.  Record the operating system version and maintenance level [http://www.ibm.com/support/docview.wss?uid=swg21634678].
+     9.  
+     10. 
+     11. On Linux, UNIX and Windows, record the GSKit version used by MQ [http://www.ibm.com/support/docview.wss?uid=swg21652675].
+     12. 
+     13. 
+     14. Save the MQ configuration information [http://www.ibm.com/support/docview.wss?uid=swg21621003], for example registry keys and ini files.
+     15. 
+     16. 
+     17. For client applications. save a list of the environment variables which are set when you start the application. For example:
+         
+         DISPLAYING ENVIRONMENT VARIABLES ON LINUX AND UNIX
+         
+         sh> set > /tmp/client.env.txt
+         
+         DISPLAYING ENVIRONMENT VARIABLES ON WINDOWS
+         
+         C:\> set > %TEMP%\client.env.txt
+         
+         DISPLAYING ENVIRONMENT VARIABLES IN THE IBM I COMMAND LINE
+         
+         ===> WRKENVVAR LEVEL(*JOB)
+         ===> WRKENVVAR LEVEL(*JOB)
+         
+         DISPLAYING ENVIRONMENT VARIABLES IN THE IBM I QSHELL
+         
+         ===> set > /tmp/client.env.txt
+         
+     18. 
+     19. 
+     20. If your system has more than one MQ installation, record your MQ installation details:
+         
+         LINUX AND UNIX
+         
+         sh> dspmqinst > /tmp/dspmqinst.txt
+         
+         WINDOWS
+         
+         C:\> dspmqinst > %TEMP%/dspmqinst.txt
+         
+     21. 
+     22. 
+     23. On MQ V7.1 and later installations, use dmpmqcfg to record the queue manager configuration:
+         
+         LINUX AND UNIX
+         
+         sh> dmpmqcfg -m QMA > /tmp/QMA.config.txt
+         
+         WINDOWS
+         
+         C:\> dmpmqcfg -m QMA > %TEMP%\QMA.config.txt
+         
+         IBM I QSHELL
+         
+         ===> /QSYS.LIB/QMQM.LIB/DMPMQCFG.PGM -m QMA > /tmp/QMA.config.txt
+         
+     24. 
+     25. 
+     26. Otherwise, on MQ V7.0 and earlier installations, use runmqsc to record the queue manager configuration [http://www.ibm.com/support/docview.wss?uid=swg21621085]. If any command gives an error, carry on with the others:
+         
+         DISPLAY QMGR ALL
+         DISPLAY Q(*) ALL
+         DISPLAY SUB(*) ALL
+         DISPLAY TOPIC(*) ALL
+         DISPLAY CHANNEL(*) ALL
+         DISPLAY SERVICE(*) ALL
+         DISPLAY PROCESS(*) ALL
+         DISPLAY LISTENER(*) ALL
+         DISPLAY NAMELIST(*) ALL
+         
+     27. 
+     28. 
+     29. On all MQ installations, use runmqsc to record status information from the queue manager [http://www.ibm.com/support/docview.wss?uid=swg21621085]. If any command gives an error, carry on with the others:
+         
+         DISPLAY PUBSUB ALL
+         DISPLAY QMSTATUS ALL
+         DISPLAY CHSTATUS(*) ALL
+         DISPLAY LSSTATUS(*) ALL
+         DISPLAY SVSTATUS(*) ALL
+         DISPLAY SBSTATUS(*) ALL
+         DISPLAY CONN(*) TYPE(*) ALL
+         DISPLAY QSTATUS(*) TYPE(QUEUE) ALL
+         DISPLAY QSTATUS(*) TYPE(HANDLE) ALL
+         DISPLAY TPSTATUS('#') TYPE(PUB) ALL
+         DISPLAY TPSTATUS('#') TYPE(SUB) ALL
+         DISPLAY TPSTATUS('#') TYPE(TOPIC) ALL
+         
+     30. 
+     31. 
+     32. Manually package your files for IBM [http://www.ibm.com/support/docview.wss?uid=swg21671892], including files containing the output from the commands listed in Step 1 and 2.
+     33. 
+    
+    
+
+
+STEP 3: SEND DATA TO IBM
+ 1.  
+ 2.  Send your data to the IBM ECuRep repository [http://www.ibm.com/de/support/ecurep/send.html] by email to websphere_support@ecurep.ibm.com, by standard or secure HTTP or FTP. or by using the IBM Secure Diagnostic Data Upload Utility (SDDUU) Java application.
+ 3.  
+ 4.  
+ 5.  While the data is transferring, send an email or use the IBM Service Request tool [http://www.ibm.com/support/servicerequest/] to update your PMR with your description of the problem and of the data you are sending.
+ 6.  
+ 7.  
+ 8.  A good description of the problem and the data is the most important information you can provide to IBM. Please do not send data without providing a description!
+ 9.  
+ 10. Contact your country representative [http://www.ibm.com/planetwide/] if you need to speak to an IBM technical support representative, or in the US call 1-800-IBM-SERV. Refer to the IBM Software Support Handbook [http://www14.software.ibm.com/webapp/set2/sas/f/handbook/home.html] for more information on working with IBM.
+ 11. 
+ 12. 
+ 13. 
+ 14. Back to top
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBMMQ WebSphere MQ WMQ

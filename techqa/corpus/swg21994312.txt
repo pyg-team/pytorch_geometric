@@ -1,0 +1,57 @@
+Title: IBM "Error occurred when deleting temporary VFP files: ODBC Error (2)" when using non-English (for example Spanish) Oracle client - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User performs a database optimise. After a few minutes, user receives an error. 
+
+SYMPTOM
+Error occurred when deleting temporary VFP files: ODBC Error (2)
+
+
+CAUSE
+There are other potential causes of this (or similar) errors. 
+
+ * TIP: See separate IBM Technote #1365329 for more examples.
+
+
+This Technote specifically relates to the scenario where the cause is that the Oracle client registry key is not named with the default English naming convention.  * Typically this is because a non-English Oracle client version is installed on Controller application server.
+
+
+More Information: 
+Controller creates ODBC connections 'on-the-fly' and assumes the default English naming convention.  * Unfortunately, this fails if the application server has a non-English build.
+
+
+For example, if the operating system is in Spanish then the default label (for Oracle 11G) is 'Oracle en OraClient11g_home1' (not 'Oracle in OraClient11g_home1')  * This causes the Controller optimisations to fail.
+
+ENVIRONMENT
+Controller application server has non-English (e.g. Spanish) version of Oracle client installed.
+
+
+
+RESOLVING THE PROBLEM
+Modify a registry key on the Controller application server, so that the value is the English translation. 
+
+ 
+Steps: 
+
+ 1. Logon to the Controller application server 
+ 2. Click "START - RUN" and type: REGEDIT 
+ 3. Navigate through the registry, and locate the 32-bit version of the key "...\ODBC\ODBCINST.INI".
+
+ * TIP: this is here: HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\ODBC\ODBCINST.INI 
+
+
+4. Locate the entry for the Oracle ODBC  * TIP: For Spanish Oracle 11G client, by default this is: Oracle en OraClient11g_home1 
+
+
+5. Rename the key to the default English equivalent.  * For example, for the Oracle 11G client, this is: Oracle in OraClient11g_home1
+
+
+======================================== 
+In other words, it will now look something similar to: 
+[/support/docview.wss?uid=swg21994312&aid=1] [/support/docview.wss?uid=swg21994312&aid=1] 
+
+6. Test. RELATED INFORMATION
+ 1365329 - **Troubleshooting** 'Error occured when delet [http://www.ibm.com/support/docview.wss?uid=swg21365329]

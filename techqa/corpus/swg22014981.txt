@@ -1,0 +1,113 @@
+Title: IBM Security Bulletin:  Multiple vulnerabilities in IBM Java Runtime affect IBM MQ - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There are multiple vulnerabilities in IBM® Runtime Environment Java™ versions 6, 7 and 8 used by IBM MQ. These issues were disclosed as part of the IBM Java SDK updates in October 2017. 
+
+VULNERABILITY DETAILS
+If you run your own Java code using the IBM Java Runtime delivered with this product, you should evaluate your code to determine whether the complete list of vulnerabilities are applicable to your code. For a complete list of vulnerabilities please refer to the link for “IBM Java SDK Security Bulletin" located in the “References” section for more information.
+CVEID: CVE-2017-10281 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10281]
+DESCRIPTION: An unspecified vulnerability in Oracle Java SE related to the Java SE, Java SE Embedded, JRockit Serialization component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/133720 [https://exchange.xforce.ibmcloud.com/vulnerabilities/133720] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2017-10350 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10350]
+DESCRIPTION: An unspecified vulnerability in Oracle Java SE related to the Java SE, Java SE Embedded JAX-WS component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/133779 [https://exchange.xforce.ibmcloud.com/vulnerabilities/133779] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2017-10347 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10347]
+DESCRIPTION: An unspecified vulnerability in Oracle Java SE related to the Java SE, JRockit Serialization component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/133776 [https://exchange.xforce.ibmcloud.com/vulnerabilities/133776] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2017-10349 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10349]
+DESCRIPTION: An unspecified vulnerability in Oracle Java SE related to the Java SE, Java SE Embedded JAXP component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/133778 [https://exchange.xforce.ibmcloud.com/vulnerabilities/133778] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2017-10348 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10348]
+DESCRIPTION: An unspecified vulnerability in Oracle Java SE related to the Java SE, Java SE Embedded Libraries component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/133777 [https://exchange.xforce.ibmcloud.com/vulnerabilities/133777] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2017-10357 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10357]
+DESCRIPTION: An unspecified vulnerability in Oracle Java SE related to the Java SE, Java SE Embedded Serialization component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/133786 [https://exchange.xforce.ibmcloud.com/vulnerabilities/133786] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2017-10356 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10356]
+DESCRIPTION: An unspecified vulnerability in Oracle Java SE related to the Java SE, Java SE Embedded, JRockit Security component could allow an unauthenticated attacker to obtain sensitive information resulting in a high confidentiality impact using unknown attack vectors.
+CVSS Base Score: 6.2
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/133785 [https://exchange.xforce.ibmcloud.com/vulnerabilities/133785] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM MQ 9.0.0.x Long Term Support (LTS)
+Maintenance level 9.0.0.2 and earlier
+
+IBM MQ 9.0.x Continuous Delivery Release (CDR)
+Continuous delivery update 9.0.4 and earlier
+
+IBM MQ 8.0
+Maintenance levels 8.0.0.8 and earlier
+
+WebSphere MQ 7.5
+Maintenance levels 7.5.0.8 and earlier
+
+WebSphere MQ 7.1
+Maintenance levels 7.1.0.8 and earlier
+
+REMEDIATION/FIXES
+IBM MQ 9.0.0.0
+Apply fix pack 9.0.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24044508]
+
+IBM MQ 9.0.x Continuous Delivery Release (CDR)
+Upgrade to IBM MQ 9.0.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24043463]
+
+IBM MQ V8.0
+Apply fix pack 8.0.0.9 [http://www-01.ibm.com/support/docview.wss?uid=swg22015103]
+
+WebSphere MQ 7.5
+Apply iFix IT23405 [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+MQ&release=7.5&platform=All&function=aparId&apars=IT23405] 
+
+WebSphere MQ 7.1
+Apply fix pack 7.1.0.9 [http://www-01.ibm.com/support/docview.wss?uid=swg22010694]
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+IBM Java SDK Security Bulletin [http://www-01.ibm.com/support/docview.wss?uid=swg22009849] 
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 19 April 2018: Original published
+23 April 2018: Updated Remediation fix pack level to 8.0.0.9 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

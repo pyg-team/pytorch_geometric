@@ -1,0 +1,94 @@
+Title: IBM Updating the Agent Manager to version 3.1 can interfere with its functions - United States
+
+Text:
+AM; Agent; Manager; 3.1; content; update; xpu TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Users might find that their Agent Manager stops receiving content updates and is unable to send policies to agents after moving it to version 3.1 while still running SiteProtector 3.0. 
+
+SYMPTOM
+The system might show the following symptoms:
+
+
+ * The Agent Manager is unable to receive content updates. 
+ * The Agent Manager is unable to send policies to agents. 
+ * The Agent Manager might begin switching its status back and forth from Active to Offline.
+
+The Agent Manager logs might show the following errors: 
+
+Unable to load policy. Error code = 0x80040e55
+: DSManagerImpl::getAgentDocuments() DS ERROR(0) - failed to get policy info. DS MANAGER CODE: 0x80040e55
+: 0x00002090, ERROR: Processing get-policy-request from agent 007808ee-c0c2-11e3-bdb2-00d0c9ed546a: unable to load policy info from database. Error code = 0x80040e55 
+CAUSE
+It is possible to update the Agent Manager to version 3.1 without updating the SiteProtector Core to version 3.1 as well. When the Agent Manager's update version exceeds that of the Core, content updates for the Agent Manager can stop appearing as available and the Agent Manager can fail when trying to send policy changes to agents.
+
+
+RESOLVING THE PROBLEM
+There are two solutions for this issue:
+
+
+Update the SiteProtector Core to 3.1
+
+Users can update the SiteProtector Core component to 3.1. This should correct the update and policy issues on the Agent Manager.
+
+
+Revert to a previous the Agent Manager version
+
+If users do not want to move to SiteProtector 3.1, an alternative is to revert the version of the Agent Manager. This can only be done by uninstalling the 3.1 Agent Manager and then reinstalling the 3.0 version. Instructions for this are included below. Ensure that you follow the steps for all Agent Managers that need moved back to a previous version:
+
+
+ 1.  Log in to the IBM License Key and Download Center [https://ibmss.flexnetoperations.com/control/ibms/login].
+     
+ 2.  Click Download on the left side of the page.
+     
+ 3.  Under My Products, click IBM Security SiteProtector System.
+     
+ 4.  Under Product Lines, click SiteProtector 3.0.
+     
+ 5.  Click Installation Packages.
+     
+ 6.  Click the HTTPS Download link for SiteProtector 3.0 Agent Manager Installation.
+     
+ 7.  Access the server where the Agent Manager is installed.
+     
+ 8.  Back up the following files from the server on which your Agent Manager is installed:
+     
+     \Program Files\ISS\SiteProtector\Agent Manager\server.pem
+     \Program Files\ISS\SiteProtector\Agent Manager\certificates\*.pem
+     \Program Files\ISS\SiteProtector\Agent Manager\rsspdc.ini
+     
+     Note: The GSKit certificate files for the Agent Manager do not need to be backed up for this procedure. They will be obtained from the SiteProtector Application Server during the reinstall.
+     
+ 9.  Go to Start > Programs > ISS > SiteProtector > Uninstall SiteProtector.
+     
+ 10. Ensure that only the Agent Manager component is selected and then proceed with the uninstall.
+     
+ 11. Reboot the server.
+     
+ 12. Run the installation package for the 3.0 version of the Agent Manager that you downloaded earlier. Follow the on-screen prompts to install the component.
+     
+ 13. When the installation completes, open Windows Services and stop the issDaemon service.
+     
+ 14. Replace the files that were backed up in step 8 (server.pem, rsspdc.ini in the \Agent Manager directory and the .pem file from the \certificates directory).
+     
+ 15. Open SQL Server Management Studio on server that holds the SiteProtector Database.
+     
+ 16. Go to Security > Logins and find the login that is named AgentManager_COMPUTERNAME, where COMPUTERNAME is the name of the server on which the Agent Manager in installed. Right-click the login and select Properties.
+     
+ 17. Change the password in the properties and click OK. Make note of the new password that you entered, as you will need to enter it again in the following steps.
+     
+ 18. Run the AMLogin.exe executable in the \Program Files\ISS\SiteProtector\Agent Manager directory of the Agent Manager server.
+     
+ 19. Using the same new password that you entered in SQL in the previous steps, change the password for the Agent Manager and click OK.
+     
+ 20. Start the issDaemon service.
+     
+ 21. Check the Agent view of the SiteProtector Console to be sure that an Event Collector was properly assigned to the Agent Manager.
+     
+ 22. Apply the existing Product Maintenance updates to the Agent Manager. The Agent Manager will continue to show as Out of Date but do not apply the Product Feature update 3.1 until you are ready to update the entire site to 3.1.
+
+
+
+
+
+[/support/docview.wss?uid=swg21673558&aid=1] [https://ibm.biz/BdHdjw] [/support/docview.wss?uid=swg21673558&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21673558&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21673558&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21673558&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21673558&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21673558&aid=7] [http://ibm.biz/ContactSecSupport]

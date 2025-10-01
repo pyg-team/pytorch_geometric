@@ -1,0 +1,139 @@
+Title: IBM JR54731: END USERS MUST CLEAR THE BROWSER CACHE AFTER INSTALLING A FIX FOR A NEW GENERATION COACH RUNTIME ENVIRONMENT - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When static assets (such as JavaScript or a CSS) are updated,
+   end users must clear their browser cache, which might not be
+   practical (for thousand of end users).
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  End user, for example, using supported browser to view a coach,
+   clear browser's cache.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be incorporated into an IBM BPM V8.5.6 cumulative fix
+   and later release that provides a new parameter to ensure the
+   URL to static assets contains a build number to prevent the
+   browser from showing stale content. The build number is
+   generated when the fix is being built and then placed in a file
+   that is accessible at run time from a common Java utility.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR54731
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-11-20
+   
+   
+ * CLOSED DATE
+   2016-09-08
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R856 PSY
+   UP
+   
+   
+ * R857 PSY
+   UP

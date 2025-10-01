@@ -1,0 +1,44 @@
+Title: IBM Error Installing IBM Stewardship Center - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When I ran the InstallGovernanceApplication.sh install_configure_governance_apps step, the script produced the following error in the update_BPM_LoginCSS step: HostName:Port/mum/mycontenthandler/mm/dav/filestore/login/bspace/login.css null (Bad Request)
+
+
+
+I have verified that the username and password are valid, and the user ID I specified had full admin rights on our Process Server. Why am I seeing this and how can I circumvent it? 
+
+CAUSE
+The error suggests that the user used by the installer does not have appropriate permission to update the webdav folder. Full Error Stack:
+INFO: ssl.disable.url.hostname.verification.CWPKI0027I
+Downloaded 1 resource from 
+HostName:Port/mum/mycontenthandler/mm/dav/filestore/login/bspace/login.css
+Exception in thread "main" Can't upload HostName:Port/mum/mycontenthandler/mm/dav/filestore/login/bspace/login.css null (Bad Request)
+at org.apache.webdav.ant.Utils.makeBuildException(Utils.java:410)
+at org.apache.webdav.ant.taskdefs.Put.uploadFile(Put.java:352)
+at org.apache.webdav.ant.taskdefs.Put.execute(Put.java:167)
+at com.ibm.mdm.bpm.integration.WebDavClient.main(WebDavClient.java:43)
+BUILD FAILED
+/opt/MDM/DataStewardshipAndGovernance/mdmg/install/scripts/build-bpmlogin.xml:38: Java returned: 1
+Total time: 1 minute 27 seconds
+
+
+ANSWER
+The user that has permissions to be execute this interaction can be found in the WAS admin console as shown below: Just log in to the console, click on Resources->Resource Environment->Resource Environment Providers, select the Mashups_ConfigService and then select custom Properties. For convenience, then create a filter and search for MashupAdmin*, and you should see something like the following: 
+
+[/support/docview.wss?uid=swg21691676&aid=1] [/support/docview.wss?uid=swg21691676&aid=1]
+
+
+You will need to restart the server for it to take effect. After this the script should complete successfully.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ Master Data Management
+Reference Data Management
+MDM Server
+Physical MDM
+Hybrid MDM
+BPM

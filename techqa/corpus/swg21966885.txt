@@ -1,0 +1,71 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities in IBM Java Runtime affect WebSphere eXtreme Scale  (CVE-2015-2613, CVE-2015-2601, CVE-2015-2625, CVE-2015-1931) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There are multiple vulnerabilities in IBM Java Runtime Versions 6 and 7 that is used by WebSphere eXtreme Scale. These issues were disclosed as part of the IBM Java SDK updates in July 2015. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-2613 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2613]
+DESCRIPTION: An unspecified vulnerability and Java SE Embedded related to the JCE component could allow a remote attacker to obtain sensitive information.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/104734 [https://exchange.xforce.ibmcloud.com/vulnerabilities/104734] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N) 
+
+
+CVEID: CVE-2015-2601 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2601]
+DESCRIPTION: An unspecified vulnerability related to the JCE component could allow a remote attacker to obtain sensitive information.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/104733 [https://exchange.xforce.ibmcloud.com/vulnerabilities/104733] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+CVEID: CVE-2015-2625 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2625]
+DESCRIPTION: An unspecified vulnerability related to the JSSE component could allow a remote attacker to obtain sensitive information.
+CVSS Base Score: 2.6
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/104743 [https://exchange.xforce.ibmcloud.com/vulnerabilities/104743] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:P/I:N/A:N) 
+
+
+CVEID: CVE-2015-1931 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1931]
+DESCRIPTION: IBM Java Security Components store plain text data in memory dumps, which could allow a local attacker to obtain information to aid in further attacks against the system.
+CVSS Base Score: 2.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/102967 [https://exchange.xforce.ibmcloud.com/vulnerabilities/102967] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:L/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+WebSphere eXtreme Scale 7.1.0
+WebSphere eXtreme Scale 7.1.1 
+
+WebSphere eXtreme Scale 8.5 
+
+WebSphere eXtreme Scale 8.6
+
+REMEDIATION/FIXES
+ 
+
+<Product VRMF APAR Remediation/First Fix WebSphere eXtreme Scale 7.1.0 PI47397 http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=7.1.0.3&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=7.1.0.3&platform=All&function=all] WebSphere eXtreme Scale 7.1.1 PI47381 http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=7.1.1.1&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=7.1.1.1&platform=All&function=all] WebSphere eXtreme Scale 8.5.0 PI47381 http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=8.5.0.3&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=8.5.0.3&platform=All&function=all] WebSphere eXtreme Scale 8.6 PI47381 http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=8.6.0.8&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+eXtreme+Scale&release=8.6.0.8&platform=All&function=all] WORKAROUNDS AND MITIGATIONS
+No workaround exists. If you are running WebSphere eXtreme Scale standalone, apply the appropriate fix from the previous table. If you are running WebSphere eXtreme Scale clients or servers that are embedded in WebSphere Application Server, apply the appropriate fix for WebSphere Application Server, which is described here: https://www-304.ibm.com/support/docview.wss?uid=swg21962931 [https://www-304.ibm.com/support/docview.wss?uid=swg21962931] 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 25 September 2015: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

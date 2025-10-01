@@ -1,0 +1,47 @@
+Title: IBM How to enable Baselining in your monitored application. - United States
+
+Text:
+tema enable baselining Unknown application health status CAMADALL CAMADINST TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ Steps to enable Baselining in your monitored application. 
+
+ANSWER
+The health of the monitored application is calculated against an internally stored baseline threshold. The baselining of the application is a process that uses a pre-defined mathematical and statistical method to automatically calculate a threshold based on response time information typically collected over a period of time (few days to few weeks.) 
+
+By default baselining gets enabled with a situation WasAppDiscoverd. This situation is enabled by default and will discover new applications then run a take action to start the baselining. So if this situation is not enabled then you should enable it and assign to the ITCAM App Server managing system list. 
+
+You want to do baselining with normal or typical load on the server over a period of few days to few weeks, or even few months. The performance of the application under this load is considered good (you will see "Good"" in the Application Health views) and deviation from this performance indicates degrading health ("Bad" or "Fair" in the Application Health views) of the monitored application. 
+
+To start baselining for your application server, please follow these steps: 
+
+(Note 1: in this example, I've used a WebSphere-based application but you can also do the same for any application on your J2EE agent also.) 
+
+(Note 2: Before beginning baselining, make sure you have typical or normal load on the server to set the baselining threshold values.) 
+
+1. Login to your TEPS, select Application Health, right-click on it, go to Workspace and select Application Registry. Look at the panels on the right and observe the baselining columns. If they're blank, your baselining has not been started. 
+
+2. Next select Application Health, right-click on it, go to Workspace and select Application Health status. If you see Unknown, then you know the baselining has not started or not been calculated. 
+
+3. High-lite your application, select the small yellow chain link in the first unnamed column and select Application Configuration Details. See screenshot here: 
+
+[/support/docview.wss?uid=swg21653905&aid=1] [/support/docview.wss?uid=swg21653905&aid=1] 
+
+4. In the bottom panel on the right select the line that says All and high-lite it. Then right-click it, select Take Action and Select. In the pull-down, select Start_Baselining and enter the Period (2 days), Update_Interval (every 2 hours), and Run_Clean set to 1 (clean start.) If you wish, you can change these values to whatever you want. 
+
+See screenshots here:
+[/support/docview.wss?uid=swg21653905&aid=2] [/support/docview.wss?uid=swg21653905&aid=2]
+[/support/docview.wss?uid=swg21653905&amp;aid=3]
+Hit OK twice and you should get a Command completed successfully message. (Note: If you get a Baselining_Already_Active message in the pop-up window, then you should do another Take Action and Stop_Baselining first if you want to do the baselining again.)
+
+Once you have the baselining active, let it run for the period of time with typical load on the server. After the baselining is complete, the Unknown values in the Application Health should now change to Good or Fair or Bad depending on threshold values.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for Web Resources ITCAM for Web Resources (J2EE TEMA) AIX, HP-UX, Linux, Solaris, Windows, Solaris Opteron 6.1, 6.2 Advanced 
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM4AD ITCAMfAD TEMA ITCAM for Web Resources

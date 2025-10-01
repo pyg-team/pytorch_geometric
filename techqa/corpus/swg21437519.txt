@@ -1,0 +1,59 @@
+Title: IBM Resolving an argument type mismatch exception when executing rules in Rule Execution Server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you are using rule engine classes and passing object of this type as argument to XOM methods you might be seeing the following type of exception during the rule execution.
+
+
+
+
+
+Caused by: ilog.rules.bres.session.IlrRuleSessionException: 
+
+Nested Message is argument type mismatch  .  Look at the XU files.
+
+at ilog.rules.bres.session.java.
+
+     IlrStatelessRuleSessionSimple. executeRules(Unknown Source) 
+
+at .jrules.ExecutionEngine.
+
+      executeRulesUsingVendorApi(ExecutionEngine.java:197) 
+
+... 70 more 
+
+Caused by: 
+
+ilog.rules.engine.IlrUserRuntimeException: argument type mismatch 
+
+at ilog.rules.engine.IlrContext.executeRuleSelector(Unknown Source)
+
+
+
+
+SYMPTOM
+If a function in the BOM is using a method of the XOM that has one argument of type IlrRrule, you are getting a "invalid argument exception" during execution. 
+The method in the XOM is expecting an IlrRule object, but the engine is passing something different apparently. 
+
+This can also happen with instances of IlrRuleInstance or IlrContext for example
+
+
+DIAGNOSING THE PROBLEM
+In your XOM you included the jrules-engine.jar to resolve the references to IlrRule and the other engine classes you method is using. 
+
+The XU also includes the engine classes to execute the rules. 
+
+Your method expects an instance of IlrRule created with the application classloader while all engine classes are created using the XU classloader. Therefore the instance that your method receives is not matching.
+
+
+RESOLVING THE PROBLEM
+If you remove the jrules-engine.jar from your application the problem will be resolved. If it is not possible to deploy the application without the jrules-engine.jar then your utility class referencing the engine classes need to be packaged within the XU.rar. 
+
+This restriction applies to the rule application deployed. You can have a reference to those classes in the XOM of your rule project. It is recommended to use engine classes in the B2X classes so that they do not appear in the BOM itself. The engine classes are often not needed to write business rules they are utilities used to provide services.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0, 7.5 Enterprise

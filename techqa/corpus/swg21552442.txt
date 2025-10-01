@@ -1,0 +1,73 @@
+Title: IBM CRL Processing Service error ORA-01795: maximum number of expressions in a list is 1000 - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CRL Processing Service error ORA-01795: maximum number of expressions in a list is 1000 
+
+SYMPTOM
+
+
+Sterling Integrator version 5.0 build 5003
+
+Oracle Database 10g Enterprise Edition Release 10.2.0.1.0
+
+CRL Processing Service error when the Certificate Revocation List has more than 1000 entries
+
+Error Message Status Report from the CRL service:-
+
+Exception listing trusted certificates
+java.sql.SQLException: ORA-01795: maximum number of expressions in a list is 1000
+
+
+RESOLVING THE PROBLEM
+
+
+Please apply Sterling Integrator, Release 5.0 Build 5006 or later.
+Please apply Sterling Integrator, Release 5.1 Build 5101 or later.
+
+ 
+
+HISTORICAL NUMBER
+ NFX7781 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+Standards
+
+
+Escalation ID
+
+
+00119079
+
+
+Fix ID
+
+
+207010
+233475
+
+
+Severity
+
+
+Critical
+
+
+Type
+
+
+NormalFix
+
+
+Build
+
+
+5006
+5101

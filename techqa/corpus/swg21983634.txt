@@ -1,0 +1,38 @@
+Title: IBM Upgrading from IBM Business Process Manager (BPM) V8.5.5 fails with "Can not delete file 'C:\IBM\BPM855 exp\BPM\Lombardi\process-server\applications\Teamworks.ear'" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you are upgrading from IBM Business Process Manager (BPM) V8.5.5 to IBM BPM V8.5 Refresh Pack 7 (V8.5.7), the update fails with an "install" phase error about Teamworks.ear. 
+
+
+SYMPTOM
+The upgrade process fails with the following error: 
+
+Error during "install" phase:
+Deleting files from C:\IBM\BPM855 exp
+Error unzipping C:\ProgramData\IBM\Installation Manager\adapters\native\IBM WebSphere Application Server V8.5\com.ibm.websphere.appserver.installcontext\backupDirs\200\0.zip: Can not delete file "C:\IBM\BPM855 exp\BPM\Lombardi\process-server\applications\Teamworks.ear".
+Can not delete file "C:\IBM\BPM855 exp\BPM\Lombardi\process-server\applications\Teamworks.ear". 
+
+[/support/docview.wss?uid=swg21983634&aid=1] [/support/docview.wss?uid=swg21983634&aid=1]
+
+
+CAUSE
+This error can be caused by a problem with a previous version of interim fix JR51926.
+
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, you can do either of the following: 
+
+ 
+
+ * Update interim fix JR51926 by getting the latest version from Fix Central [https://www.ibm.com/support/fixcentral/] 
+ * Remove interim fix JR51926
+
+
+Then, retry the upgrade.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Installation / Configuration AIX, Linux, Solaris, Windows 8.5.7, 8.5.5 Business Integration IBM Business Process Manager Express Installation / Configuration Linux, Windows 8.5.7, 8.5.5

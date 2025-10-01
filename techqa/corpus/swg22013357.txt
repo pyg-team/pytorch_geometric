@@ -1,0 +1,24 @@
+Title: IBM When running a report in HTML in the footer, it should show the last page number as ? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running a report in HTML in the footer of the report is should say for example 1 of 5 however it is displaying 1 of ?, the last page number appears as a question mark. How do I fix this? 
+
+SYMPTOM
+Last page number showing as ?
+
+
+CAUSE
+Due to how HTML reports are rendered once we press the run button
+
+RESOLVING THE PROBLEM
+The product is working as expected and can be explained in the following link: 
+
+https://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=83921 [https://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=83921]
+
+The reason we display a question mark (?) is that we do not render the intermediate pages. Rather we skip to the bottom of the query and render just the last page. This is done for performance reasons. 
+
+To illustrate, imagine the user runs a report in HTML interactively. The user views page 1. We can put the page number in because we know that we are on the first page. The user pages down, we know we are on page 2 and can display a page number. So long as the user pages down, we know how many pages have been created and can display the page number. 
+Now, the user goes to the bottom of the report. Rather than creating all the page, we skip to the bottom of the query and render just the last page. We have no idea how much data (and therefore how many pages) there are so we cannot display a page number. If the user runs the report in PDF, we render the entire PDF document before the user can view page 1 (that's how PDF works, it is document oriented). As we create the PDF document we create the pages in order from 1, 2, 3 ... <end> so we can include the page number.

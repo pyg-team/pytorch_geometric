@@ -1,0 +1,41 @@
+Title: IBM Are MySQL versions 3.23.36, 3.23.54 or 4.0.6 supported? (SCI60072) - Sterling Gentran:Server for UNIX - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ Are MySQL versions 3.23.36, 3.23.54 or 4.0.6 supported? (SCI60072) 
+
+ANSWER
+No. Not currently supported. SR # 1261968 opened as an Enhancement Request. 
+
+Other versions of MySQL may not be compatible with Gentran:Server for Unix SAP R/3 Extension. Sterling Commerce does not endorse a MySQL upgrade. Sterling Commerce only supports the version that is shipped with the SAP R/3 Extension. 
+
+
+ 
+
+HISTORICAL NUMBER
+ PRI8002 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Gentran:Server for UNIX
+All Releases 
+Process Control Manager 
+EC 
+Workbench 
+Advanced Data Distribution 
+Using SAP R/3 Extension 
+
+SCI60072
+
+
+Goal
+
+
+FAQ: Are MySQL versions 3.23.36
+3.23.54 or 4.0.6 supported?

@@ -1,0 +1,55 @@
+Title: IBM Network Error: 404 Not Found after changing context root - United States
+
+Text:
+Network Error 404 Not Found old context root change theme WebDav Fiddler FireBug TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After successfully changing the context root with 'modify-servlet-path' and 'modify-servlet-path-portlets', an error is thrown when using additional debug tools upon accessing Portal. Fiddler and FireBug may report an error that shows the old context root. No exceptions are thrown in the SystemOut log during the time of access.
+
+SYMPTOM
+Error message displayed by Fiddler and FireBug:
+"NetworkError: 404 Not Found - http ://mycompany.domain.com/MyOldContextRoot/themeModules/themes/html/dynamicSpots/icons/blank.gif"
+
+Using FireBug, looking at the HTML markup from the login page and searching for the old context root., one can see the reference coming from this <span> tag:
+
+<span title="Display menu">
+<img src="/MyOldContextRoot/themeModules/themes/html/dynamicSpots/icons/blank.gif"
+alt="" aria-label="Display menu">
+</span>
+
+
+There may be little to no functional impact on Portal itself. A user can still log in and access the site.
+
+
+CAUSE
+There is a reference to the old context root remaining in the theme files. The 'modify-servlet-path' and 'modify-servlet-path-portlets' tasks do not update the context root on the theme.
+
+
+RESOLVING THE PROBLEM
+On Unix, navigate to /opt/IBM/WebSphere and use the grep command to search for references to the old context root on the file system. 
+
+ 
+
+grep -r -ls 'MyOldContextRoot' ./ 
+
+ 
+
+On Windows, use the native OS search functionality. 
+
+ 
+
+The results would be along the lines of this: 
+
+
+./wp_profile/temp/PortalNode1/WebSphere_Portal/JCRFileStore/filestore/fs-type
+1/themes/Portal8.0/skins/Hidden/nls/skin_en.html
+./wp_profile/temp/PortalNode1/WebSphere_Portal/JCRFileStore/filestore/fs-type
+1/themes/Portal8.0/skins/Hidden/skin.html
+
+Note: These files lie within the temp directory. Modifying them will not be a permanent solution.
+
+Using WebDav, access Portal at the similar file path to modify the actual theme files. For example, use the below link to get to the fs-type1 directory:
+
+WEB-DAV://mycompany.domain.com/MyNewContextRoot/mycontenthandler/dav/fstype-1
+
+From there, navigate to /themes/Portal8.0... to change each theme file. After doing this, clear out the ./wp_profile/temp directory and restart the server.

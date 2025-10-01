@@ -1,0 +1,142 @@
+Title: IBM IV00167: S&P CONTROLS SOMETIMES DISABLED FOR ITCAM APP - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Approver Initials:    bs
+   Reported Release:     622
+   
+   PROBLEM DESCRIPTION:
+   The Summarization and pruning controls in the Tivoli Enterprise
+   Portal
+   historical configuration are sometimes disabled for certain
+   applications.
+   
+   
+   RECREATE INSTRUCTIONS:
+   Was not able to recreate in house. Customer was able to recreate
+   at will.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Summarization and Pruning controls in the Tivoli Enterprise
+   Portal are sometimes greyed out (disabled).
+   
+   When using the Summarization and Pruning controls for historical
+   collection in the Tivoli Enterprise Portal client, sometimes the
+   check boxes are greyed out.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Add exception handling around the affected code that renders the
+   controls in this dialog.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.2.2-TIV-ITM-FP0006
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV00167
+   
+   
+ * REPORTED COMPONENT NAME
+   TEP
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04EP
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-10
+   
+   
+ * CLOSED DATE
+   2011-06-13
+   
+   
+ * LAST MODIFIED DATE
+   2011-09-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEP
+   
+   
+ * FIXED COMPONENT ID
+   5724C04EP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

@@ -1,0 +1,29 @@
+Title: IBM Procedure for collecting accounting and statistics data as SMF messages - United States
+
+Text:
+IIB; statistics; smf TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Use the procedure below to capture accounting and statistics data as SMF messages in WebSphere Message Broker (WMB) and IBM Integration Bus (IIB).
+
+Gathering this information before calling IBM Support will help you to become familiar with the troubleshooting process and save you time. 
+
+RESOLVING THE PROBLEM
+Trace causes extra processing when it is switched on, which can affect the reported statistics, so consider turning it off before you collect accounting and statistics data.
+You can use the mqsireporttrace [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/an07310_.htm] command to determine which trace options are currently active. Follow these steps to collect accounting and statistics data in SMF format: 
+
+ 1. Turn on accounting and statistics collection by using the mqsichangeflowstats command:
+    mqsichangeflowstats brokerName-e egName-s -j -n advanced -t basic -o smf -c active 
+ 2. Run message data through the message flows. Snapshot statistics data are recorded every 20 seconds, so it is important to consider this when you are deciding how long to perform your test. 
+ 3. Turn off accounting and statistics collection by using the mqsichangeflowstats command:
+    mqsichangeflowstats brokerName-e egName-s -j -n advanced -t basic -o smf -c inactive 
+ 4. The SMF records get written to a dataset as configured by your sysprogs. The data records are type 117 records with the following identifiers:  *  BipSMFDate BipSMFRecordHdr BipSMFTriplet BipSMFMessageFlow BipSMFThread BipSMFNode BipSMFTerminal 
+    
+    
+ 5. Provide IBM with a tersed dataset containing the SMF records.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Message Broker Performance z/OS 8.0 Business Integration IBM Integration Bus for z/OS Performance z/OS 10.0, 9.0 Business Integration IBM Integration Bus Performance z/OS 10.0, 9.0 
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

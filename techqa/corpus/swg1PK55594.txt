@@ -1,0 +1,199 @@
+Title: IBM PK55594: A HANG AT SHUTDOWN MAY OCCUR EVEN THOUGH A FAILURE RETURN VALUE FROM THE " QUEUEACRW " IS SENT, SINCE THE CODE IS NOT CHECKED. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This is a problem in our CR-outbound-to-SR path.
+   The thread we have found to be of interest tries to
+   queue up an ACRW to deliver the request to the SR and then
+   waits to be posted by the response;  however, since we are
+   shutting down, there are no more ACRW threads to process
+   the work.  This fact is relayed back to the thread that
+   attempted to queue the ACRW via a failure return value
+   from the "queueACRW" routine; however, the queueing thread
+   does not check the return code.   The code just assumes it
+   worked and moves into the wait.  Since the request will never
+   be processed, the waiting thread will never be posted.  It
+   is a java thread, so the JVM will NOT shutdown until that
+   thread goes away which it will never do.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere Application Server    *
+   *                 V5.1.0 for z/OS                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: ABENDA03/ABENDSA03 or hang during       *
+   *                      AppServer STOP/stopServer.sh            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The WebSphere Application Server for z/OS Controller region
+   experiences a hang during server shutdown.  The problem
+   exhibits itself intermittently.  The hang might eventually
+   cause an ABENDA03/ABENDSA03.
+   
+   The hang is caused by a pending intra-server request invoked
+   from the Controller to the Servant.  Under normal operation,
+   the invoking thread queues the work to a work-processing
+   thread, then waits to be posted when the response is ready.
+   During shutdown, the work-processing threads are stopped prior
+   to threads that might attempt to invoke intra-server work.
+   The invoking thread receives an error when it attempts to queue
+   work if the work processing threads have all been stopped.
+   However, this error condition is not checked and the invoking
+   thread proceeds to wait for a response it will never receive.
+   Thus, the thread waits forever.
+   
+   The presence of the waiting thread prevents the address space
+   from completely terminating.  This might eventually cause the
+   address space to abend with ABENDA03/ABENDSA03.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Corrected the invoking thread to detect a work-queueing failure
+   and return the request with a failure response.
+   
+   APAR PK55594 is associated with SERVICE LEVEL W510244 of
+   WebSphere Application Server V5.1.0 for z/OS.
+   
+   The following publication was revised as a result
+   of APAR PK55594:
+   ________________________________________________________________
+   WebSphere Application Server V5 for z/OS
+   Messages and Codes
+   GA22-7915-00
+   _______________________________________________________________
+   This APAR requires changes to documentation.
+   
+   NOTE: Periodically, we refresh the documentation on our
+   Web site, so the changes might have been made before you
+   read this text. To access the latest on-line
+   documentation, go to the product library page at:
+   
+   www.ibm.com/software/webservers/appserv/zos_os390/library.html
+   
+   ________________________________________________________________
+   Chapter 03, pg. 089 (new code)
+   C9C20D75
+   Explanation: A local, outbound request that originated in the
+   Controller and targeted a Servant was aborted in the
+   Controller. The most likely reason for the failure is the
+   server was in the process of stopping.
+   User Response: Check whether the server was in the process of
+   stopping when this failure was experienced.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK55594
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-29
+   
+   
+ * CLOSED DATE
+   2007-11-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-01-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK14934
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  BBOUBINF
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY UK32179 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK32179]
+   UP07/12/19 P F712
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

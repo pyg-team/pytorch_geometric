@@ -1,0 +1,234 @@
+Title: IBM JR54678: SECURITY APAR - SECURITY VULNERABILITIES EXIST IN BUSINESS SPACE CVE-2015-7400, CVE-2015-7407, CVE-2015-7454, CVE-2014-8912 - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.5.7.0-WS-WBM-IFJR54678 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Monitor&fixids=8.5.7.0-WS-WBM-IFJR54678&source=SAR]
+8.5.6.0-WS-WBM-IFJR54678 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Monitor&fixids=8.5.6.0-WS-WBM-IFJR54678&source=SAR]
+8.5.5.0-WS-WBM-IFJR54678 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Monitor&fixids=8.5.5.0-WS-WBM-IFJR54678&source=SAR]
+8.0.1.3-WS-BSPACE-IFJR56078 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.3-WS-BSPACE-IFJR56078&source=SAR]
+7.5.1.2-WS-BSPACE-IFJR54678 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=7.5.1.2-WS-BSPACE-IFJR54678&source=SAR]
+8.5.6.1-WS-BPM-IFJR54678 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.6.1-WS-BPM-IFJR54678&source=SAR]
+8.0.1.3-WS-BSPACE-IFJR54678 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.3-WS-BSPACE-IFJR54678&source=SAR]
+8.5.0.2-WS-BPM-IFJR54678 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.0.2-WS-BPM-IFJR54678&source=SAR]
+8.5.5.0-WS-BPM-IFJR54678 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPM-IFJR54678&source=SAR]
+8.5.6.2-WS-BPM-IFJR54678 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.6.2-WS-BPM-IFJR54678&source=SAR]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Multiple security vulnerabilities exist in IBM Business Space:
+   
+   CVE-2015-7400 - XML external entity expansion vulnerability
+   CVE-2015-7407 - Server Side Request Forgery
+   CVE-2015-7454 - Incomplete implementation of LOCKEDDOWN mode
+   CVE-2014-8912 - Authorization bypass in Mashups
+   
+   You cannot disable the user search function for non-privileged
+   users.
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  CVEID: CVE-2015-7400
+   DESCRIPTION: IBM Business Process Manager is vulnerable to a
+   denial of service, caused by an XML External Entity Injection
+   (XXE) error when processing XML data. A remote authenticated
+   attacker could exploit this vulnerability to consume all
+   available CPU resources and cause a denial of service.
+   CVSS Base Score: 4.3
+   CVSS Temporal Score:
+   See https://exchange.xforce.ibmcloud.com/vulnerabilities/107105 
+   for the current score
+   CVSS Environmental Score*: Undefined
+   CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L)
+   
+   CVEID: CVE-2015-7407
+   DESCRIPTION: IBM Mashups is vulnerable to Server Side Request
+   Forgery. A remote attacker might use specially crafted HTTP
+   requests to IBM Mashups in order to make the Mashups servers
+   call other reachable HTTP services in its network.
+   CVSS Base Score: 7.5
+   CVSS Temporal Score:
+   See https://exchange.xforce.ibmcloud.com/vulnerabilities/107433 
+   for the current score
+   CVSS Environmental Score*: Undefined
+   CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N)
+   
+   CVEID: CVE-2015-7454
+   DESCRIPTION: IBM Business Process Manager could allow an
+   authenticated user to create pages and spaces that they should
+   not have access to due to improper access restrictions.
+   CVSS Base Score: 4.3
+   CVSS Temporal Score:
+   See https://exchange.xforce.ibmcloud.com/vulnerabilities/108333 
+   for the current score
+   CVSS Environmental Score*: Undefined
+   CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N)
+   
+   On BPM V7.5.1.2, this APAR also resolves:
+   CVEID: CVE-2014-8912
+   DESCRIPTION: IBM WebSphere Portal and other products could allow
+   a remote attacker to obtain sensitive information, caused by the
+   failure to restrict access to resources located within web
+   applications. An attacker could exploit this vulnerability to
+   obtain configuration data and other sensitive information.
+   CVSS Base Score: 5
+   CVSS Temporal Score:
+   See https://exchange.xforce.ibmcloud.com/vulnerabilities/99253 f
+   or the current score
+   CVSS Environmental Score*: Undefined
+   CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V7.5.1.2, V8.0.1.3, V8.5.0.2,
+   V8.5.5.0, V8.5.6.0 cumulative fix 2, and IBM BPM V8.5.7.0
+   CF2016.06 that removes these vulnerabilities. This fix also
+   introduces a new feature whereby you can disable the user search
+   capability.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR54678:
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select APAR or SPR, enter JR54678, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   To enable this feature, configure the
+   com.ibm.mashups.usersearch.blocked property as described in the
+   readme file for your version of the product.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR54678
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-11-10
+   
+   
+ * CLOSED DATE
+   2016-08-25
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP
+   
+   
+ * R801 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP
+   
+   
+ * R855 PSY
+   UP
+   
+   
+ * R856 PSY
+   UP
+   
+   
+ * R857 PSY
+   UP

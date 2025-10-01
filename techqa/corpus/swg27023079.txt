@@ -1,0 +1,13 @@
+Title: IBM Release Notes - Fixes by version for WebSphere ILOG JRules BRMS - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ IBM provides periodic fixes for the ILOG JRules BRMS family release. The following is the list of those releases with the list of fixes for each product in the WebSphere ILOG JRules BRMS family. 
+
+CONTENT
+
+
+FIXES FOR WEBSPHERE ILOG JRULES BRMS V7.1
+Fix Lists [http://www.ibm.com/support/docview.wss?uid=swg27019787]

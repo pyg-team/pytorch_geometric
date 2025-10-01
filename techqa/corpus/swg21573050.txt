@@ -1,0 +1,36 @@
+Title: IBM Scan Start Batch Panel Customization in IBM DatacapTaskmaster Capture - United States
+
+Text:
+Start Batch Panel TECHNOTE (FAQ)
+
+QUESTION
+ How to customize a Batch Pilot based Start Batch panel in IBM Datacap Taskmaster Capture? 
+
+ANSWER
+This technical note explains how to store information from the "Start Batch" scan dialog in the scanned batch for use later in the workflow. This note applies to versions of the Batch Pilot based scan tasks in Taskmaster 6.5 and later. This Technote does not apply to non-Batch Pilot scan tasks such as DotEdit and remote scan in Taskmaster Web. 
+
+Note: The Start Batch dialog is an optional component of Taskmaster scan tasks that can be configured to prompt the scan operator before each batch is scanned. Note that any assistance with customizing the Start Batch panel should be directed to premium services such as ECM Lab Services and not standard IBM Support. 
+
+Users of Taskmaster 6.2 (including Service Pack 1) or earlier software must install and register dcmap.ocx: 
+
+ 1. Copy dcmap.ocx to the dcshared folder and register by running regsvr32 \Datacap\dcshared\dcmap.ocx. This must be done on any computer that runs this new IScan task as well as any development computer where the panels might be edited. 
+ 2. Make a backup copy of the existing isscan.dcf then copy the new one over the existing one in \Datacap\Bpilot\ISscan.
+    
+
+
+To see an example of scripting that saves information to a batch variable, run Batch Pilot and open the sample Start Batch panel (\Datacap\BPilot\ISscan\StartBatch_demo.dcf). Double-click the Scan button or select Form/View Code and look at the scripting in Sub btnSBScan_Click. This subroutine fires when the user is satisfied with the information in the panel and wishes to initiate the scanning. Dcmap1.Item("DCO").Variable("AnyVariable") = "This is a test" 
+
+This creates a batch variable called AnyVariable and sets it to the specified string. You could set the variable instead to the result of a lookup, the selected value of a dropdown list control, or anything you need. If you scan a batch using this panel, go to the batch folder and open the scan task’s Page File (e.g. scan.xml). You will see the Batch Variable AnyVariable and its assigned value. 
+
+To update any existing start batch panel to work with the updated scan tasks, you will need to: 
+
+ 1. Open the existing Start Batch panel in Batch Pilot 
+ 2. Display the Batch Pilot Toolbox if not visible (menu Form/Toolbox) 
+ 3. Right-click in the Toolbox and add the DCMap control (Additional Controls… check the Datacap String to variant map control, then press OK) 
+ 4. Select the new DCMap control in the Toolbox and place it on your existing form 
+ 5. Don’t change the name of the control – the scan task requires “DCMap1” 
+ 6. Add scripting to accomplish what your application requires, using the sample start batch panel as a model. Items that are available in the DCMap control (actually they are placed there by the scan task script) include Pilot, DCO, LogFile, and MainForm.
+    
+
+Note: This line of code sets the variable "pilot" to the Datacap Batch Pilot Control object: 
+Set pilot = Dcmap1.Item("Pilot")

@@ -1,0 +1,16 @@
+Title: IBM Can an update query be run against the C&DS repository to update job results? - United States
+
+Text:
+mass change query update results TECHNOTE (FAQ)
+
+QUESTION
+ We have jobs set up in SPSS Deployment Manager. We would like to do a mass change of the location set up on the location set on the location tab. 
+
+CAUSE
+Currently all results are written to a specific file system and the server is full. We would like to change the location the results of the output. 
+
+ANSWER
+The job data is stored as metadata. There is no query or batch process that can be run to do a mass update to change the location of your results tab. The recommendation is to work with your IT administrator to clean up your file system, point your file system to a new location or manually update all of your jobs
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]

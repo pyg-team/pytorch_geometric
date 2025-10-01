@@ -1,0 +1,37 @@
+Title: IBM Security Bulletin: A security vulnerabilities has been identified in Websphere Application Server shipped with Jazz for Service Management (CVE-2016-0306) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Websphere Application Server is shipped as a component of Jazz for Service Management. Information about a security vulnerability affecting Websphere Application Server has been published in a security bulletin. 
+
+VULNERABILITY DETAILS
+Please refer the WAS security bulletin Security Bulletin: Potential security vulnerability in IBM WebSphere Application Server if FIPS 140-2 is enabled (CVE-2016-0306) [http://www-01.ibm.com/support/docview.wss?uid=swg21979231]
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Principal Product and Version(s) Affected Supporting Product and Version Jazz for Service Management version 1.1, 1.1.1, 1.1.2 and fixpacks Websphere Application Server 8.5.5 Full Profile REMEDIATION/FIXES
+Please refer to WAS ifix for fixing the vulnerability 
+
+Note: WAS needs 8.5.5.7 as the minimal level for fixing the vulnerability. JazzSM 1.1.2.1 is certified with WAS 8.5.5.8
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 12-Apr-2016: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

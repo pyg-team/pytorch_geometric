@@ -1,0 +1,40 @@
+Title: IBM WebSphere ILOG Rule Solutions for Office V7.1.1.5 Fix Pack - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This cumulative fix pack updates Rule Solutions for Office V7.1 (7.1.0, 7.1.1, 7.1.1.1, 7.1.1.3 or 7.1.1.4) to V7.1.1.5. 
+
+DOWNLOAD DESCRIPTION
+This cumulative fix pack updates Rule Solutions for Office V7.1 (7.1.0, 7.1.1, 7.1.1.1, 7.1.1.3 or 7.1.1.4) to V7.1.1.5. It is available as a full product installer from IBM Passport Advantage. 
+
+This fix pack is entitled. Only customers who have purchased Rule Solutions for Office V7.1 can download the new version.
+
+PREREQUISITES
+WebSphere ILOG Rule Solutions for Office V7.1
+
+INSTALLATION INSTRUCTIONS
+Use the following link to open the download document for WebSphere ILOG Rule Solutions for Office V7.1.1.5. The download document contains information for downloading and installing the product.
+
+URL LANGUAGE SIZE(Bytes) WebSphere ILOG Rule Solutions for Office 7.1.1.5 [http://www.ibm.com/support/docview.wss?uid=swg24035216] Language Independent 1000000000 
+
+
+
+
+
+TECHNICAL SUPPORT
+ 
+
+ * Contact 1-800-IBM-SERV (U.S. only) or visit the WebSphere ILOG Rule Solutions for Office Support site [http://www-947.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_ILOG_Rule_Solutions_for_Office].
+ * Passport Advantage Online support [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html] 
+ * Fix List for WebSphere ILOG JRules BRMS V7.1.1.5 [http://www-01.ibm.com/support/docview.wss?uid=swg27019787#7115]
+ * Fix List for WebSphere ILOG Rules for .NET BRMS V7.1.1.5 [http://www-01.ibm.com/support/docview.wss?uid=swg27019171#7115]
+ * Known limitations in WebSphere Business Rule Management System V7.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg21498138]
+ * WebSphere ILOG JRules BRMS V7.1 Download document [http://www-01.ibm.com/support/docview.wss?uid=swg24030938]
+ * WebSphere ILOG Rules for .NET BRMS V7.1 Download document [http://www-01.ibm.com/support/docview.wss?uid=swg24030939]
+
+
+
+ [/support/docview.wss?uid=swg24033603&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24033603&aid=2]Problems (APARS) fixed
+RS00828, RS00987

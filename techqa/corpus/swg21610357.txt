@@ -1,0 +1,20 @@
+Title: IBM SAVE TRANSLATE ODBC Request error - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I have syntax that I ran to export the Statistics data back to MS Access using ODBC and it is working in the past and now it no longer working after the system update on the machine.
+I am now getting the error below when doing the export using SAVE TRANSLATED command.
+
+Error # 6492
+The ODBC subsystem has issued an error which prevents the processing of
+SAVE TRANSLATE ODBC request.
+[Microsoft][ODBC Microsoft Access Driver] Could not find file '(unknown)'.
+
+
+ANSWER
+You are more likely to have an incomplete command in the syntax. Be sure to verify the syntax and making sure the GET FILE location is pointing the correct directory where your file located. Also check make sure all command color codes are highlight correctly. Missing period, semicolon, quote and so on will make your syntax not complete and will produce the error.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

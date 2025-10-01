@@ -1,0 +1,31 @@
+Title: IBM SFTP or FTP poller front side handlers not finding files on remote server - United States
+
+Text:
+No input found for URL sftp ftp poller FSH handlers TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you use the SFTP or FTP poller front side handler on the IBM WebSphere DataPower SOA Appliance, the poller does not find the files on the remote server. 
+
+SYMPTOM
+The following is an example of a message found in the DataPower log for an SFTP poller that does not find files in the target directory:
+
+
+ * 
+ * No input found for URL 'sftp://XXX.XX.XXX.XXX:22/'
+
+
+The X's represent the IP address of the remote SFTP server. Similar entries are found for FTP pollers with this issue. CAUSE
+ 
+
+ * The poller's match pattern provided in the Input File Match Pattern field does not match the files provided in the Target Directory. 
+ * The target directory provided in the poller's Target Directory field is not the correct directory. 
+ * The server is not following the File Transfer Protocol (FTP) specification. For example, according to the specification, each file must have some permission bits set to indicate that this is a 'regular' file and not a directory or symlink; etc. If the server used does not correctly set these bits, the DataPower appliance cannot find the files even if the match pattern and target directory provided are correct..
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Ensure that the match pattern and target directory are correct. 
+ 2. Ensure that the server used follows the File Transfer Protocol specification. If it does not, switch to a server that follows the FTP specification.
+
+RELATED INFORMATION
+# WebSphere DataPower SOA Appliances Documentation [http://www-01.ibm.com/software/integration/datapower/library/documentation/]

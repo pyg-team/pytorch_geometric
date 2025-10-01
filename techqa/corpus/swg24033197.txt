@@ -1,0 +1,111 @@
+Title: IBM CA1Y: Send email from CICS Transaction Server for z/OS - United States
+
+Text:
+email e-mail CA1Y CICS Transaction Server for z/OS; CICS TS; SMTP; attachments; JavaMail; cics-l list 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 KIXINFO DOWNLOADABLE FILES
+
+ABSTRACT
+ SupportPac CA1Y provides a simple mail transfer protocol (SMTP) client to send emails and attachments from CICS Transaction Server for z/OS (CICS TS). 
+
+DOWNLOAD DESCRIPTION
+SupportPac CA1Y was updated in February 2016. See New in this release (V1.7) and upgrade to this new release if you would like to take advantage of the latest updates. 
+
+Electronic mail has become an effective form of communication widely used in our private lives and dealings with businesses, governments, and other organizations. The trend towards on-line purchasing, investments, banking, managing utilities, and tax returns is driving further adoption of email. For example, customers now expect confirmation of orders, account alerts, and availability of statements to be sent within minutes by email.
+
+
+As many of today's transactions are hosted in CICS Transaction Server for z/OS (CICS TS), it is not surprising that the need to send emails from CICS TS applications has been raised a number of times on the cics-l list [https://listserv.meduniwien.ac.at/cgi-bin/wa?A0=cics-l&D=0&F=&H=0&O=T&S=&T=0] and customer surveys. There are already a number of solutions to sending emails from CICS TS, such as using the z/OS Communications Server SMTP application [http://www.ibm.com/support/docview.wss?uid=swg27019687#SMTP], using a process server or enterprise service bus, or developing your own SMTP client. However, these solutions can be inflexible, require in-depth knowledge of SMTP, code to be developed and maintained, or require additional products.
+
+SupportPac CA1Y provides an SMTP client to send emails and attachments that is quick to setup, easy to use, and might not require any application changes. This SupportPac runs in the CICS Java server environment and is eligible for off-loading onto a System z Application Assist Processor (zAAP) speciality engine [http://www.ibm.com/systems/z/hardware/features/zaap/index.html], which could be very cost-effective.
+
+Capabilities
+SupportPac CA1Y provides a choice of two interfaces to send an email:
+
+
+ 1. Do one of the following to capture a CICS TS event and emit it to the CA1Y event adapter:  * Use the CICS Explorer event binding editor to filter and capture the information from your application.
+       
+     * Use the CICS Explorer event adapter editor or event binding editor to define transaction CA1Y as the custom event adapter, and specify the email headers, content, attachments, server, and so on.
+       
+     * Use this interface to create and send the email asynchronous to the application, thereby minimizing any disruption to the applications existing response time or performance profile. This is the recommended approach.
+       
+    
+    
+ 2. Write one of the following applications to LINK to the SupportPac:  * From your application, create one or more CICS containers to specify the email headers, content, attachments, server, and so on, and then link to transaction CA1Y.
+       
+     * Use this interface to synchronously send an email from an application. The application will wait for the email to be sent, and could react if there is an error.
+    
+    
+
+
+Both of these interfaces are easy to use and flexible, allowing you to specify: 
+ * Email address headers for recipients including; from, to, carbon copy (cc), blind carbon copy (bcc), and reply to. Use the Internet Engineering Task Force (IETF) RFC 822 [http://www.w3.org/Protocols/rfc822/] format, for example; <sam.smith@company.com>, “John Doe” <j.doe@example.com>
+   
+ * Email subject formatted as a single line of plain text.
+   
+ * Email content typically formatted as plain text or HTML.
+   
+ * Email attachments including a name and Multipurpose Internet Mail Extensions (MIME) type, as defined by RFC 2046 [http://www.ietf.org/rfc/rfc2046.txt?number=2046] and IANA [http://www.iana.org/assignments/media-types]. For example, image files, Portable Document Format (PDF) documents, or spreadsheets could be attached. 
+   
+ * Email subject and content that can include information from the event or application. Tokens placed anywhere in the subject, content and other properties are replaced by the SupportPac with CICS event information items, current time and date, CICS containers, CICS DOCUMENT TEMPLATE resources, or zFS files. This token replacement is similar in concept to mail-merge in word processing packages. For example, this enables an email to include template information loaded from a zFS file or PDS member to be merged with runtime information from the application.
+   
+ * Conversion of content and attachments from XML into other document types. The SupportPac processes the XML in combination with your XML stylesheet (XSLT) to generate HTML, XHTML, or other XML documents. In addition, the SupportPac can work in combination with the Apache open source project Formatting Objects Processor (FOP) [http://xmlgraphics.apache.org/fop/] to convert XSL formatting objects (XSL-FO) into PDF, Rich Text Format (RTF), and other printed documents. For example, this enables CICS event information to be combined with other XML and a stylesheet to create an invoice PDF that is emailed to a customer.
+   
+ * SMTP server configuration, including IP name or address, IP port, and security credentials. Common configuration can be imported from zFS files, for example email server properties to enable it to be secured and managed centrally.
+   
+
+Possible Uses 
+Creation and send emails and attachments from CICS TS for z/OS using an SMTP client. 
+
+Skill level required 
+Standard user, with a good understanding of the configuration and use of the CICS TS for z/OS. 
+
+New in this release (V1.7):  * New support to call the SupportPac from a z/OS JCL batch job, a USS script, or using the CICS command START FROM(). 
+ * New texttable token will create a hexadecimal dump of the conents of all properties and containers, or only those whos name matches a specified regular expression. The htmltable token provides similar data but in an HTML table form suitable for use in an email. 
+ * Fix to set the email header time and date to the CICS local time and date (ABSTIME) when the event was captured. If you wish to set an alternative date and time, set the new mail.sentdate property. 
+ * Fix to not issue an abend when CICS is unable to capture a data item. For example if your event binding specified a FILE ENABLE STATUS system capture point and made use of DSNAME, but the file resource did not specify a data set name then DSNAME will not be captured.
+
+
+Refer to Chapter 1 of the "CA1Y Installation and User Guide" for a complete "Version History". 
+
+Details 
+Authors: Mark Cocker, CICS Development, IBM Hursley, UK. 
+Category: 2 
+Released: 03Oct12 
+Last updated: 28Jan16 
+Current Version: 1.7 
+
+PREREQUISITES
+The SupportPac makes use of a number of new CICS TS features. Most notably event processing support and the Java server environment, and the JavaMail API [http://www.oracle.com/technetwork/java/javamail/index.html] that is a Java framework for interacting with email servers.
+
+You must have one of the following versions of CICS TS installed and configured to use the Java server environment, before you install the SupportPac: 
+
+ * CICS Transaction Server for z/OS V4.2, or later 
+ * CICS Transaction Server for z/OS Value Unit Edition, V5.1, or later 
+ * CICS Transaction Server for z/OS Developer Trial
+   
+
+
+Restrictions 
+This SupportPac uses the JavaMail API provided with CICS TS to connect to the email server. In particular, it has only been tested with the Simple Mail Transfer Protocol (SMTP) service provider. The JavaMail API package includes additional protocol service providers, such as IMAP and POP3 that might work, but these have not been tested. 
+
+INSTALLATION INSTRUCTIONS
+To download the SupportPac: 
+
+ 1. Click on the FTP link below for the relevant version of the SupportPac and save the compressed file to your local machine. 
+ 2. Extract the saved file to a temporary directory on your local machine. This will create the necessary installation, documentation, and license files. 
+ 3. Follow the instructions in the included documentation to complete installation of this SupportPac on your host system.
+
+URL LANGUAGE SIZE(Bytes) CA1Y Installation and User Guide [http://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/ca1y.pdf] US English 822975 
+DOWNLOAD PACKAGE
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options CA1Y.zip 28 Jan 16 US English 3553432 HTTP [http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?popup=Y&li_formnum=L-APIG-A6LEQM&accepted_url=ftp://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/ca1y.zip] 
+TECHNICAL SUPPORT
+ SupportPacs in this category are available at no charge to all licensed users of the CICS family products on the platforms specified in the SupportPac description. These SupportPacs are provided "AS-IS" (under the terms and conditions of the IBM International License Agreement for Non-Warranted Programs and of the associated License Information and other documentation). The terms and conditions of this license DO NOT provide for any entitlement to defect correction.
+
+To determine if you want to use this SupportPac, read the accompanying license file. 
+
+Other CICS SupportPacs
+To view the complete portfolio of CICS SupportPacs, go to the CICS SupportPacs Home Page [http://www.ibm.com/support/docview.wss?uid=swg27007241] 
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

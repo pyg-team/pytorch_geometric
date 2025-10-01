@@ -1,0 +1,59 @@
+Title: IBM Opening a module results in DXL interaction message "could not open include file" - United States
+
+Text:
+DOORS; module; column; DXl; include file; view; default; could not open TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Rational DOORS Report window pops up many times while opening a module and results in error message "could not open include file". 
+
+SYMPTOM
+The error being generated is in a DXL Interaction Window. 
+
+In the DXL Output section, the message reads:
+
+"-E- DSL: Line:5> could not open include file (\Local path\...\Layout\legacy_main.dxl) 
+No such file or directory) -I-DXL:all done with 1 error and 0 warnings"
+
+CAUSE
+Module view contains a column with DXL that references a nonexistent file.
+
+
+
+DIAGNOSING THE PROBLEM
+Archived data from another database is restored in DOORS. 
+
+Opening the module generates numerous DXL error messages and eventually the module opens. 
+One column has "error in DXL" for all objects in the module.
+
+Set the standard view display when the module opens:
+
+
+ 1.  With the module open, Click View > manage Views ... ( In the Views window, saved views are listed on the left) 
+ 2.  Select the view listed as the module default 
+ 3. On the general tab to the right, uncheck the box Default For module 
+ 4. Click OK to close the views window 
+ 5. Close the module
+    
+
+Open the module. 
+RESOLVING THE PROBLEM
+When a view contains DXL that causes error messages to be displayed, either update the column DXL to use the correct path to any referenced files 
+or remove the DXL column and save the view. 
+
+
+To modify a DXL column: 
+
+
+ 1. Right click the column > select Properties ... to load the Edit column window 
+ 2. With layout DXL selected, click the Browse button to the right 
+ 3. In the Browse DXL window, click the Current button at the bottom ( this loads the EDIT layout DXL window with the script displayed in the top sections) 
+ 4. Update the path for any references to other include or dxl files run by the script 
+ 5. Click the Check button at the bottom to ensure there are no errors 
+ 6. Click OK to close the DXL editor window 
+ 7. Click OK to close the Edit column window 
+ 8. Save the view to retain the column changes  *  Click View > Save As... 
+     * Click OK to overwrite the existing view or create a new view set as the module default 
+     * Click OK to close the views window 
+     * If you are resetting the default view with a new or updated view click yes 
+       when prompted to set as the default 
+     * Click confirm to overwrite the existing view

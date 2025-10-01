@@ -1,0 +1,235 @@
+Title: IBM PK55278: USING VIRTUAL MEMBER MANAGER (VMM) THE SEARCH FOR ATTRIBUTES DEFINED AS INTEGER FAILS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description: I introduced an atribute of type integer
+   ("numberOfKids")
+   and created a person with 5 kids :)
+   Then I tried the following search query:
+   @xsi:type='PersonAccount' and
+   numberOfKids='5'
+   It caused a ClassCastException: java.math.BigInteger
+   incompatible with
+   java.lang.String
+   which VMM catches internally, so the search result is empty.
+   If I use the query @xsi:type='PersonAccount' and
+   numberOfKids<='5'
+   then it is working fine
+   
+   =====================================
+   bug is in VMM's code:
+   
+   FileXPathHelper:patternMatch(...):
+   
+               if (operator.equals("=") || operator.equals("!=")) {
+                   String str = (String) value;
+                     ...
+                  }
+               else {
+                   int intValue =
+   Integer.parseInt(value.toString());
+                   int intPattern = Integer.parseInt(pattern);
+   
+   That means that if the comparison operator is = or !=, then the
+   code
+   assumes that the value is a String
+   For other operators. it assumes that the value is a number
+   That's why you can't search for numberOfKids='5'
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  use the query @xsi:type='PersonAccount' and numberOfKids<='5'
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: This affects IBM WebSphere Application       *
+   *                 Server version 6.1 users who use federation  *
+   *                 repositories (virtual member manager).       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An exception is thrown when you use     *
+   *                      an int type attribute in a search       *
+   *                      expression.                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   After defining an int type attribute such as "numberOfKids",
+   one first creates a person wiith 5 kids, and then tries to
+   call vmmService.search with the following expression:
+   @xsi:type="PersonAccount" and numberOfKids='5'
+   
+   Virtual Member Manager will throw an exception like:
+   "ClassCastException: java.lang.integer incompatible with
+   java.lang.String".
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem has been fixed.  The exception will not be thrown
+   if an int type attribute is used in search expression.
+   
+   This fix is included in PK55278 and targeted for fix pack
+   6.1.0.15.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK55278
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   61W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-24
+   
+   
+ * CLOSED DATE
+   2007-11-02
+   
+   
+ * LAST MODIFIED DATE
+   2007-11-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  FILE     REGISTRY
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSN
+   UP
+   
+   
+ * R60H PSN
+   UP
+   
+   
+ * R60I PSN
+   UP
+   
+   
+ * R60P PSN
+   UP
+   
+   
+ * R60S PSN
+   UP
+   
+   
+ * R60W PSN
+   UP
+   
+   
+ * R60Z PSN
+   UP
+   
+   
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

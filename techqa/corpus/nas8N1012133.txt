@@ -1,0 +1,17 @@
+Title: IBM Using CWBCOSSL to Import Certificate Authority into the PC Key databases of Access for Windows - United States
+
+Text:
+ACCESS; SSL TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Remote users or in cases when the IBM i Local Create CA Certificate is not being used, is it necessary to manually import the Certificate Authority into the PC key database of Access for Windows. The following are instructions on how to do so. 
+
+RESOLVING THE PROBLEM
+Remote users or in cases when the IBM i Local Create CA Certificate is not being used, it is necessary to manually import the Certificate Authority into the PC key databases of Access for Windows. You should follow the instructions below on how to do this: 
+
+1. Open a PC command prompt by going to Start - Programs - Accessories- Command Prompt. 2. Type CWBCOSSL and press Enter. 3. When the About System i Access Certificate Authority Downloader screen pops, select OK. 4. When the CwbCoSSL window pops, go to the section labeled If using a CA from another source, enter a label and then press the store button. Next, type the name of the certificate you received in the Certificate Authority text label parameter and press the Store CA from file.... 5. Browse to find the certificate file on your PC, select it, and select Open. 6. You will receive the following message: Are you sure you want to trust all certificates issued by this Certificate Authority. Select Yes. 7. You will receive the following message: Key Database password Prompt. Type ca400 if the default password is still being used and select OK. 8. You will receive the following message: The Certificate Authority has been successfully stored in the PC Key Database with label: name of cert. Select OK. 9. You will receive the following message: The Certificate Authority has been successfully stored in the Java toolbox Key Database. Select OK. 10. The certificates are now stored in the Access for Windows key databases. You may select Cancel on the CWBCOSSL to close. 11. Close the Command prompt window.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 567309621

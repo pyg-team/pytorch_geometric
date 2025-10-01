@@ -1,0 +1,34 @@
+Title: IBM Cross-project references with IBM Rational Team Concert dependency builds on IBM i - United States
+
+Text:
+LIBL; serchpaths; libraries; IBM i; dependency build; reference TECHNOTE (FAQ)
+
+QUESTION
+ How do you enable cross-project references in IBM Rational Team Concert dependency builds with IBM i source? 
+
+CAUSE
+Libraries are referenced in an IBM i dependency build several ways: 
+1) As external libraries, which are not associated with iprojects, but are needed in the library list (LIBL) for the build job to succeed.
+2) As iproject source and object libraries which are used by an iproject when building.
+3) As referenced libraries which are objects added to the searchPath of translators. They are searched for by the build's preprocessor, but are not associated with the built iproject. These could be cross-project libraries.
+
+Before any build commands are executed, the dependencies for source changes need to be retrieved. The build pre-processor performs this task. 
+If no referenced libraries are defined, dependencies will only be found in the designated iproject.
+If there are cross-project dependencies, the libraries that are referenced need to be in the searchPath(s) of the translator(s) so that cross-project changes are rebuilt.
+
+After the build pre-processor work, the library list (LIBL) is set when communicating with the IBM i server. Then, then the build processing continues on the IBM i server.
+
+There were several changes made to the library list (LIBL) management that can affect the setting of searchPaths:
+1) When a preset LIBL set with a user-defined command is used, the LIBL will cycle through to reset OBJLIB as CURLIB and move SRCLIB to the top of USRLIBL. Because of this, referenced libraries in the searchPaths will be added unless they already exist.
+2) As an alternate LIBL method, that has to be specified with a build property, com.ibm.team.enterprise.ibmi.build.overrideLibl with a value of true, the LIBL will cycle OBJLIB to CURLIB and will not modify the order of USRLIBL. In this way, the referenced libraries in the searchPaths will not be added.
+
+
+ANSWER
+Set searchPaths in the translators of the dependency build to ensure cross-project changes are realized and need to be rebuilt.
+
+ 
+
+HISTORICAL NUMBER
+ ER42794
+ER43012
+ER44549

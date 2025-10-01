@@ -1,0 +1,67 @@
+Title: IBM The upgrade7x command fails when the number of characters used for performance data is greater than 64 characters for IBM Business Process Manager (BPM) - United States
+
+Text:
+upgrade7x; upgrade; migration; BPM 7.5; tracking group tables; max-length-of-string-columns TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You might have extended the maximum number of characters beyond the default of 64 characters in the performance data. However, you might not have made the same change to the new environment before running the upgrade7x command. 
+
+SYMPTOM
+You might encounter the following exception in the upgrade0.log file when you run the upgrade7x command: 
+
+May 13, 2012 11:32:05 AM FINE: com.microsoft.sqlserver.jdbc.SQLServerStatement - SQLServerStatement:12690 created by (ConnectionID:1)
+May 13, 2012 11:32:05 AM FINE: com.microsoft.sqlserver.jdbc.SQLServerStatement - SQLServerStatement:12690 Executing (not server cursor) ALTER TABLE TG_TradeTicketAudit ALTER COLUMN "NOTE" NVARCHAR(64) NULL
+
+
+May 13, 2012 11:32:05 AM FINE: com.microsoft.sqlserver.jdbc.SQLServerException - *** SQLException: com.microsoft.sqlserver.jdbc.SQLServerException: String or binary data would be truncated. Msg 8152, Level 16, State 4, String or binary data would be truncated.
+May 13, 2012 11:32:05 AM SEVERE: com.lombardisoftware.tools.SQLFileExec - Error executing SQL statement
+May 13, 2012 11:32:05 AM FINE: com.lombardisoftware.tools.SQLFileExec - String or binary data would be truncated.
+com.microsoft.sqlserver.jdbc.SQLServerException: String or binary data would be truncated.
+at com.microsoft.sqlserver.jdbc.SQLServerException.makeFromDatabaseError(SQLServerException.java:196)
+at com.microsoft.sqlserver.jdbc.SQLServerStatement.getNextResult(SQLServerStatement.java:1454)
+at com.microsoft.sqlserver.jdbc.SQLServerStatement.doExecuteStatement(SQLServerStatement.java:786)
+at com.microsoft.sqlserver.jdbc.SQLServerStatement$StmtExecCmd.doExecute(SQLServerStatement.java:685)
+at com.microsoft.sqlserver.jdbc.TDSCommand.execute(IOBuffer.java:4026)
+at com.microsoft.sqlserver.jdbc.SQLServerConnection.executeCommand(SQLServerConnection.java:1416)
+at com.microsoft.sqlserver.jdbc.SQLServerStatement.executeCommand(SQLServerStatement.java:185)
+at com.microsoft.sqlserver.jdbc.SQLServerStatement.executeStatement(SQLServerStatement.java:160)
+at com.microsoft.sqlserver.jdbc.SQLServerStatement.execute(SQLServerStatement.java:658)
+at com.lombardisoftware.tools.SQLFileExec.doSQL(SQLFileExec.java:124)
+at com.lombardisoftware.tools.dbupgrade.steps.UpgradeTrackingGroupColumns$TGSQLFileExec.doSQL(UpgradeTrackingGroupColumns.java:77)
+at com.lombardisoftware.tools.SQLFileExec.start(SQLFileExec.java:83)
+at com.lombardisoftware.tools.dbupgrade.steps.UpgradeTrackingGroupColumns.execute(UpgradeTrackingGroupColumns.java:49)
+at com.lombardisoftware.tools.dbupgrade.UpgradeDatabase.main(UpgradeDatabase.java:171)
+May 13, 2012 11:32:05 AM FINE: com.lombardisoftware.tools.SQLFileExec - About to execute SQL statement:
+ALTER TABLE TG_TradeTicketAudit ALTER COLUMN "TICKETID" NVARCHAR(64) NULL
+
+
+CAUSE
+The target (new) environment properties are not customized to match the the source (old) environment.
+
+
+DIAGNOSING THE PROBLEM
+By default, the maximum number of characters that is allowed in performance data is 64 characters. You might have extended this limit by customizing the max-length-of-string-columns property in the 100custom.xml file or 00static.xml file. 
+
+
+You will see the exception noted in the Symptom section if your source (old) environment database column is larger than the default of 64 characters.
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, complete the following steps: 
+
+ 1. Customize the new environment to extend the the maximum number of characters that is allowed in performance data as described in the Extending the maximum number of characters in tracked performance data [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=/com.ibm.wbpm.admin.doc/adminguide/topic/extending_string_length_for_perf_svr.html] product documentation topic.
+    
+ 2. Restore the Process Server and Performance Data Warehouse database.
+    
+ 3. Rerun the upgrade7x command [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=/com.ibm.wbpm.imuc.doc/upgrade/topic/upgrading_existing_dbs_751.html].
+
+RELATED INFORMATION
+ Itemizing customizations during migration [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=/com.ibm.wbpm.imuc.doc/upgrade/topic/itemizing_customizations_751.html]
+Upgrading existing databases [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=/com.ibm.wbpm.imuc.doc/upgrade/topic/upgrading_existing_dbs_751.html]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Migration Linux, Linux zSeries, Windows 8.0, 7.5.1, 7.5.0.1, 7.5 Business Integration IBM Business Process Manager Advanced Migration AIX, Linux, Linux zSeries, Solaris, Windows 8.0, 7.5.1, 7.5.0.1, 7.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

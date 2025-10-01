@@ -1,0 +1,29 @@
+Title: IBM Content Search Services Index Jobs do not start in FileNet Content Engine - United States
+
+Text:
+unable to index TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Content Search Services Index Jobs do not start after upgrading FileNet Content Engine. 
+
+SYMPTOM
+ 
+
+ * Indexing jobs used to work, but now no longer start. 
+ * Content Engine was recently upgraded to 5.2.0.1 (Fixpack 1) or higher 
+ * Error message seen in the p8_server_error.log but permission for the IndexArea was proper:
+   
+   com.filenet.api.exception.EngineRuntimeException: FNRCB0084E: 
+   CBR_TS_ACCESSING_COLLECTION_FAILED: The IBM Content Search Services server failed to access the index on the file system. CSS server: 
+   CSS_ServerName:8191, Object store: {C1225F0A-BF68-458C-B35F- 
+   649A46C4E379}, index area: IndexArea1, index: \\ServerName\CSSRoot\IndexArea\FileStore\filestore_Document_YYYY0331160505_3BB8ED5DD06941D2A95E252EDFD2FD5C
+
+
+CAUSE
+Content Search Services must be upgraded as well to a compatible version to the Content Engine.
+
+RESOLVING THE PROBLEM
+Update the Content Search Services to a compatible Fix Pack/ Interim Fix version per the FileNet P8 Fix Pack Compatibility Matrices [http://www-01.ibm.com/support/docview.wss?rs=3278&uid=swg27014734].
+
+RELATED INFORMATION
+ FileNet P8 Fix Pack Compatibility Matrices [http://www-01.ibm.com/support/docview.wss?rs=3278&uid=swg27014734]

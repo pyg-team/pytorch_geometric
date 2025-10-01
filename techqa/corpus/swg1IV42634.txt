@@ -1,0 +1,175 @@
+Title: IBM IV42634: WMQ: SSLPEER CHANNEL ATTRIBUTE VALUE INCORRECTLY HANDLING COMMAS IN DN in CERTIFICATE, LEADING TO ERROR AMQ9636 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix Pack 7.1.0.4 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036454]
+WebSphere MQ V7.5 Fix Pack 7.5.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24036808]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using an SSL enabled channel and setting the SSLPEER
+   attribute value to match a certificate whose distinguished name
+   contains a comma in one of its attributes, MQ incorrectly
+   treats the comma as a delimiter between DN attributes rather
+   than treating it as a literal character as intended, which
+   results in the channel failing to start and the error AMQ9636
+   logged.
+   
+   Additional Symptom(s) Search Keyword(s):
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set your SSLPEER attribute, omitting any text after the comma.
+   This will allow the channel's SSLPEER value to match the
+   certificate value correctly.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users with certificates with a DN containing an embedded comma
+   in an attribute.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The parsing of the certificate DN did not take embedded commas
+   into account.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Parse the certificate DN properly if it contains an embedded
+   comma.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.4
+   --------           --------------------
+   Windows            7.1.0.4
+   AIX                7.1.0.4
+   HP-UX (Itanium)    7.1.0.4
+   Solaris (SPARC)    7.1.0.4
+   Solaris (x86-64)   7.1.0.4
+   iSeries            7.1.0.4
+   Linux (x86)        7.1.0.4
+   Linux (x86-64)     7.1.0.4
+   Linux (zSeries)    7.1.0.4
+   Linux (Power)      7.1.0.4
+   
+   Platform           v7.5
+   --------           --------------------
+   Multiplatforms     7.5.0.3
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV42634
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86-64
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7230
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-14
+   
+   
+ * CLOSED DATE
+   2013-05-24
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86-64
+   
+   
+ * FIXED COMPONENT ID
+   5724H7230
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

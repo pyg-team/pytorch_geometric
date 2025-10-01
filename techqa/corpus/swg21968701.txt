@@ -1,0 +1,46 @@
+Title: IBM How to change the Log Level and Sampling Rate for the ITCAM for J2EE v7.1.1 agent. - United States
+
+Text:
+Log Level Sampling Rate reqSampleRate request Monitoring Level change CAMJ2ALL CAMJ2INST J2EE TEMA TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ How to change the Log Level and Sampling Rate for the ITCAM for J2EE v7.1.1 agent. 
+
+ANSWER
+In the ITCAM for J2EE v6.1 agent, you could modify the Log Level and Sampling Rate during the configuration steps. However, in v7.1.1 of the agent this is not possible. The Log Level defaults to L1 and the Sampling Rate defaults to 2%. 
+
+If you would like to change these default values to a more customized value, here are the steps: 
+
+1. Stop the YJ J2EE agent first. 
+
+ $ITM_HOME/bin/itmcmd agent stop yj (Linux) or use the MTEMS to stop the agent (Windows) 
+
+2. Navigate to the configuration directory. 
+
+ cd $ITM_HOME/config (Linux/Unix) or cd %ITM_HOME%\TMAITM6 (Windows) 
+
+ 3. Do a directory listing of your <hostname>_yj*.xml as shown here:
+[/support/docview.wss?uid=swg21968701&aid=1] [/support/docview.wss?uid=swg21968701&aid=1]
+
+4. Notice I have a master <hostname>_yj.xml file and an xml file for each instance (JBoss7 and WebLogic versions 10 and 12). In my case, I want to edit the JBoss7 Request Log Level and Sampling Rate so I will open the first file and edit it: <hostname>_yj_jboss7.<hostname>.standalone.xml. (make backup first.)
+- search for requestMonitoringLevel and change the default value of L1 to L2.
+- search for reqSampleRate and change the default value of 2 to whatever you like, maximum value 100.
+- save file.
+
+5. If you have other instances, say WebLogic instances, make changes if you want to change the Log Level / Sampling Rate and save the files.
+
+(Note: You will always edit the instance files, never the master <hostname>_yj.xml file. Always make sure your agent has stopped and you have a 
+backup of these instance files before editing.)
+
+6. After all files changes have been made and saved, restart the YJ J2EE agent back up again. No server restart is required.
+
+7. Login to your TEPS, you will now see the new Log Level and Sampling Rate on your panel. This will take approximately about 20 seconds to refresh and show on your screen. In this example, I've changed the Log Level to L2 and Sampling Rate to 77%. 
+[/support/docview.wss?uid=swg21968701&aid=2] [/support/docview.wss?uid=swg21968701&aid=2]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for J2EE

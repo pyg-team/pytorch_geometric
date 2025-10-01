@@ -1,0 +1,47 @@
+Title: IBM Effectively working with Informix Servers on AIX - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ This document tells you how to work effectively with Informix database servers and the AIX operating system by providing information like recommended install levels, APARs, and tuning tips. 
+
+CONTENT
+
+Known issues for Informix servers running on AIX
+
+
+
+Issue Comments APAR IC95265: 
+UPGRADE TO 12.10 FAILS WITH SANE_CHOPEN:CHECSUM 0XD0C1 != CHECKSUM 0XD0E1 This will be fixed in 12.10.FC3. Contact technical support for a special build on 12.10.FC2 that fixes this APAR. APAR IC80345: 
+11.50.xC9W1 ALLOWS USER WITH WRONG PASSWORD TO CONNECT A replacement for each PID is available on Fix Central. 11.50.UC9W1X1 replaces 11.50.UC9W1 and 11.50.FC9W1X1 replaces 11.50.FC9W1. Click here for details. [www.ibm.com/support/docview.wss?uid=swg21575140] 
+
+
+This document lists recommended installation levels, APARs, and known issues regarding the interaction between Informix databases and the AIX operating system. There may be additional AIX APARs that are unrelated to Informix activity that impact Informix databases. It is recommended that you consult the AIX fix distribution site to search for other AIX APARs which could impact your system: 
+ * http://www.ibm.com/eserver/support/fixes/fixcentral/main/pseries/aix
+
+
+
+Recommended Minimum AIX Technology Levels 
+
+The recommended minimum technology levels are minimum levels. Unless otherwise indicated, higher Technology (TL) or Service Pack (SP) levels are recommended. The prerequisite levels in the standard Informix product documentation are the minimum levels required for support and do not change after the product becomes generally available; the recommended minimum levels presented in this document deal with issues discovered after the product became generally available. Following these recommendations can result in increased system stability and reliability. 
+
+Recommendations for running Informix 12.10 on AIX AIX version Recommended minimum AIX technology levels 7.1 7100-03-01 6.1 6100-09-01 
+Recommendations for running Informix 11.70 on AIX AIX version Recommended minimum AIX technology levels 7.1 7100-03-01 6.1 6100-09-01 
+Recommendations for running Informix 11.50 on AIX AIX version Recommended minimum AIX technology levels 7.1 7100-03-01 6.1 6100-09-01 5.3 5300-12-08 
+Recommendations for running Informix 11.10 on AIX AIX version Recommended minimum AIX technology levels 6.1 6100-09-01 5.3 5300-12-08 
+
+Recommended Minimum AIX Firmware Release 
+
+It is important to maintain the most current version of firmware release to avoid known and fixed issues. You can access the firmware download list by providing your machine type and model number here: 
+ * http://www.ibm.com/support/entry/portal/Downloads
+
+
+
+AIX APARs which Affect Informix Server 
+
+AIX 7.1 APARs for Informix servers APAR# AIX APAR Description TL Comments IZ94610 IO ON J2 AIO FASTPATH MAY CAUSE A HANG FOR SPARSE FILES 7100-00-03 I/O hang IZ92383 TCP_NODELAYACK CAUSES EAGAIN ERROR ON SORECEIVE 7100-00-03 Indicators are 25582 and 25580 errors. Click here for more details. [www.ibm.com/support/docview.wss?rs=630&uid=swg21468244] 
+
+AIX 6.1 APARs for Informix servers APAR# AIX APAR Description TL Comments IZ91171 FAIL TO SEND SIGIO WHEN AIO J2 FASTPATH IS TAKEN 6100-06-04 I/O hang IZ94663 IO ON J2 AIO FASTPATH MAY CAUSE A HANG FOR SPARSE FILES 6100-06-05 I/O hang IZ85844 TCP_NODELAYACK CAUSES EAGAIN ERROR ON SORECEIVE 6100-06-05 Indicators are 25582 and 25580 errors. Click here for more details. [www.ibm.com/support/docview.wss?rs=630&uid=swg21468244] 
+
+AIX 5.3 APARs for Informix servers APAR# AIX APAR Description TL Comments IY83580 64-BIT RTL ENABLED APPLICATIONS FAIL WITH ERROR 0509-036 5300-04-02 exec(): 0509-036 Cannot load program IY93737 INFORMIX COMMAND DUMPING CORE 5300-08 oninit fails with IOT/Abort trap

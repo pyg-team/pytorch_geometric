@@ -1,0 +1,120 @@
+Title: IBM PK66234: CCRC client doesn't handle HTTP messages from RWP to redirect to an https URL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Trying to access CCRC at http://southeast.us.company1.com/ccrc [http://southeast.us.company1.com/ccrc]
+   fails with, 'Error: Unable to connect to server at
+   'http://southeast.us.company1.com/ccrc' ' .
+   SSL is configured for RWP in this environment, which means a
+   non-ssl URL for accessing CCRC should be automatically converted
+   to SSL (https:). For example, when you enter
+   http://southeast.us.company1.com/ccrc in the CCRC client, then
+   it should be redirected to
+   https://southeast.us.company1.com/ccrc. [https://southeast.us.company1.com/ccrc.]
+   The above error occurs because the URL conversion is not working
+   for CCRC, though it does work for CCWeb in this same
+   environment. The CCWeb URL is converted as expected from
+   http://system1/ccweb/ to https://system1/ccweb/ .
+   WORKAROUND:
+   When SSL is configured for RWP, you need to enter the SSL URL
+   using https for accessing CCRC, such as
+   https://southeast.us.company1.com/ccrc. [https://southeast.us.company1.com/ccrc.]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  SSL redirection is not supported in the CCRC client.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  See technote titled, "Unable to connect to Change Management
+   Server or Rational Web Platform when using CCRC with SSL
+   redirection enabled".
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK66234
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARCASE UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724G2901
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-05-16
+   
+   
+ * CLOSED DATE
+   2009-06-04
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

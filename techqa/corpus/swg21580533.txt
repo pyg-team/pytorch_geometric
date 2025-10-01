@@ -1,0 +1,80 @@
+Title: IBM WebSphere Process Server (WPS) java.lang.RunTimeException: An invalid XML character (Unicode: 0x1A) was found in the element content - United States
+
+Text:
+BOXMLSerializer; XML; control characters; unicode 0x1A; jdbc adapter TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A database is configured as back-end database for WebSphere Process Server. The data within the database is not escaped and text (variable chararacters/varchar or string) data might contain control characters. When fetching this data with the WebSphere Adapter for JDBC, a runtime exception is thrown because of invalid XML characters. 
+
+SYMPTOM
+When data is retrieved data from the database, a runtime exception is created and the log file, which is the profileName/logs/serverName/logs/SystemOut.log file, contains the following message: 
+
+[2/23/12 12:25:36:330 EST] 00000011 MessageLogger E
+CWSXM3154E: Mediation primitive java.lang.RuntimeException: Error serializing BO BusinessObject: @29152915 ....
+
+Additonally, a FFDC file is generated, containing the following errors: 
+
+
+[2/23/12 12:25:36:174 EST] FFDC Exception:java.lang.RuntimeException SourceId:com.ibm.ws.uow.UOWManagerImpl.runUnderCurrentUOW ProbeId:1130 Reporter:com.ibm.ws.uow.UOWManagerImpl@76d476d4
+java.lang.RuntimeException: Error serializing BO BusinessObject: @29152915 
+...
+at com.ibm.ws.bo.service.BOXMLSerializerImpl.save
+(BOXMLSerializerImpl.java:559)
+at com.ibm.ws.bo.service.BOXMLSerializerImpl.writeDataObject
+(BOXMLSerializerImpl.java:208)
+at com.ibm.ws.bo.delegate.BOXMLSerializerDelegate.writeDataObject
+(BOXMLSerializerDelegate.java:110)
+at com.ibm.ws.sibx.smobo.util.XMLSerialisationHelper.writeOutputStream
+(XMLSerialisationHelper.java:288)
+at com.ibm.ws.sibx.smobo.util.XMLSerialisationHelper.writeString
+(XMLSerialisationHelper.java:202)
+at com.ibm.ws.sibx.mediation.primitives.logger.MessageLoggerMediation.
+storeMessage(MessageLoggerMediation.java:1376) 
+
+.....
+Caused by: java.lang.RuntimeException: An invalid XML character (Unicode: 
+0x1A) was found in the element
+<<< THE DATA CONTAINING THE INVALID CHARACTER >>>
+at org.eclipse.emf.ecore.xmi.impl.XMLSaveImpl$Escape.convertText
+(XMLSaveImpl.java:3181)
+at org.eclipse.emf.ecore.xmi.impl.XMLSaveImpl.getDatatypeValue
+(XMLSaveImpl.java:2758)
+at com.ibm.ws.bo.bomodel.util.BOXMLSaveImpl.getDatatypeValue
+(BOXMLSaveImpl.java:254)
+at com.ibm.ws.bo.bomodel.util.BOXMLSaveImpl.getTrueType
+(BOXMLSaveImpl.java:597)
+at com.ibm.ws.bo.bomodel.util.BOXMLSaveImpl.saveElement
+(BOXMLSaveImpl.java:273)
+at com.ibm.ws.bo.bomodel.util.BOXMLSaveImpl.saveDataTypeElementSingle
+(BOXMLSaveImpl.java:261)
+
+
+CAUSE
+According to the XML specification, there are several characters (especially the ASCII control characters from ASCII 0x0 to 0x1F) that cannot be represented in XML files and are forbidden. 
+
+The WebSphere Adapter for JDBC fetches the data containing the invalid characters from the database and creates business objects. The business objects are represented in XML Therefore, a business objects serialization error of the business objects is issued when the data contains invalid control characters.
+
+
+RESOLVING THE PROBLEM
+There are several possibilities to avoid these errors: 
+
+ * Avoid control characters in the database or escape invalid characters.
+   
+   
+ * Change the database design. For example, change the varchar/string to the BLOB data type.
+   
+   
+ * Create a custom data handler for the JDBC binding and remove control characters there.
+   
+   
+ * Upgrade to WebSphere Process Server Version 7.0.0 Fix Pack 4, use the WebSphere Adapter for JDBC version 7 and configure the handling of invalid XML characters. More information is available in the Setting deployment properties and generating the service [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5mx/index.jsp?topic=/com.ibm.wsadapters.jca.jde.doc/doc/tjde_outgenobjxml.html] topic within the product documentation.
+
+RELATED INFORMATION
+ WebSphere Adapter could not deal with control character [http://www.ibm.com/support/docview.wss?uid=swg21422693]
+Setting deployment properties and generating the servic [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5mx/index.jsp?topic=/com.ibm.wsadapters.jca.jde.doc/doc/tjde_outgenobjxml.html]
+Creating a custom data handler [https://www.ibm.com/support/knowledgecenter/en/SSFTBX_8.5.7/com.ibm.wbpm.wid.integ.doc/topics/r_customdatahandler.html]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Adapters Family Adapter for JDBC AIX, HP-UX, Linux, Solaris, Windows, z/OS, Linux zSeries 6.2

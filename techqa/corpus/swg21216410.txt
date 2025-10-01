@@ -1,0 +1,46 @@
+Title: IBM CSQV086E QUEUE MANAGER ABNORMAL TERMINATION REASON=00D96001 due to ABN=5C6-00D70108 in CSQP1CON - United States
+
+Text:
+5c6 abend5c6 6c6 abenc6c6 00D96001 00D70108 CSQP1CON subpool 229 key 7 sp229 key7 IUWD virtual storage shortage 00E2000B csqsfbk CSQIUOWA TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After an abnormal termination, restart of IBM MQ for z/OS fails with:
+
+IEA794I SVC DUMP HAS CAPTURED: 
+DUMPID=013 REQUESTED BY JOB (CSQ1MSTR)
+DUMP TITLE=CSQ1,ABN=5C6-00D70108,U=SYSOPR ,C=F1000.531.BUFF-CS 
+QP1CON,M=CSQGFRCV,LOC=CSQPLPLM.CSQP1CON+0270 
+
+CSQV086E !CSQ1 QUEUE MANAGER ABNORMAL TERMINATION REASON=00D96001 
+IEF450I CSQ1MSTR CSQ1MSTR - ABEND=S6C6 U0000 REASON=00000000 
+
+CAUSE
+Reason 00D70108 means an attempt to obtain storage for the buffer pool was unsuccessful. The buffer pools are in Subpool 229 Key 7.
+
+RESOLVING THE PROBLEM
+ 
+
+ * Set REGION=0M for the IBM MQ job as recommended in the Address space storage [https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.pla.doc/q114210_.html] topic.
+   
+   
+ * Check LOGLOAD in the queue manager parameters. The default setting of 500000 is preferred. Using the maximum setting of 16000000 means there will be many more recovery log records to process since the last checkpoint. The storage used to process those records can cause the storage shortage in SP229 KEY7. Storage has many IUWD control block eyecatchers.
+   
+   If the restart failure is due to a high LOGLOAD parameter, lower it to prevent the problem in the future. For the present, restart will still fail until sufficient storage is available. Temporarily lower settings such as BUFFPOOL size (for example to 1000), trace table size, and OUTBUFF, or take other steps to allow enough storage for the recovery to complete. Then, do a normal restart of the queue manger with the original BUFFPOOL and trace settings.
+   
+   
+ * If the queue manager still will not restart, cold start it as described in the topic "Reinitializing a queue manager [https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.adm.doc/q022640_.html]". 
+   Warning: You should only perform a cold start if you cannot restart the queue manager any other way. Performing a cold start enables you to recover your queue manager and your object definitions; you will not be able to recover your message data. 
+
+
+Additional information
+The 5C6 abend codes do not always appear in the joblog or syslog if their dumps were suppressed. If you see the CSQV086E message for ABEND=S6C6 REASON=00000000 without a dump or message for a more detailed reason code, run an EREP [http://www.ibm.com/support/docview.wss?rs=171&uid=swg21291812] report for the time of the restart. You should see a LOGREC record for another abend code which had its dump suppressed. Modify DAE [https://www.ibm.com/support/knowledgecenter/SSLTBW_2.3.0/com.ibm.zos.v2r3.ieav100/dmpdds.htm], so that a dump can be taken for the symptom and repeat the restart. PM77250 [http://www.ibm.com/support/docview.wss?uid=swg1PM77250] for MQ 7.0.1 and 7.1.0 (included in base V8.0) will cause CSQY291E to be issued if the SDUMP is suppressed. 
+
+ 
+
+Another symptom of the problem is
+ABN=5C6-00E2000B,U=SYSOPR ,C=F1000.531.DMC -CSQIUOWA,M=CSQGFRCV,LOC=CSQSLD1.CSQSFBK+04AA
+
+
+
+PRODUCT ALIAS/SYNONYM
+ IBM MQ WebSphere MQ WMQ

@@ -1,0 +1,77 @@
+Title: IBM Steps to remotely deploy the J2EE YJ agent on a target Linux system using a Linux TEMS. - United States
+
+Text:
+tema j2ee remote deploy YJ agent tacmd createNode addSystem addBundle viewDepot CAMJ2ALL CAMJ2INST TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ What are the steps to remotely deploy the J2EE YJ agent on a target Linux system using a Linux TEMS? 
+
+ANSWER
+Here are the steps: 
+
+1. First login to your TEMS on your Linux system using the tacmd login command. (Note that these steps are on a Linux TEMS/TEPS and the target endpoint is also a Linux system. This should also work if you are using another OS like AIX or HP-UX.) 
+
+
+[/support/docview.wss?uid=swg22002089&aid=1] [/support/docview.wss?uid=swg22002089&aid=1]
+
+2. Now you will need to populate the TEMS Depot with whatever you want to remotely deploy. So, in this example, am deploying the YJ agent v7.1.1.0.4 (which is a cumulative full install.) Note, I am also populating the LZ (Linux) OS agent also, as this is required. So first get these individual (LZ and YJ) packages, and untar them in a temporary directory and deploy them one-by-one into the TEMS depot as follows.
+
+2a. Untar the LZ Agent v6.3.0.0 package first and verify the descriptor files exist with the tacmd listBundles command. This shows that
+the Linux descriptor files are available for the platform 8266 and can be populated into the TEMS depot.
+[/support/docview.wss?uid=swg22002089&aid=2] [/support/docview.wss?uid=swg22002089&aid=2]
+
+2b. Same thing for the YJ J2EE agent v7.1.1.0.4. Verify the descriptor files exists too with the same command:
+
+[/support/docview.wss?uid=swg22002089&aid=3] [/support/docview.wss?uid=swg22002089&aid=3]
+
+3. Ok now its time to populate the above descriptor files (for both LZ and YJ) into the TEMS depot using the tacmd addBundles command:
+
+[/support/docview.wss?uid=swg22002089&aid=4] [/support/docview.wss?uid=swg22002089&aid=4]
+
+Doing the same for the YJ 71104 agent too...
+
+[/support/docview.wss?uid=swg22002089&aid=5] [/support/docview.wss?uid=swg22002089&aid=5]
+
+4. Verify the TEMS Depot is populated with the LZ and YJ agents with the tacmd viewDepot commands:
+
+[/support/docview.wss?uid=swg22002089&aid=6] [/support/docview.wss?uid=swg22002089&aid=6]
+
+[/support/docview.wss?uid=swg22002089&aid=7] [/support/docview.wss?uid=swg22002089&aid=7]
+
+5. Great, your TEMS Depot is populated with the LZ and YJ agents now. Now, you have to simply "push" the agents out to whatever system you want them deployed. You will do the tacmd createNode command and tacmd addSystem for this. See screenshots below.
+
+First tacmd createNode to the target system as follows, then use tacmd getDeployStatus to check the deployment. This will take few minutes to complete. This will deploy only the LZ (Linux) agent to the target node, not the YJ agent yet.
+
+[/support/docview.wss?uid=swg22002089&aid=8] [/support/docview.wss?uid=swg22002089&aid=8]
+
+[/support/docview.wss?uid=swg22002089&aid=9] [/support/docview.wss?uid=swg22002089&aid=9]
+
+You can tail the $ITM_HOME/logs/manageserver.log to see the deployment activity. Once it has completed successfully, you should have the LZ agent on the target system. In my case, its 9.53.113.112 so I logged on here and checked, and sure enough, its there. See screenshot below.
+
+[/support/docview.wss?uid=swg22002089&aid=10] [/support/docview.wss?uid=swg22002089&aid=10]
+
+6. Do a tacmd listSystems to see the system where the LZ agent is deployed from your previous steps. It should show up here successfully before you deploy the YJ agent in the next step. See the screenshot here:
+
+[/support/docview.wss?uid=swg22002089&aid=11] [/support/docview.wss?uid=swg22002089&aid=11]
+
+6. Final Step! Now that the LZ agent has been deployed, you can use the tacmd addSystem command to deploy the J2EE YJ v7.1.1.0.4 agent. See screenshot here:
+
+[/support/docview.wss?uid=swg22002089&aid=12] [/support/docview.wss?uid=swg22002089&aid=12]
+
+After few minutes, it gets deployed successfully...
+
+[/support/docview.wss?uid=swg22002089&aid=13] [/support/docview.wss?uid=swg22002089&aid=13]
+
+7. Log in to the target system (9.53.113.112) and you will see the YJ agent installed/deployed there successfully.
+
+[/support/docview.wss?uid=swg22002089&aid=14] [/support/docview.wss?uid=swg22002089&aid=14]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for J2EE ITCAM J2EE BASE Linux 7.1.1 
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM4AD ITCAMfAD

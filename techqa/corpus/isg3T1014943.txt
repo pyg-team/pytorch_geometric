@@ -1,0 +1,25 @@
+Title: IBM Why can't LIM restart after I edited the hosts file with IP forwarding option on? - United States
+
+Text:
+host file; restart LIM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why can't LIM restart after I edited the hosts file with IP forwarding option on? 
+
+RESOLVING THE PROBLEM
+
+
+The IP forwarding option is on. I edited the hosts file and tried to restart the LIM. This is the error message I got :
+
+[lsfadmin@acsrocks1 conf]$ lsadmin limrestart all
+
+Checking configuration files ...
+No errors found.
+ls_gethostinfo: Failed in sending/receiving a message: Permission denied
+Operation aborted
+
+With the original hosts file, I can restart LIM. But after I modify it, I get the error message above. 
+
+Problem identified: the user put a wrong ip address for the external interface on the master node, so that the packet are routed to external network.  
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

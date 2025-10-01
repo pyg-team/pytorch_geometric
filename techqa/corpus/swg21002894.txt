@@ -1,0 +1,34 @@
+Title: IBM Hung workstation causing tasks to back up in CICS - United States
+
+Text:
+Hangs and Deadlocks TECHNOTE (FAQ)
+
+QUESTION
+ Hung workstation causing tasks to back up in CICS®. 
+
+ANSWER
+Problem: hung system on IODM. 
+
+Problem: Hung workstation causing tasks to back up in CICS 
+
+ 
+Action taken: Customer saw an OWMS transaction connected to an IWP 
+workstation waiting on ZCIOWAIT and other transactions queued up 
+behind it. This has happened only to one workstation. No others seem to 
+be, to date. Fearing that the system might go to MAXTASKS, he 
+purged the OWMS transaction. All other transactions quickly 
+executed and completed, thus eliminating system threat. Customer wants to 
+know why this got hung and how to implement the automatic safeguards to 
+protect the mainframe from hung transactions; 
+
+Action plan: 
+
+
+I discussed with customer. ZCIOWAIT means that the host is waiting for 
+IWP to respond. Further investigation as to why the workstation got 
+hung needs to be done by IWP support. As for protecting the host, however, I 
+advised the customer to set RTIMOUT - which was currently set to NO to 
+indicate that no timeout processing was occurring - to some low value 
+(e.g., 30 seconds), so that CICS automatically purges the transaction 
+after the specified number of seconds, thereby safeguarding the system 
+from further delays.

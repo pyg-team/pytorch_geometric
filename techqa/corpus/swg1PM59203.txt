@@ -1,0 +1,153 @@
+Title: IBM PM59203: modules configured for use with the change integration can't be exported to RIF - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational DOORS 9.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24031906]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Attempting to export a module to RIF which is configured for use
+   with the change integration will result in the message 'Could
+   not export module 'moduleName' - formal module is not open for
+   edit'
+   
+   This is because the integration creates a trigger which prevents
+   the module from being opened invisibly or in edit mode. The RIF
+   export requires that the module be opened invisibly (if not also
+   for edit).
+   
+   So there is a effectively a clash in the design of each
+   component here, but perhaps not one that couldn't be overcome,
+   at least in some circumstances e.g. when exporting to RIF
+   without locking data.
+   
+   To recreate:
+   
+    - configure a module for use in the Change integration
+    - add that module to a RIF definition (no locks) and attempt to
+   export that definition
+   
+   Potential workaround:
+   
+   Loosen the control of the integration trigger.... This is
+   slightly dubious and will probably need more input from each
+   side.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   RIF requires modules to be opend for exclusive edit to allow
+   locks and RIF ID's to be updated on export.
+   Change Integration triggers prevent modules under change
+   control from being opened for exclusive edit.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  It is possible to export a read-only module if locks are not
+   applied - RIF ID's need to be updated but this can be done
+   without saving any other module data.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM59203
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * REPORTED COMPONENT ID
+   5724V61DR
+   
+   
+ * REPORTED RELEASE
+   920
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-28
+   
+   
+ * CLOSED DATE
+   2012-06-06
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * FIXED COMPONENT ID
+   5724V61DR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R920 PSN
+   UP

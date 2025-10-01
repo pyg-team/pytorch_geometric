@@ -1,0 +1,63 @@
+Title: IBM Limitation on Using Queries with Complex Data Types in Secondary Server of HDR Environment - United States
+
+Text:
+HDR; 626; 140 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document explains the limitation when using queries involving complex data types like LIST, SET, MULTISET, named or unnamed ROW types in the secondary server of an HDR Environment. 
+
+SYMPTOM
+When running queries involving complex data types like LIST, SET, MULTISET, named or unnamed ROW in the secondary server in an HDR environment the following errors are generated: 
+
+-626 Cannot obtain or set serial value. 
+
+This internal error message does not refer to a problem with a SERIAL column in a table that you defined. The database server uses unique integer values for many purposes (for example, the table ID number for a new or altered table). An internal error has made it impossible to generate a new, unique number. For example, in host systems that use files for locking, something might have prevented the creation of a lock file. Check the accompanying ISAM error code for more information. 
+If the error recurs, note all circumstances and contact Technical Support at tsmail@us.ibm.com. 
+
+-140 ISAM error: operation illegal on a DR secondary. 
+
+A DR secondary server is meant for read-only operations. Any kind of write operation to a nontemporary dbspace is not allowed. For example, you cannot create a table in a regular dbspace, and you cannot do an insert, update, or delete operation on a table in a regular dbspace. 
+
+Review your application logic and rewrite it to remove any operations that would write to a nontemporary dbspace. 
+
+ 
+
+Example: 
+
+ 
+
+If you run the following query in the Secondary HDR Server: 
+
+
+select count(*) from table(multiset(select colname from syscolumns));
+select * from table(multiset(select colname from syscolumns));
+
+626: Cannot obtain or set serial value.
+140: ISAM error: operation illegal on a DR Secondary
+
+
+CAUSE
+This is a limitation in HDR which is documented in the Release Notes. 
+
+Link to Release Notes for 10x servers (a zip file): 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg27039629&aid=1 [http://www-01.ibm.com/support/docview.wss?uid=swg27039629&aid=1]
+
+
+
+ENVIRONMENT
+The following products and operating systems are affected: 
+
+ 
+
+Product Name Product Version(s) Hardware Vendor Operating System IBM Informix® Dynamic Server 10.00.x All All x can be T, U, H, or F depending on your operating system. 
+
+RESOLVING THE PROBLEM
+Running the query in the secondary server will try to create a transient type which will be writing in system catalog. As secondary is read-only it gives the 626/140 error. 
+
+ 
+Run the same query on the Primary HDR Server first, and then on the Secondary HDR Server.
+
+Running the query on the secondary will always work with no problem once the query is ran on the primary first. If the primary is re-started the query would need to be ran again. 
+
+The users do not need to be the same in the primary and secondary for the query to begin working in the secondary.

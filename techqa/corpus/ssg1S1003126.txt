@@ -1,0 +1,66 @@
+Title: IBM HDD firmware NA07 available for Seagate FC disk drive identifiers: X272_S10K7073F10, X274_S10K714gF10, and X276_S10K7288F10 - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ The NA07 drive firmware upgrade is recommended for the IBM® System Storage™ N series EXN2000 (2863-001) product using the affected FC drive part numbers in their disk shelves:
+
+23R2964, 23R2965, and 23R2966 
+
+CONTENT
+
+Summary
+
+The announcement is that improved drive firmware (version NA07) is now available. Customers are advised to upgrade drives identified in this note so as to realize overall drive operation and FC loop stability improvements. Drive firmware upgrades do not require disruption to the storage system.
+
+Affected Systems
+
+All EXN2000 FC disk shelves using the Hard Disk Drives (HDD) listed.
+
+HDD Firmware Matrix by affected Drive Type and Vendor 
+
+FRU 
+(IBM Part Number) Hard Disk Drive Type 
+(Vendor: Description) Configuration ID 
+("Sysconfig -v" output) Firmware Upgrade 
+(version) Disk Shelf Affected 
+(N series product) 23R2964 
+(23R4490) Seagate: 72GB 10K X272_S10K7073F10 NA07 EXN2000 (2863-001) 23R2965 
+(23R4492) Seagate: 144GB 10K X274_S10K7146F10 NA07 EXN2000 (2863-001) 23R2966 
+(23R4494) Seagate: 300GB 10K X276_S10K7288F10 NA07 EXN2000 (2863-001) 
+Symptoms 
+
+The problems fixed by FC drive firmware NA07 are: 
+ * Write buffer command failed.
+   
+   Problem: Write buffer command reported drive failure.
+   Root Cause: Under a MetroCluster environment, the download process would sometimes report "Firmware Download Failed." This was due to the drive not logging back into the fabric with the fabric login ID to return to good status. Although good status was not returned to, the download process was completed with the new firmware.
+   Workaround: None.
+   Fix: This issue is fixed in firmware NA07.
+
+ * Drive not responding after disabling switch.
+   
+   Problem: Drive failed on MetroCluster when disabling/enabling switch.
+   Root Cause: If one of the switches is disabled on a MetroCluster environment, an excessive number of invalid frames may be sent to the drive, causing the drives' heartbeat timer to expire. When this condition occurred, the drive would perform an internal reset and if the drives’ port remained in the unbalanced state following the reset, the drive would continually reset itself.
+   Workaround: None 
+   Fix: This issue is fixed in firmware NA07.
+   
+ * Lip asserts fault code and time reporting changes.
+   
+   Problem: Lip asserts causing loop stability problems.
+   Root Cause: After studying the issues and effects 10K6-NA10 had with MetroCluster environments, engineering changed the failure code on an assert event to 0B/8200 (NA01 did not report assert events). This change allows Data ONTAP® to re-issue the command without failing the drive. Engineering also changed the drive port bypass condition to three asserts within a 60-second period and fixed a unique case that caused the drive to assert during a download process.
+   Workaround: None.
+   Fix: This issue is fixed in firmware NA07. 
+   
+
+Note: During the drive firmware download process, a small window exists in which the drive may not report good status to the host (although the firmware did download correctly) but instead report "Firmware Download Failed." This is because the firmware download portion of the code is controlled by the earlier code version installed on the drive. This problem may show up in an unstable loop environment in which excessive LIPs are sent to the drive during the download process. In these rare occasions, if a drive is failed from its RAID group due to a "Firmware Download Failed" report, "unfail" the drive, zero the spare, and, if necessary, add the drive back to the RAID volume. 
+
+Recommendations 
+
+All the issues mentioned above are fixed in drive firmware versions NA07. Drive firmware NA07 has fixes that improve loop stability and customers are advised to move to them as soon as possible. 
+
+Download/Installation Instructions 
+
+Instructions for upgrading HDD firmware are available from the N series support website [http://www.ibm.com/storage/support/nseries]:  * Refer to the Important information for N series support [http://www.ibm.com/support/docview.wss?uid=ssg1S1003659] if you have not created and registered your IBM ID to access N series content on the Web. 
+ * The Hard Disk Drive (HDD) and Solid State Disk (SSD) Firmware for N series Publication Matrix [http://www.ibm.com/support/docview.wss?uid=ssg1S7002517] has instructions for obtaining and installing firmware and the Data ONTAP Disk Qualification Package (DQP).

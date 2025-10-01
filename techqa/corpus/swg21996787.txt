@@ -1,0 +1,13 @@
+Title: IBM What is the maximum number of members to be returned for a group? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is the maximum number of members to be returned for a ISAM group? 
+
+CAUSE
+There is a maximum number of members to be returned for a group. If the maximum number of users in the group is exceeded, then no users will appear in the output.
+
+ANSWER
+The maximum number of members to be returned for a group is 1500 users. If there are 1501 or more users in the group, then none of the users will appear in the output. The 1500 threshold applies to both the pdadmin list users output and the LMI.

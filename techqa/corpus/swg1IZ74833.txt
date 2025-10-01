@@ -1,0 +1,121 @@
+Title: IBM IZ74833: THE EVENT MONITOR CHECK BOXES FOR CEI AND AUDIT EVENTS DO NOT WORK INDEPENDANT OF EACH OTHER. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere Enterprise Service Bus V7.0.0 Fix Pack 3 (7.0.0.3) [http://www-01.ibm.com/support/docview.wss?uid=swg24027661]
+WebSphere Enterprise Service Bus V7.0.0 Fix Pack 4 (7.0.0.4) [http://www-01.ibm.com/support/docview.wss?uid=swg24030312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The event monitor check boxes for CEI and Audit events on the
+   BPEL components do not work independant of each other. If audit
+   events are checked but not CEI events, you will still see events
+   emitted for both. This is also true when CEI events checkbox is
+   marked but not the audit event checkbox.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Problem fixed
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix will be included in V700 FP3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ74833
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * REPORTED COMPONENT ID
+   5655FLW11
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-20
+   
+   
+ * CLOSED DATE
+   2010-05-31
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ74750
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * FIXED COMPONENT ID
+   5655FLW11
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

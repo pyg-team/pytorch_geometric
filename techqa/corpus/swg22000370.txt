@@ -1,0 +1,94 @@
+Title: IBM Security Bulletin: A vulnerability has been addressed in the GSKit component of IBM Security Directory Server (CVE-2016-2183) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM GSKit could allow a remote attacker to obtain sensitive information, caused by an error in the DES/3DES cipher, used as a part of the SSL/TLS protocol. This vulnerability is known as the SWEET32 Birthday attack. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2016-2183
+DESCRIPTION: OpenSSL could allow a remote attacker to obtain sensitive information, caused by an error in the DES/3DES cipher, used as a part of the SSL/TLS protocol. By capturing large amounts of encrypted traffic between the SSL/TLS server and the client, a remote attacker able to conduct a man-in-the-middle attack could exploit this vulnerability to recover the plaintext data and obtain sensitive information. This vulnerability is known as the SWEET32 Birthday attack.
+CVSS Base Score: 3.7
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/116337 [https://exchange.xforce.ibmcloud.com/vulnerabilities/116337] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Tivoli Directory Server 6.2 and 6.3
+IBM Security Directory Server 6.3.1 and 6.4
+IBM Security Directory Suite 8.0 and 8.0.1
+
+REMEDIATION/FIXES
+ 
+
+[/support/docview.wss?uid=swg22000370&amp;aid=1]
+Product [/support/docview.wss?uid=swg22000370&amp;aid=1]
+APAR [/support/docview.wss?uid=swg22000370&amp;aid=1]
+V.R.M.F [/support/docview.wss?uid=swg22000370&amp;aid=1]
+Remediation [/support/docview.wss?uid=swg22000370&amp;aid=1]
+IBM Tivoli Directory Server 6.2 [/support/docview.wss?uid=swg22000370&amp;aid=1]
+IO24996 [http://www-01.ibm.com/support/docview.wss?uid=swg1IO24996] [/support/docview.wss?uid=swg22000370&amp;aid=1]
+6.2.0.52 [/support/docview.wss?uid=swg22000370&amp;aid=1]
+6.2.0.52-ISS-ITDS-IF0052 [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Tivoli/Tivoli+Directory+Server&release=6.2.0.52&platform=All&function=all] [/support/docview.wss?uid=swg22000370&amp;aid=1]
+IBM Tivoli Directory Server 6.3 [/support/docview.wss?uid=swg22000370&amp;aid=1]
+IO24997 [http://www-01.ibm.com/support/docview.wss?uid=swg1IO24997] [/support/docview.wss?uid=swg22000370&amp;aid=1]
+6.3.0.45 [/support/docview.wss?uid=swg22000370&amp;aid=1]
+6.3.0.45-ISS-ITDS-IF0045 [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Tivoli/Tivoli+Directory+Server&release=6.3.0.45&platform=All&function=all] [/support/docview.wss?uid=swg22000370&amp;aid=1]
+IBM Security Directory Server 6.3.1 [/support/docview.wss?uid=swg22000370&amp;aid=1]
+IO25027 [http://www-01.ibm.com/support/docview.wss?uid=swg1IO25027] [/support/docview.wss?uid=swg22000370&amp;aid=1]
+6.3.1.20 [/support/docview.wss?uid=swg22000370&amp;aid=1]
+6.3.1.20-ISS-ISDS-IF0020 [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Tivoli/IBM+Security+Directory+Server&release=6.3.1.20&platform=All&function=all] [/support/docview.wss?uid=swg22000370&amp;aid=1]
+IBM Security Directory Server 6.4 [/support/docview.wss?uid=swg22000370&amp;aid=1]
+IO24983 [http://www-01.ibm.com/support/docview.wss?uid=swg1IO24983] [/support/docview.wss?uid=swg22000370&amp;aid=1]
+6.4.0.11 [/support/docview.wss?uid=swg22000370&amp;aid=1]
+6.4.0.11-ISS-ISDS-IF0011 [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Tivoli/IBM+Security+Directory+Server&release=6.4.0.11&platform=All&function=all] [/support/docview.wss?uid=swg22000370&amp;aid=1]
+IBM Security Directory Suite 8.0 [/support/docview.wss?uid=swg22000370&amp;aid=1]
+[/support/docview.wss?uid=swg22000370&amp;aid=1]
+[/support/docview.wss?uid=swg22000370&amp;aid=1]
+Contact IBM Support [/support/docview.wss?uid=swg22000370&amp;aid=1]
+IBM Security Directory Suite 8.0.1 [/support/docview.wss?uid=swg22000370&amp;aid=1]
+IO25028 [http://www-01.ibm.com/support/docview.wss?uid=swg1IO25028] [/support/docview.wss?uid=swg22000370&amp;aid=1]
+8.0.1.1 [/support/docview.wss?uid=swg22000370&amp;aid=1]
+8.0.1.1-ISS-ISDS_20170301-2234 [https://www.ibm.com/support/fixcentral/swg/selectFixes?product=ibm%2FTivoli%2FIBM+Security+Directory+Suite&fixids=8.0.1.1-ISS-ISDS_20170301-2234.pkg&function=fixId&parent=IBM%20Security] WORKAROUNDS AND MITIGATIONS
+Use either of the following methods to disallow DES/3DES ciphers on the directory server 
+
+
+A) Enable FIPS mode, or
+
+B) Remove the following ciphers from the server configuration, ibmslapd.conf:
+ibm-slapdSslCipherSpec: RC4-40-MD5
+ibm-slapdSslCipherSpec: RC4-128-MD5
+ibm-slapdSslCipherSpec: RC4-128-SHA
+ibm-slapdSslCipherSpec: RC2-40-MD5
+ibm-slapdSslCipherSpec: DES-56
+ibm-slapdSslCipherSpec: TripleDES-168
+
+and set the client ciphers using the environment variable:
+export LDAP_OPT_SSL_CIPHER=352F
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 15 Mar 2017 : Original draft
+17 Mar 2017: Contact support for SDS 8.0 remediation 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Directory Server SSL AIX, HP-UX, Linux, Solaris, Windows 6.2, 6.3, 6.3.1, 6.4 All Editions Security IBM Security Directory Suite SSL Appliance 8.0, 8.0.1 All Editions

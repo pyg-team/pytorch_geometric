@@ -1,0 +1,221 @@
+Title: IBM Capturing Debug Install/Restore Output - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English, US English 
+
+QUESTION
+ How do I enable and capture debug output from a BOS install or mksysb restore? 
+
+ANSWER
+This document is intended for those who need to find out why a BOS install or a mksysb restore will not complete successfully. The resulting log(s) can then be sent to IBM to analyze. 
+
+ 
+
+WHAT THIS GUIDE DOES AND DOES NOT COVER :
+
+-How to configure logging 
+HMC Environment 
+Non-HMC Environment 
+-->Hardware requirements for interfacing a PC with the AIX system 
+-->Hardware requirements for interfacing two AIX systems 
+-Enabling Debug Output While Installing/Restoring 
+
+
+--SMIT and Command line processes for most of the operations I cover 
+
+
+Before you will be able to capture the debug output from the install/restore that is having problems, you will need to configure logging so that the debug output can be captured and sent to IBM support to be analyzed. 
+There are a couple of different ways to configure logging, and they depend upon the type of environment you are in. 
+_______________________________________________________________________________________ 
+
+
+
+HOW TO CONFIGURE LOGGING:
+
+
+HMC ENVIRONMENT
+
+
+Setting up the software: 
+
+Using SSH session to capture console output 
+
+1. Configure an SSH client (eg putty) to log session output to a local file. 
+***Once you open the putty application, input the IP or HMC that has control of the system that is being installed. 
+On the left hand side of the application, there is a ‘Logging’ option (under the “Session” tab) 
+Once you click “Logging”, select the radial button to “Log all session output”, and give a location for the file 
+
+2. Open a connection to the HMC and login as user 'hscroot'. 
+
+3. Run the command ‘vtmenu’. 
+
+4. At the vtmenu, select the server to which you desire a console session. 
+
+5. Select the LPAR from which you need boot debug. 
+
+6. Wait for "Open Completed" message (if LPAR were running you would get a Console: login) 
+
+Capturing the debug output: 
+The console session is being run via the SSH connection to the HMC and the output will be captured in the log file configured in step 1. Once the system install fails or hangs, stop the LPAR and send the install debug log file to IBM Support for review. 
+_______________________________________________________________________________________ 
+
+NON-HMC ENVIRONMENT
+
+
+Setting up the hardware 
+
+HARDWARE REQUIREMENTS FOR INTERFACING A PC WITH THE AIX SYSTEM
+
+
+The following hardware is needed: 
+
+* Two RS232 serial cables 
+* One gender changer 
+* One interposer (null modem) 
+
+Connect the hardware as shown in the schematic below: 
+
+[S1]--[X]----[R]----[I][G]----[R]----[X]--[Sx] 
+
+Note: 
+S1 = first serial port on the machine being installed 
+X = any extra cables needed to connect the DB25-RS232 cable to the serial port 
+R = DB25-RS232 cable 
+I = interposer 
+G = gender changer (female) to get the right connection to Sx 
+Sx = any serial port on the connecting AIX box 
+
+Setting up HyperTerminal with client 
+Start up a HyperTerminal from your PC by doing the following: 
+1. Start Menu 
+2. Programs 
+3. Accessories 
+4. Communications 
+5. HyperTerminal 
+6. Name the session test then click Ok. 
+7. Under Connect using, select COM 1. 
+8. Enter the following Port Settings: 
+Bits per second 9600 
+Data bits 8 
+Parity None 
+Stop Bits 1 
+Flow control Hardware 
+Click Ok when done. 
+*Note: If your client system has tty0 configured properly to the S1 port, you should see a login prompt in the hyperterminal screen. 
+9. Capturing the debug data from the HyperTerminal 
+1. Click on Transfer drop-down menu in the HyperTerminal toolbar. 
+2. Select Capture text. 
+3. Enter a file name when prompted then click on Start 
+_______________________________________________________________________________________ 
+
+HARDWARE REQUIREMENTS FOR INTERFACING TWO AIX SYSTEMS
+
+
+During installation with debug mode enabled, debug output is sent to the S1 serial port of the machine. This output can then be captured to a tty or other serial connection. The preferred method for capturing debug mode output is to have another system near to the client machine that can interface with it via an rs232 serial connection. 
+
+* Two RS232 serial cables 
+* One gender changer 
+* One interposer (null modem) 
+
+Connect the hardware as shown in the schematic below: 
+
+[S1]--[X]----[R]----[I][G]----[R]----[X]--[Sx] 
+
+Note: 
+S1 = first serial port on the machine being installed 
+X = any extra cables needed to connect the DB25-RS232 cable to the serial port 
+R = DB25-RS232 cable 
+I = interposer 
+G = gender changer (female) to get the right connection to Sx 
+Sx = any serial port on the connecting AIX box 
+
+Setting up the interfacing system 
+
+1. Use the lslpp command to determine if bos.net.uucp is installed. Enter: 
+
+lslpp -l bos.net.uucp 
+
+Note: If not If you do not have this installed, you must install it from the AIX installation media. 
+
+2. Set up the Sx port and create a tty on the port. To create the tty, enter: 
+1. smitty tty 
+2. Select Add a TTY 
+3. Select tty rs232 Asynchronous Terminal 
+4. Select Sx serial port 
+5. Select the port number 
+Note: Defaults 
+
+3. Create an uucp entry for created tty by editting the file /etc/uucp/Devices with your preferred text editor. Add the following: 
+
+Direct tty0 - 9600 direct 
+
+4. Run the 'cu' command piped to the 'tee' command to capture the debug output. Enter: 
+
+cu -ml tty0 | tee /tmp/debug1.log 
+
+5. Disconnect from the client and stop logging by doing the following: 
+
+1. ~. 
+2. exit 
+_______________________________________________________________________________________ 
+
+ENABLING DEBUG OUTPUT WHILE INSTALLING/RESTORING
+
+
+Enabling Debug Output While Installing/Restoring 
+
+1. Boot your system from your AIX installation device (AIX installation media, mksysb tape, etc). Define the console and select the language to be used during the installation. 
+
+2. Once you arrive at the BOS Installation and Maintenance Menu (shown below), you will want to enter the following to enable the debug output: 911 
+
+Welcome to Base Operating System 
+Installation and Maintenance 
+
+Type the number of your choice and press Enter. Choice is indicated by >>>. 
+
+>>> 1 Start Install Now with Default Settings 
+
+2 Change/Show Installation Settings and Install 
+
+3 Start Maintenance Mode for System Recovery 
+
+4 Configure Network Disks (iSCSI) 
+
+6 Install from a System Backup 
+
+88 Help ? 
+99 Previous Menu 
+
+>>> Choice [1]: 
+
+
+*Note: You may not see the numbers being typed when you enter 911. 
+
+3. Once you have typed 911, hit the ‘Enter’ key. You will see the screen refresh and “BOSINST_DEBUG enabled” will be displayed towards the bottom of the terminal (shown below): 
+
+Welcome to Base Operating System 
+Installation and Maintenance 
+
+Type the number of your choice and press Enter. Choice is indicated by >>>. 
+
+>>> 1 Start Install Now with Default Settings 
+
+2 Change/Show Installation Settings and Install 
+
+3 Start Maintenance Mode for System Recovery 
+
+4 Configure Network Disks (iSCSI) 
+
+6 Install from a System Backup 
+
+--> BOSINST_DEBUG enabled <-- 
+
+88 Help ? 
+99 Previous Menu 
+
+>>> Choice [1]: 
+
+4. Continue with the installation of your system as you normally would. Once your install/restore has reached its problem point, you can use the log that has captured the debug install output to send to IBM support for analyzing.

@@ -1,0 +1,238 @@
+Title: IBM JR36472: CMVC 198887 - RESOLVE PROBLEM WITH PASSWORDNOTIFY.JSP AFTER WAS 7.0.0.9 FIXPACK UPGRADE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere Commerce Version 7.0.0.1 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24026649]
+JR36472; Fail to send emails after Application Server upgrade to 7.0.0.9 [http://www-01.ibm.com/support/docview.wss?uid=swg24027245]
+WebSphere Commerce Version 7.0.0.7 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24034686]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrading the IBM Websphere Application Server to Fix Pack
+   7.0.0.9 there is the following error in Websphere Commerce V7
+   when trying to send a password reset mail:
+   [4/29/10 13:56:53:899 CEST] 00000023 CommerceSrvr  E
+   com.ibm.commerce.messaging.commands.SendMsgCmdImpl
+   performExecute
+   CMN0208E: Command
+   "com.ibm.commerce.messaging.commands.SendMsgCmdImpl" failed to
+   process. Error: Messaging system. The composer encountered the
+   following error:
+   The URL constructed during composition using ViewName
+   http://<hostname>:80/webapp/wcs/stores/IBM.WC.Compose/MadisonsSt [http://<hostname>:80/webapp/wcs/stores/IBM.WC.Compose/MadisonsSt]
+   orefrontAssetStore//Messages/PasswordNotify.jsp/********  is
+   invalid {1}
+   ...
+   [4/7/10 13:11:21:109 CDT] 00000024 webapp        E
+   com.ibm.ws.webcontainer.webapp.WebApp logServletError SRVE0293E:
+   [Servlet Error]-[CompositionRequestServlet]:
+   java.lang.AbstractMethodError:
+   com/ibm/websphere/servlet/request/IRequest.isStartAsync()Z
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(Ser
+   vletWrapper.java:946)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(Ser
+   vletWrapper.java:500)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.handleRequest
+   (ServletWrapperImpl.java:178)
+    at
+   com.ibm.ws.webcontainer.webapp.WebApp.handleRequest(WebApp.java:
+   3810)
+    at
+   com.ibm.ws.webcontainer.webapp.WebGroup.handleRequest(WebGroup.j
+   ava:276)
+    at
+   com.ibm.ws.webcontainer.WebContainer.handleRequest(WebContainer.
+   java:931)
+    at
+   com.ibm.ws.webcontainer.WSWebContainer.handleRequest(WSWebContai
+   ner.java:1583)
+    at
+   com.ibm.wsspi.webcontainer.WebContainer.handleRequest(WebContain
+   er.java:95)
+    at
+   com.ibm.commerce.messaging.composer.JSPInvokerWAS6Impl$JSPPrivil
+   egedActionExecutionUnit.run(JSPInvokerWAS6Impl.java:116)
+    at
+   com.ibm.commerce.messaging.composer.JSPInvokerWAS6Impl.invokeJSP
+   (JSPInvokerWAS6Impl.java:257)
+    at
+   com.ibm.commerce.messaging.viewcommands.MessagingViewCommandImpl
+   .nonHttpForwardDocument(MessagingViewCommandImpl.java:477)
+   
+   After uninstalling the Application Server Fix Pack 7.0.0.9 it
+   works again.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Apply WS Commerce v7.0.0.1 or this APAR before upgrading to WAS
+   7.0.0.9.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   Any WebSphere Commerce V7.0.0.0 customers who use 7.0.0.9 or
+   above.
+   
+   PROBLEM ABSTRACT:
+   WebSphere Commerce V7 fails to send emails (e.g. a password
+   reset
+   email) in a web 2.0 enabled sample store (e.g. Madison) after
+   Application Server upgrade to 7.0.0.9.
+   
+   BUSINESS IMPACT:
+   Any email functionality, for example, the password reset mail
+   functionality, for a web 2.0 enabled sample store (for example,
+   the Madison store), in WebSphere Commerce V7 is impacted.
+   
+   RECOMMENDATION:
+   Subscribe to WebSphere Commerce notifications to keep up to date
+   with support updates. As per the following Information Center
+   page:
+   
+   Required and recommended fixes for WebSphere Commerce version 7
+   http://publib.boulder.ibm.com/infocenter/wchelp/v7r0m0/index.jsp
+   ?topic=/com.ibm.commerce.install.doc/refs/rigrecfix.htm [http://publib.boulder.ibm.com/infocenter/wchelp/v7r0m0/index.jsp?topic=/com.ibm.commerce.install.doc/refs/rigrecfix.htm]
+   
+   The minimum required level of WebSphere Application Server is
+   7.0.0.3. It is recommended to upgrade to WebSphere Commerce
+   v7.0.0.1 when running WebSphere Commerce with WebSphere
+   Application Server 7.0.0.9.
+   
+   You can apply WebSphere Commerce fixpack 7.0.0.1. if upgrade
+   WebSphere Application Server to Version 7.0.0.9 is required, or
+   request APAR JR36472:
+   IBM - WebSphere Commerce Version 7.0.0.1 Fix Pack -
+   http://www-01.ibm.com/support/docview.wss?rs=3046&uid=swg2402664 [http://www-01.ibm.com/support/docview.wss?rs=3046&uid=swg2402664]
+   9
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In WebSphere Application Server v7.0.0.9, the interface class
+   com.ibm.websphere.servlet.request.IRequest has been updated with
+   some new methods. This interface class was implemented by
+   Websphere Commerce. Updating this interface required the
+   corresponding update in WebSphere Commerce.
+   
+   In WebSphere Application Server 7.0.0.3, the implementation of
+   this class works fine. In 7.0.0.9, the implementation class
+   fails to initialize with the following exception:
+   [4/29/10 13:56:53:602 CEST] 00000023 webapp        E
+   com.ibm.ws.webcontainer.webapp.WebApp logServletError SRVE0293E:
+   [Servlet
+   Error]-[/MadisonsStorefrontAssetStore/Messages/PasswordNotify.js
+   p]:
+   java.lang.AbstractMethodError:
+   com/ibm/websphere/servlet/request/IRequest.isStartAsync()Z
+   
+   The interim fix associated with this APAR resolves the problem
+   for WebSphere Commerce V7 to adapt to the WebSphere Application
+   Server 7.0.0.9. implementation.
+   
+   -------------------------------------------------------------
+   The latest available maintenance information can be obtained
+   from the Recommended Fixes for WebSphere Commerce technote:
+   http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296 [http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR36472
+   
+   
+ * REPORTED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * REPORTED COMPONENT ID
+   5724I3800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-03
+   
+   
+ * CLOSED DATE
+   2010-06-22
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * FIXED COMPONENT ID
+   5724I3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

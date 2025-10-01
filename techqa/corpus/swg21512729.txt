@@ -1,0 +1,51 @@
+Title: IBM Can we remove world-writable permissions - global write permission - United States
+
+Text:
+World writeable TECHNOTE (FAQ)
+
+QUESTION
+ Setup a recurring process to remove world-writable from the files and directories: chmod o-w. We are not planning to delete any files. Would this impact functionality ? 
+
+ANSWER
+The question is whether or not it is safe to remove world-writable for these files and directories. Some of them are dynamic and will be re-created with world-writable after reboot. For these we would like to remove world-writable on a recurring basis. 
+
+/export/opt/IBM/tivoli/tip/derby/TTSS Directory-Only /export/opt/IBM/tivoli/tip/derby/TTSS/log Directory-Only /export/opt/IBM/tivoli/tip/derby/TTSS/seg0 Directory-Only /opt/tivoli/cit/bin/etc Directory-Only /opt/tivoli/cit/bin/etc/wscanhw Directory-Only /opt/tivoli/cit/cache_data Directory-Only /tmp/javasharedresources Directory-Only /usr/ibm/common/acsi/logs Directory-Only /usr/ibm/tivoli/common/CIT/logs Directory-Only /var/.com.zerog.registry.xml File /var/ibm/common/acsi/resourceBundleLocation Directory-Only /usr/ibm/common/acsi/repos/persistSVCRepos Directory-Only /usr/ibm/common/acsi/repos/persistSVCRepos/* File /usr/ibm/tivoli Directory-Only /usr/ibm/tivoli/common Directory-Only /usr/ibm/tivoli/common/CIT Directory-Only 
+Answer: 
+
+DB2 is OK confirmed by DB2 support 
+# Revoke world-writable from recurring DB2 log files 
+/bin/chmod o-w 
+/export/opt/IBM/home/tklmdb2/sqllib/db2dump/stmmlog/stmm.*.log 
+/bin/chmod o-w 
+/opt/IBM/home/tklmdb2/tklmdb2/NODE0000/TKLMDB/.SQLCRT.FLG 
+/bin/chmod o-w 
+/opt/IBM/home/tklmdb2/tklmdb2/NODE0000/TKLMDB/*/.SQLCRT.FLG 
+
+Tested removing world-writable permissions on DB2 and it is OK. 
+
+None of these files are TKLM specific. 
+
+Some of these directories do not belong to TIP. 
+
+CIT Files TKLM V2 doesn't have them: 
+/opt/tivoli/cit/bin/etc Directory-Only 
+/opt/tivoli/cit/bin/etc/wscanhw Directory-Only 
+/opt/tivoli/cit/cache_data Directory-Only 
+/usr/ibm/tivoli Directory-Only 
+/usr/ibm/tivoli/common Directory-Only 
+/usr/ibm/tivoli/common/CIT Directory-Only 
+/usr/ibm/tivoli/common/CIT/logs Directory-Only 
+
+Changed the permissions on those files. Everything looked OK: create a master keystore. create an LTO device. create a key, backup and restore, and apply a fixpack. 
+
+Non-DE 
+/tmp/javasharedresources Directory-Only 
+/var/.com.zerog.registry.xml File Can be deleted 
+DE related files 
+/usr/ibm/common/acsi/logs Directory-Only 
+/var/ibm/common/acsi/resourceBundleLocation Directory-Only 
+/usr/ibm/common/acsi/repos/persistSVCRepos Directory-Only 
+/usr/ibm/common/acsi/repos/persistSVCRepos/* File 
+** Remove world writable permissions from DE directories. This will not impact functionality. 
+
+It is OK to change the global write permission on above directories and files.

@@ -1,0 +1,107 @@
+Title: IBM Release of QRadar 7.1 MR2 Patch 11 (7.1.0.1098887) - United States
+
+Text:
+7.1MR2 Patch 11; QRadar update; fix pack; sfs RELEASE NOTES
+
+ABSTRACT
+ A list of the installation instructions and fixes for IBM Security QRadar 7.1 MR2 Patch 11 (7.1.0.1098887). 
+
+CONTENT
+If your deployment is installed with QRadar 7.1, you can install fix pack 7.1.0-QRADAR-QRSIEM-1098887. 
+
+ 
+
+
+
+
+
+Issues resolved in QRadar 7.1 MR2 Patch 11 (7.1.0.1098887) 
+Number Description IV71974 [http://www.ibm.com/support/docview.wss?uid=swg1IV71974] QRADAR LOG MANAGER CONFIG RESTORE IS MISSING SOME NECCESSARY CONFIGURATION DATA IV72614 [http://www.ibm.com/support/docview.wss?uid=swg1IV72614] QRADAR USER INTERFACE CAN BECOME UNRESPONSIVE IN DEPLOYMENTS WITH A LARGE NUMBER OF MANAGED HOSTS Security Bulletin [http://www.ibm.com/support/docview.wss?uid=swg21701087] IBM QRadar SIEM and IBM QRadar Risk Manager can be affected by Multiple Vulnerabilities in the IBM Java Runtime Environment (CVE-2015-0138, CVE-2015-0410, CVE-2015-0400, CVE-2014-6593) Security Bulletin [http://www.ibm.com/support/docview.wss?uid=swg21701086] Vulnerabilities in OpenSSL affect IBM QRadar SIEM (CVE-2015-0286, CVE-2015-0287, CVE-2015-0289) Security Bulletin [http://www.ibm.com/support/docview.wss?uid=swg21883359] VULNERABILITY IN RC4 STREAM CIPHER AFFECTS IBM QRADAR SIEM (CVE-2015-2808) 
+Before you begin 
+
+Ensure that you take the following precautions: 
+
+ * Back up your data before you begin any software upgrade. For more information about backup and recovery, see the IBM Security QRadar Administration Guide. [http://public.dhe.ibm.com/software/security/products/qradar/documents/71MR2/QRadar/EN/QRadar_71MR2_AdminGuide.pdf] [http://www.ibm.com/support/docview.wss?uid=swg27038118] 
+ * To avoid access errors in your log file, close all open QRadar sessions. 
+ * The fix pack for QRadar cannot be installed on a managed host that is at a different software version from the Console. All appliances in the deployment must be at the same software revision to patch the entire deployment. 
+ * Verify that all changes are deployed on your appliances. 
+ * The patch cannot install on appliances that have changes that are not deployed. 
+
+
+About this task Fix packs are cumulative software updates to fix known software issues in your QRadar deployment. QRadar fix packs are installed by using an SFS file. The fix pack can update any appliance that is attached to the QRadar Console that is at the same software version as the Console.
+
+
+Procedure 
+
+ 1. Download the fix pack 7.1.0-QRADAR-QRSIEM-1098887 from the IBM Fix Central website: [https://ibm.biz/BdFBj8] [https://ibm.biz/BdEmtp]
+
+ * http://www-933.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/Other+software/IBM+Security+QRadar+SIEM&release=7.1.0&platform=Linux&function=fixId&fixids=7.1.0-QRADAR-QRSIEM-1098887&includeSupersedes=0
+ * 
+ * 
+ * 
+ * 
+ * /tmp
+ * 
+ * 
+ * Note:
+ * 
+ * /tmp
+ * 
+ * 
+ * 
+ * /media/updates
+ * 
+ * mkdir -p /media/updates
+ * 
+ * 
+ * cd /tmp
+ * 
+ * 
+ * mount -o loop -t squashfs 710_QRadar_patchupdate-7.1.0.1098887.sfs /media/updates/
+ * 
+ * 
+ * /media/updates/installer
+   
+ * Note:
+ * 
+ * 
+ * 
+ * all
+ * 
+ * 
+ * 
+ * 
+ * all
+ * 
+ * 
+ * 
+ * 
+ * all
+ * 
+ * 
+ *  Console Event Processors Event Collectors Flow Processors Flow Collectors
+   
+   
+ * 
+ * 
+ * 
+
+NOTE: If your Secure Shell (SSH) session is disconnected while the installation is in progress, the installation continues. When you reopen your SSH session and rerun the installer, the current state of the installation is displayed. 
+
+
+
+Results 
+
+A summary of the fix pack installation advises you of any managed host that were not updated. If the fix pack fails to update a managed host, you can copy the fix pack to the host and run the installation locally. 
+
+ 
+
+ 
+
+Where do I find more information?
+If you have additional questions or some of this content is not clear, you can see the QRadar forum or contact customer support: 
+
+
+ * Online QRadar Customer Forums [https://ibm.biz/BdR2kC] 
+ * Submit and manage your support tickets online 24x7 using IBM Service Request [http://www.ibm.com/software/support/servicerequest/quick_start.html] 
+ * QRadar Downloads - IBM Fix Central [http://www.ibm.com/support/fixcentral/options?selection=Security+Systems;ibm/Other+software/IBM+Security+QRadar+SIEM]

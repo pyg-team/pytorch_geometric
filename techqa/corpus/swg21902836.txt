@@ -1,0 +1,35 @@
+Title: IBM Receiving Mixed Content Errors with the IBM Connections Forums Portlet in WebSphere Portal - United States
+
+Text:
+connections; portlets; connections portlets; mixed content; forums portlet TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Receiving Mixed Content Errors with the IBM Connections Forums Portlet in IBM WebSphere Portal.
+
+The Forums portlet shows Mixed Content Errors in the console of the browser in Google Chrome and Firefox.
+
+Internet Explorer works fine.
+
+SYMPTOM
+The problem is that upon clicking on the "Previous" or "Next" links in the Forums portlet, the following error is received:
+
+"Mixed Content: The page at 'https://...' was loaded over HTTPS, but requested and insecure XMLHTTPRequest endpoint 'http://...'. This
+request has been blocked; the content must be served over HTTPS."
+
+and the portlet keeps loading without going to either the Previous or Next pages.
+
+
+
+CAUSE
+One customer that reported this issue was running an older version of the IBM Connections Portlets For WebSphere Portal.
+
+Page Navigation in the Forums portlet was failing for Chrome and Firefox due to changes performed by the Web Browsers Providers/Vendors, which affected how https pages containing http resources are loaded. 
+
+The problem doesn't happen in IE.
+
+
+RESOLVING THE PROBLEM
+Update to the latest version of the Connections portlets from the IBM Collaboration Solutions catalog [https://greenhouse.lotus.com/catalog/] in order to resolve the issue.
+
+The following document contains information for how to update from a previous release
+http://www-01.ibm.com/support/knowledgecenter/SSYGQH_4.5.0/connectors/admin/t_connections_portlets_updating.dita?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSYGQH_4.5.0/connectors/admin/t_connections_portlets_updating.dita?lang=en]

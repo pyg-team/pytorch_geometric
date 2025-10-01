@@ -1,0 +1,26 @@
+Title: IBM MobileFirst Platform Foundation and IBM Worklight support for Apple iOS 9 - United States
+
+Text:
+IMF60 WL61; ios; ios9 TECHNOTE (FAQ)
+
+QUESTION
+ How can my IBM MobileFirst Platform Foundation apps or my IBM Worklight apps support Apple iOS 9? 
+
+CAUSE
+Apple iOS 9 introduces a number of changes that require you to take additional actions so that your MobileFirst apps can support iOS 9.
+
+ANSWER
+For your apps to support iOS 9, download and install the latest interim fix from IBM Fix Central for your product. After you install the fix, update your projects and your Worklight Server or MobileFirst Server according to the instructions in the following PDF file: 
+
+MobileFirst Platform iOS 9 support.pdf [/support/docview.wss?uid=swg21966655&aid=2]MobileFirst Platform iOS 9 support.pdf [/support/docview.wss?uid=swg21966655&aid=1] 
+
+After you complete these tasks, your apps from IBM Worklight V6.0 and later, IBM Worklight Foundation V6.2.0, and IBM MobileFirst Platform Foundation V6.3 and later will continue to work on iOS 9 as they did on previous versions of iOS.
+
+RELATED INFORMATION
+ IBM Fix Central [http://www.ibm.com/support/fixcentral/]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Mobile- Speech and Enterprise Access IBM MobileFirst Platform Foundation Application Development Apple iOS 7.1, 7.0, 6.3 Mobile- Speech and Enterprise Access IBM MobileFirst Platform Foundation for iOS Application Development Apple iOS 7.1, 7.0, 6.3 Mobile- Speech and Enterprise Access IBM Worklight Application Development Apple iOS 6.2, 6.1, 6.0

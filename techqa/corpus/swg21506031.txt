@@ -1,0 +1,90 @@
+Title: IBM How do I manually run the download cacher tool for AIX? - United States
+
+Text:
+372 Patch; googlebigfix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Instructions for running the AIX download cacher tool. 
+
+RESOLVING THE PROBLEM
+
+
+The download cacher tool for AIX is designed to automatically download and cache AIX Technology Levels, Service Packs or Concluding Service Packs to facilitate deployment of AIX Fixlet messages. Download the tool, which is a Perl executable, together with the required components, a JRE and the Electronic Customer Care (ECC) client, from AIX Download Cacher Tool [http://software.bigfix.com/download/bes/util/AIXDownloadCacher.bfarchive].
+
+You will also need the BFArchive tool in the same directory as the AIX Download Cacher. The BFAchive tool can be downloaded from BFArchive Tool [http://software.bigfix.com/download/bes/util/BFArchive-win-x86-9.3.1.0.exe]. This tool will use HTTP to download specified fix packs, so you need to make sure such behavior is acceptable in your environment.
+
+Before you can use the download cacher tool, you must use the BFArchive Tool to extract the download cacher package tool. Use the following command:
+"<BFArchive file name> -x <source archive> <target directory>"
+For example: BFArchive.exe -x AIXDownloadCacher-7.0.bfarchive c:/AIXDownloadCacher
+
+To run the download cacher tool, you may wish to create a batch file with the following parameters. If you run the tool without specifying any parameters, you will be prompted to enter the parameters at the command line.
+
+Sample.bat
+AIXDownloadCacher.exe --dir "C:\SavedFiles" --logdir "C:\logs" --repo "C:\MyAIXRepo" --proxyserver http://proxy.server.com:8080 --proxyuser myuser --proxypass secretpass --fixid 6100-08-07-1524
+
+Usage:
+AIXDownloadCacher.exe --dir <directory> --fixid <Fix Pack ID> [optional parameters]
+
+Required Parameters
+
+--dir <path to output directory>
+Directory where downloaded files will be saved. This directory is also used for temporary storage of downloaded files before being compressed into a single archived file.
+
+--fixid <Fix Pack ID>
+AIX Fix Pack ID or Interim Fix APAR ID to be downloaded (ie: 6100-08-07-1524 or IZ93611).
+Note: You must specify the operating system level, technology level, service pack level, and build number in the Fix Pack ID 
+
+Optional Parameters
+
+ 
+
+--proxyserver <servername:port>
+Name and port of proxy server (ie. http://myproxy.company.com:8080).
+
+--proxyuser <username>
+Proxy username if required by server.
+
+--proxypass <password>
+Proxy password if required by server.
+
+--logdir <path to log directory>
+Specify the directory to write log file to. Defaults to the current working directory. 
+
+--repo <path to local repository of .bff files>
+Specify the location of local cache to check before attempting to download files from the Internet. Missing files will be added to the cache directory if write access is enabled. 
+
+--base <Base Technology Level>
+Specify the base Technology Level (e.g. 6100-00) to use when building the fileset list for the specified fix pack ID. Defaults to the TL of the fix pack. This option is ignored with interim fixes. 
+
+--no-archive
+Skip creation of .aix archive file. The output directory will contain the individual filesets.
+
+--clean
+Remove temp files after each run. Enabling this option will disable the ability to resume failed and incomplete downloads. Default behavior is to only remove temp files after all files for the fileset have been downloaded and a complete archive has been created.
+
+--sha1
+Rename the archived .aix file to its sha1 value.
+
+--version
+Display version information.
+
+--help
+Display usage information.
+
+Examples
+
+ 
+
+Download Fix Pack 6100-08-07-1524 through a proxy server using a local repository.
+AIXDownloadCacher.exe --dir "C:\temp" --fixid 6100-08-07-1524 --proxyserver http://proxy.server.com:8080 --proxyuser myuser --proxypass secretpass --repo "D:\AIXCache"
+
+Download Fix Pack 7100-02-07-1524 for systems already at TL 02, force removal of temp files on failures and rename .aix archive file to its sha1 value.
+AIXDownloadCacher.exe --dir "C:\temp" --fixid 7100-02-07-1524 --base 7100-02 --clean --sha1
+
+Download Fix Pack 6100-08-07-1524 with complete TL without compressing filesets into .aix archive file.
+AIXDownloadCacher.exe --dir "C:\temp" --fixid 6100-08-07-1524 --base 6100-00 --no-archive
+
+ 
+
+HISTORICAL NUMBER
+ 372

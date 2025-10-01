@@ -1,0 +1,91 @@
+Title: IBM Rational Developer for System z Host Connection failure messages - United States
+
+Text:
+RDz; Host Connect; host connection emulator; failure; host; COMM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When IBM Rational Developer for System z Host Connection emulator fails to connect or disconnects from the host system, COMM or communication messages in the Operator Information Area may help you determine why the failure occurred. 
+
+CAUSE
+Disconnects or failures to connect to the host system can be caused by many reasons including, but not limited to, client or host configuration, host errors, security configuration, or certificate expiration.
+
+DIAGNOSING THE PROBLEM
+Understanding the communication messages provided in the Operator Information Area can help to resolve the disconnect.
+
+
+As an example, the IBM Rational Developer for System z Host Connection emulator when disconnected shows a specific communication message, 657 (circled in red in the image below): 
+
+
+[/support/docview.wss?uid=swg21419276&aid=1] [/support/docview.wss?uid=swg21419276&aid=1]
+
+For this failed connection, the host properties of the Host Connection emulator were configured to connect using SSL enabled, but the port the emulator was configured to connect to was a non-SSL port, 23.
+
+
+
+RESOLVING THE PROBLEM
+The most common communication messages for connection failures are: 
+
+ 
+
+
+654 
+The session could not establish a connection to the Telnet3270E server because the specified LU name is not valid. The LU name may not be valid for the following reasons: 
+
+ * The LU name is already in use by another session. 
+ * The LU name is not defined at the Telnet server. 
+ * The Telnet server does not support the LU type of the specified LU. 
+ * The LU name is not compatible with the requested LU type. For example, the session type is Display, but the specified LU is a Printer. 
+ * An unknown error occurred during Telnet device-type negotiations.
+
+
+Ensure that your session's destination address, port, and LU name are correct. Also, ensure that your Telnet server is configured for the LU name that you are requesting. 
+
+655 
+
+ * The socket connection to the Telnet server has been established and the session is waiting for negotiation to finish. 
+ * The client has SSL off and has tried to connect to the server on an SSL port. 
+
+
+Check that the SSL lock icon displays in the lower, right-hand corner of the session screen. If not, the host system port has not been configured for SSL. Try setting SSL on the client and reconnecting. 
+
+657 
+
+ * The session is in the process of establishing the TCP/IP connection to the Telnet server. 
+   
+   For SSL: 
+ * The client has SSL on and has tried to connect to the server on a non-configured port. 
+ * The client has SSL on and has tried to connect to the server on a non-SSL port. 
+
+
+
+
+658 
+The session is initializing the TCP/IP connection for Telnet3270E. 
+
+
+
+659  * The Telnet TCP connection to the session has not succeeded or has failed. 
+ * The TCP/IP connection to the Telnet3270 server could not be established. 
+ * Disconnect was selected in the Host Properties menu. 
+ * The Telnet server closed the TCP/IP connection either by application control or because it detected an error. 
+   
+   For SSL: 
+ * The client has SSL off and has tried to connect to the server on a non-configured port. 
+ * The client has SSL on and has tried to connect to the server on a non-configured port. 
+ * The client has SSL on and has tried to connect to the server on a non-SSL port. 
+
+
+
+
+663 
+The server's certificate did not match its name. Because the client requested server authentication, the connection was refused. 
+
+
+
+664 
+A secure connection could not be completed. 
+
+
+
+666 
+The server's certificate has expired.

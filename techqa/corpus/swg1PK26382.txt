@@ -1,0 +1,184 @@
+Title: IBM PK26382: MESSAGE ADMA5026E GENERATED WHEN MAPPING AN APPLICATION TO AN UNMANAGED WEBSERVER. - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+6.1.0.2: WebSphere Application Server V6.1.0 Fix Pack 2 for Solaris [http://www-01.ibm.com/support/docview.wss?uid=swg24013151]
+6.1.0.2: WebSphere Application Server V6.1.0 Fix Pack 2 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24013150]
+6.1.0.2: WebSphere Application Server V6.1.0 Fix Pack 2 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24013153]
+6.1.0.2: WebSphere Application Server V6.1.0 Fix Pack 2 for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24013142]
+6.1.0.2: WebSphere Application Server V6.1.0 Fix Pack 2 for HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24013144]
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Message ADMA5026E is generated when mapping an application to
+   an unmanaged webserver and system property:
+   com.ibm.websphere.management.enableFileServiceMBean=true
+   in the AppServer. This property enables the Node Agent to return
+   the AppManagement MBeans as well as the Deployment Manager which
+   causes the problem.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set com.ibm.websphere.management.enableFileServiceMBean=false or
+   contact Level 2 for a tempfix jar file.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere Application Server    *
+   *                 V6.0.1 for z/OS                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Re-Map of MapModuletoServer on a        *
+   *                      installed application in a ND set up    *
+   *                      (NetWork Deployment) fails.             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When the System property
+   com.ibm.websphere.management.enableConfigMBean  is set to true
+   on one or more processes running in theNetWork Deployment set
+   up,an action of MapModuletoServer on a installed application ,
+   fails with an exception:
+   Caused by:
+   com.ibm.websphere.management.exception.AdminException:
+   
+   ADMA5026E: No valid target is specified in ObjectName
+   
+   WebSphere:cell=wdcell,node=WEB1,server=IMWEBSRV for module
+   
+   PurchaseOrder_Web.war+WEB-INF/web.xml.
+   
+     at
+   
+   com.ibm.ws.management.application.AppAssociation.
+   getServerNames(AppAssociation.java:1308).
+   
+   This is due to the incorrect MBeans returned from the query
+   due to this property being set.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code changes made to make sure that the correct MBean  is
+   returned  on which the task can be invoked without failure.
+   
+   APAR PK26382 is currently targeted for inclusion in Service
+   Level (Fix Pack) 6.0.2.15 of WebSphere Application Server V6.0.1
+   for z/OS.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK26382
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-06-12
+   
+   
+ * CLOSED DATE
+   2006-09-20
+   
+   
+ * LAST MODIFIED DATE
+   2006-10-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PK30321 UK18171
+   
+   
+
+MODULES/MACROS
+ *  BBOTRRM  BBOUBINF BBO00001 BBO00003 BBO00016
+   BBO00018 BBO00030 BBO00042 BBO00058 BBO00060 BBO00084 BBO000
+   
+   ***This field was truncated.  To obtain the full apar record, please contact your local support center.***
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY UK18171 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK18171]
+   UP06/09/27 P F609
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

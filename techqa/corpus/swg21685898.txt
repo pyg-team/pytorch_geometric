@@ -1,0 +1,23 @@
+Title: IBM Domino on IBM i:  Timestamps off one hour (Daylight Savings Time) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+End users notice the current time stamp on a new memo is displayed one hour ahead or behind of Daylight Saving Time (DST). However, the client operating system's time zone Date/Time Properties and IBM i system value QTIME were changed to observe "Daylight" settings.
+
+CAUSE
+The DSTLAW parameter is missing from the NOTES.INI file.
+
+RESOLVING THE PROBLEM
+The DSTLaw parameter is a requirement for all Domino servers running on the i5/OS that observe daylight savings. It identifies the start and end dates for the Daylight Savings Time period. 
+
+In the United States, the correct value is DSTLAW=3,2,1,11,1,1 (interpreted as starting the second Sunday in March and ending the first Sunday in November. 
+
+ 3,2,1 = third month, second week, first day 
+
+11,1,1 = eleventh month, first week, first day 
+
+ 
+
+On the IBM i, this parameter is not added automatically when configuring a new server. Therefore, it must be manually added to the NOTES.INI file. A Domino server restart is required to activate this change.

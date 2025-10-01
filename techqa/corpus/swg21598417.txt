@@ -1,0 +1,57 @@
+Title: IBM DataType incorrect on Secondary - United States
+
+Text:
+netcool; impact; netcool/impact; nci; data; type; datatype; .type; replication; cluster; sync; error; 500; mark; invalid TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The DataType is not being correctly replicated across the ImpactServer Cluster 
+
+SYMPTOM
+The .type file of the Secondary ImpactServer configuration is truncated with the error message: 
+
+ * 
+ * 
+
+
+CAUSE
+APAR "IZ81446: IMPACT 511 CLUSTER UNABLE TO REPLICATE DATATYPES WITH USERPARMETERS VALUES IN EXCESS OF 16,000 CHARACTERS." [link below] 
+
+
+
+
+
+RESOLVING THE PROBLEM
+Additional comments associated with APAR IZ81446 release notes: 
+
+
+"a new property is added to increase the file size limit:
+
+
+
+ * 
+
+
+Add the property to $NCHOME/impact/etc/<SERVERNAME>_server.props file 
+where size limit can be 8192, 16384, 32768, etc.. " 
+
+The property would have to be added to all ImpactServers in the Cluster and would require a restart to enable - ensuring that the ImpactServer started as Primary had the correct, uncorrupted .type file to be replicated across the Cluster. Also ensure that there are no trailing white-space characters on the property as these invalidate properties in lower versions of Impact. 
+
+The APAR is not an issue in Impact 6 and 7, but one would still have to include this property with an appropriate value to handle a large character length for the USERPARAMETERS parameter. 
+
+The character length includes the whole USERPARAMETERS property name as well as the definition. 
+
+For example one would add the property: 
+
+ * 
+
+
+to the files: 
+
+ * 
+ * 
+ * 
+
+
+where one wished to allow the replication of a DataType between two ImpactServers called NCI1 and NCI2 in a Cluster where the USERPARMETERS property line were 20,000 characters long. 
+RELATED INFORMATION
+ APAR IZ81446 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ81446]

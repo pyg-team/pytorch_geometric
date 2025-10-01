@@ -1,0 +1,66 @@
+Title: IBM Cannot start the Rational Team Concert Server as Windows service on 64-bit platform - United States
+
+Text:
+1404257; RTC; service; windows; 32-bit; 64-bit; tomcat5; tomcat5w; valid; Win32; application TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+This technote explains how to download and configure 64 bit Tomcat to run as a service when using IBM Rational Team Concert.
+
+SYMPTOM
+Following the instructions as detailed in the Jazz.net Technote Running Jazz Team Server in Tomcat as a Windows Service [http://jazz.net/library/techtip/72] on a 64-bit platform (see link below), the Tomcat service would not start properly. The following error is encountered at service startup: 
+
+ * 
+ * [2009-08-20 14:54:14] [info] Running Service...
+ * [2009-08-20 14:54:14] [info] Starting service... 
+ * [2009-08-20 14:54:15] [174 javajni.c] [error] %1 is not a valid Win32 application. 
+ * [2009-08-20 14:54:15] [947 prunsrv.c] [error] Failed creating java C:\IBM\JazzTeamServer\server\jre\bin\j9vm\jvm.dll 
+ * [2009-08-20 14:54:15] [1202 prunsrv.c] [error] ServiceStart returned 1 
+ * [2009-08-20 14:54:16] [info] Run service finished. 
+ * [2009-08-20 14:54:16] [info] Procrun finished.
+
+ENVIRONMENT
+Microsoft Windows 2008 Server x64
+
+
+
+DIAGNOSING THE PROBLEM
+Operating system is Microsoft Windows 64-bit 
+
+Error message at service startup: [174 javajni.c] [error] %1 is not a valid Win32 application.
+
+
+
+RESOLVING THE PROBLEM
+To resolve this issue: 
+
+ 1.  [http://svn.apache.org/viewvc/tomcat/tc5.5.x/tags/TOMCAT_5_5_23/connectors/procrun/bin/]Go to <rtc_server_install_dir>/server/tomcat/bin directory and uninstall the 32-bit service by running:service remove Tomcat5
+    
+    Note: The old service may be cached somewhere - when in doubt, reboot
+    
+ 2. Rename the 32-bit service wrapper:
+    copy <rtc_server_install_dir>/server/tomcat/bin/tomcat5.exe to tomcat5.exe.32bit (or any name you want to call it) 
+ 3. Copy the 64-bit service wrapper:
+    RTC 2.X: copy /server/tomcat/bin/procrun/amd64/tomcat5.exe to the /server/tomcat/bin directory 
+    RTC 3.X: copy /server/tomcat/bin/procrun/x64/tomcat5.exe to the /server/tomcat/bin directory 
+ 4. Proceed with service configuration as detailed in TN0010: Running Jazz Team Server in Tomcat as a Windows Service - [http://jazz.net/library/techtip/72]with the exception that the path to the jvm.dll is not correct for an RTC 2.x product (it should be "<rtc_server_install_dir>/server/jre/bin/j9vm/jvm.dll") 
+ 5. Once service started, verify the Rational Team Concert Server can be reached.
+    
+    
+
+
+Leverage the Jazz Community: Jazz and Rational Team Concert have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://ibm.com/support/docview.wss?rs=3488&&uid=swg21319600] for details and links.
+
+
+
+RELATED INFORMATION
+#jazz.net work item 85748 [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.WorkItem/85748]
+Running RTC Server in Tomcat as a Windows Service [http://jazz.net/library/technote/72]
+jazz.net work item 102573 [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.WorkItem/102573]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Project Conductor Team Server Windows 1.0, 1.0.0.1 Software Development Rational Quality Manager Web App Server Windows 2.0, 2.0.0.1, 2.0.1 Software Development Rational Requirements Composer Web App Server Windows 2.0, 2.0.0.1, 2.0.0.2 Software Development Rational Team Concert Web App Server Windows 2.0.0.1, 2.0

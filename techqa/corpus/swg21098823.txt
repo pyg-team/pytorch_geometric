@@ -1,0 +1,32 @@
+Title: IBM Error: "An unnamed file contains an invalid path" While Recording a Movie - United States
+
+Text:
+ScreenCam; Workstation/Desktop; Install/Load/Run; Issues Running Product TECHNOTE (FAQ)
+
+QUESTION
+The following error occurs after clicking the Record button: 
+
+An unnamed file contains an invalid path.
+
+
+ANSWER
+In at least one case, this error occurred because the directory Windows was using to store temporary files had been deleted. Determine where Windows is attempting to store temporary files and if that directory does not exist, create it. If the path is correct and the directory exists, be sure there is sufficient space available on that drive and that it is not set to read-only or otherwise restricted.
+
+
+Supporting Information:
+
+LOCATING THE WINDOWS TEMP FILE
+To determine where Windows is trying to store temporary files in Windows NT:
+
+1. On the Windows Desktop, right-click My Computer and select Properties.
+
+2. On the Environment tab, in the System variables panel scroll down to the TEMP variable and note the path listed under "Value".This is where Windows needs to store temporary files. If this directory does not exist on the computer, it must be created.
+
+
+Related Documents:
+
+
+
+
+HISTORICAL NUMBER
+ 169579

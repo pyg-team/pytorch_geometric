@@ -1,0 +1,18 @@
+Title: IBM TRC and Derby - United States
+
+Text:
+derby; trc; database; db TECHNOTE (FAQ)
+
+QUESTION
+ I deployed Remote Control in my production system with Derby database and my database is corrupted. I need to recover the situation. 
+
+ANSWER
+DERBY db is not supported in production system and can only be used for POC or test deployments as reported in the official documentation:
+http://www.ibm.com/support/knowledgecenter/SS63NW_9.2.0/com.ibm.tem.life.doc_9.2/Remote_Control/RC_Install_Guide/rcinst_server_install.html?lang=en [http://www.ibm.com/support/knowledgecenter/SS63NW_9.2.0/com.ibm.tem.life.doc_9.2/Remote_Control/RC_Install_Guide/rcinst_server_install.html?lang=en] 
+
+If you don't have a DB backup, the only way to recover the system is by:
+- stop IBM Remote Control server service
+- move the TRCDB folder outside TRC installation path 
+- restart the IBM Remote Control server service 
+
+The system is now recovered but you will need to reconfigure all policies/users/groups

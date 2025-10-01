@@ -1,0 +1,176 @@
+Title: IBM IT24316: IBM SPECTRUM CONTROL SRA PROBES REMAINING IN RUNNING - United States
+
+Text:
+AIX SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SRA probes remain in Running because Data Server threads
+   AgentRequestHandler* spent too much time waiting on locks. When
+   they get to processing a probe results the SRA connection is
+   long gone.
+   Log show :
+   java core on Data Server side has a lot of AgentRequestHandler*
+   waiting on locks:
+   java core on Data Server side has a lot of AgentRequestHandler*
+   waiting on locks:
+   3XMTHREADINFO      "AgentRequestHandler26"
+   J9VMThread:0x0000000002EEAC00, j9thread_t:0x0000000013E012C0,
+   java/lang/Thread:0x00000000A0803070, state:CW, prio=5
+   3XMTHREADINFO      "AgentRequestHandler21"
+   J9VMThread:0x0000000002F3A300, j9thread_t:0x0000000013E02C60,
+   java/lang/Thread:0x00000000A0803318, state:CW, prio=5
+   3XMTHREADINFO      "AgentRequestHandler29"
+   J9VMThread:0x0000000002EC6700, j9thread_t:0x00000000141246E0,
+   java/lang/Thread:0x00000000A59F91C8, state:CW, prio=5
+   3XMTHREADINFO      "AgentRequestHandler4"
+   J9VMThread:0x0000000002D7DB00, j9thread_t:0x0000000014111C30,
+   java/lang/Thread:0x00000000A94CFC78, state:CW, prio=5
+   4XESTACKTRACE                at java/lang/Thread.sleep(Native
+   Method)
+   4XESTACKTRACE                at
+   java/lang/Thread.sleep(Thread.java:909(Compiled Code))
+   4XESTACKTRACE                at
+   com/tivoli/itsrm/backend/LockManager.waitOnLock(LockManager.java
+   :487(Compiled Code))
+   4XESTACKTRACE                at
+   com/tivoli/itsrm/backend/LockManager.lock(LockManager.java:121(C
+   ompiled Code))
+   4XESTACKTRACE                at
+   com/ibm/tpc/rollup/RUProcessingInfoComputerGroup.copyLocalValues
+   (RUProcessingInfoComputerGroup.java:149(Compiled Code))
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * IBM Spectrum Control 5.2.x users with over 1000 SRAs         *
+   * installed.                                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Spectrum Control probes of SRAs may remain in Running state  *
+   * because Data Server threads AgentRequestHandler* spending    *
+   * too much time waiting on locks. When they get to processing  *
+   * a                                                            *
+   * probe result the SRA connection is expired.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fix maintenance when available                         *
+   ****************************************************************
+   After a SRA probe several rollup processings were run to update
+   the rollup tables. Some of those were redundant but in case the
+   of high number of SRAs they were blocking the Data Server.
+   The fix was to reduce the rollup processing to strictly what is
+   necessary to update what has been changed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   
+   IBM Spectrum Control 5.2.17  |  refresh pack  |
+   5.2-TIV-TPC-RP0017  |  May 2018
+   
+   http://www.ibm.com/support/docview.wss?&uid=swg21320822 [http://www.ibm.com/support/docview.wss?&uid=swg21320822]
+   
+   The target dates for future releases do not represent a formal
+   commitment by IBM. The dates are subject to change without
+   notice.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT24316
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPCA0
+   
+   
+ * REPORTED RELEASE
+   52D
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-03-08
+   
+   
+ * CLOSED DATE
+   2018-04-19
+   
+   
+ * LAST MODIFIED DATE
+   2018-04-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5608TPCA0
+   
+   
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,19 @@
+Title: IBM What is the meaning of gpu_mode value - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ When GPU feature is enabled in LSF, lsload can show gpu_mode* resources and values, What is the meaning of gpu_mode value? 
+
+ANSWER
+gpu_mode is compute mode of each GPU. The value is 0~3, the meaning is:
+0: DEFAULT mode (compute shared mode)
+1: EXCLUSIVE_THREAD mode 
+2: PROHIBITED mode
+3: EXCLUSIVE_PROCESS mode 
+
+Default mode GPU can be shared with several jobs, prohibited mode GPU is not allowed to run job, The GPU of exclusive process mode or exclusive thread mode only is allowed to run one job, but in the same time, only one process runs on exclusive process mode GPU and one thread runs on exclusive thread mode GPU.

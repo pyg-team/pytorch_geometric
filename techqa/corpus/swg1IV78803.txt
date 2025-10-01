@@ -1,0 +1,166 @@
+Title: IBM IV78803: UNABLE TO VIEW SOA TOPOLOGY WORKSPACES WITH ORACLE JAVA JRE - United States
+
+Text:
+  READMES ARE AVAILABLE
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 7 README 7.2.0.1-TIV-ITCAMSOA-IF0007 [http://www-01.ibm.com/support/docview.wss?uid=isg400002451]
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 9 README 7.2.0.1-TIV-ITCAMSOA-IF0009 [http://www-01.ibm.com/support/docview.wss?uid=isg400002627]
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 12 README 7.2.0.1-TIV-ITCAMSOA-IF0012 [http://www-01.ibm.com/support/docview.wss?uid=isg400003852]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description:
+   When using an Oracle Java Runtime (JRE) to run a Tivoli
+    Enterprise Portal (TEP) client, the ITCAM for SOA view will not
+    display any workspaces.
+    When the TEP client logs are checked, the following exception
+    will be contained therein:
+   (563c5b3e.11679100-(null)AWT-EventQueue-2:PropertiesLoader,0,"Pr
+   opertiesLoader.getProperties(String)") EXCEPTION:
+   'java.lang.NullPointerException: stream == null', loading
+   properties id:
+   http://pr-soarh7itm.isonet.perth.micromuse.com:15200/classes/can [http://pr-soarh7itm.isonet.perth.micromuse.com:15200/classes/can]
+   dle/fw/resources/help/attr_kfwtsit.properties
+   Exception in thread "AWT-EventQueue-2"
+   java.lang.NoClassDefFoundError:
+   org/apache/xalan/client/XSLTProcessorApplet
+       at
+   com.ibm.management.soa.tepui.flow.topo.SCPTextUtil.<clinit>(SCPT
+   extUtil.java:61)
+       at
+   com.ibm.management.soa.tepui.flow.tep.SCPQuickFind.setCurrentQFI
+   (SCPQuickFind.java:467)
+   ...
+   
+   Approver :
+     L3 - BG
+     L2 - IS
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix:
+    Please contact IBM support to obtain
+    7.2.0.1-TIV-ITCAMSOA-TF0031 or follow these instructions:
+    http://www-01.ibm.com/support/docview.wss?uid=swg21429283====> [http://www-01.ibm.com/support/docview.wss?uid=swg21429283====>]
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users viewing TEP with an Oracle Java Runtime
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The SOA topology would not render on an
+   * Oracle JVM. A NoClassDefFoundError would be thrown, looking
+   * for org.apache.xalan.client.XSLTProcessorApplet
+   *
+   * XSLTProcessorApplet is part of the standard IBM Java Runtime
+   * but not part of the Oracle one. The code which depended on
+   * this missing class was rewritten to remove the dependency.
+   ****************************************************************
+   * RECOMMENDATION: Apply IFix 7 when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Apply the IFix when it is available.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   | interim fix | 7.2.0.1-TIV-ITCAMSOA-IF0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV78803
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * REPORTED COMPONENT ID
+   5724SOA00
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-11-12
+   
+   
+ * CLOSED DATE
+   2015-12-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * FIXED COMPONENT ID
+   5724SOA00
+   
+   
+
+APPLICABLE COMPONENT LEVELS

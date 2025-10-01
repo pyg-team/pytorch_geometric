@@ -1,0 +1,31 @@
+Title: IBM Security Access Manager for e-business 6.1.1 Software Requirements - United States
+
+Text:
+TAMeb TAM Webseal TAM Webseal Security Access manager for ebusiness Tivoli Access manager PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Software requirements that are stated here are for IBM® Tivoli® Access Manager for e-business version 6.1.1
+
+These requirements were current when this publication went to production. For possible updates to this information, contact your customer support representative.
+
+IBM Tivoli Access Manager for e-business product overview information: 
+http://www-01.ibm.com/software/tivoli/products/access-mgr-e-bus/ [http://www-01.ibm.com/software/tivoli/products/access-mgr-e-bus/] 
+
+CONTENT
+ 
+
+
+
+Requirements by type - The list of supported operating systems and software.
+
+Requirements by platform - The complete lists of hardware requirements, supported operating systems, prerequisites and optional supported software, with component-level details and operating system restrictions. 
+
+
+Requirements by type Requirements by platform  * Operating Systems [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/osForProduct?deliverableId=50495B1043ABB95185256E43005543EC] 
+ * Software [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/prereqsForProduct?deliverableId=50495B1043ABB95185256E43005543EC] 
+
+ * AIX [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=50495B1043ABB95185256E43005543EC&osPlatform=AIX] 
+ * Linux [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=50495B1043ABB95185256E43005543EC&osPlatform=Linux] 
+ * Solaris [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=50495B1043ABB95185256E43005543EC&osPlatform=Solaris] 
+ * Windows [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=50495B1043ABB95185256E43005543EC&osPlatform=Windows] 
+ * HP [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=50495B1043ABB95185256E43005543EC&osPlatform=HP]

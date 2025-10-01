@@ -1,0 +1,69 @@
+Title: IBM Extend dbspace with REClaimstorage=Yes fails with ANR1893E and ANR3137E - United States
+
+Text:
+tsm reclaimstorage redistribute dbspace rebalance alter tablespace TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The EXTEND DBSPCE command logs the ANR3137E message with error code 9994 and the command fails with ANR1893E. 
+
+SYMPTOM
+The following messages are logged in the server activity log : 
+
+
+ANR3137E Unable to reclaim database storage for table space BFBFEXTIDXSPACE. The error code 9994 is returned. 
+ANR0985I Process xxx for EXTEND DBSPACE running in the BACKGROUND completed with completion state FAILURE at <timestamp>.
+ANR1893E Process xxx for EXTEND DBSPACE completed with a completion state of FAILURE. 
+
+Although the ANR1893E message is logged, the QUERY DBSPACE command shows the database space was extended.
+
+
+CAUSE
+Starting V7.1, by default, the "EXTEND DBSPACE" command will be executed with option REClaimstorage=Yes . With option "REClaimstorage=Yes ", the "EXTEND DBSPACE" will space redistribution with the followings steps :
+
+
+ 1. Add /newdb as the new db container
+    db2 ALTER DATABASE TSMDB1 ADD STORAGE ON /newpath 
+ 2. Rebalance each tablespace
+    db2 alter tablespace tablespace_name rebalance 
+ 3. Reduce and reclaim the free space for each tablespace
+    db2 alter tablespace tablespace_name reduce max
+
+
+The process will return a failure if any of the above steps fails. 
+ENVIRONMENT
+Tivoli Storage Manger V7
+
+
+
+DIAGNOSING THE PROBLEM
+Examine the server activity log for errors logged prior to the failure. For example : 
+
+
+ANR0162W Supplemental database diagnostic information: -1:55041:-258 ([IBM][CLI Driver][DB2/LINUXX8664] SQL0258N Neither container operations nor a REBALANCE can be performed while a rebalance of the table space is pending or in progress. SQLSTATE=55041).
+ANR3137E Unable to reclaim database storage for table space BFBFEXTIDXSPACE. The error code 9994 is returned.
+
+The above message indicates that step 3 or "alter tablespace reduce" failed on tablespace BFBFEXTIDXSPACE because the rebalance was in progress.
+
+
+RESOLVING THE PROBLEM
+Obtain the tablespace name from the ANR3137E message and execute the following steps to manually rebalance and reclaim the space. In above example, the affected tablespace is BFBFEXTIDXSPACE. 
+
+ 
+
+ 1. Login as the instance owner and the run the following command:
+    db2 alter tablespace BFBFEXTIDXSPACE rebalance 
+ 2.  
+ 3. Check the rebalance process with the following command :
+    db2 "select * from SYSIBMADM.TBSP_UTILIZATION " |grep -i progress 
+ 4.  
+ 5. After the rebalance finishes, run the following command to reclaim the space:
+    db2 alter tablespace BFBFEXTIDXSPACE reduce max 
+
+
+Notes : 
+The redistribution process uses considerable system resources, so ensure that you plan ahead when you want to add space to the database. Review the following guidelines:  * Complete the process when the server is not handling a heavy workload. 
+ * The time that is required to redistribute data and reclaim space might vary and is affected by factors such as the file system layout, the ratio of new paths to existing storage paths, server hardware, and concurrent operations. To get a rough estimate, you can try the operation with a small Tivoli Storage Manager database on a lab system. Use your results as a reference to estimate the time that is required for the procedure. 
+ * Do not interrupt the redistribution process. If you try to stop it, for example, by halting the process that is completing the work, you must stop and restart the DB2® server. When the server is restarted, it will go into crash recovery mode, which takes several minutes, after which the redistribution process resumes.
+
+
+If above can't be satisfied, consider turning off the space redistribution process using the "reclaimstorage=NO" parameter and perform a manual redistribution, as needed, using the below document.  * Steps to rebalance Database tablespaces [http://www.ibm.com/support/docview.wss?uid=swg21611157]

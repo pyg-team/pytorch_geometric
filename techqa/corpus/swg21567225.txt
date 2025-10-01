@@ -1,0 +1,23 @@
+Title: IBM How to move preferences files to a database storage in FileNet Content Engine - United States
+
+Text:
+XT preferences; change storage area TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do you move the FileNet Workplace XT (WPXT) site and user preference files from an Object Store's local file store to its database store? 
+
+SYMPTOM
+WPXT site and users preferences are being saved locally to an object store's File Store. 
+
+
+CAUSE
+It was set up initially to use the local file store.
+
+RESOLVING THE PROBLEM
+
+
+
+ 1. From FileNet Enterprise Manager (FEM) - change the Default Storage Area and/or Policy of the Preferences Document Class to the desired Database Store. 
+ 2. Log into WPXT as an administrator and open Site Preferences. 
+ 3. From FEM - select object store where the preferences files resided - Root Folder - Preferences folder and delete existing WPXT preferences. 
+ 4. Select Apply in WPXT and save the site preferences which generates a new preferences file and stores it into the database store.

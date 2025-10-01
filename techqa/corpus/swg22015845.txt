@@ -1,0 +1,67 @@
+Title: IBM 【セキュリティ情報】 IBM MQ および IBM WebSphere MQはOpenSSLに関してモンゴメリ乗算の不具合に起因した脆弱性が報告されています (CVE-2017-3736) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM MQ および IBM WebSphere MQはOpenSSLの脆弱性により、悪意のある第三者が機密情報を取得する可能性があります。 原因は、x86_64モンゴメリ乗算関数 bn_sqrx8x_internal().x のキャリー伝搬の不具合があるためです。
+
+OpenSSLは、IBM iのプラットフォーム上でのみIBM MQ Advanced Message Securityによって使用されます。 
+
+VULNERABILITY DETAILS
+最新の情報については、下記URLの文書（英語）をご参照ください。
+IBM Security Bulletin: IBM MQ and IBM WebSphere MQ are vulnerable to an OpenSSL Montgomery squaring function propagation flaw (CVE-2017-3736)
+http://www-01.ibm.com/support/docview.wss?uid=swg22013025 [http://www-01.ibm.com/support/docview.wss?uid=swg22013025&myns=swgws&mynp=OCSSYHRD&mynp=OCSSFKSJ&mync=E&cm_sp=swgws-_-OCSSYHRD-OCSSFKSJ-_-E] 
+
+
+
+CVEID: CVE-2017-3736 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-3736]
+DESCRIPTION: OpenSSLは、悪意のある第三者が x86_64 モンゴメリ乗算関数bn_sqrx8x_internal（）のキャリー伝搬の不具合に起因して機密情報を取得する可能性があります。 パッチを適用していないシステムにオンラインでアクセスし、秘密鍵の情報を取得する可能性があります。
+CVSS Base Score: 5.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/134397 [https://exchange.xforce.ibmcloud.com/vulnerabilities/134397] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N) AFFECTED PRODUCTS AND VERSIONS
+IBM MQ と IBM MQ Appliance の下記のバージョンで影響を受けます。 
+
+IBM MQ v8.0 
+
+ * 対象バージョン 8.0.0.0 - 8.0.0.8
+
+
+IBM MQ v9 LTS  * 対象バージョン 9.0.0.0 - 9.0.0.2
+
+REMEDIATION/FIXES
+IBM MQ v8.0 
+
+Fixpack 8.0.0.9 [http://www-01.ibm.com/support/docview.wss?uid=swg22015103] を適用してください 
+IBM MQ v9 LTS  * Fixpack 9.0.0.3 を適用してください
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+公開済みのフィックスパックについては、以下のサイトよりご利用いただけます。 Recommended Fixes for WebSphere MQ 
+http://www.ibm.com/support/docview.wss?uid=swg27006037 [http://www.ibm.com/support/docview.wss?uid=swg27006037] 
+
+フィックス・パックの公開予定については、以下のサイトよりご確認いただけます。 
+MQ planned maintenance release dates 
+http://www.ibm.com/support/docview.wss?uid=swg27006309 [http://www.ibm.com/support/docview.wss?uid=swg27006309] 
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+関連情報
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg22013025]
+
+
+
+
+
+クロスリファレンス情報 区分 製品 コンポーネント プラットフォーム バージョン エディション Business Integration IBM MQ Business Integration IBM MQ Advanced Business Integration WebSphere MQ

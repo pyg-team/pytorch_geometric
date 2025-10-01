@@ -1,0 +1,70 @@
+Title: IBM Instructions for Generating Trace Logs for both FileNet P8 Content Platform Engine and IBM Connections Waltz - United States
+
+Text:
+ WHITE PAPER
+
+ABSTRACT
+ You can configure log4j to generate trace logs for both FileNet P8 Content Platform Engine and IBM Connections Waltz at the same time. 
+
+CONTENT
+Starting with FileNet P8 version 5.2, IBM Connections Waltz comes bundled with FileNet P8 Content Platform Engine (CPE). If standard logging procedures are followed, the logs for both CPE and Waltz cannot be generated at the same time. 
+
+This white paper shows how to generate CPE and Waltz logs concurrently. It comes with an attached log4j.xml file, which you can use as a starting point. Screen shots are based on IBM® WebSphere® Application Server 7.0. 
+
+Configuration Steps
+
+1) Download the attached log4j.xml file and save it in the c:\temp folder. The file contains log4j settings for both CPE and Waltz. 
+
+2) On the WebSphere server that hosts the FileNet P8 Content Platform Engine, add the following JVM arguments:
+
+-DskipTLC=true -Dlog4j.configuration=file:/c:/temp/log4j.xml [file:///c:/temp/log4j.xml] 
+
+[/support/docview.wss?uid=swg27040423&aid=1] [/support/docview.wss?uid=swg27040423&aid=1]
+
+3) Save the change and restart the WebSphere Application Server. The system is now ready to generate trace logs for CPE and Waltz concurrently.
+
+Note: Syntax-errors in log4j.xml will be logged to the SystemErr.log file of the WebSphere Server hosting FileNet.
+
+Log File Location 
+
+With the default settings in log4j.xml file, the following three logs are generated: 
+· p8_server_error.log 
+· p8_server_trace.log 
+· waltz.sonata.trace.log
+
+They are located in the following path: 
+
+app_server_root_dir\profiles\AppSrv01\logs\
+
+For example, here is the location on a Windows server:
+
+C:\Program Files\IBM\WebSphere\AppServer\profiles\AppSrv01\logs\
+
+With the default log4j settings, CPE trace log messages are in the p8_server_trace.log file, while Waltz trace messages are in the waltz.sonata.trace.log file.
+
+Configuration Variations
+
+The log4j in the XML file can be configured for the following purposes. 
+
+Troubleshooting Functional Issues
+
+With the default log4j settings, detailed trace messages are logged for security troubleshooting. For CPE, both EJB and Security sub-systems are enabled. To troubleshoot security-related issues use the log4j.xml file as-is, without modification. 
+
+[/support/docview.wss?uid=swg27040423&aid=2] [/support/docview.wss?uid=swg27040423&aid=2]
+
+Troubleshooting Performance Issues 
+
+Turn on timer flags to troubleshoot performance issues in directory service area. Turn off detail level for CPE’s Security sub-system. Otherwise, it will generate more directory service calls and add more performance overhead. 
+
+[/support/docview.wss?uid=swg27040423&aid=3] [/support/docview.wss?uid=swg27040423&aid=3]
+
+Log CPE and Waltz Messages in the Same File
+
+Both CPE and Waltz trace messages can be logged to the same file (p8_server_trace.log) by adding FileNetTraceRollingAppender to the root logger. 
+
+[/support/docview.wss?uid=swg27040423&aid=4] [/support/docview.wss?uid=swg27040423&aid=4]
+
+
+
+
+log4j.xml [/support/docview.wss?uid=swg27040423&aid=6]log4j.xml [/support/docview.wss?uid=swg27040423&aid=5]

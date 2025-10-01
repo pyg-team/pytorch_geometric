@@ -1,0 +1,136 @@
+Title: IBM IZ42703: ORACLE_LISTENER_CRIT SITUATION NOT FIRED WHEN ONE LISTENER DOWN - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When multiple listeners are configured on an Oracle server,
+   default situation Oracle_Listener_Crit becomes true only when
+   all listener processes are down.
+   As soon 1 listener starts, the situation goes in closed state.
+   
+   If one defines a situation to monitor a single listener by name,
+   such as:
+   
+   *IF *VALUE Oracle_Listener_Detail.Listener_Status *NE Active
+   *AND *VALUE
+   Oracle_Listener_Detail.Listener_Name *EQ LISTENER
+   
+   unexpected behavior is reported when listener names begin the
+   same way.
+   
+   E.g., if you have two listeners named LISTENER and LISTENER1,
+   the situation above will become true again only when both of
+   them is down (while just LISTENER would be enough).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Don't use listener names beginning with the same substring.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Oracle_Listener_Crit situation not fired if listener "LISTENER1"
+   alive but listener "LISTENER" is stopped.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Change codes to check the listener name more strictly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ42703
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON ORACLE
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96OO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-28
+   
+   
+ * CLOSED DATE
+   2009-04-16
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON ORACLE
+   
+   
+ * FIXED COMPONENT ID
+   5724B96OO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

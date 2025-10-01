@@ -1,0 +1,47 @@
+Title: IBM During installation IBM SPSS product(s) displays message including 1311. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You received product installation media in the form of a compressed file (.zip). During installation an error presents with the following content 
+
+"Error 1311. Source file not found" and the installation does not continue. 
+
+SYMPTOM
+'Error 1311. Source file not found' during installation.
+
+
+CAUSE
+Operating systems allow opening compressed (zip) files without extracting them. Some required files are not automatically extracted and are not available to be used during the installation process.
+
+RESOLVING THE PROBLEM
+Stop the installation. Extract all of the files in the compressed (.zip file) to a new folder, and run the installer executable ('setup.exe') from that new folder.
+
+
+
+Microsoft Windows operating systems
+(1) Right-click the compressed file (.zip).
+(2) Select the 'Extract All' drop-menu option.
+(3) Select the 'Extract' button.
+(4) When complete, a (new) folder containing the extracted (decompressed) files will appear in the same location as the compressed (zip) file.
+(5) Run the product installer from the (new) folder containing the extracted (decompressed) files according to the product installation instructions. 
+
+ 
+
+ Macintosh operating systems
+(1) Right-click (Control+click) on the compressed file (.zip).
+(2) Select the 'Open With' drop-down menu option.
+(3) Select 'Archive Utility' from the available options. 
+(4) The Archive Utility window displays with a progress bar.
+(5) When complete, a new folder will contain the extracted (decompressed) files in the same location as the compressed file (.zip).
+(6) Run the product installer from the new folder which contains the extracted (decompressed) files.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+
+
+HISTORICAL NUMBER
+ 76802

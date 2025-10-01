@@ -1,0 +1,130 @@
+Title: IBM IZ96968: DOC: HOW TO DISABLE TEP LDAP AUTHENTICATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  APAR Type:            Field
+   Approver Initials:    bs
+   Severity:             3
+   Reported Release:     622
+   Compid:               5724C04PS Tivoli Enterprise Portal Server
+   ABSTRACT:             DOC: How to disable TEP LDAP
+   Authentication
+   
+   PROBLEM DESCRIPTION:
+   
+   TEP LDAP authentication can't be disabled by just setting
+   KFW_LDAP_ENABLED = NO.
+   
+   disableLDAPRepository.sh has to also be run.
+   
+   
+   RECREATE INSTRUCTIONS:
+   ITM Documentation only references disableLDAPRepository.sh in
+   the troubleshooting guide.  We need to add steps on how to
+   disable
+   the TEPS LDAP authentication to the Users or Admin Guide.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  run disableLDAPRepository.sh
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Documentation needed to explain how to disable LDAP
+   authentication at the Tivoli Enterprise Portal Server.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Troubleshooting Guide to the Admin Guide. See the section
+   "Disabling LDAP authentication on the portal server"
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ96968
+   
+   
+ * REPORTED COMPONENT NAME
+   TEPS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04PS
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-18
+   
+   
+ * CLOSED DATE
+   2011-05-31
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,323 @@
+Title: IBM JR31654: DEADLOCKS OCCUR WHEN PARSING BUSINESS OBJECTS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere Process Server V6.2.0 Fix Pack 1 (V6.2.0.1) [http://www-01.ibm.com/support/docview.wss?uid=swg24022185]
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 1 (6.2.0.1) [http://www-01.ibm.com/support/docview.wss?uid=swg24022868]
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 2 (6.2.0.2) [http://www-01.ibm.com/support/docview.wss?uid=swg24024407]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There will be a number of WSVR0605W messages
+   [11/10/11 4:36:47:378 EST] 00000031 ThreadMonitor W   WSVR0605W:
+   Thread "WebContainer : 1" (00000040) has been active
+   for 745848 milliseconds and may be hung.  There is/are
+   1 thread(s) in total in the server that may be hung.
+   .
+      If a java stack is recorded with the WSVR0605W message, it
+   will show threads in this state.
+   at org/apache/xerces/parsers/XML11Configuration.<init>(Bytecode
+   PC:815(Compiled Code))
+   at
+   org/apache/xerces/parsers/XIncludeAwareParserConfiguration.<init
+   >(Bytecode PC:4(Compiled Code))
+   at
+   org/apache/xerces/parsers/XIncludeAwareParserConfiguration.<init
+   >(Bytecode PC:4(Compiled Code))
+   at java/lang/Class.newInstanceImpl(Native Method)
+   at java/lang/Class.newInstance(Class.java:1328(Compiled Code))
+   at org/apache/xerces/parsers/ObjectFactory.newInstance(Bytecode
+   PC:8(Compiled Code))
+   at org/apache/xerces/parsers/ObjectFactory.createObject(Bytecode
+   PC:529(Compiled Code))
+   at org/apache/xerces/parsers/ObjectFactory.createObject(Bytecode
+   PC:3(Compiled Code))
+   at org/apache/xerces/parsers/SAXParser.<init>(Bytecode
+   PC:5(Compiled Code))
+   .
+   OR
+   .
+   at java/lang/ClassLoader.loadClass(ClassLoader.java:597(Compiled
+   Code))
+   at javax/xml/parsers/FactoryFinder.newInstance(Bytecode
+   PC:14(Compiled Code))
+   at javax/xml/parsers/FactoryFinder.find(Bytecode PC:563(Compiled
+   Code))
+   at javax/xml/parsers/SAXParserFactory.newInstance(Bytecode
+   PC:4(Compiled Code))
+   .----------------------------------------------
+      The root cause of this is a deadlock.  The following WPS
+   code might be the root cause of this deadlock situation.
+   
+   Error stack trace related to WPS:
+   com/ibm/wbiserver/mediation/ifm/InterfaceMediationHandler$2.run(
+   InterfaceMediationHandler.java:137)
+   com/ibm/wbiserver/mediation/ifm/InterfaceMediationHandler.loadIF
+   MInstance(InterfaceMediationHandler.java:133)
+   com/ibm/wbiserver/mediation/ifm/InterfaceMediationHandler.getIFM
+   Handler(InterfaceMediationHandler.java:207(Compiled Code))
+   com/ibm/wbiserver/mediation/MediationContext.<init>(MediationCon
+   text.java:90(Compiled Code))
+   com/ibm/wbiserver/mediation/MediationImplementationHandler.proce
+   ssMessage(MediationImplementationHandler.java:286(Compiled
+   Code))
+   .-------------------------------------------------------
+   
+   From the javacore files we see:
+   1LKDEADLOCK    Deadlock detected !!!
+   
+   NULL           ---------------------
+   NULL
+   2LKDEADLOCKTHR  Thread "WebContainer : 1" (0x0000000081DB4000)
+   3LKDEADLOCKWTR    is waiting for:
+   4LKDEADLOCKMON      sys_mon_t:0x0000000085E664B8 infl_mon_t:
+   0x0000000085E66538:
+   4LKDEADLOCKOBJ
+   com/ibm/ws/classloader/CompoundClassLoader@0000020016D00220/0000
+   020016D0
+   0238:
+   3LKDEADLOCKOWN    which is owned by:
+   2LKDEADLOCKTHR  Thread "WebContainer : 0" (0x00000000806BF200)
+   3LKDEADLOCKWTR    which is waiting for:
+   4LKDEADLOCKMON      sys_mon_t:0x00000200B4E41B28 infl_mon_t:
+   0x00000200B4E41BA8:
+   4LKDEADLOCKOBJ
+   org/apache/xerces/impl/dv/DTDDVFactory@00000000809157F0/00000000
+   80915808
+   :
+   3LKDEADLOCKOWN    which is owned by:
+   2LKDEADLOCKTHR  Thread "WebContainer : 1" (0x0000000081DB4000)
+   .
+   .--------------------
+   2LKMONINUSE      sys_mon_t:0x00000200B4E41B28 infl_mon_t:
+   0x00000200B4E41BA8:
+   3LKMONOBJECT
+   org/apache/xerces/impl/dv/DTDDVFactory@00000000809157F0/00000000
+   80915808
+   : Flat locked by "WebContainer : 1" (0x0000000081DB4000), entry
+   count 2
+   3LKWAITERQ            Waiting to enter:
+   3LKWAITER                "WebContainer : 2" (0x0000000080352100)
+   3LKWAITER                "WebContainer : 3" (0x00000000802D7000)
+   3LKWAITER                "WebContainer : 23"
+   (0x00000200B49A8C00)
+   3LKWAITER                "WebContainer : 0" (0x00000000806BF200)
+   .
+   .-------
+   2LKMONINUSE      sys_mon_t:0x0000000085E664B8 infl_mon_t:
+   0x0000000085E66538:
+   3LKMONOBJECT
+   com/ibm/ws/classloader/CompoundClassLoader@0000020016D00220/0000
+   020016D0
+   0238: Flat locked by "WebContainer : 0" (0x00000000806BF200),
+   entry
+   count 1
+   3LKWAITERQ            Waiting to enter:
+   3LKWAITER                "WebContainer : 1" (0x0000000081DB4000)
+   .
+   .----------------------------------------------
+   3XMTHREADINFO      "WebContainer : 0" (TID:0x00000000806BF200,
+   sys_thread_t:0x00000000804E4CD0, state:B, native
+   ID:0x0000000000001061)
+   prio=5
+   4XESTACKTRACE          at
+   org/apache/xerces/parsers/XML11Configuration.<init>(Bytecode
+   PC:815(Compiled Code))
+   4XESTACKTRACE          at
+   org/apache/xerces/parsers/XIncludeAwareParserConfiguration.<init
+   >(Byteco
+   de PC:4(Compiled Code))
+   4XESTACKTRACE          at
+   org/apache/xerces/parsers/XIncludeAwareParserConfiguration.<init
+   >(Byteco
+   de PC:4(Compiled Code))
+   4XESTACKTRACE          at java/lang/Class.newInstanceImpl(Native
+   Method)
+   4XESTACKTRACE          at
+   java/lang/Class.newInstance(Class.java:1328(Compiled Code))
+   4XESTACKTRACE          at
+   org/apache/xerces/parsers/ObjectFactory.newInstance(Bytecode
+   PC:8(Compiled Code))
+   4XESTACKTRACE          at
+   org/apache/xerces/parsers/ObjectFactory.createObject(Bytecode
+   PC:529(Compiled Code))
+   4XESTACKTRACE          at
+   org/apache/xerces/parsers/ObjectFactory.createObject(Bytecode
+   PC:3(Compiled Code))
+   .
+   .---------
+   3XMTHREADINFO      "WebContainer : 1" (TID:0x0000000081DB4000,
+   sys_thread_t:0x0000000081D9C0B8, state:B, native
+   ID:0x0000000000001068)
+   prio=5
+   4XESTACKTRACE          at
+   java/lang/ClassLoader.loadClass(ClassLoader.java:597(Compiled
+   Code))
+   4XESTACKTRACE          at
+   org/apache/xerces/impl/dv/ObjectFactory.findProviderClass(Byteco
+   de
+   PC:55(Compiled Code))
+   4XESTACKTRACE          at
+   org/apache/xerces/impl/dv/ObjectFactory.newInstance(Bytecode
+   PC:3(Compiled Code))
+   4XESTACKTRACE          at
+   org/apache/xerces/impl/dv/DTDDVFactory.getInstance(Bytecode
+   PC:5(Compiled Code))
+   4XESTACKTRACE          at
+   org/apache/xerces/impl/dv/DTDDVFactory.getInstance(Bytecode
+   PC:2(Compiled Code))
+   4XESTACKTRACE          at
+   org/apache/xerces/parsers/XML11Configuration.<init>(Bytecode
+   PC:815(Compiled Code))
+   4XESTACKTRACE          at
+   org/apache/xerces/parsers/XIncludeAwareParserConfiguration.<init
+   >(Byteco
+   de PC:4(Compiled Code))
+   4XESTACKTRACE          at
+   org/apache/xerces/parsers/XIncludeAwareParserConfiguration.<init
+   >(Byteco
+   de PC:4(Compiled Code))
+   4XESTACKTRACE          at java/lang/Class.newInstanceImpl(Native
+   Method)
+   4XESTACKTRACE          at
+   java/lang/Class.newInstance(Class.java:1328(Compiled Code))
+   4XESTACKTRACE          at
+   org/apache/xerces/parsers/ObjectFactory.newInstance(Bytecode
+   PC:8(Compiled Code))
+   4XESTACKTRACE          at
+   org/apache/xerces/parsers/ObjectFactory.createObject(Bytecode
+   PC:529(Compiled Code))
+   4XESTACKTRACE          at
+   org/apache/xerces/parsers/ObjectFactory.createObject(Bytecode
+   PC:3(Compiled Code))
+   4X
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Process Server v6.1.0.x,           *
+   *                 v6.1.2.x, and v6.2.0.0 users.                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Deadlocks will occur when parsing       *
+   *                      business objects (BO).                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Problem caused synchronization deadlocks.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Applying this interim fix will resolve the issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR31654
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-13
+   
+   
+ * CLOSED DATE
+   2009-02-18
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP
+   
+   
+ * R612 PSY
+   UP
+   
+   
+ * R620 PSY
+   UP

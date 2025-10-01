@@ -1,0 +1,38 @@
+Title: IBM Guardium Open Mic: Configuring & troubleshooting ATAP and EXIT functionality for db traffic collection - REPLAY AVAILABLE - United States
+
+Text:
+ISS_OPEN_MIC OPEN_MIC; STEwebcastDocument WEBCAST
+
+ABSTRACT
+ IBM Security Guardium Support hosted this Open Mic on November 30, 2017 discussing configuring Guardium ATAP and EXIT to collect database traffic. 
+
+CONTENT
+This Open Mic discussed the usage of ATAP and EXIT. ATAP allows interception of encrypted traffic at the database server application level, and EXIT functionality making possible to intercept any traffic while eliminating the need for loading KTAP module into the kernel. 
+
+Replay 
+A recording of the session is available on the IBM Security Support You Tube channel [https://youtu.be/WzvnMVuDW8I] 
+
+
+
+Presentation 
+
+OpenMic_ATAP-EXIT.pdf [/support/docview.wss?uid=swg27050459&aid=2]OpenMic_ATAP-EXIT.pdf [/support/docview.wss?uid=swg27050459&aid=1] 
+
+
+How to ask questions Post your question at the bottom of this document and it will be answered in the dW Answers forum! 
+
+
+
+About Open Mic Webcasts IBM Security Systems Support wants to help you take full advantage of your products. Join us for our Open Mic Webcast series as technical experts share their knowledge and answer your questions. These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient online webcast format. 
+
+
+To be on the mailing list that gets notified about Security Support's Open Mic webcasts, Send an e-mail to isssprt@us.ibm.com [isssprt@us.ibm.com?subject=ste%20subscribe%20InfraSec] with the subject line: 
+
+ste subscribe guardium 
+
+We welcome you to follow us on Twitter [http://bit.ly/1jZ80d3] @AskIBMSecurity [http://bit.ly/1jZ80d3]. 
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2017/10/27

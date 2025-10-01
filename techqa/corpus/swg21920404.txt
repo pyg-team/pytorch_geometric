@@ -1,0 +1,83 @@
+Title: IBM How to Install TWS and TDWC 9.1 and greater level on Linux x86_64 Red Hat Enterprise 6 and 7 - United States
+
+Text:
+TWS; Red Hat 7; Installation Manager 1.8.2.1; TDWC TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installing the Tivoli Workload Scheduler and Dynamic Workload Console 9.2 (and their FixPacks) on Red Hat 6 and greater, may lead to configuration/installation issues.
+
+Note: WebSphere is supporting Red Hat 7 from the version 8.5.5.3, so it is necessary to install WebSphere 8.5.5.3 before installing the TWS.
+
+For TWS 9.1 all of the issues has been solved with TWS 9.1 FP2 and TDWC 9.1 FP2.
+
+
+
+
+ENVIRONMENT
+Red Hat Enterprise 6.0 and 7.0
+
+RESOLVING THE PROBLEM
+
+
+For Red Hat enterprise 7.0 install IBM Install Manager 1.8.2.1 as following step:
+
+
+ * Install IBM Installation Manager, version 1.8.2.1, see:  * http://www-933.ibm.com/support/fixcentral/swg/doSelectFixes?options.selectedFixes=1.8.2.1-IBMIM-LINUX-X86_64-20150409_1833&continue=1 [http://www-933.ibm.com/support/fixcentral/swg/doSelectFixes?options.selectedFixes=1.8.2.1-IBMIM-LINUX-X86_64-20150409_1833&continue=1]
+      
+      
+   
+   
+ * Check GTK and Cairo libraries, see:  * http://www-01.ibm.com/support/docview.wss?uid=swg21690056 [http://www-01.ibm.com/support/docview.wss?uid=swg21690056]
+   
+   
+
+ * Download IBM WebSphere Application Server V8.5.0.1 for Jazz for Service Management for Linux Multilingual (CIES6ML ) 
+   
+   For Red Hat enterprise 7.0 executed this step 
+ * Download (http://www-01.ibm.com/support/docview.wss?uid=swg24038133) [http://www-01.ibm.com/support/docview.wss?uid=swg24038133]:  * Application Server V8.5.5.3 local repository ZIP Files containing Base, Developers, ND, NDDMZ, Java SDK for Full Profile from FixCentral:  1. 8.5.5-WS-WAS-FP0000003-part1.zip 
+       2. 8.5.5-WS-WAS-FP0000003-part2.zip
+      
+      
+    * IBM WebSphere SDK Java Technology Edition (Optional) V7.0.7.0 for Full Profile and Liberty Profile. Note: it is required to download this package, the "optional" word is in the name of the package  1. 7.0.7.0-WS-IBMWASJAVA-part1.zip 
+       2. 7.0.7.0-WS-IBMWASJAVA-part2.zip
+          
+          
+      
+      
+   
+   
+ * Run WebSphere installation adding to Installation Manager the repositories of WebSphere 8.5.0.1, 8.5.5.3, SDK 7.0.7.0. It is possible to run the installation in one step.
+
+ * Add the following libraries to Red Hat (sometime it could be necessary to add the --force option):  * glibc-common-2.12-1.25.el6.i686.rpm glibc-2.12-1.25.el6.i686.rpm nss-softokn-freebl-3.12.9-11.el6.i686.rpm 
+    * libgcc-4.8.3-9.el7.i686.rpm 
+    * compat-libstdc++-33-3.2.3-69.el6.i686.rpm 
+    * libstdc++-4.4.4-13.el6.i686.rpm 
+   
+   
+
+ * Apply the TechNote: http://www-01.ibm.com/support/docview.wss?uid=swg21700440 [http://www-01.ibm.com/support/docview.wss?uid=swg21700440]
+
+ * Install TWS 9.2 GA (it will hang on one of the first installation panels)  * Apply the APAR IV69166 for 9.2GA (use the package IV69166_9.2_GA_MDM.zip) 
+    * Run again TWS 9.2 GA installation
+   
+   
+ * Update to TWS 9.2 FP1 (it will hang on one of the first installation panels)  * Apply the APAR IV69166 for 9.2 FP1 (use the package IV69166_9.2_FP1_MDM.zip) 
+    * Run again TWS 9.2 FP1 installation
+   
+   
+
+ * Download:  * Jazz for Service Management 1.1.0.2 for Linux Multilingual (CISZ3ML)
+   
+   
+ * Install:  * Jazz for Service Management for WebSphere 8.5 1.1.0.1 
+    * IBM Dashboard Application Services Hub 3.1.0.2
+   
+   
+
+ * Run TDWC 9.2 GA + FP1 installation (it will hang on one of the first installation panels)  * Apply the APAR IV69166 for TDWC 9.2 FP1 (use the package IV69166_9.2_FP1_MDM.zip) 
+    * Run again TDWC 9.2GA + FP1 installation
+   
+   
+
+IV69166_9.2_FP1_TDWC.zip [/support/docview.wss?uid=swg21920404&aid=2]IV69166_9.2_FP1_TDWC.zip [/support/docview.wss?uid=swg21920404&aid=1] IV69166_9.2_GA_MDM.zip [/support/docview.wss?uid=swg21920404&aid=4]IV69166_9.2_GA_MDM.zip [/support/docview.wss?uid=swg21920404&aid=3]
+IV69166_9.2_FP1_MDM.zip [/support/docview.wss?uid=swg21920404&aid=6]IV69166_9.2_FP1_MDM.zip [/support/docview.wss?uid=swg21920404&aid=5]

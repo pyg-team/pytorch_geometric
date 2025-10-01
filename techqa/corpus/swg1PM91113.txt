@@ -1,0 +1,203 @@
+Title: IBM PM91113: TRANSACTION ROUTING FROM NON-CICS/TS TO CICS/TS OVER IPIC FAILS.CICS/TS SENDS AN IS07 SENSE CODE (X'08640001'). - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Transaction routing from non CICS/TS to CICS/TS, flow a
+   capability exchange which specifies ISCE_PREFERRED_RECOVERY of
+   ISCE_RECOV_XA. Then a transaction routing from non CICS/TS
+   to CICS/TS over IPIC always fails because non CICS/TS
+   gets an IS07 from CICS/TS with a Sense code (X'08640001').
+   The problem appears to be with the way CICS handles XA
+   sync-points with IPIC.
+   
+   APAR PM87755 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM87755] raised to route RET APAR PM27349 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM27349] fix from
+   CICS/TS 4.1 to CICS/TS 4.2.
+   
+   
+   
+   
+   
+   Additional Symptom(s) Search Keyword(s): KIXREVDAM SNC08640001
+                                                        RC08640001
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Transaction Routing from a non-CICS/TS  *
+   *                      partner to CICS/TS over an IPIC         *
+   *                      connection fails when the partner       *
+   *                      receives an IS7 error flow at           *
+   *                      end-of-task.                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A non-CICS/TS partner has an IPIC connection to CICS/TS 5.1. The
+   capability exchange between the two partners specifies
+   isce_recov_xa for the XA recovery manager, rather than
+   isce_recov_cics for the CICS recovery manager as would be the
+   case when both partners were CICS/TS.
+   A transaction is routed from the non-CICS/TS partner to CICS/TS
+   where it runs as expected. However a failure occurs during
+   end-of-task syncpoint processing when CICS/TS attempts to free
+   the IPIC session which is still in send state and in-use.
+   CICS/TS sends an IS7 error flow to the TOR carrying
+   SENSE(08640001) to inform it of the error.
+   The error occurs because CICS/TS does not release the surrogate
+   terminal on the AOR during end-of-task processing.
+   
+   Additional keywords: PM27349 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM27349]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CICS Transaction Routing over IPIC support has been changed for
+   the reported problem with a non-CICS/TS TOR. During end-of-task
+   syncpoint processing CICS will now attempt to free the surrogate
+   terminal on the AOR before attempting to free the IPIC session
+   to the TOR.
+   If the attempt to free the surrogate terminal fails a new
+   exception trace point, tid_isju_tfrf_failed, will be issued.
+   The CICS Transaction Server for z/OS V5.1 Trace Entries manual,
+   SC34-2873-00, will be changed to add a new 'IS 130B' exception
+   trace point after the existing 'IS 1302' entry. The new trace
+   point has the following characteristics:
+   
+   Point ID ....... IS 130B
+   Module ......... DFHISJU
+   Level .......... EXC
+   Type ........... RELEASE_FACILITY_FAILED
+   Data ........... 1 DFHRMLKM parameter list
+                    2 DFHTFRF parameter list
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM91113
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-14
+   
+   
+ * CLOSED DATE
+   2013-07-12
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM87755 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM87755]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK95773
+   
+   
+
+MODULES/MACROS
+ *  DFHCIS4  DFHISAL  DFHISCOP DFHISCO  DFHISCU  DFHISDM  DFHISDUF
+   DFHISEMP DFHISEM  DFHISFS  DFHISIC  DFHISIF  DFHISIS  DFHISJU
+   DFHISLQP DFHISLQ  DFHISPHP DFHISPH  DFHISPRP DFHISRE  DFHISRRP
+   DFHISRR  DFHISRSP DFHISRS  DFHISSR  DFHISST  DFHISTRI DFHISUE
+   DFHISXF  DFHISXM  DFHISXS  DFHISZA  DFHMIRS
+   
+   
+    
+   
+   
+
+Publications Referenced SC34287300 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY UK95773 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK95773]
+   UP13/07/18 P F307
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

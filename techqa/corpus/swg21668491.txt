@@ -1,0 +1,44 @@
+Title: IBM Where can I download the  WebSphere MQ resource adapter? - United States
+
+Text:
+get download WebSphere MQ resource adapter RA application server JBOSS TECHNOTE (FAQ)
+
+QUESTION
+ Java™ EE application servers require the WebSphere MQ resource adapter, which is supplied as a JCA Resource Archive (RAR) file called wmq.jmsra.rar.
+
+Where can I get it? 
+
+ANSWER
+The WebSphere MQ Resource Adapter can be downloaded from Fix Central [https://www.ibm.com/support/fixcentral/]. Just search on "WS-MQ-Java-InstallRA" in the [https://www.ibm.com/support/fixcentral/]search box, or click on the following link:
+
+
+
+ * Download the WebSphere MQ Resource Adapter [http://www.ibm.com/support/entry/portal/search_results?sn=spe&filter=keywords:ibmsupportfixcentralsearch&q=WS-MQ-Java-InstallRA]
+
+
+
+Or search for the WebSphere MQ Resource Adapter manually:
+
+
+
+ 1. Go to Fix Central [https://www.ibm.com/support/fixcentral/].
+    
+    
+ 2. In the Product Selector field enter "WebSphere MQ" and select it from the list.
+    
+    
+ 3. In the "Installed Version" field select "7.5".
+    
+    
+ 4. In the "Platform" field select your platform or just choose "All", then press Continue.
+    
+    
+ 5. On the next page select the "Browse for Fixes" button and make sure that the "Show fixes that apply to this version" button is also selected, then press Continue.
+    
+    
+ 6. Select the WS-MQ-Java-InstallRA version you want and download it, for example:
+    
+    
+
+
+[/support/docview.wss?uid=swg21668491&aid=1] [/support/docview.wss?uid=swg21668491&aid=1]

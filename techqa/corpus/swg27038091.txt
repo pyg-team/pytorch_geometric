@@ -1,0 +1,99 @@
+Title: IBM Known Issues: IBM Business Process Manager products V8.0.1 Fix Pack 1 (V8.0.1.1) - United States
+
+Text:
+known issues; known issues; known issues; fix pack 8.0.1.1; fix pack 8.0.1.1 PRODUCT README
+
+ABSTRACT
+ This document details known issues with V8.0.1 Fix Pack 1 (V8.0.1.1) for the installation of the IBM Business Process Manager products. 
+
+CONTENT
+ 
+
+ * Download for the IBM Business Process Manager products [http://www.ibm.com/support/docview.wss?uid=swg24034495]
+
+TAB NAVIGATION
+ * Fix Pack installation instructions [http://www.ibm.com/support/docview.wss?uid=swg27038088]
+ * Profile upgrade instructions [http://www.ibm.com/support/docview.wss?uid=swg27038089]
+ * Known issues [http://www.ibm.com/support/docview.wss?uid=swg27038091]- selected tab,
+
+
+
+IBM Business Process Manager products collectively refers to IBM Business Process Manager Advanced, IBM Business Process Manager Advanced - Process Server, IBM Business Process Manager Standard, and IBM Business Process Manager Express. 
+
+This document provides solutions to problems that you might encounter (known issues) when you upgrade your product to IBM Business Process Manager V8.0.1 Fix Pack 1 (V8.0.1.1). It also provides information regarding mandatory interim fixes (if applicable). 
+
+Review this document before you start upgrading your installation. IBM Support Portal provides access to all known issues [https://www-947.ibm.com/support/entry/myportal/search_results?sn=spe&q=8.0.1.1&prod=R313154Z95228H31&prod=O197921M64801N83&prod=Y874774U49422V63&filter=language:en++IBM.Task:SP] for this release. 
+Note: You might need to log into IBM Support Portal before accessing this known issues link
+
+
+
+
+
+
+
+Known issues Problem: Even if you have Internet access, you might be unable to connect to the live repositories, which contain the fix pack and any required fixes 
+
+Solution: Add the service repository URLs to your IBM Installation Manager preferences. See the following technote for more information: You cannot connect to the IBM Business Process Manager or IBM Business Monitor V8.0.1 service repository during an update or a custom installation [http://www.ibm.com/support/docview.wss?uid=swg21617394] 
+
+
+
+Back to top
+
+
+Problem: The Process Designer, Process Center, and each runtime environment must be running the same version of IBM Business Process Manager V8.0.1. 
+
+Solution: Upgrade the Process Designer, Process Center, and each runtime environment to Fix Pack 1 (V8.0.1.1) together to avoid issues due to version conflicts. 
+Back to top
+
+
+
+Problem: If you have installed IBM Business Monitor V8.0 and IBM Business Process Manager v8.0 together, and you want to update IBM Business Monitor to 8.0.1 Fix Pack 1 first, you might see the following error: Error occurred during Install phase:
+CRIMA1020E: failed to extract zip com.ibm.bpm.CMN.atlas_078_all.all8.0.1001.201302280242.File C:\IBM\Websphere\AppServer\lib\htmlshellwbi.jar already exists. 
+
+Solution: Add both IBM Business Process Manager and IBM Business Process Monitor 8.0.1 Fix Pack 1 repositories in the Installation Manager preferences, and update both products at the same time. 
+
+
+Back to top
+
+
+Problem: If you create an Advanced Process Center profile as a non-admin user, using a local existing IBM DB2 database, you might see the following error: WASX7017E: Exception received while running file "/home/admin/bpm8/BPM/base/profile/actions/scripts/configureProcessPortal.py"; exception information: com.ibm.bpm.config.procsvr.ConfigLombardiException: com.ibm.bpm.config.procsvr.ConfigLombardiException: Application installation failed. 
+
+Solution: Apply WebSphere Application Server APAR PM83744 [http://www.ibm.com/support/docview.wss?uid=swg1PM83744]. 
+
+
+
+Back to top
+
+
+Problem: When you install IBM Business Process Manager V8.0.1 Fix Pack 1 (V8.0.1.1), several fixes might be wrongly listed as missing from the fix pack. You might see the following information or warning message: 
+
+One or more fixes will be uninstalled when IBM Business Process Manager is updated to 8.0.1.1. The update does not address issues that were resolved previously by the maintenance packages. The problems might return if fixes for the following issues are not reapplied or have new fixes applied to prevent the problems from returning. 
+
+ * JR44699 
+ * JR45071 
+ * PD44937
+
+
+Solution: You can safely ignore this message. These fixes are included in IBM Business Process Manager V8.0.1 Fix Pack 1 (V8.0.1.1). 
+Back to top
+
+
+
+
+
+
+Trademarks and service marks For trademark information, see the IBM Terms of Use [http://www.ibm.com/legal] Web site. 
+
+
+
+Back to top
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2013/3/15 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Installation / Configuration AIX, Linux, Linux zSeries, Solaris, Windows 8.0.1.1 Business Integration IBM Business Process Manager Express Installation / Configuration Linux, Windows 8.0.1.1 PRODUCT ALIAS/SYNONYM
+ BPM

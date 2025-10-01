@@ -1,0 +1,57 @@
+Title: IBM Security Bulletin: GNU C library (glibc) vulnerability affects DS8000 (CVE-2015-0235) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ GNU C library (glibc) vulnerability that has been referred to as GHOST affects DS8000 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-0235 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0235]
+DESCRIPTION:The gethostbyname functions of the GNU C Library (glibc) are vulnerable to a buffer overflow. By sending a specially crafted, but valid hostname argument, a remote attacker could overflow a buffer and execute arbitrary code on the system with the privileges of the targeted process or cause the process to crash. The impact of an attack depends on the implementation details of the targeted application or operating system. This issue is being referred to as the "Ghost" vulnerability.
+
+CVSS Base Score: 7.6
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/100386 [http://xforce.iss.net/xforce/xfdb/100386]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:C/I:C/A:C)
+
+AFFECTED PRODUCTS AND VERSIONS
+All
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix DS8000 CVE_GHOST_PATCH_v1.0.iso N/A 02/11/2015 
+The above patch is applicable to VRMFs R4.3- 64.36.xx.xx, R6.3 - 76.31.xx.xx / 86.31.xx.xx, and R7.x 87.21.xx.xx/ 87.3x.xx.xx / 87.4x.xx.xx and is applied to the attached HMCs. 
+
+This security bulletin will be updated with the specific service release levels for DS8870,DS8880,DS8700 and DS8100/DS8300 as these are made available. 
+
+
+Once updates have been applied, any process using glibc will need to be restarted. Given that nearly all system processes use glibc, rebooting the HMC after upgrading is suggested. 
+
+IBM recommends that you review your entire environment to identify vulnerable releases of glibc including your Operating Systems and take appropriate mitigation and remediation actions. Please contact your Operating System provider for more information. WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Disk Storage Systems DS8870 Disk Storage Systems TotalStorage DS8100 Disk Storage Systems TotalStorage DS8300 Disk Storage Systems System Storage DS8700 Disk Storage Systems System Storage DS8800

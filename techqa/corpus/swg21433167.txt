@@ -1,0 +1,37 @@
+Title: IBM Asynchronous trace capture for Decision Warehouse - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can the Decision Warehouse trace be captured asynchronously so as to reduce the impact of monitoring on clients of ruleset executions ? 
+
+ANSWER
+It is possible to customize the DW trace and implement the capture as an asynchronous operation in application servers supporting the commonj WorkManager API. A sample customization project is attached in this document. The commonj specification is in particular supported in WebSphere Application Server through asynchronous beans, see: Asynchronous beans [http://publib.boulder.ibm.com/infocenter/wasinfo/fep/index.jsp?topic=/com.ibm.websphere.nd.multiplatform.doc/info/ae/asyncbns/concepts/casb_asbover.html] 
+
+Instructions 
+
+In order to use this asynchronous DW trace implementation in an application server that supports commonj API such as WebSphere 6.1 and WebSphere 7.0, proceed as follows: 
+
+ * bundle the attached jrules-asynctrace.jar in the application that will perform ruleset executions, along with the Rule Execution Server session library used for executions 
+ * configure the application server resources to provide a commonj WorkManager : in WebSphere Application Server a default work manager is available under the JNDI name wm/default 
+ * declare the following resource reference ( in WEB-INF/web.xml if ruleset execution is initiated from a web application, or in META-INF/ejb-jar.xml if it is initiated from an EJB)
+
+
+<resource-ref> 
+<res-ref-name>wm/AsyncTraceWorkManager</res-ref-name> 
+<res-type>commonj.work.WorkManager</res-type> 
+<res-auth>Container</res-auth> 
+<res-sharing-scope>Shareable</res-sharing-scope> 
+</resource-ref>  * bind the resource reference above with the JNDI name of the commonj WorkManager provided by the application server. For example in WebSphere Application Server this binding can be established at deployment time and set to: wm/AsyncTraceWorkManager -> wm/default
+
+
+jrules-asynctrace.jar [/support/docview.wss?uid=swg21433167&aid=2] [/support/docview.wss?uid=swg21433167&aid=1] 
+
+If you are interested in learning about the implementation of this DW trace you can use the following eclipse project : 
+
+jrules-asynctrace-src.zip [/support/docview.wss?uid=swg21433167&aid=4] [/support/docview.wss?uid=swg21433167&aid=3]  
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0.1, 8.0, 7.5

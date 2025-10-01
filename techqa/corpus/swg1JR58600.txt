@@ -1,0 +1,116 @@
+Title: IBM JR58600: ODBC CONNECTOR SYBASE ASE BULKLOAD JOBS ABORT WITH NULL COLUMN VALUES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS VENDOR SOLUTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ODBC Connector jobs connecting to Sybase ASE Database would
+   abort with the following cryptic error message whenever
+   EnableBulkLoad is set and the input data has NULL values. The
+   error message would be of the following pattern:
+   
+   ODBC function "SQLExecute" reported:  SQLSTATE = HY000: Native
+   Error Code = 4,837: Msg = [IBM(DataDirect OEM)][ODBC Sybase
+   Wire Protocol driver][SQL Server]Bad row data received from the
+   client while bulk copying into object 2044595016 partition
+   2044595016 in database 4. Received a row of length 22 whilst
+   maximum or expected row length is 6.
+   (CC_OdbcDBStatement::executeInsert, file
+   CC_OdbcDBStatement.cpp, line 829)
+   
+   This is a problem with the DataDirect Sybase ASE ODBC Driver
+   and this has been fixed in the driver version: 07.16.0210
+   (B0365, U0243).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This is a problem with the DataDirect Sybase ASE ODBC Driver.
+   Fixes to multiple problems with BulkLoad are fixed in the driver
+    version starting: 07.16.0224 (B0396, U0260). The DataDirect
+   ODBC Driver set branded on or after 13th March, 2018 contains
+   the fixes to the problems reported.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR58600
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36DS
+   
+   
+ * REPORTED RELEASE
+   B50
+   
+   
+ * STATUS
+   CLOSED ISV
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-17
+   
+   
+ * CLOSED DATE
+   2018-03-16
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

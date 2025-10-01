@@ -1,0 +1,15 @@
+Title: IBM Unable to find copybook error in the SCLM Developer View - United States
+
+Text:
+Rdz; SCLM; copybooks; exclamation marks; exclamation TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ From the SCLM Perspective in IBM Rational Developer for System z, why are copybooks in COBOL source code flagged with exclamation marks indicating that they can not be found? 
+
+SYMPTOM
+If not flagged, attempting to browse COBOL copybooks will also result in the following error:
+
+"Open Copy Member Problems. The Copy file cannot be found in the SYSLIB library. Verify that both the file and the library are allocated properly."
+
+RESOLVING THE PROBLEM
+The ability to open copybooks using the SCLM Development Toolkit is currently under development for a subsequent release of Rational Developer for System z.

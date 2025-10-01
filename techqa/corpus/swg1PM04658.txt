@@ -1,0 +1,229 @@
+Title: IBM PM04658: DUMP TITLE: CSQ1,ABN=0C4-00000004,C=R3600.701.CHIN,M=CSQXDISP,  LOC=CSQXDCST.????????+0F1DE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer is running WebSphere MQ V701 and the CHIN abends
+   with 0C4-04 in CSQXCRTF 07.00.01 5655-R36 at offset x'1012'.
+   The failing function name is "swap" which supports the
+   qsort/bsearch function. The failing instruction is an execute
+   instruction 44504050 which uses reg 4 (36743860) and reg 5
+   (000000D7). Reg 4 is 1698 plus offset x'50' which points to
+   x'16E8' (D200E000F000). Both Reg 14 and reg 15 contain zeros.
+   The proc static void swap has the follow parameters:
+   (void* a, void* b, void *buf, size_t size)
+   Here are the pParameters passed:
+                      a        b        buf
+   37B1F184.          00000000 00000000 3784F018
+             size
+   37B1F190. 000000D8
+   The Abend occurs on a memcpy(a, b, size) because the address of
+   a is zero so we attempt to write into the PSA in low core. The
+   problem occurred during a Display CHSTATUS command.
+   .
+   Chin Log contains:
+   08.23.09 IEA794I SVC DUMP HAS CAPTURED:
+            DUMPID=010 REQUESTED BY JOB (XGE2CHIN)
+            DUMP TITLE=CSQ1,ABN= 0C4-00000004,C=R3600.701.CHIN,M=
+            CSQXDISP, LOC=CSQXDCST.????????+0F1DE
+   08.23.09 +CSQX112E -CSQ1 CSQXDISP Dispatcher process error,
+            TCB=006B5890 reason=0C4000-00000004
+   ---------------------------------------------------------------
+   %MQSTS shows:
+   Status from the SDWA in the Dump Header
+   .
+   EC PSW at Time of Error: 078D0000 B67431DE
+   .                 Csect CSQXCRTF 20090729 + x'1016' in CSQXDCST
+   PASID 0127  SASID 0127
+     R00  3784F018 &#65436;RC] 0ALLC/
+     R01  00000000
+     R02  000000D8 &#65436;R5+x'001']
+     R03  36743220 &#65436;R6+x'6BA'] Csect CSQXCRTF 20090729 + x'1058'
+     in CSQXDCST
+     R04  36743860 &#65436;R3+x'640'] Csect CSQXCRTF 20090729 + x'1698'
+     in CSQXDCST
+     R05  000000D7 &#65436;RA+x'0D7']
+     R06  B6742B66  Csect CSQXCRTF 20090729 + x'99E' in CSQXDCST
+     R07  00000000
+     R08  36B426D0  XSTB/
+     R09  00000000
+     R10  00000000
+     R11  FFFFFFFF  (Unavail)
+     R12  3784F018 &#65436;R0] 0ALLC/
+     R13  37B1F1A8  CSQA/
+     R14  00000000
+     R15  00000000
+   The change team reviewed the dump and went back through the
+   savearea chain which showed the flow was :-
+   rrxReconcileLcsTable->getSortedScsArrayMatchingStatus->qsort->
+   _qsort->partiton->swap (abend here)
+   From the parameters pointed to by Reg 1 in each DSA, they can
+   see that the array passed to qsort is all zeros and the element
+   count is zero. This occurs in getSortedScsArrayMatchingStatus
+   in module csqxrstc after a call to rrxAllocAndQuerySharedStatus
+   returns RC=0 RSN=x'20809901' which is rrcE_NOT_FOUND.
+   .
+   If the RC is non-zero the area returned (if any) is freed, the
+   ptr nullified, the count set to zero and the routine returns
+   the value from lRsnCode. This needs to be done when RC=0 AND
+   Rsn=rrcE_NOT_FOUND also. The same logic change needs to be made
+   in the proceedure getSortedScsArrayMatchingName which has
+   similar code.
+   .
+   Additional Symptoms:
+   TITLE=CSQ3,ABN=0C4-00000004,
+   C=R3600.701.CHIN,M=CSQXDISP,LOC=CSQXDCST.????????+0D626
+   .
+   CSQ1,ABN= 0C4-00000004,C=R3600.701.CHIN,M=CSQXDISP,LOC=CSQXDCST.
+   ????????+0A636
+   .
+   The program check occurs while a semaphore is held.  A semaphore
+   is a lock that is represented by an XSEM control block. Channel
+   startup waits in CSQXXSEM for the semaphore, which will not be
+   released until the CHIN is recycled.  Eventually, the following
+   message may appear:
+     CSQX014E CSQXSRSP Listener exceeded channel limit, TRPTYPE=TCP
+   INDISP=QMGR
+   STOP CHINIT may also hang, requiring a force of the address
+   space to complete the shutdown.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 0 Modification 1.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A DISPLAY CHSTATUS involving a Shared   *
+   *                      channel receives an ABEND0C4.           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An ABEND0C4 occurs in CSQXCRTF at offset x'1012' when doing
+   a DISPLAY CHSTATUS on a Shared Channel. The abend occurs
+   because there are no DB2 table entries matching the RETRY
+   status of the channel, which produces an empty array of
+   elements. This empty array is passed to a qsort routine
+   which cannot cope with an empty input array, and abends
+   trying to use a zero pointer.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CSQXRSTC has been changed to handle the reason code
+   rrcE_NOT_FOUND in the same way as a non-zero return code.
+   010Y
+   CSQXRSTC
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM04658
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   010
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-07
+   
+   
+ * CLOSED DATE
+   2010-04-23
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK56362
+   
+   
+
+MODULES/MACROS
+ *  CSQXRSTC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R010 PSY UK56362 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK56362]
+   UP10/05/08 P F005
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

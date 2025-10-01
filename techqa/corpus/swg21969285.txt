@@ -1,0 +1,82 @@
+Title: IBM The steps to downgrade fixpak level on existing DB2 V10.5 pureScale cluster - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to downgrade fixpak level on existing DB2 V10.5 pureScale cluster ? 
+
+ANSWER
+For some reason, when you need to downgrade fixpak or 
+rollback the fixpak upgrade work on existing DB2 V10.5 pureScale cluster, 
+you can do with following steps. 
+
+Most steps are same with the those for installing higher level fixpak.
+And this example is using simplified offline method which is supported since DB2 V10.5.
+
+There are two main things you need to keep in mind.
+
+1. Downgrade to lower fixpak level should be done by 'Offline' method.
+Since DB2 V10.5, '-online' is the implicitly default option of 'installFixPack' command.
+So you need to explicitly use '-offline' option.
+
+2. '-f level' option forces the applying fixpak to lower level. 
+
+
+<Steps>
+NOTE : The following steps in this technote are only for DB2 V10.5 version, 
+not for previous V10.1 and V9.8 version. 
+
+1. Stop DB2 instance 
+
+ $ db2stop 
+
+2. Stop DB2 instance cluster service from all hosts.
+$ db2stop instance on <hostname1>
+$ db2stop instance on <hostname2> 
+
+ ...
+
+3. Ensure there is no alert from 'db2instance -list' output
+$ db2instance -list
+
+4. From Fixpak installation image, run 'installFixPack' command by 'root' user.
+( Do this command on all pureScale member/CF hosts. ) 
+
+ # ./installFixPack -p /opt/IBM/db2/V10.5_FP4 -f level -I db2inst1 -offline
+
+( Where '/opt/IBM/db2/V10.5_FP4' is new installation target directory
+and 'db2inst1' is the existing DB2 instance name. )
+
+5. Check commit verification by 'root' user.
+( Do this command on all pureScale member/CF hosts. 
+If there is any alert or error, resolve the issue before moving to the next step.)
+
+# ./installFixPack -check_commit -p /opt/IBM/db2/V10.5_FP4 -I db2inst1
+
+6. Commit the level on a pureScale host by 'root' user.
+
+# ./installFixPack -commit_level -p /opt/IBM/db2/V10.5_FP4 -I db2inst1
+
+7. Start DB2 instance cluster service from all hosts. 
+
+ $ db2start instance on <hostname1>
+$ db2start instance on <hostname2>
+
+8. Start DB2 instance
+$ db2start 
+
+ 
+9. Check the db2level 
+
+ $ db2level
+
+
+RELATED INFORMATION
+ Installing offline fix pack updates to a DB2 pureScale [http://www-01.ibm.com/support/knowledgecenter/#!/SSEPGG_10.5.0/com.ibm.db2.luw.qb.server.doc/doc/t0057003.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management DB2 for Linux- UNIX and Windows

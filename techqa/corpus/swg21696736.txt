@@ -1,0 +1,127 @@
+Title: IBM Trace instructions for Data Protection for VMware, VMware ESXi and vCenter - United States
+
+Text:
+trace vadp TECHNOTE (FAQ)
+
+QUESTION
+ What are the steps required to perform tracing of a Data Protection VMware backup or restore problem? 
+
+CAUSE
+To diagnose a backup/restore problem of a virtual machine, tracing is normally required. Tracing is needed for the Tivoli Storage Manager client, VMware VDDK, ESXi host(s), and the VMware vCenter.
+
+ANSWER
+Follow the steps below to setup the required tracing. This should only be done at the request of support. All steps must be followed verbatim. If not, this will delay the investigation into the problem. 
+
+In general we need the following information for each VMware problem before we can open a VMware Support Request (SR). Here is a high level list, more detail below.
+
+
+Tivoli Storage Manager Client Changes
+
+1. Enable VM client-side tracing. This is done in the datamovers options file
+TRACEFLAGS VM ENTER EXIT PID TID GENERAL
+TRACEFILE <Path to trace file>\VEtrace.txt
+
+Note: The tracefile can be put in any location, the default path is the working directory. Ensure the path used has sufficient free disk space so it does not fill the disk. It is recommended to not place this on the system disk.
+
+2. Enable VMware VDDK trivial tracing for the Tivoli Storage Manager client (dsmvddk.opt file)... this data will be written to the Tivoli Storage Manager client trace file.
+
+# 0-quiet, 1-panic, 2-error, 3-warning, 4-info, 5-verbose, 6-trivia
+vixDiskLib.transport.LogLevel = "6"
+vixDiskLib.nfc.LogLevel = "6"
+
+VMware Changes
+
+3. Enable vCenter and ESX server logs trivia mode enabled.
+
+The following link should be referenced if help is needed.
+(Increasing vCenter Server and ESX/ESXi logging levels)
+http://kb.vmware.com/kb/1004795 [http://kb.vmware.com/kb/1004795] 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * http://kb.vmware.com/kb/1006186
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+For Virtual Center, you can use the VI Client to configure the amount of detail that VirtualCenter collects in log files. 
+A. Connect the VI Client to the VirtualCenter Server. Choose Administration > Server Settings and select Logging Options. 
+B. Configure the level of detail for log files. From the VirtualCenter Logging list, choose Trivial (Extended Verbose) and click OK. 
+Also mentioned in KB article http://kb.vmware.com/kb/1001584 [http://kb.vmware.com/kb/1001584] 
+
+4. Increase the number of logs and their size for vpxd, vpxa and hostd logs. This is required in order to avoid the roll over of the logs due to increased logging levels. Refer to the VMWare KB article http://kb.vmware.com/kb/1004795 [http://kb.vmware.com/kb/1004795] 
+
+5. Collect all Tivoli Storage Manager and VMware trace data and return to IBM. 
+(Collecting diagnostic information for ESX/ESXi hosts and vCenter Server using the vSphere Web Client) 
+http://kb.vmware.com//kb/2032892 [http://kb.vmware.com//kb/2032892] 
+(Collecting diagnostic information for the VMware Virtual Disk Development Kit) 
+http://kb.vmware.com/kb/1006186 [http://kb.vmware.com/kb/1006186] 
+
+6. VERY VERY IMPORTANT: Note the EXACT time of the error. If the the Tivoli Storage Manager client, vCenter and ESXi hosts are in different time zones note that too. The ESXi host will always be in UTC so the offset from ESXi host and Tivoli Storage Manager client should be provided. 
+
+Once the problem has been reproduced with all required tracing, the following information will need to be provided to support. After you have reproduced the problem, revert all changes made to prevent tracing from continuing. Failure to do so can result in a negative impact to the environment. 
+
+1. Tivoli Storage manager datamover OS name and bit version (32/64). Is it a virtual machine or a physical system? 
+2. Target VM OS name and bit version (32/64)? 
+3. Does the Target VM have VMware Tools installed, and at the current level? 
+4. Is the issue reproducible in customer's environment with same proxy for: 
+a. Same VM always? 
+b. Other VMs in same environment? 
+5. Please provide following logs and information after reproducing the issue: 
+a. Tivoli Storage Manager trace file which will include the VDDK logs. This was set in step 1 above. 
+b. vCenter and ESX support bundle after enabling trivia tracing. 
+c. Time stamp at which issue was reproduced. 
+d. Time skew, if any, between datamover and vCenter/ESX server. 
+e. Target VM name. 
+f. VMX files for datamover and target vm if both are VMs. 
+g. vmware.log file for TSM datamover and target VM. This can be found in the datastore containing VM files. 
+h. Version and build # for the vCenter and ESXi host(s). 
+i. vCloud Director version and build # if this is being used. 
+
+
+7. Gather the information outlined in the following document: 
+https://www-304.ibm.com/support/docview.wss?uid=swg21497489 [https://www-304.ibm.com/support/docview.wss?uid=swg21497489] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Storage Management IBM Spectrum Protect for Virtual Environments Data Protection for VMware 8.1.0, 8.1.2, 7.1.8, 8.1.4 
+PRODUCT ALIAS/SYNONYM
+ TSM

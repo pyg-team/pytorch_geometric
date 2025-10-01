@@ -1,0 +1,128 @@
+Title: IBM GetByFilter() function parse error with single quote in string - United States
+
+Text:
+netcool; impact; netcool/impact; nci; get; by; filter; getby; getbyfilter; sql; look; up; look-up; lookup; lookupfilter; parse; parser; error; failure; meta; character; char; meta-character; metacharacter; quote; escape; single; double TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Performing a GetByFilter() function against a character field (not Identifier) when the value contains a single quote causes the SQL to fail. 
+
+SYMPTOM
+22 Apr 2013 09:26:45,076 ERROR [JDBCVirtualStatement] Error executing query 'SELECT Identifier, Node, Severity, Summary, StateChange, Tally, Class FROM alerts.status WHERE Node = 'TestEvent_001' and Summary = 'Testing single quote ' for GetByFilter action' AND Class = 74058; 
+
+com.sybase.jdbc3.jdbc.SybSQLException: ERROR=Parse failure on line 1 of statement 'SELECT Identifier, Node, Severity, Summary, StateChange, Tally, Class FROM alerts.status WHERE Node = 'TestEvent_001' and Summary = 'Testing single quote ' for GetByFilter action' AND Class = 74058;', at or near 'for'
+
+
+
+CAUSE
+The single quote is not being escaped and so is seen as a control character - the end of the character field's string variable. The remaining characters are then seen as junk in SQL terms and "break it". 
+
+
+
+
+
+ENVIRONMENT
+Test Policy: 
+
+
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Log(2,ID+WP+": Escape Summary quote"); 
+   MySummary=Replace(@Summary,"'","\\\\\'",1); 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Log(2,ID+WP+": Use Summary as is"); 
+   MySummary=@Summary; 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Test Event : 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+RESOLVING THE PROBLEM
+When dealing with fields that contain metacharacters such as a single quote, one has to escape the quote so that it is literalised and not treated as a control character by SQL. The trick is using the correct number of escape characters to survive the parsers and make it into the outgoing SQL statement. 
+
+
+The documentation gives us a hint as to how many are required in the "Note" of the Replace() function where four are required to imitate one for the function to work. So, for the GetByFilter() function to escape a metacharacter in its outgoing SQL statement one has to use five escape characters.
+
+The number of escapes comes from the number of parser levels the Policy works through to produce SQL and there are two levels in Impact and the final SQL level parser - so from 5 backslashes the first pair and second pair are converted into one each by the first parser. Now we're left with 3 backslashes and at the second parser the first pair are converted into one so that the outgoing SQL now has an escaped backslash character that itself acts as an escape for the single quote.
+
+In the example Policy (above) I have tested this and confirmed that 5 backslashes are required to get one escaped backslash into the SQL and this worked fine against the test event I had created.

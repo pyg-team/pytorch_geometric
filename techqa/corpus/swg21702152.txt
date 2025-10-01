@@ -1,0 +1,24 @@
+Title: IBM QE-DEF-0157 Errors in Reports - United States
+
+Text:
+qe-def-0157 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running reports and a QE-DEF-0157 error is hit. Refreshing the reports (multiple times sometimes) causes the report to run fine succesfully.
+
+
+SYMPTOM
+QE-DEF-0157 The model or package [packageName] does not exist or you are not allowed to use it because of security settings 
+
+
+
+CAUSE
+There is cached metadata 
+
+DIAGNOSING THE PROBLEM
+If you are hitting the problem and running a report as an administrator. 
+
+RESOLVING THE PROBLEM
+1. Stop Cognos
+2. Delete the contents of the <installDirectory/data/cqe> (delete just the contents in the folder and not the folder itself )
+3. Start Cognos

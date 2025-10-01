@@ -1,0 +1,50 @@
+Title: IBM When calling PageIDByBCSep action, barcodes are being rejected. - United States
+
+Text:
+PageIDByBCSep datacap barcode rejected TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Datacap 8.01: when calling PageIDByBCSep action, barcodes are being rejected. 
+
+SYMPTOM
+After the PageIDByBCSep action is called, barcodes are being rejected (as recorded in the logs below): 
+
+t:EA0 p:A309868 Horizontal resolution (X): 200
+t:EA0 p:A309868 Vertical resolution (Y): 200
+t:EA0 p:A309868 Image Width: 1683
+t:EA0 p:A309868 Image Height: 2184
+t:EA0 p:A309868 
+t:EA0 p:A309868 Running barcode recognition for the entire page.
+t:EA0 p:A309868 Attempting to read barcode of type(s) 'Unknown'
+t:EA0 p:A309868 Orientation 0
+t:EA0 p:A309868 Confidence required: 75
+t:EA0 p:A309868 Recognition time: 0.015625
+t:EA0 p:A309868 Confidence 0 too low - or barcodes were not found.
+t:EA0 p:A309868 Enhancing image and retrying...
+t:EA0 p:A309868 The oDC2DBCNet Instance was successfully initialized.
+t:EA0 p:A309868 1 barcode(s) found.
+t:EA0 p:A309868 Barcode 0. Rough Barcode result: 14ISSSL
+t:EA0 p:A309868 Confidence: 70
+t:EA0 p:A309868 Confidence is lower than the minimum 75. Barcode will be rejected.
+
+
+CAUSE
+The PageIDByBCSep identifies the barcode on the page, and by default, any confidence level on the barcode is less than 75, the barcode will be rejected.l
+
+
+RESOLVING THE PROBLEM
+To change the default value, in the DCO, right-click "Other", go to Manage Variables, add a 
+
+variable named ReqConf and assign it the value of 0-9. 
+
+This value is used within the <DRIVE>\Datacap\RRS. Also, open the "barcode_p.rrx" to determine the confidence level(see below code): 
+++++++++++++++++++++++++++++++++++ 
+confreq = 75 ' was 81 in previous versions 
+sconfreq = Trim(dcoObject.Variable("ReqConf")) 
+
+If sconfreq <> "" Then 
+confreq = 10 * CInt(sconfreq) + 1 ' map 0-9 to 1-91 
+End If 
+
+WriteLog("Confidence required: " & CStr(confreq)) 
+++++++++++++++++++++++++++++++++++

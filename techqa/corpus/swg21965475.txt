@@ -1,0 +1,44 @@
+Title: IBM CDC on AS400: Unable to complete table mapping with DMU0068 error - United States
+
+Text:
+RA MSG 2007; DMU0068; table mapping TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using CDC on AS400, 
+
+
+
+1. Deleted the PF (i.e., a table created using CRTPF command) on AS400.
+2. Created a new table using SQL statement: CREATE TABLE XXX after changing a column name.
+3. Deleted the table mapping including the deleted table.
+4. Re-mapped the table.
+
+
+
+Then, user was unable to complete the table mapping with DMU0068 error. 
+
+SYMPTOM
+1. Unable to complete re-mapping of the tables with the error below:
+Error:
+RA MSG 2007 (DMU0068) Table xxxxxx has been changed since it was selected for mirroring. Help Info - Table xxxxxx in library yyyyyy has been changed since it was selected for mirroring via Transformation Server. Mirroring could not be initiated as requested. Use the "Update Source Table Definition" option to ensure that the current record format is utilized for mirroring and describe the table to the target system again.
+
+
+CAUSE
+The metadata was not cleared; and the information of the deleted tables are kept in the metadata.
+
+ENVIRONMENT
+Using CDC on AS400.
+
+DIAGNOSING THE PROBLEM
+1. Unable to complete table mapping.
+
+RESOLVING THE PROBLEM
+This issue can be avoided by removing the table(s) no longer needed from catalog as follow:
+
+In Management Console, 
+
+1. Select "Configuration" tab,
+2. Remove the tables that are no longer needed from Table Mappings in the relevant subscription(s) if it is not done yet,
+3. Right click on the relevant Datastore,
+4. Click on "Replication tables...", which will display all the tables stored in PB metadata.
+5. Remove the tables that are no longer needed, which is a final step of clearing the metadata.

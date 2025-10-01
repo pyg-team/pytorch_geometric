@@ -1,0 +1,151 @@
+Title: IBM LO74374: INOTES: ERROR OCCURS WHEN OPENING ENCRYPT MESSAGE WITH PREVIEW - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS RETURNED (APAR CANNOT BE RESOLVED WITHOUT ADDITIONAL INFO FROM IBM OR CUSTOMER.)
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  User uses preview pain. If user try to open an encrypt message
+   with double clicking quickly, a script error occurs.
+   The error message is the following:
+   
+   'EKc.prototype.EYl.e-dialog-notesIDPassword:EeE' is null or not
+   an object
+   
+   IE script error dialog is displayed.
+   ------------------
+   Line: 4
+   Character: 2388
+   Code: 0
+   URI:
+   http://server/iNotes/Forms85.nsf/iNotes/Proxy/?OpenDocument&Form
+   =l_StdPageOperations&l=en&gz&CR&MX&TS=20120213T184434,31Z&TSX=20 [http://server/iNotes/Forms85.nsf/iNotes/Proxy/?OpenDocument&Form=l_StdPageOperations&l=en&gz&CR&MX&TS=20120213T184434,31Z&TSX=20]
+   121108T093703,59Z&charset=UTF-8&PresetFields=s_DocumentActions;1
+   ------------------
+   
+   iNotes console displays the error "A problem has occurred which
+   may have caused the current operation to fail" also.
+   
+   iNotes console
+   ------------------
+   03/14/2013 01:48:36PM A problem has occurred which may have
+   caused the current operation to fail.
+   03/14/2013 01:48:36PM
+   'EKc.prototype.EYl.e-dialog-notesIDPassword:EeE' is null or not
+   an object
+   03/14/2013 01:48:36PM
+   http://server/iNotes/Forms85.nsf/iNotes/Proxy/?OpenDocument&Form
+   =l_StdPageOperations&l=en&gz&CR&MX&TS=20120213T184434,31Z&TSX=20 [http://server/iNotes/Forms85.nsf/iNotes/Proxy/?OpenDocument&Form=l_StdPageOperations&l=en&gz&CR&MX&TS=20120213T184434,31Z&TSX=20]
+   121108T093703,59Z&charset=UTF-8&PresetFields=s_DocumentActions;1
+   : 4
+   03/14/2013 01:48:36PM GmH([object Object])
+   ------------------
+   
+   This issue is reproduced only when the Internet password is
+   different with the Notes ID password.
+   (When user open an encrypt message, user is required to input
+   Notes ID password)
+   
+   Steps to reproduce:
+   1. Import Notes ID to iNotes Mail Db
+   2. Set this user's internet password that is different with the
+   Notes ID password
+   3. Set to open preview pain on Inbox
+   4. Receive a encrypt message
+   5. Double clicking very quickly on this encrypt message(double
+   clicking before displaying in preview pain)
+   6. IE script error and iNotes console error are displayed
+   
+   This issue is not reproduced when
+   - not using preview pain
+   - Internet password and Notes ID password are the same
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# MNAA95S8AU.
+   The record was returned to the person who created it for more
+    information.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO74374
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   853
+   
+   
+ * STATUS
+   CLOSED RET
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-14
+   
+   
+ * CLOSED DATE
+   2013-04-17
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

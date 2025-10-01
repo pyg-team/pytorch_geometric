@@ -1,0 +1,31 @@
+Title: IBM Non ASCII character symbols appear with multiline strings in Excel exports from ClearQuest Web - United States
+
+Text:
+1509108; PM44403; CQ; black box; non ascii; export to excel; CQweb TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote identifies an issue that can occur in IBM Rational ClearQuest Web. Exported Microsoft Excel files have non-ACSII character symbols in multiline string data. 
+
+SYMPTOM
+When using Rational ClearQuest Web to export result set data to Excel, non-ASCII character symbols (black boxes) are in the data fields that were multiline strings in Rational ClearQuest.
+
+CAUSE
+This issue was identified as a product defect under APAR PM44403 [http://www.ibm.com/support/docview.wss?uid=swg1PM44403].
+
+ENVIRONMENT
+This problem occurs in Rational ClearQuest version 7.1.2.1.
+
+DIAGNOSING THE PROBLEM
+When exporting the result set to Excel using ClearQuest Web 7.1.2.1 the multiline fields now contain square blocks where the carriage returns are located. This does not occur exporting from earlier versions of ClearQuest Web.
+
+
+Steps to Reproduce: 
+
+ 1. Using a SAMPL database edit an All Defect query. Add Note_entry field to the query output. 
+ 2. Login to ClearQuest Web to run the query. 
+ 3. Add this data to the Note_Entry field: "This is a test"(press enter key) "This is a test"(press enter key), "This is a test". There are three lines of data in the field that will look like this: This is a test 
+ 4. Save the record. Run the query again. 
+ 5. Click the Export to an Excel spreadsheet button. When looking at the results Excel, you will see the square boxes in the data at the end of each line.
+
+RESOLVING THE PROBLEM
+This defect was closed as a permanent restriction. A workaround for this problem is to use the ClearQuest Export Tool and import that data into Excel.

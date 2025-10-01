@@ -1,0 +1,44 @@
+Title: IBM DFH5117S when upgrading from CICS TS 1.3 - United States
+
+Text:
+DFHCSD DFHCSDUP DFH0CBDC ; DFH5117 S ; DFH5117S DFH5103 I DFH5103I migrating migrate upgrade CSD 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 ; KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are upgrading from CICS Transaction Server for z/OS (CICS TS ) V1.3 to a newer release of CICS TS, and need to extract or copy data from your old CSD. When you run program DFH0CBDC or DFHCSDUP that came with any CICS TS version after CICS TS V1.3, you receive message DFH5117S. 
+
+SYMPTOM
+The complete message is:
+DFH5117 S THE PRIMARY CSD HAS BEEN DEFINED WITH AN INVALID
+RECORD SIZE. PROCESSING IS TERMINATED.
+
+You are also seeing:
+DFH5103 I ERROR(S) OCCURRED WHILE PROCESSING EXTRACT COMMAND.
+DFH5104 W SUBSEQUENT COMMANDS ARE NOT EXECUTED BECAUSE OF
+ERROR(S) ABOVE.
+
+
+CAUSE
+The record size of DFHCSD in CICS TS V1.3 is 100 500, but starting with CICS TS V2.1 the record size of the DFHCSD is 200 2000. Therefore, the CICS TS 3.1 , 3.2, 4.1 and 4.2 programs (DFH0CBDC and DFHCSDUP) will not work with the shorter record lengths in the V1.3 DFHCSD.
+
+RESOLVING THE PROBLEM
+You can use the CICS TS V1.3 DFHCSDUP to copy groups from the V1.3 DFHCSD to the V3.1 , V3.2, V4.1 or V4.2 DFHCSDs.
+
+Here is the JCL: 
+
+//CSDCOPY EXEC PGM=DFHCSDUP,REGION=1M
+//STEPLIB DD DSN=hlq.CICSTS13.CICS.SDFHLOAD,DISP=SHR
+//DFHCSD DD DSN=hlq.CICSTS32.CI10.DFHCSD1,DISP=SHR ...target CSD
+//FROMCSD DD DSN=hlq.CICSTS13.CI5.DFHCSD,DISP=SHR ...source CSD
+//SYSUT1 DD UNIT=SYSDA,SPACE=(1024,(100,100))
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+COPY G(xxx) TO(xxx) FROMCSD(FROMCSD)
+ADD G(xxx) LIST(TESTLIST)
+/*
+// 
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

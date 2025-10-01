@@ -1,0 +1,63 @@
+Title: IBM Applying a fix pack to Tivoli Storage Manager V6 in a clustered environment for Windows - United States
+
+Text:
+srelnotes630 srelnotes710 PRODUCT DOCUMENTATION
+
+ABSTRACT
+ To install a fix pack on a Tivoli® Storage Manager V6 server in a Windows clustered environment, several steps are required. Steps 8 and 14 were updated with the correct information (disabling Cluster Service) 
+
+CONTENT
+ 
+
+Applying a fix pack to Tivoli Storage Manager V6 in a clustered environment for Windows 
+
+To install a fix pack on a Tivoli® Storage Manager V6 server in a Windows clustered environment, several steps are required. 
+
+To install a fix pack or interim fix to the server, install the server at the level on which you want to run it. You do not have to start the server installation at the base release level. For example, if you currently have V6.1.2.1 installed, you can go directly to the latest fix pack for V6.3 or later. You do not have to start with the V6.3.0 installation if a maintenance update is available. 
+
+Before you upgrade the Tivoli Storage Manager server, ensure that you retain the installation media from the base release of the installed server. If you installed Tivoli Storage Manager from a DVD, ensure that the DVD is available. If you installed Tivoli Storage Manager from a downloaded package, ensure that the downloaded files are available. If the upgrade fails, and the server license module is uninstalled, the installation media from the server base release are required to reinstall the license. 
+
+
+1. Back up the database. The preferred method is to use a snapshot backup. A snapshot backup is a full database backup that does not interrupt any scheduled database backups. For example, issue the following command: 
+backup db type=dbsnapshot devclass=tapeclass
+Important: If the upgrade fails, and you must revert the server to the previous level, you will need the database backup and the configuration files that you save in the next steps. By using the database backup and the configuration files, you might be able to revert the server to the previous level.
+2. Back up the device configuration information. Issue the following command: 
+backup devconfig filenames=file_name
+where file_name specifies the name of the file in which to store device configuration information.
+3. Back up the volume history information. Issue the following command: 
+backup volhistory filenames=file_name
+where file_name specifies the name of the file in which to store the volume history information.
+4. Save a copy of the server options file, typically named dsmserv.opt. The file is in the server instance directory.
+5. Disable automatic failback. 
+Tip: You must disable automatic failback so that no groups automatically fail back during the installation. 
+a. In the Failover Cluster Manager window, select Services and Applications and right-click the cluster group.
+b. Select Properties. 
+c. On the Failover tab in the Properties window, select Prevent failback and click OK.
+d. If multiple groups exist, repeat the preceding steps to disable automatic failback for each group.
+6. Determine the first server on which to install the fix pack.
+7. Move the cluster groups from the node where the fix pack is to be installed.
+8. Disable the Cluster Service node. 
+9. Install the Tivoli Storage Manager fix pack. For details, see Installing a Tivoli Storage Manager fix pack [http://pic.dhe.ibm.com/infocenter/tsminfo/v6r4/topic/com.ibm.itsm.srv.install.doc/t_srv_inst_fixpack.html]. 
+Tip: Tivoli Storage Manager is still running and available on another node. If the DB2® installation attempts to access an offline instance near the end of the installation, you might receive error message SQL5005C. This message does not indicate an installation failure. You can ignore the message.
+10. Take the Tivoli Storage Manager server and the DB2 resources offline: 
+a. In the Failover Cluster Manager window, select Services and Applications and then select the cluster group. The resources for the group are displayed. In the Other Resources section, SERVER1 and the Tivoli Storage Manager server are displayed.
+b. In the Other Resources section, right-click the Tivoli Storage Manager Instance(x) Server, where x represents the instance number. Select Take this resource Offline. Repeat this step for SERVER1.
+11. Restart the cluster service on the current node. In the Component Services window, right-click Cluster Service and click Start.
+12. Move the cluster groups to the current node: 
+a. In the Failover Cluster Manager window, click Services and Applications.
+b. Right-click the cluster group and select Move this service or application to another node. The Current Owner column changes to the current node.
+c. Optional: If multiple groups exist, move the other cluster groups to the current node by repeating steps 12.a [http://pic.dhe.ibm.com/infocenter/tsminfo/v6r4/topic/com.ibm.itsm.srv.install.doc/ptf_6x_cluster_win.html#ptf_6x_cluster_win__saa] and 12.b [http://pic.dhe.ibm.com/infocenter/tsminfo/v6r4/topic/com.ibm.itsm.srv.install.doc/ptf_6x_cluster_win.html#ptf_6x_cluster_win__mts].
+13. Start the DB2 resources: 
+a. In the Failover Cluster Manager window, select Services and Applications, and then select the cluster group. 
+b. Right-click SERVER1 and select Bring this service online. Repeat this step for each Tivoli Storage Manager Instance (x) Server, where x represents the instance number. 
+14. Disable the Cluster Service on the second node. 
+15. Install the Tivoli Storage Manager fix pack. Tivoli Storage Manager is now running and available on the first node. If the DB2 installation attempts to access an offline instance before the installation is completed, you might receive error message SQL5005C. This message does not indicate an installation failure. You can ignore the message.
+16. Restart the cluster service on this node. In the Component Services window, right-click Cluster Service and click Start. 
+17. Move the cluster groups back to the servers that you want to use: 
+a. In the Failover Cluster Manager window, click Services and Applications.
+b. Right-click the group that you want to move and select Move this service or application to another node. The Current Owner column changes to the selected node. 
+c. For any other nodes that must be moved to the owners that you want to use, repeat step 17.b [http://pic.dhe.ibm.com/infocenter/tsminfo/v6r4/topic/com.ibm.itsm.srv.install.doc/ptf_6x_cluster_win.html#ptf_6x_cluster_win__MoveToAnotherNode]. This step reverts the Microsoft Cluster Server environment to its initial configuration.
+18. Restart automatic failback processing: 
+a. In the Failover Cluster Manager window, right-click the cluster group.
+b. Select Properties. 
+c. On the Failover tab of the Cluster Group Properties window, select Allow failback, and click OK.

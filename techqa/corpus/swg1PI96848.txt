@@ -1,0 +1,168 @@
+Title: IBM PI96848: MQ: A CLUSTER REPOSITORY LOSES SIGHT OF SOME OTHER QUEUE MANAGERS AFTER A REFRESH CLUSTER IS DONE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A REFRESH CLUSTER(clusname) REPOS(NO) command was issued.
+   Afterward, some other queue managers in the cluster were
+   unreachable from the queue manager where the REFRESH was done.
+   Applications received MQRC 2087 when attempting to send reply
+   messages back to these queue managers.
+   
+   The issue occurs when a cluster sender channel is active at the
+   time that the refresh is issued but then goes inactive before
+   the full repository has republished that cluster-sender record
+   in response to the refresh.
+   
+   Additional Symptom(s) Search Keyword(s):
+   MQRC_UNKNOWN_REMOTE_Q_MGR CLUSSDR
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do another REFRESH CLUSTER command or simply alter the
+   description of the CLUSRCVR channel on the target queue manager
+   to cause the cluster subscription to be republished.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of IBM MQ for z/OS Version 8       *
+   *                 Release 0 Modification 0                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A Partial Repository Queue Manager may  *
+   *                      incorrectly lose sight of other Qmgrs   *
+   *                      in a cluster, after a REFRESH CLUSTER   *
+   *                      REPOS(NO) command is issued.            *
+   ****************************************************************
+   If auto-defined cluster sender channels are running when a
+   REFRESH CLUSTER REPOS(NO) command is issued, but the channel
+   stops prior to the REFRESH command processing completes, the
+   republish of cluster Qmgr records may not be correctly added to
+   the local cluster cache by reconcile processing. As a result the
+   Qmgr may lose sight of the remote cluster Qmgr until the
+   internal subscription for the Qmgr expires or the remote Qmgr's
+   cluster receive definition is altered.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Cluster refresh and reconcile processing has been corrected,
+   to ensure the republished cluster Qmgr record is added to the
+   cluster cache, when a running cluster channel stops prior to
+   refresh processing completing.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI96848
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ Z/OS V8
+   
+   
+ * REPORTED COMPONENT ID
+   5655W9700
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-04-17
+   
+   
+ * CLOSED DATE
+   2018-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2018-07-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI98289 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI98289] UI56966
+   
+   
+
+MODULES/MACROS
+ *  CMQXRECO CMQXRREF
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM MQ Z/OS V8
+   
+   
+ * FIXED COMPONENT ID
+   5655W9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI56966 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI56966]
+   UP18/07/25 I 1000 ¢
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

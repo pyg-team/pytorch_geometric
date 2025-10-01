@@ -1,0 +1,50 @@
+Title: IBM Installing maintenance results in 'Compile failed' message on IBM WebSphere Commerce - United States
+
+Text:
+recompileLOBT NIFException compile jr56287 commerce installation maintenance updi updateinstaller instconffailed TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to install maintenance on IBM WebSphere Commerce results in an error like the following:
+
+2017.03.13 11:50:42.710 CET INSTCONFFAILED: Failed to install: zip:///opt/IBM/UpdateInstaller/maintenance/7.0.0.9-WS-WCServer-IFJR56287.fp.pak
+
+2017.03.13 11:50:42.724 CET W Compile failed. See /opt/IBM/WebSphere/CommerceServer70/logs/update/actions/install/recompileLOBT_WC_demo.log for details
+
+2017.03.13 11:50:42.725 CET com.ibm.ws.install.ni.framework.NIFException: Compile failed. See /opt/IBM/WebSphere/CommerceServer70/logs/update/actions/install/recompileLOBT_WC_demo.log for details 
+
+SYMPTOM
+updatelog.txt shows the following:
+(Mar 13, 2017 11:49:35 AM), Install, com.ibm.ws.install.ni.ismp.actions.InstallNIFMaintenance, msg1, Compiling Management Center, percent complete: 0%
+(Mar 13, 2017 11:49:35 AM), Install, com.ibm.ws.install.ni.ismp.actions.InstallNIFMaintenance, msg1, recompileLOBT-server" --> Recompile log: /opt/IBM/WebSphere/CommerceServer70/logs/update/actions/install/recompileLOBT_WC_demo.log
+(Mar 13, 2017 11:50:42 AM), Install, com.ibm.ws.install.ni.ismp.actions.InstallNIFMaintenance, msg1, I Script failed to complete
+(Mar 13, 2017 11:50:42 AM), Install, com.ibm.ws.install.ni.ismp.actions.InstallNIFMaintenance, msg1, Compile of Management Center failed
+For more information, see the log file: "/opt/IBM/WebSphere/CommerceServer70/logs/update/actions/install/recompileLOBT_WC_demo.log" or the "Troubleshooting: WebSphere Commerce Update Installer issues" topic in the Information Center.
+For more information, see the WebSphere Commerce Fix Pack Installation Guide.
+(Mar 13, 2017 11:50:42 AM), Install, com.ibm.ws.install.ni.ismp.actions.InstallNIFMaintenance, msg1, commerce.lobtools.recompile.failure
+(Mar 13, 2017 11:50:42 AM), Install, com.ibm.ws.install.ni.ismp.actions.InstallNIFMaintenance, err, Compile failed. See /opt/IBM/WebSphere/CommerceServer70/logs/update/actions/install/recompileLOBT_WC_demo.log for details
+(Mar 13, 2017 11:50:42 AM), Install, com.ibm.ws.install.ni.ismp.actions.InstallNIFMaintenance, err, Compile failed. See /opt/IBM/WebSphere/CommerceServer70/logs/update/actions/install/recompileLOBT_WC_demo.log for details
+(Mar 13, 2017 11:50:42 AM), Install, com.ibm.ws.install.ni.ismp.actions.InstallNIFMaintenance, err, com.ibm.ws.install.ni.framework.NIFException: Compile failed. See /opt/IBM/WebSphere/CommerceServer70/logs/update/actions/install/recompileLOBT_WC_demo.log for details
+at com.ibm.ws.install.ni.ismp.utils.ISMPLogUtils.logException(ISMPLogUtils.java:46)
+at com.ibm.ws.install.ni.ismp.actions.InstallNIFMaintenance.execute(InstallNIFMaintenance.java:105)
+at com.installshield.wizard.RunnableWizardBeanContext.run(RunnableWizardBeanContext.java:21)
+Caused by: java.io.IOException: Compile failed. See /opt/IBM/WebSphere/CommerceServer70/logs/update/actions/install/recompileLOBT_WC_demo.log for details
+at com.ibm.commerce.install.updi.product.wc.WCRebuildWithAntComponentAction.execute(WCRebuildWithAntComponentAction.java:552)
+
+However, recompileLOBT_WC_demo.log is empty
+
+
+CAUSE
+recompileLOBT.xml is required to recompile the LOBTools project.
+This does not exist if no Feature Packs were installed on the environment
+
+ENVIRONMENT
+WebSphere Commerce v7 with no Feature Packs
+This issue has only been seen with CF4 which requires a LOBTools recompile
+
+DIAGNOSING THE PROBLEM
+Check the following directory to see if recompileLOBT.xml exists:
+CommerceServer70/components/management-center/openlaszlo/xml
+
+RESOLVING THE PROBLEM
+Copy the file from an environment where the file exists or contact IBM Support for a copy of this file.
+Place the file in the CommerceServer70/components/management-center/openlaszlo/xml directory and rerun the installation

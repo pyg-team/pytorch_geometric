@@ -1,0 +1,53 @@
+Title: IBM Health status warnings and errors for SiteProtector Console - United States
+
+Text:
+health; status; warning; error TECHNOTE (FAQ)
+
+QUESTION
+ What information is contained within the health status warnings and errors in SiteProtector Console? 
+
+ANSWER
+Within the SiteProtector health status information, there are links to the IBM Proventia Management SiteProtector system help files for health check remedies. The purpose of this article is to provide a place for updated troubleshooting information for those specific health checks. Below are the common remedies for health status warnings and errors in SiteProtector.
+Please note that as more issues arise, more information will be added to this document, and more checks will have resolutions here. If you do not see the health check below that you are having problems with, contact Customer Support [http://www.ibm.com/support/docview.wss?uid=swg21446948].
+
+SiteProtector Database health warnings and errors:
+
+
+ * Event Loading - Events Rejected.
+   
+   This health check allows you to be notified if events from sensors are being rejected by the database due to incorrect values, corrupted data, or various other reasons. Please reference Technote 1436283: Database not healthy due to Rejected Events [http://www-01.ibm.com/support/docview.wss?uid=swg21436283] for this issue.
+   
+ * Database Jobs - Automated Maintenance Procedure.
+   
+   This health check will check if the last run of the database maintenance was successful or not. Please check the Automated Maintenance in RealSecureDB job that is run by the SQL Server Agent. You may need to also check the SQL Server logs and the Windows Application logs for errors. Typical things that cause this to fail are the transaction logs being full, the database backup job failing due to invalid permissions or a full hard drive, and errors while doing emergency purging from the database. If you do not see any errors or need assistance, contact Customer Support [http://www.ibm.com/support/docview.wss?uid=swg21446948].
+   
+ * Database Jobs - Automated Purge Procedure.
+   
+   This health check will check if the scheduled purging job last ran successfully. Usually, the failure here is due to the transaction log of RealSecureDB or TempDB filling up. Increase or truncate the transaction log to free space and wait 24 hours to see if the next purging job runs successfully.
+   
+ * Database Jobs - Data Loading Procedure.
+   
+   This health check allows you to be notified if the procedure that processes events from sensors is failing and rejecting events. Please reference Technote 1436283: Database not healthy due to Rejected Events [http://www-01.ibm.com/support/docview.wss?uid=swg21436283] for this issue, as well as checking the SQL Server error log for reasons for the failure. 
+   
+ * Database Jobs - Load Sensor Data and Post-Process job not running. 
+   
+   If this job is listed as Unhealthy, it is likely that the job is stuck. The job can be rebuilt via the following SQL query commands. Once the jobs are rebuilt, wait 5 minutes for the database status to update.
+   
+   use RealSecureDB 
+   exec iss_UninstallJobs
+   exec iss_BuildJobs
+   exec iss_BuildJobs_AutoMaint
+   exec iss_AssignIssApptoJob
+
+
+If there are still questions or unresolved issues after going through the above information, follow the instructions in the Technote 1436109: Running the SiteProtector DBServerInfo script [https://www-304.ibm.com/support/docview.wss?uid=swg21436109] to generate the SiteProtector logs for the support team to investigate. 
+
+
+
+
+
+[/support/docview.wss?uid=swg21436197&aid=1] [https://ibm.biz/BdHdjw] [/support/docview.wss?uid=swg21436197&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21436197&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21436197&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21436197&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21436197&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21436197&aid=7] [http://ibm.biz/ContactSecSupport] 
+ 
+
+HISTORICAL NUMBER
+ 4638

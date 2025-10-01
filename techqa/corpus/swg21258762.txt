@@ -1,0 +1,29 @@
+Title: IBM Can HTML be included in an iNotes signature? - United States
+
+Text:
+how to; configure; steps; iNotes Web Access 6.x; DWA; IWA; memo; mail message; e-mail; email; signature; sign; signature line; signature TECHNOTE (FAQ)
+
+QUESTION
+Can HTML be included in an iNotes signature?
+
+ANSWER
+Support for pass-thru HTML in iNotes was added in Domino 8.0.2 and Domino 8.5. This is not supported in earlier releases.
+Use of pass-thru HTML in an iNotes signature requires selecting to use a plain text signature, instead 
+of rich text. You cannot use pass-thru HTML in a rich text signature.
+
+You can use HTML within a iNotes signature by encapsulating all HTML tags within brackets [ ] to mark the text as pass-thru HTML.
+
+If you use an image, the file must exist on a Web server that the iNotes client can access. For example, you can store the image within the domino/html directory of the Domino server and reference the image using the Web address such as http:// / 
+
+What follows is an example of HTML code to display a signature with a corporate logo: 
+
+
+ * 
+
+
+(Please note: There should be no spaces after the open bracket "[" or before the close bracket "]". Spaces have been intentionally added to the above block of text in order to allow it to display correctly on the web, instead of being treated as pass-thru html.) 
+
+The Domino server may need to have "iNotes_WA_AllowPassThruHtml=1" set in its notes.ini in order to use pass-thru HTML in a signature. This setting was required when this feature was first provided in Domino 8.5 and 8.0.2. This setting may not be needed in some later versions of Domino, but its presence on such servers will have no negative effect. 
+
+RELATED INFORMATION
+#A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21602100]

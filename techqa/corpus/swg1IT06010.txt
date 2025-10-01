@@ -1,0 +1,172 @@
+Title: IBM IT06010: SMARTCLOUD ORCHESTRATOR 2.3.0.1: ERROR ENCOUNTERED WHEN ATTEMPTING TO PROVISION A NEW VIRTUAL MACHINE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When attempting to provision a new Virtual Machine (VM) using
+   the "Self-Service->Request new Servers" menu option in
+   SMARTCLOUD ORCHESTRATOR 2.3.0.1 cfix5, the following error is
+   encountered.
+   
+   "OpenStack reported the following message: Malformed request
+   url"
+   
+   This problem impacts any user that is not in the "admin"
+   project.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The following is a work-around to this problem.
+   
+   1. Open config file:
+   /opt/ibm/rainmaker/purescale.app/private/expanded/ibm/scp.ui-1.0
+   .0/config/openstack.config
+   2. Modify section "openstack" by adding "cache_service_versions"
+   parameter with value false. After this change is made, openstack
+   section should be similar to one below.
+   
+   "openstack": {
+         "server_operation_timeout_sec": 3600,
+          "server_operation_check_interval_sec": 10,
+           "cache_service_versions": false,
+           "image_service":"vil"
+   },
+   
+   3. Restart IWD:   service iwd restart
+   
+   After following these steps, the problem should be resolved.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users of IBM SmartCloud Orchestrator 2.3 FixPack 1 with iFix5
+   applied may encounter a problem with provisioning virtual
+   machines in custom projects. The deployment fails with the
+   following message: "OpenStack reported the following message:
+   Malformed request url".
+   IBM SmartCloud Orchestrator 2.3 FixPack 1 iFix5 introduced a
+   performance fix, by which OpenStack service versions are
+   cached. The caching module had a defect which resulted in
+   inappropriate rewriting of project-relative URLs.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code of the caching module has been updated to perform
+   per-project caching of service URLs
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  999
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT06010
+   
+   
+ * REPORTED COMPONENT NAME
+   IWD FOR SCO/SCP
+   
+   
+ * REPORTED COMPONENT ID
+   5765PS1SC
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-12
+   
+   
+ * CLOSED DATE
+   2015-05-22
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IWD FOR SCO/SCP
+   
+   
+ * FIXED COMPONENT ID
+   5765PS1SC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

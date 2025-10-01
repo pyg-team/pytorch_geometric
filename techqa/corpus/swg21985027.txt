@@ -1,0 +1,19 @@
+Title: IBM The IBM Datacap V9.0 documentation states incorrect information about the LookupEx variable support - United States
+
+Text:
+Datacap Desktop; LookupEx; support; IBM Datacap V9.0 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The information about LookupEx variable states that the Lookup variable is supported by the Datacap Desktop. However, this information is incorrect.
+
+The following link on the IBM Datacap V9.0 documentation states this incorrect information:
+http://www.ibm.com/support/knowledgecenter/SSZRWV_9.0.0/com.ibm.dc.develop.doc/dcadg318.htm [http://www.ibm.com/support/knowledgecenter/SSZRWV_9.0.0/com.ibm.dc.develop.doc/dcadg318.htm] 
+
+RESOLVING THE PROBLEM
+The correct information must state that the LookupEx variable is not supported by the Datacap Desktop in the IBM Datacap V9.0. 
+
+The following table depicts the correct verification panels that support the LookupEx variable: 
+
+Support this variable Do not support this variable Datacap Web Client (VeriFine.aspx) Datacap Desktop Datacap Navigator 
+
+Datacap Web Client (aindex.aspx)

@@ -1,0 +1,112 @@
+Title: IBM Procedure to change password for FileNet Content Engine 4.X Directory Service Account - United States
+
+Text:
+Password; Content Engine; Directory Service Account; Bind User; LDAP TECHNOTE (FAQ)
+
+QUESTION
+ How to change password for Directory Service Account? 
+
+ANSWER
+
+The Directory Service account and password are normally used in two places: FileNet Enterprise Manager (FEM), and application server. A coordinated update procedure should be followed when there is a need to change the account's password. If the account is also used in the CE's BootstrapConfig.properties file as the GCD admin username, the corresponding password in the BootstrapConfig.properties needs to change as well.
+
+For changing the GCD admin password in BootstrapConfig.properties specifically, refer to this documentation:
+http://publib.boulder.ibm.com/infocenter/p8docs/v4r5m1/index.jsp?topic=/com.ibm.p8.doc/admin/security/sec_how_change_bootstrap_pwd.htm [http://publib.boulder.ibm.com/infocenter/p8docs/v4r5m1/index.jsp?topic=/com.ibm.p8.doc/admin/security/sec_how_change_bootstrap_pwd.htm]
+
+1. Launch FEM and application server's administrative console first.
+a. Login to FEM using Directory Service account.
+b. Login to application server administrative console with an administrator account.
+
+Important: Do not close above two applications until you have completed step 5 below.
+
+2. Change password on LDAP server - Using LDAP interface, change password for CE Directory Service
+account.
+
+3. Change password in FEM
+
+Using FEM (step 1a above), go to Domain properties 
+> Directory Configuration > Select Directory Configuration > click on modify button > in General Tab 
+> Change Directory Service User > click on Change password check box > change to new password
+> click OK.
+
+At this point you will be presented a dialog box with following message: 
+“These changes require the application server to be restarted. Please restart the application server to
+incorporate these changes” 
+
+click OK > click OK 
+
+Important: Do not restart the application server until you have completed step 5 below. 
+
+4. Change password in application server's directory configuration
+
+- For WebSphere go to Global Security > click on LDAP under User Registry > Change server user >
+Change server password > Change bind user > change bind password > click OK and Save changes
+in WebSphere Administrative Console.
+- For WebLogic go to Security Realms > myrealm > Providers > ldap provider and click on 
+"Provider Specific" tab in WebLogic Admin Console. Change "Principal" and "Credential". 
+- For JBoss go to <JBoss Home>\server\<CE Server>\conf directory and edit "login-config.xml".
+Find "FileNet" application-policy and in login module change bindDN/bindCredential.
+
+5. Change CE Bootstrap password 
+
+
+This step is needed only if the GCD user name is the same as the Directory Service account. 
+
+- Open Command prompt 
+- For WebSphere, go to folder – “<WebSphere Home>\ AppServer\ profiles \ <profile name> \ config \ 
+cells \ <serverNodecell> \ applications \ FileNetEngine.ear \" 
+- For WebLogic, go to folder - "<WebLogic home> \ user_projects \ domains \ <domain> \ servers \ 
+AdminServer \ upload \" 
+- For JBoss, go to folder - "<JBoss Home> \ server \ <server> \ deploy \" 
+- Run BootstrapConfig.jar utility as specified: 
+For WebSphere, 
+Java –jar “c:\program files\FileNet\ContentEngine\lib\BootStrapConfig.jar” –e FileNetEngine.ear 
+--password <password> 
+For WebLogic, 
+Java –jar “c:\program files\FileNet\ContentEngine\lib\BootStrapConfig.jar” –e Engine-wl.ear 
+--password <password> 
+For JBoss, 
+Java –jar “c:\program files\FileNet\ContentEngine\lib\BootStrapConfig.jar” –e Engine-jb.ear 
+--password <password> 
+
+- For WebSphere, since the ear file has been deployed in the WebSphere's installedApps path, the 
+Bootstrap file need to be copied to the path manually: 
+Extract the props.jar file from the ear file by utility such as Winzip, copy the props.jar file to the 
+installedApps location - “<WebSphere Home>\ AppServer\ profiles \ <profile name> \ InstalledApps \ 
+<serverNodecell> \ FileNetEngine.ear \ APP-INF \ lib \" 
+
+Note that an alternative to copying the props.jar file is to uninstall and re-install the updated ear file 
+in WebSphere. 
+
+5.a. Change CE Bootstrap password (through FileNet Configuration Manager) 
+
+In CE 4.5.x, the CE Bootstrap password can easily be modified using FileNet Configuration Manager. 
+
+- Open Configuration Manager, and open existing configuration profile used during CE installation. 
+- Edit Configure Bootstrap Properties. 
+- Select Modify Existing for Bootstrap operation. 
+- Change Bootstrap user password. 
+- Run task. 
+
+6. Remove the cached files in Application Server 
+
+- Close FileNet Enterprise Manager (Step 1a) 
+- Close Administrative Console (Step 1b) 
+- Stop Application Server 
+- Remove cached FileNetEngine directory in application server. 
+For example, the default windows path on Websphere 6.0 is 
+"C:\programfiles\Websphere\AppServer\profiles\<profile name>\temp\<server node>\ 
+<server>\FileNetEngine" 
+
+7. Restart application server, and login to FEM using the new password. 
+
+8. Recover from mistakes 
+
+If CE fails to start due to mistake in the change procedure, you may not be able to redo the change through these procedures because FEM will fail to run. 
+In this case, you can do the following: 
+
+- Back out the change made to GCD database in step 3 by deleting the latest row in the FNGCD table. 
+- Change the directory service password on LDAP server back to the previous one. 
+- Back out the change made to application server (step 4) by redoing the procedure with previous password. 
+- Back out the change made to BootstrapConfig.properties file's GCD user password by redoing the procedure in step 5 with previous password. 
+- Restart application server, and login to FEM using the previous password.

@@ -1,0 +1,40 @@
+Title: IBM Use SQL Toolkit function without installing in database - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to use SQL Toolkit function from any database without enabling toolkit support ? 
+
+ANSWER
+To run this function from any database , a conventional method is to enable the toolkit in that database.If SQL toolkit functionality is to be used in multiple database,we need to enable support of toolkit in each database by installing it.
+If SQL Ext Toolkit is not installed in database,the below error is expected.
+
+If the toolkit is not enabled and the function is run from any database then it will error out like below . 
+
+ERROR [42S02] ERROR: Function 'REGEXP_LIKE(UNKNOWN, UNKNOWN)' does not 
+exist 
+Unable to identify a function that satisfies the given argument types 
+You may need to add explicit typecasts 
+
+We can avoid this.We just need to install it in any single database on the NPS host and rest databases can use this functionality without actually enabling support in those.
+
+Please note,you need at least one database where SQL Ext Toolkit is installed.
+Then do the below :
+
+Take a backup of postgresql.conf file.
+
+cp /nz/data/postgresql.conf /nz/data/postgresql_orig.conf
+
+Modify postgresql.conf file.
+vi /nz/data/postgresql.conf 
+
+Add the line below.
+search_path=<Database name where toolkit is enabled>.<User name by which toolkit is installed> 
+
+For Ex: 
+If you have installed toolkit in SQLEXTTEST with ADMIN user then you have to give search_path in postgresql.conf as below . 
+search_path=SQLEXTTEST.ADMIN 
+*** Please remember to restart NPS after making above changes into postgresql.conf*** 
+
+With that any database where toolkit is not installed still we will be able to use the toolkit function from that database

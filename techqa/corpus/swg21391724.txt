@@ -1,0 +1,10 @@
+Title: IBM Flush Out Old Entries in the MQSeries Events Workspace - United States
+
+Text:
+MQSeries Events workspace Current Events flush 5724K3500TR TECHNOTE (FAQ)
+
+QUESTION
+ How can I flush out old entries in the MQ Series Events workspace for channels or queues that no longer exist? 
+
+ANSWER
+The MQSeries Events workspace displays data from the Current Events attribute group. Since this data is stored in memory, stopping and restarting the MQ Monitoring agent will clear all the data in the Current Events table.

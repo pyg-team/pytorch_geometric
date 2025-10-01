@@ -1,0 +1,101 @@
+Title: IBM Using Windows Remote Desktop and Genwin GUI playbacks in a VMware image - United States
+
+Text:
+BWMGW0153E; BWMGW0162E; vm; vmware; remote; desktop; screen; locked; Genwin; gui; mstsc; playback; fails; hangs; failure; generic windows; robot; gui; robotic; roboter; rrt; 71RRT-TSRGP; 71RRT-ROBPLAY; 71RRT-PLAY; 71RRT-TS TECHNOTE (FAQ)
+
+QUESTION
+ Using Remote Desktop to access an Agent running Genwin GUI robotic playbacks, the playbacks are failing with "Agent screen is locked" errors. The screen isn't locked, why is this happening? 
+
+ANSWER
+The first thing to remember about playing back Rational Robot GUI scripts in ITCAMfT is that Rational Robot must be able to access an unlocked desktop at all times and must have access to the active desktop running on the console.
+
+There are 2 possible reasons for using Remote Desktop to access a Virtual Machine (VM) running Robotic playbacks using Rational Robot GUI scripts:
+
+
+
+ * Secure single remote access point (Permanently connected) 
+ * Occasional access for the purpose of troubleshooting and/or maintenance 
+
+
+The simplest method of using Remote Desktop is to access the host machine running the VMs and access the individual VM from there using the VM console. 
+
+If it is not possible to do this, you need to be aware of the following information and limitations when using Remote Desktop to access a machine running on a VM directly if that machine is being used to playback Rational Robot GUI scripts. 
+
+Starting the RRT/T6 TEMA VM 
+
+To access the RRT Agent or the RRT TEMA VM using Remote Desktop, the image must first be running on the VM host. 
+
+This would mean starting the VM and logging in to ensure the RRT TEMA is communicating with the Management Server or the TEMS and the Rational Robot GUI playbacks are running. 
+
+If you do not login, the RRT TEMA is visible to the TEMS and playbacks are launched but they fail with "BWMGW0153E Agent Screen is Locked" error being seen in the "Robotic Playback Availability Events" view or "Component Events" in TEP GUI console. 
+
+The procedure for starting the VM is influenced by the type of Remote Desktop access needed: 
+
+ * Secure single remote access point (Permanently connected)
+   
+   Automatic login
+   Manual login from the VM host machine
+   Do not login (Manual login using Remote Desktop)
+   
+
+ * Occasional access
+   
+   Automatic login
+   Manual login from the VM host machine
+   
+
+
+Starting the Remote Desktop session 
+
+The method of starting the Remote Desktop session (mstsc.exe) is influenced by the type of access needed and the version of Windows being used. 
+
+ * Secure single remote access point
+   
+   mstsc.exe /admin
+   
+   This session must always be active.
+   
+   If this session is terminated, Robotic scripts continue to be launched but fail as described above.
+   
+
+ * Occasional access
+   
+   mstsc.exe
+   
+   This session allows you to review various aspects of the RRT TEMA including logs and data file activity. You can not see playbacks running or task manager activity as seen in the actual VM.
+   
+   The session is temporary and can be terminated at anytime without disturbing Robotic playbacks. 
+
+
+For Remote Desktop sessions started with "/admin" 
+
+Do not minimize the Remote Desktop screen. 
+
+If you do, the playback fails because it does not have control of the desktop. This results in the following error seen in the "Robotic Playback Availability Events" view or "Component Events": 
+
+BWMGW0162E Rational Robot script failure, reason Unknown - Window was found but Rational Robot cannot make it active. 
+
+This happens because Rational Robot needs access to a mouse and keyboard when the GUI scripts playback. 
+
+Minimizing the Remote Desktop session when connected directly to the VM means Rational Robot cannot see the keyboard and mouse. 
+
+This is equivalent to 2 machines sharing a keyboard and mouse via a switchbox, then starting a playback and switching to the other machine. 
+
+If you need to navigate to another window, use the Remote Desktop "Restore Down" button to put the Remote Desktop in a window, then switch to the other window without minimizing the session window to the RRT TEMA 
+
+Screen Resolution 
+
+If a script contains "RegionVP" tests and the Remote Desktop resolution is different to that used during the recording, Region Verification Points may fail. 
+
+Please note: Rational Robot playbacks are not supported on ITCAMfT 7.4+ RRT Agents. If Rational Robot playbacks are needed in an ITCAMfT 7.4+ environment you must use an ITCAMfT 7.3 RRT Agent as described in this blog: Rational Robot is not supported on 7.4 RRT agents [https://www.ibm.com/developerworks/community/blogs/0587adbc-8477-431f-8c68-9226adea11ed/entry/itcamft_how2_live_without_robot] 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfRT
+TCAMfRT
+CAMfRT
+ITCAMfRTT
+TCAMfRTT
+CAMfRT
+ITCAMfT
+TCAMfT
+CAMfT

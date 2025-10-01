@@ -1,0 +1,205 @@
+Title: IBM Announcement: End of Support for WebSphere MQ and WebSphere MQ File Transfer Edition V7.0.1 and V7.0.0 and WebSphere MQ Telemetry V7.0.1 - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ IBM has withdrawn support for WebSphere MQ V7.0.1 and V7.0.0, WebSphere MQ for z/OS V7.0.1 and V7.0.0, WebSphere MQ File Transfer Edition V7.0.1 and V7.0.0, WebSphere MQ File Transfer Edition for z/OS V7.0.1 and V7.0.0, and WebSphere MQ Telemetry V7.0.1. 
+
+CONTENT
+
+
+TAB NAVIGATION
+ * WebSphere MQ and File Transfer Edition V7.0.1 and V7.0.0 • MQ Telemetry V7.0.1 selected tab
+
+TAB NAVIGATION
+ * What were the end of support dates for WebSphere MQ V7.0.1 and V7.0.0, WebSphere MQ File Transfer Edition V7.0.1 and V7.0.0, and WebSphere MQ Telemetry V7.0.1?
+ * Do these announcements affect WebSphere MQ File Transfer Edition V7.0.4, V7.0.3 and V7.0.2, WebSphere MQ Advanced Message Security V7.0.1, or WebSphere MQ Hypervisor Edition V7.0.1?
+ * What replacement products are available?
+ * How do I check which version I am currently running?
+ * Is any information available to help me upgrade to a later version?
+ * How do I purchase a support extension for my current version?
+ * When a WebSphere MQ server product goes out of support, does the client and file transfer agent also go out of support?
+ * Are these products still supported when they are bundled with another IBM product?
+ * Is the WebSphere MQ V7.0 Resource Adapter supported in WebSphere Application Server?
+ * Is documentation still available for these products?
+ * How do I obtain installation images for these products if I still need them?
+ * Is there an IBM MQ V9.0 or MQ V8.0 trial version available for download?
+
+
+
+[/support/docview.wss?uid=swg21674407&amp;aid=1]
+
+
+
+
+WHAT ARE THE END OF SUPPORT DATES FOR WEBSPHERE MQ V7.0.1 AND V7.0.0, WEBSPHERE MQ FILE TRANSFER EDITION V7.0.1 AND V7.0.0, AND WEBSPHERE MQ TELEMETRY V7.0.1?
+
+ * 
+ *  Product Version Release Date End of Support Platforms WebSphere MQ V7.0.1 28 Aug 2009 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS209-245] 30 Apr 2015 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS914-067] AIX, HP-UX (Itanium), HP-UX (PA-RISC), i5/OS, Linux (POWER), Linux (x86), Linux (x86-64), Linux (zSeries 64-bit), Solaris (SPARC), Solaris (x86-64), Windows (x86) WebSphere MQ for z/OS V7.0.1 25 Sep 2009 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS209-248] 30 Sep 2015 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS914-150] z/OS WebSphere MQ V7.0.0 16 Jun 2008 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS208-068] 30 Apr 2015 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS914-067] AIX, HP-UX (Itanium), HP-UX (PA-RISC), i5/OS, Linux (POWER), Linux (x86), Linux (x86-64), Linux (zSeries 64-bit), Solaris (SPARC), Solaris (x86-64), Windows (x86) WebSphere MQ for z/OS V7.0.0 27 Jun 2008 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS208-067] 30 Sep 2011 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS910-014] z/OS WebSphere MQ File Transfer Edition V7.0.1 05 Jun 2009 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS209-118] 30 Sep 2014 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS913-158] AIX, HP-UX (Itanium), Linux (x86), Linux (x86-64), Linux (zSeries 64-bit), Solaris (SPARC), Windows (x86) WebSphere MQ File Transfer Edition for z/OS V7.0.1 12 Jun 2009 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS209-119] 30 Sep 2014 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS913-149] z/OS WebSphere MQ File Transfer Edition V7.0.0 05 Dec 2008 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS208-331] 30 Sep 2014 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS913-158] AIX, HP-UX (Itanium), Linux (x86), Solaris (SPARC), Windows (x86) WebSphere MQ File Transfer Edition for z/OS V7.0.0 12 Dec 2008 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS208-339] 30 Sep 2014 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS913-149] z/OS WebSphere MQ Telemetry V7.0.1 27 Aug 2010 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS210-201] 30 Sep 2015 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS914-067] Linux (x86-64), Windows (x86) 
+ * 
+ *  Review lifecycle dates for all IBM MQ and WebSphere MQ products [http://www.ibm.com/software/support/lifecycleapp/PLCSearch.wss?q=%28+%22IBM+MQ%22+OR+%22WebSphere+MQ%22+%29+AND+NOT+%28+Tivoli+OR+Adapter+OR+Broker+OR+Integrator+OR+Workflow+OR+%22Low+Latency+Messaging%22+%29]
+   
+   End of support information for WebSphere MQ V7.5 and WebSphere MQ Hypervisor Edition V7.5 [http://www.ibm.com/support/docview.wss?&uid=swg21996472]
+   
+   End of support information for WebSphere MQ V7.1, WebSphere MQ File Transfer Edition V7.0.4, V7.0.3 and V7.0.2, WebSphere MQ Advanced Message Security V7.0.1, and WebSphere MQ Hypervisor Edition V7.0.1 [http://www.ibm.com/support/docview.wss?&uid=swg21980668]
+   
+   
+ * Back to top
+
+
+
+
+DO THESE ANNOUNCEMENTS AFFECT WEBSPHERE MQ FILE TRANSFER EDITION V7.0.4, V7.0.3 AND V7.0.2, WEBSPHERE MQ ADVANCED MESSAGE SECURITY V7.0.1, OR WEBSPHERE MQ HYPERVISOR EDITION V7.0.1?
+
+ * IBM has subsequently announced the end of support for these products [http://www.ibm.com/support/docview.wss?uid=swg21980668] on all platforms including z/OS:
+ *  
+ *  Lifecycle dates for WebSphere MQ V7.0 products [http://www.ibm.com/software/support/lifecycleapp/PLCSearch.wss?q=%28%22WebSphere+MQ+%22+AND+%227.0%22%29+OR+%28%22WebSphere+MQ+File+Transfer+Edition+%22+AND+%28%227.0.4%22+OR+%227.0.3%22+OR+%227.0.2%22%29%29+OR+%28%22WebSphere+MQ+Advanced+Message+Security+%22+AND+%227.0.1%22%29] 
+ * 
+ * Back to top
+
+
+
+
+WHAT REPLACEMENT PRODUCTS ARE AVAILABLE?
+
+ * Replacements for WebSphere MQ V7.0.1 and V7.0.0 include IBM MQ or IBM MQ Advanced V9.0 and V8.0. WebSphere MQ or WebSphere MQ Advanced V7.5 are also available (except on IBM i), but their end of support date is 30 Apri 2018 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS916-117].
+ * Replacements for WebSphere MQ for z/OS V7.0.1 and V7.0.0 include IBM MQ, IBM MQ Advanced, or IBM MQ Value Unit Edition for z/OS V9.0 and V8.0.0.
+ * Replacements for WebSphere MQ File Transfer Edition V7.0.1 and V7.0.0 include IBM MQ Advanced V9.0 and V8.0. WebSphere MQ Advanced V7.5 is also available (except on IBM i), but its end of support date is 30 April 2018 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS916-117]. The Advanced license allows use of the Managed File Transfer and Advanced Message Security components which are now built into MQ and replace the former File Transfer Edition and Advanced Message Security products.
+ * Replacements for WebSphere MQ File Transfer Edition for z/OS V7.0.1 and V7.0.0 include IBM MQ Advanced for z/OS V9.0 and V8.0.0. The Advanced license allows use of the Managed File Transfer and Advanced Message Security components which are now built into MQ for z/OS and replace the former File Transfer Edition for z/OS and Advanced Message Security for z/OS products.
+ * The replacement for WebSphere MQ Telemetry V7.0.1 is IBM MQ or IBM MQ Advanced V9.0 or V8.0, all of which include Telemetry as a component of the MQ product. WebSphere MQ or WebSphere MQ Advanced V7.5 are also available (except on IBM i), but their end of support date is 30 April 2018 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS916-117].
+ * 
+ * 
+ * Back to top
+
+
+
+
+HOW DO I CHECK WHICH VERSION I AM CURRENTLY RUNNING?
+
+ * Follow these general instructions [http://www.ibm.com/support/docview.wss?uid=swg21621707] or the IBM MQ Knowledge Center instructions [http://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.ref.adm.doc/q083280_.htm] to display your IBM MQ or WebSphere MQ version on all platforms except for z/OS with the command: dspmqver
+ * On z/OS, look for message CSQY000I [http://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.ref.doc/csq_y.htm] in the MSTR joblog to determine your version.
+ * Follow the IBM MQ Knowledge Center instructions [http://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.wmqfte.doc/display_ver_cmd.htm] to display your Managed File Transfer or WebSphere MQ File Transfer Edition version with the command: fteDisplayVersion
+ * WebSphere MQ Telemetry V7.0.1 only runs on WebSphere MQ V7.0.1 (fix pack 7.0.1.3 and later) on Linux (x86-64) and Windows (x86). Although there is no command to display the WebSphere MQ Telemetry version, if your WebSphere MQ version is V7.0.1 and you have a WebSphere MQ Telemetry service and channels [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.0.1/com.ibm.mq.tt.doc/tt_intro.htm] configured, then you are running WebSphere MQ Telemetry V7.0.1.
+ * 
+ * Back to top
+
+
+ 
+[/support/docview.wss?uid=swg21674407&amp;aid=2]
+
+ 
+
+
+
+
+IS ANY INFORMATION AVAILABLE TO HELP ME UPGRADE TO A LATER VERSION?
+
+ * The IBM MQ and WebSphere MQ Migration Guide [https://www.ibm.com/developerworks/community/blogs/aimsupport/entry/websphere_mq_ibm_mq_migration_guide] is available to view online or download:
+ *  IBM MQ and WebSphere MQ Migration Guide [https://www.ibm.com/developerworks/community/blogs/aimsupport/resource/MQ_migration/WMQ_Migration.pdf] 
+ * 
+ * The IBM Knowledge Center also includes information to assist you in migrating to a supported version of IBM MQ or WebSphere MQ:
+ *  Migrating and upgrading to IBM MQ V9.0 [http://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.mig.doc/q006180_.htm] Migrating and upgrading to IBM MQ V8.0 [http://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.mig.doc/q006180_.htm] Migrating and upgrading to WebSphere MQ V7.5 [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.mq.mig.doc/q006180_.htm] 
+ * 
+ * The following WebSphere Support Technical Exchange presentations may be helpful if you are considering running multiple MQ installations on your system:
+ *  Webcast replay: WebSphere MQ Multi-Version - First Steps [http://www.ibm.com/support/docview.wss?uid=swg27024276] Webcast replay: WebSphere MQ Multi-Version - Environment Considerations and Management [http://www.ibm.com/support/docview.wss?uid=swg27024340] 
+ * 
+ * Back to top
+
+
+
+
+HOW DO I PURCHASE A SUPPORT EXTENSION FOR MY CURRENT VERSION?
+
+ * Support extensions are available for an additional fee. To purchase extended support for WebSphere MQ or any of the other products, please contact your local IBM sales representative.
+ * US Customers should contact Customer Support Operations at 1-877-426-6006, option #2. If you provide your IBM customer number, they can quickly find your sales representative.
+ * Customers in other geographies should refer to the IBM directory of worldwide support contacts to find sales contact numbers in your region:
+ * 
+ *  IBM Directory of Worldwide Contacts [http://www.ibm.com/planetwide/] 
+ * 
+ * Back to top
+
+
+
+
+WHEN AN WEBSPHERE MQ SERVER PRODUCT GOES OUT OF SUPPORT, DOES THE CLIENT AND FILE TRANSFER AGENT ALSO GO OUT OF SUPPORT?
+
+ * Yes. WebSphere MQ V7.0 clients and WebSphere MQ File Transfer Edition V7.0.1 and V7.0.0 agents go out of support at the same time as the server.
+ * 
+ * Back to top
+
+
+ [/support/docview.wss?uid=swg21674407&amp;aid=3] 
+
+
+
+
+ARE THESE PRODUCTS STILL SUPPORTED WHEN THEY ARE BUNDLED WITH ANOTHER IBM PRODUCT?
+
+ * Yes, support is available for all bundled components until the IBM product that includes them is withdrawn from support. However, they are only supported when used by the bundling IBM product. Unrelated usage is not supported.
+ * 
+ *  Find the end of support date for your IBM software product [http://www.ibm.com/software/support/lifecycle/index_a_z.html] 
+ * 
+ * Back to top
+
+
+
+
+IS THE WEBSPHERE MQ V7.0 RESOURCE ADAPTER SUPPORTED IN WEBSPHERE APPLICATION SERVER?
+
+ * Yes, the WebSphere MQ V7.0 Resource Adapter [http://www.ibm.com/support/docview.wss?uid=swg21248089#7dotx_0] shipped with WebSphere Application Server V8.0 and V7.0 is supported through 30 April 2018 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS916-143], when both of those versions of WebSphere Application Server end support, or longer if you purchase a WebSphere Application Server support extension.
+   
+ * Similarly, the WebSphere MQ V7.1 Resource Adapter [http://www.ibm.com/support/docview.wss?uid=swg21248089#7dotx_0_0] shipped with WebSphere Application Server V8.5.x is supported as long as that version of WebSphere Application Server remains in support, or longer if you purchase a WebSphere Application Server support extension.
+   
+ * However, if you manually install your own copy of the WebSphere MQ V7.x Resource Adapter in WebSphere Application Server or any third-party Java EE server, it will go out of support with the corresponding WebSphere MQ server version.
+   
+ * The IBM MQ V8.0 and V9.0 Resource Adapters cannot be installed in WebSphere Application Server V8.5.x, V8.0 and V7.0 because those versions support JMS 1.1 while the IBM MQ Resource Adapters implement JMS 2.0. WebSphere Application Server V9.0 ships with the IBM MQ V9.0 Resource Adapter [http://www.ibm.com/support/docview.wss?uid=swg21248089#7dotx_0_0_0] and includes full support for JMS 2.0. The version of MQ Resource Adapter you use must be supported by your Java EE server but does not need to match the version of the queue managers to which you wish to connect.
+   
+ * Back to top
+
+ 
+
+
+
+
+IS DOCUMENTATION STILL AVAILABLE FOR THESE PRODUCTS?
+
+ * Yes. Online documentation is available in the IBM Knowledge Center, while downloadable Information Center installations and PDF versions of the manuals are available from the MQ Library page.
+ * 
+ *  WebSphere MQ V7.0.1 Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.0.1/com.ibm.mq.helphome.v70.doc/WelcomePagev7r0.htm] WebSphere MQ V7.0.1 library of downloadable documentation [http://www.ibm.com/software/integration/wmq/library/library701.html] WebSphere MQ V7.0.0 library of downloadable documentation [http://www.ibm.com/software/integration/wmq/library/library700.html] WebSphere MQ File Transfer Edition V7.0.4 Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSEP7X_7.0.4/welcome/WelcomePagev7r0.html] WebSphere MQ Telemetry V7.0.1 [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.0.1/com.ibm.mq.tt.doc/tt_intro.htm] 
+ * 
+ * Back to top
+
+
+
+
+HOW DO I OBTAIN INSTALLATION IMAGES FOR THESE PRODUCTS IF I STILL NEED THEM?
+
+ * Installation images for WebSphere MQ V7.0.1 and V7.0.0, WebSphere MQ File Transfer Edition V7.0.1 and V7.0.0, and WebSphere MQ Telemetry V7.0.1 are no longer available from Passport Advantage [https://www.ibm.com/software/passportadvantage/pao_customer.html]. Contact IBM if you have an urgent business need for these installation images.
+ * 
+ * Back to top
+
+
+ 
+[/support/docview.wss?uid=swg21674407&amp;aid=4]
+
+ 
+
+
+
+
+IS THERE AN IBM MQ V9.0 OR MQ V8.0 TRIAL VERSION AVAILABLE FOR DOWNLOAD?
+
+ * You can obtain a full-featured trial version of IBM MQ to evaluate for 90 days:
+ * 
+ *  Try IBM MQ now [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?pkgid=&S_SRCID=ESD-WSMQ-EVAL&source=ESD-WSMQ-EVAL&S_TACT=109J84RW&S_CMP=web_ibm_ws_appint_ct_wmq-ov&S_PKG=CR9H9ML&s=&id=2009-08-28+03%3A34%3A46.648052R&fam=&cat=&l=English+International&m=download&ibm-continue=Continue] 
+ * 
+ * Back to top
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere MQ File Transfer Edition Not Applicable AIX, HP-UX, Linux, Solaris, Windows, z/OS 7.0.1, 7.0 All Editions Business Integration WebSphere MQ Telemetry Not Applicable Linux, Windows Business Integration IBM MQ 
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

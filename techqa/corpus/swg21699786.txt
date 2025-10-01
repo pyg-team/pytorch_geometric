@@ -1,0 +1,43 @@
+Title: IBM What to do if you receive InfoSphere Guardium "no traffic" alert? - United States
+
+Text:
+Guardium; alert; no traffic TECHNOTE (FAQ)
+
+QUESTION
+ What should Guardium administrator do if they receive "no traffic" alerts from InfoSphere Guardium appliance? 
+
+CAUSE
+"No Traffic" alert is a predefined alert. It checks for traffic from an active inspection engine, from which the collector previously received traffic, and for traffic that is processed by the policy. If both conditions are not satisfied within 48 hours, an alert will be generated.
+No traffic from certain DB server can happen for many reasons. Guardium administrator can use this guide to help understand the situation. 
+
+
+ANSWER
+There are several things you can check when receiving "no traffic" alert. 
+
+
+1) For the server IP generating no traffic alert, is the STAP status active? If the STAP is inactive for any reason, or all STAPs are inactive (which means inspection-core is stopped), there would be no traffic collected.
+
+For more information about inactive STAP, please refer to the following technote:
+What to do if you get Guardium "Inactive S-TAPs Since" alerts [http://www-01.ibm.com/support/docview.wss?uid=swg21698838]
+
+2) Is no traffic from certain DB server a expected result? If there is indeed no traffic from the server at that time period (low traffic period), this would not be a concern.
+
+3) What is the "Max Timestamp" in the alert text? Did some planned events happen on the server at that time?
+
+4) Check the STAP configuration parameters. For example, if you are using load balancing, the traffic may had been sent to other collector. Is there any change to STAP configuration during that time? For example, if port range in inspection engine configuration was modified to a wrong value, it will cause no traffic.
+
+5) Check the current installed policy on the collector. If the policy was set or changed to selective-audit policy? Or does it have rules like "ignore STAP session"? That may lead to the result of no traffic.
+
+
+In you encounter other problems about no traffic alert and require assistance from IBM Guardium technical support engineer, please open a PMR and collect the following information.
+
+- Investigation results from above 5 items
+- Run "support must_gather sniffer_issues" and "support must_gather system_db_info" from CLI console and collect the files (click here [http://www-01.ibm.com/support/docview.wss?uid=swg21624567] for more information about MustGather files)
+- STAP diag file from the problematic server (click here [http://www-01.ibm.com/support/docview.wss?uid=swg21579891] for more information about STAP diag, including Unix and Windows platform)
+- SLON file for several minutes (click here [http://www-01.ibm.com/support/docview.wss?uid=swg21508960] for more information about SLON file)
+- Any other relevant information
+
+RELATED INFORMATION
+#IBM MustGather: Collecting data for Guardium Appliance [http://www-01.ibm.com/support/docview.wss?uid=swg21624567]
+IBM MustGather: Collecting data for Guardium STAP [http://www-01.ibm.com/support/docview.wss?uid=swg21579891]
+How can a 'slon' capture be created on Guardium [http://www-01.ibm.com/support/docview.wss?uid=swg21508960]

@@ -1,0 +1,216 @@
+Title: IBM PI67478: BIGSQL ANALYZE RESULTS IN SECURITY CONSTRAINT VIOLATION - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On analyze which results in Security constraint violation while
+   recording stats.
+   $ cat scenario.sql
+   DROP TABLE IF EXISTS orders;
+   CREATE HADOOP TABLE orders(orderkey INT not null, o_comment
+   string comment 'comment column' not null) PARTITIONED BY
+   (orderdate string);
+   INSERT INTO ORDERS SELECT row_number() over(), row_number()
+   over (), (row_number() over ()) from syscat.tables fetch first
+   20 rows only;
+   ANALYZE TABLE ORDERS COMPUTE STATISTICS FOR ALL COLUMNS
+   TABLESAMPLE SYSTEM(15);
+   $ db2 -tvf scenario.sql
+   DROP TABLE IF EXISTS orders
+   DB20000I  The SQL command completed successfully.
+   CREATE HADOOP TABLE orders(orderkey INT not null, o_comment
+   string comment 'comment column' not null) PARTITIONED BY
+   (orderdate string)
+   DB20000I  The SQL command completed successfully.
+   INSERT INTO ORDERS SELECT row_number() over(), row_number()
+   over (), (row_number() over ()) from syscat.tables fetch first
+   20 rows only
+   DB20000I  The SQL command completed successfully.
+   ANALYZE TABLE ORDERS COMPUTE STATISTICS FOR ALL COLUMNS
+   TABLESAMPLE SYSTEM(15)
+   DB21034E  The command was processed as an SQL statement because
+   it was not a
+   valid Command Line Processor command.  During SQL processing it
+   returned:
+   SQL5105N  The statement failed because a Big SQL component
+   encountered an
+   error. Component receiving the error: "". Component returning
+   the error:
+   "HIVE". Log entry identifier: "[BSL-0-496018e68]".
+   SQLSTATE=58040
+   bigsql.log for "[BSL-0-496018e68]":
+   2016-05-09 10:52:44,410 WARN
+   com.ibm.biginsights.biga.udf.stats.AnalyzeCatalog [Thread-3] :
+   Column O_COMMENT has been altered to VARCHAR(33)
+   2016-05-09 10:52:44,745 WARN
+   com.ibm.biginsights.biga.udf.stats.AnalyzeCatalog [Thread-3] :
+   Column ORDERDATE has been altered to VARCHAR(33)
+   2016-05-09 10:52:45,033 WARN
+   com.ibm.biginsights.catalog.translator.hive.HiveExceptionTransla
+   tor [Thread-3] : [BSL-0-496018e68]: DB2 SQL Error:
+   SQLCODE=-1227, SQLSTATE=23521, SQLERRMC=20;COLCARD;6,
+   DRIVER=4.21.21
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException:
+   DB2 SQL Error: SQLCODE=-1227, SQLSTATE=23521,
+   SQLERRMC=20;COLCARD;6, DRIVER=4.21.21
+     at com.ibm.db2.jcc.am.kd.a(Unknown Source)
+     at com.ibm.db2.jcc.am.kd.a(Unknown Source)
+     at com.ibm.db2.jcc.am.kd.a(Unknown Source)
+     at com.ibm.db2.jcc.am.sp.b(Unknown Source)
+     at com.ibm.db2.jcc.am.sp.c(Unknown Source)
+     at com.ibm.db2.jcc.t4.bb.m(Unknown Source)
+     at com.ibm.db2.jcc.t4.bb.a(Unknown Source)
+     at com.ibm.db2.jcc.t4.p.a(Unknown Source)
+     at com.ibm.db2.jcc.t4.wb.b(Unknown Source)
+     at com.ibm.db2.jcc.am.tp.uc(Unknown Source)
+     at com.ibm.db2.jcc.am.tp.a(Unknown Source)
+     at com.ibm.db2.jcc.am.tp.b(Unknown Source)
+     at com.ibm.db2.jcc.am.tp.mc(Unknown Source)
+     at com.ibm.db2.jcc.am.tp.executeUpdate(Unknown Source)
+     at
+   com.ibm.biginsights.biga.udf.stats.AnalyzeCatalog.execUpdate(Ana
+   lyzeCatalog.java:662)
+     at
+   com.ibm.biginsights.biga.udf.stats.AnalyzeCatalog.updateColumnSt
+   ats(AnalyzeCatalog.java:357)
+     at
+   com.ibm.biginsights.biga.udf.stats.StatsUpdater.etlStatistics(St
+   atsUpdater.java:167)
+     at
+   com.ibm.biginsights.biga.udf.stats.StatsUpdater.doETL(StatsUpdat
+   er.java:113)
+     at
+   com.ibm.biginsights.biga.udf.stats.AnalyzeTool.analyze(AnalyzeTo
+   ol.java:138)
+     at
+   com.ibm.biginsights.biga.udf.stats.AnalyzeTool.analyze(AnalyzeTo
+   ol.java:56)
+     at
+   com.ibm.biginsights.biga.udf.BIGSQL_DDL.performAnalyze(BIGSQL_DD
+   L.java:1131)
+     at
+   com.ibm.biginsights.biga.udf.BIGSQL_DDL.doAnalyzeStatement(BIGSQ
+   L_DDL.java:1098)
+     at
+   com.ibm.biginsights.biga.udf.BIGSQL_DDL.processDDL(BIGSQL_DDL.ja
+   va:227)
+     Expected results:
+   Analyze should be successful
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  See error description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem is fixed in Version 4.2 and later fix packs.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI67478
+   
+   
+ * REPORTED COMPONENT NAME
+   INFO BIGINSIGHT
+   
+   
+ * REPORTED COMPONENT ID
+   5725C0900
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-11
+   
+   
+ * CLOSED DATE
+   2016-11-09
+   
+   
+ * LAST MODIFIED DATE
+   2016-11-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  Unknown
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INFO BIGINSIGHT
+   
+   
+ * FIXED COMPONENT ID
+   5725C0900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R420 PSY
+   UP

@@ -1,0 +1,146 @@
+Title: IBM Unable to Logon to FileNet Content Manager Workplace after changing the Object Store Display Name of the bootstrapped Object Store - United States
+
+Text:
+object store display name; Workplace logon; credentials exception; E_OBJECT_NOT_FOUND; bootstrap.properties; user preference TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After changing the bootstrapped object store display name in Enterprise Manager (FEM), users were not able to logon to Workplace. 
+
+SYMPTOM
+Workplace Logon error and stack trace: 
+
+ * 
+ * 
+ * <ORIGINAL OBJECT STORE DISPLAY NAME>
+ * 
+ * ORIGINAL OBJECT STORE DISPLAY NAME
+ * 
+ * 
+ * 
+ * Error Message:
+ * 
+ * 
+ * 
+ * 
+   Exception Class:
+ * 
+ * 
+ * 
+ * 
+   Stack Trace:
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * <ORIGINAL OBJECT STORE NAME>
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * ORIGINAL OBJECT STORE DISPLAY NAME
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+CAUSE
+Workplace bootstrap.properties file and User Preferences file referenced the old object store.
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+1. Verify the display name change in Enterprise Manager (FEM). 
+
+ *  Review the Symbolic name Review the Display name 
+
+2. Review the error message from the Workplace logon. 
+3. Go to the installation location for Workplace and review the bootstrap.properties file (\FileNet\Config\AE) to see if the new object store display name is referenced in the "objectStoreId=" field. If the old name shows up there, see below. 
+RESOLVING THE PROBLEM
+ 
+
+ * Review the bootstrap.properties file in the Workplace installation location. 1. If the old object store display name is referenced in the bootstrap.properties file, make a backup copy of the bootstrap.properties file. 
+   
+   2. In the bootstrap.properties file, change the old object store display name to the new object store display name. 
+   
+   3. Save the bootstrap.properties file. 
+   
+   4. Stop the Application Server. 
+   
+   5. Clear the temp files. 
+   
+   6. Restart the Application Server.
+   
+   
+
+
+ * Review the user preference files in Enterprise Manager 1. Go to Enterprise Manager and look at the Preferences Folder under the Root Folder located under the bootstrapped object store. 
+   
+   2. Right-click on the user preference file for the user who encountered the Workplace logon error, select Properties and click View on the Content Elements tab to view the user preferences XML content. Search for the old object store display name in the XML. 
+   
+   3. If the old object store display name is referenced, you have two options: 
+   
+   4. (a) Check out the user preference file, find and replace the old object store display name with the new object store display name and check the file back in. 
+   
+   OR 
+   
+   (b) Delete the user preference file and ask the user to logon to Workplace. A new user preference file will be created that will reference the new object store display name.

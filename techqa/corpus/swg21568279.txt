@@ -1,0 +1,69 @@
+Title: IBM Collecting Data: ITCAM for Applications - Extended Agent for Oracle - United States
+
+Text:
+5724V09ORMGX; 5724V09ORTR; mustseerz; must gather; mustgather; MustGatherDocumentSupportLandingPageChildren TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting Data documents for ITCAM for Applications - Extended Agent for Oracle (RZ) 
+
+DIAGNOSING THE PROBLEM
+Collecting Data documents for Extended Agent for Oracle used to aid problem determination and reduce time resolving PMRs (Problem Management Records)
+
+RESOLVING THE PROBLEM
+ 
+
+Identifying the problem To research the problem prior to submitting a PMR start with these pre-filtered searches 
+
+Search Hints:  * Do not use New Search, use search within the existing search, add your own search criteria, use 'back' in your browser to move around 
+ * Right click on link to launch in new tab to reference back to this doc 
+ * You may have to launch the Support Portal Search a second time if 0 results occur on the first attempt 
+
+
+APARS and Fixes (Portal Search) [https://www.ibm.com/support/entry/myportal/search_results/software/tivoli/tivoli_brand_support_(general)?sn=spe&q=5724V09OR&filter=language:en&productContext=2094912778] 
+[https://www.ibm.com/support/entry/myportal/search_results/software/tivoli/tivoli_brand_support_(general)?sn=spe&q=5724V09OR&filter=language:en&productContext=2094912778] 
+DCF Solutions (Portal Search) [https://www.ibm.com/support/entry/myportal/search_results/tivoli/tivoli_composite_application_manager/tivoli_composite_application_manager_for_applications?sn=spe&q=5724V09ORTR&filter=language:en&productContext=-1624548657#q%3D5724V09ORTR%26sortby%3D-dcdate%26filter%3Dlanguage%3Aen] 
+
+PMR Searches for IBMers (Wellspring) [http://eclient.lenexa.ibm.com:9082/search/?q=5724V09OR&start=0&selfilt=&tp=&sortkey=relevance&sortdir=Descending&xqterm_mod=&num=20&details=Show+Partial] 
+
+L3 and Developers Wiki and Best Practices for Oracle Extended Agent [https://www.ibm.com/developerworks/mydeveloperworks/wikis/home?lang=en#/wiki/Tivoli%20Composite%20Application%20Manager/page/Oracle_Extended_Agent] 
+
+dwAnswers [https://developer.ibm.com/answers/questions/#apm/] 
+
+
+Gather Documentation  1. Stop the Oracle Extended Agent 
+ 2. Set RAS1 trace settings below 
+ 3. Reconfigure the Oracle Extended Agent 
+ 4. Recreate problem and take screen print of issue 
+ 5. Process <install path>/bin/tacmd pdcollect from the command line 
+
+
+Send the pdcollect jar/tar file, screen prints, and all useful Oracle environmental information including oracle logs, listener.ora and tnsnames.ora files if required 
+
+
+Oracle Extended Agent Trace Settings  * Update the Oracle Extended Agent environment file:
+ * Windows 
+ *  <install path>\TMAITM6\KRZENV [http://www-1.ibm.com/support/docview.wss?&uid=swg21266129] 
+ * 
+ * 
+ *  <install path>/config/rz.ini 
+ * Set trace values for KBB_ RAS1 and KBB_RAS1_LOG 
+ *  KBB_RAS1=ERROR (UNIT:krz ALL) (UNIT:knz ALL) (UNIT:kra ALL) KBB_RAS1_LOG set the following for more and larger log files 
+ * 
+ * 
+ * Further specific filtering options, remove krz above and use only specific UNIT 
+ *  krzalert: the Alert Log component krzbasic: the basic functions component krzcomm: the common connection component krzmutex: the event and mutex component krzora: the OCI(Oracle Call Interface) related functions component krzxml: the XML component 
+
+
+Delivering Collected Data​​ Upload files using the http://www.ecurep.ibm.com/app/upload [http://www.ecurep.ibm.com/app/upload] website along with the PMR number. 
+Or upload files for review to the following FTP site: ftp.ecurep.ibm.com. Log in as anonymous and place your files in the directory that corresponds to the IBM Tivoli Monitoring component that you use. RELATED INFORMATION
+ 6.3.1 Patches [ftp://ftp.software.ibm.com/software/tivoli_support/patches/patches_6.3.1/]
+6.3.0 Patches [ftp://ftp.software.ibm.com/software/tivoli_support/patches/patches_6.3.0/]
+Oracle Extended Development Solutions and Best practice [https://www.ibm.com/developerworks/mydeveloperworks/wikis/home?lang=en#/wiki/Tivoli%20Composite%20Application%20Manager/page/Oracle_Extended_Agent]
+Collecting Data for ITCAM for Applications [http://www.ibm.com/support/docview.wss?uid=swg21568133]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ itcamforapps
+itcam4apps

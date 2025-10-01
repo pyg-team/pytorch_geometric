@@ -1,0 +1,187 @@
+Title: IBM JR55109: YOU MIGHT RECEIVE THE CONCURRENTMODIFICATIONEXCEPTION WHEN YOU CALL REST APIS - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2016.06.delta.repository.2of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.06.delta.repository.2of2&source=SAR]
+bpm.8570.cf2016.06.delta.repository.1of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.06.delta.repository.1of2&source=SAR]
+7.5.1.2-WS-BPM-IFJR55109 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=7.5.1.2-WS-BPM-IFJR55109&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you make REST API calls, you might see
+   ConcurrentModificationExceptions like the following exception:
+   
+   CWTBG0019E: Unexpected exception during execution. Exception
+   information:
+   java.util.ConcurrentModificationException
+    at java.util.HashMap$AbstractMapIterator.
+     checkConcurrentMod(HashMap.java:193)
+    at java.util.HashMap$AbstractMapIterator.makeNext
+     (HashMap.java:198)
+    at java.util.HashMap$EntryIterator.next(HashMap.java:259)
+    at java.util.HashMap$EntryIterator.next(HashMap.java:252)
+    at java.util.AbstractMap.toString(AbstractMap.java:608)
+    at java.lang.String.valueOf(String.java:1528)
+    at com.ibm.bpm.rest.impl.service.ServiceRunnerManager.
+     initOldWebWFM(ServiceRunnerManager.java:113)
+    at com.ibm.bpm.rest.impl.service.ServiceRunnerManager.
+     getInstance(ServiceRunnerManager.java:68)
+    at com.ibm.bpm.rest.impl.service.ServiceResource.
+     getServiceActions(ServiceResource.java:105)
+   
+   
+      The ConcurrentModificationException is thrown by newer Java
+   versions. In older Java versions, Java does
+   not detect it, so subsequent errors occur; including
+   NegativeArraySizeException.
+   
+   CWTBG0019E: Unexpected exception during
+   execution.
+   
+   com.ibm.bpm.wle.api.UnexpectedFailureException: CWTBG0019E:
+   Unexpected
+   exception during execution.
+   java.lang.NegativeArraySizeException
+       at java.lang.StringBuilder.<init>(StringBuilder.java:66)
+       at java.util.AbstractMap.toString(AbstractMap.java:604)
+       at java.lang.String.valueOf(String.java:1530)
+       at
+   com.ibm.bpm.rest.impl.service.ServiceRunnerManager.initOldWebWFM
+   (ServiceRunnerManager.java:105)
+       at
+   com.ibm.bpm.rest.impl.service.ServiceRunnerManager.getInstance(S
+   erviceRunnerManager.java:66)
+       at
+   com.ibm.bpm.rest.impl.service.StartActionHandler.handleAction(St
+   artActionHandler.java:129)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  In high-load scenarios, a non-synchronized hash map is read and
+   traced while it is updated. As a result, you receive the
+   ConcurrentModification exception.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V7.5.1.2 that synchronizes the
+   access to this hash map so that you do not receive the
+   exception.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR55109:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR55109, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR55109
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-14
+   
+   
+ * CLOSED DATE
+   2016-03-04
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP

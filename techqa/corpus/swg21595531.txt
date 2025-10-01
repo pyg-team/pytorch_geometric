@@ -1,0 +1,101 @@
+Title: IBM WebSphere Partner Gateway - bcgserver stops processing after a period of time - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The bcgserver occassionally stops document processing after period of time. 
+
+SYMPTOM
+The following hung thread warming message is seen in the bcgserver SystemOut.log, e.g.: 
+
+[05/01/02 01:01:01:345 UTC] 00000062 ThreadMonitor W WSVR0605W: Thread "BCGTimerManager.Alarm Pool : 0" (0000003c) has been active for 822162 milliseconds and may be hung. There is/are 23 thread(s) in total in the server that may be hung.
+at java.util.Collections$SynchronizedSet.hashCode(Collections.java:835)
+at com.ibm.ejs.j2c.PoolManager$SubjectHashCode.run(PoolManager.java:4853)
+at com.ibm.ws.security.util.AccessController.doPrivileged(AccessController.java:63)
+at com.ibm.ejs.j2c.PoolManager.computeHashCode(PoolManager.java:4528)
+at com.ibm.ejs.j2c.PoolManager.reserve(PoolManager.java:2165)
+.....
+.....
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+ 1. Refer to the WAS MustGather: "Performance, hang, or high CPU issues on <OS>" [http://www-01.ibm.com/support/search.wss?rs=180&tc=SSCMPB9+SSCMP9J&q=MustGatherDocument], complete the steps instructed under the "Collecting data manually" section to capture required data taken at the time of the server hung. (Please note: The MustGather instruction is vary with the operating system where the WPG server is running on.) 
+ 2. Review the javacore files, determine there are two threads hung together and in a deadlock situation, as is shown as below, for example:
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+The problem may be caused by thread deadlocks as addressed in WebSphere Application Server APAR PK69110 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK69110]. 
+RESOLVING THE PROBLEM
+If this deadlock is observed in the java cores, and the system is running on the WAS fixpack level that is mentioned in the APAR release note, then you can activate this fix to address the hung thread problem. 
+
+ * 
+ * 
+ *  WPG Fixpack release notes
+ * 
+ * WPG system requirement
+ * 
+
+To activate the APAR PK69110, please set custom property "useRRASetEquals" of type java.lang.String to 'true', on the WPG datasource: 
+
+ datasources/bcgArchiverDS
+datasources/bcgConDS
+datasources/bcgRCVRDS
+datasources/bcgDocMgrDS 
+
+[Steps] 
+
+ *  Log in to WAS administrative console. In the left pane, navigate to Resources > JDBC > Data sources. Click the WPG data source name. Click "Custom properties". Click [New]. In the Name text field, type: useRRASetEquals In the Value text field, type: true Click OK or Apply and then click "Save directly to master configuration". Repeat the step 3 to step 8 for all the datasource listed above. Restart the WPG system: 
+ * In a Simple mode environment, stop and restart the server1. 
+   In a Distributed environment, stop processes in order: stop the bcg servers, then bcgmas, nodeagents, and then bcgdmgr. And then start them in reverse order. 
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Partner Gateway Advanced Edition AIX, HP-UX, Linux, Solaris, Windows, Linux pSeries 6.2.1, 6.2, 6.1.1, 6.1 
+PRODUCT ALIAS/SYNONYM
+ WPG

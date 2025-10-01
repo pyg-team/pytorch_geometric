@@ -1,0 +1,12 @@
+Title: IBM Performance degradation for parallel queries - United States
+
+Text:
+DB2 UDB Universal Database for z/OS zos and OS/390 os390 s390 Version V 6 7 v6 v7 OS/390; z/OS; query parallelism disable disabled disabling; performance degradation; APAR PQ25135; APAR PQ45820; QW0022CO field IFCID 0022 trace record TECHNOTE (FAQ)
+
+QUESTION
+ When parallelism is enabled, certain short-running queries that DB2 runs in parallel might not perform as well as when these queries are run sequentially. What is the reason and how do I resolve this problem? 
+
+ANSWER
+The performance degradation is due to the additional overhead that is required to make the query run in parallel. To address this issue, a threshold value for parallelism was added to DB2® via APAR PQ25135 to allow parallelism to be disabled for these types of queries. For query blocks with internal cost estimates that are less than the value of this threshold, parallelism is disabled. The parallelism behavior of queries that have internal cost estimates above the value of this threshold does not change. APAR PQ45820 set the default value at 120. The internal cost estimate at the query block level is externalized in the QW0022CO field of the IFCID 0022 trace record. 
+
+For more details on disabling query parallelism, see the DB2 Administration Guide at the DB2 for z/OS® and OS/390® library [http://www.ibm.com/software/data/db2/os390/library.html] Web page.

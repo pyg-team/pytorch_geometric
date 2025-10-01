@@ -1,0 +1,69 @@
+Title: IBM Mail server configuration on TCR - United States
+
+Text:
+mail server; cannot be reached; tcr; cognos; smtpmailserver; mailing reports; cogstartup; cognos configuration TECHNOTE (FAQ)
+
+QUESTION
+ How can I configure TCR to send reports via email if I cannot use Cognos Configuration GUI? 
+
+CAUSE
+The server where TCR is running does not have X Server, so the Cognos Configuration GUI cannot be executed. You need to perform the related steps manually.
+
+ANSWER
+All the Cognos configuration information are maintained in the cogstartup.xml file.
+Before changing the content of this file, please make a backup copy.
+You can then alter this file to enable TCR/Cognos email feature.
+
+Into the cogstartup.xml there are actually two sections regarding the SMTP server configuration. 
+You can do a search for name="smtpMailServer" to find these sections.
+The changes must be done in the second one, that is placed few rows after the first.
+You can easily identify the first section because it has also a statement "Disabled=true". 
+Ignore this one and make the changes to the second one, that does not shows Disabled=true statement. 
+The section looks like:
+
+<crn:parameter name="NC" opaque="true"> 
+<crn:value> 
+<!-- smtpMailServer: Specifies the host name and port of the mail server computer. --> 
+<!-- Use the following syntax to specify the location of the mail server: host:port. The default SMTP port on most mail servers is 25. --> 
+<crn:parameter name="smtpMailServer"> 
+<crn:value xsi:type="cfg:hostPort">mailserver:25</crn:value> 
+</crn:parameter> 
+<!-- smtpAccount: Specifies the user id and password to log on to the mail server. --> 
+<!-- If the mail server requires authentication to send messages, enter a valid user idand password. If the mail server does not require authentication, leave these values empty. --> 
+<crn:parameter name="smtpAccount"> 
+<crn:value xsi:type="cfg:credential" 
+encrypted="true">MIH4BgkqhkiG9w0BBwaggeowgecCAQAwgeEGCSqGSIb3DQEHATAdBgl 
+ghkgBZQMEAQIEEJGtKIVhxdyY+TQ0JMKsc+yAgbTj6VCzK4BOPMORkat+9j3p3kSKoiiQHP2 
+flRwe6dvJ1336Njyq0ZwIHTNLApDPqQUmT0tCykQxZ72OUBhc74KA1z4WTJmlqiv+M6Yev/S 
+aWQ1uEpwSvBqfWFXlVbcPyCe19/hAAcrpKVOKnkC9fXAWzqzEftbmAUr+AO95MAmFX2A0Lyq 
+JwYeI7INSIwSaEQntqvI4DdAPbvw6wPouwQFAb0eerzsy54E6K6MuW0Ekjsc0LN4=</crn:v 
+alue> 
+</crn:parameter> 
+<!-- defaultSender: Specifies the email address of the sender. 
+--> 
+<!-- This setting specifies the email address of the 'sender' of outgoing messages. Use 
+a valid email address. --> 
+<crn:parameter name="defaultSender"> 
+<crn:value xsi:type="xsd:string">notifications@cognos.com</crn:value> 
+</crn:parameter> 
+</crn:value> 
+</crn:parameter> 
+
+You have to specify the mail server hostname and port in the hostPort tag, and the sender email in the defaultSender section.
+As you can see, this section includes encrypted information for the server user account.
+If you don't want to use encrypted information, you can specify the userid and password by changing the <credentials> tag in this way:
+
+<crn:value xsi:type="cfg:credential">
+<credential>
+<username>user<username/>
+<password>pwd<password/>
+</credential>
+</crn:value>
+</crn:parameter>
+
+After you completed the changes, restart TCR/Cognos.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Tivoli Common Reporting V2.1.1 V3.x

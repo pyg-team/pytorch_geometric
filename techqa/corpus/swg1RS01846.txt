@@ -1,0 +1,123 @@
+Title: IBM RS01846: FORCE LOGOFF UPON 2ND LOGIN DOES NOT WORK - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+Fix Pack 2 for IBM Decision Optimization Center v3.8 servers edition on Windows 64-bit [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+ILOG+Optimization+Decision+Manager&fixids=3.8.0-WS-DOC-servers-win64-fp002&source=SAR]
+Fix Pack 2 for IBM Decision Optimization Center v3.8 server edition on Linux 64-bit [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+ILOG+Optimization+Decision+Manager&fixids=3.8.0-WS-DOC-servers-linux64-fp002&source=SAR]
+Fix Pack 2 for IBM Decision Optimization Center v3.8 server edition on AIX 64-bit [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+ILOG+Optimization+Decision+Manager&fixids=3.8.0-WS-DOC-servers-aix64-fp002&source=SAR]
+Fix Pack 2 for IBM Decision Optimization Center v3.8 developer edition on Windows 64-bit [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+ILOG+Optimization+Decision+Manager&fixids=3.8.0-WS-DOC-developer-win64-fp002&source=SAR]
+Fix Pack 2 for IBM Decision Optimization Center v3.8 developer edition on Windows 32-bit [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+ILOG+Optimization+Decision+Manager&fixids=3.8.0-WS-DOC-developer-win32-fp002&source=SAR]
+Fix Pack 2 for IBM Decision Optimization Center v3.8 client edition on Windows 64-bit [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+ILOG+Optimization+Decision+Manager&fixids=3.8.0-WS-DOC-clients-win64-fp002&source=SAR]
+Fix Pack 2 for IBM Decision Optimization Center v3.8 client edition on Windows 32-bit [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+ILOG+Optimization+Decision+Manager&fixids=3.8.0-WS-DOC-clients-win32-fp002&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When starting ODM Studio with an ODM useris which is already
+   logged-in, the second login attempt with force-logoff option
+   may fail when the dataserver response time is long (e.g. over
+   4s)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue is specific to the ODM Studio startup sequence and
+   does not affect the API, a manual workaround is to force the
+   user logoff using a separate java program that uses the ODM API
+   to login the userid and then logoff to reset the session.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When starting ODM Studio with an ODM useris which is already
+   logged-in, the second login attempt with force-logoff option
+   may fail when the dataserver response time is long (e.g. over
+   4s)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS01846
+   
+   
+ * REPORTED COMPONENT NAME
+   ILOG ODM ENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y0400
+   
+   
+ * REPORTED RELEASE
+   380
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-15
+   
+   
+ * CLOSED DATE
+   2015-04-13
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R380 PSY
+   UP

@@ -1,0 +1,132 @@
+Title: IBM PM58110: INTERMITTENT CAF ERROR WITH DRILL DOWN IN PORTAL TAB - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CAF rejection error occurs frequently for user as well as cognos
+   system admin for a portal tab that has drill down reports based
+   on a cube source. The reports run but once you do a drill down
+   sometimes it throws the error and sometimes it does not.??The
+   same reports work fine in the portal page once created and the
+   issue happens only when it is added as a portal tab.??Adding to
+   the domain list in cognos configuration doesnt make any
+   difference.????workaround: turn off CAF but not acceptable to
+   customer.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See error description.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM Cognos Business Intelligence 10.1.1 Fix Pack  *
+   * 2                                                            *
+   * or Upgrade to IBM Cognos Business Intelligence 10.2 Refresh  *
+   * Pack 1                                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code Fix
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM58110
+   
+   
+ * REPORTED COMPONENT NAME
+   COG8 BI COG CON
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12CC
+   
+   
+ * REPORTED RELEASE
+   A11
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-14
+   
+   
+ * CLOSED DATE
+   2013-03-28
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   COG8 BI COG CON
+   
+   
+ * FIXED COMPONENT ID
+   5724W12CC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA11 PSN
+   UP

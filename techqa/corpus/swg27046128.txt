@@ -1,0 +1,61 @@
+Title: IBM Known issue: IBM StoredIQ for Legal server must be restarted after upgrade - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ After you upgrade IBM StoredIQ for Legal, you must restart the StoredIQ for Legal server to enable essential functions, such as sending legal hold notices and enabling external LDAP user logins. 
+
+CONTENT
+After you upgrade IBM StoredIQ for Legal to a fix pack or other service pack, you must restart the StoredIQ for Legal server one time to ensure that: 
+
+ 1. legal hold notices are sent 
+ 2. external LDAP users can log in to StoredIQ for Legal
+
+
+Important: Item 2 above assumes that the  *  StoredIQ for Legal directory server was configured prior to the upgrade. 
+ *  external LDAP users were ingested into StoredIQ for Legal and were able to log in.
+
+
+If you do not restart the server after you upgrade, the following problems can occur:  * hold notices that were published before the upgrade was completed may not actually be sent. 
+ * new hold notices that are published after the upgrade may show the status "Sending", but are never actually sent. 
+ * external LDAP users will not be able to log in because the security domain for the configured directory server (i.e., LDAP server) is not established.
+
+
+To restart the IBM StoredIQ for Legal server, you must restart the VMWare virtual machine (VM) guest operating system (OS). Restart the guest OS using the following steps: 
+
+1. Log in to the VMWare vSphere client 
+2. Select View > Inventory > VMs and Templates 
+3. Select the StoredIQ for Legal virtual machine 
+4. Right click 
+5. Select Power 
+6. Select Restart Guest 
+Result: An entry is displayed in the Recent Tasks section at the bottom of the vSphere client window. The entry includes "Initiate guest OS reboot" under the Name column. 
+7. Right click 
+8. Select Open Console 
+Result: A console window is displayed that shows the guest OS is rebooting. When the reboot completes, a login prompt is displayed in the console window. 
+
+Alternatively, you can use the following steps: 
+
+1. Log in to the VMWare vSphere client 
+2. Select View > Inventory > VMs and Templates 
+3. Select the StoredIQ for Legal virtual machine 
+4. Select Inventory > Virtual Machine > Power > Restart Guest 
+Result: An entry is displayed in the Recent Tasks section at the bottom of the vSphere client window. The entry includes "Initiate guest OS reboot" under the Name column. 
+5. Right click 
+6. Select Open Console 
+Result: A console window is displayed that shows the guest OS is rebooting. When the reboot completes, a login prompt is displayed in the console window. 
+
+Also, you can restart the server by typing a command in a VMWare vSphere console or SSH session as follows: 
+
+1. Log in to the VMWare vSphere client 
+2. Select View > Inventory > VMs and Templates 
+3. Select the StoredIQ for Legal virtual machine 
+4. Right click 
+5. Select Open Console 
+A console window is displayed that contains a login prompt. 
+6. Log in as user "root" 
+7. Type "reboot" and push the Enter key. 
+Result: After the server has restarted successfully, the login prompt is displayed in the console window. 
+
+Note: After the guest OS restarts successfully, you must wait a short time - 5 minutes or less - before the StoredIQ for Legal system is ready for use. However, the amount of time may vary depending on your deployment.

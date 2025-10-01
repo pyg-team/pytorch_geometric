@@ -1,0 +1,10 @@
+Title: IBM Cognos Incentive Compensation Management - Configuration - SSO and web enablement of users - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ To have access to ICM Web, do all users have to be web-enabled even when web access is determined by SSO ? 
+
+ANSWER
+Yes, each user needing access to ICM must be web enabled irrespective of whether SSO is being used to determine web access or not.

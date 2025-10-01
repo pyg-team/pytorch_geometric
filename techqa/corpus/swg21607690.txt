@@ -1,0 +1,23 @@
+Title: IBM Support's Guide to the SNMP [MTTrapd] probe - United States
+
+Text:
+nco_p_mttrapd; snmp; rules file; probe; snmpsend; snmptrap; test; testing; snmpv3 TECHNOTE (FAQ)
+
+QUESTION
+ MTTrapd probe : How can you troubleshoot configuration issues? 
+
+ANSWER
+The MTTrapd (SNMP) probe is a Generic probe used to process SNMP traps.
+It is a multi-threaded probe and supports both UDP and TCP traps/informs.
+
+The attached Support's guide to the SNMP probe provides details on how best to configure the probe, troubleshoot issues and how to use third party products to test the probes behaviour.
+
+The latest probe version is:
+Release ID: 20.0.2
+Or higher.
+
+RELATED INFORMATION
+ Where to locate the latest MTTrapd probe release 20.0.2 [https://developer.ibm.com/answers/questions/414820/where-do-you-download-the-mttrapd-probe-release-20/]
+
+
+SNMP_MTTRAPDProbe_SupportsGuide_22.pdf [/support/docview.wss?uid=swg21607690&aid=2]SNMP_MTTRAPDProbe_SupportsGuide_22.pdf [/support/docview.wss?uid=swg21607690&aid=1]

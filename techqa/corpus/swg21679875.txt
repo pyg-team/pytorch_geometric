@@ -1,0 +1,13 @@
+Title: IBM SUBPGM DECOMPRESS_ZLIB (DMGCPMIS) R14=A8E2D17A - United States
+
+Text:
+CDSYSOUT ZLIB SUBPGM TECHNOTE (FAQ)
+
+QUESTION
+ Getting numerous (tens of thousands) SUBPGM DECOMPRESS_ZLIB (DMGCPMIS) R14=A8E2D17A messages in the CDSYSOUT report for C:D. Filling up the JES spool. We saved the C:D sysouts and purged them from the spool queue. What is causing this. 
+
+CAUSE
+This message is generated every time that the ZLIB compression/decompression routines are called. This is not a error message. There is nothing broke with ZLIB or Connect:Direct. 
+
+ANSWER
+The CDSYSOUT DD statement is not needed in the started task JCL. This DD statement can be removed. With the number of times that the ZLIB routines can be called this can add up to a very large amount of sysout that is not needed. If IBM Sterling Connect:Direct for z/OS Support has a need for other messages that could be routed to this DD sysout the customer will be directed by Support to add the CDSYSOUT DD statement to the started task.

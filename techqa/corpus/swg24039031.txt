@@ -1,0 +1,77 @@
+Title: IBM WebSphere Message Broker V8.0 - Fix Pack 8.0.0.5 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This is Fix Pack 8.0.0.5 for WebSphere Message Broker Version 8.0 
+
+DOWNLOAD DESCRIPTION
+
+
+
+
+
+
+
+Changes introduced by this Fix Pack might negatively affect existing product function.
+
+Please refer to APARs:
+IT07974 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT07974]
+IT06391 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT06391]
+IC98925 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC98925]
+IT05457 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT05457] [http://www-01.ibm.com/support/docview.wss?uid=swg1IT04913]
+IT04913 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT04913]
+IT04524 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT04524]
+PI45626 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI45626]
+
+for a description of the problems and corrective actions.
+
+Evaluate these APARs for the potential impact in your environment.
+
+
+
+
+
+
+
+
+Fix Pack 8.0.0.5 is the fifth maintenance release for WebSphere Message Broker Version 8.0. It is available for the following platforms:
+
+AIX 
+HP-UX Itanium 
+Linux on Intel x86 
+Linux on zSeries 
+Linux (Power) 
+Linux on Intel x86-64 
+Sun Solaris 
+Solaris x86-64 
+Windows 32 bit
+Windows 64 bit
+z/OS (PTF UI24736, UI24737, UI24738 ,UI24739)
+
+Note that this Fix Pack is for the Broker product only. Updates for the toolkit are available from the product Toolkit links on the following URL : 
+http://www.ibm.com/support/docview.wss?uid=swg24038327 [http://www.ibm.com/support/docview.wss?uid=swg24038327]
+
+For details of the problems fixed for the WebSphere Adapters included with this Fix Pack, refer to: 
+http://www.ibm.com/support/docview.wss?uid=swg27035733 [http://www.ibm.com/support/docview.wss?uid=swg27035733]
+
+For details of the problems fixed in IBM Data Format Description Language version 1.0.3.1_ifix003 included with this Fix Pack, please refer to
+http://www.ibm.com/support/docview.wss?uid=swg27041042 [http://www.ibm.com/support/docview.wss?uid=swg27041042]
+
+For details of the problems fixed in IBM Graphical Data Mapper version 1.0.4.0 IFix010 included with this Fix Pack, please refer to:
+http://www.ibm.com/support/docview.wss?uid=swg27024325 [http://www.ibm.com/support/docview.wss?uid=swg27024325]
+
+The following table shows embedded components in WebSphere Message Broker and the versions shipped with this Fix Pack.
+
+
+
+Embedded component Version shipped with this Fix Pack Java SE Runtime Environment (all except HP) 6.0 SR 16 Java SE Runtime Environment (HP only) 6.0 SR 15 FP1 WebSphere MQ File Transfer Edition 7.0.4.3 WAS thin client (used by SOAP and SCA nodes) 8.5.5.1 WSRR client 7.5.0.1 WebSphere eXtreme Scale 8.5.0.3 (cumulative iFix cf31424.1134105 Tomcat 7.0.54 URL LANGUAGE SIZE(Bytes) System Requirements [http://www.ibm.com/support/docview.wss?rs=849&uid=swg27023737] English 9999 
+URL LANGUAGE SIZE(Bytes) Problems Fixed [http://www.ibm.com/support/docview.wss?&uid=swg27035709] English 9999 WebSphere Message Broker Library [http://www.ibm.com/software/integration/wbimessagebroker/library/] English 9999 Readmes [http://www.ibm.com/support/docview.wss?&uid=swg27023600] English 9999 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] AIX 16 Feb 2015 English 869637085 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+Message+Broker&release=8.0.0.5&platform=AIX+64-bit,+pSeries&function=all&useReleaseAsTarget=true] [ ] HP Itanium 16 Feb 2015 English 1148600737 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+Message+Broker&release=8.0.0.5&platform=HPUX+64-bit,+IA64&function=all&useReleaseAsTarget=true] [ ] LinuxX86-32 16 Feb 2015 English 568975360 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+Message+Broker&release=8.0.0.5&platform=Linux+32-bit,x86&function=all&useReleaseAsTarget=true] [ ] LinuxPPC 16 Feb 2015 English 601241600 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+Message+Broker&release=8.0.0.5&platform=Linux+64-bit,pSeries&function=all&useReleaseAsTarget=true] [ ] LinuxX86-64 16 Feb 2015 English 582420480 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+Message+Broker&release=8.0.0.5&platform=Linux+64-bit,x86_64&function=all&useReleaseAsTarget=true] [ ] Linux390x(Z-Series) 16 Feb 2015 English 579491840 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+Message+Broker&release=8.0.0.5&platform=Linux+64-bit,zSeries&function=all&useReleaseAsTarget=true] [ ] Solaris Sparc 16 Feb 2015 English 824122720 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+Message+Broker&release=8.0.0.5&platform=Solaris+64-bit,SPARC&function=all&useReleaseAsTarget=true] [ ] SolarisX86-64 16 Feb 2015 English 776975273 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+Message+Broker&release=8.0.0.5&platform=Solaris+64-bit,x86&function=all&useReleaseAsTarget=true] [ ] Windows 32 16 Feb 2015 English 580643472 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+Message+Broker&release=8.0.0.5&platform=Windows+32-bit,+x86&function=all&useReleaseAsTarget=true] [ ] Windows 64 16 Feb 2015 English 633375936 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+Message+Broker&release=8.0.0.5&platform=Windows+64-bit,+x86&function=all&useReleaseAsTarget=true] [ ] Z/OS 16 Feb 2015 English 232698880 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+Message+Broker&release=8.0.0.5&platform=z/OS&function=all&useReleaseAsTarget=true] [ ]

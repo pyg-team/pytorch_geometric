@@ -1,0 +1,262 @@
+Title: IBM IV24771: TEPS WASADMIN CAN'T LOGIN MULTIPLE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 4 (6.2.3-TIV-ITM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24034252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ********************** START OF APAR OPEN TEMPLATE
+   *********************
+   * Please open an apar with the following severity and
+   information:     *
+   *
+   *
+   APAR Type:            Field
+   Approver Initials:    MB
+   Severity:             3
+   Reported Release:     623
+   Compid:               5724C04PS Tivoli Enterprise Portal Server
+   ABSTRACT:             TEPS wasadmin can't login multiple
+   principals
+   error LDAP
+   PROBLEM DESCRIPTION:
+   When the TEPS is configured with LDAP and there is another
+   wasadmin
+   userid already defined in the realm, the TEPS shows an error at
+   startup
+   in the eWAS SystemOut.log:
+   
+   CWWIM4538E Multiple principals were found for the 'wasadmin'
+   principal
+   name.
+   
+   RECREATE INSTRUCTIONS:
+   1.  Configure the TEPS to use any LDAP.
+   2.  Make sure that wasadmin already exists in the realm
+   3.  Restart the TEPS.
+   
+   
+   At restart, the TEPS should receive the error
+   CWWIM4538E Multiple principals were found for the 'wasadmin'
+   principal
+   name.
+   
+   LOCAL FIX:
+    In the wimconfig.xml can you change the following line:
+   Under the section
+   <config:ldapServerConfiguration
+   
+   change
+    <config:ldapEntityTypes name="PersonAccount" >
+           <config:objectClasses>user</config:objectClasses>
+         </config:ldapEntityTypes>
+   
+   To:
+         <config:ldapEntityTypes name="PersonAccount"
+   searchFilter="(!(cn=wasadmin))">
+           <config:objectClasses>user</config:objectClasses>
+         </config:ldapEntityTypes>
+   ------------------------------------------------------------
+   
+   *********************** END OF APAR OPEN TEMPLATE
+   **********************
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *   In the wimconfig.xml can you change the following line:
+   Under the section
+   <config:ldapServerConfiguration
+   
+   change
+    <config:ldapEntityTypes name="PersonAccount" >
+           <config:objectClasses>user</config:objectClasses>
+         </config:ldapEntityTypes>
+   
+   To:
+         <config:ldapEntityTypes name="PersonAccount"
+   searchFilter="(!(cn=wasadmin))">
+           <config:objectClasses>user</config:objectClasses>
+         </config:ldapEntityTypes>
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When the portal server eWAS admin userid is defined in more than
+    one repository, errors occur and the portal server will not be
+   fully functional.  Errors that will show up in the SystemOut.log
+     are CWWIM4538E Multiple principals were found and
+   VMMITMAdapter checkPassword CWWIM4512E The password match
+   failed.
+   
+   
+   The portal server eWAS userid should only be defined in the
+   default WIM file repository.  But this can not always be
+   controlled when the same userid is already defined in LDAP.
+   When this occurs the following errors show in the SystemOut.log
+   at portal server system startup:
+   
+   CWWIM4538E Multiple principals were found for the 'wasadmin'
+   principal
+   
+   Additionally, even if the portal server is not configured for
+   LDAP an error can occur when the portal server eWAS admin userid
+   is defined as a portal server user.  When this occurs the
+   following error shows in the SystemOut.log at portal server
+   system startup:
+   
+   com.ibm.TEPS.VMM.Adapter.VMMITMAdapter checkPassword CWWIM4512E
+   The password match failed.
+   com.ibm.TEPS.VMM.Adapter.VMMITMAdapter checkPassword
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been added to prevent the LDAP repository from being
+   searched for the portal server eWAS admin userid authentication.
+     Code has also been added to prevent the portal server eWAS
+   admin userid from being created as a portal server userid.
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+   
+      | fix pack | 6.2.3-TIV-ITM-FP0003
+   
+   Note: Search the IBM technical support web site for maintenance
+   package availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  For the problem when the portal server eWAS userid found in the
+   Default WIM file repository and the LDAP repository, two
+   circumventions exist.  They can delete the wasadmin userid from
+   the LDAP repository.  If this is not possible, the following
+   changes can be made to the wimconfig.xml file:
+   
+   In the wimconfig.xml can you change the following line:
+   
+   Under the section
+   <config:ldapServerConfiguration
+   
+   change
+   <config:ldapEntityTypes name="PersonAccount" >
+   <config:objectClasses>user</config:objectClasses>
+   </config:ldapEntityTypes>
+   
+   To:
+   <config:ldapEntityTypes name="PersonAccount"
+   searchFilter="(!(cn=wasadmin))">
+   <config:objectClasses>user</config:objectClasses>
+   </config:ldapEntityTypes>
+   
+   This modification will not persist after portal server
+   reconfiguration, unless the LDAP type is specified as OTHER.
+   But if OTHER is used, then any further modification to the
+   portal server LDAP configuration must done using isclite.
+   
+   For the problem with the portal server eWAS admin userid being
+   defined as a portal server user.  Delete the userid from the
+   portal server user administration dialog and do not use it for
+   general portal server use.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV24771
+   
+   
+ * REPORTED COMPONENT NAME
+   TEPS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04PS
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-16
+   
+   
+ * CLOSED DATE
+   2012-10-25
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEPS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04PS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP

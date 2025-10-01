@@ -1,0 +1,55 @@
+Title: IBM Collecting Data: ITCAM for Microsoft Applications - United States
+
+Text:
+mustgather; 5724C71AOTR; 5724C0BIZTR; 5724M94MCTR; 5724B98EOTR; 5724C04HITR; 5724C04HVTR; 5724C0FWATR; 5724C04OCTR; 5724C0SPATR; 5724B96MOTR; 5724L92COTR; 5724L92VITR; 5724B98ISTR; 5724B97ISTR; must gather; mustgather; MustGatherReadFirstDocument; 5724C04HITR; 5724C04NMTR; CSILandingPage; SupportLandingPage TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ For every problem, collecting data can aid in problem determination and save time resolving issues.
+Gathering this data before calling IBM® support helps understand the problem and provides data for analysis. 
+
+RESOLVING THE PROBLEM
+ 
+
+Step One: If your problem is related to one of these product components, click on the agent name and read the related material for assistance.
+
+
+
+Each of these items provides a link to the Collecting Data instructions for the set of agents included in this package.
+
+
+TAB NAVIGATION
+ * ITCAM for Microsoft Applications [http://www.ibm.com/support/docview.wss?uid=swg21592320]
+ * Active Directory [http://www.ibm.com/support/docview.wss?uid=swg21653698]
+ * Biztalk qb [http://www.ibm.com/support/docview.wss?uid=swg21653158]
+ * Cluster q5 [http://www.ibm.com/support/docview.wss?uid=swg21652432]
+ * Exchange ex [http://www.ibm.com/support/docview.wss?uid=swg21642422]
+ * Host Integration qh [http://www.ibm.com/support/docview.wss?uid=swg21649453]
+ * Hyper-V hv [http://www.ibm.com/support/docview.wss?uid=swg21653746]
+ * IIS q7
+ * Lync ql [http://www.ibm.com/support/docview.wss?uid=swg21653786]
+ * .NET Framework qf [http://www.ibm.com/support/docview.wss?uid=swg21653794]
+ * Network Devices n4 [http://www.ibm.com/support/docview.wss?uid=swg21653834]
+ * SharePoint qp [http://www.ibm.com/support/docview.wss?uid=swg21653794]
+ * SQL oq [http://www.ibm.com/support/docview.wss?uid=swg21625873]
+ * VMWare VI vm [http://www.ibm.com/support/docview.wss?uid=swg21653838]
+
+[Gathering Agent Specific Information [/support/docview.wss?uid=swg21592320&amp;aid=1] Step Two: If your problem is finding information about ITCAM for MS Applications, choose a topic. [/support/docview.wss?uid=swg21592320&amp;aid=2] Do you want to find a fix? 
+FixCentral [http://www.ibm.com/support/fixcentral/] is the IBM repository for updates to be applied to the agents listed above. If you are directed to apply a fix or you believe your agent is not at the current level, visit FixCentral for the available updates. 
+[/support/docview.wss?uid=swg21592320&amp;aid=3] Do you need additional information for an agent? 
+Connect with experts in the SmartCloud Monitoring Community [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Monitoring/page/Home]. Search the [http://www.ibm.com/developerworks/wikis/display/maximo/Maximo+Asset+Management]blogs [https://www.ibm.com/developerworks/community/blogs/home/tags/itm?lang=en] and the forum [https://www.ibm.com/developerworks/community/forums/html/category?id=33333333-0000-0000-0000-000000000507]. Watch videos at IBM Education Assistant. [http://www.ibm.com/software/info/education/assistant/index.shtml]
+[/support/docview.wss?uid=swg21592320&amp;aid=4] [http://www.ibm.com/developerworks/wikis/display/tivolidoccentral/Tivoli+Composite+Application+Manager+for+Microsoft+Applications]
+Documentation Central [http://www.ibm.com/developerworks/wikis/display/tivolidoccentral/Tivoli+Composite+Application+Manager+for+Microsoft+Applications] provides easy access to the information you need for each available release of ITCAM.
+[/support/docview.wss?uid=swg21592320&amp;aid=5] Do you need more information about SmartCloud products? 
+The Information Center [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcamms.doc_6.3.1%2Fwelcome_msapps631.html] provides a broader range of software documentation. 
+[/support/docview.wss?uid=swg21592320&amp;aid=6] Have you used the IBM Support Portal to find what you need? 
+IBM Support Portal [http://www.ibm.com/support/electronicsupport/] helps you customize the IBM support pages to find the information you need. 
+[/support/docview.wss?uid=swg21592320&amp;aid=7] 
+
+RELATED INFORMATION
+ Gateway to APM Resources [http://www.ibm.com/support/docview.wss?uid=swg21646900]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ itcamfmsa

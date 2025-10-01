@@ -1,0 +1,26 @@
+Title: IBM SPSS Statistics on Mac OS displaying "JVM Not Found" when starting. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You have installed IBM SPSS Statistics on a Mac OS host machine. When starting Statistics, an error message including "JVM Not Found" or 'JVMNotFound' is displayed. 
+
+CAUSE
+This behavior is most frequently causes by deployment of Statistics to a unsupported/incompatible version of Mac OS. 
+
+ANSWER
+Check the Product Compatibility Report for the installed version of Statistics to determine if the version of Statistics is compatible with the version of Mac OS: 
+
+Statistics 20 [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1326839702222&osPlatforms=Mac%20OS&duComponentIds=D001%7CS002&optionalCapIds=22%7C186%7C26] 
+
+Statistics 21 [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1377620669121&osPlatforms=Mac%20OS&duComponentIds=D002%7CS001&optionalCapIds=47%7C22%7C186%7C26] 
+
+Statistics 22 [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=8A127990BE8211E4A9BCCF61BB0CEA43&osPlatforms=Mac%20OS&duComponentIds=D002%7CS001&mandatoryCapIds=47&optionalCapIds=30%7C7%7C47%7C22%7C72%7C186%7C223%7C26] 
+
+Statistics 23 [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1884E240EE2511E4989B60FF8B09BCE8&osPlatforms=Mac%20OS&duComponentIds=D002%7CS001&mandatoryCapIds=47%7C13&optionalCapIds=30%7C7%7C47%7C22%7C72%7C186%7C223%7C26] 
+
+Statistics 24 [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=B8E87BA0EE2211E4989B60FF8B09BCE8&osPlatforms=Mac%20OS&duComponentIds=D002%7CS001&mandatoryCapIds=13&optionalCapIds=30%7C7%7C47%7C22%7C72%7C186%7C223%7C26]
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

@@ -1,0 +1,40 @@
+Title: IBM CNX0106E Connect failed with error 'Basic Authentication Error' when using CICS Explorer with a CMCI connection - United States
+
+Text:
+5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 kixinfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You receive message 'CNX0106E Connect failed with error 'Basic Authentication Error'. You are using IBM CICS Explorer and have configured a CICS Management Client Interface (CMCI) connection to a CICS that is managed by CICSPlex SM or a standalone CICS using the System Managed Single Server (SMSS) capabilities. 
+
+SYMPTOM
+CNX0106E Connect failed with error 'Basic Authentication Error'.
+
+
+CAUSE
+A 'Basic Authentication Error' will occur if the user id and password combination cannot be successfully validated by the External Security Manager (for example RACF). 
+
+ENVIRONMENT
+CICS Explorer users that are sending requests to a CICS using a TCPIPSERVICE that has AUTHENTICATE(BASIC) set.
+
+DIAGNOSING THE PROBLEM
+Examine the CICS joblog of the target CICS. Check for messages from the External Security Manager - for example ICH408I message for RACF users. If no messages are found, check the CICS Transient Data Queue output for DFHXS messages reporting user id verification problems.
+
+Common causes for this error include:
+
+
+ * Invalid Userid 
+ * Revoked Userid 
+ * Invalid Password 
+ * Expired Password
+   
+
+RESOLVING THE PROBLEM
+Depending on the cause of the problem, specify a correct user id and password combination. If necessary contact your security administrator to ensure that the user id is valid. 
+
+If the password has expired, use an alternative interface to change the password, for example TSO, or CESN on CICS.
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS transaction Server

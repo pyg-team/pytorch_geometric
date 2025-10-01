@@ -1,0 +1,44 @@
+Title: IBM Open Mic: Install or upgrade ILMT/BFI to version 9.2.8 - 19 July 2017 (Includes link to replay; slides are attached) - United States
+
+Text:
+Endpoint-open-mic; ilmt-open-mic; STEwebcastDocument; ISS_OPEN_MIC WEBCAST
+
+ABSTRACT
+ The Support team talked about how to install or upgrade to the newly released IBM License Metric Tool (ILMT) version 9.2.8. Attendees were given an opportunity to ask questions of the panel of experts. 
+
+CONTENT
+For this open mic session, Silviu Gligore and his teammates provided a collection of resources so you can install the latest ILMT/BFI update successfully.
+
+
+ * Topic: Install or upgrade IBM License Metric Tool and BigFix Inventory to version 9.2.8 
+ * Date: Wednesday, 19 July Month 2017 
+ * Time: 10:00 AM EDT (14:00 UTC/GMT, UTC-4 hours) 
+
+How to ask questions on the topic To ask a question, please use the " Community questions and discussion" option near the bottom of this page. 
+
+
+Presentation OpenMic-Install-or-upgrade-ILMTBFI-to-V9.2.8post-event.pdf [/support/docview.wss?uid=swg27050061&aid=2]OpenMic-Install-or-upgrade-ILMTBFI-to-V9.2.8post-event.pdf [/support/docview.wss?uid=swg27050061&aid=1] 
+
+
+Audio Replay The recording of the session is available on the IBM Security Support YouTube channel [https://www.youtube.com/IBMSecuritySupport] at https://youtu.be/--HXvs41Fao [https://youtu.be/--HXvs41Fao] 
+
+
+About Open Mic Webcasts This Open Mic session was the sixth webcast provided by ILMT Technical Support in 2017. Our goal is to provide insight on how the License Metric Tool works and to teach on-going sessions that help users and administrators understand, maintain, troubleshoot, and resolve issues with their their software license monitoring. 
+IBM Security Support wants to help you take full advantage of your products. Join us for our Open Mic Webcast series as technical experts share their knowledge and answer your questions. These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient online webcast format. 
+Visit the Support technical exchanges for IBM Security [https://support.podc.sl.edst.ibm.com/support/home/exchanges-listing/K527788Q35237V48/IBM_Security_support_(general)/product] page to see lists of all scheduled and past Open Mic events. 
+[https://www-947.ibm.com/support/entry/myportal/scheduled_tech_exchanges/security_systems/security_systems_support_%28general%29?productContext=-1089885148] 
+To be on the mailing list that gets notified about Security Support's Open Mic webcasts, send an e-mail to isssprt@us.ibm.com [isssprt@us.ibm.com?subject=ste%20subscribe%20Endpoint%20And%20Mobility%20Management] with the subject line: 
+ste subscribe Endpoint And Mobility Management 
+
+We welcome you to follow us on Twitter [http://bit.ly/1jZ80d3] @AskIBMSecurity [http://bit.ly/1jZ80d3]. 
+We welcome you to like us on Facebook [https://www.facebook.com/IBMSecuritySupport]. 
+
+RELATED INFORMATION
+ BigFix Inventory - What's new in v9.2.8 [https://youtu.be/HMThvxfunks]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM BigFix Inventory

@@ -1,0 +1,166 @@
+Title: IBM OA23897: NETVIEW UA AGENT SHOWS EMPTY WORKSPACES OR BNH618I / BNH805I CON NECTION ERRORS - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Installed the Netview 5.2 UA Agent and seeing two types of
+   errors:
+   1) The TEP shows empty workspaces where they should contain
+      data.
+   2) Seeing the following messages indicating connection errors:
+      BNH804I NETVIEW TIVOLI ENTERPRISE PORTAL AGENT
+       'HOST.NAME.COM(111.111.111.111):1750' INTERFACE
+       INITIALIZATION IS STARTING.
+      BNH618I RECV REQUEST ON SOCKET 0 FAILED. CONNECTION CLOSED
+      BNH805I NETVIEW TIVOLI ENTERPRISE PORTAL AGENT
+       'HOST.NAME.COM(111.111.111.111):1750' INTERFACE HAS
+       TERMINATED DUE TO 'SOCKET RECEIVE FAILURE'
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  none at this time
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Tivoli NetView for z/OS V5R2 users of    *
+   *                 the Universal Agent.                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The NetView 5.2 Univeral Agent is       *
+   *                      connecting to the 6.1 Fixpack 2         *
+   *                      version of the ITM framework. In        *
+   *                      this environment, several workspaces    *
+   *                      that should contain data do not show    *
+   *                      any.                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The NetView V5R2 Universal Agent was packaged with ITM fixpack
+   2. As a result, the NetView V5R2 UA will not function correctly
+   with an ITM environment at fixpack 5 or above.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Instead of repackaging the NetView V5R2 Universal Agent with
+   the ITM 6.1 fixpack 5 libraries, the fix for this problem is
+   to ship the NetView V5R3 version of the Universal Agent, which
+   has already been packaged with ITM 6.1 fixpack 5. The Universal
+   Agent function has not changed between NetView V5R2 and NetView
+   V5R3; as a result, they are functional equivalents.
+   Note: Some splash screens and messages will indicate that the
+   Univeral Agent is a NetView V5R3 agent -- as a result of this
+   maintenance, this is supported under NetView V5R2.
+   The fixes are included in the packages that are available for
+   download from the URL that is documented in the PSP upgrade
+   for the NetView for z/OS product release.
+   On that web page, click on 'Download' and then "View all
+   Download items" for a list of available downloads.
+   The maintenance will be available on or before June 13th, 2008.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA23897
+   
+   
+ * REPORTED COMPONENT NAME
+   NETVIEW FOR Z/O
+   
+   
+ * REPORTED COMPONENT ID
+   5697ENV00
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-31
+   
+   
+ * CLOSED DATE
+   2008-05-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  EGVNMCS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETVIEW FOR Z/O
+   
+   
+ * FIXED COMPONENT ID
+   5697ENV00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R528 PSY
+   UP

@@ -1,0 +1,167 @@
+Title: IBM PJ40262: Using Case Manager Administration Client to export solutions from a development environment fails when SSO is enabled. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+IBM Case Manager V5.1.0 Fix Pack 3 for Windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.0.3-ICM-WIN-FP003&source=SAR]
+IBM Case Manager V5.1.0 Fix Pack 3 for Solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.0.3-ICM-SOLARIS-FP003&source=SAR]
+IBM Case Manager V5.1.0 Fix Pack 3 for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.0.3-ICM-LINUX-FP003&source=SAR]
+IBM Case Manager V5.1.0 Fix Pack 3 Client for Linux for System z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.0.3-ICM-CLIENT-ZLINUX-FP003&source=SAR]
+IBM Case Manager V5.1.0 Fix Pack 3 Client for Windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.0.3-ICM-CLIENT-WIN-FP003&source=SAR]
+IBM Case Manager V5.1.0 Fix Pack 3 Client for Solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.0.3-ICM-CLIENT-SOLARIS-FP003&source=SAR]
+IBM Case Manager V5.1.0 Fix Pack 3 Client for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.0.3-ICM-CLIENT-LINUX-FP003&source=SAR]
+IBM Case Manager V5.1.0 Fix Pack 3 Client for AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.0.3-ICM-CLIENT-AIX-FP003&source=SAR]
+IBM Case Manager V5.1.0 Fix Pack 3 for AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.0.3-ICM-AIX-FP003&source=SAR]
+IBM Case Manager V5.1.0 Fix Pack 3 for Linux for System z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.0.3-ICM-ZLINUX-FP003&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When Single Sign-On (SSO) using Kerberos or SPNEGO is enabled,
+   the Export Solution Package wizard in Case Manager
+   Administration Client
+   generates the following error when exporting a solution from a
+   development environment:
+   
+   The solution package for the solution or template could not be
+   created. Use your case management installation and configuration
+   checklist to verify the Content Engine server property values
+   that you entered in the wizard and ensure that the Content
+   Engine server is running.
+   
+   Click OK to return to the wizard to review and correct your
+   settings.
+   
+   Click Window > Show View > Error Log to review the log for more
+   information.
+   FNRPA9001E The Business Space server is not available. Verify
+   the URL, the administrative user name, and the password.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disable SSO when exporting a solution from the development
+   environment.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * System Administrators who want to run Case Manager           *
+   * Administration Client's Export Solution Package wizard.      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * To fix this problem, apply IBM Case Manager V5.1.0.1 Interim *
+   * Fix 1 or later releases.                                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this problem is provided in IBM Case Manager
+   V5.1.0.1 Interim Fix 1 and later releases.
+   
+   A fix was made in the Case Manager Administration Client (CMAC)
+   such that when Single Sign-On (SSO) using Kerberos/SPNEGO is
+   enabled on a development environment, the Export Solution
+   Package wizard in Case Manager Administration Client succeeds.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ40262
+   
+   
+ * REPORTED COMPONENT NAME
+   CASE MGR ADMIN
+   
+   
+ * REPORTED COMPONENT ID
+   5725A1502
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-16
+   
+   
+ * CLOSED DATE
+   2012-05-23
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CASE MGR ADMIN
+   
+   
+ * FIXED COMPONENT ID
+   5725A1502
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP

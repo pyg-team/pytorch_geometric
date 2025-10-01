@@ -1,0 +1,253 @@
+Title: IBM PK52087: SLOW CONNECTION LEAK AS IDENTIFIED BY MORE CONNECTIONS IN USE THAN ARE DEFINED IN POOL WHICH COULD LEAD TO J2CA0045E - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24020073]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24021203]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Slow memory leak in the DBRequestMonitor class.
+   Trace shows more stuck connections than total connections,
+   which should not occur.
+   .
+      As a result of this problem, you might see the following
+   errors logged.
+   [10/25/08 7:21:31:091 EDT] 00000103 FreePool      E   J2CA0045E:
+   Connection not available while invoking method
+   createOrWaitForConnectionfor resource
+   jms/auditConnectionFactory.
+   .
+   Or a J2CA0020E error.
+   .
+   The PMI stats or a trace of the connection pool would show that
+   the number of connections is greater than the sum of the actual
+   connections in the pool.  For example, this trace of the
+   connection pool shows a total of 10 connections, but there are
+   only 2 connections accounted for in the connection pool trace.
+   .
+   [11/12/08 7:17:52:873 EST] 000038c2 PoolManager   3   reserve(),
+   Pool
+   contents ==> PoolManager name:jms/auditConnectionFactory
+   PoolManager object:262364109
+   Total number of connections: 10 (max/min 10/1, reap/unused/aged
+   180/1800/0, connectiontimeout/purge 180/EntirePool)
+                                  (testConnection/inteval false/0,
+   stuck
+   timer/time/threshold 0/0/0, surge time/connections 0/-1)
+   The waiter count is 1
+   The mcWrappers in waiter queue []
+   Shared Connection information (shared partitions 200)
+   ...
+     Total number of connection in shared pool: 2
+   Free Connection information (free distribution table/partitions
+   5/1)
+   
+     No free connections
+   
+   UnShared Connection information
+     No unshared connections
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: IBM WebSphere Application Server users of    *
+   *                 JCA and stuck connection support.            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Slow memory leak in class               *
+   *                      DBRequestMonitorPool if stuck           *
+   *                      connections remains greater then zero.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A slow memory leak will occur, if a connection remains in stuck
+   state. Some of the reasons for connections to remain stuck
+   are:
+     1. if an unexpected exception occurs while getting a
+   connection handle.
+     2. the application does not close or commit a connection
+   handle.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The stuck connection support was changed to remove the
+   use of the DBRequestMonitorPool class.  This illuminates the
+   slow memory leak.  In addition, trace enhancements were added
+   to better diagnose stuck connection problems.
+   
+   The fix for this APAR is currently targeted for inclusion
+   in fixpacks 6.0.2.25 and 6.1.0.15.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK52087
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   61W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-08-31
+   
+   
+ * CLOSED DATE
+   2007-10-09
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  J2C
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP
+   
+   
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

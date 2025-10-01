@@ -1,0 +1,96 @@
+Title: IBM Firewall Considerations : IBM CORBA probes : Generic TMF814 probe - United States
+
+Text:
+nco_p_huawei_M2000_corba; nco_p_generic_tmf814; nco_p_huawei_u2000_corba; ibm corba TECHNOTE (FAQ)
+
+QUESTION
+ Firewall : IBM CORBA : What ports need to be opened? 
+
+CAUSE
+The documentation discusses what ports need to be opened but does not provide an example.
+
+ANSWER
+ 
+
+In a firewall environment, the ports to the server's IRPs need to be opened [from the probe to the EMS server] and the probe's ORBLocalPort [from the EMS server to the probe server]. The IRP port should be obtained from the administrator of the EMS server. The ORBLocalPort is used for notification communications. 
+
+
+[/support/docview.wss?uid=swg21964865&aid=1] [/support/docview.wss?uid=swg21964865&aid=1] 
+
+
+The following example is for the Generic TMF814 probe on Solaris:
+
+Consider the following configuration:
+EMS Server - ems.sbank.uk.ibm.com = 192.168.30.31
+Probe Server - probe.sbank.uk.ibm.com = 192.168.20.21
+
+Probe property settings:
+# Connection settings to EMS
+NamingServiceHost : 'ems.sbank.uk.ibm.com'
+NamingServicePort : 59072
+# Probe connection settings
+ORBLocalHost : '192.168.20.21'
+ORBLocalPort : 9876
+
+Host Name Resolution:
+You should ensure the host name resolution [e.g. /etc/hosts] has consistent naming for the probe and EMS servers.
+e.g. Ensure /etc/hosts has the same entries on both servers
+192.168.30.31 ems ems.sbank.uk.ibm.com 
+192.168.20.21 probe probe.sbank.uk.ibm.com 
+
+
+You can use the IOR parser tool [see links] to convert any IOR files, if the host and ports are not provided by the EMS administrator:
+e.g.
+reachable with IIOP 1.2 at host "192.168.30.31", port 59072 [naming service]
+reachable with IIOP 1.2 at host "192.168.30.31", port 59134 [EMS session factory]
+reachable with IIOP 1.2 at host "192.168.30.31", port 59080 [notification]
+reachable with IIOP 1.2 at host "192.168.30.31", port 59080
+
+Firewall settings:
+From these details we can see that the firewall needs to allow these ports:
+
+From probe to EMS:
+59072
+59134
+59080 
+
+From EMS to probe:
+9876
+
+Troubleshooting firewall issues:
+Use snoop on probe server to check for correct tcp traffic:
+
+snoop -s 0 -o SnoopOnProbe4EMS.pcap 192.168.30.31
+
+Then start the probe from the command line.
+
+Check that the ORBLocalPort starts successfully:
+netstat -na | grep 9876
+<listener>
+
+Examine PCAP file in WireShark:
+
+Excluding known probe and EMS ports [FILTER]:
+!(tcp.port == 9876 or tcp.port == 59072 or tcp.port == 59134 or tcp.port == 59080)
+
+Checking ORBLocalPort [FILTER]:
+!( tcp.port == 59072 or tcp.port == 59134 or tcp.port == 59080)
+
+ONLY ORBLocalPort [FILTER]:
+(tcp.port == 9876)
+
+If ORBLocalPort is not in the PCAP file then the EMS cannot communicate with the probe.
+
+Manual checks:
+You can telnet to CORBA ports to check connectivity through the firewall.
+From probe server:
+telnet ems.sbank.uk.ibm.com 59072
+telnet ems.sbank.uk.ibm.com 59134
+telnet ems.sbank.uk.ibm.com 59080
+From EMS server with the probe running:
+telnet probe.sbank.uk.ibm.com 9876
+
+RELATED INFORMATION
+ IOR Parser [http://www2.parc.com/istl/projects/ILU/parseIOR/]
+Support's Guide to IBM CORBA probes [http://www-01.ibm.com/support/docview.wss?uid=swg21614208]
+Capturing TCP/IP data for analysis [http://www-01.ibm.com/support/docview.wss?uid=swg21569745]

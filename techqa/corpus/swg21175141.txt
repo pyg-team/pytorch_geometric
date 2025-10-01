@@ -1,0 +1,32 @@
+Title: IBM Corrupted message flow recovery - United States
+
+Text:
+MQIINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your IBM Integration Bus (IIB) or WebSphere Message Broker (WMB) message flow is corrupted, and you want to know if there is a way to recover or revert to a previous copy. 
+
+RESOLVING THE PROBLEM
+Each time you edit and save a file, a copy of it is saved. This allows you to compare your current file state to a previous state, or replace the file with a previous state. Each state in the local history is identified by the date and time the file was saved.
+Therefore, if your message flow file becomes corrupted, instead of opening the file you should be able to use the message flow's resource option Replace With, and lose only the most recently unsaved changes.
+
+
+To replace a Workbench resource with a state in the local history: 
+
+1. In the Navigator view, select the resource that you want to replace with a local history state. 
+2. Right-click the resource, select Replace with > Local History. The Replace from Local History page opens. 
+3. Select a state from the Local History list. The Text Compare editor opens. 
+4. Click the Select Next Change and Select Previous Change buttons to browse through the changes made between states in the local history and the Workbench resource. 
+5. Select the state you want to replace, and click Replace. 
+
+The online documentation has more details about using the local history feature. From the Message Brokers Toolkit choose the menu option Help -> Help Contents to access the Information Center. Search using the search argument "Working with local history [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/index.jsp?topic=%2Fcom.ibm.etools.mft.doc%2Fau16520_.htm]".
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Bus Toolkit 9.0 All Editions 
+HISTORICAL NUMBER
+ 67242 7TD 000 
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

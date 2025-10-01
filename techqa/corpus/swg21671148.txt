@@ -1,0 +1,39 @@
+Title: IBM About the end of support announcement for Rational Developer for Power Systems Software 7.5 and 7.6 - United States
+
+Text:
+rdp; rdi; rda; EOS NEWS
+
+ABSTRACT
+ This document highlights an announcement regarding IBM Rational Developer for Power Systems Software 7.5.x and 7.6.x, and documentation on upgrading your product to 9.0 of IBM Rational Developer for i or IBM Rational Developer for AIX and Linux. 
+
+CONTENT
+An announcement has been made that extended support for Rational Developer for Power Systems Software 7.5.x and 7.6.x will no longer be offered after April 30, 2015. You can find the announcement here: Software withdrawal and end of service: IBM Rational selected products [http://www.ibm.com/vrm/newsletter_10577_9002022_276979_email_DYN_1IN/am106425186] 
+
+You can also find the status of the product versions in the Rational Software Support Lifecycle [http://www.ibm.com/software/rational/support/lifecycle/] site. 
+
+
+
+
+
+
+If you work with IBM i systems, you can find information on upgrading to Rational Developer for i 9.0 with this link: Rational Developer for i 9.0 [http://www.ibm.com/support/docview.wss?uid=swg24034857] 
+
+ 
+
+Additional information on the Rational Developer for i family of products can be found here: 
+
+ * IBM Rational Developer for i family of products [http://www.ibm.com/software/products/en/dev-ibm-i/] 
+ * Rational Developer for i on developerWorks [https://www.ibm.com/developerworks/downloads/r/rdi/] 
+ * The "Installing" section of the Rational Developer for i 9.0 Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSAE4W_9.0.0/com.ibm.iseries.xd.doc/helpindex_rdp.html]
+
+
+If you work with AIX or Linux systems, whether it is for C/C++ or COBOL development, you can find information on upgrading to Rational Developer for AIX and Linux 9.0 with this link: Rational Developer for AIX and Linux version 9.0 [http://www.ibm.com/support/docview.wss?uid=swg24034858]
+
+Additional information on the Rational Developer for AIX and Linux can be found here: 
+
+ * Rational Developer for AIX and Linux on developerWorks [http://www.ibm.com/developerworks/downloads/r/rdal/] [http://www-03.ibm.com/software/products/en/dev-c-cpp/] 
+ * The "Installing" section of the Rational Developer for AIX and Linux 9.0 Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSPSQF_9.0.0/com.ibm.iseries.xd.doc/helpindex_rdal.html]
+
+RELATED INFORMATION
+#Rational Developer for i Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSAE4W/welcome]
+Rational Developer for AIX and Linux Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSPSQF/welcome]

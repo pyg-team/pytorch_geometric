@@ -1,0 +1,40 @@
+Title: IBM Cognos Disclosure Management 10.2.4 Supported System Environments - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document provides links to the system compatibility reports for your product. These reports provide up-to-date information about the supported environments. 
+
+CONTENT
+Always up-to-date system requirement reports can be dynamically generated using the Software Product Compatibility Reports (SPCR) tool [http://www-969.ibm.com/software/reports/compatibility/clarity/index.html]. 
+
+
+
+
+For your convenience, the sections below offer detailed system requirement reports for different contexts (by Operating System, by component). Note that clicking a link will always generate a new, up-to-date report. 
+
+
+
+
+
+
+
+Requirements
+by platform  * Windows [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1375109299617&osPlatforms=Windows] 
+ * Supported Hypervisors [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/vesForProduct?deliverableId=1375109299617]
+
+
+
+
+
+Requirements
+by component  * Application Server [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1375109299617&duComponentIds=Server_84127680C0DF11E4B5E869C52CDBC825] 
+ * Client [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1375109299617&duComponentIds=Desktop_841387F0C0DF11E4B5E869C52CDBC825] 
+ * Database Server [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1375109299617&duComponentIds=Server_840B71A0C0DF11E4B5E869C52CDBC825]
+
+
+
+
+
+Related requirements No related requirements.

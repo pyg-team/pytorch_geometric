@@ -1,0 +1,33 @@
+Title: IBM Can SPSS give me the partial R^2 for each predictor in a linear regression model without my having to square things or run multiple models? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm running a multiple linear regression model and want to get the partial R^2 values or changes in R^2 achieved by adding each predictor on top of a model containing the other predictors in the model. I know from resolution 19213 that I can ask for the part and partial correlations and then square the part correlations, or that I can run multiple models and ask for R^2 change statistics, but is there a way to get SPSS to print all of these for me without my having to do any computations and without my having to run multiple models? 
+
+RESOLVING THE PROBLEM
+Yes, you can obtain the change in R^2 for each predictor on top of all other predictors in the model, without computations and fitting only a single model, though it does require use of command syntax. Begin by setting up your regression model in the menus. Specify the model with a Method of Enter. Instead of clicking on OK to run the model, click on Paste. For a regression of y on predictors a, b and c, the REGRESSION command pasted into a syntax window would have a structure similar to the following:
+
+REGRESSION
+/MISSING LISTWISE
+/STATISTICS COEFF OUTS R ANOVA
+/CRITERIA=PIN(.05) POUT(.10)
+/NOORIGIN
+/DEPENDENT y
+/METHOD=ENTER a b c .
+
+All you would need to do would be to edit the METHOD subcommand, then run the command. The METHOD subcommand would need to look like the following:
+
+/METHOD=TEST (a) (b) (c) .
+
+After editing the command syntax, simply leave the cursor anywhere in the REGRESSION command click on the little black arrowhead button on the toolbar in the SPSS syntax window (if you hover over it, a popup reading "Run Current" should appear). You can also use the Run menu
+
+RELATED INFORMATION
+ IBM SPSS Help and Support [https://www.ibm.com/analytics/us/en/spss/spss-support/]
+
+
+
+
+HISTORICAL NUMBER
+ 65220

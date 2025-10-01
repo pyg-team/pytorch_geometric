@@ -1,0 +1,108 @@
+Title: IBM winconvert.cmd fails with java.lang.NoClassDefFoundError - United States
+
+Text:
+Operating Environment; STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ winconvert.cmd fails with java.lang.NoClassDefFoundError 
+
+SYMPTOM
+
+
+SI 5.0 patch 5002 – Windows platform
+
+Winconvert.cmd in the /tp_import directory fails with error. This happens even when not passing any parameters and just trying to get usage. Note, the Linux/Unix version of this script works without issue. Error Message D:\SterlingIntergrator50\install\tp_import>winconvert 
+Exception in thread "main" java.lang.ExceptionInInitializerError 
+at java.lang.Class.forName0(Native Method) 
+at java.lang.Class.forName(Class.java:242) 
+at com.sterlingcommerce.woodstock.noapp.NoAppLoader.main(NoAppLoader.java:70) 
+Caused by: org.apache.commons.logging.LogConfigurationException: org.apache.commons.logging.LogConfigurationException: java.lang.NoClassDefFoundError: org/apache/commons/logging/Log (Caused by java.lang.NoClassDefFoundError: org/apache/comm 
+ons/logging/Log) (Caused by org.apache.commons.logging.LogConfigurationException: java.lang.NoClassDefFoundError: org/apache/commons/logging/Log (Caused by java .lang.NoClassDefFoundError: org/apache/commons/logging/Log)) 
+at org.apache.commons.logging.impl.LogFactoryImpl.newInstance(LogFactoryImpl.java:5 43) 
+at org.apache.commons.logging.impl.LogFactoryImpl.getInstance(LogFactoryImpl.java:2 35) 
+at org.apache.commons.logging.impl.LogFactoryImpl.getInstance(LogFactoryImpl.java:2 09) 
+at org.apache.commons.logging.LogFactory.getLog(LogFactory.java:351) 
+at com.sterlingcommerce.woodstock.profile.ie.gentran.windows.WinConverter.<clinit>( WinConverter.java:101) 
+... 3 more 
+Caused by: org.apache.commons.logging.LogConfigurationException: java.lang.NoClassDefFoundError: org/apache/commons/logging/Log (Caused by java.lang.NoClassDefFoundError: org/apache/commons/logging/Log) 
+at org.apache.commons.logging.impl.LogFactoryImpl.getLogConstructor(LogFactoryImpl. java:397) 
+at org.apache.commons.logging.impl.LogFactoryImpl.newInstance(LogFactoryImpl.java:5 29) 
+... 7 more 
+Caused by: java.lang.NoClassDefFoundError: org/apache/commons/logging/Log 
+at java.lang.ClassLoader.defineClass1(Native Method) 
+at java.lang.ClassLoader.defineClass(ClassLoader.java:620) 
+at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:124) 
+at java.net.URLClassLoader.defineClass(URLClassLoader.java:260) 
+at java.net.URLClassLoader.access$100(URLClassLoader.java:56) 
+at java.net.URLClassLoader$1.run(URLClassLoader.java:195) 
+at java.security.AccessController.doPrivileged(Native Method) 
+at java.net.URLClassLoader.findClass(URLClassLoader.java:188) 
+at java.lang.ClassLoader.loadClass(ClassLoader.java:306) 
+at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:268) 
+at java.lang.ClassLoader.loadClass(ClassLoader.java:299) 
+at java.lang.ClassLoader.loadClass(ClassLoader.java:251) 
+at org.apache.commons.logging.impl.LogFactoryImpl$1.run(LogFactoryImpl.java:441) 
+at java.security.AccessController.doPrivileged(Native Method) 
+at org.apache.commons.logging.impl.LogFactoryImpl.loadClass(LogFactoryImpl.java:435 ) 
+at org.apache.commons.logging.impl.LogFactoryImpl.getLogConstructor(LogFactoryImpl. java:376) 
+... 8 more
+
+
+RESOLVING THE PROBLEM
+
+
+Please apply Sterling Integrator Release 5.0, Build 5006 or later.
+Please apply Sterling Integrator Release 5.1, Build 5101 or later.
+
+As a workaround, please do the following.
+
+ 1. Backup <SI Root>\install\tp_import\winconvert.cmd as a precaution.
+ 2. Add the following to the the line in winconvert.cmd that begins with: &JAVA_HOME_WIN;\bin\java %JAVA_OPTIONS% ...
+    &JAVA_HOME_WIN;\bin\java %JAVA_OPTIONS% -classpath %INSTALL_DIR%\jar\bootstrapper.jar -Dvendor=shell -DvendorFile=%PROP_DIR%\servers.properties com.sterlingcommerce.woodstock.noapp.NoAppLoader -class com.sterlingcommerce.woodstock.profile.ie.gentran.windows.WinConverter -f &PROP_DIR;/dynamicclasspath.cfg -invokeargs %*
+ 3. Save and close the file.
+ 4. Try running winconvert.cmd again.
+
+ 
+
+HISTORICAL NUMBER
+ NFX7130 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+Import/Export
+
+
+Escalation ID
+
+
+00092002
+
+
+Fix ID
+
+
+202844
+233361
+
+
+Severity
+
+
+Normal
+
+
+Type
+
+
+NormalFix
+
+
+Build
+
+
+5006
+5101

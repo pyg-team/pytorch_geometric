@@ -1,0 +1,135 @@
+Title: IBM HE12189: INTERVIEW PREVIEW SECTION DOES NOT REFRESH AFTER CREATING AND PUBLISHING AN INTERVIEW WHEN USING INTERNET EXPLORER - United States
+
+Text:
+  A FIX IS AVAILABLE
+Download IBM Atlas Policy Suite Version 6.0.3 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24038397]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When an interview is created with a few questions and
+   published, the interview preview section on the screen is not
+   refreshed and only shows " loading.." message. This is seen
+   when using Internet Explorer
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Reload the interview after going back to the interview list
+   screen
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  INTERVIEW PREVIEW SECTION DOES NOT REFRESH AFTER CREATING AND
+   PUBLISHING AN INTERVIEW WHEN USING INTERNET EXPLORER
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  fixed in 6032
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12189
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   603
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-02
+   
+   
+ * CLOSED DATE
+   2015-01-08
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  HOLD
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R603 PSY
+   UP

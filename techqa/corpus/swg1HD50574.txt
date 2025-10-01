@@ -1,0 +1,157 @@
+Title: IBM HD50574: VPM: ERROR ORA-01795 WHEN TRYING TO GET MML IMPACTS IN PSN - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract: VPM: ERROR ORA-01795 WHEN TRYING
+   TO GET MML IMPACTS IN PSN
+   Description:
+   In PSN, Select a specific part.
+   'Multi-model links/Get Impacts In PSN'
+   Result:
+   The following error message:
+   CATDbCursor Error : ORA-01795: maximum number
+   of expressions in a list is 1000.
+   The problem comes when trying to run the
+   command on a specific CATPart, stored in VPM as a
+   DOCCAD. This CATPart has about 80 publications
+   and 40 external references
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  VPM: ERROR ORA-01795 WHEN TRYING TO GET MML IMPACTS IN PSN
+   Abstract: VPM: ERROR ORA-01795 WHEN TRYING
+   TO GET MML IMPACTS IN PSN
+   Description:
+   In PSN, Select a specific part.
+   'Multi-model links/Get Impacts In PSN'
+   .
+   Result:
+   The following error message:
+   CATDbCursor Error : ORA-01795: maximum number
+   of expressions in a list is 1000.
+   The problem comes when trying to run the
+   command on a specific CATPart, stored in VPM as a
+   DOCCAD. This CATPart has about 80 publications
+   and 40 external references.
+   
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON ENOVIA VPM 1.5
+   PTF37 (HD53533).
+   .
+   Incident Diagnosis
+   The code has been rewritten to accept large data.
+   ORACLE cannot support actually more than 1000
+   items in a list ( select in (?,?,...,?,?) ) and more
+   than 250 items in a complex list (select .. from ..
+   where ((coid=? and compid=?) and ... and (coid=?
+   and compid=?)))
+   .
+   The treatment is automatically switched to a "lot
+   treatment".
+   .
+   Answer and By-Pass
+   NONE
+   
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD50574
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA VPM AIX
+   
+   
+ * REPORTED COMPONENT ID
+   569101900
+   
+   
+ * REPORTED RELEASE
+   150
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-03-08
+   
+   
+ * CLOSED DATE
+   2006-06-23
+   
+   
+ * LAST MODIFIED DATE
+   2006-06-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    HD50575 HD50576 HD50577
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ENOVIA VPM AIX
+   
+   
+ * FIXED COMPONENT ID
+   569101900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R150 PSY
+   UP

@@ -1,0 +1,167 @@
+Title: IBM PI92171: AN INTERMITTENT PERFORMANCE DEGRADATION IS OBSERVED WITH CICS V5.4 AND LIBERTY 17.0.0.3 COMPARED TO LIBERTY 17.0.0.1 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+18.0.0.1: WebSphere Application Server Liberty 18.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24044624]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An intermittent performance degradation has been observed
+   running with CICS V5.4 with Liberty 17.0.0.3
+   compared to CICS V5.4 with Liberty 17.0.0.1.
+   Possibly  due to a change in processing incoming socket
+   requests.
+   
+   One instance was about 4% increase in CPU cost per servlet
+   request with sampling data. The sampling data showed that
+   17.0.0.3 used of some functions not evident in 17.0.0.1
+   related
+   to TCP Select Pool.  These functions were EZBTCFSP(TCP/IP
+   Select Poll) in the TCPIP region and  BPXTCSEL and EZBPFSEL
+   (TCP/IP PFS Select) in OMVS region.
+   
+   Taking Javacore dumps of 17.0.0.1 and 17.0.0.3 running the
+   same
+   workload may show there is a difference in the threads.
+   17.0.0.3 as an "Inbound Read Selector.1" that uses quite a
+   lot
+   of CPU 'CPU usage total: 85.861000000 secs'.  17.0.0.1 has a
+   different thread structure.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of IBM WebSphere Application Server   *
+   *                  Liberty running inside a CICS TS V5.4       *
+   *                  environment on z/OS.                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: I/O performance degradation when        *
+   *                      running Liberty inside a CICS TS V5.4   *
+   *                      environment.                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   WebSphere Application Server Liberty for z/OS has a z/OS-
+   specific I/O performance enhancement that is supposed to be
+   enabled by default when running anywhere on the z/OS platform,
+   including when running inside a CICS TS V5.4 environment.
+   
+   However, a specific configuration setting of the CICS TS V5.4
+   environment accidentally disables this enhancement, leading to a
+   performance degradation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Updated the code so that the z/OS-specific I/O performance
+   enhancement is enabled when running WebSphere Liberty inside a
+   CICS TS V5.4 environment.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 18.0.0.1.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI92171
+   
+   
+ * REPORTED COMPONENT NAME
+   LIBERTY PROF -
+   
+   
+ * REPORTED COMPONENT ID
+   5655W6514
+   
+   
+ * REPORTED RELEASE
+   CD0
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-01-09
+   
+   
+ * CLOSED DATE
+   2018-01-31
+   
+   
+ * LAST MODIFIED DATE
+   2018-01-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIBERTY PROF -
+   
+   
+ * FIXED COMPONENT ID
+   5655W6514
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RCD0 PSY
+   UP

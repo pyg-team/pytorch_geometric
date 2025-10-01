@@ -1,0 +1,61 @@
+Title: IBM Security Bulletin: A vulnerability in IBM Java SDK affects IBM WebSphere MQ (CVE-2015-4872) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There is a vulnerability in IBM® Runtime Environment Java™ Technology Edition, Versions 6 & 7 that are used by IBM WebSphere MQ. This issue was disclosed as part of the IBM Java SDK updates for October 2015. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-4872 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-4872]
+
+DESCRIPTION: An unspecified vulnerability related to the Security component has no confidentiality impact, partial integrity impact, and no availability impact.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/107361 [https://exchange.xforce.ibmcloud.com/vulnerabilities/107361] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:P/A:N)
+
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM SDK, Java Technology Edition, Version 7R1, provided by IBM WebSphere MQ 8.0.0.4 and earlier on Windows, Linux and AIX
+IBM SDK, Java Technology Edition, Version 7, provided by IBM WebSphere MQ 8.0.0.4 and earlier on Solaris and HP-UX
+IBM SDK, Java Technology Edition, Version 6, provided by IBM WebSphere MQ 7.5.0.5, IBM WebSphere MQ 7.1.0.7 and earlier on all platforms (except IBM i and z/OS)
+
+REMEDIATION/FIXES
+IBM WebSphere MQ 8.0 
+
+Apply fix pack 8.0.0.5 [http://www-01.ibm.com/support/docview.wss?uid=swg27043086] when available, in the interim apply ifix IT13492 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+MQ&release=8.0&platform=All&function=aparId&apars=IT13492] 
+
+ 
+
+IBM WebSphere MQ 7.5 
+
+Apply fix pack 7.5.0.6 [http://www-01.ibm.com/support/docview.wss?uid=swg27038184] 
+
+ 
+
+IBM WebSphere MQ 7.1 
+
+Apply fix pack 7.1.0.8 [http://www-01.ibm.com/support/docview.wss?uid=swg27024302]when available, in the interim apply ifix IT13492 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+MQ&release=7.1&platform=All&function=aparId&apars=IT13492]
+
+WORKAROUNDS AND MITIGATIONS
+None known
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+IBM Java SDK Security Bulletin [http://www-01.ibm.com/support/docview.wss?uid=swg21969225] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 21 April 2016: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21982283]

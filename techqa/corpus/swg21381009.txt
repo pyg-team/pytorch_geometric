@@ -1,0 +1,106 @@
+Title: IBM Using dblook and ij to work with the embedded Apache Derby in WebSphere Portal - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM WebSphere Portal 6.1 uses an embedded version of Apache Derby out of the box. However, there is no longer a graphical tool such as CloudView (as with Cloudscape 5.x). In order to obtain the data and structure of the WebSphere Portal database, dblook and ij utilities can be used to accomplish such goals. 
+
+RESOLVING THE PROBLEM
+
+Before proceeding with the following, it is strongly recommended that you back up your Derby database. Make a copy of <wp_profile>/PortalServer/derby/wpsdb to a backup directory. Since the version of Derby used in WebSphere Portal is embedded, you must stop the Portal server before you can access the database although you can always work on the backup copy.
+
+NOTE: For simplicity, we will omit the extension of the utilities. You should add ".sh" or ".bat' depending on the platform.
+
+There are three primary utility tools that are installed with WebSphere 6.1, "dblook", "ij", and "sysinfo", under the <was_root>/AppServer/derby/bin/embedded directory. The sysinfo utility generates information about the operating system, the Java version and classpath, and the Derby driver files and version information.
+
+dblook utility
+The dblook utility is used to view the database structure (in DDL - Data Definition Language) for a specific database. 
+
+The usage is dblook -d <databaseURL> [options], where databaseURL is in the "jdbc:derby:<database>" format. The <database> should be given as a full path, such as C:\IBM\WebSphere\wp_profile\derby\wpsdb. 
+
+Commonly used options include: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Examples:
+ * 
+ * 
+ * dblook -d jdbc:derby:C:\IBM\WebSphere\wp_profile\PortalServer\wpsdb -o C:\temp\wpsdb_ddl.sql
+ * 
+ * 
+ * 
+ * 
+ * dblook -d jdbc:derby:C:\IBM\WebSphere\wp_profile\PortalServer\wpsdb -z release -o C:\temp\wpsdb_ddl.sql
+ * 
+ * 
+ * 
+ * 
+ * dblook -d jdbc:derby:C:\IBM\WebSphere\wp_profile\PortalServer\wpsdb -z release -t user_desc -verbose -o C:\temp\user_desc.sql
+ * 
+ * 
+
+
+ij utility 
+The ij utility is a command line SQL processor. It can be used to run DDL for creating database, tables, indexes, and so on. In a WebSphere Portal environment, it would typically be used for exporting data or making simple changes (when advised by IBM Support). 
+
+To start ij, simply open a command prompt or terminal window, change the directory and enter the command. You should then see the ij shell with prompt "ij>". 
+
+The following are some common commands that you may use when reviewing data in the Portal database.  * 
+ * ij> connect 'jdbc:derby:C:\IBM\WebSphere\wp_profile\derby\wpsdb';
+ * 
+ * 
+ * 
+ * 
+ * ij> show connections;
+ * 
+ * 
+ *  CONNECTION0* - jdbc:derby:C:\ibm\websphere\wp_profile\portalserver\derby\wpsdb 
+   * = current connection 
+   ij> driver "org.apache.derby.jdbc.EmbeddedDriver'; 
+ * 
+ * 
+ * 
+ * ij> set schema=release;
+ * 
+ * 
+ * 
+ * 
+ * ij> select * from user_desc where oid=1000;
+ * 
+ * 
+ * 
+ * 
+ * ij> run 'myquery.sql';
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * ij> CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE('RELEASE','USER_DESC','USER_DESC.SQL',';','|',NULL);
+ * 
+ * 
+ * 
+ * 
+ * ij> 
+ * CALL SYSCS_UTIL.SYSCS_EXPORT_QUERY('SELECT * FROM RELEASE.USER_DESC','user_desc_query.sqlL',null,'|',NULL);
+ * 
+ * 
+
+RELATED INFORMATION
+ Derby utility from Apache [http://docs.oracle.com/javadb/10.3.3.0/getstart/cgsusingtoolsutils.html]
+Derby SQL references from Apache [http://db.apache.org/derby/docs/10.1/ref/crefsqlj23296.html]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products AIX, HP-UX, IBM i, Linux, Solaris, Windows, z/OS 7.0, 6.1

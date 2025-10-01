@@ -1,0 +1,138 @@
+Title: IBM Security Bulletin: A vulnerability in IBM Java SDK affects IBM Operations Analytics Predictive Insights - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There is a vulnerability in IBM® SDK Java™ Technology Edition, Version 7 Service Refresh 10 Fix Pack 1 that is used by IBM Operations Analytics Predictive Insights 1.3.5 and earlier.
+There is a vulnerability in IBM® SDK Java™ Technology Edition, Version 8 Service Refresh 4 Fix Pack 1 that is used by IBM Operations Analytics Predictive Insights 1.3.6.
+IBM Operations Analytics Predictive Insights has addressed the applicable CVE.
+
+These issues were also addressed by IBM WebSphere Application Server shipped with IBM Operations Analytics Predictive Insights. These issues were disclosed as part of the IBM Java SDK updates in April 2018. 
+
+VULNERABILITY DETAILS
+If you run your own Java code using the IBM Java Runtime delivered with this product, you should evaluate your code to determine whether the complete list of vulnerabilities are applicable to your code. For a complete list of vulnerabilities, refer to the “IBM Java SDK Security Bulletin”, located in the References section for more information. 
+
+CVEID: CVE-2018-2783 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2783]DESCRIPTION: An unspecified vulnerability in Oracle Java SE related to the Java SE, Java SE Embedded, JRockit Security component could allow an unauthenticated attacker to cause high confidentiality impact, high integrity impact, and no availability impact.
+CVSS Base Score: 7.4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/141939 [https://exchange.xforce.ibmcloud.com/vulnerabilities/141939] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Operations Analytics Predictive Insights v1.3.6 and earlier
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix IBM Operations Analytics Predictive Insights v1.3.0, v1.3.1, v1.3.2, v1.3.3, v1.3.5 None See Resolution A IBM Operations Analytics Predictive Insights v1.3.6 None See Resolution B Installation Instructions – Resolution A 
+
+---------------------------------------------------------- 
+
+1. Download ibm-java-sdk-7.0-10.25-x86_64-archive.bin [https://www-945.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm%7EWebSphere&product=ibm/IBM+SDKs+for+Java+Technology/Java+Standard+Edition+(Java+SE)&release=7.0.10.25&platform=Linux+64-bit,x86_64&function=fixId&fixids=7.0.10.25-JavaTech-JavaSE-Linuxx86_6464-ServiceRefresh10FP25&includeRequisites=1&includeSupersedes=0&downloadMethod=ddp] from Fix Central 
+
+2. As the user that installed the Predictive Insights UI, e.g. scadmin, stop the UI server used by IBM Operations Analytics Predictive Insights
+<UI_HOME>/bin/pi.sh -stop
+where UI_HOME is typically /opt/IBM/scanalytics/UI 
+
+3. cd <UI_HOME> 
+
+4. Rename JAVA SDK installation folder
+mv ibm-java-x86_64-70 ibm-java-x86_64-70_orig 
+
+5. If necessary, make the .bin file executable:
+chmod u+x ibm-java-sdk-7.0-10.25-x86_64-archive.bin 
+
+6. Run the ibm-java-sdk-7.0-10.25-x86_64-archive.bin to install the SDK into the <UI_HOME> folder.
+When prompted for “Where would you like to install?”, supply the full path 
+<UI_HOME>/ibm-java-x86_64-70 
+This will create a new ibm-java-x86_64-70 folder in <UI_HOME> 
+
+7. As the user that installed the Predictive Insights UI, start UI server
+<UI_HOME>/bin/pi.sh -start 
+
+ 
+
+Remove Update Instructions – Resolution A 
+
+---------------------------------------------------------------- 
+
+1. As the user that installed the Predictive Insights UI, e.g. scadmin, stop the UI server used by IBM Operations Analytics Predictive Insights
+<UI_HOME>/bin/pi.sh -stop 
+
+2. Replace the JAVA SDK installation folder with the original 
+mv ibm-java-x86_64-70 ibm-java-x86_64-70_7.0.10.25
+mv ibm-java-x86_64-70_orig ibm-java-x86_64-70 
+
+3. Start the UI server<UI_HOME>/bin/pi.sh -start 
+
+
+
+
+Installation Instructions – Resolution B 
+
+-------------------------------------------------------- 
+
+1. Download ibm-java-sdk-8.0-5.15-x86_64-archive.bin [https://www-945.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~WebSphere&product=ibm/IBM+SDKs+for+Java+Technology/Java+Standard+Edition+(Java+SE)&release=8.0.5.15&platform=Linux+64-bit,x86_64&function=fixId&fixids=8.0.5.15-JavaTech-JavaSE-Linuxx86_6464-ServiceRefresh5FP15&includeRequisites=1&includeSupersedes=0&downloadMethod=ddp&login=true] from Fix Central 
+
+2. As the user that installed the Predictive Insights UI, e.g. scadmin, stop the UI server used by IBM Operations Analytics Predictive Insights
+<UI_HOME>/bin/pi.sh -stop
+where UI_HOME is typically /opt/IBM/scanalytics/UI 
+
+3. cd <UI_HOME> 
+
+4. Rename JAVA SDK installation folder
+mv ibm-java-x86_64-80 ibm-java-x86_64-80_orig 
+
+5. If necessary, make the .bin file executable:
+chmod u+x ibm-java-sdk-8.0-5.15-x86_64-archive.bin 
+
+6. Run the ibm-java-sdk-8.0-5.15-x86_64-archive.bin to install the SDK into the <UI_HOME> folder.
+When prompted for “Where would you like to install?”, supply the full path
+<UI_HOME>/ibm-java-x86_64-80 
+This will create a new ibm-java-x86_64-80 folder in <UI_HOME> 
+
+7. Start the UI server
+<UI_HOME>/bin/pi.sh -start 
+
+ 
+
+Remove Update Instructions – Resolution B
+--------------------------------------------------------------- 
+
+1. As the user that installed the Predictive Insights UI, e.g. scadmin, stop the UI server used by IBM Operations Analytics Predictive Insights
+<UI_HOME>/bin/pi.sh -stop 
+
+2. Replace the JAVA SDK installation folder with the original 
+mv ibm-java-x86_64-80 ibm-java-x86_64-80_8.0.5.15
+mv ibm-java-x86_64-80_orig ibm-java-x86_64-80 
+
+3. Start the UI server<UI_HOME>/bin/pi.sh -start 
+
+
+
+Refer to the following security bulletins for vulnerability details and information about fixes addressed by IBM WebSphere Application Server shipped with IBM Operations Analytics Predictive Insights.
+
+
+
+Principal Product and Version(s) Affected Supporting Product and Version Affected Supporting Product Security Bulletin IBM Operations Analytics Predictive Insights version 1.3.6 and earlier Websphere Application Server 8.5.x Multiple Vulnerabilities in IBM® Java SDK affects WebSphere Application Server April 2018 CPU [http://www-01.ibm.com/support/docview.wss?uid=swg22016282] WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+IBM Java SDK Security Bulletin [http://www-01.ibm.com/support/docview.wss?uid=swg22015806] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 24 May 2018: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

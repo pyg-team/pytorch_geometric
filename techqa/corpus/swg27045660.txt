@@ -1,0 +1,160 @@
+Title: IBM System Requirements for WebSphere Application Server v7.0 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The table below provides the system requirements for all editions of IBM WebSphere Application Server v7.0 in different levels and organization of detail.
+
+This document describes the minimum product levels that need to be installed before opening a problem report with the WebSphere Application Server Support Team. Because other products frequently ship fixes, updates, and new releases, testing every configuration is not possible. In general, you can install and run with updates to supported products if those updates are forward compatible. 
+
+CONTENT
+ 
+
+To get the most updated software product compatibility report, use the Software Product Compatibility Reports (SPCR) tool [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity/index.html]. 
+
+For your convenience, the sections offer detailed system requirement reports for different contexts (by Operating System, by component). Note that clicking a link will always generate a new, up-to-date report.
+
+
+
+
+EDITIONS
+ * Base
+ * Network Deployment
+
+ * Express
+ * for Developers
+
+ * z/OS
+
+
+
+BASE EDITION
+REQUIREMENTS
+BY PLATFORM
+ * AIX [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1224646995350&osPlatform=AIX]
+ * HP [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1224646995350&osPlatform=HP]
+ * IBMi [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1224646995350&osPlatform=IBM i]
+
+ * Linux [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1224646995350&osPlatform=Linux]
+ * Solaris [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1224646995350&osPlatform=Solaris]
+ * Windows [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1224646995350&osPlatform=Windows]
+
+
+
+
+
+RELATED REQUIREMENTS
+ * Software Requirements [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/prereqsForProduct?deliverableId=1224646995350]
+ * Hardware Requirements [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/hardwareReqsForProduct?deliverableId=43FD4BD087A311E49803C6F06C4301C6&osPlatforms=AIX|HP|IBM%20i|Linux|Solaris|Windows&duComponentIds=S001|S002]
+
+ * Supported Hypervisors [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/vesForProduct?deliverableId=1224646995350]
+ * LDAP Servers [http://www-01.ibm.com/support/docview.wss?uid=swg27036471]
+
+
+
+
+ Back to top 
+
+NETWORK DEPLOYMENT EDITION
+REQUIREMENTS
+BY PLATFORM
+ * AIX [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1114458462035&osPlatform=AIX]
+ * HP [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1114458462035&osPlatform=HP]
+ * IBMi [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1114458462035&osPlatform=IBM i]
+
+ * Linux [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1114458462035&osPlatform=Linux]
+ * Solaris [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1114458462035&osPlatform=Solaris]
+ * Windows [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1114458462035&osPlatform=Windows]
+
+
+
+
+
+RELATED REQUIREMENTS
+ * Software Requirements [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/prereqsForProduct?deliverableId=1114458462035]
+ * Hardware Requirements [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/hardwareReqsForProduct?deliverableId=8CB8636087A711E49803C6F06C4301C6&osPlatforms=AIX|HP|IBM%20i|Linux|Solaris|Windows&duComponentIds=S001|S003|S002]
+
+ * Supported Hypervisors [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/vesForProduct?deliverableId=1114458462035]
+ * LDAP Servers [http://www-01.ibm.com/support/docview.wss?uid=swg27036471]
+
+
+
+
+ Back to top 
+
+EXPRESS EDITION
+REQUIREMENTS
+BY PLATFORM
+ * AIX [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1114608388054&osPlatform=AIX]
+ * HP [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1114608388054&osPlatform=HP]
+ * IBMi [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1114608388054&osPlatform=IBM i]
+
+ * Linux [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1114608388054&osPlatform=Linux]
+ * Solaris [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1114608388054&osPlatform=Solaris]
+ * Windows [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1114608388054&osPlatform=Windows]
+
+
+
+
+
+RELATED REQUIREMENTS
+ * Software Requirements [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/prereqsForProduct?deliverableId=1114608388054]
+ * Hardware Requirements [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/hardwareReqsForProduct?deliverableId=A722B22087A511E49803C6F06C4301C6&osPlatforms=AIX|HP|IBM%20i|Linux|Solaris|Windows&duComponentIds=S000]
+
+ * Supported Hypervisors [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/vesForProduct?deliverableId=1114608388054]
+ * LDAP Servers [http://www-01.ibm.com/support/docview.wss?uid=swg27036471]
+ * 
+
+
+
+
+ Back to top 
+
+DEVELOPERS EDITION
+REQUIREMENTS
+BY PLATFORM
+ * AIX [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1224623337700&osPlatform=AIX]
+ * HP [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1224623337700&osPlatform=HP]
+ * IBMi [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1224623337700&osPlatform=IBM i]
+
+ * Linux [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1224623337700&osPlatform=Linux]
+ * Solaris [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1224623337700&osPlatform=Solaris]
+ * Windows [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1224623337700&osPlatform=Windows]
+
+
+
+
+
+RELATED REQUIREMENTS
+ * Software Requirements [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/prereqsForProduct?deliverableId=122462333770]
+ * Hardware Requirements [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/hardwareReqsForProduct?deliverableId=122462333770&osPlatforms=AIX|HP|IBM%20i|Linux|Solaris|Windows&duComponentIds=S001|S002]
+
+ * Supported Hypervisors [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/vesForProduct?deliverableId=122462333770]
+ * LDAP Servers [http://www-01.ibm.com/support/docview.wss?uid=swg27036471]
+
+
+
+
+ Back to top 
+
+Z/OS EDITION
+REQUIREMENTS
+BY PLATFORM
+ * z/OS [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1224622737278&osPlatform=z/OS]
+
+
+
+
+
+RELATED REQUIREMENTS
+ * Software Requirements [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/prereqsForProduct?deliverableId=1224622737278]
+ * Hardware Requirements [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/hardwareReqsForProduct?deliverableId=BB9CE4E087A611E49803C6F06C4301C6&osPlatforms=z/OS&duComponentIds=S000]
+
+ * Supported Hypervisors [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/vesForProduct?deliverableId=1224622737278]
+ * LDAP Servers [http://www-01.ibm.com/support/docview.wss?uid=swg27036471]
+
+
+
+
+ Back to top

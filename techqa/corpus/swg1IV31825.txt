@@ -1,0 +1,302 @@
+Title: IBM IV31825: ENHANCEMENT TO KRA MESSAGES DOCUMENTED IN THE KRA MESSAGES - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  KRAACMD00 Incorrect FTO configuration!
+   Configure secondary TEMS for this
+   agent! The agent received a command from the
+    FTO monitoring server to switch to secondary monitoring server,
+   but no
+   secondary monitoring server
+    is configured on the agent. Can we add "Configure secondary
+   TEMS for
+   this agent, for more detail please see ....."?
+   
+   KRAIRA000 Starting Enterprise situation <situation>
+   <xxxxxxxxxx,xxxxxxxxxx> for
+   <pc.attribute_name> The agent successfully started
+    monitoring for the situation. This message appears twice for
+   situations
+   with a take action command.  Can we add "No response is needed"?
+   Do we
+   have to show the message twice if it has take action?
+   
+   KRAIRA002 Executed <cmd> with status <errno>.  Indicates the
+   execution
+   of an action
+    command, where cmd is the take action command associated with
+   the
+   situation and errno is the error code returned by OS when take
+   action
+   command is executed.
+    The explanation of this error code can be found in  standard C
+   library
+   header file errno.h. Can we document the contents of errno.h?
+   We need
+   to eliminate directing users to more than a couple of location
+   for
+   resolution, they will eventually give up and just open a PMR.
+   For each
+   errno, we need to document the User's response.
+   
+   KRAIRA003 TakeSample call abended for <situation>
+   <xxxxxxxxxx,xxxxxxxxxx> on
+   <pc.attribute_name>, stopping request. The situation sample
+   failed in
+   the agent
+    collector with an unrecoverable error. The situation request
+   will be
+   stopped by the framework. Can we document what the client is
+   supposed to
+   do?
+   
+   KRAIRA008 Agent can not determine the list of situations that
+   were
+   combined into
+   duperized situation and therefore it is
+   unable to export SNMP and EIF events
+   for these situations. Explanation: To resolve this problem,
+   perform one
+   of the following procedures:
+    v Disable the duper mechanism on the monitoring server by
+   setting the
+   environment variable CMS_DUPER=NO.
+    v Identify situations that are combined into a duperized
+   situation.
+   Then change each situation sampling interval to make it
+   ineligible for
+   duperization.
+    Tip: Use ERROR(UNIT:ko4lodge STATE) trace on   TEMMS to
+   determine
+   situations combined into a duperized situation. For example,
+   "ko4lodge.cpp,1282,"newSitRec::buildName
+    AndPredicate") created a new situation
+    <_Z_WTHPHYSDSK2> by melding
+    <NT_Physical_Disk_Busy_Warning
+    NT_Physical_Disk_Busy_Critical> where
+    _Z_WTHPHYSDSK2 represents the duperized  situation that
+   combines
+   sampling for situations
+    NT_Physical_Disk_Busy_Warning and
+    NT_Physical_Disk_Busy_Critical. To resolve the original
+   problem, change
+   the sampling interval for situation
+   NT_Physical_Disk_Busy_Warning and
+    situation NT_Physical_Disk_Busy_Critical by a few seconds. Can
+   we add a
+   legitimate User's response?  Looks like the explanation is just
+   providing a workaround, right?  Additionally, do we really want
+   to
+   document the Tip?  This is just telling them which situations
+   are
+   duppered together and changing the interval so they won't be
+   duperized.
+   
+   KRALOG000 New log file created The agent operations log (LG0)
+   has been
+    successfully created. Can we add "No response is needed"?
+   
+   KRAMGR000 RPC call Sample for
+   <tems_handle,agent_handle> failed, status
+   = <status>  For <status> = 1c010001, the monitoring
+    server process is down or unreachable. The agent lost
+   monitioring
+   server connection and will attempt to reconnect.
+    For <status> = 210102bd, the monitoring server is unable to
+   locate
+   request matching request handle <tems_handle>, because the
+   situation was
+   stopped or restarted on the monitoring server, but not on the
+    agent.The agent sent data for the old instance of this
+   situation
+   request. The monitoring server will stop or
+    restart the situation on the agent. We should first explain
+   what
+   <tems_handle, agent_handle> means.  Then we should document all
+   the
+   <status> is what to do with each.
+   
+   KRAMGR001 No HEARTBEAT request found. Initiating reconnect. The
+   agent
+   deactivated and restarted
+    connection with the monitoring server. Can we provide User's
+   response?
+   What do we do if reconnect still fails?
+   
+   KRAREG001 CMS lookup failed. The agent failed to connect to the
+    monitoring server. The agent will wait for ten minutes before
+   attempting to reconnect. Can we document what is needed should
+   reconnect
+   fail?
+   
+   KRAREG003 RPC call SubnodeRequest for
+   <xxxxxxxxxx,xxxxxxxxxx> failed, status =
+   <status The RPC call to register agent subnodes
+    failed. The agent will deactivate the monitoring server
+   connection and
+   attempt to reconnect and re-register subnodes. Can we document
+   what is
+   needed should reconnect fail? Also, can you document what the
+   xxxxxx,xxxxxxx values are and what the potential statuses are?
+   
+   KRARMN000 IRA rmt server shutting down The agent is shutting
+   down. Can
+   we add "No response needed"?
+   
+   KRATBM000 Sample error <status_code>, for <situation_name>
+   <xxxxxxxxxx,xxxxxxxxxx>
+   <pc.attribute_name> The situation sample failed with a minor
+    error. The framework expects the agent collector to  recover on
+   the
+   next sample. The situation is not stopped. Can we document the
+   legitimate status codes, what xxxxxxxx,xxxxxxxx and what the
+   pc_attribute_name is?  Can we also document what happens if
+   recovery
+   fails? What doc to collect, etc?
+   
+   RECREATE INSTRUCTIONS:
+   N/A
+   
+   LOCAL FIX:
+   Messages Manual needs to be updated, in meantime we should
+   document the changes in this APAR.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No workaround available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Supplement trace log messages that are generated by the KRA
+   component so that they are more useful in diagnosing problems .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following trace log messages have been enhanced:
+   
+   (IBM Tivoli Monitoring Operations log)
+   KRAMGR001 No HEARTBEAT request found. Check connectivity to
+   Monitoring Server if this problem persists.
+   
+   (IBM Tivoli Monitoring RAS1 log)
+   No HEARTBEAT request found. Initiating reconnect. Check
+   connectivity to Monitoring Server if this problem persists.
+   
+   KRAACMD00 Incorrect FTO configuration! Configure secondary TEMS
+   for this agent. For details see IBM Tivoli Monitoring High
+   Availability Guide for Distributed Systems.
+   
+   KRAIRA000 Starting <Situation Type> situation <Situation Name>
+   <Proxy Request>,<Request Handle> for <Application Name>.<Table
+   Name>. No action is required.
+   
+   KRALOG000 New log file created. No action is required.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   | fix pack | 6.2.3-TIV-ITM-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV31825
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMA
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04TE
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-12
+   
+   
+ * CLOSED DATE
+   2013-11-08
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    OA44952 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA44952]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEMA
+   
+   
+ * FIXED COMPONENT ID
+   5724C04TE
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP

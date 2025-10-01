@@ -1,0 +1,54 @@
+Title: IBM Some Information Server Enterprise Applications Don't Start on WebSphere 8 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Some Information Server enterprise applications will not start on WebSphere 8 if WebSphere 8 was installed without the EJBDeploy tool for pre-EJB 3.0 modules component. The Information Server installation will indicate it was successful, but the SystemOut.log will have errors when the applications are starting. Also, the ISALite Business Glossary Health Check will have a failure. 
+
+SYMPTOM
+The installation indicates that it has succeeded, but the following type errors can occur in the WebSphere SystemOut.log: 
+
+During application deployment:
+[5/16/12 15:11:21:005 CEST] 00000037 DefaultTaskPr W ADMA0245W: EJBDeploy feature is not installed. Cannot execute "deploy enterprise beans" option.
+
+
+During application server startup:
+[5/30/12 9:26:10:160 CEST] 00000202 AbstractEJBRu E WSVR0068E: Attempt to start EnterpriseBean GlossaryBrowser.ear#ejb-LXMeta.jar#SandboxLocalStatelessService failed with exception: com.ibm.ejs.container.EJBConfigurationException: Bean class could not be found or loaded
+at com.ibm.ws.metadata.ejb.EJBMDOrchestrator.loadGeneratedImplementationClasses(EJBMDOrchestrator.java:5587)
+at com.ibm.ws.metadata.ejb.EJBMDOrchestrator.finishBMDInitWithReferenceContext(EJBMDOrchestrator.java:1267)
+at com.ibm.ws.ejbcontainer.runtime.AbstractEJBRuntime.finishBMDInit(AbstractEJBRuntime.java:2542)
+at com.ibm.ws.ejbcontainer.runtime.AbstractEJBRuntime.initializeDeferredEJBImpl(AbstractEJBRuntime.java:2437)
+at com.ibm.ws.ejbcontainer.runtime.AbstractEJBRuntime.access$300(AbstractEJBRuntime.java:209)
+
+Caused by: java.lang.ClassNotFoundException: com.ascential.xmeta.shared.repository.core.EJSLocalStatelessSandboxLocalStatelessService_b7f693b5
+at java.net.URLClassLoader$1.run(URLClassLoader.java:202)
+at java.security.AccessController.doPrivileged(Native Method)
+at java.net.URLClassLoader.findClass(URLClassLoader.java:190)
+at com.ibm.ws.bootstrap.ExtClassLoader.findClass(ExtClassLoader.java:198)
+
+
+ISALite Business Glossary Health Checks will also fail with the following recommendation:
+CDIHC8145E: Verify that Business Glossary is installed and running and the server name and port of the URL are valid.
+
+CAUSE
+This problem occurs when Information Server is installed to WebSphere 8, but WebSphere 8 does not have the EJBDeploy tool for pre-EJB 3.0 component installed.
+
+
+
+RESOLVING THE PROBLEM
+Install WebSphere 8 with the EJBDeploy tool for pre-EJB 3.0 modules component. 
+
+ 
+
+If WebSphere 8 is installed without the EJBDeploy tool for pre-EJB 3.0 modules component, it can be added as follows:
+
+1) Launch the Installation Manager used to install WebSphere 8
+2) Select 'Modify' option 
+3) Select 'IBM Websphere application server 8' in the 'Modify packages' screen
+3) When the Modify Packages screen appears, Select the EJBDeploy tool for pre-EJB 3.0 modules
+
+If Information Server was installed to WebSphere 8 without the EJBDeploy tool for pre-EJB 3.0 modules component:
+1) Information Server should be completely uninstalled 
+2) Add the EJBDeploy tool for pre-EJB 3.0 modules component to WebSphere 8
+3) Reinstall Information Server

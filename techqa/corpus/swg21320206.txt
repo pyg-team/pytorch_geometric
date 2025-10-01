@@ -1,0 +1,33 @@
+Title: IBM ERROR: Default DB path is not set, when adding database set on RHEL 5 - United States
+
+Text:
+1320206; ClearQuest; Command Line Tools; CQ; cqreg; add_dbset; initialize; CQ_DATABASES; CQDB_rgys; registry; db set; db_set; Default DB path is not set; Use cqreg initialize first; linux; RHEL; RHEL5 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why the error, "Default DB path is not set", occurs when adding a connection with IBM® Rational® ClearQuest® on RedHat Enterprise Linux® (RHEL) 5. 
+
+SYMPTOM
+When running the command cqreg add_dbset, this error occurs:
+
+"Default DB path is not set"
+"Default version is 7.0.0"
+/opt/rational/clearquest/CQDB_rgys/cqdb_registry/7.0.0 does not exist. Use cqreg initialize first. 
+
+CAUSE
+Normally, at the end of a ClearQuest installation on UNIX® based platforms, the cqreg initialize command runs automatically. The command creates the registry structure for database sets. During the installation, the command did not run successfully.
+
+DIAGNOSING THE PROBLEM
+Verify that the CQDB_rgys directory exists, as defined in the installation options. The following is the default registry location: 
+
+
+/opt/rational/clearquest/CQDB_rgys/cqdb_registry/
+
+If not present, then the cqreg initialize command was not successful.
+
+
+RESOLVING THE PROBLEM
+Run cqreg initialize. The add_dbset command will run successfully afterwards. However, should the same error persist, make sure the command is run as the root user. 
+
+
+
+Also make sure that the CQ_DATABASES environment variable is set to the desired registry path. If it is not, set the variable accordingly, then run the previously mentioned commands again.

@@ -1,0 +1,38 @@
+Title: IBM Upgrading the Daeja ViewONE Virtual version on IBM Content Navigator V3.0 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I upgrade to IBM Daeja ViewONE, V5.0 or later, in an IBM Content Navigator V3.0 installation? 
+
+CAUSE
+You have entitlement to IBM Daeja ViewONE and want to manually upgrade the version of the product that is integrated in your IBM Content Navigator deployment to a newer version. 
+
+ANSWER
+Prerequisites 
+
+
+To upgrade the version of IBM Daeja ViewONE, you must have access to the IBM Content Navigator installation location and be able to deploy the application as for IBM Content Navigator. 
+
+The instructions in this document use the following conventions: 
+
+ * <navigator> refers to the installation location of IBM Content Navigator. By default, the installation location is C:\Program Files (x86)\IBM\ECMClient on Windows systems and/opt/IBM/ECMClient on UNIX systems. 
+ * <viewone> refers to the installation location of IBM Daeja ViewONE. By default, the installation is C:\Program Files\IBM\Daeja ViewONE_Virtual on Windows and /opt/IBM/Daeja ViewONE_Virtual on UNIX systems. 
+
+
+Instructions To upgrade to a new version of IBM Daeja ViewONE: 
+1. Follow the installation instructions of the IBM Daeja ViewONE version you want to upgrade to, found in the readme of that package.
+2. Back up the following folders: 
+
+ * <navigator>\configure\explodedformat\navigator\applets\iviewpro\FnJavaV1Files 
+ * <navigator>\configure\explodedformat\navigator\WEB-INF 
+
+3. Copy all files in <viewone>\client\v1files folder to the <navigator>\configure\explodedformat\navigator\applets\iviewpro\FnJavaV1Files 
+4. Copy the annot.xsl file in <viewone>\clientto <navigator>\configure\explodedformat\navigator\WEB-INF\xsl folder. 
+5. Copy all files in the <viewone>\server\WEB-INF folder to the <navigator>\configure\explodedformat\navigator\WEB-INF folder. 
+6. Redeploy IBM Content Navigator application to your web application server and restart the application. For more information, see Configuring and deploying IBM Content Navigator [http://www.ibm.com/support/knowledgecenter/SSEUEX_3.0.0/com.ibm.installingeuc.doc/eucde000.htm]. 
+
+Note 
+In most cases, the changes you make will be removed if you install a new product fix pack. After installing a fix pack, re-run these instructions. 
+Related information  [http://www-01.ibm.com/support/docview.wss?uid=swg21685397#]IBM Content Navigator installation and deployment [http://www.ibm.com/support/knowledgecenter/SSEUEX_3.0.0/com.ibm.installingeuc.doc/eucao000.htm]

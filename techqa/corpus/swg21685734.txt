@@ -1,0 +1,98 @@
+Title: IBM action-PM76033-fix-duplicate-portletinstances-wp.script fails during CF installation. - United States
+
+Text:
+CF13; PM76033; action-PM76033-fix-duplicate-portletinstances-wp.script FLASH (ALERT)
+
+ABSTRACT
+ During the application of the Combined Cumulative Fix, the ConfigEngine task fails at the action-PM76033-fix-duplicate-portletinstances-wp.script subtask.
+
+......
+
+Target started: action- PM76033-fix-duplicate-portletinstances-wp.script
+
+
+
+action- PM76033-fix-duplicate-portletinstances-wp.script:
+
+......
+
+[wsadmin] WASX7017E: Exception received while running file
+
+"E:/IBM/WebSphere/WCM/PortalServer/base/wp.script/config/scripts/fix_dup
+
+licate_portlet_entities.py"; exception information:
+
+com.ibm.bsf.BSFException: exception from Jython:
+
+[wsadmin] Traceback (innermost last):
+
+[wsadmin] File "<string>", line 15, in ?
+
+[wsadmin] java.lang.RuntimeException: CommandMethodInvoker: The
+
+method public abstract java.lang.String
+
+com.ibm.wps.scripting.cmdifce.PortalExecuteCommand.getOutputResourceData
+
+() is not included in returned result by
+
+com.ibm.wps.scripting.cmdifce.PortalExecuteCommand
+
+[wsadmin] at
+
+com.ibm.wps.scripting.commands.CommandMethodInvoker.throwException(Comma
+
+ndMethodInvoker.java:223)
+
+[wsadmin] at
+
+com.ibm.wps.scripting.commands.CommandMethodInvoker.callGetter(CommandMe
+
+thodInvoker.java:199)
+
+.......
+
+[wsadmin] java.lang.RuntimeException: java.lang.RuntimeException:
+
+CommandMethodInvoker: The method public abstract java.lang.String
+
+com.ibm.wps.scripting.cmdifce.PortalExecuteCommand.getOutputResourceData
+
+() is not included in returned result by
+
+com.ibm.wps.scripting.cmdifce.PortalExecuteCommand
+
+......
+
+BUILD FAILED
+
+E:\IBM\WebSphere\WCM\PortalServer\installer\wp.update\config\includes\cu
+
+mulative_fix.xml:59: The following error occurred while executing this
+
+line:
+
+E:\IBM\WebSphere\WCM\PortalServer\installer\wp.update\config\includes\wp
+
+.update.fix_cfg.xml:194: The following error occurred while executing
+
+this line:
+
+E:\IBM\WebSphere\WCM\PortalServer\base\wp.script\config\includes\wp.scri
+
+pt.fp_cfg.xml:35: Java returned: 105
+
+Total time: 36 minutes 28 seconds
+
+...... 
+
+CONTENT
+Please apply APAR PI25731 to resolve this issue:
+
+PI25731 - DISABLE AUTOMATIC EXECUTION OF PORTLET INSTANCE CLEANUP
+
+This APAR must be applied simultaneously with co-requisite of CF13 (in one IIM session).
+
+APAR PI25731 is available on Fix Central:
+
+http://www-933.ibm.com/support/fixcentral/swg/selectFix?product=ibm%2FWebSphere%2FWebSphere+Portal&fixids=8.0.0.1-WP-IFPI25731&source=dbluesearch&function=fixId&parent=ibm/WebSphere [http://www-933.ibm.com/support/fixcentral/swg/selectFix?product=ibm%2FWebSphere%2FWebSphere+Portal&fixids=8.0.0.1-WP-IFPI25731&source=dbluesearch&function=fixId&parent=ibm/WebSphere]

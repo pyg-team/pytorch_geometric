@@ -1,0 +1,45 @@
+Title: IBM Operational Decision Manager V8.5.1.2: Interim Fix 56 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This interim fix provides a solution for several APARs. 
+
+DOWNLOAD DESCRIPTION
+The following list shows the components in Operational Decision Manager that are directly affected by this interim fix:
+
+
+ * Decision Center 
+ * Rule Execution Server
+
+
+You can find more information on the problems in the following APAR descriptions:  * RS01898 [http://www.ibm.com/support/docview.wss?uid=swg1RS01898] 
+ * RS01900 [http://www.ibm.com/support/docview.wss?uid=swg1RS01900] 
+ * RS01907 [http://www.ibm.com/support/docview.wss?uid=swg1RS01907] 
+ * RS01929 [http://www.ibm.com/support/docview.wss?uid=swg1RS01929] 
+ * RS01962 [http://www.ibm.com/support/docview.wss?uid=swg1RS01962] 
+ * RS01976 [http://www.ibm.com/support/docview.wss?uid=swg1RS01976] 
+ * RS01978 [http://www.ibm.com/support/docview.wss?uid=swg1RS01978] 
+ * RS02000 [http://www.ibm.com/support/docview.wss?uid=swg1RS02000] 
+ * RS02019 [http://www.ibm.com/support/docview.wss?uid=swg1RS02019] 
+ * RS02059 [http://www.ibm.com/support/docview.wss?uid=swg1RS02059] 
+ * RS02287 [http://www.ibm.com/support/docview.wss?uid=swg1RS02287]
+
+SEE ALSO
+Operational Decision Manager Interim Fixes [http://www.ibm.com/support/docview.wss?uid=swg21640630] 
+
+INSTALLATION INSTRUCTIONS
+Follow the instructions in the readme.
+
+URL LANGUAGE SIZE(Bytes) Readme [http://download4.boulder.ibm.com/sar/CMA/WSA/060q3/2/Readme.html] English 1825 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 8.5.1.2-WS-ODM-IF056 7 Mar 2016 Language Independent 17070000 FC [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm%2FWebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=All&platform=All&function=fixId&fixids=8.5.1.2-WS-ODM-IF056&includeRequisites=1&includeSupersedes=0] [ ] DD 
+ [/support/docview.wss?uid=swg24041980&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24041980&aid=2]Problems (APARS) fixed
+RS01898, RS01900, RS01907, RS01929, RS01962, RS01976, RS01978, RS02000, RS02019, RS02059, RS02287

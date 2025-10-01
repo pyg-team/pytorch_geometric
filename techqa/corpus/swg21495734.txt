@@ -1,0 +1,16 @@
+Title: IBM LDAP bind distinguished name and password in TIP server - United States
+
+Text:
+TIPL2; TIPL2CONF; LDAP bind distinguished name password TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to change LDAP bind name and password in Tivoli Integrated Portal from the back-end? 
+
+ANSWER
+While configuring LDAP in Tivoli Integrated Portal (TIP) a bind distinguished name and bind password can be set from the TIP console, as shown in below screen shot. This information can only be updated from the console, and there is no alternative to do the same from the back-end.
+
+Note: Bind userid and password are optional fields, but they are required if anonymous binds are not possible on the LDAP server to obtain user and group information. If the LDAP server is setup to use anonymous binds, then you can leave these fields blank, otherwise it is needed to authenticate any LDAP users (to search for users and groups).
+
+You can access below screen by clicking on Security->Secure Administration..
+
+[/support/docview.wss?uid=swg21495734&aid=1] [/support/docview.wss?uid=swg21495734&aid=1]

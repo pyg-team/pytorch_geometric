@@ -1,0 +1,54 @@
+Title: IBM Jobs suspend with "Failed to change the Activity state to eASPostProcessing" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Security AppScan Enterprise jobs suspend with "Unknown error: Failed to change the Activity state to eASPostProcessing" 
+
+SYMPTOM
+
+All scans (jobs) or only large scans suspends with message: 
+
+Suspended (Unknown error: Failed to change the Activity state to eASPostProcessing) 
+
+[/support/docview.wss?uid=swg21616505&aid=1] [/support/docview.wss?uid=swg21616505&aid=1] 
+
+
+
+The ItemLog shows the following error messages: 
+
+"Exception: Failed to change the Activity state to eASPostProcessing" "ScanDirector" "" 
+"Method source: AgentHost" "ScanDirector" "" 
+"Method source: AgentHost" "Stack Trace: " "" 
+" at Watchfire.AgentHost.ServerScanDirector.UpdateActivityStateAction(ActivityState activityState, ActivityAction activityAction, Object exceptionData)" "ScanDirector" "" 
+
+
+
+Earlier to the error message, the Itemlog may have the following entries: 
+
+warning "11/01/2012 22:36:58.439" AgentHost.exe 1316 3328 661 "Scan Engine" 0x0 "Exception String System.Runtime.InteropServices.COMException (0x8004070F): The transaction log for database 'xxxxxxxx' is full. To find out why space in the log cannot be reused, see the log_reuse_wait_desc column in sys.databases --- DB Error: 0x80040e14" "ScanDirector" ""
+
+
+CAUSE
+There is not enough disk space on the machine running the SQL database server. 
+
+
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+The disk space usage is proportional to the following attributes: 
+
+ * number of jobs 
+ * size of the jobs 
+ * number of jobs running at the same time 
+   
+
+
+RESOLVING THE PROBLEM
+Make sure you have plenty of disk space on the machine running the SQL database server. You may do one of the following: 
+
+ * Add disk space 
+ * Delete old jobs (after deleting jobs you will need to "shrink" the database in order to reclaim the space)

@@ -1,0 +1,149 @@
+Title: IBM PM91194: CLEARCASE_ROOT and CLEARCASE_CMDLINE environment variables are not set in cleartool shell subprocess - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Some environment variables are automatically set for a user when
+   executing certain cleartool commands in IBM Rational ClearCase.
+   The CLEARCASE_ROOT variable is set by the 'cleartool setview'
+   command and specifies the full pathname of the root directory of
+   a set view process. The CLEARCASE_CMDLINE variable is set by the
+   cleartool command and specifies the cleartool subcommand and
+   arguments.
+   
+   The following defect was resolved in ClearCase 7.1.2.8 and
+   8.0.0.4. However, one side effect of this resolution is that the
+   CLEARCASE_ROOT and CLEARCASE_CMDLINE environment variables are
+   not set in a cleartool shell subprocess.
+   
+   ==================
+   PM62396 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM62396]: Setting the CLEARCASE_XPN spawned in a cleartool
+   interactive shell causes unexpected results running the find
+   command
+   http://www.ibm.com/support/docview.wss?uid=swg1PM62396
+   ================== [http://www.ibm.com/support/docview.wss?uid=swg1PM62396==================]
+   
+   Steps to reproduce:
+   
+   1. Set to a dynamic view on an affected host
+   2. Run cleartool to open an interactive cleartool shell
+   3. Use the shell command and note CLEARCASE_ROOT and
+   CLEARCASE_CMDLINE are not set
+   
+   [user@myhost ~]$ cleartool setview myview
+   
+   [user@myhost ~]$ env | grep CLEARCASE_
+   CLEARCASE_CMDLINE=setview myview
+   CLEARCASE_ROOT=/view/myview
+   
+   [user@myhost ~]$ cleartool
+   cleartool? shell env | grep CLEARCASE
+   
+   Workaround: None. Depending on the task there may be another way
+   to accomplish it using other commands. CLEARCASE_ROOT and
+   CLEARCASE_CMDLINE should be set by the setview and cleartool
+   commands respectively, not by the user.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Missing environment variables in cleartool shell subprocess.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The CLEARCASE_ROOT and CLEARCASE_CMDLINE environment
+   variables are no longer set in a cleartool shell subprocess.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM91194
+   
+   
+ * REPORTED COMPONENT NAME
+   CC&CC MSITE UNI
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3301
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-17
+   
+   
+ * CLOSED DATE
+   2013-08-09
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

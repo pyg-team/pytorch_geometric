@@ -1,0 +1,36 @@
+Title: IBM What is the purpose of the "Deployed" directory on the Portal Server? - United States
+
+Text:
+deployed; archive; war; ear; application; portlet; disk; space; df -k; xmlaccess; deploy; purpose; deployed directory; archive directory; space requirements; space use; filled up TECHNOTE (FAQ)
+
+QUESTION
+ IBM WebSphere Portal is successfully installed and configured. After running for a long period of time, the system administrator indicates that the /PortalServer/deployed directory server is starting to running out of disk space. What is the deployed directory and can it be safely deleted to free up disk space on the Portal Server? 
+
+ANSWER
+Where applications are stored when installed:
+When new applications or portlets are installed in WebSphere Portal, the resulting files used to install them are temporarily stored in the /PortalServer/deployed directory. The resulting application or portlet is permanently stored in the <profile_root>\config\cells\<cellname>\applications directory. 
+
+A sample screenshot is shown below from a Portal system showing the wps.ear application in this directory.
+
+[/support/docview.wss?uid=swg21386174&aid=1] [/support/docview.wss?uid=swg21386174&aid=1]
+
+Purpose of the deployed directory:
+After a period of time, a /PortalServer/deployed/archive directory is created to archive the copies of applications stored in the /deployed directory. Both the deployed and archive directory can be useful if a newer copy of an application or portlet is installed or doesn't function correctly, and a backup of the previous application needs to be located quickly. 
+
+The /deployed/archive directory may also be useful when transferring complete configurations via XMLAccess from a source system to a target system. If numerous custom portlets and applications exist on the source system, a copy of the /deployed directory can be useful for quickly redeploying the custom portlets and applications on the target system.
+
+As a result of multiple copies of an application potentially being present, the /deployed directory and the /archive subdirectory can significantly grow in size and consume a large amount of disk space.
+
+Deployed directory may be safely backed up and then deleted:
+As permanent copies of the applications are NOT stored in the /deployed directory, this directory may be safely deleted to free up space disk on the Portal server. It is strongly recommended that prior to deleting this directory, the files contained in this directory be backed up for safekeeping. 
+
+Alternatively, in cases in which XMLAccess is used frequently to transfer complete configurations, it may be advantageous to increase the size of the partition where the /deployed directory resides, instead of deleting the directory and restoring the file structure every time a complete configuration must be transferred.
+
+RELATED INFORMATION
+ XMLAccess Transfering Complete Configuration [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1/index.jsp?topic=/com.ibm.wp.ent.doc_v6101/admin/adxmltsk.html]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products AIX, HP-UX, IBM i, Linux, Solaris, Windows, z/OS 7.0, 6.1, 6.0

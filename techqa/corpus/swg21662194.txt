@@ -1,0 +1,61 @@
+Title: IBM Changes in the default user identifier between WebSphere MQ V7.0.1 classes for Java and WebSphere MQ V7.1 classes for Java - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You are running a WebSphere MQ classes for Java™ application within WebSphere Application Server. You notice a change in the default behaviour between WebSphere Application Server versions regarding the user identifier flowed to WebSphere MQ when you create a com.ibm.mq.MQQueueManager object:
+
+- When using WebSphere Application Server v7.0 and v8.0, no user identifier value (blank) is passed to the queue manager. 
+
+- When using WebSphere Application Server V8.5, a non-blank user identifier value is passed to the queue manager. 
+
+In the latter case, you receive the following exception when creating a connection to a queue manager:
+
+MQJE001: Completion Code '2', Reason '2035'.
+com.ibm.mq.MQException: MQJE001: Completion Code '2', Reason '2035'.
+
+Is this change in behaviour expected? 
+
+ANSWER
+WebSphere MQ access control is based on user identifiers. There is a deliberate change in the default behaviour between the WebSphere MQ V7.0.1 classes for Java and the WebSphere MQ V7.1 (and later) classes for Java regarding the default user identifier flowed to the queue manager. 
+From the WebSphere MQ V7.1 classes for Java onwards, a non-blank user identifier is always flowed to the queue manager when creating a connection to WebSphere MQ. This is true even if no user identifier has been specified, or a blank or null user identifier has been specified; for example by leaving the MQEnvironment.userID property at it's default value (“”) and calling:
+
+MQQueueManager myQMgr = new MQQueueManager(“QM1”);
+
+
+In the case where a null or blank user identifier has been specified, such as in the example above, the WebSphere MQ V7.1 (and later) classes for Java will query the value of the Java System Property user.name. The value of this property is flowed to the queue manager for authorization.
+
+As a result, if the user identifier specified by the Java System Property user.name is not authorized to access the queue manager, the queue manager will return an exception to the WebSphere MQ classes for Java with Reason Code MQRC_NOT_AUTHORIZED and the connection to the queue manager will not be established.
+
+This change in behaviour could affect topologies that previously relied on the default behaviour in the WebSphere MQ V7.0.1 classes for Java that flowed a blank user identifier when establishing a CLIENT mode transport connection. The expectation that a blank or null user identifier will be flowed by default and that the user identifier that started the WebSphere MQ server-connection channel would be used by the queue manager when performing the authorization checks, is no longer valid from the WebSphere MQ V7.1 classes for Java.
+
+In the case outlined above, system administrators that are currently relying on the default behaviour of the WebSphere MQ V7.0.1 classes for Java should review their configurations regarding the use of user identifiers and authorization. This might also help to improve security within their WebSphere MQ topology.
+
+In summary, the change in behaviour will affect users of:
+
+- The WebSphere MQ V7.1 and later classes for Java.
+- The WebSphere MQ V7.1 and later JCA Resource Adapter that includes the classes for Java.
+- Versions of WebSphere Application Server that include the WebSphere MQ V7.1 and later JCA Resource Adapter. Currently this is WebSphere Application Server V8.5.0.0 and later.
+
+
+The com.ibm.mq.forceUserID Java System Property
+
+A Java System Property called “com.ibm.mq.forceUserID” was introduced as part of APAR IV02827 [http://www.ibm.com/support/docview.wss?uid=swg1IZ49302] and included from WebSphere MQ V7.0.1.7.
+
+The changes made as part of this APAR could be used to change the default behaviour in the WebSphere MQ V7.0.1 classes for Java regarding the user identifier value flowed to the queue manager when creating a connection.
+
+This property is no longer valid from WebSphere MQ V7.1. Setting this property will have no affect on the WebSphere MQ V7.1 classes for Java and later.
+
+Other Useful Resources
+
+WebSphere MQ Documentation
+
+The WebSphere MQ documentation contains a section on planning user authorization which also includes a description on access control for clients. A link to this section in the WebSphere MQ V7.1 documentation is as follows:
+WebSphere MQ > Security > Planning for your security requirements >>
+Planning authorization [http://pic.dhe.ibm.com/infocenter/wmqv7/v7r1/topic/com.ibm.mq.doc/zs14070_.htm] 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server

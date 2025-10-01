@@ -1,0 +1,93 @@
+Title: IBM Collecting Data (MustGather) for IBM Datacap Taskmaster Capture 8.1 - United States
+
+Text:
+MustGatherDocument TECHNOTE (FAQ)
+
+QUESTION
+ What information should I collect when I experience a problem with IBM® Datacap 8.1? 
+
+ANSWER
+Collecting Data for Datacap
+For every problem, collecting data can aid in problem determination and save time resolving Problem Management Records (PMRs). Gathering this data before calling IBM support will help you to understand the problem and save time analyzing the data.
+
+Collecting data early, before opening the PMR, helps IBM® Support quickly determine if: 
+
+ * Symptoms match known problems (rediscovery). 
+ * There is a non-defect problem that can be identified and resolved. 
+ * There is a defect that identifies a work around to reduce severity.
+
+
+Locating the root cause of a problem can speed development of a code fix. 
+
+Gathering General Information 
+
+For IBM® Datacap, gather version of software, the operating system versions, whether this is a single machine installation or a multi-machine configuration, and the settings for the pertinent servers or client machines. 
+
+Then, gather the following information that is specific to a Datacap problem or issue:  * How often does this problem occur? 
+ * Can the problem be reproduced? 
+ * How many users are affected by this problem? 
+ * What is the business impact of this problem? 
+ * Is there a work around? 
+ * What Datacap component,if known, is failing?
+
+Gathering Version Information 
+
+On the Taskmaster Server machine, locate the version.txt file in the \Datacap folder. Provide the number after the "IBM Datacap Taskmaster Capture" text (not the build number). 
+
+Windows Application Event Logs
+
+The Microsoft Windows application event logs may contain useful information when diagnosing your issue. Gather the application event logs from the Taskmaster Server (TMS) and the client machine (if applicable). If your problem is easily reproducible, clearing the logs prior to reproducing the issue will make transport and log review much easier. Please consult the Microsoft documentation for the location of the application event logs, based on your operating system version. 
+
+Datacap Log files
+
+When providing logs, please note the date and time of the problem, to make the analysis easier. The logs required will depend on the application that was being executed when the issue occurred. The following is a list of the various Datacap components, with instructions on how to turn on logging:
+
+· Enabling logging in Taskmaster Server
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21635506 [http://www-01.ibm.com/support/docview.wss?uid=swg21635506]
+
+· Enabling logging in Rulerunner
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21635504 [http://www-01.ibm.com/support/docview.wss?uid=swg21635504]
+
+· Enabling logging in Taskmaster Web
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21635509 [http://www-01.ibm.com/support/docview.wss?uid=swg21635509]
+
+· Enabling logging for Taskmaster Web tasks
+
+http://www-01.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.develop.doc/dcadg210.htm%23dcadg210 [http://www-01.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.develop.doc/dcadg210.htm%23dcadg210]
+
+· Enabling logging in FastDoc
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21635501 [http://www-01.ibm.com/support/docview.wss?uid=swg21635501]
+
+· Enabling logging in DotScan
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21635500 [http://www-01.ibm.com/support/docview.wss?uid=swg21635500]
+
+· Enabling logging in DotEdit
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21635496 [http://www-01.ibm.com/support/docview.wss?uid=swg21635496]
+
+· Enable logging for IBM Datacap Taskmaster RV2 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21661059 [http://www-01.ibm.com/support/docview.wss?uid=swg21661059]
+
+Gathering Additonal Information
+
+Depending on what actions you were trying to complete, different data sets might be needed to support problem resolution. Depending on what aspect of the Client you were using, please also gather the following: 
+
+ * Web Browser version information 
+ * Type of database and LDAP servers and/or authentication method used 
+ * Brand and model of scanner used 
+ * TWAIN or ISIS drivers 
+ * Repository (brand and version) used
+
+
+
+Collection information for other components 
+
+If you can tell based on the nature of the problem or visible symptoms in the log files that the issue is related to the repository, gathering the respective log files can help speed resolution, although these files are not specifically required to start the problem resolution process. 
+
+Please refer to the repository's documentation for the log gathering process.

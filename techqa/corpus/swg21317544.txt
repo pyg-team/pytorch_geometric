@@ -1,0 +1,31 @@
+Title: IBM Host On-Demand Cached Client on Windows Vista™ with Protected mode ON - United States
+
+Text:
+HOD Cached client; HOD Protected mode; HOD IE7; HOD Internet Explorer 7; 1317544 TECHNOTE (FAQ)
+
+QUESTION
+ Clearing a Java™ cache or deleting temporary internet files causes the Cached Client in Windows Vista™ with Internet Explorer running in Protected mode to be uninstalled. In Windows Vista with IE Protected mode ON, the Cached client and Host On-Demand session works without any problems, however, if the user clears the browser cache by selecting Tools -> Internet options -> Browsing History -> Delete -> Delete All and selects "Also delete files and settings stored by add-ons" the cached client is completely removed causing the cached client to be redownloaded. 
+
+CAUSE
+Protected mode is a new feature for Internet Explorer for Windows Vista™ based on security features newly added to Vista. Windows Vista includes an addition to the access control security mechanism of Windows® that labels processes and other securable objects with an integrity level. Internet-facing programs are at a higher risk for exploits than other programs because they download untrustworthy content from unknown sources. Running these programs with fewer permissions, or at a lower integrity level than other programs reduces the ability of an exploit to modify the system or harm user data files. Protected Mode builds on the new integrity mechanism to restrict write access to securable objects like processes, files, and registry keys with higher integrity levels. When running in Protected Mode, Internet Explorer is a low integrity process; it cannot gain write access to files and registry keys in a user's profile or system locations. 
+
+ 
+Low integrity processes can only write to folders, files, and registry keys that have been assigned a low integrity mandatory label. As a result, Internet Explorer and extensions running in Protected Mode can only write to low integrity locations, such as the new low integrity temporary Internet files folder, the History folder, the Cookies folder, the Favorites folder and the Windows temporary file folders. 
+
+Information related to Windows security and Protected mode are taken from the following reference. Please refer this URL for more information. http://msdn2.microsoft.com/en-us/library/bb250462.aspx [http://msdn2.microsoft.com/en-us/library/bb250462.aspx]
+
+
+ANSWER
+With the information above, it is inferred that with Host On Demand running as an applet in Internet Explorer under Protected mode, Host On-Demand is not able to write or install it's supported and executable files such as JAR file(s) to the specified path/default cached client install path because of the intended behavior of Windows Vista. By default, deploying the Host On-Demand cached client is an unattended or silent process and Host On-Demand cached client is deployed under the user's home directory in other flavors of the Windows OS. To overcome this, IBM® suggests the following workarounds to their customers who are using the Host On-Demand Cached client. 
+
+ 
+
+ 1. Turn off Protected mode in IE before accessing Host On-Demand cached client: Protected Mode can be configured in Internet Explorer's Internet Options dialog. To configure Protected Mode, click the Security tab, select a Web content zone, and then change the "Enable Protected Mode" check box. By default, Protected Mode is enabled for the Internet, Intranet, and Restricted Sites zones. To verify that Internet Explorer is running in Protected mode, look for the words "Protected Mode: On" next to the Web content zone displayed in Internet Explorer's status bar. Protected Mode will be configurable through Group Policy when Windows Vista ships through the URLACTION_LOWRIGHTS (0x00002500)URL Action. For more information. Please refer the following MSDN link for more information in this regard, http://msdn2.microsoft.com/en-us/library/bb250462.aspx#upm_cfgpm [http://msdn2.microsoft.com/en-us/library/bb250462.aspx#upm_cfgpm] 
+ 2. Include Host On-Demand URL as the trusted sites so that Cached client jars are stored in the User profile. 
+ 3. 
+
+
+
+
+HISTORICAL NUMBER
+ 100170

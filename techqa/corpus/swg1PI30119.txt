@@ -1,0 +1,152 @@
+Title: IBM PI30119: DOC - NO DOCUMENTATION ABOUT CREATING BACKUP COPIES OF THE IBM BPM DATABASES - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There is no information in the IBM BPM V8.0.1 documentation
+   about how to create backup copies of the databases after
+   installing IBM BPM. These backup copies can be used, in certain
+   situations, to revert to the post-installation state of the
+   databases.
+   
+   To create backup copies of the IBM BPM databases, complete the
+   following steps:
+   
+   1. Delete the databases or tables.
+   
+   2. If you deleted the databases, re-create them.
+   
+   For IBM DB2, see "Creating DB2 databases"
+   (http://www.ibm.com/support/knowledgecenter/SSFPJS_8.0.1/com.ibm
+   .wbpm.imuc.ebpm.doc/topics/db_create_nd_lin_db2.html).
+   
+   For Oracle, see "Preparing the Oracle database server"
+   (http://www.ibm.com/support/knowledgecenter/SSFPJS_8.0.1/com.ibm
+   .wbpm.imuc.ebpm.doc/topics/db_prep_nd_lin_orcl.html).
+   
+   3. If you deleted the tables, re-create the tables and run the
+   bootstrap.
+   
+   Note: These instructions say they are for stand-alone
+   installations, but they also apply to network deployment (ND)
+   installations. The database scripts are located under <BPM
+   Root>/profiles/<DMGR Profile>/dbscripts.
+   
+   For DB2, see "Configuring DB2 databases after stand-alone
+   profile creation"
+   (http://www.ibm.com/support/knowledgecenter/SSFPJS_8.0.1/com.ibm
+   .wbpm.imuc.ebpm.doc/topics/db_cfg_sa_lin_db2.html). If you need
+   to re-create the scripts, you can use the dbdesign tool. See
+   "Creating database design files for deployment environments with
+   DB2"
+   (http://www.ibm.com/support/knowledgecenter/SSFPJS_8.0.1/com.ibm
+   .wbpm.imuc.ebpm.doc/topics/ddt_env_nd_lin_db2.html).
+   
+   For Oracle, see "Configuring Oracle databases after stand-alone
+   profile creation"
+   (http://www.ibm.com/support/knowledgecenter/SSFPJS_8.0.1/com.ibm
+   .wbpm.imuc.ebpm.doc/topics/db_cfg_sa_lin_orcl.html).
+   
+   This procedure is not in the documentation.
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The content will be updated the next time the documentation is
+   refreshed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI30119
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADV FOR Z/O
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0200
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-20
+   
+   
+ * CLOSED DATE
+   2015-01-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

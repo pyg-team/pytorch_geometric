@@ -1,0 +1,24 @@
+Title: IBM XMetaSpaces and XMetaTenantSpace tables are missing under XMETA and XMETASR schemas in 11.5 environment that has upgraded from 11.3 - United States
+
+Text:
+ISALite XMeta Diagnostic Healthchecker TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ XMetaSpaces and XMetaTenantSpace tables are created in XMeta database under Active(XMETA) and Staging(XMETASR) repository schemas in 11.5 suite installation for multi tenant support. These tables are missing in IS 11.5 installation which has upgraded from 11.3. Though these tables are not in use by Information Server 11.5 On-Prem, they are checked for existence by 'xmetaAdmin dumpRegistry' command. So, the 'xmetaAdmin dumpRegistry' command fails in IS 11.5 installation which is upgraded from 11.3. 
+
+SYMPTOM
+'xmetaAdmin dumpRegistry' command fails with error like below 
+
+Operation dumpRegistry failed 
+Error: [IBM][SQLServer JDBC Driver][SQLServer]Invalid object name 'xmeta.XMetaSpaces'.
+
+
+RESOLVING THE PROBLEM
+Create the XMetaSpaces and XMetaTenantSpace tables in XMeta database under both Active(XMETA) and Staging(XMETASR) repository schemas by following below steps.
+
+1. Connect to the Metadata Repository(XMETA) as Active Repository user(for eg. xmeta)
+2. Use the create_spaces_tables_<dbtype>.sql corresponding to your XMeta database type and run the commands provided in the file for Active repository schema(XMETA)
+3. Connect to the Metadata Repository(XMETA) as Staging Repository user(for eg. xmetasr)
+4. Use the create_spaces_tables_<dbtype>.sql corresponding to your XMeta database type and run the commands provided in the file for Staging repository schema(XMETASR)
+
+create_spaces_tables_db2.sql [/support/docview.wss?uid=swg21999085&aid=2]create_spaces_tables_db2.sql [/support/docview.wss?uid=swg21999085&aid=1] create_spaces_tables_oracle.sql [/support/docview.wss?uid=swg21999085&aid=4]create_spaces_tables_oracle.sql [/support/docview.wss?uid=swg21999085&aid=3]create_spaces_tables_sqlserver.sql [/support/docview.wss?uid=swg21999085&aid=6]create_spaces_tables_sqlserver.sql [/support/docview.wss?uid=swg21999085&aid=5]

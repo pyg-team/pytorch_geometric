@@ -1,0 +1,18 @@
+Title: IBM Application Integration (AI) Mapping from a Microsoft Excel File with Sterling B2B Integrator - United States
+
+Text:
+Excel spreadsheet; .xlsx file TECHNOTE (FAQ)
+
+QUESTION
+ Can the Application Integration Map Editor translate a Microsoft Excel .xlsx file, with Sterling B2B Integrator? 
+
+ANSWER
+No, the AI Map Editor cannot translate a .xlsx file, as it is not a text file. The .xlsx file can only be opened or viewed properly in the proprietary software. 
+
+To work with the data in a .csv file, open the file in Microsoft Excel. Then convert it by saving it as a .csv file. 
+
+A .csv file is a type of Variable Delimited file. The map editor can translate Variable Delimited files. Use that option when you create the map. 
+
+ 
+
+See also: Create a Variable-Length-Delimited Layout from a Delimited File [http://www.ibm.com/support/knowledgecenter/SS3JSW_5.2.0/com.ibm.help.stds804_map_editor.doc/t_STDS_ME_CreateAVariable-Length-DelimitedLayoutFromADelimitedFi.html?lang=en]

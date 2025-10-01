@@ -1,0 +1,145 @@
+Title: IBM DB2 fix pack installation steps for universal fix pack - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ DB2 fix pack installation / instance update steps using universal fix pack image
+
+You have two choices when it comes to fix pack installation.
+1. Universal fix pack (all products) 
+2. Product-specific fix pack. 
+
+To know the difference between these two and to decide which method is best suitable for your environment please check the link added at the bottom of the page.
+
+Depending on the operating system and DB2 pureScale® / non DB2 pureScale® environment, there are several different methods for installing fix packs. To know these different methods you can refer fix pack installation methods, section of IBM Knowledge Center or Installing DB2 Servers manual.
+
+
+CONTENT
+Main procedural difference between installation of universal fix pack and Product-specific fix pack is -
+1. To install universal fix pack, you need to download DB2 Universal fix pack binary/image.
+Whereas to install Product-specific fix pack, you need to download DB2 Server fix pack binary/image. 
+
+2. To install universal fix pack, you have to provide existing DB2 install path. This is inplace instance update/upgrade.
+Whereas to install Product-specific fix, you have to provide new path in db2setup or db2_install command.
+
+3. For universal fix pack you use installFixPack command to update all instances.
+Whereas to install Product-specific fix, you use db2setup or db2_install and db2iupdt command from new path to update each instance.
+
+4. To rollback/revert to old DB2 level in case of universal fix pack you use installFixPack -f level option.
+Whereas in case of Product-specific fix, you use db2iupdt -f level option from old path.
+
+This technote details minimal steps involved while installing universal fix pack on single partition non-pureScale Linux and UNIX operating systems. For complete and best practice fix pack installation steps please refer applying fix packs section of the IBM Knowledge Center or Installing DB2 Servers manual.
+
+1. Download the universal fix pack binary from IBM site. For root installation, place it under a directory using root user.
+
+For example -
+
+# pwd
+/home/software
+# ls -l v10.1fp5_aix64_universal_fixpack.tar.gz
+-rw-r----- 1 root system 2728099840 Jan 9 21:28 v10.1fp5_aix64_universal_fixpack.tar.gz
+
+2. Unzip the file. For ex. gunzip -c v10.1fp5_aix64_universal_fixpack.tar | tar -xvf -
+Untar creates a directory named universal in the current directory.
+
+# gunzip -c v10.1fp5_aix64_universal_fixpack.tar.gz | tar -xvf -
+# cd universal
+# ls -ltr
+total 120
+-r-xr-xr-x 1 bin bin 5154 Jun 26 2015 db2prereqcheck
+-r-xr-xr-x 1 bin bin 5154 Jun 26 2015 db2setup
+-r-xr-xr-x 1 bin bin 5136 Jun 26 2015 db2ls
+-r-xr-xr-x 1 bin bin 5302 Jun 26 2015 db2_deinstall
+-r-xr-xr-x 1 bin bin 5349 Jun 26 2015 db2ckupgrade
+-r-xr-xr-x 1 bin bin 5172 Jun 26 2015 db2_install
+-r-xr-xr-x 1 bin bin 5190 Jun 26 2015 installFixPack
+drwxr-xr-x 6 bin bin 4096 Jun 26 2015 db2
+
+3. Check the current db2 installed path of your existing instance and number of instances.
+
+Login as instance user 
+
+$ db2level
+DB21085I This instance or install (instance name, where applicable: "db2inst3")
+uses "64" bits and DB2 code release "SQL10011" with level identifier
+"0202010E".
+Informational tokens are "DB2 v10.1.0.1", "s120826", "IP23377", and Fix Pack
+"1".
+Product is installed at "/opt/IBM/db2/V10.1".
+
+$ db2ilist
+db2inst3
+mig_v97
+
+4. Make sure you backup your all databases, DB2 server configuration and diagnostic information.
+
+5. Stop all db2 processes, instances (db2stop) and DAS (db2admin stop) associated with this copy.
+
+6. Start the fix pack installation by running the installFixPack command.
+
+# ./installFixPack -b /opt/IBM/db2/V10.1
+Do you want to choose a different installation directory for the fix pack? [yes/no]
+------------------------------------------------------------------------------------
+no
+
+DBI1017I installFixPack is updating the DB2 product(s) installed in
+location /opt/IBM/db2/V10.1.
+
+DB2 installation is being initialized.
+
+Total number of tasks to be performed: 43
+Total estimated time for all tasks to be performed: 2530 second(s)
+
+Task #1 start
+Description: Stopping DB2 Fault Monitor
+Estimated time 10 second(s)
+Task #1 end
+.
+.
+.
+Task #44 start
+Description: Updating existing DB2 instances
+Estimated time 60 second(s)
+Task #44 end
+
+The execution completed successfully.
+
+For more information see the DB2 installation log at
+"/tmp/installFixPack.log.27590688".
+
+All existing instances in the DB2 copy must be updated after a fix pack is installed. By default, the installFixPack command updates the DB2 instances automatically. 
+However, if an error occurs, you can update instances manually using update instance command db2iupdt.
+
+7. Restart the instances (db2start), including the DAS (db2admin start) if it is associated with the current copy.
+
+# su - db2inst3
+$ db2level
+DB21085I This instance or install (instance name, where applicable:
+"db2inst3") uses "64" bits and DB2 code release "SQL10015" with level
+identifier "0206010E".
+Informational tokens are "DB2 v10.1.0.5", "s150624", "IP23765", and Fix Pack
+"5".
+Product is installed at "/opt/IBM/db2/V10.1".
+
+$ db2start
+01/11/2017 16:55:00 0 0 SQL1063N DB2START processing was successful.
+SQL1063N DB2START processing was successful.
+
+8. Optional: Update the system catalog objects in your databases to support the fix pack.
+
+For each database, issue the command:
+
+db2updv10 -d <db_name>
+
+9. In case you want to revert back to earlier fix pack, you can do so on Linux and UNIX operating systems.
+To revert back, the installFixPack command must be run from the lower level fix pack image.
+For ex.
+# pwd
+/home/software/universal_v10.1fp1
+
+# ./installFixPack -f level -b /opt/IBM/db2/V10.1
+
+RELATED INFORMATION
+ Universal versus product-specific fix packs [https://www.ibm.com/support/knowledgecenter/en/SSEPGG_11.1.0/com.ibm.db2.luw.qb.server.doc/doc/c0025286.html]
+Fix pack installation methods [https://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.1.0/com.ibm.db2.luw.qb.server.doc/doc/c0025016.html]

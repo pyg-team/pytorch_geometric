@@ -1,0 +1,24 @@
+Title: IBM 2610-426 resource or resource class is not currently available - United States
+
+Text:
+TSA; TSAMP; CT_MANAGEMENT_SCOPE; CT_MANAGEMENT_SCOPE=2 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to change an attribute for a resource using the chrsrc command results in the 2610-426 error 
+
+CAUSE
+CT_MANAGEMENT_SCOPE=2 not set for root or sudo root
+
+ENVIRONMENT
+Here's an example of the command and error : 
+
+root@node01:/ chrsrc -s 'Name==my_resource"' IBM.Application StartCommandTimeout=3599
+
+2610-426 The specified resource or resource class is not currently available on node node02
+
+
+RESOLVING THE PROBLEM
+The most common reason for a 2610-426 error is a scope problem, in other words, we see this error whenever CT_MANAGEMENT_SCOPE has not been set to 2 and exported for the current shell where ch* or mk* commands are issued. If you do have CT_MANAGEMENT_SCOPE set in the shell where you are issuing the commands, then the next likely cause is the sudo root configuration, that is, sudo root does not have CT_MANAGEMENT_SCOPE=2 set/exported. 
+
+
+The only other possibility is that the Resource Manager for the resource class in question is not currently running on the node for the resource constituent in question. In the case of the example above, that would be IBM.GblResRM on node "node02". You can use 'lssrc -g rsct_rm' and 'lssrc -s IBM.GblResRM', executed on node "node02", to check that IBM.GblResRM is active.

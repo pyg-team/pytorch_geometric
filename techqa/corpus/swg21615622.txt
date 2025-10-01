@@ -1,0 +1,96 @@
+Title: IBM SDK, Java Technology Edition, Version 7 Service Refresh 3 - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ IBM SDK, Java Technology Edition, Version 7 Service Refresh 3 general availability. 
+
+CONTENT
+Service refresh 3 is now available on developerWorks and contains a number of enhancements to the vesrion 7 code base: 
+
+ * On z/OS®, by default, the Attach API is now disabled to enhance security. 
+ * On z/OS, support is included for 1M pageable large pages. 
+ * The -Xsoftmx option is now available on Linux, Windows, and z/OS, as well as AIX. 
+ * There are performance improvements for Linux systems that are using the Completely Fair Scheduler in the default mode. 
+ * The IBM® GBK converter can use Unicode 2.0 standards. 
+ * There are improvements to Javadump output: more detailed information about Java threads, and a new memory category for Direct Byte Buffer usage. 
+ * The IBMJCEFIPS security provider has been recertified. 
+ * The IBM PKCS#11 security provider supports additional cryptographic adapters. 
+ * There is a new IBM security provider for the United States Department of Defense Common Access Card. 
+ * The ikeycmd command is enhanced to show all security certificates in the certificate chain. 
+ * There is support for AES-NI in the IBM JCE security provider. 
+ * The SDK and JRE have been tested on the following new hardware and operating system levels: IBM zEnterprise® EC12, Microsoft Windows 8, and Windows Server 2012.
+
+
+For any late breaking news or supplementary information that is not included in the user documentation, see IBM SDK and Runtime Environment Java Technology Edition Version 7: Current news [http://www.ibm.com/support/docview.wss?uid=swg21499721] 
+
+For any security fixes provided in this service refresh, see the list of Security alerts [http://www.ibm.com/developerworks/java/jdk/alerts/]. 
+
+Visit developerWorks: IBM developer kits [http://www.ibm.com/developerworks/java/jdk/index.html] to download the service refresh for your platform. 
+
+
+
+
+
+
+Java attach API 
+
+On z/OS, connections to virtual machines through the Java Attach API have a new default state. By default, the Attach API is now disabled, to enhance security. 
+
+1M pageable large page support 
+
+On z/OS, the JVM now includes support for 1M pageable large pages. 
+
+The use of 1M pageable large pages for the Java object heap provides similar runtime performance benefits to the use of 1M nonpageable pages. However, using 1M pageable pages provides options for managing memory that can improve system availability and responsiveness. 
+
+When 1M pageable large pages are used for the JIT codecache, the runtime performance of some Java applications can be improved. 
+
+To take advantage of 1M pageable large pages, the following minimum prerequisites apply: IBM zEnterprise EC12 with the Flash Express feature (#0402), z/OS V1.13 with PTFs, and the z/OS V1.13 Remote Storage Manager Enablement Offering web deliverable. 
+
+For more information, see the -Xlp option in JVM command-line options [http://publib.boulder.ibm.com/infocenter/java7sdk/v7r0/topic/com.ibm.java.zos.70.doc/diag/appendixes/cmdline/commands_jvm.html]. 
+
+Support for -Xsoftmx 
+
+The -Xsoftmx option is now available on Linux, Windows, and z/OS, as well as AIX. A soft limit for the maximum heap size can be set using the com.ibm.lang.management API. The Garbage Collector attempts to respect the new limit, shrinking the heap when possible. For more information about this option, see Garbage Collector command-line options [http://publib.boulder.ibm.com/infocenter/java7sdk/v7r0/topic/com.ibm.java.lnx.70.doc/diag/appendixes/cmdline/commands_gc.html]. 
+
+Linux Completely Fair Scheduler 
+
+The default locking behavior on Linux systems that are using the CFS in the default mode (sched_compat_yield=0) is now optimized to improve performance for most applications. For more information, see What's new [http://pic.dhe.ibm.com/infocenter/java7sdk/v7r0/topic/com.ibm.java.lnx.70.doc/diag/preface/changes_70/whatsnew_sr3.html#whatsnewsr3__cfs]. [http://publib.boulder.ibm.com/infocenter/java7sdk/v7r0/topic/com.ibm.java.lnx.70.doc/diag/preface/changes_70/overview_vm.html] 
+
+IBM GBK converter 
+
+By default the IBM GBK converter follows Unicode 3.0 standards. A new system property value for -Dfile.encoding is available to force the IBM GBK converter to follow Unicode 2.0 standards. For more information see System property command-line options [http://publib.boulder.ibm.com/infocenter/java7sdk/v7r0/topic/com.ibm.java.lnx.70.doc/diag/appendixes/cmdline/cmdline_properties.html]. 
+
+Diagnostics improvements 
+
+More detailed information is included in a Java core file to help diagnose the cause of a failure. Updates include: 
+
+* A new memory category for Direct Byte Buffers usage. See Native memory (NATIVEMEMINFO) [http://publib.boulder.ibm.com/infocenter/java7sdk/v7r0/topic/com.ibm.java.lnx.70.doc/diag/tools/javadump_tags_nativememinfo.html] 
+* Additional information about Java threads. See Threads and stack trace (THREADS) [http://publib.boulder.ibm.com/infocenter/java7sdk/v7r0/topic/com.ibm.java.lnx.70.doc/diag/tools/javadump_tags_threads.html] 
+
+IBMJCEFIPS recertification 
+
+The IBMJCEFIPS security provider has been FIPS certified. If you use IBMJSSE2, this security provider can now be run in FIPS mode. For more information, see Running IBMJSSE2 in FIPS mode [http://publib.boulder.ibm.com/infocenter/java7sdk/v7r0/topic/com.ibm.java.security.component.70.doc/security-component/jsse2Docs/runfips.html]. 
+
+IBM PKCS#11 security provider 
+
+Support is introduced for the following cryptographic adapters: 
+
+* SafeNet Luna SA 4.0 
+* SafeNet Luna SA 5.0 
+* Thales nShield Edge 
+* Thales nShield Connect 1500 
+
+Points of interest for these adapters are detailed in Card Observations [http://publib.boulder.ibm.com/infocenter/java7sdk/v7r0/topic/com.ibm.java.security.component.70.doc/security-component/pkcs11implDocs/cardobservations.html]. [http://publib.boulder.ibm.com/infocenter/java7sdk/v7r0/topic/com.ibm.java.security.component.doc/security-component/pkcs11implDocs/cardobservations.html] 
+
+IBM CAC provider 
+
+The IBM Common Access Card (IBMCAC) provider enables applications to use standard APIs to access the United States Department of Defense Common Access Card (CAC). This provider is available only on the Windows platform. For more information, see IBM Common Access Card provider [http://publib.boulder.ibm.com/infocenter/java7sdk/v7r0/topic/com.ibm.java.security.component.70.doc/security-component/cacDocs/cac_provider.html]. 
+
+iKeyman updates 
+
+IKeyman is a GUI application that provides key, certification request and self-signed certification generation operations. The ikeycmd command is enhanced to show all certificates in the certificate chain. For more information, see iKeyman [http://publib.boulder.ibm.com/infocenter/java7sdk/v7r0/topic/com.ibm.java.security.component.70.doc/security-component/ikeyman_tool.html]. 
+
+IBM JCE provider updates 
+The IBM JCE provider supports the use of Intel Advanced Encryption Standard New Instructions (AES-NI), if available, by using a new system property. For more information, see What's new in JCE [http://publib.boulder.ibm.com/infocenter/java7sdk/v7r0/topic/com.ibm.java.security.component.70.doc/security-component/JceDocs/whatsnew.html].

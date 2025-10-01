@@ -1,0 +1,102 @@
+Title: IBM Detailed system requirements for Lotus Enterprise Integrator for Domino (LEI) 8.0 - United States
+
+Text:
+requirements; system requirements; DSRdoc; SystemRequirementsDocument; prereq; coreq; installation prerequisites; 8.0; 80 PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains the detailed system requirements for Lotus Enterprise Integrator for Domino (LEI) 8.0. 
+
+CONTENT
+See below for a list of detailed system requirements for Lotus Enterprise Integrator® for Domino® (LEI) 8.0. For complete details, see the LEI Installation Guide [http://www-128.ibm.com/developerworks/lotus/documentation/lei/].
+
+
+ 
+
+[/support/docview.wss?uid=swg27011483&amp;aid=1] [/support/docview.wss?uid=swg27011483&amp;aid=1] [/support/docview.wss?uid=swg27011483&amp;aid=1] Supported platforms [/support/docview.wss?uid=swg27011483&amp;aid=1]  * Windows 2003 Server and Server Enterprise Edition 32 bit and 64 bit 
+ * AIX 5.3 
+ * Solaris 10 
+ * RedHat Enterprise Linux (RHEL) 5.0 32 bit and 64 bit 
+ * Novell SuSE Linux Enterprise Server (SLES) 10 32 bit and 64 bit 
+
+Read all Domino system requirements documentation regarding the specific patches Domino requires for its server. The patch level required by Domino is a prerequisite for successful LEI installation. Hardware requirements [/support/docview.wss?uid=swg27011483&amp;aid=1]  * 40MB disk space on Win32 
+ * 80MB disk space on UNIX and System i 
+ * 90MB temp space on Win32 - required by System i LEI Installer 
+ * 15MB temp space on Win32 - required by LEI installer 
+ * 90MB temp space on UNIX - required by LEI installer
+
+Software requirements [/support/docview.wss?uid=swg27011483&amp;aid=1]  * LEI 8.0 requires Lotus Notes/Domino 8.0. 
+ * Notes 8.0 client to administer the LEI Administrator database and run the LEI server if LEI is installed on a Notes client. 
+ * Domino 8.0 server to manage the LEI Administrator database and run the LEI server if LEI is installed on a Domino server. 
+ * Client libraries of the external systems to be accessed must be installed on the LEI server and the Domino server. When running activities, if the LEI server and the Domino server are on separate machines, the client libraries must be installed on both machines. 
+ * For UNIX - X Window system server environment 
+ * For UNIX - X Window system client libraries 
+
+Verify that all of your database software is current with all available maintenance releases and/or fix packs.  * For System i (i5/OS), LEI installation requires Windows Internet Explorer 6.0 or later.
+
+Current supported data drivers [/support/docview.wss?uid=swg27011483&amp;aid=1] Supported Lotus Connector data driver versions are listed below. 
+Note: DataDirect ODBC drivers can be used with the Lotus Connector for ODBC. These include the Data Direct Sybase, Oracle, Informix, DB2, and SQL Server ODBC wire protocols. LEI supports the supplied Lotus-branded DataDirect ODBC driver. LEI and DECS recommend using the Lotus-branded DataDirect ODBC Wire Protocol drivers. Windows 2003 Server and Server Enterprise Edition
+Oracle 9i and 10g 
+DB2 v8.2.2, 9.1 and DB2 Universal Database for iSeries (System i) 
+Sybase 15 
+MS SQL Server 2000 and 2005 
+Data Direct ODBC 5.2
+
+AIX 5.3 
+Oracle 9i and 10g 
+DB2 v8.2.2, 9.1 (must be aix power 4 or higher for DB2 9.1) and DB2 Universal Database for iSeries (System i) 
+Sybase 15 
+Data Direct ODBC 5.2
+
+Solaris 10 
+Oracle 9i and 10g 
+DB2 v8.2.2, 9.1and DB2 Universal Database for iSeries (System i) 
+Sybase 15 
+Data Direct ODBC 5.2 
+
+Redhat Linux Enterprise Server 5.0 
+Oracle 9i and 10g 
+DB2 v8.2.2, 9.1 and 
+Data Direct ODBC 5.2
+
+Novell SuSE Linux Enterprise Server (SLES) 10 
+Oracle 9i and 10g 
+DB2 v8.2.2, 9.1 and DB2 Universal Database for iSeries (System i) 
+Data Direct ODBC 5.2
+
+i5/OS V5R4 
+xData Direct ODBC 5.2 (32-bit version) 
+DB2 Universal Database for iSeries (System i)
+
+z/OS 1.7 
+DB2 9.1
+
+zLinux - RedHat Enterprise Server 5.0 64-bit 
+DB2 9.1 and DB2 Universal Database for iSeries (System i)
+
+zLinux - Novell SUSE Linux Enterprise Server (SLES) 10 
+DB2 9.1 and DB2 Universal Database for iSeries (System i)
+
+Testing Connectivity [/support/docview.wss?uid=swg27011483&amp;aid=1] 
+The supplied DCTEST program tests connectivity from the system on which the LEI server is installed to external data sources. The LEI server acts as a client to your external data server. Run the appropriate connectivity test program from the Domino server before running LEI. The program names are listed below by platform: 
+
+Issue the following command for Windows: 
+
+ndctest 
+
+Issue the following command for UNIX: 
+
+dctest 
+
+Issue the following command for System i: 
+
+RUNDOMCMD SERVER(your_dom_server) CMD(CALL PGM(QDOMINOxxx/DCTEST)) BATCH(*NO) 
+
+where xxx is the Domino release (for example 703 for Domino 7.0.3) 
+
+A command window help menu provides information using the connectivity test program. 
+
+
+RELATED INFORMATION
+ Lotus software Upgrade Central [http://www.ibm.com/software/lotus/support/upgradecentral]
+Lotus Enterprise Integrator Product Support [http://www.ibm.com/software/lotus/support/integration/support.html]
+Lotus Enterprise Integrator Product Info [http://www.ibm.com/software/lotus/products/enterpriseintegrator/]

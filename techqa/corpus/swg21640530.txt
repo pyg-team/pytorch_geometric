@@ -1,0 +1,40 @@
+Title: IBM Disabling SSL between WebSphere and LDAP in TIP - United States
+
+Text:
+TIPL2FAQ; Disabling SSL; between; WebSphere; and LDAP TECHNOTE (FAQ)
+
+QUESTION
+ How can I disable SSL between WAS and LDAP in the Tivoli Integrated Portal? 
+
+CAUSE
+For various reasons, the SSL certificates can become invalid. If you still need to access the Tivoli Integrated Portal before you can implement new certificates, you can disable SSL between LDAP and WAS.
+
+ANSWER
+
+Linux/AIX/Solaris
+
+1. You must first stop the TIP service, 
+
+ <TIPHOME>/profiles/TIPProfile/bin/stopServer.sh server1 
+
+ 
+2. Navigate to the following directory: 
+
+ <TIP_HOME>/profiles/TIPProfile/config/cells/TIPCell/wim/config 
+
+
+3. Create a backup of the wimconfig.xml file. 
+
+
+4. Edit the wimconfig.xml file and change the sslEnabled value to "false" 
+
+ Example: derefAliases="always" referal="ignore" sslEnabled="false"> 
+
+ and the host port from 636 to 389: 
+
+ Example: <config:connections host="<LDAP SERVER/FQDN>" port="389"/> 
+
+
+5. Start TIP: <TIPHOME>/profiles/TIPProfile/bin/startServer.sh server1 
+
+For Windows, the TIP start and stop scripts will be in the same directory,but you will need to use stopServer.bat and startServer.bat respectively. Or stop the WAS/TIP Java Windows services process.

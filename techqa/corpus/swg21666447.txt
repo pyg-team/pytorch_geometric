@@ -1,0 +1,79 @@
+Title: IBM Running the "repotools-jts -reindex all" or "repotools-rm -reindex all" command results in Java out of memory CRJZS5856E errors in Rational DOORS Next Generation - United States
+
+Text:
+jts; java; out of memory; OOM; reindex; repotools TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to run the "repotools-jts -reindex all" or "repotools-rm -reindex all" command results in error CRJZS5856E and warning CRJZS5181W reporting an error exception during text indexing IBM Rational DOORS Next Generation. 
+
+SYMPTOM
+Note: Starting with IBM Rational DOORS Next Generation (RDNG) version 5.0, the Requirements Management (RM) database has been separated from the Jazz Team Server (JTS) database, therefore the repotools reindex command to be used is repotools-rm -reindex all. 
+
+The following errors are reported when the reindex all command is not completed: 
+
+ 
+
+ 
+
+ 1. In the command window where the repotools-jts -reindex all or repotools-rm -reindex all for version 5.x command is being executed:
+    
+    
+    java/lang/OutOfMemoryError.
+    
+    CRJAZ1065I Failed to execute preInvoke.
+    
+    java.lang.RuntimeException: CRJZS5856E An unexpected error occurred during a write transaction in the index.
+    
+    
+    
+ 2. In the repotools-jtsreindex.log or repotools-rmreindex.log (for version 5.x):
+    
+    CRJZS5181W Error reported during text indexing, exception:
+    CRJZS5585I Reindexing : Finished processing "text live" indices for /admin in 539058 ms
+    CRJZS5586I Reindexing : Finished processing "text live" indices for private applications in 539338 ms
+    CRJZS5585I Reindexing : Finished processing "text live" indices for Rational Requirements Server in 539369 ms
+    CRJZS5585I Reindexing : Finished processing "triple live" indices for /admin in 539636 ms
+    CRJZS5586I Reindexing : Finished processing "triple live" indices for private applications in 539783 ms
+    JVMDUMP039I Processing dump event "systhrow", detail "java/lang/OutOfMemoryError" at 2013/08/24 12:19:20 - please wait.
+    JVMDUMP039I Processing dump event "systhrow", detail "java/lang/OutOfMemoryError" at 2013/08/24 12:19:20 - please wait.
+    JVMDUMP039I Processing dump event "systhrow", detail "java/lang/OutOfMemoryError" at 2013/08/24 12:19:20 - please wait.
+    JVMDUMP039I Processing dump event "systhrow", detail "java/lang/OutOfMemoryError" at 2013/08/24 12:19:20 - please wait.
+    JVMDUMP039I Processing dump event "systhrow", detail "java/lang/OutOfMemoryError" at 2013/08/24 12:19:20 - please wait.
+    JVMDUMP039I Processing dump event "systhrow", detail "java/lang/OutOfMemoryError" at 2013/08/24 12:19:20 - please wait.
+    JVMDUMP039I Processing dump event "systhrow", detail "java/lang/OutOfMemoryError" at 2013/08/24 12:19:20 - please wait.
+    
+
+
+CAUSE
+This could be due to JVM (Java Virtual Machine) heap lack of memory. Depending on the index size for a given deployment, the default JVM setting of -Xmx1500M is not enough to run the repotools-jts -reindex all or repotools-rm -reindex all for version 5.x command.
+
+RESOLVING THE PROBLEM
+To modify the JVM settings, follow these steps: 
+
+ 
+
+ 
+
+ 1. Stop the server.
+    
+    
+ 2. In the [SERVER_INSTALL]/server/repotools-jts or /repotools-rm file locate the following properties:
+    VMARGS="$VMARGS -Xmx1500M"
+    #VMARGS="$VMARGS -Xgcpolicy:gencon" 
+    
+    
+ 3. Modify as follows:
+    
+    VMARGS="$VMARGS -Xmx8192M"
+    VMARGS="$VMARGS -Xms8192M"
+    VMARGS="$VMARGS -Xmn1024M"
+    VMARGS="$VMARGS -Xgcpolicy:gencon" 
+    
+    
+    Note: The above values are just an example based on the JVM utilisation and index size for a given deployment. The values should vary depending on the type of deployment and should be more of a tuning exercise, verifying the changes are acceptable by running a complete reindex.
+    
+    
+ 4. Run the repotools-jts -reindex all or repotools-rm -reindex all command and verify it completes successfully.
+    
+    
+ 5. Restart the server.

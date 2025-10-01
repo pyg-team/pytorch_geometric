@@ -1,0 +1,143 @@
+Title: IBM IV64518: CUSTOM COPY ANALYSIS GETS AUTOMATICALLY ENABLED ON IMPORT INTO SCM CUSTOM SITE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Custom copy analysis gets automatically enabled on import into
+   SCM custom site.
+   
+   If copied using the Dashboard API's ImportXML() function, the
+   analysis is copied into the custom site and automatically
+   activated.
+   
+   This unintended automatic activation can cause performance
+   issues in the deployment as endpoints work to analyze the
+   copied and activated analyses.
+   
+   The issue has been fixed in versions of IEM > 9.0.218
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Upgrade IEM server and consoles to version > 9.0.218
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem Description:
+   Custom copy analysis gets automatically enabled on import into
+   SCM custom site.
+   
+   If copied using the Dashboard API's ImportXML() function, the
+   analysis is copied into the custom site and automatically
+   activated.
+   
+   This unintended automatic activation can cause performance
+   issues in the deployment as endpoints work to analyze the
+   copied and activated analyses.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The issue has been fixed in versions of IEM > 9.0.218
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV64518
+   
+   
+ * REPORTED COMPONENT NAME
+   TV EP MG SEC CF
+   
+   
+ * REPORTED COMPONENT ID
+   5725C43SM
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-03
+   
+   
+ * CLOSED DATE
+   2015-04-30
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TV EP MG SEC CF
+   
+   
+ * FIXED COMPONENT ID
+   5725C43SM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R920 PSY
+   UP

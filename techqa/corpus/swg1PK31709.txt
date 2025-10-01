@@ -1,0 +1,193 @@
+Title: IBM PK31709: SERVER FAILED (SQLCODE -637) WHEN TRYING TO ADD MORE THAN 1 NEW FIELD TO AN AG AT THE SAME TIME - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Server failed (SQLCODE -637) when trying to add more than 1 new
+   field to an AG at the same time
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Content Manager OnDemand for    *
+   *                 z/OS and OS/390.                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 1. When adding more than one column to  *
+   *                         an application group, message        *
+   *                         ARS0013E is issued with SQLCODE      *
+   *                         -637.                                *
+   *                                                              *
+   *                      2. When the customer uses the add new   *
+   *                         app group data field feature to add  *
+   *                         a new field, they can load new data  *
+   *                         into the app group data table, until *
+   *                         the next app group data table is     *
+   *                         created.  Loading will then issues   *
+   *                         message ARS0013e with SQLCODE -301   *
+   *                         and no future loads will work in     *
+   *                         this app group.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   1. DB2 UDB for z/OS restricts you to only adding 1 column per
+      ALTER TABLE statement.  The code was adding multiple columns
+      in 1 ALTER TAB as allowed by DB2 UDB for Linux, UNIX and
+      Windows.
+   
+     When adding more than 1 column to an application group, the
+     following message is issued:
+   
+   ARS0013E BWOLF DB ERROR:  DB2 FOR OS/390  ODBC DRIVER  DSN06012
+    838 DSNT408I SQLCODE = -637, ERROR:  DUPLICATE ADD KEYWORD
+               DSNT418I SQLSTATE   = 42614 SQLSTATE RETURN CODE
+                          DSNT415I SQLERRP    = DSNHSM6C SQL
+    PROCEDURE DETECTING ERROR                     DSNT416I SQLERRD
+    = 0  0  0  -1
+     62  0 SQL DIAGNOSTIC INFORMATION              DSNT416I SQLERRD
+    = X'00000000'  X'00000000'  X'00000000'  X'FFFFFFFF'
+    X'0000003E'  X'00000000' SQL DIAGNOSTIC INFORMATION      --
+   SQLSTATE =42614, SQLCODE=-637, FILE=ARSSEG.C, LINE=3397
+   
+   
+   2. When the customer uses the add new app group data field
+      feature to add a new field, they can load new data into the
+      app group data table, until the next app group data table is
+      created.  Loading will then issue message ARS0013e below.
+   
+      This is the problem reported by PK32220 against OnDemand for
+      Multiplatforms.  The CREATE TABLE was built incorrectly for
+      added columns.
+   
+   ARS0013E ADMIN DB ERROR:  DB2 FOR OS/390  ODBC DRIVER  DSN06012
+    903 DSNT408I SQLCODE = -301, ERROR:  THE VALUE OF INPUT HOST
+    VARIABLE OR PARAMETER            NUMBER 005 CANNOT BE USED AS
+    SPECIFIED BECAUSE OF ITS DATA TYPE         DSNT418I SQLSTATE
+    = 42895 SQLSTATE RETURN CODE
+    DSNT415I SQLERRP    = DSNXRIVE SQL PROCEDURE DETECTING ERROR
+    DSNT416I SQLERRD = -320  0  0  -1  0  0 SQL DIAGNOSTIC
+    INFORMATION            DSNT416I SQLERRD    = X'FFFFFEC0'
+    X'00000000'  X'00000000'  X'FF -- SQLSTATE
+   =42895, SQLCODE=-301, FILE=ARSDOC.C, LINE=3859
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  1. The code is changed to issue multiple ALTER TABLE statements
+      for z/OS.
+   
+   2. The CREATE TABLE will be build correctly for the added
+      columns.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK31709
+   
+   
+ * REPORTED COMPONENT NAME
+   CM OD Z/OS, OD/
+   
+   
+ * REPORTED COMPONENT ID
+   5655H3900
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-09-20
+   
+   
+ * CLOSED DATE
+   2006-11-21
+   
+   
+ * LAST MODIFIED DATE
+   2006-12-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK19935
+   
+   
+
+MODULES/MACROS
+ *     ARSSEG
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CM OD Z/OS, OD/
+   
+   
+ * FIXED COMPONENT ID
+   5655H3900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY UK19935 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK19935]
+   UP06/11/23 P F611
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

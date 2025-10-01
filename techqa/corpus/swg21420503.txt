@@ -1,0 +1,58 @@
+Title: IBM The manageprofiles command might display a misleading error message when a required profile augmentation template is missing - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using the manageprofiles command to augment a profile, the augmenting template might require other templates as prerequisites. If any of those prerequisite templates are missing, then the manageprofiles command will display an error. The error is misleading and displays the wrong template name as the one that is missing. 
+
+SYMPTOM
+When using the manageprofiles command to augment a profile, the template used for augmentation might require other templates as prerequisites. If one of the prerequiste templates is missing, then the manageprofiles command displays an error message. The error message states that a required profile template is missing, but it names the wrong profile template as the one that is missing. 
+
+For example, you might try to augment a profile with a template named "TemplateA". This template might require other templates as prerequisites, such as "Template1" and "Template2". If either of those required templates (Template1 or Template2) are missing, then the profile tool will display an error message:
+
+Cannot locate the template: No profile template exists at path TemplateA
+
+The error message is misleading. In this example, the error message states that TemplateA is missing, when either Template1 or Template2 could actually be missing.
+
+The profile augmentation will fail, because a required template is missing.
+
+
+CAUSE
+Only the template name provided to the "-templatePath" parameter is available to be displayed in an error message.
+
+
+RESOLVING THE PROBLEM
+Although the error message is misleading, it still accurately indicates that the reason the augmentation failed: A required template is missing. Therefore, you must determine which profile template is missing, and make sure that profile template is present before attempting to augment the profile again.
+
+Follow these steps to verify which profile template is missing: 
+
+ 
+
+ 1. Determine whether the profile template listed in the error message is present. For example, if the error states that the profile template at /was/profileTemplates/TemplateA is missing, then make sure that path is present.
+    
+    If the profile template at that path is missing, then you do not need to proceed with further steps, because you have determined which profile template is missing. Verify that you specified the correct path to this template.
+    
+    
+ 2. If the profile template listed in the error message is present, then review the error message further. The error message will state which log file the error was written to. (The message will state, "For more information, consult <log file>.) Open that log file.
+    
+    
+ 3. Search for this string in the log file:
+    
+    is not a valid profile template path
+    
+    
+ 4. The line which contains that string will show a message similar to this:
+    
+    <message>../TemplatePath is not a valid profile template path.</message>
+    
+    
+ 5. The template indicated by "TemplatePath" is the one which is actually missing.
+
+
+
+Further action 
+Once you have determined which profile template is missing, you will then need to determine why it is missing and how you can obtain it. If the profile template belongs to a WebSphere Application Server feature pack, or a product which is installed on top of WebSphere Application Server, then verify that the feature pack or product was installed correctly. If a profile template is missing, it is likely that the product it belongs to was not properly installed.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server - Express Install and migration AIX, HP-UX, Linux, Solaris, Windows 7.0

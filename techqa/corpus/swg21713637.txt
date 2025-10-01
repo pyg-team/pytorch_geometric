@@ -1,0 +1,23 @@
+Title: IBM Web GUI pack installation was failing - United States
+
+Text:
+webgui; instapp; upgrade; IAGLOBAL_INVALID_TIP22_LOCATION_BASED_NOT_FOUND TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installation of Web GUI fix pack fails with below error in the IA log:
+
+IAGLOBAL_INVALID_TIP22_LOCATION_BASED_NOT_FOUND 
+
+SYMPTOM
+Fix pack installation log (eg; OMNIbusWebGUI_FP??_Install-00.log) may contain below errors:
+
+Caused by: The following error occurred while executing this line:
+/ancl18/ncl/Omnibus/netcool/omnibus_webgui/_uninst/OMNIbusWebGUI740FP3/plan/inventory/OMNIbusWebGUIInstall_Inventory/OMNIbusWebGUIInstall_Inventory.xml:267: ${IAGLOBAL_INVALID_TIP22_LOCATION_BASED_NOT_FOUND}
+
+
+RESOLVING THE PROBLEM
+Above error message suggest that TIP is not found in the directory specified in the response file used for installation. It was found that user had below path in the response file:
+IAGLOBAL_TIP_HOME=/opt/Omnibus/tipv2
+
+But actually this is not where TIP is installed, rather it is a symbolic link to another dir. 
+To resolve this issue response file was updated to have actual path, not the symbolic link.

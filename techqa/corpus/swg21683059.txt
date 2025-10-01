@@ -1,0 +1,50 @@
+Title: IBM Required offerings for WebSphere Application Server Patterns must be downloaded from Fix Central - United States
+
+Text:
+WASPatternsV1RNotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM Installation Manager repository does not contain the required offerings to run your WebSphere Application Server Patterns configuration. 
+
+RESOLVING THE PROBLEM
+You must download the required offerings for WebSphere Application Server Patterns from Fix Central to the IBM Installation Manager repository. 
+
+IBM WebSphere Application Server Patterns supports IBM WebSphere Application Server Version 8.0.0.9 and 8.5.5.2. 
+
+The following tables contain the supported WebSphere Application Server offerings and additional features that the software components can install. 
+
+ 
+
+ * WebSphere Application Server 8.5.5.x software components and fix pack offerings
+ * 
+ * WebSphere Application Server 8.5.5.x additional features
+ * 
+ * WebSphere Application Server 8.0.0.x software components and fix pack offerings
+ * 
+ * WebSphere Application Server 8.0.0.x additional features
+
+
+WebSphere Application Server 8.5.5.x software components and fix pack offerings 
+
+The Software component column indicates what package should be downloaded from the IBM Fix Central download site. To determine the offerings that you need to download based on the fix pack you require, see Recommended fixes for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27004980]. 
+
+ 
+
+Software component Fix pack offering Deployment manager WebSphere Application Server V8.5.5.x local repository compressed files containing Base, Developers, ND, NDDMZ, Java SDK for Full Profile Custom nodes WebSphere Application Server V8.5.5.x local repository compressed files containing Base, Developers, ND, NDDMZ, Java SDK for Full Profile Job manager WebSphere Application Server V8.5.5.x local repository compressed files containing Base, Developers, ND, NDDMZ, Java SDK for Full Profile Administrative agents WebSphere Application Server V8.5.5.x local repository compressed files containing Base, Developers, ND, NDDMZ, Java SDK for Full Profile IBM HTTP Servers Supplements V8.5.5.x local repository compressed files containing Application Client, Web server plug-ins, Pluggable Application Client, IBM HTTP Server, Java SDK On demand routers WebSphere Application Server V8.5.5.x local repository compressed files containing Base, Developers, ND, NDDMZ, Java SDK for Full Profile Stand-alone server WebSphere Application Server V8.5.5.x local repository compressed files containing Base, Developers, ND, NDDMZ, Java SDK for Full Profile Liberty controller WebSphere Application Server V8.5.5.x Liberty Profile Runtime for Network Deployment Liberty host WebSphere Application Server V8.5.5.x Liberty Profile Runtime for Network Deployment Liberty profile server WebSphere Application Server V8.5.5.x Liberty Profile Runtime for Network Deployment 
+WebSphere Application Server 8.5.5.x additional features 
+The following software components can install additional functionality. If these features are needed, additional offerings must be added to the Installation Manager repository. 
+Also see:  * Recommended fixes for WebSphere eXtreme Scale [http://www-01.ibm.com/support/docview.wss?uid=swg27018991] 
+ * Feature packs by version for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg27008534#was80]
+
+Additional features Fix pack offering IBM WebSphere eXtreme Scale Client WebSphere eXtreme Scale Client for WebSphere Application Server Version 8.0 Java SDK v6 IBM WebSphere SDK Java Technology Edition (Default) V6.0.x.0 for Liberty Profile Java SDK v7.0 IBM WebSphere SDK Java Technology Edition (Optional) V7.0.x.0 for Full Profile and Liberty Profile Java SDK v7.1 IBM WebSphere SDK Java Technology Edition (Optional) V7.1.x.0 for Full Profile and Liberty Profile Web 2.0 and Mobile Toolkit v1.1 IBM Websphere Application Server Web 2.0 and Mobile Toolkit V1.1.0.x WebSphere Customization Toolbox WebSphere Customization Toolbox V8.5.5.3 local repository compressed files 
+WebSphere Application Server 8.0.0.x software components and fix pack offerings The Software component column indicates what package should be downloaded from the IBM Fix Central download site. To determine the offerings that you need to download based on the fix pack you require, see Recommended fixes for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27004980].
+
+
+
+Software component Fix pack offering Deployment manager WebSphere Application Server V8.0.0.x local repository compressed files containing Base, Express, Developers, ND, NDDMZ, Java SDK Application Server V8.0.0.9 local repository compressed files containing Base, Express, Developers, ND, NDDMZ, Java SDK Custom nodes WebSphere Application Server V8.0.0.x local repository compressed files containing Base, Express, Developers, ND, NDDMZ, Java SDK Application Server V8.0.0.9 local repository compressed files containing Base, Express, Developers, ND, NDDMZ, Java SDK Job manager WebSphere Application Server V8.0.0.x local repository compressed files containing Base, Express, Developers, ND, NDDMZ, Java SDK Administrative agents WebSphere Application Server V8.0.0.x local repository compressed files containing Base, Express, Developers, ND, NDDMZ, Java SDK IBM HTTP Servers Supplements V8.0.0.x local repository compressed files containing Application Client, Web server plug-ins, Pluggable Application Client, IBM HTTP Server, Java SDK On demand routers WebSphere Application Server V8.0.0.x local repository compressed files containing Base, Express, Developers, ND, NDDMZ, Java SDK Stand-alone server WebSphere Application Server V8.0.0.x local repository compressed files containing Base, Express, Developers, ND, NDDMZ, Java SDK 
+WebSphere Application Server 8.0.0.x additional features 
+The following software components can install additional functionality. If these features are needed, additional offerings must be added to the Installation Manager repository. 
+Also see:  * Recommended fixes for WebSphere eXtreme Scale [http://www-01.ibm.com/support/docview.wss?uid=swg27018991] 
+ * Feature packs by version for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg27008534#was80]
+
+Additional features Fix pack offering IBM WebSphere eXtreme Scale Client WebSphere eXtreme Scale Client for WebSphere Application Server Version 8.0 Web 2.0 and Mobile Feature pack WebSphere Application Server Version 6.1, 7.0, and 8.0 Feature Pack for Web 2.0 and Mobile WebSphere Customization Toolbox WebSphere Customization Toolbox V8.0.0.x local repository ZIP File

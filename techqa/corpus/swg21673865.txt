@@ -1,0 +1,134 @@
+Title: IBM How to configure IBM HTTP Server as a reverse proxy for Rational DOORS Web Access - United States
+
+Text:
+ssl; proxy TECHNOTE (FAQ)
+
+QUESTION
+ How do you configure IBM HTTP Server as a reverse proxy for Rational DOORS Web Access? 
+
+ANSWER
+You can configure IBM HTTP Server (IHS) as a reverse proxy for Rational DOORS Web Access. A reverse proxy server provides another layer of security, protects HTTP servers in the network, and improves the performance of Secure Sockets Layer (SSL) requests. With a reverse proxy, you can change your deployment topology later. 
+
+Before you begin 
+
+Before you configure the reverse proxy server, you must install the following components: 
+
+ 1. Install Rational DOORS Web Access, but do not start the Rational DOORS Web Access components or server. 
+ 2. Install IBM HTTP Server.
+
+
+About this task A reverse proxy server is a special HTTP server that prevents direct access to the content HTTP server. All requests for content goes through a publicly visible reverse proxy server URI and are then redirected to the private Rational DOORS Web Access server URI. 
+
+These are some of the main advantages of using a reverse proxy server: 
+
+ * Future deployment topology changes: When using a reverse proxy in your deployment, you can provide a single host name in your public URL regardless of the machines and port numbers that the applications are deployed on. This enables you to change your deployment topology later.
+   
+   
+ * Security: The reverse proxy server provides an additional layer of security and can protect other HTTP servers in the communication network. If you are using a firewall between the reverse proxy server and the content HTTP server, you can configure the firewall to allow only HTTP requests from the reverse proxy server.
+   
+   
+ * Performance: You can equip the reverse proxy server with SSL acceleration hardware that can improve the performance of SSL requests.
+
+
+
+
+
+Procedure  1. Prepare the SSL keystore:  1. Create or open your SSL keystore in the supplied IBM Key Management Utility (IKeyMan) SSL tool. 
+     2. When you save your keystore, ensure you have selected the option to save the password to a stash file. 
+     3. Record the following:
+    
+     * The default SSL certificate label. 
+     * The path to the keystore file. 
+     * The path to the stash file.
+       
+       
+    
+    
+ 2. To configure the IBM HTTP Server to process SSL requests, edit the httpd.conf file, which is in the conf directory in the IBM HTTP Server installation.  1. Uncomment the following modules:  * LoadModule proxy_module modules/mod_proxy.so 
+         * LoadModule proxy_http_module modules/mod_proxy_http.so 
+         * LoadModule ibm_ssl_module modules/mod_ibm_ssl.so
+           
+        
+        
+     2. Navigate to the SSL configuration section and set your application server details. In addition to the standard settings, ensure the following parameters are set, as shown in the example below.  * SSLProxyEngine 
+         * ProxyPass 
+         * ProxyPassReverse
+           
+           Note:In this example, the proxy port that is visible to end users is set to 8443. Depending on your environment, the port that Apache Tomcat is configured to use might be set to a different value to avoid port conflicts.
+           
+           # Enable the port that listens for client SSL requests
+           Listen 0.0.0.0:8443
+           <VirtualHost *:8443> 
+           # The SSLEnable directive enables SSL for the virtual host. 
+           SSLEnable 
+           
+           # The SSLProxyEngine toggles whether the server uses SSL for proxied connections. 
+           # SSLProxyEngine on is required if your server is acting as a reverse proxy for an SSL resource. 
+           # Depends on mod_ibm_ssl.so 
+           SSLProxyEngine on
+           
+           # The SSLProtocolDisable directive enables you to specify one or more SSL protocols which cannot be 
+           # used by the client for a specific virtual host. 
+           # This directive must be located in a <VirtualHost> container. 
+           # Supported protocols for a virtual host are supported separately. 
+           # If all supported protocols are disabled, clients cannot complete an SSL handshake. 
+           # The following possible values are available for this directive: SSLv2, SSLv3, TLS, TLSv1, TLSv1.1, TLSv1.2
+           SSLProtocolDisable SSLv2
+           SSLProtocolDisable SSLv3 
+           
+           # The keyfile directive sets the key file to use. 
+           KeyFile <path to keystore>/<keystore filename>.kdb
+           
+           # The SSLStashfile directive indicates path to file with file name containing the encrypted password 
+           # for opening the PKCS11 device. 
+           # Depends on mod_ibm_ssl.so 
+           SSLStashfile <path to stash file>/.<stash filename>.sth 
+           
+           # The SSLServerCert directive sets the server certificate to use for this virtual host. 
+           # Depends on mod_ibm_ssl.so
+           SSLServerCert <ssl certificate label>
+           
+           # This directive allows remote servers to map into the space of the local server; the local server 
+           # does not act as a proxy in the conventional sense, but appears as a mirror of the remote server. 
+           # <Path> is the name of a local virtual path. 
+           # <url> is a partial URL for the remote server. 
+           # ProxyPass <Path> <url> 
+           # Note: Retain the trailing slash 
+           ProxyPass / https://<dwa tomcat host>:<dwa tomcat port>/ 
+           
+           # This directive lets Apache adjust the URL in the Location header on HTTP redirect responses.
+           # This capability is essential when Apache is used as a reverse proxy, to avoid bypassing the reverse 
+           # proxy because of HTTP redirects on the backend servers, which stay behind the reverse proxy. 
+           # <Path> is the name of a local virtual path. 
+           # <url> is a partial URL for the remote server - the same way they are used for the ProxyPass directive. 
+           # ProxyPassReverse <Path> <url> 
+           # Note: Retain the trailing slash 
+           ProxyPassReverse / https://<dwa tomcat host>:<dwa tomcat port>/
+           
+           # This option will pass the Host: line from the incoming request to the proxied host, instead of the 
+           # private hostname specified in the proxypass line.
+           ProxyPreserveHost On
+           
+           </VirtualHost>
+           
+           # Disable SSL for all other virtual hosts unless explicitly configured
+           SSLDisable
+           
+           
+        
+        
+    
+    
+ 3. Start IBM HTTP Server.
+    
+    
+ 4. Start Rational DOORS Web Access components.
+    
+    
+ 5. Start Rational DOORS Web Access server.
+
+
+Related concepts: 
+
+Installing Rational DOORS Web Access [http://www.ibm.com/support/knowledgecenter/SSYQBZ_9.6.0/com.ibm.rational.dwa.install.doc/topics/c_node_installing.html]
+Starting, stopping, and removing Rational DOORS Web Access [http://www.ibm.com/support/knowledgecenter/SSYQBZ_9.6.0/com.ibm.rational.dwa.install.doc/topics/c_rundoorswebaccess.html]

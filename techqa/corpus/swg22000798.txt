@@ -1,0 +1,49 @@
+Title: IBM Issue with FileNet Content  Engine 5.2.1 Database Upgrade - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrade to CPE 5.2.1 errors are received during database migration 
+
+SYMPTOM
+The following errors are seen in the upgrade status and p8_server_error.log
+
+Upgrade Status:
+
+Exception encountered with upgrader task, attempt #4
+com.filenet.api.exception.EngineRuntimeException: FNRCD0009E: DB_ERROR:
+The database access failed with the following error: ErrorCode -968,
+Message 'DB2 SQL Error: SQLCODE=-968, SQLSTATE=57011, SQLERRMC=null,
+DRIVER=4.15.113' SQL: ""INSERT INTO FNGCD (epoch_id, gcd_blob,
+modify_date) VALUES (?, ?, ?)" In-bindings: (3019,[len=2035547]
+
+p8_server_error.log
+
+2017-03-13T10:02:54.980 0760311C ENG FNRCE0024W - WARN The following
+error was encountered while trying to determine the DatabaseType for
+DatabaseConnection 'BIC Connection'. A null property value will be
+returned.
+com.filenet.api.exception.EngineRuntimeException: FNRCE0024E:
+E_FAILED_TO_GET_DATASOURCE: The server cannot get the data source
+BIC_OS. Message was: [jcc][t4][2043][11550][4.15.113] Exception
+java.net.ConnectException: Error opening socket to server
+fp8xdb02/10.96.33.11 on port 50,000 with message: A remote host refused
+an attempted connect operation.. ERRORCODE=-4499, SQLSTATE=08001
+DSRA0010E: SQL State = 08001, Error Code = -4,499
+at
+com.filenet.engine.dbpersist.DBContext.determineDatabaseType(DBContext.j
+ava:739)
+
+
+CAUSE
+Database Transaction logs full
+
+RESOLVING THE PROBLEM
+
+
+
+ 1. Clear the Database Transaction logs
+    
+    
+ 2. Restart the CPE jvm's

@@ -1,0 +1,129 @@
+Title: IBM IZ54672: SQL ERRORS AND TRANSACTION TIMEOUTS DURING VIEW GRAPH, EXPORT   OR UPGRADE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When loading large documents, you see a TransactionTimeout
+   Exception in the WAS system log.
+   
+   Following an AppServer restart, the SystemOut log shows a
+   database deadlock
+   [7/1/09 10:26:57:437 PDT] 0000001e impl E
+   com.ibm.sr.tyto.access.impl.TytoAccessImpl TytoAccessImpl
+   com.ibm.websphere.ce.cm.StaleConnectionException:
+   [jcc][t4][2043][11550][3.50.152] Exception
+   java.net.ConnectException: Error opening socket to server
+   localhost/127.0.0.1 on port 50,000 with message: Connection
+   refused: connect. ERRORCODE=-4499, SQLSTATE=08001DSRA0010E: SQL
+   State = 08001, Error Code = -4,499
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Once the deadlock has occurred, the only way to recover is to
+   stop and restart the database and the AppServer. You may need to
+   force the database shutdown.
+   
+   This fix improves import and load performance so that the chance
+   of a Transaction Timeout exception is reduced.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Apply this fix to improve import and load performance.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ54672
+   
+   
+ * REPORTED COMPONENT NAME
+   SERV REG STUDIO
+   
+   
+ * REPORTED COMPONENT ID
+   5724N7202
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-07-07
+   
+   
+ * CLOSED DATE
+   2009-08-14
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SERV REG STUDIO
+   
+   
+ * FIXED COMPONENT ID
+   5724N7202
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

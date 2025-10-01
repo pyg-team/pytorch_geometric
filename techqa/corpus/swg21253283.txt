@@ -1,0 +1,46 @@
+Title: IBM High number of XDNR tasks in the CMAS using a REXX API in CPSM - United States
+
+Text:
+XDNR transactions ; too many ; 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 kixinfo 5655M1501 R100 R102 R310 5655-M15 5655M15 HCP3100 JCP3102 5655M1500 R320 R50M JCI650M 5655S9700 R600 R60M 5655-S97 5655S97 JCI660M R700 R70M JCI670M 5655Y0400 R800 R80M 5655-Y04 5655Y04 FMID JCI680M CPSM cpsmpddb TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have written an Elapsed Time Monitor application using the CPSM application programming interface (API). There is a very large volume of XDNR tasks that are generated on the CMAS. You would like to understand why there are so many XDNR tasks. You would also like to know if there is anything you can do to reduce the number of XDNR tasks. 
+
+SYMPTOM
+Your production system consists of 12 LPARs and almost 300 CICS regions. It is quite normal for there to be around 5,000 CICS tasks in the system at any one time, sometimes more. The monitor API runs every 5 minutes and CONNECTs directly to the CPSM Maintenance Point. Issues a GET for the whole TASK table. It then processes the result set with FETCH and TPARSE in a loop. 
+
+ 
+Each task returned is examined against an exclusion list of known long runners. For all non-excluded tasks the response time is checked and if greater than a preset value (5 minutes) the task is reported to on-line support. You intend to purge these tasks with a SET MODIFY, the monitor then terminates. 
+Within the CMAS EYU0XDNA only starts XDNR if the application is running on a local MAS..
+EYU0XDNE (LRT XDNE) will start the XDNR transaction if the request is coming from an API that connects directly to a CMAS ( BATCH job). 
+
+Here is the logic of the program: 
+
+ * Issues an API GET 
+ * Does a FETCH against a result set 
+ * Goes through each item in the result set and issue a TPARSE
+
+
+
+CAUSE
+Your API is written in REXX [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.doc/eyup1/topics/eyup1c8.html] [http://publibfp.boulder.ibm.com/cgi-bin/bookmgr/BOOKS/eyup1b01/5.0?DT=20070117140015]so when each result set is passed back to the application the TPARSE [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.doc/eyup1/topics/eyup1dr.html] has to be issued. The TPARSE causes another call to the REXX function package from CPSM (not the application) for a TRANSLATE command. Each translate command causes a XDNR transaction to start in the CMAS. There are 28 TPARSEs issued for each of the GET commands issued. 
+
+
+
+DIAGNOSING THE PROBLEM
+The auxtrace reveals that there are 2821 TRANSLATE commands issued, for every 100 GET commands.
+
+
+
+RESOLVING THE PROBLEM
+The XDNR transactions are started in the CMAS and should not have any bearing on the through put of transactions on the WORKING MAS's. If the application had been written in ASSEMBLER, then the TPARSE would not be needed. If we do not need to parse the result set, then you would not see 28 translates for each GET. In any case, CICSPlex is working correctly.
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICSPlex SM Application 
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server CICSPlex SM CICSPlexSM CPSM CP/SM

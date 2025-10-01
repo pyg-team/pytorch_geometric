@@ -1,0 +1,164 @@
+Title: IBM PK87788: Clustered services layers on Oracle result in intermittent deadl ock - ORA-00060 (message translation contention) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Clustered engines on oracle result in intermittent deadlock - OR
+   A-00060
+   
+   I have attached the catalina and engine log files for both syste
+   ms for the deadlock event. There is no noticeable failure either
+    through the user interface or in a running job. There seems to
+   be no failure of any type which occurred through the console. We
+    were able to reproduce the issue live by running a few builds.
+   It seems there is contention between the two consoles when regis
+   tering events with services, or deleting them at the same time.
+   The only clue I have from their environment is this seems to occ
+   ur when multiple builds are kicked off together requiring a writ
+   e of a number of events to the logs. The pertinent queries from
+   services seem to be:
+   DELETE FROM bf_rtceventqueue WHERE bf_id=?
+   SELECT bf_id,bf_type,bf_state,bf_target_id,bf_target_geo_id,bf_c
+   reated,bf_timeout,bf_error_store FROM bf_eventqueue WHERE bf_sta
+   te ?? 'W'
+   DELETE FROM bf_eventarg WHERE bf_event_id=?
+   
+   The schema has these constraints\foreign keys:
+     bf_rtceventqueue:
+     ?constraint name='pk_bf_rtcevtque' type='PrimaryKey'?
+      ?target field='bf_id' /?
+     ?/constraint?
+   
+     bf_eventqueue:
+     ?constraint name='pk_bf_evtarg' type='PrimaryKey'? ?target fie
+   ld='bf_id' /? ?/constraint?
+   
+     ?constraint name='fk_bf_earg_evtq' type='ForeignKey'?
+      ?target field='bf_event_id' reference='bf_eventqueue.bf_id' /
+   ?
+     ?/constraint?
+   
+     bf_eventarg:
+     ?constraint name='pk_bf_evtarg' type='PrimaryKey'? ?target fie
+   ld='bf_id' /? ?/constraint?
+   
+     ?constraint name='fk_bf_earg_evtq' type='ForeignKey'?
+      ?target field='bf_event_id' reference='bf_eventqueue.bf_id' /
+   ?
+     ?/constraint?
+   
+   I am sure I missed some of the data points from the code itself.
+    Even from these few it seems we are at the least missing an ind
+   ex on bf_eventqueue.bf_state. I am unsure whether or not this is
+    the only missing index, or if perhaps the locking we perform ha
+   s an impact with clustered engines and larger tables for events.
+   
+   They do have around 300k messages and 6+million translated messa
+   ges. Their current build count is around 1k which should give a
+   good idea of the sizes of the above tables.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   All Services Layers would compete to expire events of or
+   older than the maximum configured age.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Services Layers now expire only their own events, up to a
+   much larger maximum that will qualify expiration by any
+   Services Layer.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK87788
+   
+   
+ * REPORTED COMPONENT NAME
+   BUILD FORGE EE
+   
+   
+ * REPORTED COMPONENT ID
+   5724S2701
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-02
+   
+   
+ * CLOSED DATE
+   2010-11-04
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,30 @@
+Title: IBM Error  "Cookie rejected: [...]. Domain attribute ".x.y.z" violates RFC 2109" on WebSphere - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why do I get an error "Cookie rejected: [...]. Domain attribute ".x.y.z" violates RFC 2109" with JRules installed on WebSphere? 
+
+CAUSE
+The cause of this error is an improper setting of the SSO cookie domain for a LPTA or LPTA2 token in WebSphere
+
+ANSWER
+When Rules Team Server is installed on WebSphere with SSO enabled, an error "Cookie rejected: [...]. Domain attribute ".x.y.z" violates RFC 2109" might occur when attempting to deploy a ruleapp to the Rule Execution Server (RES) or execute a Decision Validation Services (DVS) scenario. 
+
+This happens because of an improper setting of the SSO cookie domain attribute for the LPTA or LPTA2 token defined for SSO, for instance when the cookie domain is set to ".my.personal.domain". This setting effectively violates the RFC 2109 specification (refer to http://www.ietf.org/rfc/rfc2109.txt [http://www.ietf.org/rfc/rfc2109.txt]) 
+
+To resolve, the SSO cookie domain can be removed via the WebSphere administration console:
+Security > Secure administration, applications, and infrastructure > Web security > Single sign-on (SSO)
+
+An alternative can be to set the SSO cookie domain to: "xxx.my.personal.domain:9081;xxx.my.personal.domain;my.personal.domain” as it is possible to “specify multiple domains separated by a semicolon (;), a space ( ), a comma (,), or a pipe (|). Each domain is compared with the host name of the HTTP request until the first match is located”. (Reference:http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/tsec_msso.html [http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/tsec_msso.html])
+
+RELATED INFORMATION
+ Single sign-on settings [http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/usec_sso.html]
+HTTP State Management Mechanism [http://www.ietf.org/rfc/rfc2109.txt]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.6, 8.5, 8.0, 7.5 Enterprise

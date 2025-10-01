@@ -1,0 +1,41 @@
+Title: IBM How to generate license keys based on the same Rational License Key Server machine from multiple license accounts - United States
+
+Text:
+Multiple license accounts; LKC; license generation; license key center; merging licenses TECHNOTE (FAQ)
+
+QUESTION
+ How do you generate license keys based on the same IBM Rational License Key Server machine from multiple license accounts from IBM Rational License Key Center Website? 
+
+CAUSE
+You would like to know if the license keys needs to be merged when generating license keys from multiple license accounts or would it get automatically merged.
+
+ANSWER
+Procedure:
+
+
+ 1. Login into IBM Rational License key Center Website [http://www-01.ibm.com/software/rational/support/licensing/]
+    
+    If you have access to multiple license accounts then all those license accounts would be displayed in the home page after logging into the website
+    
+    
+ 2. Select the first license account from the list where license keys needs to be generated
+    
+    
+ 3. Follow the instructions on how to generate license keys [http://www-01.ibm.com/support/docview.wss?uid=swg21605567] from IBM Rational License Key Center Website
+    
+    Once the license key is generated, do not download the license keys yet since the license keys from other license account is yet to be generated
+    
+    
+ 4. Navigate to the left navigation bar and select Switch Account
+    
+    
+ 5. Select the second account from where the license keys needs to be generated for the same license server
+    
+    
+ 6. Generate the license keys based on the same license server information
+    
+    Now the license keys generated will have licenses generated from first and second license account which is automatically merged.
+    
+    Note: When providing the hostname and host id to generate license keys from the second license account ensure the same casing is used as compared to the first license account.
+    
+    Example: If upper-case is used in the first license account to generate license keys and small-case is used in the second license account to generate the license keys then the license keys wont be merged automatically where manual merging steps is needed.

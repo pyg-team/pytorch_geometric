@@ -1,0 +1,210 @@
+Title: IBM IV10234: FDCS SHOWING MQRC_GET_INHIBITED & MQRC_SYNCPOINT_NOT_AVAILABLE WHEN QUEUES ARE GET-ENABLED AFTER BEING TEMPORARILY GET-DISABLED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.8 [http://www-01.ibm.com/support/docview.wss?uid=swg24031774]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.8 [http://www-01.ibm.com/support/docview.wss?uid=swg24031775]
+WebSphere MQ v7.0.1.8 Hypervisor for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24032802]
+WebSphere MQ v7.0.1.8 Hypervisor for RHEL [http://www-01.ibm.com/support/docview.wss?uid=swg24032809]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a queue is re-enabled for MQGET after being temporarily
+   get-disabled the following fdcs are produced:
+   
+   WebSphere MQ First Failure Symptom Report
+   =========================================
+   Probe Id          :- ZS402020
+   Component         :- zstAsyncConsume
+   Program Name      :- amqrmppa
+   Major Errorcode   :- krcE_UNEXPECTED_ERROR
+   
+   MQM Function Stack
+   ------------------
+   zstAsyncConsumeThread
+   zstAsyncConsume
+   xcsFFST
+   
+   WebSphere MQ First Failure Symptom Report
+   =========================================
+   Probe Id          :- ZS402099
+   Component         :- zstAsyncConsume
+   Program Name      :- amqrmppa
+   Major Errorcode   :- STOP
+   
+   MQM Function Stack
+   ------------------
+   zstAsyncConsumeThread
+   zstAsyncConsume
+   xcsFFST
+   
+   Within the back-trace of the first FDC with probe Id ZS402020
+   the following responses from the zstMQGETM call may be seen.
+   ...
+   } zstMQGETM rc=MQRC_GET_INHIBITED
+   ...
+   { zstMQGETM
+   } zstMQGETM rc=lpiRC_WAITCANCELLED_ASYNCCONSUME
+   ...
+   { zstMQGETM
+   } zstMQGETM rc=MQRC_SYNCPOINT_NOT_AVAILABLE
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Customers using XA Co-ordination in conjunction with client
+   connections to the queue manager.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When a queue is GET(DISABLED) then a notification is sent to
+   all processes which are getting messages from the queue that
+   the MQGET operations have been inhibited. For async get
+   requests such as JMS consumers, this notification is handled
+   internally and the processing thread waits to be notified that
+   GET operations have been re-enabled.
+   However, when the application is using XA co-ordination, and
+   the XA transaction was started just as the queue was being
+   inhibited, when the queue is re-enabled for GET an attempt is
+   made to re-issue the XA start to the queue manager by the MQ
+   channel. It is this attempt to issue the 2nd XA-Start which
+   causes the FFSTs with probe ids ZS402020 and ZS402099. At the
+   time these FDCs are written, the application connection to the
+   queue manager is broken.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When a queue is GET(DISABLED) the state of the async get
+   requests is updated to reflect that the queue is disabled for
+   GET. When GET operations are re-enabled, no 2nd XA-Start request
+   is issued.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.8
+   --------           --------------------
+   Windows            U200335
+   AIX                U845856
+   HP-UX (PA-RISC)    U847965
+   HP-UX (Itanium)    U847970
+   Solaris (SPARC)    U847966
+   Solaris (x86-64)   U847972
+   iSeries            7.0.1.8
+   Linux (x86)        U847967
+   Linux (x86-64)     U847971
+   Linux (zSeries)    U847968
+   Linux (Power)      U847969
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV10234
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7221
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-04
+   
+   
+ * CLOSED DATE
+   2011-11-30
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM53248 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM53248]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7221
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,181 @@
+Title: IBM IV94961: RZ AGENT TOP SQL ATTRIBUTE DATA REQUIRES ENTERPRISE EDITION ORACLE WITH DIAGNOSTIC PACK LICENSE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITM Oracle Extended Agent (RZ) requires Enterprise Edition
+   Oracle WITH "Diagnostic Pack License" and
+   "STATISTIC_LEVEL=TYPICAL/ALL"  to support gathering of Top SQL
+   data with "KRZRDB TOP SQL" attribute group.
+   The Oracle requirements are needed to populate Oracle DB tables
+   - dba_hist_snapshot and dba_hist_sqlstat.
+   In addition to Oracle requirements for underlying database
+   tables that SQL queries are issued against, the RZ agent also
+   requires defining Situations / Historical collections against
+   the "KRZRDB TOP SQL" attribute group under the "Oracle RDBMS"
+   application to define the SQL queries to be issued against these
+   Oracle tables.
+   Tivoli Composite Application Manager for Applications > Tivoli
+   Composite Application Manager for Applications 7.2.1.1 > Oracle
+   Database Extended agent 6.3.1 Fix Pack 2 > Installation and
+   configuration > Agent installation and configuration >
+   Agent-specific installation and configuration > Configuring Top
+   SQL monitoring
+   https://www.ibm.com/support/knowledgecenter/en/SS3JRN_7.2.1/com. [https://www.ibm.com/support/knowledgecenter/en/SS3JRN_7.2.1/com.]
+   ibm.itcama.doc_7.2.1/oracleextended/fac_config_agentspecific_con
+   figtopsql.html?cp=SS3JRN_7.2.1.1
+   The ITM Situation / Historical collections defined against
+   "KRZRDB TOP SQL" - KRZ.KRZTOPSQL must specify valid values for
+   the four filter criteria:
+   "Begin Hour Before Current" -  KRZ_RDB_TOP_SQL.BEG_HOUR
+   "End Hour Before Current" - KRZ_RDB_TOP_SQL.END_HOUR
+   "Order By" - KRZ_RDB_TOP_SQL.ORDERBY
+   "Row Order" - KRZ_RDB_TOP_SQL.ROWORDER
+   
+   ITM RAS1 diagnostics are not able to capture the details of
+   the SQL queries used to get information from the Oracle
+   dba_hist_snapshot and dba_hist_sqlstat tables.
+   .
+   RZ agent user's guide should document prerequisite environment
+   needed to populate Top SQL attributes and provide example SQL
+   queries that can be run externally to verify data is possible
+   to be gathered from Oracle.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ITM Oracle Extended Agent (RZ) requires Enterprise Edition
+   Oracle WITH "Diagnostic Pack License" and
+   "STATISTIC_LEVEL=TYPICAL/ALL"  to support gathering of Top SQL
+   data with "KRZRDB TOP SQL" attribute group.
+   The Oracle requirements are needed to populate Oracle DB tables
+   - dba_hist_snapshot and dba_hist_sqlstat.
+   In addition to Oracle requirements for underlying database
+   tables that SQL queries are issued against, the RZ agent also
+   requires defining Situations / Historical collections against
+   the "KRZRDB TOP SQL" attribute group under the "Oracle RDBMS"
+   application to define the SQL queries to be issued against these
+   Oracle tables.
+   Tivoli Composite Application Manager for Applications > Tivoli
+   Composite Application Manager for Applications 7.2.1.1 > Oracle
+   Database Extended agent 6.3.1 Fix Pack 2 > Installation and
+   configuration > Agent installation and configuration >
+   Agent-specific installation and configuration > Configuring Top
+   SQL monitoring
+   https://www.ibm.com/support/knowledgecenter/en/SS3JRN_7.2.1/com. [https://www.ibm.com/support/knowledgecenter/en/SS3JRN_7.2.1/com.]
+   ibm.itcama.doc_7.2.1/oracleextended/fac_config_agentspecific_con
+   figtopsql.html?cp=SS3JRN_7.2.1.1
+   The ITM Situation / Historical collections defined against
+   "KRZRDB TOP SQL" - KRZ.KRZTOPSQL must specify valid values for
+   the four filter criteria:
+   "Begin Hour Before Current" -  KRZ_RDB_TOP_SQL.BEG_HOUR
+   "End Hour Before Current" - KRZ_RDB_TOP_SQL.END_HOUR
+   "Order By" - KRZ_RDB_TOP_SQL.ORDERBY
+   "Row Order" - KRZ_RDB_TOP_SQL.ROWORDER
+   
+   ITM RAS1 diagnostics are not able to capture the details of
+   the SQL queries used to get information from the Oracle
+   dba_hist_snapshot and dba_hist_sqlstat tables.
+   .
+   RZ agent user's guide should document prerequisite environment
+   needed to populate Top SQL attributes and provide example SQL
+   queries that can be run externally to verify data is possible
+   to be gathered from Oracle.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Software Product Compatibility Reports (SPCR) was updated to
+   display the correct supported Oracle Database editions.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV94961
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM EXT AGNT
+   
+   
+ * REPORTED COMPONENT ID
+   5724V09OR
+   
+   
+ * REPORTED RELEASE
+   631
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-04-10
+   
+   
+ * CLOSED DATE
+   2017-04-21
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

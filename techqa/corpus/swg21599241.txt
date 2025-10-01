@@ -1,0 +1,24 @@
+Title: IBM Executing a scenario suite with a Scenario Service Provider (SSP) over HTTPS - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to configure the machines hosting the WebSphere Operational Decision Management modules with regard to HTTPS when executing scenario suites ?
+
+How to avoid the exception below while requesting from Decision Center the execution of a scenario suite on Scenario Service Provider (SSP) over HTTPS ?
+
+Exception caught while contacting RES ilog.rules.res.util.http.IlrConnectionException: IO error when contacting "/res/repositoryService"
+....
+Caused by: javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.util.g: PKIX path building failed: java.security.cert.CertPathBuilderException: unable to find valid certification path to requested target
+
+
+CAUSE
+When the execution of a scenario suite is requested from a client such as Decision Center, an HTTP/HTTPS request is made to the SSP, which in turn makes HTTP/HTTPS requests to the Rule Execution Server (RES) management console (to deploy and then undeploy a ruleapp for the duration of the scenario suite run).
+
+ANSWER
+The server hosting the SSP must be considered a client to RES, and Solution A or Solution B from Deploying a ruleapp to Rule Execution Server (RES) over HTTPS [http://www.ibm.com/support/docview.wss?uid=swg21427447] must be implemented for the SSP to successfully deploy and undeploy ruleapps to the RES server over HTTPS. For example, if Solution A is chosen, the RES server certificate should be added to the SSP JVM's trust store. 
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere ILOG Decision Validation Services General Platform Independent 7.1.1, 7.1, 7.0.3, 7.0.2, 7.0.1, 7.0

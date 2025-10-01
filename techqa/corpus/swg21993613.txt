@@ -1,0 +1,27 @@
+Title: IBM STEPS TO RECLAIM ALL AVAILABLE SPACE FROM A RECLAIMABLE STORAGE DMS AUTOMATIC STORAGE TABLESPACE - United States
+
+Text:
+alter; tablespace; reclaim; reduce; max; reorg; reclaimable; storage; DMS TECHNOTE (FAQ)
+
+QUESTION
+ How to reclaim all available space from a reclaimable storage DMS automatic storage tablespace? 
+
+ANSWER
+1) First make sure you are dealing with reclaimable storage. Execute the following to list out which tablespaces have reclaimable storage enabled:
+db2 "SELECT varchar(tbsp_name, 30) as tbsp_name, tbsp_type, RECLAIMABLE_SPACE_ENABLED FROM TABLE(MON_GET_TABLESPACE('',-2))"
+
+2) For all tablespaces with reclaimable storage enabled, run the following to reclaim as much space as you can for the table and tablespace(s) in question:
+
+db2 -v "CONNECT TO <database_name>"
+db2 -v "REORG TABLE <table name> LONGLOBDATA"
+db2 -v "ALTER TABLESPACE <tablespace name> LOWER HIGH WATER MARK"
+db2 -v "ALTER TABLESPACE <tablespace name> REDUCE MAX"
+
+The sequence of these steps is important. Adding "LONGLOBDATA" to your REORG command is also important if you have LONG and/or LOB data.
+
+Once these steps are completed successfully, make sure to allow some time for DB2 to release the space back to disk. You will notice DB2 releases space back to itself right away (via "db2pd -d <database name> -tablespace" command). DB2 however needs some time to give the space back to disk.
+
+RELATED INFORMATION
+ REORG INDEXES/TABLE command [http://www.ibm.com/support/knowledgecenter/SSEPGG_11.1.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0001966.html]
+ALTER TABLESPACE statement [http://www.ibm.com/support/knowledgecenter/SSEPGG_11.1.0/com.ibm.db2.luw.sql.ref.doc/doc/r0000890.html]
+db2pd [http://www.ibm.com/support/knowledgecenter/SSEPGG_11.1.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0011729.html]

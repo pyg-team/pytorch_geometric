@@ -1,0 +1,21 @@
+Title: IBM EMAIL Probe : IMAPS on Windows - United States
+
+Text:
+nco_p_email.bat; IMAPS; TLSv1.2; TLS; gmail TECHNOTE (FAQ)
+
+QUESTION
+ nco_p_email : Is there a Support's Guide for the email probe? 
+
+CAUSE
+
+The email probe is more difficult to configure on Windows, especially when SSL is involved.
+The SSL messages are sometimes difficult to decipher.
+
+
+
+ANSWER
+ 
+
+Yes, there is a Support's Guide to the email probe on Windows, which covers connecting to a web based email server using IMAPS [SSL TLSv1.2].
+
+EMAIL_Probe_SupportsGuide_20.pdf [/support/docview.wss?uid=swg21986688&aid=2]EMAIL_Probe_SupportsGuide_20.pdf [/support/docview.wss?uid=swg21986688&aid=1]

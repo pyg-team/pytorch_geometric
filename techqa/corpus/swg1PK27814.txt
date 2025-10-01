@@ -1,0 +1,157 @@
+Title: IBM PK27814: ICMMRMDI FAILS WITH SQLCODE -300 WHEN LIBRARY SERVER IS REMOTE - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Asynchronous Delete utility fails with the following errors
+   if the resource manager is in a different DB2 subsystem from the
+   library server:
+   
+    ICMMOSD1 cleanUpItemsInLS                  01416 Error rc=501,
+   reason=-300
+    ICM083E Error reading items to delete
+   0 DSNT408I SQLCODE = -300, ERROR:  THE STRING CONTAINED IN HOST
+   VARIABLE OR PARAMETER 001 IS NOT NUL-TERMINATED
+     DSNT418I SQLSTATE   = 22024 SQLSTATE RETURN CODE
+     DSNT415I SQLERRP    = DSNXRIVE SQL PROCEDURE DETECTING ERROR
+     DSNT416I SQLERRD    = -280  0  0  -1  0  0 SQL DIAGNOSTIC
+   INFORMATION
+     DSNT416I SQLERRD    = X'FFFFFEE8'  X'00000000'  X'00000000'
+   X'FFFFFFFF'  X'00000000'  X'00000000' SQL DIAGNOSTIC INFORMATION
+    ICMMOSDI main                              01017 Error rc=9902,
+   reason=0
+    ICM085E Error deleting item fromLibrary Server
+   0ICMMOSD1 lsLogoff                          01486 Entry
+   0 DSNT408I SQLCODE = -440, ERROR:  NO PROCEDURE BY THE NAME
+   ICMLOGOFF HAVING COMPATIBLE ARGUMENTS WAS FOUND IN THE CURRENT
+   PATH
+     DSNT418I SQLSTATE   = 42884 SQLSTATE RETURN CODE
+     DSNT415I SQLERRP    = DSNXOSTP SQL PROCEDURE DETECTING ERROR
+     DSNT416I SQLERRD    = -100  0  0  -1  0  0 SQL DIAGNOSTIC
+   INFORMATION
+     DSNT416I SQLERRD    = X'FFFFFF9C'  X'00000000'  X'00000000'
+   X'FFFFFFFF'  X'00000000'  X'00000000' SQL DIAGNOSTIC INFORMATION
+    ICMMOSD1 lsLogoff                          01554 Error rc=501,
+   reason=0
+    ICM083E Error reading items to delete
+   
+   
+   Additional Keywords:
+   ICMMRMDI
+   ICMMRMAR
+   ICMTRMDI
+   ICMTRMAR
+   Asynchronous
+   Async
+   Asynch
+   AD
+   AR
+   Delete
+   Recovery
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ICMMRMDI FAILS WITH SQLCODE -300 WHEN LIBRARY SERVER IS REMOTE
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem has been resolved in fixpack4, PTF UK20739 &
+   UK20740.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK27814
+   
+   
+ * REPORTED COMPONENT NAME
+   CM390 LIB SER R
+   
+   
+ * REPORTED COMPONENT ID
+   5697H6000
+   
+   
+ * REPORTED RELEASE
+   831
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-07-07
+   
+   
+ * CLOSED DATE
+   2007-01-08
+   
+   
+ * LAST MODIFIED DATE
+   2007-01-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CM390 LIB SER R
+   
+   
+ * FIXED COMPONENT ID
+   5697H6000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R831 PSY
+   UP

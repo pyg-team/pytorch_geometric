@@ -1,0 +1,48 @@
+Title: IBM Manually installing Datacap Web controls with IBM Datacap - United States
+
+Text:
+web client controls download TECHNOTE (FAQ)
+
+QUESTION
+ How to manually install the Datacap Web controls on a client machine with IBM Datacap. 
+
+CAUSE
+Datacap Web installs to clients various controls for certain functionality such as interfacing with scanners. These controls are normally downloaded and installed automatically when accessing the website with proper browser settings and user permissions. However, there may be cases due to corporate security / user environment where manual installation may be desirable or required.
+
+ANSWER
+All Datacap Web clients 
+
+ 1. Login to the end user's machine with an account that has rights to install and register files. 
+ 2. Make \Datacap\tmweb.net\Task\dcim.cab from the Datacap Web server available on the end user's machine. 
+ 3. Extract the contents of dcim.cab into a new folder. 
+ 4. Copy all extracted files into the %windir%\SysWOW64 folder. 
+    This is typically C:\Windows\SysWOW64
+    Note: For this step and all subsequent steps, if installing to a 32 bit (x86) system, replace SysWOW64 with system32 in all paths. 
+ 5. Right-click and run Command Prompt with the Run as Administrator option if User Account Control (UAC) is enabled. 
+ 6. Execute the following commands, adjusting paths as necessary:  * regsvr32 C:\Windows\SysWOW64\DcEdit.ocx 
+     * regsvr32 C:\Windows\SysWOW64\dcimage.ocx 
+     * regsvr32 C:\Windows\SysWOW64\dcthumbs.ocx 
+     * regsvr32 C:\Windows\SysWOW64\dcsimage.ocx
+    
+    
+
+Datacap Web scan stations 
+
+In addition to the above, Datacap Web scan stations require the following: 
+
+ 1. Make \Datacap\tmweb.net\Task\dctwx.cab from the Datacap Web server available on the end user's machine. 
+ 2. Extract the contents of dctwx.cab into a new folder. 
+ 3. Copy all extracted files into the %windir%\SysWOW64 folder. 
+ 4. Right-click and run Command Prompt with the Run as Administrator option if User Account Control (UAC) is enabled. 
+ 5. Execute the following commands, adjusting paths as necessary:
+    regsvr32 C:\Windows\SysWOW64\dcstwx.ocx
+    regsvr32 C:\Windows\SysWOW64\Accusoft.TwainPro7.ActiveX.dll
+
+
+Additional information 
+
+Prior to testing, ensure that all other prerequisites mentioned in the installation and configuration guide such as the ability to run ActiveX components are met before confirming resolution. 
+
+If using Datacap 8.1 or earlier, see Manually installing Taskmaster Web controls in IBM Datacap Taskmaster Capture [http://www.ibm.com/support/docview.wss?uid=swg21606423]. 
+
+When this procedure is being used to update client components, some administrators may want to disable automatic version checking. For instructions, see Disabling the Datacap Web client component check with IBM Datacap [http://www.ibm.com/support/docview.wss?uid=swg21962027].

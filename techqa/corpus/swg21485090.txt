@@ -1,0 +1,27 @@
+Title: IBM Cannot recode numeric variables with comma based decimals into string variables using the Transform - Recode into different variables dialog - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am working with Statistics 18 on a comma based locale for decimal separators e.g. German or Polish In my data file I have a numeric variable with decimals e.g. 12,50 (this is 12.50 on a locale using dots as decimal separator). I would like to recode these values into a string variable with Recode into Different Variable dialog.
+On the Old and New Values dialog I select the option "Output variables are strings". I enter e.g. 12,50 as old value and 13,50 as new value. However, when I click on the Add button I get an error "Invalid numeric value" and I am unable to enter these string values, why is this? This does only happen when I have selected "Output variables are strings" and not with numeric output variables. 
+
+RESOLVING THE PROBLEM
+This problem has been reported to SPSS Development - Workaround Available. It is resolved in Statistics 19.
+As a workaround please use either syntax or set the locale to a non comma-based locale (e.g. English) and enter your decimal values in the transform - recode into different variables menu. For the above example the syntax would be:
+
+STRING mynewstringvar (A8) .
+RECODE
+v1
+(12.50='13,50') INTO mynewstringvar .
+EXECUTE
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 86950

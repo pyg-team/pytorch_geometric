@@ -1,0 +1,149 @@
+Title: IBM JR40177: BPD INSTANCE FROM START MESSAGE EVENT DOESN'T START ON RUNTIME UNTIL SNAPSHOT IS MANUALLY SET AS DEFAULT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 7.5 Refresh Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24031230]
+WebSphere Enterprise Service Bus V7.5 Refresh Pack 1 (7.5.1.0) [http://www-01.ibm.com/support/docview.wss?uid=swg24031270]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you follow below steps,
+   1. Create Background Service and onEvent UCA 'UCA1'
+   2. Create BPD 'BPD1'which starts from Start Message Event
+   3. Link created UCA to the Start Message Event
+   4. Create Service for invoking the UCA: Start-UCA1-End
+   6. Invoke the UCA
+   Then the instance of the BPD appeared in Process Inspector for
+   Process Center.
+   
+   7. Create Snapshot and install it on Runtime Server
+   8. Invoke the UCA on Runtime Server
+   9. Observe Process Inspector
+   Then no instances of the 'BPD1' are started on Runtime Server.
+   
+   But the expected result is that the instance of the 'BPD' should
+   be started on Runtime Server after UCA is invoked.
+   
+   Jira Number: WLE-4354
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Create one more Snapshot and install it on Runtime. Make just
+   installed Snapshot default manually in Process Admin Console.
+   Invoke UCA. As the result instance is started in the second
+   Snapshot.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  BPD INSTANCE FROM START MESSAGE EVENT DOESN'T START
+   ON RUNTIME
+   UNTIL SNAPSHOT IS MANUALLY SET AS DEFAULT
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  iFix published in FixCentral
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR40177
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-21
+   
+   
+ * CLOSED DATE
+   2012-01-20
+   
+   
+ * LAST MODIFIED DATE
+   2012-01-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP
+   
+   
+ * R751 PSY
+   UP

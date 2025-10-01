@@ -1,0 +1,37 @@
+Title: IBM Enable streaming search to prevent socket timeout failures during long running Content Based Retrieval (CBR) search operations - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Complex Content Based Retrieval (CBR) queries can take over an hour to complete when querying large Content Search Services (CSS) collections. In such cases, a CSS client socket read timeout exception can occur which will cause the search operation to fail. 
+
+SYMPTOM
+CSS client side will see a "java.net.SocketTimeoutException: Read timed out error" in the P8 Content Platform Engine (CPE) log file. CSS server side will see a "java.net.SocketException: Broken pipe" error in the CSS Trace log file.
+
+
+RESOLVING THE PROBLEM
+Upgrade to 5.2.1.7-P8CPE and 5.2.1.7-P8CSS or higher. 
+
+Enable the P8 CPE/CSS streaming search configuration option to allow CSS search results to be returned to the CPE as they become available instead of delaying until the entire CSS search operation is finished. Periodic "keep alive" responses are also used by CSS to prevent a socket time out occurrence in between streaming result replies. 
+
+To enable streaming search, add the following parameter to the FileNet.properties file on the P8 CPE server: 
+
+ com.filenet.cbr.EnableStreamingSearch=true 
+
+Alternatively, this parameter can also be applied as a JVM system property by including: 
+
+ -Dcom.filenet.cbr.EnableStreamingSearch=true 
+
+in the CPE application server JVM arguments list. 
+
+The CPE server must be restarted to allow any change in this parameter value to take place. 
+
+ 
+
+Caution is advised when enabling streaming search in a CSS environment where the CBR search operation can involve many CSS collections at one time (> 40), otherwise increased P8 CPE server CPU utilization rate can occur. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management FileNet P8 Platform

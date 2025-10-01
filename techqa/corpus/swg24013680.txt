@@ -1,0 +1,70 @@
+Title: IBM PK30872; 6.0.2.9: "java.lang.securityexception: attempted commit in subordinate" - United States
+
+Text:
+PK30872; PK30872; PK30872 DOWNLOADABLE FILES
+
+ABSTRACT
+ "java.lang.SecurityException: Attempted commit in subordinate" occurs when committing transactions involving third party C++ Orb 
+
+DOWNLOAD DESCRIPTION
+PK30872 resolves the following problem:
+
+ERROR DESCRIPTION: 
+In IBM® WebSphere® Application Server V6, the following exception may occur when committing a transaction involving a third-party C++ ORB, such as OmniORB. The problem did not exist with WebSphere Application Server V5.1. 
+
+java.lang.SecurityException: Attempted commit in subordinate 
+at 
+com.ibm.ws.Transaction.JTA.UserTransactionImpl.commit(UserTransa
+ctionImpl.java:248) ... 
+
+LOCAL FIX: 
+none 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+All WebSphere Application Server version 6.0.2 users.
+
+PROBLEM DESCRIPTION:
+"java.lang.SecurityException:
+Attempted commit in subordinate" occurs when committing transactions involving third party C++ Orb
+
+RECOMMENDATION:
+None
+
+The problem occurs because, upon return from the third party Orb, there was no transaction context present on the response. This caused the transaction service to believe the transaction was still active on the remote server. When the request to commit was made, a check was made to see if the transaction was on-server - this failed, and the resulting SecurityException was thrown.
+
+PROBLEM CONCLUSION: 
+Class TxClientInterceptor will be changed to handle the case when a response is returned without a transaction context correctly. 
+
+The fix for this APAR is currently targeted for inclusion in Fix Pack 6.0.2.17. 
+
+Please refer to the Recommended Fixes page for delivery information: 
+http://www.ibm.com/support/docview.wss?uid=swg27004980 [http://www.ibm.com/support/docview.wss?uid=swg27004980] 
+
+
+
+This fix has already been applied to version 6.1.0.
+
+PREREQUISITES
+Please download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK30872/readme.txt] US English 5530 
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 6.0.2.9-WS-WAS-IFPK30872 09-29-2006 US English 9065 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK30872/6.0.2.9-WS-WAS-IFPK30872.pak] DD 
+TECHNICAL SUPPORT
+ Contact IBM Support using Service Request [http://www.ibm.com/software/support/probsub.html], visit the WebSphere Application Server Support Web site [http://www.ibm.com/software/webservers/appserv/was/support/], or contact 1-800-IBM-SERV(U.S. only). 
+
+Cross Reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK 
+ [/support/docview.wss?uid=swg24013680&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24013680&aid=2]Problems (APARS) fixed
+PK30872

@@ -1,0 +1,160 @@
+Title: IBM PK74174: CONFIGENGINE WP-ADD-LA-PROPERTY TASK FAILS WITH SCHEMAALREADYEXI STEXCEPTION: CWWIM0511E - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running the ConfigEngine wp-add-la-property task, the task
+   may fail for various errors and does not add the new property to
+   the Properties Extension database
+   
+   However, when you correct the errors and run the task again, it
+   will fail with this new error:
+   
+   [wplc-add-property]
+   com.ibm.websphere.wim.exception.SchemaAlreadyExistException:
+   CWWIM0511E The 'teamname' property type is already defined for
+   the 'PersonAccount' entity type.
+   [wplc-add-property]     at
+   com.ibm.ws.wim.SchemaManager.addPropertySchema(SchemaManager.jav
+   a:691)
+   [wplc-add-property]     at
+   com.ibm.ws.wim.SchemaManager.createSchema(SchemaManager.java:155
+   9)
+   [wplc-add-property]     at
+   com.ibm.websphere.wim.ServiceProvider.createSchema(ServiceProvid
+   er.java:175)
+   [wplc-add-property]     at
+   com.ibm.websphere.wim.ejb.WIMServiceBean.createSchema(WIMService
+   Bean.java:119)
+   
+   Cause: The wp-add-la-property task incorrectly adds the new
+   property to wimextensions.xml located in
+   <wp_profile_root>/config/cells/<cellname>/wim/model even though
+   the task failed.
+   
+   
+   This issue is resolved in fixpack v6101 but customers who cannot
+   upgrade need a separate APAR for v6.1.0
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Remove the failing property entry from
+   wimextensions.xml and restart server1 and WebSphere_Portal
+   servers before rerunning wp-add-la-property task.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When running the ConfigEngine wp-add-la-property task, the task
+   may fail for various errors and does not add the new property to
+   the Properties Extension database
+   
+   However, when you correct the errors and run the task again, it
+   will fail with this new error:
+   Cause: The wp-add-la-property task incorrectly adds the new
+   property to wimextensions.xml located in
+   <wp_profile_root>/config/cells/<cellname>/wim/model even though
+   the task failed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Fixed in 6.101 fixpack.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK74174
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED UR3
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-21
+   
+   
+ * CLOSED DATE
+   2010-06-28
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSN
+   UP

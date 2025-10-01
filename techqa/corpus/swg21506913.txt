@@ -1,0 +1,51 @@
+Title: IBM How to use the Optimizer in AppScan Standard - United States
+
+Text:
+Extentions; Explore; Optimization; Module TECHNOTE (FAQ)
+
+QUESTION
+ How do you use Explore Optimization Module in IBM Security AppScan Standard? 
+
+CAUSE
+AppScan Standard includes an extension called Explore Optimization Module that helps optimizing large scans. The extension optimizes scans when the scanned site uses: 
+
+ * URL re-writing 
+ * Navigational parameters (to turn on this function on, set Run navigational parameter detection to True in the optimizer dialog)
+
+
+
+This technote shows how to turn the extension on. For more information: 
+ * on the optimizer consult video Optimize scans using Optimization Module [https://www.youtube.com/watch?v=mMyzTbsDUok] and the AppScan Standard Help: Help > AppScan Help (search for 'optimization'). 
+ * on optimizing large scans consult technote How to optimize large scans [http://www.ibm.com/support/docview.wss?uid=swg21501218].
+
+
+
+ANSWER
+You can use the Explore Optimization Module in two ways: 
+
+ 
+
+1. Turn on the Optimizer for all scans performed by your AppScan Standard installation. 
+
+ * Open the Optimizer dialog by selecting: Tools > Extensions > Explore Optimization: Configure 
+ * In the opened dialog, check option Run Explore Optimizer automatically during scans. 
+ * Click OK.
+   
+   The Optimizer dialog: 
+   [/support/docview.wss?uid=swg21506913&aid=1] [/support/docview.wss?uid=swg21506913&aid=1]
+   
+   
+    
+   
+   After the extension is turned on, it will be applied automatically to each scan when the number of Visited Pages in the scan reaches the number of Minimum links to start module specified in the optimizer dialog. By default the number is set to 1000. 
+   
+   When the optimizer is kicked on, AppScan will start exploring from scratch with the optimizer analyzing the URLs while they are explored (Note: The number of Visited Pages will turn back to 0, and AppScan will start exploring again). 
+   
+   
+   
+
+
+2. Turn the Optimizer on a specific scan 
+
+ * 
+ * Tools > Extensions > Explore Optimization Module: Run

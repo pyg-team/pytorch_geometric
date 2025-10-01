@@ -1,0 +1,38 @@
+Title: IBM Cognos Disclosure Management 10.2.4 Interim Fix 10 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This Interim Fix provides product corrections, enhancements and security updates for IBM Cognos Disclosure Management 10.2.4. 
+
+DOWNLOAD DESCRIPTION
+Cognos Disclosure Management 10.2.4 Interim Fix 10 is an update of IBM Cognos Disclosure Management 10.2.4 for existing IBM Cognos Disclosure Management customers. This Interim Fix addresses security vulnerabilities and includes important product corrections detailed in the Problem Solved section below.
+
+
+Please refer to the following Security Bulletin for more details: 
+Cognos Disclosure Management file upload bypass (CVE-2015-5014) [http://www-01.ibm.com/support/docview.wss?uid=swg21967228] 
+
+Additionally, a new capability for SaaS offerings to connect to On Prem HFM data sources has been introduced, more details in this Technote [http://www-01.ibm.com/support/docview.wss?uid=swg27046820]. This Interim Fix contains also third party updates, most of them around the report generation engine.
+
+PREREQUISITES
+This Interim Fix requires that Cognos Disclosure Management 10.2.4 is already installed. An existing installation may optionally include earlier interim fixes for Cognos Disclosure Management 10.2.4.
+
+Our interim fixes are cumulative by design. Hence Cognos Disclosure Management 10.2.4 Interim Fix 10 includes all updates from earlier 10.2.4 interim fixes. 
+
+INSTALLATION INSTRUCTIONS
+For more details on installing, upgrading, configuring, or setting up IBM Cognos Disclosure Management, please refer to the following document: 
+
+URL LANGUAGE SIZE(Bytes) Cognos Disclosure Management 10.2.4 Knowledge Center [http://www-01.ibm.com/support/knowledgecenter/SSQK59_10.2.4/com.ibm.swg.ba.cognos.cdm.doc/welcome.html] English 99 
+DOWNLOAD PACKAGE
+Please click the FC link below to start the download from Fix Central. 
+
+
+PROBLEMS SOLVED
+Cognos Disclosure Management 10.2.4 Interim Fix 10 Fix List [http://www-01.ibm.com/support/docview.wss?uid=swg27045158#tab_1024IF10]
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Cognos Disclosure Management 10.2.4 IF10 Windows 30 Sep 2015 Language Independent 343613955 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Information+Management&product=ibm/Information+Management/Cognos+Disclosure+Management&release=All&platform=All&function=fixId&fixids=10.2.4.0-BA-CDM-IF10:0&includeSupersedes=0&source=fc] [ ]

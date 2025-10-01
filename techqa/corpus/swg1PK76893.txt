@@ -1,0 +1,119 @@
+Title: IBM PK76893: OPTIONS FILES SHOULD ACCEPT CQ USERS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Option files for Flexlm License server needs the windows account
+   in the INCLUDE part. It should be possible to add a CQ User.
+   
+   A CQ user that uses another Windows account than normally cannot
+   
+   retrieve a license when there exists an options file for Flexlm
+   
+   
+   
+   Successful solution provides:
+   It should be possible to include CQ users in the options file fo
+   r Flexlm Server.   CQ-license has to be checked out with usernam
+   e which will be filled into the CQ-Login form. License 'check ou
+   t' after CQ Login form.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Customer was using Windows user names in options files but
+   the 'name' used by FlexLM was actually CQ username and DBSET
+   name.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  There is no plan to change this behavior.  The customer is
+   now generating the correct options file values with CQ
+   username and DBSET name, which has solved the problem.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK76893
+   
+   
+ * REPORTED COMPONENT NAME
+   CLRQUEST MSITE
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3700
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-12-04
+   
+   
+ * CLOSED DATE
+   2009-05-27
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,63 @@
+Title: IBM Windows Services fail after changing the informix password - United States
+
+Text:
+System error 1069 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This article describes to avoid a problem in which Services may get System error 1069 after changing the password of the user informix. 
+
+RESOLVING THE PROBLEM
+ 
+
+When IBM Informix® Dynamic Server (IDS) is installed, several Windows services are created which run as user informix. If the informix password is changed, the password for the services which run as informix needs to be changed manually or the services will fail to start with the following error:
+
+
+
+ * System error 1069 has occurred.
+ * 
+ * The service did not start due to a logon failure.
+ * 
+
+
+Starting with IDS version 9.30.TC1 a utility called ixpasswd.exe is supplied in the %INFORMIXDIR%\bin directory. 
+
+The ixpasswd.exe utility finds every Windows service that logs on as informix and updates the password. Here is the syntax of ixpasswd.exe: 
+
+ * ixpasswd
+ * .exe
+ * 
+ * -l
+ * 
+ * -y
+ * 
+ * new_password
+ * 
+
+ *  -l  * 
+   
+   
+   -y  * 
+    * new_password
+    * 
+   
+   
+
+
+The ixpasswd.exe utility must be run as the user informix. 
+
+If a server is in a domain and both a domain and a local informix user exist then running ixasswd.exe as a domain user will only change the password used by services that log on as the domain user informix, and running ixpasswd.exe as a local user will only change the password used by services that log on as the local user informix. 
+
+If you are logged on as a domain user and want to change the password used by the services that log on as the local informix user, use the -l option to force ixpasswd.exe to change the password used by the local services. 
+ * 
+ * Example:
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  ixpasswd.exe -l -y newpasswd 
+
+
+
+The ixpasswd.exe utility can also be used with older versions of IDS. For convenience a copy is provided here: 
+ *  ixpasswd.zip [/support/docview.wss?uid=swg21137990&aid=2] [/support/docview.wss?uid=swg21137990&aid=1]

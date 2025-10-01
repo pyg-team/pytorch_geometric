@@ -1,0 +1,89 @@
+Title: IBM Initial login to the FileNet Workplace fails with a java.lang.NullPointerException - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Initial login to the FileNet Workplace application to set the bootstrap properties fails with a java.lang.NullPointerException 
+
+SYMPTOM
+The following stack dump is returned by the FileNet Workplace application for the failed login attempt. 
+
+Error Message:
+
+null
+
+Exception Class:
+java.lang.NullPointerException
+
+Stack Trace:
+java.lang.NullPointerException
+at org.apache.jasper.runtime.JspWriterImpl.write (JspWriterImpl.java:426)
+at com.filenet.wcm.apps.server.ui.info.prefs.PrefAccessRolesInfoPage.renderRoleMembers (PrefAccessRolesInfoPage.java:254)
+at com.filenet.wcm.apps.server.ui.info.prefs.PrefAccessRolesInfoPage.renderRole (PrefAccessRolesInfoPage.java:220)
+at com.filenet.wcm.apps.server.ui.info.prefs.PrefBootstrapInfoPage.renderAdminRole (PrefBootstrapInfoPage.java:114)
+(AbstractJSPExtensionServletWrapper.java:259)
+at com.ibm.ws.webcontainer.webapp.WebAppRequestDispatcher.include 
+
+
+CAUSE
+The FileNet Content Engine Directory Configuration's User Display Name Attribute: property is incorrect.
+
+
+ENVIRONMENT
+FileNet Content Engine / FileNet Application Engine
+
+
+
+DIAGNOSING THE PROBLEM
+
+
+
+ 1. Access FileNet Enterprise Manager
+    
+    
+ 2. Right-click on the domain node
+    
+    
+ 3. Click Properties.
+    
+    
+ 4. Click the Directory Configuration tab. 
+    
+    
+ 5. Select the directory configuration. 
+    
+    
+ 6. Click Modify to open the directory configuration properties sheet. The properties sheet consists of three tabs: General, User, and Group, which display properties for the supported directory configurations. 
+    
+    
+ 7. Click the User tab and review the User Display Name Attribute.. 
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. In FileNet Enterprise Manager
+    
+    
+ 2. Right-click on the domain node
+    
+    
+ 3. Click Properties. 
+    
+    
+ 4. Click the Directory Configuration tab. 
+    
+    
+ 5. Select the directory configuration to modify. 
+    
+    
+ 6. Click Modify to open the directory configuration properties sheet. The properties sheet consists of three tabs: General, User, and Group, which display properties for the supported directory configurations. 
+    
+    
+ 7. Click the User tab and make the necessary change to the User Display Name Attribute. 
+    
+    
+ 8. Click OK to save the changes.
+    
+    
+ 9. Restart the FileNet Content Engine and FileNet Application Engine.

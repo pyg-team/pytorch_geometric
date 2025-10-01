@@ -1,0 +1,209 @@
+Title: IBM IV85146: NO VALID DATA ERROR RETURNED ERROR OPENING WO - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Details:
+   
+   An Anywhere user was about to open a WO by tapping it but it
+   gave the following error:
+   
+   No Valid Data Error Returned.
+   
+   The  user is logged with same username as another engineer at
+   the same time, for purpose of testing Anywhere in UAT. Both
+   engineers are using same user name so it might be the case that
+   WO is completed by the first engineer and the other engineer is
+   still able to view it.
+   
+   The error went away when the engineer experiencing the error
+   message, refreshed the query base.
+   
+   Steps to replicate:
+   
+   1. Login to Anywhere Work Execution application
+   
+   2. Login with same username from another device
+   
+   3. The last user attempts to open an existing WO and receives
+   the error:
+   
+   No Valid Data Error Returned.
+   
+   Product Version #:
+   IBM Maximo Anywhere 7.5.2.1 Build 20150730-101121-0400 DB Build
+   V7521-04
+   Tivoli's process automation engine 7.5.0.8 Build 20150401-2000
+   DB Build V7508-33
+   IBM Maximo Asset Management 7.5.0.8 Build 201504071004 DB Build
+   V7508-00
+   IBM Maximo for Service Providers 7.5.3.0 Build 20140708-1430 DB
+   Build V7530-19
+   MaxTAF 7.5.0.0 Build 2.4.0.0 DB Build V7500-24
+   IBM Maximo for Utilities 7.5.0.1-20140311-0927 Build
+   20120710-0136
+   DB Build V7501-14 HFDB Build HF7501-04
+   TPAE OSLC Object Structure 7.5.2.1 Build 20150730-101114-0400
+   DB Build V7521-03
+   IBM Maximo Asset Management Scheduler 7.5.2.0 Build
+   20150401-2000 DB Build V7520-181
+   IBM Maximo Spatial Asset Management 7.5.0.1-20151113-1143 Build
+   20120714-2208 DB Build V7501-13 HFDB Build HF7501-07
+   IBM TPAE Integration Framework 7.5.1.3 Build 20150403-1800 DB
+   Build V7513-02
+   A.W. 7.5.0.R4 Build 0 DB Build V7500-00
+   
+   WAS 7.0.0.33
+   Oracle 11.2
+   
+   Mobile device: Panasonic Toughpad FZ  G1 : Windows 8.1
+   
+   Operating System:
+   Windows Server 2008 R2
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Dev to provide fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Any user with a slow system could hit this.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * If I attempt to add data to a work order that is being       *
+   * removed from the list, I could receive an error that says    *
+   * "No Valid Error".  The work order might be removed from the  *
+   * list because someone else has completed it while you were    *
+   * working on it. This error happens because the work order     *
+   * that I'm trying to modify no longer appears in my list so I  *
+   * cannot modify it.  You can refresh the querybase to get past *
+   * the error, but the data you were trying to add to the        *
+   * workorder would be lost.                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to the latest fixpack to receive this fix.           *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  We needed additional code to catch when this happens, and
+   successfully try and send the data to the Maximo server, even if
+   the workorder has already been removed from my list.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV85146
+   
+   
+ * REPORTED COMPONENT NAME
+   ANYWHERE APPS
+   
+   
+ * REPORTED COMPONENT ID
+   5725M39MA
+   
+   
+ * REPORTED RELEASE
+   752
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-25
+   
+   
+ * CLOSED DATE
+   2016-05-31
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  DATA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ANYWHERE APPS
+   
+   
+ * FIXED COMPONENT ID
+   5725M39MA
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R752 PSY
+   UP
+   
+   
+ * R760 PSY
+   UP

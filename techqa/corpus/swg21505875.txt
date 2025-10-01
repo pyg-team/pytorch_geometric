@@ -1,0 +1,51 @@
+Title: IBM Forgotten or lost BigFix Passwords - United States
+
+Text:
+WebReports; Server; Database; BESAdmin; Console TECHNOTE (FAQ)
+
+QUESTION
+ What do I do if I forget my passwords? 
+
+ANSWER
+If you have lost or forgotten certain passwords and need to reset them: 
+
+ * Site credentials password -- If you lose the site credential files or password, you will need to generate another set of site credentials and do a complete reinstall of the BigFix system. 
+ * BigFix Console operator password -- If you lose the publisher credential files or password, you will need to create a replacement set of publisher credentials using the BES Admin Tool. 
+ * BigFix Web Reports login -- If you lose your web reports login and cannot get access to web reports, you can follow one of these two methods: 
+ * These steps will clear all the Web Reports logins, and then create a new web reports administrator account to recover access:
+
+ 1. Open a command prompt on the BigFix Server computer that is running the web reports database (you need to be logged in as an administrator on the computer). 
+ 2. Type 'osql -E' at the command line to log into the database. 
+ 3. Type 'use BESReporting' at the '1>' prompt to access the Web Reports database. 
+ 4. Type 'go' to execute the previous action. 
+ 5. Type 'select * from USERS' to see the users in the database (the password is stored as a one-way hash of the password you type into to BES). 
+ 6. Type 'go' to execute the previous action. 
+ 7. Type 'delete from USERS' to clear the USER table. 
+ 8. Type 'go' to execute the previous action (note that this will clear all of the web reports users). 
+ 9. Open the web reports web page again to recreate a username/password  * You can also run the query below to insert an administrator web reports user into the database. The user/password will be "bigfix/bigfix".  * 
+       
+       
+    
+    
+
+Run the following query on the BESReporting database to create a new user 
+
+-- Run all lines together to ensure the same @ID value is used in all inserts. 
+begin 
+declare @id int 
+insert into USER_NAMES ( LoginName, DisplayName, IsADUser ) values ( 'bigfix', 'bigfix', 0 ) 
+set @id = (select UserID from user_names where LoginName = 'bigfix') 
+insert into USERS ( UserID, LoginName, PasswordHash, PasswordSalt ) values ( @id, 'bigfix', 'gwCOEwCUD1ntCnCBwRDV+VzdvvM', '1' ) 
+insert into ROLE_USER_ASSIGNMENTS ( UserID, RoleID ) values ( @id, 1 ) 
+end 
+go  For more information on losing passwords, please visit:
+Disaster Recovery Overview [https://www.ibm.com/developerworks/mydeveloperworks/wikis/home?lang=en#/wiki/Tivoli%20Endpoint%20Manager/page/Disaster%20Recovery%20Overview]..
+
+RELATED INFORMATION
+ Password Recovery [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli Endpoint Manager/page/Password Recovery]
+
+
+
+
+HISTORICAL NUMBER
+ 122

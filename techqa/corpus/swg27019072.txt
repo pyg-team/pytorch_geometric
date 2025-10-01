@@ -1,0 +1,109 @@
+Title: IBM Required IBM WebSphere Application Server Network Deployment (ND) and HTTP Server fix pack and interim fixes for use with IBM InfoSphere Information Server 8.5 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ If you preinstall WebSphere Application Server instead of installing it by using the InfoSphere Information Server installation program, also install these fix packs and iFixes. 
+
+CONTENT
+
+
+The following table specifies the WebSphere Application Server Network Deployment (ND) fix packs and iFixes to install. Install fix pack first then apply all the interim fixes before installing InfoSphere Information Server 8.5.
+
+Platform WebSphere Application Server (ND) Fix pack level interim fixes All 6.1.0.29 IFPK96868 (61.0.27-WS-WAS-IFPK96868d.pak)
+IFPK99266 (6.1.0.17-WS-WAS-MultiOS-IFPK99266.pak)
+IFPK99560 (6.1.0.27-WS-WAS-IFPK99560.pak) AIX, 
+Linux,
+Windows 7.0.0.11 IFPK96868 (7.0.0.7-WS-WAS-IFPK96868c.pak)
+IFPM21207 (7.0.0.0-WS-WAS-IFPM21207.pak)
+IFPM20596 (7.0.0.0-WS-WASJavaSDK-LinuxX32-IFPM20596.pak)
+7.0.0.0-WS-WASJavaSDK-WinX32-IFPM20596.pak) Solaris,
+HP 7.0.0.11 FPK96868 (7.0.0.7-WS-WAS-IFPK96868c.pak)
+IFPM21207 (7.0.0.0-WS-WAS-IFPM21207.pak) 
+
+ 
+
+Where do I obtain fix packs and interim fixes?
+- Obtain 6.1.0.29 fix pack and Java SDK cumulative fix for your specific platform from the following links:
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg24025185 [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg24025185]
+
+
+- Obtain 7.0.0.11 fix pack and Java SDK cumulative fix for your specific platform from the following links:
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg24026852 [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg24026852]
+
+
+IBM WebSphere Application Server Update Installer:
+To apply WebSphere Application Server fix packs and interim fixes, you will need to download and Install WebSphere Application Server Update Installer 7.0.0.11 (or higher) for your specific platform from this link: http://www.ibm.com/support/docview.wss?rs=180&uid=swg24020212 [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg24020212]
+
+
+ * Note: Update Installer V7.0.0.11 is backwards compatible. A single instance of the V7.0.0.11 Update Installer can apply maintenance and updates to WebSphere Application Server V7.0.0.x, V6.1.0.x and any newer maintenance from WebSphere Application Server.
+
+
+Make sure that you are the root user. Install Update Installer following the instructions at this link: http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.installation.nd.doc/info/ae/ae/tins_updi_install.html [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.installation.nd.doc/info/ae/ae/tins_updi_install.html] 
+
+Once the Update Installer has been successfully installed, follow the steps below to apply Web Sphere Server fix packs and interim fixes. 
+
+Considerations before you start installing fix pack and interim fixes: 
+- With each WebSphere Application Server fix pack a cumulative Java SDK fixpack is provided. The Java SDK Fix Pack is a separate download component. It does not get upgraded when installing the AppServer fix pack only. To upgrade the Java SDK version, you must download and install the Java SDK Fix Pack separately. 
+- If the WebSphere Application Server product installed is 32-bit, apply the 32-bit version of the fixpack. Similarly, if a 64-bit version of WebSphere Application Server product is installed, install a 64-bit fixpack. 
+- Do not attempt to unzip or unpack the *.pak file. If your browser changes the download package from *.pak file to *.zip, do not attempt to unzip the package. Instead, rename the file to *.pak and proceed to the next step without unzipping the renamed *.pak file. 
+- On UNIX platform, make sure you are root user and umask is set to 022. Open a terminal window and type: umask to check current setting. Type umask 022 to change the setting. 
+- On WINDOWS platform, make sure you have administrative privileges 
+
+A. Standalone server: 
+- Stop WebSphere Application Server:  * UNIX: ./stopServer.sh <serverName> (i.e. /opt/IBM/WebSphere/AppServer/bin/stopServer.sh server1) 
+ * Windows: stopServer.bat <serverName> (i.e. C:\IBM\WebSphere\AppServer\bin\stopServer.bat server1)
+
+
+- Ensure all java processes are stopped:  * UNIX: On a terminal, type 'ps -ef | grep -i java' to list all the running processes. Then type kill <pid> where pid is the process ID for java process. 
+ * Windows: Using Windows taskmanager, identify Java processes and stop them.
+
+
+- Download and copy all the fixes to the < was_home>/UpdateInstaller/maintenance directory 
+- Go to the Update installer directory (for example, < was_home>/UpdateInstaller) and run ./update.sh command on UNIX or update.bat command on Windows 
+
+For WebSphere 6.1, using IBM WebSphere Update Installer: 
+- Install IBM WebSphere 6.1.0.29 fix pack 
+- Install IBM WebSphere 6.1.0.29 Java SDK fix pack 
+- Install WebSphere interim fixes 
+
+For WebSphere 7.0, using IBM WebSphere Update Installer: 
+- Install IBM WebSphere 7.0.0.11 fix pack 
+- Install IBM WebSphere 7.0.0.11 Java SDK fix pack 
+- Install WebSphere interim fixes 
+
+B, Cluster: 
+You must apply the same maintenance packages to all of the WebSphere Application Server installations in a cluster. Identify the Deployment Manager Server of your cluster and all its cluster members then follow steps below: 
+
+DMGR Node:  *   1. Stop the deployment manager on the Network Deployment machine by running the following command from the <nd_root>/bin directory:
+       UNIX: ./stopManager.sh
+       Windows: stopManager.bat 
+    2. Apply fix pack and interim fixes (as described at section A above) 
+   
+   
+
+
+Cluster member nodes:  *   1. Stop the node agent on each node by running the following command from the <was_profile_root> [http://publib.boulder.ibm.com/infocenter/wpdoc/v510/topic/com.ibm.wp.ent.doc/wps/wpsdirstr.html#wpsdirstr__was_profile_root]/bin directory:  * UNIX: ./stopNode.sh 
+        * Windows: stopNode.bat 
+       
+       
+    2. Apply fix pack and interim fixes on each node (as described at section A above)
+   
+   
+
+
+C. HTTPServer: 
+If you use IBM HTTP Server as the front end dispatcher, then you must apply the same maintenance packages to your HTTPServer. Identify the server associated with your HTTP Server, stop the HTTP Server process, and then perform the following tasks:  *  Apply IBM HTTP Server fix pack Apply Java SDK fix pack 
+
+
+D. HTTPServer Plugin:  *  Apply HTTP Server plugin fix pack Apply Java SDK fix pack 
+
+
+After you have successfully completed steps above, you can start this cluster. 
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2011/7/6

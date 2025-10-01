@@ -1,0 +1,128 @@
+Title: IBM Security Bulletin: Potential Denial of Service in IBM WebSphere Application Server CVE-2014-0050 - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Apache Commons FileUpload used by IBM WebSphere Application Server may be vulnerable to a denial of service. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2014-0050 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0050]
+Description: Potential denial of service in Apache Commons FileUpload 
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/90987 [https://exchange.xforce.ibmcloud.com/vulnerabilities/90987] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+
+AFFECTED PRODUCTS AND VERSIONS
+VERSIONS AFFECTED: This problem affects the following versions of the WebSphere Application Server or WebSphere Application Server Hypervisor Edition: 
+· Version 8.5 Full Profile and Liberty Profile
+· Version 8
+· Version 7
+· Version 6.1 
+This problem also affects the following versions of WebSphere Extended Deployment Compute Grid: 
+· Version 8 on WebSphere Application Server Version 7 or Version 8
+· Version 6.1 on WebSphere Application Server Version 7
+
+
+REMEDIATION/FIXES
+ Apache Commons FileUpload used by the Administrative Console and WebContainer in WebSphere Application Server and batch processing in IBM Compute Grid may be vulnerable to a denial of service, caused by the improper handling of Content-Type HTTP header for multi-part requests. By sending a specially-crafted request, an attacker could exploit this vulnerability to cause the application to enter into an infinite loop. 
+
+
+Although the file in error is present in several components, some instances of having this file is not as severe as others. 
+
+If you have an application which uses MultipartConfig for File upload supported by Java Servlet Specification 3.0 and above with version 8.0 or version 8.5 for both Full profile and Liberty, it is extremely important that you install the Web Container Interim Fix PI12926 since you are at risk for this vulnerability. WebSphere Application Server Versions 7.0 and earlier are not affected by the fileupload vulnerability for the Web Container component. 
+
+If you are using the Administrative Console or if you are administering batch jobs in Compute Grid we recommend you apply the interim fix, however there is not a way for an attacker to force the vulnerability to occur. 
+
+FileUpload is also present if you are using Struts version 1.x from the optional libraries that are shipped with WebSphere Application Server, you also may be vulnerable. If your application is using the FileUpload in Struts as part of the MultipartStream constructor, you will need to upgrade. WebSphere Application Server Version 7.0 deprecated the inclusion of version 1.x of Struts in 2008. We recommend that you upgrade to include a version of Struts in your code that is still supported by Apache or upgrade your commons-fileupload.jar and prerequisites. Your application should be thoroughly tested to verify that it does not have any issues. Please refer to the Apache site for information and download: Apache Struts Web site [http://struts.apache.org/]. (struts.apache.org) If this mitigation will not work for you, please contact IBM Support. Please note: IBM does not plan on shipping any fix for Struts 1.x as the fix is only available at the current levels of Apache Struts which can only be obtained from the Apache Struts website. 
+
+Important! IBM is planning on removing and no longer shipping all 4 versions of Struts Version 1.x from the optional Libraries starting in WebSphere Application Server 7.0.0.37, 8.0.0.11, and 8.5.5.4. If you have copied the optional Struts packages to your shared library for your applications to use, you will need to take the following actions prior to moving to 7.0.0.37, 8.0.0.11, or 8.5.5.4. 
+
+- Upgrade your applications to use a current level of Struts
+- Include a copy of the Struts 1.x package as part of your ear file development. 
+
+
+FIXES: The recommended solution is to apply the Fix Pack or PTF for each named product as soon as practical. There are 3 separate interim fixes that may need to be applied, links are provided below to fix central 
+
+APARs 
+PI12648 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/WebSphere/WebSphere+Application+Server&release=All&platform=All&function=aparId&apars=PI12648] for the Administrative Console - not vulnerable in Liberty 
+PI12926 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/WebSphere/WebSphere+Application+Server&release=All&platform=All&function=aparId&apars=PI12926] for the Web [http://www-01.ibm.com/support/docview.wss?uid=swg24037284] Container - not vulnerable prior to versions 8
+PI13162 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/WebSphere/WebSphere+Application+Server&release=All&platform=All&function=aparId&apars=PI13162] for Administering batch jobs in Compute Grid 
+
+
+Fix:Apply a Fix Pack or PTF containing the above APARs, as noted below: 
+
+For affected IBM WebSphere Application Server: 
+
+For V8.5.0.0 through 8.5.5.1 Full Profile: 
+
+ * Apply Interim Fixes PI12648 and PI12926 [http://www-01.ibm.com/support/docview.wss?uid=swg24037284]
+
+--OR--  * Apply Fix Pack 8.5.5.2 or later.
+
+
+For V8.5.0.0 through 8.5.5.1 Liberty Profile:  * Apply Interim Fixes PI12926 [http://www-01.ibm.com/support/docview.wss?uid=swg24037284]
+
+--OR--  * Apply Fix Pack 8.5.5.2 or later.
+
+
+For V8.5.0.0 through 8.5.5.1 using Compute Grid:  * Apply Interim Fixes PI13162
+
+--OR--  * Apply Fix Pack 8.5.5.2 or later. 
+ * 
+   For V8.0 through 8.0.0.8: 
+ * Apply Interim Fixes PI12648 and PI12926 [http://www-01.ibm.com/support/docview.wss?uid=swg24037284]
+
+--OR--  * Apply Fix Pack 8.0.0.9 or later.
+
+
+For V7.0.0.0 through 7.0.0.31: 
+ * Apply Interim Fix [http://www-01.ibm.com/support/docview.wss?uid=swg24036992]PI12648 
+
+--OR--  * Apply Fix Pack 7.0.0.33 or later.
+
+
+For V6.1.0.0 through 6.1.0.47:  * Apply Interim Fix PI12648
+
+For affected IBM WebSphere Application Server Extended Deployment Compute Grid: 
+
+For Compute Grid V8.0.0.0 through 8.0.0.3 on WebSphere Application Server Version 8 or WebSphere Application Server Version 7 
+
+ * Apply Interim Fixes PI13162
+
+--OR--  * Apply Compute Grid Fix Pack 8.0.0.4 or later.
+
+
+For Compute Grid V6.1 on WebSphere Application Server V7.0:  * Apply Interim Fixes PI13162
+
+
+For Compute Grid V6.1 on WebSphere Application Server V6.1:  * Not affected - no updates needed
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 15 April 2014: Original Document Published
+19 May 2014: updated alternate reference 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Liberty Core Application Servers WebSphere Extended Deployment Compute Grid Application Servers WebSphere Application Server Hypervisor Edition

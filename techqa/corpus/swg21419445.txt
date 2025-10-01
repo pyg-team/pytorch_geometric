@@ -1,0 +1,104 @@
+Title: IBM Explanation of odb.bdb and odb.log - United States
+
+Text:
+odb.bdb; odb.log; database TECHNOTE (FAQ)
+
+QUESTION
+ A description of what the odb.bdb and the odb.log are and how they work 
+
+ANSWER
+Firstly, let's summarize what odb.log is. 
+
+The odb.log is a transaction log file for the database odb.bdb recording
+on-going transactions for any rollback request. 
+Once a transaction is finished and there is no other pending 
+transactions, a trial to sync the changes logged in odb.log to the 
+database will be invoked. 
+The trial can be timed out when oserv is in the middle of normal process
+or the sync is not finished for 300 secs. 
+If the sync trial is completed successfully without pending transactions
+nor time-out, the odb.log file will be truncated. 
+On the other hand, if there is any pending transaction constantly or 
+cpu/disk is too busy for the time-out, odb.log can stay large and 
+odb.bdb will be in an inconsistent state until the sync succeeds at the next 
+trial. 
+
+Since there is a physical limit of 2GB for odb.log, the object database 
+will be crashed when odb.log is not successfully sync-ed for long time 
+and reaches to 2GB. 
+It is recommended to keep sync-ing the odb.log to keep away from this 
+limit and keep odb.bdb consistent. 
+
+"odadmin db_sync" is the way to manually invoke the sync. 
+But if there are many transactions running background, that will prevent
+the sync. 
+There is a way to force stopping all transactions by wlocktmr command, 
+but it highly depends on the use of the customer. 
+
+
+
+Based on the explanation about odb.log, let me explain the odb.bdb. 
+
+The odb.bdb is a b-tree file storing key-data pairs in page structure. 
+The size of a page is defined as 8KB and there are key pages and data 
+pages in the file. 
+A key page stores many keys, and a data page can store more than one 
+data records but it depends the size of the data record. 
+
+When a new managed resource like endpoint, profile, managed node is 
+created, a new record of key-data pair will be created in odb.bdb. 
+If the key page is full, a new key page will be created to record it. 
+If a data record is bigger than the free space of currently allocated 
+data pages, a new data page will be created to record the rest of the 
+record. 
+They are the timing to increase the file size of odb.bdb. 
+
+When a managed resource is deleted, the record of key-data pair will be 
+removed from odb.bdb. 
+When a key-data pair is removed from the database, the key will be 
+removed from the key page, and the data will be removed from the data 
+pages. 
+After the removal, if there are any empty pages, the pages will be 
+truncated from odb.bdb, and this is the only chance to decrease the file
+size of odb.bdb. 
+If there is any data remaining in the data page after the removal, the 
+page will remain and the file size does not change. 
+
+In normal case, daily operation like profile creation will be combined 
+with a deletion of the old profile. 
+In that case, the new profile will re-use the space of key record and 
+data records of deleted profile in existing key pages and data pages. 
+This works well, and the file size of odb.bdb will not change. 
+
+Since there are some features that can limit the physical file size (OS 
+ulimit, filesystem filesize, and page size limit defined for each 
+Framework version & patch levels), the object database will be crashed 
+when odb.bdb reaches to that limit. 
+It is recommended to back up the object database files from time to time so 
+that they can be recovered even if the database is crashed. 
+
+
+Finally, another way to reduce the odb.bdb size would be to "dump 
+all object data into a temporary file and create a new obd.bdb from the 
+temporary file using a rescue tool called bdbx". 
+If there are apparently large number of free spaces in the object 
+database, the steps above can *defragment* the spaces, and the file size
+can be reduced. 
+But in most cases, the re-creation just re-organizes the page structure,
+and the file size will not be changed or increased. 
+If there surely are many numbers of objects, odb.bdb needs certain size 
+to store all of them. 
+In that case, removing unused managed objects carefully or creating new 
+TMR with minimal object creation for the management is required. 
+
+As for bdbx, the above steps are very dangerous and requires high skills. 
+The full editing version of the tool is for L2/L3 use only and a read-only version
+is available for testing the physical integrity of database for customer use. 
+There is no promises even performed by L2/L3 support. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ fw
+framework
+5698fra00

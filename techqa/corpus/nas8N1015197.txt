@@ -1,0 +1,50 @@
+Title: IBM IPL Stuck at SRC C6004058 - United States
+
+Text:
+SRCC6004058; IFS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides information about what is happening and what to do when the system has crashed and is stuck in SRC C6004058. 
+
+RESOLVING THE PROBLEM
+"My system crashed and now has been stuck in this SRC C6004058 for 2 hours. What is it doing? Should I re-IPL?" 
+
+What is this step doing?
+
+This SRC, "Journal Synchronization" means the system is recovering all the journaled changes to the database files. These are the changes in your database files that had not yet been forced to disk at the time of the crash. This may be the longest part of the IPL to get the system back up, and it is worth waiting for. Otherwise, data may be lost or you may have to manually recover. It is important to understand what this Journal does FOR you, not TO you.
+
+Should I re-IPL?
+
+No. Another IPL is not recommended. Another IPL would also hang at the same SRC. The only exception might be if you have several Integrated File System files journaled. In that situation, this step is not particularly useful because there are no changes to Integrated File System files. 
+
+How much longer do I have to wait?
+
+A rough estimate can be provided based on the progress indicators. The user should see progress indicators on the console. If this is a secondary partition, the user might have to force DST. Then, the progress indicators are shown as follows:
+
+
+IPL in progress screen for Journal Synchronization [/support/docview.wss?uid=nas8N1015197&aid=1] [/support/docview.wss?uid=nas8N1015197&aid=1]
+
+Current 3 and Total 19 indicates that the Journal Synchronization is on journal 3 out of 19 that must be recovered.
+
+The journal library and name is next, followed by the "phase" of JO Sync we are in. This phase affects what the bottom set of numbers represents.
+
+In SYNCOBJ, the bottom numbers tell us how many jrn entries we have recovered out of the total we need to recover. As long as this number is increasing, the recovery is proceeding as expected. This number is refreshed every 30 seconds. An estimate can be provided (how many entries are being recovered each second) to give a time estimate to the user. Advise the user to wait and watch the numbers move. The recovery progress is not necessarily linear in time. However, if the number stops moving, call the Support Center.
+
+After the fact, there are OD00 BEED and BEEC VLOGs that provide additional information about the IPL.
+
+Can this long wait in C6004058 be avoided?
+
+If the user finds this wait at IPL too offensive, they can pay more at runtime to decrease this wait. The journal "sweeper" task, JORECRCA, can be set to force the database file changes to auxiliary storage sooner. This is done by decreasing the number of entries JORECRA must wait to start sweeping. The API to alter this value is:
+
+CALL PGM(QJOCHRVC) PARM(X'0000C350' 0) / / must use hex
+
+Note: At R610 and higher, the CHJRNA command allows a user to change recovery count (number of changes forced to disk per journal) or journal cache wait time (time between each force of the journal entries to disk when caching is on).
+
+After the system is back up, determine the value. Use the same API to display the value. Then, return the value to your preference, and ensure it was not set to something outrageously high (for example, 500,000). An extremely high number indicates the JORECRA task does not force entries as frequently. Generally it is not recommended to use a setting any lower than the default of 50000 because this would cause the JORECRA task to be quite busy during run time.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 399895903

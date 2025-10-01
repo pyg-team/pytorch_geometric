@@ -1,0 +1,177 @@
+Title: IBM JR45522: SOAPACTIONS WITH 'ACCEPT-ENCODING: GZIP' AND MISSING 'USER-AGENT: ' HEADER THROWS NULLPOINTEREXCEPTION - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.0.1 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24034495]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SOAPActions with 'Accept-Encoding: gzip' and missing
+   'User-Agent: ' header throws NullPointerException.
+   
+   The problem only occurs in combination with both headers.
+   
+   The SystemOut.log shows error-messages like:
+   
+   [3/19/13 20:39:23:952 CET] 000000bb webapp        E
+   com.ibm.ws.webcontainer.webapp.WebApp logServletError SRVE0293E:
+   [Servlet Error]-[webservice]: java.lang.NullPointerException
+   at
+   com.lombardisoftware.servlet.CompressionFilter.isZippable(Compre
+   ssionFilter.java:75)
+   at
+   com.lombardisoftware.servlet.CompressionFilter.doFilter(Compress
+   ionFilter.java:47)
+   .
+   .
+   .
+   [3/19/13 20:39:23:967 CET] 000000bb wle_servlet   E
+   CWLLG0005E: A
+   Throwable was caught in the servlet method doGet(). The class it
+   occurred in was com.lombardisoftware.servlet.ControllerServlet.
+   Error: null
+   java.lang.NullPointerException
+   at
+   com.lombardisoftware.servlet.ControllerServlet.doCommon(Controll
+   erServle t.java:575)
+   at
+   com.lombardisoftware.servlet.ControllerServlet.doPost(Controller
+   Servlet.
+   java:141)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:595)
+   .
+   .
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround:
+   -----------
+   Include the 'User-Agent: " header in the SOAP-Request, but leave
+   the value empty.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Applications invoking a BPM service with    *
+   *                  SOAPAction header and 'Accept-Encoding:     *
+   *                  gzip, deflate' defined.                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A NullPointerException occurs when      *
+   *                      'Accept-Encoding: gzip, deflate' is     *
+   *                      defined and 'User-Agent' is not.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When sending the SOAPAction header with Accept-Encoding
+   defined but the User-Agent field is not, a
+   NullPointerException occurs and the server will return with a
+   HTTP 500 error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code changes have been made to properly handle this scenario
+   as these two fields are independent of each other. An
+   interim-fix is available on v8.0.0.0 and v8.0.1.0.  The fix
+   has been integrated into the v8.0.1.1 fixpack.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR45522
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-24
+   
+   
+ * CLOSED DATE
+   2013-03-21
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

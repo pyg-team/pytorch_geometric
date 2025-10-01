@@ -1,0 +1,136 @@
+Title: IBM IC93972: PERFORMANCE STATS PAGE ONLY AFFECTS 1 NODE AND THE VERBIAGE ON THAT PAGE IS NOT CLEAR - United States
+
+Text:
+  DIRECT LINK TO FIX
+patch_SI_5020500 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FSterling+B2B+Integrator&fixids=5.2.5-OtherSoftware-B2Bi-All&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  While using the Operations -> Performance -> Statistics
+   During Performance Testing we soon after realized that the
+   "Enable Performance Statistics" On/Off
+   selection is NODE SPECIFIC and is NOT cluster aware.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   All
+   
+   Problem Description:
+   While using the Operations -> Performance -> Statistics during
+   Performance Testing with onsite IBM Performance Engineering
+   personnel,
+   we soon after realized that the "Enable Performance Statistics"
+   On/Off
+   selection is NODE SPECIFIC and is NOT cluster aware.
+   
+   Platforms Affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added warning verbiage to existing warning message displayed
+   when performance statistic gathering is enabled as well as a
+   note at the bottom of performance statistic reports.
+   
+   Delivered In:
+   5020402, 5020500
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC93972
+   
+   
+ * REPORTED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * REPORTED COMPONENT ID
+   5725D0600
+   
+   
+ * REPORTED RELEASE
+   524
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-08
+   
+   
+ * CLOSED DATE
+   2013-07-09
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * FIXED COMPONENT ID
+   5725D0600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R524 PSY
+   UP

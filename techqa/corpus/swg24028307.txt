@@ -1,0 +1,62 @@
+Title: IBM Production Imaging Edition Version 5.0 download document - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and assemble the IBM Production Imaging Edition Version 5.0 by using the Passport Advantage Online Web site. 
+
+DOWNLOAD DESCRIPTION
+
+
+[http://www.ibm.com/i/c.gif] 
+
+Downloading the product  1. From a browser, navigate to the Find Downloads and Media page on the IBM Passport Advantage Online website. You must log on to continue.  
+    
+    
+ 2. Select the Find by part number search option under Download finder options. 
+    
+    
+ 3. Search for the following part numbers and download the images.
+    
+    
+    IBM Production Imaging Edition and IBM Datacap Taskmaster 
+    
+    Component Description eSD Part Number IBM Production Imaging Edition 5.0 CRK5SML IBM Datacap Taskmaster Capture 8.1.0 MP ML eAssembly CRJR8ML 
+    
+    IBM FileNet Content Manager 5.1 part numbers for Production Imaging Edition 5.0
+    
+    Component Description eSD Part Number IBM FileNet Content Manager 5.1 MP ML eAssembly CRF92ML Content Manager Image Services 1.0 MP ML eAssembly CRFC3ML IBM FileNet Content Engine 5.1 MP ML eAssembly CRFC4ML IBM FileNet Legacy Content Search Engine 5.0 MP ML eAssembly CRFC5ML IBM FileNet Content Search Engine 5.1 MP ML eAssembly CRFC6ML IBM FileNet Content Federated Services MP ML eAssembly CRFC7ML System Dashboard MP ML eAssembly CRFC8ML IBM FileNet Content Search Services 5.1 MP ML eAssembly CRFC9ML Composite Platform Installation Tool 5.1 MP ML eAssembly CRFD0ML Platform Documentation Installable Info Center 5.1 MP ML eAssembly CRFD1ML WebSphere Application Server 7 for Linux32 MP ML eAssembly CRFD2ML WebSphere Application Server 7 for Linux64 ML eAssembly CRFD3ML WebSphere Application Server 7 for Linux on System z64 ML eAssembly CRFD4ML WebSphere Application Server 7 for HP-UX32 ML eAssembly CRFD5ML WebSphere Application Server 7 for HP-UX64 ML eAssembly CRFD6ML WebSphere Application Server 7 for Solaris ML eAssembly CRFD7ML WebSphere Application Server 7 for AIX ML eAssembly CRFD8ML WebSphere Application Server 7 for Windows 32 ML eAssembly CRFD9ML WebSphere Application Server 7 for Windows 64 ML eAssembly CRFE0ML DB2 Workgroup Server 9.7 MP ML eAssembly CRFE1ML DBA Enterprise Server 9.7 MP ML eAssembly CRFE2ML FileNet Application Engine 4.0.2 MP ML eAssembly CRFE3ML IBM FileNet Workplace XT 1.1.5 ML eAssembly CRFE4ML IBM FileNet Services MP ML eAssembly CRFE5ML Content Integrator 8.6 MP ML eAssembly CRFE6ML FileNet Connector for Microsoft SharePoint Web Parts 2.2.2 MP ML eAssembly CRFE7ML IBM FileNet Integration for Microsoft Office 1.1.5 MP ML eAssembly CRFE8ML IBM Tivoli Directory Server 6.3 MP ML eAssembly CRFE9ML 
+    
+    IBM FileNet Business Process Manager 5.1 for Production Imaging Edition 5.0 
+    
+    Component Description eSD Part Number IBM FileNet Process Engine 5.0 MP ML eAssembly CRFF0ML IBM FileNet Process Manager 5.1 MP ML eAssembly CRG5TML IBM ECM Widgets 4.5.2 CRDM1ML IBM Mashup Center 2.0 eAssembly CRDM2ML IBM FileNet Connector for Microsoft Visio 4.0.1 eAssembly CRDM5ML IBM Forms 4.0 eAssembly CRG5UML IBM Content Navigator 2.0 MP ML eAssembly CRHC4ML 
+
+[http://www.ibm.com/i/c.gif] INSTALLATION INSTRUCTIONS
+Important: 
+Back up your systems and business-critical information before starting the installation process, especially if you are upgrading any software components.
+
+1. Use the Planning and preparing for IBM FileNet P8 section in the IBM FileNet P8 information center to prepare for the FileNet P8 Platform and FileNet Content Manager installation.
+
+2. Use the Installing or upgrading IBM FileNet P8 Platform section in the IBM FileNet P8 information center to install and configure the FileNet Content Manager and P8 Platform components, including Content Engine and Process Engine.
+
+3. Use the Installing additional IBM FileNet P8 products section in the IBM FileNet P8 information center to install and configure IBM FileNet Workplace XT.
+
+4. Use the Production Imaging Edition installation guide to prepare for installation and to install and configure IBM Production Imaging Edition Viewer Pro.
+
+5. Use the IBM Datacap Taskmaster Capture installation guide to prepare for installation and to install and configure Datacap Taskmaster Capture.
+
+6. Use the Production Imaging Edition installation guide to perform any final configuration steps to complete the installation and configuration of Production Imaging Edition.
+
+URL LANGUAGE SIZE(Bytes) Production Imaging Edition Installation [http://www-01.ibm.com/support/docview.wss?uid=swg27020543] English 1600000 Release Notes [http://www-01.ibm.com/support/docview.wss?uid=swg27023478] English 116000 Publication Library [http://www-01.ibm.com/support/docview.wss?uid=swg27020014] English 28789 
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options IBM Passport Advantage - AIX 12/10/2010 English 1 HTTP [http://www.ibm.com/software/howtobuy/passportadvantage/] IBM Passport Advantage - HP-UX 12/10/2010 English 1 HTTP [http://www.ibm.com/software/howtobuy/passportadvantage/] IBM Passport Advantage - HP PA-RISC 12/10/2010 English 1 HTTP [http://www.ibm.com/software/howtobuy/passportadvantage] IBM Passport Advantage - Linux 12/10/2010 English 1 HTTP [http://www.ibm.com/software/howtobuy/passportadvantage/] IBM Passport Advantage - Solaris 10 Dec 10 English 1 HTTP [http://www.ibm.com/software/howtobuy/passportadvantage] IBM Passport Advantage - Windows 12/10/2010 English 1 HTTP [http://www.ibm.com/software/howtobuy/passportadvantage] 
+TECHNICAL SUPPORT
+ 
+IBM Production Imaging Edition Support URL:
+http://www.ibm.com/support/entry/portal/Overview/Software/Information_Management/Production_Imaging_Edition [http://www.ibm.com/support/entry/portal/Overview/Software/Information_Management/Production_Imaging_Edition]

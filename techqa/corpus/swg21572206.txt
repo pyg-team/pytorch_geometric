@@ -1,0 +1,40 @@
+Title: IBM How are QZDASOINIT jobs used for Collaboration and Deployment Services installed on an iSeries or IBMi platform? - United States
+
+Text:
+qzdasoinit showcase c&ds collaboration deployment services TECHNOTE (FAQ)
+
+QUESTION
+ We've noticed that many QZDASOINIT prestart jobs are allocated to requests from Collaboration and Deployment Services on our IBMi (iSeries) server. Are these necessary, or are there ways to better tune these jobs for better performance? 
+
+CAUSE
+Prestart job settings may not be correct for best performance
+
+ANSWER
+These jobs are used for all C&DS connections: Logging in to Deployment Portal or Deployment Manager, running jobs, or viewing job histories are examples. They are required, and ending these jobs prematurely will cause C&DS connections to be dropped. 
+
+It's also possible that jobs used more than once can maintain locks on ShowCase or C&DS objects, and will not clear temporary storage until they are ended.
+
+Any prestart jobs in the IBMi (iSeries) can be tuned for better performance. It is important to consult with IBM documentation or tech support if the prestart job parameters aren't adequately understood.
+
+However, we believe there are two parameters that can be modified to improve performance and reliability of C&DS connections.
+
+1 - We recommend that the Maximum number of uses be changed to 1. The default value is 200, which means that one QZDASOINIT job will accept 200 SQL requests before ending. Any object that this job uses during any of those requests may remain allocated until the job ends. By changing the value to 1, this forces all object locks to be released and temporary storage to be refreshed.
+
+To change this setting, please use the following command: 
+
+CHGPJE SBSD(QUSRWRK) PGM(QSYS/QZDASOINIT) MAXUSE(1)
+
+2 - We also recommend that the Maximum number of jobs remain at the default of *NOMAX. This is important, because if the system has reached its limit of jobs, and another user attempts to connect (or another job attempts to run), it will be rejected.
+
+To view this (and all) parameters, you can use these steps:
+1 - DSPSBSD QUSRWRK
+2 - Take option 5 to display
+3 - Use menu option 10
+4 - Take option 5 to display the details of QZDASOINIT (do not confuse this with QZDASSINIT, which has a very similar name)
+
+Please consult with the IBM online documentation for tuning prestart jobs for the version of the operating system you have,
+
+While it is possible to use C&DS without changing the Maximum number of uses to 1, we strongly encourage this change.
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]

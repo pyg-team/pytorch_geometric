@@ -1,0 +1,26 @@
+Title: IBM Can deployment manager run essbase queries? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error Message: ESSBASE ERROR 1042018
+Case Description: 
+Can deployment manager 4.0 run ESSBASE queries? Is there a different datasourse setup in Deployment manager for essbase? 
+
+The error received is similar resolution 5232 on SPSS website. We updated the ESSBASE config file during our migration to Showcase 8.0. refer to ticket for viva 689568. However is there something in Deployment manager that needs to be set also? 
+
+RESOLVING THE PROBLEM
+This issue is resolved in the 8.00.440 patch.
+
+It is actually in the Plugins patch within the WHM server patch.
+You need to apply the plugins to your CDS server to resolve the issue
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 88063

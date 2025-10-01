@@ -1,0 +1,24 @@
+Title: IBM JDBC Error When Importing Metadata In Cube Designer or Framework Manager - United States
+
+Text:
+JDBC; Framework Manager; Cube Designer; DQM; jdbcDriver TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When importing metadata in Dynamic Cube Designer or Framework Manager using DQM you may receive the following error message when expanding a JDBC data source:
+
+
+
+BMT-MD-6610 An unknown error jdbcDriverNotFound has occurred. Please verify the JDBC connection information for the data source is correct in Cognos Administration and that testing the connection is successful. 
+
+SYMPTOM
+DQM connection test is successful in Cognos Administration.
+
+
+CAUSE
+JDBC drivers not correctly deployed on the BI server's application tier in a non-Tomcat or WebSphere Liberty installation.
+
+ENVIRONMENT
+Distributed environment using WebSphere, WebLogic or other supported application servers other than Tomcat or WebSphere Liberty.
+
+RESOLVING THE PROBLEM
+Ensure that the database JDBC drivers are located in <ibmcognos>/webapps/p2pd/WEB-INF/lib on the application tier and redeploy the application using the application server's deployment mechanism.

@@ -1,0 +1,22 @@
+Title: IBM Why might I receive an EVNA8027 error in ImagePlus Workstation Program when I try to print a document? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I'm trying to print a document and am seeing an EVNA8027 error with rc 7012 in ImagePlus Workstation Program (IWPM). This error says the print operation failed with an indication that the problem may be associated with the printer setup. What might I do to resolve this? 
+
+CAUSE
+It could be that one or more of the printer profile or control files in your IWPM installation directory is corrupted.
+
+ANSWER
+It usually helps to delete the printer subdirectory in the IWPM installation directory and all of its contents and then recreate the printer profile(s). This printer subdirectory might be named c:\evn\bin\printer or C:\Program Files (x86)\EVN\BIN\PRINTER, for example. By deleting this printer directory and all of its contents, it allows IWPM to remove any corrupted elements and rebuild it. Before deleting the directory, make note of any Printer Option Profile settings via the IWPM Setup Printer utility so that you will be able to recreate them afterwards. Creating the printer profile(s) anew should resolve the problem. 
+
+ 
+
+
+If these steps do not fix the problem, please contact IBM software support for further assistance. 
+
+
+Stay Informed by Receiving Product and Lifecycle Notifications:
+Click here [http://www.ibm.com/support/docview.wss?uid=swg21674106]

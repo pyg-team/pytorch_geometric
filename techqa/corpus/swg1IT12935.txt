@@ -1,0 +1,158 @@
+Title: IBM IT12935: WEBSPHERE MQ APPLIANCE 8.0.0.4 WEB-UI MISSING FIELDS FOR VLAN AND LINK AGGREGATION - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+Interim fix for IBM MQ Appliance 8.0.0.4 with APAR(s) IT13223 IT13419 IT13296 IT13023 IT12935 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+MQ+Appliance+M2000&fixids=8.0.0.4-IBM-MQ-Appliance-M2000-IT13223&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Some fields, such as IP Address and Default Gateway for VLAN
+   and Link aggregation, do not exist in the 8.0.0.4 Web UI.  By
+   contrast, they existed in previous versions.
+   This is a regression in 8.0.0.4.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the IBM MQ v8.0.0.4 Appliance who
+   use the MQ Console (otherwise known as the Web UI) to set the
+   VLAN and Link Aggregation properties IP Address and Default
+   Gateway.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   After applying the MQ Appliance firmware update 4 (8.0.0.4), the
+   MQ Console VLAN and Link Aggregation properties IP Address and
+   Default Gateway were no longer displayed.  This was due to a
+   defect in the underlying IBM DataPower Appliance firmware on
+   which the MQ Appliance Firmware is built.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The IBM DataPower Appliance firmware has been upgraded to a
+   later version where the defect that caused the properties to not
+   be displayed has been resolved.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.5
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT12935
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ APPL M20
+   
+   
+ * REPORTED COMPONENT ID
+   5725S1400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-12-24
+   
+   
+ * CLOSED DATE
+   2016-02-23
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM MQ APPL M20
+   
+   
+ * FIXED COMPONENT ID
+   5725S1400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

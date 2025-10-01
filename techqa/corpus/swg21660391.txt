@@ -1,0 +1,55 @@
+Title: IBM Bind failure trying to start ibmslapd - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When attempting to start your Directory Server instance using the "ibmslapd -I <instance>" command using a non-root user, you get the following error in the ibmslapd.log and the server does not start..
+
+
+
+12/12/2013 10:33:52 AM GLPCOM027E Attempt to bind failed with errno 13 (Permission denied). 
+
+12/12/2013 10:33:52 AM GLPCOM006E SocketInit failed for port 389. 
+
+CAUSE
+On Unix systems, only the root user is able to bind to a port <1024. Attempting to run the ibmslapd command using a non-root user results in that processing running as this non-root user which will not be able to bind to ports <1024.
+
+ANSWER
+If you want to use ports <1024, then you must either use the root id to start the process, or non-root users can start it using the ibmdirctl command. For example...
+
+ibmdirctl -D cn=root -w <password> -h <hostname> -p <admin_server_port> start
+
+
+Usage: ibmdirctl [options] command -- [ibmslapd options]
+where:
+command: command to issue to ibmdiradm
+must be one of start/stop/restart/status/admstop/startlogmgmt/stoplogmgmt/statuslogmgmt
+
+start starts the Directory Server
+stop stops the Directory Server
+restart stops and starts the Directory Server
+status displays whether the Directory Server is running
+statusreturn sets exit code 0=running, 1=starting, 2=stopped
+admstop stops the Administration Server
+startlogmgmt starts the log management capabilities for the Directory Server
+stoplogmgmt stops the log management capabilities for the Directory Server
+statuslogmgmt displays whether the log management for the Directory Server is running
+
+
+options:
+-D adminDn bind DN. (-d can also be used)
+-h hostname ibmdiradm hostname. (-H can also be used)
+-K keyfile file to use for keys
+-N key_name private key name to use in keyfile
+-p port ibmdiradm port number
+-P key_pw keyfile password
+-v run in verbose mode
+-w adminPw bind password or '?' for non-echoed prompt
+use backslash '\?' to avoid matching single character filenames (UNIX only)
+-W same as -w
+-Y use a secure ldap connection (TLS)
+-Z use a secure ldap connection (SSL)
+-1 sec:usec Specify timeout for connect() in seconds and microseconds.
+Both values must be specified as non-negative integers.
+-? this help screen

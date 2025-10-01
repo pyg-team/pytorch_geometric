@@ -1,0 +1,100 @@
+Title: IBM GPFS may incorrectly encrypt files when the AES:ECB wrapping mode is used, possibly resulting in undetected data corruption of those files - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ In the Advanced Edition of GPFS V4.1.0 or later, under certain circumstances, files may be incorrectly encrypted when the AES:ECB wrapping mode is used, possibly resulting in undetected data corruption of those files. 
+
+CONTENT
+
+Problem Summary: File encryption (available only in the Advanced Edition of GPFS 4.1.0 or later releases) in GPFS is controlled by encryption policy rules, which determine which files are encrypted and with what keys and algorithms. At the time an encrypted file is created, a File Encryption Key (FEK) is generated and then encrypted ("wrapped") with the Master Encryption Key (MEK), and the result is recorded as one of the file's extended attributes, along with the identity of the MEK and the encryption parameters needed to decrypt the FEK later on. The contents of the file are encrypted with the FEK being used as encryption key.
+
+A problem has been discovered in the CLiC toolkit, which is used by GPFS to perform basic encryption/decryption. The problem results in the FEK being encrypted incorrectly before getting stored as one of the file's extended attributes. The outcome is that an incorrect FEK may be produced upon opening the file. Though the file may still be read correctly on nodes of the same type as the one used when the file was created, it may be read incorrectly from other nodes. In addition, if the file is written by one of those other nodes, the file may then be retrieved incorrectly from any of the nodes, since different portions of the file may have been written using different FEKs.
+
+The problem occurs only when FIPS mode is disabled (the FIPS1402mode configuration variable is set to 'no') and the AES:ECB wrapping mode is used on a Linux x86 node with AESNI encryption acceleration. Note that AES:ECB is not the default wrapping mode and is not the one used if the default DEFAULTNISTSP800131A algorithm is configured.
+
+
+Users affected: Users are affected only if all of the following conditions are true:
+
+
+ * The file encryption capability (available only in the Advanced Edition of GPFS 4.1.0 or later releases) is used, as described in the Encryption chapter in the Advanced Administration Guide publication at http://www.ibm.com/support/knowledgecenter/SSFKCN/gpfs_welcome.html?lang=en [http://www.ibm.com/support/knowledgecenter/SSFKCN/gpfs_welcome.html?lang=en]
+
+ * The AES:ECB wrapping mode is chosen when providing the encryption policy rules for a file system. Note that AES:ECB is not the default wrapping mode and is not the one used if the default DEFAULTNISTSP800131A algorithm is configured.
+   
+   
+   The following command (and its sample output) shows the existing policy for the file system. It will clearly indicate whether the affected wrapping mode is being used:
+   
+   mmlspolicy file system name-L
+   
+   [...]
+   
+   RULE 'F128' ENCRYPTION SET 'F128'
+   ALGO 'AES:128:CBC:FEK:HMACSHA512'
+   COMBINE 'XOR' WRAP 'AES:ECB'
+   KEYS('KEY-6aaa3451-6a0c-4f2e-9f30-d443ff2ac7db:RKMKMIP3')
+   
+   Note that ALGO ’DEFAULTNISTSP800131A’ is a safe setting, since it corresponds to the AES:KWRAP wrapping mode.
+   
+   The following command (see sample output) will show the parameters used for a given file:
+   
+   mmlsattr -n gpfs.Encryption xyz2.enc
+   
+   file name: xyz2.enc
+   gpfs.Encryption: "EAGC???N▒V]0????????????????D▒▒?▒▒;▒??????????????"▒_▒?줦▒46?Z? }??1?fooBar1?"
+   EncPar 'AES:128:CBC:FEK:HMACSHA512'
+   type: wrapped FEKWrpPar 'AES:ECB'CmbPar 'XOR'
+   KEY-6aaa3451-6a0c-4f2e-9f30-d443ff2ac7db:RKMKMIP3
+   
+   Note that changing the encryption policy does not affect the wrapping mode of existing files.
+   
+ * The length of the file encryption key (as specified in the encryption parameter string) is set to a value longer than 128 bits (192 or 256 bits)
+
+ * The FIPS1402mode configuration parameter is set to 'no', which will result in the CLiC toolkit being used for encryption/decryption
+   
+   The FIPS mode in use can be displayed with the following command:
+   
+   mmlsconfig FIPS1402mode
+   
+ * The cluster includes nodes which run on Linux x86 (any distro)
+
+ * At least one node in the cluster supports the AESNI instruction. The following command can be used to determine whether that CPU instruction is present:
+   
+   grep aes /proc/cpuinfo
+   
+   If the command above produces some output then the AESNI instruction is present on the node. 
+   
+
+
+Required Actions: GPFS 4.1 Advanced Encryption customers should avoid use of the AES:ECB wrapping mode. 
+
+If the existing encryption policy rules specify AES:ECB then the encryption rules should be changed (with mmchpolicy) to use a different wrapping mode. That will ensure that files created from that point on will not use the AES:ECB wrapping mode. 
+
+The following applies to the users for which all the conditions under Users affected are true. 
+
+It is important to act promptly if your cluster may be affected by the problem (if all conditions under Users Affected are true). The steps described below aim to minimize the chance of any further data loss, as opposed to fixing any damage to the existing files. The existing files may or may not be recoverable (and backup copies may have been damaged as well), depending on a complex set of circumstances. 
+
+For the affected users, the following steps should be taken: 
+
+1. Run the following command and save the output. This contains the current policy rules (including any encryption rules) in place for the file system. The output should be provided to IBM Support. 
+ * 
+ * mmlspolicy 
+ * file system name
+ *  -L
+
+
+2. The following steps above should prevent any new file from being created using AES:ECB as wrapping mode, and should avoid producing additional damaged files.  * 
+ * 
+ * AES:ECB
+ * 
+ * AES:KWRAP
+ * 
+ * 
+ * 
+ *  
+   mmchpolicy file system file containing the modified policy -I yes 
+
+
+3. Call IBM support as soon as possible for assistance with data recovery. 
+
+Note: In a cluster which may be affected by the problem, do not change the value of the FIPS1402mode variable . Changing that value (which will alter the toolkit used to encrypt/decrypt data) may cause file content to be incorrectly decrypted, since an incorrect FEK may be derived. In addition, writing to existing files -- but not reading from them -- may cause them to be damaged irreparably. For the very same reasons, also do not add nodes to the cluster which are affected by the problem differently than the original nodes in the cluster. That is, if all nodes in the cluster are affected (all nodes are Linux x86 with AESNI enabled) then do not add nodes which are not affected, or vice-versa: if the cluster is not affected then do not add nodes which are affected.

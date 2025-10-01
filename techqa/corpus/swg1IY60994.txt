@@ -1,0 +1,212 @@
+Title: IBM IY60994: S13301 - REQUEST IS NOT CORRECTLY LISTED WHEN DELETE USER FILTER IS SELECTED IN VIEW COMPLETED REQUESTS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description:
+   Request isn't correctly listed when "Delete User" filter is
+   selected in
+   "View Completed Requests".
+   This phenomena occurs under Japanese language installed. This
+   can't see
+   under English environment.
+   
+   When Today, This week or This month is set as the filtered term,
+   no
+   "Delete User" request is listed.
+   When the filter is set as "from 1st of Jan 2000 to tomorrow",
+   only
+   "Delete User" requests, which are older than this month, are
+   listed.
+   
+   Can Customer Recreate:
+   Yes, and Japan L2 regenerated.
+   
+   ITIM Server Version - 4.5.1 with IF18LA
+   
+   Server Environment
+   Operating System   : AIX5.2 ML3
+   Database server    : DB2 V8.1 w/ FP2
+   Directory server   : IDS5.1 w/ FP2
+   Application Server : WebSphere V5.0 w/ FP2
+   
+   Desired Behavior:
+   "Delete User" filter should work correctly.
+   
+   Steps to Duplicate:
+   1) Install Japanese language using Language Support CD-Rom
+   2) Change priority of language in IE browser
+      IE, take for example,
+      a) Select "internet option" from "Tool" menu
+      b) Select "Language..."
+      c) Make "Japanese [ja]" to be the top priority
+      d) Restart IE to get it effective
+   3) Login to ITIM
+   4) Create a person
+   5) Delete the person
+   6) Go to filter setting of "View Completed Requests", then set
+   "Today"
+      and "All Users".
+   7) On "View Completed Request", set "All" filter
+   8) Make sure that two completed requests above are listed.
+      Please refer OK.jpg image file.
+   9) Change the filter to "Delete User", then make sure whether
+   the
+   "Delete User" request is listed.
+      "Delete User" request should be there, but no request is
+   listed.
+      Please refer Error_Today_DeleteUser.jpg image file.
+      If you change the term to "This week" or "This month", you
+   would see
+      the same phenomena.
+   10) Change the filter to "New User". This change works fine.
+   "New User"
+       request gets listed.
+   11) Change the filter to "All"
+   12) Go to filter setting of "View Completed Requests", then set
+   as
+       follows. (Please refer Filter_by_a_term.jpg image file.)
+      "Between Specific Dates"
+      Start: 1st Jan 2000  00:00
+      End  : Tomorrow
+   13)Make sure that two completed requests above are listed.
+   14)Change the filter to "Delete User", then make sure whether
+   the
+      "Delete User" request is listed.
+      The "Delete User" request should be there, but no request is
+   listed.
+      Please refer Error_Term_DeleteUser.jpg image file.
+      If there are another "Delete User" requests, which have been
+   run
+      before, they would correctly be listed.
+   
+   Log Files:
+   These image files are under /PMR_Attachments/Japan/77851.
+   
+   - OK.jpg
+   - Error_Today_DeleteUser.jpg
+   - Filter_by_a_term.jpg
+   - Error_Term_DeleteUser.jpg
+   
+   **********************************************
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  s13301
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   users affected:
+   Customer using Japanese language.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed and shipped in ITIM Interim fix, 4.5.1-TIV-TIM-IF0033.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY60994
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM TIV IDENT M
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3402
+   
+   
+ * REPORTED RELEASE
+   451
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-08-24
+   
+   
+ * CLOSED DATE
+   2004-10-26
+   
+   
+ * LAST MODIFIED DATE
+   2004-10-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     SERVER
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM TIV IDENT M
+   
+   
+ * FIXED COMPONENT ID
+   5724C3402
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R450 PSY
+   UP

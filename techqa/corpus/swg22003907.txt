@@ -1,0 +1,123 @@
+Title: IBM License Metric Tool 9.2 - Supported Operating Systems - United States
+
+Text:
+ PRODUCT LIFECYCLE
+
+ABSTRACT
+ This document provides information about operating systems supported by each component of License Metric Tool. The information is sorted by operating system and by component. 
+
+CONTENT
+To generate custom reports, see: Software Product Compatibility Reports (SPCR) [https://www.ibm.com/software/reports/compatibility/clarity/osForProduct.html]. For information about technologies eligible for PVU full capacity and subcapacity, see also: 
+
+ * Eligible Virtualization Technology and Operating Systems [http://public.dhe.ibm.com/software/passportadvantage/SubCapacity/Eligible_Virtualization_Technology.pdf] 
+ * Eligible Processor Technology [http://public.dhe.ibm.com/software/passportadvantage/SubCapacity/Eligible_Processor_Technology.pdf]
+
+
+APPLICATION UPDATE 9.2.11
+REQUIREMENTS
+BY PLATFORM
+ * AIX [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=F38B0F000DA211E8BE1A0F0F1F3F9A88&osPlatforms=AIX]
+ * IBM i* [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=F38B0F000DA211E8BE1A0F0F1F3F9A88&osPlatforms=IBM i]
+ * HP-UX [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=F38B0F000DA211E8BE1A0F0F1F3F9A88&osPlatforms=HP]
+
+ * Linux [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=F38B0F000DA211E8BE1A0F0F1F3F9A88&osPlatforms=Linux]
+ * Solaris [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=F38B0F000DA211E8BE1A0F0F1F3F9A88&osPlatforms=Solaris]
+ * Windows [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=F38B0F000DA211E8BE1A0F0F1F3F9A88&osPlatforms=Windows]
+
+ * Supported Hypervisors [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/vesForProduct?deliverableId=F38B0F000DA211E8BE1A0F0F1F3F9A88]
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * BigFix Platform [http://www-01.ibm.com/support/docview.wss?uid=swg21976664#IBM%20BigFix%20Platform]
+ * BigFix Agent** [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=F38B0F000DA211E8BE1A0F0F1F3F9A88&osPlatforms=AIX|HP|IBM%20i|Linux|Solaris|Windows&duComponentIds=A001]
+
+ * License Matric Tool Server [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=F38B0F000DA211E8BE1A0F0F1F3F9A88&osPlatforms=AIX|HP|IBM%20i|Linux|Solaris|Windows&duComponentIds=S003]
+
+ * Disconnected scanner [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=F38B0F000DA211E8BE1A0F0F1F3F9A88&osPlatforms=AIX|HP|IBM%20i|Linux|Solaris|Windows&duComponentIds=A002]
+
+APPLICATION UPDATE 9.2.10
+REQUIREMENTS
+BY PLATFORM
+ * AIX [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122&osPlatforms=AIX]
+ * IBM i* [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122&osPlatforms=IBM i]
+ * HP-UX [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122&osPlatforms=HP]
+
+ * Linux [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122&osPlatforms=Linux]
+ * Solaris [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122&osPlatforms=Solaris]
+ * Windows [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122&osPlatforms=Windows]
+
+ * Supported Hypervisors [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/vesForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122]
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * BigFix Platform [http://www-01.ibm.com/support/docview.wss?uid=swg21976664#IBM%20BigFix%20Platform]
+ * BigFix Agent** [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122&osPlatforms=AIX|HP|IBM%20i|Linux|Solaris|Windows&duComponentIds=A003]
+
+ * License Matric Tool Server [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122&osPlatforms=AIX|HP|IBM%20i|Linux|Solaris|Windows&duComponentIds=S001]
+
+ * Disconnected scanner [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=36F6F500D50011E78F8FA93481EF6122&osPlatforms=AIX|HP|IBM%20i|Linux|Solaris|Windows&duComponentIds=A002]
+
+APPLICATION UPDATE 9.2.9
+REQUIREMENTS
+BY PLATFORM
+ * AIX [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF&osPlatforms=AIX]
+ * IBM i* [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF&osPlatforms=IBM i]
+ * HP-UX [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF&osPlatforms=HP]
+
+ * Linux [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF&osPlatforms=Linux]
+ * Solaris [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF&osPlatforms=Solaris]
+ * Windows [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF&osPlatforms=Windows]
+
+ * Supported Hypervisors [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/vesForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF]
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * BigFix Platform [http://www-01.ibm.com/support/docview.wss?uid=swg21976664#IBM%20BigFix%20Platform]
+ * BigFix Agent** [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF&osPlatforms=AIX|HP|IBM%20i|Linux|Solaris|Windows&duComponentIds=A003]
+
+ * License Matric Tool Server [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF&osPlatforms=AIX|HP|IBM%20i|Linux|Solaris|Windows&duComponentIds=S001]
+
+ * Disconnected scanner [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=2D29BF80931011E7B5CB91944BF3C9CF&osPlatforms=AIX|HP|IBM%20i|Linux|Solaris|Windows&duComponentIds=A002]
+
+APPLICATION UPDATE 9.2.8
+REQUIREMENTS
+BY PLATFORM
+ * AIX [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89&osPlatforms=AIX]
+ * IBM i* [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89&osPlatforms=IBM i]
+ * HP-UX [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89&osPlatforms=HP]
+
+ * Linux [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89&osPlatforms=Linux]
+ * Solaris [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89&osPlatforms=Solaris]
+ * Windows [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89&osPlatforms=Windows]
+
+ * Supported Hypervisors [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/vesForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89]
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * BigFix Platform [http://www-01.ibm.com/support/docview.wss?uid=swg21976664#IBM%20BigFix%20Platform]
+ * BigFix Agent** [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89&osPlatforms=AIX|HP|IBM%20i|Linux|Solaris|Windows&duComponentIds=A001]
+
+ * License Matric Tool Server [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89&osPlatforms=AIX|HP|IBM 20i|Linux|Solaris|Windows&duComponentIds=S003]
+
+ * Disconnected scanner [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=CF239C003AF711E7BE8E09C6CE305F89&osPlatforms=AIX|HP|IBM%20i|Linux|Solaris|Windows&duComponentIds=A002]
+
+
+
+
+RELATED 
+REQUIREMENTS
+* Discovery on IBM i is based on disconnected scans, a semi-automated procedure for collecting the data about hardware and software inventory.
+
+** Some operating systems are supported only by lower versions of the BigFix agent. It does not mean that the BigFix platform must be downgraded to a lower version to support a specific operating system. The latest version of BigFix supports all lower clients. You can install BigFix 9.5 and yet connect to a client in version 9.0, 9.1 or 9.2.

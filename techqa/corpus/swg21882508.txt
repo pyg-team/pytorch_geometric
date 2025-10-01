@@ -1,0 +1,56 @@
+Title: IBM Unable to process the cubes using IBM FileNet Case Analyzer 5.2.1 - United States
+
+Text:
+28000; DATASOURCE; processing cubes; cubes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While processing the cubes using Case Analyzer Process Task Manager, the error message can be seem from pesvr_system log:
+
+2015/04/06 13:19:56.885-0400 CAPublisher 463fec8c [Error] FNRPE0911843017E [CA] filenet.eventexporter.ca.main.DTSRunner::processWIP - [FNRPE0911843017E]Error while processing WIP cubes: CA 
+
+Exception: Error while processing WIP cubes: CA 
+
+Caused by: java.lang.Exception: OLE DB error: OLE DB or ODBC error: Login failed for user 'DOMAIN\ComputerName$'.; 28000. 
+
+Errors in the high-level relational engine. A connection could not be made to the data source with the DataSourceID of 'DATASOURCE - VMAE', Name of 'DATASOURCE - VMAE'. 
+
+Errors in the OLAP storage engine: An error occurred while the dimension, with the ID of 'Workflow Definition', Name of 'Workflow Definition' was being processed. 
+
+CAUSE
+The Domain User Account is not configured as Windows Authentication using the SQL data source.
+
+ENVIRONMENT
+Window 2012 / remote SQL 2012 server 
+
+DIAGNOSING THE PROBLEM
+none
+
+RESOLVING THE PROBLEM
+To resolve this issue:
+
+
+
+
+1) Launch the Microsoft SQL Server Management Studio 
+
+2) Connect to Microsoft Analysis Server 
+
+3) Expand Databases 
+
+4) Navigate to DATASOURCE-VMAE 
+
+5) Right mouse to select its properties 
+
+6) Click on 3 dots of Connection String Under General section 
+
+
+[/support/docview.wss?uid=swg21882508&aid=1] [/support/docview.wss?uid=swg21882508&aid=1]
+
+7) Select the radio button Use Windows Authentication.
+
+8) Click OK
+
+9) Click TEST CONNECTION as a test.
+
+
+[/support/docview.wss?uid=swg21882508&aid=2] [/support/docview.wss?uid=swg21882508&aid=2]

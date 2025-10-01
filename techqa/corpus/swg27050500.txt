@@ -1,0 +1,32 @@
+Title: IBM Spectrum Control Support for NetApp - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Support of NetApp devices with IBM Spectrum Control 5.2.8 and later. 
+
+CONTENT
+NetApp (7-mode only) devices were tested with the following data source levels: 
+
+Data Source Supported Devices Provisioning Performance Monitoring Data ONTAP 8.2 and higher
+
+Data ONTAP 8.1 running API version 1.14+ 2
+
+FAS series
+V series
+N series
+NearStore R200 Yes1 
+(block) Yes
+(block) 
+Tips:  * For key concepts related to non-IBM storage like NetApp devices, check out Key concepts: IBM Spectrum Control support for non-IBM storage [http://g01zciwas018.ahe.pok.ibm.com/support/dcf/preview.wss?host=g01zcidbs003.ahe.pok.ibm.com&db=support/swg/swgdocs.nsf&unid=7771C9D65C27EB18852581930074FB83&taxOC=SSWFB4&MD=2017/09/06%2016:09:20&sid=]. 
+ * If you upgraded from Tivoli Storage Productivity Center and were monitoring NetApp storage with SMI-S Agents, see the storage support matrix for Tivoli Storage Productivity Center. [http://www.ibm.com/support/docview.wss?uid=swg27039840] 
+ * Newer providers and firmware levels are also supported. If any problems occur when you use newer firmware or provider levels, open a support ticket. IBM Support will investigate the problem and attempt to resolve it. 
+
+
+LIMITATIONS AND CONSIDERATIONS
+ * 1 Thin provisioning is not supported. Reports of thin provisioned storage were not tested. 
+ * 2 API version 1.14+ supported. You can check API version by running: system-get-ontapi-version
+
+
+For a complete list of the storage systems that are supported by Spectrum Control, see Supported Storage Products [http://www.ibm.com/support/docview.wss?uid=swg27047049] .

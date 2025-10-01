@@ -1,0 +1,102 @@
+Title: IBM Raise the feature level of a single VOB without increasing the feature level for other VOBs on the server - United States
+
+Text:
+feature level; chflevel; unreplicated; non-replicated; base; clearcase; 1150579; feature levels; replicated VOB TECHNOTE (FAQ)
+
+QUESTION
+ How can you increase the feature level of a single non-replicated IBM Rational ClearCase VOB without increasing the feature level for the other VOBs on the server? 
+
+ANSWER
+ 
+
+Execute the following two commands: 
+
+ 1. cleartool chflevel -replica <new feature level> replica:<replica name>@\<vob tag>
+    
+    
+ 2. cleartool chflevel -family <new feature level> vob:\<vob tag>
+
+
+
+Notes:  * These commands are used for replicated VOB as well; however, there are special considerations that need to be taken when changing the feature level of a VOB that is replicated. Review the MultiSite Administrator's Guide under the topic of Feature levels [http://publib.boulder.ibm.com/infocenter/cchelp/v7r0m1/index.jsp?topic=/com.ibm.rational.clearcase.cc_ms_admin.doc/c_feature_levels.htm]for more details.
+   
+ * If a VOB is used in a UCM environment, the PVOB and all Component VOBs must be at the same feature level in order to utilize the features of that level.
+
+
+Example: 
+
+ 1. Open a command prompt and set into a view
+    
+    
+ 2. Mount and change directory into the VOB tag
+    
+    
+ 3. Describe the VOB to show current feature level
+    
+    > cleartool describe -long vob:.
+    versioned object base "/vobstore/test_vob"
+    created 23-Mar-01.09:36:29 by John Doe (jdoe.group1@host1)
+    VOB family feature level: 2
+    VOB storage host:pathname "host1:/vobstore/test_vob.vbs"
+    VOB storage global pathname "/net/host1/vobstore/test_vob.vbs"
+    database schema version: 53
+    VOB ownership:
+    owner ibm.com/jdoe
+    group ibm.com/group1
+    Additional groups:
+    group ibm.com/other
+    VOB holds objects from the following views:
+    Attributes:
+    FeatureLevel = 2 
+    
+    
+ 4. Determine the replica name (by default is original)
+    
+    > cleartool lsreplica
+    For VOB replica "/vobstore/test_vob":
+    23-Mar.09:36 jdoe replica "original"
+    
+    
+ 5. Change the feature level.  * Step 1:
+       > cleartool chflevel -replica 3 replica:original@/vobstore/test_vob
+       Replica feature level raised to 3.
+       
+       
+     * Step 2:
+       > cleartool chflevel -family 3 vob:/vobstore/test_vob
+       cleartool: Warning: Raising the VOB family feature level may make it impossible to move this VOB to servers running an earlier revision of ClearCase and to create MultiSite replicas of this VOB on such servers.
+       Raise VOB family feature level? [no] y
+       VOB family feature level raised to 3.
+       
+       
+    
+    
+ 6. Describe the VOB to show new feature level:
+    
+    > cleartool describe -long vob:.
+    versioned object base "/vobstore/test_vob"
+    created 23-Mar-01.09:36:29 by John Doe (jdoe.group1@host1)
+    VOB family feature level: 3
+    VOB storage host:pathname "host1:/vobstore/test_vob.vbs"
+    VOB storage global pathname "/net/host1/vobstore/test_vob.vbs"
+    database schema version: 53
+    VOB ownership:
+    owner ibm.com/jdoe
+    group ibm.com/user
+    Additional groups:
+    group ibm.com/other
+    VOB holds object from the following views:
+    Attributes:
+    FeatureLevel = 3 
+
+
+Review the ClearCase Command Reference Guide on the topic of chflevel (cleartool man chflevel) for more information. 
+
+ 
+
+
+
+
+
+RELATED INFORMATION
+#About Feature Levels and ClearCase [http://www.ibm.com/support/docview.wss?uid=swg21119269]

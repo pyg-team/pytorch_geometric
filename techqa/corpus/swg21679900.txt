@@ -1,0 +1,35 @@
+Title: IBM Upgrading ITCAM for J2EE agent from 6.x to 7.1.1.0 - United States
+
+Text:
+ITCAM; upgrade; uplift; 7.1.1; CAMJ2ALL; CAMJ2INST TECHNOTE (FAQ)
+
+QUESTION
+ What is the correct procedure to upgrade ITCAM for J2EE components from 6.x to 7.1.1.0? 
+
+CAUSE
+Previous versions of ITCAM Agent for J2EE had 2 components:
+- ITCAM Agent for J2EE Monitoring Agent (ITM infrastructure, as known as J2EE TEMA Agent)
+- ITCAM Agent for J2EE Data Collector (Non-ITM infrastructure)
+
+On the other hand ITCAM Agent for J2EE 7.1.1.0.0 bundles TEMA and DC together.
+
+
+ANSWER
+This is the correct sequence of actions to upgrade ITCAM Agent for J2EE Monitoring Agent 6.x to 7.1.1.0.0: 
+
+
+1- Install ITCAM Agent for J2EE 7.1.1.0.0 support files in TEMS/TEPS/TEP environment
+This step is needed because ITCAM Agent for J2EE does not support automatic seeding (SDA)
+ITCAM Agent for J2EE 7.1.1.0.0 support files are also available in a separate support file package
+
+2- Unconfigure the 6.1.x ITCAM Agent for J2EE Data Collector for the monitored Application Server.
+You must use the unconfiguration tool in 6.1.x J2EE Data Collector to perform this task.
+Restart the application server after DC unconfiguration.
+
+3- Run ITCAM Agent for J2EE 7.1.1.0.0 installer in 6.x TEMA agent environment, and let the installation complete.
+The agent configurator will be automatically launched at the end of the installation, but you can also launch it at any later time from MTEMS or from command line.
+
+4- Configure ITCAM Agent for J2EE Agent 7.1.1.0.0 TEMA
+
+5- Configure ITCAM Agent for J2EE 7.1.1.0.0 Data Collector.
+Restart the Application Server after DC configuration.

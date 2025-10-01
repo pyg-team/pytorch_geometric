@@ -1,0 +1,52 @@
+Title: IBM Creating the MSI file from Statistics 21 executable on Windows - United States
+
+Text:
+MSI; PUSH; Silent; Unattended; install; Statistics 21.0 TECHNOTE (FAQ)
+
+QUESTION
+ How do I create the MSI file for IBM SPSS Statistics 21.0 to use for an unattended/silent/Push installation of the software product? 
+
+CAUSE
+The Microsoft Installer (MSI) file for the IBM SPSS Statistics product is not available as a separate download.
+
+ANSWER
+ Accessing MSI file for IBM SPSS Statistics is dependent upon the installation media you have received.
+**Disk Media (CD/DVD)** 
+(1) Insert the disk. 
+(2) IF prompted to install the software, select 'Cancel'. 
+(3) Open Windows Explorer. 
+(4) Open the 'Windows' folder. 
+(5) Open the 'SPSSStatistics' folder. 
+The 32-bit MSI file will be located in the 'win32'. folder. 
+The 64-bit MSI file will be located in the 'win64' folder. 
+
+**Compressed ZIP file** 
+(1) Extract (decompress) the contents of the ZIP file into a designated folder. 
+(2) The MSI folder will located in the designated folder. 
+
+**Executable (IBM Component) file** 
+(1) Download and save the installer executable. (e.g. 'SPSS_Statistics_21_win32_.exe').
+(2) Create a directory to receive the *.msi file. (e.g. 'C:\Users\Public\Stats MSI'). 
+(3) Open Command Prompt and change directory to the directory where the installer executable was saved.
+(4) Type the name of the installer executable (e.g. 'SPSS_Statistics_21_win32_.exe').
+(5) Press Space.
+(6) Type the following: /b
+(7) Press Space.
+(8) Type a double-quote (").
+(9) Type the full directory path of the folder created to receive the *.msi file (e.g. 'C:\Users\Public\Stats MSI').
+(10) Type a double-quote ("). 
+(11) Press Enter. 
+(12) A window will appear containing a reference to 'InstallShield Wizard'. 
+(13) The window will display the status of the product *.msi file. 
+(14) A window will appear containing the phrase 'Welcome to the InstallShield Wizard'. 
+(15) Select the 'Cancel' button. 
+(16) A window will appear requesting confirmation (e.g. 'Are you sure...'), select the 'Yes' button. 
+(17) A window will appear containing the phrase 'InstallShield Wizard Completed'. 
+(18) Select the 'Finish' button.
+(19) Open Windows Explorer.
+(20) Browse to the location where the *.msi was extracted (e.g. 'C:\Users\Public\Stats MSI').
+
+Note 3: For documentation on IBM SPSS-specific commands for use with *.msi files, see 'Administrator's Guide' appropriate to your license type (e.g. 'Site', 'Concurrent', 'Single/Authorized User'). 
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

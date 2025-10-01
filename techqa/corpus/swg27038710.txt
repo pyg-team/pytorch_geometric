@@ -1,0 +1,40 @@
+Title: IBM System requirements for IBM InfoSphere Optim Performance Manager for DB2 for Linux, UNIX, and Windows V5.3 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document describes the system requirements for IBM® InfoSphere® Optim™ Performance Manager for DB2® for Linux®, UNIX®, and Windows® Version 5.3 
+
+CONTENT
+
+
+RELATED INFORMATION
+ *  System requirements for IBM InfoSphere Optim Performance Manager Extended Insight V5.3 [http://www.ibm.com/support/docview.wss?uid=swg27038711] 
+ *  Compatibility matrix for IBM InfoSphere Optim Performance Manager V5.3 and previous products or versions [http://www-01.ibm.com/support/docview.wss?uid=swg27023428] 
+
+PRODUCT DESCRIPTION
+IBM InfoSphere Optim Performance Manager consists of an OPM server component and an optional DB2 Performance Expert Client component. For more information, see Installation architecture of an InfoSphere Optim Performance Manager system [http://pic.dhe.ibm.com/infocenter/perfmgmt/v5r2/topic/com.ibm.datatools.perfmgmt.installconfig.doc/pm_topology.html].
+
+TABLE OF SUPPORTED SYSTEM REQUIREMENTS
+The links in the table below are located in the IBM Software Product Compatibility Reports (SPCR) tool and go directly to the supported operating systems, prerequisites, system requirements, and optional supported software for the specific operating system. Because the report is dynamically generated, it might take a moment to open.
+
+IBM InfoSphere Optim Performance Manager V5.3 Requirements by type Requirements by platform Software requirements by component  * Operating systems [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/osForProduct?deliverableId=1340700019383] 
+ * Related software [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/prereqsForProduct?deliverableId=1340700019383] 
+ * Hardware [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/hardwareReqsForProduct?deliverableId=1340700019383&osPlatforms=AIX&osPlatforms=HP&osPlatforms=Linux&osPlatforms=Solaris&osPlatforms=Windows]
+
+ * AIX [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1340700019383&osPlatform=AIX]
+ * HP-UX [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1340700019383&osPlatform=HP]
+ * Linux [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1340700019383&osPlatform=Linux]
+ * Solaris [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1340700019383&osPlatform=Solaris]
+ * Windows [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1340700019383&osPlatform=Windows]
+
+OPM Server [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1340700019383&duComponent=Server_57BE2E80C97E11E28D7F3D750925FE1B] DB2 Performance Expert Client [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1340700019383&duComponent=Desktop_57B97390C97E11E28D7F3D750925FE1B] SPCR TOOL AVAILABLE FOR ALL SOFTWARE PRODUCTS
+IBM has created a Software Product Compatibility Reports (SPCR) tool where you can locate and find complete lists of supported operating systems, system requirements, prerequisites, and optional supported software for InfoSphere Optim Performance Manager versions.
+
+You can access the tool for any product and obtain the supported operating systems, system requirements, and optional supported software for your product version. 
+
+ 1. Click the following link to reach the front page of SPCR: Detailed system requirements for a specific product in SPCR [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity/softwareReqsForProduct.html] 
+ 2. Then choose the following options to obtain the supported operating systems, system requirements, and optional supported software for your product version.  1. Select the desired product.
+     2. Select the desired version.
+     3. Select your operating system or your product component.

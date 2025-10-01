@@ -1,0 +1,148 @@
+Title: IBM RS02046: SIMULATION FAILS WITH DB2 SQLSTATE=51002 ERROR ON ODM 8.5.1 DECISION CENTER (TEAMSERVER) WITH DB2 REPOSITORY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Whith ODM 8.5.1 Decision Center and DB2 database, when running
+   a simulation with many scenarios, more than a 1000, a SQL
+   message is thrown by DC when displaying the report:
+   Cannot retrieve execution traces on server res com.ibm.db2.jcc.
+   am.SqlException: DB2 SQL Error: SQLCODE=-805,SQLSTATE=51002,
+   SQLERRMC=NULLID.SYSLN303 0X5359534C564C3031,DRIVER=4.11.69
+   DB2 SQL Error: SQLCODE=-805, SQLSTATE=51002, SQLERRMC=NULLID.
+   SYSLN3030X5359534C564C3031, DRIVER=4.11.69
+   Once this error message is thrown a first time, it is thrown
+   again when trying to display the report of test with a lower
+   number of scenario that were previously correctly displayed.
+   It related to the display of the simulation report because
+   after logout and login , the simulation is seen as completed
+   but when trying to display it, the same error  is caught .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  db2binder can be used as a workaround:
+   Goto WAS_HOME/ODMjdbcdrivers/DB2 directory and execute:
+   java -classpath ./db2jcc4.jar:./db2jcc_license_cu.jar com.ibm.
+   db2.jcc.DB2Binder -url jdbc:db2://DB2SERVER:
+   DB2PORT/DATABASENAME -user DBAUSER -password PASSWORD -size
+   NUMBER
+   Where NUMBER can be up to 30
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The decision warehouse API does not properly close the SQL
+   request use to search traces of execution. The simulation uses
+   a lot of queries to generate the report which creates a leak in
+   resources
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02046
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6900
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-06-26
+   
+   
+ * CLOSED DATE
+   2015-07-11
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * FIXED COMPONENT ID
+   5725B6900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R851 PSY
+   UP

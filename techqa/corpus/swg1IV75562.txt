@@ -1,0 +1,128 @@
+Title: IBM IV75562: ERROR "FAILED TO LOAD DATA!" OCCURRING IN 3.1.2 TABLE WIDGET - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the new JAZZ SM 1.1.2 Version this error "Failed to load
+   Data!" is occurring when configuring a WebGUI data source:
+   
+   Datasource to test with :
+   
+   Netcool/OMNIbus Web GUI > Events > Events: Default (global)
+   Netcool/OMNIbus Web GUI events for the 'Default' global view
+   Data Format: tree, Dataset Type: large, No Automatic Refresh,
+   Local Data Provider
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  TWL L3 provided test fix.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem Summary :
+   upgrading from JazzSM 1.1.1.0 to JazzSM 1.1.2.0, Table Widget
+   with a Webtop (Web GUI ) Data source throws
+   Error "Failed to load Data"
+   
+   Problem Conclusion :
+   "Failed to load data" error was due to an exception in the Dojo
+   code for the the table widget
+   
+   Patch has been provided to customer on top of JazzSM 1.1.2.0
+   build and formal fix is included in JazzSM 1.1.2.1 build
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  No Workaround Available
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV75562
+   
+   
+ * REPORTED COMPONENT NAME
+   JAZZ SM TIP DAS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04JD
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-28
+   
+   
+ * CLOSED DATE
+   2015-07-30
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R112 PSY
+   UP

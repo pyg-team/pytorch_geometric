@@ -1,0 +1,284 @@
+Title: IBM OA35739: Documentation updates: TCP/IP stack affinity for Event Integration Facility (EIF) component. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Desc.
+   ============
+   When installing ZPUMP and attempting to send test events to
+   OmniBus to  no avail. It was discovered that ZPUMP was starting
+   up on the default TCP/IP
+   stack instead of the one we pointed to in the GTMPUMP STC. Below
+   is the parm that was coded in ZPUMP STC:
+   
+   //SYSTCPD  DD  DISP=SHR,DSN=MCT.TS.TCPIP.TST1.TCPPARMS(TCPDAT1V)
+   
+   Instead of using the parms from this DD. It used the defaults
+   coming from SYS1.PARMLIB.
+   To get around this, customer had to force ZPUMP to start on
+   thecorrect TCP/IP stack. Why did ZPUMP ignore the parms on the
+   SYSTCPD DD
+   statement?
+   
+   
+   Following explaination was provided to customer. Please include
+   it in product documentation:
+   ================================================================
+   ==
+   MASTER address space uses the z/OS UNIX System Services (z/OS
+   UNIX C
+   sockets) to send EIF messages to the EIF Probe server on
+   distributed side. For all of the z/OS UNIX sockets applications
+   the stack affinity is determined by UNIX System Services
+   configuration definitions. Refer   to the z/OS Communication
+   Server IP Configuration Guide for  considerations for multiple
+   instances of TCP/IP.
+   
+   There are two approaches to gain affinity to a specific TCP/IP
+   stack:
+   
+   1. In a z/OS UNIX INET (single stack) environment, the socket
+   application program is always associated with the single TCP/IP
+   stack.
+   In the z/OS UNIX Common INET (CINET) environment, your
+   application is associated with multiple TCP/IP stacks unless the
+   application
+   specifically associates with a particular stack.
+   
+   EIF component of Event Pump does not bind themselve to a
+   particular  stack in a multi-stack environment. If you require
+   that Event Pump EIF socket application be bound to a particular
+   stack in a CINET environment, consider establishing affinity
+   using the following method.  The BPXTCAFF program can be used to
+   bind affinity to a stack of your   choice. To do this, the
+   BPTXTCAFF program must run prior to the program   that
+   initializes the MASTER address space. One way of doing this is
+   to  add this statement in the GTMPUMP startup JCL just prior to
+   the  statement used to start GPZMAINE:
+   
+   //STEP0    EXEC PGM=BPXTCAFF,PARM=MYSTACK
+   
+   where the PARM= parameter is a pointer to the stack to which you
+   want to  establish affinity. This example shows what the startup
+   JCL might look
+   like after the step is added. This example is for reference
+   only.
+   
+   
+   //STEP0    EXEC PGM=BPXTCAFF,PARM=MYSTACK
+   //PUMP     EXEC PGM=GPZMAINE,TIME=1440,REGION=400M
+   //STEPLIB  DD  DISP=SHR,DSN=%hlq.SGTMMODS          <== AUTH LIB
+   //         DD  DISP=SHR,DSN=%rexxhlq.SEAGALT       <== AUTH LIB
+   //*        DD  DISP=SHR,DSN=%cpsmlib.SEYUAUTH      <== AUTH LIB
+   
+   2. To request transport affinity when multiple TCP/IP images are
+   used,set the _BPXK_SETIBMOPT_TRANSPORT environment variable to
+   the name of
+   the preferred transport before starting MASTER address space
+   (GTMPUMP).
+   
+   For additional information about BPXTCAFF and
+   _BPXK_SETIBMOPT_TRANSPORT environment variable, refer to the
+   UNIX System Services Planning.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  See problem description for explaination provided to customer.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Tivoli Event Pump users who want to gain     *
+   *                 affinity to particular TCP/IP stack in EIF.  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Event Integration Facility component    *
+   *                      of Tivoli Event Pump may send EIF       *
+   *                      data to Netcool/OMNIbus server using    *
+   *                      the incorrect TCP/IP stack in multi-    *
+   *                      stack CINET environment. All attempts   *
+   *                      to manually set SYSTCPD data set to     *
+   *                      gain affinity to specific stack fail.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Event Integration Facility component of the Tivoli Event Pump
+   uses the z/OS UNIX System Services to send EIF messages to the
+   Tivoli EIF Probe server on the distributed side. EIF component
+   does not bind itself to a particular stack in a multi-stack
+   environment. z/OS UNIX System Services gains affinity to the
+   default stack in multi-stack environment for Event Integration
+   Facility. User must do extra steps to properly bind EIF to
+   specific TCP/IP stack.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  New paragraph 'Gain affinity to a TCP/IP stack for the Event
+   Integration Facility' was added to the 'Chapter 19. Filtering
+   Event Pump for z/OS events' of Installation and Configuration
+   Guide for IBM Tivoli Event Pump:
+   
+   Gain affinity to a TCP/IP stack for the Event Integration
+   Facility
+   
+   Event Integration Facility component of the Tivoli Event Pump
+   uses the z/OS UNIX System Services (z/OS UNIX C sockets) to send
+   EIF messages to the Tivoli EIF Probe server on the distributed
+   side. For all of the z/OS UNIX sockets applications the stack
+   affinity is determined by UNIX System Services configuration
+   definitions. Refer to the z/OS Communication Server IP
+   Configuration Guide for considerations for multiple instances
+   of TCP/IP.
+   
+   In the z/OS UNIX INET environment, single stack environment, the
+   socket application program is always associated with the single
+   TCP/IP stack.
+   
+   In the z/OS UNIX Common INET (CINET) environment, your
+   application is associated with multiple TCP/IP stacks unless the
+   application specifically associates with a particular stack.
+   Event Integration Facility of Tivoli Event Pump does not bind
+   itself to a particular stack in a multi-stack environment. If
+   you require that Tivoli Event Pump EIF socket application be
+   bound to a particular stack in a CINET environment, consider
+   establishing affinity using the following methods:
+   
+    - The BPXTCAFF program can be used to bind affinity to a stack
+      of your choice. To do this, the BPTXTCAFF program must run
+      prior to the program that initializes the address space of
+      Event Integration Facility. Depending of your installation
+      BPTXTCAFF program should be run before Master or Event
+      Distributor address space. One way of doing this is to add
+      this statement in the Tivoli Event Pump startup JCL just
+      prior to the statement used to start Event Integration
+      Facility:
+   
+      //STEP0    EXEC PGM=BPXTCAFF,PARM=MYSTACK
+   
+      where the PARM= parameter is a pointer to the stack to which
+      you want to establish affinity. This example shows how the
+      startup JCL might look like after the step is added. This
+      example is for reference only.
+   
+      MASTER address space:
+   
+      ...
+   
+      //STEP0    EXEC PGM=BPXTCAFF,PARM=MYSTACK
+      //PUMP     EXEC PGM=GPZMAINE,TIME=1440,REGION=400M
+      //STEPLIB  DD  DISP=SHR,DSN=%hlq.SGTMMODS        <== AUTH LIB
+      //         DD  DISP=SHR,DSN=%rexxhlq.SEAGALT     <== AUTH LIB
+      //         DD  DISP=SHR,DSN=%cpsmlib.SEYUAUTH    <== AUTH LIB
+   
+      ...
+   
+      or
+   
+      Event Distributor address space:
+   
+      ...
+   
+      //STEP0    EXEC PGM=BPXTCAFF,PARM=MYSTACK
+      //SRVR     EXEC PGM=GTMMAINS
+      //STEPLIB  DD DISP=SHR,DSN=%hlq.SGTMMODS
+   
+      ...
+   
+    - To request transport affinity when multiple TCP/IP images are
+      used, set the _BPXK_SETIBMOPT_TRANSPORT environment variable
+      to  the name of the preferred transport before starting the
+      Event Integration Facility (GPZPUMP or GTMSRVR started
+      procedures).
+   
+   For additional information about BPXTCAFF program and
+   _BPXK_SETIBMOPT_TRANSPORT environment variable, refer to the
+   UNIX System Services Planning.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA35739
+   
+   
+ * REPORTED COMPONENT NAME
+   EVENT PUMP FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5698B3400
+   
+   
+ * REPORTED RELEASE
+   422
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-24
+   
+   
+ * CLOSED DATE
+   2011-05-18
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC27230901 SC27230902 SC27230905 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,173 @@
+Title: IBM PI94769: IBM MQ Z/OS V900: ABEND 5C6-00E7014F AND MESSAGE CSQX774E FOR AN LU62 CHANNEL - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When an LU62 channel connects to a qmgr which has
+   CHLAUTH(ENABLED) and a CHLAUTH rule with TYPE(ADDRESSMAP), the
+   channel authentication code attempts to process the channel's
+   LU62 connection name as an IP address. This results in an
+   unexpected error in the parsing code, causing the abend
+   5C6-00E7014F and message CSQX774E reporting all inbound
+   channels being blocked.
+   
+   Below messages were displayed in CHIN joblog:
+   11:08:39  +CSQX500I CSQ1 CSQXRCTL Channel CSQ1.CHL1 started
+   11:09:56  +CSQX202E CSQ1 CSQXRCTL Connection or remote listener
+   unavailable,
+   11:09:56   channel CSQ1.CHL1
+   11:09:56   connection conn_name(<ipaddr>)
+   11:09:56   TRPTYPE=TCP RC=00000467 (ETIMEDOUT) reason=00000000
+   11:09:56  +CSQX599E CSQ1 CSQXRCTL Channel CSQ1.CHL1 ended
+   abnormally
+   11:10:57  IEA794I SVC DUMP HAS CAPTURED:
+   11:10:57  DUMPID=420 REQUESTED BY JOB (CSQ1CHIN)
+   11:10:57  DUMP TITLE=CSQ1,ABN= 5C6-00E7014F
+   ,LOC=CSQXADPM.CSQXADPM
+   11:10:57  +CSQX772E CSQ1 CSQXRESP ???? failed, MQRC=2195
+   (MQRC_UNEXPECTED_ERROR)
+   11:11:00  +CSQX774E CSQ1 CSQXRESP CHLAUTH cache load failed, all
+   inbound channels blocked
+   .
+   Additional keywords:
+   ABEND5C6
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disable QMGR CHLAUTH to avoid above abend and CSQX772E
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of IBM MQ for z/OS Version 9       *
+   *                 Release 0 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: LU62 Channels will not start when       *
+   *                      ADDRESSMAP ChlAuth rules are applied to *
+   *                      them                                    *
+   ****************************************************************
+   When an ADDRESSMAP ChlAuth Rule is applied to an LU62 Channel to
+   block an IP Address, the LU62 ChlAuth validation will fail
+   preventing the channel from being started.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ChlAuth checks that include the use of IP Addresses have been
+   stopped for channels of type 'LU62'.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI94769
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ Z/OS V9
+   
+   
+ * REPORTED COMPONENT ID
+   5655MQ900
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-03-07
+   
+   
+ * CLOSED DATE
+   2018-03-20
+   
+   
+ * LAST MODIFIED DATE
+   2018-07-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI88648 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI88648] 
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI54601
+   
+   
+
+MODULES/MACROS
+ *  CMQXRMSA CMQXRSCF
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM MQ Z/OS V9
+   
+   
+ * FIXED COMPONENT ID
+   5655MQ900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI56541 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI56541]
+   UP18/07/26 I 1000 ¢
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

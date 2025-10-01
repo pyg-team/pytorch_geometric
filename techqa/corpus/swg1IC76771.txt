@@ -1,0 +1,151 @@
+Title: IBM IC76771: THE INSPECT TOOL CAN LEAK MEMORY WHEN INCORRECTLY INSERTING A COMPRESSION DICTIONARY - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032087]
+DB2 Version 9.5 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033308]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The DB2 INSPECT ROWCOMPESTIMATE option estimates the
+   effectiveness of row compression for a table. It can leak memory
+   when the compression dictionary was built successfully but
+   attempting to insert it into table didn't succeed or complete.
+   For such case, the dictionary should be free'ed from the memory.
+    The most common situation for this is when INSPECT
+   ROWCOMPESTIMATE runs against a table that does not support data
+   row compression.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Restart the database to free the leaked memory in DBHEAP
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of INSPECT ROWCOMPESTIMATE                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The DB2 INSPECT ROWCOMPESTIMATE option estimates the         *
+   * effectiveness of row compression for a table. It can leak    *
+   * memory when the compression dictionary was built             *
+   * successfully but                                             *
+   * attempting to insert it into table didn't succeed or         *
+   * complete. For such case, the dictionary should be free'ed    *
+   * from the memory. The most common situation for this is when  *
+   * INSPECT  ROWCOMPESTIMATE runs against a table that does not  *
+   * support data row compression.                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 v9.5 FP9 or newer                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Memory is no longer leaked in DB2 v9.5 FP9
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC76771
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-02
+   
+   
+ * CLOSED DATE
+   2012-03-12
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IC76556 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC76556]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSN
+   UP
+   
+   
+ * R950 PSY
+   UP

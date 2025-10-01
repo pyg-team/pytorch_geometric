@@ -1,0 +1,210 @@
+Title: IBM PM30230: DETERMINING CORRECT PERMISSIONS FOR YN AGENT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.2-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP2 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24030518]
+7.1.0.2-TIV-ITCAMAD-IF0006: ITCAM for Application Diagnostics V7.1 FP2 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24031010]
+7.1.0.2-TIV-ITCAMAD-IF0007: ITCAM for Application Diagnostics V7.1 FP2 IF7 [http://www-01.ibm.com/support/docview.wss?uid=swg24031710]
+7.1.0.2-TIV-ITCAMAD-IF0010: ITCAM for Application Diagnostics V7.1 FP2 IF10 [http://www-01.ibm.com/support/docview.wss?uid=swg24032110]
+7.1.0-TIV-ITCAMAD-FP0003: ITCAM for Application Diagnostics V7.1 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032604]
+7.1.0.3-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP3 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032985]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Users Affected: unix or linux host with websphere agent (yn)
+   installed and run as non-root user.
+   
+   Sample configuration of users:
+   CANDLEHOME: /usr/IBM/ITM
+   agents: ux um ul - all run as user tivadmin
+   agents: ht yn tu - all run as user wasadmin
+   websphere and IHS both run as wasadmin
+   group itmgroup exists with members root, tivadmin, wasadmin
+   
+   ---
+   
+   On UNIX and Linux operating systems, the product installation
+   process
+   creates the majority of directories and files with world write
+   permissions.
+   
+   User secured his ITM installation by running
+   "chown -R tivadmin:itmgroup /usr/IBM/ITM" while all components
+   were
+   down during some ITM maintenance. The yn agent is run by
+   'wasadmin'
+   user which is member of 'itmgroup' group. Besides this 'chown'
+   operation
+   yn agent requires additional chown/chmod to function properly:
+   some
+   directories will need running
+   "chown -R wasadmin:itmgroup /usr/IBM/ITM/<some_dir>". What
+   directories
+   should be chown'ed in this way? What directories need to be
+   owned by
+   'wasadmin' for yn agents to function properly?
+   
+   According to ITM documentation to secure the installation
+   running 'secureMain' script is required. However, this script
+   sets
+   insufficient permissions for yn agent to function properly.
+   
+   ---
+   Keyword/Symptom: TEMA directory permissions
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  hotfix profided
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   * Users of ITCAM for Application Diagnostics 7.1 on Linux and
+   * Unix platforms with WebSphere Agent (yn) installed and run as
+   * non-root user.
+   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   * User wants to run yn agent with user (wasadmin) different than
+   * owner of files under ITM installation (tivadmin).
+   * This requires adding yn agent user to proper group (itmgroup)
+   * and secure ITM installation with:
+   *
+   *  chown -R tivadmin:itmgroup /usr/IBM/ITM
+   *
+   * ITM recommends using 'secureMain' script to secure ITM
+   * installation for specified group:
+   *  /usr/IBM/ITM/bin/secureMain -g itmgroup lock
+   *
+   * This script sets insufficient permissions for yn agent to
+   * function properly, when run by wasadmin user.
+   *
+   * Sample configuration of users:
+   *  - CANDLEHOME: /usr/IBM/ITM
+   *  - agents: ux um ul - all run as user tivadmin
+   *  - agents: ht yn tu - all run as user wasadmin
+   *  - WebSphere and IHS both run as wasadmin
+   *  - group 'itmgroup 'exists with members: root, tivadmin and
+   *     wasadmin
+   *
+   *
+   ****************************************************************
+   * RECOMMENDATION: Use interim fix 3: 7.1.0.2-TIV-ITCAMAD-IF0003
+   * or newer.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Implemented fix provides 'ynSecure.shl' extension for
+   'secureMain' script, which sets correct group permission, when
+   running 'secureMain'.
+   
+   The fix for this APAR is a part of maintenance package:
+    interim fix pack 7.1.0.2-TIV-ITCAMAD-IF0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM30230
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS TEM
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92WD
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-01-11
+   
+   
+ * CLOSED DATE
+   2011-04-20
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS TEM
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92WD
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

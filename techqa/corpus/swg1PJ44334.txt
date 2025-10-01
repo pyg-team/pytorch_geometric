@@ -1,0 +1,239 @@
+Title: IBM PJ44334: CONTENT PLATFORM ENGINE (CPE) SHOULD PREVENT AUDITAS ON ENUMERATIONS. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following error occurs when configuring auditing on an
+   enumeration:
+   
+   com.filenet.api.exception.EngineRuntimeException: FNRCE0066E:
+   E_UNEXPECTED_EXCEPTION: An unexpected exception occurred.  The
+   unexpected exception is chained to this exception. Can't persist
+   audit log entry for event class UpdateEvent. failedBatchItem=0
+   errorStack={
+           at
+   com.filenet.engine.persist.EventPersister.writeAuditEvent(EventP
+   ersister.java:406)
+           at
+   com.filenet.engine.persist.SubscribablePersister.postEvent(Subsc
+   ribablePersister.java:454)
+           at
+   com.filenet.engine.persist.SubscribablePersister.auditSystemEven
+   ts(SubscribablePersister.java:401)
+           at
+   com.filenet.engine.persist.SubscribablePersister.postExecuteChan
+   ge(SubscribablePersister.java:340)
+           at
+   com.filenet.engine.persist.ReplicablePersister.postExecuteChange
+   (ReplicablePersister.java:135)
+           at
+   com.filenet.engine.persist.WithContentPersister.postExecuteChang
+   e(WithContentPersister.java:549)
+           at
+   com.filenet.engine.persist.VersionablePersister.postExecuteChang
+   e(VersionablePersister.java:302)
+           at
+   com.filenet.engine.persist.IndependentPersister.executeChangeWor
+   k(IndependentPersister.java:441)
+           at
+   com.filenet.engine.persist.IndependentPersister.executeChange(In
+   dependentPersister.java:229)
+           at
+   com.filenet.engine.persist.SubscribablePersister.executeChange(S
+   ubscribablePersister.java:172)
+   ...
+           at
+   com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1690)
+   Caused by: java.lang.NullPointerException failedBatchItem=0
+           at
+   com.filenet.apiimpl.util.UtilityMap.putMember(UtilityMap.java:11
+   9)
+           at
+   com.filenet.apiimpl.property.PropertiesImpl.put(PropertiesImpl.j
+   ava:112)
+           at
+   com.filenet.apiimpl.property.PropertiesImpl.getModifiedData(Prop
+   ertiesImpl.java:248)
+           at
+   com.filenet.apiimpl.core.EngineObjectImpl.getModifiedProperties(
+   EngineObjectImpl.java:509)
+           at
+   com.filenet.apiimpl.core.Session.getChangeRequest(Session.java:4
+   84)
+           at
+   com.filenet.engine.context.ServerSession.getChangeRequest(Server
+   Session.java:182)
+           at
+   com.filenet.apiimpl.core.Session.getChangeRequests(Session.java:
+   516)
+           at
+   com.filenet.apiimpl.core.Session.executeChanges(Session.java:544
+   )
+           at
+   com.filenet.apiimpl.core.Session.executeChange(Session.java:846)
+           at
+   com.filenet.apiimpl.core.IndependentlyPersistableObjectImpl.save
+   (IndependentlyPersistableObjectImpl.java:83)
+           at
+   com.filenet.apiimpl.core.IndependentlyPersistableObjectImpl.save
+   (IndependentlyPersistableObjectImpl.java:74)
+           at
+   com.filenet.engine.persist.EventPersister.writeAuditEvent(EventP
+   ersister.java:385
+   
+   Steps to Reproduce:
+   1) Enable auditing at the Object Store level
+   2) Create a custom doc class (optional) and create a custom
+   property template  - multivalue object type ( and attach it to
+   the class)
+   create a doc class with a multivalue object property (MVOPDC)
+   from the DC properties > Property Definitions tab select the
+   property and click edit > more tab > set required class = custom
+   object
+   3) Add the same property to the UpdateEvent class (when you add
+   you need to click "show object type" to display the property
+   definition)
+   in other classes > event > object change event > update event
+   add the multivalue object property
+   You'll need to set the required class = custom object again.
+   Property Definitions tab select the property and click edit >
+   more tab > set required class = custom object
+   4) Configure the custom doc class custom enum property for
+   AuditAs..the same property added to the UpdateEvent class
+   5) Configure an audit definition on the custom doc class for
+   example on Success Update events
+   Go back to MVOPDC properties > Audit Definitions tab
+   Event = update
+   object state recording level = none
+   audit type = success
+   check is enabled
+   click add as new
+   6) Create a custom doc class instance and then attempt to modify
+   one of the values
+   Add a document with MVOPDC as the doc class
+   try to change the document title and you'll see the error
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * P8 administrators with 5.2.1.7-P8CPE-FP007 and prior.        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The following error occurs when configuring auditing on an   *
+   * enumeration:                                                 *
+   *                                                              *
+   * com.filenet.api.exception.EngineRuntimeException:            *
+   * FNRCE0066E:E_UNEXPECTED_EXCEPTION: An unexpected exception   *
+   * occurred.  The unexpected exception is chained to this       *
+   * exception. Can't persist audit log entry for event class     *
+   * UpdateEvent.                                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.5.0.0-P8CPE or above.                           *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  As Audit should not be available on enumerations.  Code changes
+   in 5.5.0.0-P8CPE made to not allow for audit as on enumerations.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ44334
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   521
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-08
+   
+   
+ * CLOSED DATE
+   2018-01-11
+   
+   
+ * LAST MODIFIED DATE
+   2018-01-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS

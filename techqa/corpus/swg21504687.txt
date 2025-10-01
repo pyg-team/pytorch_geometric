@@ -1,0 +1,55 @@
+Title: IBM Modeler aggregate node caching attempts to create real tables on SQL Server instead of local(#) or global (##) temp tables. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Caching is enabled for an Aggregate node. Also, database caching is enabled on the client machine,
+
+Running the stream the message "Failed to create table for in-database caching. Using file cache instead." is generated. 
+
+Reviewing the sql what was executed was CREATE TABLE CLEMTMPA024A51 ( "Column1" INT,"Column2" INT). The user does not have authority to create a real table on SQL Server. We would expect either temporary local or global tables to be used on sql server in this situation. 
+
+SYMPTOM
+"Failed to create table for in-database caching. Using file cache instead."
+
+
+CAUSE
+No authority to create a real table in sql server database.
+
+ENVIRONMENT
+SQL sever 2008 and Modeler 14.1 on Windows 2008 R2 server
+
+DIAGNOSING THE PROBLEM
+See symptom
+
+RESOLVING THE PROBLEM
+Currently, when in-database caching is chosen we use a naming convention of 'CLEMTMPxxxx' which makes it a normal table and it does not get automatically removed by the system.
+
+example:
+Executing SQL: CREATE TABLE CLEMTMP34D0E1A1 
+
+After the below solution the temporary tables are named as such:
+Executing SQL: INSERT INTO "#CLEMTMP7A2510F51" 
+
+Local temporary tables(#) are only available to the current connection to the database for the current user and are dropped when the connection is closed. Global temporary tables(##) are available to any connection once created, and are dropped when the last connection using it is closed.
+
+Both types of temporary tables are created in the system database tempdb.
+
+Temporary tables can be created like any table in SQL Server with a CREATE TABLE or SELECT..INTO statement. To make the table a local temporary table, you simply prefix the name with a (#). To make the table a global temporary table, prefix it with (##). 
+
+To force Modeler to create local temporary tables, close Modeler and do the following:
+
+1) In the <modeler install path>\config directory create a text file with the name:
+odbc-mssql-custom-properties.cfg
+
+2) Edit the file with note pad and add this line:
+table_create_temp_tablename_prefix, '#CLEMTMP'
+
+3) In that same directory, open the 'options.cfg' file and confirm this setting is 'Y':
+allow_config_custom_overrides, Y
+
+4) Start Modeler and try a stream that uses in-database caching. Looking at the messaging should indicate how the table was created and if it starts with a single '#' sign it was created as a local temporary table.
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]

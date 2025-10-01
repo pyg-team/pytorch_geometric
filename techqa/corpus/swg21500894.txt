@@ -1,0 +1,45 @@
+Title: IBM Installing Pack for HIPAA EDI 4.3.2.1 results in error indicating Design Studio is required - United States
+
+Text:
+HIPAA install required design studio TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you attempt to install the WTX HIPAA EDI Pack, a pop-up window is displayed stating "Setup has detected that you are trying to install components that require IBM WebSphere Transformation Extender Design Studio. Install IBM WebSphere Transformation Extender Design Studio before attempting to install this product. 
+
+CAUSE
+The correct combination of the WTX Design Studio and HIPAA EDI Pack have not been installed.
+
+RESOLVING THE PROBLEM
+This problem is caused by either the WTX Design Studio not having been installed or the incorrect version of the HIPAA EDI pack is being installed.
+
+
+The WTX HIPPA EDI 4.3.2.1 pack, WTX_FOR_HIPAA_V4.3.2.1_WIN_<language>.zip, is delivered with three installation exe files. These are: 
+
+hipaa4321_83.exe 
+
+hipaa4321_82.exe 
+
+hipaa4321_81.exe 
+
+ 
+
+To successfully install the WTX HIPAA EDI 4.3.2.1 Pack: 
+
+ 1. Verify the version of the Design Studio you have installed by reviewing the contents of the Design Studio's Help About window. 
+ 2. If the Design Studio is not installed, install it from the respective Passport Advantage download and proceed to Step 3. 
+ 3. After verifying that the Design Studio is installed, ensure you install the HIPAA EDI installation executable that corresponds to the version of the Design Studio you have installed as described below:  * hipaa4321_83.exe is the installation executable to use with the WTX Design Studio 8.3.0.4 or higher 
+     * hipaa4321_82.exe is the installation executable to use with the WTX Design Studio 8.2.0.5 or higher 
+     * hipaa4321_81.exe is the installation executable to use with the WTX Design Studio 8.1.0.5 or higher
+    
+    
+
+ * Note that similar pop-up windows informing you of a required WTX Design Studio install can occur with other versions of the HIPAA Pack or other WTX Industry Packs and Components. Similar resolution steps can be applied to these products as well. Review the corresponding products Release Notes for WTX prerequisites. Release notes for WTX products can be found at: http://www.ibm.com/support/docview.wss?uid=swg27008337 [http://www.ibm.com/support/docview.wss?uid=swg27008337]
+
+RELATED INFORMATION
+#WTX Release Notes [https://www.ibm.com/support/docview.wss?uid=swg27008337]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Ascential Mercator HIPAA DataStage DataStageTX Transformation Extender

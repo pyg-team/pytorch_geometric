@@ -1,0 +1,51 @@
+Title: IBM How to Configure Planning Analytics Timeout Settings - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The following page contains a consolidated view of the various timeout settings available to Planning Analytics. Please take in to consideration that timeouts allow the cleanup of inactive sessions, freeing up resources (memory) from various services to be used by active users. Timeouts set too high may have a negative impact on your environment.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+TM1 SERVER IDLE:
+Default: 900 seconds ( 15 minutes )
+Location: tm1s.cfg
+Setting: IdleConnectionTimeOutSeconds=900
+https://www.ibm.com/support/knowledgecenter/en/SSD29G_2.0.0/com.ibm.swg.ba.cognos.tm1_inst.2.0.0.doc/c_idleconnectiontimeoutseconds_tm1.html [https://www.ibm.com/support/knowledgecenter/en/SSD29G_2.0.0/com.ibm.swg.ba.cognos.tm1_inst.2.0.0.doc/c_idleconnectiontimeoutseconds_tm1.html]
+
+TM1 SERVER REST/HTTP:
+Default: 20 minutes
+Location: tm1s.cfg
+Setting: HTTPSessionTimeoutMinutes=20
+https://www.ibm.com/support/knowledgecenter/en/SSD29G_2.0.0/com.ibm.swg.ba.cognos.tm1_inst.2.0.0.doc/c_httpsessiontimeoutminutes.html [https://www.ibm.com/support/knowledgecenter/en/SSD29G_2.0.0/com.ibm.swg.ba.cognos.tm1_inst.2.0.0.doc/c_httpsessiontimeoutminutes.html]
+
+CAM SECURITY:
+Default: 3600 seconds ( 60 minutes )
+Location: Cognos Configuration > Security > Authentication
+Setting: Inactivity timeout in seconds
+https://www.ibm.com/support/knowledgecenter/en/SSEP7J_10.2.0/com.ibm.swg.ba.cognos.ig_mob.10.2.0.doc/t_mig_sec_st_cam.html [https://www.ibm.com/support/knowledgecenter/en/SSEP7J_10.2.0/com.ibm.swg.ba.cognos.ig_mob.10.2.0.doc/t_mig_sec_st_cam.html]
+
+TM1 WEB: 
+Default: 20 minutes
+Location: \tm1_64\webapps\tm1web\WEB-INF\web.xml
+Setting: <session-timeout>20</session-timeout>
+https://www.ibm.com/support/knowledgecenter/en/SSD29G_2.0.0/com.ibm.swg.ba.cognos.tm1_prism_gs.2.0.0.doc/t_paw_troubleshooting_web_timeout.html [https://www.ibm.com/support/knowledgecenter/en/SSD29G_2.0.0/com.ibm.swg.ba.cognos.tm1_prism_gs.2.0.0.doc/t_paw_troubleshooting_web_timeout.html]
+
+PMPSVC: 
+Default: 60 minutes
+Location: Cognos Configuration > TM1 Applications 
+Setting: Session timeout (min)
+( this setting updates the \tm1_64\webapps\pmpsvc\WEB-INF\configuration\fpmsvc_config.xml session-timeout )
+https://www.ibm.com/support/knowledgecenter/en/SSD29G_2.0.0/com.ibm.swg.ba.cognos.tm1_inst.2.0.0.doc/t_tm1_inst_contrib_c8security_session_timeout_vals.html [https://www.ibm.com/support/knowledgecenter/en/SSD29G_2.0.0/com.ibm.swg.ba.cognos.tm1_inst.2.0.0.doc/t_tm1_inst_contrib_c8security_session_timeout_vals.html]
+
+PMHUB / PLANNING ANALYTICS FOR EXCEL:
+Default: 3600 seconds ( 60 minutes )
+Location: http://localhost:9510/pmhub/pm/admin [http://localhost:9510/pmhub/pm/admin] , Configurations > PMHub Session
+Setting: MaxInactivityTimeout
+
+RELATED INFORMATION
+#

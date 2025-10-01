@@ -1,0 +1,54 @@
+Title: IBM ITM UNIX OS Agent on Solaris won't start - United States
+
+Text:
+ITM_UNIX_OS_AGENT 5724C040U - UX OS Agent Solaris TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ITM UNIX OS Agent on Solaris won't start. This happened for 6.22 FP02 but could also occur on 6.2, 6.2.1 and 6.2.3 versions of the agent
+
+# ./itmcmd agent start ux
+Starting Monitoring Agent for UNIX OS ...
+KCIIN0198E Unable to start agent. Please, check log file. 
+
+SYMPTOM
+The following is the error in the logfile: 
+
+ld.so.1: kuxagent: fatal: librtld_db.so.1: version `SUNWprivate_1.1' not found (required by file /lib/sparcv9/libproc.so.1)
+ld.so.1: kuxagent: fatal: librtld_db.so.1: open failed: No such file or directory
+
+
+CAUSE
+SUNWprivate_1.1 is missing under /lib/64/librtld_db.so.1. This is contained in a Solaris patch provided by Sun.
+
+
+ENVIRONMENT
+6.2, 6.2.1, 6.2.2, 6.2.3 (64-bit)
+
+
+
+DIAGNOSING THE PROBLEM
+# /export/opt/IBM/ITM/bin/itmcmd execute ux "ldd /export/opt/IBM/ITM/sol*/ux/bin/kuxagent" 
+
+
+** If "ldd" cannot be found, use the fully qualified path of "ldd" ("which ldd" should give you the path). All the libraries used by the kuxagent will be listed here (based on the version of the agent running)
+
+This was reported for the library error received in the logs above:
+
+/export/opt/IBM/ITM/tmaitm6/sol286/lib/libkdh.so 
+librtld_db.so.1 => /lib/64/librtld_db.so.1 
+librtld_db.so.1 (SUNWprivate_1.1) => (version not found)
+
+# pvs -d /lib/librtld_db.so.1 
+librtld_db.so.1; 
+SUNW_1.1; 
+SUNWprivate_1.1; 
+
+# pvs -d /lib/64/librtld_db.so.1 
+librtld_db.so.1; 
+SUNW_1.1; 
+
+NOTE: SUNWprivate_1.1 is missing under /lib/64/librtld_db.so.1. It was present under the 32-bit library. This was a 64-bit OS and the customer had installed 64-bit version of the OS agent. The missing symbol (SUNWprivate_1.1) is required under the 64-bit library.
+
+
+RESOLVING THE PROBLEM
+Install the patch which contains the SUNWprivate_1.1 symbol. Contact Solaris support for details of the patch.

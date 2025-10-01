@@ -1,0 +1,35 @@
+Title: IBM How do I choose the connection_pool_size parameter in STAP configuration? - United States
+
+Text:
+connection pool size STAP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What does "connection_pool_size =1" mean?
+
+What is the difference between "connection_pool_size =1" and "connection_pool_size =2"?
+
+When should I set connection_pool_size higher than 1? 
+
+RESOLVING THE PROBLEM
+Transport layer security (TLS) connections between the Guardium appliance and the STAP can experience a lot of traffic and have the additional overhead of encryption. 
+
+TLS can be enabled via the S-TAP Control or by setting the following in the guard_tap.ini 
+
+ * 
+ * use_tls=1
+
+
+When TLS is enabled, additional connections can be opened by using the connection_pool_size parameter in the guard_tap.ini. 
+
+This feature allows the STAP to send traffic to the collector on more than 1 port. If you set connection_pool_size parameter=2, traffic would be sent over 2 ports. (the default setting is 0 (connection pooling not used)) 
+
+Important notes:  * 
+ * 
+ *  Note: Since TLS connections can experience a lot of traffic and have the additional overhead of encryption, additional connections can be opened, if supported by additional CPUs, by using the connection_pool_size parameter. See Edit the S-TAP Configuration File for more information. 
+
+ 
+
+Additional note :-
+Connection pooling should only be used on very robust servers. If the database server has 2 CPU's you should not use connection pooling. Normally all traffic can be handled using a setting of '1' even in busy environments. 
+
+Connection pooling should only be used in an environment using the latest STAP (November 2012 release onwards ) and an appliance at 8.2p140 or higher.

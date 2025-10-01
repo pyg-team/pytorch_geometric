@@ -1,0 +1,14 @@
+Title: IBM Queues Missing from the Queue Statistics Workspace and Present in the Queue Definitions Workspace - United States
+
+Text:
+Queue Statistics Queue Definitions missing TECHNOTE (FAQ)
+
+QUESTION
+ Why are queues missing from the Queue Statistics workspace and present in Queue Definitions workspace? 
+
+ANSWER
+There are two explanations:: 
+
+1) You are looking at "Queue Statistics for Monitored Queues with Messages" workspace. This workspace, the default one displayed for Queue Statistics, will only show queues where Current Depth is greater than 0. So if a queue has no messages, it will not show up on this workspace. If you right-click on Queue Statistics and select Workspaces, you will see several other workspace views to choose from. The "Queue Statistics" view will show all queues with associated statistics. Other choices are "Queue Statistics for monitored open queues", "Queue Statistics for Transmission Queues", "Real-time Queue Data for open queues" and more. 
+
+2) Queue Statistics workspaces will only display statistics for local queues (or alias queues whose base queue is a local queue). You will not see statistics for cluster or remote queues.

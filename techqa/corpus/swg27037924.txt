@@ -1,0 +1,21 @@
+Title: IBM Incorrect filter for obtaining parameters to upgrade Content Engine - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ The FileNet P8 Information Center incorrectly documents how to filter the Installation and Upgrade Worksheet for the program parameters to upgrade Content Engine. 
+
+CONTENT
+Step 2 in each of the following FileNet P8 Information Center topics incorrectly states the Installation or Configuration Program filter in the Installation and Upgrade Worksheet for obtaining the parameters to upgrade Content Engine:
+
+
+ * Upgrading to Content Platform Engine software interactively [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.install.doc/p8pup307.htm] 
+ * Upgrading to Content Platform Engine software silently [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.install.doc/p8pup306.htm]
+   
+
+
+Step 2 should read as follows: 
+Open your completed Installation and Upgrade Worksheet file. 
+
+Tip: In the worksheet file, verify that the Data > Filter > AutoFilter command is enabled. To view only Content Platform Engine values, filter by CPE Installer in the Installation or Configuration Program column.

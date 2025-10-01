@@ -1,0 +1,71 @@
+Title: IBM Collecting Data: reporting a problem with IBM Decision Center - United States
+
+Text:
+Collecting Data; Collecting Data; Collecting Data; MustGather; MustGather; MustGather; MustGatherDocument TECHNOTE (FAQ)
+
+QUESTION
+ Collecting data for problems with IBM Decision Center. Collecting this MustGather information before calling IBM support will help you understand the problem and save time analyzing the data. 
+
+ANSWER
+IBM Decision Center serves as a designated workspace where business users can work collaboratively to author, edit, organize, and search for business rules.
+
+If you already contacted support, continue on to the Collecting Decision Center specific information. Otherwise, click Collecting Data: Read first for all IBM Operational Decision Management Components [http://www.ibm.com/support/docview.wss?uid=swg21653691]
+
+
+
+COLLECTING DECISION CENTER SPECIFIC INFORMATION
+ 1. Collect Environment information  1.  Version and Patch number of:  1. Decision Center (DC) (About in console) 
+         2. the Application Server or Web Server where Decision Center is installed 
+         3. the JDK used 
+         4. the Browser used 
+         5. the database used 
+         6. the driver used for the datasource
+        
+        
+     2. The persistence language and display language used (If the problem is related to localization)
+        
+        
+    
+    
+ 2. Collect log traces for the Application Server  * For WAS, those are theSystemOut.log,SystemErr.logandtrace.logfound under<WAS_HOME>\profiles\<your profile>\logs\<your server>. 
+     * Send the full content of the log folder so we also see the trace of the last server start. 
+     * Also include the full content of the corresponding FFDC folder,<WAS_HOME>\profiles\<your profile>\logs\ffdc. 
+     * See Collecting Data: reporting a problem with IBM Rule Execution Server [http://www.ibm.com/support/docview.wss?uid=swg21653982] if the issue occurs when testing rules with the Decision Validation Services feature.
+       
+       
+    
+    
+ 3. Collect log traces for the database usage:
+    If you detect an issue with the database provide the SQL queries log using DCLogger. For instructions read Decision Center: Backend trace collector [http://www-01.ibm.com/support/docview.wss?uid=swg21977917]
+    
+    
+ 4. Provide step by step instructions to reproduce the problem  1. If DC is customized please describe the customization. 
+     2. Provide screen shots of display issues and logs for any other issues. 
+     3. When relevant, check the box in the Decision Center user options to display the stack trace in the console when an exception occurs and send us the full text of the error you see next time you reproduce the error.
+        
+        
+    
+    
+ 5. Use this link to Collect data for User Management in Decision Center [http://www.ibm.com/support/docview.wss?uid=swg21980003]. 
+ 6. Provide a project to reproduce.  1. If the problem can be reproduced with a sample from the distribution, provide the sample name. 
+     2. If the problem can be reproduced with another sample project, export this project from Decision Center. 
+     3. If the problem appears to be in the database used by Decision Center, provide a dump of the database. 
+        Support recommends using the Database export utility [http://www.ibm.com/support/docview.wss?uid=swg21980378]an easy to use database agnostic tool to export your database.
+        (Note that IBM Support treats all customer information as confidential and you can use secure transfer to maximize security and privacy concerns.)
+        
+        
+    
+    
+ 7. Follow instructions to send diagnostic data to IBM support [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852].
+
+
+
+
+Collecting and providing all the information relevant to the problem will significantly improve the support team's response time. 
+
+
+For a listing of all technotes, downloads, and educational materials specific to IBM Decision Center visit the IBM Operational Decision Manager Support [http://www.ibm.com/support/entry/portal/overview/software/websphere/ibm_operational_decision_manager] website. RELATED INFORMATION
+ Troubleshooting and support for ODM 8.5.1 [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/topic/com.ibm.odm.distrib.troubleshooting/topics/con_support_troubleshoot.html]
+Database export utility [http://www.ibm.com/support/docview.wss?uid=swg21980378]
+Database backend trace collector [http://www.ibm.com/support/docview.wss?uid=swg21977917]
+Collecting Data: User Management with Decision Center [http://www.ibm.com/support/docview.wss?uid=swg21980003]

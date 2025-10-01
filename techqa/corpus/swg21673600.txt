@@ -1,0 +1,74 @@
+Title: IBM Security Bulletin: IBM WebSphere Transformation Extender Secure Adapter Collection 8.4.1.1 CPU utilization and insecure Elliptic Curve Digital Signature Algorithm (CVE-2014-0963, CVE-2014-0076) - United States
+
+Text:
+WTX security bulletin Transformation Extender SECURITY BULLETIN
+
+SUMMARY
+ IBM WebSphere Transformation Extender Secure Adapter Collection product is affected by two issues: one related to the TLS implementation which, under very specific conditions, can cause CPU utilization to rapidly increase, the other related to an insecure Elliptic Curve Digital Signature Algorithm. 
+
+VULNERABILITY DETAILS
+
+CVE ID: CVE-2014-0963 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0963]
+Description: Multiple IBM products are affected by a problem with the handling of certain SSL messages. The TLS implementation can, under very specific conditions, cause CPU utilization to rapidly increase. The situation occurs only in a certain error case that causes a single thread to begin looping. If this happens multiple times, more threads will begin to loop and an increase in CPU utilization will be seen. This increase could ultimately result in CPU exhaustion and unresponsiveness of the products and other software running on the affected system.
+CVSS Base Score: 7.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/92844 [https://exchange.xforce.ibmcloud.com/vulnerabilities/92844] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:N/A:C)
+
+Workarounds and Mitigations:
+
+Method One) Monitor CPU utilization of IBM WebSphere Transformation Extender Launcher Agent instances. If utilization becomes abnormally high, stop and restart the affected instance.
+
+Method Two) Configure WTX Launcher Agent to use the legacy security protocol, which does not use GSKit. To do this, perform the following for every WTX instance in your environment:
+1. Rename m4gskssl.dll or m4gskssl.so to a different extension (e.g. .dll_disable for windows, .so_disable for UNIX). The older security protocol stack, as implemented by mercssl.dll or mercssl.so, will then be automatically used.
+2. In the [SSL_SERVER] section of the dtx.ini configuration file, set
+secure_mode=0
+If secure_mode is set to a value other than zero, then WTX will fail all secure communications, since mercssl module does not implement NIST compliance.
+
+
+
+
+
+
+
+CVE ID: CVE-2014-0076 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0076] 
+Description: OpenSSL could allow a local attacker to obtain sensitive information, caused by an implementation error in ECDSA (Elliptic Curve Digital Signature Algorithm). An attacker could exploit this vulnerability using the FLUSH+RELOAD cache side-channel attack to recover ECDSA nonces. 
+CVSS Base Score: 2.1 
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91990 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91990] [https://exchange.xforce.ibmcloud.com/vulnerabilities/92844] for the current score 
+CVSS Environmental Score*: Undefined 
+CVSS Vector: (AV:L/AC:L/Au:N/C:P/I:N/A:N) 
+Workarounds and Mitigations: None. AFFECTED PRODUCTS AND VERSIONS
+IBM WebSphere Transformation Extender Secure Adapter Collection 8.4.1.1
+
+REMEDIATION/FIXES
+Download and install IBM WebSphere Transformation Extender Secure Adapter Collection 8.4.1.2 from http://www.ibm.com/software/howtobuy/passportadvantage [http://www.ibm.com/software/howtobuy/passportadvantage]
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 20 May 2014 - Initial copy published.
+13 June 2014 - Since the 8.4.1.2 fix pack is now available, deleted instruction to request a patch, and instead instruct users to install the 8.4.1.2 fix pack.
+26 June 2014 - Updated to include CVE-2014-0076. 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21677026]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WTX

@@ -1,0 +1,94 @@
+Title: IBM HTTP Server: Error - Unable to Bind <hostname> port 80, port in use or Bind To Host configuration specifies a duplicate IP address/host - United States
+
+Text:
+as400; system i; qtmhhttp; iseries; ibmi; ibm i TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When attempting to LOAD HTTP, the following error occurs on the Domino console:
+
+HTTP Server: Error - Unable to Bind SERVERNAME.DOMAIN.COM, port 80, port in use or Bind To Host configuration specifies a duplicate IP address/host 
+HTTP Server: Shutdown 
+
+Issue often occurs on new servers added to an LPAR where other DOMINO servers were previously configured.
+
+
+CAUSE
+Most common causes: 
+
+1. The server cannot resolve the host name to an IP address 
+
+2. Another task is listening on port 80 (a different Domino server or the Operating System HTTP Server has reserved the port) 
+
+3. Authority and/or ownership problems exist. Check all objects in the data directory for QNOTES ownership and all object authority.
+
+
+RESOLVING THE PROBLEM
+1. The server must be able to resolve the name "servername.domain.com" to an IP address. 
+
+
+- The "Bind to Host name" value you set on the HTTP tab of the Internet Protocols section in the Server document should be the name value, not an IP address. 
+- That name must be resolvable on the local host table of the machine (CFGTCP option 10).
+- The TCP Domain Information screen (CFGTCP option 12) must have the Host Name Search Priority set to *LOCAL.
+
+Note : The error can also occur if the administrator tries to bind port 80 using the same IP address to two different host names by entering both names in the Server Document > Internet Protocols tab > HTTP tab > Host Names field. You should enter only one name here. If there are incorrect entries, correct them, make sure the changes replicate to any other server(s), and reload HTTP.
+
+2. If you have one Domino HTTP server running and want to add a second Domino server running the HTTP task, the original or first server must have "Bind to Host Name" ENABLED and set to a properly configured host name. If not enabled, the second server's HTTP task can fail with the "Unable to bind port 80" error message.
+
+- To verify if the first server is "listening" to all IP addresses on port 80, which would prevent the second server from initializing HTTP, perform a NETSTAT *CNN command on an IBM i command line.
+- Locate entries for port 80, http, or www-http (or use F15=Subset and enter 80 in the Local Port: Lower Value field), then use option 5=Display to review the details:
+
+[/support/docview.wss?uid=swg21960029&aid=1] [/support/docview.wss?uid=swg21960029&aid=1]
+
+
+If you find that you have an asterisk in the LOCAL INTERNET ADDRESS field, as follows,
+
+(Local internet address . . . . . . . . . . : *)
+
+then the first server is "listening" to all IP addresses on port 80 and must be changed. In other words, both servers must BIND SPECIFIC to their respective host names. If you make changes, you must restart both servers for them to take effect. 
+
+- If the "Associated User Profile" field is the user profile QTMHHTTP and the "Local Internet Address" field is an * (listening on all ports), the operating system HTTP server has the port reserved. If not currently needed, use the ENDTCPSVR *HTTP to end the HTTP Server and allow Domino to get the port. Configuration changes will be needed in the IBM i HTTP Server to bind it to a specific IP address / host name. 
+
+
+3. The "Port in use" error can also occur when authority and/or ownership problems exist. Check all objects in the data directory for QNOTES ownership.
+
+Verify the authority on HTTP related databases:
+
+1. Navigate to the desired file using WRKLNK or WRKDOMSVR option 12
+2. Enter a 9 on the option line to the left of each file and press Enter to confirm QNOTES ownership and all object authority as follows:
+
+Work with Authority 
+
+Object . . . . . . . . . . . . : /notes/data/domlog.nsf 
+Owner . . . . . . . . . . . . : QNOTES 
+Primary group . . . . . . . . : *NONE 
+Authorization list . . . . . . : *NONE 
+
+
+Type options, press Enter. 
+1=Add user 2=Change user authority 4=Remove user 
+
+Data --Object Authorities-- 
+Opt User Authority Exist Mgt Alter Ref 
+
+*PUBLIC *EXCLUDE 
+QNOTES *RW X X X X 
+
+
+3. Use option 2 to change the User authority as required:
+
+Change Authority (CHGAUT) 
+
+Type choices, press Enter. 
+
+Object . . . . . . . . . . . . . > '/notes/data/admin4.nsf' 
+User . . . . . . . . . . . . . . > QNOTES Name, *PUBLIC, *NTWIRF 
+New data authorities . . . . . . > *RW *SAME, *NONE, *RWX, *RX
+New object authorities . . . . . > *OBJMGT *SAME, *NONE, *ALL... 
+> *OBJEXIST 
+> *OBJALTER 
+> *OBJREF 
+Authorization list . . . . . . . Name, *NONE 
+
+4. Issue the following IBM i command as required to change file ownership:
+
+CHGOWN '/Notes/Data/domlog.nsf' NEWOWN(QNOTES)

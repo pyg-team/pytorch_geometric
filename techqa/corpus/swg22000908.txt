@@ -1,0 +1,29 @@
+Title: IBM How to configure datasources for IBM Security Guardium Vulnerability Assessment on Oracle 12c Multitenant - United States
+
+Text:
+Guardium VA; datasource; Oracle 12c; multitenant; CDB; PDB TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Datasource creation for Guardium Vulnerability Assessment on Oracle 12c Multitenant - Pluggable and Container database. 
+
+ENVIRONMENT
+IBM security 
+Oracle 12c Multitenant 
+
+RESOLVING THE PROBLEM
+ 
+
+-You have to create a datasource for the CDB which is the container database that has the SID. 
+-You would need to create a datasources for each PDB that reside in the CDB.
+-Each PDB is actually a database and we treat each PDB just like any normal database. 
+-You need to run a separate script on CDB and PDB to perform VA test.
+
+"gdmmonitor-ora-container.sql" script should be used to create privileges needed for the CDB.
+
+"gdmmonitor-ora.sql" script should be used to create privileges needed for PDB.
+
+-Technote on how to extract these scripts:
+http://www-01.ibm.com/support/docview.wss?uid=swg21998173 [http://www-01.ibm.com/support/docview.wss?uid=swg21998173]
+
+RELATED INFORMATION
+ How to set correct access to a database to allow for a [http://www-01.ibm.com/support/docview.wss?uid=swg21998173]

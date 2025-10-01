@@ -1,0 +1,47 @@
+Title: IBM MQJMS2008 failed to open MQ queue with reason code 2085 caused by QueueManagerHost name configuration - United States
+
+Text:
+was app server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You notice the following messages are logged if the Java Message Service (JMS) is unable to find the queue manager. The queue manager name is based on the QueueManagerHost name. In general, the reason code 2085 means that the referenced queue could not be found on the Queue Manager. This specific issue, however, is caused by the configured QueueManagerHost.
+
+SystemOut.log
+[7/22/15 10:23:24:237 EDT] 7b40fe EJBContainerI I WSVR0037I: Starting EJB jar: CMSReportsBusiness.jar 
+[7/22/15 10:23:26:756 EDT] 7b40fe ConnectionEve A J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adaptor for resource JMS$cms_queue_factory. The exception which was received is javax.jms.JMSException: MQJMS2008: failed to open MQ queue 
+[7/22/15 10:23:27:154 EDT] 7b40fe MDBListenerIm W WMSG0019E: Unable to start MDB Listener InterfaceProcessor, JMSDestination jms/cms_interface_queue : javax.jms.JMSException: MQJMS2008: failed to open MQ queue 
+at com.ibm.mq.jms.services.ConfigEnvironment.newException(ConfigEnvironme nt.java:540) 
+at com.ibm.mq.jms.MQQueueAgent.resolveQueue(MQQueueAgent.java:460) 
+at com.ibm.mq.jms.MQQueueAgent.getQueueAgent(MQQueueAgent.java:271) 
+
+An MQJMS2008 exception with Reason Code 2085 when WebSphere® Application 
+Server attempts to start the "ReceiverListenerPort" listener port. 
+Reason Code 2085 typically indicates that the queue doesn't exist on the 
+queue manager that the application is connected to. 
+
+
+Resources.xml 
+<factories xmi:type="resources.jms.mqseries:MQQueue" 
+xmi:id="MQQueue_1121279694652" name="CMSInterfaceQueue" 
+jndiName="jms/cms_interface_queue" persistence="APPLICATION_DEFINED" 
+priority="APPLICATION_DEFINED" specifiedPriority="0" 
+expiry="APPLICATION_DEFINED" specifiedExpiry="0" 
+baseQueueName="CMSInterfaceQueue" useNativeEncoding="false" 
+integerEncoding="Normal" decimalEncoding="Normal" 
+floatingPointEncoding="IEEENormal" targetClient="JMS" 
+queueManagerHost="MYHOSTSRV" queueManagerPort="1823" 
+serverConnectionChannelName="MYHOSTSRV1.CN0001" userName="MYMQT"/> 
+
+CAUSE
+In Message Queueing, the server was defined in lower-case. The queueManagerHost is case sensitive. For example: MYHOSTSRV was defined as myhostsrv.
+
+RESOLVING THE PROBLEM
+Ensure the definition matches case.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK 
+HISTORICAL NUMBER
+ 33458
+344
+000

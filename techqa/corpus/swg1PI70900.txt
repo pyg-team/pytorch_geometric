@@ -1,0 +1,162 @@
+Title: IBM PI70900: Events get lost when the logstashCollector config gets updated - United States
+
+Text:
+  FIXES ARE AVAILABLE
+16.0.0.4: WebSphere Application Server Liberty 16.0.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24042990]
+17.0.0.1: WebSphere Application Server Liberty 17.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043339]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Collector manager uses internal buffers to store events.
+   These buffers are discarded when the last handler goes away.
+   This behavior does not doesn't work well for certain
+   situations. Example below.
+   
+   1) We have one handler (logmet/logstash collector feature).
+   2) User updates the config for this feature, example bad
+   port to a valid port.
+   3) Logmet/Logstash collector calls an unsubscribe &
+   subscribe on the sources on config update.
+   4) Unsubscribe will discard the existing buffers and a
+   subscribe operation will result in new buffers getting
+   allocated.
+   5) End result is we lose events in the old buffer.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty - Perf Monitoring Tools      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Some events get lost when the           *
+   *                      logstashCollector configuration gets    *
+   *                      updated                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Collector manager uses internal buffers to store events. These
+   buffers are discarded when the last handler goes away. This
+   behavior is not doesn't work well for certain situations.
+   Example below.
+   
+   1) We have one logmet/logstash collector feature.
+   2) User updates the config for this feature, example bad port to
+   a valid port.
+   3) Logmet/Logstash collector calls a unsubscribe & subscribe on
+   the sources on config update.
+   4) Unsubscribe will discard the existing buffers and a subscribe
+   operation will result in new buffers getting allocated.
+   5) End result is that we lose events in the old buffer.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Program change: We now maintain the buffer contents across
+   configuration changes as long as the source is present both
+   before and after the change. If the source is removed, the
+   configuration saved, and then the source is added again at a
+   later time, the events in between will still be lost, as
+   intended.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 16.0.0.4.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI70900
+   
+   
+ * REPORTED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0814
+   
+   
+ * REPORTED RELEASE
+   CD0
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-18
+   
+   
+ * CLOSED DATE
+   2016-10-25
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * FIXED COMPONENT ID
+   5724J0814
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RCD0 PSY
+   UP

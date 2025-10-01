@@ -1,0 +1,58 @@
+Title: IBM Change the default shared resource location for Installation Manager - United States
+
+Text:
+BPMShared; shared resource; v70rnotes TECHNOTE (FAQ)
+
+QUESTION
+ When installing WebSphere Process Server through the launchpad, can I change the default shared resource location? 
+
+ANSWER
+Yes. You can change the default shared resource location by using the following procedure.
+The following steps are for new installations. If you already have installed and want to change the shared resource location, you will have to uninstall and reinstall after following these steps.
+
+Steps
+
+1. Locate the default shared resource. Depending on whether you are an administrative (root) or non-administrative (non-root) user, find the default shared resource location in one of the following tables.
+
+
+Administrative or root users
+
+
+
+Platform Default Location for shared resources AIX /usr/IBM/BPMShared HP-UX /opt/IBM/BPMShared Linux /opt/ibm/BPMShared Solaris /opt/IBM/BPMShared Windows <ProgramFiles>\IBM\BPMShared 
+
+
+Non-administrative or non-root users 
+
+Platform Default Location for shared resources AIX <HOME>/IBM/BPMShared HP-UX <HOME>/IBM/BPMShared Linux <HOME>/ibm/BPMShared Solaris <HOME>/IBM/BPMShared Windows <APPDATA>\IBM\BPMShared 
+
+
+2. Modify the <imageLocation> /launchpad/content/userExtensions.js file, where <imageLocation> is the location of the installation image of WebSphere Process Server. 
+
+
+
+3. Replace the existing defaultSharedPlugins() and defaultSharedPlugins_nonroot() functions with the following versions updated with your preferred location, <NEW_SHARED_LOCATION>. 
+
+
+function defaultSharedPlugins() 
+{  * var sharedLocation='<NEW_SHARED_LOCATION>'; 
+   
+   return sharedLocation; 
+
+} 
+
+function defaultSharedPlugins_nonroot() 
+{  * var sharedLocation='<NEW_SHARED_LOCATION>'; 
+
+ * return sharedLocation; 
+
+} 
+
+
+Changing the install location of other Installation Manager resources 
+
+Change the install location for IBM Installation Manager [http://www.ibm.com/support/docview.wss?uid=swg21425809] 
+Change the IBM Installation Manager agent data location [http://www.ibm.com/support/docview.wss?uid=swg21425908]  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Enterprise Service Bus Install AIX, HP-UX, Linux, Solaris, Windows 7.0 Business Integration WebSphere Business Monitor Installation Wizard AIX, HP-UX, Linux, Solaris, Windows 7.0 Business Integration WebSphere Business Compass Installation Linux, Windows 7.0 Business Integration WebSphere Dynamic Process Edition Installation AIX, HP-UX, Linux, Solaris, Windows 7.0 Business Integration WebSphere Business Services Fabric Installation AIX, Linux, Solaris, Windows 7.0

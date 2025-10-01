@@ -1,0 +1,107 @@
+Title: IBM MustGather: WebSphere DataPower SOA Appliance Self-Balancing Problems - United States
+
+Text:
+Self Balance SLB SB AOC AO selfbalancing self-balancing TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collect the following MustGather information to help IBM Support troubleshoot problems related to the Self-Balancing feature on IBM WebSphere DataPower SOA Appliances using the Option for Application Optimization. 
+
+CAUSE
+When using the Option for Application Optimization Self-Balancing feature and an issue occurs, understanding what data to collect is important to isolate the root cause and help resolve.
+
+RESOLVING THE PROBLEM
+If a problem is encountered using the Self-Balancing feature with DataPower, here are the general steps to help isolate the issue and collect the appropriate data to proceed with proper problem determination: 
+
+Section I: Data to collect:
+
+
+
+
+
+ 1. Status Output:
+    
+    CLI:
+    # show self-balanced-status (default domain only)
+    
+    WebGUI: 
+    Status -> Self-Balanced Service Status (default domain)
+    
+    CLI: 
+    # show local-self-balanced-services (default for all or per application domain)
+    
+    WebGUI: 
+    Status -> Local Self-Balanced Services (default for all or per application domain)
+    
+    
+ 2. Error Report:
+    
+    CLI: 
+    # save error-report
+    
+    WebGUI: 
+    Control Panel -> Troubleshooting -> Generate Error Report
+    The error-report will be generated to the temporary directory for download.
+    
+ 3. Internal State:
+    
+    CLI:
+    # config
+    # save internal-state 
+    # show file temporary:///internal-state.txt
+    
+    
+ 4. Packet Traces:
+    
+    Collect simultaneous packet traces on both Active and Standby Appliances during the failing request or issue.
+    
+    This can be done using the packet-capture command following the Information Center Command Reference or through the WEBGUI.
+    
+    For example:
+    
+    CLI: 
+    # config
+    # int eth<number>
+    # packet-capture temporary://capture-1 -1 50000
+    
+    Starts a continuous, packet-capture session and writes the data to the capture-1 file in the temporary: directory. The session completes either when manually stopped or when the file contains 50000 kilobytes. 
+    
+    # no packet-capture temporary://capture-1
+    Continuous packet capture to temporary:///capture-1 on interface stopped.
+    
+    Stops the packet capture.
+    
+    WebGUI: 
+    Default domain -> Control Panel -> Troubleshooting -> Packet Capture
+
+
+Section II. Preparing to contact IBM Support
+
+
+
+
+
+ 1. Obtain the serial number of the appliance which experienced the problem. 
+    This is need for IBM entitlement processing, before a PMR can be created. 
+    Use the WebGUI, select Status -> System -> Version Information, locate tag on the case of the appliance, or from the CLI use "show system". 
+ 2. Locate the firmware version of the appliance. 
+    Use the WebGUI, select Status- > System -> Version Information or from the CLI use Show Version 
+ 3. Have your IBM customer number ready. 
+ 4. Determine the severity of your problem based on the Severity Levels table found in the following technote: "WebSphere DataPower Extended Maintenance and Support Services [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21254180#severity.]". 
+ 5. Prepare to describe how the problem affects your business operations. 
+ 6. Determine which telephone number/email address IBM should use to contact you concerning this problem report.
+
+
+Section III. Contacting IBM Support and sending your MustGather information to IBM support 
+
+
+
+ 
+
+Reference our technote for information on Contacting IBM WebSphere DataPower SOA Appliance Support [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21236322]. 
+
+After you have contacted IBM Support, a PMR number will be assigned. 
+
+Once the PMR number has been assigned and received, submit the collected data using these instructions:
+http://www-1.ibm.com/support/docview.wss?uid=swg21153852 [http://www-1.ibm.com/support/docview.wss?uid=swg21153852]
+
+Do not send any proprietary or confidential information from your company.

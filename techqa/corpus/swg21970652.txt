@@ -1,0 +1,61 @@
+Title: IBM CLM application is not reachable - United States
+
+Text:
+unreachable; tomcat; rtc; rqm; rdng; rrc; clm TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Collaborative Lifecycle Management (CLM) application deployed in Tomcat is not reachable. 
+
+SYMPTOM
+It is not possible to access IBM Rational Requirements Composer, DOORS Next Generation, Team Concert or Quality Manager.
+
+
+CAUSE
+Problems during the deployment of the application in Tomcat
+
+DIAGNOSING THE PROBLEM
+The stack trace below can be found in the Tomcat localhost log file: 
+
+org.apache.catalina.core.StandardWrapperValve invoke
+SEVERE: Servlet.service() for servlet [equinoxbridgeservlet] in context with path [/rm] threw exception [Servlet execution threw an exception] with root cause
+Throwable occurred: java.lang.ClassFormatError: JVMCFRE113 unexpected EOF; class=com/ibm/team/repository/service/internal/URLRewriterUtil, offset=0
+at java.lang.ClassLoader.defineClassImpl(Native Method)
+at java.lang.ClassLoader.defineClass(ClassLoader.java:287)
+at org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader.defineClass(DefaultClassLoader.java:188)
+at org.eclipse.osgi.baseadaptor.loader.ClasspathManager.defineClass(ClasspathManager.java:580)
+at org.eclipse.osgi.baseadaptor.loader.ClasspathManager.findClassImpl(ClasspathManager.java:550)
+at org.eclipse.osgi.baseadaptor.loader.ClasspathManager.findLocalClassImpl(ClasspathManager.java:481)
+at org.eclipse.osgi.baseadaptor.loader.ClasspathManager.findLocalClass_LockClassName(ClasspathManager.java:460)
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+ * If the application server is Tomcat:
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * <DNG Install Directory>\server\tomcat\webapps\jts
+   <DNG Install Directory>\server\tomcat\webapps\rm
+   <DNG Install Directory>\server\tomcat\webapps\qm
+   <DNG Install Directory>\server\tomcat\webapps\ccm
+   <DNG Install Directory>\server\tomcat\temp
+   <DNG Install Directory>\server\tomcat\work\catalina\localhost
+ * 
+ * 
+ * 
+
+
+
+
+ * If the application server is WebSphere Application Server:
+
+ * 
+ * 
+ * 
+ * How to clear the WebSphere class caches
+ *

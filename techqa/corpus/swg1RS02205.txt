@@ -1,0 +1,180 @@
+Title: IBM RS02205: THE PARAMETER 'XXXXXXXXXX' USED IN THE TEST SUITE IS NOT PART OF THE RULESET SIGNATURE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Operational Decision Manager V8.8.0.1 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24041725]
+Operational Decision Manager V8.8.1 Mod Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24042247]
+Operational Decision Manager V8.7.1.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24042348]
+Operational Decision Manager V8.8.1 Download Document [http://www-01.ibm.com/support/docview.wss?uid=swg24042245]
+Operational Decison Manager z/OS 8.8.0.1 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24042608]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running a test scenario with variables that have no
+   verbalization defined the below exception is raised :
+   
+   IlrTestingUti W    Report -
+   nullilog.rules.teamserver.model.IlrTestingException:
+   The parameter 'XXXXXXXX' used in the test suite is not part of
+   the ruleset signature
+           at
+   ilog.rules.teamserver.ejb.service.validation.
+   IlrTestSuiteService.asynchr
+   onousPrepare(IlrTestSuiteService.java:223)
+           at
+   ilog.rules.teamserver.ejb.service.validation.
+   PrepareArchiveThreadService
+   .run(PrepareArchiveThreadService.java:56)
+           at
+   com.google.common.util.concurrent.
+   AbstractExecutionThreadService$1$1.run
+   (AbstractExecutionThreadService.java:48)
+           at java.lang.Thread.run(Thread.java:795)
+   
+   Caused by: ilog.rules.teamserver.model.
+   IlrArchiveGenerationException:
+   The parameter 'XXXXXXX' used in the test suite is not part of
+   the ruleset signature
+          at
+   ilog.rules.teamserver.ejb.ruleset.IlrRulesetArchiveGenerator.
+   generateDER
+   ulesetArchive(IlrRulesetArchiveGenerator.java:1395)
+           at
+   ilog.rules.teamserver.ejb.ruleset.ValidationArchiveBuilder.
+   buildArchive(
+   ValidationArchiveBuilder.java:389)
+           at
+   ilog.rules.teamserver.ejb.ruleset.ValidationArchiveBuilder.
+   buildTestingA
+   rchive(ValidationArchiveBuilder.java:112)
+           at
+   ilog.rules.teamserver.ejb.service.validation.
+   IlrTestSuiteService.prepare
+   Run(IlrTestSuiteService.java:280)
+           at
+   ilog.rules.teamserver.ejb.service.validation.
+   IlrTestSuiteService.asynchr
+   onousPrepare(IlrTestSuiteService.java:201)
+           ... 3 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Add a verbalization to the variables
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  variable with no verbalization are not available during the
+   code generation and lead to this exception
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02205
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6900
+   
+   
+ * REPORTED RELEASE
+   871
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-11-10
+   
+   
+ * CLOSED DATE
+   2015-12-13
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * FIXED COMPONENT ID
+   5725B6900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R871 PSY
+   UP

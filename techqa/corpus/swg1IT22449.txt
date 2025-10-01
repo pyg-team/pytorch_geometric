@@ -1,0 +1,151 @@
+Title: IBM IT22449: ISSUE WITH THE IMPORT EXPORT RULES AND ACTION - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When I try to import our rules and action, the sequence of the
+   rules
+   was not the same as the other server who I have exported the
+   rules.
+   
+   So on the new server I must change the possition rule by rule
+   and I
+   have 156 rules.
+   
+   Why the export import does not keep the sequence ?
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Description of issue:  Imported Rules via the web console do not
+    preserve exported rule priority.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Description of fix: Added check box option, "Preserve exported
+   priority",  to web console import Rules panel to allow the user
+   to specify if they want to keep the rules in the exported order
+   or not.  This option will only show on the import rules web
+   console if the rules were exported by an IBM Control Center
+   instance that has this fix applied.  This is because the rule
+   exporter had to be changed to save the priority to the exported
+   zip file in order for the importer to know the original
+   priority.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  R549773/IT22449 (2017-09-21)
+   Description of issue:  Imported Rules via the web console do not
+   preserve exported rule priority.
+   Description of fix: Added check box option, "Preserve exported
+   priority",  to web console import Rules panel to allow the user
+   to specify if they want to keep the rules in the exported order
+   or not.  This option will only show on the import rules web
+   console if the rules were exported by an IBM Control Center
+   instance that has this fix applied.  This is because the rule
+   exporter had to be changed to save the priority to the exported
+   zip file in order for the importer to know the original
+   priority.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT22449
+   
+   
+ * REPORTED COMPONENT NAME
+   STR CONTROL CEN
+   
+   
+ * REPORTED COMPONENT ID
+   5725D0200
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-19
+   
+   
+ * CLOSED DATE
+   2017-10-05
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR CONTROL CEN
+   
+   
+ * FIXED COMPONENT ID
+   5725D0200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

@@ -1,0 +1,47 @@
+Title: IBM Automating Hyperion Financial Management (HFM) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Automating Hyperion Financial Management (HFM) 
+
+RESOLVING THE PROBLEM
+
+
+Through IBM Cognos Command Center, you can easily automate Hyperion Financial Management with the Oracle HFM Plugin. The following HFM tasks can be automated:  * Allocations
+ * Consolidates
+ * Copy Data
+ * Clear Data Slice
+ * Open Period
+ * Close Period
+ * Create Star Schema (Extended Analytics)
+ * Delete Star Schema
+ * Extract Data
+ * Extract Journals
+ * Extract Member Lists
+ * Extract Metadata
+ * Extract Rules
+ * Extract Security
+ * Load Data
+ * Load Journals
+ * Load Lists
+ * Load Metadata
+ * Load Rules
+ * Load Security
+ * Create Application (native)
+ * Delete Application
+ * Logoff Users
+ * Enable Connections
+ * Disable Connections
+
+
+Demonstrating an IBM Cognos Command Center HFM task to automate Extended Analytics: 
+SampleHFMAutomation [/support/docview.wss?uid=swg21637215&aid=1] [/support/docview.wss?uid=swg21637215&aid=1]
+
+
+
+
+
+HISTORICAL NUMBER
+ 413

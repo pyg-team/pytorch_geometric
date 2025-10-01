@@ -1,0 +1,153 @@
+Title: IBM PI77304: VERSIONINFO SHOWS JAVA 6 AFTER INSTALL OF IBM HTTP SERVER 8.5.5.11 WITH JAVA 8.0 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Installed IBM HTTP Server 8.5.5.11 with Java SDk 8.0. when
+   running versionInfo shows
+    "IBM HTTP Server 64-bit with Java, Version 6, Core runtime "
+   
+   versionInfo Output :
+   
+   Name                  IBM HTTP Server for WebSphere Application
+   Server
+   Version               8.5.5.11
+   ID                    IHS
+   Build Level           cf111649.01
+   Build Date            12/6/16
+   Package
+   com.ibm.websphere.IHS.v85_8.5.5011.20161206_1434
+   Architecture          x86-64 (64 bit)
+   Installed Features  IBM HTTP Server 64-bit with Java, Version 6
+                        Core runtime
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This message cane be ignored as long as ./java -version from
+   IHS_HOME/java/jre/bin
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of IBM HTTP Server (IHS)              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: bin/versionInfo shows "Java 6"          *
+   *                      references regardless of the            *
+   *                      installed Java release.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The IBM Installation Manager packaging of IHS had some
+   hardcoded references to "Java 6" that showed up in
+   bin/versionInfo output.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The messages were updated to be Java version independent.
+   
+   The fix for this issue is targetted for 8.5.5.12.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI77304
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM HTTP SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0801
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-02-27
+   
+   
+ * CLOSED DATE
+   2017-05-08
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM HTTP SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724J0801
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

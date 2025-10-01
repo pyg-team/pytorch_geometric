@@ -1,0 +1,36 @@
+Title: IBM JMS connection pools and sessions pools in WebSphere Application Server - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Frequently Asked Questions concerning connection pools and sessions pools in IBM WebSphere Application Server. 
+
+ANSWER
+Q: WebSphere MQ Queue Connection Factories in WebSphere Application Server releases contain both a connection pool and a session pool for configuration. When configuring the session pool, is this configuration per each connection? For example, if my connection pool has a maximum size of 10, and my session pool also has a maximum size of 10, does that mean that I have a total of 10 sessions available per connection (which would make this 100 sessions for 10 connections) or does this mean that there are only 10 sessions available to be used among 10 connections? 
+A: The session pool setting applies to each JMS connection as this is the factory for sessions, so you can have a maximum of 10 sessions for each connection and a maximum of 10 connections. So, in total, this mean you might have 100 channels (connections) open to the MQ Server.
+
+
+Q: What happens if my session pool has a maximum of 10 session and connections and I attempt to create a new session from a connection that exceeds this maximum session and connection? Does the pool grow? Is an exception thrown? If so, what kind of exception? 
+
+A: When the maximum number of connections and sessions is reached, and a request for a new connection or session is received, the pool manager waits for a period of time defined in the Connection timeout property for an available physical connection. If a connection is not available in the time period defined by the Connection timeout property, the Pool manager throws a ConnectionWaitTimeoutException. This is documented in more detail in the Connection timeout section on the Session pool settings page of the WebSphere Application Server Information Center.
+
+
+Q: When closing a QueueConnection JMS in WebSphere Application Server with Connection Pooling configured, what exactly happens? 
+
+A: When a connection is closed, it is returned to the connection pool, and the session to its session pool. Any QueueSender and QueueReceiver objects associated with the session are destroyed. 
+
+
+Q: From a design perspective, is there a formula regarding the sizing of the WebSphere MQ JMS connection pool and JMS session pool with respect to the number of concurrent requests? 
+
+A: No formula exists. However, we recommend that you set the Max Connections property for your connection pool to a value about 50% higher than your typical JMS connection concurrency, and the Max Connections property for your session pool to approximately 50% more than the average number of concurrent sessions requested on a JMS Connection. The requirements really depend on the design of your application; in particular, how it uses JMS connections and sessions. You should also remember that the Max Connections property for your session pool is the maximum number of sessions that can be made from a single JMS Connection, because a JMS connection is a factory for sessions. 
+
+
+Q: How can I utilize a WebSphere MQ JMS session pool without having to manage the JMS connections in the application? It appears that if I have a JMS connection pool and a JMS session pool, I need to keep track of my connections in some collector object to use the number of sessions I have configured for use with each connection. How do you make use of those sessions in the session pool without having to maintain your own programmatic list of connections that are configured in the connection pool? For example, having retrieved a connection from the connection pool, what is the approach for creating sessions for multiple users without having to maintain that connection reference and a collector object in my application? 
+
+A: JMS connections are non-shareable. Therefore, unless your application does something like caching a connection in a static class variable (which is definitely not recommended in practice), an Enterprise JavaBeans™ method has only a single JMS connection/JMS session pair per EJB method thread. Currently, the JCA Connection Manager does not support sharing of non-transactional resources such as a JMS connection and so that must be handled in your application code. Note that, from a WebSphere MQ perspective, a JMS connection is very lightweight. It is the JMS session that is the heavyweight object. Also be aware that in the Sun J2EE™ 1.4 specification, an Application Server must enforce an application so that it can only create a single JMS session from a JMS connection. A possible reason behind the Sun decision to do this is because of Connection Management considerations, and the fact that in J2EE 1.4, JMS providers are advised to be defined as JCA Resource Adapters.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

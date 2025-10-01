@@ -1,0 +1,86 @@
+Title: IBM PK50967; 6.0.2.21/6.0.2.23: TRAS0016E: Exeption while trying to archive log file - United States
+
+Text:
+PK50967; PK50967; PK50967 DOWNLOADABLE FILES
+
+ABSTRACT
+ Application Server prints a verbose warning when it fails to rollover a log file. 
+
+DOWNLOAD DESCRIPTION
+PK50967 resolves the following problem:
+
+ERROR DESCRIPTION: 
+TRAS0016E: An unexpected exception while trying to archive log file when IBM® WebSphere® Application Server is running under Test environment of IBM Rational® Application Developer (RAD). 
+
+The log files are supposed to be locked by other processes like Rational Application Developer, Rational Software Architect, and Eclipse, which results in the application server not able to rename the file which is scheduled for file rotation when the file size reaches to the value specified in "logs and traces" option of Application Server administrative console. 
+
+This APAR will attempt to copy the log file over if the rename fails during the rollover process. 
+
+LOCAL FIX: 
+none. 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+Users who run IBM WebSphere Application Server versions 6.0.2 and 6.1 in a development environment such as Eclipse, Rational Application Developer, and so on, or any user who monitors WebSphere Application Server log files in a "file locking" text editor.
+
+PROBLEM DESCRIPTION:
+Application Server prints a verbose warning when it fails to rollover a log file.
+
+RECOMMENDATION:
+None
+
+Application Server attempts to roll over a log file by stopping all output, then renaming the existing file (that is, from SystemOut.log to SystemOut_<timestamp>.log), then resuming output to a new file called SystemOut.log. If the rename operation fails (usually because another process like WordPad, Eclipse, or other has locked the log file), Application Server will write a verbose error message with the message ID, TRAS0016E, and will continue logging to the same file.
+
+PROBLEM CONCLUSION: 
+While it is impossible for Application Server to force the rename when the operating system fails to rename the file, Application Server can attempt the roll-over by copying the existing log file to a new file with the timestamp appended, and then write-over the original log file. This makes it possible to roll over log files even when the rename operation fails. 
+
+Application Server will still write a warning message when the rename fails. This is because a copy operation is significantly slower than a rename operation, so system performance can be affected. Also, it is possible that the copy operation will fail (due to insufficient disk space, or some other error). In this case, Application Server will log a verbose error message, so that the root cause of the copy failure can be identified. 
+
+The fix for this APAR is currently targeted for inclusion in Fix Packs 6.0.2.25 and 6.1.0.15. Please refer to the recommended updates page for delivery information: 
+
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+
+
+
+The file 6.1.0.0-WS-WAS-IFPK50967.pak can be applied to V6.1.0.5- V6.1.0.13.
+
+PREREQUISITES
+Download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK50967/readme.txt] US English 9430 Readme 6.1 [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK50967/readme_61.txt] US English 4359 
+DOWNLOAD PACKAGE
+
+
+
+HOW CRITICAL IS THIS FIX?
+Minimal - this change is "cosmetic" only.
+
+
+
+PROBLEMS SOLVED
+Avoids printing a stack trace in the System Out (console) when Application Server cannot rename the System Out log file (usually only occurs in Eclipse-based development environment, or when the file is opened in an editor). Windows® only.
+
+
+
+KNOWN SIDE EFFECTS
+The log file rollover process will take longer (since copying a file takes longer than renaming it), and no logging can occur during this process.
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 6.1.0.0-WS-WAS-IFPK50967 1/21/2008 US English 132544 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=6.1.0.0-WS-WAS-IFPK50967&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch++] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK50967/6.1.0.0-WS-WAS-IFPK50967.pak] DD 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server Support Web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV(U.S. only). 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server for z/OS z/OS 6.1 
+
+ [/support/docview.wss?uid=swg24018223&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24018223&aid=2]Problems (APARS) fixed
+PK50967

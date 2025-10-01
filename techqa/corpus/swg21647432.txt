@@ -1,0 +1,62 @@
+Title: IBM How to file and remove repositories after installation - United States
+
+Text:
+IM; API; repositories; remove; RFT; Installation Manager API; IBM Packaging Utility TECHNOTE (FAQ)
+
+QUESTION
+ How do you remove repositories from the repositories list in unattended mode without affecting the physical files in IBM Rational Functional Tester (RFT)? 
+
+CAUSE
+Users are denied access to these repository folders. If their path remain in the list they might get confused because they cannot access any of them. As a result they might get their own repositories.
+
+ANSWER
+Removing HTTP and FTP repositories are not supported. 
+
+The IBM Rational Installation Manager API is not documented. Therefore, it can be changed anytime without prior notice. So, maybe the API is not the first choice to have repositories removed.
+
+Perhaps the IBM Packaging Utility is a better choice. With this product you can manage repositories, for example remove packages you no longer need, For an overview, see Overview of IBM Packaging Utility [http://pic.dhe.ibm.com/infocenter/install/v1r6/topic/com.ibm.cic.auth.ui.doc/topics/t_introduction.html]
+
+For the specific commands, see the following document Package Utility links [http://pic.dhe.ibm.com/infocenter/install/v1r6/index.jsp?topic=%2Fcom.ibm.cic.auth.ui.doc%2Ftopics%2Ft_introduction.html].
+
+Consider the following steps.
+
+
+ 1. Create a response file to set the list of repositories to the desired values and execute the response file. Put the following in the file "resetRepos.xml". For example in Windows.
+    
+    Disclaimer All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+    
+    
+    
+    
+    C:\tmp\resetRepos.xml:
+    <agent-input clean='true' temporary='false'>
+    </agent-input>
+    
+    
+    
+ 2. Execute the installed imcl from the eclipse/tools directory of the installed IBM Rational Installation Manager.
+    
+    C:\>Cc:\Program Files (x86)\IBM\Installation Manager\eclipse\tools\imcl.exe" input c:\tmp\resetRepos.xml
+
+
+
+For more details, please, visit Response file commands [http://pic.dhe.ibm.com/infocenter/install/v1r6/topic/com.ibm.silentinstall12.doc/topics/r_silent_inst_commands12.html]. 
+
+See the section on Temporary  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *

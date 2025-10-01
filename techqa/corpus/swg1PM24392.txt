@@ -1,0 +1,167 @@
+Title: IBM PM24392: WSRP Consumer does not handle InvalidCookieFault from Portal 6.0 producer - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal V7.0 Combined Cumulative Fix [http://www-01.ibm.com/support/docview.wss?uid=swg24027254]
+Recommended Updates for WebSphere Portal and IBM Web Content Manager V7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24027857]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The WSRP consumer in Portal versions 6.1 or newer does not
+   correctly handle an InvalidCookieFault returned by a Portal 6.0
+   producer: The consumer throws a portlet exception and the
+   portlet will be unavailable.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Upgrade the WRSP Producer from 6.0 to 6.1.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The WSRP consumer in Portal versions 6.1 or newer does not
+   correctly handle an InvalidCookieFault returned by a Portal 6.0
+   producer: The consumer throws a portlet exception and the
+   portlet will be unavailable.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Portal WSRP consumer is changed to correctly handle
+   InvalidCookieFault that is returned by a Portal 6.0 producer:
+   The consumer will invoke initCookie and then retry the WSRP
+   request.
+   
+   Manual Steps:
+      None
+   
+   Failing Module(s):
+      Web Services
+   
+   Affected Users:
+      All users
+   
+   Version Information:
+       Portal Version(s): 6.1.0.1
+        Pre-Requisite(s):
+         Co-Requisite(s): ---
+   
+       Portal Version(s): 6.1.0.2
+        Pre-Requisite(s):
+         Co-Requisite(s): ---
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   A fix is available from Fix Central:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PM24392&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PM24392&productid=WebSphere%20Portal&brandid=5]
+   
+   You may need to type or paste the complete address into your Web
+   browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM24392
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   61C
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-13
+   
+   
+ * CLOSED DATE
+   2010-11-17
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61B PSY
+   UP

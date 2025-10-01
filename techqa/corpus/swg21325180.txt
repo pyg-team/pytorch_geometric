@@ -1,0 +1,193 @@
+Title: IBM Suppressing Parallel Notification During Checkin and Checkout - United States
+
+Text:
+TB162 TECHNOTE (FAQ)
+
+QUESTION
+ Suppressing Parallel Notification During Checkin and Checkout 
+
+ANSWER
+Overview 
+
+
+IBM Rational Synergy displays a warning dialog when a checkin or checkout of a parallel object version is attempted. This feature is useful for informing developers that parallel object versions exist, and that a merge may be in order. However, in some cases a merge may never be in order and the parallel warnings become a nuisance. 
+
+
+Parallel checkin/checkout warnings can be suppressed for objects in a given database meeting a predefined criteria. For instance, the default is that versions whose status is "rejected" or whose is_product attribute is set to TRUE do not appear in the parallel notification dialogs on check out or check in. This behavior is specified in the parallel_exclude_rules attribute on the base model object. This technical bulletin documents how to modify this model attribute to suppress parallel warning message for these objects. 
+
+
+Details 
+
+
+The parallel notification code reads an attribute called parallel_exclude_rules, of type text, on the base model object (base-1:model:base), which contains a set of rules defining which versions will be excluded from parallel notification. This attribute contains one rule per line. The syntaxes in the following table are supported for these rules: 
+
+
+ 
+
+ * Syntax 
+
+ * Description 
+
+ * attrname 
+ * 
+ * attrvalue 
+
+ * 
+ * attrname 
+ * 
+ * attrvalue 
+ * . 
+ * Example: status=rejected 
+
+ * attrname 
+ * 
+ * attrvalue 
+
+ * 
+ * attrname 
+ * 
+ * not 
+ * 
+ * attrvalue 
+ * . 
+ * Example: is_product!=TRUE 
+
+ * 
+ * attrname 
+ * 
+
+ * 
+ * attrname 
+ * . 
+ * Example: EXISTS(is_product) 
+
+ * 
+ * attrname 
+ * 
+
+ * 
+ * don't 
+ * 
+ * attrname . 
+ * Example: NOT_EXISTS(is_product) 
+
+ * 
+ * attrname 
+ * 
+
+ * 
+ * attrname 
+ * 
+ * Example: MATCHING(release) 
+
+ * 
+ * attrname 
+ * 
+
+ * 
+ * attrname 
+ * 
+ * doesn't 
+ * 
+ * Example: NOT_MATCHING(release) 
+
+
+ 
+
+The default value of this attribute is: 
+
+status=rejected 
+
+is_product=TRUE 
+
+ 
+
+Some additional info: 
+
+ * The = and != rules support values of types string and boolean. 
+ * The values specified in the rules cannot contain the newline character. 
+ * None of the rules should contain the character sequences = or != , except as delimiters for the equal/not-equal rules. 
+ * Any lines that the parser doesn't understand will be ignored. 
+ * Quotes are not needed around attribute names or string values, and should not be used. If present, they will be considered as literals (part of the attribute name or value). 
+ * The value of the parallel_exclude_rules attribute is cached, so if the rules are changed, users with active sessions will need to restart their sessions to get the new value. 
+ * Like most other attributes on the model, this attribute must be set manually using the ccm attr command, or through a model install; no customization interface is provided. 
+ * To exclude parallel variant branches from notification, add the following rules to the default value: NOT_MATCHING(release) 
+   NOT_MATCHING(platform) 
+ * The rule MATCHING(owner) should not be used. It won't work correctly for checkout, because it uses the version you're deriving FROM to detect parallels. That version could have any owner. 
+
+
+ 
+
+Modifying the parallel_exclude_rules Attribute 
+
+ 
+
+Modifying the parallel_exclude rules attribute on the base model object requires the ccm_admin role. The steps to modify this attribute are: 
+
+ 
+
+1. Change to ccm_admin role 
+
+ccm set role ccm_admin 
+
+ 
+
+2. Query for the model CV 
+
+ccm query -n base -t model 
+
+This will return the line 
+
+1) base/model/base/1 ac_rel ccm_root model <void> base <void> 
+
+ 
+
+3. Start an edit session on the parallel_exclude_rules attribute with the command 
+
+ccm attr -m parallel_exclude_rules @1 
+
+ 
+
+4. Save your changes and exit the edit session. 
+
+ 
+
+5. Exit and restart your session to have the changes take effect. 
+
+ 
+
+ 
+
+Examples of Usage 
+
+The following are examples of using the parallel_exclude_rules attribute. 
+
+ 
+
+Example 1: Turning off parallel warnings for objects with a specific release value 
+
+This example illustrates how to disable parallel checkin/checkout warnings about parallel object versions that have a specific release value. For instance, if you do not wish to receive parallel notification when the parallel object version has a release value of 3.0_beta, use the rule: 
+
+release=3.0_beta 
+
+ 
+
+Example 2: Turning off parallel warnings for objects with a specific platform value 
+
+As in the previous example, you can suppress parallel warnings for object versions with specific platform attribute settings. So if you are doing both SUN, HP, NT, and Microsoft Windows98 development, you can set the parallel_exclude_rules to have the following exclude lines: 
+
+ * 
+ * 
+ * platform=nt 
+ * platform=hp 
+ * platform=win98 
+
+
+In this example, the platform values listed should correspond to those listed in the om_hosts.cfg file under the server's CCM_HOME/etc directory. No notification of parallels will be given when the parallel object version has one of the listed platform values. Note that you will receive a notification if no platform value is set on the parallel version, or if it is set to a value not specified. 
+
+
+
+
+HISTORICAL NUMBER
+ TB162
+KB1682

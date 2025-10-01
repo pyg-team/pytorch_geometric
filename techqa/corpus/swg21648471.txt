@@ -1,0 +1,17 @@
+Title: IBM Does IBM Content Navigator support Workplace XT created stored searches and search templates? - United States
+
+Text:
+stored search; search template; WPXT; Workplace XT; ICN; navigator; IBM Content Navigator TECHNOTE (FAQ)
+
+QUESTION
+ Does IBM Content Navigator support Workplace XT created stored searches and search templates? 
+
+ANSWER
+Workplace XT created stored searches are supported in IBM Content Navigator (ICN). 
+ICN can be used to only run these stored searches with the following restriction: 
+- stored searches that return both documents and folders are not supported.
+These stored searches cannot be edited in ICN.
+
+Workplace XT created search templates are also supported in ICN with the restriction that the search template cannot be edited in ICN.
+
+Please also note that ICN can only create native search templates, but not stored searches.

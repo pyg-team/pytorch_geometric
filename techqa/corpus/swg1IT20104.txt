@@ -1,0 +1,184 @@
+Title: IBM IT20104: UNEXPECTED OOM ERRORS AFTER A LARGE DYNAMIC DATABASE CONFIGURATION INCREASE - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 11.1 Mod 2 Fix Pack 2 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24043789]
+Db2 Version 11.1 Mod2 Fix Pack2 iFix001 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24044133]
+Db2 Version 11.1 Mod2 Fix Pack2 iFix002 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24044392]
+Db2 Version 11.1 Mod 3 Fix Pack 3 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24044630]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After increasing the configured database memory size, the DB2
+   memory manager may not always allocate the underlying OS memory
+   permitted as part of the increase, resulting in intermittent out
+   of memory errors.
+   
+   When dynamically increasing the database memory configuration
+   size, either through an update to the DATABASE_MEMORY
+   configuration parameter or an underlying area (eg.
+   SHEAPTHRES_SHR), DB2 does not immediately allocate a
+   corresponding amount of OS memory.  Rather, the memory is
+   allocated as required and needed for operations (even operations
+   such as a bufferpool increase will use any free existing
+   allocated memory before allocating any additional OS memory
+   needed).
+   
+   This "deferred allocation" behaviour is intentional.  However,
+   there are some allocation paths, typically for small allocation
+   requirements, where the DB2 memory manager may only try to reuse
+   existing allocated memory, ignoring the possibility of
+   allocating new OS memory areas as permitted by the configuration
+   increase.  This can result in a wide variety of out of memory
+   messages (SQL0973, SQL0955, etc.).
+   
+   The out of memory messages typically occur under an increased
+   fixed database memory limit or under a fixed instance memory
+   limit, where the automatic database memory size has
+   unnecessarily increased and exhausted instance memory.  The
+   unnecessary increase is due to allocating new OS memory under a
+   further database memory increase (rather than allocate new OS
+   memory under the increase that already occurred).
+   
+   The easiest case to confirm is where a small allocation request
+   fails even though there is an abundance of "unreserved" memory.
+   For example, the db2diag.log entry for sqloMemLogPoolConditions
+   shows the following failure to allocate 16000 bytes, yet the
+   shared sort heap has only used 192GB out of 614GB configured,
+   and there is 109GB of unreserved left in the set.  There is no
+   obvious reason for the failure.
+   
+   Out of memory failure for Shared Sort Heap (SHEAPTHRES_SHR) on
+   node 0.
+   Requested block size           : 16000 bytes.
+   Physical heap size             : 192185696256 bytes.
+   Configured heap size           : 614400000000 bytes.
+   Unreserved memory used by heap : 0 bytes.
+   Unreserved memory left in set  : 109930479616 bytes.
+   
+   The immediate fix is to recycle the database.  During
+   activation, DB2 preallocates all OS memory based on the database
+   memory configured size, and the problem paths are avoided.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Recycle the database (force all applications, deactivate
+   database)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 11.1 Mod 2 Fix Pack 2 or higher               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in DB2 11.1 Mod 2 Fix Pack 2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT20104
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   B10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-04-06
+   
+   
+ * CLOSED DATE
+   2017-06-23
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IT17904 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT17904]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB10 PSN
+   UP

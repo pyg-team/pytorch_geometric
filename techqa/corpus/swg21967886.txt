@@ -1,0 +1,30 @@
+Title: IBM Finding DASH version and patch level. - United States
+
+Text:
+DASH; installed; patches; isc.version.properties TECHNOTE (FAQ)
+
+QUESTION
+ How can I find the patch level of my current DASH install? 
+
+CAUSE
+Some versions of DASH have additional cumulative patches that require previous patches be installed. Any installed patches don't show up in the output of the "consolecli Version" command.
+
+ANSWER
+The patch level for a DASH release is recorded in this file: /profile/installedApps/JazzSMNode01Cell/isc.ear/isclite.war/WEB-INF/config/isc.version.properties 
+
+The isc.patch.level value will get updated with the patch level if it applies. Here is an example of the contents of this file: 
+
+
+isc.name=IBM Dashboard Application Services Hub
+isc.version=3.1.1.0
+isc.release.name=IBM Dashboard Application Services Hub 3.1.2.0
+isc.build.level=201505020120
+isc.build.date=05/02/15
+*isc.patch.level=
+
+*isc.patch.level will get updated with the patch level, if this line doesn't exist or doesn't have a value, it's because there are no patches applied for the current DASH version.
+
+To get the DASH cumulative Patch level, you can check to see if the Patches directory exists in <JazzSM_HOME>/ui directory. If so, you can see what DASH Cumulative patches have been installed. This link will show you the Cumulative patch, and the associated number you may see in the Patches directory:
+www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/W8b1151be2b42_4819_998e_f7de7db7bfa2/page/Download%20Cumulative%20Patches%20-%20UI%20Services%20%28DASH%29 [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/W8b1151be2b42_4819_998e_f7de7db7bfa2/page/Download%20Cumulative%20Patches%20-%20UI%20Services%20%28DASH%29]
+
+The next way is to execute this command: <JazzSM_HOME>/ui/bin/consolecli.[sh || bat] Version.

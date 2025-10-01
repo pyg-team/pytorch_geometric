@@ -1,0 +1,43 @@
+Title: IBM Confusing translation for Route column in Workflow Inbox/Assignment portlet on Maximo/SCCD Start Center - United States
+
+Text:
+TPAEWORKFLOW; TPAEUI; TPAECUSTOMIZATION TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In the Maximo/SCCD Start Center, the Chinese translation for the Route column in the Workflow Inbox/Assignment portlet is confusing. 
+
+SYMPTOM
+From the Maximo login page, select the Chinese language to login to Maximo. 
+
+From the Start Center, check the Workflow Inbox/Assignments portlet. The Route column is translated as '检修路线' in Chinese environment. This translation is making users feel confused by its function.
+
+The 'Route' here functions the same as 'Route Workflow' highlighted below in the Maximo application toolbar.
+
+[/support/docview.wss?uid=swg21970526&aid=1] [/support/docview.wss?uid=swg21970526&aid=1]
+The Route in Inbox/Assignments is not the same concept as the Route in the PM and Routes application. The one in PM and Routes application has a different meaning altogether.
+
+[/support/docview.wss?uid=swg21970526&aid=2] [/support/docview.wss?uid=swg21970526&aid=2]
+
+
+CAUSE
+This has been identified as a product defect under APAR IV76926
+
+
+
+DIAGNOSING THE PROBLEM
+For Maximo users, we understand what the 'Route' in the Inbox/Assignments portlet does, but there is no way for the translators to understand that 'Route' in the Inbox/Assignments portlet has a different meaning from the 'Route' in the Routes application. 
+
+
+
+
+
+RESOLVING THE PROBLEM
+'Route' in that portlet can be found in the maxmessages_0003.xliff. 
+
+Users can update the database (where msgkey = 'inbxroutelbl' and MSGGROUP = 'startcntr') to change the value to a correct Chinese translation as a workaround. 
+
+ 
+
+We suggest to change it from '检修路线' to '发送工作流'. 
+
+[/support/docview.wss?uid=swg21970526&aid=3] [/support/docview.wss?uid=swg21970526&aid=3]

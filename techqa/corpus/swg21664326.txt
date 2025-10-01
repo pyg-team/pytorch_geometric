@@ -1,0 +1,41 @@
+Title: IBM Probe processing description - United States
+
+Text:
+probe; probes; hung; stalled; not logging; unresponsive; delay; delayed; object server TECHNOTE (FAQ)
+
+QUESTION
+ Probe : Why do probes sometimes appear to have stalled? 
+
+CAUSE
+The native probe processes data in memory and does not log to the probes log file until the ObjectServer processing thread is responsive.
+
+ANSWER
+Native probes can appear to be hung when the ObjectServer it is configured to send data to is unresponsive. 
+
+Native probes store data in memory, and only write to the probes log file, regarding event processing, when the specified ObjectServers are available and responsive. If the ObjectServer thread becomes inactive, the probe continues to process events until the ObjectServer connection becomes responsive again, or until the process runs out of memory.
+
+To check the probe is working, examine the cpu usage time, and see if the probes memory increases. In order to recover the data stored in the probe, the connection to the ObjectServer needs to be recovered. If the probe process is stopped, the data will be lost unless the probe has Store and Forward enabled.
+
+The recommended property settings to avoid this type of situation are:
+
+AutoSAF : 1 
+StoreAndForward : 1 
+MaxSAFFileSize : 10485760 
+SAFFileName : "/opt/tivoli/netcool/omnibus/var/<probe_name>.saf" 
+NetworkTimeout : 10 
+
+With Store and Forward enabled, the probe will store event data in the SAFFileName file, and the existence of the SAFFileName and its size indicates that the probe has a problem with the ObjectServer connection.
+
+When NetworkTimeout is set the probe will log any issues with the ObjectServer connection to the probe log after the timeout period has expired, in this case 10 seconds. However, the log file will not show further details. this means that under some circumstances the probes log will show a problem with ObjectServer connectivity as the last log file message. Under these circumstances, investigate the ObjectServer connection from the probes perspective, and check for the existence and size of the SAFFileName file.
+
+If the probe needs to connect to two ObjectServers the ServerBackup and PollServer properties need to be set as well as NetworkTimeout [see the FAQ : Configuring automatic probe failover and failback].
+
+Whilst the recommended properties allow the probe to manage the ObjectServer connection better, it is important to investigate why an ObjectServer appears unavailable to the probe, as the behaviour affects the probes performance and indicates a system or network problem.
+
+For example, the target ObjectServer may not have enough processing power to handle the event load and the probe may require a dedicated collection ObjectServer.
+
+
+RELATED INFORMATION
+ Netcool OMNIbus Performance Troubleshooting - Object Se [http://www-01.ibm.com/support/docview.wss?uid=swg21329522]
+Configuring automatic probe failover and failback [http://www-01.ibm.com/support/docview.wss?uid=swg21411298]
+Configuring Probe Circular Store and Forward [http://www-01.ibm.com/support/docview.wss?uid=swg21451167]

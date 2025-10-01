@@ -1,0 +1,26 @@
+Title: IBM AMOS Bayesian estimation triggers "Waiting to accept a transition..." warning - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am requesting Bayesian estimation on a model in AMOS. I can run the analysis on this model with no problems in maximum likelihood estimation. When I request Bayesian estimation, I get a warning box that states "Waiting to accept a transition before beginning burn-in." What does this message mean and how can I work around it? 
+
+RESOLVING THE PROBLEM
+Here is an explanation for the "Waiting to accept a transition" message. Amos estimates the posterior distribution of the parameters by generating a sequence of parameter vectors. Each parameter vector depends on the one that came before, so the algorithm jumps from one parameter vector to the next. The size of the jump depends in part on the tuning parameter, although there is substantial randomness too. The "Waiting to accept a transition" message usually means that the initial jumps are so large that they produce parameter vectors of very low probability. Parameter vectors that have low probability are likely to be rejected. It could even be that the initial jumps are so large that they consistently produce parameter vectors for which the posterior probability is undefined. Setting the tuning parameter to a low value means that you won' t jump far, so you are unlikely to jump from a region of high probability to one of low probability in a single step. If you haven't changed the tuning parameter (on the Technical tab of the Bayesian Options window), it is probably still set at the default value of 0.7. To get past the warning, try successively smaller tuning values. The Options window is available in the View menu of the Bayesian SEM window. The Tuning parameter can be changed from either the Technical Tab (under Random Walk) or the MCMC tab. 
+
+For a sufficiently small tuning value, the "Waiting to accept a transition" message should go away. You don't want to make the tuning parameter too small, however, because too small a value will cause the MCMC algorithm to take an extra long time.
+
+Instead of changing the tuning parameter manually, you can click the "Adapt" button on the Bayesian toolbar. (The "Adapt" button has a "wrench" icon.) This will automatically adjust the tuning parameter. After you click the "Adapt" button, it becomes disabled. If the "adapt" button becomes enabled again, then you can click it again. 
+
+ 
+Note that the question contained the premise that the model ran without problems in maximum likelihood estimation (MLE). If experimentation with the tuning parameter fails to get you past the "Waiting to accept a transition" message and you have not tried running the model with MLE, then run the model in MLE (Analyze->Calculate Estimates"). Check the MLE output for signs of an unidentified model, such as negative variance estimates or warnings that certain estimates are unidentified. Solving the model identification problem(s) may get you past the "Waiting to accept" warning when you run with Bayesian Estimation. See Technote 1480160 for resources on model identification. 
+
+RELATED INFORMATION
+ Need more help? Our AMOS forum is Live! [https://developer.ibm.com/answers/search.html?f=&type=question&redirect=search%2Fsearch&sort=relevance&q=%2B[amos]]
+
+
+ 
+
+HISTORICAL NUMBER
+ 72152

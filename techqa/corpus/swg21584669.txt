@@ -1,0 +1,54 @@
+Title: IBM Tivoli Integrated Portal feature pack installation is failing - United States
+
+Text:
+TIPL2INST; Feature Pack; install fails; TIPL2 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The installation of the TIP 2.2.x.x feature pack is failing with the following error: 
+FAILURE: The overall installation fails. Check 
+<installuser's home directory>/TIPFeaturePackInstaller-00.log 
+
+
+SYMPTOM
+The following error is being displayed at the end of the failed installation: 
+
+FAILURE: The overall installation fails. Check <installuser's home directory>/TIPFeaturePackInstaller-00.log 
+
+The TIPFeaturePackInstaller-00.log contains an error like this:
+
+2012-02-06 17:00:03.037+01:00 : STDERR : 
+/opt/IBM/tivoli/tipv2/_uninst/TIPInstall2201/plan/checks/MachinePlan_localhost/000
+01_TIPInstall_PreCheck-FP1/TIPInstall_PreCheck-FP1.xml:317: The 
+following error occurred while executing this line: 
+/opt/IBM/tivoli/tipv2/_uninst/TIPInstall2201/plan/checks/MachinePlan_localhost/000
+01_TIPInstall_PreCheck-FP1/TIPInstall_PreCheck-FP1.xml:935:
+TIP server is stopped, but other unknown running java process from /opt/IBM/tivoli/tipv2 must be shut down. 
+
+
+CAUSE
+More than one Java process is running from the Java install in <TIP Home>/java
+
+
+
+DIAGNOSING THE PROBLEM
+With the TIP server process shut down, check if other Java processes are running: 
+
+
+Unix:
+
+Run the following command to list all running Java processes: 
+
+ps -ef | grep java
+
+ps -ef | grep tip
+
+
+Windows: 
+
+The Windows Task Manager program can show you if other java processes are running. Unfortunately, Task Manager does not indicate which program started the process. Windows Process Explorer is available for download from Microsoft, and can be used to identify which Java processes are running from the TIP Java installation.
+
+
+RESOLVING THE PROBLEM
+Any TIP Java process need to be stopped prior to attempting any fixpack or feature pack install. 
+
+ Once you have stopped these Java processes, please retry the TIP fix pack 2.2.x.x install.

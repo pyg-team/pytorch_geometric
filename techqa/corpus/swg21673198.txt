@@ -1,0 +1,35 @@
+Title: IBM When opening a work item from an in-basket in Case Manager Client, it failed to load the IBM form with CDEWG5405E error - United States
+
+Text:
+blank; IBM form; ICM; 5.1; 5.1.1; Case Form; widget TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The customer configured the Case Form Widget to use a form template. It was unable to load the IBM form in Case Manager Client with CDEWG5405E error when opening a work item from an in_basket. 
+
+SYMPTOM
+Here is the error reported in the WAS SystemOut.log : 
+
+[5/13/14 14:50:28:566 MST] 00000022 SystemOut O com.ibm.ecm.acm.forms.service.FormException: java.lang.NoSuchMethodError: org/apache/log4j/Logger.isTraceEnabled()Z
+[5/13/14 14:50:28:566 MST] 00000022 SystemOut O at com.ibm.ecm.acm.forms.service.FormService.dispatch(FormService.java:98)
+[5/13/14 14:50:28:566 MST] 00000022 SystemOut O at com.ibm.form.integrations.icm.servlet.IBMFormServlet.doPost(IBMFormServlet.java:131)
+[5/13/14 14:50:28:566 MST] 00000022 SystemOut O at javax.servlet.http.HttpServlet.service(HttpServlet.java:738)
+[5/13/14 14:50:28:566 MST] 00000022 SystemOut O at com.ibm.form.webform.framework.servlet.IBMWorkplaceFormsServerServlet.service(IBMWorkplaceFormsServerServlet.java:1857)
+...
+...
+[5/13/14 14:50:28:582 MST] 00000022 SystemOut O at com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:905)
+[5/13/14 14:50:28:582 MST] 00000022 SystemOut O at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1613)
+[5/13/14 14:50:28:582 MST] 00000022 SystemOut O Caused by: java.lang.NoSuchMethodError: org/apache/log4j/Logger.isTraceEnabled()Z
+
+
+CAUSE
+The problem was due to the log4j-1.2.7.jar file of IBM Cognos software on the server configured in the ICM Classpath. See the screen shot from running to http://<server name>:<port #>/CaseManager/CASEREST/v1/info below. 
+[/support/docview.wss?uid=swg21673198&aid=1] [/support/docview.wss?uid=swg21673198&aid=1]
+
+
+ENVIRONMENT
+Windows 2008 R2, IBM Case Manager (ICM) 5.1.1, ICM development profile with the stand-alone WAS profile
+
+
+
+RESOLVING THE PROBLEM
+To resolve the CDEWG5405E error, you must remove the log4j-1.2.7.jar file from WAS Classpath. You can edit the setupCmdLine.bat being called by the WAS startServer.bat file to remove the reference log4j-1.2.7.jar file

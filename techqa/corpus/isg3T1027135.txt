@@ -1,0 +1,142 @@
+Title: IBM Downloading and Installing or Upgrading OpenSSL and OpenSSH - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to download and install or upgrade OpenSSL and OpenSSH on AIX? 
+
+ANSWER
+Here are instructions on where to download and how to install or upgrade to the latest openssl and openssh.
+OpenSSL is a prerequisite for OpenSSH. 
+1) Download openssl and openssh from the following link: 
+https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=aixbp [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=aixbp]
+
+You will have to register at the site if you do not have an account. 
+
+The latest openssl provided by IBM is openssl-1.0.2.1300
+The latest openssh provided by IBM is OpenSSH_7.5.102.1100 
+
+openssh 
+select OpenSSH 7.5 
+Download: OpenSSH_7.5.102.1100.tar.Z (11635741) 
+
+openssl 
+select OpenSSL Version 1.0.x.x 
+continue 
+Download: openssl-1.0.2.1300.tar.Z (25191399) 
+
+NOTE:
+OpenSSL must be installed first.
+
+On your AIX system. 
+2) Create directory to hold openssl and openssh.
+Example: 
+# mkdir /tmp/newopenssl 
+# mkdir /tmp/newopenssh 
+
+Transfer the openssl compressed tar file to the /tmp/newopenssl directory
+Transfer the openssh compressed tar file to the /tmp/newopenssh directory 
+
+3) Before upgrading SSH and or AIX make a backup of the /etc/ssh directory if it exists.
+Skip steps 3 and 9 if you don't have ssh installed.
+
+NOTE: If you have an existing ssh configuration please make a copy of 
+the /etc/ssh directory before installing the new ssh to preserve the 
+ssh host keys. If this is a new installation of ssh there will not be an /etc/ssh directory. 
+
+# cp -pr /etc/ssh /etc/ssh_backup 
+
+4) Prepare the openssl software for installation. 
+# cd /tmp/newopenssl 
+# uncompress openssl-1.0.2.1300.tar.Z
+# tar -xvf openssl-1.0.2.1300.tar
+# cd <newly created openssl directory if one was created>
+
+5) Install the openssl software
+# smitty install_all
+INPUT device / directory for software [.]
+<enter>
+
+* INPUT device / directory for software .
+* SOFTWARE to install []
+<....>
+
+Select F4 or esc+4 to list the openssl software.
+Select with F7: openssl.base openssl.license openssl.man.en_US 
+<enter>
+
+ACCEPT new license agreements? yes
+<enter>
+
+6) Prepare the openssh software for installation
+# cd /tmp/newopenssh
+# uncompress *.Z 
+# tar -xvf OpenSSH_7.5.102.1300.tar 
+
+7) Install the openssh software
+# cd <newly created openssh directory if one was created> 
+
+# smitty install_all
+INPUT device / directory for software [.]
+<enter>
+
+* INPUT device / directory for software .
+* SOFTWARE to install []
+<....>
+Select F4 or esc+4 to list the openssl software.
+Select with F7: openssh.base openssh.license openssh.man.en_US
+openssh.msg.EN_US openssh.msg.en_US
+<enter>
+
+ACCEPT new license agreements? yes
+<enter>
+
+If the installation was successful sshd should now be active. 
+# lssrc -g ssh
+active
+Should be active and ready to accept ssh connections
+
+Or, lssrc -s sshd
+Should be active and ready to accept ssh connections
+
+SSH is also automatically configured to start on each reboot.
+SSH is called from /etc/rc.d/rc2.d/Ssshd script at boot up.
+The Ssshd script is called from from the l2 entry in /etc/inittab
+l2:2:wait:/etc/rc.d/rc2.d
+
+9) Restore the ssh host keys by restoring the /etc/ssh_backup directory to avoid the man-in-the-middle attack.
+Skip step 9 if this is a new SSH installation.
+But if SSH was installed prior to this SSH upgrade perform step 9.
+
+# cd /etc/ssh
+Backup the newly installed ssh_config and sshd_config files.
+# cp -p ssh_config ssh_config.orig_<today's_date>
+# cp -p sshd_config sshd_config.orig_<today's_date>
+
+Restore the /etc/ssh_backup directory
+# cd /etc/ssh_backup
+# cp -pr * /etc/ssh
+
+If you had customized the ssh_config and sshd_config files they have now been restored.
+# cd /etc/ssh
+
+Or, you can bring back the ssh_config.orig_<today's_date> to ssh_config
+and sshd_config.orig_<today's_date> to sshd_config from the new installation if you
+prefer to use the newly installed ssh_config and sshd_config files.
+I prefer that you use the newly installed ssh_config and sshd_config files and
+and if there were any customization done to the old files you can add those
+changes to the new files.
+
+10) Stop and restart sshd 
+To stop sshd from the command line:
+# stopsrc -s sshd
+Or,
+# stopsrc -g ssh
+
+To start sshd from the command line:
+# startsrc -s sshd
+Or,
+# startsrc -g ssh
+
+The sshd daemon should be active.

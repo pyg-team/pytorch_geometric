@@ -1,0 +1,49 @@
+Title: IBM Missing summarized data in the "Unix Memory" and "Disk" DB2 data warehouse tables after the upgrade to 6.30 FP5 - United States
+
+Text:
+UNIXMEM; TDW; KSY FLASH (ALERT)
+
+ABSTRACT
+ The 6.30 FP5 Summarization and Pruning agent fails to write data into the DB2 data warehouse hourly, daily, weekly, monthly, quarterly and yearly summarized tables of the Unix Memory and Disk groups. This issue applies only to DB2 data warehouse. 
+
+CONTENT
+Because of a set of new attributes introduced by the 6.30 FP5 UNIX OS Agent into the "Unix Memory" and "Disk" attribute groups the size of the summarized warehouse tables for these groups has crossed the 4K DB2 tablespace boundary. As a consequence the Summarization and Pruning agent fails in adding the new columns to these tables' definitions . The following kind of error can be found in the Summarization and Pruning RAS1 logs:
+== 3720 t=work2 SQL IN ERROR : 
+statement name : Unix_Memory_H.Alt1 
+SQL : ALTER TABLE "ITMUSER"."Unix_Memory_H" ADD "AVG_MR" DECIMAL (31, 2) template SQL : 
+== 3721 t=work2 SQLException occurred. SQL State = 54010 , SQL Error Code = -670 == 3722 t=work2 com.ibm.db2.jcc.am.SqlException: The statement failed because the row size of the resulting table would have exceeded the row size limit. Limit: "4005". Table space: "USERSPACE1".. SQLCODE=-670, SQLSTATE=54010, DRIVER=3.65.110 
+
+Because of this error no new rows can be written into the hourly, daily, weekly, monthly, quarterly and yearly summarized "Unix_Memory" and "Disk" tables. 
+
+Even if raw data warehouse tables are not affected by this issue, it may rapidly lead to a loss of information or to inaccurate historical data depending on the configured pruning frequencies.
+
+This problem is tracked via APAR IV75908 "THE SUMMARIZATION AND PRUNING AGENT FAILS IN SUMMARIZING HISTORICAL DATA FOR THE UNIX OS AGENT "UNIX MEMORY" ATTRIBUTE GROUP" and APAR IV79257 "FAILURE COLLECTING "DISK" SUMMARIZED HISTORICAL DATA INTO DB2 WAREHOUSE"
+
+In order to solve this issue it is necessary to run a set of SQL warehouse upgrade scripts that move the "Unix_Memory" and "Disk" summarized tables into the 8K DB2 tablespace. These scripts are named:
+
+kux_63migr_Memory_H.sql
+kux_63migr_Memory_D.sql
+kux_63migr_Memory_W.sql
+kux_63migr_Memory_M.sql
+kux_63migr_Memory_Q.sql
+kux_63migr_Memory_Y.sql
+
+kux_63migr_Disk_H.sql
+kux_63migr_Disk_D.sql
+kux_63migr_Disk_W.sql
+kux_63migr_Disk_M.sql
+kux_63migr_Disk_Q.sql
+kux_63migr_Disk_Y.sql
+
+
+Files for APAR IV75908 (kux_63migr_Memory_*.sql) are included in the 6.3.0.5-TIV-ITM_UNIX-IF0002 UNIX OS Agent Interim Fix as part of the UNIX OS Agent TEPS support files, as well as included in 6.30 FP6. 
+
+Files for APAR IV79257 (kux_63migr_Disk_*.sql) are included in the 6.3.0.5-TIV-ITM_UNIX-IF0003 UNIX OS Agent Interim Fix as part of the UNIX OS Agent TEPS support files, as well as included in 6.30 FP7. 
+
+All the files are available in attachment to this tech-note.
+
+The procedure is the same as the one documented for the "System" summarized tables in the Appendix A "Upgrading your warehouse for primary key and tablespace changes" of the UNIX OS Agent Reference Guide. 
+
+kux_63migr_Memory_W.sql [/support/docview.wss?uid=swg21964406&aid=2]kux_63migr_Memory_W.sql [/support/docview.wss?uid=swg21964406&aid=1]kux_63migr_Memory_Y.sql [/support/docview.wss?uid=swg21964406&aid=4]kux_63migr_Memory_Y.sql [/support/docview.wss?uid=swg21964406&aid=3]kux_63migr_Memory_D.sql [/support/docview.wss?uid=swg21964406&aid=6]kux_63migr_Memory_D.sql [/support/docview.wss?uid=swg21964406&aid=5]kux_63migr_Memory_H.sql [/support/docview.wss?uid=swg21964406&aid=8]kux_63migr_Memory_H.sql [/support/docview.wss?uid=swg21964406&aid=7]kux_63migr_Memory_M.sql [/support/docview.wss?uid=swg21964406&aid=10]kux_63migr_Memory_M.sql [/support/docview.wss?uid=swg21964406&aid=9]kux_63migr_Memory_Q.sql [/support/docview.wss?uid=swg21964406&aid=12]kux_63migr_Memory_Q.sql [/support/docview.wss?uid=swg21964406&aid=11] 
+
+kux_63migr_Disk_D.sql [/support/docview.wss?uid=swg21964406&aid=14]kux_63migr_Disk_D.sql [/support/docview.wss?uid=swg21964406&aid=13]kux_63migr_Disk_H.sql [/support/docview.wss?uid=swg21964406&aid=16]kux_63migr_Disk_H.sql [/support/docview.wss?uid=swg21964406&aid=15]kux_63migr_Disk_M.sql [/support/docview.wss?uid=swg21964406&aid=18]kux_63migr_Disk_M.sql [/support/docview.wss?uid=swg21964406&aid=17]kux_63migr_Disk_Q.sql [/support/docview.wss?uid=swg21964406&aid=20]kux_63migr_Disk_Q.sql [/support/docview.wss?uid=swg21964406&aid=19]kux_63migr_Disk_W.sql [/support/docview.wss?uid=swg21964406&aid=22]kux_63migr_Disk_W.sql [/support/docview.wss?uid=swg21964406&aid=21]kux_63migr_Disk_Y.sql [/support/docview.wss?uid=swg21964406&aid=24]kux_63migr_Disk_Y.sql [/support/docview.wss?uid=swg21964406&aid=23]

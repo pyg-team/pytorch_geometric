@@ -1,0 +1,81 @@
+Title: IBM Security Bulletin:  Multiple vulnerabilities may affect Oracle Outside In Technology (OIT) Version 8.5.3 used by IBM FileNet Content Manager and IBM Content Foundation - United States
+
+Text:
+security; vulnerabilty; OIT SECURITY BULLETIN
+
+SUMMARY
+ Security Bulletin: Multiple vulnerabilities may affect Oracle Outside In Technology (OIT) Version 8.5.3 used by IBM FileNet Content Manager and IBM Content Foundation.
+Oracle OIT issues disclosed in the Oracle April 2018 Critical Patch Update. 
+
+VULNERABILITY DETAILS
+Advisory CVEs: 
+
+CVEID: CVE-2018-2768 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2768]
+DESCRIPTION: An unspecified vulnerability in Oracle Fusion Middleware related to the Outside In Technology Outside In Filters component could allow an unauthenticated attacker to cause high confidentiality impact, no integrity impact, and low availability impact.
+CVSS Base Score: 7.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/141924 [https://exchange.xforce.ibmcloud.com/vulnerabilities/141924] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:L) 
+
+CVEID: CVE-2018-2801 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2801]
+DESCRIPTION: An unspecified vulnerability in Oracle Fusion Middleware related to the Outside In Technology Outside In Image Export SDK component could allow an unauthenticated attacker to cause high confidentiality impact, no integrity impact, and low availability impact.
+CVSS Base Score: 7.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/141957 [https://exchange.xforce.ibmcloud.com/vulnerabilities/141957] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:L) 
+
+CVEID: CVE-2018-2806 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2806]
+DESCRIPTION: An unspecified vulnerability in Oracle Fusion Middleware related to the Outside In Technology Outside In Filters component could allow an unauthenticated attacker to cause high confidentiality impact, no integrity impact, and low availability impact.
+CVSS Base Score: 7.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/141962 [https://exchange.xforce.ibmcloud.com/vulnerabilities/141962] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:L)
+
+AFFECTED PRODUCTS AND VERSIONS
+FileNet Content Manager 5.2.1, 5.5.0
+IBM Content Foundation 5.2.1, 5.5.0
+
+REMEDIATION/FIXES
+To resolve these vulnerabilities, install one of the patch sets listed below to upgrade Oracle Outside In Technology (OIT) to the April 2018 v8.5.3 patch 27695571 release. 
+
+
+ 
+
+Product VRMF APAR Remediation/First Fix FileNet Content Manager 5.2.1 PJ45337 [http://www.ibm.com/support/docview.wss?uid=swg1PPJ45337]
+PJ45338 [http://www.ibm.com/support/docview.wss?uid=swg1PPJ45338] 5.2.1.7-P8CPE-IF002 [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=FileNet%20Product%20Family&product=ibm/Information+Management/FileNet+Content+Engine&release=5.2.1.7&platform=All&function=all] - 5/24/2018
+5.2.1.7-P8CSS-IF002 [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=FileNet%20Product%20Family&product=ibm/Information+Management/FileNet+Content+Search+Services&release=5.2.1.7&platform=All&function=all] - 5/24/2018 IBM Content Foundation 5.2.1 [http://www.ibm.com/support/docview.wss?uid=swg1PJ44469]PJ45337 [http://www.ibm.com/support/docview.wss?uid=swg1PPJ45337]
+PJ45338 [http://www.ibm.com/support/docview.wss?uid=swg1PPJ45338] 5.2.1.7-P8CPE-IF002 [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=FileNet%20Product%20Family&product=ibm/Information+Management/FileNet+Content+Engine&release=5.2.1.7&platform=All&function=all] - 5/24/2018
+5.2.1.7-P8CSS-IF002 [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=FileNet%20Product%20Family&product=ibm/Information+Management/FileNet+Content+Search+Services&release=5.2.1.7&platform=All&function=all] - 5/24/2018 
+
+In the above table, the APAR links will provide more information about the fix. 
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 6 June, 2018 - initial release 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management FileNet Content Manager Content Search Services AIX, HP-UX, Linux, Solaris, Windows 5.5.0, 5.2.1 Enterprise Content Management Content Foundation Content Engine 5.5.0, 5.2.1 Enterprise Content Management Content Foundation Content Search Services 5.5.1, 5.2.1

@@ -1,0 +1,87 @@
+Title: IBM How to reduce the current size of IBM InfoSphere Information Server xmeta database - United States
+
+Text:
+xmeta; logging; LoggingAdmin.sh TECHNOTE (FAQ)
+
+QUESTION
+ How do I reduce the current size of IBM InfoSphere Information Server xmeta database? 
+
+CAUSE
+Xmeta is getting too large.
+
+ANSWER
+There are two ways to remove all the DS job events from the OR log. 
+
+The first method is from within db2 (the system should be quiesced for this approach):
+
+
+ 1. Start the db2 command line processor: 
+    
+    cd /opt/IBM/db2/V9/bin 
+    ./db2 
+    
+    
+ 2. Connect to the database (replace with db2 admin username and password):
+    
+    db2 => connect to xmeta user <username> using <password> 
+    
+    
+ 3. Temporarily disable transaction logging (note that the table name suffix may be different for your installation): 
+    
+    db2 => alter table XMETA.LOGGING_XMETAGEN_LOGGINGEVENT1466CB5F activate not logged initially 
+    
+    
+ 4. Delete events matching the category name 'IIS-DSTAGE-RUN' 
+    
+    db2 => delete from LOGGING_XMETAGEN_LOGGINGEVENT1466CB5F where CATEGORYNAME_XMETA = 'IIS-DSTAGE-RUN' 
+    
+    
+ 5. Exit the command processor: 
+    
+    db2 => quit 
+
+
+The XMETA.LOGGING_XMETAGEN_LOGGINGEVENT1466CB5F table (the suffix may differ depending on your installation) is the only table affected by OR logging and is the only table that should grow rapidly (if OR logging is enabled). 
+
+Assuming this is a DB2 xmeta, and the repository database is named XMETA, an SQL command such as this will also tell you if there are any log events that belong to DataStage in the LoggingEvent table: 
+
+SELECT * 
+FROM XMETA.LOGGING_XMETAGEN_LOGGINGEVENT1466CB5F 
+WHERE CATEGORYNAME_XMETA = 'IIS-DSTAGE-RUN' 
+
+The Oracle table name is XMETA.LOGGING_LOGGINGEVENT1466CB5F. 
+
+On an Oracle db you can use the TRUNCATE command to delete all rows in a table. The LOGGING_LOGGINGEVENT1466CB5F table is independent and can also be dropped and recreated if necessary. 
+
+
+The second method is to schedule a background purge of the log events. 
+ 1. Use the following command line (from the ASBServer/bin (ASBServer\bin directory)) to create the scheduled auto purge task:
+    
+    ./LoggingAdmin.sh -user <user> -password <password> -create -schedule -name "DS job event purge task" -frequency -minutes 30 -threshold 10000 -percentage 100 -includeCategories IIS-DSTAGE-RUN 
+    
+    LoggingAdmin.bat -user <user> -password <password> -create -schedule -name "DS job event purge task" -frequency -minutes 30 -threshold 10000 -percentage 100 -includeCategories IIS-DSTAGE-RUN 
+    
+    Note: Replace <user> <password> with a suite admin user/password 
+    
+    
+ 2. After all DS log events have been purged, the scheduled task can be deleted with the following command line: 
+    
+    ./LoggingAdmin.sh -user <user> -password <password> -delete -schedule -name "DS job event purge task" 
+    
+    LoggingAdmin.bat -user <user> -password <password> -delete -schedule -name "DS job event purge task"
+
+If the Logging agent fills up xmeta with IIS-DSTAGE-RUN messages do the following: 
+
+A job with the OR logging enabled can log a huge amount of events filling up the xmeta database. Even after stopping the job, turning off OR logging, truncating the log event table and restarting everything, the logging event table continues to grow rapidly, consumes all memory and crashes.
+The reason events continued to get logged after restarting everything is because there was still a large number of events staged to the ASBNode\logs\DataStage directory. 
+
+Fix the issue by truncating the table, disabling OR logging and removing all log files from the \IBM\InformationServer\ASBNode\logs\DataStage directory 
+
+ 1. Disable ORLogging using the Administrator client-> Logs tab to stop using the xmeta for the job logging. 
+ 2. To ensure there are no other logging messages waiting to be written to xmeta, check the \IBM\InformationServer\ASBNode\logs\DataStage or any other directory under the \IBM\InformationSserviceserver\ASBNode\logs\ directory and remove all the log files. 
+ 3. Start all IS services
+
+
+RELATED INFORMATION
+#The XMETA Repository for Information Server 8.1 [https://www-304.ibm.com/support/docview.wss?uid=swg21407491]
+DataStage logging changes introduced at 8.1 [https://www-304.ibm.com/support/docview.wss?uid=swg21370048]

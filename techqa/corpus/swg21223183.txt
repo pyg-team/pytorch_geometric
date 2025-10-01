@@ -1,0 +1,138 @@
+Title: IBM How to configure Lotus Domino Web Server for Host On-Demand - United States
+
+Text:
+lotus domino; Lotus Domino; hod; HOD; web server; v6.5; configuration; config; configure; 1223183; 97139 TECHNOTE (FAQ)
+
+QUESTION
+ How do you configure Lotus Domino Web Server to work with IBM Rational Host On-Demand? 
+
+CAUSE
+Lotus Domino is different from other Web Server configurations 
+
+ANSWER
+Use the following step-by-step instructions to configure Host On-Demand using Lotus Domino Web Server. 
+
+Installation of Lotus Domino:
+
+
+ 1. Run the setup of Lotus Domino.
+    
+    
+ 2. Enter a username and companyName. Both are case sensitive. Remember the companyName and userid. They will be required later for configuring the server.
+    
+    
+ 3. Choose the program and data destination folder path.
+    
+    
+ 4. Choose the Domino Enterprise Server option.
+
+
+
+
+
+
+Configuring Lotus Domino server: 
+ 1. Once the installation is over, start the Domino server from the Start menu. The Domino server setup begins.
+    
+    
+ 2. Select Set up the first server or a stand alone server.
+    
+    
+ 3. Provide a server name.
+    
+    
+ 4. Enter the password under organization password.
+    
+    
+ 5. Enter only the last name; remove the first and middle name. Enter administration password. Remember this user id and password for configuring the server.
+    
+    
+ 6. Select Web Browsers (HTTP services) for automatically running the webserver once the Domino server starts.
+    
+    
+ 7. Next, accept the defaults and continue the setup.
+
+
+
+
+
+
+Configuring the Lotus Domino server for Host On-Demand using webadmin.nsf 
+ 1.  Java has to be installed on the machine which is used for configuring the Lotus Domino server.
+     
+     
+ 2.  Once the setup of the server is done, start the Domino server from the Start menu. 
+     
+     
+ 3.  In the browser, check for http://localhost or http://IP-Address to confirm the installation.
+     
+     
+ 4.  Open http://localhost/webadmin.nsf to configure the server.
+     
+     
+ 5.  Enter the userid and password from Step 5 of Configuring Lotus Domino server above.
+     
+     
+ 6.  Click on the configuration tab.
+     
+     
+ 7.  Click the Server on the left and All Server Documents.
+     
+     
+ 8.  Click on the server link that has been created and click Edit Server on the top. If you don't see any menu at the top, java is not installed properly.
+     
+     
+ 9.  Enable the Load internet configurations from server\Internet sites document.
+     
+     
+ 10. Click Save & Close on the top menu.
+     
+     
+ 11. Click on the Web > Internet sites menu on the left panel.
+     
+     
+ 12. Select Web from the Add Internet Site menu on the top.
+     
+     
+ 13. Give a descriptive name for the site. Enter the company name entered in Step 2 of Installation of Lotus Domino above. Remember the company name is case sensitive.
+     
+     
+ 14. Give the ip address of the system where Lotus Domino is installed.
+     
+     
+ 15. Remove the * and select the server that you entered in Step 2 of Configuring Lotus Domino server above.
+     
+     
+ 16. Click Save & Close in the top menu.
+     
+     
+ 17. Click on the website link you created which would be listed under Web (left panel) and Internet Sites.
+     
+     
+ 18. Click on the Website and select Create Rule in the top menu.
+     
+     
+ 19. Select Directory under Type of rule. 
+     
+     
+ 20. Enter the URL pattern under Incoming URL pattern. This is the alias one generally provides when configuring Apache. 
+     
+     For example, if we want to access Host On-Demand as http://IP-Address/hod/HODMain.html the incoming URL pattern should be /hod.
+     
+     
+ 21. Enter the path of Host On-Demand under Target Server Directory. 
+     
+     For example: C:\Program Files (x86)\IBM\HostOnDemand\HOD
+     
+     
+ 22. Click Save & Close under the top menu.
+     
+     
+ 23. Restart the Lotus Domino server. (Exit command will exit the Lotus Domino Server running in the console. Restart the server again).
+     
+
+
+
+
+
+Accessing Host On-Demand http://IP-Address/alias/... Alias is the url pattern entered under Step 20 of Configuring the Lotus Domino server for Host On-Demand using webadmin.nsf above.

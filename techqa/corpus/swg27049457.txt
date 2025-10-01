@@ -1,0 +1,47 @@
+Title: IBM Fix list for Debug Tool Plug-ins - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains a complete listing of Debug Tool Plug-in fixes with the most recent fix at the top. 
+
+CONTENT
+ 
+
+TAB NAVIGATION
+ * Version 14- selected tab,
+ * Support Resources
+
+IBM Rational Software Support Communities  * Visit the IBM Support Portal [http://www.ibm.com/support/entry/portal/Overview/Software/Rational/Rational_Developer_for_System_z] to configure your support portal experience and review FAQs, lists of known problems, fixes, and a wealth of important support information.
+ * Visit developerWorks [http://www.ibm.com/developerworks/rational/] to access an online collection of tutorials, sample code, standards, forums and other resources provided by experts at IBM to assist software developers using Rational tools including access to the IBM RFE Community [http://www.ibm.com/developerworks/rfe/].
+ * Visit the Jazz Community [http://jazz.net/] if you use a Rational product created using the Jazz platform to interact directly with the Jazz development team and other community members, download product trials and betas and track development progress.
+
+
+
+
+Helpful Hints For Obtaining Technical Assistance: Before you contact IBM Rational Software Support, gather the background information that you need to describe the problem. When you describe a problem to an IBM software support specialist, be as specific as possible and include all relevant background information so that the specialist can help you solve the problem efficiently. To save time, know the answers to these questions:
+
+ * What software versions were you running when the problem occurred?
+ * Do you have logs, traces, or messages that are related to the problem?
+ * Can you reproduce the problem? If so, what steps do you take to reproduce it?
+ * Is there a workaround for the problem? If so, be prepared to describe the workaround.
+
+If you have helpful information to diagnose or identify the problem on your system, you can provide this data by following the instructions to exchange information with IBM Technical Support [http://www.ibm.com/software/support/exchangeinfo.html].
+
+Follow IBM Rational Client Support on Twitter [http://twitter.com/rationalsupport] | Facebook [http://facebook.com/rationalsupport] | YouTube [http://www.youtube.com/ibmrationalsupport] | devWorks Blog [https://www.ibm.com/developerworks/mydeveloperworks/blogs/nfrsblog/?lang=en]
+
+TABLE OF CONTENTS:
+Client 14.0.0 Fix Pack 4
+
+
+
+
+Client 14.0.0 Fix Pack 4 Link Date Released Status Download IBM Developer for z Systems 14.0.0.4 [https://developer.ibm.com/mainframe/products/download] 31 March 2017 Current Download Debug Tool Plugins for RDz 9.5.1.x v1.0.1 [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?product=ibm%2FRational%2FRational+Developer+for+System+z&fixids=9.5.1.x-RATIONAL-RDz-ifix02&source=dbluesearch&function=fixId&parent=ibm/Rational] 28 March 2017 Current APAR Description PI74412 [http://www.ibm.com/support/docview.wss?uid=swg1PI74412] DTSP PLUGIN IS WRITING DATA TO THE INSTALL DIRECTORY PI71839 [http://www.ibm.com/support/docview.wss?uid=swg1PI71839] INCORRECT COLORING OF STATEMENTS IN DT CC PLUG IN REPORTS PI76130 [http://www.ibm.com/support/docview.wss?uid=swg1PI76130] DEBUG TOOL UPDATE TO A NEW DTSP SERVER PROFILE FAILS TO UPDATE THE HOST SERVER PROFILE DATASET  Back to top 
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development IBM Developer for z Systems Software Development Debug Tool for z/OS Software Development Rational Developer for System z

@@ -1,0 +1,199 @@
+Title: IBM IC83806: A FEDERATED QUERIY CONTAINING SUBQUERY PREDICATES MAY FAIL WITH SQL0901N IN AN SMP ENVIRONMENT. - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.7 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033685]
+DB2 Version 9.7 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24034634]
+DB2 Version 9.7 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036646]
+DB2 Version 9.7 Fix Pack 9a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037559]
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In SMP mode, a federated query containing subquery predicates
+   may fail with SQL0901N during compilation.
+   An example of the failing query:
+   SELECT 1 FROM NNT1 A  WHERE    (EXISTS(SELECT 1 FROM NNT2 WHERE
+   C1=LOCALFUNC1('test')) OR C2='test');
+   where NNT1/NNT2 are remote tables and LOCALFUNC1 is a local
+   function that accesses local tables.
+   
+   Error received:
+   SQL0901N  The SQL statement failed because of a non-severe
+   system error.
+   Subsequent SQL statements can be processed.  (Reason
+   "sqlnoSmpPlanShipOp
+   [100]:rc(     0)                ".)  SQLSTATE=58004
+   
+   The following error stack can be found in the trace:
+   -------Frame------ ------Function + Offset------
+   0x09000000004CD6B0 pthread_kill + 0xB0
+   0x0900000005255D48 sqloDumpEDU + 0xA4
+   0x09000000052B43BC sqldDumpContext__FP9sqeBsuEduiN42PCcPvT2 +
+   0x100
+   0x0900000005215250
+   sqldDumpContext__FP9sqeBsuEduiN42PCcPvT2@glue59B + 0x98
+   0x0900000005690BBC sqlrr_dump_ffdc__FP8sqlrr_cbiT2 + 0x360
+   0x0900000009243FD4 sqlzeDumpFFDC__FP8sqeAgentUiP5sqlcai + 0x50
+   0x0900000005920798 sqlzeSqlCode__FP8sqeAgentUiUlT2P5sqlcaiUsPc +
+   0x238
+   0x09000000055D96DC sqlnn_erds__FiN41e + 0x340
+   0x09000000082B2600
+   sqlnoSmpPlanShipOp__FP20SQLNO_SMP_POSTOPT_CBP21SQLNO_POSTOPT_CON
+   TEXTPP19sqlno_plan_operator + 0x400
+   0x09000000082ACCCC
+   sqlnoSmpPlanNLJNOp__FP20SQLNO_SMP_POSTOPT_CBP21SQLNO_POSTOPT_CON
+   TEXTPP19sqlno_plan_operator + 0xB38
+   0x09000000082ACCCC
+   sqlnoSmpPlanNLJNOp__FP20SQLNO_SMP_POSTOPT_CBP21SQLNO_POSTOPT_CON
+   TEXTPP19sqlno_plan_operator + 0xB38
+   0x09000000082B02A8
+   sqlnoSmpPlanMateOp__FP20SQLNO_SMP_POSTOPT_CBP21SQLNO_POSTOPT_CON
+   TEXTPP19sqlno_plan_operator + 0x54C
+   0x09000000082B0678
+   sqlnoSmpPlanPipeOp__FP20SQLNO_SMP_POSTOPT_CBP21SQLNO_POSTOPT_CON
+   TEXTPP19sqlno_plan_operator + 0x340
+   0x09000000082C7054
+   sqlno_smp_process_subsection__FP20SQLNO_SMP_POSTOPT_CBP19sqlno_p
+   lan_operatorP17sqlno_smp_ss_info + 0x444
+   0x09000000082B612C
+   sqlnoSmpPlanPass__FP20SQLNO_SMP_POSTOPT_CBP19sqlno_plan_operator
+   P13sqlno_costtyp + 0x6C8
+   0x09000000082B5934 sqlnoSmpPostPassMain + 0x2F8
+   0x090000000658EA9C sqlno_final_phase__FP13sqlno_globals + 0x5B0
+   0x0900000008E1A9D0 sqlno_exe__FP9sqlnq_qur + 0x638
+   0x0900000008FE9084 sqlno_exe__FP9sqlnq_qur@glue1754 + 0x84
+   0x0900000008FE91D0
+   sqlnn_cmpl__FP8sqeAgentP11sqlrrstrings17sqlnn_compileModeT3P14sq
+   lrr_cmpl_enviT7PP9sqlnq_qur + 0x94
+   0x09000000090987E8
+   sqlnn_cmpl__FP8sqeAgentP11sqlrrstrings17sqlnn_compileModeT3P14sq
+   lrr_cmpl_env + 0x40
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disable SMP
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users running DB2 v9.7 FP6 and earlier                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 v9.7 FP7                                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem was first fixed in DB2 v9.7 FP7.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Disable SMP
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC83806
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-29
+   
+   
+ * CLOSED DATE
+   2013-01-30
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC89918 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC89918]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSY
+   UP

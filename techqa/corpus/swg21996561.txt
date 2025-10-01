@@ -1,0 +1,12 @@
+Title: IBM launch licenseactivator receive error said I did not have administrator rights - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have downloaded SPSS Statistics version 24 and copied the old authorization key – but when I launch the license activator (jar file) I get the message that I do not have administrator rights to run the program. 
+
+I am the Admin on this computer though so I shouldn't encounter that message. 
+
+RESOLVING THE PROBLEM
+Right click SPSS Statistics 24 License Authorization Wizard on Windows Start menu and select Run as Administrator to resolve this issue.

@@ -1,0 +1,170 @@
+Title: IBM MustGather: Disk response times and requests - United States
+
+Text:
+DASD; DISK; PERFM; msgCPFAF05 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Use this document to collect PEX Trace data for debugging disk IO response times and requests. 
+
+RESOLVING THE PROBLEM
+Use this document to collect PEX Trace data for debugging disk IO response times and requests. 
+
+PEX PDIO traces can be used to help analyze disk response times and requests. The trace is obtained using Native OS/400 commands. 
+
+Step 1. Verify that the required Performance Explorer (PEX) PTFs are applied:
+
+For V7R1M0 refer to the following Web site:
+http://www.ibm.com/support/docview.wss?uid=nas8N1012020 [http://www.ibm.com/support/docview.wss?uid=nas8N1012020]
+
+For V7R2M0 refer to the following Web site:
+http://www.ibm.com/support/docview.wss?uid=nas8N1020091 [http://www.ibm.com/support/docview.wss?uid=nas8N1020091]
+
+For V7R3M0 refer to the following Web site: 
+http://public.dhe.ibm.com/services/us/igsc/idoctor/html/downloadsV7R3.html [http://public.dhe.ibm.com/services/us/igsc/idoctor/html/downloadsV7R3.html]
+
+From an i5 operating system command line, type the following (Note: An IBM Support Representative might change some of the parameters specified, based on a specific problem being reported): 
+
+Step 2. CRTLIB PMRxxxxx (where xxxxx = your PMR number) 
+
+Step 3. QSYS/ADDPEXDFN DFN(PDIO) 
+TYPE(*TRACE) 
+JOB((*ALL *ALL)) 
+TASK(*ALL) 
+MAXSTG(4000000) 
+INTERVAL(10) 
+TRCTYPE(*SLTEVT) 
+SLTEVT(*YES) 
+MCHINST(*NONE) 
+BASEVT((*PMCO *NONE *FORMAT2)) 
+DSKEVT((*READEND) (*WRTEND) (*PGREADEND) (*PGWRTEND)) 
+SAREVT((*ALL *NONE *FORMAT2)) 
+
+Step 4. STRPEX SSNID(RUN1) DFN(PDIO)
+
+Important Note: If other PEX sessions are active, this step may fail.
+
+A message CPFAF05 Reason Code 3 would be posted to the joblog of the job that issued the STRPEX command. RC3 - Definition overlaps with a session that is currently active.
+
+The error occurs only if there is another PEX session running that is also collecting BASEVT(*PMCO) events but is using an INTERVAL size greater then or less then 10 milliseconds. If the CPFAF05 error occurs, you should use ENDPEX (no parameters) and press Enter one time to see if there are other PEX sessions active; then you should wait for this PEX collection to end.
+
+The only way to successfully collect more then one type of PEX trace at a time would be to ensure that all of the active PEX definitions (that have BASEVT(*PMCO) specified) are all using the same INTERVAL size.
+
+Step 5. ENDPEX (no parameters) and press Enter one time. 
+Refresh and watch the event counter. If the counter approaches 1 million or desired time period or problem has occurred, prepare to stop the trace, but not from this screen. Use Step 6 below.
+
+Step 6. Submit this command to batch using JOBQ qsys/qsysnomax so it will run immediately:
+SBMJOB CMD(ENDPEX SSNID(RUN1) DTAOPT(*MGTCOL) MGTCOL(PMRXXXXX/*SSNID)) JOB(ENDPEX) JOBQ(QSYS/QSYSNOMAX) 
+
+Step 7. Once the Batch job in Step 6 completes, save the data to a savf.
+CRTSAVF QGPL/PEXSAVF
+SAVLIB LIB(PMRXXXXX) DEV(*SAVF) SAVF(QGPL/PEXSAVF) DTACPR(*MEDIUM)
+
+Step 8. Send the data to IBM. 
+
+
+ *  - [http://www.ibm.com/i/c.gif] Use e-mail if the file size is less than 20 MB 
+   
+   If the data you will be submitting is less than 20 MBs and you would like to e-mail the data to IBM, you should use the following information. You may send e-mail to ibmi_support@ecurep.ibm.com using the instructions from the following URL: http://www-01.ibm.com/software/support/exchangeinfo.html#email [http://www-01.ibm.com/software/support/exchangeinfo.html#email]
+   
+   
+   
+
+
+
+ *  - [http://www.ibm.com/i/c.gif] Use the Service Request (SR) Tool if the file size is 2 GB or less 
+   
+   If you have an existing PMR 
+   
+   1. Sign on to the SR tool at the following URL:
+   http://www.ibm.com/support/entry/portal/open_service_request [http://www.ibm.com/support/entry/portal/open_service_request]
+   
+   2. On the Welcome page, enter the PMR number in the Enter a report number field and click Go.
+   
+   3. Scroll down to the Attach Relevant File field.
+   
+   4. Click Browse to locate the log or trace file that you want to submit to IBM Support.
+   
+   5. Click Submit to transfer your file to IBM Technical Support through FTP (ECuRep) and associated with this PMR.
+   
+   If you are opening a new PMR
+   
+   1. Sign on to the SR tool at the following URL:
+   http://www.ibm.com/support/entry/portal/open_service_request [http://www.ibm.com/support/entry/portal/open_service_request]
+   
+   2. Select Open a new service request.
+   
+   3. Follow the steps to create a Service Request until you have come to the final page prior to submitting your request.
+   
+   4. Scroll down to the Attach additional files section.
+   
+   5. Click Browse to start adding files to your PMR. Note that there is a 2GB limit per file.
+   
+   6. Click Submit when you are done adding files and are ready to submit your PMR to IBM Service. If the data you will be submitting is less than 20 MBs and you would like to e-mail the data to IBM, use the following information. You can send an e-mail to ibmi_support@ecurep.ibm.com using the instructions from http://www-01.ibm.com/software/support/exchangeinfo.html#email [http://www-01.ibm.com/software/support/exchangeinfo.html#email]. 
+   
+   
+   
+
+
+
+ *  - [http://www.ibm.com/i/c.gif] Using FTP 
+   
+   You can refer to this link for full instructions: http://www-01.ibm.com/software/support/exchangeinfo.html#ecurep [http://www-01.ibm.com/software/support/exchangeinfo.html#ecurep]
+   
+   Use the following for the performance data:
+   
+   For North / South America locations, type and enter: 
+   ftp testcase.boulder.ibm.com PORT(*DFT) SECCNN(*SSL)
+   
+   For all other locations, type and enter: ftp ftp.ecurep.ibm.com
+   
+   1. Log in as anonymous. Enter your e-mail address as the password.
+   
+   NOTE: At some point in time, IBM will remove anonymous login. Refer to this URL for information to obtain an IBM ID and password.
+   
+   http://www-01.ibm.com/support/docview.wss?uid=nas8N1022576 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1022576]
+   
+   2. Type and enter: cd /toibm/os400
+   
+   3. Type and enter the following command to enable binary mode for the FTP session: bin
+   
+   4. Use your PMR record information to name the file: 
+   xxxxx.bbb.ccc.idr.PA1.savf
+   
+   Where:
+   xxxxx is the PMR number
+   bbb is the Branch
+   ccc is the Country code [http://www.ibm.com/de/support/ecurep/country.html] [http://www.ibm.com/de/support/ecurep/country.html] 
+   idr is the file identifier
+   CS is the data identifier (this should be incremented if additional save files are sent, PA1, PA2, PA3, etc)
+   .savf is the file extension
+   
+   Example for a green screen FTP command line:
+   put yourlib/yoursavf 12345.379.000.idr.PA1.savf 
+   
+   
+   
+   
+
+
+
+ *  - [http://www.ibm.com/i/c.gif] Blue Diamond: Customer diagnostic data upload instructions 
+   
+   http://www-01.ibm.com/support/docview.wss?uid=nas8N1020947 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1020947]
+   
+   
+   
+   
+
+
+
+
+
+
+Step 9. (Optional) 
+
+If you would like to analyze the data, consider using IBM's iDoctor PEX Analyzer tool or PRTPEXRPT commands from the operating system command line. To learn more about iDoctor PEX Analyzer, visit https://www-912.ibm.com/i_dir/idoctor.nsf/pa.html [https://www-912.ibm.com/i_dir/idoctor.nsf/pa.html]. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 
+HISTORICAL NUMBER
+ 663597314

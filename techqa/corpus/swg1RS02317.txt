@@ -1,0 +1,161 @@
+Title: IBM RS02317: [XU] STACKOVERFLOWERROR WHEN XU STOPPED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Operational Decision Manager V8.8.1 Mod Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24042247]
+Operational Decision Manager V8.8.1 Download Document [http://www-01.ibm.com/support/docview.wss?uid=swg24042245]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When terminating a RES server below StackOverflowError may
+   appear:
+   
+   java.lang.StackOverflowError
+   at java.util.ArrayList$Itr.remove(ArrayList.java:860)
+   at com.ibm.rules.res.xu.util.internal.WeakIterator.next(
+   AbstractWeakCollection.java:223)
+   at com.ibm.rules.res.xu.util.internal.WeakIterator.next(
+   AbstractWeakCollection.java:224)
+   at com.ibm.rules.res.xu.util.internal.WeakIterator.next(
+   AbstractWeakCollection.java:224)
+   at com.ibm.rules.res.xu.util.internal.WeakIterator.next(
+   AbstractWeakCollection.java:224)
+   [...]
+   at com.ibm.rules.res.xu.util.internal.WeakIterator.next(
+   AbstractWeakCollection.java:224)
+   at com.ibm.rules.res.xu.util.internal.WeakIterator.hasNext(
+   AbstractWeakCollection.java:208)
+   at com.ibm.rules.res.xu.work.internal.WorkManagerImpl.stop(
+   WorkManagerImpl.java:61)
+   at com.ibm.rules.res.xu.spi.internal.XUResourceAdapter.stop(
+   XUResourceAdapter.java:86)
+   at com.ibm.rules.res.xu.client.internal.XUClient.stopXU(
+   XUClient.java:275)
+   at ilog.rules.res.session.IlrJ2SESessionFactory.release(
+   IlrJ2SESessionFactory.java:375)
+   at ilog.rules.res.session.rawdata.RawDataRuleServiceFactory.
+   close(RawDataRuleServiceFactory.java:152)
+   at com.ibm.rules.hbr.runtime.RulesExecutionManager.terminate(
+   RulesExecutionManager.java:623)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  increase xss
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The code is using recursion to browe a huge list of element
+   which can lead to a stack overflow.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02317
+   
+   
+ * REPORTED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6903
+   
+   
+ * REPORTED RELEASE
+   860
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-18
+   
+   
+ * CLOSED DATE
+   2016-02-29
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI57540
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * FIXED COMPONENT ID
+   5725B6903
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R860 PSY
+   UP

@@ -1,0 +1,293 @@
+Title: IBM IZ23838: NEW RESTRICTION ADDED WHEN DROPPING NODES FROM A DATABASE PARTIT ION GROUP - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+DB2 Version 9.5 Fix Pack 3b for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24022591]
+DB2 Version 9.5 Fix Pack 4 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24023213]
+DB2 Version 9.5 Fix Pack 3a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24021838]
+DB2 Version 9.5 Fix Pack 3 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24021563]
+DB2 Version 9.5 Fix Pack 4a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24024215]
+DB2 Version 9.5 Fix Pack 5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24025421]
+DB2 Version 9.5 Fix Pack 6a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027747]
+DB2 Version 9.5 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028731]
+DB2 Version 9.5 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24030302]
+DB2 Version 9.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032087]
+DB2 Version 9.5 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033308]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A sequence of adding and dropping nodes from a database
+   partition group can lead into a situation where SQL0901 (Reason
+   "Node with storage defined not found".) is returned. This
+   SQL0901 message is returned while attempting to add a new
+   tablespace container to a tablespace which resides in the
+   database partition group.
+   .
+   To prevent this unexpected situation from occurring, dropping
+   nodes from a database partition group now requires at
+   least one other node existing in the database partition group
+   with the IN_USE flag set to 'Y'.  The IN_USE flag may be found
+   in the SYSCAT.DBPARTITIONGROUPDEF catalog table.
+   .
+   Here is a sequence of events which may lead into the unexpected
+   SQL0901 condition.
+   .
+   Using the following select statement (same statement used
+   throughout the example), we see the current state of the
+   database partition group:
+   .
+   select char(dbpgname, 10)dbpgname, dbpartitionnum, in_use
+   
+   
+     from syscat.dbpartitiongroupdef
+     where dbpgname='NG10'
+     order by dbpartitionnum;
+   .
+   DBPGNAME   DBPARTITIONNUM IN_USE
+   ---------- -------------- ------
+   NG10   0 Y
+   .
+     1 record(s) selected.
+   .
+   alter database partition group ng10 add dbpartitionnum (1, 2)
+   without tablespaces;
+   SQL1759W  Redistribute database partition group is required to
+   change database
+   partitioning for objects in nodegroup "NG10" to include some
+   added database
+   partitions or exclude some dropped database partitions.
+   SQLSTATE=01618
+   .
+   DBPGNAME   DBPARTITIONNUM IN_USE
+   ---------- -------------- ------
+   NG10   0 Y
+   NG10   1 T
+   NG10   2 T
+   .
+     3 record(s) selected.
+   .
+   alter database partition group ng10 drop dbpartitionnum (0);
+   SQL1759W  Redistribute database partition group is required to
+   change database
+   partitioning for objects in nodegroup "NG10" to include some
+   added database
+   partitions or exclude some dropped database partitions.
+   SQLSTATE=01618
+   .
+   DBPGNAME   DBPARTITIONNUM IN_USE
+   ---------- -------------- ------
+   NG10   0 D
+   NG10   1 T
+   NG10   2 T
+   .
+     3 record(s) selected.
+   .
+   alter tablespace d4kr10 add (FILE '/d4kr10/tbspaces/C1' 5756)
+   ondbpartitionnum (1) autoresize yes;
+     DB21034E  The command was processed as an SQL statement
+   because it was not a
+    valid Command Line Processor command. During SQL
+   processing it returned:
+          SQL0901N The SQL statement failed because of a
+   non-severe system error.
+     Subsequent SQL statements can be processed.
+   (Reason "Node with storage
+        defined not found".)  SQLSTATE=58004
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All DB2 systems on Linux, Unix, and Windows platforms at
+   service levels from Version 9.5 GA through to Version 9.5 Fix
+   Pack 2. Only applies to DPF environments.
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   A sequence of adding and dropping nodes from a database
+   partition group can lead into a situation where SQL0901 (Reason
+   "Node with storage defined not found".) is returned. This
+   SQL0901 message is returned while attempting to add a new
+   tablespace container to a tablespace which resides in the
+   same database partition group.
+   .
+   To prevent this unexpected situation from occurring, dropping
+   nodes from a database partition group now requires at
+   least one other node existing in the database partition group
+   with the IN_USE flag set to 'Y'.  The IN_USE flag may be found
+   in the SYSCAT.DBPARTITIONGROUPDEF catalog table.
+   .
+   Here is a sequence of events which leads into the unexpected
+   SQL0901 condition.
+   .
+   Using the following select statement (same statement used
+   throughout the example), we see the current state of the
+   database partition group:
+   .
+   select char(dbpgname, 10)dbpgname, dbpartitionnum, in_use
+   
+   
+   
+     from syscat.dbpartitiongroupdef
+     where dbpgname='NG10'
+     order by dbpartitionnum;
+   .
+   DBPGNAME   DBPARTITIONNUM IN_USE
+   ---------- -------------- ------
+   NG10   0 Y
+   .
+     1 record(s) selected.
+   .
+   alter database partition group ng10 add dbpartitionnum (1, 2)
+   without tablespaces;
+   SQL1759W  Redistribute database partition group is required to
+   change database
+   partitioning for objects in nodegroup "NG10" to include some
+   added database
+   partitions or exclude some dropped database partitions.
+   SQLSTATE=01618
+   .
+   DBPGNAME   DBPARTITIONNUM IN_USE
+   ---------- -------------- ------
+   NG10   0 Y
+   NG10   1 T
+   NG10   2 T
+   .
+     3 record(s) selected.
+   .
+   alter database partition group ng10 drop dbpartitionnum (0);
+   SQL1759W  Redistribute database partition group is required to
+   change database
+   partitioning for objects in nodegroup "NG10" to include some
+   added database
+   partitions or exclude some dropped database partitions.
+   SQLSTATE=01618
+   .
+   DBPGNAME   DBPARTITIONNUM IN_USE
+   ---------- -------------- ------
+   NG10   0 D
+   NG10   1 T
+   NG10   2 T
+   .
+     3 record(s) selected.
+   .
+   alter tablespace d4kr10 add (FILE '/d4kr10/tbspaces/C1' 5756)
+   ondbpartitionnum (1) autoresize yes;
+     DB21034E  The command was processed as an SQL statement
+   because it was not a
+    valid Command Line Processor command. During SQL
+   processing it returned:
+          SQL0901N The SQL statement failed because of a
+   non-severe system error.
+     Subsequent SQL statements can be processed.
+   (Reason "Node with storage
+        defined not found".)  SQLSTATE=58004
+   ****************************************************************
+   RECOMMENDATION:
+   Upgrade to DB2 Version 9.5 Fix Pack 3, or ensure to, when
+   adding new nodes, to first redistribute data to new nodes prior
+   to dropping old nodes in the database partition group.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The complete fix for this problem first appears in DB2 Version
+   9.5 Fix Pack 3 and all subsequent Fix Packs.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ23838
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4100
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-06-04
+   
+   
+ * CLOSED DATE
+   2009-03-11
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * FIXED COMPONENT ID
+   5765F4100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSN
+   UP

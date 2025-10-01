@@ -1,0 +1,46 @@
+Title: IBM Configure Platform Symphony to be immuned to Padding Oracle On Downgraded Legacy Encryption (POODLE) attack(CVE-2014-3566) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do I make sure Platform Symphony is immuned to POODLE attack due to the SSLv3 vulnerability (CVE-2014-3566)? 
+
+RESOLVING THE PROBLEM
+By default, SSLv3 is not enabled in Symphony so that POODLE attack is not a concern at all as it is based on a SSLv3 vulnerability. 
+
+If SSLv3 is up, to avoid the potential attack, you may either choose to disable it or it is strongly recommended to change the cipher from CIPHER=EDH-RSA-DES-CBC3-SHA to RC4-MD5 or RC4-SHA to do the trick as this vulnerability is from CBC padding. Detailed steps are as follows. 
+
+
+1. Open the ego.conf file on the management host using a text editor. The location of the file is defined in the EGO_CONFDIR environment variable.
+2. Set EGO_DEFAULT_TS_PARAMS.
+
+For example:
+(Linux/UNIX)
+EGO_DEFAULT_TS_PARAMS="SSL[CERTIFICATE=/etc/symcert.pem,CIPHER=RC4-MD5, PRIVATE_KEY=/etc/symkey.pem]"
+
+(Windows)
+EGO_DEFAULT_TS_PARAMS="SSL[CERTIFICATE=C:\xxc\newcert.pem,CIPHER=RC4-MD5, PRIVATE_KEY=C:\xxc\newkey.pem]"
+
+5. Open the ego.conf file on the client host using a text editor.
+6. Set EGO_CLIENT_TS_PARAMS.
+
+For example:
+(Linux/UNIX)
+EGO_CLIENT_TS_PARAMS="SSL[CAFILE=/home/.../cacert.pem, CIPHER=RC4-MD5, SERVER_AUTH={myCN}"
+
+(Windows)
+EGO_CLIENT_TS_PARAMS="SSL[CIPHER=RC4-MD5, CAFILE=C:\xxc\demoCA\cacert.pem,SERVER_AUTH={myCN}]" 
+
+If you choose to disable SSLv3 in Symphony, please refer to the Knowledge Center and remove all relevant parameters.
+http://www-01.ibm.com/support/knowledgecenter/SSGSMK_6.1.1/management_sym/ssl_settings_configure.dita?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSGSMK_6.1.1/management_sym/ssl_settings_configure.dita?lang=en] 
+
+ 
+
+For more details about CVE-2014-3566, please refer to http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566]
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum Symphony

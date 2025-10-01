@@ -1,0 +1,214 @@
+Title: IBM IV59978: IF AN INSTALL ABORTS, LOCKED FILES RENAMED AS FILENAME.EXTENSIONBUSY ARE NOT RENAMED BACK TO - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 4 (6.3.0-TIV-ITM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24037653]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract: If an install aborts, locked files renamed as
+   filename.extensionbusy are not renamed back to their original
+   file name.
+   This can prevent ITM components from starting after an aborted
+   upgrade
+   or install.
+   Environment:
+     Windows only where ITM install or upgrade is unable to stop
+   ITM
+   components. If the installer finds locked files it renames them
+   to
+   filename.extensionbusy so they can be upgraded.
+   Problem Description:
+     During an upgrade or install if locked (busy) files are found
+   they are
+   renamed filename.extensionbusy so they can be replaced during
+   the
+   upgrade or install. If the install then aborts for some reason
+   the files
+   are not renamed back to their original name. This can cause ITM
+   components to fail upon start because the original files are
+   not present
+   only the renamed busy files.
+   Recreate Instructions:
+     1. Install the NT agent at 6.2.2 FP3 and the current WAS
+   agent.
+     2. Make sure everything is running and reporting.
+     3. Upgrade the NT agent to 6.2.3 FP3. Do not stop anything
+   just start
+   the upgrade. The WAS agent may not stop and this causes the
+   locked files
+   problem. The Install will abort because of these locked files,
+   but some
+   have already been renamed. They will not be renamed back to
+   their
+   original name causing the ITM component that uses them to fail
+   to start
+   after the install/upgrade aborts.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix:
+     All the *busy files need to renamed back to the base. This
+   can be done
+   by using the following procedure. The procedure must be
+   executed for
+   extension dll, extension exe and possibly others.
+   1. Launch a DOS Prompt and do the following:
+   2. From the CANDLE_HOME directory issue the following command:
+      dir *.exebusy /s /b >fixbusyfiles.bat
+   3. Edit the fixbusyfiles.bat file and change as follows:
+      Edit to rename C:\ -> rename C:\
+      Edit to rename .xxxbusy -> .xxxbusy *.xxx
+      When complete the file will appear as follows
+      rename C:\IBM\ITM\InstallITM\kinconfg.exebusy *.exe
+      rename C:\IBM\ITM\TMAITM6\KNTAgent.exebusy *.exe
+      .... the rest of the exebusy files
+      Save the file.
+   4. Run the bat file.
+      NOTE: This must be done until not more *busy files are found.
+      Usually this will be twice. Once for exe and once for dll
+   files.
+   Once there are no more *busy files all ITM components should
+   start.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If an install aborts or is cancelled, locked files renamed as
+   <filename>busy are not renamed back to their original name.
+   Because of this, components will not start.
+   
+   
+   If an IBM Tivoli Monitoring component is found active and cannot
+   be stopped, the busy files are renamed to <filename>busy.  The
+   files are renamed before the file copy and are processed after
+   the file copy completes.  After the file copy, they are either
+   renamed back to their original name, or deleted if the upgrade
+   replaced them.  However, if the install aborts or is cancelled
+   before they can be processed they are left in their busy state
+   and cannot be used by IBM Tivoli Monitoring.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix processes the CANDLE_HOME directory tree after an abort
+   or cancel to verify all <filename>busy files have been returned
+   to their original filename, or are deleted.  The action taken
+   depends on the whether the original filename exists in the
+   locked file directory.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.3.0-TIV-ITM-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  To workaround this problem search the CANDLE_HOME directory tree
+    for *busy.  If any files are found rename <filename>busy to
+   filename.  If filename already exists the <filename>busy file
+   can be deleted.  Once the APAR is available in the field an
+   image containing the APAR can be run to the "Welcome screen"
+   then cancelled.  The busy files will be handled by install
+   startup.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV59978
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-30
+   
+   
+ * CLOSED DATE
+   2014-06-27
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

@@ -1,0 +1,217 @@
+Title: IBM IC85354: logs could be mistakenly removed on new primary after takeover on AIX 64 OS - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 10.1 Fix Pack 2 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033997]
+DB2 Version 10.1 Fix Pack 3 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24035759]
+DB2 Version 10.1 Fix Pack 4 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037466]
+DB2 Version 10.1 Fix Pack 3a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037557]
+DB2 Version 10.1 Fix Pack 6 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24043366]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  By design, only logs that have been archived on old primary will
+   be deleted on new primary during HADR takeover.
+   If logretain is enabled, no logs should be deleted.
+   However, when hitting this APAR, even when logretain is enabled,
+   db2 will removes logs up to first active log.
+   For forced takeover, this APAR could make reintegration fail or
+   make auxiliary standby not be able to be synchronous with new
+   primary because logs at takeover position is removed.
+   When this happen, similar messages like following will appear in
+   new primary's db2diag.log:
+   
+   2012-06-21-11.16.25.029452+540 I101122A414          LEVEL: Info
+   PID     : 12582958             TID : 7327           PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000
+   HOSTNAME: host1
+   EDUID   : 7327                 EDUNAME: db2hadrp.0.1 (SAMPLE) 0
+   FUNCTION: DB2 UDB, High Availability Disaster Recovery,
+   hdrSDoTakeover, probe:47262
+   DATA #1 : <preformatted>
+   Deleting old log files starting from 0 up to 3.
+   ......
+   2012-06-21-11.16.25.681051+540 I109591A645          LEVEL: Error
+   PID     : 12582958             TID : 5271           PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000
+   HOSTNAME: host1
+   EDUID   : 5271                 EDUNAME: db2lfr.0 (SAMPLE) 0
+   FUNCTION: DB2 UDB, recovery manager, sqlplfrFMOpenLog, probe:25
+   MESSAGE : ZRC=0x860F000A=-2045837302=SQLO_FNEX "File not found."
+             DIA8411C A file "" could not be found.
+   DATA #1 : SQLPLFR_SCAN_ID, PD_TYPE_SQLPLFR_SCAN_ID, 8 bytes
+   LFR Scan Num            = 10
+   LFR Scan Caller's EDUID = 7592
+   DATA #2 : String, 25 bytes
+   Problem opening log file:
+   DATA #3 : String, 12 bytes
+   S0000002.LOG
+   
+   2012-06-21-11.16.25.681448+540 I110237A394          LEVEL:
+   Warning
+   PID     : 12582958             TID : 5271           PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000
+   HOSTNAME: host1
+   EDUID   : 5271                 EDUNAME: db2lfr.0 (SAMPLE) 0
+   FUNCTION: DB2 UDB, recovery manager, sqlplfrFMReadLog,
+   probe:5120
+   MESSAGE : Return code for LFR opening file S0000002.LOG was
+   -2045837302
+   
+   2012-06-21-11.16.25.681665+540 I110632A599          LEVEL: Error
+   PID     : 12582958             TID : 7592           PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000
+   HOSTNAME: host1
+   EDUID   : 7592                 EDUNAME: db2hadrp.0.3 (SAMPLE) 0
+   FUNCTION: DB2 UDB, High Availability Disaster Recovery,
+   hdrEdu::hdrEduP, probe:20591
+   MESSAGE : ZRC=0x860F000A=-2045837302=SQLO_FNEX "File not found."
+             DIA8411C A file "" could not be found.
+   DATA #1 : <preformatted>
+   HADR primary database failed to read log pages for remote
+   catchup. sqlplfrScanNext scanPages = 0, scanFlagsOut = 0x2
+   
+   And standby could fail with similar messages in db2diag.log:
+   
+   2012-06-21-11.16.25.857278-240 I3134549A594         LEVEL:
+   Warning
+   PID     : 4784150              TID : 6427           PROC :
+   db2sysc 0
+   INSTANCE: db2inst1              NODE : 000           DB   :
+   SAMPLE
+   HOSTNAME: host1
+   EDUID   : 6427                 EDUNAME: db2hadrs.0.0 (SAMPLE) 0
+   FUNCTION: DB2 UDB, High Availability Disaster Recovery,
+   hdrEdu::hdrEduS, probe:21580
+   MESSAGE : ZRC=0x87800148=-2021654200=HDR_ZRC_BAD_LOG
+               "HADR standby found bad log"
+   DATA #1 : String, 99 bytes
+   HADR standby error handling: will close connection to primary,
+   then reconnect, and perform a retry.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Copy logs from old primary to new primary's active log path if
+   the logs are available on old primary and restart standby
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * AIX                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 UDB version 10.1 fix pack 2.                  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem was first fixed in DB2 UDB Version 10.1 FixPack 2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC85354
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-17
+   
+   
+ * CLOSED DATE
+   2012-12-31
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSN
+   UP

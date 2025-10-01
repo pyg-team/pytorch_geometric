@@ -1,0 +1,164 @@
+Title: IBM PI70914: DFHESN HAS NO CODE TO HANDLE LENGTH ISSUE CAUSED BY R_PASSWORD SERVICE AND ISSUES AEXZ ABEND. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  R_Password service validates password and returns 12/13
+   because of password length issue. CICS checks password length
+   and returns PASSWORD_REQUIRED response from DFHXSSB and
+   DFHXSPW.  DFHESN has no code to handle this specific error
+   response so issues an AEXZ abend instead of returning NOTAUTH
+   with RESP2=1.
+   The exception trace entry shows return codes passed back as
+   below,
+   XS FE04 XSSB  *EXC* FUNCTION(INQUIRE_PASSWORD_DATA)
+   RESPONSE(EXCEPTION)
+                              REASON(PASSWORD_REQUIRED)
+                              SAF_RESPONSE(8) SAF_REASON(0)
+                              ESM_RESPONSE(C) ESM_REASON(D)
+                              METHOD_USED(FULL)
+   Additional Symptom(s) Search Keyword(s): R_Password , ABENDAEXZ
+   DFHESN , INQUIRE_PASSWORD_DATA , KIXREVxxx
+   return codes 80CD 8,0,C,D  blank blanks
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No local fix provided
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A transaction issuing an EXEC CICS      *
+   *                      VERIFY PASSWORD or an EXEC CICS VERIFY  *
+   *                      PHRASE command abends AEXZ.             *
+   ****************************************************************
+   A transaction issues an EXEC CICS VERIFY PASSWORD command or an
+   EXEC CICS VERIFY PHRASE command with a BLANK or NULL password.
+   The transaction is abended with abend code AEXZ.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  For a BLANK or NULL password the module DFHXSSB Verify Password
+   routine has been changed to return 'Invalid_Password' rather
+   than 'Password_Required'.  This is interpreted by DFHESN as
+   RESP=00000046 'Notauth' and RESP2=00000002 'Invalid Password'
+   which is returned to the user program.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI70914
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-19
+   
+   
+ * CLOSED DATE
+   2017-02-16
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI76050 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI76050] UI44739
+   
+   
+
+MODULES/MACROS
+ *  DFHUSAD  DFHXSPW  DFHXSPWT DFHXSSB
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI44739 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI44739]
+   UP17/02/20 P F702
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

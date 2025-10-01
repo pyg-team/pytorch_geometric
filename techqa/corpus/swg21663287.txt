@@ -1,0 +1,59 @@
+Title: IBM A possible cause for slow connection to the database server - United States
+
+Text:
+sanjitc; sanjitc2014; dns; IPv6; IPv4; PF_INET6; PF_INET; getaddrinfo; IFX_DISABLE_IPV6 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A problem with DNS lookup can cause slow connection to database server. This article explains one scenario and a possible solution for that problem. 
+
+SYMPTOM
+Connection request to database server from dbaccess is trying to access DNS server for hostname resolution, after it found the same in the local host file. 
+
+On certain Operating System (for example: Linux) you may noticed dbaccess (and other client applications) always doing DNS lookup while connecting to a database, even after found out the hostname or IP address in the local host file. This behavior sometimes caused slow connection, if you have problem related to DNS. Following is an excerpt of strace output shows the sequence of file accessed by a dbaccess request: 
+
+ * 
+ * 
+ * 
+ * $ strace dbaccess sysadmin -e | grep open
+   ….
+   open("/etc/services", O_RDONLY) = 6
+   open("/etc/resolv.conf", O_RDONLY) = 6
+   open("/etc/host.conf", O_RDONLY) = 6
+   open("/etc/hosts", O_RDONLY) = 6
+   open("/etc/ld.so.cache", O_RDONLY) = 6
+   open("/lib64/libnss_dns.so.2", O_RDONLY) = 6
+   open("/lib64/libresolv.so.2", O_RDONLY) = 6
+   open("/etc/hosts", O_RDONLY) = 6
+   ….
+ * 
+ * 
+
+
+CAUSE
+Traditionally, hostname and service name resolution were performed by functions such as gethostbyname(), getservbyname() etc. These traditional lookup functions are still available, however those are not forward compatible to IPv6. Instead, the IPv6 socket API provides new lookup functions that consolidate the functionality of several traditional functions. These new lookup functions are also backward compatible with IPv4, so a programmer can use the same translation algorithm in an application for both the IPv4 and Ipv6. The getaddrinfo() is the new primary lookup function and a connection request from the dbaccess ultimately calls this socket API. You can pass several parameters to the getaddrinfo(), one of those parameter is addrinfo structure. By default, dbaccess passes value “AF_INET6” for addrinfo.ai_family. The ai_family field indicates the protocol family associated with the request, and will be PF_INET6 for IPv6 or PF_INET for IPv4. 
+If the ai_family set to AF_INET6 (IPv6) the getaddrinfo() will search the DNS every time. If the ai_family set to AF_INET, then it don't query the DNS server. You can consult the 'man' page for getaddrinfo() for detailed information. 
+
+Beginning with Informix 10.00.xC4 and Client SDK 2.90.xC4, the database server checks, on startup, whether IPv6 is supported in the underlying operating system. If IPv6 is supported it is used. If the underlying operating system does not support IPv6, the IPv4 address is used. 
+
+
+
+DIAGNOSING THE PROBLEM
+You can use the attached 'C' program to reproduce and verify the problem outside Informix. 
+
+ gt_adr_info.c.txt [/support/docview.wss?uid=swg21663287&aid=2]gt_adr_info.c.txt [/support/docview.wss?uid=swg21663287&aid=1] 
+
+How to use the attached 'C' program? 
+
+1. Save the attached file as 'gt_adr_info.c'. 
+
+2, Compile the 'C' program using following command: 
+
+ * 
+ * 
+
+
+3. Run it as 'gt_adr_info < HostName>', where HostName is the machine name that you want to connect.  
+
+
+RESOLVING THE PROBLEM
+In case of a problem with DNS lookup and encountering slow connection to database, you may use the environment variable IFX_DISABLE_IPV6 (IFX_DISABLE_IPV6=1) to disable Ipv6 and this will set the ai_family to AF_INET only and will not do subsequent query to the DNS server.

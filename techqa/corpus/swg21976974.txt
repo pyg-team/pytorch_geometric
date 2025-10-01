@@ -1,0 +1,71 @@
+Title: IBM BigInsights: How to use webhdfs through knox and upload a file? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ IBM BigInsights: How to use webhdfs through knox and upload a file? 
+
+ANSWER
+Knox reverse proxy allows users to access webhdfs by abstracting the cluster topology details. 
+
+Following is an example for uploading a file to hadoop using webhdfs. 
+
+We are using curl as the web client 
+
+
+1. Create inode for the file hello.txt. 
+
+[hdfs@rvm /]$ curl -iku guest:guest-password -X put 'https://bivm.ibm.com:8443/gateway/default/webhdfs/v1/tmp/hello.txt?op=CREATE&permission=777'
+HTTP/1.1 307 Temporary Redirect
+Set-Cookie: JSESSIONID=1wycqjil2twnf13jltd8422l32;Path=/gateway/default;Secure;HttpOnly
+Expires: Thu, 01 Jan 1970 00:00:00 GMT
+Cache-Control: no-cache
+Expires: Mon, 01 Feb 2016 00:56:53 GMT
+Date: Mon, 01 Feb 2016 00:56:53 GMT
+Pragma: no-cache
+Expires: Mon, 01 Feb 2016 00:56:53 GMT
+Date: Mon, 01 Feb 2016 00:56:53 GMT
+Pragma: no-cache
+Location: 'https ://bivm.ibm.com:8443/gateway/default/webhdfs/data/v1/webhdfs/v1/tmp/hello.txt?_=AAAACAAAABAAAACQf-V9V0-gB1Y93RLgBF2Lk1Yykjvo1vR32M9Ot62FnGqjibxtKJpv5cbJfH6spPSoAfzDcHXTf6y7n8S9NOn4hbBPc3MMI_LTni8gO_xh31dkfcfzbpQ4ip0AsI7TEOHiPWQW_PS0TVI_mbSEVpjJRwOPCNb6eox9cEtypIHqDGzvYwi6tnk4NlFxT9tvn7SkosYPb1_tq-I7p0k_ac-iF623xxUzvkM1'
+Server: Jetty(6.1.26-ibm)
+Content-Type: application/octet-stream
+Transfer-Encoding: chunked
+
+2. Contents of /tmp directory
+
+[hdfs@rvm /]$ hadoop fs -ls /tmp
+Found 4 items
+drwxrwxrwx - bigr hdfs 0 2015-10-26 09:58 /tmp/bigr
+drwxrwxrwx - guest hdfs 0 2016-01-29 04:00 /tmp/guest
+drwxrwxrwx - hive hdfs 0 2016-01-28 01:02 /tmp/hive
+drwxr-xr-x - bigsql hdfs 0 2016-02-01 00:14 /tmp/test
+
+3. Created a local file hello.txt
+
+[hdfs@rvm ~]$ echo "Hello" >> hello.txt
+
+4. Uploading the file with header received in Step 1. 
+
+[hdfs@rvm ~]$ curl -iku guest:guest-password -T hello.txt -X PUT 'https://bivm.ibm.com:8443/gateway/default/webhdfs/data/v1/webhdfs/v1/tmp/hello.txt?_=AAAACAAAABAAAACQf-V9V0-gB1Y93RLgBF2Lk1Yykjvo1vR32M9Ot62FnGqjibxtKJpv5cbJfH6spPSoAfzDcHXTf6y7n8S9NOn4hbBPc3MMI_LTni8gO_xh31dkfcfzbpQ4ip0AsI7TEOHiPWQW_PS0TVI_mbSEVpjJRwOPCNb6eox9cEtypIHqDGzvYwi6tnk4NlFxT9tvn7SkosYPb1_tq-I7p0k_ac-iF623xxUzvkM1'
+HTTP/1.1 100 Continue
+
+HTTP/1.1 201 Created
+Set-Cookie: JSESSIONID=zaob0f1vuqyj1lxalvvjl4yo9;Path=/gateway/default;Secure;HttpOnly
+Expires: Thu, 01 Jan 1970 00:00:00 GMT
+Location: 'https ://bivm.ibm.com:8443/gateway/default/webhdfs/v1/tmp/hello.txt'
+Connection: close
+Server: Jetty(8.1.14.v20131031)
+
+5. File created with required contents.
+
+[hdfs@rvm ~]$ hadoop fs -ls hdfs://bivm.ibm.com:8020/tmp
+Found 5 items
+drwxrwxrwx - bigr hdfs 0 2015-10-26 09:58 /tmp/bigr
+drwxrwxrwx - guest hdfs 0 2016-01-29 04:00 /tmp/guest
+-rwxrwxrwx 1 guest hdfs 6 2016-02-01 00:59 /tmp/hello.txt
+drwxrwxrwx - hive hdfs 0 2016-01-28 01:02 /tmp/hive
+drwxr-xr-x - bigsql hdfs 0 2016-02-01 00:14 /tmp/test
+
+[hdfs@rvm ~]$ hadoop fs -cat hdfs://bivm.ibm.com:8020/tmp/hello.txt
+Hello

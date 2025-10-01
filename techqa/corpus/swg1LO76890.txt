@@ -1,0 +1,124 @@
+Title: IBM LO76890: SPORADIC ERROR LOADING ACTIVITY STREAM WITH USERS WITH {} IN NAME - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  sporadically when users access activity stream, they get error
+   loading the stream error in systemOut is
+   Caused by: java.util.regex.PatternSyntaxException: Illegal
+   repetition near index 12 Test user {name}
+               ^
+       at java.util.regex.Pattern.error(Pattern.java:1724)
+       at java.util.regex.Pattern.closure(Pattern.java:2786)
+       at java.util.regex.Pattern.sequence(Pattern.java:1900)
+   </PROBLEM>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *                   Fixed in IC 4.5 CR3
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *                       Fixed in IC 4.5 CR3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO76890
+   
+   
+ * REPORTED COMPONENT NAME
+   CONNECTN ACTIVI
+   
+   
+ * REPORTED COMPONENT ID
+   5724S6800
+   
+   
+ * REPORTED RELEASE
+   450
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-03
+   
+   
+ * CLOSED DATE
+   2015-08-06
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONNECTN ACTIVI
+   
+   
+ * FIXED COMPONENT ID
+   5724S6800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R450 PSY
+   UP

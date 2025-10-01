@@ -1,0 +1,211 @@
+Title: IBM IZ15408: WRONG SCHEMA AFTER SWITCH OPERATIONS, SQLCODE -204 - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+DB2 Version 9.5 Fix Pack 3b for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24022591]
+DB2 Version 9.5 Fix Pack 1 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24018907]
+DB2 Version 9.5 Fix Pack 2a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24020633]
+DB2 Version 9.5 Fix Pack 2 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24020242]
+DB2 Version 9.5 Fix Pack 4 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24023213]
+DB2 Version 9.5 Fix Pack 3a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24021838]
+DB2 Version 9.5 Fix Pack 3 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24021563]
+DB2 Version 9.5 Fix Pack 4a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24024215]
+DB2 Version 9.5 Fix Pack 5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24025421]
+DB2 Version 9.5 Fix Pack 6a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027747]
+DB2 Version 9.5 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028731]
+DB2 Version 9.5 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24030302]
+DB2 Version 9.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032087]
+DB2 Version 9.5 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033308]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When an XA client connects to a DB2 for zOS server through a
+   DB2 Connect Server that has the Concentrator turned on,
+   sometimes the client will get the error SQL0204 ("<name>" is an
+   undefined name). This happens because the DB2 Connect
+   Concentrator tries to reuse an existing connection when
+   switching applications, but uses the wrong schema to access
+   database objects on the server.
+   If this APAR fix is not installed, the XA aplications
+   connecting to zOS through the DB2 Connect server may terminate
+   abnormally with the SQL0204 error.
+   For example, a JCC Type 4 client may see an error that looks
+   like this:
+   JDBC Driver = DB2 Universal JDBC Driver Provider Type 4 (JCC4)
+   SQLException messages returned by JDBC/JCC drivers.
+   SQLCODE = -204
+   SQLSTATE = 42704
+   Error Message = DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704,
+   SQLERRMC=ECOM_ROLE_
+   ACCOUNT_MANAGER_XA.MVSDB, DRIVER=3.51.74
+   SQLException messages returned by JCC drivers.
+   --------------- SQLCA ---------------
+   Error code: -204
+   SQLERRMC: ECOM_ROLE_ACCOUNT_MANAGER_XA.MVSDB
+   token 0: ECOM_ROLE_ACCOUNT_MANAGER_XA.MVSDB
+   SQLERRP: DSNXOTL
+   SQLERRD(1): -500
+   SQLERRD(2): 0
+   SQLERRD(3): 0
+   SQLERRD(4): -1
+   SQLERRD(5): 0
+   SQLERRD(6): 0
+   ... (etc.)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Turn off the Concentrator on the DB2 Connect server.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected: All.
+   Problem Description: When an XA client connects to a DB2 for zOS
+   server through a DB2 Connect Server that has the Concentrator
+   turned on, sometimes the client will get the error SQL0204
+   ("<name>" is an undefined name). This happens because the DB2
+   Connect Concentrator tries to reuse an existing connection when
+   switching applications, but uses the wrong schema to access
+   database objects on the server.
+   
+   If this APAR fix is not installed, the XA aplications connecting
+   to zOS through the DB2 Connect server may terminate abnormally
+   with the SQL0204 error.
+   
+   For example, a JCC Type 4 client may see an error that looks
+   like this:
+   
+   JDBC Driver = DB2 Universal JDBC Driver Provider Type 4 (JCC4)
+   SQLException messages returned by JDBC/JCC drivers.
+   SQLCODE = -204
+   SQLSTATE = 42704
+   Error Message = DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704,
+   SQLERRMC=ECOM_ROLE_
+   ACCOUNT_MANAGER_XA.MVSDB, DRIVER=3.51.74
+   
+   SQLException messages returned by JCC drivers.
+   --------------- SQLCA ---------------
+   Error code: -204
+   SQLERRMC: ECOM_ROLE_ACCOUNT_MANAGER_XA.MVSDB
+     token 0: ECOM_ROLE_ACCOUNT_MANAGER_XA.MVSDB
+   SQLERRP: DSNXOTL
+   SQLERRD(1): -500
+   SQLERRD(2): 0
+   SQLERRD(3): 0
+   SQLERRD(4): -1
+   SQLERRD(5): 0
+   SQLERRD(6): 0
+   ... (etc.)
+   
+   Problem Summary:  Wrong schema after switch operations, SQLCODE
+   -204.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in DB2 UDB Version 950, FixPak 1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Turn off the Concentrator on the DB2 Connect server.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ15408
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4100
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-02-12
+   
+   
+ * CLOSED DATE
+   2008-05-19
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ15288 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ15288]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * FIXED COMPONENT ID
+   5765F4100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSN
+   UP

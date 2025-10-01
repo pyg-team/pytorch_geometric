@@ -1,0 +1,22 @@
+Title: IBM Load Balancer Group for Log Target cannot be used with syslog (UDP) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why do I get errors when I configure a syslog log target to write to a load balancer group? 
+
+SYMPTOM
+Connection error(6) at 'syslog://<LBGroupName>:514/' 
+Could not resolve host for 'syslog://<LBGroupName>:514/' 
+
+
+
+CAUSE
+UDP / syslog is fire and forget. Since no connection is maintained, there is no such concept as failing over to a different group member. Hence Load Balancer Groups are not supported for syslog log targets. They are supported for syslog-tcp log targets.
+
+RESOLVING THE PROBLEM
+If you want to use a Load Balancer Group as the Remote Host with a Log Target, use syslog-tcp in the Target Type field. 
+
+
+If you want to use syslog to fire and forget log events, then use a single Remote Host rather than a Load Balancer Group.

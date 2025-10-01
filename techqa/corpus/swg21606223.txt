@@ -1,0 +1,66 @@
+Title: IBM DFHDS0001 0C4 in DFHDSSR when using ASG-TMON - United States
+
+Text:
+DFHDS0001 MSGDFHDS0001 0C4 S0C4 abendS0C4 abend0C4 AKEA abendAKEA FFFF DFHDSSR ; TM4N960 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While your CICS Transaction Server for z/OS (CICS TS) region is running, you receive message DFHDS0001 with an abend 0C4 AKEA (abend0C4 abendAKEA) at offset FFFF in DFHDSSR. You are using ASG-TMON from ASG Software Solutions. 
+
+SYMPTOM
+You see the following message in the CICS log:
+
+DFHDS0001 [http://pic.dhe.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.messages.doc/cics_mc/dfhds/DS0001.html]applied An abend (code 0C4/AKEA) has occurred at offset X'FFFF' in module DFHDSSR
+
+
+CAUSE
+An ASG-TMON program TM4N960 running in 64-bit addressing mode did not clear the 33 high-order bits of a register when loading a 31-bit pointer into that register.
+
+DIAGNOSING THE PROBLEM
+Reviewing the system dump of the DFHDS0001, you will see the following information for the 0C4 abend:
+
+KE Domain Error Table Summary
+
+ERR_NUM ERR_TIME KE_NUM ERROR TYPE ERR_CODE MODULE OFFSET
+======= ======== ====== ========== ======== ====== ======
+000000C5 09:20:51 0052 PROGRAM_CHECK 0C4/AKEA UNKNOWN UNKNOWN
+
+Error Number: 000000C5
+Program DFHDSSR was in control, but the PSW was elsewhere.
+CICS Registers and PSW: 078D0001 80000000 00000000 00646CFEIL: 6 IC: 38
+
+64-BIT REGISTERS 0-15
+00000000_00000000 C9DC7124_00066680 00000000_48F3D948 00000000_00646A74
+00000000_4E627A30 00000000_4E62859A 00000000_47D9D400 00000000_00644150
+00000000_00646A70 00000000_00645150 00000000_48F3E040 00000000_4E62858C
+00000000_4E439020 00000000_48F3DD68 00000000_4E44DEA0 3622ADFC_00000000
+
+Taking the PSW address 00646CFE and going into IPCS option 1, browse, you will see the following failing COMPARE LOGICAL instruction:
+
+00646CFE | D501 869C 101C | CLC X'69C'(X'2',R8),X'1C'(R1)
+
+The reason for the ASCE type exception is displacement 2 of the CLC is using Reg1+1C or C9DC7124_00066680 and the program is running in 64-bit addressing mode and it loaded a 31-bit pointer into a 64-bit register and did not clear the high half of the register.
+
+While still in IPCS option 1 and backing up from the PSW, you will see the following TMON module of TM4N960 at offset x'2CFE':
+
+00644000 | .&>MODHEAD.A.670TM4N960 07/19/11 |
+00644020 | @22.25.}...............&LTCE330 |
+00644040 | ............................ |
+00644060
+00644140 | {0......}.....1- |
+00644160 | .o.-1.."..!.1..01.......TM4N960 | 
+00644180 | ........ASM 07/19/11 22.25 VERSI |
+006441A0 | ON 033 MOD LEVEL 0000-020 LICENS |
+006441C0 | ED MATERIALS COPYRIGHT 1990, 201 |
+006441E0 | 1 BY ALLEN SYSTEMS GROUP, INC. |
+00644200 | LTCE330 ............ |
+00644220
+00644260 | ....960TM4N960 ..........RM..u.. | 
+
+
+RESOLVING THE PROBLEM
+Apply ASG TMON fix TH03418. Contact [/support/docview.wss?uid=swg21606223&amp;aid=1] ASG Software Solutions [http://www.asg.com/] for additional information.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

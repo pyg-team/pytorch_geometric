@@ -1,0 +1,64 @@
+Title: IBM Download WebSphere DataPower XC10 Appliance V2.5 Fix Pack 4 firmware - United States
+
+Text:
+v25xc10rnotes; v86xsrnotes DOWNLOADABLE FILES
+
+ABSTRACT
+ Download IBM WebSphere DataPower XC10 Appliance Version 2.5 Fix Pack 4, also known as V2.5.0.4. 
+
+DOWNLOAD DESCRIPTION
+This firmware release includes improved capability and usability enhancements for the appliance. For more information, see the WebSphere DataPower XC10 Appliance V2.5 product documentation [http://www.ibm.com/support/knowledgecenter/SSS8GR_2.5.0/com.ibm.websphere.datapower.xc.doc/whatsnew.html?lang=en]. For a list of fixes and improvements that are included in this fix pack, see the IBM WebSphere eXtreme Scale and WebSphere DataPower XC10 Appliance Releases and Updates [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/W30b21440b0d9_432c_8e75_b16bac9c5427/page/IBM%20WebSphere%20eXtreme%20Scale%20and%20DataPower%20XC10%20Appliance%20Releases%20and%20Updates] web page.
+
+
+Note: For certain levels of installed firmware, a rolling upgrade of a collective of appliances might lead to a corrupted configuration. Before you attempt a rolling upgrade from V2.5 Fix Pack 3 to this fix pack level, see the technote about this firmware upgrade problem [http://www.ibm.com/support/docview.wss?uid=swg21692158]. 
+
+
+IBM WebSphere DataPower XC10 Virtual Appliance for Developers:Download the IBM WebSphere DataPower XC10 Virtual Appliance for Developers [http://www.ibm.com/developerworks/downloads/ws/wsdvad/index.html], which is an open virtual appliance (OVA) package that you can import into your virtualization environment. With this image, you can test and develop with the XC10 software before you create your data grid on the physical appliance.
+
+PREREQUISITES
+Two firmware upgrades exist for this release. See the following descriptions to determine which firmware upgrade to download: 
+
+
+Run the show ssd-version command from a command prompt. If this command does not exist on your system, then, the SSD driver installed in the appliance is level 3.1.1. If the command exists on your system, then the output indicates whether the appliance is at SSD driver level 3.1.1 or 3.2.6; for example:
+
+Command output from a virtual appliance where there is no SSD card.
+Console> show ssd-version
+No version reported. By default, use a firmware not tagged for VSL 3.2.6.
+
+Command output from a virtual appliance where there is an old SSD card.
+Console> show ssd-version
+Version: 3.1.1 build 172. By default, use a firmware not tagged for VSL 3.2.6.
+
+Command output from an appliance where there is a newer SSD driver:
+Console> show ssd-version
+Version: 3.2.6 build 1212. Use a firmware tagged for VSL 3.2.6
+
+Alternatively, in the monitoring console, click Collective > Members. Select a collective member. If the line SSD Version is present, then determine whether the level is 3.2.6 or higher. If so, you have the new driver. If not, then you have the old driver.
+
+Firmware and driver 9005.rel.xc10.scrypt3
+
+This firmware image contains the VSL 3.1.1 SSD driver. This image includes a firmware driver that is intended for appliances that already contain the VSL 3.1.1 or lower SSD driver. When you install this image, you also upgrade the SSD driver. After you have upgraded, the appliance firmware cannot be rolled back to the previous 2.1.0.0 version. However, you can roll back to the VSL 3.1.1 firmware version that you had before you applied the VSL 3.1.1 SSD driver upgrade.
+
+Firmware and driver 9005.rel.xc10.vsl.3.2.6.scrypt3 
+
+This firmware image contains the latest VSL 3.2.6 SSD driver. This image includes a firmware driver that is intended for appliances that contain the VSL 3.2.6 or lower version. After you upgrade with this firmware image, the appliance firmware cannot be rolled back to the previous firmware version that you installed for V2.5 Fix Pack 3. Likewise, if you upgrade to this VSL 3.2.6 SSD driver from an existing VSL 3.1.1 SSD driver, then you cannot roll back to the VSL 3.1.1 SSD driver version. However, if you upgrade to a firmware that contains the VSL 3.2.6 SSD driver from an appliance that already contains the VSL 3.2.6 SSD driver, the you can roll back to the previous VSL 3.2.6 firmware version.
+
+Alternatively, use the following table to determine the rollback scenarios for each firmware and driver image:
+
+
+
+Begin with SSD driver Upgrade the firmware using driver Rollback available VSL 3.1.1 VSL 3.1.1 Yes VSL 3.1.1 VSL 3.2.6 No VSL 3.2.6 VSL 3.1.1 You must roll back because this scenario causes the system to fail. VSL 3.2.6 VSL 3.2.6 Yes INSTALLATION INSTRUCTIONS
+Complete the following instructions to download the firmware and client images. 
+
+ 1. Initialize and configure the appliance.
+    The firmware upgrades for the 7199-92x (2426-92X) appliances are available in this document. See Inihtializing and configuring WebSphere DataPower XC10 Appliance [http://pic.dhe.ibm.com/infocenter/wdpxc/v2r5/topic/com.ibm.websphere.datapower.xc.doc/tinitappl.html] in the product information center for more information about the initialization and firmware upgrade process. 
+    
+    Note: The type 7199 appliances can have one of two machine types depending on when they were ordered. Type 2426, listed in parentheses, is the machine type model (MTM) if the appliance is ordered from Passport Advantage. 
+
+DOWNLOAD PACKAGE
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Virtual appliance upgrade 8 Dec 2014 Language Independent 290118034 FC [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=All&platform=All&function=fixId&fixids=2.5.0-WS-DPXC10-VIRT-FP0000004&includeSupersedes=0] [ ] 2426-92X Firmware 9005.rel.xc10.vsl.3.2.6.scrypt3 8 Dec 2014 Language Independent 298881400 FC [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=All&platform=All&function=fixId&fixids=2.5.0-WS-DPXC10-7199-VSL-3.2.6-FP0000004&includeSupersedes=0] [ ] 2426-92x Firmware 9005.rel.xc10.scrypt3 8 Dec 2014 Language Independent 282992068 FC [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=All&platform=All&function=fixId&fixids=2.5.0-WS-DPXC10-7199-FP0000004&includeSupersedes=0] [ ] 
+TECHNICAL SUPPORT

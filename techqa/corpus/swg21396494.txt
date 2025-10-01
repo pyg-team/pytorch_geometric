@@ -1,0 +1,31 @@
+Title: IBM Debugger fails to start on Microsoft Windows Server - United States
+
+Text:
+RDz; Windows server; debugger TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Debugger in IBM Rational Developer for System z reports an incorrect platform value and subsequently fails to start properly on Microsoft Windows Server. 
+
+SYMPTOM
+In the Debug view below, the platform value is incorrectly displayed as nil instead of Win32. 
+
+[/support/docview.wss?uid=swg21396494&amp;aid=1]
+
+
+
+CAUSE
+Security settings in Microsoft Windows Server prevent the Debugger from calling createProcess() to start the program to be debugged.
+
+
+
+RESOLVING THE PROBLEM
+Change the Microsoft Windows Server settings as follows: 
+
+ 
+
+ 1. Click Start, right-click My Computer, and then click Properties 
+ 2. On the Advanced tab, under Performance, click Settings 
+ 3. On the Data Execution Prevention tab, click Turn on DEP for all programs and services except those I select 
+ 4. Click on Add and locate the debugger engine program irmtdbgc.exe in the SDPShared\plugins directory 
+ 5. Click OK 
+ 6. Restart

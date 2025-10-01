@@ -1,0 +1,19 @@
+Title: IBM Can't copy Row Labels from pivot tables in SPSS 16.0 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In versions of SPSS earlier than 16.0, I could activate a pivot table and copy the row labels to past into Excel. In version 16.0, when I try to highlight the row labels in output pivot tables to cut them and paste them into Excel, nothing gets placed on the clipboard. I can copy, say, regression coefficients and paste them properly, but nothing happens with the row labels.
+
+This is quite an inconvenience, since I copy models I estimate into Excel frequently. Can you fix this quickly? 
+
+RESOLVING THE PROBLEM
+This problem has been reported to SPSS Development for potential remediation in an upcoming release of SPSS. In the meantime, please export the entire table to Excel for editing instead of using Copy/Paste.
+
+SPSS would like to apologize for the inconvenience
+
+
+
+HISTORICAL NUMBER
+ 76036

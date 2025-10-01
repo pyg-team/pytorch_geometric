@@ -1,0 +1,74 @@
+Title: IBM Tivoli Integrated Portal upgrade is failing at StartWAS - United States
+
+Text:
+TIPL2; TIPL2INST; upgrade; installation; failed; StartWAS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The installation of TIP 2.2.0.9 failing at the following step:
+
+14:13:04.043-04:00 : FINE : PlanStepEventOccurred(Failed target 'step_00004_StartWAS') (from com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.eventOccurred) 
+
+SYMPTOM
+The IA log shows below errors: 
+
+
+FINE : PlanStepEventOccurred(Failed target 'step_00004_StartWAS') (from com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.eventOccurred)
+14:13:04.044-04:00 : FINE : COIEventType.ERROR (from com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.eventOccurred)
+14:13:04.046-04:00 : FINE : MachinePlanEventOccurred(An exception was received during the processing of MachinePlan: localhost. See the Exception Stack Trace for more information.) (from com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.eventOccurred)
+14:13:04.047-04:00 : FINE : COIEventType.ERROR. Last step started was: StartWAS (from com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.eventOccurred)
+14:13:04.048-04:00 : FINE : DeploymentPlanEventOccurred(Failed Deployment Plan 'install') (from com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.eventOccurred)
+14:13:04.049-04:00 : FINE : COIEventType.ERROR (from com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.eventOccurred)
+14:13:04.581-04:00 : FINE : Exception via callback from DeploymentPlanProcessor.process(INSTALL): (from com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.install)
+14:13:04.581-04:00 : FINE : COIEventType.ERROR reported (from com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.install)
+14:13:04.582-04:00 : STDERR : com.ibm.ac.coi.ext.ia.COIWrapperException: COIEventType.ERROR reported
+14:13:04.582-04:00 : STDERR : at com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.eventOccurred(COIWrapperPluginImpl.java:123)
+14:13:04.583-04:00 : STDERR : at com.ibm.ac.coi.impl.COIRuntimeImpl.notifyListener(COIRuntimeImpl.java:226)
+14:13:04.584-04:00 : STDERR : at com.ibm.ac.coi.impl.COIRuntimeImpl.notifyListeners(COIRuntimeImpl.java:215)
+14:13:04.584-04:00 : STDERR : at com.ibm.ac.coi.impl.utils.ParallelPlanListener.eventOccurred(ParallelPlanListener.java:105)
+14:13:04.585-04:00 : STDERR : at com.ibm.ac.coi.impl.COIRuntimeImpl.notifyListener(COIRuntimeImpl.java:229)
+14:13:04.586-04:00 : STDERR : at com.ibm.ac.coi.impl.COIRuntimeImpl.notifyListeners(COIRuntimeImpl.java:219)
+
+The MachinePlan_localhost.log shows below error message:
+
+Caused by: The following error occurred while executing this line:
+/opt/ibm/TWA/eWAS/_uninst/TIPInstall2209/plan/install/MachinePlan_localhost/00004_StartWAS/StartWAS.xml:202: condition satisfied
+
+
+CAUSE
+After the "open for e-business" message is received, the TIP upgrades wait for all the ports defined in the StartWAS.xml to open. If this doesn't happen within the specified time out period, then the upgrade may fail.
+
+
+
+DIAGNOSING THE PROBLEM
+The IA log shows below errors suggesting that eWAS did not come up successfully. But if you take a look into startServer.log and SystemOut.log (in <TIP HOME>/profiles/TIPProfile/logs/server1 dir) you may not find any errors at the time of failure. These logs may show that TIP came up successfully.
+
+14:13:04.043-04:00 : FINE : PlanStepEventOccurred(Failed target 'step_00004_StartWAS') (from com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.eventOccurred)
+14:13:04.044-04:00 : FINE : COIEventType.ERROR (from 
+
+
+You'll see below message (condition satisfied) in the MachinePlan_localhost.log, meaning that the time out condition in StartWAS.xml was successful:
+
+Caused by: The following error occurred while executing this line:
+/opt/ibm/TWA/eWAS/_uninst/TIPInstall2209/plan/install/MachinePlan_localhost/00004_StartWAS/StartWAS.xml:202: condition satisfied
+
+
+
+Note: A more descriptive message is added in TIP fix pack 2.2.0.13 and higher version to reflect the correct status rather than "condition satisfied". The current StartWAS.xml file have below lines starting line # 202: 
+<condition> 
+<isset property="startServerTimout"/> 
+</condition> 
+
+
+
+RESOLVING THE PROBLEM
+Find below file where you unzipped/un-tared the installation package. Then increase the time out from 300 to 600 seconds.
+
+
+<IMAGE_DIR>/cdimage.fixpack/COI/PackageSteps/StartWAS/StartWAS.xml
+
+<waitfor maxwaitunit="second" maxwait="300" timeoutproperty="startServerTimout">
+
+<waitfor maxwaitunit="second" maxwait="600" timeoutproperty="startServerTimout">
+
+
+After above change try the installation again.

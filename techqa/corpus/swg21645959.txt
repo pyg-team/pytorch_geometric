@@ -1,0 +1,67 @@
+Title: IBM Can not login to DASH because of Invalid user id error. - United States
+
+Text:
+TIPL2; TIPL2CONF; change default admin user; password TECHNOTE (FAQ)
+
+QUESTION
+ I can not remember default user id I used while installing DASH. How can I find the used id and reset its password? 
+
+CAUSE
+User forgot that what user id was selected while installing DASH. 
+
+ANSWER
+Take a look into below files: 
+
+ 
+<DASH_HOME>/profile/config/cells/JazzSMNode01Cell/fileRegistry.xml 
+<DASH_HOME>/profileconfig/cells/JazzSMNode01Cell/security.xml
+
+The security.xml file contains default admin user id used during the installation. See below sample snippet from security.xml file. In this case smadmin is the user id.
+
+------------------ snippet from security.xml -----------------
+
+<userRegistries xmi:type="security:WIMUserRegistry"
+xmi:id="WIMUserRegistry_1" serverId="" serverPassword="{xor}"
+realm="defaultWIMFileBasedRealm" ignoreCase="true"
+useRegistryServerId="false" primaryAdminId="smadmin"
+registryClassName="com.ibm.ws.wim.registry.WIMUserRegistry"/>
+<authConfig xmi:id="AuthorizationConfig_1" useJACCProvider="false">
+
+--------------------- end snippet ----------------------------------------------
+
+See below snippet from the fileRegistry.xml file. In this case smadmin is the user id and password is enclosed in <wim:password> tags in encrypted format. 
+
+If you do not remember the password then replace password string in fileRegistry.xml with the following string, which is equivalent to tipadmin. Make a backup copy of fileRegistry.xml before making any changes.
+
+U0hBLTE6eXNuYmdkb255eXY3OjBtbE55b2c2T3FXUVBOWGMvZlZlbkVkMW5EVT0K
+
+-------- snippet from fileRegistry.xml ------------------------- 
+<wim:Root>
+<wim:entities xsi:type="wim:PersonAccount">
+<wim:identifier externalId="3209475e-7723-4bdb-9926-dfd5e178cc0a" 
+externalName="uid=smadmin,o=defaultWIMFileBasedRealm"
+uniqueId="3209475e-7723-4bdb-9926-dfd5e178cc0a"
+uniqueName="uid=smadmin,o=defaultWIMFileBasedRealm"/>
+<wim:parent>
+<wim:identifier uniqueName="o=defaultWIMFileBasedRealm"/>
+</wim:parent>
+<wim:createTimestamp>2013-04-25T13:54:38.439-04:00</wim:createTimestamp>
+<wim:password>U0hBLTE6dHY5emxidnlmaTNoOmpDWmkrRUNxZ29OcTZWa0I1dm5zVU5VSEpZMD0K</wim:password>
+<wim:uid>smadmin</wim:uid>
+<wim:cn>smadmin</wim:cn>
+<wim:sn>smadmin</wim:sn>
+</wim:entities>
+</wim:Root>
+--------------------- end snippet ---------------------------------------
+
+If you wish to disable the security then follow steps in technote below. After that you should be able to login without password and correct any configuration issues which may be causing login issue.
+
+https://www-304.ibm.com/support/docview.wss?uid=swg21499504 [https://www-304.ibm.com/support/docview.wss?uid=swg21499504]
+
+If above guidelines does not help then please open a PMR and provide logs as described in below technote for investigation. 
+
+https://www-304.ibm.com/support/docview.wss?uid=swg21470063 [https://www-304.ibm.com/support/docview.wss?uid=swg21470063]
+
+In addition provide below files:
+<DASH_HOME>/profile/config/cells/JazzSMNode01Cell/fileRegistry.xml 
+<DASH_HOME>/profileconfig/cells/JazzSMNode01Cell/security.xml

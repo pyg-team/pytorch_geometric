@@ -1,0 +1,131 @@
+Title: IBM IT24306: UNABLE TO UPDATE HATS TO THE LATEST FIXPACK WHEN IT IS INSTALLEDIN THE SAME PACKAGE GROUP AS RDZ. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Unable to update HATS to the latest fixpack when it is installed
+   in the same package group as RDz.
+   Swt beans present in HATS 9.5 is not matching with the swt beans
+   added in latest RDz.
+   com.ibm.etools.terminal.beans used in HATS is 3.0.3.201503261213
+   and the same plugin used in latest RDz is 3.0.4.201706130919.
+   They are not compatible so it is not allowing HATS update to
+   the latest fixpack.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Developers trying to install HATS and RDz into the same      *
+   * package group.                                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Unable to install HATS V9.5 in the same package group with   *
+   * RDz 9.5.                                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Changed the terminal beans plugin version  to 3.0.5.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT24306
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL HATS TOOLK
+   
+   
+ * REPORTED COMPONENT ID
+   5724U6801
+   
+   
+ * REPORTED RELEASE
+   960
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-03-07
+   
+   
+ * CLOSED DATE
+   2018-06-04
+   
+   
+ * LAST MODIFIED DATE
+   2018-06-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL HATS TOOLK
+   
+   
+ * FIXED COMPONENT ID
+   5724U6801
+   
+   
+
+APPLICABLE COMPONENT LEVELS

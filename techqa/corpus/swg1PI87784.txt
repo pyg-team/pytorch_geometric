@@ -1,0 +1,133 @@
+Title: IBM PI87784: RATIONAL DEVELOPER FOR SYSTEM Z (RDZ) : "ALWAYS USE DEBUGGER EDITOR" OPTION AFFECTS SYNTAX HIGHLIGHTING - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Developer for System z Fix Pack 5 (9.5.1.6) for 9.5.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24044335]
+Rational Developer for z Systems Fix Pack 7 (9.5.1.7) for 9.5.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24044493]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Rational Developer for System z - RDz - v9.5.1.4
+   
+   Description :
+   Syntax Highlighting stops working in debugger for sources with
+   more than 72 characters/line.
+   When the "Always use Debugger Editor while debugging" option is
+   not selected then the exec SQL statements should be marked as
+   executable but they are not.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When debugging PLI source that contains more than 72 characters
+   per line, using the Debug PLI Editor, token highlighting may
+   cease to work as expected.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When debugging, the Debug PLI Editor will be automatically
+   configured to the line length of the debug source to prevent any
+    issues with token highlighting.
+   
+   he problem listed in this APAR has been resolved with
+   IBM Rational Developer for z Systems V9.5.1.6 Fix Pack which
+   is available from the Recommended Fixes support download page:
+   http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335 [http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI87784
+   
+   
+ * REPORTED COMPONENT NAME
+   DEV FOR Z SYS
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   951
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-22
+   
+   
+ * CLOSED DATE
+   2018-01-02
+   
+   
+ * LAST MODIFIED DATE
+   2018-01-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DEV FOR Z SYS
+   
+   
+ * FIXED COMPONENT ID
+   5724T0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R951 PSY
+   UP

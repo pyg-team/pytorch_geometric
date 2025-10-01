@@ -1,0 +1,22 @@
+Title: IBM How to force IBM Content navigator (ICN) to download documents instead of opening them? - United States
+
+Text:
+Viewer java support ICN navigator view download desktop TECHNOTE (FAQ)
+
+QUESTION
+ How do you force ICN to download documents instead of opening them in Daeja Viewer? 
+
+CAUSE
+When using the Chrome browser, ICN downloads documents if the viewer is set as DaejaView One. It would be nice to get this same behaviour across all browsers.
+
+ANSWER
+Since update 45 of the Chrome Browser no longer supports Java. See article: https://java.com/en/download/faq/chrome.xml [https://java.com/en/download/faq/chrome.xml]
+To bypass this, set DaejaView One Virtual as your viewer.
+
+To force all browsers download documents instead of opening them via the built-in viewer do the following:
+
+1) Open ICN admin console
+2) Viewer Maps
+3) New Viewer map
+4) Select the necessary Content Manager you wish to utilise with this new viewer map
+5) In the Viewer drop-down menu, select Web Browser as the viewer

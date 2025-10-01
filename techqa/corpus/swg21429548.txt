@@ -1,0 +1,41 @@
+Title: IBM Replacement option for ICU code page change for maps executing on z/OS. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ ICU code table changes only affect delimiters used in a map when executing on z/OS. What can I do if I am using the delimiter <LF> in a rule? 
+
+CAUSE
+ICU code page changes do not affect the value used for <LF> when used as a delimiter in rules.
+
+ANSWER
+A new option has been developed for WTX 8.1, 8.2 and 8.3 that will set the value of <LF> in maps (including the use in rules) to hexadecimal value 25, to enable the same map source and type trees to execute without changes, in both Windows and z/OS. 
+
+APAR PM10673 has introduced a coding change that is implemented with a Windows environmental variable, to specify the value of hexadecimal 25 for <LF> when used as a delimiter on the z/OS platform. The old method to do this is documented in Technote 1429427, titled "Updating ICU code page used by WTX 8.1 for maps executing on z/OS". 
+
+This new method provides a mechanism to use this substitution in map rules that use the delimiter <LF> on the mainframe, as well as delimiters that are identified in the type trees. 
+
+Before starting the customization of the system variable, ensure that you have APAR PM10673 applied to your Windows system. 
+
+In order to make use of this coding change, the environmental variable for the old method needs to be removed from the client's system. 
+
+From the Windows Control Panel, double click on the Systems icon. Select the Advanced tab, followed by the "Environmental Variables" button, 
+
+If the variable ICU_DATA is found in either the User or System variables, delete it by selecting the variable and then presses the Delete button on the screen. 
+
+Click on "New" button under User Variables, and enter the following values when prompted: 
+
+ 
+
+Variable Name: DTX_ZOSLF_HEX25 
+
+Variable Value: True 
+
+ 
+
+Click "OK" to save entry. Continue to click "OK" until you are no longer in the Systems Properties dialog. 
+
+ 
+
+To use this customization, open a map in the Design Studio, and compile for z/OS. Deploy the map to the z/OS system, and run map as usual. The Command Server should now recognize the value <LF> as hexadecimal value 25.

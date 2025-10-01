@@ -1,0 +1,33 @@
+Title: IBM Documentation of the compressed repositories for installing WebSphere Application Server for z/OS might require updating - United States
+
+Text:
+WASV85RNotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The documentation in the IBM WebSphere Application Server Version 8.5 Information Center of the compressed repositories on the media for installing WebSphere Application Server for z/OS might require clarification and correction. 
+
+RESOLVING THE PROBLEM
+The compressed repositories for the following offerings are on the DVD labelled "Compressed repositories for Application Server": 
+
+ * DMZ Secure Proxy Server for IBM WebSphere Application Server for z/OS 
+ * IBM HTTP Server for z/OS 
+ * IBM WebSphere Adapters 
+ * IBM WebSphere Application Server Web 2.0 and Mobile Toolkit 
+ * Web Server Plug-ins for WebSphere Application Server for z/OS 
+ * WebSphere Application Server for z/OS 
+
+
+The compressed repository for IBM WebSphere SDK Java Technology Edition Version 7.0 is labelled "Compressed repositories for SDK Java Technology Edition". Also, the IBM WebSphere SDK Java Technology Edition Version 7.0 is contained in a single compressed file, was.repo.8500.java7.zip, rather than the three files described in early versions of the information center. This file contains the compressed repository for the z/OS edition of the product only, and it should be uncompressed into an empty directory on your system.
+
+
+
+RELATED INFORMATION
+#WebSphere Application Server Version 8.5 release notes [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=phil&product=was-nd-mp&topic=relnotes]
+WebSphere Application Server V8.5 Information Center [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=phil]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server for z/OS Install z/OS 8.5

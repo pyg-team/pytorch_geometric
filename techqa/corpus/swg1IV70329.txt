@@ -1,0 +1,161 @@
+Title: IBM IV70329: HEARTBEAT MESSAGES SENT BY PROBE EVEN IF PROPERTY DISABLED - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+TIV-NCOMNIbus-Probe-for-SNMP-Multiplatform-nco_p_mttrapd-20_2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=TIV-NCOMNIbus-Probe-for-SNMP-Multiplatform-nco_p_mttrapd-20_2&source=SAR]
+Netcool/OMNIbus Integrations Interim Fix - Probe for SNMP (nco-p-mttrapd-20_2) [http://www-01.ibm.com/support/docview.wss?uid=swg24041112]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  probe is sending heart beat messages despite
+   being disabled in probe props file
+   
+   2015-02-27T12:01:27: Debug: D-UNK-105-000:
+   
+   
+   ConfPath: "/opt/IBM/tivoli/netcool/omnibus/probes/linux2x86"
+   2015-02-27T12:01:27: Debug: D-UNK-105-000: DSALog: 0
+   2015-02-27T12:01:27: Debug: D-UNK-105-000: DSAPeriod: 30
+   2015-02-27T12:01:27: Debug: D-UNK-105-000: FlushBufferInterval:
+   0
+   2015-02-27T12:01:27: Debug: D-UNK-105-000: Heartbeat: 0
+   2015-02-27T12:01:27: Debug: D-UNK-105-000: Help: 0
+   2015-02-27T12:01:27: Debug: D-UNK-105-000: KeepLastBrokenSAF: 0
+   2015-02-27T12:01:27: Debug: D-UNK-105-000: LogFilePoolSize: 10
+   2015-02-27T12:01:27: Debug: D-UNK-105-000: LogFileUsePool: 0
+   2015-02-27T12:01:27: Debug: D-UNK-105-000: LogFileUseStdErr: 0
+   2015-02-27T12:01:27: Debug: D-UNK-105-000:
+   LogStatisticsInterval: 0
+   
+   
+   2015-02-27T12:01:27: Information: I-UNK-000-000: Connecting ...
+   2015-02-27T12:01:27: Debug: D-UNK-000-000: Shutting down
+   Probewatch
+   heartbeat thread.
+   2015-02-27T12:01:27: Debug: D-UNK-000-000: Probewatch heartbeat
+   thread
+   is already shutdown.
+   
+   
+   but yet we see this every 1 second
+   
+   
+   2015-02-27T12:01:28: Debug: D-UNK-000-000: Heartbeat mode is:
+   standard
+   2015-02-27T12:01:28: Debug: D-UNK-000-000: Heartbeat mode is
+   standard,
+   probe will function as normal without heartbeating
+   
+   as per below every 1 second
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  await response from l3
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of probe-nco-p-mttrapd-18_0                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * I put hearbeat : 0 in the file mttrapd.props but I am still  *
+   * getting                                                      *
+   * heartbeat events from the snmp probe : Probe Heartbeat       *
+   * Message (Probe :                                             *
+   * mttrapd, Host : vl-frmv-rhe41, ObjectServer : NCOMS)         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to probe-nco-p-mttrapd-20_1                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV70329
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/OBUS MTTRAPD
+   
+   
+ * REPORTED COMPONENT ID
+   5724P03MT
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-03
+   
+   
+ * CLOSED DATE
+   2015-05-06
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

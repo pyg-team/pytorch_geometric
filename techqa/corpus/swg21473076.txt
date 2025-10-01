@@ -1,0 +1,145 @@
+Title: IBM Health check monitoring for TKLM server and database - United States
+
+Text:
+Healthy checking monitoring status functional TECHNOTE (FAQ)
+
+QUESTION
+ How to verify and validate that TKLM server is running fine 
+
+ANSWER
+Health check
+============
+TKLM server
+-----------
+Verify that all DB2 services/processes and the Tivoli Integrated Portal(TIP) are running and set to automatic. If all the DB2 processes are running, restart TIP. Verify all ports on TKLM server are on listen mode:
+
+3801, 441, 16316, 16310, 50000, 50010.
+
+#$TIPHOME/bin/serverStatus.bat server1 -username tipadmin -password <password> 
+
+use of the tklmKeyServerStatus command: 
+
+print AdminTask.tklmKeyServerStatus ()
+
+This command will fail if port 3801 is listening but DB2 is not started properly. It could scripted to run automatically to check the health of the server periodically. That way you can be notified possibly if one of the backup servers is down.
+
+The way to do CLI: 
+
+Go to TKLM installation drive like C:\ or D:\ 
+
+1. cd to \ibm\tivoli\tip\bin or \ibm\tivoli\tklmv2\bin
+
+2. Run following command:
+
+wsadmin -username tklmadmin -password password -lang jython 
+
+You will get: 
+
+WASX7209I: Connected to process "server1" on node TIPNode using SOAP connector; The type of process is: UnManagedProcess 
+WASX7031I: For help, enter: "print Help.help()" 
+wsadmin>
+
+3. Run following command:
+
+wsadmin>print AdminTask.tklmKeyServerStatus() 
+
+You will get: 
+
+CTGKM0001I Command succeeded. 
+Keystores initialized = true 
+TCP transports initialized = true 
+SSL transports initialized = true 
+3592 Primary Certificate defined = true 
+3592 Secondary Certificate defined = true 
+Accepting unknown 3592 devices = false 
+Any 3592 devices defined = true 
+LTO Default Keygroup defined = true 
+LTO accepting unknown devices = false 
+Any LTO Devices Defined = true 
+Accepting unknown DS8K devices = false 
+Any DS8K devices defined = true 
+Transport TCP port = 3801 
+Transport SSL port = 441 
+Transport SSL certificate alias = sslcert 
+
+wsadmin>quit 
+
+4. You can put that in a bat file like filename.py and run it as follows: 
+
+In one line:
+D:\ibm\tivoli\tip\bin>wsadmin -username tklmadmin -password password -lang jython -f filename.py > tklm.out 
+
+Then you can have something to check tklm.out. If TIP (TIPProfile_Port_16310) is not running, wsadmin would fail.
+
+
+DB2 
+---
+
+1. There is a Health Monitoring feature in DB2. This link goes over how to use it. 
+
+http://publib.boulder.ibm.com/infocenter/tivihelp/v4r1/index.jsp?topic=%2Fcom.ibm.tpc_V41.doc%2Ffqz0_r_db2_health_monitor.html [http://publib.boulder.ibm.com/infocenter/tivihelp/v4r1/index.jsp?topic=%2Fcom.ibm.tpc_V41.doc%2Ffqz0_r_db2_health_monitor.html] 
+
+2. If you are only looking for disk space you could cd /home/tklmdb2 then issue 
+
+du -s -k . 
+
+and monitor growth, for example: 
+
+tklml3lnx:/home/tklmdb2 # du -s -k . 
+2057308 . 
+
+3. You can also try connecting to the database manually and running SQL command that will provide some data on usage. Here are the steps you would need to do that: 
+
+1. su to tklmdb2 
+2. issue command, 'db2' to get to db2 command line 
+3. issue commamd, 'connect to tklmd user tklmdb2 using <password>' 
+4. Then issue following SQL command in one line: 
+. 
+SELECT SUBSTR(TBSP_NAME,1,15) NAME, TBSP_TYPE TYPE, 
+TBSP_AUTO_RESIZE_ENABLED AUTO_RESIZE, TBSP_NUM_CONTAINERS CONTAINERS, 
+TBSP_TOTAL_PAGES TOTAL_PGS, TBSP_USED_PAGES USED_PGS, TBSP_FREE_PAGES 
+FREE_PGS, TBSP_MAX_SIZE MAX_SZ, TBSP_PAGE_SIZE PG_SZ FROM 
+SYSIBMADM.TBSP_UTILIZATION WHERE TBSP_CONTENT_TYPE IN ('ANY','SYSTEMP') 
+
+You should get similar output like this: 
+
+NAME TYPE AUTO_RESIZE CONTAINERS TOTAL_PGS 
+USED_PGS FREE_PGS MAX_SZ PG_SZ 
+
+SYSCATSPACE DMS 1 1 
+24576 20904 3668 -1 
+4096 
+
+TEMPSPACE1 SMS - 1 
+0 0 0 - 
+4096 
+
+TKLM_DATA_LG DMS 1 1 
+16384 256 16120 -1 
+8192 
+
+TKLM_DATA_32K_L DMS 1 1 
+16384 72 16304 -1 
+32768 
+
+TKLM_DATA_SM DMS 1 1 
+512 344 160 -1 
+8192 
+
+TKLM_4K_IDX DMS 1 1 
+8192 240 7944 -1 
+4096 
+
+TKLM_IDX DMS 1 1 
+8192 576 7608 -1 
+8192 
+
+TKLM_32K_IDX DMS 1 1 
+8192 40 8144 -1 
+32768 
+
+TEMP_DATA DMS 1 1 
+8192 16 8168 -1 
+8192 
+
+9 record(s) selected.

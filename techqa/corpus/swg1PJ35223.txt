@@ -1,0 +1,143 @@
+Title: IBM PJ35223: NEED A CONFIRMATION PAGE WHEN DELETING FS FROM STORAGE POLICY P ROPERTIES PAGE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  need  a confirmation page when deleting FS from storage policy
+   properties page
+   Product: Content Engine 3.x
+   Release: 3.5.1 P
+   Steps to Reproduce: 1. create three FS select #3 option -- not
+   map to storage policy
+   2. create a storage policy and add all three FS
+   3. go to the properites page of the storage policy, select one
+   of the FS --> click Remove button
+   actual result: EM removed the FS without a confirmation page
+   expected result: EM should have a confirmation page to let user
+   to confirm (as EM does when deleting FS from File Stores
+   node), in case user accedently deletes the wrong one...
+   Database: N/A
+   Frequency: Recurring
+   Target Product: Content Engine 3.x
+   URL to Original DTS Defect:
+   http://hqdtsweb2/cqweb/main?command=GenerateMainFrame&service=C
+   Q&schema=FNPROD&contextid=FNDTS&entityID=33719492&entityDefName [http://hqdtsweb2/cqweb/main?command=GenerateMainFrame&service=CQ&schema=FNPROD&contextid=FNDTS&entityID=33719492&entityDefName]
+   =Defect
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Customers using Content Engine P8CE-3.5.2-016 and priorneed  a c
+   properties page
+   
+   Steps to Reproduce: 1. create three FS select #3 option -- not
+   map to storage policy
+   2. create a storage policy and add all three FS
+   3. go to the properites page of the storage policy, select one
+   of the FS --> click Remove button
+   
+   actual result: EM removed the FS without a confirmation page .
+   expected result: EM should have a confirmation page to let user
+   to confirm (as EM does when deleting FS from File Stores
+   node), in case user accedently deletes the wrong one...      Upg
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  P8CE-3.5.2-017 and higher will resolve this problem
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ35223
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   352
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-11-27
+   
+   
+ * CLOSED DATE
+   2009-02-09
+   
+   
+ * LAST MODIFIED DATE
+   2009-02-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R352 PSN
+   UP

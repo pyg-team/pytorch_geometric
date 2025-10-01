@@ -1,0 +1,36 @@
+Title: IBM Data manager log file errors in Sterling Gentran:Server for UNIX - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ What are the data manager log file errors? 
+
+ANSWER
+#define NORMAL 0 *No error* 
+#define DUPLICATE 1 *Duplicate data found*
+#define NO_CONFIG 2 *No configuration record found*
+#define NO_TP 3 *No trading partner record found* 
+#define STRUCT_ERROR 4 *Input file data error*
+#define TRANSLATION_FAILED 5 *Xltr trans script failed or couldn't set env's*
+#define INVALID_FN 6 *Format of input filename is invalid*
+#define ROUTING_ERROR 7 *Error routing file to mailbox or dest dir*
+#define DEST_Q_ERROR 8 *Error with destination queue*
+#define SRC_Q_ERROR 9 *Error with source queue*
+#define APP_ERROR 10 *Error in application description file*
+#define E_FILE_ACCESS 11 *A problem occurred accessing a file*
+#define E_ISAM 12 *Could not open, read, write, etc., an Isam file*
+#define E_LINE_MANAGER 13 *Error with line manager*
+#define E_INIT_XLTR 14 *Initialization of xltr failed*
+#define E_RW_SAME_QUEUE 15 *data manager reading and writing to same queue, causing a loop condition*
+#define E_WRITE_ERROR 16 *Write error for write _chk failure*
+#define E_LOCK_FAIL 17 *LOCK_ATTEMPT lock failures reached*
+#define EXEC_ERROR 18 *Positive return from sys_call*
+#define EXEC_FAIL_ERROR 19 *Negative return from sys_call
+#define FA_ERROR 20 *Error to mail with failed fa in FA_MAIL*
+#define E_MEM_ERROR 21 *Memory Allocation error*
+
+ 
+
+HISTORICAL NUMBER
+ PRI16172

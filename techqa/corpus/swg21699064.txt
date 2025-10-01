@@ -1,0 +1,114 @@
+Title: IBM During migration the upgrade-profile task fails with message, "All nodes in the cluster are not at the required WebSphere Application Server level." - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+While running the upgrade-profile task on the Primary node of a 2 node cluster on the target environment during the migration process the task fails with the message, "All nodes in the cluster are not at the required WebSphere Application Server level."
+
+SYMPTOM
+The following is found in the ConfigTrace.log...
+Tue Mar 10 12:57:15 EDT 2015
+Target started: action-pre-apply-PTF-applyMIGStatic-wp.config
+[copy] Copying 2 files to
+C:\IBM\WebSphere\wp_profile\PortalServer\bin
+[echo] Update C:/IBM/WebSphere/wp_profile/PortalServer/bin/*.sh
+and .bat WPS_HOME to C:/IBM/WebSphere/PortalServer
+[echo] Calling default target to deploy shared app artifacts to
+the profile.
+[echo] Previous portal not 6.1.*, shared object copy skipped
+[validate-cluster-member-versions] Task parameters:
+[validate-cluster-member-versions] Global attributes:
+[validate-cluster-member-versions] cell=""
+[validate-cluster-member-versions]
+engineinstalllocation="C:/IBM/WebSphere/wp_profile/ConfigEngine"
+[validate-cluster-member-versions]
+enginerootdir="C:/IBM/WebSphere/ConfigEngine"
+[validate-cluster-member-versions] pathseparator=";"
+[validate-cluster-member-versions] osarch="amd64"
+[validate-cluster-member-versions] node=""
+[validate-cluster-member-versions] server=""
+
+[validate-cluster-member-versions] Instance attributes (Set 1 of 1):
+[validate-cluster-member-versions] cluster="PortalClusterQA"
+[validate-cluster-member-versions] minVersion="8.0.0.3"
+[validate-cluster-member-versions]
+[validate-cluster-member-versions]
+[validate-cluster-member-versions] Cluster Topology
+[validate-cluster-member-versions]
+---------------------------------------------------------
+[validate-cluster-member-versions] Cluster: 'PortalClusterQA'.
+[validate-cluster-member-versions]
+---------------------------------------------------------
+[validate-cluster-member-versions] Node name: portalqa1
+[validate-cluster-member-versions] Version = 8.5.5.2
+[validate-cluster-member-versions]
+---------------------------------------------------------
+[validate-cluster-member-versions]
+---------------------------------------------------------
+[validate-cluster-member-versions] Node name: portalqa2
+[validate-cluster-member-versions] Version = 7.0.0.35
+[validate-cluster-member-versions] *Node not at the correct level.
+[validate-cluster-member-versions]
+---------------------------------------------------------
+[validate-cluster-member-versions]
+---------------------------------------------------------
+[validate-cluster-member-versions]
+--- Exception Thrown ---
+C:\IBM\WebSphere\PortalServer\installer\wp.config\config\includes\wp.con
+fig.mig_cfg.xml:148: All nodes in the cluster are not at the required
+WebSphere Application Server level.
+at
+com.ibm.wplc.deploy.tasks.impl.ClusterVerifyWasNodeVersion.execute(Clust
+erVerifyWasNodeVersion.java:112)
+at
+com.ibm.wplc.deploy.tasks.AbstractBaseAdminTask.executeBean(AbstractBase
+AdminTask.java:541)
+at
+com.ibm.wplc.deploy.tasks.AbstractBaseAdminTask.executeTask(AbstractBase
+AdminTask.java:525)
+at
+com.ibm.wplc.deploy.tasks.AbstractBaseWsAdminWrapperTask.executeTask(Abs
+tractBaseWsAdminWrapperTask.java:395)
+at
+com.ibm.wplc.deploy.tasks.AbstractBaseAdminTask.execute(AbstractBaseAdmi
+nTask.java:175)
+at
+org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:275)
+at org.apache.tools.ant.Task.perform(Task.java:364)
+
+
+CAUSE
+Determined that the problem was being caused by an incorrect version value in the file...
+
+C:\IBM\WebSphere\wp_profile\config\cells\<cellName>\nodes\<nodeName>\node-metadata.properties
+
+
+The WAS version that is reported in the ConfigTrace.log is found in the file above. 
+
+The reason for this incorrect value is because the cluster was never synchronized before running the upgrade-profile task. 
+
+In this case the DMGR copy of this file had the correct WAS version.
+
+The requirement to sync the nodes on the target environment is documented in the ConfigWizard panels on Step 1 of the "Migrate a Cluster Step 3" workflow.
+
+
+ENVIRONMENT
+Portal Source 7.0x 
+
+Portal Target 8.5x 
+
+Windows
+
+
+DIAGNOSING THE PROBLEM
+Review the file.... 
+
+
+C:\IBM\WebSphere\wp_profile\config\cells\DmgrQACell\nodes\portalqa2\node-metadata.properties
+
+
+
+
+RESOLVING THE PROBLEM
+Perform a Full Synchronization from the DMGR and re-run the upgrade-profile task

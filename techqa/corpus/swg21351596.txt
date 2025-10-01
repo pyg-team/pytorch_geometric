@@ -1,0 +1,77 @@
+Title: IBM Trouble contacting registry on host "<host-name>": timed out trying to communicate with ClearCase remote server - United States
+
+Text:
+CC; albd_rgy_get_entry call failed: RPC: Timed out; cleartool: Error: Trouble contacting registry on host; lsvob; lsview; albd_rgy_get_entry call failed TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to resolve an error, albd_rgy_get_entry call failed: RPC: Timed out
+cleartool: Error: Trouble contacting registry on host <host-name>": timed out trying to communicate with ClearCase remote server., that can occur when attempting to run IBM Rational ClearCase commands such as lsvob or lsview. 
+
+SYMPTOM
+ 
+
+Attempts to run commands, such as cleartool lsvob and cleartool lsview result in this error: 
+
+albd_rgy_get_entry call failed: RPC: Timed out
+cleartool: Error: Trouble contacting registry on host "<host-name>": timed out trying to communicate with ClearCase remote server. 
+
+These same commands worked successfully on this machine previously, so what is causing this behavior?
+
+
+CAUSE
+ 
+
+ 1. McAfee HIPS (Host Intrusion Prevention for Server) software is installed. The issue has been reported with HIPS versions 7.0 and 8.5, however, it can likely occur with other versions also.
+    
+    HIPS actually breaks the SunRPC packets that ClearCase uses into regular fragmented IP packets, which we can see in a network trace. 
+    
+ 2. This can also be caused by a router or switch with certain fragmentation settings. 
+    For example, in one case the rules were set in a Cisco firewall for VPN-RDP traffic:
+
+ * fragment reassembly full
+ * fragment chain 5000 
+ * fragment timeout 30 
+ * fragment size 20000 
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+From the host or client receiving the error, issue this command for just one VOB or view: 
+
+cleartool lsvob -long <vobtag> 
+
+Results: This returns the correct information successfully. 
+
+
+
+
+For diagnosing the problem without using ClearCase operations you can try using ping: 
+
+
+Example: 
+
+A regular 'ping' will work:
+ping <reg-host> 
+
+
+A loaded 'ping' will time out:
+ping -l 4096 <reg-host>
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+For Cause 1 
+
+The solution for this instance is to remove the McAfee HIPS software. 
+
+
+To resolve the issue without removing HIPS, you can uncheck "McAfee NDIS Intermediate Filter" in the network connection properties and you should be able to contact the registry server properly. This might help if corporate requirements mandate that HIPS is enabled.
+
+Note: There have been other issues reported where you will receive the same error if there are network communication errors. These are due to network or router issues where the larger packets cannot be successfully sent through the routers. Packet fragmentation is sometimes the issue.
+
+For Cause 2
+
+Removing the fragment rules will allow the larger packets to get through. This one is fairly simple to test and can be seen in a network trace. lsview <view> works but lsview (normally returning a long list) does not and times out.

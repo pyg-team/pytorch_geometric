@@ -1,0 +1,221 @@
+Title: IBM IT15284: JCC DRIVER RETURNS -4499 ERROR ON A SELECT QUERY WITH THREE PARTNAME FOR DB2 Z/OS V11 NFM->V11 CM OR V10 NFM CONNECTIVITY - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a JCC thread connects to a DB2 z/OS V11 NFM and hops to a
+   z/OS V11 CM using an explicit three-part name in the SQL
+   statement, a -4499 occurs.
+   The driver is trying to parse something which was meant for
+   SQLAM11 even though the override says the current SQLAM level as
+   10, resulting in an error.
+   
+   [jcc][SystemMonitor:start]
+   [jcc][Time:2016-03-14-10:27:19.843][Thread:Worker-5][Statement@d
+   f3c1450]execute (SELECT * FROM XXX1.SYSIBM.SYSDUMMY1  FOR FETCH
+   ONLY  OPTIMIZE FOR 30000 ROWS ) called
+   [jcc][t4][time:2016-03-14-10:27:19.843][Thread:Worker-5][tracepo
+   int:1][Request.flush]
+   [jcc][t4]        SEND BUFFER: PRPSQLSTT              (ASCII)
+   (EBCDIC)
+   
+   [jcc][t4][time:2016-03-14-10:27:19.845][Thread:Worker-5][tracepo
+   int:2][Reply.fill]
+   [jcc][t4]        RECEIVE BUFFER: SQLDARD             (ASCII)
+   (EBCDIC)
+   :
+   [jcc][Time:2016-03-14-10:27:19.846][Thread:Worker-5][Statement@d
+   f3c1450]execute () returned true
+   :
+   [jcc][Time:2016-03-14-10:27:19.932][Thread:Worker-5][Statement@a
+   a0c29a5]execute (
+   SELECT * FROM XXX2.SYSIBM.SYSDUMMY1  FOR FETCH ONLY  OPTIMIZE
+   FOR 30000 ROWS ) called
+   [jcc][t4][time:2016-03-14-10:27:19.932][Thread:Worker-5][tracepo
+   int:1][Request.flush]
+   [jcc][t4]        SEND BUFFER: PRPSQLSTT              (ASCII)
+   (EBCDIC)
+   
+   
+   [jcc][t4]
+   [time:2016-03-14-10:27:19.932][Thread:Worker-5][tracepoint:101]R
+   equest flushed.
+   [jcc][t4]
+   [time:2016-03-14-10:27:19.932][Thread:Worker-5][tracepoint:102]R
+   eply to be filled.
+   [jcc][t4][time:2016-03-14-10:27:19.950][Thread:Worker-5][tracepo
+   int:2][Reply.fill]
+   [jcc][t4]        RECEIVE BUFFER: MGRLVLOVR           (ASCII)
+   (EBCDIC)
+   
+   [jcc][t4]        RECEIVE BUFFER: SQLDARD             (ASCII)
+   (EBCDIC)
+   
+   
+     DDM Format: d0 RECV(AR) OBJDSS - Object Data Stream Structure
+     LL: 14  CORR: 0001  CHAINED: y  CONT ON ERR: n  SAME CORR FOR
+   NEXT DSS: y
+   
+       NM: MGRLVLOVR - Manager Level Overrides
+         LL: 8    CP: 1C03
+         * SQLAM - SQL Application Manager
+           LEVEL OF SUPPORT: 10
+   
+   
+   
+       SEND BUFFER(AR):
+   
+               EXCSAT RQSDSS
+           * SQLAM - SQL Application Manager
+             LEVEL OF SUPPORT: 11
+   
+   
+   
+   [jcc][t4][time:2016-03-14-10:27:19.969][Thread:Worker-5][tracepo
+   int:2][Reply.fill]
+   
+       RECEIVE BUFFER(AR):
+   
+               EXCSATRD OBJDSS
+   
+   
+           * SQLAM - SQL Application Manager
+             LEVEL OF SUPPORT: 11
+   
+   [jcc][t4]
+   [time:2016-03-14-10:27:19.954][Thread:Worker-5][tracepoint:202]
+   closing non-pooled Transport:
+   [jcc][t4]
+   [time:2016-03-14-10:27:19.954][Thread:Worker-5][tracepoint:530]c
+   ompleteLocalRollback 0
+   [jcc][Time:2016-03-14-10:27:19.954][Thread:Worker-5][ResultSet@d
+   3b4e518]completeLocalRollback (true, false) called
+   [jcc][Time:2016-03-14-10:27:19.954][Thread:Worker-5][ResultSet@d
+   3b4e518]markClosed () called
+   
+   [jcc] BEGIN TRACE_DIAGNOSTICS
+   [jcc][Thread:Worker-5][SQLException@613abcd]
+   java.sql.SQLException
+   [jcc][Thread:Worker-5][SQLException@613abcd] SQL state  = null
+   [jcc][Thread:Worker-5][SQLException@613abcd] Error code = -4499
+   [jcc][Thread:Worker-5][SQLException@613abcd] Message    =
+   [jcc][t4][2085][11336][4.19.26] Mutually exclusive fields cannot
+   both contain non-null values. ERRORCODE=-4499, SQLSTATE=null
+   [jcc][Thread:Worker-5][SQLException@613abcd] Stack trace follows
+   com.ibm.db2.jcc.am.DisconnectRecoverableException:
+   [jcc][t4][2085][11336][4.19.26] Mutually exclusive fields cannot
+   both contain non-null values. ERRORCODE=-4499, SQLSTATE=null
+           at com.ibm.db2.jcc.am.kd.a(Unknown Source)
+           at com.ibm.db2.jcc.am.kd.a(Unknown Source)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  First fixed in JDBC driver version 3.69.66 /4.19.62 (included
+   in DB2 v10.5 FP8)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Upgrade to JDBC driver version 3.69.66 /4.19.62 (included
+   in DB2 v10.5 FP8) or higher
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT15284
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 JDBC SQLJ D
+   
+   
+ * REPORTED COMPONENT ID
+   DB2DSDRVR
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-13
+   
+   
+ * CLOSED DATE
+   2017-05-25
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 JDBC SQLJ D
+   
+   
+ * FIXED COMPONENT ID
+   DB2DSDRVR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA50 PSY
+   UP

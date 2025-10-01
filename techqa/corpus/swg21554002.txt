@@ -1,0 +1,33 @@
+Title: IBM CSPA202E SSL handshake failure, reason=GSK_ERR_CRYPTO - United States
+
+Text:
+Performance; STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CSPA202E SSL handshake failure, reason=GSK_ERR_CRYPTO 
+
+SYMPTOM
+
+
+Attempting a Secure+ connection Connect:Direct-Windows to Connect:Direct-z/OS when Connect:Direct-z/OS is using a certificate created with a SHA2 signature algorithm.
+
+IBM Manual z/OS V1R9.0 ICSF Overview Glossary SHA-2 (Secure Hash Algorithm 2, FIPS 180). Four additional variants to 
+the SHA family, with increased output ranges and a slightly different 
+design: SHA-224, SHA-256, SHA-384, and SHA-512 (all are sometimes referred to as SHA-2). gskkyman display when creating certificates: Signature Digest Type 1 - SHA-1 2 - SHA-224 3 - SHA-256 4 - SHA-384 5 - SHA-512 Error Message C:D-z/OS will see following messages in the JESMSGLG. CSPA202E SSL handshake failure, reason=GSK_ERR_CRYPTO CSPA004E Security Violation - PNODE authentication error And Connect:Direct-Windows side will see error CSPA311E - certificate signature failure 
+RESOLVING THE PROBLEM
+
+
+Must use a certificate created with SHA1 signature algorithm on the Connect:Direct-z/OS side.
+
+ 
+
+HISTORICAL NUMBER
+ NFX5785 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Severity
+
+
+Normal

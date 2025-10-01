@@ -1,0 +1,31 @@
+Title: IBM DFHSR0601 in IGZCPSU during CICS initialization - United States
+
+Text:
+ABEND 0C4; ABEND0C4; ABENDS0C4; ABEND S0C4; COB2LIB; COB2CICS; LE/370; LE370; DFHSR0601; IGZCPSU; COBOL II; STEPLIB; DFHRPL; 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 kixinfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You receive the following message during CICS initialization: 
+
+DFHSR0601 Program interrupt occurred with system task III in control.
+
+Language Environment is not initializing. 
+
+CAUSE
+Old COBOL libraries in the CICS startup JCL when running with LE/370.
+
+DIAGNOSING THE PROBLEM
+The dump shows that an abend 0C4 is occurring in IGZCPSU on the CLI instruction at offset x'436' with Reg3 not valid. IGZCPSU is contained within load module IGZCEV5. The failing offset using the load module IGZCEV5 is x'3966'. Browsing IGZCPSU in storage shows the correct LE prefix CEE in the eyecatcher. 
+
+
+The problem is due to having SYS1.COB2LIB and SYS1.COB2CICS in the STEPLIB or RPL concatenations. You should not have COBOL libraries when you are running LE/370. 
+
+
+RESOLVING THE PROBLEM
+Remove all references to SYS1.COB2LIB and SYS1.COB2CICS from your STEPLIB and DFHRPL concatenations.
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

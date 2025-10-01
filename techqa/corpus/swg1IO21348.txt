@@ -1,0 +1,127 @@
+Title: IBM IO21348: IN: EXPORTED PROPERTY LISTS IN ICN ARE MISSING UTF-8 MARKER AT BEGINNING OF FILE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Download IBM Content Navigator Version 2.0.2 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24038083]
+Download IBM Content Navigator Version 2.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038160]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Content Navigator, when a user exports the properties of a
+   directory in a .CSV file, the .CSV file is missing the UTF-8
+   marker at the beginning of the file. This confuses certain
+   viewers such as MS Excel into mistaking the file as ANSI.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Resaving the document in NotePad restores the header and allows
+   the file to be viewed normally.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  fixed
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO21348
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   ISCONTNAV
+   
+   
+ * REPORTED RELEASE
+   202
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-03
+   
+   
+ * CLOSED DATE
+   2014-09-24
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   ISCONTNAV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R202 PSY
+   UP

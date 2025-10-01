@@ -1,0 +1,166 @@
+Title: IBM IY87779: IMPACT IS FAILING TO UPDATE TIMESTAMP DATA IN ORACLE WHEN IT IS SET AS PRIMARY KEY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  create the following table in Oracle
+   
+   create table test1 (
+      id integer,
+      start_time timestamp,
+      status integer,
+      primary key (id, start_time)
+    );
+   
+   1> Insert a record in the table using any SQL client
+   2> create the corresponding DT in Impact with both 'id' and
+   'start_time' fields selected as keys
+   3> Retrieve a record in a policy using GetByFilter(MyDataType2,
+   " (id = 1) and (start_time=timestamp'2006-06-22 14:40:13.000')
+   ", false)
+   
+   Set the value of the 'status' field with a statement such as :
+   MyRecord[0].status = 10;
+   
+    It translates into an INCORRECT SQL update statement :
+   
+   UPDATE MYDB.TEST1 SET status = 10 WHERE ID = 1 AND START_TIME =
+   '2006-06-22 14:40:13.0'
+   
+    Impact has not included the to TO_DATE() conversion in the
+   WHERE clause and eventually POLICY fails
+   Same works if start_time is not set for PRIMARY KEY and in that
+   scenario the update statement will be
+   UPDATE MYDB.TEST1 SET start_time = TO_DATE('2006-06-22
+   14:40:13.000', 'YYYY-MM-DD HH24:MI:SS.###') WHERE ID = 1
+   Please note To_DATE() is called by Impact implicitly
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *   1> Do not use TIMESTAMP as Primary Key
+   2> Use BATCHUPDATE for Oracle DataTypes
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Impact Users                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Oracle Dsa TIMPSTAMP type not handed    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Impact cannot handle the TIMESTAMP variable from Oracle
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  added a TIMESTAMP field for oracle to better support the
+   TIMESTAMP field.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY87779
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O5900
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-08-09
+   
+   
+ * CLOSED DATE
+   2007-04-04
+   
+   
+ * LAST MODIFIED DATE
+   2007-10-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     DSA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O5900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY
+   UP

@@ -1,0 +1,45 @@
+Title: IBM In a CDM Report, "The query failed" error after editing the structure periods in Cognos Controller FAP - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User adds periods into Cognos Controller FAP data mart. Afterwards, a user runs a report in Cognos Disclosure Management (CDM). An error appears. 
+
+SYMPTOM
+Error in Cognos Disclosure Management: 
+
+[/support/docview.wss?uid=swg21701141&amp;aid=1]
+The query failed.
+
+
+CAUSE
+Not all periods (being published in the data mart by FAP) were available to the report.
+
+
+Example Scenario: 
+
+In the FAP data mart, some new periods had been added (e.g. 1501 to 1712) to the company structure. 
+
+ * The new range of periods replaced (rather than adding to) the existing selection.
+
+
+After changing the range to include all prior/future periods (i.e. from 1101 to 1712), and then running a FAP structure update, CDM was able to ‘see’ the 1412 data as expected. 
+
+ * This stops the CDM error from occurring.
+
+RESOLVING THE PROBLEM
+Ensure that the CDM report definition matches the data range available in the cube instance. 
+
+ 
+
+Example Scenario: 
+
+Ensure all periods covered by the CDM report are added to the data mart:
+[/support/docview.wss?uid=swg21701141&aid=2] [/support/docview.wss?uid=swg21701141&aid=2]
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Disclosure Management Windows 10.1.1, 10.2, 10.2.1, 10.2.2 Edition Independent

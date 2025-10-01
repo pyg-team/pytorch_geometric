@@ -1,0 +1,65 @@
+Title: IBM Newly installed ITNCM GUI server fails to start - United States
+
+Text:
+ITNCM; Server; startup; start up; events; timeout; Thread "server.startup : TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Scenario where an existing ITNCM DB was migrated to a new server, and a new presentation/worker server was installed. After all steps completed, the server would not start successfully. 
+
+SYMPTOM
+Customer will see the following when trying to start ITNCM:
+
+
+IBM Tivoli Netcool Configuration Manager
+----------------------------------------
+Starting Worker Server
+Worker Server = RUNNING
+
+
+Starting Compliance Server
+Compliance Server = RUNNING
+
+Starting GUI Server
+GUI Server = NOT RUNNING <- GUI is not starting
+
+**************************************************************** 
+
+
+
+CAUSE
+The customer did not have "housekeeping" configured and running. This resulted in a lot of 'events' in the EVENTS table of the DB. When the server attempted to startup, it was trying to process all of these 'events', but would timeout before completing. Thus, it would not start up successfully.
+
+DIAGNOSING THE PROBLEM
+The customer may see the following error in the systemout log file:
+
+[5/11/15 6:16:00:262 GMT+00:00] 00000023 ThreadMonitor W WSVR0605W: Thread "server.startup : 1" (0000001d) has been active for 779275 milliseconds and may be hung. There is/are 1 thread(s) in total in the server that may be hung.
+at com.ibm.tivoli.ncm.events.DatabasePoller.addConsumer(DatabasePoller.java:69)
+at com.ibm.tivoli.nsm.work.NSMEventConsumer.register(NSMEventConsumer.java:33)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+
+
+
+
+RESOLVING THE PROBLEM
+The customer will need to manually clear out the 'events' in the EVENTS table using the following SQL command:
+
+
+DELETE FROM EVENTS WHERE UNIQUEKEY NOT IN (SELECT DISTINCT(LASTEVENTKEY) FROM EVENTPOLLERINSTANCES);
+
+
+Depending on the volume of EVENTS records, this may take a long time to execute. If the customer wishes, they can break it down into chunks of deletions using the SQL below:
+
+DELETE FROM EVENTS WHERE CREATEDTIME&lt;? AND ROWNUM&lt;=10000
+AND UNIQUEKEY NOT IN (SELECT DISTINCT(LASTEVENTKEY) FROM EVENTPOLLERINSTANCES);
+
+
+Note: It is important that the customer delete using this method rather than just emptying the table, as there are some events that ITNCM requires. 
+
+
+
+To prevent this from happening in the future, the customer should configure and enable internal housekeeping on their server. In case of a mutil server-deployment, internal housekeeping should only be enabled on one of the servers. To enable and configure Internal Housekeeping, follow the directions found on the following links:
+
+http://www-01.ibm.com/support/knowledgecenter/SS7UH9_6.4.1/ncm/wip/confg/task/ncm_config_internalhousekeeping.dita?lang=en [http://www-01.ibm.com/support/knowledgecenter/SS7UH9_6.4.1/ncm/wip/confg/task/ncm_config_internalhousekeeping.dita?lang=en]
+
+
+http://www-01.ibm.com/support/knowledgecenter/SS7UH9_6.4.1/ncm/wip/adm/concept/ncm_adm_housekeeping.dita?cp=SS7UH9_6.4.1%2F13-5&lang=en [http://www-01.ibm.com/support/knowledgecenter/SS7UH9_6.4.1/ncm/wip/adm/concept/ncm_adm_housekeeping.dita?cp=SS7UH9_6.4.1%2F13-5&lang=en]

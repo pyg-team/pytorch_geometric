@@ -1,0 +1,52 @@
+Title: IBM Portal upgrade fails during xmlaccess script with EJPSD0001E error - United States
+
+Text:
+StepUpAuthenticationLoginModule; cumulative fix; fixpack; upgrade; EJPSD0001E; EJPXB0019E; EJPFB0002E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When attempting to upgrade WebSphere Portal, the upgrade fails during the CONFIG-WP-PTF-CF ConfigEngine script while trying to run xmlaccess. 
+
+SYMPTOM
+In the ConfigTrace.log, the following exception can be seen:
+
+=======================
+Target finished: action-modify-HTTP-Inbound-Channel-timeout
+[xmlaccess] EJPXB0006I: Connecting to URL hxxp://localhost:10039/wps/config/
+[xmlaccess] EJPXB0004I: Writing output file /opt/IBM/WebSphere/wp_profile/ConfigEngine/config/work/deployedWebAppXmlAccess-PTF/preExistingWebApps.xml
+[xmlaccess] EJPXB0002I: Reading input file /opt/IBM/WebSphere/PortalServer/installer/wp.migration.core/migration/components/wp.migration.core/exportWebApps.xml
+[xmlaccess] EJPXB0019E: Server response indicates an error. For status and details of the XmlAccess error look at file /opt/IBM/WebSphere/wp_profile/ConfigEngine/config/work/deployedWebAppXmlAccess-PTF/preExistingWebApps.xml.
+[xmlaccess] EJPXB0019E: Server response indicates an error. For status and details of the XmlAccess error look at file /opt/IBM/WebSphere/wp_profile/ConfigEngine/config/work/deployedWebAppXmlAccess-PTF/preExistingWebApps.xml.
+Target finished: deploy-portlets-upgrade
+=======================
+
+The root cause of this xmlaccess failure can be found in the SystemOut.log:
+
+=====================
+[7/27/13 12:32:48:348 EDT] 00000070 XmlCommandSer E com.ibm.wps.command.xml.XmlCommandServlet authenticate EJPFB0002E: Exception occurred.
+com.ibm.wps.services.authentication.exceptions.WASAuthenticationFailedException: EJPSD0001E: Authentication against WebSphere Application Server failed for user uid=wpsadmin,ou=users,dc=ibm,dc=com.
+at com.ibm.wps.services.authentication.impl.AuthenticationServiceImpl.doWASLogin(AuthenticationServiceImpl.java:610)
+at com.ibm.wps.services.authentication.impl.AuthenticationServiceImpl.doAppServerAuthentication(AuthenticationServiceImpl.java:528)
+at com.ibm.wps.services.authentication.impl.AuthenticationServiceImpl.doFullLogin(AuthenticationServiceImpl.java:283)
+.
+.
+.
+Caused by: javax.security.auth.login.LoginException: java.lang.RuntimeException: com.ibm.wps.auth.sua.loginmodule.StepUpAuthenticationLoginModule
+at com.ibm.ws.security.common.auth.module.proxy.WSLoginModuleProxy.initialize(WSLoginModuleProxy.java:103)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+=====================
+
+The key exception is "javax.security.auth.login.LoginException: java.lang.RuntimeException: com.ibm.wps.auth.sua.loginmodule.StepUpAuthenticationLoginModule"
+
+
+CAUSE
+In this case, the WebSphere Portal server was configured to run as a non-root user. Both the "RunAsUser" and "RunAsGroup" properties in the JVM configuration were set to the non-root users.
+
+The upgrade however was being executed as "root". This set numerous Portal binary files with 'root' ownership. When the upgrade tried to start the server, even though it was executing startServer as "root", the server starts up based on the "RunAsUser" property. 
+
+The non-root user did not have access to the "wp.auth.base.sua_loginmodule.jar" file that contains the "StepUpAuthenticationLoginModule" and thus this error occurred.
+
+This specific failure came from a Portal v7002 CF22 upgrade. 
+
+RESOLVING THE PROBLEM
+To resolve the problem, you can either perform the upgrade as the non-root user, or you can remove the RunAsUser and RunAsGroup settings from the JVM in the WAS Admin Console, then run the upgrade as root.

@@ -1,0 +1,42 @@
+Title: IBM "Wrong Content" error when configuring Rule Team Server database - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When configuring the Rule Team Server database, the error "Wrong content: The files you specified in the previous step do not match the expected format. Make sure that you provide correct .brdx and .brmx or .zip files" is seen. 
+
+SYMPTOM
+ 
+
+To complete Rule Team Server installation, the database has to be configured before performing any other task. 
+
+However, even though the option "Default Extensions" is chosen for the extension files to be used, the following error is seen, although no extension files were specified: 
+
+[/support/docview.wss?uid=swg21501333&aid=1] [/support/docview.wss?uid=swg21501333&aid=1]
+
+
+The application server logs show the warning: 
+
+ilog.rules.teamserver.model.IlrModelInfo loadExtensions
+WARNING: Feature 'model' not found.
+
+
+CAUSE
+This error usually occurs if you deploy the Rule Team Server EAR or WAR file meant for another application server. For example, you might have deployed the Rule Team Server WAR file for WebsphereCE on Tomcat.
+
+
+
+RESOLVING THE PROBLEM
+Make sure that you deploy the Rule Team Server EAR or WAR file meant for the application server being used. 
+
+Follow the documentation at Installing JRules modules on Java EE application servers [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global285.html] to locate the correct files to be deployed.
+
+RELATED INFORMATION
+ Configuring your Rule Team Server installation > Config [http://publib.boulder.ibm.com/infocenter/rtsohelp/v7r1/index.jsp?topic=/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/Rule_Team_Server/ps_Rule_Team_Server_OH215.html]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise Business Integration IBM Operational Decision Manager Platform Independent 8.0

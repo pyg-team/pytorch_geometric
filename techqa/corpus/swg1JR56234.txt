@@ -1,0 +1,149 @@
+Title: IBM JR56234: SERVER VALIDATION DOES NOT CONSIDER LOGIN CONFIGURATION PROPERTIES FROM DEPLOYMENT DESCRIPTOR FILES - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.5.7.0-WS-IID-IFJR56232 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Integration+Designer&fixids=8.5.7.0-WS-IID-IFJR56232&source=SAR]
+8.5.0.1-WS-IID-IFJR56232 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Integration+Designer&fixids=8.5.0.1-WS-IID-IFJR56232&source=SAR]
+8.5.0.1-WS-BPM-IFJR56234 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Advanced&fixids=8.5.0.1-WS-BPM-IFJR56234&source=SAR]
+bpm.8570.cf2016.09.delta.repository.2of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.2of2&source=SAR]
+bpm.8570.cf2016.09.delta.repository.1of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.1of2&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2016.09 [http://www-01.ibm.com/support/docview.wss?uid=swg24042580]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Interim fix JR56232 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR56232] adds new function in the Deployment editor
+   in IBM Integration Designer to allow login configuration to be
+   specified for a web service export. However, the server
+   validation for installing an application and the serviceDeploy
+   tool do not recognize these new properties, preventing the
+   application from installing.
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager Advanced
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM Business Process Manager V8.5.0.1
+   that updates the server validation to recognize the login
+   configuration deployment descriptor properties generated from
+   Integration Designer.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR56234:
+   
+       1. Select IBM Business Process Manager with your edition
+   from the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+       2. Select APAR or SPR, enter JR56234, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56234
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-30
+   
+   
+ * CLOSED DATE
+   2016-09-30
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP
+   
+   
+ * R857 PSY
+   UP

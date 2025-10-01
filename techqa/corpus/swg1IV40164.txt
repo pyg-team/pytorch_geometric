@@ -1,0 +1,148 @@
+Title: IBM IV40164: JOB STREAM NAME IS LOST AFTER PRIORITY IS CHANGED BY BUTTON ON SET PRIORITY. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment
+   -----------------------------------
+   MDM: TWS 8.5.1 + FP0004 on Windows 2008 R2
+   TDWC: 8.5.1 + FP0004 (Shares the same eWAS with MDM)
+   Browser : IE9
+   
+   Repliation steps.
+   1. Logon to TDWC
+   2. Select "Tivoli Workload Scheduler" -> "Monitor" -> Monitor
+       Job Streams"
+   3. Select "All of job streams"-> click "OK"
+   4. Check the one job stream and select "Priority" on "More
+   5. Confirm the following display on top of the view.
+   ---
+   <Job Stram Name> job stream priority
+   ---
+   
+   6. Change New Priority from "Hold" or "High" or "Go" or
+      "Default" by pressing button.
+   
+     Confirm the <Job Stream ame> is lost.
+   ---
+   job stream priority
+   ---
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Modify priority by editing a number.
+     or
+   Use Firefox.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  the job stream name is not showed on the title of the window.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This apar will be fixed    8.6.0-TIV-TDWC-FP0003 and
+   8.5.1-TIV-TDWC-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV40164
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV DYN WKLD CN
+   
+   
+ * REPORTED COMPONENT ID
+   TIVOWEBUI
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-18
+   
+   
+ * CLOSED DATE
+   2013-04-29
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV DYN WKLD CN
+   
+   
+ * FIXED COMPONENT ID
+   TIVOWEBUI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R851 PSY
+   UP
+   
+   
+ * R860 PSY
+   UP

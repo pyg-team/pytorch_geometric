@@ -1,0 +1,36 @@
+Title: IBM ITCAM for AD 7.1 Managing Server Agent/Data Collector Platform Incorrect - United States
+
+Text:
+itcam CAMADMSINST WebSphere DC MS TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ ITCAM for AD 7.1 Agent/DC configured a WebSphere Portal Server accidentally as a WebSphere Application Server. In the ITCAM Managing Server, the configured Data Collector shows as WebSphere Application Server, rather than WebSphere Portal Server. 
+
+SYMPTOM
+The Data Collector will be visible in the Configured Data Collectors, but will not display any data. See screen shot... 
+
+[/support/docview.wss?uid=swg21580129&amp;aid=1]
+
+
+RESOLVING THE PROBLEM
+Follow these steps to resolve the problem: 
+
+1. Go to the ITCAM Managing Server console and go to the following tabs, Administration > Server Management > Data Collector Configuration 
+
+2. Unconfigure the Data Collectors which were configured as the wrong platform. 
+
+3. Go to the system where the Data Collector was configured and completely unconfigure it using either the GUI or Command line. 
+
+4. Restart the WebSphere Portal Server. 
+
+5. Configure the Data Collector again, but select the correct platform. In this case, WebSphere® Portal Server 
+
+6. Restart WebSphere Portal Server.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM4AD ITCAMfAD App Diagnostics

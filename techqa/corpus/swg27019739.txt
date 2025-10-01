@@ -1,0 +1,39 @@
+Title: IBM Open Mic Replay: Migrating to WebSphere Commerce V7.0 - United States
+
+Text:
+wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; Migration; commerce migration WEBCAST
+
+ABSTRACT
+ This talk focuses on what IBM has done to improve the WebSphere Commerce migration process by reducing complexity, risk and the time it takes to perform a migration. Receive insight and guidance into preparing and planning for a migration in V7.0, and a chance to interact with experts on the topic. 
+
+CONTENT
+Open Mic sessions are conducted in a question and answer format. The table below provides a time index (minutes:seconds) to the recording and describes the questions or topics discussed. You can fast forward to any question using the time index, a table containing the panel of experts is also included.
+
+
+To play or download the audio of this Open Mic session, see the Audio Section of this document.
+
+See the Related Information Section of this document for a list of documents referenced during the presentation.
+
+
+
+
+
+
+
+
+Open Mic session 
+21 October 2010 - 11:00 a.m. - 12:00 p.m. EDT 
+
+Time Questions asked 00:00 Silence 00:00 General introduction 02:15 Technical introduction 12:31 Can we continue to use Accelerator for everything that we use in WebSphere Commerce V6.0 if we don’t want to move to Management Center? 13:30 Is shipping promotion still considered as an adjustment with -7 (calusageId) or is there a change back to V5.6.1 type of shipping discount? 14:19 Can we continue to use Activity token for web services session, a feature that was introduced in Version 6.0 Feature Pack 4? 15:51 Are there any changes in the OOB Contract management for catalog\price filter? 16:48 Does WebSphere Commerce V7.0 make it mandatory to use EJB 3.0? 18:06 I have a question regarding the migration wizard and utilizing DB2 V9.7.1. Does the migration wizard handle this or is it specially coded for DB2 V9.5.4? 20:40 Today we are using the BANDD tool for build and deployment in WebSphere Commerce V6.0. Should we continue to use this tool if we want to upgrade to WebSphere Commerce V7.0, or use a new tool for build and deployment? 22:47 We are currently using the advanced B2B direct store for building the B2B storefront but are interested in upgrading to V7.0 because of the enhanced functions. What is the best and recommended way for migration if We have implemented our own customization and code in V6.0? 26:21 Would there be any major problems if we install WebSphere Commerce V7.0 on the same machine as WebSphere Commerce V6.0 (not running them in parallell, but installing them on the same machine? 28:44 Closing remarks 30:05 End of Call 
+Panel of Experts: Chenfei Song WebSphere Commerce Deployment Lead Eric Rybczynski WebSphere Commerce L2 Support 
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]WSTE-10212010-OpenMic-MigrationToWebSphereCommerceV7-Rybczynski.pdf [/support/docview.wss?uid=swg27019739&aid=2] WSTE-10212010-OpenMic-MigrationToWebSphereCommerceV7-Rybczynski.pdf [/support/docview.wss?uid=swg27019739&aid=1]
+
+Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]Click on Download Audio [ftp://public.dhe.ibm.com/software/websphere/techexchange/Oct-21-2010-Song-Rybczynski.mp3] to play the recording of this 30 minutes conference call (3.0MB - MP3 format). Right-click and select Save As to store the file on your local computer for later playback. Remember that you can fast forward to any question using the time index.
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchange [http://www.ibm.com/software/websphere/webcast]

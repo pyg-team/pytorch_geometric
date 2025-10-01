@@ -1,0 +1,60 @@
+Title: IBM Integrated Application Server (IAS/IWS) Fails To Start With Message CPFC780 RC4 - United States
+
+Text:
+CPFC780; IAS; IWS; Start; Fail; Server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An IBM Integrated Application Server (IAS/IWS) running on the WAS Liberty runtime fails to start. 
+
+SYMPTOM
+Message CPFC780 RC4 - "The file specified for the property engine.stderr failed to open. Error: 3525" message is thrown in the primary IAS/IWS server job log
+
+
+CAUSE
+The IAS/IWS job process is unable to open the /www/<server>/wlp/usr/servers/<server>/logs/console.log file due to its large size. Toolbox or some other tracing might be enabled causing the console.log file size to get too large to process.
+
+ENVIRONMENT
+IBM i OS
+
+DIAGNOSING THE PROBLEM
+Review the IAS/IWS job log for the CPFC780 message. Inspect the /www/<server>/wlp/usr/servers/<server>/logs/console.log to see if it is very large in size.
+
+RESOLVING THE PROBLEM
+Following is an example of the CPFC780 RC4 error message thrown in the IAS/IWS server job log:
+
+
+
+
+CPFC780 Escape 30 01/25/16 14:42:09.194271 QLWISVR QSYS *STMT QCMD QSYS 01C8
+From module . . . . . . . . : QLWISVR
+From procedure . . . . . . : sendEscapeMessage__FPcsi
+Statement . . . . . . . . . : 16
+Message . . . . : Failed to start the integrated Web application server. Reason 4.
+Cause . . . . . : An error occurred when starting the integrated web
+application server. The reason code is 4.
+Reason codes and their meanings follow: 
+1 - Integrated Web application server version is not valid. 
+2 - The port 3525 specified in config.properties is already in use. 
+3 - The file specified for property engine.stderr failed to open. Error: 3525. 
+4 - The file specified for property engine.stdout failed to open. Error: 3525. 
+5 - Attempt to change the working directory to bin directory failed. Error: 3525
+6 - Attempt to change the working directory to the instance directory failed. Error: 3525 7 - Unknown error: 3525.
+
+To resolve the issue, you will need to delete the console.log and messages.log files in the /www/<server>/wlp/usr/servers/<server>/logs/ directory. After these log files are deleted, you should be able to successfully start the IBM Integrated Application Server (IAS/IWS).
+
+IBM also recommends the /www/<server>/wlp/usr/servers/<server>/jvm.options file be checked to see if the following line exists in the file:
+
+-Dcom.ibm.as400.access.Trace.category=all
+
+If it does exist, you should do the following:
+
+1. Delete the line.
+2. Press F3 two times to save and exit.
+3. Restart your IAS/IWS server. 
+
+This will turn off Toolbox tracing, which can lead to this issue.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3

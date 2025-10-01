@@ -1,0 +1,257 @@
+Title: IBM JR48612: FAILED BPD INSTANCE ON DB SERVER FAILOVER - United States
+
+Text:
+  A FIX IS AVAILABLE
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Process instances fail while a DB server failover is in
+   progress.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM BPM V8.0.1.1 Advanced, Standard, and    *
+   *                  Express.                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: During DB server failover internal      *
+   *                      exceptions occur. These exceptions      *
+   *                      cause transactions to roll back.        *
+   *                      When the DB2 server failover occurs,    *
+   *                      active process instances fail. In the   *
+   *                      Process Admin Console, the related      *
+   *                      instances are marked as failed with     *
+   *                      the following                           *
+   *                      exception:                              *
+   *                      wle           E   CWLLG0326E: A         *
+   *                      deliverException has occurred.          *
+   *                      com.lombardisoftware.core.TeamWorksRunt *
+   *                      imeException:                           *
+   *                      com.lombardisoftware.client.delegate.Bu *
+   *                      sinessDelegateException: CORBA          *
+   *                      TRANSACTION_ROLLEDBACK 0x0 No; nested   *
+   *                      exception is:                           *
+   *                      org.omg.CORBA.TRANSACTION_ROLLEDBACK:   *
+   *                      javax.transaction.TransactionRolledback *
+   *                      Exception:  ; nested exception is:      *
+   *                      java.lang.IllegalStateException:        *
+   *                      Mismatched start/end instrumentation    *
+   *                      periods  vmcid: 0x0  minor code: 0      *
+   *                      completed: No                           *
+   *                      at                                      *
+   *                      com.lombardisoftware.core.TeamWorksRunt *
+   *                      imeException.asTeamWorksRuntimeExceptio *
+   *                      n(TeamWorksRuntimeException.java:65)    *
+   *                      at                                      *
+   *                      com.lombardisoftware.client.persistence *
+   *                      .common.versioning.ReferenceHelper.find *
+   *                      SystemDataByName(ReferenceHelper.java:1 *
+   *                      84)                                     *
+   *                      at                                      *
+   *                      com.lombardisoftware.client.persistence *
+   *                      .common.versioning.ReferenceHelper.getS *
+   *                      ystemParticipant(ReferenceHelper.java:1 *
+   *                      56)                                     *
+   *                      at                                      *
+   *                      com.lombardisoftware.bpd.component.flow *
+   *                      component.activity.worker.BPDActivityWo *
+   *                      rker.resolveSendTo(BPDActivityWorker.ja *
+   *                      va:988)                                 *
+   *                      at                                      *
+   *                      com.lombardisoftware.bpd.component.flow *
+   *                      component.activity.worker.BPDActivityWo *
+   *                      rker.createTask(BPDActivityWorker.java: *
+   *                      687)                                    *
+   *                      . . .                                   *
+   *                      Caused by:                              *
+   *                      com.lombardisoftware.client.delegate.Bu *
+   *                      sinessDelegateException: CORBA          *
+   *                      TRANSACTION_ROLLEDBACK 0x0 No; nested   *
+   *                      exception is:                           *
+   *                      org.omg.CORBA.TRANSACTION_ROLLEDBACK:   *
+   *                      javax.transaction.TransactionRolledback *
+   *                      Exception:  ; nested exception is:      *
+   *                      java.lang.IllegalStateException:        *
+   *                      Mismatched start/end instrumentation    *
+   *                      periods  vmcid: 0x0  minor code: 0      *
+   *                      completed: No                           *
+   *                      at                                      *
+   *                      com.lombardisoftware.client.delegate.Bu *
+   *                      sinessDelegateException.asBusinessDeleg *
+   *                      ateException(BusinessDelegateException. *
+   *                      java:41)                                *
+   *                      at                                      *
+   *                      com.lombardisoftware.client.delegate.co *
+   *                      mmon.WebsphereDelegateHelper.doAsCurren *
+   *                      tSubjectContextSensitive(WebsphereDeleg *
+   *                      ateHelper.java:177)                     *
+   *                      at                                      *
+   *                      com.lombardisoftware.client.delegate.Pe *
+   *                      rsistenceServicesDelegateDefault.findBy *
+   *                      PrimaryKey(PersistenceServicesDelegateD *
+   *                      efault.java:290)                        *
+   *                      at                                      *
+   *                      com.lombardisoftware.client.persistence *
+   *                      .common.factorydelegate.UnversionedFact *
+   *                      oryDelegate.findByPrimaryKey(Unversione *
+   *                      dFactoryDelegate.java:42)               *
+   *                      at                                      *
+   *                      com.lombardisoftware.client.persistence *
+   *                      .common.AbstractUnversionedPOFactory.fi *
+   *                      ndByPrimaryKey(AbstractUnversionedPOFac *
+   *                      tory.java:122)                          *
+   *                      at                                      *
+   *                      com.lombardisoftware.client.persistence *
+   *                      .ProjectDependency.isTargetToolkit(Proj *
+   *                      ectDependency.java:75)                  *
+   *                      at                                      *
+   *                      com.lombardisoftware.client.persistence *
+   *                      .ProjectDependency.isTargetSystemData(P *
+   *                      rojectDependency.java:51)               *
+   *                      at                                      *
+   *                      com.lombardisoftware.client.persistence *
+   *                      .common.versioning.ReferenceHelper.getS *
+   *                      ystemDataProjectDependency(ReferenceHel *
+   *                      per.java:969)                           *
+   *                      at                                      *
+   *                      com.lombardisoftware.client.persistence *
+   *                      .common.versioning.ReferenceHelper.find *
+   *                      SystemDataByName(ReferenceHelper.java:1 *
+   *                      76)                                     *
+   *                      ... 46 more                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Process instances fail while a DB server failover is in
+   progress.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.0.1.1 that prevents active
+   process instances from failing.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), and
+   search for JR48612:
+   
+   1. Select the product group, product, installed version, and
+   platform, and click Continue.
+   2. Select APAR or SPR, enter JR48612, and click Continue.
+   
+   When downloading fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Yes. You can resume processing the process instance by
+   clicking the Retry Failed Steps action in the Process Admin
+   Console.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR48612
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-26
+   
+   
+ * CLOSED DATE
+   2014-01-29
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

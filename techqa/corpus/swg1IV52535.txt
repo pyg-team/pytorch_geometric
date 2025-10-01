@@ -1,0 +1,141 @@
+Title: IBM IV52535: HISTORICAL DATA IS MISSING FOR KVM VM DATASTORE UTILIZATION ATTRIBUTE GROUP. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.2.0-TIV-ITM_VMWVI-FP0003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Monitoring+for+Virtual+Servers&fixids=7.2.0-TIV-ITM_VMWVI-FP0003&source=SAR]
+7.2.0.2-TIV-ITM_VMWVI-IF0003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Monitoring+for+Virtual+Servers&fixids=7.2.0.2-TIV-ITM_VMWVI-IF0003&source=SAR]
+IBM(R) Tivoli(R) Monitoring for Virtual Environments: VMware VI 7.2.0.2-TIV-ITM_VMWVI-IF0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24039291]
+IBM(R) Tivoli(R) Monitoring for Virtual Environments: VMware VI 7.2.0-TIV-ITM_VMWVI-FP0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24040186]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There is inconsistency in the historical data collection for the
+   attribute group KVM VM DATASTORE UTILIZAITON. In this attribute
+   group,
+   all the virtual machines listed under the column
+   Virtual_Machine are not
+   considered for summarization and results in missing data in
+   agent
+   reports. This is the issue with the design consideration
+   followed to
+   define primary keys for attribute group table
+   KVM_VM_DATASTORE_UTILIZATION.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  There is inconsistency in the historical data collection for the
+   attribute group KVM VM DATASTORE UTILIZAITON. In this attribute
+   group, all the virtual machines listed under the column
+   Virtual_Machine are not considered for summarization and results
+   in missing data in agent
+   reports. This is the issue with the design consideration
+   followed to define primary keys for attribute group table
+   KVM_VM_DATASTORE_UTILIZATION.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  There was inconsistent design consideration for a primary key
+   causing the historical data for the table
+   KVM_VM_DATASTORE_UTILIZATION not being consistently summarized
+   in summary table KVM_VM_DATASTORE_UTILIZATION_D. Hence added a
+   unique identifier in the attribute group
+   VM_Datastore_Utilization.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV52535
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF VE VM WARE
+   
+   
+ * REPORTED COMPONENT ID
+   5724L92VI
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-25
+   
+   
+ * CLOSED DATE
+   2014-01-09
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMF VE VM WARE
+   
+   
+ * FIXED COMPONENT ID
+   5724L92VI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

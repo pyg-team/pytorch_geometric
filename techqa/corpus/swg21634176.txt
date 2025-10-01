@@ -1,0 +1,57 @@
+Title: IBM StackOverflowException due to insufficient Java stack - United States
+
+Text:
+JMeter; CWPCM0002E:Generic error; CWSER0061E:Invalid index for position path; CWSER0110E:Unexpected offset; java.lang.RuntimeException; toString(); java.text.DateFormat.parse; ADMIN_MEMORY_FLAG; EVENTPROCESSOR_MEMORY_FLAG; QUEUEMANAGER_MEMORY_FLAG; SCHEDULER_MEMORY_FLAG; WORKFLOWENGINE_MEMORY_FLAG TECHNOTE (FAQ)
+
+QUESTION
+ I am seeing java.lang.StackOverflowError while running the application. Why am I getting this error and how can I prevent it? 
+
+CAUSE
+Every thread created in a Java program or Java Virtual Machine (JVM) has its own stack space which is independent of Java heap. The total stack size available to an application is determined during startup and that value determines the number of threads we can have; exceeding it will result in java.lang.StackOverflowError like the following:
+com.ibm.ws.webcontainer.servlet.ServletWrapper service SRVE0068E: Uncaught exception created in one of the service methods of the servlet utils.secure_invoker in application ccd_mdmprod-appsvr. Exception created : com.ibm.websphere.servlet.error.ServletErrorReport: java.lang.StackOverflowError 
+
+ at org.apache.jasper.runtime.PageContextImpl.handlePageException(PageContextImpl.java:695)
+at utils.secure_invoker._jspService(Unknown Source)
+at com.ibm.ws.webcontainer.jsp.runtime.HttpJspBase.service(HttpJspBase.java:103)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:831)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1657)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1597)
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebAppFilterChain.java:104)
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain._doFilter(WebAppFilterChain.java:77)
+at com.ibm.ws.webcontainer.filter.WebAppFilterManager.doFilter(WebAppFilterManager.java:908)
+...
+
+
+ANSWER
+To prevent this error, the stack size available to the application should be increased. Following are the steps to do so:
+1. Locate the service_mem_settings.ini file in the conf directory. This directory is usually under the $TOP/bin directory but may be in a custom location if you have horizontal clustering. 
+
+2. This file contains JVM arguments for the various services, for example, the following flag for the appserver process:
+APPSVR_MEMORY_FLAG=-Xmx1024m -Xms256m 
+
+The above entry illustrates that the maximum heap size is 1024 MB while the default starting heap size is 256 MB. To increase the heap size, we can add another -Xss argument to it:
+APPSVR_MEMORY_FLAG=-Xmx1024m -Xms256m -Xss2048k 
+
+The above entry will set the stack size to 2 MB and you may increase it further if that is not sufficient. This is applicable for all services and not just the appserver. 
+
+3. Restart the application using scripts under $TOP/bin/go directory. 
+
+ 
+
+Note:
+1. This issue is rare unless there are large data models. Usually the defaults are sufficient. 
+
+2. Setting the default stack space to a very large value can result in performance degradation. Start with 2 MB and increase it as needed.
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WPC 
+MDMCS
+MDMPIM
+MDM Server for PIM
+WebSphere Product Center
+InfoSphere MDM Server for PIM
+Infosphere Master Data Management Collaboration Server
+InfoSphere Master Data Management Server for Product Information Management

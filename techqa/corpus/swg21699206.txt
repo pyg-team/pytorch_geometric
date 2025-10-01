@@ -1,0 +1,186 @@
+Title: IBM PureData System for Analytics: Upgrade Matrix - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are the pre-requisites for upgrading my PureData appliance? 
+
+ANSWER
+ 
+
+Here is a chart of Pre-requisites: 
+
+Type of Upgrade IBM Netezza 100 IBM PureData System for Analytics N1001 IBM Netezza High-Capacity Appliance C1000 IBM PureData System for Analytics 
+N2001 IBM PureData System for Analytics 
+N2002 IBM PureData System for Analytics 
+N3001-001 IBM PureData System for Analytics 
+N3001-002+ [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] FDT 2.6.1 NPS 6.0.8+
+HPF 5.3.2+
+FDT 2.1.3+
+RHEL 5.7+ NPS 6.0.8+
+HPF 5.3.2+
+FDT 2.1.3+
+RHEL 5.7+ NPS 6.0.8+
+HPF 5.3.2+
+FDT 2.1.3+
+RHEL 5.7+ Not supported Not supported Not supported Not supported FDT 3.0.3 Not supported Not supported Not supported NPS 7.0.2+
+HPF 5.1+
+FDT 3.0+
+RHEL 6.2+ Not supported Not supported Not supported FDT 3.0.5 Not supported Not supported Not supported NPS 7.0.2+
+HPF 5.1+
+FDT 3.0+
+RHEL 6.2+ NPS 7.0.2+
+HPF 5.1+
+FDT 3.0+
+RHEL 6.2+ Not supported Not supported FDT 4.1.1.1 NPS 6.0.8+
+HPF 5.1+
+FDT 2.4 +
+RHEL 5.7+ NPS 6.0.8+
+HPF 5.1+
+FDT 2.4 +
+RHEL 5.7+ Not supported NPS 7.0.2.P6+
+HPF 5.1+
+FDT 3.0.3 +
+RHEL 6.5 NPS 7.0.4.P3+
+HPF 5.1+
+FDT 3.0.5 +
+RHEL 6.5 Not supported Not supported FDT 4.2.X Not supported Not supported Not supported Not supported Not supported NPS 7.2+
+HPF 5.4+
+FDT 4.2+
+RHEL 6.5+ NPS 7.2+
+HPF 5.4+
+FDT 4.2+
+RHEL 6.5+ FDT 4.3.X NPS 7.0.2.P6 +
+HPF 5.3.3+
+FDT 2.6.1 +
+RHEL 5.8+ NPS 7.0.2.P6 +
+HPF 5.3.3+
+FDT 2.6.1 +
+RHEL 5.8+ Not supported NPS 7.0.2.P6 +
+HPF 5.3.4+
+FDT 3.0.5.1 +
+RHEL 6.2+ NPS 7.0.4.P1 +
+HPF 5.3.4+
+FDT 3.0.5.1 +
+RHEL 6.4+ NPS 7.2.0.1 +
+HPF 5.4.1+
+FDT 4.2 +
+RHEL 6.5+ NPS 7.2.0.0.P1 +
+HPF 5.4+
+FDT 4.2.0.1 +
+RHEL 6.5+ [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] HPF 5.3.2 NPS
+HPF 4.13.+
+FDT 
+RHEL NPS
+HPF 4.13.+
+FDT 
+RHEL NPS
+HPF 4.13.+
+FDT 
+RHEL NPS
+HPF 4.13.+
+FDT 
+RHEL NPS
+HPF 4.13.+
+FDT 
+RHEL Not supported Not supported HPF 5.3.3 NPS
+HPF 4.13.+
+FDT 
+RHEL NPS
+HPF 4.13.+
+FDT 
+RHEL NPS
+HPF 4.13.+
+FDT 
+RHEL NPS
+HPF 4.13.+
+FDT 
+RHEL NPS
+HPF 4.13.+
+FDT 
+RHEL Not supported Not supported HPF 5.3.4 NPS
+HPF 4.13.+
+FDT 
+RHEL NPS
+HPF 4.13.+
+FDT 
+RHEL NPS
+HPF 4.13.+
+FDT 
+RHEL NPS
+HPF 4.13.+
+FDT 
+RHEL NPS
+HPF 4.13.+
+FDT 
+RHEL Not supported Not supported HPF 5.4 Not supported Not supported Not supported Not supported Not supported BASE BASE HPF 5.4.1 Not supported Not supported Not supported Not supported Not supported HPF 5.4+ Not supported HPF 5.4.0.1 Not supported Not supported Not supported Not supported Not supported Not supported HPF 5.4 + HPF 5.5 Not Supported NPS
+HPF 4.13.+
+FDT 
+RHEL 5.8+ Not supported NPS
+HPF 4.13.+
+FDT 
+RHEL 6.4+ NPS
+HPF 4.13.+
+FDT 
+RHEL 6.4+ Not supported NPS
+HPF 4.13.+
+FDT 
+RHEL 6.4+ HPF 5.6 Not Supported NPS
+HPF 5.3+
+FDT 
+RHEL 5.8+ Not supported NPS
+HPF 5.3+
+FDT 
+RHEL 5.8+ NPS
+HPF 5.3+
+FDT 
+RHEL 6.4+ Not supported NPS
+HPF 5.3+
+FDT 
+RHEL 6.4+ [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] RHEL 5.5 RHEL 5.3 RHEL 5.3 RHEL 5.3 Not supported Not supported Not supported Not supported RHEL 5.7 RHEL 5.5 RHEL 5.5 RHEL 5.5 Not supported Not supported Not supported Not supported RHEL 5.8 RHEL 5.7 RHEL 5.7 RHEL 5.7 Not supported Not supported Not supported Not supported RHEL 5.9 NPS 
+HPF 5.3.+
+FDT 2.6.1 +
+RHEL 5.8 NPS
+HPF 5.3.+
+FDT 2.6.1+
+RHEL 5.8 Not supported Not supported Not supported Not supported Not supported RHEL 5.10 NPS 7.0.+
+HPF 5.3.4+
+FDT 4.1.1.1
+RHEL 5.9 NPS 7.0.+
+HPF 5.3.4+
+FDT 4.1.1.1
+RHEL 5.9 Not supported Not supported Not supported Not supported Not supported RHEL 5.11 NPS 7.0.+
+HPF 5.3.4+
+FDT 4.1.1.1
+RHEL 5.8+ NPS 7.0.+
+HPF 5.3.4+
+FDT 4.1.1.1
+RHEL 5.8+ NPS 7.0.+
+HPF 5.3.4+
+FDT 2.6+
+RHEL 5.8+ Not supported Not supported Not supported Not supported RHEL 6.4 Not supported Not supported Not supported NPS 7.0.2+
+HPF 5.3.+
+FDT 4.1.1.1
+RHEL 6.2+ NPS 7.0.2.+
+HPF 5.3.+
+FDT 4.1.1.1
+RHEL 6.2+ [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] RHEL 6.5** Not supported Not supported Not supported NPS 7.0.2.P6+
+HPF 5.3.4+
+FDT 4.1.1.1
+RHEL 6.4+ NPS 7.0.4.P3+
+HPF 5.3.4+
+FDT 4.1.1.1
+RHEL 6.4 + [/support/docview.wss?uid=swg21699206&amp;aid=1] [/support/docview.wss?uid=swg21699206&amp;aid=1] RHEL 6.6 Not supported Not supported Not supported NPS 7.0.2.P6+
+HPF 5.3.5+
+FDT 4.3+
+RHEL 6.4 NPS 7.0.2.P6+
+HPF 5.3.5+
+FDT 4.3+
+RHEL 6.4+ NPS 7.0.2.P6+
+HPF 5.3.5+
+FDT 4.3+
+RHEL 6.4+ NPS 7.0.2.P6+
+HPF 5.3.5+
+FDT 4.3+
+RHEL 6.4+

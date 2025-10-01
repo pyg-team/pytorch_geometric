@@ -1,0 +1,156 @@
+Title: IBM PI61292: "CACHE SESSION TIMEOUT" SETTING APPEARS TO BE VALID FOR THE C&DSADMINISTRATION PORTAL ONLY. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a customer sets the C&DS Admistration Portal > Security >
+   Cache Session Timeout value to 1 minute, it has been observed
+   that only the Administration Portal will ask for the user to
+   enter their C&DS login credentials again after the minute
+   timeout has passed.
+   
+   Deployment Manager Client and Deployment Manager Browser
+   continues the session as if there were no idle moments.
+   
+   According to documentation, by default all logins are cached. As
+   long as there is no activity from the same session, the cache
+   will be invalidated after this period passes.
+   
+   Current experience suggests that this is only applicable to the
+   Admin Portal and that the same should be expected from DM
+   Client and Predictive Browser.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This behaviour is functioning as designed. The setting 'Cache
+   Session Timeout' is only applicable to the Deployment Manager
+   Administration Portal (http://<host>:<port>/config).
+   
+   Deployment Manager Client uses session-less SOAP calls (user
+   token is passed and authenticated with each SOAP call), and is
+   not affected by this setting.
+   
+   The "cache session" would only apply to the thin clients (ie.
+   PEA, PEB), however, there is a "ping back" feature in PEB that
+   will keep the session alive, by design, so it can accommodate
+   longer running jobs without timing out the session. Therefore,
+   if the browser is open to PEB and is "pinging back" to the
+   server (which is invisible to the user), it's possible that the
+   session will not time out.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * This affects all users of IBM SPSS C&DS.                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * "CACHE SESSION TIMEOUT" SETTING APPEARS TO BE VALID FOR THE  *
+   * C&DS ADMINISTRATION PORTAL ONLY.                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM SPSS C&DS 8.1 to resolve this          *
+   * documentation issue.                                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This documentation issue has been resolved in IBM SPSS C&DS 8.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This documentation issue has been reported to the IBM SPSS
+   Collaboration and Deployment Services development team and will
+   be addressed in a future release of our product.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI61292
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS CADS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A72CD
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-21
+   
+   
+ * CLOSED DATE
+   2017-06-20
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

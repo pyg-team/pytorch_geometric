@@ -1,0 +1,188 @@
+Title: IBM PI68898: DIAGNOSTIC APAR FOR LOGGER I/O WAIT AFTER ROB PROTOCOL VIOLATION - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Thread hang / wait occurred in LOGGER module DSNJW101 for a LOG
+   I/O, after a ROB protocol violation occurred. Usermod AN48781
+   has been created to capture further diagnostics and will now be
+   incorporated into an apar.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All DB2 users.                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Hang caused by a thread that was        *
+   *                      resumed but left in a paused state.     *
+   *                                                              *
+   *                      ABEND04E RC00E50079 DSNRLLM1.DSNRCRSC   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A thread was resumed but remained in a paused state because it
+   paused using a Pause Element Token (PET) that was different
+   than the PET used on the release, leaving the thread hanging.
+   Dumps were collected many hours after the suspend and resume
+   but they did not have any useful information on how two
+   different PETs were used.  A dump that is much closer to when
+   the suspend and resume error occurred is needed for diagnosis.
+   
+   For V10, this APAR retrofits V11 diagnostic APAR PI55964 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI55964]
+   to capture errors in the suspend and resume protocol that will
+   cause a hang.
+   
+   For both V10 and V11, this APAR fixes a problem that could
+   cause two agents to incorrectly use the same control block
+   that contains the Pause Element Token.  This could cause the
+   hang due to the wrong Pause Element Token being used on the
+   resume or various abends such as the ABEND04E RC00E50079
+   DSNRLLM1.DSNRCRSC.  This problem occurs when a synchronous
+   system check point request is cancelled.  When the cancel
+   occurred, there was an error in the suspend and resume
+   protocol for releasing the control block that contains
+   the Pause Element Token, allowing two agents to incorrectly
+   use the same block.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  For V10, suspend processing has been updated to save the
+   control block containing the PET on entry, and to check for
+   inconsistencies related to the control block prior to
+   performing the pause.  If an inconsistency is detected,
+   an ABEND will be issued to allow recovery to take a SVC dump.
+   An attempt will then be made to recover from the inconsistency
+   to avoid a hang.  If the control block becomes inconsistent
+   after the pause has been performed, a hang will still occur,
+   but the saved copy of the control block will give additional
+   clues for investigating the hang.
+   
+   For V10 and V11, the cancel processing for the system
+   check point request was fixed to follow the suspend and
+   resume protocol for releasing the control block that
+   contains the PET.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI68898
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-10
+   
+   
+ * CLOSED DATE
+   2016-12-06
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI43135 UI43136
+   
+   
+
+MODULES/MACROS
+ *  DSNRCRQS DSNVSRRX DSNVSRX
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY UI43135 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI43135]
+   UP16/12/22 P F612
+   
+   
+ * RB10 PSY UI43136 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI43136]
+   UP16/12/22 P F612
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

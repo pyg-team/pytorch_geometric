@@ -1,0 +1,113 @@
+Title: IBM QRadar 7.2.6: Converting event or flow indexes on older data to the new super index format - United States
+
+Text:
+superindex; indexes; QRadar; 7.2.6; search performance TECHNOTE (FAQ)
+
+QUESTION
+ Can I convert for my existing event and flow indexes from QRadar 7.2.5 to the new super index format that is available in QRadar 7.2.6? 
+
+ANSWER
+After upgrading to QRadar 7.2.6, new event and flow data collected is automatically converted to the super index format. However, existing data collected for QRadar 7.2.5 is not converted and still uses the previous index format. Administrators can follow the procedure in this technical note to convert 7.2.5 indices to the new 7.2.6 super index format. 
+
+
+For more information on super indexes, see our QRadar 7.2.6 Open Mic discussion on this topic: https://www.youtube.com/watch?v=41_XKUotV3s&list=PLFip581NcL2XB_5aRgUdZXMKEnZBqDBpU&index=4 [https://www.youtube.com/watch?v=41_XKUotV3s&list=PLFip581NcL2XB_5aRgUdZXMKEnZBqDBpU&index=4].
+
+
+
+Why are super indexes important? 
+In QRadar 7.2.6, event and flow data written to disk is indexed for specific types of data. now to take advantage of the new super indexes feature. Super indexes can improve search performance up to 10x for indexed value searches over the previous format, as well as being more compact to save on appliance disk space. Administrators must be on QRadar 7.2.6 to use Super Indexes. All new data received by the system that is upgraded to QRadar 7.2.6 will be automatically indexed using the new index format. 
+
+
+
+Do I need to update my index format?
+No, updating 7.2.5 indexes is not required. Indexes written in the 7.2.5 format are still usable and fully searchable, however, they do not have the same performance as a super index when searching indexed values. The value of converting standard indexes depends on how long administrators retain data on their system and if you have already upgraded to 7.2.6 or not. 
+
+
+
+How does this process work?
+Customers who recently upgraded to QRadar 7.2.6 can convert existing indexes to the new super index format using the command-line. Index files are on each QRadar appliance that runs search queries, such as Event Processors, Flow Processors, Data Nodes, Consoles, and All-in-One appliances. The administrator will have to use ariel_offline_indexer.sh utility from the command-line on every EP/FP/DNode/console in deployment.
+
+The purpose of this script is to reads 7.2.5 indexes in to memory and convert the existing index to the new super index format. After the script completes the index conversion, the old QRadar 7.2.5 index is removed to save disk space.
+
+A sample command that creates super index on events for events will looks like this: /opt/qradar/bin/ariel_offline_indexer.sh -n events -v -s -d TimeinMinutes
+
+The time designated in the command-line determines how far back from the present time that the offline indexer looks back to update ariel indexes. For example, this command looks back 1 week for 7,.2.5 index files to convert: /opt/qradar/bin/ariel_offline_indexer.sh -n events -v -s -d 10080
+
+
+
+Can the index conversion be run while the appliances are collecting data?
+Yes, this conversion process can run while data is being collected. This script looks back in time to locate QRadar 7.2.5 indexes and converts them to the new 7.2.6 super index format that provides a significant search performance boost. 
+
+The following appliances create indexes in QRadar: 
+
+ * Event Processors (16xx) 
+ * Data Nodes (14xx) 
+ * Flow Processor (17xx) 
+ * Combination Event and Flow Processors (18xx) 
+ * Consoles and All-in-One appliances (31xx or 21xx)
+   
+   IMPORTANT: The conversion process can run on systems while normal event collection is occurring, however, appliances that are near hardware capacity might want to start this process during a maintenance window. An example of an appliance that is near capacity would be as an Event Processor handling close to 20,000 EPS on hardware validated with a maximum limit of 20,000 EPS. This is not license related, but a capacity issue of the hardware. On these systems, administrators might want to start convert indexes to super indexes during a maintenance window hours to prevent slowing down high-capacity systems.
+
+
+
+
+How long does this process typically take (Testing your system)? 
+To convert QRadar 7.2.5 indexes to super indexes, administrators must run this script on each appliance that processes event data, such as Event Processors, Flow Processors, Data Nodes, Consoles, or All-in-Ones. Estimates during tests show that it takes approximately 6-8 minutes to convert an hour of indexes. 
+ 
+
+
+To confirm an average conversion time for your system, administrators can run a test on a recently upgraded 7.2.6 appliance. It is recommended that administrators run the ariel_offline_indexer script looking back 1 day to get an estimate of how long the data files take to convert, then run the script for the last week to test the time it takes to convert one day's worth of 7.2.5 index to 7.2.6 super indexes. After you have converted the data, the users or administrator can attempt a search using one of the indexed values to see the change in performance. Then administrators can determine how far back 7.2.5 data exists (based on retention settings) and convert that data to the new super index format. Depending on how far back administrators typically search, they can create super indexes for those time frames. There is no need to create super indexes for the last year of event or flow data, unless there is a need to search back that far. 
+
+
+
+Is there a recommended procedure to follow? 
+Yes, after upgrading to QRadar 7.2.6, administrators should start by testing the conversation to determine how long it will take on average for their appliance. 
+
+
+ * Before you begin
+ *  Administrators can view the script help from the command link by typing: ./ariel_offline_indexer.sh --help. If super indexes already exist on the appliance, the indexes are skipped and the script continues to search the time frame for 7.2.5 indexes that need to be converted. The script will not touch existing super indexes and these files are bypassed. 
+
+
+
+ * Procedure
+ *  Using SSH, log in to the QRadar Console as the root user. Open an SSH session to the QRadar appliance you want to convert 7.2.5 indexes on. Navigate to the following directory: /opt/qradar/bin Optional. Run a test command to determine the time it takes to convert indexes for one day (1440 minutes). 
+   
+   For example: 
+   ./ariel_offline_indexer.sh -n events -v -s -d 1440
+   OR
+   ./ariel_offline_indexer.sh -n flows -v -s -d 1440
+   
+   As the script converts indexes, a list of newly created indexes is displayed, along with the conversion time. The administrator can use this to determine how long it will take to convert data farther back in time on the appliance.
+   
+   Note: For longer conversions, administrators might want to start a screen session. To start a screen session, from the command-line type: screen 
+   Run the command and expand the time frame to create super indexes as far back as required.
+   
+   For example: 
+   ./ariel_offline_indexer.sh -n events -v -s -d 10080
+   OR
+   ./ariel_offline_indexer.sh -n flows -v -s -d 10080
+   Wait for the conversion to complete. 
+   
+   Note: If your SSH session becomes disconnected, you can reattach to the existing screen session. 
+   Repeat this procedure on other QRadar appliances or for other data types (events or flows) on your appliance. The script can convert indexes for either events or flows and each conversion must be run separately. 
+   
+   
+   
+   
+   Common time intervals Minutes 1 hour 60 6 hours 360 12 hours 720 1 day 1440 1 week 10080 2 weeks 20160 3 weeks 30240 1 month 43800 2 months 87600 6 months 262800 1 year 525600 
+ * 
+   
+   
+   
+ * 
+   
+   If you have questions about anything in this technical note, you can always ask us in our forums. 
+   
+   
+   
+
+------- 
+Where do you find more information? 
+
+
+[/support/docview.wss?uid=swg21968002&aid=1] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21968002&aid=2] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21968002&aid=3] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21968002&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21968002&aid=5] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21968002&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21968002&aid=7] [http://ibm.biz/SuptRegQuikStart]

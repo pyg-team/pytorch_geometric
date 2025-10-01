@@ -1,0 +1,31 @@
+Title: IBM How can I set a timer for RTIMOUT and DTIMOUT in LU6.2 ? - United States
+
+Text:
+IWP Related TECHNOTE (FAQ)
+
+QUESTION
+ I'm using RTIMOUT and DTIMOUT to write online common programming interfaces for communications (CPIC) programs. The CPIC programs communicate between two Customer Information Control Systems (CICSs). 
+
+Their setup is:
+
+Client side...............Server side
+
+Tran A (CICS A) —> Tran B (CICS B)
+
+Tran A issues a CPIC receive command. Until it gets a response from tran B, tran A waits for tran B to respond. 
+
+I want to set a timer for tran A so if tran B does not respond, tran A will return to the program, which will handle the transaction. By implementing the RTIMOUT parameter in tran A, tran A will abend if the time exceeds the limit in RTIMOUT. My questions are:
+
+1. Is this the only method to handle a timing issue between tran A and tran B?
+2. Can DTIMOUT be used in this case? In the CICS/ESA Intercommunication Guide, both DTIMOUT and RTIMOUT are mentioned. 
+3. If tran A is a conversation type of transaction, can RTIMOUT be coded? RTIMOUT will be used by the transaction even though it is waiting for the user's input.
+4. What does the sentence, "CICS inhibits deadlock time-out at certain points," mean? I found this in the Resource Definition Online manual. 
+
+ANSWER
+1. The RTIMOUT method is the only method that controls the timing on an advanced program-to-program communication (APPC) connection. 
+
+2. RTIMOUT is timeout on a read/receive as defined in profile. DTIMOUT is the transaction definition to purge the task on deadlock situation, or on a wait on resources. 
+
+3. RTIMOUT is defined in profile uses by transaction, or in the ALLOCATE command. You cannot change the RTIMOUT once the transaction is started. RTIMOUT functions similarly in a conversational-type transaction. 
+
+4. "CICS inhibits deadlock time-out at certain points" means that DTIMOUT doesn't work in certain situations, such as in terminal input/output waits and certain file input/output waits. For example, if you use DTIMOUT in transaction B the transaction hangs on a wait for a DL/I resource. DTIMOUT is set to 10 seconds. When the 10 seconds expire, instead of the transaction being purged, it is abended the moment the resource is available. You have set purge to "yes" and a value is specified for DTIMOUT, so the task should be purged when DTIMOUT expires. A task might not be purged if it were in a state unsuitable for an abnormal termination. However, because the transaction was abended as soon as the DL/I resource was freed, the task is in a state suitable for an abnormal termination. This is why DTIMOUT might not work in some situations.

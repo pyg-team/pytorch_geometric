@@ -1,0 +1,30 @@
+Title: IBM Monitoring of monitor Oracle DBMS Jobs status - United States
+
+Text:
+oracle dbms jobs schedule monitoring status extended how to itm TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to monitor the status (failed, overrun, etc) of the Oracle DBMS Jobs using Oracle Extended agent ? 
+
+ANSWER
+The Oracle Extended agent currently does not have a specific attribute group to monitor the status of the Oracle Jobs. 
+
+Anyway, you can leverage on the feature called Customized SQL to implement your own monitoring of the wanted information. 
+The following link provides detail about the Customized SQL feature and how to configure it: 
+
+http://www-01.ibm.com/support/knowledgecenter/SS3JRN_7.2.0/com.ibm.itcama.doc_7.1/oracleextended/fac_config_agentspecific_definingsql.html [http://www-01.ibm.com/support/knowledgecenter/SS3JRN_7.2.0/com.ibm.itcama.doc_7.1/oracleextended/fac_config_agentspecific_definingsql.html]
+
+Basically, you may want to identify the table where those information are maintained and use an SQL query to extract them from the table. 
+
+For example if you are using DBMS Scheduler, you can use table DBA_SCHEDULER_JOBS. 
+
+This is a link from Oracle portal explaining something more about monitoring of the DBMS jobs: 
+
+http://docs.oracle.com/cd/B28359_01/server.111/b28310/schedadmin002.htm [http://docs.oracle.com/cd/B28359_01/server.111/b28310/schedadmin002.htm] 
+
+Using the Customized SQL you can extract all the information highlighted in the above article and have them displayed on TEP.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM Extended Oracle Agent V6.3.1

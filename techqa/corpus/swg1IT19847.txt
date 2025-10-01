@@ -1,0 +1,216 @@
+Title: IBM IT19847: IBM MQ JMS application using MQ RA fails with MQJCA1011: Failed to allocate a JMS connection - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An IBM MQ classes for JMS application running within a JEE
+   application server with the MQ V7.5 JCA Resource Adapter
+   received the following error:
+   
+     MQJCA1011: Failed to allocate a JMS connection
+   
+   An FFDC is generated reporting a
+   java.util.ConcurrentModificationException, similar to the below:
+   
+   Source Class     :-
+   com.ibm.msg.client.jms.internal.JmsProviderExceptionListener
+   ProbeID          :- XJ008001
+   Thread           :- name=JMSCCThreadPoolWorker-3
+                       priority=5
+                       group=JMSCCThreadPool
+                       ccl=ModuleClassLoader for Module
+   "deployment.wmq.jmsra-7.5.0.6.rar:main" from Service Module
+   Loader  Data
+   ----
+     StackTrace:1  :-  java.util.ConcurrentModificationException
+   at
+   java.util.ArrayList$Itr.checkForComodification(ArrayList.java:90
+   1)
+   at java.util.ArrayList$Itr.next(ArrayList.java:851)
+   at
+   com.ibm.mq.connector.outbound.ConnectionEventHandler.fireEvent(C
+   onnectionEventHandler.java:129)
+   at
+   com.ibm.mq.connector.outbound.ManagedConnectionImpl.onException(
+   ManagedConnectionImpl.java:848)
+   at
+   com.ibm.msg.client.jms.internal.JmsProviderExceptionListener.run
+   (JmsProviderExceptionListener.java:427)
+   at
+   com.ibm.msg.client.commonservices.workqueue.WorkQueue1tem.runTas
+   k(WorkQueueItem.java:214)
+   at
+   com.ibm.msg.client.commonservices.workqueue.SimpleWorkQueueItem.
+   runItem(SimpleWorkQueueItem.java:105)
+   at
+   com.ibm.msg.client.commonservices.workqueue.WorkQueue1tem.run(Wo
+   rkQueueItem.java:229)
+   at
+   com.ibm.msg.client.commonservices.workqueue.WorkQueueManager.run
+   WorkQueueItem(WorkQueueManager.java:303)
+   at
+   com.ibm.msg.client.commonservices.j2se.workqueue.WorkQueueManage
+   rImplementation$ThreadPoolWorker.run(WorkQueueManagerImplementat
+   ion.java:1241)
+   
+   |   Message    :-  JMSCC1026
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the:
+   
+     - WebSphere MQ V7.5 JCA Resource Adapter
+     - IBM MQ V8.0.0.0 and V8.0.0.1 JCA Resource Adapter
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   After detecting a broken connection for a pooled JMS Connection
+   object, the MQ JCA Resource Adapter invoked a callback on the
+   object:
+   
+       javax.resource.spi.ConnectionEventListener
+   
+   which was previously registered by the application server to
+   inform the container of the event.  This, in turn, resulted in
+   the application server calling back into the MQ JCA Resource
+   Adapter to perform clean-up and closure operations on the
+   affected pooled ManagedConnection object.  The result of this
+   clean-up was that a:
+   
+       java.util.ConcurrentModificationException
+   
+   was thrown by the MQ JCA Resource Adapter, and a FFDC was
+   generated.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQ JCA Resource Adapter code has been updated to prevent a:
+   
+       java.util.ConcurrentModificationException
+   
+   being thrown in the scenario described above.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.9
+   v8.0       8.0.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT19847
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-23
+   
+   
+ * CLOSED DATE
+   2017-06-23
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7241
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

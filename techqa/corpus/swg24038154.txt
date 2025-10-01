@@ -1,0 +1,47 @@
+Title: IBM Cognos Disclosure Management 10.2.3 Fix Pack 1 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ Cognos Disclosure Management 10.2.3 FP1 provides important corrections and enhancements for Cognos Disclosure Management 10.2.3 products and should be applied to all installations. 
+
+DOWNLOAD DESCRIPTION
+This Fix Pack is an update of IBM Cognos Disclosure Management 10.2.3 for existing IBM Cognos Disclosure Management customers. New features have been added to this Fix Pack including
+
+
+ *  COREP/FINREP
+
+
+In addition, this Fix Pack includes fixes addressing defects. PREREQUISITES
+This Fix Pack requires an existing installation of Cognos Disclosure Management 10.2.3.
+
+INSTALLATION INSTRUCTIONS
+In environments with UAC (both Client and Server), it is recommend that you run the installers with the 'Run as Administrator' option.
+
+Also, please note that once you have installed the Fix Pack, there is an Interim Fix that you will need to install to fix APAR PI32246:
+http://www-01.ibm.com/support/docview.wss?uid=swg21694135 [http://www-01.ibm.com/support/docview.wss?uid=swg21694135]
+
+You can find details on the Interim Fix located at:
+
+
+URL LANGUAGE SIZE(Bytes) Cognos Disclosure Management 10.2.3 Knowledge Center [http://www-01.ibm.com/support/knowledgecenter/SSQK59_10.2.3/com.ibm.swg.ba.cognos.cdm.doc/welcome.html?cp=SSQK59_10.2.3%2F0] English 99 Cognos Discl Mgmt 10.2.3 & 10.2.3.1 Product Docs [http://www-01.ibm.com/support/docview.wss?uid=swg27041677] English 99 Cognos Disclosure Management 10.2.3.1 Release Notes [http://www-01.ibm.com/support/knowledgecenter/SSQK59_10.2.3/com.ibm.swg.ba.cognos.cdm_rn.10.2.3.1.doc/c_relnotes_cdm_get_strt.html?cp=SSQK59_10.2.3] English 99 
+DOWNLOAD PACKAGE
+The Cognos Disclosure Management 10.2.3 FP1 Windows link is for the Cognos Disclosure Management 10.2.3 Windows installation. 
+
+The Cognos Discl Mgmt with Data Agg 10.2.3 FP1 Windows link is for the Cognos Disclosure Management 10.2.3 with Data Aggregation 10.2.3 Windows installation. 
+
+You can determine which version you have by the license that came with the product, which is located at the drive where you installed Cognos Disclosure Management typically under the following folder structure: 
+
+
+ * 
+
+
+PROBLEMS SOLVED
+Cognos Disclosure Management 10.2.3 FP1 Fix List [http://www.ibm.com/support/docview.wss?uid=swg27041786#tab_1023FP1]
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Cognos Disclosure Management 10.2.3 FP1 Windows 16 Dec 2014 Language Independent 151654227 FC [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Cognos&product=ibm/Information+Management/Cognos+Disclosure+Management&release=All&platform=Windows&function=fixId&fixids=10.2.3-BA-CDM-Windows-FP001&includeSupersedes=0] [ ] Cognos Discl Mgmt with Data Agg 10.2.3 FP1 Window 16 Dec 2014 Language Independent 151647689 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Cognos&product=ibm/Information+Management/Cognos+Disclosure+Management&release=All&platform=Windows&function=fixId&fixids=10.2.3-BA-CDMDA-Windows-FP001&includeSupersedes=0] [ ]

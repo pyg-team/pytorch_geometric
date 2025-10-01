@@ -1,0 +1,161 @@
+Title: IBM Security Bulletin:  IBM Sterling Order Management and IBM Sterling Configure, Price, Quote are affected by multiple Apache Struts 2 security vulnerabilities. - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM Sterling Order Management and IBM Sterling Configure Price Quote use Apache Struts 2 and are affected by some of the vulnerabilities that exist in Apache Struts 2. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2013-4310 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-4310] 
+
+Description:
+
+Apache Struts 2.0.0 through 2.3.15.1 allows remote attackers to bypass access controls via a crafted action: prefix.
+
+CVSS Base Score: 5.8
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/87336 [https://exchange.xforce.ibmcloud.com/vulnerabilities/87336] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:P/A:N) 
+
+CVEID: CVE-2013-4316 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-4316] 
+
+DESCRIPTION: 
+
+An unspecified error in Apache Struts related to the default enabling of Dynamic Method Invocation (DMI) could lead to remote code execution. 
+
+CVSS Base Score: 10
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/87373 [https://exchange.xforce.ibmcloud.com/vulnerabilities/87373] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:C/I:C/A:C) 
+
+CVEID: CVE-2013-2251 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-2251] 
+
+Description:
+
+Apache Struts 2.0.0 through 2.3.15 allows remote attackers to execute arbitrary OGNL expressions via a parameter with a crafted (1) action:, (2) redirect:, or (3) redirectAction: prefix.
+
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/85756 [https://exchange.xforce.ibmcloud.com/vulnerabilities/85756] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:P/A:P)
+
+CVEID: CVE-2013-2248 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-2248] 
+
+Description:
+
+Multiple open redirect vulnerabilities in Apache Struts 2.0.0 through 2.3.15 allow remote attackers to redirect users to arbitrary web sites and conduct phishing attacks via a URL in a parameter using the (1) redirect: or (2) redirectAction: prefix. 
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/85755 [https://exchange.xforce.ibmcloud.com/vulnerabilities/85755] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N)
+
+CVEID: CVE-2013-2135 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-2135] 
+
+Description:
+
+Apache Struts 2 before 2.3.14.3 allows remote attackers to execute arbitrary OGNL code via a request with a crafted value that contains both "${}" and "%{}" sequences, which causes the OGNL code to be evaluated twice. 
+
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/84763 [https://exchange.xforce.ibmcloud.com/vulnerabilities/84763] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:P/A:P)
+
+CVEID: CVE-2013-2134 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-2134] 
+
+Description:
+
+Apache Struts 2 before 2.3.14.3 allows remote attackers to execute arbitrary OGNL code via a request with a crafted action name that is not properly handled during wildcard matching, a different vulnerability than CVE-2013-2135.
+
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/84762 [https://exchange.xforce.ibmcloud.com/vulnerabilities/84762%20] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:P/A:P)
+
+CVEID: CVE-2013-2115 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-2115] 
+
+Description:
+
+Apache Struts 2 before 2.3.14.2 allows remote attackers to execute arbitrary OGNL code via a crafted request that is not properly handled when using the includeParams attribute in the (1) URL or (2) A tag. NOTE: this issue is due to an incomplete fix for CVE-2013-1966. 
+
+
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/84543 [https://exchange.xforce.ibmcloud.com/vulnerabilities/84543%20] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:P/A:P)
+
+CVEID: CVE-2013-1966 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-1966] 
+
+Description:
+
+Apache Struts 2 before 2.3.14.1 allows remote attackers to execute arbitrary OGNL code via a crafted request that is not properly handled when using the includeParams attribute in the (1) URL or (2) A tag. 
+
+
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/84542 [https://exchange.xforce.ibmcloud.com/vulnerabilities/84542] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:P/A:P)
+
+CVEID: CVE-2013-1965 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-1965]
+
+
+Description:
+
+Apache Struts Showcase App 2.0.0 through 2.3.13, as used in Struts 2 before 2.3.14.1, allows remote attackers to execute arbitrary OGNL code via a crafted parameter name that is not properly handled when invoking a redirect. 
+
+CVSS Base Score: 6.8
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/85573 [https://exchange.xforce.ibmcloud.com/vulnerabilities/85573] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:P/A:P)
+
+AFFECTED PRODUCTS AND VERSIONS
+Sterling Order Management 8.5
+IBM Sterling Selling and Fulfillment Foundation 9.0
+IBM Sterling Selling and Fulfillment Foundation 9.1.0
+IBM Sterling Selling and Fulfillment Foundation 9.2.0
+IBM Sterling Selling and Fulfillment Foundation 9.2.1
+IBM Sterling Field Sales 9.0
+IBM Sterling Field Sales 9.1.0
+IBM Sterling Field Sales 9.2.0
+IBM Sterling Field Sales 9.2.1
+
+REMEDIATION/FIXES
+The recommended solution is to apply two fix packs sequentially, the security fix pack (SFP) and then followed by the fix pack (FP) as soon as practical. Please see below for information about the available fixes. 
+
+
+
+
+Product Security Fix Pack* Fix Pack* How to acquire fix IBM Sterling Selling and Fulfillment Foundation 9.2.1 9.2.1-SFP1 9.2.1-FP7 http://www-933.ibm.com/support/fixcentral/options [http://www-933.ibm.com/support/fixcentral/options]
+
+Select appropriate VRMF IBM Sterling Selling and Fulfillment Foundation 9.2.0 9.2.0- SFP1 9.2.0-FP29 http://www-933.ibm.com/support/fixcentral/options [http://www-933.ibm.com/support/fixcentral/options]
+
+Select appropriate VRMF IBM Sterling Selling and Fulfillment Foundation 9.1.0 9.1.0- SFP1 9.1.0-FP57 http://www-933.ibm.com/support/fixcentral/options [http://www-933.ibm.com/support/fixcentral/options]
+
+Select appropriate VRMF IBM Sterling Selling and Fulfillment Foundation 9.0.0 9.0.0- SFP1 9.0.0-FP82 https://www14.software.ibm.com/webapp/iwm/web/reg/signup.do?source=swg-SterlngLegacyreq&lang=en_US [https://www14.software.ibm.com/webapp/iwm/web/reg/signup.do?source=swg-SterlngLegacyreq&lang=en_US] Sterling Order Management 8.5 8.5- SFP1 8.5-HF103 https://www14.software.ibm.com/webapp/iwm/web/reg/signup.do?source=swg-SterlngLegacyreq&lang=en_US [https://www14.software.ibm.com/webapp/iwm/web/reg/signup.do?source=swg-SterlngLegacyreq&lang=en_US] IBM Sterling Field Sales 9.0 SFS9.0-SFP1 SFS9.0-HF6 https://www14.software.ibm.com/webapp/iwm/web/reg/signup.do?source=swg-SterlngLegacyreq&lang=en_US [https://www14.software.ibm.com/webapp/iwm/web/reg/signup.do?source=swg-SterlngLegacyreq&lang=en_US] IBM Sterling Field Sales 9.1.0 SFS9.1.0- SFP1 SFS9.1.0-FP15 http://www-933.ibm.com/support/fixcentral/options [http://www-933.ibm.com/support/fixcentral/options]
+
+Select appropriate VRMF IBM Sterling Field Sales 9.2.0 SFS9.2.0- SFP1 SFS9.2.0-FP4 http://www-933.ibm.com/support/fixcentral/options [http://www-933.ibm.com/support/fixcentral/options]
+
+Select appropriate VRMF IBM Sterling Field Sales 9.2.1 SFS9.2.1- SFP1 SFS9.2.1-FP2 http://www-933.ibm.com/support/fixcentral/options [http://www-933.ibm.com/support/fixcentral/options]
+
+Select appropriate VRMF WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 31/1/2014 : Original Copy Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

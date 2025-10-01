@@ -1,0 +1,78 @@
+Title: IBM How to fix the error "fglpc: error while loading shared libraries: libifsql.so: cannot open shared object file: No such file or directory" - United States
+
+Text:
+fglpc; loading; shared; libraries; such; file; directory; 4GL; SQL; RDS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to fix the error "fglpc: error while loading shared libraries: libifsql.so: cannot open shared object file: No such file or directory" using the IBM Informix Tools products. 
+
+SYMPTOM
+ 
+
+After the installation of the IBM® Informix Tools the programs might not start because they can not find the correct libraries and the programs fail with the error :
+
+
+fglpc: error while loading shared libraries: libifsql.so: cannot open shared object file: No such file or directory
+
+
+CAUSE
+
+Environment variable LD_LIBRARY_PATH is missing or it has a wrong setting.
+
+
+RESOLVING THE PROBLEM
+ 
+
+1. Check the installation order of the IBM Informix products, it can be done checking the file $INFORMIXDIR/etc/.snfile, installation should follow the order that is mentioned below: 
+
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+2. Set the environment variable LD_LIBRARY_PATH, it sets the path to the library file that the IBM Informix products uses, it has to be set to: 
+
+ * LD_LIBRARY_PATH=$INFORMIXDIR/lib:$INFORMIXDIR/lib/esql:$INFORMIXDIR/lib/tools;
+ * 
+ * 
+ * Note:
+ * 
+ * LD_LIBRARY_PATH
+ * 
+ * LIBPATH
+ * 
+ * SHLIB_PATH
+ * 
+ * 
+ * 
+
+In the AIX case the error message should be: 
+
+ * exec(): 
+ * 
+ * 0509-036 Cannot load program isql because of the following errors:
+ * 
+ * 0509-150 Dependent module libifsql.so could not be loaded.
+ * 
+ * 0509-022 Cannot load module libifsql.so.
+ * 
+ * 0509-026 System error: A file or directory in the path name does not exist.
+ * 
+ * 
+
+ * If the environment variable LD_LIBRARY_PATH is set but you get the error message fglpc: error while loading shared libraries: libifsql.so: cannot open shared object file: No such file or directory, please check that it has been set to the correct library paths shown previously.
+
+ * Verify that the file shown in the error message, in this case libifsql.so, exists in the correct directory $INFORMIXDIR/lib/esql. If the file does not exist you have to re-install the IBM Informix products following the order shown in the first step, or restore it from a system backup file.
+
+
+Note: This error also occurs when you have installed tools (4gl, r4gl, ..) 64 bits in the same directory with CSDK 32 bits.

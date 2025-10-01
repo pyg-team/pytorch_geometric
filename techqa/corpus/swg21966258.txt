@@ -1,0 +1,33 @@
+Title: IBM Configuring RTC web to use smart card / certificate login - United States
+
+Text:
+rtc; smart card; certificate; sslclientauth; allowFailOverToBasicAuth TECHNOTE (FAQ)
+
+QUESTION
+ How do you configure IBM Rational Team Concert (RTC) web to use smart card login? 
+
+CAUSE
+You would like to understand what steps are needed to configure RTC web to use smart card login.
+
+ANSWER
+The steps to enable smart card authentication for RTC and in general IBM Collaborative Lifecycle Management (CLM) applications is as explained in the jazz.net article Configuring certificate authentication in Rational Team Concert [https://jazz.net/library/article/606] 
+
+Note: 
+
+ * No additional steps for web clients 
+ * It is possible to enable dual mode of authentication which allows user login with userid/password even if the certificate (smart card) authentication has failed
+
+
+For CLM environments using WAS only: 
+Add the following line to your server.xml file and restart the WAS profile for changes to take effect. 
+
+<webAppSecurity allowFailOverToBasicAuth="true" /> 
+
+
+For CLM environments based on WAS using both IBM HTTP Server (IHS) 
+Add the SSL directive below to the httpd.conf either within a <virtual Host> section, or globally, outside of any <virtualHost> section. Restart both IHS and WAS profile for changes to take effect. 
+
+SSLClientAuth optional
+RELATED INFORMATION
+ IHS SSLClientAuth directive [https://www-01.ibm.com/software/webservers/httpservers/doc/v1319/9acdssl.htm#sslclient]
+WAS Auth failover [https://www.ibm.com/support/knowledgecenter/en/SSD28V_8.5.5/com.ibm.websphere.wlp.core.doc/ae/rwlp_config_webAppSecurity.html]

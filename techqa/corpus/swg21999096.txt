@@ -1,0 +1,106 @@
+Title: IBM INSTALL AND START GUARDIUM CONFIGURATION AUDIT SYSTEM (CAS) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to install/ uninstall the Guardium CAS agent and start/stop CAS? 
+
+ANSWER
+Guardium CAS is used to track file changes on the database server host. The CAS agent must be installed where the database server resides. Java is required for CAS to run. On a Unix server, the Java must be obtained and installed (due to licensing constraints), while on Windows Java is installed as part of the STAP installation. Java is installed on the database server host where the CAS agent runs. 
+Table taken from Installing Guardium STAPs [https://www.ibm.com/support/knowledgecenter/en/SSMPHH_10.1.0/com.ibm.guardium.doc.stap/stap/stap_admin_install.html] 
+
+Component Prerequisite CAS under HP-UX Java™ 1.5 or higher CAS under any other UNIX Java 1.4.2 or higher CAS under Windows If CAS will monitor the MS SQL Server event log, the dumpel.exe program from the Microsoft Windows Resource Kit must be installed on the database server. Check if this program exists in the c:\Program Files\Resource Kit\ directory. If not, you can download it from Microsoft. 
+
+You can configure the CAS agent to use SSL to send data to the Guardium Collector. CAS should not be asked to monitor more than 10,000 files per client. It is recommended to configure CAS to handle no more than 1,000 monitored files per hour. 
+
+
+INSTALLING ON WINDOWS 
+
+The CAS agent and the STAP can be installed together using the command line method [https://www.ibm.com/support/knowledgecenter/SSMPHH_10.1.0/com.ibm.guardium.doc.stap/stap/stap_win_install_cli.html]. 
+
+
+INSTALLING ON UNIX HOST 
+
+1. Login as root in DB host 
+
+2. Install the CAS package. A script called guard-cas-setup should exist under the guard_stap/cas/bin folder. 
+
+The VA license includes CAS so you do not need separate license for CAS. 
+
+You may run "show lic" in the Guardium CLI console to check. 
+ *  show lic 
+   
+   Number of License: 9999 
+   Metering: -1 
+   Number of Datasources: -1 
+   Host MAC: 00:00:00:00:00:F2 
+   Valid Until: 2099-01-01 00:00:00 
+   
+   Licensed Applications: 
+   Applications User Responsibility Detection 
+   Audit Guard (Audit & Privacy Sets) 
+   Change Audit System 
+
+
+
+3. Installing CAS does not need database downtime. The installer will not affect the database. 
+
+Invoke the CAS installer in root. 
+
+guard-cas-setup -- install --java-home <JAVA_HOME> --install-path <INSTALL_PATH> --stap-conf <FULL_PATH_TO_GUARD_TAP_INI> 
+
+where 
+
+--java-home <JAVA_HOME> identifies the JAVA_HOME directory 
+
+--install-path identifies the installation path 
+
+--stap-conf <FULL_PATH_TO_GUARD_TAP_INI> identifies where the guard_tap.ini file is located after an S-TAP installation. 
+
+
+To uninstall CAS, 
+ * guard-cas-setup -- uninstall
+
+
+
+STARTING AND STOPPING CAS IN THE UNIX HOST 
+
+1. in the /etc/inittab, comment out 'cas:' (if stopping CAS) or remove the comment (if starting CAS) 
+
+cas:<nnnn>::respawn:/usr/local/guardium/guard_stap/cas/bin/run_wrapper.sh /usr/local/guardium/guard_stap/cas/bin 
+
+save the /etc/inittab file 
+
+2. execute init q command to invoke service 
+
+init q 
+
+3. check cas is running  * ps -fe | grep cas
+
+
+
+In RHEL 6, you can also use the Service Configuration tool to start or stop the CAS service 
+
+[/support/docview.wss?uid=swg21999096&amp;aid=1] 
+
+
+MONITOR CAS STATUS 
+
+To monitor CAS status, select CAS Status in the Local Taps section of the Administration Console to open the Configuration Auditing System Status panel. 
+
+[/support/docview.wss?uid=swg21999096&aid=2] [/support/docview.wss?uid=swg21999096&aid=2] 
+
+To stop and restart the CAS agent, you can do that from the Administrator Console of the Guardium system, using Reset button (arrow circle icon). 
+
+For each CAS host where this Guardium system is the active Guardium host, the status lights indicate whether CAS is connected:  
+
+Red: Host and/or the CAS agent is offline or unreachable. 
+
+Green: Host and CAS agent are online
+
+
+
+
+RELATED INFORMATION
+ Installing Guardium STAPs [https://www.ibm.com/support/knowledgecenter/en/SSMPHH_10.1.0/com.ibm.guardium.doc.stap/stap/stap_admin_install.html]

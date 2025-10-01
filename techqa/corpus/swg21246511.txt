@@ -1,0 +1,121 @@
+Title: IBM Interpreting Vendor API return codes from db2diag.log messages - United States
+
+Text:
+Interpreting Vendor API return codes from db2diag.log messages TECHNOTE (FAQ)
+
+QUESTION
+ Sometimes you will see a db2diag.log entry indicating that DB2 failed to archive a log file SNNNNNNN.log to TSM chain M from a particular path with rc = #. What does this mean?
+
+This technote will help you interpret Vendor API return codes so that you can determine the next step in resolving the error. 
+
+CAUSE
+Generally when an error is encountered while archiving a log using a vendor API such as TSM, the db2diag.log will have the following messages:
+2006-08-29-23.36.45.181336-240 I171851309A565 LEVEL: Error
+PID : 1287366 TID : 1 PROC : db2logmgr (DBNAME) 0
+INSTANCE: corrente NODE : 000
+FUNCTION: DB2 UDB, data protection, sqlpInitVendorDevice, probe:1030
+MESSAGE : sqluvint failed! Vendor rc:
+DATA #1 : Hexdump, 48 bytes
+0x0FFFFFFFFFFFD120 : 0000 01AA 3432 3520 3432 3600 0000 0000 ....425 426.....
+0x0FFFFFFFFFFFD130 : 0000 0000 0000 0000 0000 0000 0000 0000 ................
+0x0FFFFFFFFFFFD140 : 0000 0000 0000 0000 0000 0000 0000 0000 ................
+
+2006-08-29-23.36.45.181867-240 I171851875A282 LEVEL: Error
+PID : 1287366 TID : 1 PROC : db2logmgr (DBNAME) 0
+INSTANCE: corrente NODE : 000
+FUNCTION: DB2 UDB, data protection, sqlpInitVendorDevice, probe:1050
+RETCODE : ZRC=0x0000000B=11
+
+2006-08-29-23.36.45.182157-240 I171852158A283 LEVEL: Error
+PID : 1287366 TID : 1 PROC : db2logmgr (DBNAME) 0
+INSTANCE: corrente NODE : 000
+FUNCTION: DB2 UDB, data protection, sqlpgArchiveLogVendor, probe:1820
+RETCODE : ZRC=0x0000000B=11
+
+2006-08-29-23.36.45.182304-240 I171852442A393 LEVEL: Error
+PID : 1287366 TID : 1 PROC : db2logmgr (DBNAME) 0
+INSTANCE: corrente NODE : 000
+FUNCTION: DB2 UDB, data protection, sqlpgArchiveLogFile, probe:3160
+MESSAGE : Failed to archive log file SNNNNNNN.LOG to TSM chain 0 from
+/db2path/corrente/NODE0000/SQL00001/SQLOGDIR/ with rc = 11. 
+
+The last message tells us that the sqlpgArchiveLogFile function failed with a return code of 11. 
+
+What do we do now?
+
+
+ANSWER
+If we follow the function sequence we see the following: 
+
+ 
+
+sqlpgArchiveLogFile -> sqlpgArchiveLogVendor -> sqlpInitVendorDevice 
+
+ 
+
+We see that sqlpInitDevice has a return code (RETCODE) of ZRC=0x0000000B=11 
+
+ZRC codes are set by DB2 functions, so 11 must be a DB2 return code. 
+
+The definitions for all DB2 to Vendor API return codes are found under the instance home directory <sqllib>/include/ in the sqluvend.h header file. 
+
+The above return code is in this example:
+#define SQLUV_INIT_FAILED 11 /* Initialization failed */ 
+
+Similarly one can find the meaning of other DB2 to Vendor API return codes, in this way. 
+
+Note, however, that this return code is not the return code from the Vendor API. To find this out we must at the very first instance of the db2diag.log message, in the above group of diagnostic messages:
+
+2006-08-29-23.36.45.181336-240 I171851309A565 LEVEL: Error
+PID : 1287366 TID : 1 PROC : db2logmgr (DBNAME) 0
+INSTANCE: corrente NODE : 000
+FUNCTION: DB2 UDB, data protection, sqlpInitVendorDevice, probe:1030
+MESSAGE : sqluvint failed! Vendor rc:
+DATA #1 : Hexdump, 48 bytes
+0x0FFFFFFFFFFFD120 : 0000 01AA 3432 3520 3432 3600 0000 0000 ....425 426.....
+0x0FFFFFFFFFFFD130 : 0000 0000 0000 0000 0000 0000 0000 0000 ................
+0x0FFFFFFFFFFFD140 : 0000 0000 0000 0000 0000 0000 0000 0000 ................ 
+
+The Vendor rc is defined to of type Return_code which is defined in <sqllib>/include/sqluvend.h as:
+
+#define SQLUV_COMMENT_LEN 30
+
+typedef struct Return_code
+{
+sqlint32 return_code; /* return code from the vendor function */
+char description[SQLUV_COMMENT_LEN];
+/* descriptive message */
+void *reserve; /* reserve for future use */
+} Return_code;
+
+
+This structure is dumped out in the DATA component of the above diagnostic entry: 
+
+DATA #1 : Hexdump, 48 bytes
+0x0FFFFFFFFFFFD120 : 0000 01AA 3432 3520 3432 3600 0000 0000 ....425 426.....
+0x0FFFFFFFFFFFD130 : 0000 0000 0000 0000 0000 0000 0000 0000 ................
+0x0FFFFFFFFFFFD140 : 0000 0000 0000 0000 0000 0000 0000 0000 ................
+
+sqlint32 takes up 4 bytes, so the return code from the vendor function is to be found in the first 4 bytes of the above diagnotics data entry. This is hexadecimal dump (hexdump).
+
+So, in the above case we see that the value is hex 0000 01AA which is corresponds to decimal 426.
+Note: the value for the description array is 
+3432 3520 3432 3600 0000 00000000 0000 0000 0000 0000 0000 0000 0000 0000 
+which happens to contain the return code value. We should not rely soley on the description array though.
+
+Now that we have the Vendor's return code one can find out what that means by simply looking up the Vendor API documentation. In the case of TSM one can find this here:
+
+http://publib.boulder.ibm.com/infocenter/tivihelp/v1r1/topic/com.ibm.itsmm.doc_5.4/anrcms589408.htm [http://publib.boulder.ibm.com/infocenter/tivihelp/v1r1/topic/com.ibm.itsmm.doc_5.4/anrcms589408.htm]
+
+A quick search for 426 we see 
+
+#define DSM_RC_CANNOT_OPEN_TRACEFILE 426/* cannot open trace file */ 
+
+Now, if the above DATA component contains all zeros and the db2diag.log contains a number of signal handler diagnostic entries, then it is likely that an abnormal termination has occurred in the vendor's library. 
+
+In this case you would see a rc = 30 in the sqlpgArchiveLogFile function. 
+
+This DB2 return code is defined in the sqluvend.h file as: 
+
+
+#define SQLUV_UNEXPECTED_ERROR 30 /* A severe error was experienced */

@@ -1,0 +1,88 @@
+Title: IBM QRadar: DNS Analyzer app and DSM support for URL custom event properties - United States
+
+Text:
+ QUESTION/ANSWER
+
+QUESTION
+How do you update a Device Support Module (DSM) to parse URL information using a custom event property for the IBM QRadar DNS Analyzer app?
+
+ANSWER
+
+
+OVERVIEW 
+Custom event properties can be used in a Device Support Module (DSM) to extract values from device event logs for non-normalized fields in IBM QRadar. By default, QRadar normalizes data from the event logs and populates the user interface with certain data, including user names, source IP, destination IP, ports, and so on. Since there is no normalized property for storing domain name data in QRadar, the IBM QRadar DNS Analyzer app uses the standard URL custom event property included in IBM QRadar.
+
+
+The following workflow describes how the URL custom event property is processed by the IBM QRadar DNS Analyzer app:
+
+ 1. The device DSM that is deployed on the user network either includes or is updated to parse domain name information into the URL custom event property.
+ 2. Logs forwarded from the deployed device to the IBM QRadar console are parsed by the updated DSM and domain name data is stored in the URL custom event property.
+ 3. The IBM QRadar DNS Analyzer queries the IBM QRadar console for logged events where the URL custom event property is populated.
+ 4. The queried domain names are processed by the IBM QRadar DNS Analyzer app.
+
+
+1. HOW TO UPDATE A DSM WITH URL CUSTOM EVENT PROPERTY SUPPORT 
+The standard DSM for any device can be updated by an administrative user through the DSM editor to add support for the URL custom event property if they can determine the regex (regular expression) for domain name data from logs for the targeted device.
+
+Update procedures 
+For example, you can add URL custom event property support for Microsoft Windows DNS servers where Request Logging has been enabled. The following workflow describes how to add a custom event property to parse URLs for the Microsoft DNS Debug log source type:
+
+ 1. Open the DSM Editor from the IBM QRadar admin page and choose the Microsoft DNS Debug log source type for editing.
+ 2. In the Properties tab, click the plus sign icon (+) to add a custom property, choosing URL from the displayed list.
+ 3. Click the new URL property added to the Properties tab to edit it.
+ 4. Add the regex Question Name=(\S+) to the Expression input field and add “1” to the Capture Group field.
+ 5. Click the OK button to confirm the edit and then click Save to update the DSM.
+    
+    Results 
+    The custom event property is created for the log source type. When you view the event details page in QRadar, you will see your custom property displayed in the user interface with the notation (custom). Anytime you see (custom) in the user interface it indicates that the data associated to the value is a custom property in QRadar. 
+
+
+2. ADD URL CUSTOM PROPERTIES FOR OTHER EVENT SOURCES 
+The following table lists event sources that contain a URL field in their event payload that you can add as a custom event property to the DSM.
+
+DSM Regex for updating URL property DSM Name Regex Microsoft DNS Debug Question Name=(\S+) Note : A custom property can be included in the content pack, but be disabled by default. When a custom event property is disabled, the regular expression is not applied to parse the custom property from the event payload and this can lead to N/A values being displayed for the custom property. QRadar Support often recommends that administrators review custom properties to ensure they are enabled after adding content packs to QRadar.
+
+
+3. CONTENT PACKS THAT ADD URL CUSTOM PROPERTIES 
+Content packs can contain custom properties, rules, searches, and other valuable information to extends the core capabilities of QRadar for administrators. A good practice for administrators is to review that your apps and content packs are updated as the content pack contain important parsing updates or optimizations. To view available app updates and new content, administrators can configure the QRadar Assist app [https://exchange.xforce.ibmcloud.com/hub/extension/ed8aee4440f98f9c8bedaff4c5c644de], which is installed with QRadar 7.3.1 as a default application.
+
+The following list includes applications or content extensions for QRadar that contain URL
+
+A. When you install the IBM QRadar DNS Analyzer app [https://exchange.xforce.ibmcloud.com/hub/extension/6c52b4571878b24511052868dbb4f6c9], it adds a URL custom property for the following DSMs:
+
+ * ICS Bind DNS / InfoBlox DNS
+ * Apache Web Proxy
+ * Squid Web Proxy
+
+
+B. The following content packs can be downloaded and installed from the Assist App or from the X-Force App Exchange to add a URL custom event property for the following event sources:
+
+ * Check Point [https://exchange.xforce.ibmcloud.com/hub/extension/2ab04201e22575e6b7323b8792d333e8]
+ * Cisco IronPort [https://exchange.xforce.ibmcloud.com/hub/extension/7254252db7da398855547dd7ac9c258b]
+ * McAfee ePolicy Orchestrator [https://exchange.xforce.ibmcloud.com/hub/extension/efb43ce66be214dfee8c549c1e8e8e57]
+ * Fortinet FortiAnalyzer [https://exchange.xforce.ibmcloud.com/hub/extension/IBMQRadar:FortinetFortiAnalyzerContentPack]
+ * Palo Alto PA Series Firewall [https://exchange.xforce.ibmcloud.com/hub/extension/IBMQRadar:PaloAltoPASeriesFirewallCustomProperties]
+ * Symantec Endpoint Protection [https://exchange.xforce.ibmcloud.com/hub/extension/5b081018661ebd281c91a73736b4c9a6]
+
+C. IBM QRadar ships with a URL custom property in the following DSMs:
+
+ * Blue Coat SG Appliance
+ * Juniper Networks Secure Access VPN SSL
+
+
+TIP : Enabling XForce URL rule tests may cause performance issues for the QRadar DNS Analyzer app and generate "performance degradation" notifications in QRadar. Administrators can avoid performance issues by reducing the number of unique of URLs being tested by the system. Each unique URL must be evaluated when contained within a rule test; however, not all data in the query string of the URL is valid. By removing unneeded URL parameters with your custom event property regular expression it can help reduce system load by parsing only the important security information from the URL. Administrators should evaluate the data and significance of the URLs being collected by the system and attempt to optimize them where appropriate.
+
+For example, the URL contains a non-human readable query string for a document edit. Since this is not relevant security information, the URL can be truncated down to the domain, path, and document information in the custom event property.
+
+Non-optimized URL : example.com/path/document?a=some_value,token=88r23182734sajd182weee71262ee
+Optimized URL: example.com/path/document
+
+
+
+
+Where do you find more information? 
+
+
+
+
+[https://www-prd-trops.events.ibm.com/sites/default/files/support/swg/sectech.nsf/0/1d8d1fd2d93a767d852582a60025d85b/Content/0.270C.png] [http://ibm.biz/QRadar-KC][https://www-prd-trops.events.ibm.com/sites/default/files/support/swg/sectech.nsf/0/1d8d1fd2d93a767d852582a60025d85b/Content/0.3414.png] [https://ibm.biz/qradarforums][https://www-prd-trops.events.ibm.com/sites/default/files/support/swg/sectech.nsf/0/1d8d1fd2d93a767d852582a60025d85b/Content/0.4020.png] [http://ibm.biz/qradarknowledge][https://www-prd-trops.events.ibm.com/sites/default/files/support/swg/sectech.nsf/0/1d8d1fd2d93a767d852582a60025d85b/Content/0.4CA8.png] [http://ibm.biz/SecSuptUTube][https://www-prd-trops.events.ibm.com/sites/default/files/support/swg/sectech.nsf/0/1d8d1fd2d93a767d852582a60025d85b/Content/0.58E4.png] [http://ibm.biz/qradarsoftware][https://www-prd-trops.events.ibm.com/sites/default/files/support/swg/sectech.nsf/0/1d8d1fd2d93a767d852582a60025d85b/Content/0.683C.png] [http://ibm.biz/MyNotification][https://www-prd-trops.events.ibm.com/sites/default/files/support/swg/sectech.nsf/0/1d8d1fd2d93a767d852582a60025d85b/Content/0.7566.png] [http://ibm.biz/SuptRegQuikStart]

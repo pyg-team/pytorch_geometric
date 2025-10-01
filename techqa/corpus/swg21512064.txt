@@ -1,0 +1,36 @@
+Title: IBM ITCAM for Application Diagnostics(AD) 7.1 WebSphere Agent Command Line configuration - United States
+
+Text:
+command line configuration silent config YN TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Unable to EDIT an already configured WebSphere Agent using the command line configuration.
+
+This part of the command line does not show the WebSphere Agent that was already configured and running:
+
+Choose the type of application server that you want to monitor:
+[ 1=WebSphere Application Server, 2=WebSphere Process Server, 3=WebSphere ESB Server, 4=WebSphere Portal Server ] (default is: 1): 1
+
+WebSphere Profile Configuration :
+
+No 'WebSphere Profile Configuration' settings available. <---- No WebSphere configuration showing
+Edit 'WebSphere Profile Configuration' settings, [1=Add, 2=Edit, 3=Del, 4=Next, 5=Exit] (default is: 5): 
+
+
+RESOLVING THE PROBLEM
+The reason you do not see the previously configured WebSphere Agent is due to this part of the command line configuration only applies to the current configuration attempt. For example, you use option 1 and input all the configuration information. After completion of inputting the information, you are back to the same WebSphere Configuration as shown below: 
+
+'WebSphere Profile Configuration' settings: Input WebSphere Profile Home=/opt/IBM/WebSphere/AppServer/profiles/AppSrv02
+Edit 'WebSphere Profile Configuration' settings, [1=Add, 2=Edit, 3=Del, 4=Next, 5=Exit] (default is: 5):
+
+Notice that the Profile Home is now populated with the profile that was just configured. At this point, you can now use option 2, 3, or 4(if you added more than one profile).
+
+Although not documented in the ITCAM for AD publications, this part of the Command line configuration DOES NOT apply to an already configured and running WebSphere Agent.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for AD ITCAM4AD ITCAMfAD ITCAM for Application Diagnostics CAMADINST CAMADWASDC CAMADALL

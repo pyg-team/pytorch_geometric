@@ -1,0 +1,175 @@
+Title: IBM IV68780: CANNOT MONITOR THE STATUS OF THE INTERNAL DAEMON SUPPORTING THE SCRIPTING FEATURE - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 5 (6.3.0-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24039236]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PMR NO: 12827,7TD,000
+   APAR SEV: 3
+   COMPID: 5724C04LN
+   REL: 6.30.04.00
+   Symptom Code: IN
+   Symptom Key Word: INCORROUT
+   
+   Problem:
+    Several status codes are defined for the fcp_daemon internal
+   status
+    (DAEMON_STARTED,DAEMON_STOPPED,DAEMON_ERROR etc.).
+   
+   They are expected  to be set in the Status Code attribute of
+   the Custom Scripts attribute  group for the row identifying the
+   overall status of the scripting feature itself. If the
+   fcp_daemon does not stay running, then no rows at all are
+   returned for this group making it impossible to be alerted on
+   issues with the scripting feature, including the condition that
+   it is not enabled.
+   
+   Affected Platforms / Versions:
+    Linux agent at version 6.30 FP4
+   
+   Diagnostics:
+    KBB_RAS1=ERROR (UNIT:factory ALL) (UNIT:klzmain ALL)
+   (UNIT:kralz34 ALL)
+    (UNIT:klz34 ALL)(UNIT:kralz35 ALL) (UNIT:klz35 ALL)
+   
+   Initial Impact:
+    Medium, situations based on the status of the scripting
+   feature do not work
+   
+   Additional Keywords:
+    KUXSCRPTS
+    STSCODE
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Define a situation for the fcp_daemon missing process, as a
+   workaround  if you need to be alerted on the scripting feature
+   not being enabled.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In the Custom Scripts attribute group the Status Code attribute
+   is expected to provide the overall status of the internal
+   daemon that supports the scripting feature, in addition to the
+   status from each custom script configured.  Actually, only the
+   normal status, DAEMON_STARTED, is currently returned. No rows
+   at all are provided in case the feature is not enabled or it is
+   malfunctioning.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem Conclusion: Code fixed such that a row of data is always
+   returned, even if the feature is not enabled, with the proper
+   status information.
+   
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+   
+      | fix pack | 6.3.0-TIV-ITM-FP0005 |
+   
+   Note: Search the IBM technical support web site for maintenance
+   package availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV68780
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04LN
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-20
+   
+   
+ * CLOSED DATE
+   2015-02-25
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * FIXED COMPONENT ID
+   5724C04LN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

@@ -1,0 +1,27 @@
+Title: IBM Cannot log on IBM ECM FileNet P8 WorkplaceXT (XT) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+Logging onto XT causes the system to hang and not allow you get any further into XT. 
+
+SYMPTOM
+ 
+
+The following error occurs in the SystemOut.log from IBM ECM Websphere Enterprise 7.1 (WAS)
+
+[10/10/12 08:15:44:402 IST] 00000055 SystemOut O Failed to get primary port
+[10/10/12 08:18:20:687 IST] 0000001f ThreadMonitor W WSVR0605W: Thread "WebContainer : 5" (00000044) has been active for 689949 milliseconds and may be hung. There is/are 2 thread(s) in total in the server that may be hung.
+
+
+RESOLVING THE PROBLEM
+
+Login to WAS application server
+Goto Application servers > server1 > Process definition > Java Virtual Machine
+Under Generic JVM arguments field added the following for XT
+
+-Djava.security.auth.login.config=C:\Progra~2\ibm\FileNet\WebClient\CE_API\config\jaas.conf.WebSphere
+
+Note: This is the default location for XT to be installed on Windows 64 bit server. Make sure you enter in the correct location for this file

@@ -1,0 +1,76 @@
+Title: IBM How to reclaim space after dropping Indexes or Rows from a DB2 Table? - United States
+
+Text:
+reclaim space; reclaim; reorg; drop; drop rows; drop index; reorgchk; dms; dms pages; pages; sms; sms pages TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why dropping indexes or rows from DMS table spaces does reclaim the correspondent DMS pages? 
+
+SYMPTOM
+Users may notice that dropping indexes or rows (registers) from DB2 tables that are created under DMS table spaces will not reclaim the correspondent DMS pages after the dropping operation.
+
+
+CAUSE
+After many changes to table data, logically sequential data may be on non-sequential physical data pages so that the database manager must perform additional read operations to access data. Additional read operations are also required if a significant number of rows have been deleted. 
+
+Dropping rows or indexes from tables has different effects depending on which type of table spaces you have created (SMS or DMS). Details on this are described below:
+
+SMS table spaces behavior
+When users drop rows or indexes from a table that was created in a System Managed Space (SMS) table space, they will notice that the correspondent pages will be immediately reclaimed at the file system level. This is because the SMS table space's storage model consists of many files (representing table objects) stored in the file system space (directories). The database administrator decides the location of the files, the database manager controls their names, and the file system is responsible for managing them. By controlling the amount of data written to each file, the database manager distributes the data evenly across the table space containers.
+
+As you drop table's rows or indexes from a table in a SMS table space, a file will be actually erased and the pages will be immediately reclaimed at the file system level.
+
+DMS table spaces behavior
+On the other hand Database Managed Space (DMS) table spaces' storage model consists of a limited number of devices (raw device, for example) or files managed by the database manager. The database administrator decides which devices and files to use, and manages the space on those devices and files. The table space is essentially an implementation of a special purpose file system designed to best meet the needs of the database manager. 
+
+Considering the container is either a file or a raw device, when you drop rows or indexes from a table in this kind of table space, the correspondent DMS pages within the file/raw device are immediately made available for reuse, but only to the objects that have been created under that DMS table space, not at the file system level. However, you may notice that the "Used Pages" and/or "High Water Mark" for the table space has not lowered. This can be expected if DB2 is unable to free up an entire extent..
+
+If you are running DB2 9.7, the Reclaimable storage feature was added to help you consolidate in-use extents below the high water mark and return unused extents in your table space to the system for reuse.
+
+All nontemporary automatic storage and DMS table spaces created in DB2 Version 9.7 and later provide the capability for consolidating extents below the high water mark. For table spaces created in an earlier version, you must first replace the table space with a new one created using DB2 V9.7.
+
+Using the ALTER TABLESPACE command with the REDUCE option will help with this. Here is what it does:
+
+For non-automatic storage table spaces, specifies that existing containers are to be reduced in size. The size specified is the size by which the existing container is decreased. If the all-containers-clause is specified, all containers in the table space will decrease by this size. If the reduction in size will result in a table space size that is smaller then the current high water mark, an attempt will be made to reduce the high water mark before attempting to reduce the containers. For non-automatic storage table spaces, the REDUCE clause must be followed by a database-container-clause or an all-containers-clause.
+
+For automatic storage table spaces, specifies that the current high water mark is to be reduced, if possible, and that the size of the table space is to be reduced to the new high water mark. For automatic storage table spaces, the REDUCE clause must not be followed by a database-container-clause, an all-containers-clause, or an on-db-partitions-clause.
+
+You can reduce automatic storage table spaces in a number of ways:
+
+Container reduction only
+With this option, no extents are moved. The database manager attempts to reduce the size of the containers by first freeing extents for which deletes are pending. (It is possible that some "pending delete" extents cannot be freed for recoverability reasons, so some of these extents may remain.) If the high water mark was among those extents freed, then the high water mark is lowered, otherwise no change to the high water mark takes place. Next, the containers are re-sized such that total amount of space in the table space is equal to or slightly greater than the high water mark. This operation is performed using the ALTER TABLESPACE with the REDUCE clause by itself. 
+
+Lower high water mark only
+With this option, the maximum number of extents are moved to lower the high water mark, however, no container resizing operations are performed. This operation is performed using the ALTER TABLESPACE with the LOWER HIGH WATER MARK clause by itself. 
+
+Lower high water mark and reduce containers by a specific amount
+With this option, you can specify an absolute amount in kilo-, mega-, or gigabytes by which to reduce the table space. Or you can specify a relative amount to reduce by entering a percentage. Either way, the database manager first attempts to reduce space by the requested amount without moving extents. That is, it attempts to reduce the table space by reducing the container size only, as described in Container reduction only, by freeing delete pending extents, and attempting to lower the high water mark. If this approach does not yield a sufficient reduction, the database manager then begins moving used extents lower in the table space to lower the high water mark. After extent movement has completed, the containers are resized such that total amount of space in the table space is equal to or slightly greater than the high water mark. If the table space cannot be reduced by the requested amount because there are not enough extents that can be moved, the high water mark is lowered as much as possible. This operation is performed using the ALTER TABLESPACE with a REDUCE clause that includes a specified amount by which to reduce the size the table space.
+
+Lower high water mark and reduce containers the maximum amount possible
+In this case, the database manager moves as many extents as possible to reduce the size of the table space and its containers. This operation is performed using the ALTER TABLESPACE with the REDUCE MAX clause. 
+
+Please check details on these commands usage by checking the Related URL section of this Technote.
+
+
+RESOLVING THE PROBLEM
+In order to lower the "Used Pages" and/or "High Water Mark" when dropping indexes or rows from a DB2 table that was created in a DMS table space, a REORG operation should be performed. 
+
+
+Below is an example on how to Reorganize a table named test.employee in order to reclaim DMS space. Table space 'temp1' is being used as the temporary table space during the REORG operation:
+
+db2 "reorg table test.employee use temp1"
+
+By running this command, the pages in the table space will be reorganized and if enough data has been deleted full extents will be freed.
+
+Please check the 'Related URL' section below to obtain additional details on how to use the REORG command. 
+
+Before running the REORG utility, you can use the REORGCHK utility to confirm that your Table needs to be REORG'ed. Details on how to use REORGCHK can be found in the 'Related URL' section below.
+
+RELATED INFORMATION
+ Table reorganization [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.admin.perf.doc/doc/c0005406.html ]
+REORGCHK command [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.admin.cmd.doc/doc/r0001971.html ]
+REORG INDEXES/TABLE command [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.admin.cmd.doc/doc/r0001966.html]
+Types of table spaces [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.admin.dbobj.doc/doc/c0052372.html]
+Comparison of SMS and DMS table spaces [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.admin.dbobj.doc/doc/c0004961.html]
+Reclaimable storage [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=%2Fcom.ibm.db2.luw.admin.dbobj.doc%2Fdoc%2Fc0055392.html]
+ALTER TABLESPACE statement [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=%2Fcom.ibm.db2.luw.sql.ref.doc%2Fdoc%2Fr0000890.html]

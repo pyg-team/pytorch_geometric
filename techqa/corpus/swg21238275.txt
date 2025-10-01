@@ -1,0 +1,54 @@
+Title: IBM New Function APARs for CICS products - United States
+
+Text:
+NF APARs ; NF APAR ; New Function APARs ; CICS Transaction Server ; CICSPlex SM ; CPSM ; CICS Tools; CICS dynamic scripting ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 R700 700 R000 000 HCI7000 R710 710 R100 100 HCI7100 5655Y0401 5655-Y04 5655Y04 ; 5655VSE00 RB2P R211 211 5655-VSE 5655VSE 564805401 RCOP; 564805400 RB0P R411 R111 5648-054 5648054 KIXINFO TECHNOTE (FAQ)
+
+QUESTION
+ You want to find all New Function (NF) APARs for a specific release of CICS Transaction Server, CICSPlex SM, CICS Explorer, or the CICS Tools. 
+
+ANSWER
+See the CICS continuous delivery features [http://www.ibm.biz/continuous-delivery-features] in the CICS Transaction Server for z/OS (CICS TS) documentation for new functions and capabilities that have been added to CICS TS and CICSPlex SM by service.
+
+According to the Software maintenance strategy for CICS TS and its embedded components [http://www.ibm.com/support/docview.wss?uid=swg27048530], IBM recommends that you upgrade to the latest release of CICS Explorer to obtain the most recent functionality and service. Old releases of CICS Explorer are not generally updated with new function, but new CICS Explorer releases are compatible with all earlier versions of CICS TS... For further details see Latest version of CICS Explorer and CICS Tools plug-ins. [http://www.ibm.com/support/docview.wss?uid=swg21404312]" 
+
+For all other CICS products, click on one of the following links to be taken to a table of products, then click on the link for a product to display the NF APARs for the product. 
+
+ * CICS TS for z/VSE NF APARs
+ * CICS Tools NF APARs
+
+
+Click on the Fixes by version document [http://www.ibm.com/support/docview.wss?uid=swg27008833] to see Fix lists containing the APARs for each version, release, and modification (VRM) level of currently supported CICS products.
+
+
+
+
+
+
+
+
+
+
+
+CICS TS for z/VSE NF APARs CICS Transaction Server for z/VSE V2.2 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5655VSE00+rb3p&q2=&sort=desc] CICS Transaction Server for z/VSE V2.1 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5655VSE00+rb2p&q2=&sort=desc] 
+Back to top
+
+
+
+
+
+CICS Tools NF APARs CICS Batch Application Control for z/OS V1.1.1 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5697I9400+%28r111+OR+r11E+OR+r11K%29&q2=&sort=desc] CICS Batch Application Control for z/OS V1.1 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5697I9400+%28r100%29&q2=&sort=desc] CICS Configuration Manager for z/OS V5.4 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5697CIC00+%28r540+OR+r54E+OR+r54K%29&q2=&sort=desc] CICS Configuration Manager for z/OS V5.3 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5697CIC00+%28r530+OR+r53E+OR+r53K%29&q2=&sort=desc] CICS Configuration Manager for z/OS V5.2 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5697CIC00+%28r520+OR+r52E+OR+r52K%29&q2=&sort=desc] CICS Configuration Manager for z/OS V5.1 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5697CIC00+%28r510+OR+r51E+OR+r51K%29&q2=&sort=desc] CICS Deployment Assistant for z/OS V5.3 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5655Y2900+%28r530+OR+r53C+OR+r53E+OR+r53K%29&q2=&sort=desc] CICS Deployment Assistant for z/OS V5.2 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5655Y2900+%28r520+OR+r52C+OR+r52E+OR+r52K%29&q2=&sort=desc] CICS Deployment Assistant for z/OS V5.1 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5655Y2900+%28r510+OR+r51C+OR+r51E+OR+r51K%29&q2=&sort=desc] CICS Interdependency Analyzer for z/OS V5.3 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5655Y2200+%28r530+OR+r53E+OR+r53K%29&q2=&sort=desc] CICS Interdependency Analyzer for z/OS V5.2 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5655Y2200+%28r520+OR+r52E+OR+r52K%29&q2=&sort=desc] CICS Interdependency Analyzer for z/OS V5.1 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5655Y2200+%28r510+OR+r51E+OR+r51K%29&q2=&sort=desc] CICS Online Transmission Time Optimizer for z/OS V1.2 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5655I0500+%28r120%29&q2=&sort=desc] CICS Performance Analyzer for z/OS V5.4 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5655Y2300+%28r540+OR+r54C+OR+r54E+OR+r54K+OR+r54S%29&q2=&sort=desc] CICS Performance Analyzer for z/OS V5.3 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5655Y2300+%28r530+OR+r53C+OR+r53E+OR+r53K+OR+r53S%29&q2=&sort=desc] CICS Performance Analyzer for z/OS V5.2 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5655Y2300+%28r520+OR+r52C+OR+r52E+OR+r52K+OR+r52S%29&q2=&sort=desc] CICS Performance Analyzer for z/OS V5.1 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5655Y2300+%28r510+OR+r51C+OR+r51E+OR+r51K+OR+r51S%29&q2=&sort=desc] CICS VSAM Recovery for z/OS V5.2 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5655Y2400+%28r520+OR+r52E+OR+r52K%29&q2=&sort=desc] CICS VSAM Recovery for z/OS V5.1 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5655Y2400+%28r510+OR+r51E+OR+r51K%29&q2=&sort=desc] CICS VSAM Recovery for VSE/ESA V1.2 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+568601101+%28r1NL%29&q2=&sort=desc] CICS VSAM Transparency for z/OS V2.1 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5655Y0100+%28r200+OR+r201+OR+r202%29&q2=&sort=desc] IBM CL/Conference for z/OS V1.4.1 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5608A3100+%28r41L+OR+r410%29&q2=&sort=desc] IBM CL/SuperSession for z/OS V2.1 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5601B2800+%28r210%29&q2=&sort=desc] IBM CL/SuperSession for z/OS V1.4.7 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5608A2400+%28r470+OR+r471+OR+r472+OR+r473+OR+r474+OR+r475%29&q2=&sort=desc] IBM Session Manager for z/OS V3.2 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+%285655U9800+OR+5655U9801%29+%28r200+OR+r201%29&q2=&sort=desc] IBM Session Manager for z/OS V3.1 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5655U9800+%28r100%29&q2=&sort=desc] IBM Session Manager for z/OS V2.2 [http://www.ibm.com/support/search.wss?q=%22closed%20ur1%22+%22Closed%20as%20new%20function.%22+5697N6100+%28r200%29&q2=&sort=desc] 
+Back to top
+
+RELATED INFORMATION
+ HIPER or PE APARs for CICS and CPSM [ http://www.ibm.com/support/docview.wss?uid=swg21182322]
+End of Service Dates for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21154953]
+Announcement Letters for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21227090]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Batch Application Control for z/OS Capability z/OS 1.1, 1.1.1 Host Transaction Processing CICS Configuration Manager for z/OS Capability z/OS 5.4, 5.3, 5.2, 5.1 Host Transaction Processing CICS Interdependency Analyzer for z/OS Capability z/OS 5.3, 5.2, 5.1 Host Transaction Processing CICS Online Transmission Time Optimizer Maintenance z/OS 1.2 Host Transaction Processing CICS Performance Analyzer for z/OS New Function APAR z/OS 5.4, 5.3, 5.2, 5.1 Host Transaction Processing CICS VSAM Recovery for z/OS z/OS 5.2, 5.1 Host Transaction Processing CICS VSAM Transparency for z/OS Capability z/OS 2.1 Host Transaction Processing IBM CL/Conference Capability z/OS 1.4.1 Host Transaction Processing IBM CL/SuperSession Capability z/OS 1.4.7, 2.1 Host Transaction Processing IBM Session Manager Maintenance z/OS 3.2, 3.1, 2.2 Host Transaction Processing CICS Deployment Assistant for z/OS Capability z/OS 5.3, 5.2, 5.1 
+PRODUCT ALIAS/SYNONYM
+ CICS/VSE CICS VSE CICS/TS CICS TS CICS Transaction Server CICSBAC CICS BAC CBEP CICS BEP CICSCM CICS CM CICSDA CICS DA CICSIA CICS IA CICSPA CICS PA CICSPM CICS PM CICSVC CICS VC CICSVR CICS VR CICS/VR CICSVT CICS VT CICS/VT ISM LS147 LC141 CICSOTTO CICS OTTO

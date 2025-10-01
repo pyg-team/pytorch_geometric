@@ -1,0 +1,48 @@
+Title: IBM SDK Java Technology Edition Version 7 - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ IBM SDK Java Technology Edition 7 general availability. 
+
+CONTENT
+The IBM SDK for Java V7 is now available for the following platforms: 
+
+ * AIX 
+ * Linux 
+ * z/OS 
+ * IBM i
+
+
+To download the SDK from developerWorks, see http://www.ibm.com/developerworks/java/jdk/index.html [http://www.ibm.com/developerworks/java/jdk/index.html]. 
+
+What's New 
+
+This version contains many new enhancements and features, including: 
+ * Project Coin (JSR 334) language enhancement features, for example: strings in switch, diamond operator, and automatic resource management. 
+ * NIO.2 (JSR 203) asynchronous I/O capabilities, extended file system attributes, and file system notifications. 
+ * New java.util.concurrent capabilities using a new fork/join framework. 
+ * New balanced Garbage Collection (GC) policy targeting short and consistent pause times on large heaps. 
+ * New, more detailed and efficient format for verbose GC. 
+ * Significant diagnostic improvements, including enhancements to javacore.txt contents (ulimits, native stacks, and native memory use). 
+ * Improvements to trace capabilities that enable Java stack traces to be captured at any tracepoint. 
+ * Enhanced error logging to operating system logs, for example: syslog on Linux. 
+ * Improved shared classes cache support, for example: additional content, better diagnostics for corrupted caches, a programmable interface to find and destroy caches, better control of persistent cache file permissions, and more control over displaying the cache contents.
+
+
+Real Time evaluation technology 
+
+Metronome, a real-time, incremental GC policy (-Xgcpolicy:metronome) is included with the IBM SDK for Java 7 for evaluation purposes. Although this policy is not supported under the Java 7 license agreement, support is available through WebSphere Real Time [http://www.ibm.com/software/webservers/realtime/]. [http://www-01.ibm.com/software/webservers/realtime/] 
+
+Important changes 
+ * The default GC policy is now the Generational Concurrent Garbage Collection Policy (-Xgcpolicy:gencon). 
+ * AIX uses a persistent shared classes cache instead of a non-persistent cache by default when running on supported versions of AIX. 
+ * The proposed daylight saving time changes for Russia in October, if adopted, will require an update to the time zone data for Java 7. Customers affected by any changes will be able to apply an update using the IBM Time Zone Utility for Java (JTZU) [https://www.ibm.com/developerworks/java/jdk/dst/jtzu.html]. For information about the time zone updates that can be applied with this utility, see http://www.ibm.com/developerworks/java/jdk/dst/olson_table.html [http://www.ibm.com/developerworks/java/jdk/dst/olson_table.html].
+
+
+Further information 
+
+User documentation to support the IBM SDK and JRE for Java 7 is available in an IBM Information Center [http://publib.boulder.ibm.com/infocenter/java7sdk/v7r0/index.jsp]. 
+
+Note: IBM does not provide an SDK for the Windows platform. However, if you are interested in developing and testing Java applications for Windows, IBM has a number of offerings to assist you, including the IBM Development Package for Eclipse [https://www.ibm.com/developerworks/java/jdk/eclipse/index.html], IBM WebSphere Application Server Community Edition [http://www-03.ibm.com/software/products/us/en/appserv-wasce/], and IBM WebSphere Application Server Liberty Core V8.5.2 [http://www.ibm.com/developerworks/downloads/ws/was/].

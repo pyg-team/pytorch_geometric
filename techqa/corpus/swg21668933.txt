@@ -1,0 +1,29 @@
+Title: IBM Cognos Administration link does not Appear in Chrome - United States
+
+Text:
+Cognos; administration; Google; Chrome TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When using Chrome, Admin user is able to login to Cognos and select the link to launch administration interface, the link does not appear
+
+SYMPTOM
+No errors are returned to the screen, and SSO is working properly, but when trying to launch the Connections Metrics Administration link, it does not appear.
+
+
+CAUSE
+Currently Chrome is not a supported browser for Cognos Administration this is only an issue when using the Administration interface. 
+
+List of supported browsers:
+http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/prereqsForProduct?deliverableId=1267644462529 [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/prereqsForProduct?deliverableId=1267644462529]
+http://www.ibm.com/support/knowledgecenter/SSEP7J_10.2.1/com.ibm.swg.ba.cognos.ug_cra.10.2.1.doc/c_configurewebbrowsers.html [http://www.ibm.com/support/knowledgecenter/SSEP7J_10.2.1/com.ibm.swg.ba.cognos.ug_cra.10.2.1.doc/c_configurewebbrowsers.html]
+
+
+ENVIRONMENT
+IBM Connections Metrics 10.1.1, and 10.2 and Chrome
+
+
+
+RESOLVING THE PROBLEM
+Use a supported browser like Internet Explorer or Firefox and the admin link will appear. 
+
+Cognos development is considering providing support for administration in the Chrome browser in a future release of the product.

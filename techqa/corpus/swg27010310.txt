@@ -1,0 +1,108 @@
+Title: IBM Self-Training: Domino Archive policy settings documents - United States
+
+Text:
+SupportVideo; domino policy; domino policies; policies; policy doc; policy document; domino server; domino admin; domino administration; policy doc; pushed down; pulled down; dcc; settings not applied EDUCATION
+
+ABSTRACT
+ This document is part of a collection of documents designed to help administrators better understand how to create, configure and troubleshoot Lotus® Domino® policies. The topic of this document, which includes an accompanying video, is Archive policy settings documents. 
+
+CONTENT
+ 
+
+SELF-TRAINING: DOMINO ARCHIVE POLICY SETTINGS DOCUMENTS
+ * Archiving [http://www.ibm.com/support/docview.wss?rs=463&uid=swg27010310]- selected tab, 
+ * Desktop [http://www.ibm.com/support/docview.wss?rs=463&uid=swg27010351] 
+ * Mail [http://www.ibm.com/support/docview.wss?rs=463&uid=swg27010352] 
+ * Registration [http://www.ibm.com/support/docview.wss?rs=463&uid=swg27010354] 
+ * Security [http://www.ibm.com/support/docview.wss?rs=463&uid=swg27010355] 
+ * Advanced [http://www.ibm.com/support/docview.wss?rs=463&uid=swg27010356] 
+ * Troubleshooting [http://www.ibm.com/support/docview.wss?rs=463&uid=swg27010353] 
+
+
+
+
+
+
+
+Archive settings documents are used to dictate how and where to archive documents from users' mail files. Typically this is used for server-based archiving, but it can be applied to local archiving as well. Archive settings documents differ slightly from other policy settings documents in that they require an Archiving Criteria document.
+
+[/support/docview.wss?uid=swg27010310&amp;aid=1]Video: Archiving Settings [ftp://public.dhe.ibm.com/software/lotus/demos/support_videos/7010310/Archiving/Archiving.html]
+
+
+ 
+
+Step 1: Create an Archive settings document 
+Let’s say that you’re going to prohibit private archiving criteria (i.e., users have to abide by the one we make, they can’t make their own), and set up server-based archiving. First, you'll create an Archive settings document. 
+
+
+[/support/docview.wss?uid=swg27010310&aid=2] [/support/docview.wss?uid=swg27010310&aid=2] 
+
+
+
+Note the following reminder that displays in the Archiving Settings document: 
+
+[/support/docview.wss?uid=swg27010310&amp;aid=3] 
+
+
+Step 2: Specify the archiving criteria 
+Next , create an Archive Criteria settings document. This example sets up criteria to copy old documents not modified in more than 90 days to an archive database. 
+
+
+[/support/docview.wss?uid=swg27010310&amp;aid=4] 
+
+
+Be sure to enable the archive criteria by checking the box Enable archive criteria. 
+
+
+Note: You should not check the “In views or folders” option unless you want to archive from only specific views or folders. For example, you would not want to check this option and then uncheck all the boxes underneath it for all views; instead just leave it unchecked.) 
+Step 3: Add archiving criteria to the Archive settings document 
+Now add the archive criteria to the Archive settings document as shown here. 
+
+
+[/support/docview.wss?uid=swg27010310&amp;aid=5] 
+
+
+Once it has been successfully added, the archive criteria will be listed under “Currently Selected Criteria”. These settings can be used as soon as they are saved and added to a policy. 
+
+
+[/support/docview.wss?uid=swg27010310&aid=6] [/support/docview.wss?uid=swg27010310&aid=6] 
+
+
+Step 4: Assign the policy to users 
+
+If you created an organizational policy, the name of the policy matches the name of the organization it applies to. Thus, the policy will automatically be applied to everyone in that organization. 
+
+If you created an explicit policy, you must assign the policy to the appropriate users. To assign an explicit policy to a user(s), put checkmarks next to the user(s) names in the People view on the People & Groups tab. Then under Tools, expand People, and then click on “Assign Policy”. 
+
+
+[/support/docview.wss?uid=swg27010310&amp;aid=7] 
+
+
+Step 5: Verify the archive settings were pushed out 
+You can verify that the archive settings were pushed out by opening a user's mail file and selecting Actions -> Archive -> Settings. You'll want to look for whether the settings selected in the policy are now visible in the local archive profile. 
+
+So, in the following example, we know that the archive settings were applied because of the following reasons: 
+
+- - the name of the archive criteria is listed in the archive profile. 
+- - the archive profile is set to archive documents not modified in more than 90 days 
+- - the message “Your administrator does not permit you to modify some settings” appears, 
+which correlates to the “Prohibit private archive criteria” setting. 
+
+
+[/support/docview.wss?uid=swg27010310&amp;aid=8] 
+
+
+
+
+Step 6: Verify the documents archive correctly 
+Lastly, to make sure that the documents will archive correctly, we issue the command compact –a against a user's mail file to see if documents get archived, and if so, how many. 
+
+
+[/support/docview.wss?uid=swg27010310&amp;aid=9] 
+
+
+In this case, the user had no documents that had not been modified in 90 days. If they had we would see the number of documents archived. 
+
+When the documents are archived, if you selected them to be put into an archive database, you can open the archive database to view the documents that were archived. 
+
+[/support/docview.wss?uid=swg27010310&amp;aid=10]Back to top

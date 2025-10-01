@@ -1,0 +1,148 @@
+Title: IBM IC59116: DEFAULT SOAP ENVELOPE CAN RESULT IN AXISFAULT IF BODY IS NOT IN UTF-8 - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Message Broker V6.1 - Fix Pack 6.1.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24026355]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using the default SOAP envelope can result in an AxisFault if
+   the body is not in UTF-8.  A Java exception will be thrown
+   giving the AxisFault, indicating that the Character Set Encoding
+   from the transport information does not match with the character
+   set encoding in the received SOAP message [utf-8].
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere Message Broker V6.1   *
+   *                 using SOAP Request Nodes.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The SOAP Request Node creates default   *
+   *                      headers in charset UTF-8. If the body   *
+   *                      has a different charset then an error   *
+   *                      can occur while processing the reply.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When an outgoing message is not already in the SOAP domain,
+   then the SOAP Request node creates a default SOAP envelope
+   using charset of UTF-8.
+   
+   If the message body is in a different charset the resulting
+   mismatch can result in a BIP3701E error when the reply is
+   processed.
+   
+   In this example the body is in charset iso-8859-1.
+   
+   A Java exception was thrown whilst calling the Java JNI method
+   ''Axis2Requester_processResponseMessageSync''. The Java
+   exception was ''org.apache.axis2.AxisFault: Character Set
+   Encoding from transport information [iso-8859-1] does not
+   match with character set encoding in the received SOAP message
+   [utf-8]''.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere Message Broker has been modified so that the default
+   SOAP envelope is created using the same charset as the message
+   body.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC59116
+   
+   
+ * REPORTED COMPONENT NAME
+   WMB WINDOWS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0500
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-12-02
+   
+   
+ * CLOSED DATE
+   2008-12-18
+   
+   
+ * LAST MODIFIED DATE
+   2008-12-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMB WINDOWS V6
+   
+   
+ * FIXED COMPONENT ID
+   5724J0500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

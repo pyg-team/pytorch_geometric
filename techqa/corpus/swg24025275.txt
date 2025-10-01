@@ -1,0 +1,223 @@
+Title: IBM PK98482; 7.0.0.7: Error due to NoClassDefFoundError loading DeserializationStub - United States
+
+Text:
+PK98482; PK98482; PK98482 DOWNLOADABLE FILES
+
+ABSTRACT
+ RuntimeException error occurs indicating a NoClassDefFoundError loading DeserializationStub 
+
+DOWNLOAD DESCRIPTION
+PK98482 resolves the following problem:
+
+ERROR DESCRIPTION: 
+When parsing a JAX-WS SOAP message, the following error is logged in the SystemErr.log file. This occurs when running the webservice as a BLA (business level application) and the JAXB runtime environment is not visible to the application classloader. 
+. 
+java.lang.RuntimeException: 
+java.lang.reflect.InvocationTargetException 
+at 
+com.ibm.xml.xlxp2.jaxb.codegen.AbstractGeneratedStubFactory.getS
+tubClassConstructor(AbstractGeneratedStubFactory.java:171) 
+at 
+com.ibm.xml.xlxp2.jaxb.unmarshal.codegen.AbstractGeneratedDeseri
+alizationStubFactory.createStub(AbstractGeneratedDeserialization
+StubFactory.java:58) 
+at 
+com.ibm.xml.xlxp2.jaxb.unmarshal.impl.DeserializationContext.sta
+rtComplexType(DeserializationContext.java:660) 
+at 
+com.ibm.xml.xlxp2.jaxb.unmarshal.impl.DeserializationContext.han
+dleRootElementEvent(DeserializationContext.java:303) 
+at 
+com.ibm.xml.xlxp2.jaxb.unmarshal.impl.JAXBDocumentScanner.produc
+eRootElementEvent(JAXBDocumentScanner.java:186) 
+at 
+com.ibm.xml.xlxp2.scan.DocumentScanner.scanRootElement(DocumentS
+canner.java:2234) 
+at 
+com.ibm.xml.xlxp2.scan.DocumentScanner.scanProlog(DocumentScanne
+r.java:1726) 
+at 
+com.ibm.xml.xlxp2.scan.DocumentScanner.nextEvent(DocumentScanner
+.java:1316) 
+at 
+com.ibm.xml.xlxp2.scan.DocumentScanner.parseDocumentEntity(Docum
+entScanner.java:1168) 
+at 
+com.ibm.xml.xlxp2.jaxb.unmarshal.impl.JAXBDocumentScanner.unmars
+hal(JAXBDocumentScanner.java:125) 
+at 
+com.ibm.xml.xlxp2.jaxb.unmarshal.UnmarshallerImpl.unmarshal(Unma
+rshallerImpl.java:120) 
+
+... 
+Caused by: java.lang.reflect.InvocationTargetException 
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) 
+at 
+sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+Impl.java:39) 
+at 
+sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+AccessorImpl.java:37) 
+at java.lang.reflect.Method.invoke(Method.java:599) 
+at 
+com.ibm.xml.xlxp2.jaxb.codegen.AbstractGeneratedStubFactory$Clas
+sLoaderMethods.defineClass(AbstractGeneratedStubFactory.java:323
+) 
+at 
+com.ibm.xml.xlxp2.jaxb.codegen.AbstractGeneratedStubFactory$Clas
+sLoaderMethods.defineClass(AbstractGeneratedStubFactory.java:317
+) 
+at 
+com.ibm.xml.xlxp2.jaxb.codegen.AbstractGeneratedStubFactory.getS
+tubClassConstructor(AbstractGeneratedStubFactory.java:155) 
+... 20 more 
+
+Caused by: java.lang.NoClassDefFoundError: 
+com.ibm.xml.xlxp2.jaxb.unmarshal.impl.DeserializationStub 
+at java.lang.ClassLoader.defineClassImpl(Native Method) 
+at java.lang.ClassLoader.defineClass(ClassLoader.java:265) 
+at java.lang.ClassLoader.defineClass(ClassLoader.java:202) 
+... 27 more 
+
+Caused by: java.lang.ClassNotFoundException: 
+com.ibm.xml.xlxp2.jaxb.unmarshal.impl.DeserializationStub 
+at 
+org.eclipse.osgi.framework.internal.core.BundleLoader.findClass(
+BundleLoader.java:402) 
+at 
+org.eclipse.osgi.framework.internal.core.BundleLoader.findClass(
+BundleLoader.java:347) 
+at 
+org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader.loadCla
+ss(DefaultClassLoader.java:83) 
+at java.lang.ClassLoader.loadClass(ClassLoader.java:609) 
+... 30 more 
+
+LOCAL FIX: 
+Add the jars to the application or create a WebSphere Application Server shared library to point to them. 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+All IBM WebSphere Application Server V7.0 users of JAX-WS or JAXB.
+
+PROBLEM DESCRIPTION:
+RuntimeException error occurs indicating a NoClassDefFoundError loading DeserializationStub
+
+RECOMMENDATION:
+Install a fix pack that contains this APAR.
+
+When a customer uses the JAXB API, uses JAX-WS web services, or uses another stack product that uses JAXB, a RuntimeException may occur.
+
+Here is an example error:
+
+java.lang.RuntimeException:
+java.lang.reflect.InvocationTargetException
+at
+com.ibm.xml.xlxp2.jaxb.unmarshal.codegen.AbstractGeneratedStubFa
+ctory.getStubClassConstructor(AbstractGeneratedStubFactory.java:
+153)
+at
+com.ibm.xml.xlxp2.jaxb.unmarshal.codegen.AbstractGeneratedStubFa
+ctory.createStub(AbstractGeneratedStubFactory.java:84)
+at
+com.ibm.xml.xlxp2.jaxb.unmarshal.impl.DeserializationContext.sta
+rtComplexType(DeserializationContext.java:646)
+at
+com.ibm.xml.xlxp2.jaxb.unmarshal.impl.DeserializationContext.han
+dleRootElementEvent(DeserializationContext.java:298)
+at
+com.ibm.xml.xlxp2.jaxb.unmarshal.impl.JAXBDocumentScanner.produc
+eRootElementEvent(JAXBDocumentScanner.java:186)
+at
+com.ibm.xml.xlxp2.scan.DocumentScanner.scanRootElement(DocumentS
+canner.java:2234)
+at
+com.ibm.xml.xlxp2.scan.DocumentScanner.scanProlog(DocumentScanne
+r.java:1726)
+at
+com.ibm.xml.xlxp2.scan.DocumentScanner.nextEvent(DocumentScanner
+.java:1316)
+at
+com.ibm.xml.xlxp2.scan.DocumentScanner.parseDocumentEntity(Docum
+entScanner.java:1168)
+at
+com.ibm.xml.xlxp2.jaxb.unmarshal.impl.JAXBDocumentScanner.unmars
+hal(JAXBDocumentScanner.java:147)
+at
+com.ibm.xml.xlxp2.jaxb.unmarshal.UnmarshallerImpl.unmarshal(Unma
+rshallerImpl.java:158)
+...
+Caused by: java.lang.reflect.InvocationTargetException
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native
+Method)
+at
+sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+Impl.java:39)
+at
+sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+AccessorImpl.java:25)
+at java.lang.reflect.Method.invoke(Method.java:599)
+at
+com.ibm.xml.xlxp2.jaxb.unmarshal.codegen.AbstractGeneratedStubFa
+ctory$ClassLoaderMethods.defineClass(AbstractGeneratedStubFactor
+y.java:344)
+at
+com.ibm.xml.xlxp2.jaxb.unmarshal.codegen.AbstractGeneratedStubFa
+ctory$ClassLoaderMethods.defineClass(AbstractGeneratedStubFactor
+y.java:338)
+at
+com.ibm.xml.xlxp2.jaxb.unmarshal.codegen.AbstractGeneratedStubFa
+ctory.getStubClassConstructor(AbstractGeneratedStubFactory.java:
+137)
+... 11 more
+Caused by: java.lang.NoClassDefFoundError:
+com.ibm.xml.xlxp2.jaxb.unmarshal.impl.DeserializationStub
+at java.lang.ClassLoader.defineClass
+(ClassLoader.java:265)
+at java.lang.ClassLoader.defineClass
+(ClassLoader.java:202)
+... 18 more
+Caused by: java.lang.ClassNotFoundException:
+com.ibm.xml.xlxp2.jaxb.unmarshal.impl.DeserializationStub
+at
+java.lang.ClassNotFoundException.<init>(ClassNotFoundException.j
+ava:65)
+at java.net.URLClassLoader.findClass
+(URLClassLoader.java:381)
+at java.lang.ClassLoader.loadClass(ClassLoader.java:643)
+at
+sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:345)
+at java.lang.ClassLoader.loadClass(ClassLoader.java:609)
+at java.lang.ClassLoader.defineClassImpl(Native Method)
+... 20 more
+
+The error indicates that the JAXB Unmarshaller API does not have access to some of the classes that are part of the JAXB implementation.
+
+PROBLEM CONCLUSION: 
+The JAXB Unmarshaller generates code which requires that the application's ClassLoader has access to classes which are part of the JAXB implementation. But there are environments such as those which use OSGi where this requirement cannot be satisfied. To allow JAXB applications to work in such environments the implementation was fixed so that when the ClassLoader does not have access to the JAXB implementation classes an alternate path through the Unmarshaller is taken. 
+
+The fix for this APAR is currently targeted for inclusion in 
+fix pack 7.0.0.9. Please refer to the Recommended Updates 
+page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+Please download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK98482/readme.txt] US English 14899 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 7.0.0.5-WS-WAS-IFPK98482 12/1/2009 US English 53815 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.0.0.5-WS-WAS-IFPK98482&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK98482/7.0.0.5-WS-WAS-IFPK98482.pak] DD 7.0.0.7-WS-WAS-IFPK98482 12/1/2009 US English 63629 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.0.0.7-WS-WAS-IFPK98482&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK98482/7.0.0.7-WS-WAS-IFPK98482.pak] DD 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server Support Web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24025275&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24025275&aid=2]Problems (APARS) fixed
+PK98482

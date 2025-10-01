@@ -1,0 +1,146 @@
+Title: IBM PJ32982: WORKPLACE XT SEARCH RESULTS SHOW DOCUMENTS FROM OBJECT STORES TH E USER DOES NOT HAVE ACCESS TO BASED ON ACCESS ROLES SETTINGS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  End users do not expect that the results from their search
+   could come from object stores that they have no access to. They
+   are therefore confused by the error message "User does not
+   have access to the Object Store" when they try to  open the
+   returned documents.
+   Additional Info:
+   Even though documents from other object stores are retuned in
+   the search results, attempts to open them will correctly
+   return an error message "User does not have access to the
+   Object Store". This is confusing for end users as there is
+   nothing to indicate that the search results come from different
+   object stores.
+   Steps to Reproduce:
+   1. Use P8 4.0 system with two object stores
+   2. Logon to Workplace XT as admin user and note that both
+   object stores are shown.
+   3. Still logged on as admin user, go to Tools -> Admin -> Site
+   Preferences and limit access to one of the object stores to
+   "Application Engine Administrators" only. Logoff
+   4. Logon as an ordinary user and note that the restricted
+   object store (step 3) is no longer visible.
+   5. Click on "Search" (magnifier icon) and select simple
+   search.
+   6. Enter the title of a document that is known to be in the
+   object store that this user does not have access to.
+   7. Run the search and note that documents from the limited
+   object store will be returned.
+   Actual Results:
+   Objects from the object store the user does not have access to
+   are returned in the search.
+   Expected Results:
+   That only objects from object stores the user does have access
+   to would be returned.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  WorkplaceXT usersEnd users do not expect that the results from t
+   are therefore confused by the error message "User does not have
+   returned documents.??Install WorkplaceXT 1.1.1.2
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Resolved in WorkplaceXT 1.1.1.2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ32982
+   
+   
+ * REPORTED COMPONENT NAME
+   WORKPLACE XT
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7611
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-02-14
+   
+   
+ * CLOSED DATE
+   2008-03-19
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORKPLACE XT
+   
+   
+ * FIXED COMPONENT ID
+   5724R7611
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSY
+   UP

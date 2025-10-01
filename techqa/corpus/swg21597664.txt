@@ -1,0 +1,46 @@
+Title: IBM Themes and Skins portlet is unavailable - United States
+
+Text:
+context; context root; modify-servlet-path-portlets; modify-servlet-path; admin portlet; unavailable; disable TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+ In the IBM WebSphere® Portal Administration UI, the Themes and Skins portlet is shown as "This portlet is unavailable". What is the cause of this issue and how to resolve it?
+
+SYMPTOM
+ In the IBM WebSphere® Portal Administration UI, under "Portal User Interface", when the Portal administrator clicks on "Themes and Skins", the portlet is not loading. Instead, in the portlet menu bar the portlet title is displayed as "[Not available]", and the portlet window displays "This portlet is unavailable".
+
+
+[/support/docview.wss?uid=swg21597664&aid=1] [/support/docview.wss?uid=swg21597664&aid=1] 
+
+
+In SystemOut.log, the following exception stack is recorded:
+
+PortletContai E com.ibm.wps.pe.pc.legacy.PortletContainerImpl performBeginEvents EJPPG1122E: An error occurred during portlet event processing.
+java.lang.RuntimeException: javax.portlet.UnavailableException: WebApplication is not available
+at com.ibm.wps.pe.pc.legacy.factory.PortletObjectAccess.getPortletContext(PortletObjectAccess.java:90)
+at com.ibm.wps.pe.pc.legacy.InternalPortletData.<init>(InternalPortletData.java:60)
+at com.ibm.wps.pe.pc.legacy.PortletContainerImpl.getInternalPortletData(PortletContainerImpl.java:1410)
+at com.ibm.wps.pe.pc.legacy.PortletContainerImpl.callPortletMethod(PortletContainerImpl.java:1091)
+at com.ibm.wps.pe.pc.legacy.PortletContainerImpl.performBeginEvents(PortletContainerImpl.java:259)
+...
+Caused by: javax.portlet.UnavailableException: WebApplication is not available
+at com.ibm.wps.pe.om.definition.impl.WebApplicationDefinitionImpl.getWebAppContext(WebApplicationDefinitionImpl.java:312)
+at com.ibm.wps.pe.om.definition.impl.LegacyWebModuleImpl.getWebAppContext(LegacyWebModuleImpl.java:93)
+at com.ibm.wps.pe.om.definition.impl.WebApplicationDefinitionImpl.getServletContext(WebApplicationDefinitionImpl.java:169)
+at com.ibm.wps.pe.pc.legacy.factory.impl.PortletContextFactoryImpl.getPortletContext(PortletContextFactoryImpl.java:42)
+at com.ibm.wps.pe.pc.legacy.factory.PortletObjectAccess.getPortletContext(PortletObjectAccess.java:88)
+... 63 more
+Caused by: org.apache.pluto.PortletContainerException: EJPPG0017E: Web application for context root /internal/PA_ThemesAndSkinsMgr is unavailable.
+at com.ibm.wps.pe.om.definition.impl.WebApplicationDefinitionImpl.getWebAppContext(WebApplicationDefinitionImpl.java:314)
+... 67 more
+
+
+CAUSE
+ In this case, the context root was changed from /wps to /internal. However, not all required steps as documented in the Portal documentation were performed, in particular the ConfigEngine task "modify-servlet-path-portlets" was not executed.
+
+
+RESOLVING THE PROBLEM
+ Run the ConfigEngine task "modify-servlet-path-portlets" and restart Portal to resolve the issue.
+
+RELATED INFORMATION
+ Changing the Portal URI [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Changing_the_portal_URI_wp7]

@@ -1,0 +1,76 @@
+Title: IBM Login to TDWC succeeds, but there are no menu items displayed - United States
+
+Text:
+TDWC; portfolio; blank; missing; menu; empty; view; NoSuchUserException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ No Tivoli Workload Scheduler (TWS) portfolio menu items display in Tivoli Dynamic Workload Console (TDWC) although login to TDWC succeeds. 
+
+SYMPTOM
+For any user that can login to TDWC, the following set of menu items in the "portfolio" are displayed: 
+
+ * Welcome 
+ * My Startup Pages 
+ * Settings -> Credential Store 
+ * Settings -> Change Password
+
+
+Under the "View" drop down list, the following selections are visible: 
+
+ *  All tasks 
+ *  My tasks 
+ *  Tivoli Dynamic Workload Broker 
+ *  Tivoli Workload Scheduler
+
+
+If "Tivoli Dynamic Workload Broker" or "Tivoli Workload Scheduler" is selected in the "View:" drop down list, then there will be no menu items found in the portfolio section. 
+
+After logging into TDWC and attempting to access TDWB or TWS views the following message can be found in TDWC's WebSphere log SystemOut.log: 
+
+
+ElementRender W com.ibm.isclite.runtime.aggregation.tags.ElementRenderTag doStartTag()
+user does not have permissions for view mode
+
+Also, the following entry is found in one of WebSphere's ffdc logs:
+
+FFDC Exception:javax.portlet.PortletException SourceId:com.ibm.ws.portletcontainer.invoker.impl. 
+PortletServlet.dispatch ProbeId:255 Reporter:com.ibm.ws.portletcontainer.invoker.impl.PortletServlet@2f652f65 
+javax.portlet.PortletException: com.ibm.isc.portlet.service.credentialstore.NoSuchUserException
+
+
+CAUSE
+The global security setting "Enable Application Security" must be selected for TWS or TDWB portfolio elements to load.
+
+
+DIAGNOSING THE PROBLEM
+Access the WebSphere Administration Console to confirm that "Enable Application Security" is enabled with a check in the applicable box.
+
+
+
+RESOLVING THE PROBLEM
+1. From WebSphere Admin Console as the primary admin user: 
+
+
+a. Go to: Security -> Global Security
+
+b. In the Global Security panel locate the section titled "Application Security", make sure that there is a check in the box next to "Enable application security". 
+
+c. Restart WebSphere if the box was unchecked.
+
+- or -
+
+2. As root (on UNIX) or administrative user on Window, change this setting within the security.xml file:
+
+Location: <TWAHome>/eWAS/profiles/TIPProfile/config/cells/TIPCell/security.xml
+
+a. Create a backup copy of security.xml
+
+b. Change the second line to have: appEnabled="true" and save the file.
+
+c. Restart WebSphere if the value was changed to true from false.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TDWC
+DWC

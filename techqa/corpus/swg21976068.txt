@@ -1,0 +1,33 @@
+Title: IBM Gathering detailed JazzSM Page and Widget information - United States
+
+Text:
+DASHL2FAQ; Page; Widget; release; detailed; information TECHNOTE (FAQ)
+
+QUESTION
+ How can I get detailed information about defined Pages and the Widgets on the Page? 
+
+CAUSE
+Page and Widget release information that will be needed for PMR's
+
+ANSWER
+There are two options, display information about the Page and defined widgets and wires on the page, or show information about just the widgets. Both methods are explained below. 
+
+In the upper right portion of the displayed Page, right click on the icon followed by either the "About" or "Edit Page" on the pull down menu item as shown below. 
+
+[/support/docview.wss?uid=swg21976068&amp;aid=1]
+
+The "About" selection will show the following information about the Page and Widgets widgets, wires defined on the Page:
+
+"Console", "General" information showing the DASH version, layout of the page and information about each of the defined widgets and wires on the page. Below is an example of the Widget information displayed:
+
+[/support/docview.wss?uid=swg21976068&aid=2] [/support/docview.wss?uid=swg21976068&aid=2]
+[/support/docview.wss?uid=swg21976068&aid=3] [/support/docview.wss?uid=swg21976068&aid=3]
+
+The second option is to display only the information about a single widget. 
+
+Selecting the "Edit Page" shown in the first screen shot above, you an then right click on the widgets, select "About" from the pulldown as shown below, 
+
+
+[/support/docview.wss?uid=swg21976068&amp;aid=4]
+
+[/support/docview.wss?uid=swg21976068&aid=5] [/support/docview.wss?uid=swg21976068&aid=5]

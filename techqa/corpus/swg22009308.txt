@@ -1,0 +1,10 @@
+Title: IBM Question HTTP VERBS - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What HTTP VERBS are leveraged for Control Center? 
+
+ANSWER
+CC uses HTTP verbs - PUT, POST, GET, DELETE

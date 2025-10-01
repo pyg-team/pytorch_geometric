@@ -1,0 +1,114 @@
+Title: IBM Guide to the Notes/Domino Out of Office. Part 2: ACL Access Level and its impact on the Out of Office behavior - United States
+
+Text:
+ooo; out of office; outofoffice; vacation; absences; acl; access; authorization WHITE PAPER
+
+ABSTRACT
+ The access level that a mail file owner has in the Access Control List (ACL) of his or her mail database impacts the configuration and behavior of the Out of Office functionality in Lotus Notes/Domino. 
+
+This document, the second in a series of four, describes the Out of Office functionality with respect to each allowable database access level, examining the LotusScript code differences among the following:
+--Manager access 
+--Designer access
+--Editor access (available with Notes/Domino version 6.0) 
+
+CONTENT
+== 
+
+Guide to the Notes/Domino Out of Office Functionality
+Part 1 - Out of Office Design and Features [http://www.ibm.com/support/docview.wss?rs=475&uid=swg27006404] 
+Part 2 - this document
+Part 3 - Configuration of the Out of Office [http://www.ibm.com/support/docview.wss?rs=475&uid=swg27006537] 
+Part 4 - Out of Office in Domino Web Access (iNotes) [http://www.ibm.com/support/docview.wss?rs=475&uid=swg27006538]
+==
+
+1. MINIMUM ACCESS LEVEL TO USE THE NOTES/DOMINO OUT OF OFFICE:
+
+Notes 5.x:
+In Notes/Domino Release 5, a user (mail file owner) must have Manager or Designer access to his or her mail file in order to successfully use the Notes/Domino Out of Office functionality and other functionality in the 5.x mail template design.
+
+In addition, Designer-level users must also have rights in the ACL to "Create LotusScript/Java agents." This ACL attribute is given to all Manager-level users by default. 
+
+Notes 6.x, 7.x, and 8.x:
+Beginning with 6.0, a mail file user must have at least Editor access or higher to the mail file. This change was added to the mail template so that users would be able to successfully use the Out of Office agent, without having rights to run all other agents on the server.
+
+
+2. ENABLING THE NOTES/DOMINO OUT OF OFFICE: WHAT HAPPENS?
+
+To understand more clearly the difference among the different ACL access levels, what follows is an overview of the LotusScript code behind the "Enable" button of the Out of Office Profile document. This code, written in LotusScript, controls the manner in which the Out of Office is enabled and recognized by the Domino server. 
+
+Enable button code that executes for all access levels: 
+
+ * Verifies the ACL access of the current user; returns error if the user is author 
+ * Checks the current agent status (Enabled/Disabled); returns an error if already enabled 
+ * Verifies the Mail File Owner as in the Calendar Profile document; Displays a warning if the current user is a delegate (as Out of Office does not support delegation) 
+ * Validates the dates selected by the user (although it allows you to choose a leaving date in the past) 
+ * Clears out the "Notified" field of the Out of Office profile document 
+ * Checks the current location document for user's Home/Mail server and populates the "Run on Server" field for the Out of Office agent 
+ * Stores the current user ID as the name for the From field of all e-mail notifications 
+ * Books busytime for the duration of the absence 
+ * Hides the Enable button and displays the Disable button instead
+
+
+The overall result of this process for users with Manager or Designer access to the mail file is that the agent becomes signed with the current user's ID. This behavior differs for users with Editor access, as discussed below. 
+
+Why is the agent signer important? 
+The agent signer must have the appropriate rights to run LotusScript agents on the Domino server. At the time that the Out of Office agent is loaded into the Agent Manager task queue, the server checks to make sure that the agent signer has the proper access rights to be able to enable, set, and run agents on that server. 
+
+The ACL setting that is checked for Manager and Designer-level users is related to the "Run Restricted LotusScript/Java Agents" field in the Server document. For Editor-level users, the valid agent signer must be "Lotus Notes Template developers" or another ID file as authorized in the Server document field of "Sign agents to run on behalf of someone else." 
+
+3. The NOTES/DOMINO OUT OF OFFICE AND EDITOR ACCESS: 
+In Notes/Domino 6, new functionality has been introduced to allow mail users with Editor access to enable the Out of Office agent, without giving them rights to run all restricted LotusScript agents on the server. The Out of Office LotusScript agent is still run by the Agent Manager task, but the agent becomes enabled through the AdminP process. 
+
+When a 6.x Editor-level user clicks the Enable button, the following additional LotusScript code executes:  * Sends a request to the Administration Requests database (admin4.nsf) to have the server set, sign, and enable the agent for the user; returns an error if the user does not have at least Author rights to admin4.nsf 
+ * Checks for pre-existing AdminP requests and returns an error if this is true 
+ * AdminP populates the Notes/Domino 6 Out of Office agent properties, security tab checkbox "Allow User Activation" 
+ * AdminP populates the "Run on behalf of" agent security property with the current user’s canonical name
+
+
+The overall result in this process for Editor-level users is that the Out of Office agent, through the AdminP process on the Domino server, is signed by the server's ID file. 
+
+Additional information about Editor access and the AdminP process: 
+When activated by a user with Editor access, thus sending an AdminP request to the server's Administration Requests database, the agent will complete the enablement process depending on the following:  * 
+ * 
+ * 
+ * 
+ * 
+
+
+Thus, for Editor-level access, there could be some lag between the time that the user clicks the Enable button to the agent actually becoming enabled. If that is true, the Editor-level user typically sees blue text on the Profile doc with this message: 
+ * 
+
+
+In a single Domino server environment, the Out of Office AdminP request to set, sign, and enable the agent for the user occurs fairly quickly because it is sent to the Administration Requests database of the current server, which is also the user's home/mail server. The request is typically processed within 0 to 10 minutes (most often between 1 to 2 minutes), and you can see that the status is enabled (seen in the Profile Doc's "Status" as well as in Domino Designer). 
+
+In a multiple Domino server environment, assuming the Editor-level user and agent signer pass all security checks, the process of enabling the Out of Office agent takes longer. 
+
+To understand this better, let us assume that the current Domino server environment is a Hub and Spoke topology, that AdminP requests on each Domino server are processed every 15 minutes, that there are four concurrent threads of AdminP running on the server, and that server-to-server replication for the Administration Requests database (admin4.nsf) occurs every 15 minutes. Here is an example of what happens in a multi-server Domino environment for Editor level users, based on the previous assumptions: 
+
+1. The User clicks the Enable button, which sends an AdminP request to the Administration Requests database (admin4.nsf) on the user's home/mail server. 
+2. Within 15 minutes, the admin4.nsf of the user's home/mail server replicates with the Hub server's admin4.nsf (which is the administration server for this Domino environment and for this admin4.nsf). 
+3. There are 12 other AdminP requests already waiting in the AdminP queue of the Hub server. Because there are four concurrent threads of AdminP running, these 12 requests will be processed first, four at a time until all are completed. 
+4. Once the previous 12 requests are processed, AdminP will then process the user's Out of Office "set and enable" request. 
+5. Admin4.nsf on the Hub server then replicates back to the user's home/mail server with the approved or denied request. 
+
+Once this administration process is complete, the Out of Office agent becomes signed with the server's ID of the user's home/mail server, and it is now set to run on the user's home/mail server. 
+
+4. DISABLING THE NOTES/DOMINO OUT OF OFFICE: 
+
+When a user with Manager, Designer, or Editor access has returned to the office and clicks the "Disable" button, the end result is that the agent is signed with the user's ID file for all access levels. Clicking the Disable button forces a modification of both the Out of Office agent as well as the Out of Office profile document. As result, the Out of Office agent is modified with the ID file of the user who disables the agent, along with a time-stamp of the time that the agent was disabled. 
+
+Note that for Editor-level users, the AdminP process does not play a role in disabling the Out of Office agent. Thus, you will not see an AdminP request in the Administration Requests database to disable the Out of Office agent. When an Editor-level user disables the agent, the agent becomes signed with the user's ID file, and the necessary agent property flags are maintained. The next time the Editor-level user wishes to enable the Out of Office agent, no new AdminP request needs to be submitted on the user's behalf. The agent runs with the same credentials as the previous agent execution. 
+
+Related Documents: 
+
+Notes/Domino 6.x Agent Security Model and Private Agents 
+Technote #: 1114269 [http://www.ibm.com/support/docview.wss?rs=463&uid=swg21114269] 
+
+
+Can a User Be Given ACL Rights which Allows Them To Enable Agents but not Create Agents? 
+Technote #: 1101548 [http://www.ibm.com/support/docview.wss?rs=463&uid=swg21101548] 
+
+Out of Office Agent Does Not Prevent a "Leaving Date" from the Past 
+Technote #: 1093077 [http://www.ibm.com/support/docview.wss?rs=463&uid=swg21093077] 
+
+For more information on general Notes/Domino 6 agent functionality, refer to "Decoding the New Notes/Domino 6 Agent Features," available at the Web address:  * http://www.lotus.com/ldd/today.NSF/Lookup/ND6NewAgentFeatures

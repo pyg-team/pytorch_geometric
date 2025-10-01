@@ -1,0 +1,94 @@
+Title: IBM Hung thread behavior with SocketWriteTimerThread - United States
+
+Text:
+com.ibm.rmi.util.buffer.SequentialByteBuffer.flushTo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SystemOut.Log will report Hung ORB Threads with the following stack traces. 
+
+SYMPTOM
+[[4/16/13 6:18:08:057 EDT] 00000306 ThreadMonitor W WSVR0605W: Thread "ORB.thread.pool : 184" (0000361f) has been active for 706577 milliseconds and may be hung. There is/are 133 thread(s) in total in the server that may be hung.
+
+at java.net.SocketOutputStream.socketWrite0(Native Method)
+
+at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:103)
+
+at java.net.SocketOutputStream.write(SocketOutputStream.java:147)
+
+at com.ibm.rmi.util.buffer.SequentialByteBuffer.flushTo(SequentialByteBuffer.java:410)
+
+at com.ibm.rmi.util.buffer.SequentialByteBuffer.flushTo(SequentialByteBuffer.java:439)
+
+at com.ibm.rmi.iiop.IIOPOutputStream.writeTo(IIOPOutputStream.java:541)
+
+at com.ibm.rmi.iiop.Connection.write(Connection.java:2225)
+
+at com.ibm.rmi.iiop.Connection.send(Connection.java:2267)
+
+at com.ibm.rmi.iiop.ClientRequestImpl.invoke(ClientRequestImpl.java:338)
+
+at com.ibm.rmi.corba.ClientDelegate.invoke(ClientDelegate.java:424)
+
+
+
+
+
+[4/16/13 6:18:08:059 EDT] 00000306 ThreadMonitor W WSVR0605W: Thread "ORB.thread.pool : 70" (0000282b) has been active for 665094 milliseconds and may be hung. There is/are 134 thread(s) in total in the server that may be hung.
+
+at com.ibm.rmi.util.buffer.SequentialByteBuffer.flushTo(SequentialByteBuffer.java:427)
+
+at com.ibm.rmi.iiop.IIOPOutputStream.writeTo(IIOPOutputStream.java:541)
+
+at com.ibm.rmi.iiop.Connection.write(Connection.java:2225)
+
+at com.ibm.rmi.iiop.Connection.send(Connection.java:2267)
+
+at com.ibm.rmi.iiop.ClientRequestImpl.invoke(ClientRequestImpl.java:338)
+
+at com.ibm.rmi.corba.ClientDelegate.invoke(ClientDelegate.java:424)
+
+at com.ibm.rmi.corba.ClientDelegate.non_existent(ClientDelegate.java:1591)
+
+at com.ibm.CORBA.iiop.ClientDelegate.non_existent(ClientDelegate.java:500)
+
+
+
+CAUSE
+This has been identified as a product defect under APAR IX90098
+
+ENVIRONMENT
+see above
+
+DIAGNOSING THE PROBLEM
+If the ORB threads are reported as hung in the above stack traces and do not recover then check for the following :
+
+Set the ORB property com.ibm.CORBA.SocketWriteTimeout to a value > 0. The value specifies the number of seconds after which an ORB Thread doing a socketWrite will time out. The connection associated with the hung socketWrite will be closed anywhere between SocketWriteTimeout and 2 x SocketWriteTimeout seconds. Typically, set this value to the same value as the com.ibm.CORBA.RequestTimeout value. Once, the connection is closed, the ORB Thread stuck at socketWrite will throw the following exception : 
+java.rmi.RemoteException: CORBA NO_RESPONSE 0x4942fb05 No; nested exception is:
+org.omg.CORBA.NO_RESPONSE: Socket write timed out for connection to 14.9
+9.186.64 at port 1700 vmcid: IBM minor code: B05 completed: No
+at com.ibm.CORBA.iiop.UtilDelegateImpl.mapSystemException(UtilDelegateImpl.java:335)
+at javax.rmi.CORBA.Util.mapSystemException(Util.java:84)
+at _BeanInterface_Stub.echoObject(_BeanInterface_Stub.java:46)
+at Client.main(Client.java:57)
+
+The other ORB threads waiting on the same connection will log a COMM_FAILURE.
+
+Please Note : The property com.ibm.CORBA.SocketWriteTimeout is available in the IBM JDK since the following releases - 
+Java 5 SR14
+
+
+Java 6 SR11
+Java 6.0.1 SR2
+Java 7 SR1
+
+If the com.ibm.CORBA.SocketWriteTimeout is set to a value > 0 and yet threads still seem to be hung in socketWrite well beyond 2xSocketWriteTimeout period, then check for a NullPointerException logged in the SystemErr.log as follows :
+Exception in thread "Thread-29" java.lang.NullPointerException
+at com.ibm.rmi.iiop.SocketTimerThread.run(SocketTimerThread.java:55)
+This means that the SocketTimerThread has failed to clean up the connections which are stuck at socketWrite. The APARs PM83349 and IX90112 must be applied.
+
+If the ORB threads appear to be hung in socketWrite for more than the value specified by the com.ibm.CORBA.SocketWriteTimeout but eventually recover on their own, this is an indication of high contention on the socket connections. Please increase the value of com.ibm.CORBA.ConnectionMultiplicity to have multiple connections between server and client ORBs.
+
+
+
+RESOLVING THE PROBLEM
+See suggestions from "Diagnosing the Problem". Defect has been resolved.

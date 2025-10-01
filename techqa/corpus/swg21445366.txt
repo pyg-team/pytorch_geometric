@@ -1,0 +1,112 @@
+Title: IBM How to verify LDAP parameters for Jazz Team server configuration - United States
+
+Text:
+LDAP; parameters; user registry; base group dn; base; user; dn; jts; jazz team server TECHNOTE (FAQ)
+
+QUESTION
+ How can you tell if the given LDAP parameters are accurate to complete the IBM Rational Jazz Team Server (JTS) LDAP configuration? 
+
+CAUSE
+The Jazz Team Server relies on the user registry to provide basic information about users and groups. When configuring the Jazz Team server to use a LDAP server to act as the user registry, you will be asked to provide a list of parameters (properties) such as Base User DN, Base Group DN, Group Name property and Group Member property, to complete the setup.
+
+Usually you will collect these parameters from your LDAP Administrator. In the case that you are not sure if the value of these given parameters are accurate, or you are getting errors/warnings indicating some of the value is incorrect during the setup, you can use a third party LDAP browser to verify their accuracy. 
+
+
+ANSWER
+This technote is based on third party software named: Softerra LDAP Browser. You can always choose a different LDAP browser to achieve the same results. 
+
+ 
+
+Alternative LDAP browsers which you can use: 
+
+ * Jexplorer [http://www.jxplorer.org/]
+   
+   
+ * Apache Directory Studio [http://directory.apache.org/studio/]
+
+
+
+
+
+Disclaimer IBM is not providing program services of any kind for this program. Making use of the Information provided in this technote is done at the user's own risk.
+
+ 
+
+ 1. Download, install and launch Softerra LDAP Browser. You can download it from the following site download [http://www.softerra.com/#downloads] page.
+    
+    
+ 2. Create a profile for your LDAP server to verify LDAP Registry Location, User Name, Password, Base User DN. To create the profile follow follow the instruction under the help menu of Softerra. Input the above parameters in the profile creation wizard accordingly as the following:  * Host: Extract the host name from LDAP Registry Location parameter, for example: ldapserver.mycompany.com
+       
+       
+     * Port: Extract the port number from LDAP Registry Location parameter, for example 389
+       
+       
+     * Base DN: key in the value of the Base User DN parameter
+       
+       
+     * User DN: User Name
+       
+       
+     * Password: Password
+       
+       
+       Save the profile and connect to your LDAP server by double clicking on the profile. If you can connect, that means the value of the above giving LDAP parameters are accurate. Otherwise, base on the errors you get, contact your LDAP Administrator to follow up.
+       
+       
+    
+    
+ 3. Verify value of the User Property Names Mapping property. The default value for this property is: userId=uid,name=cn,emailAddress=mail. That assumes your LDAP user record has the attributes of uid, cn and mail representing userID, common name and emailAddress. To verify these attributes exist in your LDAP user record, follow the steps below to search for your own LDAP ID, then examine all the attributes there to ensure the above given attributes exist.  1. click on Tools > Directory Search from Softerra LDAP browser.
+        
+        
+     2. Type in the value of the Base User DN property into the Search DN box.
+        
+        
+     3. Replace: (objectclass=*) with (cn=your common name) in the Filter box and click on Search button. It should find your LDAP user record, double click to open it, and you should see all the attributes within the record. Verify the above attributes exist.
+        
+        [/support/docview.wss?uid=swg21445366&aid=1] [/support/docview.wss?uid=swg21445366&aid=1]
+        
+        
+        [/support/docview.wss?uid=swg21445366&aid=2] [/support/docview.wss?uid=swg21445366&aid=2]
+        
+        
+    
+    
+ 4. Verify the value of the Base Group DN property. To verify the value of the Base Group DN property, follow the steps below to search for your LDAP group that is mapped to any of the Jazz role:  1. Click on Tools > Directory Search from Softerra LDAP browser.
+        
+        
+     2. Type in the value of Base Group DN in the Search DN box
+        
+        
+     3. Replace (objectclass=*) with (cn=your ldap group) in the Filter box
+        
+        
+     4. If the group can be found, that means the Base Group DN has correct value
+        
+        [/support/docview.wss?uid=swg21445366&aid=3] [/support/docview.wss?uid=swg21445366&aid=3]
+        
+    
+    
+ 5. Verify the value of the Group Name property. The default value of Group Name is cn. That assumes your LDAP group record has an attribute named cn represent the name of the group. To verify this attribute exist, follow the steps in step 4 above to search for your LDAP group, open it to verify the cn attribute exists.
+    
+    [/support/docview.wss?uid=swg21445366&aid=4] [/support/docview.wss?uid=swg21445366&aid=4]
+    
+    
+ 6. Verify Group Member property. The default value of Group Member property is members. That assumes your LDAP group record has an attribute named members representing member of the group. To verify this attribute exist, follow the steps in session C above to search for your LDAP group, open it to verify the members attribute exist.
+    
+    [/support/docview.wss?uid=swg21445366&amp;aid=5]
+    
+    
+
+
+Leverage the Jazz Community The Jazz based products have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://ibm.com/support/docview.wss?uid=swg21319600] for details and links.
+
+RELATED INFORMATION
+ Softerra LDAP Browser [http://www.ldapadministrator.com/softerra-ldap-browser.htm]
+Setting up user management [http://www-01.ibm.com/support/knowledgecenter/SSYMRC_5.0.2/com.ibm.jazz.install.doc/topics/c_plan_user_management.html?lang=en]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Project Conductor Team Server AIX, Linux, Solaris, Windows 1.0 Software Development Rational Quality Manager Team Server AIX 1.0, 1.0.1, 2.0, 2.0.1, 3.0.1, 3.0.1.1, 3.0.1.2, 3.0.1.3, 3.0.1.4, 3.0.1.5, 3.0.1.6, 4.0, 4.0.0.1, 4.0.0.2, 4.0.1, 4.0.2, 4.0.3, 4.0.4, 4.0.5, 4.0.6, 4.0.7, 5.0, 5.0.1, 5.0.2 Software Development Rational Requirements Composer Team Server 1.0, 2.0, 3.0.1, 3.0.1.1, 3.0.1.2, 3.0.1.3, 3.0.1.4, 3.0.1.5, 3.0.1.6, 4.0, 4.0.0.1, 4.0.0.2, 4.0.1, 4.0.2, 4.0.3, 4.0.4, 4.0.5, 4.0.6, 4.0.7 Software Development Rational DOORS Next Generation Linux, Windows 5.0, 5.0.1, 5.0.2

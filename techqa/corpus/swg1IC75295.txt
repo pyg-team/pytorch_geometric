@@ -1,0 +1,149 @@
+Title: IBM IC75295: THE AVAILABILITY WORKSPACE MAY SHOW INACTIVE - ATTRIBUTE GROUP RETURNED NULL FOR ONE OR MORE WORKSPACES. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using Monitoring and Reporting, the Availability workspace
+   in TEP may show INACTIVE under Object Status column even when
+   the agent is working properly.  This occurs because the most
+   recent request for data from the agent returned no new data.
+   Initial Impact:
+   Low
+   Tivoli Storage Manager Versions Affected:
+   All 6.x Tivoli Storage Manager for Monitoring and Reporting
+   Additional Keywords:
+   ZZ61RM ZZ62RM inactive availability workspace attribute group
+   null TEP
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If data is being seen in the Workspace for those listed as
+   INACTIVE, ignore the Availability workspace.  Clicking on a
+   workspace will sometimes force a refresh of new data, which will
+   change the INACTIVE to ACTIVE.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of IBM Tivoli Storage Manager      *
+   *                 Administration Center.                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See ERROR DESCRIPTION                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This problem is projected to be fixed in a future version of
+   Tivoli Storage Manager.  Note that this is subject to change
+   at the discretion of IBM.
+   
+   Affected platforms:  AIX, Linux, and Windows.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC75295
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   62W
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-25
+   
+   
+ * CLOSED DATE
+   2011-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61L PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R62A PSY
+   UP
+   
+   
+ * R62L PSY
+   UP
+   
+   
+ * R62W PSY
+   UP

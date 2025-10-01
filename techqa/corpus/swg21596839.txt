@@ -1,0 +1,134 @@
+Title: IBM Initiate error when performing a MEMPUT on a member - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Performing MEMPUT yields the following error in the engine logfile: 
+ODBC [S1000] [InitiateSystems][ODBC DB2 Wire Protocol driver][UDB DB2 for Windows, UNIX, and Linux]Unknown error: SQLCODE -1477 (DBError=-1477) 
+
+SYMPTOM
+Customer tried to memput a member into the system but it failed with the following error: 
+
+18:48:27 [00556] AUDIT iatesystems.hub.logging.AuditLog: MEMPUT: member XXXXXX:XXXXXX, being processed.
+18:48:27 [00556] ERROR atesystems.hub.logging.NativeLog: ODBC [S1000] [InitiateSystems][ODBC DB2 Wire Protocol driver][UDB DB2 for Windows, UNIX, and Linux]Unknown error: SQLCODE -1477 (DBError=-1477)
+18:48:27 [00556] ERROR atesystems.hub.logging.NativeLog: MAD_PkgExecStmt: MAD_OdbcExecute(mpi_memident) failed, stmt=' selectmemrecno,memseqno,caudrecno,maudrecno,recstat,attrrecno,asaidxno,idsrcrcno,idnumber,idexpdate from mpi_memident where memrecno=?'.
+18:48:27 [00556] ERROR atesystems.hub.logging.NativeLog: MAD_PkgExecStmt: Dumping bound parameters... 
+
+18:48:27 [00556] ERROR atesystems.hub.logging.NativeLog:
+01 memrecno: 'XXXXXXX'
+18:48:27 [00556] ERROR atesystems.hub.logging.NativeLog:
+02 memseqno: '0'
+18:48:27 [00556] ERROR atesystems.hub.logging.NativeLog:
+03 caudrecno: '0'
+18:48:27 [00556] ERROR atesystems.hub.logging.NativeLog:
+04 maudrecno: '0'
+18:48:27 [00556] ERROR atesystems.hub.logging.NativeLog:
+05 recstat: ''
+18:48:27 [00556] ERROR atesystems.hub.logging.NativeLog:
+06 attrrecno: '0'
+18:48:27 [00556] ERROR atesystems.hub.logging.NativeLog:
+07 asaidxno: '0'
+18:48:27 [00556] ERROR atesystems.hub.logging.NativeLog:
+08 idsrcrecno: '0'
+18:48:27 [00556] ERROR atesystems.hub.logging.NativeLog:
+09 idnumber: '?K
+18:48:27 [00556] ERROR atesystems.hub.logging.NativeLog:
+10 idexpdate: ''
+18:48:27 [00556] ERROR atesystems.hub.logging.NativeLog: MAD_PkgSelAcbByBind: MAD_PkgExecStmt(mpi_memident) failed.
+18:48:27 [00556] ERROR atesystems.hub.logging.NativeLog: MPI_MemDbGetTheRest: MAD_PkgSelAcbByBind(mpi_memident) failed.
+18:48:27 [00556] ERROR atesystems.hub.logging.NativeLog: USR=xxxxxxxx_a, IXN=MEMPUT, ERR=EODBC, MSG=member XXXXXX:XXXXXX, unable to select member data.
+18:48:27 [00556] ERROR atesystems.hub.logging.NativeLog: MPI_IxnExec_ODBC: ixn failed due to ODBC error.
+18:48:27 [00556] ERROR engine.logic.AbstractEngineLogic: Error encountered during native interaction execution. com.initiatesystems.hub.engine.logic.EngineLogicException: Error
+encountered during native interaction execution.
+at com.initiatesystems.hub.engine.logic.IxnNativeLogic.doExecute(IxnNativeLogic.java:88)
+
+
+DIAGNOSING THE PROBLEM
+We tried to perform a direct SQL command that the application was attempting to do outlined in the error message using the DB2 tool instead:
+
+select
+memrecno,memseqno,caudrecno,maudrecno,recstat,attrrecno,asaidxno,idsrcre
+cno,idnumber,idexpdate from mpi_memident where memrecno= XXXX
+
+....However it failed and gave the following information below:
+
+
+MEMRECNO MEMSEQNO CAUDRECNO MAUDRECNO
+RECSTAT ATTRRECNO ASAIDXNO IDSRCRECNO IDNUMBER
+
+IDEXPDATE
+
+-------------------- -------- -------------------- --------------------
+------- --------- -------- ----------
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+---------------- --------------------------
+SQL1477N For table "XXXXXXX.MPI_MEMIDENT" an object "142" in table
+space
+"2" cannot be accessed. SQLSTATE=55019
+
+SQL1477N For table "XXXXXXX.MPI_MEMIDENT" an object "142" in table
+space "2 " cannot be accessed.
+
+Explanation:
+
+An attempt was made to access a table where one of its objects is not accessible. The table may not be accessible because of one of the following reasons: 
+
+ 
+
+ * The table had NOT LOGGED INITIALLY activated when the unit of work was rolled back. 
+ * The table is a partitioned created temporary table or declared temporary table and one or more database partitions failed since the temporary table was instantiated or declared. 
+ * ROLLFORWARD encountered the activation of NOT LOGGED INITIALLY on this table or a NONRECOVERABLE load on this table.
+
+
+Access to this table is not allowed because its integrity cannot be 
+guaranteed. 
+
+User response: 
+
+One of the following actions can be taken. 
+ * If the object is a table and it had NOT LOGGED INITIALLY activated, drop the table. If this table is required, re-create it. 
+ * If the object is a data partition, detach it from the table. If this data partition is required, add a new one. 
+ * If the object is a non-partitioned index, drop the index. If this index is required, create a new one. 
+ * If the table is a created temporary table, disconnect from the server and connect again to instantiate a new copy of the created temporary table. 
+ * If the table is a declared temporary table, drop the table. If this table is required, declare it again.
+
+
+Otherwise, restore from a table space or database backup. The backup image must have been taken subsequent to the commit point following the completion of the non-recoverable operation (NOT LOGGED INITIALLY operation, or NONRECOVERABLE load). 
+
+The catalogs and administrative views can be used to determine what the object is. To determine if the object is a table, use the following query: 
+
+SELECT TABNAME 
+FROM SYSCAT.TABLES 
+WHERE TBSPACEID="<tbspace-id>" AND 
+TABLEID="<object-id>" 
+
+If a table name does not appear as the result for the above query you can determine if the object is a partition by using the following query: 
+
+SELECT DATAPARTITIONNAME, TABNAME 
+FROM SYSCAT.DATAPARTITIONS 
+WHERE TBSPACEID="<tbspace-id>" AND 
+PARTITIONOBJECTID="<object-id>" 
+
+To determine if the object is an index, use the following query: 
+
+SELECT INDNAME 
+FROM SYSCAT.INDEXES 
+WHERE TBSPACEID="<tbspace-id>" AND 
+INDEX_OBJECTID="<object-id>" 
+
+To determine if the object is a created temporary table or a declared temporary table, use the following query: 
+
+SELECT TABNAME 
+FROM SYSIBMADM.ADMINTEMPTABTABLES 
+WHERE TBSP_ID="<tbspace-id>" AND 
+INDEX_TAB_FILE_ID="<object-id>" 
+
+sqlcode: -1477 
+
+sqlstate: 55019 
+
+We also tried to do a select first 100 rows on the mpi_memident table which failed with the same error. 
+RESOLVING THE PROBLEM
+It was deemed that there is some problem with the mpi_memident table that is preventing the application from doing the select and commiting the memput interaction. Customer contacted the DB team to engage DB2 support to resolve problem

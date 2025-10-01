@@ -1,0 +1,24 @@
+Title: IBM Multi Attribute Search Returning Extra Results - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When we search for name, phone, or any other attribute (unique or not), we get expected results. But whenever our users search for 2 attributes, they get a lot of extra values which are completely unrelated to the search. This is consistently reproducible and every time they search for more than 1 token, they see this.
+
+In theory, if I do a search with name and unique number (DNI) the results should be more specific and so this is unexpected. 
+
+CAUSE
+It appears the rule set being used for searching is too loose. Searching for Name and Unique number does not make the search filter down the return. In this case, the pipeline does a resolution search and and returns any entities that are related to the search data based on your Match Merge Rules for the search source. 1589 is the default search but in this config, MM_CONFIG_ID=1 is being used and that is not normal. Usually the customer adjusts MM_CONFIG_ID=3 to be the search rules. the current MM_CONFIG_ID=1 rules are VERY lose and will create a response for any data that matches in any way.
+
+ANSWER
+I would adjust the MM_CONFIG_ID=3 rules to be what the customer wants to return and change the 1589 Data Source to point to 3. Another suggestion is to use the UMF_QUERY request, which doesn't use entity resolution (it will be a 'tighter' search by definition). 
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ II
+GNR
+Identity Insight
+Global Name Resolution

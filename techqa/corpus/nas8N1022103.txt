@@ -1,0 +1,163 @@
+Title: IBM Electronic Software Delivery help - Tips and FAQs - United States
+
+Text:
+ PLANNING
+
+ Electronic Software Delivery help - Tips and FAQs 
+
+
+
+IBM i Support [http://www.ibm.com/support/entry/portal/product/ibm_operating_systems/ibm_i] Planning [//www.ibm.com/support/docview.wss?uid=nas8N1022012] Upgrade planning [//www.ibm.com/support/docview.wss?uid=nas8N1022013] Technology Refresh [//www.ibm.com/support/docview.wss?uid=nas8N1022014] Resaves [//www.ibm.com/support/docview.wss?uid=nas8N1022015] Customer Notices [//www.ibm.com/support/docview.wss?uid=nas8N1022016] Technical databases [//www.ibm.com/support/docview.wss?uid=nas8N1022017] 
+
+ *  Overview [//www.ibm.com/support/docview.wss?uid=nas8N1022091] 
+ *  Walkthrough [//www.ibm.com/support/docview.wss?uid=nas8N1022104] 
+ *  Tips & FAQs [//www.ibm.com/support/docview.wss?uid=nas8N1022103] 
+ *  Help [http://www.ibm.com/servers/eserver/ess/OpenServlet.wss?NO_SCRIPT=YES&show_page=ess_sitehelp.jsp&command=ShowPageCommand] 
+
+
+
+
+This page contains tips and FAQs about Electronic Software Delivery.
+
+
+
+
+TIPS
+Burn a copy of the optical media for emergency situations.
+
+
+
+
+FAQS
+ * Why can't I sign in?
+ * What customer number should I use?
+ * Why do I get a message that my customer number is already registered?
+ * Why don't I see the option to download software?
+ * How long does it take to download the optical images?
+ * How do I use Download Director?
+ * Why is the install from image catalog failing?
+ * Why is the install from optical media failing?
+ * How do I unpack files if my unpacking software does not work correctly?
+
+
+
+
+WHY CAN'T I SIGN IN?
+To download software, you must have an IBM ID. If you don't have an IBM ID, register at My IBM registration [https://www.ibm.com/account/profile/us?page=reg].
+
+If you have an IBM ID and are experiencing problems with signing in, refer to Help and FAQ [https://www.ibm.com/account/profile/us?page=regfaqhelp] for IBM registration.
+
+
+
+
+WHAT CUSTOMER NUMBER SHOULD I USE?
+Use the customer number and the machine type/serial number that is in the Electronic Software Delivery Notification or printed on the packing list.
+
+Back to top
+
+
+
+
+WHY DO I GET A MESSAGE THAT MY CUSTOMER NUMBER IS ALREADY REGISTERED?
+A customer number only has to be registered one time. After it is registered, the person who registered the customer number becomes the primary contact and the administrator for the customer number.
+
+If you are the primary contact, you do not need to register the customer number again.
+
+If you are not the primary contact, request authorization from the primary contact for the customer number.
+
+If you are uncertain who the primary contact is for the customer number, call the customer support center [//www.ibm.com/servers/eserver/ess/OpenServlet.wss?NO_SCRIPT=YES&show_page=ess_contact_info.jsp&command=ShowPageCommand&from_page=ess_sign_out_confirm.jsp] for your country, territory, or unit.
+
+The support center will notify the primary contact and administrators that you are requesting authorization to the customer number. You will not be able to download the optical images until the primary contact or administrator has authorized you to do so.
+
+
+
+
+WHY DON'T I SEE THE OPTION TO DOWNLOAD SOFTWARE?
+Your IBM ID must be authorized to download software.
+
+If you are the primary contact or administrator, go to the Administrator functions [//www.ibm.com/servers/eserver/ess/ProtectedServlet.wss].
+
+ 1. Click Manage customer numbers.
+ 2. Select the customer number and click Continue.
+ 3. Click Manage authorizations.
+ 4. Select your IBM ID and click Continue
+ 5. Under Electronic Software Delivery, check the box for Perform downloads.
+
+If you are not the primary contact or administrator, contact the primary administrator for authorization.
+
+If you are uncertain who the primary contact is for the customer number, call the customer support center [//www.ibm.com/servers/eserver/ess/OpenServlet.wss?NO_SCRIPT=YES&show_page=ess_contact_info.jsp&command=ShowPageCommand&from_page=ess_sign_out_confirm.jsp] for your country, territory, or unit.
+
+The support center will notify the primary contact and administrators that you are requesting authorization to the customer number. You will not be able to download the optical images until the primary contact or administrator has authorized you to do so.
+
+Back to top
+
+
+
+
+HOW LONG DOES IT TAKE TO DOWNLOAD THE OPTICAL IMAGES?
+The amount of time it takes to download the optical images depends on the speed of the connection. Over cable modem or T1 connections, smaller products take a few seconds to a few minutes. Large products such as IBM i and AIX could take a couple of hours.
+
+
+
+
+HOW DO I USE DOWNLOAD DIRECTOR?
+Download Director requires a trusted applet supplied by IBM. The applet appears in a pop-up window.
+
+In order for the applet to work, you must have the Java Plug-in installed. See Download Director - Frequently Asked Questions [//www6.software.ibm.com/dldirector/doc/DDfaq_en.html] for instructions on how to download and install the correct Java Runtime Environment (JRE).
+
+You must also accept the trusted applet when prompted for permission to run on your computer.
+
+
+
+
+WHY IS THE INSTALL FROM IMAGE CATALOG FAILING?
+Refer to Installing from Image Catalog [//publib.boulder.ibm.com/infocenter/systems/scope/i5os/topic/rzahc/scenarioprepareimagecatalog.htm] to ensure that all of the images are in the image catalog and are in the correct order.
+
+If all of the images are in the image catalog, and are in the correct order, and the installation is still failing, contact the customer support center [//www.ibm.com/servers/eserver/ess/OpenServlet.wss?NO_SCRIPT=YES&show_page=ess_contact_info.jsp&command=ShowPageCommand&from_page=ess_sign_out_confirm.jsp].
+
+For additional information on Virtual Optical and Image Catalogs, refer to Virtual optical storage [//publib.boulder.ibm.com/infocenter/systems/scope/i5os/topic/rzam4/rzam4virtual.htm].
+
+Back to top
+
+
+
+
+WHY IS THE INSTALL FROM THE OPTICAL MEDIA FAILING?
+Refer to how to burn to optical media [//www.ibm.com/support/docview.wss?uid=nas8N1022089] to ensure that the burning software was configured correctly.
+
+If all of the settings were correct, contact the customer support center [//www.ibm.com/servers/eserver/ess/OpenServlet.wss?NO_SCRIPT=YES&show_page=ess_contact_info.jsp&command=ShowPageCommand&from_page=ess_sign_out_confirm.jsp].
+
+
+
+
+HOW DO I UNPACK FILES IF MY UNPACKING SOFTWARE DOES NOT WORK CORRECTLY?
+If you have not deleted the files that you downloaded, you need to change the default settings for Download Director, and then unpack the files using Download Director.
+
+The following steps will assist you.
+
+ 1. On the system that you used to download the files, go through the same steps that you did to download the files. When you click Download now, Download Director recognizes that you have downloaded the files, so the files will not be downloaded again.
+ 2. Click OK in the window with the message that the files are downloaded already.
+ 3. In the window that shows the progress of the download, the bar should show 100% complete. Click Setup at the bottom of the window.
+ 4. In the window that is titled Setup: Download Director, click Set unpack options.
+ 5. Select either the setting to always unpack or the setting to prompt before unpacking. Click OK.
+ 6. In the window that shows the progress of the download, click Details at the bottom of the window.
+ 7. A new window pops up. Right-click on the file that you want to unpack.
+ 8. Click Unpack.
+
+If you have deleted the files that you downloaded, you need to change the default settings for Download Director before you download the files again. Use steps 1 through 5 described above.
+
+Back to top
+
+
+
+
+
+ADDITIONAL RESOURCES
+ * Entitled Systems Support (License keys and software) [//www.ibm.com/eserver/ess/]
+ * IBM Power Systems Redbooks [//www.redbooks.ibm.com/portals/power]
+ * IBM i Redbooks publications [http://www.redbooks.ibm.com/redbooks.nsf/searchsite?SearchView&query=%22ibm+i%22]
+ * IBM i storage solutions [//www.ibm.com/systems/power/software/i/management/storage/index.html]
+ * IBM i Knowledge Center [//www.ibm.com/support/knowledgecenter/ssw_ibm_i/welcome]
+ * IBM Knowledge Center [//www.ibm.com/support/knowledgecenter/]
+ * developerWorks for IBM i [https://www.ibm.com/developerworks/learn/ibmi/]
+ *

@@ -1,0 +1,126 @@
+Title: IBM WMB/IIB Mustgather: problems with an Execution Group on Windows - United States
+
+Text:
+database broker execution MustGather; MustGathers; Must Gather; Collect Troubleshooting Data; MustGatherDocument; Collecting; Trouble; Shooting TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are experiencing an Execution Group problem with WebSphere Message Broker (WMB) or IBM Integration Bus (IIB) on Windows. 
+
+This mustgather document explains how to troubleshoot this problem by yourself, how to generate diagnostic data when the problem is happening, how to collect the available data from your system, and how to share that data with IBM support. 
+
+ENVIRONMENT
+These instructions are for WebSphere Message Broker or IBM Integration Bus on Windows systems.
+Return to the WebSphere Message Broker MustGather index [http://www-01.ibm.com/support/docview.wss?uid=swg21209857] for other systems.
+
+RESOLVING THE PROBLEM
+
+
+
+STEP 1: SELF-GUIDED TROUBLESHOOTING
+
+ 1. Consider Using the Test Client in trace and debug mode [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/topic/com.ibm.etools.mft.doc/af52260_.htm].
+ 2. 
+ 3. A user level trace [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321#1] is intended to assist users with understanding how their ESQL is processed.
+    It will also show a high level view of the message flow behavior.
+ 4. 
+ 5. Check for known issues:
+    Troubleshooting IIB/WMB [http://publib.boulder.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/au09090_.htm] Try a dynamic guide to help with troubleshooting Message Broker [https://www.ibm.com/developerworks/community/blogs/c7e1448b-9651-456c-9924-f78bec90d2c2/entry/try_a_dynamic_guide_to_help_with_troubleshooting_message_broker?lang=en]
+    Recovering after the broker fails in IIB/WMB [http://publib.boulder.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/an04380_.htm]
+    IBM and WMB Frequently Asked Questions [http://www-01.ibm.com/support/docview.wss?uid=swg21650025]
+    Recovering after an execution group fails in IIB/WMB [http://publib.boulder.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/an04460_.htm]
+    [http://www.ibm.com/software/htp/cics/tserver/support/]WebSphere Message Broker support site [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Message_Broker]
+    
+    
+    
+
+
+
+STEP 2: COLLECT DATA
+
+ 1. mqsidc
+    See: mqsidc usage instructions [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp?topic=%2Fcom.ibm.etools.mft.doc%2Fbu46012_.htm]
+     * This command line tool is only available for WMB 7.0.0.5+, WMB 8.0.0.1+, and IIB 9.0.
+     * When running the tool, select the option for 'Broker Collector', when prompted.
+    
+    
+ 2. 
+ 3. 
+ 4. General Broker information
+    If the mqsidc tool was not run, then capture this information manually  * Record the WebSphere Message Broker version, release, and maintenance level.
+       This can be captured using the command 'mqsiservice -v'.
+     * Record the operating system version, release, and maintenance level.
+     * Record the version, release, and maintenance level of any related products and components for the problematic application.
+     * Collect the local error log. On Windows, the local error log is the Windows Event viewer application log. 
+       See: Windows Event viewer application logs [http://publib.boulder.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/an04090_.htm]
+     * Collect the console.txt WMB writes information to console.txt. This file is located under the Message Broker workpath.
+       See: Standard System Logs [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp?topic=%2Fcom.ibm.etools.mft.doc%2Fau14165_.htm]
+       
+       
+    
+    
+ 5. 
+ 6. Select the point of failure:  * 
+     * 
+     * Failures 
+     * 
+     * 
+     * Abends
+     * 
+     * 
+     * Startup
+     * 
+     * 
+     * Creation
+     * 
+       
+     * 
+     * 
+     * Failures
+     *  
+       Execution Group service trace [http://www-01.ibm.com/support/docview.wss?rs=849&context=SSKM8N&context=SS3GH2&context=SSKMAB&q1=service+trace&uid=swg21177321&loc=en_US&cs=utf-8&lang=en] 
+     * 
+     * 
+     * 
+     * Abends
+     *  Abend file
+       Abend files are recorded in the Windows event logs, however if there is more data to be written than is appropriate for the log, a new file is created, and the log entry tells you the file name. The new file is called: filename.abend and is written to the <MQSI_WORKPATH>\Common\log directory. 
+       Execution Group service trace [http://www-01.ibm.com/support/docview.wss?rs=849&context=SSKM8N&context=SS3GH2&context=SSKMAB&q1=service+trace&uid=swg21177321&loc=en_US&cs=utf-8&lang=en] 
+     * 
+     * 
+     * 
+     * Startup
+     *  Startup trace [http://www.ibm.com/support/docview.wss?rs=849&uid=swg21177044] 
+     * 
+       Creation 
+     *  Exact command and error message Utility trace [http://www.ibm.com/support/docview.wss?rs=849&uid=swg21177043] 
+    
+    
+
+
+ATTENTION: A good problem description is one of the most important tools IBM needs to analyze your data!
+When sending data to IBM, be sure to update your PMR or send a note with the following information:
+
+ *  Tell us what errors you saw, where you saw them, and what time they happened Let us know if you made any changes to WebSphere Message Broker or the system before the problem Share any other observations which you think will help us to better understand the problem 
+
+
+
+STEP 3: SUBMIT DATA TO IBM
+
+ * Use IBM Service Request [http://www.ibm.com/support/servicerequest/] to open or view a problem record with IBM.
+ * Send your data to IBM [http://www.ibm.com/support/docview.wss?uid=swg21392217] for further analysis.
+
+
+
+
+
+Please see the IBM Software Support Handbook [http://www14.software.ibm.com/webapp/set2/sas/f/handbook/home.html] for more information on working with IBM support. 
+
+Back to top
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Bus Broker / EG Windows 9.0 All Editions 
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

@@ -1,0 +1,147 @@
+Title: IBM IC94877: DATAPOWER SSL SERVER INCORRECTLY REJECTS LARGE CLIENT_VERIFY MSG - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix packs for DataPower XML Security Gateway version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034955]
+Fix packs for DataPower B2B Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034956]
+Fix packs for DataPower Integration Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034957]
+Fix packs for DataPower Low Latency Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034958]
+Fix packs for DataPower Service Gateway version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034959]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When DataPower is configured as an SSL server that requests
+   client authentication, it might incorrectly reject certain large
+   ClientVerify SSL handshake messages from the client.
+   
+   Specifically it might incorrectly reject any ClientVerify
+   messages created with RSA keys larger than 4096 bits.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  SSL handshakes where DataPower is the SSL server might fail if
+   there is client authentication and the client's RSA key is
+   larger than 4096 bits.  For example 8192-bit RSA clients might
+   not do client authentication successfully.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is available in 4.0.2.15, 5.0.0.10, and 6.0.0.2.
+   
+   For a list of the latest fix packs available, please see:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21237631 [http://www-01.ibm.com/support/docview.wss?uid=swg21237631]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC94877
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   402
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-14
+   
+   
+ * CLOSED DATE
+   2013-08-15
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R402 PSY
+   UP
+   
+   
+ * R500 PSY
+   UP
+   
+   
+ * R600 PSY
+   UP
+   
+   
+ * R382 PSN
+   UP
+   
+   
+ * R401 PSN
+   UP

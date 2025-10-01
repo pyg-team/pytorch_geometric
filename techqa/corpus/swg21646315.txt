@@ -1,0 +1,45 @@
+Title: IBM ERROR: Insufficient disk space for backup. when trying to run a backup on Guardium appliance - United States
+
+Text:
+guardium backup fail Insufficient disk space TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are trying to run back up on Guardium appliance and get the following error on the Aggregation/Archive Log report:
+
+ERROR: Insufficient disk space for backup. 
+
+CAUSE
+A Guardium appliance needs at minimum 50% free space on the /var partition in order to run a backup.
+
+RESOLVING THE PROBLEM
+To resolve the problem you need to free space on the /var partition. The following are some suggestions:
+
+
+
+
+ *  purge more days. See link below on "What can I do if I see my Guardium Appliance getting full? (this option applies only to aggregators). 
+   
+   
+ * 
+ *  look for large log files that can be deleted. Use the following CLI command to verify if is there any large log files: 
+   
+    
+   
+   support show large_files 
+   
+    
+   
+   then use this CLI command to clean the large log files: 
+   
+    
+   
+   support clean log_files 
+   
+    
+   
+   
+   
+   
+
+If you cannot reduce the /var partition to less than 50%, contact Guardium support for further assistance. RELATED INFORMATION
+#What can I do if I see my Guardium Appliance getting fu [http://www-01.ibm.com/support/docview.wss?uid=swg21511904]

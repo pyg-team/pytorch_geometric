@@ -1,0 +1,75 @@
+Title: IBM Security Bulletin: A Security Vulnerability exists in the Dojo runtime that affects Rational Software Architect and Rational Software Architect for Websphere Software - United States
+
+Text:
+advisory; 2498; vulnerable; vulnerability; dojo SECURITY BULLETIN
+
+SUMMARY
+ The dojox/form/resources/fileuploader.swf, dojox/form/resources/uploader.swf, dojox/av/resources/audio.swf, and dojox/av/resources/video.swf files exhibit an cross-site scripting (XSS) vulnerability. Any web application using the IBM Dojo Toolkit and providing those files might be subject to this vulnerability. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2014-8917 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-8917]
+DESCRIPTION: IBM Dojo Toolkit is vulnerable to cross-site scripting, caused by improper validation of user-supplied input. A remote attacker could exploit this vulnerability using a specially-crafted URL to execute script in a victim's Web browser within the security context of the hosting Web site, once the URL is clicked. An attacker could use this vulnerability to steal the victim's cookie-based authentication credentials.
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/99303 [https://exchange.xforce.ibmcloud.com/vulnerabilities/99303] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+Dojo 1.4 and 1.5 packaged with Rational Software Architect and Rational Software Architect for WebSphere Software 8.0.x and 8.5.x
+
+REMEDIATION/FIXES
+Update the Dojo runtime provided by the product to address this vulnerability:
+
+
+
+
+For Dojo version 1.4 included with IBM Rational Software Architect and Rational Software Architect for WebSphere Software Version 8.0.x or Version 8.5.x
+1. On the Select Fixes page, select interim fix: Rational-dojo141-CVE-2014-8917-ifix (Fix for the CVE-2014-8917 vulnerability in Dojo)
+
+For Dojo version 1.5 included with IBM Rational Software Architect and Rational Software Architect for WebSphere Software Version 8.5.x
+1. On the Select Fixes page, select interim fix: Rational-dojo15-CVE-2014-8917-ifix (Fix for the CVE-2014-8917 vulnerability in Dojo) 
+Product VRMF Remediation/Fix Rational Software Architect 
+
+Rational Software Architect for WebSphere Software 8.0 to 8.0.4.2Ifix1
+
+8.5 to 8.5.5.3 Rational-dojo141-CVE-2014-8917-ifix [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Rational&product=ibm/Rational/IBM+Rational+Application+Developer+for+WebSphere+Software&release=8.0.4.3&platform=All&function=fixId&fixids=Rational-dojo141-CVE-2014-8917-ifix&includeSupersedes=0]
+
+Rational-dojo15-CVE-2014-8917-ifix [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Rational&product=ibm/Rational/IBM+Rational+Application+Developer+for+WebSphere+Software&release=8.0.4.3&platform=All&function=fixId&fixids=Rational-dojo15-CVE-2014-8917-ifix&includeSupersedes=0] 
+
+Instructions to download and install the update from the compressed files 
+1. Locate your existing Dojo installation folder in your projects; for example; Project/WebContent/dojo. To find your specific location, follow these instructions:  * 
+ * 
+ * 
+ * 
+ * 
+
+2. Backup your existing Dojo installation by renaming the folder to; for example; Project/WebContent/dojo.bak/ 
+3. Recreate the original Dojo installation folder; for example, Project/WebContent/dojo/ 
+4. Download the updated Dojo runtime from the link listed in the Remediation /Fix in above table and save it to the Dojo installation folder from step 3 
+5. Extract the compressed Dojo archive into your Dojo installation folder 
+
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Linux, Windows 8.0, 8.0.1, 8.0.2, 8.0.3, 8.0.4, 8.0.4.1, 8.0.4.2, 8.5, 8.5.1, 8.5.5, 8.5.5.1, 8.5.5.2, 8.5.5.3

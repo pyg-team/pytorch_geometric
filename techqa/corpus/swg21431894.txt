@@ -1,0 +1,38 @@
+Title: IBM Upgrading to Rational Developer for System z 7.6.1 from 7.5.1, 7.5.1.1 or 7.5.1.2 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Users who have previously updated IBM® Rational® Developer for System z™ from version 7.5.1, 7.5.1.1, or 7.5.1.2 to version 7.6 may receive an installation error message when installing Refresh Pack 7.6.1. 
+
+SYMPTOM
+Users receive the following installation error:
+
+Installation failed.
+Error during "complete" phase:
+The bundle "com.ibm.ftt.cdz.core.nl1_3.4.6" cannot be installed in this Eclipse configuration because it is not equivalent to the bundle "com.ibm.ftt.cdz.core.nl1_3.3.0" that is already installed.
+
+RESOLVING THE PROBLEM
+Interim Fix 001 for Rational Developer for System z 7.6.0 is available to resolve this issue. The fix must be installed on top of version 7.6.0. After Interim Fix 001 has been installed, the version 7.6.1 refresh pack can be installed via the standard installation process. To install Interim Fix 001: 
+
+1. Download the RDz760InterimFix001.zip file from the RDz 760 Interim Fix site [ftp://public.dhe.ibm.com/ps/products/wsed/fixes/v7.6.1/RDz760InterimFix001.zip] to a temporary location on your system.
+2. Start IBM Installation Manager.
+3. Open the Repository preferences by clicking File > Preferences > Repositories.
+4. Click Add to add a new repository location.
+5. Browse to the location of the RDz760InterimFix001.zip file downloaded in Step 1.
+6. Click OK, then OK again to save and exit the preferences window.
+7. Click Update on the main Installation Manager panel.
+8. Select the package group that contains Rational Developer for System z 7.6.0. By default this will be IBM Software Delivery Platform. You can determine what is installed in each package group by selecting the package group and reviewing the Installed Packages and Fixes information in the Details section at the bottom of the panel. Once you have selected the package group, click Next.
+9. Select the Show All Versions button.
+10. Select Interim Fix 001 from the list of available packages and de-select all other packages.
+11. Click Next and following the remaining wizard panels to install the fix.
+
+If you receive the error message described in the Problem section when updating from Rational Developer for System z version 7.6.0.1, you will need to roll back your installation to version 7.6.0 and then follow the above instructions to apply Interim Fix 001. To roll back your installation:
+
+1. Start IBM Installation Manager.
+2. Click Roll Back.
+3. Select the package group that contains Rational Developer for System z version 7.6.0.1. By default this will be IBM Software Delivery Platform. You can determine what is installed in each package group by selecting the package group and reviewing the Installed Packages and Fixes information in the Details section at the bottom of the panel. Once you have selected the package group, click Next.
+4. Locate Rational Developer for System z on the Roll Back Packages panel and select Version 7.6.
+5. Click Next and follow the remaining wizard panels to complete the rollback.
+6. Follow the steps above to install Interim Fix 001.

@@ -1,0 +1,203 @@
+Title: IBM PM48199: SQLCODE270 ERRONEOUSLY RECEIVED ON ALTER TABLE JOB TO ALTER COLUMN DATA TYPE INVOLVING USER DEFINED FUNCTION AND VIEW - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SQLCODE270 was erroneously returned when running a ALTER TABLE
+   job to alter column data type;  Also, there was a view which
+   was basing on this target table and this view was referencing a
+   a user defined function as well.
+   
+   The problem case is like:
+   1) CREATE TABLE T1 (C1 VARCHAR(10));
+   2) CREATE FUNCTION F1 (P1 VARCHAR(10))
+       RETURNS VARCHAR(10)
+       LANGUAGE SQL
+       DETERMINISTIC
+       NO EXTERNAL ACTION
+       CONTAINS SQL
+      RETURN P1;
+   3) CREATE VIEW V1 (VC1) AS SELECT F1(C1) FROM T1;
+   4) ALTER TABLE T1 ALTER COLUMN C1 SET DATA TYPE VARCHAR (20);
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All DB2 9 for z/OS users of ALTER VIEW       *
+   *                 REGENERATE or ALTER TABLE ALTER COLUMN       *
+   *                 SET DATA TYPE where the column being         *
+   *                 altered is referenced by a view.             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Unexpected SQLCODE -270 may result      *
+   *                      from ALTER TABLE ALTER COLUMN SET       *
+   *                      DATA TYPE when the column being         *
+   *                      altered is referenced by a view.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Unexpected SQLCODE -270 from ALTER TABLE ALTER COLUMN SET DATA
+   TYPE may result when the column being altered is referenced
+   by a view.
+   
+    ALTER TABLE SCN27000.TB_WAREHOUSE_SEG ALTER WAREHOUSE_TAX SET
+     DATA TYPE DECIMAL(7,4);
+    TEP3E15   SQLERROR ON ALTER      COMMAND, EXECUTE  FUNCTION
+    TEP3I05   RESULT OF SQL STATEMENT:
+    DSNT408I SQLCODE = -270, ERROR:  FUNCTION NOT SUPPORTED
+    DSNT418I SQLSTATE   = 42997 SQLSTATE RETURN CODE
+    DSNT415I SQLERRP    = DSNXOFN3 SQL PROCEDURE DETECTING ERROR
+    DSNT416I SQLERRD    = -111  0  0  -1  0  0 SQL DIAGNOSTIC
+                          INFORMATION
+    DSNT416I SQLERRD    = X'FFFFFF91'  X'00000000'  X'00000000'
+                          X'FFFFFFFF'  X'00000000'  X'00000000'
+                          SQL DIAGNOSTIC INFORMATION
+   
+   
+   Additionally, ALTER VIEW REGENERATE may result in an unexpected
+   SQLCODE -20266.
+   
+    ALTER VIEW SCN27000.VW_WAREHOUSE_V7_B REGENERATE;
+    TEP3E15   SQLERROR ON ALTER      COMMAND, EXECUTE  FUNCTION
+    TEP3I05   RESULT OF SQL STATEMENT:
+    DSNT408I SQLCODE    = -20266, ERROR:  ALTER VIEW FOR
+                          SCN27000.VW_WAREHOUSE_V7_B FAILED
+    DSNT418I SQLSTATE   = 560C7 SQLSTATE RETURN CODE
+    DSNT415I SQLERRP    = DSNXIRVW SQL PROCEDURE DETECTING ERROR
+    DSNT416I SQLERRD    = 43  0  0  -1  0  0 SQL DIAGNOSTIC
+                          INFORMATION
+    DSNT416I SQLERRD    = X'0000002B'  X'00000000'  X'00000000'
+                          X'FFFFFFFF'  X'00000000' SQL DIAGNOSTIC
+                          INFORMATION
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DB2 has been modified to prevent incorrectly issuing SQLCODE
+   -20266 on ALTER VIEW REGENERATE and SQLCODE -270 on ALTER TABLE
+   ALTER COLUMN SET DATA TYPE when the column is referenced by a
+   view.
+   
+   ADDITIONAL KEYWORDS:
+   SQLCODE270
+   SQLALTER
+   SQLVIEW
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM48199
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-19
+   
+   
+ * CLOSED DATE
+   2011-11-03
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK73556
+   
+   
+
+MODULES/MACROS
+ *  DSNXIRVW
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY UK73556 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK73556]
+   UP11/11/19 P F111
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

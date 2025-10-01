@@ -1,0 +1,78 @@
+Title: IBM What to know before installing Web Services Feature Pack from Installation Manager - United States
+
+Text:
+1303247; WAS in rad7; wsfp in rad7; can I update WAS; can I update WTE; can I update WAS in RAD7; can I update WTE in RADv7; can I update WSFP in RAD 7; WS-FP; WAS-WSFP; uninstall WAS in RADv7; uninstall WebServices Feature Pack in RAD7; manual install WSFP; manual install webservices feature pack; manual install WAS; manual uninstall webservices TECHNOTE (FAQ)
+
+QUESTION
+ What information should you know if you plan to install the Web Services Feature Pack using IBM® Installation Manager? 
+
+ANSWER
+ 
+
+1. What will IBM Installation Manager do after I have selected the "IBM WebSphere® Application Server Version 6.1 Feature Pack for Web Services"?
+
+[/support/docview.wss?uid=swg21303247&aid=1] [/support/docview.wss?uid=swg21303247&aid=1]
+
+
+ * If WebSphere Application Server v6.1.0.2 is detected (for example. you have not manually updated WebSphere Application Server v6.1 that comes with Rational Application Developer v7) or if you manually updated WebSphere Application Server v6.1 to v6.1.0.3, v6.1.0.5, v6.1.0.7, then:
+    1. IBM Installation Manager will install WebSphere Update Installer v6.1.0.9 under
+       "<RADv7_install_dir>\runtimes\base_v61\UpdateInstaller\" folder
+       
+    2. IBM Installation Manager will update WebSphere Application Server to v6.1.0.9 
+       
+    3. IBM Installation Manager will install Web Services Feature Pack version 6.1.0.9 on top of WebSphere Application Server v6.1.0.9
+   
+   
+
+ *  If WebSphere Application Server v6.1.0.9 or WebSphere Application Server v6.1.0.9+ is detected (i.e. user have manually updated WebSphere Application Server v6.1 to v6.1.0.9 or greater), then:
+    1. IBM Installation Manager will install WebSphere Update Installer v6.1.0.9 under "<RADv7_install_dir>\runtimes\base_v61\UpdateInstaller" folder
+       
+    2. IBM Installation Manager will install Web Services Feature Pack version 6.1.0.9 on top of the WebSphere Application Server v6.1
+   
+   
+
+IMPORTANT: 
+
+You must not intentionally/manually install WebSphere Update Installer under "<RADv7_install_dir>\runtimes\base_v61\UpdateInstaller" . This location is used by Installation Manager to install its own WebSphere Update Installer. If the location were modified, IBM Installation Manager would fail to install Web Services Feature Pack. 
+
+
+
+
+
+
+ 
+
+2. If Web Services Feature Pack were installed successfully via Installation Manager, could you still manually update WebSphere Application Server v6.1 and/or Web Services Feature Pack? 
+
+Yes, you can manually update WebSphere Application Server v6.1 and Web Services Feature Pack to a desired version. Since IBM Installation Manager can recognize the installed WebSphere Application Server v6.1 and Web Services Feature Package, you can use IBM Installation Manager to uninstall them. 
+
+
+Note: IBM Installation Manager cannot recognize the WebSphere Application Server "version" that you manually applied. IBM Installation Manager will always think that:
+
+
+ * The WebSphere Application Server version is 6.1.0.2 (or v6.1.0.9 , if you have applied the Web Services Feature Pack); 
+   
+ * The WebSphere Application Server - Web Services Feature Pack is in v6.1.0.9 (if you have applied the Web Services Feature Pack)
+
+
+
+
+
+ 
+
+3. What will IBM Installation Manager do after you have un-checked the "IBM WebSphere Application Server Version 6.1 Feature Pack for WebServices"? 
+
+ 
+[/support/docview.wss?uid=swg21303247&aid=2] [/support/docview.wss?uid=swg21303247&aid=2]
+
+
+ * IBM Installation Manager will uninstall Web Services Feature Pack (even if you updated Web Services Feature Pack to version 6.1.0.9+) 
+   
+ * IBM Installation Manager will roll-back WebSphere Application Server v6.1 to previous version.
+   
+ * IBM Installation Manager will uninstall WebSphere Update Installer that is located in "<RADv7_install_dir>\runtimes\base_v61\UpdateInstaller" folder
+
+
+RELATED INFORMATION
+#Web Services Feature Pack (WSFP) [http://www.ibm.com/support/docview.wss?uid=swg21290246]
+IM fails to install Web Services Feature Pack (WSFP) [http://www.ibm.com/support/docview.wss?uid=swg21270211]

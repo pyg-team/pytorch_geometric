@@ -1,0 +1,245 @@
+Title: IBM HD32807: LDAP ON STV5R13 NOT WORKING - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This is the customer comment:
+   In R12 and R13, LDAP authentication is performed
+   differently.
+   First the LDAP is sent a search request for the CN.
+   The CN comes
+   directly from the login screen. In R11, this step
+   does not exist.
+   You see in R13 that my attempt at using
+   jason.levandoski as I had
+   done in R11 does not work. This is because
+   jason.levandoski is my
+   network account name and not my CN. My CN
+   should be Jason
+   Levandoski.
+   When I use Jason Levandoski you see LDAP
+   responds by saying that it
+   found 1 record. Now that SmarTeam believes I
+   exist, it then tries
+   to bind with LDAP using my full DN. This is the
+   same as in R11,
+   however, now SmarTeam URL encodes the DN
+   string which it sends to
+   LDAP. For instance spaces in the DN string are
+   converted to %20.
+   This is where the problem lies, because this string
+   is encoded, MS
+   Active Directory LDAP does not decode the string
+   properly
+   This is a regression from R11:
+   Customer use to work in ST with LDAP
+   authentication
+   On his site they have Active Directory installed
+   This is how he use to work. And all work fine
+   After he upgrade ST to R13 SP7
+   He canﾨt use the LDAP authentication
+   According to the Information that I get now it is not
+   possible to use LDAP authentication
+   With Active Directory. Thatﾨs not acceptable by the
+   Customer
+   I asked him to change the authentication to Active
+   Directory. And the search took a long time to make
+   a login
+   To SmarTeam. It takes about 10 ﾨ 15min. to each
+   ST login. Not acceptable by the Customer
+   The problem:
+   Customer canﾨt use LDAP authentication with AD
+   (they donﾨt have LDAP install) on R11
+   In R13 they canﾨt login with LDAP authentication
+   Expected:
+   If the search base was change from R11 (the
+   authentication was made against the DB and not
+   against the Domain)
+   It is very important to allow the Customer to Make
+   more then one search base in the authentication
+   AD Page
+   Or the increase the Performance in the Active
+   Directory from 10 ﾨ 15min to acceptable time
+   Thanks
+   Baruch  02/01/2005
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  LDAP on STV5R13 not working
+   This is the customer comment:
+   In R12 and R13, LDAP authentication is performed
+   differently.
+   First the LDAP is sent a search request for the CN.
+   The CN comes
+   directly from the login screen. In R11, this step
+   does not exist.
+   You see in R13 that my attempt at using
+   jason.levandoski as I had
+   done in R11 does not work. This is because
+   jason.levandoski is my
+   network account name and not my CN. My CN
+   should be Jason
+   Levandoski.
+   When I use Jason Levandoski you see LDAP
+   responds by saying that it
+   found 1 record. Now that SmarTeam believes I
+   exist, it then tries
+   to bind with LDAP using my full DN. This is the
+   same as in R11,
+   however, now SmarTeam URL encodes the DN
+   string which it sends to
+   LDAP. For instance spaces in the DN string are
+   converted to %20.
+   This is where the problem lies, because this string
+   is encoded, MS
+   Active Directory LDAP does not decode the string
+   properly
+   This is a regression from R11:
+   Customer use to work in ST with LDAP
+   authentication
+   On his site they have Active Directory installed
+   This is how he use to work. And all work fine
+   After he upgrade ST to R13 SP7
+   He can t use the LDAP authentication
+   According to the Information that I get now it is not
+   possible to use LDAP authentication
+   With Active Directory. That s not acceptable by the
+   Customer
+   I asked him to change the authentication to Active
+   Directory. And the search took a long time to make
+   a login
+   To SmarTeam. It takes about 10   15min. to each
+   ST login. Not acceptable by the Customer
+   The problem:
+   Customer can t use LDAP authentication with AD
+   (they don t have LDAP install) on R11
+   In R13 they can t login with LDAP authentication
+   Expected:
+   If the search base was change from R11 (the
+   authentication was made against the DB and not
+   against the Domain)
+   It is very important to allow the Customer to Make
+   more then one search base in the authentication
+   AD Page
+   Or the increase the Performance in the Active
+   Directory from 10   15min to acceptable time
+   Thanks
+   Baruch  02/01/2005
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON SMARTEAM
+   VERSION 5 RELEASE 17 GA level.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD32807
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   513
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-01-02
+   
+   
+ * CLOSED DATE
+   2006-05-01
+   
+   
+ * LAST MODIFIED DATE
+   2006-05-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569199970
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R513 PSN
+   UP
+   
+   
+ * R514 PSN
+   UP
+   
+   
+ * R515 PSN
+   UP
+   
+   
+ * R516 PSN
+   UP

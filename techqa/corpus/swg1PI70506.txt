@@ -1,0 +1,217 @@
+Title: IBM PI70506: DIMENSIONS PLUGIN: DMCLIENT CLASSNOTFOUND - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  NoClassDefFoundException for a Serena specific class...
+   
+   java.lang.reflect.InvocationTargetException
+   	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+   	at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:95)
+   	at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:55)
+   	at java.lang.reflect.Method.invoke(Method.java:507)
+   	at com.urbancode.air.plugin.Main.execute(Main.java:115)
+   	at com.urbancode.air.plugin.Main.main(Main.java:33)
+   Caused by: java.lang.NoClassDefFoundError:
+   com.serena.dmclient.api.DimensionsConnectionDetails
+   	at
+   com.urbancode.air.plugin.command.DimensionsClient.<init>(Dimensi
+   onsClient.java:33)
+   	at
+   com.urbancode.air.plugin.command.ImportVersion.execute(ImportVer
+   sion.java:107)
+   	... 6 more
+   Caused by: java.lang.ClassNotFoundException:
+   com.serena.dmclient.api.DimensionsConnectionDetails
+   	at java.net.URLClassLoader.findClass(URLClassLoader.java:607)
+   	at java.lang.ClassLoader.loadClassHelper(ClassLoader.java:797)
+   	at java.lang.ClassLoader.loadClass(ClassLoader.java:771)
+   	at
+   sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:325)
+   	at java.lang.ClassLoader.loadClass(ClassLoader.java:752)
+   	... 8 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Update to v6 of the plugin.
+   
+   Need to provide the correct variable to reference the classpath.
+   dimensionClasspath -> dimensionsClasspath
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users on version 5 of the Dimensions Source Config       *
+   * plugin.                                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The Serena jars provided as user input, were not being       *
+   * placed on the class path during run time. This caused Class  *
+   * Not Found exceptions.                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade plugin to v6 of the Dimensions Source Config plugin. *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI70506
+   
+   
+ * REPORTED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * REPORTED COMPONENT ID
+   5725M5400
+   
+   
+ * REPORTED RELEASE
+   612
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-11
+   
+   
+ * CLOSED DATE
+   2016-12-08
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP
+   
+   
+ * R600 PSY
+   UP
+   
+   
+ * R601 PSN
+   UP
+   
+   
+ * R601 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R610 PSY
+   UP
+   
+   
+ * R611 PSN
+   UP
+   
+   
+ * R611 PSY
+   UP
+   
+   
+ * R612 PSN
+   UP
+   
+   
+ * R612 PSY
+   UP
+   
+   
+ * R613 PSN
+   UP
+   
+   
+ * R613 PSY
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R620 PSY
+   UP
+   
+   
+ * R621 PSN
+   UP
+   
+   
+ * R621 PSY
+   UP
+   
+   
+ * R622 PSN
+   UP
+   
+   
+ * R622 PSY
+   UP

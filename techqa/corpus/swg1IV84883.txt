@@ -1,0 +1,212 @@
+Title: IBM IV84883: GL ACCOUNT VALIDATION NOT CARRIED OUT ON INTERNAL SERVICES - SERVICE PROVIDERS 7620 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment :
+   
+   TPAE 7603
+   SP7620 IFIX002
+   
+   Pre-Requisite:
+   
+   1. Internal Company
+   - Setup a Company with Company Type I (Internal)
+   ===
+   1. Go to company master (sp) app > create new
+   
+   2. Enter a name, description and company type = "I" (must be
+   internal) and save
+   
+   3. Select action > add company Master to Organization
+   
+   4. Select the organization you want and hit ok.
+   ===
+   
+   
+   - This Company's RBNI account should be populated with GL
+   Account information.
+   (Purchasing --> Companies (SP) --> Pull up the company -->
+   populate the RBNI field)
+   
+   
+   
+   
+   2. Ensure you have atleast one internal service item setup in
+   Maximo:
+   ===
+   
+   
+   now go to > service item (sp) app > create new
+   give a name, new row on vendors and add the company created
+   above
+   save and change status to active
+   ===
+   
+   
+   Replication Steps:
+   
+   
+   1. Login to Maximo
+   
+   2. Financial Periods --> Chart of Accounts application
+   
+   3. More Actions - Validation Options
+   
+   4. Check Validate GL Component Combinations and Require Valid GL
+   Account for All Transactions
+   
+   5. More Actions - Add/Modify Account Structure
+   
+   6. Check Required for first three Components (COST CENTER,
+   ACTIVITY
+   and RESOURCE)
+   
+   7. Open Work Order Tracking (SP) and create a new work order
+   
+   8. Set an incomplete GL Account, e.g. 6000-???-???
+   
+   9. Approve the work order
+   
+   10. Go to Actuals tab and open Services list tab
+   
+   11. Click Select Internal Services and add a service
+   
+   12. Verify that GL Debit Account is incomplete, same as in step
+   07
+   above, on the Service transaction
+   
+   13 Save
+   
+   ISSUE: The work order is saved desipte having an incomplete GL
+   Debit
+   Account and validation of GL accounts is active
+   
+   
+   14. Trying to do the same thing with a Labor transaction results
+   in an
+   error message, BMXAA2530E - Not a valid labor transaction GL
+   account
+   6000-???-300. Either the required components are not filled or
+   the
+   component values are not valid.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * none                                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * GL ACCOUNT VALIDATION NOT CARRIED OUT ON INTERNAL SERVICES   *
+   * -SERVICE PROVIDERS 7620                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * none                                                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added a new validation to GL account
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV84883
+   
+   
+ * REPORTED COMPONENT NAME
+   SERVICE PROVIDE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46SV
+   
+   
+ * REPORTED RELEASE
+   762
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-18
+   
+   
+ * CLOSED DATE
+   2016-06-01
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SERVICE PROVIDE
+   
+   
+ * FIXED COMPONENT ID
+   5724R46SV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R761 PSY
+   UP

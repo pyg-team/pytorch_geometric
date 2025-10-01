@@ -1,0 +1,141 @@
+Title: IBM IT08539: FIX SECURITY VULNERABILITY CVE-2015-2808 FOR TPC 5.X - United States
+
+Text:
+  FIXES ARE AVAILABLE
+4.2.2 Fix Pack 9 (May 2015) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24039932]
+4.2.2 Fix Pack 10 (August 2015) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24040623]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Security update for vulnerability CVE-2015-2808
+   
+   
+   Affected versions:
+   Tivoli Storage Productivity Center 5.2.0 through 5.2.5
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * TPC 4.x users                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Vulnerability in RC4 stream cipher affects Tivoli Storage    *
+   * Productivity Center (CVE-2015-2808)                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * See security bulletin for details.                           *
+   * http://www.ibm.com/support/docview.wss?uid=swg21883158       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  See security bulletin for full details to resolve.
+   http://www.ibm.com/support/docview.wss?uid=swg21883158 [http://www.ibm.com/support/docview.wss?uid=swg21883158]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT08539
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC STANDARD ED
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPCS0
+   
+   
+ * REPORTED RELEASE
+   422
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-30
+   
+   
+ * CLOSED DATE
+   2015-05-30
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IT08318 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT08318]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  SECURITY
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC STANDARD ED
+   
+   
+ * FIXED COMPONENT ID
+   5608TPCS0
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R422 PSY
+   UP

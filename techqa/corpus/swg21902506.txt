@@ -1,0 +1,34 @@
+Title: IBM RPT script with TLS protocol does not play back in ITCAM - United States
+
+Text:
+TLS SSL; 71RRT-RPTCONF; 71RRT-RPTPLAY; 71RRT-CONF; 71RRT-PLAY TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TLS protocol requires a change to ITCAM t6 environment to run Service Tests. 
+
+SYMPTOM
+This problem occurs with Service Tests created in RPT (Rational Performance Tester) 8.2.1.5 for HTTPS exchanges with a server based on TLS. 
+
+When the test is exported to ITCAM and executed, SSL handshake failures occur, whereas they do not happen when the test is executed within the RPT 8.2.1.5 workbench.
+
+
+CAUSE
+RPT 8.2.1.5 Java version does not match the ITCAM version which introduces a different behavior when the server is using the TLS protocol. 
+
+
+DIAGNOSING THE PROBLEM
+CommonBaseEvent log shows RPWD0002E Unexpected exception javax.net.ssl.SSLException: Received fatal alert: handshake_failure
+
+
+
+RESOLVING THE PROBLEM
+ITCAM T6 agent Java version must be changed to Java 1.6 SR9 for the script to run correctly on the agent.
+
+RELATED INFORMATION
+#Overriding the SSL protocol defined by the default SSL [http://www.ibm.com/support/knowledgecenter/SSYKE2_7.0.0/com.ibm.java.security.component.70.doc/security-component/jsse2Docs/overrideSSLprotocol.html]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ itcamft

@@ -1,0 +1,161 @@
+Title: IBM HD40958: GSA/ SINGULARITY ERROR WITH USER DEFINED CONNECTION PROPERTIES OF SPRING-SMOOTH. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  GSA/ SINGULARITY ERROR WITH USER DEFINED
+   CONNECTION PROPERTIES OF SPRING-SMOOTH.
+   .
+   SCENARIO:
+   1) Open CATAnalysis
+   2) On the tree: Double click the both User defined
+   connections
+   properties Start/ SpringSmooth Middle/ Rigid End/
+   Rigid
+   and stiffness value are defined correctly
+   3) Compute the Analysis-->Error message
+   Singularity pb appear.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  GSA/ SINGULARITY ERROR WITH USER DEFINED CONNECTION PROPERTIES
+   OF SPRING-SMOOTH.
+   GSA/ SINGULARITY ERROR WITH USER DEFINED
+   CONNECTION PROPERTIES OF SPRING-SMOOTH.
+   .
+   SCENARIO:
+   1) Open CATAnalysis
+   2) On the tree: Double click the both User defined
+   connections
+   properties Start/ SpringSmooth Middle/ Rigid End/
+   Rigid
+   and stiffness value are defined correctly
+   3) Compute the Analysis-->Error message
+   Singularity pb appear.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON CATIA VERSION
+   5 RELEASE 16 GA level.
+   .
+   Incident Diagnosis
+   The rotational stiffnesse are not equal to zero and
+   are connected to 3D elements. In consequence, the
+   solver raises a local singularity.
+   .
+   Development Request Justification
+   Correction done in R16. The correction is too
+   impacting to be exported in R15. There is no point
+   in putting none zero values for spring rotational
+   stiffnesses on 3D elements. It is now automatically
+   set to zero while computing to help the user.
+   .
+   Answer and By-Pass
+   Set the rotationnnal stiffnesse of the spring to 0.
+   Delete all userdefined properties and recreate.
+   .
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD40958
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   514
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-06-15
+   
+   
+ * CLOSED DATE
+   2005-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2005-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569151000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R514 PSN
+   UP
+   
+   
+ * R515 PSN
+   UP

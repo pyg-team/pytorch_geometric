@@ -1,0 +1,22 @@
+Title: IBM FIPS option in the appliance setup wizard enables compliance for NIST SP800-131a but not for FIPS 140-2 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Does the FIPS option in the appliance setup wizard turn on compliance for FIPS 140-2? 
+
+ANSWER
+ 
+
+The FIPS option in the appliance setup wizard does not turn on compliance for FIPS 140-2. It turns on compliance for NIST SP800-131a only. 
+
+The current product documentation regarding the FIPS 140-2 Mode Configuration option contains the following incorrect statement: 
+
+"Enable the FIPS mode to turn on compliance for FIPS 140-2 and NIST SP800-131a." 
+
+The correct statement should be: 
+
+"Enable this option to turn on compliance for NIST SP800-131a." 
+
+Note that although the user interface shows the relevant option name as "FIPS 140-2 Mode Configuration", enabling this option does not turn on compliance for FIPS 140-2.

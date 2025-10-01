@@ -1,0 +1,31 @@
+Title: IBM After WMQ queue manager migration various BATCH jobs have dumps generated against them - United States
+
+Text:
+CSQ3CL0X CSQMEOTC batch csqbsrv csqbcon TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unexplained SVC dumps captured after WebSphere MQ (WMQ) queue manager migration 
+
+SYMPTOM
+Symptom strings similar to the following are generated in the joblog
+
+IEA794I SVC DUMP HAS CAPTURED: 
+DUMPID=018 REQUESTED BY JOB (batch job name) 
+DUMP TITLE=abcd,ABN=0C4-00000011,U=, 
+
+C=R3600.710.SSSC-CSQ3CL0X,M=CSQ3CL0X,PSW=psw_address,ASID=asid 
+
+
+CAUSE
+Similar abends can occur if an older version of the batch adapter is being picked up (since this means older levels of the code for CSQBCON and/or CSQBSRV are being loaded from the older SCSQAUTH dataset). 
+
+The problem will only occur if an application TCB ends without issuing an MQDISC. 
+
+
+RESOLVING THE PROBLEM
+Change your job(s) to use the version of the SCSQAUTH dataset load modules which are current for the level of WebSphere MQ to which you have migrated.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

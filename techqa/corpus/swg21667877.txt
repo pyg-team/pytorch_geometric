@@ -1,0 +1,145 @@
+Title: IBM Rational Developer for System z failing on SSL connection: RSEG1243 - United States
+
+Text:
+RDz; SSL; RD&T; CIPHERS; certificate TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Rational Developer for System z (RDz) failing on SSL connection: RSEG1243 Failed to connect to the daemon with an unexpected exception. 
+
+SYMPTOM
+After completing the RDz host SSL customization on RD&T V9 and starting the RSEDSSL started tasks, the IVP's ran successfully to verify the SSL setup as shown below. However, when connecting from RDz client v9, the SSL connection fails with: RSEG1243 Failed to connect to the daemon with an unexpected exception.
+
+F RSEDSSL,APPL=IVP PASSTICKET,IBMUSER
++FEK900I PASSTICKET IVP: start: serverid=STCRSE userid=IBMUSER 
++FEK900I PASSTICKET IVP: the default applid=FEKAPPL 
++FEK900I PASSTICKET IVP: Success, PassTicket IVP finished normally
++FEK901I PASSTICKET IVP Exit code = 0
+
+F RSEDSSL,APPL=IVP DAEMON,IBMUSER 
++FEK900I DAEMON IVP: SSL is enabled 
++FEK900I DAEMON IVP: connected
++FEK900I DAEMON IVP: 2442 
++FEK900I DAEMON IVP: 2439199 
++FEK900I DAEMON IVP: Success
++FEK901I DAEMON IVP Exit code = 0 
+
+
+Client side logs:
+When the SSL connection fails, the following messages are written to the RDz client .log file
+
+: 192.168.198.160. Make sure the daemon is running or port 4047.
+
+java.net.SocketException: Software caused connection abort: recv failed
+java.net.SocketException: Software caused connection abort: recv failed
+
+at java.net.SocketInputStream.read(Unknown Source)
+
+at java.net.SocketInputStream.read(Unknown Source)
+
+at java.net.SocketInputStream.read(Unknown Source)
+
+at java.io.DataInputStream.readByte(Unknown Source)
+
+at com.ibm.etools.zseries.util.DStoreWithSSHConnectorService.readString(Unknown Source)
+
+at com.ibm.etools.zseries.util.DStoreWithSSHConnectorService.launchServer(Unknown Source)
+
+at com.ibm.etools.zseries.util.DStoreWithSSHConnectorService.launchServer(Unknown Source)
+
+at org.eclipse.rse.connectorservice.dstore.DStoreConnectorService.connectWithDaemon(Unknown Source)
+
+at org.eclipse.rse.connectorservice.dstore.DStoreConnectorService.internalConnect(Unknown Source)
+
+at org.eclipse.rse.core.subsystems.AbstractConnectorService$1.run(Unknown Source)
+
+at org.eclipse.rse.core.subsystems.AbstractConnectorService$SafeRunner.run(Unknown Source)
+
+at org.eclipse.rse.core.subsystems.AbstractConnectorService.connect(Unknown Source)
+
+at org.eclipse.rse.core.subsystems.SubSystem.connect(Unknown Source)
+
+at org.eclipse.rse.internal.ui.actions.SystemConnectAllSubSystemsAction$ConnectAllJob.run(Unknown Source)
+
+at org.eclipse.core.internal.jobs.Worker.run(Unknown Source)
+
+
+
+RSE server and daemon logs:
+On RSE server side, the following messages were logged. 
+
+
+BROWSE rseserver.log Line 00000000 Col 001 063
+Command ===> Scroll ===> CSR
+********************************* Top of Data **********************************
+Thu Jan 16 02:53:49 EST 2014
+ERROR RseDaemon: Error initializing SSL environments
+--------------------------------------------------------------- 
+Thu Jan 16 02:53:59 EST 2014
+ERROR RseDaemon: Error initializing SSL environments
+--------------------------------------------------------------- 
+Thu Jan 16 02:56:42 EST 2014
+ERROR RseDaemon: No Data Received 
+--------------------------------------------------------------- 
+Thu Jan 16 03:08:42 EST 2014
+ERROR RseDaemon: Error initializing SSL environments
+--------------------------------------------------------------- 
+******************************** Bottom of Data ********************************
+
+
+BROWSE rsedaemon.log Line 00000000 Col 001 080
+Command ===> Scroll ===> CSR
+********************************* Top of Data **********************************
+02:53:49.919 .corejni.c:2077 0x260d2600. gsk_secure_socket_init() failed: No SSL cipher specifications
+02:53:59.535 .corejni.c:2077 0x260d2600. gsk_secure_socket_init() failed: SSL message format is incorrect
+03:08:42.816 .corejni.c:2077 0x260d2600. gsk_secure_socket_init() failed: No SSL cipher specifications
+******************************** Bottom of Data ******************************** 
+
+
+CAUSE
+Due to export restrictions, these FMIDs are removed from the ADCD JIP621K (Communications Server IP):
+
+JCRY741 (z/OS Security Level 3 OCSF)
+JCPT411 (z/OS Security Level 3 SSL)
+JSWK411 (z/OS Security Level 3 NAS)
+JRSL411 (z/OS Security Level 3 IBM TDS LDAP)
+
+Without Security Level 3 packages, the server was missing the stronger ciphers needed for the RDz client SSL connection.
+
+
+ENVIRONMENT
+RDz v9.0 client connecting to RDz v9.0 server running on RD&T v9.0 machine
+
+
+
+DIAGNOSING THE PROBLEM
+The gsktrace shows the following: 
+
+
+ERROR gsk_dll_init_once(): Unable to load crypto DLL EDC5205S DLL module not found.
+
+This means that the Security Level 3 FMID JCPT3D1 is not installed and that means you will only be able to use Base Security Level ciphers. 
+
+You will need to order FMID JCPT3D1 to use the stronger ciphers.
+
+Further down in the trace shows the following:
+
+read_v3_client_hello(): CLIENT-HELLO message
+00000000: 01000033 030052e1 80323667 cb708b5f *...3..R..26g.p._*
+00000010: 7a85cbf9 1d59dda6 bae2f9b0 fcc479eb *z....Y........y.*
+00000020: 8dcf76d4 b56c0000 0c00ff00 05000a00 *..v..l..........*
+00000030: 16001300 040100 *....... *
+read_v3_client_hello(): Creating new session for connection with
+10.26.0.17
+gsk_query_security_level(): Security level 0x00000000
+edit_ciphers(): Using server certificate 'rdzrse'
+edit_ciphers(): SSL V3 cipher specs: 09150306020100
+read_v3_client_hello(): No intersection with client cipher suites
+send_v3_alert(): Sent SSL V3 alert 40 to 10.26.0.17[49167]
+
+The server supports ciphers 09150306020100.
+The ciphers extracted from the client hello are 050A161304 and these are all Security Level 3 ciphers. 
+As you can see there were no matching ciphers to agree upon, so the handshake ended.
+
+
+RESOLVING THE PROBLEM
+Order and install Security Level 3 FMID JCPT3D1 on your RD&T host.

@@ -1,0 +1,156 @@
+Title: IBM IC68968: WMB V6.1 - ADD ASYNCHRONOUS EXCEPTION HANDLING OPTION FOR JMS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The JMSInput node does not reconnect after restarting a JBoss
+   JMS Provider.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  none available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of WebSphere Message Broker version 6.1 or higher
+   with JMS Nodes connecting to a JBoss JMS provider.
+   
+   Platforms Affected:
+   All Platforms
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The JBoss JMS client does not throw an exception when calling
+   MessageConsumer.receive() if the underlying connection has been
+   broken due to a JMS Provider restart. This does not follow the
+   JMS 1.1 specification, however there is an alternate
+   asynchronous exception handling strategy outlined in the JMS
+   specification which JBoss does implement.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A new parameter has been added to the JMSProvider configurable
+   Service definition named jmsAsyncExceptionHandling. Setting this
+   property to 'true' causes the broker to register an exception
+   listener on the JMS connection when it is created and handle
+   connection exceptions asynchronously from the main flow. This
+   allows the broker to detect when the connection has been broken
+   and therefore attempt to reconnect.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   V6.1 - Maintenance Level 6.1.0.9
+   
+   V7.0 - Maintenance Level 7.0.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere Message Broker Recommended Fixes'
+   http://www.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere Message
+   Broker Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC68968
+   
+   
+ * REPORTED COMPONENT NAME
+   WMB WINDOWS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0500
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-02
+   
+   
+ * CLOSED DATE
+   2010-09-15
+   
+   
+ * LAST MODIFIED DATE
+   2011-02-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMB WINDOWS V6
+   
+   
+ * FIXED COMPONENT ID
+   5724J0500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

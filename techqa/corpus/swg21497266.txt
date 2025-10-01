@@ -1,0 +1,54 @@
+Title: IBM Unable to retrieve  documents - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Intermittently when viewing documents stored in ECM Centera the retrieval fails via FileNet Content Engine 
+
+SYMPTOM
+When viewing documents, intermittently, users receive the following error. If the error is received a second attempt may succeed. On occasion the document is retrieved but pages may be missing. For example a five page document is retrieved but only the first four pages display. 
+
+The stack trace error is as follows: 
+
+Getting document content has failed.<br>com.filenet.api.exception.EngineRuntimeException;Fixed Content Provider open operation failed. Provider: [com.filenet.engine.content.fcprovider.centera.CenteraFCP(21)]SeqN[0] Referral: [version(hex)=10001; checksum(hex)=170a; mode=1; flags=0;contentID={<GUID>}; clipID=<CLIPID>;numContentElements=2;Tag[0]=>ceSeqNum[1];][Code=null]...Object Reference [DOCUMENT:1]ID"{<GUID>}" in ObjectStore "{<OS GUID>}";OMFC/Document/GetContent//CONTENT_FCP_OPERATION_FAILED_ON_OPEN
+
+
+CAUSE
+This is a known Centera Device issue:
+
+Cause: 
+
+Internal memory leak. The memory leak results in a consumption rate of approximately 2.0 to 2.5 megabytes (MB) per day and affects only Gen4/Gen4LP nodes running CentraStar version 4.1.0-3343-0-0 or CentraStar version 4.1.1-3610-0-0. After a period of six to nine months of system uptime has elapsed at these microcode revisions, users may report incidents of application performance and/or nodes within the cluster will reboot in order to release Slab memory for internal and external operations.
+
+Workaround: 
+
+Reboot the Linix platform on each affected node to release the amount of slab memory actively being consumed.
+
+Permanent Fix: 
+
+Two CentraStar patches have been made generally available (GA) in order to resolve the memory leak; CentraStar 4.1.0p1 (4.1.0-3672-1-0) and CentraStar 4.1.1p1 (4.1.1-3673-1-0).
+
+
+
+ENVIRONMENT
+Specific to a Linux\Centera environment
+
+
+
+DIAGNOSING THE PROBLEM
+Users intermittently receive the following stack trace error or the full document is not downloaded. 
+
+ Getting document content has failed.<br>com.filenet.api.exception.EngineRuntimeException;Fixed Content Provider open operation failed. Provider: [com.filenet.engine.content.fcprovider.centera.CenteraFCP(21)]SeqN[0] Referral: [version(hex)=10001; checksum(hex)=170a; mode=1; flags=0;contentID={<GUID>}; clipID=<CLIPID>;numContentElements=2;Tag[0]=>ceSeqNum[1];][Code=null]...Object Reference [DOCUMENT:1]ID"{<GUID>}" in ObjectStore "{<OS GUID>}";OMFC/Document/GetContent//CONTENT_FCP_OPERATION_FAILED_ON_OPEN
+
+
+RESOLVING THE PROBLEM
+ 
+
+ * Short term resolution is to reboot the Linux platform on each affected node.
+   
+ * Long term resolution is to apply the following CentraStar patches 4.1.0 Patch 1 (4.1.0-3672-1-00 and 4.1.1 patch (4.1.1-3673-1-0)
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager

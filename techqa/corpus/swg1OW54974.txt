@@ -1,0 +1,159 @@
+Title: IBM OW54974: EXCEEDING LOAD COUNT OF DSNALI AFTER 21 DAYS OF RUNNING TBSM IN NETVIEW,IHSBIFIC LOADS DSNALI,BUT DOESN'T PROPERLY DELET IT - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  .
+   Module
+   IHSBIFIC loads DSNALI and then later deletes it, however the
+   delete
+   is not working due to an incorrect condition being tested before
+   the
+   delete is performed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Fix required
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IBM Tivoli Business Systems Manager      *
+   *                 for DB2 V1R5 users.                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: During DB2 rediscovery, or poll monitor *
+   *                      processing, the following messages are  *
+   *                      returned:                               *
+   *                      CSV002I REQUESTS FOR MODULE DSNALI      *
+   *                      EXCEED MAXIMUM USE COUNT                *
+   *                      IHS637E IHSBIFIC unable to load         *
+   *                      DSNALI/DSNWLI2: Abend S906-8            *
+   *                      The DB2 interface module DSNALI is      *
+   *                      being loaded for execution but not      *
+   *                      correctly unloaded afterwards.  Because *
+   *                      of this the use count for load module   *
+   *                      DSNALI continues to increase.  With the *
+   *                      frequent execution of the poll monitor, *
+   *                      the use count eventually exceeds the    *
+   *                      limit of 32767.                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   During DB2 rediscovery, or poll monitor processing, the
+   following messages are returned:
+   CSV002I REQUESTS FOR MODULE DSNALI EXCEED MAXIMUM USE COUNT
+   IHS637E IHSBIFIC unable to load DSNALI/DSNWLI2: Abend S906-8
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The unload of DSNALI is not working due to an incorrect
+   condition being tested before the delete is performed.  This
+   test will be corrected so that DSNALI is correctly unloaded.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OW54974
+   
+   
+ * REPORTED COMPONENT NAME
+   TIVOLI BSM OS/
+   
+   
+ * REPORTED COMPONENT ID
+   5698BSM00
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2002-05-30
+   
+   
+ * CLOSED DATE
+   2002-06-28
+   
+   
+ * LAST MODIFIED DATE
+   2002-08-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UW92281
+   
+   
+
+MODULES/MACROS
+ *  IHSBIFIC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIVOLI BSM OS/
+   
+   
+ * FIXED COMPONENT ID
+   5698BSM00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY UW92281
+   UP02/07/08 P F207

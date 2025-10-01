@@ -1,0 +1,196 @@
+Title: IBM IV64618: AGENT CONFIGURATION FAILS WITH RC=255 ON WINDOWS 2003 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Agent configuration can fail displaying the following message:
+   
+   KCICF8037E Agent configuration aborted due to user action or
+   errors
+   encountered.
+   
+   %candle_home%\InstallITM\kincfg.log can contain entries like the
+   following:
+   07-17-2014 14:13:14: executing application: cmd.exe /C
+   runConfig.bat -p
+   Q5 -v 063001000 -a WIX64 -c
+   C:\IBM\ITM\TMAITM6_x64\Q5_dd_063001000.xml
+   07-17-2014 14:13:14: RC=255
+   
+   
+   %candle_home%\InstallITM\kincfg.trc can contain entries like the
+   following:
+   07-17-2014 14:13:14 [LOG]: executing application: cmd.exe /C
+   runConfig.bat -p Q5 -v 063001000 -a WIX64 -c
+   C:\IBM\ITM\TMAITM6_x64\Q5_dd_063001000.xml
+   07-17-2014 14:13:14 [MID]: ENTER function ExecuteBatch() :
+   cmd.exe /C
+   runConfig.bat -p Q5 -v 063001000 -a WIX64 -c
+   C:\IBM\ITM\TMAITM6_x64\Q5_dd_063001000.xml
+   07-17-2014 14:13:14 [MIN]: ExecuteBatch: Process created
+   successfully
+   07-17-2014 14:13:14 [MIN]: ExecuteBatch: Process ended with
+   result code
+   [255]
+   07-17-2014 14:13:14 [MID]: EXIT function ExecuteBatch() :
+   Returning
+   value 255
+   07-17-2014 14:13:14 [LOG]: RC=255
+   07-17-2014 14:13:14 [MID]: EXIT function RunJavaLessXMLcfg() :
+   RC=255
+   07-17-2014 14:13:14 [LOG]: RC=255
+   07-17-2014 14:13:14 [MID]: EXIT function Kincfg() : RC=255
+   
+   RECREATE INSTRUCTIONS:
+   On a Windows 2003 system
+   Install ITM 6.23.02.00 64-bit OS agent
+   Install 6.23.00.00 64-bit Microsoft Cluster Server Agent
+   Notice: The initial configuration of the agent fails.
+   Reconfigure the Microsoft Cluster Server Agent.
+   Notice: The reconfiguration of the agent fails.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The following steps will cause the agent configuration to use
+   the java configuration process instead of the java-less
+   configuration process.
+   
+   1. Install the embedded JVM if it is not already installed.
+      Run the following command to see if the embedded JVM is
+      installed.
+   kincinfo -d | findstr "KJM("
+      If the command returns output, then the JVM is installed and
+      you can skip to step 3.
+   
+   2. Install the "CMA/Tivoli Enterprise Services User Interface
+      Extensions" (KUE) component from the ITM Agents media which
+      will cause the embedded JVM to be installed.
+   
+   3. Locate the <PP>_dd_<VER>.xml file in the directory
+      %candle_home%\tmaitm6_x64 or %candle_home%\tmaitm6,
+      where <PP> is the 2 character component code
+      for the agent and <VER> is the version of the agent.
+   
+   4. Edit <PP>_dd_<VER>.xml in the directory where it was found.
+      Add the following line after lines 1:
+   <!--<event_listening>fake</event_listening> -->
+      The first 3 lines in the file should look like the following:
+   <?xml version="1.0" encoding="UTF-8"?>
+   <!--<event_listening>fake</event_listening> -->
+   <!--Licensed Materials - Property of IBM-->
+   
+   5. Save the file.
+   
+   6. Configure the agent again.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The Windows installation prior to 6.23 installed a local JVM and
+   used it to perform xml configuration.
+   The Windows installation at 6.23 and above no longer installs a
+   local JVM by default and now uses a javaless xml configuration
+   procedure by default.
+   On certain versions of Windows the javaless xml configuration
+   procedure fails unexpectedly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Local Fix provided resolved the configuration issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV64618
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-05
+   
+   
+ * CLOSED DATE
+   2015-06-16
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  kincfg
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

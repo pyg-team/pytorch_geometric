@@ -1,0 +1,132 @@
+Title: IBM QRadar: How to configure log rollover on WinCollect Agents - United States
+
+Text:
+WinCollect; log rollover; log cleanup; WINCOLLECT AGENT DOES NOT CLEAN UP ITS OWN LOG FILES; APAR IV65507 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WinCollect Agents that have been upgraded to version 7.2.3 do not include the fix to enable log rollover, this functionality is only part of new installations. This article describes how to configure log rollover for existing agents. 
+
+CAUSE
+Over time, the Windows host might run low on disk space due to the number of WinCollect logs that are kept on the local drive and not cleaned up. WinCollect Agents do not include a default log rollover feature and might fill the disk on the Windows host. 
+
+ENVIRONMENT
+WinCollect agents at version 7.2.2 or 7.2.3 that need to enable log rollover.
+
+DIAGNOSING THE PROBLEM
+
+How log file rollover is changing by following these instructions
+The procedures in this article outline how to update the behavior of log rollover in WinCollect agents that were upgrades to 7.2.3 and existing agents at version 7.2.2. The following table outlines how logs are updated by applying the an updates logconfig.xml file to your WinCollect agent. 
+
+Current log name and behavior Updated behavior Example of updated log rollover WinCollect_System.log
+
+One log file is kept with no limit on file size. Multiple log files are now kept with the current log labeled: WinCollect_System_Active.log
+
+When the active log file rolls over, the system renamed the file to WinCollect_System.01 to .05. A total of 5 additional device log files can be kept (100MB) total before the system deletes the oldest log file to preserve space. WinCollect_System_Active.log (current data)
+WinCollect_System.01 (newest log rollover)
+WinCollect_System.02 (2nd newest log)
+WinCollect_System.03 (3rd newest log)
+WinCollect_System.04 (4th newest log)
+WinCollect_System.05 (oldest log to be deleted when active reaches 20MB) WinCollect_Device.log
+
+One log file is kept per day to track connection and log source issues on the local agent. There is no limit to the number of files that can be kept and no file size limit. Multiple log files are now kept with the current log labeled: WinCollect_Device_Active.log
+
+When the active log file rolls over, the system renamed the file to WinCollect_Device.01 to .05. A total of 5 additional device log files can be kept (100MB) total before the system deletes the oldest log file to preserve space. WinCollect_Device_Active.log (current data)
+WinCollect_Device.01 (newest log rollover)
+WinCollect_Device.02 (2nd newest log)
+WinCollect_Device.03 (3rd newest log)
+WinCollect_Device.04 (4th newest log)
+WinCollect_Device.05 (oldest log to be deleted when active reaches 20MB) WinCollect_Code.log
+
+
+One log file is kept with no limit on file size. Multiple log files are now kept with the current log labeled: WinCollect_Code_Active.log
+
+When the active log file rolls over, the system renamed the file to WinCollect_Code.01 to .05. A total of 5 additional device log files can be kept (100MB) total before the system deletes the oldest log file to preserve space. WinCollect_Code_Active.log (current data)
+WinCollect_Code.01 (newest log rollover)
+WinCollect_Code.02 (2nd newest log)
+WinCollect_Code.03 (3rd newest log)
+WinCollect_Code.04 (4th newest log)
+WinCollect_Code.05 (oldest log to be deleted when active reaches 20MB)  
+
+
+
+
+
+RESOLVING THE PROBLEM
+Part 1: Determining your WinCollect Agent Version (32-bit or 64-bit)
+To update your WinCollect agent to include log rollover requires the Windows administrators to download and apply the correct file for the WinCollect agent. There is a 32-bit and 64-bit version of logconfig.xml and the administrator must verify their WinCollect version and download the correct file. 
+
+ 
+
+ * 
+ * Procedure
+   
+ * 
+ *  
+ *  Log in to the Windows system that hosts your WinCollect agent. Navigate to the WinCollect configuration directory. 
+   
+   For example:  * 32-bit WinCollect: C:\Program Files (x86)\IBM\WinCollect\logs\ 
+    * 64-bit WinCollect: C:\Program Files\IBM\WinCollect\logs\ 
+    * Custom install directory: E:\WinCollect\
+      
+      NOTE: If an administrator uses a custom installation directory, the value= field in the logconfig.xml file must be edited to use your custom install path.
+      
+      For example: 
+      value="C:\Program Files\IBM\WinCollect/logs/WinCollect_Code_Active.log"
+      value="C:\Program Files\IBM\WinCollect/logs/WinCollect_Code.%i.log" 
+      
+      Updated for custom install path: 
+      value="E:\WinCollect/logs/WinCollect_Code_Active.log"
+      value="E:\WinCollect/logs/WinCollect_Code.%i.log"
+      
+   
+   From the logs directory, open the WinCollect_System.log and review the INFO messages to determine your WinCollect agent version. The version will be printed as a line in the log file.
+   
+   For example:
+   2015-02-27 15:26:42,083 INFO System.WindowsAgent.main : ~~~~~~~~~~~~~~ WinCollect Version 7.2.2 64-bitRunning on operating system Windows 7 (Build 7601 SP1) (64-bit architecture, 4 CPU and 3318/8075 MB RAM currently available) ~~~~~~~~~~~~~~ Depending on your WinCollect version, download the proper file and copy the file to the Windows host:
+   
+   Table 1: Replacement logconfig.xml to enable log rollover WinCollect version File download 32-bit WinCollect [/support/docview.wss?uid=swg21975273&aid=2]logconfig.xml [/support/docview.wss?uid=swg21975273&aid=1] 64-bit WinCollect [/support/docview.wss?uid=swg21975273&aid=4]logconfig.xml [/support/docview.wss?uid=swg21975273&aid=3]
+   
+ *  
+   IMPORTANT: These files are identical, except for the fact that the paths in the files reference either Program Files or Program Files (x86). The administrator must download the proper file for their Windows version as identified in the WinCollect_System.log. If you are using a custom installation path, you must edit the value= fields to point to your WinCollect log files. 
+
+
+ 
+
+ 
+
+Part 2: Installing logconfig.xml on your Windows host
+This procedure outlines how to install an updated logconfig.xml on your WinCollect agent to enable log rollover.
+
+
+ * 
+ * Procedure
+ *  Log in to the Windows system hosting the WinCollect agent. Click Start and in the search box, type services.msc and press ENTER. Locate the WinCollect service and click Stop. Navigate to the WinCollect configuration directory.
+   
+   For example:  * 32-bit WinCollect: C:\Program Files (x86)\IBM\WinCollect\config\ 
+    * 64-bit WinCollect: C:\Program Files\IBM\WinCollect\config\ 
+    * Custom install directory: <Install Path>\WinCollect\config\
+      
+   
+   Rename the existing logconfig.xml file to logconfig_old.xml or move it to a different directory. Copy the downloaded logconfig.xml file to the WinCollect\config\ directory. Navigate to the WinCollect\logs\ directory. Take one of the following actions for your existing log files:  1. Copy the log files in to a new folder and move the folder outside of the WinCollect\logs\ directory. 
+    2. Delete all of the old log files from this directory. Any logs required by WinCollect will be recreated when the service restarts. 
+       
+       NOTE: Any existing log files are not cleaned up with the new file and any required logs will be created when the WinCollect agent starts. 
+   
+   From the WinCollect service window, locate the WinCollect service and click Start.
+   
+   Results
+   The WinCollect agent will rollover logs by each type when they reach a specific size on the Windows host. 
+   
+ * 
+ *  
+ * ------
+   Where do you find more information? 
+ * 
+ * [/support/docview.wss?uid=swg21975273&amp;aid=5]
+ * [/support/docview.wss?uid=swg21975273&amp;aid=6]
+ * [/support/docview.wss?uid=swg21975273&amp;aid=7]
+ * [/support/docview.wss?uid=swg21975273&amp;aid=8]
+ * [/support/docview.wss?uid=swg21975273&amp;aid=9]
+ * [/support/docview.wss?uid=swg21975273&amp;aid=10]
+ * [/support/docview.wss?uid=swg21975273&amp;aid=11]
+ *

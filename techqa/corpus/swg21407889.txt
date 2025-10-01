@@ -1,0 +1,65 @@
+Title: IBM How to determine the ulimit settings of a running WebSphere Application Server process on Linux - United States
+
+Text:
+ulimit process pid determine get TECHNOTE (FAQ)
+
+QUESTION
+ How can the ulimit settings of a running WebSphere Application Server process be determined on Linux? 
+
+ANSWER
+There are a number of situations where determining the ulimit settings of a running WebSphere Application Server process may be necessary. The more common scenarios include determining the maximum number of file descriptors for a given process or generating a system core from a given process.
+
+
+Step 1
+-Determine the Process ID (PID) of the IBM WebSphere Application Server process to be investigated. 
+
+If the PID is already known, proceed to step 2. 
+
+If the PID is unknown then inspect the contents of the following file to determine the PID: 
+
+<install_root>/profiles/<profile_name>/logs/<server_name>/<server_name>.pid 
+
+ * This file should exist if the server is currently running. Exceptional circumstances could lead to a situation where this file exists and the server is not running.
+
+
+The number contained within this file is the PID of the running server.  
+
+Step 2
+Once the PID is known, inspect the file at the following location: 
+
+Location: /proc/<PID> 
+
+File: limits 
+
+ * The contents of this file is similar to the output of the "ulimit -a" command.
+
+
+This file will have a list of ulimit parameters and their associated values for the specified PID. 
+
+Sample 
+Limit Soft Limit ... 
+Max cpu time unlimited 
+Max file size unlimited 
+Max data size unlimited 
+Max stack size 10485760 
+Max core file size unlimited 
+Max processes unlimited 
+Max open files 8192 
+...  
+
+ 
+
+Limitations
+This method is only available to more recent versions of IBM WebSphere Application Server supported Linux operating systems. 
+
+The following is a list of minimum operating system versions and maintenance levels where this technique is usable: 
+
+ * RHEL 4 Update 7 
+ * RHEL 5 Update 2 
+ * SLES 10 Service Pack 3 
+ * SLES 11
+
+
+There may be some exceptions to this list, and this list is not necessarily exhaustive; however, all the major maintenance levels (Updates / Service Packs) for RHEL 4 and 5 and SLES 9, 10, and 11 were tested. This list reflects the findings of those tests. 
+
+There may be some incremental maintenance that can be applied to support this method prior to the above versions and maintenance levels as only major maintenance levels were tested.

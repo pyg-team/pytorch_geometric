@@ -1,0 +1,25 @@
+Title: IBM Clustering a transparent decision service - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Can I cluster my tranparent decision service (HTDS or MTDS) and how should I proceed? 
+
+ANSWER
+A transparent decision service, whether it is hosted or monitored (HTDS or MTDS), is like any other client to Rule Execution Server, which calls it locally (using a Java SE or POJO rule session). Therefore, you cluster it along with the eXecution Unit (XU), on each server of the cluster.
+
+
+Note: Refer to section "WebSphere ILOG JRules BRMS V7.1: Java EE add-ons > Installing on <your application server> > Installing Rule Execution Server > Rule Execution Server deployment on cluster environments" of the JRules 7.1 documentation [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.install.doc/Content/Business_Rules/Documentation/_pubskel/JRules_Application_Servers/ps_Installing_JRules_IC.html] to get more information on how to deploy Rule Execution Server on each supported application server.
+
+RELATED INFORMATION
+#Clustering the Rule Execution Server console [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21426014]
+Clustering Decision Validation Services [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21425487]
+Clustering Rule Team Server [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21400812]
+Configuring Rule Execution Server V7.5 [http://publib.boulder.ibm.com/infocenter/dmanager/v7r5/topic/com.ibm.dserver.configuring/Content/Business_Rules/_pubskel/Infocenter_Primary/ps_DS_Configuring104.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Modules:Execution Server Platform Independent 8.5, 8.0, 7.5

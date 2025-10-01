@@ -1,0 +1,47 @@
+Title: IBM CE_Operations in Content Engine Platform 5.2.1 failed with errors referencing the P8 4.5.1 CE_Operations component configuration - United States
+
+Text:
+CE_Operations TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CE_Operations in Content Engine Platform 5.2.1 failed with errors referencing the P8 4.5.1 CE_Operations component configuration 
+
+SYMPTOM
+After a successful Process Engine upgrade from 4.5.1 to 5.2.1, the CE_Operations component failed with following errors in Process Engine trace log:
+
+
+2016/03/31 11:13:08.506-0500 RPCHandler PEServer.init DB=PEDBConnection [Trace] CM, CMConfigManager:MountRegion <?xml version="1.0" encoding="UTF-8"?><fnpe_java_component_descriptor xmlns="http://www.filenet.com/process [http://www.filenet.com/process]"><adaptor_name>Java Component</adaptor_name><description>This component queue exposes operations that allow several Content Engine operations.</description><adaptor_class>filenet.vw.integrator.adaptors.java.VWJavaAdaptor</adaptor_class><jar_file_url>C:\Temp\p8ciops.jar</jar_file_url><target_class>com.filenet.wcm.toolkit.server.operations.CEOperations</target_class><concurrent_threads>4</concurrent_threads><polling_rate>1000</polling_rate><startup_mode>automatic</startup_mode><exception_submap>Malfunction</exception_submap><jaas_username>YSV6C0A</jaas_username><jaas_configcontext>CELogin</jaas_configcontext><name>CE_Operations</name><jaas_password>aNfqajL3gAjNfh1orN9hhzzPozuRqlrigkzPdhPq</jaas_password></fnpe_java_component_descriptor>
+....
+
+2016/03/31 11:13:39.101-0500 CMDp.f_sA6BF PEPrimary3 [Trace] CM, CE_Operations###filenet.contentops.ContentOperations: Failed to load method with signature=public void com.filenet.wcm.toolkit.server.operations.CEOperations.file(filenet.vw.api.VWAttachment,filenet.vw.api.VWAttachment) throws com.filenet.wcm.toolkit.util.WcmException for qOp=file from class=filenet.contentops.ContentOperations
+....
+
+
+
+CAUSE
+The old p8ciops.jar and class "com.filenet.wcm.toolkit.server.operations.CEOperations" in P8 4.5.1 were being referenced in the component configuration of the upgraded 5.2.1 system due to some incorrect configuration information in the PE 4.5.1 system.
+
+Although the CPE 5.2.1 upgrade process completed without getting errors, the incorrect configuration information in PE 4.5.1 system had caused the CPE 5.2.1 upgrade to fail to properly upgrade the CE Operations component to CPE 5.2.1.
+
+The first error message above indicated that the component classes of PE 4.5.1, com.filenet.wcm.toolkit.server.operations.CEOperations, was referenced in CPE 5.2.1 CE_Operaitons queue configuration.
+
+The second error message showed that a PE 4.5.1 method signature was referenced, which was 
+public void com.filenet.wcm.toolkit.server.operations.CEOperations.file(filenet.vw.api.VWAttachment,filenet.vw.api.VWAttachment) throws com.filenet.wcm.toolkit.util.WcmException
+
+RESOLVING THE PROBLEM
+Use the following procedure to correct the CE_Operations component configuration of the affected PE isolated region. 
+
+1. On CPE server, go to the following equivalent file path on the system:
+C:\IBM\FileNet\ContentEnginer\tools\PE, and make sure that the vwtfer batch (or shell script) file exists.
+
+2. Run the following command:
+vwtfer <Connectionpoint> -Y <username>+<password> -o c:\temp\upgrade.cdl 
+
+where 
+- "Connectionpoint" is a connection point to the affected region
+- "username" is a peadmin userid
+- "upgrade.cdl" is a PE configuration upgrade CDL file, which can be found in the FileNetEngine.ear file under peengine-ejb.jar\filenet\jpe\resources folder.
+
+3. After running the vwtfer command successfully, restart the CPE server.
+
+4. Run a test to confirm the fix.

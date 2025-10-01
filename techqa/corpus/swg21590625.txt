@@ -1,0 +1,17 @@
+Title: IBM DataType field accidentally removed - United States
+
+Text:
+netcool; impact; netcool/impact; nci; data; type; datatype; item; field; row; custom; delete; deleted; refresh; add; new; insert; table; database; base; sql; external TECHNOTE (FAQ)
+
+QUESTION
+ How do I get it back again? 
+
+CAUSE
+One is editing the list of target database fields mapped in a DataType and one accidentally deletes a field that one actually requires.
+
+ANSWER
+For Impact versions 3.0 through to 5.1.1 the only available method was to refresh the entire table and start removing the unwanted fields all over again. 
+
+In Impact 6.1 onwards one now has access to the Add Deleted Fields button. Per Impact 6.1 User Interface Guide page 70:
+
+"If you have deleted fields from the data type that still exist in the SQL database, these fields do not show in the user interface. To restore the fields to the data type, mark the Add Deleted Fields check box and click Refresh."

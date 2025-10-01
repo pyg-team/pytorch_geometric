@@ -1,0 +1,100 @@
+Title: IBM How to generate system dumps for Java Processes - United States
+
+Text:
+system dump TECHNOTE (FAQ)
+
+QUESTION
+ How do you generate system dumps for Java Processes? 
+
+CAUSE
+There are times when IBM support requires a System Dump in order to analyze a Java problem.
+
+ANSWER
+There are three recommended ways to generate a System Dump from a Java process. 
+
+
+Approach 1 involves editing a configuration file, which will cause an extra console window to appear. 
+
+Approach 2 is a Windows only approach and involves downloading a small utility program. 
+
+Approach 3 involves using a new menu item. This is the preferred approach for versions 7.5.5.1 and above. 
+
+Once a dump has been generated, it needs to be processed by the jextract program (which is included in the JRE). From your install directory run: 
+
+jdk\jre\bin\jextract <name-of-the-dump-file> 
+
+this will produce a large zip file. It is the zip file that IBM support needs. 
+
+
+
+
+
+
+Approach 1 
+
+ 
+
+ 1. Backup your eclipse.ini file. This file is located in the base Rational Application Developer install directory. (Usually C:\Program Files\IBM\SDP )
+    
+    
+ 2. Edit the eclipse.ini file by changing the javaw.exe occurrence to java.exe. (Note that the "w" is removed). At the bottom of the file add the following line: -Xdump:java+system:events=user
+    
+    
+ 3. Now when you start Application Developer a new console window will appear. Usually you can just ignore this window, but when you want to trigger a System Dump file, click Ctrl-Break into this window.
+    
+    Note: It should generate two files similar tojavacore{timestamp}.txt and core{timestamp}.dmp in the same directory as the Rational Application Developer installation directory which contains eclipse.exe.
+
+
+[http://www.ibm.com/i/v14/icons/fw_bold.gif] Example [javascript:void(0);] [javascript:void(0);] (click to expand) Example from a Rational Application Developer version 7.5 install with this change:
+
+//===eclipse.ini
+-vm
+C:\Program Files\IBM\SDP\jdk\jre\bin\java.exe
+-consolelog
+-debug
+-startup
+plugins/org.eclipse.equinox.launcher_1.0.101.R34x_v20080819.jar
+-install
+C:\Program Files\IBM\SDP
+--launcher.library
+plugins/org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731
+-vmargs
+-Xquickstart
+-Xms100m
+-Xmx1024m
+-Xmnx64m
+-Xgcpolicy:gencon
+-Xscmx96m
+-Xshareclasses:name=IBMSDP_%u
+-Xnolinenumbers
+-XX:MaxPermSize=128M
+-Xjit:exclude={com/ibm/team/coverage/internal/common/report/SourceElementInfo.write*}
+-Dosgi.requiredJavaVersion=1.5
+-Xdump:java+system:events=user
+//== 
+
+
+Approach 2 
+
+ 
+
+This approach only applies to Windows. 
+
+ 
+
+ 1. Download the Process Explorer [http://www.latenighthacking.com/projects/2003/sendSignal/]from Microsoft. See http://technet.microsoft.com/en-us/sysinternals/bb896653 [http://technet.microsoft.com/en-us/sysinternals/bb896653]
+    
+    
+ 2. Locate the Java process. It will have the name javaw.exe and will have a large working set. Select this process, and then select Create Dump -> Create Full Dump ... Save this dump file in your install directory.
+
+
+
+
+
+Approach 3 
+
+Use the new menu item that was introduced in version 7.5.5.1: 
+
+Help -> Performance -> Generate diagnostic information -> System Core File (Crash Dump) 
+
+This is the easiest approach, but if the problem that you are trying to debug is a hang, then you will not be able to use any menu items, and one of the other approaches will be needed.

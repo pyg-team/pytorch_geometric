@@ -1,0 +1,207 @@
+Title: IBM PI85774: CPSM MAS AGENT STARTUP DUPLICATING SECURITY CHECKING DONE BY CICS 5.4 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In CICS 5.4, the CPSM MAS agent tasks were converted from user
+   tasks to CICS Category 1 system tasks. CICS already checks
+   during its startup to make sure that the CICS region userid has
+   sufficient authority in RACF (or the current External Security
+   Manager) to run all Category 1 transactions. Because of this,
+   CPSM no longer needs to duplicate the efforts when the MAS
+   agent code starts.
+   .
+   Additional Symptom(s) Search Keyword(s): KIXREVxxx
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICSPlex SM V5R4M0 Users.                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: One or more EYUNX0102E messages may be  *
+   *                      issued during the start of the CPSM     *
+   *                      agent in a MAS or SMSS region,          *
+   *                      indicating that the security definition *
+   *                      for one or more CPSM transactions is    *
+   *                      incorrect.  The text of the messages    *
+   *                      will be similar to the following:       *
+   *                                                              *
+   *                        EYUNX0102E  Security profile for      *
+   *                                    TRANSATTACH <tranid> is   *
+   *                                    incorrect:                *
+   *                                    READ=NOTREADABLE.         *
+   *                                                              *
+   *                      If this occurs, the messages will be    *
+   *                      followed by message EYUNX0103E,         *
+   *                                                              *
+   *                        EYUNX0103E  Incorrect security        *
+   *                                    profile for one or more   *
+   *                                    resources. MAS            *
+   *                                    initialization is         *
+   *                                    terminating.              *
+   *                                                              *
+   *                      and CPSM agent initialization will      *
+   *                      terminate.                              *
+   ****************************************************************
+   * RECOMMENDATION: After applying the PTF that resolves this    *
+   *                 APAR, all MASes, including MASes running as  *
+   *                 WUI servers, must be restarted.  Note that   *
+   *                 the restarts do not need to occur at the     *
+   *                 same time.                                   *
+   ****************************************************************
+   When the CPSM agent initializes in a MAS or SMSS, module
+   EYU9NXLM (MAS) or EYU9NXRM (SMSS) is performing security checks
+   to verify that the CPSM transactions that are internally started
+   have the correct authorization.  This check is against the
+   PLTPIUSR ID (if specified) or the region user ID.
+   
+   With CICS TS V5.4, all CPSM agent transactions that are
+   internally started in a MAS and SMSS that is running CICS 710
+   have been changed to CICS Category 1 transactions, and will run
+   under the region user ID.
+   
+   If PLTPIUSR is specified for a MAS or SMSS region running CICS
+   710, and that user ID does not have the same authorization as
+   the region user ID, then EYU9NXLM or EYU9NXRM may invalidly
+   issue message EYUNX0102E for each transaction, and fail CPSM
+   agent initialization with message EYUNX0103E.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  With CICS TS V5.4, the CPSM MAS and SMSS transactions that are
+   now defined as CICS Category 1 transactions are now subject to
+   authorization checking performed by CICS at region start up so
+   there is no need for CPSM to perform authorization checks for
+   them in EYU9NXLM and EYU9NXRM when the MAS or SMSS is running
+   CICS release 710.  As such, the following updates have been
+   made:
+   
+   -  Since a CPSM MAS running CICS TS V5.4 could be running CICS
+      710 or previous, a conditional check has been added to
+      EYU9NXLM to only perform CPSM transaction authorization
+      checking if the CICS release is 700 or lower.
+   
+   -  Since a CPSM SMSS running CICS TS V5.4 must be running CICS
+      710, the CPSM transaction authorization checking has been
+      removed from EYU9NXRM.
+   
+   Note that when the MAS or SMSS is running CICS 710, and the CICS
+   authorization checking for CPSM MAS or SMSS transactions fails,
+   CICS will issue messages DFHXS1111 and DFHXS1113 to document
+   this and fail region initialization.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI85774
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   10M
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / CST / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-10
+   
+   
+ * CLOSED DATE
+   2017-10-17
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI51214
+   
+   
+
+MODULES/MACROS
+ *  CJF9NXLM CJG9NXLM CJH9NXLM EYU9NXLM EYU9NXRM EYUE3516 EYUK3516
+   EYUS3516
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R10M PSY UI51214 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI51214]
+   UP17/10/20 P F710
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

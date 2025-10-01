@@ -1,0 +1,37 @@
+Title: IBM Transaction Block error while in Business Insight Advanced against Greenplum database - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When working in Business Insight Advanced, if a query is cancelled the error below is reported.
+Once the "transaction block" occurs, users are not able to run any queries as the error keeps coming up. On the Greenplum side, there are no errors that we can see as Cognos is not even able to issue the SQL to the DB. 
+
+At this point, the user has to log off of Cognos and start a new session again. There's no guarantee that this will work. If not and we have other users experiencing this error, we have to restart the Cognos services and we have the Greenplum Admin kill any Cognos sessions. 
+
+SYMPTOM
+RQP-DEF-0177 An error occurred while performing operation sqlPrepareWithOptions' status='-9'. 
+
+UDA-SQL-0107 A general exception has occurred during the operation "prepare".
+ERROR: current transaction is aborted, commands ignored until end of transaction block; No query has been executed with that handle
+
+
+CAUSE
+This can be corrected with modifications to the ODBC connection properties of the Greenplum driver.
+
+
+ENVIRONMENT
+Cognos 10.1 Windows 32bit 
+
+Greenplum V4.0.3
+PostgresSQL ANSI V8.04.02.00
+
+
+RESOLVING THE PROBLEM
+This can be corrected with modifications for the ODBC connection properties where Use Declared Fetch should be unchecked.
+
+
+For complete information on the suggested settings for the ODBC connection, please refer to the documentation available from Greenplum (see link below). There is a section within that document with full screenshots of the suggested settings. 
+
+RELATED INFORMATION
+#Working with the Cognos BI Server Using the Greenplum D [http://www.emc.com/collateral/software/white-papers/h10626-cognos-bi-server-aix.pdf]

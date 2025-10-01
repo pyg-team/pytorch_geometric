@@ -1,0 +1,109 @@
+Title: IBM Case Manager Administrator Client 5.2: Get error when applying Security Configuration to a Solution: The security manifest could not be applied. FNRAM9052 - United States
+
+Text:
+Security Manifest TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Case Manager Administrator Client 5.2: Get error when applying Security Configuration to a Solution: The security manifest could not be applied. FNRAM9052 
+
+SYMPTOM
+Get error when applying Security Configuration to a Solution: 
+
+The security manifest could not be applied. FNRAM9052
+
+The security manifest of the solution could not be applied because of the following error: FNRPA0087E An unexpected error occurred.
+
+Try the request again. If the problem persists, contact your system administrator.
+
+Review the associated message and the IBM Content Navigator server log.
+
+
+CAUSE
+The version of Content Platform Engine (CPE) is mismatched between CPE and IBM Content Navigator
+
+
+ENVIRONMENT
+Content Platform Engine
+
+DIAGNOSING THE PROBLEM
+Error stack trace shows in IBM Content Navigator Server Application Logs (SystemOut.log):
+
+[2/16/15 15:57:10:456 PST] 00000147 SystemOut O 2015/02/16 15:57:10 [WebContainer : 5] DEBUG filenet_tracing.error.detail.moderate.summary.com.filenet.api.exception.EngineRuntimeException com.filenet.api.exception.EngineRuntimeException: FNRCE0066E: E_UNEXPECTED_EXCEPTION: An unexpected exception occurred. The unexpected exception is chained to this exception. Message was: null
+at com.filenet.apiimpl.util.J2EEUtilWS.handleException(J2EEUtilWS.java:116)
+at com.filenet.apiimpl.util.J2EEUtilWS.doAs(J2EEUtilWS.java:224)
+at com.filenet.api.util.UserContext.doAs(UserContext.java:143)
+at filenet.pe.ejb.client.PERPCProxyBase.invokeRPC(PERPCProxyBase.java:487)
+at filenet.pe.ejb.client.PEEJBSession.executeRPC(PEEJBSession.java:845)
+at filenet.pe.ejb.client.PEEJBSession.getSystemConfigInfo(PEEJBSession.java:1924)
+at filenet.vw.api.VWSystemConfiguration.fetchSystemConfig(VWSystemConfiguration.java:495)
+at filenet.vw.api.VWSystemConfiguration.<init>(VWSystemConfiguration.java:475)
+at filenet.vw.api.VWSession.fetchSystemConfiguration(VWSession.java:2241)
+at com.ibm.casemgmt.intgimpl.callcache.ConnectionDefinitionCallCache.initialize(ConnectionDefinitionCallCache.java:79)
+at com.ibm.casemgmt.intgimpl.callcache.ConnectionDefinitionCallCache.getInstance(ConnectionDefinitionCallCache.java:60)
+at com.ibm.casemgmt.api.admin.DevelopmentSolution.checkReinitInProgress(DevelopmentSolution.java:532)
+at com.ibm.casemgmt.api.admin.DevelopmentSolution.doProcessPendingActivities(DevelopmentSolution.java:452)
+at com.ibm.casemgmt.api.admin.DevelopmentSolution.processPendingActivities(DevelopmentSolution.java:428)
+at com.ibm.casemgmt.api.admin.DevelopmentSolution.initiateSecurityConfiguration(DevelopmentSolution.java:235)
+at com.ibm.ecm.icm.accm.repository.ManageSolutionSecurityManifest.applySolutionSecurityManifest(ManageSolutionSecurityManifest.java:552)
+at com.ibm.ecm.icm.accm.repository.ManageSolutionSecurityManifest.saveSecurityManifest(ManageSolutionSecurityManifest.java:231)
+at com.ibm.ecm.icm.accm.services.SaveSolutionSecurityManifestService.callBackend(SaveSolutionSecurityManifestService.java:132)
+at com.ibm.ecm.icm.accm.services.SaveSolutionSecurityManifestService.doExecute(SaveSolutionSecurityManifestService.java:105)
+at com.ibm.ecm.icm.accm.services.BaseService.execute(BaseService.java:130)
+at com.ibm.ecm.util.PluginUtil.invokeService(PluginUtil.java:782)
+at com.ibm.ecm.struts.actions.PluginAction.executeBaseAction(PluginAction.java:114)
+at com.ibm.ecm.struts.actions.BaseAction.execute(BaseAction.java:181)
+at org.apache.struts.action.RequestProcessor.processActionPerform(RequestProcessor.java:484)
+at org.apache.struts.action.RequestProcessor.process(RequestProcessor.java:274)
+at org.apache.struts.action.ActionServlet.process(ActionServlet.java:1482)
+at com.ibm.ecm.struts.controller.ControllerServlet.process(ControllerServlet.java:234)
+at org.apache.struts.action.ActionServlet.doPost(ActionServlet.java:525)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:595)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:668)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1225)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrapper.java:775)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrapper.java:457)
+at com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.handleRequest(ServletWrapperImpl.java:178)
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain.invokeTarget(WebAppFilterChain.java:136)
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebAppFilterChain.java:79)
+at com.ibm.ws.webcontainer.filter.WebAppFilterManager.doFilter(WebAppFilterManager.java:928)
+at com.ibm.ws.webcontainer.filter.WebAppFilterManager.invokeFilters(WebAppFilterManager.java:1025)
+at com.ibm.ws.webcontainer.servlet.CacheServletWrapper.handleRequest(CacheServletWrapper.java:87)
+at com.ibm.ws.webcontainer.WebContainer.handleRequest(WebContainer.java:908)
+at com.ibm.ws.webcontainer.WSWebContainer.handleRequest(WSWebContainer.java:1662)
+at com.ibm.ws.webcontainer.channel.WCChannelLink.ready(WCChannelLink.java:195)
+at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleDiscrimination(HttpInboundLink.java:459)
+at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleNewRequest(HttpInboundLink.java:526)
+at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.processRequest(HttpInboundLink.java:312)
+at com.ibm.ws.http.channel.inbound.impl.HttpICLReadCallback.complete(HttpICLReadCallback.java:87)
+at com.ibm.ws.tcp.channel.impl.AioReadCompletionListener.futureCompleted(AioReadCompletionListener.java:165)
+at com.ibm.io.async.AbstractAsyncFuture.invokeCallback(AbstractAsyncFuture.java:217)
+at com.ibm.io.async.AsyncChannelFuture.fireCompletionActions(AsyncChannelFuture.java:161)
+at com.ibm.io.async.AsyncFuture.completed(AsyncFuture.java:138)
+at com.ibm.io.async.ResultHandler.complete(ResultHandler.java:204)
+at com.ibm.io.async.ResultHandler.runEventProcessingLoop(ResultHandler.java:775)
+at com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:905)
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1815)
+Caused by: java.lang.reflect.InvocationTargetException
+at sun.reflect.GeneratedMethodAccessor31.invoke(Unknown Source)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+at com.filenet.apiimpl.util.J2EEUtilWS.doAs(J2EEUtilWS.java:220)
+... 52 more
+Caused by: java.lang.RuntimeException: RPC pejb_getSystemConfigInfo. IO Error while serialize bytes to objects. java.io.InvalidClassException:filenet.vw.server.WorkBasketRef; local class incompatible: stream classdesc serialVersionUID = 7425, local class serialVersionUID = 7424
+at com.ibm.websphere.security.auth.WSSubject.doAs(WSSubject.java:205)
+at com.ibm.websphere.security.auth.WSSubject.doAs(WSSubject.java:152)
+... 56 more
+Caused by: RPC pejb_getSystemConfigInfo. IO Error while serialize bytes to objects. java.io.InvalidClassException:filenet.vw.server.WorkBasketRef; local class incompatible: stream classdesc serialVersionUID = 7425, local class serialVersionUID = 7424
+at filenet.vw.server.rpc.RPCUtilities.BytesToObject(RPCUtilities.java:407)
+at filenet.pe.ejb.client.PESendAPIRPCProxy.ejbInvokeAsBytes(PESendAPIRPCProxy.java:120)
+at filenet.pe.ejb.client.PESendAPIRPCProxy.ejbInvoke(PESendAPIRPCProxy.java:95)
+at filenet.pe.ejb.client.PERPCProxyBase.privateInvokeRPC(PERPCProxyBase.java:449)
+at filenet.pe.ejb.client.PERPCProxyBase.access$000(PERPCProxyBase.java:89)
+at filenet.pe.ejb.client.PERPCProxyBase$EJBExecuteAction.run(PERPCProxyBase.java:127)
+at java.security.AccessController.doPrivileged(AccessController.java:314)
+at javax.security.auth.Subject.doAs(Subject.java:573)
+at com.ibm.websphere.security.auth.WSSubject.doAs(WSSubject.java:195)
+... 57 more
+
+RESOLVING THE PROBLEM
+Applying the Content Platform Engine Client on IBM Content Navigator

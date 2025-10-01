@@ -1,0 +1,19 @@
+Title: IBM SSLKeyException: RSA premaster secret error  Caused by InvalidKeyException - United States
+
+Text:
+JDBC JCC SSL SSLKeyException .InvalidKeyException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ My java application using the Data Server Driver for JDBC (JCC) is failing to establish SSL connection with following error:
+
+SSLKeyException: RSA premaster secret error. Caused by: java.security.InvalidKeyException: Illegal key size or default parameters. 
+
+SYMPTOM
+javax.net.ssl.SSLKeyException: RSA premaster secret error. Caused by: java.security.InvalidKeyException: Illegal key size or default parameters 
+
+
+CAUSE
+The default restricted policy file has a 2048 key size limit. If the RSA key size exceeds this limit then this error is expected.
+
+RESOLVING THE PROBLEM
+This issue can be resolved by upgrading to the unrestricted policy files, replacing the security policy files with the IBM unlimited cryptography files. Replace the local_policy.jar with the Unrestricted JCE policy File. [https://www14.software.ibm.com/webapp/iwm/web/reg/pick.do?source=jcesdk&lang=en_US]

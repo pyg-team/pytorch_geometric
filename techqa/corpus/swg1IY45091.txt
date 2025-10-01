@@ -1,0 +1,152 @@
+Title: IBM IY45091: CHANNEL STAYS IN BINDING / INITIALIZING STATE - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 12 (CSD12) [http://www-01.ibm.com/support/docview.wss?uid=swg24011423]
+WebSphere MQ V5.3 & WebSphere MQ Express V5.3 - Fix Pack 10 (CSD10) [http://www-01.ibm.com/support/docview.wss?uid=swg24009688]
+WebSphere MQ V5.3 & WebSphere MQ Express V5.3 - Fix Pack 8 (CSD08) [http://www-01.ibm.com/support/docview.wss?uid=swg24007905]
+WebSphere MQ V5.3 for iSeries - Fix Pack 12 (CSD12) [http://www-01.ibm.com/support/docview.wss?uid=swg24011422]
+WebSphere MQ V5.3 & WebSphere MQ Express V5.3 - Fix Pack 7 (CSD07) [http://www-01.ibm.com/support/docview.wss?uid=swg24007281]
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 13 (CSD13) [http://www-01.ibm.com/support/docview.wss?uid=swg24014128]
+WebSphere MQ v5.3 and WebSphere MQ Express v5.3 - Fix Pack 6 (CSD06) [http://www-01.ibm.com/support/docview.wss?uid=swg24006435]
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 14 (CSD14) [http://www-01.ibm.com/support/docview.wss?uid=swg24017668]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An installation has two queue managers on the same machine.  The
+   channels are started from one queue manager and the channels
+   start with no problem.  If an attempt to start the channels is
+   made from the second queue manager, the channels either stay in
+   BINDING / INITIALIZING state or fail with one of two messages:
+   .
+      AMQ9502 Type of channel not suitable for action requested.
+   or
+      AMQ9514 Channel is in Use.
+   .
+   This is a result of connecting to the wrong subpool to find an
+   amqrmppa process to run a channel.  The amqrmppa process for the
+   failing channel on queue manager 2 was associating with queue
+   manager 1 improperly.
+   .
+   This can be detected by amqrdbgm 'e' (Pool entry) & 'l' (Dump
+   pool) and a process list.  This is also associated with files
+   remaining in the ...qmgrs/@qmpersist subdirectories from a
+   previous instance of the queue manager.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The problem has been fixed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem has been fixed and the fix will be shipped in the
+   following PTFs:
+   .
+       A) WebSphere MQ V5.3    CSD04
+   .
+             Windows           U200190
+             AIX               U486531
+             HP-UX             U486875
+             Linux on Intel    U486878
+             Linux on zSeries  U486902
+             Sun Solaris       U486877
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY45091
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB MQ FOR AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724B4101
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2003-06-03
+   
+   
+ * CLOSED DATE
+   2003-06-04
+   
+   
+ * LAST MODIFIED DATE
+   2003-06-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB MQ FOR AIX
+   
+   
+ * FIXED COMPONENT ID
+   5724B4101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY
+   UP

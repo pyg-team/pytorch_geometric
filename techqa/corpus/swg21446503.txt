@@ -1,0 +1,58 @@
+Title: IBM U1213 abend in ITM OMEGAMON address spaces - United States
+
+Text:
+user 1213 abend kpdmane TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Receiving U1213 abends in my OMEGAMON and / or ITM address spaces. 
+
+CAUSE
+There are several issues that can cause the U1213 abend: 
+
+ 1. Multiple shutdowns issued for the address space. 
+ 2. A previous ABEND occurred and the U1213 ABEND was secondary. The U1213 in this case was a victim of the 1st ABEND. 
+ 3. Maintenance was applied to a component of the Persistent Datastore (PDS). 
+ 4. PDS collection was modified from TEMA to TEMS or TEMS to TEMA. 
+ 5. Actual problem in the PDS. 
+
+RESOLVING THE PROBLEM
+Wait awhile before issuing the second shutdown command. 
+
+ 1. If the U1213 ABEND is a secondary ABEND, this ABEND may be ignored. Diagnose the first ABEND. 
+ 2. Perform the resolution documented in technote: 1383677 [http://www-01.ibm.com/support/docview.wss?uid=swg21383677]. 
+ 3. PDS can be configured to collect history data at the TEMS and TEMA for the z/OS application. It is not recommended to switch collection of history data from TEMS to TEMA or from TEMA to TEMS. 
+ 4. Verify the following maintenance is applied: 
+
+
+ITM V610 OA19712 
+
+OA20752 
+
+IY97999 
+
+ ITM V620 
+
+OA27549 
+
+ ITM V621 
+
+OA29253 
+
+ OMEGAMON XE fro DB2 V300 
+
+OA23136 
+
+ OMEGAMON XE for IMS V410 on z/OS 
+
+OA18781 
+
+ 
+
+All other issues can you run pdcollect [http://www-01.ibm.com/support/docview.wss?uid=swg21287268]on the address space abending with the U1213? 
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli OMEGAMON XE for CICS on z/OS z/OS All Versions Systems and Asset Management Tivoli OMEGAMON XE for IMS on z/OS z/OS 4.2.0, 3.1.0, 4.1.0 Systems and Asset Management Tivoli OMEGAMON XE for Mainframe Networks z/OS 4.2.0, 4.1.0, 3.1 Systems and Asset Management Tivoli OMEGAMON XE for Messaging for z/OS z/OS 6.0.1, 6.0.0, 7.0, 7.0.1 Storage Management Tivoli OMEGAMON XE for Storage on z/OS z/OS All Versions

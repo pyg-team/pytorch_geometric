@@ -1,0 +1,35 @@
+Title: IBM Why do Parent Events with Severity=1 persist after all child events have been cleared? - United States
+
+Text:
+ParentId; ScopeId; Event Correlation; Parent Event TECHNOTE (FAQ)
+
+QUESTION
+ The automation "correlation_process_existing_parents" is configured to run every 17 seconds and sets the Severity of ScopeID and Sitename parents to 1 if no child events have been found or to the highest severity of child events if child events exist.
+
+
+
+Is it possible that they get processed by the "correlation_process_existing_parents" , which means and their severity is set back to 1 and StateChange field is updated, which in turn prevents removing them from alerts.status automatically?
+
+
+
+
+ANSWER
+The scope-based grouping is designed to only remove a parent event if both of the following are true:
+
+there are no children left
+the time window has expired
+
+If either one of those conditions are not satisfied, then the parent event must remain in the ObjectServer. This is because events are transient - and may come and go. While the time window is still open, there is still a chance that another event may come back to the group. If a ticket has been opened against the parent event, then we don't want to lose that association until we are sure no further events can possibly be added to the group (ie. the time window has expired).
+
+In order to ensure this, the procedure "correlation_process_scopeid_parents" (called by
+"correlation_process_existing_parents") will set the Severity of the parent to 1 if there are no children left. This is so that the parent event is not inadvertently deleted by the trigger "delete_clears" before the time window has expired. 
+
+Note that the procedure will only update the parent event if it is not clear, or if there are some children event present.
+
+A different procedure "correlation_clear_expired_parents" (also called by correlation_process_existing_parents") has the job to work out if the parent event should be cleared. It checks to make sure there are no children - then it checks the master.correlation_scopeid table to
+see if the grouping has expired yet. 
+
+If both of these are true, then and only then will the parent event be cleared. After the parent event
+has been cleared, the procedure "correlation_process_scopeid_parents" will not update the parent event again. This has been carefully and deliberately coded this way.
+
+If you are seeing childless parent events not being cleared, it's probably because the time window is still active.

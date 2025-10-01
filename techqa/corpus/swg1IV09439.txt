@@ -1,0 +1,183 @@
+Title: IBM IV09439: BMXAA4195E REQUIRED FIELD PROTOCOL IS BLANK - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  APAR IZ90711 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ90711] - was originally opened against Maximo 7.1.1.7,
+   originally Dev flagged this as not a bug with the explanation:
+    "If the field is required on the form, whether displayed or
+   not, it validates workaround: conditionally change the
+   inputmode on the control inside the container to not be
+   required if not visible"
+   
+   Later Comments:
+   
+   " I've seen something similar to this before.  I'm not sure what
+   changed or how this was working in 7.1.1.6 but unfortunately
+   hiding and showing a field is not the proper way to make a
+   field required or not.
+   The good news is, in 7.5 this has been resolved and hiding a
+   required field will no longer make the field required but a
+   number of framework changes (both Mbo and UI) were made to
+   allow this to happen.   I'm going to investigate what changed.
+   "
+   
+   Dev then thought they had a viable fix and they provide a Hotfix
+   for this issue however that fix later had to be backed out as ;
+   "Development couldn't fix it in a hotfix without degrading
+   performance.
+   Its addressed in the next major release Maximo 7.5 (i.e. the
+   current 7.1 design cannot handle this without performance
+   trade-off.  It is an enhancement has been implemented in 7.5
+   which involves a major re-design of Maximo)."
+   
+   They did provide another workaround:
+   
+   "... add the sigoption to the textbox control directly, instead
+   of the section container. Let me know if there are still any
+   problems after they do that. "
+   
+   At this point the Fix is listed as being in the latest 7.1.1.8
+   hotfix but is being "backed out" as it causes other issues and
+   the issues mentioned above.
+   
+   Current Dev conclusion : This is not a bug in the Maximo 7.1.x
+   version and it beyond the scope of a patch or Hotfix to change.
+   
+   Since the Tpae has backed out the fix due to frame work issue,
+   TPM will fix this locally.
+   
+   ACTION PLAN:
+   Reroute to L2 to open APAR.
+   Please let me know the APAR number and I will open internal
+   defect to fix this.
+   
+   Initial Problem :
+   
+   I cannot modify the CloudFileRepository object.
+   
+   .
+   For example I need to change the IP Address for the file server,
+   and when I save the change, the error is...
+   .
+   BMXAA4195E required field protocol is blank
+   .
+   I was hoping to workaround the error by creating an XML for a
+   new FileRepository, but the import fails, and I cannot
+   determine the exact xml syntax required.
+   .
+   A. We should be able to change the IP Address of the file server
+   B. Can you provide working syntax of XML to create a new
+   FileRepository?
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The fix will be available in TPM 7.2.1.0 release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix will be available in TPM 7.2.1.0 release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV09439
+   
+   
+ * REPORTED COMPONENT NAME
+   TSAM (& INSTALL
+   
+   
+ * REPORTED COMPONENT ID
+   5724W7800
+   
+   
+ * REPORTED RELEASE
+   722
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-19
+   
+   
+ * CLOSED DATE
+   2011-10-20
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSAM (& INSTALL
+   
+   
+ * FIXED COMPONENT ID
+   5724W7800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R722 PSY
+   UP

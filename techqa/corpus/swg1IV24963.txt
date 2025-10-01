@@ -1,0 +1,115 @@
+Title: IBM IV24963: THE "-RENAME" OPTION OF THE NETCOOL/OMNIBUS OBJECTSERVER UTILITY"NCO_CONFPACK" DOES NOT RENAME ALL RELATED OBJECTSERVER NAMES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS REQUIREMENT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The ObjectServer names in <SQLFiles> are not renamed. It also
+   uses hard coded directories in the export related to the section
+   of <SQLFiles>. The ObjectServer install directory should rather
+   use $OMNIHOME here too.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Avoid export/import of SQLFile objects when using the -rename
+   option.
+   Rather recreate the specific files manually on the target
+   ObjectServer.
+   
+   Refer to the Netcool/OMNIbus documentation on nco_confpack on
+   the '-list' function on how to recreate an 'export' list that
+   only exports a subset of the ObjectServer items.
+   
+   Consider using the nco_osreport utility to get an export of the
+   SQL code for creating the SQLFile items.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  As a work around you can use the nco_osreport command.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV24963
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED REQ
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-19
+   
+   
+ * CLOSED DATE
+   2013-10-25
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

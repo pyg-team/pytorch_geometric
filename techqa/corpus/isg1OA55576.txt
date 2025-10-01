@@ -1,0 +1,217 @@
+Title: IBM OA55576: SYSTEM SSL NEEDS TO CONVERT BLANKS TO %20 IN THE URI WHEN SEARCHING FOR CRLS - United States
+
+Text:
+z/OS MVS  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  We found in SSL trace that a CRL isn't found on the HTTP
+   server.
+   Error receiving HTTP CRL response from
+   http://xxx.xxxxxxxxxxx.xxx/yyy-aaa_CA_2017 - 2.crl
+   Error 0x0335300e.
+   
+   When we verify the same CRL URI in Internet Explorer, it is
+   found. In Internet Explorer browser we observed that the
+   blanks are changed to %20 automatically.
+   http://xxx.xxxxxxxxxxx.xxx/yyy-aaa_CA_2017%20-%202.crl. [http://xxx.xxxxxxxxxxx.xxx/yyy-aaa_CA_2017%20-%202.crl.]
+   
+   System SSL needs to convert the blanks to %20 that are found in
+   the HTTP URI in the certificate when this URI is to be used for
+   HTTP CRL support.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of z/OS System SSL enabled for HTTP                    *
+   * CDP CRL revocation support.                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When constructing a HTTP GET request                         *
+   * to retrieve a CRL, System SSL does                           *
+   * not properly escape any spaces or                            *
+   * blanks in the CRL file name with                             *
+   * %20's. Since the spaces are not                              *
+   * properly escaped, this generally                             *
+   * results in web servers being unable                          *
+   * to properly parse the HTTP request and                       *
+   * responding with a HTTP 400 error (Bad                        *
+   * Request).                                                    *
+   *                                                              *
+   * When this issue occurs in System                             *
+   * SSL during a SSL/TLS secure connection                       *
+   * establishment (handshake), the                               *
+   * gsk_secure_socket_init() routine fails                       *
+   * with a return code of 436                                    *
+   * (GSK_ERR_BAD_CRL) if the revocation                          *
+   * security level                                               *
+   * (GSK_REVOCATION_SECURITY_LEVEL) is                           *
+   * set to MEDIUM or HIGH. (By default, the                      *
+   * GSK_REVOCATION_SECURITY_LEVEL setting                        *
+   * is set to MEDIUM).                                           *
+   *                                                              *
+   * If this issue occurs when calling the                        *
+   * gsk_validate_certificate_mode()                              *
+   * routine and a HTTP CDP data source has                       *
+   * been specified in the data_sources                           *
+   * parameter, the return code is                                *
+   * 0x03353060 (CMSERR_BAD_CRL) if the                           *
+   * optional                                                     *
+   * GSKCMS_REVOCATION_SECURITY_LEVEL                             *
+   * parameter is set to                                          *
+   * GSKCMS_REVOCATION_SECURITY_LEVEL_MEDIUM                      *
+   * or                                                           *
+   * GSKCMS_REVOCATION_SECURITY_LEVEL_HIGH.                       *
+   * (By default, this parameter is set to                        *
+   * GSKCMS_REVOCATION_SECURITY_LEVEL_MEDIUM                      *
+   * ).                                                           *
+   *                                                              *
+   * If System SSL tracing is enabled, it                         *
+   * will show the HTTP error response from                       *
+   * the web server.                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * APPLY PTF                                                    *
+   ****************************************************************
+   According to the HTTP 1.0 and HTTP 1.1 standards, spaces or
+   blanks within an HTTP request must be escaped with %20
+   characters to avoid being interpreted by web servers as part of
+   the HTTP request line. If a certificate distribution point
+   extension within a certificate being checked for revocation
+   contains an HTTP URI with spaces within the CRL file name,
+   these spaces must be escaped with %20 characters.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The System SSL code has been updated to properly escape any
+   spaces or blanks within an CRL file name that is present in an
+   HTTP URI value in the certificate distribution point extension
+   when enabled for HTTP CDP CRL revocation support.
+   
+   This APAR support has been provided through internal defect
+   ZD008K82.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA55576
+   
+   
+ * REPORTED COMPONENT NAME
+   SYSTEM SSL
+   
+   
+ * REPORTED COMPONENT ID
+   565506805
+   
+   
+ * REPORTED RELEASE
+   420
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-05-23
+   
+   
+ * CLOSED DATE
+   2018-08-07
+   
+   
+ * LAST MODIFIED DATE
+   2018-08-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA97056 UA97057 UA97058 UA97059
+   
+   
+
+MODULES/MACROS
+ *  GSKC31F  GSKC31   GSKCMS31 GSKCMS64 GSKC64   GSKC64F
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SYSTEM SSL
+   
+   
+ * FIXED COMPONENT ID
+   565506805
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R420 PSY UA97058 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA97058]
+   UP18/08/11 I 1000
+   
+   
+ * R421 PSY UA97059 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA97059]
+   UP18/08/14 I 1000
+   
+   
+ * R431 PSY UA97057 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA97057]
+   UP18/08/11 I 1000
+   
+   
+ * R430 PSY UA97056 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA97056]
+   UP18/08/11 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

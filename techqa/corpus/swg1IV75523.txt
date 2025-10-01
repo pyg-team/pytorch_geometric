@@ -1,0 +1,123 @@
+Title: IBM IV75523: DURING EIF PROBE PROCESSING, JAPANESE CHARACTERS RECEIVED IS SOMETIMES GARBLED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When EIF probe is processing received Japanese characters, a
+   part of Japanese character is garbled.
+    In the EIF probe logfile, when it receives Japanese
+   characters, which is see properly but during processing the
+   string, a part of the character is garbled.
+   
+   version information
+   --- Omnibus version with Fixpack level, -version and nco_id
+   output ---
+   Netcool/OMNIbus tivoli_eif probe - Version 7.4.0
+   Netcool/OMNIbus Probe API Library Version 7.4.0
+   API Release ID: 5.40.34
+   Release ID: 13.0.7
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of nonnative probes (e.g. Tivoli EIF probe) parsing    *
+   * data with Japanese characters.                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The nonnative probe library sometimes incorrectly parsed the *
+   * command from the EIF probe to set event elements with        *
+   * Japanese characters.  The nonnative probe library parsing    *
+   * routine was modified to better handle Japanese characters.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to probe-nco-p-nonnative-18_1                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV75523
+   
+   
+ * REPORTED COMPONENT NAME
+   TIVOLI EIF
+   
+   
+ * REPORTED COMPONENT ID
+   5724P09TI
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-28
+   
+   
+ * CLOSED DATE
+   2015-09-03
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSN
+   UP

@@ -1,0 +1,104 @@
+Title: IBM QRadar Monthly Support Newsletter - June 2015 - United States
+
+Text:
+april qradar support newsletter; qradar april newsletter; support articles; support newsletter; qradar how-to; IBM security april newletter; support newsletter NEWS
+
+ABSTRACT
+ QRadar Support Newsletter - June 2015: Covering QRadar troubleshooting, news, announcements, and how-to articles for IBM Security QRadar users and administrators. 
+
+CONTENT
+QRadar Support Newsletter - June 2015
+
+IBM Security QRadar Community, 
+
+We are pleased to provide the sixth support newsletter of 2015. The purpose of this newsletter is to provide support information, news, "how-to" articles, and tips for IBM Security QRadar SIEM and other associated QRadar products directly to QRadar users and administrators. Our goal is to provide knowledge and solutions to help security specialists complete their day-to-day activities. 
+
+What's new? 
+
+
+ * 1. QRadar 7.2.5 Patch 2 is released 
+ * 
+ * 
+ * Release of QRadar 7.2.5 Patch 2 (7.2.5.20150605140117)
+ * 
+ * 
+ * 
+ * 2. A new MSRPC protocol test tool is available 
+ * 
+ * 
+ * Testing your Windows log source with the MSRPC test tool
+ * 
+ * 
+ * 
+ * 3. Thank you for joining our Open Mic about QRadar 7.2.5 
+ * 
+ * 
+ * Qradar Customer Forum
+ * 
+ * 
+ * 
+ * 
+ *  API Updates Historical Correlation Overlapping IP Support in SIEM Support LDAP Authorization Deployment Actions from System Management GetLogs in the UI Enterprise Ready Reporting Patch Rollback Framework Factory Re-install, new 'retain' option to preserve /store Security Updates Offense (CRE) Count Resets Password Storage Enhancement 
+ * 
+ * 4. Coming Soon: QRadar 7.2.5 Patch 3 
+ * 
+ * 
+ * IBM My Notifications
+ * 
+ * 
+ * 
+ * 5. Device and integration updates 
+ * 
+ * 
+ * 
+ *  Security Content  *  Coming Soon: IBM z/OS - 6 new custom event properties. 
+    *  Coming Soon: IBM Security Privileged Identity Manager - 5 new custom event properties. 
+    *  Coming Soon: IBM Security Access Manager (ESSO) - 7 new custom event properties. 
+    *  Coming Soon: IBM Privileged Session Recorder - 4 new custom event properties. 
+      
+   
+   Scanner updates  *  Updated: Tenable SecurityCenter Scanner (June 11) 
+   
+   DSMs & Protocols  *  Updated: Proofpoint Enterprise (June 11) 
+    *  Updated: Cisco Call Manager (June 11) 
+    *  Updated: Aruba Mobility Controller (June 11) 
+    *  Updated: Sun Solaris OS (June 11) 
+    *  Updated: IBM AIX Server (June 11) 
+    *  Updated: Imperva SecureSphere (June 11) 
+    *  Updated: Microsoft Windows Security Event Log (May 26) 
+    *  Updated RSA Authentication Manager (May 21) 
+    *  Coming soon: Okta Identity Management DSM 
+    *  Coming soon: HyTrust CloudControl DSM 
+   
+   
+
+Support articles and useful information for QRadar: 
+ *  Release notes: Release of QRadar 7.2.5 Patch 2 (7.2.5.20150605140117) [ http://www.ibm.com/support/docview.wss?uid=swg27045959&acss=danl_2291_web ] 
+ *  Article: QRadar: Testing your Windows log source with the MSRPC test tool [ http://www.ibm.com/support/docview.wss?uid=swg21959348&acss=danl_2291_web ] 
+ *  Updated content: Software upgrade progression for QRadar appliances [ http://www.ibm.com/support/docview.wss?uid=swg21651118&acss=danl_2291_web ] 
+ *  Learning & Examples: QRadar 7.2.5 API Code Samples [ https://www.ibm.com/developerworks/community/forums/html/topic?id=19027124-50dc-4114-a3bf-57b927639f71&ps=25&acss=danl_2291_web ] 
+ *  Troubleshooting: Adaptive Log Exporter Requires New Update Site URL [ http://www.ibm.com/support/docview.wss?uid=swg21959175&acss=danl_2291_web ] 
+ *  Flash Notice: QRadar Automatic Updates Fail to Download on Networks that Use IP-based Firewall Rules [ http://www.ibm.com/support/docview.wss?uid=swg21958881&acss=danl_2291_web ] 
+ *  General Information: APARs explained [ http://www.ibm.com/support/docview.wss?uid=swg21424131&acss=danl_2291_web ] 
+ *  Useful links: Getting Support for IBM Security QRadar Products [ http://www.ibm.com/support/docview.wss?uid=swg21616144&acss=danl_2291_web ] 
+
+How do I get QRadar questions answered?  * 
+ * IBM Customer forum for QRadar
+ * 
+ * 
+ * 
+ * 
+ *  IBM Customer forum for QRadar
+ * 
+
+We are on Twitter  * 
+ * @AskIBMSecurity
+ * 
+ * 
+ * https://twitter.com/AskIBMSecurity
+ * 
+ * 
+
+More to come  * 
+ * IBM Customer forum for QRadar
+ *

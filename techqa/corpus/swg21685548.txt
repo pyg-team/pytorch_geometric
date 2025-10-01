@@ -1,0 +1,68 @@
+Title: IBM WebSphere Message Broker V8.0 for WebSphere MQ V8 - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ WebSphere Message Broker V8.0 for WebSphere MQ V8 
+
+CONTENT
+Websphere Message Broker V7
+WebSphere MQ V8 is not supported for use with Websphere Message Broker V7
+
+Websphere Message Broker V8 - Runtime
+
+WebSphere MQ V8 is supported from Websphere Message Broker V8.0.0.4 onwards and the following steps will need to be taken in order for this to work:
+
+
+Apply APAR IT03599 
+
+JRE Update
+
+Due to the fact that the WebSphere MQ V8 client JARs were built using Java 7, APAR IT03599 must be applied. This APAR package can be accessed by contacting IBM service and
+contains a Java™ 7 JRE that can be used with an existing WebSphere Message Broker V8.0.0.4.
+
+The APAR can be applied using the fix installer shipped with the package. This installer copies the Java 7 JRE to a new directory in the install path, alongside the Java 6 JRE. In order for the Java 7 JRE to be loaded at runtime the MQSI_JREPATH environment variable must be updated to point to the Java 7 JRE. This change can be made in the mqsiprofile script to ensure that changes are persisted across different user sessions. Detailed instructions for this process can be found in the APAR readme.
+
+
+IDPWOS Authentication
+
+For a new WebSphere MQ Version 8.0 installation, the CONNAUTH CHCKLOCL attribute is set to OPTIONAL. This means that user IDs and passwords are not required, but if they are provided they must be a valid pair, or they will be rejected.
+
+Currently, the Websphere Message Broker and IBM Integration Toolkits only pass a Username to MQ, and therefore due to the new default, a MQRC 2035 (MQRC_NOT_AUTHORIZED) error will be seen when trying to connect to a Broker using a WebSphere MQ V8 Queue Manager using the CMP.
+
+The APAR IT03599 includes a new ConfigManagerProxy.jar that will allow all the mqsi commands to work without error. 
+
+
+
+
+Websphere Message Broker V8 – Clients
+
+
+Clients that make use of CMP such as Message Broker Toolkit will face the same issue with the IDPWOS Authentication described above. Therefore in order for them to work with WebSphere MQ V8 the following 'runmqsc' commands can be run to disable the new IDPWOS Authentication that is enabled by default in MQ8:
+
+ALTER AUTHINFO(SYSTEM.DEFAULT.AUTHINFO.IDPWOS) AUTHTYPE(IDPWOS) CHCKCLNT(NONE) 
+
+REFRESH SECURITY TYPE(CONNAUTH) 
+
+These commands remove the optional requirement for Username and Password authentication when connecting to the Queue Manager locally and then refresh the Authentication Service so the changes are picked up.
+
+Note:
+For runmqsc usage instructions see IBM Knowledge Center page:
+http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.mq.ref.adm.doc/q083460_.htm [http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.mq.ref.adm.doc/q083460_.htm]
+
+If you want to run using the default MQ Security settings with the Websphere Message Broker Toolkit or Explorer then you should contact IBM service to request APAR IT03599 which can be applied to the Toolkit and Explorer so that they can work with the new MQ Defaults. The Toolkit and Explorer have been enhanced to optionally use a userid and password for the connection so you can connect remotely. The Message Broker API has two new methods to set the userid and password when using a Java application based on the Message Broker API.
+For example,
+MQBrokerConnectionParameters bcp =
+new MQBrokerConnectionParameters(host, port, qmgr);
+bcp.setConnectionUserid("myuser");
+bcp.setConnectionPassword("mypassword");
+
+
+
+
+WebSphere Message Broker Explorer V8
+
+The Message Broker Explorer plugins are only supported with MQ Explorer versions 7.0.1, 7.1 or 7.5. 
+
+Administering MQ v8 brokers using Message Broker Explorer with MQ Explorer versions 7.0.1, 7.1 or 7.5 is supported with APAR IT03599 applied.

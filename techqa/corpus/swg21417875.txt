@@ -1,0 +1,49 @@
+Title: IBM Collecting Data: Performance, hang, or high CPU issues for WebSphere Portal 6.1 / 7.0 on Windows - United States
+
+Text:
+MustGatherDocument; mustgather; mustgather; mustgather; collecting data; collecting data; collecting data; performance; WPRUN; Windows; degradation; high cpu; hang; hung; starvation; delay; deadlock; utilization RECOMMENDED RESOURCES
+
+ABSTRACT
+ Collecting troubleshooting data for performance degradation, hang, no response, hung threads, CPU starvation, high CPU utilization, network delays, or deadlocks with IBM WebSphere Portal 6.1/7.0 on Windows expedites time to resolution by enabling IBM Support to provide informed problem analysis. 
+
+CONTENT
+If you already contacted IBM Support and must collect data to determine the nature of a problem in WebSphere Portal, review the information below for the available methods of data collection. Otherwise, review Collecting Data: Read first for WebSphere Portal. [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21444911] 
+
+Automated collection of troubleshooting data Automated log collection with the IBM Support Assistant Lite (ISALite) for WebSphere Portal tool is available for this information and is the recommended method for improving accuracy of the data collection.
+
+ISALite for WebSphere Portal
+Download Tool [http://www.ibm.com/support/docview.wss?rs=688&ca=portall2&uid=swg24008662] | View Demo of Trace Collection [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/isalite-fundamentals-version-1.3.3-for-ibm-websphere-portal]
+
+After downloading ISALite for WebSphere Portal, perform the following steps to collect the data and send to IBM Support: 
+
+1. Extract the contents of the downloaded file to the <wp_profile_root>\PortalServer directory, which will create the subdirectory "ISALite" (for example, C:\WebSphere\wp_profile\PortalServer\ISALite). 
+
+2. Run the runISALite.bat file (Windows) or runISALite.sh (UNIX or Linux) from the ISALite directory (for example, C:\WebSphere\wp_profile\PortalServer\ISALite\runISALite.bat). 
+
+3. Once the tools starts, select the following Problem Type: 
+
+ * 
+ * Portal Runtime -> Hang / High CPU / Performance Problem
+
+
+4. Provide the output path and a file name of " <PMR #>.isalite.zip" (e.g. 22222,111,000.isalite.zip). 5. Click Collect Data and follow the series of dialog boxes to set the tracing, reproduce the issue, and send the files to IBM Support.
+
+
+
+Manual collection of troubleshooting data 
+If you are unable to use ISALite for WebSphere Portal for automatic log collection, then please follow the instructions in the Collecting data manually section of Collecting Data: Performance, hang, or high CPU issues on Windows [http://www.ibm.com/support/docview.wss?uid=swg21111364]. 
+
+Note that the versions of ISALite are product specific. For example, ISALite for WebSphere Portal is different than ISALite for WebSphere Application Server. For the above technote, just follow the Collecting data manually section. 
+
+Remember to execute the manual instructions for the problem WebSphere Portal JVM (not a different WebSphere Application Server JVM like server1).  
+
+Related Information  * Overview: WebSphere Portal Support [http://www.ibm.com/software/genservers/portal/support/] [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571] 
+ * Steps to getting support for WebSphere Portal [http://www.ibm.com/developerworks/websphere/zones/portal/support/portal_support.html] 
+ * Collecting Data: Read first for WebSphere Portal [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21312740]
+
+
+
+ * 
+ *  Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management IBM Web Content Manager General Windows 6.1 
+ * 
+ *

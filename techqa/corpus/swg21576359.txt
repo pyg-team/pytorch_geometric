@@ -1,0 +1,58 @@
+Title: IBM The toString() method introduced quotes in the return value beginning in TDI version 7.0. - United States
+
+Text:
+toString; upgrade; att.toString(); migrate TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Prior to TDI version 7.0, the toString() method returned the value without quotes. In version 7.0, this method was modified, and now returns the value with quotes included. 
+
+SYMPTOM
+The expected result is different after an upgrade from TDI 6.1.1 to TDI 7.0 or 7.1.
+
+
+CAUSE
+Change in product code
+
+ENVIRONMENT
+A migrated TDI 6.1.1 to TDi 7.0 or 7.1
+
+DIAGNOSING THE PROBLEM
+Expected results may be different after upgrade where the toString() method has been used. After migrating the configuration from TDI 6.1 to TDI 7.1, the returned value is enclosed in quotes.
+
+RESOLVING THE PROBLEM
+During the upgrade process, a configuration may need to be reviewed for use of the toString() method. If used in any type of comparison logic, the results may not be as expected due to the introduction of the quotes in the return value.
+
+
+
+
+
+For example, 
+
+This is the simple results of 6.1 This is the simple results of 7.1  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  [value:0] 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  ["value": "0"] 
+ *

@@ -1,0 +1,27 @@
+Title: IBM Java JVMTI profiling analysis types are not available for profiling on WebSphere Application Server Liberty Profile - United States
+
+Text:
+JVMTI; profiling; Liberty TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Java JVMTI profiling analysis types are not showing up in the Profiling on Server dialog when profiling on WebSphere Application Server Liberty Profile if none of the WebSphere Application Server 7.0/8.0/8.5 Development tools install option is selected during Rational Application Developer v9.5 installation. 
+
+SYMPTOM
+When profiling on WebSphere Application Server Liberty Profile, only Health Center Data Collector is showing up as option in the Profile on Server dialog. That is, none of the JVMTI Java Profiling options such as Execution Time Analysis, Memory Analysis, Thread Analysis is showing up as available profiling analysis type to be selected.
+
+
+ [/support/docview.wss?uid=swg21967031&aid=1] [/support/docview.wss?uid=swg21967031&aid=1]
+
+
+This problem only occurs when none of the WebSphere Application Server 7.0/8.0/8.5 Development tools install option are selected, but WebSphere Application Server v8.5 Liberty Profile Tools option is selected during Rational Application Developer v9.5 installation. 
+
+
+CAUSE
+The plugins providing the profile on server function is not installed when none of the WebSphere Application Server 7.0/8.0/8.5 Development tools install option are selected, but the WebSphere Application Server v8.5 Liberty Profile Tools option is selected. 
+
+[/support/docview.wss?uid=swg21967031&amp;aid=2]
+
+
+
+RESOLVING THE PROBLEM
+If you select the WebSphere Application Server v8.5 Liberty Profile Tools option during your product installation and you plan to profile on WAS Liberty Profile, you can resolve the problem by selecting one of the WebSphere Application Server 7.0/8.0/8.5 – Development tools install option during the Rational Application Developer installation process.

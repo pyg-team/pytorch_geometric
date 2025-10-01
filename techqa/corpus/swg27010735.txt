@@ -1,0 +1,109 @@
+Title: IBM WebSphere Adapter for Siebel Business Applications, version 6.1: software requirements - United States
+
+Text:
+WebSphere Adapters; Adapter for Siebel; Siebel PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This techdoc lists the software requirements for IBM WebSphere Adapter for Siebel Business Applications, V6.1. 
+
+CONTENT
+The information provided here describes the minimum product levels you need installed before opening a problem report with the WebSphere Adapters support team. Because other products frequently ship fixes, updates, and new releases, it is not possible to test every configuration. In general, you can install and run updates to supported products if those updates are compatible with later versions. This statement does not apply to enterprise information system (EIS) product versions and their dependencies. Specific cases where this statement is not applicable are indicated where relevant. 
+
+Supported Siebel Business Application versions [/support/docview.wss?uid=swg27010735&amp;aid=1]  * 7.05, 7.5.x, 7.7x, 7.8.x, 8.0, 8.1,8.1.1
+
+Supported operating systems [/support/docview.wss?uid=swg27010735&amp;aid=1] On x86 32-bit  * Microsoft Windows 2000 Advanced Server Update Rollup 1 for SP4 (Windows 2000 product site [http://www.microsoft.com/windows2000/]) 
+ * Microsoft Windows 2000 Professional Server Update Rollup 1 for SP4 
+ * Microsoft Windows 2000 Server Update Rollup 1 for SP4 
+ * Microsoft Windows 2003 Datacenter Edition SP1 (Windows Server 2003 product site [http://www.microsoft.com/windowsserver2003/default.mspx]) 
+ * Microsoft Windows 2003 Enterprise Edition 
+ * Microsoft Windows 2003 Standard Edition 
+ * Microsoft Windows XP Professional SP2 
+ * Red Hat Enterprise Linux 4.0 AS,ES,WS* 
+ * SUSE Linux Enterprise Server 9.0*
+
+
+* This operating system is supported for this adapter using Siebel Business Application version 8.0 and later. On x86 64-bit 
+
+ * Microsoft Windows 2003 Standard x64 Edition 
+ * Microsoft Windows 2003 Enterprise x64 Edition 
+ * Microsoft Windows 2003 Datacenter x64 Edition 
+ * Microsoft Windows XP Professional x64 SP2 
+ * Sun Solaris 10 with latest recommended patch cluster (Sun product site [http://www.sun.com/products/]) 
+ * Red Hat Enterprise Linux 4.0 AS,ES,WS* 
+ * SUSE Linux Enterprise Server 9.0*
+
+
+* This operating system is supported for this adapter using Siebel Business Application version 8.0 and later. SPARC 
+
+ * Sun Solaris 9 with latest recommended patch cluster (Sun product site [http://www.sun.com/products/]) 
+ * Sun Solaris 10 with latest recommended patch cluster
+
+
+PA-RISC  * HP-UX 11i v2 (HP-UX 11 product site http://welcome.hp.com/country/us/en/prodserv/software_os.html [http://welcome.hp.com/country/us/en/prodserv/software_os.html])
+
+
+IA 64 (Itanium)  * HP-UX 11i v2
+
+
+System p  * IBM AIX 5L 5.2 (ML 5200-07)
+   (IBM AIX product site http://www.ibm.com/servers/aix/index.html [http://www.ibm.com/servers/aix/index.html]) 
+ * IBM AIX 5L 5.3 (SP 5300-05-01)
+
+
+AIX on POWER  * IBM AIX 5L 5.2 (ML 5200-07) 
+ * IBM AIX 5L 5.3 (SP 5300-05-01) 
+ * IBM AIX 6.1 *
+
+
+* The Siebel versions are 8.0 and 8.1. You need IBM JVM/JRE version 1.5.0 or above Prerequisites [/support/docview.wss?uid=swg27010735&amp;aid=1] This adapter is supported with the following complementary products:
+ * IBM WebSphere Integration Developer, version 6.1
+   (http://www-1.ibm.com/support/docview.wss?rs=2308&uid=swg27006409 [http://www-1.ibm.com/support/docview.wss?rs=2308&uid=swg27006409]) and one of the following: 
+   
+   
+ * IBM WebSphere Process Server, version 6.1
+   (http://www-1.ibm.com/support/docview.wss?rs=2307&&uid=swg27006205 [http://www-1.ibm.com/support/docview.wss?rs=2307&&uid=swg27006205]) 
+ * IBM WebSphere Enterprise Service Bus, version 6.1
+   (http://www-1.ibm.com/support/docview.wss?rs=2346&uid=swg27006912 [http://www-1.ibm.com/support/docview.wss?rs=2346&uid=swg27006912])
+
+
+This adapter is also supported with the following complementary products: 
+(Requires a separate adapter media pack and part number)
+
+
+ * IBM Rational Application Developer for WebSphere v7.5.0.0
+   (http://www.ibm.com/software/awdtools/developer/application/sysreq/index.html [http://www.ibm.com/software/awdtools/developer/application/sysreq/index.html])
+   
+   and
+   
+   • IBM WebSphere Application Server, version 6.1.0.13
+   (http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27006921 [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27006921])
+   
+   • IBM WebSphere Application Server Network Deployment, version 6.1.0.13
+   (http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27006921 [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27006921])
+   
+   • IBM WebSphere Application Server, version 7.0.0.0
+   (http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27006921 [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27006921])
+   
+   • IBM WebSphere Application Server Network Deployment, version 7.0.0.0
+   (http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27006921 [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27006921])
+   
+
+This adapter is also supported with the following products:  * IBM WebSphere Message Broker, version 6.1 
+   (http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006551 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006551])
+
+
+This adapter is supported only for development and unit testing on the operating systems supported by the tooling products. This adapter is supported only for deployment and production on the operating systems supported by the runtime server products. To ensure compatibility, always check system requirements supported by these complementary products. Other supported software
+
+[/support/docview.wss?uid=swg27010735&amp;aid=1]  * IBM Support Assistant 3.0
+   A free stand-alone Web application that provides self-help on your desktop (IBM Support Assistant sign in page https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=isa [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=isa]) 
+ * IBM Tivoli License Manager 2.1
+
+
+
+Related information 
+IBM WebSphere Adapters Information Center [http://www.ibm.com/software/integration/wbiadapters/library/infocenter/] 
+IBM WebSphere Adapters and IBM WebSphere Business Integration Adapters: hardware requirements [http://www.ibm.com/support/docview.wss?uid=swg27010805] 
+
+
+Disclaimer 
+IBM reserves the right to change specifications and other product information without prior notice. This publication could include technical inaccuracies or typographical errors. References herein to IBM products and services do not imply that IBM intends to make them available in other countries. IBM PROVIDES THIS PUBLICATION AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. Some jurisdictions do not allow disclaimer of express or implied warranties in certain transactions, therefore, this statement may not apply to you.

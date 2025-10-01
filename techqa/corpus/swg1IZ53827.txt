@@ -1,0 +1,186 @@
+Title: IBM IZ53827: DOCUMENTATION APAR FOR TEC RULE DEVELOPER'S GUIDE               TO AMEND DESCRIPTION OF RULE_ID IN XML FILE - United States
+
+Text:
+AIX  A FIX IS AVAILABLE
+3.9.0.8-TIV-TEC-IF0128 IBM Tivoli Enterprise Console Version 3.9 Interim Fix [http://www-01.ibm.com/support/docview.wss?uid=swg24026658]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Documentation to be corrected:
+   
+   Enterprise Console -> Rule Developer's Guide ->
+   Writing rules for the state correlation engine ->
+   state correlation rules -> Attributes common to all rules
+   
+   Under the "id: section as follows:
+   
+   ****
+   
+   The following are attributes common to all rules:
+   
+   id
+   Specifies the identifier for each rule. It must be
+   unique within the correlation engine where it is
+   registered. Periods are treated as directories.
+   For example, if you have a rule with the identifier
+   test.threshold, you cannot have another rule with
+   the identifier test.threshold.1.
+   ****
+   
+   Add text something like the following for additonal clarity:
+   
+   The following set of XML duplicate rule "headings" will fail to
+   work as
+   expected because of the way the rule-id is constructed:
+   
+   <rule id="duplicate.rule.efflevel">
+   <rule id="duplicate.rule.efflevel.cleared">
+   
+   Instead, use the following rule_id values in the duplicate rules
+   :
+   <rule id="duplicate.rule.efflevel.a">
+   <eventType>TPF_EfficiencyLevel4</eventType>
+   <duplicate timeInterval="600000">
+   ......
+   
+   <rule id="duplicate.rule.efflevel.b">
+   <eventType>TPF_EfficiencyLevel4Cleared</eventType>
+   <duplicate timeInterval="600000">
+   ****
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  DOCUMENTATION APAR FOR TEC RULE DEVELOPER'S GUIDE
+   TO AMEND DESCRIPTION OF RULE_ID IN XML FILE
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Documentation to be corrected:
+   
+   Enterprise Console -> Rule Developer's Guide ->
+   Writing rules for the state correlation engine ->
+   state correlation rules -> Attributes common to all rules
+   
+   Under the "id: section as follows:
+   
+   ****
+   
+   The following are attributes common to all rules:
+   
+   id
+   Specifies the identifier for each rule. It must be
+   unique within the correlation engine where it is
+   registered. Periods are treated as directories.
+   For example, if you have a rule with the identifier
+   test.threshold, you cannot have another rule with
+   the identifier test.threshold.1.
+   ****
+   
+   Add text something like the following for additonal clarity:
+   
+   The following set of XML duplicate rule "headings" will fail to
+   work as
+   expected because of the way the rule-id is constructed:
+   
+   <rule id="duplicate.rule.efflevel">
+   <rule id="duplicate.rule.efflevel.cleared">
+   
+   Instead, use the following rule_id values in the duplicate rules
+   :
+   <rule id="duplicate.rule.efflevel.a">
+   <eventType>TPF_EfficiencyLevel4</eventType>
+   <duplicate timeInterval="600000">
+   ......
+   
+   <rule id="duplicate.rule.efflevel.b">
+   <eventType>TPF_EfficiencyLevel4Cleared</eventType>
+   <duplicate timeInterval="600000">
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ53827
+   
+   
+ * REPORTED COMPONENT NAME
+   TIVOLI ENT.CONS
+   
+   
+ * REPORTED COMPONENT ID
+   5698TEC00
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-23
+   
+   
+ * CLOSED DATE
+   2009-08-03
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

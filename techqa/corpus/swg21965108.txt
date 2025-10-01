@@ -1,0 +1,23 @@
+Title: IBM Unable to connect to Oracle RAC cluster from Modeler - United States
+
+Text:
+General error. Invalid verifierType sdap data direct progress datadirect odbc wire protocol oracle OID OVD Oracle RAC ECM00215587 TECHNOTE (FAQ)
+
+QUESTION
+ I am using the IBM SPSS Data Access Pack Oracle Wire Protocol driver to attempt to connect to my Oracle RAC cluster from Modeler and when I try I get this error:
+
+
+
+Failed to connect to datasource <username>@<datasource>
+
+HY000 [IBM SPSS][ODBC Oracle Wire Protocol driver]General error.
+
+Invalid verifierType Failed to connect to datasource: <datasource> 
+
+ANSWER
+The Oracle Wire Protocol driver does not support Oracle OID authentication. Refer to the following Progress DataDirect knowledgebase article:
+
+http://knowledgebase.progress.com/articles/Article/000055572?q=Oracle+OID+authentication&l=en_US&fs=Search&pn=1 [http://knowledgebase.progress.com/articles/Article/000055572?q=Oracle+OID+authentication&l=en_US&fs=Search&pn=1]
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]

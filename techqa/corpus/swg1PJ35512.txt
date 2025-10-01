@@ -1,0 +1,148 @@
+Title: IBM PJ35512: FEM THROWS .NET ERROR WHEN ATTEMPTING TO SEARCH OBJECT STORE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When attempting to access the Search from an Object Store (by
+   clicking on the Search), FEM takes 6 to 7 minutes before it
+   throws the following error message:
+   File = .\AdmSearchScopeNode.cpp, Line = 525, Rev. =
+   $Revision:   1.10  $
+    Source =
+    Description = Item has already been added. Key in
+   dictionary: 'IsLocked' Key being added: 'IsLocked'
+   --------
+   Error Code: 0
+   Error Source: mscorlib
+    HR = 0x80070057
+    HR Description = The parameter is incorrect.
+    MinorCode = 0x00000a94
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do not use IsLocked as Symbolic Name for a Property Definition o
+   r Property Template.
+   Please review the  New Content Engine classes and properties in
+   Appendixes of FileNet P8 Platform Installation and Upgrade Guide
+    4.5 (at  ftp://ftp.software.ibm.com/software/data/cm/filenet/do
+   cs/p8doc/45x/_install_guide.pdf) for reserved CE class and prope
+   rty names to avoid.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * P8 FEM  users  who are using Search                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * FEM THROWS .NET ERROR WHEN ATTEMPTING TO SEARCH OBJECT       *
+   * STORE.This issue occurs if "isLocked" is used as a           *
+   * customeproperty                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade CE server to P8CE-4.0.1-009                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is fixed in P8CE-4.0.1-009
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ35512
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-13
+   
+   
+ * CLOSED DATE
+   2009-04-13
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PJ35872 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ35872]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

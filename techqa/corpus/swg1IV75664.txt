@@ -1,0 +1,166 @@
+Title: IBM IV75664: WPS61TRACKER.ITMTRACKER EXCEPTION BEING THROWN IN WAS SYSTEMOUT LOGS DUE TO ITCAM SOA 7.2.X - United States
+
+Text:
+  READMES ARE AVAILABLE
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 7 README 7.2.0.1-TIV-ITCAMSOA-IF0007 [http://www-01.ibm.com/support/docview.wss?uid=isg400002451]
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 9 README 7.2.0.1-TIV-ITCAMSOA-IF0009 [http://www-01.ibm.com/support/docview.wss?uid=isg400002627]
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 12 README 7.2.0.1-TIV-ITCAMSOA-IF0012 [http://www-01.ibm.com/support/docview.wss?uid=isg400003852]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following exception is being thrown in the Websphere
+   SystemOut log with the SOA 7.2.0.1 agent running,
+   
+   [7/20/15 14:53:17:433 PDT] 0000013c SystemOut     O 2015-07-20
+   14:53:17.432-07:00 [Default : 3] WPS61Tracker.ITMTracker() 
+   com.ibm.management.soa.exceptions.WSMInitException:
+   com.ibm.management.soa.exceptions.WSMInitException
+    at
+   com.ibm.management.soa.utils.DCServerID.getCurrentServerID(DCSer
+   verID.java:94)
+   
+   [7/20/15 14:53:18:895 PDT] 0000013c SystemOut O 2015-07-20
+   14:53:18.895-07:00 [Default : 3]
+   WPS61Tracker.getInitialLogDataFromMessage() Exit, return value =
+   com.ibm.management.soa.agent.ITMLogMessage@6469281c
+   [7/20/15 14:53:18:896 PDT] 0000013c SystemOut O 2015-07-20
+   14:53:18.896-07:00 [Default : 3] WPS61Tracker.invoke()
+   java.lang.NullPointerExceptionat
+   com.ibm.management.soa.agent.wps61.WPS61Tracker.invoke(WPS61Trac
+   ker.java:821)
+   Null Pointer Exception thrown for every SCA transactions:
+   [7/20/15 14:56:49:225 PDT] 00000139 E
+   com.ibm.ws.monitoring.policy.data.ObserversAccess notify()
+   CWLBS0041E: An error occurred while notifying observers.
+   java.lang.NullPointerException
+   at
+   com.ibm.management.soa.agent.wps61.ITMAbstractCall.preImportInvo
+   ke(ITMAbstractCall.java:459)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  na
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Those monitoring Business Process Manager(BPM)
+   * under load using Classic SCA ( most likely from WebSphere
+   * Portal Server 6.1 ).
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Under some circumstances BPM would not
+   * initialize all classes correctly. When starting while load is
+   * running there is potential to access for one code path to be
+   * called exposing an un-initialized object. This is related to
+   * APAR IV67077 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV67077]. However this addressed the initialization
+   * errors not just limiting memory use.
+   ****************************************************************
+   * RECOMMENDATION: Apply IFix 7 when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Apply the IFix when it is available.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   | interim fix | 7.2.0.1-TIV-ITCAMSOA-IF0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV75664
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * REPORTED COMPONENT ID
+   5724SOA00
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-08-04
+   
+   
+ * CLOSED DATE
+   2015-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * FIXED COMPONENT ID
+   5724SOA00
+   
+   
+
+APPLICABLE COMPONENT LEVELS

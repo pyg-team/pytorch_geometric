@@ -1,0 +1,225 @@
+Title: IBM IO09314: TDI DOCUMENTATION FOR WASSERVICE COMMAND IS INCORRECT. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TDI Documentation for WASService command is incorrect.
+   
+   Description:
+    Approximately 20 seconds after starting the Services in Windows
+    Service, the status of the service is lost in Windows Services.
+   The
+    AMC server will remain active and listening for incoming
+   browser
+    connections, although Windows Service has no connection or
+   control of
+    the running AMC Server process.
+   
+   Steps to Duplicate:
+   
+    1. Create the service by following TDI Instructions for the
+   WASService
+      command:
+   
+      <TDI>\AppServer\bin>WASService.exe -add "TDIAMC" -servername
+      server1 -profilePath "..\profiles\amcprofile" -startType
+   automatic
+   
+      Adding Service: TDIAMC
+           Config Root: ..\profiles\amcprofile\config
+           Server Name: server1
+           Profile Path: ..\profiles\amcprofile
+           Was Home: C:\IBM\TDI\V6.1.1\AppServer\
+           Start Args:
+           Restart: 1
+      IBM WebSphere Application Server V6 - IBM TDI AMC service
+      successfully  added.
+   
+    2. Approximately 20 seconds after starting the Services in
+   Windows
+      Service, the status of the service is lost in Windows
+   Services. The
+      AMC server will remain active and listening for incoming
+   browser
+      connections, although Windows Service has no connection or
+   control of
+      the running AMC Server process.
+   
+   Desired Behavior:
+   
+    The customer expects the "AMC - Windows Service" correctly
+   represent
+    the status of the running AMC Server (java) process.
+   
+   
+   FIX:
+   
+   After reviewing the WASService command syntax in the WAS Express
+   v6.0
+   documentation, it was found that "-logRoot" is a REQUIRED
+   parameter for
+   the WASService command.
+   
+   -logRoot <server_log_directory>
+    Required parameter that identifies the server log directory for
+   the
+    profile. The WASService command looks for a file named
+   server_name.pid
+    to determine if the server is running."
+   
+   For further parameters on this command please review the
+   following link.
+   
+   http://publib.boulder.ibm.com/infocenter/wasinfo/v6r0/topic/com. [http://publib.boulder.ibm.com/infocenter/wasinfo/v6r0/topic/com.]
+   ibm.webs
+   phere.express.doc/info/exp/ae/rins_wasservice.html
+   
+   
+   EXAMPLE:
+   C:\IBM\TDI\V6.1.1\AppServer\bin>WASService.exe -add "TDIAMC"
+   -servername
+   server1 -profilePath "..\profiles\amcprofile" -logRoot
+   "c:\IBM\TDI\V6.1.1\AppServer\pro files\amcprofile\logs\server1"
+   -startType automatic
+   
+   NOTE:  I found that the "-logRoot" needs a static directory path
+   to
+   work correctly.  Do not use a dynamic path.
+   
+   Environment:  TDIv6.1.1, Windows
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The running status of the AMC Server, is lost after 20 seconds
+   when running the AMC Server as a Window Service.
+   
+   
+   The missing documentation is as follows.
+   
+   The "-logRoot" is a REQUIRED as aparameter for the WASService
+   command.
+   
+   
+   -logRoot <server_log_directory> is a
+   required parameter that identifies the server log directory for
+   the profile. The WASService command looks for a file named
+   server_name.pid to determine if the server is running.
+   
+   
+   
+   For further parameters on this command please review the
+   following link.
+   
+   http://publib.boulder.ibm.com/infocenter/wasinfo/v6r0/topic/com.
+   ibm.websphere.express.doc/info/exp/ae/rins_wasservice.html [http://publib.boulder.ibm.com/infocenter/wasinfo/v6r0/topic/com.ibm.websphere.express.doc/info/exp/ae/rins_wasservice.html]
+   
+   
+   
+   EXAMPLE:
+   C:\IBM\TDI\V6.1.1\AppServer\bin>WASService.exe -add "TDIAMC"
+   -servername server1 -profilePath "..\profiles\amcprofile"
+   -logRoot "c:\IBM\TDI\V6.1.1\AppServer\pro
+   files\amcprofile\logs\server1"
+   -startType automatic
+   
+   
+   
+   
+   NOTE: The "-logRoot" needs a static directory path
+   to work correctly. Do not use a dynamic path.
+   
+   
+   Environment:  TDIv6.1.1, Windows
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The missing documentation is available in the summary section of
+   the APAR.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO09314
+   
+   
+ * REPORTED COMPONENT NAME
+   ITDI
+   
+   
+ * REPORTED COMPONENT ID
+   5724D9960
+   
+   
+ * REPORTED RELEASE
+   611
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-08-07
+   
+   
+ * CLOSED DATE
+   2008-08-27
+   
+   
+ * LAST MODIFIED DATE
+   2008-08-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

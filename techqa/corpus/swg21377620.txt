@@ -1,0 +1,146 @@
+Title: IBM 'Standard Error Number 5 - Argument 'Number' is not a valid value' when running any Ad Hoc report - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User clicks 'Reports - Ad Hoc'. User selects their code (for example '58A') and then their report selections (for example 'AC,0805,1,MG,AMER,AA,LC'. User clicks green 'tick' icon, to choose this report. User clicks 'Preview' icon. User receives error message. 
+
+SYMPTOM
+Screen: 
+
+ 
+Information
+Standard Error
+Number: 5
+Source: Microsoft.VisualBasic:FrangoClient.clsStandardReports.CreateReports:FrangoClient.clsStandardReports.PreviewReports.frmReportAdHoc.IPrint_DoPreview
+Description: Argument 'Number' is not a valid value.
+at Microsoft.VisualBasic.ErrObject.Raise(Int32 Number, Object Source, Object Description, Object HelpFile, Object HelpContext)
+at Cognos.Controller.Common.RaiseErrCli.RaiseError(Int32 IErrNo, String sErrSource, String sErrDesc, String sErrHelpFile, Int32 IErrHelpContext)
+at Cognos.Controller.Forms.Form.frmReportAdHoc.IForm_DoClick(Int32 ICmd, String& sTag)
+[OK]
+
+Event Viewer (Application Log):
+
+Event Type: Warning
+Event Source: Cognos Controller
+Event Category: None
+Event ID: 0
+Date: 10/03/2009
+Time: 11:33:33
+User: N/A
+Computer: SERVERNAME
+Description:
+Standard Error
+Number: 5
+Source: Microsoft.VisualBasic:FrangoClient.clsStandardReports.CreateReports:FrangoClient.clsStandardReports.PreviewReports.frmReportAdHoc.IPrint_DoPreview
+Description: Argument 'Number' is not a valid value.
+at Microsoft.VisualBasic.ErrObject.Raise(Int32 Number, Object Source, Object Description, Object HelpFile, Object HelpContext)
+at Cognos.Controller.Common.RaiseErrCli.RaiseError(Int32 lErrNo, String sErrSource, String sErrDesc, String sErrHelpFile, Int32 lErrHelpContext)
+at Cognos.Controller.Forms.Form.frmReportAdHoc.IPrint_DoPreview()
+at Cognos.Controller.Forms.Form.frmReportAdHoc.IForm_DoClick(Int32 lCmd, String& sTag)
+
+Event Type: Warning
+Event Source: Cognos Controller
+Event Category: None
+Event ID: 0
+Date: 10/03/2009
+Time: 11:33:33
+User: N/A
+Computer: SERVERNAME
+Description:
+Error occured at 10/03/2009 11:33:33 in IBM Cognos 8 Controller, Error No=5, Source=Microsoft.VisualBasic:FrangoClient.clsStandardReports.CreateReports:FrangoClient.clsStandardReports.PreviewReports, Description=Argument 'Number' is not a valid value., HelpFile= HelpContext=0
+
+Event Type: Warning
+Event Source: Cognos Controller
+Event Category: None
+Event ID: 0
+Date: 10/03/2009
+Time: 11:33:33
+User: N/A
+Computer: SERVERNAME
+Description:
+Error occured at 10/03/2009 11:33:33 in IBM Cognos 8 Controller, Error No=5, Source=Microsoft.VisualBasic:FrangoClient.clsStandardReports.CreateReports, Description=Argument 'Number' is not a valid value., HelpFile= HelpContext=0
+
+Event Type: Warning
+Event Source: Cognos Controller
+Event Category: None
+Event ID: 0
+Date: 10/03/2009
+Time: 11:33:33
+User: N/A
+Computer: SERVERNAME
+Description:
+Error occured at 10/03/2009 11:33:33 in IBM Cognos 8 Controller, Error No=0, Source=:FrangoClient.clsStandardReports.CreateReport, Description=, HelpFile= HelpContext=0
+
+Event Type: Warning
+Event Source: Cognos Controller
+Event Category: None
+Event ID: 0
+Date: 10/03/2009
+Time: 11:33:33
+User: N/A
+Computer: SERVERNAME
+Description:
+Error occured at 10/03/2009 11:33:33 in IBM Cognos 8 Controller, Error No=5, Source=FrangoDirect.ReportAdHocD.AdHocCRN#ControllerProxyClient.frmReportAdHoc.IFormStandardReport_CreateReportData, Description=System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.Runtime.InteropServices.COMException (0x80040E14): Incorrect syntax near 'AND'.
+at FrReportB.ReportAdHocClass.AdHocCRN(String sGuid, String sUser, Recordset rsBnr, Recordset rsKeys, Int32 lLLocale, Boolean loksprak, String sXmlDoc)
+at Cognos.Controller.Proxy.CCRWS.ReportAdHoc_AdHocCRN(String sGuid, String sUser, DataSet rsBnr, DataSet rsKeys, Int32 lLLocale, Boolean loksprak, String sXmlDoc)
+--- End of inner exception stack trace ---, HelpFile= HelpContext=0
+
+Event Type: Warning
+Event Source: Cognos Controller
+Event Category: None
+Event ID: 0
+Date: 10/03/2009
+Time: 11:33:33
+User: N/A
+Computer: SERVERNAME
+Description:
+Error occured at 10/03/2009 11:33:33 in IBM Cognos 8 Controller, Error No=5, Source=FrangoDirect.ReportAdHocD.AdHocCRN#ControllerProxyClient, Description=System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.Runtime.InteropServices.COMException (0x80040E14): Incorrect syntax near 'AND'.
+at FrReportB.ReportAdHocClass.AdHocCRN(String sGuid, String sUser, Recordset rsBnr, Recordset rsKeys, Int32 lLLocale, Boolean loksprak, String sXmlDoc)
+at Cognos.Controller.Proxy.CCRWS.ReportAdHoc_AdHocCRN(String sGuid, String sUser, DataSet rsBnr, DataSet rsKeys, Int32 lLLocale, Boolean loksprak, String sXmlDoc)
+--- End of inner exception stack trace ---, HelpFile= HelpContext=0
+
+Event Type: Warning
+Event Source: VBRuntime
+Event Category: None
+Event ID: 1
+Date: 10/03/2009
+Time: 11:33:32
+User: N/A
+Computer: SERVERNAME
+Description:
+The VB Application identified by the event source logged this Application FrReportB: Thread ID: 4656 ,Logged: Error occured at 10/03/2009 11:33:32 in FrReportB, Error No=-2147217900, Source=FrReportB.ReportAdHoc.AdHoc, Description=Incorrect syntax near 'AND'., HelpFile= HelpContext=0
+
+Event Type: Warning
+Event Source: VBRuntime
+Event Category: None
+Event ID: 1
+Date: 10/03/2009
+Time: 11:33:32
+User: N/A
+Computer: SERVERNAME
+Description:
+The VB Application identified by the event source logged this Application FrSrvFunc: Thread ID: 4656 ,Logged: Error occured at 10/03/2009 11:33:32 in FrSrvFunc, Error No=-2147217900, Source=Server function:Dbp_ExecuteImmediate(..) , Description=Incorrect syntax near 'AND'., HelpFile= HelpContext=0
+
+CAUSE
+Code production problem, reference #621979. 
+
+ 
+The problem is triggered if the database's fourth dimension (Ext Dim 4) has either 0 or more than 23 entries in it.
+
+
+RESOLVING THE PROBLEM
+ 
+
+Workaround:
+
+The only workarounds are: 
+
+ 1. to pre-configure the ad-hoc report with a single entry for the Dim4 
+ 2. or reduce the number of entries in Dim4 to between 1 and 23.
+
+
+Solution 
+
+Upgrade to Controller 8.4 sp3 (also known as Controller 8.4.205) or later.

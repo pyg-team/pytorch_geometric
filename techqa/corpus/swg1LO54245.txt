@@ -1,0 +1,229 @@
+Title: IBM LO54245: FTI SEARCH INCORRECT RESULTS WHEN SEARCHING FOR EMAIL ADDRESS   CONTAINING SEPARATOR WITH UNDERSCORE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  FTI Search incorrect results when searching for email address
+   containing Separator with Underscore
+   
+   User in a Full Text Indexed database cannot find email address
+   when the e-mail address contains as separator "underscore" "_"
+   if the e-mail address contains as separator a "dot" "." the name
+   can be found correctly
+   
+   For example consider the name
+   
+   john_doe@acme.com
+   john.doe@acme.com
+   
+   Steps to reproduce:
+   
+   1. Create in a mail file hosted on a 851 server the following
+   documents
+   
+   Document 1. New mail addressed in To: john_doe@acme.com
+   Document 2. New mail addressed in To: john.doe@acme.com
+   Document 3. New mail addressed in cc: john_doe@acme.com
+   Document 4. New mail addressed in cc: john.doe@acme.com
+   Document 5. New mail addressed in cc: john_doe@acme.com
+   Document 6. New mail addressed in cc: john.doe@acme.com
+   
+   2. In the Sent view of the mail file you can see this 6
+   documents
+   
+   3. In the Sent vie open the Search. By going to view>search this
+   view. "In search for" enter doe
+   
+   The result is that you find the 6 documents
+   
+   4. Now Create a Full Text Index for this database with the
+   options
+   Case sensitivity OFF
+   Index Breaks= Words Only
+   Index Attachments ON(filtered)
+   Index Encyupted Fields ON
+   
+   Do a search in the view Sent for:  doe
+   
+   The result is you only find 3 documents in which the email
+   address contains the separator "dot" as in
+   
+    john.doe@acme.com
+   
+   
+   5. Clear the search results and perform a second query in the
+   sent view for : *doe
+   
+   The result if now all 6 documents in which you can find the
+   email address that contains the separator like a "dot" and also
+   the documents that have a separator as "underscore"
+   
+   The search results finds documents that contains both bellow:
+   
+   john.doe@acme.com
+   john_doe@acme.com
+   
+   
+   Reviewed documentation for query operators
+   
+   - (hyphen) is a query operator but "_" underescore is not
+   considered query operator
+   
+   
+   - (hyphen) Finds documents with the hyphenated word pair.
+    Example
+    full-text
+    Finds documents containing "full-text." Notes view - Yes
+     Notes domain - Yes
+     Web view/domain - Yes
+   
+   
+   Unable to find explanation why searching without any query
+   operator when full text indexed only able to find documents that
+   contains the dot (.) as separator and (_) underscore is not
+   found
+   
+   The same results are obtained if you seach for
+   
+   john  only find results with john.doe@acme.com
+   
+   but if you search for John* you can find both
+   john.doe@acme.com
+   john_doe@acme.com
+   
+   This is the description found regarding < *> wildcard
+   
+   Web query syntax
+   
+   
+   An asterisk used as a wildcard can only be used at the end of a
+   search
+   term, not at the beginning or in the middle of the term.
+   
+   
+   Notes query syntax
+   
+   * A wildcard that can represent any extension of letters. It
+   does not
+   work with dates or numbers.
+    Examples
+    *one
+    Finds documents containing bone, cone, clone, crone, done,
+   drone, gone,
+   telephone (and any other words of any length that end with
+   'one').
+    Also,
+    *one*
+    Finds documents containing bone, cone, clone, lonely, phoned,
+   stoned,
+   pardoned. Notes view - Yes
+     Notes domain - Yes
+     Web view/domain - Yes
+   
+   5. Tried with Notes query syntax  and Web query syntax and I
+   obtain the same results. Does not make any difference
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No Workaround found
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The problem will be fixed in the next release of the product.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# BBSZ88NJ8N.
+   The problem will be fixed in the next release of the product.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO54245
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-25
+   
+   
+ * CLOSED DATE
+   2011-01-08
+   
+   
+ * LAST MODIFIED DATE
+   2011-01-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R851 PSN
+   UP

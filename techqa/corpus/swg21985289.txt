@@ -1,0 +1,61 @@
+Title: IBM Steps to configure Domino server to connect over TLSv1.2 when running Java agents that use HttpsURLConnection class - United States
+
+Text:
+TLS 1.2; Web Service; Java agents TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+How do you configure a Domino server to connect over TLS 1.2 protocol when running Java agents that use the HttpsURLConnection class? This has become necessary because there are Web Service Providers from products like Salesforce that have started disabling the TLS 1.0 encryption protocol, which means that all inbound or outbound connections are required to use TLS 1.1 or a higher version.
+
+
+
+ANSWER
+The Domino JVM is based on Java 1.6, which defaults to using TLSv1.0. So, in addition to the updates included in Domino 9.0.1 FP3 IF2 (and higher) to support TLSv1.2, a Domino JVM property is needed to enable the protocol when you have Java agents that connect to an endpoint that requires TLSv1.1 or higher. 
+
+If the JVM property is not set, you will receive an error similar to the following:
+
+
+ * Agent Manager: Agent error: [UnexpectedErrorFault [ApiFault exceptionCode='UNSUPPORTED_CLIENT' exceptionMessage='TLS 1.0 
+ * 
+ * has been disabled in this organization. Please use TLS 1.1 or higher when connecting to <end point> using https.']]
+ * 
+
+
+To set the Domino JVM property, you need to do the following: 
+
+1. Add the JavaUserOptionsFile parameter in the server's notes.ini, specifying the location of the text file that will contain the JVM properties. 
+ * 
+ *  
+ * 
+
+
+2. Create a text file in the location specified in the notes.ini. 
+ * 
+
+
+3. Edit the text file and add the following to a new line https.protocols=TLSv1.2 
+
+ * 
+
+
+4. Restart the Domino server. 
+
+After performing the above steps, all Java agents running on Domino server that use the HttpsURLConnection class will now use TLSv1.2 as the protocol when doing the handshake. 
+
+IMPORTANT NOTE: Using the parameter described above limits all agents to using only that protocol. So, any agents that were using the HttpsURLConnection class to connect via a lower level protocol will no longer be able to connect if their endpoint does not also allow for TLSv1.2. 
+
+
+
+RELATED INFORMATION
+ Salesforce disabling TLS 1.0 [https://help.salesforce.com/apex/HTViewSolution?id=000221207]
+JavaUserOptionsFile [https://www-10.lotus.com/ldd/dominowiki.nsf/dx/javauseroptionsfile]
+JVM property settings on a per Domino server basis [http://www-01.ibm.com/support/docview.wss?uid=swg21377792]
+IBM Domino Interim Fixes to support TLS 1.0 which can b [https://www-10.lotus.com/ldd/dominowiki.nsf/dx/IBM_Domino_TLS_1.0]
+IBM Notes and Domino Interim Fixes to support TLS 1.2 [https://www-10.lotus.com/ldd/dominowiki.nsf/dx/TLS_1.2]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Messaging Applications IBM Domino Not Applicable Windows 9.0.1, 8.5.3

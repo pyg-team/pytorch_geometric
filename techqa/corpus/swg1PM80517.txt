@@ -1,0 +1,120 @@
+Title: IBM PM80517: ITEMS THAT FAIL TO DELETE DURING LIVE ITEM SYNDICATION ARE NOT A DDED TO FAILED ITEMS REPORT. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.0 Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24033155]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  1. Create a syndication pair that syndicates live items.
+   2. Syndicate a published item (itemA).
+   3. Refer this item at the subscriber from another WCM item.
+   4. Now delete itemA.
+   5. Once the event has been syndicated, itemA will fail to be
+   deleted at the subscriber.
+   6. The failed items report for the syndicator does not display
+   this item.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Item deletions that fail to syndicate during live item
+   syndication are not reflected in the "Failed Items" report.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The issue has been resolved.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM80517
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2901
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-13
+   
+   
+ * CLOSED DATE
+   2013-01-14
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

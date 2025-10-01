@@ -1,0 +1,95 @@
+Title: IBM How to implement simple retry logic into an IBM WebSphere DataPower SOA Appliance Processing Policy. - United States
+
+Text:
+datapower; retry; firewall; xml; connection; retry connection; fail; error code; error; rule; error rule; trey TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ The ability to retry a connection from within a policy, rather than simply returning the failure information to the client, is needed in some situations. 
+
+CAUSE
+DataPower is currently designed to reflect the ability of the backend servers used. With this understanding, should there be questionable connectivity or reliability to a backend server, then the connection may terminate and the transaction will fail. In some situations, the connection may need to be attempted again within the policy.
+
+RESOLVING THE PROBLEM
+With the DataPower appliances, there are always multiple methods to achieve an objective. This technote is a template to give ideas and options for a reusable method to handle some error conditions. 
+
+There are two basic types of communication retries:
+
+- a TCP Packet retransmission which is enabled by default in the network settings. This has nothing to do with the Protocol, HTTP, MQ, FTP, etc this is simply a retransmitting of an unacknowledged packet. 
+
+- Content retransmission such as MQ has native to its protocol. The retry ability or a backout queue is very helpful. What about HTTP or other content. For example, there are times when a processed payload needs to be retransmitted due to a random act of nature or some other interruption. 
+
+ 
+
+Rather than trusting or forcing the client to handle the failure and retransmit the message it could be simpler and safer for the appliance to simply send the POST again. This can reduce complexity or dependancy on the client and make sure the message is handled correctly, further logging through xsl messages can be used to help with this. 
+
+ 
+
+The additional logic would need to handle the specific failure, then attempt a new connection, and retransmit the processed data. This is one method, a simple example of how to implement this retry from a policy in a Multi-Protocol Gateway. 
+
+ 
+
+The following sample configuration was built to handle the situation where the errors: 
+
+"Failed to process response headers" 
+
+or 
+
+"Valid backside connection could not be established: Failed to establish a backside connection" 
+
+These errors are thrown by the DataPower appliance when it is unable to establish or reuse a connection. The simplest method to handle this error condition is to configure an error rule specifically to catch this condition and retransmit the processed payload by passing it in a variable. 
+
+
+The following simple multi-step is used to show how this can work:
+[/support/docview.wss?uid=swg21282678&aid=1] [/support/docview.wss?uid=swg21282678&aid=1] 
+
+ 
+
+1. Within the request rule "retry_request": 
+
+Before the transform begins, you could use an on-error action of type Cancel to terminate processing and call the needed rule. Or in the case shown above you may just allow the error rule match to "catch" based on the specific event code. 
+
+
+2. When the backend server fails to respond or terminates the connection, you will find an error like the following in the system log:
+[mpgw][error] mpgw(tcptest): tid(9876543)[5.6.7.8]: Error occurred (port error) when connecting to URL 'http://1.2.3.4:9009/'
+[mpgw][error] mpgw(tcptest): tid(9876543)[5.6.7.8]: Valid backside connection could not be established: Failed to establish a backside connection, url: http://1.2.3.4:9009/
+
+
+3. This error can be caught by an error rule: 
+
+[/support/docview.wss?uid=swg21282678&amp;aid=2]
+
+
+You can confirm that this retry rule caught the error by looking for an event in the system log similar to:
+
+[mpgw][info] mpgw(tcptest): tid(572626257)[error][9.48.43.133]: rule (tcptest_error_retry): selected via match 'all' from processing policy 'tcptest' for code '0x01130006'
+
+3.b. Just to clarify the error rule, use a style sheet to set the routing-url and to copy the content of the request rules.
+[/support/docview.wss?uid=swg21282678&amp;aid=3]
+
+The basic content of the retry xsl style sheet is simply:
+
+<xsl:template match="/">
+<xsl:copy-of select="dp:variable('var://context/FinalOutput1')"/>
+<dp:set-variable name="'var://service/routing-url'" value="'http://somelocation:port/'"/>
+</xsl:template>
+
+
+4. You could also use a result action rather than a stylesheet. Take the processed data, in our example this would be within the context of "save-request", from the Request rule and send this to the var://service/routing-url which will initiate a new connection to the defined static backend for this service. 
+
+ 
+
+Another key point is that you must set the variable var://service/error-protocol-response to 200 and var://service/error-protocol-reason-phrase to OK for this to work properly within the "retry" error rule response. Use two simple set var actions, one of which is illustrated here:
+[/support/docview.wss?uid=swg21282678&amp;aid=4] 
+
+ 
+
+This will allow a single retry from within a policy with little overhead and this will only occur if the exact error condition or code is handled. If another type of common error occurs, you can build further logic into the policy to handle these conditions in a similar manner. 
+
+
+A few notes to keep in mind:
+1- the "OUTPUT" context can not be used as an input. 
+
+2- the Error Input setting on the On-Error action may have no bearing whatsoever on what the error rule gets for input.

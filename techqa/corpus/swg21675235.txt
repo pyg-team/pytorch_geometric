@@ -1,0 +1,23 @@
+Title: IBM TIP fix pack failure with "CTGWA0086E" - United States
+
+Text:
+TIPL2; TIPL2INST; CTGWA0086E; Tivoli Integrated Portal; install failure; java TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The installation of a Tivoli Integrated Portal fix pack fails with the following error:
+
+"CTGWA0086E TIP server is stopped, but other unknown running java process from /opt/IBM/tivoli/tipv2 must be shut down." 
+
+CAUSE
+The installation command was executed with the -j option (Java location) and the path to TIP's Java was specified
+
+DIAGNOSING THE PROBLEM
+If uncertain whether or not the -j option was used in the TIP fix pack installation command, check the TIP fix pack installation log located in the installation user's home directory. An example might look like:
+
+###
+2014-06-03 16:04:57.630-04:00 : INFO : running process is: root 5701876 5112048 0 16:00:10 pts/1 0:00 /bin/sh ./install.sh -i silent -j /opt/IBM/tivoli/tipv2/java -f /maint/ims_install/tcr/FixPacks/TIP_IF7/cdimage.fixpack/sample_response_fp13.txt (from com.ibm.tivoli.tip.install.common.ant.DetectJavaProcessTask.execute)
+###
+
+
+RESOLVING THE PROBLEM
+The -j option is typically not required when executing a TIP fix pack install. However, if for any reason it is required, do not specify TIP's Java install, but a Java location outside of <TIP HOME>.

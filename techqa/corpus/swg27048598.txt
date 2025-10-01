@@ -1,0 +1,38 @@
+Title: IBM Installation of ITM 6.0.3.2 in Windows to monitor MQ queue managers - United States
+
+Text:
+ WHITE PAPER
+
+ABSTRACT
+ Installation of ITM 6.0.3.2 in Windows to monitor MQ queue managers 
+
+CONTENT
+The purpose of this document is to provide a tutorial for installation of IBM Tivoli Monitoring 6.3.0.2 in a Windows 7 machine. 
+
+The overall objective is to have ITM and ITCAM services monitoring MQ queue managers in Windows and in Linux, and additional tutorials will provide steps for other components.
+
+In order to keep the overall scenario as simple as possible, only the most essential components will be installed. Therefore, this tutorial does not show other ITM components; of course, if you need those ITM components, then you can go ahead and install/configure them.
+
+These are the chapters:
+
+Chapter 1 provides the details on how to download the software from IBM Passport Advantage.
+
+Chapter 2 describes how to install these fundamental components:
+TEMS - Tivoli Enterprise Monitoring Server
+TEMA - Tivoli Enterprise Monitoring Agent
+
+Chapter 3 describes how to install the GUI support:
+TEPS - Tivoli Enterprise Portal Server
+TEPD - Tivoli Enterprise Portal Desktop Client
+
+Chapter 4 describes how to install the ITM monitoring agents (these are NOT the agents that will monitor the MQ configuration and the MQ queue managers)
+
+
+
+File: Installation of ITM 6.0.3.2 in Windows to monitor MQ queue managers.pdf 
+
+Installation of ITM 6.0.3.2 in Windows to monitor MQ queue managers.pdf [/support/docview.wss?uid=swg27048598&aid=2]Installation of ITM 6.0.3.2 in Windows to monitor MQ queue managers.pdf [/support/docview.wss?uid=swg27048598&aid=1]
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM MQ PRODUCT ALIAS/SYNONYM
+ IBMMQ WMQ MQ

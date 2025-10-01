@@ -1,0 +1,23 @@
+Title: IBM How to prevent CMP administrator's password getting expired - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+We have deployed Sametime 9 and SUT 9 server environments. At the 
+moment SUT CMP Administrator's password gets expired after three 
+months? This causes issues as scheduled SUT provisions uses the same 
+credentials and once the password gets expired provision runs will fail
+until someone notices the issue. 
+
+We would like to disable the expiration of the SUT CMP administrator's password.
+How can we do that?
+
+ANSWER
+The file to change this setting will be 
+/enterprise/common/conf/PassphrasePolicyConfig.xml
+
+and administrator should set MaximumAge to 0
+
+See the following link for further details:
+http://www.ibm.com/support/knowledgecenter/SSKTXQ_8.5.1/com.ibm.help.sametime.v8512.sut.doc/cmp_acc/cmp_acc_user_password_policy.html?lang=en [http://www.ibm.com/support/knowledgecenter/SSKTXQ_8.5.1/com.ibm.help.sametime.v8512.sut.doc/cmp_acc/cmp_acc_user_password_policy.html?lang=en]

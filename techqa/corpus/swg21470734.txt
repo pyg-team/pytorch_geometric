@@ -1,0 +1,33 @@
+Title: IBM ITM DLA changes by APAR IZ80142 related to TADDM or TBSM idml book upload - United States
+
+Text:
+DLA TADDM TBSM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+When an ITM OS agent is not monitoring the same system as an application agent or they are connected to different ITM environments then DLA books may not load into TADDM or TBSM.
+
+
+CAUSE
+
+Many application agents (e.g. DB2 agent) rely on the operating system monitoring agents to create the elements in the DLA book that describe the computer system and operating systems that the agents are running on. In their DLA templates, the application agents reference the computer system and operating system elements that will be created by the OS agents using a relationship element. For example, a Db2System runsOn a ComputerSystem where runsOn is the relationship type, Db2System is the source element, and ComputerSystem is the target element. 
+
+If an operating system monitoring agent is not monitoring the same system as an application agent or the operating system agent and application agent are connected to different ITM environments then ITM DLA books may not load into TADDM or TBSM because the source or target element of a relationship in the DLA book does not exist. This error can also occur if, 
+
+ *  the Windows operating system agent is monitoring a Windows 2000 system because it cannot discover the IP address of the Windows 2000 system and, therefore, does not create computer system elements in the ITM DLA book 
+ * you are using an agentless operating system agent to monitor a system that a consumer agent is also monitoring since agentless OS agents do not provide input to the ITM DLA books
+
+
+RESOLVING THE PROBLEM
+
+The APAR IZ80142 provides a workaround by removing a relationship from an ITM DLA book if the source or target of a relationship do not exist in the book. This allows the ITM DLA books to load successfully into TADDM or TBSM. However, if a relationship is removed, the DLA book will not contain the information to map the affected resource (e.g. a database system) to a computer system or operating system in TADDM or TBSM.
+
+If you want your resources to be mapped to computer systems and operating systems in the ITM DLA books that are loaded into TADDM and TBSM, install an operating system agent on the systems that are being monitored by your application agents.
+
+With the IZ80142 fix, the ITM DLA creates two XML files each time the tmsdla command is run: 
+
+ *  a book with the .xml extension and 
+ * a book with the .xml.original extension. 
+
+
+The file with the .xml.original extension contains the contents of the DLA book before any relationships were removed. Removed relationships were written in tmsdla.log.

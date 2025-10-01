@@ -1,0 +1,131 @@
+Title: IBM JR52777: JAVASCRIPT OBJECT TWTIMEPERIOD REQUIRES TO UPDATE SYSTEM DATA TOOLKIT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After migrating from WebSphere Lombardi Edition V7.2.0.x to IBM
+   Business Process Manager V8.5.5, I get the following exception
+   while importing a process application:
+   
+    [1/29/15 15:36:42:658 EST] 0000012e wle E
+   com.lombardisoftware.core.TeamWorksRuntimeException:
+    com.lombardisoftware.core.TeamWorksException: Property id in
+   class TWTimePeriod is not declared. It must be declared to be
+   used.
+    [1/29/15 15:36:42:659 EST] 0000012e wle E   CWLLG2015E:  An
+   unexpected runtime exception occurred. See exception for more
+   details. Error: Wrapped
+   com.lombardisoftware.core.TeamWorksRuntimeException:
+   com.lombardisoftware.core.TeamWorksRuntimeException:
+   com.lombardisoftware.core.TeamWorksException: Property id in
+   class TWTimePeriod is not declared. It must be declared to be
+   used. (<JSScript>#26).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  If process applications imported from WebSphere Lombardi Edition
+   use the TWTimePeriod JavaScript object and the version of the
+   System Data toolkit does not match the version of IBM Business
+   Process Manager (BPM) V8.5.5 or later releases, you see the
+   exception.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Upgrade the version of the System Data toolkit to match the
+   version of IBM BPM you have.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR52777
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-09
+   
+   
+ * CLOSED DATE
+   2015-05-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS

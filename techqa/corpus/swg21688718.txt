@@ -1,0 +1,35 @@
+Title: IBM TEP Login is failing for some LDAP users - United States
+
+Text:
+KFW_AUTHORIZATION_USE_EWAS; TEPS; Login ; LDAP ADO; status 1021 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The TEPS is configured to use LDAP (e.g. Microsoft Active Directory ) for user authentication.
+Some LDAP user are able to login successfully, but some users are not able to login, why? 
+
+SYMPTOM
+For some users that try to log into the TEPS, the following error is seen: 
+
+"KFWITM393E User ID or password is invalid" 
+
+ 
+
+The TEPS logs shows the error:
+KFW1002I Starting Service: 'Startup Complete v2.0' (Thursday, August 28, 2014, 3:12:36 PM-{252C}ctserver.cpp,520, "CTServer::startServerDll") KFW1003I Started Service: 'Startup Complete 
+v2.0' (Thursday, August 28, 2014, 3:12:36 PM-{4D4}ctserver.cpp,975, 
+"CTServer::runORB") KFW1020I ********* Waiting for requests. Startup complete ********* 
+(Thursday, August 28, 2014, 3:13:30 PM-{51C}kdssqrun.c,964,"CreatePath") Create Path Error. status 1021 path NCS: 
+
+
+CAUSE
+The TEPS variable 'KFW_AUTHORIZATION_USE_EWAS' 
+
+
+RESOLVING THE PROBLEM
+Please remove the TEPS variable 'KFW_AUTHORIZATION_USE_EWAS' from the KFWENV, then restart the TEPS and verify that all users can log in.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITM
+Monitoring

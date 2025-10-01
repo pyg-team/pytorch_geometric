@@ -1,0 +1,136 @@
+Title: IBM LO51493: FREQUENT JVM CRASHES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  User is experiencing frequent JVM crashes running Lotus Notes
+   8.5.1 FP1 build.
+   There are no known steps to reproduce, and the client could be
+   minimized/idle,
+   and the crash will still occur.  In the Javacore, there are
+   INACCESSIBLE error
+   references to the j9vm24.dll in the C:\Program
+   Files\IBM\Lotus\Notes\jvm\bin
+   directory.
+   
+   1XHEXCPCODE    J9Generic_Signal_Number: 00000004
+   1XHEXCPCODE    ExceptionCode: C0000005
+   1XHEXCPCODE    ExceptionAddress: 7FF04821
+   1XHEXCPCODE    ContextFlags: 0001003F
+   1XHEXCPCODE    Handler1: 7FEF9CF0
+   1XHEXCPCODE    Handler2: 7FED98F0
+   1XHEXCPCODE    InaccessibleAddress: 00000008
+   NULL
+   1XHEXCPMODULE  Module: C:\Program
+   Files\Lotus\Notes\jvm\bin\j9vm24.dll
+   1XHEXCPMODULE  Module_base_address: 7FEF0000
+   1XHEXCPMODULE  Offset_in_DLL: 00014821
+   
+   However, on the customer's machine, this dll is located in the
+   C:\Program
+   Files\Lotus\Notes\jvm\bin\j9vm (notice that this dll is in the
+   j9vm
+   subfolder).  For a typical 8.5.1 FP1 install, this dll is stored
+   in the
+   C:\Program Files\IBM\Lotus\notes\jvm\bin direectory.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# TMDS857P7Y.
+   This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO51493
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-06
+   
+   
+ * CLOSED DATE
+   2011-08-17
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R851 PSN
+   UP

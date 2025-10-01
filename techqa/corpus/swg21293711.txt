@@ -1,0 +1,40 @@
+Title: IBM How to move the IBM JSF jars outside of the WEB-INF\lib directory - United States
+
+Text:
+Rational Application Developer; RAD; WAS; WEB-INF\lib; directory; class; loader; external jar; library; 1293711 TECHNOTE (FAQ)
+
+QUESTION
+ How can the IBM® JSF jars be moved outside of the WEB-INF\lib directory to another location on the WebSphere® Application Server classloader? 
+
+ANSWER
+An example for wanting to move the jars out of the directory could be that you have several Web projects all using JSF jars that need to be deployed to the server and you want a single location for storing all the jar files.
+
+
+Each Web Project will have its own copy of the jars. All together, it will take up substantial memory on the server. You might also want to manage just one set of jar files instead of having to keep track of all the jar files spread across all the Web projects. 
+
+Therefore the IBM JSF jar files can be moved from the default location to another location on the WebSphere Application Server classloader, for example a Shared Library.
+
+The following steps assume that you have moved the IBM JSF jar files already to a desired location, such as a Shared Library, or a location on the Server classpath.
+
+To find out which jar files to move for your particular project, review the two links in the Related information section. 
+
+Steps: 
+
+ 1. Add the IBM JSF jars to the Java build path by means of either External jars or a Variable on the workbench pointing to external files 
+ 2. Create a new "tld" folder under "WEB-INF" directory of your Web project 
+ 3. Extract the html_extended.tld file from the jsf-ibm.jar and store it folder you created above 
+ 4. Build and redeploy your application
+
+
+
+
+RELATED INFORMATION
+#Updating. . .resources for Web Projects [http://publib.boulder.ibm.com/infocenter/iadthelp/v7r0/index.jsp?topic=/com.ibm.etools.rad.migration.doc/topics/tmgv6facesto601.html]
+Updating. . .resources for JSF Portlets [http://publib.boulder.ibm.com/infocenter/iadthelp/v7r0/index.jsp?topic=/com.ibm.etools.rad.migration.doc/topics/tmgv6portletjsfto601.html]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Linux, Windows 6.0, 6.0.0.1, 6.0.1, 6.0.1.1, 6.0.1.2, 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4, 7.0.0.5

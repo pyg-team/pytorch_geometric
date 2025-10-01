@@ -1,0 +1,141 @@
+Title: IBM PI24828: Unable to export some scan results to XML report - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM Security AppScan Standard 9.0.0.1, if the scan results
+   contain a particular issue, in this case JavaScript Hijacking,
+   when user tries to export scan result to a XML file, the
+   following error will be displayed:
+   'AppScan successfully created an XML file, but some data could
+   not included...'
+   Also, when clicking on the particular issue on Issues tab view,
+   AppScan Standard will raise an error and terminates.
+   
+   Workaround:
+   Set problematic issues as non-vulnerable.
+   Specifically in this case - to exclude the JavaScript Hijacking
+   from the scan by setting it to non-vulnerable variant.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When the customer receives the following error while trying
+   to export an ASTD scan result to a XML file:
+   "AppScan successfully created an XML file, but some data
+   could not included..."
+   When clicking on the issue that is not exported well (in the
+   scope of the Issues tab), the application raises an error
+   and the relevant information on the issue is not presented.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 9.0.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI24828
+   
+   
+ * REPORTED COMPONENT NAME
+   SEC APPSCAN STD
+   
+   
+ * REPORTED COMPONENT ID
+   5724T5900
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-28
+   
+   
+ * CLOSED DATE
+   2014-10-22
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SEC APPSCAN STD
+   
+   
+ * FIXED COMPONENT ID
+   5724T5900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSN
+   UP

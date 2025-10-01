@@ -1,0 +1,146 @@
+Title: IBM PM53295: UNABLE TO CHANGE FONT SIZE FOR LAYER AREA ON FAST RENDERED TABLES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You work with IBM SPSS Statistics 20 and create a custom table
+   with a layer variable. In the viewer you double click on the
+   table and on Format - Table properties dialog you would like to
+   change the font size for the layer text to a higher pt size than
+   the default on the Cell Properties tab.
+   However, you notice this is not possible for fast rendered
+   tables. The font size is not changed for the layer text.
+   
+   This issue was reported to IBM SPSS Development. As a workaround
+   on Edit - Options dialog, pivot tables tab select the option
+   "Render as legacy tables" and create the table again (SET
+   TABLERENDER = FULL). Then you will be able to change the font
+   size for layer text.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users working with fast tables with layer variables          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * You work with IBM SPSS Statistics 20 and create a custom     *
+   * table                                                        *
+   * with a layer variable. In the viewer you double click on the *
+   * table and on Format - Table properties dialog you would like *
+   * to                                                           *
+   * change the font size for the layer text to a higher pt size  *
+   * than                                                         *
+   * the default on the Cell Properties tab.                      *
+   * However, you notice this is not possible for fast rendered   *
+   * tables. The font size is not changed for the layer text.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Install IBM SPSS Statistics 20 FixPack 1 (20.0.0.1)          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Install IBM SPSS Statistics 20 FixPack 1 (20.0.0.1)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM53295
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   K00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-01
+   
+   
+ * CLOSED DATE
+   2012-03-01
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RK00 PSN
+   UP
+   
+   
+ * RK00 PSY
+   UP

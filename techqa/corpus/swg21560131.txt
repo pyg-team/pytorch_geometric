@@ -1,0 +1,96 @@
+Title: IBM MCF: YDM00025: Shipment modification rules do not permit modification of shipment in its current status - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ MCF: YDM00025: Shipment modification rules do not permit modification of shipment in its current status 
+
+SYMPTOM
+
+
+When trying to complete some transaction, such as Modify Shipment, Confirm Shipment, or even some order-related or other transactions, etc., the user gets a popup with the following error (or the error is returned in an API outXML):
+
+YDM00025: Shipment modification rules do not permit modification of shipment in its current status
+
+This error is very commonly encountered in new implementations. The technical reason for this error is you are trying to make some modification to a Shipment, either directly or indirectly, that is not allowed by the Shipment Modification Rules specified for the Node/Enterprise in the Configurator.
+
+Error Message MCF: YDM00025: Shipment modification rules do not permit modification of shipment in its current status
+
+
+RESOLVING THE PROBLEM
+
+
+There is no clear-cut solution to this error, because processes vary greatly among different implementations of MCF, but here are some suggestions to help guide you:
+
+Scenario 1:
+
+If your system has already been implemented and you are in the testing or production phases, chances are your shipment is in the wrong status and you legitimately can not perform this transaction to a shipment in this status.
+
+If this is the case, you most likely skipped a step or executed an incorrect step. 
+If you are not familiar with the normal process used in your system, you can get clues from the Shipment (Order Fulfillment) pipeline in the Process Modeling screen of the Platform Configurator. See the Platform Configuration Guide for more details.
+
+If you are familiar with the process but the shipment is in the wrong status for some reason, you will need to figure out how to get the Shipment into the correct status so you can continue processing it.
+
+Changing the Shipment Modification Rules is not generally recommended in these cases because they were probably disabled for a reason. However, the system administrator may wish to disable a Modification Rule to prevent you from going to that incorrect status in the future.
+
+
+
+Scenario 2:
+
+If you are implementing a new system, or trying a new pipeline in Process Modeling, etc., and the system is not yet in UAT or production phases, you may want to use the default out-of-box settings for the Modification Rules or you may wish to edit the Modification Rules to allow any Modification Type in any Status and figure out based on your business which ones to disable during development/testing.
+
+If this is your scenario, do one of the following:
+
+If your node is a Networked WMS node, open Configurator and go here to view/edit your Shipment Modification Rules:
+
+Warehouse Management
+-> Shipping
+-> Document Specific (Shipping)
+-> <Choose Order Type>
+-> Shipment Modification
+-> Modification Rules (confirm this!!!!)
+
+
+If your ShipNode is a Sterling Supply Chain Application Consoles node, open Configurator and go here to view/edit your Shipment Modification Rules:
+
+Distributed Order Management 
+-> Document Specific 
+-> <Choose Order Type> 
+-> Outbound Logistics 
+-> Shipment Modification
+-> Shipment Modification Rules
+
+
+In the Modification Rules screen, the rules will be grouped by Modification Type by default. Change the Group By to "Status"
+
+Find the status in which your shipment is stuck, and expand the status and expand modification level "Shipment".
+
+You will see all of the modification types for this status and whether each rule is enabled/disabled. 
+
+For more information on these screens, refer to the WMS Configuration Guide or the DOM Configuration Guide.
+
+
+
+HISTORICAL NUMBER
+ NFX6631 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+Console, API's
+
+
+Escalation ID
+
+
+71648
+
+
+Severity
+
+
+Normal

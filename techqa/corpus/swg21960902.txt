@@ -1,0 +1,119 @@
+Title: IBM nzhostrestore command is taking too long to complete - United States
+
+Text:
+nzhosrestore command is taking too long to complete waitForState TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ nzhosrestore command is taking too long to complete and you can see from the status that it appears to be stuck on the "Synchronizing data on spus" part. 
+
+SYMPTOM
+ 
+
+nzhostrestore command is taking too long to complete and you can see from the status that it appears to be stuck on the "Synchronizing data on spus" part. 
+
+
+$ nzhostrestore <nzhostbackup file>
+
+example:
+$ nzhostrestore /nzscratch/backup.1
+
+Starting host restore
+nzhostrestore command: nzhostrestore /nzscratch/backup.1
+Extracting host data archive ...
+Restore host data archived Wed Jun 24 19:08:42 EDT 2015? (y/n) [n] y
+Stopping the system ...
+NPS system is not running.
+Starting topology restore ...
+Stopping the system ...
+Warning: The restore will now rollback spu data to Wed Jun 24 19:08:42 EDT 2015.
+This operation cannot be undone. Ok to proceed? (y/n) [n] y
+Installing system catalog to '/nz/data.1.0' ...
+Starting the system in host restore mode...
+Synchronizing data on spus ...
+..............................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+
+
+CAUSE
+
+For this article, the cause is that the $PATH is not configured properly. The PATH must include /nz/kit/sbin directory in order for the 'waitForState -showState' command to be executed. This command is part of the nzhostrestore script 
+
+
+ *   
+   
+    
+   
+   
+   
+   
+
+RESOLVING THE PROBLEM
+ 
+
+
+ Open a new terminal and export the value of $PATH 
+
+ 
+
+ $ echo $PATH 
+
+ 
+
+ A. if the PATH does not contain /nz/kit/sbin, modify the $PATH to include /nz/kit/sbin 
+
+ 
+
+ * 
+ * a.1 )
+ * 
+ * CTRL + z
+ * 
+ * bg
+ * 
+ *  
+ * a.2) enter the following command: 
+ *  
+ *   * $ export PATH=$PATH:/nz/kit/sbin
+    * $ echo $PATH 
+    *  
+    * Ensure that the new PATH contains /nz/kit/sbin
+   
+   
+
+ * 
+ * a.3) 
+ * 
+
+
+ *   * $ waitForState -showState
+    *  
+    *  At this point, the system should be online
+   
+   
+
+ * 
+ * a.4) 
+ * 
+ * CTRL + z
+ * 
+ * fg
+ * 
+ *  
+ * a.5) let the script finish 
+ *  
+ *   * Stopping the system ...
+    * 
+    * Restore complete. You can now start the system using 'nzstart'.
+   
+   
+
+ 
+
+ 
+
+ B. if the PATH contains /nz/kit/sbin, let the script finish 
+
+ 
+
+ * Stopping the system ...
+ * 
+ * Restore complete. You can now start the system using 'nzstart'.

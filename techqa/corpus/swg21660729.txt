@@ -1,0 +1,54 @@
+Title: IBM Remove installed components from Deployment Engine registry - United States
+
+Text:
+DEL2; remove components deployment engine DE registry TECHNOTE (FAQ)
+
+QUESTION
+ How to remove installed components from Deployment Engine registry 
+
+ANSWER
+To remove an installed component from DE registry use below steps. Please take a backup of DE registry before making any changes. See below technote for details:
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21395223 [http://www-01.ibm.com/support/docview.wss?uid=swg21395223]
+
+
+1. If it is a base package, then following command can be run to perform uninstall of base package. You can use de_lsrootiu.sh command to get discriminant, UUID and version (on Windows platform use de_lsrootiu.bat and manageIU.bat script). These scripts can be found in <DE-HOME>/bin dir. 
+
+ 
+
+ * 
+ * 
+ * 
+ * 
+   
+ * 
+ * 
+ * 
+
+
+
+2. If it is a fixpack/upgrade package, then below command can be run to undo the fixpack/upgrade package :  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+   
+ * 
+ * 
+
+
+Example 1. Run de_lsrootiu.sh to get discriminant (path), version and ID. Following shows a snippet from the output of de_lsrootiu.sh command. In this case; say you want to remove TIPCore 2.2.0.11 fix pack then you will needed the information highlighted below.
+
+<instanceID>InstanceID[IU,TIPCore,mrid:http://w3.ibm.com/namespaces/2003/OS_componentTypes:Operating_System,2.2.0.11,/opt/IBM/tivoli/tipv2,2ADC4A33F09F4E85AD27963E850290C3]
+<UUID>2ADC4A33F09F4E85AD27963E850290C3</UUID>
+<identityName>TIPCore</identityName>
+<version>2.2.0.11</version>
+<hostingEnv>mrid:http://w3.ibm.com/namespaces/2003/OS_componentTypes:Operating_System
+<discriminant>/opt/IBM/tivoli/tipv2</discriminant>
+</iuInstance>
+<iuInstance undoable="false" softwareLifeCycleStatus="Usable">
+
+2. Run below command to remove Installed component. 
+
+ *

@@ -1,0 +1,34 @@
+Title: IBM Change Data Capture Event Server:  Unable to connect to MQ through JMS if the JNDI alias for the queue manage is defined with a TRANSPORT(BIND). - United States
+
+Text:
+binding; client; MQ; libraries; JMS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am trying to create a new instance for CDC Event Server in binding mode and getting the following error.
+
+Testing JMS Destination. Please wait... 
+
+Error: IBM InfoSphere Change Data Capture failed to connect to the 
+specified JMS Destination.Error: javax.naming.Reference incompatible 
+with org.omg.CORBA.portable.ObjectImpl Page 4 of 39 
+
+Press ENTER to continue... 
+
+CAUSE
+The binding mode will only work if ES were to use MQ specific API (3rd party libraries) and ES is on the same machine as the MQ.
+
+ENVIRONMENT
+Change Data Capture Event Server
+
+RESOLVING THE PROBLEM
+Install/change the third party libraries to the following jars:
+jms.jar 
+com.ibm.mq.jar 
+com.ibm.mqjms.jar 
+com.ibm.mq.jmqi.jar 
+connector.jar 
+dhbcore.jar 
+fscontext.jar 
+providerutil.jar 
+
+Only these jar files should be included.

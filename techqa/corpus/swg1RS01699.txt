@@ -1,0 +1,159 @@
+Title: IBM RS01699: COMPILE ERRORS ON RULES/DECISION TABLES IN DECISION CENTER (z/OS) - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Operational Decision Manager V8.5.1.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24039235]
+Operational Decison Manager z/OS 8.7.1.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24042643]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Decision Center (z/OS), the following compile errors are
+   sometimes seen (for example, after synchronization or ruleset
+   generation):
+   On rules:
+   Value (string) ' ' is incorrect :
+   ilog.rules.teamserver.common.IlrBRLTokenModelRule incompatible
+   with ilog.rules.webui.IlrWBRLSyntacticRuleElement
+   On decision tables:
+   col: <number>, line: <number>: Value (string) '<value>' is
+   incorrect:
+   ilog.rules.teamserver.model.dt.IlrWDTRuleElement incompatible
+   with ilog.rules.webui.IlrWBRLSyntacticRuleElement
+   ------------------
+   The server logs contain the following:
+   SEVERE: ilog.rules.teamserver.model.dt.IlrWDTRuleElement
+   incompatible with ilog.rules.webui.IlrWBRLSyntacticRuleElement
+   Throwable occurred: java.lang.ClassCastException:
+   ilog.rules.teamserver.model.dt.IlrWDTRuleElement incompatible
+   with ilog.rules.webui.IlrWBRLSyntacticRuleElement
+   at
+   ilog.rules.teamserver.web.cobol.TeamserverCodePageInfo.getCodePa
+   ge(TeamserverCodePageInfo.java:24)
+   at
+   com.ibm.rules.cobol.valuecheck.ValueChecker.initCodePageEncoding
+   (ValueChecker.java:312)
+   at ilog.rules.brl.IlrBRL.checkValueNode(IlrBRL.java:2141)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Reset project dependencies
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Some cobol value checker expects to apply to a business rules
+   only and not a Decision table. when applied on a decision table
+   the check fails with an exception
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  the cobol value checker is fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS01699
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6900
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-31
+   
+   
+ * CLOSED DATE
+   2014-08-05
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  None
+   999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * FIXED COMPONENT ID
+   5725B6900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R851 PSY
+   UP

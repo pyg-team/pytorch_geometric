@@ -1,0 +1,150 @@
+Title: IBM PK29498: DOC: "CLEAR CASE-INSENSITIVE MVFS AND SELECT CASE-PRESERVING" IS NOT A VALID COMBINATION - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Software Development Platform - Team version 7.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24016212]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In ClearCase Administrator's guide p.50, there's a section
+   called "When to use a case-preserving MVFS".
+   Here you are suggested to use "case-preserving mode (clear
+   Case-Insensitive MVFS and select Case-Preserving)".  If you try
+   to clear Case-Insensitive from control panel, you are not
+   allowed to select Case-Preserving (because case sensitive means
+   case preserving, too). This expression in the manual is not
+   clear to our customers.  It should be changed something like
+   "clear Case-Insensitive MVFS which selects Case-Preserving".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  On p. 50 of the ClearCase Administrator's Guide (v7.0), the
+   "When to use a case-preserving MVFS" section suggests using
+   the following:
+   "[Use] case-preserving mode (clear Case-Insensitive MVFS and
+   select Case-Preserving)".
+   However, clearing the Case-Insensitive check box on the
+   control panel prevents you from selecting the
+   Case-Preserving check box  (because case sensitive
+   implicitly means case preserving).  Therefore, the content
+   should be changed to something like, "clear Case-Insensitive
+   MVFS, which selects Case-Preserving".
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The "When to use a case-preserving MVFS" section on p. 50 of
+   the ClearCase Administrator's Manual now reads:
+   "In the default mode (Case Insensitive MVFS enabled, Case
+   Preserving disabled), the MVFS converts to lowercase the
+   names of view-private files created in a dynamic view. This
+   behavior can interfere with the operations of tools that
+   intentionally create files with mixed-case names. For
+   example, if a Java development environment creates a file
+   named util.JAR in an MVFS environment that is not
+   case-sensitive, it will be written as util.jar. Development
+   tools that reference
+   the file as util.JAR will not find it. To correct this kind
+   of problem, configure the MVFS to use case-preserving mode
+   (clear the
+   Case-Insensitive MVFS check box)."
+   The revised content will appear in a future version of the
+   ClearCase Administrator's Manual.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK29498
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARCASE UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724G2901
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-08-08
+   
+   
+ * CLOSED DATE
+   2007-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2007-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CLEARCASE UNIX
+   
+   
+ * FIXED COMPONENT ID
+   5724G2901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSN
+   UP

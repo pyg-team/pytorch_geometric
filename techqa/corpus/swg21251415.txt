@@ -1,0 +1,25 @@
+Title: IBM Clarification of reconciliation failurethreshold - United States
+
+Text:
+failurethreshold failure recon reconciliation accounts delete remove deleted removed TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Additional information regarding the failurethreshold setting in the enrole.properties file. 
+
+RESOLVING THE PROBLEM
+The enrole.reconciliation.failurethreshold setting is designed to prevent accounts from being removed from ISIM when an adapter doesn't return any results. It has absolutely no effect on accounts on the managed resource itself - only the account entries held in ISIM's LDAP server. It was added because some adapters rely on 3rd party APIs to retrieve accounts, and in rare cases, these APIs returned an incomplete set of accounts without an error condition. 
+
+Since no error was reported to the adapter, it passed on the incomplete set of accounts to the ISIM server and reported "success". ISIM, seeing a successful recon, proceeded to remove from LDAP all accounts not returned in the recon. The root cause was a problem on the managed resource itself, not in ISIM, but this option was added to ISIM as a safeguard to prevent the large scale removal of accounts from ISIM due to an incomplete reconciliation. 
+
+The default setting for this value is 100%, which means that ISIM will remove from it's LDAP any accounts not returned in the reconciliation. This value is configurable, but should generally not be set below 10%. Setting this value to "0" will usually result in failed recons. This is because, in practice, not all changes are ALWAYS made through ISIM. If this setting is set to "0", and an administrator removes an account on a managed resource outside of ISIM, then the reconciliations will fail until one of the following conditions is met: 
+
+a. The account is added back to the managed resource 
+
+b. The account is removed manually from ISIM 
+
+c. The enrole.reconciliation.failurethreshold is increased
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ itim tim enrole isim

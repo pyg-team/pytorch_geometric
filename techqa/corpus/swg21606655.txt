@@ -1,0 +1,95 @@
+Title: IBM 'Common Reporting' link on TIP portal not working - United States
+
+Text:
+DPR-ERR-2109; CM-SYS-5003; Common reporting TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ This technote provides troubleshooting methods for when the 'Common Reporting' link on the navigation bar on TIP portal doesn't work and results in an error. 
+
+SYMPTOM
+Clicking the 'Common Reporting' link on the TIP portalr results in error:
+
+'DPR-ERR-2109 The dispatcher cannot service the request at this time. The dispatcher is still initializing. Contact administrator if this problem persists.'
+
+
+CAUSE
+There are x2 instances of 'TCR' running 
+
+DIAGNOSING THE PROBLEM
+1) Check the log file:
+
+
+</<$TIP_HOME>/tip21Components/TCRComponent/cognos/logs/cogserver.log 
+
+ 
+
+look for waning "CM-SYS-5003": 
+
+
+Warning CM-SYS-5003 Content Manager is unable to access the content store. Verify your database connection parameters, and then contact your database administrator for assistance. java.net.ConnectException : Error connecting to server aponsp02 on port 1557 with message Connection refused. Cause: java.net.ConnectException : Error connecting to server aponsp02 on port 1557 with message Connection refused. Runtime Exception stack trace: org.apache.derby.client.am.DisconnectException: java.net.ConnectException : Error connecting to server aponsp02 on port 1557 with message Connection refused. 
+
+ 
+
+2) verify the port 'TCR' is using by checking the startup file: 
+
+
+</<$TIP_HOME>/tip21Components/TCRComponent/cognos/configuration/cogstartup.xml
+
+check entry:
+
+<crn:value xsi:type="xsd:unsignedShort">1557</crn:value>
+<crn:value xsi:type="cfg:hostPort">localhost:1557</crn:value>
+
+verity the port 'content store' is runnning on, by checking file:
+
+</<$TIP_HOME>/tip21Components/TCRComponent/cognos/contentstore/derby.properties
+
+check entry:
+
+derby.drda.portNumber=1557
+
+3) verify there's only one instance of 'TCR' running with:
+
+$ ps -ef | grep java
+
+you should only see x2 process entries beginning like:
+
+root 24288 1 0 Jul25 ? 00:01:56 /opt/IBM/tivoli/tip21/java/jre/bin/java -Xmx256m
+
+root 24339 1 0 Jul25 ? 00:08:26 /opt/IBM/tivoli/tip21/java/bin/java
+
+there should be only one instance of "jre", which is the one belonging to TCR.
+
+
+
+RESOLVING THE PROBLEM
+If there are x2 instances of Java 'jre' running: 
+
+ 
+
+A) Stop TCR: 
+
+
+$<TIP_HOME>/tip21Components/TCRComponent/bin/stopTCRserver.sh
+
+
+ B) Make sure no Java 'jre' process is running, if there is, kill these using: 
+
+ 
+
+$ kill -9 <PID> 
+
+ 
+
+C) Start TCR: 
+
+
+$<TIP_HOME>/tip21Components/TCRComponent/bin/startTCRserver.sh 
+
+
+D) Make sure TCR starts fine by monitoring the log entries:
+
+tail -f </<$TIP_HOME>/tip21Components/TCRComponent/cognos/logs/cogserver.log

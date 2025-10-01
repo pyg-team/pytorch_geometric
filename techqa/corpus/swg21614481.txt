@@ -1,0 +1,33 @@
+Title: IBM Mirroring fails with "Violation of PRIMARY KEY constraint" while replicating to SQL Server target - United States
+
+Text:
+CDC; Infosphere CDC; Infosphere Change Data Capture; Change Data Capture; ISCDC; IS-CDC; DataMirror; TS; DataMirror TS; Transformation Server; DataMirror Transformation Server; primary key violation; case sensitive; case insensitive; collation; duplicate; sql server; mirroring TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Mirroring fails with "Violation of PRIMARY KEY constraint" error message while replicating to SQL Server target. Source table has corresponding columns defined as primary key or unique index so no duplicates are possible and present on the source. 
+
+SYMPTOM
+Subscription fails and the message similar to the one below is present in event log: 
+
+A SQL exception has occurred. The SQL error code is '2627'. The SQL state is: 23000. The error message is: 
+[CDC][SQLServer JDBC Driver][SQLServer]Violation of PRIMARY KEY constraint 'PK__TABLE__4E53A1AA'. Cannot insert duplicate key in object 'schema.table'
+
+Target database uses case-insensitive collation and source database is case-sensitive.
+
+Character columns are part of primary key or unique index on both source and target.
+
+CAUSE
+If source database is case-sensitive and target database uses case-insensitive collation, some rows might be duplicates on target even though they are not duplicates on source. For example: 
+
+
+('EXAMPLE', 12, 'A') and ('Example', 12', 'a')
+
+Above primary key values are not duplicates on source, as they have different case, but they are duplicates in target database which is case-insensitive.
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, you must either: 
+
+ * Make sure that source and target databases are both case sensitive or both case insensitive 
+ * Do not use character columns as part of the key 
+ * Make sure that no source-side primary key or unique index values differ only by case

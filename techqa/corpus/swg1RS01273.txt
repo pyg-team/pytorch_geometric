@@ -1,0 +1,129 @@
+Title: IBM RS01273: METHOD ILROBJECTMODELSERVICES.GETXOMCLASSMAPPINGFORBOMTYPE DOES NOT RETURN THE RIGHT CLASS WHEN A MANAGED XOM IS USED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The method getXOMClassMappingForBOMType can be used in a
+   scenario provider to get the class and clasloader information
+   from the BOM and this can then be used to instantiate classes.
+   When the XOM is managed by the RES this method does
+   not return the class from the ruleset classloader and it is
+   not possible to instantiate new instances from on it.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The class returned by this method is serialized so there is no
+   reference to the original classloader when it is available in
+   the SSP
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is modified so that the provider class is created in
+   the XOM classloader which makes every objects defined in the
+   ruleset also available in the data provider.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS01273
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6900
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-21
+   
+   
+ * CLOSED DATE
+   2013-04-15
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * FIXED COMPONENT ID
+   5725B6900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

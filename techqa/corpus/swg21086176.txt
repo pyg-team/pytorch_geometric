@@ -1,0 +1,38 @@
+Title: IBM What does the message 'Performing consistency check' mean? - United States
+
+Text:
+Domino Server; performing consistency check on database.nsf; server console; consistency check TECHNOTE (FAQ)
+
+QUESTION
+When a Domino server is started, the following message can appear: 
+
+Performing consistency check on database <database>.nsf 
+
+What does this message indicate?
+
+
+ANSWER
+This message is an indication that Domino is performing a consistency check on a Notes database. A consistency check is synonymous with the Fixup server task. Consistency checks are done when a database is found to be in an unknown state, corrupt state, or the integrity is questionable.
+
+
+ * An unknown state occurs when the database is not closed properly (for example, a server crash or a database file being copied at the operating system level while open, etc.). 
+ * A corrupt state can occur in several places. These all relate to bad tables, notes, folders, bitmaps, etc. 
+ * Questionable integrity occurs when a database header or index has entries that appear to be invalid.
+
+
+
+There is no way to prevent a consistency check from occurring. When Domino performs a consistency check, it is a good thing, because Domino is proactively maintaining the stability of a Notes database. 
+
+Supporting Information: 
+
+The NSF file format and detailed information regarding ODS attributes and changes Notes makes between releases are proprietary and will not be generally documented. 
+
+NOTE $FIXUP does not delete a document and leave behind a deletion stub, it completely removes it. RELATED INFORMATION
+ What is a Consistency Check and can the progress of a C [http://www.ibm.com/support/docview.wss?uid=swg21089961]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Messaging Applications IBM Notes 
+HISTORICAL NUMBER
+ 113795

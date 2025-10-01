@@ -1,0 +1,48 @@
+Title: IBM WebSphere Test Environment fails to re-start when Microsoft Winsock Proxy Client is running in Microsoft Windows environment - United States
+
+Text:
+RAD; RSA ; WTE; restart; winsock; 1281376 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In IBM® Rational® Application Developer, the WebSphere® Test Environment fails to re-start when Microsoft® Winsock Proxy Client is running. 
+
+SYMPTOM
+WTE can be started in the first startup, however, when restarting WTE, exceptions will be thrown:
+
+[x/y/z 11:33:26:742 CST] 0000000a WsServerImpl E WSVR0009E: Error
+occurred during startup com.ibm.ws.exception.RuntimeError: com.ibm.ws.exception.RuntimeError:
+org.omg.CORBA.INTERNAL: CREATE_LISTENER_FAILED_4 vmcid: 0x49421000
+minor code: 56 completed: No
+
+CAUSE
+Microsoft Winsock Proxy Client forwards the packets of WTE to unknown destination and the packets cannot route back to the host machine.
+
+RESOLVING THE PROBLEM
+ 
+
+Disabling the Winsock Proxy client with a wspcfg.ini
+
+
+ 1. To prevent WebSphere Test Environment from accessing Winsock Proxy, create a file called wspcfg.ini with the following text in it:
+    
+    [java]
+    Disable=1
+    
+    
+ 2. Place the wspcfg.ini file in the same directory as the java.exe executable for WebSphere Test Environment (For example, C:\Program Files\IBM\Rational\SDP\6.0\runtimes\base_v6\java\bin & C:\Program Files\IBM\Rational\SDP\6.0\runtimes\base_v6\java\jre\bin ). 
+    
+    
+ 3. Restart the machine. If the root issue is caused by Winsock Proxy, WebSphere Test Environment should be able to restart at this stage.
+
+
+
+
+RELATED INFORMATION
+#Version 6.x of WTE stays in a Starting. . . state [http://www.ibm.com/support/docview.wss?uid=swg21207553]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect

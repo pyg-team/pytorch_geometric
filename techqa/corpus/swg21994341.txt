@@ -1,0 +1,35 @@
+Title: IBM MDM - WAS Secuirty LDAP setup - user id limited to 20 characters - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ WebSphere uses a fully qualified user name eg 317836260@devmaple.devfg.abc.com instead of a short one 317836260. If the short name is used then the same ID can have a collision with other domains and this does not meet our requirements.
+
+
+
+We need the userID@domain.com LDAP value to support the many different domains we have within the enterprise such user ID@saifg.abc.com, we need a proven solution to support this configuration. 
+
+CAUSE
+This is by design and is the default.
+
+ANSWER
+To accommodate larger strings, you may increase the length of this and other columns to a higher value from the database level. This wouldn't be approved as a defect, you could open an enhancement for future consideration, but the best way forward would be to increase it in the database directly.
+Future upgrades and patches will not restore the default and you will not lose any data. Let me know what you think and how you would like to proceed.
+
+We don't have documentation or scripts for doing so. IBM Services helps with customization, not IBM Support, but your DBA may be able to scan the database schema and onto the tables/index and then columns to identify last_update_user.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ MDM
+Master Data Management
+Master Data Management Advanced Edition
+Master Data Management Standard Edition
+Master Data Management Hybrid Edition
+MDM AE
+MDM SE
+MDMSE
+MDMAE
+MDS
+Master Data Service

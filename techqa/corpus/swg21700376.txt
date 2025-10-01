@@ -1,0 +1,29 @@
+Title: IBM Setting WebGUI server trace level to FINEST without restarting - United States
+
+Text:
+debug; detail TECHNOTE (FAQ)
+
+QUESTION
+ How do I set WebGUI server trace level to FINEST without restarting it? 
+
+CAUSE
+This helps the user avoid unnecessary server downtime if they set the trace level manually by editing server.init file.
+
+ANSWER
+Perform the following:
+
+1) As an administrator, log into the Tivoli Integrated Portal console. For TIP 2.x releases, after logging in navigate to Settings > WebSphere® Administrative Console. Click on "Launch WebSphere administrative console" button.
+2) Navigate to Troubleshooting -> Logs and Trace.
+3) Click on server1 and select Diagnostic Trace in the next page. 
+4) Click on the Runtime tab 
+
+Note: Configuration changes within the Runtime tab will apply to the TIP process that is currently running. Enabling tracing from the Runtime tab will keep tracing active until the next time the TIP server process is stopped.
+
+5) Increase the Maximum Number of Historical Files from 1 to 10. Click Apply.
+6) Select Change Log Detail Levels under Additional Properties.
+7) Ensure that you're still in the Runtime tab. Clear the string in the Groups box and replace it with the following:
+*=info:com.ibm.tivoli.ncw.*=finest:com.micromuse.dash.*=finest:com.micromuse.ncw.*=finest:com.micromuse.wave.*=finest
+
+8) Click Apply button.
+
+The ncw.X.trace file (where X is a number) located in tip_home_dir/profiles/TIPProfile/logs/ncw directory will start logging messages at the FINEST level.

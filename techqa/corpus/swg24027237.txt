@@ -1,0 +1,36 @@
+Title: IBM WebSphere ILOG Rule Team Server Fix Pack V7.1.1.1 - United States
+
+Text:
+Rule Team Server DOWNLOADABLE FILES
+
+ABSTRACT
+ This fix pack updates IBM WebSphere ILOG Rule Team Server V7.1 (7.1.0 or 7.1.1) to V7.1.1.1. 
+
+DOWNLOAD DESCRIPTION
+
+
+ This fix pack updates IBM WebSphere ILOG Rule Team Server V7.1 (7.1.0 or 7.1.1) to V7.1.1.1. 
+
+As described in the Technote "Incremental Installer for Fix Pack [http://www.ibm.com/support/docview.wss?uid=swg21456489]," the update for .NET users is available as a full product installer on Passport Advantage, whereas the update for J2EE users is supplied as an incremental installer on Passport Advantage and Fix Central. 
+
+ This fix pack is entitled. Only customers who have purchased WebSphere ILOG Rule Team Server V7.1 can download this fix pack. 
+
+PREREQUISITES
+Java customers need IBM WebSphere ILOG Rule Team Server V7.1.
+
+INSTALLATION INSTRUCTIONS
+
+
+Execute the product installer.
+
+Problems fixed with the V7.1.1.1 release for the BRMS products: Fix List for IBM Operational Decision Manager [http://www-01.ibm.com/support/docview.wss?uid=swg27023767].
+
+DOWNLOAD PACKAGE
+IBM WebSphere ILOG Rule Team Server V7.1.1.1
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options Rule Team Server for .NET 12/10/2010 Language Independent 3000000000 HTTP [http://www.ibm.com/support/docview.wss?uid=swg24026626] Rule Team Server for J2EE 12/10/2010 Language Independent 3000000000 HTTP [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+ILOG+Rule+Team+Server&release=All&platform=All&function=fixId&fixids=7.1.1.1-WebSphere-RTS-fp0001&includeRequisites=1&downloadMethod=http&source] 
+TECHNICAL SUPPORT
+ Passport Advantage Online support: http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html 
+
+PRODUCT ALIAS/SYNONYM
+ RTS

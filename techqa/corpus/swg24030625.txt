@@ -1,0 +1,72 @@
+Title: IBM FileNet P8 Platform V5.1 Documentation Updates - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document provides updates for your installed IBM® FileNet® P8 V5.1 information center. These updates have already been applied to the information center hosted on ibm.com. 
+
+DOWNLOAD DESCRIPTION
+The documentation update files available from this document include updates from several documentation refreshes as well as several security patches. 
+
+Note: Although the information center hosted on ibm.com was updated on 30 March 2012, these March updates are not currently included in the documentation update file available from this document.
+
+23 November 2012 updates:
+
+Documentation for IBM Enterprise Records Version 5.1.1 now available in a separate download (p8docs510_ier511_11_23_2012.zip).
+
+14 November 2011 updates:
+
+For most of the changed topics, the updates include: 
+
+ * Fixes that correct known issues and other errors. 
+ * Changes to the product name for IBM InfoSphere® Enterprise Records, which is now named IBM Enterprise Records. 
+ * Deprecation notices for IBM FileNet Legacy Content Search Engine. 
+   
+
+In addition, the updates include:  * Content Engine administration – added a new topic, "Conversion of mapped property values," which defines the data type conversion rules for IBM FileNet CFS for Content Integrator; updated the description of the license terms for use of IBM Content Engine Bulk Import Tool. 
+ * IBM Content Search Services troubleshooting – added a new topic, "Checking IBM Content Search Services for common errors." 
+ * IBM ECM Widgets installation – added a new planning topic. 
+ * Performance tuning – added IBM Content Manager tuning topics. 
+ * Process Engine Web Service documentation - added new methods from Fix Pack 5.0.0.1-P8PE-FP001 and supporting updates. 
+ * IBM Forms – added documentation for IBM Forms, which is now bundled with IBM FileNet Business Process Manager with limited use license terms. 
+
+
+Note: IBM FileNet Business Process Manager Version 5.1 was released on 21 October 2011. This release delivers a new bundled offering as well as improved support for IBM Case Manager. However, there are no documentation changes for the release, and the Process Engine, Case Analyzer, and Process Simulator software versions remain at V5.0. 
+
+5 August 2011 updates: 
+ * Updated documentation for IBM Enterprise Records. 
+ * Corrected the Japanese and Spanish translations of the IBM FileNet Workplace XT V1.1.5 user help. 
+
+20 January 2014 update:  * Fix for cross-site scripting vulnerability in the IBM FileNet P8 Platform Documentation Installable Info Center (see the security bulletin at http://www.ibm.com/support/docview.wss?uid=swg21662360 [http://www.ibm.com/support/docview.wss?uid=swg21662360] for more information) 
+
+INSTALLATION INSTRUCTIONS
+To install the documentation updates or the cross-site scripting vulnerability fix, extract the files from your information center WAR file and add the new plug-ins to the information center structure. Re-create the WAR file, clear the information center cache, and redeploy your information center. 
+
+Security patch installation: 
+
+ 1. Expand the existing p8docs.war file to a working directory. 
+ 2. Download the security patch using the link below. 
+ 3. Unzip the security patch and copy the resulting files to the directory where you expanded p8docs.war. 
+ 4. Re-create the p8docs.war file. 
+ 5. Replace the original p8docs.war file with the one you created in the previous step.
+
+
+For detailed instructions on how to update your information center, see the following links. URL LANGUAGE SIZE(Bytes) Updating the information center [http://publib.boulder.ibm.com/infocenter/p8docs/v5r1m0/topic/com.ibm.p8toc.doc/updatingwar.htm] English 100 Preventing errors on JBoss [http://www.ibm.com/support/docview.wss?rs=86&uid=swg27020336] English 100 
+DOWNLOAD PACKAGE
+The documentation updates are available as a compressed file. You must have FTP access available in order to download the file. Note that the file might take a while to download. 
+
+Download the p8docs510_refresh_11_14_2011.zip [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/p8doc/51x/p8docs510_refresh_11_14_2011.zip] 
+
+Download the p8docs510_ier511_11_23_2012.zip [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/p8doc/51x/p8docs510_ier511_11_23_2012.zip] 
+
+Download the p8docs510_xss_vulnerability_01_20_2014.zip [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/p8doc/51x/p8docs510_xss_vulnerability_01_20_2014.zip] 
+
+
+
+Download the security_patch_iehs_3.4.2.v20121022-1748.zip [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/p8doc/51x/security_patch_iehs_3.4.2.v20121022-1748.zip]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management FileNet eForms Eforms for P8 Enterprise Content Management Enterprise Records Enterprise Content Management Case Foundation Business Process Manager

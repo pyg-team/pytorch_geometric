@@ -1,0 +1,82 @@
+Title: IBM Rational ClearQuest 8.0 - United States
+
+Text:
+CQ; clearquest; download DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM Rational ClearQuest 8.0 has been made generally available on the IBM Passport Advantage Web site. 
+
+DOWNLOAD DESCRIPTION
+
+
+TAB NAVIGATION
+ * 8.0- selected tab,
+ * Support Resources [http://ibm.com/support/docview.wss?uid=swg27020747]
+
+
+
+
+This release is a full product download. 
+
+ * Passport Advantage clients: Passport Advantage and Passport Advantage Express clients are required to sign in to Passport Advantage Online [https://www.ibm.com/software/howtobuy/softwareandservices/passportadvantage] to download the image.
+   
+   
+ * Non-Passport Advantage clients: If your organization did not purchase your software and support through Passport Advantage or Passport Advantage Express, you are required to sign in to the new IBM Software Group OEM Portal [https://www.ibm.com/software/howtobuy/softwareandservices/oem] to download the image.
+   
+   Note: This includes clients with Flexible Contract Type (FCT) license purchases and IBM Business Partners.
+   
+   For assistance with the IBM Software Group OEM Portal, visit the eCustomer care [https://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html] page.
+   
+   
+
+
+PREREQUISITES
+
+
+Supporting Documentation Document Description Release information [http://www.ibm.com/support/docview.wss?uid=swg21505466] A description of the new features, known restrictions and links to other important information. Detailed System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27023170] A detailed list of the supported hardware, operating systems and information related to IBM and third party software requirements. Information Center [http://publib.boulder.ibm.com/infocenter/cqhelp/v8r0m0/index.jsp] Browse or search on-line information related to the deployment, configuration and usage of the product. 
+INSTALLATION INSTRUCTIONS
+Review the Information Center for installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Installation instructions [http://publib.boulder.ibm.com/infocenter/cqhelp/v8r0m0/index.jsp?nav=/1] English 1 
+DOWNLOAD PACKAGE
+Passport Advantage and Passport Advantage Express clients are required to sign in to Passport Advantage Online [https://www.ibm.com/software/howtobuy/softwareandservices/passportadvantage] to download the image.
+
+TECHNICAL SUPPORT
+ 
+
+TAB NAVIGATION
+ * General Support Information- selected tab,
+ * Support Portal [http://www.ibm.com/software/rational/support/]
+ * developerWorks [http://www.ibm.com/developerworks/rational/]
+ * Jazz Community [http://jazz.net/]
+
+
+
+
+IBM Rational Software Support Communities 
+
+ * Support Portal: Click the Support Portal tab above to begin configuring your support portal experience to review FAQs, lists of known problems, fixes, and a wealth of important support information. 
+ * developerWorks: Click the developerWorks tab above to access an online collection of tutorials, sample code, standards, forums and other resources provided by experts at IBM to assist software developers using Rational tools including access to the IBM RFE Community [http://www.ibm.com/developerworks/rfe/]. 
+ * Jazz Community: Click the Jazz Community tab above if you are using one of the Rational tools created using the Jazz platform to interact directly with the Jazz development teams and other community members, download product trials and betas and track developement progress. 
+
+
+
+
+HELPFUL HINTS FOR OBTAINING TECHNICAL ASSISTANCE:
+Before you contact IBM Rational Software Support, gather the background information that you need to describe the problem. When you describe a problem to an IBM software support specialist, be as specific as possible and include all relevant background information so that the specialist can help you solve the problem efficiently. To save time, know the answers to these questions: 
+
+ * What software versions were you running when the problem occurred? 
+ * Do you have logs, traces, or messages that are related to the problem? 
+ * Can you reproduce the problem? If so, what steps do you take to reproduce it? 
+ * Is there a workaround for the problem? If so, be prepared to describe the workaround. 
+
+If you have helpful information to diagnose or identify the problem on your system, you can provide this data by following the instructions to exchange information with IBM Technical Support [http://www.ibm.com/software/support/exchangeinfo.html]. 
+
+ 
+
+Follow IBM Rational Client Support on Twitter [http://twitter.com/rationalsupport] | Facebook [http://facebook.com/rationalsupport] | YouTube [http://www.youtube.com/ibmrationalsupport] | devWorks Blog [https://www.ibm.com/developerworks/mydeveloperworks/blogs/nfrsblog/?lang=en]
+
+
+
+
+ Back to top

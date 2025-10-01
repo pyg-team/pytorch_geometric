@@ -1,0 +1,170 @@
+Title: IBM IZ74620: CHANGING A SR STATUS OUT OF BAND MAKES TSAM ESCALATION FAIL. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a management plan completed TSAM sets the status of the
+   service request that has triggered the management plan to
+   CLOSED.  In the case the status was already changed outside of
+   TSAM using the Service Request Manager an error can occur that
+   makes a TSAM escalation fail.
+   
+   The error shown in SystemOut.log is
+   BMXAA4301E - Ticket 3550 is in history and must remain unchanged
+   followed by the SQL exception
+   com.ibm.db2.jcc.b.SqlException: [jcc][t4][10120][10898][3.53.70]
+   Invalid operation: result set is closed. ERRORCODE=-4470,
+   SQLSTATE=null
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  From Service Request (= Ticket) 3550 you can navigate to the
+   related workorder and from the workorder back to the Service
+   Instance.  To see the status of all related workorders, issues
+   the following two queries on the db:
+   
+   1.) db2 "select wonum from maximo.woancestor where ancestor =
+   '<workorder Number>'"
+   2.) db2 "select w.wonum, w.siteid, w.status, e.wfintstatus from
+   workorder w, pmzhbwlswoex e where w.siteid = e.siteid and
+   w.wonum = e.wonum and w.wonum in ('23149','23151','23152')"
+   
+   Replace the numbers in the list of the second query with the
+   ones you get from the first one.  Then change  the status of
+   the workorders listed in the second query to 'COMP'
+   (workorder - status) and 'COMPLETED' (pmzhblswoex -
+   wfintstatus).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Tivoli Service Automation
+   Manager 7.2.0.0, 7.2.0.1 and 7.2.0.2
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If a service request got closed out of
+   band, an exception is thrown when TSAM tries to close the same
+   service request after an automated task got fulfilled.
+   If the error occurs TSAM stops fulfilling new service requests.
+   The exception is showing up in the Websphere logs repeatedly
+   (also after restarting the server).
+   ****************************************************************
+   * RECOMMENDATION:
+   The situation can be avoided by not changing the status of a
+   service requests fulfilled by TSAM manually.
+   
+   Apply TSAM 7.2 Fixpack 3.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When TSAM tries to close the service request, the status change
+   is written into the work log of the service request. Logging is
+   not allowed if the service request is already closed. The APAR
+   makes TSAM check the status of the SR before trying to close it
+   and to write into the work log.
+   
+   
+   The fix for this APAR is contained in the following
+   maintenance
+   packages:
+   
+   | fix pack | 7.2.0-TIV-TSAM-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ74620
+   
+   
+ * REPORTED COMPONENT NAME
+   TSAM (& INSTALL
+   
+   
+ * REPORTED COMPONENT ID
+   5724W7800
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-14
+   
+   
+ * CLOSED DATE
+   2010-05-26
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSAM (& INSTALL
+   
+   
+ * FIXED COMPONENT ID
+   5724W7800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

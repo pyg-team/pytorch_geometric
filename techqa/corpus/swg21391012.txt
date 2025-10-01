@@ -1,0 +1,36 @@
+Title: IBM (KMQW000W)2035-Not Authorized Returned in the Queue Messages Workspace - United States
+
+Text:
+KMQW000W 2035 Not Authorized Queue Messages QACCESS USEQACCESS 5724K3500TR TECHNOTE (FAQ)
+
+QUESTION
+ Why do you get the "(KMQW000W)2035-Not Authorized" error in the Queue Messages workspace? 
+
+CAUSE
+The MQ Monitoring agent tries to access the queue messages information for the selected queue with the TEP user id which does not have the required mqm authority on agent host.
+
+ANSWER
+You can use the MSGACCESS parameter (at the QMGR and GROUP level) and SET QACCESS monitoring settings in the agent cfg file so that access to the WMQ Messages is granted accordingly. 
+
+ 
+Please refer to ITCAM/OMEGAMON XE for MQ Monitoring Agent User Guide for details regarding the SET QACCESS statement.
+
+For example, the below MSGACCESS and SET QACCESS settings uses MQAGENT authority to access MQ Messages in all queue. And with 'MSGACCESS(DELETE)', any TEP user has full access to queue messages including DELETE.
+************************************************************
+SET GROUP NAME (GROUP1) -
+DEFAULT(YES) -
+COMMAND (YES) -
+MSGACCESS(USEQACCESS) -
+EVENTS(REMOVE)
+SET MANAGER NAME(QM1) GROUP(GROUP1)
+SET QACCESS NAME(*) MSGAUTHUSERS(*) MSGACCOUNT(MQAGENT) -
+MSGACCESS(DELETE) MGRNAME(QM1)
+SET QUEUE NAME(*) MGRNAME(QM1)
+SET CHANNEL NAME(*) MGRNAME(QM1)
+PERFORM STARTMON SAMPINT(300) HISTORY(NO)
+************************************************************
+
+For instructions about changing monitoring options for each supported system, please refer to ITCAM/OMEGAMON XE for MQ Monitoring Agent User Guide (Chapter 2. "Customizing monitoring options" - "Changing monitoring options" section).
+
+RELATED INFORMATION
+ Changing Monitoring Options [https://www.ibm.com/support/knowledgecenter/SS3JRN_7.2.1.1/com.ibm.itcama.doc_7.2.1.1/kmq_userguide/t_changemonioptn.html ]

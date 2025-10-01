@@ -1,0 +1,227 @@
+Title: IBM JR47500: INVALID CDATA STRING IN JAVASCRIPT MAY RESULT IN java.lang.OutOfMemoryError AND HIGH CPU USAGE - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.5.1.2-WS-BPM-IFJR47500 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=7.5.1.2-WS-BPM-IFJR47500&source=SAR]
+Version 8.0.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035701]
+Version 8.5.0 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035702]
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  BPM process containing javascript which attempts to serialize
+   or deserialize String data that contains incorrect CDATA form
+   (e.g missing "]]>" from <![CDATA[sometext]]>) may result in
+   high memory usage and CPU consumption if the process is
+   allowed to continue.
+   .
+      This is what the heapdump would show in terms of the memory
+   usage.
+   .
+   A Linked List Data Structure Detected.
+   4,591,895,664 bytes (78.34 %) of Java heap is used by 95,664,492
+   instances of java/util/LinkedList$Link
+   Contains the following object:
+   - 95,664,491 instances of
+   com/lombardisoftware/core/VariableObjectSerializer$CDATALocation
+   holding 2,295,947,784 bytes
+   
+   4,591,895,712 [24] 2 java/util/LinkedList$Link 0x4b188c38
+   |- 4,591,895,640 [24] 3 java/util/LinkedList$Link 0x4b189330
+   |  |- 4,591,895,592 [24] 3 java/util/LinkedList$Link 0x4b189390
+   |  |  |- 4,591,895,544 [24] 3 java/util/LinkedList$Link
+   0x4b189468
+   |  |  |- 24 [24] 1
+   com/lombardisoftware/core/VariableObjectSerializer$CDATALocation
+   0x4b189450
+   |  |  |- 4,591,895,640 [24] 3 java/util/LinkedList$Link
+   0x4b189330
+   |  |- 24 [24] 1
+   com/lombardisoftware/core/VariableObjectSerializer$CDATALocation
+   0x4b189378
+   |  |- 4,591,895,712 [24] 2 java/util/LinkedList$Link 0x4b188c38
+   |- 48 [24] 3 java/util/LinkedList$Link 0x1aced9f50
+   .
+   .--------------------------------------------
+      This java exception may be logged as well
+   java.lang.OutOfMemoryError
+    at java.lang.Object.clone(Native Method)
+    at java.lang.reflect.Method.getParameterTypes(Method.java:265)
+    at
+   com.lombardisoftware.utility.spring.TransactionInterceptor.invok
+   e(TransactionInterceptor.java:37)
+    at
+   org.springframework.aop.framework.ReflectiveMethodInvocation.pro
+   ceed(ReflectiveMethodInvocation.java:171)
+    at
+   com.lombardisoftware.utility.spring.CoreEntryInterceptor.invoke(
+   CoreEntryInterceptor.java:44)
+    at
+   com.lombardisoftware.utility.spring.PSCoreEntryInterceptor.invok
+   e(PSCoreEntryInterceptor.java:14)
+    at
+   org.springframework.aop.framework.ReflectiveMethodInvocation.pro
+   ceed(ReflectiveMethodInvocation.java:171)
+    at
+   org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkD
+   ynamicAopProxy.java:204)
+    at $Proxy29.findByFilter(Unknown Source)
+    at
+   com.lombardisoftware.server.ejb.persistence.PersistenceServicesB
+   ean$6.execute(PersistenceServicesBean.java:122)
+    at
+   com.lombardisoftware.server.ejb.persistence.PersistenceServicesB
+   ean$6.execute(PersistenceServicesBean.java:120)
+    at
+   com.lombardisoftware.server.ejb.EjbServerUtils.handleEjbCall(Ejb
+   ServerUtils.java:90)
+    at
+   com.lombardisoftware.server.ejb.persistence.PersistenceServicesB
+   ean.handleEjbCall(PersistenceServicesBean.java:49)
+    at
+   com.lombardisoftware.server.ejb.persistence.PersistenceServicesB
+   ean.findByFilter(PersistenceServicesBean.java:120)
+    at
+   com.lombardisoftware.server.ejb.persistence.EJSRemoteStatelessPe
+   rsistenceServices_ccd74654.findByFilter(Unknown Source)
+    at
+   com.lombardisoftware.server.ejb.persistence._PersistenceServices
+   _Stub.findByFilter(_PersistenceServices_Stub.java:546)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Correct the invalid CDATA tags.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  BPM user on v8.0.1.1                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Invalid CDATA string in javascript      *
+   *                      may result in OutOfMemory error and     *
+   *                      high CPU usage.                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Incorrect form of CDATA string in javascript can cause
+   OutOfMemory error and high CPU usage.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been corrected to recognize the invalid CDATA
+   string. ‚   When an invalid CDATA string is encountered, the BPM
+   engine will issue a WARNING message, and the invalid CDATA
+   string will be omitted from the serialized output.
+   
+   Install/Dependency information is available in the readme.txt
+   on FixCentral. When the user goes to the download files page
+   in FixCentral, the readme will be available with the fix
+   package as a separate download.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  The CDATA string should be corrected to have the proper end
+   tag "]]>". ‚   This will avoid the problem.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR47500
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-12
+   
+   
+ * CLOSED DATE
+   2013-08-23
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

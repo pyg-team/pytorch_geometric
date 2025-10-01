@@ -1,0 +1,34 @@
+Title: IBM JDBC Type 2 connection experiences DRDA Data Stream Syntax Error after DB2 upgrade - United States
+
+Text:
+JDBC; JCC; Type 2; distribution protocol error; deallocation; DRDA; Data Stream Syntax Error; db2jcc.jar; StaleConnectionException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading the local DB2 server or IBM Data Server client, a Type 2 connection using the IBM Data Server Driver for JDBC and SQLJ may fail with an exception similar to the following: 
+
+SYMPTOM
+[jcc][2034][11148][3.53.70] Execution failed due to a distribution protocol error that caused deallocation of the conversation. A DRDA Data Stream Syntax Error was detected. Reason: 0x1. ERRORCODE=-4499, SQLSTATE=58009
+
+
+CAUSE
+For a Type 2 (native) connection, the driver JAR file (db2jcc.jar or db2jcc4.jar) and the local DB2 instance need to be at compatible product levels, since the DB2 native libraries are loaded by the driver. If this is not the case, unpredictable results, including the above protocol exception, may occur.
+
+RESOLVING THE PROBLEM
+Please take the following steps:
+
+
+ 1. Search the application class path for all copies of db2jcc.jar (or db2jcc4.jar). Only one (1) copy of the JAR file should be in the application class path. It is recommended that this file be loaded from <instance_home>sqllib/java on Linux/Unix, or from <DB2_install_path>\sqllib\java directory on Windows systems.
+    
+ 2. Verify the version of the JDBC driver:
+    java -cp <classpath> com.ibm.jcc.DB2Jcc -version
+    
+ 3. Verify the version and Fixpack level of the DB2 instance:
+    db2level
+    
+ 4. Compare the JDBC driver level and the DB2 instance db2level to the list of compatible DB2 and JDBC driver versions [http://www-01.ibm.com/support/docview.wss?uid=swg21363866]
+    
+ 5. Replace the current driver JAR file in order to match the DB2 instance's product level, if necessary.
+
+RELATED INFORMATION
+ IBM DB2 JDBC Driver Versions [http://www.ibm.com/support/docview.wss?uid=swg21363866]
+Installing the IBM Data Server Driver for JDBC and SQLJ [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_t0010264.html]

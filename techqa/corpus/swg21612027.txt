@@ -1,0 +1,81 @@
+Title: IBM Extended agent for Oracle, Adding bundle to agent depot - United States
+
+Text:
+5724V09ORTR; 5724V09OR TECHNOTE (FAQ)
+
+QUESTION
+ For agent depot located on Unix system, what are the steps to add ITCAM Extended agent for Oracle, V6.3.1 (product code RZ) bundles for Unix and Windows platforms? 
+
+CAUSE
+The steps to add agent bundles for Unix and Windows platforms are different.
+
+ANSWER
+ 
+
+I) Steps to add bundles for Unix and Linux platforms:
+
+Use install.sh in the Extended Oracle Agent V6.3.1 product CD and select following option:
+
+2) Install products to depot for remote deployment (requires TEMS).
+
+Please enter a valid number: 2
+
+A list of products available for remote deployment will be displayed. Navigate using "F) Forward page" option to display the list of RZ agent bundles for Unix platforms. Note that this list does not include agent bundle for Windows platform. See section II) for adding Windows bundles.
+Select options you want to install from the displayed list and follow prompts to install the required bundles.
+
+The following product packages are available for depot installation:
+
+Code Decription(version) [base platform:supported platforms]
+
+1) ax IBM Tivoli Monitoring Shared Libraries(06.22.02.000) [aix523:aix523,aix533]
+2) ax IBM Tivoli Monitoring Shared Libraries(06.22.02.000) [aix526:aix526,aix536]
+...
+
+42) rz Monitoring Agent for Oracle Database Extended(06.31.00.000) [aix523:aix523,aix533]
+...
+53) rz Monitoring Agent for Oracle Database Extended(06.31.00.000) [sol606:sol606]
+
+II) Steps to add bundles for Windows platform:
+
+Agent bundles for Windows platform are located in WINDOWS/Deploy directory in the CD image. Use tacmd addbundles command specifying path to Windows bundle with '-i' option on the command line. For example:
+
+[root]:CZJ9CML>/opt/IBM/ITM/bin/tacmd addbundles -i ./WINDOWS/Deploy -t rz
+
+KUICAB023I: Are you sure you want to add the following bundles to the /opt/IBM/ITM/tables/HUBCAM/depot depot?
+
+Product Code : RZ
+Deployable : True
+Version : 063100000
+Description : Monitoring Agent for Oracle Database Extended
+Host Type : WIX64
+Host Version : WIX64
+Prerequisites:
+
+Product Code : RZ
+Deployable : True
+Version : 063100000
+Description : Monitoring Agent for Oracle Database Extended
+Host Type : WINNT
+Host Version : WINNT
+Prerequisites:
+
+KUICAB024I: Enter Y for yes or N for no: Y
+
+KUICAB020I: Adding bundles to the /opt/IBM/ITM/tables/HUBCAM/depot depot. The time required to complete this operation depends on the number and size of the added bundles.
+
+KUICAB022I: The following bundles were successfully added to the /opt/IBM/ITM/tables/HUBCAM/depot depot:
+
+Product Code : RZ
+Deployable : True
+Version : 063100000
+Description : Monitoring Agent for Oracle Database Extended
+Host Type : WIX64
+Host Version : WIX64
+Prerequisites:
+
+Product Code : RZ
+Deployable : True
+Version : 063100000
+Description : Monitoring Agent for Oracle Database Extended
+Host Type : WINNT
+Host Version : WINNT

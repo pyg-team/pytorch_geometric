@@ -1,0 +1,20 @@
+Title: IBM LDAP Users suite roles are lost in InformationServer Console - United States
+
+Text:
+LDAP users suite roles TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Suite Roles are lost for LDAP users in InformationServer Console 
+
+SYMPTOM
+LDAP users lose all roles for no apparent reason
+
+
+CAUSE
+In an LDAP configuration where the LDAP users are assigned roles in the InformationServer Web console. The LDAP Distinguished Name is used in the XMETA repository to store the user's suite roles. The repository is linked to the LDAP repository which is controlled by the Websphere Application Server registry settings. 
+
+RESOLVING THE PROBLEM
+If the Distinguished Name is changed on the LDAP Server by any means, like changing the case of any attribute, or adding or removing any attribute, changing groups, etc, the Distinguished Name will not match what we have stored in the XMETA repository and the changed value will be assumed to be a new user by InformationServer. To the administrator it would seem to be the same user and look like all the roles are just dropped, thus requiring you to setup the user again. 
+
+
+Work around: have roles assigned (inherited) by LDAP groups instead of assigned to each individual user.

@@ -1,0 +1,60 @@
+Title: IBM ITCAM4Tx : Use arm4test with Robotic Response Time agent - United States
+
+Text:
+arm .dat empty blank workspace robotic armtest arm4test 71RRT-CONF; 71RRT-DCOLL; 71RRT-RPTG; 71RRT-WV; 71RRT-TS TECHNOTE (FAQ)
+
+QUESTION
+ How do you use the "arm4test" tool to verify if arm libraries and configuration are correct. 
+
+CAUSE
+You do not see any ARM_xxxx.dat file on the robotic (t6) agent.
+If using arm4test does not show the expected result, the origin of the problem is very likely a issue with old arm libraries present on the agent system.
+
+Symptom : You enabled a robotic application with a script to be played back using a robotic response time profile, but the Robotic Response Time "Applications" and "Transactions" workspaces in TEP are empty, although the "Playback Status" workspace in TEP is showing, that your robotic script name Last Run Status is complete.
+
+
+ANSWER
+From the TEP, launch the AMC (Application Management Configuration) Editor, and go to Applications, 
+
+1) create a new application : 
+
+e.g. Application Name = arm4test 
+
+2) Then create a new Transaction associated to your newly created application 
+
+e.g Application Name = arm4test 
+
+Transaction Name = arm4test 
+
+Agent Type = Robotic Response Tine 
+
+Transaction Type = Command line 
+
+3) In the Command line details, set the Command to invoke field; make sure you set up here the right path to arm4test script. In v7.4 arm4test script is coming with Tx Collector (tu) agent included in ITCAM for Transactions Tracking installation package. 
+
+e.g C:\IBM\ITM\TMAITM6\tusupport\arm4test /ap /an=test /tn=test /wm=3000 
+
+success return code = 0 
+
+concurrent CLI Playback = true 
+
+4) To finish, while using the AMC Editor, create a profile of type "Robotic Response Time", where you add in it the transaction you previously created 
+
+e.g. arm4test 
+
+and you distribute this profile to the target RRT T6 player agent hostname, using the Distribution tab info. 
+
+ 
+
+If the agent installation is correct, and there is no conflict with old arm libraries (check for example C:/Windows/system32 directory, it should not contain any arm dll), and provided that you have no filtering in place (check in the Clients entries, using the AMC Editor, that you have a "All Clients" client group name, with filter set with ip value *, Type Include). You should then see response time values and entries associated to your "arm4test" application in TEP robotic "Applications" workspace, as well as arm .dat file created in <ITM_HOME>\TMAITM6\arm\log\kt6 directory, example of file name : ARM_<timestamp>.dat 
+
+If that still does not work, refer to the related url:
+
+RELATED INFORMATION
+ No T6 data in TEPS [http://www.ibm.com/support/docview.wss?uid=swg21396484]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itcam ITCAMfT TCAMfT CAMfT ITCAMfTRANSACTIONS ITCAM4TRANSACTIONS

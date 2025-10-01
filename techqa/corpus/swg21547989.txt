@@ -1,0 +1,78 @@
+Title: IBM Checking the UNIX return code from Connect:Direct shell script - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ How do I check the UNIX return code from Connect:Direct shell script? 
+
+ANSWER
+Check the $? variable. Use a command like this immediately after the EOF of the "here document":
+x=$? 
+
+However be aware that Connect:Direct for UNIX reinterprets return codes to fit a particular scheme. Connect:Direct can issue return codes of 0, 4, 8 and 16 to represent good, warning, error and catastrophic error, respectively. Thus, return codes from run tasks will be re-interpreted to fit that scheme. 
+
+Run task completion codes will generate the $? variable as follows: 
+
+ * 
+ * 
+ * 
+ * 
+
+
+For UNIX run task scripts that generate a Completion Code (CC) of 4 or less, you must perform additional tasks to make the $? non-zero. In the Connect:Direct Process after the run task, add an "if" step that checks the CC of the run task step. If the return code is 4 or less, program it to execute another run task script on the PNODE that only has a statement of exit 5. Then the $? Variable is set to 8 when exiting the Connect:Direct part of the UNIX script. 
+
+EXAMPLE 
+#running this script will generate a $? Of 8
+/cdunix/ndm/bin/direct -x << EOJ
+submit maxdelay=00:00:30 proc1 process snode=l1aix1.cd.v3301
+step01 run task snode sysopts="/home/acme1/scrpt"
+step01a if (step01 lt 5) then
+step02 run task snode sysopts="/home/acme1/setcc"
+eif
+PEND;
+EOJ
+x=$?
+echo $x
+
+
+Here is an example of the results of running these example scripts:
+$ more scrpt
+exit 2 
+
+
+$ more setcc
+exit 5 
+
+The return code for a process is stored in the $? variable within the ksh or sh if the maxdelay=hh:mm:ss parameter is in the process. The maxdelay paramter is designed to force the submit command to wait until the process has completed or the assigned time has expired before returning control back to the shell. Additionally it stores the rc of a process in the $? variable for the ksh and sh. Below is a script that echos the rc for a process back to STDOUT 
+#!/bin/sh
+#
+# This script invokes the Connect:Direct for UNIX CLI
+# and submits a process inline to copy a file to a remote
+# node.
+#
+SNDE=meg.cd.v3401
+export NDMAPICFG=/home/cd3401/cdunix/ndm/cfg/cliapi/ndmapi.cfg
+set -v
+/home/cd3401/cdunix/ndm/bin/direct -x << EOJ
+submit maxdelay=00:00:01 proc1 process snode=$SNDE
+step1 copy from (file=/home/cd3401/cdunix/mycpio.gz)
+to (file=/tmp/cddelete.me)
+pend ;
+EOJ
+echo $?
+
+
+Upon completion a Connect:Direct process will return 1 of 4 return codes
+0 success
+4 warning 
+8 failure
+16 catastrophic failure
+
+
+
+
+HISTORICAL NUMBER
+ PRI1963
+SCI32788
+7.0.11382513.2746831

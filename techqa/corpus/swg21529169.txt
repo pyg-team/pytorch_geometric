@@ -1,0 +1,31 @@
+Title: IBM What does the global key startup message mean? (SCI12303) - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ What does the global key startup message mean? (SCI12303) 
+
+ANSWER
+The global key is created when the steps are taken to do batch and RSD password encryption. If this encryption is not used the system generates a message that there is no global key, for this situation the message can be ignored. There
+is no way to disable the message if encryption is not chosen. For further information on batch and RSD encryption see the section in the "CONNECT:Enterprise for UNIX System Administrator's Guide" about the ceukey command.
+
+ 
+
+HISTORICAL NUMBER
+ PRI28663 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Connect:Enterprise for UNIX 
+SCI12303
+
+
+Goal
+
+
+FAQ: What does the global key startup message mean?

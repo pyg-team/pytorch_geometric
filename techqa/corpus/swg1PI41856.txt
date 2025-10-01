@@ -1,0 +1,184 @@
+Title: IBM PI41856: FILES IN VAR/SA/DIALOGUE DIRECTORY ARE NOT DELETED WHEN THE REQUEST TIMES OUT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Starting in 6.1.0.4, plugin steps are failed if the agent does
+   not send an acknowledgement that the server's request for a step
+   was received within a specified time frame (default is 30
+   seconds). When these plugin steps fail, the dialogue related to
+   them is not cleaned up properly, which causes the
+   var/sa/dialogue directory on the server to fill up with entries.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If there are too many entries in the var/sa/dialogue directory,
+   you can:
+   1. Make sure that there are no processes or version imports
+   running. (Consider using maintenance mode to allow currently
+   running processes to finish without allowing new processes to be
+   started.)
+   2. Stop the server.
+   3. Delete all entries in the var/sa/dialogues directory.
+   4. Start the server.
+   
+   Do not attempt to delete dialogue files while processes are in
+   progress.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Starting in 6.1.0.4, plugin steps are failed if the agent    *
+   * does                                                         *
+   * not send an acknowledgement that the server's request for a  *
+   * step                                                         *
+   * was received within a specified time frame (default is 30    *
+   * seconds). When these plugin steps fail, the dialogue related *
+   * to                                                           *
+   * them is not cleaned up properly, which causes the            *
+   * var/sa/dialogue directory on the server to fill up with      *
+   * entries.                                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to UCD version 6.1.1.6                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in UCD version 6.1.1.6
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI41856
+   
+   
+ * REPORTED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * REPORTED COMPONENT ID
+   5725M5400
+   
+   
+ * REPORTED RELEASE
+   611
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-05-27
+   
+   
+ * CLOSED DATE
+   2015-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * FIXED COMPONENT ID
+   5725M5400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP
+   
+   
+ * R600 PSY
+   UP
+   
+   
+ * R601 PSN
+   UP
+   
+   
+ * R601 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R610 PSY
+   UP
+   
+   
+ * R611 PSN
+   UP
+   
+   
+ * R611 PSY
+   UP

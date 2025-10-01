@@ -1,0 +1,71 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities in IBM Java Runtime affect IBM® SPSS Statistics Server - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There are multiple vulnerabilities in IBM® Runtime Enviornment Java™ Technology Edition, Version 6, 7, 7R1, and 8 used by IBM® SPSS Statistics Server. These issues were disclosed as part of the IBM Java SDK updates in April 2018. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2018-2783 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2783]
+DESCRIPTION: An unspecified vulnerability related to the Java SE Security component could allow an unauthenticated attacker to cause high confidentiality impact, high integrity impact, and no availability impact.
+CVSS Base Score: 7.4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/141939 [https://exchange.xforce.ibmcloud.com/vulnerabilities/141939] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM SPSS Statistics 21.0.0.2
+IBM SPSS Statistics 22.0.0.2
+IBM SPSS Statistics 23.0.0.3
+IBM SPSS Statistics 24.0.0.2
+IBM SPSS Statistics 25.0.0.1
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix IBM SPSS Statistics
+IBM SPSS Statistics Server 21.0.0.2 None * See Note Below IBM SPSS Statistics
+IBM SPSS Statistics Server 22.0.0.2 None * See Note Below IBM SPSS Statistics
+IBM SPSS Statistics Server 23.0.0.3 None Install Statistics 23 FP003 IF014 [https://www.ibm.com/support/fixcentral/swg/downloadFixes?parent=SPSS&product=ibm/Information+Management/SPSS+Statistics&release=23.0.0.3&platform=All&function=fixId&fixids=23.0-IM-S23STAT-ALL-FP003-IF014&includeRequisites=1&includeSupersedes=0&downloadMethod=http] IBM SPSS Statistics
+IBM SPSS Statistics Server 24.0.0.2 None Install Statistics 24 FP002 IF011 [https://www.ibm.com/support/fixcentral/swg/downloadFixes?parent=SPSS&product=ibm/Information+Management/SPSS+Statistics&release=24.0.0.2&platform=All&function=fixId&fixids=24.0-IM-S24STAT-ALL-FP002-IF011&includeRequisites=1&includeSupersedes=0&downloadMethod=http] [http://www.ibm.com/support/docview.wss?uid=swg24043574] IBM SPSS Statistics
+IBM SPSS Statistics Server 25.0.0.0 None Install Statistics 25 FP001 IF007 [https://www.ibm.com/support/fixcentral/swg/downloadFixes?parent=SPSS&product=ibm/Information+Management/SPSS+Statistics&release=25.0.0.1&platform=All&function=fixId&fixids=25.0-IM-S25STAT-ALL-FP001-IF007&includeRequisites=1&includeSupersedes=0&downloadMethod=http] For SPSS Statistics Server Version 20 and earlier, IBM recommends upgrading to a fixed, supported version/release/platform of the product. 
+
+ 
+
+* Note: 
+
+SPSS Statistics Server V21 & V22 users can receive a free complementary upgrade to SPSS Statistics Server 25 edition. This will include upgrades of both the version 21/22 Server and all connected version 21/22 clients. The upgrade will be a 1:1 upgrade, meaning equal server PVUs, client users, and module/bundle functionality. The offer is available now until 30 Sep 2018. SPSS Statistics 25 is a major upgrade from versions 21 or 22, with major features, better reliability, and improved security. 
+
+Contact SPSS Statistics Product Support [https://www.ibm.com/mysupport/s/topic/0TO500000001xpQGAQ/1742fe293dcd33daef1b0d51618ce39dspss-statistics?language=en_US&productId=01t50000004XAyOAAW], login with your IBMid, and open a new Support ticket citing this Security Bulletin to take advantage of this offer.
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 13 June 2018: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics IBM SPSS Statistics

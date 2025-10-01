@@ -1,0 +1,68 @@
+Title: IBM Using cross reference in a DVS scenario - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When entering ruleset parameters, which use cross reference in the object model, into an Excel scenario file, Decision Validation Services (DVS) test can throw the following exception:
+ilog.rules.dvs.excel.IlrExcel2003ScenarioSuiteDataException: It is impossible to create scenario data because of cross references between the following objects defined in the scenario: <nameOfObject A>, <nameOfObjectB> 
+
+SYMPTOM
+DVS test fails with the following stack trace displayed in the report: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * <nameOfObject A>
+ * 
+ * <nameOfObjectB>
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+CAUSE
+ The Excel Tabbed Format supports cross referencing in the BOM object structure, in the sense that it allows you to define a classA that references classB that itself references classA and the Excel scenario template will be successfully generated. 
+
+However, cross reference at the data level is not supported. That is, objectA that references objectB that itslef references objectA in the Excel scenario file cannot be processed by the scenario provider. This is because the data objects are created one after the other in the Excel scenario provider algorithm.
+
+
+RESOLVING THE PROBLEM
+The recommended solution for handling cross reference in DVS is to associate one object to another implicitly in a custom constructor, instead of handling both references from the Excel scenario sheet. 
+
+The custom constructor can be defined in the BOM as a virtual constructor with b2x implementation so that the XOM can remain unchanged. 
+
+Sample scenario:
+Class Customer and Class Order are cross referenced through attributes, Customer.order and Order.customer. 
+
+Solution: 
+Step 1. In Customer BOM class, enable "ignore for DVS" property on the attribute Customer.order. Step 2. Select the default constructor of the Customer class as "DVS constructor", which takes no parameter. 
+Step 3. In Order BOM class, enable "ignore for DVS" property on the attribute Order.customer. Step 4. Create a virtual custom constructor in the Order BOM class that only takes a Customer object as a parameter. For instance, 
+
+ * public Order(Customer cus){ 
+ *  com.ilog.Order myOrder = new com.ilog.Order(); 
+   cus.order = myOrder; 
+   myOrder.customer = cus; 
+   return myOrder; 
+ * } 
+   
+ * 
+ *  
+
+Step 5. Select the custom constructor defined in step 4 as "DVS constructor" for Order class. Step 6. Generate the Excel scenario template using Tabbed Format. 
+
+As a result, the generated scenario template will display Customer and Order tabs respectively. The Customer worksheet will NOT include the attribute, customer.order. The Order worksheet will include a reference to the name of an object defined in the Customer sheet. 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Features:BOM (Business Object Model) 8.5, 8.0, 7.5

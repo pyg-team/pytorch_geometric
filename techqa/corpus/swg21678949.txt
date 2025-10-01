@@ -1,0 +1,97 @@
+Title: IBM Self-Describing agent (SDA) feature fails to install application support - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SDA feature is not working as expected. It fails to install the application support for a custom agent built using agent builder even though SDA is enabled on Hub TEMS (HTEMS) and Remote TEMS (RTEMS) . 
+
+SYMPTOM
+1. Install SDA enabled Agent on a server EXAMPLE: agent code 54 (Custom agent). 
+
+=========================================================== 
+# ./cinfo -e 
+
+*********** Tue Jul 8 10:12:42 EDT 2014 ****************** 
+User: root Groups: root 
+Host name : <HOST_NAME> Installer Lvl:06.30.02.00 
+CandleHome: /opt/IBM/ITM 
+Version Format: VV.RM.FF.II (V: Version; R: Release; M: Modification; 
+F: Fix; I: Interim Fix) 
+*********************************************************** 
+...Application support propagation 
+
+PC PRODUCT DESC PLAT VER BUILD SDA STATUS 
+
+51 Monitoring Agent for Disk lx8266 06.22.00.00 - Disabled 
+54 Monitoring Agent for Process lx8266 06.23.00.00 201310041810 Enabled 
+lz Monitoring Agent for Linux OS lx8266 06.30.02.00 32341 Enabled 
+============================================================
+
+2. SDA is enabled on HTEMS and RTEMS. 
+============================================================
+# ./tacmd listsdastatus 
+
+Hub/RTEMS State Status 
+HUB_TEMS_NAME ON 0 
+REMOTE_TEMS1 ON 0 
+REMOTE_TEMS2 ON 0 
+===========================================================
+
+3. Run "editSdaOptions" command 
+# ./tacmd editSdaOptions -t 54 -o INSTALL_SEED=NONE UPGRADE_SEED=NONE 
+
+KUICO2054I: No configuration options were found for the specified type (s). The following options will be created: 
+
+PRODUCT INSTALL_SEED UPGRADE_SEED 
+54 NONE NONE 
+
+Are you sure you want to update the selected options? Type Y for yes. Type N for no. 
+Y 
+
+KUIESO150I: The selected SDA configuration options records were successfully updated. 
+
+4. listSdaOptions output 
+# ./tacmd listSdaOptions 
+
+PRODUCT INSTALL_SEED UPGRADE_SEED 
+54 NONE NONE 
+
+5. Run "addSdaInstallOptions" command 
+# ./tacmd addSdaInstallOptions -t 54 -v 06230000 
+
+6. Run "listSdaInstallOptions" command 
+# ./tacmd listSdaInstallOptions 
+KUILIO200W: No default SDA installation settings exist. 
+
+PRODUCT VERSION 
+54 06230000 
+
+- Finally once you run tacmd listappinstallrecs, there is no application support seen for agent 54. 
+- Cinfo -t also does not show application support for 54 agent.
+
+
+CAUSE
+Incorrect entries in the K54 support text file.
+
+
+ENVIRONMENT
+ITM 6.3 FP2 
+
+Agent Builder (Custom Agent): version 6.23
+
+
+DIAGNOSING THE PROBLEM
+Modify the appropriate entry/entries under /opt/IBM/ITM/lx8266/54/support/K54MSMAN.txt
+
+
+
+RESOLVING THE PROBLEM
+Modify the ?product_vrmf=062300? to product_vrmf=06230000 in
+/opt/IBM/ITM/lx8266/54/support/K54MSMAN.txt and this will resolve the issue.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management IBM Tivoli Monitoring V6

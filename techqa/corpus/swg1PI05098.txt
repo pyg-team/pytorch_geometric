@@ -1,0 +1,141 @@
+Title: IBM PI05098: NO CLEAR ERROR MESSAGE THAT BACKWARD SYNDICATION IS NOT SUPPORTE D - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The error message displayed when attempting to create a 8001 ->
+   7002 syndication pair does not clearly indicate that this is
+   because backward syndication is not supported.
+   
+   Reproduction Steps
+   1. Create a library "Test Library" on a 7002 XVS enabled server
+   2. On a 8001 server, subscriber to the 7002 server and click
+   "Next"
+   3. Select the library "Test Library" and finish
+   
+   Expected: A clear error message indicating backward syndication
+   is not supported on the first page of the wizard (where the
+   syndicator details are entered)
+   Actual: A generic error message saying "Could not create
+   subscriber. Please check the subscriber logs for more
+   information" appears on the second page of the wizard (where the
+   libraries are selected)
+   Opened for release 7002
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  When syndicating with higher version of WCM, a error code will
+   returned. Get this error code and display a clearer error
+   message in the UI.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The error message displayed when attempting to create a 8001 ->
+   7002 syndication pair does not clearly indicate that this is
+   because backward syndication is not supported.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When syndicating with higher version of WCM, a error code will
+   returned. Get this error code and display a clearer error
+   message in the UI.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI05098
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-29
+   
+   
+ * CLOSED DATE
+   2013-11-12
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,66 @@
+Title: IBM Enabling TTAPI integration for the v7.2 Data Collector - United States
+
+Text:
+CAMADALL CAMADWASDC CAMADTTAPI TTAPI 7.2 JDBC JMS DC "Data Collector" Enable TT collector setup TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After successfully enabling TTAPI for a v7.2 DC, it does not appear in either the Enabled or Disabled table on the MS view "Enable TTAPI for JDBC / JMS" 
+
+
+SYMPTOM
+When viewing the screenshot below I expect to see the Data Collector appear in one of the two tables to indicate if TTAPI has been enabled (or not). 
+
+In both tables I see the message "No TTAPI data collectors found in this table"
+
+To access the screen in question on the MS go to... 
+- Administration -> Server Management -> Data Collector Configuration. 
+- Under the menu on the left select "Enable TTAPI for JDBC" and/or "Enable TTAPI for JMS"
+
+[/support/docview.wss?uid=swg21652087&aid=1] [/support/docview.wss?uid=swg21652087&aid=1]
+
+
+CAUSE
+The ITCAM for WebSphere v7.2 Data Collector no longer requires the Managing Server for the enablement of TTAPI as it is able to act as the client to the TT Collector agent and send the TTAPI data directly. This means the v7.2 Data Collector will not appear in the screen above. 
+
+Only v7.1 Data Collectors that have been TTAPI enabled will appear in this view as they will still require the MS to act as the client to the TT Collector agent
+
+
+
+ENVIRONMENT
+ITCAM for Application Diagnostics v7.1 FP03 Managing Server
+ITCAM for WebSphere v7.2 Data Collector
+
+
+
+DIAGNOSING THE PROBLEM
+(1) The v7.2 Data Collector can be enabled for TTAPI via the CLI GUI
+
+Configuration of the TTAPI settings can be completed by referencing the v7.2 InfoCenter section titled Additional setings for TTAPI on the Data Collector [http://publib.boulder.ibm.com/infocenter/tivihelp/v63r1/index.jsp?topic=%2Fcom.ibm.itcamfapps_ad.doc_72%2Fwas_agent_ttapi%2Fadditional_dist.html] 
+
+
+(2) The v7.1 Data Collector can be configured for TTAPI via enablement in the <$DC_HOME>/runtime/<$SERVER>/custom/toolkit_custom.properties file
+
+See the section titled TTAPI: Integration with ITCAM for Transactions [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcamfad.doc_7101%2Fttapi.html] from the v7.1 InfoCenter for full steps
+
+This will then make the v7.1 Data Collector available on the MS in the screen above, where you can then allow TTAPI to be enabled for JDBC and JMS whilst the monitoring on demand (MOD) level is 1.
+
+If the MOD level for the Data Collector is set to 2, these metrics will be automatically enabled. 
+
+
+
+RESOLVING THE PROBLEM
+To verify that TTAPI is enabled for a v7.2 Data Collector 
+
+(1) Check in the <$DC_HOME>/runtime/<$SERVER>/ directory you have a file named ttdc.properties
+
+(2) Check in the following file - <$DC_HOME>/runtime/<$SERVER>.DCManualInput.txt - that the letters 'TT' are contained in the following parameter...
+am.camtoolkit.gpe.dc.operation.mode=WR,MS,TT,DE
+
+(3) Check in the following file - <$DC_HOME>/runtime/<$SERVER>/dc.java.properties - that the letters 'TT' are contained in the following parameter...
+dc.operation.mode=WR,MS,TT,DE
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for WebSphere

@@ -1,0 +1,153 @@
+Title: IBM IV36425: WEBSPHERE MQ V7.5 WMQHVE STOP COMMAND DOES NOT SHUTDOWN THE MQ PROCESSES GRACEFULLY. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The stop script, stopVirtualImageServices.sh, appears to
+   execute this command: /etc/init.d/WMQHVE stop
+   The QMGR AMQERRXX.LOG shows no invocation of the "endmqm" at the
+   time the shutdown script is running. Timing of the shutdown
+   events is being affected by the WMQHVE stop command.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This affects users using the WebSphere MQ V7.5 Hypervisor
+   Edition, when the WMQHVE stop command is issued
+   
+   
+   Platforms affected:
+   Linux on x86-64
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The Kill scripts in the /etc/rc.d/rc*.d/ directories only get
+   executed if the /etc/rc.d/rc script, (executed when the VM moves
+   between run levels), finds a corresponding lock-file in
+   /var/lock/subsys/ for the relevant service.
+   
+   So to get the Kill scripts to call WMQHVE stop, there has to
+   be a lock-file created whenever the default queue manager is
+   started, (and removed whenever it is stopped, in order that
+   the /etc/rc.d/rc*.d/ Start scripts get called correctly).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A lock-file is created (and removed) when the default queue
+   manager is started (and stopped).
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Platform           v7.5
+   --------           --------------------
+   Multiplatforms     7.5.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV36425
+   
+   
+ * REPORTED COMPONENT NAME
+   MQ HV REDHAT
+   
+   
+ * REPORTED COMPONENT ID
+   5725C7900
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-06
+   
+   
+ * CLOSED DATE
+   2013-04-09
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MQ HV REDHAT
+   
+   
+ * FIXED COMPONENT ID
+   5725C7900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

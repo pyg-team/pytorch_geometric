@@ -1,0 +1,21 @@
+Title: IBM Can SPSS GLM/UNIANOVA produce plots of fitted regression lines? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm running an ANCOVA model in SPSS and want to see plots of the fitted regression lines for different groups in a model where the slopes are modeled as different for different groups (a factor by covariate interaction). Can SPSS produce such a plot? 
+
+RESOLVING THE PROBLEM
+GLM and UNIANOVA do not offer the option to plot fitted regression lines. An enhancement request has been filed with SPSS Development. It is possible to create plots of this type in current releases of SPSS, by saving predictions and using overlay scatterplots, then adding straight line fits to the subgroups and turning off the line markers. 
+
+The one drawback with this is that the lengths of the regression lines are determined by the range of the covariate values in the two groups. If they're very different, the lines will have noticeably different lengths. If this is a big deal (i.e., you want to produce such a plot for presentation purposes and want to include areas in the lines that are not observed in the data, you can do it; there are those who would say you shouldn't do this, but others might want to do it), you can work around it by adding some dummy data points to the file with missing dependent values, with low and high points on the covariate for each group, and using the REGRESSION procedure to produce the predicted values. REGRESSION will save predictions for these new cases even if they don't have dependent values. The limits of the X axis of the graph will then be controlled by your choices of extremes, without changing anything about what's plotted other than how far the lines go
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 68127

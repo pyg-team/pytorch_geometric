@@ -1,0 +1,31 @@
+Title: IBM ITX 9 Resource Registry ERROR : Could not normalize MSL file - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A failure to initialise the IBM Transformation Extender (ITX) 9 Resource Registry files could result if the MRC file is created manually, and the MSL and MRN references are not made to be relative paths from the MRC location. 
+
+SYMPTOM
+Resource Registry ERROR : Could not normalize MSL file entries in Launcher log file, and failure of Resource Registry variable resolution at runtime.
+
+
+CAUSE
+MSL and MRN references need to be relative paths from the MRC location. So if the MRC is stored in /opt/ibm/itx9/config/resource.mrc, it might contain entries such as:
+
+<ResourceCfg>
+<EventServer>
+<System Name="../systems/system1.msl">
+
+<ResourceFile ActiveVirtualServer="live">resource.mrn</ResourceFile></System>
+</EventServer>
+
+
+ENVIRONMENT
+IBM Transformation Extender Launcher on any execution platform
+
+DIAGNOSING THE PROBLEM
+Review Launcher logs for the 'Resource Registry ERROR : Could not normalize MSL file' entries
+
+RESOLVING THE PROBLEM
+It would be best to use the GUI on the target platform to design the MRC file, using the point and click method to add those entries. If the file must be created manually, be sure to use relative references

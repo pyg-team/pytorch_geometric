@@ -1,0 +1,179 @@
+Title: IBM IV69189: ONCE MXE.DB.FETCHRESULTSTOPLIMIT=5000 THE TABLE BBOARDMSGSTATUS REACHES MORE THAN 5000, YOU GET ERROR IN THE LOG AND PERFORMANCE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem details:
+   =================
+   For problems of performance, the property
+   mxe.db.fetchResultStopLimit=5000. When the table BBOARDMSGSTATUS
+   reaches more than 5000 recordings I have error messages in
+   SystemOut.log and memory problems.
+   
+   I set the property PMBBISTRACKED to 0, not to manage any more
+   the display of messages in the bulletin board. If I consult
+   messages since the Start Center, the table BBOARDMSGSTATUS
+   is not any more updated : OK
+   
+   If I consult messages since the Self-service Center the table
+   BBOARDMSGSTATUS is always updated : NOT OK
+   
+   Later, I am going to have 5000 recordings in BBOARDMSGSTATUS and
+   my initial problem will return.
+   
+   
+   Why the table continues to fill when messages are consulted from
+   Self-service Center?
+   
+   STEP BY STEP to Reproduce the problem in SCCD 7511 + TPAE
+   7505.
+   
+   1. Go to System Properties --> PMBBISTRACKED  --. Set the global
+   value to 0
+   
+   
+   2. Save changes and LIVE REFRESH
+   
+   3. Go to Bulletin Board and create a new message and "Approve"
+   the status.
+   
+   
+   4. Go back to start center and read the message by clicking on
+   it and you will notice the message remains N as status which is
+   good because  PMBBISTRACKED   = 0
+   
+   5. Now Go to Self Service center and read the message from "My
+   News" section by clicking in the message.
+   
+   
+   6. Now go back to Start center--> You will notice the message is
+   setup as Y despite having PMBBISTRACKED = 0
+   
+   So the issue is that When I set the property PMBBISTRACKED to 0,
+   not to manage any more the display of messages in the bulletin
+   board. If I consult messages since the Start Center, the table
+   BBOARDMSGSTATUS is not any more updated which is OK.
+   
+   If I consult messages from the Self-service Center the table
+   BBOARDMSGSTATUS is always updated which is NOT OK
+   
+   Hence Later, I am going to have 5000 recordings in
+   BBOARDMSGSTATUS and my initial problem will return.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  My news is not respecting  PMBBISTRACKED
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  My news pod should behave as the bulletin board taking into
+   account the value of PMBBISTRACKED when mark the bulleting as
+   viewed or not. It should be fixed in the code.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV69189
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTROL DESK/SC
+   
+   
+ * REPORTED COMPONENT ID
+   5725E2400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-02-05
+   
+   
+ * CLOSED DATE
+   2015-04-01
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTROL DESK/SC
+   
+   
+ * FIXED COMPONENT ID
+   5725E2400
+   
+   
+
+APPLICABLE COMPONENT LEVELS

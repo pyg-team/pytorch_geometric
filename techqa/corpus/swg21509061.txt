@@ -1,0 +1,94 @@
+Title: IBM Business Space applications are not updated in single node network deployment environment after applying V7.0 Fix Pack 4 - United States
+
+Text:
+Upgrade; ND; Cluster; Business Space; Applications not updated TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If the following conditions are met, the Business Space applications are not updated after you apply V7.0 Fix Pack 4 in a network deployment environment:
+
+1. The deployment manager profile and all managed profiles share the same WebSphere Application Server installation.
+2. The deployment manager, node agents, clusters, and servers are stopped before applying the Fix Pack.
+
+This applies to the following products that include Business Space:
+
+WebSphere Business Compass
+WebSphere Business Monitor
+WebSphere Enterprise Service Bus
+WebSphere Process Server
+
+
+SYMPTOM
+ 
+
+ 1. When a user brings up the Business Space login page, the page is not displayed, and an error message (with exception stack trace) similar to the following is displayed instead:
+    
+    HTTP Error Code: 404
+    
+    Error Message:JSPG0036E: Failed to find resource /bootstrap/login.jsp
+    Root Cause:java.io.FileNotFoundException: JSPG0036E: Failed to find resource /bootstrap/login.jsp
+    at com.ibm.ws.jsp.webcontainerext.AbstractJSPExtensionProcessor.findWrapper (AbstractJSPExtensionProcessor.java:395)
+    at com.ibm.ws.jsp.webcontainerext.AbstractJSPExtensionProcessor.handleRequest(AbstractJSPExtensionProcessor.java:349)
+    ...
+    
+    
+ 2. No BPMProfileUpgrade log is present in the directory <profile_root>/logs (at least one such file should be generated during Fix Pack installation), where <profile_root> is the root directory of any managed profile.
+
+
+RESOLVING THE PROBLEM
+ 
+
+Make sure the deployment manager profile has been started. This is necessary because the BSpaceProfileUpgrade.ant script must connect to the central configuration repository on the deployment manager profile to make the updates.
+Upgrade managed profiles.
+ 1. Open a command prompt and change to the <WAS_root> directory.
+    
+ 2. For each managed profile, run one of the following commands as appropriate for your platform:
+    
+    Windows: bin\ws_ant.bat -f util\BPMProfileUpgrade.ant -profileName <profileName> -Dupgrade=true -Duser=<userID> -Dpassword=<password>
+    
+    UNIX and Linux: sh ./bin/ws_ant.sh -f util/BPMProfileUpgrade.ant -profileName <profileName> -Dupgrade=true -Duser=<userID> -Dpassword=<password>
+    
+    where <profileName> is the name of the managed profile, <userID> is a user ID from the user registry that has administrative authority and <password> is the password for that user ID.
+    
+ 3. Check the following log file for errors:
+    
+    <profile_root>/logs/BPMProfileUpgrade.<profileName>.<timestamp>.log
+    
+    where <profile_root> is the root directory of the managed profile.
+    
+
+Upgrade clusters.
+ 1. Open a command prompt and change to the <WAS_root> directory.
+    
+ 2. For each cluster, run one of the following commands as appropriate for your platform:
+    
+    
+    Windows: bin\ws_ant.bat -f util\BPMProfileUpgrade.ant -profileName <profileName> -Dupgrade=true -Dcluster=<clusterName> [-Duser=<user> -Dpassword=<password>]
+    
+    UNIX and Linux: sh ./bin/ws_ant.sh -f util/BPMProfileUpgrade.ant -profileName <profileName> -Dupgrade=true -Dcluster=<clusterName> [-Duser=<user> -Dpassword=<password>]
+    
+    where <profileName> is the name of the deployment manager profile and <clusterName> is the name of the cluster.
+    
+    
+ 3. Check the following log file for errors:
+    
+    dmgr_profile_root>/logs/BPMProfileUpgrade.<profileName>.<clusterName>.<timestamp>.log
+    
+    where <dmgr_profile_root> is the root directory of the deployment manager profile. 
+ 4. Check the following trace file in the deployment manager profile logs:
+    
+    dmgr_profile_root>/logs/updateBusinessSpaceWidgets.<timestamp>.trace
+    
+    where <profile_root> is the root directory of the deployment manager profile.
+    
+
+When the clusters have been successfully upgraded, stop and restart the deployment manager.
+For managed nodes, start the node agents and wait for the node synchronization to complete.  
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Business Compass Business Space AIX, Linux, Linux zSeries, Windows, Linux pSeries 7.0.0.4 Business Integration WebSphere Process Server Business Space AIX, HP-UX, Linux, Solaris, Windows, Linux zSeries 7.0.0.4 Business Integration WebSphere Enterprise Service Bus Business Space AIX, HP-UX, Linux, Linux iSeries, Linux pSeries, Linux xSeries, Linux zSeries, Solaris, Windows 7.0.0.4 
+HISTORICAL NUMBER
+ 47428
+L6Q
+000
+42598
+379
+000

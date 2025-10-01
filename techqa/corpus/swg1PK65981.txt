@@ -1,0 +1,176 @@
+Title: IBM PK65981: ITCAM should not update database with zero for Max Heap size - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description :
+   
+   The MS received zero value for max heap size of a data
+   collector server. The JVM Memory Utilization % chart showed up
+   as "Data not available" for this server.
+   
+   The Managing Server should store default non-zero value in the
+   database for the max heap size of the server, instead of zero.
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+    --
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The Data Collector sends a default non-zero value for Max and
+   Initial heap size for the JVM to the Managing Server. However if
+   for any reason, the Max or Initial Heap Size of zero is received
+   for a Data Collector Server, the Managing Server updates the
+   database with zero values.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Managing Server code was fixed as follows:
+   
+   If zero Initial Heap Size is received, then the non-zero value
+   in the database is used. If database value is also zero, then
+   Initial Heap Size will be defaulted to 50 MB.
+   
+   Following message will be printed in the kernel logs:
+   
+   [CYNK0072W Initial Heap size value of zero was received for
+   Server: <ipaddress>:<Server Name>, setting it to: <Initial Heap
+   Size>.]
+   
+   If zero Max Heap Size is received, then non-zero value in the
+   database is used. If both values are zero then Max Heap Size is
+   defaulted to greater of (256 MB) and <Initial Heap Size>.
+   
+   Following message will be printed in the kernel logs:
+   
+   [CYNK0073W Max Heap size value of zero was received for Server:
+   <ipaddress:<Server Name>, setting it to: <Max Heap Size>.]
+   
+   This APAR is fixed in 6.0.0.6-TIV-ITCAMfWAS_SVR-IF0005.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Restart of the Data Collector Server should correct any problem
+   which led to Max Heap Size not being received by the Managing
+   Server.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK65981
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * REPORTED COMPONENT ID
+   5724L6200
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-05-13
+   
+   
+ * CLOSED DATE
+   2008-07-09
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * FIXED COMPONENT ID
+   5724L6200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

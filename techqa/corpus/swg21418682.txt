@@ -1,0 +1,55 @@
+Title: IBM Enabling Transaction Tracking Application Programming Interface (TTAPI) in the ITCAM agent for J2EE Data Collector - United States
+
+Text:
+TTAPI; JBoss; WebLogic; Netweaver; MOD; ITCAM for J2EE; J2EE TECHNOTE (FAQ)
+
+QUESTION
+ How does one enable Transaction Tracking Application Programming Interface (TTAPI) in the Data Collector for JBoss, WebLogic, and Netweaver? 
+
+ANSWER
+ 
+
+ * To enable TTAPI in the existing Data Collectors, perform the following steps:
+   
+   1. Open the DC_home/runtime/node_name/custom directory.
+   
+   2. Add the following lines in the toolkit_custom.properties file:
+   com.ibm.tivoli.itcam.dc.ttapi.enable=true
+   com.ibm.tivoli.itcam.dc.ttapi.ttas.transport=protocol:IP_address (or hostname):port 
+   
+   Modify protocol to the protocol you used, IP_address (or hostname) to the IP address or the host name of the Transaction Collector monitoring agent, and port to the port number. For example:
+   com.ibm.tivoli.itcam.dc.ttapi.enable=true
+   com.ibm.tivoli.itcam.dc.ttapi.ttas.transport=tcp:192.168.0.10:5455
+   
+   3. Restart the Data Collector by recycling the monitored application server instance.
+   
+   Note:
+   Ensure that the Data Collector is running at MOD (Monitoring On Demand) L2 in order for TTAPI to work. Refer to the following link for information about MOD: http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?topic=/com.ibm.itcamwas_j.doc_6.1/UserGuide101.htm [http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?topic=/com.ibm.itcamwas_j.doc_6.1/UserGuide101.htm]
+   
+ * To enable TTAPI in a new Data Collector installation, perform the following steps:
+   
+   1. Run the J2EE Data Collector Configuration Tools.
+   
+   2. On the "Choose Data Collector agents" panel, check the box "Data collection for ITCAM for Transaction Tivoli Enterprise Portal interface".
+   
+   3. On the "Enter TTAS Information" panel, enter the host name and the port number of the ITCAM for Transaction Monitoring Agent.
+   
+   4. Restart the Data Collector by recycling the monitored application server instance after the configuration process finishes.
+   
+   Note:
+   1) If this is your first time installing the Data Collector in the target server instance, you are required to configure the Data Collector from the Managing Server Visualization Engine console. Refer to the following link for details:
+   http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?topic=/com.ibm.itcamwas.doc_6.1/j2ee/Configuring_a_Data_Collector.html [http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?topic=/com.ibm.itcamwas.doc_6.1/j2ee/Configuring_a_Data_Collector.html]
+   
+   2) Generally, Data Collector has to be running at MOD L2 or above in order for TTAPI to work. The exception is that JDBC event capturing can be enabled at MOD L1 for TTAPI integration.
+   
+   For more information about MOD:
+   http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?topic=/com.ibm.itcamwas_j.doc_6.1/UserGuide101.htm [http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?topic=/com.ibm.itcamwas_j.doc_6.1/UserGuide101.htm]
+   
+   For more information about ITCAM for Transaction Tracking integration and how to enable TTAPI for JDBC at MOD L1:
+   http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/topic/com.ibm.itcamwas.doc_6.1/itcamwas_ttapi_Integration.pdf [http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/topic/com.ibm.itcamwas.doc_6.1/itcamwas_ttapi_Integration.pdf]
+
+ * For more information about TTAPI support for JBoss, WebLogic and Netweaver Data Collectors, refer to this technote: https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Composite%20Application%20Manager/page/TTAPI%20integration%20support%20table [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Composite%20Application%20Manager/page/TTAPI%20integration%20support%20table]
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for J2EE Solaris, AIX, HP-UX, i5/OS, Linux, Windows 6.1

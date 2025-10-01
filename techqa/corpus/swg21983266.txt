@@ -1,0 +1,24 @@
+Title: IBM DataStage Oracle connector and TAF - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Does the DataStage Oracle Connector support TAF, and if so, can I see when it has happened? Also can I configure the RETRIES and DELAY values? 
+
+CAUSE
+When a database connection is enabled for TAF, the application that is connected to the database is transparently reconnected to an alternative database instance if the original connection fails. Because the reconnection occurs transparently, the connector might seem to unexpectedly stop running and hang while the reconnection occurs 
+
+ANSWER
+You can configure the DataStage Oracle connector to receive messages that describe when the Oracle client starts transparent application failover (TAF) and how TAF progresses. 
+
+To configure the connector for TAF notifications, set these properties: 
+
+ * Set Manage application failover to Yes. 
+ * Set Number of retries to the number of times to attempt application failover. 
+ * Set Time between retries to the number of seconds to wait between subsequent attempts to failover. 
+
+If the RETRIES and DELAY values are specified as part of the FAILOVER_MODE configuration in the tnsnames.ora file, the connector ignores these values and instead uses the values that are specified for the Number of retries and Time between retries properties. 
+
+See the below link for a full description of RELATED INFORMATION
+ Oracle Connector TAF properties [https://www.ibm.com/support/knowledgecenter/SSZJPZ_11.5.0/com.ibm.swg.im.iis.conn.oracon.usage.doc/topics/r_transparent_application_failover.html]

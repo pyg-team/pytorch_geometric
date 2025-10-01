@@ -1,0 +1,145 @@
+Title: IBM IT24069: SECURITY VULNERABILITY: APACHE COMMONS FILEUPLOAD BEFORE 1.3.3 DISKFILEITEM FILE MANIPULATION REMOTE CODE EXECUTION - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+Media_IM_5020603_6 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FSterling+File+Gateway&fixids=5.2.6.3-OtherSoftware-SFG-All-IF0006&source=SAR]
+Media_IM_5020603_6 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FSterling+B2B+Integrator&fixids=5.2.6.3-OtherSoftware-B2Bi-All-IF0006&source=SAR]
+iSeries_Media_5020603_6.zip [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FSterling+File+Gateway&fixids=5.2.6.3-OtherSoftware-SFG-Iseries-IF0006&source=SAR]
+iSeries_Media_5020603_6 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FSterling+B2B+Integrator&fixids=5.2.6.3-OtherSoftware-B2Bi-Iseries-IF0006&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CVE-2016-1000031 Apache Commons FileUpload before 1.3.3
+   DiskFileItem File Manipulation Remote Code Execution.
+   Need to update Apache Commons FileUpload to V1.3.3 for security
+   vulnerability.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  RTC NO: 562704
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   All
+   
+   Problem Description:
+   Need to update Apache Commons FileUpload to V1.3.3 for security
+   vulnerability.
+   
+   Platforms Affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Resolution Summary:
+   A code fix is provided.
+   
+   Delivered In:
+   5020500_18
+   5020601_10
+   5020602_6
+   5020603_6
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT24069
+   
+   
+ * REPORTED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * REPORTED COMPONENT ID
+   5725D0600
+   
+   
+ * REPORTED RELEASE
+   526
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-02-14
+   
+   
+ * CLOSED DATE
+   2018-03-20
+   
+   
+ * LAST MODIFIED DATE
+   2018-07-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * FIXED COMPONENT ID
+   5725D0600
+   
+   
+
+APPLICABLE COMPONENT LEVELS

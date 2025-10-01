@@ -1,0 +1,28 @@
+Title: IBM Adding editable column in return order lines grid - United States
+
+Text:
+editable grid column; OLST_listGrid TECHNOTE (FAQ)
+
+QUESTION
+ How do you add editable grid column under return order lines grid in IBM Call Center for Commerce? 
+
+CAUSE
+Requirement is to have a custom column to update return receiving quantity similar to cancel quantity feature available in order lines grid.
+
+ANSWER
+This requirement can be achieved with certain changes as described below: 
+
+ 1. Go to return summary screen and launch extensibility workbench. Goto OLST_listGrid and select and add gridx/modules/Edit.
+    
+    
+ 2. Add custom grid column and provide necessary bindings.
+    
+    
+ 3. Then for this custom column, goto editable tab, and make necessary changes.
+    
+    The out of box editable grid column in call center can be edited only on double click, whereas in return summary screen there's a subscriber already listening to ScDoubleClick, which actually takes the control to Return Line Summary page, before even the column is ready for edit. So, to get this working, disable this ScDoubleClick event handler. Since oob event handlers cannot be disabled, therefore to achieve this - override the oob subscriber LST_DoubleClickHandler() listening to ScDoubleClick event and leave it with a blank implementation. 
+    
+    Doing so would enable grid columns editing but will lead to loss of functionality of opening Return Lines Summary screen. This functionality can be reinstated through a custom link in one of the grid columns.
+    
+    
+ 4. Build ear/war as applicable and deploy.

@@ -1,0 +1,165 @@
+Title: IBM PI05059: FAIL TO LOGIN TO AN APPLICATION WITH SSLHANDSHAKEEXCEPTION - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.2: WebSphere Application Server V8.5.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037250]
+8.5.5.3: WebSphere Application Server V8.5.5 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038133]
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Fail to login to an application with exception:]
+   javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.util.j:
+   PKIX path building failed:
+   java.security.cert.CertPathBuilderException: unable to find
+   valid certification path to requested target.
+   
+   The application relies on the fact that the Liberty profile
+   server sets a SSLContext created with the default SSL
+   configuration as the process's default.  When running in just
+   a Liberty Profile server all is okay.  When they run in a
+   collective a cert path error is hit.  This happens because the
+   default SSL Configuration is being used when the app make it's
+   httpsURLConnection call.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty Profile version 8.5.5        *
+   *                  Collective Members.                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Fail to login to an application with    *
+   *                      SSLHandshakeException on a              *
+   *                      server with collectiveMember-1.0        *
+   *                      feature.                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This problem was caused because the code setting the
+   SSLSocketFactory for the entire JVM which resulted in
+   failure to login to an application with the following
+   exception:
+   javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.util.j:
+   PKIX path building failed:
+   java.security.cert.CertPathBuilderException: unable to find
+   valid certification path to requested target.
+   This can also be caused by application code doing the same
+   thing.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  We now have instance base setting of the SSL Socket factory on
+   the JMXConnector.
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.2. Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI05059
+   
+   
+ * REPORTED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0814
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-30
+   
+   
+ * CLOSED DATE
+   2013-11-05
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * FIXED COMPONENT ID
+   5724J0814
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

@@ -1,0 +1,87 @@
+Title: IBM Upgrade fails between v5010 and v5030 on the developer portal in a cluster - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Upgrading the developer portal from v5010 to v5030 is failing on clustered
+servers. 
+
+SYMPTOM
+Upgrading the developer portal from v5010 to v5030 is failing on clustered 
+
+servers.
+
+The upgrade commands that were run with just the -a parameter i.e.:
+>bash 5.0.3.0-APIConnect-Portal-20160803-0132.bin -a
+
+will complete successfully however the command on the final server which
+is run with both -a and -i will fail:
+
+>bash 5.0.3.0-APIConnect-Portal-20160803-0132.bin -a -i
+
+The file /var/log/syslog on this server will show the error message:
+
+Aug 30 10:31:19 devportal3 mysqld: 160830 10:31:19 [ERROR] WSREP: failed to open gcomm backend connection: 110: failed to reach primary view: 110 (Connection timed out)
+Aug 30 10:31:19 devportal3 mysqld: #011 at gcomm/src/pc.cpp:connect():162
+Aug 30 10:31:19 devportal3 mysqld: 160830 10:31:19 [ERROR] WSREP: gcs/src/gcs_core.cpp:gcs_core_open():208: Failed to open backend connection: -110 (Connection timed out)
+Aug 30 10:31:19 devportal3 mysqld: 160830 10:31:19 [ERROR] WSREP: gcs/src/gcs.cpp:gcs_open():1380: Failed to open channel 'Devportal Cluster' at 'gcomm://devportal1,devportal2,devportal3': -110 (Connection timed out)
+Aug 30 10:31:19 devportal3 mysqld: 160830 10:31:19 [ERROR] WSREP: gcs connect failed: Connection timed out
+Aug 30 10:31:19 devportal3 mysqld: 160830 10:31:19 [ERROR] WSREP: wsrep::connect(gcomm://devportal1,devportal2,devportal3) failed: 7
+Aug 30 10:31:19 devportal3 mysqld: 160830 10:31:19 [ERROR] Aborting
+
+Checking the file /var/log/syslog on one of the other nodes will show error 
+messages like: 
+[ERROR] WSREP: handshake with remote endpoint ssl://devportal3:4567
+failed: 1: 'SSL error.' ( 336031996: 'error:140770FC:SSL
+routines:SSL23_GET_SERVER_HELLO:unknown protocol') 
+
+
+CAUSE
+This is a known issue for which an APAR LI79278 has been raised to cover. 
+
+
+ENVIRONMENT
+IBM API Connect developer portal upgrade from v5010 to v5030
+
+
+
+RESOLVING THE PROBLEM
+Fixing a system the upgrade has been run on 
+
+The following steps can be performed to fix the system in this state. 
+
+1) Copy the ssl certificate from the 5030 node to the 5010 node with the command. In this case devportal1 and devportal2 had the fix pack applied and devportal3 was the node which the fixpack was applied to last and failed. On the failing node (devportal3) run the command: 
+>mysql_certs -c devportal1
+2) Restart all the databases using (can be run on any node): 
+>bootstrap_cluster -bf
+3) Re run the upgrade on the failing (devportal3) node using: 
+>bash 5.0.3.0-APIConnect-Portal-20160803-0132.bin -a -i -y
+4) This will finish with the following error: 
+Queue system quiesced. Database status: Primary ERROR 2026 (HY000): SSL connection error: SSL_CTX_set_default_verify_paths failed Error occurred in script 5.0.3.0-APIConnect-Portal-20160803-0132.bin at line: 1920. 
+Line exited with status: 1
+See /var/log/devportal/command_line.log for more details.
+This error is due to the manual running of the mysql_certs command. In this case running the fixpack command again will get past this error and it should complete successfully: 
+>bash 5.0.3.0-APIConnect-Portal-20160803-0132.bin -a -i -y
+5) Run the status command on each node to verify the upgrade has worked. 
+
+Performing the upgrade on 5010 systems
+Applying the upgrade to systems that haven't see this issue yet. 
+
+If the upgrade to v5030 from v5010 hasn't been run yet then the following procedure which works around the bug in the code when going directly from 5010 to 5030:
+
+1) On all nodes, waiting for each command to finish before going onto the next node:
+
+>bash 5.0.3.0-APIConnect-Portal-20160803-0132.bin -ly
+
+2) Then once that command has finished on every node. On all nodes but the last one:
+
+>bash 5.0.3.0-APIConnect-Portal-20160803-0132.bin -say 
+
+3) Then on the last one:
+
+>bash 5.0.3.0-APIConnect-Portal-20160803-0132.bin -sayi 
+
+This procedure breaks the upgrade into two portions by installing the new system software first on all nodes (-ly) and then doing the rest of the upgrade on all nodes once the new software has been installed.
+
+There will be a short down time on each node when running with -ly as the new database software is installed and the DB is restarted and then the longer downtime when you run with -say as it reconfigures the databases and restarts them all together.

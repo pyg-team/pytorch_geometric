@@ -1,0 +1,142 @@
+Title: IBM Benefits, requirements, limitations, and known issues for Rational Software Architect products running as 64-bit applications starting from v8.0.3 - United States
+
+Text:
+SRX; RN8.0.3; 64-bit; benefits; requirements; issues; co-install; shell-sharing; 8.0.3; 8.5; 8.5.1; 8.0.4; 8.0.4.1; 8.0.4.2 PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Starting from version 8.0.3, Rational Sofware Architect products can be installed as 64-bit applications on supported 64-bit operating systems. This document provides information in relation to benefits, requirements, known limitations, and links to known problems related to working with these products running in 64-bit mode. 
+
+CONTENT
+ 
+
+ * Benefits of 64-bit installation 
+ * Requirements 
+ * Known limitations 
+ * Known issues
+
+
+
+
+
+
+Benefits of 64-bit installation  * Extends heap size 
+ * Ability to manage larger models
+
+
+32-bit vs. 64-bit Comparisons (RSA = Rational Software Architect) 
+
+Ability to create and work with larger models 
+
+Product & Machine Heap setting # Elements # Packages # Diagrams RSA v8.0.x 32-bit
+8 GB RAM -Xmx 2000m 135200 16900 101400 RSA v8.0.x 64-bit
+8 GB RAM -Xmx 4000m 396800 49600 297600 
+Compare/merge (large model comparisons) 
+
+Product & Machine Heap setting 15 MB model file 
+168,508 classes + 169 packages 20 MB model file 
+224,284 classes + 225 packages 90 MB model file 
+1,005,084 classes + 1006 packages RSA v8.0.x 32-bit
+8 GB RAM -Xmx 1500m Success 
+Head sis: 1.481GB Out of Memory Out of Memory RSA v8.0.x 64-bit
+8 GB RAM -Xmx 8000m* Success 
+Head sis: 1.481GB Success 
+Head sis: 1.481GB Success 
+Head sis: 1.481GB 
+*NOTE, not all 8GB is available due to system requirements (e.g., OS) 
+
+Web publish (Successfully published a large model (235 MB file, 700 MB heap space to load, 1,800+ packages, 100,000 first class elements and 10,000 diagrams) using the RSA 64-bit offering) 
+
+Product & Machine Heap setting Result RSA v8.0.x 32-bit
+8 GB RAM -Xmx 1024m Out of Memory RSA v8.0.x 64-bit
+8 GB RAM -Xmx 6448m Successfully generated 2.8Gb of output:  *  1.3GB of XML in 1.820 files An 80MB json file defining the tree display 1GB of HTML in over 100,000 files 
+
+
+Rational Rose model import: Able to successfully import 100MB, 450MB, 670MB test models in non-incremental mode using the 64-bit offering while the 32-bit offering could only load the 100MB model.* 
+
+*NOTE, all models can be opened in RSA 32-bit mode using incremental load. 
+
+
+
+
+Requirements  
+
+Action Requirement(s) Installation  * IBM Installation Manager 1.4.4 required 
+ * Installation on supported Windows or Linux 64-bit Operating Systems 
+ * Full Installation required (upgrade from previous 32-bit installation is not supported) 
+ * To use Installation Manager to install 64-bit application on RHEL 6.0 x86_64 (64-bit) [https://www-304.ibm.com/support/docview.wss?uid=swg21459143] 
+ * When using Eclipse or P2 updater to install new plug-ins, in a shared "write-protected" installation, the owner of the installation (i.e. Administrator) vs. user must perform this action [https://www-304.ibm.com/support/docview.wss?uid=swg21502991&wv=1] 
+ * Using the "64-bit" Architecture Selection option in the Install Packages view during installation
+
+
+[/support/docview.wss?uid=swg27021665&amp;aid=1]
+By default: Architecture Selection is "32-bit"
+
+Note:  * 64-bit installation on Solaris (Rational Software Architect RealTime Edition) not supported [https://www-304.ibm.com/support/docview.wss?uid=swg21503018&wv=1] 
+ * Separate 32-bit/64-bit installations (on the same machine) are supported
+
+Recommended hardware 
+configuration Minimum 8 GB RAM with minimum 4 GB Heap
+
+Note: -Xcompressedrefs (IBM VM) or -XX:+UseCompressedOops (Sun) flag, may optimize memory usage for 64-bit machines with less than 32GB 
+Limitations 
+
+ 
+
+[/support/docview.wss?uid=swg27021665&amp;aid=2] Limitation(s) Operating system 64-bit Installation not supported on Solaris [https://www-304.ibm.com/support/docview.wss?uid=swg21503018&wv=1] Product features not supported in 64-bit install  * DoDAF 1.0 Reporting - Ability to generate an Microsoft Word document (reporting) is not supported. 
+ * Rational Rose model import: - When Rational Rose model uses stereotypes & properties and Rational Rose not installed on the same machine.
+   Work-around: Export entries from registry to *.reg file and supply to importer. 
+ * Java Visual Editor
+
+Integrations Supported when shell-sharing:  * Rational Desktop Connection Toolkit for Cloud v1.0.3 
+ * WebSphere Application Server Test Environment (32-bit), v6.1.0.37, v7.0.0.17, v8.0 
+
+
+Supported as co-installs, only:  * InfoSphere Data Architect 
+ * Rational Business Developer 
+ * Rational Developer for System z 
+ * Rational Functional Tester 
+ * Rational PerformanceTester 
+ * Rational Requirements Composer 
+ * Rational Rose 
+ * Rational System Architect 
+ * Rational Tau 
+ * WebSphere Business Modeler 
+ * WebSphere Integration Developer
+
+
+Integrations not supported with 64-bit Install:  * Rational Asset Manager 
+ * Rational Build Forge 
+ * Rational ClearCase (base) 
+ * Rational ClearQuest 
+ * Rational Requisite Pro 
+ * Rational SoDA (32-bit install on 64-bit architecture is not supported either) 
+ * Rational Team Concert
+
+WebSphere Application Server  * You can install the WebSphere Application Server test environment extensions into the installation location. However, the test environment extensions will be 32-bit versions. 
+ * Some product features might not be available
+
+Web browsers Internet Explorer v8.0 is not supported with 64-bit install [https://www-304.ibm.com/support/docview.wss?uid=swg21502701].
+Internet Explorer v9.0 or higher is supported. 
+Known issues  * Shared 'read-only' 64-bit Installations Only: User installed plug-ins may not load correctly [https://www-304.ibm.com/support/docview.wss?uid=swg21502991&wv=1] 
+ * 64-bit Architecture Selection installation option is shown as available for Rational Software Architect RealTime Edition v8.0.3 on Solaris SPARC, but is not supported [https://www-304.ibm.com/support/docview.wss?uid=swg21503018&wv=1] 
+ * Cannot install Rational Team Concert Client into existing 64 Bit package group [https://www-304.ibm.com/support/docview.wss?uid=swg21502535&wv=1] 
+ *  [https://www-304.ibm.com/support/docview.wss?uid=swg1502701&wv=1]Internet Explorer v9 or higher is required if the product was installed using 64-bit Bit Mode option on a 64-bit system [https://www-304.ibm.com/support/docview.wss?uid=swg21502701&wv=1] 
+ * List of related support documents about additional known issues for installing or running these products as a 64-bit applications, including any applicable work-arounds [http://www.ibm.com/support/search.wss?q=RAD64bit]
+
+
+
+
+
+Co-installing vs shell-sharing 
+
+Co-install means two or more products are installed on the same machine, but into different package groups (each product functions independently). 
+
+Shell-share means two or more products are installed on the same machine in the same package groups. When starting one of the products, the functionality in other products will also be available. 
+
+]KNOWN ISSUES[
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Linux, Windows 8.0.3, 8.0.4, 8.0.4.1, 8.0.4.2, 8.5, 8.5.1, 8.5.5 Software Development Rational Software Architect RealTime Edition Linux, Windows 8.0.3, 8.0.4, 8.5, 8.5.1

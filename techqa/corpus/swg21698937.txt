@@ -1,0 +1,73 @@
+Title: IBM Security Bulletin: Vulnerabilities in OpenSSL affect IBM Endpoint Manager for Remote Control. CVE-2015-0204, CVE-2015-0205, CVE-2014-3572 - United States
+
+Text:
+CVE-2014-3572; CVE-2015-0204; CVE-2015-0205; OpenSSL; FREAK attack SECURITY BULLETIN
+
+SUMMARY
+ OpenSSL vulnerabilities were disclosed on January 8, 2015 by the OpenSSL Project. This includes “FREAK: Factoring Attack on RSA-EXPORT keys" TLS/SSL client and server vulnerability. OpenSSL is used by IBM Endpoint Manager for Remote Control. IBM Endpoint Manager for Remote Control has addressed the applicable CVEs. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2014-3572 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3572]
+DESCRIPTION: OpenSSL could provide weaker than expected security. The client accepts a handshake using an ephemeral ECDH ciphersuite with the server key exchange message omitted. An attacker could exploit this vulnerability to launch further attacks on the system.
+CVSS Base Score: 1.2
+CVSS Temporal Score: See http://exchange.xforce.ibmcloud.com/#/vulnerabilities/99705 [http://exchange.xforce.ibmcloud.com/#/vulnerabilities/99705] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:H/Au:N/C:N/I:P/A:N) 
+
+CVEID: CVE-2015-0204 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0204]
+DESCRIPTION: A vulnerability in the OpenSSL ssl3_get_key_exchange function could allow a remote attacker to downgrade the security of certain TLS connections. An OpenSSL client accepts the use of an RSA temporary key in a non-export RSA key exchange ciphersuite. This could allow a remote attacker using man-in-the-middle techniques to facilitate brute-force decryption of TLS/SSL traffic between vulnerable clients and servers. 
+
+This vulnerability is also known as the FREAK attack. 
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See http://exchange.xforce.ibmcloud.com/#/vulnerabilities/99707 [http://exchange.xforce.ibmcloud.com/#/vulnerabilities/99707] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N) 
+
+CVEID: CVE-2015-0205 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0205]
+DESCRIPTION: OpenSSL could allow a remote authenticated attacker to bypass security restrictions, caused by the acceptance of a DH certificate for client authentication without verification. An attacker could exploit this vulnerability to authenticate without the use of a private key.
+CVSS Base Score: 2.1
+CVSS Temporal Score: See http://exchange.xforce.ibmcloud.com/#/vulnerabilities/99708 [http://exchange.xforce.ibmcloud.com/#/vulnerabilities/99708] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:S/C:N/I:P/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Endpoint Manager for Remote Control versions 9.1.0 and 9.0.1. 
+
+REMEDIATION/FIXES
+You should verify applying this fix does not cause any compatibility issues.
+
+To resolve this issue, upgrade your target, broker, gateway and cli components.The fix pack can be downloaded from Fix Central.
+
+
+
+Product VRMF APAR Remediation/First Fix IBM Endpoint Manager for Remote Control 9.1.0 IV70771 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV70771] IBM Endpoint Manager for Remote Control Interim Fix pack 9.1.0-TIV-IEMRC910-IF0006. 
+For more information about 9.1.0-TIV-IEMRC910-IF0006, see http://www-01.ibm.com/support/docview.wss?uid=swg24039331 [http://www-01.ibm.com/support/docview.wss?uid=swg24039331]
+
+Fix pack 9.1.0-TIV-IEMRC910-IF0006 will be released 2nd April 2015. IBM Endpoint Manager for Remote Control 9.0.1 IV70771 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV70771] IBM Endpoint Manager for Remote Control Interim Fix pack 9.0.1-TIV-IEMRC901-IF0006. 
+For more information about 9.0.1-TIV-IEMRC901-IF0006, see http://www-01.ibm.com/support/docview.wss?uid=swg24039334 [http://www-01.ibm.com/support/docview.wss?uid=swg24039334]
+
+Fix pack 9.0.1-TIV-IEMRC901-IF0006 will be released 2nd April 2015. WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+OpenSSL Project vulnerability website [http://www.openssl.org/news/vulnerabilities.html] (for detail on what versions are affected) 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 2nd April 2015: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

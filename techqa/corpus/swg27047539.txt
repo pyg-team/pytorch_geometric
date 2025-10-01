@@ -1,0 +1,89 @@
+Title: IBM Interim Fix 02 - For QRadar 7.1.0 Maintenance Release 2 patch 12 (7.1.0.1104434) - United States
+
+Text:
+Interim Fix 02; 7.1.0 Maintenance Release 2 patch 12; IF02; 7.1.0.1104434 RELEASE NOTES
+
+ABSTRACT
+ Installation instructions for Interim Fix 02 of IBM Security QRadar 7.1.0 Maintenance Release 2 patch 12 (7.1.0.1104434) 
+
+CONTENT
+Interim fixes are intended to resolve specific APAR or security-related issues in the latest version of QRadar. If your deployment is installed with IBM Security QRadar 7.1.0 Maintenance Release 2 patch 12 (7.1.0.1104434), then this interim fix can be applied to your system. Interim fixes are cumulative, so installing IF02 also includes software changes for IF01. The fixed issues below might list several tables for prior interim fixes that are included with this software update.
+
+
+
+
+
+
+Issues resolved in Interim Fix 02 for QRadar 7.1.0 Maintenance Release 2 patch 12 
+Number Description SECURITY BULLETIN [http://www.ibm.com/support/docview.wss?uid=swg21977664] VULNERABILITY IN IBM JAVA SDK AFFECTS IBM QRADAR SIEM AND INCIDENT FORENSICS. (CVE-2015-7575) SECURITY BULLETIN [http://www.ibm.com/support/docview.wss?uid=swg21977665] GNU C LIBRARY (GLIBC) VULNERABILITY AFFECTS IBM QRADAR SIEM AND INCIDENT FORENSICS (CVE-2015-7547) Issues resolved in Interim Fix 01 for QRadar 7.1.0 Maintenance Release 2 patch 12 
+Number Description SECURITY BULLETIN [http://www.ibm.com/support/docview.wss?uid=swg21976113] VULNERABILITY IN MD5 SIGNATURE AND HASH ALGORITHM AFFECTS IBM QRADAR SIEM, AND QRADAR INCIDENT FORENSICS (CVE-2015-7575) SECURITY BULLETIN [http://www.ibm.com/support/docview.wss?uid=swg21976148] OPENSSL AS USED IN IBM QRADAR SIEM IS VULNERABLE TO A DENIAL OF SERVICE ATTACK, AND SENSITIVE INFORMATION EXPOSURE (CVE-2015-3194, CVE-2015-3195, CVE-2015-3196) 
+Before you begin 
+
+Ensure that you take the following precautions: 
+
+ * Back up your data before you begin any software upgrade. For more information about backup and recovery, see the IBM Security QRadar Administration Guide. [http://public.dhe.ibm.com/software/security/products/qradar/documents/71MR2/QRadar/EN/QRadar_71MR2_AdminGuide.pdf] [http://www.ibm.com/support/docview.wss?uid=swg27038118] 
+ * To avoid access errors in your log file, close all open QRadar sessions. 
+ * The interim fix for QRadar cannot install on a managed host that is at a different software version from the Console. All appliances in the deployment must be at the same software revision to patch the entire deployment. 
+ * Verify that all changes are deployed on your appliances. 
+ * The patch cannot install on appliances that have changes that are not deployed. 
+
+
+About this task Interim fixes are software updates intended to fix a small number of known software issues in your QRadar deployment. The interim fix restarts services, which halts event and flow collection in your deployment until the installation completes.
+
+
+
+
+Procedure 
+
+ 1. Download interim fix 7.1.0-QRADAR-QRSIEM-1104455INT from the IBM Fix Central website: 
+    http://www.ibm.com/support/fixcentral/swg/quickorder?parent=Security%2BSystems&product=ibm/Other+software/IBM+Security+QRadar+SIEM&release=7.1.0&platform=Linux&function=fixId&fixids=7.1.0-QRADAR-QRSIEM-1104455INT&includeSupersedes=0&source=fc [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=Security%2BSystems&product=ibm/Other+software/IBM+Security+QRadar+SIEM&release=7.1.0&platform=Linux&function=fixId&fixids=7.1.0-QRADAR-QRSIEM-1104455INT&includeSupersedes=0&source=fc]
+    
+    
+ 2. Using SSH, log in to your system as the root user.
+    
+    
+ 3. Copy the interim fix to the /tmp directory on the QRadar Console. 
+    
+    Note: If space in the /tmp directory is limited, copy the interim fix to another location that has sufficient space.
+    
+    
+ 4. To create the /media/updates directory, type the following command: mkdir -p /media/updates
+    
+    
+ 5. Change to the directory where you copied the patch file. For example, cd /tmp
+    
+    
+ 6. To mount the patch file to the /media/updates directory, type the following command:mount -o loop -t squashfs 710_QRadar_interimfix-7.1.0.1104434-IF02-1104455.sfs /media/updates/
+    
+    
+ 7. To run the patch installer, type the following command: /media/updates/installer 
+    The first time that you run the interim fix, there might be a delay before the installation menu is displayed.
+    
+    
+ 8. Using the patch installer, select all. 
+    
+    The all option updates the software on all systems in your deployment. In HA deployments, primary HA appliances are patched and replicate the patch update to the secondary HA appliance. 
+    
+    NOTE: If your Secure Shell (SSH) session is disconnected while the installation is in progress, the installation continues. When you reopen your SSH session and rerun the installer, the current state of the installation is displayed.
+    
+    
+ 9. After the install completes, administrators and users should clear their browser cache before logging in to the Console.
+
+
+
+Results 
+
+A summary of the interim fix installation advises you of any managed host that were not updated. If the interim fix fails to update a managed host, you can copy the interim fix to the host, then mount and run the installation locally. 
+
+ 
+
+
+
+
+--------- 
+Where do you find more information? 
+
+
+
+
+[/support/docview.wss?uid=swg27047539&aid=1] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg27047539&aid=2] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg27047539&aid=3] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg27047539&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg27047539&aid=5] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg27047539&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg27047539&aid=7] [http://ibm.biz/SuptRegQuikStart]

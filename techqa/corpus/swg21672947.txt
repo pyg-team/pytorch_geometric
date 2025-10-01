@@ -1,0 +1,36 @@
+Title: IBM XPages SessionID cookie secure flag not set in SSL Required environment - United States
+
+Text:
+XPages; HTTPS; SSL; SessionID; secure TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Steps to Reproduce: 
+
+- Set up your Domino server using HTTPS / SSL, and in Domino Administrator enable the option "Require SSL protected communication" 
+- Create an XPages application (e.g. using the discussion template)
+- Close all browser instances (because the cookie is a session cookie, 
+tied to the duration of the browser session).
+- Open a HTTPS (not HTTP) URL to an XPage, like so:
+https :// server.example.com/disc2.nsf/allDocuments.xsp
+- Check the cookie that was set by the XPage.
+The cookie is like so:
+Set-Cookie: SessionID=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX; path=/; HttpOnly
+
+The cookie has the "path" attribute and the "HttpOnly" attribute, but does not have the "secure" attribute.
+The secure attribute would be recommended on servers that are configured to require SSL
+and have been configured to only accept HTTPS connections (not HTTP). 
+The expected cookie is like so:
+Set-Cookie: SessionID=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX; path=/; secure; HttpOnly
+See the cookie specification for more details.
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, first upgrade Domino to 9.0.1 FixPack2 or any later version, or install a Domino hotfix containing the fix for SPR#CJON9BVPAM.
+
+Then, with the fix in place, you need to change a configuration option to enable the secure flag.
+The configuration file is: C:\Domino\data\properties\xsp.properties
+If that xsp.properties file does not yet exist, create a text file with that name.
+Add this line to that file:
+xsp.sessionid.cookie.secure=true
+Note, that setting should only be enabled if the server has been configured to only accept https requests.
+If both https and http requests are accepted, then it will not be secure and the users may experience data loss.

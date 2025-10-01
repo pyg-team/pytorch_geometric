@@ -1,0 +1,23 @@
+Title: IBM企业内容管理8.4.X或8.5在AIX操作系统上，对可以全文检索的项类型做创建、更新和重新检索操作时，使用Oracle 11.2.0.4版本比使用Oracle 11.2.0.3版本性能差。 - United States
+
+Text:
+Oracle 11.2.0.4; slow performance; IBM Content Manager TECHNOTE (TROUBLESHOOTING)
+
+本文档仅适用于以下语言版本：
+ 简体中文 
+
+问题（摘要）
+ IBM企业内容管理8.4.X或8.5在AIX操作系统上，对可以全文检索的项类型做创建、更新和重新检索操作时，使用Oracle 11.2.0.4版本比使用Oracle 11.2.0.3版本性能差。 
+
+症状
+在AIX操作系统上，当您升级到Oracle 11.2.0.4版本后，您会发现对可以全文检索的项类型做创建、更新和重新检索操作时会比之前缓慢。
+
+
+原因
+这个问题已经被Oracle的技术支持团队接受，对应的Oracle缺陷号码是19055653。
+
+解决问题
+联络Oracle的技术支持团队获取相应的补丁。
+
+相关信息
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21678720]

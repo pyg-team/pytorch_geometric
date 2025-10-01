@@ -1,0 +1,61 @@
+Title: IBM Installing ITCAM Agent for WebSphere Applications Reports V7.2 on Tivoli Common Report 3.1 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I install ITCAM Agent for WebSphere Applications Reports V7.2 on Tivoli Common Report 3.1? 
+
+ANSWER
+You can install ITCAM Agent for WebSphere Applications Reports 7.2, provided with ITCAM for Applications V7.2.0.0.1, on Tivoli Common Reporting V2.1.1 or V3.1 by performing a manual installation or by using the Reports installer. 
+Prerequisites and pre-installation tasks
+
+Before installing ITCAM Agent for WebSphere Applications Reports, verify that you have met the following prerequisites: 
+
+ * Tivoli Monitoring 6.2.2 fix pack 3 or higher 
+ * Tivoli Common Reporting 2.1.1 or version 3.1 
+ * ITCAM Agent for WebSphere Applications 7.1 Fix Pack 2, interim fix 3, or higher 
+ * Tivoli Data Warehouse (including Summarization and Pruning agent [SnP]) 
+ * You must have Java Runtime Environment (JRE) 1.5 or higher installed on the systems where you are plan to run the reports installer
+
+
+The databases that are supported are the same as the databases supported by Tivoli Data Warehouse. 
+
+Installing using the Reports installer 
+
+To run the installer in GUI mode, complete the following steps: 
+1. Open a command prompt and issue one of the following commands:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+2. Follow the instructions on the wizard to complete the installation. 
+
+To run the installer in console mode, complete the following steps: 
+1. Open a command prompt and issue one of the following commands:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+2. Follow the console prompts to complete the installation. 
+
+To run the installer in silent mode, complete the following steps: 
+1. use the latest version of itcam_silent_installer.properties to create a sample response file 
+2. Run one of the following commands:  * 
+ * path_to_the_response_file
+ * 
+ * 
+ * path_to_the_response_file
+
+
+For more information about installing and configuring ITCAM Agent for WebSphere Applications Reports, see the ITCAM Agent for WebSphere Applications Reports Installation and Configuration Guide. Agent_for_WebSphere_Applications_Reports_Installation_and_User_Guide.pdf [/support/docview.wss?uid=swg21639861&aid=2]Agent_for_WebSphere_Applications_Reports_Installation_and_User_Guide.pdf [/support/docview.wss?uid=swg21639861&aid=1]

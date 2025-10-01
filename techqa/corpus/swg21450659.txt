@@ -1,0 +1,15 @@
+Title: IBM Assigning different DocClasses to documents in IBM FileNet Capture Professional - United States
+
+Text:
+document class TECHNOTE (FAQ)
+
+QUESTION
+ How do I assign different DocClasses to documents using Capture Professional? 
+
+CAUSE
+The DocClass for a document is determined by the Settings Collection assigned to the batch, requiring that all documents within a batch have the same DocClass. Therefore, it is necessary to have each document in a separate batch so that they may each be assigned a separate DocClass.
+
+ANSWER
+If the documents currently exist in a single batch, Event Activator rules need to be created to break documents into separate batches, and assign Settings Collections to each batch containing the desired DocClass.
+
+Detailed instructions on how to create Event Activator rules can be found in the FileNet Capture Administrators Guide available on the Product Documentation for FileNet Capture [http://www.ibm.com/support/docview.wss?rs=3276&context=SSNVMX&uid=swg27010327] page.

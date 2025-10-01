@@ -1,0 +1,264 @@
+Title: IBM HD92934: OM  : CANNOT CREATE CATPARTS NOR CATDRAWINGS ON AIX 6.1 CATIA V5 R19 SP4 -- XLSMP FILESETS WERE MISSING FROM AIX 6.1 INSTALLATION - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Scenario :
+   Background:
+   Environment:
+   AIX 6.1 TL2
+   C++ runtime 10.1.0.0
+   Fortran runtime 12.1.0.0
+   Scenario:
+   1. Unable to create parts or drawings in CATIA V5R19 SP4
+   (32-bit) on AIX 6.1 (64-bit kernel). CATIA seems to start OK
+   - the GUI appears, the Product Structure workbench is loaded,
+   2. Initial Product1.CATProduct appears. If user then attempts
+   to create a new Part or Drawing, a "Licensing problem"
+   message window appears with the message "No license available
+   for this application". I am running with an AL3 license.
+   If CATIA started from command line:
+   > install_dir/B19/aix_a/code/command/catstart -run CNEXT
+   The following messages appear as CATIA starts:
+   Starting CATIA V5 program. Please wait...
+   Cannot open library libCATDrafting2DLProvider.a
+   Cannot open library libCATRmaView.a
+   Cannot open library libCATPenConfiguration.a
+   Cannot open library libCATRdgWorkbench.a
+   .
+   While attempting a new part, the following message is added:
+   Cannot open library libCATMechanicalModelerUI.a
+   .
+   When I attempt to create a new drawing, the following message
+   is added:
+   Cannot open library libCATDuiWkbDrw.a
+   .
+   No error files are created. All error messages appear on the
+   screen,
+   not in a log file. No Abendtrace is created.
+   .
+   Check Prerequisites runs OK.Integrity Check Level 1, Level 2
+   and Level 3 all run OK.
+   .
+   Default CATSettings were used.
+   This same system also has ENOVIA V6R2010 Server code
+   installed, which runs successfully.
+   .
+   Possible defect area:
+   When compared lslpp ?L output of L2 machine with users
+   machine, it was found that following file sets were missing
+   at users end.
+   xlsmp.aix53.rte                  SMP Runtime Libraries for
+   AIX 5.3
+   xlsmp.rte                              SMP Runtime Library
+   
+   xlsmp.msg.en_US.rte     SMP Runtime Messages - U.S. English
+   
+   .
+   User explained that he installed what is mentioned in R19
+   Pdir (and 3ds.com site) but not got above file sets installed
+   on his machine.
+   .
+   Expected results:
+   1. According to V5R19 PDir, followings are the Prerequisites
+   for CATIA:
+   .
+   AIX 6.1 Technology Level 02 GA with following components:
+   XL C/C++ V10.1.0.0 Run-time Environment (part of AIX 6.1
+   TL02)
+   XL Fortran V12.1.0.0 Run-Time Environment (part of AIX 6.1
+   TL02)
+   Java 1.5.0 32 bit Service Refresh 7
+   JAVA 1.5.0 IBM AIX build pap32dev-20080315 (SR7)
+   Fileset: Java5.sdk 5.0.0.175
+   .
+   Is above prerequisites list is sufficient to get above xlsmp
+   file sets ? If not:
+   2. Which other application user needs to install.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  empty
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Scenario :
+   Background:
+   Environment:
+   AIX 6.1 TL2
+   C++ runtime 10.1.0.0
+   Fortran runtime 12.1.0.0
+   Scenario:
+   1. Unable to create parts or drawings in CATIA V5R19 SP4
+   (32-bit) on AIX 6.1 (64-bit kernel). CATIA seems to start OK
+   - the GUI appears, the Product Structure workbench is loaded,
+   2. Initial Product1.CATProduct appears. If user then attempts
+   to create a new Part or Drawing, a "Licensing problem"
+   message window appears with the message "No license available
+   for this application". I am running with an AL3 license.
+   If CATIA started from command line:
+   > install_dir/B19/aix_a/code/command/catstart -run CNEXT
+   The following messages appear as CATIA starts:
+   Starting CATIA V5 program. Please wait...
+   Cannot open library libCATDrafting2DLProvider.a
+   Cannot open library libCATRmaView.a
+   Cannot open library libCATPenConfiguration.a
+   Cannot open library libCATRdgWorkbench.a
+   .
+   While attempting a new part, the following message is added:
+   Cannot open library libCATMechanicalModelerUI.a
+   .
+   When I attempt to create a new drawing, the following message
+   is added:
+   Cannot open library libCATDuiWkbDrw.a
+   .
+   No error files are created. All error messages appear on the
+   screen,
+   not in a log file. No Abendtrace is created.
+   .
+   Check Prerequisites runs OK.Integrity Check Level 1, Level 2
+   and Level 3 all run OK.
+   .
+   Default CATSettings were used.
+   This same system also has ENOVIA V6R2010 Server code
+   installed, which runs successfully.
+   .
+   Possible defect area:
+   When compared lslpp ???L output of L2 machine with users
+   machine, it was found that following file sets were missing
+   at users end.
+   xlsmp.aix53.rte                  SMP Runtime Libraries for
+   AIX 5.3
+   xlsmp.rte                              SMP Runtime Library
+   
+   xlsmp.msg.en_US.rte     SMP Runtime Messages - U.S. English
+   
+   .
+   User explained that he installed what is mentioned in R19
+   Pdir (and 3ds.com site) but not got above file sets installed
+   on his machine.
+   .
+   Expected results:
+   1. According to V5R19 PDir, followings are the Prerequisites
+   for CATIA:
+   .
+   AIX 6.1 Technology Level 02 GA with following components:
+   XL C/C++ V10.1.0.0 Run-time Environment (part of AIX 6.1
+   TL02)
+   XL Fortran V12.1.0.0 Run-Time Environment (part of AIX 6.1
+   TL02)
+   Java 1.5.0 32 bit Service Refresh 7
+   JAVA 1.5.0 IBM AIX build pap32dev-20080315 (SR7)
+   Fileset: Java5.sdk 5.0.0.175
+   .
+   Is above prerequisites list is sufficient to get above xlsmp
+   file sets ? If not:
+   2. Which other application user needs to install.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS MODIFICATION WILL BE INCLUDED IN V5R20SP02 Program
+   Directory
+   Additional Closure Information:
+   Program Directory has been updated with required reference of
+   SMP Runtime Library. You can find reference at following
+   location.
+   .
+   V5R20SP02 Program Directory->
+   Prerequisites->
+   V5 Client Side (V5 Client Hardware & Software Requirements)->
+   Check the ???IBM AIX??? section. You will find sentence ???SMP
+   Runtime Library as delivered on AIX CDs??? added to it.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD92934
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 AIX
+   
+   
+ * REPORTED COMPONENT ID
+   569101000
+   
+   
+ * REPORTED RELEASE
+   519
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-25
+   
+   
+ * CLOSED DATE
+   2010-06-04
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

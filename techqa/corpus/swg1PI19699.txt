@@ -1,0 +1,179 @@
+Title: IBM PI19699: CANNOT CHANGE EDIT MODE AFTER OPENING MODULE IN READ ONLY MODE &DOUBLE CLICKING ON ANY OTHER ATTRIBUTE COLUMN THAN MAIN COLUMN - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational DOORS and Rational DOORS Web Access 9.6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038346]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Steps to replicate the behavior:
+   ========================
+   1> Select any Module which has Objects in it and open this
+   Module in Read Only Mode. (As any user including Administrator)
+   2> Insert a new Column in the Module, say Object Heading or
+   Object Text.
+   3> Double click on any of the Object's such the cursor starts
+   blinking in the newly added Column of step 2
+   4> Click on Edit -- Edit Mode -- try changing the Mode to either
+   Exclusive Edit or Shareable Edit.
+   
+   Expected Result:
+   =============
+   Upon selecting the required Edit Mode, the Module's editing mode
+   should be changed.
+   
+   Current Behavior:
+   =============
+   Instead of the Edit Mode being changed, the Module continues to
+   remain in Read Only Mode.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  You can either click away from that Object or double click on
+   the Object's Main Column.
+   This will allow the Module's edit mode to be changed as
+   required.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * DOORS users who use columns and the dit mode functionality   *
+   * in a particular way                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Steps to replicate the behavior:                             *
+   * ========================                                     *
+   * 1> Select any Module which has Objects in it and open this   *
+   * Module in Read Only Mode. (As any user including             *
+   * Administrator)                                               *
+   * 2> Insert a new Column in the Module, say Object Heading or  *
+   * Object Text.                                                 *
+   * 3> Double click on any of the Object's such the cursor       *
+   * starts                                                       *
+   * blinking in the newly added Column of step 2                 *
+   * 4> Click on Edit -- Edit Mode -- try changing the Mode to    *
+   * either                                                       *
+   * Exclusive Edit or Shareable Edit.                            *
+   *                                                              *
+   * Expected Result:                                             *
+   * =============                                                *
+   * Upon selecting the required Edit Mode, the Module's editing  *
+   * mode                                                         *
+   * should be changed.                                           *
+   *                                                              *
+   * Current Behavior:                                            *
+   * =============                                                *
+   * Instead of the Edit Mode being changed, the Module continues *
+   * to                                                           *
+   * remain in Read Only Mode.                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This is a client side fix
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been changed so that the edit mode changes in this
+   scenario.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI19699
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * REPORTED COMPONENT ID
+   5724V61DR
+   
+   
+ * REPORTED RELEASE
+   952
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-10
+   
+   
+ * CLOSED DATE
+   2014-12-05
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * FIXED COMPONENT ID
+   5724V61DR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R960 PSY
+   UP

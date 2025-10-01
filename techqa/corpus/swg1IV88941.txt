@@ -1,0 +1,160 @@
+Title: IBM IV88941: JIT COMPILER TAKES FAR TOO LONG TO COMPILE A METHOD - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: The symptoms of this APAR are sustained high CPU
+   usage by a JIT compilation thread, and potentially the JVM
+   hanging on shutdown. Additionally, a JIT verbose log will show a
+   compile request for a method that never completes even after a
+   long period of time, or takes far too long to complete.
+   .
+   Stack Trace: The stack backtrace of the JIT compiler thread
+   using sustained high CPU may look like this:
+   fixUpTree() // likely many frames of this
+   TR_EliminateDeadTrees::process()
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This problem can be avoided using the Java command line option
+   -Xjit:disableDeadTreeElimination
+   Note that this may affect performance. This can be limited by
+   only applying the option to the method(s) experiencing the
+   problem.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Certain patterns of Java bytecodes can cause the JIT
+   optimization Dead Tree Elimination to get stuck iterating over
+   the same trees in an exponential walk, causing the optimization
+   and compilation to run for a very long time and give the
+   appearance of being stuck in an infinite loop. This causes the
+   JIT compilation thread compiling the method to sustain high CPU
+   usage and potentially prevent JVM shutdown.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Checks have been added to the Dead Tree Elimination optimization
+   to prevent the JIT compiler from getting stuck iterating over
+   the same trees in an exponential walk.
+   .
+   This APAR will be fixed in the following Java Releases:
+      7 R1 SR4 FP20  (7.1.4.20)
+      7    SR10 FP20 (7.0.10.20)
+      6 R1 SR8 FP60  (6.1.8.60)
+      8    SR5 FP6   (8.0.5.6)
+   .
+   Contact your IBM Product's Service Team for these Service
+   Refreshes and Fix Packs.
+   For those running stand-alone, information about the available
+   Service Refreshes and Fix Packs can be found at:
+              https://www.ibm.com/developerworks/java/jdk/ [https://www.ibm.com/developerworks/java/jdk/]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV88941
+   
+   
+ * REPORTED COMPONENT NAME
+   JIT
+   
+   
+ * REPORTED COMPONENT ID
+   620700124
+   
+   
+ * REPORTED RELEASE
+   130
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-02
+   
+   
+ * CLOSED DATE
+   2017-11-15
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JIT
+   
+   
+ * FIXED COMPONENT ID
+   620700124
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R130 PSY
+   UP
+   
+   
+ * R260 PSY
+   UP

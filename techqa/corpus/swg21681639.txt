@@ -1,0 +1,64 @@
+Title: IBM Content Search Services is attempting to access an index area that no longer exists - United States
+
+Text:
+index area update; collection.xml; collectionConfiguration.xml TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Attempts to index content for keyword searching after upgrading FileNet Content Engine and IBM Content Search Services from version 5.1 to 5.2, fails with an error. 
+
+SYMPTOM
+In the Indexing Queue object in FileNet Enterprise Manager (FEM) or Administration Console Content Engine (ACCE), the following error is in the Last Failure Reason column:
+
+Indexing batch failed; An IBM Content Search Services server could not complete an indexing operation while accessing the /<index area 1 path here>/<collection name here> index for the server that runs on the <host name here>:8191 host and port. Message was: IQQG0354E The index directory [/<index area 2 path here>/<collection name here>/data/text] does not exist
+
+
+CAUSE
+Indexarea path not updated properly after an upgrade
+
+DIAGNOSING THE PROBLEM
+Verify the path update for the index-area properties was done correctly. 
+
+
+See this InfoCenter link: 
+
+ 
+
+http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.ce.admin.tasks.doc/cbr/csscbr_indexarearoot_changing.htm?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.ce.admin.tasks.doc/cbr/csscbr_indexarearoot_changing.htm?lang=en]
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 
+
+Installing FileNet Content Platform Engine 5.2 with IBM Content Search Services 5.2 each text collection that is created contains a collectionConfiguration.xml file. Prior to version 5.2, this text collection configuration file was called collection.xml.
+
+During an upgrade to FileNet Content Platform Engine 5.2 with IBM Content Search Services 5.2, the collection.xml file is retained while also creating a new collectionConfiguration.xml file. The values from the prior collection.xml are copied to the new collectionConfiguration.xml file. After the upgrade, continue the collectionConfiguration.xml is used and the collection.xml file is not.
+
+If the index area path is updated after the application upgrade, the old index area path can exist in the new collectionConfiguration.xml file for each text collection. If this is the case, each text collection configuration file needs to be updated with the new index area path. The steps are: 
+
+ 
+
+ 1. Stop IBM Content Search Services (all instances).
+    
+    
+ 2. Locate the collectionConfiguration.xml for each text collection in the specified index area on the file system.
+    
+    
+ 3. Update the following line reflecting the new updated index area path:
+    <physicalPath>/<index area path here>/<collection name here>/data</physicalPath>.
+    
+    
+ 4. When done, restart all IBM Content Search Services previously stopped in step 1.
+    
+
+RELATED INFORMATION
+ Changing index area root directory [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.ce.admin.tasks.doc/cbr/csscbr_indexarearoot_changing.htm?lang=en]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager

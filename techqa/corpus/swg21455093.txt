@@ -1,0 +1,68 @@
+Title: IBM Oracle listener process reported as inactive - United States
+
+Text:
+5724B96OOTR; IPC TCP listener oracle monitoring itm protocol active inactive address IZ77124 TECHNOTE (FAQ)
+
+QUESTION
+ Why are the listener processes with protocol IPC reported as inactive by the Monitoring agent for Oracle? 
+
+CAUSE
+In case there are two protocols configured for the current listener in the monitored environment, the Tivoli agent will get the protocols and will verify them one by one; the first one (TCP) is active, another one (IPC) is inactive. 
+
+EER0083T (140029) Listener LISTENER_HAORA1 address:
+"(ADDRESS=(PROTOCOL=TCP)(HOST=10.200.203.6)(PORT=1521))"
+
+UEX3050W KDDUEXE(1103) u_exec returning Line(4) ptr(270350608) next(0) value(OK (0 msec))
+-> LISTENER_HAORA1 1521 TCP active 0
+
+EER0083T (140032) Listener LISTENER_HAORA1 address:
+"(ADDRESS=(PROTOCOL=IPC)(KEY=EXTPROC))"
+
+UEX3050W KDDUEXE(1103) u_exec returning Line(4) ptr(270350576) next(0) value(TNS-12541: TNS:no listener)
+-> LISTENER_HAORA1 0 IPC inactive 1
+
+The listener.ora file has three endpoints defined in the file, two about TCP protocol with port 1521, another one being the IPC reported by the Tivoli agent as inactive status:
+
+LISTENER_HAORA2 =
+(DESCRIPTION_LIST =
+(DESCRIPTION =
+(ADDRESS_LIST =
+(ADDRESS = (PROTOCOL = TCP)(HOST = haora2-vip)(PORT = 1521)(IP = FIRST))
+)
+(ADDRESS_LIST =
+(ADDRESS = (PROTOCOL = TCP)(HOST = 10.200.203.7)(PORT = 1521)(IP = FIRST))
+)
+(ADDRESS_LIST =
+(ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC))
+)
+)
+)
+
+6.2.1-IF0003 includes an APAR enabling the Tivoli agent to verify each endpoints in the listener definition from listener.ora file: 
+
+APAR : IZ77124
+Abstract: LISTENER SITUATION FALSE ALERT OF INACTIVE STATUS
+Additional Information: The Oracle Agent false alert of inactive status of listener in all addresses in case the first address(such as the IPC protocol in following) in a listener is inactive.
+#################################################
+LISTENER =
+(DESCRIPTION_LIST =
+(DESCRIPTION =
+(ADDRESS_LIST = (ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC)))
+(ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = gb02qvn020rbsx7)(PORT = 1521)))
+)
+)
+#################################################
+
+
+ANSWER
+1). If the false alert is from the IPC protocol, then this is working as designed, as the agent detects the IPC endpoint of the listener as inactive. In this case, we suggest your DBA to check if the IPC protocol had been stopped. 
+
+2). In case you don't want to monitor the IPC protocol endpoints of the listener, then you should modify the situation to add the following condition to the formula: 
+'Listener Protocol' *EQ 'TCP'
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITM
+IBM Tivoli Monitoring

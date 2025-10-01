@@ -1,0 +1,168 @@
+Title: IBM PI47268: DOUBLE-CLICK ON .SAV. .SPV OR .SPS FILE --> IF STATISTICS IS OPEN GET ERROR THAT SPSSSTATISTICS CAN'T BE OPENED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Statistics 22.0 for Mac you were able to launch the product
+   and load a file simply by double-clicking an SPSS Statistics
+   file type  (.sav, .sps, .spv,).
+   
+   In Statistics 23.0 the product launches but does not load.  If
+   the product is already running, and you click a data file
+   (*.sav) you get a message saying SPSSStatistics can't be opened.
+   
+   Workaround:  With Statistics already open, you can drag the
+   desired SPSS Statistics file onto the running application to
+   load it in a new window.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This behavior is seemingly due to a difference in the Finder
+   between Mac OS X 10.9 and 10.10.  IBM SPSS Statistics
+   Development is working closely with Apple to remedy this issue's
+   effect in our product.
+   
+   This issue will be addressed in a future release.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of IBM SPSS Statistics for Mac                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * DOUBLE-CLICK ON .SAV. .SPV OR .SPS FILE --> IF STATISTICS IS *
+   * OPEN GET ERROR THAT SPSSSTATISTICS CAN'T BE OPENED           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade your Operating System to macOS 10.12.1 or     *
+   * later.                                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is resolved for macOS 10.12.1 or later
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI47268
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   N00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-08-20
+   
+   
+ * CLOSED DATE
+   2017-05-17
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RM00 PSN
+   UP
+   
+   
+ * RM00 PSY
+   UP
+   
+   
+ * RN00 PSN
+   UP
+   
+   
+ * RN00 PSY
+   UP
+   
+   
+ * RO00 PSN
+   UP
+   
+   
+ * RO00 PSY
+   UP

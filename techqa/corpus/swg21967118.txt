@@ -1,0 +1,25 @@
+Title: IBM Security Network Protection (XGS) inbound and outbound SSL inspection session resumption - United States
+
+Text:
+ssl; encryption; decryption TECHNOTE (FAQ)
+
+QUESTION
+ How does the XGS handle the session resumption when inspecting SSL inbound vs. outbound traffic? 
+
+ANSWER
+One of the main difference between inbound and outbound SSL inspection is tolerance to errors occurring during traffic inspection. 
+
+We call inbound SSL inspection as "passive" inspection because we won't modify the packets at all. We call outbound inspection as "active" inspection because we need to modify every packet for inspection.
+
+Once we start an active inspection, there is no way to reverse it or stop it, we need to keep modifying packet until the connection is finished. If there is an error occur during inspection, e.g. XGS is too busy in processing packets, the XGS will start bypassing packets or the hardware bypass will kick-in due to system error. 
+
+All the active SSL connections will be corrupted and there is no way to recover them. Currently we have no plans to support SSL session resumption in outbound SSL inspection.
+
+However, when using inbound SSL inspection, all the SSL connection will still be fine even if XGS enter bypass mode because we don't modify the packets at all. 
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21967118&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21967118&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21967118&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21967118&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21967118&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21967118&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21967118&aid=7] [http://ibm.biz/ContactSecSupport]

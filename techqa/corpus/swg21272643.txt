@@ -1,0 +1,75 @@
+Title: IBM The "java.lang.NoClassDefFoundError: org.eclipse.core.runtime.CoreException" error is displayed when testing a web service java client with IBM Rational Architect and IBM WebSphere Application server - United States
+
+Text:
+CoreException; Web Service; Websphere; thinclient_6.1.0.jar; java.lang.NoClassDefFoundError: org.eclipse.core.runtime.CoreException; WAS; NoClassDefFoundError; 1272643 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When testing a Web service Java client with IBM® Rational® Application Developer (RAD) and IBM® WebSphere® Application Server (WAS) 6.1, the following exception may be raised: 
+
+java.lang.NoClassDefFoundError: org.eclipse.core.runtime.CoreException 
+
+SYMPTOM
+The full error appears in the log file as follows: 
+
+
+Exception in thread "main" java.lang.NoClassDefFoundError: 
+org.eclipse.core.runtime.CoreException 
+at java.lang.J9VMInternals.verifyImpl(Native Method) 
+at java.lang.J9VMInternals.verify(J9VMInternals.java:59) 
+at java.lang.J9VMInternals.initialize(J9VMInternals.java:120) 
+at 
+com.ibm.ws.webservices.multiprotocol.discovery.ServiceProviderManager.getDiscoveredServiceProviders(
+ServiceProviderManager.java:378) 
+at 
+com.ibm.ws.webservices.multiprotocol.discovery.ServiceProviderManager.getAllServiceProviders(
+ServiceProviderManager.java:214) 
+at 
+com.ibm.ws.webservices.multiprotocol.discovery.ServiceProviderManager.getSupportingServiceProvider(
+ServiceProviderManager.java:400) 
+
+
+
+
+CAUSE
+A possible cause is that the Java project is not using the thin client .jar file provided with WebSphere 6.1, but rather the WebSphere 6.1 runtime library (required only by Web or EJB projects) on its Java build path.
+
+
+
+RESOLVING THE PROBLEM
+Steps to create a stand-alone Java client that invokes a Web service are given in the redbook Web Services Handbook for WebSphere Application Server 6.1, Chapter 15 Develop Web services with Application Server Toolkit 6.1..Creating Web service clients..Stand-alone Java client. 
+
+
+The last step is: 
+
+ * 
+ * 
+ * 
+ * Add com.ibm.ws.webservices.thinclient_6.1.0.jar to the classpath. In the Project Explorer select the WeatherClientStandalone project and Properties. Select Java Build Path and on the Libraries tab click Add External JARs. The JAR file is located in {WAS_HOME}/runtimes. 
+ * 
+ * 
+ * In RAD, the JAR file can be found under <RAD HOME>/runtimes/base_v61/runtimes
+ * 
+ * 
+
+
+The attached Project Interchange gives an example. To reproduce the problem, remove the webpshere thin client jar from the build path and add the Websphere 6.1 runtime library (from the Java build path, click on Add library>Server runtime>We bsphere Application Server 6.1). 
+
+wsjavaclient.zip [/support/docview.wss?uid=swg21272643&aid=2] [/support/docview.wss?uid=swg21272643&aid=1] 
+
+DISCLAIMER All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. 
+
+ 
+
+
+
+
+
+RELATED INFORMATION
+#Web Services Handbook for WebSphere Application Server [http://www.redbooks.ibm.com/redbooks/SG247257/wwhelp/wwhimpl/java/html/wwhelp.htm]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Application Developer for WebSphere Software Web Services Development Windows 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4 All Editions

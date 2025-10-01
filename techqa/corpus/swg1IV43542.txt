@@ -1,0 +1,254 @@
+Title: IBM IV43542: SR_SLA_COMPLIANCE_NONCOMPLIANCE_TSD.RPTDESIGN REPORT STACK TRACE ERRORS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The outofthebox report
+   sr_sla_compliance_noncompliance_tsd.rptdesign does not run and
+   gives multiple  error exceptions. Even on Maxdemo data.
+   
+   
+   Steps to replicate:
+   
+   Problem reproduced one BS 7118 and BS71110 with SP 7112 & SRM
+   7211
+   
+   1. Login as Maxadmin user
+   
+   (Maxadmin has full privileges to Service Requests app and SLA
+   (SP) application in Security Groups)
+   
+   2. Go To Menu from Start Centre, choose Reports -> Service Desk
+   ->Service Requests.
+   
+   3. From  the Reports to Run - On Demand Reports - Description
+   filter, enter "sla" and press enter.
+   
+   This brings back report:
+   
+   SLA Compliance for Service Request Management report
+   (SR_SLA_compliance_non-compliance_tsd.rptdesign )
+   
+   4. Enter the following information in the parameter fields
+   available (note: none of these are Required fields)
+   
+   SubGroup: (leave blank)
+   
+   Start Date; 01/01/2013
+   
+   End Date: 07/05/2013
+   
+   Schedule: Immediate
+   
+   5. Click Submit
+   
+   Following error is seen for the new report viewer window that
+   opens up:
+   
+   Multiple exceptions occurred.
+   
+   Show Exception Stack Trace....
+   
+   org.eclipse.birt.report.engine.api.EngineException: There are
+   errors evaluating script "if (!maximoDataSet.fetch())
+   return (false);
+   
+   See full log stack trace at:
+   
+   
+   https://ecurep.mainz.de.ibm.com/rest/download/75225,019,866/0-al
+   l_data/75225.019.866.EXCEPTION.txt [https://ecurep.mainz.de.ibm.com/rest/download/75225,019,866/0-all_data/75225.019.866.EXCEPTION.txt]
+   
+   
+   Also seen following errors that may be related:
+   
+   
+   
+   Error:
+   
+   Caused by: org.eclipse.birt.data.engine.core.DataException: A
+   BIRT
+   exception occurred: There are errors evaluating script
+   "__bm_FETCH()":
+   Wrapped
+   com.ibm.tivoli.maximo.report.script.MXReportRuntimeException:
+   com.ibm.db2.jcc.am.SqlException: [jcc][1093][10420][3.64.82]
+   Invalid
+   data conversion: Parameter instance SR17045 is invalid for the
+   requested
+   conversion to integer. ERRORCODE=-4220, SQLSTATE=null (#16)..
+   See next
+   exception for more information.
+   
+   Wrapped
+   com.ibm.tivoli.maximo.report.script.MXReportRuntimeException:
+   com.ibm.db2.jcc.am.SqlException: [jcc][1093][10420][3.64.82]
+   Invalid
+   data conversion: Parameter instance SR17045 is invalid for the
+   requested
+   conversion to integer. ERRORCODE=-4220, SQLSTATE=null (#16).
+      at
+   org.eclipse.birt.data.engine.core.DataException.wrap(DataExcepti
+   on.java:
+   118)
+   
+   25 Feb 2013 15:10:29:776 [ERROR] getInteger(TICKETID) failed.
+   com.ibm.db2.jcc.am.SqlException: [jcc][1093][10420][3.64.82]
+   Invalid
+   data conversion: Parameter instance SR17045 is invalid for the
+   requested
+   conversion to integer. ERRORCODE=-4220, SQLSTATE=null
+    at com.ibm.db2.jcc.am.bd.a(bd.java:663)
+    at com.ibm.db2.jcc.am.bd.a(bd.java:60)
+    at com.ibm.db2.jcc.am.bd.a(bd.java:75)
+    at com.ibm.db2.jcc.am.ec.d(ec.java:1599)
+    at com.ibm.db2.jcc.am.fc.H(fc.java:1220)
+    at com.ibm.db2.jcc.am.ResultSet.getIntX(ResultSet.java:789)
+   
+   
+   <SNIP>
+   
+   Caused by:
+   java.lang.NumberFormatException
+    at java.math.BigDecimal.<init>(BigDecimal.java:399)
+    at java.math.BigDecimal.<init>(BigDecimal.java:672)
+    at com.ibm.db2.jcc.am.ec.k(ec.java:1956)
+    at com.ibm.db2.jcc.am.ec.d(ec.java:1596)
+    ... 142 more
+   
+   07 Feb 2013 13:36:17:895 [ERROR] DataSet [dataSet] fetch failed:
+   com.ibm.db2.jcc.am.SqlException: The result of a scalar
+   fullselect,
+   SELECT INTO statement, or VALUES INTO statement is more than
+   one row..
+   SQLCODE=-811, SQLSTATE=21000, DRIVER=3.64.82
+    at com.ibm.db2.jcc.am.bd.a(bd.java:682)
+    at com.ibm.db2.jcc.am.bd.a(bd.java:60)
+    at com.ibm.db2.jcc.am.bd.a(bd.java:127)
+    at
+   com.ibm.db2.jcc.am.ResultSet.completeSqlca(ResultSet.java:4031)
+    at
+   com.ibm.db2.jcc.am.ResultSet.earlyCloseComplete(ResultSet.java:4
+   013)
+   
+   BS 7.1.1.10
+   IBM Maximo for Service Providers 7.1.1.2
+   IBM Maximo Asset Management Scheduler 7.1.1
+   IBM Tivoli Change Management for Service Providers
+   7.2.1.2
+   
+   Service Request Manager 7.2.1.1
+   Tivoli Asset Management for IT Enablement 7.2.2.0
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Dev to provide fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  SR_SLA_COMPLIANCE_NONCOMPLIANCE_TSD.RPTDESIGN REPORT STACK
+        TRACE ERRORS
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in SCCD 7503 & 7512.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV43542
+   
+   
+ * REPORTED COMPONENT NAME
+   ADMINISTRATION
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46A1
+   
+   
+ * REPORTED RELEASE
+   721
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-03
+   
+   
+ * CLOSED DATE
+   2014-04-24
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV SERVICE DES
+   
+   
+ * FIXED COMPONENT ID
+   5724S85D0
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R721 PSY
+   UP

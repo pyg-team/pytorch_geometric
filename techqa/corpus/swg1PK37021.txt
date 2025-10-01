@@ -1,0 +1,148 @@
+Title: IBM PK37021: TRANSACTION ID NOT ROLLED BACK ON SIB COMMUNICATIONS FAILURE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a SIBus client gracefully closes a connection when a
+   transaction is in "pre-prepare" state the server will retain
+   the transaction ID in its logs.  When the client reconnects
+   and attempts to start a transaction the attempt may fail.  The
+   server will log this FFDC:
+   
+   Exception = com.ibm.ws.sib.msgstore.XidAlreadyKnownException
+   Source = com.ibm.ws.sib.msgstore.transactions.
+            MSDelegatingXAResource.start
+   probeid = 227
+   Stack Dump = com.ibm.ws.sib.msgstore.XidAlreadyKnownException:
+   CWSIS1000E: The requested action could not be carried out as
+   it does not comply with the XA transaction protocol.
+     at com.ibm.ws.sib.msgstore.transactions.XidManager.start(XidMa
+     at com.ibm.ws.sib.msgstore.transactions.MSDelegatingXAResource
+     at com.ibm.ws.sib.comms.server.clientsupport.StaticCATXATransa
+     at com.ibm.ws.sib.comms.server.clientsupport.ServerTransportRe
+     at com.ibm.ws.sib.jfapchannel.impl.rldispatcher.ConversationRe
+     at com.ibm.ws.sib.jfapchannel.impl.rldispatcher.ReceiveListene
+     at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1471)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of WebSphere Application Server        *
+   *                 default messaging.                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A client may issue an                   *
+   *                      XidAlreadyKnownException after a        *
+   *                      connection is closed while              *
+   *                      transactions are in-flight -            *
+   *                      not yet prepared.                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In-flight transactions were not rolled back when the connection
+   they were associated with was closed gracefully. This resulted
+   in a XidAlreadyKnownException when a new connection was created
+   and the same transaction id was reused by the XA code.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix ensures that any transactions that are in-flight (ie
+   not yet prepared) and are associated with a connection which
+   is being closed gracefully, are rolled back.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK37021
+   
+   
+ * REPORTED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * REPORTED COMPONENT ID
+   620600101
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-01-08
+   
+   
+ * CLOSED DATE
+   2007-07-06
+   
+   
+ * LAST MODIFIED DATE
+   2007-07-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * FIXED COMPONENT ID
+   620600101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY
+   UP

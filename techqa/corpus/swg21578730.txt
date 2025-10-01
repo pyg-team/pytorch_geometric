@@ -1,0 +1,54 @@
+Title: IBM Configuring IBM Websphere DataPower appliance to close CVE-2011-3389 (BEAST) SSL/TLS vulnerability - United States
+
+Text:
+SSL ; TLS/SSL; TLS 1.0; TLS 1.1; BEAST; Vulnerability; CVE-2011-3389 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A known SSL/TLS vulnerability, CVE-2011-3389 (also known as BEAST), exists in the SSLv3 and TLS 1.0 protocols. To eliminate this vulnerability, please review the specific configuration recommendations below. 
+
+SYMPTOM
+Refer to CVE-2011-3389
+
+
+RESOLVING THE PROBLEM
+The following describes how to prevent the CVE-2011-3389 vulnerability on any firmware version of the IBM WebSphere DataPower appliance.
+
+The protocol problem in this case is the use of a predictable IV (initialization vector) when block cipher CBC mode is used. There are two ways to prevent the attack.
+
+1. use TLS 1.1 or TLS 1.2 
+
+The protocol problem that allows the attack was fixed completely starting in TLS 1.1 which changed the spec to use a new, random IV in each encrypted SSL record. 
+
+DataPower firmware release 6.0.0 added support for TLS 1.1 or TLS 1.2 by default. To protect the appliance against the vulnerability enable support for TLS 1.1 and TLS 1.2 in the Crypto Profile while disabling support for TLS 1.0, SSLv3, and SSLv2.
+
+DataPower firmware releases prior to 6.0.0 do not support TLS 1.1 or TLS 1.2 and therefore must use option #2 below to avoid the vulnerability.
+
+
+2. Enable the empty data record counter measure (CLI only)
+
+This counter measure can only be enabled using the command line interface (it is not available in the WebGUI).
+
+This counter measure is to send empty data records between the usual data records to effectively randomize the IV value. This behavior is legal according to the SSL/TLS specifications, but some SSL/TLS stacks are not fully compliant to this specification and will reject connections that send such records. Therefore use of this setting may result in incompatibility with SSL/TLS stacks that are not standards compliant such as the one in some versions of Microsoft Internet Explorer (IE).
+
+The Crypto Profile has a property called Options. Using the command line interface, set the Options field by entering crypto mode and using the profile command with an options mask of 0x10007FF: 
+
+profile name idCred [ssl name] [ciphers cipher-string] [options mask] 
+
+For example, a Crypto Profile named "alice-cp" uses an Identification Credential named "alice-idcred". The following CLI commands will enable the empty data record counter measure for this Crypto Profile:
+
+top
+configure terminal
+crypto
+profile alice-cp alice-idcred options 0x10007FF
+
+This counter measure only protects one half of the duplex (outgoing data from DataPower). It is up to the SSL peer to protect the other half of the duplex with the same counter measure. If this is undesirable then use #1 or #3 instead. 
+
+
+3. Use SSL Server Profile or SSL SNI Server Profile with firmware version 7.2.0 or later
+
+In 7.2.0 release, IBM DataPower Gateways introduced SSL Server Profile and SSL SNI Server Profile. These 2 profiles are not vulnerable to this advisory, as they will always send empty data records between the usual data records. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower B2B Appliance XB60 4.0.2, 4.0.1, 3.8.2, 5.0.0, 6.0.0 Business Integration WebSphere DataPower B2B Appliance XB62 4.0.2, 4.0.1, 5.0.0, 6.0.0 Business Integration WebSphere DataPower Integration Appliance XI50 4.0.2, 4.0.1, 3.8.2, 5.0.0, 6.0.0 Business Integration WebSphere DataPower Integration Appliance XI52 4.0.2, 4.0.1, 5.0.0, 6.0.0 Business Integration WebSphere DataPower Integration Appliance XI52 Virtual Edition 5.0.0, 6.0.0 Business Integration WebSphere DataPower Integration Blade XI50B 4.0.2, 4.0.1, 3.8.2, 5.0.0, 6.0.0 Business Integration WebSphere DataPower Low Latency Appliance XM70 3.8.2, 4.0.1, 4.0.2, 5.0.0, 6.0.0 Business Integration WebSphere DataPower Service Gateway XG45 4.0.2, 5.0.0, 6.0.0 Business Integration WebSphere DataPower Service Gateway XG45 Virtual Edition 5.0.0, 6.0.0 Business Integration WebSphere DataPower XML Accelerator XA35 4.0.2, 4.0.1, 3.8.2, 5.0.0 Business Integration WebSphere DataPower XML Security Gateway XS40 4.0.2, 4.0.1, 3.8.2, 5.0.0, 6.0.0

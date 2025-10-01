@@ -1,0 +1,64 @@
+Title: IBM How to calculate dbheap - United States
+
+Text:
+dbheap; config; configuration; memory; bufferpool TECHNOTE (FAQ)
+
+QUESTION
+ This document provides a formula for calculating an appropriate value for the database heap configuration parameter (dbheap). 
+
+ANSWER
+Below is a formula that can be used to estimate a value for the dbheap database configuration parameter.
+For DB2® Universal Database™ (DB2 UDB) Version 7:
+
+In bytes:
+(logbufsz * 4K)
++ (catalogcache_sz * 4K)
++ 8K per table space
++ 4K per table
++ 100 bytes per page of Extended Storage
+
+In pages:
+logbufsz
++ catalogcache_sz
++ 2 per table space
++ 1 per table
++ 1 per 40 pages of Extended Storage
+
+If buffer pool monitoring is enabled, you will need to add the following:
+
+216 bytes
+* (number of database agents + number of prefetchers + number of page cleaners)
+* (maximum table space ID)
+
+For FixPaks 4 through 7 inclusive, use 416 instead of 216 in the above formula.
+
+Note that the buffer pool monitoring requirement is only a concern when there is a large number (more than 100) of table spaces.
+
+For DB2 UDB Version 8 and DB2 Version 9 :
+
+In bytes:
++ 10K per table space
++ 4K per table
++ ( 1K + 4*extents used ) per range clustered table (RCT)
+
+
+Description of the components of the dbheap formulae:
+
+
+ * logbufsz: Memory that is allocated in its entirety on database activation. 
+ * catalog cache (Version 7 only): This is allocated in its entirety on database activation. The catalog cache loads descriptions of each table from the catalog as they are accessed. The memory that is actually used never increases or decreases. Table descriptions are only removed when there is no room left in the cache and a table whose description is not already loaded into the cache needs to be accessed. 
+ * table space control information: Control information for all table spaces is loaded on database activation, or as table spaces are created; 8K per table space in Version 7, 10K in Version 8 and 9. 
+ * object control information: Applies to tables, indexes, or large objects (LOBs), approximately 4K per table, depending on the table and index definitions. Object control information is loaded as tables are accessed, so the allowance for tables only needs to include accessed tables. Once a table is accessed, this information stays in memory until the database is recycled, or until the table is dropped. 
+ * memory for buffer pool monitoring (Version 7 only): This is volatile memory. The maximum is 216 bytes * (agents + prefetchers + page cleaners) * maximum_tablespace_id. The 216-byte value was increased to 416 bytes in FixPak 4 for internal performance monitoring purposes, and reverted to 216 bytes in FixPak 8 (APAR IY32333). 
+ * range clustered table (RCT) (Versions 8 and 9 only): RCTs are supported as of Version 8, FixPak 4. The memory requirement for an RCT is in addition to the object control information
+
+
+Note : 
+
+The database heap value that you configure represents only a portion of the database heap that is allocated. The database heap is the main memory area used to satisfy global database memory requirements. It is sized to include basic allocations needed for the startup of a database in addition to the dbheap value. Tools which report memory usage such as Memory Tracker, Snapshot Monitor, and db2pd report the statistics of this "larger" database heap - there is no separate tracking of the allocations that are represented by the DBHEAP configuration parameter. Therefore, it is normal for the statistics on database heap memory usage reported from these tools to exceed the configured value for the dbheap parameter.
+
+RELATED INFORMATION
+ DB2 UDB Version 8: Organization of memory use [http://publib.boulder.ibm.com/infocenter/db2luw/v8/index.jsp?topic=/com.ibm.db2.udb.doc/admin/c0005383.htm]
+DB2 UDB Version 8: dbheap [http://publib.boulder.ibm.com/infocenter/db2luw/v8/index.jsp?topic=/com.ibm.db2.udb.doc/admin/r0000276.htm]
+DB2 Version 9: Memory allocation in DB2 [http://publib.boulder.ibm.com/infocenter/db2luw/v9/topic/com.ibm.db2.udb.admin.doc/doc/c0005383.htm]
+DB2 Version 9: dbheap parameter [http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.admin.doc/doc/r0000276.htm]

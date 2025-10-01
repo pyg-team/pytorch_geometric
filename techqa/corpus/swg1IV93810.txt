@@ -1,0 +1,189 @@
+Title: IBM IV93810: DIALOG BOX STICKS TO MOUSE POINTER WHEN USING CHROME - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ERROR DESCRIPTION:
+   Mouse cursor is sticking to Help > System Information dialog
+   box when using Chrome.
+   
+   PROBLEM:
+   When dialog box was dragged, mouse cursor will stick to the box
+   even after the mouse button is released. You will have to click
+   the left mouse button again to release the dialog box from the
+   pointer. This is replicable in 7604, 7605, and 7606 environment
+   using Chrome; it works fine with IE and Firefox.
+   
+   PERFORMANCE ISSUE:  No
+   
+   STEPS TO REPRODUCE:
+   1) Sign into MAM 7.6 with maxadmin using Chrome.
+   2) From "Help", select "System Information".
+   3) Click the title bar of "System Information" dialog and drag
+   it to just a little bit left or right or up or down or anywhere.
+   4) Release the mouse button and then move the mouse.
+   5) Now you can see the dialog is sticked to the mouse pointer
+   and move together everytime you move the mouse.
+   
+   CURRENT ERRONEOUS RESULT:
+   Mouse pointer is sticking to dialog box.
+   
+   EXPECTED RESULT:
+   Cursor should released the dialog box after mouse button is
+   released.
+   
+   ADDITIONAL INFO:
+   
+   ENVIRONMENT (SYSTEM INFO):
+   App Server
+   IBM WebSphere Application Server 8.5.5.3
+   
+   Version
+   Tivoli's process automation engine 7.6.0.5 Build 20160611-0100
+   DB Build V7605-45
+   IBM TPAE Integration Framework 7.6.0.5 Build 20160610-2330 DB
+   Build V7605-50
+   IBM Maximo Calibration 7.6.0.0 Build 20160611-0100 DB Build
+   V7600-06
+   IBM Maximo Asset Management Work Centers 7.6.0.0 Build
+   20160610-1318 DB Build V7600-38
+   IBM Maximo Asset Management 7.6.0.5 Build 20160611-0100 DB
+   Build V7604-01
+   
+   Server OS
+   Windows Server 2008 R2 6.1
+   
+   Server DB
+   Oracle 12.1 (Oracle Database 12c Enterprise Edition Release
+   12.1.0.2.0 - 64bit Production With the Partitioning, Real
+   Application Clusters, Automatic Storage Management, OLAP,
+   Advanced Analytics and Real Application Testing options)
+   
+   LOCAL FIX:
+   Click again the left mouse button and it will release the
+   dialog box from the pointer.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Click again the left mouse button and it will release the
+   dialog box from the pointer.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Chrome users                                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * DIALOG BOX STICKS TO MOUSE POINTER WHEN USING CHROME         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in library.js
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV93810
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO SYSTEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46AV
+   
+   
+ * REPORTED RELEASE
+   760
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-02-28
+   
+   
+ * CLOSED DATE
+   2017-03-27
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO SYSTEMS
+   
+   
+ * FIXED COMPONENT ID
+   5724R46AV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R760 PSY
+   UP

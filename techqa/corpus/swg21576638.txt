@@ -1,0 +1,79 @@
+Title: IBM MQ 7.1 and later: packaging changes and renamed commands for GSKit and SSL Support - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ - Scenario 1:
+You want to install WebSphere MQ 7.1 or 7.5 or 8.0 on AIX and noticed that the fileset "mqm.ikeyman.rte" that was available with MQ 6.0 and MQ 7.0 is no longer provided. Instead you see the new fileset "mqm.gskit.rte".
+
+- Scenario 2:
+You want to install WebSphere MQ 7.1 or 7.5 or 8.0 on Linux and notice that the gsk7bas*, gsk7bas64* and MQSeriesKeyMan-7.0* filesets are no longer provided. Instead you see the new fileset: MQSeriesGSKit-7.1.*.rpm
+
+- Scenario 3:
+You get the following error in AIX, during the installation:
+MISSING REQUISITES: The following filesets are required by one or more of the selected filesets listed above. They are not currently installed and could not be found on the installation media. 
+mqm.keyman.rte 7.1.0.0 # Base Level Fileset 
+
+
+ANSWER
++++ Scenarios 1 and 2:
+GSKit V8.0 is now integrated with WebSphere MQ version 7.1 and 7.5. 
+In previous versions of WebSphere MQ, GSKit was installed separately into a machine-wide shared directory.
+
+MQ 7.1 does not use a machine-wide shared installation of GSKit: instead it uses a private GSKit installation in the WebSphere MQ installation directory. 
+
++ New filesets in MQ 7.1 and 7.5
+
+These are the new filesets that are delivered with MQ 7.1 and 7.5 for GSKit and SSL Support (IBM Global Security Kit V8 Certificate and SSL Base Runtime):
+
+AIX: mqm.gskit.rte
+HP-UX: MQSERIES.MQM-GSKIT
+Linux: MQSeriesGSKit-7.1.*.rpm
+Solaris: gskit (file class in the mqm package)
+Windows: Client and Server (installed by default)
+
+The following filesets from MQ 6 and MQ 7.0 are no longer provided with MQ 7.1 and 7.5:
+
+AIX: mqm.ikeyman.rte
+HP-UX: MQSERIES.MQM-KEYMAN
+Linux: MQSeriesKeyMan-7.0*
+Solaris: keyman (file class in the mqm package)
+Common: gsk7bas* gsk7bas64* gskcrypt32-8.0* gskssl32-8.0*
+
++ Renamed GSKit commands 
+
+Each WebSphere MQ Version 7.1 installation may use a different GSKit version. 
+To display the version number of GSKit embedded in a particular WebSphere MQ installation, run the dspmqver command from that installation as shown in the following table:
+
+MQ V7.0 command MQ 7.1 or later Purpose
+gsk7cmd runmqckm iKeycmd command-line tool
+gsk7ikm strmqikm iKeyman GUI tool
+gsk7capicmd runmqakm non-Java tool
+gsk7cmd,gsk7ver dspmqver -p 64 display version
+gsk8ver dspmqver -p 64 display version
+
+
++++ Scenario 3
+
+This is a known issue and is caused by the previous installation of the mqm.keyman.rte package being present on the system. 
+
+This issue is documented as APAR IV12566 [http://www.ibm.com/support/docview.wss?uid=swg1IV12566]. To resolve this issue, you will need to uninstall the current mqm.keyman.rte package.
+
+The reason for the error is that mqm.keyman.rte was included with V6 and V7.0 of WMQ but not with 7.1. There is a prerequisite test during the install to make sure that there is not a mixture of filesets from different releases. If mqm.keyman.rte or any other fileset is installed that is not in 7.1 it must be uninstalled first.
+
+
++ References:
+
+
+WebSphere MQ > Migrating and upgrading > List of changes by version, release, and maintenance level > V7.0.1 to V7.1 changes > GSKit: Changes from GSKit V7.0 to GSKit V8.0 [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm.mq.doc/mi77159_.htm?cp=SSFKSJ_7.1.0%2F1-0-3-2-9-2&lang=en]
+GSKit: Commands renamed [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm.mq.doc/mi77159_.htm?cp=SSFKSJ_7.1.0%2F1-0-3-2-9-2&lang=en]
+
+
+WebSphere MQ > Installing > Installing WebSphere MQ > Planning your installation > Choosing what to install
+WebSphere MQ components for UNIX and Linux [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm.mq.doc/zi00920_.htm?lang=en]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ MQSeries

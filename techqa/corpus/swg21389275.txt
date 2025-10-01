@@ -1,0 +1,49 @@
+Title: IBM Content Collector mark for archiving fails with internal processing error. - United States
+
+Text:
+ICC; archive TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When I select an email for archiving using Content Collector for Email, it fails with an internal processing error. 
+
+SYMPTOM
+After selecting an email for archiving using the Lotus Notes Client, the pop-up error message "Internal processing error" appears.
+
+
+CAUSE
+An unexpected error has occurred when Content Collector sends an archiving request to the trigger mailbox.
+
+ENVIRONMENT
+Content Collector for Email with Lotus Domino
+
+DIAGNOSING THE PROBLEM
+To troubleshoot further, perform the following to collect additional information:
+
+
+
+
+ * Ensure that the Configuration Web Service validation is successful:  * From the Content Collector Configuration Manager, select Email Services > Configuration Web Service. 
+    * Click on the Validate button. 
+    * If validation fails, you must correct the problem with Configuration Web Service before proceeding to the next step. See Related URL below.
+   
+   
+ * From the Lotus Notes Client menu, select Actions > IBM Content Collector > Enable or Disable Tracing. 
+ * From the Lotus Notes Client menu, select Tools > Show Java Debug Console. 
+ * Select a different email for archiving from the Lotus Notes Client to capture additional information.
+   Important: Once an email is selected for archiving, you cannot mark it for archiving again. You must select a different email to ensure a new archiving request will be sent.
+
+RESOLVING THE PROBLEM
+ 
+
+ * Check the following two places for errors:  * ICCNotesClientInfo.log under the Notes installation directory on the workstation. 
+    * Java Console of the Lotus Notes Client
+   
+   
+   If there is an error, you should resolve that error before proceeding to the next step. Consult with IBM support if you need further assistance. 
+ * Check to ensure that the trigger mailbox address defined in the Configuration Manager > Email Services > Client Application > Trigger Mailbox is a valid email address, and that you are able to send an email to this address directly in Lotus Notes. Note: Do not specify the name of the trigger mailbox database in this field. 
+ * After you correct the trigger mailbox value, go to the Email Services > Configuration Web Service panel and save the configuration. Make sure that the configuration web service is restarted. You may need to wait for a short period of time before the Notes Client will obtain the new value from the ICC Configuration Web Service. 
+ * When there are no longer errors in both the ICCNotesClientInfo.log and the Java Console, you can try to select a different email for archiving again. 
+   Important: Once an email is selected for archiving, you cannot mark it for archiving again. You must select a different email to ensure a new archiving request will be sent. 
+
+RELATED INFORMATION
+ ICC Configuration Web Service validation fails [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21389286]

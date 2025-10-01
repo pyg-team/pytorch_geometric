@@ -1,0 +1,22 @@
+Title: IBM Applying TIP 2.2 fix packs directly to a TIP 2.1 installation - United States
+
+Text:
+TIPL2; TIPL2INST; tivoli Integrated portal; feature pack TECHNOTE (FAQ)
+
+QUESTION
+ Can Tivoli Integrated Portal 2.2 fix packs be applied directly to a TIP 2.1 installation?
+
+
+ANSWER
+In order to apply TIP 2.2 fix packs, the target TIP installation must already be at TIPCore 2.2.0 or newer. TIP 2.1 installations must be upgraded to TIP 2.2 using the TIP 2.2.0.1 feature pack. The TIP 2.2.0.1 feature pack can be acquired from IBM Fix Central [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Tivoli+Integrated+Portal&release=All&platform=All&function=all]. 
+
+The following three items should be obtained from Fix Central: 
+
+ * 2.2.0.1-TIV-TIP-<platform>-RP0001 
+ * 2.2.0.1-TIV-TIP-FITSuit-RP0001vx 
+ * 2201-fixpack-guide-PDF.pdf
+
+
+
+To determine the installed TIPCore version, review the DE listIU command output. Details on the listIU command are included in the following technical note: 
+http://www-01.ibm.com/support/docview.wss?uid=swg21615989 [http://www-01.ibm.com/support/docview.wss?uid=swg21615989]

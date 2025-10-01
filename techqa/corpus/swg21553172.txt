@@ -1,0 +1,51 @@
+Title: IBM Executes C:E 1.3.00 ISPF Libdef and get IKJ56500I COMMAND MZMCP001 NOT FOUND - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Executes C:E 1.3.00 ISPF Libdef and get IKJ56500I COMMAND MZMCP001 NOT FOUND 
+
+SYMPTOM
+
+
+Installing C:E z/OS 1.3 on a test LPAR that probably never had C:E on it before. Customized the LIBDEF clist (just for our dataset names) and when I EXEC it, I get a "IKJ56500I COMMAND MZMCP001 NOT FOUND" message. All the ISPEXEC LIBDEF commands finished with LASTCC=0 (I added a debug statement after each one). I also created a MZICMDS table entry in ISPF option 3.9.
+
+Error Message IKJ56500I COMMAND MZMCP001 NOT FOUND
+
+
+RESOLVING THE PROBLEM
+
+
+In C:E 1.0.00, the LIBDEF example member contained the following, using PGM:
+
+ISPEXEC SELECT PGM(MZMCP001) NEWAPPL(MZI) PASSLIB
+
+In C:E 1.1.00 and above, the LIBDEF example member was updated and PGM was delibrately changed to CMD:
+
+ISPEXEC SELECT CMD(MZMCP001) NEWAPPL(MZI) PASSLIB
+
+Why the update: We found that CMD was needed for the dialog to function properly. CMD allows us to do LINK/LOAD/XCTL and find modules in the LIBDEF concatenation. With PGM, all programs must be called using the ISPF SELECT service.
+
+This customer was using ACF2 and C:E 1.3.00. They noticed in their C:E 1.2.00 LIBDEF, they defined PGM(MZMCP001) and in their C:E 1.3.00 libdef, they'd defined CMD(MZMCP001). Per ACF2 support, this is why the ACF2 Command-Limiting table needed to be updated for C:E 1.3.00, you must add Program MZMCP001 to give access to these TSO users, but this was unnecessry for C:E 1.2.00. FYI: The TSO CMDS can be defined per TSO user id or it can be defined globally in TSO GSO CMDLIST command. If NULL is defined in the list, that means there is no checking/verifying.
+
+
+
+ 
+
+HISTORICAL NUMBER
+ NFX2072 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Severity
+
+
+Normal
+
+
+Type
+
+
+NormalFix

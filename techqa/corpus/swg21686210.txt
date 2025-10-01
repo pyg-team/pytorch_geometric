@@ -1,0 +1,55 @@
+Title: IBM Security Bulletin: IBM WebSphere MQ Telemetry Component - Potential authentication bypass vulnerability when using the JAASConfig property (CVE-2014-6116) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM WebSphere MQ contains a vulnerability in which authentication is bypassed by MQTT clients with the "JAASConfig" configuration property set. 
+
+VULNERABILITY DETAILS
+CVE ID: CVE-2014-6116 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6116] 
+
+IBM WebSphere MQ contains a vulnerability in which authentication is bypassed by MQTT clients with the "JAASConfig" configuration property set.
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/96213 [https://exchange.xforce.ibmcloud.com/vulnerabilities/96213] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N)
+
+.
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM WebSphere MQ Telemetry Component 
+
+ * WebSphere MQ 8.0.0.1 downloaded prior to 24th September 2014 (Level: p000-001-L140910). To check your fix pack level, issue the command dspmqver and check the output of the Level option.
+
+REMEDIATION/FIXES
+Remove fix pack WebSphere MQ 8.0.0.1 (Level: p000-001-L140910), then install the latest version of WebSphere MQ 8.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg27043086] fix pack.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 08 October 2014: Original Copy Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21686646]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

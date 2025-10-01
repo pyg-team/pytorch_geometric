@@ -1,0 +1,151 @@
+Title: IBM After you install WebSphere Application Server Version 8.5.0.0, install the recommended interim fixes - United States
+
+Text:
+WASV85RNotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After you install the initial product level of IBM WebSphere Application Server Version 8.5.0.0, you should also install the recommended interim fixes. 
+
+RESOLVING THE PROBLEM
+After you install the initial product level of IBM WebSphere Application Server Version 8.5.0.0, you should install the recommended interim fixes before using the product. Access and install the appropriate fixes for your WebSphere Application Server edition and platform.
+
+
+ * 
+ * Recommended WebSphere Application Server Version 8.5 interim fixes
+ * 
+ * Accessing the WebSphere Application Server Version 8.5 interim fixes
+ * 
+ * Instructions for installing the WebSphere Application Server Version 8.5 interim fixes
+ * 
+ * Fix for the Intelligent Management component of WebSphere Application Server Hypervisor Edition Version 8.5
+ * 
+
+Recommended WebSphere Application Server Version 8.5 interim fixes
+
+
+The following fixes apply to WebSphere Application Server Version 8.5 (all editions): 
+
+ * 
+ * PM62795:
+ *  
+   8.5.0.0-WS-WAS-IFPM62795 
+ * 
+ * PM63479:
+ *  
+   8.5.0.0-WS-WASBase-i5OSPPC-IFPM63479 
+   8.5.0.0-WS-WASBase-MultiOS-IFPM63479 
+   8.5.0.0-WS-WASND-i5OSPPC-IFPM63479 
+   8.5.0.0-WS-WASND-MultiOS-IFPM63479 
+   8.5.0.0-WS-WAS-OS390-IFPM63479 
+ * 
+ * PM63827:
+ *  
+   8.5.0.0-WS-WAS-IFPM63827 
+ * 
+ * PM64186:
+ *  
+   8.5.0.0-WS-WASProd-IFPM64186 
+ * 
+ * PM64890:
+ *  
+   8.5.0.0-WS-WASND-DistExceptIBMi-IFPM64890 
+   8.5.0.0-WS-WAS-OS390-IFPM64890 
+   
+   
+   
+
+The following fix applies only to WebSphere Application Server for z/OS Version 8.5:  * 
+ * PM66102:
+ *  
+   8.5.0.0-WS-WAS-OS390-IFPM66102 
+   
+   
+   
+
+The following fix applies to WebSphere Java SDK Technology Edition Version 7.0:  * 
+ * PM63957:
+ *  
+   7.0.1.0-WS-WASJavaSDK7-AixPPC32-IFPM63957 
+   7.0.1.0-WS-WASJavaSDK7-AixPPC64-IFPM63957 
+   7.0.1.0-WS-WASJavaSDK7-HpuxIA64-IFPM63957 
+   7.0.1.0-WS-WASJavaSDK7-LinuxPPC32-IFPM63957 
+   7.0.1.0-WS-WASJavaSDK7-LinuxPPC64-IFPM63957 
+   7.0.1.0-WS-WASJavaSDK7-LinuxS390-IFPM63957 
+   7.0.1.0-WS-WASJavaSDK7-LinuxS39064-IFPM63957 
+   7.0.1.0-WS-WASJavaSDK7-LinuxX32-IFPM63957 
+   7.0.1.0-WS-WASJavaSDK7-LinuxX64-IFPM63957 
+   7.0.1.0-WS-WASJavaSDK7-OS390-IFPM63957 
+   7.0.1.0-WS-WASJavaSDK7-SolarisSparc-IFPM63957 
+   7.0.1.0-WS-WASJavaSDK7-SolarisSparc64-IFPM63957 
+   7.0.1.0-WS-WASJavaSDK7-SolarisX64-IFPM63957 
+   7.0.1.0-WS-WASJavaSDK7-WinX32-IFPM63957 
+   7.0.1.0-WS-WASJavaSDK7-WinX64-IFPM63957 
+   
+   
+   
+
+Accessing the WebSphere Application Server Version 8.5 interim fixes 
+
+Perform one of the following actions to access and install the interim fixes: 
+
+ 
+
+ * If you have access to the web-based service repository as well as an IBM Software ID and password, you can install these interim fixes directly from the service repository using IBM Installation Manager.
+   
+   For the live service repositories, use the same URLs as those used for the generally available product-offering repositories during installation. These URLs are based on the following pattern: 
+   
+   http://www.ibm.com/software/repositorymanager/ [http://www.ibm.com/software/repositorymanager/]offering_ID
+   
+   where offering_ID is the offering ID that you can find in WebSphere Application Server Version 8.5 product offerings for supported operating systems [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=phil&product=was-nd-dist&topic=cins_offerings].
+   
+   
+   
+   These locations do not contain web pages that you can access using a web browser. They are remote web-based repository locations that you specify for Installation Manager so that it can maintain the product.
+   
+   
+   
+   
+ * Otherwise, download the compressed interim-fix files for your system from IBM Fix Central [http://www-933.ibm.com/support/fixcentral/] and install them using Installation Manager.
+   
+
+
+Instructions for installing the WebSphere Application Server Version 8.5 interim fixes
+ * 
+ * Distributed operating systems: 
+ * 
+ * Installing interim fixes on distributed operating systems using the GUI
+ * 
+ * Installing interim fixes on distributed operating systems using the command line
+ * 
+ *  
+ * z/OS systems: Instructions for installing interim fixes on z/OS systems can be found in Installing interim fixes and fix packs on z/OS operating systems [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=phil&product=was-nd-zos&topic=tins_install_fixes_z]. 
+ *  
+ * IBM i systems: Instructions for installing interim fixes on IBM i systems can be found in Installing interim fixes on IBM i operating systems using the command line [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=phil&product=was-nd-iseries&topic=tins_install_fixes_i].
+   
+
+
+Fix for the Intelligent Management component of WebSphere Application Server Hypervisor Edition Version 8.5
+
+The following fix applies to WebSphere Application Server Hypervisor Edition Version 8.5: 
+
+ * 
+ * PM66137: 
+ *  
+   8.5.0.0-WS-WASND-DistExceptIBMi-IFPM66137 
+   
+   
+
+Before using the Intelligent Management component of WebSphere Application Server Hypervisor Edition Version 8.5, you must download and apply this base cumulative fix for Intelligent Management. 
+
+For information on how to apply the interim fix to virtual systems, see the instructions at http://www.ibm.com/support/docview.wss?uid=swg21598785 [http://www.ibm.com/support/docview.wss?uid=swg21598785]. 
+
+Note: You can optionally install Version 8.5.0.1 to resolve this issue.
+
+RELATED INFORMATION
+#WebSphere Application Server Version 8.5 release notes [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=phil&product=was-nd-mp&topic=relnotes]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server for z/OS Install z/OS 8.5 Application Servers WebSphere Application Server Hypervisor Edition 8.5 All Editions

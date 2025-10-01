@@ -1,0 +1,199 @@
+Title: IBM IT15030: ANS9921E ERROR BACKING UP VMS WHICH HAVE DISKS ON NFS DATASTORES - United States
+
+Text:
+AIX SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Incremental backup of VM may fail with an ANS9921E error when
+   the VM disks are on NFS datastores. This occurs as the total
+   disk size is incorrectly set during incr backup when disk is on
+   NFS datastore. This problem only affects disk verification, all
+   data is backed up correctly.  Full backup is not affected, the
+   observed behavior is that the initial incremental performed
+   after the full backup is successful, but subsequent incrementals
+   fail with ANS9921E.
+   Customer/L2 Diagnostics:  Trace with SERVICE VM flags will show
+   a valid diskSizeonDisk value for full and initial incremental
+   backup, and will show 0 for the diskSizeonDisk on the second
+   incremental.
+   FULL and INCR show
+   04/22/2016 13:02:21.606 [006276] [876] :
+   ..\..\common\vm\vmbackvddk.cpp(11172):
+   Disk Objinfo: diskObjInfoVersion:  4
+                 diskCapacityInBytes: 64424509952
+                 diskSizeOnDisk:      64424509952
+                 diskIncrementalSize: 0
+                 diskStatus:          0
+                 diskLabel:           Hard Disk 2
+   Second IFINCR
+   04/22/2016 13:16:52.057 [006052] [4648] :
+   ..\..\common\vm\vmbackvddk.cpp(11172):
+   Disk Objinfo: diskObjInfoVersion:  4
+                 diskCapacityInBytes: 64424509952
+                 diskSizeOnDisk:      0
+                 diskIncrementalSize: 0
+                 diskStatus:          0
+                 diskLabel:           Hard Disk 2
+   So we are unable to determine the size on disk, as occurred
+   before, on the second IFICNR.
+   Tivoli Storage Manager Versions Affected:
+   TSM client 6.3.2.3, 6.3.2.4, 6.4.3, 7.1.2
+   
+   MDVPARTL 7.1.2
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Performing a full VM backup will resolve the error, however, it
+   can reoccur.  Alternatively, setting VMVERIFYIFLATEST NO should
+   allow the backup to continue as the disk size check is bypassed.
+   Note that utilizing this option can introduce exposure to
+   unrecoverable backups.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Tivoli Storage Manager for Virtual Environments Data         *
+   * Protection for VMware versions 7.1 and 6.4 running on all    *
+   * Microsoft Windows x64 and Linux x86_64 platforms             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See ERROR DESCRIPTION                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue is projected to be fixed in the Tivoli Storage    *
+   * Manager Client on Windows x64 and Linux x86_64  in level     *
+   * 7.1.6                                                        *
+   * Note 1: The Tivoli Storage Manager (TSM) Client is a         *
+   * prerequisite to using the Data Protection for VMware. In     *
+   * Data Protection for VMware environments, the TSM Client is   *
+   * also known as the data mover.                                *
+   * Note 2: This is subject to change at the discretion of IBM.  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Size is now correctly set for disks on NFS datastore.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT15030
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM FOR VE DP V
+   
+   
+ * REPORTED COMPONENT ID
+   5725TVEVM
+   
+   
+ * REPORTED RELEASE
+   71W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-29
+   
+   
+ * CLOSED DATE
+   2016-05-13
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  dsmagent
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMCL
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R71W PSY
+   UP
+   
+   
+ * R71L PSY
+   UP
+   
+   
+ * R64W PSY
+   UP
+   
+   
+ * R64L PSY
+   UP

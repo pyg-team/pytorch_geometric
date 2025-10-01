@@ -1,0 +1,29 @@
+Title: IBM Why are the GDE binaries missing after upgrade of AIX OS from version 6.1 to version 7.1? - United States
+
+Text:
+Why are the GDE binaries missing after upgrade AIX OS from version 6.1 to version 7.1 TECHNOTE (FAQ)
+
+QUESTION
+ Why are the GDE binaries missing after upgrade of AIX OS from version 6.1 to version 7.1? 
+
+ANSWER
+You can't use the GDE Agent binaries for AIX version 6.1 on AIX version 7.1. 
+
+If you already did this then you need to: 
+
+- Uninstall the GDE agent. 
+
+- Reboot the server. 
+
+- Install GDE Agent binaries for AIX v7.1 
+
+ 
+
+To avoid this problem in the first place do this: 
+
+
+- On AIX v6.1 uninstall the GDE agent. 
+- Upgrade OS to v7.1 during this a reboot will be done. Take note that during OS upgrade file access to encrypted files will not be possible. 
+- New install of AIX v7.1 GDE agent.
+
+For details about how to uninstall, and install a GDE Agent. Please refer to your GDE Agent Install Guide.

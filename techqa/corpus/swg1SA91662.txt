@@ -1,0 +1,149 @@
+Title: IBM SA91662: MQM400 MQV5-GA DSPMQMQ + CHGMQMQ SHOW DIFFERENT EVENT VALUES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ******* (Do NOT alter/erase this or next 3 lines) *******
+   * EQUIVALENT ABSTRACT:
+   MQM400 MQV5-GA DSPMQMQ _ CHGMQMQ SHOW DIFFERENT EVENT VALUES
+   *
+   While using the DSPMQMQ command to view the values for the
+   performance events fields, the enduser noticed that the
+   values were different from the CHGMQMQ command. Below is
+   an example of the correct data displayed by the DSPMQMQ command:
+   DSPMQMQ SYSTEM.ADMIN.PERFM.EVENT plus F4=prompt :-
+   Queue full events enabled  . . :   *YES
+   Queue high events enabled  . . :   *NO
+   Queue low events enabled . . . :   *NO
+   CHGMQMQ displays all values as *YES.
+   CHGMQMQ is writing correct values for changed fields
+   but displaying inverted values for HIGHEVT and LOWEVT.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  While using the DSPMQMQ command to view the values for the
+   performance events fields, the enduser noticed that the
+   values were different from the CHGMQMQ command. Below is
+   an example of the correct data displayed by the DSPMQMQ command:
+   DSPMQMQ SYSTEM.ADMIN.PERFM.EVENT plus F4=prompt :-
+   Queue full events enabled  . . :   *YES
+   Queue high events enabled  . . :   *NO
+   Queue low events enabled . . . :   *NO
+   CHGMQMQ displays all values as *YES.
+   CHGMQMQ is writing correct values for changed fields
+   but displaying inverted values for HIGHEVT and LOWEVT.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Commands CHGMQMQ, CPYMQMQ and CRTMQMQ will display the correct
+   prompt override values for parameters HIGHEVT and LOWEVT.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SA91662
+   
+   
+ * REPORTED COMPONENT NAME
+   MQSERIES FOR AS
+   
+   
+ * REPORTED COMPONENT ID
+   5733A3800
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2000-12-15
+   
+   
+ * CLOSED DATE
+   2000-12-15
+   
+   
+ * LAST MODIFIED DATE
+   2001-04-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  AMQOQPOX
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MQSERIES FOR AS
+   
+   
+ * FIXED COMPONENT ID
+   5733A3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP
+   
+   
+ * R520 PSY SF63984
+   UP01/04/14 P 1100

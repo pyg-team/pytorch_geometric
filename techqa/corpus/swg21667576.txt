@@ -1,0 +1,53 @@
+Title: IBM Unable to launch GPM using Java SDK 7 in Sterling B2B Integrator - United States
+
+Text:
+GPM; Java 7; Security; java.lang.SecurityException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to launch Graphical Process Modeler (GPM) after Java 7 SDK upgrade while upgrading to fixpack 5.2.4.2 
+
+SYMPTOM
+Following error message are observed when GPM is launched using Java Runtime Environment (JRE) 7.0
+
+"Unable to launch application" 
+
+Details tab shows the following exception:
+java.lang.SecurityException: Missing required Permissions manifest attribute in main jar: ..//<hostname>:15000/gbm/pmodeler/FlowBuilder.jar
+at com.sun.deploy.security.DeployManifestChecker.verifyMainJar(Unknown Source)
+at com.sun.deploy.security.DeployManifestChecker.verifyMainJar(Unknown Source)
+at com.sun.javaws.Launcher.doLaunchApp(Unknown Source)
+at com.sun.javaws.Launcher.run(Unknown Source)
+at java.lang.Thread.run(Unknown Source)
+================
+
+
+CAUSE
+This is due to the security setting for launching Java applications in the Java control panel. Java 7 features new Security settings tab for launching the Java application from the browser. The default security level setting is high. Thus, when user tries to launch the GPM from the browser, it fails, as Java applications identified by a certificate from a trusted authority only will be allowed to run due to the high security setting.
+
+
+
+RESOLVING THE PROBLEM
+To resolve the issue, follow either of these workarounds: 
+
+ * Set the security setting to medium:  1. Go to Windows START > CONTROL PANEL 
+    2. Go to JAVA 
+    3. Click the SECURITY tab 
+    4. Change the Security Level setting from HIGH to MEDIUM. This setting will allow all the Java applications to run after presenting a security prompt.
+   
+   
+ * Add the Sterling B2B Integrator URL in the exception site list:  1. Go to START > CONTROL PANEL 
+    2. Go to JAVA 
+    3. Click the SECURITY tab 
+    4. Click "Edit Site List..." 
+    5. Click Add 
+    6. Type the URL in the Location field
+   
+   
+
+After either of the above settings, applications launched from the URL added will be allowed to run after appropriate security prompts. 
+
+Note: After making changes in Java Control Panel, open in a new browser window for the changes to take effect.
+
+
+RELATED INFORMATION
+ Java Control Panel [http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/jcp/jcp.html#security]

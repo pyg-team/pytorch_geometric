@@ -1,0 +1,103 @@
+Title: IBM J2CA0020E: The Connection Pool Manager could not allocate a Managed Connection: java.lang.IllegalState - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You implemented a new application in WebSphere Application Server (WAS) and you receive the following message in the WAS servant task: 
+
+J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adapter for resource 
+MQJMS2007: failed to send message to MQ queue 
+J2CA0020E: The Connection Pool Manager could not allocate a Managed Connection: java.lang.IllegalState 
+... 
+The only way to solve this problem is to restart the WAS server. 
+
+CAUSE
+The configuration is WebSphere Application Server for z/OS V7 which connects to a WebSphere MQ for z/OS V6 queue manager in BINDINGS mode. The first few lines at the top of the stack trace for the J2CA0020E error look like this: 
+
+J2CA0020E: The Connection Pool Manager could not allocate a Managed Connection: 
+java.lang.IllegalStateException: 
+Internal Error: cannot find the PoolManager Reference. 
+at com.ibm.ejs.j2c.ConnectionManager. 
+allocateMCWrapper(ConnectionManager.java:1007) 
+at com.ibm.ejs.j2c.ConnectionManager. 
+associateConnection(ConnectionManager.java:2335) 
+at com.ibm.ejs.jms.JMSSessionHandle. 
+getOpenSession(JMSSessionHandle.java:1310) 
+at com.ibm.ejs.jms.JMSSessionHandle. 
+getOpenUnifiedSession(JMSSessionHandle.java:1339) 
+at com.ibm.ejs.jms.JMSSessionHandle. 
+createTextMessage(JMSSessionHandle.java:507) 
+at my.application.log.impl.JMSQueueAppender$1. 
+run(JMSQueueAppender.java:246) 
+: : : : : : : : : : : : 
+
+This indicates that the method: 
+
+my.application.log.impl.JMSQueueAppender$1.run() 
+
+is trying to create a JMS Text Message from a JMS Session. 
+
+As part of this processing, the application server's Connection Manager 
+is invoked to try to assign this particular application thread a JMS 
+Session to use. To do this, the Connection Manager tries to access the 
+JMS Session Pool being used by this thread, and finds that it is no 
+longer accessible. 
+
+Now, in WebSphere Application Server, there is one JMS Session Pool for each JMS Connection that has been defined. The Session Pool is created when the JMS Connection is first created, and then destroyed when the JMS Connection is cleaned up by the application server. 
+When the J2CA0020E error occurs, the application is trying to get a JMS Session from a JMS Session Pool that has been destroyed because its owning JMS Connection no longer exists. 
+JMS Connections can be destroyed in one of three situations: 
+
+
+ *  An error occurs on the JMS Connection. 
+ *  The JMS Connection is closed, which causes it to be returned to the JMS Connection Factory Free Pool, and the JMS Connection remains in the Free Pool for longer than the Connection Factory Connection Pool "Unused timeout" property. 
+ * The JMS Connection is closed, and rather than being returned to the Free Pool, it is closed off because the Connection Factory Connection Pool "Aged timeout" property has elapsed for this connection. 
+
+
+Some additional information on the J2CA0020E error can be found in the 
+following technote: 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21206150 [http://www-01.ibm.com/support/docview.wss?uid=swg21206150] 
+RESOLVING THE PROBLEM
+Change the following properties for connection Pool and Session Pool properties: 
+
+ 
+Unused timeout 
+Aged timeout 
+
+Set them to zero for all of the JMS Connection Factories that are defined on the application server. 
+
+Setting these properties to zero mean that JMS Connections and JMS 
+Sessions will no longer be closed off by the WebSphere Application 
+Server Connection Manager if they have either been unused for a period 
+of time, or are simply too old. 
+
+ 
+
+The first option would be for the application owner to look at modifying their application code so that it behaves like this: 
+
+
+ * Try to create a JMS Text Message. 
+ * If an error occurs:  *  Close any JMS Sessions being used by the application. 
+    *  Close any JMS Connections being used by the application. 
+    *  Create a new JMS Connection. 
+    *  Create a new JMS Session. 
+    *  Try to create the JMS Text Message again. 
+   
+   
+ *  Continue processing the JMS Text Message. 
+
+
+The way the code appears to be written at the moment, the application 
+will never be able to recover from the situation where the JMS 
+Connection it is using has been destroyed.  Modifying the code in the way shown above will allow it to recover 
+from this situation by reconnecting to WebSphere MQ and then 
+carrying on as normal. 
+
+
+
+HISTORICAL NUMBER
+ 52867 010 678 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

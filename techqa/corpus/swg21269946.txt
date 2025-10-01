@@ -1,0 +1,31 @@
+Title: IBM Invalid license during import of Rational Software Delivery Platform product licenses - United States
+
+Text:
+SDP; license; invalid; import; License Key Administrator; IBM Rational Software Architect; Rational Systems Developer; Rational Software Modeler; Rational Application Developer; Rational Functional Tester; Rational Manual Tester; Rational Performance Tester; Software Development Platform; RPT; RMT; RFT; RSA; RSD; RSM; RAD; At least one of the license of the licenses within the file is invalid. Would you like to import these floating licenses; At least one of the license of the licenses within the file is invalid; Would you like to import these floating licenses; flexlm; software Development Platform; 1269946 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote addresses import issues that might occur during the installation of the following IBM® Rational® Software Delivery Platform (SDP) products: IBM Rational Software Architect (RSA), Rational Systems Developer (RSD), Rational Software Modeler (RSM), Rational Application Developer (RAD), Rational Functional Tester (RFT), Rational Manual Tester (RMT) and Rational Performance Tester (RPT). 
+
+SYMPTOM
+The following License Key Administrator warning is displayed when importing a new license file containing IBM Rational SDP products:
+
+At least one of the licenses in the file being imported is invalid. Would you like to import these Floating Licenses?
+
+
+[/support/docview.wss?uid=swg21269946&aid=1] [/support/docview.wss?uid=swg21269946&aid=1]
+
+
+
+CAUSE
+This warning occurs because the License keys are being imported on Rational License Server version 7.0 or earlier.
+
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, upgrade the Rational License Server to the latest version 7.0.1 or above.
+
+The Rational License Server v7.0.1 for Microsoft® Windows will support FLEXlm keys for the products listed above as well as the traditional Rational FLEXlm keys such as IBM Rational ClearQuest® and the IBM Rational Suite®. 
+
+You can download the v7.0.1 for Windows from your Passport Advantage, Passport Advantage Express account that offers the 7.0 product download. 
+
+The server download assembly is named "IBM Rational License Server V7.0.1 for Windows English and Japanese (C11LVML) [https://www14.software.ibm.com/webapp/dswdown/dswdown.wss/showAssemblies?brandIndex=0&assyIndex=7&prodIndex=15#anchor]

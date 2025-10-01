@@ -1,0 +1,187 @@
+Title: IBM IV82704: INACCURATE ESTIMATE OF TOTAL AVAILABLE MEMORY ON LINUX - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 7 (6.3.0-TIV-ITM-FP0007) [http://www-01.ibm.com/support/docview.wss?uid=swg24041633]
+IBM Tivoli Monitoring: Linux(R) OS Agent 6.3.0.6-TIV-ITM_LINUX-IF0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24044572]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Linux OS agent returns the total memory that is available
+   for applications in its Total Memory Free attribute of the VM
+   Stats group.
+   This is a calculated attribute that sums two freeable
+   contributions, memory in cache and memory in buffers, to the
+   actual free memory. In the most recent Linux distributions this
+   metric is directly exposed by the kernel in the MemAvailable
+   field of the /proc/meminfo file and it is much more accurate as
+   it takes into account various other freeable memory
+   contributions. When present, the agent should retrieve this
+   information instead of applying its old logic.
+   
+   Affected Platforms / Versions:
+   Linux kernels 3.2 or newer.
+   
+   Diagnostics:
+   cat /proc/meminfo | grep MemAvailable  (translated in MB) does
+   not match the KLZ_VM_Stats.Total_Memory_Free attribute value.
+   
+   Initial Impact:
+   Medium. Inaccurate single metric.
+   
+   Additional Keywords:
+    KLZVM
+    TOTMEMFREE
+    NETMEMUSED
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  You may exploit the scripting feature to return the
+   MemAvailable value through a custom script into ITM.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem Description: The Total Memory Free attribute value is
+    not accurate.
+   Problem/Problem Summary: The Monitoring Agent for Linux OS
+    estimates the physical memory actually available to the system
+    for starting new applications without swapping, by using a
+    simple algorithm that takes into account freeable memory
+    contributions like memory in cache and memory in buffers. Since
+    kernel 3.2 the same information is directly computed by the
+    system in a more accurate way, and made available through the
+    specific MemAvailable field in the /proc/meminfo file, as well
+    as in the new column "available" of the "free" command output.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem conclusion: The agent returns in Total Memory Free the
+    value found for MemAvailable in the /proc/meminfo file. It
+    applies the old logic if it cannot find it.
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+   
+      | fix pack | 6.3.0-TIV-ITM-FP0007 |
+      | interim fix | 6.3.0.6-TIV-ITM_LINUX-IF0002 |
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV82704
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04LN
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-15
+   
+   
+ * CLOSED DATE
+   2016-05-24
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * FIXED COMPONENT ID
+   5724C04LN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R621 PSN
+   UP
+   
+   
+ * R622 PSN
+   UP
+   
+   
+ * R623 PSN
+   UP

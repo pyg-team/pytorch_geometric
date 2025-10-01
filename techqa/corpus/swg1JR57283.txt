@@ -1,0 +1,165 @@
+Title: IBM JR57283: USING AN LDAP URL FOR AN ORACLE DATABASE CAUSES THE BPMCONFIG -CREATE COMMAND TO FAIL WITH ERROR CWMCB0360E - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2017.03.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2017.03.delta.repository&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2017.03 [http://www-01.ibm.com/support/docview.wss?uid=swg24043252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you run the BPMConfig -create or the BPMConfig -validate
+   command with a configuration properties file that contains an
+   Oracle LDAP URL like
+   
+   bpm.de.db.#.url=jdbc:oracle:thin:@ldap://acme.com:389/BPM,cn=bpm
+   db,dc=acme,dc=com
+   
+   you receive the following error:
+   
+   CWMCB0360E: The property bpm.de.db.#.databaseName=orcl does not
+   match 'acme.com:389/BPM,cn=bpmdb,dc=acme,dc=com' from URL
+   'jdbc:oracle:thin:@ldap://acme.com:389/BPM,cn=bpmdb,dc=acme,dc=c
+   om'
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the default Oracle URL for the initial deployment
+   environment configuration, and then manually change the URL
+   property of all IBM BPM data sources to the value you want.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When you use an Oracle database, the BPMConfig command extracts
+   the database name from the bpm.de.db.#.url property and compares
+    it with the bpm.de.db.#.databaseName property. However, the
+   database name is not in an Oracle LDAP URL; as a result, this
+   check fails.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be included in IBM BPM V8.5.7 cumulative fix 2017.03
+   that omits the database name validation when you specify an
+   Oracle LDAP URL in the configuration properties file.
+   
+   To determine whether the cumulative fix is available, complete
+   the following steps on Fix Central
+   (http://www.ibm.com/support/fixcentral):
+   
+   1. On the Select product tab, select WebSphere as the product
+   group, IBM Business Process Manager with your edition from the
+   WebSphere options, All as the installed version, and All as the
+   platform, and then click Continue.
+   2. In the Text field, enter "cumulative fix", and click
+   Continue.
+   
+   If cumulative fix 2017.03 is available, download and install it.
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR57283
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-18
+   
+   
+ * CLOSED DATE
+   2017-01-25
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

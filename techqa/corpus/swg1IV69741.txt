@@ -1,0 +1,171 @@
+Title: IBM IV69741: LOSS OF OVERRIDE LOCAL SETTINGS VARIABLES UPON CHANGE TO MSSQL AGENT TEMPLATE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Approver: JM
+   
+   Abstract:
+   Loss of Override Local Settings variables upon change to
+   MSSQL Agent template. Item in the Override Local Settings
+   Section are not reflected to Instances if the template is
+   changed.
+   
+   Environment:
+   Windows ONLY. MSSQL Agent template is changed and instances do
+   not  reflect the changes.
+   
+   Problem Description:
+   This defect was only reported against the Windows MSSQL agent,
+   but   may affect other agents that have Pre or Post Processing
+   Exits and regenerate the template INI file when the customer
+   makes changes.
+   
+   Recreate Instructions:
+   1. Install MSSQL agent
+   2. Create an instance of the MSSQL Agent
+   3. From the instance right click and select
+      Advanced->Edit Variables.
+      Add Variable CT_CMSLIST for example and change the hostname
+      to an IP address: #192.168.2.10 for example. Press ok to
+      implement the change. Use Regedit to review the registry for
+      the instance.
+      Note CT_CMSLIST is set correctly to the IP address.
+   4. Right click on the template and select
+      Advanced->Configure Advanced or select
+      Configure using Defaults
+      Next select the instance and press the Edit button.
+      Change some value on the screen, then press OK, you may have
+      to press ok twice.
+   5. Use Regedit again to review the instance registry values.
+      Note the CT_CMSLIST has returned to the hostname value.
+   6. Reconfig the instance and the registry values are again
+      present and correct.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  After a template is changed reconfigure all instances of the
+   agent to pickup the new changes and retain the changes from
+   Override Local Settings.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When using Manage Tivoli Enterprise Monitoring Services (MTEMS)
+   to alter settings for Microsoft SQL template, the custom
+   Override Local Settings for agent instances are lost.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Corrected code to save any instance override settings and
+   restore them after the template configuration is complete.
+   Fix will be included in the common installer for 6.3.0 FP7.
+   However the MSSQL Agent will have to repackage with the 6.3.0
+   FP7 install to fix up the fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Use Manage Tivoli Enterprise Monitoring Services
+   (MTEMS) to edit each agent instance and restore the lost
+   settings.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV69741
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-23
+   
+   
+ * CLOSED DATE
+   2015-11-12
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

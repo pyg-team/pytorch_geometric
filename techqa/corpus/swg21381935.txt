@@ -1,0 +1,86 @@
+Title: IBM WebSphere Application Server v6.x ws_ant.bat error: The java class is not found when running Ant - United States
+
+Text:
+RAD; WAS; AST; v6.0; v6.1; v7.0; wsEjbDeploy ; ws_ant; The java class is not found: TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere Application Server v6.x ws_ant.bat error: The java class is not found: occurred on a Microsoft Windows 2003 machine on which WebSphere Application Server v6.1.0.23 was just installed. 
+
+SYMPTOM
+WebSphere Application Server v6.1.0.23 ws_ant.bat error occurred as shown without any class name mentioned. 
+
+ 
+The java class is not found: 
+
+
+Although wsEjbDeploy was in the ws_ant script, running just the ws_ant.bat without any arguments, results in the the same error.
+
+
+CAUSE
+In this case, the error occurred because there was no default profile created for this WebSphere Application Server v6.1 install.
+
+Note: WebSphere Application Server 6.1.0.23 has a known defect APAR PK45126: STOPSERVER ANT API CASED JAVA CLASS IS NOT FOUND, but this is not the problem
+
+
+ENVIRONMENT
+This error could occur on any Operating System and any server edition.
+
+
+
+DIAGNOSING THE PROBLEM
+Consider below the scenario/results from WebSphere Application Server (WAS) 6.1.0 on any supported Windows platform: 
+
+
+No profile:
+
+{WAS v6.1 HOME Install dir}\bin>manageprofiles -listProfiles 
+
+[] 
+
+{WAS v6.1 HOME Install dir}\bin>ws_ant.bat 
+
+The java class is not found: 
+
+ 
+
+
+Create a default profile with default options: 
+
+{WAS v6.1 HOME Install dir}\bin> manageprofiles -create -templatePath {WAS v6.1 HOME Install dir}\profileTemplates\default 
+
+INSTCONFSUCCESS: Success: Profile AppSrv01 now exists. Please consult {WAS v6.1 HOME Install dir}\profiles\AppSrv01/logs/AboutThisProfile.txt for more information about this profile.
+
+Note: In the case of WebSphere Application Server Network Deployment edition, There are two profile templates that are used to create one cell (which is actually two profiles). the templates are WAS_HOME/profileTemplates/cell/dmgr and WAS_HOME/profileTemplates/cell/default. Contact IBM WebSphere server support if assistance is needed 
+
+ 
+
+
+Rerun, and get a "meaningful" error message. In this case a buildfile was not provided, and the default build.xml was not there: 
+
+{WAS v6.1 HOME Install dir}\bin>ws_ant.bat 
+
+Buildfile: build.xml does not exist! 
+
+Build failed 
+
+
+Running something similar to this should show if there is no default profile. 
+
+
+RESOLVING THE PROBLEM
+Creating a profile resolves this specific scenario. This applies to nay WAS server version. 
+
+
+Note: As of WebSphere Application Server v7.0.0.x there is an improved/informative error message instead of just: The java class is not found:
+
+Note: ws_ant cannot be used in IBM Rational Application Developer (RAD). It can only be used with WAS outside of RAD.
+
+RELATED INFORMATION
+ WAS v8.0 KC: manageprofiles command [http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.0.0/com.ibm.websphere.nd.doc/info/ae/ae/rxml_manageprofiles.html?lang=en]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Administrative Scripting Tools (for example: wsadmin or ANT) Linux, Windows 6.1.0.23 Base, Developer, Network Deployment, Single Server

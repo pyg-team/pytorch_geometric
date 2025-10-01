@@ -1,0 +1,200 @@
+Title: IBM JR55555: YOU RECEIVE A PACKAGE NOT FOUND ERROR - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+8.5.5.0-WS-BPM-IFJR55555 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Advanced&fixids=8.5.5.0-WS-BPM-IFJR55555-ADV&source=SAR]
+bpm.8570.cf2016.06.delta.repository.2of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.06.delta.repository.2of2&source=SAR]
+bpm.8570.cf2016.06.delta.repository.1of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.06.delta.repository.1of2&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you try to view a BPEL instance in Business Process
+   Choreographer Explorer from an IBM Business Process Manager
+   (BPM) on Cloud environment, where the following non-default
+   option are enabled in the administrative console
+   
+   Global security > Web security > General settings >
+   Authenticate when any URI is accessed
+   
+   you might not see the BPEL instance in the view and you might
+   see the following exception in the SystemOut.log file:
+   
+   org.eclipse.emf.ecore.xmi.PackageNotFoundException  &#243;&#212;&#233;&#188;&#212;&#199;&#163; Pack
+   with uri
+   'http://ProcessLib/SendFileUpload' not found. (file:
+   ///home/bpminst/BPM/v85/profiles/Node_t074-dev001-dfw.bpmoncloud
+   .local/, 2, 285)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  apply fix to resolve this issue
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM BPM Advanced on Cloud                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When you try to view a BPEL instance    *
+   *                      in Business Process Choreographer       *
+   *                      Explorer from an IBM Business Process   *
+   *                      Manager (BPM) on Cloud environment,     *
+   *                      where the following non-default         *
+   *                      option are enabled in the               *
+   *                      administrative console                  *
+   *                      Global security > Web security >        *
+   *                      General settings > Authenticate when    *
+   *                      any URI is accessed                     *
+   *                      you might not see the BPEL instance     *
+   *                      in the view and you might see the       *
+   *                      following exception in the              *
+   *                      SystemOut.log file:                     *
+   *                      org.eclipse.emf.ecore.xmi.PackageNotFou *
+   *                      ndException  &#243;&#212;&#233;&#188;&#212;&#199;&#163; Package with uri
+   *                      'http://ProcessLib/SendFileUpload'      *
+   *                      not found. (file:                       *
+   *                      ///home/bpminst/BPM/v85/profiles/Node_t *
+   *                      074-dev001-dfw.bpmoncloud               *
+   *                      .local/, 2, 285)                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When Business Process Choreographer Explorer, which is
+   installed and running on support cluster, tries to show the
+   details of a BPEL instance, it needs the definitions of the
+   interfaces, such as WSDL and XSD files, defined for the
+   process. Such definitions are installed with the application
+   on the application cluster. Therefore, Business Process
+   Choreographer Explorer must depend on the Remote Artifact
+   Loader (RAL) to query the URLs for the definitions on the
+   application cluster and load the resource by the URLs.
+   However, when the following non-default option were enabled in
+   administrative console
+   Global security > Web security > General settings >
+   Authenticate when any URI is accessed
+   the Business Process Choreographer Explorer cannot load the
+   resources by using the URLs without authentication.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM on Cloud that provide the
+   authentication information for Business Process Choreographer
+   Explorer to load the resource by using URLs when  &#243;&#212;&#233;&#188; &#244;Authenti
+   when any URI is accessed &#243;&#212;&#233;&#188;  &#162; is enabled.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR55555:
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select APAR or SPR, enter JR55555, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR55555
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-17
+   
+   
+ * CLOSED DATE
+   2016-05-17
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

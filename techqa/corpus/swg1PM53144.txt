@@ -1,0 +1,132 @@
+Title: IBM PM53144: The use of Content Assist with PDS files takes too long - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Developer for System z 8.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24032829]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using content assist for files from PDS data set takes
+   too long.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   RD/z users who use RD/z to edit PL/I programs with include files
+   or COBOL programs with copybooks.
+   ****************************************************************
+   *
+   PROBLEM DESCRIPTION:
+   When a PL/I program or COBOL program was edited in RD/z, either
+   with the System z LPEX editor or with the PL/I editor or COBOL
+   editor, copybooks and include files without ISPF statistics were
+   downloaded twice.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When editing PL/I programs or COBOL programs, copybooks and
+   include files without ISPF statistics are downloaded once.
+   
+   The problem listed in this APAR has been resolved with
+   IBM Rational Developer for System z V8.0.3.2 Fix Pack which
+   is available from the Recommended Fixes support download page:
+   http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335 [http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM53144
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   760
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-29
+   
+   
+ * CLOSED DATE
+   2012-03-29
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * FIXED COMPONENT ID
+   5724T0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R803 PSY
+   UP

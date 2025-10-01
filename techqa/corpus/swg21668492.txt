@@ -1,0 +1,17 @@
+Title: IBM Approver not receiving emails when a hold notice is sent for approval - United States
+
+Text:
+Approver Hold Notices Preferences Alerts Pending Approval Atlas TECHNOTE (FAQ)
+
+QUESTION
+ Why does the approver not receive any email notifications when a hold Notice is sent for approval in Atlas?, 
+
+CAUSE
+Under Preferences for the approver, "Send copy of My Alerts to my email address" option is set to No
+
+ANSWER
+ 
+
+ 1. Edit the Preferences for the approver 
+ 2. Select the check box for "Send copy of My Alerts to my email address" option. 
+ 3.  Save and Close.

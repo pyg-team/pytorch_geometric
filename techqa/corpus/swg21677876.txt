@@ -1,0 +1,31 @@
+Title: IBM FileNet Workplace XT applets fail to initialize - United States
+
+Text:
+java viewer; unrecognized name TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ FileNet Workplace XT applets fail to initialize and report a, handshake alert: unrecognized_name, when being accessed over HTTPS and using Oracle Java Runtime Environment (JRE) 1.7.0 
+
+SYMPTOM
+Accessing WorkplaceXT applets such as JavaViewer or Search Designer over the HTTPS transport may fail with the following exception : 
+
+javax.net.ssl.SSLProtocolException: handshake alert: unrecognized_name 
+
+
+CAUSE
+Oracle JRE 1.7 by default enables the Server Name Indication (SNI) Transport Layer Security extension. An SSL / TLS client ( in this case the JRE where the applet is running) will include the hostname of the server it is accessing in the SSL handshake request. The server side is meant to use the hostname specified to determine which SSL certificate to present to the client. If the server is unable to identify a certificate then the " unrecognized_name" exception may be returned. 
+
+
+DIAGNOSING THE PROBLEM
+This behavior occurs only accessing WorkplaceXT applets using the HTTPS transport and Oracle JRE 1.7.0. It does not occur if using the HTTP transport or an older JRE such as 1.6.0.
+
+
+
+RESOLVING THE PROBLEM
+Identify the server side component ( e.g. hardware load balancer, web server, J2EE Application Server) that provides the SSL certificate and refer to vendor documentation on how to configure Server Name Indication support and ensure that the desired SSL certificate is selected when the client includes a certain hostname in the initial SSL handshake. 
+
+Optionally, the SNI feature may be disabled on the client by applying the following argument : 
+
+-Djsse.enableSNIExtension=false 
+
+in the Runtime parameters on the client JRE ( Java Control Panel -> Java Runtime Environment Settings -> Runtime parameters).

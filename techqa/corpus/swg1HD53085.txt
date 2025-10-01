@@ -1,0 +1,170 @@
+Title: IBM HD53085: ASD / CLASH / FILTER OF CHECK CLASH RESULTS IS NOT - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ASD / CLASH / FILTER OF CHECK CLASH RESULTS
+   IS NOT REFLECTED TO EXPORTED XML FILE.
+   .
+   SCENARIO:
+   1.Start CATIA and Click on Tools menu and select
+   Options. Options dialog box appears.
+   2.Go to Mechanical Design - Assembly Design -
+   DMU Clash ﾨ Process tab page.
+   3.Check OFF Federated XML output.
+   4.Click OK to options dialog box.
+   5.Open Connector_Assembly_4.CATProduct in
+   Assembly Design Workbench.
+   6.Click on Clash Icon. Check Clash window appear.
+   7.Click on Apply button in Check Clash window.
+   Check clash window appears.
+   8.Select Relevant as Filter.
+   9.Click on Export As Icon.
+   10.Select xml file as file format and save the file
+   with any desired name.
+   6.Open the saved xml file.
+   .
+   OBSERVATION:
+   Check the computation results. Not Inspected is
+   also displayed, Relevant Filter is not respected.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ASD / CLASH / FILTER OF CHECK CLASH RESULTS IS NOT
+   REFLECTED TO EXPORTED XML FILE.
+   ASD / CLASH / FILTER OF CHECK CLASH RESULTS
+   IS NOT REFLECTED TO EXPORTED XML FILE.
+   .
+   SCENARIO:
+   1.Start CATIA and Click on Tools menu and select
+   Options. Options dialog box appears.
+   2.Go to Mechanical Design - Assembly Design -
+   DMU Clash   Process tab page.
+   3.Check OFF Federated XML output.
+   4.Click OK to options dialog box.
+   5.Open Connector_Assembly_4.CATProduct in
+   Assembly Design Workbench.
+   6.Click on Clash Icon. Check Clash window appear.
+   7.Click on Apply button in Check Clash window.
+   Check clash window appears.
+   8.Select Relevant as Filter.
+   9.Click on Export As Icon.
+   10.Select xml file as file format and save the file
+   with any desired name.
+   6.Open the saved xml file.
+   .
+   OBSERVATION:
+   Check the computation results. Not Inspected is
+   also displayed, Relevant Filter is not respected.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS MODIFICATION WILL BE INCLUDED IN
+   CATIA DOCUMENTATION DELIVERED WITH
+   CATIA VERSION 5 RELEASE 17.
+   .
+   Documentation Reference
+   DMU Space Analysis-
+   Exporting Clash Results & Geometry in XML
+   Format
+   Second XML Format Type
+   Filtering Clash Results
+   .
+   Additional Information:
+   With "Federated XML output" turned off we
+   have each file for different result and hence
+   we have a link format in XLM result file. And
+   with "XML Export for clash process purpose "
+   checked ON filtering during export is not
+   available.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD53085
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   516
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-05-24
+   
+   
+ * CLOSED DATE
+   2007-02-08
+   
+   
+ * LAST MODIFIED DATE
+   2007-02-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

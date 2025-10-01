@@ -1,0 +1,20 @@
+Title: IBM Infosphere DataStage ORACLE Connector Stage Fails With Error "Optional feature not implemented. No Locator". - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Infosphere DataStage ORACLE Connector stage using XML type data fails with error "Optional feature not implemented. No locator". 
+
+SYMPTOM
+Select statement fails in Infosphere DataStage ORACLE Connector stage using ORACLE ODBC driver with error :
+
+Sch_Hist_Tbl,0: ODBC function "SQLExecute" reported: SQLSTATE = HYC00:
+Native Error Code = 0: Msg = [IBM(DataDirect OEM)][ODBC Oracle Wire
+Protocol driver]Optional feature not implemented. No locator.
+(CC_OdbcDBStatement::executeSelect, file CC_OdbcDBStatement.cpp, line
+1,422)
+
+
+RESOLVING THE PROBLEM
+Cast the XML type data to CLOB datatype using TO_CLOB function for LongVarchar columns in the select statement.

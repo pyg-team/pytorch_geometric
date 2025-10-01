@@ -1,0 +1,46 @@
+Title: IBM Virtual Member Manager times out connection request to LDAP - United States
+
+Text:
+vmm; network; connectivity; ldap; CWWIM4520E; connectexception; EJPSB0057E; EJPSG0015E; dirContext; load balancer TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Arbitrary WebSphere Portal security-related function fails because Virtual Member Manager cannot connect to LDAP.
+
+SYMPTOM
+SystemOut.log contains:
+ContentModelI E com.ibm.wps.model.content.impl.ContentModelImpl ContentModelImpl() EJPEG0111E: An unexpected exception has been caught.
+com.ibm.wps.ac.AuthorizationDataException: EJPSB0057E: Authorization Data Exception occurred.
+at com.ibm.wps.ac.impl.PACGroupManagementServiceImpl.retrieveGroupsFromPuma(PACGroupManagementServiceImpl.java:390)
+...
+Caused by: com.ibm.wps.um.exceptions.impl.PumaSystemExceptionImpl: com.ibm.wps.util.DataBackendException: EJPSG0015E: Data Backend Problem com.ibm.websphere.wim.exception.WIMSystemException: CWWIM4520E The 'javax.naming.CommunicationException: ldap1.ibm.com:389 [Root exception is java.net.ConnectException: Connection timed out]' naming exception occurred during processing.
+at com.ibm.wps.um.VMMExceptionHelper.rethrowSystemMNF(VMMExceptionHelper.java:249)
+...
+Caused by: com.ibm.wps.util.DataBackendException: EJPSG0015E: Data Backend Problem com.ibm.websphere.wim.exception.WIMSystemException: CWWIM4520E The 'javax.naming.CommunicationException: ldap1.ibm.com:389 [Root exception is java.net.ConnectException: Connection timed out]' naming exception occurred during processing.
+...
+Caused by: com.ibm.websphere.wim.exception.WIMSystemException: CWWIM4520E The 'javax.naming.CommunicationException: ldap1.ibm.com:389 [Root exception is java.net.ConnectException: Connection timed out]' naming exception occurred during processing.
+at com.ibm.ws.wim.adapter.ldap.LdapConnection.getDirContext(LdapConnection.java:1590)
+
+
+CAUSE
+VMM times out the connection request.
+
+
+DIAGNOSING THE PROBLEM
+Identify messages in SystemOut.log like those above.
+
+
+
+RESOLVING THE PROBLEM
+Work with your network administrators to address the underlying network connectivity problem(s). Consider checking: 
+
+ 
+
+ 1. Whether LDAP server is running and listenting on its port; for example with netstat -an 
+ 2. If fronted by a proxy such as an LDAP load balancer, the proxy is running and listenting on its port. 
+ 3. The host name can be resolved; for example, with nslookup 
+ 4. The network path is open; for example, with ping 
+ 5. The port is open; for example, with telnet <port number> 
+ 6. Recreate the problem and collect a network trace. Compare the request for a TCP connection with any responses and adjust Virtual Member Manager's connectTimeout (stored in wimconfig.xml).
+
+RELATED INFORMATION
+ VMM connectTimeout [http://publib.boulder.ibm.com/infocenter/wasinfo/fep/topic/com.ibm.websphere.soafep.multiplatform.doc/info/ae/ae/rxml_atidmgrrepositoryconfig.html]

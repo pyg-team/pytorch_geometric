@@ -1,0 +1,163 @@
+Title: IBM PM07581: Requests URLs not getting filtered for selected application from Application Health workspace. - United States
+
+Text:
+  A FIX IS AVAILABLE
+ITCAM for WebSphere V6.2 TEMA - 6.2.0.5-TIV-ITCAM_WAS_TEMA-IF014 [http://www-01.ibm.com/support/docview.wss?uid=swg24028525]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   ============
+   Red Hat Enterprise Linux AS release 4 (Nahant Update 4)
+   ITCAM for WAS TEMA 06.20.05.00
+   ITCAM for WAS DC v6.1 FP05
+   ITM 06.10.05.01
+   
+   Problem Description:
+   ====================
+   (1) Select an application from the Application Health
+   (2) Select the blue link icon to the left of the application
+   name and select 'Selected Application - Request Analysis'
+   (3) We would expect to see the results in the Request Analysis
+   workspace filtered to only show entries relevant to that
+   application
+   (4) If the same action is performed on a different application,
+   the resulting Request Analysis workspace shows the same results
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   *
+   * Tivoli Enterprise Portal users using the Application Health
+   * workspace of ITCAM for WebSphere/Web Resources 6.2, to drill
+   * down to the Request Analysis table of a selected application.
+   *
+   ****************************************************************
+   *
+   * PROBLEM DESCRIPTION:
+   *
+   * From the Application Health workspace, if the user clicks on
+   * the link icon of a specific application and selects
+   * "Selected Application - Request Analysis" menu item, the
+   * Request Analysis workspace that is displayed will show the
+   * URLs from all the applications instead of just the selected
+   * one.
+   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix filters out other application URLs and displays only
+   those from the selected application.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | interim fix | 6.2.0.5-TIV-ITCAM_TEMA_WAS-IF011
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM07581
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS DIS T
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62TM
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-15
+   
+   
+ * CLOSED DATE
+   2010-04-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS DIS T
+   
+   
+ * FIXED COMPONENT ID
+   5724L62TM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

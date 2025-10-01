@@ -1,0 +1,37 @@
+Title: IBM How do I monitor StoredIQ service status and restart services that have stopped? - United States
+
+Text:
+monit; deepfiler; status; restart; service; summary; monitor TECHNOTE (FAQ)
+
+QUESTION
+ How do I monitor StoredIQ service status and restart services that have stopped? 
+
+CAUSE
+There are times where you may need to restart a service due to it becoming zombied, or to increase the logging level or after applying a patch. The following commands outline how to do so on the Appstack and the Dataserver and Gateway servers.
+
+ANSWER
+To get service status on the Appstack: 
+
+Issue command: /siq/bin/monit summary
+
+To get service status on the Dataserver and Gateway:
+Issue command: service deepfiler status
+
+To restart all services on the Appstack:
+Issue command: /siq/bin/monit restart all
+
+To restart all services on the Dataserver and Gateway:
+Issue command: service deepfiler restart
+
+To restart an individual service on the Appstack:
+Get service name from: /siq/bin/monit summary 
+Issue command: /siq/bin/monit restart <service_name>
+
+To restart an individual service on the Dataserver and Gateway:
+Get service name from: service deepfiler status 
+Issue command: /usr/bin/monit -c /etc/deepfile/monitrc restart <service_name>
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management eDiscovery Identification and Collection StoredIQ Platform Platform Independent 7.5.1, 7.5.0.2, 7.5.0.1, 7.5 All Editions Enterprise Content Management Policy Assessment and Compliance StoredIQ Platform Platform Independent 7.5.1, 7.5.0.2, 7.5.0.1, 7.5 All Editions Enterprise Content Management Unstructured Data Identification and Mgmt Not Applicable Platform Independent 7.5.1, 7.5.0.2, 7.5.0.1, 7.5 All Editions

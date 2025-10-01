@@ -1,0 +1,40 @@
+Title: IBM $DOMAIN_NAME in Failover EventGatewaySchema file - United States
+
+Text:
+DOMAIN_NAME; g_event; nco2ncp; virtualdomain; failover TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ nco2ncp portion of backup EventGatewaySchema file makes reference to $DOMAIN_NAME in the event filter. What domain does it reference when accessing the objectserver? 
+
+SYMPTOM
+Should the backup ncp_g_event look for events from both primary and backup domains?
+
+
+ENVIRONMENT
+In a virtualdomain domain configuration, with the primary failed over and the backup reporting a healthy status. 
+
+The default EventFilter for nco2ncp is 
+
+
+"LocalNodeAlias <> '' and (NmosDomainName = '$DOMAIN_NAME' or NmosDomainName = '')",
+
+
+
+DIAGNOSING THE PROBLEM
+Can be reviewed in ncp_g_event trace file at debug 4.
+
+
+
+RESOLVING THE PROBLEM
+If the name of the primary domain is PRINM 
+
+and the name of the backup domain is BAKNM 
+
+and the primary domain has failed, the $DOMAIN_NAME on the BAKNM ncp_g_event will resolve to PRINM. 
+
+In other words, even though the ncp_g_event on the backup server is running in a domain called BAKNM, when the primary fails and it's collecting events from the objectserver it will filter for events with NmosDomainName = PRINM. 
+
+ITNM poll events will only carry the NmosDomainName as the primary. It will not change to the backup domain name when there is a failover.

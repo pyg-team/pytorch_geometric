@@ -1,0 +1,91 @@
+Title: IBM Install order for IBM SPSS Modeler products - United States
+
+Text:
+ PRODUCT README
+
+ABSTRACT
+ There are many steps to installing SPSS Modeler. The goal of this article is to give an overview of what to install and when. You can run SPSS Modeler in local mode as a standalone product, or use it in distributed mode along with IBM® SPSS® Modeler Server for improved performance on large data sets. The two sections below describe installing each environment. 
+
+CONTENT
+NOTE: The intent of this article is not to be a replacement of existing install documentation but instead a guide of what order to install all the products.
+
+
+For reference: 
+
+IBM SPSS Modeler 16 documentation including install guides can be found here: http://www-01.ibm.com/support/docview.wss?uid=swg27038316 [http://www-01.ibm.com/support/docview.wss?uid=swg27038316] 
+
+IBM SPSS Modeler 15 documentation including install guides can be found here: http://www-01.ibm.com/support/docview.wss?uid=swg27023172 [http://www-01.ibm.com/support/docview.wss?uid=swg27023172] 
+
+IBM SPSS Modeler requirements can be found here: http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity/index.jsp [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity/index.jsp] 
+
+[http://www.ibm.com/i/v14/icons/fw_bold.gif] [javascript:void(0);] 
+
+[/support/docview.wss?uid=swg27038627&amp;aid=1] 
+SPSS Modeler Client 
+
+[http://www.ibm.com/i/v14/icons/fw_bold.gif] Step 1: License Manager [javascript:void(0);] [javascript:void(0);] (click to expand) If you have a Concurrent license you will need to connect to a Sentinel License server which manages licenses. It could be that your company already has a server running and your administrator gave you a system name or IP address to use on the install of Modeler client. If so, you do not need to install the License Manager, just use the information when prompted upon installing the client.
+
+If you have an authorized user license, you do not need a license manager.
+
+If you are the administrator or just need a License Manager, this should be installed first. The installer should be named similar to 'IBM SPSS Concurrent Licensing Tools ' and will be dependent on what operating system you intend to install the License Manager on. 
+
+Example: IBM SPSS Concurrent Licensing Tools 9.5 - License Manager Microsoft Windows English (CI8Z7EN) 
+
+To ensure that you download the appropriate version, obtain it from the Eassembly for the version of Modeler you have installed. 
+
+[http://www.ibm.com/i/v14/icons/fw_bold.gif] Step 2: SPSS Modeler Client [javascript:void(0);] [javascript:void(0);] (click to expand) The main interface into SPSS Modeler is Modeler Client and is used to build streams, create models, ect. It should be installed for all end users. Make note of your desktop operating system and if it is 32 or 64 bit then download the appropriate version. The product you will be downloading is named similar to 'IBM SPSS Modeler Client' 
+
+ Example: IBM SPSS Modeler Client 32-bit 15.0 Microsoft Windows Multilingual (CI8Y7ML) 
+
+When installing you will need to have your license (authentication code) handy or the name of the License Manager that manages your password. 
+
+ 
+
+
+
+[http://www.ibm.com/i/v14/icons/fw_bold.gif] Step 3: SPSS Modeler Client premium features [javascript:void(0);] [javascript:void(0);] (click to expand) Modeler client has several premium features that can also be installed (Text Analytics, Entity Analytics, Social Network Analysis, ect). After Modeler client is installed, next would be to add on any premium client features. When you download premium features, like Modeler client, you will need to know your desktop OS and if it is 32 or 64 bit. 
+
+The premium features all have different names, here are examples to look for if needing to install them: 
+
+ Example: IBM SPSS Modeler Client Entity Analytics 32-bit 15.0 Microsoft Windows Multilingual (CI8Y5ML) 
+
+ Example: IBM SPSS Modeler Client Social Network Analysis 32-bit 15.0 Microsoft Windows Multilingual (CI8YAML) 
+
+ Example: IBM SPSS Text Analytics Client 32-bit 15.0 Microsoft Windows Multilingual (CI8Y8ML) 
+
+
+
+[http://www.ibm.com/i/v14/icons/fw_bold.gif] Step 4: SPSS Modeler Client patches [javascript:void(0);] [javascript:void(0);] (click to expand) After Modeler client and premium features are installed they need to be patched if a patch is available. Patch the client first, then patch any of the premium installs. Patches for Modeler can be found on Fix Central: http://www.ibm.com/support/fixcentral [http://www.ibm.com/support/fixcentral] 
+
+
+
+[http://www.ibm.com/i/v14/icons/fw_bold.gif] Step 5: SPSS Data Access pack (SDAP) - ODBC Drivers [javascript:void(0);] [javascript:void(0);] (click to expand) To read or write to a database, you must have an ODBC data source installed and configured for the relevant database with read or write permissions as needed. The IBM® SPSS® Data Access Pack includes a set of ODBC drivers that can be used for this purpose. If you require one of these drivers, install the product named similar to 'IBM SPSS Data Access Pack '. 
+
+ Example: IBM SPSS Data Access Pack 6.1 sp3 Multiplatform English (CIHP2EN) 
+
+
+To ensure that you download the appropriate version, obtain it from the Eassembly for the version of Modeler you have installed.
+
+
+
+[http://www.ibm.com/i/v14/icons/fw_bold.gif] Step 6: Analytic Server Extensions for Modeler: Requires Modeler 15 Fix Pack 2 or later [javascript:void(0);] [javascript:void(0);] (click to expand) Modeler 15 Fix Pack 2 enables support for Analytic Server along with R scripting support. If you are on Modeler 15 Fix Pack 2 or higher, you can also install Analytic Server Extensions and R Essentials at this point. Make sure to read the install instructions for both products for any additional requirements that need to be installed first. 
+
+With Modeler 16 and above Analytic Server extensions are installed automatically and additional extension installs are not required.
+
+
+
+SPSS Modeler Server 
+
+[http://www.ibm.com/i/v14/icons/fw_bold.gif] Step 1: SPSS Modeler Server [javascript:void(0);] [javascript:void(0);] (click to expand) If you require a Modeler Server that can be installed next. Similar to client, determine what operating system will be used, determine if the system is 32 or 64 bit and that it fits the requirements according to the install documentation and start the install. 
+
+[http://www.ibm.com/i/v14/icons/fw_bold.gif] Step 2: SPSS Modeler Server premium features [javascript:void(0);] [javascript:void(0);] (click to expand) Identical to client, Modeler server has several premium features that can be installed. If the premium features have been installed on the client, they will need to be installed on Modeler Server also. Install those at this time. 
+
+[http://www.ibm.com/i/v14/icons/fw_bold.gif] Step 3: SPSS Modeler Server patches [javascript:void(0);] [javascript:void(0);] (click to expand) After Modeler server and premium features are installed they need to be patched if a patch is available. Patch the server first, then patch any of the premium server installs. Patches for Modeler can be found on Fix Central: http://www.ibm.com/support/fixcentral [http://www.ibm.com/support/fixcentral] 
+
+Note: Analytic Server support is built into Modeler Server 15 Fix Pack 2 and above. On the client it was necessary to install Analytic Server extensions to add the nodes to the client. On the server, there are no additional installs for Analytic Server. This is the same for R Essentials too, no additional installs are required.
+
+
+
+[http://www.ibm.com/i/v14/icons/fw_bold.gif] Step 4: SPSS Data Access pack (SDAP) - ODBC Drivers [javascript:void(0);] [javascript:void(0);] (click to expand) Similar to client, Modeler Server also will require ODBC drivers installed to access relevant databases. If you require one of these drivers, install the product named similar to 'IBM SPSS Data Access Pack '. 
+
+ Example: IBM SPSS Data Access Pack 6.1 sp3 Multiplatform English (CIHP2EN)

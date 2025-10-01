@@ -1,0 +1,199 @@
+Title: IBM JR48973: INSTANCE MIGRATION IS SLOW WITH CURRENT DESIGN FOR ABSTRACT. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the current design, instance migration is handled by a single
+   thread. To achieve better performance, we have implemented
+   multi-threaded instance migration along with configurable
+   options to migrate either all/none/skip-closed tasks.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM BPM Express, Standard and Advanced      *
+   *                  Edition.                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Instance migration from snapshot to     *
+   *                      snapshot was slow since it used to be   *
+   *                      handled by a single thread.             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Instance migration used to be slow since a single java thread
+   handles migrating the instances from the source snapshot to
+   the target snapshot. This caused multiple customers using
+   various versions of BPM asking to improve its performance.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The issue has been fixed by introducing a thread pool that
+   handles instance migration using multiple threads. In addition
+   to the multi-threaded change, to improve its performance
+   further, we have introduced three configurable options to
+   migrate certain tasks.
+   You have the following options to migrate tasks:
+   
+    <migrate-tasks><MODE></migrate-tasks>
+   
+   MODES that can be used in above property:
+    "all"   =     Migrate all tasks
+    "none"  =     Don't migrate any tasks
+    "skip-closed" = Don't migrate closed tasks. Migrate the rest.
+   
+   The default behaviour after you install this fix is that:
+   <thread-pool-size> will be equal to 5
+   and
+   <migrate-tasks> option will be set to migrate "all" tasks.
+   
+   In case you want to override this default options, you can do
+   so by putting the right values in 100Custom.xml file.
+   
+   **Important**
+   You must restart server after you make these changes in
+   100Custom.xml
+   
+   For example, if you want to set the <thread-pool-size> to 10
+   and <migrate-tasks> option to skip-closed, then put the
+   following values in 100Custom.xml
+   
+    <server>
+      <instance-migration merge="mergeChildren">
+       <thread-pool-size merge="replace">10</thread-pool-size>
+       <migrate-tasks merge="replace">skip-closed</migrate-tasks>
+      </instance-migration>
+    </server>
+   
+    If you want to leave thread-pool-size to default value of 5
+   but set <migrate-tasks> option to skip-closed, then put the
+   following values in 100Custom.xml <server>
+   
+    <server>
+      <instance-migration merge="mergeChildren">
+       <migrate-tasks merge="replace">skip-closed</migrate-tasks>
+      </instance-migration>
+    </server>
+   
+   The fix is included into the v7.5.1.2 fix pack and an interim
+   fix for v8.0.1.1, v8.0.1.2 is available. On Fix Central
+   (http://www.ibm.com/support/fixcentral), search for JR48973.
+   After you select the product group, product, installed
+   version, and platform, click Continue and then select APAR or
+   SPR, enter JR48973, and click Continue. When downloading fix
+   packages, ensure that you also download the readme file for
+   each fix. Review each readme file for additional installation
+   instructions and information about the fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR48973
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-01-07
+   
+   
+ * CLOSED DATE
+   2014-03-18
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP

@@ -1,0 +1,30 @@
+Title: IBM How do I submit a Service Request for MDM? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I submit a Service Request? 
+
+ANSWER
+Prior to submitting a Service Request, you must obtain an IBM ID and register to use the IBM Service Request tool. You can find instructions on how to do this by clicking here [https://www-946.ibm.com/sr/help/register.html]. 
+
+Follow these steps to submit a Service Request:
+
+
+ 1.  Go to https://www.ibm.com/support/servicerequest/ [https://www.ibm.com/support/servicerequest/] and sign in with your IBM Web ID (email address) and password. 
+ 2.  Click the New Service Request button. 
+ 3.  Under "What kind of problem do you have?" select "I am having a problem with software" 
+ 4.  Find your product by entering the product name (InfoSphere Master Data Management) in the Enter your keys word(s) field. You may also need to remove the check next to Show entitled products only if you are not seeing any search results. 
+ 5.  Check the box for Add selection to Preferred products so that it appears in your preferred products for the next time you need to submit a Service Request. 
+ 6.  Click the product name in the Search results. 
+ 7.  Fill out the form. The fields with red asterisks are required fields. 
+ 8.  Click Continue. 
+ 9.  Select how you would like to be contacted. 
+ 10. Review the summary of your Service Request and verify the information is correct. 
+ 11. Click Create request.
+
+
+You will receive a Service Request number and a support engineer will respond shortly. 
+
+To learn more about the IBM Support Portal and Service Requests, please go to the IBM Service Request Help [https://www-946.ibm.com/sr/help/index.html] page or visit the IBM Channel on YouTube by clicking here [http://www.youtube.com/user/IBMelectronicsupport].

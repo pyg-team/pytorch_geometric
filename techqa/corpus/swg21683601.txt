@@ -1,0 +1,31 @@
+Title: IBM Monitoring OS agent doesn't start after upgrading Tivoli Storage Manager to 7.1 - United States
+
+Text:
+GSKIT upgrade ITM TSM agent Cannot load program kuxagent cannot does not start 0509-022 Cannot load module libgsk7iccs_64.so TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After a successful installation of the IBM Tivoli Monitoring Agent for Tivoli Storage Manager 7.1, the IBM Tivoli Monitoring UNIX OS agent v.6.2.2. FP2 will not start anymore. 
+
+SYMPTOM
+The following error maybe shown in the Tivoli Monitoring OS agent log 
+
+(for example "/opt/IBM/ITM/logs/<instance_name>_ux_1406805924.log") : 
+
+exec(): 0509-036 Cannot load program 
+/opt/IBM/ITM/aix526/ux/bin/kuxagent because of the following errors: 
+0509-150 Dependent module libgsk7iccs_64.so could not be 
+loaded. 
+0509-022 Cannot load module libgsk7iccs_64.so. 
+0509-026 System error: A file or directory in the path name 
+does not exist. 
+
+
+CAUSE
+When upgrading the IBM Tivoli Monitoring Agent for Tivoli Storage Manager to version 7.1, the GSKIT library version is replaced with version 8 while the version of GSKIT used by the IBM Tivoli Monitoring Agent for UNIX OS 6.2.2 FP2 is version 7.
+
+
+RESOLVING THE PROBLEM
+Upgrading or installing the IBM Tivoli Monitoring Agent for Tivoli Storage Manager version 7.1 in an existing IBM Tivoli Monitoring environment, the installed IBM Tivoli Monitoring version must be 6.3.0 FP2, or later. 
+
+This is a prerequisite as shows in the "Tivoli Monitoring for Tivoli Storage Manager 7.1" guide available at:
+http://www-01.ibm.com/support/docview.wss?uid=swg27041893 [http://www-01.ibm.com/support/docview.wss?uid=swg27041893]

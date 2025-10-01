@@ -1,0 +1,64 @@
+Title: IBM Correlating High CPU on HP-UX with output from hpux_glance.sh - United States
+
+Text:
+hpux; MustGather; mustgather; glance; GlancePlus; 100% CPU; performance TECHNOTE (FAQ)
+
+QUESTION
+ How do you correlate a thread consuming High CPU with a particular thread stack in the native_stdout.log? 
+
+ANSWER
+This document explains how to correlate data from the MustGather below which utilizes GlancePlus: [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21166017] 
+
+ * MustGather: Performance, Hang, or High CPU Issues on HP-UX [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21127574] 
+
+
+The following files will be used to determine the thread that has high CPU:  * hpux_glance.out 
+ * native_stdout.log
+
+
+
+
+Sample output from hpux_glance.out 
+
+-----16:26:11
+gbl cpu utilization = 93%
+alive processes = 213
+active processes = 16
+priority queue = 0.1
+run queue = 0.7
+context switch rate = 333
+network packet rate = 1.6
+disk phys io rate = 29.1
+memory pageout rate = 0.0
+system call rate = 41834
+process fork rate = 0.0
+proc completion rate= 0.4
+highest syscall rate= 9332 for system call write
+arm compl tran rate = 0.0
+
+Process name pid ktid pricpu%scall% dsptch cpu-swtch shell-cmd
+------------ --- ---- --- ---- ------ ------ --------- ---------
+java 11671 5134935 154 20 98 0 /opt/IBM/WebSphere/AppServer60
+java116715551377223828 334 0 /opt/IBM/WebSphere/AppServer60 
+
+1. The hpux_glance.sh script outputs 13 times every 25 seconds and tracks CPU usage. Each section is separated by a timestamp. CPU usage is indicated in the cpu% column. By default it displays only java processes/threads. 
+
+2. The pid column contains the process ID. If the PID is for an application server, the 
+<SERVER_NAME>.pid contains the matching PID. You can find this file in the server logs directory. In the above example, the PID is 11671. 
+
+3. The ktid column identifies an individual thread. In this example, the thread 5551377 is utilizing 82% of the CPU. 
+
+
+Sample thread dump from native_stdout.log 
+"WebContainer : 3" daemon prio=10 tid=03025200 nid=92 lwp_id=5551377 runnable [0x5e4e4000..0x5e4e34f0] 
+at java.io.FileOutputStream.writeBytes(Native Method) 
+at java.io.FileOutputStream.write(FileOutputStream.java:260) 
+at com.ibm.ejs.ras.WrappingFileOutputStream.write(WrappingFileOutputStream.java:362) 
+- locked <67acb728> (a com.ibm.ejs.ras.WrappingFileOutputStream) 
+... 
+
+
+4. Search the native_stdout.log for the ktid. The ktid has a one-to-one correspondence with the lwp_id. In the example, the matching thread has lwp_id equal to 5551377. 
+
+5. Review the thread dump to reveal the methods most likely causing the high CPU. RELATED INFORMATION
+ MustGather: Performance Hang or High CPU on HP-UX [http://www.ibm.com/support/docview.wss?uid=swg21127574]

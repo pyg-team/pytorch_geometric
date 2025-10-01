@@ -1,0 +1,63 @@
+Title: IBM "Cannot find a match for the predicate is" error after migration to V7.x - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You get the error "Cannot find a match for the predicate is" at run time or in Rule Studio after migrating from V6.x to V7.x. 
+
+SYMPTOM
+The following error might show on the ruleflow file when the rule project is built: 
+
+ * 
+ * cannot find a match for the predicate is
+
+
+or at run time when a RuleApp migrated from V6.x is executed: 
+
+ilog.rules.res.xu.ruleset.impl.IlrCannotCreateRulesetException: Cannot create ruleset: /TestRuleApp/1.0/TestRuleset/1.0 
+ilog.rules.res.xu.ruleset.impl.IlrRulesetParseException: Ruleset /TestRuleApp/1.0/TestRuleset/1.0 parsing failed 'IRL/main-rfl.irl', line 6: error: cannot find a match for the predicate is 
+at ilog.rules.bres.session.java.IlrStatelessRuleSessionSimple.executeRules(IlrStatelessRuleSessionSimple.java:179) 
+... 
+CAUSE
+Although "is" and "equals" are tolerated by the V6.x compiler and "equals" is still tolerated in V7.x, the good practice is to use the documented ILOG Rule Language (IRL) equality operator "==" instead.
+
+Neither "is" nor "equals" are documented IRL operators. To avoid such issue, do not use them.
+
+You can refer to section Reference > Rule languages > ILOG Rule Language (IRL) > IRL grammar > Operator summary [http://pic.dhe.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1924.html] of the V7.1 documentation for the full list of supported IRL operators.
+
+
+RESOLVING THE PROBLEM
+Replace all "is" operators by "==" operators in the IRL code, rebuild your projects, and redeploy your rulesets and RuleApps. 
+
+ 
+
+The "==" operator works as follows: 
+
+ * On primitive types, it compares their values. 
+ * On strings and object references, it compares whether the two instances are the same.
+
+
+To compare the values of two strings, write in IRL: 
+
+ * 
+ * myString.equals("test")
+
+
+In Business Action Language (BAL), you can still write: 
+
+ * 
+ * myString is "test"
+
+
+It will translate to the above IRL code. RELATED INFORMATION
+#Migrating from JRules to WODM [http://www.ibm.com/support/docview.wss?uid=swg21589725]
+Installing WODM V8.0 [http://www.ibm.com/support/docview.wss?uid=swg24032433]
+Installing WODM V7.5 [http://www.ibm.com/support/docview.wss?uid=swg21595346]
+Installing JRules V7.1 [http://www.ibm.com/support/docview.wss?uid=swg21474292]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Modules:Java Engine Platform Independent 8.5, 8.0, 7.5

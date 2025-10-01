@@ -1,0 +1,176 @@
+Title: IBM IC61566: Memory leak in the amqrmppa process when SHARECNV value is less than 2 or for pre-V7 MQ clients connecting to V7 queue manager. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The memory used by the channel pooling process (amqrmppa) grows
+   continuously until it reaches the process limit, at which point
+   resource errors start occurring.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  not sure
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Any users of WebSphere MQ with pre-V7 clients connecting to a
+   V7 queue manager or with SVRCONN channels with a SHARECNV value
+   of less than 2.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The problem was caused by optimisation logic within the channel
+   pooling process in order to reduce the performance overhead of
+   managing a connection to the queue manager with a shared hConn.
+   For pre-V7 clients or if the SHARECNV value is set to less than
+   2, the channel pooling process does not require a shared hConn
+   handle to the queue manager, so it disconnects and reconnects
+   with a normal hConn. However, during this processing, the
+   counter which tracks connections to the shared memory IPCC
+   subpool became incorrect, leading to a failure to clean up
+   connection resources when the thread disconnected from the queue
+   manager. This would result in a memory leak of approximately 6Kb
+   for every client connection to the queue manager.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere MQ was modified to ensure that the subpool connection
+   counter in the channel pooling process was adjusted correctly
+   when reconnecting to the IPCC subpool.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.0
+   --------           --------------------
+   Windows            U200306
+   AIX                U823774
+   HP-UX (PA-RISC)    U823665
+   HP-UX (Itanium)    U823667
+   Solaris (SPARC)    U823772
+   Solaris (x86-64)   U824344
+   iSeries            tbc_p700_0_1_0
+   Linux (x86)        U823664
+   Linux (x86-64)     U823773
+   Linux (zSeries)    U823668
+   Linux (Power)      U823666
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC61566
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-18
+   
+   
+ * CLOSED DATE
+   2009-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

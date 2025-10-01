@@ -1,0 +1,163 @@
+Title: IBM Collecting data for TNPM Wireline & Netcool/Proviso - United States
+
+Text:
+MustGatherDocument; TNPM; Wireline TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ For every problem, collecting data can aid in problem determination and save time resolving Problem Management Records (PMRs). Gathering this data before calling IBM® support will help you understand the problem and save time analyzing the data. 
+
+RESOLVING THE PROBLEM
+If there are any issues with TNPM Wireline and/or Netcool/Proviso, please follow these steps and attach the required information to the PMR: 
+
+1. For all issues (other than Install issues):
+
+a) Execute "$PVMHOME/bin/dbMgr/dbMgr versionSupportLevelDump"
+b) Were there any recent changes made to the current system?
+c) Attach the topology.xml loaded from DB
+d) Collect "grep PERF proviso.log | grep ERROR" from the server that is running the channel manager
+
+2. For Install issues:
+
+a) Is this a fresh Install? If yes, what version?
+b) Is this an upgrade? If yes, from what version to what version?
+c) Describe where in the installation the failure occurred and what step the deployer was performing when the failure occurred
+d) Attach the topology.xml file that was saved just before deployment
+e) Zip and attach the contents of the /tmp/ProvisoConsumer directory:
+Make sure it includes the following:
+Topology.xml
+Discovery.xml
+log.txt
+All the Item*.xml files and the related Out files
+f) If the failure occurred while trying to install a component on to a remote host, please attach the contents of the ProvisoConsumer Directory on that host as well.
+g) If this was a TIP Install failure, please send in all the TIP/TCR install logs found in the “/” or root user's home directory.
+h) Confirm the free-space availability as mentioned below:
+/tmp : 4GB
+/opt : 4GB (4 GB required for TIP/TCR/DV installation)
+/SWAP : 8GB (if RAM space is not sufficient)
+Check how much RAM Is free.
+In case it is not available then check if you can increase it to the specified value.
+
+i) Clean the previously installed TIP by using following commands.
+/opt/IBM/proviso/deployer/proviso/bin/Util/tcrClean.sh
+rm -rf /usr/ibm/common/acsi
+rm -rf /var/ibm/common/acsi
+
+j) Please send me the output of the following commands :
+a. To check tmp available space : df –h /tmp
+b. To check opt available space : df –h /opt
+c. To check RAM available space : prtconf | grep Memory | awk '{print $3}'
+d. ls –ltr /usr/ibm/common/acsi
+e. ls –ltr /var/ibm/common/acsi
+
+
+3. For Collector/Dataload related issues:
+
+a) Execute "$DL_PRODUCT_HOME/bin/pvmdctrl status"
+b) Execute "ps -ef | grep pvmd"
+c) Collect <YY.MM.DD>SNMP.log, pvmd.log and pvmdmgr.log
+d) If the above don't exist, collect "grep SNMP $DC_HOME/log/proviso.log" from the server that is running the channel manager
+e) Execute the following command and attach “dl.cfg”:
+i) $DC_HOME/bin/dccmd debug CMGR "self dbCfgPrint" | grep ^SNMP > dl.cfg
+f) Execute "$DL_PRODUCT_HOME/ /contribs/dialogTest2 DebugDump" and tar the resulting directories
+g) Execute "$DL_PRODUCT_HOME/contribs/dialogTest2 version"
+h) Attach the $DL_PRODUCT_HOME/dataload.env
+i) Attach debug log for SNMP. For this run the below command:
+/opt/dataload/contribs/dialogTest2 debug 6.0
+j) $ ./dialogTest2 debug 6.next -S yyy.yyy.yyy.yyy -P 3002; snmpGet xxx.xxx.xxx.xxx sysUpTime.0 -S yyy.yyy.yyy.yyy -P 3002
+Where, yyy.yyy.yyy.yyy -> dataLoad Server IP
+In parallel, run "tail -f proviso.log" command. Provide the output of dialogTest2 command and excerpt from the proviso.log file.
+
+K) For the failed device/s, please collect the following information -
+$ snmpGet xxx.xxx.xxx.xxx sysDescr.0 -m rfc1213-MIB-II.oid -c <community_string>
+Where, xxx.xxx.xxx.xxx -> Target Device IP
+
+l) Go to <dataLoad>/contribs directory and run -
+$ ./simTool walk xxx.xxx.xxx.xxx
+m) For snmpGet command, check whether this command works? snmpGet <device IP> sysDescr.0 -m rfc1213-MIB-II.oid -c <community_string> ?
+
+If it is returning data (running from DL server), then it should not be a connection problem, then we can focus on the tech pack side. 
+
+n) Run the below command to get the statics about the collector:
+statGet -S <collector_Name> -l stats > CollectorName.output
+
+4. For DataMart related issues:
+
+a) Execute "$DC_HOME/bin/dccmd status DISC" from the server that is running the channel manager
+b) Collect the logs under $PVMHOME/log
+c) Collect "grep DISC $DC_HOME/log/proviso.log" from the server that is running the channel manager
+d) Collect output for "crontab -l" from the DataMart server
+e) The inventory_element.txt and inventory_subelement,txt files from the path /tnpmopt/datamart/conf/folder
+f) A tar ball of the profile folder under ../datamart/importexport/ 
+g) Please test the formula against the resource in question using the "Formula Editor" tool in debug mode and share the output along with Screen Shot.
+h) Get the Generic ID for "Memory Pool" related formulas -
+$ resmgr -export fgp -colNames "frm.dbIndex nName" -filter "nName(*Memory Pool*)"
+i) Find the real formula associated with this Generic formula -
+$ resmgr -export fgp -colNames "frm.dbIndex nName frm.data" -filter "frm.data(*<Generic ID>*)"
+j) Check if the formula is in collection state -
+$ resmgr -export segpreq -colNames "fgp.nName segp.npath ttype status storage period" -filter "frm.dbIndex(<Specific ID>)"
+k) Find out the subelement grouping information -
+$ resmgr -export segp -colNames "dbIndex npath se.name" -filter "se.dbIndex(<subElmtID>)"
+l) Get the subelement request state -
+$ resmgr -export se -colNames "name invariant label state fam.name elt.name elt.state elt.profil elt.collector" -filter "se.dbIndex(<subElmtID>)"
+
+5. For Database related issues:
+
+a) Collect $ORACLE_BASE/admin/PV/bdump/alert_PV.log. It uses the Oracle-supplied log.
+b) Collect $DC_HOME/log/proviso.log and $DC_HOME/log/tnpm.log from the server that is running the channel manager
+c) Execute the sql script: $PVMHOME/extratools/supportScripts/check_proviso_db.sql
+d) Collect output from contab -l from the Datamart server
+e) Attach NotifyDBSpace*.log file: The NotifyDBSpace*.log file is a daily automatic file containing messages about the status of the database.
+f) df –kh: To know the disk space details.
+g) bash-3.00$ ./dbRegEdit PV_ADMIN/PV@PV CHANNELS from path $PVMHOME/extratools/supportScripts : The above output will let us know about purging window configuration.
+
+
+6. For DataChannel related issues:
+
+a) Execute "$DC_HOME/bin/dccmd status all"
+b) Execute "$DC_HOME/bin/findvisual" from the server that is running the channel manager
+c) Collect recent walkback files from $DC_HOME/log/ folder
+d) Collect "grep <DC_component> $DC_HOME/log/proviso.log". Here DC_component = component that is reporting an issue
+e) Execute the following command and attach “dc.cfg”
+i) "$DC_HOME/bin/dccmd debug CMGR "self dbCfgPrint" > dc.cfg
+
+7. For DataView related issues:
+
+a) Collect only 2 days worth of ../silverstream/log/SilverServerConsole.log (Proviso – 4.4.3.x)
+b) The report URL in question
+c) A screenshot of the report in question
+d) If this is a realtime report or probe issue, execute the following:
+i) tail -f $DC_HOME/log/proviso.log | grep CMD 
+ii) tail -f $DC_HOME/log/proviso.log | grep RT
+e) Confirm whether these are custom reports or GA reports.
+f) Provide the aggregation metrics if available in the LDR.x.y/output/bof files.
+g) To determine the discovery formula that was used to create the subelement, use the following resmgr command to display the subelement family name
+$ resmgr -export se -colNames "name invariant label state fam.name elt.name elt.state elt.profil elt.collector"
+h) Kindly provide the traceInventory.log
+i) Verify that you have done correct grouping for the device in question.
+j) Verify whether community string is wrong if so then insert the correct one by using either "../datamart/bin/snmpconf" GUI or `resmgr` command: 
+resmgr -import scf -colnames "ipaddress rcommunity" -line "192.168.13.12|_|<read_community>|_|" 
+
+k) Look for exceptions in the Tivoli Integrated Portal server exception log file.
+<tip_location>/profiles/TIPProfile/logs/ffdc/server1_exception.log
+
+l) Go through url http://www-01.ibm.com/support/docview.wss?uid=swg21577786 [http://www-01.ibm.com/support/docview.wss?uid=swg21577786] and provide us trace.log SystemErr.log and SystemOut.log files" Where <tip_location> is the Tivoli Integrated Portal installation directory from the below location ( By default, /opt/IBM/tivoli/tip21 )
+
+<tip_location>/profiles/TIPProfile/logs/server1/ 
+
+8. For TIP related issues (TNPM – Wireline):
+
+a) Please see the following link that describes the must gather for TIP related issues:
+
+https://www-304.ibm.com/support/docview.wss?uid=swg21468983 [https://www-304.ibm.com/support/docview.wss?uid=swg21468983]
+
+
+9. For TCR related issues (TNPM – Wireline):
+
+a) Please see the following link that describes the must gather for TCR related issues:
+https://www-304.ibm.com/support/docview.wss?uid=swg21422663 [https://www-304.ibm.com/support/docview.wss?uid=swg21422663]
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Netcool/Proviso Solaris, AIX 4.4.3

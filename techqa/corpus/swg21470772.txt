@@ -1,0 +1,80 @@
+Title: IBM How to generate Java thread dumps on a hung Java virtual machine (JVM) with the WebSphere Lombardi Edition or IBM Business Process Manager (BPM) products - United States
+
+Text:
+java; jvm; websphere; lombardi; hang; threadump; thread dump TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Java virtual machine for the WebSphere Lombardi Edition or an IBM Business Process Manager product server has hung and you need to gather thread dumps. 
+
+DIAGNOSING THE PROBLEM
+If you cannot gather thread dumps from the manual Java™Server Pages (JSP) Page, which is mentioned in the JSP Page that displays a JVM Thread Dump [http://www.ibm.com/support/docview.wss?uid=swg21439803] document, you can get a thread dump from the Administrative Console for WebSphere Application Server. 
+
+This document references the MustGather: Performance, hang, or high CPU issues on Windows [http://www.ibm.com/support/docview.wss?uid=swg21111364] document for WebSphere Application Server, but is customized for WebSphere Lombardi Edition.
+
+
+RESOLVING THE PROBLEM
+To resolve this problem, complete the following steps:
+
+
+ 1. Download the following ATTCG89L_windows_hang.bat file to this directory
+    WebSphere Lombardi Edition : [install_dir]\AppServer\bin
+    IBM Business Process Manager : [install_dir]\bin
+    ATTCG89L_windows_hang.bat [/support/docview.wss?uid=swg21470772&aid=2] [/support/docview.wss?uid=swg21470772&aid=1]
+    
+    
+    Note: You installation directory might be different.
+    
+    
+ 2. Open a command prompt, access the bin directory in which the ATTCG89L_windows_hang.bat file exists, and enter the following command:  * WebSphere Lombardi Edition ATTCG89L_windows_hang.bat twprocsvr 
+     * IBM Business Process Manager Stand-AloneATTCG89L_windows_hang.bat server1
+       
+       
+       For the IBM Business Process Manager 7.5 products, you can check under WebSphere application servers in the WebSphere Application Server administrative console.
+       
+       
+    
+    
+ 3. Respond to the first prompt, which asks whether administrative security is enabled. For a default environment, the answer is n for no.
+    
+    
+ 4. Respond to the prompt, which asks whether the SOAP port has changed. For this prompt, enter y for yes and enter the SOAP port number. The default value is 8881 (WebSphere Lombardi Edition) or 8880 (IBM Business Process Manager). To locate the SOAP port number, log into the WebSphere Application Server Administrative Console and complete the following steps:  1. Expand Servers > Server Types.
+        
+        
+     2. Select WebSphere Application Servers.
+        
+        
+     3. Click twprocsvr or server1.
+        
+        
+     4. In the right column, expand Communications.
+        
+        
+     5. Click Ports. The SOAP connector port is located on this administrative console panel.
+        
+        
+        When you complete these steps, the process gathers three thread dumps and prompts you with a Java dialog box to log into the server. 
+        
+        
+    
+    
+ 5. Enter tw_user (WebSphere Lombardi Edition) or admin (IBM Business Process Manager products) for the user name and enter the password. For IBM Business Process Manager Version 7.5, if you did a custom install, you might have specified a different super user name other than admin.
+
+
+
+You are prompted 3 times.The log files are stored in the following location: [install_dir]\AppServer\profiles\Lombardi
+[install_dir]\profiles\ProcCtr01
+
+
+(This path might be different if you specified a custom profile name.) 
+
+
+The files have names such as the following name with time stamps in the file name: javacore.20101022.173157.1836.0003.txt 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Windows 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Advanced Windows 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Express Windows 8.0.1, 8.0, 7.5.1, 7.5 
+PRODUCT ALIAS/SYNONYM
+ Lombardi
+WLE
+BPM

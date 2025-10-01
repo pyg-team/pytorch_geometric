@@ -1,0 +1,214 @@
+Title: IBM PK39386: SESSIONMANAGER NOT CHECKING FOR COOKIE INFORMATION IN AN INCLUDED RESOURCE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24020073]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24021203]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In a EAR with 2 web-modules and unique JSESSIONID cookies set
+   for each of the webmodule, when a URI request with an associated
+   cookie incoming, does a requestdispatch call, the following
+   happens....
+   --------------------------------------------------
+   1. SessionManager not checking for cookie information in an
+   included
+   resource
+   2. SessionManager not setting the cookie in response for second
+   webApplication. Note that the cookie name was renamed in two
+   webapplications.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: IBM WebSphere Application Server version 6.1 *
+   *                 users who employ the following two things:   *
+   *                 1. Decide to use the WebSphere Application   *
+   *                 Server's extension feature to override the   *
+   *                 default session cookie name JSESSIONID       *
+   *                 with their customized name.                  *
+   *                 2. The overriding is done at web module      *
+   *                 level and the enterprise application         *
+   *                 contains more than one web module.           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When customized session cookie names    *
+   *                      are used (overriding the default name   *
+   *                      of JSESSIONID) in an EAR containing     *
+   *                      more than two web modules, then it      *
+   *                      has been discovered that in             *
+   *                      dispatched requests the session cookie  *
+   *                      may not be found.                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When customized session cookie names are specified (overriding
+   the default name of JSESSIONID) in an EAR containing more than
+   two web modules, then it has been discovered that in
+   dispatched requests an existing session cookie may not be
+   found for the forwarded or included request.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  To correct this behaviour this fix introduces a custom
+   property CheckCookiesOnDispatch.  By default this csutom
+   property is inactive. To get this fix activated please define
+   a web container custom property CheckCookiesOnDispatch with
+   its value set to true.
+   
+   The effect of this property is that during the processing of a
+   dispatched request (i.e. during processing of an forwarded or
+   included resource) http session manager first checks if there
+   is an existing session with the session id of the forwarding
+   request.  If so that will be retrieved and used.  If not then
+   we move on to examining the session cookies for finding a
+   valid session.
+   
+   The fix for this APAR is currently targeted for inclusion
+   in fixpack 6.1.0.9.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK39386
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   61W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-02-14
+   
+   
+ * CLOSED DATE
+   2007-03-30
+   
+   
+ * LAST MODIFIED DATE
+   2007-03-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  SESSNMGR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

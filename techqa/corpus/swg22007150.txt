@@ -1,0 +1,62 @@
+Title: IBM How to change LDAP configuration at FileNet P8 5.2.1 due to Microsoft Active Directory Domain change? - United States
+
+Text:
+FileNet AD Domain Change TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ How to change LDAP configuration at FileNet P8 5.2.1 due to Microsoft Active Directory Domain change? 
+
+Customers have to change LDAP's configuration due to Microsoft Windows Active Directory domain change, such as from abc.com to xyz.abc.com. They want to know what steps need to take for FileNet P8 or related middleware. 
+
+Be noted, if you simply want to change domain controller within the same domain, such as from server A to server B within the domain abc.com, please refer the following technote:
+
+How is a Microsoft Windows Active Directory Domain controller changed in a FileNet P8 Domain?
+http://www-01.ibm.com/support/docview.wss?uid=swg21380149 [http://www-01.ibm.com/support/docview.wss?uid=swg21380149]
+
+
+CAUSE
+Doing so due to business needs
+
+ANSWER
+Prior to configuration change made against FileNet P8, you need to make sure all related Filenet windows user and groups are properly migrated to new domain controller, either using migration tool to ensure all user and groups's SIDs are migrated to new domain controller, or using SID history to trace previous SIDs in source domain controller. Please engage IBM LAB service team or Microsoft, if you still have a problem for the LDAP migration.
+
+Also, the most important, the assumption is given that LDAP bind account and FileNet bootstrap account's CN short name and password were not changed during the migration process.
+
+Then perform following steps for FileNet
+1) Perform whole backup for FileNet GCD database.
+2) Logon WebSphere administrative console, in the global security, for the LDAP configuration, made the change accordingly, including
+
+
+ a) LDAP server host name 
+
+ b) User base DN 
+
+ c) Group base DN 
+
+ d) LDAP server bind DN name 
+
+
+You can verify the ldap connection, if you are using standalone LDAP. 
+
+
+3) Meanwhile, logon ACCE for FileNet, at the domain level, go to directory configuration, create new LDAP configuration, also make sure following fields are correct accordingly
+
+
+ a) Directory Server Host 
+
+ b) User Base DN 
+
+ c) Group Base DN 
+
+ d) Directory Server User Name 
+
+ 
+Make sure this LDAP setting can be successfully saved, which in turn prove the LDAP setting is correct.
+4) Delete old LDAP configuration, which point to your old domain controller and log off ACCE
+5) Restart WebSphere Application server which deployed FileNet Content Engine to switch to new Domain.
+
+
+Note: Please do not close WebSphere admin console and ACCE Web page from above mentioned step 1 to step 4.

@@ -1,0 +1,55 @@
+Title: IBM System requirements for IBM TXSeries for Multiplatforms V9.1 for Linux on x86 - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+The following tables provide you with a listing of supported IBM and vendor-acquired software for use with IBM TXSeries for Multiplatforms V9.1 for Linux on x86.
+
+CONTENT
+This document provides information on IBM and vendor-acquired software that is compatible with TXSeries for Multiplatforms V9.1. The minimum maintenance levels are listed. TXSeries is not tested with every maintenance level of every product. In general, you can install and run with updates to supported product levels, if those updates are forward compatible. If you use later maintenance levels and experience problems, test with the levels specified in this document before contacting your IBM support representative.
+
+For the supported software that is listed, refer to the respective product website for their system requirements and specifications.
+
+Note: 
+
+ * TXSeries is a 32-bit product. All libraries linked with TXSeries must be 32-bit libraries. Most vendors offering 64-bit versions of their products also provide 32-bit client libraries. On 64-bit operating systems, TXSeries runs in 32-bit compatibility mode.
+ * IBM recommends that you maintain your TXSeries system environments at the latest fix pack level. See TXSeries for Multiplatforms support policy statement [http://www.ibm.com/support/docview.wss?uid=swg21663762] for more details.
+
+Operating System 
+
+Software Version Notes Red Hat Enterprise Linux (RHEL) 6.7 
+7.1  * For information on pre-requisite packages / libraries, refer to TXSeries for Multiplatforms V9.1 Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSAL2T_9.1.0/com.ibm.cics.tx.doc/tasks/t_in_tx_plan_lin.html?lang=en].
+ * For RHEL, glibc-2.12-1.166.el6_7.1 or above is required.
+
+Ubuntu 16.04 Compilers 
+
+Software Version Notes GCC 4.4.7-16.el6 for RHEL 6.7 
+4.8.3-9.el7 for RHEL 7.1 
+5.4.0 for Ubuntu 16.04 COBOL-IT Compiler Suite Enterprise Edition 3.8.36 Micro Focus Visual COBOL 2.3 3.0 IBM Java SDK 1.8 SR 2 
+Databases 
+
+Software Client Version Notes IBM DB2 UDB 10.1 
+10.5 
+11.1 Oracle 12.1 Informix Client SDK 3.7 Supported with Informix Dynamic Server Version 11.70 FC 7. Sybase ASE 15.7 Refer to Sybase documentation [http://infocenter.sybase.com/help/index.jsp?topic=/com.sybase.infocenter.dc34789.1570/html/ocsinunx/CIHEBHFB.htm] on XA support. 
+Note: All the databases listed above are tested and supported with the 32-bit client versions.
+
+Communication software 
+
+Software Version Notes IBM Communication Server 7.0.0.1 
+Monitoring tools 
+
+Software Version Notes IBM Tivoli Monitoring 6.2.1 
+Integration Middleware 
+
+Software Version Notes IBM MQ (formerly IBM WebSphere MQ) 8.0.0.6 
+9.0.0.1 
+IBM MQ Appliance Refer to WMQ System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27006467] page for more details.
+Refer to this technote [http://www.ibm.com/support/docview.wss?uid=swg22010948] for more details on support for IBM MQ Appliance. Transaction Server 
+
+Software Version Notes CICS Transaction Server for z/OS (CICS TS) All supported versions of CICS TS Refer to CICS TS System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27006382] page for more details. WebSphere Application Server (WAS) 8.5.5 
+9.0 TXSeries V9.1 integrates with WAS / Liberty through CICS Transaction Gateway, for the feature "Bidirectional XA support with WAS". WebSphere Liberty 16.0.0.4 Clients 
+
+Software Version Notes IBM CICS Transaction Gateway (CICS TG) All supported versions of CICS TG  * Refer to CICS TG System Requirements [http://www-01.ibm.com/software/htp/cics/ctg/reqs/] page for more details.
+ * CICS TG V9.2 Fix Pack 1 is a pre-requisite for the following features provided by TXSeries V9.1:  * RESTful API support
+    * Bidirectional XA support with WAS

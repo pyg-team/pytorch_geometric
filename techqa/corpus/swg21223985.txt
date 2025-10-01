@@ -1,0 +1,81 @@
+Title: IBM TSO command server Installation Verification test fails with RC 1004 EIBMIUCVERR IUCV error with WDz and RDz - United States
+
+Text:
+RDz; WDz; TSO command server; RC 1004 EIBMIUCVERR IUCV; fekfscmd TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ TSO Command Server Installation Verification test fails with RC 1004 EIBMIUCVERR IUCV error in IBM WebSphere Developer for zSeries (WDz) and IBM Rational Developer for System z (RDz) 
+
+CAUSE
+SECACPT=NONE has been specified in the APPL definition for the LU against which this APPC transaction FEKFRSRV was going to run. 
+
+Possible options are NONE, CONV, or ALREADYV. 
+
+NONE means no password is needed. 
+CONV indicates password is required. 
+ALREADYV indicates a password is required or if the password has already been verified and the already-verified bit is acceptable. 
+Both CONV and ALREADYV will require a conversation level password. 
+
+
+DIAGNOSING THE PROBLEM
+When running the fekfscmd from OMVS/USS to verify the configuration for the TSO command server, the following result is seen: 
+
+./fekfscmd: version=Oct 2003 
+Input parms: 1.2.3.4 * notrace haimo ******
+APPC: Allocate succeeded 
+Conversation id is 121BE3F80000011B 
+APPC: Set Send Type succeeded
+APPC: Confirm succeeded
+Req to send recd value is 0
+APPC: SEND_DATA return_code = 0
+request_to_send_received = 0 
+Send Data succeeded 
+APPC: Set Prepare to Receive type succeeded
+APPC: Prepare to Receive succeeded 
+APPC: Receive data 
+RCV return_code = 0 
+RCV data_received= 2
+RCV received_length= 57 
+RCV status_received= 4
+RCV req_to_send= 0
+Receive succeeded 
+:IP: 8 INITIALIZATION FAILED: 1004 EIBMIUCVERR IUCV error 
+APPC: CONFIRMED succeeded 
+
+and this error was in the OPERLOG: 
+
+
+ * 
+ * 
+ * I
+ * CH408I JOB(FEKFRSRV) STEP(IKJACCNT) CL(PROCESS )
+   OMVS SEGMENT NOT DEFINED
+ * 
+   from the top of the FEKFRSRV output on the spool: 
+   
+ * IKJ56644I NO VALID TSO USERID, DEFAULT USER ATTRIBUTES USED 
+ * 
+
+
+and in the user id column in sdsf, you will no owner listed but instead this entry:  * 
+ * ++++++++ 
+
+
+RESOLVING THE PROBLEM
+Specify SECACPT=CONV or SECACPT=ALREADYV.
+
+
+
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Developer for System z Setup / Configure z/OS 7.5, 7.6, 8.0.1, 8.0.2, 8.0.3 
+HISTORICAL NUMBER
+ 1223985

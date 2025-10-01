@@ -1,0 +1,321 @@
+Title: IBM PI80202: UPDATE RACF STATS FOR IMS CONNECT RACF USER AUTH CALLS FOR ODBM CLIENTS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Provide a configuration parm in IMS Connect to enable or disable
+   RACF statistics for RACF user authentication calls made for
+   clients communicating with ODBM.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * IMS 14 IMS Connect users using ODBM.                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * New ODRACFST parm option in the                              *
+   * ODACCESS statement of the IMS Connect                        *
+   * PROCLIB configuration member.                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * INSTALL CORRECTIVE SERVICE FOR APAR/PTF                      *
+   ****************************************************************
+   New function specified by the ODRACFST parm option in the
+   ODACCESS statement of the IMS Connect configuration member
+   that enables or disables the update of RACF statistics when
+   IMS Connect authenticates users for DB request to ODBM.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  New function specified by the ODRACFST parm option in the
+   ODACCESS statement of the IMS Connect configuration member
+   that enables or disables the update of RACF statistics when
+   IMS Connect authenticates users for DB request to ODBM.
+   
+   Parts changes
+   -------------
+   HWSHCDB
+   - Add HCDBODBM_RACFST byte.
+   
+   HWSHSCT
+   - Add SCT_FG_ODRFST_Y equate.
+   
+   HWSOCBLK
+   - Add qic_show_odracfst and uic_odracfst.
+   
+   HWSCQ010
+   - Add SHOW(ODRACFST).
+   
+   HWSCU010
+   - Add SET(ODRACFST).
+   
+   HWSOCM00
+   - Add SHOW(ODRACFST) for QRY CONFIG.
+   - Add SET(ODRACFST) for UPD CONFIG.
+   
+   HWSODOM0
+   - Use configurable STAT= for RACROUTE call.
+   
+   HWSXCFG0
+   - Add ODRACFST= parm option.
+   
+   
+   Doc changes
+   -----------
+   IMS Version 14 Release Planning (GC19-4224-00)
+   
+   IMS > IMS 14.1.0 > Release planning for IMS
+    > Release planning > IMS Version 14 enhancements
+    > IMS Connect enhancements
+   
+   Option for enabling RACF statistics
+   In IMS 14, you can enable RACF statistics to be recorded and
+   updated when IMS Connect issues the RACF RACROUTE
+   REQUEST=VERIFY command to authenticate Open Database Manager
+   (ODBM) client connections to IMS DB. You can enable RACF
+   statistics by specifying ODRACFST=Y in the ODACCESS  statement
+   of the HWSCFGxx configuration member.
+   
+   
+   IMS Version 14 System Definition (GC19-4226-00)
+   
+   IMS > IMS 14.1.0 > Installing IMS > System definition
+    > Members of the IMS PROCLIB data set
+    > HWSCFGxx member of the IMS PROCLIB data set
+    > ODACCESS statement
+   
+   New ODRACFST= parameter is added to the ODACCESS statement in
+   the IMS Connect HWSCFGxx configuration member of the IMS
+   PROCLIB data set.
+   
+   ODACCESS statement
+     ODRACFST= parameter
+       Specifies the RACF statistics option for the RACF user
+       authentication calls on incoming DB request messages to
+       ODBM when RACF=Y is specified.
+   
+       The RACF statistics option controls the STAT= parameter
+       option that is used in the RACF RACROUTE REQUEST=VERIFY
+       user authentication call.
+   
+       The STAT= parameter specifies whether the statistics
+       controlled by the options specified on the RACF SETROPTS
+       command should be maintained or ignored for the execution
+       of RACROUTE REQUEST=VERIFY call. The parameter also
+       controls whether a message is to be issued when the logon
+       is successful.
+   
+       N is the default.
+   
+       Y  Specifies RACF to record and update statistics by using
+          the STAT=ASIS option in the RACROUTE call.
+          When STAT=ASIS, the messages and statistics are
+          controlled by the installation's current options on the
+          RACF SETROPTS command.
+          Statistics are updated daily at most.
+   
+       N  Specify RACF to not update statistics by using the
+          STAT=NO option in the RACROUTE call.
+          When STAT=NO, the options specified on the RACF
+          SETROPTS command are ignored.
+   
+       The ODRACFST= setting can be changed using the IMS Connect
+       type-2 command UPDATE IMSCON TYPE(CONFIG).
+   
+       For details of the STAT= parameter in the RACROUTE
+       REQUEST=VERIFY call, see ?z/OS Security Server RACROUTE
+       Macro Reference?.
+   
+   
+   IMS Version 14 Commands, Volume 2: IMS Commands N-V
+    (SC19-4211-00)
+   
+   IMS > IMS 14.1.0 > IMS reference information
+    > IMS commands > IMS commands > QUERY commands
+    > QUERY IMSCON commands
+    > QUERY IMSCON TYPE(CONFIG) command
+   
+   The QUERY IMSCON TYPE(CONFIG) command is enhanced to display
+   the ODRACFST value.
+   
+   The filter keyword ODRACFST is added to the SHOW keyword.
+   
+   SHOW
+     ODRACFST
+       Displays the RACF statistics option for the RACF user
+       authentication calls on incoming DB request messages to
+       ODBM when RACF=Y is specified.
+   
+   The following entry is added to the output fields table.
+   
+   Short   Long
+   label   label         Keyword   Meaning
+   -------------------------------------------------------------
+   ORSTAT  ODBMRacfStat  ODRACFST  The RACF statistics option
+                                   value for the RACF user
+                                   authentication calls on
+                                   incoming DB request messages
+                                   to ODBM when RACF=Y is
+                                   specified.
+   
+                                   Y  RACF statistics is
+                                      enabled.
+   
+                                   N  RACF statistics is
+                                      disabled.
+   
+   
+   IMS > IMS 14.1.0 > IMS reference information
+    > IMS commands > IMS commands > UPDATE commands
+    > UPDATE IMSCON commands
+    > UPDATE IMSCON TYPE(CONFIG) command
+   
+   The UPDATE IMSCON TYPE(CONFIG) command is enhanced to allow
+   the ODRACFST value to be changed.
+   
+   The ODRACFST attribute keyword is added to the SET keyword.
+   
+   SET
+     ODRACFST
+       Specifies the RACF statistics option for the RACF user
+       authentication calls on incoming DB request messages to
+       ODBM when RACF=Y is specified.
+   
+       The RACF statistics option controls the STAT= parameter
+       option that is used in the RACF RACROUTE REQUEST=VERIFY
+       user authentication call.
+   
+       The STAT= parameter specifies whether the statistics
+       controlled by the options specified on the RACF SETROPTS
+       command should be maintained or ignored for the execution
+       of RACROUTE REQUEST=VERIFY call. The parameter also
+       controls whether a message is to be issued when the logon
+       is successful.
+   
+       ON   Specifies RACF to record and update statistics by
+            using the STAT=ASIS option in the RACROUTE call.
+            When STAT=ASIS, the messages and statistics are
+            controlled by the installation's current options on
+            the RACF SETROPTS command.
+            Statistics are updated daily at most.
+   
+       OFF  Specify RACF to not update statistics by using the
+            STAT=NO option in the RACROUTE call.
+            When STAT=NO, the options specified on the RACF
+            SETROPTS command are ignored.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI80202
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V14
+   
+   
+ * REPORTED COMPONENT ID
+   5635A0500
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / New Function / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-04-20
+   
+   
+ * CLOSED DATE
+   2017-05-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-07-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI80701 [http://www-01.ibm.com/support/docview.wss?uid=isg1PI80701] UI47653
+   
+   
+
+MODULES/MACROS
+ *  HWSXCFG0 HWSCQ010 HWSODOM0 HWSOCM00 HWSCU010
+   
+   
+    
+   
+   
+
+Publications Referenced GC19422400 GC19422600 SC19421100 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V14
+   
+   
+ * FIXED COMPONENT ID
+   5635A0500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY UI47653 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI47653]
+   UP17/06/16 P F706
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

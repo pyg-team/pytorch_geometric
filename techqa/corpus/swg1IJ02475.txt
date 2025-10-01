@@ -1,0 +1,159 @@
+Title: IBM IJ02475: UPDATE TO THE RBA ADD ON WITH CORRECTION TO THE RBA DERBY DATASOURCE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Product: IBM Tivoli Netcool/Impact 7.1.0
+   Release: 7.1.0.10
+   Severity: 3
+   
+   Problem Description: Netcool/Impact 7.1.0
+   
+   Impact failover malfunctioning after RBA integration.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1. advise customer to go back to their pre-install add-on snap
+   shot of their cluster
+   2. execute install_rba.sh on the primary only.   //with the
+   revised FP12 install_rba.xml
+   3. login in to GUI in the primary
+    Configure and test RBA_ObjectServer data source connection
+   //pointed at an object server that has the additional fields
+   alerts.status
+    Configure and test RBA_Derby data source connection
+   
+   4. manually update the  3 properties in bold in
+   NCI1_RBA_Derby.ds on the primary.
+   //ensuring backup host is the host of the secondary cluster
+   member.
+   
+   RBA_Derby.Derby.FAILOVERPOLICY=FAILOVER
+   RBA_Derby.Derby.BACKUPDATABASE=ImpactDB
+   RBA_Derby.Derby.BACKUPHOST=FQDN (NCI1.tivlab.raleigh.ibm.com)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Failover was working in an Impact cluster with the rba       *
+   * add-on installed.                                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue was more of a procedural issue.                   *
+   * The documented method of installing the rba add on into an   *
+   * impact cluster was not correct.                              *
+   * The rba docs will be updated in line with the release of     *
+   * Impact 7.1 FP13.                                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following
+   maintenance packages:
+   |Fix Pack | 7.1.0-TIV-NCI-FP0013
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ02475
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-12-07
+   
+   
+ * CLOSED DATE
+   2018-03-16
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS

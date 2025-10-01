@@ -1,0 +1,138 @@
+Title: IBM IC81824: DATAPOWER NFS WRITE OPERATIONS MIGHT NOT REPORT FAILURE WHEN PERFORMED AGAINST AN UNRELIABLE REMOTE NFS SERVER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DataPower write operations over the NFS protocol might not
+   report internal write failures when performed against an
+   unreliable remote NFS server.
+   
+   DataPower write operations can be compromised if the NFS server
+   crashes, goes down, experiences slow performance or reboots
+   while these write operations are in progress.
+   
+   Under these conditions, the RPC re-transmission sequence will
+   end after a timeout, because the NFS Volumes in DataPower are
+   soft-mounted.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Insure that your NFS server and the network connectivity to the
+   NFS server are stable.   For situations, where several DataPower
+   appliances are using the same unreliable NFS server, you may
+   wish to investigate a High Availability NFS server solution.
+   
+   Until this is fixed, write operations on NFS Volumes (read-only
+   volumes are not affected) should be avoided if the NFS Server is
+   unreliable. The following alternatives can be chosen for the
+   different uses of NFS in the appliance:
+   
+   - Logging targets: choose a different log target type for
+   logging messages; for example, you may log the messages to the
+   files in the hard-disk of the appliance and select a best fit
+   archiving option, either rotation or upload using FTP (all
+   appliance types)
+   
+   - B2B Gateway Archive Target: It is recommended to use FTP or
+   SFTP  to upload the archive files to a remote data store. You
+   can also select any other supported protocols; such as,  FTP,
+   FTP over SSL, SFTP, HTTP, HTTPS, MQ, MQFTE or RAID.
+   
+   - NFS Destinations: for destinations used in any of the
+   gateways, via Routing URL or stylesheet extensions, such as
+   url-open(), you can select any other supported protocol
+   available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This will be fixed in the next major release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC81824
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   402
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-06
+   
+   
+ * CLOSED DATE
+   2012-03-16
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

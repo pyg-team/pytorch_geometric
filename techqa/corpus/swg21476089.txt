@@ -1,0 +1,80 @@
+Title: IBM Hierarchical (a.k.a sequential) discriminant analysis in SPSS - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Can SPSS do hierarchical discriminant analysis? 
+
+RESOLVING THE PROBLEM
+In hierarchical (or sequential) discriminant analysis (HDA), one is generally interested in whether one or more predictors improves upon the classification accuracy of a previously entered set of predictors. HDA has also been presented to us as a question of whether an additional block of predictors results in a significant change in Wilks' Lambda, i.e., further separates the groups on the resulting functions. These two aspects of HDA are discussed and illustrated below.
+
+I. Improvement in Classification Accuracy
+
+You can perform sequential tests of classification accuracy for alternate predictor lists by using DISCRIMINANT in combination with NPAR TESTS. Huberty (1994, "Applied Discriminant Analysis", Wiley) suggests that alternate classification rules be compared by creating a variable for each rule, such that a case is coded as 1 if the rule 
+predicted the correct class; as a 0, if incorrectly classified. McNemar's test would be employed to test whether the true proportions of correct classifications ("hits") are equal for the 2 rules. Huberty suggests that the hit/miss rates of 3 or more rules could similarly be compared with Cochran's Q, which is also available in NPAR TESTS.
+
+SPSS allows you to request analyses of separate functions in a single DISCRIMINANT command and to print the classification results (actual class by predicted class) for each analysis. You can also save the predicted class from each analysis with the /SAVE subcommand. The binary hit/miss variables are then easily created with COMPUTE
+commands and applied to the McNemar or Q test through the NPAR TESTS command. The following example uses the bank.sav data that was provided with several versions of SPSS. The group variable is sexrace. The first model uses 2 of the predictors from the /VARIABLES list. The second model uses all 5 predictors. The predicted classes are stored as disc2p and disc5p, respectively. The respective binary hit/miss variables are created as pc2 and pc5 from COMPUTE commands and then used in NPAR TESTS. Note that the use of 2 /ANALYSIS subcommands is only available when DISCRIMINANT is run from a syntax window. The COMPUTE commands could be run from the Transform->Compute menu and NPAR TESTS could be run from the Statistics->Nonparametric Tests->2 
+Related Samples menu (Cochran's Q is available from Statistics->Nonparametric Tests->K Related Samples).
+
+On a final note, Huberty suggests that the classification rules should be compared on data sets other than the data used to derive them. Thus, in the example the sample has been split into those with odd-numbered and even-numbered case sequence numbers and assigned the values 1 & 2, respectively, on the variable cvset. The /SELECT subcommand directs DISCRIMINANT to use the first group to derive the classification rules and the second group as a cross-validation group. The SPLIT FILE command is used before NPAR TESTS to provide separate 
+McNemar results for the rule-derivation and cross-validation groups (DO NOT put the SPLIT FILE command before the DISCRIMINANT command). SPLIT FILE OFF returns you to full-sample analysis.
+
+
+COMPUTE cvset = 2 - mod($casenum,2).
+EXECUTE.
+DISCRIMINANT
+/GROUPS=sexrace(1 4)
+/VARIABLES=time age jobcat edlevel work
+/SELECT = cvset (1)
+/ANALYSIS time age
+/SAVE = class = disc2p 
+/ANALYSIS ALL
+/SAVE=CLASS = disc5p
+/STATISTICS=MEAN STDDEV UNIVF BOXM FPAIR TABLE . 
+
+COMPUTE pc2 = (disc2p = sexrace).
+COMPUTE pc5 = (disc5p = sexrace).
+EXECUTE.
+
+SORT CASES BY cvset.
+SPLIT FILE BY cvset.
+NPAR TEST
+/MCNEMAR= pc2 WITH pc5 (PAIRED)
+/MISSING ANALYSIS.
+SPLIT FILE OFF.
+
+
+II. Significant Change in Wilks' Lambda
+
+SPSS DISCRIMINANT does allow you to group and order predictors for stepwise entry into the model. The Wilks' Lambda results provided in the 'Variables Entered/Removed' table in the output provide a multivariate test of the differences among group means at each step, using all of the predictors entered into the model up to that step. The 'Variables in the Analysis' and 'Variables Not in the Analysis' output tables provide 'F to Remove' and 'F to Enter' tests for the change in Wilks' Lambda at each step. The entry of each predictor in the model is treated as a separate step in this output, so you don't have a direct test in the output of whether 2 or more new predictors would together significantly change Lambda at a given step. Tabachnick & Fidell (1996, "Using Multivariate Statistics" (3rd Ed.),
+HarperCollins, pp. 545-6) describe a test for the change in Wilks' Lambda due to the addition of several predictors. The components of that test are available in the DISCRIMINANT output and could be plugged into a calculator. 
+
+To force SPSS DISCRIMINANT to analyze predictors in sequential blocks, you need to run it from a syntax window and add inclusion levels to the /ANALYSIS subcommand (see pp. 266-268 of the SPSS Base 7.5 Syntax Reference Guide). The example below illustrates such a stepwise model.
+
+In the example, we force the predictors time and edlevel in as a set by giving them both an inclusion level of 4 (highest inc level specified, equal for the 2 variables). 'As a set' really means that each of these predictors is entered in a separate step before lower-level predictors are considered. Using an even-numbered inclusion level insures that both predictors will be entered. An odd-numbered inclusion level would allow either or both predictors to be omitted on the basis of F-to-enter criteria. We then force in age, work, and jobcat by giving them all an inclusion level of 2. We 
+then allow these latter 3 variables to be removed from the equation by relisting them in the same /ANALYSIS subcommand with an inclusion level of 1 (only predictors with inclusion = 1 can be dropped after entry at a previous step). 
+
+
+DISCRIMINANT
+/GROUPS=sexrace(1 4)
+/VARIABLES=time edlevel age work jobcat
+/ANALYSIS time edlevel (4) age work jobcat (2) age work jobcat (1)
+/METHOD=WILKS
+/FIN= 3.84
+/FOUT= 2.71
+/PRIORS EQUAL
+/HISTORY
+/STATISTICS=MEAN STDDEV UNIVF BOXM FPAIR TABLE
+/PLOT=MAP
+/CLASSIFY=NONMISSING POOLED
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 15371

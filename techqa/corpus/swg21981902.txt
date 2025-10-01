@@ -1,0 +1,65 @@
+Title: IBM Index  state revalidation - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to find if any index needs revalidation 
+
+CAUSE
+ Sometimes due to programming error or some external reason Index gets corrupted
+
+ANSWER
+ We can find the invalid indexes as per below methods 
+
+Online methods 
+
+1. For whole database - run this query 
+db2 INSPECT CHECK database INDEX LOW RESULTS keep <outputfile in sqllib/db2dump on Unix, or sqllib\<instance> on Windows> 
+
+A connection to the database must exist.
+
+For specific table :
+
+db2 INSPECT CHECK table name <tablename> INDEX LOW RESULTS keep 
+<outputfile in sqllib/db2dump on Unix, or sqllib\<instance> on Windows> 
+
+cd <sqllib>\<instance> 
+
+db2inspf <outputfile> <formatted_outputfile> 
+
+more <formatted_outputfile> 
+
+look for entries saying index has to be rebuilt. 
+exact entry : Index object is in invalid state, requires index be re-built. 
+
+Also we can run the below 2 queries to find invalid indexes.
+
+1) using table function. 
+$ db2 select indschema,indname,tabschema,tabname from table(sysproc.admin_get_index_info('','','') ) where INDEX_REQUIRES_REBUILD='Y' 
+
+2) using admin view. 
+$ db2 "select tabname, INDEXES_REQUIRE_REBUILD from sysibmadm.admintabinfo where tabname='T1'" 
+
+****************************************
+Offline method
+
+db2dart command (offline command) 
+
+To inspect objects of a table: 
+
+db2dart <dbname> /t /tsi <tbspace_number> /tn <tablename> 
+
+Ex: 
+db2dart sample /t /tsi 2 /tn MYTABLE 
+
+
+To mark an index as invalid: 
+
+db2dart <dbname> /MI /TSI <tbspace_number> /OI <object_index_number> 
+
+This index will be rebuilt as per INDEXREC configuration. 
+
+
+Note: db2dart is executed on non-active databases, so issue a 'db2 
+terminate' command before.

@@ -1,0 +1,40 @@
+Title: IBM InfoSphere Warehouse V9.5 release  - End of Support date is April 30, 2015 - United States
+
+Text:
+ PRODUCT LIFECYCLE
+
+ABSTRACT
+ InfoSphere Warehouse V9.5 release - End of Support date is April 30, 2015 
+
+CONTENT
+This documentation contains frequently asked questions about the End of Support (EOS) for InfoSphere Warehouse V9.5 releases on all supported platforms, which includes V9.5 GA, V9.5.1 and V9.5.2 releases.
+Please note the product name changes. For V9.5.0 release, it was called DB2 Warehouse Edition. For V9.5.1 and V9.5.2 fixpack release, it changed to InfoSphere Warehouse.
+
+1) What are the end of support dates for InfoSphere Warehouse V9.5.x?
+
+End of support for InfoSphere Warehouse V9.5.x is April 30, 2015. 
+Extended support may be purchased to extend your support until April 30, 2018.
+
+"End of support" indicates the last date on which you are entitled to base support for your InfoSphere Warehouse products. You can extend the support period beyond the end of support date for an additional fee. 
+
+"Extended support" indicates the final date in which IBM shall end all support for the InfoSphere Warehouse products.
+
+2) Where are the InfoSphere Warehouse V9.5.x end of support dates listed?
+
+IBM Software Product Support Lifecycle [http://www-01.ibm.com/software/support/lifecycle/index_a_z.html] page contains the announcement letters and dates for all IBM products, which includes InfoSphere Warehouse, and DB2 UDB products.
+
+Refer to the related URLs below for the direct link to the withdrawal announcement for InfoSphere Warehouse V9.5.x.
+
+3) How do I purchase a Support Extension?
+
+Support extensions may be purchased for an additional fee. To extend your support of your InfoSphere Warehouse V9.5 releases product until April 30, 2012, please contact your local IBM Sales Representative. For direct inquiries, US Customers may call IBM Sales at 1-888-426-4343, option 3 and ask for a Service Extension on InfoSphere Warehouse V9.5. Customers in other geographies should refer to the IBM directory of worldwide contacts [http://www.ibm.com/planetwide/] [http://www.ibm.com/planetwide/]to find sales contact numbers in their region.
+
+4) What's the migration path that IBM recommends?
+
+The latest release for InfoSphere Warehouse is called DB2 Warehouse V10.5. Customer cannot migrate to DB2 Warehouse V10.5 directly due to DB2 limitation. You have to migrate to DB2 V9.7.4 or later fixpack release for V9.7 first before migrate to V10.1, or V10.5 release. This is documented in DB2 Warehouse V10.5 Knowledge Center [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.dwe.migrate.doc/migrating_isw.html].
+
+5) Is there information to help me upgrade?
+
+The migration doc [http://www.ibm.com/support/docview.wss?uid=swg21683031] for DB2 Warehouse V10.5 [http://www-01.ibm.com/support/docview.wss?uid=swg21683031] [http://www-01.ibm.com/support/docview.wss?uid=swg24011815]contains information about how to upgrade your InfoSphere Warehouse V9.5 to the latest release of DB2 Warehouse V10.5. A migration video [https://www.youtube.com/watch?v=dkh9eMD5VQ4&list=UU_rR6DkLijpZo6NNcGNi17w] is also available.
+
+If you still have questions, please contact your IBM Sales Representative or calll 'IBM Direct' toll free at 1-800-426-2255 to open PMR.

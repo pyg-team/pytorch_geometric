@@ -1,0 +1,67 @@
+Title: IBM db2inidb completes successfully however throws file system path errors into db2diag.log - United States
+
+Text:
+db2inidb; SQLO_FNEX; realpath; source db path; ENOENT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When db2inidb is run on target server using relocate option with configuration file, it completes successfully and database is accessible, however, there are the following error messages dumped into db2diag.log:
+
+2014-09-29-10.56.02.768329-240 E1353244A769 LEVEL: Error (OS) 
+PID : 54198522 TID : 1 PROC : db2bp 
+INSTANCE: db2inst1 NODE : 000 
+EDUID : 1 
+FUNCTION: DB2 UDB, oper system services, sqloqualifydir, probe:20 
+MESSAGE : ZRC=0x860F000A=-2045837302=SQLO_FNEX "File not found." 
+DIA8411C A file "" could not be found. 
+CALLED : OS, -, realpath 
+OSERR : ENOENT (2) "No such file or directory" 
+DATA #1 : String, 21 bytes 
+/home/db2inst1/db2inst1
+DATA #2 : unsigned integer, 8 bytes 
+256 
+DATA #3 : String, 0 bytes 
+Object not dumped: Address: 0x0FFFFFFFFFFFA7D8 Size: 0 Reason: Zero-length data 
+DATA #4 : String, 105 bytes 
+Search for ossError*Analysis probe point after this log entry for further 
+self-diagnosis of this problem. 
+
+
+db2inidb command used is as follows:
+
+db2inidb ${DBNAME} as SNAPSHOT RELOCATE USING ${PATH}/relocate.cfg
+
+
+cat relocate.cfg
+
+DB_NAME= ${DBNAME}
+DB_PATH=${OLDPATH},${NEWPATH}
+INSTANCE=${OLDINSTANCENAME},${NEWINSTANCENAME} 
+##NODENUM=nodeNumber 
+##LOG_DIR=oldDirPath,newDirPath 
+##CONT_PATH=oldContPath1,newContPath1 
+##CONT_PATH=oldContPath2,newContPath2 
+
+##STORAGE_PATH=oldStoragePath1,newStoragePath1 
+##STORAGE_PATH=oldStoragePath2,newStoragePath2 
+
+##FAILARCHIVE_PATH=newDirPath 
+##LOGARCHMETH1=newDirPath 
+##LOGARCHMETH2=newDirPath 
+##MIRRORLOG_PATH=newDirPath 
+##OVERFLOWLOG_PATH=newDirPath 
+
+
+The error message above refers to ${OLDPATH} which is /home/db2inst1/db2inst1 which obviously does not exist on targer machine. 
+
+SYMPTOM
+Error message complaining on path not found in db2diag.log that refers to instance path on source server.
+
+
+CAUSE
+DB2 code does a lot of checking when db2inidb is initiated including path checks from source and target before checking the relocate option and throws the error message mentioned above since source paths are not found. 
+
+DIAGNOSING THE PROBLEM
+This is benign error and can be ignored. db2inidb is successful and database is accessible. The only way to diagnose this error is to check db2diag.log for the above error referring to old db path on source.
+
+RESOLVING THE PROBLEM
+Nothing to be resolved. Things are working as designed and the error can be ignored safely.

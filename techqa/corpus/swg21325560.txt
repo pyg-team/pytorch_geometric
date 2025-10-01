@@ -1,0 +1,17 @@
+Title: IBM Which feature in the license file is responsible for the TAUâ€“DOORS integration? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Which feature in the license file is responsible for the TAUâ€“DOORS integration? 
+
+ANSWER
+The TAU-G2-MODEL-AUTHOR and TAU-G2-UML-SQDE packages are needed for the TAUâ€“DOORS integration. 
+The Model Author contains the TAU-DOORS feature and the TAU-G2-UML-SQDE contains the TAU-G2-LINKS feature. 
+TAU/DEVELOPERTAUDEV-FAQ-55AnswerProduct versionPartner ContentInternal ContentCategoryReference ID 
+
+
+
+HISTORICAL NUMBER
+ KB7627

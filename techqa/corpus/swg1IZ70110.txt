@@ -1,0 +1,166 @@
+Title: IBM IZ70110: HTTPREQUEST NODE RESTRICTS SOCKETS TO 1024 AND THROWS BIP3150   OTHERWISE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Websphere Message Broker V6.0, the HTTPRequest node throws
+   the following error:
+   
+   BIP3150S: A socket error occurred. Operation:
+   ::connect::select().
+   Error Code: 22. Error Text: Invalid argument
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  While not a fix, this may help alleviate the
+   restriction by keeping the sockets open longer for reuse. The
+   broker set the maximum socket age to 4 seconds by default. If
+   you increase the age, the socket will not close and can be
+   reused. The command to make this change is:
+   
+   
+   mqsichangeproperties <BrokerName> -e <ExecutionGroupName>
+     -o ComIbmSocketConnectionManager -n maxSocketAge -v 60
+   
+   (this will set the age to 60 seconds)
+   The broker must be restarted as this is a broker wide property.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All WebSphere Message Broker V6.0 users, who work with
+   the HTTPRequest node.
+   
+   Platforms Affected:
+   All Platforms
+   ****************************************************************
+   PROBLEM SUMMARY:
+   In Websphere Message Broker V6.0, it is seen that the broker is
+   restricted to use the default 1024 sockets by the HTTPRequest
+   node. If the opened sockets exceed 1024, the HTTPRequest node
+   throws the following error:
+   
+   BIP3150S: A socket error occurred. Operation:
+   ::connect::select().
+   Error Code: 22. Error Text: Invalid argument
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere Message Broker has been changed to override the
+   restriction of 1024 sockets to 65536.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   V6.0 - Maintenance Level 6.0.0.11
+   
+   The latest available maintenance can be obtained from
+   'WebSphere Message Broker Recommended Fixes'
+   http://www.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere Message
+   Broker Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ70110
+   
+   
+ * REPORTED COMPONENT NAME
+   WMB SOL SPARC
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0502
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-11
+   
+   
+ * CLOSED DATE
+   2010-03-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMB SOL SPARC
+   
+   
+ * FIXED COMPONENT ID
+   5724J0502
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

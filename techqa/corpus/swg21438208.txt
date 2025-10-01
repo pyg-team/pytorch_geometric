@@ -1,0 +1,26 @@
+Title: IBM Reducing the size of Decision Warehouse trace when running scenario suites - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When running a Decision Validation Service scenario suite in Rule Team Server can the optional trace be filtered to reduce its size ? 
+
+ANSWER
+It is possible to customize the Decision Warehouse (DW) trace that is used by the Scenario Suite Provider (SSP) when a Decision Validation Service (DVS) scenario suite is executed in Rule Team Server. The customization can filter out information that is not necessary to keep in the DW. A sample implementation is provided that removes information about all the rules that are not fired, which helps keep the size of the trace small when there is a large number of rules in the ruleset and typically a much smaller number of rules actually fire. Also, only the DW persisted trace is smaller, the original larger trace is still used by DVS to perform the tests involved in the scenario suite. 
+
+Instructions: 
+
+ 1. Unjar the attached jrules-ssptrace-src.jar to a local directory 
+ 2. Edit the file ./jrules-ssptrace/build.xml and modify the properties to reflect your environment setup ( in particular the jrules.home directory path, the sspInput and sspOutput file paths ) 
+ 3. Using a command line from the directory ./jrules-ssptrace execute: ant repackage-ssp 
+ 4. Deploy the customized SSP (available as the sspOutput file path) 
+
+
+jrules-ssptrace-src.jar [/support/docview.wss?uid=swg21438208&aid=2] [/support/docview.wss?uid=swg21438208&aid=1] 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0.1, 8.0, 7.5

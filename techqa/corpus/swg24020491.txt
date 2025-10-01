@@ -1,0 +1,57 @@
+Title: IBM Script to update existing profiles to include PK54128 custom properties - United States
+
+Text:
+SIBus SIB WPS DOWNLOADABLE FILES
+
+ABSTRACT
+ These scripts update an IBM WebSphere Application Server V6.0 profile to include the custom properties described in APAR PK54128. 
+
+DOWNLOAD DESCRIPTION
+PK54128 was fixed in WebSphere Application Server V6.0.2.25 to allow target, targetType and targetSignicance custom properties to be used with activation specifications for the default messaging provider (the Service Integration Bus). 
+
+
+
+
+PK54128 states that a new profile must be created, on a system with the APAR applied, before the properties can be used. This is because the resource adapter configuration in the profile must include the properties. 
+
+These scripts update the default messaging provider resource adapter configuration of an existing profile (created before PK54128 was applied) to include the new properties.
+
+SIBUpdateResourceAdapter.jacl updates the resource adapter used by Java™ Massage Service message-driven beans.
+
+SIBInternalUpdateResourceAdapter.jacl updates an internal resource adapter used by other IBM products and components, including WebSphere Process Server.
+
+If no IBM product or component has installed a resource adapter called "Platform Messaging Component SPI Resource Adapter" into the environment, this script makes no changes to the configuration.
+
+The scripts are provided as is.
+
+PREREQUISITES
+Fix Pack 6.0.2.25 or higher should be applied to the WebSphere Application Server V6.0 installation prior to using these scripts.
+
+See the following link for the latest maintenance available for WebSphere Application Server V6.0:
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+INSTALLATION INSTRUCTIONS
+Run the scripts as follows from the machine where the deployment manager is hosted.
+
+Change DMGR_PROFILE to path of the deployment manager profile.
+
+UNIX, Linux and z/OS:
+
+DMGR_PROFILE/bin/wsadmin.sh -f SIBUpdateResourceAdapter.jacl
+DMGR_PROFILE/bin/wsadmin.sh -f SIBInternalUpdateResourceAdapter.jacl
+
+Windows:
+
+DMGR_PROFILE\bin\wsadmin.bat -f SIBUpdateResourceAdapter.jacl
+DMGR_PROFILE\bin\wsadmin.bat -f SIBInternalUpdateResourceAdapter.jacl
+
+After executing the scripts, re-synchronize all nodes.
+
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] SIBUpdateResourceAdapter.jacl 25/09/2008 US English 4736 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/configscripts/SIBUpdateResourceAdapter.jacl] SIBInternalUpdateResourceAdapter.ja 25/09/2008 US English 48343 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/configscripts/SIBInternalUpdateResourceAdapter.jacl] 
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server for z/OS z/OS 6.0

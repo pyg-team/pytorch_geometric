@@ -1,0 +1,95 @@
+Title: IBM RPT out of memory errors when running tests - United States
+
+Text:
+rrt; crash; memory; 71RRT-RPTPLAY; 71RRT-RPTTS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installing or updating RPT, a memory error occurs trying to create a new script, or run an existing script. 
+
+CAUSE
+RPT (Rational Performance Tester) and the Eclipse client require a minimum of half of the total physical memory on the machine, or 1200 MB, whichever is less.
+
+DIAGNOSING THE PROBLEM
+ 
+
+Several errors can be generated as a result of insufficient memory allocated for the RPT workbench. Some examples are :
+
+
+ * Failed to create a thread: retVal -xxxxxxxxxx, errno 12
+   [/support/docview.wss?uid=swg21622199&amp;aid=1]
+   
+ * An out of memory error has occurred Running Eclipse
+   [/support/docview.wss?uid=swg21622199&amp;aid=2]
+   
+ * Unhandled event loop exception
+   [/support/docview.wss?uid=swg21622199&amp;aid=3]
+   
+ * Error: JVM terminated. Error: JVM terminated. Exit code=1, starting RPT 
+
+
+RESOLVING THE PROBLEM
+These suggested updates can significantly improve the Windows environment when running scripts in the RPT development environment. The eclipse.ini file used in the suggestions below is found in ..\Program Files\IBM\SDP and ..\Program Files\IBM\SDP\rptse for use with RPT.
+[/support/docview.wss?uid=swg21622199&aid=4] [/support/docview.wss?uid=swg21622199&aid=4]
+
+
+
+
+ * Default heap size
+   The default heap for the workbench is too small for long-running RPT playbacks. You can override the default by adding a -Xmx setting in eclipse.ini 
+   
+   For example, to specify 1024 MB of heap space in eclipse.ini, add the following -Xmx1024m line: 
+   
+   -vmargs 
+   -Xquickstart 
+   -Xms40m 
+   -Xgcpolicy:gencon 
+   -Xscmx96m
+   -Xmx1024m
+   -Xshareclasses:singleJVM,keep 
+   
+   
+   
+ * Clean cache
+   To add an option to the Eclipse command line to make the JVM clean an existing cache before starting up, add "expire=0" to the option: 
+   
+   java -Xshareclasses:singleJVM,keep,expire=0 
+   
+   
+   
+ * Deleting the cache file 
+   Another option is to manually delete the cache file. IBM Rational Application Developer (RAD) has chosen to use the default location for the cache file, which is 
+   
+   C:\Documents and Settings\<user name>\Local Settings\Application Data\javasharedresources\
+   
+   This is also documented in the JVM guides. Navigate to the directory and delete this file if found: 
+   
+   C23D1A32_sharedoc_<username>_G01 
+   
+   
+   
+ * Windows Java -noddraw 
+   Another option for optimizing memory is to add the following line in the eclipse.ini file 
+   
+   -Dsun.java2d.noddraw=true 
+   
+   Here is an example: 
+   
+   -vmargs 
+   -Xquickstart 
+   -Xms40m 
+   -Xmx1024m 
+   -Xgcpolicy:gencon 
+   -Xscmx96m 
+   -Xshareclasses:singleJVM,keep,expire=0 
+   -Dsun.java2d.noddraw=true 
+
+RELATED INFORMATION
+ Developerworks java class sharing [https://www.ibm.com/developerworks/java/library/j-ibmjava4/]
+Eclipse Workbench User's Guide [http://help.eclipse.org/juno/topic/org.eclipse.platform.doc.user/tasks/running_eclipse.htm?cp=0_3_0]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ 5724s79rr
+itcamft

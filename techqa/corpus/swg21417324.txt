@@ -1,0 +1,44 @@
+Title: IBM LANFREE timeouts and session processing - United States
+
+Text:
+SAN RESOURCETIMEOUT COMMTIMEOUT IDLETIMEOUT storage agent STA storage area network networks LANFREE TECHNOTE (FAQ)
+
+QUESTION
+ Why are there multiple Storage Agent sessions for the LANFREE processing and what type of timeouts might be encountered during a LANFREE backup or restore. 
+
+ANSWER
+For a LANFREE backup or restore operation within Tivoli Storage Manager, there are three timeouts that can be encountered: 
+
+ * Idletimeout 
+ * Commtimeout 
+ * Resourcetimeout
+
+
+Three sessions are started when the Tivoli Storage Manager Storage Agent starts. The output from the StgAgent will show these sessions initializing:  * One sessions for the Paths 
+ * One session for the Event Logging 
+ * One session to initialize the Library sharing.
+
+
+In many cases, these sessions terminate as there is no work to do. In some cases, they will transition into an IdleWait state. 
+
+When a backup or restore session begins, the following sessions are also initialized:  * One session to the Tivoli Storage Manager Server from the client 
+ * One session to the Tivoli Storage Manager Server from the StgAgent that is a proxy session for the client. 
+ * One session from the StgAgent to the Tivoli Storage Manager Server that can be considered an administrative Library Client session. This session keeps statistics and tracks the data being backed up but does not perform the actual data transfer. 
+ * There are also Library Sharing sessions that are utilized to initiate the tape mounts/dismounts and are then terminated.
+
+
+For every session on the StgAgent, there is a corresponding session on the Tivoli Storage Manager Server. To verify the corresponding sessions, look at the tape volume being used and/or the "Proxy By Storage Agent" field on the Server side that shows the StgAgent name. 
+
+If the proxy session from the StgAgent for the client is not working (i.e, when it is waiting for data), the session that is seen on the Tivoli Storage Manager Server will be in a RecvWait (for a backup) or a SendWait (for restore). The wait state is seen because it is waiting on something (a response) from the client. 
+For any delay in the transfer of data for the backup/restore, the RecvW and SendW sessions are seen on the Tivoli Storage Manager Server, the corresponding StgAgent session goes into an IdleW. In order to prevent this from causing a failure, the IDLETIMEOUT setting on the Server and StgAgent should be set to a high enough value to accommodate any expected delays in processing of the data. It is important to note that the RESOURCETIMEOUT value on the Tivoli Storage Manager server and the IDLETIMEOUT value on the storage agent will both come into play for the proxied storage agent sessions. 
+
+For example, during an incremental backup for some database applications, there are delays in the sending of the data such that the session will witness a RecvW. During a restore there may be times when a client application will first request a small amount of data to be restored. The client will then use this information to create the files/tablespaces that are needed to hold the restore data. While the application is preparing the files, the session for the Tivoli Storage Manager is in a SendWait. The restore will only start after the client application has completed the necessary processing to prepare for the restore. Both of these scenarios would see sessions in a wait state that can result in a timeout failure if the values are not set high enough to accommodate the delay. 
+
+All of these values will disconnect the session if they are reached:  * The RESOURCETIMEOUT value is set on the Tivoli Storage Manager Server. Even if the RESOURCETIMEOUT is set for the StgAgent, in most cases the Server value will be used as it is the controlling entity. 
+ * The IDLETIMEOUT value needs to be set on both the Tivoli Storage Manager Server and the StgAgent. 
+ * In the case of LAN backups, the COMMTIMEOUT value on the Tivoli Storage Manager Server will be utilized. Note that the COMMTIMEOUT should also be set on the StgAgent. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TSM

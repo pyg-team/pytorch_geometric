@@ -1,0 +1,244 @@
+Title: IBM IV93495: GL ACCOUNT VALUES DO NOT GET REPLACED ON ASSOCIATED CU ESTIMATE WORK ORDER WHEN THE "REPLACE" OPTION IS SET - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  GL Account data gets populated in the PLUSDACGDETAIL table for
+   the associated Work Order when the Perform Estimation function
+   is performed.  When the Perform Acceptance function is done, no
+   values on the Work Order get replaced.  This occurs even if the
+   CU Acceptance Options/GL Account/Replace setting in
+   Organizations(T&D) is set.
+   
+   Steps to reproduce:
+   -Log in to maxdemo instance as wilson
+   -Go To Administration | Organizations (T&D)
+   -In the Organization field enter "eaglena" and press Enter
+   -Click EAGLENA to open the record
+   -Select Action | T&D Options | CU Estimating Options
+   -Click the checkboxes for:
+    Allocate accounting to work order tasks?
+    Generate accounting details records
+   -Click OK
+   -Select Action | T&D Options | CU Acceptance Options
+   -In the GL Account section click the radio button for Replace
+   -Click OK
+   -Save the record
+   -Log out, then log in
+   
+   -Go To Administration | Resources | Person Groups
+   -In the Person Group field enter 1001 and press Enter
+   -Click 1001 to open the record
+   -Click the checkbox for Crew Work Group
+   -Save the record
+   
+   -Go To Planning | CU Library (T&D)
+   -Click the New CU button on the toolbar
+   -In the CU field enter "CUE-1"
+   -In Accounting Code field | Select Value
+   -In the Accounting Code field | Select Value | click any value
+   -In the Control Flags section, select the checkboxes for
+   Station Detail
+   and CU Detail
+   -On the Services tab click the New Row button
+   -In the Service field | Detail Menu | Select Value
+   -Click INSTALL
+   -In the Quantity field enter 1
+   -In the Vendor field enter "almar" and tab out
+   -In the Unit Cost enter 75
+   -Save the record
+   -Click the Change Status button on the toolbar
+   -In the New Status field use the drop-down arrow and click
+   Active
+   -Click OK
+   
+   -Go To System Configuration | Platform Configuration |
+   Application
+   Designer
+   -In the Application field enter "plusdwotrk" and press Enter
+   -Click PLUSDWOTRK
+   -Click the Work Order tab
+   -Click the Control Palette button on the toolbar
+   -Click and drag a Textbox control onto the form, likely under
+   the GL
+   Account field
+   -Click the X to close the Controls dialog
+   -Highlight the Textbox and click the Control Properties button
+   on the
+   toolbar
+   -In the Label field enter, "CUE GL Account"
+   -In the Attribute field | Select Value
+   -In the Object field enter "plusdacgdetail"and press Enter
+   -In the Attribute field enter "glaccount" and press Enter
+   -Click GLACCOUNT
+   -Save the record
+   -Click the X to close the Textbox Properties dialog
+   
+   -Go To Work Orders | Work Order Tracking (T&D)
+   -Click the New Work Order button on the toolbar
+   -In the Location field enter "br200" and tab out
+   -In the Gl Account field remove the value
+   -On the Plans tab | Tasks section | click the New Row button
+   -In the Task 10 Description field enter "Task One"
+   -In the Estimated Duration field enter 0:10
+   -Save the record
+   
+   -Go To Work Orders | CU Estimating (T&D)
+   -Click the New Estimate Request button on the toolbar
+   -In the Target WO field | Detail Menu | Select Value
+   -In the Work Order field enter the number of the Work Order
+   that you
+   just created and press Enter
+   -Click the record to populate the Target WO field
+   
+   -On the Versions tab click the New Row button
+   -In the Labor Filters section | Work Group field | Detail Menu
+   | Select
+   Value | click 1001
+   -In the Storeroom field enter "central" and tab out
+   -Click the Propagate Change button, then click Yes in the System
+   Message dialog
+   
+   -On the Stations tab click the New Station button
+   -In the Station field enter 1
+   -On the Compatible Units tab | Station field | Select Value |
+   click the
+   checkbox for 1
+   -Click OK
+   -Click the Propagate Change button, then click Yes in the System
+   Message dialog
+   
+   -On the Compatible Units tab click the New Row button
+   -In the CU Name field | Detail Menu | Select Value | click the
+   checkbox
+   for CUE-1, then click OK
+   -In the Work Function field click I
+   -In the Quantity field enter 1
+   -Save the record
+   -On the Estimate Request tab click the Propagate Changes
+   button, then
+   click Yes in the System Message dialog
+   
+   -Select Action | Perform Estimation
+   -Click OK, then click OK at the System Message dialog
+   *On the Work Order, no value has populated the CUE GL Account
+   field
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users that use Maximo for Utilities 7.6.0.0.             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * GL ACCOUNT VALUES DO NOT GET REPLACED ON ASSOCIATED CU       *
+   * ESTIMATEWORK ORDER WHEN THE "REPLACE" OPTION IS SET          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code changed to solve the problem.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV93495
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO UTILITIE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R5600
+   
+   
+ * REPORTED RELEASE
+   760
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-02-17
+   
+   
+ * CLOSED DATE
+   2017-03-02
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO UTILITIE
+   
+   
+ * FIXED COMPONENT ID
+   5724R5600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R760 PSY
+   UP

@@ -1,0 +1,76 @@
+Title: IBM How to adjust the IBM Content Foundation base pattern vCPU, memory, and disk space - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document describes how to customize the base pattern to match your PVU purchase. 
+
+CONTENT
+IBM Content Foundation Pattern includes pre-tuned patterns that you can use without further modification. Pre-tuned patterns are read-only, which means you cannot change the number of custom nodes at deployment. However, you can change the number of virtual CPU (vCPU), memory, or disk space at deployment. 
+
+In addition to the pre-tuned patterns, IBM Content Foundation Pattern provides an editable base pattern that you can edit to increase the number of custom nodes as well as other aspects, such as vCPU. After editing it, you must save the modifications to persist the changes and overwrite previous defaults. The number of custom nodes - and in particular the number of vCPU - selected per custom node must reflect the number of Processor Value Unit (PVU) licenses that you purchased. Let’s assume that you have purchased 140 PVU licenses for the IBM Content Foundation 5.2 pattern. On the IBM PureApplication System W1500, 70 PVU equals 1 vCPU; therefore with 140 PVU, you need the custom nodes in the base pattern to consume 2 vCPU. If you want high availability (HA) for the application servers that run the Content Platform Engine application, then when you edit the base pattern, you must change the number of Custom nodes in the pattern to 2 and set the Virtual CPUs property to 1. If you do not need HA, set the Custom nodes to 1 (which is the default) and change the Virtual CPUs property to 2. Either of these options will yield 2 vCPU or 140 PVU when deployed. 
+
+In general for the IBM PureApplication System W1500, divide the number of PVU license by 70 to determine the number of vCPU that the custom nodes in your deployment will consume. To determine the number of custom nodes, use the combination of high availability needs and the cloud group vCPU configuration of your IBM PureApplication System. If the result of the division is an even number and it maps evenly with the cloud group vCPU configuration, then set a number for the custom nodes that reflects on the even distribution of vCPU per custom nodes. For example, let’s assume you have 560 PVU. The result of the division is 8. Further assume that the vCPU configuration has a value of 4. In this case, you can set the number of custom nodes to 2 and the vCPU to 4 (4 x 2 = 8). Setting the custom nodes to 2 provides high availability; and setting the vCPU to 4 per custom node utilizes the 8 vCPU, which equates to the 560 PVU (8 x 70 = 560). If the result of the division is an odd number, to get the exact number of vCPU that equates to the PVU, you will have to increase the number of custom nodes. To illustrate this point, let’s assume you have 210 PVU, which equates to 3 vCPU (3 x 70 = 210). In this case, you will have to set the custom nodes to 3 and the value of vCPU to 1 per custom node.
+
+To edit the base pattern to set the custom nodes and vCPU, follow these steps:
+1. Log on to your IBM PureApplication System.
+2. Click the Workload Console.
+3. Click Patterns->Virtual Systems.
+4. Type IBM Content Foundation in the filter field.
+5. Click IBM Content Foundation 5.2 base to select it.
+6. Click Edit on the tool bar.
+7. On the Custom nodes, click Add nodes (up arrow) beside the lock icon to increase the number of custom nodes.
+8. Click on properties (pencil icon), then set Virtual CPUs and click OK.
+9. Click Done editing to save changes.
+
+
+Other tunable properties to consider when customizing the base pattern for different workloads are memory, disk space, and Content Search Services. 
+
+Memory 
+
+The default memory that is set for each of the virtual parts in the pattern topology might not be sufficient for your workload. You should therefore compute appropriate values for the different virtual parts and set them. You can use the IBM Content Foundation Pattern online documentation that shows what is installed on each virtual part to determine which appropriate values to set. 
+
+Disk space 
+
+The pattern allocates disk space for the GCD, object store, and IBM Content Navigator databases on the DB2 Enterprise HADR Standby/Primary virtual parts. The Core OS – NFS Server virtual part also allocates disk space for content files, index areas, and product images. The maximum disk allocation on the W1500 per file system is 1.8T, so do not set a DISK_SIZE_GB greater than 1800 GB. Disk space allocation is not done at runtime; therefore determining the proper disk space requirement ahead of time is essential so that you can configure the DISK_SIZE_GB property properly. The DISK_SIZE_GB property can be set in one of two ways, detailed below. 
+
+The easier way is to set the appropriate value during deployment, but you can also edit the default value of the pattern so that each deployment can see that value. 
+
+To edit the DISK_SIZE_GB, follow these steps:
+
+1. Log on to your IBM PureApplication System.
+2. Click the Workload Console.
+3. Click Patterns->Virtual Systems.
+4. Type IBM Content Foundation in the filter field.
+5. Click IBM Content Foundation 5.2 base to select it.
+6. Click Edit on the tool bar.
+7. Click the ECM add disk add-on each on the DB2 Enterprise HADR Standby, DB2 Enterprise HADR Primary, Core OS – NFS Server and set the DISK_SIZE_GB property value. Set the same value for the DB2 Enterprise HADR parts.
+8. Click OK.
+9. Click Done Editing to save changes. 
+
+Content Search Services 
+
+During deployment, Content Search Services (CSS) is configured based on a workload size. The table below shows the workload size and the CSS configuration parameters applied for that size.
+
+Table 1. Content Search Service (CSS) Servers Configuration 
+
+CSS Parameter set in configuration.xml
+
+Base Small Medium Large Enterprise maxHeapSize 3GB 3GB 4GB 6GB 8GB inputQueueMemorySize 50 MB 50 MB 100 MB 150 MB 150 MB outputQueueMemorySize 50 MB 50 MB 100 MB 150 MB 150 MB numberOfPreprocessingThreads 4 4 8 16 16 numberOfIndexThreads 4 4 8 16 16 numberOfTokenizers 10 10 16 32 32 numberOfSearchables 10 10 16 32 32 
+By default, the base pattern is configured with values for the base. The base pattern and the small pattern have the same values. If you determine that your CSS workload will reflect the medium, large, or enterprise, then you must edit the base pattern and set the Pattern_Size property of the Core OS – CSS virtual parts to M, L, or E for medium, large, or enterprise. 
+
+To edit the base pattern and set the Pattern_Size property, follow these steps: 
+
+1. Log on to your IBM PureApplication System. 
+2. Click the Workload Console. 
+3. Click Patterns->Virtual Systems. 
+4. Type IBM Content Foundation in the filter field 
+5. Click the IBM Content Foundation 5.2 base to select it. 
+6. Click Edit on the tool bar. 
+7. For both Core OS – CSS, click the parameters icon for the CSS Install and Configure script package. 
+8. Unlock the Pattern_Size property by clicking on the lock icon. 
+9. Set Pattern_Size property to M, L, or E from the dropdown list. 
+10. Lock the Pattern_Size property by clicking on the lock icon. 
+11. Click OK. 
+12. Click Done Editing to save changes.

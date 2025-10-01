@@ -1,0 +1,52 @@
+Title: IBM Security Bulletin: ICU4C overflow vulnerability affects IBM WebSphere MQ (CVE-2011-4599) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ A vulnerability exists in the version of ICU4C shipped by IBM WebSphere MQ that provides support for the Managed File Transfer (MFT) process controller. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2011-4599 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-4599]
+DESCRIPTION: International Components for Unicode (ICU) is vulnerable to a stack-based buffer overflow, caused by improper bounds checking by the _canonicalize( ) function. By supplying a negative len value, a remote attacker could overflow a buffer and execute arbitrary code on the system or cause the application to crash.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/71726 [https://exchange.xforce.ibmcloud.com/vulnerabilities/71726] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:P/A:P) 
+
+AFFECTED PRODUCTS AND VERSIONS
+The ICU4C vulnerability only affects MQ installations that have Managed File Transfer (MFT) components installed. 
+
+IBM MQ 8.0 
+
+Fixpack 8.0.0.3 and earlier maintenance levels 
+
+IBM WebSphere MQ 7.5 
+
+Fixpack 7.5.0.5 and earlier maintenance levels
+
+REMEDIATION/FIXES
+IBM MQ 8.0 
+
+Apply fixpack 8.0.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg21969244] or later 
+
+IBM WebSphere MQ 7.5 
+
+Apply fixpack 7.5.0.6 [http://www-01.ibm.com/support/docview.wss?uid=swg21975660] or later
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 11 March 2016 - Original version published
+11 April 2016 - Clarify this vulnerability only affects Managed File Transfer installations 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

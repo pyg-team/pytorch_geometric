@@ -1,0 +1,43 @@
+Title: IBM Setting the SAP JCo properties on JVM - United States
+
+Text:
+adapter; sap; jco; jvm TECHNOTE (FAQ)
+
+QUESTION
+ How do I set the SAP JCo properties on the JVM where WebSphere Adapter for SAP software runs? 
+
+CAUSE
+WebSphere Adapter for SAP Software uses the SAP JCo API to interact with SAP ERP Systems. SAP JCo has a list of properties which can be changed at the client side where it is used. 
+
+ 
+Listed below are the SAP JCo connection related properties which might be of interest to users to help them tune the SAP JCo internal connection pool. WebSphere Adapter for SAP Software will read these properties when they are set on the JVM.
+
+The supported properties are: 
+
+ 1. jco.destination.pool_capacity 
+ 2. jco.destination.peak_limit 
+ 3. jco.destination.expiration_time 
+ 4. jco.destination.expiration_check_period 
+ 5. jco.destination.max_get_client_time
+
+
+NOTE: Customer should use the SAP Adapter containing the APAR JR43846 that allows the SAP Adapter to read the above properties, and to use them during processing. 
+
+For a complete list of properties refer to the SAP JCo documentation. 
+ANSWER
+How to set the SAP JCo Parameters in Business Process Management (BPM) 
+
+Refer to this document for instructions:
+http://www.ibm.com/support/docview.wss?uid=swg21417365#howto [http://www.ibm.com/support/docview.wss?uid=swg21417365#howto] 
+
+ 
+
+How to set the SAP JCo Parameters in WebSphere Message Broker (WMB) 
+
+On WebSphere Message Broker customers can set the JVM parameters using the mqsichangeproperties command: 
+http://publib.boulder.ibm.com/infocenter/wmbhelp/v6r1m0/index.jsp?topic=%2Fcom.ibm.etools.mft.doc%2Fan09143_.htm [http://publib.boulder.ibm.com/infocenter/wmbhelp/v6r1m0/index.jsp?topic=%2Fcom.ibm.etools.mft.doc%2Fan09143_.htm] 
+
+Example:
+mqsichangeproperties MB7BROKER -e default -o ComIbmJVMManager -n jvmSystemProperty -v"-Djco.destination.pool_capacity=0"
+
+A broker/server restart is needed.

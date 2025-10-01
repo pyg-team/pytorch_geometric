@@ -1,0 +1,160 @@
+Title: IBM IC51358: MEDIATION MODULES WHICH ARE RESTARTED ON A LOADED SERVER MAY NOT BE AVAILABLE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Mediation modules which are restarted on a loaded server may not
+   be available.
+   .
+   When a mediation module is stopped whilst requests to it are
+   still being sent, then after subsequent restart, requests to the
+   module may result in com.ibm.ejs.container.HomeDisabledException
+   being thrown by the runtime. Without the fix for this APAR then
+   either a restart of the module without load, or a server restart
+   is required.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of WebSphere Enterprise Service Bus    *
+   *                 and WebSphere Process Server v6.0.1 and      *
+   *                 v6.0.2.0, where you stop a Mediation Flow    *
+   *                 Component in a server which is under load.   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When a module containing a Mediation    *
+   *                      Flow Component is stopped which is      *
+   *                      currently under load, occasionally      *
+   *                      you may see a HomeDisabledException     *
+   *                      exception thrown when you next start    *
+   *                      the module.  It is then observed that   *
+   *                      it is not possible to get the module    *
+   *                      to further process messages once this   *
+   *                      state has been reached, without a       *
+   *                      server restart.                         *
+   ****************************************************************
+   * RECOMMENDATION: If you encounter this problem, it is         *
+   *                 recommended that you install the fix pack    *
+   *                 which contains this program fix.  It is      *
+   *                 currently targetted to be included with      *
+   *                 6.0.2 Fix Pack 1 (v6.0.2.1).                 *
+   *                 Alternatively, you may restart               *
+   *                 the server to circumvent this problem        *
+   *                 when encountered.                            *
+   ****************************************************************
+   As a Mediation Flow Component module is stopped, there is a
+   small window during which the module may still accept
+   an additional request, but is not in a state to process it.
+   The consequence of this is that once the module is restarted,
+   the cached local copy of the mediation flow session bean is
+   invalid, which leads to a HomeDisabledException exception
+   being thrown.  Restarting the server refreshes this cache,
+   which clears the problem.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The program fix associated with this APAR changes the point at
+   which the modules cleanup code runs, such that it occurs after
+   the point where the module can accept new requests.  There
+   are no known side effects with this fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC51358
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724I8200
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-12-12
+   
+   
+ * CLOSED DATE
+   2007-03-01
+   
+   
+ * LAST MODIFIED DATE
+   2007-03-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724I8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP
+   
+   
+ * R200 PSY
+   UP

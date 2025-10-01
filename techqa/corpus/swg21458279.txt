@@ -1,0 +1,94 @@
+Title: IBM FileNet Image Services (IS) 4.1.2 using character set WE8MSWIN1252 fails to present Umlaut characters. - United States
+
+Text:
+WE8MSWIN1252 German umlaut characters Image Services IDM Desktop TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An IS system which was converted from US7ASCII to the WE8MSWIN1252 character set, fails to present German umlaut characters. Image Services (IS) 4.1.2 FP 6 and higher officially supports the WE8MSWIN1252 character set on all platforms. 
+
+SYMPTOM
+Umlaut characters such as Ä,ä,Ö,ö,Ü,ü, entered as document properties via FileNet Integrated Document Management (IDM)-Desktop client, are stored and returned as question marks ( ascii 191 ) by the Oracle database server. 
+
+
+CAUSE
+The database server's WE8MSWIN1252 character set is not detected by Image Services processes such as INXbg, INXu and bes_commit, which access the Index database. Those processes continue to use the US7ASCII character set..
+
+ENVIRONMENT
+AIX 6.1
+
+
+Image Services 4.1.2 FP9 
+
+Oracle 11.1.0.7 FileNet controlled database
+
+
+DIAGNOSING THE PROBLEM
+1) Verify the nls character set for the Oracle database : 
+
+
+SQL> select * from nls_database_parameters where parameter = 'NLS_CHARACTERSET';
+
+PARAMETER VALUE
+--------- -----
+NLS_CHARACTERSET WE8MSWIN1252
+
+2) Verify the character set used by the Image Services client processes :
+
+The following queries indicate a mismatch between the database server's WE8MSWIN1252 character set and the character set being used by the Image Services processes. 
+Query is validated for Oracle 11 only : 
+
+SQL> set echo on linesize 120 trimspool on 
+SQL> set pagesize 60 
+SQL> col instance_name for a20 
+SQL> col username for a20 
+SQL> col program for a40 
+SQL> col client_charset for a20 
+SQL> col hostname for a30 
+
+SQL> select instance_name, host_name, version from v$instance; 
+
+INSTANCE_NAME HOST_NAME VERSION
+------------- --------- --------
+IDB <hostname> 11.1.0.7.0
+
+SQL> select username, program, client_charset 
+from v$session s, v$session_connect_info c 
+where s.sid=c.sid and s.serial#=c.serial# 
+-- optional filter for better reading (start) 
+and lower(network_service_banner) like '%protocol adapter%' 
+-- optinal filter (end) 
+order by username,machine, program; 
+
+USERNAME PROGRAM CLIENT_CHARSET
+-------- ------- --------------
+F_SW INXbg@<hostname> (TNS V1-V3)US7ASCII
+F_SW INXu@<hostname> (TNS V1-V3) US7ASCII
+F_SW bes_commit@<hostname> (TNS V1-V3) US7ASCII
+F_SW bes_commit@<hostname> (TNS V1-V3) US7ASCII
+F_SW bes_commit@<hostname> (TNS V1-V3) US7ASCII
+F_SW bes_commit@<hostname> (TNS V1-V3) US7ASCII
+F_SW fbc_commit@<hostname> (TNS V1-V3) US7ASCII
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+1) Upgrade Image Services to IS 4.1.2 Fixpack FP9
+2) set the following variables in .profile for both fnsw and oracle users :
+NLS_LANG=AMERICAN_AMERICA.WE8MSWIN1252 
+ORA_NLS11=$ORACLE_HOME/nls/data 
+3) reboot AIX. It only works after rebooting the operating system.
+
+Rerun the query. The result is now :
+USERNAME PROGRAM CLIENT_CHARSET
+-------- ------- --------------
+F_SW INXbg@<hostname> (TNS V1-V3) WE8MSWIN1252
+F_SW INXu@<hostname> (TNS V1-V3)WE8MSWIN1252
+F_SW bes_commit@<hostname> (TNS V1-V3)WE8MSWIN1252
+F_SW bes_commit@<hostname> (TNS V1-V3)WE8MSWIN1252
+F_SW bes_commit@<hostname> (TNS V1-V3)WE8MSWIN1252
+F_SW bes_commit@<hostname> (TNS V1-V3)WE8MSWIN1252
+F_SW fbc_commit@<hostname> (TNS V1-V3)WE8MSWIN1252
+
+Umlaut characters entered via IDM-Desktop client were now stored and presented correctly.

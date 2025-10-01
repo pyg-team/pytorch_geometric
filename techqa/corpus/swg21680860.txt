@@ -1,0 +1,20 @@
+Title: IBM What are the Verifine Hot Keys for IBM Datacap Taskmaster Capture? - United States
+
+Text:
+verifine; hotkeys TECHNOTE (FAQ)
+
+QUESTION
+ What are the hot keys for the Taskmaster Web Verifine.aspx page with IBM Datacap 8.1.0.2? 
+
+CAUSE
+With Fix Pack 2, the hot keys available for the Verifine page have changed.
+
+ANSWER
+ 
+
+To Do This Do This [/support/docview.wss?uid=swg21680860&amp;aid=1] [/support/docview.wss?uid=swg21680860&amp;aid=1] Next LC Alt + L Load the next or previous image in a multipage document next image: shift+alt+> 
+previous image: shift+alt+< Select next node in the tree structure select tree structure then CTRL + down arrow Select previous node in the tree structure select tree structure then CTRL + up arrow Move page down or up in the tree structure Move page up in the tree structure: select tree structure then ctrl+shift+up 
+Move page down tree structure: select tree structure then ctrl+shift+down Collapse node to hide children in the tree structure select batch in tree structure then Ctrl+Left Arrow Expand node to show children in the tree structure select batch in tree structure then Ctrl+Right Arrow Split document in the tree structure select tree structure then ctrl+shift+right on the page to split document
+ctrl+shift+left on the page to undo split 
+For versions prior to Fix Pack 2, the hot keys can be found at: 
+Keyboard shortcuts for the ASPX web pages [http://www.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.admin.doc/dcrkbs001.htm]

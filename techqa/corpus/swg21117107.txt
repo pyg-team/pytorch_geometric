@@ -1,0 +1,51 @@
+Title: IBM TCP/IP configuration information for Content Manager OnDemand for i - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Are the *LOOPBACK TCP/IP interface and the LOOPBACK and LOCALHOST host table entries required for Content Manager OnDemand for i? 
+
+ANSWER
+The correct configuration of TCP/IP is critical to the functioning and performance of your Content Manager OnDemand for i system. Problems caused by incorrect configuration of TCP/IP might include: 
+
+ * Inability to start the Content Manager OnDemand servers 
+ * Inability to archive documents 
+ * Poor performance when logging on from the OnDemand client 
+ * Inability to open System Log messages
+
+
+Every IBM i system using TCP/IP has a *LOOPBACK interface for TCP/IP. If you use the Work with TCP/IP Network Sts command with the Option parameter set to *IFC ( WRKTCPSTS *IFC), you should see an address of 127.0.0.1 with a line description of *LOOPBACK. This interface must exist and be active so that Content Manager OnDemand for i operates properly. 
+
+If you have deleted the *LOOPBACK interface, you must recreate it by using the Add TCP/IP Interface (ADDTCPIFC) command: 
+
+ADDTCPIFC INTNETADR('127.0.0.1') LIND(*LOOPBACK) SUBNETMASK('127.0.0.0') 
+
+Sample output from WRKTCPSTS *IFC: 
+
+Internet Network Line Interface 
+Address Address Description Status 
+10.33.176.221 10.33.176.0 ETHLINE Active 
+127.0.0.1 127.0.0.0 *LOOPBACK Active 
+
+If the *LOOPBACK interface is inactive, you must start it by using option 9 on the Work with TCP/IP Interface Status panel (by using the WRKTCPSTS command) or by using the Start TCP/IP Interface command: 
+
+STRTCPIFC INTNETADR('127.0.0.1') 
+
+In addition, you must also have host table entries for the LOOPBACK and LOCALHOST host names. If the host table entries have been deleted, you can add them by using option 10 of the Configure TCP/IP (CFGTCP) command or by using the Add TCP/IP Host Table Entry (ADDTCPHTE) command. 
+
+Work with TCP/IP Host Table Entries 
+Internet Host 
+Address Name 
+127.0.0.1 LOOPBACK 
+LOCALHOST 
+
+The host name and domain name for your system must also be defined. You can check this by using option 12 of the Configure TCP/IP (CFGTCP) command. The host name and domain name that are entered using option 12 must match the host table entries, which can be viewed using option 10 of the Configure TCP/IP (CFGTCP) command. For example, if the host name is MYSYS400 and the domain name is MYCOMPANY.COM, the host table entries should be: 
+
+Work with TCP/IP Host Table Entries 
+Internet Host 
+Address Name 
+10.33.123.456 MYSYS400 
+MYSYS400.MYCOMPANY.COM 
+
+If you are using IPv6, the requirements are the same, except that configuration is performed by using System i Navigator or IBM Navigator for i, depending on the version and release of your IBM i system.

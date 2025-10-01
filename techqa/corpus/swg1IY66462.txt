@@ -1,0 +1,154 @@
+Title: IBM IY66462: MESSAGE ON CLUSTER COMMAND QUEUE READ MULTIPLE TIMES - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 12 (CSD12) [http://www-01.ibm.com/support/docview.wss?uid=swg24011423]
+WebSphere MQ V5.3 & WebSphere MQ Express V5.3 - Fix Pack 10 (CSD10) [http://www-01.ibm.com/support/docview.wss?uid=swg24009688]
+WebSphere MQ V5.3 for iSeries - Fix Pack 12 (CSD12) [http://www-01.ibm.com/support/docview.wss?uid=swg24011422]
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 13 (CSD13) [http://www-01.ibm.com/support/docview.wss?uid=swg24014128]
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 14 (CSD14) [http://www-01.ibm.com/support/docview.wss?uid=swg24017668]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A message on the cluster command queue can be read multiple
+   times. The message is written to the command queue when a
+   channel stops, and is used by the repository manager to drive
+   the logic to reallocate messages to other queue managers in the
+   cluster. If the reallocate fails such that the message read
+   from the cluster transmission queue cannot be put to any queue
+   in the cluster, for example because the queue no longer exists,
+   or there is a 2189 (MQRC_CLUSTER_RESOLUTION_ERROR), the message
+   is backed out to the cluster transmission queue again. This
+   backout also backs out the message on the cluster command
+   queue, and so the message is read again. The solution is to
+   commit the message read from the command queue before reading
+   any messages from the transmission queue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Any cluster user. The problem may occur if the queues in the
+   cluster are deleted such that messages have no possible
+   destination, and there is no dead letter queue defined on the
+   queue manager.
+   
+   Platforms affected:
+    All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   If there is a problem when reallocating messages to other queue
+   managers in the cluster after a cluster channel has ended such
+   that there is no possible destination in the cluster, or the
+   destination cannot be resolved, the command message is backed
+   out to the command queue, and so is read again (and again...)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Commit the get of the command message before processing
+   messages on the cluster transmission queue.
+   
+   The fix will be included in the following PTFs:
+   
+                      v5.3
+   Platform           Fix Pack 10
+   --------           --------------------
+   Windows            U200226
+   AIX                U800391
+   HP-UX (PA-RISC)    U800392
+   Solaris (SPARC)    U800393
+   iSeries            SI17950
+   Linux (x86)        U800394
+   Linux (zSeries)    U800395
+   Linux (Power)      Not applicable
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY66462
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB MQ FOR AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724B4101
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-01-05
+   
+   
+ * CLOSED DATE
+   2005-01-07
+   
+   
+ * LAST MODIFIED DATE
+   2007-04-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY
+   UP

@@ -1,0 +1,57 @@
+Title: IBM In Cognos Cube Designer, get BMT-MD-6606 and BMT-MD-6610 errors - United States
+
+Text:
+Dynamic explore browse setup TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In Cognos Cube Designer, get Metadata (Framework Manager Package) from the Cognos BI server. Once loaded, it gives the error:
+
+
+
+"BMT-MD-6606 Cannot find the data source connection for this data source".
+
+
+
+However, continuing and trying to navigate the Oracle data source, and expanding Schema Tables, it gives the error:
+
+
+
+BMT-MD-6610 An unknown error invalidConnectionString has occurred.
+
+Please verify the JDBC connection information for the data source is correct in Cognos Administration and that testing the connection is successful. 
+
+SYMPTOM
+Unable to navigate Tables in the Oracle data source.
+
+
+CAUSE
+On the Cognos BI server, in Cognos Administration, the JDBC connection information for the data source is not enabled or is incorrect.
+
+ENVIRONMENT
+Windows
+Oracle
+
+DIAGNOSING THE PROBLEM
+Check if JDBC is enabled and configured correctly in the data source.
+
+RESOLVING THE PROBLEM
+On the Cognos BI server, in Cognos Administration, for the Oracle data source, enable and configure the JDBC connection information.
+
+Steps for the data source:
+
+* In Cognos Administration, in The Configuration tab, select 'More' actions 
+* View Connections, 'More' Actions
+* Set properties, Connection tab, edit the Connection String
+* Tick to Enable JDBC connection
+* Configure JDBC connection
+Choose Connection type TNS Names Alias
+Set TNS Names accordingly
+Test Connection
+Close/OK
+
+Now the Oracle JDBC data source can be used successfully in Cube Designer.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CD DCD FM

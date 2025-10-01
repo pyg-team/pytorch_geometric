@@ -1,0 +1,95 @@
+Title: IBM Could not find factory error after redeploying FileNet WorkplaceXT - United States
+
+Text:
+jsf-api-1.1_02.jar; jsf-impl-1.1_02.jar; faces; redeploying; could not find Factory; error code 500 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After redepolying WorkplaceXT you see the following error stack: java.lang.IllegalStateException: Application was not properly initialized at startup, could not find Factory: javax.faces.context.FacesContextFactory. 
+
+SYMPTOM
+At logon and every time you attempt to navigate within WorkplaceXT, the follow errors are thrown in the browser, and show up in the WebSphere SystemOut.log:
+
+Error Message: javax.servlet.ServletException: SRVE0207E: Uncaught 
+initialization exception created by servlet 
+Error Code: 500 
+Target Servlet: faces 
+Error Stack: 
+java.lang.IllegalStateException: Application was not properly 
+initialized at startup, could not find Factory: javax.faces.context. 
+FacesContextFactory 
+at javax.faces.FactoryFinder.getFactory(FactoryFinder.java:270) 
+at javax.faces.webapp.FacesServlet.init(FacesServlet.java:164) 
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.init 
+(ServletWrapper.java:358) 
+at com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.init 
+(ServletWrapperImpl.java:169) 
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest 
+(ServletWrapper.java:739) 
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest 
+(ServletWrapper.java:502) 
+at com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.handleRequest 
+(ServletWrapperImpl.java:179) 
+at com.ibm.ws.webcontainer.webapp.WebApp.handleRequest(WebApp.java: 
+3935) 
+at com.ibm.ws.webcontainer.webapp.WebGroup.handleRequest(WebGroup. 
+java:276) 
+at com.ibm.ws.webcontainer.WebContainer.handleRequest(WebContainer. 
+java:931) 
+at com.ibm.ws.webcontainer.WSWebContainer.handleRequest 
+(WSWebContainer.java:1583) 
+at com.ibm.ws.webcontainer.channel.WCChannelLink.ready 
+(WCChannelLink.java:186) 
+at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink. 
+handleDiscrimination(HttpInboundLink.java:452) 
+at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink. 
+handleNewRequest(HttpInboundLink.java:511) 
+at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink. 
+processRequest(HttpInboundLink.java:305) 
+at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.ready 
+(HttpInboundLink.java:276) 
+at com.ibm.ws.tcp.channel.impl.NewConnectionInitialReadCallback. 
+sendToDiscriminators(NewConnectionInitialReadCallback.java:214) 
+at com.ibm.ws.tcp.channel.impl.NewConnectionInitialReadCallback. 
+complete(NewConnectionInitialReadCallback.java:113) 
+at com.ibm.ws.tcp.channel.impl.AioReadCompletionListener. 
+futureCompleted(AioReadCompletionListener.java:165) 
+at com.ibm.io.async.AbstractAsyncFuture.invokeCallback 
+(AbstractAsyncFuture.java:217) 
+at com.ibm.io.async.AsyncChannelFuture.fireCompletionActions 
+(AsyncChannelFuture.java:161) 
+at com.ibm.io.async.AsyncFuture.completed(AsyncFuture.java:138) 
+at com.ibm.io.async.ResultHandler.complete(ResultHandler.java:204) 
+at com.ibm.io.async.ResultHandler.runEventProcessingLoop 
+(ResultHandler.java:775) 
+at com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:905) 
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1604) 
+
+
+CAUSE
+Missing files in the WEB-INF\lib install directory of WorkplaceXT which caused missing files in the newly created web_client.war or web_client.ear files.
+
+DIAGNOSING THE PROBLEM
+Compare the contents of the last known good web_client.war to the web_client.war that is throwing the error when deployed to <WorkplaceXT_Install_Dir>\WEB-INF.
+
+RESOLVING THE PROBLEM
+Replace the jsf*.jar files that are missing from the <WorkplaceXT_Install_Dir>WEB-INF\lib. They can be replaced by one of the following options, or WorkplaceXT can be reinstalled:
+
+
+ *  Copy the missing files from a known good web_client.war. Copy the missing files from a different environment (such as TEST or DEV) as long as the WorkplaceXT versions are exactly the same. Restore the missing files from a file level backup. Uninstall and reinstall WorkplaceXT.
+   
+ * 
+ *  Re-creating the WAR and EAR files
+ * 
+ * 
+ * 
+ * 
+ * Deploying Workplace XT on the Web application server
+
+RELATED INFORMATION
+ Re-creating the WAR and EAR files [http://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.installingxt.doc/wxtip034.htm]
+Deploying Workplace XT on the Web application server [http://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.installingxt.doc/wxtip042.htm]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management FileNet P8 Platform Content Engine 5.1, 5.0, 4.5, 4.0.2

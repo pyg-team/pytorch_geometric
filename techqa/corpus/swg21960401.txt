@@ -1,0 +1,78 @@
+Title: IBM PureApplication System is affected by security vulnerabilities (CVE-2015-0197, CVE-2015-0198, CVE-2015-0199) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Security vulnerabilities have been identified in General Parallel File System V4.1, V3.5, and V3.4 which affect IBM PureApplication System. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-0197 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0197]
+DESCRIPTION: IBM General Parallel File System could allow a local attacker which only has a non-privileged account to execute programs with root privileges.
+CVSS Base Score: 6.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/101224 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101224] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:M/Au:N/C:C/I:C/A:C)
+
+CVEID: CVE-2015-0198 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0198]
+DESCRIPTION: IBM General Parallel File System may not properly authenticate network requests and could allow an attacker to execute programs remotely with root privileges.
+CVSS Base Score: 9.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/101225 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101225] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:C/I:C/A:C)
+
+CVEID: CVE-2015-0199 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0199]
+DESCRIPTION: IBM General Parallel File System allows attackers to cause kernel memory corruption by issuing specific ioctl calls to a character device provided by the mmfslinux kernel module and cause a denial of service.
+CVSS Base Score: 6.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/101226 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101226] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:M/Au:N/C:C/I:C/A:C)
+
+AFFECTED PRODUCTS AND VERSIONS
+This vulnerability affects IBM PureApplication Server and the GPFS pattern type included in the following:
+
+IBM PureApplication System V2.0
+IBM PureApplication System V2.1
+
+REMEDIATION/FIXES
+The solution is to upgrade the IBM PureApplication System to the following fix levels and update deployments that implement the GPFS pattern type using the GPFS Pattern Interim Fix:
+
+IBM PureApplication System V2.1 
+
+ * 
+ * 
+ * 
+ * 
+ * http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=PureSystems&product=ibm/WebSphere/PureApplication+System&release=All&platform=All&function=fixId&fixids=update-gpfs-1.2.1.0&includeSupersedes=0
+
+
+IBM PureApplication System V2.0  * 
+ * 
+ * 
+ * 
+ * http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=PureSystems&product=ibm/WebSphere/PureApplication+System&release=All&platform=All&function=fixId&fixids=update-gpfs-1.2.0.0_1.2.0.1_and_1.2.0.2&includeSupersedes=0
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 22 June 2015: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

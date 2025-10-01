@@ -1,0 +1,166 @@
+Title: IBM IV89821: APM DASHBOARD MAY FAIL TO SHOW OLDER VERSION OF AGENT BUILDER AGENTS IF MULTIPLE AGENTS LEVELS OF THE AGENT ARE DEPLOYED - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Agent Builder for ITM V6 and IBM Performance Management V8 is now available [http://www-01.ibm.com/support/docview.wss?uid=swg24043533]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ENVIRONMENT
+   APM version : 8.1.3
+   APM Agent Builder version: 6.3.3
+   
+   PROBLEM
+   If the multiple versions of an agent builder agent are deployed
+   then the earlier versions of the agent may not show up in the
+   APM dashboard.
+   
+   
+   The Agent Builder agent OSLC app support definition uses the
+   latest version of the agent builder agent instead of the
+   earliest version that supports the attribute groups (data sets)
+   referenced in the OSLC data model definition.  Therefore, if an
+   earlier version of the agent builder agent connects to the APM
+   server,  the APM server logs a message indicating that the
+   earlier version is not supported and does not retrieve the OSLC
+   data that is required to add the agent to an APM application.
+   
+   Related Files and Output:
+   
+   The APM server log file, host_as_*.log located in
+   /opt/ibm/ccm/oslc_pm/logs (Install_Dir/oslc_pm/logs) contains
+   following message for the Agent Builder agent (in this log
+   message example,  the Agent Builder agent ITMAB_HOST:INSTNAME:99
+   is using product code K99, the latest version of the agent
+   builder K99 agent is 6.30.02 but the ITMAB_HOST:INSTNAME:99
+   agent is at an earlier version such as 06.30.01):
+   
+   (57E921DA.0000-13:prtpproc.cpp,618,"kas_processAgentResourceThre
+   ad") WARNING: Conditions to process template determined to be
+   false for productcode <K99> and node <ITMAB_HOST:INSTNAME:99>
+   using <@ checkVersionRange ${VERSION} MIN '6.30.02' *EQ 1>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Work around:
+   
+   The workaround is to upgrade all Agent Builder agents to the
+   latest version of the agent.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If there are multiple versions of an Agent Builder agent
+   deployed and an earlier version of the agent connects to the APM
+   server, it does not show up in the APM dashboard.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Agent Builder determines the oldest committed version of the
+   agent that supports the needed attributes and uses that version
+   number.
+   
+   The fix for this APAR is included in the next release:
+   
+   - IBM Tivoli Monitoring V6.3.4 Agent builder
+   
+   which is available for download from Fix Central here:
+   http://www.ibm.com/support/docview.wss?uid=swg24041130 [http://www.ibm.com/support/docview.wss?uid=swg24041130]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV89821
+   
+   
+ * REPORTED COMPONENT NAME
+   MON AGENT BUILD
+   
+   
+ * REPORTED COMPONENT ID
+   5725U05AB
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-07
+   
+   
+ * CLOSED DATE
+   2017-04-18
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT BUILD
+   
+   
+ * FIXED COMPONENT ID
+   5724C04BR
+   
+   
+
+APPLICABLE COMPONENT LEVELS

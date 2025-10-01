@@ -1,0 +1,237 @@
+Title: IBM PM91632: [wi 116463]RAM 7.5.1.2 Eclipse Client could not be installed into RAD 8.5.1 package group in IBM Installation Manager - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract:
+   
+   Attempting to install the Rational Asset Manager (RAM) v7.5.1.2
+   Eclipse Client into the same package group as Rational
+   Application Developer (RAD) v8.5.1 using IBM Installation
+   Manager, resulted in a com.ibm.ut.help.common plugin version
+   conflict error.
+   
+   
+   Error_description:
+   
+   IBM Installation Manager (IM) 1.6.2 was being used to install
+   the RAM v7.5.1.2 Eclipse Client into the same package group as
+   RAD 8.5.1-iFix2
+   or Rational Software Architect for WebSphere (RSA/RSA4WS) 8.5.1,
+   to allow for Eclipse Sell sharing. This resulted in the
+   following error being reported in the IM Agent Data installation
+   log:
+   
+   '...
+   Error during 'complete' phase:
+   CRIMA1082E: The bundle
+   'com.ibm.ut.help.common_2.11.3.v20130228_1957'
+   cannot be installed in this Eclipse configuration because it is
+   not
+   equivalent to the bundle
+   'com.ibm.ut.help.common_2.7.2.v20121004_1540'
+   that is already installed.
+   ..'
+   
+   
+   The technote:
+   - IBM Software products installed together that share a common
+   environment
+   http://www-01.ibm.com/support/docview.wss?uid=swg21279139 [http://www-01.ibm.com/support/docview.wss?uid=swg21279139]
+   , shows the RAM v7.5.1.2 Eclipse Client, as shell shareable with
+   RAD 8.5.1.
+   
+   Workaround:
+   
+   There is no known workaround at this time involving IBM
+   Installation Manager.
+   
+   An alternative using the Eclipse Updater to to install RAM 7512
+   with RAD 851:
+   1) Install RAD 8.5.1
+   2) Using RAM's update site to install the RAM eclipse client.
+   Don't choose help.
+   RAM 7.5.1.x Info Center item:
+   - Installing Rational Asset Manager Eclipse client by using
+   Eclipse update manager
+   http://pic.dhe.ibm.com/infocenter/ramhelp/v7r5m1/topic/com.ibm.r
+   am.installguide.doc/topics/t_install_eclipse.html [http://pic.dhe.ibm.com/infocenter/ramhelp/v7r5m1/topic/com.ibm.ram.installguide.doc/topics/t_install_eclipse.html]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * RAM                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Abstract:                                                    *
+   *                                                              *
+   * Attempting to install the Rational Asset Manager (RAM)       *
+   * v7.5.1.2                                                     *
+   * Eclipse Client into the same package group as Rational       *
+   * Application Developer (RAD) v8.5.1 using IBM Installation    *
+   * Manager, resulted in a com.ibm.ut.help.common plugin version *
+   * conflict error.                                              *
+   *                                                              *
+   *                                                              *
+   * Error_description:                                           *
+   *                                                              *
+   * IBM Installation Manager (IM) 1.6.2 was being used to        *
+   * install                                                      *
+   * the RAM v7.5.1.2 Eclipse Client into the same package group  *
+   * as                                                           *
+   * RAD 8.5.1-iFix2                                              *
+   * or Rational Software Architect for WebSphere (RSA/RSA4WS)    *
+   * 8.5.1,                                                       *
+   * to allow for Eclipse Sell sharing. This resulted in the      *
+   * following error being reported in the IM Agent Data          *
+   * installation                                                 *
+   * log:                                                         *
+   *                                                              *
+   * '...                                                         *
+   * Error during 'complete' phase:                               *
+   * CRIMA1082E: The bundle                                       *
+   * 'com.ibm.ut.help.common_2.11.3.v20130228_1957'               *
+   * cannot be installed in this Eclipse configuration because it *
+   * is                                                           *
+   * not                                                          *
+   * equivalent to the bundle                                     *
+   * 'com.ibm.ut.help.common_2.7.2.v20121004_1540'                *
+   * that is already installed.                                   *
+   * ..'                                                          *
+   *                                                              *
+   *                                                              *
+   * The technote:                                                *
+   * - IBM Software products installed together that share a      *
+   * common                                                       *
+   * environment                                                  *
+   * http://www-01.ibm.com/support/docview.wss?uid=swg21279139    *
+   * , shows the RAM v7.5.1.2 Eclipse Client, as shell shareable  *
+   * with                                                         *
+   * RAD 8.5.1.                                                   *
+   *                                                              *
+   * Workaround:                                                  *
+   *                                                              *
+   * There is no known workaround at this time involving IBM      *
+   * Installation Manager.                                        *
+   *                                                              *
+   * An alternative using the Eclipse Updater to to install RAM   *
+   * 7512                                                         *
+   * with RAD 851:                                                *
+   * 1) Install RAD 8.5.1                                         *
+   * 2) Using RAM's update site to install the RAM eclipse        *
+   * client.                                                      *
+   * Don't choose help.                                           *
+   * RAM 7.5.1.x Info Center item:                                *
+   * - Installing Rational Asset Manager Eclipse client by using  *
+   * Eclipse update manager                                       *
+   * http://pic.dhe.ibm.com/infocenter/ramhelp/v7r5m1/topic/com.i *
+   * bm.r                                                         *
+   * am.installguide.doc/topics/t_install_eclipse.html            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in
+   https://jazz.net/jazz02/resource/itemName/com.ibm.team.workitem. [https://jazz.net/jazz02/resource/itemName/com.ibm.team.workitem.]
+   WorkItem/116463
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM91632
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-23
+   
+   
+ * CLOSED DATE
+   2014-06-16
+   
+   
+ * LAST MODIFIED DATE
+   2014-06-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL ASSET MGR
+   
+   
+ * FIXED COMPONENT ID
+   5724R4200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R752 PSY
+   UP

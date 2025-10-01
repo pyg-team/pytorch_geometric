@@ -1,0 +1,137 @@
+Title: IBM PK59517: WRONG PLUGIN VERSIONS LOADED DUE TO INCORRECT FEATURES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  18 features were incorrectly constructed in RAD 601x.  Feature p
+   atches were created for feature patches, which is not correct.
+   Feature patches should be patching a feature (not a previous fea
+   ture patch). Wrong plugin versions are being loaded as a result
+   (not using the latest version) after a customer uses Update Mana
+   ger to install/update anything.
+   WID has had several customer issues which have turned out to hav
+   e this same underlying cause.  RAD would be experiencing the pro
+   blem as well, though the symptoms are not always obvious.  For W
+   ID, we depend on the higher levels of these plugins, so our cust
+   omers see that our BI perspective will not load after using upda
+   te manager to install a 3rd party plugin (or WebSphere Modeler,
+   which uses Update Manager to install).   For other products, it
+   might be less obvious - e.g., the latest ifixes are not working
+   after using UM.  So basically, any customer who has ever run Upd
+   ate Manager is using a different set of plugins than the rest of
+    the customer base.  Support obviously will have trouble reprodu
+   cing their defects and it will also result in opening of PMRs th
+   at might have already been fixed in a fixpack.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  18 features were incorrectly constructed in RAD 601x.
+   Feature patches were created for feature patches, which is
+   not correct.  Feature patches should be patching a feature
+   (not a previous feature patch). Wrong plugin versions are
+   being loaded as a result (not using the latest version)
+   after a customer uses Update Manager to install/update
+   anything.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix delivered in Rational Application Developer V6.0.1.2
+   iFix001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK59517
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-17
+   
+   
+ * CLOSED DATE
+   2008-04-24
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    JR28342 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR28342]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP

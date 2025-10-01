@@ -1,0 +1,190 @@
+Title: IBM PK13068: ADMA8019E EXCEPTION IS THROWN DURING APPLICATION DEPLOYMENT. - United States
+
+Text:
+  A FIX IS AVAILABLE
+PK13068; 6.0.2.7: adma8019e exception is thrown during application deployment [http://www-01.ibm.com/support/docview.wss?uid=swg24011718]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following exception is thrown in the adminconsole during
+   application deployment/update.
+   
+   ADMA8019E : The resources that are assigned
+   to the application are beyond the deployment target scope
+   
+   Eventhough we have defined a resource of type workmanager, the
+   class which picks up the resources bindings present in the
+   environment for
+   validating the resource bindings contained in an application
+   seems to ignore the binding of type workmanager found in the
+   environment.
+   
+   Workmanager has been configured as follows.
+   AdminConsole > Resources > AsynchBean > WorkManager >
+   scope (Server=server1)>
+   Create New WorkManager(myWorkManager, wm/myWorkManager).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Application Server users of        *
+   *                 version 6.0.2.                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Resource validation failed with error   *
+   *                      message ADMA8019E stating               *
+   *                      "TypeMismatch", for the resources       *
+   *                      J2CActivationSpec and MailSession.      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Validation for WebSphere resources J2CActivationSpec and
+   MailSession are failing during application deployment.
+   In the application, resources are defined as JMS and
+   MailProvider. Resource validation code should map JMS resource
+   definitions against J2CActivationSpec resource, and
+   MailProvider against MailSession resource.
+   Since resource definitions in the application are valid,
+   application management code should not thrown any false
+   validation warnings.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Identified the root cause where appmanagement code fails to
+   validate these resouces, and made appropriate changes to
+   validate JMS resource against J2CActivationSpec and
+   MailProvider resource against MailSession.
+   
+   The fix for this APAR is currently targeted for inclusion
+   in fixpack 6.0.2.9.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK13068
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-10-06
+   
+   
+ * CLOSED DATE
+   2006-02-20
+   
+   
+ * LAST MODIFIED DATE
+   2006-02-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  APPMGMT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP

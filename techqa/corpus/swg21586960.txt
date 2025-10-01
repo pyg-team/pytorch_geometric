@@ -1,0 +1,90 @@
+Title: IBM Performance issues while accessing LDAP in Federated repository environment - United States
+
+Text:
+VMM ; Performance ; LDAP ; AD ; MSAD ; Active directory ; Domino ; ITDS ; TDS ; LDAP server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Slow response time is experienced while VMM makes calls to LDAP during login, membership resolution, search, and so on. 
+
+SYMPTOM
+Slow response time of VMM when configured with LDAP.
+
+
+CAUSE
+There could be several cause for slow response time: amount of data in LDAP, how data is stored in LDAP, LDAP response time, how the LDAP repository is configured in VMM, and so on. Review the Resolving the problem section and find the cause that might be causing the issue in your environment.
+
+ENVIRONMENT
+All (General)
+
+DIAGNOSING THE PROBLEM
+Review the JNDI call being made by VMM and the response time from LDAP.
+
+RESOLVING THE PROBLEM
+
+
+
+
+
+
+ 1. Lots of user/group entries in LDAP
+    A large number of users and groups entries in LDAP could result in longer processing time in LDAP and in VMM. Limit the number of entries that VMM can access to what is needed by your application.
+    
+    Solutions >  1. Configure LDAP repository with proper baseEntry
+        Check the nameInRepository configuration for your LDAP repository configuration in VMM. If it is set to “” (empty string), then it means that VMM will be accessing LDAP at the root level and entire repository may be searched for users, groups, or membership resolution. Try setting it to the subtree(s) where users and groups exist.
+        
+        Related wsadmin commands: getIdMgrRepository, updateIdMgrRepositoryBaseEntry
+        
+     2. Configure searchBases per entityType.
+        If your LDAP contains users and groups in two different subtrees of LDAP then setting the searchBases per entityType will scope the users and groups searches to specific subtree which will result in faster response time
+        
+        For example, Configure ou=users,o=mycomp.com for PersonAccount
+        ou=groups,o=mycomp.com for Group
+        
+        Related wsadmin commands: getIdMgrLDAPEntityType, updateIdMgrLDAPEntityType
+        
+        
+    
+    
+ 2. Slow logins with LDAPs having dynamic + static group configuration.
+    When LDAP repository configuration in VMM contains static and dynamic groups settings and VMM setup or called to return nested groups, VMM has to make repetitive calls to LDAP to resolve dynamic group members.
+    
+    Solutions >  1. Use LDAP’s attribute to get all members/groups
+        If your LDAP supports an attribute which contains all the groups of a user (e.g. ibm-allGroups for Tivoli Directory Server) or all members of a group (e.g. ibm-allMembers for Tivoli Directory Server). 
+        
+        Note: For most LDAPs, these attributes are operational attributes and are not-editable, so VMM will not be able to update group membership using these attributes.
+        
+        Related wsadmin commands: addIdMgrLDAPGroupMemberAttr, updateIdMgrLDAPGroupMemberAttr, addIdMgrLDAPGroupDynamicMemberAttr, updateIdMgrLDAPGroupDynamicMemberAttr
+        
+        
+     2. Do not use group nesting for login or other User Registry calls
+        Configure custom property at UserRegistry layer to minimize group related LDAP calls and narrow down scope to DIRECT lookup.
+        Reference: http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.wim.doc%2Fdisablingnestedgroupsearches.html [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.wim.doc%2Fdisablingnestedgroupsearches.html] 
+        
+        
+    
+    
+ 3. Slow Logins caused by searchPageSize (Microsoft Active Directory only)
+    The default searchPageSize for Active Directory in VMM is 1500. This may lead to slow logins for some Active Directory setup.
+    
+    Solution >
+    Set the searchPageSize to 0, which means no max limit on the pageSize returned from AD.
+    Related wsadmin commands: updateIdMgrLDAPRepository
+    
+    
+ 4. LDAP group having 1500+ members (Microsoft Active Directory only)
+    When the LDAP contains groups with 1500+ members, VMM may not return all the members which could lead to authorization failures while accessing a resource eg. page/application. This problem usually occurs on AD which, by default, returns maximum 1500 values of an attribute. Because of this, VMM can not retrieve all the members of a group.
+    
+    Solution >
+    Change the MaxValRange of Active Directory policy.
+    References: http://msdn.microsoft.com/en-us/library/cc223376(PROT.10).aspx [http://msdn.microsoft.com/en-us/library/cc223376(PROT.10).aspx] http://support.microsoft.com/kb/315071 [http://support.microsoft.com/kb/315071] 
+    
+ 5. Unidentified Interlinking between entries in LDAP (Domino only).
+    Many times Domino's objects are interlinked and they are not resolved quickly.
+    Solution >
+    Set derefAliases="never" for the LDAP configuration in VMM. This will do JNDI lookup in LDAP without de-referencing aliases and improve Domino's response time.
+    Related wsadmin commands: updateIdMgrLDAPServer
+
+RELATED INFORMATION
+ Knowledge Center link for WAS70 [https://www.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.nd.doc/info/ae/ae/rxml_atidmgrrepositoryconfig.html]
+Knowledge Center link for WAS80 [https://www.ibm.com/support/knowledgecenter/SSAW57_8.0.0/com.ibm.websphere.nd.doc/info/ae/ae/rxml_atidmgrrepositoryconfig.html]
+Knowledge Center link for 9.0 [https://www.ibm.com/support/knowledgecenter/SSEQTP_9.0.0/com.ibm.websphere.base.doc/ae/rxml_atidmgrrepositoryconfig.html]

@@ -1,0 +1,119 @@
+Title: IBM "SETALL" permission is needed for WebSphere DataPower MQ authorization - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is "SETALL" permission necessary for WebSphere DataPower MQ authorization? 
+
+ANSWER
+"SETALL" permission is required for the queue manager or queue because DataPower uses the following options in MQOPEN calls: 
+
+ * MQOO_OUTPUT 
+ * MQOO_FAIL_IF_QUIESCING 
+ * MQOO_SET_ALL_CONTEXT
+
+
+Here are the MQ related commands to set permission for the principal namely, "test1" to access the qmgr "DP2" with local queues such as "QUEUE10" and "QUEUE2" and model queue "MODELQ1" in DataPower mq-qm object. 
+
+setmqaut -m DP2 -t qmgr -p test1 -all +connect +inq +set +setall +altusr 
+setmqaut -m DP2 -t queue -n QUEUE10 -p test1 -all +put +get +browse +dsp 
+setmqaut -m DP2 -t queue -n QUEUE2 -p test1 -all +setall +put +get +browse 
++dsp 
+setmqaut -m DP2 -t queue -n MODELQ1 -p test1 -all +put +get +browse +dsp 
+setmqaut -m DP2 -t queue -n '**' -p test1 -all +get +put +crt +dsp 
+
+The following information describes the permission options: 
+
+Authorizations for context 
+passall 
+Pass all context on the specified queue. All the context fields are copied from the original request. 
+
+passid 
+Pass identity context on the specified queue. The identity context is the same as that of the request. 
+
+setall 
+Set all context on the specified queue. This is used by special system utilities. 
+
+setid 
+Set identity context on the specified queue. This is used by special system utilities. 
+
+Authorizations for commands 
+chg 
+Change the attributes of the specified object. 
+
+clr 
+Clear the specified queue. 
+
+crt 
+Create objects of the specified type. 
+
+dlt 
+Delete the specified object. 
+
+dsp 
+Display the attributes of the specified object. 
+
+ctrl 
+Start, and stop the specified channel, listener, or service. And ping the specified channel. 
+
+ctrlx 
+Reset or resolve the specified channel. 
+
+Authorizations for MQI calls 
+altusr 
+Use another user’s authority for MQOPEN and MQPUT1 calls. 
+
+browse 
+Retrieve a message from a queue using an MQGET call with the BROWSE option. 
+
+connect 
+Connect the application to the specified queue manager using an MQCONN call. 
+
+get 
+Retrieve a message from a queue using an MQGET call. 
+
+inq 
+Make an inquiry on a specific queue using an MQINQ call. 
+
+put 
+Put a message on a specific queue using an MQPUT call. 
+
+set 
+Set attributes on a queue from the MQI using an MQSET call. 
+
+Authorizations for generic operations 
+all 
+Use all operations applicable to the object. 
+
+alladm 
+Use all administration operations applicable to the object. 
+
+allmqi 
+Use all MQI calls applicable to the object. 
+
+none 
+No authority. Use this authorization to create profiles without authority. 
+When an authority is given to an object or group that was previously showing "none", then the authorization changes to the authority just applied. 
+However, when the "none" authorization is added to a set object or group with an existing alternative authority, the authority does not change. 
+
+The link contains what Authorization attributes including setall: 
+http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=%2Fcom.ibm.mq.amqzag.doc%2Ffa16000_.htm [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=%2Fcom.ibm.mq.amqzag.doc%2Ffa16000_.htm]. 
+
+http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=%2Fcom.ibm.mq.amqzag.doc%2Ffa12780_.htm [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=%2Fcom.ibm.mq.amqzag.doc%2Ffa12780_.htm] 
+How access control is implemented by WebSphere MQ on UNIX systems and Windows 
+
+http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=%2Fcom.ibm.mq.amqzag.doc%2Ffa12780_.htm [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=%2Fcom.ibm.mq.amqzag.doc%2Ffa12780_.htm] 
+Authority to work with WebSphere MQ objects on UNIX systems and Windows 
+
+http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=%2Fcom.ibm.mq.amqzag.doc%2Ffa12780_.htm [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=%2Fcom.ibm.mq.amqzag.doc%2Ffa12780_.htm] 
+Authority to administer WebSphere MQ on UNIX and Windows systems 
+
+http://publib.boulder.ibm.com/infocenter/wmqv6/v6r0/index.jsp?topic=%2Fcom.ibm.mq.amqzag.doc%2Ffa15980_.htm [http://publib.boulder.ibm.com/infocenter/wmqv6/v6r0/index.jsp?topic=%2Fcom.ibm.mq.amqzag.doc%2Ffa15980_.htm] 
+setmqaut (grant or revoke authority) 
+
+http://publib.boulder.ibm.com/infocenter/wmqv6/v6r0/index.jsp?topic=%2Fcom.ibm.mq.amqzag.doc%2Ffa15980_.htm [http://publib.boulder.ibm.com/infocenter/wmqv6/v6r0/index.jsp?topic=%2Fcom.ibm.mq.amqzag.doc%2Ffa15980_.htm] 
+How authorizations work  
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere DataPower XC10 Appliance Not Applicable

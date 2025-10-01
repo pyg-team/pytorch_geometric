@@ -1,0 +1,42 @@
+Title: IBM Detecting network adapter failure in an automated cluster controlled DB2 HADR environment - United States
+
+Text:
+netmon.cf; possible malfunction; network interfact; HADR TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In an automated cluster controlled HADR environment, network interface failure on one of the nodes may not result in a failover reporting "possible malfunction on local adapter". 
+
+SYMPTOM
+Here is a sample message that will be reported on syslog: 
+
+Feb 16 10:53:02 amdha01 cthats[5998]: (Recorded using libct_ffdc.a cv 2):::Error ID: 824....ibNa7/saQ/8..Od0...................:::Reference ID: :::Template ID: 0:::Details File: :::Location: rsct,nim_control.C,1.39.1.22,4987 :::TS_LOC_DOWN_ST Possible malfunction on local adapter Adapter interface name eth1 Adapter offset 1 Adapter IP address 10.0.99.25
+
+CAUSE
+Limitation on RSCT (Reliable Scalable Clustering Technology)
+
+
+
+RESOLVING THE PROBLEM
+If you are running a single-node or two-node cluster with a point-to-point network (adapters in question are cabled directly to each other with no intervening hardware) and no other network switch/router, additional configuration is required to detect network interface failures. The cluster software periodically tries to reach each network interface in the cluster. If one interface fails on one node of a two node cluster, the interface on the other node will also be flagged as offline because it does not receive a response from its peer. 
+
+
+To avoid this behavior, the cluster software must be configured to contact a network instance outside of the cluster. We recommend creating a file called netmon.cf under /var/ct/cfg to add this information. Normally a netmon.cf file is configured with IP addresses of remote devices so RSCT can make a quick determination of where the true network outage is. Best practice is to use the default gateway of the subnet the interface is in. 
+
+On each node, create the following file: 
+/var/ct/cfg/netmon.cf 
+
+Each line of this file should contain the machine name or IP address of the external network instance. IP addresses should be specified in dotted decimal format.
+
+This is an example of a netmon.cf file:
+
+#This is default gateway for all interfaces in the subnet 192.168.1.0
+192.168.1.1 
+
+# This is default gateway for all interfaces in the subnet 192.168.2.0 
+gtwy.us.ibm.com
+
+For more details, consult TSAMP "Administrator's and User's Guide" (v3.1, Sept 08) at http://publib.boulder.ibm.com/tividd/td/ITSAFL/SC33-8415-01/en_US/PDF/HALfile.pdf [http://publib.boulder.ibm.com/tividd/td/ITSAFL/SC33-8415-01/en_US/PDF/HALfile.pdf]
+
+
+RELATED INFORMATION
+#TSAMP "Administrator's and User's Guide" [http://publib.boulder.ibm.com/tividd/td/ITSAFL/SC33-8415-01/en_US/PDF/HALfile.pdf]

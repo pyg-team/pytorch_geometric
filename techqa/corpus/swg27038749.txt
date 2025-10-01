@@ -1,0 +1,115 @@
+Title: IBM Migration to Rational Rhapsody 8.0.3 - United States
+
+Text:
+migration; migrating; upgrade; upgrading; rhapsody 8.0.3; rhapsody 803; 8.0.3; 803; v8.0.3 PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains information about issues that you might encounter when you migrate existing Rational Rhapsody projects to version 8.0.3. 
+
+CONTENT
+
+
+
+
+
+Saving older models in Rational Rhapsody 8.0.3 
+
+
+If you open an existing model in version 8.0.3 and then save the model, you can no longer open the model in version 8.0.2 of Rational Rhapsody. If you have a situation where people will be using both version 8.0.2 and version 8.0.3 to work on a model, use the Save as Rhapsody 8.0.2 option when you are working with the model in version 8.0.3.
+
+
+
+
+Data Distribution Service (DDS) models 
+
+
+Multiple IDL files Beginning in version 8.0.3, a separate IDL file is generated for each package that contains DDS elements. To preserve the previous code generation behavior for pre-8.0.3 models, the CPP_CG::Configuration::GenerateSingleIDLFile property was added to the backward compatibility settings for C++ with a value of True.
+
+Elements with bounded multiplicity For elements with bounded multiplicity, Rational Rhapsody now generates arrays by default, rather than sequences.
+
+For existing models, if you want to restore the previous code generation behavior, set the CG::Attribute::Implementation property to Fixed for attributes, and set the CG::Type::Implementation property to Fixed for typedefs. If you want to make these change for all such elements in the model, right-click the model in the browser and select Convert pre-8.0.3 DDS model.
+
+If you want to use the new code generation behavior for an existing model, but do not want to see a warning about the change each time you generate code, change the value of the CPP_CG::DDS::Pre803MultiplicityWarning property to False. (This property is from the CGCompatibilityPre803Cpp.sbs settings file.)
+
+
+
+
+Browser behavior when in flat mode 
+
+
+Prior to version 8.0.3, if you were using the Flat browser view (meaning, no category names such as Classes or Events), the model elements were displayed alphabetically. Beginning in version 8.0.3, when you use the Flat view, the elements are organized by metaclass, and alphabetically within each metaclass. This behavior is controlled by the new Browser::Settings::SortingPolicy property. If you want to restore the previous behavior, you can change the value of SortingPolicy to "ByBrowserSettings." Note that this property does not affect the display of elements if you have selected the Enable Ordering option.
+
+
+
+
+Renaming of schema files for AUTOSAR profiles 
+
+
+To prevent any confusion about the nature of the schema (.xsd) files provided with the various AUTOSAR profiles, these files have been renamed to indicate that they are REST-related. For example, the AUTOSAR_40.xsd file is now the AUTOSAR_40_REST.xsd file.
+
+
+
+
+Message text for AUTOSAR checks 
+
+
+Prior to version 8.0.3, the following generic message was used in cases where an element did not contain the correct number of items of a certain type:
+
+"(GL-3) <element-name> does not contain enough <<role>> of one of the following types: <type-list>. "
+
+Beginning in version 8.0.3, this message has been replaced by three messages that provide more specific information regarding the problem. The new messages are:
+
+ * "(GL-8) <element-name> must have at least <lower-limit> <<role>>. "
+ * "(GL-9) <element-name> must have exactly <lower-limit> <<role>>. "
+ * "(GL-10) <element-name> must have between <lower-limit> to <upper-limit> of <<role>>. "
+
+
+
+
+Changes to frameworks 
+
+
+Changes to OMReactive (OXF and SXF) Changes were made to OMReactive in order to reduce the amount of memory used by objects based on OMReactive. These changes included reordering the members as well as removing the following two members:
+
+ * frameworkInstance boolean attribute
+ * theTerminationEvent object
+
+In addition, theStartBehaviorEvent was renamed to theStartOrTerminationEvent.
+
+Use of theStartOrTerminationEvent for both startBehavior and Termination event sending (OXF) To allow for the removal of theTerminationEvent from OMReactive, theStartOrTerminationEvent is now used for both startBehavior and Termination event sending.
+
+The following operations now use theStartOrTerminationEvent instead of theStartBehaviorEvent and theTerminateEvent objects:
+
+ * OMReactive::OMReactive
+ * OMReactive::startBehavior
+ * OMReactive::handleEventUnderDestruction
+
+In order to use the same event instance for both startBehavior and Termination event sending, the following changes were made to OMStartBehaviorEvent:
+
+ * The isTypeOf operation was modified to return the correct answer in all cases. Prior to this change, it did not use the lId attribute for comparison. Rather, it always compared the id argument with the OMStartBehaviorEventId constant, and this would have resulted in the incorrect behavior after the reincarnation of the event. Now, the implementation of isTypeOf is:
+ *  bool OMStartBehaviorEvent::isTypeOf(const IOxfEvent::ID id) const {
+       //#[ operation isTypeOf(ID) const
+       return (lId==id);
+       //#]
+   }
+   
+   
+ * A new operation named reincarnateAsTerminationEvent was added to OMStartBehaviorEvent. This operation is called in OMReactive::destroy() before theStartOrTerminationEvent is sent as a termination event.
+ *  void OMStartBehaviorEvent::reincarnateAsTerminationEvent(void) {
+       //#[ operation reincarnateAsTerminationEvent()
+       setId(OMReactiveTerminationEventId);
+       setFrameworkEvent(true);
+       //#]
+   }
+   
+   
+
+Additional "new" and "delete" operations (SXF) Prior to version 8.0.3, if you used the SXF framework to create an application for certain targets such as QNX 6.5, memory faults would occur if the number of events generated exceeded the value set for the BaseNumberOfInstances property. This was due to an exception being thrown rather than "null" being returned in cases where "new" was used and the pool was already full.
+
+To correct this problem, the values of a number of properties were modified in order to generate additional "new" and "delete" operations that include std::nothrow as a parameter. These are the properties that were modified: 
+
+ * CPP_CG::Framework::StaticMemoryPoolDeclaration
+ * CPP_CG::Framework::StaticMemoryPoolImplementation
+ * CPP_CG::Framework::HeaderFile
+
+As a result of this change, if you use version 8.0.3 to generate code for existing SXF-based models, you will find differences in the code generated for packages that contain events, relative to the code generated previously.

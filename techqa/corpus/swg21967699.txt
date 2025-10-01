@@ -1,0 +1,43 @@
+Title: IBM Abend S0C4 in DMINIT (DGAXSMF +00000090) at Connect:Direct initialization. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Sterling Connect:Direct for z/OS abends at initialization with a S0C4 in DMINIT (DGAXSMF +00000090) when using the Statistics Exit. This may be followed by an SA03 abend. 
+
+SYMPTOM
+Immediately after initialization, the Statistics Exit DGAXSMF abends as follows. This may occur after turning on the Statistics Exit for the first time, or if the exit was re-assembled and re-linked.
+
+16.24.38 JOB01617 SITA036I Connect:Direct 5.01.01 PUT Level 0000 Initialization Complete. 
+16.24.38 JOB01617 *SABA001I - DMINIT S0C4 U0000 ID=M STATE=R TASK#=0001 PSW=078D2400 0000AB58 (DGAXSMF +00000090) 
+16.24.38 JOB01617 * TCA@=18462520(MAINTASK) LDPT=00000000 
+16.26.58 JOB01617 IEA995I SYMPTOM DUMP OUTPUT 977 
+977 SYSTEM COMPLETION CODE=A03 
+977 TIME=16.26.58 SEQ=07892 CPU=0000 ASID=0081 
+977 PSW AT TIME OF ERROR 070C2000 84832B20 ILC 2 INTC 0D 
+977 NO ACTIVE MODULE FOUND 
+977 NAME=UNKNOWN 
+977 DATA AT PSW 04832B1A - 58108010 0A0D58E0 02FC58D0 
+977 AR/GR 0: 000000C0/00000010 1: 00000000/80A03000 
+977 2: 00000000/00000000 3: 00000000/00000000 
+977 4: 00000000/008FF1C0 5: 00000000/7F572618 
+977 6: 00000000/008FF1C0 7: 00000000/008FC198 
+977 8: 00000000/04833E00 9: 00000000/008FC198 
+977 A: 00000000/008F80B8 B: 00000000/008B5AB0 
+977 C: 00000000/008FC198 D: 00000000/008FC204 
+977 E: 00000000/8482B146 F: 04608368/84832AA8 
+977 END OF SYMPTOM DUMP 
+
+
+
+CAUSE
+Incorrect use of AMODE=24 for DGAXSMF.
+
+If you also receive an SA03 abend, that is caused by the initial S0C4.
+
+
+RESOLVING THE PROBLEM
+Verify that DGAXSMF is linked with AMODE=31 instead of AMODE=24.
+
+Reassemble and re-link with the correct AMODE. $hlq.SDGASAMP(DGAXSTG2) contains a sample job that can be modified to assemble/link the DGAXSMF.

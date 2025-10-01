@@ -1,0 +1,89 @@
+Title: IBM Enabling logging for IBM Daeja ViewONE Professional in IBM Content Navigator (ICN) 2.0.3 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you enable the applet viewer logging in ICN 2.0.3? 
+
+ANSWER
+With ICN 2.0.3 all logging can be enabled via the ICN admin interface. 
+
+The client logging appears in the client side Java control panel rather then in a log file so you will need to set your Java console on the client machine, to be shown prior to the issue being reproduced. 
+
+Java control panel 
+
+For the Java console to be shown please access the Java control panel. 
+
+Under the advanced tab you should see the Java console hidden by default. Please make sure this is set to "Show Console" during your testing.
+[/support/docview.wss?uid=swg21989171&aid=1] [/support/docview.wss?uid=swg21989171&aid=1]
+
+You may be asked to enable any of the three top options in this control panel so please take a note of these for your reference.
+If asked for "Full Java logging" this would indicate that you should enable "tracing" "logging" and "show applet lifecycle exceptions" as part of your log gathering procedure.
+
+Enabling the logging in the ICN system. 
+
+Access your ICN installation admin page via the following URL. 
+
+http://Servername:port/navigator/?desktop=admin
+
+
+Log-in using an account which has administration rights. 
+
+Please click on the settings option on the left, then the logging tab:
+[/support/docview.wss?uid=swg21989171&aid=2] [/support/docview.wss?uid=swg21989171&aid=2]
+On this page you will find all the logging for both ICN and the viewer.
+
+Generally you will be asked to set the ICN application logging level to "Information".
+Depending on your web application server, the ICN logging generally will be placed in its system log.
+e.g. ICN on WebSphere would place the ICN logging in the Sysout.log file and the SysError.log.
+
+[/support/docview.wss?uid=swg21989171&aid=3] [/support/docview.wss?uid=swg21989171&aid=3]
+
+For the viewer logging specifically this can be enabled at the bottom of the page.
+Your support analyst should confirm the logging that will be required and this is the area that some of this is set.
+
+[/support/docview.wss?uid=swg21989171&aid=4] [/support/docview.wss?uid=swg21989171&aid=4]
+
+As you can see you can set the location of the viewer log files for the streamer and redaction components and some basic tracing such as basic, network and annotations.
+Client side logging for the applet viewer will appear in the Java console which now should be enabled as per the instructions above.
+
+Some issue specific tracing can be enabled in another area of the ICN Admin interface.
+You will be asked to enable this logging if it is required.
+Using a generic example we will show you how this is done.
+
+E.g.
+If you have a rendering issue with a PDF when using the streamer you may be asked to enable trace filter.
+You may be asked to enable trace filter on either the applet or the streamer or even both.
+
+In your Admin interface click on the Daeja ViewONE option on the left.
+You can see several tabs for each of the areas you may be asked for the tracing to be enabled.
+Using the default option which is "Professional" we will add the request tracefilter.
+[/support/docview.wss?uid=swg21989171&aid=5] [/support/docview.wss?uid=swg21989171&aid=5]
+For additional tracing such as tracefilter this needs to be added as an additional setting (or parameter).
+Under additional settings click the "New" button and add the trace parameter with the value of true.
+[/support/docview.wss?uid=swg21989171&aid=6] [/support/docview.wss?uid=swg21989171&aid=6]
+Click the "create" button
+
+[/support/docview.wss?uid=swg21989171&aid=7] [/support/docview.wss?uid=swg21989171&aid=7]
+Now you have set the trace filter for the Professional applet.
+
+The same process would be followed for adding trace filter for the streamer:
+[/support/docview.wss?uid=swg21989171&aid=8] [/support/docview.wss?uid=swg21989171&aid=8]
+
+Likewise for any requested additional tracing this is added in the same way.
+
+Once you have added and enabled all requested tracing in the ICN admin interface you should log out of all ICN sessions on that workstation.
+For the applet logging just logging out and a restart the browser will be sufficient will be sufficient, but for any server component such as streaming you will need to restart the ICN application.
+The ICN logging would also require you to restart the application for the changes to take effect.
+
+For the client side tracing you can verify this has been enabled by opening the viewer and accessing the shift+t window. 
+[/support/docview.wss?uid=swg21989171&aid=9] [/support/docview.wss?uid=swg21989171&aid=9]
+
+As you can see the four traces are list as HTML parameters on the left (trace, traceNet, traceFilter, traceAnnotation) and as debug settings on the right.
+We would always generally recommend you add the tracing ICN interface rather then via this shift+t window, as just ticking the boxes on the right only enables the traces for this viewer session and cannot be enabled prior to start up, so any annotation load viewer startup or document load issue may well have occurred prior to you being able to enable them here.
+
+Some logging will increase the load on your server so these should only be enabled when required and disabled once the issue is resolved to your satisfaction.
+If you would like clarification on whether the server load will be affected by adding the logging, please ask your IBM support representative at the point of their request.
+
+Please zip up all requested logging prior to delivery to IBM.

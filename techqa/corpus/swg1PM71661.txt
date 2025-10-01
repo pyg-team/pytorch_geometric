@@ -1,0 +1,152 @@
+Title: IBM PM71661: STALEVALUEEXCEPTION NOT HANDLED BY WCM - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Description￘
+   Syndication of some items fails. SystemOut.log contains
+   staleValueException:
+   
+   [8/16/12 8:02:51:731 EDT] 0000001e SyndicatorTas W
+   IWKSY1018X: Appears that update has finished even though we
+   didn't get a confirmation. Perhaps error for: IWKSY1010X:
+   [Subscription Update Info.  Syndicator: IWKSY1095X: [Name:
+   <INS_TO_QA_SYN>, IceId: <ebb6eb80455f9a569d8fbf75ea6d731a>,
+   URL:
+   <http://mycompany.net:33344/wps/wcm/connect/?MOD
+   =Synd>]  Subscriber: IWKSY1095X: [Name: <INS_FROM_WCM_QASUB>,
+   IceId: <10619200455f9a5c817bfbb05fa0aeab>, URL:
+   <http://mycompany.net:33344/wps/wcm/connect/?MOD
+   =Subs>]  Subscription: IWKSY1096X: [IceId:
+   <ebb6eb80455f9a569d8fbf75ea6d731a> Current State:
+   <d00b46804b1dd7aeb5cbb77f5f96a283:1345118504726>]]
+   [8/16/12 8:02:51:877 EDT] 0000001e ProcessAction E
+   com.ibm.icm.da.portable.data.ProcessAction processUpdateActions
+   [ErrorCode:10024] Error, item AB001001N11A10C1490001901A,
+   versionID=1 (userTable=ICMUT01540001) is stale, timestamp
+   mismatch: 8/16/12 12:01 PM, 8/16/12 12:02 PM
+   
+   com.ibm.workplace.wcm.services.repository.StaleValueException:
+   IWKMU1062X: Message: Could not save object in repository.,
+   Cause: javax.jcr.StaleValueException: Error while calling a
+   function updateItems of PLS data manager.: Error while calling
+   a function updateItems of PLS data manager.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix￘
+   none
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The following exception occurs during syndication:
+   
+   com.ibm.workplace.wcm.services.repository.StaleValueException:
+   IWKMU1062X: Message: Could not save object in repository.,
+   Cause: javax.jcr.StaleValueException: Error while calling a
+   function updateItems of PLS data manager.: Error while calling
+   a function updateItems of PLS data manager.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix has been provided to prevent the exception from occurring.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM71661
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   615
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-27
+   
+   
+ * CLOSED DATE
+   2014-03-18
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP
+   
+   
+ * R615 PSY
+   UP

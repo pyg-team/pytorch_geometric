@@ -1,0 +1,195 @@
+Title: IBM IT14924: BIP5540E FROM MRM PARSER WHILE PARSING DATE FEBRUARY 29 (0229) - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In a message model if an element is defined as 'xsd:date' or
+   'xsd:dateTime' type and the DateTime format does not contain the
+   year part in it, then the MRM parser will fail to parse date
+   February 29 (0229) with a BIP5540E error message.
+   
+   BIP5540E: Unable to parse value '0229' using format string
+   'MMdd'. Strict Datetime Checking = 1.
+   
+   If the input dateTime field value misses any of the sub fields
+   like year or month then the missing sub field value is
+   substituted from the current epoch value which is 1970-01-01
+   00:00:00. So date '0229' is treated as '02291970' which is not a
+   valid date as 1970 is not a leap year and hence the MRM parser
+   throws a BIP5540E error while parsing the date field value
+   '0229' and its an expected behaviour of the product.
+   
+   This APAR provides an option under environment variable
+   'MQSI_USE_CURRENTYEAR_FOR_SUBSTITUTION' to use current year as
+   the substitution year if the input date value is missing the
+   year part.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  clude the year in the DateTime Format and in the input Date
+   value.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of IBM Integration Bus V9.0 and V10.0 using the MRM
+   parser with 'xsd:date' or 'xsd:dateTime' type elements.
+   
+   
+   Platforms affected:
+   z/OS, MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   In a message model if an element is defined as 'xsd:date' or
+   'xsd:dateTime' type and the DateTime format does not contain the
+   year part in it, then the MRM parser will fail to parse date
+   February 29 (0229) with a BIP5540E error message.
+   
+   BIP5540E: Unable to parse value '0229' using format string
+   'MMdd'. Strict Datetime Checking = 1.
+   
+   If the input dateTime field value misses any of the sub fields
+   like year or month then the missing sub field value is
+   substituted from the current epoch value which is 1970-01-01
+   00:00:00. So date '0229' is treated as '02291970' which is not a
+   valid date as 1970 is not a leap year. Hence the MRM parser
+   throws a BIP5540E error while parsing the date field value
+   '0229'. This is the expected behaviour of the product.
+   
+   This APAR provides an option to set a new environment variable
+   'MQSI_USE_CURRENTYEAR_FOR_SUBSTITUTION'. When set, to any value,
+   the product will use the current year as the substitution year
+   if the input date value is missing the year part.
+   
+   There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0.  For details
+   visit
+   http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.e
+   tools.mft.doc/bb23814_.htm [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/bb23814_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product now provides an option under the environment
+   variable 'MQSI_USE_CURRENTYEAR_FOR_SUBSTITUTION'  to use the
+   current year as the substitution year.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v10.0      10.0.0.7
+   v9.0       9.0.0.7
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available,information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT14924
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION BUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0530
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-02
+   
+   
+ * CLOSED DATE
+   2016-11-23
+   
+   
+ * LAST MODIFIED DATE
+   2016-11-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION BUS
+   
+   
+ * FIXED COMPONENT ID
+   5724J0530
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

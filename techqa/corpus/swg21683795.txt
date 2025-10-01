@@ -1,0 +1,79 @@
+Title: IBM Removing empty or unwanted advanced content from a process application for IBM Business Process Manager (BPM) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Empty, invalid, or unwanted advanced content (SCA modules and mirrorred libraries) that is associated with a process application or dependant toolkit can lead to unexpected behaviors in Process Center or during deployment for Business Process Manager. This situation can lead to performance problems or deployment failures. 
+
+SYMPTOM
+If you see some of the following symptoms, you might want to review the advanced content if you are not aware of its usage in the current process application. If you intended to use advanced integration services (AIS) or SCA modules with your process application, then some of these symptoms might be normal behavior. 
+
+ * The status for a process application snapshot shows as deployed or undeployed in Process Designer. You might notice it go from deployed to not deployed and back when an integration service or business object changes. This behavior occurs when the business level application (BLA) is being re-installed after a change. See the following screen shots:
+   
+   
+   [/support/docview.wss?uid=swg21683795&amp;aid=1] [/support/docview.wss?uid=swg21683795&amp;aid=2]
+   
+   
+ * In addition to activate and deactivate, undeploy and deploy can also be options for a snapshot that contains advanced content depending on the current state of the snapshot and its business level application. The following screen shot shows a new snapshot prior to activation with and without advanced content.
+   
+   
+   [/support/docview.wss?uid=swg21683795&amp;aid=3]
+   
+   
+ * In cases where there is trouble getting the associated business level application status, the snapshot might not show a status nor options for deployment.
+
+
+CAUSE
+When you open a process application or toolkit in IBM Integration Designer, it is needed to generate an associated SCA module and mirrored library. These generated items are immediately added to the process application or toolkit so it does not require a Process Center publish in IBM Integration Designer. If you are not using AIS services or you did not create any SCA content in the generated module before closing IBM Integration Designer, then you have an empty SCA module and mirrored library that needs to be removed. 
+The following option widow displays when you open a process application with editable toolkits from the Process Center console in IBM Integration Designer. You can see that the testApp2 process application already contains an SCA module and library but TestToolkit1 does not yet have advanced content. Items marked with "to be initialized" generate and save modules and libraries for the associated process applications or toolkits when they are opened in the workspace. 
+
+
+
+ * [/support/docview.wss?uid=swg21683795&amp;aid=4]
+
+
+
+Mirrored libraries contain business objects and interfaces that are mirrored with IBM Process Designer. If any items change in either tool, then it triggers a new deployment, which can add to the overhead in Process Center. 
+RESOLVING THE PROBLEM
+The unwanted or empty advanced content needs to be removed from the process application and its dependent toolkits. If you have an empty SCA module, which is a module without components, or a library without an associated SCA module, then they need to be removed. 
+
+Follow these guidelines to remove the content from a process application that might have several toolkits with unwanted advanced content: 
+
+ 1. Make note of all the dependent toolkits for the process appication and for each toolkit until you know the dependency tree for your process application. Make note of any toolkits that need to have advanced content removed or depend on a toolkit that needs an update.
+    
+    
+ 2. Choose a toolkit that does not have any dependant toolkits with advanced content. 
+    
+    
+ 3. Open the toolkit IBM Integration Designer. If you get a dialog asking to select which modules and libraries to open, ensure that you remove the check box from any item saying "to be initialized". 
+    
+    
+ 4. Follow the steps in the Disassociating a module or library from a process application or toolkit [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.0/com.ibm.wbpm.auth.stp.doc/processcenter/topics/tremoveasscmodlib.html] topic within the product documentation. You should disassociate the SCA modules before libraries within the workspace. 
+    
+    
+    Note: You need to be in the advanced mode of the Business Integration view.
+    
+    
+    The following image shows the icon in the upper left corner for switching between the simple and advanced mode. It also shows the "testApp2_Implementation" SCA module and "testApp2_Library" library, which need to be disassociated. 
+    [/support/docview.wss?uid=swg21683795&amp;aid=5] 
+    
+    
+ 5. Create a new snapshot of the modified toolkit, which needs to be used for parent toolkits or process applications.
+    
+    
+ 6. For toolkits that had a dependency on a modified toolkit, ensure that the dependency is updated to the new snapshot in IBM Process Designer. Create a new snapshot of a toolkit after all of the needed dependency updates and advanced content removal process is complete.
+    
+    
+ 7. Repeat steps 2-6, as needed, until there are no toolkits that have unwanted advanced content or refer to a dependant snapshot with it.
+    
+    
+ 8. After all of the toolkits are correct, then you need to complete the same actions for the process application (steps 3,4 and 6). 
+    
+    
+ 9. Create a new snapshot of the process application, which should not contain advanced content.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ BPM

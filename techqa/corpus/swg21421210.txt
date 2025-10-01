@@ -1,0 +1,18 @@
+Title: IBM Migrating the ITCAM Octigate database from DB2 to Oracle - United States
+
+Text:
+octigate CAMADMSDB CAMADMSALL TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ What would need to be done in order to migrate an existing Octigate database running on DB2 to Oracle? 
+
+ANSWER
+Please see the DB2toOracle.doc referenced here.
+
+DB2toOracle.doc [/support/docview.wss?uid=swg21421210&aid=2] [/support/docview.wss?uid=swg21421210&aid=1]truncate_itcamtables-oracle.sql [/support/docview.wss?uid=swg21421210&aid=4] [/support/docview.wss?uid=swg21421210&aid=3]export_itcamdata-db2.sh [/support/docview.wss?uid=swg21421210&aid=6] [/support/docview.wss?uid=swg21421210&aid=5] 
+
+PRODUCT ALIAS/SYNONYM
+ itcam

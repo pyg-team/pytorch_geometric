@@ -1,0 +1,25 @@
+Title: IBM iNotes doesn't load using IE9, IE10 or IE11 within an iFrame, including the iNotes portlet - United States
+
+Text:
+ie; ie9; iframe; iNotes portlet TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When using Microsoft Internet Explorer 9 with the iNotes portlet for WebSphere Portal, you get errors in the iNotes console.
+
+CAUSE
+The iNotes portlet is an iframe portlet, and Internet Explorer 9 can fail in rendering iframes due to changes in that version for iframe handling.
+
+RESOLVING THE PROBLEM
+To avoid the errors and work successfully with the iNotes portlet in IE9, add the following flag to the header of any pages that contain an iframe portlet: 
+
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" />
+This flag causes the browser to switch to Internet Explorer 8 compatibility mode; therefore, the portlet works as expected.
+
+To avoid the errors and work successfully with the iNotes in an iFrame using IE10, the solution is adding the following META tag to the HTML which contains the iFrame tag.
+<META http-equiv="X-UA-Compatible" content="IE=EmulateIE9" /> 
+This flag causes the browser to switch to Internet Explorer 9 compatibility mode; therefore, the portlet /iFrame works as expected.
+
+Currently, there are no plans to create a new iNotes portlet that does not use iframes. However, we are re-designing the iNotes code and targeting changes to use HTML5 standards mode for Internet Explorer in a future version of iNotes, so that this emulation mode will no longer be necessary. 
+
+RELATED INFORMATION
+#Support Statement for Microsoft Internet Explorer V9 [http://www.ibm.com/support/docview.wss?uid=swg21496054]

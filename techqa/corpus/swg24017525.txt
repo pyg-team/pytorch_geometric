@@ -1,0 +1,39 @@
+Title: IBM WebSphere Adapters V7.5 on WebSphere Application Server 8.0 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to access information for installing and using WebSphere Adapters V7.5. 
+
+DOWNLOAD DESCRIPTION
+The link in this document provide references to instructions on installing and using the WebSphere adapters V7.5 on WebSphere Application Server V8.0.
+
+
+
+
+These adapters provide the means for Java™ 2 Platform, Enterprise Edition components to interact with the Enterprise Information System for which the specific adapter is designed. 
+
+Included in this document is a link to the Passport Advantage Online site where entitled customers can download these code packages. 
+
+PREREQUISITES
+Hardware and software requirements are described here [http://www.ibm.com/support/docview.wss?uid=swg27006249]
+
+DOWNLOAD PACKAGE
+
+
+
+Adapter e-Assembly number Installation Instructions QSG for IBM WebSphere Adapter on WebSphere Application Server CZYY4ML Click here to access installation instructions [http://www.ibm.com/support/docview.wss?rs=695&uid=swg27011040] 
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] Passport Advantage Online 06/03/2011 Language Independent 22724608 FC [http://www-01.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] [ ] DD 
+TECHNICAL SUPPORT
+ Passport Advantage Online support is available at https://www-112.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [https://www-112.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]
+
+WebSphere Adapters support is available at
+http://www.ibm.com/software/integration/wbiadapters/ [http://www.ibm.com/software/integration/wbiadapters/]
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Java 2 Connectivity (J2C) AIX, HP-UX, Linux, Solaris, Windows 8.0

@@ -1,0 +1,48 @@
+Title: IBM Improve Performance of Synchronization between Rule Studio and Rule Team Server (RTS) - United States
+
+Text:
+WODM; Rule Designer; Decision Center TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Synchronizing a rule project between Rule Studio and Rule Team Server (RTS) takes a long time. How can the time taken by synchronization be reduced and the performance improved? 
+
+RESOLVING THE PROBLEM
+ 
+
+Synchronization is a computation-intensive and memory-intensive process. The following recommendations help in improving performance: 
+
+Allocate Sufficient Resources: Ensure that your system has enough resources for synchronization to be time efficient. Provide adequate heap size to both Rule Studio and RTS, using the JVM argument -Xmx. It is typical for Rule Studio and RTS to require 1024 MB heap size, but this can be higher for larger workspaces. Set the initial heap size to a reasonable amount (such as 512MB), using the JVM argument -Xms.
+
+Restructure the Rule Project: Restructure your rule project so that the rules are split among multiple top level packages. Synchronization is done at the top-package level. If you create all your rules under the top-level package PackageA, then during the first synchronization publish, all of them are sent from Studio to RTS at the same time. 
+
+If the number of rules in a single top-level package is very large, then this can be a significant bottleneck during synchronization. This is especially true if a new rule project is being created as a result of synchronization (either a publish of the project from Studio to RTS, or the creation of a new project on Studio from RTS). If you split them into multiple top level packages, then the amount of memory needed while sending a top level package from RTS to Studio (or vice versa) will be smaller since the number of rules would be less.
+
+Reduce transfer of data: Minimize the need for getting an entire rule project from RTS (when creating a new rule project from RTS in Studio). Instead of getting the entire rule project from RTS each time you synchronize, you should synchronize with an existing local copy of the project. This would significantly lower the memory used since only the rules that were changed will be sent from RTS to Studio.
+
+Avoid Heap Fragmentation: Configure certain JVM settings to avoid heap fragmentation.
+
+Use of IBM JDK 1.4.2: In IBM's JVM (version 1.4.2) fragmentation occurs when classes are loaded. The garbage collector allocates special "pinned" (that is, that the garbage collector cannot move around) memory blocks called class blocks.When the JVM is started, there is an initial amount of memory reserved for a block called kCluster, at the bottom of the heap. Its default size is 1280 entries (class blocks). Each entry uses 256 bytes. If more space is needed for newly loaded classes, the GC will allocate additional blocks called pCluster as needed. These blocks cannot be moved around through heap compaction and cause the fragmentation. 
+
+ * Use IBM HeapAnalyzer [http://www.alphaworks.ibm.com/tech/heapanalyzer] to provide a recommended kCluster size from Java heap dump analysis. 
+ * Run Rule Studio and RTS with the following JVM arguments and perform synchronization, for more specific kCluster size recommendations: 
+   -Xms512m -Xmx1024m -verbose:gc -Xverbosegclog:verbosegc.txt -Dibm.dg.trc.print=st_verify 
+ * Analyze the generated verbosegc.txt using the IBM Pattern Modeling and Analysis Tool for Java Garbage Collector [http://www.alphaworks.ibm.com/tech/pmat].
+
+As a result of the analysis, take the following measures: 
+1) Increase the size of the kCluster by using the JVM option "-Xknnnn" where nnnn is the maximum number of class entries in the kCluster. Increase the kCluster size that is recommended by the tool by at least 10% before supplying it as a JVM argument value. 
+2) Specify the pCluster size and pCluster overflow size using the -Xp command-line option: "-Xpiiii[K][,oooo[K]]", where iiii specifies the size of the initial pCluster in KB and oooo optionally specifies the size of overflow (subsequent) pClusters in KB. Default values of iiii and oooo are 16 KB and 2 KB respectively. 
+3) Use the Large Object Area Ratio mode of the JVM, which enables reserving a percentage of the heap to the allocation of large objects (> 64K) only. Use the other options first, as the one drawback of this is that when allocating a large object, it will first try to put this in the regular heap instead of the Large Object Area. Thus you may not have enough Java heap for the rest of your objects, but have much available Java heap in the Large Object Area. For example, -Xloratio0.2 reserves 20% of the active Java heap (not 20% of -Xmx but 20% of the current size of the Java heap) to the allocation of large objects. 
+
+This process of configuring your JVM might require multiple iterations of generating and 
+analyzing the verbose:gc output and applying its recommendations, before arriving at the optimal settings for your environment. RELATED INFORMATION
+ Proven Practices for Enhancing Performance for BRMS 7.1 [http://www.redbooks.ibm.com/redpapers/pdfs/redp4775.pdf]
+Improve Performance of RTS and Decision Center [http://www.ibm.com/support/docview.wss?uid=swg21584855]
+Improve Performance of Rule Studio and Rule Designer [http://www.ibm.com/support/docview.wss?uid=swg21589514]
+Synchronization issues between Rule Studio and RTS [http://www.ibm.com/support/docview.wss?uid=swg21427772]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise Business Integration IBM Operational Decision Manager Platform Independent 8.0

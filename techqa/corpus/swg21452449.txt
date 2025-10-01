@@ -1,0 +1,36 @@
+Title: IBM Get CYNCR9114E error during ITCAM for AD 7.x or ITCAM for WAS 6.x installation. - United States
+
+Text:
+CYNCR9114E bufferpool database tablespace ITCAM ITCAMAD71 ITCAMAD MS install fails CAMADALL CAMADINST TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Get CYNCR9114E error during ITCAM for AD 7.x or ITCAM for WAS 6.x installation. 
+
+CAUSE
+This is caused due to inadequate user permissions.
+
+ENVIRONMENT
+ITCAM for AD 7.1 or ITCAM for WAS 6.x.
+
+DIAGNOSING THE PROBLEM
+Check the user permissions for the user that's installing the ITCAM for AD program.
+
+RESOLVING THE PROBLEM
+
+
+
+During installation of the ITCAM for AD 7.1 program, you will see a CYNCR9114E error message. (See screenshot below.) 
+
+[/support/docview.wss?uid=swg21452449&aid=1] [/support/docview.wss?uid=swg21452449&aid=1]
+
+The resolution is to make sure the user that's installing is part of the DB2 groups DB2ADMINS and DB2USERS (on Windows). If you're using Unix/Linux make sure the user that's installing the ITCAM software has permissions to start and access the DB2 database. If the user doesn't have the right permissions/access to start and use the DB2 database, you will get the above error. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for WebSphere ITCAM for WebSphere Managing Server AIX, HP-UX, Linux, Solaris, Windows 6.1 
+PRODUCT ALIAS/SYNONYM
+ ITCAM for WAS ITCAM for AD ITCAMAD ITCAMAD71 ITCAM for Application Diagnostics

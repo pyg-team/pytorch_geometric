@@ -1,0 +1,29 @@
+Title: IBM getTotalRulesFired() always returns 0 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using the method IlrExecutionTrace.getTotalRulesFired() in my application to find the number of rules executed always returns 0 even some rules are being fired.
+
+
+SYMPTOM
+The result of getTotalRulesFired() remains null even when some rules are executed.
+
+
+CAUSE
+The method getTotalRulesFired uses the information stored in the trace in order to return the number of rules executed. If the trace is not activated, the count is not being recorded.
+
+RESOLVING THE PROBLEM
+To solve this issue, you need to make sure that that trace is being activated. 
+
+
+use IlrSessionRequest.setTraceEnabled(true) 
+
+
+When running in Sequential mode, this means you also need to add the following setting on the RuleSet side the following property:
+ruleset.sequential.trace.enabled=true
+
+
+RELATED INFORMATION
+#Retrieving the ruleset execution trace [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0/index.jsp?topic=%2Fcom.ibm.wodm.dserver.rules.res.managing%2Ftopics%2Ftsk_res_config_getting_trace.html]

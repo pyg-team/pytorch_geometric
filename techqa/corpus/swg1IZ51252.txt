@@ -1,0 +1,348 @@
+Title: IBM IZ51252: LINUX REMEDY GATWAY SUPPORT FOR REMEDY ARS/ITSM V7.X QUESTION ..NEED DOC. UPDATE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  As of few months ago the status was, the Linux version of the
+   Remedy
+   gateway is not available due to pending  licensing arrangement
+   with
+   BMC/Remedy.  IBM working on a new agreement with BMC,  which
+   will
+   allow us to compile the gateway using Remedy's static library.
+   
+   Recently (last week) for another PMR I received the following
+   from
+   the product management (via the customer account team):
+   
+   The most recent version of the Remedy gateway has recently been
+   certified for use with BMC Remedy 7.1 as well. While the docs
+   may take
+   some to time to get updated to reflect this support.
+   
+   The Integration  Wiki  at
+   https://w3.tap.ibm.com/w3ki/display/integrations/Netcool+OMNIBus [https://w3.tap.ibm.com/w3ki/display/integrations/Netcool+OMNIBus]
+   +Gateway+Integrations
+   says ... except Remedy Express we support 7.1 and 7.0 on Linux.
+   
+     IBM Tivoli Netcool OMNIbus Gateway Tier 2
+   Gateway for Remedy ARS           TroubleTicket          ARS 6.3
+   , 7.0 and 7.1         nco-g-remedy         Solaris, HP-UX, AIX,
+   Linux, Windows
+   
+   "The Gateway for Remedy ARS converts alerts into Remedy help
+   desk trouble
+   tickets. Trouble tickets are updated, according to a predefined
+   mapping throughout the lifetime of the alert. Remedy
+   Express(Magic Servicedesk) is not supported via this Gateway .
+   There are no plans of supporting Remedy Express "
+   
+   The gateway read me says ...
+   
+   The default installation supports Remedy 6.3 for Linux and
+   Remedy 7.0
+         for all other platforms.
+   
+   Can you please confirm the subject support to advise the
+   customer please.  Thanks.
+   
+   
+   ----- Forwarded by Michael Nelson/UK/Contr/IBM on 29/04/2009
+   12:16 -----
+   Christian Smith/UK/IBM@IBMGB
+   
+   29/04/2009 12:06
+   
+   To
+    Venkat Surath/Raleigh/IBM@IBMUS, Gavin Jackson/UK/IBM@IBMGB,
+   IBM Netcool Technical Support/UK/IBM@IBMUS
+   
+   Venkat,
+   
+   As per Gavin's request, can you please create a docs APAR for
+   the Remedy gateway.
+   
+   Gavin, there are no changes to the gateway, as this is the
+   existing GA gateway retested for ARS 7.1 compatibility, so
+   unless there are other Remedy gateway docs APARs outstanding,
+   this should be it.
+   
+   Thanks,
+   Christian
+   
+   --
+   
+   Christian Smith
+   Software Engineer
+   Network Availability Management
+   Network Management - Development
+   Tivoli Software, IBM United Kingdom Limited
+   
+   Tel: +44 20 7021 9426
+   christian.smith@uk.ibm.com
+   
+   
+   Gavin Jackson/UK/IBM
+   
+   29/04/2009 11:54
+   
+   To
+    Christian Smith/UK/IBM@IBMGB
+   Hi Christian
+   
+   Yes to both.  Also, apart from the compatibility issue, are
+   there any other changes that can be made to the guide at the
+   same time?
+   
+   Regards
+   
+   Gavin
+   
+   
+   
+   
+   Christian Smith/UK/IBM
+   
+   29/04/2009 11:47
+   
+   To
+    Anish Chohan/UK/IBM@IBMGB, Gavin Jackson/UK/IBM@IBMGB
+   Thanks Anish.
+   
+   Gavin, do we need a technote or docs update to reflect the new
+   compatibility status WRT ARS 7.1? Do we need a docs APAR?
+   
+   Christian
+   
+   --
+   
+   Christian Smith
+   Software Engineer
+   Network Availability Management
+   Network Management - Development
+   Tivoli Software, IBM United Kingdom Limited
+   
+   Tel: +44 20 7021 9426
+   christian.smith@uk.ibm.com
+   
+   
+   Anish Chohan/UK/IBM
+   
+   29/04/2009 11:42
+   
+   To
+    Christian Smith/UK/IBM@IBMGB
+   cc
+   Hi all,
+   
+   I can confirm that I successfully tested the previous version of
+   the Remedy gateway (Release ID: 8.0.5565 available on XL) with
+   Remedy v7.1 running on Aix (6.1), Linux (SuSE10), Solaris
+   (5.10), and HPUX (11.11).
+   
+   Kind regards,
+   Anish Chohan
+   TIC SQA Test Engineer
+   From:  Christian Smith/UK/IBM
+   To:  Rajesh Suseelan/UK/IBM@IBMGB
+   Cc:  IBM Micromuse L3 - OMNIbus Integrations/UK/IBM@IBMGB, IBM
+   Netcool Technical Support/UK/IBM@IBMUS, Jonathan
+   Lawder/UK/IBM@IBMGB, Venkat Surath/Raleigh/IBM@IBMUS, Anish
+   Chohan/UK/IBM@IBMGB
+   Date:  29/04/2009 11:04
+   Subject:  Re: [INTERNAL] Omnibus Integrations - Gateways L3
+   Communication: PMR 84290,422,000 Linux Remedy Gatway Support
+   for Remedy ARS/ITSM V7.x Question
+   
+   
+   
+   I believe the existing Linux gateway (part number C1TS0EN) was
+   tested against Remedy 7.1, using the default ARS 6.3 module.
+   Perhaps Anish can clarify what platforms were validated against
+   Remedy ARS 7.1? Regardless, the Linux version should work
+   against ARS 7.1, as ARS 7.1 is backward compatible with 6.3
+   clients.
+   
+   You're right that the ARS 7.x module for Linux will require a
+   new build environment. If the customer has a problem with the
+   GA gateway on Linux, then we can look at putting together a
+   concession release for them when we have an updated build
+   environment.
+   
+   
+   Christian
+   
+   --
+   
+   Christian Smith
+   Software Engineer
+   Network Availability Management
+   Network Management - Development
+   Tivoli Software, IBM United Kingdom Limited
+   
+   Tel: +44 20 7021 9426
+   christian.smith@uk.ibm.com
+   
+   
+   
+   Rajesh Suseelan/UK/IBM
+   
+   28/04/2009 12:27
+   
+   To
+    IBM Micromuse L3 - OMNIbus Integrations/UK/IBM@IBMGB, Jonathan
+   Lawder/UK/IBM@IBMGB
+   
+   Christian , I know for certain that we did not upload a linux
+   binary to the enablement sites. Jonathan had informed me
+   sometime back that  we were unable to compile the Remedy 7
+   Gateway on Linux due to build issues. Has that changed ?  If so,
+   can we make a Linux build available to customer on concession ?
+   
+   Thanks,
+   Rajesh
+   
+   
+   
+   Rajesh Suseelan | Product Management | Tivoli Software, IBM
+   United Kingdom | M: +44 (0) 7702 676015
+   Please use these links for Product Questions --
+   IBM Internal: Network and Event Management Wiki
+   IBM Internal:Netcool Integrations Team Wiki
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Communcated to the customer that ...
+   
+   Here is what we've found out from L3:
+   
+   "The current GA gateway is simply the older gateway, initially
+   tested
+   against ARS 6.3 and 7.0, but now validated against ARS 7.1 in
+   addition
+   to the existing ARS 6.3 and 7.0 support, including Linux.
+   
+   So, ARS 6.3, 7.0 and 7.1 is supported on all platforms,
+   including Linux.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of the Gateway for Remedy on Linux.
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The guide currently states in the Summary table that the gateway
+   supports Remedy V6.3 and V7.0. However, the gateway also
+   supports Remedy V7.1.
+   
+   The supported Remedy versions table indiates that on Linux,
+   only Remedy V6.3 is supported. The gateway has now been tested
+   successfully against Remedy V7.0 and V7.1.
+   ****************************************************************
+   RECOMMENDATION:
+   The reference guide will be updated with the next release of the
+   gateway.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Summary table will be updated to indicated that the gateway
+   supports Remedy V6.3, 7.0, and 7.1.
+   
+   The supported Remedy versions table will be updated to indicate
+   that all platforms support Remedy V6.3, 7.0, and 7.1.
+   
+   There are also a number of places in the guide that mention
+   Remedy V7.0.  These will be all be updated to state Remedy V7.0
+   and V7.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ51252
+   
+   
+ * REPORTED COMPONENT NAME
+   REMEDY GATEWAY
+   
+   
+ * REPORTED COMPONENT ID
+   5724O73GR
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-14
+   
+   
+ * CLOSED DATE
+   2009-07-08
+   
+   
+ * LAST MODIFIED DATE
+   2010-08-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC23603704 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

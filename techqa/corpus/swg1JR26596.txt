@@ -1,0 +1,160 @@
+Title: IBM JR26596: MAIL SESSION IS NOT CREATED IN CLUSTERED 602 ENV WHEN USING HTM CONTAINER INSTALLATION WIZARD IN THE ADMIN CONSOLE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The HTM container installation was done by the HTM container
+   installation wizard of the WebSphere Process Server
+   administrative console. It created a mail session in the default
+   mail provider in the cell scope. But the same mail session JNDI
+   name could not be seen in the HT runtime page of the
+   administrative console.
+   When a process with e-mail escalation is triggered it will not
+   deliver the escalation mails and the logs do not show any
+   exception.
+   alerts, its not delivering the mails.
+   
+   The only warning during server startup is
+   
+   CWTKE0012I: HTM mail function will be disabled.
+   
+   The same behaviour is not seen in non-clustered environment.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  use the bpeconfig.jacl script with the parameter -cluster to
+   install the HTM container
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Process Server 6.0.2 users         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Mail session is not created in          *
+   *                      clustered 6.0.2 environment when using  *
+   *                      htm container installation wizard in    *
+   *                      the admin console.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The HTM container installation was done by the HTM container
+   installation wizard of the WebSphere Process Server
+   administrative console. It created a mail session in the default
+   mail provider in the cell scope. But the same mail session JNDI
+   name could not be seen in the HTM runtime page of the
+   administrative console.
+   When a process with e-mail escalation is triggered it will not
+   deliver the escalation mails and the logs do not show any
+   exception.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Apply ifix to resolve the stated problem.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR26596
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-05-11
+   
+   
+ * CLOSED DATE
+   2007-07-05
+   
+   
+ * LAST MODIFIED DATE
+   2007-12-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP
+   
+   
+ * R601 PSN
+   UP
+   
+   
+ * R602 PSY
+   UP

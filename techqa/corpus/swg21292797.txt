@@ -1,0 +1,45 @@
+Title: IBM RHEL6 requires xlibp files from Fedora Core v6 for MS to install. - United States
+
+Text:
+xlibp libawt.so libXp.so.6 RHEL CAMADALL CAMADINST TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ RHEL6 requires xlibp files to be updated before using MS, otherwise the following java errors are seen:
+"The java class could not be loaded. java.lang.UnSatisfiedLinkError: 
+/opt/install/ms/ITCAMMSxlin/java/jre/bin/libawt.so: libXp.so.6: cannot 
+open shared object file: No such file or directory: 
+
+CAUSE
+This is caused due to the missing xlibp fedora core 6 updates files on the RHEL 50 OS.
+
+ANSWER
+Go to this website and download it: 
+
+http://rpmfind.net/linux/rpm2html/search.php?query=libxp&submit=Search+...&system=&arch= [http://rpmfind.net/linux/rpm2html/search.php?query=libxp&submit=Search+...&system=&arch=] 
+
+Install the missing xlibp files using the Fedora Core 9/10 updates. 
+
+If you're installing on a Linux Intel-based architecture, narrow 
+your search to "i386" (do a "uname -a" on your Linux box to 
+see the version/kernel info first). 
+
+Most likely, you'll need "libXp-1.0.0.-11.fc.9.i386.rpm" (as of this writing).
+
+Do these commands to install and then verify its installed.
+
+To install the package, do this command:
+rpm -i libXp-1.0.0.-11.fc.9.i386.rpm (or your own package name)
+
+To verify its installed, do this command:
+rpm -q libXp-1.0.0-11.fc.9.i386 (without the "rpm" extension)
+
+Then start the MS using the 'launchpad.sh' script and it should work just fine. 
+No restart of the OS is required since this is Linux and not Windows.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfAD ITCAM for App Diagnostics

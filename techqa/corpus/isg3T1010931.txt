@@ -1,0 +1,63 @@
+Title: IBM Issues opening files in CIO or DIO mode - United States
+
+Text:
+ProblemDeterminationDocument TECHNOTE (FAQ)
+
+QUESTION
+ My database is opening files in CIO mode and I can't copy the files. Why is this and how can I fix it? 
+
+ANSWER
+INTRODUCTION - DIRECT I/O AND CONCURRENT I/O 
+
+To gain greater performance many databases will use raw logical volumes to store tablespaces and containers. The performance gain is mainly due to the fact that it bypasses filesystem cache and file locking mechanisms. However this makes backup and administration more difficult. So there are two options that AIX offers to give database users better performance when using JFS or JFS2 filesystems. These options are Concurrent I/O (CIO) and Direct I/O (DIO). 
+
+Direct I/O (DIO) bypasses the filesystem buffer cache and enables reading/writing directly to the filesystem. This is particularly useful when the application itself buffers reads and writes, avoiding a "double-buffer" situation and increasing I/O throughput. To avoid data consistency issues, if multiple processes open the same file and one did not use the O_DIRECT flag in their open(), then normal cached filesystem mode is used for the file. When the last process not using O_DIRECT closes, the file access is moved to Direct I/O mode. 
+
+Direct I/O also uses mandatory write-locking on a per-file or per-inode basis, as does the filesystem. This ensures that overlapping writes to the file do not occur, which would corrupt the file. This is also known as serialization of writes. 
+
+Concurrent I/O (CIO) for JFS2 filesystems gains the benefits of Direct I/O without the locking serialization. It allows a process writing to a file exclusive write access to that file. 
+
+ 
+
+TWO METHODS OF ENABLING DIRECT I/O AND CONCURRENT I/O 
+
+There are two different ways a sysadmin or database admin can set up Direct I/O or Concurrent I/O. 
+
+The first is to use a mount option to put the entire filesystem in either DIO or CIO mode: 
+
+# mount -o cio,dio /mountpoint /dev/lvname 
+
+If you wish to permanently have the filesystem mounted this way, use chfs to change the LVCB and the /etc/filesystems file: 
+
+# chfs -a options=cio,dio /mountpoint 
+
+The second method is for an application itself to open the file in DIO or CIO mode. This would be done via an option set in the open() system call, such as: 
+
+open( /path/to/file, O_DIRECT | O_CIO ) 
+
+There are benefits to each method, and some restrictions to using the open() API to access files. 
+
+ 
+
+FILE ISSUES WHILE USING DIRECT I/O AND CONCURRENT I/O 
+
+If a database such as Oracle has opened a file with CIO or DIO, other processes may find themselves blocked if they are not using the same access methods. Some admins may not know that the database is opening the file using CIO or DIO, but usually a configuration directive can tell you. 
+
+In the case of Oracle, there is a variable called FILESYSTEMIO_OPTIONS, and if set to SETALL then both CIO and DIO will be enabled on any data file opened. 
+
+The effect of this is that opening a file with CIO and DIO may block other commands, such as cp, out of the file. 
+
+A typical error would be when trying to copy a database table using 'cp' this error is returned; 
+
+ a system call received a parameter that is not valid. 
+
+While this is not obvious, here is the explanation, from the open() manual page of the AIX Technical Reference Manual: 
+
+
+The O_CIO flag is exclusive. If the file is opened in any other way (for example, using the O_DIO flag or opening the file normally), the open will fail. If the file is opened using the O_CIO and another process attempts to open the file another way, the open will fail. The O_CIO flag also prevents the mmap subroutine and the shmat subroutine access to the file. The mmap subroutine and the shmat subroutine return EINVAL if they are used on a file that was opened using the O_CIO flag. 
+
+
+Since commands such as "cp" do not open files using CIO/DIO they are blocked from accessing the file. The solution is to either have the application that has the file open in CIO/DIO mode close it, thereby unlocking it for use by non-CIO/DIO applications, or mount the filesystem it is in using the CIO/DIO flags. Using the second method EVERY open of the file will be using the CIO/DIO flag due to the mount attribute.
+
+For Further Reference see the pSeries and AIX Information Center, General Programming Concepts book, "Working with File I/O" chapter
+http://publib.boulder.ibm.com/infocenter/pseries/v5r3/topic/com.ibm.aix.genprogc/doc/genprogc/fileio.htm [http://publib.boulder.ibm.com/infocenter/pseries/v5r3/topic/com.ibm.aix.genprogc/doc/genprogc/fileio.htm]

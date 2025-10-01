@@ -1,0 +1,127 @@
+Title: IBM LI76669: INVOKE RFC ACTIVITY DOES NOT UPDATE SCHEMA WHEN THE RFC IS CHANG ED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In WebSphere Cast Iron Studio, re-opening the project containing
+   Invoke RFC activity and browsing the RFC, doesn't refresh the
+   schema, when the corresponding RFC in SAP is changed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No workaround is available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A product defect meant that reopening the project was not
+   updating the RFC details.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product defect has been fixed in the WebSphere Cast Iron
+   Cloud integration 6.1.0.6 fix pack.
+   
+   Announcements of new fix packs are made on the WebSphere Cast
+   Iron Support Portal at
+   http://www-947.ibm.com/support/entry/portal/Overview/Software/We [http://www-947.ibm.com/support/entry/portal/Overview/Software/We]
+   bSphere/WebSphere_Cast_Iron_Cloud_integration
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LI76669
+   
+   
+ * REPORTED COMPONENT NAME
+   WCI LIVE STD ED
+   
+   
+ * REPORTED COMPONENT ID
+   5725F7000
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-06
+   
+   
+ * CLOSED DATE
+   2012-05-03
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WCI LIVE STD ED
+   
+   
+ * FIXED COMPONENT ID
+   5725F7000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

@@ -1,0 +1,50 @@
+Title: IBM LDAP identifier conflict - United States
+
+Text:
+wp-create-ldap; LDAP identifier TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The ConfigEngine task, wp-create-ldap, fails due to an LDAP identifier conflict. 
+
+SYMPTOM
+ConfigTrace.log contains: 
+
+wp-create-ldap failure occurred because of:
+
+[wplc-create-federated-ldap-repository] id="LdapId1"
+[wplc-create-federated-ldap-repository] Repository LdapId1 already
+exists in the WIM Repository System.
+[wplc-create-federated-ldap-repository] at
+com.ibm.wplc.deploy.tasks.impl.FederatedRepositoryLdapCreateImpl.execute
+(FederatedRepositoryLdapCreateImpl.java:40)
+
+
+CAUSE
+Another LDAP was already defined in Virtual Member Manager's (VMM) configuration.
+
+
+DIAGNOSING THE PROBLEM
+View <profile>/config/cells/<cellname>/wim/config/wimconfig.xml. Search for the LDAP identifier cited in the message above (id="LdapId1").
+
+
+
+RESOLVING THE PROBLEM
+The simplest way to resolve this problem is to specify a new value for the new LDAP identifier when running the ConfigEngine task. To do so, edit wkplc.properties (or helper file, if you are using one) and change: 
+
+federated.ldap.id=LdapId1 
+
+to: 
+
+federated.ldap.id=LdapId2
+
+
+It is possible that the old, conflicting LDAP definition is invalid. For example, if the definition does not include server information such as host name and port. If this is the case, you should clean up any invalid definitions. Doing so would avoid the LDAP identifier conflict as well.
+
+If any such invalid LDAP definitions exist, first back up wimconfig.xml (under DMGR profile directory, if clustered; under WebSphere Portal profile directory, if standalone). Then try to delete the invalid repository via the WebSphere Application Server Integrated Solutions Console (WAS ISC) > Global security > Federated repositories. If this fails from the WAS ISC, then delete the invalid repository definition manually by editing wimconfig.xml and deleting: 
+
+<config:repositories ... id="LdapId1" ...>
+...
+</config:repositories>
+
+RELATED INFORMATION
+#Anatomy of wimconfig.xml [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Anatomy_of_a_WebSphere_Portal_file_wimconfig.xml]

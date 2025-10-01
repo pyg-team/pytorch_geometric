@@ -1,0 +1,30 @@
+Title: IBM After unregistering the Guardium collector, GUI login with custom user accounts does not work - United States
+
+Text:
+set guiuser; collector; CM; central manager; LDAP; authentication type; accessmgr; admin; login; GUI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After unregistering the Guardium collector from a Central Manager (CM), only logins with users "admin" and "accessmgr" work with GUI. Login with custom users does not work. Authentication type needs to be set to local. 
+
+SYMPTOM
+Cannot log into GUI with non-default users (ie. "admin", "accessmgr"). Login with custom users does not work. 
+
+
+CAUSE
+The system was configured to use LDAP authentication when it was managed by the CM. When it was unregistered, the system continued to look for LDAP authentication at the GUI level. 
+
+RESOLVING THE PROBLEM
+1.Log into GUI as "admin" user.
+
+
+2. Go to Administration Console > Configuration > Portal 
+
+3. Under Authentication Configuration, set authentication type to local and save. 
+
+4. Log out "admin". 
+
+ 5. Retry login with a custom user. 
+
+ 
+
+Another workaround is to SSH into the Guardium appliance using a custom user (ie. "guardcli1") and execute the "set guiuser" command, it is possible to login as any of the custom users configured by user "accessmgr".

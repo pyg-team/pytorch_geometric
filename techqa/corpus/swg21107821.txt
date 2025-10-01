@@ -1,0 +1,52 @@
+Title: IBM ICH408I indicating UNIX System Services full function mode is required for CICS TS - United States
+
+Text:
+DFHDS0002 0506 0137 RC0506 RC0317 DFHKEDS DFHDSIT AEXZ ABENDAEXZ USS ; UNIX SYSTEM SERVICES; FULL-FUNCTION ; FULL FUNCTION ; OPENAPI DB/2 DB2 V6 DFHKE0002 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 kixinfo ; kixdcfudb61 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have been running CICS Transaction Server for z/OS (CICS) without UNIX® System Services (USS) with the IEASYS parameter of OMVS=DEFAULT with no problems. Now when some applications run, you receive message ICH408I indicating an OMVS segment must be defined for the CICS userid. You also receive message DFHKE0002 with code 0506 and DFHDS0002 with code 0137. 
+
+SYMPTOM
+Following are the messages you receive: 
+
+CEE3250C The system or user abend AEXZ was issued. From compile unit EKCIINIT at entry point EKCIINIT at compile unit offset +0000716C at address 0AD1FB24.
+
+ICH408I USER(JDOE ) GROUP(NAMES ) NAME(SUE SMITH ) CL(PROCESS ) OMVS SEGMENT NOT DEFINED
+
+DFHKE0002 [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.messages.doc/DFHKE/DFHKE0002.html] A severe error (code X'0506') has occurred in module DFHKEDS.
+
+DFHDS0002 [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.messages.doc/DFHDS/DFHDS0002.html] A severe error (code X'0137') has occurred in module DFHDSIT.
+
+
+CAUSE
+UNIX Systems Services must be running in full-function mode. This requirement is documented in Section 6.2 of the CICS TS V5.1 Program Directory [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.doc/HCI68005b.pdf] under OMVS requirement:
+
+Before running the installation jobs: 
+
+ * Ensure the MVS image was IPLed with OMVS in full-function mode. 
+ * Ensure the user ID under which you are running the jobs has superuser authority
+
+
+Authorizing access to z/OS UNIX System Services [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.installation.doc/topics/dfha1l3.html] in the CICS TS documentation explains why CICS requires access to USS: 
+
+CICS requires access to z/OS UNIX System Services and to directories and files in the file system. CICS facilities that require this access include TCP/IP support, Java support, CICS Web support, and task-related user exits that are enabled with the OPENAPI option, including the task-related user exit of the CICS DB2 attachment facility. 
+
+Note: With DB2 V6 or higher, the OPENAPI is being used automatically. The OPENAPI requires UNIX System Services to be active in full function mode. 
+DIAGNOSING THE PROBLEM
+The following type of CICS trace entry can be found in the CICS internal trace showing that it is trying to create a TCB using the OPENAPI function:
+
+KE 0506 *EXC* - SET_DUB_DEFAULT_ERROR - FUNCTION(CREATE_TCB) ATTACH_TOKEN(07B036C0) MODENAME(L8) PRTY_RELATIVE_TO_QR(0) PARENT_MODENAME(QR) EXEC_CAPABLE(EXEC_YES) LE_ENVIRONMENT(LE_CICS) TCB_KEY(KEY8) INHERIT_SUBSPACE(INHERIT_YES) ESSENTIAL_TCB(ESSENTIAL_NO)
+
+
+
+
+RESOLVING THE PROBLEM
+Ensure the MVS image is IPLed with OMVS in full-function mode.
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Transaction Server Migration 
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

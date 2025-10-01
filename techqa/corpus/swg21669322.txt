@@ -1,0 +1,69 @@
+Title: IBM Announcement letter for CICS Transaction Server for z/OS 5.2 - United States
+
+Text:
+CICS TS 5.2 announcement Letter ; CICS Transaction Server for z/OS 5.2 ; announcements ; letters ; general availability ; 5655Y0400 R690 690 R900 900 HCI6800 5655-Y04 5655Y04 CICS Explorer 5655Y0401 R520 510 CICS Developer Trial Value Unit Edition VUE kixinfo retention52 PRODUCT LIFECYCLE
+
+ABSTRACT
+ CICS Transaction Server for z/OS (CICS TS) V5.2, CICS TS Value Unit Edition (VUE) V5.2, CICS TS Developer Trial V5.2, and CICS Explorer V5.2 general availability (GA) date was 13 June 2014. CICS TS V5.2 builds on the many advances in service agility, operational efficiency, and cloud capabilities delivered in CICS TS V5.1. This document contains a list of the key enhancements, a link to the announcement letter, and additional ways that you can become familiar with the capabilities of CICS TS V5.2. 
+
+CONTENT
+CICS TS V5.2 satisfies over one hundred user requirements that help drive operational efficiencies while increasing service agility, moving you towards a service delivery platform for cloud computing. See customer requirements answered in CICS TS 5.2 [http://www.ibm.com/support/docview.wss?uid=swg27041548] to learn about each user requirement that will be delivered in CICS TS V5.2.
+
+Service agility: 
+
+ * CICS TS V5.2 significantly enhances the portability of web applications into CICS, by upgrading IBM WebSphere Application Server Liberty Profile to Version 8.5.5 and supporting a broader set of its features. 
+ * Service oriented architecture (SOA) support is extended by integrating the JavaScript Object Notation (JSON) and Representational State Transfer (REST) capabilities, introduced in the CICS TS Feature Pack for Mobile Extensions, into CICS TS V5.2. This makes it easier to interact with mobile devices and mobile-optimized gateways, such as IBM Worklight Server.
+
+
+Operational efficiency:  * The number of supported policy thresholds is expanded to cover an increased number of threshold types, safeguarding critical runtime resources. This enables a wider range of service-level agreement thresholds to trigger automatic actions. 
+ * The integration of CICS applications with distributed security standards has been simplified by incorporating the Security Assertion Markup Language (SAML) support, introduced in the CICS TS Feature Pack for Security Extensions, into CICS TS V5.2. Also introduced is support for Kerberos security tokens and stronger cryptographic ciphers. SAML support is provided for both inbound and outbound use of SAML tokens, and SAML tokens can now be augmented by adding new attributes. 
+ * A transaction channel allows applications to be able to use containers throughout the transaction without the need to restructure COMMAREA-based programs. Performance enhancements include a reduction in 31-bit storage usage for web services and an increase in threadsafe support. 
+
+
+Cloud enablement:  * Major advances are made in the area of cloud enablement, to enhance application lifecycle management by allowing different versions of a multi-program application to run concurrently, and simplify deployment of application updates or to easily rollback to an earlier version if required. 
+ * Application versioning assists with the consolidation of applications onto fewer CICS regions. 
+ * Platforms are enhanced to define and create new 'top down' topologies, and to add and remove regions from installed platforms. 
+ * Twice as many traditional CICS resources can be defined and managed in CICS bundles, compared to previous CICS TS releases. 
+
+
+
+CICS Explorer [http://www.ibm.com/software/products/en/cics-explorer] V5.2 is updated to add support for the new and enhanced capabilities of CICS TS V5.2. If you use CICSPlex SM (CPSM) workload management (WLM), you can use CICS Explorer to define and manage workloads. 
+
+CICS TS Developer Trial V5.2 is a try-before-you-buy edition of CICS TS V5.2 with a zero-cost license charge and does not initiate any single version charging (SVC) period. If you want to assess the value that could be gained from a CICS TS upgrade, before making an upgrade decision, you should order this product. The CICS TS Developer Trial V5.2 will be fully supported and can be upgraded to CICS TS V5.2 or CICS TS VUE V5.2 without the need for a full reinstallation. See the CICS TS Developer Trial web page [http://www.ibm.com/software/products/en/cics-ts-devtrial] for more information. 
+
+CICS TS Value Unit Edition (VUE) V5.2 offers a one-time-charge (OTC) price metric for eligible workloads that are deployed in qualified System z New Application License Charge (zNALC) logical partitions (LPARs). CICS TS VUE V5.2 is available through the normal ordering channels for IBM z/OS software. See the CICS TS Value Unit Edition web page [http://www.ibm.com/software/products/en/cics-ts-vue/] for more information. 
+
+CICS TS V5.2 introduces a wide range of other technical and operational capabilities. For more details about CICS TS V5.2 see the US Announcement letter for CICS TS 5.2 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS214-107] (214-107). Information for other country announcements is available on the IBM Offering Information page [http://www.ibm.com/common/ssi/index.wss]. 
+
+
+IBM has also updated five core foundational CICS tools (and the Optimization Solution Pack) to use and augment the latest operational efficiency and service agility enhancements made in CICS TS V5.2:  * CICS Configuration Manager for z/OS V5.2 
+ * CICS Deployment Assistant for z/OS V5.2 
+ * CICS Interdependency Analyzer for z/OS V5.2 
+ * CICS Performance Analyzer for z/OS V5.2 
+ * CICS VSAM Recovery for z/OS V5.2 
+ * CICS Optimization Solution Pack for z/OS V5.2
+   
+   
+
+For more information on these CICS tools, see the document entitled Announcement letter for CICS Tools for z/OS 5.2 [http://www.ibm.com/support/docview.wss?uid=swg21669323]. 
+
+
+For more details about CICS TS V5.2 see:  * CICS TS web page [http://www.ibm.com/software/products/en/cics-tservers] 
+ * CICS TS V5.2 detailed system requirements [http://www.ibm.com/support/docview.wss?uid=swg27041627] 
+ * CICS TS V5.2 product documentation in the IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.2.0/com.ibm.cics.ts.home.doc/welcomePage/welcomePage.html]
+   
+   
+
+See the IBM Software Support Lifecycle Page [http://www.ibm.com/software/support/lifecycle/index_c.html] to determine if the release of CICS TS you are running is still supported or if there is a newer release of CICS TS. 
+
+See Looking up prices for CICS Transaction Server for z/OS and CICS Tools [http://www.ibm.com/support/docview.wss?uid=swg21220237] if you would like to use IBMLink to check for the price or cost of the product. RELATED INFORMATION
+#Announcement letters for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21227090]
+End of Support dates for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21154953]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Transaction Server Availability z/OS, Linux, Windows 5.2 
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

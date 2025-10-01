@@ -1,0 +1,62 @@
+Title: IBM Server Target support in WSAD v5.1.1+ and RAD version 6.x - United States
+
+Text:
+WSAD; v5.1; v512; RAD; v6; Server Target; migration; server; J2EE; runtime; build; RSA; JDK; JVM; jdk v1.3.1; jdk v1.4; deploying J2EE applications; specifying target runtimes; 1234365 TECHNOTE (FAQ)
+
+QUESTION
+ There are questions concerning J2EE projects in WebSphere® Studio Application Developer (WSAD) version 5.1.1+ and the WebSphere Application Server (WAS) version 5.x server jars and JDKs used to build them. Here are answers as to whether these can be run on WAS 5.1.x . It also addresses changes in Server Target support in Rational® Application Developer (RAD). 
+
+CAUSE
+This information is being provided to address the following questions that are often asked: 
+
+ * Why are all J2EE™ 1.3 projects utilizing the WAS 5.0.2 (SDK 1.3.1) Java™ version? There does not appear to be a way to indicate that WAS 5.1 is the deployment environment when creating a new project. 
+ * Going into window preferences and changing the SDK to be the WAS 5.1 version can generate errors when recompiling the code. The 1.3.1 SDK uses rt.jar and the 1.4.1 SDK uses core.jar. Core.jar by default does not include all the classes that were in rt.jar -- what is the right way to get around this? 
+ * Which SDK should be used to compile applications that are going to be deployed to WAS 5.1? This specifically relates to utilizing an external build system to build code being deployed to WAS 5.1 on Solaris. 
+ * What is new in Rational® Application Developer (RAD) version 6 server Target support? 
+
+ANSWER
+WSAD version 5.1.1.x: 
+
+
+WSAD version 5.1.1+ workbench tooling runs on JDK 1.3.1. If Server Target(ing) is enabled and the J2EE project specifies a WAS version 5.1.x target, the version 5.1.x server JAR files compiled with its IBM JDK 1.4.1 are used at build time. 
+
+The default for J2EE 1.3 projects is to utilize the WAS 5.0.2 (JDK 1.3.1) Java™ jars/classes at build time. WSAD version 5.1.1 introduced Server Targeting support, as mentioned in the article Specifying target servers for J2EE projects in the Related information link below.
+
+To enable the server targeting support in WSAD version 5.1.1+:
+
+
+ 1. Click Window > Preferences to open the Preferences window. 
+ 2. On the J2EE page of the preferences, select the Enable radio button in the Server Targeting Support section. 
+ 3. Click OK. 
+ 4. Right click Target Server > Modify on any J2EE project to specify the target server.
+
+
+When a target server is specified for a project, a .server file is added to the project resources indicating the target server. 
+
+Note: 
+It is necessary for any J2EE Client project to be built with the same JDK libraries as the server JDK it will be run with. For example, if you build a J2EE 1.3 Web Services service and Java client with the build default of WAS version 5.0.2 JDK 1.3, but targeting WAS version 5.1, even when correctly launched using the Run Launcher and specifying the WAS 5.1 JVM (JDK 1.4). it will fail. It will run using the WSAD 5.1.1 JVM ( == JDK 1.3.1 + some WAS 5.1 JDK 1.4 libraries), since it is closer to the WAS 5.1 JDK 1.4.x. Once a server target of WAS 5.1 is specified for the J2EE Project and the project is rebuilt, it is then possible to launch and run with the WAS 5.1 JVM (JDK 1.4.x). 
+
+For more information on WAS version 5.1.x and JDK 1.4.1, this Related Information Item can be helpful: Changes to IBM Developer Kit for Java Technology Edition Version 1.4.x. 
+
+RAD version 6.0.x: 
+
+RAD version 6 runs on JDK 1.4.1 and requires that the Server Target be set on every J2EE project. When you are creating a new J2EE project, it defaults to WAS version 6. 
+To change the server target:  1. Right click on the J2EE project > Properties > Server 
+ 2. Specify the "Target runtime". 
+
+
+RAD 6.0.x supports WAS 6.0.x (J2EE 1.4.x/JDK1.4.2.x) in addition to version 5.0.2.x and version 5.1.1.x. See the RAD v6 Related Information items for more useful information 
+
+
+
+RELATED INFORMATION
+#WSAD v5.1.2 IC: Specifying target servers for J2EE proj [http://publib.boulder.ibm.com/infocenter/wsad512/index.jsp?topic=/com.ibm.etools.j2eeapp.doc/topics/tjtargetserver.html]
+WAS v5.1.x IC: Changes to IBM Developer Kit for Java Te [http://publib.boulder.ibm.com/infocenter/wasinfo/v5r1//index.jsp?topic=/com.ibm.websphere.base.doc/info/aes/ae/rsec_devkit14x.html]
+RAD v6: J2EE version of an EAR must match the J2EE vers [http://www.ibm.com/support/docview.wss?uid=swg21205454]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Application Developer for WebSphere Software J2EE Development RedHat Enterprise Linux WS, SuSe Enterprise Server, Windows 6.0, 6.0.0.1, 6.0.1.0, 6.0.1.1 Software Development Rational Software Architect J2EE Development Windows, Linux 6.0, 6.0.0.1, 6.0.1.0, 6.0.1.1

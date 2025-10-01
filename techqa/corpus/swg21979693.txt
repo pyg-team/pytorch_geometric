@@ -1,0 +1,34 @@
+Title: IBM Performance impact in Threads/Timers initialization while using -Xcompressedrefs - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Java applications that heavily use reflection might experience gradual performance slowdowns during thread initialization when Java command line option "-Xcompressedrefs" is enabled. 
+
+CAUSE
+While using "-Xcompressedrefs", the JVM uses an internal memory sub-allocator that allocates memory below the 4GB virtual memory address. Certain types of JVM data must be allocated using the sub-allocator for performance and correctness. 
+
+When using "-Xcompressedrefs", memory is allocated using the sub-allocator to support the auto-generated reflection classes. After accommodating memory requirements for a lot of reflection, the sub-allocator takes longer to find free memory.
+
+
+RESOLVING THE PROBLEM
+There are two possible workarounds to overcome this issue: 
+
+ 1. There are two possible workarounds to overcome this issue:
+    Set -Dsun.reflect.inflationThreshold to a value which yields performance improvement for the application. For more information on usage, please refer to link #1 in reference section below. When using this option, the observed regression in thread initialization is resolved since less memory is allocated for reflection using the sub-allocator. 
+ 2. Enable -Xnocompressedrefs. When -Xnocompressedrefs is used, the JVM does not use the sub-allocator. From Java 626 SR5 and Java 7 SR4, JVM uses -Xcompressedrefs as its default option. See the details below.
+    (Do not use these workarounds unless you are experiencing poor performance)
+
+
+Please note,  * The -Xcompressedrefs option only applies to 64-bit versions of the JVM. 
+ * This problem might affect all the platforms when -Xcompressedrefs is used. 
+ * JVM option -Xcompressedrefs is enabled by default, except for z/OS®, from Java 626 SR5 and Java 7 SR4 when the value of the -Xmx option is less than or equal to 25 GB. On z/OS®, -Xcompressedrefs is enabled by default from Java 7.1 when the value of the -Xmx option is less than or equal to 25 GB. 
+ * From Java 8 service refresh 2 fix pack 10, -Xcompressedrefs is enabled by default on all platforms except z/OS®, and except when -Xgcpolicy:metronome is specified, when the value of the -Xmx option is less than or equal to 57 GB. 
+ * From Java 8 service refresh 3, compressed references are enabled by default on z/OS® when the value of the -Xmx option is less than or equal to 57 GB.
+
+RELATED INFORMATION
+ Command line option inflationThreshold [http://www.ibm.com/support/knowledgecenter/SSYKE2_7.0.0/com.ibm.java.lnx.70.doc/diag/appendixes/cmdline/Dsunreflectinflationthreshold.html?lang=en]
+Understanding how the JVM uses native memory on AIX [http://www.ibm.com/developerworks/library/j-nativememory-aix/]
+Reflection - A memory viewpoint [http://www.ibm.com/developerworks/community/blogs/738b7897-cd38-4f24-9f05-48dd69116837/entry/reflection_a_memory_viewpoint3?lang=en]
+Troubleshooting native OOMs due to reflection [http://www-01.ibm.com/support/docview.wss?uid=swg21566549]

@@ -1,0 +1,18 @@
+Title: IBM WBI Adapter for Lotus Domino uses Note ID (NID) instead of Universal Note ID (UNID) as the key to locate a Notes document - United States
+
+Text:
+WBI Adapter for Lotus Domino; Domino Adapter; Universal Note ID; UNID; NID; Note ID; NOTEID; NoteID TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The WBI Adapter for Lotus Domino uses Domino Note ID as the key to locate a Lotus Notes document in a Lotus Notes database. Apparently Note ID is not unique across a network of replicated Domino servers. The business process utilizing the adapter must consider that the adapter should only be used to interact with the primary database (not a replicate). 
+
+
+CAUSE
+In the WBI Adapter for Lotus Domino there is an Event Listener (EL) software component which uses the Lotus C API for Domino to provide the callback functions for event notifications. The EL reads a document header to get the Note ID and writes the Note ID to the Event Table (ET). The adapter agent reads Note ID from ET and retrieves the related document from the Notes database. 
+
+When the adapter agent creates a DominoDocument Business Object (BO) for a Notes document, the UNID of that document is also retrieved from the document. The UNID field in the DominoDocument BO is populated by the adapter agent. Since the current EL is not designed to locate a document in the replicas of a Notes database, a Note ID is sufficient for locating a document in a Notes database. 
+
+
+
+RESOLVING THE PROBLEM
+The business process utilizing the adpater must consider that because Note ID is used to locate a document in the database, the adapter should only be used with the primary database (not a replicate). Please note that the UNID value should be available in the UNID field in the DominoDocument BO that is returned. This may allow business processes to utilize UNID indirectly by also utilizing DatabaseName and/or ServerName which is also provided in the DominoDocument BO.

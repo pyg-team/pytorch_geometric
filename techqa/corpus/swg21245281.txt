@@ -1,0 +1,97 @@
+Title: IBM Consolidated information on use of EGLCMD/EGLSDK - United States
+
+Text:
+EGLSDK; EGLCMD; EGL; generation; batch; out of memory; EGL; SDK; EGL CMD; EGL SDK; EGL Software Development Kit ; 1245281 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Information about using the EGLCMD/EGLSDK command for IBM® Rational® Application Developer for WebSphere® Software are consolidated in this technote. 
+
+RESOLVING THE PROBLEM
+Ensure you have the latest fix packs. 
+
+ 
+For EGLSDK
+
+To generate COBOL for z/OS, the classpath needs to be set to point to the following runtime jar files: 
+
+ 1. RADInstallDir\bin\eglbatchgen.jar 
+ 2. RADInstallDir\egl_cobolgen\eclipse\plugins\com.ibm.etools.egl.
+    generators.cobol_version\runtime\eglgencobol.jar 
+ 3. WDzInstallDir\wdz\eclipse\plugins\com.ibm.etools.egl.
+    wsed_version\runtime\eglwsed.jar 
+ 4. RADInstallDir\rwd\eclipse\plugins\com.ibm.wtp.emf.workbench.
+    edit_version\emfworkbenchedit.jar 
+
+
+The classpath should be set to point to only these jar files. For example: 
+. 
+set classpath=D:\Programs\RAD6.0\bin\eglbatchgen.jar;D:\Pro 
+grams\RAD6.0\egl_cobolgen\eclipse\plugins\com.ibm.etools.eg 
+l.enerators.cobol_6.0.1\runtime\eglgencobol.jar;D:\Programs 
+\WDz6.0\wdz\eclipse\plugins\com.ibm.etools.egl.wsed_6.0.0\r 
+untime\eglwsed.jar;D:\Programs\RAD6.0\rwd\eclipse\plugins 
+\com.ibm.wtp.emf.workbench.edit_1.0.1\emfworkbenchedit.jar 
+
+To generate COBOL for iSeries, the classpath needs to be set to point to the following runtime jar files:  1. RADInstallDir\bin\eglbatchgen.jar 
+ 2. RADInstallDir\egl_cobolgen\eclipse\plugins\com.ibm.etools.egl.
+    generators.cobol_version\runtime\eglgencobol.jar 
+ 3. RADInstallDir\eclipse\jre\lib\xml.jar 
+ 4. WDSCInstallDir\radi_prod\eclipse\plugins\com.ibm.etools.egl.
+    wdsc_6.0.0.1\runtime\eglwdsc.jar. 
+ 5. RADInstallDir\rwd\eclipse\plugins\com.ibm.wtp.emf.workbench.
+    edit_version\emfworkbenchedit.jar
+
+
+The classpath should be set to point to only these jar files. For example: 
+. 
+set classpath=d:\Programs\RAD6.0\egl\eclipse\plugins\com.ib 
+m.etools.egl.batchgeneration_6.0.0.303\eglbatchgen.jar;d:\P 
+rograms\RAD6.0\radiprod\eclipse\plugins\com.ibm.etools.egl. 
+wdsc_6.0.0.1\runtime\eglwdsc.jar;d:\Programs\RAD6.0\egl_cob 
+olgen\eclipse\plugins\com.ibm.etools.egl.generators.cobol_6 
+.0.0.1\runtime\eglgencobol.jar;d:\Programs\RAD6.0\eclipse\ 
+jre\lib\xml.jar;D:\Programs 
+\WDz6.0\wdz\eclipse\plugins\com.ibm.etools.egl.wsed_6.0.0\r 
+untime\eglwsed.jar;D:\Programs\RAD6.0\rwd\eclipse\plugins 
+\com.ibm.wtp.emf.workbench.edit_1.0.1\emfworkbenchedit.jar 
+
+The Base version of Rational Application Developer cannot generate COBOL. The above reference about COBOL generation will need WSED or WDz. EGLSDK does not support the generation of pageHandlers. To create pageHandlers in batch mode, use EGLCMD. The Command file can be in any directory for EGLSDK. 
+
+For EGLCMD 
+ 1. Close all instances of the workbench UI before executing EGLCMD from a command prompt. 
+ 2. If you use the wizard to create the command file, do not move that command file to another directory. The command file must be in the workspace containing the parts EGL is using to generate code. 
+ 3. Use the -data option to specify the workspace for EGLCMD. Otherwise EGL will use the default workspace, which may not be the one you want. 
+ 4. When you generate a pageHandler with EGLCMD, be sure to use the build descriptor option genProject. This allows EGL to handle all the J2EE deployment information automatically. 
+ 5. If you use EGLCMD and the genDirectory build descriptor option for a project that contains no Web components, EGL will compile the programs outside the workbench. For this reason the Java compiler (javac.exe) must be in the system path and the EGL Java generation code (eglbatchgen.jar, in the bin directory of your installation directory) must be in the system classpath. 
+ 6. If you are generating for iSeries, you may also need to put xml.jar on your classpath (you will find it in <rad_install>\eclipse\jre\lib in you installation directory). Because having too many items in the classpath for EGLCMD can also cause problems, you should have only these four files in your classpath to generate for the iSeries: eglutil.jar, startup.jar, eglbatchgen.jar, and xml.jar. 
+ 7. If you do generate pageHandlers using EGLCMD, you must update the faces-config.xml manually with managed-bean and navigation-rule entries in order for the page handler to run correctly. 
+
+
+
+To work around an OutOfMemoryError when running either the EGL CMD or SDK, try increasing the JVM heap size to get by this error. It is not recommended that the maxiumum heap size be set to more than half of the RAM that is available to the system. The JVM maxiumum heap size is set as follows: java -mxYYYm <application> where YYY is the amount of memory you can allocate for the heap size. The -ms option can also be set to indicate the starting JVM heap size. 
+
+For EGL CMD, the following is an example assuming the system has 2GB of RAM: 
+. 
+java -ms512m -mx1024m EGLCMD 
+EGLListDetailForTUI/EGLCommandFile.xml -data D:\WorkSpace 
+
+For EGL SDK, the following is an example assuming the system has 2GB of RAM: 
+. 
+java -ms512m -mx1024m EGLSDK d:\EGLCommandFile.xml 
+
+If increasing the heap size is not enough, try generating fewer EGL parts per EGL command file. 
+
+
+
+
+RELATED INFORMATION
+#6011 Readme [http://www3.software.ibm.com/ibmdl/pub/software/rationalsdp/rad/6011/html/readme_6011.html#Known%20problems%20and%20limitations4.1]
+EGLSDK [http://publib.boulder.ibm.com/infocenter/radhelp/v6r0m1/index.jsp?topic=/com.ibm.etools.egl.doc/topics/reglgen0004.html]
+EGLCMD [http://publib.boulder.ibm.com/infocenter/radhelp/v6r0m1/index.jsp?topic=/com.ibm.etools.egl.doc/topics/reglgen0003.html]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect

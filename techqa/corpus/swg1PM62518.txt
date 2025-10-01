@@ -1,0 +1,166 @@
+Title: IBM PM62518: CICS TREATS TWO DIGIT YEAR '70' AS 1970 INSTEAD OF 2070. RACF TREATS IT AS 2070. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  RACF uses dates with a year of '71' as the century cutover date,
+   treating dates with years less than '71' as 20xx but years '71'
+   and higher as 19xx.
+   .
+   CICS is using the year '70' instead for this comparison. So,
+   userids with revoke date, resume date, group revoke or group
+   resume date with a year of '70' will be treated differently in
+   CICS than by RACF.
+   .
+   For example, a user id with a REVOKE DATE of 01/01/70 will be
+   considered by RACF to be revoked in the year 2070, so they still
+   should be able to logon, but CICS considers it to be 1970, so it
+   disallows logon.
+   .
+   The following messages may be seen:
+   .
+   DFHXS1203  The userid supplied in the verification request for
+   userid <userid> is revoked. This occurred in transaction
+   <tranid> when userid <userid> was signed on at netname
+   <netname>.
+   .
+   DFHSN1120 Signon at {netname |console | terminal }portname by
+   user <userid> has failed because the {userid | group access} has
+   been revoked.
+   .
+   Additional Symptoms/Keywords:
+   KIXREVRJL
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use a year other than '70'.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS Users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: MSGDFHCE3546 appears when using CESN to *
+   *                      signon to a terminal with a USERID      *
+   *                      which is already signed on at the       *
+   *                      terminal and has a REVOKE date of 2070. *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   RACF uses REVOKE dates with a 2-digit year. RACF interprets
+   dates as 20yy when yy is less than 71, and 19yy when yy is 71 or
+   higher. This means that year 70 is 2070. When a RACF USERID is
+   initially signed on to a terminal using the CESN signon
+   transaction, a RACROUTE VERIFY ENVIR=CREATE command is used to
+   signon the user. The policing of the REVOKE status of the USERID
+   for this signon is performed by RACF.
+   The same USERID signs on again at the same terminal using CESN.
+   This time, CICS invokes DFHXSSB INQUIRE_PASSWORD_DATA to
+   perform an optimized check of USERID and PASSWORD and to check
+   the REVOKE date of the USERID.
+   DFHXSSB treats a revoke year of 70 as 1970 instead of 2070 so
+   fails the signon request. This produces message DFHCE3546 at the
+   terminal.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is being closed FIN with concurrence from the
+   submitting customer.  This means that a fix to this APAR is
+   expected to be delivered from IBM in a release which is being
+   developed at the time that the APAR was closed.
+   The latest release of the product to exit development at the
+   time this APAR was closed was:
+     CICS Transaction Server for z/OS V4.2.
+   SPA50364  SPA 50364
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM62518
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-04-16
+   
+   
+ * CLOSED DATE
+   2012-04-27
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP

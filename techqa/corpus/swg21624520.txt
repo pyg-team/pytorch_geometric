@@ -1,0 +1,52 @@
+Title: IBM Unable to Recalculate Metric derived values using DB2 Metric Store: SQL1477N - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to Recalculate Metric derived values after restoring DB2 Metric Store Database Backup. 
+
+SYMPTOM
+DIS-ERR-3115 Task execution failed. 
+
+DIS-RUN-3364 Step 'Recalculate derived values' failed with an internal error. For further information, consult the log. 
+
+
+CAUSE
+Metric Store Database Backup has been created in online mode. 
+
+Tables created with the NOT LOGGED INITIALLY option specified are not replicated. Attempts to access such tables after an HADR standby database takes over as the primary database will result in an error. 
+
+Following Metric Store tables will always be created with the NOT LOGGED INITIALLY option:
+MMLOADER_KPI
+MMLOADER_POST
+MMLOADER_POST_UDC
+MMLOADER_SPECPERIODS
+
+These Tables will be created with the 'NOT LOGGED INITIALLY' attribute, because Metric Studio creates and populates work tables from master tables, and you are not concerned about the recoverability of these work tables because they can be easily recreated from the master tables. The advantage of using the NOT LOGGED INITIALLY parameter is that any changes made on the table (including insert, delete, update, or create index operations) in the same unit of work that creates the table will not be logged. This not only reduces the logging that is done, but may also increase the performance.
+
+
+ENVIRONMENT
+IBM Cognos Metric Studio 10.x 
+
+IBM DB2
+
+
+DIAGNOSING THE PROBLEM
+mmLoaderError.txt log 
+
+
+Error(24:0 ) CCL Failure: <UDA-SQL-0107 A general exception has occurred during the 
+operation "execute immediate". 
+[IBM][CLI Driver][DB2/AIX64] SQL1477N For table "R0963.MMLOADER_POST" an object "14" in table space "7" cannot be accessed. SQLSTATE=55019
+
+Following Tables are not accessible (SQLCODE = -1477)
+
+MMLOADER_KPI
+MMLOADER_POST
+MMLOADER_POST_UDC
+MMLOADER_SPECPERIODS
+
+
+RESOLVING THE PROBLEM
+To avoid this issue, always create Backups from you Metric Store Database when the Database is offline.

@@ -1,0 +1,62 @@
+Title: IBM How can I tell which community string my device is using? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Given an access ip address for a device, how can I tell what community string is being used by ITNM? 
+
+ANSWER
+You will need to query the ncmonitor database to determine which community string is being used, and, most likely, use the ncp_crypt program to decrypt that string. 
+
+Using ncp_oql to execute the query is the easiest: 
+
+[ root@testbox : /opt/IBM/tivoli/netcool/precision ] 
+
+# ncp_oql -service ncim -domain ITNMDOM -username ncim -password netcool -query "select * from ncmonitor.snmpv1Sec where ACCESSID in (select READACCESSID from ncmonitor.snmpTarget where DOMAIN='ITNMDOM' and NETADDR='192.168.113.68');" 
+
+ncp_oql ( IBM Tivoli Network Manager OQL Interface ) 
+
+Copyright (C) 1997 - 2010 By IBM Corporation. All Rights Reserved. See product license for details. 
+
+IBM Tivoli Network Manager Version 3.9 (Build 49) created by ncpbuild at 22:06:25 Wed Feb 15 GMT 2012 
+
+Connected to INFORMIX DB schema NCIM 
+
+Executing query: 
+
+select * from ncmonitor.snmpv1Sec where ACCESSID in (select READACCESSID from ncmonitor.snmpTarget where DOMAIN='ITNMDOM' and NETADDR='192.168.113.68'); 
+
+ 
+
+{ 
+
+ACCESSID=22; 
+
+COMMUNITY='@44:SMcxaoBlMTwbIZ9NnzfaaFyXhQhbVaLSwfHyXL9Lg18=@'; 
+
+ENCRYPTED=1; 
+
+} 
+
+1 rows(s) 
+
+ 
+
+Then, use the ncp_crypt command to decrypt the community string: 
+
+[ root@testbox : /opt/IBM/tivoli/netcool/precision ] 
+
+# ncp_crypt -decrypt -password @44:SMcxaoBlMTwbIZ9NnzfaaFyXhQhbVaLSwfHyXL9Lg18=@ 
+
+ 
+
+ncp_crypt ( IBM Tivoli Network Manager Password Encryption/Decryption Tool ) 
+
+Copyright (C) 1997 - 2010 By IBM Corporation. All Rights Reserved. See product license for details. 
+
+IBM Tivoli Network Manager Version 3.9 (Build 49) created by ncpbuild at 22:06:25 Wed Feb 15 GMT 2012 
+
+ 
+
+@44:SMcxaoBlMTwbIZ9NnzfaaFyXhQhbVaLSwfHyXL9Lg18=@ 'public'

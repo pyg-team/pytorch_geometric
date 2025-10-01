@@ -1,0 +1,22 @@
+Title: IBM WebSphere DataPower firmware release 7.0.0 now available - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ WebSphere DataPower SOA Appliances firmware version 7.0.0 is now available for download on the following appliances: 
+
+WebSphere DataPower B2B Appliance XB62
+WebSphere DataPower Integration Appliance XI52
+WebSphere DataPower Integration Appliance XI52 Virtual Edition
+WebSphere DataPower Service Gateway XG45
+WebSphere DataPower Service Gateway XG45 Virtual Edition 
+
+CONTENT
+Refer to the following documents for details about firmware version 7.0.0 now available: 
+
+ * WebSphere DataPower firmware V7.0.0 announcement [http://www-01.ibm.com/common/ssi/cgi-bin/ssialias?infotype=AN&subtype=CA&htmlfid=897/ENUS214-117&appname=USN] 
+
+Refer to the Release Notes [http://www-304.ibm.com/support/docview.wss?uid=swg27042274] for details on the Authorized Program Analysis Reports (APARs) included in this version. See also:  *  [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg24014405]Link to the Fix Central site [http://www.ibm.com/support/fixcentral/]to begin the download process. 
+ * New to Fix Central? If so, see Fix download method for WebSphere DataPower SOA Appliances. [http://www.ibm.com/support/docview.wss?uid=swg21376557] 
+ * IBM WebSphere DataPower Appliance Support Lifecycle [http://www.ibm.com/support/docview.wss?uid=swg21246298] for reference

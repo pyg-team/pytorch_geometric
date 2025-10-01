@@ -1,0 +1,27 @@
+Title: IBM Relationship between "Enable parallel processing" and "max_parallelism" setting on IBM SPSS Modeler Client - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ IBM SPSS Modeler has two parallel processing settings:
+
+1. "max_parallelism" on options.cfg
+2. "Enable parallel processing" on stream properties -> Options -> Optimization
+
+What is the relationship between these settings, and how does it affect IBM SPSS Modeler Client on multi-core cpu usage? 
+
+ANSWER
+If you unchecked the stream property (Tools > Stream Properties > Options > Optimization > "Enable parallel processing") it will override the global server setting max_parallelism (as long as it is enabled in server as it is by default). You cannot enable it with this client option if the server has it disabled. This then gives you the flexibility to disable parallel execution at the stream level (but retain it globally in server).
+
+This means, if you turn this stream property OFF, you will NOT benefit from using a multi-core CPU machine. This option overrides the max_parallelism setting if it is set to -1 or 0. 
+
+If max_parallelism is set to any value other than '-1' or '0', IBM SPSS Modeler will use this value even if the stream properties option is turned ON or OFF.
+
+Notes: 
+1. In case of IBM SPSS Modeler Desktop, the term of "Modeler Server" means the "modelerserver.exe" backend service.
+
+2. The "Enable parallel processing" setting exist under the "Optimization" tab which is only available when we use Modeler client with "Server Enablement License". 
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]

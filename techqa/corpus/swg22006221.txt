@@ -1,0 +1,90 @@
+Title: IBM Overview of the IBM WebSphere Application Server Migration Process - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides an overview of IBM WebSphere Application Server Migration strategies and explains the different tools available to complete the migration process. 
+
+RESOLVING THE PROBLEM
+ 
+
+TAB NAVIGATION
+ * Learn more- selected tab,
+ * Troubleshoot [http://www.ibm.com/support/docview.wss?uid=swg22006216]
+ * Collect data [http://www.ibm.com/support/docview.wss?uid=swg21141284]
+
+
+What is Migration? Migrating involves collecting the configuration information from a previous release of a WebSphere® Application Server and merging it into a configuration for a new release. 
+
+The goal of migrating your application servers to a newer version of WebSphere Application Server is for the migrated servers to behave as closely as possible to how they behaved in the previous release. 
+
+After you migrate the servers, you can further configure them to take advantage of the new version's features. 
+
+Applications that are installed in the old environment are redeployed to the new application server without any changes. To use new technologies that are available in the newer (migrated) version, you must update your applications. 
+
+WebSphere Application Server Version 9.0 provides migration tools which support migration strategies such as: 
+
+ 
+
+ *   * Local or remote:  * Migrating within the same host or machine, or migrating to new ones 
+      
+      
+   
+    *  Standard or clone (V9.0 Feature):  * Disable the old profile after migration, or keep the old profile functional 
+      
+      
+   
+   
+
+Regardless of the type of migration, you can use the command-line or GUI tools to migrate your product configuration to a newer version. 
+
+ 
+
+ 
+
+Additional Education/Information on Migration: 
+
+Migrating, coexisting, and interoperating 
+
+https://www.ibm.com/support/knowledgecenter/SSAW57_9.0.0/com.ibm.websphere.nd.multiplatform.doc/ae/welc6topmigrating.html [https://www.ibm.com/support/knowledgecenter/SSAW57_9.0.0/com.ibm.websphere.nd.multiplatform.doc/ae/welc6topmigrating.html] 
+
+ 
+
+WebSphere Application Server Migration Guide 
+
+https://www.ibm.com/developerworks/community/blogs/aimsupport/entry/websphere_application_server_migration_guide?lang=en [https://www.ibm.com/developerworks/community/blogs/aimsupport/entry/websphere_application_server_migration_guide?lang=en] 
+
+WebSphere Migration Knowledge Collection: Planning and Resources 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg27008724 [http://www-01.ibm.com/support/docview.wss?uid=swg27008724] 
+
+ 
+
+WebSphere Migration Knowledge Collection: Why Migrate? 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg27008728 [http://www-01.ibm.com/support/docview.wss?uid=swg27008728] 
+
+ 
+
+Webcast replay: Configuration Migration for WebSphere Application Server using Migration Tools 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg27042334 [http://www-01.ibm.com/support/docview.wss?uid=swg27042334] 
+
+ 
+
+Planning to Migrate and Need Assistance? 
+
+The Migration Assist activity is an extension of your current IBM Software Subscription and Support (S&S) / Passport Advantage (PPA) at no additional cost. 
+
+WebSphere Migration Assist Program - Information on participation 
+
+https://www.ibm.com/developerworks/community/blogs/aimsupport/entry/websphere_application_server_migration_assist_Program_Information_on_participation?lang=en [https://www.ibm.com/developerworks/community/blogs/aimsupport/entry/websphere_application_server_migration_assist_Program_Information_on_participation?lang=en] 
+
+ 
+
+Need to Migrate your Applications from a previous version of WebSphere Application Server or from competitive application servers? 
+
+Application Migration Toolkit 
+
+http://www.ibm.com/developerworks/websphere/downloads/migration_toolkit.html [http://www.ibm.com/developerworks/websphere/downloads/migration_toolkit.html]

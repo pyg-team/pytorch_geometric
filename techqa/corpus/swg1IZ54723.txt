@@ -1,0 +1,152 @@
+Title: IBM IZ54723: LOGICAL HOSTNAME SHOULD BE USED IN JNLP FILES FOR TEPS CLUSTERS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   ITM 6.2.1 IF3 clustered TEPS on UNIX/Linux
+   Problem Description:
+   Each configuration of the TEPS causes the JNLP files in the
+   <platform>/cw directory to be updated with the short physical
+   hostname, causing the clients to be unable to connect to the
+   TEPS. The logical cluster hostname is required and preferrably
+   the fully qualified hostname as TEPS clients are also present in
+   different DNS- domains.
+   Detailed Recreation Procedure:
+   Set up TEPS in a cluster on AIX as described here:
+   .
+   http://www-01.ibm.com/software/brandcatalog/portal/opal/details?
+   NavCode=1TW10TM4G [http://www-01.ibm.com/software/brandcatalog/portal/opal/details?NavCode=1TW10TM4G]
+   Reconfigure TEPS
+   Notice that the physical hostname is used in the jnlp files
+   causing TEP not to connect. This should be the logical cluster
+   name defined in lnxenv.
+   Related Files and Output:
+   Indicate log location, trace levels used, command output,
+   configuration files, coredumps, etc.
+   Approver:CM
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  High availability portal server cluster is made of multiple
+   underlying physical nodes that are seen outside as a one virtual
+   machine. For the client applications such as TEP started via
+   Java Web Start only virtual machine name is known, all physical
+   nodes are not accessible, since their DNS names are not
+   registered by any outside DNS servers. So far, URLs inside TEP
+   JNLP descriptors have included address of active physical node
+   instead of the virtual cluster name. In this way some resources
+   were not accessible, and loading TEP via Java Web Start has been
+   failing.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Now all URLs in JNLP are updated during portal server
+   configuration to include virtual host name, to allow Java Web
+   Start successfully download all needed resources. The virtual
+   cluster name must be specified during portal server
+   installation.
+   
+   
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+       | fix pack | 6.2.1-TIV-ITM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ54723
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-07-07
+   
+   
+ * CLOSED DATE
+   2010-01-14
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R621 PSY
+   UP

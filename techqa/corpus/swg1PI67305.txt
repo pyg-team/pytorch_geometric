@@ -1,0 +1,240 @@
+Title: IBM PI67305: EclipseLink assigns the same object instance to multiple embedded fields - United States
+
+Text:
+  FIXES ARE AVAILABLE
+16.0.0.3: WebSphere Application Server Liberty 16.0.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24042657]
+16.0.0.4: WebSphere Application Server Liberty 16.0.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24042990]
+9.0.0.3: WebSphere Application Server traditional V9.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24043338]
+9.0.0.4: WebSphere Application Server traditional V9.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24043693]
+9.0.0.5: WebSphere Application Server traditional V9.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24044067]
+9.0.0.6: WebSphere Application Server traditional V9.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24044242]
+9.0.0.7: WebSphere Application Server traditional V9.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24044620]
+17.0.0.1: WebSphere Application Server Liberty 17.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043339]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When assigning the same object instance to two fields of an
+   embeddable type of an entity, the eclipselink embedded in
+   websphere creates a broken sql update statement and crashes.
+   This causes business transactions to be rolled back.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty - Java Persistence API       *
+   *                  (JPA)                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: EclipseLink Embeddables creates a       *
+   *                      broken SQL update statement when        *
+   *                      assigning the same embeddable, java     *
+   *                      instance.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   public SomeEntity update() {
+   SomeEntity object =
+   (SomeEntity)this.entityManager.find(SomeEntity.class, "PK");
+   String value = String.valueOf(System.currentTimeMillis());
+   SomeEmbedded embedded = new SomeEmbedded(value);
+   object.setEmbedded1(embedded);
+   object.setEmbedded2(embedded);
+   return object;
+   }
+   Exception:
+   Duplicate column name "EMB2"; SQL statement:
+   UPDATE SOMEENTITY SET emb2 = ?, emb2 = ? WHERE (ID = ?) [42121-
+   191]
+   Fehlercode:42121
+   Aufruf: UPDATE SOMEENTITY SET emb2 = ?, emb2 = ? WHERE (ID = ?)
+   bind => [3 parameters bound]
+   Abfrage: UpdateObjectQuery(versioncolumn.SomeEntity@3ba40476)
+   at
+   org.eclipse.persistence.internal.jpa.EntityManagerSetupImpl$1.ha
+   ndleException(EntityManagerSetupImpl.java:767)
+   at
+   org.eclipse.persistence.transaction.AbstractSynchronizationListe
+   ner.handleException(AbstractSynchronizationListener.java:275)
+   at
+   org.eclipse.persistence.transaction.AbstractSynchronizationListe
+   ner.beforeCompletion(AbstractSynchronizationListener.java:170)
+   at
+   org.eclipse.persistence.transaction.JTASynchronizationListener.b
+   eforeCompletion(JTASynchronizationListener.java:68)
+   at
+   com.ibm.tx.jta.impl.RegisteredSyncs.coreDistributeBefore(Registe
+   redSyncs.java:291)
+   at
+   com.ibm.tx.jta.impl.RegisteredSyncs.distributeBefore(RegisteredS
+   yncs.java:192)
+   at
+   com.ibm.tx.jta.impl.TransactionImpl.prePrepare(TransactionImpl.j
+   ava:1663)
+   at
+   com.ibm.tx.jta.impl.TransactionImpl.stage1CommitProcessing(Trans
+   actionImpl.java:1057)
+   at
+   com.ibm.tx.jta.impl.TransactionImpl.processCommit(TransactionImp
+   l.java:1032)
+   at
+   com.ibm.tx.jta.impl.TransactionImpl.commit(TransactionImpl.java:
+   975)
+   at
+   com.ibm.tx.jta.impl.TranManagerImpl.commit(TranManagerImpl.java:
+   237)
+   at
+   com.ibm.tx.jta.impl.TranManagerSet.commit(TranManagerSet.java:19
+   1)
+   at com.ibm.ejs.csi.TranStrategy.commit(TranStrategy.java:866)
+   at
+   com.ibm.ejs.csi.TranStrategy.postInvoke(TranStrategy.java:188)
+   at
+   com.ibm.ejs.csi.TransactionControlImpl.postInvoke(TransactionCon
+   trolImpl.java:482)
+   at
+   com.ibm.ejs.container.EJSContainer.postInvoke(EJSContainer.java:
+   3989)
+   at
+   versioncolumn.EJSLocalNSLService_d04a18f1.update(EJSLocalNSLServ
+   ice_d04a18f1.java)
+   at versioncolumn.TestResource.update(TestResource.java:20)
+   at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+   at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:62)
+   at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:43)
+   at java.lang.reflect.Method.invoke(Method.java:498)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR changes the EclipseLink implementation to
+   correct the problem. See
+   https://bugs.eclipse.org/bugs/show_bug.cgi?id=499335. [https://bugs.eclipse.org/bugs/show_bug.cgi?id=499335.]
+   
+   The fix for this APAR is currently targeted for inclusion in
+   Service Level (Fix Pack) 9.0.0.3 of WebSphere
+   Application Server version 9.0.0 and in fix
+   pack 16.0.0.3 for WebSphere Application Server Liberty. Please
+   refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  public SomeEntity update() {
+       SomeEntity object =
+   (SomeEntity)this.entityManager.find(SomeEntity.class, "PK");
+       String value = String.valueOf(System.currentTimeMillis());
+       object.setEmbedded1(new SomeEmbedded(value));
+       object.setEmbedded2(new SomeEmbedded(value));
+       return object;
+     }
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI67305
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * REPORTED COMPONENT ID
+   5725L2900
+   
+   
+ * REPORTED RELEASE
+   CD0
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-09
+   
+   
+ * CLOSED DATE
+   2016-08-22
+   
+   
+ * LAST MODIFIED DATE
+   2016-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * FIXED COMPONENT ID
+   5725L2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RCD0 PSY
+   UP

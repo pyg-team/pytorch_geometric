@@ -1,0 +1,184 @@
+Title: IBM IV21418: UNIX OS AGENT HANGS WITH A HOURGLASS ON AIX 7.1 AND DOES NOT RETURN ANY DATA. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 2 (6.2.3-TIV-ITM-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24032429]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 4 (6.2.3-TIV-ITM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24034252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Due to a problem in "perfstat_netinterface" API of the AIX 7.1
+   system that doesn't return the network statistics, the Unix OS
+   Agent experiments a long wait to retrieve this data (40 minutes
+   for each network adapter) and this appears as a hang of the
+   agent.
+   
+   Killing the ifstat module solves the hang problem but remove
+   the network statistics.
+   
+   NOTE: The error received when the perfstat API was called:
+   root@njros1up1792[/]>./perfstat_sample
+   Found 2 interfaces
+   Error - perfstat_netinterface ret returned -1 records
+   rc = -1, errno = 109 (Function not implemented)
+   
+   
+   
+   EXPECTED RESULT:
+   
+   With this fix the Agent should not hang and each sample (30
+   seconds) should be able to interrogate the system for
+   the network statistics. It they are not available, the Agent
+   will not report this data. In short, the agent will not
+   experiment a long wait to retrieve the network stats data (40
+   mins for each network adapter).
+   
+   
+   
+   ENVIRONMENT:
+   
+   Monitoring Agent for Unix OS 6.23 FP01 on AIX 7.1
+   
+   
+   
+   DETAILED RECREATION PROCEDURE:
+   
+   The problem has been observed in AIX 7.1 with oslevel
+   7100-00-02-1041.
+   
+   
+   
+   RELATED FILES AND OUTPUT:
+   
+   The minimum trace level (on UX agent) to observe the problem is
+   ERROR (UNIT:ifstat-BSD ALL).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Kill the "ifstat" process once you start the UX agent. This will
+   not retrieve the network statistics but rest of the data will be
+   seen in TEPS.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  UNIX OS Agent hangs with in AIX 7.1.
+   
+   Due to a problem in AIX perfstat_netinterface API, it does not
+   return the network statistics. This causes the UNIX OS Agent to
+   experience long waits data (40 minutes for each network
+   adapter). This appears as an hang of the agent.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified to send the network statistics only when
+   they are available. This avoids long waits.
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+   
+      | fix pack | 6.2.3-TIV-ITM-FP0002 |
+   
+   Note: Search the IBM technical support web site for maintenance
+   package availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV21418
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040U
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-17
+   
+   
+ * CLOSED DATE
+   2012-06-25
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * FIXED COMPONENT ID
+   5724C040U
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP

@@ -1,0 +1,64 @@
+Title: IBM How to troubleshoot images not appearing in PDF/Excel in Report Studio - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to view images in reports in PDF/Excel output when using Report Studio/Workspace. 
+However images are visible in HTML format when reports are run actively. 
+
+SYMPTOM
+Unable to view images in reports in PDF/Excel output when using Report Studio/Workspace. 
+However images are visible in HTML format when reports are run actively.
+
+The PDF/Excel outputs will have a placeholder image. This will be in the form of an empty black box (PDF) or will be a missing pictures icon (Excel).
+
+
+CAUSE
+There are a few common causes for this issue: 
+
+ 1. The permissions of the folder which contains the image, have not been configured correctly 
+ 2. The image is not within the directory which is specified 
+ 3. The directory where the image is meant to be stored, does not exist in the specified location
+
+DIAGNOSING THE PROBLEM
+To find out the root cause of this problem, you will need to use tools that monitor and record all actions attempted against the Operating System Registry. 
+
+In THIS scenario the tool used was Process Monitor and the Web Server was IIS 7.5. 
+
+ 
+
+ 1.  Download Process Monitor tool (Make sure you run it from the same machine Cognos is installed on) 
+ 2.  Open up the report in Cognos Workspace 
+ 3.  Load up Process Monitor 
+ 4.  You will notice the current processes immediately being captured and displaying in the window. Press the Capture / Ctrl+E Icon (Magnifying Glass) to stop the capture of events. 
+ 5.  Press the Clear / Ctrl+X icon (Eraser) to remove all the recorded entries. 
+ 6.  Press the capture icon in process monitor 
+ 7.  Export the report to Excel 2007/PDF 
+ 8.  Save the file anywhere 
+ 9.  Press the Capture icon again in process monitor to stop the capturing of events. 
+ 10. Press the Find Icon / Ctrl+F and type "[Image Name]" to make sure the filter image event was captured. 
+ 11. You should be able to see the reason why the image could not be saved under the 'Result' column.
+
+
+RESOLVING THE PROBLEM
+If the image is found but cannot be accessed due to permission configuration issue: 
+
+ 
+
+ 1. Open up IIS 7.5 
+ 2. Click on the root folder of your Cognos installation (E.g. C1021GA) in the navigation pane on the left side 
+ 3. When the root folder is selected, double-click 'Authentication' 
+ 4. Ensure that anonymous access is enabled 
+ 5. Repeat steps 3 and 4 for the image folder and it's parent folder. 
+ 6. If the user is concerned about security, they may want to restrict the child-folders (E.g. cgi-bin) and change the authentication settings accordingly 
+ 7. Run the report in export as Excel 2007 and PDF
+
+
+If the image/ directory is not located: 
+
+Place the image/directory in the specified location  
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Business Intelligence Cognos Workspace Windows 10.2.1, 10.2

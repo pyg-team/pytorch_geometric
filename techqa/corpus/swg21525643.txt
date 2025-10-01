@@ -1,0 +1,55 @@
+Title: IBM How Authentication For SFTP Client Works (SCI30469) - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ How Authentication For SFTP Client Works (SCI30469) 
+
+ANSWER
+Currently CONNECT:Enterprise does not support CRL. I believe that there is already a "Enhancement Request" for this feature.
+
+During the hand-shake exchange with CONNECT:Enterprise and a remote. 
+We do support for strong mutual (bi-directional) authentication of 
+client and server during secure FTP transfers using X.509 certificates. 
+
+This feature has impacts upon multiple
+CONNECT:Enterprise products. The present CONNECT:Enterprise UNIX server 
+and Client for Windows products make use of X.509 certificates for the 
+authentication of a server to a client. As part of the setup of the 
+CONNECT:Enterprise UNIX secure FTP server, the administrator must obtain 
+an X.509 certificate from a 3rd-party certificate authority and install 
+this within the product. As part of a secure FTP session, the secure server 
+send this certificate to the client where it is compared to a list of trusted 
+root signing certificates. If the certificate has been signed by a trusted 
+source, the client permits the secure connection to be established. 
+
+This is only half of the problem however. In environments that demand 
+strong security, it is necessary for both the client and the server to
+authenticate the identity of the other party. This requires each party 
+to maintain both a certificate used to establish their identity and a 
+chain of trusted root certificates used to authenticate the identity of others. 
+This release of CONNECT:Enterprise will provide client authentication within
+the auto-connect client of the base product, Client for Windows, and the 
+new command-line client. This capability also requires changes within the 
+server to accept and validate the certificate received from the client.
+
+ 
+
+HISTORICAL NUMBER
+ PRI12968 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+CONNECT:Enterprise UNIX, Release 1.2.01 
+SCI30469
+
+
+Goal
+
+
+FAQ: How Authentication For SFTP Client Works

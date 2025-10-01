@@ -1,0 +1,101 @@
+Title: IBM Security Bulletin: Tivoli Endpoint Manager for Remote Control is affected by OpenSSL vulnerabilities.  (CVE-2014-0160, CVE-2014-0076) - United States
+
+Text:
+CVE-2013-0160; CVE-2013-0076; OpenSSL memory; sensitive information; IBM Endpoint Manager for Remote Control; OpenSSL vulnerability SECURITY BULLETIN
+
+SUMMARY
+ Security vulnerabilities have been discovered in OpenSSL. 
+
+VULNERABILITY DETAILS
+DESCRIPTION:
+CVEID: CVE-2014-0160 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0160]
+DESCRIPTION: OpenSSL could allow a remote attacker to obtain sensitive information, caused by an error in the TLS/DTLS heartbeat functionality. An attacker could exploit this vulnerability to expose 64k of private memory and retrieve secret keys. This vulnerability can be remotely exploited, authentication is not required and the exploit is not complex. An exploit can affect the confidentially, but not integrity or availability. 
+
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/92322 [https://exchange.xforce.ibmcloud.com/vulnerabilities/92322] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector:(AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+Warning: We strongly encourage you to take action as soon as possible as potential implications to your environment may be more serious than indicated by the CVSS score.
+
+
+CVEID: CVE-2014-0076 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0076]
+DESCRIPTION: OpenSSL could allow a local attacker to obtain sensitive information, caused by an implementation error in ECDSA (Elliptic Curve Digital Signature Algorithm). An attacker could exploit this vulnerability using the FLUSH+RELOAD cache side-channel attack to recover ECDSA nonces. This vulnerability can only be exploited locally, authentication is not required and the exploit is not complex. An exploit can only partially affects confidentially, but not integrity or availability. 
+
+CVSS Base Score: 2.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91990 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91990] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:L/Au:N/C:P/I:N/A:N)
+
+
+
+
+AFFECTED PRODUCTS AND VERSIONS
+Tivoli Endpoint Manager for Remote Control versions 8.2.1. 
+
+
+
+REMEDIATION/FIXES
+To specifically resolve this issue, upgrade your broker, cli, and target components. 
+
+ 
+
+Product VRMF APAR Remediation/First Fix Tivoli Endpoint Manager for Remote Control 8.2.1 IV58894 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV58894] Tivoli Endpoint Manager for Remote Control Interim Fix pack 8.2.1-TIV-TEMRC821-HotFix-IV58894. 
+
+To upgrade your Windows components download, 8.2.1-TIV-TEMRC821-WIN-HotFix-IV58894.zip [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/Tivoli+Endpoint+Manager&release=8.2.1&function=fixId&fixids=8.2.1-TIV-TEMRC821-WIN-HotFix-IV58894&source=fc]
+
+To upgrade your Linux components download, 8.2.1-TIV-TEMRC821-LINUX-HotFix-IV58894.tar [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/Tivoli+Endpoint+Manager&release=8.2.1&function=fixId&fixids=8.2.1-TIV-TEMRC821-LINUX-HotFix-IV58894&source=fc]
+
+For more information and general upgrade guidelines, download 8.2.1-TIV-TEMRC821-HotFix-IV58894-Readme.txt [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/Tivoli+Endpoint+Manager&release=8.2.1&function=fixId&fixids=8.2.1-TIV-TEMRC821-HotFix-IV58894-Readme.txt&source=fc]
+
+Hot Fix 8.2.1-TIV-TEMRC821-HotFix-IV58894 is expected to be released 14th April 2014.
+
+After applying the fix, additional instructions are needed for CVE-2014-0160 
+
+You only need to remove existing broker SSL certificates and reissue new certificates for the broker component. To revoke the old certificates, they need to be removed from the trust store and replaced with the new certificates. Use the following steps to change your certificate. 
+
+1) Revoke the existing broker certificates. To revoke the old certificates, they need to be removed from the trust store on the server. You will find instructions on how to do this in the following section of the documentation: 
+
+http://pic.dhe.ibm.com/infocenter/tivihelp/v26r1/topic/com.ibm.tem.doc_8.2/Remote_Control/RC_IC_Broker_Guide/rcbdelcert.html [http://pic.dhe.ibm.com/infocenter/tivihelp/v26r1/topic/com.ibm.tem.doc_8.2/Remote_Control/RC_IC_Broker_Guide/rcbdelcert.html] 
+
+2) Issue new broker certificates. You will find instructions on how to do this in the following section of the documentation: 
+
+http://pic.dhe.ibm.com/infocenter/tivihelp/v26r1/topic/com.ibm.tem.doc_8.2/Remote_Control/RC_IC_Broker_Guide/rcbmigratecert.html [http://pic.dhe.ibm.com/infocenter/tivihelp/v26r1/topic/com.ibm.tem.doc_8.2/Remote_Control/RC_IC_Broker_Guide/rcbmigratecert.html] 
+
+3) 
+If you have installed targets that are configured to use the broker, update the trust store on those targets by using the Target Configuration Wizard. Create a new configuration task and enter your new certificate in the Target Configuration Wizard, then run the task. You will find instructions on how to do this in the following section of the documentation: 
+
+Create the task 
+http://pic.dhe.ibm.com/infocenter/tivihelp/v26r1/topic/com.ibm.tem.doc_8.2/Remote_Control/RC_Users_Guide/rcusrtgtinstalltasks.html [http://pic.dhe.ibm.com/infocenter/tivihelp/v26r1/topic/com.ibm.tem.doc_8.2/Remote_Control/RC_Users_Guide/rcusrtgtinstalltasks.html] 
+
+Run the task 
+http://pic.dhe.ibm.com/infocenter/tivihelp/v26r1/topic/com.ibm.tem.doc_8.2/Remote_Control/RC_Users_Guide/rcusrruntgttasks.html [http://pic.dhe.ibm.com/infocenter/tivihelp/v26r1/topic/com.ibm.tem.doc_8.2/Remote_Control/RC_Users_Guide/rcusrruntgttasks.html] 
+WORKAROUNDS AND MITIGATIONS
+Workaround(s): 
+None.
+
+Mitigation(s): 
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+OpenSSL Project vulnerability website [http://www.openssl.org/news/vulnerabilities.html] 
+Heartbleed [http://heartbleed.com/] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 12th-May-2014: Amended Remediation section to include clearer instructions for updating the SSL certificate.
+7th-May-2014: Links to APARs amended
+14th-April-2014: Original version published
+
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

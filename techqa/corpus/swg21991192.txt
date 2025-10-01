@@ -1,0 +1,47 @@
+Title: IBM Content Collector stubs are not working after certificate update. - United States
+
+Text:
+icc; certificate; replace; keystore; truststore TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We are not able to access IBM Content Collector archived documents via shortcuts/short links/ stubs since the certificate is updated(yearly update). 
+
+SYMPTOM
+Accessing document stub fails with the following error in the browser.
+-----
+Error 404: The page that you requested is not available. The server might be temporarily unavailable.
+-----
+
+
+CAUSE
+Once the certificate is updated , this certificate has to replaced with updated certificate in IBM Content Collector server machine for truststore and keystore.
+
+ENVIRONMENT
+IBM Content Collector 4.0.1 with FileNet P8 5.2
+
+DIAGNOSING THE PROBLEM
+Enable the ICC Web Application trace to highest level and the corresponding trace file has the following exception.
+---------------------
+SEVERE Failed to establish a connection to P8. [com.ibm.ecm.rs.p8.RepositoryP8:connect(188)]
+com.filenet.api.exception.EngineRuntimeException: FNRCA0031E:API_UNABLE_TO_USE_CONNECTION: The URI for server communication cannot
+be determined from the connection object Message was: com.ibm.jsse2.util.j: PKIX path building failed:
+java.security.cert.CertPathBuilderException: PKIXCertPathBuilderImpl could not build a valid CertPath.; internal cause is: java.security.cert.CertPathValidatorException: The certificate issued by CN=VeriSign Class 3 Public Primary Certification Authority -G5, OU="(c) 2006 VeriSign, Inc. - For authorized use only", OU=VeriSign Trust Network, O="VeriSign, Inc.", C=US is not trusted; internal cause is: java.security.cert.CertPathValidatorException: Certificate chaining error
+----------------
+
+RESOLVING THE PROBLEM
+
+
+
+
+
+
+Follow the below technote to replace the ICC server trust store with updated Filenet P8 certificate.
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21979016 [http://www-01.ibm.com/support/docview.wss?uid=swg21979016] 
+
+
+Follow the below knowledge center link to replace the ICC server keystore with updated certificate.
+
+http://www.ibm.com/support/knowledgecenter/SSAE9L_4.0.0/com.ibm.content.collector.doc/security/t_afu_config_ewas_cert_pw.html [http://www.ibm.com/support/knowledgecenter/SSAE9L_4.0.0/com.ibm.content.collector.doc/security/t_afu_config_ewas_cert_pw.html] 
+
+After the above , restart ICC Web Application Service and retrieve the archived stubs.

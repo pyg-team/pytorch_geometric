@@ -1,0 +1,236 @@
+Title: IBM IT19930: UPGRADE TO 5.2.13 FAILS WITH THE MISLEADING ERROR "BPCIN0307E THE SECURITY CERTIFICATES FOR THE WEB SERVER HAVE EXPIRED." - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+IBM Spectrum Control V5.2.15 (August 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043749]
+IBM Spectrum Control V5.2.15.2 (November 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24044286]
+IBM Spectrum Control V5.2.16 (March 2018) [http://www-01.ibm.com/support/docview.wss?uid=swg24044454]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Misleading error "BPCIN0307E The security certificates for the
+   Web server have expired."
+   at preupgrade time.( IBM Spectrum Control )
+   
+   Inside the lax file there is something like:
+   
+   2017-03-06 15:08:05.078+0100 INFO ShellCommandExecuter
+   saveInfoAfterProcessExection stdout = WASX7023E: Error creating
+   "SOAP" connection to host "localhost"; exception information:
+   com.ibm.websphere.management.exception.ConnectorNotAvailableExce
+   ption: [SOAPException: faultCode=SOAP-ENV:Client; msg=Error
+   opening socket: java.io.IOException: Exception during
+   sslSocket.startHandshake: java.net.SocketException: Broken pipe;
+   targetException=java.lang.IllegalArgumentException: Error
+   opening socket: java.io.IOException: Exception during
+   sslSocket.startHandshake: java.net.SocketException: Broken pipe]
+   WASX7213I: This scripting client is not connected to a server
+   process; please refer to the log file
+   /opt/IBM/TPC/ewas/profiles/WebServerProfile/logs/wsadmin.traceou
+   t for additional information.
+   WASX8011W: AdminTask object is not available.
+   WASX7015E: Exception running command:
+   "AdminTask.listServerPorts('webServer')"; exception information:
+    com.ibm.bsf.BSFException: exception from Jython:
+   Traceback (innermost last):
+     File "<input>", line 1, in ?
+   NameError: AdminTask
+   
+   2017-03-06 15:08:05.078+0100 INFO ShellCommandExecuter
+   saveInfoAfterProcessExection stderr =
+   2017-03-06 15:08:05.079+0100 INFO  Exit ShellCommandExecuter
+   saveInfoAfterProcessExection exitCode = 103
+   2017-03-06 15:08:05.079+0100 INFO  Exit ShellCommandExecuter
+   execute exitCode = 103
+   2017-03-06 15:08:05.084+0100 INFO TPCUtility exportCurrentPorts
+   exit code of executing command
+   AdminTask.listServerPorts('webServer') was not the expected zero
+   2017-03-06 15:08:05.085+0100 INFO  Entry TPCUtility
+   areInvalidWASSecurityCertificates
+   2017-03-06 15:08:05.085+0100 INFO TPCUtility
+   areInvalidWASSecurityCertificates outAndErrStreamContent
+   contains = Exception during sslSocket.startHandshake
+   
+   <SC_installation_dir>/ewas/profiles/WebServerProfile/logs/webSer
+   ver/SystemOut.log contains somethine like this,
+   the most important part related to the root cause being
+   "Extended key usage does not permit use for TLS client
+   authentication":
+   
+   "/opt/IBM/TPC/ewas/profiles/WebServerProfile/config/cells/WebSer
+   verCell/nodes/WebServerNode/trust.p12" located in SSL
+   configuration alias "NodeDefaultSSLSettings" loaded from SSL
+   configuration file "security.xml".  The extended error message
+   from the SSL handshake exception is: "Extended key usage does
+   not permit use for TLS client authentication".
+   [3/6/17 15:07:53:806 CET] 0000001e SystemOut     O
+   [3/6/17 15:07:53:806 CET] 0000001e SystemOut     O
+   [3/6/17 15:07:53:806 CET] 0000001e SystemOut     O CWPKI0429I:
+   The signer might need to be added to the local trust store. You
+   can use the Retrieve from port option in the administrative
+   console to retrieve the certificate and resolve the problem. If
+   you determine that the request is trusted, complete the
+   following steps: 1. Log into the administrative console.  2.
+   Expand Security and click SSL certificate and key management.
+   Under Configuration settings, click Manage endpoint security
+   configurations. 3. Select the appropriate outbound configuration
+   to get to the (cell):WebServerCell:(node):WebServerNode
+   management scope. 4. Under Related Items, click Key stores and
+   certificates and  click the NodeDefaultTrustStore key store. 5.
+   Under Additional Properties, click Signer certificates and
+   Retrieve From Port.  6. In the Host field, enter <target host
+   name>  in the host name field, enter <target host port> in the
+   Port field, and unknown_cert in the Alias field.  7. Click
+   Retrieve Signer Information.  8. Verify that the certificate
+   information is for a certificate that you can trust. 9. Click
+   Apply and Save.    If you do not see an actual host and port
+   field specified in step 6, your client has not specified the
+   host and port.
+   [3/6/17 15:07:53:806 CET] 0000001e SystemOut     O
+   [3/6/17 15:07:54:081 CET] 0000001e SSLHandshakeE E   SSLC0008E:
+   Unable to initialize SSL connection.  Unauthorized access was
+   denied or security settings have expired.  Exception is
+   javax.net.ssl.SSLException: Unrecognized SSL message, plaintext
+   connection?
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * IBM Spectrum Control 5.2.x users who encounter error         *
+   * BPCIN0307E while upgrading.                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Spectrum Control may throw a misleading error "BPCIN0307E    *
+   * The security certificates for the Web server have expired."  *
+   * at preupgrade time.                                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fix maintenance when available                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is targeted for the following maintenance
+   package:
+   
+   | refresh pack | 5.2-TIV-TPC-RP0015 - target August 2017
+   
+   Fixed in IBM Spectrum Control 5.2.15
+   
+   http://www.ibm.com/support/docview.wss?&uid=swg21320822 [http://www.ibm.com/support/docview.wss?&uid=swg21320822]
+   
+   The target dates for future refresh packs do not represent a
+   formal commitment by IBM. The dates are subject to change
+   without notice.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT19930
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPCA0
+   
+   
+ * REPORTED RELEASE
+   52B
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-29
+   
+   
+ * CLOSED DATE
+   2017-07-18
+   
+   
+ * LAST MODIFIED DATE
+   2017-07-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5608TPCA0
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R52B PSY
+   UP
+   
+   
+ * R52C PSY
+   UP
+   
+   
+ * R52D PSY
+   UP
+   
+   
+ * R52E PSY
+   UP

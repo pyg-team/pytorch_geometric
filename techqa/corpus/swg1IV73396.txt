@@ -1,0 +1,180 @@
+Title: IBM IV73396: DEPRECATION OF SSLV3 CIPHERSPECS IN WEBSPHERE MQ V7 QUEUE MANAGERS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR covers changes to the WebSphere MQ Queue Manager to
+   disallow the configuration of SSLv3 CipherSpecs on new Queue
+   Managers created after the application of this change.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users wishing to use SSL/TLS to secure communication over MQ
+   channels.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Once this change is applied, any queue managers created will
+   disallow the use of the following CipherSpecs on channel
+   definitions associated with the queue manager:
+   
+     AES_SHA_US
+     RC4_SHA_US
+     RC4_MD5_US
+     TRIPLE_DES_SHA_US
+     DES_SHA_EXPORT1024
+     RC4_56_SHA_EXPORT1024
+     RC4_MD5_EXPORT
+     RC2_MD5_EXPORT
+     DES_SHA_EXPORT
+     NULL_SHA
+     NULL_MD5
+     FIPS_WITH_DES_CBC_SHA
+     FIPS_WITH_3DES_EDE_CBC_SHA
+   
+   Attempting to use or configure one of these CipherSpecs will
+   result in one or more of the following messages in the queue
+   manager error log: AMQ8242, AMQ9616, AMQ9635.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  To override this restriction, set the environment variable
+   "AMQ_SSL_V3_ENABLE" to the value "TRUE" in the environment used
+   to start the queue manager
+   
+   Alternatively, add the following entry to the SSL stanza of the
+   queue manager's qm.ini file:
+       AllowSSLV3=y
+   
+   
+   Once this change is applied, queue managers using GSKit 8 will
+   have the GSK_STRICTCHECK_CBCPADBYTES functionality enabled by
+   default. To override this, set
+   GSK_STRICTCHECK_CBCPADBYTES=GSK_FALSE in the environment used to
+   start the queue manager.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.0       7.0.1.13
+   v7.1       7.1.0.7
+   v7.5       7.5.0.5
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV73396
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7224
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-19
+   
+   
+ * CLOSED DATE
+   2015-05-20
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7224
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

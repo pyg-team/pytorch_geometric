@@ -1,0 +1,252 @@
+Title: IBM JR53756: SYMBOLIC GROUP NAME #AUTHENTICATED-USERS NOT FOUND - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8560.cf1.delta.repository.2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.2&source=SAR]
+bpm.8560.cf1.delta.repository.1 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.1&source=SAR]
+8.5.6.0-WS-BPM-IFJR53756 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.6.0-WS-BPM-IFJR53756&source=SAR]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you follow the instructions in the "Reconfiguring the user
+   registry" section of the "Administering the technical user for
+   the IBM BPM document store" topic
+   (http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.6/com.ibm
+   .wbpm.admin.doc/topics/tbpmdocauth.html),  the following wsadmin
+   command fails
+    AdminTask.maintainDocumentStoreAuthorization('&#65422;-deName
+   YOUR_DE_NAME -add    #AUTHENTICATED-USERS&#65434;')
+   and you might see the following error:
+   
+   WASX7015E: Exception running command:
+   "AdminTask.maintainDocumentStoreAuthorization('&#65422;-deName
+   YOUR_DE_NAME
+    -add  #AUTHENTICATED-USERS&#65434;')";
+   exception information:
+   com.ibm.bpm.embeddedecm.exception.UserOrGroupNotFoundException:
+   com.ibm.bpm.embeddedecm.exception.UserOrGroupNotFoundException:
+   CWTDS0030E: The user or group '#AUTHENTICATED-USERS' does not
+     exist.
+   Explanation: The user or group for the specified name could not
+     be found.
+   Action: Check your input parameters. Then, run the command
+     again.
+   
+   In the wsadmin.traceout file, you find an error message that is
+   similar to the following message:
+   &#65422;6/17/15 15:37:10:978 CEST&#65434; 00000001 AbstractShell E
+   WASX7120E: Diagnostic information from exception with text
+   "com.ibm.bpm.embeddedecm.exception.UserOrGroupNotFoundException:
+   com.ibm.bpm.embeddedecm.exception.UserOrGroupNotFoundException:
+   CWTDS0030E: The user or group '#AUTHENTICATED-USERS' does not
+   exist.
+   Explanation: The user or group for the specified name could not
+     be found.
+   Action: Check your input parameters. Then, run the command
+     again. "
+   
+   follows:
+    com.ibm.bpm.embeddedecm.exception.UserOrGroupNotFoundException:
+   CWTDS0030E: The user or group '#AUTHENTICATED-USERS' does not
+     exist.
+   Explanation: The user or group for the specified name could not
+     be found.
+   Action: Check your input parameters. Then, run the command
+     again.
+    at com.ibm.bpm.embeddedecm.mbean.
+     InternalBPMDocumentStoreMBeanImpl.getGranteeName
+     (InternalBPMDocumentStoreMBeanImpl.java:85)
+    at com.ibm.bpm.embeddedecm.mbean.
+     InternalBPMDocumentStoreMBeanImpl.
+     grantAccessToDomainForPrincipal
+     (InternalBPMDocumentStoreMBeanImpl.java:391)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at sun.reflect.NativeMethodAccessorImpl.invoke
+     (NativeMethodAccessorImpl.java:95)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke
+     (DelegatingMethodAccessorImpl.java:56)
+   ...
+   
+   
+   In the SystemOut.log file of the application target, you see a
+   warning that is similar to the following warning:
+   
+   &#65422;6/16/15 16:47:39:761 CEST&#65434; 00000123 FfdcProvider  W
+   com.ibm.ws.ffdc.impl.FfdcProvider logIncident FFDC1003I: FFDC
+   Incident emitted on
+   /opt/WebSphere/AppServerBPM/profiles/Node1Profile/logs/ffdc/AppC
+   lusterMember1_8e16223a_15.06.16_16.47.39.7149171143951023191615.
+   txt com.ibm.ws.management.AdminServiceImpl.invoke 679
+   
+   In the corresponding FFDC you see an exception that is similar
+   to the following exception:
+   &#65422;6/16/15 16:47:39:715 CEST&#65434;     FFDC
+   Exception:javax.management.MBeanException
+   SourceId:com.ibm.ws.management.AdminServiceImpl.invoke
+   ProbeId:679
+   Reporter:com.ibm.ws.management.AdminServiceImpl$1&#65525;6e7409f7
+   javax.management.MBeanException: Exception thrown in
+   RequiredModelMBean while trying to invoke operation
+   grantAccessToDomainForPrincipal
+    at javax.management.modelmbean.RequiredModelMBean.
+     invokeMethod(RequiredModelMBean.java:1304)
+   ...
+   Caused by:
+   com.ibm.bpm.embeddedecm.exception.UserOrGroupNotFoundException:
+   CWTDS0030E: The user or group '#AUTHENTICATED-USERS' does not
+     exist.
+   Explanation: The user or group for the specified name could not
+     be found.
+   Action: Check your input parameters. Then, run the command
+     again.
+    at com.ibm.bpm.embeddedecm.mbean.
+     InternalBPMDocumentStoreMBeanImpl.getGranteeName
+     (InternalBPMDocumentStoreMBeanImpl.java:85)
+   ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Instead of '#AUTHENTICATED-USERS' you can use your own group
+   name (which must exist have the required authorization).
+   For more information, see
+    Administering the technical user for the IBM BPM document
+   store
+   (http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.6/com.ibm
+   .wbpm.admin.doc/topics/tbpmdocauth.html).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  #AUTHENTICATED-USERS is a built-in symbolic group name. The
+   current implementation does not consider all aspects for the
+   symbolic name and might handle the name like a group name.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is/will be available for IBM BPM V8.5.6.0 that ensures
+   the symbolic group name  #AUTHENTICATED-USERS is handled
+   correctly.  For more information about the expected behavior,
+   see ?#AUTHENTICATED-USERS?
+   (http://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm
+   .p8.security.doc/p8psu039.htm?lang=en).
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR53756:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR53756, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR53756
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-02
+   
+   
+ * CLOSED DATE
+   2015-08-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R856 PSY
+   UP

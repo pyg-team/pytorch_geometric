@@ -1,0 +1,56 @@
+Title: IBM PowerHA:  PowerHA GUI Recommendation to Help Prevent Slowness or Hangs - United States
+
+Text:
+PowerHA; GUI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document explains how to add a setting to help alleviate slowness or hangs with the PowerHA GUI. 
+
+RESOLVING THE PROBLEM
+This document explains how to add a setting to help alleviate slowness or hangs with the PowerHA GUI. 
+
+In some cases, users may notice a lag when working inside the PowerHA GUI. Another symptom could be that PowerHA GUI appears to be hanging. The first thing to do in these situations would be to ensure that the latest and greatest PowerHA PTFs are applied, as well as cumulative, DB/HIPER PTF Groups, and the latest Client Access Service pack. 
+
+If data has already been captured by Support, view the contents of a file called lwistderr.txt and the error of interest is "StackOverFlow" exception with com.ibm.as400.data.ProgramCallDocument.loadSerializedPcmlDocument 
+
+This string can produce a very large callstack and appear to slow things down or hang the GUI. If this is seen, you should create the entry below. If this is not seen, you should look beneath the Important Note below for further data capture options.
+
+If all of the above is fulfilled, the next thing to look for would be an entry in the IFS:
+
+1. WRKLNK '/qibm/userdata/os/osgi/LWISysInst/admin2/lwi/conf/overrides/i5.javaopt'
+2. Select Option 2 to edit.
+3. Add a new line containing '-Xss512k '
+
+Example
+
+************Beginning of data**************
+-Dosgi.clean=true 
+-Xms64m 
+-Djava.awt.headless=true
+-Xverify:none 
+-Djava.version=1.5
+-Djava.library.path=/QSYS.LIB:/QSYS.LIB/QHTTPSVR.LIB
+-Xss512k 
+************End of Data********************
+
+Once the above entry has been added to the file, the Admin2 job must be recycled. This should have little to no impact to users on the system. It would be recommended that any browsers open to the GUI should also be closed.
+
+To recycle the Admin2 job on the IBM i, you should issue the following commands:
+
+QSYS/ENDTCPSVR SERVER(*IAS) INSTANCE(ADMIN2)
+
+QSYS/STRTCPSVR SERVER(*IAS) INSTANCE(ADMIN2)
+
+
+
+Important Note: This change should be performed on all nodes in the PowerHA, clustered environment. 
+If the above still does not resolve the problem, further actions to collect data regarding the GUI environment are needed. You should refer to IBM Rochester Support Center Knowledgebase document New, MustGather: How To Obtain and Install QMGTOOLS : Database 'DCF Technotes (IBM i)', View 'Products', Document 'MustGather: How To Obtain and Install QMGTOOLS' [http://www-01.ibm.com/support/icons/doclink.gif] [http://www-01.ibm.com/support/docview.wss?uid=nas8N1011297]. Once the library has been added to a system, and while the slowness or hang condition is occurring, you should collect the GUI data by doing the following: 
+
+1. Issue the GO MG command. 
+2. Select Option 1. 
+3. Select Option 8 - Collect GUI data. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 7.3 Operating System IBM i 7.2 
+HISTORICAL NUMBER
+ 664986862

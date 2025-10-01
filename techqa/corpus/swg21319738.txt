@@ -1,0 +1,196 @@
+Title: IBM MustGather: Performing a general data collection for WebSphere Front Office V3.0 - United States
+
+Text:
+MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During problem determination it is important to collect the necessary logs, resource, and configuration files in order to troubleshoot the problem. This document walks through the process of performing a manual and automated data collection. 
+
+ENVIRONMENT
+Linux/UNIX
+
+DIAGNOSING THE PROBLEM
+General data collection in a UNIX environment 
+
+This example explores a general data collection for a WFO v3.0 component. In particular, the IT Object Distributor will be used for example purposes, however, the general collection steps are the same for any UNIX based component.
+
+NOTE: The archive file format is nnnnn.bbb.ccc.itod.tar.gz. The formatting nnnnn.bbb.ccc would be replaced with your PMR number where nnnnn is the 5 digit number, bbb is the 3 digit branch, and ccc is the 3 digit country code. This formatting is extremely important and must be followed for the correct proceesing to occur when the archive is transferred to IBM. 
+
+Manually gathering log and configuration files
+Each component has the same hierarchy of log and configuration files. Taking the IT Object Distributor (ITOD) as an example, the log files are created in the same directory as the executable and the configuration files are located in the config directory directly under the component executable. 
+
+ITOD logs and configuration files 
+
+[/support/docview.wss?uid=swg21319738&aid=1] [/support/docview.wss?uid=swg21319738&aid=1]
+
+The goal is to archive the log files (including the stderr.out) and everything in the config directory. In addition, the archive should contain host, network, disk space, and other resource information that is helpful in resolving the problem.
+
+The WebSphere Front Office v3 data collector for the IBM Support Assistant v4 automates this process and will be described in the following section. However, the manual process is helpful in understanding what is being collected and what it will be used for. 
+
+Generating general system information
+The first activity is to collect the general resource information. This is accomplished through the following commands to collect information:
+
+UNIX commands 
+
+ * host information 
+ * uname –a > host.txt 
+ * network interface information 
+ * ifconfig > inet.txt 
+ * process information 
+ * ps –ef > proc.txt 
+ * network statistics 
+ * netstat –an > netstat.txt 
+ * disk status 
+ * df –all –h > disk.txt 
+ * free memory 
+ * free > free.txt
+
+
+Collecting the information 
+Archive the general system information, log files, and configuration files; 
+ * Archive the information 
+ * tar cfv nnnnn.bbb.ccc.itod.tar *.log stderr.out *.txt config/* 
+ * Compress the tar file 
+ * gzip nnnnn.bbb.ccc.itod.tar
+
+
+Transfer the information to the IBM FTP host, ECUREP. The transfer instructions are located at the URL http://www.ibm.com/de/support/ecurep/other.html [http://www-05.ibm.com/de/support/ecurep/other.html] 
+Automating the general data collection
+The general data collection process can be automated using the WebSphere Front Office v3 data collector for the IBM Support Assistant v4 ISA v4). Instructions for installing the IBM Support Assistant are available at the ISA v4 web site http://www.ibm.com/software/support/isa/ [http://www.ibm.com/software/support/isa/] 
+
+Creating the portable collector
+After installing the WebSphere Front Office for Financial Markets v3.0 plug-in, a portable collector can be generated through the following steps;
+
+1. Start the IBM Support Assistant and click the Launch Activity button
+
+[/support/docview.wss?uid=swg21319738&aid=2] [/support/docview.wss?uid=swg21319738&aid=2]
+
+2. Select the option Analyze Problem option of the drop down menu
+
+[/support/docview.wss?uid=swg21319738&amp;aid=3]
+
+3. Select the button Generate Portable Collector button to start the process
+
+[/support/docview.wss?uid=swg21319738&aid=4] [/support/docview.wss?uid=swg21319738&aid=4]
+
+
+4. From the Select a product from My Computer: menu choose WebSphere Front Office for Financial Markets v3.0
+5. Enter a local output directory, such as C:\Temp
+6. Press OK
+
+[/support/docview.wss?uid=swg21319738&amp;aid=5]
+
+7. After the portable collector is generated, select OK from the pop-up window
+
+[/support/docview.wss?uid=swg21319738&amp;aid=6]
+
+Use FTP to transfer the portable collector to the host machine that requires collection 
+
+
+ * Unzip the portable collector into a temporary directory after uploading 
+ * unzip Collector_<date string>.zip
+
+ * On UNIX operating systems, change the permissions for all files that have been extracted and set the JAVA_HOME environment variable 
+ * chmod –R 755 * 
+ * export JAVA_HOME=/opt/wfo/v3/client_connection/java32/jre
+
+Running the portable collector 
+
+1. Start the collector 
+
+[root@fh4b collector]# ./startcollector.sh
+AUTOPD_HOME = .
+JAVA_HOME = /opt/wfo/v3/client_connection/java32/jre 
+
+2. Enter the archive file name 
+
+Enter the Output Filename/Path (must be a local path, and have a .zip file extension):
+(example: <pmrNumber>.<branchNumber>.<countryCode>.<desc>.zip):
+ANSWER: nnnnn.bbb.ccc.itod.zip
+Enter yes to create the collection zip file at /tmp/collector/nnnnn.bbb.ccc.itod.zip
+ANSWER: yes 
+
+3. Select the collector to run 
+
+Enter the number or title of the IBM Support Assistant Lite collection option you want or enter RECOVER to recover from a previous IBM Support Assistant Lite tool collection or enter QUIT to end the tool
+1: General Collector
+1 
+
+4. Enter the component root path 
+
+**************************************************
+* Input_Required
+* Enter the root path to the WFOFM product<full path to WFOFM v3>:
+/opt/wfo/v3/client_connection/itod
+**************************************************
+OPTIONS FOR COMPLETING THE INPUT DIALOG 
+1: OK<Continue the collection using the values you set during the INPUT DIALOG>
+2: Cancel<Stop the collection>
+1 
+
+5. Enter feedback 
+
+Do you want to provide IBM with feedback concerning your experiences doing data collection using the IBM Support Assistant tool?
+1:Yes
+2:No
+2
+**************************************************
+* Question Regarding How the Script Should Proceed
+* Would you like the tool to FTP the logs (unencrypted) 
+* automatically?
+* Select one:: 
+
+6. Transfer the archive to IBM 
+
+* 1: FTP the Logs to IBM Support
+* 2: FTP the Logs to a Different Location
+* 3: Do Not FTP the Logs
+1
+**************************************************
+OPTIONS FOR COMPLETING THE INPUT DIALOG 
+1: OK<Continue the collection using the values you set during the INPUT DIALOG>
+2: Cancel<Stop the collection>
+2
+
+Are you sure you want to end the entire collection?
+1: Yes
+2: No
+2
+
+OPTIONS FOR COMPLETING THE INPUT DIALOG 
+1: OK<Continue the collection using the values you set during the INPUT DIALOG>
+2: Cancel<Stop the collection>
+1
+
+**************************************************
+* Input Information for Anonymous FTP
+* Password (enter your email address as password, for example, your_name@your_company.com):
+* myemail@somewhere.com
+
+#####
+* Operating System or Brand:
+* 1: aix
+* 2: linux
+* 3: os400
+* 4: unix
+* 5: windows
+* 6: mvs
+2 
+
+7. End the collection 
+
+**************************************************
+OPTIONS FOR COMPLETING THE INPUT DIALOG 
+1: OK<Continue the collection using the values you set during the INPUT DIALOG>
+2: Skip<Continue the collection without using the values you set during the INPUT DIALOG>
+3: Cancel<Stop the collection>
+1
+
+The collection has completed successfully.
+The collection results (which may not exist in all cases) are located in /tmp/collector/nnnnn.bbb.ccc.itod.zip
+
+This completes the general data collection.
+
+
+RESOLVING THE PROBLEM
+If the IBM support team for WebSphere Front Office V3.0 is contacted they will ask for the information described in this MustGather to be collected. Once a resolution has been determined, the necessary changes will be made to the product.

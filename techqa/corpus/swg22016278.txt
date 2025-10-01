@@ -1,0 +1,149 @@
+Title: IBM Security Bulletin:  Multiple vulnerabilities in IBM Java Runtime affect IBM MQ - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There are multiple vulnerabilities in IBM® Runtime Environment Java™ versions 6, 7 and 8 used by IBM MQ. These issues were disclosed as part of the IBM Java SDK updates in January 2018. 
+
+VULNERABILITY DETAILS
+If you run your own Java code using the IBM Java Runtime delivered with this product, you should evaluate your code to determine whether the complete list of vulnerabilities are applicable to your code. For a complete list of vulnerabilities please refer to the link for “IBM Java SDK Security Bulletin" located in the “References” section for more information.
+
+CVEID: CVE-2018-2579 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2579]
+DESCRIPTION: An unspecified vulnerability related to the Java SE Libraries component could allow an unauthenticated attacker to obtain sensitive information resulting in a low confidentiality impact using unknown attack vectors.
+CVSS Base Score: 3.7
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137833 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137833] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N)
+
+CVEID: CVE-2018-2663 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2663]
+DESCRIPTION: An unspecified vulnerability related to the Java SE Libraries component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137917 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137917] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L)
+
+CVEID: CVE-2018-2677 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2677]
+DESCRIPTION: An unspecified vulnerability related to the Java SE AWT component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137932 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137932] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L)
+
+CVEID: CVE-2018-2678 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2678]
+DESCRIPTION: An unspecified vulnerability related to the Java SE JNDI component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137933 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137933] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2018-2602 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2602]
+DESCRIPTION: An unspecified vulnerability related to the Java SE I18n component could allow an unauthenticated attacker to cause low confidentiality impact, low integrity impact, and low availability impact.
+CVSS Base Score: 4.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137854 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137854] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:H/PR:N/UI:R/S:U/C:L/I:L/A:L) 
+
+CVEID: CVE-2018-2603 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2603]
+DESCRIPTION: An unspecified vulnerability related to the Java SE Libraries component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137855 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137855] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+
+CVEID: CVE-2018-2657 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2657]
+DESCRIPTION: An unspecified vulnerability related to the Java SE, Serialization component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137910 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137910] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2018-2618 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2618]
+DESCRIPTION: An unspecified vulnerability related to the Java SE JCE component could allow an unauthenticated attacker to obtain sensitive information resulting in a high confidentiality impact using unknown attack vectors.
+CVSS Base Score: 5.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137870 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137870] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N) 
+
+CVEID: CVE-2018-2637 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2637]
+DESCRIPTION: An unspecified vulnerability related to the Java SE JMX component could allow an unauthenticated attacker to cause high confidentiality impact, high integrity impact, and no availability impact.
+CVSS Base Score: 7.4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137889 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137889] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N) 
+
+CVEID: CVE-2018-2633 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2633]
+DESCRIPTION: An unspecified vulnerability related to the Java SE JNDI component could allow an unauthenticated attacker to take control of the system.
+CVSS Base Score: 8.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137885 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137885] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:R/S:C/C:H/I:H/A:H) 
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM MQ 9.0.0.x Long Term Support (LTS)
+Maintenance level 9.0.0.2 and earlier
+
+IBM MQ 9.0.x and IBM MQ Appliance 9.0.x Continuous Delivery Release (CDR)
+Continuous delivery update 9.0.4 and earlier
+
+IBM MQ 8.0 and IBM MQ Appliance 8.0
+Maintenance levels 8.0.0.8 and earlier
+
+WebSphere MQ 7.5
+Maintenance levels 7.5.0.8 and earlier
+
+WebSphere MQ 7.1
+Maintenance levels 7.1.0.8 and earlier
+
+REMEDIATION/FIXES
+IBM MQ 9.0.0.0
+Apply fix pack 9.0.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24044508]
+
+IBM MQ 9.0.x and IBM MQ Appliance 9.0.x Continuous Delivery Release (CDR)
+Upgrade to IBM MQ 9.0.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24043463]
+
+IBM MQ V8.0 and IBM MQ Appliance 8.0
+Apply fix pack 8.0.0.9 [http://www-01.ibm.com/support/docview.wss?uid=swg22015103]
+
+Please note: Users of MQ v8.0 on the HP-UX platform are advised that patches for these issues have not been released by the manufacturer for this JRE level (7.0) at this time. These updates will be published by IBM once available. 
+
+WebSphere MQ 7.5
+Apply iFix IT23405 [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+MQ&release=7.5&platform=All&function=aparId&apars=IT23405] 
+
+WebSphere MQ 7.1
+Apply fix pack 7.1.0.9 [http://www-01.ibm.com/support/docview.wss?uid=swg22010694]
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+IBM Java SDK Security Bulletin [http://www.ibm.com/support/docview.wss?uid=swg22012965] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 23 May 2018: Original published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+RELATED INFORMATION
+# 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM MQ Appliance

@@ -1,0 +1,82 @@
+Title: IBM AMQ7280 queue manager appears unresponsive, Probeid ZX155001 component zxcFileLockMonitorThread error lrcE_S_Q_MGR_UNRESPONSIVE - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your WebSphere MQ queue manager got several FDCs and the first one shows an unresponsive queue manager.
+
+
+
+SYMPTOM
+| Probe Id :- ZX155001
+| Component :- zxcFileLockMonitorThread
+| Major Errorcode :- lrcE_S_Q_MGR_UNRESPONSIVE 
+| Probe Description :- AMQ7280: WebSphere MQ queue manager 'x' appears unresponsive.
++-----------------------------------------------------
+MQM Function Stack
+zxcFileLockMonitorThread
+xcsFFST 
+
++ Similar probe ids
+
+XY511000 xcsReadFileLock xecF_E_UNEXPECTED_SYSTEM_RC 
+ZL080000 zllWaitForAsyncProcess
+ZT376000 zutVerifyQMFileLocks lpiRC_Q_MGR_LOCK_UNAVAILABLE
+ZT376002 zutVerifyQMFileLocks xecF_E_UNEXPECTED_RC 
+ZT376006 zutVerifyQMFileLocks xecF_E_UNEXPECTED_RC 
+ZX085131 amqzmuc0
+ZX086131 amqzmur0
+ZX131006 zmuQPubsubDaemonController
+ZX135131 amqzmuf0
+ZX136016 zmuPubSubNamelistCacheTask
+ZX156001 zxcFileLockVerifyThread lrcE_S_Q_MGR_LOCK_LOST
+ZX159002 zxcLivenessMonitorThread lrcE_S_Q_MGR_UNRESPONSIVE
+ZX155001 zxcFileLockMonitorThread
+ZX154004 zxcStopFileLockMonitorThread
+xecN_E_FILE_ERROR
+xecN_E_LOCK_NOT_GRANTED
+
+
+
+CAUSE
+The core reason for this problem is because the MQ queue manager had a problem with obtaining a file lock from the file system (via the operating system) in a timely manner. Since MQ is reliant on having access to its files in order to run, then any interruption to file accesses can cause the queue manager to fail. 
+
+
+The MQ queue manager runs a file lock monitor thread, which every 10 seconds, checks that it has access to the resources it needs over the network. 
+Another health-check thread monitors the file lock monitor thread to determine whether it has hung, which is a sign that there is a network problem. 
+The FDC with probe id ZX155001 is from the health-check thread which detected that the file lock monitor thread had not responded for 20 seconds.
+
+Subsequent FDCs may result due to MQ processes being unable to access files over the network.
+
+The unresponsiveness is due to the underlying file system and not caused by MQ. MQ is making use of facilities provided by the operating system and the file system; in this case the facilities are for the NFS file locking.
+
+MQ is in fact not doing anything fancy here, it is simply asking for a lock on an NFS file, opening that file and reading its contents. 
+
+There is nothing that can be done from the perspective of IBM MQ Support, either to investigate further, or to fix this problem, because the real problem is due to some fault in the operating system, or the disk system, or some intermediate routing system. 
+
+The NFS file locking is only used by the MQ multi-instance feature. It is only at NFS V4 that the file locking can be expected to work (that is, NFS V3 does not provide the proper file locking needed by MQ).
+
+
+
+RESOLVING THE PROBLEM
+1) You need to check with your operating system administrator, file system administrator, and your network administrator to determine if there are any known defects fixed in the operating system or in the NFS server or NFS client and to ensure that all the latest NFS and OS patches are applied on the system. 
+
+
+2) A common problem is that NFS V3 is being used, which is not supported for multi-instance queue managers. The required version for NFS is V4.
+
+3) If you are using the NFS V4 file system as the shared file system, you must use hard mounts, synchronous writing and disable write caching, to fulfill these requirements.
+
+4) If you are using queue managers prior to 7.0.1.6, in Windows under MSCS control, see the following APAR:
+IC74752: INSTALLING WMQ V7.0.1.4 MAINTENANCE CAUSES HA CLUSTER FAILOVER TO FAIL. AN FDC WITH PROBE ID ZT374003 IS GENERATED. [http://www.ibm.com/support/docview.wss?uid=swg1IC74752]
+Provided with Fix Pack 7.0.1.6
+
++++ Reference
+
+How to verify that the NFS server and NFS client are at version 4 [http://www.ibm.com/support/docview.wss?uid=swg21681903]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ MQSeries

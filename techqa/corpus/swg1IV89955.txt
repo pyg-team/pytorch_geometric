@@ -1,0 +1,147 @@
+Title: IBM IV89955: EIF EVENT TREATED AS MALFORMED DUE TO PURELY NUMERIC ATTRIBUTE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  events not arriving on the server due to
+   being malformed - class names and attribute names must be
+   alphanumeric, but not solely numeric.
+   
+   ------customer comment-----
+   From my perspective if numeric names are unsupported, then
+   we just would need a reference to this fact in the
+   documentation/Release notes for the EIF-Probe Version 13+
+   now that the EIF library enforces this.
+   ------end
+   
+   For test case 2 - numeric class name and attribute names are not
+   supported by EIF, so these are malformed alarms.  Changes to the
+   EIF library made for PMR 09194,122,000 discard the event in EIF,
+   so the probe doesn't have a chance to handle the malformed
+   alarm.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None, extra doc description required.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of the Probe for Tivoli EIF v13.                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * A customer has requested that we include in the guide        *
+   * reference to the fact that all events must have class names  *
+   * and attribute names that are alphanumeric, and that the      *
+   * probe treats as malformed any events that have class names   *
+   * and attribute names that are solely numeric.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The guide will be uploaded to the Netcool/OMNIbus Knowledge  *
+   * Center during the next Asynchronous Release.                 *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following note will be added to the Data Acquisition section
+   of the Probe for Tivoli EIF v13 Reference Guide.
+   
+   ==========
+   Note:
+   The events that the probe receives must have alphanumeric class
+   names and attribute names. The probe considers events that
+   contain class names or attribute names that are solely numeric
+   as malformed and discards them, unless you set the
+   HandleMalformedAlarms property to true.
+   ==========
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV89955
+   
+   
+ * REPORTED COMPONENT NAME
+   TIVOLI EIF
+   
+   
+ * REPORTED COMPONENT ID
+   5724P09TI
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-13
+   
+   
+ * CLOSED DATE
+   2016-11-22
+   
+   
+ * LAST MODIFIED DATE
+   2016-11-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC22542102 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

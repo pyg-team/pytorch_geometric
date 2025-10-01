@@ -1,0 +1,81 @@
+Title: IBM Situation created using i5/OS agent's inactive jobs end reason goes to problem status - United States
+
+Text:
+IV13430; ENUM; iSeries; Tivoli Monitoring TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to create a situation using IBM Tivoli Monitoring for i5/OS agent inactive jobs attribute group end reason attribute results in problem status on IBM Tivoli Monitoring Tivoli Enterprise Portal. 
+
+SYMPTOM
+Tivoli Enterprise Portal shows red X for situations created using i5/OS inactive job attribute group end reason attribute. Situation will not start. This can also happen when some other attributes with enumerated values used in situations. 
+
+
+CAUSE
+This has been identified as a product defect under APAR IV13430. 
+
+This happens when ENUM values for attribute have imbedded blanks.
+The i5OS tables and attributes affected by this problem are: 
+Table, Attribute 
+---------------- 
+i5OS Inactive Job, End Reason 
+
+i5OS History Log, Type (message type) 
+
+i5OS Job Log, Type (message type) 
+
+i5OS Management Central, Monitor Type 
+i5OS Management Central, Metric 
+i5OS Management Central, Event Type 
+i5OS Management Central, Message Type
+
+
+ENVIRONMENT
+IBM Tivoli Monitoring for i5/OS agent v6.x
+
+
+
+DIAGNOSING THE PROBLEM
+Situation failed to start and TEMS log will have log similar to below (4F0B6D0F.000A-7:kdssqprs.c,5322,"PRS_YYError") ... line #1 
+
+(4F0B6D0F.000B-7:kdssqprs.c,5323,"PRS_YYError") ... at or near offset 555 
+
+(4F0B6D0F.000C-7:kdssqprs.c,5324,"PRS_YYError") last token read => end 
+
+(4F0B6D0F.000D-7:kdssqprs.c,815,"PRS_ParseSql") Sql processed was ... 
+
++4F0B6D0F.000D "SELECT COMPSTAT, ENDREASON, ENDSTATUS, ENDDATETIM, 
+
+ENTDATETIM, JOBQLIB, JOBQPRTY, JOBQSTAT, JOBQDATTIM, JOBQNAME, 
+
+JOBSTATUS, JOBTYPE, JOBLOGPEND, MSGQLIB, MSGQNAME, JOBNAME, JOBNUMBER, 
+
+ORIGINNODE, OUTQPRTY, SCHDATETIM, STRDATETIM, JOBSUBTYPE, TIMEINSYS, 
+
+JOBUSER FROM KA4.KA4INACJOB WHERE SYSTEM.PARMA("SITNAME", 
+
+"a4_asdfasdf", 11) AND SYSTEM.PARMA("NUM_VERSION", "6", 1) AND SYSTEM. 
+
+PARMA("LSTDATE", "1120109144119000", 16) AND SYSTEM.PARMA("SITINFO", 
+
+"ATOM=KA4INACJOB.JOBNAME;TFWD=Y;OV=N;SEV=Harmless;TDST=0;", 56) AND 
+
+KA4INACJOB.ENDREASON = Abnormal end ;" 
+
+(4F0B6D0F.000E-7:kdssqprs.c,820,"PRS_ParseSql") SqlParse rc=350 User=type=A 0x00550000 Net= 
+
+(4F0B6D0F.000F-7:kdspac1.c,2026,"VPA1_CreateRequest") SQL parse failed with return code 350 (4F0B6D0F.0010-7:kdsruc1.c,5801,"CreateRequest") Cannot create request, status = 350 (4F0B6D0F.0011-7:kdsruc1.c,6364,"DecomposePredicate") Cannot create request, status = 350 (4F0B6D0F.0012-7:kdsruc1.c,4425,"CreateRuleTree") Cannot create rule tree, status = 350 (4F0B6D0F.0013-7:kdssnc1.c,967,"CreateSituation") Cannot create the RULE tree (4F0B6D0F.0014-7:kdspmou1.c,715,"PM1_CompilerOutput") Cannot set root table, status = 350 
+
+
+RESOLVING THE PROBLEM
+Fix for APAR IV13430 is released in IBM Tivoli Monitoring 6.2.2 Fix Pack 9 and IBM Tivoli Monitoring 6.2.3 Fix Pack 2.
+
+RELATED INFORMATION
+ IV13430 [http://www.ibm.com/support/docview.wss?uid=swg1IV13430]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITM i5/OS agent
+Tivoli OS/400 agent
+Tivoli iSeries agent

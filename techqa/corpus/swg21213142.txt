@@ -1,0 +1,55 @@
+Title: IBM Why do I get error ICM7172 when a user with AllPrivs privilege set attempts to log on to DB2 Content Manager? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When a user with AllPrivs attempts to log on to DB2® Content Manager, the application throws error ICM7172: The password provided is invalid for this user ID, or it is NULL. (STATE) : [LS RC = 7172, LS reasonCode = 9 
+
+CAUSE
+This error will occur when a DB2 Content Manager administrator attempts to log on to DB2 Content Manager using a shared connection ID (ICMCONCT is the default connection ID). 
+
+DB2 Content Manager requires an administrator to connect to a DB2 database using his own user ID and to have DB2 administrative privileges. An administrator is allowed to perform data modeling operations, such as creating an item type, or subset, and these will result in new objects (like tables or views) in the database. 
+
+DB2 Content Manager identifies an administrator as a user that has privilege SystemSuperDomainAdmin (privilege code 200) in his password is the operating system password. That is, the password for this user is not managed by DB2 Content Manager. 
+
+The following system defined privilege sets contain privilege SystemSuperDomainAdmin: 
+
+ * AllPrivs 
+ * SysAdminCM 
+ * SysAdminSuper 
+ * SysAdminEIP
+
+
+How do I see which connection ID is being used to log on to DB2 Content Manager? Use one of the following methods to set the library server trace level to 15: 
+
+ * Check all trace levels boxes in system administration client. (View the Logs and Trace page in the library server configuration window.) 
+ * Use a DB2 command window for DB2 databases, or sqlplus for Oracle, connect to the library server database with an administrator ID, and run the following command:
+   update icmstsyscontrol set tracelevel=15
+
+
+Repeat the failing scenario and look at the library server log for these entries: 
+ICMPLSLG ICMLOGON 00763 07/19 18:29:40.159 GMT ;19182940543875 ? LG_USER4 Input 
+UserID <LG_USER4> 
+DB2UserID <ICMCONCT> 
+Language < > 
+Application <ICM Connector> 
+
+UserID: is the user ID used at the logon screen 
+DB2UserID: this is the user ID being used to connect to the database. 
+When an administrator logs on, both values for UserID and DB2UserID will be the same. 
+
+Additionally, the library server log will contain these error entries: 
+
+ICMPLSLG ICMLOGON 01161 07/19 18:29:41.040 GMT ;19182940543875 ? LG_USER4 CM Administrator cannot logon to CM using a shared Connection UserID 
+ICMPLSLG ICMLOGON 01162 07/19 18:29:41.040 GMT ;19182940543875 ? LG_USER4 Exit rc=7172 reason=9 extrc=0 extreason=9 
+
+
+ANSWER
+Refer to the links below on how to setup an administrator user ID in DB2 Content Manager.
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager for z/OS Library Server OS/390 8.2, 8.3 All Editions Enterprise Content Management Content Manager for iSeries Other AS400 All Editions

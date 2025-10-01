@@ -1,0 +1,42 @@
+Title: IBM Using Secure Shell login for the Common Desktop Environment - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you use ssh to log into CDE? How can I remotely display CDE environment through my SSH session on my PC? 
+
+ANSWER
+Enable X11 forwarding on AIX: 
+
+- Check fileset levels for secure shell:
+openssh.base.client
+openssh.base.server
+openssh.license
+openssh.man.en_US
+openssh.msg.EN_US
+*Note: openssh* is located on AIX Expansion CD.
+
+Check for (and, if needed, edit accordingly) the following entries in /etc/ssh/sshd_config:
+X11Forwarding yes
+XAuthLocation /usr/lpp/X11/bin/xauth
+
+Stop and restart secure shell daemon:
+- stopsrc -s sshd
+- startsrc -s sshd
+
+Enable X11 forwarding on putty (freeware) or Xemulator application. Xemulator applications and putty are not supported by AIX Support. Here is an example of a putty configuration:
+
+
+
+[/support/docview.wss?uid=isg3T1011153&amp;aid=1]
+
+
+
+Log in to an AIX system from a PC using an Xemulator application (which is not supported by AIX Support). 
+
+SSH tunnels the X11 session from the first AIX system to second AIX system:
+
+ssh -X -l <user> <hostname>
+OR
+ssh -Y -l <user> <hostname>

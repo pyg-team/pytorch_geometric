@@ -1,0 +1,145 @@
+Title: IBM PM10373: NIS EXCEPTION OCCURS IN PZN - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  [11/5/09 11:08:15:701 MST] 0000004a PortletFilter E
+   com.ibm.wps.pe.pc.legacy.services.PortletFilterServiceImpl init
+   EJPPG0105E: Portlet filter NlsFilter has not been defined.
+   
+   message received after initial trigger of Business Rules page
+   from PZN
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Detailed Action Taken/Reproduction Scenario:
+           1. Install Portal 6101 with non-root user, upgrade to
+   6102.
+           2. Configure DB2 V9.5 fixpack 3, Configure Webserver IHS
+   7005
+           3. Enable security to MS ADAM 2008, Add
+   multi-realm:realm01?realm02?realm03
+           4. Upgrade to Portal 6103 successfully
+           5. Login Portal and go to Applications -> Content
+   ->Personalization
+           6. After click Business Rules Portlet
+   
+   Expected Results:
+            - No exception occurs in logs.
+   
+   
+   Actual Results:
+     - There's exception occurs in logs.The following exception in
+   SystemOut.log:
+   
+   [11/5/09 11:08:15:701 MST] 0000004a PortletFilter E
+   com.ibm.wps.pe.pc.legacy.services.PortletFilterServiceImpl init
+   EJPPG0105E: Portlet filter NlsFilter has not been defined.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  NLS processing corrected.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM10373
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   61C
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-19
+   
+   
+ * CLOSED DATE
+   2010-04-19
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61C PSY
+   UP

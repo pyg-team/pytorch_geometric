@@ -1,0 +1,53 @@
+Title: IBM Messages CPF2528 and CPF4218 for QEZJOBLOG - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document explains that messages CPF2528 and CPF4218 cause the system to slow down. 
+
+RESOLVING THE PROBLEM
+Multiple messages CPF2528 and CPF4218 in the history indicate that the QEZJOBLOG in QUSRSYS was not available. This caused the system to slow down and ultimately lead to an IPL to recover. 
+
+Message ID . . . . . . . . . : CPF2528
+Message file . . . . . . . . : QCPFMSG
+Library . . . . . . . . . : QSYS 
+
+Message . . . . : Job log not written to output queue because of CPF4218.
+Cause . . . . . : Message text for CPF4218 is: &2.
+Recovery . . . : See the recovery section of the &1 message. 
+Technical description . . . . . . . . : During the open of the print file 
+QPJOBLOG or during the production of the job log, QMHJLOG received a &1 
+exception. Depending on when the error occurred, either none or only part of
+the job log was generated. 
+
+Message ID . . . . . . . . . : CPF4218
+Message file . . . . . . . . : QCPFMSG
+Library . . . . . . . . . : QSYS 
+
+Message . . . . : Output queue QEZJOBLOG in QUSRSYS not available.
+Cause . . . . . : The output queue QEZJOBLOG in QUSRSYS that you specified is already 
+assigned to another job.
+Recovery . . . : Try the job again when output queue QEZJOBLOG in QUSRSYS is available.
+If you wish to wait more than 600 seconds (10 minutes) for the output queue,
+use the WAITFILE parameter to override file &2.
+
+These messages are typically caused by a large number of jobs that have ended and all are trying to write joblogs out to QEZJOBLOG at the same time. This creates contention on system resources because each job has to wait to write out its joblog. 
+
+To prevent this situation from occurring again, change the QLOGOUTPUT system value to *JOBLOGSVR. By changing the QLOGOUTPUT system value to *JOBLOGSVR, the individual jobs will not be responsible for writing out their own joblogs. If changing the QLOGOUTPUT to *JOBLOGSVR does not clear the contention, try *PND. The jobs will then not try to write the joblogs. The joblog servers introduced at V5R4M0 will be responsible for writing out the joblogs.
+
+It is also recommended to get the latest Print Group PTFs: 
+
+o V5R4M0 - SF99347
+o V6R1M0 - SF99356 
+o V7R1M0 - SF99366
+o V7R1M0 - SF99766
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 524278058

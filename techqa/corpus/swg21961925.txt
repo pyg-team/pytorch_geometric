@@ -1,0 +1,67 @@
+Title: IBM Notes Client 9.0.x crashes due to dgapi.dll - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After upgrading, Notes Client 9.0.x crashes on splash screen.
+
+SYMPTOM
+Notes Client 9.0.x crash on splash screen. This happened in the same machine after upgrading from Notes Client 8.5.3. 
+
+Rcplauncher.exe will not startup when launching the Notes Client. When running in Safemode with Networking, rcpalauncher.exe and notes2.exe launches but immediately closes out. 
+
+
+CAUSE
+In this case, the Digital Guardian version was not compatible with Notes Client 9.0.x
+
+
+ENVIRONMENT
+Notes Client 9.0.x
+
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+Based on the Javacore files, the offending DLL is dgapi.dll, which 
+belongs to the 3rd party software, Digital Guardian by Verdasys. 
+
+These are the Javacore entries which is pointing to it: 
+
+1XHEXCPCODE J9Generic_Signal_Number: 00000004 
+1XHEXCPCODE ExceptionCode: C0000005 
+1XHEXCPCODE ExceptionAddress: 73CBD821 
+1XHEXCPCODE ContextFlags: 0001007F 
+1XHEXCPCODE Handler1: 0049A730 
+1XHEXCPCODE Handler2: 004FC130 
+1XHEXCPCODE InaccessibleAddress: 00000000 
+NULL 
+1XHEXCPMODULE Module: c:\windows\system32\dgapi.dll 
+1XHEXCPMODULE Module_base_address: 73C10000 
+1XHEXCPMODULE Offset_in_DLL: 000AD821 
+
+JAVACALLSTACK: 
+
+3XMTHREADINFO Anonymous native thread 
+3XMTHREADINFO1 (native thread ID:0x1560, native priority: 
+0x0, native policy:UNKNOWN) 
+3XMTHREADINFO3 Native callstack: 
+4XENATIVESTACK ZwWaitForMultipleObjects+0x15 (0x7748015D [ntdll+0x2015d]) 
+4XENATIVESTACK WaitForMultipleObjectsEx+0x8e (0x753F19FC 
+[kernel32+0x119fc]) 
+4XENATIVESTACK WaitForMultipleObjects+0x18 (0x753F41D8 
+[kernel32+0x141d8]) 
+4XENATIVESTACK RemoveUserModeHooks+0x13d7a (0x73CEB04A 
+[dgapi+0xdb04a]) 
+4XENATIVESTACK RemoveUserModeHooks+0x13f4f (0x73CEB21F 
+[dgapi+0xdb21f]) 
+4XENATIVESTACK RtlInitializeExceptionChain+0x63 
+(0x77499F72 [ntdll+0x39f72]) 
+4XENATIVESTACK RtlInitializeExceptionChain+0x36 
+(0x77499F45 [ntdll+0x39f45]) 
+
+The RemoveUserModeHooks function is part of the dgapi.dll which is code 
+in the DGAgent (Digital Guardian Agent). 
+RESOLVING THE PROBLEM
+Uninstall Digital Guardian or add Notes Client, specially notes2.exe, on the list of excluded applications.

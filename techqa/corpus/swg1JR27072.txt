@@ -1,0 +1,148 @@
+Title: IBM JR27072: ADD RUNTIME SUPPORT FOR WBI (LEGACY) DATAHANDLER TO WPS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Add runtime support for WBI (Legacy) DataHandler to WPS
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users who upgrade to a WebSphere Procee      *
+   *                 Server binding or J2EE Connector             *
+   *                 Architecture Adapter (JCA) from WebSphere    *
+   *                 Business Integration (WBI) Adapters which    *
+   *                 uses data handlers                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Data coming from an external source     *
+   *                      into WebSphere Process Server can not   *
+   *                      be adequately parsed due insufficient   *
+   *                      data transformation support provided    *
+   *                      with WebSphere Process Server.          *
+   *                      Provided data bindings do not perform   *
+   *                      the same function as the Websphere      *
+   *                      Business Integration Data Handler.      *
+   *                      Invest in custom data handlers can      *
+   *                      not be utilized in Websphere Process    *
+   *                      Server.                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   WBI Adapters provided both a set of productized Data Handlers
+   and an public API for developing custom data handlers.
+   WebSphere Process Server does not support the use of either of
+   these two previous solutions.  Additionally, in many cases,
+   there is no equivalent solution provided. This leaves the no
+   option other than to implement new custom data bindings from
+   scratch.  This is either not possible of very expensive in
+   most cases. Lacking sufficient data transformation capability,
+   there is no viable upgrade path for customers to move from the
+   WBI Adapter to either a WebSphere Process Server binding or
+   JCA Adapter.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem was resolved by adding a limited support API to
+   allow WBI DataHandlers for 'text based transformations to be
+   invoked by WebSphere Process Server runtime code. There might
+   be a need to write either a custom data binding or a Java
+   Component to invoke the WBI DataHandler using the support API
+   provided by this iFix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR27072
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   602
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-07-16
+   
+   
+ * CLOSED DATE
+   2007-10-16
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R602 PSY
+   UP

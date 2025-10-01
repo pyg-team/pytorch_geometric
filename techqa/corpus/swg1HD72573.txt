@@ -1,0 +1,174 @@
+Title: IBM HD72573: DRAFTING (INTDRAFT) / WRONG REPRESENTATION OF THE FONT SIZE FRO M TOOLS > STANDARDS. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Drafting (IntDraft) / Wrong representation of the
+   Font size from Tools > Standards.
+   .
+   Scenario:
+   1. Open CATIA.
+   2. Go to Tools > Standards > Drafting > ISO >
+   Styles > Length / Distance Dimension > Default
+   > Font >  & change these settings (Font size: 14,
+   Bold: Yes, Underline: Yes 7 Colour: Green).
+   3. Go to part design.
+   4. Create a Pad.
+   5. Go to Drafting (with the changed standard).
+   6. Create Front view.
+   7. Create Dimension.
+   8. Go to Tools > Options > General > Parameters
+   & Measures > Units & change the setting to Inch.
+   9. Go to Drafting (with the same changed standard).
+   10. Create front view & create dimension.
+   .
+   Problem: The font size is different.
+   .
+   Expected result: It should be as per the standard.
+   .
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Drafting (IntDraft) / Wrong representation of the Font size fro
+   m Tools > Standards.
+   Drafting (IntDraft) / Wrong representation of the
+   Font size from Tools > Standards.
+   .
+   Scenario:
+   1. Open CATIA.
+   2. Go to Tools > Standards > Drafting > ISO >
+   Styles > Length / Distance Dimension > Default
+   > Font >  & change these settings (Font size: 14,
+   Bold: Yes, Underline: Yes 7 Colour: Green).
+   3. Go to part design.
+   4. Create a Pad.
+   5. Go to Drafting (with the changed standard).
+   6. Create Front view.
+   7. Create Dimension.
+   8. Go to Tools > Options > General > Parameters
+   & Measures > Units & change the setting to Inch.
+   9. Go to Drafting (with the same changed standard).
+   10. Create front view & create dimension.
+   .
+   Problem: The font size is different.
+   .
+   Expected result: It should be as per the standard.
+   .
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON CATIA VERSION
+   5 RELEASE 19 GA LEVEL.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED
+   ON V5R18SP05
+   INCIDENT DIAGNOSIS
+   .
+   Drafting (IntDraft) / Wrong representation of the
+   Font size from Tools > Standards.
+   .
+   CORRECTION EXPLANATION
+   .
+   The was a problem with the combo of the font size
+   for the Test Properties, which has now been
+   corrected.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD72573
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   518
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-19
+   
+   
+ * CLOSED DATE
+   2008-04-03
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569151000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R518 PSN SP51805
+   UP08/06/02 I 1000

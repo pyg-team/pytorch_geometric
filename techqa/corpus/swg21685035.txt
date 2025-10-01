@@ -1,0 +1,24 @@
+Title: IBM NullPointerException error received when installing WebSphere Application Server Liberty profile - United States
+
+Text:
+WASV855RNotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you are installing WebSphere Application Server Liberty profile with the -imcl command, you might encounter problems. If you are connecting to the Liberty repository and specifying any user.property with the -properties and -useServiceRepository parameters, you might receive an error message similar to the following example message:
+ERROR: java.lang.NullPointerException
+
+
+ENVIRONMENT
+This problem occurs with IBM Installation Manager Version 1.7.1, 1.7.2, and 1.7.3.
+
+RESOLVING THE PROBLEM
+Choose from the following options to resolve this problem:
+
+
+ * Specify the command without the -properties parameter. 
+ * Specify the command without the -useServiceRepository parameter, and instead add the service repository URL: 
+   -repositories http://www.ibm.com/software/repositorymanager/com.ibm.websphere.liberty.zOS.v85 [http://www.ibm.com/software/repositorymanager/com.ibm.websphere.liberty.zOS.v85] 
+ * Update to the latest version of IBM Installation Manager. This issue is resolved in IBM Installation Manager Version 1.8 and later. 
+
+RELATED INFORMATION
+ WebSphere Application Server Version 8.5 release notes [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=phil&product=was-nd-mp&topic=relnotes]

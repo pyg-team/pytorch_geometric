@@ -1,0 +1,22 @@
+Title: IBM Read .sav file in IBM SPSS Amos - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When I tried to open a .sav file in IBM SPSS Amos, I received the following error message:
+To display IBM SPSS Statistics files, the IBM SPSS Statistics module must be installed on this system. Amos could not find the IBM SPSS Statistics module. 
+
+CAUSE
+If you want to open .sav file from IBM SPSS Amos, you need to install and license IBM SPSS Statistics on the same computer.
+
+ANSWER
+Install and license IBM SPSS Statistics on the same computer and then you can open .sav files with IBM SPSS Amos.
+
+RELATED INFORMATION
+ Need more help? Our AMOS forum is Live! [https://developer.ibm.com/answers/search.html?f=&type=question&redirect=search%2Fsearch&sort=relevance&q=%2B[amos]]
+
+
+[/support/docview.wss?uid=swg21646023&aid=1] [/support/docview.wss?uid=swg21646023&aid=1] 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Amos

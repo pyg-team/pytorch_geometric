@@ -1,0 +1,144 @@
+Title: IBM IT17581: EXECUTING MQSIPROFILE FAILS IF HCP V4 IS INSTALLED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Executing the mqsiprofile script on a V10 unix installation
+   fails if Healthcare Pack version 4 is installed. The following
+   error is shown:
+   
+   
+   $ . /opt/IBM/mqsi/10.0.0.4/server/bin/mqsiprofile mqsiprofile
+   extended for Healthcare Pack Web-based Monitoring ksh: test:
+   argument expected
+   
+   This prevent the additional context roots for the web-ui panels
+   from
+   being registered correctly.
+   
+   
+   Additional Symptom(s) Search Keyword(s):
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Closed as duplicate of IT13682 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT13682]
+   
+   
+   Platforms affected:
+   AIX, Linux on x86 platform, Linux on x86-64 platform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Closed as duplicate of IT13682 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT13682]
+   
+   There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0.  For details
+   visit
+   http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.e
+   tools.mft.doc/bb23814_.htm [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/bb23814_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Closed as duplicate of IT13682 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT13682]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Closed as duplicate of IT13682 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT13682]
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT17581
+   
+   
+ * REPORTED COMPONENT NAME
+   IIB HEALTHCARE
+   
+   
+ * REPORTED COMPONENT ID
+   5725C1830
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-19
+   
+   
+ * CLOSED DATE
+   2017-08-23
+   
+   
+ * LAST MODIFIED DATE
+   2017-08-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

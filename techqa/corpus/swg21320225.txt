@@ -1,0 +1,96 @@
+Title: IBM Windows - Path Not Found: The path <Storage Path> does not exist - United States
+
+Text:
+1300225; CC; path does not exist; vob tag; Path Not Found: The path <Storage Path> does not exist TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to resolve The path <Storage Path> does not exist, that can occur when using IBM® Rational® ClearCase® (CC). 
+
+SYMPTOM
+ 
+
+Attempts to access a ClearCase source file from a view results in the following error: 
+
+The Path <Path Name> does not exist. 
+
+The same view works without errors when accessing other VOBs.
+
+
+
+CAUSE
+ 
+
+The VOB may have been tagged incorrectly when created. 
+
+Example: 
+
+The tag should be created as: \\Host\Vob_Storage\VOBS\NewVob.vbs
+The tag was incorrectly created as: \\Host\Vob_Storage\VOBS\NewVob
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+Confirm that this is in fact what you are experiencing:
+
+
+ 1. run <cleartool describe -l vob:\<Problem Vob> 
+ 2. run <cleartool describe -l vob:\<Working Vob>
+
+
+When compared, the following is displayed: 
+
+VOB producing the error 
+-------------------------------------------------------------------------------------------------------------------- 
+C:\>cleartool describe -l vob:\IBM_services 
+versioned object base "\IBM_services" 
+created 04-Sep-08.16:40:42 by Rational ClearCase account 
+(albd.rational@Host-B) 
+VOB family feature level: 4 
+VOB storage host:pathname "Host-B:/vob_stg/vobs/IBM_services 
+VOB storage global pathname "\\Host-nfs\vob_stg\vobs\IBM_services" 
+database schema version: 54 
+
+Working VOB 
+-------------------------------------------------------------------------------------------------------------------- 
+C:\>cleartool describe -l vob:\IBM_support 
+versioned object base "\IBM_support" 
+created 07-Jul-08.18:14:53 by Rational ClearCase account 
+(albd.rational@Host-B) 
+VOB family feature level: 4 
+VOB storage host:pathname "Host-B:/vob_stg/vobs/IBM_support.vbs" 
+VOB storage global pathname "\\Host-nfs\vob_stg\vobs\IBM_support.vbs" 
+database schema version: 54 
+
+From the above output we can see that for the VOB producing the error the VOB storage global pathname does not end in .vbs (which should be the case for the actual storage directory name). The VOB not giving the error contains the .vbs in it's path. 
+RESOLVING THE PROBLEM
+ 
+
+
+The tag must be recreated for the VOB.
+
+
+ 1. Unmount the VOB that needs to be re-tagged using, cleartool umount 
+    
+    Example:
+    
+    Cleartool umount \<VOB NAME> 
+    
+    
+ 2. Remove the old VOB tag using, cleartool rmtag
+    
+    Example:
+    
+    Cleartool rmtag -vob -all \<VOB NAME>
+    
+    Note: You will be prompted for your registry password.
+    
+    
+ 3. Make the new tag using, cleartool mktag
+    
+    Example:
+    
+    Cleartool mktag -vob -tag \<VOB NAME> \\SERVER_NAME\Clearcase_Storage\Vobs\<VOB NAME>.vbs
+
+
+After the tag has been repaired with the proper syntax the reported error will no longer occur.

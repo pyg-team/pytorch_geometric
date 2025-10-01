@@ -1,0 +1,62 @@
+Title: IBM WSVR0605W - "Thread may be hung" message in the logs - United States
+
+Text:
+WSVR0605W; v62rnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A WSVR0605W message in the SystemOut.log might be misleading because this message normally indicates a "hung thread" situation. However, when a JCA adapter is set up for polling, the same message might occur in the log because, at the interval between polling, the adapter changes its state from polling to "sleep" and does not wake up until the next polling cycle starts. This adapter behavior is working as designed. 
+
+SYMPTOM
+The SystemOut.log file shows: 
+
+ThreadMonitor W WSVR0605W: Thread "Default : 0" (<ThreadID>) has been active for xxx milliseconds and may be hung. There is/are 1 thread(s) in total in the server that may be hung.
+at java.lang.Thread.sleep(Native Method)
+at java.lang.Thread.sleep(Thread.java:939)
+at com.ibm.j2ca.base.internal.PollEventManagerWorker.run(PollEventManagerWorker.java:96)
+at com.ibm.ejs.j2c.work.WorkProxy.run(WorkProxy.java:419)
+at com.ibm.ejs.j2c.work.AsyncWorkProxy.run(AsyncWorkProxy.java:136)
+at com.ibm.ws.asynchbeans.J2EEContext$RunProxy.run(J2EEContext.java:268)
+at java.security.AccessController.doPrivileged(AccessController.java:192)
+at com.ibm.ws.asynchbeans.J2EEContext.run(J2EEContext.java:768)
+at com.ibm.ws.asynchbeans.ExecutionContextImpl.go(ExecutionContextImpl.java:85)
+at com.ibm.ejs.j2c.work.AsyncWorkProxy.run(AsyncWorkProxy.java:90)
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1497)
+
+
+CAUSE
+The resource adapter has one mechanism poll period. It is considered the rate (in milliseconds) at which to poll the enterprise information system (EIS) event store for new inbound events. The poll cycle is established at a fixed rate, meaning that if execution of the poll cycle is delayed for any reason, the next cycle will occur immediately to “catch up”. During the poll period, the polling thread will be sleeping. 
+
+Once the time is calculated to 60000 milliseconds, the WebSphere Application Server thread monitor regards this polling thread as hung and throws the exception.
+
+
+RESOLVING THE PROBLEM
+To avoid the misleading WSVR0605W messages, use the following workaround to disable the thread monitor/thread hang detection on WebSphere Application Server: 
+
+ 1.  From the administrative console, click Servers > Application Servers > server_name. 
+ 2. Under Server Infrastructure, click Administration > Custom Properties. 
+ 3. Click New. 
+ 4. Add the following property to disable the hang detection option:  * For Name, type: com.ibm.websphere.threadmonitor.interval 
+     * For Value, enter a value less than or equal to 0.
+    
+    
+ 5. Click Apply. 
+ 6. Click OK. 
+ 7. Save the changes. Make sure a file synchronization [http://www.ibm.com/support/knowledgecenter/SSAW57_6.1.0/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/uagt_rsynchservice.html] is performed before restarting the servers. 
+ 8. Restart the Application Server for the changes to take effect.
+    
+    NOTE: Disabling the thread monitor affects ALL threads on the server, not just the JCA adapter threads. Therefore, hung threads will not be detected at all. There is no option available to filter the activity that will be monitored.
+
+
+A fix is available for the Email Adapter. For more information, see JR38440: HUNG THREAD MESSAGE IN EMAIL ADAPTER [http://www.ibm.com/support/docview.wss?uid=swg1JR38440]. 
+
+
+[/support/docview.wss?uid=swg21448485&amp;aid=1]
+
+RELATED INFORMATION
+ Configuring the hang detection policy [http://www.ibm.com/support/knowledgecenter/SS7JFU_6.1.0/com.ibm.websphere.express.doc/info/exp/ae/ttrb_confighangdet.html]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Adapters Family Not Applicable AIX, HP-UX, Linux, Solaris, Windows 7.0, 6.2.0.3, 6.2.0.2, 6.2.0.1, 6.2

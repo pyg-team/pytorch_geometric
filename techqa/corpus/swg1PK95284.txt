@@ -1,0 +1,166 @@
+Title: IBM PK95284: DUMP TITLE=CSQ1,ABN=5C6-00A30054,U=USER1                        ,C=R3600.700.TOPM-CSQTORES,M=CSQGFRCV,LOC=CSQMLPLM.CSQTORES+0E1C - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The dump shows that the abend occurs when deleting a topic with
+   QSGDISP(GROUP). The module CSQMUTOP locates the object and then
+   calls kqiTopicLocateTopic to find the node in the topic tree
+   corresponding with the topic string associated with the topic.
+   No node exists in the topic tree for this topicstring, and
+   CSQMUTOP then invokes CSQTORES with a null pointer, which
+   results in the reported abend being taken.
+   .
+   In this instance there is no matching node (00C90001 -
+   CSQI_OBJECT_NOT_FOUND) in the topic tree. The dump does not show
+   why this is, but it could be caused (for example) by
+   PSMODE being changed to enabled or compat after the COPY
+   instance of an object is deleted. This is a valid (although
+   unusual) state to be in, and should not cause the qmgr to abend.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 0 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Abend 5C6-00A30054 in CSQTORES, or      *
+   *                      00D40085 in CSQMUTOP occur when         *
+   *                      deleting a topic with QSGDISP(GROUP) if *
+   *                      the QSGDISP(COPY) object has already    *
+   *                      been deleted.                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When deleting a topic CSQTORES is called to resolve any ASPARENT
+   attributes of the topic's node in the topic tree. If the topic
+   being deleted has QSGDISP(GROUP), and the QSGDISP(COPY) instance
+   of the topic has already been deleted it is possible that no
+   such node exists (the node is associated with the QSGDISP(COPY)
+   instance of the topic, and will no longer exist if the topic
+   tree is rebuilt after the QSGDISP(COPY) object is deleted).
+   If the node does no longer exist, the qmgr will either abend
+   5C6-00A30054 or 5C6-00D40085 depending on whether the base topic
+   exists in the topic tree.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CSQMUTOP has been changed to prevent topic resolution for
+   QSGDISP(GROUP) topic objects.
+   000Y
+   CSQMUTOP
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK95284
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-02
+   
+   
+ * CLOSED DATE
+   2009-09-17
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK50185
+   
+   
+
+MODULES/MACROS
+ *  CSQMUTOP
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK50185 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK50185]
+   UP09/09/24 P F909
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,45 @@
+Title: IBM Knowledge Collection: PureData System for Analytics - Query History Data Collection - United States
+
+Text:
+ RECOMMENDED RESOURCES
+
+ABSTRACT
+ A single stop shop of resources and documents to help you configure and setup Query History Data Collection on an IBM PureData System for Analytics appliance. 
+
+CONTENT
+Capturing query history data on a Pure Data for Analytics appliance is a key DBA task needed to understand the usage trends and patterns along with gathering information regarding object access, query runtimes, access plans, troubleshoot long running queries etc. 
+This document intends to capture various sources of published information on configuring/setting up query history data that would allow end users greater self sufficiency and flexibility in administering the PDA appliance. 
+
+Below are various resources available that explain configuring query history in detail as well as some best practices around it.
+
+IBM PureData Systems for Analytics' Product Documentation thoroughly explains key concepts and the steps needed along with various configuration options:
+(Please select the appropriate NPS version from the drop down on the below links)
+
+
+ * System Administration Guide [https://www.ibm.com/support/knowledgecenter/SSULQD_7.2.1/com.ibm.nz.adm.doc/c_sysadm_qhist_collect_report.html] 
+ * Database User's Guide [https://www.ibm.com/support/knowledgecenter/SSULQD_7.2.1/com.ibm.nz.dbu.doc/r_dbuser_create_history_configuration.html]
+
+
+Forum discussions and Blog Posts on the extremely popular dWAnswers [https://developer.ibm.com/answers/smartspace/puredata-for-analytics/] and the IBM PureData-Enzee Community [https://www.ibm.com/developerworks/community/groups/service/html/communitystart?communityUuid=9c8f1300-9ac0-4de5-80e6-0708f8e0260d] are great additional resources to perform searches for the latest information or initiate new discussion threads on any topic. For instance: 
+ * How do I change query history configuration ? [https://developer.ibm.com/answers/questions/273473/how-do-i-change-query-history-configuration.html?smartspace=puredata-for-analytics] 
+ * How to display query history timestamp in local timezone ? [https://developer.ibm.com/answers/questions/273498/how-to-display-query-history-timestamp-in-local-ti.html] 
+ * 50 PureData Nuggets #37 : How to Upgrade History Database From v1 ,v2 to v3 [https://www.ibm.com/developerworks/community/blogs/9c8f1300-9ac0-4de5-80e6-0708f8e0260d/entry/50_PureData_Nuggets_37_How_to_Upgrade_History_Database_From_v1_v2_to_v3?lang=en] 
+ * Reconcile old QUERY_HISTORY database with new Query History database [https://www.ibm.com/developerworks/community/forums/html/topic?id=42672809-effe-436e-b27f-020464d339d2]
+
+
+IBM published Technotes** are another set of resources targeted to address specific customer questions or issues encountered. 
+Here are several specific Technotes around query history data configurations and capturing. 
+ * How to create and configure Query History for IBM PureData System for Analytics [http://www-01.ibm.com/support/docview.wss?uid=swg21688917] 
+ * How do I capture query history information in a persistent table? [http://www-01.ibm.com/support/docview.wss?uid=swg21572029] 
+ * What do the columns in the table nz_query_history contain? How are they populated? [http://www.ibm.com/support/docview.wss?uid=swg21982653] 
+ * How do I configure Linux ODBC Client attributes that persists in the NPS query history database and helps in determining the actual users of repetitive inefficient queries ? [http://www-01.ibm.com/support/docview.wss?uid=swg21978940] 
+ * What does the CONFIG_LEVEL value mean in SHOW HISTORY CONFIGURATION output ? [http://www-01.ibm.com/support/docview.wss?uid=swg21700208] 
+ * How can I change a Query History user's password? [http://www-01.ibm.com/support/docview.wss?uid=swg21571347] 
+ * ERROR: Query History User is 'ADMIN'. [http://www-01.ibm.com/support/docview.wss?uid=swg21515668]
+
+
+**You now have the ability to ask questions or open up new discussion threads on technotes as well, including this one. 
+Just click on 'Ask a Question' below the technotes!! 
+
+IBM PDA Best Practices contain valuable information targeted for new users. The following resources provide good reference for best practices on query history data collection and configuration:  * PureData System for Analytics Best Practices - Query History [https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=9c8f1300-9ac0-4de5-80e6-0708f8e0260d#fullpageWidgetId=W9382f586cf7b_4d64_ae5e_fb6f156ee789&file=c879ffe0-0673-4297-8306-890240b03f6e] 
+ * PDA Query History Best Practice [https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=9c8f1300-9ac0-4de5-80e6-0708f8e0260d#fullpageWidgetId=W9382f586cf7b_4d64_ae5e_fb6f156ee789&file=cd677284-d108-43d0-8fc4-319ec338d82a]

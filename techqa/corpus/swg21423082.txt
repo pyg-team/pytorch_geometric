@@ -1,0 +1,23 @@
+Title: IBM CTGIN2275E: WebSphere thin admin client install verification completed with errors - United States
+
+Text:
+CTGIN2275E; websphere; thin; admin; client; ADMN0022E; access; denied; insufficient; empty; credentials; TPAEWEBSPHERE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Receiving error installing fixpack, CTGIN2275E: WebSphere thin admin client install verification completed with errors
+"ADMN0022E: Access is denied for the 
+getProcessType operation on Server MBean because of insufficient or 
+empty credentials." 
+
+
+
+SYMPTOM
+unable to proceed with fix pack installation
+
+
+RESOLVING THE PROBLEM
+Log into Maximo, go to the System Properties Application, search for WAS.AdminPassword and change the value to the WebSphere admin password and this should be updated in the install.propteries file as well located at C:\ibm\smp\etc 
+
+[/support/docview.wss?uid=swg21423082&amp;aid=1]  
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Maximo Asset Management Essentials Systems and Asset Management Tivoli Asset Management for IT Systems and Asset Management Tivoli Change and Configuration Management Database Systems and Asset Management Tivoli Service Request Manager

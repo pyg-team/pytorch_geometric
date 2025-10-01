@@ -1,0 +1,86 @@
+Title: IBM Troubleshooting the Sterling Graphical Process Modeler (GPM) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When the Sterling Graphical Process Modeler (GPM) fails to launch, the information provided is very limited. In order to gather additional data for troubleshooting purposes, the Java console needs to be enabled. 
+
+SYMPTOM
+GPM fails to launch for the following reasons: 
+
+ * Missing Permissions manifest jar 
+ * Unable to load resource 
+ * Connection refused
+
+
+CAUSE
+There are various reasons the GPM can fail to launch. The following steps show the basic troubleshooting methodology.
+
+DIAGNOSING THE PROBLEM
+Enabling the Java Console 
+
+The first step to troubleshooting GPM launch issues is to enable the Java Console using the following steps. 
+
+1. Click the Windows Start icon
+
+[/support/docview.wss?uid=swg21676211&amp;aid=1]
+
+
+2. A the bottom of the screen, enter the word: Java 
+
+3. In the results window, click on "Configure Java" 
+
+ [/support/docview.wss?uid=swg21676211&aid=2] [/support/docview.wss?uid=swg21676211&aid=2] 
+
+ 
+
+4. Click the Advanced tab and select the "Enable tracing" and "Enable logging" boxes and the "Show Console" radio button. Then click OK. 
+
+ [/support/docview.wss?uid=swg21676211&aid=3] [/support/docview.wss?uid=swg21676211&aid=3] 
+
+ 
+
+The Java console is now enabled. To turn this back off, follow these same instruction then deselect the Enable tracing and Enable logging boxes and the "Do not start console" radio button. 
+
+ 
+
+Common GPM Launch Errors 
+
+ 
+
+Java Versions Mismatches 
+
+As the GPM starts to launch you may encounter a message saying that "this application would like to use a version of Java (1.6+) that is not installed on your system. We recommend running the application with the latest version of Java on your computer" 
+
+
+[/support/docview.wss?uid=swg21676211&aid=4] [/support/docview.wss?uid=swg21676211&aid=4]
+
+After selecting the "Run with the latest version", with the Java Console enabled you see a window displaying the Java Web Start with an error. You will also receive a pop-up which saying "Unable to launch the application." click the Details button.
+
+[/support/docview.wss?uid=swg21676211&aid=5] [/support/docview.wss?uid=swg21676211&aid=5]
+
+On the "More Information" screen, click the Exception tab. The error message indicates there's a Permissions manifest missing.
+
+[/support/docview.wss?uid=swg21676211&aid=6] [/support/docview.wss?uid=swg21676211&aid=6]
+
+To resolve Java Permissions issues see Unable to start Graphical Process Modeler: HTTP 503 [http://www.ibm.com/support/docview.wss?uid=swg21676202]
+
+Unable to load resource
+
+Another common error is the "Unable to load resource"
+
+[/support/docview.wss?uid=swg21676211&aid=7] [/support/docview.wss?uid=swg21676211&aid=7]
+
+Connection Refused
+
+If you select the Wrapped Exception tab, you can see a "Connection refused" message. Possible reasons this can occur include:
+
+
+ * The Sterling Integrator Server has not been started. 
+ * A firewall does not allow HTTPS traffic over the port you are trying to access. In the following example port 23501 is being restricted. 
+
+
+[/support/docview.wss?uid=swg21676211&aid=8] [/support/docview.wss?uid=swg21676211&aid=8] 
+
+If the Sterling B2B Integrator server is started, check with your network team to see if a firewall is blocking traffic.

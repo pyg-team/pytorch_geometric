@@ -1,0 +1,187 @@
+Title: IBM HD69597: SESSION MANAGEMENT TIME OUT CHANGE NOT TAKEN IN ACCOUNT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Session Management Time Out Change not taken
+   in account
+   Hi
+   The document ?SMARTEAM - Editor Administrator
+   Guide.pdf?
+   Under the chapter ?Session Management Service?
+   In the ?implementation? section (page 86/87)
+   paragraph 6 should be change
+   To replace it with the comment in FAQ number 556
+   NOTE: Please consult Baruch Farkash or Oren Dror
+   for the fix.
+   FAQ 556 - What does the
+   SmarTeam.Std.SessionManagement.Service.Host.e
+   xe.config system configuration setting do?
+   Each time SmarTeam ? Editor or SmarTeam ? Web
+   Editor (/Navigator) is activated, a new work session
+   is created. The session stores user login
+   information that passes between the client and the
+   server. The
+   SmarTeam.Std.SessionManagement.Service.Host.e
+   xe.config key keeps the session open until the
+   configured session expiration time, which is set to
+   20 minutes by default.
+   For SmarTeam ? Editor:
+   When SmarTeam ? Editor is closed, Editor notifies
+   Foundation to close the work session. If a
+   connection problem occurs between the client and
+   the Foundation server while SmarTeam ? Editor is
+   open, the session expiration instruction begins to
+   track the time, and the work session is terminated
+   after the session expiration timeout is reached (by
+   default, 20 minutes).
+   For SmarTeam ? Web Editor:
+   When SmarTeam ? Web Editor is closed, Web
+   Editor notifies Foundation to close the work session.
+   However, if SmarTeam ? Web Editor remains open
+   but no activity is detected for 20 minutes, the IIS
+   timeout closes the Internet Explorer connection and
+   the work session is terminated after 20 minutes
+   without activity.
+   Baruch
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Session Management Time Out Change not taken in account
+   Session Management Time Out Change not taken
+   in account
+   Hi
+   The document ?SMARTEAM - Editor Administrator
+   Guide.pdf?
+   Under the chapter ?Session Management Service?
+   In the ?implementation? section (page 86/87)
+   paragraph 6 should be change
+   To replace it with the comment in FAQ number 556
+   NOTE: Please consult Baruch Farkash or Oren Dror
+   for the fix.
+   FAQ 556 - What does the
+   SmarTeam.Std.SessionManagement.Service.Host.e
+   xe.config system configuration setting do?
+   Each time SmarTeam ? Editor or SmarTeam ? Web
+   Editor (/Navigator) is activated, a new work session
+   is created. The session stores user login
+   information that passes between the client and the
+   server. The
+   SmarTeam.Std.SessionManagement.Service.Host.e
+   xe.config key keeps the session open until the
+   configured session expiration time, which is set to
+   20 minutes by default.
+   For SmarTeam ? Editor:
+   When SmarTeam ? Editor is closed, Editor notifies
+   Foundation to close the work session. If a
+   connection problem occurs between the client and
+   the Foundation server while SmarTeam ? Editor is
+   open, the session expiration instruction begins to
+   track the time, and the work session is terminated
+   after the session expiration timeout is reached (by
+   default, 20 minutes).
+   For SmarTeam ? Web Editor:
+   When SmarTeam ? Web Editor is closed, Web
+   Editor notifies Foundation to close the work session.
+   However, if SmarTeam ? Web Editor remains open
+   but no activity is detected for 20 minutes, the IIS
+   timeout closes the Internet Explorer connection and
+   the work session is terminated after 20 minutes
+   without activity.
+   Baruch
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  this was fix in the documentation for R19
+   Default TEXTAREA value goes here
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD69597
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   517
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-11-28
+   
+   
+ * CLOSED DATE
+   2008-03-20
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

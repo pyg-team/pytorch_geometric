@@ -1,0 +1,19 @@
+Title: IBM WebSphere DataPower- unexpected warning messages in logs when there is a mismatch between the SOAP 1.1 and the binding SOAP 1.2 - United States
+
+Text:
+SOAP 1.2; SOAP 1.1; Unrecognized content type ; SOAP Action header; warning messages in logs; PMR 92573; 344; 000 TECHNOTE (FAQ)
+
+QUESTION
+ Why do I get a warning message similar to the following whenever I send a SOAP 1.1 message to a 1.2 binding: 
+"Unrecognized content type so SOAP Action header 'http://www.someurl.com/webservices' will be ignored'" ? 
+
+ANSWER
+This message is sent when there is a mismatch between the content type (SOAP 1.1 in this case) and the binding (SOAP 1.2). This issue is due to the two bindings that are instantiated asynchronously and so in random order; therefore, different installs could either try the SOAP 1.2 binding first, or you could try the SOAP 1.1 binding first. In few cases, if you try 1.1 first, no warning is seen but if you try 1.2 first, you will see the warning for both messages. 
+
+However, the warning message 'Unrecognized content type so SOAP Action header 'http://www.someurl.com/webservices' will be ignored ' is expected whenever you send a SOAP 1.1 message to a 1.2 binding. 
+
+To avoid a heavy influx of warning messages, you could optionally suppress the warning messages using message ID 0x080e004b8. 
+
+Using the WebGUI: 
+
+Status -> Logging Targets -> default-log -> Event Filters -> Event Subscription Filter

@@ -1,0 +1,182 @@
+Title: IBM HD58387: THE HOOK AT BEFORE OR AFTER "ON FILE EXISTS ON LOCAL MIRROR" D OES NOT SEEM TO BE ACTIVE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The hook at before or after  "on file exists on local
+   mirror" does not seem to be active
+   1. Create a multisite environment (database and
+   distributed) with two sites
+   2. Do not create the upload RDS jobs
+   3. Hook a dummy script at before on file exists on
+   local mirror (with a message box to see if it is
+   effective)
+   For example:
+   Function CopyFileFromRemoteSite(ApplHndl As
+   Long,Sstr As String,FirstPar As Long,SecondPar As
+   Long,ThirdPar As Long ) As Integer
+   msgbox "entering the code"
+   End Function
+   4. Connect to the secondary site (vault
+   configuration set to site 2)
+   5. Save and release a CATIA Part
+   6. Connect to the primary (vault configuration set
+   to site 1)
+   7. Look for the CATIA Part just created before
+   8. Do a copy file on it
+   Problem: you do not get the message
+   box:  "entering the code"
+   User Remarks:
+   1.I've looked deeply in the documentation and I
+   was not able to see that a setting is required to
+   activate this hook
+   2.Of course in my scenario the windows remote
+   copy makes the file available but I would need to
+   use this hook to create a RDS upload job (basically
+   a RDS upload job when required). Indeed the
+   windows remote copy is much slower and you can
+   not put a compression.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The hook at before or after  "on file exists on local mirror" d
+   oes not seem to be active
+   The hook at before or after  "on file exists on local
+   mirror" does not seem to be active
+   1. Create a multisite environment (database and
+   distributed) with two sites
+   2. Do not create the upload RDS jobs
+   3. Hook a dummy script at before on file exists on
+   local mirror (with a message box to see if it is
+   effective)
+   For example:
+   Function CopyFileFromRemoteSite(ApplHndl As
+   Long,Sstr As String,FirstPar As Long,SecondPar As
+   Long,ThirdPar As Long ) As Integer
+   msgbox "entering the code"
+   End Function
+   4. Connect to the secondary site (vault
+   configuration set to site 2)
+   5. Save and release a CATIA Part
+   6. Connect to the primary (vault configuration set
+   to site 1)
+   7. Look for the CATIA Part just created before
+   8. Do a copy file on it
+   Problem: you do not get the message
+   box:  "entering the code"
+   User Remarks:
+   1.I've looked deeply in the documentation and I
+   was not able to see that a setting is required to
+   activate this hook
+   2.Of course in my scenario the windows remote
+   copy makes the file available but I would need to
+   use this hook to create a RDS upload job (basically
+   a RDS upload job when required). Indeed the
+   windows remote copy is much slower and you can
+   not put a compression.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON SMARTEAM
+   VERSION 5 RELEASE 18 GA level.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD58387
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   516
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-10-23
+   
+   
+ * CLOSED DATE
+   2007-03-18
+   
+   
+ * LAST MODIFIED DATE
+   2007-03-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569199970
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R517 PSN
+   UP

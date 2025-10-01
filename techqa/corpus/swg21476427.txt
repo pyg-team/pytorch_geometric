@@ -1,0 +1,23 @@
+Title: IBM Single / Site licenses cannot be installed on servers running NT Terminal Server. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am attempting to install a Single User or Site License of an SPSS product on a Windows 2003 /2008 Server operating system and encountering one of the following alerts after entering my license information:
+1. Single user licenses cannot be installed on servers running NT Terminal Server
+2. The license code entered is not valid.
+
+Why can't I install the software? 
+
+RESOLVING THE PROBLEM
+Windows 2003/2008 Server editions have NT Terminal Server technology built into the operating system which allows for multiple users to access a single copy of the software. This is a violation of the single user license agreement. Please install the software on client versions of the operating system, such as Windows XP Professional or obtain a Network client license
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 18987

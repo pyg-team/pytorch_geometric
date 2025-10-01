@@ -1,0 +1,138 @@
+Title: IBM PI22548: RDZ INTEGRATED DEBUGGER MSG, AQEDB0004E, AND AQEDB0009I, STATES COBOL LISTING DOESN'T CONTAIN REQUIRED INFORMATION - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Developer for System z Fix Pack 3 (9.0.1.3) for 9.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038195]
+Rational Developer for System z Fix Pack 4 (9.0.1.4) for 9.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24040109]
+Rational Developer for System z Fix Pack 5 (9.0.1.5) for 9.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042107]
+Rational Developer for System z Fix Pack 6 (9.0.1.6) for 9.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043643]
+Rational Developer for System z Interim Fix 1 for 9.0.1.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24044419]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Rational Developer for System z integrated debugger user
+   receives message "The zOS probe was unable to locate the listing
+   file dated 2014/06/13 07:50:28 for compile unit MYCBLPRG.
+   Compile unit MYCBLPRG will be treated as non-debugable."
+   
+   The RDz user does not see the source code but (disassembled)
+   assembler code. This happens when using the compile option
+   LANGUAGE(UE).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use compile option LANGUAGE(EN) when compiling
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The compiler option Language(UE) wasn't supported.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Support for Language(UE) added.
+   
+   The problem listed in this APAR has been resolved with
+   IBM Rational Developer for System z V9.0.1.3 Fix Pack which
+   is available from the Recommended Fixes support download page:
+   http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335 [http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI22548
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   901
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-23
+   
+   
+ * CLOSED DATE
+   2014-08-22
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * FIXED COMPONENT ID
+   5724T0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R901 PSY
+   UP

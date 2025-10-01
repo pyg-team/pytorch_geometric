@@ -1,0 +1,39 @@
+Title: IBM Cannot enter the authorization code as the window is too small - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The customer has installed the Statistics 23 successfully, when you run the License Authorization Wizard, there is a small blank window to enter the authorization code. The window is so small that the authorization code cannot be entered at all. 
+
+RESOLVING THE PROBLEM
+There is a workaround, please activate the license by these commands: 
+
+On Windows, open a Command Prompt window as an administrator.
+Navigate to the installation path of Statistics Client 23 (default paths below for 64 and 32-bit installs):
+
+cd C:\Program Files\IBM\SPSS\Statistics\23
+cd C:\Program Files (x86)\IBM\SPSS\Statistics\23
+
+* NOTE: Please just edit the version number instead of '23', depending if you installed Statistics Client version 19/20/21/22. *
+
+Then, press 'Enter' key.
+
+Use the 'licenseactivator' command to enter your authorization code:
+
+licenseactivator <authcode>
+
+
+NOTE: where <authcode> is your authorization code
+
+[/support/docview.wss?uid=swg21971954&aid=1] [/support/docview.wss?uid=swg21971954&aid=1]
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Statistics

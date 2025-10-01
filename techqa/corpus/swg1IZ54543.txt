@@ -1,0 +1,165 @@
+Title: IBM IZ54543: MQGET returns MQRC_CALL_IN_PROGRESS when data conversion exits  are in use. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24025627]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In WebSphere MQ V7 when a client tries to get a message from
+   the queue using MQGET API with a data conversion exit in place
+   and sharing conversations is enabled, a MQRC_CALL_IN_PROGRESS
+   (2219) error is returned.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   WebSphere MQ V7 users using sharing conversation feature and
+   data conversion exits.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The problem was caused by a check to determine whether data
+   conversion was active in order to prevent two concurrent data
+   conversion operations. However, the check was performed
+   incorrectly leading to MQRC_CALL_IN_PROGRESS being returned even
+   with only one data conversion operation active.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere MQ code has been modified in order to ensure that
+   single data conversion operations no longer return
+   MQRC_CALL_IN_PROGRESS.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.1
+   --------           --------------------
+   Windows            U200310
+   AIX                U827232
+   HP-UX (PA-RISC)    U826485
+   HP-UX (Itanium)    U826884
+   Solaris (SPARC)    U827125
+   Solaris (x86-64)   U827374
+   iSeries            tbc_p700_0_1_1
+   Linux (x86)        U826321
+   Linux (x86-64)     U827231
+   Linux (zSeries)    U827105
+   Linux (Power)      U826779
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ54543
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7221
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-07-02
+   
+   
+ * CLOSED DATE
+   2009-10-02
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7221
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

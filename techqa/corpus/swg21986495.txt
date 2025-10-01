@@ -1,0 +1,39 @@
+Title: IBM ServletWrapper service exceptions in Maximo logs - United States
+
+Text:
+TPAEAPPSERVER maximo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides info about those exception errors in the logs related to ServletWrapper 
+
+SYMPTOM
+In case you have been getting the below errors in your system logs quite frequently and are unable to identify the root cause of it, as no user 
+has reported any issues but the errors are filling up your log files, then check the following info :
+
+Below is the log sample.
+
+[3/3/16 12:02:39:865 EST] 00000121 ServletWrappe E com.ibm.ws.webcontainer.servlet.ServletWrapper service SRVE0068E: An exception was 
+thrown by one of the service methods of the servlet 
+[/webclient/components/resultsetportlet.jsp] in application [MAXIMOUI]. 
+Exception created : [java.lang.NullPointerException 
+at psdi.webclient.system.controller.ComponentInstance.needsRender(ComponentInstance.java:764) 
+at com.ibm._jsp._resultsetportlet._jspService(_resultsetportlet.java:1981) 
+
+
+
+RESOLVING THE PROBLEM
+There are some reasons for these kind of exceptions that we have seen. You may need to check in your environment to see if one of them fits to the current scenario. 
+
+The most common root cause of such errors is that one or multiple Result Sets have a wrong query definition, or the query definition is missing at all. 
+
+Are the users using the same Start Center template? If yes, the problem may be the queries been used. 
+
+Could you please check the queries that the portlets are using? What happens if you run the queries in the database? 
+
+There have been a couple of issues found with having special characters in the title of and of the portlets in the startcenter; namely, ( ) % or '. 
+
+You can check those portlet titles. Also, many pie charts and bar charts in just one Start Center for users, or specific Start Center templates having issues due to corrupted data in the database could affect it. 
+
+Make sure you are running Maximo with the latest IFIX packages applied.
+
+Should you need any assistance, please contact IBM Maximo Support

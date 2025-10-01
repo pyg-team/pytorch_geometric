@@ -1,0 +1,93 @@
+Title: IBM Security Bulletin: Information disclosure in WebSphere Application Server (CVE-2017-1381) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There is an information disclosure in the WebSphere Application Server Proxy Server or On-Demand-Router (ODR). This only occurs when the system clock is changed. If the system clock is changed it could cause stale data to be cached and served. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2017-1381 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-1381]
+DESCRIPTION: IBM WebSphere Application Server Proxy Server or On-demand-router (ODR) could allow a local attacker to obtain sensitive information, caused by stale data being cached and then served.
+CVSS Base Score: 2.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/127152 [https://exchange.xforce.ibmcloud.com/vulnerabilities/127152] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+This vulnerability affects the following versions and releases of IBM WebSphere Application Server traditional: 
+
+ * Version 9.0 - you are only affected if you have changed the default value for the custom property cache.query.string to false 
+ * Version 8.5 
+ * Version 8.0 
+ * Version 7.0
+
+REMEDIATION/FIXES
+This vulnerability only occurs if you change the system clock. 
+The recommended solution is to apply the interim fix, Fix Pack or PTF containing APAR PI82630 for each named product as soon as practical.
+
+For WebSphere Application Server traditional and WebSphere Application Server Hypervisor Edition: 
+For V9.0.0.0 through 9.0.0.4: 
+· Upgrade to minimal fix pack levels as required by interim fix and then apply Interim Fix PI82630 [http://www-01.ibm.com/support/docview.wss?uid=swg24043870] [http://www-01.ibm.com/support/docview.wss?uid=swg24043596] [http://www-01.ibm.com/support/docview.wss?uid=swg24042908] [http://www-01.ibm.com/support/docview.wss?uid=swg24042513] [http://www-01.ibm.com/support/docview.wss?uid=swg24041604] [http://www-01.ibm.com/support/docview.wss?uid=swg24041394]
+--OR-- 
+· Apply Fix Pack 9.0.0.5 or later. 
+
+For V8.5.0.0 through 8.5.5.12: 
+· Upgrade to minimal fix pack levels as required by interim fix and then apply Interim Fix PI82630 [http://www-01.ibm.com/support/docview.wss?uid=swg24043870] [http://www-01.ibm.com/support/docview.wss?uid=swg24043596] [http://www-01.ibm.com/support/docview.wss?uid=swg24042908] [http://www-01.ibm.com/support/docview.wss?uid=swg24042712] [http://www-01.ibm.com/support/docview.wss?uid=swg24042513] [http://www-01.ibm.com/support/docview.wss?uid=swg24041604] [http://www-01.ibm.com/support/docview.wss?uid=swg24041394] [http://www-01.ibm.com/support/docview.wss?uid=swg24043596] [http://www-01.ibm.com/support/docview.wss?uid=swg24042908] [http://www-01.ibm.com/support/docview.wss?uid=swg24042513] [http://www-01.ibm.com/support/docview.wss?uid=swg24041604] [http://www-01.ibm.com/support/docview.wss?uid=swg24041394]
+--OR-- 
+· Apply Fix Pack 8.5.5.13 or later. 
+
+For V8.0.0.0 through 8.0.0.13: 
+· Upgrade to a minimal fix pack levels as required by interim fix and then apply Interim Fix PI82630 [http://www-01.ibm.com/support/docview.wss?uid=swg24043870] [http://www-01.ibm.com/support/docview.wss?uid=swg24043596] [http://www-01.ibm.com/support/docview.wss?uid=swg24043596] [http://www-01.ibm.com/support/docview.wss?uid=swg24042908] [http://www-01.ibm.com/support/docview.wss?uid=swg24042513] [http://www-01.ibm.com/support/docview.wss?uid=swg24041604] [http://www-01.ibm.com/support/docview.wss?uid=swg24041394] 
+
+--OR-- 
+· Apply Fix Pack 8.0.0.14 or later. 
+
+For V7.0.0.0 through 7.0.0.43: 
+· Upgrade to a minimal fix pack levels as required by interim fix and then apply Interim Fix PI82630 [http://www-01.ibm.com/support/docview.wss?uid=swg24043870] [http://www-01.ibm.com/support/docview.wss?uid=swg24043596] [http://www-01.ibm.com/support/docview.wss?uid=swg24043596] [http://www-01.ibm.com/support/docview.wss?uid=swg24042908] [http://www-01.ibm.com/support/docview.wss?uid=swg24042513] [http://www-01.ibm.com/support/docview.wss?uid=swg24041604] [http://www-01.ibm.com/support/docview.wss?uid=swg24041394] 
+
+--OR-- 
+· Apply Fix Pack 7.0.0.45 or later. 
+
+WORKAROUNDS AND MITIGATIONS
+There are several ways to work around this issue. You only need to do one of these or apply the Interim fix above. 
+
+1) Restart the ODR or proxy server after changing the system clock.
+2) If your applications do not require response caching then disable caching and restart the ODR or proxy server prior to changing the system clock. https://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/ujpx_proxy.html [https://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/ujpx_proxy.html]
+3) Set the custom property cache.query.string to true and restart the ODR or proxy server prior to changing the system clock. This is already set to true in Version 9. https://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/rjpx_siphttpcustprops.html#cache.query.string [https://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/rjpx_siphttpcustprops.html#cache.query.string] 
+4) Clear the ODR or proxy server cache prior to changing the system clock.https://developer.ibm.com/answers/questions/382562/how-do-i-clear-the-websphere-proxy-server-or-odr-c.html [https://developer.ibm.com/answers/questions/382562/how-do-i-clear-the-websphere-proxy-server-or-odr-c.html] 
+5) In the application, set the "Cache-Control: no-cache" directive header in the response to prevent sensitive content from being cached in the proxy server or ODR. 
+
+
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 18 July 2017: original document published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg22006988]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Hypervisor Edition

@@ -1,0 +1,17 @@
+Title: IBM Parameters Estimate displays 'system missing' values. - United States
+
+Text:
+GENLIN system missing dot table output general linear regression parameter estimates TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am running a generalized linear model analysis in the SPSS Statistics GENLIN procedure with a very large predictor. In my output, the 'Parameters Estimates' table is displaying system-missing indicators ('.') for the Wald chi-square statistic and associated significance. Why is this happening? 
+
+SYMPTOM
+'Parameters Estimates' table is displaying system-missing indicators ('.') for some values 
+
+
+RESOLVING THE PROBLEM
+Parameter estimates are predicted changes in the linear predictor response function for a unit increase in a given predictor. If the predictor variable is on a very large scale, the predicted change in the response function may be very small, resulting in a variance and standard error that is numerically difficult to distinguish from 0. If this occurs, the Wald chi-square statistic, which is the square of the ratio of the parameter estimate to its standard error, is undefined. In Version 20 and later, an internal rescaling is used to handle issues like this, with results scaled back to the original metrics, and this problem likely will not occur. In earlier releases we recommend rescaling the relevant predictor(s) prior to running the analysis. If you divide a predictor by 10, that moves the decimal in the parameter estimate one place to the left, multiplying the parameter estimate by 10. Dividing a huge number by a multiple of 10 can allow you to obtain test results. You can then back-divide the parameter estimate(s) and standard error(s) by the same multiple to re-express the results in the original metric if that is necessary.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

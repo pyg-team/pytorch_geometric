@@ -1,0 +1,92 @@
+Title: IBM Language Support for Host Print Transform and Transform Services - United States
+
+Text:
+5761-SS1; 5761-TS1; 5761SS1; 5761TS1 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides information describing current V6R1 language support for Host Print Transform versus Transform Services. 
+
+RESOLVING THE PROBLEM
+In IBM i 6.1, an application that writes *AFPDS data to a printer file has the option to transform the *AFPDS data directly to a stream file in the IFS. It is expected that this function would be used most often to create GIF, TIFF, or PDF type stream files. However, there is a difference in the software used to create GIF and TIFF, versus the software used to create PDF. 
+
+GIF/TIFF
+
+These output formats are generated using the legacy Host Print Transform (HPT) and require AFP (FOCA) fonts and code pages to render text. AFP fonts for non-Latin1 languages are not provided with the AFP Compatibility Font option for i5/OS, so must be purchased separately and installed. If the appropriate font and code page are not explicitly specified in the printer file, HPT will attempt to locate the required font based on the CHRID value specified on the printer file, device description, or QCHRID system value.
+
+If the printer file specifies the use of a TrueType font using the FONTNAME DDS keyword, HPT will use it to render the associated text. The Additional Fonts option provides such fonts which include the characters needed to render all the i5/OS National Language Versions and many additional scripts. While intended to support printing Unicode data, an AFP code page can be specified with the *CODEPAGE parameter to support printing EBCDIC-encoded data, as well. If the UNISCRIPT keyword also specified, HPT will use Layout Engine to render complex scripts, such as Indic and Arabic.
+
+
+PDF
+
+The PDF output format is generated using the new Transform Services (5761-TS1) product. The V6R1 version is not capable of rendering non-Latin1 text based on generic AFP font references. While the transform can be configured to embed a specified Type1 font in the PDF, it currently does not have the capability to use the custom-encoding tables needed for non-ANSI characters. Overcoming this deficiency is a top priority for any future enhancements,
+
+However, the V6R1 version can render text in Czech and other non-latin NLVs if it is associated with a TrueType font using the FONTNAME DDS keyword. The TrueType font will be embedded in the PDF document with the Identity encoding and a ToUnicode CMap to allow the text to be searched by most PDF viewers. 5761-TS1 PTF number SI30007 must be installed if the *CODEPAGE parameter is used with the FONTNAME keyword to print EBCDIC-encoded text data.
+
+
+Font Support with Transform Services
+
+6.1 Transform Services (product 5761TS1) does not have the ability to embed fonts, and therefore is limited describing the characteristics of a typeface. It is therefore limited to the 14 Standard Type 1 fonts:
+
+
+
+o Times Roman o Times Bold o Times Italic o Times Bold/Italic o Helvetica o Helvetica Bold o Helvetica Oblique o Helvetica Bold/Oblique o Courier o Courier Bold o Courier Oblique o Courier BoldOblique o Symbol o ZapfDingbats 
+7.1 Transform Services (product 5770TS1) added the ability to embed fonts, including host-resident font character sets and coded fonts. This provides better font support, but can increase the size of the resulting PDF file since each referenced font must be embedded in the PDF file itself. 
+
+Note: When using 6.1 or 7.1 Transform Services to generate PDF stream files with mixed Single-Byte Character Set (SBCS) and Double-Byte Character Set (DBCS) text, it is recommended that you specify a DBCS outline font instead of DBCS raster fonts using the IGCCDEFNT (DBCS Coded Font) parameter in the printer file. 
+
+The older DBCS raster fonts are available in libraries QFNT61, QFNT62, QFNT63, QFNT64 or QFNT65 by purchasing and installing the Advanced Function Printing DBCS Fonts/400 product (5769-FN1). 
+
+The newer DBCS outline (or scalable) fonts are available in library QFNT68 by by purchasing and installing the AFP Font Collection for IBM i product (5733-B45). However, if you only intend to reference the DBCS outline fonts with Transform Services then they can be specified without actually purchasing and installing product 5733-B45. 
+
+For more information on the DBCS outline coded fonts that can be used with Transform Services through the IGCCDEFNT (DBCS Coded Font) parameter in the printer file, please refer to the attached IBM AFP Font Collection for i Font Summary (G544-5846-03) publication: 
+
+IBM AFP Font Collection for i Font Summary (G544-5846-03).pdf [/support/docview.wss?uid=nas8N1013755&aid=2]IBM AFP Font Collection for i Font Summary (G544-5846-03).pdf [/support/docview.wss?uid=nas8N1013755&aid=1] 
+
+For more information on the Advanced Function Printing DBCS Fonts/400 and AFP Font Collection for IBM i products, please refer to the following documents: 
+
+N1011107: Libraries Shipped with Advanced Function Printing DBCS Fonts/400 (Product 5769FN1) [http://www-01.ibm.com/support/docview.wss?uid=nas8N1011107] 
+N1011759: How to Install the AFP Font Collection for IBM i Product (5733B45) [http://www-01.ibm.com/support/docview.wss?uid=nas8N1011759] 
+
+
+User-Defined DBCS Characters 
+
+Host Print Transform (HPT) supports user-defined characters that have beed defined by using the character generator utility (CGU) and that have been stored in an DBCS font table or *IGCTBL object, but Transform Services does not. 
+
+
+System-Supplied Workstation Customizing Objects (WSCSTs) for Transform Services 
+
+6.1 Transform Services (product 5761TS1) supplies the following Workstation Customizing Objects (WSCSTs): 
+
+QSYS/QCTXPDF 
+
+The QCTXPDF *WSCST object is the default PDF WSCST object that is used when the special value *PDF is specified. It includes tags to map all of the CJK World Type fonts included in i5/OS option 43 to corresponding registered CMaps and character collections. This allows ideographic characters to be rendered without embedding these very large fonts within the document. The smaller World Type fonts are not mapped by this object and will be embedded within the output document to allow non-Latin1 SBCS languages to be presented. 
+
+QSYS/QCTXPDFWT 
+
+The QCTXPDFWT *WSCST object contains tags to map all of the World Type fonts included with i5/OS option 43 to corresponding Type 1 fonts or registered CMaps and character collections. This generally results in the smallest possible PDF file size, but only reliably presents Latin and CJK languages. 
+
+QSYS/QCTXPDFMBD 
+
+The QCTXPDFMBD *WSCST object is the minimal PDF WSCST object included. It omits all font tags, so that the default font mapping is used for all font references. The default behavior is to map all SBCS AFP font references to standard PDF fonts, map all DBCS AFP fonts to common CID fonts, and embed all TrueType font references. 
+
+7.1 Transform Services (product 5770TS1) supplies the following additional Workstation Customizing Objects (WSCSTs) through 7.1 PTF SI45369 [http://www-912.ibm.com/a_dir/as4ptf.nsf/ALLPTFS/I45369]: 
+
+QSYS/QCTXPDF2 
+
+Similar to the QCTXPDF *WSCST object, the QCTXPDF2 *WSCST object includes tags to map all of the CJK World Type fonts included in i5/OS option 43 to corresponding registered CMaps and character collections. However, the QCTXPDF2 *WSCST object contains the new AFPFNTSUB tag with EMBED=NO so that AFP Font references will be mapped to standard font references rather than be embedded. AFP Font references are host resident fonts including font character sets 
+( FNTCHRSET ), coded fonts ( CDEFNT ) and DBCS coded fonts ( IGCCDEFNT ). TrueType fonts will be embedded. 
+
+QSYS/QCTXPDFWT2 
+
+Similar to the QCTXPDFWT *WSCST object, the QCTXPDFWT2 *WSCST object includes tags to map all of the World Type fonts included with i5/OS option 43 to corresponding Type 1 fonts or registered CMaps and character collections. However, the QCTXPDFWT2 *WSCST object contains the new AFPFNTSUB tag with EMBED=NO so that AFP Font references will be mapped to standard font references rather than be embedded. AFP Font references are host resident fonts including font character sets ( FNTCHRSET ), coded fonts ( CDEFNT ) and DBCS coded fonts ( IGCCDEFNT ). 
+
+QSYS/QCTXPDFMB2 
+
+Similar to the QCTXPDFMBD *WSCST object, however, the QCTXPDFMB2 *WSCST object contains the new AFPFNTSUB tag with EMBED=NO so that AFP Font references will be mapped to standard font references rather than be embedded. AFP Font references are host resident fonts including font character sets ( FNTCHRSET ), coded fonts ( CDEFNT ) and DBCS coded fonts ( IGCCDEFNT ). TrueType fonts will be embedded. 
+
+Keywords: 5761SS1 5761-SS1 5761TS1 5761-TS1 R610 R611 V6R1 V6R1M0 V6R1M1 6.1 6.1.1 5769FN1 5769-FN1 5733B45 5733-B45 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 
+HISTORICAL NUMBER
+ 483500633

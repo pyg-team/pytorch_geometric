@@ -1,0 +1,165 @@
+Title: IBM PJ43482: INCORRECT ERROR HANDLING WILL CAUSE CSS FUNCTIONAL ERRORS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the list of special errors code we look at to determine if
+   indexing should be paused because of problems we have these
+   definitions:
+       // TASK_ERROR_TEMPORARY_COLLECTION_ERROR
+       private static final String TEMP_INDEX_TASK_ERROR =
+   "IQQ0071E";
+   
+       // TASK_ERROR_SERVER_ERROR
+       private static final String SERVER_TASK_ERROR = "IQQ0072E";
+   
+   It looks like these error codes are wrong.
+   
+   From the IQQI.properties file:
+   I0071E.TASK_ERROR_TEMPORARY_COLLECTION_ERROR = An error occurred
+   during execution of task {0}. The collection is temporarily
+   unavailable for indexing.
+   
+   
+   I0072E.TASK_ERROR_SERVER_ERROR = An error occurred during
+   execution of task {0}. The server is currently unavailable for
+   indexing. This error may require the involvement of an
+   administrator.
+   
+   
+   So the CPE definitions have another "I" like this:
+       // TASK_ERROR_TEMPORARY_COLLECTION_ERROR
+       private static final String TEMP_INDEX_TASK_ERROR =
+   "IQQI0071E";
+   
+       // TASK_ERROR_SERVER_ERROR
+       private static final String SERVER_TASK_ERROR = "IQQI0072E";
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users doing full text indexing with Content Search Services  *
+   * and Content Platform Engine 5.2.0.3-P8CPE-FP003 and prior.   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Content Platform Engine handles different indexing errors it *
+   * receives from Content Search Services differently. Due to    *
+   * the wrong error codes in Content Platform Engine, for        *
+   * certain temporary indexing error conditions, it responded by *
+   * slowing down indexing instead of temporarily pausing         *
+   * indexing for the collection from which the errors            *
+   * originated.                                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to Content Platform Engine 5.2.0.4-P8CPE-FP004 and   *
+   * later                                                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Content Platform Engine 5.2.0.4-P8CPE-FP004 and later uses
+   correct error codes to identify the error conditions and handles
+   them appropriately.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ43482
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   521
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-08-11
+   
+   
+ * CLOSED DATE
+   2015-09-02
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY
+   UP

@@ -1,0 +1,33 @@
+Title: IBM Number of rows retrieved in an IBM Content Navigator (ICN) search? - United States
+
+Text:
+ICN search items pagesize size returned retrieve navigator per TECHNOTE (FAQ)
+
+QUESTION
+ When doing a search in ICN, the results are returned with a maximum of 200 items per page. Is there a way to increase this number? 
+
+CAUSE
+Due to a potentially large number of search results, it could be beneficial to have a greater number of items displayed on a single page to make it easier to find an item. It would also help in a case where the size of the results page needs to be decreased for performance reasons.
+
+ANSWER
+It is not possible to increase the 200 items limit within the ICN interface, but there is an event method called onSearchTemplatePrepared(searchTemplate) that is incorporated into ICN since version 2.0.3.3. This method can be invoked just before the search template is run. A plug-in can extend the ecm.widget.search.BasicSearchDefinition (search builder) and ecm.widget.search.SearchForm (search run-time) widgets and override the onSearchTemplatePrepared method to set the pageSize. 
+
+
+For example:
+lang.extend(ecm.widget.search.BasicSearchDefinition, {
+onSearchTemplatePrepared: function(searchTemplate) {
+searchTemplate.pageSize = 400;
+}
+});
+lang.extend(ecm.widget.search.SearchForm, {
+onSearchTemplatePrepared: function(searchTemplate) {
+searchTemplate.pageSize = 400;
+}
+});
+
+It is important to note that small page sizes (typically less than 50) are not recommended because additional requests might be sent to fill the content list. For example, if the content list displays 10 rows and you set the page size to 6, the first 6 items returned by the search are displayed, but to fill the content list an additional query attempts to retrieve 4 more items. Also, the page size must be equal or greater than the maximum results setting in order to avoid paging. 
+
+ 
+
+The plugin at the link below may be used to set page size for ICN search.
+https://github.com/ibm-ecm/ibm-content-navigator-samples/tree/master/SearchPageSizePlugin [https://github.com/ibm-ecm/ibm-content-navigator-samples/tree/master/SearchPageSizePlugin]

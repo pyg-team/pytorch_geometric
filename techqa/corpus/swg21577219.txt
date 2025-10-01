@@ -1,0 +1,37 @@
+Title: IBM Random timeouts after configuring LDAP - United States
+
+Text:
+timeout; lpta; session; ldap; TPAELDAP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Users randomly logged out while working in the application. 
+
+SYMPTOM
+Users are logged out while working in the application before the time out value in set in the web,xml 
+
+
+CAUSE
+This can be caused by the LTPA time out values in Websphere if users are Directory Authentication
+
+DIAGNOSING THE PROBLEM
+Have users time when they are logged in compared to the random log out time. This may be synchronized with the amount of time the LTPA time out is set for. You can also check your system out logs, there may be token session time out messages displayed.
+
+RESOLVING THE PROBLEM
+1) Choose Global Security then Click on LTPA
+
+
+2) Look for the LTPA time out value
+
+The time here is set to 120 minutes by default. This can time the user out of Maximo well working after 120 minutes of activity whether it is idle or not and regardless of what is in the web.xml
+
+3) Increase this value to a limit that suits your users
+4) Stop the jvm, synchronize your nodes and restart the jvm
+
+*Note if you increase this value to a higher number your inactivity time out set for session-config in the web.xml will still work, users will be timed out after inactivity, just not randomly.
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management for IT 7.1, 7.1.1, 7.1.2, 7.2, 7.2.1, 7.2.2, 7.5 Systems and Asset Management Tivoli Change and Configuration Management Database 7.1, 7.1.1, 7.2, 7.2.1, 7.2.2, 7.5 Systems and Asset Management Tivoli Service Request Manager 7.1, 7.2, 7.2.1, 7.5

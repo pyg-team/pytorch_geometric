@@ -1,0 +1,29 @@
+Title: IBM How to set the WSRR and ITCAM for SOA Integration in debug mode. - United States
+
+Text:
+ITCAM SOA WSRR Integration debug mode CAMD4ALL TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ How to set the WSRR and ITCAM for SOA Integration in debug mode. 
+
+ANSWER
+
+If you want to see debug outputs in the SystemOut.log logfile during the WSRR - ITCAM for SOA integration, then please follow these steps.
+1. Enable websphere admin console in TEPS (automatically disabled after any TEPS restart)
+Unix/Linux: $ITM_HOME/<arch>/iw/scripts/enableISCLite.sh true
+Windows: MTEMS -> right click TEPS -> Advanced -> TEPS/e-Administration -> Enable TEPS/e Administration
+2. Set a password if you haven't done so before
+Unix/Linux: $ITM_HOME/<arch>/iw/scripts/updateTEPSEPass.sh
+Windows: MTEMS -> right click TEPS -> Advanced -> TEPS/e-Administration -> TEPS/e Administration Password
+3. Log in to the eWAS admin console on port 15206.
+4. Go to the Troubleshooting -> Logs and trace -> ITMServer -> Change Log Detail Levels -> Runtime -> *=info: com.ibm.management.soa.dms.*=all
+5. Re-run the sync script or modify a SLD or related object
+6. Check the updated TEPS eWAS trace.log and SystemOut.log files in the server directory.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM for SOA WSRR

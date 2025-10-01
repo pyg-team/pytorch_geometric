@@ -1,0 +1,85 @@
+Title: IBM The upgradeProcessData command for IBM Business Process Manager (BPM) fails to recognize the Process Server database - United States
+
+Text:
+upgradeProcessData; BPM 8.0.1; migration TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The upgradeProcessData command fails to recognize the Process Server database. The command fails with the following exception in the upgrade log files: "The configured Process Server database does not appear to be a Teamworks Process Server database." 
+
+SYMPTOM
+You might see messages that are similar to the following text in the upgrade log files: 
+
+Jan 17, 2013 12:00:55 PM FINE: com.lombardisoftware.tools.dbupgrade.UpgradeDatabase - The configured Process Server database does not appear to be a Teamworks Process Server database.
+java.lang.RuntimeException: The configured Process Server database does not appear to be a Teamworks Process Server database.
+at com.lombardisoftware.tools.dbupgrade.steps.TestDatabases.execute(TestDatabases.java:43)
+at com.lombardisoftware.tools.dbupgrade.UpgradeDatabase.upgradeDatabase(UpgradeDatabase.java:274)
+at com.lombardisoftware.tools.dbupgrade.UpgradeDatabase.main(UpgradeDatabase.java:260)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+at org.apache.tools.ant.taskdefs.ExecuteJava.run(ExecuteJava.java:217)
+at org.apache.tools.ant.taskdefs.ExecuteJava.execute(ExecuteJava.java:152)
+at org.apache.tools.ant.taskdefs.Java.run(Java.java:764)
+at org.apache.tools.ant.taskdefs.Java.executeJava(Java.java:218)
+
+
+CAUSE
+The upgradeProcessData command validates the Process Server database and the Performance Data Warehouse table by determining whether a specific table exists.
+
+
+For IBM DB2 and Microsoft SQL Server databases, the code looks for the following tables in their respective database: 
+
+ * LSW_PROCESS table in the Process Server database 
+   
+   
+ * LSW_TIMING_INTERVAL_VALUE table in the Performance Data Warehouse database 
+
+
+
+The Process Server and Performance Data Warehouse components do not have schema support. Using the same database with different schema is not supported. If you have same table with multiple schema names, you will see the same problem. 
+
+For example: 
+DB2INST1.LSW_PROCESS 
+PSDBUSER.LSW_PROCESS 
+RESOLVING THE PROBLEM
+The upgradeProcessData command has been enhanced to validate the options that are used when you invoke this command. The database information for IBM Business Process Manager Version 8.0.1 and later is gathered from the respective data source. 
+
+
+
+procsvr.db.jndi gathers the information from jdbc/TeamWorksDB and perfdw.db.jndi gathers information from jdbc/PDWDB.
+
+Prior to IBM Business Process Manager V8.0.1, the upgrade database command finds the database information in theProfile_home/properties/dd/bpm.standard.standalone.dbDesign file.
+
+To resolve this issue, complete the following steps: 
+
+ 1. Make sure that the profileName, nodeName, and the serverName values that are used in the command are correct. For example:
+    
+    
+    upgradeProcessData.bat -profileNameDepMGR-nodeName Appnode1-serverName AppClustermember-perfNodeName suppNode-perfServerName suppClusterMember
+    
+    
+ 2. Verify that the LSW_PROCESS table exists in the Process Server and the LSW_TIMING_INTERVAL_VALUE table exists in the Performance Data Warehouse database.
+    
+    
+    If there is more than one table with different schemaName values, you will see the same exception because the code expects only one table.
+    
+    
+    For example: 
+    DB2INST1.LSW_PROCESS
+    PSDBUSER.LSW_PROCESS
+    
+    
+
+The code has been enhanced using APAR JR45361 [http://www.ibm.com/support/docview.wss?uid=swg1JR45361] to validate the database using a specific schema name. This fix is included in IBM Business Process Manager V8.0.1 Fix Pack 1 [http://www.ibm.com/support/docview.wss?uid=swg24034495]. 
+
+
+If you notice that the tables are created multiple times with different schema name, you can work around the problem by deleting all of the tables under the schema. These tables might have been created by mistake and are not being used. 
+
+
+For example, if the tables were created accidentally using the DB2INST1 user, delete all of the tables under the DB2INST1 schema and also delete all of the views that are owned by the DB2INST1 user.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Migration AIX, Linux, Linux zSeries, Solaris, Windows 8.0.1, 8.0, 7.5.1 Business Integration IBM Business Process Manager Express Migration Linux, Linux zSeries, Windows 8.0.1, 8.0, 7.5.1 
+PRODUCT ALIAS/SYNONYM
+ BPM

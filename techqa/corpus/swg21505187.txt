@@ -1,0 +1,51 @@
+Title: IBM Tivoli Storage Manager V6 Server installation fails with return code 1618 - United States
+
+Text:
+msi exec second installation TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A Tivoli Storage Manager 6.x server is installed on Windows. The installation successfully installs the deployment engine but immediately fails to install the server. The installation fails with a return code of 1618. 
+
+CAUSE
+Another program installation is already in progress
+
+DIAGNOSING THE PROBLEM
+Examine the logs.zip created by the failed installation. Review the coi\plan\install\MachinePlan_localhost\logs\[INSTALL_date_time]\MachinePlan_localhost.log file. 
+
+For example :
+
+install-create:
+[echo] product.log.file is: C:\Program Files\Tivoli\TSM\_uninst\plan\install\MachinePlan_localhost\00001_TSM_Server_1_1/logs
+
+executePackage:
+[echo] de.descriptor.source.file is install_input.xml
+[echo] Running command: C:/Program Files/IBM/Common/acsi/bin/de_processreq.cmd
+[processReq] Invoking DEProcessReq CHANGE...
+[echo] <?xml version="1.0" encoding="UTF-8" ?>
+[echo] <output:processReqOutput schemaVersion="1.3" implVersion="1.3.1.20"
+[echo] xmlns:output="http://www.ibm.com/namespaces/autonomic/solutioninstall/deProcessReqOutput" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ibm.com/namespaces/autonomic/solutioninstall/deProcessReqOutput deProcessReqOutput.xsd">
+[echo] <changeRequestResults id="-330265b5:1311fe876e6:-7f93" requestStatus="failed" rollbackStatus="success">
+[echo] <startTime>July 12, 2011 1:53:15 PM CST</startTime>
+[echo] <endTime>July 12, 2011 1:53:25 PM CST</endTime>
+[echo] <successCount>0</successCount>
+[echo] <warningCount>0</warningCount>
+[echo] <errorCount>1</errorCount>
+[echo] <errorMessages>
+[echo] <errorMessage>[com.ibm.ac.si.ap.action.ExternalCommandActionException: ACUOSI0050E External command action failed with return code 1618. Invocation string: [cmd.exe, /c, install.bat], com.ibm.ac.common.hosts.CreationFailedException: : ]</errorMessage>
+[echo] </errorMessages>
+[echo] <actionErrorEvents>
+[echo] <actionErrorEvent actionID="OsAction_ExecuteExternalCommand_3" actionName="externalCommand">ACUCME1100E </actionErrorEvent>
+[echo] </actionErrorEvents>
+[echo] </changeRequestResults>
+[echo] </output:processReqOutput>
+
+
+
+RESOLVING THE PROBLEM
+The return code 1618 is an error returned by Windows. This error is described as follows : 
+
+
+ERROR_INSTALL_ALREADY_ RUNNING 1618 
+Another installation is already in progress. Complete that installation before proceeding with this install.
+
+Run the Windows Task explorer and verify if there are msiexec.exe processes running. Those processes need to complete before running the Tivoli Storage Manager server installer. In this instance, there were hung msiexec.exe processes. Running the "process explorer" tool determined that the hung msiexec.exe process belonged to McAfee installer. After removing the hung McAfee install process, the Tivoli Storage Manager server installation was successful.

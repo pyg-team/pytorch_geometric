@@ -1,0 +1,196 @@
+Title: IBM IC79259: CLONING A PROCESS APP WITH MANY SNAPSHOTS CAUSES OOM, JVM HANG, OR NEVER ENDING HUNG THREADS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer has large application (10MB export) with 121 named
+   snapshots and approximately 30,000 saves (unnamed snapshots).
+   When cloning, the process server either hits OOM or becomes hung
+   with multiple threads trying to bundle and find all parts of the
+   process app. See stacks at end of JIRA and attached to ticket.
+   
+   [10/4/11 23:17:01:276 CDT] 0000001d ThreadMonitor W   WSVR0605W:
+   Thread "WebContainer : 2" (00000030) has been active for 758781
+   milliseconds and may be hung.
+   here is/are 1 thread(s) in total in the server that may be hung.
+    at java.net.SocketInputStream.socketRead0(Native Method)
+    at java.net.SocketInputStream.read(SocketInputStream.java:141)
+    at
+   java.io.BufferedInputStream.fill(BufferedInputStream.java:230)
+    at
+   java.io.BufferedInputStream.read(BufferedInputStream.java:249)
+   
+   the stack is lengthy, but one of the key areas is
+   
+   at
+   com.lombardisoftware.server.ejb.persistence.versioning.BranchCon
+   textImpl.writeAccessUnderVMLock(BranchContextImpl.java:425)
+    at
+   com.lombardisoftware.server.ejb.persistence.versioning.BranchCon
+   textImpl.writeAccess(BranchContextImpl.java:275)
+    at
+   com.lombardisoftware.server.ejb.persistence.versioning.BranchMan
+   ager.writeAccess(BranchManager.java:291)
+    at
+   com.lombardisoftware.server.ejb.persistence.versioning.BranchMan
+   ager.createNewBranch(BranchManager.java:438)
+    at
+   com.lombardisoftware.server.ejb.repositoryservices.RepositorySer
+   vicesCore.cloneProject(RepositoryServicesCore.java:3401)
+   
+   For OOM heap shows the following
+   
+     1,770,375,760 (82%) [48] 1
+   java/util/concurrent/ConcurrentHashMap 0x8394ebc8
+                1,770,375,712 (82%) [80] 16 array of
+   java/util/concurrent/ConcurrentHashMap$Segment 0x8394ebf8
+                 999,258,032 (46%) [40] 2
+   java/util/concurrent/ConcurrentHashMap$Segment 0x8394edb0
+                  999,257,960 (46%) [32] 1 array of
+   java/util/concurrent/ConcurrentHashMap$HashEntry 0x926e87d0
+                   999,257,928 (46%) [32] 3
+   java/util/concurrent/ConcurrentHashMap$HashEntry 0xa5c7eea8
+                    998,610,440 (46%) [32] 3
+   java/util/concurrent/ConcurrentHashMap$HashEntry 0x926e87f0
+                     998,561,736 (46%) [32] 3
+   java/util/concurrent/ConcurrentHashMap$HashEntry 0x9746a968
+                      994,996,576 (46%) [32] 2
+   java/util/concurrent/ConcurrentHashMap$HashEntry 0x8300b4e8
+                       994,996,488 (46%) [64] 8
+   com/lombardisoftware/server/ejb/persistence/versioning/BranchCon
+   textImpl 0x8300ad28
+                        994,989,776 (46%) [48] 1 java/util/HashMap
+   0x8300b248
+                         994,989,728 (46%) [272] 31 array of
+   java/util/HashMap$Entry 0xc8982a30
+                          65,654,080 (3%) [32] 3
+   java/util/HashMap$Entry 0xb7194208
+                          63,209,864 (2%) [32] 3
+   java/util/HashMap$Entry 0xf364e500
+                          49,225,280 (2%) [32] 3
+   java/util/HashMap$Entry 0xd5761138
+                          46,099,144 (2%) [32] 3
+   java/util/HashMap$Entry 0xdf522da8
+                          45,858,336 (2%) [32] 3
+   java/util/HashMap$Entry 0xebefc8f0
+                          45,804,456 (2%) [32] 3
+   java/util/HashMap$Entry 0xf8740898
+   
+   BPM JIRA is WLE-6823
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Export desired snapshot to a second process center. A simple
+   Express install will also work. Clone app in the second
+   environment. Take a new snapshot of the clone. Export new clone
+   and import into primary process center.  Note the clone will
+   change the short name of the process app.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Process app fails to clone when there are many
+   snapshots
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  iFix made available
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC79259
+   
+   
+ * REPORTED COMPONENT NAME
+   WS LOMBARDI EDI
+   
+   
+ * REPORTED COMPONENT ID
+   5725A0900
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-20
+   
+   
+ * CLOSED DATE
+   2012-01-16
+   
+   
+ * LAST MODIFIED DATE
+   2012-01-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS LOMBARDI EDI
+   
+   
+ * FIXED COMPONENT ID
+   5725A0900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

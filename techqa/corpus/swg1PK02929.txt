@@ -1,0 +1,151 @@
+Title: IBM PK02929: OUT OF MEMORY ERROR IN CONSUMER DISPATCHER. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.0.2: WebSphere Application Server V6.0 Refresh Pack 2 for AIX platforms [http://www-01.ibm.com/support/docview.wss?uid=swg24010066]
+6.0.2: WebSphere Application Server V6.0 Refresh Pack 2 for HP-UX platforms [http://www-01.ibm.com/support/docview.wss?uid=swg24010067]
+6.0.2: WebSphere Application Server V6.0 Refresh Pack 2 for Solaris platforms [http://www-01.ibm.com/support/docview.wss?uid=swg24010069]
+6.0.2: WebSphere Application Server V6.0 Refresh Pack 2 for Windows platforms [http://www-01.ibm.com/support/docview.wss?uid=swg24009813]
+6.0.2: WebSphere Application Server V6.0 Refresh Pack 2 for Linux platforms [http://www-01.ibm.com/support/docview.wss?uid=swg24010068]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I have setup a WSGW Instance  in a cell environment with two
+   bus members and attached a routing mediation to the inbound
+   service on one bus member.
+   
+   There are defined 100 outbound services and ports defined on
+   the the other bus member and the purpose of the mediation is
+   to accept a SOAP request on the inbound service. Extract
+   information out of the SOAP body, and then change the forward
+   routing path to one of the 100 outbound destinations.
+   
+   We are running a stress test with 100 clients running 1000
+   iterations and after approximately 90 iterations the inbound
+   service bus member keels over with an out of memory exception.
+   I have run the test three times with various trace strings.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Any user of WebServices over the Service     *
+   *                 Integration Bus with a heavy concurrent      *
+   *                 load.                                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Multiple webservice requests to         *
+   *                      multiple destinations can result in     *
+   *                      an OutOfMemoryError under heavy load.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   With multiple requests to multiple destinations, there is a
+   caching of requests to load stored WSDL, as this is a
+   single-threaded activity, from the SDO database. The problem
+   arises when the WSDL extractions are being stored as datagraph
+   model objects which maintain a bidrectional reference to a
+   static superclass and hence can never be garbage collected.
+   Given the concurrency load, and multiple destination WSDL
+   definitions, this problem causes an OutOfMemoryError.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix resolves the problem.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK02929
+   
+   
+ * REPORTED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * REPORTED COMPONENT ID
+   620400101
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-03-23
+   
+   
+ * CLOSED DATE
+   2005-04-25
+   
+   
+ * LAST MODIFIED DATE
+   2005-04-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * FIXED COMPONENT ID
+   620400101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

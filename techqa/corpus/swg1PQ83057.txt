@@ -1,0 +1,177 @@
+Title: IBM PQ83057: IF MULTIPLE DDS FOR SAME GDG IN SAME STEP, STEP NOT RESTARTABLE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the same GDG is referenced multiple times in a single jobstep
+   (via different DD statements specifying different generations...
+   for instance (+0) and (+1), That jobstep and all prior steps of
+   the same job, other than the very first one, are shown as
+   NON-RESTARTABLE in the RCL dialog, panel EQQMERSL.
+   .
+   In fact, there is no reason cleanup cannot be performed and this
+   step (or any of the job's prior steps) cannot be restarted.  The
+   TWSz RCL logic should be able to understand and handle this
+   common JCL construction.
+   CIRCUMVENTION:
+   If RCLOPTS STEPRESCHK(NO) is set, the TWSz restartability
+   validation logic is disabled and the operator is allowed to
+   select any jobstep as the restart point.  However, users must
+   be aware that in most cases, jobsteps flagged as non-restartable
+   by TWSz are in fact not restartable, and selecting them as a
+   restart point will result in the job's failing again when
+   resubmitted -- as well as possible data corruption.
+   RCL DATASTORE RESTART&CLEANUP
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All TWS for z/OS users.                      *
+   *                 FUNCTION = R&C                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Problem with R&C function when the      *
+   *                      same GDG dataset root is referenced     *
+   *                      multiple times in a single jobstep.     *
+   ****************************************************************
+   * RECOMMENDATION: APPLY THE PTF FIXING THIS APAR               *
+   ****************************************************************
+   If in a single jobstep there are multiple references of GDGs
+   with the same root, one of which has DISP=OLD and another one
+   has DISP=NEW, then that jobstep and all prior steps of the same
+   job, other than the very first one, are shown as NON-RESTARTABLE
+   in the R&C dialog.
+   In fact, in this situation, the GDG referenced with DISP=OLD
+   erroneously resulted as not available. Consequently the step
+   resulted as not executable and therefore all the previous ones
+   were NON-RESTARTABLE.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When a GDG is referenced in a step with DISP=OLD and:
+   1. this step is flushed
+   2. no other reference to this GDG in present in this run
+   3. no information, about the GDG, is present in the previous
+      run
+   then the dataset will result available.
+   102Y
+   202Y
+   EQQPSAVA
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ83057
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV WRKLD SCHD
+   
+   
+ * REPORTED COMPONENT ID
+   5697WSZ01
+   
+   
+ * REPORTED RELEASE
+   102
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2004-01-09
+   
+   
+ * CLOSED DATE
+   2004-02-24
+   
+   
+ * LAST MODIFIED DATE
+   2005-05-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ85453 UQ85454
+   
+   
+
+MODULES/MACROS
+ *  EQQPSAVA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV WRKLD SCHD
+   
+   
+ * FIXED COMPONENT ID
+   5697WSZ01
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R102 PSY UQ85453 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ85453]
+   UP04/04/09 P F404
+   
+   
+ * R202 PSY UQ85454 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ85454]
+   UP04/04/09 P F404
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

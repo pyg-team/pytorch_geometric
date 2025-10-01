@@ -1,0 +1,176 @@
+Title: IBM IT14127: DB2DIAG.LOG ERROR MESSAGES ARE LOGGED WHEN CREATING A NEW TABLE SPACE IN AN AUTOMATED HADR/TSA ENVIRONMENT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+DB2 Version 10.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24044110]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In an automated HADR/TSA environment, when a new table space
+   is created for the database, the following error and warning
+   messages may be seen in the db2diag.log:
+     The db2diag.log messages as below can be safely ignored.  This
+   APAR fix is to address this issue and ensure that these
+   db2diag.log error and warning messages are not logged to the
+   db2diag.log in this case.
+   
+   2016-02-05-20.05.57.195556+540 I1080989E562  LEVEL: Warning
+   PID     : 10073        TID : 47029334042368  PROC : db2sysc 0
+   INSTANCE: db2inst1     NODE : 000            DB   : DBNAME
+   APPHDL  : 0-93         APPID: *LOCAL.db2inst1.160205110442
+   AUTHID  : DB2USER      HOSTNAME: hostname
+   EDUID   : 76           EDUNAME: db2agent (DBNAME) 0
+   FUNCTION: DB2 UDB, high avail services, sqlhaGetInfoForHADB,
+   probe:200
+   MESSAGE :
+   ECF=0x900001F6=-1879047690=ECF_GENREG_NO_MATCHING_RECORD_FOUND
+             No matching record found
+   
+   2016-02-05-20.05.57.200008+540 I1081552E591  LEVEL: Error
+   PID     : 10073        TID : 47029334042368  PROC : db2sysc 0
+   INSTANCE: db2inst1     NODE : 000            DB   : DBNAME
+   APPHDL  : 0-93         APPID: *LOCAL.db2inst1.160205110442
+   AUTHID  : DB2USER      HOSTNAME: hostname
+   EDUID   : 76           EDUNAME: db2agent (DBNAME) 0
+   FUNCTION: DB2 UDB, high avail services,
+   sqlhaEligibleHAFilesystem, probe:9106
+   DATA #1 : <preformatted>
+   sqlhaEligibleHAFilesystem: /db2/database, fsType ext4, instance
+   policy 7 is not an HA eligible mount path
+   
+   2016-02-05-20.05.57.200328+540 I1082144E579  LEVEL: Error
+   PID     : 10073        TID : 47029334042368  PROC : db2sysc 0
+   INSTANCE: db2inst1     NODE : 000            DB   : DBNAME
+   APPHDL  : 0-93         APPID:
+   *LOCAL.db2inst1.160205110442
+   AUTHID  : DB2USER      HOSTNAME: hostname
+   EDUID   : 76           EDUNAME: db2agent (DBNAME) 0
+   FUNCTION: DB2 UDB, high avail services, sqlhaCreateMount,
+   probe:9554
+   DATA #1 : <preformatted>
+   Path
+   /db2/database/db2inst1/NODE0000/DBNAME/T0000000/DB2USER
+   is not eligible to be made HA
+   
+   2016-02-05-20.05.57.200605+540 I1082724E660  LEVEL: Warning
+   PID     : 10073        TID : 47029334042368  PROC : db2sysc 0
+   INSTANCE: db2inst1     NODE : 000            DB   : DBNAME
+   APPHDL  : 0-93         APPID: *LOCAL.db2inst1.160205110442
+   AUTHID  : DB2USER      HOSTNAME: hostname
+   EDUID   : 76           EDUNAME: db2agent (DBNAME) 0
+   FUNCTION: DB2 UDB, buffer pool services,
+   sqlbDMSAddContainerRequest, probe:814
+   DATA #1 : String, 39 bytes
+   Cluster add mount operation succeeded:
+   DATA #2 : String, 68 bytes
+   /db2/database/db2inst1/NODE0000/DBNAME/T0000000/DB2USER
+   DATA #3 : String, 8 bytes
+   DBNAME
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 10.5 FP8                                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT14127
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-03
+   
+   
+ * CLOSED DATE
+   2017-01-11
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RA50 PSN
+   UP

@@ -1,0 +1,16 @@
+Title: IBM Application not found on Solaris Zone - United States
+
+Text:
+Zone Websphere Weblogic whinham applications lsof zonecfg TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Applications running on Solaris Zone, such as WebSphere or Weblogic, are not discovered by TADDM 
+
+CAUSE
+Since lsof does not run on Zone machines, the parent of the Zone machine must be discovered in order to correctly discover applications running on the virtual Zone machines.
+
+DIAGNOSING THE PROBLEM
+If the GenericServerSensor for the target contains "isVirtualZone=true" and there is no ZoneGeneric sensor, then the target is a child Zone and the parent has not been discovered. 
+
+RESOLVING THE PROBLEM
+Add the parent to the scope of machines discovered.

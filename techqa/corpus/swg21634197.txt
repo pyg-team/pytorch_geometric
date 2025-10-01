@@ -1,0 +1,61 @@
+Title: IBM Using the CICS TG V5.1 resource adapters in Rational Application Developer V8.5 - United States
+
+Text:
+CICS; CTG; resource adapters ; cicsec; JCA1.0; JCA1.5 TECHNOTE (FAQ)
+
+QUESTION
+ Can I use the CICS TG V5.1 resource adapters in Rational Application Developer V8.5 to generate J2C beans and execute in WebSphere Application Server V8.5? 
+
+CAUSE
+CICS TG V5.1 resource adapters are out of service already.
+
+ANSWER
+WAS/JCA Compatibility 
+
+
+ Note that the JCA specification is backlevel compatible, so a JCA 1.0 application will be compatible with JCA 1.5 or JCA 1.6. 
+
+ Also, notice the following statement at the top of this page from Websphere Application server infocenter [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/index.jsp?topic=%2Fcom.ibm.websphere.nd.multiplatform.doc%2Fae%2Frovr_specs.html]. 
+
+ 
+
+WAS /JCA Compatibility "The Version 8.5 column in the table lists the latest specification level that the product supports. 
+
+However, support for specifications is compatible with earlier versions of the product; 
+
+the Version 8.5 product supports all specifications that are listed for Version 6.0 through Version 8.5. 
+
+ For example, for any application type, the Version 8.0 product supports Java EE 5 and 6 and J2EE 1.2, 1.3, and 1.4. 
+
+ The word "New" beside a specification indicates that the product first supported the specification in that product version."
+
+[/support/docview.wss?uid=swg21634197&aid=1] [/support/docview.wss?uid=swg21634197&aid=1]
+
+Code generation in using J2C Tooling
+
+
+ You can still generate J2C Beans using CICS TG V5.1 resource adapters which is JCA 1.0 
+
+ You should be able to run the JCA 1.0 application in WebSphere Application Server V8.5. 
+
+ However, we recommend migrating to newer versions of the Resource Adapters which are 
+
+ shipped in the product. Refer to the CICS TG life cycle link [http://www-01.ibm.com/software/support/lifecycle/index_c.html] in the Related information section. 
+
+ If you run into any run-time error in communicating to CICS with any out of service resource adapters, 
+
+ the CICS TG support team cannot provide support via PMR unless your Gateway demon is at a supported level. 
+
+ An example of an ECI error is: 
+
+ javax.resource.spi.ResourceAdapterInternalException: CTG9631E: Error
+occurred during interaction with CICS. Error Code=ECI_ERR_SYSTEM_ERROR, 
+
+The life cycle of the CICS resource adapters match the match the CICS TG product .
+
+Please refer to the product end of cycle for CICS in the Related URL section.
+
+
+RELATED INFORMATION
+#product end of cycle for CICS [http://www-01.ibm.com/software/support/lifecycle/index_c.html]
+choosing right resource adapter [http://www-01.ibm.com/support/docview.wss?uid=swg21306754]

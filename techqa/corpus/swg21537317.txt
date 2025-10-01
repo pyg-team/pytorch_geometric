@@ -1,0 +1,36 @@
+Title: IBM Error message XIPT002I or XPMD005I -Too many open files fdbk=24 (SCI37950) - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error message XIPT002I or XPMD005I -Too many open files fdbk=24 (SCI37950) 
+
+SYMPTOM
+Processes keep failing with msgid xpmd005i fdbk=24 
+xpmd005i 
+short.text=socketpair() failed. Errno=&fdbk. 
+long.text=The socketpair() system call to create sockets for the PMGR and a CMGR or SMGR failed. 
+user.action=Use the errno value to determine the reason for the failure. Correct the problem if possible and release the process. 
+fdbk=24 
+too many open files 
+XIPT002I Too many open files fdbk=24
+
+
+RESOLVING THE PROBLEM
+Increase the system file descriptors. Use ulimit -Sa to see what the value for no file descriptors is currently set to. It is generally recommended to set ulimit for file descriptors on UNIX to 1024. After increasing the value, stop cdpmgr and then start the Direct processes again.
+
+ 
+
+HISTORICAL NUMBER
+ PRI467 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+SCI14827 
+SCI37950 
+Connect:Direct UNIX, All Releases

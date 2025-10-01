@@ -1,0 +1,97 @@
+Title: IBM Customer requirements answered in CICS TS and related products - United States
+
+Text:
+requirements ; request for enhancements ; rfe ; completed; finished ; incorporated ; cics ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 R700 700 R000 000 HCI7000 R701 701 R100 100 HCI7100 5655Y0401 5655-Y04 5655Y04 ; cpsm 5655M1501 R100 R102 R310 5655-M15 5655M15 HCP3100 JCP3102 5655M1500 R320 R50M JCI650M 5655S9700 R600 R60M 5655-S97 5655S97 FMID JCI660M R700 R70M JCI670M CPSM cpsmpddb PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ You want to know what customer requirements or requests for enhancements (RFEs) have been delivered in IBM CICS Transaction Server for z/OS (CICS TS), CICS Tools, CICS Transaction Gateway, and z/OS Connect Enterprise Edition. 
+
+CONTENT
+Click on the link for the release you are using to display the corresponding list of customer requirements answered in that release:
+
+
+ * CICS Transaction Server for z/OS
+ * CICS Tools
+ * CICS Transaction Gateway (CICS TG)
+ * z/OS Connect Enterprise Edition (z/OS Connect EE) 
+
+
+
+
+
+
+
+
+IBM CICS Transaction Server
+
+ Customer requirements answered in CICS TS for z/OS V5.4 [http://www.ibm.com/support/docview.wss?uid=swg27049941] 
+Customer requirements answered in CICS TS for z/OS V5.3 [http://www.ibm.com/support/docview.wss?uid=swg27047654] 
+Customer requirements answered in CICS TS for z/OS V5.2 [http://www.ibm.com/support/docview.wss?uid=swg27041548] 
+Customer requirements answered in CICS TS for z/OS V5.1 [http://www.ibm.com/support/docview.wss?uid=swg27037777] 
+
+
+
+Back to top
+
+
+
+
+
+
+IBM CICS Tools
+
+ Customer requirements answered in CICS Tools V5.4 [http://www.ibm.com/support/docview.wss?uid=swg27049939] 
+Customer requirements answered in CICS Tools V5.3 [http://www.ibm.com/support/docview.wss?uid=swg27049901] 
+Customer requirements answered in CICS Tools V5.2 [http://www.ibm.com/support/docview.wss?uid=swg27041591] 
+Customer requirements answered in CICS Tools V5.1 [http://www.ibm.com/support/docview.wss?uid=swg27037776] 
+
+
+
+Back to top
+
+
+
+
+
+
+IBM CICS Transaction Gateway
+
+ Customer requirements answered in CICS Transaction Gateway V9.2 [http://www.ibm.com/support/docview.wss?uid=swg27049917] 
+Customer requirements answered in CICS Transaction Gateway V9.1 [http://www.ibm.com/support/docview.wss?uid=swg27042520] 
+Customer requirements answered in CICS Transaction Gateway V9.0 [http://www.ibm.com/support/docview.wss?uid=swg27037911] 
+
+
+
+Back to top
+
+
+
+
+
+
+IBM z/OS Connect Enterprise Edition
+
+ Customer requirements answered in z/OS Connect Enterprise Edition V3.0 [http://www.ibm.com/support/docview.wss?uid=swg27049942] 
+Customer requirements answered in z/OS Connect Enterprise Edition V2.0 [http://www.ibm.com/support/docview.wss?uid=swg27049169] 
+
+
+
+Back to top
+
+
+
+RELATED INFORMATION
+ Fixes by version for CICS products [http://www.ibm.com/support/docview.wss?uid=swg27008833]
+Detailed System Requirements for CICS TS [http://www.ibm.com/support/docview.wss?uid=swg27006382]
+Finding CICS PSP buckets [http://www.ibm.com/support/docview.wss?uid=swg21231874]
+Upgrading information for CICS [http://www.ibm.com/support/docview.wss?uid=swg21207399]
+List of APARs migrated into CICS TS releases [http://www.ibm.com/support/docview.wss?uid=swg21223445]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Transaction Gateway AIX, HP-UX, Linux, Solaris, Windows, z/OS 9.2, 9.1 Business Integration z/OS Connect Enterprise Edition z/OS 2.0, 3.0 Host Transaction Processing CICS Configuration Manager for z/OS Availability 5.3, 5.2, 5.1 Host Transaction Processing CICS Deployment Assistant for z/OS z/OS 5.3, 5.2, 5.1 Host Transaction Processing CICS Interdependency Analyzer for z/OS z/OS 5.3, 5.2, 5.1 Host Transaction Processing CICS Performance Analyzer for z/OS Availability z/OS 5.4, 5.3, 5.2, 5.1 Host Transaction Processing CICS VSAM Recovery for z/OS Availability z/OS 5.2, 5.1 
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

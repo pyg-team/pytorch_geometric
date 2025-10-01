@@ -1,0 +1,95 @@
+Title: IBM WebSphere Process Server (WPS) database-related technotes - United States
+
+Text:
+wps; database; db2; oracle; faq; install; PMT; profile create; v602rnotes; v61rnotes; v612rnotes; v62rnotes TECHNOTE (FAQ)
+
+QUESTION
+ Where are the WebSphere Process Server database related technotes and APARs? Refer to this document for links to the technotes and APARs that may help you with your database problems. 
+
+ANSWER
+
+
+TAB NAVIGATION
+ * Database FAQ [http://www.ibm.com/support/docview.wss?uid=swg21403081]
+ * Reference Documents [http://www.ibm.com/support/docview.wss?uid=swg21403911]
+ * Technotes [http://www.ibm.com/support/docview.wss?uid=swg21403912]- selected tab,
+
+
+Table of contents 
+WebSphere Process Server database-related technotes and APARs:  * Business Process Choreographer 
+ * Business Process Choreographer Observer and Explorer 
+ * Business rules 
+ * Common database (Common DB)
+
+
+Business Process Choreographer 
+ 1. Deploying a process with an Oracle database fails (6.0, 6.1, 6.1.2, 6.2) [http://www.ibm.com/support/docview.wss?uid=swg21249121]
+    The deployment of a process within Business Process Choreographer using an Oracle database fails with an SQLException exception such as the following message for null namespaces in the BPEL or WSDL files:
+    java.sql.SQLException: ORA-01400: cannot insert NULL into ("BPEDB"."URI_TEMPLATE_B_T"."URI")
+    
+ 2. Required BPEDB database definition updates for UTF-8 support and startup failure resolution for the HTM_PredefinedTaskMsg_xxxx and HTM_PredefinedTasks_xxxx applications. (6.1.2 [http://www.ibm.com/support/docview.wss?uid=swg21312699])
+    If Business Process Choreographer is configured in a WebSphere Process Server profile with DB2 Universal Database for i5/OS as the database on an IBM i system, the predefined applications HTMPredefinedTaskMsg and HTMPredefinedTasks might fail to start. Manual instructions are also provided for required BPEDB database definition updates for UTF-8 support to prevent future data loss for any workflow-related applications. 
+    
+ 3. Upgrading Business Process Choreographer database schema in i5 V6.1 environment causes errors (6.2) [http://www.ibm.com/support/docview.wss?uid=swg21328854]
+    Errors occur when upgrading an i5/OS V6.1 Business Process Choreographer database schema to version V6.2 with one of the following upgrade scripts: 
+    upgradeSchema612.sql
+    upgradeSchema610.sql
+    
+ 4. Slow Business Process Choreographer processing - a PD story using DB analysis (6.0.2, 6.1, 6.1.2, 6.2) [http://www.ibm.com/support/docview.wss?uid=swg21381220]
+    WebSphere Process Server might become a bit sluggish and all the usual tuning efforts might not help. One of the things that you can still do is look into the BPEDB itself to see whether there are unexpected amounts of data and/or relations. 
+    Back to top
+    
+    
+    
+    
+
+
+Business Process Choreographer Observer and Explorer 
+ 1. CWWBA0010E Business Process Choreographer Explorer does not display process instances with DB2 V9.5 (6.1.0.1) [http://www.ibm.com/support/docview.wss?uid=swg21298160]
+    The Business Process Choreographer Explorer does not display process instances when DB2 V9.5 is used in conjunction with the DB2 v9.5 JDBC driver.
+    
+    
+    Back to top
+    
+    
+    
+    
+
+Business rules 
+ 1. java.sql.SQLException: ORA-01483: invalid length for DATE or NUMBER bind variable occurs when using Oracle 9 Thin Driver (6.0.1,6.0.2) [http://www-01.ibm.com/support/docview.wss?uid=swg21289953]
+    Limitations with the Oracle 9 Thin Driver cause exceptions when publishing from the business rule manager. Have WebSphere Process Server use the Oracle OCI driver rather than the Oracle Thin Driver . Also you might use the Oracle 10g driver with the Oracle 9 database. 
+    
+    
+    Back to top
+    
+    
+    
+    
+
+Common database (Common DB) 
+ 1. java.lang.IllegalStateException: Microsoft SQL Server as the common database (6.2) [http://www.ibm.com/support/docview.wss?uid=swg21329440]
+    If WebSphere Process Server and WebSphere ESB V6.2 are configured to use Microsoft SQL Server as the common database and the database is not set to be case-sensitive, an IllegalStateException exception occurs during server start up.
+    
+    
+ 2. SQLCODE -8001 and SQLSTATE 42968 connecting to a DB2 database (6.0.2,6.1,6.1.2) [http://www.ibm.com/support/docview.wss?uid=swg21317781]
+    When running WebSphere Process Server in some circumstances, a DB2 product might be installed with an evaluation or temporary license. After a period of time, this license expires, making the DB2 product unusable.
+    If you are using an expired evaluation copy of a DB2 product with WebSphere Process Server, the following DB2 SQL error occurs: SQLCODE: -8001, SQLSTATE: 42968 exception in the Systemout.log file.
+    
+ 3. J2CA0081E and DSRA0080E received during WebSphere Process Server deployment manager startup (6.1.2,6.1.2.1,6.1.2.2,6.2) [http://www.ibm.com/support/docview.wss?uid=swg21330555]
+    Exceptions and error messages are returned during WebSphere Process Server startup when older versions of Oracle 9i JDBC drivers are used. 
+    
+ 4. Problem creating Common database for WebSphere ESB profile (6.1, 6.1.0.1, 6.1.0.2, 6.1.0.3, 6.1.2, 6.1.2.1 ) [http://www.ibm.com/support/docview.wss?uid=swg21326626]
+    The createDBTables.sh and createDBTables.bat database scripts call nonexistent database SQL scripts when creating the Common database (CommonDB) for the WebSphere Enterprise Service Bus (WebSphere ESB) profile
+    
+    Back to top
+    
+    
+    
+    
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Process Server Business Process Choreographer AIX, HP-UX, Linux, Solaris, Windows, z/OS 6.2, 6.1.2, 6.1, 6.0.2 
+PRODUCT ALIAS/SYNONYM
+ WPS

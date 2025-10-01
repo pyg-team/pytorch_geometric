@@ -1,0 +1,72 @@
+Title: IBM Collecting Data: Installation of WebSphere Portal 8.0 on Multiplatforms - United States
+
+Text:
+WebSphere Portal v8 Mustgather Installation TECHNOTE (FAQ)
+
+QUESTION
+What data to collect for failed installation of WebSphere Portal v8?
+
+ANSWER
+If you have already contacted IBM Support and must collect data to determine the nature of a problem in WebSphere Portal, review the information below for the available methods of data collection. Otherwise, review Collecting Data: Read first for WebSphere Portal 8.0. [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21591590] 
+
+Collecting Portal Installation information
+Portal v8 Installation includes the following steps:
+
+1) Installation of the install tool, named as IBM Installation Manager or shortly, IIM.
+2) Adding the repositories for Portal and pre-requisites (WebSphere AppServer, WAS fixes, Portal Server and the Offering) for installing Portal.
+3) Determining if this will be a base, full or custom installation.
+
+
+Automated collection of troubleshooting data Automated log collection is the recommended method for improving accuracy of the data collection. This is coming soon.
+
+For capturing logs manually, please collect the below:
+
+The following location is defined IM_DATA_DIR
+
+Unix: /<user_home>/var/ibm/InstallationManager
+Windows: C:\ProgramData\IBM\Installation Manager
+
+1) The directory
+
+Unix: <IM_DATA_DIR>/logs
+Windows: <IM_DATA_DIR>\logs
+
+(if not at the very least, make sure to include the index.xml, index.xsl, all <timestamp>.xml and the two directories 'DownloadExceptions' and 'native' from the above directory)
+
+2) The files: installed.xml, installed.xsl and installRegistry.xml and histories
+
+from <IM_DATA_DIR>
+
+Note: Only on Windows (Check with your Windows System Administrator for further details): The directory, C:\Program Data is hidden by default. If one needs to access this location, do the below:
+
+Under Control Panel -> Folder Options -> Show hidden files and folders,
+
+choose to check "Show hidden files, folders and drives", uncheck "Hide extensions for known file types" and "Hide protected operating system files". 
+
+Enabling traces for Portal installation issues
+
+If support requests you to enable traces for installation issues, do the below:
+
+A file, log.properties needs to be created as in the below provided sample
+
+#Sample debug properties suitable for log.properties
+#Tue Jan 18 12:54:48 EST 2011
+InstallOperation=DEBUG
+InstallOperation/pause.on_error=true
+#global=DEBUG
+
+Save this file, copy it to the directory 'IM_DATA_DIR/logs'. Re-run the portal install. When the install fails, the installation pauses and then one can collect all the logs from the following directories:
+
+<IM_DATA_DIR>/logs
+<IM_DATA_DIR>/installed.xml
+<IM_DATA_DIR>/installed.xsl
+<IM_DATA_DIR>/installRegistry.xml
+<wp_profile root>/logs
+<wp_profile root>/ConfigEngine/log/ConfigTrace.log
+<AppServer root>/logs
+
+
+
+
+ * 
+ *

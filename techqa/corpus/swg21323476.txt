@@ -1,0 +1,15 @@
+Title: IBM Differences between a Node-Locked and Floating License - United States
+
+Text:
+1323476; 10075; Node; Locked ; Floating; License TECHNOTE (FAQ)
+
+QUESTION
+ What is the difference between Node-Locked and Floating Licenses in IBM Rational Rhapsody? 
+
+ANSWER
+A Node-locked License applies to a single PC running our software. A Floating License applies to several PCs running our software all connected to a server which has the license manager running on it. The license manager counts the number of users at any one time for the allowed number of Rhapsody clients. 
+
+
+
+HISTORICAL NUMBER
+ 10075

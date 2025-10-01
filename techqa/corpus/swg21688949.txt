@@ -1,0 +1,53 @@
+Title: IBM Security Bulletin: IBM WebSphere MQ is affected by a vulnerability in GSKit (CVE-2014-0076) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ A vulnerability in GSKit, which is included in IBM WebSphere MQ, can potentially allow key information about certain kinds of binary type Elliptic Curves used in Digital signatures during signing operations. 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2014-0076 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0076]
+DESCRIPTION: An attacker running a program on the same machine as where the victim is running a program could use CPU timing information to discover key information about certain kinds of binary type Elliptic Curves used in Digital signatures during signing operations. Although GSKit only generates Prime type Elliptic Curves, externally generated keys may be imported in GSKit.
+From WebSphere MQ version 7.1, GSKit version 8.0 is integrated with WebSphere MQ. For WebSphere MQ 7.0.1, GSKit version 7 or version 8 was installed separately.
+
+CVSS Base Score: 2.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91990 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91990]
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:L/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM WebSphere MQ 8.0, including all maintenance levels. 
+
+IBM WebSphere MQ 7.5, including all maintenance levels. 
+
+IBM WebSphere MQ 7.1, including all maintenance levels. 
+
+IBM WebSphere MQ 7.0.1, maintenance levels from 7.0.1.4 onwards, using GSKit version 8.0.
+
+REMEDIATION/FIXES
+IBM strongly recommends that Elliptic Curve CipherSpecs are not used. These CipherSpecs have names starting with 'EC'. 
+
+A summary of MQ CipherSpecs and protocols can be found in the IBM Knowledge Center Specifying CipherSpecs [http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.sec.doc/q014260_.htm] topic.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 03 November 2014: Original Copy Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21689211]

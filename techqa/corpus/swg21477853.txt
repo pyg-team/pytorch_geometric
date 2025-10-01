@@ -1,0 +1,27 @@
+Title: IBM "Login in failed for user" error when connecting a client to the Modeler Server running on Windows with a non-Admin profile. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Can the profile logon locally to the server when it is not part of the Admin group? 
+
+I have installed Modeler on my workstation and am attempting to connect to a Modeler Server installed on Windows. When I connect using a profile in the Administrators group on the server I can connect without problems. When I login using a valid Windows profile for the server that is not part of the Administrators group I get an error "Login failed for User...". The server_logging.log file on the Modeler server also indicates that the logon failed. If I put the same profile into the Administrators group I can log in fine. Why can't I connect to the server with a non-Administrator profile? 
+
+RESOLVING THE PROBLEM
+Modeler Server uses the operating system on the server machine to authenticate users when connecting to the server. Once connected all operations are performed on behalf of the user account. If the user can not log on locally, then Modeler Server is unable to authenticate the user. 
+
+Verify that there are not any restrictions on the security policies in Windows that prohibit the user from logging on locally.
+
+Go to Control Panel ->Administrative Tools->Local Security Policy->Local Policies->User Rights Assignment and locate the "Log on Locally" policy. Users that will be accessing the Modeler Server must have rights to this policy if it is in effect.
+
+This login error has also occurred when the user did not have proper permissions to the temp directory specified in the options.cfg file. Please ensure the specified folder is fully accessible to the user
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 71631

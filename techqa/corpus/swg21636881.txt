@@ -1,0 +1,67 @@
+Title: IBM DB2 SQLCODE -302 when creating snapshot - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DB2 SQL Error: SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null running snapshot.sh tool 
+
+SYMPTOM
+When running the script: 
+
+$ ./snapshot.sh take
+
+
+you can get the following messages 
+
+
+>> MSG : Found 2091 sensor errors in 30 discovery runs 
+>> MSG : Found 4247 scope ips in 29 discovery runs 
+>> ERROR : Exception in take 
+>> MSG : snapshot ended with errors. 
+>> MSG : check for errors in /opt/IBM/cmdb/dist/log/snapshot.log.
+
+
+CAUSE
+A attribute value was too large to be inserted in the CT_SNAPSHOT_COMPSYS table.
+
+
+DIAGNOSING THE PROBLEM
+The snapshot log contains the following information: 
+
+
+2013-02-26 10:31:53,686 [main] ERROR custom.ChangeHelper - com.ibm.db2.jcc.b.yn: DB2 SQL Error: SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=3.53.95
+
+Look at dist\log\DiscoveryManager.log* to identify the command about OS version:
+
+PATH=$PATH:/usr/local/bin:/bin:/usr/bin:/usr/sbin:/sbin:/usr/X11R6/bin;LC_ALL=C;LANG=C;export LANG LC_ALL;cat /etc/issue | grep -v Kernel
+
+in this case the output is like :
+
+
+######################################################################
+# 
+# 
+# WARNING! WARNING! WARNING! WARNING! WARNING! 
+# 
+# ==================================================== 
+# 
+# This is a server of a private corporation 
+# 
+# ----------------------------------------- 
+# 
+# If you are not authorised by our management to access this 
+# 
+# system, disconnect now. 
+# 
+# 
+# 
+######################################################################
+
+
+
+This welcome message is the cause of the issue. It doesn't allow to correctly identify the OS version. Furthermore, even truncated when storing the discovered server, the OS version was still too long to be added in the proper parameter
+
+
+RESOLVING THE PROBLEM
+You should remove the welcome message associated to the /etc/issue file and discover again the server involved so the OS version can be correctly filled in, and the snapshot .sh script can run without failures.

@@ -1,0 +1,50 @@
+Title: IBM Policy differences between the Security Network IPS and Security Network Protection System - United States
+
+Text:
+policy; difference; firewall; user-defined; protection domains; wap; connection events; snort TECHNOTE (FAQ)
+
+QUESTION
+ What are the policy differences between the Security Network IPS (GX) and the Securirty Network Protection System (XGS)? 
+
+ANSWER
+The following GX policies are replaced by rules in the Network Access policy on the XGS in order to provide a more integrated approach: 
+
+ * Connection Events 
+ * Firewall Rules 
+ * Protection Domains
+   
+
+Configuration Examples:
+ * To configure a rule that behaves similarly to a Connection Event, create a rule in the Network Access policy for the traffic on which you want it to fire, and then set the Response field to Event log.
+   
+ * To see these events in the Local Management Interface (LMI), look under Monitor Analysis and Diagnosis > Logs > Event log. On that page, select the Network access events tab. Keep in mind that if you want the XGS to inspect the traffic using the Protocol Analysis Module (PAM), you will need to set the appropriate policy in the Inspection column of the rule. If you do not want PAM to analyze this traffic, leave the inspection column blank.
+   
+ * To configure a rule that behaves similarly to a Firewall rule, create a rule in the Network Access policy and chose what to do with that traffic: allow it, reject it, inspect it, or ignore it. To ignore the traffic, leave the Inspection column blank and PAM will not do deep inspection analysis.
+   
+ * Regarding Protection Domains, on the XGS you use the Network Access policy to apply your set of inspection policies to the specific type of source and destination traffic that you designate. When you create the rule, you can specify the VLAN ID and XGS adapter numbers in addition to the source and destination addresses and ranges that you create.
+   
+   
+   
+
+The XGS policies are also different from the GX policies in the following ways: 
+ * IPS objects are independent. 
+ * Client based SSL Inspection supported. 
+ * Notification responses are assigned to IPS objects, not individual signatures. 
+ * Quarantine responses were added in FW 5.2. 
+ * There are no separate Data Loss Prevention (DLP) or Web Application Protection (WAP) policies. Those signatures are contained in the Inspection Protection Policy. 
+ * There is no User Defined Events policy. 
+ * SNORT support called "Open Signatures" in the XGS was added in FW 5.3. 
+   
+
+
+
+
+[/support/docview.wss?uid=swg21667633&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21667633&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21667633&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21667633&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21667633&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21667633&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21667633&aid=7] [http://ibm.biz/ContactSecSupport] 
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21965589]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Network Intrusion Prevention System Policy Firmware 4.5, 4.6, 4.6.1, 4.6.2

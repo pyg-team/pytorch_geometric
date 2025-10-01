@@ -1,0 +1,149 @@
+Title: IBM IY76133: IF DEFAULT VIEW IS NOT PHYSICAL VIEW, CNP WILL NOT COME UP. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Reproduced locally using the following scenario:
+   1 From Managed Candle Services, launch CNP in browser mode
+   2 Logon as SYSADMIN
+   3 Add a bookmark to the resulting page to IE favorites
+   4 Exit browser
+   5 Restart browser and select bookmark
+   6 Logon as a user defined to have a different navigator view as
+   default
+   7 The session will fail to initialize as described
+   
+   Analysis shows that a message can be presented that will make it
+   easier to diagnose this problem should it happen to others.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The problem happened because the customer had added a bookmark
+   "Favorites" to the IE browser to start the Portal browser
+   session.  The bookmark contained the full path to the current
+   screen,  like the following:
+   http://srvmon:1920///cnp/kdh/lib/cnp.html?-12000=SYSADMIN&-5001=
+   MOPHYSICAL&-1021A=REPORT&-1020=db2prod:acsdbp1.ncfb.org@zkud.KUD [http://srvmon:1920///cnp/kdh/lib/cnp.html?-12000=SYSADMIN&-5001=MOPHYSICAL&-1021A=REPORT&-1020=db2prod:acsdbp1.ncfb.org@zkud.KUD]
+   DB2APPLGROUP00&-2400=p@db2prod:acsdbp1.ncfb.org&-10105=1055ea5c7
+   57&-1022=Application%20SQL%20Statement%20Text%20w%20Agent%20ID
+   
+   In the bookmark, it sets SYSADMIN and PHYSICAL as the user and
+   the Navigator view.
+   Change the bookmark to just be:
+   http://srvmon:1920///cnp/kdh/lib/cnp.html and when the signon
+   screen comes up, it will then drive the browser to the default
+   Navigator view with the current userid.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When a user uses a saved bookmark in the Tivoli Enterprise
+   Portal browser
+       client to navigate to a specific view that does not contain
+   the user's
+       default navigator, the client session will fail to
+   initialize.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is included in the following maintenance
+   vehicle(s): interim fix pack 1.9.6-TIV-MgtPortal-IF0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY76133
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MGMT PORTAL
+   
+   
+ * REPORTED COMPONENT ID
+   5724K6500
+   
+   
+ * REPORTED RELEASE
+   195
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-09-07
+   
+   
+ * CLOSED DATE
+   2006-02-22
+   
+   
+ * LAST MODIFIED DATE
+   2006-02-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MGMT PORTAL
+   
+   
+ * FIXED COMPONENT ID
+   5724K6500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R196 PSY
+   UP

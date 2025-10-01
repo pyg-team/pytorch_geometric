@@ -1,0 +1,26 @@
+Title: IBM DYRS1031E error when trying to export from a folder in IBM eDiscovery Manager - United States
+
+Text:
+eDM; eDiscovery Manager; DYRS1031E; export failure TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In IBM eDiscovery Manager (eDM), we receive a DYRS1031E error when right-clicking a folder and trying to export its contents. The message states that the folder does not contain any content. However, we have confirmed that the folder has content in it. We are using IBM FileNet P8 as our content server. 
+
+SYMPTOM
+When you right-click and try to export from a folder, you see the message DYRS1031E - "This folder does not contain any content. You cannot export the contents of an empty folder"
+
+
+CAUSE
+This is caused by the eDiscovery group missing in the "Default Instance Security" tab of the EDMCase, EDMFolder, EDMFolderSec, and EDMCaseSec objects
+
+RESOLVING THE PROBLEM
+Using FileNet Enterprise Manager (FEM) or Administration Console for Content Engine (ACCE), do the following.
+
+
+1) In your primary object store, navigate to the EDMCase and EDMFolder objects under Folder->EDMBaseFolder and add your eDiscovery group to the "Default Instance Security" tab 
+
+2) In each of your secondary object stores, navigate to the EDMCaseSec and EDMFolderSec objects under Folder->EDMBaseFolder and add your eDiscovery group to the "Default Instance Security" tab 
+
+ 
+
+The above changes will take effect for all new cases created in eDM.

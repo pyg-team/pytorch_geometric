@@ -1,0 +1,189 @@
+Title: IBM JR56047: IN IBM PROCESS DESIGNER, YOU CANNOT VISUALIZE A PROCESS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+bpm.8570.cf2016.06.delta.repository.2of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.06.delta.repository.2of2&source=SAR]
+bpm.8570.cf2016.06.delta.repository.1of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.06.delta.repository.1of2&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM Process Designer, when you try to view a process diagram
+   by going to Playback > Visualize Process, the diagram is not
+   displayed; you see the following error message and stack trace:
+   
+   Error in File: visualization.jsp, Line: 99, Column: 5
+   TypeError: Unable to get property 'cacheBust' of undefined or
+   null reference
+      {
+         [functions]: ,
+         __proto__: { },
+         description: "Unable to get property 'cacheBust' of
+   undefined or null reference",
+         message: "Unable to get property 'cacheBust' of undefined
+   or null reference",
+         name: "TypeError",
+         number: -2146823281,
+         stack: "TypeError: Unable to get property 'cacheBust' of
+   undefined or null reference
+      at constructor (eval code:110:3)
+      at Anonymous function
+   (https://nbhargavavm3.canlab.ibm.com:9443/portal/js/dojo/1.6.1/d
+   ojo/dojo.js:14:22497)
+      at addToProcessViewStack (eval code:387:4)
+      at Anonymous function (eval code:234:7)
+      at Anonymous function
+   (https://nbhargavavm3.canlab.ibm.com:9443/portal/js/dojo/1.6.1/d
+   ojo/dojo.js:14:15329)
+      at request.load (eval code:58:4)
+      at Anonymous function
+   (https://nbhargavavm3.canlab.ibm.com:9443/portal/js/dojo/1.6.1/d
+   ojo/dojo.js:14:80692)
+      at _102
+   (https://nbhargavavm3.canlab.ibm.com:9443/portal/js/dojo/1.6.1/d
+   ojo/dojo.js:14:27189)
+      at _100
+   (https://nbhargavavm3.canlab.ibm.com:9443/portal/js/dojo/1.6.1/d
+   ojo/dojo.js:14:27015)
+      at callback
+   (https://nbhargavavm3.canlab.ibm.com:9443/portal/js/dojo/1.6.1/d
+   ojo/dojo.js:14:27667)"
+      }
+   
+   PRODUCTS AFFECTED
+   IBM BPM Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The diagram viewer in Process Designer does not require the
+   cacheBust Dojo property as part of the URL it generates to
+   retrieve a diagram from the IBM Business Process Manager (BPM)
+   server, but it did not properly search for the property in the
+   browser window object to ensure the property is not included in
+   the URL.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is included in IBM BPM V8.5.7 cumulative fix 2016.06 that
+   corrects the issue.
+   
+   To determine whether the cumulative fix is available and
+   download it if it is, complete the following steps on Fix
+   Central:
+   
+   1. On the Select product tab, select WebSphere as the product
+   group, IBM Business Process Manager with your edition from the
+   WebSphere options, All as the installed version, and All as the
+   platform, and then click Continue.
+   2. In the Text field, enter "cumulative fix?, and click
+   Continue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56047
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-07
+   
+   
+ * CLOSED DATE
+   2016-06-16
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

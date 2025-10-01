@@ -1,0 +1,30 @@
+Title: IBM Checking FileNet P8 4.5 Prerequisites for IBM Content Collector - United States
+
+Text:
+ICC; ce; prereq; NoClassDef TECHNOTE (FAQ)
+
+QUESTION
+ How to check if I have the required P8 prerequisites for IBM Content Collector? 
+
+ANSWER
+ 
+
+ * You need both the .NET Clients and Java Clients components
+
+ * To check if you have the .NET Clients component, on the IBM Content Collector server:  1. Go to Control Panels 
+    2. Add or Remove Programs 
+    3. Look for Content Engine .Net API 4.x.x. 
+   
+    * If it is present, you have already installed it. 
+    * If it is missing, you can install it through the FileNet Content Engine installer.
+   
+   
+ * To check if you have the Java Clients component, examine the content of the file ceclient_install_log_4_5_0.txt under the FileNet Content Engine Client installation folder. 
+   For example: C:\Program Files\FileNet\CEClient\ceclient_install_log_4_5_0.txt
+    * UPDATE_OTHER=1 means the Java Clients component is already installed. 
+    * UPDATE_OTHER=0 means the Java Clients component is not yet installed and you can install it through the FileNet Content Engine Client installer by means of the "Other Applications" option.
+   
+   
+
+RELATED INFORMATION
+ Prerequisites for IBM InfoSphere Content Collector 2.1. [http://www.ibm.com/support/docview.wss?rs=0&uid=swg27016442 ]

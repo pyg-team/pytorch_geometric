@@ -1,0 +1,50 @@
+Title: IBM Event counters for IBM Content Navigator - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ You can use two types of event counters to measure the frequency and duration of tasks on your IBM Content Navigator server. You can use this information to monitor and tune your server or database accordingly. 
+
+CONTENT
+Important: The event counters are available only in IBM Content Navigator 2.0.3 Fix Pack 1 and later releases. Some event counters were added in later fix pack. These event counters are labeled with the fix pack in which they were introduced. 
+
+The IBM System Dashboard for Enterprise Content Management is a performance monitoring tool that IBM distributes with many of its Enterprise Content Management products. For more information about the IBM System Dashboard for Enterprise Content Management see, IBM System Dashboard for Enterprise Content Management overview [http://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.sysmgr.admin.doc/overview.htm].
+
+The event counters for IBM Content Navigator are categorized into two groups in IBM Content Navigator: 
+
+ * Event counters for Remote Procedure Call requests [http://www.ibm.com/support/docview.wss?uid=swg27043889#rpc] 
+ * Event counters for common document-centric tasks [http://www.ibm.com/support/docview.wss?uid=swg27043889#doc-centric]
+
+
+Event counters for Remote Procedure Call requests
+These event counters measure the frequency and duration of incoming action requests to the IBM Content Navigator server. An action request is sent from a client when it asks the IBM Content Navigator server to perform some task on behalf of a user. A set of counters is created for each type of request the first time that it is received by the IBM Content Navigator server; then, the containers are cached. The IBM Content Navigator server looks for patterns in each request and handles them accordingly.
+
+
+Event counters for common document-centric requests
+These event counters monitor tasks that are commonly performed by users and organize those tasks by repository. The system dashboard displays these counters under the USER node. Information about the following actions is captured:
+
+IBM FileNet P8, IBM CMIS, and IBM Content Manager repositories: 
+
+ * Add Document 
+ * Add Folder 
+ * Check Out 
+ * Check In 
+ * Modify Properties 
+ * Delete Item (both folders and documents) 
+ * Download as Original 
+ * Download as PDF 
+ * Search 
+ * Fix Pack 2 or later: Preview 
+ * Fix Pack 2 or later: Generate Thumbnail 
+ * Fix Pack 2 or later: Display Page (Snowbound) 
+ * Fix Pack 2 or later: Display Page (Outside In)
+
+
+IBM Content Manager OnDemand repositories:  * Modify Properties 
+ * Download as Original 
+ * Download as PDF 
+ * Search
+
+
+The Remote Procedure Call counters measure from when a request is first received to when the request is almost complete. The USER counters are at a lower level in the code and is specific to that action. Because these two types of counters are measuring from different points of the code, the durations that are captured for the two types of events are not the same.

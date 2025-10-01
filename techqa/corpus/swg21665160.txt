@@ -1,0 +1,42 @@
+Title: IBM A CWLLG0594E error occurs when you click an offering on the Self-service tab - United States
+
+Text:
+CWLLG0594E; PKIX; GenericREST; com.ibm.orchestrator.restcall.GenericREST TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A "PKIX path building failed" message is seen in the IBM SmartCloud Orchestrator user interface when you click an offering on the Self-service tab. 
+
+SYMPTOM
+The following exception is received:
+
+[2/10/14 19:15:16:814 CST] 00000111 wle E CWLLG0594E: An exception occurred while initializing the runnable thread. Error:com.lombardisoftware.component.common.workflow.WorkflowProcessItemException: javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.util.j: PKIX path building failed:java.security.cert.CertPathBuilderException: unable to find valid certification path to requested target in
+com.ibm.orchestrator.restcall.GenericREST
+
+at com.lombardisoftware.component.common.workflow.ExecutionJob.doJob(ExecutionJob.java:421)
+at com.lombardisoftware.server.ejb.workflow.EJBWorkflowManagerBean.doResumeWorkflowEngine(EJBWorkflowManagerBean.java:1287)
+at com.lombardisoftware.server.ejb.workflow.EJBWorkflowManagerBean.resumeProcess(EJBWorkflowManagerBean.java:407)
+at com.lombardisoftware.server.ejb.workflow.EJSRemoteStatefulEJBWorkflowManager_82478d70.resumeProcess(Unknown Source)
+at com.lombardisoftware.server.ejb.workflow._EJBWorkflowManagerInterface_St
+ub.resumeProcess(_EJBWorkflowManagerInterface_Stub.java:518)
+at com.lombardisoftware.component.common.workflow.EJBWorkflowManagerDelegat
+eDefault.resumeProcess(EJBWorkflowManagerDelegateDefault.java:144)
+at com.lombardisoftware.component.common.workflow.EJBWorkflowManagerDelegat
+eWebSphere$6.run(EJBWorkflowManagerDelegateWebSphere.java:84)
+at java.security.AccessController.doPrivileged(AccessController.java:280)
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, complete the following steps: 
+
+ 1. Restart IBM Business Process Manager from the administrative console. To restart it, click Servers > All servers > SingleClusterServer1. 
+    
+    
+ 2. Stop the Deployment Manager by running the /opt/ibm/BPM/v8.5/profiles/DmgrProfile/bin/stopManager.sh command.
+    
+    
+ 3. Restart the Deployment Manager by running the /opt/ibm/BPM/v8.5/profiles/DmgrProfile/bin/startManager.sh command.
+
+
+
+You can access the Administrative Console for IBM Business Process Manager using the following URL syntax: https://<Central Server 4>:9043/ibm/console 
+Replace the <Central Server 4> variable with the address of the Center Server 4 in your environment.

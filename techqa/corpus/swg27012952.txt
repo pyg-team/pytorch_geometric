@@ -1,0 +1,63 @@
+Title: IBM Download WebSphere Application Server for Developers Version 7.0 for the AIX operating system - United States
+
+Text:
+V7Rnotes PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document describes how to download IBM WebSphere Application Server for Developers Version 7.0 installation images from the IBM Passport Advantage Online Web site. 
+
+CONTENT
+IBM WebSphere Application Server is the premier Java™ Platform, Enterprise Edition (Java EE) and Web services-based application server. WebSphere Application Server is built on open standards and helps you deploy and manage applications ranging from simple Web sites to powerful on-demand solutions.
+
+More information 
+
+To access a wide variety of technical resources for this product, see the Information Center for WebSphere Application Server Version 7.0 [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=compass&product=was-base-dist&].
+
+Space requirements 
+
+ * 800 MB of disk space to store the required downloadable parts plus 900 MB of disk space to unpack the parts. 
+ * 1 GB (1000 MB) of disk space to install the product without profiles and 1.25 GB (1250 MB) for a cell installation. 
+ * 30 MB of space in the /tmp directory to run the installation program. 
+ * For more detailed information, see the WebSphere Application Server detailed system requirements [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27006921] document.
+
+
+Downloading and assembling the product  1. Navigate your browser to the Find Downloads and Media [http://www-112.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] Web page on the IBM Passport Advantage Online Web site. 
+ 2. Select the Find by part number search option under Download finder options. 
+ 3. Search for each downloadable image by part number. 
+ 4. Download all of the required parts. 
+ 5. Use a file extracting utility that supports large file extractions to unpack each of the parts into a single, temporary directory on your system. 
+ 6. Open the Quick Start Guide, which is located on the Quick Start CD. Follow step three through step nine of the Quick Start Guide to access the documentation to help with product installation.
+
+
+
+
+TAB NAVIGATION
+ * AIX- selected tab,
+ * HP-UX [http://www.ibm.com/support/docview.wss?uid=swg27012951]
+ * IBM i [http://www.ibm.com/support/docview.wss?uid=swg27013249]
+ * Linux [http://www.ibm.com/support/docview.wss?uid=swg27012950]
+ * Solaris [http://www.ibm.com/support/docview.wss?uid=swg27012948]
+ * Windows [http://www.ibm.com/support/docview.wss?uid=swg27012946]
+
+
+Supported operating systems 
+IBM AIX on PowerPC 32-bit architecture 
+
+Downloadable parts 
+There are nine downloadable parts for WebSphere Application Server for Developers V7.0 for the AIX operating system. Refer to the following tables for details about what each part contains. At a minimum, you must download the required parts. 
+
+Required parts 
+To install WebSphere Application Server for Developers Version 7.0 on an IBM AIX on PowerPC architecture, download the following parts: 
+
+Part Description File name (part number.extension) Download 1 of 10: WebSphere Application Server for Developers V7.0 Quick Start, Multilingual CZ0KFML.zip Download 2 of 10: WebSphere Application Server for Developers V7.0 for AIX PowerPC 32-bit C1FV7ML.tar.gz 
+Optional parts 
+
+Part Description File name (part number.extension) Download 3 of 10: WebSphere Application Server for Developers V7.0 Supplements for PowerPC 32-bit (1 of 2) C1FV8ML.tar.gz WebSphere Application Server for Developers V7.0 Supplements for PowerPC 32-bit (2 of 2) C1FV9ML.tar.gz Download 4 of 10: IBM WebSphere Installation Factory for AIX on PowerPC 32-bit, Multilingual C1F92ML.tar.gz Download 5 of 10: WorldType Fonts V7.0 for WebSphere Application Server for Developers V7.0 Multiplatforms, Multilingual C1G25ML.tar.gz Download 6 of 10: IBM Rational Application Developer Assembly and Deployment Features for WebSphere Software V7.5 for Multiplatforms (Windows and Linux only) Setup Disk, Multilingual C1KJ4ML.tar.gz Rational Application Developer Assembly and Deployment Features for WebSphere Software V7.5 for Multiplatforms (Windows and Linux only) (1 of 5) C1KJ5ML.tar.gz Rational Application Developer Assembly and Deployment Features for WebSphere Software V7.5 for Multiplatforms (Windows and Linux only) (2 of 5) C1KJ6ML.tar.gz Rational Application Developer Assembly and Deployment Features for WebSphere Software V7.5 for Multiplatforms (Windows and Linux only) (3 of 5) C1KJ7ML.tar.gz Rational Application Developer Assembly and Deployment Features for WebSphere Software V7.5 for Multiplatforms (Windows and Linux only) (4 of 5) C1KJ8ML.tar.gz Rational Application Developer Assembly and Deployment Features for WebSphere Software V7.5 for Multiplatforms (Windows and Linux only) (5 of 5) C1KJ9ML.tar.gz Download 7 of 10: IBM Support Assistant Workbench V4.0.2 for Linux on x86, or C1G2BML.tar.gz IBM Support Assistant Workbench V4.0.2 for Windows on x86 C1G27ML.zip Download 8 of 10: IBM Support Assistant Agent V4.0.2 C1G29ML.tar.gz Download 9 of 10: IBM Tivoli Access Manager for e-Business V6.1 for AIX on 32bit / 64bit, Multilingual C1HP0ML.tar.gz Download 10 of 10: IBM Tivoli Composite Application Manager for IBM WebSphere Application Server V7.0 C1HW4ML.tar.gz 
+RELATED INFORMATION
+ Interim Fixes for Application Server V7.0.0.0 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg24020613]
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2008/9/26

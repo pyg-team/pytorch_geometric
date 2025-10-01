@@ -1,0 +1,157 @@
+Title: IBM IT06798: CALL HOME GENERATES A CWZIP9602E SERVICE53 ERROR AFTER AN UPGRADE TO PUREAPPLICATION SYSTEM VERSION 2.0.0.1 - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.1.0.0 Interim Fix 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24039268]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer may receive the following critical event when Call
+   Home is enabled:
+   
+   CWZIP9602E: Service53 is failed offline at node and cannot be
+   restarted.
+   
+   CWZIP9604W: Service53 failed. The high availability component
+   will attempt to recover the service.
+   
+   Steps to confirm:
+   
+   Check global config via REST:
+   admin/resources/global_config?global_config_type=SSM
+   
+   Search "CONNECTION_TYPE_1":
+   If the value is 4, you can confirm the issue
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1. In the PureApplication System Console navigate to System >
+      Settings and then open the Service and Support Manager
+      section.
+   2. Click on the edit button next to Connection
+   3. Copy and paste the current proxy information (IP and port)
+   4. Select to connect to the internet directly
+   5. Click Save
+   6. Click the edit button next to Connection again
+   7. Select to connect to IBM via HTTP proxy and input the IP
+      address and port that you saved if they aren't already there.
+   8. Check global config again to make sure "CONNECTION_TYPE_1":
+      1 or 2
+   9. SSH to the floating PSM IP address with a local (non-LDAP)
+      administrative account
+   10. Run "psm reset Service53"
+   11. You can check High Availability status from the PureApp UI
+       or by running "psm info all"
+   12. Confirm that HA is restored
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The Call home function was attempting to use a connection
+   through the FTP protocol which caused the service to fail.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix is being provided in PureApplication System
+   version 2.1.0.0 to remove the code that was checking
+   for an FTP connection for the Call Home feature.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT06798
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-28
+   
+   
+ * CLOSED DATE
+   2015-03-02
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R210 PSY
+   UP

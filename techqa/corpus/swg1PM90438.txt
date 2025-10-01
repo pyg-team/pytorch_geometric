@@ -1,0 +1,189 @@
+Title: IBM PM90438: SSL RETURN CODE 450, DFHWB0732 SOCKET I/O ERROR WHILE RECEIVING CLIENT REQUEST, AND DFHSO0002 X'080C'. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a certificate error for a GSK_ERR_BAD_MSG_LEN is received,
+   CICS Web services is issuing a DFHSO0002 message with a error
+   code x'080C' and a dump is generated.
+   
+   There are two APAR's for CICS TS Ver.3.2 and 4.1 (PM60971 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM60971] and
+   PM53329 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM53329]), already includes in CICS TS Ver.4.2 base code, that
+   fixes a very similar problem, but only for error codes 438,
+   439, 440 and 441.
+   
+    The same behaviour should be followed also for error 450
+   (GSK_ERR_BAD_MSG_LEN), because this is a error provoked by the
+   client, and only a message DFHSO0123 is needed and CICS should
+   not take a Dump if this error code 450 is encountered.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No local fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: DFHSO0002 is issued while an SSL        *
+   *                      handshake fails with                    *
+   *                      GSK_ERR_BAD_MSG_LEN.                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The customer is using SSL with client authentication. A client
+   connects to CICS and supplies its certificate as part of the
+   handshake. The incorrect message length in certificate caused
+   socket initialization process failed with GSK_ERR_BAD_MSG_LEN.
+   GSK_ERR_BAD_MSG_LEN is handled to issue a severe error DFHSO0002
+   It is considered a too strong response and DFHSO0123 should be
+   issued for this kind of error.
+   Additional Keywords: MSGDFHSO0002,DFHSO0002
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHSOSE has been change to handle GSK_ERR_BAD_MSG_LEN and issue
+   DFHSO0123 message instead. Message template of DFHSO0123 has
+   also been changed to handle this error.
+   
+   This apar has amended the following message:
+     DFHSO0123
+   
+     A new message description in the
+     CICS Transaction Server for z/OSVersion 5 Release 1
+     CICS Messages and Codes Vol 2 SRL GC34-2862-00
+     Change the line "Server name not recognized}." to
+     "Server name not recognized | Bad message length}."
+   
+   After "43=Server name not recognized", add a new line
+   "44=Bad message length".
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  &#158;**** PE13/11/14 FIX IN ERROR. SEE APAR PI05993 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI05993]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM90438
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-05
+   
+   
+ * CLOSED DATE
+   2013-08-08
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM88467 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM88467]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK96567
+   
+   
+
+MODULES/MACROS
+ *  DFHMESOC DFHMESOE DFHMESOK DFHSOSE
+   
+   
+    
+   
+   
+
+Publications Referenced GC34286200 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY UK96567 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK96567]
+   UP13/08/15 P F308
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

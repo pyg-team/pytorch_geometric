@@ -1,0 +1,37 @@
+Title: IBM Logging into or Changing Password in a Content Manager OnDemand repository fails with: Error setting Afp2PdfConfigFile. Invalid filename - United States
+
+Text:
+logon; login TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Logging into or changing your password in an IBM Content Manager OnDemand repository using IBM Content Navigator fails with the following similar error message:
+
+An error occurred on the Content Manager OnDemand server.
+Contact your system administrator with the following information: 
+Error ID: 0
+Error message: Error: com.ibm.edms.od.ODException: Error setting Afp2PdfConfigFile. Invalid filename /directory/../afp2pdf.ini specified 
+
+CAUSE
+The afp2pdf.ini configuration file used by the InfoPrint® AFP2PDF Transform was not specified in the Content Navigator administration tool and does not exist in the default location. The default location searched is the parent directory of the AFP2PDF installation directory specified in the Content Navigator administration tool under Settings and the Content Manager OnDemand tab.
+
+RESOLVING THE PROBLEM
+To set a different default location for the afp2pdf.ini file, in the Content Navigator administration tool, go to Settings and the Content Manager OnDemand tab, and add the following Custom Property: 
+
+ * 
+ * 
+ * AFP2PDF_CONFIG_FILE
+ * 
+ * 
+ * /full/path/to/your/afp2pdf.ini
+
+
+An example afp2pdf.ini is located in the directory where the Content Manager OnDemand Web Enablement Kit (ODWEK) is installed. 
+
+Note: If an AFP2PDF configuration file is specified under the Configuration Parameters tab of a Content Manager OnDemand repository, that value will take precedence RELATED INFORMATION
+ Configuring the AFP2PDF conversion viewer [http://pic.dhe.ibm.com/infocenter/cmod/v8r5m0/topic/com.ibm.installingeuc.doc/eucco057.htm]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager OnDemand for Multiplatforms AIX, Linux, Linux zSeries, Solaris, UNIX, Windows 9.0, 8.5

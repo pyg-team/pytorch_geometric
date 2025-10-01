@@ -1,0 +1,10 @@
+Title: IBM Why can't I create add more than one Box Collaboration for a case and a task? - United States
+
+Text:
+Box; Collaboration; integration TECHNOTE (FAQ)
+
+QUESTION
+ Why can't I create add more than one Box Collaboration for a case and a task? Is it working as designed? 
+
+ANSWER
+This is working by design. The architecture for Box Collaboration has one Box folder for the case, which is intended for external collaboration. You can also create sub-folders under the Box collaboration folder.

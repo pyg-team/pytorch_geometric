@@ -1,0 +1,176 @@
+Title: IBM JR40495: IN A COLLABORATION AREA, WHEN SAVING AN ITEM WITH MANY UPDATED ATTRIBUTES,A "TOO LARGE FOR DATABASE COLUMN" ERROR IS THROWN. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In a collaboration Area, when saving an item with many updated
+   attributes, the 'EntryDifferencesXML' cannot be written in the
+   database.
+   The error is:
+   ERROR - XML ENTRY DIFFS STRING REPRESENTATION REQUIRED MORE THAN
+   3000
+   CHARACTERS; TOO LARGE FOR DATABASE COLUMN, DISCARDED
+   
+   Here is the stack trace:
+   
+   [jsp_14751: saveColAreaEntries.wpc] ERROR
+   com.ibm.ccd.common.error.AustinException - CWPCM0002E:Generic
+   error /
+   Exception: DB2 SQL Error: SQLCODE=-302,
+   SQLSTATE=22001, SQLERRMC=null, DRIVER=3.57.82
+   com.ibm.db2.jcc.am.co: DB2 SQL Error: SQLCODE=-302,
+   SQLSTATE=22001,
+   SQLERRMC=null, DRIVER=3.57.82
+           at com.ibm.db2.jcc.am.bd.a(bd.java:668)
+           at com.ibm.db2.jcc.am.bd.a(bd.java:60)
+           at com.ibm.db2.jcc.am.bd.a(bd.java:127)
+           at com.ibm.db2.jcc.am.km.b(km.java:2164)
+           at com.ibm.db2.jcc.am.km.c(km.java:2147)
+           at com.ibm.db2.jcc.t4.db.k(db.java:354)
+           at com.ibm.db2.jcc.t4.db.a(db.java:60)
+           at com.ibm.db2.jcc.t4.t.a(t.java:50)
+           at com.ibm.db2.jcc.t4.tb.b(tb.java:218)
+           at com.ibm.db2.jcc.am.lm.ec(lm.java:2692)
+           at com.ibm.db2.jcc.am.lm.b(lm.java:3225)
+           at com.ibm.db2.jcc.am.lm.b(lm.java:3697)
+           at com.ibm.db2.jcc.am.lm.Wb(lm.java:690)
+           at com.ibm.db2.jcc.am.lm.executeUpdate(lm.java:673)
+           at
+   org.apache.commons.dbcp.DelegatingPreparedStatement.executeUpdat
+   e(Delega
+   tingPreparedStatement.java:233)
+           at com.ibm.ccd.common.db.Query.executeUpdate(Unknown
+   Source)
+           at
+   com.ibm.ccd.common.context.common.DBContext.executeUpdate(Unknow
+   n
+   Source)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Truncate attribute content
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All Master Data Management Server for Product Information
+   Management implementations are affected by this issue.
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   [P0] IN A COLLABORATION AREA, WHEN SAVING AN ITEM WITH MANY
+   UPDATED ATTRIBUTES, A "TOO LARGE FOR DATABASE COLUMN" ERROR
+   IS THROWN.
+   ****************************************************************
+   RECOMMENDATION:
+   IBM recommends that customers facing the issue reported by this
+   APAR apply  Master Data Management Server for Product
+   Information Management version 9.1.0-FP2 to gain resolution to
+   this problem
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for this problem has been included in Master Data
+   Management Server for Product Information Management version
+   9.1.0-FP2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR40495
+   
+   
+ * REPORTED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5100
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-29
+   
+   
+ * CLOSED DATE
+   2012-01-24
+   
+   
+ * LAST MODIFIED DATE
+   2012-01-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * FIXED COMPONENT ID
+   5724V5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY
+   UP

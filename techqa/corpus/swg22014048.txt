@@ -1,0 +1,18 @@
+Title: IBM Is it possible to use an older WAS DC v7.1.x or v7.2.x with APM v8.1.4 server? - United States
+
+Text:
+DC v71 DC v72 APM v813 older version TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ Is it possible to use an older WAS DC v7.1.x or v7.2.x with APM v8.1.4 server? 
+
+ANSWER
+No, this is not supported. If you are using APM v8.1.4, then you have to use the corresponding WAS DC v7.3.x with APM v8.1.4. Using older DC v7.1.x or DC v7.2.x with APM v8.1.3 or APM v8.1.4 is not supported.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ APM itcam

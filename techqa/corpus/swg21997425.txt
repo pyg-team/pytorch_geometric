@@ -1,0 +1,19 @@
+Title: IBM If DB2 ACR is set, the user cannot log in after a DB2 failover and failback - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DB2 automatic client reroute (ACR) is enabled and DB2 fails. The user performs a DB2 failover and failback. The user might not be able to access the Identity Governance and Intelligence login screen. 
+
+CAUSE
+This is a known limitation.
+
+DIAGNOSING THE PROBLEM
+Search for the following exception in the log files. 
+
+java.sql.SQLException: [jcc][t4][2043][11550][3.69.24] Exception java.net.ConnectException: Error opening socket to server /<dbServer> on port <port> with message: Connection refused. ERRORCODE=-4499, SQLSTATE=08001 DSRA0010E: SQL State = 08001, Error Code = -4,499 
+
+
+RESOLVING THE PROBLEM
+If that exception is found, restart the Identity Governance and Intelligence server.

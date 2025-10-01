@@ -1,0 +1,148 @@
+Title: IBM PI60809: CONCURRENT USER LICENSING NEVER TAKES EFFECT IN MODELER - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You have successfully installed and licensed IBM SPSS Modeler
+   18.0 to use Concurent User Licensing on a remote Sentinel RMS
+   License Manager  (or so you think).  Still each time you launch
+   the product, you are met with the same Welcome Screen telling
+   you
+   you have X many days left in your Trial period and you are
+   offered the chance to license you product (again... and again).
+   
+   WORKAROUND:
+   This comes down to the fact that, while the LAW successfully
+   updates the DaemonHost value in spssprod.inf, it does not
+   disable the the trial license.
+   
+   To do so, simply rename the license file in your product
+   installation directory.
+   For example:
+   C:\Program Files\IBM\SPSS\Modeler\18.0\lservrc
+   to
+   C:\Program Files\IBM\SPSS\Modeler\18.0\lservrc_bak
+   
+   Alternatively, you could use the "#" character to 'comment out'
+   the license string(s) within "C:\Program
+   Files\IBM\SPSS\Modeler\18.0\lservrc"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * See Error Description field                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description field                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to Modeler 18.1 to resolve this issue.        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is resolved in Modeler 18.1, as well as current
+   downloads of 18.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI60809
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS MODELER
+   
+   
+ * REPORTED COMPONENT ID
+   5725A64MD
+   
+   
+ * REPORTED RELEASE
+   I00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-14
+   
+   
+ * CLOSED DATE
+   2017-07-14
+   
+   
+ * LAST MODIFIED DATE
+   2017-07-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS MODELER
+   
+   
+ * FIXED COMPONENT ID
+   5725A64MD
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RI00 PSN
+   UP

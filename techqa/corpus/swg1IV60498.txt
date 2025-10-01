@@ -1,0 +1,168 @@
+Title: IBM IV60498: EMPTY UNICODE ATTRIBUTES IF UTF-8 CONVERSION FAILS - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 3 (6.3.0-TIV-ITM-FP0003) [http://www-01.ibm.com/support/docview.wss?uid=swg24036775]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem:
+   
+   Common behavior of the UNIX and Linux OS Agents, for all the
+   attributes defined as Unicode strings and in any attribute
+   groups, is to return an empty value if the string cannot be
+   converted to UTF-8. This is correct but does not handle the
+   case where the conversion has failed just because the converted
+   string does not fit in the fixed length of the attribute.  This
+   APAR is going to change such behavior in a way that truncated
+   Unicode strings will be provided in such cases, instead of empty
+   strings.
+   
+   Affected Platforms / Versions:
+   
+   This issue affects all the UNIX and Linux OS agents, at any
+   versions.
+   
+   Diagnostics:
+   
+   KBB_RAS1=ERROR (UNIT:kux ALL) (UNIT:utf8 ALL) (UNIT:nls2 ALL)
+   
+   
+   Example:
+   
+   Look for messages like "Error converting <attribute name> to
+   UTF8; no conversion occurred."
+   
+   Initial Impact:
+   
+   Medium, Unicode attributes unusable if their converted value
+   length exceeds their defined limit.
+   
+   Additional Keywords:
+   
+   UNIXPS
+   UNIXTOPCPU
+   UNIXTOPMEM
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Empty unicode attributes when the value exceeds the attribute
+   length.
+   
+   
+   The Monitoring Agent for UNIX OS does not apply truncation in
+   case the conversion from the native string to UTF-8 encoding
+   fails due to a buffer overflow. As a result the unicode
+   attribute is filled with blanks.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Changed this behavior for all of the unicode attributes. They
+   get now truncated and the trailing '...' string appended, if the
+    converted string does not fit.
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.3.0-TIV-ITM-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV60498
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040U
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-15
+   
+   
+ * CLOSED DATE
+   2014-06-10
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * FIXED COMPONENT ID
+   5724C040U
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

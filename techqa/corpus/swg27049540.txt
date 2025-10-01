@@ -1,0 +1,103 @@
+Title: IBM Release notes - IBM SPSS Statistics Subscription - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ Release notes - IBM SPSS Statistics Subscription 
+
+CONTENT
+IBM® SPSS® Statistics Subscription is now available. Compatibility and other issues are addressed.
+
+
+
+
+
+Contents 
+
+ * Description 
+ * System requirements and installation 
+ * Known issues
+
+Description IBM SPSS Statistics Subscription empowers clients with pay-as-you-go pricing and easy software management in order to make better data-driven decisions. IBM® SPSS® Statistics Subscription offers the self-service advanced statistical capabilities that are required to gain insights from data and make better decisions. SPSS Statistics is the world's leading statistical software used to solve business and research problems by means of ad hoc analysis, hypothesis testing, geospatial analysis, and predictive analytics. 
+
+ * Quickly understand large and complex datasets by using advanced statistical procedures that ensure high accuracy to drive quality decision making. 
+ * Reveal deeper insights and provide better confidence intervals by using visualizations and geographic spatial analysis. 
+ * Process and deploy analytics faster with flexible deployment options. 
+ * Build a predictive enterprise, making the business more agile and maximizing return on investment.
+
+
+With the introduction of SPSS Statistics Subscription (SPSS Statistics), organizations, groups, and individual users are now able to leverage its predictive analytics capabilities to deliver the maximum amount of value to the end user.  * Intelligent add-ons extend the capabilities of the license to meet the needs of users of all abilities. 
+ * Easily consumable by the end user: SPSS Statistics simplifies the experience for everything from downloading software, to managing licensing, to updating your software. 
+ * Flexible billing options: A monthly payment option offers the flexibility to leverage SPSS Statistics when needed. 
+ * Highly secured and easily scalable with a simplified renewal process.
+
+
+System requirements and installation Note: The following steps assume you have already purchased IBM SPSS Statistics Subscription. 
+
+To download and install IBM SPSS Statistics Subscription, go to the IBM Marketplace [https://www.ibm.com/us-en/marketplace?lnk=mp] and then:
+
+
+ 1. Sign in with your IBM account (also known as IBMid). You must register for an IBMid if you do not already have an active IBM account. 
+ 2. After you are logged in, your account profile provides a Product and Services section that displays all of the IBM products and services to which you are entitled. 
+ 3. Click Download next to IBM SPSS Statistics Subscription. 
+ 4. On the Product and Services page, click the Download link underneath IBM SPSS Statistics Subscription. 
+ 5. Select the appropriate download option (for example, 32-bit, 64-bit, or Mac OS) and then click Download. 
+ 6. Click Save File if prompted. 
+ 7. Navigate to the save file location on your workstation and double-click the installer file. On the Mac OS you must double-click the installer file after mounting the disk image. 
+ 8. Follow the installation steps (including accepting the license agreement), until the product installation is complete. 
+ 9. IBM SPSS Statistics Subscription is now ready for use.
+
+
+Windows silent installation instructions
+ 1. Run the following command from a Windows command prompt window:
+    
+    SPSSStatisticsSub_Setup_x64.exe -s -p {InstallPath} --log C:\temp\installer.log -l ACCEPTED
+    
+
+Notes:  * The -l ACCEPTED flag is required and indicates that you accept the license agreement. 
+ * The -s flag indicates a silent installation. 
+ * The installer uses the default installation path (C:\Program Files\IBM\SPSS\Statistics\Subscription) when the -p flag is not used. You must enclose the installation path in quotation marks when the path includes space characters. 
+ * The --log flag must begin with double-dash and must define an absolute path that includes the log file name. In the above example, the installation log file is written to the C:\temp directory. 
+ * Use the --help flag to view more information regarding supported flags and command syntax. 
+
+
+Mac OS silent installation instructions 
+ 1. Open a terminal session and use the bellowcommand to mount the disk image. For example:
+    
+    hdiutil attach {user_download_path}/StatisticsSub_Installer.dmg
+    
+ 2. Use the following command to navigate to the installer folder:
+    
+    cd /Volumes/StatisticsSub_Installer/StatisticsSub_Installer.app/Contents/MacOS
+    
+ 3. Run the following command to perform a silent installation:
+    
+    ./StatisticsSub_Installer -s –p {InstallPath} --log ~/Desktop/installer.log -l ACCEPTED
+    
+
+Notes:  * The -l ACCEPTED flag is required and indicates that you accept the license agreement. 
+ * The -s flag indicates a silent installation. 
+ * The installer uses the default installation path (/Applications/IBMSPSSStatistics/Subscription) when the -p flag is not used. You must enclose the installation path in quotation marks when the path includes space characters. 
+ * The --log flag must begin with double-dash and must define an absolute path that includes the log file name. In the above example, the installation log file is written to the desktop. 
+ * Use the --help flag to view more information regarding supported flags and command syntax.
+
+
+Mac OS uninstall instructions 
+ 1. Drag the installation folder (by default, /Applications/IBMSPSSStatistics/Subscription) to the Trash. 
+ 2. In the Home folder, browse to Library/Preferences. 
+ 3. Drag com.ibm.spss.plist to the Trash. Note that this file is also used by IBM SPSS Statistics 24, IBM SPSS Statistics Student Version, and IBM SPSS Smartreader. Do not remove the file if any of these applications are still installed. 
+ 4. In the Home folder, drag Library/Application Support/IBM/SPSS/Statistics/Subscription to the Trash. 
+ 5. Empty the Trash.
+
+
+For information regarding system requirements, see the IBM detailed system requirements site [http://www-969.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html]. Known issues 
+
+There are no known issues at the time of publication.
+
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2017/3/28

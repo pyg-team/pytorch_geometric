@@ -1,0 +1,13 @@
+Title: IBM Error: Failed to open in exclusive edit when using IBM Rational DOORS Quality Center Interface sync - United States
+
+Text:
+DOORS; lock; exclusive; edit; QC; QCI; failed; open; sync; synch; synchronize; synchronization TECHNOTE (FAQ)
+
+QUESTION
+ When trying to run a synchronization from the Rational DOORS Quality Center Interface Admin Tool I get an error related to DOORS that says "Failed to open in exclusive edit", what is this? 
+
+ANSWER
+Following are two items to check: 
+
+ * The DOORS module which is being synchronized is already open in exclusive edit mode by another user. You can check this by logging into DOORS as the 'Administrator' account and selecting Tools -> Manage Locks from the database explorer. If it is identified that another user has the module open in exclusive edit mode, notify them to exit out of the module. 
+ * The DOORS user configured in the DOORS Quality Center Admin Tool may not have access to the open the module in question in exclusive edit mode. So check the access rights for the module and make sure the DOORS user has full access to the module.

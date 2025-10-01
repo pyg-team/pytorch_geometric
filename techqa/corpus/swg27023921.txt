@@ -1,0 +1,162 @@
+Title: IBM What's new in IBM InfoSphere Optim Query Workload Tuner, Version 3.1.1 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ InfoSphere Optim Query Workload Tuner, Version 3.1.1 includes new features and enhancements to existing features. 
+
+CONTENT
+ 
+
+ 
+
+The changes fall into these categories: 
+
+ * Data Studio clients replace the InfoSphere Optim Query Tuner client 
+ * New license activation kits for applying licenses to DB2 databases and subsystems 
+ * Workload Design Advisor for InfoSphere Optim Query Workload Tuner for DB2 Linux, UNIX, and Windows 
+ * Improvements to usability in the Query Tuner workflow assistant 
+ * Features that support DB2 Version 10 for Linux, UNIX, and Windows 
+ * New information center and information roadmap
+
+
+DATA STUDIO CLIENTS REPLACE THE INFOSPHERE OPTIM QUERY TUNER CLIENT 
+The Data Studio full client and Data Studio administration client are now the client applications for InfoSphere Optim Query Workload Tuner. You can use either of these clients to connect to DB2 databases and subsystems on which licenses for InfoSphere Optim Query Workload Tuner are active. You can then use the full set of tuning features that come with InfoSphere Optim Query Workload Tuner.
+
+If you use either of these clients to connect to a DB2 database or subsystem on which a license for InfoSphere Optim Query Workload Tuner is not active, then you can use only a default subset of the tuning features. 
+
+For a list of the tuning features that are available in the Data Studio clients with and without licenses for InfoSphere Optim Query Workload Tuner, see Tuning features by product [http://publib.boulder.ibm.com/infocenter/dstudio/v3r1/topic/com.ibm.datatools.qrytune.relinfo.doc/topics/featuresbyproduct.html].
+
+
+
+NEW LICENSE ACTIVATION KITS FOR APPLYING LICENSES TO DB2 DATABASES AND SUBSYSTEMS 
+You can now apply licenses for InfoSphere Optim Query Workload Tuner directly from the Data Source Explorer. Install a license activation kit together with the Data Studio full client and, when you connect to a DB2 database or subsystem to start tuning, the client activates a license on the connected system automatically. If you prefer to activate licenses manually, the license activation kits provide scripts or JCL that you can modify and run.
+
+
+
+WORKLOAD DESIGN ADVISOR FOR INFOSPHERE OPTIM QUERY WORKLOAD TUNER FOR DB2 LINUX, UNIX, AND WINDOWS 
+The new Workload Design Advisor can assist you with tasks that fall into these two general areas.
+
+
+
+
+
+
+PLANNING FOR OR SETTING UP A NEW DATABASE 
+While designing your database use the Workload Design Advisor to: 
+Generate design alternatives in a test environment of a partitioned database environment, and of MQTs, and MDC tables.
+For partitioned database environments, you can use the Workload Design Advisor to: 
+
+ * Determine the database partitioning strategy before loading data into a database  * Assist in migrating from a single-partition DB2 database to a multiple-partition DB2 database 
+    * Assist in migrating from another database product to a multiple-partition DB2 database
+   
+   
+ * Evaluate MQTs, MDC tables, or database partitioning strategies that have been generated manually
+
+
+
+
+
+PERFORMANCE TUNING 
+After your database is set up, you can use the Workload Design Advisor to evaluate MQTs, MDC tables, or database partitioning strategies to: 
+
+ * Improve performance of a query workload 
+ * Improve performance of the most frequently executed queries in a query workload 
+ * Find MQTs that are not used by a query workload
+
+
+IMPROVEMENTS TO THE USABILITY OF THE QUERY TUNER WORKFLOW ASSISTANT 
+A number of changes make the Query Tuner workflow assistant even more convenient when you use it to solve your SQL performance problems.
+
+
+
+
+
+
+BETTER MANAGEMENT OF SQL STATEMENTS IN QUERY TUNER PROJECTS 
+Choose whether or not to save queries in Query Tuner projects. Choose whether or not to save the sets of analyses and recommendations that InfoSphere Optim Query Workload Tuner generates for your queries.
+
+
+
+
+
+
+FASTER ACCESS TO THE ZPARMS BROWSER 
+Browse zParms more conveniently by right-clicking a DB2 for z/OS subsystem that is listed in the Data Source Explorer, and then selecting Analyze and Tune > Browse zParms.
+
+
+
+
+
+
+FASTER ACCESS TO THE TOOL FOR MANAGING PRIVILEGES 
+Manage privileges more conveniently on database objects that are required or created by InfoSphere Optim Query Workload Tuner. In the Data Source Explorer, right-click a DB2 database or subsystem, and then select Analyze and Tune > Privilege Management.
+
+
+
+
+
+
+EXPORT AND IMPORT GLOBAL PREFERENCES 
+Export or import a common set of global preferences to ensure that you and members of your team are using the same settings for options when you are working on queries and query workloads. 
+
+
+
+FEATURES THAT SUPPORT DB2 VERSION 10 FOR LINUX, UNIX, AND WINDOWS 
+The following features make use of new capabilities that are delivered in DB2 Version 10 for Linux, UNIX, and Windows.
+
+
+
+
+
+
+RECOMMENDATIONS FOR STATISTICAL REFERENTIAL INTEGRITY CONSTRAINTS, IN ADDITION TO RECOMMENDATIONS FOR STATISTICAL VIEWS 
+Get recommendations for NOT TRUSTED informational relational integrity constraints that can help the DB2 optimizer to infer statistics from recommended statistical views. This option can be useful when all three of these conditions are true: 
+
+ 1. Your application maintains referential integrity in your data, not DB2. 
+ 2. There might be a very small percentage of non-NULL values in foreign keys that do not match values in corresponding primary keys. 
+ 3. You want to try to reduce the number of statistical views that are recommended. Fewer statistical views require less maintenance and fewer resources.
+
+
+
+
+
+ADDITIONAL RECOMMENDATIONS FROM THE WORKLOAD INDEX ADVISOR 
+The Workload Index Advisor can recommend indexes that take advantage of zigzag joins and jump scans.
+
+
+
+
+
+
+FIND OUT ABOUT REBALANCING OPERATIONS IN ACCESS PLANS 
+The new REBAL operator in access plan graphs represents the transferal of rows between subagents in symmetric multiprocessor (SMP) environments. Operations like table and index scans, processed in parallel, evenly distribute work among SMP subagents by assigning each agent a predetermined range of records for execution. Other operations, like data filtering and joins, can cause data to become imbalanced as a query executes. The DB2 optimizer restores the balance with the REBAL operation.
+
+
+
+
+
+
+FIND OUT ABOUT ZIGZAG JOINS IN ACCESS PLANS 
+The new ZZJOIN operator in access plan graphs represents a zigzag join. A zigzag join joins a fact table and two or more dimension tables in a star schema. The columns joining dimension tables with the fact table must be unique. Queries that use an all-probes list-prefetch plan for the fact table access will include two separate ZZJOIN operators. One of those two ZZJOIN operators represents a back-join between the fact table and the dimension tables.
+
+
+
+NEW INFORMATION CENTER AND INFORMATION ROADMAP 
+The documentation for the 3.1.1 release is located at https://www.ibm.com/support/knowledgecenter/SS7L9Q_3.1.1/product_landing.html [https://www-01.ibm.com/support/knowledgecenter/SS7L9Q_3.1.1/product_landing.html].
+
+An information roadmap is located on developerWorks at http://www.ibm.com/developerworks/data/roadmaps/roadmap_ioqt_ioqwt_311.html [http://www.ibm.com/developerworks/data/roadmaps/roadmap_ioqt_ioqwt_311.html]. This document links to documentation both within and outside of the information center about topics such as overviews of the products, installing the products, configuring data servers for tuning, tuning, and getting support.
+
+
+
+
+
+ Back to top
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Optim Query Workload Tuner for DB2 for z/OS z/OS 3.1.1

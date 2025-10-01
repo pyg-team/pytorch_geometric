@@ -1,0 +1,34 @@
+Title: IBM Infosphere Data Architect - Oracle JDBC driver could not be loaded - United States
+
+Text:
+IDA; OCI; JDBC; thick; thin; Oracle TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Infosphere Data Architect - Oracle JDBC driver could not be loaded and the driver drop down list is not populated 
+
+SYMPTOM
+1) Test connection to Oracle database server fails with various errors. For example: 
+
+The JDBC driver class was not found in the specified JAR or zip file. Click the elilpsis (...) button to update the path to the JDBC driver files 
+
+2) The JDBC driver drop down list is not populated
+
+
+CAUSE
+1) Incorrect selection of the Oracle JDBC driver
+2) Not pointing to the location where the JDBC driver is present.
+
+
+RESOLVING THE PROBLEM
+If you want to use the Thick driver (requires Oracle Client to be installed):
+
+Select Oracle 11 - Oracle OCI driver Default
+Click Ellipsis, browse to the location where OCI driver exists (ocijdbc10.jar) 
+and test the connection.
+
+
+If you want to use thin driver: (ojdbc6.jar), try the below:
+
+Select Oracle 11 - Oracle Thin driver Default
+Click Ellipse, browse to the location where ojdbc6.jar driver exists
+and test the connection.

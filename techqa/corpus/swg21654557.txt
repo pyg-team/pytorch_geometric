@@ -1,0 +1,69 @@
+Title: IBM Single-server installation using FileNet Composite Platform Installation Tool fails - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CPIT 5.2 install fails. 
+
+SYMPTOM
+CPIT install fails. 
+
+ERROR in InvokeScripts-function - Terminate the remaining scripts.
+***Aborting InvokeScripts-Install function. errors occur in the cpit_install_stdout.txt for the configPE.bat (23/28) step. See below for root cause error:
+
+Install-InvokeDescription: (2/28) addfilenetusers.bat
+invokeScript: C:\Program Files (x86)\IBM\cpit\install-scripts\addfilenetusers.bat
+
+Cmd: "C:\Program Files (x86)\IBM\cpit\install-scripts\addfilenetusers.bat" "C:\Program Files (x86)\IBM\cpit\install-scripts" "C:\Program Files (x86)\IBM\cpit\decompressed" "C:\Platform_Downloads" 64
+
+OUTPUT>====================
+OUTPUT>Begin addfilenetusers.bat
+OUTPUT>06:53 AM
+OUTPUT>The command completed successfully.
+OUTPUT>
+OUTPUT>The command completed successfully.
+OUTPUT>
+OUTPUT>The command completed successfully.
+OUTPUT>
+OUTPUT>The command completed successfully.
+OUTPUT>
+OUTPUT>The command completed successfully.
+OUTPUT>
+OUTPUT>The command completed successfully.
+OUTPUT>
+OUTPUT>The command completed successfully.
+OUTPUT>
+OUTPUT>The command completed successfully.
+OUTPUT>
+OUTPUT>The command completed successfully.
+OUTPUT>
+OUTPUT>The command completed successfully.
+OUTPUT>
+ERROR>System error 1376 has occurred.
+ERROR>
+ERROR>The specified local group does not exist.
+ERROR>
+OUTPUT>The command completed successfully.
+OUTPUT>
+OUTPUT>The command completed successfully.
+OUTPUT>
+OUTPUT>The command completed successfully.
+OUTPUT>
+OUTPUT>The command completed successfully.
+OUTPUT>
+OUTPUT>06:53 AM
+OUTPUT>End addfilenetusers.bat
+OUTPUT>====================
+Process completed with exit code: 0
+
+
+CAUSE
+The addP8UsersGroups.bat file was missing the entry call net localgroup DB2ADMNS /add, causing the DB2ADMNS group not to be added. The dependent call net localgroup DB2ADMNS gcddbuser osdbuser f_sw f_maint P8Admin /add also failed. This caused the configPE.bat to fail and the FileNet Process Engine was not correctly configured and the remaining scripts were not ran.
+
+
+RESOLVING THE PROBLEM
+Prior to running the install edit the addP8UsersGroups.bat file in the cpit\install-scripts directory and add the following line in the call net localgroup /add section of the file. 
+
+
+ *  call net localgroup DB2ADMNS /add

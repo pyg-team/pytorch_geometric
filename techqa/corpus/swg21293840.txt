@@ -1,0 +1,35 @@
+Title: IBM Documentation correction for deleting a report - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The topic "Deleting a report" in the DB2 Content Manager OnDemand for Multiplatforms documentation is incorrect. The OnDemand instance must be specified, otherwise the default 'ARCHIVE' instance will be used. 
+
+ANSWER
+When you follow the instructions to unload reports from your OnDemand server, replace the arsadmin command with the correct syntax below: 
+
+Incorrect instructions:
+The following shows how to run the ARSADMIN program on a UNIX server from the command line to delete a load process from all of the storage locations: 
+
+ /usr/lpp/ars/bin/arsadmin unload -g Credit -L 1220-1-0-8FAA-5538-5673 
+
+To UNLOAD a report on a Windows server:
+1. Start --> Programs --> IBM OnDemand for Windows --> Command Window.
+2. Run the ARSADMIN program from the prompt. For example: 
+arsadmin unload -g Credit -L 1220-1-0-8FAA-5538-5673
+
+Correct instructions:
+The following shows how to run the ARSADMIN program on a UNIX server from the command line to delete a load from all of the storage locations: 
+
+ /usr/lpp/ars/bin/arsadmin unload -h instance -g Credit -L 1220-1-0-8FAA-5538-5673 
+
+To UNLOAD a report on a Windows server:
+1. Start --> Programs --> IBM OnDemand for Windows --> Command Window.
+2. Run the ARSADMIN program from the prompt. For example: 
+arsadmin unload -h instance -g Credit -L 1220-1-0-8FAA-5538-5673
+
+RELATED INFORMATION
+ OD 7.1.1. documentation [http://publib.boulder.ibm.com/infocenter/cmod/v7r1m1/topic/com.ibm.ondemand.mp.doc/ars1b171310.htm]
+OD 7.1.2 documentation [http://publib.boulder.ibm.com/infocenter/cmod/v7r1m1/topic/com.ibm.ondemand.mp.doc/ars1b171310.htm]
+OD 8.4.0 documentation [http://publib.boulder.ibm.com/infocenter/cmod/v8r4m0/topic/com.ibm.ondemand.mp.doc/ars1b171335.htm]

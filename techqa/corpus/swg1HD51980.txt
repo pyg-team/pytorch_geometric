@@ -1,0 +1,134 @@
+Title: IBM HD51980: INCORRECT PRINTING OF A CGM FILE FROM SMARTIEVIEWER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Incorrect printing of a CGM file from SmartIEViewer
+   Scenario :
+   1. Configure SmarTeam to visualize CATDrawing
+   documents
+   with SmartIEViewer through CGM files.
+   2. Visualize a CATDrawing document.
+   3. Open the Print window with the printing function
+   of
+   SmartIEViewer.
+   4. Select Page Setup , choose the format, and set
+   the
+   margins to 0 mm.
+   5. In the Print window, the parameters Width and
+   Height
+   does not correspond to the selected format.
+   6. Open the preview window, or print the
+   document.
+   7. The draw is not correctly centered on the sheet
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Incident Diagnosis
+   In this scenario , the customer complains that
+   1 - the width and height in print dialog box is not
+   the format chosen width and height.
+   2 - The drawing is not correctly centered
+   Correct Application
+   1- print dialog box width and height are not
+   supposed to be the chosen format width and
+   height. They define the object to print width and
+   height, that is, in this case, the viewer area width
+   and height in mm.
+   2 - To center the object to print in the chosen
+   paper, the user should choose the "Fit in Page"
+   option instead of the "No Fitting" option. With
+   the "No fitting Option", the object to print is not
+   scaled and may lie partly outside the paper.
+   Documentation Reference
+   3d com User's Guide -
+   Getting Started
+   3d com Web Navigator - Web Viewer - Printing
+   .
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD51980
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   514
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-04-20
+   
+   
+ * CLOSED DATE
+   2006-08-08
+   
+   
+ * LAST MODIFIED DATE
+   2006-08-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,32 @@
+Title: IBM Administration console and WebSphere logs show "Too many open files" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using the administration console causes a file open leak for the bidilang.properties file, resulting in the maximum number of open files limit being exceeded. 
+
+SYMPTOM
+An error message about "Too many open files" appears in the browser to the Tivoli Security Policy Manager administration console, in the WebSphere SystemOut.log file, and in the WebSphere SystemErr.log file.
+
+
+CAUSE
+Using the Tivoli Security Policy Manager administration console causes a file open leak for the following file: 
+
+/opt/IBM/WebSphere/AppServer/systemApps/isclite.ear/isclite.war/WEB-INF/config/bidilang.properties
+
+A "leak" is when the file gets opened but never closed. Over time, more and more opens for this file exist until eventually, the limit on the maximum number of open files is exceeded. Files are opened during log in and log out of WebSphere Administration Server and when you select Services or Policies in the console, for example.
+
+To confirm that it is the bidilang.properties file that is causing this problem, run the following command on UNIX platforms:
+
+lsof | grep bidilang.properties | wc -l
+
+This command counts the number of times the bidilang.properties file is open. The "Too many open files" error is due to the bidilang.properties file if the number of open files is in the hundreds.
+
+
+RESOLVING THE PROBLEM
+This problem can be avoided with the following workaround: 
+
+ 1. Rename /opt/IBM/WebSphere/AppServer/systemApps/isclite.ear/isclite.war/WEB-INF/config/bidilang.properties 
+    to /opt/IBM/WebSphere/AppServer/systemApps/isclite.ear/isclite.war/WEB-INF/config/bidilang.properties.save 
+ 2.  Restart WebSphere Application Server.

@@ -1,0 +1,54 @@
+Title: IBM Graphical User Interface (GUI) Installation of ITCAM Data Collector Fails on 64 bit Linux Operating System - United States
+
+Text:
+ITCAM; J2EE; WAS; 64-bit Linux; GUI Installer TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Version 6.1 ITCAM for J2EE and ITCAM for WebSphere installer bundles and uses a 32-bit JRE to start GUI installer. On a 64-bit Linux OS, sometimes, the X11 libraries required by 32-bit JRE are not present so the GUI installer fails to start. 
+
+SYMPTOM
+After issuing setup_DC_lin.bin from DC installation directory, you may get following error message: 
+
+"The installer is unable to run in graphical mode. Try running the installer with the -console or -silent flag."
+
+
+
+RESOLVING THE PROBLEM
+1. Perform silent installation. 
+
+2. You can use 64-bit JDK/JRE to start GUI installer if 64-bit JDK/JRE is already installed on your machine, switch to DC installation directory and issue:
+
+setup_DC_lin.bin -is:javahome $JDK_HOME
+
+Note that $JDK_HOME is 64-bit JDK installation directory 
+
+ 
+
+3. If 64-bit JDK/JRE is not present on your machine, follow steps below to downlaod and use 64-bit JDK/JRE to start GUI installer:
+
+1) Download 64-bit IBM Java 1.4.2 JDK for your processor type at:
+http://www.ibm.com/developerworks/java/jdk/linux/download.html [http://www.ibm.com/developerworks/java/jdk/linux/download.html]
+
+2) Install 64-bit IBM Java 1.4.2 JDK to your machine, for example,
+
+rpm -ivh IBMJava2-AMD64-142-SDK-1.4.2-13.8.x86_64.rpm
+
+3) Switch to DC installation directory and issue:
+
+setup_DC_lin.bin -is:javahome $JDK_HOME
+
+For example,
+
+setup_DC_lin.bin -is:javahome /opt/IBMJava2-amd64-142 
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for Application Diagnostics Linux 7.1 All Editions Systems and Asset Management Tivoli Composite Application Manager for WebSphere Linux 6.1 All Editions 
+PRODUCT ALIAS/SYNONYM
+ ITCAMfJ2EE
+ITCAMfWAS
+ITCAMfAD

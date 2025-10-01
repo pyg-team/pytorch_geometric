@@ -1,0 +1,19 @@
+Title: IBM Detailed System Requirements for IBM InfoSphere Optim Test Data Management Solution - United States
+
+Text:
+ DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ The IBM® InfoSphere® Optim™ Test Data Management Solution consists of a number of components. The system requirements for the components are compiled in this document. 
+
+CONTENT
+
+
+Use the links to view the Detailed System Requirements for each component of the Test Data Management Solution
+
+For test data management and data masking, the components are:
+
+ *  Optim workstation and Optim server [http://www.ibm.com/support/docview.wss?uid=swg27036209]
+ *  Optim Designer [http://www.ibm.com/support/docview.wss?uid=swg27036273]
+ *  Web applications (Optim Connection Manager, Optim Manager, and Optim Service Interface) [http://www.ibm.com/support/docview.wss?uid=swg27036293]
+ *  Optim Masking on Demand [http://www.ibm.com/support/docview.wss?uid=swg27036212]

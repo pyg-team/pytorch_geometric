@@ -1,0 +1,199 @@
+Title: IBM PK61608: HTTP: CLIENT CERTIFICATE REVOCATION STATUS PERFORMANCE ENHANCEMENT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  HTTP Server v6.0
+   ----------------
+   
+   A change was added to improve performance of CRL functionality.
+   
+   -----------------
+   Keywords: CRL Performance
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: IBM HTTP Server configurations with          *
+   * SSL Client Certificate revocation checking                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Certificate Revocation List (CRL)       *
+   * checking slows as the number of revoked certificates grows   *
+   ****************************************************************
+   * RECOMMENDATION: This fix is recommended for configurations   *
+   * where the directive SSLClientAuth contains the 'CRL' option  *
+   * and certificate revocation info is available via the OCSP    *
+   * protocol                                                     *
+   ****************************************************************
+   CRL processing requires loading the entire list from the LDAP
+   server, and if the list is large then extensive CPU is
+   required to parse the list and check it at runtime.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  IHS now has the option of using OCSP, a more efficient
+   certificate revocation checking protocol.  New directives
+   SSLOCSPEnable and SSLOCSPResponderURL are added and may be used
+   either in addition to or independently of the legacy CRL
+   checking.
+   .
+   Example:
+   <VirtualHost *:443>
+     SSLEnable
+     SSLClientAuth Required
+     SSLOCSPResponderURL http://ocsp.example.com:2560/ [http://ocsp.example.com:2560/]
+   </VirtualHost>
+   .
+   This fix is targeted for fix packs
+     6.1.0.19
+     6.0.2.29
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK61608
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM HTTP SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0801
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2008-02-25
+   
+   
+ * CLOSED DATE
+   2008-04-16
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM HTTP SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724J0801
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSN
+   UP
+   
+   
+ * R60H PSN
+   UP
+   
+   
+ * R60I PSN
+   UP
+   
+   
+ * R60P PSN
+   UP
+   
+   
+ * R60S PSN
+   UP
+   
+   
+ * R60W PSN
+   UP
+   
+   
+ * R60Z PSN
+   UP
+   
+   
+ * R61A PSN
+   UP
+   
+   
+ * R61H PSN
+   UP
+   
+   
+ * R61I PSN
+   UP
+   
+   
+ * R61P PSN
+   UP
+   
+   
+ * R61S PSN
+   UP
+   
+   
+ * R61W PSN
+   UP
+   
+   
+ * R61Z PSN
+   UP

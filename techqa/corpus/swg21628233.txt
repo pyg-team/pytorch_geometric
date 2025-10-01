@@ -1,0 +1,77 @@
+Title: IBM Plugin fails to initialize GSKIT during IHS startup when using the WAS 8.5 Liberty profile - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using the Websphere Application Server V8.5 Liberty profile with IBM Worklight, the plugin fails with a GSK error 429 (GSK_ERROR_PKCS11_LIBRARY_NOTLOADED). 
+
+SYMPTOM
+ 
+
+Plugin debug log shows the following during IHS startup. 
+
+[Fri Mar 08 12:43:43 2013] 00000c50 00000600 - DEBUG: lib_security: 
+initializeSecurity: Initializing... 
+[Fri Mar 08 12:43:43 2013] 00000c50 00000600 - DEBUG: lib_security: 
+setGskEnvironment: r_gsk_environment_open() rc=0; env_handle=01963D40 
+[Fri Mar 08 12:43:43 2013] 00000c50 00000600 - DEBUG: LIb_SECURITY: 
+setGskEnvironment show GsKit version =8.0.14.9= 
+[Fri Mar 08 12:43:43 2013] 00000c50 00000600 - DEBUG: lib_security: 
+setGskEnvironment: GSK_KEYRING_FILE rc=0; 
+ssl_value=F:\WAS85\Plugins\etc\plugin-key.kdb 
+[Fri Mar 08 12:43:43 2013] 00000c50 00000600 - DEBUG: lib_security: 
+setGskEnvironment: GSK_KEYRING_LABEL=- 
+[Fri Mar 08 12:43:43 2013] 00000c50 00000600 - DEBUG: lib_security: 
+setGskEnvironment: 
+GSK_KEYRING_STASH_FILE=F:\WAS85\Plugins\etc\plugin-key.sth 
+
+[Fri Mar 08 12:43:43 2013] 00000c50 00000600 - DEBUG: lib_security: 
+setGskEnvironment: GSK_PKCS11_SYMMETRIC_CIPHER_ON 
+[Fri Mar 08 12:43:43 2013] 00000c50 00000600 - DEBUG: lib_security: 
+setGskEnvironment: GSK_ACCELERATOR_NCIPHER_NF_ON 
+[Fri Mar 08 12:43:43 2013] 00000c50 00000600 - DEBUG: lib_security: 
+initializeSecurity: Setting FIPS environment over SSL transports 
+[Fri Mar 08 12:43:43 2013] 00000c50 00000600 - DEBUG: libSecurity: FIPS 
+support for SSL is disabled [Fri Mar 08 12:43:43 2013] 00000c50 00000600 - DEBUG: lib_security: setGskEnvironment: GSK_PKCS11_DRIVER_PATH=REPLACE [Fri Mar 08 12:43:43 2013] 00000c50 00000600 - DEBUG: lib_security: 
+setGskEnvironment: htsecurityConfigGetCertLabel: - 
+[Fri Mar 08 12:43:43 2013] 00000c50 00000600 - DEBUG: lib_security: 
+initializeSecurity: setting GSK iocallback 
+[Fri Mar 08 12:43:43 2013] 00000c50 00000600 - ERROR: lib_security: 
+logSSLError: str_security (gsk error 429): 
+GSK_ERROR_PKCS11_LIBRARY_NOTLOADED 
+[Fri Mar 08 12:43:43 2013] 00000c50 00000600 - ERROR: lib_security: 
+initializeSecurity: Failed to initialize GSK environment 
+[Fri Mar 08 12:43:43 2013] 00000c50 00000600 - ERROR: ws_transport: 
+transportInitializeSecurity: Failed to initialize security 
+[Fri Mar 08 12:43:43 2013] 00000c50 00000600 - DEBUG: 
+lib_security_config: htsecurityConfigDestroy: freeing 
+SSLconfig=00EC1630; env_handle=01963D40 
+[Fri Mar 08 12:43:43 2013] 00000c50 00000600 - DEBUG: 
+lib_security_config: htsecurityConfigDestroy: close env_handle=01963D40 
+[Fri Mar 08 12:43:43 2013] 00000c50 00000600 - ERROR: ws_server: 
+serverAddTransport: Failed to initialize security 
+[Fri Mar 08 12:43:43 2013] 00000c50 00000600 - ERROR: ws_server: 
+serverAddTransport: HTTPS Transport is skipped 
+
+
+CAUSE
+During GSKIT initialization, the plugin tries to load the PKCS library. Since the PKCS Cryptocard is not being used, this library does not exist, but the following entries still showed up in the plugin-cfg.xml
+
+SSLPKCSDriver="REPLACE" 
+SSLPKCSPassword="REPLACE" 
+
+
+
+ENVIRONMENT
+IBM Worklight with WebSphere 8.5 liberty profile
+
+
+
+DIAGNOSING THE PROBLEM
+Plugin Trace needed
+
+
+
+RESOLVING THE PROBLEM
+Removing SSLPKCSDriver="REPLACE" and SSLPKCSPassword="REPLACE" from the plugin-cfg.xml resolves the issue.

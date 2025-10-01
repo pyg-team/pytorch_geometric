@@ -1,0 +1,89 @@
+Title: IBM B2B Mail Client Adapter error out with SSLHandshakeException - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ B2B Mail Client Adapter errors out with SSLHandshakeException and does not pick up and process the data from email server.
+B2B Mail Client Adapter is configured to use SSL.
+Load balancer is used in the infrastructure. 
+
+SYMPTOM
+b2bmailclient.log 
+
+[2017-03-29 11:53:55.468] DEBUG JSSESSLSocketImpl.getDefault()- JSSE SSL Socket Factory Implementation ...
+[2017-03-29 11:53:55.468] DEBUG JSSESSLSocketImpl.getDefault()- Client Authentication
+[2017-03-29 11:53:55.474] DEBUG JSSESSLSocketImpl.getDefault()- factory = com.ibm.jsse2.SSLSocketFactoryImpl@bf021fdb
+[2017-03-29 11:53:55.474] DEBUG JSSESSLSocketImpl.getDefault()- JSSE SSL Socket Factory done...
+[2017-03-29 11:53:55.474] DEBUG SSLSocketControl, unlocked
+[2017-03-29 11:53:55.487] ERROR AccessMailJ, get folder exception = 
+[2017-03-29 11:53:55.487] ERROR [1490806435487] com.ibm.jsse2.util.j: PKIX path building failed: java.security.cert.CertPathBuilderException: unable to find valid certification path to requested target
+[2017-03-29 11:53:55.488] ERRORDTL [1490806435487]javax.mail.MessagingException: com.ibm.jsse2.util.j: PKIX path building failed: java.security.cert.CertPathBuilderException: unable to find valid certification path to requested target;
+nested exception is:
+javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.util.j: PKIX path building failed: java.security.cert.CertPathBuilderException: unable to find valid certification path to requested target
+at com.sun.mail.imap.IMAPStore.protocolConnect(IMAPStore.java:571)
+at javax.mail.Service.connect(Service.java:288)
+at com.sterlingcommerce.woodstock.services.b2bmailsvs.AccessMailJ.connect(AccessMailJ.java:326)
+at com.sterlingcommerce.woodstock.services.b2bmailsvs.SimpleMailClient.processData(SimpleMailClient.java:121)
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.invokeService(ActivityEngineHelper.java:1818)
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.nextMainLogic(ActivityEngineHelper.java:631)
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.next(ActivityEngineHelper.java:362)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.doWork(WorkFlowQueueListener.java:459)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.run(WorkFlowQueueListener.java:240)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.onMessage(WorkFlowQueueListener.java:197)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.onMessage(WorkFlowQueueListener.java:184)
+at com.sterlingcommerce.woodstock.workflow.queue.wfTransporter.run(wfTransporter.java:444)
+at com.sterlingcommerce.woodstock.workflow.queue.BasicExecutor$Worker.run(BasicExecutor.java:508)
+at java.lang.Thread.run(Thread.java:798)
+Caused by: javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.util.j: PKIX path building failed: java.security.cert.CertPathBuilderException: unable to find valid certification path to requested target
+at com.ibm.jsse2.j.a(j.java:44)
+at com.ibm.jsse2.qc.a(qc.java:508)
+at com.ibm.jsse2.ab.a(ab.java:148)
+at com.ibm.jsse2.ab.a(ab.java:68)
+at com.ibm.jsse2.bb.a(bb.java:31)
+at com.ibm.jsse2.bb.a(bb.java:115)
+at com.ibm.jsse2.ab.t(ab.java:364)
+at com.ibm.jsse2.ab.a(ab.java:175)
+at com.ibm.jsse2.qc.a(qc.java:592)
+at com.ibm.jsse2.qc.h(qc.java:275)
+at com.ibm.jsse2.qc.a(qc.java:235)
+at com.ibm.jsse2.e.read(e.java:9)
+at com.sun.mail.util.TraceInputStream.read(TraceInputStream.java:110)
+at java.io.BufferedInputStream.fill(BufferedInputStream.java:247)
+at java.io.BufferedInputStream.read(BufferedInputStream.java:266)
+at com.sun.mail.iap.ResponseInputStream.readResponse(ResponseInputStream.java:97)
+at com.sun.mail.iap.Response.<init>(Response.java:96)
+at com.sun.mail.imap.protocol.IMAPResponse.<init>(IMAPResponse.java:61)
+at com.sun.mail.imap.protocol.IMAPResponse.readResponse(IMAPResponse.java:135)
+at com.sun.mail.imap.protocol.IMAPProtocol.readResponse(IMAPProtocol.java:261)
+at com.sun.mail.iap.Protocol.<init>(Protocol.java:114)
+at com.sun.mail.imap.protocol.IMAPProtocol.<init>(IMAPProtocol.java:104)
+at com.sun.mail.imap.IMAPStore.protocolConnect(IMAPStore.java:538)
+... 13 more
+Caused by: com.ibm.jsse2.util.j: PKIX path building failed: java.security.cert.CertPathBuilderException: unable to find valid certification path to requested target
+at com.ibm.jsse2.util.h.a(h.java:39)
+at com.ibm.jsse2.util.h.b(h.java:76)
+at com.ibm.jsse2.util.g.a(g.java:21)
+at com.ibm.jsse2.yc.a(yc.java:101)
+at com.ibm.jsse2.yc.a(yc.java:56)
+at com.ibm.jsse2.yc.checkServerTrusted(yc.java:77)
+at com.ibm.jsse2.bb.a(bb.java:281)
+... 31 more
+Caused by: java.security.cert.CertPathBuilderException: unable to find valid certification path to requested target
+at com.ibm.security.cert.PKIXCertPathBuilderImpl.buildCertPath(PKIXCertPathBuilderImpl.java:642)
+at com.ibm.security.cert.PKIXCertPathBuilderImpl.engineBuild(PKIXCertPathBuilderImpl.java:356)
+at java.security.cert.CertPathBuilder.build(CertPathBuilder.java:256)
+at com.ibm.jsse2.util.h.a(h.java:58)
+
+
+CAUSE
+The cause of the issue is that server was presenting incorrect CA certificate to B2B Mail Client Adapter which did not match the client certificate stored in IBM Sterling B2B Integrator CA store. 
+
+
+DIAGNOSING THE PROBLEM
+Capture the certificate presented by email server.
+
+
+
+RESOLVING THE PROBLEM
+Something is changed outside of the IBM Sterling B2B Integrator. Fix the issue such that the server presents the correct certificate.

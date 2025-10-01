@@ -1,0 +1,36 @@
+Title: IBM Hung threads with IBM Daeja ViewONE classes seen in the logs. - United States
+
+Text:
+hung threads; cache TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ My application server's log shows hung threads related IBM Daeja ViewONE. 
+
+SYMPTOM
+In the log there are these errors:
+
+Could not delete docstore directory
+/ECMApps/ICN/cache/erqltMSJQ5cuv93rk4dTeVB9i6Ts3dEmgGtTryw0ws.na
+vigator/docstore
+Could not force delete directory
+/ECMApps/ICN/cache/erqltMSJQ5cuv93rk4dTeVB9i6Ts3dEmgGtTryw0ws.na
+vigator/docstore
+
+ThreadMonitor W WSVR0605W: Thread
+"WebContainer : 2" (000000fa) has been active for 701249 milliseconds
+and may be hung. There is/are 1 thread(s) in total in the server that
+may be hung.
+at java.lang.Object.wait(Native Method)
+at java.lang.Object.wait(Object.java:172)
+at ji.streamer.cache.DocInfoCache.create(Unknown Source)
+at com.ibm.dv.server.ViewOnePlatformService.createCache(Unknown
+
+
+CAUSE
+The cache directory used by the ViewONE Virtual viewer needs to have RW permissions by the account that starts the application server's JVM. If the permission is changed it can cause problems.
+
+DIAGNOSING THE PROBLEM
+Check the permissions of the directory (and its sub-directories) defined as the Cache Root for ViewONE Virtual. Make sure the account that is used to start the JVM hosting the ViewONE Virtual viewer has RW permissions to the directories and files.
+
+RESOLVING THE PROBLEM
+Correct the permissions of the cache root directory, its sub-directories, and files.

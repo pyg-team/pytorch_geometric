@@ -1,0 +1,160 @@
+Title: IBM PK97151: WTP Defect 241466: Dependent Jar not included when publishing - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Application Developer for WebSphere Software, Version 7.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24025148]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Env:
+   Rational Application Developer 7.5.3
+   
+   Description:
+   When having a utility jar within the EAR/lib , there is a publis
+   ing issue, that the defined classes in the jar file doesn't exis
+   t.
+   
+   To workaround this, the java EE module dependencies should add i
+   t, but then it will violate the EE5 specifications
+   
+   The problem in this case is the WAS looseconfig.  If you look at
+    the looseconfig.xmi file it will have an entry similar to this:
+   
+   
+     ?looseArchives xsi:type='org.eclipse.jst.j2ee.commonarchivecor
+   e.looseconfig:LooseLibrary' uri='THE.jar' binariesPath='D:\THE.j
+   ar' resourcesPath='D:\The.jar'/?
+   
+   notice that the uri attribute value does not contain the lib/ pr
+   efix - this causes the problem (where THE JAR can't be found at
+   runtime).  The bug is definitely 241446 because the JEE Tools AP
+   I that the WAS server tooling is using to generate the looseconf
+   ig uri entry is only returning the name of the module and not th
+   e lib/ directory + name of the module.  The work-around this pro
+   blem by manually including the lib/ prefix in the uri of the loo
+   seconfig, i.e.
+   
+     ?looseArchives xsi:type='org.eclipse.jst.j2ee.commonarchivecor
+   e.looseconfig:LooseLibrary' uri='lib/THEjar' binariesPath='D:\TH
+   E.jar' resourcesPath='D:\THE.jar'/?
+   
+   but you would need to manually do this anytime the looseconfig f
+   ile gets regenerated (which is rather painful).
+   
+   Problem is seen in https://bugs.eclipse.org/bugs/show_bug.cgi?id
+   =241466 [https://bugs.eclipse.org/bugs/show_bug.cgi?id=241466]
+   Fixed in WTP 3.1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The problem if jars being deployed to a Java EE 5.0 EAR's
+   lib directory not being properly added to the classpath of
+   dependent modules has been fixed in RAD 755.  e.g. an EAR
+   project contains a reference to a jar called Util.jar
+   mapping to the lib directory.  This jar should automatically
+   be on the classpath at runtime of all the EAR's module
+   components, but this was not working correctly because of a
+   looseconfig problem.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in Rational Application Developer V7.5.5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK97151
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   754
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-25
+   
+   
+ * CLOSED DATE
+   2009-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R754 PSN
+   UP

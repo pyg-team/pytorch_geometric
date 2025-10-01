@@ -1,0 +1,37 @@
+Title: IBM How can I specify JVM parameters for the Case Foundation Process Engine? - United States
+
+Text:
+runtime; JRE TECHNOTE (FAQ)
+
+QUESTION
+ How can I specify JVM parameters for the Case Foundation Process Engine? 
+
+CAUSE
+I am configuring Process Engine with a monitoring utility that requires JVM parameters to be specified. For example, CA Wily Introscope is one such utility. 
+
+ANSWER
+While IBM does not test Case Foundation Process Engine with most 3rd-party utilities and does not document configuration and does not guarantee such integration will work, you can specify 3rd-party JVM parameters in the Process Engine startup script. You can try to make such configuration work at your own risk. 
+
+Notes: 
+
+ * If there are any problems with the Process Engine, IBM may ask that you take out unsupported and undocumented JVM parameters from the startup script. 
+ * The JVM parameters take effect after you restart the Process Engine.
+
+
+Procedure: . 
+
+ 1. Find the Process Engine startup script where you can specify the 3rd-party JVM parameters. It is the following file under the Process Engine installation location:  * Unix / Linux: 
+     * ../IBM/FileNet/ProcessEngine/startpesvr.sh 
+     * Windows: 
+     * ../IBM/FileNet/ProcessEngine/startpesvr.bat
+    
+    
+ 2. Edit the line starting with $JAVA_HOME/bin/java.  * Follow standard java rules for running java classes with parameters.
+    
+    
+
+. Example: 
+
+For example, when specifying CA Wily Introscope parameters: 
+
+$JAVA_HOME/bin/java -Djpeserver.useHTTPTunneling=false -Djpeserver.httptunnel.ssl=false -Xms256m -Xmx512m -cp $JPEINSTALL_DIR/lib/pesvr.jar:$JDBC_JAR_PATH:$JPEINSTALL_DIR/CE_API/lib/Jace.jar:$JPEINSTALL_DIR/CE_API/wsi/lib/wasp.jar -DJPEINSTALL_DIR=$JPEINSTALL_DIR -DJPEDATA_DIR=$JPEDATA_DIR -DJPEVIRTUALSERVER=$JPEVIRTUALSERVER -Djava.security.auth.login.config=$JPEINSTALL_DIR/CE_API/config/jaas.conf.WSI -Dwasp.location=$JPEINSTALL_DIR/CE_API/wsi -javaagent:/app/IBM/wily/AgentNoRedef.jar -Dcom.wily.introscope.agentProfile=/app/IBM/wily/core/config/IntroscopeAgent.NoRedef.profile filenet.jpe.rpc.main.PEServer

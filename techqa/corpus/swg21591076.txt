@@ -1,0 +1,27 @@
+Title: IBM Automatically renew trusted credential - United States
+
+Text:
+security; trusted credentials SSO renew TECHNOTE (FAQ)
+
+QUESTION
+ How do I choose the value to use for the Security > Authentication > Automatically renew trusted credential setting? 
+
+ANSWER
+For IBM Cognos Business Intelligence(BI) deployments that do not implement a single sign-on (SSO) solution, stored credentials used for running scheduled activities can be automatically updated. When a user logs into the IBM Cognos BI application with a user name and password, the trusted credential used to run schedules when not logged in will be refreshed as well. This removes the burden from the end user of having to remember to manually refresh their trusted credentials and may eliminate failed activities caused by changed or expired user credentials.
+The credential refresh behaviour is controlled by the Security > Authentication > Automatically renew trusted credential setting in Cognos Configuration.
+
+
+ * Primary namespace only (default setting): When you log on to the first namespace of your session, if you have trusted credentials for that account, the credentials are updated for the primary account only. All other credentials for other namespaces are not updated.
+   
+ * Off: Credentials are not updated in any namespace.
+   
+ * All namespaces: When you log on to the first namespace, your credentials are updated as described for "Primary namespace only". When you log on to additional namespaces, if your trusted credentials associated with the primary account contain logon information for that namespace, then those trusted credentials are updated. NOTE: Do not use the All namespaces option if users authenticate into secondary namespaces as different users.
+
+
+A user's trusted credentials for a namespace will only be renewed once per day. 
+
+It is NOT possible to use SSO with the feature 'Automatically Renew Trusted Credentials' found in Cognos BI. The reason for this is due to the following: 
+
+"A trusted credential is special because the namespace credentials it stores must be usable at any time, not depending on any timestamp. This rules out SSO tickets like Kerberos tokens or SAP tokens as they will expire after a short time and will become unusable. A suitable trusted credential therefore usually is a pair consisting of a user name and a password. However, for SSO based authentication to IBM Cognos BI, there is no password available to the namespace that can be stored into the trusted credential. Therefore, this feature will only work for basic authentication, when the user provides a user name and password to the login screen." RELATED INFORMATION
+ Proven Practices: Securing the IBM Cognos 10 BI Environ [http://www.ibm.com/developerworks/data/library/cognos/security/cognos_bi_platform/page602.html]
+Cognos Analytics 11 Equivalent Technote [http://www-01.ibm.com/support/docview.wss?uid=swg21998776]

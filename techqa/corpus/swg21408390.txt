@@ -1,0 +1,77 @@
+Title: IBM Problems using the graphical installation process for WebSphere Application Server Version 6.1 on Windows 7 and Windows Server 2008 R2 - United States
+
+Text:
+"Windows 7" "Windows Server 2008" Win7_2008_R2 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you attempt to use the graphical user interface to install IBM WebSphere Application Server Version 6.1 on Microsoft® Windows® 7 or Windows Server 2008 R2, you might encounter the following error message from the InstallShield Wizard:
+
+The installer is unable to run in graphical mode. Try running the installer with the -console or -silent flag". This issue is specific to using Windows 7 or Windows Server 2008 R2.
+
+This same error message displays when you run the uninstall.exe command to uninstall a WebSphere Application Server Version 6.1 product.
+
+In addition, if you use the launchpad application, the installation link for a product does not launch the product installation panel. 
+
+CAUSE
+The IBM Software Development Kit (SDK) Version 1.5, which was bundled with WebSphere Application Server Version 6.1 in 2006, does not properly recognize the Windows 7 and Windows Server 2008 R2 operating systems.
+
+RESOLVING THE PROBLEM
+Note: The launchpad application for WebSphere Application Server Version 6.1 is not supported to install the application server on the Windows 7 operating system. However, you can use the built-in Administrator account on the Windows Server 2008 R2 operating system to install the application server using the launchpad application. Before using the launchpad application, you must configure the install.exe files to use the proper Windows application compatibility mode as described in this document. 
+
+
+
+
+Installation process
+To resolve the installation issue, use one of the following solutions:
+
+
+ * Use the silent installation process. For more information, see Installing silently [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=pix&product=was-nd-mp&topic=tins_runsilent] in the Version 6.1 Product Documentation. Within that topic, complete the same actions that are specified for the Windows Vista operating system.
+   
+   
+ * Complete a graphical installation that uses a Customized Installation Package (CIP) with a minimum 6.1.0.29 fix pack level for WebSphere Application Server and the associated recommended IBM Software Development Kit (SDK) level. For more information on the currently available fix pack level, see Latest fix packs for WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27009661].
+   
+   
+ * Modify the graphical installation process for WebSphere Application Server Version 6.1. To successfully use this process, you must set the Windows application compatibility mode for the applicable install.exe file within the product installation images. Complete the following steps to install the application server in the graphical mode on the Windows 7 and Windows Server 2008 R2 operating systems. You must complete this same procedure for the install.exe files in the following situations:  * If you are installing the Application Client, IBM HTTP Server, or plug-in products
+      
+      
+    * If you are using a Customized Installation Package (CIP) for WebSphere Application Server, the CIP incorporates a fix pack level earlier than Version 6.1.0.29, and it was created using the IBM Installation Factory
+   
+   
+   Note: The location of the install.exe file depends on the product that you are installing.
+   
+    1. Right-click Properties on the install.exe file with the WAS folder of the installation image for WebSphere Application Server Version 6.1. The Properties window displays.
+       
+       
+    2. Click the Compatibility tab on the Properties window.
+       
+       
+    3. Click Change settings for all users on the Compatibility tab. A new Properties window displays.
+       
+       
+    4. Select the Run the program in compatibility mode option and select either the Windows Vista mode or Windows Server 2008 (Service Pack 1) mode. You can select any of the Windows Vista modes when you are using the Windows 7 operating system. However, you must select the Windows Server 2008 (Service Pack 1) mode when you are using the Windows Server 2008 R2 operating system.
+       
+       
+    5. Click OK at the bottom of the window and click OK on the remaining window.
+       
+       
+    6. Optional: Update the manifest in the install.exe files so that Administrator privileges are not required if you want to install the application server with a non-administrator Windows user account. The process enables a non-administrator user to install without receiving a Windows UAC prompt to enter an Administrator password.
+       
+       
+    7. Run the install.exe file to install the application server. A system prereq-check failure windows displays during the installation process. The failure message occurs for any operating system that was released after the 2006 introduction of WebSphere Application Server Version 6.1. For this installation process, you can ignore that failure message and continue. 
+       
+       
+       Note: During the installation process, if you use an Aero desktop theme. the theme is temporarily changed to a 'Windows 7 Basic' theme.
+       
+       
+    8. Update your WebSphere Application Server Version 6.1 installation to Version 6.1.0.29 or later using Update Installer for WebSphere Software Version 7.0.0.9 or later. When you update to a recent fix pack level, you can successfully use a Windows service to start and stop an application server profile. Also, you can avoid other issues that have been fixed in the product since its introduction in 2006. 
+   
+   
+   For additional information, see the documents [http://www.ibm.com/support/search.wss?rs=180&tc=SSEQTP&q=Windows2008Cert] that were previously published for the Windows Vista and Windows Server 2008 operating systems. These documents also apply to the Windows 7 and Windows Server 2008 R2 operating systems.
+
+
+
+Uninstallation process 
+To uninstall WebSphere Application Server Version 6.1 using the graphical interface, you must complete the previous steps to set the compatibility mode for the uninstall.exe file prior to running the uninstall command. 
+
+
+To use the silent installation process, see Uninstalling the product [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=pix&product=was-nd-mp&topic=tins_uninstall] in the Version 6.1 Product Documentation.

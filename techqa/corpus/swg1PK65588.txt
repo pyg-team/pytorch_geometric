@@ -1,0 +1,207 @@
+Title: IBM PK65588: SECJ0371W: Validation of the LTPA token failed after refreshing server Subject. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The server credential fails to be refreshed due to multiple
+   invocations of server credential refresh. When a client's node
+   agent manages multiple servers, it is possible that multiple
+   threads will request for refreshing the server token
+   simultaneously, and one of thread may get incorrect server
+   subject due to a race condition. The following warning message
+   will be observed when this condition occurs.
+   
+   LTPAServerObj W SECJ0371W: Validation of the LTPA token failed
+   because the token expired with the following info: Token
+   expiration Date: Sun Feb 17 08:29:42 UTC 2008, current Date:
+   Sun Feb 24 03:36:47 UTC 2008.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of WebSphere Application Server   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: SECJ0371W: Validation of the LTPA       *
+   *                      token failed is reported due to         *
+   *                      concurrent server credential refresh.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   During processing getServerSubject method, the server tokens
+   will be refreshed if a server credential is expired. However
+   getServerSubject method may return a server subject which
+   contains one or more tokens which are not refreshed yet.
+   If more than one thread invokes getServerSubject method,
+   a server subject which is in a middle of refreshing
+   tokens may be returned while the other thread is refreshing the
+   tokens. When this condition happens, the second thread may get
+   a server subject which contains a token or tokens which has an
+   incorrect expiration time.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  With this fix, getServerSubject method is synchronized. Also,
+   it checks whether some thread already refreshed tokens while a
+   thread is waiting to enter the synchronize clause to avoid the
+   server tokens from being refreshed multiple times.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fixpack 6.0.2.31 and 6.1.0.19.  Please refer to the Recommended
+   Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK65588
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-05-06
+   
+   
+ * CLOSED DATE
+   2008-06-03
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK63446
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP
+   
+   
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

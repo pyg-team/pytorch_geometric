@@ -1,0 +1,153 @@
+Title: IBM OA40827: 0E0 ABEND ISSUE AFTER QMGR IS TERMINATED BY A FORCE COMMAND - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  0E0 abend issue after Qmgr is terminated by a force command
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IBM Tivoli OMEGAMON XE for Messaging:    *
+   *                 WebSphere MQ Monitoring 6.0.0 users.         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: MQ agent has repeated abend 0E0 in      *
+   *                      functions MQEL and MQXM.                *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   If the monitored queue manager is terminated by the MVS force
+   command, it is possible for the queue manager to be left in an
+   unexpected state that MQ monitoring agent does not recognize.
+   This causes the MQ monitoring agent to repeatedly attempt to
+   access unavailable queue manager data and abend.
+   
+   The following messages may be seen:
+   
+      KMQRM104E  ABEND recovery entered
+      KMQRM104E+   Code=X'00E0' FUNCTION=MQEL ADDRESS=X'BB5004EE'
+   
+      KMQRM104E  ABEND recovery entered
+      KMQRM104E+   Code=X'00E0' FUNCTION=MQXM ADDRESS=X'BB5453DA'
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified to check additional status flags in
+   queue manager to identify when queue manager is in force or
+   quiesce state. This will allow MQ monitoring agent to identify
+   problem and stop monitoring.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA40827
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG XE WEBSPHM
+   
+   
+ * REPORTED COMPONENT ID
+   5608A1100
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-15
+   
+   
+ * CLOSED DATE
+   2012-11-15
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    OA36023 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA36023]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  KMQAMQSA KMQAMQS1 KMQAMQS2 KMQAMQS8
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG XE WEBSPHM
+   
+   
+ * FIXED COMPONENT ID
+   5608A1100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY UA67231 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA67231]
+   UP12/11/21 P F211
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

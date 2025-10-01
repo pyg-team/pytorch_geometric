@@ -1,0 +1,69 @@
+Title: IBM usePersistentReserve is not available on Linux operating systems,is that right? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ As the following doc says,usePersistentReserve is not available on Linux operating systems,is that right?
+https://www.ibm.com/support/knowledgecenter/en/SSEPGG_11.1.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0056712.html [https://www.ibm.com/support/knowledgecenter/en/SSEPGG_11.1.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0056712.html]
+usePersistentReserve
+Specifies whether to enable or disable PR on the disks. The default value is YES. If you change the setting to NO, then fast failure recovery is replaced with a longer GPFS lease timeout wait period, resulting in a slower failure recovery. This feature is not available on Linux operating systems and the lease timeout is always used for file system recovery. 
+
+ANSWER
+No,it's not right.Whether we could “Enable SCSI-3 Persistent Reserve” has no relationship with Linux operation or AIX operation system,it is determined by whether the disk support SCSI-3 PR.
+As following testing :
+In my redhat linux purescale environment: 
+
+[root@bjliyslinux01 bin]# ./mmchconfig usePersistentReserve=yes 
+
+Verifying GPFS is stopped on all nodes ... 
+
+mmchconfig: Processing disk nsdpfs1 
+
+mmchconfig: Device sdc does not support PR_shared reserve policy. 
+
+mmchconfig: Unable to set reserve policy PR_shared on disk nsdpfs1 on node bjliyslinux01. 
+
+mmchconfig: Processing disk nsdgpfs2 
+
+mmchconfig: Device sdd does not support PR_shared reserve policy. 
+
+mmchconfig: Unable to set reserve policy PR_shared on disk nsdgpfs2 on node bjliyslinux01. 
+
+mmchconfig: Processing disk nsdgpfs3 
+
+mmchconfig: Device sde does not support PR_shared reserve policy. 
+
+mmchconfig: Unable to set reserve policy PR_shared on disk nsdgpfs3 on node bjliyslinux01. 
+
+mmchconfig: Unable to enable Persistent Reserve on the following disks: 
+
+nsdpfs1 
+
+nsdgpfs2 
+
+nsdgpfs3 
+
+mmchconfig: The usePersistentReserve parameter will remain unchanged. 
+
+mmchconfig: Command failed. Examine previous error messages to determine cause. 
+
+ 
+
+In AIX purescale environment: 
+
+# ./mmchconfig usePersistentReserve=yes 
+
+Verifying GPFS is stopped on all nodes ... 
+
+mmchconfig: Processing disk hdisk2nsd 
+
+mmchconfig: Processing disk hdisk3nsd 
+
+mmchconfig: Processing disk hdisk4nsd 
+
+mmchconfig: Command successfully completed 
+
+mmchconfig: 6027-1371 Propagating the cluster configuration data to all 
+
+affected nodes. This is an asynchronous process.

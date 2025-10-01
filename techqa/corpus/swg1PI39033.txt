@@ -1,0 +1,211 @@
+Title: IBM PI39033: DUMP TITLE=CSQ2,ABN=0C4-00000011,C=R3600.710.CHIN,M=CSQXDISP, LOC=CSQXRCTL.CMQXREVN+01B66 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer is running WebSphere MQ on z/OS V710 when running
+   along, they received:
+   DUMP TITLE=CSQ2,ABN=0C4-00000011,C=R3600.710.CHIN,M=CSQXDISP,
+           LOC=CSQXRCTL.CMQXREVN+01B66
+   .
+   Event functions module CMQXREVN (v710 base) failing at offset
+   x'01B66'
+   .
+   MSTR Log shows:
+   .
+   18.46.44 IEA794I SVC DUMP HAS CAPTURED:
+            DUMPID=001 REQUESTED BY JOB (CSQ2CHIN)
+            DUMP TITLE=CSQ2,ABN=
+            0C4-00000011,C=R3600.710.CHIN,M=CSQXDISP,
+            LOC=CSQXRCTL.CMQXREVN+01B66
+   .
+   CHIN log shows:
+   .
+   18.46.44 +CSQX112E +CSQ2 CSQXDISP Dispatcher process error,
+          TCB=009BC6D8 reason=0C4000-00000011
+   .
+   Looking through the Savearea chain, it appears that an event was
+   trying to be written to the SYSTEM.ADMIN.CHANNEL.EVENT queue for
+   a CLUSRCVR channel.
+   .
+   The change team reviewed the dump and found that the abend
+   occurs when CHLAUTH processing attempts to put a warning
+   event message to SYSTEM.ADMIN.CHANNEL.EVENT due to a channel
+   using SSL matching a CHLAUTH rule that would block it with the
+   WARN(YES) option.
+   .
+   Looking at the configured CHLAUTH rules I can see that the
+   CLUSRCVR channel has a rule to warn on any unexpected
+   connections from queue managers for which no other rule matches.
+   In this case the remote queue manager, there is no rule to allow
+   connections from this queue manager.
+   .
+   While putting the warning event message to the event queue,
+   rsiEvent is called and is passed various attributes of the
+   channel. In the failing case, it has been passed a pointer to
+   the SSLPeerName, and is attempting to determine the length of
+   this distinguished name. However, rsiEvent incorrectly assumes
+   the storage containing this value is 1024 bytes long, however in
+   this case it is just long enough to contain the actual value.
+   While attempting to determine the correct length, GetLen
+   attempts to access inaccessible storage beyond the end of the
+   storage allocated for the SSLPeerName value and abends 0C4.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This abend can be avoided by adding an appropriate CHLAUTH rule
+   to allow connections from queue manager on these channels
+   (assuming that this queue manager is expected to be connecting
+   using these channels).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 1 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: MQRC_CHANNEL_BLOCKED_WARNING event      *
+   *                      messages contain invalid data in the    *
+   *                      MQCACH_SSL_PEER_NAME parameter.         *
+   *                      In some cases abend 0C4 in              *
+   *                      CSQXRCTL.CMQXREVN occurs during         *
+   *                      generation of the message.              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   During start up of a channel using SSL/TLS, rriCheckChlAuth is
+   called to evaluate any matching CHLAUTH rules for the channel.
+   If a rule with WARN(YES) is matched, rsiEvent is called to
+   generate an event message with reason
+   MQRC_CHANNEL_BLOCKED_WARNING, and reason qualifier
+   (MQIACF_REASON_QUALIFIER) MQRQ_CHANNEL_BLOCKED_NOACCESS.
+   During generation of the event message, for SSL/TLS channels
+   the MQCACH_SSL_PEER_NAME parameter is added to the event
+   message, however an error in calculating the length of the SSL
+   Peer Name can result in either:
+    - additional unexpected data being added to the SSL peer name
+    in the event message
+   or
+    - abend 0C4 being issued
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  The correct SSLPeerName length is passed to rsiEvent, preventing
+   rsiEvent from calculating the length incorrectly.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI39033
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-14
+   
+   
+ * CLOSED DATE
+   2015-04-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI27092
+   
+   
+
+MODULES/MACROS
+ *  CMQXREVN CMQXRMSA CSQXCCCX CSQXRMRS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY UI27092 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI27092]
+   UP15/06/03 P F506
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

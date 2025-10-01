@@ -1,0 +1,35 @@
+Title: IBM Ask the Experts session: Ask us anything about User Management in Connections - 24 March 2015 [presentation, audio, summary attached] - United States
+
+Text:
+lste_webcast; STEwebcastDocument WEBCAST
+
+ABSTRACT
+ Listen to this replay as members of the IBM Connections team discuss and answers questions about User Management in Connections. 
+
+CONTENT
+ 
+
+ * Topic: Ask us anything about User Management in Connections 
+ * Date held: Tuesday, March 24, 2015 
+
+Presentation ATE_ManageUsers_032415.pdf [/support/docview.wss?uid=swg27045052&aid=2]ATE_ManageUsers_032415.pdf [/support/docview.wss?uid=swg27045052&aid=1] 
+
+
+Audio recording User Management in Connections - Ask the Experts Mar 24 2015.mp3 [/support/docview.wss?uid=swg27045052&aid=4]User Management in Connections - Ask the Experts Mar 24 2015.mp3 [/support/docview.wss?uid=swg27045052&aid=3] 
+
+
+Q&A summary 
+Audio recording (length 34:21 minutes) 
+
+Approximate time stamp Question Answer summary 00:00 Presentation of slides [/support/docview.wss?uid=swg27045052&amp;aid=5] 27:37 I am using the GUID now. Is it possible to change to use the employeeID? Or change during the migration? Yes, you can definitely change from using the GUID to EmployeeID. In the audio, the presenter describes a three-step process: 1) an initial sync, 2) changing the hash key and updating the GUID followed by a sync, 3) finishing change of the hash key. I would recommend doing the ID change on its own, at least a week or two before any migration. Doing both changes at the same time makes it harder to track down any problems. Do the GUID change, let that settle, and then do the migration afterwards. 31:18 For external user support for Connections 5, any recommendations on the value for GUID there? When you set up external users, you can set up two TDI solution directories – one TDI for internal sync and one for external sync. For the GUID, you want to select a value that is not going to change. There's no real difference as far as syncing; you have possibly two user repositories – internal and external – and GUID based off of those. A reference to review is Open Mic Webcast: Understanding and Configuring External User Collaboration in IBM Connections 5.0 - 25 September 2014. [http://www.ibm.com/support/docview.wss?uid=swg27042950] 32:36 With the DSML, if I want to sync user information back to Domino, is that working? To be able to sync info from the Profiles database back into the LDAP directory requires an additional server, the DSML server. I don't know of a way to do that type of operation with Domino. There might be a way to customize TDI to do that; you would need to check with a TDI expert about how to set that up. 
+Web Conference chat 
+
+Question Answer Can you provide an explanation for the various codenames, e.g. Sonata, Waltz, etc.? Waltz is the name for 'directory lookup' module and Sonata is the name for 'gets cookies'. Our developer prefers music and dancing analogies as a naming scheme. I am doing my first Connections deployment. I already synchronized the users from Domino with TDI, but now I want to add fields that were not synchronized the first time. How do I do that? You can run the TDI wizard again, and then in the mapping screen, make changes there. What is the process to keep the directory updated? How do I configure daily updates for example? There is a TDI script called "sync_all_dns". Set up a scheduled task or script to run that on your preferred schedule. You can read more about that command in Synchronizing source changes such as LDAP with Profiles [http://www-01.ibm.com/support/knowledgecenter/SSYGQH_5.0.0/admin/admin/t_admin_profiles_sync_ldap.dita]. I am moving a customer from Domino to Active Directory LDAP. Any references to review? See Updating Profiles when changing LDAP directory [http://www-01.ibm.com/support/knowledgecenter/SSYGQH_5.0.0/admin/admin/t_admin_profiles_change_ldaps.dita] in the IBM Connections Knowledge Center. Is it possible to add the department name as a text field and not as a code? To do that, you might want to add what's called an extension attribute for the department filed. This is a good wiki article that explains more about how to customize the Profiles GUI: Customizing IBM Connections 4.0 Profiles [http://www-10.lotus.com/ldd/lcwiki.nsf/dx/Customizing_IBM_Connections_4.0_Profiles]. We changed the Login Attributes from uid, mail, cn to mail, uid, cn after updating to Connections 5 CR2 and now we can't create documents with IBM Docs 1.0.7. Can this be a problem with Login Attributes / Login Principal in Connections? Yes, that sounds like a login attributes problem. Try changing the login attributes to uid first as a troubleshooting step to see if the issue goes away. 
+
+About Ask the Experts sessions IBM Collaboration Solutions (Lotus) Support wants to help you take full advantage of your products. "Ask the Experts Q&A" is a program where the main focus of the sessions is having technical experts answer your questions. 
+
+Join us for our Open Mic Webcast series as technical experts share their knowledge and answer your questions. These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient online webcast format. For more information about our Open Mic webcasts, visit the IBM Collaboration Solutions Support Open Mics [http://www.ibm.com/software/lotus/support/lotus-open-mics/] page. 
+
+
+ORIGINAL PUBLICATION DATE
+ 2015/2/3

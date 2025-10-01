@@ -1,0 +1,142 @@
+Title: IBM PM50475: THE CEMT INQ DB2CONN RESPONSE IS NOT FORMATTED AS IN PRIOR RELEASES. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you issue the CEMT INQ DB2CONN command your response now
+   is different than what was returned in prior releases. This
+   difference causes problems for Automated Operators which expect
+   the output to be the same as before.
+   In Release 3.2 of CICS Transaction Server for z/OS, the response
+   for CONNECTST was returned on line 10 and read:
+   Connectst( Connected ) and the automation exec would perform the
+   required action.
+   In Release 4.1 of CICS Transaction Server for z/OS, the response
+   returned shows the CONNECTST is part of a second block of a
+   multiline output message.
+   Additionally, any changes to the output from the CICS commands
+   should be documented in the Release Guide. This so that you can
+   make modifications to resources like automated scripts.
+   ADDITIONAL KEYWORDS:
+   KIXREVBDB
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All.                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Undocumented change of results for CEMT INQUIRE.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Chapter 7 ( Changes to CEMT ) of the CICS Transaction Server for
+   z/OS Version 4 Release 1 'Upgrading from CICS TS Version 3.2'
+   manual ( GC34-6998-02 ) will have an additional section thus:
+                                                                  .
+   CEMT Format
+   
+   Prior to TS 4.1, a CEMT INQUIRE on certain resources
+   ( eg DB2CONN ) would return the resource parameters on one
+   screen with the data arranged in columns thus:
+                                                                  .
+   field name  field value     field name  field value
+                                                                  .
+   For this release, the data is arranged in the format:
+                                                                  .
+   Field name  field value
+                                                                  .
+   Field names and field values that were previously displayed
+   in columns 3 and 4 are now accessible by use of the scroll key.
+   
+   In addition, the resource name is now appended to the top of
+   the column.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM50475
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-20
+   
+   
+ * CLOSED DATE
+   2012-01-05
+   
+   
+ * LAST MODIFIED DATE
+   2012-01-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced GC34699802 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

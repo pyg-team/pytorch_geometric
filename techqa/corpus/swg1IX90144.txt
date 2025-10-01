@@ -1,0 +1,170 @@
+Title: IBM IX90144: UNEXPECTED EXCEPTION THROWN IN EJB CALL - United States
+
+Text:
+  FIXES ARE AVAILABLE
+PI14305: SHIP SDK 6 SR16 FOR WSAS V7.0.0.X [http://www-01.ibm.com/support/docview.wss?uid=swg24037515]
+PI14301: SHIP SDK 7.1 SR1 FOR WSAS V8.5.5.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037534]
+PI19109: SHIP SDK 626 SR8 FOR WSAS V8.0.0.X [http://www-01.ibm.com/support/docview.wss?uid=swg24037708]
+PI19107: SHIP SDK 7 SR7 FOR WSAS V8.5.0.X AND V8.5.5.X [http://www-01.ibm.com/support/docview.wss?uid=swg24037709]
+PI19108: SHIP SDK 626 SR8 FOR WSAS V8.5.0.X AND V8.5.5.X [http://www-01.ibm.com/support/docview.wss?uid=swg24037710]
+PI28437: SHIP JAVA apar IV66110 for WAS V8553 using Java 6/26 [http://www-01.ibm.com/support/docview.wss?uid=swg24038600]
+PI28436: SHIP JAVA apar IV66110 for WAS V8553 using Java 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24038638]
+PI28435: SHIP JAVA apar IV66110 for WAS V8553 using Java 7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038639]
+PI29448: Ship JAVA apar IV66110 for WAS V70033 using Java 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24038829]
+PI37011: SHIP JAVA 6/26 SR8 + IX90144+IV70681 FOR WAS 8009 [http://www-01.ibm.com/support/docview.wss?uid=swg24039735]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: Possible incompatibility between Stub and Tie at
+   offset 0x46  vmcid: IBM  minor code: 8F3  completed: No
+   .
+   Stack Trace: ERROR: Caught exception test8:
+   java.rmi.MarshalException: CORBA MARSHAL 0x4942f8f3 No; nested
+   exception is:org.omg.CORBA.MARSHAL: Possible incompatibility
+   between Stub and Tie at offset 0x46  vmcid: IBM  minor code: 8F3
+    completed: No04-11-2014 11:08:17:  ERROR:
+   java.rmi.MarshalException: CORBA MARSHAL 0x4942f8f3 No; nested
+   exception is:org.omg.CORBA.MARSHAL: Possible incompatibility
+   between Stub and Tie at offset 0x46  vmcid: IBM  minor code: 8F3
+    completed: Noat
+   com.ibm.CORBA.iiop.UtilDelegateImpl.mapSystemException(UtilDeleg
+   ateImpl.java:279)at
+   javax.rmi.CORBA.Util.mapSystemException(Util.java:78)at
+   org.omg.stub.com.sun.ts.tests.interop.ejb.entity.bmp.clientviewt
+   est._TestBean_Stub.getHandle(_TestBean_Stub.java:177)at
+   com.sun.ts.tests.interop.ejb.entity.bmp.clientviewtest.Client.te
+   st8(Client.java:553)at
+   sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:48)at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:25)at
+   java.lang.reflect.Method.invoke(Method.java:600)
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ORB incorrectly deducts this is a EJB2 Vs EJB3 mismatch and
+   throws the following exceptionorg.omg.CORBA.MARSHAL: Possible
+   incompatibility between Stub and Tie at offset 0x46  vmcid: IBM
+   minor code: 8F3  completed: No
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR will be fixed in the following Java Releases:
+      6    SR16 FP1  (6.0.16.1)
+      7    SR7  FP1  (7.0.7.1)
+      6 R1 SR8  FP1  (6.1.8.1)
+      7 R1 SR1  FP1  (7.1.1.1)
+   .
+   The solution is to remove the incompatibility check based on the
+   pad byte.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IX90144
+   
+   
+ * REPORTED COMPONENT NAME
+   ORB
+   
+   
+ * REPORTED COMPONENT ID
+   620700123
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-15
+   
+   
+ * CLOSED DATE
+   2014-05-16
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ORB
+   
+   
+ * FIXED COMPONENT ID
+   620700123
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP
+   
+   
+ * R260 PSY
+   UP

@@ -1,0 +1,33 @@
+Title: IBM IllegalArgumentException when changing permission on an object - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading to Cognos 10.2.1 and attempt to change a permission on an object (report, folder, package, etc...), we get an error: "IllegalArgumentException: Unexpected exception while executing the xml pipline process 'stage_d0n327'" 
+
+SYMPTOM
+This issue happens when we see the following message at the top of the permission window: 
+"The list contains entries that cannot be displayed. They may have been deleted or you may not have sufficient privileges to see them"
+We also see an entry in the list of names which states "Unavailable" with a "?" question icon. When we try and change any permission (i.e. add a user or change the permissions), and click Okay, we get the IllegalArgumentException: Unexpected exception while executing the xml pipline process 'stage_d0n327 dialogue box message. If we click OK on that message, we see a Cognos error message:
+CM-REQ-4192 The property "policies" (for an object of class "Folder") is incorrect. CM-REQ-4158 The search path "storeID(")" is invalid. An object may contain invalid syntax, or an unsupported character, or the user account in the namespace may not have sufficient privileges. Check the object to ensure that the target destination location does not contain special characters. CM-REQ-4078 The function "storeID" has an invalid argument.
+
+
+CAUSE
+Appears to be an issue caused by the migration between deployments off of the old Cognos environment (in this case, it was Cognos 8.4). 
+
+ENVIRONMENT
+Cognos 10.2.1 upgrade from Cognos 8.4. Fix Pack 1 installed but issue is Fix Pack independent 
+
+DIAGNOSING THE PROBLEM
+Ensure that the client does not have multiple namespaces as the alert: "The list contains entries that cannot be displayed. They may have been deleted or you may not have sufficient privileges to see them" usually means that they are trying to change permissions for an object that has multiple namespaces authorized to it. If they do, make sure that they are logged in against that namespace as well. If they only have one namespace or are authenticated against all namespaces, see the next section for possible resolutions.
+
+RESOLVING THE PROBLEM
+Consistency check: 
+Some users may not exist anymore but remain in the Content Store. Conduct an external consistency check as outlined in the documentation here: http://pic.dhe.ibm.com/infocenter/cbi/v10r2m1/index.jsp?topic=%2Fcom.ibm.swg.ba.cognos.ug_cra.10.2.1.1.doc%2Ft_stepstocreateacontentmaintenancetask.html [http://pic.dhe.ibm.com/infocenter/cbi/v10r2m1/index.jsp?topic=%2Fcom.ibm.swg.ba.cognos.ug_cra.10.2.1.1.doc%2Ft_stepstocreateacontentmaintenancetask.html]
+
+Third Part Cross Scripting
+Ensure that that the Third Party XSS Scripting is set to false and that XSS setting within the web browser is set to false
+
+Clearing security on the object
+Uncheck the "Override the access permissions acquired from the parent entry" box, click Okay. The object now has the same permissions as its parent. Go back to change the permissions and check the box again. We should see that the "Unavailable" entry is gone as well as the Alert and we can now set permissions

@@ -1,0 +1,138 @@
+Title: IBM How to set trace strings in .options file to trace Validator performance and Build in Rational Application Developer - United States
+
+Text:
+traces; validators; performance; rational Application Developer TECHNOTE (FAQ)
+
+QUESTION
+ How do you set trace strings in the .options file to trace Validator performance and Build in IBM Rational Application Developer for WebSphere Software (RAD)? 
+
+CAUSE
+If you run into performance issues with the validators in RAD, it is recommended to provide tracing information when contacting IBM Rational Client Support.
+
+ANSWER
+These trace options apply to validator performance and build information in Rational Application Developer v8.x and v9.0. Most should also apply to RAD v7.5.x 
+
+
+
+The <.options> file is attached under the Related Information section.
+These are the trace strings settings to use when you create the .options file:
+
+
+
+# --------------------------------------------------------------------------------------------------
+# an .options file with settings to trace validator performance
+
+org.eclipse.wst.validation/debug=false
+
+# Set this to true if you wish performance information to be logged
+org.eclipse.wst.validation/timings=true
+
+# set this to true if you want version 1 validator tracing
+org.eclipse.wst.validation/v1=true
+
+# Set this to a file name, if you wish the results to be logged to a file, otherwise
+# they will be written to stderr. When logged to a file the results are in a
+# CSV (comma separated values) form. When logged to stderr they are in a more 
+# human readable form.
+org.eclipse.wst.validation/timings/tracefile=vf.csv
+
+# By default times that are written to the trace file are in milliseconds for elapsed
+# time and nanoseconds for cpu time. If you find these times easier to read as seconds
+# as expressed by a double, the following flag can be turned on.
+org.eclipse.wst.validation/timings/useDoubles=true
+
+# If extra detail is needed for a particular validator it's id can be specified here.
+# For example, if you wanted more detail on the XML validator you would use
+# org.eclipse.wst.xml.core.xml 
+org.eclipse.wst.validation/extraValDetail=
+
+# Debugging options for the org.eclipse.core.resources plugin.
+
+# Turn on debugging for the org.eclipse.core.resources plugin.
+org.eclipse.core.resources/debug=true
+
+# Monitor builders and gather time statistics etc.
+org.eclipse.core.resources/perf/builders=10000
+
+# Monitor resource change listeners and gather time statistics etc.
+org.eclipse.core.resources/perf/listeners=500
+
+# Monitor workspace snapshot and gather time statistics etc.
+org.eclipse.core.resources/perf/snapshot=1000
+
+# Monitor workspace snapshot and gather time statistics etc.
+org.eclipse.core.resources/perf/save.participants=500
+
+# Debug build failure cases such as failure to retrieve deltas.
+org.eclipse.core.resources/build/failure=false
+
+# Reports the cause of autobuild interruption
+org.eclipse.core.resources/build/interrupt=false
+
+# Reports the start and end of all builder invocations
+org.eclipse.core.resources/build/invoking=true
+
+# Reports the start and end of build delta calculations
+org.eclipse.core.resources/build/delta=false
+
+# For incremental builds, displays which builder is being run
+# and because of changes in which project.
+org.eclipse.core.resources/build/needbuild=true
+
+# Prints a stack trace every time an operation finishes that requires a build
+org.eclipse.core.resources/build/needbuildstack=true
+
+# Prints a stack trace every time a build API method is called
+org.eclipse.core.resources/build/stacktrace=true
+
+# Reports configuration and deconfiguration of project natures
+org.eclipse.core.resources/natures=true
+
+# Report history store debugging.
+org.eclipse.core.resources/history=false
+
+# Report debugging for project preferences.
+org.eclipse.core.resources/preferences=false
+
+# Prints debug information (elapsed time, estimated savings) from string compaction
+org.eclipse.core.resources/strings=false
+
+# Report timings for restoring the workspace state
+org.eclipse.core.resources/restore=false
+org.eclipse.core.resources/restore/markers=false
+org.eclipse.core.resources/restore/syncinfo=false
+org.eclipse.core.resources/restore/tree=false
+org.eclipse.core.resources/restore/metainfo=false
+org.eclipse.core.resources/restore/snapshots=false
+org.eclipse.core.resources/restore/mastertable=false
+
+# Report timings for saving and snapshots on the workspace state
+org.eclipse.core.resources/save=false
+org.eclipse.core.resources/save/markers=false
+org.eclipse.core.resources/save/syncinfo=false
+org.eclipse.core.resources/save/tree=false
+org.eclipse.core.resources/save/metainfo=false
+org.eclipse.core.resources/save/mastertable=false
+
+# Report debug of workspace auto-refresh
+org.eclipse.core.resources/refresh=false
+
+# Prints debug information on resource content description 
+org.eclipse.core.resources/contenttype=false
+org.eclipse.core.resources/contenttype/cache=false
+# --------------------------------------------------------------------------------------------------
+
+
+
+RELATED INFORMATION
+#How to Trace RAD [http://www.ibm.com/support/docview.wss?uid=swg21327307]
+MustGather for for Java Application Hang [http://www.ibm.com/support/docview.wss?uid=swg21391829]
+
+
+
+
+Disclaimer All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+
+
+.options [/support/docview.wss?uid=swg21606315&aid=2].options [/support/docview.wss?uid=swg21606315&aid=1]

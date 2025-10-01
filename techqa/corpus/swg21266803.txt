@@ -1,0 +1,166 @@
+Title: IBM ODBC Excel reporting - United States
+
+Text:
+odbc excel vba spreadsheet workbook workbooks report reports reporting automatic automation automate script scripts scripting visual basic driver tsmodbc TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Microsoft Excel can use the TSM ODBC driver to obtain information from the TSM server database tables. Typically the "Data/Get External Data" menu options can be used to load this information. However, that method requires using Microsoft Query as an intermediate mechanism for obtaining the data and is somewhat manual.
+
+This document provides a model for using Microsoft Excel's embedded macro language, Visual Basic for Applications (VBA) to automate reporting through Excel.
+
+This document is not a guide to using Excel, Visual Basic, or the TSM ODBC driver. Therefore it is assumed that the reader of this document is at least somewhat familiar with using these tools. If you require assistance with the procedures in this document, you should consult with someone at your site who has experience with Excel and Visual Basic. Your TSM server administrator can provide guidance for the TSM ODBC driver. 
+
+RESOLVING THE PROBLEM
+The example presented in this document will describe how to create an Excel workbook that, when opened, will automatically display data from the TSM server's EVENTS table. 
+
+1. Make sure the TSM ODBC driver is installed on the same Windows machine from which you will be running Excel. Version 5.3.4 (or higher) of the ODBC driver is recommended. You will need to use the ODBC Driver Administrator to define a data source name (DSN) that can be used by Excel to connect to the TSM server. Refer to the TSM ODBC driver README file, README.ODBC.TXT, for information on installing the ODBC driver and defining data sources. 
+
+2. Start Excel. 
+
+3. Select the "Tools/Macro/Visual Basic Editor" menu item. This will start the Visual Basic editor. 
+
+4. In the Visual Basic editor, select the 'Tools/References..." menu item. Make sure that the "Microsoft ActiveX Data Objects 2.5 Library" item is checked. Note: The library version can be 2.5 or higher. 
+
+5. In the Visual Basic editor, locate the "ThisWorkbook" object in the "Project - VBAProject" window. Double-click on "ThisWorkbook" to bring up the code editor for the workbook object. 
+
+6. In the code editor, enter the following code (you may use copy and paste). For your convenience, the code is also provided in a separate attachment to this document. Note that you will need to customize the values for the dsn, uid, and pwd variables. 
+
+
+Private Sub Workbook_Open()
+Call QueryEvents
+End Sub
+
+Sub QueryEvents()
+Dim conn As New ADODB.Connection
+Dim rs As New ADODB.Recordset
+Dim wb As Excel.Workbook
+Dim sheet As Excel.Worksheet
+Dim row As Long
+Dim sql As String
+Dim today As String
+Dim yesterday As String
+Dim minTimeStamp As String
+Dim maxTimeStamp As String
+Dim dsn As String
+Dim uid As String
+Dim pwd As String
+Dim col As Integer
+
+row = 0
+
+' ==================================================================
+' These must be tailored for your environment
+' ==================================================================
+dsn = "mydsn" 'Data source name
+uid = "myadmin" 'TSM Admin ID
+pwd = "xxxx" 'TSM Admin password
+
+' ==================================================================
+' This example runs the following SQL SELECT statement against the
+' EVENTS table:
+'
+' SELECT * FROM EVENTS
+' WHERE SCHEDULED_START >= <x> AND SCHEDULED_START <= <y>
+' ORDER BY STATUS, RESULT, REASON, DOMAIN_NAME,
+' SCHEDULE_NAME, NODE_NAME
+'
+' <x> is yesterday at 00:00:00 (midnight).
+' <y> is today at 23:59:59 (just before midnight tomorrow).
+'
+' You will need to tailor this for your environment.
+' ==================================================================
+today = Date$
+yesterday = DateAdd("d", -1, today)
+
+' ==================================================================
+' Create SQL TIMESTAMP values of format 'YYYY-MM-DD HH:MM:SS'.
+' ==================================================================
+minTimeStamp = Year(yesterday) & "-" & _
+Right$("0" & Month(yesterday), 2) & "-" & _
+Right$("0" & Day(yesterday), 2) & " " & _
+"00:00:00"
+
+maxTimeStamp = Year(today) & "-" & _
+Right$("0" & Month(today), 2) & "-" & _
+Right$("0" & Day(today), 2) & " " & _
+"23:59:59"
+
+sql = "select * from events where " & _
+"scheduled_start >= '" & minTimeStamp & "' and " & _
+"scheduled_start <= '" & maxTimeStamp & "' " & _
+"order by " & _
+"status, result, reason, domain_name, schedule_name, " & _
+"node_name"
+
+' ==================================================================
+' Open a connection to the TSM server.
+' ==================================================================
+conn.ConnectionString = "DSN=" & dsn & ";UID=" & uid & ";PWD=" & pwd
+conn.Open
+
+' ==================================================================
+' Run the query (SELECT).
+' ==================================================================
+rs.ActiveConnection = conn
+rs.Source = sql
+rs.Open
+
+Set wb = ThisWorkbook
+Set sheet = wb.Worksheets("sheet1")
+
+' ==================================================================
+' The following code loops through the result set and stores each
+' row of data in the worksheet. Note that the output columns are
+' those returned by the above SQL statement. You will need to tailor
+' the code below such that it corresponds with the output columns
+' in your SQL statement.
+' ==================================================================
+Do Until rs.EOF
+row = row + 1
+sheet.Cells(row, 1).Value = Format(rs!scheduled_start, _
+"yyyy/mm/dd hh:mm:ss")
+sheet.Cells(row, 2).Value = Format(rs!actual_start, _
+"yyyy/mm/dd hh:mm:ss")
+sheet.Cells(row, 3).Value = rs!domain_name
+sheet.Cells(row, 4).Value = rs!schedule_name
+sheet.Cells(row, 5).Value = rs!node_name
+sheet.Cells(row, 6).Value = rs!Status
+sheet.Cells(row, 7).Value = rs!result
+sheet.Cells(row, 8).Value = rs!reason
+rs.MoveNext
+Loop
+
+' ==================================================================
+' This loop is cosmetic only. It sets the width of each column so
+' that the data fits nicely in the columns.
+' ==================================================================
+For col = 1 To 8
+sheet.Columns("A:H").AutoFit
+Next
+
+wb.Save
+
+rs.Close
+conn.Close
+End Sub 
+
+ 
+
+7. In the Visual Basic editor, select the "File/Close and Return to Microsoft Excel" menu item. 
+
+8. From the Excel menu, select "File/Exit". When prompted to save your changes, click "Yes". Save the workbook with whatever name you wish. 
+
+9. Start Excel again, then open the workbook you saved in the prior step. The VBA macro should run. The time it takes for the SELECT statement to run varies from site to site, but within a few seconds or minutes, the worksheet should load with the results from the query. 
+
+ 
+
+IMPORTANT NOTES 
+
+The information in this document has not been submitted for any formal testing, and is provided on an "as is" basis. The author of this document has performed minimal, informal testing with Excel 2000, Excel 2002, and Excel 2003. It is the responsibility of the user of this document to validate the results obtained from using these procedures. 
+
+If Excel macro security is set to "High", then the macro will not run since it is not signed. If macro security is set to "Medium", then when a workbook containing macros is opened, you will be prompted whether to enable or disable macros. Macros must be enabled in order for the procedures in this document to work. Macro security can be changed by choosing the "Tools/Macro/Security..." menu item from within Excel. 
+
+The information in this document contains nothing that can harm your data. However, your site's computing security team might have specific standards in place with regard to Excel macro security. You should consult with your site security team and understand any site guidelines before running macros or changing Excel macro security.
+
+
+TSM_Excel_VBA_Example.txt [/support/docview.wss?uid=swg21266803&aid=2] [/support/docview.wss?uid=swg21266803&aid=1]

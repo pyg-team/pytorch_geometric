@@ -1,0 +1,213 @@
+Title: IBM PM16431: OTMA DOES NOT CHECK THE RETURN CODE FROM RESUME TPIPE SECURITY EXIT DFSYRTUX PROPERLY. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  OTMA calls RACF for Resume TPIPE security if the RIMS class is
+   defined - and then calls the Resume TPIPE Security Exit DFSYRTUX
+   if it exists.  If the RIMS class is not defined only DFSYRTUX is
+   called.  The return codes are placed in a common field and if it
+   is >4 then the Resume TPIPE is rejected with a security failure.
+   That is correct for RACF - but for DFSYRTUX a return code of 4
+   means a security failure.  OTMA has to check each return code
+   separately.  For RACF >4 is a security failure - but for
+   DFSYRTUX >0 is a security failure.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  A local fix would be to use only RACF RIMS Class security for
+   Resume TPIPE security and not DFSYRTUX.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IMS V10 OTMA Users running with          *
+   *                 exit DFSYRTUX.                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The return codes from RESUME TPIPE      *
+   *                      Security Exit DFSYRTUX are not          *
+   *                      properly documented.                    *
+   ****************************************************************
+   * RECOMMENDATION: INSTALL CORRECTIVE SERVICE FOR APAR/PTF      *
+   ****************************************************************
+   
+   OTMA calls RACF for Resume TPIPE security if the RIMS class is
+   defined - and then calls the Resume TPIPE Security Exit DFSYRTUX
+   if it exists.  If the RIMS class is not defined only DFSYRTUX is
+   called.  The return codes are placed in a common field and if it
+   is >4 then the Resume TPIPE is rejected with a security failure.
+   That is correct for RACF - but according to the IMS Exit
+   Routines Reference, for DFSYRTUX, a return code of 4 means a
+   security failure.  That is incorrect.  The OTMA code is working
+   correctly and a return code >4 is a security failure - not a
+   return code of >0 as it indicates in the Reference.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  GEN:
+   KEYWORDS:
+   
+   *** END IMS KEYWORDS ***
+   The following changes will be made to the IMS Reference
+   book.
+   IMS Reference Information, V10, SC18-9708
+     Exit Routines
+       Transaction Manager exit routines
+         OTMA Resume TPIPE Security exit routine (DFSYRTUX)
+           Communicating with IMS
+             Contents of registers at exit
+   
+   
+   Return code     Meaning
+   -----------     ---------------------------------------------
+   !0              Authorization is successful. TPIPE protected.
+   !4              Authorization is successful. TPIPE unprotected.
+   !               All users/groups allowed access.
+   !8              Authorization Failure.  See list of reason
+   !               codes below under RTUPRSNC.
+   
+   !If register R15 is X'04', the sense code in the message prefix
+   !TMAMCSNC is X'33'. This sense code indicates that there must
+   !be a reason code in the message prefix TMAMCRSC. The
+   !applicable reason codes are listed in the following table
+   !under RTUPRSNC.
+   
+   The following table describes the parameter list (DFSYRTUP) for
+   the OTMA Resume TPIPE Security exit routine.
+   
+   
+   Label          Description
+   ---------       -----------------------------------------------
+   RTUPVERS  Version number of the parameter list.
+   RTUPTPNM  Address of the TPIPE name.
+   !RTUPUSID Address of the user ID. If this address is zero,
+   !               there is no user ID (user ID is provided by
+   !               the client).
+   !RTUPSENC  Address of the sense code. The sense code for a
+   !               failure in Resume TPIPE authorization is X'33'.
+   !RTUPRSNC  Address of the reason code. The following reason
+   !               codes are possible:
+   
+       * X'01': Security header was not provided in the message
+                prefix
+       * X'02': User ID was not provided in the message prefix
+       * X'03': Group ID was not provided in the message prefix
+       * X'04': User token was not provided in the message prefix
+       * X'05': TPIPE name was not provided in the message prefix
+       * X'06': RACF system failure
+       * X'07': RACF security violation; no profile was defined
+                 for the user
+       * X'08': User ID or Group ID is not authorized
+   !
+   
+   !RTUPRRET  Address of the return code from RACF. If this
+   !               address is zero, the SAF parameter area
+   !               does not exist.
+   !RTUPRREA  Address of the reason code from RACF. If this
+   !               address is zero, the SAF parameter area
+   !               does not exist.
+   !RTUPSFRC  Address of the return code from SAF. If this
+   !               address is zero, the SAF parameter area
+                   does not exist.
+   !RTUPSFRS  Address of the reason code from SAF. If this
+   !               address is zero, the SAF parameter area
+   !               does not exist.
+   RTUPSAFP  Address of SAF.
+   RTUPAMCI  Address of MCI.
+   RTUPASTD  Address of the prefix for state data.
+   RTUPASEC  Address of the prefix for security data.
+                   If this address is zero, there is no security
+                   data section in the prefix provided by the
+                   client.
+   RTUPINRC  Return code at entry to the exit routine.
+   RTUPINRS  Reason code at entry to the exit routine.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM16431
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V10
+   
+   
+ * REPORTED COMPONENT ID
+   5635A0100
+   
+   
+ * REPORTED RELEASE
+   010
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2010-06-14
+   
+   
+ * CLOSED DATE
+   2010-09-23
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC18970800 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

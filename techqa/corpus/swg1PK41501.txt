@@ -1,0 +1,171 @@
+Title: IBM PK41501: ABEND0C1 AT DFHZSDA, R300, +34C - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abend0C1 was detected at +34C in DFHZSDA when it ran in CICS
+   system task TCP. This caused DFHSR0601, msgDFHSR0601, SR0601,
+   termination against this CICS region.
+   .
+   This abend resulted from an invalid change of AMODE. DFHZSDA
+   issued a VTAM SEND macro and made it into VTAM in amode31 but
+   VTAM returned with amode24. Invalid address was thus generated
+   and caused abend0c1.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: MSGDFHSR0601 after ABENDS0C4 in         *
+   *                      DFHZSDA.                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The TCP task is in the middle of a VTAM macro which has used
+   CSAOSRSA as a register save area. The TCP task is running on the
+   QR TCB. In parallel with this, a J8 TCB is running through
+   DFHSMVP processing a GETMAIN request under a JVM. CICS is
+   running short on region storage so DFHSMVP suspends waiting for
+   another JVM to release some storage. Around the suspend, the
+   DFHKEDSI macro is used to start and stop purge protection. When
+   DFHSMVP is resumed, the DFHKEDSI macro changes R13 to address
+   the CSA rather than DFHSMVP's savearea.
+   DFHSMVP then proceeds to issue a VSMLIST macro which uses R13
+   as a savearea. This corrupts CSAOSRSA.
+   The corrupted CSAOSRSA leads to a program check on the TCP task
+   which causes CICS to terminate with DFHSR0601, but other
+   unpredictable results may occur.
+   
+   ADDITIONAL KEYWORDS :- 0C4 S0C4 ABEND0C4 ABENDS0C4 SR0601
+   CSZOSRSA CSA DFHZRST 0C1 abend0C1 abendS0C1 S0C1 SAVEWORDS
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHSMVP has been changed to ensure that R13 addresses
+   its savearea after issuing DFHKEDSI macros.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *              *********
+               * HIPER *
+               *********
+   FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK41501
+   
+   
+ * REPORTED COMPONENT NAME
+   CICSTS 3.1 Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655M1500
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-03-19
+   
+   
+ * CLOSED DATE
+   2007-06-04
+   
+   
+ * LAST MODIFIED DATE
+   2007-07-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK36143
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK25648
+   
+   
+
+MODULES/MACROS
+ *     DFHSMVP
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICSTS 3.1 Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5655M1500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY UK25648 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK25648]
+   UP07/06/07 P F706
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,149 @@
+Title: IBM PI72138: EDGE LOAD BALANCER JAVA RELEASE UPGRADE INCLUDED in 8.5.5.11 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Java must be upgraded from version 6 which is going out of
+   support to java 8.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM WebSphere Application Server Edge Load  *
+   *                  Balancer users                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Load Balancer uses Java6 and        *
+   *                      Java6 is going out of support.          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Upgrading to Java8 where appropriate. Java 8 does not support
+   all the same operating systems as the Load Balancer.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Java is updated on AIX (both load balancers) to Java8.
+   Supported operating systems on AIX remains the same.
+   
+   Java is currently not updated on any other operating systems
+   for the Load Balancer for ipv4.
+   
+   Java is not updated with the Content Based Routing component
+   or the Site Selector component.
+   
+   Java is updated on Solaris 64bit, Microsoft Windows and Linux.
+   If your operating system is not at a supported level for
+   Java8, you should upgrade the OS before applying any further
+   load balancer maintenance.
+   
+   If using the https or ldaps advisors, the default cipher set
+   is updated with java.
+   
+   Please refer to:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21994040 [http://www-01.ibm.com/support/docview.wss?uid=swg21994040]
+   for more detailed information specific to the load balancer
+   and the java update.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI72138
+   
+   
+ * REPORTED COMPONENT NAME
+   WS EDGE LB IPV4
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8812
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-11-10
+   
+   
+ * CLOSED DATE
+   2016-12-06
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS EDGE LB IPV4
+   
+   
+ * FIXED COMPONENT ID
+   5724H8812
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

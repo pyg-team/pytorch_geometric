@@ -1,0 +1,35 @@
+Title: IBM Strange multiple dataset behavior in SPSS 15.0.1 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm using SPSS for Windows and there appears to have been a change made in version 15.0.1 from versions 14.0.x and 15.0.0 in terms of how multiple datasets are activated via command syntax execution. For example:
+
+In versions 14.0.0 through 15.0.0, I could launch SPSS and the Data Editor would be blank, with the "title":
+
+Untitled1 [DataSet0]
+
+If I run a GET FILE via command syntax, the blank dataset will be overwritten with the new data, and since it's the only open dataset, will be the active dataset and all subsequent command or menu operations will refer to it, even without a DATASET NAME command being issued. This seems to hold even if I launch SPSS and immediately select File->New->Data, which will change the Data Editor title to Untitled2 [DataSet1]. 
+
+If I launch SPSS and open a file and name the dataset, then a subsequent GET FILE syntax command without any DATASET commands following it will open a new, unnamed -- i.e., [ ] -- dataset, and will both activate it for subsequent syntax commands and mark it with the green cross to indicate it is the active dataset in the GUI as well.
+
+This behavior strikes me as expected and safely consistent with all of my extant command syntax files that were written prior to the additional of multiple dataset functionality.
+
+Starting in 15.0.1, however, the behavior is different. For example, I launch SPSS and if I leave the title as Untitled1 [DataSet0], a subsequent GET FILE command will overwrite the data and be the active dataset despite being unnamed -- that's consistent with prior performance. But if I launch SPSS and run File->New->Data to get a Untitled2 [DataSet1], the behavior is very different:
+
+The next GET FILE command will open in a new dataset window, but the original "blank" dataset retains the green cross. If I then run a DISPLAY NAMES command, I can see in my output that a DATASET ACTIVATE DataSet1 command is executed out of thin air, the 2nd, unnamed dataset I had open is closed, and the DISPLAY NAMES command fails because the only open dataset is blank.
+
+If I run the GET FILE and DISPLAY NAMES commands together, however, the new dataset is opened -- still with no green cross, there is no mysterious DATASET ACTIVATE command issued, and the DISPLAY NAMES command executes as expected on the newly opened dataset.
+
+This can't be proper behavior, can it? 
+
+RESOLVING THE PROBLEM
+SPSS 16 has been returned to the "old" behavior. Until you can upgarde, please use the DATASET NAME and DATASET ACTIVATE commands to be as explicit as necessary to ensure proper dataset references.
+
+We apologize for the inconvenience
+
+
+
+HISTORICAL NUMBER
+ 71675

@@ -1,0 +1,194 @@
+Title: IBM IC59383: WebSphere MQ Manuals missing steps for configuration of queue manager resources on Windows Server 2008 clusters. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere MQ v7.0 supports Microsoft Windows Server 2008 queue
+   managers in an MSCS configuration. However, the manuals do not
+   document the steps required to configure an MSCS queue manager
+   resource using the new user interface 'Failover Cluster
+   Management' provided on Windows Server 2008.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Any users of WebSphere MQ in an MSCS HA environment on Windows
+   Server 2008.
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The problem was that the manuals did not contain any additional
+   information with respect to the configuration of queue manager
+   resources under MSCS on Windows Server 2008.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The manuals should be updated under the following URL:
+   http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/topic/com.ib
+   m.mq.amqzag.doc/fa14240_.htm [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/topic/com.ibm.mq.amqzag.doc/fa14240_.htm]
+   
+   Sys Admin guide->Configuring WebSphere MQ->Supporting the
+   Microsoft Cluster Service (MSCS)->
+   Creating a queue manager for use with MSCS->Putting a queue
+   manager under MSCS control:
+   
+   Under there is a section on Putting a queue manager under MSCS
+   control:
+   
+   This needs to be modified into two sections:
+   
+   Section 1: Non windows Server 2008
+   The existing instructions can be placed here.
+   
+   Section 2: Windows Server 2008
+   New steps as follows:
+   
+   1.
+   Log in to the cluster node computer hosting the queue manager,
+   or log in to a remote workstation as a user with cluster
+   administration permissions, and connect to the cluster node
+   hosting the queue manager.
+   
+   2.
+   Start the Failover Cluster Management tool.
+   
+   3.
+   Open a connection to the cluster as follows:
+   Right-click Failover Cluster Management->Manage a Cluster...
+   
+   4.
+   In contrast to the group scheme used in the MSCS Cluster
+   Administrator on previous versions of Windows, the Failover
+   Cluster Management tool uses the concept of services and
+   applications. A configured service/application contains all the
+   resources necessary for one application to be clustered. In
+   order to configure a queue manager under MSCS:
+   Right-click Services and Applications->Configure a Service or
+   Application...
+   
+   5.
+   Proceed through the wizard creation steps. Select 'Other
+   Server' on the 'Select Service or Application' panel.
+   
+   6.
+   Select an appropriate IP address as a client Access Point.
+   Please see Section 1 for additional information regarding IP
+   resource instance configuration.
+   
+   7. Assign a storage device for exclusive use by the queue
+   manager. This device should have been previously created as a
+   resource instance. Please see Section 1 for additional
+   information regarding storage device resource instance
+   configuration.
+   
+   8. Tick the IBM MQSeries MSCS resource on the 'Select Resource
+   Types' panel. Complete the remaining steps in the wizard.
+   
+   9. Before bringing the resource online, the IBM MQSeries MSCS
+   resource needs additional configuration. Select the newly
+   defined service which should contain a resource called
+   'New IBM MQSeries MSCS'.
+   
+   10. Right-click->properties on the MQ resource. Modify the name
+   of the resource if required. Proceed through each of the
+   properties tabs to configure the resource. Steps 7-9 in Section
+   1 can be used to configure the resource.
+   
+   As an additional note, there is a current section regarding
+   Parameters specific to creating a resource. LooksAlive/IsAlive
+   is mentioned here however the default times are incorrect. The
+   isAlive poll interval default is 30000ms as opposed to 3000ms.
+   Furthermore, this default has increased to 60000ms on windows
+   Server 2008 systems.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC59383
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7200
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-08
+   
+   
+ * CLOSED DATE
+   2009-02-11
+   
+   
+ * LAST MODIFIED DATE
+   2009-02-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

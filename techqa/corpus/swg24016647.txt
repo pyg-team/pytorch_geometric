@@ -1,0 +1,180 @@
+Title: IBM Installation Manager, version 1.1 - United States
+
+Text:
+RN1.1; fix pack; IM; installation manager; Version 1.1; v11; 7.0.0.4; 11; 7004 DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and install this fix pack to IBM Installation Manager, version 1.0. 
+
+DOWNLOAD DESCRIPTION
+IMPORTANT: This update has been superseded and is no longer available for download from ibm.com. You should update your product with the most recent version available. See http://www.ibm.com/support/docview.wss?uid=swg27025142 [http://www.ibm.com/support/docview.wss?uid=swg27025142] [http://www-01.ibm.com/support/docview.wss?rs=2042&uid=swg27007823] for the most recent version.
+
+
+
+
+This fix pack includes new features, enhancements, and fixes to the version 1.0, 1.0.0.2, 1.0.0.3, 1.0.0.4, and 1.0.0.5 releases of IBM Installation Manager.
+
+IBM Installation Manager is a program that helps you install, update, modify, and uninstall packages on your workstation. 
+
+
+This section describes the content of Installation Manager, version 1.1
+
+
+ * Cumulative updates
+ * New in this release
+ *  Installing and running Installation Manager in silent mode Response File validation Installation Manager Documentation Information center now available 
+ * Prerequisites
+ * Installing the fix pack
+ * Known problems
+
+ * 
+ * 
+ * Cumulative updates
+ * 
+ * 
+ * 
+ * 
+ *  
+   Installation Manager, version 1.0.0.2 [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/1002/docs/readme/readme.html] 
+   Installation Manager, version 1.0.0.3 [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/1003/docs/readme/readme.html] 
+   Installation Manager, version 1.0.0.4 [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/1004/docs/readme/readme.html] 
+   Installation Manager, version 1.0.0.5 [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/1005/docs/readme/readme.html] 
+ * 
+ * 
+ * http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/110/docs/readme/readme.html
+
+
+ * 
+ * 
+ *  New in this release 
+   
+
+ *  Installing and running Installation Manager in silent mode
+   The method for installing and running Installation Manager in silent installation mode from a command line has changed. 
+   Refer to the Installation Manager Information Center http://publib.boulder.ibm.com/infocenter/install/v1m0r0/index.jsp [http://publib.boulder.ibm.com/infocenter/install/v1m0r0/index.jsp] for complete documentation on how to run it in silent mode. 
+   
+   Response File validation
+   In previous releases, there was no command line validation . In Installation Manager version 1.1, if you invoke Installation Manager using incorrect command line options, IM will display an error dialog with a message noting the correct usage of the command line options, or generate the same message in the terminal mode if it is running in the silent mode.
+   
+   Installation Manager Documentation Information Center now available
+   For the most up-to-date information about working with Installation Manager, visit the Installation Manager Information Center at: http://publib.boulder.ibm.com/infocenter/install/v1m0r0/index.jsp [http://publib.boulder.ibm.com/infocenter/install/v1m0r0/index.jsp]. 
+ * 
+ *  [http://www.ibm.com/i/v14/icons/u_bold.gif] Back to top 
+ * 
+ * 
+ * 
+ * 
+ * Prerequisites
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Installing this fix pack
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Known problems
+ * 
+ * 
+ * 
+ * http://www.ibm.com/software/rational/support/
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  View all known problems for IBM Installation Manager, Version 1.1 [http://www.ibm.com/support/search.wss?tc=SSCZQKL&q=RN1.1&rankprofile=8] 
+   View all known problems for IBM Installation Manager Version 1.0 and later [http://www.ibm.com/support/search.wss?tc=SSCZQKL&rankprofile=8] 
+ * 
+ *  [http://www.ibm.com/i/v14/icons/u_bold.gif] Back to top 
+
+
+
+
+PREREQUISITES
+Before you can install certain products, you must install IBM Installation Manager, Version 1.0; by default, it is automatically installed when you update or install packages by using an earlier version.
+
+For more information, refer to the version 1.1 readme file at: [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/110/docs/readme/readme.html]http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/110/docs/readme/readme.html [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/110/docs/readme/readme.html]
+
+
+
+
+
+
+
+
+INSTALLATION INSTRUCTIONS
+To download and install the fix pack, complete the following steps: 
+
+
+ 1. 
+ 2. Download the fix pack (im-1.1.0.zip) from the download URL below.
+ 3. 
+ 4. Extract the compressed file in an appropriate directory. For example, choose to extract to C:\temp.
+ 5. 
+ 6. Add the fix pack repository location in IBM Installation Manager:
+     1. Start IBM Installation Manager.
+     2. 
+     3. On the Start page of Installation Manager, click File > Preferences, and then click Repositories. The Repositories page opens.
+     4. 
+     5. On the Repositories page, click Add Repository.
+     6. 
+     7. In the Add repository window, browse to or enter the file path to the repository.config file, which is located in the directory where you extracted the compressed files. For example, enter C:\temp\ or C:\temp\repository.config and then click OK.
+    
+    
+    
+ 7. Installation of the fix pack will begin once you click on Install Packages or Update Packages.
+ 8. 
+
+
+
+If IBM Installation is not currently installed, you can install this version by completing the following steps:  1. Download the installer from the download URL in the table below:  * im.installer.win32-1.1.0.zip (on Windows) 
+     * im.installer.linux-1.1.0.zip (on Linux) 
+     * im.installer.solaris-1.1.0.zip (on Solaris)
+    
+    
+ 2. Extract the compressed file into an appropriate directory. 
+ 3. Run install.exe (Windows), or install (Linux/Solaris). 
+ 4. If IBM Installation Manager is not currently installed, or if the installed version is older than 1.1, the Installation Manager installer will be launched. Follow the wizard pages to install it. 
+ 5. IBM Installation Manager will start at completion.
+    
+
+[http://www.ibm.com/i/v14/icons/u_bold.gif] Back to top 
+
+
+
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] im-1.1.0.zip 9/26/2007 English 180258210 HTTP [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/110/zips/im-1.1.0.zip] im.installer.linux-1.1.0.zip 9/26/2007 English 78014841 HTTP [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/110/zips/im.installer.linux-1.1.0.zip] im.installer.solaris-1.1.0.zip 9/26/2007 English 88293531 HTTP [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/110/zips/im.installer.solaris-1.1.0.zip] im.installer.win32-1.1.0.zip 9/26/2007 English 77070097 HTTP [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/110/zips/im.installer.win32-1.1.0.zip] 
+TECHNICAL SUPPORT
+ IBM Installation Manager technical support page: http://www.ibm.com/software/awdtools/installmanager/support/index.html [http://www.ibm.com/software/awdtools/installmanager/support/index.html]
+
+IBM Rational Client Support provides you with technical assistance.
+
+
+For contact information and guidelines or reference materials that you will need when you require support, read the IBM Software Support Handbook at: http://techsupport.services.ibm.com/guides/handbook.html [http://techsupport.services.ibm.com/guides/handbook.html]
+
+
+Before you contact IBM Rational Software Support, gather the background information that you will need to describe your problem. When describing a problem to an IBM software support specialist, be as specific as possible and include all relevant background information so that the specialist can help you solve the problem efficiently. To save time, know the answers to these questions: 
+ * 
+ * What software versions were you running when the problem occurred?
+ * 
+ * Do you have logs, traces, or messages that are related to the problem?
+ * 
+ * Can you reproduce the problem? If so, what steps do you take to reproduce it?
+ * 
+ * Is there a workaround for the problem? If so, be prepared to describe the workaround.
+ * 
+
+
+[http://www.ibm.com/i/v14/icons/u_bold.gif] Back to top 
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Installation Manager Linux, Windows 7.0.0.4 Software Development Rational Software Modeler Installation Manager Windows, Linux 7.0.0.4 Software Development Rational Systems Developer Installation Manager Linux, Windows 7.0.0.4 Software Development Rational Application Developer for WebSphere Software Installation Manager Windows, Linux 7.0.0.4 Software Development Rational Asset Manager Installation Manager Windows 7.0.0.1

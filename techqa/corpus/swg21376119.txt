@@ -1,0 +1,18 @@
+Title: IBM How to export list of Filtered URL's and other Application Data from a scan - United States
+
+Text:
+Export; Filtered URL; xml; report; 1376119; filteredlinks; filtered links; scan results as xml TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to export the list of Filtered URL's from a scan in IBM Security Appscan Standard? 
+
+ANSWER
+Yes, the list of Filtered URL's from a scan can be exported in AppScan Standard. 
+
+This action is possible by exporting the scan results as a part of an XML file. To get this list, go to:File > Export > Scan Results as XML , then save the resulting XML file. 
+
+If you search the XML file for the term FilteredLinks , this will bring you to the section of the file containing all the filtered URL's from the scan. 
+
+ 
+
+Additionally should you need a list of other Application Data such as Visited Links or Script Parameters you could search for VisitedLinks or ScriptParameters

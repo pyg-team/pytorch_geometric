@@ -1,0 +1,151 @@
+Title: IBM IZ34220: REMOTE UPGRADE OF 6.2 FP1 ORACLE AGENT FAILS ON UNIX - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Severity: 2
+   Approver:CM
+   
+   Compid:  5724C04MS Remote Deploy
+   Abstract:Remote Upgrade of 6.2 FP1 Oracle Agent fails on UNIX
+   
+   Environment:
+     ITM for Databases 6.2 FP1 Oracle agent on UNIX
+   Problem Description:
+     Attempting to upgrade an Oracle agent with tacmd
+     updateAgent fails to update the database agent common
+     component (dd).
+   
+   Detailed Recreation Procedure:
+     Install 6.2 FP1 Oracle agent bundles to TEMS depot and
+     attempt to upgrade an Oracle agent of a lesser version using
+     tacmd updateAgent.
+   
+   Related Files and Output:
+        None
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The DD package is not updated on the endpoint when Oracle is
+   updated on the endpoint.
+   
+   The DD package, which was added as a support package for Orcale
+   6.2, is not correctly identified as a prerequisite for the
+   Oracle bundle.  Like the JRE and GSKit products, specifying DD
+   in the DSC file is insufficient for it to be downloaded as a
+   prerequisite of the Agent during an update.  As a result, the
+   Agent code is updated, but its corresponding DD prerequisite is
+   not updated.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified to specify DD as a required download for
+   Oracle whether or not the DD package is updated.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+    | fix pack | 6.2.0-TIV-ITM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ34220
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-09
+   
+   
+ * CLOSED DATE
+   2008-10-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEMS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

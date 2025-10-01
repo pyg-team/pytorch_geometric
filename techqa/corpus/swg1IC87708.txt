@@ -1,0 +1,139 @@
+Title: IBM IC87708: DOMINO DESIGNER CRASH WHEN OPENING AN AGENT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Domino designer will crash when opening a JAVA agent. A complete
+   uninstall and reinstal of the client will work for a few days
+   then crash again.
+   
+   Customers comments:
+   
+   I wanted to give you a little more info on what we have done
+   with this today. I did a complete uninstall of Notes and then
+   re-installed, using version 8.5.3 (previously using 8.5.2). As
+   soon as the user attempted to open a Java agent, Domino Designer
+   closed down.
+   
+   I then had one of the other developers try to open the same Java
+   element, using the same version of Domino and the same platform
+   on the same hardware. It opened instantly without issue. After
+   this I pulled another machine and put the users hard drive in
+   this other machine and again, Domino crashed as soon as the Java
+   element was opened.
+   
+   The last thing I attempted was upgrading to the newest version
+   of Java and this did not help anything.
+   
+   The machine hasn't had any new software added to it since I
+   reloaded it a few weeks ago and it was working for a short
+   period of time.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Closing low priority Expeditor SPRs
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Closing low priority Expeditor SPRs that have not had a report
+    in years. Reviewed 18 of these and determined they are either
+    indirectly fixed or minor issue. If customers encounter in
+    9.0.1 or above, they may be re-raised for triage.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# SFBI8RXKGY.
+   Closing low priority Expeditor SPRs that have not had a report
+    in years. Reviewed 18 of these and determined they are either
+    indirectly fixed or minor issue. If customers encounter in
+    9.0.1 or above, they may be re-raised for triage.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC87708
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS EXPEDITOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724R0900
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-01
+   
+   
+ * CLOSED DATE
+   2014-03-04
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    LO67704
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

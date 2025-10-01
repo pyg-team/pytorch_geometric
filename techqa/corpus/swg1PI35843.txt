@@ -1,0 +1,139 @@
+Title: IBM PI35843: DO NOT CREATE NEW ENTRIES IN RESOURCE ENVIRONMENT PROVIDER "WP CACHEMANAGERSERVICE" DURING MIGRATION - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When migrating to Portal 8.0.0.1, the file
+   CacheManagerService.properties in the profile directory gets
+   updated. A consequence of this is that with the next call of
+   the config engine task "update-properties" resource
+   environment provider (REP) entries for each of these new
+   settings are created.
+   
+   This is not intended because REP entries should only be created
+   for settings that deviate from the default. Adding REP entries
+   with default values during migration would make administration
+   more difficult for the customer.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually delete these REP entries.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 16 (PI33619 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI33619]) for Portal
+   8.0.0.1 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI33619
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI35843
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-26
+   
+   
+ * CLOSED DATE
+   2015-04-21
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

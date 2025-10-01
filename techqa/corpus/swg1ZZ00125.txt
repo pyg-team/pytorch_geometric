@@ -1,0 +1,168 @@
+Title: IBM ZZ00125: SET OPTION SET_OPTION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  why set the option set_option(ldap.OPT_REFFERALS,0) when
+   configuring integration of SCO
+   with Active Directory.
+   
+   
+   "When searching from the domain level MS AD returns referrals
+   (search
+   continuations) for some objects to indicate to the client where
+   to look
+   for these objects. Client-chasing of referrals is a broken
+   concept since
+    LDAPv3 does not specify which credentials to use when chasing
+   the
+   referral. Windows clients are supposed to simply use their
+   Windows
+   credentials but this does not work in general when chasing
+   referrals
+   received from and pointing to arbitrary LDAP servers.
+   Therefore per default libldap automatically chases the referrals
+   internally with an anonymous access which fails with MS AD. "
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of SmartCloud Orchestrator 2.2
+   * FixPack 1 and 2.3 using Microsoft Active Directory as
+   * authentication method
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   * After configuring IBM SMartCloud Orchetsrator to use Microsoft
+   * Active Directory for authentication, you are no
+   * longer able to login into SmartCloud Orchestrator using a user
+   * from the LDAP.
+   * With the same user, if you try to run any command in
+   * OpenStack directly (e.g. nova list) you get 'ERROR: Invalid
+   * OpenStack Nova credentials'.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The issue is related to handling referrals in LDAP.
+   The following troubleshooting will be added to IBM SmartCloud
+   Orchestrator 2.3 infocenter to address this issue:
+   
+   **************************************************************
+   After configuring Active Directory, you are unable to login in
+   SmartCloud Orchestrator using an LDAP user
+   
+   Refer to this topic if you are unable to login into  SmartCloud
+   Orchestrator using an LDAP user after configuring Microsoft
+   Active Directory.
+   
+   Symptoms:
+   As an LDAP user, if you try to run any command in OpenStack, for
+   example, nova list, you get the following error:  'ERROR:
+   Invalid OpenStack Nova credentials'.
+   
+   Causes:
+   When searching from the domain level, MS AD returns referrals
+   (search continuations) for some objects to indicate to the
+   client where to look for these objects. Client-chasing of
+   referrals is a broken concept, since LDAPv3 does not specify
+   which credentials to use when chasing the referral. Windows
+   clients are supposed to  use their Windows credentials, but this
+   does not work in general when chasing referrals received from
+   and pointing to arbitrary LDAP servers. As a result, the default
+   libldap automatically chases the referrals internally with an
+   anonymous access which fails with MS AD.
+   
+   Solution:
+   To resolve this issue, you must switch this behavior off editing
+   /usr/share/pyshared/keystone/common/ldap/core.py and adding a
+   new line under ldap.initialize line:
+   self.conn.set_option(ldap.OPT_REFERRALS,0)
+   ****************************************************************
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00125
+   
+   
+ * REPORTED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2800
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-24
+   
+   
+ * CLOSED DATE
+   2014-01-13
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

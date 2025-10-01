@@ -1,0 +1,25 @@
+Title: IBM Deploying Datacap servers and clients on a wide area network (WAN) - United States
+
+Text:
+WAN LAN architecture deployment TECHNOTE (FAQ)
+
+QUESTION
+ What are the best practices for deploying Datacap servers and clients on a wide area network (WAN)? 
+
+ANSWER
+Remote users that access Datacap over a WAN can use any of the following options:
+• Thin clients based on Taskmaster Web
+• Thin clients based on Datacap Navigator 
+• FastDoc Capture operating in offline mode 
+
+The Datacap thick clients (such as DotScan, DotEdit, or DcDesktop) and utilities (NENU, Fingerprint Maintenance Tool) require LAN communication speeds and low latency for responsive performance. 
+
+Connect all the Datacap Taskmaster Servers, Datacap Navigator servers, Rulerunner Servers, Web Servers, file servers, and databases to a single high performance LAN for best results. Network delays between Taskmaster Server, shared files and databases causes degraded performance of Job Monitor and data intensive operations. 
+
+Some customers successfully operate Datacap thick clients in remote sites using Citrix or other remote access technology. 
+Important: IBM has not tested or sought certification with Citrix, and does not provide support for Citrix. If you deploy Datacap clients on Citrix and encounter issues, IBM might require you to reproduce the issues outside of Citrix as part of the investigation. 
+
+For more information about deployment recommendations and diagrams, see the IBM Redbook "Implementing Imaging Solutions with IBM Production Imaging Edition and IBM Datacap Capture", section 2.5. 
+
+RELATED INFORMATION
+ IBM Redbooks Production Imaging Edition [http://www.redbooks.ibm.com/abstracts/sg247969.html?Open]

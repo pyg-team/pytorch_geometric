@@ -1,0 +1,269 @@
+Title: IBM IC96203: PROBE FAILS WITH HWNEP0002E LOG/OUTPUT FILE NOT FOUND. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Probes may fail after the deletion and creation of an mdisk.
+   TPC does not handle correctly the database update and the probe
+   fails.
+   
+   Check for the following exception in the device server logs:
+   HWN099993E DB2 SQL Error: SQLCODE=-811, SQLSTATE=21000,
+   SQLERRMC=null, DRIVER=3.64.82
+   @(-9223372036854689560;[-9223372036854774683,0,5];-9223372036854
+   683914;Process Processor (Thread-232))
+     com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: SQLCODE=-811,
+   SQLSTATE=21000, SQLERRMC=null, DRIVER=3.64.82
+    at com.ibm.db2.jcc.am.bd.a(bd.java:682)
+    at com.ibm.db2.jcc.am.bd.a(bd.java:60)
+    at com.ibm.db2.jcc.am.bd.a(bd.java:127)
+    at com.ibm.db2.jcc.am.io.b(io.java:2371)
+    at com.ibm.db2.jcc.am.io.c(io.java:2354)
+    at com.ibm.db2.jcc.t4.ab.l(ab.java:370)
+    at com.ibm.db2.jcc.t4.ab.a(ab.java:62)
+    at com.ibm.db2.jcc.t4.p.a(p.java:50)
+    at com.ibm.db2.jcc.t4.rb.b(rb.java:220)
+    at com.ibm.db2.jcc.am.jo.mc(jo.java:3377)
+    at com.ibm.db2.jcc.am.jo.b(jo.java:4335)
+    at com.ibm.db2.jcc.am.jo.ec(jo.java:768)
+    at com.ibm.db2.jcc.am.jo.executeUpdate(jo.java:750)
+    at
+   com.ibm.tpc.infrastructure.database.DBPreparedStatement.executeU
+   pdate(DBPreparedStatement.java:261)
+    at
+   com.ibm.tpc.infrastructure.mapping.CLISVC6_LDiskToPhysicalVolume
+   DBMapper.persistDiskGroupIDForLDisk(CLISVC6_LDiskToPhysicalVolum
+   eDBMapper.java:322)
+    at
+   com.ibm.tpc.infrastructure.mapping.CLISVC6_LDiskToPhysicalVolume
+   DBMapper.persist(CLISVC6_LDiskToPhysicalVolumeDBMapper.java:272)
+    at
+   com.ibm.tpc.disk.collection.DiskCIMProcessor.persist(DiskCIMProc
+   essor.java:1797)
+    at
+   com.ibm.tpc.discovery.parser.NAPI_DS_SVC_Parser.persistEntity(NA
+   PI_DS_SVC_Parser.java:293)
+    at
+   com.ibm.tpc.discovery.parser.NAPI_DS_SVC_Parser.processOutputFil
+   e(NAPI_DS_SVC_Parser.java:222)
+    at
+   com.ibm.tpc.disk.discovery.SVC_CLI_PostProcess.parse(SVC_CLI_Pos
+   tProcess.java:76)
+    at
+   com.ibm.tpc.disk.discovery.NAPIProbePostProcess.process(NAPIProb
+   ePostProcess.java:377)
+    at com.ibm.tpc.Router.perform(Router.java:1060)
+    at com.ibm.tpc.Router.perform(Router.java:596)
+    at
+   com.ibm.tpc.discovery.ProcessProcessor.process(ProcessProcessor.
+   java:69)
+    at
+   com.ibm.tpc.infrastructure.threads.TPCThread.run(TPCThread.java:
+   258)   com.ibm.tpc.disk.collection.DiskCIMProcessor persist
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Request patch from IBM support.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * TPC 5.1.x users using SVC storage                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Probe fails with error: HWNEP0002E Log/output file, Storwize *
+   * V7000-2076-V7000-1-IBM-2958_output.txt, not found or failed  *
+   * to load.                                                     *
+   * And exception:                                               *
+   * HWN099993E Encountered error parsing output file:            *
+   * com.ibm.db2.jcc.am.SqlException: DB2 SQL Error:              *
+   * SQLCODE=-811, SQLSTATE=21000, SQLERRMC=null, DRIVER=3.64.82  *
+   * @(-9223372036853255492;[-9223372036853936399,0,55];689500;Pr *
+   * ocess Processor (Thread-49764))                              *
+   * com.ibm.tpc.discovery.interfaces.DiscoveryException:         *
+   * com.ibm.db2.jcc.am.SqlException: DB2 SQL Error:              *
+   * SQLCODE=-811, SQLSTATE=21000, SQLERRMC=null, DRIVER=3.64.82  *
+   *       at                                                     *
+   * com.ibm.tpc.disk.collection.DiskCIMProcessor.persist(DiskCIM *
+   * Processor.java:1844)                                         *
+   *       at                                                     *
+   * com.ibm.tpc.discovery.parser.NAPI_DS_SVC_Parser.persistEntit *
+   * y(NAPI_DS_SVC_Parser.java:293)                               *
+   *       at                                                     *
+   * com.ibm.tpc.discovery.parser.NAPI_DS_SVC_Parser.processOutpu *
+   * tFile(NAPI_DS_SVC_Parser.java:222)                           *
+   *       at                                                     *
+   * com.ibm.tpc.disk.discovery.SVC_CLI_PostProcess.parse(SVC_CLI *
+   * _PostProcess.java:76)                                        *
+   *       at                                                     *
+   * com.ibm.tpc.disk.discovery.NAPIProbePostProcess.process(NAPI *
+   * ProbePostProcess.java:377)                                   *
+   *       at com.ibm.tpc.Router.perform(Router.java:1060)        *
+   *       at com.ibm.tpc.Router.perform(Router.java:596)         *
+   *       at                                                     *
+   * com.ibm.tpc.discovery.ProcessProcessor.process(ProcessProces *
+   * sor.java:69)                                                 *
+   *       at                                                     *
+   * com.ibm.tpc.infrastructure.threads.TPCThread.run(TPCThread.j *
+   * ava:258)                                                     *
+   * Caused by: com.ibm.db2.jcc.am.SqlException: DB2 SQL Error:   *
+   * SQLCODE=-811, SQLSTATE=21000, SQLERRMC=null, DRIVER=3.64.82  *
+   *       at com.ibm.db2.jcc.am.bd.a(bd.java:682)                *
+   *       at com.ibm.db2.jcc.am.bd.a(bd.java:60)                 *
+   *       at com.ibm.db2.jcc.am.bd.a(bd.java:127)                *
+   *       at com.ibm.db2.jcc.am.io.b(io.java:2371)               *
+   *       at com.ibm.db2.jcc.am.io.c(io.java:2354)               *
+   *       at com.ibm.db2.jcc.t4.ab.l(ab.java:370)                *
+   *       at com.ibm.db2.jcc.t4.ab.a(ab.java:62)                 *
+   *       at com.ibm.db2.jcc.t4.p.a(p.java:50)                   *
+   *       at com.ibm.db2.jcc.t4.rb.b(rb.java:220)                *
+   *       at com.ibm.db2.jcc.am.jo.mc(jo.java:3377)              *
+   *       at com.ibm.db2.jcc.am.jo.b(jo.java:4335)               *
+   *       at com.ibm.db2.jcc.am.jo.ec(jo.java:768)               *
+   *       at com.ibm.db2.jcc.am.jo.executeUpdate(jo.java:750)    *
+   *       at                                                     *
+   * com.ibm.tpc.infrastructure.database.DBPreparedStatement.exec *
+   * uteUpdate(DBPreparedStatement.java:261)                      *
+   *       at                                                     *
+   * com.ibm.tpc.infrastructure.mapping.CLISVC6_LDiskToPhysicalVo *
+   * lumeDBMapper.persistDiskGroupIDForLDisk(CLISVC6_LDiskToPhysi *
+   * calVolumeDBMapper.java:322)                                  *
+   *       at                                                     *
+   * com.ibm.tpc.infrastructure.mapping.CLISVC6_LDiskToPhysicalVo *
+   * lumeDBMapper.persist(CLISVC6_LDiskToPhysicalVolumeDBMapper.j *
+   * ava:272)                                                     *
+   *       at                                                     *
+   * com.ibm.tpc.disk.collection.DiskCIMProcessor.persist(DiskCIM *
+   * Processor.java:1797)                                         *
+   *       ... 8 more                                             *
+   * com.ibm.tpc.disk.discovery.SVC_CLI_PostProcess process       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fix pack maintenance when available.                   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is targeted for the following maintenance
+   package:
+   
+   | fix pack | 5.1.1-TIV-TPC-FP0002 - September 2013
+   
+   http://www-01.ibm.com/support/docview.wss?&uid=swg21320822 [http://www-01.ibm.com/support/docview.wss?&uid=swg21320822]
+   
+   The target dates for future fix packs do not represent a formal
+   commitment by IBM. The dates are subject to change without
+   notice.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC96203
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPC00
+   
+   
+ * REPORTED RELEASE
+   511
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-24
+   
+   
+ * CLOSED DATE
+   2013-10-02
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  PROBE
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC
+   
+   
+ * FIXED COMPONENT ID
+   5608TPC00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R511 PSY
+   UP
+   
+   
+ * R510 PSY
+   UP

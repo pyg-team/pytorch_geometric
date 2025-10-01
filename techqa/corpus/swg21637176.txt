@@ -1,0 +1,146 @@
+Title: IBM MustGather: ObjectServer fails to start or coredumps on startup - United States
+
+Text:
+Object Server; Must Gather; mustgather; netcool/omnibus; coring; cored; stack; segmentation; dump TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A list of items to provide to IBM Support. 
+
+RESOLVING THE PROBLEM
+ 
+
+Please give a clear, specific problem description, including specific usage information and error scenario on how to recreate the problem you encountered.
+
+
+Identify the Fix Pack and verify the libraries in use
+
+Capture the following information:
+
+
+UNIX
+
+$OMNIHOME/bin/nco_objserv –version
+$OMNIHOME/bin/nco_objserv -help
+
+
+ls -ltr $NCHOME/_uninst
+
+/home/<username>/.acsi_<username>/bin/listIU.sh
+
+(where <username> is the non-root user id used to install OMNIbus)
+
+OR
+
+If the installation was performed by the root user, the output of:
+
+/usr/ibm/common/acsi/bin/listIU.sh 
+
+Windows
+
+%OMNIHOME%\bin\nco_objserv –version
+C:\Program Files\IBM\Common\acsi\bin\listIU.cmd
+
+You can also access the nco_id.bat utility as follows:
+
+cd %NCHOME%\bin
+nco_id.bat –s –v –o nco_id.txt [enter path to %NCHOME%]
+
+
+Operational Information 
+
+UNIX (gathered using typescript):
+
+* Please read the notes under each step, identified by '*'
+
+1.1 script /tmp/L2_OSFail.txt
+
+* This records all commands until you exit from the script using Ctrl + D
+
+1.2 uname -a 
+
+* For Linux, cat /etc/redhat-release or cat /etc/suse-release
+* For AIX, oslevel -r
+
+1.3 ulimit –a
+
+1.4 env > /tmp/env.txt 
+
+1.5 ps -ef | grep nco 
+
+* To check which processes are currently running. 
+
+If the ObjectServer is down, start it up as follows:
+
+$OMNIHOME/bin/nco_objserv -name [NCOMS] -messagelevel debug -maxlogfilesize 102400 & 
+
+1.5.1 While it is down, and before restarting however, run the nco_check_store command as follows:
+
+cd $OMNIHOME\bin
+./nco_check_store –server [NCOMS] –messagelevel debug
+
+* Please be careful to ensure the ObjectServer is not running when you do this, as it may corrupt the database files on an operational one.
+
+1.6 find $OMNIHOME -name "*core*" -print 
+
+* Location of a core file in the case of a segmentation fault or coredump. If one exists and your Operating System is Linux or Solaris, please follow the directions at:
+
+Technote Id: 1241093
+Title: core : Troubleshooting technique : What details are required?
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21241093 [http://www-01.ibm.com/support/docview.wss?uid=swg21241093]
+
+* For AIX:
+
+dbx <path to binary> <path to core>
+hit ENTER 
+type WHERE 
+hit ENTER 
+get the output 
+
+
+1.7 ls -alrt $OMNIHOME/log 
+
+* To determine the last accessed log file 
+
+1.8 ls -lart $OMNIHOME/db 
+
+* To determine the last updated checkpointed .tab, .log and .chk files.
+
+1.9 2.3 top > /tmp/L2_Topout.txt
+
+* Alternatively, you can use prstat
+Once the problem is replicated, use Ctrl + D to terminate typescript and send the following files to Support:
+
+
+1) Fix Pack/Patch Level and Version output
+2) $OMNIHOME/log/[NCOMS]*
+3) /tmp/L2_OSFail.txt
+4) env.txt
+5) /tmp/L2_Topout.txt
+
+
+
+Windows
+
+While the ObjectServer is down, and before restarting, run the nco_check_store command as follows:
+
+cd %OMNIHOME%\bin
+nco_check_store –server [NCOMS] –messagelevel debug
+
+* Please be careful to ensure the ObjectServer is not running when you do this, as it may corrupt the database files on an operational one.
+
+
+Start the ObjectServer as follows:
+
+%OMNIHOME%\bin\nco_objserv -name [NCOMS] -messagelevel debug -maxlogfilesize 102400
+
+Replicate the problem and send the following files to Support:
+
+1) Fix Pack/Patch Level and Version output
+2) %OMNIHOME%\log/[NCOMS]*
+3) The output of winver from the DOS prompt or a screenshot when you right-click on My Computer Properties for System Information
+4) Screenshots of Task Manager showing Processes and Performance or Memory usage (the labelling will depend on your version of Windows)
+5) nco_check_store screen output
+
+RELATED INFORMATION
+ Troubleshooting coring applications [http://www-01.ibm.com/support/docview.wss?uid=swg21241093]

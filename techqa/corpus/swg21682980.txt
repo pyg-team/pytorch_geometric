@@ -1,0 +1,18 @@
+Title: IBM Error KCIIN2593E while installing the application support - United States
+
+Text:
+KCIIN2593E; application support; CAMJ2ALL; CAMJ2RF TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In ITM 6.3 FP2 environment the error KCIIN2593E may prevents you to apply the ITCAM for J2EE v7.1.1 application support (originally released in July 2014 with part number CN0PQEN). 
+
+SYMPTOM
+The full error message is: 
+
+KCIIN2593E The CD you are trying to install is a fixpack CD and cannot be installed on a machine without an existing image to upgrade.
+
+
+RESOLVING THE PROBLEM
+A new refreshed version of the application support package has been released with name 7.1.1-TIV-ITCAM_J2EE_ITM-RP001. It can be downloaded at the following link:
+
+http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=Tivoli%2BComposite%2BApplication%2BManager&product=ibm/Tivoli/Tivoli+Composite+Application+Manager+for+J2EE&release=7.1.1.0&platform=All&function=fixId&fixids=7.1.1-TIV-ITCAM_J2EE_ITM-RP001&includeRequisites=1&includeSupersedes=0&downloadMethod=ddp [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=Tivoli%2BComposite%2BApplication%2BManager&product=ibm/Tivoli/Tivoli+Composite+Application+Manager+for+J2EE&release=7.1.1.0&platform=All&function=fixId&fixids=7.1.1-TIV-ITCAM_J2EE_ITM-RP001&includeRequisites=1&includeSupersedes=0&downloadMethod=ddp]

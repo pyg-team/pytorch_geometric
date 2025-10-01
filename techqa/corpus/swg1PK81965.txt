@@ -1,0 +1,152 @@
+Title: IBM PK81965: STACKTRACE PRINTED IN DC WAS LOGS WHEN MANAGING SERVER GOES DOWN - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  1) When Managing Server is stopped, stacktrace is printed in the
+   Data Collector server's WebSphere logs.
+   
+   <PPEPROBE, 11c847ef-48ff-dd01-e7e4-5c13fcd3ea52.727,
+   <ip-address>> Unable to join ....
+   .java.net.ConnectException: EDC8128I Connection refused.
+   (errno2=0x76630291)
+   java.net.ConnectException: EDC8128I Connection refused.
+   (errno2=0x76630291)
+   .at java.net.PlainSocketImpl.socketConnect(Native Method)
+   .at java.net.PlainSocketImpl.doConnect(PlainSocketImpl.java:391)
+   .at
+   java.net.PlainSocketImpl.connectToAddress(PlainSocketImpl.java:2
+   52)
+   .at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:239)
+   .at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:385)
+   .at java.net.Socket.connect(Socket.java:543)
+   .at java.net.Socket.connect(Socket.java:493)
+   .at java.net.Socket.<init>(Socket.java:401)
+   .at java.net.Socket.<init>(Socket.java:215)
+   .at
+   com.cyanea.kernel.util.KernelManager.getKernel(KernelManager.jav
+   a:91)
+   .at
+   com.cyanea.kernel.util.JoinManager$JoinWorker.run(JoinManager.ja
+   va:245)
+   
+   Print a message instead of printing stack trace.
+   
+   2) When Managing Server is stopped, following message appears
+   in the WebSphere logs, which is not appropriate:
+   
+   LookupAgent.lookup Invocation target exception on service:
+   PPEPUBLISH host: <ipaddress of DC>:  caused by:
+   java.rmi.RemoteException: No Kernel is availabile - No Kernel is
+   availabile
+   ...throwing KernelException
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Unhandled exceptions.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack    | 6.1.0.TIV-ITCAMfWAS_SVR-FP0006
+     | fix pack    | 7.1.0-TIV-ITCAMAD-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK81965
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62MS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-03-06
+   
+   
+ * CLOSED DATE
+   2011-08-26
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * FIXED COMPONENT ID
+   5724L62MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

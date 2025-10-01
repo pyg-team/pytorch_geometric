@@ -1,0 +1,29 @@
+Title: IBM Configure Omnibus Probe to use different Java JRE - United States
+
+Text:
+probe; java; jre; java_home; env; nonnative; .env TECHNOTE (FAQ)
+
+QUESTION
+ How can I configure an Omnibus java based nonnative probe to use a specific Java JRE? 
+
+CAUSE
+By default with the nonnative base probe version 10 and later, the JRE installed with Omnibus is used. Depending on the probe and Omnibus version, a different JRE may be needed. 
+Omnibus 7.2 - 7.3.0 provide IBM JRE 1.5
+Omnibus 7.3.1 - 7.4.0 provides IBM JRE 1.6
+Omnibus 8.1 provides IBM JRE 1.7
+
+
+ANSWER
+The JAVA_HOME environment variable can be set in the probe's environment file. A probe's environment file is located at 
+
+$OMNIHOME/probes/java/nco_p_<probename>.env 
+
+If the file does not exist, it can be created. 
+
+Add the JAVA_HOME location, setting it to the full jre path prior to bin/java. 
+
+For example, if the java executable is in /opt/IBM/tivoli/netcool/omnibus/platform/solaris2/jre_1.6.7/jre/bin/java, set JAVA_HOME as follows: 
+
+JAVA_HOME=/opt/IBM/tivoli/netcool/omnibus/platform/solaris2/jre_1.6.7/jre 
+
+The nco_p_<probename> -version output should reflect the Java version the probe will use.

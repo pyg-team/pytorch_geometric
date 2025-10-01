@@ -1,0 +1,37 @@
+Title: IBM Working with timestamp values in select statements to filter output by date. - United States
+
+Text:
+sql tsm select date time timestamp format range dates days filter TECHNOTE (FAQ)
+
+QUESTION
+ How can timestamp values available in the Tivoli Storage Manager server tables be used in select statements to filter data on dates and time? 
+
+CAUSE
+Using timestamp values in a Tivoli Storage Manager select statement can be a challenge when trying to get data for a specific date or time period. 
+
+ANSWER
+Proper casting and or standard SQL date/time functions can be used to help filter on date and time when there is a timestamp field in a table being processed. 
+
+To filter on a timestamp and display those items with a date/time of "today" the following syntax can be used: 
+
+ * 
+
+For example to obtain a list of volumes from storage pool TAPEPOOL with a last write date of today, the following select statement could be used:  * 
+
+To get the list of volumes from the same pool that have a write date within the last week the same select statement could be used by changing the '=0' to a '<=7' 
+
+When filtering on a timestamp to display only items for a specific day, the following syntax can be used:  * 
+
+For example to obtain a list of volumes from storage pool TAPEPOOL that were written on April 22nd 2014, the following select statement could be used:  * 
+
+
+It is also possible to filter on a timestamp to obtain a listing that covers a specific date range by using the following syntax:  * 
+
+For example to obtain a list of volumes from storage pool TAPEPOOL that were all written in the month of January 2014 the following select statement could be used:  * 
+
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TSM

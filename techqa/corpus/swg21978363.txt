@@ -1,0 +1,145 @@
+Title: IBM Security Bulletin: Various IBM WebSphere MQ Installers are susceptible to DLL-planting vulnerabilities (CVE-2016-2542 & CVE-2016-4560) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Various IBM WebSphere MQ graphical user interface installers are susceptible to a DLL-planting vulnerability where a malicious DLL, that is present in the Windows search path, could be loaded by the operating system in place of the genuine file.
+
+The vulnerability affects Windows executable installers downloaded from IBM before 2nd June 2016. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2016-2542 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2542]
+DESCRIPTION: Flexera InstallShield could allow a remote attacker to execute arbitrary code on the system. The application does not directly specify the fully qualified path to a dynamic-linked library (schannel.dll) when running on Microsoft Windows. By persuading a victim to open a specially-crafted file from a WebDAV or SMB share using a vulnerable application, a remote attacker could exploit this vulnerability via a specially-crafted library to execute arbitrary code on the system.
+CVSS Base Score: 7.8
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/110914 [https://exchange.xforce.ibmcloud.com/vulnerabilities/110914] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H) 
+
+CVEID: CVE-2016-4560 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-4560]
+DESCRIPTION: Flexera InstallAnywhere could allow a remote attacker to execute arbitrary code on the system. The application does not directly specify the fully qualified path to a dynamic-linked library when running on Microsoft Windows. By persuading a victim to open a specially-crafted file from a WebDAV or SMB share using a vulnerable application, a remote attacker could exploit this vulnerability via a specially-crafted library to execute arbitrary code on the system.
+CVSS Base Score: 7.8
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/113016 [https://exchange.xforce.ibmcloud.com/vulnerabilities/113016] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H)
+
+AFFECTED PRODUCTS AND VERSIONS
+The vulnerability affects the executable (.exe file extension) installers, fixpacks and SupportPacs; 
+
+- IBM WebSphere MQ for Windows (5.3 - All versions) 
+
+- IBM WebSphere MQ for Windows (6.0 - All versions) 
+
+- IBM WebSphere MQ for Windows (7.0.0.0 - 7.0.1.13) 
+
+- IBM WebSphere MQ for Windows (7.1.0.0 - 7.1.0.7) 
+
+- IBM WebSphere MQ for Windows (7.5.0.0 - 7.5.0.6) 
+
+- IBM WebSphere MQ for Windows (8.0.0.0 - 8.0.0.4) 
+
+- IBM WebSphere MQ Evaluation (8.0.0.0 - 8.0.0.4) 
+
+- IBM WebSphere MQ Evaluation (7.5.0.0 - 7.5.0.6) 
+
+- IBM WebSphere MQ Evaluation (7.1.0.0 - 7.1.0.7) 
+
+- IBM WebSphere MQ File Transfer Edition for Windows (V7.0.0.0 - V7.0.4.4) 
+
+- IBM WebSphere MQ File Transfer Edition Trial for Windows (V7.0.0.0 - V7.0.4.4) 
+
+- IBM WebSphere MQ Advanced Message Security for Windows (V7.0.1.0 - V7.0.1.3) 
+
+- IBM WebSphere MQ Advanced Message Security Trial for Windows (V7.0.1.0 - V7.0.1.3) 
+
+- IBM WebSphere MQ for HP NonStop Server V5.3 (Windows Installer V5.3.1.0) 
+
+- IBM WebSphere MQ Advanced for Developers (7.5.0.0 - 8.0.0.4) 
+
+- MS0T IBM WebSphere MQ Explorer (7.0.1.0 - 8.0.0.4) 
+
+- MQC7 IBM WebSphere MQ V7 Clients (All versions) 
+
+- MQC71 IBM WebSphere MQ V7.1 Clients (7.1.0.0 - 7.1.0.7) 
+
+- MQC75 IBM WebSphere MQ V7.5 Clients (7.5.0.0 - 7.5.0.6) 
+
+- MQC8 IBM WebSphere MQ V8 Clients (8.0.0.0 - 8.0.0.4) 
+
+ 
+
+Where fixes are available (see below), you should discard any Windows installation images that were downloaded from IBM before 2nd June 2016 and download new images from Fix Central or Passport Advantage.
+
+REMEDIATION/FIXES
+The executable installers for the following offerings now contain safeguards to prevent being started in an environment where a malicious DLL could be loaded by the operating system. 
+
+ 
+
+The following offerings, and all subsequent levels of maintenance, have the installer fix applied: 
+
+- IBM WebSphere MQ for Windows (6.0.2.12) [http://www.ibm.com/support/fixcentral/quickorder?source=dbluesearch&product=ibm%2FWebSphere%2FWebSphere+MQ&release=6.0&platform=Windows&fixids=6.0.2-WS-MQ-Windows-FP0012] 
+
+- IBM WebSphere MQ for Windows (7.0.1.13) [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+MQ&release=7.0.1&platform=All&function=fixId&fixids=7.0.1-WS-MQ-Windows-FP0013] 
+
+- IBM WebSphere MQ for Windows (7.1.0.7) [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+MQ&release=7.1&platform=All&function=fixId&fixids=7.1.0-WS-MQ-Windows-FP0007] 
+
+- IBM WebSphere MQ for Windows (7.5.0.6) [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/WebSphere/WebSphere+MQ&release=7.5&platform=All&function=fixId&fixids=7.5.0-WS-MQ-Windows-FP0006] 
+
+- IBM WebSphere MQ for Windows (8.0.0.5) [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/WebSphere/WebSphere+MQ&release=All&platform=All&function=fixId&fixids=8.0.0-WS-MQ-Windows-FP0005] 
+
+- IBM WebSphere MQ File Transfer Edition for Windows (V7.0.4.5) [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+MQ+File+Transfer+Edition&release=7.0.4.4&platform=Windows&function=all] 
+
+- IBM WebSphere MQ Advanced Message Security for Windows (V7.0.1.3) [http://www-933.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?brandid=5&productid=WebSphere+MQ+Advanced+Message+Security&vrmf=7.0.1&platform=Windows&searchtype=browse] 
+
+- IBM WebSphere MQ for HP NonStop Server V5.3 (V5.3.1.0 Manufacturing Refresh) 
+
+- MS0T IBM WebSphere MQ Explorer (8.0.0.4) [http://www-01.ibm.com/support/docview.wss?uid=swg24021041] 
+
+- MQC71 IBM WebSphere MQ V7.1 Clients (7.1.0.7) [http://www-01.ibm.com/support/docview.wss?uid=swg24031412] 
+
+- MQC75 IBM WebSphere MQ V7.5 Clients (7.5.0.6) [http://www-01.ibm.com/support/docview.wss?uid=swg24032744] 
+
+- MQC8 IBM WebSphere MQ V8 Clients (8.0.0.5) [http://www-01.ibm.com/support/docview.wss?uid=swg24037500] 
+
+ 
+
+You should download these new install images from Fix Central or Passport Advantage where possible, however if older installers must be used, please refer to the workarounds and mitigations detailed below.
+
+WORKAROUNDS AND MITIGATIONS
+The DLL-planting vulnerability only impacts IBM WebSphere MQ for Windows when an interactive installation is attempted via the graphical user interface via executable installer (.exe file extension). 
+
+ 
+
+The advanced installation method of IBM WebSphere MQ that uses msiexec offers both an interactive graphical interface, and a command line driven non-interactive installation that is not affected by this vulnerability. To install using msiexec, at the command line, enter the msiexec command in the following format: 
+
+msiexec parameters [USEINI=" response-file "] [TRANSFORMS=" transform_file "] 
+
+This installation method should be used in preference to running setup.exe. See the links below for detailed information on using this installation method.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] IBM WebSphere MQ 7.1 Advanced Installation [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm.mq.doc/wq10640_.htm] 
+IBM WebSphere MQ V7.5 Advanced Installation [http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.mq.ins.doc/q008690_.htm] 
+IBM WebSphere MQ V8 Advanced Installation [http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.ins.doc/q008690_.htm] 
+IBM MQ Advanced for Developers [http://www-03.ibm.com/software/products/en/ibm-mq-advanced-for-developers] 
+IBM MQ SupportPacs by Product [http://www-01.ibm.com/support/docview.wss?uid=swg27007197#1] 
+Recommended Fixes for WebSphere MQ [http://www-01.ibm.com/support/docview.wss?uid=swg27006037] 
+IBM WebSphere MQ Evaluation [https://www-01.ibm.com/marketing/iwm/iwm/web/pick.do?source=ESD-WSMQ-EVAL] 
+IBM WebSphere MQ Advanced Message Security Evalution [https://www-01.ibm.com/marketing/iwm/iwm/web/preLogin.do?source=ESD-MQAMS-EVAL] 
+IBM WebSphere MQ File Transfer Edition Evaluation [https://www-01.ibm.com/marketing/iwm/iwm/web/preLogin.do?source=ESD-MQFTE-EVAL] CHANGE HISTORY
+ 2 June 2016: Original version published
+7 June 2016: Corrected spelling of SupportPac
+9 June 2016: Remove link to MQC7 SupportPac 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21984649]

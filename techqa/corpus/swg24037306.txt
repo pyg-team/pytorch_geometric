@@ -1,0 +1,75 @@
+Title: IBM Content Collector V4.0 Fix Pack 2 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document contains links to the download page for IBM Content Collector V4.0 Fix Pack 2. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+IBM CONTENT COLLECTOR DOWNLOADS
+ *  All versions [http://www.ibm.com/support/docview.wss?uid=swg27040223] 
+ *  Version 4.0.0 Fix Pack 2- selected tab, 
+
+Apply IBM Content Collector V4.0 Fix Pack 2 to upgrade from IBM Content Collector V4.0.0.0 or IBM Content Collector V4.0.0.1 to IBM Content Collector V4.0.0.2. 
+
+Below is a list of the problems that were fixed in this fix pack. 
+
+
+
+APAR number Component APAR title HE11932 [http://www.ibm.com/support/docview.wss?uid=swg1HE11932] Server (Lotus Domino) IBM Content Collector does not archive and stub email with identical attachments HE11980 [http://www.ibm.com/support/docview.wss?uid=swg1HE11980] Server (Microsoft SharePoint) The server count in a Microsoft SharePoint farm is not accurate when deploying IBM Content Collector solution files HE11982 [http://www.ibm.com/support/docview.wss?uid=swg1HE11982] Server IBM Content Collector relies only on ICMP when determining an available domain controller HE11988 [http://www.ibm.com/support/docview.wss?uid=swg1HE11988] Content Search Services Support Content Collector P8 Content Search Service Support cannot process constructors.xml configuration files with surplus newlines HE11991 [http://www.ibm.com/support/docview.wss?uid=swg1HE11991] Content Search Services Support Content Collector P8 Content Search Service Support might index SMTP email with a Received Date property set to a future date HE11996 [http://www.ibm.com/support/docview.wss?uid=swg1HE11996] Server (Web Application) IBM Content Collector Email Search displays an error for searches that return duplicate FileNet P8 object IDs HE12001 [http://www.ibm.com/support/docview.wss?uid=swg1HE12001] Server (Configuration Manager) In IBM Content Collector Configuation Manager, an oversized Edit Expression window sometimes cannot be closed HE12008 [http://www.ibm.com/support/docview.wss?uid=swg1HE12008] Content Search Services Support IBM Content Collector P8 Content Search Services Support cannot index Microsoft Exchange (MSG) email due to an exception HE12011 [http://www.ibm.com/support/docview.wss?uid=swg1HE12011] Server (FileNet P8) The maintenance task of the IBM Content Collector FileNet P8 Connector might cause long server response times HE12013 [http://www.ibm.com/support/docview.wss?uid=swg1HE12013] Server (SMTP Connector) When processing large SMTP email with the IBM Content Collector SMTP Connector, IBM Content Collector might run out of memory HE12014 [http://www.ibm.com/support/docview.wss?uid=swg1HE12014] Server (Lotus Domino) The IBM Content Collector Email Connector throws an exception if user-defined address books are used HE12015 [http://www.ibm.com/support/docview.wss?uid=swg1HE12015] Server (FileNet P8) Running the IBM Content Collector initial configuration or the setup tool to configure an IBM FileNet P8 repository returns a DB_NOT_UNIQUE error HE12022 [http://www.ibm.com/support/docview.wss?uid=swg1HE12022] Server (Lotus Domino) When using an IBM Content Collector offline repository in Lotus Domino, opening compressed attachments might not be possible HE12025 [http://www.ibm.com/support/docview.wss?uid=swg1HE12025] Server (Email Connector) New metadata mappings in the IBM Content Collector EC Extract Metadata task are not saved HE12030 [http://www.ibm.com/support/docview.wss?uid=swg1HE12030] Server (Microsoft SharePoint) Collections in IBM Content Collector for Microsoft SharePoint might fail if user-defined metadata mapping is selected HE12035 [http://www.ibm.com/support/docview.wss?uid=swg1HE12035] Outlook Web App IBM Content Collector Outlook Web App Support does not work correctly when using Microsoft Internet Explorer 10 HE12036 [http://www.ibm.com/support/docview.wss?uid=swg1HE12036] Server (Configuration Store) In an IBM Content Collector cluster in a VMware environment, configuration host failover might not work HE12043 [http://www.ibm.com/support/docview.wss?uid=swg1HE12043] Text Search Support for IBM Content Manager IBM Content Collector Text Search Support does not recognize uuencoded attachments but indexes them as part of the email body HE12045 [http://www.ibm.com/support/docview.wss?uid=swg1HE12045] Server (Microsoft Exchange, Web Application) The IBM Content Collector Web Application service does not respect user-defined Active Directory settings HE12048 [http://www.ibm.com/support/docview.wss?uid=swg1HE12048] Server (Lotus Domino) IBM Content Collector computes invalid attachment URL links when restubbing Lotus Notes documents originally archived with 2.1.0 HE12049 [http://www.ibm.com/support/docview.wss?uid=swg1HE12049] Server (File System, Web Application) IBM Content Collector does not correctly display file names that contain non-ASCII characters when accessed through a stub link HE12059 [http://www.ibm.com/support/docview.wss?uid=swg1HE12059] Server (Microsoft Exchange) IBM Content Collector might fail to connect to Microsoft Exchange 2013 servers for various reasons (If an APAR link does not work, the detailed information for that APAR is not yet available from the Support page. Try again in a day or two.) PREREQUISITES
+IBM Content Collector V4.0 Fix Pack 2 can be used with IBM Content Collector V4.0.0.0 and V4.0.0.1.
+
+IBM Content Collector P8 Content Search Services Support V4.0 Fix Pack 2 can be used with the following IBM Content Collector versions: 
+
+ * IBM Content Collector V2.2.0.2 or later 
+ * IBM Content Collector V3.0 
+ * IBM Content Collector V4.0
+
+IBM Content Collector Text Search Support for IBM Content Manager V8 can be used with the following products: 
+
+ * IBM Content Collector V2.1.1, V2.2, V3.0, V4.0 
+ * IBM CommonStore for Lotus Domino V8.4 
+ * IBM CommonStore for Exchange Server V8.4
+
+
+For detailed prerequisite information, view the IBM Content Collector system requirements document at: URL LANGUAGE SIZE(Bytes) Prerequisites for IBM Content Collector V4.0 [http://www.ibm.com/support/docview.wss?uid=swg27039384] English 1 
+INSTALLATION INSTRUCTIONS
+Read the fix pack readme files for specific information about installing the fix pack packages. 
+There are three readme files included in IBM Content Collector V4.0 Fix Pack 2, one for each fix pack package.
+
+URL LANGUAGE SIZE(Bytes) Readme files for IBM Content Collector V4.0.0.2 [http://www.ibm.com/support/docview.wss?uid=swg27041780] English 1 
+DOWNLOAD PACKAGE
+There are three download packages for IBM Content Collector V4.0 Fix Pack 2.
+
+The IBM Content Collector V4.0 Fix Pack 2 Server download package consists of the following files: 
+
+ * 4.0.0.2-IBM-ICC-FP002.pdf: Readme file 
+ * 4.0.0.2-IBM-ICC-Server-FP002.zip: IBM Content Collector Server 
+ * 4.0.0.2-IBM-ICC-OWA-FP002.zip: Outlook Web Access 
+ * 4.0.0.2-IBM-ICC-NotesClient-FP002.zip: Notes Client 
+ * 4.0.0.2-IBM-ICC-SharePoint-FP002.zip: SharePoint Support
+
+
+The IBM Content Collector P8 Content Search Services Support V4.0 Fix Pack 2 download package consists of the following files:  * 4.0.0.2-IBM-ICC-P8CSS-FP002.pdf: Readme file 
+ * 4.0.0.2-IBM-ICC-P8CSS-AIX-FP002.tar.gz: P8 Content Search Services Support for AIX 
+ * 4.0.0.2-IBM-ICC-P8CSS-Linux-FP002.tar.gz: P8 Content Search Services Support for Linux 
+ * 4.0.0.2-IBM-ICC-P8CSS-Linuxz-FP002.tar.gz: P8 Content Search Services Support for Linux for zSeries 
+ * 4.0.0.2-IBM-ICC-P8CSS-Solaris-FP002.tar.gz: P8 Content Search Services Support for Solaris 
+ * 4.0.0.2-IBM-ICC-P8CSS-WIN-FP002.zip: P8 Content Search Services Support for Windows
+
+
+The IBM Content Collector Text Search Support for IBM Content Manager V4.0 Fix Pack 2 download package consists of the following files:  * 4.0.0.2-IBM-ICC-CM8Text-FP002.pdf: Readme file 
+ * 4.0.0.2-IBM-ICC-CM8Text-AIX-FP002.tar.gz: Text Search Support for Content Manager 8 on AIX 
+ * 4.0.0.2 IBM-ICC-CM8Text-Linux32-FP002.tar.gz: Text Search Support for Content Manager 8 on Linux 
+ * 4.0.0.2-IBM-ICC-CM8Text-Linuxz-FP002.tar.gz: Text Search Support for Content Manager 8 on Linux for zSeries 
+ * 4.0.0.2-IBM-ICC-CM8Text-Solaris-FP002.tar.gz: Text Search Support for Content Manager 8 on Solaris 
+ * 4.0.0.2-IBM-ICC-CM8Text-WIN-FP002.zip: Text Search Support for Content Manager 8 on Windows
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] IBM Content Collector 4.0 FP2 17 Apr 2014 Language Independent 1468874154 FC [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Information+Management&product=ibm/Information+Management/Content+Collector&release=All&platform=All&function=fixId&fixids=4.0.0.2-IBM-ICC-FP002&includeRequisites=1&includeSupersedes=0] [ ] Content Search Services Support 4.0 FP2 17 Apr 2014 Language Independent 140861323 FC [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Information+Management&product=ibm/Information+Management/Content+Collector&release=All&platform=All&function=fixId&fixids=4.0.0.2-IBM-ICC-P8CSS-FP002&includeRequisites=1&includeSupersed] [ ] Text Search Support for Content Manager 4.0 FP2 17 Jun 2014 Language Independent 873526722 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=Enterprise%2BContent%2BManagement&product=ibm/Information+Management/Content+Collector&release=All&platform=All&function=fixId&fixids=4.0.0.2-IBM-ICC-CM8Text-FP002&includeRequisites=1&includeSup] [ ] 
+ [/support/docview.wss?uid=swg24037306&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24037306&aid=2]Problems (APARS) fixed
+HE11932, HE11980, HE11982, HE11988, HE11991, HE11996, HE12001, HE12008, HE12011, HE12013, HE12014, HE12015, HE12022, HE12025, HE12030, HE12035, HE12036, HE12043, HE12045, HE12047, HE12048, HE12049, HE12059

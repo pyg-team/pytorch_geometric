@@ -1,0 +1,14 @@
+Title: IBM Multiple HADR databases but only one VIP - United States
+
+Text:
+TSA; TSAMP; db2haicu; collocation; virtual IP TECHNOTE (FAQ)
+
+QUESTION
+ Multiple DB2 instances and multiple databases but only want to use one virtual IP address. Is this possible ? 
+
+ANSWER
+For the out-of-the-box HADR automation policy, you cannot share a virtual IP address for multiple databases. If virtual IP addresses are to be used, each HADR database must have its own unique virtual IP. This is a restriction (or limitation) imposed by DB2's db2haicu utility. 
+From a TSAMP perspective, you could assign a virtual IP address to one of the HADR database and add "collocation" relationships between each of the HADR databases. This will force all HADR databases to be online on the same node at any given time. It means you could never have one HADR database primary/online on one node and a different HADR database primary/online on another node. I must point out that this is not a formally tested scenario. 
+
+If you choose to deviate from the standard HADR automation policy, you should thoroughly test all aspects of the solution from startup/shutdown, to automated failovers. For information on making relationships and "collocation" relationships, refer to the TSAMP Administrator's and User's Guide :
+http://www.ibm.com/support/knowledgecenter/SSRM2X [http://www.ibm.com/support/knowledgecenter/SSRM2X]

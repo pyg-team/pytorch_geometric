@@ -1,0 +1,217 @@
+Title: IBM IT12791: CONFIGURING AN INVALID CCSID FOR A JAVA CLIENT CONNECTION CAUSES A JAVA.LANG.NULLPOINTEREXCEPTION AT RUNTIME - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using either the WebSphere MQ classes for JMS or classes
+   for Java and configuring an invalid CCSID value (such as 9000)
+   to be used by the Java client, a java.lang.NullPointerException
+   is thrown to the application when an attempt to establish a new
+   connection is made.  The top of the Java call stack of the
+   exception is as follows (there may be differences in line
+   numbers depending on the maintenance level of the Java client in
+   use):
+   
+   java.lang.NullPointerException
+   &#09;at
+   com.ibm.mq.jmqi.internal.JmqiDC.writeMQField(JmqiDC.java:821)
+   &#09;at
+   com.ibm.mq.jmqi.internal.JmqiDC.writeMQField(JmqiDC.java:790)
+   &#09;at
+   com.ibm.mq.jmqi.remote.rfp.RfpID.setChannelName(RfpID.java:319)
+   &#09;at
+   com.ibm.mq.jmqi.remote.impl.RemoteConnection.initSess(RemoteConn
+   ection.java:976)
+   &#09;at
+   com.ibm.mq.jmqi.remote.impl.RemoteConnection.connect(RemoteConne
+   ction.java:728)
+   &#09;at
+   com.ibm.mq.jmqi.remote.impl.RemoteConnectionSpecification.getSes
+   sionFromNewConnection(RemoteConnectionSpecification.java:400)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Only use a valid CCSID value that corresponds to an ASCII
+   compliant codeset that is to be used by the WebSphere MQ classes
+   for JMS and classes for Java when establishing a connection.
+   The default value is 819.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users who have configured an invalid CCSID
+   value (that does not represent the CCSID of an ASCII compliant
+   codeset) for the WebSphere MQ v7.5 classes for JMS and classes
+   for Java clients.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The CCSID used by the WebSphere MQ classes for JMS and classes
+   for Java clients, which affects the way in which a queue manager
+   translates information in WebSphere MQ headers, can be
+   configured.  For WebSphere MQ classes for JMS applications, this
+   involves setting the character set CCSID value on a JMS
+   ConnectionFactory.  Programmatically this can be achieved using
+   the following method:
+   
+     com.ibm.mq.jms.MQConnectionFactory.setCCSID(int)
+   
+   As documented in the Knowledge Center:
+   
+   http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.i [http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.i]
+   bm.mq.javadoc.doc/WMQJMSClasses/com/ibm/mq/jms/MQConnectionFacto
+   ry.html?lang=en-us#setCCSID_int_
+   
+   
+   For WebSphere MQ classes for Java applications, the CCSID used
+   can be configured by changing the CCSID field on the
+   MQEnvironment object.
+   
+   The default value for both the WebSphere MQ classes for JMS and
+   classes for Java is 819 and this value is suitable in the
+   majority of situations.
+   
+   
+   When the CCSID value used by either the WebSphere MQ classes for
+   JMS and classes for Java clients was configured with an invalid
+   value, a connection attempt (e.g., by calling createConnection()
+   on an MQConnectionFactory or instantiating an MQQueueManager
+   object) resulted in a java.lang.NullPointerException being
+   thrown to the application.  This was because the invalid CCSID
+   value could not be mapped to a valid Java Character Set,
+   resulting in a null internal object.  When attempting to call a
+   method on this null object, the java.lang.NullPointerException
+   was thrown.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ classes for JMS and classes for Java clients
+   have been updated such that, if an invalid CCSID value has been
+   configured which does not map to a valid Java character set, the
+   default CCSID value of 819 is used instead.  This prevents a
+   java.lang.NullPointerException being thrown to the application.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.7
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT12791
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-12-15
+   
+   
+ * CLOSED DATE
+   2015-12-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7241
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

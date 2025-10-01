@@ -1,0 +1,291 @@
+Title: IBM Example Shell AIX Printer Backend Program - United States
+
+Text:
+print shell backend TECHNOTE (FAQ)
+
+QUESTION
+ Example Shell AIX Printer Backend Program 
+
+ANSWER
+
+
+ Many AIX and UNIX administrators find it easy to write ksh scripts, but have fewer skills when it comes to writing C programs. When you are writing an AIX printing backend program, there are certain pieces of information that are much easier to obtain with a C program. This document shows how a shell script backend can call a simple C program to retrieve the queue-specific information, such as the user name, file name, and job number. Using this simple script, you can expand the shell script to do logging and problem diagnostics. Information on creating and testing an AIX queue to use the custom backend is also supplied. 
+
+ This script and program work at all levels of AIX. 
+
+Goal and overview 
+The shell script 
+The C program 
+Creating the queue 
+Viewing the queue stanzas in /etc/qconfig 
+Testing the queue 
+An expanded printing shell script 
+Obtaining the source 
+
+
+
+ GOAL AND OVERVIEW 
+ This backend is a combination of two programs. 
+
+ 1. The shell script that is actually the backend program 
+ 2. The C program called by the shell program to get queue information 
+
+ This program was written as an illustration in response to a question regarding writing print backends as a shell script and obtaining the job number. Similar questions have also been asked about obtaining the user ID. 
+
+
+
+
+ THE SHELL SCRIPT  THE SHELL SCRIPT THAT IS PROVIDED AS AN EXAMPLE DOES NOT ACTUALLY PRINT THE FILE, BUT GATHERS INFORMATION ABOUT THE QUEUE. TO ADD PRINTING CAPABILITY, YOU COULD CALL ONE OF THE STANDARD AIX PRINT COMMANDS TO PRINT TO A SEPARATE QUEUE, POSSIBLY SUPPLYING NEW PRINT FLAGS. IF YOU ARE USING A LOCAL PRINTER, THE FILE = PARAMETER IN THE QUEUE STANZA IN /ETC/QCONFIG WILL BECOME A STANDARD OUT TO THE SCRIPT. FOR THIS REASON, YOU COULD SIMPLY USE THE CAT COMMAND TO SEND THE FILE TO THE PORT ONCE YOU HAVE PROCESSED THE OUTPUT. 
+
+ SOME OF THE THINGS THAT YOU SHOULD KEEP IN MIND WHEN WRITING THE SCRIPT ARE THAT THE LAST PARAMETER PASSED TO THE SCRIPT BY THE QDAEMON IS THE PRINT FILE. THE FLAGS PRIOR TO THIS THAT WILL BE TREATED ARE THE ACTUAL PRINT FLAGS PASSED BY ENQ. THE SCRIPT PRINTS ALL OF THE FLAGS TO THE FILE /TMP/QUEUE_NAME IN THE STATEMENT: 
+
+  ECHO $* >> /TMP/$Q
+
+
+THE C PROGRAM IS CALLED IN THE LINE:   FT=`/USR/LOCAL/BIN/GETQINFO`
+
+
+THE PARAMETERS ARE RETURNED IN THE SHELL ARRAY FT.  CREATE THE FOLLOWING FILE AS /USR/LOCAL/BIN/SUBQUE. THIS FILE MUST HAVE EXECUTE PERMISSIONS AND SHOULD BE OWNED BY GROUP PRINTQ. 
+
+ 
+
+#!/USR/BIN/SH
+# THIS IS THE PRINTER BACKEND FILE.  IT IS JUST A SHELL FOR NOW, SO LOOK
+# IN THE /TMP FILE THAT IS POINTED AT BY THE NAME IN /ETC/QCONFIG.
+# /ETC/QCONFIG LINE FORMAT:
+#       BACKEND = /USR/LOCAL/BIN/SUBQUE /TMP/LOG.FILE
+#REMEMBER: WHAT WE PUT INTO /ETC/QCONFIG ALWAYS GIVES THE QUEUE NAME FIRST
+# IN OTHER WORDS WHEN WE MAKE THE QUEUE, PUT A QUEUE NAME AFTER THE BACKEND.
+Q=$1; SHIFT
+# FOR DEBUG PURPOSES YOU CAN ECHO SOME VARIABLES TO A FILE
+ECHO "============================ \C" >> /TMP/$Q
+/USR/BIN/DATE >> TMP/$Q
+ECHO $* >> /TMP/$Q
+# THIS CODE GETS THE USER NAME AND TITLE FOR THE ORIGINAL FILE
+# THIS IS USED TO LOG THE INFORMATION, BUT ALSO TO GET THE INFO
+# NEEDED TO PASS THIS ON TO THE NEXT QUEUE WITH AN 'ENQ -T AND -Z'
+# SEE EXAMPLE LATER.
+    FT=`/USR/LOCAL/BIN/GETQINFO`
+    INTEGER J=0
+    TYPESET  FR
+    FOR FT IN $FT
+     DO
+        FR[J]=$FT
+        LET J=J+1
+     DONE
+        ECHO "FROM = ${FR[0]}" >> /TMP/$Q
+        ECHO "TITLE = ${FR[1]}" >> /TMP/$Q
+        ECHO "JOB # = ${FR[2]}" >> /TMP/$Q
+ECHO STOP >> /TMP/$Q
+EXIT 0
+
+
+
+
+
+
+ THE C PROGRAM 
+ The details of this program are similar to the information in the technical document Basic AIX Printer Backend Program Example. 
+
+ The key feature of this program is that it calls the library routing log_init() to set up the queue information. The output is returned to the shell script by printing to stdout. When compiling the program, you must link in the libqb library with the cc flag -lqb. 
+
+ This is a short example: 
+
+ 
+
+/* This is getqinfo example header maker */
+/* Compile with cc -o getqinfo -lqb getqinfo.c  */
+/* It doesn't do anything to the data, but
+   shows how to get at the information and use
+   the routines           */
+#include <stdio.h>
+#include <IN/backend.h>
+#include <IN/standard.h>
+#include <string.h>
+char *qdate;
+char *cmdline;
+char *to;
+char *devname;
+char *title;
+char *qname;
+char *qdname;
+char *from;
+char *at;
+char *enqflags;
+int   mail_only;
+int   jobno;
+main(argc,argv)
+unsigned argc;
+char **argv;
+{
+  int   rc, i, c;
+  char* pfile;
+  FILE *pf;
+/*  This is an obligatory routine for getting access to
+    all the other routines - log_init           */
+  rc = log_init();
+  if (rc == -1)
+  {
+/* So we see something if log_init fails - Output Error */
+        printf("ERROR\n");
+        exit(1);
+  }
+  else
+  {
+/*  Some of the standard backend subroutine calls are */
+/*  Then are described in info explorer                 */
+    from      = get_from();
+    title     = get_title();
+    jobno     = get_job_number();
+/* Return information to shell script   */
+        printf("%s %s %d\n",from,title,jobno);
+  }
+  exit(0);
+}
+
+
+
+
+
+ CREATING THE QUEUE 
+ The smit page shown below is from AIX 4, but a similar screen appears at AIX 3.2 when you are adding a queue with smitty spooler.
+
+
+ 
+
+ 1. touch /dev/testl 
+ 2. smitty mkpq 
+ 3. Choose: other       User Defined Backend
+    
+    
+ 4. From the "Add a print queue" screen, add the following and press enter or DO. 
+
+* Name of QUEUE to add                               [testq]
+* Name of QUEUE DEVICE to add                        [testd]
+* BACKEND PROGRAM pathname     [/usr/local/bin/subque q.log]
+  ACTIVATE the queue?                                 yes
+  Should this become the DEFAULT queue?               no
+  Queuing DISCIPLINE                   first come first serve
+  ACCOUNTING FILE pathname                           []
+  HOSTNAME of remote server                          []
+  Name of QUEUE on remote server                     []
+  Pathname of the SHORT FORM FILTER for queue        []
+   status output
+  Pathname of the LONG FORM FILTER for queue         []
+   status output
+  BACKEND OUTPUT FILE pathname             [/dev/testl]
+
+
+
+
+
+ VIEWING THE QUEUE STANZAS IN /ETC/QCONFIG 
+ View the /etc/qconfig file with view /etc/qconfig. The queue should look like this in /etc/qconfig. 
+
+ 
+
+testq:
+        device = testd
+        up = TRUE
+testd:
+        file = /dev/testl
+        backend = /usr/local/bin/subque q.log
+
+
+
+
+
+ TESTING THE QUEUE 
+First, make sure the queue shows READY for a status command.  Next, print to the queue: 
+
+ * qprt -Ptestq /etc/motd 
+
+ 
+
+TEST OUTPUT TO /TMP/TESTQ.LOG
+ After you ran the preceding print command, a print of the test file showed: 
+
+ 
+
+================== Mon Jan 13 13:26:31 CST 1997
+/usr/local/bin/subque log.file /etc/motd
+START
+/etc/motd
+1
+From = root
+Title = /etc/motd
+Job # = 188
+STOP
+
+
+
+
+
+ AN EXPANDED PRINTING SHELL SCRIPT 
+The following shell script was written specifically to print output from HCON. The script was written to override the default flags sent by HCON and to add desired AIX flags when submitting the data to a new queue. This script illustrates how you can capture the flags from a print job and convert them to your own use. The C program is used to specify the header page parameters in the new queue.  
+
+#/bin/ksh
+# This testpr.sh script is designed to print overlays
+# when initiated by HCON, but should also work for other
+# types of printing.
+#
+while getopts :J:L:X:Z:b:ci:j:l:p:f:s:t:u:v:w:x:y:z: arguments
+do
+ case $arguments in
+## $OPTARG
+      X) Xflags="-X $OPTARG" ;;
+      J) Jflags="-J $OPTARG" ;;
+      L) Lflags="-L $OPTARG" ;;
+      Z) Zflags="-Z $OPTARG" ;;
+      b) bflags="-b $OPTARG" ;;
+      c) cflags="-c $OPTARG" ;;
+      f) fflags="-f $OPTARG" ;;
+      g) gflags="-g $OPTARG" ;;
+      i) iflags="-i $OPTARG" ;;
+      j) jflags="-j $OPTARG" ;;
+      l) lflags="-l $OPTARG" ;;
+      p) pflags="-p $OPTARG" ;;
+      s) sflags="-s $OPTARG" ;;
+      t) tflags="-t $OPTARG" ;;
+      u) uflags="-u $OPTARG" ;;
+      v) vflags="-v $OPTARG" ;;
+      w) wflags="-w $OPTARG" ;;
+      x) xflags="-x $OPTARG" ;;
+      y) yflags="-y $OPTARG" ;;
+      z) zflags="-z $OPTARG" ;;
+      \?)  ;;
+ esac
+done
+ ((current_position = OPTIND -1))
+ shift $current_position
+date >> /tmp/flags.out
+###############  Call C code to get queue info ###################
+    FT=`/usr/local/bin/getqinfo`
+    integer j=0
+    typeset  fr
+    for ft in $FT
+     do
+        fr[j]=$ft
+        let j=j+1
+     done
+        echo "From = ${fr[0]}" >> /tmp/flags.out
+        echo "Title = ${fr[1]}" >> /tmp/flags.out
+        echo "Job # = ${fr[2]}" >> /tmp/flags.out
+echo "Number of files to print $#" >> /tmp/flags.out
+echo "Filenames were: $*" >> /tmp/flags.out
+# Use the -c option so we don't lose the file in the next queue
+#qprt -c -Ppcl -Z! -p14 -f2 -dp -z+ -v8 $*
+enq -Ban -c -Ppcl -o-Z! -o-p14 -o-fp -o-z+ -o-v8 -T ${fr[1]} -Z ${fr[0]}
+sleep 2
+
+
+
+
+
+ OBTAINING THE SOURCE 
+The source is printed in the preceding section.  
+
+
+
+HISTORICAL NUMBER
+ isg1pTechnote0404

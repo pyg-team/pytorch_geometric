@@ -1,0 +1,19 @@
+Title: IBM Must Gather for BTT Out of Memory Issue - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What files should I provide to IBM support when a BTT out of memory error occurs? 
+
+ANSWER
+ 
+
+1. Java Heapdump. This shows the memory usage of java objects.
+
+2. WAS javacore file when out of memory error occurs. This file may help support to know how many threads were active and what they were doing at that time. 
+Refer to this link [http://www-01.ibm.com/support/docview.wss?fdoc=aimwas&rs=180&uid=swg21181068]to collect WAS javacore file. 
+
+3. WAS verbose GC trace. This file may help support know java heap usage during application running, especially if the java heap is stable during running. To enable verbose GC trace, please refer here. [http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg21114927]
+
+4. BTT configuration files. These files may help support know how customer is using BTT.

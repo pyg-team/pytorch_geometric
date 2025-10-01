@@ -1,0 +1,46 @@
+Title: IBM Information Analyzer column analysis fails with "String data, right truncated". - United States
+
+Text:
+Information Analyzer Column Analysis String data; right truncated. TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Information Analyzer column analysis fails with "ODBC function "SQLExecute" reported: SQLSTATE = 22001: Native Error Code = 0: Msg = [IBM(DataDirect OEM)][ODBC Oracle Wire Protocol driver]String data, right truncated. Error in parameter 21". 
+
+SYMPTOM
+IBM Information Analyzer column analysis fails when string data is right truncated error: 
+"ODBC function "SQLExecute" reported: SQLSTATE = 22001: Native Error Code = 0: Msg = [IBM(DataDirect OEM)][ODBC Oracle Wire Protocol driver]String data, right truncated. Error in parameter 21. (CC_OdbcDBStatement::executeInsert, file CC_OdbcDBStatement.cpp, line 829)".
+
+
+CAUSE
+When the data passed in exceeds the SQL width right truncated issues occurs. 
+
+ENVIRONMENT
+Information Analyzer ODBC Connection
+
+DIAGNOSING THE PROBLEM
+While running Column Analysis in IBM Information Analyzer retain datastage scripts, which stores the job logs in IBM DataStage Director client. 
+1) Login into Director Client
+2) In Analyzer project, under IA folder, open Column Analysis job log and check for the ODBC Function error SQLSTATE = 22001 Native Error Code = 0: Msg = [IBM(DataDirect OEM)][ODBC Oracle Wire Protocol driver]String data, right truncated. Error in parameter 21. (CC_OdbcDBStatement::executeInsert, file CC_OdbcDBStatement.cpp, line 829)".
+
+RESOLVING THE PROBLEM
+32-bit Windows
+Add two parameters to your DSN definition in the Windows Registry as follows:
+1) Use the Run utility in the Windows Start menu to run REGEDIT.
+2) Navigate to the HKEY_LOCAL_MACHINE\SOFTWARE\ODBC\ODBC.INI\DSN_name folder.
+3) Right-click on your DSN_name and select Add -> String Value.
+4) Enter ColumnSizeAsCharacter
+5) Right-click on ColumnSizeAsCharacter and select Modify.
+6) Enter a value of 1.
+
+64-bit Windows
+Add two parameters to your DSN definition in the Windows Registry as follows:
+1) Use the Run utility in the Windows Start menu to run REGEDIT.
+2) Navigate to the HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\ODBC\ODBC.INI\DSN_name folder.
+3) Right-click on your DSN_name and select Add -> String Value.
+4) Enter ColumnSizeAsCharacter
+5) Right-click on ColumnSizeAsCharacter and select Modify.
+6) Enter a value of 1.
+
+Linux and UNIX
+Insert the following parameters under your DSN in the ODBC.INI file:
+ColumnSizeAsCharacter=1

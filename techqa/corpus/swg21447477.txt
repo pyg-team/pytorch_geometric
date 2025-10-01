@@ -1,0 +1,56 @@
+Title: IBM MustGather: Collecting data when experiencing ODBC issues on IBM WebSphere DataPower SOA Appliances - United States
+
+Text:
+MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collect the following MustGather information to help IBM Support troubleshoot problems when experiencing issues with ODBC or an SQL Data Source on an IBM WebSphere DataPower SOA Appliance. 
+
+SYMPTOM
+DataPower Error messages such as: 
+
+"There are currently insufficient resources to start the SQL endpoint"
+"SQL Data Source object failed to start"
+"Starting DB connection failed"
+"Data Source ID missing
+
+
+RESOLVING THE PROBLEM
+Section 1. Collecting information on the problem 
+
+1.1. Describing the Problem: 
+
+ * Specify the problem you are having with your SQL Data Source; point out any error messages you see in the system logs or from another resource. 
+ * If the problem is reproducible, please include the steps you followed to reproduce the issue.
+
+
+1.2. Collecting information to debug the problem:  * Collect a configuration export and an error report. Steps to collect this information are provided in the technote "Collecting Data: WebSphere DataPower SOA Appliances problem determination" [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21235587]. 
+   Note: 
+   Enabling debug-level logging with the SQL endpoint configured will have a noticeable impact on DataPower performance. This is due to increased and enhanced diagnostics added to the 3.8.1 firmware release. The debug log is still a valuable, even essential, tool, but do expect it to slow performance. 
+ *  To enable additional tracing in addition to the debug log, open the SQL Data Source object on DataPower and add the parameter: "TraceFile" logtemp://<logfilename>.trace on the Data Source Configuration Parameters tab. 
+   The Value field can contain any target file: logtemp://<logfilename>.trace or (if a crash could occur and off-box logging is preferable), dpnfs://<logfilename>.trace . But the Name field must contain TraceFile. 
+   This TraceFile option causes a trace file to be created for each and every connection the SQL object initiates, and logs all data sent over that connection. This option has a small impact on DataPower overhead, much less than the debug logging has. 
+ * Gather any additional information which may not be contained on the device but instead on a remote SQL server (such as the product name and software version of your database application, and any errors logged there or any questionable behavior noted). 
+ * Provide sample request and response messages for the service(s) affected. 
+ * Depending on the problem, you may be asked to provide packet captures of the traffic entering or exiting the DataPower device. 
+
+
+
+Section 2. Preparing to contact IBM Support 
+1. Obtain the serial number of the appliance which experienced the problem. This is needed for IBM 
+entitlement processing, before a PMR can be created. Use the WebGUI, select Status > 
+System > Version Information, locate tag on the case of the appliance, or from the CLI use 
+"Show System" 
+2. Locate the firmware version of the appliance. Use the WebGUI, select Status > System > 
+Version Information or from the CLI use "Show Version" 
+3. Have your IBM customer number ready. 
+4. Determine a time for IBM remote support to call you to walk through these steps. 
+5. Determine the severity of your problem based on the Severity Levels table found in the following 
+technote: "WebSphere DataPower Extended Maintenance and Support Services". [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21254180#severity.] 
+6. Prepare to describe how the problem affects your business operations. 
+7. Determine which telephone number IBM should use to contact you concerning this problem report. 
+
+Section 3. Contacting IBM Support and sending your MustGather information to IBM support 
+1. Reference our technote for information on Contacting IBM WebSphere DataPower SOA Appliance Support [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21236322]. 
+2. After you have contacted IBM Support, a PMR number will be assigned.  * Reply to the email, or attach to the PMR via the SR, tool the information in the preceding sections. 
+ * Do not send any proprietary or confidential information from your company.

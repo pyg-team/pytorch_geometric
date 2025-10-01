@@ -1,0 +1,105 @@
+Title: IBM Steps to follow for Business Space when moving from a standalone LDAP to federated repositories with LDAP - United States
+
+Text:
+LDAP; StandAlone; Federated; Business Space TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ It is highly recommended that you finalize the security strategy before developing a large number of Business Space artifacts. If you are moving from a standalone LDAP to federated repositories with LDAP, you will need to ensure that the access for the existing spaces is configured manually. This technote lists the steps used when helping a customer recover access to the spaces after a move to federated repositories with LDAP. 
+
+SYMPTOM
+After moving from a standalone LDAP to federated repositories with LDAP, Business Space users may not have access to their previous spaces.
+
+
+CAUSE
+The format used for the userid in Business Space for a standalone LDAP, is different from the format used in Business Space for federated repositories with LDAP.
+
+ENVIRONMENT
+All
+
+DIAGNOSING THE PROBLEM
+If users are not unable to access their previous spaces or pages, after moving from a standalone LDAP to federated repositories with LDAP, use this technote to resolve the issue.
+
+RESOLVING THE PROBLEM
+The following steps are a circumvention and not a supported procedure by the products.
+
+
+
+
+
+The switch to federated repositories with LDAP requires these steps: 
+
+ 1. Get a text dump of the following tables from the Mashup/ Business Space database:  * SPACENODE_LOD 
+     * AC_MEMBER, 
+     * AC_RESOURCE, 
+     * AC_ROLE 
+     * ACCOUNT (Business Space V7.5 and later)
+    
+    
+ 2. Update the administrative user.  *  Check that the following Mashup Config Service properties are correct for the new security strategy:  * com.ibm.mashups.adminGroupName 
+        * displaySpaceAdminFeaturesGroup 
+        * MashupAdminForOOBSpace 
+        * noSecurityAdminInternalUserOnly
+       
+       
+    
+    
+ 3. Fix the space owners and access control:  * Method 1: The best recommendation is to use a new clean Mashup/Business Space database.  1.  Make notes of all the spaces in the system and who owns them. 
+        2.  Make notes of all the shares, and access levels for all the spaces and pages. 
+        3.  Export all the user spaces. 
+        4.  Reset the Business Space/Mashups database so they are clean with no current content. 
+        5.  Switch the security setup to use federated repositories with LDAP. 
+        6.  Change the adminGroupName value to just the login name value, rather than the full group DN. This does not need to be done with Business Space V7.5+ if the default J2EEAdmin.role is used. That will use the security role configured for Mashup and Business Space applications. 
+        7.  Start the system. 
+        8.  Before logging into Business Space, log into the WebSphere administrative console to set a runtime trace setting of: info:com.ibm.mm.was.user.*=all. 
+        9.  Log in as the admin user. After login, check the trace and validate that the user is being recognized as an admin. The trace will have a checkAdminUser() method trace point which will show if the user is recognized as an admin. Correct this situation as needed. 
+        10. Edit oobLoadedStatus.txt file to load the System Spaces. Then restart the WebSphere server.
+            Log into Business Space and verify that the Welcome space is shown. 
+        11. Have each space owner re-import their spaces and redo the shares or access to spaces and pages.
+       
+       
+     * Method 2: Use this method if you do not want to reset the database. You will need to work with IBM Support and Services team to ensure all steps are done correctly. Executing this method incorrectly can cause database corruption.  1. Make notes of all the spaces in the system and who owns them. 
+        2. Make notes of all the shares for all the spaces and pages. 
+        3. Delete the System Spaces. 
+        4. Switch the security setup to use federated repositories with LDAP. 
+        5. Update the administrator and administrative group rights:  * Business Space V7.0 only:  1. Update the ConfigService.properties file. Find the property value of com.ibm.mashups.adminGroupName=. 
+               2. Under a standalone system the property value is the full DN. Federated repositories configurations use the login name only (i.e. "administrators"). 
+               3. Run the Business Space task to update the WebSphere configuration with the value from this file. 
+               4. You can also change the above through the admin console.
+              
+              
+            * Business Space V7.5 and later:  1. Update J2EERole.Admin for the mm.was<NODE> application. 
+               2. The standalone LDAP configuration uses the full DN value and this should be changed to the short name: E.g. from uid=admin,cn=groups,dc=ibm,dc=com --> admin. 
+               3. This allows the designated administrator user to log in, and be recognized as a member of the above group or role. Log in as the administrative user and reassign the Space owners.
+              
+              
+           
+           
+        6. Edit the oobLoadedStatus.txt file to load the System Spaces. Then restart the WebSphere server.
+           Log in into Business Space and verify that the Welcome space is shown. 
+        7. For each space which now have an owner showing as "No owner", use Space Manager to find and assign the original owner to the space (Actions->Edit Settings->Change owner). The space record now gets an owner based on the externalID gathered from the LDAP, rather than the DN from the LDAP.
+           The original owner can be found in the table output referenced in step 1. 
+        8. The Space owners can now log in, and since they can see their spaces now, they will need to set up the Space shares again.
+       
+       
+    
+    
+ 4. Changing the admin user to an LDAP defined user:  * Typically the original defaultWIMFileBasedRealm consists of the contents in fileRegistry.xml. When Mashups are installed, they use fileRegistry.xml to store the admin user. Business Space V7.5.1 also configures the J2EEAdmin.Role for this admin user from fileRegistry.xml. 
+     * Administrators can add one or more LDAP Servers later. 
+     * The issue often arises that the implementer wants to use a user in the LDAP Server for administrative purposes, and disable the fileRegistry.xml as a source for users.
+    
+    
+
+
+Recommended procedure:  1. Enable additional user(s) and or group(s) from an LDAP Server for J2EERole.Admin. 
+ 2. Log in as the original admin user and transfer ownership of all non-System spaces to a new admin user. 
+ 3. Delete the Welcome space and other System spaces. 
+ 4. Use The WebSphere administrative console to remove the original file based repository. This will likely require new credentials for the Realm since the original admin ID is not going to be valid anymore. A Stop/Start will be required, so stop the server. 
+ 5. In ConfigServices.properties assign a new MashupAdminForOOBSpaces property value with a new admin user. Run the Business Space task to load this change. 
+ 6. Start the server and verify that admin users can log into the WebSphere administrative console. 
+ 7. Mark the oobLoadedStatus.txt file to re-import the OOB Spaces. 
+ 8. Restart the server and verify that the OOB Space (Welcome Space) is visible and is owned by the user designated in Step 5. 
+ 9. Verify that the admin users can see all the spaces on the system.
+    
+
+
+IMPORTANT: After moving to federated repositories with LDAP, you will need to delete the entries in the old format, from the following database tables: AC_MEMBER, AC_RESOURCE, AC_ROLE

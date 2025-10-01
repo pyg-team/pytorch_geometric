@@ -1,0 +1,37 @@
+Title: IBM Windows Updates fail with Outbound SSL inspection enabled on QRadar Network Security - United States
+
+Text:
+windows updates; outbound; ssl; failed; XGS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If Outbound SSL decryption is enabled on QRadar Network Security (XGS), Windows Updates fail. 
+
+RESOLVING THE PROBLEM
+To resolve the issue in firmware 5.3.1.1 or greater, add the following Outbound SSL Inspection Policy rule as defined below:
+
+Action: Ignore
+Source: Any
+Destination: Any
+Domain: Microsoft domain certificate
+
+To resolve this issue in versions 5.3.0.0 - 5.3.1.0, add an Outbound SSL Inspection Policy rule as defined below:
+
+Action: Ignore
+Source: Any
+Destination: Any
+Domain: Domain Certificate List
+
+Note: The Domain Certificate List Object should have *.update.microsoft.com in the URL List.
+
+This rule must be above the Source: Any, Destination: Any, Domain: Any, Action: Inspect rule. For example, if the Any, Any, Any, Inspect is rule 5, then the Windows Update rule needs to be positioned at 4 or less. 
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21903062&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21903062&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21903062&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21903062&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21903062&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21903062&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21903062&aid=7] [http://ibm.biz/ContactSecSupport] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Network Protection SSL Inspection Firmware 5.3.3

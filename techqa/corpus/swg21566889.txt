@@ -1,0 +1,29 @@
+Title: IBM Information Server DataStage ODBC Common Connector:Oracle NChar support - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Information Server ODBC common connector fails when reading or writing to Oracle table that contains an Nchar datatype 
+
+SYMPTOM
+When using the ODBC common connector to read or write to an Oracle table that contains an Nchar datatype. The following example error is reported: 
+
+When Reading:
+Message: ODBC_Connector_0: ODBC Info: SQLSTATE = HYC00: Native Error Code = 0: Msg = [IBM(DataDirect OEM)][ODBC Oracle Wire Protocol driver]Optional feature not implemented.
+
+When Writing to NChar(1) field:
+Message: ODBC_Connector_3,0: ODBC function "SQLExecute" reported: SQLSTATE = HY000: Native Error Code = 12,899: Msg = [IBM(DataDirect OEM)][ODBC Oracle Wire Protocol driver][Oracle]ORA-12899: value too large for column "STG"."NCHAR_TEST"."COL1" (actual: 4, maximum: 1) (CC_OdbcDBStatement::executeInsert, file CC_OdbcDBStatement.cpp, line 702)
+
+
+
+RESOLVING THE PROBLEM
+To resolve the issue. You need to insert/update the .odbc.ini file for the specific Oracle DSN as follows: 
+
+
+For NChar Read issue:
+EnableNcharSupport=1
+
+For NChar Write issue:
+ColumnSizeAsCharacter=1
+ColumnsAsChar=1

@@ -1,0 +1,18 @@
+Title: IBM PureApplication System Release Note: Scheduling a pattern to deploy at a later time results in an error on the Instances page. - United States
+
+Text:
+v2000rlsnotes RELEASE NOTES
+
+ABSTRACT
+ After scheduling a pattern for deployment at a future time, the Instances page for the pattern displays a blank page with an error message. The deployment still occurs, however. Use a CLI command to delete the instance if needed. 
+
+CONTENT
+Problem: You deploy a pattern and select to schedule the deployment to start at a later time. After completing the deployment request, when you open the virtual pattern instances page to display the status of the deploying pattern, the status of the instance is displayed as Queuing, but there is no detail displayed about the pattern. Instead, an error message is displayed:
+
+CMPRE0001E: An internal server error occurred.
+
+You cannot access the pattern deployment in the virtual pattern instances page.
+
+Resolution: The deployment of the pattern should still complete successfully, so you can usually disregard this error message and wait for the deployment operation to complete. If you need to delete the scheduled pattern deployment, you can use the Command Line Interface (CLI) command for deleting the appropriate virtual pattern instance. 
+
+See the product documentation for more information about using the CLI to list and delete virtual pattern instances.

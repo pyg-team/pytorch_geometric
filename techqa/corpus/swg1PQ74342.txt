@@ -1,0 +1,147 @@
+Title: IBM PQ74342: CSV002I REQUESTS FOR MODULE EKAPT EXCEED MAXIMUM USE COUNT (32K) - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer has kept his MPR region up and running for a month and
+   experiences the following error on module EKAPT:
+   .
+   CSV002I REQUESTS FOR MODULE EKAPT EXCEED MAXIMUM USE COUNT (32k)
+   .
+   which led to a EKA772E when his users went to the MSC panel.
+   The use count for any module is a hard limit of (32767) and that
+   is why they are seeing the CSV002I error message.  Everytime a
+   user goes to the MSC panel the EKAPT gets loaded by DSLSRVP and
+   it bumps up the 'use' count.  Once it reaches the limit (32K),
+   it issues the CSV002I error message.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: ALL MERVA ESA 4.1 USERS USING MSC FUNCTION   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: MAX. USE COUNT WAS EXCEEDED FOR MODULE  *
+   *                      EKAPT                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   DELETE MODULE EKAPT ON RETURN FROM FUNCTION MSC.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DELETE MODULE EKAPT ON RETURN OF FUNCTION MSC.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ74342
+   
+   
+ * REPORTED COMPONENT NAME
+   MERVA ESA 4.1.0
+   
+   
+ * REPORTED COMPONENT ID
+   5648B2900
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2003-05-19
+   
+   
+ * CLOSED DATE
+   2003-06-13
+   
+   
+ * LAST MODIFIED DATE
+   2003-07-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ77689
+   
+   
+
+MODULES/MACROS
+ *  EKAEMSC  EKAYIESC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MERVA ESA 4.1.0
+   
+   
+ * FIXED COMPONENT ID
+   5648B2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R410 PSY UQ77689 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ77689]
+   UP03/06/17 P F306
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

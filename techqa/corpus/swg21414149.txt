@@ -1,0 +1,47 @@
+Title: IBM How to install IBM Records Manager V8.5 on DB2 9.7, 10.1, or 10.5 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I install IBM Records Manager V8.5 on DB2 V9.7, V10.1 Fix Pack 3 or later, or V10.5? 
+
+ANSWER
+To install IBM Records Manager V8.5 on DB2 V9.7, V10.1 Fix Pack 3 or later, or V10.5, you must first copy some files from the appropriate IBM Records Manager V8.5 fix pack installation package to the IBM Records Manager V8.5 installation package. 
+To install IBM Records Manager V8.5 on DB2 V9.7, V10.1 Fix Pack 3 or later, or V10.5: 
+
+ 1. Copy the IBM Records Manager V8.5 installation package to the server on which DB2 is installed and on which you plan to install IBM Records Manager. 
+ 2. Download the appropriate fix pack, copy the installation package to the server on which you plan to install IBM Records Manager V8.5, and extract the files.  * For DB2 V10.5, download IBM Records Manager V8.5 Fix Pack 7. 
+     * For DB2 V10.1 Fix Pack 3 or later, download IBM Records Manager V8.5 Fix Pack 6 or later. 
+     * For DB2 V9.7, download IBM Records Manager V8.5 Fix Pack 2 or later.
+    
+    
+ 3. Copy the appropriate files from the fix pack installation package to the IBM Records Manager V8.5 installation package. Select the option to replace existing files.
+
+
+ *  64-bit Windows operating systems 
+   Copy the following files and directory:  * All files in the IRM 85 Patch\64 bit Windows directory 
+    * The entire _jvm64 directory
+   
+   
+   All other operating systems 
+   Copy all files in the IRM 85 Patch\Non 64 bit Windows patches\DB2 directory. 
+ * 
+ * 
+ * IRM 85 Patch\DB2 V9.7
+ * 
+ * 
+ *  
+ * 
+
+4. Run the IBM Records Manager V8.5 installation program. 
+5. Run the fix pack installation program. 
+If you want to upgrade an existing IBM Records Manager installation to DB2 V9.7, V10.1 Fix Pack 3 or later, or V10.5, first upgrade IBM Records Manager to the appropriate fix pack level and then upgrade DB2.
+
+RELATED INFORMATION
+ Download IBM Records Manager Version 8.5 Fix Pack 4 [http://www.ibm.com/support/docview.wss?rs=817&uid=swg24027883]
+Download IBM Records Manager Version 8.5 Fix Pack 5 [http://www.ibm.com/support/docview.wss?rs=817&uid=swg24030500]
+Download IBM Records Manager Version 8.5 Fix Pack 6 [http://www.ibm.com/support/docview.wss?rs=817&uid=swg24034413]
+Download IBM Records Manager Version 8.5 Fix Pack 7 [http://www.ibm.com/support/docview.wss?rs=817&uid=swg24037561]
+Installing IBM Records Manager V8.5 [http://www.ibm.com/support/knowledgecenter/SSRTHY_8.5.0/com.ibm.installingirm.doc/rminst0100.htm]
+Installing IBM Records Manager fix packs [http://www.ibm.com/support/knowledgecenter/SSRTHY_8.5.0/com.ibm.irmfpreadme.doc/irm_fpinstallintro.htm]

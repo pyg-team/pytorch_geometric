@@ -1,0 +1,28 @@
+Title: IBM How to create a multi-page portlet displaying horizontal tabs across the 
+top with each horizontal tabs containing a vertical multi-page layout. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ This document provides the steps necessary to produce a multi-page portlet with horizontal tabs accross the top and vertical tabs down the side. This provides easy navigation when the desire is to provide a series folder links across the top and each of these folders contains numerous reports. 
+
+ANSWER
+Create a nested Portal-Page layout.
+This document assumes that the user is familiar with the steps to create multi-page dashboard reports as outlined in the IBM cognos 8 BI Administration and Security Guide under the heading Pages and Dashboards > Create a Dashboard with Multiple Tabs.
+
+1. Create a Folder that will contain the Vertical portal pages.
+2. Create a Dashboard with Multiple (vertical )Tabs that references the folder containing one set of reports and save this within the folder created in Step 1 giving it a name that represents the reports contained within the folder. For example, using the Cognos Samples, create a Dashboard that has the target folder set to Cognos > Public Folders > GO Sales (query) > Event Studio Samples and name the Dashboard 'Event Studio Samples'.
+3. Repeat Step 1 for each folder that contains the target reports. For example, repeat the above steps setting the target folder Cognos > Public Folders > GO Sales (query) > Report Studio Report Samples and name the Dashboard 'Report Studio Samples'.
+4. Create a Dashboard with Multiple (Horizontal) Tabs that references the folder created in step 1
+
+When opening the Dashboard created in step 4, a nested Dashboard will be displayed with Horizontal tabs across the top showing 'Event Studio Samples' and 'Report Studio Samples'. Selecting the link for 'Report Studio Samples' will display a sub-dashboard with vertical links to the reports.
+
+RELATED INFORMATION
+ Administration and Security Guide [http://support.cognos.com/supported/docs/en/html/cognos8_bi/8.3/ug_cra_id13263CC_Create_Dashboard.html]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Business Intelligence Cognos Connection AIX, HP-UX, HP Itanium, Linux, Solaris, Windows 8.3, 8.4

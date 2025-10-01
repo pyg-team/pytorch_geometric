@@ -1,0 +1,66 @@
+Title: IBM Upgrading the v5.1 WebSphere Test Environment in WebSphere Studio - United States
+
+Text:
+Upgrade Test Environment 5.1.1; WTE; 5.1; 5.1.1; Test Environment; upgrade; fixpack; WebSphere; 1180428 TECHNOTE (FAQ)
+
+QUESTION
+ How do you upgrade the v5.1 IBM WebSphere Test Environment from WebSphere Application Server v5.1 to v5.1.1. 
+
+ANSWER
+
+To upgrade the v5.1 WebSphere Test Environment (WTE) from v5.1 to v5.1.1 you will need to obtain the WebSphere Application Server (WSAS) Version 5.1 Fix Pack 1 (Version 5.1.1) from the WSAS 5.1 FixPack 1 (5.1.1) link (below). If you are looking for the Windows upgrade, then look under section "Download Package" and download "Windows Base" or if you are looking for the Linux upgrade, then download "Linux on Intel Base", etc.)
+
+Note(s): 
+
+ * You can check your WSAS version before and after the update using: <WebSphere Studio Installation Directory>\runtimes\base_v51\bin\versionInfo 
+ * The following installation instructions can also be used in applying any subsequent v5.1.1.x update over v5.1.1. This is especially applicable in the case of Rational Application Developer(RAD) v6 which ships with WTE v5.1.1. 
+ * For upgrading WTE/WSAS v6 in RAD v6, see Related Infromation item: Upgrading the WTE V6 in Rational Application or Web Dev.
+   
+
+
+
+WebSphere Application Server Fixpack Installation Instruction adapted for the WebSphere Studio v5.1 WebSphere Test Environment server 
+
+These modified instructions are a simplified supplement and not a replacement for the WSAS Fix Pack Installation Instructions.To apply this fixpack to your Test Environment, perform the following 6 steps: 
+ 1. Ensure all Test Environments are stopped and shutdown WSAD. 
+ 2. Extract the v5.1.1 WebSphere Application Server update to a temporary directory (e.g. c:\temp\was511) 
+ 3. Open a command-prompt and execute the batch file:  * <WebSphere Studio Installation Directory>\runtimes\base_v51\bin\setupCmdline.bat
+    
+    
+ 4. In the same command-prompt change to the temporary directory that you extracted the v5.1.1 fixpack and execute the updateWizard.bat batch file. 
+ 5. Using the wizard, install the v5.1.1 WebSphere Application Server update to the "runtimes\base_v51" directory of the WSAD installation directory. When prompted by the Update Installer about the server location, provide the following folder:  * <WebSphere Studio Installation Directory>\runtimes\base_v51
+    
+    
+ 6. When the upgrade is complete, please follow the instructions in the 'Using WTE 5.1.1' document link below.
+
+
+Notes:
+ * You can leave the "IBM HTTP Server" box unchecked at the Features screen. The WTE uses the embedded HTTP server so it is normal that the installer cannot find an HTTP server installation directory. 
+ * In the Features Screen, "Embedded Messaging" box should normally be checked if WebSphere Embedded Messaging is shown in the Installation directory. 
+   
+   Embedded Messaging is an optional WSAD v5.1.x install. It is recommended that it be installed and be used for any JMS or MDB EJB work if you are not using the full stand-alone IBM WebSphere MQ product. It is installed into a directory separate from WSAD (e.g. C:\Program Files\IBM\WebSphere MQ). If the features screen shows it as installed, make sure it is not the "full" stand-alone IBM WebSphere MQ product since this update would not apply. If Embedded Messaging is installed, it is suggested to choose the WebSphere MQ update as it will give you the latest supported level.
+   
+   
+ * For all WSAS v5.x version updates, should you have problems with the "updateWizard" failing close to the finish, especially as it affects the install of an item referred to as "webui", consult the technote: 
+   "IOException creating Runtime()" error when installing webui component
+   which also refers to:
+   updateInstaller logs a NoClassDefFoundError while applying fix pack or interim fix to WebSphere Application Server version 5
+   
+ *  Any recommended WSAS v5.1.1.x Java SDK updates should be applied after the server is upgraded. This information is available from the Related information item: Verify Java SDK version shipped with WebSphere Application Server fix packs.
+   
+
+
+
+
+RELATED INFORMATION
+#Using WTE 5.1.1 [http://www.ibm.com/support/docview.wss?uid=swg21178000]
+WSAS Support - downloads [http://www.ibm.com/software/webservers/appserv/was/support/]
+Upgrading the WTE V6 in Rational Application or Web Dev [http://www.ibm.com/support/docview.wss?uid=swg21199423]
+Verify Java SDK version shipped with WebSphere Applicat [http://www.ibm.com/support/docview.wss?uid=swg27005002]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Application Developer for WebSphere Software -

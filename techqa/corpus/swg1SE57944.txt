@@ -1,0 +1,154 @@
+Title: IBM SE57944: MQM400 CUMULATIVE #70112 FIX PACK (WMQ V7.0.1 COMMANDS & OPS) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MDV service delivery for WebSphere MQ v7.0.1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Collective service MDV 7.0.1.12 for WebSphere MQ v7.0.1
+   
+   Details of problems fixed for the WMQ server product (5724H72)
+   are included in APAR SE57944.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Collective service MDV 7.0.1.12 for WebSphere MQ v7.0.1
+   - which contains fixes for all the problems listed below:
+   .                                                              .
+   IV51966 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV51966] - WEBSPHERE MQ V7.0.1 DISPLAY OF CHANNEL STATUS SHOWS  .
+             MCAUSER( )                                           .
+   IV51517 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV51517] - WHEN INVOKING A WEBSPHERE MQ SERVICE VIA RUNMQSC,    .
+             STARTARG FOR USER DEFINED TOKENS ARE LIMITED TO 255  .
+             CHARACTERS                                           .
+   IV51415 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV51415] - WEBSPHERE MQ 7: AMQ9573 GENERATED WHEN A CHANNEL IS  .
+             UNAVAILABLE                                          .
+   IV51059 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV51059] - PROBE ID XC307009 FROM XLSREQUESTMUTEXSEM AS SEMAPHORE
+             EYECATCHER IS CORRUPT                                .
+   IV50782 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV50782] - WEBSPHERE MQ V7 REPORTS FDC PROBEID KN468004 FROM    .
+             KPIDURABLESUBSCRIPTIONMANAGERTASK KRCE_SUB_ALREADY_E .
+   IV50524 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV50524] - REFRESH CLUSTER OPERATION FAILED AND DID NOT WRITE ANY
+             ERROR MESSAGES WARNING OF THIS FACT                  .
+   IV50422 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV50422] - DSPMQ REPORTS A MULTI-INSTANCE QUEUE MANAGER AS      .
+             RUNNING ELSEWHERE WHEN IT IS NOT                     .
+   IV50411 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV50411] - WMQ V701 - RUNMQSC "START SERVICE" COMMAND RESULTS IN.
+             FILE SERVICE.ENV BEING OPENED AND NEVER CLOSED       .
+   IV49602 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV49602] - MEMORY EXCEPTION AND POSSIBLE LOSS OF FUNCTION IN    .
+             WEBSPHERE MQ APPLICATION                             .
+   IV48864 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV48864] - WEBSPHERE MQ AMQ9999 AND AMQ9637 MESSAGES DO NOT     .
+             CONTAIN ENOUGH INFORMATION                           .
+   IV47785 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV47785] - WEBSPHERE MQ JAVA/JMS V7.0.1: FDC FILES WITH PROBLEM .
+             ID JO076001 AND JO205001 ARE GENERATED FOLLOWING A   .
+             REMOTE CONNECTION                                    .
+   IV47426 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV47426] - QUEUE MANAGER OR STRMQM HANG WITH FDC AO199010       .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SE57944
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ ISERIES V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7226
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-01-24
+   
+   
+ * CLOSED DATE
+   2014-01-24
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    506PC14 SI52649
+   
+   
+
+MODULES/MACROS
+ *  RCHMGR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ ISERIES V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7226
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY SI59942
+   UP16/08/25 I 1000
+   
+   
+ * R710 PSY
+   UP

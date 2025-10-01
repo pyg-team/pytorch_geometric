@@ -1,0 +1,74 @@
+Title: IBM Database transfer failing with error ADMC0009E - United States
+
+Text:
+ADMC0009E; database-transfer TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When attempting to perform a database-transfer it fails with the following message in the ConfigTrace.log...
+
+ADMC0009E:
+The system failed to make the SOAP RPC call: invoke
+
+SYMPTOM
+The ConfigTrace.log shows the following....
+
+[wplc-create-jdbc-provider] JDBCProvider wpdbJDBC_db2 create fail.
+
+[wplc-create-jdbc-provider]
+com.ibm.websphere.management.exception.ConfigServiceException:
+com.ibm.websphere.management.exception.ConnectorException: ADMC0009E:
+The system failed to make the SOAP RPC call: invoke
+
+[wplc-create-jdbc-provider] at
+com.ibm.websphere.management.configservice.ConfigServiceProxy.resolve(Co
+nfigServiceProxy.java:521)
+
+....
+
+[wplc-create-jdbc-provider] Caused by: [SOAPException:
+faultCode=SOAP-ENV:Protocol; msg=Unsupported response content type
+"text/html", must be: "text/xml". Response was:
+[wplc-create-jdbc-provider] <HTML><TITLE>500 - Internal Server
+Error</TITLE><BODY><h1>500 </h1></BODY></HTML>
+
+The Portal SystemOut.log shows the following...
+
+WSVR0501E: Error
+creating component null [class
+com.ibm.ws.runtime.component.ResourceMgrImpl]
+com.ibm.ws.exception.WsRuntimeException:
+com.ibm.ws.exception.ConfigurationError: org.xml.sax.SAXParseException:
+Premature end of file.
+
+The DMGR SystemOut.log shows the following....
+
+ADMG0003E: The
+system failed to load document
+com.ibm.websphere.management.exception.ConfigDocumentLoadException:
+ADMG0003E: The system failed to load document
+cells/PortCell01/clusters/PortalCluster/resources.xml.
+
+
+
+
+CAUSE
+In this case, the problem was because the resources.xml file existed but it had nothing in it.
+
+ENVIRONMENT
+AIX
+Portal 8.0x
+DB2
+Cluster
+
+DIAGNOSING THE PROBLEM
+Review of the ConfigTrace.log shows an error with SOAP communication. A SOAP connection occurs when the config task wants to edit a configuration resource on the DMGR. Review of the Portal SystemOut.log and DMGR SystemOut.log shows the following...
+
+ADMG0003E: The system failed to load document
+cells/PortCell01/clusters/PortalCluster/resources.xml
+
+Review of the resources.xml revealed the problem.
+
+
+
+RESOLVING THE PROBLEM
+In this case, we replaced the empty resources.xml on the DMGR with a copy from another node in the cluster and re-ran the database-transfer task

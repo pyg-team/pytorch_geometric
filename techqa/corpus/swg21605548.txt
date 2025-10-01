@@ -1,0 +1,50 @@
+Title: IBM Fixpack upgrade fails during the action-deploy-portlets-wp.bp.feedspace subtask - United States
+
+Text:
+cluster upgrade; fixpack fails TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The fixpack upgrade fails during the action-deploy-portlets-wp.bp.feedspace subtask using the XMLAccess utility.
+
+SYMPTOM
+Checking the ConfigTrace.log, the upgrade fails here on the XMLAccess utility:
+
+action-deploy-portlets-wp.bp.feedspace:
+[copy] Copying 1 file to /opt/WebSphere/AppServer61/profiles/wp_profile/ConfigEngine/config/work
+[xmlaccess] EJPXB0006I: Connecting to URL "http localhost:10040/wps/config/"
+[xmlaccess] EJPXB0002I: Reading input file /opt/WebSphere/AppServer61/profiles/wp_profile/ConfigEngine/config/work/DeployPortlets.xml
+[xmlaccess] <!-- 1 [web-app uid=FeedspacePortletApplication.webmod] -->
+[xmlaccess] <request xmlns:xsi="http www.w3.org/2001/XMLSchema-instance" build="wp6106_038_01" type="update" version="6.1.0.6" xsi:noNamespaceSchemaLocation="PortalConfig_6.1.0.2.xsd">
+[xmlaccess] <status element="[web-app uid=FeedspacePortletApplication.webmod]" result="failed">
+[xmlaccess] <message id="EJPXA0043E">com.ibm.wps.command.xml.XmlCommandException: EJPXA0043E: An error occurred while creating or updating the resource. [web-app uid=FeedspacePortletApplication.webmod]</message>
+[xmlaccess] <message id="EJPPD0015E">com.ibm.wps.command.CommandFailedException: EJPPD0015E: Portlet application manager failed when user xmlaccess scripting user executed command InstallWebApplication.
+[xmlaccess] WrappedException is: com.ibm.wps.pe.mgr.exceptions.AppServerWarInstallException: EJPPE0013E: Installation of Web Module from WAR file /opt/WebSphere/AppServer61/profiles/wp_profile/PortalServer/deployed/SyndicatedFeedPortlet.war failed.</message>
+[xmlaccess] <message id="EJPPE0013E">com.ibm.wps.pe.mgr.exceptions.AppServerWarInstallException: EJPPE0013E: Installation of Web Module from WAR file /opt/WebSphere/AppServer61/profiles/wp_profile/PortalServer/deployed/SyndicatedFeedPortlet.war failed.</message>
+[xmlaccess] <message id="EJPPE0001E">com.ibm.wps.pe.mgr.exceptions.InstanceException: EJPPE0001E: Instantiation of AppServerAdminManager failed.</message>
+[xmlaccess] <message id="EJPPH0007E">com.ibm.wps.pe.mgr.exceptions.InstanceException: EJPPH0007E: Instantiation of the administration module for Portal context failed.</message>
+[xmlaccess] <message id="EJPPH0010E">com.ibm.wps.pe.mgr.exceptions.InitException: EJPPH0010E: Failed to retrieve and initialize runtime variables from Application Server.</message>
+[xmlaccess] <message>com.ibm.websphere.management.exception.AdminException: com.ibm.websphere.management.exception.ConnectorNotAvailableException</message>
+[xmlaccess] </status>
+[xmlaccess] </request>
+
+
+CAUSE
+ConnectorNotAvailableException is the root cause of this issue. This exception usually means that Portal is unable to communicate with the DMGR. This could mean that the DMGR was down or that the nodeagent was down as Portal communicates to the DMGR through the node agent.
+
+
+DIAGNOSING THE PROBLEM
+Based on the root exception noted in the configTrace.log 
+
+1. Confirm that DMGR was started.
+2. Confirm that node agent was started. 
+
+3. If both are running, request DMGR and nodeAgent logs. 
+
+Reviewing the DMGR and nodeAgent systemOut.log the issue was noted:
+
+ADMD0026W: The version of the deployment manager (6.1.0.29) is earlier
+than that of this node (portalNode, 6.1.0.41)
+
+
+RESOLVING THE PROBLEM
+At a minimum, upgrade the DMGR's WAS version to match the version of the Portal's WAS version. The DMGR's WAS version can be greater.

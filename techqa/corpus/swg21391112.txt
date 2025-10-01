@@ -1,0 +1,18 @@
+Title: IBM ITCAM for J2EE JBOSS Application Server configuration - United States
+
+Text:
+ITCAM J2EE JBOSS Jboss manual configuration TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ What is the procedure for manually configuring the ITCAM for J2EE Data Collector running JBOSS application server? 
+
+ANSWER
+Please see the attached document. It describes the steps to do manual configuration of the JBoss App Server.
+
+Manual configuration steps for ITCAMfJ2 for JBoss.doc [/support/docview.wss?uid=swg21391112&aid=2] [/support/docview.wss?uid=swg21391112&aid=1] 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfJ2EE

@@ -1,0 +1,22 @@
+Title: IBM Cannot execute a DVS test in a migrated workspace - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ JVM error when executing a Decision Validation Services (DVS) test in a workspace migrated from 7.1. 
+
+SYMPTOM
+Getting one of the following errors when executing a rule project with the 'DVS Excel file' launch configuration:
+
+
+Java(TM) Platform SE Binary has stopped working. - Or - 
+An unhandled win32 exception occurred in javaw.exe. 
+CAUSE
+As indicated in the documentation at Migrating from JRules > Migrating from JRules V7 > How to migrate from JRules V7 [http://publib.boulder.ibm.com/infocenter/dmanager/v7r5/topic/com.ibm.decisions.migrating.jrules/Content/Business_Rules/_pubskel/Infocenter_Primary/ps_Decisions_Rules_Migrating40.html], you must import rule projects into a new workspace to migrate them.
+
+RESOLVING THE PROBLEM
+Importing the projects to migrate into a new 7.5 workspace solves the issue.
+
+RELATED INFORMATION
+#Migrating from JRules to WODM/ODM [http://www.ibm.com/support/docview.wss?uid=swg21589725]

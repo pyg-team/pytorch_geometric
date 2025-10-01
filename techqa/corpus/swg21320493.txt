@@ -1,0 +1,59 @@
+Title: IBM CEE3250C abend SEC6 BBOO0334E IEA995I completion code 4039 and Daemon address space abends - United States
+
+Text:
+dmn damon TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your daemon address space for WebSphere® Application Server for z/OS® V7.0 abends with a CEEDUMP similar to the following:
+
+
+IEA995I SYMPTOM DUMP OUTPUT 095
+USER COMPLETION CODE=4039 REASON CODE=00000000
+TIME=13.30.21 SEQ=15732 CPU=0000 ASID=0250
+PSW AT TIME OF ERROR 072D1401 AC8C5C0A ILC 2 INTC 0D
+ACTIVE LOAD MODULE ADDRESS=2C507000 OFFSET=003BEC0A
+NAME=CELQLIB
+DATA AT PSW 2C8C5C04 - 00181610 0A0DB914 003FEB4F
+AR/GR 0: AAD78EDE/00000000_84000000 1: 00000000/00000000_84000FC7
+2: 00000000/00000001_082FAB40 3: 00000000/3C100000_00000000
+4: 00000000/00000001_082F9640 5: 00000000/00000000_2C8C5C68
+6: 00000000/00000000_2C8C5B70 7: 00000000/00000000_2C6B8C26
+8: 00000000/00000001_082FAB40 9: 00000000/00000000_2C8C5C0A
+A: 00000000/00000001_082FA7FF B: 00000000/00000001_082FAB40
+C: 00000000/00000001_082FA848 D: 00000000/00000001_082FD3C0
+E: 00000000/00000001_00005DC8 F: 00000000/00000000_00000000
+END OF SYMPTOM DUMP
+
+From the corresponding CEEDUMP:
+Traceback:
+
+CEEHDSP
+CEEOSIGJ
+CELQHROD
+CEEOSIGG
+CELQHROD
+bbodbdld(char*,char*,bgvt*,CSVDYLPA_area*,unsigned int*,char
+main
+CELQINIT
+
+Original Condition:
+CEE3250C The system or user abend SEC6 R=0F01C001 was issued. 
+
+CAUSE
+Starting in V7, WebSphere Application Server for z/OS now loads all it's needed load modules from the HFS rather than load libraries. This simplifies the configuration of WebSphere Application Server for z/OS by not requiring any PDSes to run WebSphere and thus not requiring any STEPLIB statements in the JCL. In order for this function to work, three UNIX System Services APARS are required however. They are: OA22093, OA22094 and OA25489. 
+
+If you have OA22093 and OA22094 applied but have not applied OA25489 yet, you will see the following error message instead: 
+
+
+BBOO0334E ADD TO LPA FAILED FOR MODULE bbodpcrt RETURN=8 
+REASON=0000083D ERRORDATA=00 LPMEAOUTPUTINFO=0000 00000000 00000000. 
+
+
+
+
+RESOLVING THE PROBLEM
+To allow your Daemon address space to start, you should apply the three required APARs: 
+
+ * OA22093 available in PUT 0806 / RSU 0809 
+ * OA22094 available in PUT 0806 / RSU 0809 SUP'd by RSU 0907 
+ * OA25489 available in PUT 0807 / RSU 0809

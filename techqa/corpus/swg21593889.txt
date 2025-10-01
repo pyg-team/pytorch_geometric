@@ -1,0 +1,58 @@
+Title: IBM TEM Server SQL Server database Upgrade Issue - United States
+
+Text:
+TEM SQL Server upgrade failure; Database Error; Invalid column name; inconsistent state ; Database; Server; SQL; Installation TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ "Database Error"
+"The database appears to be in an inconsistent state. Please contact your support representative. Database Error: [Microsoft][SQL Server Native Client 10.0][SQL Server]Invalid column name 'Username'. (S0022:207)" 
+
+SYMPTOM
+TEM Server upgrade fails
+
+
+CAUSE
+Database Collation changed, either on the entire database or individual tables 
+
+ENVIRONMENT
+Microsoft SQL Server
+
+RESOLVING THE PROBLEM
+To Check to see what your collations are, you may need assistance from your DBA. 
+
+
+There are three possible places where collation could be changed that should be double checked, and make sure that they are all set to be the same value. Run the following SQL Server Queries, from the SQL Server Management Studio;
+
+1. At the SQL server instance level 
+
+
+ * SELECT ServerProperty('Collation') 
+
+
+2. At the database level. 
+ * SELECT DatabasePropertyEx( 'BFEnterprise', 'Collation' )
+
+
+3. At the column level in the database, some of the system columns might be in a different collection. 
+ *  SELECT C.name, O.name, C.collation_name 
+ * 
+ *  from BFEnterprise.sys.columns C, BFEnterprise.sys.all_objects O 
+ * 
+ *  where C.collation_name is not NULL 
+ * 
+ *  and C.object_id = O.object_id
+
+
+
+
+If the Server collation is different from the database collation and/or the collation of the columns in the database. You must manually correct the collation, they must all be the same. 
+
+As a standard configuration, use the CI - Case Insensitive collation setting, if you us the CS - Case Sensitive collation, there will be issues with mixed case characters. 
+
+Collation setting Example; 
+
+Case Insensitive Collation uses SQL_Latin1_General_CP1_CI_AS - (use this one for TEM) 
+Case Sensitive Collation uses SQL_Latin1_General_CP1_CS_AS 
+
+You can change the collation for the server, database, and columns using the instructions at 
+ * http://msdn.microsoft.com/en-us/library/ms177439.aspx

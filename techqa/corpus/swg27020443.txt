@@ -1,0 +1,41 @@
+Title: IBM Webcast replay: The CICS-MQ Adapter - How to Use a CICS System Dump to Investigate Hangs - United States
+
+Text:
+MQ WMQ CICS adapter CTHREAD MAXOPENTCBS HANG WAIT DUMP troubleshooting debugging dumps wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; 5655M1500 R650 650 R500 500 HCI6500 5655-M15 5655M15 ; 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 KIXINFO retention41 WEBCAST
+
+ABSTRACT
+ How do you mine a CICS system dump for information about tasks that are hung making WebSphere MQ calls? Is control in MQ? What is the call? What program made the call? How long has control been in MQ? 
+This Support Technical Exchange explores these questions and more using CICS and MQ dump formatters and Fault Analyzer.
+
+
+Level of Difficulty: Intermediate 
+
+Presenter: Dan Zachary
+
+Date: 9 December 2010 
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]WSTE-12092010-CICSMQAdapterHowtoUseCICSSystemDumpInvestigateHangs-Zachary.pdf [/support/docview.wss?uid=swg27020443&aid=2] WSTE-12092010-CICSMQAdapterHowtoUseCICSSystemDumpInvestigateHangs-Zachary.pdf [/support/docview.wss?uid=swg27020443&aid=1]
+
+
+Click the PDF file above to play the slide presentation for this Webcast. Right-click and select Save As to store the file on your local computer for later review.
+
+Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]To replay the recording of this 38 minutes Webcast, click on Download Audio [ftp://public.dhe.ibm.com/software/websphere/techexchange/Dec-09-2010-Zachary.mp3] (4.0MB - audio in MP3 format) then open the PDF file above.
+
+Right-click and select Save As to store the file on your local computer for later playback.
+
+Problem listening to the audio replay?
+If you are having a problem listening to the audio when you use a left-click on the audio link above, you need to download the MP3 file to your local computer before playback by doing a right-click and Save As.
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchanges [http://www.ibm.com/software/websphere/webcast]
+Other CICS Support Technical Exchanges [http://www.ibm.com/support/docview.wss?uid=swg27007244]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

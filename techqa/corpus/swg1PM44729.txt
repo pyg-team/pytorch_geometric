@@ -1,0 +1,179 @@
+Title: IBM PM44729: AXIS 1.X CALLBACK SHOULD HANDLE EXCEPTION BY AXISCLIENT'S INVOKE METHOD. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Please refer to internal CMVC defect 211118
+   
+   Managing Server: ITCAM for AD 7.1
+   Data Collector: ITCAM for AD 7.1
+   
+   Environment Details:
+   
+   OS Information: Windows
+   AppServer: WAS 6.1
+   J2EE Application: Axis 1.4.x
+   
+   Steps to reproduce:
+   
+   The issue was uncovered when working on Axis1.4. Code segment
+   below recreated the issue:
+   
+   try {
+   
+   CalculatorService service = new CalculatorServiceLocator();
+   
+   // get service
+   Calculator calc = service.getCalculator();
+   
+   // create stub
+   org.apache.axis.client.Stub s = (org.apache.axis.client.Stub)
+   calc;
+   
+   // set timeout
+   setTimeout(2000);  // 2 second, in milliseconds
+   out.println("timeout is " + 2000 + " milliseconds");
+   
+   // invoke sleep operation with 5000 to trigger timeout and
+   client side exception
+   calc.sleep(5000);
+   
+   } catch (Exception e) {
+   e.printStackTrace();
+   out.println("Exception " + e);
+   }
+   
+   LOCAL FIX:
+   
+   Comment out ws.instrument=true at
+   DCHOME/runtime/node.server/datacollector.properties
+   
+   If ws.instrument=true is commented out or set to a value of
+   false (ws.instrument=false), Web Service monitoring is disabled
+   and stack corruption can be prevented.
+   
+   Code Fix:
+   
+   Refer to track 211118.
+   AXIS 1.x callback should handle exception by AxisClient's
+   invoke() method to prevent DC side stack corruption.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Comment out ws.instrument=true at
+   DCHOME/runtime/node.server/datacollector.properties
+   
+   If ws.instrument=true is commented out or set to a value of
+   false (ws.instrument=false), Web Service monitoring is disabled
+   and stack corruption can be prevented.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Unhandled exception.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | interim fix | 7.1.0.2-TIV-ITCAMAD-IF0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM44729
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92DC
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-29
+   
+   
+ * CLOSED DATE
+   2011-09-01
+   
+   
+ * LAST MODIFIED DATE
+   2011-09-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92DC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

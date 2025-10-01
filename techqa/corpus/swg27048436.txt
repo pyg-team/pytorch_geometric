@@ -1,0 +1,26 @@
+Title: IBM Middleware for monitoring services in PureApplication System Version 2.2.1.0 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The following pattern types are supported for use with the PureApplication System Version 2.2.1.0 monitoring services for middleware. 
+
+CONTENT
+The Monitoring Agent for DB2 supports the following patterns: 
+
+ * Default DB2 Datamart pattern 
+ * Default DB2 BLU Datamart pattern 
+ * Default DB2 OLTP pattern 
+ * Default DB2 OLTP pattern with HADR 
+ * Hypervisor pattern for DB2 (DB2 Hypervisor Edition) 
+ * Business Process Manager (BPM) pattern 
+
+In the case of a monitoring agent that supports only classic virtual system patterns or virtual system patterns, the following following patterns are supported:  * For classic virtual system patterns, the Monitoring Agent for DB2 supports:  * Hypervisor pattern for DB2 (DB2 Hypervisor Edition) 
+    * BPM pattern 
+   
+   
+ * For virtual system patterns, the monitoring agent supports all virtual system patterns provided. 
+
+In the case of a monitoring agent that is only supported on Intel, AIX or both, the following patterns are supported:  * For Intel, the monitoring agent supports all patterns. 
+ * For AIX, the MQ pattern is not supported.

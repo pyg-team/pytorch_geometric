@@ -1,0 +1,193 @@
+Title: IBM PJ36105: DOCUMENT CLASS PROPERTIES ARE BEING CHANGED FROM ARABIC CHARACTE RS TO NUMERIC WHEN THE PROPERTIES ARE VIEWED VIA IDMWS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Property values are being changed from Arabic characters to
+   numeric characters when a user views the properties of an item
+   already added to the library system via IDM Web Services.  This
+   does not happen with IDM Desktop clients.
+   What sequence of events led up to or revealed the problem? :
+   Using IDMWS in an Arabic environment.
+   Is the problem reproducible on the customer{ascii_value:146}s
+   system? Yes
+   [Yes, only one system / Yes, across all systems (e.g. PROD,
+   DEV, TEST) / No] Prod.
+   Is the problem reproducible in-house? Yes
+   FRC{ascii_value:146}s in-house lab details: Contact Fred Dunne
+   to arrange access to the system.
+   How long has the problem been occurring (recent changes)? :
+   Since upgrading to IDMWS 4.0.  Customer stated that this does
+   not occurr with IDMWS 3.3.
+   Is there a workaround? : No
+   What is the impact to the customer/system? : They are partners
+   in Kuwait and their customers and their own language is
+   Arabic, so they require that the FileNet software does not
+   change their language to a series of numbers.
+   Does this occur on more than one station? : Yes
+   What was running on station/system/other displays at the time?
+   : MSIE and IDMWS
+   If something did not work as anticipated, what was expected? :
+   For the characters in the Document Class property fields to
+   stay as they left them.
+   What happened instead? : The arabic characters got changed to
+   numeric characters
+   Are there any similar or related DTSs? : None for Arabic that I
+   could see.
+   Product: IDM Desktop/Web
+   Release: 4.0P
+   Steps to Reproduce: Full FRC{ascii_value:146}s in-house system
+   configuration (including patch level):
+   Web Server
+   Windows 2003 sp1
+   IIS 6.0
+   IDMSW 4.0 patch 9 INSO 8.1
+   JVM - Sun 1.5_06 ( NOTE: The customer is using Windows 2000 and
+   MSJVM )
+   CS 5.4 sp2 Client libraries
+   Region settings : Arabic/Kuwait
+   CS server and Property Manager
+   Windows 2003
+   MSSQL2k sp3a
+   CS 5.4 sp2
+   Region settings Arabic
+   RDB Sort code: Arabic, case-insensitive, accent-insensitive,
+   kanatype-insensitive, width-insensitive
+   Once you have the above setup and working then your good to
+   move in to the reproduction steps.
+   1_. Open IDMWS and log into your CS library.
+   2_. Click on the "Add Document" button.
+   3_. Select "Add External Document" and click next.
+   4_. Select a the Document Class "General".
+   5_. In the property field called "Title" add in a value using
+   Arabic characters.
+   6_. Click Finish and close.
+   7_. Still in IDMWS select the radio button for you newly added
+   item.
+   8_. Click on the "Properties" button.
+   9_. Notice that your values are still in Arabic.
+   10_. Click the OK button, even though you did not make any
+   changes to the values.
+   11_. Now you will notice that there is numbers where there was
+   Arabic characters.
+   Database: N/A
+   Frequency: Recurring
+   Call Tracking ID: 20017914
+   Env_Comments: Full FRC{ascii_value:146}s in-house system
+   configuration (including patch level):
+   Web Server
+   Windows 2003 sp1
+   IIS 6.0
+   IDMSW 4.0 patch 9 INSO 8.1
+   JVM - Sun 1.5_06 ( NOTE: The customer is using Windows 2000 and
+   MSJVM )
+   CS 5.4 sp2 Client libraries
+   Region settings : Arabic/Kuwait
+   CS server and Property Manager
+   Windows 2003
+   MSSQL2k sp3a
+   CS 5.4 sp2
+   Region settings Arabic
+   RDB Sort code: Arabic, case-insensitive, accent-insensitive,
+   kanatype-insensitive, width-insensitive
+   Track Releases Database: N/A
+   Track Releases Name: 4.0.1P
+   Track Releases Platform: Win32
+   Track Releases Status: Re-Open
+   Releases: 4.0.1P * IDM Desktop/Web * Win32 * N/A * Re-Open
+   Target Product: IDM Desktop/Web
+   Target Release: 4.0.1P
+   URL to Original DTS Defect:
+   http://hqdtsweb2/cqweb/main?command=GenerateMainFrame&service=C
+   Q&schema=FNPROD&contextid=FNDTS&entityID=33739966&entityDefName [http://hqdtsweb2/cqweb/main?command=GenerateMainFrame&service=CQ&schema=FNPROD&contextid=FNDTS&entityID=33739966&entityDefName]
+   =Defect
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Fixed in IDM-4.0.1-008
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ36105
+   
+   
+ * REPORTED COMPONENT NAME
+   IDM DESKTOP
+   
+   
+ * REPORTED COMPONENT ID
+   5724R9401
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-04-03
+   
+   
+ * CLOSED DATE
+   2009-11-09
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

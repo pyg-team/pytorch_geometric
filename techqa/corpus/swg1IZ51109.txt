@@ -1,0 +1,157 @@
+Title: IBM IZ51109: ITM6.2-SYBASE AGENT CREATES TEMP FILES IN %WINDIR%\TEMP - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer would like a provisional fix to address the
+   following issues:
+   
+   
+   
+   1.) temp files accumulating when there is an error with the
+   Sybase agent . In the
+   customers case, they
+   were accumulating in the winnt\system32 directory. It was
+   mentioned that
+   this was fixed in 6.1.2 and 6.2.1 but not 6.2.0.
+   
+   2.) If there is an error of any kind with the agent, the agent
+   should still effectively clean up the temp files from the saved
+   location. However, the only time the customer sees the cleanup
+   is when the agent is running without error, otherwise the files
+   are not removed from the directory.
+   
+   
+   
+   
+   
+   
+   Additional info:
+   
+   The defect that addresses the temp file location is d69735.
+   This
+   defect seems to have been placed in v6.2.1 and 6.2.1 but not
+   6.2.0.
+   
+   The customer is seeing the same issue with the MSSQL agent,
+   which is addressed in another pmr and apar
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ITM sybase agent v620 creates leaves many temporary file in
+   %WINDIE%\system32 directory.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Port the relevant code changes to kdd component from defect
+   69735.
+   Changes include:
+    1. Temporary file will be created in a new temporary directory
+   unique to each agent and database instance, for sybase agent,
+   the temp directory will locate in
+   "%CANDLEHOME%\TMAITM6\logs\tmp\KOY\<instancename>" instead of
+   "c:\winnt\system32".
+   
+    2. Temporary file names are in format "KOY_<timestamp>.in" and
+   "KOY_<timestamp>.out".  <timestamp> should be replaced by real
+   timestamp of the file creation.
+   
+   The fix is included in 6.2.0-TIV-ITM_SYB-IF0003.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ51109
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON SYBASE
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96SO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-12
+   
+   
+ * CLOSED DATE
+   2009-06-08
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON SYBASE
+   
+   
+ * FIXED COMPONENT ID
+   5724B96SO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

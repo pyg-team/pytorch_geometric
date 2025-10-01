@@ -1,0 +1,43 @@
+Title: IBM Error 84 when commuting a licence - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you attempt to commute a licence you receive error 84, however when you try using a network licence whilst connected to the local network IBM SPSS Statistics obtains a licence and works correctly. 
+
+CAUSE
+The problem may be due to either a permissions issue where Sentinel, the licence manager for IBM SPSS Statistics can not access a folder or the persistent storage for the licences has corrupt information.
+
+DIAGNOSING THE PROBLEM
+Open the commute utility and check out a licence.
+
+RESOLVING THE PROBLEM
+Error 84 is usually a permissions problem.
+
+
+This is normally caused by the user access to "\Documents and Settings\All Users\Application Data\SafeNet Sentinel\Sentinel RMS Development Kit\System"
+
+The commuter utility creates the following files under this directory when users check in/out licenses.
+
+Make sure the folder is not full or files are not write protected, so that commuter utility could overwrite these files: 
+clauth1.dll 
+clauth2.dll 
+ssprs.dll 
+ssprs.tgz 
+grcauth1.dll 
+grcauth2.dll 
+prsgrc.dll 
+prsgrc.tgz 
+
+If the problem is still occurring then it is likely there is corruption in the persistent storage, to resolve this you need to delete the contents of:
+"\Documents and Settings\All Users\Application Data\SafeNet Sentinel\Sentinel RMS Development Kit\System\
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Statistics Not Applicable Windows 20.0, 19.0, 18.0

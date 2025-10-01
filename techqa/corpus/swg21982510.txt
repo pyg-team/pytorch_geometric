@@ -1,0 +1,90 @@
+Title: IBM Self describing support in OS agents Interim Fixes - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ This technote announces the introduction of self describing capabilities into OS agents Interim Fixes.
+The ITM OS agents support self describing since version 6.23, but OS agents Interim Fixes have never been enabled for self describing. The ITM server side files, that may be included in an OS agent Interim Fix, still need to be locally installed on the server. 
+
+CONTENT
+The current tool used to install server side updates of OS agent Interim Fixes (the Application Support Installer - ASI) is no longer officially supported. Moreover it implies one or multiple recycles of the ITM server where the new supports are to be installed (both TEMS and TEPS). This is always a critical phase because servers' shutdown and restart can take several minutes. In addition to the monitoring downtime in this time frame, cases were reported where the Interim Fix installation itself fails because of timeouts expiration while waiting for the servers to resume. 
+
+
+An alternative method to ASI is available since 6.23, as OS agents are among the other ITM SDA (Self Describing Agent) enabled agents. This feature allows to deploy on the ITM servers all the files needed to support a specific agent type and version, without requiring any shutdown other than that possibly needed to enable SDA itself. While the feature is supported by OS agents main releases and fixpacks, it was never implemented at Interim Fix level. 
+
+More information on the self describing feature is available at:
+http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0/com.ibm.itm.doc_6.3/adminuse/agentadmin_sda_intro.htm [http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0/com.ibm.itm.doc_6.3/adminuse/agentadmin_sda_intro.htm] 
+
+ 
+
+Effective on May 2016 all of the new OS Agents Interim Fixes on 6.23 or later, containing updates to the server support files, will come with two alternative methods for installing the server side updates. In addition to the legacy method based on local installation through the Application Support Installer, the Self Describing Agent technique is introduced. 
+
+ 
+
+The README file, chapter 5.4 (Agent support update), will show up a new section with SDA installation instructions. This is an excerpt taken from the README file of 6.3.0.5-TIV-ITM_UNIX-IF0004, the first SDA enabled OS Agent Interim Fix: 
+
+
+B. Exploiting the Self describing Agent (SDA) 
+
+1. In order to exploit this method SDA needs to be enabled on the agent, 
+on the R-TEMS and on the HUB-TEMS. SDA is enabled by default on all
+components, but the HUB-TEMS. In order to enable it on the HUB-TEMS, if 
+not already enabled, set KMS_SDA=Y in its environment and restart it.
+This is the only possible server restart required by this method, as 
+opposed to the multiple restarts of each server required during the 
+ASI install.
+
+2. Double check SDA status is ON through command
+
+> tacmd listsdastatus
+
+Hub/RTEMS State Status
+<HUB_name> ON 0
+<RTEMS_name> ON 0
+
+
+3. Enable SDA for this Interim Fix through command
+
+> tacmd addsdainstalloptions -t ux -v 06300504
+
+KUICO2054I: No configuration options were found for the specified 
+type(s). The following options will be created:
+
+PRODUCT VERSION
+UX 06300504
+
+Are you sure you want to update the selected options? Type Y for yes. 
+Type N for no.
+Y
+
+KUIAIO150I: The selected SDA configuration options records were 
+successfully updated.
+
+4. Double check required SDA install options are in place
+
+> tacmd listsdainstalloptions
+
+KUILIO200W: No default SDA installation settings exist.
+
+PRODUCT VERSION
+UX 06300504
+
+5. You need at least one agent upgraded to this Interim Fix level running 
+in this HUB environment. In a few moments from its startup all the needed 
+support files will be propagated from the agent to the servers.
+
+6. Double check the seeding of the support files has successfully completed 
+(STATE=IC Installation Complete)
+
+> tamcd listappinstallrecs
+
+HUB/RTEMS PRODUCT VERSION GRPID ID IDVER SEEDSTATE STATE STATUS
+<HUB_name> UX 06300504 5655 TMS 06300504 Y IC 0
+<RTEMS_name> UX 06300504 5655 TMS 06300504 Y IC 0
+
+7. Note that the version reported by cinfo command for the TEP Desktop 
+(TEPD/tpd) App Support component will not be updated by the SDA method. 
+
+
+SDA enabled Interim Fixes are packaged with four new files named KXXJSTMS.jar, KXXJSTPS.jar, KXXJSTPW.jar and KXXMSMAN.txt (KXX standing for KUX or KLZ or KNT) that get installed under the agent "<candle_home>/<arch>/<pc>/support" directory.

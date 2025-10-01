@@ -1,0 +1,72 @@
+Title: IBM Security Bulletin: Vulnerability in RC4 stream cipher affects IBM Tivoli Composite Application Manager for Transactions (CVE-2015-2808) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The RC4 “Bar Mitzvah” Attack for SSL/TLS affects IBM Tivoli Composite Application Manager for Transactions. 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2015-2808 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2808]
+
+DESCRIPTION: The RC4 algorithm, as used in the TLS protocol and SSL protocol, could allow a remote attacker to obtain sensitive information. An attacker could exploit this vulnerability to remotely expose account credentials without requiring an active man-in-the-middle session. Successful exploitation could allow an attacker to retrieve credit card data or other sensitive information.
+
+This vulnerability is commonly referred to as "Bar Mitzvah Attack".
+
+CVSS Base Score: 5.00
+CVSS Temporal Score: https://exchange.xforce.ibmcloud.com/#/vulnerabilities/101851 [https://exchange.xforce.ibmcloud.com/#/vulnerabilities/101851] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Tivoli Composite Application Manager (ITCAM) for Transactions is affected. ITCAM for Transactions contains multiple sub components (Agents). 
+Both the Internet Service Monitor (ISM – Agent code ‘IS’) and the Robotic Response Time (RRT – Agent code ‘T6’) are affected.
+
+ISM Versions:
+· 7.4 – Affected by CVE (CVE-2015-2808)
+· 7.3 – Affected by CVE (CVE-2015-2808)
+· 7.2 – Affected by CVE (CVE-2015-2808)
+
+RRT Versions:
+· 7.4 – Affected by CVE (CVE-2015-2808)
+· 7.3 – Affected by CVE (CVE-2015-2808)
+· 7.2 – Affected by CVE (CVE-2015-2808)
+· 7.1 – Affected by CVE (CVE-2015-2808)
+
+REMEDIATION/FIXES
+ISM Fixes 
+
+Product VRMF APAR Remediation/First Fix 7.4.0.0-TIV-CAMIS-IF0028 7.4.0.0 None http://www.ibm.com/support/docview.wss?uid=isg400002125 [http://www.ibm.com/support/docview.wss?uid=isg400002125] 7.3.0.1-TIV-CAMIS-IF0035 7.3.0.1 None http://www.ibm.com/support/docview.wss?uid=isg400002127 [http://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400002127] 7.2.0.3-TIV-CAMIS-IF0029 7.2.0.3 None http://www.ibm.com/support/docview.wss?uid=isg400002107 [http://www.ibm.com/support/docview.wss?uid=isg400002107] For ISM 7.1 IBM recommends upgrading to a fixed, supported version/release/platform of the product. 
+
+RRT Fixes Product VRMF APAR Remediation/First Fix 7.4.0.0-TIV-CAMRT-IF0029 7.4.0.0
+7.3.0.1
+7.2.0.3
+7.1.0.0 None http://www.ibm.com/support/docview.wss?uid=isg400002131 [http://www.ibm.com/support/docview.wss?uid=isg400002131] 
+You should verify applying this fix does not cause any compatibility issues. The fix disables RC4 stream cipher by default. If you change this setting you will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the RC4 stream cipher and take appropriate mitigation and remediation actions. WORKAROUNDS AND MITIGATIONS
+For ISM disable the RC4 ciphers in all monitors. To disable the RC4 ciphers, update the monitor properties: SSLCipherSuite and BridgeSSLCipherSet. For example, to disable RC4 ciphers in the HTTPS monitor, update the https.props file to include
+
+SSLCipherSuite : "AES:3DES:DES:!EXP"
+BridgeSSLCipherSet : "AES:3DES:DES:!EXP"
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 22 April 2015 Original Version Published
+29 April 2015 - Added RRT Interim Fix 29 link 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

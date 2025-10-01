@@ -1,0 +1,78 @@
+Title: IBM DCSV messages appearing in the SystemOut.log file - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An explanation of distribution and consistency services (DCS) messages are appearing in the WebSphere Application Server SystemOut.log file. These messages appear in the following format:
+
+DCSVnnnnW or DCSVnnnnI where "n" is a number, "W" signifies warning, and "I" signifies informational. 
+
+CAUSE
+These are warning or informational messages informing of message congestion. 
+
+RESOLVING THE PROBLEM
+Below is a list of message examples and their significance. To further debug these messages review HAManager troubleshooting [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21246671].
+
+The first type of national language support (NLS) messages relates to the DCS outgoing messages congestion control. There is an outgoing messages queue from DCS to reliable multi-cast messaging (RMM), which is being controlled in the following way: 
+
+There are 3 marks in this control mechanism, each mark represents a certain amount of memory occupied by the outgoing messages queue. 
+
+
+
+
+ * DCSV1052W appears when the outgoing message queue hits the Yellow mark.
+   
+   [10/9/04 10:50:46:300 EDT] 00003510 TransmitterTh W DCSV1052W: DCS Stack DefaultCoreGroup at Member dmgr\dmgr\dmgr: Raised a medium severity congestion event for outgoing messages. Internal details are Total stored bytes: 2017690, Red mark is 2411520, Yellow mark is 1929216, Green mark is 1205248. 
+   
+ * DCSV1051W appears when the outgoing messages queue hits the Red mark. At this point, DCS blocks further sending of outgoing messages, and waits until RMM sends enough messages, so that the outgoing messages queue will go down the Green line.
+   
+   [10/9/04 10:50:46:388 EDT] 00003510 TransmitterTh W DCSV1051W: DCS Stack DefaultCoreGroup at Member dmgr\dmgr\dmgr: Raised a high severity congestion event for outgoing messages. Internal details are Total stored bytes: 2421228, Red mark is 2411520, Yellow mark is 1929216, Green mark is 1205248. 
+   
+ * DCSV1053I appears when outgoing messages queue return to the Green mark.
+   
+   [10/9/04 10:50:46:497 EDT] 000006f9 TransmitterTh I DCSV1053I: DCS Stack DefaultCoreGroup at Member dmgr\dmgr\dmgr: Outgoing messages congestion state is back to normal. 
+   These thresholds can be adjusted using the Transport buffer size parameter under Application servers > server_name > Core group service. 
+   
+ * DCSV1111W and DCSV1113W means the incoming connection or the outgoing connection (respectively) to a certain process has failed, and the therefore a suspect call is raised. 
+   
+   [10/9/04 10:53:23:157 EDT] 0000002c RmmPtpGroup W DCSV1111W: DCS Stack DefaultCoreGroup at Member dmgr\dmgr\dmgr: Suspected another member because the outgoing connection from the other member was closed. Suspected members is dmgr\mngNode01\SERV5_1_1. DCS logical channel is View|Ptp.
+   
+   [10/9/04 10:53:23:220 EDT] 0000002c DiscoveryRmmP W DCSV1113W: DCS Stack DefaultCoreGroup at Member dmgr\dmgr\dmgr: Suspected another member because the outgoing connection to the other member was closed. Suspected member is dmgr\mngNode01\SERV5_1_1. DCS logical channel is Connected|Ptp. 
+   
+ * DCSV8053I This suspect call eventually translated to taking the suspected member out of the view. The following message means that a view change started. You can see that the excluded member is the one that has just been suspected.
+   
+   [10/9/04 10:53:23:324 EDT] 00000025 RoleViewLeade I DCSV8053I: DCS Stack DefaultCoreGroup at Member dmgr\dmgr\dmgr: View change in process. Excluded members are [dmgr\mngNode01\SERV5_1_1]. 
+   
+ * DCSV2004I means that the Virtual Synchrony (VS) messages have arrived to all members in the group. The number represents the number of VS messages sent by every process. In this case, no VS messages were sent.
+   
+   10/9/04 10:53:27:357 EDT] 0000002c VSync I DCSV2004I: DCS Stack DefaultCoreGroup at Member dmgr\dmgr\dmgr: The synchronization procedure completed successfully. The View Identifier is (290:0.dmgr\dmgr\dmgr). The internal details are [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+   
+ * DCSV8050I contains the following parameters.
+   
+   [10/9/04 10:53:29:876 EDT] 00000025 CoreGroupMemb I DCSV8050I: DCS Stack DefaultCoreGroup at Member dmgr\dmgr\dmgr: New view installed, identifier (291:0.dmgr\dmgr\dmgr), view size is 32 (AV=32, CD=32, CN=32, DF=83) 
+   Where, AV is the number of active members in the view CN is the number of members which are connected to this member (this process has connection to them). Usually, this should be the same as AV. CD CN - (number of members that we a connection to them, but this process suspects them, and does not want to be in the same view with them. The suspect can be a result of many reasons) DF is the number of defined members 
+   
+ * DCSV0003I and DCSV8103W are printed when a view change distributed operation has timed out.
+   
+   [10/6/04 13:01:07:672 EDT] 0000000f CoreGroupMemb I DCSV0003I: DCS Stack DefaultCoreGroup at Member waCell01\scNode01\server1: An unusual programming state has occurred. Internal details: {Method=handleAlarm(), InternalDetails=Alarm is sounded MBWait4VL}
+   
+   [10/6/04 13:01:07:672 EDT] 0000000f RoleMember W DCSV8103W: DCS Stack DefaultCoreGroup at Member waCell01\scNode01\server1: Suspected member [waCell01\agNode01\nodeagent] because the member did not respond within the timeout period of 78 seconds. Internal details: {InternalDetails=VL wait for MB expired } . 
+   
+ * DCSV2002W means that a member that was suspected by this process has sent a message to this process.
+   
+   [10/6/04 13:01:07:891 EDT] 0000001c VSync W DCSV2002W: DCS Stack DefaultCoreGroup at Member waCell01\scNode01\server1: Message from illegal member waCell01\agNode01\server1 was ignored. The reason is Sender is not a live view member. 
+
+
+ * DCSV8104W means that a member of the core group has been removed from the core group because its jvm process has been stopped.
+   
+   [10/6/04 13:01:07:891 EDT] 0000001c RoleMember W 
+   DCSV8104W: DCS Stack CoreGroup3 at Member MyNCell\Node4\MyServer: Removing member
+   [MyNCell\Node2\App2] because the member was requested to be removed by member MyNCell\Node3\App5. Internal details VL suspects others: CC-Situation Normal
+   
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

@@ -1,0 +1,53 @@
+Title: IBM How to lower the security level in IBM JRE V6 - United States
+
+Text:
+security level; disable; java 6 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to disable security check in Java 6 JRE. 
+
+SYMPTOM
+After updating the WebSphere Application Client from version 8.0.0.6 to 8.0.0.9, the client faces security issues and will not start correctly. The client is using Java Web Start to start Swing-based stand-alone Java client applications. 
+
+Here is the log displayed in the Java Console when the Java client is launched with Java Web Start.
+========================================================================== 
+
+Missing Application Name: manifest attribute for:http://webstart-xxxxx.com/webstart/svp/lib/client.jar 
+
+Missing Permissions manifest attribute for:http://webstart-xxxxx.com/webstart/svp/lib/servicefactory.jar 
+
+Missing Codebase manifest attribute for:http://webstart-xxxxx.com/webstart/svp/lib/servicefactory2.jar 
+
+Missing Permissions manifest attribute for:http://webstart-xxxxx.com/webstart/svp/lib/newclient.jar 
+
+Missing Codebase manifest attribute for:http://webstart-xxxxx.com/webstart/svp/lib/util.jar 
+
+==========================================================================
+
+
+
+
+CAUSE
+ In Java 7: you can reduce the security level from High to Medium in the Java Control Panel. In JRE V6 did not find how to set to lower the security level.
+
+
+
+ENVIRONMENT
+WebSphere Java 6 JRE
+
+
+
+RESOLVING THE PROBLEM
+Please follow the below steps to disable the security warnings until the applications are reworked to enable the latest security features: 
+
+ 
+
+Replace / update the jar in question. The issue is discussed in the following link 
+
+Why are Java applications blocked by your security settings with the latest Java? [https://www.java.com/en/download/help/java_blocked.xml]
+
+In the Java 6 Control Panel, 
+
+1. Click on the "Advanced" tab. 
+2. Under "Security" section, Expand the "Mixed code (Sandboxed Vs. trusted) security verification" option We will see the four options under this. 
+3. Click on the second option i.e. "Enable - hide warning and run with protections" By enabling this, the user will not see the warning dialog box and Java will internally take care of executing the application with protections.

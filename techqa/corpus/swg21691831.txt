@@ -1,0 +1,80 @@
+Title: IBM WebSphere® Application Server Liberty Profile server fails to start in debug mode - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The WebSphere Application Server Liberty Profile server, whether local or remote, fails to start in debug mode when the Liberty runtime environment uses the Oracle JRE. 
+
+DIAGNOSING THE PROBLEM
+The following error is seen when starting the server in debug mode using the Oracle Java Runtime Environment (JRE). 
+
+starting server defaultServer.
+Server defaultServer start failed. Check server log for details. 
+
+
+The error can be seen in the Console view from Eclipse or in the command line window. 
+
+You will also see the following error in the server's console log file. The console log file is located in the server output directory, for example, C:\LibertyRuntime\wlp\usr\servers\defaultServer\logs\console.log. where defaultServer is the name of the server. 
+
+FATAL ERROR in native method: JDWP No transports initialized, jvmtiError=AGENT_ERROR_TRANSPORT_INIT(197) 
+ERROR: transport error 202: bind failed: Address already in use 
+ERROR: JDWP Transport dt_socket failed to initialize, TRANSPORT_INIT(510) 
+JDWP exit error AGENT_ERROR_TRANSPORT_INIT(197): No transports initialized [../../../src/share/back/debugInit.c:750] 
+
+
+Steps to verify the JRE used by the server: 
+
+1. Check the contents of the messages.log file located inside the log folder of the server directory, for example, 
+C:\LibertyRuntime\wlp\usr\servers\defaultServer\logs\messages.log . This file will have entries similar to the following ones: 
+
+******************************************************************************** 
+product = WebSphere Application Server 2014.11.0.0 (wlp-<version>) 
+wlp.install.dir = <runtime install dir> 
+java.home = <Path to JRE used by runtime environment> 
+java.version = <Java version> 
+java.runtime = Java(TM) SE Runtime Environment (<Java version>) 
+os = <OS details) 
+process = <process details> 
+******************************************************************************** 
+The java.home variable will tell you the JRE used by the server. 
+
+
+RESOLVING THE PROBLEM
+The workaround for this issue is to configure the server to use the IBM JRE instead of the Oracle JRE. 
+
+Download the IBM JRE from the following link:
+
+http://www.ibm.com/developerworks/java/jdk [http://www.ibm.com/developerworks/java/jdk] 
+
+Steps to modify the JRE used by the server:
+
+1. Go to the runtime installation directory and navigate to the server folder, for example,
+
+
+ * 
+
+
+2. Create a file named server.env if it does not exist. 
+
+3. Open the file created in step 2 and add the following line: 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+4. Save the file and close it. 
+
+5. Restart the server using Eclipse or the command line. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+6. Check the content of the messages.log file. Verify that the java.home variable shows the location set in the server.env file. 
+
+After the server.env file is configured to use the IBM JRE, restarting the server in debug mode should be successful.

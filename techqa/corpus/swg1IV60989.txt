@@ -1,0 +1,152 @@
+Title: IBM IV60989: SAP AGENT 7.11.01 - EMPTY WORKSPACE FOR BUSINESS PROCESS MONITORING AND SYSTEM MONITORING IN TEP - United States
+
+Text:
+  FIXES ARE AVAILABLE
+ITCAM Agent for SAP Applications, 7.1.1-TIV-ITM_SAP-FP0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24037991]
+ITCAM Agent for SAP Applications, 7.1.1-TIV-ITM_SAP-FP0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24043404]
+ITCAM Agent for SAP Applications, 7.1.1.3-TIV-ITM_SAP-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24043820]
+ITCAM Agent for SAP Applications,7.1.1-TIV-ITM_SAP-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24044289]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Empty Workspace for Business Process Monitoring and
+   System Monitoring in TEP.
+   
+   Detailed Recreation Procedure:
+   1. Import 711 transport on MAI configured Solution Manager SAP
+   system ST-PI level dependent
+   2. Check the Workspace for System Monitoring and BPM monitoring
+   3. Data is not displayed for above workspaces
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ERROR DESCRIPTION:
+   Empty Workspace for Business Process Monitoring and
+     System Monitoring in TEP.
+   
+   Detailed Recreation Procedure:
+   1. Import 711 transport on MAI configured Solution Manager SAP
+   system ST-PI level dependent
+   2. Check the Workspace for System Monitoring and BPM monitoring
+   3. Data is not displayed for above workspaces
+   
+   LOCAL FIX:
+   Provided ABAP transport test fix.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The formal fix for this APAR is contained in the following
+   package:
+   IBM(R) Tivoli(R) Composite Application Manager Agent for SAP
+   Applications,
+    Version 7.1.1
+   Component ID: 5724B97SO
+   
+   Fixpack: 0001, 7.1.1-TIV-ITM_SAP-FP0001
+   
+   Date: Q3 2014
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Provided and data is coming in ABAP function module.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV60989
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * REPORTED COMPONENT ID
+   5724B97SO
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-28
+   
+   
+ * CLOSED DATE
+   2014-06-18
+   
+   
+ * LAST MODIFIED DATE
+   2014-06-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * FIXED COMPONENT ID
+   5724B97SO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

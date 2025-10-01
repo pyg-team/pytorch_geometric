@@ -1,0 +1,32 @@
+Title: IBM RQM: Execution trend report calculation is inaccurate for multiple iteration selection - United States
+
+Text:
+out of the box; out-of-the-box; RRDI; BIRT REPORT; Execution trend report calculation; iteration; multiple; selection; "not accurate"; APAR PM93142; Configuration Lifecycle Management; CLM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The execution trend report calculation is not accurate for multiple iteration selection when running IBM Rational Quality Manager (RQM). 
+
+CAUSE
+This has been identified as a product defect under APAR PM93142
+
+DIAGNOSING THE PROBLEM
+Users can experience this issue on RQM v4.0, 4.0.1, 4.0.2, and 4.0.3 releases. All accumulation of points should only be included in dates of the specified iteration and users should not have overlapping dates between multiple iterations. In other words, when users have multiple iterations which do not have overlapping dates, the points in different iterations should not be summed. Summing the points on the same date regardless different iterations is not a correct behavior because the points in an iteration should only be shown on the dates in the same period of the particular iteration.
+
+
+The purpose of the report is comparing the planned points and actual execution points. The planned points is only able to be defined in one iteration. The multiple selection of milestone will make the calculation of how many days behind or ahead of the plan is incorrect when selecting showing as days. Either BIRT version or Cognos version of the report shows unexpected data if those selected iterations have overlapping dates, but we cannot guarantee what options users might or might not select. 
+
+
+RESOLVING THE PROBLEM
+A new report will be created to compare the planned points and actual points during execution and the plan points are only allowed defined in one iteration. It is not necessary to show execution comparison across iterations in this report. 
+
+The multiple iterations parameter will only be available on the Cognos version. That means multiple selection of iteration will be disabled in BIRT reports after implementing above solution. Users could choose the Cognos based version of this report if they indeed would like to run multiple iterations. They just need to install Rational Reporting for Development Intelligence (RRDI) and import RQM OOTB (out of the box) sample reports onto RRDI and point the DW of RRDI to your current Data Warehouse. No extra migration step is required.
+
+Here are some more details about the new proposed report: 
+
+ 1. If multiple selection of iteration parameter is disabled, the user is only allowed to see execution points comparison in one iteration. The result should be correct for one iteration. 
+ 2. If you indeed would like to show multiple iterations, you can select the Cognos report version. Then you should schedule to run ETL (Extract Transform and Load) everyday if you would like to see accurate results in this report.
+
+
+Leverage the Jazz Community The Jazz based products have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+
+Review technote 1319600: Leveraging the Jazz Community on Jazz.net [http://www.ibm.com/support/docview.wss?uid=swg21319600] for details.

@@ -1,0 +1,12 @@
+Title: IBM limit to the number of values within 'in list' as part of a where clause - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is there a limit to the number of items that can be listed within an "in" list as part of a where clause?
+
+
+ANSWER
+No, there is not a limit.
+The only limit with large "in list" statements would need large memory to compile the query. If the query is too complex, you can potentially run out of memory.

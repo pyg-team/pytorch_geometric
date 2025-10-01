@@ -1,0 +1,53 @@
+Title: IBM tacmd login fails when TEMS is configured with LDAP authentication - United States
+
+Text:
+TEMSLDAP LDAPTEMS ITMLDAP directory server KUIC0006E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User attempts to do "tacmd login" to login to the TEMS, and has LDAP authentication enabled, but the login fails. 
+
+RESOLVING THE PROBLEM
+The tacmd command acts as a SOAP client when logging-in to the TEMS, connecting to the SOAP server on the Hub TEMS. There could be problems either in the SOAP configuration, or in the TEMS LDAP configuration information. 
+
+1. To confirm their SOAP configuration, review the kshxhubs.xml file on the Hub TEMS. For example, on a UNIX/Linux Hub TEMS, this file would be at:
+
+<InstallDirectory>/tables/<Hub_Name>/HTML/kshxhubs.xml
+
+Confirm it's setup correctly to allow those users to login via SOAP. If necessary, reconfigure the TEMS, and at the end of the configuration when it prompts for SOAP configuration, change the SOAP configuration to allow the user(s) to connect and/or to update. 
+
+2. If SOAP configuration appears fine, then the problem could potentially involve the TEMS LDAP configuration. There's TEMS tracing and LDAP client-side tracing that can be done on the Hub:
+
+Hub TEMS RAS1 log tracing (all platforms):
+KBB_RAS1=ERROR (UNIT:kdslg ALL) (UNIT:kdsvl ALL) (UNIT:kgllg ALL) (UNIT:kglld ALL) 
+Hub TEMS LDAP client-side tracing for UNIX/Linux:
+
+--Run the following commands on the system hosting the UNIX/Linux Hub TEMS:
+export LDAP_DEBUG=65535
+export LDAP_DEBUG_FILE=/opt/IBM/ITM/logs/ldaptrace.txt (or whatever path/file you want)
+rm /opt/IBM/ITM/logs/ldaptrace.txt (to remove the file before restarting the Hub)
+--Restart the Hub TEMS. Note that these LDAP-related trace settings remain active until the TEMS is restarted from a shell session where the variables are not exported. If the TEMS is restarted from the same session where these variables are still exported, then the settings will be active again after restart.
+--Reproduce the problem. As you reproduce it, any LDAP requests would add trace content to that ldaptrace.txt file.
+
+Hub TEMS LDAP client-side tracing for Windows:
+
+From the "Manage Tivoli Enterprise Monitoring Services" (MTEMS) GUI, do the following:
+
+--Stop the TEMS.
+--Right-click the entry for the TEMS, and choose "Advanced..."-->"Edit Variables..."
+--In the "Override Local Variable Settings" window that appears, click the "Add" button. Enter "LDAP_DEBUG" for the Variable, and "65535" for the value, and click OK. 
+--Click the "Add" button again; enter "LDAP_DEBUG_FILE" for the Variable, and any path/file that you wish (for example, "C:\temp\ldaptrace.txt"). Then click OK.
+--Click OK to save the changes.
+--Start the TEMS.
+
+New login and LDAP-related TEMS activity will now be logged in the LDAP_DEBUG_FILE. 
+
+When you are finished reproducing the problem and want to stop tracing, go back to the Manage Tivoli Enterprise Monitoring Services (MTEMS) GUI and do the following:
+
+--Stop the TEMS.
+--Right-click the entry for the TEMS, and choose "Advanced..."-->"Edit Variables..."
+--Highlight the variables and choose the "Delete" button to delete both the LDAP_DEBUG and LDAP_DEBUG_FILE variables. Then click "OK" to save the changes.
+--Start the TEMS.
+
+Reviewing logs:
+
+The Hub TEMS RAS1 logs (UNIX/Linux: $CANDLEHOME/logs/*_ms_4*.log ; Windows: %CANDLE_HOME%\logs\*_ms_4*.log) will show any possible failures that occur leading-up to the calls to the SOAP server. The ldaptrace.txt file will show any activity and possible failures occurring when it actually binds to the SOAP server and attempts to lookup users.

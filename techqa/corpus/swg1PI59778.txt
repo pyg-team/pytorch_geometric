@@ -1,0 +1,159 @@
+Title: IBM PI59778: "THE LICENSE SERVER PROVIDED IS INVALID" - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You have successfully installed IBM SPSS Statistics 24.0 (or IBM
+   SPSS Modeler 18) and
+   applied the Trial license (default behavior for all installs)
+   Now you would like to associate your IBM SPSS Statistics client
+   with an existing Sentinel RMS License Manager.
+   You launch statistics 24.0 and see the welcome screen.  You
+   click the  "License Product" button and supply your license
+   manager's hostname or IP address.  You click "Next" and see this
+   error:  "The License Server provided is invalid"
+   
+   WORKAROUND:
+   The License Activation Wizard (LAW) tool is trying to 'ping' the
+   license manager server to verify it exists.  If port 7 TCP is
+   blocked by firewall, or configured not to answer, the above
+   error will result.
+   
+   To work around this, manually edit the 'spssprod.inf' file to
+   redirect
+   the "DaemonHost=" line to point to your license manager server
+   either by hostname or IP address.
+   Next, rename the file lservrc on installation directory or
+   otherwise disable the local Trial license in 'lservrc' by adding
+   a # before the ttial license code in LSERVRC file.
+   
+   These files can be found here by default:
+   Windows -- "C:\Program Files\IBM\SPSS\Statistics \24"
+   Mac --
+   "/Applications/IBM/SPSS/Statistics/24/SPSSStatistics.app/Content
+   s/bin"
+   Linux -- "/opt/IBM/SPSS/Statistics/24/bin"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The 'License Server provided is invalid' for Statistics 24.0
+   concurrent/network licensing clients was corrected in an
+   updated version of the Statistics 24 desktop client uploaded on
+   June 23, 2016.
+   If you are encountering this behavior prior to a mass
+   installation of the product using a version of the Statistics
+   24.0 desktop client software downloaded prior to June 23, 2016,
+   please download the updated version of the Statistics 24
+   desktop client and use this version for your installations.
+   If you are encountering this behavior after a mass installation
+   of the product, there is a 'workaround' for this behavior:
+   WORK-AROUND:
+   Manually edit the 'DaemonHost' value in the 'spssprod.inf' file
+   located in the Statistics 24.0 product installation directory
+   to direct the client installation to the network identifier
+   (hostname/IP) of the License Manager host.
+   For products installed to the default installation directory,
+   the location of the 'spssprod.inf' file is:
+   Windows: C:\Program Files\IBM\SPSS\Statistics \24\
+   Mac:
+   /Applications/IBM/SPSS/Statistics/24/SPSSStatistics.app/Contents
+   /bin
+   Linux: /opt/IBM/SPSS/Statistics/24/bin
+   If you are performing a large-scale update using remote
+   installation technology, you could create a exemplar
+   'spssprod.inf' file with the correct values and add a procedure
+   to the installation routine to replace the existing
+   'spssprod.inf' file with exemplar.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This issued was resolved by media refresh.  Current media does
+   not produce this behavior.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI59778
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   M00
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-25
+   
+   
+ * CLOSED DATE
+   2017-08-10
+   
+   
+ * LAST MODIFIED DATE
+   2017-08-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

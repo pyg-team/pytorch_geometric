@@ -1,0 +1,17 @@
+Title: IBM Identifying people in scope across Matters in Atlas - United States
+
+Text:
+Atlas People in Scope Views TECHNOTE (FAQ)
+
+QUESTION
+ How do I identify people in scope across Matters in Atlas? 
+
+CAUSE
+Query to identify people in scope across matters in Atlas
+
+ANSWER
+REP_PEOPLE_INSCOPE_VW view has information about people in scope. You can create a query by joining the view with REP_MATTER_VW, REP_REQUEST_VW, REP_NOTICES_VW and REP_PERSON_VW views. 
+
+Please refer to reporting views documentation at the following link for more details about Matter related views
+
+https://www.ibm.com/support/knowledgecenter/SS5JP8_6.0.3/com.ibm.aps.use.doc/apsrv0044.html [https://www.ibm.com/support/knowledgecenter/SS5JP8_6.0.3/com.ibm.aps.use.doc/apsrv0044.html]l

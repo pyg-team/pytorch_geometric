@@ -1,0 +1,31 @@
+Title: IBM Successful installation is reported after profile creation failure - United States
+
+Text:
+ibpma75relnotes; mon75relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If the profile creation step fails during a custom installation, the failure is not recognized by Installation Manager, which reports a successful installation. This problem occurs only on Windows platforms. 
+
+SYMPTOM
+The failure of the profile creation step is indicated in the profile creation log. For example, you might see the following error:
+
+INSTCONFFAILED: Profile augmentation failed.
+
+
+ENVIRONMENT
+This note applies to IBM Business Process Manager Advanced - Process Server, IBM Business Monitor, and WebSphere Enterprise Service Bus.
+
+RESOLVING THE PROBLEM
+Check the profile creation log, which is located in the <installroot>/logs/manageprofiles directory to determine the cause of the error. Then, complete one of the following steps:
+
+
+ * Delete the profile that contains the error. Then, use the manageprofiles command or the Profile Management Tool to create a new profile.
+   
+   
+ * Install the product with a custom installation, but do not create a profile. Then, after installation, use the manageprofiles command or the Profile Management Tool to create the profile.
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Monitor General Windows 7.5 Business Integration WebSphere Enterprise Service Bus General Windows 7.5

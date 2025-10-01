@@ -1,0 +1,229 @@
+Title: IBM IY91542: DATADIRECT 1226 ERROR WHEN USING XA AND 64-BIT EGS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The DataDirect driver is incorrectly capitalising the DataSource
+   parameter in the XAOpenString when comparing this to a DSN
+   defined in the odbc64.ini.  The net result of this is that the
+   1226 error will occur if the DSN definition in the odbc64.ini is
+   not in upper case.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use upper case DSN definitions in the odbc64.ini.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Customers using XA coordinated message       *
+   *                 flows with Oracle and MQ V6 queue managers.  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A number of problems have been found    *
+   *                      when using XA coordinated message       *
+   *                      flows in Message Broker with MQ V6.     *
+   *                      These problems include the following:   *
+   *                                                              *
+   *                      1. Coordinated message flows stop       *
+   *                         processing messages off the input    *
+   *                         queue. The execution group trace     *
+   *                         shows the message flow has hung      *
+   *                         whilst waiting for a response to     *
+   *                         a call to MQCMIT. This can be        *
+   *                         accompanied by the queue manager     *
+   *                         producing an FDC file in             *
+   *                         /var/mqm/errors.                     *
+   *                         The FDC file indicates a return      *
+   *                         code -6 (XAER_PROTO) after calling   *
+   *                         xa_commit.                           *
+   *                                                              *
+   *                         Running 'pstack' against the DFE     *
+   *                         process shows the following stack    *
+   *                         (edited to improve readability).     *
+   *                                                              *
+   *                      fe99fd20 lwp_cond_wait                  *
+   *                      fea130f4 cond_wait_common               *
+   *                      fea135a4 _cond_timedwait                *
+   *                      fea135d8 cond_timedwait                 *
+   *                      e92d10b4 xcsWaitEventSem                *
+   *                      e8b32620 zcpReceiveOnPipe               *
+   *                      e8b3efa4 ziiSendReceiveAgent            *
+   *                      e8b3cd24 ziiMQCMIT                      *
+   *                      e8b63db0 zstMQCMIT                      *
+   *                      fabda384 MQCMIT                         *
+   *                                                              *
+   *                      The broker does not respond to an       *
+   *                      'mqsistop -i' and to recover from       *
+   *                      this situation it is necessary to       *
+   *                      kill the broker and MQ Agent            *
+   *                      processes and restart.                  *
+   *                                                              *
+   *                      2. When shutting down the broker and    *
+   *                         MQ FDC is produced reporting the     *
+   *                         following:                           *
+   *                                                              *
+   *                       tmiCloseResourceManager: The XA        *
+   *                       resource manager UKDEV294 has          *
+   *                       returned an unexpected return code     *
+   *                       -3, when called for xa_close.          *
+   *                                                              *
+   *                      3. BIP2616E errors - unable to commit   *
+   *                         a Websphere MQ Transaction. MQCMIT   *
+   *                         failed with an MQRC=2195             *
+   *                                                              *
+   *                      4. SIGSEGVs when running with           *
+   *                         additional instances (>20) and an    *
+   *                         AMQ7605 error reporting An           *
+   *                         internal Websphere MQ Error has      *
+   *                         occurred - SIGSEGV : address not     *
+   *                         mapped.                              *
+   *                                                              *
+   *                      5. DataDirect 1226 error when using     *
+   *                         XA and 64-bit execution groups.      *
+   *                                                              *
+   *                      [DataDirect][ODBC Oracle Wire Protocol  *
+   *                      driver]1226                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   XA Coordinated message flows do not perform correctly
+   when using MQ V6 queue managers with Oracle.
+   
+   A summary of the problems is provided below.
+   
+   1. Coordinated message flows stop processing messages off
+      the input queue. The DFE process running the flow
+      hangs and doesn't respond to configuration requests.
+   
+   2. When shutting down the broker and MQ FDC is produced
+      reporting the following:
+   
+      tmiCloseResourceManager: The XA resource manager
+      UKDEV294 has  returned an unexpected return code
+      -3, when called for xa_close.
+   
+   3. BIP2616E errors - unable to commit a Websphere MQ
+      Transaction. MQCMIT failed with an MQRC=2195
+   
+   4. SIGSEGVs when running with additional instances (>20)
+      and an AMQ7605 error reporting An internal Websphere
+      MQ Error has occurred - SIGSEGV : address not
+      mapped.
+   
+   5. DataDirect 1226 error when using XA and 64-bit execution
+      groups.
+   
+      [DataDirect][ODBC Oracle Wire Protocol driver]1226
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  All of the problems were caused by defects in the DataDirect
+   Oracle 64-bit Wire-Protocol driver and switch load file.
+   
+   These defects were corrected by DataDirect under the following
+   case numbers:
+   
+   Case #15022480 - 1226 errors
+   Case #15022846 - xa_commit error results in hang
+   Case #15023080 - SEG fault in 64-bit XA switch library
+   Case #15023232 - hang while enlisting in XA
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY91542
+   
+   
+ * REPORTED COMPONENT NAME
+   WMB SOL SPARC
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0502
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-11-09
+   
+   
+ * CLOSED DATE
+   2007-02-22
+   
+   
+ * LAST MODIFIED DATE
+   2007-03-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMB SOL SPARC
+   
+   
+ * FIXED COMPONENT ID
+   5724J0502
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

@@ -1,0 +1,200 @@
+Title: IBM IZ78069: INCONSISTENCY IN AMQ6174 ERROR MESSAGE WHEN THE QUEUE MANAGER FAILS TO LOAD AN API EXIT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24028106]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24028109]
+WebSphere MQ V6.0 Fix Pack 6.0.2.11 [http://www-01.ibm.com/support/docview.wss?uid=swg24029382]
+WebSphere MQ V6.0 for iSeries Fix Pack 6.0.2.11 [http://www-01.ibm.com/support/docview.wss?uid=swg24029383]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.11 (FP 04) [http://www-01.ibm.com/support/docview.wss?uid=swg24032452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a queue manager fails to load an API exit during startup
+   it reports an error message AMQ6174 which incorrectly states
+   the queue manager will continue without this module, when the
+   queue manager is going to fail.
+   
+   Error message:
+   
+   AMQ6174: The dynamically loadable shared library
+   '/var/mqm/exits64//exitname.so_r' was not found. The system
+   returned error number '2' and error message 'A file or directory
+   in the path name does not exist.'. The queue manager will
+   continue without this module.
+   EXPLANATION:
+   This message applies to UNIX systems. The shared
+   library '/var/mqm/exits64//exitname.so_r' was not found.
+   ACTION:  Check that the file exists, and is either fully
+   qualified or is in the appropriate directory also check the file
+   access permissions.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Remove (or correct) the API exit in the ini file
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of API exits.
+   
+   Platforms affected:
+   Windows,All Unix
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When a queue manager encounters an error when loading an API
+   exit during start up, the queue manager fails to start. However
+   the error message AMQ6174 reported during this failure
+   incorrectly states the queue manager will continue without this
+   module. The error message needs to be corrected.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The error messages for the reported error AMQ6174 and other
+   related errors AMQ6175, AMQ6252, AMQ6253, AMQ6255, AMQ6256 and
+   AMQ6261 have been modified.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.11
+   --------           --------------------
+   Windows            tbc_p600_0_2_11
+   AIX                tbc_p600_0_2_11
+   HP-UX (PA-RISC)    tbc_p600_0_2_11
+   HP-UX (Itanium)    tbc_p600_0_2_11
+   Solaris (SPARC)    tbc_p600_0_2_11
+   Solaris (x86-64)   tbc_p600_0_2_11
+   Linux (x86)        tbc_p600_0_2_11
+   Linux (x86-64)     tbc_p600_0_2_11
+   Linux (zSeries)    tbc_p600_0_2_11
+   Linux (Power)      tbc_p600_0_2_11
+   Linux (s390x)      tbc_p600_0_2_11
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.4
+   --------           --------------------
+   Windows            U200323
+   AIX                U835793
+   HP-UX (PA-RISC)    U836458
+   HP-UX (Itanium)    U836463
+   Solaris (SPARC)    U836459
+   Solaris (x86-64)   U836465
+   Linux (x86)        U836460
+   Linux (x86-64)     U836464
+   Linux (zSeries)    U836461
+   Linux (Power)      U836462
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ78069
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7201
+   
+   
+ * REPORTED RELEASE
+   602
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-24
+   
+   
+ * CLOSED DATE
+   2010-09-22
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V6
+   
+   
+ * FIXED COMPONENT ID
+   5724H7201
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R602 PSY
+   UP

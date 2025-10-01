@@ -1,0 +1,66 @@
+Title: IBM How to create a custom group/role for Cognos Workspace and/or Cognos Workspace Advanced - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document will explain the steps necessary to create a group or role within the Cognos Namespace that can be used to assign only rights for Cognos Workspace Advanced and/or Cognos Workspace (or as they were formerly known in 10.1.1 / 10.1 Business Insight Advanced and/or Business Insight.). 
+
+CAUSE
+IBM Cognos Licensing might require a Group of Users to be able to only access Cognos Workspace or Cognos Workspace Advanced (Business Insight or Business Insight Advanced).
+
+ENVIRONMENT
+IBM Cognos Installation with Cognos Workspace (Business Insight) and Cognos Workspace Advanced (Business Insight Advanced).
+
+RESOLVING THE PROBLEM
+Based on the following steps the group or role will only have access to either Cognos Workspace (Business Insight) or Cognos Workspace Advanced (Business Insight Advanced). Even though the Role receives Traverse and Execute permissions for the Report Studio capability it will not be able to open Report Studio (this is only possible if you have Traverse and Execute permissions for the Professional User Interface Profile).
+
+
+
+
+
+First create your group or role in the Cognos Namespace: 
+
+1. Launch IBM Cognos Administration 
+
+2. Select the Security Tab 
+
+3. Choose Users, Groups and Roles 
+
+4. Click on the Cognos namespace. 
+
+5. Click "New Role" or "New Group" 
+
+Then you will have to apply the following settings:
+R=Read
+T=Traverse
+W=Write
+X=Execute 
+
+Permissions on Capabilities [Cognos Administration->Capabilities]:
+Cognos Viewer: TX
+Run With Options: TX
+Collaborate: TX
+Executive Dashboard: TX
+Executive Dahsboard -> Use Advanced Dashboard Features: TX (10.2.x and Up)
+Executive Dahsboard -> Use Interactive Dashboard Features: TX (10.2.x and Up)
+Report Studio: TX
+Scheduling: TX
+Watch Rules: TX
+
+Report Studio Profiles: TX [This is "set properties" directly on Security Tab->User Interface Profiles]
+Express: TX [This is below User Interface Profiles]
+
+Permissions:
+Public Folders: RTWX
+Express Authors (on itself): RTX [Replace this with your Group located in Cognos Administration->Security tab->Users,Groups,Roles->Cognos-><your Express Group>]
+
+To remove the Group/Role access to Cognos Workspace (Business Insight) do the following access:
+Cognos Administration->Security Tab->Capabilities->Executive Dashboards (Cognos Workspace/Business Insight)->Set Properties 
+Your group/role then receives deny on Traverse and Execute. 
+
+To remove the Group/Role access to Cognos Workspace Advanced (Business Insight Advanced) do the following:
+Cognos Administration->User Interface Profiles->Drop Down Symbol next to Express->Set Properties
+Select your group and change Traverse and Execute to Deny.
+
+You can create unique Groups/Roles to cater to every requirement separately.

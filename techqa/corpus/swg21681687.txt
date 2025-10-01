@@ -1,0 +1,38 @@
+Title: IBM Unknown Object Name [2085], SYSTEM.MQXR.COMMAND.QUEUE - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You see the following record added to the WebSphere MQ event messages queue 'SYSTEM.ADMIN.QMGR.EVENT'.
+
+[timestamp] Unknown Object Name [2085]
+Event Type: Queue Manager 
+Queue Manager Name: QMGR
+Appl Type: Unix 
+Appl Name: amqpcsea 
+Queue Name: SYSTEM.MQXR.COMMAND.QUEUE 
+
+CAUSE
+a) The queue SYSTEM.MQXR.COMMAND.QUEUE is used by the MQ Telemetry 
+component. A typical scenario for its usage is this: 
+The MQ command server, amqpcsea, reads PCF messages from the 
+SYSTEM.ADMIN.COMMAND.QUEUE and if the PCF message is related to 
+Telemetry, then the PCF message is forwarded to the 
+SYSTEM.MQXR.COMMAND.QUEUE for the MQ Telemetry component to handle.
+.
+b) This queue is used by certain monitoring products such as Nastel and InfraRed360
+
+
+
+ANSWER
+Some ways to handle this situation: 
+
+
+a) You can create the queue by using the following command:
+. 
+runmqsc QMGR 
+DEFINE QLOCAL(SYSTEM.MQXR.COMMAND.QUEUE) 
+END 
+
+b) If you do not want to create the above queue, then you will need to disable the monitoring from the products mentioned in the "Cause" section.

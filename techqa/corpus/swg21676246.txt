@@ -1,0 +1,13 @@
+Title: IBM Why do fax images appear scrunched when viewing in Datacap 8.1 DotEdit or DotScan? - United States
+
+Text:
+strange; narrow; thumbnail TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When viewing fax images in DotEdit or DotScan, the images appeared "scrunched". The images were described as short and wide, or tall and skinny, depending on the rotation. When viewed in other viewers, like Microsoft's Viewer, the images appeared fine. 
+
+CAUSE
+The page dimensions (width and height) were of varying dimensions, causing the "scrunched" appearance.
+
+RESOLVING THE PROBLEM
+Use the EqualizeUnbalancedImage action from the Equalize Action Library on each image before rotation. This will normalize the dimensions of the image and allow proper viewing.

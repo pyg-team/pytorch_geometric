@@ -1,0 +1,65 @@
+Title: IBM WebSphere Application Server java.security file - United States
+
+Text:
+java.security; securerandom RELEASE NOTES
+
+ABSTRACT
+ WebSphere Application Server java.security file may need manual updates 
+
+CONTENT
+The java.security file shipped with WebSphere Application Server is a customizable file. WebSphere Application Server does not update this file when fix packs or i-fixes are applied, to avoid overwriting customizations. 
+
+WebSphere Application Server Liberty using the Installation Manager (IM) install method, and the WebSphere Application Server Classic may be affected.
+
+The java.security file may need manual updates to comply with both security and performance upgrades.
+
+See the following, organized by Java major version, to determine if your java.security file needs to be manually updated.
+
+Java 8
+
+
+
+Java 8 release start point Description CVE Common name java.security property Java 8 GA Vulnerability in SSLv3 CVE-2014-3566 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566] POODLE jdk.tls.disabledAlgorithms=SSLv3 Java 8 SR1 Vulnerability in RC4 CVE-2015-2808 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2808] Bar Mitzvah jdk.tls.disabledAlgorithms=SSLv3, RC4 Java 8 SR1 FP1 Vulnerability with Diffie-Hellman ciphers CVE-2015-4000 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-4000] Logjam jdk.tls.disabledAlgorithms=SSLv3, RC4, DH keySize <768 Java 8 SR2 Performance degradation due to secure random source n/a n/a securerandom.source=file:/dev/urandom Java 8 SR2 FP10 Vulnerability in MD5 CVE-2015-7575 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7575] SLOTH jdk.certpath.disabledAlgorithms=MD2, MD5, RSA keySize < 1024
+-and-
+jdk.tls.disabledAlgorithms=SSLv3, RC4, DH keySize <768, MD5withRSA 
+
+
+Java 7 and 7.1 
+
+Java 7/7.1 release start point Description CVE Common name java.security property Java 7.1 SR2
+----
+Java 7 SR8 FP10 Vulnerability in SSLv3 CVE-2014-3566 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566] POODLE jdk.tls.disabledAlgorithms=SSLv3 Java 7.1 SR 3
+-----
+Java 7 SR9 Vulnerability in RC4 CVE-2015-2808 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2808] Bar Mitzvah jdk.tls.disabledAlgorithms=SSLv3, RC4 Java 7.1 SR3 FP10
+-----
+Java 7 SR9 FP10 Vulnerability with Diffie-Hellman ciphers CVE-2015-4000 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-4000] Logjam jdk.tls.disabledAlgorithms=SSLv3, RC4, DH keySize <768 Java 7.1 SR3 FP30
+-----
+Java 7 SR9 FP30
+Vulnerability in MD5 CVE-2015-7575 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7575] SLOTH jdk.certpath.disabledAlgorithms=MD2, MD5, RSA keySize < 1024
+-and-
+jdk.tls.disabledAlgorithms=SSLv3, RC4, DH keySize <768, MD5withRSA 
+
+Java 6 and 6.1 
+
+
+Minimum Java 6/6.1 Description CVE Common name java.security property Java 6.1 SR8 FP2
+-----
+Java 6 SR16 FP3 Vulnerability in SSLv3 CVE-2014-3566 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566] POODLE jdk.tls.disabledAlgorithms=SSLv3 Java 6.1 SR8 FP7
+-----
+Java 6 SR16 FP7 Vulnerability in RC4 CVE-2015-2808 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2808] Bar Mitzvah jdk.tls.disabledAlgorithms=SSLv3, RC4 Java 6.1 SR8 FP5
+-----
+Java 6 SR16 FP5 Vulnerability with Diffie-Hellman ciphers CVE-2015-4000 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-4000] Logjam jdk.tls.disabledAlgorithms=SSLv3, RC4, DH keySize <768 Java 6.1 SR8 FP20
+-----
+Java 6 SR16 FP20 Vulnerability in MD5 CVE-2015-7575 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7575] SLOTH jdk.certpath.disabledAlgorithms=MD2, MD5, RSA keySize < 1024
+-and-
+jdk.tls.disabledAlgorithms=SSLv3, RC4, DH keySize <768, MD5withRSA 
+
+
+RELATED INFORMATION
+ WebSphere Java Versions [http://www-01.ibm.com/support/docview.wss?rs=404&uid=swg27005002]
+WebSphere Java Non-serviceable files [http://www-01.ibm.com/support/docview.wss?uid=swg27046880]
+IBM SDK Java Technology Edition Version 8 fixes [http://www.ibm.com/developerworks/java/jdk/fixes/8/]
+IBM SDK Java Technology Edition Version 7 Release 1 fix [http://www.ibm.com/developerworks/java/jdk/fixes/71/]
+IBM SDK Java Technology Edition Version 7 fixes [http://www.ibm.com/developerworks/java/jdk/fixes/7/]
+IBM SDK for Java 6 with an IBM J9 2.6 virtual machine f [http://www.ibm.com/developerworks/java/jdk/fixes/601/]
+IBM SDK Java Technology Edition Version 6 fixes [http://www.ibm.com/developerworks/java/jdk/fixes/6/]

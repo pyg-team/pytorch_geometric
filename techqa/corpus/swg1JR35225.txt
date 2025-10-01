@@ -1,0 +1,129 @@
+Title: IBM JR35225: WID EXPORT FAILING WITH NAMESPACE ENDING IN NUMBER - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM WebSphere Business Modeler Advanced V7.0.0.0 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026455]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using the namespace http://dummy/2009 the log shows this error
+   on export to WID:
+   
+   ----------------------------------------------------------------
+   
+   !MESSAGE RunExportAction:RunExportAction: exception caught
+   java.lang.reflect.InvocationTargetException
+   
+   !MESSAGE RunExportAction:RunExportAction: exception caused by
+   org.w3c.dom.DOMException: INVALID_CHARACTER_ERR: An invalid or
+   illegal XML character is specified.
+   ----------------------------------------------------------------
+   
+   
+   With namespace http://dummy/a2009 everything works fine.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  -
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fix to be delivered in Modeler 7.0.0.2, targetting beginning 2nd
+   quarter 2010.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  Test fix delivered to single customer
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR35225
+   
+   
+ * REPORTED COMPONENT NAME
+   WBI MODELER AE
+   
+   
+ * REPORTED COMPONENT ID
+   5724I7500
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-23
+   
+   
+ * CLOSED DATE
+   2010-01-26
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

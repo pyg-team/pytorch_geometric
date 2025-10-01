@@ -1,0 +1,72 @@
+Title: IBM ClearQuest Server on Linux dumps core - United States
+
+Text:
+CQ; ClearQuest; Linux; core; dump; JRE; data direct; rwp; RATLC00737129; RATLC00728499; RATLC00726709 ; novell; suse; red hat; RHEL; sels; REDHAT; JAVA; 1260113; 1196655; hang; hung; crash TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote provides information on a known issue with the Java™ Runtime Environment (JRE) that is shipped as part of the IBM® Rational® ClearQuest® Linux® installation and is known to cause issues with the Data Direct ODBC drivers, which can lead to a core dump when trying to start the request manager. 
+
+SYMPTOM
+The JRE shipped with the Rational ClearQuest for the Linux installation is known to cause issues with the Data Direct ODBC drivers. This issue can result in the Request Manager not starting correctly and you seeing a blank screen when you log in. This also can cause a core dump, when you try to start the ClearQuest Request Manager.
+
+CAUSE
+The Data Direct ODBC drivers have been reported to have issues with the 1.3.1_02 version of the Java Runtime Environment (JRE) shipped with the ClearQuest 2003.06 patches 7 through 18 for the Linux operating system. This is not an issue on the other supported UNIX® operating systems.
+
+RESOLVING THE PROBLEM
+The Release notes for the 2003.06.15 release of ClearQuest state the following instructions for installation of the Sun JRE 1.4.2, which does not have issue with the Data Direct ODBC drivers:
+
+
+Note: This defect also effects both Redhat and SUSE Linux.
+
+
+
+RATLC00728499; ClearQuest Server on Red Hat Linux dumps core when used with Data Direct libraries When using Data Direct libraries with ClearQuest Server on Red Hat Linux, the ClearQuest Server application dumps core.
+
+RATLC00488144; Incorrect JRE shipped with RWP The JRE shipped with the product is missing a core library.
+
+To resolve this issue, an alternative Java Runtime Environment (JRE) must be used in order for ClearQuest Web to function properly. 
+
+Sun JRE 1.4.2 ( which can be obtained at http://java.sun.com/j2se/1.4.2/download.html [http://java.sun.com/j2se/1.4.2/download.html], click the "Download J2SE JRE" link ) should be used in place of the JRE shipped with this version of ClearQuest. 
+
+ 1. To obtain and install the Sun JRE:Download Sun JRE 1.4.2 from http://java.sun.com/j2se/1.4.2/download.html [http://java.sun.com/j2se/1.4.2/download.html]. Click on Download J2SE JRE.
+    
+    
+ 2. Run the following commands:
+    
+    /opt/rational/clearquest/cqweb/cqserver_shutdown
+    /opt/rational/common/rwp/rhat_x86/bin/rwp_shutdown
+    
+    
+    The ClearQuest Server, when started from the installation process, populates /tmp with many files. It is important to shut down cqserver after installation to avoid running out of disk space.
+    
+    
+ 3. Remove all javacore* files from /tmp.
+    
+    
+ 4. As root, rename/jre in/opt/rational/common/java/ to/jre.old.
+    
+    
+ 5. Create a soft link from your Sun JRE install area to /opt/rational/common/java: 
+    ln -s sun_java_install_dir/jre /opt/rational/common/java
+    
+    
+ 6. Run the following commands:
+    
+    /opt/rational/clearquest/cqweb/cqserver_startup
+    /opt/rational/common/rwp/rhat_x86/bin/rwp_startup
+    
+
+
+
+
+
+
+RELATED INFORMATION
+#Supported Java for CQ [http://www.ibm.com/support/docview.wss?uid=swg21246317]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Common Components Rational Web Platform Linux 2003.06.00

@@ -1,0 +1,45 @@
+Title: IBM Why does DataPower not perform a retry after bringing MQ Front Side Handler down? - United States
+
+Text:
+MQ; MQ QM; QM; Queue Manager; object; Front Side Handler; FSH; down; retry TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In some cases, DataPower will not trigger an automatic retry once the MQ Front Side Handler went down due to a problem while trying to get a message from the MQ Server.
+
+
+CAUSE
+There is a difference between DataPower MQ Queue Manager (MQ QM) object and DataPower MQ Front Side Handler (MQ FSH) object. 
+
+An MQ QM object has a retry interval setting. This retry interval setting is for situations where the MQ QM object can't establish the connection between DataPower and the MQ server. In other words, if there is any error happening when establishing the connection and thereby preventing the connection to be successfully established, the retry mechanism will be triggered.
+
+An MQ FSH object has no retry interval setting. If the MQ FSH encounters an error when trying to get the message from the MQ Server, and if this error is not a connection broken error, the MQ FSH won't notify MQ QM to go down. So, the retry mechanism in MQ QM object won't be triggered. If there is an error listed in the below critical error list, then DataPower will bring down MQ FSH. If the error is neither connection broken error nor one of these critical errors, then DataPower will close the connection and the MQ FSH will get another connection from MQ QM and try again.
+
+Currently the MQ FSH critical error list is as below:
+
+MQ FSH critical error list 
+============================= 
+MQRC_UNKNOWN_OBJECT_NAME 
+MQRC_MSG_TOO_BIG_FOR_Q 
+MQRC_MSG_TOO_BIG_FOR_CHANNEL 
+MQRC_DATA_LENGTH_ERROR 
+MQRC_Q_FULL 
+MQRC_SELECTOR_SYNTAX_ERROR 
+MQRC_SUB_INHIBITED 
+MQRC_GET_INHIBITED 
+MQRC_TOPIC_STRING_ERROR 
+MQRC_TOPIC_NOT_ALTERABLE 
+MQRC_SUBLEVEL_NOT_ALTERABLE 
+MQRC_SUBSCRIPTION_IN_USE 
+MQRC_SELECTOR_NOT_ALTERABLE 
+MQRC_INVALID_SUBSCRIPTION 
+MQRC_DEST_CLASS_NOT_ALTERABLE 
+MQRC_DURABILITY_NOT_ALLOWED 
+MQRC_SELECTOR_ALWAYS_FALSE 
+MQRC_FUNCTION_NOT_SUPPORTED 
+MQRC_NOT_AUTHORIZED 
+MQRC_MULTIPLE_REASONS 
+
+Additionally, there are only two MQRCs (MQRC_NOT_AUTHORIZED and MQRC_SUBSCRIPTION_IN_USE) which will perform retry after only bringing MQ FSH down.
+
+RESOLVING THE PROBLEM
+Manually change the Administrative State of the MQ Front Side Handler will bring it up again.

@@ -1,0 +1,50 @@
+Title: IBM Problem connecting to the IBM Business Process Manager or IBM Business Monitor V8.0.1 service repository during an update or a custom installation - United States
+
+Text:
+ibpma801relnotes ibpms801relnotes ibpme801relnotes mon801relnotes iid801relnotes pd801relnotes repository updates fixpacks TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When performing an update or a custom installation of an IBM Business Process Manager or IBM Business Monitor V8.0.1 product, you cannot connect to the service repository to install the updates. 
+
+SYMPTOM
+When attempting to connect to the live repository to find additional fixes, none of the fixes in the live repository are found.
+
+
+CAUSE
+The service offering repositories in the Version 8.0.1 products are not set correctly.
+
+RESOLVING THE PROBLEM
+To resolve this issue, add the service repository URLs to the IBM Installation Manager preferences. You can add the URLs either before or after installing the Version 8.0.1 products. If you want to install the latest fix pack and any mandatory interim fixes during the product installation, install Installation Manager and add the repository URLs before installing one of the IBM Business Process Manager or IBM Business Monitor V8.0.1 products. If completing an update, add the service repositories before attempting to complete the update. 
+
+To add the service repository URLs, complete the following steps:
+
+
+
+ 1. Start IBM Installation Manager.
+    
+    
+ 2. Select File > Preferences.
+    
+    
+ 3. Click Add Repository.
+    
+    
+ 4. Add the appropriate repository URL for the product you are installing:  * IBM Business Process Manager Express: http://public.dhe.ibm.com/software/websphere/bpm/repositories/server/bpmexp/800/updates/ 
+     * IBM Business Process Manager Standard: http://public.dhe.ibm.com/software/websphere/bpm/repositories/server/bpmstd/800/updates/ 
+     * IBM Business Process Manager Advanced: http://public.dhe.ibm.com/software/websphere/bpm/repositories/server/bpmadv/800/updates/ 
+     * IBM Business Process Manager Advanced Process Server and WebSphere Test Environment: http://public.dhe.ibm.com/software/websphere/bpm/repositories/server/bpmadvps/800/updates/ 
+     * IBM Business Monitor: http://public.dhe.ibm.com/software/websphere/bpm/repositories/server/wbm/800/updates/ 
+       
+    
+    
+ 5. Click OK.
+    
+    
+ 6. Click OK to exit Preferences.
+    
+    
+ 7. If you are performing an installation then exit Installation Manager. If you are doing an update then click Update to begin.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Installation / Configuration Linux, Linux zSeries, Windows 8.0.1 Business Integration IBM Business Process Manager Standard Installation / Configuration AIX, Linux, Linux zSeries, Solaris, Windows 8.0.1 Business Integration IBM Business Process Manager Tools and Add-Ons General AIX, Linux, Solaris, Windows 8.0.1 Business Integration IBM Integration Designer Installation Windows, Linux 8.0.1 Business Integration IBM Business Monitor General AIX, Linux, Linux zSeries, Solaris, Windows 8.0.1

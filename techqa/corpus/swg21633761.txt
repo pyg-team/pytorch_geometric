@@ -1,0 +1,133 @@
+Title: IBM Obtaining the IBM MQ Resource Adapter for the WebSphere Application Server Liberty Profile - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How can you get the IBM MQ Resource Adapter, for use with either the WebSphere Application Server Liberty Profile or other JavaEE application servers? 
+
+CAUSE
+To connect to IBM MQ from the Liberty Profile or other JavaEE application servers, you use the IBM MQ Resource Adapter. The Liberty Profile does not contain the IBM MQ Resource Adapter, you must get it separately.
+
+RESOLVING THE PROBLEM
+The JavaEE version of the application server used determines the version of the resource adapter that must be used. 
+
+JavaEE 1.5 and 1.6 
+
+The WebSphere MQ Resource Adapter v7.5 supports JCA v1.5 and provides JMS 1.1 support. To provide full integration with WebSphere Application Server Liberty Profile the WebSphere MQ 7.5 Resource Adapter has been updated to APAR IC92914 [http://www.ibm.com/support/docview.wss?uid=swg1IC92914]. This resource adapter retains full compatibility with other JavaEE 1.5 and later application servers. 
+
+See "WebSphere MQ resource adapter v7.1 and later statement of support" [http://www.ibm.com/support/docview.wss?uid=swg27023129] 
+
+JavaEE 1.7 
+
+The IBM MQ Resource Adapter v8.0 and v9.0 supports JCA v1.7 and provides JMS 2.0 support. This needs to be deployed within a JavaEE 1.7 and later application server. 
+
+See "IBM MQ resource adapter v8.0 statement of support" [http://www.ibm.com/support/docview.wss?uid=swg27041968] and "IBM MQ resource adapter v9.0 statement of support" [https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.dev.doc/q128150_.htm] 
+
+ 
+
+Download
+The WebSphere MQ Resource Adapter can be downloaded from Fix Central [http://www-933.ibm.com/support/fixcentral/swg/identifyFixes?query.parent=null&query.product=ibm~WebSphere~WebSphere%20MQ&query.release=All&query.platform=All]. To locate the latest version that is available for download, enter the phrase "Resource Adapter" in the Text Search box. The name of the file to be downloaded will be in the format of <V.R.M.F>-WS-MQ-Java-InstallRA.jar. From version IBM MQ v9 this format is <V.R.M.F>-IBM-MQ-Java-InstallRA.jar
+
+
+Installation 
+
+The jar file that can be downloaded from Fix Central is executable. When run, it displays the IBM MQ license agreement, which must be accepted. It asks for a directory in which to install the IBM MQ Resource Adapter. The Resource Adapter file and Installation Verification test program are installed to that directory. The directory is created if it does not exist. 
+
+The directory could be the 'resource adapters' directory of an application server or any other directory on your system. The Java installer used here does not require running as root or any specific user. The only requirement is that the user you choose has write access to the directory you want the files to go in. 
+
+To start the installation, issue the following command from the directory to which you downloaded the file. Note that this command requires a Java™ Runtime Environment to be installed on your machine and added to the system path.
+java -jar <V.R.M.F>-WS-MQ-Java-InstallRA.jar 
+
+or
+java -jar <V.R.M.F>-IBM-MQ-Java-InstallRA.jar 
+
+where <V.R.M.F>-WS-MQ-Java-InstallRA.jar is the name of the file that was downloaded from Fix Central. 
+
+For example, to install the IBM MQ Resource Adapter for the v9.0.0.0 release, use the following command: 
+
+java -jar 9.0.0.0-IBM-MQ-Java-InstallRA.jar
+
+
+This displays the following information: 
+
+
+LICENSE INFORMATION
+
+Before you can use, extract, or install IBM MQ V9.0, you must accept
+the terms of 1. IBM International License Agreement for Evaluation of
+Programs 2. IBM International Program License Agreement and additional
+license information. Please read the following license agreements
+carefully.
+
+The license agreement is separately viewable using the
+--viewLicenseAgreement option.
+
+Press Enter to display the license terms now, or 'x' to skip. 
+
+Either press 'Enter' or 'x' as required, after display of the license or immediately on selection of 'x', additional license terms can be displayed. 
+
+
+Additional license information is separately viewable using the
+--viewLicenseInfo option.
+
+Press Enter to display additional license information now, or 'x' to skip. 
+
+Again press 'Enter' or 'x' as required. 
+
+The license now need to be accepted, this message is displayed:
+By choosing the "I Agree" option below, you agree to the terms of the
+license agreement and non-IBM terms, if applicable. If you do not
+agree, select "I do not Agree".
+
+
+Select [1] I Agree, or [2] I do not Agree: 
+
+Selecting '2' terminates installation immediately. Selecting '1' allows selection of the installation directory. 
+
+
+Enter directory for product files or leave blank to accept the default value.
+The default target directory is H:\Liberty\WMQ
+
+Target directory for product files? 
+
+ 
+
+Enter the directory to install the files to, or press 'Enter' without entering any value to install the default location as displayed. After the files have been installed to the requested location a confirmation message is displayed:
+Extracting files to H:\Liberty\WMQ\wmq
+Successfully extracted all product files. 
+
+Files Installed 
+
+Within the selected directory a new directory 'wmq' will be created. Inside the 'wmq' directory, the following files are installed.
+
+wmq.jmsra.ivt.ear
+wmq.jmsra.rar 
+
+The wmq.jmsra.ivt.ear is the installation verification test program. The wmq.jmsra.rar is the WebSphere MQ Resource Adapter RAR file. 
+
+Details of running the installation verification test are within the IBM MQ V9.0 Product Documentation [http://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.dev.doc/q031760_.htm?lang=en] 
+
+ 
+
+Liberty Configuration 
+
+Details of the Liberty configuration should be checked in the WebSphere Application Server Product Documentation [http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.wlp.nd.multiplatform.doc/ae/twlp_dep_msg_wmq.html?cp=SSAW57_8.5.5%2F3-3-11-0-5-8-1]. In summary, an additional feature is added (wmqJmsClient-1.1 or wmqJmsClient-2.0), and reference to the wmq.jmsra.rar file is added. For example, a configuration to support servlets and MDBs, with JNDI, might look like this:
+
+<featureManager>
+<feature>wmqJmsClient-1.1</feature>
+
+<feature>servlet-3.0</feature>
+<feature>jmsMdb-3.1</feature> 
+<feature>jndi-1.0</feature> 
+
+</featureManager>
+
+<variable name="wmqJmsClient.rar.location"
+value="H:\Liberty\WMQ\wmq\wmq.jmsra.rar"/>
+
+For Liberty versions up to v8.5.5.1, if an EJB is deployed using solely the configuration within the ejb-jar.xml, the version of WebSphere Application Server that the Liberty Profile is using must have APAR PM89890 [http://www.ibm.com/support/docview.wss?uid=swg1PM89890] applied. This method of configuration is used for the Resource Adapter's installation verification program (IVT), so this APAR is required in order for the IVT to run.
+
+Platform Support
+
+In addition to the platform support defined by the WebSphere MQ System Requirements, the WebSphere Application Server Liberty profile includes platform support for Mac OS X. Therefore use of the resource adapter within the Liberty profile on Mac OS X is tolerated. Outside of the Liberty Profile, the platform support for the IBM MQ Resource Adapter is unchanged.

@@ -1,0 +1,168 @@
+Title: IBM PI54159: DFHSM0002 XXXXXXXX A SEVERE ERROR (CODE X'0318') HAS OCCURRED IN MODULE DFHSMGF WHILE BROWSING SHARED TEMPORARY STORAGE QUEUES - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An application program is browsing through the shared TS pools
+   and shared TS queues in them. while this is running a periodic
+   cleanup of shared TS queues by CICS runs under a Timer Domain
+   task (TI). Both tasks end up sharing the same SBB control block
+   and eventually a freemain fails becasue the control block has
+   already been freed
+   
+   SM 0318 SMGF  *EXC* Freemain_address_overlays_previous_SCF
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All CICS users.                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * DFHSM0002 A severe error (code X'0317') occurred in module   *
+   * DFHSMGF.                                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * .                                                            *
+   ****************************************************************
+   A temporary storage cleanup task was running. DFHTSCL getmained
+   a shared browse block (SBB) to represent its browse of the
+   shared temporary storage queues. Before this browse had ended, a
+   user task also started a browse of the shared queues. The start
+   browse logic found the SBB that DFHTSCL had getmained was not
+   associated with a known task number. This was correct as DFHTSCL
+   runs under a TI (timer domain) task. The logic
+   incorrectly assumed this meant the SBB had been used by an
+   earlier task which had ended without explicitly ending its
+   browse, so had not freemained its SBB. It freed the SBB and the
+   storage was reused as a new SBB for the user task. This meant
+   both tasks were now using the same storage for their respective
+   SBBs. The user task completed its browse, and the end browse
+   logic freemained the SBB. When DFHTSCL finished its own browse,
+   it also tried to freemain the SBB. Storage manager detected that
+   the freemain length overlaid the next SCF and issued message
+   "DFHSM0002 A severe error (code X'0317') has occurred in module
+   DFHSMGF." Note - the same invalid freemain may result in a
+   severe error code X'0318', depending upon the location of the
+   next freed storage area.
+   Keywords: msgdfhsm0002 sm0002 sm 0002 tscl
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHTSSH has been changed to avoid freeing an SBB if it was
+   associated with a task with no transaction manager token.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI54159
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-12-15
+   
+   
+ * CLOSED DATE
+   2016-01-27
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI46681 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI46681]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI34770
+   
+   
+
+MODULES/MACROS
+ *  DFHTSDUF DFHTSDUS DFHTSSH  DFHTSST
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI34770 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI34770]
+   UP16/02/11 P F602
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

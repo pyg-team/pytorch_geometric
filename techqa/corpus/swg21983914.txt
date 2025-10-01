@@ -1,0 +1,42 @@
+Title: IBM How to configure IBM HTTP Server 5.3  to work with Host On-Demand V12 - United States
+
+Text:
+HOD; HTTP 5.3; DGW TECHNOTE (FAQ)
+
+QUESTION
+ How do you configure IBM HTTP Server 5.3 (Domino-based server) to work with IBM Host On-Demand V12 (HOD 12)? 
+
+CAUSE
+The Domino server was not tested with HOD 12 during development and test since the HTTP 5.3 server will no longer be shipped with z/OS 2.2, only the IBM HTTP Server (Apache based server) will be provided. Clients on earlier versions of z/OS might still be using the HTTP 5.3 server. 
+
+ANSWER
+The structure of the Host On-Demand V12 file system is different from previous versions of HOD. For instance, the html, properties, and txt files no longer have the .ascii appended to the name. The web server directives and pass rules are different from previous versions. Because of these differences, you will not be able to host both HOD 11 and HOD 12 servers from the same Web server instance. 
+
+These statements assume the default install location is /usr/lpp/HOD/hostondemand and the alias is 'hod'. Modify the statements if installed in a different path or using a different alias. 
+
+Code the following Pass rules: 
+Pass /hod/*.css /usr/lpp/HOD/hostondemand/HOD/*.css
+Pass /hod/*.jnlp /usr/lpp/HOD/hostondemand/HOD/*.jnlp
+Pass /hod/*.html /usr/lpp/HOD/hostondemand/HOD/*.html
+Pass /hod/*.HTML /usr/lpp/HOD/hostondemand/HOD/*.HTML
+Pass /hod/*.js /usr/lpp/HOD/hostondemand/HOD/*.js
+Pass /hod/*.properties /usr/lpp/HOD/hostondemand/HOD/*.properties
+Pass /hod/*.props /usr/lpp/HOD/hostondemand/HOD/*.props
+Pass /hod/* /usr/lpp/HOD/hostondemand/HOD/* 
+
+ 
+
+Change the following AddType statements:
+
+
+
+AddType .html text/html binary 1.0 
+AddType .js application/x-Javascript binary 1.0
+AddType .txt text/plain binary 0.5 [/support/docview.wss?uid=swg21983914&amp;aid=1] Restart the web server after making any changes to the httpd.conf file. 
+
+On the client machine, clear the Java and Browser cache. 
+
+If you want to configure a user-defined publish directory for your customized html pages, add a pass rule and alias to point to the path. For example: 
+
+Pass /user/* /usr/lpp/userpublish/* 
+Warning: The AddType changes could affect other applications being served by the same Web server instance and you might need a separate instance of the Web server on a different port for Host On-Demand V12.

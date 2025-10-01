@@ -1,0 +1,203 @@
+Title: IBM JR46317: CMVC 228269 - PERFORMANCE ISSUES WHEN SEARCHING FOR TASK/TASKGROUPS IN WMT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Search queries become inefficient when a large number of
+   taskgroups (many thousands) exist in the workspace.
+   
+   An exception similar to the following may be seen in the logs
+   when this problem occurs:
+   ______
+   [4/9/13 15:52:21:227 PDT] 00000004 TimeoutManage I   WTRN0124I:
+   When the timeout occurred the thread with which the transaction
+   is, or was most recently, associated was Thread[WebContainer :
+   7,5,main]. The stack trace of this thread when the timeout
+   occurred was:
+    java.net.SocketInputStream.socketRead0(Native Method)
+    java.net.SocketInputStream.read(SocketInputStream.java:140)
+    com.ibm.db2.jcc.t4.ab.b(ab.java:195)
+    com.ibm.db2.jcc.t4.ab.c(ab.java:243)
+    com.ibm.db2.jcc.t4.ab.c(ab.java:354)
+    com.ibm.db2.jcc.t4.ab.v(ab.java:1139)
+    com.ibm.db2.jcc.t4.db.a(db.java:37)
+    com.ibm.db2.jcc.t4.t.a(t.java:32)
+    com.ibm.db2.jcc.t4.sb.h(sb.java:141)
+    com.ibm.db2.jcc.a.jm.db(jm.java:1942)
+    com.ibm.db2.jcc.a.km.gc(km.java:2566)
+    com.ibm.db2.jcc.a.km.e(km.java:3267)
+    com.ibm.db2.jcc.a.km.Tb(km.java:600)
+    com.ibm.db2.jcc.a.km.executeQuery(km.java:570)
+    com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.pmiExecuteQue
+   ry(WSJdbcPreparedStatement.java:1082)
+    com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.executeQuery(
+   WSJdbcPreparedStatement.java:703)
+    com.ibm.ws.rsadapter.jdbc.WSJccPreparedStatement.executeQuery(W
+   SJccPreparedStatement.java)
+    com.ibm.commerce.base.helpers.BaseJDBCHelper.executeQuery(BaseJ
+   DBCHelper.java:381)
+    com.ibm.commerce.base.objects.ServerJDBCHelperBean.executeParam
+   eterizedQueryNoCache(ServerJDBCHelperBean.java:497)
+    com.ibm.commerce.base.objects.ServerJDBCHelperBean.executeParam
+   eterizedQuery(ServerJDBCHelperBean.java:447)
+    com.ibm.commerce.base.objects.ServerJDBCHelperBean.executeQuery
+   (ServerJDBCHelperBean.java:523)
+    com.ibm.commerce.base.objects.EJSRemoteStatelessServerJDBCHelpe
+   r_1e86a748.executeQuery(EJSRemoteStatelessServerJDBCHelper_1e86a
+   748.java)
+    com.ibm.commerce.base.objects._ServerJDBCHelper_Stub.executeQue
+   ry(_ServerJDBCHelper_Stub.java)
+    com.ibm.commerce.base.objects.ServerJDBCHelperAccessBean.execut
+   eQuery(ServerJDBCHelperAccessBean.java:186)
+    com.ibm.commerce.content.facade.server.commands.FetchTaskGroupB
+   ySearchCriteriaCmdImpl.getTaskGroupIdsWithSQLQuery(FetchTaskGrou
+   pBySearchCriteriaCmdImpl.java:469)
+    com.ibm.commerce.content.facade.server.commands.FetchTaskGroupB
+   ySearchCriteriaCmdImpl.performSearch(FetchTaskGroupBySearchCrite
+   riaCmdImpl.java:162)
+    com.ibm.commerce.content.facade.server.commands.AbstractFetchTa
+   skGroupCmdImpl.performExecute(AbstractFetchTaskGroupCmdImpl.java
+   :121)
+    com.ibm.commerce.foundation.internal.server.command.impl.Comman
+   dTarget.executeCommand(CommandTarget.java:66)
+    com.ibm.websphere.command.TargetableCommandImpl.execute(Targeta
+   bleCommandImpl.java:139)
+    com.ibm.websphere.command.CacheableCommandImpl.execute(Cacheabl
+   eCommandImpl.java:138)
+   
+    ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Reduce number of complete or cancelled task groups in the
+   database.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   WebSphere Commerce users who are using workspaces in the
+   management center and have a large number of task groups
+   defined.
+   
+   PROBLEM ABSTRACT:
+   Performance issues may occur when using simple/quick search for
+   Task or Taskgroups in the workspace management tool when a large
+   number of taskgroups are defined.
+   
+   BUSINESS IMPACT:
+   Impacts usability of the management center tool when using
+   workspaces.
+   
+   RECOMMENDATION:
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The database query used by the task group quick/simple search
+   was enhanced and also the web service paging implementation was
+   improved.
+   
+   
+   -------------------------------------------------------------
+   The latest available maintenance information can be obtained
+   from the Recommended Fixes for WebSphere Commerce technote:
+   http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296 [http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR46317
+   
+   
+ * REPORTED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * REPORTED COMPONENT ID
+   5724I3800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-12
+   
+   
+ * CLOSED DATE
+   2013-05-14
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * FIXED COMPONENT ID
+   5724I3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

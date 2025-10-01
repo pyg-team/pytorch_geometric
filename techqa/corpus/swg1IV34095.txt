@@ -1,0 +1,147 @@
+Title: IBM IV34095: DATASTAGE JOB LISTINGS IN TDWC ARE INCONSISTENT IN RESULTS, INTERMITTENTLY DISPLAY ERROR, INCLUDING AWKDSE020E - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a user lists the available datastage jobs in TDWC, the user
+   will often receive
+   
+   1.) An empty list
+   2.) An incomplete list
+   3.) AWKDSE020E No object found with the filter "filter" you
+   specified
+   
+   The behavior is not well defined and affects similar object
+   retrieval from datastage from within TDWC.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  L3 delivered fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When a user lists the available datastage jobs in TDWC, the user
+   
+   will often receive
+   
+   1.) An empty list
+   2.) An incomplete list
+   3.) AWKDSE020E No object found with the filter "filter" you
+   specified
+   
+   The behavior is present when the list to be retrived contains
+   high number of objects ( > 100).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This apar will be fixed in 8.6.0-TIV-TWSWSE-FP0001.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV34095
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV DYN WKLD CN
+   
+   
+ * REPORTED COMPONENT ID
+   TIVOWEBUI
+   
+   
+ * REPORTED RELEASE
+   860
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-04
+   
+   
+ * CLOSED DATE
+   2013-01-28
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TWS APPS
+   
+   
+ * FIXED COMPONENT ID
+   5698WSE00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R860 PSY
+   UP

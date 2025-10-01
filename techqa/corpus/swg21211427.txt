@@ -1,0 +1,68 @@
+Title: IBM Tips on configuring the high availability feature for Load Balancer - United States
+
+Text:
+Edge Server; Network Dispatcher TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ With the high availability function for Load Balancer, a partner machine can takeover load balancing if the primary partner fails or is shut down. To maintain connections between the high availability partners, connection records are passed between the two machines. When the backup partner takes over the load balancing function, the cluster IP address is removed from the backup machine and added to the new primary machine. There are numerous timing and configuration considerations that can affect this takeover operation. 
+
+SYMPTOM
+The tips listed in this technote help alleviate problems that arise from high availability configuration problems such as: 
+
+ * Connections dropped after takeover
+   
+   
+ * Partner machines unable to synchronize
+   
+   
+ * Requests erroneously directed to the backup partner machine
+
+
+RESOLVING THE PROBLEM
+The following five tips are helpful for successful configuration of high availability on your Load Balancer machines. 
+
+ 1. The positioning of the high availability commands in your script files can make a significant difference.
+    
+    Examples of high availability commands are:
+    
+    dscontrol highavailability heartbeat add ...
+    dscontrol highavailability backup add ...
+    dscontrol highavailability reach add ...
+    
+    In most cases, you must position the high availability definitions at the end of the file. The cluster, port, and server statements must be placed before the high availability statements. This is because when high availability synchronizes, it looks for the cluster, port, and server definitions when a connection record is received.
+    
+    If the cluster, port, and server do not exist, the connection record is dropped. If a takeover occurs and the connection record has not been replicated on the partner machine, the connection fails.
+    
+    The exception to this rule is when using collocated servers that are configured with the MAC-forwarding method. In this case, the high availability statements must come before the collocated server statements. If the high availability statements are not before the collocated server statements, Load Balancer receives a request for the collocated server, but it appears the same as an incoming request for the cluster and is load balanced. This can lead to a looping of the packets on the network and lead to excess traffic. When the high availability statements are placed before the collocated server, Load Balancer knows that it should not forward incoming traffic unless it is in the ACTIVE state.
+    
+    Steps 2, 4 and 5 do not apply to the Load Balancer for IPv4 and IPv6 
+ 2. (Applies to the Load Balancer for IPv4 only) On z/OS® or OS/390® operating systems, the hypervisor controls the interface and multiplexes the real interface among the guest operating systems. The hypervisor permits only one guest at a time to register itself for an IP address, and there is an update window. This means that when the cluster IP is removed from the backup machine, you might have to add a delay before trying to add the cluster IP to the primary machine; otherwise, it fails and incoming connections are not processed.
+    
+    To correct this behavior, add a sleep delay in the goActive script. The amount of time needed to sleep is deployment dependent. It is recommended that you start with a sleep delay time of 10.
+    
+    
+ 3. High availability partners must be able to communicate with each other and must be on the same subnet.
+    
+    By default, the machines attempt to communicate with each other every one half second and will detect a failure after two seconds with no communication received. If you have a busy machine, this might cause failovers to occur when the system is still functioning properly. You can increase the number of times until failure by issuing:
+    
+    dscontrol executor set hatimeout new_timeout_value
+    
+    The executor must be started for this command to be successful.
+    
+    
+ 4. (Applies to the Load Balancer for IPv4 only) When the partners synchronize, all the connection records are sent from the active machine to the backup machine. The synchronization must complete within the default limit of 50 seconds.
+    
+    To accomplish this, old connections must not remain in memory for an extended amount of time. In particular, there have been issues with LDAP ports and large staletimeout periods (in excess of one day). Setting a large staletimeout period causes old connections to remain in memory, which causes more connection records to be passed at synchronization, and also more memory usage on both machines.
+    
+    If the synchronization fails with a reasonable staletimeout period, you can increase the synchronization timeout by issuing:
+    
+    e xm 33 5 new_timeout 
+    
+    The timeout value is stored in one half seconds; therefore, the default value for new_timeout is 100 (50 seconds).
+    
+    
+ 5. (Applies to the Load Balancer for IPv4 only) When a partner machine takes over the workload, it issues a gratuitous ARP response to tell machines on the same subnet of the new hardware address associated with the cluster IP address. You must ensure that your routers honor gratuitous ARPs and update their cache, or the requests will be sent to the inactive partner.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

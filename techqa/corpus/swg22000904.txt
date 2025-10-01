@@ -1,0 +1,84 @@
+Title: IBM Security Bulletin: A vulnerability in Java runtime from IBM affects IBM WebSphere MQ and IBM MQ Appliance (CVE-2016-5597) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There are multiple vulnerabilities in IBM® Runtime Environment Java™ Versions 7 and 8 used by IBM WebSphere MQ and the IBM MQ Appliance. These issues were disclosed as part of the IBM Java SDK updates in October 2016. 
+
+VULNERABILITY DETAILS
+If you run your own Java code using the Java runtime from IBM delivered with this product, you should evaluate your code to determine whether the complete list of vulnerabilities are applicable to your code. For a complete list of vulnerabilities, refer to the IBM Java SDK Security Bulletin, located in the References section for more information.
+
+CVEID: CVE-2016-5597 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5597]
+DESCRIPTION: An unspecified vulnerability related to the Networking component could allow a remote attacker to obtain sensitive information resulting in a high confidentiality impact using unknown attack vectors.
+CVSS Base Score: 5.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/118071 [https://exchange.xforce.ibmcloud.com/vulnerabilities/118071] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM MQ 9.0.0.x Long Term Support (LTS)
+Maintenance level 9.0.0.0 only
+
+IBM MQ 9.0.x Continuous Delivery Release (CDR)
+Continuous delivery update 9.0.1 only
+
+IBM MQ Appliance 9.0.x
+Update level 9.0.1 only
+
+IBM MQ 8.0
+Maintenance levels between 8.0.0.0 and 8.0.0.5
+
+IBM MQ Appliance 8.0
+Maintenance levels between 8.0.0.0 and 8.0.0.5
+
+IBM WebSphere MQ 7.5
+Maintenance levels between 7.5.0.0 and 7.5.0.7
+
+IBM WebSphere MQ 7.1
+Maintenance levels between 7.1.0.0 and 7.1.0.7
+
+REMEDIATION/FIXES
+IBM MQ 9.0.0.x Long Term Support (LTS)
+Apply fix pack 9.0.0.1 [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+MQ&release=9.0.0.1&platform=All&function=all&useReleaseAsTarget=true]. 
+
+IBM MQ V9.0.x CDR
+Apply continuous delivery update 9.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24043463] or later
+
+IBM MQ Appliance V9.0.x
+Apply update 9.0.2 [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+MQ+Appliance+M2000&release=9.0.1&platform=All&function=all] or later
+
+IBM MQ V8.0 & IBM MQ Appliance V8.0
+Apply fix pack 8.0.0.6 [http://www-01.ibm.com/support/docview.wss?uid=swg21995100] or later maintenance
+
+IBM WebSphere MQ 7.5
+Apply fix pack 7.5.0.8 [http://www-01.ibm.com/support/docview.wss?uid=swg22005413]
+
+IBM WebSphere MQ 7.1
+Apply iFix IT20034 [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+MQ&release=7.1&platform=All&function=aparId&apars=IT20034]
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+IBM Java SDK Security Bulletin [http://www-01.ibm.com/support/docview.wss?uid=swg21985393] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 28 March 2017: Original Version Published
+13 July 2017: Added links to 7.5.0.8 and IT Fix 20034 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,194 @@
+Title: IBM Supported Storage System Matrix for IBM Copy Services Manager 6.1.x - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This page provides details about storage systems supported by IBM Copy Services Manager. 
+
+CONTENT
+ 
+
+Supported storage systems
+The following table provides details about the storage systems that are supported by IBM Copy Services Manager.
+
+NOTE: Firmware levels newer than what are listed here are considered untested but are expected to work similarly and can be used. Newer levels are often recommended to pick up the latest fixes and functionality. If issues arise while using the newer levels, open a PMR and IBM Support will investigate the problem and attempt to resolve it, but resolution is not guaranteed. An upgrade to a later version of IBM Copy Services Manager may be required, particularly for new functions. Any issues will be documented as they are identified. 
+
+Storage systems supported by Copy Services Manager 
+
+Storage System Version and release level IBM DS8000 
+Storage 
+
+Recommended Code Levels [http://www-01.ibm.com/support/docview.wss?uid=ssg1S1004456&myns=s028&mynp=OCST8NCA&mynp=OCSTXN8P&mynp=OCSTUVMB&mynp=OCHW2C2&mynp=OCHW2B2&mync=E] IBM DS8880 R8.2 R8.1 
+
+R8.0
+
+IBM DS8870 R7.5 R7.4 
+
+R7.3 
+
+R7.2 
+
+R7.1 
+
+R7.0
+
+IBM DS8800 R6.3 R6.2 
+
+R6.1 
+
+R6.0
+
+IBM DS8700 R6.3 R6.2 
+
+R6.1 
+
+R5.1.6 (R5.1.5++) 
+
+R5.1.5 
+
+R5.1 
+
+R5.04
+
+IBM DS8100
+
+IBM DS8300 R4.x - Direct Connect via Ethernet cards -
+minimum 64.0.175.0 HMC Connection - minimum 64.21.14.0 
+
+R3.x - minimum 63.1.32.0 
+
+R2.x - minimum 6.2.410.30
+
+IBM FlashSystem 
+Storage IBM FlashSystem V9000 R7.8 R7.7 
+
+R7.6 
+
+R7.4
+
+IBM FlashSystem V840 R7.8 R7.7 
+
+R7.6 
+
+R7.4 
+
+R7.3
+
+IBM FlashSystem A9000 and A9000R 12.0 IBM SAN Volume Controller 
+Storage IBM SAN Volume Controller* 7.8 7.7 
+
+7.6 
+
+7.4 
+
+7.3 
+
+7.2 
+
+7.1 
+
+6.4 
+
+6.3 
+
+6.2 
+
+6.1
+
+IBM Storwize 
+Storage IBM Storwize V3500*
+
+V3700*
+
+7.8 7.7 
+
+7.6 
+
+7.4 
+
+7.3 
+
+7.2 
+
+7.1 
+
+6.4.1
+
+IBM Storwize V5000* 7.8 7.7 
+
+7.6 
+
+7.5 
+
+7.4 
+
+7.3 
+
+7.2 
+
+7.1
+
+IBM Storwize V7000* 7.8 7.7 
+
+7.6 
+
+7.4 
+
+7.3 
+
+7.2 
+
+7.1 
+
+6.4 
+
+6.3 
+
+6.2 
+
+6.1
+
+IBM Storwize V7000U 1.6 1.5 
+
+1.4 
+
+1.3
+
+IBM XIV 
+Storage IBM Spectrum Accelerate 11.5 IBM XIV 2810-A14 
+
+2812-A14
+
+10.2.4 IBM XIV Gen3 2810-114 
+
+2812-114
+
+11.6.1 11.6.0b 
+
+11.5 
+
+11.4 
+
+11.3 
+
+11.2 
+
+11.1 
+
+11
+
+Misc IBM System Storage DS6000** Minimum: 6.2.2.64 IBM TotalStorage Enterprise Storage Server**
+2105-800 Minimum LIC: 2.4.4.72 [/support/docview.wss?uid=ssg1S7005234&amp;aid=1] * Specify a user ID and password of an administrator on the cluster that has sufficient
+privileges to maintain the SSH keys.
+
+** The Storage System is no longer officially supported. If issues arise while managing the storage system, open a PMR and IBM Support will investigate the problem and attempt to resolve it, but resolution is not guaranteed 
+
+
+Vendor-Acquired Storage for IBM Copy Services Manager 
+The non-IBM storage systems listed below are supported with IBM Copy Services Manager. 
+
+Vendor Supported Devices Hitachi Data Systems1 VSP
+VSP G1000 Hitachi Ltd1 VSP
+VSP G1000 
+1Only Basic HyperSwap and Metro Mirror Failover/Failback with HyperSwap sessions support this storage system for mainframe attached volumes. Please contact vendor directly to confirm support of desired configuration.

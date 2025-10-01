@@ -1,0 +1,156 @@
+Title: IBM PI34049: CICS IA COMMAND FLOW UTILITY COLLECTS INCORRECT DATA. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After running the CICS IA Command flow utility the
+   TCB_SWITCH_BEFORE_COUNT and TCB_SWITCH_AFTER_COUNT
+   fields of the CICS IA DB2 data base are both zero for
+   transactions running in various TCB modes.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS Interdependency Analyzer V520       *
+   *                 users.                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: After applying PTF UI24657 (APAR        *
+   *                      PI27196 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI27196]) CICS IA Command Flow collector *
+   *                      gathers incorrect data.                 *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   Incorrect CICS TS XPI interface is used in CICS IA Command Flow
+   collector code to get Monitor Transaction data.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  UI24657
+   
+   APAR PI27196 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI27196] IS IN ERROR FOR RELS 520
+   
+   The correct PTF was built to fix error.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI34049
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS IA V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y2200
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-03
+   
+   
+ * CLOSED DATE
+   2015-02-06
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI25019
+   
+   
+
+MODULES/MACROS
+ *  CIUACM61 CIUBCXPI CIUXACE2 CIUXACL2 CIUXACO2 CIUXACO3 CIUXACR2
+   CIUXACR3 CIUXACT1 CIUXCCD1 CIUXCCE1 CIUXCCF1 CIUXCCF2 CIUXCCGA
+   CIUXCCI1 CIUXCCL1 CIUXCCOA CIUXCCOE CIUXCCOG CIUXCCOL CIUXCCOW
+   CIUXCCO1 CIUXCCP1 CIUXCCP2 CIUXCCRS CIUXCCR1 CIUXCCS1 CIUXCCW1
+   CIUXDB2A CIUXIMSA CIUXMQMA CIUXNATA CIUXNQED CIUZCCBA CIUZCCBB
+   CIUZCCB1 CIUZCCFA CIUZCCF1 CIUZCCIC CIUZCCIR CIUZCCI1 CIUZCCML
+   CIUZCCMS CIUZCCM1 CIUZCCOA CIUZCCOC CIUZCCOE CIUZCCOF CIUZCCOG
+   CIUZCCOH CIUZCCOL CIUZCCOQ CIUZCCOR CIUZCCOS CIUZCCOW CIUZCCOY
+   CIUZCCO1 CIUZCCXX CIUZCCX1 CIU53XPI CIU62XPI CIU63XPI CIU64XPI
+   CIU65XPI CIU66XPI CIU67XPI CIU68XPI CIU69XPI
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS IA V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y2200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY UI25019 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI25019]
+   UP15/02/12 P F502 {
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

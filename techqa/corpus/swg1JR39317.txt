@@ -1,0 +1,165 @@
+Title: IBM JR39317: ADMIN CONSOLE PANEL THROWS AN ERR MSG WHEN TRYING TO CONFIGURE MQ BINDING JNDI CONNECTION FACTORY. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The WPS admin console panel throws the following exception
+   CWSCA5003E: SCA modules can  not be deployed to more than one
+   server or cluster in a cell :
+   moduleURI="NinjaTurtleWeb.war+WEB-INF/web.xml"
+   .
+   target="WebSphere:cell=KKM_WPS7_Cell,cluster=TestDE01.Support+We
+   bSphere:
+   cell=KKM_WPS7_Cell,cluster=TestDE01.AppTarget
+   
+   
+   "There are more than one containment paths for the target
+   mapping which is not allowed for sca bindings."
+   
+   The deployment targets are valid target mappings i.e. an App
+   cluster and a webserver cluster and hence the function must not
+   throw an exception.
+   
+   
+     As a result of this exception,
+   If you deploy the app in a single server environment,
+   you can dynamically change the MQ factory through the browse
+   buttons from the admin console in the deplyed application MQ
+   Export,
+   .
+      But if you dynamically deploy on a mult-server environment,
+   you cannot change it through the browse button
+   try to dynamically change the Connection, it gives an
+   error when we hit the browse button
+   admin console->applications->SCA modules-><app>->Manage
+   modules-> MQ Export
+   The Administrative Console does not allow you to
+   change the Activation Spec, MQ/Connection Factory JNDI
+   configurations for WMQ export
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No local fix available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Websphere process server users having a     *
+   *                  federated webserver and attempt to modify   *
+   *                  the SCA import bindings.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: "More than one containment paths for    *
+   *                      the target mappin.. " error message     *
+   *                      displayed                               *
+   *                      when modifying the SCA import binding   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An SCA module is deployed across a
+   SCA cluster member + Web server
+   member. Upon trying to modify the SCA
+   import binding from the admin console users may experience an
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added a check to omit webserver mappings
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR39317
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-01
+   
+   
+ * CLOSED DATE
+   2011-05-17
+   
+   
+ * LAST MODIFIED DATE
+   2012-11-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

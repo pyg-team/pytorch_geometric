@@ -1,0 +1,45 @@
+Title: IBM Obtaining debug information during Decision Warehouse trace capture - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I obtain debug information when the trace is saved to the Decision Warehouse ? 
+
+CAUSE
+To minimize the impact of Decision Warehouse (DW) monitoring on the processing of ruleset executions, possible failures to save the trace to the database may remain silent (no stack trace in the logs of the application server). 
+
+ANSWER
+If an issue arises during DW trace persistence at runtime, the related messages and stack traces are only available programmatically through the following API: ilog.rules.res.session.IlrSessionResponse.getWarnings() 
+
+So it is possible for an error to remain silent if the warnings above are not explicitly logged by the application. 
+
+It is however possible to customize the DW trace and log additional debug information even when the application does not explicitly log the above mentioned warnings. The attached sample uses the java.util.logging API to append to the ilog.rules.support.debugtrace.DebugTraceDAO logger the following: 
+
+ * at SEVERE level any exception that occurred while attempting to persist the trace to the database 
+ * at INFO level a summary of the trace with ruleset path information and a list of execution events 
+ * at FINEST level the list of session response warnings and the full execution trace XML (beware this can be a very large amount of information going to the log, possibly several megabytes)
+
+
+By default only INFO level and above messages (including SEVERE) are typically visible in the application server logs. So the first two set of information above should be visible, while the FINEST level should require specific configuration of the Java logging to be visible. 
+
+Instructions 
+
+Bundle the attached jrules-debugtrace.jar sample in the Rule Execution Server (RES) application that is performing ruleset executions:  * If you are using JRules Hosted Transparent Decision Service (HTDS), in jrules-res-htds-<appserver>.ear/jrules-res-htds-<appserver>.war/WEB-INF/lib 
+ * If you are using JRules Scenario Service Provider (SSP) in jrules-ssp-<appserver>.ear/jrules-ssp-server.war/WEB-INF/lib 
+ * If you are executing rules from your application, the sample should be packaged alongside the RES session library that your application already bundles 
+
+
+
+jrules-debugtrace.jar [/support/docview.wss?uid=swg21433278&aid=2]jrules-debugtrace.jar [/support/docview.wss?uid=swg21433278&aid=1] 
+If you are interested in learning about the implementation of this DW trace you can use the following eclipse project : 
+
+jrules-debugtrace-src.zip [/support/docview.wss?uid=swg21433278&aid=4]jrules-debugtrace-src.zip [/support/docview.wss?uid=swg21433278&aid=3] 
+RELATED INFORMATION
+#A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21665639]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0.1, 8.0, 7.5 Enterprise

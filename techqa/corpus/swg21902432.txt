@@ -1,0 +1,54 @@
+Title: IBM Isolating deployed artifacts from Apache HTTP Components provided by WebSphere Application Server - United States
+
+Text:
+ FIX README
+
+ABSTRACT
+ Unexpected classloading errors occur when using the Open Source Software framework, Apache HTTP Components. 
+
+CONTENT
+The Open Source Software framework, Apache HTTP Components, included with WebSphere Application Server is not intended for direct application use. Class loading errors and unexpected behaviors may occur whenever a Java Platform, Enterprise Edition (Java EE) application also includes and uses Apache HTTP Components. 
+
+A best practice for resolving this problem is to deploy Apache HTTP Components as an isolated shared library and associate the library to all applications and WebModules that depend on it. Another practice is to provide Apache HTTP Components as a dependency jar in the application, and during deployment, configure the delegation mode to Parent_last on each application or WAR classloader which loads Apache HTTP Components. 
+
+ 
+
+These practices do not apply to other types of deployable artifacts that may use Apache HTTP Components, and likewise, may suffer the same problems. Such artifacts include standalone resource adapters configured as non-isolated, resource providers configured as non-isolated, custom services, and custom login modules. 
+
+ 
+
+To resolve this problem the Application Server now accepts the following system property that enables the Application Server to isolate the packages of Apache HTTP Components included with WebSphere Application Server from all artifacts deployed on the application server.
+
+"-Dcom.ibm.ws.classloader.server.alwaysProtectedPackages=org.apache.http."
+
+The value of the system property -- that is, the package name "org.apache.http." -- must end with '.' or the server will otherwise ignore the value.
+
+How it works: When this property is set the loadClass(clsName) method of the WebSphere Extensions Classloader (ExtClassLoader) does not delegate to its parent, the OSGi gateway, whenever clsName contains prefix "org.apache.http.". The method returns a class only when clsName is visible on the local classpath of the ExtClassLoader. Similarly, the ExtClassLoader resource API does not delegate to the gateway whenever a resource name ends with ".class" and is in a path, that after conversion to a package name, contains the always-protected package name "org.apache.http." as a prefix.
+
+The solution works because the ExtClassLoader is the logical parent of all application and shared library classloaders. Preventing delegation from the ExtClassLoader to the OSGi Gateway effectively prevents any Java EE application or shared library from unexpectedly linking to classes in package "org.apache.http.", nor any subpackages, provided by the Application Server. The same isolation applies to class resources in path "/org/apache/http/" and any subpaths.
+
+The solution works for deployed artifacts that load directly from the ExtClassLoader classpath, such as non-isolated standalone resource adapters, non-isolated resource providers, custom services, and custom authentication modules, because when the property is set, these classes can link to Apache HTTP Components packages visible on the ExtClassloader classpath, only. 
+
+However, the solution may not always work when both applications and other artifacts provide Apache HTTP Components. If an application and, for example, a standalone (non-isolated) resource adapter both provide Apache HTTP Components, then it is possible that both will link to the packages provided by the resource adapter, which are visible on the ExtClassLoader classpath. In such a deployment, extra steps must be taken either to configure the standalone resource adapter as isolated or to apply the aforementioned best practices to the application deployment, such as setting the application classloader delegation mode to Parent_last or associating an isolated shared library to the application. 
+
+How to use it: During development set system properties "-Dws.ext.debug=true" and "-Dcom.ibm.ws.classloader.server.alwaysProtectedPackages=org.apache.http." in the generic JVM arguments field of the Java Virtual Machine configuration for the Application Server. Once you start the Server with these two properties set, open the Server's native_stdout.log. You will see statements like this:
+
+ProtectionMetaData.clinit: system property: com.ibm.ws.classloader.server.alwaysProtectedPackages=org.apache.http.
+...
+...
+ProtectionMetaData.clinit: always-protected packages:
+org.slf4j.
+org.slf4j.spi.
+org.slf4j.impl.
+org.slf4j.helpers.
+org.apache.http.
+
+If you see package "org.apache.http." in the list of always-protected packages, you have correctly configured the server. There are other packages the server always protects, like org.slf4j. Your applications are protected from these as well. 
+
+If you do not see package "org.apache.http." in the list, you will see a message in the same working area of native_stdout.log that indicates why the system property was ignored. Revise the property value accordingly and restart the server.
+
+Once you are certain the setting is correctly applied, remove system property "-Dws.ext.debug=true" before placing the new server configuration into production.
+
+RELATED INFORMATION
+ OSS not intended for direct application use [http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/opensourcesoftwareapis.html?lang=en]
+Best Practices for Integrating OSS Framework with WAS [http://www-01.ibm.com/support/docview.wss?uid=swg21639407]

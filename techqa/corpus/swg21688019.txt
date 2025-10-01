@@ -1,0 +1,16 @@
+Title: IBM Is there a maximum number of target backend servers that can be defined for standard junction? - United States
+
+Text:
+ISAM junction TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Configure standard junction target servers. 
+
+ENVIRONMENT
+ISAM
+
+RESOLVING THE PROBLEM
+There is no documented code restriction that limits the number of
+servers per junction.
+
+Any limitation for target backend servers is based on system resources.

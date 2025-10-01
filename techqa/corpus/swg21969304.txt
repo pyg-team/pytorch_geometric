@@ -1,0 +1,47 @@
+Title: IBM Open Mic Presentation on "IBM Notes Traveler Administration & Log Troubleshooting Tips – Part I" on 21st Sep, 2015 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+Presentation and Q&A session for Open Mic Presentation on "IBM Notes Traveler Administration & Log Troubleshooting Tips – Part I" on 21st Sep, 2015
+
+ANSWER
+Open Mic Presentation on "IBM Notes Traveler Administration & Log Troubleshooting Tips – Part I" where the presenter has given 75 minutes presentation followed by Q&A session.
+
+
+Download Presentation (pdf file) and Audio Recording (mp4 file)
+
+IBM Notes Traveler Administration and Log Troubleshooting Tips.pdf [/support/docview.wss?uid=swg21969304&aid=2]IBM Notes Traveler Administration and Log Troubleshooting Tips.pdf [/support/docview.wss?uid=swg21969304&aid=1]
+
+IBM Notes Traveler Administration and Log Troubleshooting Tips.rar [/support/docview.wss?uid=swg21969304&aid=4]IBM Notes Traveler Administration and Log Troubleshooting Tips.rar [/support/docview.wss?uid=swg21969304&aid=3]
+
+Question 1: What is the difference between prime sync and last sync? Sometimes, there is difference in the time between prime sync and last sync? Why is it so?
+Answer : When a device synchs any email, there are 2 threads involved. Connection between Device and Traveler server which is called as Device synch and connection between Traveler server and user home mail server which is termed as prime synch. Regarding time difference in prime synch and device synch, it needs to be checked if device is polling emails or not. It may also have connectivity issue.
+
+Question 2: If there are 2 same internet address, one in local and one on server At time, when traveler on Mobile device, sends an email to internet address, which one will be resolved by the traveler client.
+Answer : It is not possible to assign same internet address to 2 users. During registration, it will fail to register the user as the unique internet address is required. 
+
+Question 3: In case of HA pool, How to pro-actively monitor the database performance? Is there any automatic monitoring of database in traveler? 
+Answer : As of now, there is no feature available to monitor the database from traveler end. However, DB2 administrator may monitor the database performance with DB2 utilities.
+
+Question 4: How to effectively monitor the users device synchronization? Is there something for user base monitoring like actively monitoring the devices synchronization?
+Answer : You can check user last synch time in LotusTraveler.nsf or user dump which will provide information on when the device last synched.
+
+Question 5: How to get notification if there is an error on the traveler server? For example: If mail is not synchronized to the users device for an hour or so, how to get notification?
+Answer : Currently there is no such mechanism to get such notification. But Traveler server will normally show "Red" status after multiple failure attempts to sync the mails.
+
+Question 6 : What is the recommended JVM version for the traveler servers in HA pool? Do all servers need to be on same JVM? If the JVM version is not same on all servers in HA pool, is it matter of concern?
+Answer : Domino/Traveler does not have dependency on OS JVM. Domino/Traveler has its own JVM files.
+
+Question 7: If the Primary DB2 is down on what interval the secondary DB2 server will take effect ? Do DB2 team has to play any role in this fail over/switch over? How do I do manually switch over to secondary DB2 from Traveler server?
+Answer : This is on basis of how you have configured DB2 for traveler. Yes, DB2 team can give more clarity on this. 
+
+Question 8: What are the values retryIntervalForClientReroute=10; maxRetriesForClientReroute=3 signifies? ( I referred http://www-01.ibm.com/support/docview.wss?uid=swg21593442 [http://www-01.ibm.com/support/docview.wss?uid=swg21593442] but unable to understand)
+Answer : These are DB2 queries which are used by Traveler. It would be good to get a PMR created with DB2 for more clarity on this.
+
+Question 9: Does the database switch over/fail over activity is seamless and does not require Traveler task/service recycle ? 
+Answer : Yes database fail over is seamless. However you will have to enable Database for fail over capability.
+
+Question 10: How do I say there is DB performance issue in SQL/DB2 while looking into Traveler statistics?
+Answer : If you see high DB connections on server or many DB related errors that indeed indicates issue with Database. This can be seen in CPU and memory usage table in Systemdump.

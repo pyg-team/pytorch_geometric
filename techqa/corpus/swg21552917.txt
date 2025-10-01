@@ -1,0 +1,67 @@
+Title: IBM Director FTP communication session does not work - United States
+
+Text:
+Communication Failure; STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Director FTP communication session does not work 
+
+SYMPTOM
+
+
+ * Gentran:Director for Windows, Release 5.4
+ * Using the FTP Utility
+ * Trying to connect to a Sterling mailbox
+ * Neither the send nor the receive will work
+ * The C:\Program Files\Commerce Connection32\GentranFTPClient directory exists
+ * The C:\Program Files\Commerce Connection32\FTP directory exists
+ * If either the SterlingFtpRcv.bat file or the SterlingFtpSnd.bat file is initiated from a command prompt, one of the following errors appears:  * The system cannot execute the specified program
+    * '<path>\java.exe' is not recognized as an internal or external command, operable program or batch file
+    * The system cannot find the path specified
+   
+   
+ * No error appears in the Audit Log when the session is run from Process Control
+
+Error Message One of the below three errors appears on screen when either the SterlingFtpRcv.bat or SterlingFtpSnd.bat file is initiated from a command prompt:
+
+ * The system cannot execute the specified program
+ * '<path>\java.exe' is not recognized as an internal or external command, operable program or batch file
+ * The system cannot find the path specified
+
+
+RESOLVING THE PROBLEM
+
+
+ 1. Using Windows Explorer, go to the C:\Program Files\Commerce Connection32\GentranFTPClient directory.
+ 2. Right click on the ceftp.bat file and select Edit.
+ 3. Write down the path and file name at the end of the line that begins "SET JAVARUNTIME=". It should end in "java.exe".
+ 4. If the error received when the SterlingFtpRcv.bat or SterlingFtpSnd.bat file is initiated from a command prompt is "The system cannot execute the specified program", do the following. If that is not the error, skip this step. That error means that the version of Java currently installed is not recognizable by Gentran:Director. That, in turn, will usually mean that the version of Java is too old.  1. Close the ceftp.bat file.
+     2. Go to Tools > Configuration in the software.
+     3. Click the Stop button and answer "yes" to the check prompt.
+     4. Close both the Configuration window and Gentran:Director.
+     5. Reinstall the FTP Utility from the Gentran:Director installation CD. Do NOT reinstall Gentran:Director or Commerce:Connection while doing so. Be sure to answer "yes" to the Java install prompt.
+     6. Skip the rest of this article.
+    
+    
+ 5. If the error received when the SterlingFtpRcv.bat or SterlingFtpSnd.bat file is initiated from a command prompt is either "'<path>\java.exe' is not recognized as an internal or external command, operable program or batch file" or "The system cannot find the path specified", do the following. The former means that the path exists, but no java.exe file was found at the specified location. The latter means that the path does not exist.  1. Use the Windows search feature to find the java.exe file.
+     2. If no java.exe file is found, perform the sub-steps for step 4 above, otherwise continue below.
+     3. Note the exact path to the file.
+     4. Correct the file path in the ceftp.bat file.
+     5. Save and then close the ceftp.bat file.
+    
+    
+
+NOTE: Sterling Commerce recommends that whenever possible, this solution be done by someone who is familiar with editing batch files and installing software.
+
+ 
+
+HISTORICAL NUMBER
+ NFX3786 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Severity
+
+
+Critical

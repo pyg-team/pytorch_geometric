@@ -1,0 +1,55 @@
+Title: IBM Installing WebSphere Portal or Lotus Web Content Management V6.1 on IBM i V7R1 - United States
+
+Text:
+6151eGA 6104eGA; install; installing; IBM i V7R1; iSystem TECHNOTE (FAQ)
+
+QUESTION
+ How do you install IBM WebSphere Portal or Lotus Web Content Management V6.1 on an IBM i V7R1 operating system? 
+
+CAUSE
+WebSphere Portal V6.1.5.1 is the first release of Portal to support IBM i V7R1. The following document describes what to consider when installing WebSphere Portal V6.1.5.1 on IBM i V7R1. The process is to install WebSphere Portal with the 6.1.5 fresh install and then upgrade to 6.1.5.1 by applying the 6.1.0.4 fix pack. Subsequent fix pack service levels will also be supported.
+
+ANSWER
+Details: 
+
+ * The first step to install WebSphere Portal on iSeries on IBM i V7R1 is to install either WAS 6.1 or WAS 7 on an iSeries system on which WP V6.1.5 is to be installed. Note that the Application Server install media that is included in WP V6.1.5 does not support IBM i V7R1. The V7R1 install enabled Application Server installer should be used. 
+
+ * The required WebSphere Application Server level for installing WebSphere Portal 6.1.5 on IBM i V7R1 are (choose one of the following):  * - WebSphere Application Server 6.1.0.29
+    * 
+    * - WebSphere Application Server 7.0.0.7
+   
+   
+
+
+
+Installing on WebSphere Application Server 6.1.0.x: 
+The following table shows the Application Server V6.1.0.29 install images enabled for installing on IBM i V7R1. 
+ * Application Server V6.1.0.29 Refreshed install images
+
+Part Num Part Description CZBA6ML IBM WebSphere Application Server for Developers V6.1.0.29 for i5/OS Multilingual CZBA7ML IBM WebSphere Application Server for Developers Supplements V6.1.0.29 for i5/OS Multilingual CZB9ZML IBM WebSphere Application Server for Network Deployment V6.1.0.29 for i5/OS Multilingual CZBA0ML IBM WebSphere Application Server for Network Deployment Supplements V6.1.0.29 for i5/OS Multilingual CZBA3ML IBM WebSphere Application Server V6.1.0.29 for i5/OS Multilingual CZBA4ML IBM WebSphere Application Server Supplements V6.1.0.29 for i5/OS Multilingual  * 
+ * 
+
+
+
+Installing on WebSphere Application Server 7.0.0.x: 
+After successfully installing WebSphere Portal 6.1.5 on WebSphere Application Server 7.0.0.7, the WebSphere Application Server fix pack 7.0.0.9 (or later) should be applied before installing the WebSphere Portal 6.1.5.1 fix pack. 
+ * Install issue with Application Server V7.0.0.9 or later version
+ * 
+ * 
+
+
+Workaround:  * Start the WebSphere Portal 6.1.5 installation by launching either the install 400.bat file on Windows or install.sh on the local 5250 qshell session. 
+ * Edit the following file as soon as it appears in the file system: 
+   /QIBM/UserData/WebSphere/AppServer/V7/ND/profiles/wp_profile/PortalServer/base/wp.base/config/includes/wp.base_cfg.xml. Using an editor, replace the string '1792' to '1536' while searching the string. Save the file. 
+ * Let the install continue.
+
+ * 
+ * End the current install. 
+ * Stop the Portal server. 
+ * Modify the max jvm size in the server.xml file from 1792 to 1536 for the WebSphere_Portal server. 
+ * Run the following task:
+   ConfigEngine.sh configure-featurepack615 -DExecute615OOB=true -DWasPassword=your_password -DPortalAdminPwd=your_password
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management IBM Web Content Manager Installation & Configuration IBM i 6.1.5.1 Java edition

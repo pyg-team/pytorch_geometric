@@ -1,0 +1,133 @@
+Title: IBM V5.3.0 General Availability (GA) - Known Issues and Workarounds - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ OMEGAMON XE z/OS Monitoring Feature for JVM GA known issues and workarounds 
+
+SYMPTOM
+If you intend to install the OMEGAMON Monitoring Feature for JVM V530, you may encounter some of the following issues.
+
+
+ENVIRONMENT
+Java Virtual Machines on z/OS
+
+RESOLVING THE PROBLEM
+1. Unsupported Versions of IBM Java SDK 
+
+The OMEGAMON Monitoring Feature for JVM leverages the Health Center instrumentation in IBM JVMs. IBM recommends that the OMEGAMON Monitoring Feature for JVM should be used with a version of Java that includes Health Center agent at V3.0.11 or higher.
+
+The level of the Health Center agent in any JVM can be determined by executing the java command with argument -Xhealthcenter:version
+
+Using an ASCII terminal connection to UNIX System Services (USS), or from an OMVS shell in ISPF navigate to the bin sub-directory of the Java SDK you wish to examine. For example, 
+
+cd /usr/lpp/java/bin
+
+java -Xhealthcenter:version
+
+The command will generate several messages and then terminate. Look for a message like
+INFO: Agent version "3.0.7.20160104"
+
+This indicates that the JVM contains a V3.0.7 Health Center Agent
+
+Most versions of the Health Center agent will work with the OMEGAMON Monitoring Feature for JVM, however a flaw was discovered in Health Center agent V3.0.6 in Java SDKs on z/OS that prevents Garbage Collection, Thread, and Lock data being collected. V3.0.6 of Health Center Agent was packaged in the following Java SDKs:
+
+
+
+
+Java SDK 6.0.16.15 (SR16 FP15) 31- and 64-bit Java SDK 6.1.8.15 (SR8 FP15) 31- and 64-bit Java SDK 7.0.9.20 (SR9 FP20) 31- and 64-bit Java SDK 7.1.3.20 (SR3 FP20) 31- and 64-bit Java SDK 8.0.2 (SR2) 31- and 64-bit 
+
+V3.0.7 of the Health Center Agent can cause high CPU overhead in the monitored JVM. This version of Health Center Agent was distributed with the following Java SDKs: 
+
+Java SDK 6.0.20 (SR16 FP20) 31- and 64-bit Java SDK 6.1.8.20 (SR8 FP20) 31- and 64-bit Java SDK 7.0.9.30 (SR9 FP30) 31- and 64-bit Java SDK 7.1.3.30 (SR3 FP30) 31- and 64-bit Java SDK 8.0.2.10 (SR2 FP10) 31- and 64-bit 
+IBM strongly recommends that Java applications monitored by the OMEGAMON Monitoring Feature for JVM should be configured to use Health Center Agent at V3.0.11 or higher. 
+
+If it is not practicable to upgrade the version of Java installed on a particular application or subsystem, an external copy of Health Center Agent V3.0.11 may be configured for a JVM. 
+
+THESE INSTRUCTIONS SUPERCEDE THE INSTRUCTIONS DOCUMENTED IN THE CURRENT OMEGAMON KNOWLEDGE CENTER AND PARMGEN POST-CONFIG FILES. 
+
+http://www.ibm.com/support/knowledgecenter/SS2JNN_5.3.0/com.ibm.omegamon_xezos.doc_5.3.0/jvm/jvm_intro.htm?lang=en [http://www.ibm.com/support/knowledgecenter/SS2JNN_5.3.0/com.ibm.omegamon_xezos.doc_5.3.0/jvm/jvm_intro.htm?lang=en] 
+
+Use the links below to download Health Center Agent V3.0.11-2016-1017 for both 31-bit and 64-bit JVMs. 
+
+mz31-3.0.11.20161017.pax [/support/docview.wss?uid=swg21978922&aid=2]mz31-3.0.11.20161017.pax [/support/docview.wss?uid=swg21978922&aid=1] mz64-3.0.11.20161017.pax [/support/docview.wss?uid=swg21978922&aid=4]mz64-3.0.11.20161017.pax [/support/docview.wss?uid=swg21978922&aid=3] 
+
+Log on to USS with a user ID that has super-user authority or READ permission to the RACF FACILITY class profiles BPX.FILEATTR.APF , BPX.FILEATTR.PROGCTL, and BPX.FILEATTR.SHARELIB. 
+
+Create directories to install the Health Center Agents. For example 
+
+/u/HC311 
+/u/HC311_64 
+
+Transfer the pax files to the corresponding directory, making sure you use a binary transfer method. 
+
+Extract the pax file in each directory using the following commands 
+
+cd /u/HC311 
+pax -ppx -rvf mz31-3.0.11.20161017.pax 
+
+
+cd /u/HC311_64 
+pax -ppx -rvf mz64-3.0.11.20161017.pax 
+
+Allow permissions for read and execute on the directories 
+
+chmod -R a+rx /u/HC311 
+chmod -R a+rx /u/HC311_64 
+
+To configure a JVM to use the OMEGAMON z/OS Monitoring Feature for JVM with the updated Health Center Agent, the -Xhealthcenter JVM option must be replaced with -agentpath and -Xbootclasspath/p options instead. 
+
+For example, to configure a CICS JVMSERVER using a 64-bit JVM add the following statements to the JVMProfile file for the JVM: 
+
+-Xbootclasspath/p:/u/HC311_64/lib/ext/healthcenter.jar -agentpath:/u/HC311_64/bin/libhealthcenter.so=path=/u/HC311_64,level=inprocess 
+-javaagent:/usr/lpp/kan/bin/IBM/kjj.jar 
+
+Other Java applications are configured similarly . 
+
+
+2. Health Center Temporary Files 
+If a JVM terminates abnormally which has been configured for monitoring with the OMEGAMON Monitoring Feature for JVM, some Health Center temporary files may not be deleted from the effective user's temporary directory (the default is /tmp). These files have names with prefix “healthcenter*”. To avoid filling up the /tmp filesystem, they can safely be deleted periodically. 
+
+3. Semaphores 
+The Health Center Agent uses UNIX semaphore services. During normal operation, about 7 semaphore sets are used by each active JVM which are deleted when the JVM terminates. 
+
+SYS1.PARMLIB(BPXPRMxx) specifies maximum number of semaphore sets with parameter IPCSEMNIDS(nnnnnn) 
+Value range: 1 – 20000 
+Default: 500 
+
+To display the number of available semaphores use UNIX command 
+ipcs -sy 
+
+Semaphores: 
+MNIDS HWIDS CIDSA CPRIV CKEY GETEX MNSEMS MNOPS CSBYTES 
+500 233 293 0 207 0 1000 25 10000000 
+
+The value under column heading CIDSA lists the number of remaining semaphore sets available. If there are insufficient semaphore sets available, the Health Center Agent will not function correctly and OMEGAMON will not receive any thread or lock events. If the number of available semaphore sets drops to zero, then orphaned semaphore sets can be deleted using the ipcrm UNIX command, or the number of semaphore sets can be dynamically increased using the SETOMVS system command. For example: 
+
+setomvs,ipcsemnids=1000 
+
+will increase the number of semaphore sets to 1000. 
+
+
+4. APF Authorized JVMs 
+This version of OMEGAMON XE on z/OS Monitoring Feature for JVM is unable to monitor Java programs that run APF authorized, such as WebSphere Application Server (WAS) Control Regions. Enabling monitoring for a WAS Control Region will cause the region to abend at startup. This is not normally a concern since the applications only run in the Servant regions. Servant regions and Adjunct Regions may be monitored since they do not run authorized. This issue will be addressed in future maintenance. 
+
+5. Warning Level Situations 
+Some product-provided situations are supplied with both Warning and Critical level thresholds. For example JVM_GC_Pause_Warning and JVM_GC_Pause_Critical. The Warning level situations do not specify an upper range threshold, so that a situation that triggers a Critical level situation will also trigger the Warning level situation. If you do not wish to have both situation alerts issued, the Warning level situation should be edited specifying the Critical level threshold as an upper limit. 
+
+The warning level situations are: 
+JVM_GC_Pause_Warning 
+JVM_General_CPU_Warning 
+JVM_IFA_on_General_CPU_Warning 
+JVM_Lock_Missed_Warning 
+
+6. Enhanced 3270UI CPU Cell Zoom Workspace 
+Zooming to CPU Details from the LPAR Overview subpanel on the KOBSTART workspace by positioning the cursor in a CPU column cell and pressing the enter key (or using mouse pointer select double click) invokes the incorrect workspace. The CPU detail panel for highest value JVM should be invoked, but the CPU summary workspace is displayed instead. To view the CPU details you must select the JVM shown on the CPU Summary workspace. 
+
+7. WebSphere Application Servers not Identified 
+In some circumstances, WebSphere Application Server (WAS) address spaces may not be correctly identified. Due to a timing issue, signature modules used to identify a WebSphere address space may not be loaded and the WAS address space will be classified as “Unknown” or “Standalone”. This issue will be addressed in future maintenance. 
+
+
+8. CTIRA_HOSTLOC in Tivoli Enterprise Portal 
+If you are using the CTIRA_HOSTLOC parameter in the Tivoli Enterprise Portal Server configuration, you will find JVM nodes appearing at a different location in the Enterprise navigation tree from when this environment variable is not used.

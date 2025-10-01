@@ -1,0 +1,98 @@
+Title: IBM You cannot install a snapshot to the runtime server for Business Process Manager - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ You cannot install a snapshot to the runtime server because the system Deployment Service is missing from the process application in IBM Business Process Manager Version 7.5.0/7.5. 
+
+DOWNLOAD DESCRIPTION
+This system Deployment Service is required for successful installation in runtime environments. The mechanism that causes the Deployment Service to become deleted is currently unknown.
+
+
+Sometimes the application can install. However, odd behaviors such as the following behaviors can occur: 
+
+ * Inability to migrate instances 
+ * Services do not run on the default snapshot 
+ * The process center reports inaccurate information for the number of running instances
+
+This problem effects both process applications and toolkits. Open your toolkits and process applications in the process designer. In the application repository listing, click Setup. Verify the asset Deployment Service or Installation Service. which is the name used in WebSphere Lombardi Edition.
+
+[/support/docview.wss?uid=swg24031822&aid=1] [/support/docview.wss?uid=swg24031822&aid=1]
+
+Resolving the Problem 
+
+Download and install IBM Business Process Manager V7.5.1 Fix Pack 1, which contains IC74897 [http://www.ibm.com/support/docview.wss?uid=swg1IC74897] and resolves this issue. Upgrading to IBM Business Process Manager 7.5.1 Fix Pack 1 or later is the recommended solution. 
+
+or 
+
+Manual fix steps if an upgrade is currently not possible. 
+
+This solution requires a second process center with the same IBM Business Process Manager fix level to import the broken application. IBM Business Process Manager Express Version 7.5 is sufficient. 
+
+Complete the following steps: 
+
+ 1.  Export your process application. The file is essentially a compressed archive (.zip) file.
+     
+     
+ 2.  Decompress the file contents into a folder.
+     
+     
+ 3.  Open the META-INF\package.xml file.
+     
+     
+ 4.  Look for the <objects> block. Notice the ID value in each object is sorted in alphabetical order. 
+     Insert the following element in the appropriate alphabetical order:
+     
+     <object id="1.e5132d96-82b7-4ba0-b43b-3e4164439145" versionId="437365c5-93e1-4409-ba3f-7b8c3d73962b" name="Deployment Service" type="process"/>
+     
+     
+ 5.  Save thepackage.xml file.
+     
+     
+ 6.  Copy the 1.e5132d96-82b7-4ba0-b43b-3e4164439145.xml file, which is attached to this document, to the objects directory.
+     
+     
+ 7.  Compress all the folders again. 
+     
+     
+ 8.  Verify that the four folders (files, META-INF, objects and toolkits) are in the root of the compressed file and not in a parent folder.
+     
+     
+ 9.  Change the file extension from .zip to .twx.
+     
+     The same application cannot be imported twice to the same environment. A new snapshot with unique GUID strings is needed.
+     
+     
+ 10.  Import the modified export into a second process center. 
+     
+     
+ 11. Create a new snapshot and export. 
+     
+     
+ 12. Import new snapshot into the primary process center. 
+     
+     
+ 13. Open the application in the process designer to confirm that the Deployment Service exists. 
+     
+     
+ 14. Deploy the snapshot to target runtime environment.
+     
+     
+
+
+For toolkits, complete the same actions set of actions. The new toolkit snapshot causes linked process applications to indicate that there is a later toolkit version. Upgrade to the new version. You also need to change the IS_IMMUTABLE flag in LSW_PROJECTS to ‘F’. Search by the SHORT_NAME (acronym) and find the correct toolkit based on the NAME created in Step 11.
+
+DOWNLOAD PACKAGE
+Decompress the attached objects_file.zip file in which the1.e5132d96-82b7-4ba0-b43b-3e4164439145.xml file exists. 
+
+ 1. Use the 1.e5132d96-82b7-4ba0-b43b-3e4164439145.xml file as stated in step 6 in the previous steps.
+
+
+objects_file.zip [/support/docview.wss?uid=swg24031822&aid=3]objects_file.zip [/support/docview.wss?uid=swg24031822&aid=2] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced General AIX, Linux, Linux zSeries 7.5.1, 7.5.0.1, 7.5 Business Integration IBM Business Process Manager Express General Linux, Windows 7.5.1, 7.5.0.1, 7.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

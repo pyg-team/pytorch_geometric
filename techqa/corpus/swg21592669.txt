@@ -1,0 +1,33 @@
+Title: IBM Quick Search results in Quickr 8.5.1 are not returned in expected order - United States
+
+Text:
+quickr; quick; search; default; sort; order; unexpected; random; quickr domino; quickr for domino TECHNOTE (FAQ)
+
+QUESTION
+What is the default logic when doing a Quick Search in Lotus Quickr 8.5.1 for Domino? What is the default sort order of the results?
+
+CAUSE
+The results are not in the order you expected.
+
+ANSWER
+Quick Search matching behavior 
+
+When performing a Quick Search (namely, using the upper-right search bar for the place in Quickr 8.5.1), the default action is "search any words." In general, there are three ways to search in Quick Search: 
+
+ * search any words (default action) 
+ * search exact match (enclosing search string in double quotes) 
+ * search with wildcard (adding * to a substring)
+
+
+Some examples: 
+
+ * rain in Spain - will find pages that contain all three words - rain, in, and Spain, in any order. 
+ * "rain in Spain" - will only find pages that contain the exact phrase "rain in Spain". 
+ * rain* - will find pages that contain the word rain, or raining, or any word that begins with the letters rain.
+
+
+Quick Search default order 
+
+Quickr searches are performed in the backend search.nsf database, and the results within this database's full text search are returned to Quickr and displayed in the provided order. The search function itself is based upon the Domino FTSearch method, which for a full text indexed database returns results with a relevance value and ordered in descending relevance. Relevance has to do with the number of times a search key appears in the document. You can find more information about FTSearch in the product documentation [http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/topic/com.ibm.designer.domino.main.doc/H_FTSEARCH_METHOD_DB.html] or the following technote: 
+
+"LotusScript FTSearch method of NotesView class does not return results in expected order" (1221628) [http://www.ibm.com/support/docview.wss?uid=swg21221628].

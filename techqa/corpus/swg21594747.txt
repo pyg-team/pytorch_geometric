@@ -1,0 +1,13 @@
+Title: IBM Where is the authorization code for SPSS Statistics, Modeler or AMOS Student Version or Graduate Pack software? - United States
+
+Text:
+student academic user lost missing authorization authorisation code vendor TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Where is the authorization code for SPSS Statistics, Modeler or AMOS Student Version or Graduate Pack software? 
+
+RESOLVING THE PROBLEM
+Refer to the SPSS Student Support Portal [http://www-01.ibm.com/support/docview.wss?uid=swg21592093] for information on who to contact to obtain your code for SPSS Statistics, Modeler or AMOS Student Version or Graduate Pack. Each vendor has a different process in how it distributes authorization codes for IBM SPSS Statistics product. On the Student Portal, you will find information about different vendors with their contact information. Apply the code by running the SPSS License Authorization Wizard to enable the license.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

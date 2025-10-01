@@ -1,0 +1,35 @@
+Title: IBM Clarity Studio - Design Pane - Not Displaying Controls - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When working with a template or report in Clarity Studio, user notices that the Design Pane seems to be locked and at the same time does not display any controls, despite selection made from left-hand side navigation tree. 
+
+SYMPTOM
+Clarity Studio design pane is not prompted to update, when making selections in Data navigation tree.
+
+
+CAUSE
+It was determined that a permissions issue caused the Design Pane lock
+
+ENVIRONMENT
+Clarity 7.2.0
+
+DIAGNOSING THE PROBLEM
+Open any template/report in Clarity Studio
+
+
+
+
+Select the 'Data' node and make any selection on the left-hand side navigation tree (Row/Column Member groupings, page options, etc) 
+
+You will notice that the design pane is not updating to display the corresponding controls based on selection made.
+
+
+RESOLVING THE PROBLEM
+Applying permissions to the user account fixed this issue. 
+
+The user did not have the correct access assigned on the 'Web' folder level in the Clarity directory on the Application Server. 
+
+-After applying the appropriate permission for the user in question, Design pane began to behave as expected and update to display the correct controls.

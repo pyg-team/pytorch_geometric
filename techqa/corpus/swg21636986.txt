@@ -1,0 +1,79 @@
+Title: IBM How to troubleshoot "One or more digitial signature are not valid" or "Form has been tampered" errors. - United States
+
+Text:
+signmessage; signature; one or more digitial signatures; tampered TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After I sign my form and then open it again later, I get the following error when I have changed nothing on my form. 
+
+[/support/docview.wss?uid=swg21636986&amp;aid=1]
+
+Expanding the details button shows the following error:
+
+Wed Mar 23 13:56:28 2011 0 Viewer : Form has been tampered with (Form does not match signature hash value) ACCEPTED
+at _PEVerifyAndLock(..\..\..\src\digisign\digisign.c:6808 Fri Nov 19 03:21:46 2010):0x00000AA8:8
+Wed Mar 23 13:56:28 2011 0 Viewer : One or more digital signatures are not valid 
+at Error(..\..\..\src\FormObjectModel\CBaseObject\CForm.cpp:395 Sat Nov 27 05:03:58 2010):0x00000AA8:8
+
+
+CAUSE
+The reason why this type of error occurs is because something in the form changed since it was signed last. 
+
+
+The change could have been caused by either a programmatic IBM Forms API call which was performed on the form to change a value, or either an xforms:bind/xfdl:compute fired automatically on the form which changed a value of an option/instance.
+
+Either which way, something did change in the form and the only way to correct this behavior is to design the form, namely the signature, to account for these changing items.
+
+
+RESOLVING THE PROBLEM
+The easiest way to debug this issue is with the IBM Forms Viewer and a text editor that has file compare/differences capabilities (there are many freeware tools available online). 
+
+
+The Forms Viewer has a built in logging feature that we can leverage to specifically debug these types of signature issues. To enabling this logging you will need to create a wpf.pel file and place the keyword “signmessage” in the file as per information found on the IBM Forms Collecting Data technote.
+
+https://www-304.ibm.com/support/docview.wss?uid=swg21457003 [https://www-304.ibm.com/support/docview.wss?uid=swg21457003]
+(Refer to section B)
+
+Once you have created the pel file and put the keyword “signmessage” into the file, you will now get 2 new log files created alongside the masqform.log.
+
+signmessage-masform-1.xml
+signmessage-masform-2.xml
+
+What these files contain is a snapshot of the form that is signed before and after a change.
+
+Now that we have a tool to help us debug this issue, how do we use it?
+
+The key point to note here is the state of the form. What we want to compare is the state of the form after being signed against the change that is occurring on the form upon opening the form.
+
+To do this we need 2 sets of snapshots:
+1) When the form is first signed.
+2) When the form is reopened after being signed, reproducing the tamper error.
+
+After you do this collection you should have 4 log files. To keep things separated, I prefixed my snapshots with the word “before” for step 1’s collection and “after” for step 2’s collection.
+
+[/support/docview.wss?uid=swg21636986&amp;aid=2]
+
+Note: If you do not rename the signmessage log between snapshots, your previous existing logs will get overwritten and you will lose your previous snapshot. It is very important that the log files are renamed so to prevent them from being overwritten.
+
+Comparing the logs we get from these 2 collections will reveal exactly what changed in the form upon form load when the signature was applied.
+
+To identify the change causing the issue we will want to compare the 2nd file log from when we signed the form to the first log file generated when we opened the form and got the error.
+
+Compare:
+“before-signmessage-masqform-2.xml” against “after-signmessage-masqform-1.xml”
+
+In my particular form I ran this test and then did a difference between these 2 logs to identify the exact lines that changed.
+
+This is where the use of a text editor with a difference compare is very important. What this text editor will do is show you a list of lines that have been altered between the files being compared.
+
+In my case it turned out that an instance value was changing. This value was a date stored in a <modifieddate> tag.
+
+To rectify this issue you will need to omit any of these form changes from the signature button when signing the form. In my case there was a bind in the form which was putting in the current dateTime into a <modifieddate> tag. So I had to add an omit exception for this instance reference in my signature.
+
+For information on signatures, please refer to our documentation.
+http://www-10.lotus.com/ldd/lfwiki.nsf/dx/About_the_signature_filters_XFDL_8 [http://www-10.lotus.com/ldd/lfwiki.nsf/dx/About_the_signature_filters_XFDL_8]
+
+Once this was done, I was then able to sign and then open my form later without having any tamper errors.
+
+Files:
+Signature.zip [/support/docview.wss?uid=swg21636986&aid=4]Signature.zip [/support/docview.wss?uid=swg21636986&aid=3]

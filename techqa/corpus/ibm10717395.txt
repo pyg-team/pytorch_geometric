@@ -1,0 +1,98 @@
+Title: IBM Incompatibility for AS2 between SB2BI 5020400 and SB2BI 5020600 using TLS 1.2 - United States
+
+Text:
+ TROUBLESHOOTING
+
+PROBLEM
+All attempts to make an AS2 connection from SB2BI at version 5020600 to SB2BI at version 5020400 using TLS 1.2 are failing.
+
+SYMPTOM
+A TCP capture showed the following sequence as the entire capture
+
+SYN from the client (5020603)
+SYN,ACK from the server (5020400)
+ACK from the client
+Client Hello requesting TLS 1.2
+ACK from the server for the Client Hello
+alert 21 from the server specifying "Level: Fatal, Description: Protocol Version"
+ACK from the client for the alert
+FIN,ACK from the server
+alert 21 from the client specifying "Level: Fatal, Description: Internal Error"
+FIN,ACK from client
+RST from the server
+
+The client side (5020600) perimeter log included:
+
+DEBUG <Dispatcher> Relay[EI_NODE2_PS1]: RelayCircuit.receivingSideClosed(CloseCode.EOF)
+
+COMMTRACE <Dispatcher> Per[EI_NODE2_PS1] Closed from outside: CloseCode.EOF
+
+DEBUG <Dispatcher> DataConduit[-468593875] closing with code CloseCode.EOF
+
+DEBUG <Dispatcher> NBQ: close() - isEmpty: true
+
+DEBUG <Dispatcher> NBQ: sending putsClosed.
+
+DEBUG <Dispatcher> NBQ: sending takesClosed.
+
+DEBUG <Dispatcher> com.sterlingcommerce.perimeter.api.conduit.DataConduitApiImpl$2@415baa3a [com.sterlingcommerce.perimeter.api.conduit.DataConduitApiImpl$2@415baa3a] - call DRL:7
+
+DEBUG <Dispatcher> DataClientHelper..adjustReceiveWindow pending: 7
+
+ERROR <Unknown-TLS> [-825754885/1.2.3.4|5555|5.6.7.8|9999] unwrap() threw Exception
+
+ERROR <Unknown-TLS> [1527192743844] Unsupported record version Unknown-0.2
+
+ERRORDTL <Unknown-TLS> [1527192743844]javax.net.ssl.SSLException: Unsupported record version Unknown-0.2
+at com.ibm.jsse2.a.a(a.java:245)
+at com.ibm.jsse2.b.a(b.java:97)
+at com.ibm.jsse2.nc.a(nc.java:223)
+at com.ibm.jsse2.nc.unwrap(nc.java:293)
+at javax.net.ssl.SSLEngine.unwrap(SSLEngine.java:3)
+at com.sterlingcommerce.perimeter.ssl.TLSAgent.processInbound(TLSAgent.java:543)
+at com.sterlingcommerce.perimeter.ssl.TLSAgent$NetworkConduitAgent.canReceive(TLSAgent.java:794)
+at com.sterlingcommerce.perimeter.api.conduit.DataConduitApiImpl$4.body(DataConduitApiImpl.java:305)
+at com.sterlingcommerce.perimeter.api.ContextRunnable.run(ContextRunnable.java:41)
+at com.sterlingcommerce.perimeter.api.scheduler.TaskNode.run(TaskNode.java:62)
+at com.sterlingcommerce.perimeter.dispatcher.AbstractDispatcher.runTasks(AbstractDispatcher.java:465)
+at com.sterlingcommerce.perimeter.dispatcher.AbstractDispatcher.doRun(AbstractDispatcher.java:428)
+at com.sterlingcommerce.perimeter.dispatcher.AbstractDispatcher$2.run(AbstractDispatcher.java:175)
+at java.lang.Thread.run(Thread.java:798)
+
+Entire entry of http.log for the session on the server side (5020400)
+
+DEBUG ConduitStreamListener.canAccept() - Submitting job to Jetty...
+DEBUG ConduitStreamListener.initTls() - Setting up the TLS...
+
+DEBUG ConduitStreamListener.initTls() - clientAuth is false.
+
+DEBUG ConduitStreamListener.handleNewConnection() - Starting ...
+DEBUG FlushingHttpConnection.Conduit here in FlushingHttpConnectionnull
+DEBUG ConduitStreamListener.handleNewConnection() - dataconduit available here ...DataConduit[1414720514]
+
+DEBUG FlushingHttpConnection.setAttribute() - request attribute: uriOptionsMap=com.sterlingcommerce.woodstock.services.pshttp.URIOptionsMap@1004a28e
+
+DEBUG Please ignore this - FlushingHttpConnection.handle() jetty exception
+DEBUG ConduitStreamListener.handleNewConnection() - Completed.
+
+No EDIINT.log was generated on the server side.
+
+CAUSE
+This is caused by an incompatibility of SB2BI versions and settings. Since the 5020600 side (client) has TLS 1.2 as the highest version in its SSLHelloProtocol property, that means that any SSL connection it initiates will start by requesting that TLS version 1.2 be used. SB2BI 5020400 is old enough that complete functionality for TLS 1.2 was not included, Specifically, per the below link, TLS 1.2 is not supported for connections that use the HTTP Server Adapter, which is the adapter used to make AS2 connections.
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21648432 [http://www-01.ibm.com/support/docview.wss?uid=swg21648432]
+
+The HTTP Server Adapter on the 5020400 side does not recognize TLS 1.2 as a TLS version, so upon receiving a request to use TLS 1.2, it immediately sends a fatal alert.
+
+ENVIRONMENT
+This occurred with IBM Sterling B2B Integrator version 5020600 that had TLS 1.2 as the highest possible version in the SSLHelloProtocol in security.properties as the client, and IBM Sterling B2B Integration version 5020400 as the server.
+
+DIAGNOSING THE PROBLEM
+This is a situation where the TCP capture is more of a help than the logs. When possible, the TCP capture should be taken from both the client and server side with logs in debug mode on both sides.
+
+RESOLVING THE PROBLEM
+The recommended fix is for the 5020400 (server) side upgrade to a more recent version that has full support for TLS 1.2. The lowest such version would be 5020402.
+
+If an upgrade is not feasible for some reason, the next suggestion would be to switch to a different protocol for the connection and an upgrade can be done.
+
+Please note that it would be possible for the client (5020600) to downgrade the setting for the SSLHelloProtocol property so that TLS 1.1 is the highest version, but that is a universal property that would affect all TLS connections from the 5020600 side whether FTPS, Connect:Direct with Secure Plus or AS2 with TLS. IBM Customer Support recommends against such a downgrade.

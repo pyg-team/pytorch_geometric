@@ -1,0 +1,68 @@
+Title: IBM Content Manager Services for Lotus Quickr Version 1 publication library - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains links to the most important and most frequently used documents for IBM® Content Manager Services for Lotus® Quickr™ Version 1. In this document, you can find links to the Content Management Information Center and Lotus Quickr Information Center, and product system requirements. 
+
+CONTENT
+ 
+
+IBM CONTENT MANAGER SERVICES FOR LOTUS QUICKR VERSION 1.0
+ *  Version 1.0 [http://www.ibm.com/support/docview.wss?rs=86&uid=swg27014726] - selected tab, 
+ *  Version 1.1 [http://www.ibm.com/support/docview.wss?rs=86&uid=swg27016796] 
+
+ANCHOR LINKS
+ * 
+ * 
+ * Getting started
+ * Product documentation
+
+ * 
+ * Related libraries
+ * Community
+
+
+
+
+GETTING STARTED
+Learn how to download and install the product and get an overview of important product concepts.
+
+Document Format IBM Content Manager Services for Lotus Quickr Version 1 hardware and software requirements [http://www.ibm.com/support/docview.wss?rs=86&uid=swg27013939]  A complete and up-to-date list of the hardware and software requirements for IBM Content Manager Services for Lotus Quickr is available on the IBM Support site. 
+
+HTML Back to top
+
+
+PRODUCT DOCUMENTATION
+Access the documentation that is delivered with the product in multiple formats.
+
+INFORMATION CENTER
+All of the information that is in the PDF documentation is included in the knowledge center, where you can easily search across all of the documentation. The knowledge center is updated more often than the PDFs.
+
+Document Format IBM Content Manager Enterprise Edition [http://www.ibm.com/support/knowledgecenter/SSAHQR/welcome.html] HTML Back to top
+
+
+PDF DOCUMENTATION 
+
+
+ENGLISH
+Planning, Installing, and Configuring IBM Content Manager Services for Lotus Quickr (GC19-2552-00) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=GC19-2552-00] PDF Back to top
+
+
+RELATED LIBRARIES
+Access the documentation for prerequisite and corequisite products.
+
+Document Format IBM Content Manager Enterprise Edition [http://www.ibm.com/support/knowledgecenter/SSAHQR/welcome.html] HTML IBM Lotus Quickr for Domino [http://www.ibm.com/support/knowledgecenter/SS64R8/quickrd_welcome.html ] HTML Back to top
+
+
+COMMUNITY
+Share your experiences, expertise, and feedback with other product users and IBM.
+
+Document Format IBM Enterprise Content Management Services for Lotus Quickr forum [http://www.ibm.com/developerworks/forums/forum.jspa?forumID=1822] HTML IBM Enterprise Content Management Services for Lotus Quickr user group [https://www.ibm.com/developerworks/mydeveloperworks/groups/service/html/communityview?communityUuid=94c4720c-245c-4b05-97b5-ed61bd1203bd] HTML Back to top
+
+
+RELATED INFORMATION
+ IBM Content Manager Enterprise Edition [http://www.ibm.com/support/knowledgecenter/SSAHQR/com.ibm.cmgmt.doc/ic-homepage.html]
+IBM ECM Services for Lotus Quickr forum [http://www.ibm.com/developerworks/forums/forum.jspa?forumID=1822]
+IBM ECM Services for Lotus Quickr user group [https://www.ibm.com/developerworks/mydeveloperworks/groups/service/html/communityview?communityUuid=94c4720c-245c-4b05-97b5-ed61bd1203bd]

@@ -1,0 +1,76 @@
+Title: IBM The 'Manage Group' Add User search in the Process Admin Console does not return available users for IBM Business Process Manager (BPM) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you search for a user within the 'Manage Group' in the Process Admin Console for IBM Business Process Manager, a more specific search keyword does not result in any entries. In addition, an LDAP timeout message is added to the SystemOut.log file. 
+
+SYMPTOM
+When you do a broad search with a small keyword, you expect to receive many entries in return. When your search is more specific, you use a longer keyword to try to narrow the search. However, when you expect fewer returns from your search, it does not happen. The user list remains empty. 
+
+You can find the following exception in the SystemOut.log file:
+
+[8/7/12 14:02:59:435 CEST] 000000xx exception E com.ibm.ws.wim. 
+adapter.ldap.LdapConnection search(String, String, Object[], 
+SearchControls) CWWIM4520E The 'javax.naming.NamingException: LDAP 
+response read timed out, timeout used:20000ms.; Remaining name: 
+'DC=xxx,DC=xxx,DC=xxx,DC=com'; Resolved object: 'com.sun.jndi. 
+ldap.LdapCtx@196fbd6a'' naming exception occurred during processing. 
+[8/7/12 14:02:59:435 CEST] 00000068 exception E com.ibm.ws.wim. 
+adapter.ldap.LdapConnection search(String, String, Object[], 
+SearchControls) 
+com.ibm.websphere.wim.exception. 
+WIMSystemException: CWWIM4520E The 'javax.naming.NamingException: LDAP 
+response read timed out, timeout used:20000ms.; Remaining name: 
+'DC=xxx,DC=xxx,DC=xxx,DC=com'; Resolved object: 'com.sun.jndi. 
+ldap.LdapCtx@196fbd6a'' naming exception occurred during processing. 
+at com.ibm.ws.wim.adapter.ldap.LdapConnection.search 
+(LdapConnection.java:2951) 
+at com.ibm.ws.wim.adapter.ldap.LdapConnection.checkSearchCache 
+(LdapConnection.java:2781) 
+at com.ibm.ws.wim.adapter.ldap.LdapConnection.search 
+(LdapConnection.java:2971) 
+...
+
+
+CAUSE
+In some cases, LDAP might take longer to respond on a more specific search, which results in an LDAP timeout. 
+
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, increase the LDAP timeout limit by using one of the following options: 
+
+ 
+
+ * Option 1 
+   Use the wsadmin command:
+   $AdminTask updateIdMgrLDAPServer {-id AD -connectTimeout 0} 
+   $AdminConfig save 
+   
+   
+   After it is saved, view the wimconfig.xml file and make sure you see connectTimeout="0" 
+   
+   
+   You can find the wimconfig.xml file in the following locations in the deployment manager configuration:  * {WAS_HOME}\profiles\profile_name\config\cells\cell_name\wim\config\wimconfig.xml
+      
+      
+    * profile_root/conf/cells/cell_name/wim/config/wimconfig.xml
+   
+   
+   
+   A complete restart of the WebSphere Application Server / IBM Business Process Manager environment is required to make this change take effect.
+   
+   
+ * Option 2 
+   You will edit the wimconfig.xml file directly. However, before you edit the file, make a backup copy of it. Edit the wimconfig.xml file and search forconnectTimeout. Change this value from connectTimeout="20" to connectTimeout="0" and save the file. 
+   
+   
+   A complete restart of the WebSphere Application Server / IBM Business Process Manager environment is required to make this change take effect.
+
+
+Note: The connectTimeout increment value is in seconds of time. The example value 0 is to wait indefinitely. Different values can be set accordingly.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Security AIX, Linux, Linux zSeries, Solaris, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Express Security Linux, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5

@@ -1,0 +1,59 @@
+Title: IBM EDG6824I VOLUME xxxxxx IS IN VOLUME CATALOG ERROR STATUS xxxx - United States
+
+Text:
+RMMTIP TECHNOTE (FAQ)
+
+QUESTION
+ 
+How do I resolve the EDG6824I messages? Where can I find an explanation for the Error Status codes? 
+
+CAUSE
+
+Message can be found in the output after running EDGUTIL with PARM='VERIFY(SMSTAPE)'
+
+
+ANSWER
+ 
+
+EDG6824IVOLUMEvolserISINVOLUMECATALOGERRORSTATUSstatus_number status_text
+
+The status_number from EDG6824I is the status code obtained from the volume catalog and this is explained by the status_text within this message. For more information on the status text, it is documented in the "DFSMS OAM Planning, Installation and Storage Administration (PISA) Guide for Tape Libraries" manual in the article entitled, "Displaying Tape Volume Status." 
+
+Message EDG6824I is reporting an error after the fact, so understanding when and why the status text was set may be hard to determine. Failure messages were issued in the MVS SYSLOG at the time of the error, so it is up to the user at this point to determine the specific cause of the failure. 
+
+For example, to resolve a "0004 REJ BY TAP MGT" error, issue the command 'D SMS,VOLUME(volser)' to obtain another view of the volume entry. Look in the MVS SYSLOG around the time of the "LAST MOUNTED DATE" and search for an IEC518I message with REJTMS to see if you can figure out from the surrounding messages why the volume was rejected at that time.
+
+There are several ways to go about resolving these EDG6824I Volume Catalog Error Status messages. For details, review the article entitled, "Resetting the Volume Error Status Field" in the z/OS DFSMS OAM PISA for Tape Libraries. The usual required action to correct the error status is to invoke ISMF ALTER against a volume record (SCRATCH to SCRATCH or PRIVATE to PRIVATE, as appropriate). You can find the description of how to ALTER the volume record using ISMF in the DFSMS OAM PISA book in Appendix B article, "Altering the Volume Record". Unfortunately, there is no way to run ISMF in a batch mode, so you need to manually clear each volume from it's error status. 
+
+Another option is to use EDGUTIL with MEND(SMSTAPE). However, this will only remove the volume from the error status when the catalog status_number is one of the following: 1, 3-5, 101 or 107-111. The MEND parm (with no sub-parameter specified) should be used with caution, so please first review the article entitled, "Using 3-Way Audit Support" (below) taken from Chapter 4.3 of the "DFSMS Release 10 Technical Update" redbook. [http://www.redbooks.ibm.com/redbooks/pdfs/sg246120.pdf] 
+
+This article will guide you in the verify/fixing process. Recommended actions are given based on what is reported by the VERIFY processes. 
+_______________________________________________________________________________________
+4.3.3.3 Recovery of the errors found by VERIFY(SMSTAPE)
+If errors are found by EDGUTIL with the VERIFY(SMSTAPE) parameter, then an inconsistency exists between the volume records in the DFSMSrmm CDS, TCDB and LM DB. The first thing you need to do is to make DFSMSrmm CDS reliable, so that you can use MEND(SMSTAPE) at later.
+
+To correct the error status, perform the instructions below:
+
+1. Inspect the JOBLOG of the VERIFY(SMSTAPE) job carefully.
+The JOBLOG will tell you what kind of inconsistencies exist.
+
+2. Determine the location of information to be corrected.
+If DFSMSrmm CDS information is correct, do nothing at this time.
+Or, if the DFSMSrmm CDS information is incorrect, use RMM commands
+to fix it.
+
+3. Run the VERIFY(SMSTAPE) job again.
+See if all of the errors in DFSMSrmm CDS have been fixed. If it
+still has errors, go back to step 1.
+
+At this point, the DFSMSrmm CDS information should be reliable. Therefore, it is now ready to use MEND(SMSTAPE), as MEND(SMSTAPE) fixes the TCDB and LM DB automatically, based on DFSMSrmm CDS information. 
+
+We recommend that you perform MEND(SMSTAPE) against an active DFSMSrmm CDS. This is because the TCDB and LM DB are active, and their information is being updated in parallel with DFSMSrmm CDS, regardless of whether the DFSMSrmm CDS being used is active or not. (When running MEND by itself, we recommend using it on a backup of the CDS.) Furthermore, while we can back up and restore the DFSMSrmm CDS and TCDB, we cannot back up or restore the LM DB, so any changes made to LM DB cannot be backed out.
+
+4.3.4 How MEND/MEND(SMSTAPE) works
+If you find any inconsistencies between your DFSMSrmm CDS, TCDB, or LM DB, we recommend that you check the error status and correct them manually. If you decide to use MEND(SMSTAPE), its actions should be understood. ...
+_______________________________________________________________________________________
+
+To prevent this type of situation, where many errors are found, it is recommended that both the VERIFY and VERIFY(SMSTAPE) are performed regularly. Since these two methods verify CDSs in different ways, it is possible that VERIFY may not detect an error while VERIFY(SMSTAPE) would, or vice versa. You do not have to consider running VERIFY(VOLCAT), as all inspection done by this option is included in VERIFY(SMSTAPE). Actions could then be taken as soon as they are detected, thus minimizing your work.
+
+Keep in mind that running MEND alone will update the RMM CDS according to the info found in the TCDB and LM DB. For this method, we recommend running MEND against a backup of the CDS. Running MEND(SMSTAPE) will do the opposite - it will update the TCDB and LM according to the info found in the RMM CDS.

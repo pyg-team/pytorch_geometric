@@ -1,0 +1,27 @@
+Title: IBM Error Message: JVM appears hung: Timed out waiting for signal from JVM. - United States
+
+Text:
+50170000000OSMLAA4 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Wrapper process restarting the hub even though the hub was running OK.
+
+
+CAUSE
+The timeout being exceeded can be caused by a number of issues. The common ones would be waiting on the CPU because it is at 100% capacity, or waiting on I/O from the disk. This has been seen when an Anti-Virus application is running on the Application Server.
+
+RESOLVING THE PROBLEM
+ In this case the engine was slow to respond to ping requests because it was busy, but the engine was not crashing. We modified the wrapper.conf so that the wrapper would give more time for the engine to respond before restarting the process. 
+
+The wrapper process has a socket connection to the jvm and by default will ping it every 5 seconds to ensure the JVM has not gone away (crashed) or hung. It will wait 30 seconds (default) for a response to it's ping. If no response is received, it's assumed to be hung and the wrapper process will kill -9 the jvm and restart it.
+
+You can adjust the interval and timeout.
+
+wrapper.ping.timeout = 30 (default), 0 means never timeout but setting this to 0 means if the process dies unexpectedly the wrapper will not automatically restart it. The value of the timeout needs to be at least 5 seconds longer than the value of the interval.
+
+wrapper.ping.interval = 5 (default).
+
+
+
+HISTORICAL NUMBER
+ 840

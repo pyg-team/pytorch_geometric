@@ -1,0 +1,68 @@
+Title: IBM DFHAP0001 0C4 in DFHERMSP and DFHRM0002 with 020C in DFHRMUW or 020B in DFHRMUO when using ASG TMON - United States
+
+Text:
+DFHAP0001 S0C4 0C4 abend0C4 AKEA abendAKEA 'FFFF DFHERMSP MSGDFHAP0001 DFHRM0002 020C DFHRMUW MSGDFHRM0002 TM4N960 ASG_TMON ASG-TMON ; ASG TMON for CICS ; 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While your CICS Transaction Server for z/OS (CICS TS) region is running, you receive message DFHAP0001 0C4 AKEA (abend0C4 abendAKEA) at offset FFFF in DFHERMSP. This is followed by DFHRM0002 code 020C in DFHRMUW or DFHRM0002 code 020B in DFHRMUO. You are using ASG-TMON from ASG Software Solutions. 
+
+SYMPTOM
+You see the following messages in the CICS log:
+DFHAP0001 [http://pic.dhe.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.messages.doc/cics_mc/dfhap/AP0001.html]applid AN ABEND (CODE 0C4/AKEA) HAS OCCURRED AT OFFSET X'FFFF' IN MODULE DFHERMSP
+
+This is followed by one of these DFHRM0002 messages:
+DFHRM0002 [http://pic.dhe.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.messages.doc/cics_mc/dfhrm/RM0002.html] applid A SEVERE ERROR (CODE X'020C') HAS OCCURRED IN MODULE DFHRMUW 
+or
+DFHRM0002 applid A SEVERE ERROR (CODE X'020B') HAS OCCURRED IN MODULE DFHRMUO
+
+
+CAUSE
+An ASG-TMON program TM4N960 running in 64-bit addressing mode used a 31-bit pointer that had the high order bit on.
+
+DIAGNOSING THE PROBLEM
+Reviewing the system dump of the DFHRM0002 you will see the following information for the 0C4 abend:
+
+KE Domain Error Table Summary
+
+ERR_NUM ERR_TIME KE_NUM ERROR TYPE ERR_CODE MODULE OFFSET
+======= ======== ====== ========== ======== ====== ======
+00000004 09:31:16 0082 PROGRAM_CHECK 0C4/AKEA UNKNOWN UNKNOWN
+
+Error Number: 00000004
+Program DFHERMSP was in control, but the PSW was elsewhere.
+CICS Registers and PSW: 078D1001 80000000 00000000 00746156 IL: 6 IC: 38
+
+64-BIT REGISTERS 0-15
+00000000_19A9E000 00000000_1A35352C 00000000_00007000 40404040_0813D000
+40404040_1A353360 40404040_0813DFFF 40404040_1B85C158 40404040_19C0A100
+40404040_00000068 00000000_1A35352C 40404040_1A352ED8 40404040_19E43100 
+40404040_19E43100 40404040_1A353360 00000000_8813DFB8 00000000_00746150 
+
+Now, taking the PSW 00746156 and viewing this in IPCS browse mode you see the failing instruction is STORE MULTIPLE: 
+
+00746156 | EBEC D008 0024 | STMG R14,R12,X'8'(R13)
+
+Since this has a interrupt code of 38 the reason for failure is due to the fact a program running in 64-bit addressing mode used a 31-bit pointer that had the high order bit on. 
+
+Backing up from the PSW I see it is currently executing in a TMON module TM4N960: 
+
+00746000 | .&>MODHEAD.A.670TM4N960 05/08/12 |
+00746020 | @16.07.}............../&TH03422 | 
+00746040 | ............................ |
+00746060
+00746140 | {0......}.....1- |
+00746160 | .o.-1.."..!.1..01.......TM4N960 |
+00746180 | ........ASM 05/08/12 16.07 VERSI |
+007461A0 | ON 033 MOD LEVEL 0000-020 LICENS |
+007461C0 | ED MATERIALS COPYRIGHT 1990, 201 |
+007461E0 | 1 BY ALLEN SYSTEMS GROUP, INC. |
+00746200 | TH03422 ............ | 
+
+
+RESOLVING THE PROBLEM
+Apply ASG-TMON fix TH03438. Contact [/support/docview.wss?uid=swg21607248&amp;aid=1] ASG Software Solutions [http://www.asg.com/] for additional information.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

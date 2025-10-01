@@ -1,0 +1,64 @@
+Title: IBM Operations Insight 1.2 installation Problem - United States
+
+Text:
+WebGUI 8.1; NOI; Netcool Operations Insight:Installation; Exception TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Installation of Operations Insight into an existing WebGUI 8.1 fails with the following error in Installation Manager 
+"typedef class com.ibm.tivoli.tacct.psc.install.server.config.IsWasRunning cannot be found
+using the classloader AntClassLoader[/opt/IBM/netcool/omnibus_webgui/bin/OMNIbusWebGUI_IM.jar] [/opt/IBM/IMShared/files/com.ibm.noi.ea.antfile_1.2.0.201409291539.xml:657" 
+
+SYMPTOM
+The installation stops within installation manager. 
+
+The line it stops at in the file specified in the error /opt/IBM/IMShared/files/com.ibm.noi.ea.antfile_1.2.0.201409291539.xml 
+
+suggests there is a class it cannot find in the file the classpath property is pointing at: 
+
+line 657 
+
+<typedef name="isWasRunning" classname="com.ibm.tivoli.tacct.psc.install.server.config.IsWasRunning" classpath="${OMNIBUS_WEBGUI_HOME}/bin/OMNIbusWebGUI_IM.jar"/> 
+
+Running jar tvf in that file can show that the class is not present within it 
+
+
+[root@jazzsmnodeb bin]# /opt/IBM/WebSphere/AppServer/java/bin/jar tvf OMNIbusWebGUI_IM.jar
+0 Tue Jun 03 16:57:28 BST 2014 META-INF/
+91 Tue Jun 03 16:57:26 BST 2014 META-INF/MANIFEST.MF
+0 Tue Jun 03 16:57:42 BST 2014 com/
+0 Tue Jun 03 16:57:42 BST 2014 com/ibm/
+0 Tue Jun 03 16:57:42 BST 2014 com/ibm/omnibus/
+0 Tue Jun 03 16:57:42 BST 2014 com/ibm/omnibus/webgui/
+0 Tue Jun 03 16:57:42 BST 2014 com/ibm/omnibus/webgui/install/
+0 Tue Jun 03 16:57:42 BST 2014 com/ibm/omnibus/webgui/install/tasks/
+3817 Tue Jun 03 16:57:42 BST 2014 com/ibm/omnibus/webgui/install/tasks/ConcatLocaleFiles.class
+1366 Tue Jun 03 16:57:42 BST 2014 com/ibm/omnibus/webgui/install/tasks/CreateFIPSSecretKey.class
+1813 Tue Jun 03 16:57:42 BST 2014 com/ibm/omnibus/webgui/install/tasks/FIPSEncrypt.class
+4346 Tue Jun 03 16:57:42 BST 2014 com/ibm/omnibus/webgui/install/tasks/FIPSEncryptionHelper.class
+3179 Tue Jun 03 16:57:42 BST 2014 com/ibm/omnibus/webgui/install/tasks/FindDefaultUserRegistryRealm.class
+5329 Tue Jun 03 16:57:42 BST 2014 com/ibm/omnibus/webgui/install/tasks/ReplaceXML.class
+
+
+CAUSE
+There are two different GA releases of WebGUI 8.1 
+
+June 2014 GA version (build 493) and September 2014 GA version (build 615).
+
+
+
+ENVIRONMENT
+OMNIbus WebGUI 8.1
+
+
+
+DIAGNOSING THE PROBLEM
+Installation Manager graphical window and its logs show an exception
+
+
+
+RESOLVING THE PROBLEM
+Operations Insight needs the later version (build 615) in order to install. After this version is in the system, jar tvf shows the class the installer didn't find before 
+
+
+[root@jazzsmsso bin]# /opt/IBM/WebSphere/AppServer/java/bin/jar tvf OMNIbusWebGUI_IM.jar | grep IsWasRunning
+3461 Fri Mar 14 01:30:24 GMT 2014 com/ibm/tivoli/tacct/psc/install/server/config/IsWasRunning.class

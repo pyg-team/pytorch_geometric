@@ -1,0 +1,167 @@
+Title: IBM PM70004: SA Import does not translate empty data - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When importing csv file into SA Dictionary with type Application
+   Suite, nothing gets imported because of the error:
+   'Application Suite - has unmatched quotes'
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Three issues:
+   
+   The main issue here - We should during the import, filter
+   out the invalid double-quotes("") for a list property
+   (consider it as nothing). This way the file can still be
+   imported completely and no invalid definitions will be
+   created.
+   
+   During CSV import, the double quotes becoming single quotes
+   for a text property.  If you have "" in a TEXT property, we
+   should import it that way, because that is legal in a TEXT
+   property.
+   
+   The fact that a comma needs to be added to the end of the
+   line if clearing out the last field.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Issue #1:
+   Fixed so a property value of "" will always be treated as
+   empty.
+   
+   Issue #2:
+   If in the CSV, for a test property we have:
+   -  "", that translates now to nothing,
+   - """", that translates into one double quote ("), and not 2
+   single quotes as stated in the summary
+   - """""", that translates into 2 double quotes("")
+   - single quote, single quote ('') is kept as such
+   
+   If I edit the object in SA and in the text property I enter
+   "", when I export, in Notepad the file shows """""" (6
+   double quotes). Excel works the same if I edit the CSV file
+   and I type ""...
+   I am not sure now that the 4 double quotes should translate
+   into something else other than the one double quote...
+   Interestingly, if I edit the file in Excel and I type 2
+   single quotes, the file will only be saved with one. As soon
+   as I click away from the cell, the value gets translated
+   into '...I guess in Excel single quote has no other meaning
+   than apostrophe.
+   If in Notepad I enter 4 double quotes, Excel translates that
+   into one double quote.
+   So seeing that we in fact behave just like Excel does, there
+   is no defect to address here.
+   
+   Issue #3:
+   The product has always behaved like this and since no client
+   has complained about that specifically, the decision was
+   made not to fix it. The user can also just use "" now
+   instead of the additional comma to clear out the last field.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM70004
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC SYS ARCH
+   
+   
+ * REPORTED COMPONENT ID
+   5724V68SA
+   
+   
+ * REPORTED RELEASE
+   B41
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-01
+   
+   
+ * CLOSED DATE
+   2012-12-21
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC SYS ARCH
+   
+   
+ * FIXED COMPONENT ID
+   5724V68SA
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB41 PSN
+   UP

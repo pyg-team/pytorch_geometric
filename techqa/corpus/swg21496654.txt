@@ -1,0 +1,12 @@
+Title: IBM ITM events in OMNIbus received with Indeterminate severity - United States
+
+Text:
+itm; omnibus; severity; indeterminate; incorrect; priority TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ITM events with CRITICAL severity are seen in the OMNIbus Event desktop with severity of Indeterminate. 
+
+RESOLVING THE PROBLEM
+The ITM integration component comes with a updated rules file tivoli_eif.rules to replace the default one that comes with the EIF probe. Please refer to the ITM Installation and Setup Guide under "Setting up event forwarding to Netcool/OMNIbus" for more details on configuring the EIF probe.
+
+Restart the probe after updating the rules file for the changes to take effect.

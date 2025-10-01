@@ -1,0 +1,223 @@
+Title: IBM PM03843: CUMULATIVE MAINTENANCE FIXPACK 7.0.1.1 FOR THE JMS FEATURE OF   WEBSPHERE MQ FOR Z/OS VERSION 7.0.1. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Fixpack 7.0.1.1 for WebSphere MQ for z/OS Version 7.0.1
+   provides fixes for the problems described in this APAR.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 0 Modification 1 with the MQ Java    *
+   *                 Feature.                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Service offering 7.0.1.1 for WebSphere  *
+   *                      MQ for z/OS V7.0.1 provides fixes for   *
+   *                      the problems described in this APAR.    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   PK99384 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK99384] - MQRC_CONNECTION_BROKEN RECEIVED WHEN USING MQ JMS WITH
+             WEBSPHERE MESSAGE BROKER.
+   IZ63940 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ63940] - EXCEPTIONS THROWN WHEN CONNECTING USING WEBSPHERE MQ
+             V7 JAVA/JMS CONNECTION SHARING
+   IZ63692 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ63692] - A HANG OCCURS DURING START WHEN MULTIPLE MDBS ARE
+             CONFIGURED TO USE THE SAME MQ JMS ACTIVATION
+             SPECIFICATION.
+   IZ62802 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ62802] - THE JMSADMIN TOOL DISPLAYS MULTIPLE COMMAND PROMPTS
+             WHILE PROCESSING INPUT FILES.
+   IZ62706 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ62706] - NULLPOINTEREXCEPTION WHEN USING MQQUEUEMANAGER.BEGIN()
+   IZ62483 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ62483] - WEBSPHERE MQ V7 JMS CLIENT THE VALUE OF JMSTIMESTAMP
+             VALUES IS NOT CORRECT FOR NON-JMS MESSAGES.
+   IZ62412 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ62412] - A WEBSPHERE MQ V7 ACTIVATION SPECIFICATION DELIVERS
+             THE WRONG MESSAGE FROM A DIFFERENT DESTINATION TO A
+             MESSAGE-DRIVEN BEAN
+   IZ62389 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ62389] - A MESSAGE DRIVEN BEAN USING ACTIVATION SPEC FAILS TO
+             RECEIVE JMS MESSAGE FROM A WMQ V7 QUEUE MANAGER THAT
+             HAS BEEN RESTARTED
+   IZ60646 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ60646] - META-INF/services/java.nio.charset.spi.CharsetProvider
+             FILE IN COM.IBM.MQ.JMQI.JAR IS NOT ENCODED IN UTF-8
+   IZ60374 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ60374] - WEBSPHERE MQ JAVA CLIENT IS UNABLE TO MAP THE IBM-943C
+             CHARACTER SET TO A KNOWN CCSID VALUE
+   IZ60328 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ60328] - JAVA/JMS CLIENT APPLICATIONS USING WEBSPHERE MQ V7
+             JARS REPORT JAVA.LANG.OUTOFMEMORYERROR WITH CONNECTION
+             BROKEN EXCEPTIONS
+   IZ60251 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ60251] - WMQ JMS V7 LIBRARIES UNDER WEBSPHERE APPLICATION
+             SERVER V6.1 CAUSE PERFORMANCE DEGRADATION, COMPARED TO
+             WMQ V6 LIBRARIES.
+   IZ59231 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ59231] - UNABLE TO CREATE SSL CONNECTIONS TO WEBSPHERE MQ FROM
+             WEBSPHERE APPLICATION SERVER V7
+   IZ57605 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ57605] - CLASSCASTEXCEPTION WHEN CREATING A WEBSPHERE MQ
+             DURABLE SUBSCRIPTION USING THE RESOURCE ADAPTER
+   IZ56543 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ56543] - USERNAMES AND PASSWORDS ARE NOT PASSED TO CLIENT SIDE
+             SECURITY EXITS WHEN USING THE WMQ V7 CLASSES FOR JAVA
+   IZ54623 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ54623] - MQ JAVA AND JMS CLIENT MESSAGE BUFFER NOT REDUCED IF
+             MESSAGES ARE NOT RECEIVED
+   IC64098 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC64098] - APPLICATION DOES NOT AUTOMATICALLY RECONNECT TO THE
+             QUEUE MANAGER IF CONNECTION IS LOST WHEN USING THE MQ
+             RESOURCE ADAPTER
+   IC63753 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC63753] - JAVA CLIENT CALLS USER SECURITY EXIT INCORRECTLY
+   IC63680 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC63680] - NULLPOINTEREXCEPTION RETURNED WHEN TRYING TO CLOSE A
+             CONNECTION AFTER BROWSING A QUEUE USING JCA ADAPTER.
+   IC63485 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC63485] - INTERMITTENT NULLPOINTEREXCEPTION IF MESSAGES RESIDE
+             ON A TOPIC PRIOR TO THE WEBSPHERE APPLICATION SERVER
+             V6 STARTUP
+   IC62909 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC62909] - NO QUEUES SEEN IN WEBSPHERE MQ V7 EXPLORER WHEN
+             CONNECTED TO A QUEUE MANAGER
+   IC62336 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC62336] - STREAMCORRUPTEDEXCEPTION OCCURS WHEN A WMQ V7 JMS
+             APPLICATION RECEIVES OBJECTMESSAGES SENT BY A V6 JMS
+             APPLICATION
+   IC61714 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC61714] - ASYNCDELIVERY THREAD HANGS/WAITS WHEN CONNECTION
+             BROKEN EXCEPTION IS REPORTED ON THE EXCEPTION LISTENER
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Java level info:
+   
+   Name:        WebSphere MQ classes for Java
+   Version:     7.0.1.1
+   CMVC Level:  k701-101-091116
+   Build Type:  Production
+   
+   
+   JMS level info:
+   
+   Name:        Common Services for Java Platform, Standard Edition
+   Version:     7.0.1.1
+   CMVC Level:  k701-101-091116
+   Build Type:  Production
+   
+   Name:        IBM WebSphere MQ
+   Version:     7.0.1.1
+   CMVC Level:  k701-101-091116 mqjbnd=k701-101-091116
+   Build Type:  Production
+   
+   Name:        Java Message Service Client
+   Version:     7.0.1.1
+   CMVC Level:  k701-101-091116
+   Build Type:  Production
+   
+   Name:        WebSphere MQ classes for Java Message Service
+   Version:     7.0.1.1
+   CMVC Level:  k701-101-091116
+   Build Type:  Production
+   
+   018Y
+   CSQ8JTR1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM03843
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   018
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-21
+   
+   
+ * CLOSED DATE
+   2010-01-14
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK53422
+   
+   
+
+MODULES/MACROS
+ *  CSQ8JTR1
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R018 PSY UK53422 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK53422]
+   UP10/01/19 P F001
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

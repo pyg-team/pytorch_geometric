@@ -1,0 +1,165 @@
+Title: IBM PK59679: NOSUCHMETHODEXCEPTION OCCURS WHEN USING ORACLE 10G OR 11G JDBC DRIVER IN WEBSPHERE APPLICATION SERVER V6.0 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In WebSphere Application Server V6.0, a
+   java.lang.NoSuchMethodException may occur when the Oracle 10g or
+   11g JDBC driver is used.  This occurs because an Oracle 9i
+   method, OracleLog.setLogVolume(), is called.  This method was
+   removed from Oracle 10g and 11g.
+   .
+   This is a backport for APAR PK47930 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK47930] for WebSphere Application
+   Server V6.1.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V6.0.2 and Oracle 10g and beyond     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: WebSphere Application Server calls      *
+   *                      Oracle9i APIs when running in a 10g and *
+   *                      beyond environment.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Calling the Oracle9i API (OracleLog.setLogVolume()) results in
+   a method not found exception in later Oracle drivers, where
+   the method has been removed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix here consists of not calling the 9i API when running
+   with Oracle 10g and beyond environments.
+   
+   Also customers must  make sure the datasource custom property
+   oracle9iLogTraceLevel=null or blank, to avoid
+   having the 9i API called.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 6.0.2.31  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK59679
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60I
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-21
+   
+   
+ * CLOSED DATE
+   2008-04-29
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP

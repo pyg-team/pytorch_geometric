@@ -1,0 +1,196 @@
+Title: IBM IZ87541: INSTALL FROM ISO OR CD; VERSION FILES NOT UPDATED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract: When installing from an ISO image, or CD, version
+   files are not updated.
+   Causes duplicate entries for 64-bit agents to appear in kincinfo
+   output.
+   
+   Environment:
+     Windows ONLY. Installing any ITM based product from an ISO
+   image,  or real CD.
+   
+   Problem Description:
+   When installing from ISO or CD all files have the read-only
+   attribute.
+   When these files are copied to the installation area the
+   read-only attributes are not reset so updates to the ver files
+   are lost.
+   
+   
+   This can cause 32-bit and 64-bit agent recognition problems and
+   th appearance of multiple agents when 64-bit agents are
+   install. The  second version file is created to block the
+   installation of the 32-bit  agent on the same machine.
+   
+   
+   Recreate Instructions:
+     If a network image is used for testing, be sure to make sure
+   all the  files have the read-only attribute. This can be done by
+   using the  attrib command from a DOS Prompt to set all files to
+   have the  read-only attribute. (attrib *.* +r /s)
+   
+   
+   1. From the Microsoft Applications CD install the Hyper-V
+   agent only  on the target machine.
+   
+   2. Open a DOS Prompt and issue command kincinfo -i. Only one
+   entry should show for the HV Agent. Without the APAR, 2 entries
+   will appear. The failure will also appear on kincinfo -d and
+    kincinfo -t commands.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do not install from ISO image, or directly from the CD. Copy the
+   images locally or to a network drive then reset the read-only
+   attributes on all files copied from the CD.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  On Windows when installing from an ISO or DVD, version files may
+   not be updated with install information.
+   
+   During installation, version files (*.VER) are copied from the
+   installation media. If the media is in ISO or DVD format, the
+   files are marked read-only after they are copied to the
+   %CANDLE_HOME%\InstallITM\ver directory. The read-only attribute
+   prevents the installer from updating information in these *.VER
+   files. This can have an effect IBM Tivoli Monitoring components
+   that depend on that information. Also when installing a 64-bit
+   agent, a 32-bit version file is created from the 64-bit version
+   file and installed to prevent older media from installing a
+   32-bit agent into the same path. This prevents agents from being
+   selectable for installation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A change has been made to remove the read-only attribute from
+   the file before an upgrade is attempted. Also existing 32-bit
+   dummy version files are now updated with the
+   Dummy32BitVerfile=YES setting when necessary. Before files are
+   installed, the installer scans for 32-bit dummy version files
+   containing Dummy32BitVerfile=YES. If this setting is found, only
+   the 64-bit agent will be started. Otherwise, both 32-bit and
+   64-bit agents will be installed and started.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+      | fix pack | 6.2.2-TIV-ITM-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Do not install from ISO image or directly from a DVD. Copy the
+   images locally or to a network drive then reset the read-only
+   attributes on all files copied from the CD.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ87541
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-28
+   
+   
+ * CLOSED DATE
+   2011-05-03
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

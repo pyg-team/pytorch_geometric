@@ -1,0 +1,33 @@
+Title: IBM Unable to log into the Dashboard as an Active Directory user - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CognosNow has been setup to use an ADS Directory Server. The Test and Synchronize process complete successfully, but the error below is seen when the user tries to log into the Dashboard 
+
+SYMPTOM
+The password you have entered is incorrect. Please re-enter your password.
+
+
+CAUSE
+The LDAP Principale DN Prefix was set to --> cn= and the LDAP Enabled checkbox was not checked
+
+RESOLVING THE PROBLEM
+When sending the login information to the ADS server CognosNow brackets the the LDAP Principal DN Prefix, username and LDAP Principale DN Suffix.
+
+For ADS users generally connect as --> userid@domain.com, therefore the LDAP Principale DN Prefix Be sure that LDAP Principal DN Prefix is empty. Also ensure that the checkbox beside the LDAP Enabled is checked.
+
+Steps:1. Log into the CognosNow Workbench as system. 
+2. Click the Administration Console tab. 
+3. Click the System Settings button. 
+4. Choose the LDAP Synchronization from the drop down list. 
+5. Remove anything in the LDAP Principal DN Prefix setting and ensure that the LDAP Enabled checkbox is checked. 
+6. Click OK to save the settings and test logging in as the user again. RELATED INFORMATION
+ [\] 
+
+
+ 
+
+HISTORICAL NUMBER
+ 1037800

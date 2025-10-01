@@ -1,0 +1,233 @@
+Title: IBM IV07595: AGENT NO LONGER CONNECTS TO TEMS USING IP.SPIPE AFTER RUNNING SECUREMAIN DUE TO GSKIT LIBRARY PERMISSIONS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Tivoli Monitoring agents using Secure Socket Layer
+   (SSL) communications (IP.SPIPE) are unable to establish
+   a connection to the TEMS after running secureMain script
+   to lock down permissions on the CandleHome installation
+   directory / sub-directories.
+   
+   There will be no connection message in the
+   <pc>.LG0 file for the agent, and the agent will be
+   offline in the TEP navigator.
+   
+   Review of the monitoring agent's RAS1 logs
+   In kuxagent RAS1 logging with following trace settings in
+   ux.ini:
+   KBB_RAS1=ERROR (UNIT:kbb ALL) (UNIT:kbbcs ALL) (UNIT:kux ALL)
+   KBS_DEBUG=Y
+   kdebenc.c,374,"ssl_provider_constructor")
+    GSKit error 412: GSK_ERROR_UNSUPPORTED
+   kdebenc.c,117,"listSharedLibs")
+               Active Shared Libraries:
+   /opt/IBM/ITM/tmaitm6/hp116/lib/libkt1v3.sl
+   /opt/IBM/ITM/tmaitm6/hp116/lib/libkdsncsrq.sl
+   /opt/IBM/ITM/tmaitm6/hp116/lib/libkdsbase.sl
+   /opt/IBM/ITM/hp116/ux/bin/kuxagent
+   
+   The list of shared libraries that are loaded does not
+   include "icc" shared libraries that are listed when
+   IP.SPIPE communication is working.
+   
+   kraaumsg.cpp,107,"CTRA_msg_no_transports") CTRA Server:
+    no transports available, ffffffff. Server shutting down
+   
+   The library list is only displayed if running code with
+   patch-D161692 which adds this servicability of displaying
+   the shared library list.  This servicability function is
+   not available on all platforms due to those platforms not
+   providing necessary APIs to gather the library list.
+   HP itanium (hpi116) is an example platform where the
+   shared library list can not be displayed, even with the
+   diagnostic patch in place.
+   
+   ...
+   
+   GSKIT tracing enabled by export of OS environment variables:
+   export GSK_TRACE_FILE=/opt/IBM/ITM/logs/gskit_trace.out
+   export GSKTRACE_NOBUFFERING=YES
+   
+   The GSKIT 412 error is due to missing permissions when
+   trying to load libraries under the ICC subdirectory of
+   the local copy of GSKIT installed beneath ITM install
+   directory.
+   
+   From the GSKIT tracing,
+   
+    ICC_Init() returned error 4 Cannot map text for library
+    </opt/IBM/ITM/hp116/gs/icc/icclib/libicclib.sl>:
+    mmap(0x0, 0x15f2c, 0x5, 0x41, 5, 0x0)
+    returns Permission denied.
+   (GSKit error 412: GSK_ERROR_UNSUPPORTED)
+   
+   Review of the dir.info file shows that files under "icc"
+   directory are missing execute permissions after the
+   secureMain script was run.
+   
+   /opt/IBM/ITM/hp11/gs/icc:
+   total 18
+   drwxr-xr-x   4 root itmadm   96 Apr 21  2010 .
+   drwxr-xr-x   8 root itmadm 1024 Apr 21  2010 ..
+   -rw-r--r--   1 root itmadm 8118 Nov 12  2009 ReadMe.txt
+   drwxr-xr-x   2 root itmadm   96 Apr 21  2010 icclib
+   drwxr-xr-x   2 root itmadm   96 Apr 21  2010 osslib
+   
+   /opt/IBM/ITM/hp11/gs/icc/icclib:
+   total 216
+   drwxr-xr-x   2 root itmadm   96   Apr 21  2010 .
+   drwxr-xr-x   4 root itmadm   96   Apr 21  2010 ..
+   -rw-r--r--   1 root itmadm 110592 Nov 12  2009 libicclib.sl
+   /opt/IBM/ITM/hp11/gs/icc/osslib:
+   total 3024
+   drwxr-xr-x   2 root itmadm      96 Apr 21  2010 .
+   drwxr-xr-x   4 root itmadm      96 Apr 21  2010 ..
+   -rw-r--r--   1 root itmadm 1548288 Nov 12  2009
+   libcrypto.sl.0.9.7
+   
+   Additional Keywords:
+   kdebe ITM
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually adding the execute permission to the
+   shared library files under the "icc" directory and
+   subdirectories allowed the ICC shared libraries to be loaded
+   and prevented the GSKIT 412 error.
+   
+   This can be done with following example commands:
+   chmod 755 /opt/IBM/ITM/hp116/gs/icc/icclib/libicclib.sl
+   chmod 755 /opt/IBM/ITM/hp116/gs/icc/osslib/libcrypto.sl.0.9.7
+   
+   Library files may vary by platform, the above example is from
+   hp116 platform.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Change the QOMEGAMON_ONLINE interval to be at least one minute.
+   Three minutes is the recommended value.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The secureMain tool now adds execute permission to the files
+   under /*/gs/icc/icclib and /*/gs/icc/osslib
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+      | fix pack | 6.2.2-TIV-ITM-FP0007
+      | fix pack | 6.2.3-TIV-ITM-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Manually add the missing execute permission with a command like
+   this: chmod a+rx /*/gs/icc/*lib/*
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV07595
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-09
+   
+   
+ * CLOSED DATE
+   2011-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

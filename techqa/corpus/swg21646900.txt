@@ -1,0 +1,33 @@
+Title: IBM Gateway to APM Support Resources - United States
+
+Text:
+CSILandingPage; SupportLandingPage NEWS
+
+ABSTRACT
+ APM Infrastructure solutions. Each link directs you to a collection of documents for the APM agents. 
+
+CONTENT
+ 
+
+Each of these items provides a link to the Collecting Data instructions for the set of agents included in this package
+
+
+TAB NAVIGATION
+ * Application Performance Monitoring [http://www.ibm.com/support/docview.wss?uid=swg21646900]
+ * Application Performance Monitoring User Interface [http://www.ibm.com/support/docview.wss?uid=swg21627054]
+
+ * ITCAM for Applications [http://www.ibm.com/support/docview.wss?uid=swg21568133]
+ * ITCAM for Transactions [http://www.ibm.com/support/docview.wss?uid=swg21655543]
+ * ITCAM for Application Diagnostics [http://www.ibm.com/support/docview.wss?uid=swg21663653]
+ * ITCAM for Microsoft Applications [http://www.ibm.com/support/docview.wss?uid=swg21592320]
+
+[/support/docview.wss?uid=swg21646900&amp;aid=1] Do you want to find a fix? FixCentral [http://www.ibm.com/support/fixcentral/] is the IBM repository for updates to be applied to the agents listed above. If you are directed to apply a fix or you believe your agent is not at the current level, visit FixCentral for the available updates. [/support/docview.wss?uid=swg21646900&amp;aid=2] [/support/docview.wss?uid=swg21646900&amp;aid=3] Do you need additional information for an agent? Connect with experts in the SmartCloud Monitoring Community [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Monitoring/page/Home]. Search the [http://www.ibm.com/developerworks/wikis/display/maximo/Maximo+Asset+Management]blogs [https://www.ibm.com/developerworks/community/blogs/home/tags/itm?lang=en] and the forum [https://www.ibm.com/developerworks/community/forums/html/category?id=33333333-0000-0000-0000-000000000507]. [/support/docview.wss?uid=swg21646900&amp;aid=2] [/support/docview.wss?uid=swg21646900&amp;aid=4] Documentation Central [http://www.ibm.com/support/knowledgecenter] provides easy access to the information you need for each available release of ITCAM. [/support/docview.wss?uid=swg21646900&amp;aid=2] [/support/docview.wss?uid=swg21646900&amp;aid=5] Have you used the IBM Support Portal to find what you need? IBM Support Portal [http://www.ibm.com/support/electronicsupport/] helps you customize the IBM support pages to find the information you need. [/support/docview.wss?uid=swg21646900&amp;aid=2] RELATED INFORMATION
+ [IBM Support Assistant [http://www.ibm.com/software/support/isa/]
+IBM Monitoring Agents Blog [https://www.ibm.com/developerworks/community/blogs/0587adbc-8477-431f-8c68-9226adea11ed/entry/how_many_itcam_agents_are_there_too_many_to_count]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM
+IBM Tivoli Composite Application Monitoring

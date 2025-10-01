@@ -1,0 +1,50 @@
+Title: IBM Security Bulletin: GSKit and Hash Selection Vulnerability (CVE-2016-0201 ) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM Cloud Manager with OpenStack is vulnerable to a GSKit vulnerability, which allows the attackers to exploit this vulnerability to obtain authentication credentials. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2016-0201 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-0201]
+DESCRIPTION: IBM GSKit could allow a remote attacker to obtain sensitive information, caused by a MD5 collision. An attacker could exploit this vulnerability to obtain authentication credentials.
+CVSS Base Score: 5.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/109310 [https://exchange.xforce.ibmcloud.com/vulnerabilities/109310] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Cloud Manager with OpenStack 4.2.0 through 4.2.0.3 interim fix 3
+IBM Cloud Manager with OpenStack 4.3.0 through 4.3.0.4 interim fix 1
+
+REMEDIATION/FIXES
+ 
+
+IBM Cloud Manager with OpenStack 4.2.0 None IBM Cloud Manager with Openstack 4.2 fix pack 3:
+http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Other%2Bsoftware&product=ibm/Other+software/Cloud+Manager+with+Openstack&release=All&platform=All&function=fixId&fixids=+4.2.0.3-IBM-CMWO-FP03+&includeSupersedes=0 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Other%2Bsoftware&product=ibm/Other+software/Cloud+Manager+with+Openstack&release=All&platform=All&function=fixId&fixids=+4.2.0.3-IBM-CMWO-FP03+&includeSupersedes=0]
+IBM Cloud Manager with Openstack 4.2 interim fix 4 for fix pack 3:
+http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Other%2Bsoftware&product=ibm/Other+software/Cloud+Manager+with+Openstack&release=4.2.0.3&platform=All&function=fixId&fixids=+4.2.0.3-IBM-CMWO-IF004+&includeSupersedes=0 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Other%2Bsoftware&product=ibm/Other+software/Cloud+Manager+with+Openstack&release=4.2.0.3&platform=All&function=fixId&fixids=+4.2.0.3-IBM-CMWO-IF004+&includeSupersedes=0] IBM Cloud Manager with OpenStack 4.3.0 None IBM Cloud Manager with Openstack 4.3 fix pack 4:
+http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Other%2Bsoftware&product=ibm/Other+software/Cloud+Manager+with+Openstack&release=All&platform=All&function=fixId&fixids=+4.3.0.4-IBM-CMWO-FP04+&includeSupersedes=0 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Other%2Bsoftware&product=ibm/Other+software/Cloud+Manager+with+Openstack&release=All&platform=All&function=fixId&fixids=+4.3.0.4-IBM-CMWO-FP04+&includeSupersedes=0]
+IBM Cloud Manager with Openstack 4.3 interim fix 1 for fix pack 4:http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Other%2Bsoftware&product=ibm/Other+software/Cloud+Manager+with+Openstack&release=4.3.0.4&platform=All&function=fixId&fixids=+4.3.0.4-IBM-CMWO-IF001+&includeSupersedes=0 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Other%2Bsoftware&product=ibm/Other+software/Cloud+Manager+with+Openstack&release=4.3.0.4&platform=All&function=fixId&fixids=+4.3.0.4-IBM-CMWO-IF001+&includeSupersedes=0] 
+Before you install IBM Cloud Manager with Openstack 4.2 interim fix 4 for fix pack 3, you must install IBM Cloud Manager fix pack 3. 
+Before you install IBM Cloud Manager with Openstack 4.3 interim fix 1 for fix pack 4, you must install IBM Cloud Manager fix pack 4. GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Cloud Manager with Openstack

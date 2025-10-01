@@ -1,0 +1,141 @@
+Title: IBM PI25324: USER WITH AN EXISTING SESSION CANNOT SEE PAGE THAT IS CREATED WITH XMLACCESS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Scenario:
+   - A user "userA" is logged on
+   - A page "pageA" is created via XMLAccess (via the command
+   line); the same user "userA" is used to execute the script
+   - In the browser, the user triggers a re-rendering of the page
+   (either by pressing F5 or clicking on a link)
+   - As the new page was created by the very same user, the
+   navigation is supposed to contain the new page
+   
+   Error:
+   The page is not displayed until the user logs out and logs in
+   again.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround is to log out and log in again. Updates are then
+   visible.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 16 (PI33619 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI33619]) for Portal
+   8.0.0.1 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI33619
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added code to invalidate the user's cache.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI25324
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-09
+   
+   
+ * CLOSED DATE
+   2015-04-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

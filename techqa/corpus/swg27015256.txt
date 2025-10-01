@@ -1,0 +1,57 @@
+Title: IBM Open Mic Replay: WebSphere Application Server System Management - United States
+
+Text:
+wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; system management WEBCAST
+
+ABSTRACT
+ This WebSphere Support Technical Exchange Open Mic session will give you the opportunity to ask questions you might have and give you a better understanding of the management of the WebSphere Application Server on the following components of the product:
+
+- System management
+- Synchronization
+- Discovery
+- Application management
+- Scripting (wsadmin, ws_ant, start/stop)
+- AdminConsole 
+
+CONTENT
+Open Mic sessions are conducted in a question and answer format. The table below provides a time index (minutes:seconds) to the recording and describes the questions or topics discussed. You can fast forward to any question using the time index, a table containing the panel of experts is also included. 
+
+
+
+To play or download the audio of this Open Mic session, see the Audio Section of this document.
+
+
+
+
+
+
+
+
+Open Mic session 
+7 April 2009 - 11:00 a.m. - 12:00 p.m. EDT 
+
+Time Questions asked 00:00 Silence 00:00 General introduction 03:32 Technical introduction 05:38 How can I best enable tracing during a specific task or timeframe without having to restart the server? 08:12 When making configuration changes in wsadmin, how can I verify the changes made, before saving the configuration? 09:02 What is the best way to deploy an application and to avoid user error? 10:02 How can application update operation be done with no downtime on the existing enterprise application in a cluster? 12:45 In the WebSphere Application Server V7 infocenter, it shows that WAS v7 supports J2EE 1.3, but does not support servlet 2.3 and JSP 1.2. My understanding is that J2EE 1.3 includes servlet 2.3 and JSP 1.2, how can I comprehend it? 14:05 Is there a definitive place to find out the available Jython commands for writing scripts? The command hinting in the console doesn't cover very much especially any of the more obscure stuff I really want to know. 19:21 Are the "ttl settings" and "cacheLocalHost settings" redundant? If not, which API call uses which type of cache call? What should we use it for WAS 6.1? 21:21 Is there a way to rename a Cluster name? 22:24 My nodes do not appear to be synchronized, what should I do? 25:40 We are using Jython script to perform our deployment, but it is failing for some applications and working for some applications. The error message has to do with something related to Java testing issues, I want to know more about why this is happening? 28:05 I have applications that run using launch client that don't seem to take advantage of the custom properties. Is there a solution to this? 30:54 I am interested in testing the compatibility of the different Jyphon script commands/libraries from WAS v7 on the WAS v6.1 environment. Is there any way I can do that? 32:12 Does the rollout update feature of WAS cause the server to restart? If it does, how do we overcome this limitation? 36:46 Are there any gotchas that I should be aware of when changing the computer name and IP address of a node? 38:32 I have a question on synchronization with have global security enabled. I have noticed at times that when we start/stop the deployment manager, we get a message that says a new certificate/signer is available, do you want to add this signer to the deployment manager or keystore - should we take that action and say yes, or should we do another way of synchronization? 40:46 When we have multiple WebSphere installs on a machine, does WebSphere have the mechanism of handling port conflicts across the multiple installs? 43:22 Is there a best practice to validating EAR files? Also, I have an application that is already installed and is running fine. The developers come out with a new model and I want to update that application, how can I do that? 54:06 Is there a way or a map to check on the correspondence between commands and objects in WebSphere so that I can understand what the objects are, what properties are, and what I can do with the objects? 57:26 I am trying to do a full synchronization after an addNode command, but it is not passing credential, and ends up failing the full synchronization in wsadmin. Do you have any recommendations for me? 63:36 Closing remarks 64:44 End of Call 
+Panel of experts: Ajit Jariwala L2 Support, WebSphere Application Server Ganesan Karuppaiah L2 Support, WebSphere Application Server Preston Law L2 Support, WebSphere Application Server Randal Anders L2 Support, WebSphere Application Server Vikram Thommandru L2 Support, WebSphere Application Server 
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]WSTE-04072009-OpenMic-WASSystemManagement-Thommandru.pdf [/support/docview.wss?uid=swg27015256&aid=2] [/support/docview.wss?uid=swg27015256&aid=1] 
+
+
+
+Group Chat Transcript
+
+The transcript of the group chat area for this Open Mic session is attached below. Throughout the presentation replay, you may hear the presenters posting additional resources and links to the group chat area. Please refer to the transcript below for these information:
+
+
+WSTE-04072009-OpenMic-WASSystemManagement-Thommandru-Transcript-GroupChat.txt [/support/docview.wss?uid=swg27015256&aid=4] [/support/docview.wss?uid=swg27015256&aid=3]
+
+Tips: For best viewing, right-click and select Save As to store the transcript on your local computer, and then open the transcript with a text reader.
+
+
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]Click on Download Audio [ftp://public.dhe.ibm.com/software/websphere/techexchange/Apr-07-2009-Thommandru.mp3] to play the recording of this conference call (MP3 format). Right-click and select Save As to store the file on your local computer for later playback. Remember that you can fast forward to any question using the time index. 
+
+
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchange [http://www.ibm.com/software/websphere/webcast]

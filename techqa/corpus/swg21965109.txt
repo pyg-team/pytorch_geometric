@@ -1,0 +1,16 @@
+Title: IBM How to copy shortcut/hotkey key settings in Datacap Desktop to multiple users - United States
+
+Text:
+datacap desktop; hot key; hotkey; short cut TECHNOTE (FAQ)
+
+QUESTION
+ Using Datacap Desktop, if shortcut keys are configured in verify, they only take affect on the client where they are configured. How do I apply those same settings to other clients? 
+
+ANSWER
+When you configure the shortcuts or hotkeys in a DCDesktop verify screen, that information is saved to the user.config file under the user's appdata folder. So, if you wanted to push the information out, you could copy the user.config file to the various machines that needed it. 
+
+The user.config file is typically under a directory such as C:\Users\Administrator\AppData\Local\IBM\dcDesktop.exe_Url_c1whsgrkexynyl1jcucqtpjj3pccwv3w\9.0.0.0. 
+
+However, the actual directory may be different depending upon the encryption key on your server. The "c1whsgrkexynyl1jcucqtpjj3pccwv3w" part of the directory name is likely different on each Datacap system, but should be consistent for each user accessing the same server, since they would all be using the same encryption keys. 
+
+Note that there is other information such as the application, username and station that was last used when logging into DcDesktop. So, instead of replacing the whole file you might just want to replace the hotkeys section (e.g. everything in the <setting name="hotKeys" serializeAs="String"> node)

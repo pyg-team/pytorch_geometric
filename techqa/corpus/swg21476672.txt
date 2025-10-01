@@ -1,0 +1,45 @@
+Title: IBM Internet Explorer Script Error when accessing Help files. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When opening the help file or clicking on any hyperlink, error dialogs pop up.
+
+Internet Explorer Script error
+Error: Object Expected
+Code: 0
+URL: mk:@MSITStore:c:\program%20files\spss%20student\help\main\spsswin.chm::/overvw_auto_0.htm
+
+Resolutions 52930 and 57395 don't apply, because there is no "minimal install" in version 14. Other resolutions include running Windows Update, and Internet Explorer security settings. The system is currently up to date, and security settings are at a complete minimum. In order to rule out security issues with Internet Explorer, I have turned off my firewall, disabled the pop-up blocker, disabled Norton Script Blocking and Antivirus, tried accessing the files in Safe Mode, deleted all temporary and offline content and disabled script debugging in Internet Explorer. 
+
+RESOLVING THE PROBLEM
+This error is not entirely related to SPSS; it happens when the user tries to access any .chm files. Clearing the cache in Internet Explorer seems to fix the problem.
+1. Open Internet Options --> Click the Delete Files button under the Temporary Internet Files section of the General tab, click "OK".
+2. Click the Settings button, then click the View Files button.
+3. Hold down the Ctrl key and press a. Then hit your delete key. This will clear out all of your temporary Internet files.
+4. Under the History section, click on the Clear History button, but ONLY if you want to clear out your address bar.
+
+If clearing the cache proves ineffectual, try re-registering the HTML help control in Windows:
+
+1) Go to Start > Run
+2) At the Run dialog, type the following:
+
+regsvr32 C:\Windows\system32\hhctrl.ocx
+
+Finally, if the problem is still unresolved, try the following: 
+
+1) Open Edit->Options and choose the Scripts tab
+2) Un-check the Enable Autoscripting option. 
+3) Re-launch the application.
+
+There might be some useful information in the Event Viewer (Control Panel->Admin Tools->Event Viewer). It may be helpful to look into the details for Application, Security, and Internet Explorer if it's there
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 64676

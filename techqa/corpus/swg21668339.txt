@@ -1,0 +1,92 @@
+Title: IBM Portal upgrade to 6.1.0.6 failed during config task CONFIG-WP-PTF-6106 - United States
+
+Text:
+xerces.jar upgrade ClassCastException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+An attempt to upgrade Portal from 6.1.0.1 to 6.1.0.6 fails
+
+SYMPTOM
+During an attempt to upgrade Portal from 6.1.0.1 to 6.1.0.6 you see the following error in the ConfigTrace.log...
+
+set-wsadmin-scripting-classpath-in-jacl-properties:
+Target finished: set-wsadmin-scripting-classpath-in-jacl-properties
+Target finished: start-portal-server
+[xmlaccess] EJPXB0006I: Connecting to URL
+
+http:/ /localhost:9080/wps/config/
+
+[xmlaccess] EJPXB0004I: Writing output file
+D:\IBM\WebSphere\Profiles\Portal\ConfigEngine\config\work\deployedWebApp
+XmlAccess-PTF\preExistingWebApps.xml
+[xmlaccess] EJPXB0002I: Reading input file
+D:\IBM\WebSphere\PortalServer\migration\components\wp.migration.core\exp
+ortWebApps.xml
+[xmlaccess] EJPXB0019E: Server response indicates an error. For status
+and details of the XmlAccess error look at file
+D:\IBM\WebSphere\Profiles\Portal\ConfigEngine\config\work\deployedWebApp
+XmlAccess-PTF\preExistingWebApps.xml.
+[xmlaccess] EJPXB0019E: Server response indicates an error. For status
+and details of the XmlAccess error look at file
+D:\IBM\WebSphere\Profiles\Portal\ConfigEngine\config\work\deployedWebApp
+XmlAccess-PTF\preExistingWebApps.xml.
+Target finished: deploy-portlets-upgrade
+Target finished: action-deploy-apps-applyPTFStatic-wp.config
+Target finished: deploy-apps
+Target finished: action-config-6106-ConfigEngine
+Target finished: CONFIG-WP-PTF-6106
+
+
+CAUSE
+This error occurred right after the config task
+started Portal and now it is trying to run xmlaccess against the Portal
+server and is failing with the following error which can be found in
+the
+D:\IBM\WebSphere\Profiles\Portal\ConfigEngine\config\work\deployedWebApp
+XmlAccess-PTF\preExistingWebApps.xml file...
+
+Error 404: Initialization of one or more services failed.
+
+So this means that xmlaccess is unable to reach the Portal because there was a problem during Portal startup..
+
+DIAGNOSING THE PROBLEM
+Reviewed the SystemOut.log and saw the following...
+
+[3/19/14 6:29:22:283 EDT] 00000022 Servlet E
+com.ibm.wps.engine.Servlet init EJPFD0016E: Initialization of service
+failed.
+
+com.ibm.portal.state.exceptions.InvalidPropertyException:EJPEI0068E:
+The property value for key dtd specified in the properties set [dtd =
+state.dtd] is invalid.
+at
+com.ibm.wps.state.parsers.NameMapperImpl.init(NameMapperImpl.java:873)
+
+....
+
+Caused by: javax.xml.transform.TransformerException:
+java.lang.ClassCastException:
+org.apache.xerces.parsers.StandardParserConfiguration incompatible with
+org.apache.xerces.xni.parser.XMLParserConfiguration
+at
+org.apache.xalan.xsltc.trax.TransformerImpl.transform(TransformerImpl.ja
+va:673)
+
+The ClassCastException indicates a possible Classloader issue. Asked customer to enable ClassLoader tracing by following these instructions...
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21196187 [http://www-01.ibm.com/support/docview.wss?uid=swg21196187]
+
+After enabling Classloader traces recreate the problem and search the native_stderror.log for the
+classes...org.apache.xerces.xni.parser.XMLParserConfiguration and
+org.apache.xerces.parsers.StandardParserConfiguration
+
+and determined that both are from the xerces.jar....
+
+class load: org.apache.xerces.parsers.StandardParserConfiguration from:
+file:/D:/IBM/WebSphere/PortalServer/lwo/prereq.odc/shared/app/xerces.jar
+
+class load: org.apache.xerces.xni.parser.XMLParserConfiguration from:
+file:/D:/IBM/WebSphere/PortalServer/lwo/prereq.odc/shared/app/xerces.jar
+
+RESOLVING THE PROBLEM
+Move the xerces.jar out of this directory and into a location outside the Portal file system and perform the upgrade again.

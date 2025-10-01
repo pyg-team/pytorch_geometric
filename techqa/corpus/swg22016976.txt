@@ -1,0 +1,50 @@
+Title: IBM SSH Proxy Configuration and Bandwidth - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ SSH Proxy Configuration and Bandwidth 
+
+ANSWER
+
+TITLE: SSH Proxy Configuration and Bandwidth 
+
+ARTICLE 
+
+The Secret Server Proxy routes SSH and RDP sessions and helps protect the endpoint credentials. There are 2 configuration options for proxying: 
+1. Proxy through the Secret Server Web Application 
+2. Proxy through the Distributed Engine 
+
+Enabling Proxy: 
+1. Go to ADMIN | SSH Proxy 
+2. Enable SSH Proxying and SSH Tunneling and generate a new key 
+3. To enable proxying on web nodes edit the row in the Nodes section and set the Public Host and Bind IP Address. For a standard server these can be the same, but if the public IP of the server is not set on the server (like a load balancer or an EC2 instance with an elastic IP) they will be different. 
+4. To enable proxying for a specific Site and all engines within that Site, edit the row in the Sites section and enable proxying and set the SSH Port. 
+5. The Engines for the Sites are listed in the Engines section below, the Hostname/IP Address will be the public host or IP the launcher will connect to and the SSH Bind Address will be the IP on the server that the SSH proxy will listen on. Again, these will typically be the same, but may be different if the resolvable IP or host of the engine machine is different than the IP on the network adapter on the machine. 
+6. Enable proxying on a Secret with an RDP or PuTTY launcher. The launcher will now connect to the assigned Site, which is set on the General tab. If the Site has proxying enabled it will go through the engines available in the site, otherwise it will use the Secret Server web application proxy. 
+Web Application Proxy Performance 
+Hardware
+Intel 3.7 GHz Quad Core
+16 GB of RAM
+> 100 MB/s Network Capability
+
+Session Activity
+
+Sessions were tested with standard usage, such as opening and modifying files and navigating the file system on Linux. On Windows the activity was opening MMC snap ins, editing files, and copying files through the RDP session. If performing constant large file transfers across multiple concurrent sessions, or otherwise transferring large amounts of data (such as streaming a video through an RDP session) the max number of concurrent sessions will be significantly reduced. 
+
+ 
+
+Protocol Concurrent Sessions SSH 300 RDP 100 
+
+Proxy Connections
+
+Connections from the user to the proxy are over SSH, and the port can be configured. The user's machine will connect to either an Engine SSH proxy or the Secret Server web application SSH proxy. 
+
+Example 1: Default Secret Server Web Application Proxy
+
+image [/support/docview.wss?uid=swg22016976&aid=1] [/support/docview.wss?uid=swg22016976&aid=1] 
+
+
+Example 2: Proxy through Distributed Engine
+image [/support/docview.wss?uid=swg22016976&aid=2] [/support/docview.wss?uid=swg22016976&aid=2]

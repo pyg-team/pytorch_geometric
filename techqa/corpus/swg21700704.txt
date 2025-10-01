@@ -1,0 +1,24 @@
+Title: IBM DASH consolecli export failure "Client requested protocol SSLv3 not enabled" - United States
+
+Text:
+DASHL2; DASHL2SSL; DASHL2SEC; SSLv3; SSLHandshakeException; protocol; not supported TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Jazz for Service Management (JazzSM) Dashboard Application Services Hub consolecli export fails with the following in the consolcli log:
+
+"CTGWA4121E Error verifying username/password, response code: 0." 
+
+SYMPTOM
+ The following error is written to the systemOut log:
+
+"SSLHandshakeException: Client requested protocol SSLv3 not enabled or not supported"
+
+
+CAUSE
+The sslProtocol in WAS was set to TLS, which does not support all SSL protocols.
+
+DIAGNOSING THE PROBLEM
+Check the sslProtocol value set in the <JazzSM Home>/profile/config/cells/JazzSMNode01Cell/security.xml. The default value for DASH is "SSL_TLS" which support all SSL protocols. A value of "TLS" does not support all protocols and results in the systemOut error when the export is run.
+
+RESOLVING THE PROBLEM
+Update the sslProtocol value in the security.xml to a supported value ("SSL_TLS", or "SSL_TLSv2"). Restart DASH for the change to take effect.

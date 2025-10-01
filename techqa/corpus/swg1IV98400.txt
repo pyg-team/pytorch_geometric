@@ -1,0 +1,159 @@
+Title: IBM IV98400: SERVICE PORTAL'S HELP SAYS IE10 IS SUPPORTED WHEN IT IS NOT SUPPORTED FOR USE WITH SERVICE PORTAL - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM:
+   Service Portal's help says IE10 is supported when it is not
+   supported for use with Service Portal.
+   Service Portal is incompatible with IE 8, 9 and 10.
+   The Service Portal help link says IE10 is supported:
+   https://<hostname>:3000/portal/default/self-service/unsupportedb
+   rowser.html [https://<hostname>:3000/portal/default/self-service/unsupportedbrowser.html]
+   
+   
+   PERFORMANCE ISSUE:  no
+   
+   
+   STEPS TO REPRODUCE:
+   Open Service Portal help link and see what it says:
+   https://<hostname>:3000/portal/default/self-service/unsupportedb
+   rowser.html [https://<hostname>:3000/portal/default/self-service/unsupportedbrowser.html]
+   
+   CURRENT ERRONEOUS RESULT:
+   It says IE10 is supported
+   
+   EXPECTED RESULT:
+   It should say IE11 is supported.  IE10 is not.
+   
+   ADDITIONAL INFO:
+   none
+   
+   ENVIRONMENT:
+   - SCCD: 7602
+   - TPAE: 7606
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  none.  Do not use IE10 with ICD, SCCD or Service Portal.  Use
+   IE11 or other browsers.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Yes                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * APAR IV98400: SERVICE PORTAL'S HELP SAYS IE10 IS SUPPORTED   *
+   * WHEN IT IS NOT SUPPORTED FOR USE WITH SERVICE PORTAL         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed the message to remove the hardcoded browser versions and
+   moved it to documentation
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV98400
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTROL DESK/SC
+   
+   
+ * REPORTED COMPONENT ID
+   5725E2400
+   
+   
+ * REPORTED RELEASE
+   760
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-07-24
+   
+   
+ * CLOSED DATE
+   2017-09-22
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTROL DESK/SC
+   
+   
+ * FIXED COMPONENT ID
+   5725E2400
+   
+   
+
+APPLICABLE COMPONENT LEVELS

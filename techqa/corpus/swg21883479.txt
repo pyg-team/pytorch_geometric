@@ -1,0 +1,54 @@
+Title: IBM Initial Data Import after install LMT 9.2 on Windows fails RAW_DATASOURCE_FIXLET_RESULTS error - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ 
+Initial Data Import is failing with 
+
+2015-04-20 04:15:33 (+0:00:00.000) INFO: ETL from Data Source - RawDatasourceFixletResult (0x0000000000000000 - N/A): Start
+
+2015-04-20 04:30:41 (+0:15:07.379) ERROR: SQL: {call [dbo].[etl_raw_datasource_fixlet_results](?,?,?,?,?)}
+
+2015-04-20 04:30:41 (+0:00:00.000) ERROR: Batch execution error: 
+
+2015-04-20 04:30:41 (+0:00:00.000) INFO: ETL from Data Source - RawDatasourceFixletResult (0x0000000000000000 - 0x000000001B488A54): Failed
+
+2015-04-20 04:30:41 (+0:00:00.000) ERROR: Java::ComMicrosoftSqlserverJdbc::SQLServerException: The UPDATE statement conflicted with the CHECK constraint "ckt_raw_datasource_fixlet_results_scd". The conflict occurred in database "temadb", table "dbo.raw_datasource_fixlet_results_scd".
+com.microsoft.sqlserver.jdbc.SQLServerException.makeFromDatabaseError(com/microsoft/sqlserver/jdbc/SQLServerException.java:216)
+.... 
+
+CAUSE
+Issue is addressed with APAR IV72302, which is still open at time of this technote creation. 
+The workaround is available by replacing a ruby program file. 
+
+
+ANSWER
+ 
+
+a) stop LMT server 
+b) move original file 
+
+ie. 
+
+/opt/IBM/LMT/wlp/usr/servers/server1/apps/tema.war/WEB-INF/app/models/raw_datasource_fixlet_result.rb/raw_datasource_fixlet_result.rb 
+
+out of its current folder to say /tmp (needs to be moved outside of the application folder structure). 
+
+Then put this new one in its place, with the same file permission as before.
+
+eg. 
+-rw-------. 1 root root 1471 Mar 22 16:25 raw_datasource_fixlet_result.rb 
+
+68113.7TD.000.raw_datasource_fixlet_result.rb [/support/docview.wss?uid=swg21883479&aid=2]68113.7TD.000.raw_datasource_fixlet_result.rb [/support/docview.wss?uid=swg21883479&aid=1]
+
+c) start LMT server 
+d) try another Data Import task again. 
+
+ 
+
+HISTORICAL NUMBER
+ 68113
+7TD
+000

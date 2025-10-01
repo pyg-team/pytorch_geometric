@@ -1,0 +1,23 @@
+Title: IBM Warning when creating analysis plan file in SPSS Complex Samples Analysis Preparation Wizard - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm using the SPSS Complex Samples module to analyze complex sample data from a survey with existing data, so I've just created an analysis plan file, specifying the appropriate sample design. When I clicked Finish to create the file, I received the following warning in the output:
+
+"This procedure does not check the consistency of the working data file with the plan file. We recommend looking at the output table or the plan file to check consistency before performing selection or analysis."
+
+What does this mean? Is there a problem here? 
+
+RESOLVING THE PROBLEM
+This message comes out whenever you run the CSPLAN procedure to produce an analysis plan file. If this has been done through the Analysis Preparation Wizard, then it's more or less impossible for there to be problems such as the weight or design variables not being in the file, since the wizard has access to the data dictionary and those variables had to be in the file in order for them to be available for specification in the panels of the wizard. The "back end" procedure for which the wizard creates command syntax (CSPLAN) can be run without ever going through the wizard though, so that warning is just to let the user know that in creating the plan file, it's not checking the data file to make sure that what's in the plan file matches up with what's in the data file. Basically, it's just a good idea to look at the table that the procedure prints when creating an analysis plan file to make sure that the design and variables specified are as desired
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 67875

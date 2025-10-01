@@ -1,0 +1,14 @@
+Title: IBM How to prevent Situation Stopped/Started Events From Forwarding To TEC - United States
+
+Text:
+SUF KFAOT EIF Filtering Filter situation_status TECHNOTE (FAQ)
+
+QUESTION
+ How can I prevent undesirable situation_status='P' (sit stopped) or situation_status='S' (sit started) events from being forwarded to TEC when situations are being edited / stopped / started? 
+
+ANSWER
+Two filters need to be created in the CANDLEHOME/tables/<tems_name>/TECLIB/om_tec.config file on the hub TEMS (CANDLEHOME\cms\teclib\om_tec.config on a Windows TEMS). Make sure that "FilterMode" is set to "OUT" (FilterMode=OUT) in the om_tec.config, then add the following two lines to the end of the file and recycle the hub TEMS:
+Filter:Class=re:'ITM_.*';situation_status=S;
+Filter:Class=re:'ITM_.*';situation_status=P;
+
+The reason that the "Class" slot also has to be specified is that EIF filtering is serial and always keys off of the event Class first before filtering on any other slots in the event. The "re:" directive in the EIF filter denotes that a regular expression will follow rather than a literal string. Since ITM V6 situation events are mapped to class names beginning with "ITM_", then if they also have a situation_status of P or S (Stopped or Started), these filters ensure that they are not forwarded to TEC.

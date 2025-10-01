@@ -1,0 +1,33 @@
+Title: IBM Configuring XSLT debug rules for stylesheet debugging on the IBM WebSphere DataPower SOA Appliance - United States
+
+Text:
+debug; debug rule; xsl; xslt; compile options; stylesheet; datapower TECHNOTE (FAQ)
+
+QUESTION
+ I am using the debug rule with the XML Manager -> Compile Options Policy on the IBM WebSphere DataPower SOA Appliance but I do not see the HTML output. How do I configure my processing rule so the correct HTML output is produced. 
+
+ANSWER
+The following are some steps to take in order to get the HTML output when using the debug rule with the Compile Options Policy: 
+
+1. Ensure there is no Results action after the last Transform action.
+2. Set the output context of the last Transform action to OUTPUT.
+3. Add a debug rule to the 'Compile Options Policy' of the XML Manager being used by the service.
+4. Ensure the probe is disabled on the service. See related technote below.
+5. After sending the request to trigger the processing rule, redirect the response message to an HTML file (debug.html) and view the file in a browser.
+
+Sample configuration setup using the "store:///identity.xsl" stylesheet:
+1. Create a loopback XML Firewall.
+2. In the request processing rule, have only one Transform action (no Results action) that uses the "store:///identity.xsl" stylesheet.
+3. Set the output context of the Transform action to OUTPUT.
+4. Add a debug rule on the XML Manager -> Compile Options Policy configuration page.
+5. Ensure the probe is disabled on the service.
+6. After sending the request to trigger the processing rule, redirect the response message to an HTML file (debug-rule-output.html).
+7. View the HTML file (debug-rule-output.html) in a Web browser.
+
+Sample cURL command (response is saved to the 'debug-rule-output.html' file):
+curl --data-binary @request.xml http://<ip>:<port>/debug-rule-uri >> debug-rule-output.html
+
+
+
+RELATED INFORMATION
+#Stylesheet debug rule does not produce HTML output when [http://www.ibm.com/support/docview.wss?uid=swg21570182]

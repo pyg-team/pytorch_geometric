@@ -1,0 +1,19 @@
+Title: IBM i5 agent does not connect to TEMS - United States
+
+Text:
+gksi ka4 a4 communication; unable to connect; ITM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ i5 agent failing to connect to TEMS 
+
+SYMPTOM
+(54118CC5.00AE-6:kraarreg.c,1503,"ConnectProxyUsingCMSLIST") Unable to find running CMS on CT_CMSLIST <IP.PIPE:(99.99.99.99);> 
+(54118CC5.00AF-6:kraaulog.c,755,"IRA_OutputLogMsg") CMS lookup failed.
+
+
+RESOLVING THE PROBLEM
+Verify if QAUTOTMP/KMSPARM(KBBENV) has KDC_PARTITION set. If so, empty or comment out this variable.
+Eg.
+*KDC_PARTITION=Test
+or 
+KDC_PARTITION=

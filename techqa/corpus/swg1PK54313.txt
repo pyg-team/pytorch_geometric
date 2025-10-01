@@ -1,0 +1,182 @@
+Title: IBM PK54313: multitool lsshipconfig command stops retrieving storage bay data if run sufficiently frequently - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The multitool lsshipconfig command stops retrieving storage bay
+   data if run sufficiently frequently (6 times per minute) over a
+   sufficient period of time (2 days).
+   Steps to repro:
+   The problem only occurs on Windows systems; the problem does not
+   appear to occur on Unix systems.
+   1. Set-up two additional storage classes in addition to the
+   default storage class. In the script below, the additional two
+   classes are called print and customclass
+   2. Run the perl script below using ccperl.
+   3. After the script runs for 5-6 hours, it will no longer return
+   shipping bay information . There are no errors but shipping bay
+   information is not displayed. You'll have to stop and re-start
+   Clearcase for the multitool lsshipconfig command to work again
+   properly
+   Note: If you change the sleep delays from 1 second each to 10
+   seconds, the script must run for about 2 days before the problem
+   occurs
+   Copy of script:
+   use strict;
+   my $count = 0;
+   for (my $x = 0; $x < 5000000; $x++) {
+   open MYOUTPUT, ">>C:/lsshipconfig_output.txt";
+   print  MYOUTPUT ++$count . "\t" . localtime() . "\t" .
+   runIt("-default") . "\n";
+   sleep(1);
+   print  MYOUTPUT ++$count . "\t" . localtime() . "\t" .
+   runIt("print") . "\n";
+   sleep(1);
+   print  MYOUTPUT ++$count . "\t" . localtime() . "\t" .
+   runIt("customclass") . "\n";
+   sleep(1);
+   close MYOUTPUT;
+   print  "Still running...\n";
+   }
+   exit(0);
+   sub runIt {
+   my $sclass = shift;
+   my $MULTITOOL_ERROR = "multitool: Error:";
+   my $errorFound=0;
+   my $storagePath="";
+   my $result="";
+   my $slash;
+   my $cmd = "";
+   my $multitool = "multitool";
+   $cmd = "$multitool lsshipconfig -sclass $sclass -stgpath 2>&1
+   |";
+   unless (open OUTPUT, $cmd)
+   {
+   return "ERROR $_";
+   }
+   while (<OUTPUT>) {
+   chomp();
+   if ((/^$MULTITOOL_ERROR/) || $errorFound==1) {
+   $result .= "ERROR: $'";
+   $errorFound=1;
+   }
+   elsif (/Storage Bay Path 1:/) {
+   $storagePath = $';
+   $result = $storagePath;
+   }
+   elsif (!$storagePath) {
+   $result = "ERROR: The storage class \"$sclass\""
+   . " was not found on this host.";
+   }
+   }
+   return $result;
+   }
+   Workaround:
+   Scripts should hard code the incoming and outgoing storage bays.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The multitool lsshipconfig command fails to get the info
+   from registry after a long run.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in ClearCase 7.0.0.3 and 7.0.1.2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK54313
+   
+   
+ * REPORTED COMPONENT NAME
+   CLRCASE MSITE W
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3200
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-09
+   
+   
+ * CLOSED DATE
+   2008-08-13
+   
+   
+ * LAST MODIFIED DATE
+   2008-08-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CLRCASE MSITE W
+   
+   
+ * FIXED COMPONENT ID
+   5724G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSN
+   UP

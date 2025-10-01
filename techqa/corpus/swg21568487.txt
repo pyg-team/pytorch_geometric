@@ -1,0 +1,26 @@
+Title: IBM Content Collector (ICC) does not archive files from network share - United States
+
+Text:
+local; system; invalid; handle; task; route; rights TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When the P8 4.x Connector Service is configured to run as LOCAL_SYSTEM, ICC will not be able to archive files from a network share to a P8 environment. 
+
+SYMPTOM
+In the taskroute log file you will see error messages stating that an invalid handle error occurred in the task method; ibm.ctms.p8connector.p84x.ArchiveTask
+
+
+CAUSE
+If the P8 Connector service tries to access a file on a shared network directory, it will be denied access if it is configured to run as a user who has no access to the network.
+
+DIAGNOSING THE PROBLEM
+Enabling "Trace2" log level on the P8 4.x Connector reports the following error:
+
+
+Error Invalid Handle. Parametername: handle ibm::ctms::core::log::WriteException (log.cpp:133) 
+Stack Trace: (class ibm::ctms::corenet::exceptions::UnmanagedCTMSException)
+at System.IO.FileStream..ctor(SafeFileHandle handle, FileAccess access, Int32 bufferSize, Boolean isAsync)
+
+
+RESOLVING THE PROBLEM
+Reconfigure the P8 4.x Connector Service to run as a user who has access to the network share.

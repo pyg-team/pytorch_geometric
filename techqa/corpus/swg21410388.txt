@@ -1,0 +1,16 @@
+Title: IBM KMQMQ212W Messages for CSQXSERV - United States
+
+Text:
+KMQMQ212 CSQXSERV ssidCHIN TECHNOTE (FAQ)
+
+QUESTION
+ In my agent task for Omegamon XE for Messaging on z/OS I'm now seeing 
+occurrences of the type of message: 
+KMQMQ212W MQI handle translation failed. QMgr=xxxx, application=ssidCHIN, KMQMQ212W+ TRAN/PROGRAM=CSQXSERV. This may result in incomplete application queue statistics.
+Can you tell me what needs to be done to stop these messages from occurring? 
+
+ANSWER
+There are some cases where KMQMQ212 will be issued and this is an expected condition that we will not be able to resolve. These conditions include: 
+1)When the application terminates before we are able to process the MQ call and find the associated queue name. 
+2)Internal WebSphere MQ application activity does not follow standard MQ call conventions and there are some cases where we may not be able to handle these calls. However, this is 
+internal MQ activity that is beyond customer control so it does not need to be monitored. CSQXSERV program in ssidCHIN is one such internal program.

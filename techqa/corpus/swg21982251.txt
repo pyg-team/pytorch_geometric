@@ -1,0 +1,71 @@
+Title: IBM Adding SSL and TSL signers to the keystore - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I ensure that the IBM Case Manager configuration tool can use a Security Socket Layer (SSL) or Transport Layer Security (TLS) connection to connect to a server. 
+
+CAUSE
+When the IBM Case Manager configuration tool connects to a server by using a Security Socket Layer (SSL) or Transport Layer Security (TLS) connection, the certificate of that server is verified against the keystore that is used by the configuration tool. To ensure that the server certificate is authentic and that a malicious entity is not trying to impersonate the server, you must add self-signed certificates to the JVM for the IBM Case Manager configuration tool. These certificates are required for https connections.
+If you do not add an SSL signer or TSL signer to the keystore, IBM Case Manager configuration tool returns an error when a connection attempt is made. This error takes the following form:
+
+javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.util.j: PKIX path building failed: java.security.cert.CertPathBuilderException:
+
+
+
+
+
+You might need to add certificates for the Content Platform Engine load balancer or server and the IBM Content Navigator load balancer or server. 
+
+You do not need to take any action for certification authority (CA) certificates that use an http connection. The keys for these connections are already part of the JVM.
+
+
+
+ANSWER
+Before you begin, ensure that Content Platform Engine and IBM Content Navigator are already configured for SSL or TSL. 
+
+To add an SSL signer or a TSL signer to the keystore for the IBM Case Manager configuration tool: 
+
+ 1. For each certificate that you need to add to the keystore, obtain the certificate from the server to which the configuration tool is connecting. 
+    
+     1. On the Content Platform Engine server, log in to the WebSphere Integrated Solutions Console. 
+        
+        
+     2. Click Security > SSL certificates and key management. 
+        
+        
+     3. Open the Signer Certificates page: Option Description WebSphere Application Server cluster configuration Click Key stores and certificates > CellDefaultTrustStore > Signer certificates. WebSphere stand-alone configuration Click Key stores and certificates > NodeDefaultTrustStore > Signer certificates. 
+     4. Under Additional Properties select Signer certificates.
+        
+        
+     5. Select the check box next to the certificate to export and click Extract.
+        
+        
+     6. Enter a name and the location where the extracted certificate file is to be stored, and then click OK.
+        
+        
+    
+    
+ 2. Add each certificate to the keystore for the IBM Case Manager configuration tool.
+    
+     1. Start IBM Key Management by entering one of the following commands from the command line: Option Description AIX®, HPUX, HPUXi, Linux, Linux on System z®, Solaris _install_path/java/sdk/jre/bin/ikeyman.sh Windows _install_path\java\sdk\jre\bin\ikeyman.bat 
+     2. Click Keybase File > Open. 
+        
+        
+     3. For the Key database type, select JKS.
+        
+        
+     4. Click Browse and navigate to _install_path/java/sdk/jre/lib/security/cacerts.
+        
+        
+     5. Click OK.
+        
+        
+     6. Enter the password and click OK. The default password is changeit.
+        
+        
+     7. Add the certificates that you exported in step 1 to the trust file for IBM Case Manager configuration tool. 
+        
+        
+     8. Close IBM Key Management.

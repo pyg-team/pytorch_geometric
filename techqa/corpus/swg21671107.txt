@@ -1,0 +1,57 @@
+Title: IBM Installing the Linux library on a 64-bit in preparation for the MS. - United States
+
+Text:
+Linux library libpam.so.6 libpam.so.1 yum install tema CAMADALL CAMADINST MS install launchpad.sh TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ Installing the Linux library on a 64-bit RHEL system in preparation for the MS install. 
+
+CAUSE
+The MS installer will fail if you do not have the libpam.so library on your 64-bit RHEL system.
+
+ANSWER
+
+Sometimes you will have to install a Linux library on your 64-bit system. These are the steps that show how to install the library. In this example, am using the libpam.so library file. This library is required if you are installing the MS on a RHEL6 (or RHEL5) 64-bit system. Also, please see the Note at the bottom of this technote. 
+
+Step 1: Determine what version of bit level you have by doing uname -a. (Note: If you have 32-bit, then chances are the libpam.so library is already installed and you won't have to do anything.)
+
+Step 2: If you need to install the library libpam.so, run the yum whatprovides '*/libpam.so' command to see what packages install it. (See screenshot) In this example, the package pam-devel-1.1.1-4.el6.i686 installs it.
+
+[/support/docview.wss?uid=swg21671107&aid=1] [/support/docview.wss?uid=swg21671107&aid=1]
+
+Step 3: Run rpm -qa | grep pam (or rpm -qil pam-devel) to see if you have it installed already.... chances are you do not have the 32-bit library installed since you're on 64-bit system.
+
+Step 4: Next install the 32-bit library using the command: ibm-yum.sh install pam-devel.i686 (Note: The ibm-yum.sh
+is an IBM-provided script to install the package, but external customers will have to run this command: /usr/bin/yum --noplugins install pam-devel.i686). Output is the next 3 screenshots here showing it being installed:
+
+[/support/docview.wss?uid=swg21671107&aid=2] [/support/docview.wss?uid=swg21671107&aid=2]
+
+[/support/docview.wss?uid=swg21671107&aid=3] [/support/docview.wss?uid=swg21671107&aid=3]
+[/support/docview.wss?uid=swg21671107&aid=4] [/support/docview.wss?uid=swg21671107&aid=4]
+
+Step 5: Adjust the $PATH if needed to pick it up.
+
+Step 6: Run rpm -qa | grep pam and verify its installed, see screenshot:
+
+[/support/docview.wss?uid=swg21671107&aid=5] [/support/docview.wss?uid=swg21671107&aid=5]
+
+Step 7: Run the linked library ldd authenticate_linux command again and see if it works now and the MS install picks up the correct library.
+
+[/support/docview.wss?uid=swg21671107&aid=6] [/support/docview.wss?uid=swg21671107&aid=6]
+
+Note: In addition to the above library, you will also need the following RPMs if you are using RHEL6.x. Follow the same process that you did for the above library.
+
+glibc-2.12-1.132.el6.i686.rpm 
+libselinux-2.0.94-5.3.el6_4.1.i686.rpm 
+audit-libs-2.2-2.el6.i686.rpm 
+cracklib-2.8.16-4.el6.i686.rpm 
+pam-1.1.1-17.el6.i686.rpm 
+nss-softokn-freebl-3.14.3-9.el6.i686.rpm
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAMfAD ITCAM4AD ITCAM for App Diagnostics

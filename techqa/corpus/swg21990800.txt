@@ -1,0 +1,23 @@
+Title: IBM Database schema changes from Atlas version 6.0.1.4 to 6.0.3.3 - United States
+
+Text:
+atlas; schema; upgrade TECHNOTE (FAQ)
+
+QUESTION
+ We are planning for Atlas upgrade from version 6.0.1.4 to 6.0.3.3 and we have many scheduled 
+
+jobs that query the various tables. In order to be aware of any changes we my need to make to our jobs, can you provide information on changed table names, or changed logic in where certain data is stored 
+in the database? 
+
+CAUSE
+Database administrator is looking for the schema changes.
+
+ANSWER
+During Atlas upgrade, the database upgrade script may add new tables or add columns to existing tables. Some objects not needed for the functioning of the specific version of Atlas may be dropped as part of the upgrade. Upgrade could also be adding/updating certain system information stored in the tables as fixes to certain reported issues. 
+
+We do not have a document to track the schema changes for every version of Atlas. 
+One option is to review each of the version folders under the folders below to identify the database changes 
+
+\Atlas\Schema\Deploy\smf\db\release\default\oracle\upgrade 
+or 
+\Atlas\Schema\Deploy\smf\db\release\default\db2\upgrade

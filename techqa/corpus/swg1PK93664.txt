@@ -1,0 +1,122 @@
+Title: IBM PK93664: AppScan does not include Host request-header during HTTP/1.1 CON NECT request. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Rational AppScan 7.8.0.2 does not include the 'Host:' reques
+   t-header line during an HTTP/1.1 CONNECT request to a proxy in o
+   rder to access an HTTPS site.
+   
+   This results in some proxies returning a 400 error code to the r
+   equest as per RFC 2616's specification.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  IBM Rational AppScan 7.8.0.2 does not include the "Host:"
+   request-header line during an HTTP/1.1 CONNECT request to a
+   proxy in order to access an HTTPS site.
+   
+   As a result some proxies may return a 400 error code to the
+   request as per RFC 2616's specification.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The "Host:" header was added to the HTTP connect request.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK93664
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APPSCAN ST
+   
+   
+ * REPORTED COMPONENT ID
+   5724T8700
+   
+   
+ * REPORTED RELEASE
+   770
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-12
+   
+   
+ * CLOSED DATE
+   2009-10-20
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL APPSCAN ST
+   
+   
+ * FIXED COMPONENT ID
+   5724T8700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R770 PSN
+   UP

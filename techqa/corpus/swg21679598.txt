@@ -1,0 +1,19 @@
+Title: IBM ITCAM for J2EE v7.1.1.0 installation images - United States
+
+Text:
+Extreme Leverage; XL; PA; FC; Refresh Pack; RP1; CAMJ2ALL; CAMJ2INST TECHNOTE (FAQ)
+
+QUESTION
+ Are there any differences between the ITCAM for J2EE v7.1.1.0 installation images available on Fixcentral and the equivalent ones on Passport Advantage?
+
+
+CAUSE
+ITCAM for J2EE 7.1.1.0 Refresh Pack 1 installation images are available on Fixcentral.
+
+Also, IBM Tivoli Composite Application Manager Agent for J2EE V7.1.1.0 installation images are available on Passport Advantage as part of the IBM Tivoli Composite Application Manager for Applications V7.2.1.1 e-Assembly.
+
+ANSWER
+These installation images are perfectly identical, they just can be dowloaded from two different sites.
+
+RELATED INFORMATION
+ Part Numbers [http://www.ibm.com/support/docview.wss?uid=swg21679593]

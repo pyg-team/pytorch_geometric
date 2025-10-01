@@ -1,0 +1,17 @@
+Title: IBM Spectrum Accelerate: Sybase DB Dump running time may vary - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Sybase DB Dump backup running time may vary between different instances. 
+For example, for the same system, it may take 1.5 hours at one time, and 8 hours on another. 
+
+CAUSE
+Sybase DB Dump checks how full a page is before dumping it.
+
+RESOLVING THE PROBLEM
+Dump the whole database without determining which pages are allocated or not by execute the following command on Sybase ASE to achieve the faster backup.
+
+
+sp_dumpoptimize "archive_space=maximum"

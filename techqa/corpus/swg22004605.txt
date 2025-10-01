@@ -1,0 +1,111 @@
+Title: IBM CDM 10.3 - Instruction for setting up XBRL to work with the new EFM module (v41) - United States
+
+Text:
+xbrl; validation FIX README
+
+ABSTRACT
+ A separate EFM validation service has been introduced in CDM XBRL 10.3 GA that supports EFM version 41. By default, this is enabled. 
+
+CONTENT
+A separate Edgar Filer Manual (EFM) validation service had been introduced in CDM XBRL 10.3 GA. This service supports EFM version 41. A configuration key in Web.config is used to enable or disable this EFM validation service. The key, which is enabled by default, is: 
+<EfmValidationService-configuration enabled="true" />.
+
+When disabled, the previous EFM implementation in CDM XBRL is run, however, only 
+EFM version 37 is supported in this implementation. 
+
+ 
+
+1. What changed in the CDM XBRL 10.3 Install
+A new IIS web site, CognosDM-Server_EfmValidator, had been added for the separate EFM validation service. 
+This new site, by default, uses the same binding and server certificate as the CDM server web site, CognosDM-Server.
+Permission requirements are the same as for the CDM server web site, including access to the CDM XBRL database.
+A new app pool, CognosDMServerApplicationPool_EfmValidator, is also created. 
+The default identify of this app pool is LocalSystem.
+To test that the new IIS web site is functioning properly, open this address in a browser (the exact address will differ, based on your setup):
+
+https://mydomain.com/CognosDM-Server_EfmValidator/EfmValidationService.svc [https://mydomain.com/CognosDM-Server_EfmValidator/EfmValidationService.svc] [https://mydomain.com/CognosDM-Server_EfmValidator]
+
+The result should look like this: 
+
+XML Parsing Error: no root element found
+Location: https://mydomain/EfmValidator/EfmValidationService.svc [https://mydomain/EfmValidator/EfmValidationService.svc]
+Line Number 1, Column 1: 
+The new IIS web site communicates with the CDM server IIS web site by providing the service end point locations in the respective System.ServiceModel.Client.config files. CDM XBRL 10.3 makes the necessary changes during installation. Refer to the Troubleshooting section of this document for location of the files and the respective service endpoint addresses. 
+A quick rule of thumb for the service endpoint addresses: they should not point to https://localhost [https://localhost/]. 
+The new IIS web site communicates with the CDM XBRL database by providing the connection string information in its own ConnectionStrings.Config file. 
+CDM XBRL 10.3 creates and encrypts this new ConnectionStrings.config file during installation. 
+Refer to the Troubleshooting section of this document for location of this file.  
+
+ 
+
+2. Testing to ensure the CDM XBRL server is set up properly with the EFM validation service
+After upgrading to CDM XBRL 10.3 from an earlier version, or after a fresh install of CDM XBRL 10.3, no extra steps are required to support this EFM validation service. 
+You should follow one of these tests below to confirm the EFM validation service is functioning correctly: 
+· When validating EFM in Extension Taxonomies, a pop up window (called 'EFM validation Message Log') should be displayed, with one line saying "Taxonomy validated against EFM 41”:
+[/support/docview.wss?uid=swg22004605&aid=1] [/support/docview.wss?uid=swg22004605&aid=1]
+
+· Similarly when validating EFM in projects, a message should be displayed in the Validation Messages pane with a line that saying "Instance document validated against EFM 41:
+[/support/docview.wss?uid=swg22004605&aid=2] [/support/docview.wss?uid=swg22004605&aid=2] 
+
+ 
+
+ 
+
+3. Troubleshooting
+If no message related to Taxonomy or Instance document validated against EFM 41 is displayed (as shown in the previous section), check these configuration settings. 
+
+New directory called EFMValidationService 
+
+After installing CDM XBRL 10.3, an extra directory, EfmValidationService, should be found in the CDM Server directory, located after a default install at C:\inetpub\wwwroot\CognosDM-Server. 
+The folder structure of this new directory appears as:
+[/support/docview.wss?uid=swg22004605&aid=3] [/support/docview.wss?uid=swg22004605&aid=3]
+
+If you double-click the Config folder, there should be a file called System.ServiceModel.Client.config in that folder. 
+Make sure the endpoint points to an address similar to the one shown here: (the exact location of your service endpoint address might differ, check the setting in your IIS Manager for the appropriate address to use): 
+
+Incorrect Correct <client>
+<!--remote http efm validation-->  <endpoint address="https://localhost/Xbrl.10.3/
+SessionService.svc"
+behaviorConfiguration="ServiceBehavior"
+binding="wsHttpBinding" bindingConfiguration="CdmWsHttpBindingClient"
+contract="Ibm.CognosDM.Services.Contracts.
+Security.ISessionService" name="CdmWsHttpBindingClient_ISessionService"/>
+</client>
+
+<client>
+<!--remote http efm validation-->  <endpoint address="https://mydomain.com/
+CognosDM-Server/SessionService.svc"
+behaviorConfiguration="ServiceBehavior"
+binding="wsHttpBinding" 
+bindingConfiguration="CdmWsHttpBindingClient"
+contract="Ibm.CognosDM.Services.Contracts.
+Security.ISessionService" 
+name="CdmWsHttpBindingClient_ISessionService"/>
+</client>
+
+
+You should also notice a ConnectionStrings.config file under the same Config folder. This file is encrypted by default and must be decrypted before making edits to it. 
+
+
+
+Another System.ServiceModel.Client.config file to check 
+
+Under the CDM server directory, locate the Config directory and find a file called System.ServiceModel.Client.config. 
+Ensure the endpoint for the EFM Validation Service (fifth end point shown below) points to an address as shown (the exact location of your service endpoint address might differ, check the setting in your IIS Manager for the appropriate address to use): 
+
+Incorrect Correct <client>
+<endpoint address="https://localhost/EfmValidator/EfmValidationService.svc" behaviorConfiguration="ServiceBehavior" binding="wsHttpBinding" bindingConfiguration="CdmWsHttpBindingForLargeDataClient" contract="Ibm.CognosDM.Xbrl.EfmValidation.Service.Contracts.IEfmValidationService" name="WsHttpBinding_IEfmValidationService"></endpoint>
+</client> <client>
+<endpoint address="https://mydomain.com/CognosDM-Server_EfmValidator/EfmValidationService.svc" behaviorConfiguration="ServiceBehavior" binding="wsHttpBinding" bindingConfiguration="CdmWsHttpBindingForLargeDataClient" contract="Ibm.CognosDM.Xbrl.EfmValidation.Service.Contracts.IEfmValidationService" name="WsHttpBinding_IEfmValidationService"></endpoint>
+</client> 
+
+
+IIS Setting 
+
+Check the name of the IIS web sites used in this example (the default scenario): 
+[/support/docview.wss?uid=swg22004605&amp;aid=4]
+
+
+
+PRODUCT ALIAS/SYNONYM
+ cdm

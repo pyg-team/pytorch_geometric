@@ -1,0 +1,90 @@
+Title: IBM Steps to uninstall a corrupted Webform Server install - United States
+
+Text:
+install issue; unable to uninstall; WFS install issue; WFS 3.5.1 install issue; unable to uninstall 3.5.1; WFS 3.5.1; webform server; uninstall; install webform server; uninstall webform server; failed install TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When installing Webform Server 3.5.1+, the install will finish but state that serious errors have occurred during the install process. There is a possibility that Webform Server was only partially installed and thus using the uninstaller will not remove all components.
+
+SYMPTOM
+When reviewing the installation log FormsServerInstall-00.log, you may see an error similar to this:
+
+Wed Nov 11 16:15:24.656 EST 2009 : FINE : COIEventType.ERROR reported (from com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.install) 
+Wed Nov 11 16:15:24.657 EST 2009 : STDERR : com.ibm.ac.coi.ext.ia.COIWrapperException: COIEventType.ERROR reported 
+
+Wed Nov 11 16:15:24.658 EST 2009 : STDERR : at com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl$SimpleListener.eventOccurred 
+
+(COIWrapperPluginImpl.java:116) 
+
+Wed Nov 11 16:15:24.659 EST 2009 : STDERR : at com.ibm.ac.coi.impl.COIRuntimeImpl.notifyListener(COIRuntimeImpl.java:226) 
+
+Wed Nov 11 16:15:24.659 EST 2009 : STDERR : at com.ibm.ac.coi.impl.COIRuntimeImpl.notifyListeners(COIRuntimeImpl.java:215) 
+
+Wed Nov 11 16:15:24.660 EST 2009 : STDERR : at com.ibm.ac.coi.impl.utils.ParallelPlanListener.eventOccurred(ParallelPlanListener.java:105) 
+
+Wed Nov 11 16:15:24.661 EST 2009 : STDERR : at com.ibm.ac.coi.impl.COIRuntimeImpl.notifyListener(COIRuntimeImpl.java:229) 
+
+COIRuntimeImpl.notifyListeners(COIRuntimeImpl.java:219) 
+
+Wed Nov 11 16:15:24.663 EST 2009 : STDERR : at com.ibm.ac.coi.impl.MachinePlanImpl.process(MachinePlanImpl.java:254) 
+
+Wed Nov 11 16:15:24.664 EST 2009 : STDERR : at com.ibm.ac.coi.impl.utils.MachinePlanRunner.run(MachinePlanRunner.java:64) 
+
+Wed Nov 11 16:15:24.664 EST 2009 : STDERR : at java.lang.Thread.run(Thread.java:801) 
+
+Wed Nov 11 16:15:24.665 EST 2009 : STDERR : Caused by: 
+
+Wed Nov 11 16:15:24.666 EST 2009 : STDERR : com.ibm.ac.coi.api.exception.DeploymentPlanExecutionException: One or more Machine Plans within the DeploymentPlan failed. Failure count = 1 
+
+Wed Nov 11 16:15:24.667 EST 2009 : STDERR : at com.ibm.ac.coi.impl.utils.ParallelPlanListener.eventOccurred(ParallelPlanListener.java:92) 
+
+Wed Nov 11 16:15:24.667 EST 2009 : STDERR : ... 5 more 
+
+Wed Nov 11 16:15:24.668 EST 2009 : FINER : ENTRY (from COIWrapperWorkerThread.disposeSIRuntime) 
+
+ 
+
+Note: For location of log, please review the Webform Server Install issues section of the Collecting Data technote - http://www-01.ibm.com/support/docview.wss?uid=swg21446535 [http://www-01.ibm.com/support/docview.wss?uid=swg21446535]
+
+
+RESOLVING THE PROBLEM
+
+The following information will clean up your environment if you encounter errors re-installing IBM (formerly Lotus) Forms Server.
+This also applies if your un-install does not complete successfully.....
+
+Remove Deployment Engine (acsi service or process)
+
+1. Check to see if the IBM ADE Service exists in the Services control panel
+
+2. If you find this service, confirm that the following directory exists:
+Windows C:\Program Files\IBM\Common\acsi
+non-Windows /usr/ibm/common/acsi/
+
+3. Remove the Deployment Engine using the following command
+Windows C:\Program Files\IBM\Common\acsi\bin\si_inst.bat -r -f
+non-Window /usr/ibm/common/acsi/bin/si_inst.sh -r -f
+
+** Note: If you get an error about DE being in use or locked, remove the .lock_x_x (where 'x' represents an alphanumeric character) file from the logs directory and re-run the command from step #3.
+Windows C:\Program Files\IBM\Common\acsi\logs\.lock_x_x
+non-Windows /usr/ibm/common/acsi/logs/.lock_x_x
+
+4. Delete the Deployment Engine install folder
+Windows C:\Program Files\IBM\Common\acsi
+non-Windows /usr/ibm/common/acsi/
+
+5. Delete any directories and files from the first installation
+Windows C:\Program Files\IBM\Lotus Forms\Server
+non-Windows /usr/IBM/Lotus Forms/Server/
+
+5a. In Windows, if the program still exists in the Add/Remove Program tool, please use the following article:
+
+http://support.microsoft.com/kb/314481 [http://support.microsoft.com/kb/314481] 
+
+6. Restart your server
+
+7. Re-run the IBM Forms Server installer
+
+RELATED INFORMATION
+#Lotus Forms Support site [http://www-947.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Forms]
+Lotus Forms 3.5.1 Info Center [http://publib.boulder.ibm.com/infocenter/forms/v3r5m1/index.jsp]
+Lotus Forms Wiki [http://www-10.lotus.com/ldd/lfwiki.nsf]

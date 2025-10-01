@@ -1,0 +1,91 @@
+Title: IBM Configuring IBM Rational ClearQuest with LDAP user authentication for TLS 1.2 to support NIST SP 800-131A guidelines - United States
+
+Text:
+CQRN8.0.1.1; Feature Level 8; NIST SP 800-131A; TLS 1.2; LDAP TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure LDAP for Rational ClearQuest authentication to support Transport Layer Security 1.2 (TLS 1.2) in order to support NIST SP 800-131A guidelines. 
+
+CAUSE
+Different versions of the TLS protocol provide support for various security improvements. U.S. Government organizations may be required to support NIST SP 800-131A guidelines http://csrc.nist.gov/publications/nistpubs/800-131A/sp800-131A.pdf [http://csrc.nist.gov/publications/nistpubs/800-131A/sp800-131A.pdf]. Non-governmental organizations may also wish to use the security enhancements of TLS. ClearQuest V8.0.1.1, and later versions, provide support for TLS 1.2 and TLS 1.1 which support NIST SP 800-131A guidelines. TLS 1.0 is also supported.
+
+ANSWER
+You must update the LDAP server and the ClearQuest LDAP configuration to support your required level of the TLS protocol. 
+
+It is best to perform the following instructions in a test environment so that you do not disrupt production use of ClearQuest until you have validated correct CQ LDAP user authentication.
+
+
+First, follow your LDAP server's instructions on how to configure the LDAP server to support the desired level of TLS protocol. 
+
+Second, configure your ClearQuest LDAP installation to support the same level of TLS protocol using the following instructions. 
+
+ClearQuest V8.0.1.1 adds two new options "-S" and "-C" to "installutil setldapinit" to set the configuration for supporting your desired level of TLS protocol version to your LDAP server. 
+
+d 
+-S means LDAP_OPT_SSL_SECURITY_PROTOCOL, It can be set with value TLS10, TLS11 and TLS12, or multiple values of them connected by comma.
+-C means LDAP_OPT_SSL_CIPHER_EX, has a long list of supporting values, and can be set to one or more comma delimited value(s). Refer to your LDAP server admin for this option value(s).
+
+The following ciphers are supported by the TLS 1.2 protocol:
+
+TLS_RSA_WITH_RC4_128_SHA
+TLS_RSA_WITH_3DES_EDE_CBC_SHA
+TLS_RSA_WITH_AES_128_CBC_SHA
+TLS_RSA_WITH_AES_256_CBC_SHA
+TLS_RSA_WITH_AES_128_GCM_SHA256
+TLS_RSA_WITH_AES_256_GCM_SHA384
+TLS_RSA_WITH_AES_128_CBC_SHA256
+TLS_RSA_WITH_AES_256_CBC_SHA256
+TLS_ECDHE_RSA_WITH_RC4_128_SHA
+TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA
+TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
+TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
+TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+TLS_ECDHE_ECDSA_WITH_RC4_128_SHA
+TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA
+TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
+TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
+TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
+TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384
+TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+
+Because of "CVE-2016-2183 , Sweet32: Birthday attacks on 64-bit block ciphers in TLS", we recommend only using the following secure ciphers:
+
+TLS_RSA_WITH_AES_128_CBC_SHA
+TLS_RSA_WITH_AES_256_CBC_SHA
+TLS_RSA_WITH_AES_128_GCM_SHA256
+TLS_RSA_WITH_AES_256_GCM_SHA384
+TLS_RSA_WITH_AES_128_CBC_SHA256
+TLS_RSA_WITH_AES_256_CBC_SHA256
+TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
+TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
+TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
+TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
+TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
+TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384
+TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 
+
+To support the LDAP TLS 1.2 exclusively, the "-S" needs to be set with value TLS12. "-C" also needs to be set with the cipher value(s) which the LDAP server supports, and the administrator decides upon. Remember to set both "-Z" and "-K" to enable the SSL connection and provide the keystore file. 
+
+A sample command is like below:
+
+installutil setldapinit 8.0.0 admin "" "-h ldapserver -Z -K 'win:c:\key.kdb;unix:/tmp/key.kdb' -S TLS12 -C TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384"
+
+
+Refer to your LDAP server admin for the configurations on the server side. The ClearQuest admin needs to set the correct values to connect to the LDAP server correctly.
+
+The two new options must either be set together, or none of them be set to be compatible with the old behavior of supporting only TLS1.0. You will get an error when validating the LDAP connection when missed one option. e.g. If only "-C" option is set, will get below error when validating the LDAP connection:
+
+CRMMD1848E The LDAP initialization parameters are invalid:
+The required option is missing: -S
+
+
+Please refer to the infocenter for full steps to set up LDAP connection information for SSL: Setting the ClearQuest LDAP connection information for SSL [http://pic.dhe.ibm.com/infocenter/cqhelp/v8m0r1/index.jsp?topic=%2Fcom.ibm.rational.clearquest.admin.doc%2Ftopics%2Fldap%2Ft_settingtheclearquest-ldapconnectioninformationforssl.htm&resultof%3D%2522%2553%2553%254c%2522%2520%2522%2573%2573%256c%2522%2520]

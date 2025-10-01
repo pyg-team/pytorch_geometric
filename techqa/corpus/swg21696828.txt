@@ -1,0 +1,28 @@
+Title: IBM Is it possible to change a username id in Maximo - United States
+
+Text:
+users user username userid change modify replace update maximo security TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This documentation provides info about questions for changing username ids in Maximo 
+
+SYMPTOM
+For example: If a user Jane Smith (JSMITH) gets married and wants to use her new married name (Martin), is there a way to change her existing maximo account to JMARTIN ? 
+
+
+RESOLVING THE PROBLEM
+The MAXUSER.USERID - this specific field identifies the user. The name or value must be unique for all User records. 
+
+This explains why the MAXUSER.USERID in the Maximo Users application is Read Only and it cannot be changed on the Maximo UI (User interface). 
+
+There is no current way to change the USERID value for an user once they are created. 
+
+However, you can change the LOGINID, and you could create a new PERSON record if necessary and associate the new Person record. 
+
+In the User application, the User Name (LOGINID) can be changed, this is the value used to login to Maximo. 
+
+But the User value (USERID) is unique and cannot be changed. Maximo does not allow changing username due to audit purposes.
+
+You can create a new specific user with all the new corresponding information to suit the new name that the user now has. 
+
+Should you need any assistance, please contact IBM Maximo Support.

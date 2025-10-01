@@ -1,0 +1,61 @@
+Title: IBM System freezes when all servers in a cluster are started at once - United States
+
+Text:
+TPAESYSTEMS; TPAEINTEGRATION TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Starting multiple servers at once will cause a lock up on certain internal data dictionary and system level tables which results in the complete lockup of the system. 
+
+
+SYMPTOM
+ Here is one such lockup scenario. 
+
+[4/24/13 17:03:07:636 CDT] 00000014 ThreadMonitor W WSVR0605W: Thread "server.startup : 0" (0000001a) has been active for 699512 milliseconds and may be hung. There is/are 1 thread(s) in total in the server that may be hung.
+at java.net.SocketInputStream.socketRead0(Native Method)
+at java.net.SocketInputStream.read(SocketInputStream.java:140)
+at oracle.net.ns.Packet.receive(Packet.java:283)
+at oracle.net.ns.DataPacket.receive(DataPacket.java:103)
+at oracle.net.ns.NetInputStream.getNextPacket(NetInputStream.java:230)
+at oracle.net.ns.NetInputStream.read(NetInputStream.java:175)
+at oracle.net.ns.NetInputStream.read(NetInputStream.java:100)
+at oracle.net.ns.NetInputStream.read(NetInputStream.java:85)
+at oracle.jdbc.driver.T4CSocketInputStreamWrapper.readNextPacket(T4CSocketInputStreamWrapper.java:119)
+at oracle.jdbc.driver.T4CSocketInputStreamWrapper.read(T4CSocketInputStreamWrapper.java:79)
+at oracle.jdbc.driver.T4CMAREngine.unmarshalUB1(T4CMAREngine.java:1122)
+at oracle.jdbc.driver.T4CMAREngine.unmarshalSB1(T4CMAREngine.java:1099)
+at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:288)
+at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:191)
+at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:523)
+at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java:207)
+at oracle.jdbc.driver.T4CPreparedStatement.executeForRows(T4CPreparedStatement.java:1010)
+at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1315)
+at oracle.jdbc.driver.OraclePreparedStatement.executeInternal(OraclePreparedStatement.java:3576)
+at oracle.jdbc.driver.OraclePreparedStatement.executeUpdate(OraclePreparedStatement.java:3657)
+at oracle.jdbc.driver.OraclePreparedStatementWrapper.executeUpdate(OraclePreparedStatementWrapper.java:1350)
+at psdi.server.MaxSession.deleteAllRowsForServer(MaxSession.java:144)
+at psdi.server.MXServer.removeMaxSessionEntriesDeadForAnHour(MXServer.java:3354)
+at psdi.server.MXServer.start(MXServer.java:3228)
+at psdi.servlet.MAXIMOStartupServlet.init(MAXIMOStartupServlet.java:59)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.init(ServletWrapper.java:358)
+at com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.init(ServletWrapperImpl.java:169)
+
+
+
+RESOLVING THE PROBLEM
+In a clustered environment, while starting multiple servers, it is best to start in a sequence one after another. It is possible to start two servers if they are not doing the same work at the same time, but it is difficult to time this. Hence, it is always safe to start servers in a sequence by manually choosing the server by name and starting or within the cluster setup, starting the servers using the ripple start option. 
+
+Also, as a best practice, it is good to start the servers in the following order if the servers are grouped into different clusters by role. 
+
+ 
+
+1. CRON cluster servers 
+
+2. MIF cluster servers 
+
+3. BROS cluster servers 
+
+4. UI cluster servers. 
+
+ 
+
+If webservers are setup, start webservers after the UI servers are started. This prevents the end users from accessing UI servers before they are fully started.

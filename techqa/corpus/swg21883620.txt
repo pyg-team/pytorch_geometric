@@ -1,0 +1,41 @@
+Title: IBM Process Designer in Case Manager Builder does not load for an environment configured with Single Sign On (SSO) using CA eTrust SiteMinder. - United States
+
+Text:
+icm; acm; sso; sm; siteminder; ca; ca siteminder TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Process Designer in Case Manager Builder does not load for an environment configured with Single Sign On (SSO) using CA eTrust SiteMinder. 
+
+SYMPTOM
+In an IBM Case Manager development environment that is configured with Siteminder SSO, Case Manager Builder does not load Process Designer. 
+
+No error message is displayed in Case Manager Builder, but an error message is displayed in the Java console. The error message is similar to the following message:
+Exception in thread "thread applet-filenet.vw.apps.designer.VWDesignerApplet-1" org.apache.xerces.parsers.ObjectFactory$ConfigurationError: Provider <!DOCTYPE html> not found
+at org.apache.xerces.parsers.ObjectFactory.newInstance(Unknown Source)
+at org.apache.xerces.parsers.ObjectFactory.findJarServiceProvider(Unknown Source)
+at org.apache.xerces.parsers.ObjectFactory.createObject(Unknown Source)
+:
+at filenet.vw.apps.designer.VWDesignerApplet.init(VWDesignerApplet.java:54)
+at sun.plugin2.applet.Plugin2Manager$AppletExecutionRunnable.run(Unknown Source)
+:
+
+
+CAUSE
+UseHTTPOnlyCookies value was set to 'Yes' on the SiteMinder Web Agent. The default value was 'No'.
+
+
+
+RESOLVING THE PROBLEM
+Set the UseHTTPOnlyCookies value to 'No' on the SiteMinder Web Agent. However, verify that setting this value to 'No' does not cause any issues such as security and compatibility issues.
+
+RELATED INFORMATION
+ Configuring Case Manager to support SSO using CA eTrust [http://www.ibm.com/support/knowledgecenter/SSCTJ4_5.2.1/com.ibm.casemgmt.design.doc/acmcf007.htm]
+Troubleshooting CA eTrust SiteMinder SSO configuration [http://www.ibm.com/support/knowledgecenter/SSCTJ4_5.2.1/com.ibm.casemgmt.design.doc/acmta040.htm]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ Advanced Case Management
+Case Manager
+IBM Case Manager

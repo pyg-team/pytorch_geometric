@@ -1,0 +1,47 @@
+Title: IBM Copy/Paste image error in SCCD 7.5.1 Rich Text fields (IE8, 9, 10) - United States
+
+Text:
+Copy/Paste; RTE; TPAEUI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Copy/past of just a picture (without text) in Firefox works OK, while in IE copying just the picture does not work. Nothing is copied. You cannot copy/ paste in IE at all if you want to copy only a picture while in Firefox picture is copied. But when you try to copy text & pictures only text is copied in both browsers Internet Explorer (IE) and Firefox. 
+
+SYMPTOM
+ In IE if it is not a web page picture from another internet session it will not copy 
+
+(from paint, word, printscreen etc.)
+
+
+DIAGNOSING THE PROBLEM
+The following steps have been used to reproduce the problem. 
+
+1. Go to the Solution application
+
+2. Open up an existing solution
+
+3. Copy / Past an image from word doc with mouse into Symptom - Cause and Resolution fields, the image will be blank.
+
+It also happens if you Ctrl+C/Ctrl+V and also the same behavior.
+
+In a Rich Text field, click on Paste From Word icon, Paste the content from word in this 'Paste From Word' dialog. Make sure content is correct and click 'Paste', this also is not working.
+
+
+RESOLVING THE PROBLEM
+The paste from word function in the rich text editor ( RTE) removes extraneous html and css from the paste buffer which causes rendering issues within the editor. It will not help with being able to paste mixed content within the editor. 
+
+ 
+Firefox will paste just images or just text into the editor, but IE does not support pasting images directly into the editor.
+
+There is a function that allows images to be attached to communications using Internet Explorer, but that functionality only works with create communications and isn't supported everywhere the rich text editor is used.
+
+The rich text editor uses html for formatting and the native browser is what does the rendering; the capabilities of what you can do are largely dependent on that. This is why you can often see slightly different behavior between different browsers. The ability for Microsoft Word and other applications to provide marked up formatted text into the copy buffer is rather limited.
+
+There are no plans to use any other editor in Maximo.
+
+The problem is that IE does not support this. The rich text editor is not a plugin, it is simply a frame in the browser and the toolbar uses JavaScript to provide basic formatting functions. The
+actual display and handling of the content is done by the browser; that is why there are some differences in the behavior.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Control Desk

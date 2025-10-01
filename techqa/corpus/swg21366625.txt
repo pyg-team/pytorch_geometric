@@ -1,0 +1,84 @@
+Title: IBM Error: "EJPDB0160E: The sanity checks of the database layer failed" on startup - United States
+
+Text:
+database; sanity; transfer; layer; utf; utf-8; utf8; encoding; EJPDB0160E; layout; EJPDB0085W; EJPDB0159E; start up; startup TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM® WebSphere® Portal installs successfully. A DB2® database is configured for use with WebSphere Portal and a database transfer was successful from Derby™ to DB2. During the next startup of WebSphere Portal, the SystemOut.log reports an error message of "EJPDB0160E: The sanity checks of the database layer failed". 
+
+This technote will tell you how to diagnose and resolve this error message. 
+
+DIAGNOSING THE PROBLEM
+1. Run commands to determine if the character encoding of the database is UTF-8. For example, for DB2, the "db2 get db cfg" command or use of the DB2 Control Center may be used to verify if the databases are UTF-8. Consult with your database administrator or database documentation for more information on the exact methods and/or syntax used to determine the character encoding of the database. 
+
+ * 
+ * 
+ * db2 get db cfg
+ * 
+ * 
+ * 
+ * Database Configuration for Database 
+ * 
+ * 
+ * Database configuration release level = 0x0b00
+ * 
+ * Database release level = 0x0b00
+ * 
+ * 
+ * Database territory = us
+ * 
+ * Database code page = 1208
+ * 
+ * Database code set = UTF-8
+ * 
+ * 
+ * NOTE:
+ * 
+ * Document #1317981
+ * 
+ * 
+ * 
+ * 
+
+
+2. The following output is in the SystemOut.log: 
+ * [datetime] servlet E com.ibm.wps.engine.Servlet init EJPFD0016E: Initialization of service failed.
+ * 
+ * com.ibm.wps.util.DataBackendException: EJPDB0160E: The sanity checks of the database layer failed.
+
+RESOLVING THE PROBLEM
+Reviewing the wkplc_comp.properties file: 
+
+There are multiple files that are utilized as a part of the database transfer. 
+
+The following values were observed for the DataSourceNames in the wkplc_comp.properties file:
+
+
+ * feedback.DataSourceName=wpdbDS_fdbkdb
+ * 
+ * likeminds.DataSourceName=wpdbDS_lmdb
+ * 
+ * release.DataSourceName=wpdbDS_reldb
+ * 
+ * community.DataSourceName=wpdbDS_commdb
+ * 
+ * customization.DataSourceName=wpdbDS_fdbkdb
+ * 
+ * jcr.DataSourceName=wpdbDS_jcrdb
+
+
+Note that the feedback and customized DataSourceNames are set to the same value. This is incorrect and is the source of the current error messages. After a database transfer completes with these values, Portal ends up connected to the wrong customization domain. The underlying root cause of the startup errors was the database layout not being correct, as reported in the SystemOut.log. 
+
+NOTE: The database transfer completed successfully with the incorrect values in the wkplc_comp.properties file. It was only during Portal startup following the database transfer when the first symptoms of the incorrect values were observed. 
+
+Run the database transfer a second time: 
+To correct the error messages, do the following: 
+
+1. Update the value of the customized.DataSourceName parameter in the wkplc_comp.properties file to the correct value (may be obtained from your database administrator). 
+
+2. Rerun the database transfer task as follows: 
+ * ConfigEngine (.sh/.bat) database-transfer -DTransferDomainList=release,customization,community,jcr,feedback,likeminds
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products AIX, HP-UX, IBM i, Linux, Solaris, Windows, z/OS 7.0, 6.1

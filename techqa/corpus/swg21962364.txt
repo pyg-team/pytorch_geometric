@@ -1,0 +1,82 @@
+Title: IBM 【セキュリティ情報】IBM WebSphere MQ　エクスプローラーがクレデンシャルを保護しない脆弱性
+(CVE-2015-1967) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM WebSphere MQ エクスプローラーは、認証のためにリモート・キュー・マネージャーにユーザーIDとパスワード資格情報を送信するように設定することができます。MQエクスプローラーで互換性モードをオフにした場合、パスワードは、TLSなどの任意のトランスポートレベルのセキュリティで保護された形で送られなければなりません。
+
+IBM WebSphere MQ8.0.0.2以前のリリースではMQエクスプローラーの実装では、常に互換性モードが有効になり、パスワードの認証情報が平文で送信されます。
+
+
+
+VULNERABILITY DETAILS
+脆弱性の詳細：
+CVEID: CVE-2015-1967 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1967]
+DESCRIPTION: IBM WebSphere MQ could allow authentication credentials to pass in plaintext, even when the server is configured to protect passwords. An attacker could obtain this information using man in the middle techniques.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103583 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103583] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+影響のある製品・バージョン： 
+
+次の製品に影響があります。 
+
+・IBM WebSphere MQ 8.0.0.2 未満
+
+REMEDIATION/FIXES
+修正策： 
+
+Ｆix Pack 8.0.0.3 [https://www-304.ibm.com/support/docview.wss?uid=swg27043086#8003]以降を導入してください。
+
+WORKAROUNDS AND MITIGATIONS
+回避策/軽減策：
+IBMはチャネルのCipherSpecを構成することにより、MQ Explorerおよびリモート・キュー・マネージャーとの間のチャネル接続でトランスポート・レベルのセキュリティを使用することを強くお勧めします。 
+
+non-NULL CipherSpecを使用するように構成されたチャネルは、パスワードの資格情報だけでなく、MQエクスプローラーとキューマネージャーのすべてのデータを保護します。
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+. 参照情報：
+
+[IBMサイト]
+この文書は、米国 IBM 社の資料を翻訳した参考文書です。翻訳元の文書は、以下のリンクよりご参照ください。
+Security Bulletin: IBM WebSphere MQ Explorer does not protect credentials (CVE-2015-1967) [http://www.ibm.com/support/docview.wss?uid=swg21960491]
+
+公開済みのフィックスパックについては、以下のサイトよりご利用いただけます。
+Recommended fixes for WebSphere MQ [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+
+フィックス・パックの公開予定については、以下のサイトよりご確認いただけます。
+WebSphere MQ planned maintenance release dates [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+
+[CVSS情報]
+独立行政法人 情報処理推進機構: 共通脆弱性評価システムCVSS概説 [http://www.ipa.go.jp/security/vuln/CVSS.html]
+JVN iPedia: CVSS計算ソフトウェア日本語版 [http://jvndb.jvn.jp/cvss/ja.html]
+
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+. 
+関連情報： 
+. 
+[お問合せ先] 
+技術的な内容に関して、サービス契約のあるお客様はIBMサービス・ラインにお問い合わせください。 
+IBM サービス・ライン [http://www.ibm.com/jp/news/20070420001.html] 
+
+[更新履歴] 
+2015/09/10 Title CVE訂正 
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+関連情報
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21960491]

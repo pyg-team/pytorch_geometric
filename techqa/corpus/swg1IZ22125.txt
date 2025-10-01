@@ -1,0 +1,149 @@
+Title: IBM IZ22125: Clean up stopping message displayed during SSM patch installation. - United States
+
+Text:
+  READMES ARE AVAILABLE
+IBM Tivoli 4.0.0-TIV-SSM-FP0010 [http://www-01.ibm.com/support/docview.wss?uid=isg400000146]
+IBM Tivoli 4.0.0-TIV-SSM-FP0011 [http://www-01.ibm.com/support/docview.wss?uid=isg400000348]
+IBM Netcool System Service Monitor SSM 4.0 FixPack 12 README 4.0.0-TIV-SSM-FP0012 [http://www-01.ibm.com/support/docview.wss?uid=isg400000771]
+IBM Netcool System Service Monitor SSM 4.0 Fix Pack 13 README 4.0.0-TIV-SSM-FP0013 [http://www-01.ibm.com/support/docview.wss?uid=isg400000776]
+IBM Netcool System Service Monitor SSM 4.0 Fix Pack 14 README 4.0.0-TIV-SSM-FP0014 [http://www-01.ibm.com/support/docview.wss?uid=isg400001529]
+IBM Netcool System Service Monitor SSM 4.0 Interim Fix 1 README 4.0.0.14-TIV-SSM-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=isg400001759]
+IBM Netcool System Service Monitor SSM 4.0 Interim Fix 2 README 4.0.0.14-TIV-SSM-IF0002 [http://www-01.ibm.com/support/docview.wss?uid=isg400001762]
+IBM Netcool System Service Monitor SSM 4.0 Interim Fix 3 README 4.0.0.14-TIV-SSM-IF0003 [http://www-01.ibm.com/support/docview.wss?uid=isg400001838]
+IBM Netcool System Service Monitor SSM 4.0 Interim Fix 4 README 4.0.0.14-TIV-SSM-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=isg400001952]
+IBM Netcool System Service Monitor SSM 4.0 Interim Fix 5 README 4.0.0.14-TIV-SSM-IF0005 [http://www-01.ibm.com/support/docview.wss?uid=isg400002088]
+IBM Netcool System Service Monitor SSM 4.0 Interim Fix 6 README 4.0.0.14-TIV-SSM-IF0006 [http://www-01.ibm.com/support/docview.wss?uid=isg400002120]
+IBM Netcool System Service Monitor SSM 4.0 Interim Fix 7 README 4.0.0.14-TIV-SSM-IF0007 [http://www-01.ibm.com/support/docview.wss?uid=isg400002356]
+IBM Netcool System Service Monitor SSM 4.0 Interim Fix 8 README 4.0.0.14-TIV-SSM-IF0008 [http://www-01.ibm.com/support/docview.wss?uid=isg400002629]
+IBM Netcool System Service Monitor SSM 4.0 Interim Fix 1 README 4.0.0.15-TIV-SSM-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=isg400002829]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During patch installation the following output get displayed:
+   
+   IBM Tivoli Netcool/SSM is running as a service:
+   /var/tmp/NetcoolSSMPID@_opt_netcol_ssm_bin Stopping...
+   IBM Tivoli Netcool/SSM has stopped.
+   
+   We should not see the reference to /var/tmp.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The following output is as follows:
+   
+   IBM Tivoli Netcool/SSM is running as a service:
+   /var/tmp/NetcoolSSMPID@_opt_netcol_ssm_bin Stopping...
+   IBM Tivoli Netcool/SSM has stopped.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Output is now cleaned up as follows:
+   
+   IBM Tivoli Netcool/SSM is running as a service:
+   Stopping Agent on Default Port (PID 12345) ....
+   Stopping Agent on Port 8161 (PID 2131) ...
+   Stopping Agent on Port 6161 (PID 4210) ....
+   IBM Tivoli Netcool/SSM has stopped.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+      | fix pack | 4.0.0-TIV-SSM-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ22125
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL SYS SVC
+   
+   
+ * REPORTED COMPONENT ID
+   5724P4300
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2008-05-12
+   
+   
+ * CLOSED DATE
+   2008-05-16
+   
+   
+ * LAST MODIFIED DATE
+   2009-01-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL SYS SVC
+   
+   
+ * FIXED COMPONENT ID
+   5724P4300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

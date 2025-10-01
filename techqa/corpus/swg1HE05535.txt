@@ -1,0 +1,178 @@
+Title: IBM HE05535: THE ERROR OF MACRO - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SCENARIO:-
+   1.Create a new VBA project ???BCat30.catvba???.
+   2. Open Visual  Basic Editor. Import the attached file
+   ???CATDrawing2279325563.bas???.
+   3 Create a new toolbar(test) by ???Tools/Customize/Toolbars
+   tab/New
+   4 Drag&Drop ???Commands tab/Macro/CATDrawingIS??? to test
+   toolbar.
+   5 Create two new macro libraries ???AiMslib.catvba??? and
+   ???BCat30_common.catva??? .
+   6 Select ???CATDrawing??? in Visual Basic Editor. Then click
+   ???Tools/References??? and select ???AiMsLib??? and ???BCat30_co
+   mmon???.
+   7 Save ???BCat30.catvba???,Close VBE.
+   8. Restart CATIA.
+   9.Click icon in test toolbar.
+   PROBLEM:
+   1.Compile error occurs. ???Can???t find project or Library ???
+   2.AiMsLib and BCat30_common are not  shown in explorer ,Open
+   ???Tools>References???. Two references are ???MISSING
+   .
+   EXPECTED RESULT:-
+   User should be able to run the script through customized
+   toolbar.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  empty
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  SCENARIO:-
+   1.Create a new VBA project ???BCat30.catvba???.
+   2. Open Visual  Basic Editor. Import the attached file
+   ???CATDrawing2279325563.bas???.
+   3 Create a new toolbar(test) by ???Tools/Customize/Toolbars
+   tab/New
+   4 Drag&Drop ???Commands tab/Macro/CATDrawingIS??? to test
+   toolbar.
+   5 Create two new macro libraries ???AiMslib.catvba??? and
+   ???BCat30_common.catva??? .
+   6 Select ???CATDrawing??? in Visual Basic Editor. Then click
+   ???Tools/References??? and select ???AiMsLib??? and ???BCat30_co
+   mmon???.
+   7 Save ???BCat30.catvba???,Close VBE.
+   8. Restart CATIA.
+   9.Click icon in test toolbar.
+   PROBLEM:
+   1.Compile error occurs. ???Can???t find project or Library ???
+   2.AiMsLib and BCat30_common are not  shown in explorer ,Open
+   ???Tools>References???. Two references are ???MISSING
+   .
+   EXPECTED RESULT:-
+   User should be able to run the script through customized
+   toolbar.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM IS PERMANENT RESTRICTION IN CATIA
+   Additional Closure Information:
+   Incident Diagnosis:
+   VBA project with reference on other VBA project fails to
+   build if the referenced projects are not loaded into CATIA.
+   Reason:
+   This is a specification from VBA.
+   By-Pass:
+   The problem appears when referenced VBA projects
+   (???AiMslib.catvba??? and ???BCat30_common.catvba???) are not op
+   ened
+   within CATIA.
+   In fact the problem is alway reproducible whatever the way
+   the macro is run (i.e. using tools/macro/macros or a
+   customized command).
+   You can reproduce the problem even when running the macro by
+   ???Tools/Macro/Macros/Run??? if you have before removed the
+   referenced VBA projects macros from the opened macro
+   libraries dialog and restart catia.
+   .
+   To solve this issue, the user should go once in the dialog
+   ???Tools/Macro/Macros/", open the referenced VBA project if
+   they are not already opened and then run the respective macro
+   using run method  after that user can run the macro using its
+   toolbar command.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE05535
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 WIN 64
+   
+   
+ * REPORTED COMPONENT ID
+   569165000
+   
+   
+ * REPORTED RELEASE
+   519
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-24
+   
+   
+ * CLOSED DATE
+   2011-04-15
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

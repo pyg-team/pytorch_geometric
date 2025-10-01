@@ -1,0 +1,23 @@
+Title: IBM Problems importing COBOL Copybook with ODO clause - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error messages received - "Error 40 reference 164: Component rule is invalid." when attempting to import a COBOL Copybook with an Occurs Depending On (ODO) clause. 
+
+SYMPTOM
+Failure to import a COBOL Copybook, with no WebSphere Transformation Extender (WTX) Typetree being created
+
+
+CAUSE
+ODO clauses are case sensitive, and they (along with the field names to which they refer) must be in UPPERCASE.
+
+ENVIRONMENT
+WebSphere Transformation Extender Design Studio on the Windows platform
+
+DIAGNOSING THE PROBLEM
+Error message on import, which can be resolved with removal of the ODO clause.
+
+RESOLVING THE PROBLEM
+Review COBOL Copybooks for ODO clauses, and verify that the case is correct

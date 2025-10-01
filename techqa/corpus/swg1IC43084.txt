@@ -1,0 +1,148 @@
+Title: IBM IC43084: RATIONAL ROSE DATA MODELER: MODIFICATIONS OF TABLE COMMENTS ON D ATABASE SIDE ARE NOT IMPORTED IN ROSE WHEN SYNCHRONIZING - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  RATLC00977646
+   Environment:
+    - OS (name, language, version or SP): Microsoft Windows
+   XP,english,SP2
+    - Product name (Build ID or version/patch level): IBM Rational
+   Rose 2003.06.13.402
+   
+   Reproducible Y/N: Y
+   
+   Description of problem:
+   Modification of a table comment on database side is not properly
+   managed when the Rose model is synchronized.
+   
+   Steps to reproduce:
+   A1. Modify only a comment (more than 300 characters) of a
+   table on the database side.
+   A2. Synchonize the Rose model with the database
+   A3. No difference is displayed
+   
+   B1. Modify a comment (more than 300 characters) and a column
+   of a table on the database side
+   B2. Synchronize the Rose model with the database
+   B3. Differences are displayed for both the column and the
+   comment
+   B4. Import all into the model
+   B5. the column modification is imported but not the comment one
+   
+   C1. Modify on the database side a small comment of a table
+   which has a primary key
+   C2. Synchronize the Rose model with the database
+   C3. Import the difference into the model
+   C4. the comment modification is not imported
+   C5. the name of the constraint for the primary key has been
+   renamed to PK_<table name>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: na                                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See Problem Description.                *
+   ****************************************************************
+   No Plan to Fix.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  No Plan to Fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC43084
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL ROSE DM VX
+   
+   
+ * REPORTED COMPONENT ID
+   5724F4200
+   
+   
+ * REPORTED RELEASE
+   ALL
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-10-13
+   
+   
+ * CLOSED DATE
+   2005-10-10
+   
+   
+ * LAST MODIFIED DATE
+   2005-10-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  na
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

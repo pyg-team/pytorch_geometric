@@ -1,0 +1,137 @@
+Title: IBM java.lang.NoClassDefFoundError: sun.font.FontManager error when installing patch 5 for the Case Foundation Process Engine 5.0.0 - United States
+
+Text:
+environment TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ java.lang.NoClassDefFoundError: sun.font.FontManager error when installing patch 5 for the Process Engine on Redhat Linux 
+
+SYMPTOM
+All modes of the patch installation generate errors. 
+
+Interactive installation: 
+
+-sh-4.1$ ./5.0.0.5-P8PE-LINUX.BIN 
+Preparing to install... 
+Extracting the JRE from the installer archive... 
+Unpacking the JRE... 
+Extracting the installation resources from the installer archive... 
+Configuring the installer for this system's environment... 
+
+Launching installer... 
+
+Graphical installers are not supported by the VM. The console mode will 
+be used instead... 
+
+Preparing CONSOLE Mode Installation... 
+...... 
+Installer User Interface Mode Not Supported 
+
+The installer cannot run in this UI mode. To specify the interface 
+mode, use the -i command-line option, followed by the UI mode 
+identifier. The valid UI modes identifiers are GUI, Console, and Silent. 
+
+======================================================= 
+
+Console-mode installation: 
+
+-sh-4.1$ ./5.0.0.5-P8PE-LINUX.BIN -i Console 
+Preparing to install... 
+Extracting the JRE from the installer archive... 
+Unpacking the JRE... 
+Extracting the installation resources from the installer archive... 
+Configuring the installer for this system's environment... 
+
+Launching installer... 
+
+Preparing CONSOLE Mode Installation... 
+......
+Installer User Interface Mode Not Supported 
+
+The installer cannot run in this UI mode. To specify the interface 
+mode, use the -i command-line option, followed by the UI mode 
+identifier. The valid UI modes identifiers are GUI, Console, and Silent. 
+
+======================================================= 
+
+Silent installation: 
+
+-sh-4.1$ ./5.0.0.5-P8PE-LINUX.BIN -f pe_silent_install.txt 
+Preparing to install... 
+Extracting the JRE from the installer archive... 
+Unpacking the JRE... 
+Extracting the installation resources from the installer archive... 
+Configuring the installer for this system's environment... 
+
+Launching installer... 
+
+Preparing SILENT Mode Installation... 
+
+
+[-Invocation of this Java Application has caused an 
+InvocationTargetException. This application will now exit. (LAX) 
+
+Stack Trace in the pe_silent_install.txt file: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+CAUSE
+The Linux operating system has the incorrect version of the compat-libstdc++-33-3.2.3-61 package installed.
+
+
+DIAGNOSING THE PROBLEM
+Check the package with the following commands: 
+
+
+rpm -ga | grep compat-libstdc 
+
+Sample results: 
+
+[/support/docview.wss?uid=swg21661782&amp;aid=1] 
+
+
+rpm compat-libstdc++-33-3.2.3-61 -qi 
+
+Sample excerpt from theresults:
+[/support/docview.wss?uid=swg21661782&aid=2] [/support/docview.wss?uid=swg21661782&aid=2] 
+
+ 
+
+The red boxes above show the modules of the 64-bit and 32-bit versions of the package in the user/lib64 and user/lib directories, respectively. 
+
+If you do not have the 32-bit version of the package, that causes the java.lang.NoClassDefFoundError: sun.font.FontManager error.
+
+
+RESOLVING THE PROBLEM
+Install the 32-bit version of the compat-libstdc++-33-3.2.3-61 package.

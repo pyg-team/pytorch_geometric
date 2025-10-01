@@ -1,0 +1,143 @@
+Title: IBM IV33162: LANGUAGE SPECIFIC CHARACTERS NOT ALLOWED IN NAME AND DESCRIPTION FOR BIRT REPORTS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After adding a report and assigning it name or
+   
+   description containing language specific character
+   an information that no BIRT reports are available
+   was displayed. In error.log you can find:
+   2012-12-10 13:55:09,335  [http-9430-Processor20]  ERROR
+   util.BirtUtil -
+   Could not unmarshal report list
+   javax.xml.bind.UnmarshalException
+    - with linked exception:
+   [org.xml.sax.SAXParseException: Invalid byte 2 of 4-byte UTF-8
+   sequence.
+   ]
+   After the fix such characters will be available.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  remove language specific characters from report.xml file
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  After adding a report and assigning it name or description
+   containing language
+   specific character an information that no BIRT reports are
+   available was
+   displayed. In error.log you can find: 2012-12-10 13:55:09,335
+   [http-9430-Processor20] ERROR util.BirtUtil - Could not
+   unmarshal report list
+   javax.xml.bind.UnmarshalException - with linked exception:
+   [org.xml.sax.SAXParseException: Invalid byte 2 of 4-byte UTF-8
+   sequence. ] After
+   the fix such characters will be available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   | Fix Pack | 7.2.1-TIV-ITADDM-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV33162
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-12-10
+   
+   
+ * CLOSED DATE
+   2013-01-31
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * FIXED COMPONENT ID
+   5724N5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R721 PSY
+   UP

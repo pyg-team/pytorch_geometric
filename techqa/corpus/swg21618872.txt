@@ -1,0 +1,30 @@
+Title: IBM Accessing TIP's Websphere Administration Console directly - United States
+
+Text:
+TIPL2; TIPL2CONF; login; logon; Tivoli Integrated Portal; WAS; Admin; Administration; console TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to connect directly to the Websphere Administration Console without going through the Tivoli Integrated Portal console? 
+
+ANSWER
+Yes. To access the Websphere Administration Console directly, change the port in the TIP login URL to the correct port for the Websphere Administration Console. The correct port can be obtained from the <TIP HOME>/properties/TIPPortDef.properties file. Review the line containing the string "WC_adminhost_secure". For example:
+
+WC_defaulthost_secure=16316
+WC_defaulthost=16310
+WC_adminhost_secure=16311
+WC_adminhost=16315
+BOOTSTRAP_ADDRESS=16312
+SOAP_CONNECTOR_ADDRESS=16313
+SAS_SSL_SERVERAUTH_LISTENER_ADDRESS=16321
+CSIV2_SSL_SERVERAUTH_LISTENER_ADDRESS=16323
+CSIV2_SSL_MUTUALAUTH_LISTENER_ADDRESS=16322
+ORB_LISTENER_ADDRESS=16320
+DCS_UNICAST_ADDRESS=16318
+IPC_CONNECTOR_ADDRESS=16314
+REST_NOTIFICATION_PORT=16324
+
+
+Using the example above, the login URL for the Websphere Administration Console would be: 
+
+
+https://<hostname>:16311/ibm/console/logon.jsp

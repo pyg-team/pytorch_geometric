@@ -1,0 +1,179 @@
+Title: IBM ProvisoInfo Tool will not launch if 32-bit Java using 64-bit Oracle libraries - United States
+
+Text:
+Proviso Info; ProvisoInfo; browser tool; database info tool; pismgr; provisoinfo; provisoinfod; java; jre; 64-bit; 32-bit TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The 'ProvisoInfo Browser' tool will not launch and 'pismgr start' will not start the provisoinfod if 32-bit Java is set up to use 64-bit Oracle libraries 
+
+SYMPTOM
+1. An error like the following is written to console and appears in a pop-up box when you run 'provisoinfo' in an attempt to launch the 'ProvisoInfo Browser' tool 
+
+ * 
+ * 
+ * May be the Server or Registry is stopped
+
+
+2. An error like the following occurs when you try to launch the 'ProvisoInfo daemon' using the 'pismgr' tool:  * 
+ * 
+ * Fri Mar 16 01:51:32 CDT 2012: Starting ProvisoInfo daemon. 
+ * Fri Mar 16 01:52:02 CDT 2012: Error : can't start ProvisoInfo daemon (<DM>/bin/provisoinfod).
+
+
+3. Errors similar to the following may occur when you try to launch the ProvisoInfo daemon manually:  * 
+ * 
+ * (pmgt1k2) bash-3.00$ provisoinfod start 
+   Exception in thread "main" java.lang.UnsatisfiedLinkError: <$ORACLE_HOME>/lib/libocijdbc10.so: ld.so.1: java: fatal: <$ORACLE_HOME>/lib/libocijdbc10.so: wrong ELF class: ELFCLASS64 (Possible cause: architecture word width mismatch) 
+ * 
+ * 
+ * (tnpm1) bash-3.2$ provisoinfod start 
+   Exception in thread "main" java.lang.UnsatisfiedLinkError: ocijdbc10 (No such file or directory) 
+ * 
+ * 
+ * (g37) datamart 12:52:50 [423]$ provisoinfod start 
+   Exception in thread "main" java.lang.UnsatisfiedLinkError: ocijdbc10 (<$ORACLE_HOME>/lib/libocijdbc10.so: wrong ELF class: ELFCLASS64) 
+
+
+
+CAUSE
+ The 'ProvisoInfo Browser' tool requires that the ProvisoInfo daemon be running in order to launch. In order to start the ProvisoInfo daemon, either by running 'pismgr start' or 'provisoinfod start,' you need to be using a supported version of Java, as listed in the Configuration Recommendations Guide [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com.ibm.netcool_pm.doc/Guides/configuration_recommendations_guide/ctnpm_configrecguide_javaruntimeenvironment(jre)-1-57.html]. But you also need to make sure that the Oracle libraries you are using match. 
+
+
+64-bit versions of Java require 64-bit libraries and 32-bit versions of Java require 32-bit versions of Java. IBM's recommendation is that you use 32-bit versions of Java. If your Solaris & Linux LD_LIBRARY_PATH or AIX LIBPATH environment variables do not have $ORACLE_HOME/lib32 listed in them or $ORACLE_HOME/lib is listed before $ORACLE_HOME/lib32, you will encounter the problem listed in this technote.
+
+
+
+DIAGNOSING THE PROBLEM
+1. Source your DataMart environmental file 
+
+ * 
+ * 
+ * 
+ * 
+
+
+2. Run the following sequence of commands and make sure that the version of Java that appears is a version consistent with what is listed in the Configuration Recommendations Guide [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com.ibm.netcool_pm.doc/Guides/configuration_recommendations_guide/ctnpm_configrecguide_javaruntimeenvironment(jre)-1-57.html]:  * $ sh 
+   $ `which java` -version 
+
+
+3. Verify that an $ORACLE_HOME/lib32/libocijdbc10.so file exists on your DataMart machine : 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+4. Check how the Operating System's library path environment variable is set:  * 
+ * 
+ * 
+ *  If you are on Solaris or Linux, and using Korn shell (ksh), Bourne shell (sh), or the Bourne-again shell (bash), verify that lines like the following exist in your dataMart.env file: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  If you are using C Shell (csh) or TENEX C Shell (tcsh), verify that equivalent lines exist in your dataMart.csh.env file. 
+ * 
+ * 
+ * 
+ *  If you are on AIX, and using Korn shell (ksh), Bourne shell (sh), or the Bourne-again shell (bash), verify that lines like the following exist in your dataMart.env file: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  If you are using C Shell (csh) or TENEX C Shell (tcsh), verify that equivalent lines exist in your dataMart.csh.env file. 
+
+RESOLVING THE PROBLEM
+ 
+
+1. If the version of Java that appears is incorrect, take steps to correct this problem. One way to do this quickly is to do the following: 
+
+ * 
+ * 
+ * (B) Identify the directory containing the version of Java provided by the Topology Editor..: 
+   
+ * $ sh 
+   $ find /opt/IBM -name java -type f 2>/dev/null | grep topologyEditor | awk -F'/' '{OFS="/"; NF=NF-1; print}' 
+   /opt/IBM/proviso/topologyEditor/jre/bin 
+ * 
+ * 
+ * 
+ * Example:  * 
+   
+   
+ * 
+ * 
+ * 
+ * $ sh 
+   $ . dataMart.env 
+   
+ * 
+ *  
+   $ `which java` -version 
+   java version "1.5.0" 
+   Java(TM) 2 Runtime Environment, Standard Edition (build pxi32dev-20070511(SR5)) 
+   IBM J9 VM (build 2.3, J2RE 1.5.0 IBM J9 2.3 Linux x86-32 j9vmxi3223-20070426 (JIT enabled) 
+   J9VM - 20070420_12448_lHdSMR 
+   JIT - 20070419_1806_r8 
+   GC - 200704_19) 
+   JCL - 20070511 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+2. If the problem is that the $ORACLE_HOME/lib32/libocijdbc10.so file is missing, take steps to correct whatever is wrong on the Oracle side of your deployment 
+
+3. If $ORACLE_HOME/lib32 is missing from your Operating System's library path environment variable or it appears after $ORACLE_HOME/lib, make a backup copy of your dataMart environmental file, make the appropriate corrections to your dataMart environmental file to resolve the problem, and then re-source your dataMart environmental file 
+
+4. Rerun the 'provisonfo' command and verify that the 'ProvisoInfo Browser' tool now launches

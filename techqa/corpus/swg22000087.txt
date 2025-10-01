@@ -1,0 +1,45 @@
+Title: IBM After upgrading LMT or BFI to version 9.2.6 some confirmed non-PVU bundling decisions may be reverted to defaults - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ In certain circumstances (details below) after IBM License Metric Tool (LMT) or IBM BigFix Inventory (BFI) server upgrade to version 9.2.6, some confirmed bundling decisions may be reverted to default and unconfirmed status. This may have impact on accuracy of license reports.
+
+Fresh LMT and BFI 9.2.6 installations are not affected. 
+
+CONTENT
+Symptom: after upgrading LMT/BFI server from any 9.x version to 9.2.6, some user confirmed bundling relations become 'unconfirmed' and reverted to defaults. These may affect components bundled to metric 'Other' which after upgrade may be assigned to other metric, for example PVU. 
+
+Remediation: 
+
+ * If you did not yet upgrade to version 9.2.6 and you have confirmed component assignments to non-PVU products, please wait for the new product version 9.2.7 to be released in late March 2017. 
+ * If you have already upgraded to version 9.2.6 but see no or few problematic bundling relations and this can be fixed quickly by manually bundling them again to correct products, please go ahead and bundle the affected components again. The detailed list of past bundling decisions can be found in Audit Trail 
+ * If you have already upgraded to version 9.2.6 and number of affected bundling decisions is to big to manually re-define them, please apply the workaround provided in the 'Workaround' section below.
+   
+
+
+The issue has been reported under APAR IV94078 and the official fix will be contained in version 9.2.7 planned for the end of March 2017. The fix will automatically fix all incorrectly modified bundling relations  
+
+Here are the details of the problematic scenario: 
+
+ *  Customer had LMT or BFI server in version 9.x, but older than 9.2.6 Customer has done and confirmed some bundling relations assigning components to product with metric 'Other' (not PVU and not RVU MAPC) Server is upgraded to version 9.2.6 (only this version is affected!) and new data import is run. After that, one sees that number of confirmed bundlings has decreased without any user actions visible in Audit Trail. Confirmed bundling relations to 'Other' license metric are set back to defaults (this may mean bundling to PVU products and so increasing PVU counts) 
+
+Workaround:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 1489082622_iv94078_confirmation_fix.rb [/support/docview.wss?uid=swg22000087&amp;aid=2]1489082622_iv94078_confirmation_fix.rb
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM BigFix Inventory

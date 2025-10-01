@@ -1,0 +1,61 @@
+Title: IBM Potential native memory use in reflection delegating classloaders - United States
+
+Text:
+NOOM; step 2E; step 1D TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A high number of classloaders of type sun/reflect/DelegatingClassLoader, which are used to load sun/reflect/GeneratedMethodAccessor<N> classes, can indicate a potential large native memory footprint. 
+
+SYMPTOM
+The process size for the application server will grow quite large. You might also see OutOfMemoryError’s thrown.
+
+
+CAUSE
+When using Java reflection, the JVM has two methods of accessing the information on the class being reflected. It can use a JNI accessor, or a Java bytecode accessor. If it uses a Java bytecode accessor, then it needs to have its own Java class and classloader (sun/reflect/GeneratedMethodAccessor<N> class and sun/reflect/DelegatingClassLoader). Theses classes and classloaders use native memory. The accessor bytecode can also get JIT compiled, which will increase the native memory use even more. If Java reflection is used frequently, this can add up to a significant amount of native memory use. 
+
+The JVM will use the JNI accessor first, then after some number of accesses on the same class, will change to use the Java bytecode accessor. This is called inflation, when the JVM changes from the JNI accessor to the bytecode accessor. Fortunately, we can control this with a Java property. The sun.reflect.inflationThreshold property tells the JVM what number of times to use the JNI accessor. If it is set to 0, then the JNI accessors are always used. Since the bytecode accessors use more native memory than the JNI ones, if we are seeing a lot of Java reflection, we will want to use the JNI accessors. To do this, we just need to set the inflationThreshold property to zero.
+
+On Solaris and HP-UX we need to set the value to 2147483647 and not 0. The Oracle JVM handles the property differently, and uses the number as a threshold, so 0 would always meet the threshold. We need to use a very high number for the threshold to ensure that no classes are inflated to java and that a JNI accessor is used.
+
+
+DIAGNOSING THE PROBLEM
+If there are a high number of sun/reflect/DelegatingClassLoader classloaders in a javacore or heapdump, you may be seeing this issue.
+
+
+
+RESOLVING THE PROBLEM
+Set the sun.reflect.inflationThreshold Java property to 0 on Windows, Linux or AIX, and to 2147483647 on Solaris or HP-UX. 
+
+
+Windows, Linux or AIX:
+
+
+ 1. Go to the Admin Console 
+    Servers > Application Servers > serverName:
+    
+ 2. In the Server Infrastructure section open Java and Process Management, then select Process Definition:
+    
+ 3. In the Additional Properties select Java Virtual Machine, add the following string to the Generic JVM arguments:
+    -Dsun.reflect.inflationThreshold=0
+    
+ 4. Press OK, and save the configuration.
+    
+    
+
+The application servers will need to be restarted for the settings to take effect. 
+
+
+Solaris or HP-UX 
+ 1. Go to the Admin Console 
+    Servers > Application Servers > serverName:
+    
+ 2. In the Server Infrastructure section open Java and Process Management, then select Process Definition:
+    
+ 3. In the Additional Properties select Java Virtual Machine, add the following string to the Generic JVM arguments:
+    -Dsun.reflect.inflationThreshold=2147483647 
+    
+ 4. Press OK, and save the configuration.
+    
+    
+
+The application servers will need to be restarted for the settings to take effect.

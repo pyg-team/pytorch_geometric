@@ -1,0 +1,65 @@
+Title: IBM Unable to install Statistics on Macintosh due to message indicating a previous installation of SPSS already exists. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am trying to re-install PASW Statistics on a computer with a Macintosh operating system. I am unable to complete the installation process because I am receiving a message indicating that there is already a previous installation of Statistics installed and that it must be removed before a new install can take place. How can I install my Statistics program? 
+
+RESOLVING THE PROBLEM
+This error is caused by a failure to properly uninstall the Statistics product. This case be due to improper uninstallation methods ('trashing' the program) or due to an unexpected error occurring during the automated uninstallation of the product using the uninstaller application for the Statistics program.
+
+These instructions apply *only* under the condition that you do not have any other SPSS products installed.
+
+***
+If you have 'trashed' the SPSS program, but not yet emptied your trash, proceed to (1).
+If you have 'trashed' the SPSS program and emptied your Trash, proceed to (2).
+***
+(1)
+Please perform the following steps:
+'Un-trash' the SPSS program files and folders.
+If you are unable to apply a step, skip to the next one.
+On your Mac desktop, open the hard drive icon. (Typically labeled "Mac Hard Drive".)
+Open the "Applications" icon.
+Open the "SPSSInc" folder.
+Open the folder corresponding to the version of SPSS that was trashed or migrated.
+Open the "_uninstall" folder.
+(There is more than one 'uninstaller' file in the folder, so be sure the customer can see the extensions of their files. If they cannot, see 'Mac - View file extension when not displayed'.) 
+Launch the 'uninstaller.command' file.
+Follow the prompts to uninstall PASW Statistics.
+When the uninstall process is complete, proceed to next steps.
+Close all open windows.
+Proceed to (2).
+***
+(2)
+Please perform the following steps:
+If you are unable to apply a step, skip to the next one.
+On the Macintosh desktop, open the hard drive icon. (Typically labeled "Mac Hard Drive").
+Open the "Users" icon.
+Open the "house" icon with your login name.
+If present, trash the "InstallShield" folder icon.
+Open the "Library" folder icon.
+If present, trash the "initspssmac" icon.
+Open the "Preferences" folder icon.
+If present, trash any entries that begin "com.spss".
+If present, trash any entries that begin with "pasw".
+If present, trash any entries that begin with "spss".
+Close all windows.
+Open the hard drive icon. (Typically labeled "Mac Hard Drive".)
+Open the "Applications" icon.
+If present, delete the "SPSSInc" folder.
+Empty the Trash.
+Restart the computer.
+Install your Statistics product in the manner described in your installation documentation.
+If the error persists, contact IBM SPSS Technical Support.
+
+One other thing that may work if the above has not resolved the problem is to change the folder which Statistics is to be installed, for example ....SPSSInc\Statistics18\ could be changed to ....SPSSInc\PASW Statistics18
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 74554

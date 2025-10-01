@@ -1,0 +1,238 @@
+Title: IBM Documentation corrections for IBM Content Foundation V5.2.1.7 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Check this article for documentation known issues and corrections for the IBM Content Foundation Knowledge Center. 
+
+CONTENT
+Issue:
+
+
+The V5.2.1.7 release includes an installable stand-alone version of the Process Designer application. However, the Knowledge Center does not include information for installing and starting the new stand-alone application. 
+
+Corrections: 
+
+Details for installing and starting the stand-alone Process Designer application can be found in the following technical notice: 
+
+IBM FileNet P8 Case Foundation stand-alone Process Designer application [http://www.ibm.com/support/docview.wss?uid=swg27049480] 
+
+
+
+
+
+
+Issue: 
+
+The topics that describe ports for use with Content Platform Engine do not include the WebSphere Application Server ORB_LISTENER_ADDRESS. This port is necessary when IBM Content Navigator uses EJB over SSL to communicate with Content Platform Engine. 
+
+Correction: 
+
+The WebSphere ORB_LISTENER_ADDRESS port, with a default setting of 9100, should be added to the following topic: 
+
+Content Platform Engine ports [http://www.ibm.com/support/knowledgecenter/en/SSGLW6_5.2.1/com.ibm.p8.planprepare.doc/p8pap058.htm]
+
+
+
+
+
+Issue: 
+
+The documentation does not provide settings for Box integration with client applications. 
+
+Corrections: 
+
+The following topic should be updated to include the attachment type for box integration: 
+
+Attachment template functions [https://www.ibm.com/support/knowledgecenter/SSGLW6_5.2.1/com.ibm.p8.pe.user.doc/bpfe004.htm] 
+
+In Table 2. Parameters and description for VWATTACHMENT_TEMPLATE function and Table 3. Parameters and description for VWATTACHMENT_TEMPLATE_WITH_VERSION function, the list of values in the Description column for ATTACHMENT-TYPE should include the following entry: 
+
+7: indicates BOX document type 
+
+
+
+
+
+
+Issue: 
+
+The following topic provides inaccurate information about enabling asynchronous upgrades: 
+
+Enabling the Asynchronous Processing dispatcher [http://www.ibm.com/support/knowledgecenter/SSGLW6_5.2.1/com.ibm.p8.planprepare.doc/p8pup606.htm] 
+
+The steps to enable the Asynchronous Processing dispatcher apply only to upgrades from 5.1.0 or earlier. 
+
+Corrections: 
+
+All of the text in the topic should be replaced with the following content: 
+
+Procedure 
+
+To enable the Asynchronous Processing dispatcher for a Content Engine server: 
+
+1. Start Enterprise Manager. 
+
+2. Right click the domain root node or the node of the object store to be upgraded, and click Properties. 
+
+3. Click the Asynchronous Processing tab and select Enable Dispatcher. 
+
+
+
+
+
+
+ Issue: 
+
+The following topic requires updated information for WebSphere 9.0.0.x support: 
+
+Setting up a thick client development environment [https://www.ibm.com/support/knowledgecenter/en/SSGLW6_5.2.1/com.ibm.p8.ce.dev.ce.doc/gs_concepts_setup_thick_client.htm] 
+
+Corrections: 
+
+Paths in the examples that are provided might be different for different versions of the WebSphere Application Server client. For example, the JRE for WebSphere Application Server 9.0.0.x is in the following location: 
+
+%WAS_HOME%\AppClient\java\8.0\jre 
+
+For WebSphere Application Server V9.0.0.x, you must add the appropriate jar file to your class path. The files are located in the %WAS_HOME%\AppClient\runtimes directory. 
+
+For the thin client, add the following file: 
+
+com.ibm.ws.ejb.thinclient_9.0.jar 
+
+For the administration client, add the following file: 
+
+com.ibm.ws.admin.client_9.0.jar 
+
+
+
+
+
+
+Issue: 
+
+The following topic is missing some detail in the description of two API return statements: 
+
+Class ContentOperations [https://www.ibm.com/support/knowledgecenter/SSGLW6_5.2.1/com.ibm.p8.pe.dev.java.ceops.doc/filenet/contentops/ContentOperations.html] 
+
+Corrections: 
+
+In the searchForOne and searchForMany API descriptions, the following sentence should be added to the Return statements: 
+
+The search criteria and the search results must be located in the same object store. The object store is specified by the library portion of the input search criteria. 
+
+ 
+
+
+
+
+
+
+Issue: 
+
+The information in this topic is obsolete and should not be used for performance tuning:
+
+Monitoring the user cache [https://www.ibm.com/support/knowledgecenter/SSGLW6_5.2.1/com.ibm.p8.performance.doc/p8ppt069.htm]
+
+Corrections: 
+
+Do not use the information in the topic. 
+
+
+
+
+
+
+Issue: 
+
+The following topic contains inaccurate information:
+
+Workflow system database size limitations [https://www.ibm.com/support/knowledgecenter/SSGLW6_5.2.1/com.ibm.p8.pe.user.doc/bpfcg008.htm] 
+
+Corrections: 
+
+This information replaces the paragraph that follows the table, beginning with the words "The workflow system uses character-based strings.":
+
+The workflow system uses character-based strings. When a multibyte character set such as AL32UTF8 is used, the maximum number of bytes that is listed in the table is not necessarily equivalent to the maximum number of characters. To determine an approximate maximum number of multibyte characters in a string, find the maximum number of bytes that a character can require in the configured character set. Then, divide the maximum number of bytes per column (4000) by the maximum number of bytes per character. For example, if a character set has a maximum of 4 bytes per character, 4000/4 or 1000 characters is the the limit. If your configured character set requires fewer bytes or more bytes for its "worst case" character, you must adjust the above calculation accordingly.
+
+Note that the above calculation should avoid an ORA-24816 exception. Because that exception originates from Oracle, however, it is still possible to encounter the exception. If you receive an ORA-24816 exception during a transfer operation, expose a smaller number of characters of the field. 
+
+
+
+
+
+
+
+Issue: 
+
+The following topic contains multiple formatting problems in code examples:
+
+Process Engine REST service reference [https://www.ibm.com/support/knowledgecenter/SSGLW6_5.2.1/com.ibm.p8.pe.dev.doc/rest/rest_ref.htm]
+
+In this example, the syntax is incorrectly repeated:
+
+The following filter example uses reserved characters, which must be escaped by a backslash (\) character. The filter version key (fv=1) must be appended to the filter. There are two filters in this example. The first filter uses the key salary >=10000 and has a value of 10000. The second filter uses the key directory=\etc\ and has a value of \etc\:
+
+GET http://restHost:8000/myContext/P8BPMREST/p8/bpm/v1/queues/{queue}/workbaskets/{workbasket}/queueelements/?filters="[salary>\=10000=10000,directory\=\\etc\\=\\etc\\]"&fv=1 
+
+
+Correction:
+
+[salary>\=10000=10000,directory\=\\etc\\=\\etc\\] 
+should be 
+[salary>\=10000,directory\=\\etc\\]
+
+
+In this example, an incorrect character displays in place of the accurate terminology:
+
+The previous GET to retrieve the next 50 work items can also be specified to return the work items in descending order. The queryFlags value of 16384 indicates descending sort is enabled:
+
+GET http://restHost:8000/myContext/P8BPMREST/p8/bpm/v1/queues/{queue}/workbaskets/{workbasket}/queueelements?filters=[State=CA,City=Costa Mesa]&pageSize=50&queryFlags=1|+16384ℴBy=State&lastRecord=xxxxx 
+
+
+Correction:
+
+The ℴ character in this example should be replaced by &order.
+
+
+
+
+
+
+
+
+Issue: 
+
+The following topic contains extra information that is not relevant to the content:
+
+IBM Content Navigator assets [https://www.ibm.com/support/knowledgecenter/SSGLW6_5.2.1/com.ibm.p8.common.deploy.doc/p8pdb017.htm]
+
+Correction:
+
+In the "Office templates" Description row, the following first paragraph is not relevant to Office template assets, and should be ignored:
+
+
+ * 
+ * 
+
+
+
+
+
+
+Issue: 
+
+The following topics are missing an important consideration for installations when you are using Microsoft SQL Server:
+
+Microsoft SQL Server database planning [https://www.ibm.com/support/knowledgecenter/SSGLW6_5.2.1/com.ibm.p8.planprepare.doc/p8ppi086.htm]
+
+Installing and configuring Microsoft SQL Server [https://www.ibm.com/support/knowledgecenter/SSGLW6_5.2.1/com.ibm.p8.planprepare.doc/p8ppi021.htm]
+
+Correction:
+
+The following consideration should be added to both of the topics:
+
+Important: The MS SQL Server database connection property XACT_ABORT must be disabled, or the Content Platform Engine fails on the first startup during installation.
+
+To confirm that the XACT_ABORT property is disabled, use the SQL Server Management Studio. Right click on <db instance name> > Property > Connections > Default connection options, and verify that xact abort is unchecked.

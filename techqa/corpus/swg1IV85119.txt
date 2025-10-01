@@ -1,0 +1,152 @@
+Title: IBM IV85119: HOPVIEW DOES NOT SHOW LINK THICKNESS - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.2.0-TIV-NOIHD-Linux-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-NOIHD-Linux-FP0001&source=SAR]
+4.2.0-TIV-ITNMIP-Linux-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-Linux-FP0001&source=SAR]
+4.2.0_README_FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0_README_FP0001&source=SAR]
+4.2.0-TIV-NOIHD-AIX-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-NOIHD-AIX-FP0001&source=SAR]
+4.2.0-TIV-ITNMIP-AIX-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-AIX-FP0001&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After setting up topoviz.properties the network view is showing
+   different link thickness, however the hopview seems to ignore
+   the setting.
+   
+   # Link throughput parameters, specifying the threshold and
+   thickness at the different capacities, up to 5 thresholds are
+   supported
+   topoviz.pipe.1.threshold = 1M
+   topoviz.pipe.1.thickness = 2
+   topoviz.pipe.2.threshold = 10M
+   topoviz.pipe.2.thickness = 5
+   topoviz.pipe.3.threshold = 20M
+   topoviz.pipe.3.thickness = 8
+   topoviz.pipe.4.threshold = 30M
+   topoviz.pipe.4.thickness = 10
+   topoviz.pipe.5.threshold = 1G
+   topoviz.pipe.5.thickness = 20
+   
+   # These properties control the display of link capacities, if
+   set to true line thickness will vary if data exists for the
+   view.
+   topoviz.hopview.showlinkcapacity = true
+   topoviz.networkview.showlinkcapacity = true
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * The APAR occurs on ITNM GUI so is present on all ITNM 4.2    *
+   * supported platforms.                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Setting the following parameters in topoviz.properties       *
+   *                                                              *
+   * topoviz.pipe."*".threshold = 1M                              *
+   * topoviz.pipe."*".thickness = 2                               *
+   *                                                              *
+   * (where "*" is a value 1,2,3,4,5)                             *
+   * has no visual effect on displayed links in the ITNM Network  *
+   * HopView.                                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to                                                   *
+   * | fix pack | 4.2.0-ITNMIP-FP0001                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV85119
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S4500
+   
+   
+ * REPORTED RELEASE
+   420
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-24
+   
+   
+ * CLOSED DATE
+   2016-06-10
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R420 PSY
+   UP

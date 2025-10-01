@@ -1,0 +1,30 @@
+Title: IBM Business Process Framework (BPF) case is not displayed in group inbasket - United States
+
+Text:
+missing; invisible TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A case assigned to a user is not visible in a group inbasket. 
+
+CAUSE
+There is a case sensitive queue filter on the group inbasket and the user name was entered in all capital letters the first time the user logged into BPF. This caused it to be added to the Users table in the BPF metastore in all capitals. As a result, it would not be displayed in the inbasket.
+
+ENVIRONMENT
+BPF 4.1.0
+
+DIAGNOSING THE PROBLEM
+Query the view associated with the inbasket directly using a database administration tool. If the case is found, check to see if there is queue filter on the inbasket.
+
+RESOLVING THE PROBLEM
+Make the queue filter query case insensitive. For example, this query is case sensitive: 
+
+
+
+
+ApproverID='%USERNAME%' 
+
+This query is case insensitive: 
+
+LOWER(ApproverID)=LOWER('%USERNAME%') 
+
+A queue filter with a case insensitive query will return all matching values regardless of case.

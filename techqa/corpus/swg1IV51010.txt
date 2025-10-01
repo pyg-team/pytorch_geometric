@@ -1,0 +1,150 @@
+Title: IBM IV51010: MANAGE SITUATIONS DIALOG ONLY SHOWS STOPPED SITUATIONS - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 3 (6.3.0-TIV-ITM-FP0003) [http://www-01.ibm.com/support/docview.wss?uid=swg24036775]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Manage Situations dialog only shows stopped situations. This
+   happens
+   when the KFW_REPORT_ROW_LIMIT variable is set to a low value,
+   such as 1000.
+   
+   RECREATE INSTRUCTIONS:
+   1) issue the query:
+       KfwSQLClient -e "SELECT SITNAME, LCLTMSTMP, NODE, DELTASTAT,
+       GBLTMSTMP, TYPE, ORIGINNODE, ATOMIZE, FULLNAME FROM
+       O4SRV.ISITSTSH
+       WHERE (GBLTMSTMP > 0)"|wc -l
+   
+       result = 21
+   2) in the TEP -> UNIX LOGS -> Managed Situations -> i can see
+      Started and STOPPED situations
+   
+   3) changed the KFW_REPORT_ROW_LIMIT from 100.000 to 10
+   4) restart the TEPS
+   5) in the TEP -> UNIX LOGS -> Managed Situations -> i can see
+      ONLY STOPPED situations
+   6) changed the KFW_REPORT_ROW_LIMIT back to the default 100.000
+   7) restart the TEPS
+   8) in the TEP -> UNIX LOGS -> Managed Situations -> i can see
+      AGAIN Started and STOPPED situations
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Manage Situations window only shows stopped situations when
+   KFW_REPORT_ROW_LIMIT is set to a low value.
+   
+   
+   The Manage Situations window only shows stopped situations.
+   This happens when the KFW_REPORT_ROW_LIMIT variable is set to a
+   low value.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was changed not to limit the return rows against the
+   query in the Managed Situations window.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   | fix pack | 6.3.0-TIV-ITM-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV51010
+   
+   
+ * REPORTED COMPONENT NAME
+   TEPS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04PS
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-17
+   
+   
+ * CLOSED DATE
+   2013-12-19
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEPS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04PS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

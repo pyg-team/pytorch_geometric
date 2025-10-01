@@ -1,0 +1,130 @@
+Title: IBM JR45795: INDEXOUTOFBOUNDSEXCEPTION FOR BPC EXPLORER "MANAGE VIEWS" IF CUSTOMER HAS STORED QUERIES IN DATABASE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.0.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035701]
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IndexOutOfBoundsException for BPC Explorer "Manage Views" if
+   customer has stored queries in database.
+   
+   If a customer has created stored queries without user-defined
+   properties in his database he will not be able to use the
+   "Manage Views" option in BPC Explorer.
+   A java.lang.IndexOutOfBoundsException is thrown.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No further details available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  All stored queries are checked if they are valid stored queries
+   for BPC Explorer. Invalid stored queries are ignored.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR45795
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-20
+   
+   
+ * CLOSED DATE
+   2015-02-06
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    JR45713 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR45713]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSN
+   UP

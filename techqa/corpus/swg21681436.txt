@@ -1,0 +1,34 @@
+Title: IBM root 以外のユーザーで実行すると mttrapd プローブは起動できません - United States
+
+Text:
+nco_p_mttrapd; SNMP probe; SETUID; nonroot; ldconfig; Japanese; プローブ; 日本語 TECHNOTE (FAQ)
+
+QUESTION
+ SNMP (mttrapd) プローブはルート以外のユーザーでは起動できません 
+
+CAUSE
+プローブはポート 162 へバインドすることができず、ライブラリーエラーが発生します。
+
+ANSWER
+Linux上でルート以外のユーザーでプローブを実行できるように設定するには以下を実施します。 
+
+1) ルートユーザーでログインし、"chown root nco_p_mttrapd" コマンドを使用してプローブのバイナリーファイルの所有者を変更します。
+
+OMNIbus 7.2.1, 7.3.0, 7.3.1 の場合には$NCHOME/omnibus/probes/arch ディレクトリで作業します。
+32ビットプラットフォーム上のOMNIbus 7.4 の場合には$NCHOME/omnibus/platform/arch/probes ディレクトリで作業します。
+64ビットプラットフォーム上のOMNIbus 7.4 の場合には$NCHOME/omnibus/platform/arch/probes64 ディレクトリで作業します。
+
+2) ルートユーザーで上記のディレクトリより "chmod +s nco_p_mttrapd. " コマンドを使用し、"setuid root" としてprobeバイナリーファイルを有効にします。
+
+3) ルートユーザーで /etc/ld.so.conf の最終行に以下を加えます。
+$NCHOME/omnibus/platform/linux2x86/lib 
+$NCHOME/platform/linux2x86/lib 
+
+OMNIbus 7.4 64ビットプラットフォーム上では以下のライブラリーパスも加えます。
+$NCHOME/platform/linux2x86/lib64 
+$NCHOME/omnibus/platform/linux2x86/lib64
+
+4) ルートユーザーで "ldconfig -v" を実行します。
+5) ルートでないユーザーで、 $OMNIHOME/probes ディレクトリよりプローブを実行します。
+
+注： suid root として実行されたプローブは環境変数を無視してしまうので、IBM Tivoli Netcool/OMNIbus がローカルファイルシステムのデフォルトのロケーションにインストールされた場合のみ、この手続きが有効です。

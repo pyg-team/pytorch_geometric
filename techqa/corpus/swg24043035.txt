@@ -1,0 +1,45 @@
+Title: IBM OMEGAMON for JVM on z/OS Fix Pack 1 (5.4.0-TIV-KJJ-FP0001) - United States
+
+Text:
+JJ540 JJ XE OA51359 UA83018 JVM Monitor Data Loss KJJ.JAR DOWNLOADABLE FILES
+
+ABSTRACT
+ 5.4.0-TIV-KJJ-FP0001
+This is a cumulative Fix Pack for IBM OMEGAMON for JVM on z/OS V540 
+
+DOWNLOAD DESCRIPTION
+IBM OMEGAMON for JVM on z/OS V540 Fix Pack 1 consists of the following files 
+
+
+
+
+Fix Pack file name Description 5.4.0-TIV-KJJ-FP0001_README.txt Contains the README for IBM OMEGAMON for JVM on z/OS V540 Fix Pack 1. 5.4.0-TIV-KJJ-FP0001.tar.gz Contains the Fix Pack 1 updates to IBM OMEGAMON for JVM on z/OS V540 application support for TEMS, TEPS, and TEP deployed on the AIX, Linux, HP-UX, and Solaris platforms. 5.4.0-TIV-KJJ-FP0001.zip Contains the Fix Pack 1 updates to IBM OMEGAMON for JVM on z/OS V540 application support for TEMS, TEPS, and TEP deployed on Windows platforms. 
+The following PTF supplies the corresponding z/OS catalog and attribute files and can be ordered via ShopzSeries: 
+
+UA83018 - Contains Self-Describing agent data updates PREREQUISITES
+
+1. This Fix Pack requires IBM Tivoli Monitoring Version 6.3.0 FP6 or higher for IBM OMEGAMON for JVM on z/OS V540.
+2. This Fix Pack requires z/OS PTF UA83018 to be installed.
+
+INSTALLATION INSTRUCTIONS
+
+Please consult the readme file 5.4.0-TIV-KJJ-FP0001-README.txt (download below via Fix Central) for detailed installation instructions.
+
+DOWNLOAD PACKAGE
+
+Fix Central is a new way to acquire fixes and it is the only download option.
+You will need to use an IBM registered ID to acquire the files; this allows us to update you on any critical issues with the fix. Privacy is always maintained.
+Fix Central will offer three choices:
+- Download using Download Director.
+- Download using bulk FTP.
+- Download using your browser (HTTP) which will allow you to download files individually
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 5.4.0-TIV-KJJ-FP0001 on Fix Central 11 Nov 2016 US English 66537000 FC [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%2FTivoli&product=ibm/Tivoli/Tivoli+OMEGAMON+XE+on+zOS+Monitoring+Feature+for+JVM&release=5.4.0&platform=All&function=all] [ ] 
+PRODUCT ALIAS/SYNONYM
+ JJ540 JJ XE 
+
+ [/support/docview.wss?uid=swg24043035&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24043035&aid=2]Problems (APARS) fixed
+OA51359

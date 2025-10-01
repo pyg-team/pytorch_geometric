@@ -1,0 +1,42 @@
+Title: IBM How to enable single slice optimization in the Netezza Platform Software releases - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The single slice optimization feature is disabled by default in some NPS releases. Review this topic to learn how to enable the feature if your queries could benefit from it. 
+
+CAUSE
+Starting with the June 2015 fix pack for NPS 7.2.0.5 and in NPS 7.2.1, single slice optimization is disabled by default because it was optimized for specific workloads. Starting in the March 2016 fix packs 7.2.0.8 and 7.2.1.2, the feature is enabled by default because it is optimized for most workloads. With November 2016 Patches 7.2.0.9-P2 and 7.2.1.3-P2, the feature single slice optimization is disabled by default.
+
+ENVIRONMENT
+Netezza Platform Software releases 7.2.0.5 through 7.2.0.7-P1 
+
+Netezza Platform Software releases 7.2.1 through 7.2.1.1-P1
+Netezza Platform Software releases 7.2.0.9-P2 and later
+Netezza Platform Software releases 7.2.1.3-P2 and later
+
+
+DIAGNOSING THE PROBLEM
+Systems that take advantage of single slice optimization could have less query throughput for certain types of shorter queries after upgrades from any 7.2 release to a release listed in the Environment section.
+
+
+
+RESOLVING THE PROBLEM
+Single slice optimization is a query optimization feature added in NPS release 7.2 that can improve the throughput of small queries like row delete operations that typically operate on just one dataslice of a table. The feature was enabled by default for 7.2 releases up to 7.2.0.5. 
+
+
+By focusing on the specific dataslices and SPUs that "own" the rows that match the query restrictions, and bypassing dataslices that are not involved in the query, the system can increase query throughput. 
+
+If you upgrade to one of the releases listed in the Environment section from an earlier 7.2 release and detect a change in query performance for queries that take advantage of the single slice optimization, you can re-enable the feature by setting the database variable enable_dataslice_filter=true in the postgresql.conf file.
+
+
+ 1. Log in to the Netezza system as the nz user account.
+    
+ 2. With any text editor, open the /nz/data/postgresql.conf file. Use caution when you edit postgresql.conf. It contains important configuration parameters for the Netezza system operation.
+    
+ 3. Look for an enable_dataslice_filter definition in the file to make sure that one is not already present and/or commented out. If you find an entry, make sure that enable_dataslice_filter=true and that it is not commented out. If you cannot find an entry, add enable_dataslice_filter=true to the file. 
+    
+ 4. Save and close the postgresql.conf file.
+    
+ 5. Stop and restart the NPS software using the nzstop and then the nzstart command.

@@ -1,0 +1,176 @@
+Title: IBM PI69688: ORACLE TRIGGERING ISSUE ('ONE OR MORE INPUTS WAS INVALID') WHEN THE LAUNCHER IS UNDER HEAVY LOAD (MULTITHREADED) - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the Launcher is triggering from an Oracle database in a
+   multi-threaded environment, it may be observed that sometimes
+   the connections get crossed in certain threads, and incorrect
+   information is retrieved from the database.
+   
+   Sending this information to child maps via the RUN() function,
+   then highlights the issue as they fail with a 'one or more
+   inputs was invalid' error message.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  TXRTC - 59212
+   PB / PB
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   IBM Transformation Extender customs who use Oracle adapter
+   triggering and the burst mode
+   
+   Problem Description:
+   If the input map triggers using Oracle database adapter and it
+   uses burst mode and there are other cards or RUN maps using the
+   same database, a connection sharing maybe invalid resulting with
+   unexpected data to be returned from the database.
+   
+   Platforms Affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Correct connection sharing logic in the Oracle adapter is fixed.
+    The connection will not be shared if it is used for bursting on
+    the input side.
+   
+   Applies to:
+   8.3.0.7, 8.4.0.5, 8.4.1.4, 9.0.0.1
+   
+   Fixed in the next service packs and releases.
+   
+   To obtain the fix for this APAR:
+   
+   To see if the next service pack or product release is available,
+   check the IBM Transformation Extender Downloads page:
+   http://www.ibm.com/support/entry/portal/product/other_software/t [http://www.ibm.com/support/entry/portal/product/other_software/t]
+   ransformation_extender
+   
+   If the service pack or product release is available, download it
+   from Fix Central:
+   http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   
+   If the service pack or product release is not available and you
+   require the APAR fix immediately, request a Limited Availability
+   Interim Fix (LAIF) by opening a PMR:
+   http://www.ibm.com/support/servicerequest/Home.action [http://www.ibm.com/support/servicerequest/Home.action]
+   
+   Prior to version 9.0.0, IBM Transformation Extender was called
+   IBM WebSphere Transformation Extender.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI69688
+   
+   
+ * REPORTED COMPONENT NAME
+   ITX LAUNCHER
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4011
+   
+   
+ * REPORTED RELEASE
+   841
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-26
+   
+   
+ * CLOSED DATE
+   2016-10-28
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITX LAUNCHER
+   
+   
+ * FIXED COMPONENT ID
+   5724M4011
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R840 PSY
+   UP
+   
+   
+ * R841 PSY
+   UP
+   
+   
+ * R900 PSY
+   UP

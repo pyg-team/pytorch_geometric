@@ -1,0 +1,39 @@
+Title: IBM Using LDAPSYNC instead of VMMSYNC for Synchronization - Active Directory Only - United States
+
+Text:
+TPAELDAP; TPAELDAPSYNC; Security; authentication; LDAP; login; sign on; authenticate; Active Directory Server; Microsoft; Troubleshooting; LDAPSYNC; VMMSYNC; WebSphere TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Maximo 7 installer defaults to using the VMMSYNC cron task to synchronize users from WebSphere to Maximo when WebSphere is used. Active Directory does not require the WebSphere LDAP interface component and can use the direct LDAPSYNC instead 
+
+SYMPTOM
+Problems synchronizing users from Active Directory to Maximo using VMMSYNC
+
+
+CAUSE
+Limited documentation on LDAPSYNC with WebSphere
+
+RESOLVING THE PROBLEM
+LDAPSYNC only works with Microsoft Active Directory. While it can be extended to work with other directory servers (such as IBM Security Directory Server [http://www.ibm.com/support/knowledgecenter/SSVJJU]) but this requires a professional services engagement. 
+
+History 
+
+When Maximo 6 was released, the LDAPSYNC process was developed to copy user data from the Active Directory LDAP server to the Maximo table structures and enable authentication to Maximo. This tool communicates directly with the Active Directory and uses straight Active Directory queries and filters to find data to be copied. 
+
+Current Version 
+
+Maximo 7 expands on LDAP compatibility by leveraging existing technology in WebSphere to communicate with LDAP servers. By using the WebSphere tools, the LDAP data is essentially normalized to a single format regardless of the LDAP server it is connected to. 
+
+The VMMSYNC cron task is designed to synchronize users by communicating with the normalized WebSphere directory. To do this, queries and filters that would normally work for Active Directory must be modified to use the WebSphere structure. The VMMSYNC process introduces a new layer of technology and complexity to the synchronization process since now both WebSphere and VMMSYNC must be configured to map the data correctly. 
+
+If Active Directory is the LDAP server that will be used with Maximo 7, administrators can disable the VMMSYNC cron task and enable the LDAPSYNC cron task. The LDAPSYNC cron task will communicate directly with Active Directory in the same way as before.
+
+RELATED INFORMATION
+ VMMSYNC - Maximo 7.5 [http://www.ibm.com/support/knowledgecenter/en/SSLKT6_7.5.0.5/com.ibm.mam.inswas.doc/install/t_ccmdb_manconfigfoundinst.html]
+VMMSYNC - Maximo 7.6 [http://www.ibm.com/support/knowledgecenter/en/SSLKT6_7.6.0/com.ibm.mbs.doc/securgroup/t_config_vmmsync_users_groups.html]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management for IT All Systems and Asset Management Maximo Asset Management Essentials All Systems and Asset Management Tivoli Change and Configuration Management Database Systems and Asset Management Tivoli Service Request Manager

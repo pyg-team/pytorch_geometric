@@ -1,0 +1,90 @@
+Title: IBM Security Bulletin:  Multiple vulnerabilities in IBM Java SDK and IBM Java Runtime affect IBM Web Experience Factory - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There are multiple vulnerabilities in IBM® SDK Java™ Technology Edition, Version 6 and IBM® Runtime Environment Java™ Version 6 used by IBM Web Experience Factory. These issues were disclosed as part of the IBM Java SDK updates in Jul 2017. 
+
+VULNERABILITY DETAILS
+If you run your own Java code using the IBM Java Runtime delivered with this product, you should evaluate your code to determine whether the complete list of vulnerabilities are applicable to your code. For a complete list of vulnerabilities please refer to the link for “IBM Java SDK Security Bulletin" located in the “References” section for more information. 
+
+CVEID: CVE-2017-10116 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10116]
+DESCRIPTION: An unspecified vulnerability related to the Java SE Security component could allow an unauthenticated attacker to take control of the system.
+CVSS Base Score: 8.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/128877 [https://exchange.xforce.ibmcloud.com/vulnerabilities/128877] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:R/S:C/C:H/I:H/A:H) 
+
+CVEID: CVE-2017-10115 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10115]
+DESCRIPTION: An unspecified vulnerability related to the Java SE JCE component could allow an unauthenticated attacker to obtain sensitive information resulting in a high confidentiality impact using unknown attack vectors.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/128876 [https://exchange.xforce.ibmcloud.com/vulnerabilities/128876] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N) 
+
+CVEID: CVE-2017-10067 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10067]
+DESCRIPTION: An unspecified vulnerability related to the Java SE Security component could allow an unauthenticated attacker to take control of the system.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/128831 [https://exchange.xforce.ibmcloud.com/vulnerabilities/128831] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:H) 
+
+CVEID: CVE-2017-10243 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10243]
+DESCRIPTION: Microsoft Office software could allow a remote attacker to execute arbitrary code on the system, caused by improper handling of objects in memory. By persuading a victim to open specially-crafted content, an attacker could exploit this vulnerability to execute arbitrary code on the system with privileges of the victim.
+CVSS Base Score: 7.8
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/125293 [https://exchange.xforce.ibmcloud.com/vulnerabilities/125293] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H) 
+
+CVEID: CVE-2017-10109 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10109]
+DESCRIPTION: An unspecified vulnerability related to the Java SE Serialization component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/128870 [https://exchange.xforce.ibmcloud.com/vulnerabilities/128870] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2017-10108 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10108]
+DESCRIPTION: An unspecified vulnerability related to the Java SE Serialization component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/128869 [https://exchange.xforce.ibmcloud.com/vulnerabilities/128869] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2017-10053 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10053]
+DESCRIPTION: An unspecified vulnerability related to the Java SE 2D component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/128822 [https://exchange.xforce.ibmcloud.com/vulnerabilities/128822] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Web Experience Factory 8.0
+
+
+IBM Web Experience Factory 8.5
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix IBM Web Experience Factory (Windows) 8.0 LO92930 Download fix here [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FWeb+Experience+Factory&fixids=LO92930_WEF80&source=SAR] IBM Web Experience Factory (Linux) 8.0 LO92931 Download fix here [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FWeb+Experience+Factory&fixids=LO92931_WEF80&source=SAR] IBM Web Experience Factory (Windows) 8.5 LO92932 Download fix here [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FWeb+Experience+Factory&fixids=LO92932_WEF85&source=SAR] IBM Web Experience Factory (Linux) 8.5 LO92933 Download fix here [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FWeb+Experience+Factory&fixids=LO92933_WEF85&source=SAR] WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 27 Sep 2017 - Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,138 @@
+Title: IBM RS01921: Monitoring filter option INFO_EXECUTION_OUTPUT not available in RES console GUI - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Operational Decision Manager V8.7.1 Download Document [http://www-01.ibm.com/support/docview.wss?uid=swg24039330]
+Operational Decision Manager V8.7.1 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24040019]
+Operational Decision Manager V8.7.1.1 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24040633]
+Operational Decision Manager V8.6.0.3 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24041321]
+Operational Decison Manager z/OS 8.6.0.3 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24042642]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A DW filter for execution output is not available in the RES
+   Console. There is no GUI option for it, unlike for other
+   filters.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  In RES console, ruleset view, editing monitoring.filters, add
+   INFO_EXECUTION_OUTPUT=true, and save it.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The code to manage the output filter for decision warehouse
+   trace is not implemented
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  the code is added.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS01921
+   
+   
+ * REPORTED COMPONENT NAME
+   WS ILOG JRULES
+   
+   
+ * REPORTED COMPONENT ID
+   5724X9800
+   
+   
+ * REPORTED RELEASE
+   870
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-03
+   
+   
+ * CLOSED DATE
+   2015-03-23
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * FIXED COMPONENT ID
+   5725B6903
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R870 PSY
+   UP

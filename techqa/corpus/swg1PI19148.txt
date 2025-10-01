@@ -1,0 +1,171 @@
+Title: IBM PI19148: FM/DB2 EDITOR CAN CAUSE CONTENTION ISSUES IN PRODUCTION ENVIRONMENTS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Enhance the FM/DB2 editor to minimize DB2 locking by provision
+   of new options in the FMN2POPT option's module.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of File Manager DB2 component.     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: File Manager DB2 component does not     *
+   *                      have a set of options that minimize the *
+   *                      potential for contention in production  *
+   *                      environments.                           *
+   ****************************************************************
+   * RECOMMENDATION: Apply the provided PTF.                      *
+   ****************************************************************
+   The File Manager DB2 editor includes a number of options, for
+   which certain settings can cause contention in production
+   environments.
+   This enhancement APAR provides a new installation setting
+   prevents the use of key problematic option settings by users of
+   of the File Manager DB2 editor.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Enhancement APAR.  File Manager DB2 component has been updated
+   to provide a new FMN2SSDM parameter (PROD_EDIT).
+   -------------------------------------------------------
+   Publication Closing Code: DEVCHNG
+   For the documentation changes associated with this APAR,
+   please refer to:
+   ftp://public.dhe.ibm.com/software/websphere/awdtools/
+       filemanager/fmv13apar.pdf
+   
+   The changes are to the following publications:
+   
+   PUB ID        PUB NAME
+   ------------  ----------------------------------------
+   
+   SC19-4118-01 File Manager for z/OS V13R1 Customization
+                 Guide
+   
+   The latest published manuals can be found at:
+   http://www.ibm.com/software/awdtools/filemanager/library/ [http://www.ibm.com/software/awdtools/filemanager/library/]
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI19148
+   
+   
+ * REPORTED COMPONENT NAME
+   FILE MANAGER Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5655Q1200
+   
+   
+ * REPORTED RELEASE
+   D12
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-06-02
+   
+   
+ * CLOSED DATE
+   2015-02-17
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     FMN2LVL  FMN2LVLJ FMN2LVLK
+   
+   
+    
+   
+   
+
+Publications Referenced SC19411801 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   FILE MANAGER Z/
+   
+   
+ * FIXED COMPONENT ID
+   5655Q1200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RD1B PSY UI25244 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI25244]
+   UP15/02/25 P F502
+   
+   
+ * RD12 PSY UI25246 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI25246]
+   UP15/02/25 P F502
+   
+   
+ * RD13 PSY UI25247 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI25247]
+   UP15/02/25 P F502
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

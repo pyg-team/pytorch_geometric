@@ -1,0 +1,97 @@
+Title: IBM The Go To Production process failed. Unable to update the package. make sure you have the permissions required, See the log file for details. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error message displayed after running a Go To Production (GTP) 
+
+SYMPTOM
+On Screen: 
+
+The Go To Production process failed.
+
+Unable to update the package. make sure you have the permissions required, See the log file for details.
+
+NOTE: The first part of this error message is not in fact correct. When this message is seen the Go To Production process itself has actually succeeded, and only the creation or update of the Planning Package in Cognos Connection has failed.
+
+
+CAUSE
+1. The user who ran the Go To Production (GTP) does not have permissions to write to the target folder in Cognos Connection
+2. GTP was previously run by a user who was not a member of the 'Planning Rights Administrators' role 3. The 'Planning Rights Administrators' role had insufficient capabilities to grant access to the Package to itself at the time of the previous GTP
+4. The rights list within the application has invalid entries due to security changes
+
+
+DIAGNOSING THE PROBLEM
+Log in to Cognos Connection as a System or Directory Administrator. Navigate to the target folder in which the Planning Package should have been created. 
+
+ 
+
+If no Planning Package is present, see solution 1 (below). 
+
+ 
+
+If there is a Package in the target folder for the affected application, to the right hand side of the Planning Package, select 'Properties'. 
+
+ 
+
+On the 'General' tab, the Owner of the package will be shown. This is (by default) the user who created the package. If this user is NOT a member of the 'Planning Rights Administrators' role, see solution 2 (below). 
+
+ 
+
+If the user is a member of the 'Planning Rights Administrators' role, but 'Planning Rights Administrators' does not appear in the 'Permissions' tab, see solution 3 (below).
+
+
+RESOLVING THE PROBLEM
+1) Ensure that the 'Planning Rights Administrators' role has sufficient permissions to create a Planning Package in the target folder: 
+
+i) The target folder is the folder specified in Contributor Administration Console (CAC), in the Development>Application Maintenance>Go To Production options screen. 
+
+ii) Navigate to this folder in Cognos Connection, click the 'Folder properties' button at the top right-hand side of the page, and select the 'Permissions' tab 
+
+iii) Ensure that the 'Planning Rights Administrators' role has at least 'Write' and 'Set policy' permissions in this folder. 
+
+iv) For each folder above the target folder in the hierarchy, up to and including the 'Public Folders' folder, ensure that the 'Planning Rights Administrators' role has at least 'Traverse' permissions. 
+
+ 
+
+2) Only run a GTP with 'Create Planning Package' selected under a user account that is a member of the 'Planning Rights Administrators' role: 
+
+i) Delete the Planning Package that was created under a user account that was NOT a member of the 'Planning Rights Administrators' role, by selecting the check-box to the left of the Package, and clicking the delete button at the top right-hand side of the page. 
+
+ii) Re-run the GTP under a user account that is a member of the 'Planning Rights Administrators' role, ensuring that the 'Create Planning package' check-box is selected in the GTP wizard or macro. 
+
+iii) Ensure that any users with GTP access to the application are either added to the 'Planning Rights Administrators' role, or that they un-check the 'Create planning package' check-box when running a GTP in the future. 
+
+ 
+
+3) Grant the 'Set policy' permission to the 'Planning Administrators' capability. (NB By default, this capability has only 'Execute' and 'Traverse' permissions):
+i) Log in to Cognos Connection as a member of the 'System Administrators' role.
+ii) Navigate to Cognos Administration.
+iii) Select the 'Security' tab.
+iv) Select 'Capabilities' in the left-hand sidebar.
+v) Click on the 'Administration' link.
+vi) Click the drop down arrow next to 'Planning Administration', and select 'Set properties'.
+vii) Click the 'Permissions' tab. By default, the 'Planning Rights Administrators' role should have 'Execute' and 'Traverse' permissions on this page.
+viii) Click the check-box to the left of 'Planning Rights Administrators', then click the check-box in the 'Grant' column to grant the 'Set policy' permission, in addition to the existing 'Execute' and 'Traverse' permissions.
+ix) Click 'OK' to save the changes.
+x) Delete the Planning Package.
+xi) Re-run the GTP under a user account that is a member of the 'Planning Rights Administrators' role, ensuring that the 'Create Planning package' check-box is selected in the GTP wizard or macro.
+
+4. Validate the rights within the application in Contributor Administration Console
+i) Navigate to Application -> Development -> Elist and Rights -> Rights
+ii) Export out all your rights as a backup
+iii) Click the 'Validate' button
+iv) Update any invalid 
+v) Re-run the GTP
+
+5. Export the Rights - Delete the Rights - Import the Rights.
+i) In the Rights section of the application, export the current Rights to a txt file for backup purposes
+ii) In the Rights section of the application, highlight and delete all the Rights and save.
+iii)In the Rights section of the application, Import the the rights from the txt file, which was exported in Step i
+iv) GTP the application
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Planning Contributor Windows 8.3, 8.4

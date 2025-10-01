@@ -1,0 +1,24 @@
+Title: IBM A DB2 LUW Online Backup may fail with SQL2428N error - United States
+
+Text:
+backup; online backup; include logs; SQL2428N; retrieve TECHNOTE (FAQ)
+
+QUESTION
+ Why does a DB2 LUW Online Backup fail with SQL2428N error?
+
+SQL2428N - The BACKUP did not complete because one or more of the requested log files could not be retrieved 
+
+CAUSE
+With Online Backup Include Logs, DB2 needs to include the log files that were active from when the Online Backup started to the log file that contains the Online Backup End Record. With the Online Backup running for a long time, it is possible the log file that was active when the Online Backup started has been archived and is also no longer active and so renamed or deleted from the active log path.
+When DB2 tries to copy the log file from when the Online backup started since it is no longer in the active path, it will try to retrieve it from the archive location. If for any reason if the log has been deleted or moved out of the archive path, then Online Backup may fail with SQL2428N due to not able to copy the requested log.
+
+Please Note: With LOGARCHMETH, DB2 controls archiving from active log directory to archive log directory. DB2 does not perform any log management in the archive location itself: i.e. renaming, copying or moving logs elsewhere. It is okay for the logs needed by Online Backup to be archived from active log path to archive location. DB2 will retrieve it if needed by Online Backup. Intent of this document is to clarify, that there is a possibility that a user may delete logs from archive location that may still be needed by Online Backup include logs if they have been running for a very long time and the user has a very aggressive archive location cleanup strategy. 
+
+
+
+ANSWER
+Make sure all logs from the start of the Online backup are available in the archive location and are not being deleted or moved out. 
+
+RELATED INFORMATION
+ BACKUP [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.admin.cmd.doc/doc/r0001933.html]
+BACKUP INCLUDE LOGS [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.admin.ha.doc/doc/c0011559.html]

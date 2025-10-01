@@ -1,0 +1,16 @@
+Title: IBM Can I install multiple XMETA databases on the same Oracle installation? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Can I install 2 or more XMETA metadata repository databases for different IBM InfoSphere Information Server versions on the same Oracle installation? 
+
+ANSWER
+In theory you should be able to change the XMETA metadata repository creation script (provided with IBM Information Server installation files) to install each XMETA database under a different Schema/User so that everything is created with its own Schema/User and they are completely separate from each other. 
+
+Note this will have performance implications if both XMETA databases are being used simultaneously.
+
+Also this particular scenario has not been officially tested by the IBM Development team so the co-located XMETA databases will not be officially supported.
+
+If you do attempt this we recommend you have a good back up of the first Oracle database before you create the second in the new schema.

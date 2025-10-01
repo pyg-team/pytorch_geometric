@@ -1,0 +1,42 @@
+Title: IBM Installing IBM Business Process Manager V8.5.7 fails with Java error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you install IBM Business Process Manager (BPM) version 8.5.7 using the Typical Installation option from the launchpad, the installation works until about 44% completion and then fails to configure the deployment manager or create the deployment manager profile. 
+
+SYMPTOM
+You see the following error message:
+Configuring the deployment manager.
+Creating the deployment manager profile.
+The following validation errors were present with the command line arguments:
+profileName: CWMCF8510E: You cannot augment a profile with Business Process Manager when the active Java version is 1.7. Use the managesdk command to switch to a supported Java version: [1.8].
+CWMCB0003E: A profile was not created for DmgrProfile.
+The 'BPMConfig.bat -create -de C:\Users\ADMINI˜1\AppData\Local\Temp\2\IBM_LaunchPad_BPM\IBM_LaunchPad_BPM202808-063710\SingleCluster.properties' command failed. For more information, see the log file C:\IBM\BPM\v8.5\logs\config\BPMConfig_20171108-072310.log. 
+
+
+CAUSE
+In the 8.5.7 launchpad, by default, Use your support account to include updates with the installation is selected on the Installation Summary page. When you enter your user name and password, the latest updates are loaded automatically and your IBM BPM installation is updated to V8.6, which requires Java 8.
+
+RESOLVING THE PROBLEM
+To avoid this problem, make sure that the Use your support account to include updates with the installation check box on the Installation Summary page is not checked.
+
+
+If you have installed and found this problem, you have two options: 
+
+ 1. To revert to V8.5.7:  1. Uninstall IBM BPM using the Installation Manager. 
+     2. Run the installation again making sure that the Use your support account to include updates with the installation check box on the Installation Summary page is not checked.
+    
+    
+ 2. To stay on V8.6:  1. Download and install a separate IBM JDK version 8. 
+     2. Switch your runtime JDK to version 8, following the instructions in Switching the edition of Java used in IBM BPM [https://www.ibm.com/support/knowledgecenter/SSFPJS_8.6.0/com.ibm.wbpm.imuc.doc/topics/tswitchjavaversion.html]. 
+     3. Create your deployment environment using the BPMConfig command [https://www.ibm.com/support/knowledgecenter/SSFPJS_8.6.0/com.ibm.wbpm.ref.doc/topics/rbpmconfig.html].
+    
+    
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Installation / Configuration AIX, Linux, Windows 8.5.7 Business Integration IBM Business Process Manager Express Installation / Configuration Linux, Windows 8.5.7 
+PRODUCT ALIAS/SYNONYM
+ IBM BPM

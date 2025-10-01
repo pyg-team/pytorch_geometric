@@ -1,0 +1,184 @@
+Title: IBM HD97530: CLASH RESULT IS NOT IMPORTED CORRECTLY USING A MACRO TO IMPORT C LASH RESULTS SAVED IN XML FORMAT - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ABSTRACT:
+   Clash result is not imported correctly Using a Macro to
+   Import Clash Results Saved in XML Format
+   SCENARIO:
+   1. Start CATIA.
+   2. Open the CATProduct.
+   3. Go to 'DMU Space Analysis' workbench.
+   4. Run 'Clash' command.
+   5. Select 'Apply' and then 'Export As'.
+   6. Select OK when the export process has finished. Now, the
+   interference node is added on the Application node. And the
+   XML format report is created as well in the chosen location.
+   As can be seen, the interference result has information of
+   the clash dimension.
+   (Now remove clash result from Product and Import/Read clash
+   result into Product)
+   7. Remove Interference.1 from the tree. Now the clash result
+   has been deleted.
+   8. Close the product and save.
+   9. Reopen the the CATProduct.
+   10. Open SpaceAnalysis.CATScript and modify the script for
+   the correct pathname (Script is used to create a Macro to
+   Import Clash Results Saved in XML Format).
+   11. After correcting the path of filename, run the script.
+   RESULT:
+   Now, the product has Interference Results.1 added into
+   Application node. But it doesn't have the clash result
+   dimension detail.
+   EXPECTED RESULT:
+   Clash result should be imported correctly Using a Macro.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  empty
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ABSTRACT:
+   Clash result is not imported correctly Using a Macro to
+   Import Clash Results Saved in XML Format
+   SCENARIO:
+   1. Start CATIA.
+   2. Open the CATProduct.
+   3. Go to 'DMU Space Analysis' workbench.
+   4. Run 'Clash' command.
+   5. Select 'Apply' and then 'Export As'.
+   6. Select OK when the export process has finished. Now, the
+   interference node is added on the Application node. And the
+   XML format report is created as well in the chosen location.
+   As can be seen, the interference result has information of
+   the clash dimension.
+   (Now remove clash result from Product and Import/Read clash
+   result into Product)
+   7. Remove Interference.1 from the tree. Now the clash result
+   has been deleted.
+   8. Close the product and save.
+   9. Reopen the the CATProduct.
+   10. Open SpaceAnalysis.CATScript and modify the script for
+   the correct pathname (Script is used to create a Macro to
+   Import Clash Results Saved in XML Format).
+   11. After correcting the path of filename, run the script.
+   RESULT:
+   Now, the product has Interference Results.1 added into
+   Application node. But it doesn't have the clash result
+   dimension detail.
+   EXPECTED RESULT:
+   Clash result should be imported correctly Using a Macro.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS MODIFICATION WILL BE INCLUDED IN THE DOCUMENTATION
+   DELIVERED WITH CATIA VERSION V5R21GA
+   NOTE THAT DOCUMENTATION WILL ALSO BE INCLUDED IN  V5R20 SP4.
+   Additional Closure Information:
+   Incident Diagnosis:
+   Clash result is not imported correctly Using a Macro to
+   Import Clash Results Saved in XML Format
+   Documentation Modification:
+   New updation will be available in the following path
+   DMU Space Analysis > User Tasks > Using a Macro to Import
+   Clash Results Saved in XML Format
+   It has been updated as
+   If the Federated XML Output option is selected in DMU
+   Clash-Process setting page, the xml file to be imported is
+   the temlFile.xml generated in the CATTemp folder in the
+   directory where the clash result is exported.
+   If the Federated XML Output option is cleared, the xml file
+   to be imported is the one generated in the directory where
+   the clash report is exported.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD97530
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-18
+   
+   
+ * CLOSED DATE
+   2010-06-28
+   
+   
+ * LAST MODIFIED DATE
+   2010-08-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

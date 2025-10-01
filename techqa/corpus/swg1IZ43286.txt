@@ -1,0 +1,293 @@
+Title: IBM IZ43286: PROBE DOCUMENTATION FOR METRICA PROBE (FIFO Probe> - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Pasted below L3 mail refrence for the Doc APAR...
+   
+   
+   Customer used old version of metrica probe with Omnibus 7.0 on
+   Solaris 8
+   He will upgrade his system to Solaris 10 and Netcool Omnibus
+   7.2.1 and
+   is request a version of Metrica probe that will work for his new
+   system.
+   Netcool Omnibus 7.2.x use Sybase 15 but old versions of probes
+   use
+   Sybase 12 and they are not compatible.
+   
+   In order to resolve this issue we rebuilt the probe and provided
+   the patch as a concessions to the customer.
+   In order to GA it, Rajesh advised on releasing as part of the
+   flex removal project but as Anand confirms that it was not
+   tested from past 3 years that indicates that after the bluewash
+   it was never tested.
+   
+   So, now we should have a GA test cycle planned to release this
+   probe as we cannot release this as part of the flex project as
+   it was never tested.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No Local Fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of the Probe for Metrica.
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The IBM Tivoli Netcool/OMNIbus Probe for Metrica Reference Guide
+   is not updated to include latest changes.
+   ****************************************************************
+   RECOMMENDATION:
+   The product documenation will be updated with the next release
+   of the probe.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Following details will be added to the IBM Tivoli
+   Netcool/OMNIbus Probe for Metrica Reference Guide:
+   
+   1. Support of the probe for Solaris 10, Sybase 15, and Netcool
+   Omnibus 7.2.1.
+   
+   2. Properties and Command Line Options
+   ===================================
+   
+   FifoName string,default: /tmp/probefifo
+   The path and name of the FIFO.
+   Commandline option: -fifo string
+   
+   Host string, default: localhost
+   This property specifies the name of the host to connect to.
+   Commandline option: -host string
+   
+   Port string, default: 0
+   The port number to connect to. This is only required when
+   reading events from a socket.
+   Commandline option: -port string
+   
+   ReadFifo boolean , default: 0
+   Specifies whether or not to read from the FIFO.
+   1 - Use the FIFO.
+   0 - Read events from the socket. This is the default.
+   Commandline option: -readfifo Boolean
+   
+   StreamCapture boolean,default: 0
+   Specifies whether or not to use stream capture.
+   1 - Use stream capture.
+   0 - Do not use stream capture.
+   Commandline option: -streamcapture boolean
+   
+   StreamCaptureFilename string, default:
+   $OMNIHOME/var/metrica.stream
+   The filename to use for stream capture.
+   Commandline option: -streamcapturefilename <filename as string>
+   
+   Timeout integer, default: 180
+   The number of seconds probe waits for an event before
+   disconnecting.
+   Commandline option: -timeout <number of seconds>
+   
+   3. Data acquistion section
+   ========================
+   
+   Connecting
+   ----------
+   Probe connects to a FIFO when ReadFifo property is 1. When
+   ReadFifo is 0, it connects to a socket through TCP/IP
+   connection.
+   Event Retrieval
+   Alarms are delimited by new line. Token type is specified by
+   EventType1 and EventType2 properties. If it is eventtype1, then
+   probe has name value pairs. If it is EventType2 then probe has
+   semicolon separated values. If both of these are not true, then
+   probe will try to asses token type on its own.
+   
+   
+   4. Error/Warning Messages
+   ======================
+   Connection Unsuccessful
+   Connection Lost
+   There is a problem with the network.
+   Check that you can access the target port from the host running
+   the probe.
+   
+   Connection Timed Out
+   There is a problem with your network, Metrica or the probe
+   configuration.
+   Check that you did not set the Timeout property too low. Check
+   that there are no problems with your network and that you
+   configured the correct port number in the probe properties.
+   
+   SendAlert failed <Number>
+   The probe was unable to send an alert to the ObjectServer.
+   Check the ObjectServer is available.
+   
+   Failed to open socket
+   Failed to open socket. Invalid Port Number
+   There is a problem with your machine, the network or the probe
+   configuration.
+   Check that there are no problems with your network and that you
+   configured the correct port number in the probe properties.
+   
+   Timed Out trying to open socket
+   There is a problem with your machine, the network or the probe
+   configuration.
+   Check that you did not set the Timeout property too low. Check
+   that there are no problems with your network and that you
+   configured the correct port number in the probe properties.
+   
+   Failed to open FIFO <FifoName>
+   Failed to re-open FIFO <FifoName>
+   The named pipe specified by the FifoName property could not be
+   opened.
+   Adjust the FifoName property if necessary and check file
+   permissions.
+   
+   Unable to open file
+   The probe was unable to open the hosts file.
+   Check the hosts file.
+   
+   Unable to write to file <filename>
+   The probe was unable to write to the alarm log file.
+   Check that there is sufficient disk space and that the
+   permissions are correct.
+   
+   error reading from socket
+   The probe had successfully logged into the target host, but
+   something interrupted the connection.
+   Check that the target host is working correctly.
+   
+   Socket error when waiting to read alarm
+   The probe had successfully logged into the target host, but
+   something interrupted the connection whilst the probe was
+   waiting to read the alarm.
+   Check that the target host is working correctly.
+   
+   Only managed to write <number> out of <number> characters
+   The probe was unable to write to the alarm log file.
+   Check that there is sufficient disk space and that the
+   permissions are correct.
+   
+   Failed to Initialise Probe
+   There are internal errors.
+   Note the message and contact the help desk. Refer to your
+   support contract for more information about contacting the help
+   desk.
+   ProbeWatch Messages
+   The probe will send out the following probewatch message to
+   allow its current state to be stored in the Object Server:
+   
+   Socket error waiting for connection
+   An error has occurred causing the probe to lose the socket
+   connection.
+   
+   Connection Lost
+   The socket connection has been closed at the server side.
+   
+   Connection Timed Out
+   No data was read from the socket for a time greater than that
+   set in the Timeout property. So the probe has closed the
+   connection.
+   
+   The following alerts are generated from error conditions
+   relating to the stream capture file.
+   Unable to open file: FileX - ErrorY
+   Unable to write to file: FileX - ErrorY
+   Only managed to write NUM out of MAX_NUM characters
+   Unable to open file: FileX  - ErrorY
+   Where FileX is a filename and ErrorY is a file error.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ43286
+   
+   
+ * REPORTED COMPONENT NAME
+   FIFO
+   
+   
+ * REPORTED COMPONENT ID
+   5724P09FI
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-09
+   
+   
+ * CLOSED DATE
+   2009-03-23
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

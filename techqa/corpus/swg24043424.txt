@@ -1,0 +1,54 @@
+Title: IBM PI74468: Update IBM WebSphere MQ JCA Resource Adapter to version 7.0.1.14 - United States
+
+Text:
+PI74468; PI74468; PI74468 DOWNLOADABLE FILES
+
+ABSTRACT
+ Update IBM WebSphere MQ JCA Resource Adapter to version 7.0.1.14 
+
+DOWNLOAD DESCRIPTION
+PI74468 resolves the following problem:
+
+ERROR DESCRIPTION: 
+Update IBM WebSphere MQ JCA Resource Adapter to version 7.0.1.14
+
+LOCAL FIX: 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+All users of IBM WebSphere Application Server
+
+PROBLEM DESCRIPTION:
+Update IBM WebSphere MQ JCA Resource Adapter to version 7.0.1.14
+
+RECOMMENDATION:
+None
+
+Update IBM WebSphere MQ JCA Resource Adapter to version 7.0.1.14
+
+PROBLEM CONCLUSION: 
+Update IBM WebSphere MQ JCA Resource Adapter to version 7.0.1.14
+
+The fix for this APAR is currently targeted for inclusion in fix pack 7.0.0.43 and 8.0.0.14. Please refer to the 
+Recommended Updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+Please download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) V70 Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI74468/7.0.0.41/readme.txt] US English 5537 V80 Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI74468/8.0.0.13/readme.txt] US English 2856 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 7.0.0.41-WS-WAS-IFPI74468 03-07-2017 US English 15745390 HTTP [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%2FWebSphere&product=ibm/WebSphere/WebSphere+Application+Server&release=All&platform=All&function=fixId&fixids=7.0.0.41-WS-WAS-IFPI74468&includeSupersedes=0] 8.0.0.12-WS-WASProd-IFPI74468 03-07-2017 US English 15948836 HTTP [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%2FWebSphere&product=ibm/WebSphere/WebSphere+Application+Server&release=All&platform=All&function=fixId&fixids=8.0.0.12-WS-WASProd-IFPI74468&includeSupersedes=0] 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24043424&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24043424&aid=2]Problems (APARS) fixed
+PI74468

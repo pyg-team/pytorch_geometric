@@ -1,0 +1,205 @@
+Title: IBM IZ90196: GATEWAY FAILS TO PROCESS BATCHES CORRECTLY WHEN IT HITS A LOOKUP ERROR. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Based on the logs provided:
+   
+         2010-11-25T11:42:50: Information: I-UNK-000-000: Reader
+   Statistics: Batches=1716
+   Insert(862)/Update(63301)/Delete(737)/Details(8957)/Journals(149
+   8) [Avg. 1 events a second]
+         2010-11-25T11:42:50: Information: I-UNK-000-000: Writer
+   Statistics: Batches=1716 Insert[Sent(862)/Errors(0)]
+   Update[Sent(63301)/Errors(0)] Delete[Sent(737)/Errors(0)]
+   Details[Sent(8957)/Errors(0)] Journals[Sent(1498)/Errors(0)]
+   [Avg. 1 events a second]
+         2010-11-25T11:51:53: Error: E-UNK-000-000: Thread
+   'InputDataProcDistThread': Failed to lookup serial '2724650' in
+   cache. (-22:Object not found)
+         2010-11-25T11:51:53: Error: E-UNK-000-000: Failed to
+   process journal table iduc set
+         2010-11-25T11:51:53: Error: E-UNK-000-000: Thread
+   'InputDataProcDistThread': Error processing IDUC data.
+         2010-11-25T11:51:53: Error: E-UNK-000-000: Thread
+   'InputDataProcDistThread': Error received while processing IDUC
+   Action.
+         2010-11-25T11:52:56: Information: I-UNK-000-000: Reader
+   Statistics: Batches=1733
+   Insert(875)/Update(63866)/Delete(743)/Details(9087)/Journals(149
+   8) [Avg. 1 events a second]
+         2010-11-25T11:52:56: Information: I-UNK-000-000: Writer
+   Statistics: Batches=1737 Insert[Sent(877)/Errors(0)]
+   Update[Sent(63921)/Errors(0)] Delete[Sent(746)/Errors(0)]
+   Details[Sent(9087)/Errors(0)] Journals[Sent(1501)/Errors(0)]
+   [Avg. 1 events a second]
+   
+   
+   - Batches in Reader have been skipped.
+   When Oracle Gateway hits the "Failed to lookup serial '2724650'
+   in cache. (-22:Object not found)" error, notice that reader
+   batch is less than writer batch because the batches is not in
+   sync anymore. Reader Batches remains at 1733 while Writer
+   Batches has increase to 1737. When it hits the lookup error, it
+   will fail to process the reader batch correctly.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of gateway nco_g_oracle.                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Batches in Reader have been skipped when it hits a lookup    *
+   * error on journal..                                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to nco_g_oracle version 5.8                          *
+   ****************************************************************
+   Sample Logs:
+   15.10.10 13:56:38: Debug: D-UNK-000-000: Statistics: Current
+   overload value = 0,000000
+   15.10.10 13:56:38: Information: I-UNK-000-000: Reader
+   Statistics: Batches=4947
+   Insert(28638)/Update(204086)/Delete(29022)/Details(0)/Journals(7
+   288) [Avg. 4 events a second]
+   15.10.10 13:56:38: Information: I-UNK-000-000: Writer
+   Statistics: Batches=4947 Insert[Sent(28638)/Errors(0)]
+   Update[Sent(204086)/Errors(0)] Delete[Sent(29022)/Errors(0)]
+   Details[Sent(0)/Errors(0)] Journals[Sent(7288)/Errors(0)] [Avg.
+   2 events a second]
+   ...
+   15.10.10 13:56:57: Error: E-UNK-000-000: Thread
+   'InputDataProcDistThread': Failed to lookup serial
+   
+   '22360628' in cache. (-22:Object not found)
+   ...
+   15.10.10 13:57:38: Debug: D-UNK-000-000: Statistics: Current
+   overload value = 798220,125000
+   15.10.10 13:57:38: Information: I-UNK-000-000: Reader
+   Statistics: Batches=4947
+   Insert(28638)/Update(204086)/Delete(29022)/Details(0)/Journals(7
+   288) [Avg. 2 events a second]
+   15.10.10 13:57:38: Information: I-UNK-000-000: Writer
+   Statistics: Batches=4951 Insert[Sent(28653)/Errors(0)]
+   Update[Sent(204247)/Errors(0)] Delete[Sent(29060)/Errors(0)]
+   Details[Sent(0)/Errors(0)] Journals[Sent(7291)/Errors(0)] [Avg.
+   2 events a second]
+   
+   When hit the "Failed to lookup serial '22360628' in cache.
+   (-22:Object not found)" error, notice that
+   reader is less than writer because the batches is not in sync
+   anymore. Reader Batches remains at 4947
+   while Writer Batches has increase to 4951. When it hits the
+   lookup error, it will fail to process the
+   reader batch correctly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When it hits the lookup error, it will fail to process the
+   reader batch correctly.
+   It will result in skipping statistics for this batch, and cause
+   overloading value to become negative number.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is closely related to IZ89958 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ89958] that cause overload
+   value to become very high value.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ90196
+   
+   
+ * REPORTED COMPONENT NAME
+   OMNI ORACLE GAT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O71OG
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-12-06
+   
+   
+ * CLOSED DATE
+   2010-12-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

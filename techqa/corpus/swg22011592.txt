@@ -1,0 +1,60 @@
+Title: IBM Rational Team Concert for Visual Studio IDE 6.0.4 fails to install on Visual Studio 2017 updates - United States
+
+Text:
+The 'com.ibm.team.workitem.ui.WorkItemUI; WorkItemUI; Version=1.0.0.0; Culture=neutral; PublicKeyToken=0b4353fd5e516d47' package did not load correctly; The 'com; ibm; team; workitem; ui; Version=1; 0 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Rational Team Concert (RTC) Client for Visual Studio IDE 6.0.4 introduced support for Microsoft Visual Studio (VS) 2017. It was discovered that RTC 6.0.4 can be installed on the base version of VS 2017 but not on later updates of VS 2017. RTC 6.0.4 would continue to work if it was installed on the base version of Visual Studio 2017 which was later updated. However, uninstallation of RTC in this scenario would leave Visual Studio 2017 in a bad state. 
+
+SYMPTOM
+Users will see the following error when opening Visual Studio 2017: 
+
+
+The 'com.ibm.team.workitem.ui.WorkItemUI, WorkItemUI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0b4353fd5e516d47' package did not load correctly. 
+
+ 
+
+The problem may have been caused by a configuration change or by the installation of another extension. You can get more information by examining the file 'C:\Users\Administrator\AppData\Roaming\Microsoft\VisualStudio\15.0_dd6370fb\ActivityLog.xml'. 
+
+ 
+
+Restarting Visual Studio could help resolve this issue.
+
+
+
+
+ 
+
+[/support/docview.wss?uid=swg22011592&amp;aid=1]
+
+
+This message can be ignored. RTC menus and views will still be visible but users will not be able to use any of them. 
+
+
+CAUSE
+This was because, unlike previous versions of Visual Studio, the VS 2017 updates came with an incremented minor version: https://www.visualstudio.com/en-us/productinfo/vs2017-release-rhythm [https://www.visualstudio.com/en-us/productinfo/vs2017-release-rhythm]. This, we learnt was done to support the side-by-side install that VS 2017 introduced. 
+
+
+RESOLVING THE PROBLEM
+ 
+
+This issue has been fixed in RTC 6.0.5 [https://jazz.net/downloads/rational-team-concert/releases/6.0.5]and RTC 6.0.4 iFix006 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7ERational&product=ibm/Rational/Rational+Team+Concert&release=6.0.4&platform=Windows&function=fixId&fixids=6.0.4-Rational-RTC-ifix006&includeRequisites=1&includeSupersedes=0&downloadMethod=ddp&source=fc].
+
+
+As a work around, in VS 2017, uninstall the following RTC extensions manually from Tools->Extension and Updates:
+[/support/docview.wss?uid=swg22011592&aid=2] [/support/docview.wss?uid=swg22011592&aid=2] 
+
+ 
+
+Alternatively, to avoid getting into the situation, prior to uninstall, modify the following file found in the Rational Team Concert Client for Visual Studio IDE installation folder as below: 
+
+In the file UninstallExtensionsVS2017.bat (at location C:\Program Files (x86)\IBM\Rational Team Concert Client for Microsoft Visual Studio IDE\bin) 
+
+Change the following line
+
+
+from:
+for /f "delims=" %%p in ('Setup.Configuration.CS.exe instances 15.0') do (
+
+to:
+for /f "delims=" %%p in ('Setup.Configuration.CS.exe instances 15') do (

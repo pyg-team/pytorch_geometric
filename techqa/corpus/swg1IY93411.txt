@@ -1,0 +1,179 @@
+Title: IBM IY93411: LOGGING POSSIBLE ACROSS ENVIRONMENTS WITH DIFFERENT ENCRYPTION KEYS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ==ENVIRONMENT==
+   Environment 1(test):
+   Windows 2003 Server Standard Edition
+   ITM61 FP2 base install: Applied FP3
+   All components TEMS, TEPS, WPA, S&PA
+   Protocol 1: IP.PIPE
+   Protocol 2: SPIPE
+   Encyption key set manually when installed
+   Agents use silent_install to set key.
+   
+   Environment 2(to be production):
+   Windows 2003 Server Standard Edition
+   ITM61 FP2 base install: Applied FP3
+   Components TEMS, TEPS, WPA, S&PA
+   Protocol 1: IP.PIPE
+   Protocol 2: SPIPE
+   
+   Encyption key set manually when installed
+   Agents use silent_install to set key.
+   AIX 5.3 TL4 RTEMS
+   
+   ==PROBLEM==
+   CR is able to connect his Unix OS agent from one
+   ITM 6.1 FP0003 environment (where the default encryption was
+   used) to another where he had set up a different encryption key.
+   He has some post FP0003 patches for TEPS etc. - but that need
+   not be relevant because I can easily reproduce this at the
+   FP0003 (fresh install) level using a Windows OS agent.
+   
+   Steps to recreate are very simple:
+   1. Environment 1 with a certain encryption key (in our case -
+   the default ie. IBMTivoliMonitoringEncryptionKey)
+   
+   2. Environment 2 with a different encryption key
+   3. Point an agent from Environment 1 to the HUB TEMS on
+   Environment 2 ensuring that IP:SPIPE is selected as Protocol 1,
+   and NO additional protocol selected on  bothTEMS, and agent (and
+   of course TEPS too)
+   
+   4. Agent is ABLE TO CONNECT! (and data can be seen in TEP)
+   I see cmvc items: 18392 "agent can be connected by ssl in
+   different EncryptionKey" but thats for ITCAM for SOA. and 33248
+   "SOA : agent can be connected by ssl in different EncryptionKey"
+   but they are for ITCAM for SOA.
+   
+   Problem has been recreated in LAB with 6.1 Fp03 + LA0006 TEMS /
+   TEPS patch installed by the FE team JA. The customer has also
+   recreated the problem after FP04 upgrade.
+   
+   The CR stated that a fix is needed by end of Jan 2007. The APAR
+   has 1 month delay.
+   
+   ==QUESTIONS==
+   
+   cmvc 9814 "Default encryption key different for aix and
+   windows" does not really match this problem.
+   
+   1) Since the issue was not addressed in FP04, it has been
+   advised by BG (L3) to raise a Sev2 APAR
+   
+   Thank you very much for your help in advance. Kind regards, Ivan
+   
+   ********
+   
+   The code is currently working as designed. The use of encryption
+   was only intended on connections between the TEP/TEPS and the
+   TEMS where human interaction plays a role.  Agents report data
+   to a TEMS without human interaction so no encryption was deemed
+   necessary.  The customer may open an enhancement request to add
+   the use of encryption for signon processing between agents and
+   the TEMS.  Note that this will still not prevent agents from a
+   Test environment from signing on to a production environment if
+   they have the correct ID and password.  A firewall should be
+   implemented for that type of protection.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  The code is currently working as designed. The use of encryption
+   for signon was only intended on connections between the TEP/TEPS
+   and the
+   TEMS where human interaction plays a role.  Agents report data
+   to a TEMS without human interaction so no encryption was deemed
+   necessary.  The customer may open an enhancement request to add
+   the use of encryption for signon processing between agents and
+   the TEMS.  Note that this will still not prevent agents from a
+   Test environment from signing on to a production environment if
+   they have the correct ID and password.  A firewall should be
+   implemented for that type of protection.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY93411
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-01-10
+   
+   
+ * CLOSED DATE
+   2007-02-09
+   
+   
+ * LAST MODIFIED DATE
+   2007-05-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

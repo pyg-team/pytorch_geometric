@@ -1,0 +1,50 @@
+Title: IBM Deploying map nodes in a WebSphere Message Broker flow generates a DTXPluginNode error or JVM pointer error - United States
+
+Text:
+IC80811 JVM Pointer DTXPlugInNode Loadable Implementation Library LIL path Node initialization failed during JNI initialization TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A DTXPluginNode error or JVM Pointer error occurs when you deploy WebSphere® Transformation Extender Map nodes in a WebSphere Message Broker flow. 
+
+SYMPTOM
+A WebSphere Message Broker (WMB) 8.0 flow that contains WebSphere Transformation Extender (WTX) Map node does either of the following: 
+
+ * Generates a DTXPluginNode error during deployment 
+ * Times out, indicating a JVM Pointer issue in the WMB service trace
+
+
+CAUSE
+This is identified as a product defect under APAR IC80811, along with WMB references to incorrect Java libraries.
+
+DIAGNOSING THE PROBLEM
+When you deploy a WMB flow that contains a WTX Map node, an error with the following content can occur: 
+
+The broker received an instruction to create a message flow node of type 'DTXPlugInNode', in message flow '<flow name>'. The broker cannot create nodes of this type because an implementation library for this node type does not exist in the LIL path. 
+
+Ensure that the LIL path is correct, and that it contains all the required node implementation libraries, including those supplied by IBM.
+
+Or the deployment of the WMB flow times out or hangs. The WMB service trace contains JVM pointer error messages that are similar to the following messages:
+
++cciServiceTrace '++ WTX: entering _setUpJni' 
+2012-05-03 18:57:16.091927 7198 >> +cciServiceTrace '!! WTX ERR: Failed to retrieve the JVM pointer (rc = 0, ptr = 0). The WTX initialization sequence was NOT completed successfully.' 
+2012-05-03 18:57:16.091936 7198 >> { ::cciMbsToUcs , (*ptr)11856c850, 'txmsgv84', (*ptr)11856c878, 20, 1208
+2012-05-03 18:57:16.091942 7198 >> } ::cciMbsToUcs , 9
+2012-05-03 18:57:16.091946 7198 >> +cciUserTrace file: line:0 message:1001.txmsgv84 'general trace' , 'WTX Node initialization failed during JNI initialization (rc = -1).'
+2012-05-03 18:57:16.091946 7198 >> UserTrace BIP2176S: Could not find message 1001 in catalogue /mybroker/broker_8_0_0_0/messages/En_US/txmsgv84.cat, inserts are 'WTX Node initialization failed during JNI initialization (rc = -1).' {1} {2} {3} {4} {5} {6}
+
+
+RESOLVING THE PROBLEM
+Stop the Message Broker and install the WMB fix associated with APAR IC80811 [http://www.ibm.com/support/docview.wss?uid=swg1IC80811]. This APAR fix resolves the DTXPluginNode error when deploying a flow. For additional information about this APAR, open a PMR with the WMB Remote Support Team. 
+
+For AIX® environments only, you must create a symbolic link for the libjvm.a / libjvm.so libraries. See the description in "Execution Group abends showing WTX libraries following WMB upgrade [http://www.ibm.com/support/docview.wss?uid=swg21575522]." After you change to the directory to where your 'jre16/lib/ppc64/classic' subdirectory is located: 
+
+ 1. Make a backup copy of libjmv.a library 
+ 2. Enter the following command: 
+
+ * ln -s libjvm.so libjvm.a
+
+
+Restart the Broker and deploy your flow.  
+
+PRODUCT ALIAS/SYNONYM
+ Mercator Ascential DataStage TX

@@ -1,0 +1,158 @@
+Title: IBM PI37735: WCM CONFIGMODULECLIENT MAY FAIL WITH 302 STATUS ERROR DUE TO FAI LED AUTHENTICATION FOR THE ADMIN USER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The WCM ConfigModuleClient (the HTTP client used to execute WCM
+   admin modules such as the library data import via ConfigEngine)
+   may fail due to authentication issues.
+   
+   Depending on the security settings on the application server,
+   the cookies that is fetched and set to the connection is not
+   parsed correctly under some circumstances.
+   
+   This causes the authentication to fail once an attempt is made
+   to establish a connection to the module URL.
+   
+   The following errors can be seen in the ConfigTrace.log:
+   [ConfigModuleClient] Connecting to login address:
+   http://serverhost:10039/wps/wcm/login [http://serverhost:10039/wps/wcm/login]
+   [ConfigModuleClient] Connecting to task address:
+   http://serverhost:10039/wps/wcm/myconnect?MOD=data&processLibrar
+   ies=...... [http://serverhost:10039/wps/wcm/myconnect?MOD=data&processLibraries=......]
+   .....
+   BUILD FAILED
+   /opt/WebSphere/PortalServer/wcm/prereq
+   .wcm/config/includes/prereq.wcm_cfg.xml:4025
+   An exception occurred while executing the task: Status returned
+   302: Authentication failed for user: wpsadmin
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The WCM ConfigModuleClient (the HTTP client used to execute WCM
+   admin modules such as the library data import via ConfigEngine)
+   may fail due to authentication issues.
+   
+   Depending on the security settings on the application server,
+   the cookies that is fetched and set to the connection is not
+   parsed correctly under some circumstances.
+   
+   This causes the authentication to fail once an attempt is made
+   to establish a connection to the module URL.
+   
+   The following errors can be seen in the ConfigTrace.log:
+   [ConfigModuleClient] Connecting to login address:
+   http://serverhost:10039/wps/wcm/login [http://serverhost:10039/wps/wcm/login]
+   [ConfigModuleClient] Connecting to task address:
+   http://serverhost:10039/wps/wcm/myconnect?MOD=data&processLibrar
+   ies=...... [http://serverhost:10039/wps/wcm/myconnect?MOD=data&processLibraries=......]
+   .....
+   BUILD FAILED
+   /opt/WebSphere/PortalServer/wcm/prereq
+   .wcm/config/includes/prereq.wcm_cfg.xml:4025
+   An exception occurred while executing the task: Status returned
+   302: Authentication failed for user: wpsadmin
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been updated to ensure the cookies are handled and
+   parsed correctly under all conditions.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI37735
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-24
+   
+   
+ * CLOSED DATE
+   2015-04-19
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

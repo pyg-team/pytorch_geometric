@@ -1,0 +1,25 @@
+Title: IBM Incoming connection failed from remote IBM Sterling Connect:Direct with error GSK_ERR_SOCKET_CLOSED - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When Client Authentication is enabled for an existing IBM Sterling Connect:Direct Secure+ session the connection failed with a GSK_ERR_SOCKET_CLOSED error, disabling Client Authentication allowed the connection to succeed. 
+
+SYMPTOM
+08:03:52 CSPA202E SSL handshake failure, reason=GSK_ERR_SOCKET_CLOSED
+08:03:52 SVTM055I SESSION (002) ESTABLISHED WITH SNODE=NODEB
+08:03:52 CSPA003E Security Violation - SNODE authentication error
+08:03:52 SVTM105I PNAME=PNAMEA, PNUM= 57,716 MOVED TO Q=HOLD ,
+QSTATUS=H
+
+
+
+CAUSE
+When SSL Client Authentication is enabled the SSL Certificate Request sent by the SNODE will contain a list of acceptable Certificate Authority Distinguished Names, if the number of Trusted CA certificates configured in the RACF KeyRing or GSK Key Database is high the Certificate Request buffer sent by the SNODE could be larger than normal. If the buffer size defined for the IBM Sterling Connect:Direct connection in the Netmap entries is smaller than the SSL buffer being sent the SNODE the IBM SSL Toolkit will be unable to read the complete Certificate Request message and will terminate the SSL Handshake with a GSK_ERR_SOCKET_CLOSED error.
+
+DIAGNOSING THE PROBLEM
+Obtain an IBM SSL GSK Toolkit trace and check the reason why the SSL Handshake is failing
+
+RESOLVING THE PROBLEM
+Ensure that the IBM Sterling Connect:Direct Netmap buffer negotiated is larger the biggest SSL Handshake Buffer that could be sent

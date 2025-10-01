@@ -1,0 +1,16 @@
+Title: IBM Tivoli Network Manager IP Edition is not affected by the Bash vulnerabilities  (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278)
+Flash (Alert) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ IBM Tivoli Network Manager IP Edition is not vulnerable to the Bash vulnerabilities that have been referred to as “Bash Bug” or “Shellshock” and the two memory corruption vulnerabilities
+
+
+CONTENT
+IBM Tivoli Network Manager IP Edition in all editions and all platforms is NOT vulnerable to the Bash vulnerabilities (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278). 
+
+IBM recommends that you review your entire environment to identify vulnerable releases of Bash including your Operating Systems and take appropriate mitigation and remediation actions. Please contact your Operating System provider for more information.
+
+Change History: September 26, 2014: original version published

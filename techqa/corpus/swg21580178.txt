@@ -1,0 +1,44 @@
+Title: IBM Standby fails with HDR_ZRC_BAD_LOG - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Standby would fail with HDR_ZRC_BAD_LOG, if the log files required by it, to catchup with the Primary is not found in its active / archive location, or Primary's active or archive location, and hence will fail to form an HADR pair 
+
+SYMPTOM
+Following messages are logged in the db2diag.log of the standby: 
+
+2012-01-13-17.19.03.284286+330 I2560886E372 LEVEL: Error 
+PID : 438 TID : 47470256056640PROC : db2sysc 0 
+INSTANCE: db2inst1 NODE : 000 
+EDUID : 11209 EDUNAME: db2hadrs (SAMPLE) 0 
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrEduS, 
+probe:21210 
+MESSAGE : HADR: Missing log on primary. Standby shutting down 
+
+2012-01-13-17.19.03.284655+330 I2561259E402 LEVEL: Error 
+PID : 438 TID : 47470256056640PROC : db2sysc 0 
+INSTANCE: db2inst1 NODE : 000 
+EDUID : 11209 EDUNAME: db2hadrs (SAMPLE) 0 
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrEduS, 
+probe:21210 
+RETCODE : ZRC=0x87800148=-2021654200=HDR_ZRC_BAD_LOG 
+"HADR standby found bad log" 
+
+CAUSE
+This can be explained with the following example: 
+
+
+Lets say, on primary Log 5 is the first active log, and currently it has been archived after getting full. The current log that the primary is processing is Log 7. Now due to some network or other issues, the standby could not replay the records from Log 5, and it tried to fetch it from the primary's archive. However, in the meantime, the log 5 from primary's archive location was moved to some other backup location. 
+
+In this case standby will not be able to form a pair with the primary, as it is looking for a log, which is not available. Even primary has no idea of where the log is, as it has been moved out of its active and archive locations.
+
+
+RESOLVING THE PROBLEM
+To resolve this situation, all the logs required by the standby could be copied to the primary's archive folder, and then HADR started. Standby would eventually catch up with the Primary, after replaying the old logs from Primary's archive.
+
+
+
+RELATED INFORMATION
+#HADR reference [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.admin.ha.doc/doc/c0021002.html]

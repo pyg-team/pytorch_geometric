@@ -1,0 +1,45 @@
+Title: IBM Taskmaster Server database error codes for IBM Datacap Taskmaster Capture - United States
+
+Text:
+database error message code TECHNOTE (FAQ)
+
+QUESTION
+ List of Taskmaster Server database error codes. 
+
+CAUSE
+Only the Taskmaster Server service communicates to an application's admin and engine databases. Clients such as Taskmaster Client do not directly communicate to the databases but go through the layer of software known as the Taskmaster Server, which in Services is listed as the Datacap Taskmaster Server Service. When trying to debug connectivity or login issues, Taskmaster Server logging may be helpful in determining the root cause.
+
+ANSWER
+Taskmaster Server database error codes 
+
+ * 14101 Commit transaction failed 
+ * 14102 Abort transaction failed - see Error Explanations below 
+ * 14103 Start transaction failed 
+ * 14104 Database is not opened 
+ * 14105 Couldn't open a session 
+ * 14106 Couldn't open the database - see Error Explanations below 
+ * 14107 Couldn't open recordset - see Error Explanations below 
+ * 14108 Recordset is not opened 
+ * 14109 Couldn't insert record 
+ * 14110 Couldn't navigate record 
+ * 14111 Couldn't edit record 
+ * 14112 Couldn't delete record 
+ * 14113 Invalid column index 
+ * 14114 Couldn't get row count 
+ * 14115 Couldn't update rowset 
+ * 14116 Couldn't set bookmark 
+ * 14117 Couldn't move to bookmark 
+ * 14118 Couldn't create recordset 
+ * 14119 Couldn't construct recordset 
+ * 14120 Couldn't attach rowset 
+ * 14121 Invalid change type 
+ * 14122 Execution failed 
+ * 14123 Invalid column type 
+ * 14124 Couldn't close connection 
+ * 14125 Couldn't close recordset 
+
+Error Explanations Many of these errors are specific to the database server and may require additional information from the databases themselves to troubleshoot. Details for a few of the most commonly asked about errors are listed below. 
+
+ * Error 14102 - A message that generally can be ignored as it usually accompanies a logoff event even when no actual problem is encountered during the operation. This error may be seen numerous times during a capture of the Taskmaster Server log. 
+ * Error 14106 - Means that Taskmaster Server could not connect to the databases because the connection strings are invalid or because the account running the Datacap Taskmaster Server Service does not have sufficient permissions to the admin and engine databases. If you encounter an error 14106, check the database connection strings and general server-client configuration. Refer to the installation guide and other Technotes for details on such configurations. Taskmaster has specific syntax for admin and engine database connection strings that should be used or referred to within the product version's documentation. In Taskmaster 8.0.0 and later, the connection strings do not have to be typed manually, but in older product versions refer to examples such as that in the Taskmaster Administrator's Guide Appendix A. If connection strings are valid, double-check the Taskmaster Server account or credentials provided for the databases. 
+ * Error code 14107 - Is usually encountered in Taskmaster 7.6 and older, and means that Taskmaster Server couldn't open a requested database recordset. This error usually occurs if Taskmaster Server loses connection to the database server, for example due to the database server being restarted or momentary general loss of network access in the environment. In Taskmaster 8.0.0 and later, Taskmaster Server automatically attempts to recover the connection, thus minimizing impact on Production. However, in older versions of the software the Taskmaster Server must be restarted in order to resume operations.

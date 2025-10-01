@@ -1,0 +1,179 @@
+Title: IBM IC66665: ONEWAY CALLOUT INVOCATION EXCEPTION NOT RETURNED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If an exception occurs on the invocation path (sync or async
+   invoke) for a OneWay operation, the FlowAction component will
+   perform unmodelled fault retry (if configured).  After all
+   retries (if any) have been performed, if the invocation path
+   exception remains, the FlowAction component builds a fault SMO
+   containing the unmodelled fault, and returns.  For an
+   invocation using Callout, there is no response flow for a OneWay
+   operation, and so no fault flow is invoked. The exception
+   failure is not returned to the Mediation Flow.  Although the
+   original cause of the exception is likely to have been logged
+   in the SystemOut log or by FFDCs, the Mediation Flow should also
+   be notified that the OneWay invocation has failed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of Websphere Enterprise Service Bus    *
+   *                 or Websphere Process Server v6.2 who are     *
+   *                 using OneWay operations using a callout.     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: OneWay callout invocation exception     *
+   *                      is not returned                         *
+   ****************************************************************
+   * RECOMMENDATION: If you encounter this problem then you are   *
+   *                 advised to install the code fix associated   *
+   *                 with this APAR.                              *
+   ****************************************************************
+   If an exception occurs on the invocation path (sync or async
+   invoke) for a OneWay operation, the FlowAction component will
+   perform unmodelled fault retry (if configured).  After all
+   retries (if any) have been performed, if the invocation path
+   exception remains, the FlowAction component builds a fault SMO
+   containing the unmodelled fault, and returns.  For an
+   invocation using Callout, there is no response flow for a
+   OneWay operation, and so no fault flow is invoked. The
+   exception failure is not returned to the Mediation Flow.
+   Although the original cause of the exception is likely to have
+   been logged in the SystemOut log or by FFDCs, the Mediation
+   Flow should also be notified that the OneWay invocation has
+   failed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified to ensure that the exception failure is
+   returned to the mediation flow.
+   
+   This code fix was targeted to be included in the following fix
+   packs:
+   
+   6.2.0 Fix Pack 4 (v6.2.0.4)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC66665
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724I8200
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-26
+   
+   
+ * CLOSED DATE
+   2011-07-18
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724I8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSN
+   UP
+   
+   
+ * R200 PSN
+   UP
+   
+   
+ * R300 PSN
+   UP
+   
+   
+ * R612 PSN
+   UP
+   
+   
+ * R620 PSY
+   UP
+   
+   
+ * R700 PSN
+   UP

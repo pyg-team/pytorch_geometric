@@ -1,0 +1,27 @@
+Title: IBM Determining the Core Dump File Size setting while Domino server is running on Linux or UNIX - United States
+
+Text:
+linux; zlinux; ulimit; core dump; coredump; unix; RELNOTE85; RELNOTE85 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Can the core dump file size setting be reliably verified for a Lotus® Domino® server environment when Domino runs on AIX, Solaris, or Linux?
+
+RESOLVING THE PROBLEM
+To check the current core dump size value, you run the "ulimit" command from within the Domino Console. "ulimit" is an environment variable command. The environment is set for each separate user login session. The Domino server sets its own environment upon startup, which overrides any system wide environment settings.
+To check the size, run the following command from the Domino Console:
+
+
+ * load /bin/ksh -c "ulimit -c"
+
+
+The result appears on the console, for example, you might see a returned value as follows: 
+ * 
+
+
+If you are running the Domino Java Console, you use the following command to return the same output: 
+ * $ulimit -c
+
+ Note that the result of this command differs for the Domino user versus the Domino server. This result is dependent on where the command is run. The environment variables can have different values for the Domino user environment because, on startup, the Domino server overrides the ulimit. The proper result for the values can only be displayed from within the Domino server.
+
+RELATED INFORMATION
+ Basic Parameters for Linux Soft Limits [http://www.ibm.com/support/docview.wss?uid=swg21161736]

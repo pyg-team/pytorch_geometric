@@ -1,0 +1,30 @@
+Title: IBM CDM - Downloading Filing Packages - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I download Filing packages compatible with IBM Cognos Disclosure Management (CDM)? 
+
+CAUSE
+A new Filing package is needed.
+
+ANSWER
+1.) Go to the IBM CDM User Group Community and navigate to the "Files" section, from the drop-down found in the left side of the page : [https://apps.na.collabserv.com/communities/service/html/communitystart?communityUuid=1f5f94ce-add9-4563-8958-e899a01620f2#fullpageWidgetId=W920d7acd435a_4a55_93d1_286c66b45dd1&folder=46c35d92-4d37-4aa3-b662-c8fc302daa07] 
+
+https://apps.na.collabserv.com/communities/service/html/communitystart?communityUuid=1f5f94ce-add9-4563-8958-e899a01620f2#fullpageWidgetId=W920d7acd435a_4a55_93d1_286c66b45dd1&folder=46c35d92-4d37-4aa3-b662-c8fc302daa07 [https://apps.na.collabserv.com/communities/service/html/communitystart?communityUuid=1f5f94ce-add9-4563-8958-e899a01620f2#fullpageWidgetId=W920d7acd435a_4a55_93d1_286c66b45dd1&folder=46c35d92-4d37-4aa3-b662-c8fc302daa07] 
+
+2.) Browse for the Filing package that you need. 
+
+*Usually, for each file, in the "Comments" section, there is a short description of the features included and a list with the CDM versions that the package is compatible with. 
+
+**If there are no such mentions, please navigate to the "Blog" section: https://apps.na.collabserv.com/blogs/1f5f94ce-add9-4563-8958-e899a01620f2?lang=en_us [https://apps.na.collabserv.com/blogs/1f5f94ce-add9-4563-8958-e899a01620f2?lang=en_us] and read the blog post regarding the desired Filing package. 
+
+3.) Download the Filing package. 
+
+IMPORTANT: if you are unable to access the IBM CDM User Group Community, you can open a ticket with Support and ask them to grant you access to this community. You may also mention the package that you need, in order to receive the link pointing exactly to the required file.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Disclosure Management Cognos Disclosure Management Windows 10.1.1, 10.2, 10.2.1, 10.2.2, 10.2.3, 10.2.3.1, 10.2.4, 10.2.5, 10.2.6

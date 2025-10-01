@@ -1,0 +1,27 @@
+Title: IBM Using Kerberos Authentication to an HTTP Server That Does Not Use the Standard Port 80 - United States
+
+Text:
+EIM; HTTP; Kerberos; SIGNON TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using an HTTP server that is listening on a port other than the standard port of 80, the Kerberos principal needs to have this as part of the host name. 
+
+RESOLVING THE PROBLEM
+When using an HTTP server that is listening on a port other than the standard port of 80, the Kerberos principal needs to have this as part of the host name; for example, HTTP/www.mycompany.com:8080@MYCOMPANY.COM. 
+
+To add this principal in qshell, you should type the following:
+
+keytab add HTTP/www.mycompany.com:8080@MYCOMPANY.COM -p password
+
+where www.mycompany.com:8080 is the host name and port for the HTTP server 
+MYCOMPANY.COM is the Windows domain
+password is the Active Directory server account password 
+
+The Active Directory account needs to be added with the same principal name.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 
+HISTORICAL NUMBER
+ 572203891

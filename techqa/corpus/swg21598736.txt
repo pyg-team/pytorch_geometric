@@ -1,0 +1,78 @@
+Title: IBM ERRORCODE=-4499, SQLSTATE=58009 may occur against DB2 zOS v10 CM8. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running aginst DB2 zOS v10 CM8, an SQL exception with error code -4499
+may happen if the setBigDecimal method of PreparedStatement/CallableStatement
+is used or registerOutParameter method of CallableStatement is used to register a 
+OUT parameter of type java.sql.Types.DECIMAL 
+
+SYMPTOM
+Following errors can be seen in this case. 
+
+Trace file shows something like below:
+
+[6/12/12 18:22:37:923 ] 00000032 logwriter 3 [jcc][t4] 
+[6/12/12 18:22:38:091 ] 00000032 logwriter 3 [jcc][t4] [time:2012-06-12-18:22:38.091][thread:WebContainer : 1][tracepoint:202] closing non-pooled Transport:
+[6/12/12 18:22:38:091 ] 00000032 logwriter 3 [jcc][Connection@1363c8e] DB2 LUWID: GA12011E.B5E0.120612102237.0001
+[6/12/12 18:22:38:093 ] 00000032 WSRdbManagedC 1 statementClosed
+Notification of statement closed received from the JDBC driver.
+WSRdbManagedConnectionImpl@131d9f8
+com.ibm.db2.jcc.DB2PooledConnection@1c19983
+com.ibm.db2.jcc.a.km@fe5f5d
+[6/12/12 18:22:38:093 ] 00000032 WSRdbManagedC 1 statementClosed
+Notification of statement closed received from the JDBC driver.
+WSRdbManagedConnectionImpl@131d9f8
+com.ibm.db2.jcc.DB2PooledConnection@1c19983
+com.ibm.db2.jcc.a.lm@67dbc3
+[6/12/12 18:22:38:101 ] 00000032 logwriter 3 [jcc] BEGIN TRACE_DIAGNOSTICS
+[6/12/12 18:22:38:107 ] 00000032 logwriter 3 [jcc][Thread:WebContainer : 1][SQLException@187a5e9] java.sql.SQLException
+[6/12/12 18:22:38:107 ] 00000032 logwriter 3 [jcc][Thread:WebContainer : 1][SQLException@187a5e9] SQL state = 58009
+[6/12/12 18:22:38:107 ] 00000032 logwriter 3 [jcc][Thread:WebContainer : 1][SQLException@187a5e9] Error code = -4499
+[6/12/12 18:22:38:112 ] 00000032 logwriter 3 [jcc][Thread:WebContainer : 1][SQLException@187a5e9] Message = [jcc][2034][11148][4.3.111] Execution failed due to a distribution protocol error that caused deallocation of the conversation.
+[6/12/12 18:22:38:113 ] 00000032 logwriter 3 A DRDA Data Stream Syntax Error was detected. Reason: 0x12. ERRORCODE=-4499, SQLSTATE=58009
+[6/12/12 18:22:38:113 ] 00000032 logwriter 3 [jcc][Thread:WebContainer : 1][SQLException@187a5e9] Stack trace follows
+[6/12/12 18:22:38:113 ] 00000032 logwriter 3 com.ibm.db2.jcc.a.ho: [jcc][2034][11148][4.3.111] Execution failed due to a distribution protocol error that caused deallocation of the conversation.
+[6/12/12 18:22:38:113 ] 00000032 logwriter 3 A DRDA Data Stream Syntax Error was detected. Reason: 0x12. ERRORCODE=-4499, SQLSTATE=58009
+
+Host DB2 server shows something like below:
+
+DSNL032I - DSNLZDJN DRDA EXCEPTION CONDITION IN 
+REQUEST FROM REQUESTOR LOCATION=::10.18.1.30 FOR THREAD WITH 
+LUWID=GA12011E.P4ED.120611030144=3665 
+REASON=00D35B16 
+ERROR ID=DSNLZSDT002C 
+IFCID=0191 
+SEE TRACE RECORD WITH IFCID SEQUENCE NUMBER=00000001 
+
+
+CAUSE
+This is due to the PRDID returned from the v10 CM8 will tell the client it's a v10 
+
+server and thus may accidentally enable the DECFLOAT support that is not supported
+in v10 CM8.
+
+
+DIAGNOSING THE PROBLEM
+Verify the JCC driver version installed currently. 
+
+
+The following command will retrieve the JCC driver version if executed from the command line: 
+
+java com.ibm.db2.jcc.DB2Jcc -version
+
+For drivers that are not yet installed execute the following command.
+
+java -cp ./db2jcc.jar com.ibm.db2.jcc.DB2Jcc -version
+
+
+
+RESOLVING THE PROBLEM
+Use JCC driver version 4.11.77 and above or upgrade to DB2 V9.5 FP7 or DB2 V9.7 FP3a and above.
+
+RELATED INFORMATION
+ DB2 JDBC Driver Versions [http://www.ibm.com/support/docview.wss?uid=swg21363866]
+JDBC Error Messages [http://pic.dhe.ibm.com/infocenter/db2luw/v10r1/topic/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_rjvjcsqc.html]
+How to find IBM Data Server Driver for JDBC and SQLJ ve [http://publib.boulder.ibm.com/infocenter/db2luw/v10r1/topic/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_rjvjcver.html]

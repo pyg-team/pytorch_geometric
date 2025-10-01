@@ -1,0 +1,154 @@
+Title: IBM SQL1042C running db2start on the passive node using Veritas Cluser Server (VCS) Agent for DB2 - United States
+
+Text:
+SQL1042C SQQL1042 db2start Veritas Cluster Server VCS failover Unexpected system error occurred TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ db2start fails with SQL1042C on the standby machine during Veristas HACMP failover process. 
+
+SYMPTOM
+In a non-MPP configuration , during Veritas Cluster Server failover process, db2start fails to start the instance on the passive node with SQL1042C. The error means : 
+
+SQL1042C "Unexpected system error occurred." 
+
+ 
+
+Failing back to the Primary server works and the db2start works without errors.
+
+
+From the db2diag.log:
+2013-04-13-08.30.59.051701-240 E55220335E304 LEVEL: Event
+PID : 23626 TID : 47446565760064PROC : db2stop2
+INSTANCE: db2inst1 NODE : 000
+FUNCTION: DB2 UDB, base sys utilities, DB2StopMain, probe:911
+MESSAGE : ADM7514W Database manager has stopped.
+STOP : DB2 DBM
+
+2013-04-13-08.36.02.607319-240 I55220640E337 LEVEL: Severe
+PID : 10330 TID : 47340008860736PROC : db2start
+INSTANCE: db2inst1 NODE : 000
+FUNCTION: DB2 UDB, base sys utilities, sqlestrt.C::main, probe:32
+DATA #1 : Hexdump, 4 bytes
+0x00007FFFF4EE235C : EEFB FFFF ....
+
+2013-04-13-08.36.02.654426-240 I55221327E342 LEVEL: Error
+PID : 10330 TID : 47340008860736PROC : db2start
+INSTANCE: db2inst1 NODE : 000
+FUNCTION: DB2 UDB, bsu security, sqlexAuditGetLogFileName, probe:12941
+MESSAGE : ZRC=0x875C00CD=-2024013619=SQLEX_UNEXPECTED_SYSERR
+"Unexpected System Error"
+
+2013-04-13-08.36.02.654565-240 I55221670E356 LEVEL: Error
+PID : 10330 TID : 47340008860736PROC : db2start
+INSTANCE: db2inst1 NODE : 000
+FUNCTION: DB2 UDB, bsu security, sqlexAuditBufferManager::writeAuditBuffe, probe:774
+MESSAGE : ZRC=0x875C00CD=-2024013619=SQLEX_UNEXPECTED_SYSERR
+"Unexpected System Error"
+
+2013-04-13-08.36.02.654657-240 I55222027E355 LEVEL: Error
+PID : 10330 TID : 47340008860736PROC : db2start
+INSTANCE: db2inst1 NODE : 000
+FUNCTION: DB2 UDB, bsu security, sqlexAuditBufferManager::finalizeBuffer, probe:195
+MESSAGE : ZRC=0x875C00CD=-2024013619=SQLEX_UNEXPECTED_SYSERR
+"Unexpected System Error"
+
+2013-04-13-08.36.02.654747-240 I55222383E341 LEVEL: Error
+PID : 10330 TID : 47340008860736PROC : db2start
+INSTANCE: db2inst1 NODE : 000
+FUNCTION: DB2 UDB, bsu security, sqlexAuditData::logEvent, probe:1059
+MESSAGE : ZRC=0x875C00CD=-2024013619=SQLEX_UNEXPECTED_SYSERR
+"Unexpected System Error"
+
+2013-04-13-08.36.02.654836-240 I55222725E1240 LEVEL: Error
+PID : 10330 TID : 47340008860736PROC : db2start
+INSTANCE: db2inst1 NODE : 000
+FUNCTION: DB2 UDB, bsu security, sqlexAuditData::logEvent, probe:1096
+MESSAGE : ZRC=0x875C00CD=-2024013619=SQLEX_UNEXPECTED_SYSERR
+"Unexpected System Error"
+DATA #1 : String, 27 bytes
+SQEX dumped temporary SQLCA
+DATA #2 : SQLCA, PD_DB2_TYPE_SQLCA, 136 bytes
+sqlcaid : SQLCA sqlcabc: 136 sqlcode: -1042 sqlerrml: 3
+sqlerrmc: 205
+sqlerrp : SQLESTRT
+sqlerrd : (1) 0x875C00CD (2) 0x000000CD (3) 0x00000000
+(4) 0x00000000 (5) 0x00000000 (6) 0x00000000
+sqlstate: 58004
+DATA #3 : SQLCA, PD_DB2_TYPE_SQLCA, 136 bytes
+sqlcaid : SQLCA sqlcabc: 136 sqlcode: -1042 sqlerrml: 3
+sqlerrmc: 205
+sqlerrp : SQLEXADT
+sqlerrd : (1) 0x875C00CD (2) 0x000000CD (3) 0x00000000
+(4) 0x00000000 (5) 0x00000000 (6) 0x00000000
+sqlwarn : (1) (2) (3) (4) (5) (6)
+(7) (8) (9) (10) (11)
+sqlstate:
+
+NOTE: HADR is not configured in this case. Only HA using VCS agent for DB2. 
+
+
+
+CAUSE
+In a Vertias Cluster Server (VCS) configuration, DB2 uses the $INSTHOME/sqllib/db2nodes.cfg file during failover from one node to another. In a non-MPP environment, a DB2 instance is active only on one system at a time and the other system is the failover system. If the instance is being started with db2start command, then the db2nodes.cfg file will remain static on both nodes and SQL1024C will be generated during the failover process on the passive node. To allow the DB2 instance to start on both nodes seamlessly, make sure virtual hostname alias of the hostname in the /etc/hosts file on both servers. Also, ensure the VCS resource type UseDB2Start attribute set to 1 for this setup. 
+
+
+If you want to use actual hostname in the db2nodes.cfg file, db2gcf command should be used instead of db2start. Set the VCS resource type UseDB2Start attribute to 0 for this setup.
+
+Please refer to the Symantec links below for more information.
+
+
+DIAGNOSING THE PROBLEM
+Ensure the db2nodes.cfg file exists and check the entry in the db2nodes.cfg file on both nodes. 
+
+
+
+RESOLVING THE PROBLEM
+To allow DB2 instance to start on both servers during the failover process, ensure the virtual hostname alias of the hostname is in the /etc/hosts. For example, if you have two hosts myhost1 and myhost2, do the following : 
+
+
+/etc/hosts on host myhost1 
+
+1.2.3.201 myhost1.<domain_name>.com db2server 
+
+and 
+
+/etc/hosts on host myhost2 
+
+4.5.6.202 myhost2.<domain_name>.com db2server 
+
+db2nodes.cfg should contain 
+
+0 db2server 0 
+
+Thus, the hostname and virtual hostname will be treated the same at the 
+operating system level so that db2start sees no difference. 
+
+- If you want to use actual hostname in db2nodes.cfg file, db2gcf command should be used instead of db2start using :
+
+/etc/hosts on host myhost1
+
+1.2.3.201 myhost1.<domain_name>.com 
+
+and 
+
+/etc/hosts on host myhost2
+
+4.5.6.202 myhost2.<domain_name>.com
+
+on host myhost1, db2nodes.cfg should contain 
+
+0 myhost1 0
+
+and 
+
+on host myhost2, db2nodes.cfg should contain
+
+0 myhost2 0
+
+Then issue the following command : 
+db2gcf -u -p 0 -i <inst_name>
+
+RELATED INFORMATION
+ In VCS 6.0 DB2 agent always uses db2start to bring up D [http://www.symantec.com/business/support/index?page=content&id=TECH201024&actp=search&viewlocale=en_US&searchid=1367860428086]
+db2gcg Control DB2 instance command [http://pic.dhe.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=%2Fcom.ibm.db2.luw.admin.cmd.doc%2Fdoc%2Fr0010986.html]
+Db2udb resource type attributes [http://www.symantec.com/business/support/index?page=content&id=HOWTO25460]

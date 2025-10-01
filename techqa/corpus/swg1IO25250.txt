@@ -1,0 +1,126 @@
+Title: IBM IO25250: CM8 ITEM TYPES WITH NAMES STARTING WITH PREFIX "ICM" ARE REMOVED FROM THE NEW SEARCH AND ADD DOCUMENT DIALOGS. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+3.0.1-ICN-WIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-WIN&source=SAR]
+3.0.1-ICN-zLINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-zLINUX&source=SAR]
+3.0.1-ICN-LINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-LINUX&source=SAR]
+3.0.1-ICN-AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-AIX&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CM8 item types with names starting with prefix "ICM" are
+   removed from the New Search and Add Document dialogs.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Item types that start with "ICM" are getting filtered out by
+   ICN.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been addressed in IBM Content Navigator V3.0
+   LA005.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO25250
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   ISCONTNAV
+   
+   
+ * REPORTED RELEASE
+   203
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-28
+   
+   
+ * CLOSED DATE
+   2017-05-15
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   ISCONTNAV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R300 PSY
+   UP

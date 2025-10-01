@@ -1,0 +1,158 @@
+Title: IBM PM98544: AST Rules update needed for Apache Struts 2.0.0 through 2.3.15 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  AST scan engine currently does not check for the following:
+   
+   CVE-2013-1965
+       Summary: Apache Struts Showcase App 2.0.0 through 2.3.13, as
+   used in Struts 2 before 2.3.14.1, allows remote attackers to
+   execute arbitrary OGNL code via a crafted parameter name that is
+   not properly handled when invoking a redirect.
+   
+   CVE-2013-1966
+       Summary: Apache Struts 2 before 2.3.14.1 allows remote
+   attackers to execute arbitrary OGNL code via a crafted request
+   that is not properly handled when using the includeParams
+   attribute in the (1) URL or (2) A tag.
+   
+   CVE-2013-2115
+       Summary: Apache Struts 2 before 2.3.14.2 allows remote
+   attackers to execute arbitrary OGNL code via a crafted request
+   that is not properly handled when using the includeParams
+   attribute in the (1) URL or (2) A tag.
+   
+   CVE-2013-2248
+       Summary: Multiple open redirect vulnerabilities in Apache
+   Struts 2.0.0 through 2.3.15 allow remote attackers to redirect
+   users to arbitrary web sites and conduct phishing attacks via a
+   URL in a parameter using the (1) redirect: or (2)
+   redirectAction: prefix.
+   
+   Workaround: Currently there is no workaround.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Missing tests.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 9.0:
+   
+   Added CVEs:
+   CVE-2013-2248
+   CVE-2013-1966
+   CVE-2013-2115
+   
+   Didn't add CVE-2013-1965 for lack of a suitable payload for
+   black box testing.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM98544
+   
+   
+ * REPORTED COMPONENT NAME
+   SEC APPSCAN STD
+   
+   
+ * REPORTED COMPONENT ID
+   5724T5900
+   
+   
+ * REPORTED RELEASE
+   870
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-06
+   
+   
+ * CLOSED DATE
+   2014-04-01
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SEC APPSCAN STD
+   
+   
+ * FIXED COMPONENT ID
+   5724T5900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R870 PSN
+   UP

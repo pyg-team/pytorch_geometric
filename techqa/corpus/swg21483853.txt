@@ -1,0 +1,20 @@
+Title: IBM Non-SPSS product that uses SafeNet Sentinel licensing technology installed on my license manager server. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have a non-SPSS product that uses SafeNet Sentinel licensing technology installed on my license manager server. Now either my SPSS Statistics product does not work or my non-SPSS product does not work. 
+
+RESOLVING THE PROBLEM
+SafeNet provides network license technology for non-SPSS products. Such products can interfere with Sentinel license manager functions using SPSS products. A search for 'lservrc' files might result in multiple 'lservrc' files identified on the server. Only one of the 'lservrc' files is the correct one. To determine which one it is, check the WLMAdmin tool for which product is listed as having an active license. Locate the 'lservrc' file that has this license and add the license code from the non-working 'lservrc' file to working 'lservrc' file. By doing so, it causes the product of the newly added license code to become active and appear as such in the WLMAdmin tool. If not, stop and start the Sentinel RMS license Manager service and the licenses become active for all products
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 84192

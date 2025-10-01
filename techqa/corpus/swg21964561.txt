@@ -1,0 +1,12 @@
+Title: IBM Unable to select child page in New URL interface in Manage Pages portlet in CF07 - United States
+
+Text:
+child pages; manage pages; javacore; core; oom FLASH (ALERT)
+
+ABSTRACT
+ There is a defect in WebSphere Portal 8.5 Cumulative Fix (CF) 07 which affects the 'Select a child page' option of the New URL: Administration interface in the Manage Pages administration portlet. The option is not available when linking to a portal page. Additional symptoms can include automatic generation of javacore (showing OutOfMemoryException) and/or heapdump files on the system.
+
+
+
+CONTENT
+IBM WebSphere Portal 8.5 Cumulative Fix (CF) 07 introduces a change that affects the 'New URL' functionality in the Manage Pages administration portlet. This change can lead to the 'Select a child page' option of the New URL: Administration interface to be unavailable. IBM Support has provided in interim fix for this issue via APAR PI46843 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8.5.0.0&platform=All&function=aparId&apars=PI46843&source=fc] which can be downloaded from Fix Central.

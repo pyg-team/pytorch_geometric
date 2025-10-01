@@ -1,0 +1,30 @@
+Title: IBM General questions for setting maxTransportObjects - United States
+
+Text:
+maxTransportObjects transport objects configure JDBC TECHNOTE (FAQ)
+
+QUESTION
+ 1. How does the software keep track of total connections across multiple JVMs? 
+
+2. What is the scope of all JVMs; WebSphere Cell or Node level, or Physical machine? 
+
+3. Does the configured value define the logical or transport DB2 agent limits? 
+
+ANSWER
+maxTransportObjects specifies the maximum number of transport objects that can be used for all connections with the associated datasource object. There is one transport object for each physical connection to the data source. 
+Answers to common questions with regards to maxTransportObjects.
+
+1. JCC driver cannot balance total number of connections across JVMs. It can only balance within a single JVM.
+
+2. The JCC driver scope is per JVM. If there are multiple JVMs then each JVM will balance the number of connections within their own JVM.
+
+3. The configured value for maxTransportObjects define the number of physical connections to DB2. 
+
+maxTransportObjects property can be set at a global JVM level or at the datasource level.
+
+The datasource level property can be set on a datasource whereas the global value can be set in a global properties file by setting db2.jcc.maxTransportObjects property. If you have multiple datasource within a single JVM then you can define a separate limit for each of them at the datasource level and also set a global limit at the JVM level.
+
+RELATED INFORMATION
+ Common IBM Data Server Driver for JDBC and SQLJ propert [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_r0052072.html]
+IBM DB2 Driver for JDBC and SQLJ configuration properti [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_r0052075.html]
+Configuration of Sysplex workload balancing at a Java c [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_c0055380.html]

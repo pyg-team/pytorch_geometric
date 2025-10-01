@@ -1,0 +1,57 @@
+Title: IBM Users are dropped from Sametime meetings at random intervals - United States
+
+Text:
+users dropped; disconnected; meeting server; Sametime meetings; emeeting; emeetings; MRC; terminated connection; connectivity; Nagle Algorithm; terminating; connection; 60 seconds; cannot allocate memory array; maximum reached; socket write error; connection reset by peer; intermittant TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Attendees are being dropped from a Lotus Sametime meeting randomly. This drop is not specific to connection type (that is, LAN or WAN). Not all connections are being broken at the same time. Not all attendees are disconnected. The problem is intermittent.
+
+CAUSE
+If the server has not received a response from the Meeting Room Client within 60 seconds after sending a polling packet, then the connection is considered stale and will be terminated.
+
+DIAGNOSING THE PROBLEM
+To determine if this problem affects your Sametime meetings, collect a Java Console (see "How to enable debug for the Sametime meeting server" [http://www.ibm.com/support/docview.wss?rs=477&uid=swg21159758]) from an affected user and look for prints similar to these: 
+
+ * 
+ * 
+ * 
+ * 
+ * EXCEPTION - 
+ * 
+ * java.net.SocketException: Connection reset by peer: socket write error
+ * 
+ * 
+ * ConnectionStatus
+ * 
+ * connectionLost
+ * 
+ * Connection reset by
+ * 
+ * peer: socket write error
+
+
+Collect the summary.diag file, and look for the following in the debug output is:
+
+
+ * 
+ * 
+ * 
+ * Packet not received from client in 60 seconds, 
+ * 
+ * terminating connection
+
+
+This is where the client gets dropped from the server. 
+
+Memory errors or warnings might also be printed: 
+ * 
+ * 
+ * Cannot allocate memory array - maximum reached
+ * 
+
+
+These messages are informational. They indicate Sametime is working as intended and are occurring because of slow connections causing buffers to fill up with packets waiting to be sent. The net result is the buffer pool is unable to provide the required buffers. Increasing the pool will not help overcome the slow connections. 
+RESOLVING THE PROBLEM
+In at least two instances, disabling the Nagle algorithm has resolved the issue. The Notes.ini parameter debug_pd_nagle_off=1 turns off the Nagle algorithm on the server. 
+
+(The Nagle algorithm, a standard feature of TCP, combines groups smaller similar packets to reduce per packet overhead and also to reduce the number of packets on the wire.)

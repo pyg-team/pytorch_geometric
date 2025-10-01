@@ -1,0 +1,135 @@
+Title: IBM PI08015: DOC: Technote for downloading SUN Solaris GTK package is obsolete - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Installation Manager 1.7.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24036814]
+Installation Manager 1.7.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24037254]
+Installation Manager 1.7.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24039320]
+Installation Manager Fix Pack 1 (1.7.4.1) for 1.7.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24039707]
+Installation Manager Fix Pack 2 (1.7.4.2) for 1.7.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24039825]
+Installation Manager Fix Pack 3 (1.7.4.3) for 1.7.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24040146]
+Installation Manager Fix Pack 4 (1.7.4.4) for 1.7.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24040510]
+Installation Manager Fix Pack 5 (1.7.4.5) for 1.7.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041661]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The IIM technote
+   http://www-01.ibm.com/support/docview.wss?uid=swg21330190 [http://www-01.ibm.com/support/docview.wss?uid=swg21330190]
+   instructed users to download Solaris GTK libs from
+   http://sunfreeware.com/. However, the sunfreeware website was
+   obsolete and 'Support for packages has been discontinued on
+   Sunfreeware' is displayed when customer visit that website. The
+   IIM technote need to be updated.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The IBM Installation Manager technote
+   http://www-01.ibm.com/support/docview.wss?uid=swg21330190 [http://www-01.ibm.com/support/docview.wss?uid=swg21330190]
+   instructed users to download Solaris GTK libs from
+   http://sunfreeware.com/. However, the sunfreeware website
+   was obsolete and "Support for packages has been discontinued
+   on Sunfreeware" is displayed when customer visit that
+   website.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The IBM Installation Manager technote
+   http://www-01.ibm.com/support/docview.wss?uid=swg21330190 [http://www-01.ibm.com/support/docview.wss?uid=swg21330190]
+   has been updated to provide the specifics for collecting the
+   necessary libraries.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI08015
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM INSTALL MGR
+   
+   
+ * REPORTED COMPONENT ID
+   RATLIMG00
+   
+   
+ * REPORTED RELEASE
+   152
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-12
+   
+   
+ * CLOSED DATE
+   2014-04-04
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

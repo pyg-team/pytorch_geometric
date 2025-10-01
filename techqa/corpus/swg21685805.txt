@@ -1,0 +1,18 @@
+Title: IBM Omni Channel Marketing products are not affected by the Bash vulnerabilities (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278) - United States
+
+Text:
+Unica; Affinium FLASH (ALERT)
+
+ABSTRACT
+ IBM Omni Channel Marketing products are not vulnerable to the Bash vulnerabilities that have been referred to as “Bash Bug” or “Shellshock” and the two memory corruption vulnerabilities. 
+
+CONTENT
+IBM Omni Channel Marketing products in all editions and all platforms are NOT vulnerable to the Bash vulnerabilities (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278).
+IBM recommends that you review your entire environment to identify vulnerable releases of Bash including your Operating Systems and take appropriate mitigation and remediation actions. Please contact your Operating System provider for more information.
+
+Change History: September 30, 2014: original version published
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Marketing Management IBM Campaign Enterprise Marketing Management IBM Contact Optimization Enterprise Marketing Management IBM Distributed Marketing Enterprise Marketing Management IBM eMessage Enterprise Marketing Management IBM Interact Enterprise Marketing Management IBM Leads Enterprise Marketing Management IBM Marketing Operations Enterprise Marketing Management IBM Marketing Platform Enterprise Marketing Management IBM PredictiveInsight Enterprise Marketing Management Unica Detect Enterprise Marketing Management Unica NetInsight

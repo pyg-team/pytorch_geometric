@@ -1,0 +1,133 @@
+Title: IBM LO84039: TIME STAMPS ON CHATS ARE INCORRECT BY 4 HOURS. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using a Linux thin client with a Citrix XenApp client,
+   time stamps in chats are 4 hours off.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None. Sametime has limited support for Citrix.
+   We only support pushing Windows sessions down to a
+   Windows-based client; not Linux.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fixed in ST 9.0.x
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in ST 9.0.x
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO84039
+   
+   
+ * REPORTED COMPONENT NAME
+   SAMETIME COMM
+   
+   
+ * REPORTED COMPONENT ID
+   5725M3400
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-27
+   
+   
+ * CLOSED DATE
+   2015-08-04
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  Sametime
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SAMETIME COMM
+   
+   
+ * FIXED COMPONENT ID
+   5725M3400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

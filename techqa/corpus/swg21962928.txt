@@ -1,0 +1,12 @@
+Title: IBM "Add components to Content Collector cluster" option  when installing  IBM Content Collector 4 fix pack 3 on a secondary node - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Can "Add components to Content Collector cluster" option be selected when installing IBM Content Collector 4 fix pack 3 on a secondary node?
+
+. 
+
+ANSWER
+When installing IBM Content Collector 4 fix pack 3. The "Add components to Content Collector cluster" option can be selected for both nodes (primary and secondary) at the "Installation Mode" section of the installation wizard.

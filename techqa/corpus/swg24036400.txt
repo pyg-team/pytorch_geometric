@@ -1,0 +1,42 @@
+Title: IBM Operational Decision Manager Application Pattern V8.5.1 Download Document - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document explains how to download the IBM ODM Application Pattern V8.5.1 eAssembly images from IBM Passport Advantage Online. 
+
+DOWNLOAD DESCRIPTION
+
+
+IBM ODM Application Pattern contains components for managing business decisions in a private cloud. Use the components to create, deploy, and manage Operational Decision Manager environments with IBM PureApplication™ System.
+
+Contents
+
+ This document contains a list of the eAssembly images for IBM ODM Application Pattern V8.5.1, and explains how to download them from IBM Passport Advantage Online. 
+
+More information
+
+ For more information about this product, see the Operational Decision Manager home page [http://www.ibm.com/software/decision-management/operational-decision-management/websphere-operational-decision-management]. 
+
+ For more information about installing this product, refer to the Operational Decision Manager installation information supplied at IBM Support Portal: Plan and install [http://www.ibm.com/support/entry/portal/planning/software/websphere/ibm_operational_decision_manager]. 
+
+Find out what's new at What's new in IBM Operational Decision Manager [http://www.ibm.com/support/docview.wss?uid=swg21992623].
+
+Space requirements
+
+The size of the pattern package is approximately 4.7 GB.
+
+Downloading the product
+
+ 1. Go to the Find Downloads and Media [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] page on IBM Passport Advantage Online.
+ 2. Sign in by using your IBM ID.
+ 3. Select Find by part number from the Download finder options.
+ 4. Search for each downloadable file by part number (parts are listed below).
+ 5. Download the files that you require.
+
+Additional installation information can be found in the IBM ODM Application Pattern V8.5.1 quick start guide:
+
+ * IBM ODM Application Pattern V8.5.1 Multiplatform Multilingual Quick Start Guide (Part No. CIQF0ML) 
+
+IBM ODM Application Pattern V8.5.1 Part number Description CIQF0ML IBM ODM Application Pattern V8.5.1 Multiplatform Multilingual Quick Start Guide CIQF2ML IBM ODM Application Pattern V8.5.1 on AIX Multilingual CIQF1ML IBM ODM Application Pattern V8.5.1 on Red Hat Enterprise Linux Server Multilingual

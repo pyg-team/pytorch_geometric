@@ -1,0 +1,27 @@
+Title: IBM IEW2303E or GIM23911E when applying CICS TS 3.2 maintenance after z/OS upgrade - United States
+
+Text:
+IEW2303E IXM4C56X SIXMEXP IEW2303 MSGIEW2303E ; 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 KIXINFO kixdcfzos113 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You see messages IEW2303E or GIM23911E when applying maintenance to CICS Transaction Server for z/OS (CICS TS) V3.2 or V3.1. This occurs if the XML Toolkit 1.9 member IXM4C56X is not found in dataset SIXMEXP. You recently upgraded to a new release of z/OS and requested the XML Toolkit. 
+
+SYMPTOM
+Your GIMSMP APPLY job fails with BINDER message:
+IEW2303E [http://pic.dhe.ibm.com/infocenter/zos/v1r13/topic/com.ibm.zos.r13.ieam800/pmbmes.htm#pmbmes] member IXM4C56X of the data set specified by SIXMEXP could not be found.
+
+You might also see message GIM23911E [http://pic.dhe.ibm.com/infocenter/zos/v1r13/topic/com.ibm.zos.r13.gim0000/gimmcd5108.htm].
+
+
+CAUSE
+The XML Toolkit is a separate product that is not included in z/OS base. When you request the Toolkit with a new release of z/OS, like z/OS 1.13, you receive the current release of the Toolkit (1.10) But, XML Toolkit 1.10 does not include the 1.9 libraries and CICS TS 3.2 (and 3.1) have a dependency on XML Toolkit 1.9 modules.
+
+RESOLVING THE PROBLEM
+Download the V1.9 version of the XML Toolkit from the XML Toolkit for z/OS V1.9 download information [http://www-03.ibm.com/systems/z/os/zos/tools/xml/download/v19_download.html] or use the V1.9 Toolkit libraries from your own system.
+
+Note: You can avoid getting this error by saving XML Toolkit V1.9 before installing z/OS V1.13 with the XML Toolkit.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

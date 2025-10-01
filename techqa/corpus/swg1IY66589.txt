@@ -1,0 +1,166 @@
+Title: IBM IY66589: WEBSEAL STOPS NEGOTIATING SSL AT RANDOM INTERVALS - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TAM 4.1 on Solaris 8
+   
+   Customer has two servers, each hosting multiple WebSEAL
+   instances that randomly experiencing problems negotiating
+   SSL sessions.  The WebSEALs function for sometime, around an
+   hour, but then randomly, no SSL session can be established to
+   any of the WebSEAL instances.
+   
+   These WebSEAL servers use an nCipher hardware crypto device.
+   Originally they were having this problem on 2 out of 10 servers
+   using the nCipher device.  They did find that the firmward for
+   the HW was different on these two servers as compared to the 8
+   that are not having problems, and updated the firmware hoping it
+   would resolve the problem, but that was not the case.
+   
+   Additionally, they removed the nCipher hardware and
+   created a kdb file and pointed 6 of the webseald instances to
+   the single kdb file, and it worked for a few hours, then they
+   encountered the same problem.
+   
+   Next, they made copies of the kdb, one per webseald instance,
+   and they worked for several hours, then encountered the same
+   problem again.
+   
+   Running IE - get "Page could not be displayed".
+   Running Mozilla or Firefox - gets popup that "unable to connect"
+   
+   Early on, they sent an email with a clipping of GSKit error from
+   msg__webseald.log and SSL handshake failure using OpenSSL tool
+   to WebSEAL. (File not available, was being worked by another
+   engineer at that time several months ago).
+   ----------------------------------------------------------------
+   2004-09-17-21:44:25.587+00:00I----- 0x38CF0131 webseald WARNING
+   wwa
+   server
+   listen-ssl.c 169 0x00000083
+   The 'ssl_writechunk' routine failed for 'gsk_secure_soc_write',
+   errno = 406
+   
+   ~ $ openssl s_client -connect x.x.x.x:443
+   CONNECTED(00000003)
+   depth=4
+   4048:error:140790E5:SSL routines:SSL23_WRITE:ssl handshake
+   failure:s23_lib.c:226
+   ----------------------------------------------------------------
+   
+   
+   In the event of future outage, customer was advised to provide
+   system_status for each of the 2 MAS/WebSEAL servers, as well as
+   pdweb.debug and iptrace, along with gskit trace.  Core was also
+   requested, but even when attempting to force it to core, no core
+   file is produced.
+   
+   They experienced an outage last week.  While in that state (not
+   receiving ssl requests), they were unable to collect pdweb.debug
+   and iptrace.  However, they did provide system_status and gskit
+   traces, which are now located on:
+   
+   pdlevel3.tivlab.austin.ibm.com/pmrs/53173,500,000/
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *   This issue has been unreproducible in the L3 la
+   b environment.  The customer was able to resolve this issue by u
+   pgrading their nCipher drivers.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY66589
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0811
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-01-10
+   
+   
+ * CLOSED DATE
+   2005-04-08
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * FIXED COMPONENT ID
+   5724C0811
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R410 PSN
+   UP

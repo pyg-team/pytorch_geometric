@@ -1,0 +1,148 @@
+Title: IBM PI58862: ODRSESSION cookie should match JESSIONID cookie. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On Demand Router (ODR) creates ODRSESSION cookie, it should
+   match
+   JESSIONID cookie.
+   
+   &#160;
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server WAS ND edition- Virtual              *
+   *                  Enterprise/IM Component On Demand Router    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The ODR session cookie does not match   *
+   *                      JESSIONID cookies in all cases. This    *
+   *                      may cause unexpected results as an      *
+   *                      application processes requests and      *
+   *                      updates cookies.                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When the On Demand Router processes a request it may create a
+   corresponding ODR Session ID cookie to ensure that the same ODR
+   processes subsequent requests from the same client.  The
+   creation of the ODR Session ID cookie is based upon attributes
+   in the JSESSIONID cookie. However, there were cases that the
+   cookies did not match.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The ODR code was changed to ensure that when the ODR Session ID
+   cookie is copied from the JSESSIONID cookie.  This will ensure
+   that these two cookies have common characteristics.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 8.5.5.9.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI58862
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-09
+   
+   
+ * CLOSED DATE
+   2016-05-27
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

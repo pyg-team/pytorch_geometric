@@ -1,0 +1,76 @@
+Title: IBM Cannot remove invalid static route via the CLI on the IBM WebSphere DataPower SOA Appliance - United States
+
+Text:
+Subnet Route Removal failed; error: Subnet route not found; Subnet route not found; error: Code 201; Code 201; static route; route; no ip route TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am unable to delete an invalid static route added to an Ethernet interface using the CLI 'no ip route ...' command. What steps should I follow in order to delete this invalid static route? 
+
+SYMPTOM
+Whenever I attempt to delete the static route using the CLI, I receive the following: 
+
+ xi52(config-if[eth21])# no ip route 0.0.0.0/0 10.28.123.1
+% Subnet Route Removal failed, error: Subnet route not found
+
+xi52(config-if[mgt0])# no ip route 0.0.0.0/0 10.28.123.1 1
+% Subnet Route Removal failed, error: Code 201
+
+For a valid entry, the static route is removed successfully:
+
+xi52(config-if[eth21])# no ip route 10.10.10.0/27 10.10.10.1 4
+Subnet Route Removed.
+
+
+CAUSE
+The static route that was added has a next-hop that is not in a directly-attached subnet. This makes the route invalid. The WebGUI allows such entries to be added but the CLI does not.
+
+
+RESOLVING THE PROBLEM
+Depending on the number of Ethernet interfaces configured on the appliance, the WebGUI, CLI/SSH, or Serial console may be used to delete the invalid static route. Below outlines the WebGUI, CLI/SSH, and Serial console approaches. 
+
+
+1. WebGUI approach:
+
+If you are still able to access the WebGUI, then delete the invalid static route using the WebGUI. Since modifying the Ethernet interface configuration may bring the interface down and up, you may have to access the WebGUI over an Ethernet interface different from the one being modified. To do so, ensure the WebGUI IP address is configured with a different IP or 0.0.0.0. If you have CLI access, you can view the WebGUI settings by executing the 'show web-mgmt' CLI command. Sample output is shown below:
+
+xi52(config)# show web-mgmt
+
+web-mgmt [up]
+--------
+admin-state enabled
+ip-address 0.0.0.0
+port 9090
+save-config-overwrite on
+idle-timeout 3600 seconds
+acl web-mgmt [up]
+
+
+2. CLI approach:
+
+Consider accessing the CLI over a different Ethernet interface, similar to the WebGUI approach. In order to remove the invalid entry, follow the steps below:
+
+a. Disable the Ethernet interface with the invalid static route.
+b. Take note of all the valid static route entries defined on the Ethernet interface.
+c. Clear all static route configurations using the CLI 'clear route' command.
+d. Add all the valid static route entries back.
+e. Enable the interface.
+
+Note: Clear route will clear all configured routes on that interface so you need to configure the valid static routes again.
+
+Below are sample CLI commands for steps a, c, and e:
+
+xi52(config)# top; co; int eth21
+Global configuration mode
+Interface configuration mode (eth21 )
+xi52(config-if[eth21])# admin-state disabled
+xi52(config-if[eth21])# clear route
+xi52(config-if[eth21])# admin-state enabled
+xi52(config-if[eth21])# exit; write mem
+Overwrite previously saved configuration? [y/n]: y
+Configuration saved successfully.
+xi52(config)#
+
+
+3. Serial Console approach:
+
+This approach may be used if only one Ethernet interface is configured on the appliance and the WebGUI or CLI cannot be accessed. Ethernet access to the appliance is not needed when connecting over the serial console. Therefore, once you have serial console access, the steps noted for the CLI approach (#2) may be used.

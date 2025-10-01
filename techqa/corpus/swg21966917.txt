@@ -1,0 +1,46 @@
+Title: IBM Using a Cognos package, Transformer encounters issues that Report Studio does not have with that same package. Why ? - United States
+
+Text:
+MSSQL Microsoft SQL Server Oracle Informix Sybase DB2 MySQL request datasource TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The situation is as follows :
+- Transformer model is based on a Cognos package
+- Transformer version is the same as Cognos BI Server (and the Transformer installed on the same machine as Cognos BI server encounters problems too)
+- The namespace user that is used to connect from Transformer onto the namespace, has no problem in Report Studio when running the queries from the package. 
+- These queries that are working in Report Studio for that user are those that are used in Transformer model.
+
+Still, Transformer may encounter problems like :
+- unable to connect to the data source (like error TR0168 for example)
+- the data brought by the queries are not exactly the same as those brought by Report Studio.
+- performance issues
+- TR3110 , RQP-DEF-0177 An error occurred while performing operation sqlOpenResult , UDA-SOR-0005 Unable to write the file (sort buffer problems)
+
+
+CAUSE
+Transformer behaves differently, depending on the nature of the package.
+When publishing a Cognos BI package from Framework Manager, it is possible to choose wether this package will work in CQM (Classic Query Mode / Compatible Query Mode) or in DQM (Dynamic Query Mode)
+CQM is 32-bit
+DQM is 64-bit
+If Transformer is accessing a package in CQM, it will execute the queries locally.
+If Transformer is accessing a package in DQM, it will leave execution to the Cognos BI Server.
+[ Generating a DQM package is to be done from Framework Manager while Publishing a package : just check option "Use Dynamic Query Mode" in the wizard ]
+
+
+
+RESOLVING THE PROBLEM
+To have the best chances that Transformer can connect successfully to the package and give the same result as Report Studio when executing a query, make it using a DQM package. 
+
+Using a DQM package is possible from Transformer 10.2.1 FP3 only after setting environment variable PC_ALLOW_DQ or TR_ALLOW_DQ (both have same effect)
+[ Note that a bug makes impossible to use DQM with a report (credentials prompt is looping) : this is fixed in 10.2.1 FP6 ]
+In version 10.2.2, just set the parameter "AllowDQ" to 1 in cogtr.xml (in /c10/configuration on Transformer side) or in your own preferences file :
+<Preference Name="AllowDQ" Value="1"/>
+Note that if setting AllowDQ to 0 then queries will be executed locally even if package was published as DQM. 
+
+If this is not possible to use DQM for some reason then verify : 
+
+- That the Transformer version level is really exactly the same as Cognos BI Server (same Fix Pack of Interim Fix) 
+
+- That the database client layer is correctly installed on the machine where Transformer resides, and that it is a 32-bit client. In case the data source is ODBC, verify that the DSN has been created using the 32-bit odbcad32.exe (the one that resides in C:\windows\SysWow64) 
+
+- That the regional settings under which Transformer is executed are the same as the regional settings used when this user is succesfully running a query from Report Studio.

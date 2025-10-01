@@ -1,0 +1,39 @@
+Title: IBM Using sendSmsLogo and sendSmsRingtone with WebSphere Telecom Web Services Server (TWSS) 6.2 - United States
+
+Text:
+sendSmsLogo; sendSmsRingtone TECHNOTE (FAQ)
+
+QUESTION
+ How are the sendSmsLogo and sendSmsRingtone API's used within IBM WebSphere Telecom Web Services Server (TWSS) 6.2? 
+
+ANSWER
+There are two encoding formats: EMS and Nokia Smart Messaging. EMS is published standard and Nokia Smart Messaging is the standard published by Nokia. [http://ringtonetools.mikekohn.net/docs.php] 
+
+sendSMSLogo 
+
+The application invokes this API to send an SMS logo specified by the byte array image. In the case of TWSS, the image should be EMS/Nokia Messaging encoded before making the API call.
+
+The attached sample (SMSClient.ear) demonstrates the API usage, along with converting the encoded content (hexadecimal string) message to a byte array.
+
+The sample accepts the following inputs:
+Destination // destination URI is as per ‘tel:’ URI scheme
+Sender name //optional
+Binary //accepts hexadecimal string, which represents SMS Logo data in hex
+SmsFormat //Format can be a string, either Ems or SmartMessaging
+End point URI //Service implementation end point
+
+The sendSMSLogo operation takes a byte array as the input parameter. Hence the sample accepts a hexadecimal string and converts it into a byte array before sending it to the sendSMSLogo operation. 
+
+sendSmsRingtone 
+
+The application invokes this API to send an SMS ringtone, specified by the String ringtone, which should be in RTX format. In the case of TWSS, the RAW RTX format needs to be encoded to either the EMS or Nokia Smart Message format for the devices to receive and use the message before making the API call.
+
+Host the content in either RAW RTX format or in EMS/Smart Messaging Format. In the first case, ensure that the RTX content is converted to one of the two formats before making the API call.
+
+
+SMSClient.ear [/support/docview.wss?uid=swg21313651&aid=2] [/support/docview.wss?uid=swg21313651&aid=1]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TWSS

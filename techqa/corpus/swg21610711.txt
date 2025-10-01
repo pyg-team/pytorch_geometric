@@ -1,0 +1,80 @@
+Title: IBM Intermittent HTTP 404 errors caused by exhausted user limits - United States
+
+Text:
+ulimit; FileNotFoundException; 404; CWWWS8011E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+User limits are exhausted in the operating system.
+
+SYMPTOM
+A user requests a WebSphere Portal page and gets an HTTP 404 error. With the following trace strings enabled: 
+
+com.ibm.wps.policy.*=all:com.ibm.wps.theme.policy.*=all:com.ibm.wps.engine.Servlet=all
+
+trace.log contains (portions of this will be mirrored in SystemOut.log):
+
+... ApplicationMg A WSVR0200I: Starting application: content_j2ee
+...
+... PluginLocator E com.ibm.content.plugin.base.impl.PluginLocatorImpl createLoader java.util.zip.ZipException: error in opening zip file
+java.util.zip.ZipException: error in opening zip file
+at java.util.zip.ZipFile.open(Native Method)
+...
+at com.ibm.content.init.servlets.InitServlet.init(InitServlet.java:219)
+at javax.servlet.GenericServlet.init(GenericServlet.java:241)
+...
+... Servlet > com.ibm.wps.engine.Servlet doGet ENTRY ...
+... StorageApiUti > com.ibm.wps.policy.commands.util.StorageApiUtil getContentService from JCR ENTRY
+... InitThemePoli E com.ibm.wps.theme.policy.tags.InitThemePolicyTag doStartTag EJPNG0006E: There was an error in trying to retrieve information in the InitThemePolicy Tag.
+java.lang.NullPointerException
+at com.ibm.wps.policy.commands.util.StorageApiUtil.getContentService(StorageApiUtil.java:76)
+...
+... StorageApiUti > com.ibm.wps.policy.commands.util.StorageApiUtil getContentService from JCR ENTRY
+... servlet E com.ibm.ws.webcontainer.servlet.ServletWrapper service SRVE0068E: Uncaught exception created in one of the service methods of the servlet /themes/html/Portal/Default.jsp in application wps_theme. Exception created : java.lang.NullPointerException
+at com.ibm.wps.policy.commands.util.StorageApiUtil.getContentService(StorageApiUtil.java:76)
+...
+... Servlet 3 com.ibm.wps.engine.Servlet doGet() Caught generic Throwable com.ibm.portal.state.phases.exceptions.PhaseException:EJPEI0105E: An error occurred during the rendering in phase [com.ibm.wps.engine.phases.WPRenderPhase@131b131b].
+...
+... Servlet E com.ibm.wps.engine.Servlet handleException EJPEJ0069E: URL parsing problem, URL= http://...
+... Servlet 1 com.ibm.wps.engine.Servlet handleException An exception occurred while processing the request.
+com.ibm.portal.state.phases.exceptions.PhaseException:EJPEI0105E: An error occurred during the rendering in phase [com.ibm.wps.engine.phases.WPRenderPhase@131b131b].
+at com.ibm.wps.engine.phases.WPRenderPhase.processRendering(WPRenderPhase.java:519)
+...
+at com.ibm.wps.engine.Servlet.doGet(Servlet.java:677)
+
+
+Elsewhere, the trace may contain:
+
+WebServicesMo E CWWWS8011E: The ... cache file cannot be processed correctly because of the following
+error: java.io.FileNotFoundException: ... (Too many open files)
+
+CAUSE
+The operating system's user limits have been exhausted. The reason restarting the server helps is that it forces open files to be closed. The problem may reoccur after some period of time. The minimum user limit guidelines in the WebSphere Portal InfoCenter may prove insufficient, depending on several factors (other processes running on the system, other network activity, WCM usage, etc.)
+
+
+
+DIAGNOSING THE PROBLEM
+Trace and look for the messages above. 
+
+
+Monitor WebSphere Portal's open files by: 
+
+1. Run:
+ps -ef 
+or equivalent command to identify the Java process ID associated with the WebSphere Portal server
+2. Run lsof against this process ID. Count the total number of instances. For example:
+lsof -p 12345 | wc -l
+
+
+RESOLVING THE PROBLEM
+Increase the user limits in the operating system. You can use the ulimit command to do so. Refer to ulimit's man page for syntax.
+
+
+
+RELATED INFORMATION
+#InfoCenter on user limits [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Preparing_your_AIX_operating_system_wp7]
+
+
+
+
+ * 
+ *

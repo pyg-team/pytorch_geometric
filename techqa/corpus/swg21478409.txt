@@ -1,0 +1,31 @@
+Title: IBM Modeler Server login option in Modeler client (tools>server login) is disabled (greyed out) or the Server login dialog does not appear. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have installed Modeler Client and am attempting to connect to Modeler Server via Tools>Server Login, however the Server Login dialogue is greyed out and I cannot use it to connect to Modeler Server. Why is this? 
+
+RESOLVING THE PROBLEM
+Ensure the IBM SPSS Modeler client license used has 'Server enablement' imbedded. 
+
+This will require contacting IBM BA SPSS Client Care. 
+
+ 
+
+The authorization code that you have applied to the Modeler Client installation does not have the "Server Enablement" option checked.
+
+If you have purchased Modeler Server, please contact IBM SPSS customer services and obtain a Modeler Client code that has the server enablement option checked and apply that code to your Modeler Client installation. After doing this, the server login option should be enabled after you restart the client application.
+
+Details of how to contact customer services can be found here:
+
+http://www.ibm.com/software/analytics/spss/ [http://www.ibm.com/software/analytics/spss/]
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 77301

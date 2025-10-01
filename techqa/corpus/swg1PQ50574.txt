@@ -1,0 +1,264 @@
+Title: IBM PQ50574: SMTP DEBUG TRACE POINTS FOR JES PROCESSING - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Enhance SMTP / JES debugging with additional diagnostic output
+   to improve whether a problem lies with SMTP or JES.
+    Initial debugging should (at minimum) identify the JOB number
+   from the JES queue that we are to process and the type of file.
+   Ex. transmit or other. This would bind the JES file we are
+   currently processing within SMTP.
+    Additional debug information could be provided when lower level
+   debug options are used. This trace could identify the success/
+   failure for each of the 3 key steps in processing:
+     1) Querying the JOB
+     2) Allocating the JOB
+     3) Initial read of the JOB from JES
+    Information presented could result in more timely
+   identification of the jes job in error and reduce amount of time
+   service is involved.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of the IBM Communications Server   *
+   *                 for z/OS Version 1 Release 2 IP: SMTP        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Customer was having problems with the   *
+   *                      spool file processing and SMTP (pascal  *
+   *                      version). They could not tell which     *
+   *                      spool files were being processed.       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Customer needed additional information on what jobs were being
+   processed by SMTP and how they were sent.
+   +-------------------------------------------------------------+
+   + Please check our Communications Server for OS/390 homepages +
+   + for common networking tips and fixes.  The URL for these    +
+   + homepages can be found in Informational APAR II11334 [http://www-01.ibm.com/support/docview.wss?uid=isg1II11334].       +
+   +-------------------------------------------------------------+
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The SMTP code was amended to support three additional
+   informational messages dealing with spool processing (EZA5564I,
+   EZA5565I and EZA5566I). These messages are displayed only if
+   Debug is active via the DEBUG statement in the hlq.SMTPCONF
+   data set or dynamically using SMSG smtpjobname DEBUG on
+   the TSO command line.
+   
+   The following documentation should be changed to explain the new
+   messages.
+   
+   z/OS IBM Communications Server
+   IP Messages Volume 1
+   Document Number SC318783
+   
+     --------------------------------------------------------------
+     EZA5564I date time Processing spool file filename
+   
+     Explanation: This message is written to the SMTP sysdebug data
+     set specified in the SYSDEBUG statement in hlq.SEZAINST
+     (SMTPPROC). This message is generated whenever debug is active
+     and SMTP is processing data from the JES spool.
+   
+     Date is the current date.
+   
+     Time is the current time.
+   
+     Filename is the spool file name being processed by SMTP.
+   
+     System Action: SMTP continues.
+   
+     User or Operator Response: None.
+   
+     System Programmer Response: None.
+   
+     Source Data Set: SMTPBTCH
+   
+     Procedure Name: ServiceReaderMVS
+   
+     --------------------------------------------------------------
+     EZA5565I date time Read spool file filename sent by userid
+              at nodeid using TSO XMIT
+   
+     Explanation: This message is written to the SMTP sysdebug data
+     set specified in the SYSDEBUG statement in hlq.SEZAINST
+     (SMTPPROC). This message is generated whenever debug is active
+     and SMTP is processing data from the JES spool. The message
+     indicates that the spool file was sent using the TSO/E
+     TRANSMIT(XMIT) command. This command puts certain information
+     in its headers indicating who and where the XMIT command was
+     issued from. The XMIT command must be set up properly to
+     contain the correct information.
+   
+     Date is the current date.
+   
+     Time is the current time.
+   
+     Filename is the name of the spool file being processed by
+     SMTP.
+   
+     Userid is the user identification taken from the XMIT headers.
+   
+     Nodeid is the NJE node identification taken from the XMIT
+     headers.
+   
+     System Action: SMTP continues.
+   
+     User or Operator Response: If userid or nodeid is incorrect
+     then contact the system programmer.
+   
+     System Programmer Response: If userid or nodeid is incorrect
+     then check the XMIT command setup parameters.
+   
+     Source Data Set: SMTPBTCH
+   
+     Procedure Name: ServiceReaderMVS
+   
+     --------------------------------------------------------------
+     EZA5566I date time Read spool file filename sent by a batch
+              job
+   
+     Explanation: This message is written to the SMTP sysdebug data
+     set specified in the SYSDEBUG statement in hlq.SEZAINST
+     (SMTPPROC). This message is generated whenever debug is active
+     and SMTP is processing data from the JES spool. The message
+     indicates that the spool file was sent by a batch job.
+   
+     Date is the current date.
+   
+     Time is the current time.
+   
+     Filename is the name of the spool file being processed by
+     SMTP.
+   
+     System Action: SMTP continues.
+   
+     User or Operator Response: None.
+   
+     System Programmer Response: None.
+   
+     Source Data Set: SMTPBTCH
+   
+     Procedure Name: ServiceReaderMVS
+   
+   * Cross Reference between External and Internal Names
+   EZAAA00H (MSSMTP  )  EZABB01Z (SMTPBTCH)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ50574
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   120
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2001-07-13
+   
+   
+ * CLOSED DATE
+   2001-07-17
+   
+   
+ * LAST MODIFIED DATE
+   2001-09-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PQ48758
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ56104
+   
+   
+
+MODULES/MACROS
+ *  EZAAA00H EZABB01Z
+   
+   
+    
+   
+   
+
+Publications Referenced SC31878301 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * FIXED COMPONENT ID
+   5655HAL00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R120 PSY UQ56104 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ56104]
+   UP01/08/09 P F108
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,275 @@
+Title: IBM What version of Java is install with Domino server on UNIX? - United States
+
+Text:
+java; java version; UNIX; aix; linux; solaris; domino version TECHNOTE (FAQ)
+
+QUESTION
+What version of Java is installed with a Lotus Domino server running on a UNIX platform? 
+
+ANSWER
+The output below is collected from running thejava -version command for the Java package installed with a Domino server. The information is organized by UNIX type alphabetically: AIX, Linux, Solaris. 
+
+This output include the base version (for example, 1.4.2) as well as the build, build date, and SR values. These value are important because there are significant or important fixes and enhancements added in these minor version upgrades. 
+
+
+
+
+
+
+
+AIX Domino 853 (32bit) 
+java version "1.6.0" 
+Java(TM) SE Runtime Environment (build pap3260sr9fp1-20110208_03(SR9 FP1)) 
+IBM J9 VM (build 2.4, JRE 1.6.0 IBM J9 2.4 AIX ppc-32 jvmap3260sr9-20110203_74623 (JIT enabled, AOT enabled) 
+J9VM - 20110203_074623 
+JIT - r9_20101028_17488ifx3 
+GC - 20101027_AA) 
+JCL - 20110203_01 
+
+Domino 853 (64bit) 
+java version "1.6.0" 
+Java(TM) SE Runtime Environment (build pap6460sr9fp1-20110208_03(SR9 FP1)) 
+IBM J9 VM (build 2.4, JRE 1.6.0 IBM J9 2.4 AIX ppc64-64 jvmap6460sr9-20110203_74623 (JIT enabled, AOT enabled) 
+J9VM - 20110203_074623 
+JIT - r9_20101028_17488ifx3 
+GC - 20101027_AA) 
+JCL - 20110203_01 
+
+Domino 852 (32bit) 
+java version "1.6.0" 
+Java(TM) SE Runtime Environment (build pap3260sr7ifix-20100309_01(SR7+IZ70326+IZ68993)) 
+IBM J9 VM (build 2.4, JRE 1.6.0 IBM J9 2.4 AIX ppc-32 jvmap3260sr7-20100219_54049 (JIT enabled, AOT enabled) 
+J9VM - 20100219_054049 
+JIT - r9_20091123_13891 
+GC - 20100216_AA) 
+JCL - 20091202_01 
+
+Domino 852 (64bit) 
+java version "1.6.0" 
+Java(TM) SE Runtime Environment (build pap6460sr7ifix-20100322_01(SR7+IZ70326+IZ70755)) 
+IBM J9 VM (build 2.4, JRE 1.6.0 IBM J9 2.4 AIX ppc64-64 jvmap6460sr7ifx-20100311_55133 (JIT enabled, AOT enabled) 
+J9VM - 20100311_055133 
+JIT - r9_20091123_13891ifx2 
+GC - 20100216_AA) 
+JCL - 20091202_01 
+
+Domino 851 (32bit) 
+java version "1.6.0" 
+Java(TM) SE Runtime Environment (build pap3260sr4-20090219_01(SR4)) 
+IBM J9 VM (build 2.4, J2RE 1.6.0 IBM J9 2.4 AIX ppc-32 jvmap3260-20090215_29883 (JIT enabled, AOT enabled) 
+J9VM - 20090215_029883_bHdSMr 
+JIT - r9_20090213_2028 
+GC - 20090213_AA) 
+JCL - 20090218_01 
+
+Domino 851 (64bit) 
+java version "1.6.0" 
+Java(TM) SE Runtime Environment (build pap6460sr4-20090219_01(SR4)) 
+IBM J9 VM (build 2.4, J2RE 1.6.0 IBM J9 2.4 AIX ppc64-64 jvmap6460-20090215_29883 (JIT enabled, AOT enabled) 
+J9VM - 20090215_029883_BHdSMr 
+JIT - r9_20090213_2028 
+GC - 20090213_AA) 
+JCL - 20090218_01 
+
+Domino 8.5 (32bit) 
+java version "1.6.0" 
+Java(TM) SE Runtime Environment (build pap3260sr1-20080416_01(SR1)) 
+IBM J9 VM (build 2.4, J2RE 1.6.0 IBM J9 2.4 AIX ppc-32 jvmap3260-20080415_18762 (JIT enabled, AOT enabled) 
+J9VM - 20080415_018762_bHdSMr 
+JIT - r9_20080415_1520 
+GC - 20080415_AA) 
+JCL - 20080412_01 
+
+Domino 8.5 (64bit) 
+java version "1.6.0" 
+Java(TM) SE Runtime Environment (build pap6460sr1-20080419_01(SR1)) 
+IBM J9 VM (build 2.4, J2RE 1.6.0 IBM J9 2.4 AIX ppc64-64 jvmap6460-20080416_18762 (JIT enabled, AOT enabled) 
+J9VM - 20080415_018762_BHdSMr 
+JIT - r9_20080415_1520 
+GC - 20080415_AA) 
+JCL - 20080412_01 
+
+Domino 8.0.1 (32-bit) 
+java version "1.5.0" 
+Java(TM) 2 Runtime Environment, Standard Edition (build pap32devifx-20071025a (SR6b)) 
+IBM J9 VM (build 2.3, J2RE 1.5.0 IBM J9 2.3 AIX ppc-32 j9vmap3223-20071007 (JIT enabled) 
+J9VM - 20071004_14218_bHdSMR 
+JIT - 20070820_1846ifx1_r8 
+GC - 200708_10) 
+JCL - 20071025 
+
+Domino 8.0.1 (64-bit) 
+java version "1.5.0" 
+Java(TM) 2 Runtime Environment, Standard Edition (build pap64devifx-20071025 (SR6b)) 
+IBM J9 VM (build 2.3, J2RE 1.5.0 IBM J9 2.3 AIX ppc64-64 j9vmap6423-20071007 (JIT enabled) 
+J9VM - 20071004_14218_BHdSMr 
+JIT - 20070820_1846ifx1_r8 
+GC - 200708_10) 
+JCL - 20071025 
+
+Domino 8.0 
+java version "1.5.0" 
+Java(TM) 2 Runtime Environment, Standard Edition (build pap32devifx-20070511 (ifix 119933: SR4 + 119663)) 
+IBM J9 VM (build 2.3, J2RE 1.5.0 IBM J9 2.3 AIX ppc-32 j9vmap3223ifx-20070511 (JIT enabled) 
+J9VM - 20070510_12629_bHdSMR 
+JIT - 20070109_1805ifx1_r8 
+GC - 200701_09) 
+JCL - 20070126 
+
+Domino 7.0.4, 7.0.3, 7.0.2, 7.0.1 
+java version "1.4.2" 
+Java(TM) 2 Runtime Environment, Standard Edition (build 1.4.2) 
+Classic VM (build 1.4.2, J2RE 1.4.2 IBM AIX build ca1420-20040626 (JIT enabled: jitc)) 
+
+Domino 6.5.6, 6.5.5, 6.5.4 
+java version "1.3.1" 
+Java(TM) 2 Runtime Environment, Standard Edition (build 1.3.1) 
+Classic VM (build 1.3.1, J2RE 1.3.1 IBM AIX build ca131-20020706 (JIT enabled: jitc)) 
+
+
+
+
+Linux Domino 8.5 
+java version "1.6.0" 
+Java(TM) SE Runtime Environment (build pxi3260sr1ifix-20081022_01 (SR1+IZ21387+IZ25540+IZ25963+IZ29722+139167+133399+128712+140597+PK64768+J4338+J4513+J4568+J4143+J4538)) 
+IBM J9 VM (build 2.4, J2RE 1.6.0 IBM J9 2.4 Linux x86-32 jvmxi3260ifx-20081002_23977 (JIT enabled, AOT enabled) 
+J9VM - 20081002_023977_lHdSMr 
+JIT - r9_20080415_1520ifx7 
+GC - 20080415_AA) 
+JCL - 20081022_01 
+
+Domino 8.0.1 
+java version "1.5.0" 
+Java(TM) 2 Runtime Environment, Standard Edition (build pxi32devifx-20071025 (SR6b)) 
+IBM J9 VM (build 2.3, J2RE 1.5.0 IBM J9 2.3 Linux x86-32 j9vmxi3223-20071005 (JIT enabled) 
+J9VM - 20071004_14218_lHdSMR 
+JIT - 20070820_1846ifx1_r8 
+GC - 200708_10) 
+JCL - 20071025 
+
+Domino 8.0 
+java version "1.5.0" 
+Java(TM) 2 Runtime Environment, Standard Edition (build pxi32devifx-20070511 (ifix 119936: SR4 + 119663)) 
+IBM J9 VM (build 2.3, J2RE 1.5.0 IBM J9 2.3 Linux x86-32 j9vmxi3223ifx-20070511 (JIT enabled) 
+J9VM - 20070510_12629_lHdSMR 
+JIT - 20070109_1805ifx1_r8 
+GC - 200701_09) 
+JCL - 2007012 
+
+Domino 7.0.4 
+java version "1.4.2" 
+Java(TM) 2 Runtime Environment, Standard Edition (build 1.4.2) 
+Classic VM (build 1.4.2, J2RE 1.4.2 IBM build cxia32142-20080515 (SR11) (JIT enabled: jitc)) 
+
+Domino 7.0.3 
+java version "1.4.2" 
+Java(TM) 2 Runtime Environment, Standard Edition (build 1.4.2) 
+Classic VM (build 1.4.2, J2RE 1.4.2 IBM build cxia32142-20070321 (SR8) (JIT enabled: jitc)) 
+
+Domino 7.0.2 
+java version "1.4.2" 
+Java(TM) 2 Runtime Environment, Standard Edition (build 1.4.2) 
+Classic VM (build 1.4.2, J2RE 1.4.2 IBM build cxia321420-20040626 (JIT enabled: jitc)) 
+
+Domino 6.5.6 
+java version "1.3.1" 
+Java(TM) 2 Runtime Environment, Standard Edition (build 1.3.1) 
+Classic VM (build 1.3.1, J2RE 1.3.1 IBM build cxia32131-20031021 (JIT enabled: jitc)) 
+
+
+
+
+Solaris 
+Domino 8.5.3 
+java version "1.6.0_24" 
+Java(TM) 2 Runtime Environment, Standard Edition (IBM build 1.6.0_24-b07 16_Feb_2011_08_54 solaris sparc (SR9 FP1)) 
+Java HotSpot(TM) Server VM (build 19.1-b02, mixed mode) 
+IBM Java ORB build orb60-20100825.00 
+XML build XL TXE Java 1.0.24 
+XML build IBM JAXP 1.4.6 
+XML build XML4J 4.5.14 
+
+Domino 8.5.2 
+java version "1.6.0_17" 
+Java(TM) 2 Runtime Environment, Standard Edition (IBM build 1.6.0_17-b04 03_Dec_2009_09_01 solaris sparc (SR7)) 
+Java HotSpot(TM) Server VM (build 14.3-b01, mixed mode) 
+IBM Java ORB build orb60-20091127.00 
+XML build XL TXE Java 1.0.20 
+XML build IBM JAXP 1.4.5 
+XML build XML4J 4.5.11 
+
+Domino 8.5.1 
+java version "1.6.0_10" 
+Java(TM) 2 Runtime Environment, Standard Edition (IBM build 1.6.0_10-b33 13_Feb_2009_05_15 solaris sparc (SR4)) 
+Java HotSpot(TM) Server VM (build 11.0-b15, mixed mode) 
+IBM Java ORB build orb60-20090201.00 
+XML build XL TXE Java 1.0.14 
+XML build IBM JAXP 1.4.4 
+XML build XML4J 4.5.7 
+
+Domino 8.5 
+java version "1.6.0_05" 
+Java(TM) 2 Runtime Environment, Standard Edition (IBM build 1.6.0_05-b13 24_Apr_2008_14_46 solaris sparc (SR1)) 
+Java HotSpot(TM) Server VM (build 10.0-b19, mixed mode) 
+IBM Java ORB build orbdev-20080325 
+XML build XL TXE Java 1.0.5 
+XML build IBM JAXP 1.4.3 
+XML build XML4J 4.5.2 
+
+Domino 8.0 
+java version "1.5.0_10" 
+Java(TM) 2 Runtime Environment, Standard Edition (IBM build 1.5.0_10-b02 20070125a) 
+Java HotSpot(TM) Server VM (build 1.5.0_10-b02, mixed mode) 
+IBM Java ORB build orb50-20070125 (SR4) 
+XML build XSLT4J Java 2.7.6 
+XML build IBM JAXP 1.3.6 
+XML build XML4J 4.4.7 
+
+Domino 7.0.4 
+java version "1.4.2_17" 
+Java(TM) 2 Runtime Environment, Standard Edition (IBM build 1.4.2_17-b06 20080516a) 
+Java HotSpot(TM) Client VM (build 1.4.2_17-b06, mixed mode) 
+IBM Java ORB build orb142-20080508 (SR11) 
+XML build XSLT4J Java 2.6.17 
+XML build IBM JAXP 1.2.0 
+XML build XML4J 4.3.12 
+
+Domino 7.0.3, 7.0.2 
+java version "1.4.2_04" 
+Java(TM) 2 Runtime Environment, Standard Edition (IBM build 1.4.2_04-b05 20040627) 
+Java HotSpot(TM) Client VM (build 1.4.2_04-b05, mixed mode) 
+IBM Java ORB build orb1420-20040626 
+XML build XSLT4J Java 2.6.1 
+XML build XmlCommonsExternal 1.2.02 
+XML build XML4J 4.3.1 
+
+Domino 6.5.6 
+java version "1.3.1" 
+Java(TM) 2 Runtime Environment, Standard Edition (build 1.3.1-b24) 
+Java HotSpot(TM) Client VM (build 1.3.1-b24, mixed mode) 
+
+Domino 6.5.5 
+java version "1.3.1_06" 
+Java(TM) 2 Runtime Environment, Standard Edition (build 1.3.1_06-b01) 
+Java HotSpot(TM) Client VM (build 1.3.1_06-b01, mixed mode) 
+
+
+
+
+
+Steps to find the location and version of Java used by Domino on UNIX platforms 
+
+1. Log in to the operating system, then su to the notes user of the Domino server. 
+2. Issue the command which java. The result is the location of the Java used by Domino. 
+3. Issue the command java -version. The result is the version of Java. 
+
+Example: 
+root@sttlab45 /install/702/data #su - n702 
+n702@sttlab45 /install/702/data $ which java 
+/usr/java131/jre/bin/java <<< location of the Java being used 
+n702@sttlab45 /install/702/data $ java -version 
+java version "1.3.1" <<< Version of Java 
+Java(TM) 2 Runtime Environment, Standard Edition (build 1.3.1) 
+Classic VM (build 1.3.1, J2RE 1.3.1 IBM AIX build ca131-20060605 (SR10) 
+(JIT enabled: jitc)) RELATED INFORMATION
+#Supported versions of Java with IBM Lotus Products [http://www.ibm.com/support/docview.wss?uid=swg21188789]

@@ -1,0 +1,233 @@
+Title: IBM IT21384: Setting COM.IBM.MQ.CFG.JMQI.USEMQCSPAUTHENTICATION=Y does not enable the MQCSP authentication mode after IT15833 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Setting the Java System Property:
+   
+     -Dcom.ibm.mq.cfg.jmqi.useMQCSPauthentication=Y
+   
+   for MQ classes for Java or MQ classes for JMS applications that
+   connect to queue managers using the CLIENT transport does not
+   result in MQCSP authentication mode being enabled, as described
+   in the IBM Knowledge Center here:
+   
+   https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm
+   .mq.sec.doc/q118680_.htm [https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.sec.doc/q118680_.htm]
+   
+   This can result in the queue manager rejecting the connection
+   attempt from the application with the reason code 2035
+   ('MQRC_NOT_AUTHORIZED').
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  For IBM MQ classes for Java applications, set the property
+   MQConstants.USE_MQCSP_AUTHENTICATION_PROPERTY to true in the
+   properties hashtable passed to the com.ibm.mq.MQQueueManager
+   constructor.
+   
+   For IBM MQ classes for JMS applications, set the property
+   JmsConstants.USER_AUTHENTICATION_MQCSP to true, on the
+   appropriate connection factory prior to creating the connection.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the MQ classes for JMS and MQ
+   classes for Java who:
+   
+     - configure the client for MQCSP authentication,
+   
+   and
+   
+     - use a version of the MQ classes for Java and classes for JMS
+   that includes the fix for APAR IT15833 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT15833],
+   
+   and
+   
+     - have applications that connect to a queue manager using the
+   CLIENT transport.
+   
+   
+   MQCSP authentication can be configured in the MQ classes for JMS
+   and MQ classes for Java by setting either:
+   
+     - the Java system property
+   "-Dcom.ibm.mq.cfg.jmqi.useMQCSPauthentication=Y" when the
+   application is started,
+   
+   or
+   
+     - the useMQCSPauthentication=YES entry in the JMQI stanza of
+   the client configuration file.
+   
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   After APAR IT15833 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT15833], an MQCSP structure to contain user
+   credential information was only created if MQCSP authentication
+   mode had been enabled by either:
+   
+     - Setting the JmsConstants.USER_AUTHENTICATION_MQCSP property
+   to true on a JMS Connection Factory used by MQ classes for JMS
+   applications, before creating Connection and Context objects,
+   
+   or
+   
+     - Setting the MQConstants.USE_MQCSP_AUTHENTICATION_PROPERTY to
+   true in the properties hashtable passed to the
+   com.ibm.mq.MQQueueManager constructor for MQ classes for Java
+   applications.
+   
+   The Java system property,
+   "com.ibm.mq.cfg.jmqi.useMQCSPauthentication", that should have
+   enabled MQCSP authentication mode globally when set to the value
+   "Y" was not checked by either the MQ classes for JMS or the MQ
+   classes for Java when determining if an MQCSP structure should
+   be created and flowed to the queue manager when establishing a
+   connection.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQ classes for JMS have been updated such that if the
+   JmsConstants.USER_AUTHENTICATION_MQCSP property has not been set
+   to true on the JMS Connection Factory used by the application,
+   the value of the global
+   "com.ibm.mq.cfg.jmqi.useMQCSPauthentication" property is checked
+   to determine if MQCSP authentication mode should be enabled
+   while establishing connections to a queue manager.
+   
+   The MQ classes for Java have been updated such that if the
+   MQConstants.USE_MQCSP_AUTHENTICATION_PROPERTY property has not
+   been set to true in the properties hashtable passed to the
+   com.ibm.mq.MQQueueManager constructor, the value of the global
+   "com.ibm.mq.cfg.jmqi.useMQCSPauthentication" property is checked
+   to determine if MQCSP authentication mode should be enabled
+   while establishing connections to a queue manager.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.8
+   v9.0 CD    9.0.4
+   v9.0 LTS   9.0.0.3
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT21384
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-07-11
+   
+   
+ * CLOSED DATE
+   2017-07-21
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

@@ -1,0 +1,158 @@
+Title: IBM PK87733: Large numbers of variables cause a step to hang - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Build Forge 7.0.2 iFix 4 GA, and spin 77
+   
+   Large numbers of variables cause a step to hang
+   
+   To reproduce:
+   1) Import the attached project
+   2) Run the project a few times.
+   
+   In my reproductions one of the runs have hung. There seem to be
+   two parts which contribute to the hang:
+   
+   1) We double environment variables for each level of in-lines. 3
+   00 become around 4800 at the lowest level the agent has to handl
+   e.
+   2) We seem to spend our time sending the environments down to th
+   e agent outside of the actual execution of the step.
+   In my network traces I have seen just the environment being sent
+    down for a unique collection of packets. The code points to thi
+   s as being by design it seems for caching purposes. The combinat
+   ion of a large beginning environment along with the duplication
+   of environments is causing the step to hang. It may eventually F
+   innish,but a step which is expected to take a few seconds takes
+   over three minutes with the attached project in my tests. The cu
+   stomer is seeing more drastic slowdowns - it seems to hang. They
+    have left it running for days and still no results from the ste
+   p - it is simply running indefinitely. They can reproduce this i
+   ntermittently in their environment. I have been able to reproduc
+   e only when using remote agents and only a couple of times. This
+    is a very difficult issue to reproduce.
+   
+   The problem is exacerbated with 7.0.2 iFix 1 agents which are th
+   e last we have which work on Windows 2000. This version of agent
+    takes an incredibly long amount of time when employing only 300
+    environment variables - roughly 30 seconds. The customer, howev
+   er, has reproduced this hang issue when using 7.0.2 iFix 4 agent
+   s as well which handle large environments much better. There are
+    more details logged in escalation: RATLC01285816. I have been u
+   nable to get hte customer to lower their environment variable co
+   unt to work around the issue for now. The change would require a
+    significant investment on their part. I am also unable to isola
+   te exactly what is causing the issue, however I am confident it
+   is the large numbers of environment variables involved.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The environment of the step is sent twice in inline steps.
+   With the agent_trace enabled on the console, the log shows
+   an additional environment getting sent at the end of the
+   inline step.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added an agent BufferReset after the inlining step command
+   is finished.  That allows the clean up to be run without an
+   environment.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK87733
+   
+   
+ * REPORTED COMPONENT NAME
+   BUILD FORGE SP
+   
+   
+ * REPORTED COMPONENT ID
+   5724S2709
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-01
+   
+   
+ * CLOSED DATE
+   2009-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUILD FORGE SP
+   
+   
+ * FIXED COMPONENT ID
+   5724S2709
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSN
+   UP

@@ -1,0 +1,176 @@
+Title: IBM IY87983: WEBPI CRASHES WHEN A NON-TAM USER AUTHENTICATION IS PROCESSED. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebPI crashs when a user that is not a TAM user attempts to
+   authenticate.  Here are the details from the client:
+   One more thing I noticed today.  We had another crash of the
+   plug-in when a user attempted to authenticate while our LDAP
+   server was down for maintenance.  The error message in the log
+   is similar to the case where the LDAP server was operational,
+   but the LDAP user was not an imported TAM user.  We get the
+   message "Could not acquire a client credential" message
+   followed by an Error entry in the system event log exactly 10
+   seconds later.
+   
+   From msg__pdwebpi.log:
+   
+   2006-08-07-15:12:54.288-04:00I----- 0x16B480C9 pdwebpi ERROR rgy
+   ira
+   e:\am600\src\ivrgy\ira_entry.c 2938 0x00000444 HPDRG0201E
+   Error code
+   0x51 was received from the LDAP server. Error text: "Can't
+   contact LDAP
+   server".
+   2006-08-07-15:12:55.429-04:00I----- 0x13212072 pdwebpi ERROR ias
+   general
+   e:\am600\src\libivacl\azn_authn.cpp 312 0x00000444 HPDIA0114E
+   Could
+   not acquire a client credential.
+   2006-08-07-15:12:55.444-04:00I----- 0x35F02017 pdwebpi ERROR pic
+   Common
+   f:\amwebpi600\src\pdwebpi\core\sundry\WPIAuthnStatusMap.cpp 111
+   0x00000444 AMZIC0023E   An authentication system failure has
+   occurred:
+   error: HPDAC0779E   The LDAP registry server is down. (pd / acl)
+   (error
+   code: 0x1005b30b).
+   
+   
+   It looks like we are having better luck using spnego
+   authentication.  The biggest outstanding issue for us now is
+   that we can cause the TAM IIS plug-in to completely crash for
+   certain users that login.  These are the users that I mentioned
+   earlier that are setup in Active Directory and they are setup
+   in LDAP, but they are not imported as a TAM user.  I would hope
+   that we would not have any users like this, but if we do
+   encounter this situation at some point, I would expect that the
+   TAM IIS plug-in would not crash.  Here is the message that is
+   shown in the System Event viewer at the moment this occurs:
+        Event_ID: 7034
+      The Access Manager Plug-in for Web Servers service terminated
+      unexpectedly.  It has done this 1 time(s).
+   
+   The following trace levels are:
+   s t PDWebPI-WIL-BNKPROT02.bbtnet.com trace show
+   pd.bst.general 9
+   pdwebpi.request 9
+   pdwebpi.session 7
+   pdwebpi.azn 2
+   pdwebpi.proxy-cmd 9
+   The only message that is printed in the msg__pdwebpi.log before
+   the service completely stops is the following:
+   
+   2006-08-03-16:27:11.672-04:00I----- 0x13212072 pdwebpi ERROR ias
+   general
+   e:\am600\src\libivacl\azn_authn.cpp 312 0x00001278 HPDIA0114E
+   Could not acquire a client credential.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *    WHEN AUDITCFG=WPI IS SET IN THE WEB PLUGIN
+   CONFIGURATION FILE, THE SERVER WILL CRASH ON FIRST REQUEST
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  PROBLEM-CONCLUSION: THIS FIX WILL BE
+   DELIVERED IN 6.0.0-TIV-WPI-FP0004.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY87983
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR E-BU
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0800
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-08-10
+   
+   
+ * CLOSED DATE
+   2006-08-30
+   
+   
+ * LAST MODIFIED DATE
+   2006-08-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ACCESS MGR E-BU
+   
+   
+ * FIXED COMPONENT ID
+   5724C0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

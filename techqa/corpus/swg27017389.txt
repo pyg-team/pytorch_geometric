@@ -1,0 +1,89 @@
+Title: IBM Featured documents for IBM Notes, Domino & iNotes - United States
+
+Text:
+FeaturedDocument; ISFeaturedDocument; ICSFeaturedDocument; CSEdocument; featured documents; feature; featured; documents; doc; featured doc; most frequently used technotes; top; top 10; faq; most requested; featureddocument; lotus domino server; domino; domino server; lotus notes; notes; lotus inotes; inotes; dwa; domino web access; notes domino faq mailing; faq mailing; top ten; popular; most popular; recommended; most requested; highlight; most useful; helpful; most accessed; PremiumSupportTips NEWSLETTER
+
+ABSTRACT
+ This document contains links to IBM Notes, Domino & iNotes technical support documents and information that can help you get more value from your software. 
+
+CONTENT
+
+
+
+
+
+ *  In The Spotlight 
+ *  TLS & SHA-2 
+ *  Troubleshooting & How To 
+
+
+
+
+
+In the Spotlight 
+
+ 1.  Comparison tables of features between IBM Notes, IBM iNotes & IBM SmartCloud Notes web [http://www.ibm.com/support/docview.wss?uid=swg27040248&acss=danl_1255_web] 
+    This technote was updated in December 2014 to include additional features and to reflect the current version of IBM SmartCloud Notes Web. 
+ 2.  Widget plugin install fails with "The widget below had issues during the installation. See the log for more details" [http://www.ibm.com/support/docview.wss?uid=swg21690140&acss=danl_1255_web] 
+    Installing Widget plugins can fail if a user does not have Write access to directories. This is a limitation with plugins developed a certain way. Additional details and options to avoid this issue are included in this technote. 
+ 3.  How do you install, update, or remove Widgets in IBM Notes & IBM iNotes? [http://www.ibm.com/support/docview.wss?uid=swg21678786&acss=danl_1255_web] 
+    This new technote provides steps on how to install, update, and uninstall Widgets in both Notes and iNotes. 
+ 4.  Security Bulletin: Fix available for security vulnerabilities in CKEditor that affect IBM iNotes 9.0.1.x (CVE-2014-5191) [http://www.ibm.com/support/docview.wss?uid=swg21690305&acss=danl_1255_web] 
+    Recommended security fix for IBM iNotes 9.0.1.x. The issue is tracked as SPR# KKIL9N4NXS. The fix was introduced in IBM Domino version 9.0.1 Fix Pack 2 Interim Fix 1. 
+ 5.  Security Bulletin: IBM Notes and Domino - Multiple vulnerabilities in IBM Java (Oracle July 2014 Critical Patch Update) [http://www.ibm.com/support/docview.wss?uid=swg21686824&acss=danl_1255_web] 
+    IBM Notes and Domino 9.0.1 Fix Pack 2 as well as 8.5.3 Fix Pack 5/Fix Pack 6 fixes are available for the Java issues disclosed in the Oracle July 2014 Critical Patch Update. 
+ 6.  iNotes ActiveX Attachment Control install sequence [http://www.ibm.com/support/docview.wss?uid=swg21684121&acss=danl_1255_web] 
+    In Windows Vista and Internet Explorer 8, use of ActiveX is not simple because of User Account Control (UAC) and additional prompt to block installing ActiveX blindly. This document consolidates info about what happens when our ActiveX control, iNotes Control, is installed for iNotes 9.0.1. 
+ 7.  XPages Mobile controls in Domino 9.0.1 Fix Pack 2 and earlier releases do not work with iOS 8.x [http://www.ibm.com/support/docview.wss?uid=swg21686751&acss=danl_1255_web] 
+    This issue is tracked as SPR# PALT9P8JDG and is fixed starting with Domino 9.0.1 Fix Pack 2 Interim Fix 1. The XPages Mobile controls fix includes Dojo 1.9.4, which adds support for iOS 8.x and fixes issues with XPages Mobile controls running on iOS 8.x. 
+
+ Back to top 
+
+
+
+TLS & SHA-2 
+
+ 1.  How is IBM Domino impacted by the POODLE attack? [http://www.ibm.com/support/docview.wss?uid=swg21687167&acss=danl_1255_web] 
+    IBM has released Domino server Interim Fixes that implement TLS 1.0 with TLS_FALLBACK_SCSV for HTTP to protect against the POODLE attack. Implementing TLS 1.0 for Domino will protect against the POODLE attack and will allow browsers to still connect to Domino after they have been changed to address the POODLE attack. 
+ 2.  IBM Domino Interim Fixes to support TLS 1.0 which can be used to prevent the POODLE attack [http://www.lotus.com/ldd/dominowiki.nsf/dx/IBM_Domino_TLS_1.0] 
+    This page introduces IBM Domino support for Transport Layer Security (TLS) 1.0. See the Interim Fix section in this Wiki article for links to the Interim Fixes, available on the latest fix pack of maintenance releases back to 8.5.1. 
+ 3.  Planned SHA-2 deliveries for IBM Domino 9.x [http://www.ibm.com/support/docview.wss?uid=swg21418982&acss=danl_1255_web] 
+    (1) What we do today. (2) What's coming next and when. (3) How to implement SHA-2 for Domino. (4) Q&A 
+ 4.  Generating a SHA-2 Keyring file [http://www.lotus.com/ldd/dominowiki.nsf/dx/Domino_keyring] 
+    There are several different paths that can be followed to generate a keyring file that contains SHA-2 certificates. Once you have that keyring file, you can use it with any Domino 9.0+ server. However, those servers will only be able to use SSLv3 with their SHA-2 keyring files unless you upgrade them to 9.0 IF6 or 9.0.1 FP2 IF1, which adds support for TLS 1.0. 
+ 5.  Generating a keyring file with a self-signed SHA-2 cert using OpenSSL and KYRTool [http://www.lotus.com/ldd/dominowiki.nsf/dx/Self-signed_SHA-2_with_OpenSSL_and_kyrtool] 
+    The steps in this Wiki article are the easiest to understand and to expand upon when moving to an OpenSSL-based CA or a third party CA. Alternatively,"openssl x509" can be used to create a self-signed certificate in one operation. 
+ 6.  Generating a keyring file with a third party CA SHA-2 cert using OpenSSL and KYRTtool on a Windows workstation [http://www.lotus.com/ldd/dominowiki.nsf/dx/3rd_Party_SHA-2_with_OpenSSL_and_kyrtool] 
+    This Wiki article provides steps describing how to generate a SHA-2 certificate using a 3rd party CA with OpenSSL and KYRTool. 
+ 7.  Installing and Running the Domino keyring tool [http://www.lotus.com/ldd/dominowiki.nsf/dx/kyrtool] 
+    This command line tool can be used to view keyring files, create keyring files, and import certificates of all kinds into keyring files. It uses the Notes C API and can be run against any 8.5.x or 9.x IBM Notes/Domino installation, but can only be used with SHA-2 certiifcates in 9.x, and can only be used to import and delete trusted roots with interim fix 9.0 IF6 or 9.0.1 FP2 IF1. 
+ 8.  Open Mic Webcast: How IBM Domino is affected by POODLE (November 2014) [http://www.ibm.com/support/docview.wss?uid=swg27044045&acss=danl_1255_web] 
+    You can find this session's presentation and audio replay in this technote 
+
+ Back to top 
+
+
+
+Troubleshooting & How To 
+
+ 1.  Domino server performance issue or hang with dynamic policies [http://www.ibm.com/support/docview.wss?uid=swg21569853&acss=danl_1255_web] 
+    You may experience a Domino server performance issue or hang with dynamic policies when you list users explicitly in the policy document instead of using groups. This issue is tracked as SPR# DTEI8N3CAH. 
+ 2.  Supportability Q&A about IBM Notes and OS X 10.10.x [http://www.ibm.com/support/docview.wss?uid=swg21682510&acss=danl_1255_web] 
+    This technote contains questions and answers pertaining to installing and running IBM Notes on Apple's OS X 10.10.x Yosemite. 
+ 3.  Firefox users unable to connect to Domino-based certificate or self-signed secured Web sites after updating Firefox to version 31 [http://www.ibm.com/support/docview.wss?uid=swg21680147&acss=danl_1255_web] 
+    After updating Firefox to version 31 (or later), when Firefox browser users attempt to access a MD5-based SSL certificate, generated by a Domino Web server, the connection attempt will fail with the following error: "Secure Connection Failed. An error occurred during a connection to <server name>. Issuer certificate is invalid. (Error code: sec_error_ca_cert_invalid)" 
+ 4.  Some iNotes operations fail to work correctly in Chrome browsers upgraded to Chrome version 37 [http://www.ibm.com/support/docview.wss?uid=swg21683169&acss=danl_1255_web] 
+    Starting with Google Chrome version 37, support of the showModalDialog API is deprecated. Loss of this API negatively impacts IBM iNotes users. 
+
+ Back to top 
+
+
+RELATED INFORMATION
+ Click here to open a Service Request (PMR) with Support [http://www.ibm.com/software/support/probsub.html]
+Social Media channels for IBM Collaboration Solutions a [http://www.ibm.com/support/docview.wss?uid=swg21675532]
+Featured documents for IBM Notes Traveler [http://www.ibm.com/support/docview.wss?uid=swg27036696]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Messaging Applications IBM Notes 9.0, 8.5, 8.0, 7.0 Messaging Applications IBM iNotes 9.0, 8.5 Messaging Applications IBM Domino Designer 9.0, 8.5

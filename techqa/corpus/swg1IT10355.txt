@@ -1,0 +1,145 @@
+Title: IBM IT10355: UNIQUE CACHE KEY IS NOT USED FOR PROTOCOL BASED CACHE POLICY TYPES - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix packs for DataPower XML Security Gateway version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034955]
+Fix packs for DataPower B2B Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034956]
+Fix packs for DataPower Integration Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034957]
+Fix packs for DataPower Low Latency Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034958]
+Fix packs for DataPower Service Gateway version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034959]
+Fix packs for DataPower Service Gateway version 6.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036407]
+Fix packs for DataPower B2B Appliance version 6.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036409]
+Fix packs for DataPower Integration Appliance version 6.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036410]
+Fix packs for DataPower Service Gateway version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037486]
+Fix packs for DataPower B2B Appliance version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037487]
+Fix packs for DataPower Integration Appliance version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037488]
+Fix packs for DataPower Gateway version 7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038524]
+Fix packs for DataPower Gateway version 7.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039783]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The 'x-dp-cache-key' header unique cache key is used for 'fixed'
+   document cache policy types, but not for 'protocol based' cache
+   policy types.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Affected is the us of document cache.
+   
+   'x-dp-cache-key' header unique cache key is not used for
+   'protocol based' document cache policy types.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is available in 6.0.0.17, 6.0.1.13, 7.0.0.10, 7.1.0.7
+   and 7.2.0.1
+   
+   For a list of the latest fix packs available, please see:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21237631 [http://www-01.ibm.com/support/docview.wss?uid=swg21237631]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT10355
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-29
+   
+   
+ * CLOSED DATE
+   2015-10-18
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  0
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

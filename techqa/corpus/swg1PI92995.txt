@@ -1,0 +1,185 @@
+Title: IBM PI92995: CM BATCH OR OBJECT COMPARE GENERATES INCORRECT VIEW DDL WORKLIST EXECUTION ENDS SQLCODE -204 (SQLCODEN204) - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CM Batch or Object Compare generates an incorrect column
+   qualification when generating view DDL in worklist, resulting
+   in following error when worklist is run
+   
+   sqlerror on CREATE command, PREPARE
+   function
+   DSNT408I SQLCODE = -204, ERROR: >schemaname<.>columname< IS AN
+   UNDEFINED NAME
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of the DB2 Administration Tool         *
+   *                 for z/OS and DB2 Object Comparison           *
+   *                 Tool for z/OS who use Object Compare         *
+   *                 to compare a view DDL with catalog           *
+   *                 objects.                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When Object Compare option 'RUN         *
+   *                      SQLID' is specified when comparing      *
+   *                      a view, the SQLID is appended as        *
+   *                      the schema of a table name in a         *
+   *                      FROM clause. When the DDL is            *
+   *                      executed, the result may be error       *
+   *                      SQLCODE=-204 / SQLCODEN204.             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When comparing a simplified view such as the following,
+   with option 'RUN SQLID' specified:
+   
+   (
+    CREATE VIEW viewname AS
+    WITH MOVEMENT AS(SELECT ..
+                       FROM ..
+                       WHERE..)
+     ), "RESULT" AS(SELECT ..
+                  FROM ..
+                    WHERE..
+                    ..)
+     SELECT ..
+     FROM "RESULT";
+   
+   The generated DDL shows the specified sqlid appended as
+   the schema of the table RESULT in the FROM clause, yielding
+   "sqlid"."RESULT", instead of just "RESULT". As no such
+   table exists, executing the generated DDL may result in:
+   
+   DSNT408I SQLCODE = -204, ERROR: sqlid.RESULT IS AN
+   UNDEFINED NAME
+   DSNT418I SQLSTATE = 42704 SQLSTATE RETURN CODE
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem has been resolved.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI92995
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 ADMIN TOOL
+   
+   
+ * REPORTED COMPONENT ID
+   568851500
+   
+   
+ * REPORTED RELEASE
+   B20
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-01-26
+   
+   
+ * CLOSED DATE
+   2018-04-06
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI55049 UI55050
+   
+   
+
+MODULES/MACROS
+ *     ADB2PA7
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 ADMIN TOOL
+   
+   
+ * FIXED COMPONENT ID
+   568851500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB20 PSY UI55049 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI55049]
+   UP18/04/10 P F804
+   
+   
+ * RC10 PSY UI55050 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI55050]
+   UP18/04/10 P F804
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

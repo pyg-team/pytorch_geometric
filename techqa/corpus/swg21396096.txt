@@ -1,0 +1,24 @@
+Title: IBM Installing DB2 octigate database prompts user for multiple passwords. - United States
+
+Text:
+db2install.sh script octigate database CAMADALL CAMADINST TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ When using the db2install.sh script to create a new octigate database, the user gets prompted multiple times for the password. 
+
+RESOLVING THE PROBLEM
+The $MS_HOME/scripts/db2install.sh (Unix) script is used when you want to create a brand new 'octigate' database. 
+
+This script calls two other scripts, viz., db2configuration.sh and db2createschema.sh to actually set the DB2 settings and create the database. 
+
+In these 2 scripts you'll find a lot of "su - " commands. If you are using a user-id that doesn't have the right privileges to run the db2install.sh script, the "su - " commands will prompt you to enter the password multiple times. 
+
+To avoid these multiple prompts, run the db2install.sh script with the right user privileges or use 'root' if you have access to that id.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM4AD ITCAM

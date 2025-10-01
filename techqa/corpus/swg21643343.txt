@@ -1,0 +1,22 @@
+Title: IBM Continuous Reprocessing of Events by Impact - United States
+
+Text:
+Impact; Event Reader; Multiple; Processing TECHNOTE (FAQ)
+
+QUESTION
+ Why does Impact keep processing the same events? 
+
+CAUSE
+Impact has been configured to get updated events and the filters of the event reader don't use a flag (Object Server field) to indicate the event has already been processed
+
+ANSWER
+When Impact is configured to get updated events it uses StateChange as a timestamp to determine when an event has chanced 
+
+09 Jul 2013 14:33:14,440: Query: select top 1000 * from alerts.status where StateChange >= 1373376780 AND Class != 10500 AND (Node LIKE 'Nodo') order by StateChange ;
+
+Whenever Impact updates and event and this update is returned to the Object Server, the StateChange of the event gets set to the timestamp of the instant Impact made such update. Next time Impact selects events from the Object Server (3 seconds by default), this event will match again the criteria of the filter as its StateChange has a new value. 
+This behaviour should be avoided by using a Flag that gets set when the event has been processed by Impact, normally an Integer Field
+
+select top 1000 * from alerts.status where StateChange >= 1373376780 AND Class != 10500 AND (ImpactFlag = 0 AND Node LIKE 'Nodo') order by StateChange ;
+
+Any policy acting on an event should set ImpactFlag to a value different than 0 to stop multiple processing of a given event

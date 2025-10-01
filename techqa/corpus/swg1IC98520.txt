@@ -1,0 +1,235 @@
+Title: IBM IC98520: WMQ V7 JMS CLIENT REPORTING MESSAGE COULD NOT BE WRITTEN TO DEAD LETTER QUEUE DUE TO JAVA.LANG.NULLPOINTEREXCEPTION. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix Pack 7.1.0.5 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24037553]
+WebSphere MQ V7.5 Fix Pack 7.5.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere MQ V7 Client connecting to an MQ V7 Server and sees
+   the following stack trace error. This issue is caused by the
+   customer's JVM not supporting CCSID 1140. From the trace we see
+   the customer was running with a non-IBM JRE.
+   
+   The dead letter queue could not be written to because of
+   exception '
+    Message : java.lang.NullPointerException
+    Class : class
+   java.lang.NullPointerException
+   com.ibm.msg.client.wmq.internal.WMQPoison
+    Stack :
+   com.ibm.mq.jmqi.internal.JmqiDC.
+   writeMQField(JmqiDC.java:812)
+    :
+   com.ibm.mq.jmqi.internal.JmqiDC.
+   writeMQField(JmqiDC.java:780)
+    :
+   com.ibm.mq.jmqi.MQDLH.writeToBuffer
+   (MQDLH.java:440)
+    : com.ibm.mq.jmqi.internal.
+   AbstractMqiStructure.writeToBuffer(AbstractMqiStructure.java:87)
+    :
+   com.ibm.msg.client.wmq.internal.
+   WMQPoison$PoisonMessage.chainInDLH(WMQPoison.java:1999)
+    :
+   com.ibm.msg.client.wmq.internal.
+   WMQPoison$PoisonMessage.access$1400(WMQPoison.java:1725)
+    :
+   com.ibm.msg.client.wmq.internal.
+   WMQPoison.deadletter(WMQPoison.java:784)
+    :
+   com.ibm.msg.client.wmq.internal.
+   WMQPoison.handlePoisonMessage(WMQPoison.java:439)
+    :
+   com.ibm.msg.client.wmq.internal.
+   WMQPoison.handlePoisonMessage(WMQPoison.java:325)
+    :
+   com.ibm.msg.client.wmq.internal.
+   WMQPoison.handlePoisonMessage(WMQPoison.java:294)
+    :
+   com.ibm.msg.client.wmq.internal.
+   WMQConsumerShadow.getMsg(WMQConsumerShadow.java:1499)
+    :
+   com.ibm.msg.client.wmq.internal.
+   WMQSyncConsumerShadow.receiveInternal(WMQSyncConsumerShadow.java
+   :227)
+    :
+   com.ibm.msg.client.wmq.internal.
+   WMQConsumerShadow.receive(WMQConsumerShadow.java:1165)
+    :
+   com.ibm.msg.client.wmq.internal.
+   WMQMessageConsumer.receive(WMQMessageConsumer.java:460)
+    :
+   com.ibm.msg.client.jms.internal.
+   JmsMessageConsumerImpl.receiveInboundMessage(JmsMessageConsumerI
+   mpl.
+   java:786)
+    :
+   com.ibm.msg.client.jms.internal.
+   JmsMessageConsumerImpl.receive(JmsMessageConsumerImpl.java:486)
+    :
+   com.ibm.mq.jms.MQMessageConsumer.
+   receive(MQMessageConsumer.java:212)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Ensure that messages are written to the queue using a coded
+   character set identifier (CCSID) that can be accepted on the
+   receiving application. Alternatively, configure the receiving
+   application to request that the queue manager converts the
+   message to a more suitable CCSID before delivery.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the WebSphere MQ Classes for JMS
+   V7.1 and V7.5 who are attempting to receive messages whose
+   body is represented in a coded character set identifier
+   (CCSID) which is not supported by the Java virtual machine
+   (JVM).
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   A WebSphere MQ Classes for JMS application attempted to
+   receive a message with a message body which was encoded using
+   a character set not supported by the JVM, this resulted in a
+   exception being flowed back to the application. This also marked
+   the message as poisonous.
+   
+   The WebSphere MQ Classes for JMS poison message handling code
+   then attempted to append a Dead Letter Header to the message
+   encoded in the same code page as the MQMD (MQ Message
+   Descriptor) structure. The code page was again not supported
+   by the JVM and this resulted in a NullPointerException being
+   thrown. As a result of the NullPointerException, the message not
+   written to the Dead Letter Queue.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ Classes for JMS have now been altered to append
+   a Dead Letter Header to the message in code page 1208 (UTF-8) if
+   the code page specified in the MQMD is not supported by the JVM.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.1       7.1.0.5
+   v7.5       7.5.0.4
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC98520
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-30
+   
+   
+ * CLOSED DATE
+   2014-01-20
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

@@ -1,0 +1,38 @@
+Title: IBM Changing the Storage Location of Impromptu and IWR Temporary (.tmp) Files - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do you change the storage location of Impromptu and IWR temporary (.tmp) files? 
+
+RESOLVING THE PROBLEM
+The best way to set the location for Cognos temp files is through Configuration Manager (Advanced View) by expanding Services > UDA > General. In the right pane you should see some options, one of which is List of Temporary Directories. Here you can set the location of any folder you wish to store Cognos' temp files. You should select an appropriate folder, creating one if necessary, on a drive with adequate free space. Set the new path followed by validating and applying Configuration Manager services (stopping and restarting from the computer name level as well) will automatically rewrite the cer#.ini and impromptu.ini files, thus causing most IWR and Impromptu temporary files to be written to this newly specified location.
+
+Alternatively, you can set the new temp paths directly in the INI files. For example, assuming that the new temp location will be F:\TEMP, save the following changes:
+
+- ..Cognos\cer4\impromptu.ini: (e.g.)
+
+[Default Directories]
+
+temporary data path=F:\TEMP
+
+- ..Cognos\cer4\cer4.ini (e.g.)
+
+[Services]
+
+TEMPFILEDIRS=F:\TEMP
+
+However, certain temporary files created by IWR and Impromptu will continue to be placed in the default temp location of your Windows environment. Unless your Cognos temporary file location is the same one as your Windows temporary file location, there is no way to guarantee that all your Cognos temporary files will be written to the same location. You can access Window's temporary file storage location in the Windows Control Panel, under System. In the Advanced tab you'll see an option to adjust the Environment Variables. From there you can edit your User and System variables (these should both point to the same location). You will need to restart the server to pick up these new settings changes.
+
+It is recommended that you store all temporary files in the same location to avoid certain problems that may arise. If it is absolutely necessary that your Cognos temp files are stored separately from the rest of your Windows temp files, it is recommended that you make this change through Configuration Manager as described above but be aware that some IWR temp files may continue to be stored in the Windows temp location.
+
+RELATED INFORMATION
+ [\] KB#95344.1
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Series 7 Impromptu Web Reports Business Analytics Cognos Series 7 PowerPlay Enterprise Server 
+HISTORICAL NUMBER
+ 1012364

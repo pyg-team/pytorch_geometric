@@ -1,0 +1,184 @@
+Title: IBM PI26966: MEMBERFIXER MEMORY USAGE IMPROVEMENTS - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Javacore indicates OOM
+   
+   1TISIGINFO Dump Event "systhrow" (00040000) Detail
+   "java/lang/OutOfMemoryError" "Java heap space" received
+   1TIDATETIME Date: 2014/07/30 at 13:12:51
+   1TIFILENAME Javacore filename: /usr/PPE/PPESrv8/javacore
+   .20140730.131247.9240672.0004.txt
+   
+   SystemOut.log indicates below error
+   
+   [13:12:47:996 GMT+02:00 30/07/14] 000000ab LogAdapter W
+   DCSV9410W:
+   Failed to allocate memory: 1445 bytes. Exception is
+   java.lang.OutOfMemoryError: Java heap space
+   at com.ibm.rmm.mtl.receiver.MessageStream.addRight(MessageStream
+   .java:926)
+   at com.ibm.rmm.mtl.receiver.MessageStream
+   .processData(MessageStream.java:1332)
+   at com.ibm.rmm.mtl.receiver.MessageStream.onPacket(MessageStream
+   .java:371)
+   at com.ibm.rmm.ptl.tchan.receiver.PacketProcessor
+   .run(PacketProcessor.java:973)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Javacore indicates OOM
+   
+   1TISIGINFO Dump Event "systhrow" (00040000) Detail
+   "java/lang/OutOfMemoryError" "Java heap space" received
+   1TIDATETIME Date: 2014/07/30 at 13:12:51
+   1TIFILENAME Javacore filename: /usr/PPE/PPESrv8/javacore
+   .20140730.131247.9240672.0004.txt
+   
+   SystemOut.log indicates below error
+   
+   [13:12:47:996 GMT+02:00 30/07/14] 000000ab LogAdapter W
+   DCSV9410W:
+   Failed to allocate memory: 1445 bytes. Exception is
+   java.lang.OutOfMemoryError: Java heap space
+   at com.ibm.rmm.mtl.receiver.MessageStream.addRight(MessageStream
+   .java:926)
+   at com.ibm.rmm.mtl.receiver.MessageStream
+   .processData(MessageStream.java:1332)
+   at com.ibm.rmm.mtl.receiver.MessageStream.onPacket(MessageStream
+   .java:371)
+   at com.ibm.rmm.ptl.tchan.receiver.PacketProcessor
+   .run(PacketProcessor.java:973)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In addition to the code change and attempting other, already
+   documented,  means for avoiding resource issues while running
+   member fixer, the customer can set the following properties in
+   the WCM WCMConfigService REP in their WAS admin console:
+   
+    deployment.maxJCRSessionOps = 200
+    iterator.pagesize = 200
+   
+   The customer may need to try to adjust some of the different
+   settings
+   above in order to see if they can find a setting that will avoid
+   the OOM
+   issue (e.g., increasing or decreasing the maxJCRSessionOps or
+   pagesize).
+   
+   NOTE:  This change is specific to v800x only because
+   enhancements already made in the JCR starting in v8.5 prevent
+   this being an issue going forward.
+   
+   A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 17 (PI38621 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI38621]) for Portal
+   8.0.0.1 available from Fix Central:
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI38621
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI26966
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-03
+   
+   
+ * CLOSED DATE
+   2015-07-01
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

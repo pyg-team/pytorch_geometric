@@ -1,0 +1,18 @@
+Title: IBM Difference between an exclusive and shareable lock - United States
+
+Text:
+lock mode; manage user locks TECHNOTE (FAQ)
+
+QUESTION
+ What is the difference between an exclusive lock and a shareable lock in IBM Rational DOORS manage locks utility? 
+
+CAUSE
+Closing a module opened in exclusive edit mode leaves a shareable lock in place 
+
+ANSWER
+There are two types of lock that can be placed on a folder/project: Shareable lock - is put in place when users open a folder/project; this doesn't prevent other users from opening the same folder/project. Exclusive lock - is put in place when a user is moving, deleting, copying folders/projects. This means that no other user has access to this project/folder.
+
+
+
+HISTORICAL NUMBER
+ KB2704

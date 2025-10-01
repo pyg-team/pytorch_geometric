@@ -1,0 +1,136 @@
+Title: IBM IY88332: NCO_GATE / OBJECTSERVER GATEWAY LOGGING ERROR - LINES ARE DUPLIC ATED OR MERGED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Specific Binary:
+   Last-modified-by:
+   Product: Netcool/OMNIBUS
+   Component:
+   Priority: High
+   Severity: High
+   Version N.n:
+   Product Group:
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of nco_gate as an ObjectServer gateway *
+   *                 for OMNIbus v3.6 ObjectServers.              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Log file messages sometimes clash       *
+   *                      rather than get written discreetly.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Log file messages sometimes clash rather than get written
+   discreetly.
+   
+   It appears that different threads are simultaneously writing
+   log messages.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  The nco_gate ObjectServer gateway product will be replaced by a
+   new product called  gateway-nco-g-objserv-36
+   
+   Date of Release: Fix Pack Name: gateway-nco-g-objserv-36
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY88332
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/OMNI GTWY (B
+   
+   
+ * REPORTED COMPONENT ID
+   5724O73OS
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-08-16
+   
+   
+ * CLOSED DATE
+   2006-11-30
+   
+   
+ * LAST MODIFIED DATE
+   2006-11-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

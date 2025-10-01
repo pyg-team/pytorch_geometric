@@ -1,0 +1,31 @@
+Title: IBM TSAMP Operations Console cannot be installed using console mode - United States
+
+Text:
+TSA; TSAMP; setup.bin; console TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Trying to install TSAMP Operations Console and getting an error message:
+"Installer User Interface Mode Not Supported
+The installer cannot run in this UI mode." 
+
+ENVIRONMENT
+# setup.bin -i console
+Preparing to install...
+Extracting the JRE from the installer archive...
+Unpacking the JRE...
+Extracting the installation resources from the installer archive...
+Configuring the installer for this system's environment...
+
+Launching installer...
+
+Preparing CONSOLE Mode Installation...
+
+
+
+RESOLVING THE PROBLEM
+There are only two supported methods for installing the Operations Console (OC): 
+
+ - You can use a graphical installation program, the so-called installation wizard.
+- You can install the operations console in silent mode, using a response file you generated in a previous wizard-driven installation.
+
+The Installation Guide includes X Windows as a prerequisite for the OC on Linux and AIX systems.

@@ -1,0 +1,10 @@
+Title: IBM Current Cast Iron versions support Salesforce.com certificate change to use SHA-256 hash algorithm. - United States
+
+Text:
+salesforce.com certificate change FLASH (ALERT)
+
+ABSTRACT
+ Current Cast Iron versions support Salesforce.com certificate change to use SHA-256 hash algorithm. 
+
+CONTENT
+As we are aware that Salesforce is in the process of updating its certificate to SHA-256 hash algorithm, we are informing Cast Iron users that the certification changes should not ideally impact its connector functionality. The Cast Iron team has performed quick sanity tests and confirms this.

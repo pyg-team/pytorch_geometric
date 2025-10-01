@@ -1,0 +1,33 @@
+Title: IBM Atlas users experience an "Unauthorized Page" message after a period of inactivity - United States
+
+Text:
+Atlas; timeout; Application Server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After a period of inactivity, users attempt to click any link or button on the Atlas user interface and are redirected to an "Unauthorized Page" message. Underneath this there is the text "You cannot access this page because you do not have the required permissions. Contact your Atlas System Administrator." 
+
+CAUSE
+This is caused by the Atlas application timing out after an extended period of inactivity.
+
+ENVIRONMENT
+IBM Websphere Application Server
+
+DIAGNOSING THE PROBLEM
+Identify how long a period of inactivity passes before this occurrence and compare with the Websphere Application Server (WAS) timeout settings.
+
+RESOLVING THE PROBLEM
+Log on to the WebSphere Admin Console. 
+
+
+
+
+eg: https://servername:9043/ibm/console [https://servername:9043/ibm/console]
+
+Follow the steps below:
+1) Expand the menu to Servers > Application servers. 
+2) Select on the application server for Atlas. 
+3) Select the Session management link under the Container Settings section. 
+4) Set the timeout value in the Session timeout section to the duration that fits the business users' needs (by default this is set to 60 minutes (3600 seconds)).
+5) Click on Apply after you make the changes. 
+6) Click on the Save link to save the changes to the master configuration. 
+7) Restart the WebSphere Application Server.

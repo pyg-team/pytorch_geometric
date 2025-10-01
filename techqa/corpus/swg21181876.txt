@@ -1,0 +1,40 @@
+Title: IBM Support of Oracle Advance Security (OAS) with WebSphere Application Server data source using Oracle JDBC Thin - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere Application Server does not support data encryption for data sources using the Oracle JDBC Thin driver. 
+
+CAUSE
+The Oracle Advanced Security (OAS) option enables data encryption. Both Oracle JDBC OCI Thin and Thick support some of the features of OAS. This support has been available since Oracle 8.1.6 and onwards.
+The OAS parameters for data encryption are:
+
+oracle.net.encryption_client
+oracle.net.encryption_types_client
+oracle.net.crypto_checksum_client
+oracle.net.crypto_checksum_types_client
+
+When using the Oracle JDBC Thin driver, Oracle offers encryption in the oracle.net package. The parameters are set through the Java™ properties object, which can be used in opening database connection; only the DriverManager has the getConnection interface that allows the properties object to be passed to the getConnection.
+
+WebSphere Application Server Connection Manager uses the OracleConnectionPoolDataSource for the data source implementation. This OracleConnectionPoolDataSource does have the interface getConnection (URL, prop). It is now possible to pass the connection parameters to the Oracle driver. For information on how to set these parameters see the technote, Using Oracle JDBC driver specific properties through a datasource. [http://www-01.ibm.com/support/docview.wss?uid=swg21197705]
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Use the Oracle JDBC OCI driver. The parameters can be enabled in the SQLNET.ORA file (Oracle Network client's configuration file on the WebSphere Application Server system). 
+    
+    
+ 2. A second option is to configure the above parameters as a custom property on the data source using the procedure described in technote Using Oracle JDBC driver specific properties through a datasource. [http://www-01.ibm.com/support/docview.wss?uid=swg21197705]
+
+
+Here is an example 
+
+Name: connectionProperties 
+Value: oracle.net.encryption_client=REQUESTED;oracle.net.encryption_types_client=RC4_40;oracle.net.crypto_checksum_client=REQUESTED;oracle.net.crypto_checksum_types_client=MD5 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

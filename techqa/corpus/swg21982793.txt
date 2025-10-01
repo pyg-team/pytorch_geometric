@@ -1,0 +1,17 @@
+Title: IBM Is IBM Security Guardium vulnerable to CVE-2016-3081? - United States
+
+Text:
+Guardium; CVE-2016-3081 TECHNOTE (FAQ)
+
+QUESTION
+ Is IBM Security Guardium vulnerable to CVE-2016-3081? 
+
+CAUSE
+CVE-2016-3081 vulnerability affects Apache Struts 2.x before 2.3.20.2, 2.3.24.x before 2.3.24.2, and 2.3.28.x before 2.3.28.1. When Dynamic Method Invocation is enabled, allow remote attackers to execute arbitrary code via method: prefix, related to chained expressions.
+
+ANSWER
+IBM Security Guardium v8.2, v9, and v10, all use Apache Struts 1.1 internally. 
+Therefore, IBM Security Guardium v8.2/v9/v10 are not affected by CVE-2016-3081. 
+
+RELATED INFORMATION
+#

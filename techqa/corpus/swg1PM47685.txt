@@ -1,0 +1,146 @@
+Title: IBM PM47685: OUTOFMEMORYERROR ON DEPLOY MANAGER DURING MONITORING XD CELL. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.2-TIV-ITCAMAD-IF0007: ITCAM for Application Diagnostics V7.1 FP2 IF7 [http://www-01.ibm.com/support/docview.wss?uid=swg24031710]
+7.1.0.2-TIV-ITCAMAD-IF0010: ITCAM for Application Diagnostics V7.1 FP2 IF10 [http://www-01.ibm.com/support/docview.wss?uid=swg24032110]
+7.1.0-TIV-ITCAMAD-FP0003: ITCAM for Application Diagnostics V7.1 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032604]
+7.1.0.3-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP3 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032985]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  OutOfMemoryError on Deploy Manager during monitoring XD cell.
+   
+   After a long run monitoring, Deploy Manager fails with OOM,
+   caused
+   by huge amount of session data
+   (com.ibm.ws.session.WsSessionContext).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Agent KYN 7.1 users, monitoring WAS VE.
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Deploy Manager fails with
+   * OutOfMemoryError, after a long run.
+   ****************************************************************
+   * RECOMMENDATION: Update agent to 7.1.0.2 interim fix 7 or newer
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The session, used for ConfigService MBean, has to be discarded
+   from time to time, even if data is read only from ConfigService.
+   
+   The fix for this APAR is a part of maintenance package:
+    interim fix pack 7.1.0.2-TIV-ITCAMAD-IF0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM47685
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS TEM
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92WD
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-13
+   
+   
+ * CLOSED DATE
+   2011-11-15
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS TEM
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92WD
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

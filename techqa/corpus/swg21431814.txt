@@ -1,0 +1,32 @@
+Title: IBM Rational Developer for System z Debugger not allowing breakpoints - United States
+
+Text:
+1431814; RDz; COBOL ; Compiler; coprocessor; Debugger TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to resolve an issue when using the IBM Rational Developer for System z Debugger not allowing breakpoints when debugging a Local COBOL program. 
+
+SYMPTOM
+When starting the debugger for a COBOL program execution stops in the ntdll.dll instead of stopping at the load of the COBOL program. Also, the user was unable to set a valid breakpoint.
+
+
+DIAGNOSING THE PROBLEM
+When the customer used the COBOL examples that are provided however, then the debugger acted correctly. These COBOL examples can be found in the information center topic: 
+
+Knowledge Center for Developer for z System > Debugging Applications > Debugging on z/OS > Debugging a sample COBOL program 
+
+
+Breakpoints cannot be set prior to the initial load of the debugger with the COBOL program. Once the program is loaded the debugger stops at the entry, so then breakpoints can be set. 
+
+Bringing up the customer's program using the example property group also worked. Therefore, the customer compared this property group with the example property group. 
+
+
+RESOLVING THE PROBLEM
+The associated property group was changed to match the example property group and then it worked well. 
+
+The following options are used in the example COBOL property group: 
+
+Local compiler options: 
+TEST,ADATA,EXIT(ADEXIT(FTTFDBKW))
+
+The preprocessor is NOT used.

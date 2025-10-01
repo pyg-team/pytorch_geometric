@@ -1,0 +1,37 @@
+Title: IBM CWRLS0030W and DCSV1134W when WebSphere Application Server hangs during startup - United States
+
+Text:
+DCSV1134W; appserver ; hang TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You start WebSphere® Application Server; it appears to be hung and the following messages may be seen in the SystemOut.log file : 
+
+The last few lines from systemOut.log file : 
+
+[11/28/05 15:36:00:767 EST] 0000002d MbuRmmAdapter I DCSV1032I: DCS Stack
+DefaultCoreGroup at Member 
+ras00066Cell\RAS00212\WebSphere_Portal_2: Connected a defined member ras00066Cell\RAS00211\nodeagent. 
+[11/28/05 15:36:01:785 EST] 0000002b RoleViewLeade I DCSV8030I: DCS Stack DefaultCoreGroup at Member ras00066Cell\RAS00212\WebSphere_Portal_2: 
+Failed a join attempt with member [ras00066Cell\RAS00211\WebSphere_Portal]. The reason is Not all candidates are connected ConnectedSet= [ 
+ras00066Cell\RAS00211\WebSphere_Portal ras00066Cell\RAS00211\nodeagent 
+ras00066Cell\RAS00211\server1 ras00066Cell\RAS00212\WebSphere_Portal_2 
+ras00066Cell\ras00066Manager\dmgr ]. 
+[11/28/05 15:36:03:528 EST] 00000062 RLSHAGroupCal W CWRLS0030W: 
+Waiting for HAManager to activate recovery processing for local 
+WebSphere server 
+[11/28/05 15:36:09:598 EST] 0000002d DiscoveryServ W DCSV1134W: DCS 
+Stack DefaultCoreGroup at Member ras00066Cell\RAS00212\WebSphere_Portal_2: Suspected another member upon receiving an additional connection from the other member. Suspected member is ras00066Cell\RAS00211\WebSphere_Portal. DCS logical channel is Discovery|Ptp. 
+
+CAUSE
+Port conflict on Endpoint name DCS_UNICAST_ADDRESS 
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Log into dmgr Admin Console 
+ 2. Servers -->Application Servers --> Click on problematic server --> ports --> click on DCS_UNICAST_ADDRESS --> Modify the port number to a unique number --> Apply -->save 
+ 3. Re-start the server that had the issue.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

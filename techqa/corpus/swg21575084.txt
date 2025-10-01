@@ -1,0 +1,53 @@
+Title: IBM 'add-wcm-la-attributes' task fails with CWWIM4521E during migration - United States
+
+Text:
+migration add-wcm-la-attributes CWWIM4521E ORA-01017 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+During migration from WebSphere Portal 6.0 to 7.0 or from WebSphere Portal 5.1 to 6.1, the add-wcm-la-attributes task fails with: 
+
+WIMSystemException: CWWIM4521E The 'ORA-01017: invalid username/password; logon denied
+
+
+
+CAUSE
+An incorrect password that was used initially while running the 'portal-port-upgrade' task was still stored and reused via the J2C authentication data "vmmladbDSJAASAuth".
+
+
+
+DIAGNOSING THE PROBLEM
+The ConfigTrace.log reports the following error: 
+
+ 
+[exec] add-wcm-la-attributes: 
+...
+[exec] [wplc-add-property] entityTypes="PersonAccount"
+[exec] [wplc-add-property] repositoryId="LA"
+[exec] [wplc-add-property] propertyName="WCM_CATEGORIES"
+[exec] [wplc-add-property] ignoreDuplicateIDs= ***
+NOT_SPECIFIED ***
+[exec] [wplc-add-property] dataType="String"
+[exec] [wplc-add-property] trimSpaces= *** NOT_SPECIFIED ***
+[exec] [wplc-add-property] providerURL="corbaloc:iiop:
+<IP address:port>"
+[exec] [wplc-add-property] multiValued="true"
+...
+[exec] [wplc-add-property] com.ibm.websphere.wim.exception.
+WIMSystemException: CWWIM4521E The 'ORA-01017: invalid
+username/password; logon denied
+[exec] [wplc-add-property] DSRA0010E: SQL State = 72000, Error
+Code = 1,017' SQL Exception occurred during processing.
+[exec] [wplc-add-property] at com.ibm.ws.wim.dao.
+AbstractDAO.getConnection(AbstractDAO.java:277)
+...
+
+
+RESOLVING THE PROBLEM
+Remove the vmmladbDSJAASAuth data via the WebSphere Integrated Solutions Console under Security > JAAS Configuration > J2C authentication data and re-run the add-wcm-la-attributes task with correct user id and password.
+
+
+
+
+
+ * 
+ *

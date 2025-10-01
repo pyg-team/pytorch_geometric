@@ -1,0 +1,113 @@
+Title: IBM Atlas Policy Suite 6.0.3 Release Notes - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ IBM Atlas Policy Suite Version 6.0.3 is available. Compatibility, installation, and other getting-started issues are addressed in these release notes. 
+
+CONTENT
+Description
+
+
+IBM Atlas Policy Suite is part of IBM Information Lifecycle Governance solutions, which enable you to efficiently retain and archive information of value and effectively meet eDiscovery obligations across both structured and unstructured data. With other IBM Information Lifecycle Governance products, IBM Atlas Policy Suite enables the systematic and defensible disposal of unnecessary data, which reduces storage growth, reduces IT and legal costs, and lowers legal risk for organizations. 
+
+For brief descriptions of new features, see the topic "What's new in IBM Atlas Policy Suite, V6.0.3?" in Planning, Installing, and Upgrading IBM Atlas Policy Suite(Planning_Installing_and_Upgrading_IBM_Atlas_Policy_Suite.pdf)
+
+IBM FileNet P8 Interim Fix requirement
+IBM FileNet P8 Interim Fix 5.2.0.2-P8CPE-IF002 is required for the IBM Retention Policy Syndication for Content Management Systems connector. See the techdoc IBM FileNet P8 interim fix 5.2.0.2-P8CPE-IF002 is required for IBM Retention Policy Syndication for Content Management Systems connector [http://www.ibm.com/support/docview.wss?uid=swg27040221]. Interim Fix 5.2.0.2-P8CPE-IF002 can be downloaded from the IBM FileNet P8 Support website at: 
+http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=FileNet+Product+Family&product=ibm/Information+Management/FileNet+Content+Engine&release=5.2.0.2&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=FileNet+Product+Family&product=ibm/Information+Management/FileNet+Content+Engine&release=5.2.0.2&platform=All&function=all] 
+
+Mobile support
+IBM Atlas Policy Suite V6.0.3 users can respond to notices, interview requests, and global hold reminders after they log in to the Atlas web client from an iPhone or iPad with iOS V6. For more information, see the Mobile support in IBM Atlas Policy Suite V6.0.3 [http://www.ibm.com/support/docview.wss?uid=swg21654976]. 
+
+Kerberos SSO support
+Kerberos SSO is supported for IBM Atlas Policy Suite V6.0.3 and the IBM Employee Retention Portal V6.0.3. See Configuring IBM Atlas Policy Suite to use Kerberos SSO for IBM WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg27039893] and Configuring IBM Atlas Policy Suite to use Kerberos SSO for Oracle WebLogic Server [http://www.ibm.com/support/docview.wss?uid=swg27039894].
+
+
+Announcement 
+
+The IBM Atlas Policy Suite Version V6.0.3 announcement is available here [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/4/897/ENUS213-544/index.html&lang=en&request_locale=en] [http://www.ibm.com/common/ssi/rep_ca/7/649/ENUSA13-0107/index.html]. See the announcement for the following information: 
+
+ * Detailed product description 
+ * Product-positioning statement 
+ * Packaging and ordering details 
+ * International compatibility information
+
+
+System requirements 
+
+For information about hardware and software requirements, see the technote, IBM Atlas Policy Suite V6.0.3 detailed system requirements [http://www.ibm.com/support/docview.wss?uid=swg27039430]. 
+
+ 
+
+Compatibility issues with earlier versions 
+
+You can upgrade directly to version 6.0.3 of IBM Atlas Policy Suite from any release of IBM Atlas Policy Suite Version 4.0 or later. After you upgrade, you cannot uninstall version 6.0.3 to return to an earlier version of the product. You cannot perform a database rollback either; the upgrade to version 6.0.3 includes database changes that cannot be undone. 
+
+Upgrading from IBM Atlas Policy Suite Version 4.5.2 requires that you switch from Microsoft SQL Server to an Oracle database.
+If you are upgrading from IBM Atlas Policy Suite V4.5.2 and you are currently using Microsoft SQL Server for your database, you must switch to an Oracle database. 
+
+Upgrading with IBM Atlas eDiscovery Policy Syndication for IBM eDiscovery Manager connector from V6.0.2 or earlier
+If you are using the IBM Atlas eDiscovery Policy Syndication for IBM eDiscovery Manager connector from V6.0.2 or earlier and you want to upgrade to IBM Atlas Policy Suite V6.0.3, do not continue the upgrade. Instead, contact IBM Software Support. 
+
+ 
+
+Installing IBM Atlas Policy Suite Version 6.0.3 
+
+For information about installing version 6.0.3 of IBM Atlas Policy Suite, see the following guides in
+the techdoc IBM Policy Atlas Suite V6.0.3 documentation library [http://www.ibm.com/support/docview.wss?uid=swg27038846]. 
+
+ * IBM Atlas Policy Suite Version 6.0.3, Quick Start Guide 
+ * Planning, Installing, and Upgrading IBM Atlas Policy Suite 
+
+
+
+32-bit runtime support on Red Hat Enterprise Linux V6 
+By default, when you install the 64-bit version of Red Hat Enterprise Linux V6, only 64-bit runtime support is installed. However, some applications require 32-bit runtime support. 
+
+If you did not choose to install 32-bit runtime support when you installed the 64-bit version of Red Hat Enterprise Linux V6, you must now install that support on any system that hosts one of the following applications:  * IBM Atlas Policy Suite 
+ * IBM Atlas eDiscovery Policy Syndication SDK 
+ * IBM Retention Policy Syndication SDK
+
+
+Use the appropriate rpm (Red Hat Package Manager) or yum (Yellowdog Updater Modified) command to install the 32-bit version of the following packages. Operating systems that support both 32-bit and 64-bit applications require both the 32-bit and 64-bit versions of these packages. 
+
+compat-libstdc++-33-3.2.3-69 
+compat-db-4.6.21-15 
+libstdc++-4.4.4-13 
+libXp-1.0.0-15.1 
+libXmu-1.0.5-1 
+libXtst-1.0.99.2-3 
+pam-1.1.1-4 
+libXft-2.1.13-4.1 
+gtk2-2.18.9-4 
+gtk2-engines-2.18.4-5 
+
+The IBM Atlas eDiscovery Policy Syndication for InfoSphere Optim connector requires encrypted user names and passwords 
+In IBM Atlas Policy Suite V6.0.3, the sourceOdmUsername, sourceOdmPassword, holdOdmUsername and holdOdmPassword values that are used in the OptimACASettings.xml file must be encrypted so that they can be used by the IBM Atlas eDiscovery Policy Syndication for InfoSphere Optim connector. 
+See the techdoc The IBM Atlas eDiscovery Policy Syndication for InfoSphere Optim connector requires encrypted usernames and passwords [http://www.ibm.com/support/docview.wss?uid=swg27040325]. 
+Known issues 
+
+Known issues are documented in separate technotes in the Support knowledge base at http://www.ibm.com/support/entry/portal/overview/software/enterprise_content_management/altas_ediscovery/atlas_ediscovery_support_(general) [http://www.ibm.com/support/entry/portal/overview/software/enterprise_content_management/altas_ediscovery/atlas_ediscovery_support_(general)]. The following known issues were discovered in the product before its release. 
+
+ 
+
+ * Known problem: BIRT reports might not display data in tables correctly when the reports are exported to PDF [http://www.ibm.com/support/docview.wss?uid=swg27040114]
+
+ * Known problem: CSV format of Cognos reports does not display all the details [http://www.ibm.com/support/docview.wss?uid=swg27040256]
+   
+ * Known problem: Pasting numbered lists into the rich text editor results in formatting issue [http://www.ibm.com/support/docview.wss?uid=swg27040278]
+   
+ * Known limitation: You receive an error when filtering and running the Cognos Custodian Hold Non-compliance report or the Notice Recipient List report for more than 1000 parameters [http://www.ibm.com/support/docview.wss?uid=swg27040218]
+   
+
+
+As issues are discovered and resolved throughout the product's lifecycle, the knowledge base is updated. By searching the knowledge base, you can quickly find workarounds or solutions to problems. The following links launch customized, dynamic queries of the Support knowledge base:  * View all IBM Atlas Policy Suite, Version 6.0.3 technotes [http://www.ibm.com/support/search.wss?tc=SSLPDV+SS5JWB+SS5JP8+SS5JRU&atrn1=SWVersion&atrv1=6.0.3&rankprofile=8] 
+ * Search for known issues in IBM Atlas Policy Suite, Version 6.0.3 [http://www.ibm.com/support/search.wss?q=known+issue&tc=SSLPDV+SS5JWB+SS5JP8+SS5JRU&atrn1=SWVersion&atrv1=6.0.3&rankprofile=8]
+
+
+
+Documentation updates To view updates to the IBM Atlas Policy Suite V6.0.3 documentation, see the technote, IBM Atlas Policy Suite V6.0.3 documentation updates [http://www.ibm.com/support/docview.wss?uid=swg27040201]. 
+
+As issues are identified throughout the lifecycle of the product, the documentation updates technote is updated accordingly.

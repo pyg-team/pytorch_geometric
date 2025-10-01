@@ -1,0 +1,27 @@
+Title: IBM Transaction was deadlocked on lock resources with another process and has been chosen as the deadlock victim. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ At runtime while querying for records from SQL Server table, receiving the error "Transaction (Process ID 266) was deadlocked on lock resources with another process and has been chosen as the deadlock victim. Rerun the transaction."
+
+
+
+CAUSE
+This is caused by SQL Server where the table is locked either for reading or for a transaction purpose.
+
+
+
+RESOLVING THE PROBLEM
+The link to Microsoft KB [http://support.microsoft.com/kb/953948] provides information about the issue and how to solve it.
+
+ 
+
+HISTORICAL NUMBER
+ 00000750 
+
+PRODUCT ALIAS/SYNONYM
+ Cast Iron Solution
+Cast Iron Operating System
+Cast Iron Studio

@@ -1,0 +1,23 @@
+Title: IBM BigInsights: How to disable RC4 Cipher suites in Ambari Server? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ IBM BigInsights: How to disable RC4 Cipher suites in Ambari Server? 
+
+CAUSE
+RC4 is considered weak cipher by some vulnerability scan tools
+
+ANSWER
+ 
+
+On Ambari Server node 
+
+1. Edit the file /etc/ambari-server/conf/ambari.properties 
+
+2. Add the following line to the file
+
+security.server.disabled.ciphers=SSL_RSA_WITH_RC4_128_MD5|TLS_RSA_WITH_RC4_128_MD5|TLS_RSA_WITH_RC4_128_SHA|SSL_RSA_WITH_RC4_128_SHA
+
+3. Restart ambari server using ambari-server restart

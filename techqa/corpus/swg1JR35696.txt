@@ -1,0 +1,244 @@
+Title: IBM JR35696: LTPA TOKEN EXPIRES BEFORE THE SCA TIMEOUT LENIENCY HAPPENS WHICH LEADS TO TokenExpiredException - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere Enterprise Service Bus V7.0.0 Fix Pack 2 (7.0.0.2) [http://www-01.ibm.com/support/docview.wss?uid=swg24026462]
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 3 (6.2.0.3) [http://www-01.ibm.com/support/docview.wss?uid=swg24027123]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  LTPA Token expiration messages were thrown much before the SCA
+   timeout leniency.
+   .
+      The message logged for this is
+   SECJ0371W: Validation of the LTPA token failed because the token
+   expired and during the process execution:
+   BossLog: { 0858} 2010/05/26 14:10:01.946 02 SYSTEM=ZOS18R
+   CELL=AACELL
+   NODE=AADMNODD CLUSTER=AADMGR SERVER=AASR001  PID=0X000001F6 TI
+    D=0X00000085 0X97BF83AC
+   .
+   [1/6/10 11:42:47:095 PST] 00004aac ExceptionUtil E   CNTR0020E:
+   EJB threw an unexpected (non-declared) exception during
+   invocation of
+   method "transactionNotSupportedActivitySessionNotSupported" on
+   bean "BeanId(BomExportERPLNPMIDLApp#BomExportEJB.jar#Module
+   , null)".
+   Exception data: com.ibm.websphere.security.auth.
+   TokenExpiredException: Token expiration Date: Wed Jan 06
+   11:42:46 PST
+   2010, current Date: Wed Jan 06 11:42:46 PST 2010
+    at com.ibm.ws.security.ltpa.LTPAToken2.isValid(LTPAToken2.
+   java:274)
+    at com.ibm.ws.security.ltpa.LTPAToken2.<init>
+   (LTPAToken2.java:75)
+    at
+   com.ibm.ws.security.ltpa.LTPAToken2Factory.validateTokenBytes
+   (LTPAToken2Factory.java:91)
+    at com.ibm.ws.security.ltpa.LTPAServerObject.validateToken
+   (LTPAServerObject.java:982)
+    at com.ibm.ws.security.ltpa.LTPAServerObject.validateToken
+   (LTPAServerObject.java:891)
+    at
+   com.ibm.ws.security.token.SingleSignonTokenImpl.initializeToken
+   (SingleSignonTokenImpl.java:71)
+    at com.ibm.ws.security.server.lm.wsMapDefaultInboundLoginModule
+   .login(wsMapDefaultInboundLoginModule.java:1037)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at sun.reflect.NativeMethodAccessorImpl.invoke
+   (NativeMethodAccessorImpl.java:79)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke
+   (DelegatingMethodAccessorImpl.java:43)
+    at java.lang.reflect.Method.invoke(Method.java:618)
+    at javax.security.auth.login.LoginContext.invoke
+   (LoginContext.java:795)
+    at javax.security.auth.login.LoginContext.access$000
+   (LoginContext.java:209)
+    at javax.security.auth.login.LoginContext$4.run(LoginContext
+   .java:709)
+    at java.security.AccessController.doPrivileged(AccessController
+   .java:246)
+    at javax.security.auth.login.LoginContext.invokePriv
+   (LoginContext.java:706)
+    at javax.security.auth.login.LoginContext.login(LoginContext.
+   java:603)
+    at com.ibm.ws.security.auth.JaasLoginHelper.jaas_login
+   (JaasLoginHelper.java:188)
+    at com.ibm.ws.security.auth.ContextManagerImpl.login
+   (ContextManagerImpl.java:2939)
+    at com.ibm.ws.security.auth.ContextManagerImpl.login
+   (ContextManagerImpl.java:2720)
+    at com.ibm.ISecurityLocalObjectTokenBaseImpl.
+   WSSecurityContextLTPAImpl.
+   acceptSecContext(WSSecurityContextLTPAImpl.java:304)
+    at com.ibm.ISecurityLocalObjectTokenBaseImpl.
+   WSSecurityContextLTPAImpl.
+   acceptSecContext(WSSecurityContextLTPAImpl.java:222)
+    at
+   com.ibm.ws.sca.internal.managed.security.SecurityContextManager.
+   restoreUserAuthenticationToken(SecurityContextManager.java:700)
+    at
+   com.ibm.ws.sca.internal.managed.security.SecurityManagerImpl.
+   restoreUserAuthenticationToken(SecurityManagerImpl.java:263)
+    at com.ibm.ws.sca.internal.securitycontext.handler.
+   AbstractSecurityContextHandler$1.run(AbstractSecurityContextHand
+   ler.java:155)
+    at java.security.AccessController.doPrivileged(AccessController
+   .java:246)
+    at com.ibm.ws.sca.internal.securitycontext.handler.
+   AbstractSecurityContextHandler.retrieveSecurityInfoFromMessage
+   (AbstractSecurityContextHandler.java:128)
+    at com.ibm.ws.sca.internal.securitycontext.handler.
+   TargetSecurityContextHandler.processMessage
+   (TargetSecurityContextHandler.java:80)
+    at com.ibm.ws.sca.internal.message.impl.MessageDispatcherImpl.
+   processMessage(MessageDispatcherImpl.java:1297)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  WebSphere Process Server and                *
+   *                  WebSphere Enterprise Service Bus            *
+   *                  V6.0.2.x, V6.1.0.x, V6.1.2.x, V6.2.0.x, and *
+   *                  V7.0.0.x users.                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Lightweight Third Party                 *
+   *                      Authentication (LTPA) token expired     *
+   *                      exception is thrown before time         *
+   *                      exceeds configured TIMEOUTLENIENCY.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   For SCA async invocations that involve async optimisation, the
+   LTPA token expired exception is thrown even though
+   TIMEOUTLENIENCY is configured and time after LTPA timeout does
+   not exceed TIMEOUTLENIENCY. An example of an async path where
+   this can happen is when a client does an async invoke on an
+   SCA import.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem is fixed by adding code to handle the special case
+   of async optimization where the Service Integration Bus (SIB)
+   messaging layer is skipped.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR35696
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   612
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-19
+   
+   
+ * CLOSED DATE
+   2010-03-30
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R602 PSY
+   UP
+   
+   
+ * R610 PSY
+   UP
+   
+   
+ * R612 PSY
+   UP
+   
+   
+ * R620 PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

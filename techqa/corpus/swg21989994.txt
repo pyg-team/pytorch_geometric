@@ -1,0 +1,57 @@
+Title: IBM How to - Integrate ITX Design Studio into IIB Toolkit for all users - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When following the standard instructions for integrating IBM Transformation Extender (ITX) Design Studio into the IBM Integration Broker (IIB) Eclipse based Toolkit, the installation is performed for the current user only.
+
+
+
+This procedure can be followed to ensure that all users get the ITX integration. 
+
+SYMPTOM
+When other users logon to the machine and use IIB Toolkit, the WTX Node does not appear in the list of available Nodes in the palette, and existing Message Flows are unable to properly handle (or display the properties of) any existing ITX nodes.
+
+
+CAUSE
+The standard installation places the customization files in the user's personal profile directory.
+
+ENVIRONMENT
+IIB/ITX integration on the Windows platform
+
+RESOLVING THE PROBLEM
+The IIB Toolkit developers have documented a way of doing this so that all users can access the ITX plugins.
+
+Here are the steps:
+
+1) Using an Administrator, take a backup copy the eclipse.ini file under <IIB install>\tools directory.
+
+2) Create a directory call tempconfig in root of your C: drive.
+
+3) Edit the existing eclipse.ini and change the following line:
+
+@user.home/AppData/Local/IBM/IIBT10-config/10.0.0.5/configuration
+and change it to
+/tempconfig/configuration
+
+(We are going to use this to do a temp install of ITX.)
+
+3) Run the toolkit. It will create some files in tempconfig.
+
+4) Install the ITX Toolkit feature.
+
+5) Stop the Toolkit.
+
+6) Change the eclipse.ini back to its original value. (Restore your backup)
+
+7) Create a directory called 'eclipse' in the following dir: <IIB Install>\tools\dropins.
+
+8) In the c:\tempconfig directory will be a 'features' dir and a 'plugins' dir. Copy both directories to the <IIB Install>\tools\dropins\eclipse directory.
+
+So now <IIB Install>\tools\dropins should look something like:
+<IIB Install>\tools\dropins\eclipse\features\...
+and
+<IIB Install>\tools\dropins\eclipse\plugins\....
+
+9) Start the Toolkit again and you should see the ITX Node available on the palette. You can then remove the contents of the tempconfig.

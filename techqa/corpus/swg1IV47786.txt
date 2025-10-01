@@ -1,0 +1,134 @@
+Title: IBM IV47786: GLOBALIZE ALL ATTRIBUTES IN THE UNIX OS AGENT TCR DATA MODEL - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 2 (6.3.0-TIV-ITM-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24035402]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  New metrics added as part of the convergence of the AIX Premium
+   agent were not globalized in the TCR data model due to size
+   restrictions of the model itself. This APAR corrects that
+   behavior to enable these attributes to have localized strings.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Translate the UNIX OS Agent TCR Data Model.
+   
+   
+   The data model which is used in Tivoli Common Reporting to
+   design custom reports previously included additional AIX
+   attribute metrics which were provided English-only due to size
+   constraints in the Data Model.
+   
+   The size restriction has been resolved and these additional
+   metrics have now been localized.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  See problem summary.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+      | fix pack | 6.3.0-TIV-ITM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV47786
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040U
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-03
+   
+   
+ * CLOSED DATE
+   2013-09-12
+   
+   
+ * LAST MODIFIED DATE
+   2013-09-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * FIXED COMPONENT ID
+   5724C040U
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

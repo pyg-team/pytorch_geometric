@@ -1,0 +1,72 @@
+Title: IBM Notes Client Crashes when Clicking on a URL Link. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Notes Client crash when you clicked on a URl Link. Internet Explorer will open properly but when you switch back to Notes Client, it will crash.
+
+CAUSE
+The cause of the issue was determined to be the incorrect registry value for the following registry keys, which control default browser to use when clicking on a hypertext link:
+HKEY_CLASSES_ROOT\http\shell\open\command\
+HKEY_CLASSES_ROOT\https\shell\open\command\
+
+HKCU\Software\Classes\http\shell\open\command\ 
+HKCU\Software\Classes\https\shell\open\command\
+
+
+In few cases, registry value changes when upgrading the browser.
+
+
+ENVIRONMENT
+Notes Client 8.5.3 and 9.0
+
+
+
+DIAGNOSING THE PROBLEM
+To diagnose the issue, please collect the javacore created in the workstation of the user. 
+
+ 
+
+The javacore will contain the following thread and the faulting DLL as "ieframe.dll".
+
+1XHEXCPCODE J9Generic_Signal_Number: 00000004
+1XHEXCPCODE ExceptionCode: C0000005
+1XHEXCPCODE ExceptionAddress: 659ACCC8
+1XHEXCPCODE ContextFlags: 0001007F
+1XHEXCPCODE Handler1: 023EA2A0
+1XHEXCPCODE Handler2: 003CC130
+1XHEXCPCODE InaccessibleAddress: 20918F5C NULL
+1XHEXCPMODULE Module: C:\Windows\SysWOW64\ieframe.dll
+1XHEXCPMODULE Module_base_address: 658B0000
+1XHEXCPMODULE Offset_in_DLL: 000FCCC8
+
+In the "Main" thread of "Current Thread", the Native CallStack section shows IE dlls:
+4XENATIVESTACK Ordinal224+0x2d0b (0x659ACCC8 [ieframe+0xfccc8])
+4XENATIVESTACK Ordinal224+0x31e1 (0x659AD19E [ieframe+0xfd19e])
+4XENATIVESTACK DllCanUnloadNow+0x966e (0x6199C9AA [mshtml+0x44c9aa])
+4XENATIVESTACK DllGetClassObject+0x19defc (0x61967B4A [mshtml+0x417b4a])
+4XENATIVESTACK DllGetClassObject+0x14acab (0x619148F9 [mshtml+0x3c48f9])
+4XENATIVESTACK gapfnScSendMessage+0x332 (0x762C62FA [USER32+0x162fa])
+
+
+
+RESOLVING THE PROBLEM
+Set the following registry values to the default browser on the OS: 
+
+
+HKEY_CLASSES_ROOT\http\shell\open\command\
+HKEY_CLASSES_ROOT\https\shell\open\command\
+
+HKCU\Software\Classes\http\shell\open\command\ 
+HKCU\Software\Classes\https\shell\open\command\
+
+Example (with Google Chrome as the default browser):
+
+[HKEY_CLASSES_ROOT\http\shell\open\command]
+@="\"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\" -- \"%1\""
+
+Example (with IE as the default browser)
+
+[HKEY_CLASSES_ROOT\http\shell\open\command]
+@="\"C:\\Program Files (x86)\\Internet Explorer\\iexplore.exe\" -- \"%1\""

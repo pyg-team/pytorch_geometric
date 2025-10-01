@@ -1,0 +1,31 @@
+Title: IBM ITM 6.3: KCIIN2942E error message occurs during installation - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When installing ITM 6.3 Fix Pack 1 or later, the installation stops with error KCIIN2942E. 
+
+RESOLVING THE PROBLEM
+IBM Global Security Toolkit (GSKit) is required for IBM Tivoli Monitoring (ITM). Prior to version 6.3 FP1 of ITM, both 32bit and 64 bit GSKit libraries were always installed on 64bit systems. ITM 6.3 fixpack 1 introduces improvements in this area and now installs only the version(s) required by the components selected for installation/upgrade. 
+
+If you receive a KCIIN2942E error message during installation it means the installer wasn't able to find the GSKit libraries required for the selected component installation. The solution for this problem is to install the Tivoli Enterprise Monitoring Agent Framework and start installation again.
+
+Remote installation
+
+
+Use the tacmd updateFramework command to install an IBM Tivoli Enterprise Monitoring Agent (TEMA) Framework update on the specified managed system. Refer to the following technote for instructions on the usage of the updateFramework command. 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21572221 [http://www-01.ibm.com/support/docview.wss?uid=swg21572221] 
+
+ 
+
+Local installation
+
+
+The Tivoli Enterprise Monitoring Agent Framework update is available on the agents installation media. The Product code is tf. In the Installation media's Unix subdirectory, locate the silent installation file (tf<arch>.txt) for your system architecture and use it to perform a silent installation. 
+
+Example:
+If you want to install the Tivoli Enterprise Monitoring Agent Framework update on a 64bit x86 Linux system, execute following command.
+
+<path to agents installation media>/install.sh -h <itm installation directory> -p <path to agents installation media>/unix/tflx8266.txt

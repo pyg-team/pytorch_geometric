@@ -1,0 +1,215 @@
+Title: IBM IV46878: WEBSPHERE MQ CLASSES FOR JMS: MESSAGECONSUMER#RECEIVE DOES NOT RETURN - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.5 Fix Pack 7.5.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24036808]
+WebSphere MQ V7.0 Fix Pack 7.0.1.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24037169]
+Fix Pack 7.1.0.5 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24037553]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In WebSphere MQ Classes for JMS 7.0.1.9,
+   MessageConsumer#receive
+   does not return even if the timeout has expired.
+   The fact that the "receive" cannot complete because of
+   the outstanding "close" means that this issue can only occur in
+   a very particular circumstance. That is if:
+   - A Message Consumer is used successfully, but then gets a 2009
+   on Message Consumer.close.
+   - A new Message Consumer is created immediately on the same
+   session, and then used to receive.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of:
+   
+   - The WebSphere MQ classes for JMS client.
+   - The WebSphere MQ V7 Resource Adapter.
+   - The WebSphere Application Server V7 WebSphere MQ messaging
+   provider.
+   - The WebSphere Application Server V8 WebSphere MQ messaging
+   provider.
+   - The WebSphere Application Server V8.5 WebSphere MQ messaging
+   provider.
+   
+   who are using JMS Message Consumers.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java +Java zOS
+   ****************************************************************
+   PROBLEM SUMMARY:
+   A JMS application attempted to close a JMS MessageConsumer but
+   this resulted in a MQRC 2009 being returned. The application
+   then created a new Message Consumer from the same JMS Session
+   and then called receive on that Message Consumer. The JMS
+   Message Consumer receive call would then hang and not return
+   even if a message was on the queue or the receive timeout had
+   expired.
+   
+   The java stack of the hanging receive call was:
+   
+   Java callstack:
+   at java/lang/Object.wait(Native Method)
+   at java/lang/Object.wait(Object.java:167)
+   at
+   com/ibm/msg/client/wmq/internal/WMQConsumerShadow.getMsg
+   (WMQConsumerShadow.java:1300)
+   at
+   com/ibm/msg/client/wmq/internal/
+   WMQSyncConsumerShadow.receiveInternal
+   (WMQSyncConsumerShadow.java:239)
+   at
+   com/ibm/msg/client/wmq/internal/WMQConsumerShadow.receive
+   (WMQConsumerShadow.java:1062)
+   at
+   com/ibm/msg/client/wmq/internal/WMQMessageConsumer.receive
+   (WMQMessageConsumer.java:469)
+   at
+   com/ibm/msg/client/jms/internal/
+   JmsMessageConsumerImpl.receiveInboundMessage
+   (JmsMessageConsumerImpl.java:883)
+   at
+   com/ibm/msg/client/jms/internal/JmsMessageConsumerImpl.receive
+   (JmsMessageConsumerImpl.java:546)
+   at
+   com/ibm/mq/jms/MQMessageConsumer.receive
+   (MQMessageConsumer.java:258)
+   ....
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ classes for JMS have been updated to resolve
+   this issue by ensuring
+   that the initial failing MessageConsumer.close() call correctly
+   cleans up internal state
+   related to the JMS Session so that any further calls on that JMS
+   Session can function correctly.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.1       7.1.0.5
+   v7.0       7.0.1.12
+   v7.5       7.5.0.3
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV46878
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7221
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-12
+   
+   
+ * CLOSED DATE
+   2013-10-31
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7221
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

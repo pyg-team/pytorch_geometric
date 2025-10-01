@@ -1,0 +1,62 @@
+Title: IBM Federation Server migration error: SQL1344N Orphan rows found in the system catalogs when running db2iupgrade. - United States
+
+Text:
+sql1344N; migration; orphan rows in db2 catalog TECHNOTE (FAQ)
+
+QUESTION
+ 
+Why am I getting sql1344N error on attempting migration to Federation Server 9.7?
+Complete error message:
+SQL1344N Orphan rows found in the system catalogs. Contact your 
+technical service representative prior to attempting a upgrade. 
+. 
+
+ANSWER
+This error indicates that orphan rows were found in your system catalog when you run db2ckupgrade and migration cannot be continued. You need to run db2cleancat utility first to remove the orphan rows to proceed with the upgrade. 
+
+Engage IBM Support to request db2cleancat utility for your DB2 level. The db2cleancat tool includes two files: 
+
+- the executable (db2cleancat)
+- the bind file (db2cleancat.bnd) 
+
+
+Instructions to run the tool follows:
+Back up the database before using the tool. If anything goes wrong, restore the database before doing anything else.
+
+a) Place the two following files on the server where you will need to clean orphan entries.
+
+db2cleancat
+db2cleancat.bnd
+
+b) Connect to federated database
+
+db2 "connect to <Federated_database_name>"
+
+c) Bind the file
+
+db2 "bind db2cleancat.bnd"
+
+d) Set tool password that was given to you by IBM Support
+
+export DB2SVCPW=<Password>
+export LIBPATH=<instance path>/sqllib/lib
+
+-----------------------------------
+Command Syntax: 
+db2cleancat dbname option 
+
+where options are:
+0 # reports the orphan rows
+1 # removes the orphan rows.
+----------------------------------- 
+
+e) Check for orphan rows in catalog
+
+db2cleancat <dbname> 0 
+
+f) If orphans found, remove with option 1
+
+db2cleancat <dbname> 1 
+
+
+Note: db2cleancat utility is different for every platform and level so be sure to provide exact 'db2level' output and operating system information to IBM Support when you open the ticket.

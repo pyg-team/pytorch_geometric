@@ -1,0 +1,166 @@
+Title: IBM ZZ00453: HAVING TO DO MANUAL STEPS TO KEEP VIL RUNNING. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Client has to perform various steps to keep the VIL operations
+   running.  We have been running into many VIL issues.  We would
+   resolve one and another one would pop up and resolve that and
+   an issue we faced before pops up.
+   
+   Following are the latest issues we have been facing with VIL...
+   
+   16080,122,000 -- VIL "null' errors and vil-cloud-delete on one
+   region deleted a different region
+   
+   We were able to resolve, to a point, various issues by running
+   vil-cloud-delete/create for few regions, but with this, new
+   issues, which have been faced before, are seen:
+   
+   - Repositories are dropping off their location information
+   often (i.e. Fairfield).  To get around this, we have to run a
+   sync on the external repository that is missing the location
+   information.  This resolves the problem temporarily until
+   another external repository drops it's locations and we start
+   receiving the null pointer exception during CS2 Repository sync.
+   
+   - The images don't show up in the VIL UI under CS2 repository
+   in a reasonable time.  Sometime it takes two or three days for
+   images to show up.  We should not have to do any manual sync
+   process for images to show up.  This is preventing AT&T to
+   register images in SCO for clients to use during their
+   deployments.  AT&T is in the process of trying to accomplish
+   the following projects but this issue is preventing them to
+   move forward:
+   
+    - Add cent os images to every cluster managed by SCO.
+   
+    - Changing the current templates to add user support for
+         disk extension (add a new mechid for disk extension) to
+         address a security issue.
+   
+   - Extranet external repository is not added back.  We'll need
+   to run vil-cloud-create to see if this resolves the problem.
+   We have seen this constantly where external repositories are
+   missing from the VIL UI and constantly have to run
+   vil-cloud-delete/create to get them back in and even after
+   that, the repository is not showing properly (takes days to
+   show up, images not available, etc.) or impact other external
+   repositories.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Provided test fix to help resolve connection related issues.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  VMware connection failure was the major issue , improved vmware
+   connection handling
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Provided fix to handle VMware connection reated issues.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00453
+   
+   
+ * REPORTED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2800
+   
+   
+ * REPORTED RELEASE
+   230
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-08-11
+   
+   
+ * CLOSED DATE
+   2016-03-03
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * FIXED COMPONENT ID
+   5725H2800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R230 PSY
+   UP

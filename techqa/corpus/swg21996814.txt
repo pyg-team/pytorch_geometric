@@ -1,0 +1,70 @@
+Title: IBM QRadar: The use of zgrep to search logs - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is zgrep and how is it used? 
+
+CAUSE
+Zgrep is a Linux command that is used to search the contents of a compressed file without uncompressing it. This command can be used with other options to extract data from the file, such as wildcards.
+
+ANSWER
+You can use zgrep, which functions exactly like grep to search through compressed logs without having to individually decompress them with gunzip. The syntax would be: 
+
+zgrep -i ‘<search criteria>’ <file path><file.gz> | less
+
+Zgrep allows you to use the same options as grep. If you combine zgrep with grep and substitute wildcard's for the file name, you can search all of the logs in a directory at once. For example, you can simultaneously search /var/log/, var/log/audit and /var/log/qradar.old for content.
+
+To search more efficiently, follow these steps.
+
+
+ 1. Determine which files contain the string you're looking for by including the -c switch. The -c switch gives you the count of occurrences of the string.
+    Note: Pattern in these examples 
+     * cd /var/log
+       zgrep -ci '<your search string>' $(ls /var/log/ | grep "qradar\.error\..*\gz")
+       
+     * cd /var/log/qradar.old
+       zgrep -ci '<your search string>' $(ls /var/log/qradar.old/ | grep "qradar\.log\..*\gz")
+       
+     * cd /var/log/audit
+       zgrep -ci '<your search string>' $(ls /var/log/audit/ | grep ".*\.*\..*\gz")
+       
+       As an example, to search for occurrences of the user example_user and how many entries per file:
+       
+       [root@qr_example tmp]# cd /var/log/audit
+       [root@qr_example audit]# zgrep -ci 'example_user' $(ls /var/log/audit/ | grep "audit\.*\..*\gz")
+       audit-healthconsole.log:0
+       audit-healthconsole.log.1.gz:0
+       audit.log:1 
+       audit.log.1.gz:44 
+       audit.log.2.gz:0
+       audit.log.3.gz:0
+       audit.log.4.gz:52
+       
+    
+    
+ 2. You can review the file counts from using the -c switch to determine how you want to view those entries. To do this, you can either:
+     1. For limited number of entries (100 entries), you can display by removing the -c switch and adding | less at the end: 
+        cd /var/log
+        zgrep -i 'example_user' $(ls /var/log/ | grep ".*\.*\..*\gz") | less
+        
+        
+     2. If the count returns several thousand entries, you can view them one file at a time :
+        zgrep -i ‘<your search string>' <full path to file> | less
+        
+        Example: zgrep -i 'example_user' /var/log/audit/ audit.log.1.gz | less
+        
+     3. If you choose to add the entries to a file to review later or add to a support ticket, do the following:
+        zgrep -i 'example_user' $(ls /var/log/ | grep ".*\.*\..*\gz") > /tmp/example_user.txt
+    
+    
+
+
+Results: You can now easily review compressed log entries without decompressing it. 
+
+
+Where do you find more information? 
+
+
+[/support/docview.wss?uid=swg21996814&aid=1] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21996814&aid=2] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21996814&aid=3] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21996814&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21996814&aid=5] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21996814&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21996814&aid=7] [http://ibm.biz/SuptRegQuikStart]

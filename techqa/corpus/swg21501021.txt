@@ -1,0 +1,57 @@
+Title: IBM Protecting WebSphere DataPower SOA Appliance services against Potential Security Exposure due to XML Encryption Attack - United States
+
+Text:
+error rewrite; xml; encryption; padding oracle TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure my DataPower service to protect against this potential security exposure? 
+
+CAUSE
+There is a potential security exposure to an attack based on XML Encryption with all IBM WebSphere DataPower appliances making use of decryption including any of the following capabilities:
+
+
+ * A Web Service Proxy where the request message payload is encrypted 
+ * A Web Service Proxy utilizing WS-Security Policy configured to decrypt a portion or all of the request 
+ * Processing policies with decrypt actions 
+ * Processing policies with cryptobin decrypt actions 
+ * Style sheets utilizing dp:decrypt-data() and dp:decrypt-attachment() extension functions 
+ * B2B appliances (XB60 or XB62) utilizing ebMS enabled services with encrypted input messages
+
+
+The attack entails a version of the padding oracle attack optimized for XML encryption. It was presented at the ACM Con­fe­rence on Computer and Com­mu­ni­ca­ti­ons Se­cu­ri­ty in October 2011 under the title How to Break XML Encryption [http://www.nds.rub.de/research/publications/breaking-xml-encryption/]. 
+ANSWER
+RECOMMENDATION:
+Install a DataPower fix pack that contains the fix for APAR IC76651 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC76651].
+
+
+LOCAL FIX: 
+To prevent this attack without installing the specified fixpack, you can use either or both of the following approaches: 
+
+ * Digitally sign the encrypted request message using XML Digital Signatures or Message Authentication/Integrity Codes (MACs), making sure to avoid decryption entirely unless the signatures are valid 
+ * Ensure that all responses after encountering an error are indistinguishable from each other, which is a simpler approach. Providing indistinguishable responses hardens a service against this attack with minimal configuration changes. 
+
+
+To configure your service to always return indistinguishable errors messages, add an error rule that matches on all error codes. This rule includes a transform action that runs the style sheet. If you have any existing error rules, you can override the output by adding a new transform action at the end of the rule. The following XSLT style sheet returns a generic SOAP Fault. 
+
+<?xml version="1.0" encoding="UTF-8"?> 
+<xsl:stylesheet version="1.0" xmlns:xsl=" http://www.w3.org/1999/XSL/Transform [http://www.w3.org/1999/XSL/Transform] "> 
+<xsl:template match="/"> 
+<env:Envelope xmlns:env=" http://schemas.xmlsoap.org/soap/envelope/ [http://schemas.xmlsoap.org/soap/envelope/] "><env:Body><env:Fault><faultcode>env:Client</faultcode><faultstring>Internal Error (from client)</faultstring></env:Fault></env:Body></env:Envelope> 
+</xsl:template> 
+</xsl:stylesheet>  
+
+For details on configuring an error rule, see "Processing Policies" in the appropriate Information Center. To access the Information Center, go to DataPower Documentation Portal [http://www.ibm.com/software/integration/datapower/library/documentation/]. 
+
+ PROBLEM CONCLUSION: 
+Install the fix pack containing APAR IC76651 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC76651]. 
+
+This fix adds a new property, "rewrite-errors," to XML Firewall, Multi-Protocol Gateway, Web Service Proxy and Web Application Firewall. Rewrite Errors protects services against XML decryption attack by unifying error messages and is on by default. 
+
+This APAR is in fix packs 3.7.3.19, 3.8.0.13, 3.8.1.12, 3.8.2.4 and 4.0.1.0.
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower B2B Appliance XB60 Firmware 4.0.2, 4.0.1, 3.8.2, 3.8.1, 3.8 Business Integration WebSphere DataPower B2B Appliance XB62 Firmware 4.0.2, 4.0.1 Business Integration WebSphere DataPower Integration Appliance XI50 Firmware 4.0.2, 4.0.1, 3.8.2, 3.8.1, 3.8 Business Integration WebSphere DataPower Integration Appliance XI52 Firmware 4.0.2, 4.0.1 Business Integration WebSphere DataPower Integration Blade XI50B Firmware 4.0.2, 4.0.1, 3.8.2, 3.8.1 Business Integration WebSphere DataPower Low Latency Appliance XM70 Firmware 3.8, 3.8.1, 3.8.2, 4.0.1, 4.0.2 Business Integration WebSphere DataPower Service Gateway XG45 Firmware 4.0.2 Business Integration WebSphere DataPower XML Security Gateway XS40 Firmware 4.0.2, 4.0.1, 3.8.2, 3.8.1, 3.8

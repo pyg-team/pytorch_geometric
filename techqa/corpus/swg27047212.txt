@@ -1,0 +1,52 @@
+Title: IBM Content Navigator documentation: Configuring the Email mapping plug-in - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The Email mapping plug-in is included with IBM Content Navigator. To use it, you must update the list of user names and email addresses, and configure the plug-in. 
+
+CONTENT
+This information applies to IBM Content Navigator, Version 2.0.3 Fix Pack 6 and later releases.
+
+
+The Email mapping plug-in provides a service that returns an email address that is associated with an IBM Content Navigator user. The email address that the service is returning is the address that the email is being sent from. 
+
+If you enable a desktop and repository for Box Share, a mapping of user IDs and email addresses is required so that the user’s email address can be displayed and used to send the link to the document. The email address might be provided in one of the following ways: 
+
+ * For a FileNet Content Manager repository that is configured with email addresses, IBM Content Navigator uses the email address from FileNet Content Manager. 
+ * For a FileNet Content Manager repository that is not configured with email addresses, or for an IBM Content Manager repository, you can create a custom list of user IDs and email addresses, and configure the Email mapping plug-in. 
+ * If you don't use the email addresses from FileNet Content Manager or from the Email mapping plug-in, you can set the configuration option in the desktop to allow users to enter an email address when sharing a document.
+
+
+To create a custom list of user accounts and email addresses, you need to update the json file for the Email mapping plug-in, rebuild the jar file, and then configure the Email mapping plug-in. Important: If you are using the Email mapping plug-in from IBM Content Navigator, Version 2.0.3 Fix Pack 6 or Fix Pack 7, you must re-install the updated plug-in available starting from IBM Content Navigator, Version 2.0.3 Fix Pack 8 because the way the plug-in service is called from IBM Content Navigator has changed.
+
+If you made any customizations to the .json file or Java code that was provided in Fix Pack 6 or Fix Pack 7, you must apply the same customizations to the updated plug-in available in IBM Content Navigator, Version 2.0.3 Fix Pack 8.
+
+Before you begin
+Determine the user IDs and email addresses that you want to set up for the Box Share action. Create a custom list of user IDs and email addresses.
+
+Note: If you installed the Email mapping plug-in provided in IBM Content Navigator, Version 2.0.3 Fix Pack 6 or Fix Pack 7, you must first re-install the Email mapping plug-in provided in IBM Content Navigator, Version 2.0.3 Fix Pack 8 before configuring the plug-in.
+
+Procedure
+To configure the Email mapping plug-in: 
+
+ 1.  
+ 2. Edit the emailMapping.json file that is located in the JAR file for the Email mapping plug-in. The default JAR file path for the installation directory on Windows is C:\Program Files\IBM\ECMClient\plugins\emailMappingPlugin.jar.
+    
+    Find the sample list of user IDs and email addresses, and replace it with your custom list of user IDs and email addresses. Save the file.
+    
+ 3. Optional: If you want to customize the email mapping service, you can modify the code in the emailMappingPlugin.java file.
+    
+ 4. Rebuild the JAR file, emailMappingPlugin.jar, and save it in the original JAR file path. 
+ 5. Open the administration tool in the IBM Content Navigator web application, and click Plug-ins > New Plug-in. 
+ 6. Enter the JAR file path for the Email mapping plug-in. 
+    The default JAR file path for the IBM Docs Integration plug-in class on Windows is C:\Program Files\IBM\ECMClient\plugins\emailMappingPlugin.jar. 
+ 7. Click Load. 
+ 8. Save your changes.
+
+
+What to do next 
+Ensure that Box Share is enabled for your desktop and any repositories. For the desktop configuration settings, select a Box repository for shared files, and select whether to allow users to update the email address when they share a document. 
+
+The results of the configuration settings at run-time are explained in the following table: Allow or don't allow update User ID included or not included Results for the Box Share action Yes. Allow users to update the email address when they share a document. Yes. The user ID is included in the file emailMapping.json. The email address is displayed, and the user can change it to a different email address. Yes. Allow users to update the email address when they share a document. No. The user ID is not included in the file emailMapping.json. The email address is blank, and the user can enter an email address. No. Don't allow users to update the email address when they share a document. Yes. The user ID is included in the file emailMapping.json. The email address is displayed, but the user can't change it to a different email address. No. Don't allow users to update the email address when they share a document. No. The user ID is not included in the file emailMapping.json. An error is returned. The administrator needs to update the file emailMapping.json, rebuildthe jar file, and reload the plug-in.

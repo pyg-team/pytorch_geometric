@@ -1,0 +1,29 @@
+Title: IBM How to delete a baseline dated 1969 - United States
+
+Text:
+Baseline; Delete; 1969; .bas; directory TECHNOTE (FAQ)
+
+QUESTION
+How can I delete a Baseline dated 1969?
+
+ANSWER
+ 
+
+To delete a baseline dated 1969: 
+
+ 
+
+ 1. Have everyone log off and shut down DOORS (stop the ddbs). 
+ 2. Back up the directory structure of the module. (You may have to help the client get the module path, etc.) 
+ 3. Open the baseline.ixc up and find the entry which corresponds to the .bas directory. 
+ 4. When you find the entry, delete the line. 
+ 5. You must then restart the ddbs for these changes to take effect (ixc files are cached). When you go to file > baseline > view, the entry will no longer be present.
+
+
+Before you do any work, remember to back up the entire .mod directory. Once your changes have been made and the entry has gone, you can now optionally delete the .bas directory.
+
+
+
+Try it yourself on a dummy module: 
+
+ *  Create a mod Create 3 baselines Go to the b0000001.bas directory and delete the contents View baselines. One will have a date of 1970 Open the baseline.ixc file Delete the 1000001 0.2 entry Close DOORS Restart the ddbs Check baseline. It should be gone.

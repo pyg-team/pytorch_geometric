@@ -1,0 +1,82 @@
+Title: IBM ITM V6 Quick-Reference Card - United States
+
+Text:
+ITM V6; quick reference; Unix commands; Unix; Linux; 71GEN-ITM TECHNOTE (FAQ)
+
+QUESTION
+ Here is a quick-reference card for ITM V6. This reference card provides the most commonly required information for the Linux/Unix environment. 
+
+ANSWER
+
+Launch Manage Services GUI
+
+ITM_HOME/bin/CandleManage
+
+NOTE: Under Unix, X Windows is required to display the GUI.
+
+Start/Stop TEMS
+
+ITM_HOME/bin/itmcmd server -l {start | stop} tems-name
+
+Start/Stop TEPS
+
+ITM_HOME/bin/itmcmd agent {start | stop } cq
+
+Configure TEMS
+
+ITM_HOME/bin/itmcmd config -S -t tems-name
+
+Configure TEPS
+
+ITM_HOME/bin/itmcmd config -A cq
+
+Add Application Support to TEMS ("Seed" TEMS)
+
+itmcmd support -t tems-name pc pc pc
+
+where pc is the agent product code, such as t3, t4, t5, t6
+
+cinfo Abbreviations
+
+The following are the abbreviations that you see when you run the ITM_HOME/bin/cinfo –i command on the TEMS or TEPS host. These abbreviations indicate which application support has been installed on the host. However, these abbreviations do not indicate whether the application support has been added to the TEPS or TEMS.
+
+tms -- TEMS support
+tpd -- Desktop client support
+tps -- TEPS support
+tpw -- Tivoli Enterprise Portal support
+
+Start Browser Client
+
+http://teps-hostname:1920///cnp/client
+
+Start Web Start Client (new in ITM 6.2)
+
+http://teps-hostname:1920///cnp/kdh/lib/tep.jnlp
+
+For information, refer to the Installation and Setup Guide.
+
+TEP Directories
+
+ITM_HOME/CNB TEP browser client
+ITM_HOME/CNP TEP desktop client
+
+Common Product Codes
+
+cj - TEP desktop client
+cq - TEPS
+cw - TEP browser client
+hd - Warehouse proxy
+ms - TEMS
+sy - Summarization and Pruning agent
+
+is -- Internet Service Monitoring (ISM)
+t1 – File Transfer Enablement
+t2 – ITCAM for Response Time Tracking TEMA
+t3 – Application Management Console (AMC)
+t4 – Client Response Time (CRT) agent
+t5 – Web Response Time (WRT) agent
+t6 – Robotic Response Time (RRT) agent
+to – Transaction Reporter
+tu – Transaction Collector
+
+Note: The T1 (File Transfer Enablement) component is not an agent. This component is the TRANSFER library.

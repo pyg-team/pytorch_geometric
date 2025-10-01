@@ -1,0 +1,36 @@
+Title: IBM Text Anaytics Error: Exception Expected whitespace - Memory: 207085kb - Memory peak: 256057kb - United States
+
+Text:
+white space exception error memory modeler text analytics TA premium launch start application install msi customize TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Text Anaytics Error: Exception Expected whitespace - Memory: 207085kb - Memory peak: 256057kb 
+
+SYMPTOM
+Launching Text Analytics after using a customized msi to install Modeler/Modeler Premium returns the error:
+Text Anaytics Error: Exception Expected whitespace - Memory: 207085kb - Memory peak: 256057kb
+
+
+CAUSE
+In the customized msi file there was a line like: 
+# Modify the line: <parameter name="attachmentDIR>./</parameter> to
+read:
+§ <parameter name="attachmentDIR>C:/Program
+Files/IBM/SPSS/Modeler/TAData</parameter>
+
+The closing quote was missing and with the space between Program and Files it was detecting the white space and returning the error.
+
+ENVIRONMENT
+Windows 7 64 bit
+Modeler 17 Client 64 bit
+Modeler 17 Premium Client 64 bit
+Fix pack 1
+
+
+RESOLVING THE PROBLEM
+The closing quote must be included on the line: § <parameter name="attachmentDIR>C:/Program
+Files/IBM/SPSS/Modeler/TAData</parameter>", in order to avoid the white space error.
+
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]

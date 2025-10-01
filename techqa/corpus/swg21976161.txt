@@ -1,0 +1,30 @@
+Title: IBM Cannot connect to Admin Database on a second Datacap Server with IBM Datacap 9.x.x - United States
+
+Text:
+can't connect to admin database TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to introduce a second Datacap Server to an already configured Datacap environment, the second sever during testing can't connect and allow access to Datacap applications. 
+
+SYMPTOM
+Datacap Server unable to connect to a application
+
+
+CAUSE
+Either the encryption key from the primary server was not copied over, or the second Datacap Server's Service account does not have sufficient access rights. 
+
+ENVIRONMENT
+Datacap Server Service Account
+dc_ktf.xml
+
+DIAGNOSING THE PROBLEM
+Review TMS.log file for error:
+
+Connect couldn't validate parameters 
+
+RESOLVING THE PROBLEM
+Please review this technote to see if importing the encryption keys resolves issue:
+
+http://www.ibm.com/support/docview.wss?uid=swg21968549 [http://www.ibm.com/support/docview.wss?uid=swg21968549]
+
+Other wise confirm that the IBM Datacap Server Service account is configured correctly as the primary Datacap Server.

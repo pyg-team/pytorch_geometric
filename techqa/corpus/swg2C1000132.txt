@@ -1,0 +1,14 @@
+Title: IBM Cloud Orchestrator (ICO) continues to be a strategic solution for IBM - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ Cloud Orchestrator (ICO) continues to be a strategic solution for IBM 
+
+CONTENT
+IBM Cloud Orchestrator continues to be a strategic solution for IBM in Hybrid Cloud management and will continue to be actively developed. Future IBM Cloud Orchestrator releases will enable management of external OpenStack environments which are compliant with the RefStack certification, providing more choices and flexibility to clients to select their preferred OpenStack vendor. The current release of IBM Cloud Orchestrator will continue to bundle IBM Cloud Manager with OpenStack (ICMO), while future IBM Cloud Orchestrator releases will no longer bundle ICMO, as it has been announced that ICMO is at the end of market (see reference document below).
+IBM Cloud Orchestrator (ICO) and IBM Cloud Manager with OpenStack (ICMO) will continue to be supported until Sept 2020.
+
+Reference: ICMO End of Market announcement:
+http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/2/897/ENUS916-062/index.html&lang=en&request_locale=en [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/2/897/ENUS916-062/index.html&lang=en&request_locale=en]

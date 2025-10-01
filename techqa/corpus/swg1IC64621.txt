@@ -1,0 +1,250 @@
+Title: IBM IC64621: RESTORE OF DATABASE MIGHT RETURN ADM6023I (SQL0290N) IF         TABLESPACES CREATED IN DIFFERENT ORDER FROM BACKUP IMAGE. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you create a database/tablespaces/containers in order to
+   restore a backup image.  The restore can return
+   ADM6023I (SQL0290N) if the tablespaces/containers are created in
+   a different order to that of the backup image.
+   
+   Also able to reproduce this problem keeping the same database
+   (not just the same name but different ID)
+   
+   db2diag.log
+   
+   2009-08-19-05.02.06.342673-240 E144839A299        LEVEL: Warning
+   PID     : 839920               TID  : 1           PROC :
+   db2bm.4173826.0
+   INSTANCE: mjohnson             NODE : 000
+   FUNCTION: DB2 UDB, database utilities, sqludProcessSPCS,
+   probe:3640
+   DATA #1 : <preformatted>
+   Skipping table space TS1.
+   
+   ...
+   
+   2009-08-19-05.02.16.251635-240 E150088A512        LEVEL: Error
+   PID     : 4411574              TID  : 1           PROC :
+   db2agent (TAGDB)
+   INSTANCE: mjohnson             NODE : 000
+   APPHDL  : 0-71                 APPID:
+   *LOCAL.mjohnson.090819090217
+   AUTHID  : MJOHNSON
+   FUNCTION: DB2 UDB, buffer pool services, sqlbStartPools,
+   probe:20
+   MESSAGE : ADM6023I  The table space "TS1" (ID "3") is in state
+   0x"2001100".
+             The table space cannot be accessed.  Refer to the
+   documentation for
+             SQLCODE -290.
+   
+   Reproduction:
+   
+   export SID=TAGDB
+   export DBDIR=/home/db2inst1/
+   mkdir ${DBDIR}/${SID}
+   mkdir ${DBDIR}/${SID}/log_dir
+   
+   db2 -v "create db $SID automatic storage no on ${DBDIR}/${SID}"
+   db2 -v "update db cfg for $SID using NEWLOGPATH
+   ${DBDIR}/${SID}/log_dir"
+   db2 -v "update db cfg for $SID using LOGRETAIN RECOVERY"
+   db2 -v "backup db $SID to /dev/null"
+   db2 -v connect to $SID
+   db2 -v "create tablespace TS1 managed by database using (file
+   '${DBDIR}mycont' 10000)"
+   db2 -v "create tablespace TS2 managed by database using (file
+   '${DBDIR}mycont2' 10000)"
+   db2 -v "create table bob (i int) in TS1"
+   db2 -v "terminate"
+   db2 -v "backup db $SID"
+   db2 -v "deactivate db $SID"
+   db2 -v "drop db $SID"
+   
+   db2 -v "create db $SID automatic storage no on ${DBDIR}/${SID}"
+   db2 -v "update db cfg for $SID using NEWLOGPATH
+   ${DBDIR}/${SID}/log_dir"
+   db2 -v "update db cfg for $SID using LOGRETAIN RECOVERY"
+   db2 -v "backup db $SID to /dev/null"
+   db2 -v connect to $SID
+   db2 -v "create tablespace TS2 managed by database using (file
+   '${DBDIR}mycont2' 10000)"
+   db2 -v "create tablespace TS1 managed by database using (file
+   '${DBDIR}mycont' 10000)"
+   
+   db2 -v "restore db TAGDB FROM ${DBDIR} taken at XXXX replace
+   existing WITHOUT PROMPTING"
+   
+   db2 -v "restore db TAGDB FROM ${DBDIR} taken at 20090819045352
+   replace existing WITHOUT PROMPTING"
+   db2 -v "rollforward db TAGDB to end of logs and complete"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround:
+   
+   - Ensure that the tablspaces/containers are created in the same
+   order in which the backup image has them.
+   - Do not create the tablespaces/containers before starting the
+   restore.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * If you create a database/tablespaces/containers in order     *
+   * torestore a backup image.  The restore can returnADM6023I    *
+   * (SQL0290N) if the tablespaces/containers arecreated ina      *
+   * different order to that of the backup image.Also able to     *
+   * reproduce this problem keeping the samedatabase(not just the *
+   * same name but different                                      *
+   * ID)db2diag.log2009-08-19-05.02.06.342673-240 E144839A299     *
+   *    LEVEL:WarningPID    : 839920              TID  : 1        *
+   *   PROC :db2bm.4173826.0INSTANCE: mjohnson            NODE :  *
+   * 000FUNCTION: DB2 UDB, database utilities,                    *
+   * sqludProcessSPCS,probe:3640DATA #1 : <preformatted>Skipping  *
+   * table space TS1....2009-08-19-05.02.16.251635-240            *
+   * E150088A512        LEVEL:ErrorPID    : 4411574               *
+   * TID  : 1          PROC :db2agent (TAGDB)INSTANCE: mjohnson   *
+   *          NODE : 000APPHDL  : 0-71                            *
+   * APPID:*LOCAL.mjohnson.090819090217AUTHID  :                  *
+   * MJOHNSONFUNCTION: DB2 UDB, buffer pool services,             *
+   * sqlbStartPools,probe:20MESSAGE : ADM6023I  The table space   *
+   * "TS1" (ID "3") is instate0x"2001100".The table space cannot  *
+   * be accessed.  Refer to thedocumentation forSQLCODE           *
+   * -290.Reproduction:export SID=TAGDBexport                     *
+   * DBDIR=/home/db2inst1/mkdir ${DBDIR}/${SID}mkdir              *
+   * ${DBDIR}/${SID}/log_dirdb2 -v "create db $SID automatic      *
+   * storage no on${DBDIR}/${SID}"db2 -v "update db cfg for $SID  *
+   * using NEWLOGPATH${DBDIR}/${SID}/log_dir"db2 -v "update db    *
+   * cfg for $SID using LOGRETAIN RECOVERY"db2 -v "backup db $SID *
+   * to /dev/null"db2 -v connect to $SIDdb2 -v "create tablespace *
+   * TS1 managed by database using(file'${DBDIR}mycont'           *
+   * 10000)"db2 -v "create tablespace TS2 managed by database     *
+   * using(file'${DBDIR}mycont2' 10000)"db2 -v "create table bob  *
+   * (i int) in TS1"db2 -v "terminate"db2 -v "backup db $SID"db2  *
+   * -v "deactivate db $SID"db2 -v "drop db $SID"db2 -v "create   *
+   * db $SID automatic storage no on${DBDIR}/${SID}"db2 -v        *
+   * "update db cfg for $SID using                                *
+   * NEWLOGPATH${DBDIR}/${SID}/log_dir"db2 -v "update db cfg for  *
+   * $SID using LOGRETAIN RECOVERY"db2 -v "backup db $SID to      *
+   * /dev/null"db2 -v connect to $SIDdb2 -v "create tablespace    *
+   * TS2 managed by database using(file'${DBDIR}mycont2'          *
+   * 10000)"db2 -v "create tablespace TS1 managed by database     *
+   * using(file'${DBDIR}mycont' 10000)"db2 -v "restore db TAGDB   *
+   * FROM ${DBDIR} taken at XXXX replaceexisting WITHOUT          *
+   * PROMPTING"db2 -v "restore db TAGDB FROM ${DBDIR} taken       *
+   * at20090819045352replace existing WITHOUT PROMPTING"db2 -v    *
+   * "rollforward db TAGDB to end of logs and complete"           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Look to Upgrade to a Version 9.7 Fix Pack 3 or later         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem was first fixed in Version 9.7 Fix Pack 3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC64621
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-18
+   
+   
+ * CLOSED DATE
+   2010-09-27
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IC64610 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC64610]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R980 PSY
+   UP

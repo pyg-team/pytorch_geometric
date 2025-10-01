@@ -1,0 +1,24 @@
+Title: IBM How do you configure the DataDirect ODBC driver for Oracle on AIX - United States
+
+Text:
+MQIINFO configure Merant Oracle ODBC driver TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are using WebSphere Message Broker on AIX server. You have a number of message flows that connect to a supported Oracle application database. You want to know how to configure the DataDirect ODBC driver for Oracle on your AIX server. 
+
+RESOLVING THE PROBLEM
+On UNIX the only way to configure the broker connectivity with Oracle database is to manually edit the odbc.ini (for V7 and later) or odbc64.ini (for V6.1) file using a text editor. 
+
+The configurable parameters for the Oracle ODBC driver are documented in WMB/IIB Information Center [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/bk58070_.htm]
+
+We recommend setting odbc.ini and odbcinst.ini (V8 and V9) with WMB/IIB as per the steps [http://publib.boulder.ibm.com/infocenter/wmbhelp/v7r0m0/topic/com.ibm.etools.mft.doc/bh26070_.htm] [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/topic/com.ibm.etools.mft.doc/bk58070_.htm] [http://publib.boulder.ibm.com/infocenter/wmbhelp/v6r1m0/topic/com.ibm.etools.mft.doc/ah14452_.htm]provided in the Information Center.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Bus Database 9.0 All Editions 
+HISTORICAL NUMBER
+ 69909 7TD 00 
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

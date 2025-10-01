@@ -1,0 +1,111 @@
+Title: IBM SDK: Programming with LSLIB: Using Remote Execution Services - United States
+
+Text:
+remote execution services TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SDK: Programming with LSLIB: Using Remote Execution Services 
+
+RESOLVING THE PROBLEM
+How to use remote execution services?
+
+USING REMOTE EXECUTION SERVICES
+Remote execution of interactive tasks in LSF is supported through the Remote Execution Server (RES). The RES listens on a well-known port for service requests. Applications initiate remote execution by making an LSLIB call. For more information on the "Application and Platform LSF base interactions" section. 
+
+INITIALIZING AN APPLICATION FOR REMOTE EXECUTION
+LS_INITREX()
+Before executing a task remotely, an application must call the ls_initrex(): 
+
+int ls_initrex(numports, options)
+
+On success, ls_initrex() initializes the LSLIB for remote execution. If your application is installed as a setuid program, ls_initrex() returns the number of socket descriptors bound to privileged ports. If your program is not installed as a setuid to root program, ls_initrex() returns numports on success. 
+
+On failure, ls_initrex() returns -1 and sets the global variable lserrno to indicate the error. 
+
+NOTE
+ls_initrex() must be called before any other remote execution function (see ls_rex(3)) or any remote file operation function (see ls_rfs(3)) in LSLIB can be called. 
+
+ls_initrex() has the following parameters: 
+
+int numports;    The number of priviliged ports to createint options;      Either KEEPUID or 0
+
+If your program is installed as a setuid to root program, numports file descriptors, starting from FIRST_RES_SOCK (defined in ), are bound to privileged ports by ls_initrex(). These sockets are used only for remote connections to RES. If numports is 0, then the system will use the default value LSF_DEFAULT_SOCKS defined in lsf.h. 
+
+By default, ls_initrex() restores the effective user ID to real user ID if the program is installed as a setuid to root program. If options is set to KEEPUID (defined in lsf.h), ls_initrex() preserves the current effective user ID. This option is useful if the application needs to be a setuid to root program for some other purpose as well and does not want to go back to real user ID immediately after ls_initrex(). 
+
+WARNING
+
+
+
+
+
+If KEE PUID flag is set in options, you must make sure that your application restores back to the real user ID at a proper time of the program execution. 
+
+
+
+
+ls_initrex() function selects the security option according to the following rule: if the application program invoking it has an effective uid of root, then privileged ports are created. If there are no privileged port created and, at remote task start-up time, RES will use the authentication protocol defined by LSF_AUTH in the lsf.conf file. 
+
+RUNNING A TASK REMOTELY
+The example program below runs a command on one of the best available hosts. It makes use of: 
+
+ * ls_resreq() described in the "Getting Task Resource Requirements" section 
+ * ls_placereq() described in the "Making a Placement Decision" section 
+ * ls_initrex() described in the "Initializing an application for remote execution" section
+
+and ls_rexecv(): 
+
+int ls_rexecv(host, argv, options)
+
+ls_rexecv() executes a program on the specified host. It does not return if successful. It returns -1 on failure. 
+
+ls_rexecv() is like a remote execvp. If a connection with the RES on a host has not been established, ls_rexecv() sets one up. The remote execution environment is set up to be exactly the same as the local one and is cached by the remote RES server. ls_rexecv() has the following parameters: 
+
+char *host;               The execution hostchar *argv[];             The command and its argumentsint options;               See below
+
+The options argument is constructed from the bitwise inclusive OR of zero or more or the option flags defined in with names starting with `REXF_'. the group of flags are as follows: 
+
+REXF_USEPTY
+Use a remote pseudo terminal as the stdin, stdout, and stderr of the remote task. This option provides a higher degree of terminal I/O transparency. This is needed only when executing interactive screen applications such as vi. The use of a pseudo-terminal incurs more overhead and should be used only if necessary. This is the most commonly used flag. 
+
+REXF_CLNTDIR
+Use the local client's current working directory as the current working directory for remote execution. 
+
+REXF_TASKPORT
+Request the remote RES to create a task port and return its number to the LSLIB. 
+
+REXF_SHMODE
+Enable shell mode support if the REXF_USEPTY flag is also given. This flag is ignored if REXF_USEPTY is not given. This flag should be specified for submitting interactive shells, or applications which redefine, or applications which redefine the ctrl-C and ctrl-Z keys (e.g. jove). 
+
+LSLIB also provides ls_rexecve() to specify the environment to be set up on the remote host. 
+
+The program follows: 
+
+#include 
+     
+      #include 
+      
+       main(argc, argv)    int  argc;    char *argv[];{    char *command;    char *resreq;    char **best;    int  num = 1;/* check the input format */    if (argc <2 ) {       fprintf(stderr, "Usage: %s command [argument ...]\n",              argv[0]);        exit(-1);    }command = argv[1];/* initialize the remote execution */    if (ls_initrex(1, 0) <0) {        ls_perror("ls_initrex");        exit(-1);    }/* get resource requirement for the given command */    resreq = ls_resreq(command);    best = ls_placereq(resreq, &num, 0, NULL);    if (best == NULL) {        ls_perror("ls_placereq()");        exit(-1);    }/* start remote execution on the selected host for the job */    printf("<
+       
+        \n", command, best[0]);    ls_rexecv(best[0], argv + 1, 0);    /* if the remote execution is successful, the following lines will not be executed */     ls_perror("ls_rexecv()");    exit(-1);}
+       
+      
+     
+
+The output of the above program would be something like: 
+
+% a.out myjob<
+     
+      >(output from myjob goes here ....)
+     
+
+NOTE
+Any application that uses LSF's remote execution service must be installed for proper authentication. See the "Authentication" section. 
+
+The LSF command lsrun is implemented using the ls_rexecv() function. After remote task is initiated, lsrun calls the ls_rexecv() function, which then executes NIOS to handle all input/output to and from the remote task and exits with the same status when remote task exits. 
+
+See SDK: Advanced Programming Topics:articles for an alternative way to start remote tasks. 
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

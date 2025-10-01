@@ -1,0 +1,60 @@
+Title: IBM CLI commands to monitor latency and throughput on an IBM DataPower Gateway - United States
+
+Text:
+datapower; cli; latency; monitor latency; throughput; monitor; show; load; interval; cpu TECHNOTE (FAQ)
+
+QUESTION
+ What CLI commands can you use to monitor latency and throughput on a DataPower Gateways product? 
+
+ANSWER
+Monitor both show cpu and show load. As with all of these generalized statistics, they need to be interpreted within the context of what you are testing. Look at both the CPU and load number, the latency and the throughput of the appliance. Any one of these can be your limiting factor depending on the input data, concurrency and connection rate (transactions/sec).
+
+
+ * 
+ * idg# configure terminal
+ * 
+ * Global configuration mode
+ * 
+ * 
+ * idg(config)# show cpu
+ * 
+ * 
+ *  [/support/docview.wss?uid=swg21239329&amp;aid=1]
+   [/support/docview.wss?uid=swg21239329&amp;aid=1]
+   10 seconds [/support/docview.wss?uid=swg21239329&amp;aid=1]
+   1 minute [/support/docview.wss?uid=swg21239329&amp;aid=1]
+   10 minutes [/support/docview.wss?uid=swg21239329&amp;aid=1]
+   1 hour [/support/docview.wss?uid=swg21239329&amp;aid=1]
+   24 hours [/support/docview.wss?uid=swg21239329&amp;aid=1]
+   cpu usage (%): [/support/docview.wss?uid=swg21239329&amp;aid=1]
+   65 [/support/docview.wss?uid=swg21239329&amp;aid=1]
+   66 [/support/docview.wss?uid=swg21239329&amp;aid=1]
+   65 [/support/docview.wss?uid=swg21239329&amp;aid=1]
+   65 [/support/docview.wss?uid=swg21239329&amp;aid=1]
+   65 
+ * 
+ * idg(config)# show load
+ * 
+ * 
+ * interval: 1000 ms
+ * 
+ * load: 32 %
+ * 
+ * work list: 0
+
+
+The load specifies the percentage of total load on the device during the measurement interval. A load above 90 indicates that the device is at or near load capacity. High load values are not necessarily indicative of a problem, provided that transaction latencies are not affected. Low load values means that the appliance is looking for work; high load means that the appliance is doing work. 
+
+The work list specifies the number of pending work items including internal communication in the queue for processing by the device. This number is for internal diagnostics and is not intended for purposes of capacity planning. 
+
+The interval can be modified with the load-interval command. 
+ * idg(config)# load-interval 2500
+ * 
+ * idg(config)# show load
+ * 
+ * 
+ * interval: 2500 ms
+ * 
+ * load: 32 %
+ * 
+ * work list: 0

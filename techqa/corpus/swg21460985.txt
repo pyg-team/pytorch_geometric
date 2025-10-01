@@ -1,0 +1,82 @@
+Title: IBM Creating or starting a dynamic view reports error: cleartool: Error: Unable to create directory "view": Unrecognized status "2009252814" (from a newer server?) - United States
+
+Text:
+create view; startview; unrecognized status; dynamic; clearcase; Unable to create directory "view; Unrecognized status "2009252814"; from a newer server? TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote describes an error, Unable to create directory "view": Unrecognized status "2009252814" (from a newer server?), that can occur when creating or starting an IBM Rational ClearCase dynamic view. 
+
+SYMPTOM
+ 
+
+When creating or starting a dynamic view hosted on an affected system the following error will be received:
+
+
+cleartool: Error: Unable to create directory "view": Unrecognized status "2009252814" (from a newer server?)
+
+
+This will sometimes occur after a bad install of the software.
+
+
+
+CAUSE
+ 
+
+The multiversion filesystem (MVFS) on the machine starting the view is at the incorrect version. 
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+Running a Cleartool -verall will show that the MVFS version does not match the expected installed version. 
+
+
+Further details about this output can be found in the technote 1380024 [https://www.ibm.com/support/docview.wss?uid=swg21380024]
+
+
+C:\>cleartool -verall
+ClearCase version 7.0.1 (Thu May 17 09:19:01 2007)
+ClearCase version 7.0.1_iFix01 (Wed Sep 19 11:15:35 2007)
+ClearCase version 7.0.1.1 (Wed Nov 28 17:43:24 2007)
+ClearCase version 7.0.1.1_iFix01 (Tue Feb 12 10:48:57 2008)
+ClearCase version 7.0.1.1_iFix02 (Wed May 14 23:53:33 2008)
+ClearCase version 7.0.1.2 (Fri Jul 18 12:43:48 2008)
+ClearCase version 7.0.1.3 (Wed Nov 19 12:29:56 EST 2008)
+ClearCase version 7.0.1.4 (Mon Mar 02 14:30:47 EST 2009)
+ClearCase version 7.0.1.5 (Tue Jun 02 22:42:30 EDT 2009) (7.0.1.05.00_2009B.FCS)
+ClearCase version 7.0.1.6 (Thu Jul 23 16:54:25 EDT 2009) (7.0.1.06.00_2009C.FCS)
+ClearCase version 7.0.1.7 (Tue Oct 13 14:33:32 EDT 2009) (7.0.1.07.00_2009D.FCS)
+ClearCase version 7.0.1.7-iFix01 (Fri Dec 11 13:37:12 EST 2009) (7.0.1.07.01_2009D.1.FCS)
+ClearCase version 7.0.1.8 (Wed Mar 24 17:12:04 EDT 2010) (7.0.1.08.00_2010A.FCS)
+ClearCase version 7.0.1.9 (Thu Jun 03 21:01:25 EDT 2010) (7.0.1.09.00_2010B.D100603)
+@(#) MVFS version 7.0.1.0 (Thu May 24 17:15:00 2007)
+cleartool 7.0.1.9 (Thu Jun 3 23:14:28 2010)
+libatriaadm 7.0.1.9 (Thu Feb 18 12:20:16 2010)
+libatriaccfs 7.0.1.9 (Thu Feb 18 13:27:07 2010)
+libatriaclient_meters 7.0.1.9 (Thu Feb 18 13:56:43 2010)
+libatriacm 7.0.1.9 (Tue Apr 13 02:31:13 2010)
+libatriacmd 7.0.1.9 (Sat Mar 13 01:49:42 2010)
+libatriacmdsyn 7.0.1.9 (Thu Feb 18 14:05:05 2010)
+libatriacredmap 7.0.1.9 (Thu Feb 18 12:25:26 2010)
+libatriadbrpc 7.0.1.9 (Thu Feb 18 12:34:51 2010)
+libatriaks 7.0.1.9 (Fri Mar 19 13:02:44 2010)
+libatriamntrpc 7.0.1.9 (Thu Feb 18 14:07:25 2010)
+libatriamsadm 7.0.1.9 (Fri Feb 19 02:36:22 2010)
+libatriamvfs 7.0.1.9 (Thu Feb 18 14:11:52 2010)
+libatriasplit 7.0.1.9 (Thu Feb 18 13:28:51 2010)
+libatriasum 7.0.1.9 (Thu Mar 11 01:56:49 2010)
+libatriasumcmd 7.0.1.9 (Thu Feb 18 13:54:05 2010)
+libatriatbs 7.0.1.9 (Wed Mar 10 02:09:37 2010)
+libatriatool 7.0.1.9 (Thu Feb 18 13:28:00 2010)
+libatriaview 7.0.1.9 (Wed Mar 10 02:11:52 2010)
+libatriavob 7.0.1.9 (Wed Apr 21 11:37:41 2010)
+libatriaxdr 7.0.1.9 (Thu Feb 18 12:24:09 2010)
+db_server 7.0.1.9 (Fri Mar 19 14:19:47 2010)
+VOB database schema version: 54
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+Uninstall the application and re-install. Then verify that the correct version of MVFS is installed by running a cleartool -verall.

@@ -1,0 +1,74 @@
+Title: IBM How to determine what DB2 transaction log size to set to avoid DB2 transaction log being full - United States
+
+Text:
+icc TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to determine what DB2 transaction log size to set to avoid DB2 transaction log being full 
+
+SYMPTOM
+In a IBM Content Collector (ICC) environment, where task routes are running to archive documents into Content Manager 8 and the Content Collector Full Text Indexer is also running in parallel, sometimes the system will run into DB2 Transaction Log Full error. 
+
+
+CAUSE
+DB2 transaction log getting full. 
+
+ENVIRONMENT
+IBM Content Collector with Content Manager 8 and DB2.
+
+DIAGNOSING THE PROBLEM
+To determine how much transaction log size is required, perform the following steps:
+
+
+
+
+ * Use the following command to find out the current transaction log settings:  * 
+    * 
+    * Look for the following parameters: 
+    *  
+      Log file size (4KB) (LOGFILSIZ) = 12000 
+      Number of primary log files (LOGPRIMARY) = 20 
+      Number of secondary log files (LOGSECOND) = 4 
+   
+   
+ * Use the following command to set LOGSECOND to -1:  * 
+    * 
+   
+   
+   This allows unlimited number of secondary log files so we can perform the calculation later.
+   Restart ICC and afuIndexer so a new connection is made to the database. 
+ * Allow ICC task route archiving and full text indexer run as usual for a period of time. 
+ * At the end of the period, use the following command to find out transaction log usage:  * 
+    * 
+   
+   
+   Look for the following parameters:  * 
+    * 
+    * 
+    * 
+   
+   
+
+RESOLVING THE PROBLEM
+The calculation below uses the values provided by the example above: 
+
+Log space for each log file 
+= LOGFILSIZ * 4KB = 12,000 * 4,000 = 48,000,000 
+
+ Maximum secondary log space used (based on snapshot output)
+= 4,783,589,480 
+
+ Number of secondary log files required 
+= total space required in all secondary log files / log space for each log file
+= 4,783,589,480 / 48,000,000
+= 99.6
+= about 100 
+
+To give about 10% more log space, number of secondary logs required
+= 100 + 100*10%
+= 110 
+
+Use the following command to set LOGSECOND to a finite number: 
+
+ * 
+ *

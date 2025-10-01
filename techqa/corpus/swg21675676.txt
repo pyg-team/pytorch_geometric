@@ -1,0 +1,19 @@
+Title: IBM Does Business Process Framework (BPF) 4.1 support Microsoft Internet Explorer (IE) 11.0? - United States
+
+Text:
+IE; Microsoft; version; support; plan TECHNOTE (FAQ)
+
+QUESTION
+ The customer plans to upgrade Microsoft Internet Explorer to vesion 11 and wants to know if BPF 4.1 supports it. Does Business Process Framework (BPF) 4.1 support Microsoft Internet Explorer (IE) 11.0? 
+
+ANSWER
+Yes. To get IE 11 support with BPF 4.1, you must install the following Application Engine (AE) and BPF Interim Fixes: 
+
+ *  AE 4.0.2.14-IF001 and greater 
+ * BPF 4.1.0.10 IF003 and greater
+
+Both of these Interim Fixes can be downloaded at http://www-933.ibm.com/support/fixcentral [http://www-933.ibm.com/support/fixcentral]. 
+
+Important Note : It is only supported when using with the Compatibility View of IE setting. 
+
+If you need additional help or clarification, please open a Problem Management Record (PMR) with Enterprise Content Management Business Process Manager support for further assistance.

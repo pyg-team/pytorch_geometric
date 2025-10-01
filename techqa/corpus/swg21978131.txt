@@ -1,0 +1,29 @@
+Title: IBM Content Collector SharePoint Connector service fails with access denied error. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Content Collector SharePoint Connector service logs have access denied errors and these errors keep repeating. 
+
+SYMPTOM
+The following errors are logged in the SPConnector logs:
+
+Error 0xc40 Access to pipe \\.\pipe\ibm.ctms.taskroute.datacollector was denied. 
+ibm::ctms::connector::CreatePipeFile (createpipe.cpp:124)
+Trace2 0xc40 Sleeping because create pipe
+\\.\pipe\ibm.ctms.taskroute.datacollector returned with code : 5
+ibm::ctms::core::log::Write<std::basic_string<wchar_t,std::char_traits<wchar_t>,std::allocator<wchar_t> >,unsigned long> (log.h:78)
+
+
+CAUSE
+The account starting the ICC SharePoint connector Service does not have sufficient permissions
+
+ENVIRONMENT
+IBM Content Collector
+
+DIAGNOSING THE PROBLEM
+It is recommended that the user account starting the ICC SharePoint service needs to be local administrator on the IBM Content Collector Server.
+
+RESOLVING THE PROBLEM
+Add the user account starting the IBM Content Collector SharePoint service to local administrators group.

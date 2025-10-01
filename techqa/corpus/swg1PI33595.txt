@@ -1,0 +1,244 @@
+Title: IBM PI33595: UPGRADE CTC 4.2 TO 4.3 FAILED WITH WASX7015E ERROR - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Upgrading CTC 4.2 to 4.3 on Portal 8.5 CF04. Install process
+   always
+   fails when executing 'action-upgrade-site-for-ctc-43'. In the
+   ConfigTrace.log:
+   
+   ==============================================================
+   ==========
+   
+   
+   Wed Jan 14 22:59:40 CET 2015
+   Target started: action-upgrade-site-for-ctc-43
+   
+   Target started: action-fix-ctc-site-references
+   
+     [wsadmin] WASX7246E: Cannot establish "SOAP" connection to
+   host
+   "wp85.nkuite.com" because of an authentication failure. Ensure
+   that
+   user and password are correct on the command line or in a
+   properties
+   file.
+     [wsadmin] Exception message (if any): "ADMN0022E: Access is
+   denied
+   for the getProcessType operation on Server MBean because of
+   insufficient or empty credentials."
+     [wsadmin] WASX7213I: This scripting client is not connected
+   to a
+   server process; please refer to the log file
+   /apps/WebSphere/node/logs/wsadmin.traceout for additional
+   information.
+     [wsadmin] WASX8011W: AdminTask object is not available.
+   
+     [wsadmin] WASX7031I: For help, enter: "print Help.help()"
+     [wsadmin] WASX7015E: Exception running command:
+   "execfile("/apps/WebSphere/node/paa/wp.ctc/components/wp.ctc/e
+   nablement/
+   update-site.py")"; exception information:
+     [wsadmin] com.ibm.bsf.BSFException: exception from Jython:
+     [wsadmin] Traceback (innermost last):
+     [wsadmin]   File "<input>", line 1, in ?
+     [wsadmin]   File
+   "/apps/WebSphere/node/paa/wp.ctc/components/wp.ctc/enablement/
+   update-sit
+   e.py", line 10, in ?
+     [wsadmin] EJPXD0015W: The scripting client could not connect
+   to the
+   portal.
+     [wsadmin]  at
+   com.ibm.wps.scripting.shell.UsageException.throwNew(UsageExcep
+   tion.java:
+   98)
+     [wsadmin]  at
+   
+   com.ibm.wps.scripting.shell.UsageException.throwNew(UsageExcep
+   tion.java:
+   77)
+     [wsadmin]  at
+   com.ibm.wps.scripting.script.AbstractBean.getPSC(AbstractBean.
+   java:220)
+     [wsadmin]  at
+   com.ibm.wps.scripting.script.PortalHandling.loginUser(PortalHa
+   ndling.jav
+   a:256)
+     [wsadmin]  at
+   com.ibm.wps.scripting.script.PortalBean.login(PortalBean.java:
+   218)
+   
+   Analysis:PortalAdmin was used instead of WASAdmin
+   Solution:update ctc_cfg.xml and repack CTC paa
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Upgrade CTC 4.2 to 4.3 failed with WASX7015E error
+   
+   Upgrading CTC 4.2 to 4.3 on Portal 8.5 CF04. Install process
+   always
+   fails when executing 'action-upgrade-site-for-ctc-43'. In the
+   ConfigTrace.log:
+   
+   ================================================================
+   ========
+   
+   
+   Wed Jan 14 22:59:40 CET 2015
+   Target started: action-upgrade-site-for-ctc-43
+   
+   Target started: action-fix-ctc-site-references
+   
+     [wsadmin] WASX7246E: Cannot establish "SOAP" connection to
+   host
+   "wp85.nkuite.com" because of an authentication failure. Ensure
+   that
+   user and password are correct on the command line or in a
+   properties
+   file.
+     [wsadmin] Exception message (if any): "ADMN0022E: Access is
+   denied
+   for the getProcessType operation on Server MBean because of
+   insufficient or empty credentials."
+     [wsadmin] WASX7213I: This scripting client is not connected to
+   a
+   server process; please refer to the log file
+   /apps/WebSphere/node/logs/wsadmin.traceout for additional
+   information.
+     [wsadmin] WASX8011W: AdminTask object is not available.
+   
+     [wsadmin] WASX7031I: For help, enter: "print Help.help()"
+     [wsadmin] WASX7015E: Exception running command:
+   "execfile("/apps/WebSphere/node/paa/wp.ctc/components/wp
+   .ctc/enablement/
+   update-site.py")"; exception information:
+     [wsadmin] com.ibm.bsf.BSFException: exception from Jython:
+     [wsadmin] Traceback (innermost last):
+     [wsadmin]   File "<input>", line 1, in ?
+     [wsadmin]   File
+   "/apps/WebSphere/node/paa/wp.ctc/components/wp
+   .ctc/enablement/update-sit
+   e.py", line 10, in ?
+     [wsadmin] EJPXD0015W: The scripting client could not connect
+   to the
+   portal.
+     [wsadmin]  at
+   com.ibm.wps.scripting.shell.UsageException
+   .throwNew(UsageException.java:
+   98)
+     [wsadmin]  at
+   
+   com.ibm.wps.scripting.shell.UsageException
+   .throwNew(UsageException.java:
+   77)
+     [wsadmin]  at
+   com.ibm.wps.scripting.script.AbstractBean.getPSC(AbstractBean
+   .java:220)
+     [wsadmin]  at
+   com.ibm.wps.scripting.script.PortalHandling
+   .loginUser(PortalHandling.jav
+   a:256)
+     [wsadmin]  at
+   com.ibm.wps.scripting.script.PortalBean.login(PortalBean
+   .java:218)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Analysis:PortalAdmin was used instead of WASAdmin
+   Solution:update ctc_cfg.xml and repack CTC paa
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI33595
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-27
+   
+   
+ * CLOSED DATE
+   2015-02-09
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

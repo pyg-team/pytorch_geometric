@@ -1,0 +1,63 @@
+Title: IBM System requirements for IBM TXSeries for Multiplatforms V8.2 for Linux on x86 - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+The following tables provide you with a listing of supported IBM and vendor-acquired software for use with IBM TXSeries for Multiplatforms V8.2 for Linux on x86.
+
+CONTENT
+
+This document provides information on IBM and vendor-acquired software that is compatible with TXSeries for Multiplatforms V8.2. The minimum maintenance levels are listed. TXSeries is not tested with every maintenance level of every product. In general, you can install and run with updates to supported product levels, if those updates are forward compatible. If you use later maintenance levels and experience problems, test with the levels specified in this document before contacting your IBM support representative.
+
+For the supported software that is listed, refer to the respective product website for their system requirements and specifications.
+
+Note: 
+
+ * TXSeries is a 32-bit product. All libraries linked with TXSeries must be 32-bit libraries. Most vendors offering 64-bit versions of their products also provide 32-bit client libraries. On 64-bit operating systems, TXSeries runs in 32-bit compatibility mode.
+ * IBM recommends that you maintain your TXSeries system environments at the latest fix pack level. See TXSeries for Multiplatforms support policy statement [http://www.ibm.com/support/docview.wss?uid=swg21663762] for more details.
+
+Operating System 
+
+Software Version Notes Red Hat Enterprise Linux (RHEL) 5.9 
+6.4 
+7.1 For information on pre-requisite packages / libraries, refer to TXSeries for Multiplatforms V8.2 Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSAL2T_8.2.0/com.ibm.cics.tx.doc/tasks/t_in_tx_plan_lin.html?lang=en]. SUSE Linux Enterprise Server (SLES) 11 SP3 
+12 SP2 Ubuntu 14.04 Compilers 
+
+Software Version Notes GCC 4.1.2 for RHEL 5.9 
+4.4.7 for RHEL 6.4 
+4.8.3 for RHEL 7.1 
+
+4.3.4 for SLES 11 SP3 
+
+4.8.2 for Ubuntu 14.04 COBOL-IT Compiler Suite Enterprise Edition 3.7.41 Micro Focus Visual COBOL 2.2 3.0 Micro Focus Visual COBOL V3.0 is supported from TXSeries V8.2 Fix pack 2 onwards. Micro Focus Server Express COBOL 5.1 WP7 On SLES, Server Express 5.1 WP9 Hot Fix 2 is required to use External File Handler (EXTFH) functionality. IBM Java SDK 1.7 SR 8 
+Databases 
+
+Software Client Version Notes IBM DB2 UDB 9.7 FP 5 
+10.1 
+10.5 Oracle 12.1 
+12.2 
+12.1.0.2 (for SLES 12 SP2) Oracle 12.2 is supported with RHEL.
+Minimum Oracle client level supported with SLES 12 SP2: 12.1.0.2.  *   * Minimum kernel version: 3.12.49-11-default.
+    * Minimum version of binutils-2.26.1-9.15.1.
+   
+   
+
+Informix Client SDK 3.7 Supported with Informix Dynamic Server Version 11.70 FC 7. Sybase ASE 15.7 Refer to Sybase documentation [http://infocenter.sybase.com/help/index.jsp?topic=/com.sybase.infocenter.dc34789.1570/html/ocsinunx/CIHEBHFB.htm] on XA support. 
+Note: All the databases listed above are tested and supported with the 32-bit client versions.
+
+Communication software 
+
+Software Version Notes IBM Communication Server 7.0.0.1 
+Monitoring tools 
+
+Software Version Notes IBM Tivoli Monitoring 6.2.1 
+Integration Middleware 
+
+Software Version Notes IBM WebSphere MQ (WMQ) 7.5.0.3 
+8.0.0.1 Interim Fix 1 
+9.0.0.1 Refer to WMQ System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27006467] page for more details. Transaction Server 
+
+Software Version Notes CICS Transaction Server for z/OS (CICS TS) All supported versions of CICS TS Refer to CICS TS System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27006382] page for more details. Clients 
+
+Software Version Notes IBM CICS Transaction Gateway (CTG) All supported versions of CTG Refer to CTG System Requirements [http://www-01.ibm.com/software/htp/cics/ctg/reqs/] page for more details.

@@ -1,0 +1,157 @@
+Title: IBM OA24284: SUPPORT FOR KDEB_INTERFACELIST IN THE OMEGAMON II               INTERFACE TO OMEGAMON XE FOR STORAGE ON Z/OS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  OMEGAMON XE for Storage on z/OS does not support the
+   KDEB_INTERFACELIST parameter for the OMEGAMON II interface
+   address space.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Apply PTF
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of OMEGAMON XE for Storage         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: OMEGAMON XE for Storage on z/OS must    *
+   *                      support the KDEB_INTERFACELIST          *
+   *                      parameter for the OMEGAMON II interface *
+   *                      address space.                          *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   When using the Configuration Tool to configure the
+   OMEGAMON II address space, there is no place to specify the
+   value for KDEB_INTERFACELIST.  Users running on a z/OS image
+   with more than one IP interface must specify this value in
+   KDFENV to ensure proper communication.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The configuration tool will now insert into KDFENV the same
+   value that was specified for KDEB_INTERFACELIST during TEMS
+   configuration. In other words, it will copy the value for
+   KDEB_INTERFACELIST from KDSENV to KDFENV.
+   550Y
+   KDF55CCU
+   KDF55SR4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA24284
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG II FOR SMS
+   
+   
+ * REPORTED COMPONENT ID
+   5608A0500
+   
+   
+ * REPORTED RELEASE
+   550
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-10
+   
+   
+ * CLOSED DATE
+   2008-04-03
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA40334
+   
+   
+
+MODULES/MACROS
+ *  KDF55CCU KDF55SR4
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG II FOR SMS
+   
+   
+ * FIXED COMPONENT ID
+   5608A0500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R550 PSY UA40334 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA40334]
+   UP08/04/07 P F804
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

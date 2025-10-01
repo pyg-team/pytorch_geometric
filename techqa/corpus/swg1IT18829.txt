@@ -1,0 +1,137 @@
+Title: IBM IT18829: PUREAPPLICATION SYSTEM: ITCAM FOR MQ AGENT DOES NOT SHOW IN THE TIVOLI ENDPOINT PORTAL SERVER (TEPS) CONSOLE - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.2.3.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24043076]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When deploying the System Monitoring shared service along with
+   the System Monitoring for WebSphere MQ shared service, we would
+   expect to see the ITCAM for MQ agent in the TEPS console of the
+   System Monitoring shared service for every virtual machine that
+   has the MQ software component installed on it. However we do
+   not see the ITCAM for MQ agent.
+   
+   The configuration of the MQ agent automatically uses IPv6 and
+   cannot connect to the system monitoring when using externally
+   managed cloud groups.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Contact IBM Support for workaround
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Code has been added to to check if the System Monitoring shared
+   service has been configured before setting up the WMQ monitoring
+   agent. If the shared service  has been configured an attempt to
+   verify the WMQ agent installation is performed before
+   configuring the agent.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix is being provided in PureApplication System and
+   BlueMix Local System version 2.2.3.0 in the System Monitoring
+   Pattern 1.0.10.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT18829
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-13
+   
+   
+ * CLOSED DATE
+   2017-04-18
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8278 P
+   
+   
+ * FIXED COMPONENT ID
+   5725F4600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R223 PSY
+   UP

@@ -1,0 +1,57 @@
+Title: IBM WebSphere Portal inactive session time out and redirect - United States
+
+Text:
+redirect; session; time out; session time out; redirect.logout.url; redirect logout TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+A redirect to a specific page in IBM WebSphere Portal does not always occur when an inactive session times out or the inactive session time out does not appear to occur at all. 
+
+DIAGNOSING THE PROBLEM
+You set the following properties in the WP_ConfigService and notice different behavior when the session times out (depending on your version of WebSphere Portal): 
+
+ * 
+ * redirect.logout = true
+ * 
+ * redirect.logout.url = <Fully Qualified URL>
+
+
+The session inactivity time out is 30 minutes but this value does not affect this issue. 
+RESOLVING THE PROBLEM
+In V6.1.0.1, when the session expires, you are redirected to the page specified in the redirect.logout.url property. 
+
+
+In Portal 6.1.0.1 with APAR PK78213 installed or in V6.1.0.2 and later, you are not redirected to the login page. Instead, the ErrorSessionTimeOut.jsp displays: 
+
+[/support/docview.wss?uid=swg21419230&aid=1] [/support/docview.wss?uid=swg21419230&aid=1]
+
+By design, the ErrorSessionTimeOut.jsp always displays when the session times out if a logout URL is configured.
+
+On systems running V6.1.0.1, install APAR PK78213 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK78213] to maintain consistency across all 6.1 platforms. 
+
+To redirect to the login page (or any other page) when the session expires, use one of the following methods:
+
+
+ * 
+ * 
+ * 
+ * "Configuring authentication filters"
+ * 
+ * New security APIs in WebSphere Portal
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+NOTES 
+
+1. This document discusses redirect behavior on session timeout. An "explicit" logout (by selecting or clicking the logout link) is always expected to cause a redirect to the URL specified in redirect.logout.url. 
+
+2. The inactive session timeout may not work at all in a single node cluster or a cluster with "failover" nodes in which only 1 node is up at a time (for example, when using Portal Express). Either add a second node or set the value for Distributed Sessions from "Memory-to-memory 
+replication" to None in the WebSphere Application Server Integrated Solutions Console, path: Servers > Server Types > Websphere application servers > WebSphere_Portal > session management > Distributed environment settings. RELATED INFORMATION
+ APAR PK78213 [http://www.ibm.com/support/docview.wss?uid=swg1PK78213]
+Configuring authentication filters [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1/topic/com.ibm.wp.ent.doc_v6101/admin/adauthflt.html]
+New security APIs in WebSphere Portal [http://www.ibm.com/developerworks/websphere/library/techarticles/0905_buchwald/0905_buchwald.html]
+Peer-to-peer topology [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.nd.doc/info/ae/ae/cprs_m2m_p2p_default.html]

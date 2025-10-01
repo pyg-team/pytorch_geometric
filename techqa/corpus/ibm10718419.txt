@@ -1,0 +1,69 @@
+Title: IBM Security Bulletin:  Vulnerability in IBM WebSphere Application Server Affects IBM Emptoris Sourcing, IBM Emptoris Contract Management, IBM Emptoris Spend Analysis, IBM Emptoris Program Management and IBM Emptoris Service Procurement (CVE-2017-1743) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+The IBM Emptoris Sourcing, IBM Emptoris Contract Management, IBM Emptoris Spend Analysis, IBM Emptoris Program Management and IBM Emptoris Service Procurement products are affected by a vulnerability that exists in the IBM WebSphere Application Server. The security bulletin includes issues disclosed as part of the IBM WebSphere Application Server updates.
+
+VULNERABILITY DETAILS
+CVEID:CVE-2017-1743 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-1743]
+DESCRIPTION: IBM WebSphere Application Server could allow a remote attacker to obtain sensitive information caused by improper handling of Administrative Console panel fields. When exploited an attacker could browse the file system.
+CVSS Base Score: 4.3
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/134933 [https://exchange.xforce.ibmcloud.com/vulnerabilities/134933]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Emptoris Sourcing 10.0.0 through 10.1.1.21
+IBM Emptoris Contract Management 10.0.0 through 10.1.1.21
+IBM Emptoris Spend Analysis 10.0.0 through 10.1.1.21
+IBM Emptoris Program Management 10.0.0 through 10.1.1.21
+IBM Emptoris Services Procurement 10.0.0 through 10.1.1.0
+
+REMEDIATION/FIXES
+An interim fix has been issued for the IBM WebSphere Application Server (WAS) which addresses this vulnerability. Customers running any of the IBM Emptoris products listed below should apply the interim fix to all IBM WebSphere Application Server installations that are used to run IBM Emptoris applications. Please refer toSecurity Bulletin: Information Disclosure in WebSphere Application Server (CVE-2017-1743) [http://www-01.ibm.com/support/docview.wss?uid=swg22013601]for details.
+
+Select the appropriate WebSphere Application Server fix based on the version being used for IBM Emptoris product version. The following table lists the IBM Emptoris application versions along with the corresponding required version of IBM WebSphere Application Server and a link to the corresponding fix version where further installation instructions are provided.
+
+Emptoris Product Version 
+
+WAS Version 
+
+Interim Fix 
+
+10.0.0.x, 10.0.1.x 8.5.0.x Apply Interim FixPI90009 [http://www-01.ibm.com/support/docview.wss?uid=swg24044794] 10.0.2.x ,
+10.0.4 8.5.5.x 10.1.x 8.5.5.x Note : Please refer toSecurity Bulletin: Information Disclosure in WebSphere Application Server (CVE-2017-1743) [http://www-01.ibm.com/support/docview.wss?uid=swg22013601]for details.
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+
+
+Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this.
+
+REFERENCE
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide]
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0]
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html]
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt]
+
+CHANGE HISTORY
+23 July 2018: Original version published
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin.
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES ""AS IS"" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+
+Cross reference information Product Component Platform Version Edition Emptoris Contract Management Linux, Windows All Versions Emptoris Spend Analysis Linux, Windows All Versions Emptoris Program Management Linux, Windows All Versions Emptoris Services Procurement Linux, Windows All Versions 
+HISTORICAL NUMBER
+114371
+114372
+114373
+114374
+114375

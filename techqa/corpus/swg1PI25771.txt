@@ -1,0 +1,159 @@
+Title: IBM PI25771: DB2 CO-PROCESSOR CAUSING ISSUES AT RUNTIME FOR SET CURRENT PACKAGE PATH STATEMENT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+COBOL for AIX Fix Pack 12 (October 2014 PTF) for 4.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038568]
+COBOL for AIX Fix Pack 13 (October 2015 PTF) for 4.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24041150]
+COBOL for AIX Fix Pack 14 (August 2016 PTF) for 4.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042667]
+COBOL for AIX Fix Pack 15 (August 2017 PTF) for 4.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24044008]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The internal DB2 SQL coprocessor of IBM COBOL for AIX V4.1.1.11
+   successfully processes/compiles the SET CURRENT PACKAGE PATH
+   statement.
+   But at runtime the compiled code failes with SQLCODE=-805
+   (package not found) when connecting to an IBM DB2 for z/OS
+   database via IBM DB2 Connect.
+   
+   ===== ACTUAL OUTPUT:
+   $ ./cpkgpath
+   00000
+   51002
+   --- ERROR REPORT ---
+   SQLCODE : -0000000805
+   SQLSTATE: 51002
+   SQL0805N Package "%.CPKGPATH 0X724164324C5A4865" was not found.
+   SQLSTATE=51002
+   SQLSTATE 51002: The package corresponding to an SQL statement
+   execution request
+   was not found.
+   --- END ERROR REPORT ---
+   $
+   
+   ===== EXPECTED OUTPUT:
+   $ ./cpkgpath
+   00000
+   00000
+   Y
+   $
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   SQL COBOL programs with SET CURRENT PACKAGE PATH are affected by
+   this issue.
+   
+   PROBLEM DESCRIPTION:
+   The SQL co-processor does not generate correct COBOL code for
+   SET CURRENT PACKAGE PATH.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Extra code has been added to COBOL compiler to check and
+   generate correct code for SQL SET CURRENT PACKAGE PATH.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI25771
+   
+   
+ * REPORTED COMPONENT NAME
+   COBOL FOR AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724Z8700
+   
+   
+ * REPORTED RELEASE
+   411
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-16
+   
+   
+ * CLOSED DATE
+   2014-09-25
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   COBOL FOR AIX
+   
+   
+ * FIXED COMPONENT ID
+   5724Z8700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R411 PSY UI21604
+   UP C

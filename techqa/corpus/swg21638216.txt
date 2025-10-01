@@ -1,0 +1,41 @@
+Title: IBM How to convert C++ package unit to ADA package unit  in Rational Rhapsody - United States
+
+Text:
+C++; ADA; package; unit TECHNOTE (FAQ)
+
+QUESTION
+ How do you convert a C++ language package unit to ADA language package unit in IBM Rational Rhapsody? 
+
+CAUSE
+You would like to use C++ package unit for Simulation and use ADA for code generation
+
+ANSWER
+Currently there is no direct method to convert a C++ package to a ADA package. However,
+you can apply the following steps to achieve your requirement:
+
+
+ 1. Copy & Paste the *.sbs file that you wish to add into the ADA model to the ADA project location
+    
+    
+ 2. Right click on the *.sbs and open in Edit mode
+    
+    
+ 3. Change the entry for from C++ to Ada in the first line as shown below:
+    
+    
+    I-Logix-RPY-Archive version 8.7.1 C++ 5093211 to
+    I-Logix-RPY-Archive version 8.7.1 Ada 5093211
+    
+    
+    
+ 4. Save and Close the file
+    
+    
+ 5. Use Add to Model option and the *sbs file as a Unit
+    
+    
+
+
+Now you would be able to generate Ada code for the package  
+
+Alternatively, you can also raise an Enhancement Request for direct changing of language from C++ to Ada from within Rational Rhapsody using the IBM RFE Community [https://www.ibm.com/developerworks/support/rational/rfe/.]

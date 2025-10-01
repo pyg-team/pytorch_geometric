@@ -1,0 +1,125 @@
+Title: IBM Searching Your QRadar Data Efficiently: Part 1 - Quick Filters - United States
+
+Text:
+quick filter; qradar; 7.2.3; search; data; efficiently; 7.1; 7.2; searching; data; quickly find event; quickly find flow TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How can users improve search speed using the Quick Filter feature in QRadar?
+
+
+
+RESOLVING THE PROBLEM
+The following video will demonstrate how to use the Quick Filter to search efficiently: 
+
+
+
+YouTube Video Searching Data Efficiently in QRadar Using Quick Filters (00:05:24) Watch the video on YouTube [https://www.youtube.com/embed/Iw5EnoHEhU0] (00:05:24) 
+
+ABOUT THE QUICK FILTER
+
+The Quick Filter is a search bar that is displayed on both the Log Activity and Network Activity tab in QRadar; and is one of the fastest methods for searching event or flow data. The Quick filter works similar to a 'Google-style' search where you can add in one or more terms, or use regular expressions. If the quick filter is used in conjunction with other search parameters, the quick filter will execute first, and the remaining search parameters will be used to further filter the results. 
+
+The Quick Filter requires a Payload Index was created, when data was first received by QRadar to work efficiently. If a Payload Index does not exist for the time frame being searched, QRadar will create a Payload Index for all data, contained within the time frame, which will cause this initial search to take longer to complete. Subsequent searches against the same data, done within the same day however, will then be a lot quicker, as it will be able to utilize the newly created Payload Indexes. Payload Indexes created, that are outside the Payload Index Retention, will be removed overnight. 
+
+
+[/support/docview.wss?uid=swg21689800&aid=1] [/support/docview.wss?uid=swg21689800&aid=1] 
+Figure 1: Utilizing the quick filter, we are able to search 267 MB of data in just over one second. 
+
+
+
+ LOCATION OF THE QUICK FILTER?
+
+The Quick Filter is a search bar that is displayed on both the Log Activity and Network Activity tab in QRadar. 
+
+[/support/docview.wss?uid=swg21689800&aid=2] [/support/docview.wss?uid=swg21689800&aid=2] 
+Figure 2: Location of the Quick Filter on the Log Activity tab in QRadar 7.2.3 and above (click to enlarge). 
+
+
+[/support/docview.wss?uid=swg21689800&aid=3] [/support/docview.wss?uid=swg21689800&aid=3] 
+Figure 3: Location of the Quick Filter on the Log Activity tab in QRadar 7.1 MR2 (click to enlarge). 
+
+
+PAYLOAD RETENTION INDEX SETTINGS
+
+To adjust the Payload Index Retention settings from Console: 
+1) Clicking the Admin tab 
+2) Select System Settings 
+3) Locate the Database Settings section and adjusting the retention period. 
+4) Set the Payload Index Retention only to the timeframe typically searched, as Payload Indexes do use extra disk. 
+
+The default Payload Index Retention period is 30 days, the minimum is 1 day, and the maximum is 2 years. 
+Note: Administrators who want to retain payload indexes longer than the default value should be aware that extra disk space that will be used to retain the index for a longer time period. The retention values should reflect the time spans that the users or security operators are typically searching. After an increase is made to the Payload Index Retention field, administrators should monitor system notifications to ensure that they do not fill disk space by setting unnecessarily long Payload Index Retention. 
+
+[/support/docview.wss?uid=swg21689800&aid=4] [/support/docview.wss?uid=swg21689800&aid=4] 
+Figure 4: Quick filter indexes are based off of the Payload Index Retention setting (click to enlarge). 
+
+
+
+
+
+QUICK FILTER - USING ADVANCED SEARCH PARAMETERS
+
+The Quick Filter only searches raw, uncorrelated, payload data, and cannot differentiate between fields. For example, the quick filter cannot differentiate if an IP address is the source or destination. 
+
+The quick filter can be used for more than just single searches for an IP address or user names. Since the Quick Filter is based on Lucene search technology, the quick filter has the ability to do complex logical queries or include brackets, double-quotes, AND, OR, NOT, +/-, or wildcards ( * ) operators. It is important that any word operators be uppercase (AND, OR, AND NOT) to prevent the filter from thinking the operator is a search term. All of these logical operators can be used to quickly find results from the indexes of your event or flow payloads. Leveraging operators makes even more complex Quick Filter searches very efficient in QRadar. 
+
+
+
+EXAMPLE 1: HOW TO EXCLUDE SEARCH TERMS FROM YOUR QUICK FILTER RESULTS
+
+To exclude search results, users can leverage the AND NOT, or a minus symbol ( - ) as a method to reduce the amount of returned results from a quick search. If you have specific text that appears with spaces, you can add double-quotes ( "term" ) to encapsulate the exact text you want the quick filter to locate. If your text was broken in to two words, such as Session Token, you could use "Session Token" in the quick filter as the search term expects the space to be present in the search when encapsulated in quotes. 
+
+[/support/docview.wss?uid=swg21689800&amp;aid=5] or [/support/docview.wss?uid=swg21689800&amp;aid=6] 
+Figure 5 & 6: An alternate method of completing the same search result is to use a minus symbol (-) in the Quick Filter field. 
+
+
+
+EXAMPLE 2: HOW TO SEARCH FOR MULTIPLE TERMS
+
+The following images show two examples of a combination search to locate an event that contains the term firewall or "firewall accept", but also contains the words nobody or admin. 
+
+[/support/docview.wss?uid=swg21689800&amp;aid=7] or [/support/docview.wss?uid=swg21689800&amp;aid=8] 
+Figure 7 & 8: Using the quick filter to search multiple terms using AND/OR values. 
+
+
+
+EXAMPLE 3: USING SIMPLE REGEX WITHIN A LUCENE SEARCH
+
+The following images show a example of using regex to search for information within the quick filter. Regular expressions must be bracketed by forward slashes, such as / my_regex_pattern/ in the quick filter. Valid regex that falls between the forward slashes is evaluated by QRadar. 
+
+Helpful implementations of regular expressions could include: 
+ * Events with files that end in .exe or .pdf could be located with the regular expression /.*.pdf/ OR /.*.exe/ 
+ * URLs, such as /.*baddomain.com/ 
+ * Email addresses can be located with the regular expression /.*\@.*\..*/
+
+
+[/support/docview.wss?uid=swg21689800&amp;aid=9] or [/support/docview.wss?uid=swg21689800&amp;aid=10] 
+Figure 9 & 10: Values between the forward slashes can contain simple regular expression patterns. 
+
+
+
+EXAMPLE 4: USING LUCENE SEARCHES WITH SPECIAL CHARACTERS
+
+The following image shows a example of using regex to search where you need to escape special characters. For examples, a username with a hyphen might need to be escaped to return an exact match. Optionally, the user could quick filter search john AND smith or john +smith, but is not as exact as searching for the exact user name of john-smith. The following special characters that are part of the search term must be escaped: + - && || ! ( ) { } [ ] ^ " ~ * ? : \ 
+
+[/support/docview.wss?uid=swg21689800&amp;aid=11] 
+Figure 11: Using the quick filter to search for a hyphenated user name. 
+
+
+
+
+ARE THERE SYSTEM RESOURCE MINIMUMS FOR FULL PAYLOAD INDEXING?
+
+Yes, if you plan to enable full payload indexing, your appliance requires a minimum of 24 GB of RAM. The 24 GB minimum applies to both virtual and physical appliances. However, in most cases we suggest that appliances have 48 GB of RAM when they enable this feature. The minimum and suggested RAM values for full text payload indexing applies to all systems that are processing events or flows, such as 16xx, 17xx, or 18xx appliances, as well as 31xx Consoles or All-in-One Console appliances. 
+
+
+
+
+
+Where do you find more information? 
+
+
+[/support/docview.wss?uid=swg21689800&aid=12] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21689800&aid=13] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21689800&aid=14] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21689800&aid=15] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21689800&aid=16] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21689800&aid=17] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21689800&aid=18] [http://ibm.biz/SuptRegQuikStart] RELATED INFORMATION
+ Searching Data Efficiently: Start [http://www.ibm.com/support/docview.wss?uid=swg21689803]
+Searching Data Efficiently: Part 2 - Leveraging Indexed [http://www.ibm.com/support/docview.wss?uid=swg21689802]
+Searching Data Efficiently: Part 3 - Search Tips [http://www.ibm.com/support/docview.wss?uid=swg21691783]

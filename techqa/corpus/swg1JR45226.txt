@@ -1,0 +1,200 @@
+Title: IBM JR45226: PROCESS DESIGNER STOPS RESPONDING AFTER COACH CHANGES ARE SAVED DUE TO A MEMORY LEAK WHICH CAN CAUSE JAVA.LANG.OUTOFMEMORYERROR - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.0.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035701]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Process Designer, while saving a Coach after adding a button
+   (or something else) everything's ok in the first 3 Saves.  But
+   there is a slight delay in response time between each save,  but
+   the save works.
+   Then, when we make the 4th save, Process Designer stops
+   responding.  There is a "Saving"  message and in the window
+   title a "Not Responding" .
+   After that a new window "Refreshing Library" also
+   with "Not Responding".
+   After this, Process Designer stops working and in the
+   installation folder some heapdumps and javacore dumps are
+   created. The Process Designer interface, becomes grey and stops
+   working.
+      The cause of this is a memory leak.  Analysis of the
+   heapdump shows these objects being leaked
+   |- 420,737,472 (78.4%) [353,016] 60,208 array of
+   org/eclipse/emf/ecore/resource/Resource
+      |- 267,584 (0.05%) [120] 9
+   com/ibm/bpm/coachNG/util/CoachNGResourceImpl
+      |- 267,584 (0.05%) [120] 9
+   com/ibm/bpm/coachNG/util/CoachNGResourceImpl
+      |- 267,584 (0.05%) [120] 9
+   com/ibm/bpm/coachNG/util/CoachNGResourceImpl
+      |- 267,584 (0.05%) [120] 9
+   com/ibm/bpm/coachNG/util/CoachNGResourceImpl
+      |- 267,584 (0.05%) [120] 9
+   com/ibm/bpm/coachNG/util/CoachNGResourceImpl
+      |- 267,584 (0.05%) [120] 9
+   com/ibm/bpm/coachNG/util/CoachNGResourceImpl
+      |- 267,584 (0.05%) [120] 9
+   com/ibm/bpm/coachNG/util/CoachNGResourceImpl
+      |- 267,584 (0.05%) [120] 9
+   com/ibm/bpm/coachNG/util/CoachNGResourceImpl
+      |- 267,584 (0.05%) [120] 9
+   com/ibm/bpm/coachNG/util/CoachNGResourceImpl
+      |- 267,584 (0.05%) [120] 9
+   com/ibm/bpm/coachNG/util/CoachNGResourceImpl
+      |- There are 60,198 more children
+   0x3b183398
+               865,400 (0.06%) [32] 3
+   org/eclipse/emf/ecore/util/EObjectContainmentEList 0x3b1833b8
+                865,368 (0.06%) [56] 7 array of
+   com/ibm/bpm/coachNG/BaseLayoutItem 0x3b1833d8
+                 732,152 (0.05%) [64] 8
+   com/ibm/bpm/coachNG/impl/ViewRefImpl 0x3b183498
+                 47,752 (0%) [64] 8
+   com/ibm/bpm/coachNG/impl/ViewRefImpl
+   0x3b1835b8
+                 33,536 (0%) [64] 7
+   com/ibm/bpm/coachNG/impl/ViewRefImpl
+   0x3b183528
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  We are able to kill the process and restart.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If user is working in a fairly large process application or
+   toolkit, with many coach views, Process Designer will run out of
+   memory after a short amount of time after doing a variety of
+   actions (such as saving changes to editors, or even
+   opening/closing coach view artifacts).
+   
+   USER AFFECTED:
+   Business Process Manager Advanced, Standard and Express users
+   leveraging New Generation Coaches and Coach views in a fairly
+   large workspace.
+   
+   PROBLEM DETAILED DESCRIPTION:
+   Code change introduced in 8.0.1 included a static resource.  The
+   static resource set, while improving temporal performance,
+   introduced a memory leak because all loaded layouts were never
+   being released from memory.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Removed the static resource set, and introduced proper resource
+   set usage while still maintaining temporal performance goals.
+   
+   FIX AVAILABILITY:
+   Fix for 8.0.1 is available on Fix Central, search for APAR
+   JR45226 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   
+   Fix for 8.0.1.1 is available on Fix Central, search for APAR
+   JR45226 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   
+   When downloading fix package from Fix Central, please ensure to
+   download and thoroughly review the complimentary readme, which
+   includes install instructions, and more info about the
+   particular fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR45226
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION DES
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9702
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-12-21
+   
+   
+ * CLOSED DATE
+   2013-03-21
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION DES
+   
+   
+ * FIXED COMPONENT ID
+   5725C9702
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

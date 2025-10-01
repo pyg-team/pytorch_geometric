@@ -1,0 +1,190 @@
+Title: IBM PI24157: LOG ANALYSIS WORKSPACE DOES NOT WORK FOR PORTAL 8.0 AND ABOVE. - United States
+
+Text:
+  A FIX IS AVAILABLE
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Log analysis workspace does not work for portal 8.0 and above.
+   It works for WAS but it does not for Portal because there is no
+   support in the portal code in WpsAlsProperties.java. You get the
+    following messages in the logs which shows that Configuration
+   class is returning null and also Systemout and Systemerr paths
+   are wrong. I need the APAR to build the hotfix because I don't
+   have the local environment to build itm.probe
+   
+   
+   <Trace Level="INFO">
+    <Time Millis="1385390114528"> 2013-11-25
+   14:35:14.528+00:00</Time>
+    <Server Format="IP">xxxxxxxx</Server>
+    <ProductId>CYN</ProductId>
+    <Component>CYN.trc.temadc</Component>
+    <ProductInstance>29854</ProductInstance>
+    <LogText><![CDATA[WAS Configuration class = null]]></LogText>
+    <Source
+   FileName="com.ibm.tivoli.itcam.tema.was.WpsAlsProperties"
+   Method="getConfigMBean()"/>
+    <Thread>Thread-83</Thread>
+    <Principal>xxxxxxxxx</Principal>
+   </Trace>
+   
+   <Trace Level="INFO">
+    <Time Millis="1385390114529"> 2013-11-25
+   14:35:14.529+00:00</Time>
+    <Server Format="IP">xxxxx</Server>
+    <ProductId>CYN</ProductId>
+    <Component>CYN.trc.temadc</Component>
+    <ProductInstance>29854</ProductInstance>
+    <LogText><![CDATA[logDir ->
+   se!/opt/IBM/WebSphere/PortalServer8/log!SystemErr\.log]]></LogTe
+   xt>
+    <Source
+   FileName="com.ibm.tivoli.itcam.tema.was.WpsAlsProperties"
+   Method="getLogFileLocationSet()"/>
+    <Thread>Thread-83</Thread>
+    <Principal>xxxxxxx</Principal>
+   </Trace>
+   
+   <Trace Level="INFO">
+    <Time Millis="1385390114529"> 2013-11-25
+   14:35:14.529+00:00</Time>
+    <Server Format="IP">xxxxxxxx</Server>
+    <ProductId>CYN</ProductId>
+    <Component>CYN.trc.temadc</Component>
+    <ProductInstance>29854</ProductInstance>
+    <LogText><![CDATA[logDir ->
+   so!/opt/IBM/WebSphere/PortalServer8/log!SystemOut\.log]]></LogTe
+   xt>
+    <Source
+   FileName="com.ibm.tivoli.itcam.tema.was.WpsAlsProperties"
+   Method="getLogFileLocationSet()"/>
+    <Thread>Thread-83</Thread>
+    <Principal>xxxxxxxxx</Principal>
+   </Trace>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Log analysis workspace does not work for portal 8.0 and above.
+   It works for WAS but it does not for Portal because there is no
+   support in the portal code in WpsAlsProperties.java.
+   I added the support for Portal 8.0 and all the future versions.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added support for Log Analysis workspace for WebSphere Portal
+   server 8.0 and above.
+   
+   This fix will be available in ITCAM for AD 7.1.0.3 Ifix 9.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Provided hotfix to customer.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI24157
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS TEM
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92WD
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-19
+   
+   
+ * CLOSED DATE
+   2014-10-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS TEM
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92WD
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

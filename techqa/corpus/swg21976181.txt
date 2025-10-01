@@ -1,0 +1,48 @@
+Title: IBM Can you create a BPM task route for SMTP email? - United States
+
+Text:
+icc TECHNOTE (FAQ)
+
+QUESTION
+ How to create a task route to perform Business Process Management (BPM) on SMTP emails? 
+
+CAUSE
+IBM Content Collector (ICC) only provides BPM task route template for Lotus Domino or Exchange emails. No BPM template is available for SMTP emails. 
+
+ANSWER
+You can create a BPM task route for SMTP emails by using the SMTP connector tasks. 
+
+In this technote, the task route is based on the following business requirements: 
+
+ * Email and attachments are stored in the same content element of the P8 document. 
+ * Email properties such as the email subject needs to be saved into a P8 property. 
+ * SMTP emails are provided manually by users in a shared folder and not sent directly by email server.
+
+
+ 1. Ensure IBM Content Collector for SMTP is installed. If not, re-run the ICC installation package and add that option. 
+ 2. For business process management, email documents can be stored into any document class. It is not required to follow the ICC email data model. 
+ 3. As the SMTP emails are provided manually by users in a shared folder, IBM Content Collector SMTP Receiver service is not required to be running. 
+ 4. In the ICC configuration manager, Connectors > SMTP, configure the Message queue directory. In that directory, manually create the following folder structure:
+    <message queue directory>\<short hostname>\0000
+    
+    For example, if the message queue directory configured is C:\SMTPFolder and the short hostname of the IBM Content Collector server is server0123, then create the following folder structure:
+    C:\SMTPFolder\server0123\0000
+    
+    For any SMTP emails that need to be processed, place them in this directory. 
+ 5. Create a task route and include the following tasks (in order):  * SC Collect All Email 
+     * SC Extract Metadata 
+     * SC Prepare Email for Archiving 
+     * P8 Create Document 
+     * P8 File Document in Folder (optional) 
+     * SC Delete Email 
+     * Audit Log (optional)
+    
+    
+ 6. Since the business requirement is to save email and attachments in one content element, in the SC Prepare Email for Archiving task, uncheck the option Save document without attachments. 
+ 7. To save email properties such as the email subject into a P8 property, in the P8 Create Document task, assign the P8 property with values from the Email system metadata. For example, <Email, Subject>. 
+
+
+Task route may be different based on the actual business requirements. Contact IBM Support to receive further assistance.
+
+RELATED INFORMATION
+ IBM Content Collector V4.0.1 Documentation [https://www-304.ibm.com/support/knowledgecenter/SSAE9L_4.0.1/contentcollector_4.0.1.htm?lang=en]

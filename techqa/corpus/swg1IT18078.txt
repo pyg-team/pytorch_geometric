@@ -1,0 +1,289 @@
+Title: IBM IT18078: JMS application receives JMSCMQ1006: value for JMS_IBM_CHARACTER_SET 'IBM01141' is not valid - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrading to MQ v8, when an attempt is made to send a
+   message to an MQ queue, the MQ v8 classes for JMS receives the
+   javax.jms.JMSException:
+   
+   com.ibm.msg.client.jms.DetailedJMSException: JMSCMQ1006: The
+   value for 'JMS_IBM_Character_Set':'Message Chararacter Set:
+   IBM01141, Message CCSID: null, destination CCSID: 1144' is not
+   valid.
+   The value 'Message Chararacter Set: IBM01141, Message CCSID:
+   null, destination CCSID: 1144' for property
+   'JMS_IBM_Character_Set' is not correct.
+   Check the linked WebSphere MQ exception reason and completion
+   code.
+   
+   at sun.reflect.NativeConstructorAccessorImpl.newInstance0
+   at sun.reflect.NativeConstructorAccessorImpl.newInstance
+   at sun.reflect.DelegatingConstructorAccessorImpl.newInstance
+   at java.lang.reflect.Constructor.newInstance
+   at
+   com.ibm.msg.client.commonservices.j2se.NLSServices.createExcepti
+   on
+   at
+   com.ibm.msg.client.commonservices.nls.NLSServices.createExceptio
+   n
+   at
+   com.ibm.msg.client.wmq.common.internal.messages.WMQMarshalUtils.
+   getMessageCodepage
+   at
+   com.ibm.msg.client.wmq.common.internal.messages.WMQSendMarshal.c
+   onstructMessageBuffers
+   at
+   com.ibm.msg.client.wmq.common.internal.messages.WMQSendMarshal.e
+   xportMQMDAndMessageBuffers
+   at
+   com.ibm.msg.client.wmq.common.internal.messages.WMQSendMarshal.e
+   xportMQMD
+   at
+   com.ibm.msg.client.wmq.internal.WMQMessageProducer$ProducerShado
+   w.send
+   at com.ibm.msg.client.wmq.internal.WMQMessageProducer.send
+   at
+   com.ibm.msg.client.jms.internal.JmsMessageProducerImpl.sendMessa
+   ge
+   at
+   com.ibm.msg.client.jms.internal.JmsMessageProducerImpl.synchrono
+   usSendInternal
+   at
+   com.ibm.msg.client.jms.internal.JmsMessageProducerImpl.sendInter
+   nal
+   at com.ibm.msg.client.jms.internal.JmsMessageProducerImpl.send
+   at com.ibm.mq.jms.MQMessageProducer.send
+   at MyApplication
+   
+   Caused by: java.io.UnsupportedEncodingException: IBM01141
+   at com.ibm.mq.jmqi.system.JmqiCodepage.getJmqiCodepage
+   at
+   com.ibm.msg.client.wmq.common.internal.messages.WMQMarshalUtils.
+   getMessageCodepage
+   ... 12 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Change the CLASSPATH to remove reference to the
+   "com.ibm.mq.allclient.jar" and use the alternative .jar files
+   which provide access to the same MQ classes for JMS, that being
+   the file:
+   
+       <MQ_INSTALL_ROOT>/java/lib/com.ibm.mqjms.jar
+   
+   where "<MQ_INSTALL_ROOT>" is the root directory where the MQ
+   installation is located, for example "/opt/mqm" on Linux,
+   Solaris and HP-UX.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of the MQ classes for Java/JMS v8.0 and v9.0 who are
+   working with messages which are in a specific set of CCSID
+   values, who are gained access to the classes through use of
+   either of the files:
+   
+     com.ibm.mq.allclient.jar
+   
+     com.ibm.mq.osgi.allclient_<VERSION>.jar
+        where <VERSION> is the version of the MQ installation.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   As of MQ v8.0, the MQ classes for JMS are provided in an
+   additional form within the MQ installation structure, that being
+   within the single .jar file:
+   
+     com.ibm.mq.allclient.jar
+   
+   The intention of this .jar file is that it provides the same
+   function as that provided in the traditional set of .jar files,
+   those being the files:
+   
+     com.ibm.mq.commonservices.jar
+     com.ibm.mq.headers.jar
+     com.ibm.mq.jar
+     com.ibm.mq.jmqi.jar
+     com.ibm.mqjms.jar
+     com.ibm.mq.pcf.jar
+     com.ibm.mq.traceControl.jar
+   
+   However a defect in the build system used to construct the
+   "com.ibm.mq.allclient.jar" resulted in the contents of the .jar
+   file's META-INF directory not having identical content to the
+   above .jar files.  The file which differed within the .jar
+   archive was a file called:
+   
+     META-INF/ccsid_merged.map
+   
+   which is a file which the MQ classes for Java/JMS used to
+   translate between IBM "Coded Character Set Identifier" (CCSID)
+   and Java Charset names.  For example, this map file is used to
+   inform the MQ classes for Java/JMS that the Java Charset named:
+   
+     IBM01141
+   
+   to the MQ message CCSID value "1141".
+   
+   The incorrect version of "ccsid_merged.map" did not contain an
+   entry for "IBM01141", instead referring to the Charset for CCSID
+   1141 as "IBM-1141".  A consequence of this is that if a JMS
+   application is attempting to send a message to a queue where the
+   message has the property "JMS_IBM_Character_Set" defined with
+   the value:
+   
+     "IBM01141"
+   
+   a JMSException would be returned to the application during the
+   sending method call (eg. "MessageProducer.send(Message)") with
+   the error message of the form:
+   
+   JMSCMQ1006: The value for 'JMS_IBM_Character_Set':'Message
+   Chararacter Set: IBM01141, Message CCSID: null, destination
+   CCSID: 1208' is not valid.
+   
+   
+   Numerous Java Charset names were affected in a similar way, too
+   many to list here.  If you are encountering an error message
+   similar to the above and are using either of the following files
+   to access the MQ classes for JMS API:
+   
+     <MQ_INSTALLATION_ROOT/java/lib/com.ibm.mq.allclient.jar
+   
+   <MQ_INSTALLATION_ROOT/java/lib/OSGi/com.ibm.mq.osgi.allclient_8.
+   0.0.5.jar
+   
+   then you may be affected by this problem.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQ build system has been updated such the "ccsid_merged.map"
+   file is identical in all of the .jar files where it is shipped.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.7
+   v9.0 CD    9.0.2
+   v9.0 LTS   9.0.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT18078
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-11-22
+   
+   
+ * CLOSED DATE
+   2017-01-17
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

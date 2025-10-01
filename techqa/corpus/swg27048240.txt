@@ -1,0 +1,3937 @@
+Title: IBM Readme for IBM WebSphere MQ for HP NonStop Server, Version 5.3.1, Fix Pack 12 - United States
+
+Text:
+ PRODUCT README
+
+ABSTRACT
+ This readme provides information for IBM WebSphere MQ for HP NonStop Server, Version 5.3.1, Fix Pack 12. 
+
+CONTENT
+DESCRIPTION
+
+
+============
+
+This file describes product limitations and known problems.
+The latest version of this file can be found here:
+https://ibm.biz/mqreadmes [https://ibm.biz/mqreadmes]
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+UPDATE HISTORY
+20 May 2016 - Updates for IBM WebSphere MQ for HP NonStop Server, Version 5.3.1, Fix Pack 12
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+--------------------------------------------------------------------
+CONTENTS
+========
+
+Introduction
+About this release
+Installation, migration, upgrade and configuration information
+Un-installation information
+Known limitations, problems and workarounds
+Documentation updates
+Contacting IBM software support
+Notices and Trademarks
+
+INTRODUCTION
+============
+
+Welcome to IBM(R) WebSphere(R) MQ for HP NonStop Server, Version 5.3.1.12
+
+This release notes file applies to the latest WebSphere MQ cross-platform
+books (for Version 5.3), and to the WebSphere MQ for HP NonStop Server,
+Version 5.3 specific books (WebSphere MQ for HP NonStop Server System
+Administration Guide and WebSphere MQ for HP NonStop Server Quick
+Beginnings).
+
+The content of these release notes applies to the WebSphere MQ for HP
+NonStop Server product unless otherwise stated.
+
+This release notes file contains information that was not available in
+time for our publications. In addition to this file, README,
+you can find more information on the WebSphere MQ Web site:
+
+http://www.ibm.com/software/integration/wmq/ [http://www.ibm.com/software/integration/wmq/]
+
+For current information on known problems and available fixes,
+SupportPacs(TM), product documentation and online versions of this and
+other readme files see the Support page of the WebSphere MQ Web site at:
+
+http://www.ibm.com/software/integration/wmq/support [http://www.ibm.com/software/integration/wmq/support]
+
+ABOUT THIS RELEASE
+==================
+
+Nomenclature
+------------
+The terms "WMQ V5.3.1" and "WMQ V5.3.1.0" both refer to the same WMQ Refresh
+Pack without subsequent service installed. Throughout this readme, references
+to "WMQ V5.3.1.x" refer to WMQ 5.3.1 with or without subsequent service
+installed.
+
+New in this release
+-------------------
+
+This is the twelfth FixPack for IBM WebSphere MQ V5.3.1 for HP NonStop Server,
+and is designated V5.3.1.12, with associated APAR IT15471.
+
+This release is cumulative for all service and internal defect correction 
+performed since WMQ 5.3.1 was released. 
+
+All native object and executable files distributed with this FixPack have the
+following version procedure strings:
+
+T0085H06_31MAY2016_V53_1_12_<buildid> (Where buildid is the internal build
+identifier)
+
+The Non-native library distributed with this FixPack has the following 
+version procedure string:
+
+T0085H06_28FEB2015_V53_1_11 
+
+If upgrading from V5.3.1.5 or later releases, this FixPack does NOT require 
+TNS (non-native) applications to be re-bound with the MQI library. More on 
+this is described later on in this readme.
+
+IBM have not identified any new HP NonStop Server system software problems
+since V5.3.1.6 was released. The current set of recommended solutions is 
+described later on in this readme.
+
+IBM recommends that you ensure that your HP NonStop Server system software
+products are at SPR levels that incorporate these fixes (solutions) as a
+preventive measure. IBM has tested WMQ with these fixes in our own
+environment before making the recommendations.
+
+Important note about SSL channels
+---------------------------------
+
+This release includes a new version of openSSL (1.0.2h) to maintain currency
+with known vulnerabilities discovered since the version shipped with V5.3.1.
+A new version of the SSLupdate.pdf document was provided with the V5.3.1.10
+fixpack, and is also included with this this release, located in the 
+<install_path>/opt/mqm/READMES/en_US directory. If you use SSL channels you
+should review the revised version of SSLupdate.pdf prior to installing this
+fixpack.
+
+The following SSL information applies if you are upgrading from WMQ V5.3.1 and
+are using SSL channels. The following procedure is not required if you have 
+already installed WMQ V5.3.1.1
+
+Several of the fixes in this and previous FixPacks that relate to SSL channels
+change the way that SSL certificates are configured with WebSphere MQ. If
+you use SSL channels you will need to review the new documentation supplement
+SSLupdate.pdf for information about this change and make configuration changes
+Please also see the Post-installation section below for a summary of the
+required changes.
+
+In V5.3.1.10 Patch1 and all later releases, CipherSpecs that use the SSLv3
+protocol were deprecated. Continued use of SSLv3 CipherSpec's is not recommended
+but may be enabled by setting the AMQ_SSL_V3_ENABLE environment variable.
+In addition to that Env01=AMQ_SSL_V3_ENABLE=1 has to be added to the MCA stanza 
+of the queue manager's qmproc.ini file.
+
+With OpenSSL 1.0.2h the following CipherSpecs have been deprecated:
+DES_SHA_EXPORT1024
+RC4_56_SHA_EXPORT1024
+RC4_MD5_EXPORT
+RC2_MD5_EXPORT
+DES_SHA_EXPORT
+TLS_RSA_WITH_DES_CBC_SHA
+
+While WMQ V5.3.1.12 does still support these weak CipherSpecs for compatibility
+reasons, they are deemed as not secure and should not be used. 
+
+Please check product documentation to confirm the CipherSpec is valid and consult
+documentation for any instructions when adding new environment variables.
+
+
+Important note about WebSphere MQ V5.3 classes for Java and JMS
+---------------------------------------------------------------
+
+Fixpack V5.3.1.10 resolved an incompatibility between NonStop Java 7 and the
+WMQ product libraries - that fix is also included in V5.3.1.12.
+The method used to configure Java in V5.3.1.10 and later differs from 
+that in releases prior to V5.3.1.10. The Java.pdf document shipped in the 
+<install_path>/opt/mqm/READMES/en_US directory was updated to reflect the
+change. Java/JMS users migrating from versions prior to 5.3.1.10 should 
+review the updated document.
+
+Important note about instmqm for V5.3.1
+---------------------------------------
+
+Since FixPack V5.3.1.5, IBM provided a modified WebSphere MQ product
+installation script, instmqm, for any level of V5.3.1. The new installation
+script includes a workaround for the OS problem introduced in G06.29/H06.06
+where the OSS 'cp' command creates Guardian files in Format-2 form during an
+installation rather than Format-1. This change caused problems binding and
+compiling non-native and native COBOL applications, as well as wasting a lot of
+disk space because of the very large default extents settings for the Format-2
+files created by OSS cp.
+
+Instmqm has been modified in FixPack V5.3.1.5 to work around this change in OSS
+cp by forcing all Guardian files in an installation to be created as Format-1.
+The use of the new installation script is recommended for all new V5.3.1
+installations.
+
+Existing installations that are not affected by the application relink or
+rebind problems can remain as they are.
+
+Product fix history
+-------------------
+
+The following problems are resolved in FixPack V5.3.1.12:
+
+APAR IT08589 - WebSphere MQ V6 or V7 queues become "missing" from clusters. Application
+calls to MQOPEN (sometimes MQPUT1, MQPUT) suffer queue name lookup
+errors (Examples: 2085, 2082) when they try to access the affected 
+cluster queues. 
+
+APAR IT10388 - When the receiving QMgr has its channel set with SSLCAUTH(OPTIONAL),
+the Nonstop Queue Manager insists on sending a certificate to 
+identify itself. The remote side, however, does not require one
+
+APAR IT11557 - Updated OpenSSL library to version 1.0.2h. This update deprecates sslchiph 
+cipherspec TLS_RSA_WITH_DES_CBC_SHA and fixes various security 
+vulnerabilities.
+
+APAR IT12856 - When a node is removed from an MQ cluster and there is an automatically
+defined cluster sender channel from a MQ node on NonStop to the removed
+node, the sender channel on NonStop can go into state INITIALIZING and
+stay there for up to 60 minutes instead of being deleted after the first
+retry interval has expired.
+
+APAR IT12875 - When a message is put into a remote/cluster queue within a TMF user
+transaction and while the corresponding transmit queue is empty or almost
+empty, it can take up to 60 seconds after the end of the transaction
+until the message is transmitted. As a side effect automatic channel 
+starts can also be delayed.
+
+APAR IT12894 - Java 7 SSL clients behave differently than previous versions which 
+resulted in an RC 2009 error on its connection attempt. This
+is fixed with V.5.3.1.12.
+
+APAR IT14169 - When a CPU is stopped, some sender channels were not recovered 
+and stayed in inactive state. 
+
+APAR IT15316 - Memory allocation during MCA and LQMA creation and initialization was
+not handled properly and may result in an unresponsive system.
+
+APAR IT15317 - Under some conditions agents stay alive but don't accept new
+connections. That is the case if an agent has reached the maximum 
+number of connections it is allowed to handle during its lifetime
+but the agent can't terminate before the last connection has been 
+closed.
+
+APAR IT15490 - A configured process name rule has not been applied because it 
+was defined with lower case characters, while the operating 
+system interface delivered upper case process names. Since the name
+comparison then fails the configuration is not applied.
+
+The following fixes discovered during IBM's development and testing work were
+also released with V5.3.1.12:
+
+IN000100 - The CRTMQM command may fail with error 1017 if queue managers are 
+created in parallel.
+
+IN000101 - The installer has been enhanced to properly support SMF virtual disks
+if the system revision is on H06.26 and newer or J06.15 and newer.
+
+IN000102 - Removed access to uninitialized memory within mqconn which may result in
+RC 2059 MQRC_Q_MGR_NOT_AVAILABLE.
+
+
+Fixes introduced in previous fixpacks
+=====================================
+The following problems were resolved in FixPack V5.3.1.11:
+
+APAR IT03572 - In V5.3.1.10, the dspmqver -V command displays the string 
+"VPROC" rather than the VPROC string encoded in the product.
+V5.3.1.11 corrects this problem.
+
+APAR IT04083 - Error 30 received by Queue Server in a complex Queue Manager 
+configuration using MQGMO_SET_SIGNAL. This is a result of
+the limit on the number of outstanding messages sent by the 
+process not being set to the same value as the internal counter.
+This results in the Queue Server reporting "Guardian error 30 
+attempting to send signal notification" in the queue manager 
+error log.
+
+APAR IT04533 - Cluster sender channels fail to start following a CPU failure
+on a 2 CPU system when the Repository Manager and Channel Server
+are both in the same CPU. Following the CPU failure, the Queue
+Manager error log repeatedly reports message AMQ9422 
+"Repository manager error, RC=545284114" 
+
+APAR IT04876 - Some ssl channels with mismatched sslchiph cipherspecs run 
+successfully because protocol versions are not compared. 
+
+APAR IT05353 - Mitigation for SSLV3 POODLE Attack - CVE-2014-3566 
+
+APAR IT07330 - WebSphere MQ V5.3.X Process does not write FDC (First 
+Failure Symptom Report) records when the current FDC file is
+physically full. This can result in processes experiencing error
+conditions, but the error condition not being reported in the 
+FDC file. This fix changes the error handling to identify this
+scenario and switch to a new FDC file with an incremented 
+sequence number 
+
+APAR IV19854 - The master repository manager in a partial repository 
+unnecessarily subscribes to each cluster queue manager that
+it is aware of. This causes a significant increase in the number
+of subscriptions that are made, and in large clusters this can
+cause performance problems. 
+
+APAR IY87702 - SIGSEGV resulting from failed getpwnam. In some circumstances
+getpwnam can return a success value in errno, but a null
+pointer as the user record. This results in a SIGSEGV from 
+amqoamd. This change adds a check for this condition and handles
+it correctly. 
+
+APAR IY91357 - Altering a channel definition unintentionally resets the 
+SSLPEER() attribute for the channel. 
+When a channel with SSLPEER information is modified to include
+either MSGEXIT or MSGDATA attributes, the SSLPEER attribute 
+becomes blank. V5.3.1.11 resolves this problem. 
+
+The following fixes discovered during IBM's development and testing work were
+also released with V5.3.1.11:
+
+909 - In the GA release, the TFILE was opened with depth 100 in the
+Guardian NonStop process pairs. In configurations with large
+large numbers of connecting applications/threads, this could
+result in probe QS270000 errors from nspPrimary, with an Arith1
+value of 83 (0083 Attempt to begin more concurrent transactions 
+than can be handled). This change increases the TFILE open depth
+to 1000. The default value can be changed from 1000 to a value
+between 100 and 1000 using MQTFILEDEPTH environment variable.
+If a value < 100 or > 1000 is specified, a value of 100 will
+be used, and an FDC will be reported with the text
+"Invalid MQTFILEDEPTH specified - using default"
+
+1380 - In the cra library, several FFST code sites report an error 
+without reporting the name of the channel involved in the error
+condition. This change adds the channel name to the FFST report
+in cases where the channel name is available to the calling code
+
+1471 - In earlier releases of 5.3.1, if a garbage argument string is 
+supplied to dspmqfls, the command abends rather than reporting a
+usage message. V5.3.1.11 resolves this problem
+
+1597 - In earlier releases of 5.3.1, the dspmqfls output shows a 
+Queue/Status server value. Status servers were part of the V5.1
+architecture but are not present in 5.3.1. V5.3.1.11 changes the 
+message to reflect the fact that all objects are now managed by
+Queue Servers.
+
+2230 - In earlier releases of 5.3.1, the runmqsc command 
+"DISPLAY QSTATUS(*) TYPE(HANDLE) ALL" does not cleanly handle a
+scenario where there are more than 500 handles. Attempts to use
+the command when there are more than 500 handles to be returned
+results in FFSTs with probe NS013000 from nspReply, and probe
+QS264002 from qslHandleHandleStatus. See later section on
+"KNOWN LIMITATIONS, PROBLEMS AND WORKAROUNDS"
+
+4158 - Slow memory leak in MQDISC in non-native library. In prior
+releases, the non-native implementation of MQDISC contained a
+slow memory leak. This resulted in applications performing 
+repeated MQCONN/MQDISC operations during the process lifetime
+eventually receiving a MQRC_STORAGE_NOT_AVAILABLE error from
+MQCONN, and an FFST for probe ZS219001 from zstInsertPCD. The
+problem can also manifest as a probe XC130006 from 
+xehExceptionHandler inside an MQOPEN call.
+
+4395 - If memory allocation for internal working storage fails during
+an attempt to create a dynamic queue, the LQMA assoicated with
+the operation will ABEND, rather than returning a completion
+code of 2071 (MQRC_STORAGE_NOT_AVAILABLE). This change resolves
+the problem.
+
+4421 - If an attempt to start an OAM server detects an existing OAM
+server in the CPU, in prior releases, the FFST generated did not
+include the process name. This change amends the FFST to
+include the process name of the offending process, where that
+name can be determined. 
+
+4428 - The altmqfls command "resetmeasure" was incorrectly documented
+in the original version of the SysAdmin guide. See later section
+"DOCUMENTATION UPDATES"
+
+4496 - In earlier versions of this readme file, the instructions on 
+how to reassign Queue Server for 
+SYSTEM.CLUSTER.TRANSMISSION.QUEUE are incorrect. Refer to the
+"KNOWN LIMITATIONS, PROBLEMS AND WORKAROUNDS" section for the
+correct procedure.
+
+4523 - If an OAM server attempts to start in a CPU, and there is 
+already an OAM server registered, prior to V5.3.1.11, the OAM
+subsystem reported that there was a rogue process, but not
+the name of the process. This change enhances the error
+reporting to report the name of the rogue process. 
+
+4726 - Prior to this fixpack, the instmqm script did not check for
+saveabend files and FFSTs generated during the validation
+phase of the installation. V5.3.1.11 adds this check.
+
+4774 - The cobol binding library, MQMCB, was shipped without symbols in
+FixPack V5.3.1.10, which causes applications to fail. V5.3.1.11
+resolves this issue. 
+
+4800 - During instmqm, the script checks for the UNIX socket server.
+In prior releases, in the event that this check failed, the
+error message referred to the old UNIX socket server ($ZPMON).
+This has been changed to refer to the new UNIX socket subsystem
+$ZLSnn, "nn" is the CPU number.
+
+APAR IC85889 - UNEXPECTED IPC MESSAGES RECEIVED FOLLOWING PROCESS
+TERMINATION CAUSE EC TO ABEND REPEATEDLY
+If a process sends an unexpected message to the MQECSVR
+process pair, the primary process will abend resulting in a
+takeover by the backup process. The new primary process will
+then abend. The only resolution is to restart the queue manager. 
+
+APAR IC87007 - PRIMARY QUEUE SERVER ABEND FOLLOWING TRANSACTION ABORT
+In some circumstances, aborts of global units of work 
+involving MQGETs of messages greater than 52k will result in an 
+abend of the primary queue server responsible for the queue. 
+This renders the queue manager unresponsive 
+
+APAR IC87627 - WEBSPHERE MQ V5.3.1.8 FDC FILES DO NOT CONTAIN ENOUGH ERROR 
+INFORMATION
+
+APAR IC89128 - LISTENER FAILS TO START FOLLOWING UPGRADE TO 
+HP J06.14/H06.25 OR T9050J01-AWT/T9050H02-AWS
+In some configurations, the listener process will not run
+following an upgrade to J06.14/H06.25 or the installation of 
+T9050J01-AWT/T9050H02-AWS. The failure is dependent on the
+number of OSS processes running and their distribution between
+the CPUs on the system. This problem also affects endmqlsr.
+
+APAR IC89751 - CLUSSDR Channels do not restart without manual intervention
+after CPU crash.
+If a CLUSSDR or SDR channel is running in an MCA that is in the 
+same CPU as the Primary Channel Server, and that channel has 
+been running for at least 5 minutes, and that CPU crashes, the 
+channel will not automatically restart. 
+
+APAR IC92511 - TERMINATION OF SLAVE REPOSITORY MANAGER RESULTS IN CLUSTER 
+CHANNEL DELETION. In some cases this can result in a manually
+stopped cluster sender channel starting unexpectedly when they
+are dynamically recreated. 
+
+APAR IC92570 - MULTIPLE CLUSTER RECIEVER CHANNELS OR LONG RUNNING CLUSRCVR 
+CHANNELS CAUSE METADATA FDC'S
+
+APAR IC93289 - WEBSPHERE MQ R531 ON HP-NSS CLUSTER PUB SUB MESSAGES FAIL
+WITH AMQ9538 - COMMIT CONTROL ERROR 
+
+APAR IC94647 - Closing dynamic queues with MQCO_DELETE or MQCO_DELETE_PURGE
+with an outstanding MQGET with signal results in multiple FDCs 
+and an orphaned dynamic queue
+
+APAR IC96947 - Backup Queue Server generates "Open handle points to unused 
+entry in default page" FFST following LQMA termination 
+
+The following fixes discovered during IBM's development and testing work were
+also released with V5.3.1.10:
+
+4607 - Analyze lock logic in queue server takeover does not take account
+of temporary dynamic queues
+4679 - Exhaustion of message quickcell (MQC) space available to queue 
+server results in unstable queue manager
+4563 - RDF compatible message overflow file setting requires queue 
+manager restart 
+4560 - Slave repository managers issue channel manipulation commands 
+that should be performed only by the master
+4557 - Write NonStop specific trace information to product standard 
+trace files rather than platform-specific file
+4556 - Internal Queue manager query array size can cause problems 
+with clusters containing more than 10 queue managers
+
+
+The following problems were resolved in FixPack V5.3.1.9:
+
+APAR IC51322 - CODE CHANGES FOR OPTIMIZATION OF DEFAULT CONVERSION
+Delay in processing seen during the default conversion between
+client and server. The channel attempts normal conversion first,
+including attempting to load a conversion table before dropping
+through to the default conversion. Once default is required 
+for a specific set of code pages, this is now remembered 
+and the attempt to perform normal conversion skipped.
+
+APAR IY76799 - A FAILED CALL TO GETPEERNAME RESULTS IN A LEAKED SOCKET FILE
+WMQ amqrmppa (channel) process leaks a file descriptor in
+the rare circumstance that a call to the getpeername function
+fails. Such a failed call is reported in the WMQ error logs for
+the queue manager via an AMQ9213 message reporting that the
+getpeername call has failed. The failure of
+the getpeername call is the result of preoblems external to 
+WMQ. This problem could also cause the WMQ listener process
+(runmqlsr) to run out of file descriptors, if there is
+no queue manager running, and lots of connections come in,
+whilst these connections fail with getpeername problems.
+
+APAR IY95706 - SIGSEGV IMMEDIATELY FOLLOWING RETURN FROM ZFUDOESOBJECTEXIST
+An amqzlga0 process or amqrmppa process will raise an XC130004 
+FDC and the amqzlga0 process will end. The abrupt termination of
+the amqzlga0/amqrmppa process may cause channels or applications
+connected to the queue manager to fail
+
+APAR IZ06131 - RECOVER FROM SYSTEM.AUTH.DATA.QUEUE CORRUPTED BY USER ERROR
+Applications receive MQRC_NOT_AUTHORIZED (2035) error
+setmqaut returns MQRC_UNKNOWN_OBJECT_NAME (2085) and fails to
+set new authorities. Records are missing from the 
+SYSTEM.AUTH.DATA.QUEUE, determined by a mismatch between the 
+output from amqoamd -m -s, and the authorities that customers 
+believe they have set for users and objects. This fix allows 
+recovery from this situation using setmqaut without the need 
+to recreate the queue manager 
+
+APAR IC74903 - SSLPeer value slash (/) causes SSL handshake to fail
+Using slashes in the Distinguished Name name fields such as CN,
+O, OU, L, will fail SSLPEER value verification, and as such SSL
+Handshake, due to an MQ parsing error. MQ uses slashes (/) to
+delimit the distinguished name values when matching the SSLPEER
+value with the information contained in the certificate.
+
+APAR IC82919 - xcsAllocateMemBlock returning xecS_E_NO_MEM
+Queue manager (receiver channel side) with API exits generate
+FDCs containing probe ZF137003 and error log entries for AMQ9518
+in the form of - File '/mqs/WMQtest/var/mqm/@ipcc/AMQRFCDA.DAT'
+not found.
+
+APAR IC80942 - Authority commands produced by amqoamd command is not usable if
+authorization is "+None"
+
+Using the setmqaut command with commands generated by amqoamd
+results in a failure e.g
+"setmqaut -m qmgrname -n name -t queue -g group +None"
+returns:
+"AMQ7097: You gave an authorization specification that is not
+valid."
+
+APAR IC81429 - MQRC error 2003 received if an overflow file record is missing
+If a portion of a message that should be stored the queue 
+overflow file is missing, the generation of an FFST is 
+suppressed and a 2003 reason code is returned. All subsequent 
+non-specific MQGETs from the queue fail, since the partial 
+message cannot be retrieved. 
+
+APAR IC81420 - Queue Server abend during simultaneous GET and BROWSE
+When a message larger than 56k is being browsed (MQGET with
+one of the MQGMO_BROWSE_* options) from a client application 
+using message groups, and another process is simultaneously 
+performing a destructive MQGET on the same message. The primary
+queue server terminates, and more or more of the following
+probes are generated :QS003002, AO211001, AO200002, ZI074001,
+NS026006
+
+APAR IC81367 - FixPack 5318 MQMCB Guardian library is not usable
+The COBOL wrapper libraries were changed from type LINKFILE to
+DLL in the v5.3.1.8 Fixpack, and the packaging unintentionally
+stripped the symbols from the Guardian variant of the library
+ZWMQBIN.MQMCB. During the link phase of a cobal program build
+the following fatal error is encountered:
+"Cannot use file specified in CONSULT or SEARCH directive"
+Problem affects building in Guardian only.
+
+APAR IC83299 - CPU Failure during mqget of persistent messages in global
+unit of work results in incorrectly deleted records in queue and
+overflow files
+
+If a CPU fails where multiple applications are performing FIFO
+MQGETs from the same queue, and the following conditions are 
+true:
+* The primary queue server is running in the failing CPU
+* Some (but not all) of the applications are running in the
+failing CPU
+* None of the LQMAs are running in the failing CPU
+* The applications are using global units of work
+* Applications in the failing CPU have completed MQGET operations
+but not committed the transactions
+There is a failure window where an application not in the
+failing CPU will remove an additional message record from the 
+queue file.
+
+APAR IC83197 - Queue Server open handle management cannot handle backup
+restart cases where handles from non-contiguous pages are 
+synced by the primary
+
+Queue servers with more than 3000 queue opens do not 
+correctly handle a NonStop takeover. The queue manager becomes 
+unresponsive and requires a restart to resolve the error 
+situation. When the queue server hangs, the backup queue server
+produces a large number of FFST entries with the following 
+probe ids:
+QS165004 from qslSetHandle
+QS192007 from qslAddOpener
+QS190005 from qslHandleOpen
+
+APAR IC83569 - Persistent Reference messages sent over a channel cause Commit 
+Control Error
+
+When a persistent reference message is put to a queue, FFST's
+with probe CS075003 are generated with the following error 
+information
+Major Errorcode :- rrcE_COMMIT_CONTROL_ERROR
+Minor Errorcode :- OK
+Comment1 :- Error 2232 returned from lpiSPIHPNSSTxInfo
+In addition, Sender channels will go into a retry state and
+queue manager error logs will contain 'Commit Control' errors
+
+APAR IC83699 - Cluster cache maintenance asynchronous time values result in
+cache content divergence
+
+Repository queue managers report FFST with probe RM527002
+from rrmHPNSSGetMetaPacket and Comment1 field 
+"Meta data mis-match Expected: metalen=4". The problem 
+resolved by this APAR is one of several possible causes of
+these symptoms.
+
+APAR IC83328 - Permanent dynamic queues are not deleted in some cases when
+MQCO_DELETE is used on MQCLOSE.
+Permanent dynamic queues are not deleted as expected after 
+termination of the last application that has the queue open.
+
+APAR IC83228 - Repository manager/Channel server deadlock
+Listener process hangs on queue manager startup for 5 
+minutes then generates an FFST with probe RM264002 
+from rfxConnectCache
+Comment1 :- Gave up waiting for cache to be initialized
+Comment2 :- Tried 300 times at 1 second intervals. 
+This problem also occurs sometimes when attempting
+to use runmqsc while the queue manager is starting
+
+APAR IY90524 - segv in xcsloadfunction for channel exit
+WebSphere MQ channel process (amqrmppa) terminates with FFST
+showing probe id XC130003 due to a SIGSEGV SIGNAL with
+a function stack as follows:
+MQM Function Stack
+ccxResponder
+rrxResponder
+rriAcceptSess
+rriInitExits
+xcsLoadFunction
+
+APAR IC81311 - MQGET implementation masks reason codes in some cases
+Attempting to perform an MQGET after a Local Queue Manager
+Agent (LQMA) process fails or has been forcibly terminated
+results in a MQRC_UNEXPECTED_ERROR (2195). This is incorrect.
+The result should be MQRC_CONNECTON_BROKEN (2009)
+
+The following fixes discovered during IBM's development and testing work were
+also released with V5.3.1.9:
+
+4363 - MQA process opener field is sometimes corrupted in MQGET with 
+set signal operations
+4388 - Guardian sample uses the wrong link directive
+4339 - Shared hconn rendered unsuable by changes in 5317
+4123 - FASTPATH bound connect processing does not correctly set reason
+codes in some cases
+4039 - Backup queue server abend during commit after MQGET
+3826 - altmqfls --qsize does not report failure correctly
+4116 - enhance SDCP to find installed version of OSSLS2 (T8620)
+
+The following problems were resolved in FixPack V5.3.1.8:
+
+APAR IC54121 - Cluster channel in a retrying state will no longer start 
+automatically if the following commands are issued 
+STOP CHANNEL() MODE(QUIESCE) STATUS(INACTIVE).
+The channel will fail to start once communication
+to the remote system is restored. A manual start and
+stop of the channel is required to restore normal
+channel operation
+
+APAR IC54459 - Channel stays in binding state for a long time when it contains
+an invalid conname value. During this period, all requests to 
+the channel are ignored.
+
+APAR IC60204 - Comamnd server experiences a memory leak when namelist
+inquireies are performed with names values.
+The leak is observed when a PCF MQCMD_INQUIRE_NAMELIST or
+MQCMD_INQUIRE_NAMELIST_NAMES is requested that has one or 
+more names attributes.
+
+APAR IC70168 - High CPU usage from backup Queue Server performing browse
+operations on queues with high queue depth.
+When a queue has a very high queue depth (CURDEPTH) a browse
+can cause the cpu usage of the backup Queue Server to increase
+to 100%. Backup queue server CPU usage becomes significant at
+a queue depth of 15000, with CPU use reaching 100% at a queue
+depth of approx. 38000 messages.
+
+APAR IC70947 - qmproc.ini file validation does not detect incorrect CPU syntax.
+CPU lists in the qmproc.ini file that do not use comma
+characters to separate CPU numbers in the list are ignored, but
+they are not reported as an error. This can lead to unexpected
+CPU assignements for WMQ processes.
+
+APAR IC71839 - RESET QUEUE STATISTICS PCF returns incorrect values.
+When using WebSphere MQ v5.3 for HP NonStop Server PCF command
+Reset Queue Statistics, intermittently some of the values
+associated with a queue will not be returned correctly.
+* HighQDepth - The maximum number of messages on the queue
+since the statistics were last reset.
+(parameter identifier: MQIA_HIGH_Q_DEPTH).
+* MsgEnqCount - The number of messages enqueued (the number of
+MQPUT calls to the queue), since the
+statistics were last reset.
+(parameter identifier: MQIA_MSG_ENQ_COUNT).
+* MsgDeqCount - The number of messages dequeued (the number of
+MQGET calls to the queue), since the
+statistics were last reset.
+(parameter identifier: MQIA_MSG_DEQ_COUNT).
+
+Incorrect values may also be returned incorrectly for the
+command Inquire Queue Status
+* LastGetTime - Time at which the last message was
+destructively read from the queue
+(parameter identifier: MQCACF_LAST_GET_TIME).
+* LastPutTime - Time at which the last message was
+successfully put to the queue
+(parameter identifier: MQCACF_LAST_PUT_TIME).
+
+APAR IC71912 - MQMC Channel menu display shows incorrect channel status.
+In some instances, the MQMC Channel Menu display will not
+show a change in channel status, and attempts to refresh the
+screen or recycle the MQS-MQMSVR Pathway server do not correct
+the problem. RUNMQSC continues to show the correct status. 
+The MQMC channel monitor panel does show the running channels
+correctly.
+
+APAR IC73800 - A queue manager with the MaxUnthreadeAgents parameter defined
+in the QMPROC.INI file with a value greater than 812
+reports unexpected process termination FDCs and or ERROR 22
+FDCs.
+
+APAR IC74994 - Queue manager reports message sequence number error and
+produces FDCs with probe CS094005, major error code
+rrcE_CREATE_SYNC_FAILED following a queue manager
+restart. 
+
+APAR IC75298 - In some complex cluster configuations with large numbers of
+cluster members, large numbers of objects, or frequent changes
+to cluster objects, the repository managers in a queue
+manager are unable to distribute a complete set of object 
+metadata information, resulting in repeated FDCs from 
+rrmHPNSSGetMetaPacket, with probe RM527001, and cluster objects
+not being visible in some CPUs in the queue manager reporting the
+problems.
+
+The fix for the problem adds a new configurable parameter to
+allow the repository metadata buffers to be increased to handle
+larger configurations, and changes the reporting of the metadata
+errors to include information on the amount of storage requested
+by the repository managers. The default size of the buffer is 
+512K, this is sufficient for most configurations. If the buffer 
+size is insufficient, the queue manager reports FDCs from 
+rrmHPNSSPutMetaPacket that indicate the present size of the
+buffer and the size demanded.
+
+The buffer size is configured using an environment variable, 
+AMQ_CLUSTER_METABUFFER_KILOBYTES. To change the value, the 
+environment variable should be specified in the 
+"RepositoryManager" stanza of the qmproc.ini file of the queue
+manager using the following syntax:
+
+Env0n=AMQ_CLUSTER_METABUFFER_KILOBYTES=x
+
+Where "n" is the number of the environment variable, and "x" is
+the required new size of the buffer in kilobytes. In a default
+configuration, environment variables are not present in the 
+RepositoryManager stanza, hence "n" will be 1. If the 
+configuration has existing environment variables specified in
+this stanza, the value of "n" selected should be the next 
+available value. 
+
+APAR IC75356 - Partial repository queue managers in complex configurations
+where applications connected to the partial repository queue
+manager attempt to open large numbers of nonexistant objects
+can suffer from a build up of subscription objects on the 
+SYSTEM.CLUSTER.REPOSITORY.QUEUE such that the TMF lock limits
+for the volume containing the queue file are breached when the
+queue is reconciled. This produces 2024 errors during operations
+on the SYSTEM.CLUSTER.REPOSITORY.QUEUE The following error 
+message appears in the QMgr error logs.
+EXPLANATION: The attempt to get messages from queue
+'SYSTEM.CLUSTER.REPOSITORY.QUEUE' on queue manager 'xxx' failed 
+
+APAR IY57123 - Attempts to put to a clustered queue via a queue manager
+alias when the queue has been opened using BIND_AS_QDEF
+fail. Following this fix, queue name resolution functions
+as described in the Application Programming Guide.
+
+APAR IY78473 - Cluster workload management is not invoked if a queue is
+resolved using clustered queue manager aliases where there
+are multiple instances of the alias in the cluster.
+
+APAR IY86606 - Cluster subscriptions are created for non-clustered queues
+when MQOPEN is called with non-clustered ReplyToQ or 
+ReplyToQMgr. This can result in a build up of subscriptions
+in partial repositories in the cluster. The error was 
+introduced by IY8473.
+
+APAR IZ14977 - Queue manager cluster membership missing when namelists are
+used to add and remove queue managers from clusters. This can
+result in the queue manager not acting as a repository for
+one or more clusters, or other queue managers in the cluster
+not recognizing that a given queue manager is a repository
+for the cluster.
+
+APAR IZ20546 - The repository manager process (amqrrmfa) consumes high CPU
+resources on an hourly basis for several minutes, and
+applications are unable to issue messaging MQ API calls
+during this period. The problem is observed only in 
+configurations where clustered queue manager aliases are
+used and they resolve to more than 50 destinations.
+
+The following fixes discovered during IBM's development and testing work were
+also released with V5.3.1.8:
+
+1228 - COBOL Binding library mqmcb does not contain VPROC information
+1378 - FDC's cut as a result of errors from PATHWAY SPI operations do
+not report the associated Guardian error code 
+1566 - WMQ service installation tool svcmqm does not correctly detect
+and report that files it is attempting to modify are in use,
+as is the case where WMQ applications are still runnning. 
+1606 - Certain FDCs containing comment text have the comment text
+truncated 
+1710 - In some cases on heavily loaded systems, the EC re-allocates
+an MCA that has already been told to terminate. This results in
+FDC's cut with probe EC134000, from eclDeallocMCA.
+2534 - WMQ service installation tool svcmqm does not log some aspects
+of its progress, making diagnosing some installation problems
+difficult
+2856 - WMQ service installation tool should not attempt SECURE
+operations in installations where SAFEGUARD is enabled
+2943 - crtmqm does not correctly handle validation of the command line
+if a specified CPU number is invalid
+3037 - If the var/mqm/errors directory contains non-mqm user files 
+the WMQ service data collection tool, sdcp, does not capture the 
+MQM group FDC and ZZSA files.
+3128 - WMQ Service data collection tool, sdcp, does not capture VPROC 
+of the AF_UNIX R2 socket process
+
+
+The following changes were released in FixPack V5.3.1.7:
+
+APAR IC65774 - Under given conditions, the response time measured for MQGET
+operations when using SSL activated channels with multi-threaded
+MCA agents are found to be longer than that measured when using 
+SSL activated channels with unthreaded MCA agents. This problem 
+is seen with both distributed and cluster queue managers. 
+Moreover, this problem does not occur prior to WMQ V5.3.1.5 
+release. A DELAY was introduced as part of an APAR(IC57744) fix
+in WMQ V5.3.1.5 release for mutli-threaded SSL channels which
+caused this difference in measured response time. The problem is
+now rectified in this release. 
+
+APAR IC67032 - Improvement to LQMA FDC during MQCONN processing. At times, when
+application dies during MQCONN processing, LQMA's generate FDCs
+for this rather unusual event to let the user take any 
+corrective action and/or find the root cause. The problem can 
+occur with a standard bound application in a very narrow timing
+window when the application connects with the LQMA agent but 
+dies before the LQMA gets a chance to read the incoming message
+from the application. When LQMA detects this situation, it 
+cleans up and generates an FDC. But unfortunately, the FDC does
+not contain the application information. To let the user 
+identify the mis-behaving application and to possibly take
+corrective action, LQMA FDC will be updated to include 
+application information. The updated FDC will contain the
+following information :
+
+Comment1 :- Application died during MQCONN Processing.
+Comment2 :- Application: <Application PID> 
+
+APAR IC67057 - Unused LQMA agents(processes or threads) are found during MQCONN 
+processing. During MQCONN processing if a standard bound 
+application fails to connect successfully to an allocated LQMA
+process or thread (depending on your configuration), then that
+LQMA process or thread remains in a hanging state for ever and
+do not get re-used by Execution Controller for any further 
+MQCONN processing. If an LQMA agent process ever goes into this 
+"limbo" state, ecasvc utility shows 
+"Allocated, Pending Registration" flag if it is unthreaded LQMA 
+or a positive number against "Conns Pending" flag if it is a 
+multi threaded LQMA. If this problem occurrs multiple times, 
+then depending on the user configuration, it might lead to LQMA 
+resource problems where Execution Controller will run out of 
+available LQMA agents to serve application MQCONN requests.
+
+APAR IC65966 - runmqsc <queue manager name> causes FDC on a CPU due to missing
+OSS shared memory files (shm.x.x) for that CPU. Due to a yet
+unknown reason, the queue manager shared memory files for a
+particular CPU on the system are deleted even when the queue
+manager is in running state. This prevents any new MQ connection
+requests from succeeding for the same queue manager on the
+affected CPU. This patch contains changes that will better
+protect WMQ shared memory files and will prevent accidental
+deletion of files by WMQ programs. The changes in this patch
+will also report any such incidence by producing FDC files. The
+FDC file produced by this detection mechanism will contain the
+following information :
+Comment1 :- xcsIC_QUEUE_MANAGER_POOL being destroyed.
+
+APAR IC67569 - When WMQ Queue Server detects an error due to invalid context
+data during the completion of a TMF transaction started by the
+Queue Server for a PUT or GET no-syncpoint persistent message
+operation, it marks the message on the queue object as 
+accessible. This causes the Queue Server to FDC with 
+"Record not found" on any subsequent MQGET operation to retrieve
+the same message. The particular message on the queue that has 
+this problem remains in this limbo state forever and can not be
+retrieved. However other messages on the same queue that do not
+have this problem can be retrieved without any problem using 
+their msgids. The Queue Server has been revised to correct this
+behavior such that detection of inconsistent context data during
+MQPUT/MQGET is logged in the form of an FDC but is otherwise 
+committed as a normal operation. This will resolve the problem
+of MQGET failing on the retrieval of the message.
+
+APAR IC68569 - Channel server FDCs during starting/stopping of channels. The 
+problem occurrs due to a defect in the product where the channel
+server erroneously closes its open to Queue Server but assumes 
+that its open to Queue Server is valid. The open handle 
+to Queue Server after it is closed, gets reused by another open
+and hence any subsequent communication by Channel Server to 
+Queue Server always fails. Typically, this problem is seen when
+the Channel Server experiences transient socket errors with the 
+channel agent (MCA) and it wants to close the socket connection.
+After closing the socket connection, Channel server sends a 
+message to Execute Controller process to de-allocate the MCA
+with which it had socket error with. It is during this 
+communication between the Channel Server and the Execution
+Controller when the Channel Server erroneously closes the open
+to the Queue Server.
+
+APAR IC69572 - Channel server abends due to illegal address reference during
+adopt MCA processing. This problem happens if the Queue Manager
+has enabled adopt MCA processing to a remote WMQ Queue Manager
+that does not send a remote queue manager name during channel
+initialization/negotiation. The remote Queue Manager field
+remains NULL and during the Adopt MCA processing logic,
+the channel server incorrectly references the NULL pointer and
+abends. 
+
+APAR IC69932 - SNA WMQ listener fails to start the channel when HP SPR 
+T9055H07^AGN is present on the NonStop system. HP, in its SPR
+SPR T9055H07^AGN, changed the behavior of sendmsg() API if '-1'
+is used as a file descriptor to the API. This caused 
+incompatibility with WMQ SNA listener process. WMQ code has now 
+been revised to work with the updated sendmsg() behavior. 
+
+APAR IC69996 - WMQ Queue Server generates FDC with reply error 74. When an
+application with a waiting syncpoint MQGET suddenly dies 
+before getting a reply, the Queue Server can cause FDC 
+sometimes. This happens in a narrow timing window when a message
+becomes available on the queue and the Queue Server starts 
+processing the waiting MQGET request. If the application dies
+after Queue Server starts processing the waiting MQGET request, 
+then Queue Server detects the inherited TMF transaction error 
+and replies back with error 2072 (MQRC_SYNCPOINT_NOT_AVAILABLE).
+However in this case, Queue Server erroneously does not delete
+its internal waiter record for MQGET. When the timer pops for
+the waiter record, Queue Server attempts to reply back with
+no message available but the call to Guardian REPLYX procedure
+fails with error 74 as the reply to the same request has already
+been made(with error MQRC_SYNCPOINT_NOT_AVAILABLE). This causes
+the Queue Server to FDC.
+
+The following fixes discovered during IBM's development and testing work were
+also released with V5.3.1.7:
+
+363 - WMQ Queue Server under certain conditions fails to handle non-persistent
+and persistent segmented messages at the same time.
+1317 - Support for parallel execution of multiple endmqm programs on the same
+Queue Manager. 
+1404 - MQGET WAIT is not being rejected with error 2069 when there is an 
+existing MQGET set signal on the same queue handle. 
+1434 - svcmqm utility fails when install files are open but does not tell the 
+user which files are open. 
+1566 - svcmqm does not exit immediately when 'cp' command fails to copy 
+binaries during fixpack installation.
+1679 - WMQ Queue Server generates FDC while failing to open the message 
+overflow file during retrieval of very large messages (equal to or 
+larger than 'Message Overflow Threshold' displayed with dspmqfls 
+utility).
+1709 - instmqm changes related to the use of /opt directory for the creation of
+backup archive file.
+1789 - Port of distributed APAR IY66826. Cluster sender channel does not start
+and Queue Manager cache status remain in STARTING state.
+1780 - Port of distributed APAR IY85542. RESET CLUSTER command does not remove 
+deleted repository entry.
+1993 - Enhancement to WMQ mqrc program to print messages related to errors 
+being returned on NonStop platform.
+2018 - WMQ lqma agent process leaks catalog file open.
+2181 - svcmqm does not output the fixpack that is being installed.
+2282 - instmqm -b archives everything under /opt directory.
+2290 - Enhancement to Execution Controller process to aid development dubugging
+and troubleshooting.
+2534 - svcmqm has no log of its progress.
+2580 - Potential SEGV in internal function call during Pathway serverclass 
+starting.
+2632 - Incorrect message output in FDC generated by WMQ Queue Server during 
+nsrReply function call.
+2633 - WMQ Command Server memory leak found in CLEAR QL command.
+2842 - WMQ Repman process priority was not set correctly when the 
+qmproc.ini 'AllProcesses' stanza Priority attribute is configured. 
+
+The following serviceability fixes were made to the SDCP tool:
+
+1971 - sdcp data was not collected correctly when there is a default 
+Queue Manager defined.
+2211 - sdcp testing of the permission of /tmp directory.
+2289 - sdcp logging of progress to a file to aid in sdcp problem diagnosis.
+2298 - sdcp performance improvement.
+2531 - sdcp logging of scheduled CPU information.
+2582 - sdcp capture of Pathway data for PATHMON, PATHWAY, TCP, PROGRAM
+and TERM attributes.
+
+The following APAR fixes were released in V5.3.1.6:
+
+APAR IC60204 - A Memory leak occurs with repeated DISPLAY NAMELIST command. The
+leak is observed only when the NAMELIST(s) has one or more NAMES
+values defined. The problem is observed from within the runmqsc
+DISPLAY NAMELIST command, or from the PCF/MQIA equivalent. Tools
+that request NAMELIST data via the command server with PCF/MQIA
+requests such as WMQ Explorer will cause the WMQ command server
+memory to grow.
+
+APAR IC61324 - An orphan MCA problem occurs when a connection request from WMQ
+LISTENER or CHANNEL SERVER process to an MCA process fails. WMQ
+Execution Controller (EC) process fails to recognize the
+situation and does not re-use the MCA process for future agent
+allocation requests. Over a period of time, this problem can
+cause the queue manager to run out of MCA resources which may
+lead to a situation where no new channel can be started. The
+problem is observed during heavy load conditions where the WMQ
+Execution Controller(EC) process hands over a selected MCA
+process to LISTENER/CHANNEL SERVER before the MCA process
+becomes ready to accept connection requests.
+
+APAR IC61551 - The use of cluster administrative command
+RESET CLUSTER ACTION(FORCEREMOVE), to forcibly remove a Queue
+Manager out of the cluster can cause FDCs. The problem can cause
+multiple FDCs and sometimes abend in WMQ REPMAN process in a
+slave role. Once the command has been issued and the error has
+occurred, the concerned Queue Manager must be restarted to
+restore the clustering function to normal operation. The problem
+occurs because WMQ REPMAN process in a master role does not
+distribute the RESET CLUSTER ACTION(FORCEREMOVE) command to the
+slave REPMAN processes correctly.
+
+APAR IC61651 - When a NAMELIST object with one or more NAMES values is defined
+for a Queue Manager and a dspmqfls command is issued to retrieve
+the details of either all objects under the Queue Manager or
+the specific NAMELIST object, FDCs are seen from the WMQ LQMA
+process. The problem exists for both unthreaded and
+multi-threaded LQMA process. The problem occurs because WMQ LQMA
+process does not allocate sufficient memory for NAMES buffer
+during dspmqfls processing.
+
+APAR IC61660 - A PCF RESET QUEUE STATISTICS command causes the WMQ QUEUE SERVER
+process to FDC. The problem occurs during a timing window when
+there is an outstanding unit of work on the queue and a
+RESET QUEUE STATISTICS command is processed and then the
+outstanding unit of work is backed out. RESET QUEUE STATISTICS
+causes certain internal counters inside WMQ QUEUE SERVER to be
+reset to zero without taking into account the outstanding unit
+of work. If the outstanding work is later backed out for any
+reason, the already reset counters become negative which causes
+an internal consistency check to fail within the QUEUE SERVER
+process and the FDC is generated.
+
+APAR IC61681 - WMQ QUEUE SERVER causes FDC during MQCLOSE processing on a
+cluster alias queue. The problem occurs during MQCLOSE
+processing of a cluster QALIAS object hosted by a different
+QUEUE SERVER than that hosts the target local queue. MQOPEN
+incorrectly failed to allocate an internal handle for the QALIAS
+object if it was a cluster alias queue. This lead to the FDC
+during MQCLOSE processing.
+
+APAR IC61846 - When a START CHANNEL command is issued after WMQ trace is
+enabled, the SSL channel logs a Queue Manager error message and
+fails to start.
+The problem exists only for a SSL channel, no such problem
+is found for regular (non-SSL) channel. The problem occurs
+because of an incorrect implementation of NULL terminated string
+to store SSL Cipher data.
+
+APAR IC61920 - WMQ on NonStop reports an extra EMS message when the generation
+of an FFST is reported.
+The intention behind the second EMS message was to report the
+case when the open of the generated FFST file fails but the
+check to see the status of the opened FFST files was missing
+in the code.
+
+APAR IC62341 - A Security error from the WMQ OAM server is not propagated
+correctly. It was reported as MQRC_UNKNOWN_OBJECT_NAME instead
+of MQRC_NOT_AUTHORIZED. When running the Java IVP (MQIVP) to NSK
+with a non-mqm user specified as the MCAUSER in the SVRCONN
+channel, and if the non-mqm group isn't given authorization,
+MQIVP fails to connect to the Queue Manager
+with an authorization failure (MQRC_NOT_AUTHORIZED) but it is
+reported incorrectly as a MQRC_UNKNOWN_OBJECT_NAME error.
+
+APAR IC62389 - A REFRESH CLUSTER command within a cluster with more than two
+repositories causes the Repository Manager to fail. The problem
+is not common in normal cluster operation but is likely if
+extensive administrative changes are being made to the cluster
+that includes a REFRESH CLUSTER command. Incorrect distribution
+of channel status information across multiple copies of the
+REPOSITORY MANAGER cache in different CPUs of the system lead to
+the FDC.
+
+APAR IC62391 - Sometimes cluster queues are not visible on CPUs hosting WMQ
+REPOSITORY MANAGER process in a slave role. This is a cluster
+queue visibility problem across the CPUs. Any attempt to open
+the cluster queue on CPUs that have the visibility problem
+results in error MQRC_UNKNOWN_OBJECT_NAME or
+MQRC_CLUSTER_RESOLUTION_ERROR.
+The problem does not occur on the CPU that hosts WMQ REPOSITORY
+MANAGER process in a master role.
+
+APAR IC62449 - The WMQ QUEUE SERVER does not log storage related problems to
+the Queue Manager log. Some of NSK storage related errors like
+error 43 and error 45 are useful errors for which corrective
+action can be taken to restore normal operation.
+The WMQ QUEUE SERVER now logs these errors to Queue Manager log.
+
+APAR IC62480 - Port of IZ51686. Incorrect cache object linkage causes
+unexpected failures (AMQ9456) based on coincidental event
+sequences.
+
+APAR IC62511 - Port of the following clustering-related APARs from other
+platforms and versions:
+IZ14399 - Queue managers successfully rejoin a cluster when
+APAR IY99051 is applied but have mismatching sequence
+numbers for the cluster queue manager object and its
+associated clusters.
+IZ21977 - MQRC_OBJECT_CHANGED(2041),
+AMQ9511 SYSTEM.CLUSTER.TRANSMIT.QUEUE,AMQ9448,
+Repository manager ends.
+IZ37511 - Generation of an FDC by the Repository Manager causes
+it to terminate.
+IZ14977 - Missing cluster information when Namelists are used
+to add and remove queue managers from multiple
+clusters at once.
+IZ36482 - Changes to CLUSRCVR shared using a Namelist not
+published to all clusters.
+IZ10757 - Repository Manager process terminates with error
+RRCI_CLUS_NO_CLUSRCVR_DEFINED.
+IZ41187 - MQRC_CLUSTER_PUT_INHIBITED was returned when an out-
+dated object definition from the cluster repository
+was referenced.
+IZ34125 - MQ fails to construct and send an availability message
+when REFRESH CLUSTER REPOS (YES) is issued on a queue
+manager with more than 1 CLUSRCVR.
+96181 - Object changed problems with the Repository manager.
+IY97159 - Repository Manager process tries to access the cache
+while restoring the cache, resulting in a hang.
+IZ44552 - AMQ9430 message after REFRESH CLUSTER.
+135969 - Refresh bit not set when demoting QM to partial repository.
+
+APAR IC62850 - The md.Priority of a message was not being set to the queue
+DEFPRTY when a no syncpoint MQPUT is performed using
+MQPRI_PRIORITY_AS_Q_DEF while there is a waiting MQGET.
+A syncpoint MQPUT with a waiting MQGET does not have this
+problem.
+
+APAR IC63081 - A WMQ application abends in the MQI library when attempting to
+enqueue messages to a Distribution LIST with one queue entry.
+Also in certain circumstances, WMQ applications may receive
+incorrect status and reason code while using Distribution LISTS.
+
+APAR IC63105 - A Memory leak occurs in the WMQ COMMAND SERVER with repeated
+DISPLAY QSTATUS command. The leak is observed only when
+TYPE HANDLE is used with the above command. The problem also
+occurs from within runmqsc DISPLAY QSTATUS command, or from the
+PCF/MQIA equivalent. Tools that request queue status data via
+WMQ COMMAND SERVER with PCF/MQIA requests such as WMQ Explorer
+will cause the WMQ COMMAND SERVER memory to grow.
+
+APAR IC63271 - When an MQ application delays in replying to the HP system OPEN
+message from the WMQ QUEUE SERVER and an MQ message arrives on
+queue during this period, the MQ message did not get delivered
+even after the reply to the HP system OPEN message is made.
+
+APAR IC63757 - In a standard bound application, a memory leak occurs in WMQ
+LQMA process during MQCONN/MQDISC processing. The problem occurs
+with both unthreaded and multi-threaded LQMA process. If the
+LQMA agents are configured to have high use count
+(MaxAgentUse for unthreaded LQMA and MaxThreadedAgentUse for
+multi-threaded LQMA) and WMQ Execution Controller process
+re-uses the same LQMA process to satisfy a application MQCONN
+request, then the heap memory of LQMA process grows even if
+application calls MQDISC to disconnect from the
+Queue Manager.
+
+APAR IC64297 - WMQ Queue Manager becomes non-responsive because the
+WMQ QUEUE SERVER does not clean up the internal queue manager
+object opens. The QUEUE SERVER internal links for
+MQOPEN of the Queue Manager object were not
+being released during the MQCLOSE processing. This causes a
+buildup of QUEUE SERVER memory as the application repeated
+MQOPEN of the queue manager object repeatedly. When either
+a MQDISC occurred or the application process ended,
+the QUEUE SERVER cleans up its internal lists for the process.
+This resulted in a perceived QUEUE SERVER loop and
+non-responsive WMQ as there were
+over 246,000 opens found of the Queue Manager object with a
+high mark of 548,000 within the QUEUE SERVER when a dump of the
+Queue Server was analyzed.
+MQOPEN of other MQ objects (qlocal, qalias, qremote etc.) do not
+have this issue.
+
+APAR IC64373 - The COBOL copybook now includes missing definitions for MQGET
+SET SIGNAL processing.
+
+APAR IC64435 - An incorrect persistence attribute was being set for a
+non-persistent message on XMIT queue. When MQPUT of a
+non-persistent message is done using MQPER_PERSISTENCE_AS_Q_DEF
+attribute to a remote queue while the channel is idle, the MD
+MD data in transmit queue header contained
+MQPER_PERSISTENCE_AS_Q_DEF value of (2).
+
+APAR IC64630 - It takes longer for unthreaded SSL sender channel to end when
+communication to the remote Queue Manager is lost. The problem
+occurs because the unthreaded MCA process running the SSL channel
+fails to timeout correctly causing the channel to end differently
+than non-SSL channels. The problem is observed only with SSL
+channels and no such problem is visible with regular SSL 
+channels. 
+
+The following fixes discovered during IBM's development and testing work are
+also released with V5.3.1.6:
+
+1096 - An MQGET BROWSE operation can return prematurely with no message
+available as well as can cause a waited GET to hang indefinitely.
+1513 - amqrrmit erroneously reports multiple master REPMAN processes.
+1587 - Enhancements to Execution Controller log messages pertaining to
+Threshold and MaxAgent capacity situations. For unthreaded agents,
+the "max unthreaded agents reached" message will now be logged when the
+MaxUnthreadedAgent is allocated to perform work. In previous releases,
+the message was logged when the MaxUnthreadedAgent was added to the idle
+pool, which actually left one agent still available for use.
+For threaded agents, messages have been enhanced to display separate
+Threshold/Maximum messages for agents and threads. In previous releases,
+"further connections refused" was displayed when the MaxThreadedAgent
+was started, which actually left MaximumThreads connections still
+available for use. In this release "further connections refused" will be
+displayed when the MaximumThread is allocated for use.
+Also in this release, messages will be logged when the number of agents
+or threads, after having exceeded the threshold or reached maximum,
+fall below the Maximum or threshold limit.
+1669 - ZCG_FFST does not report the error code for a TMF error.
+1675 - The Execution Controller now provides an API to mark MCAs that are no
+longer used.
+1670 - Correction to missing component data in a FDC generated by the
+Queue Manager server(MQS-QMGRSVR00) process(amqqmsvr).
+1678 - Queue server abends due to uninitialized FFST inserts.
+1706 - dmpmqaut -m <qmgr> sometimes only reports the first QALIAS object and
+FDCs in kpiEnumerateObjectAuthority.
+1710 - The Execution Controller sometimes allocates an MCA that it has
+previously asked to end
+1712 - Cluster queue manager STATUS and queue visibility problems in slave
+REPMAN.
+1734 - Fixes/Updates to MQ tracing mechanism.
+1735 - Subscription id distribution.
+1751 - Fixes/Updates to MQ tracing mechanism.
+1807 - Changes to improve service and debug capability of Execution Controller
+started processes.
+1873 - "*" subscriptions are generated incorrectly causing them to be ignored.
+1989 - Fix for channel server hanging problem while opening REPMAN process.
+2003 - LQMA now FDCs when a invalid message is received.
+
+The following serviceability fixes were made to the SDCP tool:
+
+1659 - sdcp is not capturing the PSTATE of backup processes.
+1676 - sdcp takes too long.
+1690 - sdcp MQ utilities are not using the correct Queue Manager name if
+the name is mangled because of non-alphabetic characters.
+1702 - sdcp doesn't collect all relevant Saveabend files.
+1705 - sdcp workaround to avoid APAR IC61651.
+1971 - sdcp now gives correct output for default Queue Manager.
+
+The following APAR fixes were released in V5.3.1.5:
+
+APAR IC55607 - FDC files can fail to be written, or written to the wrong file
+FDCs can be suppressed or overwritten when application processes
+raise FDCs under User IDs that are not members of the MQM group.
+In addition, because FDC files are named with the CPU and PIN of
+the generating process, and PIN is reused frequently on
+HP NonStop Server, FDCs from different processes can be appended
+to the same file.
+
+The format of the file name for FDCs is:
+AMQcccpppp.s.FDC
+
+where ccc is the CPU number
+pppp is the PIN
+s is the sequence number
+
+In V5.3.1.4 and earlier releases, the sequence number was
+always set to 0. This fix introduces the use of the sequence
+number field to ensure that FDCs from different processes are
+always written to different files, and that FDCs can always be
+written. FDC files are created with file
+permissions "rw-r----" to prevent unauthorized access to the
+FDC data.
+
+APAR IC57435 - Attempts to end a queue manager with either -t or -p following
+a cpu failure in some cases did not work as a result of
+damage to the WMQ OSS shared memory files. The shared memory
+management code was revised to tolerate OSS shmem/shm files
+containing invalid data. Invalid data in these files is now
+ignored and memory segment creation will continue normally.
+
+APAR IC58165 - Triggered channels sometimes do not trigger when they should
+Some attributes of a local queue that determine if trigger
+messages get generated are not kept up to date for long-running
+applications. The most critical attribute is the GET attribute
+that controls whether MQGET operations are enabled for a queue
+or not. If the application opened the triggered queue while
+the queue was GET(DISABLED), and the queue is subsequently
+modified to be GET(ENABLED), triggering will not occur when it
+should.
+
+APAR IC58377 - Trace data is not written when PIDs are reused for processes
+running under different User IDs.
+Trace files are named according to the CPU and PIN of the process
+that is being traced. On HP NonStop Server, since PINs are
+rapidly reused, it is likely that a process attempting to write
+trace data will encounter an existing file written with the same
+CPU and PIN. The traced process will be unable to write data if
+the original file was written (and therefore owned) by a
+different User ID.
+
+This fix introduces a sequence number into the trace file names
+to prevent trace file name collisions.
+
+The format of trace file names will change from:
+
+AMQccppppp.TRC to AMQccppppp.s.TRC
+
+where s is a sequence number that will usually be 0.
+Trace files are now created with file permissions "rw-r----"
+to prevent unauthorized access to the trace data.
+
+APAR IC58717 - The Queue Server backup process generates FDCs showing ProbeId
+QS123006 from qslHandleChpPBC when attempting to locate a browse
+cursor message, with the comment text of
+"Error locating Last Message in Browse Cursor checkpoint in
+Backup" or "Error locating Last Logical Message in Browse Cursor
+checkpoint in Backup". The problem appears only when running a
+number of parallel browse / get applications for the same queue
+object.
+
+APAR IC58792 - strmqm fails to delete orphaned temporary dynamic queues if the
+associated touch file is missing. This results in these queues
+remaining in the object catalog indefinitely, and FDC files
+being generated each time the queue manager is started,
+reflecting the fact that the queue could not be deleted. The
+housekeeping function was modified to always silently remove
+temporary dynamic queue objects from the catalog, whether or
+not they are damaged. FDC files are no longer generated.
+
+APAR IC58859 - wmqtrig script does not pass TMC with ENVRDATA correctly.
+If ENVRDATA is part of the PROCESS definiton used by
+runmqtrm to trigger applications the TMC is not delivered to
+the application correctly. The problem does not occur with
+blank ENVRDATA. Additionally, ENVRDATA or USERDATA attributes
+that contain volume names ($DATA for example) are not processed
+correctly by the wmqtrig script.
+
+APAR IC58891 - Sender channels that were running in a CPU that failed are not
+restarted in some circumstances. Sender channels that are not
+restarted report "AMQ9604: Channel <...> terminated
+unexpectedly" in the queue manager error log, and the channel
+server create FDCs with ProbeID RM487001, Component
+"rriChannelTerminate".
+
+APAR IC58976 - A server channel without a specified CONNAME enters a STOPPED
+state when the MCA process running the channel is forcibly
+stopped or ends following a CPU failure. The channel state
+should be set to INACTIVE following this type of event. To
+recover the situation the channel has to be manually restarted
+or stopped using MODE(INACTIVE).
+
+APAR IC59024 - The copyright data in the COBOL COPYBOOK CMQGMOL file
+is incorrect.
+
+APAR IC59126 - Context data is missing in COA message.
+When an MQPUT application sends a message with COA report
+option, the generated replied COA message does not contain
+context data eg. PutDate, PutTime, etc.
+
+APAR IC59364 - Queue Server primary incorrectly commits an WMQ message in
+certain cases where the backup process has failed to process
+an internal checkpoint message. This causes an inconsistency
+between the primary and backup processes when an MQGET is
+attempted on this message, resulting in FDCs with the comment
+text "Invalid Message Header context in Backup for Get" from
+Component "qslHandleGetCkp". The queue object is no longer
+accessible via MQGETs, but can be recovered by stopping the
+backup process.
+
+APAR IC59388 - V5.3 OAM Implementation contains migration logic which may be
+triggered erroneously in some circumtances, removing authority
+records from the SYSTEM.AUTH.DATA.QUEUE. This change removes the
+migration logic, since there are no previous versions of the
+OAM which require migration.
+
+APAR IC59395 - Threaded LQMA actual usage is one larger than the configured
+maximum use count in the qmproc.ini file. Unthreaded LQMAs
+and MCAs (both threaded and unthreaded) do not suffer from this
+problem.
+
+APAR IC59428 - In some circumstances where connecting applications terminate
+unexpectedly during the MQCONN processing, either by external
+forcible termination, or as a consequence of other failures that
+
+result in termination, the resulting error can cause the LQMA
+process handling the application to terminate. This will
+cause collateral disconnections of all other applications using
+the same LQMA, with the application experiencing either a 2009
+(connection broken) or 2295 (unexpected) error. The problem
+window occurs only during one section of the connect protocol
+and has been observed only on very busy systems with repeated
+multiple forced terminations of applications.
+
+APAR IC59742 - qmproc.ini file will fail validation if configured with both
+MinIdleAgents=0 and MaxIdleAgents=0.
+
+APAR IC59743 - Queue Manager server expiration report generation is not fully
+configurable. The frequency with which the queue manager server
+generates expiration reports is configurable but the number of
+reports generated is not. This change introduces a new
+environment variable (MQQMSMAXMSGSEXPIRE), to allow
+configuration of the number of expiration reports generated
+at any one time. The parameter can be added to the WMQ
+Pathway MQS-QMGRSVR00 serverclass:
+ALTER MQS-QMGRSVR00, ENV MQQMSMAXMSGSEXPIRE=<1-99999>
+If this value is not specified in the queue manager
+serverclass configuration, the value defaults to 100.
+
+APAR IC59802 - Memory leak occurs with repeated DIS CHSTATUS SAVED command.
+A memory leak exists in the Channel Saved Status query. This
+leak is observed within either the runqmsc DISPLAY CHSTATUS
+
+SAVED command, or the PCF/MQIA equivalent. Tools that request
+saved channel status data via the Command Server with PCF / MQIA
+requests such as WMQ Explorer will cause the Command Server
+memory to grow.
+
+APAR IC60114 - WMQ processes or user application processes generate FDCs
+referring to "shmget" following forcible termination of the
+process or failure of the CPU running it. This is a result of
+the Guardian C-files (Cnxxxxxx) for a CPU becoming corrupt
+during an update operation, rendering the file and associated
+shared memory segment unusable. C-file update operations are
+now performed atomically to prevent this problem.
+
+APAR IC60135 - Improve servicability of the "endmqm -i" command to prevent the
+command from waiting indefinitely for the queue manager to end.
+Following this change after a specified number of seconds, the
+command will complete with the message "Queue Manager Running"
+and return to the command line with exit status 5.
+
+APAR IC60175 - Description is not available (security/integrity exposure)
+
+APAR IC60361 - Memory leak occurs in SVRCONN channel MCAs which repeatedly open
+local queue objects.
+
+APAR IC60455 - WMQ Broker restart may not work correctly.
+If the WMQ Broker is restarted using strmqbrk/endmqbrk,
+subsequent attempts to restart the broker may fail, and 2033
+errors my arise when running the test broker samples and
+recycling the broker processes.
+
+APAR IC60119 - System Administration manual incorrectly states the default
+value of the TCP/IP Keepalive is "ON"
+
+The following fixes discovered during IBM's development and testing work were
+released with V5.3.1.5:
+
+1403 Erroneous SVRCONN channel ended message.
+SVRConn channels should not generate "Channel Ended" messages in
+the error log, but in some circumstances, threaded svrconn
+channels do generate these messages.
+1451 Internal changes relating to trace and FDC files sequence numbers
+1453 Problem with MQCONN after restart of broker
+1516 strmqm fails with invalid ExecutablePath attribute (qmproc.ini)
+1560 Port of V51 MQSeries for Compaq NonStop Kernel APAR IC57981.
+Backup Queue Server runs out of memory processing non-persistent
+messages in 27K range. 
+1564 runmqlsr abends in nssclose after a previous 'socket' calls fails
+1570 Added Agent type to EC logged threshold and max agent messages.
+1576 Change ECA interface to V4
+1577 Queue Server message expiration deletion phase log message
+1583 Blank channel status entries can get created triggering
+channels when AdoptMCA is enabled.
+Under certain timing situations, when triggered channels are
+used and AdoptMCA is enabled for the queue manager, blank
+channel status entries can be created with the JOBNAME
+referencing the Channel Initiator (runmqchi), for example:
+AMQ8417: Display Channel Status details.
+CHANNEL() XMITQ()
+CONNAME() CURRENT
+CHLTYPE() STATUS(BINDING)
+MSGS() BATCHES()
+JOBNAME(5,333 $MQCHI OSS(318898190)) RQMNAME()
+This problem does not cause any immediate functional problem,
+however the blank entries consume channel status table entries
+and therefore could prevent legitimate channel starts in the
+event that the status table becomes full.
+1594 C++ unthreaded libraries use threaded semaphores
+1596 Improved cs error reporting
+1597 EC started processes sometimes not started in intended CPU
+1598 NSS Incorrect component identifiers used in some parts of zig
+1608 Queue status errors on failure of a no syncpoint persist message
+put or get
+1601 Tracing details to the EC to augment the Entry and Exit trace
+calls
+1611 LQMA Queue manager attribute corruption
+1613 Enhanced LEC Failure Handling
+1615 The EC may allow the os to choose in which cpu a MCA will start
+1616 Channel server comp traps have potential performance impact.
+1621 MQCONN does not report valid reason code when agent pool is full
+1622 After a channel is started dis chs displays "binding" in some
+circumstances when it should display "running"
+1623 Incorrect message when MCA allocation fails
+1626 Addition of Service information collection tool (SDCP)
+
+New platform support was released in V5.3.1.4:
+
+Fixpack V5.3.1.4 introduced support for the HP Integrity NonStop BladeSystem
+platform, NB50000c. Use the H-Series (Integrity) package of WebSphere MQ
+for execution on the BladeSystem. Please refer to the Hardware and Software
+Requirements section for details about the levels of the J-Series software
+required.
+
+The following APAR fixes were released in V5.3.1.4:
+
+APAR IC57020 - runmqtrm does not function correctly and produces errors in some
+cases.
+When a triggered application is a guardian script file
+(ie filecode 101). runmqtrm produces an "illegal program
+file format" error. Triggering also does not work correctly
+for COBOL or TAL applications.
+
+APAR IC57231 - The execution controller starts repository processes at the
+same priority as itself in some cases, and does not take
+account of the values set in the qmproc.ini file.
+
+APAR IC57420 - Repository manager restart following failure causes cluster
+cache corruption in some circumstances.
+If a repository manager abends while a queue manager is under a
+heavy load of cluster-intensive operations, in some
+circumstances the repository manager that is restarted can
+damage the cluster cache in the CPU in which it
+is running. This can prevent further cluster operations in that
+CPU and cause WMQ processes to loop indefinitely. This release
+changes the repository startup to prevent this from happening.
+
+APAR IC57432 - OSS applications that attempt to perform MQI operations from
+forked processes encounter errors.
+If an oss WMQ application forks a child process, that child
+process will encounter errors if it attempts to perform MQI
+operations. Some operations may succeed, but will result
+in the generation of FDC files.
+
+APAR IC57488 - MQMC channel menu display display error after channel is
+deleted.
+If a channel is deleted while the channel menu in MQMC
+is displayed, refreshing the channel menu produces the
+error: "Unknown error received from server. Error number
+returned is 1" and will not correctly display the channel
+list without restarting MQMC.
+
+APAR IC57501 - unthreaded sender channels to remote destinations with
+significant network latency may fail to start with timeout
+errors.
+
+APAR IC57524 - Applications launched locally from remote nodes cannot access
+some of the queue manager shared memory files due to default
+security on those files.
+
+APAR IC57627 - Handling of TMF outages to improve operational predictability.
+If TMF disables the ability to begin new transactions
+(BEGINTRANS DISABLED), WMQ does not always react in a
+predictable or easily diagnosed manner, and applications can
+suffer a variety of different symptoms. If TMF is stopped
+abruptly (STOP TMF, ABRUPT) queue managers can become unstable
+and require significant manual intervention to stop and restart.
+Refer to item 18 in "Known Limitations, Problems and
+Workarounds" later in this README for more information.
+
+APAR IC57712 - altmqfls --qsize with more than 100 messages on queue fails.
+When a altmqfls --qsize is performed with more the 100 MQ
+messages in the queue the processing fails.
+
+APAR IC57719 - FDCs from MQOPEN when an error exists in alias queue manager
+resolution path. If a queue resolution path includes a queue
+manager alias, and the target of the alias does not exist,
+this will produce an FDC, rather than just failing the
+MQOPEN as would be expected.
+
+APAR IC57744 - CPU goes busy when stopping a threaded SSL receiver channel
+using MODE(TERMINATE).
+If a stop channel mode(terminate) is used to stop an SSL
+receiver channel that is running in a threaded MCA, the CPU
+where the MCA is running in begin using large amounts of CPU
+time (95% range). This is due to a problem in the threads
+library.
+
+APAR IC57876 - Very infrequently, messages put via threaded LQMAs can in some
+circumstances contain erroneous CCSID information. This has
+been observed to cause conversion errors if the message is
+destined for a channel that has the CONVERT(YES) set.
+Unthreaded LQMAs do not suffer from this problem.
+
+The following fixes discovered during IBM's development and testing work were
+also released with V5.3.1.4:
+
+993 - Due to the way that default file security was used, file security for
+certain shared memory files used by the queue manager (SZ***) may
+
+inadvertently change in a way that prevents applications not in
+the mqm group from issuing MQCONN. File permissions were rationalised
+in this release to reflect those used for other shared memory files.
+1458 - Resolve Channel command generates FFSTs.
+When resolving In-Doubt channels, FFSTs were generated by the Channel
+Server and the MCA. Although the channels were successfully resolved,
+the In-Doubt status in a DIS CHS query was not correctly updated.
+When resolving In-Doubt channels using the COMMIT option the following
+error message was displayed "AMQ8101: WebSphere MQ error (7E0) has
+occurred."
+1493 - The validation of the qmproc.ini file does not report the error case
+where multiple ChannelsNameMatch entries are specified ChlRule1.
+1498 - Instmqm does not support installation of the product on
+Integrity NonStop BladeSystem platforms.
+1507 - Some Execution controller messages were missing "Action" descriptions
+when reported in the error log.
+1517 - In the qmproc.ini file, the AppRule4-SubvolMatch argument was not
+working
+1522 - Communications Component Function ids and probes are incorrect. This
+resulted in misleading or missing information in trace files generated
+for support purposes.
+1546 - MQBACK operation incorrectly reports error during broker operations
+1549 - Channel Server doesn't shutdown after takeover.
+If the Primary Channel Server process is prematurely ended, for
+example by a CPU crash, the Backup Channel Server process becomes the
+new Primary process. Subsequent attempts to use endmqm will hang
+because the new Primary Channel Server process will not end.
+
+
+The following documentation APARs are addressed by the V5.3.1.4 readme:
+
+APAR IC55404 - REFRESH QMGR PCF command is not documented in the Programmable
+
+command formats manual.
+
+Also - please check the "Limitations" and "Known Problems and Workarounds"
+sections later on in this readme for updates.
+
+The following APAR fixes were released in V5.3.1.3:
+
+APAR IC54305 - The HP TNS (non-native) C compiler generates Warning 86 when
+compiling MQI applications
+APAR IC55501 - The altmqfls command does not return the correct completion
+status; it always returns success
+APAR IC55719 - Non-native MQINQ binding does not deal with some null pointer
+parameters correctly
+APAR IC55977 - Channel retry does not obey SHORTTMR interval accurately enough
+APAR IC55990 - Trigger data changes not being acted upon if they were made
+while the queue was open, leading to incorrect triggering
+behavior
+APAR IC56277 - Command Server can loop with INQUIRE QS command with a single
+parameter
+APAR IC56278 - A remote RUNMQSC DIS QS command always times out
+APAR IC56309 - MCAs do not disconnect from some shared memory when ending,
+which causes a slow memory leak, and under some conditions an
+abend
+APAR IC56458 - Channel Server loops after installing V5.3.1.2 due to corrupt
+data on SYSTEM.CHANNEL.SYNCQ
+APAR IC56493 - Cannot use "qualified" hometerm device names with V5.3.1.2
+APAR IC56503 - Channel Server and MCA can deadlock after repeated STOP CHANNEL
+MODE(FORCE) or MODE(TERMINATE) commands
+APAR IC56536 - Unthreaded responder channels don't de-register from the EC when
+an error occurs during or before channel negotiation. For
+example, bad initial data will cause this. Unthreaded MCAs
+build up and eventually reach the maximum which prevents further
+channel starts
+APAR IC56681 - C++ unthreaded Tandem-Float SRLs have undefined references
+
+APAR IC56834 - endmqm -p can sometimes leave MCA processes running
+
+The following fixes discovered during IBM's development and testing work were
+released with V5.3.1.3:
+
+663 - Guardian command line utility return status is not the same as the OSS
+utilities return status
+1402 - Add additional tracing when testing for inconsistencies in processing
+a channel start in the Channel Server
+1416 - Ensure that the Channel Server can support the maximum BATCHSZ of 2000
+1446 - Pub / Sub command line utilities do not behave well if no broker has run
+since the queue manager was created
+1470 - EC abends attempting to start a non-executable REPMAN
+1474 - Pub / Sub broker process handling corrections for the EC
+1476 - The EC checkpoints the number of threads running in agents incorrectly
+1477 - Enhancement to ecasvc utility: the creation date/time of LQMAs, MCAs,
+and REPMEN are now displayed
+1487 - Enhancement to ecasvc utility: changed the display of Agent attributes
+to use the "real" qmproc.ini attribute names. Added a new option,
+that displays information about all connected applications
+1494 - A small memory leak occurs for the delete channel operation
+1508 - Multiple qmproc.ini environment variables don't get propagated to
+agents or repmen
+1509 - The EC failed to stop an MCA that was hung when a preemptive shutdown
+was initiated
+
+The following documentation APARs were addressed by the V5.3.1.3 readme:
+
+APAR IC55380 - Transport provider supplied during install is not propagated to
+Pathway configuration by crtmqm. Please see the documentation
+update below made for Page 17 of the "Quick Beginnings" book.
+
+The following APAR fixes were released in V5.3.1.2:
+
+APAR IC52123 - LQMA abend handling rollback of a TMF transaction in MQSET
+APAR IC52963 - The PATHMON process is not using configured home terminal for
+MQV5.3 on HP Nonstop Server
+APAR IC53205 - FDC from Pathway runmqlsr when STOP MQS-TCPLIS00
+APAR IC53891 - There is a memory leak in the Channel Server when processing
+the DIS CHS command
+APAR IC53996 - C++ PIC Guardian DLLs missing.
+APAR IC54027 - MQRC_CONTEXT_HANDLE_ERROR RC2097 when loading messages using
+MO71
+APAR IC54133 - Multi-threaded LQMA should not try to execute Unthreaded
+functions if qmproc.ini LQMA stanza sets MaximumThreads=1
+APAR IC54195 - runmqtrm data for Trigger of Guardian application not
+reinitialized
+APAR IC54266 - MinThreadedAgents greater than PreferedThreadedAgents causes
+MQRC 2009 error
+APAR IC54488 - MCA's abend after MQCONN/MQDISC 64 times.
+APAR IC54512 - OSS runmqsc loops if Guardian runmqsc is TACL stopped
+APAR IC54517 - upgmqm does not handle CPUs attribute for PROCESS specifiction
+in a SERVERCLASS
+APAR IC54583 - SSL channel agent can loop if an SSL write results in a socket
+I/O error
+APAR IC54594 - EC abends with non-MQM user running application from non-MQM
+directory
+APAR IC54657 - Channel stuck in BINDING state following failed channel start
+due to unsupported CCSID.
+APAR IC54666 - Queue Server deadlock in presence of system aborted
+transactions.
+APAR IC54798 - upgmqm fails with Pathway error on 3 or more status servers that
+require migration from V5.1 queue manager.
+APAR IC54841 - When a temporary dynamic queue is open during "endmqm -i"
+processing an FDC is generated
+APAR IC55008 - Added processing that will cause Channel Sync data to be
+Hardened at Batch End
+APAR IC55073 - altmqfls --qsoptions NONE is not working as specified
+APAR IC55176 - Abend in MQCONN from app that is not authorized to connect (2035)
+or with invalid Guardian Subvolume file permissions
+APAR IC55500 - QS Deadlock with Subtype 30 application using MQGMO_SET_SIGNAL
+APAR IC55726 - Channel stuck in BINDING state following failed channel start
+
+due to older FAP level
+APAR IC55865 - Abend on file-system error writing to EMS collector
+
+The following fixes discovered during IBM's development and testing work were
+also released with V5.3.1.2:
+
+1122 - Invalid/incomplete FFST generated during MQCONN when Guardian
+subvolume cannot be written to.
+1392 - Add support for Danish CCSID 65024
+1397 - Command Server fails to start and EC reports failure to initialize
+a CPU - error 12 purging shared memory files.
+1409 - Guardian WMQ command fails when invoked using Guardian system() API
+1413 - MCA looping after SSL socket operation fails
+1419 - altmqfls --volume attempted using a open object causes FDCs
+1439 - On non-retryable channel, runmqsc abends while executing RESOLVE CHANNEL
+command
+
+The following documentation APARs were addressed by V5.3.1.2:
+
+APAR IC53996 - C++ PIC Guardian DLLs missing.
+
+originally released in V5.3.1.1 Patch 1:
+APAR IC53891 - There is a memory leak in the Channel Server when
+processing the DIS CHS command
+
+originally released in V5.3.1.1 Patch 2:
+APAR IC54583 - SSL channel agent loops
+
+originally released in V5.3.1.1 Patch 3:
+APAR IC54666 - Queue Server deadlock in presence of system aborted
+transactions.
+
+originally released in V5.3.1.1 Patch 4:
+APAR IC54512 - OSS runmqsc loops if Guardian runmqsc is TACL stopped
+
+The following APAR fixes were released in V5.3.1.1:
+
+APAR IC52737 - When in SSL server mode and the sender is on zOS a list of CAs
+that the server will accept must be sent to the zOS sender
+during the SSL handshake
+
+APAR IC52789 - upgmqm support for upgrading V5.1 queue managers that do not use
+OAM (created with MQSNOAUT defined). Also add diagnostics as to
+reasons and preventative actions for failure to create a PATHMON
+process
+
+APAR IC52919 - Problems in synchronization of starting a queue manager when
+multiple Queue Servers are defined
+
+APAR IC52942 - Trigger Monitor holds Dead Letter Queue open all the time
+APAR IC53240 - Correct sample API exit to build for PIC and SRL/Static
+APAR IC53243 - Start of many applications simultaneously causes LQMA FDC
+APAR IC53248 - Kernel not informing repository cache manager of updates to
+cluster object attributes
+
+APAR IC53250 - Flood of FDCs when trace is enabled before qmgr start
+APAR IC53254 - Browse cursor mis-management left locked message on queue.
+In addition, browse cursor management was not correct in the
+event that a syncpoint MQGET rolls back
+
+APAR IC53288 - Cluster Sender channel is not ending until the HBINT expired
+APAR IC53383 - upgmqm was losing the MCAUSER attribute on channels
+APAR IC53492 - TNS applications fail in MQPUT with more than 106920 bytes of
+data
+
+APAR IC53524 - SVRCONN channels are not ending after STOP CHANNEL if client
+application is in a waited MQGET
+
+APAR IC53552 - OAM uses getgrent() unnecessarily, causing slow queue manager
+startup
+
+APAR IC53652 - Guardian administration commands don't work with VHS or other
+processes as standard input or output streams
+
+APAR IC53728 - ECONNRESET error when Primary TCP/IP process switched should
+not cause listener to end
+
+APAR IC53835 - Assert in xtrInitialize trying to access trace shared memory
+
+The following documentation APARs were addressed by V5.3.1.1:
+
+APAR IC51425 - Improve documentation of crtmqm options
+APAR IC52602 - Document ClientIdle option
+APAR IC52886 - Document RDF setup ALLSYMLINKS
+APAR IC53341 - Document OpenTMF RMOPENPERCPU / BRANCHESPERRM calculation
+
+The following fixes discovered during IBM's development and testing
+work were also released with V5.3.1.1:
+
+634 - Correct function of altmqfls option to reset measure counter
+822 - Message segmentation with attempted rollback operation failed
+862 - PCF command for Start Listener fails
+903 - Channel status update problems during shutdown after Repman has ended
+922 - Channel status incorrect when attempting to start a channel and the
+process management rules prevent the MCA thread or process from starting
+929 - Incorrect response records when putting to distribution list
+1012 - Two of the sample cobol programs give compilation error
+1059 - C-language samples use _TANDEM_SOURCE rather than __TANDEM
+1064 - errors checkpointing large syncpoint MQPUT and MQGET operations
+when transactions abort
+1069 - Not able to delete CLNTCONN channels
+1108 - Error logged when MCA exits because maximum reuse count is reached
+1152 - strmqm -c option gives unexpected error if executed after strmqm
+1176 - Sample cluster workload exit not functioning correctly
+1177 - QS backup abend on takeover with local TMF transactions
+1180 - Segmentation of messages on transmission queues by the queue manager
+was incorrect.
+1182 - Replace fault tolerant process pair FDCs with log messages for better
+operator information when a takeover occurs
+1185 - Opens left in all three NonStop Server processes after divering CPUs
+1208 - Trace info is incorrect for zslHPNSS functions. FFSTs show incorrect
+component and incorrect stack trace info
+1210 - FFSTs generated by criAccessStatusEntry when starting channel with
+same name from another queue manager
+1213 - Pathway listener generates FDCs on open of standard files
+1229 - Permanent dynamic queues being marked as logically deleted on last close
+1240 - Channel Server needs to update status for unexpected thread close
+1244 - Speed up instmqm
+1246 - implement workaround for the regression in the OSS cp command introduced
+in G06.29/H06.06 where a Format 2 file is created by default when
+copying to Guardian
+1247 - Fixes to SSL CRL processing, added CRL reason to message amq9633
+1253 - SSL samples required updating to reflect enhanced certificate file
+organization - cert.pem and trust.pem
+1254 - Fix an MQDISC internal housekeeping problem
+1256 - MCA does not exit after re-use count if an error occurs during early
+initialization
+1260 - Speed up strmqm when performed on very busy systems with large number
+of CPUs by minimizing calls to HP FILE_GETOPENINFO_ API
+1264 - Correct the handling of the option to make Message Overflow files
+audited in QS
+1266 - Improve diagnostic information of FFST text for semaphore problem
+1271 - After sequence of 2 CPU downs, EC, QS and CS still have openers
+1272 - Improve protection in svcmqm when files in the installation are open
+1273 - Memory leak in the command server caused by unreleased object lists
+1277 - Don't FFST if initialization fails because the mqs.ini file doesn't
+exist
+1281 - LQMA thread doesn't end when CPU containing application goes down
+1288 - Channels not retrying after CPU failure that also causes takeover of CS
+1290 - MQDISC when connection broken doesn't tidy up transaction
+1291 - Correct the syncpoint usage when amqsblst is used as a server. Enhance
+amqsblst for fault tolerant behavior - makes amqsblst attempt to
+reconnect and reopen objects on 2009 errors so it can be used during
+fault tolerant testing
+1294 - Application process management rules don't always work correctly
+1297 - Correct file permission of trace directory and files - changed
+permission of trace directory to 777
+1301 - No queue manager start or stop events generated
+1302 - instmqm function get_Guardian_version should look for string
+"Software release ID"
+1306 - instmqm validation fails when Java is not installed - issue a warning
+if the java directory doesn't exist and continue the installation
+1310 - OSS Serverclasses not restarting in Pathway if they end prematurely
+1313 - EC process management can exceed maximum number of threads for LQMA
+1317 - REFRESH CLUSTER command with REPOS(yes) fails
+1319 - MQPUT and MQPUT1 modifying PMO.Options when creating a new MsgId
+1324 - MQPUT returned MQRC_BACKED_OUT when putting message that required
+segmentation to local queue
+1325 - Trace state doesn't change in servers unless process is restarted
+1340 - QS error handling MQPUT checkpoint. Also can lead to zombie messages on
+queue requiring queue manager restart to clear
+1341 - MQGET not searching correctly in LOGICAL_ORDER for mid-group messages
+1346 - EC initial memory use too high. Initial allocation was approximately
+18 megabytes
+1351 - Upgrade logging format to V6.x style
+1353 - MQGET of 210kbyte NPM from queue with checkpointing disabled caused
+message data corruption at offset 106,906
+1355 - xcsExecProgram sets current working directory to /tmp - changed to
+installation errors directory
+1357 - instmqm fails to create an OSS symbolic link after a cancelled install
+1362 - MsgFlags showing segmentation status should still be returned in
+MQGET even if applications specifies MQGMO_COMPLETE_MSG
+1364 - endmqlsr sometimes hangs
+1366 - Correct trace, FDC and mqver versioning information for V5.3.1.1
+
+All fixes that were previously released in V5.3.0 and V5.3.1 are also included
+in this release. For information on fixes prior to V5.3.1.1, please refer to
+the readme for V5.3.1.3 or earlier.
+
+Backward compatibility
+----------------------
+
+IBM WebSphere MQ V5.3.1 for HP NonStop Server is interoperable over channels
+with IBM MQSeries(TM) V5.1 for Compaq NSK, as well as any other current or
+earlier version of IBM MQSeries or IBM WebSphere MQ on any other platform.
+
+Product compatibility
+---------------------
+
+IBM WebSphere MQ V5.3.1 for HP NonStop Server is not compatible
+with IBM WebSphere MQ Integrator Broker for HP NonStop Server.
+For other compatibility considerations, review the list of suitable
+products in the WebSphere MQ for HP NonStop Server Quick Beginnings book.
+
+IBM WebSphere MQ V5.3.1 for HP NonStop Server is compatible with any
+currently supported level of IBM WebSphere MQ Client. IBM WebSphere MQ V5.3.1
+for HP NonStop Server does not support connections from WebSphere MQ
+Extended Transactional Client.
+
+INSTALLATION, MIGRATION, UPGRADE AND CONFIGURATION INFORMATION
+==============================================================
+Hardware and Software Requirements
+----------------------------------
+
+The list of mandatory HP operating system and SPR levels has changed
+since the V5.3.1.1 release. Please read the following information carefully,
+and if you have any questions, please contact IBM.
+
+For the HP Integrity NonStop Server H-Series systems, the following system
+software versions are the minimum mandatory level for V5.3.1.12:
+
+- H06.23.01 or later
+- SPR T8306H01^ABJ or later
+- SPR T8994H01^AAM or later
+- SPR T8397H01^ABD or later
+- SPR T1248H06^AAX or later
+
+
+For the HP Integrity NonStop BladeSystem J-Series systems, the following
+system software versions are the minimum mandatory level for V5.3.1.12:
+
+- J06.14.00 or later
+
+Note that V5.3.1.12 is not supported on G-Series systems
+
+Recommended SPRs
+-----------------
+It has become increasingly complicated to document fixes made by HP
+for some of their products, as the products themselves often have multiple
+threads (H01, H02, G01, G06 etc..) that can be used on multiple OS levels.
+
+To make it more convenient for our customers to determine whether they already
+have a recommended fix installed, or to find the appropriate fix in Scout on
+the NonStop eServices Portal, we are now referencing particular problems by
+their HP solution number.
+If you wish to determine whether your particular level of an SPR contains
+the solution, review the document included when you downloaded the product
+from Scout or review the softdocs in Scout for the solution number for that
+product.
+
+We have added more information about the specific problems reported,
+what the symptoms are, workarounds to these problems if relevant,
+and the likelihood of it happening.
+Please note:
+Where versions are inside parentheses beside an HP solution #,
+those versions only are affected by that particular solution.
+
+Product ID: T0845 - Pathway Domain Mgmt Interface/TS/MP 2.5
+Problem: PATHCTL file can be corrupted if a pathway serverclass abends. 
+Symptom: Pathway unusable
+(Reported as possible by HP but not independently confirmed by IBM).
+HP Solution: 10-120322-2183
+Likelihood: Possible
+Workaround: None
+Recovery: May be possible to re-configure the WMQ serverclasses in some circumstances.
+
+Product ID: T1248 - pthreads
+Problem: Threaded server application, MCA - amqrmppa_r, causes 100% CPU
+utilization
+HP Solution: 10-080818-5258 (H07, H06, G07)
+Symptom: CPU 100% busy while processing SSL channels. MCA process consumes
+all available CPU. May be communication errors on channels
+Likelihood: Certain when attempting to Stop SSL Channels using Mode Terminate
+
+if priority of MCA process is higher than Channel Servers
+Workaround: For SSL channels use unthreaded MCAs or upgrade to WMQv5.3.1.4
+Recovery: None, CPUs will go back to normal after about 5 mins
+
+
+Problem: Assert in spt_defaultcallback for threaded MCAs, amqrmppa_r
+HP Solution: 10-080519-3266 (H06, G07)
+Symptom: FDCs from MCAs, plus MCAs abend (qmgr log message), channels fail
+and restart. Error 28 seen in FFST from MCA process on WRITEREADX
+call
+Likelihood: Rare.
+Workaround: Use unthreaded MCAs
+Recovery: None, MCAs will abend but MCAs and associated channels will
+restart
+
+Product ID: T6533 - STDSEC-STANDARD SECURITY PROD
+Problem: The GROUP_GETINFO_ Guardian procedure call used by dspmqusr returns error 590 with
+group ID greater than 65535.
+Symptom: dspmqusr abends with AMQ7047: An unexpected error was encountered by a command.
+FFST generated reports error 590.
+HP Solution: SOLN 10-091111-6280
+Likelihood: Definite if a user is created in group with a group ID greater than 65535,
+eg. SECURITY-ENCRYPTION-ADMIN and that user id added as a principal.
+Workaround: Members of a group with group ID greater than 65535 cannot be added as WMQ principal
+Recovery: None
+
+Product ID: T8306 - OSS Sockets Version: H04, H02, G12, G10
+Problem: OSS socket APIs fail with ENOMEM (4012) error.
+HP Solution: 10-081205-7769. (H04, G12)
+Symptoms: Channels fail to start, Error log and FFSTs indicate error 4012.
+Likelihood: Rare
+Workaround: None
+Recovery: Reload CPU.
+
+Problem: CPU halt %3031 and CPU Freeze %061043 after CPU down testing.
+Symptoms: All processes in the CPU will end,,, backup NonStop processes
+will take over. Error log will indicate backup servers have taken
+over.
+HP Solution: 10-080827-5452. (H04, H02, G12, G10)
+Likelihood: Rare
+Workaround: None
+Recovery: Reload CPU
+
+
+Product ID: T8397- OSS Socket Transport Agent
+Problem CPU Halt %3031 or CPU Freeze %061043
+Symptoms All processes in the CPU will end, backup NonStop processes will
+take over. Error log will indicate backup servers have taken over.
+HP Solution: 10-080827-5452 (H02, H01, G11)
+Likelihood: Rare
+Workaround: Reload CPU
+
+Problem: OSS socket APIs fail with ENOMEM (4012) error.
+Symptom: Channels fail to start. Error log and FFSTs indicate error
+4012.
+HP Solution: 10-081205-7769 (H02, G11)
+Likelihood: Rare
+Workaround: None
+Recovery: Reload CPU
+
+
+Product ID: T8607 - TMF
+Problem: Multiple issues involving lost signals with OpenTMF
+Symptom: Channel Server indicates Sequence number mismatches. Channel
+server generates FDCs that report file system error 723.
+HP Solution: 10-081027-6812, Hotstuff HS02990. (H01)
+Likelihood: Rare, but may occur if audit trail is 90% full, or operator stops
+TMF.
+Workaround: Monitor audit trail size
+Recovery: Stop primary channel server process.
+
+Symptom: Queue Manager completely freezes up, Log messages every 10 seconds
+for 50 attempts.
+HP Solution: 10-081027-6812, Hotstuff HS02990. (H01)
+Likeihood: Very likely if STOP TMF, ABRUPT command is issued while Queue
+Managers are running.
+Workaround: Do not issue STOP TMF, ABRUPT command while queue managers are 
+running until the SPR has been installed.
+Recovery: Restart Queue Manager.
+
+
+Product ID: T8620 - OSS file system Version: G13,H03, H04
+Problem: lseek() fails with errno 4602.
+Symptoms: FFSTs generated in xcsDisplayMessage component
+HP Solution: SOLN 10-071012-8159 (G13,H03, H04)
+Likelihood: Likely
+Workaround: Turn off OSS Caching in all disks
+Recovery: None needed, problem is benign.
+
+Symptoms: Queue Manager slowdown along with (sometimes) lost log messages
+in busy queue managers. System suffered major OSS lockups and CPU
+halts
+HP Solution: SOLN 10-071012-8159 (G13,H03, H04)
+Likelihood: Rarely
+Workaround: None
+Recovery: Stop and restart all Queue Managers and Listeners. Reload CPUs.
+
+If you use SNA channels with V5.3.1, we recommend the latest levels of the
+HP SNAX or ACI Communication Services for Advanced Networking (ICE) be used
+for the SNA transport. The following versions were verified by IBM with this
+release of WMQ:
+
+ACI Communication Services for Advanced Networking (ICE)
+- v4r1 on both HP Integrity NonStop Server and S-Series systems
+
+HP SNAX
+- T9096H01 on HP Integrity NonStop Server (H-Series) systems
+
+If you use the WebSphere MQ V5.3 classes for Java and JMS for HP NonStop Server
+you will need to install HP NonStop Server for Java Version 1.4.2 or later.
+The Java.pdf supplemental document in the <install_path>/opt/mqm/READMES/en_US
+directory has been updated in this release. Java/JMS users should review the 
+updated document.
+
+Upgrading to V5.3.1.12
+---------------------
+
+For systems running H Series operating systems, you may upgrade
+any prior service level of WebSphere MQ V5.3.1.x for HP NonStop Server to
+V5.3.1.12 level using this release. For NonStop BladeSystem running J series
+operating systems, you may upgrade from version V5.3.1.4 only, since V5.3.1.4
+is the earliest supported version on J series. If you need to perform a full
+installation on a J series system from the original installation media, see the
+section later in this readme file for instructions.
+
+The installation tool, svcmqm, is used to upgrade existing installations
+to this level. Additionally, the placed files for any prior level of V5.3.1
+can be overlaid with the new files from V5.3.1.12 and then instmqm can be used
+to create new installations at the updated V5.3.1.12 level.
+
+You must end all queue managers and applications in an installation if you
+want to upgrade that installation to V5.3.1.12.
+
+You do not need to re-create any queue managers to upgrade to V5.3.1.12.
+Existing queue managers (at any V5.3.1.x service level) will work with
+V5.3.1.12 once an installation has been properly upgraded.
+
+If you use SSL channels, and are upgrading from WMQ V5.3.1, you must perform
+a small reconfiguration of the Certificate store before running any SSL
+channels after you have upgraded. The steps that are required are described
+below in the Post-Installation section. If you do not perform this
+reconfiguration, SSL channels in the upgraded V5.3.1.12 installation will
+fail with the log messages similar to the following:
+
+For sender channels:
+
+09/29/07 08:52:43 Process(0,483 $Z8206) User(MQM.ABAKASH) Program(amqrmppa)
+AMQ9621: Error on call to SSL function ignored on channel
+'ALICE_BOB_SDRC_0000'.
+
+EXPLANATION:
+An error indicating a software problem was returned from a function which is
+used to provide SSL support. The error code returned was '0xB084002'. The error
+was reported by openssl module: SSL_CTX_load_verify_locations, with reason:
+system lib. The channel is 'ALICE_BOB_SDRC_0000'; in some cases its name cannot
+be determined and so is shown as '????'. This error occurred during channel
+shutdown and may not be sufficiently serious as to interrupt future channel
+operation; Check the condition of the channel.
+ACTION:
+If it is determined that Channel operation has been impacted, collect the items
+listed in the 'Problem determination' section of the System Administration
+manual and contact your IBM support center.
+---- amqccisx.c : 1411 ------------------------------------------------------
+09/29/07 08:52:44 Process(0,483 $Z8206) User(MQM.ABAKASH) Program(amqrmppa)
+AMQ9001: Channel 'ALICE_BOB_SDRC_0000' ended normally.
+
+EXPLANATION:
+Channel 'ALICE_BOB_SDRC_0000' ended normally.
+ACTION:
+None.
+
+For client or receiver channels:
+
+-------------------------------------------------------------------------------
+09/29/07 08:05:28 Process(1,802 3 $X0545) User(MQM.HEMA) Program(amqrmppa_r)
+AMQ9620: Internal error on call to SSL function on channel '????'.
+
+EXPLANATION:
+An error indicating a software problem was returned from an function which is
+used to provide SSL support. The error code returned was '0x0'. The error was
+reported by openssl module: SSL_load_client_CA_file, with reason: CAlist not
+found. The channel is '????'; in some cases its name cannot be determined and
+so is shown as '????'. The channel did not start.
+ACTION:
+Collect the items listed in the 'Problem determination' section of the System
+Administration manual and contact your IBM support center.
+---- amqccisx.c : 1347 ------------------------------------------------------
+09/29/07 08:05:28 Process(1,802 3 $X0545) User(MQM.HEMA) Program(amqrmppa_r)
+AMQ9228: The TCP/IP responder program could not be started.
+
+EXPLANATION:
+An attempt was made to start an instance of the responder program, but the
+program was rejected.
+ACTION:
+The failure could be because either the subsystem has not been started (in this
+case you should start the subsystem), or there are too many programs waiting
+(in this case you should try to start the responder program later). The reason
+code was 0.
+
+WMQ Application re-compile Considerations :
+
+You do not need to re-compile any applications to upgrade to V5.3.1.12.
+
+WMQ Application linkage Considerations :
+
+a) If upgrading from V5.3.1.5 or later releases (including patch releases) :
+
+Existing applications will continue to work with V5.3.1.12 release. However, 
+IBM strongly recommends that if you are upgrading from a release prior to 
+5.3.1.7, you review the impact of APARs IC67057 and IC68569 that were fixed in
+the V5.3.1.7 release. Please also note internal defect 4158 that is fixed in 
+V5.3.1.11. The IC67057, IC68569 and internal defect 4158 fixes will not be 
+effective in non-native applications unless the applications are relinked 
+using the HP BIND utility. 
+
+b) If upgrading from V5.3.1.4 or earlier releases (including patch releases) :
+
+You MUST use the HP BIND utility to relink any non-native applications prior
+to using them with V5.3.1.12. If an application is not re-bound with the 
+V5.3.1.12 WMQ product, MQCONN API calls will fail with a MQRC 2059 and the 
+WMQ EC process will output an FDC when the MQI incompatibility is detected, 
+as follows:
+
+Probe Id :- EC075003
+Component :- ecaIsECup
+Comment1 :- Application MQ API not compatible, relink application
+Comment2 :- <process cpu,pid process name>
+Comment3 :- <application executable name>
+
+Installation from Electronic Software Download H or J Series based systems
+-----------------------------------------------------------------------------
+
+These instructions apply to installing WebSphere MQ for HP NonStop Server,
+Version 5.3.1.12, from the package downloaded from IBM. Please note the
+additional restrictions for upgrading J Series systems to this version.
+
+Use svcmqm to update an existing installation from the V5.3.1.12 placed files.
+
+1. Unzip the fixpack distribution package - wmq53.1.12.tar.zip.
+The fixpack distribution package contains the following files:
+
+readme_wmq_5.3.1.12 - this README
+wmq53.1.12_H07.tar.Z - H-Series H06 Package
+
+2. Identify the correct fixpack package to install:
+
+For H-Series (H06) or J-Series systems (J06) use: wmq53.1.12_H06.tar.Z
+
+3. Upload the compressed fixpack archive to the OSS file system in binary mode.
+You may wish to store the compressed archive, and the expanded contents
+in a location where you archive software distributions from IBM.
+If you do this, you should store the compressed archive in a directory
+that identifies the version of the software it contains,
+for example, "V53112".
+
+mkdir -p /usr/ibm/wmq/V53112
+upload (in binary mode) the correct compressed tarfile to this directory
+
+4. Extract the fixpack compressed tarfile using commands similar to:
+
+cd /usr/ibm/wmq/V53112
+uncompress wmq53.1.12_H06.tar.Z
+
+tar xvof wmq53.1.12_H06.tar
+
+5. Locate your WMQ V5.3.1.x installation(s). The service installation procedure
+requires the full OSS path names of the opt/mqm and var/mqm directories for
+each WMQ installation to which the fixpack will be installed.
+
+6. Logon to OSS using the WMQ installation owner's userid
+
+7. End all Queue Managers defined in the WMQ Installation.
+endmqm <qmgr name>
+
+Ensure all Queue Managers defined in the WMQ installation
+are ended.
+dspmq
+
+Ensure that the WMQ installation is at a suitable V5.3.1 level.
+mqver -V
+See later notes concerning version requirements for NonStop BladeSystem
+installation.
+
+8. End any non-Pathway listeners for Queue Managers defined in the
+WQM installation:
+endmqlsr -m <qmgr name>
+
+9. Verify that no files in the Guardian subvolumes of the installation to
+be updated are open. The installation cannot proceed safely unless all
+files in these subvolumes are closed. Use the TACL command 'FUP LISTOPENS'
+for the files in all three subvolumes - an absence of output indicates
+that no files are open. If files are shown to be open, use the output
+from the command to identify processes that are holding files open.
+
+
+10. Backup your WMQ Installation; the fixpack cannot be uninstalled.
+instmqm -b can be used to back up an installation. Please refer
+to the readme file included with release WMQ V5.3.1.
+
+11. Install the fixpack by running the supplied service tool (svcmqm).
+Svcmqm requires the location of the OSS var tree as well
+as the OSS opt tree. These locations can be supplied automatically by
+running svcmqm in an OSS shell where the environment variables for the
+WMQ installation being updated have been established (typically by
+sourcing "wmqprofile"). If this is the case, svcmqm does not require the
+-i and -v parameters. 
+
+For example:
+cd /usr/ibm/wmq/V53112
+opt/mqm/bin/svcmqm -s /usr/ibm/wmq/V53112/opt/mqm
+
+If the environment variables for the WMQ installation are not established in 
+the environment of svcmqm or if you want to update a WMQ installation other
+than the one that your current WMQ environment variable points to, then 
+the locations of the OSS opt and var trees must be supplied explicitly using
+the svcmqm command line parameters -i and -v.
+
+For example:
+
+cd /usr/ibm/wmq/V53112
+opt/mqm/bin/svcmqm -s /usr/ibm/wmq/V53112/opt/mqm
+-i /wmq1/opt/mqm
+-v /wmq1/var/mqm
+
+svcmqm will prompt to confirm the location of the OSS opt tree for the
+installation to be updated.
+Type "yes" to proceed.
+
+Svcmqm will then update the installation. The current WMQCSTM file for
+the installation will be renamed to BWMQCSTM as a backup copy, before it
+is regenerated. Note that any changes to the WMQCSTM file you have made
+will not be copied to the new WMQCSTM file, however they will be preserved
+in the backup copy made before the WMQCSTM file was regenerated.
+
+12. Repeat Steps 5-11 for any other WMQ installations that you want to update
+with this fixpack.
+
+13. You can install this fixpack in the WMQ placed installation files so that
+any future WMQ product installations will include the fixpack updates.
+
+To do this, locate your WMQ placed installation filetree containing the
+opt directory, make this your current working directory (use 'cd') and
+then unpack the contents of the tar archive for this fixpack over the placed
+file tree. For example, if the placed files are located in the default
+location /usr/ibm/wmq/V531, for a H-Series system:
+
+cd /usr/ibm/wmq/V531
+tar xvof /usr/ibm/wmq/V5319/wmq53.1.12_H06.tar
+
+Initial Installation on a NonStop BladeSystem
+---------------------------------------------
+
+These instructions apply to installing WebSphere MQ for HP NonStop Server on
+a NonStop BladeSystem using the original installation media, in conjunction
+with the 5.3.1.12 package downloaded from IBM. NonStop BladeSystem platforms
+are not supported prior to V5.3.1.4, and a "from scratch" installation requires
+either V5.3.1.4 or later files to be overlaid on a set of placed files
+from the base product media prior to performing the installation.
+You do NOT need to perform these steps if you have already installed V5.3.1.4
+on your NonStop BladeSystem. In this case, follow the standard installation
+steps earlier in this readme file.
+
+1. Place the files for the Refresh Pack 1 (5.3.1.0) version of WebSphere MQ
+
+for HP NonStop Server on the target system. Refer to the "File Placement"
+section in Chapter 3 of the "WebSphere MQ for NonStop Server Quick
+Beginnings" guide. Pages 11-13 describes how to place the files.
+Do not attempt to install the placed files using the instmqm script
+that was provided with V5.3.1.0 at this time. The V5.3.1.0 version of
+instmqm does not support installation on NonStop BladeSystem.
+
+2. Unzip the 5.3.1.12 fixpack distribution package - wmq53.1.12.tar.zip.
+The fixpack distribution package contains the following files:
+
+readme_wmq_5.3.1.12 This README
+wmq53.1.12_H06.tar.Z H-Series H06 Package
+
+3. This installation requires the wmq53.1.12_H06.tar.Z package.
+Locate the WMQ placed installation filetree containing the opt directory
+prepared in step 1 above, and upload the wmq53.1.12_H06.tar.Z fixpack
+archive to this location in binary mode.
+
+4. Extract the fixpack compressed tarfile using commands similar to:
+
+cd /usr/ibm/wmq/V53112
+uncompress wmq53.1.12_H06.tar.Z
+
+5. Unpack the contents of the extracted tar archive for this FixPack over the
+placed file tree. For example, if the placed files are located in the default
+location /usr/ibm/wmq:
+
+cd /usr/ibm/wmq
+tar xvof /usr/ibm/wmq/V53112/wmq53.1.12_H06.tar
+
+6. Use the extracted instmqm script in this FixPack to install the product
+using the updated installation file tree and the instructions in Chapter 3
+of "WebSphere MQ for NonStop Server Quick Beginnings" guide, pages 13-29.
+Before beginning, review the list of changes to Chapter 3 detailed in the
+"Documentation Updates" section at the end of this README file. Note also
+that the list of installed files displayed will differ from those shown in the
+examples in the manual.
+
+Post-Installation
+-----------------
+If upgrading from WMQ V5.3.1, read the following post-installation instructions:
+
+Non-Native TNS Applications:
+
+Re-BIND any non-native (TNS) applications. See "Upgrading to V5.3.1.12" above 
+for more information.
+
+Re-binding non-native (TNS) is REQUIRED if upgrading from V5.3.1.4 or earlier
+releases but is RECOMMENDED if upgrading from V5.3.1.5 or later fixpack for 
+incorporation of APARs IC67057, IC68569 and internal defect 4158. 
+
+If you use SSL channels and have not already installed V5.3.1.1:
+
+Edit the SSL certificate store, cert.pem and move all the CA certificates
+to a new file, trust.pem, stored in the same directory as cert.pem. The
+only items that should remain in cert.pem are the queue manager's personal
+certificate, and the queue manager's private key. These two items should
+be located at the start of the cert.pem file. All other certificates
+(intermediate and root CAs) must be moved to trust.pem. The trust.pem file
+must be in the same directory as cert.pem, as configured in the queue
+manager's SSLKEYR attribute.
+
+Update the copy of the entropy daemon program that you run for SSL channels
+on the system with the new version (...opt/mqm/ssl/amqjkdm0).
+
+Enable new support for Danish CCSID 65024:
+
+Customers who wish to enable the new support for Danish CCSID 65024
+should do the following to install the revised ccsid.tbl file:
+
+Issue the following commands on OSS:
+
+1. Logon to OSS using the WMQ installation owner's userid
+2. End all Queue Managers defined in the WMQ Installation.
+endmqm <qmgr name>
+3. Source in the installation's wmqprofile
+. $MQNSKVARPATH/wmqprofile
+4. cp -p $MQNSKOPTPATH/samp/ccsid.tbl $MQNSKVARPATH/conv/table/
+5. Start queue managers
+
+Guardian C++ DLLs:
+
+Ensure that the WMQ Guardian C++ DLLs are 'executable' by using "FUP ALTER"
+to set their FILECODE to 800 (for H-Series or J-Series). Use commands similar 
+to the following:
+
+1. Logon to TACL using the WMQ installation owner's userid
+
+2. OBEY your WMQ Installation's WMQCSTM file
+3. VOLUME [#param MQNSKOPTPATH^LIB^G]
+4. FUP ALTER IMQI2,CODE 800
+5. FUP ALTER IMQI2T,CODE 800
+6. FUP ALTER IMQI3,CODE 800
+7. FUP ALTER IMQI3T,CODE 800
+8. Logoff
+
+Guardian Subvolume File Permissions
+
+The WMQ Guardian Installation Subvolume and all WMQ Guardian Queue
+Manager Subvolumes must accessible to both MQM group members
+and to users that run WMQ application programs.
+
+Ensure that:
+
+All members of the MQM security group have read, write, execute
+and purge permission to these subvolumes.
+
+All users that run WMQ application programs, have read, write
+and execute permission to these subvolumes
+
+Restart Queue Managers:
+
+Restart the queue managers for the installation you have
+updated with this fixpack.
+
+UNINSTALLATION INFORMATION
+==========================
+
+This fixpack cannot be automatically uninstalled if a problem occurs
+during the update of an installation using svcmqm.
+
+You should use the instmqm -b option to create a backup of an
+installation before applying the service. If a problem occurs
+or you need to reverse the upgrade at a later date, use the
+instmqm -x option to restore a backup of the installation at the
+prior service level.
+
+KNOWN LIMITATIONS, PROBLEMS AND WORKAROUNDS
+===========================================
+
+This section details known limitation, problems, and workarounds for
+WebSphere MQ for HP NonStop Server, Version 5.3.1.12.
+
+Limitations
+-----------
+
+1. The current implementation of Publish / Subscribe is restricted to run
+within a single CPU. The control program and all "worker" programs run in
+the CPU that was used to run the 'strmqbrk' command.
+The Publish/Subscribe broker does not automatically recover in the event
+of CPU failures.
+
+2. The current memory management implementation in the Queue Server limits
+the total amount of non-persistent message data that can be stored on all
+the queues hosted by a single Queue Server to less than 1Gb. The limit of
+non-persistent message data on a single queue can not exceed approximately
+1Gb therefore, even if a single Queue Server is dedicated to that queue.
+
+3. The number of threads in threaded agent processes (LQMAs or MCAs) or in MQI
+applications, is limited to a maximum of 1000 by the limit on open depth of
+the HP TMF T-file.
+
+4. API exits are not supported for non-native (TNS) applications. Any other
+exit code for non-native applications must be statically bound with the
+TNS application.
+
+5. Cluster workload exits are only supported in "trusted" mode. This means
+that a separate copy of each exit will run in each CPU and exit code in
+one CPU cannot communicate with exit code in another CPU using the normal
+methods provided for these exits.
+
+6. Upgmqm will not migrate the following data from a V5.1 queue manager:
+messages stored in Message Overflow files (typically persistent messages
+over 200,000 bytes in size) will not be migrated. If the option to
+migrate message data was selected, the upgrade will fail. if the option
+to migrate message data was not selected, the upgrade will not be
+affected by the presence of message overflow files.
+clustering configuration data - all cluster related attributes of objects
+will be reset to default values in the new V5.3 queue manager.
+SNA channel configuration - channels will be migrated, but several of the
+attributes values will need to be changed manually after the upgrade.
+channel exit data - attributes in channels that relate to channel exit
+configuration will be reset to default values in the new V5.3 queue
+manager.
+In all cases where upgmqm cannot migrate data completely, a warning message
+is generated on the terminal output as well as in the log file. These can
+be reviewed carefully after the upgrade completes for further actions that
+may be necessary.
+
+7. Java and JMS limitations
+
+The Java and JMS Classes do not support client connections. WebSphere MQ
+for HP NonStop Server does not support XA transaction management, so the
+JMS XA classes are not available. For more detail, please refer to the
+Java and JMS documentation supplement, Java.pdf.
+
+8. Control commands in Guardian (TACL) environment do not obey the RUN option
+"NAME" as expected
+
+A Guardian control command starts an OSS process to run the actual
+control command - and waits for it to complete. When the NAME option is
+used, the Guardian control command process uses the requested name, but
+the OSS process cannot and is instead named by NonStop OS.
+
+If the Guardian control command is prematurely stopped by the operator
+(using the TACL STOP command for example) the OSS process running the
+actual control command may continue to run. The OSS process may need to be
+stopped separately and in addition to the Guardian process.
+
+9. Trace doesn't end automatically after a queue manager restart
+(APAR IC53352) and trace changes do not take effect immediately
+
+If trace is active and a queue manager is restarted, the trace settings
+should be reset to not trace any more. Instead, the queue manager
+continues tracing using the same options as before it was restarted.
+The workaround is to disable trace using endmqtrc before ending, or while
+the queue manager is ended.
+
+Also, changes to trace settings do not always take effect immediately
+after the command is issued. For example, it could be several MQI calls
+later that the change takes effect. The maximum delay between making a
+trace settings change and the change taking effect would be until the end
+of the queue manager connection, or the ending of a channel.
+
+10. Some EMS events generated to default collector despite an alternate
+collector being configured (APAR IC53005)
+
+An EMS event message "FFST record created" is generated using the OSS
+syslog() facility whenever an FDC is raised by a queue manager. This
+EMS event cannot be disabled, and goes to the default collector $0. For
+OSS processes, an alternate collector process can be specified by
+including an environment variable in the context of these processes
+as in the following example:
+
+export EMS_COLLECTOR=\$ALT
+
+Guardian processes always use the default collector because HP do not
+provide the ability to modify the collector in the Guardian environment.
+HP is investigating if a change is possible. No fix for this problem
+has yet been identified.
+
+11. The use of SMF (virtual) disks with WMQ is not supported on Release
+Version Updates prior to H06.26 and J06.15 because of restrictions
+imposed by the OSS file system. For more details, please refer to the
+HP NonStop Storage Management Foundation User's Guide Page 2-12.
+
+12. The maximum channel batch size that can be configured (BATCHSZ attribute)
+is 2000. If you need to run channels with batch sizes greater than 680
+you must increase the maximum message length attribute of the
+SYSTEM.CHANNEL.SYNCQ to 60000.
+
+e.g. from RUNMQSC - ALTER QL (SYSTEM.CHANNEL.SYNCQ) MAXMSGL (60000)
+
+13. The SYSTEM.CHANNEL.SYNCQ is a critical system queue for operation of
+the queue manager and should not be altered to disable MQGET or MQPUT
+operations, or to reduce the maximum message size or maximum depth
+attributes from their defaults.
+
+14. Currently, the cluster transmission queue (SYSTEM.CLUSTER.TRANSMIT.QUEUE)
+cannot be moved to an alternative Queue Server because it is constantly
+open by several internal components. The following procedure (which
+requires a "quiet" queue manager, and a queue manager restart) can be
+used to achieve this reconfiguration. Do not use this procedure on a
+queue manager that is running in production. Read and understand the
+procedure carefully first since it includes actions that cause
+internal errors to be generated in the queue manager.
+
+1/ Rename the OSS repository executable (opt/mqm/bin directory)
+mv amqrrmfa amqrrmfax 
+2/ From OSS enter 'ps -f | grep amqrrmfa | grep X '
+where X is the Queue Manager name.
+3/ kill -9 those processes returned from step 2
+At this point the EC will start continuously generating FDCs and
+log messages as it attempts to, and fails, to restart the repository
+servers that were stopped. Perform the remaining steps in this
+procedure without delay to avoid problems with excessive logging
+such as disk full conditions.
+4. Verify the processes are stopped
+From OSS enter 'ps -f | grep amqrrmfa | grep X '
+Where X is the Queue Manager name
+5. Issue the altmqfls --server command to move the cluster transmission
+queue to an alternate queue server
+6. Issue dspmqfls to verify the alternate server assignment
+7. Rename the OSS repository executable back to the expected name
+mv amqrrmfax amqrrmfa
+8. End the queue manager using preemptive shutdown. The EC will generate
+FDCs ending because of the earlier attempts to start a repository
+manager while the executable was renamed. There will be FDCs and
+EC Primary process failover
+
+Component :- xcsExecProgram
+Probe Description :- AMQ6025: Program not found
+Comment1 :- No such file or directory
+Comment2 :- /opt/mqm/bin/amqrrmfa
+...
+AMQ8846: MQ NonStop Server takeover initiated
+AMQ8813: EC has started takeover processing
+AMQ8814: EC has completed takeover processing
+...
+The EC may have to be manually TACL stopped if quiesce or immediate
+end is used thus the need for the preemptive shutdown
+endmqm -p <qmgr name>
+9. Rename the repository manager executable to the original name
+mv amqrrmfax amqrrmfa
+10. Restart the queue manager
+strmqm <qmgr name>
+
+15. In Guardian/TACL environments, support for some WMQ command-line programs
+has been deprecated for WMQ Fixpack 5.3.1.3 and later.
+
+The affected command-line programs are:
+
+amqoamd
+amqrdbgm
+amqrfdm
+crtmqcvx
+endmqlsr
+runmqchi
+runmqchl
+runmqdlq
+runmqlsr
+runmqtrm
+
+These programs will continue to function for now, however their use in
+Guardian/TACL environments is discouraged. Support for these programs
+in Guardian/TACL environments may be withdrawn completely in a future
+WMQ 5.3 release/fixpack.
+
+IBM recommends that customers use the OSS version of these programs instead.
+
+Customers who want to route output from WMQ OSS tools to VHS or other Guardian
+collectors should use the OSSTTY utility. OSSTTY is a standard utility
+provided by OSS and is described in the HP publication "Open System Services
+Management and Operations Guide".
+
+Note: See Item 3. in "Known problems and workarounds" for a description of
+restrictions when using the MQ Broker administration commands in the
+Guardian/TACL environment.
+
+16. Do not use WebSphere MQ with a $CMON process that alters attributes of WMQ
+processes (for example the processor, priority, process name or program
+file name) when they are started. This is not a supported environment since
+there are components in WMQ that rely on these attributes being set as
+specified by WMQ for their correct operation.
+
+17. Support for forked processes
+
+MQI Support from forked processes in OSS is subject to the following
+restrictions:
+1. If forking is used, MQI operations can be performed only from child
+processes. Using MQI verbs from a parent process that forks child
+processes is not supported and will result in unpredictable
+behavior.
+
+2. Use of the MQI from forked processes where the parent or child is
+threaded is not supported.
+
+18. TMF Outage handling
+
+TMF outage handling was significantly improved with V5.3.1.4, however there
+is still a limitation in V5.3.1.6 and later to be aware of:
+
+1. If a STOP TMF, ABRUPT command is issued, TMF marks all open audited
+files as corrupt and the queue manager cannot perform further
+processing until this condition is rectified by restarting TMF.
+In this state, the queue manager will freeze further operation, and log
+the condition in the queue manager log file every 10 seconds for a
+maximum of 50 attempts. Whether or not TMF is restored within this
+timeframe, the WMQ queue manager should be restarted to reduce the risk
+of any undetected damage persisting.
+
+19. Triggering HP NSS non-C Guardian applications
+
+The MQ default Trigger Monitor process, runmqtrm, at present cannot
+directly trigger the following application types:
+
+Guardian TACL scripts or macro file
+COBOL application
+TAL application
+An OSS script file (wmqtrig) provides indirect support for these
+files types. To use this script, the PROCESS definition APPLTYPE should
+be set to UNIX, and the APPLICID should refer to the script as in
+the following examples:
+
+For a TACL script called "trigmacf":
+APPLICID('/opt/mqm/bin/wmqtrig -c \$data06.fp4psamp.trigmacf')
+APPLTYPE(UNIX)
+
+For a COBOL or TAL application called "mqsecha":
+APPLICID('/opt/mqm/bin/wmqtrig -p /G/data06/fp4psamp/mqsecha')
+APPLTYPE(UNIX)
+
+
+Notes:
+1. TACL scripts use the wmqtrig script with a "-c" option.
+The -c option should use the Guardian representation for file name
+of the TACL script file, with the special character ($) escaped,
+for example:
+
+\$data06.fp4psamp.trigmacf
+
+2. COBOL and TAL applications use the wmqtrig script with a "-p" option.
+The -p option must use the OSS representation for the file name of
+the application, for example:
+
+/G/data06/fp4psamp/mqsecha
+
+3. C applications can be triggered directly by specifying
+
+APPLICID('$DATA06.FP4PSAMP.MQSECHA')
+APPLTYPE(NSK)
+
+To trigger a PIC application using the WMQ Pathway MQS-TRIGMON00
+serverclass, a DEFINE is required:
+
+=_RLD_LIB_PATH,CLASS SEARCH,SUBVOL0 <Guardian MQ binary Volume.Subvolume>
+
+For example:
+ALTER MQS-TRIGMON00,
+DEFINE =_RLD_LIB_PATH,CLASS SEARCH,SUBVOL0 $DATA06.FP4PBIN
+
+4. If the "-p" option is used, gtacl passes the complete MQTMC2 structure
+text (which is 560 bytes) to the application being triggered, whereas if
+the "-c" option is used, limitations in TACL will cause the triggered 
+application to receive 520 bytes only.
+Applications intended to be triggered using -p option must handle the 
+complete 560 character startup character string.
+This can cause problems, particularly with COBOL applications;
+Since a COBOL GETSTARTUPTEXT call can process only 529 characters,
+triggering a COBOL application with the -p option (560 character startup
+string) can result in a memory overwrite and application abend.
+In this case, the -c option should be used instead of the -p option."
+
+20. Maximum numnber of LQMA processes
+
+The maximum number of LQMA processes per queue manager is 1417. Attempts to
+configure a MaxUnthreadedAgents value of 1418 or greater in the qmproc.ini file
+will result in FDCs when the queue manager attempts to start the 1418th LQMA.
+
+21. Limitation on ProcessNameRoot values in qmproc.ini file
+
+The ProcessNameRoot value used in the qmproc.ini file for the MCA, LQMA and 
+RepositoryManager stanzas must be unique across all queue managers in all
+installations on the system. If the values are not unique, two queue 
+managers attempting to create a new process name at the same time may attempt
+to use the same sequence of names, resulting in heavy load on the OSS
+nameserver and/or FDCs with probes EC062000 from eclStartMCA or EC065000 from
+eclStartLQMA. This may result in the queue manager becoming unresponsive.
+
+22. BIND/REPLACE Warning 9
+
+The use of BIND/REPLACE when re-binding non-native (TNS) applications with 
+the latest WMQ TNS Library is supported, however, when using this command, 
+you may encounter many Bind 'warning 9' messages. These warnings are safe to
+ignore, as the changes made in the MQMTNS library are completely contained
+within that library and there is no external affect on an application that
+would link with that library. Please refer to document 
+ID mmr_ns-4.0.6050052.2565545 in KBNS which has been updated by HP to include
+this information. 
+
+23. PING CHANNEL uses the =TCPIP^PROCESS^NAME DEFINE as opposed to the 
+value set in the qmproc.ini file.
+
+If the TCPIP^PROCESS^NAME DEFINE is invalid, attempts to issue a 
+PING CHANNEL request will fail with the following message -
+":AMQ9212: A TCP/IP socket could not be allocated."
+
+24. Using multiple cluster receiver channels for a queue manager can cause the 
+master and slave repository managers to get out of sync in some configurations, 
+this results in FFSTs from rrmHPNSSGetMetaPacket with Comment1 field 
+"Meta data mis-match Expected: metalen=xx".
+The root cause of this problem has not been identified definitively, but it is
+recommended that cluster configurations do not use multiple cluster receiver 
+channels for the same cluster on a given queue manager.
+
+25. Format 2 Queue and Queue overflow files are not supported
+
+If an attempt is made to use altmqfls to change extent size or max extents of 
+a Queue or Queue overflow file such that the new file size would require a
+format 2 file, the attempt will fail and an FDC file containing the following
+
+Probe Id :- XC066050 
+Component :- xgcDupPartFile 
+... 
+Major Errorcode :- xecF_E_UNEXPECTED_RC 
+Minor Errorcode :- krcE_UNEXPECTED_ERROR 
+Probe Description :- AMQ6118: An internal WMQ error has occurred 
+(20800893) 
+...
+Arith1 :- 545261715 20800893 
+
+26. RUNMQSC DISPLAY QSTATUS(*) TYPE(HANDLE) ALL can return only 500 handles
+
+The current implementation of DISPLAY QSTATUS can handle only 500 queue
+handles. In prior releases, executing the command in a scenario where there
+were more than 500 handles resulted in an error return and large numbers of 
+FFSTs (see internal defect 2230 earlier in this readme). These errors are the
+result of a design limitation with the DISPLAY QSTATUS implementation. 
+The processing of the command has been modified to handle the scenario cleanly
+and return only the first 500 handles retrieved, as supported by the design.
+
+Known problems and workarounds
+------------------------------
+1. FDCs from Component xcsDisplayMessage reporting xecF_E_UNEXPECTED_SYSTEM_RC
+
+On RVUs H06.06 and later:
+
+These FDCs occur frequently on queue manager shutdown, and at times during
+queue manager start, from processes that write to the queue manager log
+files at these times, typically the cluster repository cache manager
+(amqrrmfa) and the EC (MQECSVR). No functional problem is caused by these
+FDCs, except that the queue manager log file misses some log messages
+during queue manager shutdown. The FDCs report an unexpected return code
+from the HP lseek() function. An example of an FDC demonstrating this
+problem follows:
+
+Probe Id :- XC022011
+Component :- xcsDisplayMessage
+Program Name :- $DATA06.RP1PBIN.MQECSVR
+Major Errorcode :- xecF_E_UNEXPECTED_SYSTEM_RC
+
+MQM Function Stack
+nspPrimary
+eclShutdownOK
+xcsDisplayMessageForSubpool
+xcsDisplayMessage
+xcsFFST
+
+6fffe660 000011FA ....
+6fffe670 2F686F6D 652F726F 622F4D51 /home/test/MQ
+6fffe680 352E332F 5250312F 50726F64 2F776D71 5.3/RP1/Prod/wmq
+6fffe690 2F766172 2F6D716D 2F716D67 72732F51 /var/mqm/qmgrs/Q
+6fffe6a0 4D312F65 72726F72 732F414D 51455252 M1/errors/AMQERR
+6fffe6b0 30312E4C 4F47 01.LOG
+
+This problem is fixed by the following HP SPRs
+
+T8620ACL (OSSFS) for G06 HP OS
+T8620ACM (OSSFS) for H06 HP OS
+
+2. APAR IC54594 - EC abends with non-MQM user running application from non-MQM
+directory.
+
+Statically-bound TNS applications that are not relinked after installing 
+Fixpack 5.3.1.4 have additional considerations. For these applications, 
+qmproc.ini Application Rules 2 and 4 will not work if the application 
+is located in a non-MQM directory.
+
+3. The Guardian control commands for the Publish / Subscribe broker
+(strmqbrk, endmqbrk, dspmqbrk ... etc) will not work correctly unless they
+are run in the same CPU as the broker is running in, or was last running in.
+
+Please use the equivalent OSS commands instead of the Guardian versions, or
+ensure that the Guardian Publish / Subscribe broker commands run in the same
+CPU as the broker was or is running in.
+
+4. Queue managers occasionally do not delete Temporary Dynamic Queues the 
+when the last application closes them. The cause of this is unknown at present.
+The problem is rare and unlikely to cause significant impact on queue 
+manager operation unless the queues are present in very large numbers.
+Queues orphaned in this way cannot be used by applications, and are removed
+unconditionally as a part of the normal garbage collection activity during 
+a queue manager restart.
+
+DOCUMENTATION UPDATES
+=====================
+
+Please note that several supplements to the documentation have been provided
+with fixpacks since V5.3 was originally released. These supplements have
+been released in Adobe Acrobat format and can found in the
+opt/mqm/READMES/en_US directory of any installation as well as the original
+software distribution tree (placed files). The following supplements have
+been released to date (the name of the file describes the content):
+
+Exits.pdf
+Java.pdf
+Pubsub.pdf
+SNAChannels.pdf
+SSLUpdate.pdf
+Upgmqmreadme.pdf
+Sdcp.pdf
+
+Also please note that the current published versions of the cross-platform
+("family") books contain references to the IBM MQSeries V5.1 for Compaq NSK
+product which is the previous major version of WebSphere MQ for HP NonStop
+Server. Consequently, these references may not be accurate with respect to
+the functional support provided by V5.3.1.
+
+Websphere MQ Programmable Command Formats and Administration Interface
+(SC34-6060-03)
+-----------------------------------------------------------------------
+
+Chapter 3 - PCF Commands and Responses in Groups
+
+Page 19: Add "Refresh Queue manager" as a supported command
+
+Chapter 4 - Definitions of Programmable Command Formats
+
+Page 173: Add the following new command:
+
+Refresh Qmgr
+
+The Refresh Qmgr (MQCMD_REFRESH_Q_MGR) command refreshes the
+Execution Controller (EC) process management rules.
+
+This PCF is supported only on WebSphere MQ V5.3 HP NonStop Server.
+
+Required parameters:
+None
+
+Optional parameters:
+None
+
+Error codes
+
+This command might return the following in the response format
+header, in addition to the values shown on page 18.
+
+Reason (MQLONG)
+
+The value can be:
+MQRCCF_PARM_COUNT_TOO_BIG
+
+Parameter count too big.
+
+WebSphere MQ for HP NonStop Server Quick Beginnings (GC34-6626-00)
+------------------------------------------------------------------
+
+Chapter 1 - Planning to install WebSphere MQ for HP NonStop Server
+
+Page 1: the baseline release level for V5.3.1 on the HP Integrity NonStop
+Server is now H06.05.01
+Page 1: the typical approximate storage requirements are as follows:
++ OSS files placed before installation:
+H-Series: 160Mb
++ For each installation:
+H-Series: Guardian 220Mb, OSS 350Mb, Total 570Mb
++ For each queue manager:
+H-Series: Guardian 9.5Mb, OSS 0.2Mb, Total 10Mb
+Pages 2 & 3: please review the section "Hardware and Software
+Requirements" in these release notes for the details of all other updated
+requirements
+Chapter 3 - Installing WebSphere MQ for HP NonStop Server
+
+Page 12: Product Selection dialog. The names of the products have been
+updated to "WebSphere MQ V5.3.1" and "WebSphere MQ V5.3.1 Integrity".
+Page 14: instmqm now includes the function of creating an automatic
+backup archive of a successful installation, as follows:
+Instmqm has been enhanced to provide the ability to back-out an ungrade
+installation, and the ability to archive and restore installations
+individually. Before instmqm starts to make changes to a system, it will
+automatically create an archive of the current installation (OSS opt tree
+and Guardian installation subvolumes only) in the root directory
+containing the opt tree in OSS. If a failure occurs during installation,
+and instmqm has made changes, the user will be asked if they wish to
+restore the installation to its original state using the archive created
+before changes were made. At the end of a successful installation,
+instmqm will now automatically create a backup archive of the new
+installation.
+
+Instmqm also supports two new command line options to support creating
+and using backup archives independently from an installation:
+
+-b create a backup archive of the installation
+-x restore an installation from a backup archive
+
+These options may not be combined with any other options. Both options
+require the user to respond to questions at the terminal.
+
+A backup archive file is an OSS pax file, created as follows:
+
++ the Guardian PAK utility is used to create a backup of the three
+Guardian subvolumes for the installation in a file named "WMQSAVED"
++ the PAK backup file is copied to the OSS opt directory of the
+installation that is being archived
++ the entire OSS opt tree of the installation (which now includes
+WMQSAVED) is then archived by the OSS pax utility
+
+Backup archive files are always created in the directory that holds the
+OSS opt tree for the installation. Archive files created automatically
+by instmqm are named "mqarchive-yymmdd-hhmmss" where "yymmdd" and
+"hhmmss" are numeric strings of the date and time that the backup archive
+was created - for example: "mqarchive-061005-143606".
+
+Page 15: instmqm has new command line options as described in these
+release notes for creating and restoring backup archives
+Page 17: the SnaProviderName and TcpProviderName fields of the
+QmgrDefaults stanza in the instmqm response file are used to populate
+the proc.ini file to provide installation wide defaults for channels.
+Please note that these fields do not get used for the default listener
+configuration either on the command line (runmqlsr) or in the queue
+manager's Pathway environment. Users must manually configure the
+transport names for all listeners.
+Page 28: in addition to the manual methods for cleaning up after a failed
+installation, instmqm will offer the option to restore the previous
+installation from a backup archive in the event of a failure while
+upgrading a V5.3 installation to V5.3.1 level. These release notes
+describe the additional function.
+If an installation was initially created without SSL (selection of the
+installation type "CORE" for instmqm), the following procedure can be
+used to update the installation to include SSL components. In the
+instructions below, <MQInstall> refers to the location of the
+installation that needs to be updated and <PlacedInstall> means the
+location of the complete set of placed files for the level of WMQ that
+corresponds to the installation being updated. All queue managers
+must be ended before attempting this procedure.
+1. mkdir <MQInstall>/opt/mqm/ssl
+2. chmod 775 <MQInstall>/opt/mqm/ssl
+3. cp <PlacedInstall>/opt/mqm/ssl/* <MQInstall>/opt/mqm/ssl
+4. chmod 775 <MQInstall>/opt/mqm/ssl/amq*"...
+5. cp <MQInstall>/opt/mqm/ssl/openssl <MQInstall>/opt/mqm/bin
+6. chmod 664 <MQInstall>/opt/mqm/ssl/openssl
+7. chmod 774 <MQInstall>/opt/mqm/bin/openssl
+8. cp <MQInstall>/opt/mqm/ssl/amqjkdm0 <MQInstall>/opt/mqm/bin
+9. chmod 775 <MQInstall>/opt/mqm/bin/amqjkdm0
+10. mv <MQInstall>/opt/mqm/lib/amqcctca
+<MQInstall>/opt/mqm/lib/amqcctca_nossl
+11. mv <MQInstall>/opt/mqm/lib/amqcctca_r
+<MQInstall>/opt/mqm/lib/amqcctca_r_nossl
+12. cp <MQInstall>/opt/mqm/ssl/amqccssl <MQInstall>/opt/mqm/lib/amqcctca
+13. cp <MQInstall>/opt/mqm/ssl/amqccssl_r
+<MQInstall>/opt/mqm/lib/amqcctca_r
+14. chmod 775 <MQInstall>/opt/mqm/lib/amqcctca*
+15. The <MQInstall>/var/mqm/qmgrs/<qmgr name> directory should have an
+
+ssl directory which is where you will store the certificate related
+files (cert.pem, trust.pem etc.)
+16. The <MQInstall>/opt/mqm/samp/ssl should exist already with the ssl
+samples
+17. If the entropy daemon is not configured on the system this will need
+to be performed. Refer to the WMQ V53 HP NonStop System
+Administration Chapter 11 page 165-167
+18. Install the certificates per the updated instructions, SSLupdate.pdf
+found in <MQInstall>/opt/mqm/READMES/en_US
+
+Chapter 5 - Creating a Version 5.3 queue manager from an existing Version 5.1
+queue manager
+
+Pages 37 & 38: this section is completely replaced by the documentation
+supplement Upgmqmreadme.pdf supplied with this release.
+Chapter 7 - Applying maintenance to WebSphere MQ for HP NonStop Server
+
+Pages 44 & 45: the tool for applying maintenance is named "svcmqm" and
+not "installCSDxx".
+Page 44: in step 3 of "Transferring and preparing the PTF for
+installation", the top level directory of the PTF is opt, and is not
+named differently for each PTF. Therefore it is important to manually
+create a directory specific to each PTF, download the PTF to that new
+directory and then expand the archive within the new directory.
+Page 44: in step 2 of "Running the installation script for a PTF", the
+
+svcmqm tool has a different command line from that documented for
+"installCSDxx". svcmqm takes three parameters:
+svcmqm -i installationtree -v vartree -s servicepackage
+where "installationtree" is the full path to the location of the opt/mqm
+directory of the installation to be updated
+"vartree" is the full path to the location of the var/mqm
+directory of the installation to be updated
+"servicepackage" is the full path to the location of the opt/mqm
+directory of the maintenance to be installed
+For example:
+svcmqm -i /home/me/wmq/opt/mqm -v /home/me/wmq/var/mqm
+-s /home/me/wmqfiles/opt/mqm
+
+which will update the installation in /home/me/wmq/opt/mqm and
+
+/home/me/wmq/var/mqm from the maintenance package in directory tree
+/home/me/wmqfiles/opt/mqm.
+
+If either or both the "-i installationtree" and "-v vartree" parameters
+are omitted, svcmqm will use the current setting of the appropriate
+environment variable - either WMQNSKOPTPATH or WMQNSKVARPATH.
+
+WebSphere MQ for HP NonStop Server System Administration Guide (SC34-6625-00)
+-----------------------------------------------------------------------------
+
+Chapter 2 - An introduction to WebSphere MQ administration
+
+Page 16: before running any control commands on OSS or NonStop OS it is
+necessary to establish the environment variables for the session. When
+an installation is created a file called wmqprofile is also created in
+the var/mqm directory that will establish the environment for an OSS
+shell. Likewise, a file is also created in the NonStop OS subvolume
+containing the WMQ NonStop OS samples called WMQCSTM that can be used
+to set up the appropriate environment variables for a NonStop OS TACL
+session.
+To establish the WMQ environment for an OSS shell session:
+
+. wmqprofile
+
+To establish the WMQ environment for a NonStop OS TACL session:
+
+obey WMQCSTM
+
+The same steps are required before running any applications in the
+OSS or NonStop OS environment.
+
+Chapter 4 - Administering local WebSphere MQ objects
+
+
+Page 48: when creating a Process definition, the default value for
+the APPLTYPE attribute is "NSK" (indicating a Guardian program)
+Chapter 7 - WebSphere MQ for HP NonStop Server architecture
+
+Page 80: the MQSC command to reload the process management rules is
+REFRESH QMGR TYPE(NSPROC) and not RESET QMGR TYPE(NSPROC)
+Chapter 8 - Managing scalability, performance, availability and data
+integrity
+
+Page 104: the last paragraph of the OpenTMF section should be reworded
+as follows:
+No special administrative actions are required for this use of TMF.
+WebSphere MQ uses and manages it automatically. You must ensure that
+the RMOPENPERCPU and BRANCHESPERRM configuration parameters of TMF are
+set to appropriate values for your configuration. Please see Chapter 12
+
+Transactional Support - Configuring TMF for WebSphere MQ for
+information on how to calculate the correct values. The HP TMF Planning
+and Configuration Guide describes the subject of resource managers and
+heterogeneous transaction processing.
+
+Chapter 9 - Configuring WebSphere MQ
+
+Page 119: the CPUS section should state that the default can be
+overridden using the crtmqm -nu parameter. See Chapter 18 - The control
+commands for a description of how to use this parameter with crtmqm.
+Page 120: the section describing the ARGLIST attribute of a TCP/IP
+Listener should also mention the use of the optional -u parameter to
+configure channels started by the listener as unthreaded processes.
+The default is to run incoming channels as threads in an MCA process.
+Page 130: the MQSC command to reload the process management rules is
+REFRESH QMGR TYPE(NSPROC) and not RESET QMGR TYPE(NSPROC)
+Page 133: Figure 23 remove :
+OAM Manager stanza #
+OamManager:
+Page 136: the Exit properties section should state that the only
+
+supported way of configuring and running a Cluster Workload (CLWL) Exit
+for HP NonStop Server is in FAST mode. The CLWLMode setting in qm.ini
+is required to be set to FAST, which is the default for WebSphere MQ
+on this platform.
+Page 139: the MQIBindType attribute of the Channels stanza is set by
+crtmqm to FASTPATH. This should not be changed, except under the
+direction of IBM Service.
+Page 140: the AdoptNewMCA=FASTPATH option is always required for
+this platform in order for the adoption of MCAs to be effective. The
+"Attention!" box after the description of the FASTPATH option should
+be ignored.
+Page 140: add the following description of the ClientIdle attribute:
+ClientIdle=seconds
+
+ClientIdle specifies the number of seconds of inactivity to permit
+between client application MQI calls before WebSphere MQ terminates
+the client connection. The default is to not terminate client
+connections however long they remain inactive. When a client connection
+is terminated because of idle activity, the client application receives
+a connection broken result (2009) on its next MQI call.
+
+Chapter 11 - Working with the WebSphere MQ Secure Sockets Layer (SSL) support
+
+A documentation supplement has been written to replace the sections on
+Page 170 (Preparing the queue manager's SSL files) to Page 176 (Building
+and verifying the sample configuration) because of changes to the files
+that WebSphere MQ uses to hold certificates. The documentation supplement
+is called SSLupdate.pdf, and can be found in the opt/mqm/READMES/en_US
+directory of an installation.
+
+Chapter 12 - Transactional Support
+
+Page 185: The descriptions of the TMF attribute RMOPENPERCPU in the
+
+Resource manager configuration section is modified as follows:
+RMOPENPERCPU
+
+Each WebSphere MQ thread or process that handles transactions has
+an open of a Volatile Resource Manager in the CPU it runs in. In
+addition, each application thread or process using the MQI also has
+an open. The minimum requirement for this configuration parameter
+
+is therefore the sum of:
++ all Queue Server processes in that CPU
++ all LQMA and MCA threads running in that CPU
++ all MQI application threads running in that CPU
++ 10 (to account for miscellaneous queue manager processes that
+could be running in that CPU)
+You should calculate the peak values of these numbers across all CPUs
+and add a safety margin to arrive at the correct value for your system.
+The HP default value of 128 for this parameter is often suitable for
+small configurations, but unsuitable for medium or large ones.
+
+
+Page 186: add the following paragraph to the Troubleshooting section
+for Configuring TMF:
+If the RMOPENPERCPU value is not configured to allow sufficient opens
+of resource managers in a CPU, WebSphere MQ connections will fail with
+an unexpected return code, and FDCs will be generated reporting an
+error with the TMF_VOL_RM_OPEN_. The workaround is to distribute
+applications and queue manager processes in the CPU that exceeds
+the limit to other CPUs. The correct remedy is to schedule an outage
+and modify the TMF configuration.
+
+Page 186: add the following paragraph to the Troubleshooting section
+for configuring TMF:
+If TMF is stopped, or new transactions are disabled, and WMQ requires
+an internal "unit of work" (TMF transaction) to perform an update to
+a protected resource requested by an MQI call, that call will fail
+and the reason code returned will be MQRC_UOW_NOT_AVAILABLE (2255).
+
+Note that in some cases, updates to protected resources may be
+required by MQI operations do not directly perform messaging
+operations - for example, MQOPEN of a model queue that creates a
+permanent dynamic queue. If MQI calls return MQRC_UOW_NOT_AVAILABLE,
+check the status of the TMF subsystem to determine the likely cause.
+
+Chapter 14 - Process Management
+
+Page 197: the MQSC command to reload the process management rules is
+REFRESH QMGR TYPE(NSPROC) and not RESET QMGR TYPE(NSPROC)
+
+Page 200 and 204: the default value for the maximum number of unthreaded
+agents is now 200. The default value for the maximum number of threaded
+agents is now 20. the default value for the maximum use count for
+threaded agents is now 100.
+
+Page 203: add a new paragraph titled "Pathway":
+Pathway
+This stanza contains 3 attributes:-
+- ProcessName
+- DynamicProcessName
+- Hometerm
+ProcessName is the name of the Queue Managers pathmon process.
+If the -np option was specified at queue Manager creation, 
+the value of ProcessName will be set to the value of that option 
+when the qmproc.ini file is created
+If DynamicProcessName is set to Yes, the system will generate a name
+for the pathmon process at the time the Queue Manager starts.
+If the value is set to no, the value of the ProcessName attribute
+will determine the pathmon process name for the queue manager 
+Hometerm specifies the value of the hometerm attribute for the Queue 
+Manager pathmon process 
+If the -nh opton was specified at queue manager creation, the 
+value of Hometerm will be set to the value of that option, 
+otherwise the default of $ZHOME will be used.
+
+Page 204: the "valid attribute values" for the attribute "ExecutableName"
+should be stated as "File name part only of the program to run for the
+LQMA or MCA process".
+
+Pages 203 - 205, Table 20: Process Management: Keyword definition Summary
+There are a number of errors in the Process Management Keyword
+definition table:
+
+1. Environment variables:
+ENVxx should be Envxx
+
+2. Executable Name to Match:
+ExecNameMatch should be ExeNameMatch
+
+3. Fail if CPU unavailable:
+FailOnCPUunavail should be FailOnCPUUnavail
+
+4. Preferred number of Threaded Agents:
+PreferedThreadedAgents should be PreferredThreadedAgents
+
+Default values:
+
+5. MaxThreadedAgents: change from 10 to 20
+
+6. MaxUnthreadedAgents: change from 20 to 200
+
+7. MaxThreadedAgentUse: change from 10 to 100
+
+Pages 199 - 201, Table 16. Process management: agent attributes
+
+The same default value changes are required:
+
+1. Maximum number of unthreaded agents: 200
+2. Maximum number of threaded agents: 20
+3. Maximum reuse count for threaded agents: 100
+
+Chapter 15 - Recovery and restart
+
+Page 216: Configuring WebSphere MQ, NonStop RDF, and AutoSYNC to support
+disaster recovery
+To configure RDF to work with a existing WMQ V53 queue manager:
+End the WMQ V53 queue manager.
+Using the HP BACKUP or PAK utility specifying the AUDITED option
+Backup the primary site Guardian WMQ queue manager subvolume.
+Using the HP RESTORE or UNPAK utility specifying the AUDITED option
+Restore the files on the backup site.
+Ensure that on the backup system that the alternate key file
+attribute (ALTKEY) for files amqcat and amqpdb of each queue
+manager are set to the correct (backup system) node name
+Page 217: the example of the altmqfls command to set the RDF
+compatibility mode for large persistent messages is correct but too
+simplistic. Please use care when using altmqfls to set the queue options
+
+(--qsoptions parameter) and refer to the reference section for the
+control commands for a complete description of using this option.
+Page 217: the bullet point that describes the configuration of AutoSYNC
+filesets is incorrect when it states that NO ALLSYMLINKS should be
+specified. Replace sub-bullet item number 2 with the following text:
+2. The entire queue manager OSS directory structure
+var_installation_path/var/mqm/qmgrs/qmname.
+
+You must specify the absolute path name of the queue manager's
+directory. Specify the ALLSYMLINKS option for this fileset to
+ensure that AutoSYNC correctly synchronizes the symbolic link
+(G directory) in the queue manager's directory to the NonStop OS queue
+manager's subvolume on the backup system.
+
+Chapter 16 - Troubleshooting
+
+Page 230: after the section "Is your application or system running
+slowly?", insert the following new section:
+Are your applications or WebSphere MQ processes unable to connect?
+
+If connection failures are occurring:
+
+is the User ID under which the application runs authorized to
+use this queue manager?
+are SAFEGUARD permissions preventing read access to the WebSphere
+MQ installation files by the User ID running the application?
+are the environment variables established for the application
+process, so that the correct installation of WebSphere MQ is being
+used?
+if necessary, has the application been relinked or rebound with
+any static MQI libraries that it uses?
+is a resource problem preventing the queue manager from allowing
+the connection? Review the troubleshooting section under TMF
+Configuration on Page 185 and 186 for information about the
+RMOPENSPERCPU TMF attribute.
+
+Chapter 18 - The control commands
+
+Page 93: The example of the --resetmeasure option is missing a mandatory
+parameter having the value "YES" or "NO". The paragraph on page 93 describing
+the --resetmeasure option should be replaced with the following
+
+"The queue server can maintain the Measure counter only if it is included 
+in an active measurement. If it is not included in an active measurement, 
+and messages are put in the queue and removed from the queue, the value 
+of the counter will no longer represent the current depth of the queue. 
+If the counter is subsequently included in an active measurement, you can 
+cause the queue server to reset the Measure counter to the current depth 
+of the queue by using the --resetmeasure parameter on the altmqfls command, 
+as follows: altmqfls --qmgr QMGR --type QLOCAL --resetmeasure TEST.QUEUE YES"
+
+Page 244: The mandatory YES|NO parameter is missing from the syntax diagram
+
+Page 247: The mandatory YES|NO parameter is missing from the description
+of the option
+
+Page 243: the control commands for the Publish / Subscribe broker are
+not referenced here. Refer to the WebSphere MQ V6.0 Publish/Subscribe
+User Guide and the documentation supplement for Publish/Subscribe on
+HP NonStop Server - Pubsub.pdf.
+Page 255: if the OSS environment variable or Guardian PARAM MQPATHSEC
+is defined and set to one of the standard NonStop OS security attributes
+(A, N, C, G, O, or U) when crtmqm is run, the default PATHWAY SECURITY
+attribute value of "G" will be overridden by the value of the environment
+variable / PARAM. This can be used to restrict access to the queue
+manager's Pathway environment. The current Pathway attributes can be
+displayed in PATHCOM using the INFO PATHWAY command.
+Page 255: the -nu parameter for setting the default CPUS attribute
+in Pathway serverclasses does not accept all the values that Pathway
+allows for this attribute. The only accepted values (and the result in
+Pathway configuration) are of the form:
+-nu value Pathway CPUS attribute
+-------- ---------------------
+-nu a CPUS (a:0)
+-nu a:b CPUS (a:b)
+
+More complex Pathway serverclass CPUS attributes settings must be
+configured after the queue manager has been created, using the HP
+PATHCOM utility.
+
+Chapter 23 - API exits
+
+Pages 373-375: please review the updates to this section in the
+documentation supplement for API exits for HP NonStop Server called
+Exits.pdf. This supplement has been extensively revised for V5.3.1.1
+to clarify the requirements and process for creating and integrating
+exits with WebSphere MQ.
+
+Appendix B - Directory structure
+
+Pages 430 and 431: there is a new G symbolic link to the Guardian
+subvolume containing the product executables in
+.../var/mqm/qmgrs/@SYSTEM
+Page 431: the content of the ssl directory is revised with V5.3.1.1
+as follows:
+This directory contains up to four files used by the SSL support:
+
+The queue manager certificate and private key store (cert.pem)
+The trusted certificates store (trust.pem)
+The pass phrase stash file for the queue managers certificate
+and private key store (Stash.sth)
+The certificate revocation list file (optional - crl.pem)
+
+Appendix F - Environment variables
+
+Page 446: there are several environment variables that are used by the
+Guardian sample build scripts to locate the header files and the
+libraries. Suitable settings for these are established in the
+WMQCSTM file (in the Guardian samples subvolume). The environment
+variables, and their meanings, are:
+MQNSKOPTPATH^INC^G include file/header subvolume
+MQNSKOPTPATH^BIN^G binaries subvolume
+MQNSKOPTPATH^LIB^G binaries subvolume
+MQNSKOPTPATH^SAMP^G samples subvolume
+
+In addition, an HP environment variable is also required (and set in
+WMQCSTM) that locates the OSS DLLs for dynamic loading from Guardian.
+The environment variable is ^RLD^FIRST^LIB^PATH.
+
+Page 468: add after the "Queue Server Tuning parameters" section
+
+Queue Manager Server tuning parameters
+
+MQQMSHKEEP If this ENV is set for the MQS-QMGRSVR00 serverclass, its value
+specifies a numeric value in seconds to override the default housekeeping
+interval of the queue manager server. The default interval is 60 seconds.
+The housekeeping interval controls how frequently the queue manager
+server generates expiration reports. The permitted range of values is 1-300.
+Values outside this range will be ignored and the default value will be used.
+
+MQQMSMAXMSGSEXPIRE If this ENV is set for the MQS-QMGRSVR00 serverclass,
+its value specifies a numeric value to override the default maximum number
+of expiration report messages that are generated during housekeeping
+operations by a queue manager server. The default maximum number of expiration
+messages generated is 100. The permitted range of values is 1-99999. Values
+outside this range will be ignored and the default value will be used.
+
+
+Appendix H - Building and running applications
+
+Building C++ applications,
+
+Table 47 - there is no multi-threaded library support in
+Guardian so there should not be an entry for a
+multi-threaded guardian library
+
+Table 48 - the name of this table should be "Native non-PIC"
+
+References to G/lib symbolic links have changed with WMQ 5.3.1 to lib/G
+
+Note that the MQNSKVARPATH and MQNSKOPTPATH environment variables must
+be established in the environment, before an application starts up.
+They cannot be programmatically set once a program is running by using
+putenv().
+
+Page 461: Building COBOL applications
+
+Add the following text:
+
+"In both the OSS and Guardian environment, the CONSULT compiler
+directive referencing the MQMCB import library must now be used along
+with correct linker options. Refer to the BCOBSAMP TACL script described
+in Appendix I for more information."
+
+Appendix I - WebSphere MQ for NonStop Server Sample Programs
+
+Pages 465-466: The section "TACL Macro file for building C Sample Programs"
+is replaced by the following:
+
+BCSAMP - Build a C-Language Sample.
+
+This TACL script will compile and link a C-language sample into an
+executable program. The script expects that the WMQ environment has
+been established using WMQCSTM.
+
+BCSAMP usage:
+
+BCSAMP <type> <source>
+
+<type> The type of executable program that should be built.
+
+Valid values are:
+
+pic A native PIC program
+tns A non-native TNS program
+
+<source> The filename of the source module to be compiled and linked
+
+The <source> filename should end with a 'C'. The final program name is
+the same as the source filename with the trailing 'C' removed.
+
+Page 467: The section "TACL Macro files for building COBOL Sample
+Programs" is replaced by the following:
+
+BCOBSAMP - Build a COBOL Sample.
+
+This TACL script will compile and link a COBOL sample into an executable
+program. The script expects that the WMQ environment has been established
+using WMQCSTM.
+
+BCOBSAMP usage:
+
+BCOBSAMP <type> <source>
+
+<type> The type of executable program that should be built.
+
+Valid values are:
+
+pic A native PIC program
+tns A non-native TNS program
+
+<source> The filename of the source module to be compiled and linked
+
+The <source> filename should end with an 'L'. The final program name is
+the same as the <source> filename with the trailing 'L' removed.
+
+Page 469: The section "TACL Macro files for building TAL sample programs"
+is replaced by the following:
+
+BTALSAMP - Build a TAL Sample.
+
+This TACL script will compile and link a TAL sample into an executable
+program. The script expects that the WMQ environment has been established
+
+using WMQCSTM.
+
+BTALSAMP usage:
+
+BTALSAMP <source>
+
+<source> The filename of the source module to be compiled and linked
+
+The final program name is the same as the <source> filename with the
+trailing character removed.
+
+Appendix J - User exits
+
+refer to the documentation supplement Exits.pdf for updated information
+about configuring and building user exits. This supplement has been
+extensively revised for V5.3.1.1 to clarify the requirements and process
+for creating and integrating exits with WebSphere MQ.
+The description of compile options for PIC unthreaded, threaded and
+Guardian dlls in this document is incorrect. The option specified as
+"-export all" should be "-export_all".
+
+Appendix K - Setting up communications
+
+Page 482: The TCP/IP keep alive function
+
+By default, the TCP/IP keep alive function is not enabled. To enable
+this feature, set the KeepAlive=Yes attribute in the TCP Stanza in the
+qm.ini file for the queue manager.
+If this attribute it set to "yes" the TCP/IP subsystem checks periodically
+whether the remote end of a TCP/IP connection is still available. If it is
+not available, the channel using the connection ends.
+If TCP stanza KeepAlive attribute is not present or is set to "No", the
+TCP/IP subsystem will not check for disconnection of the remote end.
+
+Chapter 9 "Configuring WebSphere MQ" page 140 describes the TCP stanza
+attributes.
+
+APAR IC58859: wmqtrig script
+The wmqtrig script processing the -c option, for triggering a TACL macro/script
+file, will not normally propagate the TMC data to the macro/script file.
+Some applications may need the TMC for processing. A switch used in conjunction
+with the -c option, -5.1, has been added which will pass the TMC data to a TACL
+macro/script file with the wmqtrig script. Define the APPLICID attribute with
+the -5.1 switch, for example:
+APPLICID(/wmq/opt/mqm/bin/wmqtrig -5.1 -c \$data06.test.trigmac)
+
+SSLupdate.pdf page 7
+-----------------------------------------------------------------------------
+
+The SSLupdate.pdf document was first released with Fixpack 5.3.1.1
+
+The SSL test scripts expect that a default TCP/IP process ($ZTC0) is
+configured on the system to be used during the test. The configuration
+will need modification if a non-default TCP/IP process does not exist
+on the system or another TCP/IP process is used to communicate with the
+partner system. The ALICE.sh and/or BOB.sh scripts that setup of the
+listener (runmqlsr) will need modification to add the -g option to use a
+non-default TCP/IP process.
+
+CONTACTING IBM SOFTWARE SUPPORT
+===============================
+
+IBM Software Support provides assistance with product defects. You might
+be able to solve you own problem without having to contact IBM Software
+Support. The WebSphere MQ Support Web page
+(http://www.ibm.com/software/integration/wmq/support/ [http://www.ibm.com/software/integration/wmq/support/]) contains
+links to a variety of self-help information and technical flashes. The
+MustGather Web page
+(http://www-01.ibm.com/support/docview.wss?uid=swg21229861 [http://www-01.ibm.com/support/docview.wss?uid=swg21229861])
+contains diagnostic hints and tips that will aid in diagnosing and
+solving problems, as well of details of the documentation required by
+the WebSphere MQ support teams to diagnose problems.
+
+Before you "Submit your problem" to IBM Software Support, ensure
+that your company has an active IBM software maintenance contract, and
+
+that you are authorized to submit problems to IBM. The type of software
+maintenance contract that you need depends on the type of product you
+have:
+
+For IBM distributed software products (including, but not limited to,
+Tivoli(R), Lotus(R), and Rational(R) products, as well as DB2(R) and
+WebSphere products that run on Windows or UNIX(R) operating systems),
+enroll in Passport Advantage(R) in one of the following ways:
+Online: Go to the Passport Advantage Web site at
+http://www.lotus.com/services/passport.nsf/WebDocs/Passport_Advantage_Home [http://www.lotus.com/services/passport.nsf/WebDocs/Passport_Advantage_Home],
+
+and click "How to Enroll".
+By phone: For the phone number to call in your country, go to the "Contacts"
+page of the IBM Software Support Handbook at
+www.ibm.com/support/handbook [www.ibm.com/support/handbook], click 'contacts' and then click the name of 
+your geographic region.
+For customers with Subscription and Support (S & S) contracts, go to the
+Software Service Request Web site at
+http://www.ibm.com/support/servicerequest [http://www.ibm.com/support/servicerequest].
+For customers with IBMLink(TM), CATIA, Linux(R), S/390(R), iSeries(TM),
+pSeries(R), zSeries(R), and other support agreements, go to the IBM Support
+Line Web site at
+http://www.ibm.com/services/us/index.wss/so/its/a1000030/dt006 [http://www.ibm.com/services/us/index.wss/so/its/a1000030/dt006].
+For IBM eServer(TM)) software products (including, but not limited to,
+DB2(R) and WebSphere products that run in zSeries, pSeries, and iSeries
+environments), you can purchase a software maintenance agreement by working
+directly with an IBM sales representative or an IBM Business Partner.
+For more information about support for eServer software products, go to the
+IBM Technical Support Advantage Web site at
+http://www.ibm.com/servers/eserver/techsupport.html [http://www.ibm.com/servers/eserver/techsupport.html].
+
+If you are not sure what type of software maintenance contract you need,
+call 1-800-IBMSERV (1-800-426-7378) in the United States. From other
+countries, go to the "Contacts" page of the IBM Software Support
+Handbook at www.ibm.com/support/handbook [www.ibm.com/support/handbook], click 'contacts' and then 
+click the name of your geographic region. for phone numbers of people
+who provide support for your location.
+
+To contact IBM Software support, follow these steps:
+
+1. "Determine the business impact of your problem"
+2. "Describe your problem and gather background information"
+3. "Submit your problem"
+
+Determine the business impact of your problem
+
+
+When you report a problem to IBM, you are asked to supply a severity
+level. Therefore, you need to understand and assess the business impact
+of the problem that you are reporting. Use the following criteria:
+
+---------------------------------------------------------------+
+
+Severity 1 The problem has a critical
+business impact: You are unable
+to use the program, resulting in
+a critical impact on operations.
+This condition requires an
+immediate solution.
+
+---------------------------------------------------------------+
+
+Severity 2 This problem has a significant
+business impact: The program is
+usable, but it is severely
+limited.
+
+---------------------------------------------------------------+
+
+Severity 3 The problem has some business
+impact: The program is usable,
+but less significant features
+(not critical to operations) are
+unavailable.
+
+---------------------------------------------------------------+
+
+Severity 4 The problem has minimal business
+impact: The problem causes
+little impact on operations, or
+a reasonable circumvention to
+the problem was implemented.
+
+---------------------------------------------------------------+
+
+Describe your problem and gather background information
+
+When describing a problem to IBM, be as specific as possible. Include
+all relevant background information so that IBM Software Support
+specialists can help you solve the problem efficiently. See the
+MustGather Web page
+http://www-01.ibm.com/support/docview.wss?uid=swg21229861 [http://www-01.ibm.com/support/docview.wss?uid=swg21229861] for
+details of the documentation required. To save time, know the answers to
+these questions:
+
+What software versions were you running when the problem occurred?
+Do you have logs, traces, and messages that are related to the problem
+symptoms? IBM Software Support is likely to ask for this information.
+Can you re-create the problem? If so, what steps do you perform to
+re-create the problem? Did you make any changes to the system? For example,
+did you make changes to the hardware, operating system, networking software,
+or other system components? Are you currently using a workaround for the
+problem? If so, please be prepared to describe the workaround when you
+report the problem.
+
+Submit your problem
+
+You can submit your problem to IBM Software Support in one of two ways:
+
+Online: Go to the Submit and track problems tab on the IBM Software Support
+site at http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]. Type your
+information into the appropriate problem submission tool.
+By phone: For the phone number to call in your country, go to the "Contacts"
+page of the IBM Software Support Handbook at
+www.ibm.com/support/handbook [www.ibm.com/support/handbook], click 'contacts' and then click the name 
+of your geographic region.
+
+If the problem you submit is for a software defect or for missing or
+inaccurate documentation, IBM Software Support creates an Authorized
+Program Analysis Report (APAR). The APAR describes the problem in
+detail. Whenever possible, IBM Software Support provides a workaround
+that you can implement until the APAR is resolved and a fix is
+delivered. IBM publishes resolved APARs on the Software Support Web site
+daily, so that other users who experience the same problem can benefit
+from the same resolution.
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++ ++
+++ COPYRIGHT, NOTICES AND TRADEMARKS ++
+++ ++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+* IBM WebSphere MQ for HP NonStop Server, Version 5.3.1.12
+* Statement: Licensed Materials - Property of IBM
+* (c) Copyright IBM Corp. 1999, 2016
+* All rights reserved.
+* U.S. Government Users Restricted Rights - use,
+* duplication or disclosure restricted by GSA
+* ADP Schedule Contract with IBM Corp.
+* Status: Version 5.3.1.12
+* Created: May 20, 2016
+
+NOTICES AND TRADEMARKS
+======================
+
+IBM may not offer the products, services, or features discussed in this
+document in all countries. Consult your local IBM representative for
+information on the products and services currently available in your
+area. Any reference to an IBM product, program, or service is not
+intended to state or imply that only that IBM product, program, or
+service may be used. Any functionally equivalent product, program, or
+service that does not infringe any IBM intellectual property right may
+be used instead. However, it is the user's responsibility to evaluate
+and verify the operation of any non-IBM product, program, or service.
+
+IBM may have patents or pending patent applications covering subject
+matter described in this document. The furnishing of this document does
+not give you any license to these patents. You can send license
+inquiries, in writing, to:
+IBM Director of Licensing
+
+IBM Corporation
+North Castle Drive
+Armonk, NY 10504-1785
+U.S.A.
+
+For license inquiries regarding double-byte (DBCS) information, contact
+the IBM Intellectual Property Department in your country/region or send
+inquiries, in writing, to:
+IBM World Trade Asia Corporation
+Licensing
+2-31 Roppongi 3-chome, Minato-ku
+Tokyo 106, Japan
+
+The following paragraph does not apply to the United Kingdom or any
+other country/region where such provisions are inconsistent with local
+law: INTERNATIONAL BUSINESS MACHINES CORPORATION PROVIDES THIS
+PUBLICATION "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR
+IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+Some states do not allow disclaimer of express or implied warranties in
+certain transactions; therefore, this statement may not apply to you.
+
+This information could include technical inaccuracies or typographical
+errors. Changes are periodically made to the information herein; these
+changes will be incorporated in new editions of the publication. IBM may
+make improvements and/or changes in the product(s) and/or the program(s)
+described in this publication at any time without notice.
+
+Any references in this information to non-IBM Web sites are provided for
+convenience only and do not in any manner serve as an endorsement of
+those Web sites. The materials at those Web sites are not part of the
+materials for this IBM product, and use of those Web sites is at your
+own risk.
+
+IBM may use or distribute any of the information you supply in any way
+it believes appropriate without incurring any obligation to you.
+
+Licensees of this program who wish to have information about it for the
+purpose of enabling: the exchange of information between
+independently created programs and other programs (including this one)
+and (ii) the mutual use of the information that has been exchanged,
+should contact:
+IBM Canada Limited
+Office of the Lab Director
+8200 Warden Avenue
+Markham, Ontario
+L6G 1C7
+CANADA
+
+Such information may be available, subject to appropriate terms and
+conditions, including in some cases payment of a fee.
+
+The licensed program described in this document and all licensed
+material available for it are provided by IBM under terms of the IBM
+Customer Agreement, IBM International Program License Agreement, or any
+equivalent agreement between us.
+
+Any performance data contained herein was determined in a controlled
+environment. Therefore, the results obtained in other operating
+environments may vary significantly. Some measurements may have been
+made on development-level systems, and there is no guarantee that these
+measurements will be the same on generally available systems.
+Furthermore, some measurements may have been estimated through
+extrapolation. Actual results may vary. Users of this document should
+verify the applicable data for their specific environment.
+
+Information concerning non-IBM products was obtained from the suppliers
+
+of those products, their published announcements, or other publicly
+available sources. IBM has not tested those products and cannot confirm
+the accuracy of performance, compatibility, or any other claims related
+to non-IBM products. Questions on the capabilities of non-IBM products
+should be addressed to the suppliers of those products.
+
+All statements regarding IBM's future direction or intent are subject to
+change or withdrawal without notice, and represent goals and objectives
+only.
+
+This information may contain examples of data and reports used in daily
+business operations. To illustrate them as completely as possible, the
+examples include the names of individuals, companies, brands, and
+products. All of these names are fictitious, and any similarity to the
+names and addresses used by an actual business enterprise is entirely
+coincidental.
+
+This information may contain sample application programs, in source
+language, which illustrate programming techniques on various operating
+platforms. You may copy, modify, and distribute these sample programs in
+any form without payment to IBM for the purposes of developing, using,
+marketing, or distributing application programs conforming to the
+application programming interface for the operating platform for which
+the sample programs are written. These examples have not been thoroughly
+tested under all conditions. IBM, therefore, cannot guarantee or imply
+reliability, serviceability, or function of these programs.
+
+Trademarks
+
+The following terms are trademarks of International Business
+Machines Corporation in the United States, other countries,
+or both: DB2, eServer, IBM IBMLink, iSeries, Lotus, MQSeries, pSeries,
+Passport Advantage, Rational, s/390, SupportPac, Tivoli, WebSphere, zSeries.
+
+UNIX is a registered trademark of The Open Group in the United States
+and other countries.
+
+Microsoft Windows is a trademark or registered trademark of Microsoft
+Corporation in the United States, other countries, or both.
+
+Java and all Java-based trademarks and logos are trademarks or registered
+trademarks of Sun Microsystems, Inc. in the United States, other countries,
+or both.
+
+Linux is a trademark of Linus Torvalds in the United States, other
+countries, or both.
+
+Other company, product or service names may be the trademarks
+or service marks of others.

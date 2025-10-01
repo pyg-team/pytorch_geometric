@@ -1,0 +1,159 @@
+Title: IBM PI18906: VIRTUAL PORTAL SUPPORT IN WCM API ENHANCMENT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The virtual portal API in WCM Repository does not allow users
+   to get a virtual portal by object ID, determine whether content
+   is VP scoped or get a list of all virtual portal context for
+   interacting with the WCM repository.
+   
+   Add new methods to the API to allow easier VP interaction
+   within WCM.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The virtual portal API in WCM Repository does not allow users
+   to get a virtual portal by object ID, determine whether content
+   is VP scoped or get a list of all virtual portal context for
+   interacting with the WCM repository.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following new API methods have been added to the
+   com.ibm.workplace.wcm.api.Repository class.
+   
+   /**
+    * Return a list of all Virtual Portal contexts available on the
+   current system
+    * @return <code>List</code> of all Virtual Portal contexts
+    */
+   public List<VirtualPortalContext>
+   getAllVirtualPortalContexts();
+   
+   /**
+    * Generate a <code>VirtualPortalContext</code> derived from the
+   Virtual Portal Object ID
+    * If Object ID is null, return base portal by default
+    * @param objectId the ObjectID for the target Virtual Portal
+    * @return VirtualPortalContext to Virtual Portal identified by
+   the specified context path.
+    */
+   public VirtualPortalContext generateVPContextFromObjectId(Object
+   ID objectId);
+   
+   /**
+    * Retrieve the current Virtual Portal context or the Base
+   Portal if called outside of a Virtual Portal
+    * @return VirtualPortalContext the context of the current
+   virtual portal
+    */
+   public VirtualPortalContext getCurrentVirtualPortalContext();
+   
+   /**
+    * Determine whether the current system has Virtual Portal Web
+   Content Library scoping enabled
+    * as used with Managed Pages
+    * @return true if Virtual Portal scoping is enabled, false
+   otherwise
+    */
+   public boolean isVirtualPortalScoped();
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI18906
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-29
+   
+   
+ * CLOSED DATE
+   2015-02-01
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

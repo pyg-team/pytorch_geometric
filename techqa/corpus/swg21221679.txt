@@ -1,0 +1,205 @@
+Title: IBM DAMO: Can the purging of the 'Deleted Items' folder be automated? - United States
+
+Text:
+How can we automate purging of Deleted Items folder; purge; delete; deleted; deletion; remove; removal; how to automate; agent; script; code; program; function; formula; programmatic approach; programmatically; DAMO 6.5.x; DAMO 7.x; iNotes Access for Microsoft Outlook; Domino Access for MS Outlook; memo; mail message; e-mail; email TECHNOTE (FAQ)
+
+QUESTION
+Frequently, users of IBM® Lotus® Domino® Access for Microsoft® Outlook (DAMO) are unaware that it is not enough to delete an item from the Inbox or Calendar or Tasks. For this deletion to get replicated to the mail file on the Lotus® Domino® server, it is necessary to also clear out the Outlook "Deleted Items" folder. There are Visual Basic for Applications (VBA) macros that will delete the highlighted documents and then clear out the Deleted Items folder in one step. 
+
+Determine the scenario that best matches your situation and go to the solution for that scenario below.
+
+Scenario #1:
+Customer: "I don't like the fact that deleting an item in Outlook when DAMO is used, requires 2 steps; first, to move the message to the Deleted items folder and then, to clear out the Deleted Items folder".
+
+Scenario #2:
+Customer: "I am a delegated user who manages up to 10 other users' mail files. When I move a message and calendar items to a managed user's Deleted Items folder and then clear that folder, that deletion never gets propagated to the manager's mail file on the server so that he/she can see the deletion on the manager's workstation."
+
+
+By default, there are 2 safeguards against unintended deletions:
+
+1. If the default Outlook settings are in place, the user will be asked to confirm deleting items in the Deleted Items folder.
+
+2. Soft Deletions are enabled for Domino mail files by default. The result is that deletions synchronized from Outlook/DAMO will be placed in the Trash folder on the Domino server. After 48 hours, the documents will get permanently deleted.
+
+
+ANSWER
+IMPORTANT NOTE: The macros provided below are unsupported ; it is strongly recommended that the macro(s) be thoroughly tested before deploying in a production environment. 
+
+
+
+
+
+
+
+
+for Scenario #1: 
+
+Solution : Use the macro, Sub EmptyDeletedItems(), which will allow for the user to simply highlight a message in a view; and then running the macro will move the message to the Deleted Items folder and clear the folder so the deletion gets propagated to Domino. 
+
+This macro was created using Outlook 2003. Steps to set up: 
+
+1. Assuming that Microsoft Office has been installed with the Microsoft Visual Basic option, open Outlook and select Tools > Macros > Visual Basic Editor. 
+2. In Visual Basic Editor File, paste the code below. 
+3. Save and close Visual Basic Editor. 
+4. To associate the EmptyDeletedItems macro with a toolbar button, in Outlook select View > Toolbar > Customize > New 
+5. Assign a meaningful name to the new Toolbar. Close it. The Toolbar will appear. 
+6. While still in the Customize dialog, select the Commands tab and highlight Macros. 
+7. Drag the EmptyDeletedItems macro to the toolbar. 
+
+Code: 
+Attribute VB_Name = "IBM" 
+Sub EmptyDeletedItems() 
+
+'NOTE: This is an unsupported script that 
+' needs to be thoroughly tested before 
+' deploying in a production environment. 
+
+Dim olApp As Outlook.Application 
+Dim myNameSpace As Outlook.NameSpace 
+Dim colSelectedItems As Outlook.Items 
+Dim myItem As Object 
+
+Dim folderTrash As Outlook.MAPIFolder 
+Dim myDeletedItemsFolder As Outlook.MAPIFolder 
+Dim Sel As Outlook.Selection 
+
+On Error GoTo ErrHandler 
+
+Set olApp = Application 
+Set Sel = olApp.ActiveExplorer.Selection 
+
+If Sel.Count < 1 Then 
+Set Sel = Nothing 
+Set olApp = Nothing 
+Exit Sub 
+End If 
+
+Set myNameSpace = olApp.GetNamespace("MAPI") 
+Set folderTrash = myNameSpace.GetDefaultFolder(olFolderDeletedItems) 
+If Sel.Count > 0 Then 
+For i = 1 To Sel.Count 
+Set myItem = Sel.Item(i) 
+If Not (myItem Is Nothing) Then 
+myItem.Delete 
+End If 
+Next 
+Else 
+If Not (olApp.ActiveInspector Is Nothing) Then 
+Set myItem = olApp.ActiveInspector.CurrentItem 
+If Not (myItem Is Nothing) Then 
+myItem.Delete 
+End If 
+End If 
+End If 
+
+Set myItem = Nothing 
+Set folderTrash = Nothing 
+Set Sel = Nothing 
+Set olApp = Nothing 
+
+'DAMO will not capture the "Delete" method. 
+'As a result, we need to use the 
+'"Empty Deleted Items folder" menu. 
+SendKeys "%{T}Y", True 
+Exit Sub 
+
+ErrHandler: 
+MsgBox Err.Description 
+Resume Next 
+End Sub 
+
+
+
+
+
+for Scenario #2: 
+
+Solution : Use the macro titled, Sub EmptyMulitpleDeletedItems() as this macro will cycle through each managed Deleted Items folder, pause after asking if this folder is intended to be emptied before moving to the next Deleted Items folder. When the deletion is intended to be synchronized with the server, those messages will be moved to the delegate's Deleted Items folder and then cleared out. Then, when all selected manager's Deleted Items folders have been cleared, the macro will then ask if the delegated user wants to now replicate these deletions to the Domino server. 
+
+This macro was created using Outlook 2003. Steps to set up: 
+
+1. Assuming that Microsoft Office has been installed with the Microsoft Visual Basic option, open Outlook and select Tools > Macros > Visual Basic Editor. 
+2. In Visual Basic Editor File, paste the code below. 
+3. Save and close Visual Basic Editor. 
+4. To associate the EmptyMultipleDeletedItems macro with a toolbar button, in Outlook select View > Toolbar > Customize > New 
+5. Assign a meaningful name to the new Toolbar. Close it. The Toolbar will appear. 
+6. While still in the Customize dialog, select the Commands tab and highlight Macros. 
+7. Drag the EmptyMultipleDeletedItems macro to the toolbar. 
+
+Code: 
+Sub EmptyMultipleDeletedItems() 
+
+On Error GoTo ErrHandler 
+
+Const SUBNAME = "Empty 'deleted items' Macro." 
+Const TRASH_FOLDER_NAME = "Deleted Items" 
+Const DELETION_CONFIRMATION_PROMPT = "This action will purge all documents in 'Deleted Items' Folders, including Delegee's. Do you want to continue?" 
+Const DELETION_CONFIRMATION_CAPTION = "Purge Deleted Items?" 
+Const DELETEION_INNER_PROMPT1 = "You're about to purge 'Deleted Items' folder of " 
+Const DELETEION_INNER_PROMPT2 = ". There are " 
+Const DELETEION_INNER_PROMPT3 = " documents(s) in the folder. Do you want to continue?" 
+Const SYNC_PROMPT1 = "There were no documents in any of the 'Deleted Items' folders to purge. " 
+Const SYNC_PROMPT2 = "Do you wish to synchronize (Send/Receive) your account now?" 
+Const SYNC_TITLE = "Synchronize mail?" 
+
+Dim olApp As Outlook.Application 
+Dim myNameSpace As Outlook.NameSpace 
+Dim SyncObjs As Outlook.SyncObjects 
+Dim SyncObj As Outlook.SyncObject 
+Dim i, j As Integer 
+Dim bPurged As Boolean 
+
+Set olApp = Application 
+Set myNameSpace = olApp.GetNamespace("MAPI") 
+bPurged = False 
+
+'Step thru all the 'deleted items' folders (including delegee's) this user might have & clear them. 
+For Each Folders In myNameSpace.Folders 
+For Each Folder In Folders.Folders 
+If (Folder.Name = TRASH_FOLDER_NAME And Folder.Items.Count > 0) Then 
+bConfirm = MsgBox(DELETEION_INNER_PROMPT1 & Folders.Name & DELETEION_INNER_PROMPT2 & Folder.Items.Count & DELETEION_INNER_PROMPT3, vbYesNo + vbQuestion, DELETION_CONFIRMATION_CAPTION) 
+If (bConfirm = vbYes) Then 
+bPurged = True 
+For j = 1 To Folder.Items.Count 
+Folder.Items.Remove (1) 
+Next 
+End If 
+End If 
+Next 
+Next 
+
+
+If bPurged = True Then ' Attempt to replicate the mailfiles. 
+bConfirm = MsgBox(SYNC_PROMPT2, vbYesNo + vbQuestion, SYNC_TITLE) 
+If (bConfirm = vbYes) Then 
+Set SyncObjs = myNameSpace.SyncObjects 
+For i = 1 To SyncObjs.Count 
+Set SyncObj = SyncObjs.Item(i) 
+SyncObj.Start 
+Next 
+End If 
+Else 
+bConfirm = MsgBox(SYNC_PROMPT1, vbOKOnly + vbInformation, DELETION_CONFIRMATION_CAPTION) 
+End If 
+
+' Cleanup. 
+Set SyncObjs = Nothing 
+Set SyncObj = Nothing 
+Set myNameSpace = Nothing 
+Set olApp = Nothing 
+
+Exit Sub 
+
+ErrHandler: 
+MsgBox Err.Description, vbOKOnly + vbCritical, SUBNAME 
+Resume Next 
+End Sub 
+
+Private Sub Application_Quit() 
+Call EmptyDeletedItems 
+End Sub 
+
+
+
+ * 
+ *

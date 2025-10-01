@@ -1,0 +1,30 @@
+Title: IBM ISCDC/IIDR for DB2 does not replicate any data although it is on mirror continuous state. - United States
+
+Text:
+ISCDC/IIDR; DATA CAPTURE CHANGES TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ISCDC/IIDR for DB2 does not replicate any data although it is on mirror continuous state. 
+
+SYMPTOM
+Everything looks good, we can see that logs are being scrapped in the management console event logs and trace logs however no data is reaching the target database.
+
+
+CAUSE
+The following log requirement is not being met: 
+
+*DB2 on z/OS and LUW, the DB2 tables need to be altered for Data Capture Changes. 
+
+ISCDC/IIDR tries to enable DATA CAPTURE CHANGES when the table is added to the subscription, afterwards it won't check if it is enabled or not.
+
+That means, if ISCDC/IIDR was successful enabling the DATA CAPTURE CHANGES when the table was mapped in the subscription and afterwards you for some reason disabled it, CDC won't check this setting again and it won't work properly since 
+there will be no data images of changes written in the log files. 
+
+If you configure your ISCDC/IIDR instance to be read-only, then you have to ensure that DATA CAPTURE CHANGES is enabled for the tables you're trying to mirror manually, the tool won't be able to enabled by itself since it won't have proper permissions.
+
+
+
+RESOLVING THE PROBLEM
+Make sure DATA CAPTURE CHANGES are enabled for the tables you are trying to mirror. 
+
+Refresh the tables in order to have them back in synch and start mirroring them.

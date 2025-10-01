@@ -1,0 +1,11 @@
+Title: IBM How do I resolve a QMF™ upgrade problem regarding the table Q.DSQ_RESERVED and  a missing package? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ We recently upgraded our version of QMF on a VM environment. When I try to invoke QMF, I get an error message that says Q.DSQ_RESERVED cannot be found. In another instance, I received error messages expressing that a certain package was not found. How can I resolve this? 
+
+ANSWER
+The Q.DSQ_RESERVED table was introduced in version QMF 3.1.0.I am not sure why it disappeared from your database, but you can recreate this table by running the SQL query found in the DSQ2TBLR COPY file. You can use ISQL to run these SQL statements. To 
+resolve the problem of the missing package in your SQL/DS™ database, run the DSQ2PREP EXEC which can be found in the distribution library.

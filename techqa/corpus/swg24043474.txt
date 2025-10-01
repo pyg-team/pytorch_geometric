@@ -1,0 +1,53 @@
+Title: IBM PI73197:Enable Java 8 Support for EJBDeploy on WebSphere Application Server - United States
+
+Text:
+PI73197; PI73197; PI73197 DOWNLOADABLE FILES
+
+ABSTRACT
+ Enable Java 8 Support for EJBDeploy on WebSphere Application Server 8.5.5.9 or later.
+NOTE: After this fix is applied, EJBDeploy can no longer be used with Java 6 
+
+DOWNLOAD DESCRIPTION
+PI73197 resolves the following problem:
+
+ERROR DESCRIPTION: 
+Java 8 is not supported for EJBDeploy on WebSphere Application Server 8.5.5.9 or later 
+
+LOCAL FIX: 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+All users of IBM WebSphere Application Server
+
+PROBLEM DESCRIPTION:
+EJBDeploy does not run on Java 8
+
+RECOMMENDATION:
+None
+
+EJBDeploy does not run on Java 8
+
+PROBLEM CONCLUSION: 
+The fix for this APAR is targeted for inclusion in 2Q2018. 
+
+Please refer to the Recommended Updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+None
+
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) V85 Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI73197/8.5.5.13/readme.txt] US English 3141 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 8.5.5.9-WS-WAS-IFPI73197 14 Aug 2017 US English 270089825 FC [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere Application Server&release=All&platform=All&function=fixId&fixids=8.5.5.9-WS-WAS-IFPI73197&includeSupersedes=0] [ ] 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24043474&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24043474&aid=2]Problems (APARS) fixed
+PI73197

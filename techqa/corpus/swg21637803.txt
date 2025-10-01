@@ -1,0 +1,41 @@
+Title: IBM Why do I get NumberFormatException: For input string: "xxxxxxxxx" when trying to view a Content Manager OnDemand document using IBM Content Manager eClient? - United States
+
+Text:
+Federated; OnDemand; eClient; NumberFormatException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why do I get NumberFormatException: For input string: "xxxxxxxxx" when trying to view a Content Manager OnDemand document using IBM Content Manager eClient? 
+
+ENVIRONMENT
+IBM Content Manager eClient configured to directly connect to a Content Manager OnDemand Server.
+
+DIAGNOSING THE PROBLEM
+Check to see if the application group associated with the folder where the document resides has a string display value for an integer field.
+
+RESOLVING THE PROBLEM
+There are two options to work around this limitation of IBM Content Manager OnDemand Connector.
+
+1. Disable the display value associated with the application group using the IBM Content Manager OnDemand System Administration Client. This can be done as follows:
+
+
+
+
+ * 
+ * 
+ * https://www.ibm.com/support/docview.wss?uid=swg21392275
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+2. Configure IBM Content Manager eClient to use Federated connection instead of direct connection to IBM Content Manager OnDemand server and select appropriate attributes. 
+RELATED INFORMATION
+ Copatibility Matrix [https://www.ibm.com/support/docview.wss?uid=swg21392275]

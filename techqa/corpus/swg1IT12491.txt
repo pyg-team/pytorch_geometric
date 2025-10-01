@@ -1,0 +1,200 @@
+Title: IBM IT12491: CAN'T PUT/GET MESSAGES IN EXPLORER WHEN USER ID AND PASSWORD ARE SET ON THE CHANNEL AFTER APPLYING 8.0.0.4 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When connecting to a remote queue manager using the IBM MQ
+   Explorer 8.0.0.4 with a user ID and password and the option
+   "Prompt for password" selected when setting up the connection,
+   the Put Test Message, Get Test Message, Clear Messages, Test
+   Publication and Test Subscription dialogues return an 2059
+   MQRC_Q_MGR_NOT_AVAILABLE error.  The error is not seen when the
+   "No password" or"Used saved password" options are used when
+   making the connection.
+   
+   An error similar to the following is seen in the Queue Manager
+   logs
+   
+   11/25/15 11:48:24 - Process(635.8) User(userid)
+   Program(amqrmppa)
+   Host(hostname) Installation(Installation1)
+   VRMF(8.0.0.4) QMgr(QM1)
+   
+   AMQ9791: The client application did not supply a user ID and
+   password.
+   
+   EXPLANATION:
+   The client application 'MQ Explorer 8.0.0' running on host ''
+   did not supply a
+   user ID and password. The channel authentication (CHLAUTH)
+   record for the
+   connection requires a user ID and password, but none was
+   supplied.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the IBM MQ 8.0.0.4 Explorer who
+    - Put, get and clear test messages, and test publications and
+   subscriptions
+    and where
+    - the connection to the queue manager from the IBM MQ 8.0.0.4
+   Explorer was made specifying a user ID and Password
+   and where
+   - the "Prompt for password" option was selected when creating
+   the remote connection to the Queue Manager.
+   
+   
+   Platforms affected:
+   Linux on x86-64, Linux on x86, Windows
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   A code change introduced into the IBM MQ Explorer 8.0.0.4
+   cleared the cache of the password set by the user during the
+   initial connection to the Queue Manager immediately after the
+   initial connection had been made.   Instead, the IBM MQ Explorer
+   should have cached the password for the duration of the
+   connection to the Queue Manager.
+   
+   The Put Test Message, Get Test Message, Test Publication, Test
+   Subscription and Clear Messages menu options each make a new
+   connection to the Queue Manager when they run, for which the
+   user is not expected to re-enter the password.  The IBM Explorer
+   should have used the cached password for these new, internal,
+   connections.  However, as the cached password had been cleared,
+   no password was available to be passed to the Queue Manager.
+   The Queue Manager subsequently rejected the new connection
+   attempt due to there being no password supplied for the
+   connection attempt causing the explorer to display a 2059  Queue
+   Manager Not available error.
+   
+   General administration of the Queue Manager using the IBM MQ
+   Explorer, such as editing a queue definition, does not make a
+   new connection to  the queue manager, and so this function
+   continued to work as expected.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The IBM MQ Explorer has been updated to properly cache the
+   password used to connect to the remote Queue Manager.  The
+   password is now available when making any new connections to the
+   Queue Manager required by the internal logic of the IBM MQ
+   Explorer.  The password is not cached between reconnects to the
+   queue manager, instead, when the remote queue manager is
+   disconnected the internal cache is cleared.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.5
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT12491
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-11-30
+   
+   
+ * CLOSED DATE
+   2016-05-09
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

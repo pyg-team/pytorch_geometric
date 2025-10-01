@@ -1,0 +1,143 @@
+Title: IBM Packaging Utility, version 1.2 - United States
+
+Text:
+fix pack; PU; packaging utility; Version 1.2; 7.5 DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and install IBM® Packaging Utility, Version 1.2. 
+
+DOWNLOAD DESCRIPTION
+IMPORTANT: This update has been superseded and is no longer available for download from ibm.com. You should update your product with the most recent version available. See http://www.ibm.com/support/docview.wss?uid=swg27025142 [http://www.ibm.com/support/docview.wss?uid=swg27025142] [http://www-01.ibm.com/support/docview.wss?rs=2042&uid=swg27007823] for the most recent version.
+
+
+
+
+This fix pack includes new features, enhancements, and fixes to the following versions of IBM Packaging Utility: 
+
+ * 1.1.2 
+ * 1.1.1 
+ * 1.1
+   
+
+IBM Packaging Utility is a program used to generate a new repository for packages, copy packages to a new repository, and delete packages that are no longer needed. 
+This section describes the content of Packaging Utility, version 1.2.
+
+
+ * Cumulative updates
+ * Prerequisites
+ * Installing the fix pack
+ * Known problems
+
+
+For the most up-to-date information about working with Packaging Utility, visit the Documentation Information Center at: http://publib.boulder.ibm.com/infocenter/install/v1r2/index.jsp [http://publib.boulder.ibm.com/infocenter/install/v1r2/index.jsp]. 
+
+
+
+
+
+
+Cumulative updates 
+
+This version includes all fixes, enhancements, and new features from the following fix packs: 
+ * 
+ * Packaging Utility, Version 1.1.2 [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/pu/112/docs/readme.html]
+ * 
+ * Packaging Utility, Version 1.1.1 [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/pu/111/docs/readme/readme.html]
+ * 
+ * Packaging Utility, Version 1.1 [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/pu/110/docs/readme/readme.html]
+
+
+
+
+
+
+
+
+Prerequisites 
+Refer to the section "Prerequisites" below in this document for hardware, software, and other requirements for installing this fix pack. 
+
+
+
+
+
+Installing this fix pack 
+Refer to the section "Installation instructions" below in this document for instructions on downloading and installing this fix pack. 
+
+
+
+
+
+Known problems 
+Known problems are documented in the form of individual technotes in the Support knowledge base at: [http://www.ibm.com/software/rational/support/] http://www.ibm.com/software/rational/support/ [http://www.ibm.com/software/rational/support/]. As problems are discovered and resolved, the knowledge base will be updated and maintained with any new information. By searching the knowledge base, you can quickly find workarounds or solutions to problems. 
+
+The following links launch customized queries of the live Support knowledge base: 
+ * View all known problems for IBM Packaging Utility, version 1.2 [http://www.ibm.com/support/search.wss?tc=SSCQ4AP&q=RN1.2&rankprofile=8]
+ * 
+ * View all known problems for IBM Packaging Utility version 1.0 and later [http://www.ibm.com/support/search.wss?tc=SSCQ4AP&rankprofile=8]
+
+PREREQUISITES
+Before you can install this fix pack, you must have IBM Installation Manager installed. For more information, refer to the Installation instructions below.
+
+INSTALLATION INSTRUCTIONS
+To download and install the fix pack, do one of the following:
+
+If IBM Installation Manager is not currently installed, complete the following steps:
+
+
+ 1.  
+ 2.   Download the installer from the download URL in the table below:
+ 3.   pu.offering.disk_win32.zip (on Windows®) pu.offering.disk_linux.zip (on Linux®) pu.offering.disk_solaris.zip (on Solaris) pu.offering.disk_aix.zip (on AIX)
+     
+ 4.  Extract the compressed file into an appropriate directory. For example, choose to extract to C:\temp.
+ 5.  
+ 6.  Change directory to C:\temp\disk_*\InstallerImage_* and run; install.exe (Windows), or install (AIX/Linux/Solaris). 
+ 7.  
+ 8.  The Installation Manager installer will be launched. Follow the wizard pages to install it.
+ 9.  
+ 10.  IBM Installation Manager will start at completion
+
+
+
+If Installation Manager is installed, download the zip and extract into an appropriate directory. For example, choose to extract to C:\temp. 
+
+Add the fix pack's repository location in IBM Installation Manager: 
+ 1.  
+ 2.  Start IBM Installation Manager.
+ 3.  
+ 4.  On the Start page of Installation Manager, click File > Preferences, and then click Repositories. The Repositories page opens.
+ 5.  
+ 6.  On the Repositories page, click Add Repository.
+ 7.  
+ 8.  On the Add repository window, browse to and enter the file path to the disk_* directory. For example, enter C:\temp\disk_win32, select the diskTag.inf file, select Open, and click OK.
+     
+     
+ 9.  Click OK to close the Preference page.
+ 10. 
+
+
+Installation of the fix pack should begin by clicking Update Packages. DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] pu.offering.disk_win32.zip 9/26/2008 English 303088081 FC [ftp://public.dhe.ibm.com/software/rationalsdp/v7/pu/120/zips/pu.offering.disk_win32.zip] DD pu.offering.disk_linux.zip 9/26/2008 English 303994037 FC [ftp://public.dhe.ibm.com/software/rationalsdp/v7/pu/120/zips/pu.offering.disk_linux.zip] DD pu.offering.disk_solaris.zip 9/26/2008 English 314249889 FC [ftp://public.dhe.ibm.com/software/rationalsdp/v7/pu/120/zips/pu.offering.disk_solaris.zip] DD pu.offering.disk_aix.zip 9/26/2008 English 224959713 FC [ftp://public.dhe.ibm.com/software/rationalsdp/v7/pu/120/zips/pu.offering.disk_aix.zip] DD 
+TECHNICAL SUPPORT
+ IBM Rational Software Support provides you with technical assistance.
+
+
+For contact information and guidelines or reference materials that you will need when you require support, read the IBM Software Support Handbook at: http://techsupport.services.ibm.com/guides/handbook.html [http://techsupport.services.ibm.com/guides/handbook.html]
+
+
+Before you contact IBM Rational Software Support, gather the background information that you will need to describe your problem. When describing a problem to an IBM software support specialist, be as specific as possible and include all relevant background information so that the specialist can help you solve the problem efficiently. To save time, know the answers to these questions: 
+ * 
+ * What software versions were you running when the problem occurred?
+ * 
+ * Do you have logs, traces, or messages that are related to the problem?
+ * 
+ * Can you reproduce the problem? If so, what steps do you take to reproduce it?
+ * 
+ * Are you using a workaround for the problem? If so, be prepared to describe the workaround.
+ *

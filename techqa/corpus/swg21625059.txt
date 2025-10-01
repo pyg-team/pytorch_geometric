@@ -1,0 +1,48 @@
+Title: IBM WebSphere MQ endusers restricted from issuing the *SYSREQ option 2 (ENDRQS) to terminate a job - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere MQ Support recommend not to issue the operating system command ENDRQS (System Request menu option 2) to terminate any WebSphere MQ jobs. This has the potential to cause WMQ to experience undesired behavior, such as, long lock wait (hang) conditions. 
+
+RESOLVING THE PROBLEM
+To prevent WebSphere MQ users or any user from displaying the SYSTEM request menu or any of it's options, such as ENDRQS, the following command can be used: 
+To prevent specific users from seeing the System Request Menu, specify *EXCLUDE authority for those users: 
+
+[/support/docview.wss?uid=swg21625059&aid=1] [/support/docview.wss?uid=swg21625059&aid=1]
+
+
+GRTOBJAUT OBJ(QSYS/QGMNSYSR) OBJTYPE(*PNLGRP) USER(USERA) AUT(*EXCLUDE) 
+
+NOTE: *PUBLIC may have *USE authority to the SYSTEM Request menu. This will allow other endusers access to the menu and only exclude USERA. WMQ support recommends that only System Administrators have authorization to this menu. 
+
+ 
+
+Once authorization has been revoked, endusers will see the following : 
+
+
+[/support/docview.wss?uid=swg21625059&aid=2] [/support/docview.wss?uid=swg21625059&aid=2] 
+
+ 
+
+
+Alternatively, to only prevent endusers from ending an interactive job, revoke enduser authority to the End Request (ENDRQS) command :
+
+GRTOBJAUT OBJ(ENDRQS) OBJTYPE(*CMD)USER(USERA) AUT(*EXCLUDE) 
+
+
+[/support/docview.wss?uid=swg21625059&aid=3] [/support/docview.wss?uid=swg21625059&aid=3] 
+
+ 
+
+When the enduser selects the ENDRQS option, to which they are not authorized, message CPD0032 (Message: Not authorized to command ENDRQS in library *SYSTEM. Cause: An attempt was made to access a command without adequate authority.) is issued.
+
+RELATED INFORMATION
+ IBM i: System request menu [http://www.ibm.com/support/knowledgecenter/ssw_ibm_i_71/rzarl/rzarlsysreq.htm]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

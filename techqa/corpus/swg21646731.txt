@@ -1,0 +1,40 @@
+Title: IBM Health check failure events - United States
+
+Text:
+itnmhealthcheck; health check; Health Check TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ItnmHealthChk failure events keep appearing in the Event List 
+
+SYMPTOM
+I have modified EventFilter in the NcoGateSchema.cfg (ITNM version 3.8) or EventGatewaySchema.cfg (version 3.9). I am getting Health Check Failed Events in the ObjectServer
+
+
+CAUSE
+The EventFilter no longer matches Health Check Events for the domain that the Gateway is operating in.
+
+DIAGNOSING THE PROBLEM
+1. Check that the m_CtrlState in the virtualdomain state.services table are all running (4).
+That will demonstrate that the monitored processes in the domains are all healthy and are not causing the Health Check Fail events.
+
+2. Check that the Health Check *Success* events are being sent by the ITNM Probe. Increase the probe trace level using kill -USR2 to debug 4 and watch for Health Check Success Events in the nco_p_ncpmonitor.<domain>.trace file. That will demonstrate that the Probe is inserting events successfully.
+
+
+See Related Information for a link to increase messagelevel and debug logging without restarting processes.
+
+3. Review the Gateway's log file for any evidence of Health Check Success events. For example, this is a snippet from a healthy Backup domain Gateway trace file showing ItnmHealthChk events being retrieved for the companion Primary domain;
+
+Found event map 'ItnmHealthChk' for 'ItnmHealthChk'(585633)
+'ItnmHealthChk' event map handling event: Resolution 585633
+Resolution event with filtered input: {
+..
+Summary='Precision health check success event for domain PRI from primary domain: PRI',
+
+If you see no evidence of this information, then the domain is not receiving Health Check Success events for the companion domain. The most likely mechanism for those events to be blocked is the EventFilter for that domain. Health Check Events all have an EventId='ItnmHealthChk'.
+
+
+RESOLVING THE PROBLEM
+Verify that your EventFilter matches ItnmHealthChk events for both Primary and Backup domains. If it blocks these events, then the VirtualDomain process will not see the Success events and will judge that domain to be unhealthy. As a result, it will then issue a Health Check Fail event for that domain.
+
+RELATED INFORMATION
+ Increase debug without restarting process [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com.ibm.networkmanagerip.doc_3.9/itnm/ip/wip/admin/task/nmip_adm_chngloglevrunpr.html]

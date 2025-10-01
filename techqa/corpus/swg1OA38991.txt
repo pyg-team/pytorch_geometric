@@ -1,0 +1,165 @@
+Title: IBM OA38991: MS SQL AGENT DB_PASSWORD WRITTEN AS DES - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the MS SQL Agent db_password is configured using the TEP,
+   the
+   password is written with DES encryption rather than AES256.
+   
+   
+   RECREATE INSTRUCTIONS:
+   
+   Setup Windows Domain user as administrator on all machines.
+   Install TEMS 6.2.2 FP3 on Windows box A.
+   Install TEP 6.2.2 FP3  on Windows box B.
+   Install TEMA 6.2.2 FP3 on Windows 2003 Server Endpoint
+   Add MS SQL Agent 6.2.1 to TEMS Depot
+   Execute "Add Managed System" on TEP
+   Specify MS SQL Server Password as "abcd"
+   Examine the MS SQL Agent configuration file on TEMA.
+   Observe that the db_password text is preceeded by the string DES
+   and not
+   AES256.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No workaround available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All TEMS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: WRONG PASSWORD TYPE IS USED ON A 64-BIT *
+   *                      MACHINE.                                *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   When configuring the MSSQL agent via remote deploy, the 64-
+   bit version of the cryptographic routines are used with the
+   32-bit agent and the MSSQL agent configuration fails.  The
+   problem occurs on a 64-bit Windows system running a 64-bit
+   NT agent and a 32-bit MSSQL Server agent.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been added to make sure that the correct
+   cryptographic routines are always invoked.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA38991
+   
+   
+ * REPORTED COMPONENT NAME
+   MGMT SERVER DS
+   
+   
+ * REPORTED COMPONENT ID
+   5608A2800
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-02
+   
+   
+ * CLOSED DATE
+   2012-03-05
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ96600 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ96600]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  KDSMAIN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MGMT SERVER DS
+   
+   
+ * FIXED COMPONENT ID
+   5608A2800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY UA64468 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA64468]
+   UP12/03/09 P F203
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

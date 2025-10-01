@@ -1,0 +1,46 @@
+Title: IBM Recommended method of adding custom jar file(s) in Identity Manager - United States
+
+Text:
+ITIM TIM ISIM SIM Tivoli Identity Manager custom jar MANIFEST.MF shared library libraries ITIM.ear TECHNOTE (FAQ)
+
+QUESTION
+ What is the recommended method of adding custom jar file(s) to a ISIM 6 environments? 
+
+CAUSE
+The recommended method was to add the custom jar file(s) under the enRole.ear and then update the MANIFEST.MF file. If you applied a ITIM fix, this process had to be repeated. This has changed in ITIM 5.x.
+
+ANSWER
+A shared library is configured during the installation that makes the process easier and preserves the custom jar file additions across fix packs. 
+
+One way to accomplish this is to add the custom jar file(s) to the existing ITIM_LIB shared library by first placing the custom jar file(s) in the <ITIM-HOME>/lib directory (or really any directory, as long as it's named the same on all nodes in a clustered configuration). This directory needs to be named the same on each node in a cluster. Then go into the WAS Console and do the following:
+
+
+ * Expand Environment 
+ * Click on "Shared Libraries" (make sure the scope is set to "All Scopes") 
+ * Click on "ITIM_LIB" 
+ * Add the custom jar file(s) to the "Classpath" box (place the custom jar file(s) at the bottom). If the custom jar(s) are found in the <ITIM-HOME>/lib directory, they can be entered as "${ITIM_HOME}/custom.jar" 
+ * Save the configuration 
+ * Restart the ITIM Application Server(s)
+   
+
+The one draw back of the above definition is that the out of the box ITIM_LIB definition is being changed and if this is done incorrectly, the entire ITIM Application could be impacted. 
+A better way to accomplish this is to create a new shared library (CUSTOM_LIB) just for customizations. To accomplish this do the following via the WAS Console: 
+ * Expand Environment 
+ * Click on "Shared Libraries" (make sure the scope is set to "All Scopes") 
+ * Review the ITIM_LIB shared library to identify the scope at which to define the CUSTOM_LIB and then click Cancel 
+ * Select the scope at which ITIM_LIB was defined and then click on New to create the new shared library. Enter the Name as "CUSTOM_LIB", Description as "Customization shared library for ITIM" and Classpath as "${ITIM_HOME}/lib/custom.jar". Then click OK. 
+ * Expand Applications 
+ * Click on Enterprise Applications 
+ * Click on "ITIM" 
+ * Under "References" click on "Shared Library References" 
+ * Select "ITIM" and then click on "Reference shared libraries" 
+ * Select "CUSTOM_LIB" in the "Available" list box and click on the >> button to move it to the "Selected" list box 
+ * Click OK 
+ * Save the configuration 
+ * Restart the ITIM Application Server(s)
+   
+
+Once the CUSTOM_LIB is created, additional custom jar files can be added to the CUSTOM_LIB shared library. 
+
+PRODUCT ALIAS/SYNONYM
+ ITIM TIM ISIM SIM

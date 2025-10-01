@@ -1,0 +1,29 @@
+Title: IBM ODPP: Failed to initialize the ODPP Framework - United States
+
+Text:
+odpp framework error TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Convert request fails with error, "ODPP: Failed to initialize the ODPP Framework" in the Convert Process Report. 
+
+CAUSE
+Several of the new data privacy functions, like TRANS NID, are built using Optim Data Privacy Providers (ODPP), and require that the license for ODPP exist.
+
+DIAGNOSING THE PROBLEM
+The following ODPP license files will not exist in the BIN folder of the Optim Distributed installation: 
+
+
+ODPPKEYF.OPT
+ODPPLICF.OPT
+
+
+RESOLVING THE PROBLEM
+From the Optim Configuration tool, select Options -> License from the menu. After the License window opens, click on the OK button which will close the License window, and generate the two ODPP license files. 
+
+
+To license ODPP for use with the Optim solution on the UNIX/Linux platforms, the ODPP license files must be copied to the $PSTHOME/bin folder of the Optim installation.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Optim Test Data Management with Data Privacy Option

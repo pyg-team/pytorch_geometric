@@ -1,0 +1,215 @@
+Title: IBM PM26224: Rhaposdy ini becomes empty - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  1] Description:
+   A strange behaviour is observed at the customer end with respect
+   to the INI file. At irregular intervals Rhapsody clears the
+   Rhapsody.ini file. I.e file becomes empty. This is very rare but
+   has happend to most of their developers at least once. Not sure
+   of the sequence of events that causes this though.
+   
+   
+   
+   
+   2] More Insights from the Customer:
+   
+   
+   a) How do you open Rhapsody 7.5.1 after ini becomes empty?
+   ??Customer?? Rhapsody creates a default .ini file but what we do
+   is that we copy
+   from someone else. Some have also made backups of their .ini
+   file.
+   
+   b) Does it occur randomly or is it seen suddenly when working on
+   a
+   particular project?
+   
+   ??Customer?? It seem very random (and rare).
+   
+   c) When you mention ini file is empty, does its size becomes 0
+   bytes or
+   is it corrupted in parts?
+   ??Customer?? The .ini file is empty (0 bytes)
+   
+   
+   d) When was this issue last seen?
+   ??Customer?? Last seen day before yesterday.
+   
+   e) Is it seen after closing Rhapsody that ini file is empty?
+   
+   ??Customer?? In most cases it is not discovered until the next
+   start of Rhapsody.
+   Unfortunately there is not much I can add to this. Most times it
+   is
+   discovered the following day when Rhapsody is started. The last
+   
+   occurrence gave a bit more info in that it was discovered when
+   the user tried to
+   build the code. The user had just done a save (could this be
+   when it
+   happened?)
+   
+   
+   f) Is a CM tool involved?
+   If so, is the INI file also in CM.  In that case which CM Tool
+   is used along with its version details will help.
+   ??Customer?? Yes we use a CM tool (ClearCase). However the .ini
+   file is not under version control.
+   
+   
+   g) Is there a Platform or Workflow integration?
+   If so Is it with eclipse or VS and how is the behavior working
+   directly on Rhapsody
+   ??Customer?? There is no platform/workflow integration.
+   
+   
+   h) Is the customer working with scripts (Java API or anything
+   else)?
+   If so, is there any script/api which uses (read/write)
+   rhapsody.ini
+   ??Customer?? Yes we use Java scripts. None of them modify the
+   .ini file
+   
+   
+   i) What is the location of Rhapsody installation. Is it local
+   for each developer or somewhere on the network?
+   ??Customer?? The location is the default location. I.e.
+   'C:\Program Files\IBM\Rational\Rhapsody\7.5.1
+   
+   
+   j) Where the ini file is located? Is it right at the
+   installation folder, or user profile, or some other place?
+   ??Customer?? The ini file is in the installation folder
+   (default).
+   
+   
+   k) Were there rhapsody.ini files created at some unexpected
+   locations?
+   ??Customer?? honestly have no idea on the last question. I will
+   ask around but if it was it might have ended up in a place where
+   it has later on been removed. Will ask that the next time it
+   happens the disks are searched.
+   
+   
+   3] Support Observations:
+   * Searched the existing records for similar scenarios. Unable to
+   narrow down on one.
+   * Raised this in the Forum on Wednesday
+   http://ibmforums.ibm.com/forums/thread.jspa?threadID=537977?tsta
+   rt=0 [http://ibmforums.ibm.com/forums/thread.jspa?threadID=537977?tstart=0]
+   
+   No response so far.
+   * Raised an Escalation with ID: RATLC01863550
+   
+   
+   4] Impact Justification:
+   The impact is not very high. However this is duly disturbing all
+   the helper calls and other flag settings which the customer may
+   have stored in the INI file once it gets deleted.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Rhaposdy.ini file becomes empty
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect is not reproducible.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM26224
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED UR5
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-08
+   
+   
+ * CLOSED DATE
+   2010-11-16
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSN
+   UP

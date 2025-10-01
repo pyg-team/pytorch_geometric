@@ -1,0 +1,67 @@
+Title: IBM Indexing for Force Case-Insensitive Search on DB2 10.5 LUW with IBM FileNet Content Platform Engine - United States
+
+Text:
+case-insensitive search; indexing RELEASE NOTES
+
+ABSTRACT
+ The DB2 10.5 LUW Expression-Based Indexes feature can now be used to support Content Platform Engine searches when force case-insenstive search is enabled on an object store. A procedure is provided here of the required steps for indexing string properties when force case-insensitive search is in effect on DB2 10.5. 
+
+CONTENT
+Prior to DB2 10.5 LUW, to support high performance case-insensitive searches, enabling Force Case Insensitive Search required an additional "generated column" step when indexing string columns. The "generated column" had to first be created, using the LOWER() function, followed by indexing the generated column. 
+
+DB2 10.5 LUW now supports "expression-based indexes", which allows the creation of indexes using the LOWER() function without the need for adding a generated column to the table:
+
+CREATE INDEX I_DOCTITLE on DOCVERSION (LOWER(uxy_documenttitle))
+
+The generated column approach for supporting case-insensitive search should not be used with DB2 10.5 LUW, because each generated column will consume row space, which adds to storage costs as well as increasing page read times with a wider table. Instead, use expression-based indexes.
+
+Support Requirements
+
+Support for DB2 10.5 LUW requires the IBM FileNet CPE 5.2 FP2 release.
+
+Procedure
+
+The steps for indexing string properties on DB2 10.5 LUW when force case-insensitive search is in effect, are as follows.
+
+To create an expression-based index for a class property:
+
+1. Connect to the object store database by using the appropriate DB2 database tool.
+
+2. Run a command with the following syntax:
+
+CREATE INDEX idx_name ON table_name(LOWER(column_name))
+
+table_name
+
+The table that contains the column. For example, DocVersion for documents, Generic for custom objects, and Container for folders.
+
+column_name
+
+The name of the property column.
+
+idx_name
+
+The name of the index.
+
+Example:
+
+CREATE INDEX lc_lname ON DocVersion(LOWER(lname))
+
+References
+
+For indexing string properties for force case-insensitive search prior to DB2 10.5 LUW, see:
+http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.ce.admin.tasks.doc/properties/pr_create_db_column_indexes.htm [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.ce.admin.tasks.doc/properties/pr_create_db_column_indexes.htm]
+
+For information on DB2 10.5 LUW extended rowsize support, see the Techdoc:
+"Extended Rowsize Support when using DB2 10.5 LUW with IBM FileNet Content Platform Engine"
+https://www.ibm.com/support/docview.wss?uid=swg27039726 [https://www.ibm.com/support/docview.wss?uid=swg27039726]
+
+For indexing string properties for force case-insensitive search on DB2 for z/OS, see:
+https://www.ibm.com/support/docview.wss?uid=swg27038918 [https://www.ibm.com/support/docview.wss?uid=swg27038918]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Foundation Content Engine

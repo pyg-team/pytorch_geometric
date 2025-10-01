@@ -1,0 +1,67 @@
+Title: IBM TNPMW Out Of Memory Found In as-server.log - United States
+
+Text:
+jvm; pmw; out of memory; tnpmw TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Insufficient Memory Issues 
+
+SYMPTOM
+ 
+
+There are few symptoms to look out for:
+
+(a) Report hang with the following error thrown :
+
+Error1 [/support/docview.wss?uid=swg21587531&amp;aid=1]
+
+Looking at the $WMCROOT/logs/as/default/as-server.log :
+
+11:31:28,699 ERROR [reporting.RuningReportWithWaitAction] (http-0.0.0.0-8080-3) Got an exception while tryng to update result doc and run report (in performRunAndWait)
+com.watchmark.common.exception.LocalizedException:Report Validation Error. See server log for details.|report.document.validation.error
+at com.watchmark.prospect.enterprise.api.reportDefImpl.ReportingDocumentPersistenceApi.validate(ReportingDocumentPersistenceApi.java:253)
+at com.watchmark.prospect.enterprise.api.reportDefImpl.ReportingDocumentPersistenceApi.createReportingDocument(ReportingDocumentPersistenceApi.java:182)
+at com.watchmark.prospect.enterprise.api.impl.ReportDefinitionApi.createReportDefinition(ReportDefinitionApi.java:279)
+at com.watchmark.prospect.enterprise.api.ejb.services.reporting.WmReportDefinitionSessionBean.createTmpRepDef(WmReportDefinitionSessionBean.java:545)
+at com.watchmark.prospect.enterprise.api.ejb.services.reporting.WmReportDefinitionSessionBean.runImmediate(WmReportDefinitionSessionBean.java:963)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:48)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+at java.lang.reflect.Method.invoke(Method.java:600)
+
+(b) No response after clicking/ saving on a report definition
+(c) Report results gets idle 
+
+
+CAUSE
+The number of users, the number of reports being run, the width of the reports and the number of resources returned in the reports, the number of summaries and stored busy hours that are being calculated (mostly affecting overnight usage) all have effect to the overall memory usage. Usage of features such as the data availability GUI in the Tools section and KPI browser type graphing all contribute to overall memory usage.
+
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+Refer to 8.2.2 Recommended jvm.args Property Settings for Application Servers at Table 6 from TNPMW Installation Guide. In the section, it recommends " At least -Xms2048m and –Xmx2048m for the memory settings in jvm-default.ini on production systems. 
+
+Section 8.2 is headed as optional, nhowever at times, the default settings are not sufficient for most production systems. It would be recommended to increase the values to the 2048 given above. 
+
+If server memory is more than the above example, it would be best to go up to 2560M for each settings. 
+
+We would also recommend adding jvm reference compression, using
+-Xcompressedrefs
+
+Using 2560M as example, the jvm-default.ini would look like :
+
+-Xms2048m -Xmx2048m -XX:+AggressiveHeap -XX:MaxPermSize=96m -Xcompressedrefs
+
+a) Update jvm-default.ini with the value as shown above
+b) Restart the application server using sap stop as , sap start as command.
+
+Ensure that your server has sufficient free memory before increasing "as" memory .
+If you have already increased or doubled your as memory compared to earlier then open a PMR with support team
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ TNPMW

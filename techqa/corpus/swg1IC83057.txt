@@ -1,0 +1,178 @@
+Title: IBM IC83057: FEDERATION SERVER RECEIVED SQL0901N WHEN USING TRANSPARENT DDL WITHOUT SPECIFYING REMOTE_SERVER OPTION - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+DB2 Version 9.5 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033308]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You may receive SQL0901N error when using transparent DDL
+   without REMOTE_SERVER option.
+   
+   Reproducing scripts:
+   
+   CREATE TABLE T1(C1 INT) OPTIONS (REMOTE_SCHEMA
+   '<your_remote_schema>', REMOTE_TABNAME
+   '<your_remote_table_name>')
+   DB21034E  The command was processed as an SQL statement because
+   it was not a
+   valid Command Line Processor command.  During SQL processing it
+   returned:
+   SQL0901N  The SQL statement failed because of a non-severe
+   system error.
+   Subsequent SQL statements can be processed.  (Reason "No remote
+   server
+   given".)  SQLSTATE=58004
+   
+   And here is the corresponding stack trace:
+   <StackTrace>
+   -------Frame------ ------Function + Offset------
+   0x09000000006426BC pthread_kill + 0x88
+   0x090000006094D878 sqloDumpEDU + 0x58
+   0x09000000639711C4 sqldDumpContext__FP8sqeAgentiN42PCcPvT2 +
+   0x144
+   0x09000000620DB9C8 sqlrr_dump_ffdc__FP8sqlrr_cbiT2 + 0x6A8
+   0x0900000060B6D2F8 sqlzeDumpFFDC__FP8sqeAgentUiP5sqlcai + 0x58
+   0x0900000060B6DAF8 sqlzeSqlCode__FP8sqeAgentUiUlT2P5sqlcaiUsPc +
+   0x378
+   0x090000006556FEEC sqlnn_erds__FiN41e + 0x1CC
+   0x0900000068CF40DC
+   sqlnq_create_trans_table_one__FP9sqlnq_qtbP11option_pairP3loc +
+   0xA7C
+   0x0900000068CF574C
+   sqlnq_sem_djx_tran__FPP8stknode_i10actiontypePUcP3loc + 0x1AC
+   0x09000000677BA748 sqlnp_smactn__FP8sqlnp_cbi + 0xB28
+   0x09000000677C5994 sqlnp_parser__FP8sqlnp_cb + 0x1994
+   0x09000000677B867C sqlnp_main__FP12sqlnq_stringsPP9sqlnq_qur +
+   0xABC
+   0x090000006565C134
+   sqlnn_cmpl__FP8sqeAgentP11sqlrrstrings17sqlnn_compileModeT3P14sq
+   lrr_cmpl_enviT7PP9sqlnq_qur + 0x41F4
+   0x09000000656611E4
+   sqlnn_cmpl__FP8sqeAgentP11sqlrrstrings17sqlnn_compileModeT3P14sq
+   lrr_cmpl_env + 0x64
+   0x09000000625B9548
+   sqlra_compile_var__FP8sqlrr_cbP14sqlra_cmpl_envPUciUsN54P16sqlra
+   _cached_varPiPUl + 0x1728
+   0x09000000623D0198
+   sqlra_find_var__FP8sqlrr_cbP17sqlra_cached_stmt13sqlra_stmt_idUi
+   T4PUcT4UsUcP14sqlra_cmpl_enviPiT11_T12_N311_T12_P14SQLP_LOCK_INF
+   OPP16sqlra_cached_varT12_PUlb + 0xD98
+   ... ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Specify the REMOTE_SERVER option.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  User affected:
+     Users in InfoSphere Federation Server
+   Problem description and summay:
+     See error description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem was fistly fixed in Version 9.5, FixPak 10. This
+   fix should be applied on the federation Server.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC83057
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-01
+   
+   
+ * CLOSED DATE
+   2012-11-01
+   
+   
+ * LAST MODIFIED DATE
+   2012-11-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSY
+   UP

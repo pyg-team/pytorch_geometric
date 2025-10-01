@@ -1,0 +1,15 @@
+Title: IBM Functional dashboard application hangs on Internet explorer after running for 10-15 minutes - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When we run functional dashboard application on internet explorer, application stops responding after 10-15 minutes 
+
+CAUSE
+This issue occurs due to a memory leak in internet explorer. Charts in functional dashboard are created using third party library c3.js, Charts creation in code leads to memory leak. If you watch the task manager, the memory of the browser in RAM will slowly increases and then start jumping up in larger increments. This will continue until the browser stops responding. 
+
+RESOLVING THE PROBLEM
+Only resolution for this problem is to restart your browser. 
+
+ Following are some suggestion which will help to increase time for which UI doesn't get stuck and Improve application performance on internet explorera) removing cached data, history- press Alt+X in your browser -> Internet Options.-Select the General tab, and then select Delete under Browsing history.-Select all Delete > Yes > OK.b) we should use CPU rendering instead of GPU rendering for that- press Alt+X in your browser -> Internet Options-> Advanced->accelerated graphics- check a box in front of "use software rendering instead of GPU rendering"- close browserc) start your Internet Explorer by disabling add-ons. Please follow the following step to do that- Press the “Windows Logo” + “R” keys on the keyboard.- Type: "iexplore.exe –extoff" and press the "Enter".

@@ -1,0 +1,48 @@
+Title: IBM Method for de-installing/powering-off a V840 node - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ 2145-DH8/AC1 BBU Discharge Issue - Power-off steps 
+
+CONTENT
+Method for de-installing/powering-off a node 
+This method prevents batteries from discharging while the 2145 nodes are powered off.
+
+
+ 1. Shutdown and power-off the node : 
+    Using the config GUI or CLI (svctask stopsystem -node <node_name>)
+    Using the node's Service Assistant GUI or CLI (satask stopnode -poweroff ) 
+ 2. Wait for the power button on the front of the node to flash 
+ 3. Remove BOTH AC power cords from the node 
+ 4. Remove BOTH batteries from the node 
+ 5. Re-insert both batteries
+
+
+If you think a customer may accidentally reapply power and remove it again whilst keeping the node de-installed for a further length of time then you could remove/change step 5 to store the batteries separately, outside of the node. There is NO benefit in terms of retaining battery charge if the batteries are un-installed. 
+
+Checking batteries prior to install/re-install 
+
+There is no way to check the batteries other than installing them in a node, powering-on the node and running the SVC software. 
+
+If the batteries are OK : 
+
+The node will : 
+ * Cluster if it was previously clustered and powered back on in the cluster 
+ * Appear in Service state as a Candidate node, if it was not previously clustered, with no battery node errors
+
+
+NOTE: A 572 battery node error may be reported initially if the batteries are flat but charging and will clear once enough charging has taken place. 
+
+If Both batteries are Bad: 
+ * The node will be in Service mode with battery node errors 780 ( "Battery 1,2: Operational fault (charging)") and 570 
+
+
+NOTE: A 572 battery node error may be reported initially, but after 3 minutes this will clear and node errors 780 and 570 will be logged instead 
+
+If one battery is Bad: 
+
+The node will : 
+ * Cluster if it was previously clustered and powered back on in the cluster. NOTE: The node may temporarily be in Service with a 571 node error whilst the one good battery charges. 
+ * Appear in Service state as a Candidate node, if it was not previously clustered, with battery node error 780 (ie "Battery 1: Operational fault (charging)")

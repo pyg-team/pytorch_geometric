@@ -1,0 +1,128 @@
+Title: IBM PM17153: Related defects display within the RQM Execution Result view doe s not display the new defects after creating one - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Quality Manager 2.0.1 iFix003 [http://www-01.ibm.com/support/docview.wss?uid=swg24027181]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Steps to reproduce:
+   - create suite with test script attached
+   - execute suite
+   - after the execution has been finished watch the Execution Resu
+   lts view
+   - click on creating defect from this screen
+   - enter the data for the defect and save it
+   - go back to the Execution Results view and update it
+   - see in the right upper corner the related defects list
+   - it does not display the created defect (also not after updatin
+   g the page)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Related defects display within the RQM Execution Result view
+   does not display the new defects after creating a defect.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Corrected a display data update problem in the RQM UI code
+   for  the Execution Results view.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM17153
+   
+   
+ * REPORTED COMPONENT NAME
+   RQM EXPRESS ED
+   
+   
+ * REPORTED COMPONENT ID
+   5724V1002
+   
+   
+ * REPORTED RELEASE
+   201
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-23
+   
+   
+ * CLOSED DATE
+   2010-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RQM EXPRESS ED
+   
+   
+ * FIXED COMPONENT ID
+   5724V1002
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R201 PSN
+   UP

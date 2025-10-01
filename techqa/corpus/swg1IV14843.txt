@@ -1,0 +1,136 @@
+Title: IBM IV14843: TDWC CRASH ON AIX IF NEW OS ENCRYPTION MODE IS USED AND IF A BAD PASSWORD WAS PROVIDE DURING THE TDWC LOGIN - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The SHA256 alghoritm is supported by TWS anly using the PAM.
+   However if the customer provide a bad password durign the login
+   on the TDWC the recovery procedure try to login as local user (
+   etc/passwd ) and there the TDWC got the crash.
+   
+   OS :AIX
+   OS encryption : SHA256/128
+   PAM or localos
+   customer use an uncorrect pwd whern login on TDWC
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the correct pwd at the TDWC login.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This issue is present if the TDWC/TWS is installed on AIX and
+   the SHA256 alghoritm (OS alghoritm) is configured.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This apar will be fixed into 8.6-TIV-TWS-FP0002,
+   8.5.1-TIV-TWS-FP0005, 8.5.0-TIV-TWS-FP0004,
+   8.4.0-TIV-TS-FP0007, and 8.6-TIV-TDWC-FP0002,
+   8.5.1-TIV-TDWC-FP0005.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  See "LocalFix"
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV14843
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV DYN WKLD CN
+   
+   
+ * REPORTED COMPONENT ID
+   TIVOWEBUI
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-03
+   
+   
+ * CLOSED DATE
+   2012-03-13
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV DYN WKLD CN
+   
+   
+ * FIXED COMPONENT ID
+   TIVOWEBUI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R851 PSY
+   UP

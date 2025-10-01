@@ -1,0 +1,141 @@
+Title: IBM PM94101: ITCAM DC 7.2 ITM DOES NOT SET CUSTOM PMI - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a 7.2 Data Collector is configured only for ITCAM Agent for
+   WebSphere Applications, any custom PMI specified in
+   datacollector.properties (or datacollector_custom.properties) is
+    ignored.
+   
+   Users Effected:
+   All users of ITCAM 7.2 data collector not using the ITCAM
+   Managing Server
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  In the configuration runtime directory, you should find a file
+   called: *.*.*.dcManualInput.txt
+   
+   Edit that file, and change the value of property
+   am.camtoolkit.gpe.dc.operation.mode=WR
+   to read
+   am.camtoolkit.gpe.dc.operation.mode=WR,MS
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ITCAM Converged Data Collector does not use custom PMI
+   levels defined in datacollector.properties, if DC is not
+   configured for ITCAM MS (i.e if operation.mode configured only
+   for wr).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code to set custom PMI levels has been moved from MS-DC specific
+   startup component (which is only executed when a DC is
+   configured for Managing Server use) to a new independent startup
+   component which will set custom PMI values defined in
+   datacollector.properties file. Additionally, custom PMI values
+   for Monitoring On Demand (MOD) level 2 will now be changed when
+   the ITCAM Agent collection level is changed to level 2 as well
+   as when Managing Server MOD level is changed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM94101
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * REPORTED COMPONENT ID
+   5724L6200
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-30
+   
+   
+ * CLOSED DATE
+   2013-11-20
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * FIXED COMPONENT ID
+   5724L6200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

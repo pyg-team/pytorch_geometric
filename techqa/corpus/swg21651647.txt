@@ -1,0 +1,30 @@
+Title: IBM Announcement letter for IBM Operational Decision Manager V8.5.1 and IBM Operational Decision Manager Application Pattern V8.5.1 - United States
+
+Text:
+announcement letters NEWS
+
+ABSTRACT
+ IBM Operational Decision Manager (ODM) V8.5.1, the next generation of business rules, provides an elegant development environment, along with dedicated, business user interfaces, for automating and governing frequently occurring, repeatable business decisions. IBM ODM V8.5.1 planned availability date will be on 29 November 2013 and IBM ODM Application Pattern V8.5.1 planned availability date will be on 13 December 2013. This document contains a brief overview of IBM ODM for V8.5.1 and IBM ODM Application Patter V8.5.1 and a link to the announcement letter.
+
+
+CONTENT
+Overview:
+IBM ODM V8.5.1, the next generation of business rules, provides an elegant development environment, along with dedicated, business user interfaces, for automating and governing frequently occurring, repeatable business decisions. 
+
+IBM ODM helps organizations in virtually every industry to improve the quality of transaction and process-related decisions that are made repeatedly and to determine appropriate course of action for customers, partners, and internal interactions by: 
+
+ * Automating and governing operational decision-making across business processes and applications to help improve business insight and business outcomes 
+ * Helping detect opportunities and risks in real time 
+ * Easily and consistently implementing changes to meet new market demands or policy requirements 
+ * Delivering support for IBM PureApplication System with IBM ODM Application Pattern. 
+   
+
+
+For more details, see the US Announcement Letter for IBM Operational Decision Manager for V8.5.1 and IBM Operational Decision Manager Application Pattern V8.5.1 [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/1/897/ENUS213-411/index.html&lang=en&request_locale=en] 
+
+Information for other country announcement letters is located here [http://www.ibm.com/common/ssi/index.wss].  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere ILOG Decision Validation Services General AIX, HP-UX, Linux, Solaris, Windows, z/OS Enterprise Business Integration WebSphere ILOG Rule Solutions for Office General Windows All Editions Business Integration WebSphere ILOG Rule Team Server AIX, HP-UX, Linux, Solaris, Windows, z/OS Enterprise Business Integration WebSphere Business Events AIX, HP-UX, Linux, Solaris, Windows All Editions Business Integration WebSphere ILOG JRules Platform Independent Enterprise 
+PRODUCT ALIAS/SYNONYM
+ ODM

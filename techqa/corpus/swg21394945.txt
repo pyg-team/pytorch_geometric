@@ -1,0 +1,77 @@
+Title: IBM Various error messages when using Excel 2007 with Controller 8.x - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer is using Controller in combination with Microsoft Excel 2007. However, the end users are receiving various error messages when using the product. 
+
+SYMPTOM
+There are many potential error messages, but the most common message will be the following: 
+
+ 
+
+ * Microsoft Office Excel
+ * 
+ * Microsoft Office Excel has encountered a problem and needs to close. We are sorry for the inconvenience.
+
+
+The exact nature of the error messages will vary, according to the various Microsoft service packs and Microsoft hotfixes installed on the client device. For example, below is an example of a different error message that seems to be related: 
+ * Standard Error
+ * 
+ * Source: ControllerForms12
+ * 
+ * Description: Attempted to read or write protected memory. This is often an indication that other memory is corrupt.
+
+
+In addition, there are other error messages that are possible, including:  * Information
+ * 
+ * Standard Error
+ * 
+ * Number: 5
+ * 
+ * Source: ControllerProxyClient
+ * 
+ * Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.OutOfMemoryException: Insufficient memory to continue the execution of the program.
+ * 
+ *  at FrReportS.ReportBookRepSetClass.SelectAll(String.....
+ * 
+ * <.....>
+ * 
+ * [OK]
+
+
+CAUSE
+Microsoft bug(s) in their Microsoft Excel 2007 (Office 2007) application. 
+
+ENVIRONMENT
+Client device (for example end user's desktop PC/laptop or Citrix server) has Microsoft Excel 2007 installed. 
+
+ 
+NOTE: Some issues and error messages appear to be specific to certain patch levels of Excel 2007, such as: 
+
+ 1. Excel 2007 RTM (SP0) = no service pack applied 
+ 2. Excel 2007 SP1 
+ 3. Excel 2007 SP2
+
+
+In other words, IBM Controller Support have seen:  1. errors which only appear to occur with Excel 2007 RTM, and are fixed when upgrading to SP1 
+ 2. different errors which only appear to occur with Excel 2007 SP1, and are fixed when upgrading to SP2 
+ 3. different errors which only appear to occur with Excel 2007 SP2, and are fixed after downgrading to SP1
+
+RESOLVING THE PROBLEM
+All known/reproducible issues with Controller and Excel 2007 are solved by upgrading the client device (for example end user's PC and/or Microsoft Terminal/Citrix server) to Microsoft Office/Excel 2007 Service Pack 3 (SP3). 
+
+ 
+
+Steps: 
+
+ 1. Logon to the client device as an administrator 
+ 2. Download and install MS Office 2007 SP3 (TIP: This file is also known as "office2007sp3-kb2526086-fullfile-en-us.exe")
+
+RELATED INFORMATION
+#1369983 - 'Attempted to read or write protected memory' [http://www.ibm.com/support/docview.wss?uid=swg21369983]
+1367385 - Error 'ControllerForms12 - Attempted to read [http://www.ibm.com/support/docview.wss?uid=swg21367385]
+1347870 - Excel Crashes after running a report to the p [http://www.ibm.com/support/docview.wss?uid=swg21347870]
+Description of the Office Excel 2007 hotfix package (Xl [http://support.microsoft.com/kb/974992]
+Office 2007 Cumulative Update for October 2009 [http://support.microsoft.com/kb/976730]

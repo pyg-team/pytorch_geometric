@@ -1,0 +1,46 @@
+Title: IBM Web Services Feature Pack (WSFP) for Rational Application Developer v7.0.0.3 fails on WebSphere Application Server v6.1.0,9 install - United States
+
+Text:
+WSFP; RAD; RSA v7; web services feature pack; update; hangs; fails; error; install; websphere; server; 7.0.0.3; anit-virus; firewall; antivirus; hung; installtion manager; 1270211 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why the server portion of the Web Services Feature Pack (WSFP) for IBM® Rational® Application Developer v7.0.0.3 fails on WebSphere® Application Server (WAS) v6.1.0.9 install while using IBM Installation Manager (IM) version 1.0.0.5. 
+
+SYMPTOM
+IBM Installation manager hangs at 80+% then fails with the following error. 
+
+
+Error during "install" phase:
+Error executing "C:\Program Files\IBM\SDP70\runtimes\base_v61\temp7003\FEP\WEBSV\WSFPinstall.bat" operation (status=1).
+See agent output log for more information: C:\Documents and Settings\All Users\Application Data\IBM\Installation Manager\logs\native\20070828_1405.log
+
+
+[/support/docview.wss?uid=swg21270211&aid=1] [/support/docview.wss?uid=swg21270211&aid=1]
+
+
+
+INSTCONFFAILED: Cannot delete the profile. For more information, consult C:\Program Files\IBM\SDP70\runtimes\base_v61\logs\manageprofiles\AppSrvWSFP01_delete.log.
+
+
+RESOLVING THE PROBLEM
+ 
+
+
+The failure was shown to occur during the installation of the WAS v6.1.0.9 Fixpack. The error showed in the <RSA Install Dir>\SDP70\runtimes\base_v61\logs, in:
+..\update\6.1.0-WS-WAS-WinX32-FP0000009.install\updatelog.txt, as follows:
+
+
+"...
+.... Install,
+com.ibm.ws.install.ni.ismp.actions.InstallNIFMaintenance, err, Failed to delete: file:/C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/.~$65222.tmp/repository/bootstrap/lib/bootstrap.jar
+..."
+
+
+
+The above file was being prevented from deleting successfully.
+
+The machine had anti-virus or firewall software, possibly with a policy for preventing deletion of files (maybe from certain directories). In this specific instance the anti-virus software was the culprit. If any such software exists on the machine, turn it off, clean up the install and then try the installation update again. Afterwards, turn on the anti-virus and firewall software.
+
+
+Side note:
+Also make sure the associated WAS v6.x server associated with the update is not running during an update and no Windows service (such a IBM Rational Agent Controller (RAC)) is running that may use the WAS v6.x JDK.

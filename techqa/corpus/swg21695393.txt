@@ -1,0 +1,30 @@
+Title: IBM Some "Create Event Rules" buttons are missing in TDWC v9.2 using IE 10 - United States
+
+Text:
+Create Event Rules; missing; action; buttons; IE 10; Internet Explorer 10 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The action buttons "Go", Save", "Close", and "New" in the "Create Event Rules" panel are missing using Internet Explorer (IE) 10 to connect to and work with Tivoli Dynamic Workload Console (TDWC) v9.2. 
+
+SYMPTOM
+The "Go", Save", "Close", and "New" buttons never load on the screen. This is not an issue with Firefox.
+
+
+CAUSE
+SCRIPT5007: unable to get property 'toLowerCase' of undefined or null contentRender.do, line 68 character 4.
+
+RESOLVING THE PROBLEM
+As a workaround: 
+
+1. Access Dash URL
+
+2. Go to the "Administration" icon and select "Create Event Rules" and wait for the page to load.
+
+3. Press F12 and change Document Mode to:
+IE 9 Standards
+- or -
+IE 8 Standards
+
+The page should load the [Go], [Save], [Close], and [New] buttons now.
+
+NOTE: This may have to be done each time IE 10 is started.

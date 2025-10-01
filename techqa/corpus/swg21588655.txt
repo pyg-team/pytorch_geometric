@@ -1,0 +1,74 @@
+Title: IBM Resource shortage in MQ V7.1 queue manager in Linux when running large number of clients - additional kernel parameters - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You are running a large number of clients against a WebSphere MQ V7.1 queue manager and you want to know why there are FDC files showing resource shortage: probeid XC035040 from pthread_create.
+
+An example of the FDC is:
+
+| LVLS :- 7.1.0.0 
+| Product Long Name :- WebSphere MQ for Linux (x86-64 platform) 
+| Probe Id :- XC035040 
+| Component :- xcsCreateThread 
+| Program Name :- amqrmppa 
+| Addressing mode :- 64-bit 
+| Major Errorcode :- xecF_E_UNEXPECTED_SYSTEM_RC 
+| Probe Description :- AMQ6119: An internal WebSphere MQ error has 
+occurred 
+| ('11 - Resource temporarily unavailable' from pthread_create.) 
+| Arith1 :- 11 (0xb) 
+| Comment1 :- '11 - Resource temporarily unavailable' from 
+| pthread_create. 
+.
+And it might be followed by: 
+| Probe Id :- ZS401010 
+| Component :- zstStartAsyncConsumeThread 
+| Major Errorcode :- xecP_E_PROC_LIMIT 
+| Probe Description :- AMQ6026: A resource shortage prevented the creation of a WebSphere MQ process. 
+
+
+ANSWER
+The following page from the MQ V7.1 documentation has more details on some kernel parameters that can be tuned:
+WebSphere MQ > Installing > Installing WebSphere MQ > Preparing the system
+Additional settings for installing on Linux systems [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm.mq.doc/zi00760_.htm?lang=en]
+The minimum configuration for WebSphere MQ for these resources is as follows:
+kernel.msgmni = 1024
+kernel.shmmni = 4096
+kernel.shmall = 2097152
+kernel.shmmax = 268435456
+kernel.sem = 500 256000 250 1024
+fs.file-max = 524288
+net.ipv4.tcp_keepalive_time = 300
+
+To load these sysctl values immediately, enter the following command sysctl -p.
+If you do not issue the sysctl -p command, the new values are loaded when the system is rebooted.
+
+There are some other kernel parameters that might be useful, but they are not documented in the above section, such as:
+
+a) kernel.pid_max
+
+By default the Linux kernel has a maximum process identifier, which may also be used with threads and may limit the allowed number of threads. This parameter is mentioned in the following technical documents. The value used was the same in both documents:
+kernel.pid_max = 120000
+
+MPL7: WebSphere MQ for Linux (Intel) V7.1 - Performance Evaluations [http://www.ibm.com/support/docview.wss?uid=swg24031668]
+
+MPL8: WebSphere MQ for Linux (zSeries) V7.1 - Performance Evaluations [http://www.ibm.com/support/docview.wss?uid=swg24031669]
+
+b) kernel.threads-max
+
+According to the Linux manual page, the Operating System reports when the system lacks the necessary resources to create another thread, or the system-imposed limit on the total number of threads in a process {PTHREAD_THREADS_MAX} would be exceeded. If the value of kernel.threads-max is low, increase its value. The command "cat /proc/sys/kernel/threads-max" displays the current value.
+
+The number of threads created by MQ depends on number of application connecting to the queue manager. MQ creates one thread for each local connection (in amqzlaa0) or two threads (one in amqzlaa0 and the other one in amqrmppa) for each client connection. If there are 100 connections active to the queue manager, then the queue manager may need about 200 (amqzlla0 and amqrmppa) + approximately 100 threads (for other MQ processes). 
+
+In Linux, the number of active threads can be calculated from the output of the command: 
+ps -elfL
+
+This parameter is mentioned in the following technical document. 
+The value used is: kernel.threads-max = 48000
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ MQSeries

@@ -1,0 +1,27 @@
+Title: IBM Outofmemory errors in systemout.log file. - United States
+
+Text:
+out of memory; outofmemory TECHNOTE (FAQ)
+
+QUESTION
+ How can I resolve outofmemory (out of memory) errors in systemout.log? 
+
+CAUSE
+Heap size not big enough.
+
+ANSWER
+For outofmemory (out of memory) conditions, first thing to check is the heap size. Review the following link for recommended settings:
+
+http://publib.boulder.ibm.com/infocenter/tivihelp/v10r1/index.jsp?topic= [http://publib.boulder.ibm.com/infocenter/tivihelp/v10r1/index.jsp?topic=]
+%2Fcom.ibm.isdm_7.2.2.doc%2Ft_afterupgrading_tsam.html 
+
+It is recommended to set initialHeapSize to 4096 and maximumHeapSize to 6144. You should set this from the WAS Admin Console following these steps:
+
+- Logon to WAS Admin Console using your wasadmin id and pw. 
+- Go to Application Servers
+- Select MXServer
+- Click on Java and Process Management
+- Click on Process Definition
+- Click on Java Virtual Machine
+
+The values of interest are: "Initial Heap Size" and "Maximum Heap Size". If out of memory continues even after these changes are made, we will need to review the problem further via PMR.

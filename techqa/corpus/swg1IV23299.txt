@@ -1,0 +1,144 @@
+Title: IBM IV23299: AFTER IZ88839 622FP9 THE TEPS SCHEMA NAME MUST MATCH TEPS USER NAME - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After IZ88839 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ88839] that went in to 622fp6, the TEPS schema name is
+   required to be the same as the TEPS userid.  With MS SQL and
+   ITM 621
+   the TEPS DB schema name could be anything and the TEPS would
+   find tables using the SQLTables function.
+   This is because at 622fp6 we began enforcing that the userid
+   and schema name must match.  Prior to this, the schema name
+   could be anything and the SQLTables function would work. This
+   caused problems in environments where multiple schemas existed,
+   so the code was tightened to search only the schma of the TEPS
+   userid.  This requirement of having the TEPS DB schema name and
+   the TEPS user name match needs to be documented in the
+   Installation and Config Guide for ITM v6.
+   
+   Note that if MS SQL 2005 is used for the TEPS DB, the schema
+   name has to match the TEPS user name, otherwise the TEPS
+   fails to start
+   with an error:
+   (Wednesday, June 13, 2012, 6:11:22
+   PM-{16B0}ctinstallmanager.cpp,921,"CTInstall::Manager::installCh
+   eck")
+   ERROR: SQLTables failed: KFWHISTBEHAVIOR
+   (Wednesday, June 13, 2012, 6:11:22
+   PM-{16B0}ctinstallmanager.cpp,922,"CTInstall::Manager::installCh
+   eck")
+   ERROR: KFW_DSN Database 'teps', is missing table. Be sure tables
+   were
+   properly generated during installation or configuration.
+   
+   On a fresh install this will not be an issue, but in cases where
+   ITM is upgraded from 6.2.2 or earlier where it was not checked,
+   it is possible the schema name for the TEPS DB does not match
+   the TEPS user name.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Change the TEPS database schema name to match the TEPS userid.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  See Error Description.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  IBM Tivoli Monitoring v6.3 user documentation hasbeen updated
+   in Chapter 7, Upgrading from a previous installation, saying
+   that the portal server database schema name must match the
+   portal server user ID for Microsoft SQL Server 2005 when
+   upgrading from v6.2.2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV23299
+   
+   
+ * REPORTED COMPONENT NAME
+   TEPS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04PS
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-19
+   
+   
+ * CLOSED DATE
+   2012-06-26
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

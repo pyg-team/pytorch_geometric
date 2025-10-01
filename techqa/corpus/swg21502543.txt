@@ -1,0 +1,45 @@
+Title: IBM Spectrum v9 Corba Configuration for Primary and Secondary SpectroSERVER - United States
+
+Text:
+Spectrum Aprisma; nco_p_spectrum_corba_v9; SpectroServer; failover; failback TECHNOTE (FAQ)
+
+QUESTION
+ How can I configure the Spectrum probe (nco_p_spectrum_corba_v9) to failover between a Primary and Secondary SpectroSERVER? 
+
+CAUSE
+The probe is notified of the Secondary SpectroSERVER via CORBA.
+
+ANSWER
+It is not necessary to enter a configuration for the Secondary SpectroServer in the host file spectrum_corba_v9_host.xml. Enter a configuration for the Primary SpectroSERVER only. For example, 
+
+ <SpectroServer Name="servername" Domain="servername" IP="servername.us.ibm.com"> 
+
+ <ModelAttributes Value="0x0023000e,0x1006e" /> 
+
+ <AlarmAttributes Value="0x11f50,0x11f51" /> 
+
+ <TimeStampFile Value="/opt/netcool/omnibus/var/servername.timestamp" /> 
+
+ <FetchEventFormatFields Value="true" /> 
+
+ <FetchEventString Value="true" /> 
+
+ 
+
+ <EventFormatFile Value="/opt/netcool/omnibus/spectrum/CsEvFormat"/> 
+
+ <ProbCauseLookupFile 
+
+Value="/opt/netcool/omnibus/etc/rules/spectrum_corba_v9.lookup" /> 
+
+ <ResyncInterval Value="86400" /> 
+
+ <ResyncSQLCmd Value="UPDATE alerts.status SET Severity = 0 
+
+WHERE LastOccurrence %ResyncTime AND Node = %SpectroServerName AND 
+
+AlertKey NOT IN (%AlarmID_List)" /> 
+
+ 
+
+ </SpectroServer>

@@ -1,0 +1,44 @@
+Title: IBM When launching SamplePower 3.0 I am receiving the following error: "The Program has not been able to locate a valid license" - United States
+
+Text:
+License not valid; The program has not been able to locate a valid license; SamplePower TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installed SamplePower 3.0 logged on to Windows 7 32-bit workstation, as the local administrator and running the installation executable with "Run as administrator".
+
+
+
+When launching SamplePower 3.0 I am receiving the following error: "The Program has not been able to locate a valid license" 
+
+SYMPTOM
+"The Program has not been able to locate a valid license"
+
+
+ENVIRONMENT
+Windows
+Windows 7
+Windows 7 32-bit
+
+DIAGNOSING THE PROBLEM
+Running the license authorization wizard shows a valid lock code and activates the authorization code with a valid license.
+However, when having the customer launch the license authorization wizard (LAW.exe) from the software's installation directory, the LAW errors out with 00:00E or similar.
+Apparently the two do not match hence no valid license found.
+
+RESOLVING THE PROBLEM
+1) Using Windows Explorer navigate to the software's installation directory.
+2) Edit echoid.dat with MS Notepad and change the contents to a different locking type.
+For Example: If the contents are "0x100" change to "0x010" or "0x004"
+3) Delete the current licensing file (lservrc).
+4) Run the software's license authorization wizard and activate the authorization code.
+5) Launch SamplePower 3.0.
+6) The software should now launch without error. If you still get an error, create an IBM Software Service Request and reference this TechNote.
+
+NOTE: In step 4 above. If you get an error similar to "Error Code: 106 You are not allowed to generate any more new licenses." Please create an IBM Software Service Request, include your authorization code and request an increase for another activation due to error and reference this TechNote.
+
+RELATED INFORMATION
+ Need more help? Our SamplePower forum is Live! [https://developer.ibm.com/answers/search.html?f=&type=question&redirect=search%2Fsearch&sort=relevance&smartspace=predictive-analytics&q=sample+power%20%2B[statistics]%20%2B[modeler]%20%2B[licensing]%20%2B[spssstudent]%20%2B[r]%20%2B[python]%20%2B[scripting]%20%2B[extensibility]%20%2B[visualization]%20%2B[syntax]%20%2B[.net]%20%2B[textmining]%20%2B[collaboration]%20%2B[deployment]%20%2B[error]%20%2B[bluemix]%20%2B[errors]%20%2B[predictive-modeling]%20%2B[code]%20%2B[datacollection]%20%2B[authorization]%20%2B[news]%20%2B[wizard]%20%2B[streamsdev]%20%2B[License]%20%2B[mac]%20%2B[Licenses]%20%2B[installation]%20%2B[toolbar]%20%2B[java]]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS SamplePower Windows 3.0.1, 3.0

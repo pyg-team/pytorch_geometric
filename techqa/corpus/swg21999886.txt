@@ -1,0 +1,250 @@
+Title: IBM Application Stack Upgrade Troubleshooting Guide - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am having trouble upgrading my Application Stack. It either seems to fail outright or seem to be successful but is not upon closer examination.
+
+How can I examine progress, verify completion, or resolve any issues? 
+
+SYMPTOM
+Appstack Upgrade appears to hang, have failed, or partially successful
+
+
+CAUSE
+Appstack issues are usually caused by some specific step being done out of order or incorrectly, or services not running correctly before upgrade, or services not brought up in the correct order during the upgrade.
+
+ENVIRONMENT
+StoredIQ Application Stack Upgrade
+
+DIAGNOSING THE PROBLEM
+Appstack Upgrade Procedure
+
+
+BEFORE EVERY UPGRADE, TAKE A SNAPSHOT OF YOUR STOREDIQ IMAGES
+
+1) Shutdown the StoredIQ VMs in order Appstack > All Dataservers > Gateway
+2) Take a snapshot of every StoredIQ Image
+3) Power on StoredIQ VMs Gateway > All Dataservers > Appstack
+4) Verify all services are running
+
+ON THE GATEWAY
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * http://gatewayIP/products
+ * 
+ * 
+
+ON THE APPSTACK 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * ** STEPS 5 THROUGH 7 ONLY APPLIES TO VERSIONS UPGRADES AFTER 7.6.0.2 and before 7.6.0.4 so, only in effect to 7.6.0.3 and 7.6.0.4
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  For upgrade to 7.6.0.3: 
+   wget http://<gatewayIP>/products/appstack/centos65/7.6.0.3+30/siq-appstack-1.1.14+43-1.x86_64.rpm 
+   
+   For upgrade to 7.6.0.4: 
+   wget http://<gatewayIP>/products/appstack/centos65/7.6.0.4+32/siq-appstack-1.1.15+81-1.x86_64.rpm 
+ * 
+ * 
+ * 
+ *  For upgrade to 7.6.0.3: 
+   rpm -Uvh siq-appstack-1.1.14+43-1.x86_64.rpm 
+   
+   For upgrade to 7.6.0.4: 
+   rpm -Uvh siq-appstack-1.1.15+81-1.x86_64.rpm 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * First setup the repository with the command below -- REPLACE GATEWAYIP WITH THE IP ADDRESS IF YOUR GATEWAY 
+   
+   bootstrap product.set appstack repository "pkgsource=\" http://gatewayIP/products\ [http://gatewayip/products/]"" 
+   
+   example: 
+   bootstrap product.set appstack repository "pkgsource=\" http://9.0.23.24/products\ [http://9.0.23.24/products/]"" 
+ * 
+ * 
+ * 
+ * bootstrap product.upgrade appstack HEAD 
+ * 
+ * 
+ *  
+   tail -f /var/bootstrap/appstack.log 
+   
+   When you are notified that the production mode is activated the upgrade is complete. 
+   
+   IMPORTANT: This should be AFTER all the packages are applied and services are restarted automatically in the script, should see 70+ packages installed. 
+   
+   ctrl+C to escape 
+ * 
+ * 
+ * 
+
+ON GATEWAY: 
+ * 
+ * 
+ * 
+ * 
+
+
+
+____________________________________________________________ 
+
+VERIFYING UPGRADE WENT WELL 
+
+ON APPSTACK: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * STEPS
+ * 
+ * cd /var/bootstrap/ 
+   ls bootstrap* 
+   
+   If bootstrap.lock file does not exist, that is good. If it does exist, it means the upgrade is either still running, or it is hung. 
+   
+   Verify the status of progress by running command: 
+   tail -f /var/bootstrap/appstack.log 
+   
+   Ctrl+C to escape 
+ * 
+ * 
+ * 
+ * /siq/bin/monit summary (for older versions 7.6.0.6 and older) 
+   
+   service appstack status (for newer versions 7.6.0.7 and later) 
+   
+   All services must be up and running after the upgrade is complete. 
+   
+   If services are not up and running, check the /var/bootstrap/appstack.log and see if services failed to come up. If services failed to come up, note at which step it failed and contact Support. 
+ * 
+ * 
+ * 
+ * Should show history of the upgrade to the current version with the appropriate date. 
+   
+   Example (below shows fresh install -- NONE should be replaced by 'current version' for other upgrades): 
+   2016-09-27 16:02:05 upgraded NONE to 7.6.0.9+4 
+   
+   If above does NOT show the upgrade line, the upgrade is either still in the process of upgrading, or failed. 
+ * 
+ * 
+ * 
+ *  Should show the line 'production mode is activated' at the end AND should show all services being started successfully. 
+   
+   Ctrl+C to escape 
+ * 
+ * 
+ * 
+ * Should show as production (this should be the same as typing bootstrap server.mode I believe) 
+   
+   If server-mode is not in production, services either were not restarted yet or failed to restart correctly. 
+ * 
+ * 
+ * 
+ * Should NOT show as 'upgrading', but as 'valid' 
+   
+   If it still shows as upgrading, the upgrade failed or is still in the process of upgrading. 
+ * 
+ * 
+ * 
+ * Should show as the NEW current version. 
+   
+   If it still shows as previous, then upgrade failed. 
+
+
+
+____________________________________________________________ 
+
+IF UPGRADE SEEMED TO HAVE FAILED AND REMAIN HUNG, try the below 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * ex: kill -9 123 where 123 is the PID 
+ * 
+ * 
+ * 
+ * rm /var/bootstrap/bootstrap.lock 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * pidof uwsgi 
+   pidof tomcat 
+   pidof postgresql 
+   pidof platoon 
+   pidof nginx 
+   
+   Make sure each command returns 0 lines 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 1. vim /var/bootstrap/products/appstack/status 
+   2. Hit 'INSERT' to go into editing mode and change 'upgrading' to 'valid' 
+   3. Hit 'ESC' to get out of editing mode 
+   4. Hit ':' to get into command mode 
+   5. Write ':wq' and hit 'Enter' to write and quit (save) the file 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * cd /var/bootstrap/ 
+   ls bootstrap* 
+ * 
+ * 
+ * REPEAT STEPS 8-12 IN UPGRADE GUIDE ON TOP
+ * 
+
+
+For additional troubleshooting please contact StoredIQ Support -- please note in ticket which steps you tried and the output you received

@@ -1,0 +1,154 @@
+Title: IBM IV42658: ITCAM FOR SOA WORKSPACE SHOWS ERRORS WITH WMB V8.0.0.1 AND HIGHER MESSAGE FLOWS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TCAM for SOA workspace shows errors with WMB V8.0.0.1 and
+   higher message flows created using the first-class Service
+   creation feature. The Operation Name and Service Port Name are
+   missing from the ITCAM for SOA data.
+   See Reference PMR 71513,227,000
+   
+   RFE:
+   http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&C
+   R_ID=34639 [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=34639]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  See L2 support
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: ITCAM for SOA customers monitoring Message
+   * Broker V8.0.0.1 and later and using the first-class Service
+   * creation feature.
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The first-class Service creation feature
+   * introduced in Message Broker V8.0.0.1 uses SOAP nodes to
+   * implement message flows, but has changed the location of the
+   * SOAP input message information supplied during the user exit
+   * procedure. The Data Collector for Websphere Message Broker can
+   * not locate the required Service Port Name and Operation Name
+   * in the message information and returns empty fields.
+   ****************************************************************
+   * RECOMMENDATION: Apply ITCAM for Transactions 7.3.0.1
+   * Limited Availability fix LA0031.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Data Collector for Websphere Message
+   Broker V7.3.0.1 has been altered to tolerate SOAPInput nodes
+   created using the first-class Service creation feature. It will
+   report the string "UNKNOWN" when the Service Port Name and
+   Operation Name for a SOAPInput node can not be found.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+       | limited availability fix | 7.3.0.1-TIV-CAMTT-FP0031
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV42658
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM TXN MQ DC
+   
+   
+ * REPORTED COMPONENT ID
+   5724S79MQ
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-15
+   
+   
+ * CLOSED DATE
+   2013-06-19
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM TXN MQ DC
+   
+   
+ * FIXED COMPONENT ID
+   5724S79MQ
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R730 PSY
+   UP

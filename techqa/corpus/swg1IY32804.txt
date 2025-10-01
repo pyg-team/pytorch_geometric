@@ -1,0 +1,276 @@
+Title: IBM IY32804: WEBSEAL CASE INSENSITIVE JUNCTIONS NO LONGER WORK AFTER INSTALLING 3.8-PWS-FP06 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PMR: 34108,122,000
+   .
+   Release:                3.8
+   Patch Level:            6
+   Operating System:       AIX
+   O/S Level:              4.3.3
+   .
+   Problem Description:
+   .
+   The problem that is introduced by fixpack 6 is
+   that the -i flag  is useless if a junction is created and then
+   webseald
+   is restarted
+   .
+   Here  is how you can reproduce the problem:
+   .
+   1)  Create a junction to a web server (this should be a web
+   server that
+   is not case  sensitive, such as Microsoft IIS).
+   2)  Attach an ACL to the base of this junction that has
+   (T)raverse
+   permission  only for unauthenticated users.  This ACL should
+   allow
+   authenticated  users (T and r) access
+   3)  Create another ACL that gives (Tr) permissions to
+   unauthenticated
+   users.
+   4)  Attach this ACL to a directory such as (/test).  This can
+   either be
+   done  with the "acl attach" command or through the
+   administration
+   console if query  contents is installed on the server.
+   5)  Before restarting webseal, try going to
+   https://pdserver/junction/test - you  should be able to get
+   there
+   without logging on.
+   6) Now  try going to https://pdserver/junction/TEST - you  will
+   also be
+   able to get here without logging on.
+   7)  Restart webseal and repeat.  The URL in step 5 will work,
+   but the
+   URL in  step 6 will not (assuming the ACL was attached to
+   /WebSEAL/pdserver/junction/test)
+   .
+   NOTE: APAR  IY27787 is a bug that I submitted previously and is
+   unrelated to the current problem.
+   .
+   Here is the command I used to create a junction and then add an
+   ACL.
+   .
+   server task webseald-canasdx4 create -t tcp -c iv_user,iv_groups
+   -i -h
+   167.6.207.60 -p 8080 -s -w /inf
+   .
+   acl attach /WebSEAL/canasdx4/inf/inf Any-Authenticated-ACL
+   .
+   When I first create the acl and then do a "show" command I get
+   the
+   following:
+   pdadmin> server task webseald-canasdx4 show /inf
+   Junction point: /inf
+   Type: TCP
+   Junction hard limit: 0 - using global value
+   Junction soft limit: 0 - using global value
+   Active worker threads: 0
+   Basic authentication mode: filter
+   Authentication HTTP header: insert - iv_user iv_groups
+   Remote Address HTTP header: do not insert
+   Stateful junction: yes
+   Scripting support: no
+   Delegation support: no
+   Mutually authenticated: no
+   Insert WebSphere LTPA cookies: no
+   Insert WebSEAL session cookies: no
+   Server 1:
+   ID: f18d05a2-9421-11d6-9d76-000629ba068b
+   Server State: running
+   Hostname: 167.6.207.60
+   Port: 8080
+   Virtual hostname: 167.6.207.60
+   Server DN:
+   Query_contents URL: /cgi-bin/query_contents
+   Query-contents: unknown
+   Case insensitive URLs: yes
+   Allow Windows-style URLs: no
+   Total requests : 23
+   .
+   After I restart Policy Director and do a show, I get the
+   following:
+   .
+   pdadmin> server task webseald-canasdx4 show /inf
+   Junction point: /inf
+   Type: TCP
+   Junction hard limit: 0 - using global value
+   Junction soft limit: 0 - using global value
+   Active worker threads: 0
+   Basic authentication mode: filter
+   Authentication HTTP header: insert - iv_user iv_groups
+   Remote Address HTTP header: do not insert
+   Stateful junction: yes
+   Scripting support: no
+   Delegation support: no
+   Mutually authenticated: no
+   Insert WebSphere LTPA cookies: no
+   Insert WebSEAL session cookies: no
+   Server 1:
+   ID: f18d05a2-9421-11d6-9d76-000629ba068b
+   Server State: running
+   Hostname: 167.6.207.60
+   Port: 8080
+   Virtual hostname: 167.6.207.60
+   Server DN:
+   Query_contents URL: /cgi-bin/query_contents
+   Query-contents: unknown
+   Case insensitive URLs: no
+   Allow Windows-style URLs: yes
+   Total requests : 5
+   .
+   The case insensitive URLs and Windows-style URL's are both
+   different.
+   .
+   Here is the junction XML file that is created:
+   .
+   <JUNCTION>
+   .
+   <NAME>/inf</NAME>
+   .
+   <JUCTYPE>tcp</JUCTYPE>
+   .
+   <HARDLIMIT>0</HARDLIMIT>
+   .
+   <SOFTLIMIT>0</SOFTLIMIT>
+   .
+   <BASICAUTH>filter</BASICAUTH>
+   .
+   <CLIENTID>insert_pass_usgr</CLIENTID>
+   .
+   <STATEFUL/>
+   .
+   <UUID>f18d05a2-9421-11d6-9d76-000629ba068b</UUID>
+   .
+   <HOST>167.6.207.60</HOST>
+   .
+   <PORT>8080</PORT>
+   .
+   <VIRTHOSTNM>167.6.207.60</VIRTHOSTNM>
+   .
+   <SERVERDN></SERVERDN>
+   .
+   <URLQC>/cgi-bin/query_contents</URLQC>
+   .
+   <CASEINS/>
+   .
+   <WIN32SUP/>
+   .
+   </JUNCTION>
+   .
+   Submitted by: Cathryn Wang
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  use -f option to overwrite the same junction, good until restart
+   WebSEAL
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   see main problem description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   fixed in patch 3.8-PWS-0009E
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY32804
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV POL DIR WEB
+   
+   
+ * REPORTED COMPONENT ID
+   5698PDD10
+   
+   
+ * REPORTED RELEASE
+   380
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2002-07-10
+   
+   
+ * CLOSED DATE
+   2002-08-23
+   
+   
+ * LAST MODIFIED DATE
+   2002-08-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV POL DIR WEB
+   
+   
+ * FIXED COMPONENT ID
+   5698PDD10
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R380 PSN
+   UP

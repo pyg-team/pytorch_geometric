@@ -1,0 +1,138 @@
+Title: IBM PM36182: WBIFN V310 EIAS SERVICE CANNOT START IF MQ V7.0.1 IS INSTALLED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  EIAS service cannot start if MQ V7.0.1 is installed
+   indicated by DNFE3344E error event and MQ reason code 2033
+   where DNF_EI_LRT Enhanced InterAct Service cannot access the
+   WebSphere MQ queue DNF_EI_CMD1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local fix is availabe, the APAR will be provided with PTF
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  **************************************************************
+   * USERS AFFECTED: All users.
+   **************************************************************
+   * PROBLEM DESCRIPTION: WBIFN V310 EIAS SERVICE CANNOT START
+   *                      IF MQ V7.0.1 IS INSTALLED
+   **************************************************************
+   * RECOMMENDATION:
+   **************************************************************
+   Formerly, when EIAS was used with MQ V7.0.1, the EIAS service
+   could not start. DNFE3344E error event with reason code 2033
+   was issued, indicating that OUTBOUND DNF_EI_LRT EIAS service
+   could not access the WebSphere MQ queue DNF_EI_CMD1 due to an
+   exception.
+   Now, the MQ exception MQRC_NO_MSG_AVAILABLE is caught by
+   WBIFN and retries accessing DNF_EI_CMD1 queueafter 300
+   milliseconds.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WBIFN V310 EIAS SERVICE CANNOT START IF MQ V7.0.1 IS INSTALLED.
+   
+   This problem has been solved.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM36182
+   
+   
+ * REPORTED COMPONENT NAME
+   SW FIN, SW IA,
+   
+   
+ * REPORTED COMPONENT ID
+   5724D9631
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-04
+   
+   
+ * CLOSED DATE
+   2011-07-13
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM36030 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM36030]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SW FIN, SW IA,
+   
+   
+ * FIXED COMPONENT ID
+   5724D9631
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY
+   UP

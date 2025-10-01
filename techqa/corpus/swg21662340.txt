@@ -1,0 +1,33 @@
+Title: IBM Sterling Control Center console issues with JRE 1.7 release 51 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After client system JRE is updated to release 51 the Sterling Control Center Console will no longer start from the web launch. 
+
+SYMPTOM
+Missing Application-Name manifest attribute 
+
+#### Java Web Start Error:
+#### Missing required Permissions manifest attribute in main jar
+
+
+CAUSE
+JRE update
+
+
+
+DIAGNOSING THE PROBLEM
+Console will no longer launch and gives Java errors 
+
+
+
+RESOLVING THE PROBLEM
+As a work around, the user can use Exception Site list feature to run the applications blocked by security settings. By adding the URL of the blocked application to the Exception Site list allows it to run with some warnings. (See link below) 
+
+
+Sterling Control Center development is working on a fix for this issue.
+
+RELATED INFORMATION
+#Why are the Java applets and applications blocked [http://www.java.com/en/download/help/java_blocked.xml]

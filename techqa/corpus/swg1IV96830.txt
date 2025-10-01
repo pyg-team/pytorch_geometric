@@ -1,0 +1,138 @@
+Title: IBM IV96830: LEASES WILL GET STUCK WHEN TRYING TO PROCESS THE STATUS WHEN A REVIEW ASSUMPTION IS INVOLVED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Doing a review assumption on an Amended Lease (where the lease
+   was revised using Amendment option at least once), the lease is
+   getting sutck in Processing Status.
+   
+   1. Create a lease with lease type = Expense Lease, with a
+   commencement and base expiration date.
+   2. Create a payment schedule with multiple schedules.
+   3. Activate the lease
+   4. Once the lease is active, Revise it using the option Data
+   Amendment.
+   5. change the accounting start date
+   6. Create payment schedule in a revised lease
+   7. Activate the lease and do a Review assumption where Review
+   Type = Business Factors and Fiscal Period = 2015-01 and
+   Recalculate schedules is selected.
+   8. Once the Review assumption is submitted, the lease will get
+   stuck in processing.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This is caused by a lease is being reassessed/remeasured with
+   periods between accounting start date and accounting end date
+   that have been closed, earlier than today s date. The
+   changes are made in the workflow, "triContract - Synchronous -
+   Preliminary Calculations for Generating Amortization Schedule".
+   NOTE: In this scenario, no calculation on the FLIs will be done
+   since all the periods are closed. They shouldn't be changed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The status of the lease will be in Active even when a lease is
+   being reassessed/remeasured with periods between accounting
+   start date and accounting end date that have been closed,
+   earlier than today s date.
+   This is targeted to the 1h2017 application/OM release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV96830
+   
+   
+ * REPORTED COMPONENT NAME
+   TRIRIGA RE MANA
+   
+   
+ * REPORTED COMPONENT ID
+   5725F25RM
+   
+   
+ * REPORTED RELEASE
+   A51
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-06-01
+   
+   
+ * CLOSED DATE
+   2017-06-01
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RA52 PSY
+   UP

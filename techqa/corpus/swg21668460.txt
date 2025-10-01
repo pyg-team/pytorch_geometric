@@ -1,0 +1,57 @@
+Title: IBM Cannot access the Portal URL via browser - United States
+
+Text:
+fileRegistry.xml; EJPFD0016E; EJPSG0002E; CWWIM4001E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+IBM WebSphere Portal is successfully installed. After running the cluster-node-config-cluster-setup configuration task and restarting the Portal server the Portal administrator cannot access the Portal server via a web browser.
+
+SYMPTOM
+Review of the SystemOut.log shows the following during the wps application startup...
+
+[datetime] 00000017 Servlet E com.ibm.wps.engine.Servlet init EJPFD0016E: Initialization of service failed.
+com.ibm.wps.ac.DomainAdministratorNotFoundException: EJPSB0107E: Exception occurred while retrieving the identity of the domain admin user/admingroup cn=wpsadmins,o=defaultWIMFileBasedRealm.
+...
+
+Caused by: com.ibm.portal.puma.MemberNotFoundException: EJPSG0002E: Requested Member does not exist.cn=wpsadmins,o=defaultWIMFileBasedRealm
+at com.ibm.wps.services.puma.PumaServiceImpl.findGroupById(PumaServiceImpl.java:370)
+... 
+
+
+Caused by: com.ibm.websphere.wim.exception.EntityNotFoundException: CWWIM4001E The 'cn=wpsadmins,o=defaultWIMFileBasedRealm' entity was not found.
+at com.ibm.ws.wim.adapter.file.was.FileData.getByDN(FileData.java:951)
+
+
+CAUSE
+Portal must be able to find both its primary Portal administrative user and the Portal administration group during startup. The error messages indicate it cannot locate a group named "wpsadmins". In this instance, this was a default group the Portal server creates in the file repository named during installation. This group is not created during Deployment Manager (DMGR) insallation. 
+
+ 
+
+After federating to the Deployment Manager, the file repository on the DMGR (without the wpsadmins group) overwrites the copy of the file repository on the Portal node (with the wpsadmins group). As a result, on the next Portal startup the Portal administrators group is no longer present in the file repository and the Portal server will not start. 
+
+ 
+
+Note: This condition can be avoided as by augmenting the DMGR profile with the management.portal.augment template prior to federating the Portal node to the DMGR. 
+
+
+DIAGNOSING THE PROBLEM
+Capture a wpcollector collection: 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21445430 [http://www-01.ibm.com/support/docview.wss?uid=swg21445430]
+
+Inspect the <WP_profile_root>/config/cells/<cellname>/fileRegistry.xml file. Verify the "wpsadmins" entry is absent from this file.
+
+
+RESOLVING THE PROBLEM
+1) Login to the Deployment Manager 
+
+2) Navigate to Manage Groups 
+
+3) Click Create 
+
+4) Enter the name "wpsadmins"
+[/support/docview.wss?uid=swg21668460&amp;aid=1]
+
+5) Click Create.
+6) Sync nodes. Restart the Portal server(s).
+7) The Portal server should now be accessible in a web browser.

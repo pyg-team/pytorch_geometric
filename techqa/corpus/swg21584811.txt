@@ -1,0 +1,34 @@
+Title: IBM Content Engine Searches do not utilize Oracle Database Indexes - United States
+
+Text:
+nls_sort; oracle; search TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Content Engine (CE) searches performed using CE API or Workplace do not use the Oracle DB index, causing the queries to be performed using full table scans. 
+
+SYMPTOM
+CE searches do not return in a timely fashion
+
+
+CAUSE
+The Oracle parameter NLS_SORT is set to "BINARY_CI''. Note that this parameter could be set manually for the database via SQL updates or through an application server's "Test SQL" setting. 
+
+For other possible causes, check the P8 Performance Tuning Guide as well as the technote:
+"Indexing for IBM FileNet P8 Content Engine Searches":
+https://www-304.ibm.com/support/docview.wss?uid=swg21502886 [https://www-304.ibm.com/support/docview.wss?uid=swg21502886]
+
+
+
+ENVIRONMENT
+Oracle only.
+
+
+
+DIAGNOSING THE PROBLEM
+1. Check if Oracle parameter NLS_SORT is set to "BINARY_CI" 
+
+2. Go through P8 Performance Tuning Guide and the Indexing for CE Searches technote mentioned above, and perform diagnosis for database-related performance issues.
+
+
+RESOLVING THE PROBLEM
+Restore the Oracle parameter NLS_SORT to the default value of BINARY. If case-insensitive searching is required, please follow the instructions in P8 Performance Tuning Guide and the P8 InfoCenter for enabling "Force Case Insensitive Searches".

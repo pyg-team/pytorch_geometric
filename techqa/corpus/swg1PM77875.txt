@@ -1,0 +1,201 @@
+Title: IBM PM77875: SUPPORT MULTI-VALUED ATTRIBUTES FOR DISPLAY NAME - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The wimdomain.xsd shows that the cn attribute is single-valued,
+   whereas the givenName attribute can carry multiple values. These
+   settings match the defaults of a Portal installation.
+   
+   However, portal does not support multi-valued user attributes
+   for the user display name.
+   
+   If a customer changes user.displaynameattribute to givenname in
+   place of cn, interacting with the shelf throws the exception
+   mentioned:
+   
+   [8/16/12 17:00:07:468 CDT] 00000060 servlet E com.ibm.ws.
+   webcontainer.servlet.ServletWrapper service SRVE0068E: Uncaught
+   exception created in one of the service methods of the servlet
+   /themes/html/Default.jsp in application customThemeEAR.
+   Exception created : com.ibm.websphere.servlet.error
+   .ServletErrorReport:
+   com.ibm.wps.resolver.data.exceptions.URIProcessingIOException:
+   EJCBD0021E: The URI [dav:fs-type1/themes/customTheme/theme.html]
+   and parameters
+   [['themeURI'=['dav:fs-type1/themes/customTheme/theme.html'],'mim
+   e-type'=['text/html']]]
+   could not be processed: [EJCBD0021E: The URI
+   [dav:fs-type1/themes/customTheme/nls/theme_en.html]
+   and parameters
+   [['themeURI'=['dav:fs-type1/themes/customTheme/theme.html'],
+   'mime-type'=['text/html']]]
+   could not be processed: [EJCBD0019E: The data source identified
+   by the URI
+   [co:config] and parameters []] could not be processed:
+   [java.util.ArrayList incompatible with java.lang.String]]] at
+   org.apache.jasper.runtime.PageContextImpl.handlePageException
+   (PageContextImpl.java:693) at
+   com.ibm._jsp._Default._jspService(_Default.java:1273)
+   at
+   com.ibm.ws.jsp.runtime.HttpJspBase.service(HttpJspBase.java:99)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use only single-valued user attributes (for example, cn)
+   as user.displaynameattribute.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The wimdomain.xsd shows that the cn attribute is single-valued,
+   whereas the givenName attribute can carry multiple values. These
+   settings match the defaults of a Portal installation.
+   
+   However, portal does not support multi-valued user attributes
+   for the user display name.
+   
+   If a customer changes user.displaynameattribute to givenname in
+   place of cn, interacting with the shelf throws the exception
+   mentioned:
+   
+   [8/16/12 17:00:07:468 CDT] 00000060 servlet E com.ibm.ws.
+   webcontainer.servlet.ServletWrapper service SRVE0068E: Uncaught
+   exception created in one of the service methods of the servlet
+   /themes/html/Default.jsp in application customThemeEAR.
+   Exception created : com.ibm.websphere.servlet.error
+   .ServletErrorReport:
+   com.ibm.wps.resolver.data.exceptions.URIProcessingIOException:
+   EJCBD0021E: The URI [dav:fs-type1/themes/customTheme/theme.html]
+   and parameters
+   [['themeURI'=['dav:fs-type1/themes/customTheme/theme.html'],'mim
+   e-type'=['text/html']]]
+   could not be processed: [EJCBD0021E: The URI
+   [dav:fs-type1/themes/customTheme/nls/theme_en.html]
+   and parameters
+   [['themeURI'=['dav:fs-type1/themes/customTheme/theme.html'],
+   'mime-type'=['text/html']]]
+   could not be processed: [EJCBD0019E: The data source identified
+   by the URI
+   [co:config] and parameters []] could not be processed:
+   [java.util.ArrayList incompatible with java.lang.String]]] at
+   org.apache.jasper.runtime.PageContextImpl.handlePageException
+   (PageContextImpl.java:693) at
+   com.ibm._jsp._Default._jspService(_Default.java:1273)
+   at
+   com.ibm.ws.jsp.runtime.HttpJspBase.service(HttpJspBase.java:99)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 19 (PM75291 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM75291]) for Portal
+   7.0.0.2 available from Fix Central:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickord
+   er?productid=WebSphere%20Portal&brandid=5&apar=PM75291 [http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?productid=WebSphere%20Portal&brandid=5&apar=PM75291]
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM77875
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-27
+   
+   
+ * CLOSED DATE
+   2013-02-28
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,119 @@
+Title: IBM IT02867: PURESYSTEMS MANAGER FAILURES EVENTS ARE DISPLAYED WITH ONLY A "WARNING" SEVERITY - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.0.0.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24038058]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer sees a warning event for PureSystems Manager (PSM)
+   failures:
+   CWZIP9602W The state of Service16 is failed offline at node xxxx
+   
+   This message should be an error event, not a warning.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The PureSystems Manager failure CWZIP9602W message needs to be
+   increased from a warning to an error event, CWZIP9602E.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT02867
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-30
+   
+   
+ * CLOSED DATE
+   2014-07-21
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY
+   UP
+   
+   
+ * R100 PSN
+   UP
+   
+   
+ * R110 PSN
+   UP
+   
+   
+ * RESP PSN
+   UP

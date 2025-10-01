@@ -1,0 +1,40 @@
+Title: IBM Work-around for APAR IT12895 does not resolve issue - United States
+
+Text:
+Spectrum Control Tivoli Storage Productivity Center TPC upgrade BPCIN0258E exportLDAPRepositories TECHNOTE (FAQ)
+
+QUESTION
+ Why didn't the work-around documented in this APAR solve my upgrade problem? 
+
+CAUSE
+Additional certificates are expired
+
+ANSWER
+Check the TIP logs (note: these may not have been collected by the 5.2.8 or 5.2.9 'service' command) and look for an error like this: 
+
+<TIP_HOME>/profiles/TIPProfile/logs/server1/SystemOut.log -
+
+[3/31/16 9:34:51:088 CDT] 00000021 WSX509TrustMa E CWPKI0022E: SSL HANDSHAKE FAILURE: A signer with SubjectDN "CN=servername.company.com, OU=TIPCell, OU=TIPNode, O=IBM, C=US" was sent from target host:port "unknown:0". The signer may need to be added to local trust store "C:/Program Files/IBM/tipv2/profiles/TIPProfile/config/cells/TIPCell/nodes/TIPNode/trust.p12" located in SSL configuration alias "NodeDefaultSSLSettings" loaded from SSL configuration file "security.xml". The extended error message from the SSL handshake exception is: "PKIX path validation failed: java.security.cert.CertPathValidatorException: The certificate expired at Tue Dec 01 14:20:53 CST 2015; internal cause is: 
+java.security.cert.CertificateExpiredException: NotAfter: Tue Dec 01 14:20:53 CST 2015".
+
+To solve the problem, copy the renewed certificates key.p12 and trust.p12 from
+
+<TPC_HOME>\TPC\ewas\profiles\WebServerProfile\config\cells\WebServerCell\nodes\WebServerNode
+
+to these locations:
+
+<TIP_HOME>\profiles\TIPProfile\config\cells\TIPCell\nodes\TIPNode\
+<TIP_HOME>\profiles\TIPProfile\etc\
+
+then retry the upgrade.
+
+This example is from the Windows OS, but this error and solution is similar on AIX and Linux platforms (the installation directory/path names will be different).
+
+RELATED INFORMATION
+ APAR IT12895 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT12895]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Storage Management IBM Spectrum Control Standard Edition

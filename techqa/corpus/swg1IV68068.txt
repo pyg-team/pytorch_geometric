@@ -1,0 +1,148 @@
+Title: IBM IV68068: STANDALONE APPLICATION SERVER PROFILES WHICH ARE FEDERATED TO A MANAGED SERVER FAIL TO UPGRADE SUCCESSFULLY - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere Service Registry and Repository V8.5 Refresh Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24039620]
+WebSphere Service Registry and Repository V8.5 Refresh Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24041151]
+WebSphere Service Registry and Repository V8.5.6 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043121]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When applying a WSRR fixpack or iFix to a system with a Managed
+   Server configuration, the update application may fail to
+   complete successfully. On reviewing the
+   'WSRRProfileUpgrade.ant.log' log in WAS_HOME/logs , you may see
+   the following when updating the server profile:
+   
+     [wsadmin] Updating any deployed WSRR EARs
+     [wsadmin] WASX7017E: Exception received while running file
+   "/WSRR/install/jython/updatewsrr.py"; exception information:
+   com.ibm.ws.scripting.ScriptingException: WASX7206W: The
+   application management service is not running. Application
+   management commands will not run.
+     [wsadmin]
+   
+   BUILD FAILED
+   /WSRR/install/WSRRProfileUpgrade.ant:60: Internal error
+   
+   This error shows that an issue occurred trying to connect to the
+   DMGR WAS from the server profile as it is being updated.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of WebSphere Service Registry and Repository V7.5,
+   V8.0 and V8.5 using a Managed Server configuration
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When applying a WSRR fixpack or iFix to a system with a Managed
+   Server configuration, the update application operation might
+   fail to complete successfully.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code issue has been identified and corrected.
+   
+   The fix is targeted for inclusion in WSRR V7.5.0.5, V8.0.0.4 and
+   V8.5.5.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV68068
+   
+   
+ * REPORTED COMPONENT NAME
+   SERVICE REGISTR
+   
+   
+ * REPORTED COMPONENT ID
+   5724N7200
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-19
+   
+   
+ * CLOSED DATE
+   2015-02-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SERVICE REGISTR
+   
+   
+ * FIXED COMPONENT ID
+   5724N7200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

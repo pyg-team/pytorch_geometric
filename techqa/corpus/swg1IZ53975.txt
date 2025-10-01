@@ -1,0 +1,134 @@
+Title: IBM IZ53975: UNIX LOG AGENT ON LINUX DOES NOT HANDLE SPECIAL FILEPATH CHARS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment: Linux
+   Problem Description:
+   The Monitoring Agent for UNIX Log does not handle special
+   characters in
+   the filepath of the log files listed in syslog.conf such as the
+   dash
+   character.
+   Example: -/var/log/maillog
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The Monitoring Agent for UNIX Log does not handle special
+   characters in the filepath of the log files listed in
+   syslog.conf such as the dash character.
+   Example: -/var/log/maillog
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is included in the following maintenance
+   vehicle:
+   
+      | fix pack | 6.2.1-TIV-ITM-FP0001 |
+   
+   Note: Search the IBM technical support web site for maintenance
+   package availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ53975
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04LA
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-25
+   
+   
+ * CLOSED DATE
+   2009-06-26
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * FIXED COMPONENT ID
+   5724C04LA
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R621 PSY
+   UP

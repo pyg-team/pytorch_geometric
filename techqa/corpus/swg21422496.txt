@@ -1,0 +1,58 @@
+Title: IBM Collecting Data: SDMS (SOA Domain Managment Server) Data - United States
+
+Text:
+CAMSOACD CAMSOAALL CAMSOAENABLE CAMSOADB CAMSOALOG "Collecting Data" MustGather Must Gather SDMS SOA Domain Managment Server Enable Disable Trace Data log Information TECHNOTE (FAQ)
+
+QUESTION
+ Instruction to capture SDMS data with trace. 
+
+ANSWER
+ 
+
+** Collecting SDMS Information with Trace ** 
+
+Procedure to ENABLE tracing and capture data for SDMS 
+1. Change the directory to following location 
+* Windows : <ITM-Home>\CNPS\Products\KD4\bin 
+* Unix : <ITM_Home>/<platform>/cq/Products/KD4/bin 
+
+2. Run the kd4ChangeTraceLevel script with the -sa option: 
+kd4ChangeTraceLevel -sa (Starts tracing always for SDMS) 
+
+3. Restart the TEPS (for the new trace setting to take affect). 
+
+4. Make sure that the current directory is the same as specified in step 1. 
+
+5. Run the kd4ChangeTracelevel script with the -ra option: 
+kd4ChangeTraceLevel -ra (Starts tracing for the current runtime) 
+
+6. Allow the system to run for a minimum of 5 minues, and the reproduce the issue (problem). This will ensure that the trace includes a full interrogation of all agents. 
+
+7. Collect and send the following information : From TEPS * Windows : 
+<ITM-Home>/CNPSJ/profiles/ITMProfile/logs/ITMServer/trace*.log 
+<ITM-Home>/CNPSJ/profiles/ITMProfile/logs/ITMServer/System*.log
+
+* Unix :
+<ITM-Home>/<platform>/iw/profiles/ITMProfile/logs/ITMServer/trace*.log 
+<ITM-Home>/<platform>/iw/profiles/ITMProfile/logs/ITMServer/System*.log
+From TEP GUI Screenshot of TEP with the Topology Views that the defect is about. 
+8. Disable SDMS trace setting. 
+
+
+Procedure to DISABLE tracing for SDMS 
+1. Change the directory to the following location 
+* Windows : <ITM-Home>\CNPS\Products\KD4\bin 
+* Unix : <ITM_Home>/<platform>/cq/Products/KD4/bin 
+
+2. Run the kd4ChangeTraceLevel script with the -sd option: 
+kd4ChangeTraceLevel -sd (Starts tracing always for SDMS) 
+
+3. Restart the TEPS (for the new trace setting to take affect). 
+
+4. Make sure that the current directory is the same as specified in step 1. 
+
+5. Run the kd4ChangeTracelevel script with the -rd option: 
+kd4ChangeTraceLevel -rd (Starts tracing for the current runtime)  
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for SOA

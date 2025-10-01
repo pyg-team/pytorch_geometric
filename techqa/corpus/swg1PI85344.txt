@@ -1,0 +1,203 @@
+Title: IBM PI85344: DOCUMENTATION STATES THAT ORACLE 11.2 (11GR2) IS SUPPORTED AS A REPOSITORY DATABASE WHEN ONLY ORACLE 12C IS SUPPORTED. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the Installation and Configuration guide for the IBM SPSS
+   Collaboration and Deployment Services (C&DS) 8.1 repository,  an
+   example on the permissions needed to install C&DS on an Oracle
+   database is provided. In this example, Oracle 11gR2 was used.
+   This is very misleading as IBM SPSS C&DS 8.1 only support Oracle
+   12c as a repository database.
+   
+   See KC article -
+   https://www.ibm.com/support/knowledgecenter/SS69YH_8.1.0/cads_co
+   nfig_ddita/model_management/thin/database_permissions.html [https://www.ibm.com/support/knowledgecenter/SS69YH_8.1.0/cads_config_ddita/model_management/thin/database_permissions.html]
+   
+   =====================
+   Example: Oracle 11gR2
+   
+   The following permissions are required for configuring IBM SPSS
+   Collaboration and Deployment Services Repository with Oracle
+   11gR2 database:
+   
+       CREATE SESSION
+       ALTER SESSION
+       CREATE TYPE
+       CREATE TABLE
+       CREATE PROCEDURE
+       CREATE VIEW
+       CREATE TRIGGER
+   
+   The following permissions are required for starting IBM SPSS
+   Collaboration and Deployment Services Repository with Oracle
+   11gR2 database:
+   
+       CREATE SESSION
+       ALTER SESSION
+       SESSIONS_PER USER - must be set to value equal to, or
+   greater than, 100.
+   =====================
+   
+   
+   This is also reflected in the Compatibility Reports where Oracle
+   11gR2 is listed as a supported database:
+   
+   https://www.ibm.com/software/reports/compatibility/clarity-repor
+   ts/report/html/softwareReqsForProduct?deliverableId=FA7B4930C1D4 [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=FA7B4930C1D4]
+   11E6BE9C4E8BFBBFA45B&osPlatforms=AIX|Linux|Windows&duComponentId
+   s=D008|S003|S007|S006|S002|S005|S001&mandatoryCapIds=30|9|13|25&
+   optionalCapIds=7|22|65|72|186|26
+   
+   =====================
+   Prequisite: Oracle Database 11g Enterprise Edition
+   Version: Release 2 and future fix packs
+   Prequisite Minimum: Release 2
+   =====================
+   
+   
+   Any attempts to install C&DS 8.1 on an Oracle 11gR2 database
+   will fail with the following messages:
+   =====================
+   ERROR 1:
+   Database version 11.2.0.4.0 does not meet minimum requirements!
+   
+   ERROR 2:
+   Acceptable values: oracle
+   Required:
+   Range:
+       Minimum: 12.1
+   =====================
+   
+   
+   The SPSS C&DS 8.1 documentation should not use Oracle 11gR2 as
+   an example as it is misleading and can cause customers to think
+   that this is a supported version of Oracle for our repository.
+   
+   Compatibility Reports should also be updated to remove Oracle
+   11gR2 as a supported database version for our repository.
+   
+   
+   To reproduce:
+   Attempt to install C&DS 8.1 on an Oracle 11gR2 database and
+   observe the reported error message.
+   Attempt to install C&DS 8.1 on an Oracle 12c database and no
+   errors occur.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If using Oracle as your repository database for IBM SPSS C&DS
+   8.1, please make sure it is up to version 12.1 (12c) to be
+   compatible.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * This affects users deploying IBM SPSS C&DS to an Oracle      *
+   * database instance.                                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * DOCUMENTATION STATES THAT ORACLE 11.2 (11GR2) IS SUPPORTED   *
+   * AS A REPOSITORY DATABASE WHEN ONLY ORACLE 12C IS SUPPORTED.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM SPSS Collaboration and Deployment      *
+   * Services 8.1.1 to obtain the correct details on supported    *
+   * Oracle database versions.                                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This documentation issue is resolved in IBM SPSS Collaboration
+   and Deployment Services 8.1.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI85344
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS CADS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A72CD
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-01
+   
+   
+ * CLOSED DATE
+   2018-01-30
+   
+   
+ * LAST MODIFIED DATE
+   2018-01-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,196 @@
+Title: IBM JR57819: DBUPGRADE AND BPMUPDATESYSTEMAPP COMMANDS FAIL WHILE UPGRADING WITH JAVA 7 AND A CUSTOMIZED ORACLE JDBC DRIVER PATH - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+bpm.8570.cf2017.06.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2017.06.delta.repository&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following issues occur while upgrading to IBM Business
+   Process Manager (BPM) cumulative fix 2017.03 with Java 7 and a
+   customized Oracle JDBC driver path:
+   
+   -The DBUpgrade command fails with an error similar to the
+   following error:
+   
+   [Apr 7, 2017 11:08:20 AM] 00000001 FINE:
+   com.lombardisoftware.tools.dbupgrade.UpgradeDatabase.main -
+   Could not connect to your Process Server database.
+   java.lang.RuntimeException: Could not connect to your Process
+   Server database.
+   at
+   com.lombardisoftware.tools.dbupgrade.steps.TestDatabases.execute
+   (TestDatabases.java:35)
+   at
+   com.lombardisoftware.tools.dbupgrade.UpgradeDatabase.main(Upgrad
+   eDatabase.java:124)
+   at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+   :
+   Caused by: java.lang.ClassNotFoundException:
+   oracle.jdbc.driver.OracleDriver
+   at java.lang.Class.forName(Class.java:301)
+   at
+   org.springframework.jdbc.datasource.DriverManagerDataSource.setD
+   riverClassName(DriverManagerDataSource.java:146)
+   
+   -While the deployment manager starts, the BPMUpdateSystemApp
+   command fails with an error similar to the following error:
+   
+   org.springframework.jdbc.support.MetaDataAccessException: Error
+   while
+   extracting DatabaseMetaData; nested exception is
+   org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC
+   driver
+   class 'oracle.jdbc.driver.OracleDriver', cause:
+   oracle.jdbc.driver.OracleDriver
+   at
+   org.springframework.jdbc.support.JdbcUtils.extractDatabaseMetaDa
+   ta(JdbcUtils.java:296)
+   at
+   org.springframework.jdbc.support.JdbcUtils.extractDatabaseMetaDa
+   ta(JdbcUtils.java:320)
+   
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To use a customized Oracle JDBC driver path with Java 7, make
+   sure the ojdbc6.jar file is available in the customized JDBC
+   driver path alongside ojdbc7.jar.
+   
+   To make sure the database upgrade related commands can correctly
+   resolve the JDBC driver path, ensure all referenced WebSphere
+   variables are defined at the deployment manager's node level.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The DBUpgrade command uses a Java 6 runtime environment and,
+   therefore, requires the ojdbc6.jar JDBC driver when using
+   Oracle. If a customized Oracle JDBC driver path does not contain
+    the ojdbc6.jar file, the DBUpgrade fails to load an Oracle JDBC
+    driver.
+   
+   Database upgrade commands like DBUpgrade and BPMUpdateSystemApp
+   use the actual data source configuration to access the database.
+   For this reason, any WebSphere variables in the JDBC driver path
+   must be resolved. If a WebSphere variable like
+   ORACLE_JDBC_DRIVER_PATH is moved from node level to cell level
+   after initial IBM BPM is configured, the JDBC driver path lookup
+   might fail, depending on whether the cell-level variables.xml
+   file is available in the session workspace of the command in
+   question.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be available in IBM BPM V8.5.7 cumulative fix 2017.06
+    that correctly recognizes a customized Oracle JDBC driver path
+   when Java 7 is used.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR57819
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-04-25
+   
+   
+ * CLOSED DATE
+   2017-06-12
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

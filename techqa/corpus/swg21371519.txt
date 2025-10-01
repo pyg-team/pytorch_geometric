@@ -1,0 +1,31 @@
+Title: IBM QFS-ERR-0002 Unable to find or load the shared library <path>/libsbodp.so: Testing SAP datasource - United States
+
+Text:
+[SAP GUI] TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Get an error message when connecting to SAP BW system from Cognos 8 installed on UNIX. 
+
+SYMPTOM
+QFS-ERR-0002 Unable to find or load the shared library '/cognos8/c8/./bin/libsbodp.so' (or one of its dependents) containing the provider 'SAPBWODP'
+
+
+CAUSE
+Ensure the librfccm.o file is in a path which is referenced in the LIBRARY PATH.
+
+ENVIRONMENT
+UNIX
+
+RESOLVING THE PROBLEM
+The file librfccm.o is a library provided by the SAP Client.
+
+SAP GUI SDK for UNIX in 32 bit version must be installed on the system, librfccm.so folder must be on the library path environment for UNIX operating system Solaris : LD_LIBRARY_PATH= $ LD_LIBRARY_PATH:<librfccm.so_directory>
+HPUX : SHLIB_PATH= $SHLIB_PATH:<librfccm.so_directory>
+AIX : LIBPATH= $LIBPATH:<librfccm.so_directory>
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Series 7 PowerPlay 
+HISTORICAL NUMBER
+ 1039108

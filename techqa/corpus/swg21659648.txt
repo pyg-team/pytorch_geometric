@@ -1,0 +1,85 @@
+Title: IBM InfoSphere DataStage Designer Client returns message 'The client session to Services Tier is lost. Attempting to re-establish session.' - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM InfoSphere DataStage Designer Client suddenly returns the following DataStage message:
+
+The client session to the Service Tier is lost. Attempting to re-establish session. 
+
+SYMPTOM
+This issue mostly occurs when inactivity time-out is enabled. 
+
+[/support/docview.wss?uid=swg21659648&aid=1] [/support/docview.wss?uid=swg21659648&aid=1] 
+
+
+CAUSE
+The heartbeat messages sent by the IBM InfoSphere DataStage Client are failing to reach the IBM InfoSphere Information Server Services tier within the expected time frame.
+
+Starting with IBM InfoSphere DataStage Client 9.1 it uses a REST API heartbeat sending a heartbeat request every 60 seconds. IBM InfoSphere Information Server Session Monitor expects a heartbeat every 30 seconds and the default value of MaxAllowedMissedHeartbeatCount is 3 hence it could time-out after approximately 90 seconds on a single missed heartbeat.
+
+
+ENVIRONMENT
+IBM InfoSphere Information Server 9.1-9.1.2.0 
+
+IBM InfoSphere Information Server 11.3-11.3.1.2 
+
+
+DIAGNOSING THE PROBLEM
+Verify the possible network issues 
+
+
+Open a command window on the client system and execute the command ping -t <services_tier_host> 
+
+Leave this running for several hours then press ctl-C and the command will output a summary.
+
+Ping statistics for <services_tier_host>:
+
+Packets: Sent = 2006, Received = 2005, Lost = 1 (0% loss),
+Approximate round trip times in milli-seconds:
+Minimum = 21ms, Maximum = 137ms, Average = 21ms
+Control-C
+
+Review the SystemOut.log on the Services tier
+
+/opt/IBM/WebSphere/AppServer/profiles/InfoSphere/logs/server1
+Look for the similar error with the timestamp when the problem has occurred:
+
+SessionMonito I MonitorThread processSession Session Monitor will now attempt to destroy the DS_DESIGNER session 6891760C-E8A4-41E5-99FC-D60439EFA9F2 of user user_name from Host due to inactivity for approximately 94 seconds.
+
+Review the dstage_wrapper_trace_nn.log on Client tier 
+
+C:\Users\<User_Name>\ds_logs
+Look for the similar error messages:
+
+ERROR com.ascential.dstage.proxies.NewRepos.log(NewRepos.java:5734) - (External) Ascential.DataStage.Attach.COM.RESTHeartbeat.Pulse - Heartbeat. Exception=The underlying connection was closed: A connection that was expected to be kept alive was closed by the server.
+
+ERROR com.ascential.dstage.proxies.NewRepos.log (NewRepos.java:5618) - (External) Ascential.DataStage.Attach.COM.RESTHeartbeat.Pulse - Heartbeat. Exception=The remote server returned an error: ( 500) Internal Server Error.
+
+
+RESOLVING THE PROBLEM
+To resolve this issue you need to increase the value for the MaxAllowedMissedHeartbeatCount property. Stop and restart WebSphere Application Server once the changes have been made. 
+
+
+On the IBM InfoSphere Information Server 9.1 Service tier.
+
+1. Change current directory to the following location
+/opt/IBM/WebSphere/AppServer/profiles/InfoSphere/classes
+2. Edit the isfconfig.properties file and at the end of this file add the new line and save the changes
+MaxAllowedMissedHeartbeatCount=6
+3. To apply this change you need to restart the IBM WebSphere Application Server
+4. During IBM WebSphere Application Server startup review the SystemOut.log looking for the following entry
+
+SessionMonito I SessionMonitor start Session Monitor has been enabled.
+
+On the IBM InfoSphere Information Server 11.3 and 11.5 Service tier.
+
+Use these commands 
+./iisAdmin.sh -display -key com.ibm.iis.isf.security.SessionMaxMissedHeartbeatCount
+./iisAdmin.sh -key com.ibm.iis.isf.security.SessionMaxMissedHeartbeatCount -set -value "6"
+
+The minimum value is 2. If the value is less than 2, the code will use a value of 2. There is no limit for maximum value.
+
+RELATED INFORMATION
+ More about iisAdmin script [http://www-01.ibm.com/support/knowledgecenter/SSZJPZ_11.3.0/com.ibm.swg.im.iis.found.admin.common.doc/topics/r_iisadmincommand.html?cp=SSZJPZ_11.3.0%2F4-9-1]

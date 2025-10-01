@@ -1,0 +1,106 @@
+Title: IBM Knowledge Collection: Performance documents for the IBM Business Process Manager products - United States
+
+Text:
+knowledgecollection EDUCATION
+
+ABSTRACT
+ This Knowledge Collection is a focused compilation of links to performance-related documents for the IBM Business Process Manager products. 
+
+CONTENT
+ Knowledge Collections are navigation aids that organize content to help users quickly find relevant information. Knowledge Collections are not designed to be an all-inclusive list of all documents dealing with the specific theme. The applicable version is included in each entry.
+
+Other Knowledge Collections are available for the IBM Business Process Manager. 
+
+
+If you need technical support, see the Support section for information on what IBM Software Support needs to investigate the issue. 
+
+
+Performance issues and database locks in IBM Business Process Manager (BPM) when new Enterprise Content Management (ECM) documents trigger a heavy case creation load (1675910) [http://www.ibm.com/support/docview.wss?uid=swg21675910]
+Version: 8.5.5
+If IBM Business Process Manager with case features is set to automatically create a case when a document is created in the embedded ECM, heavy load conditions might cause degraded performance for case creation and document filing. In extreme cases, database lock timeouts can occur.
+
+Long startup time for the IBM Business Monitor server with IBM Business Process Manager (BPM) (1660162) [http://www.ibm.com/support/docview.wss?uid=swg21660162&acss=dakc]
+Versions 8.5, 8.0.1, 8.0, and 7.5
+If the IBM Business Monitor server is taking a long time to start, in the order of hours, there might be security software running on the system that causes a conflict with the file scanning operation in IBM Business Process Manager and IBM Business Monitor.
+
+
+References to JavaScript variables in IBM Business Process Manager (BPM) are useful only while the task is active (1637712) [http://www.ibm.com/support/docview.wss?uid=swg21637712&acss=dakc]
+Version: 8.5
+Task narrative references to JavaScript variables fail to resolve after the task is complete.
+
+
+Additional connections exist in the pool that is used by the BPM Internal Security Provider for IBM Business Process Manager (BPM) (1633754) [http://www.ibm.com/support/docview.wss?uid=swg21633754&acss=dakc]
+Versions: 8.0.1, 8.0, 7.5.1, and 7.5
+At peak load periods, IBM Business Process Manager temporarily adds many connections to the pool that is used by the BPM Internal Security Provider. These additional connections result in throughput degradation.
+
+
+IBM Business Process Manager (BPM) shows nearly 100% CPU consumption and then out-of-memory errors before crashing (1627134) [http://www.ibm.com/support/docview.wss?uid=swg21627134&acss=dakc]
+Versions: 8.0.1, 8.0, 7.5.1, and 7.5
+In IBM Business Process Manager, it is possible to write JavaScript server snippets. When the code is executed, the product shows very high (mostly 100%) CPU consumption, and runs into an out-of-memory (OOM) condition after a while.
+
+
+The rendering of complex coaches in IBM Business Process Manager (BPM) might be slow with Microsoft Internet Explorer Version 8.0 (1607607) [http://www.ibm.com/support/docview.wss?uid=swg21607607&acss=dakc]
+Version: 8.0
+The rendering of complex coaches (tasks) in the IBM Business Process Manager V8.0 portal application is very slow with Internet Explorer Version 8.0 compared to Mozilla Firefox. 
+
+
+User tasks are not shown in the My Team Performance Dashboard for IBM Business Process Manager (1611091) [http://www.ibm.com/support/docview.wss?uid=swg21611091&acss=dakc]
+Version: 8.0
+A manager using the "My Team Performance" scoreboard with IBM Business Process Manager 8.0 can only view a subset of tasks that could be viewed in prior releases.
+
+
+Performance Tuning Worksheet for Business Process Choreographer (7011121) [http://www.ibm.com/support/docview.wss?uid=swg27011121&acss=dakc]
+Versions: 8.0 and 7.5
+This white paper provides guidance through performance tuning a WebSphere Process Server system. 
+
+
+Reading and decoding instrumentation files for Teamworks, WebSphere Lombardi Edition (WLE), and IBM Business Process Manager (BPM) products (1613989) [http://www.ibm.com/support/docview.wss?uid=swg21613989&acss=dakc]
+Versions: 8.0, 7.5.1, and 7.5
+How do you read and decode instrumentation files for Lombardi Teamworks, WebSphere Lombardi Edition, and IBM Business Process Manager products?
+
+
+Performance tuning considerations when IBM Business Process Manager (BPM) is running in a virtual machine (1574113) [http://www.ibm.com/support/docview.wss?uid=swg21574113&acss=dakc]
+Versions: 8.0, 7.5.1, 7.5.0.1, and 7.5
+Running IBM Business Process Manager in a virtual machine is supported. However, there are some additional considerations when running servers in a virtual machine (VM) environment.
+
+
+
+
+
+Back to top
+
+ 
+
+
+
+SUPPORT
+If you are having installation issues and need help from IBM Support, see the Collect troubleshooting data for performance problems in IBM Business Process Manager (BPM) (1611603) [http://www.ibm.com/support/docview.wss?uid=swg21611603&acss=dakc] topic. This document explains what documentation you must collect (MustGather) so that the IBM Business Process Manager Support team can diagnose your problem. If you gather this documentation before contacting support, it will expedite the troubleshooting process, and save you time. 
+A Chinese translation [http://www.ibm.com/support/docview.wss?uid=swg21636200] of this document is also available.. 
+
+
+Back to top
+
+
+
+
+OTHER KNOWLEDGE COLLECTIONS FOR IBM BUSINESS PROCESS MANAGER
+ *  
+ * Knowledge Collection: Database documents for the IBM Business Process Manager (BPM) products (7036941) [http://www.ibm.com/support/docview.wss?uid=swg27036941]
+ * Knowledge Collection: Installation and configuration documents for the IBM Business Process Manager (BPM) products (7024590) [http://www.ibm.com/support/docview.wss?uid=swg27024590]
+ * Knowledge Collection: Migration documents for the IBM Business Process Manager (BPM) products (7038196) [http://www.ibm.com/support/docview.wss?uid=swg27038196]
+ * Knowledge Collection: Security documents for the IBM Business Process Manager (BPM) products (7036942) [http://www.ibm.com/support/docview.wss?uid=swg27036942]
+
+
+
+Back to top
+
+
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Performance AIX, Linux, Linux zSeries, Solaris, Windows 8.5.5, 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Express Performance Linux, Linux zSeries, Windows 8.5.5, 8.5, 8.0.1, 8.0, 7.5.1, 7.5 PRODUCT ALIAS/SYNONYM
+ BPM

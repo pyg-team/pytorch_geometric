@@ -1,0 +1,178 @@
+Title: IBM IV86800: TDS CLIENT FAILS USING TL2 W/ MS ACTIVE DIRECTORY LDAP SERVER - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 7 (6.3.0-TIV-ITM-FP0007) [http://www-01.ibm.com/support/docview.wss?uid=swg24041633]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment: TEMS 6.30 FP5 or FP6, platform independent
+   
+   
+   Problem Description:
+   ITM TEMS integrates with TDS client 6.3.0.27. The issue is that
+   TDS client connects with Microsoft AD server using the protocol
+   TLSV1.2. When we set the parameter LDAP_OPT_SECURITY_PROTOCOL to
+   change the protocol to TLS v1.0 or TLSv1.1 TDS client can
+   connect with AD server successfully. TEMS 6.30 FP5 and FP6 use
+   TDS client: 6.3.0.27 and GSKit 8.0.50.36.
+   
+   UserID authentication fails when trying to logon to TEMS via
+   tacmd CLI or via TEP.
+   
+   An uplift of TDS client to 6.30.0.43 and uplift of GSKit to
+   8.0.50.66 resolves the problem.
+   
+   Detailed Recreation Procedure:
+   
+                    (from L3 Lab recreate)
+    jazz_ms_5775408f-01.log        Tivoli product log w/LDAP
+   failure
+    ldapconn_0630bill.cap          Corresponding IP packet trace
+   for above
+    ldaptrace.L3LAB.html           Corresponding LDAP trace for
+   above
+    tems-ldap-gskit.trace          Corresponding GSKit trace for
+   above
+   
+                    (from customer's environment)
+   
+    ldaptrace.Coles.txt            LDAP trace of customer failure
+   
+   The problem we are experiencing is this: when configured for TLS
+   1.2
+   protocol use, our TDS client LDAP SSL connection fails when
+   directed to Microsoft's Active Directory server.  This very
+   client connection is succcessful when directed to an IBM TDS
+   server.  Our client TDS code level is LDAP-6.30.0.27 . Other
+   vendor LDAP clients (JExplorer) have established SSL / TLS 1.2
+   connections to the Active Directory server.
+   
+   When configured for TLS 1.0 or TLS 1.1 , our TDS client LDAP SSL
+   connection to Microsoft's Active Directory server is successful.
+   
+   The failure can be seen is the supplied packet trace.  After the
+   TCP/IP three-way handshake, we see the client-hello.  This is
+   immediately followed by a [RST] from the LDAP server.  This is
+   seen in Frame #543 .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  TDS client fails using TLS v1.2 with Microsoft Active Directory
+   server. UserID authentication fails when trying to logon to
+   monitoring server via tacmd CLI or via portal client. The
+   monitoring server integrates with TDS client 6.3.0.27.  The
+   issue is that TDS client connects with Microsoft Active
+   Directory server using the protocol TLSV1.2.  When we set the
+   parameter LDAP_OPT_SECURITY_PROTOCOL to change the protocol to
+   TLS v1.0 or TLSv1.1 TDS client can connect with AD server
+   successfully.  Monitoring Server 6.30 FP5 and FP6 use TDS
+   client: 6.3.0.43 and GSKit 8.0.50.69.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Uplift to TDS Client 6.30.0.43 and uplift to GSKit 8.0.50.66
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+      | fix pack | 6.3.0-TIV-ITM-FP0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV86800
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-11
+   
+   
+ * CLOSED DATE
+   2017-01-06
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEMS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

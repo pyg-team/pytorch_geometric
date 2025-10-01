@@ -1,0 +1,101 @@
+Title: IBM Collecting Data: IBM Connections 4.0,4.5, 5.0, 5.5 and 6.0 Mobile - United States
+
+Text:
+MustGatherDocument; Mustgather; Must Gather; Moble; Blackberry; IOS; Android; iPhone; iPad; droid TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ UK English, US English 
+
+PROBLEM
+ Gathering this information before calling IBM support will reduce the time that it takes to understand and resolve your problem.
+
+DIAGNOSING THE PROBLEM
+
+Collecting Log information can be automated (using IBM Support Assistant Lite (ISA Lite)) or collected manually. 
+
+Mobile Device data collection:
+There is an email address where you can send the device logs to Connections Mobile support: 
+
+heyibm@us.ibm.com 
+
+
+Manual Server data collection:
+Collecting the following data before contacting support will help expedite problem determination and resolution of the problem: 
+
+1. Provide a precise description of the issue, screenshots, error messages, and steps to reproduce. 
+
+2. Please provide Connection environment details:
+* IBM Connections version and fix level.
+* LDAP type, version, fix level
+* Amount of RAM on each of the server nodes
+* Is this a pilot or production installation?
+* Is this a new installation or an upgrade from an earlier version?
+* How many nodes in the cluster and are components installed to a single or multiple jvm's?
+* Is the problem reproducible on all nodes?
+* What browser types and versions are in use?
+* Is there a SSO solution in front of IBM Connections (Siteminder, TAM, SPNEGO)?
+* Please outline any customization that you may have.
+* What changes occurred in the environment prior to the issue
+
+3. Tracing can be very verbose. If tracing is requested by support, follow these steps. 
+
+a. Log in to the IBM WebSphere Application Server (WAS) administration console using an administrator ID
+b. Go to Troubleshooting -> Logs and Trace -> Logging and Tracing -> Server 1 (or server Mobile is installed on) -> Diagnostic Trace Server -> Change Log Detail Levels -> please add the following *string and click Apply -> OK
+
+Component Trace: com.ibm.lotus.connections.mobile.*=all
+
+c. Restart the WAS server after moving existing logs to another directory (or deleting)
+
+d. Reproduce the problem.
+Note: If the issue can be reproduced on a single node, shut down all other nodes prior to reproducing the problem.
+
+e. Provide support a compressed copy of the logs directory %WAS_HOME%/profiles/appSrv01/logs (trace.log, systemout.log, systemerr.log and FFDC logs) from the node.
+along with LotusConnections-config.xml located in directory %WAS_HOME%\profiles\(your profile)\config\cells\(your cell)\LotusConnections-config
+
+
+Device Tracing:
+Blackberry:
+Enable Logging
+Menu -> Settings -> Logging 
+Enable Debug Logging, tap Escape key and save the changes
+
+View logs on device
+1. Menu → Settings → Logging → View Logs
+2. Shortcut keys 
+t = top; b = bottom; i = zoom in; o = zoom out
+3. Menu selections for Zoom in and Zoom out
+
+Send logs
+1. Menu → Settings → Logging → Send Logs
+2. Send logs invokes BlackBerry email app
+3. Logs sent as html file attachment
+
+Android Tracing:
+Enabling logging
+1. Menu → Settings → Logging
+2. Toggle logging on or off
+3. Set a max size (2 MB) is usually sufficient
+
+To sent or view logs:
+Menu → Settings → Logging → Send Logs
+
+IOS Tracing:
+Settings → Connections
+1. Toggle logging on or off
+2. Set the level (currently All is the best option for debugging)
+3. Set a max size (2 MB is usually sufficient)
+
+Emailing logs
+1. Send Logs function on the About page
+2. Access the About page from either the Log In page or the Account page using the info button 
+3. Tap Send Logs on the About page and enter an email address to which to send them
+4. The email will include one or two attachments that are the log files
+
+Collecting a form (for environments with TAM and other supported sso solutions):
+1. Take the url they use when configuring the app, and append /mobile/homepage/Configuration to it. Example: testserver.domain.com/mobile/homepage/Configuration. 
+2. Save the html file and send it to support.
+
+IBM Connections for Good mobile application:
+
+If you are using the IBM Connections for Good mobile application then the device logging will be done from the Good application dashboard. The Connections for Good application uses the Good Dynamics Logging setting in order to record logs. In the Good Control, navigate to Users and Groups > Devices, and while making sure the Connections application is checked, go to App Actions > Logging On.
+[/support/docview.wss?uid=swg21609312&aid=1] [/support/docview.wss?uid=swg21609312&aid=1]

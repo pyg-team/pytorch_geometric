@@ -1,0 +1,50 @@
+Title: IBM Connection refused to DB2 ERRORCODE=-4499 during server setup - United States
+
+Text:
+DB2; RAM; DB2 configuration; installation; RAM server setup; CRRAM703I; configure database; Exception java.net.ConnectException; Error opening socket to server; Connection refused; ERRORCODE=-4499; SQLSTATE=08001; WSRR; service registry TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to configure your IBM DB2 database connection in IBM Rational Asset Manager results in "Error opening socket to server {machine} on port 60,000 with message: Connection refused. " 
+
+SYMPTOM
+You see the following error message: 
+
+ 
+
+CRRAM703I: Database - [jcc][t4][2043][11550][3.51.90] Exception java.net.ConnectException: Error opening socket to server {machine} on port 60,000 with message: Connection refused. ERRORCODE=-4499, SQLSTATE=08001 
+
+
+
+
+
+
+CAUSE
+A possible cause for this problem is that TCP/IP is not properly enabled on your DB2 database server.
+
+
+RESOLVING THE PROBLEM
+Use the db2set DB2COMM command from the DB2 command window to start the TCP/IP connection: 
+
+
+db2set DB2COMM=protocol_names 
+
+
+For example, to set the database manager to start connection managers for the TCP/IP communication protocols, enter the following commands:
+
+
+db2set DB2COMM=tcpip 
+
+db2stop 
+
+Db2start 
+
+
+
+
+
+ 
+
+If the above command does not resolve the connection problem, contact IBM support.
+
+RELATED INFORMATION
+#Configuring TCP/IP communications for a DB2 instance [http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.uprun.doc/doc/t0004727.htm]

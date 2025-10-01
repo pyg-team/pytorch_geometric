@@ -1,0 +1,128 @@
+Title: IBM Security Bulletin: Security Vulnerability in Apache Batik affects IBM WebSphere Portal (CVE-2015-0250) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ A security vulnerability (CVE-2015-0250) in Apache Batik affects IBM WebSphere Portal. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-0250 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0250]
+DESCRIPTION: Apache Batik could allow a remote attacker to obtain sensitive information. By persuading a victim to open a specially-crafted SVG file, an attacker could exploit this vulnerability to reveal files and obtain sensitive information.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/#/vulnerabilities/101614 [https://exchange.xforce.ibmcloud.com/#/vulnerabilities/101614] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+WebSphere Portal 8.5
+WebSphere Portal 8.0
+WebSphere Portal 7.0
+WebSphere Portal 6.1
+
+REMEDIATION/FIXES
+IBM Websphere Portal installations may be affected by usage of Apache Batik in up to three ways, via 
+
+ *  IBM WebSphere Application Server, IBM WebSphere Portal Server, or custom code. 
+
+Each needs to be adressed individually as follows:  
+
+Remediation/Fixes for 1. (IBM WebSphere Application Server) 
+
+ * 
+ * 
+ * Security Bulletin: Multiple Security Vulnerabilities fixed in IBM WebSphere Application Server 8.5.5.6
+ * 
+
+
+Remediation/Fixes for 2. (IBM WebSphere Portal Server)  * Affected: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * PM99205
+ * 
+
+ * For 8.0.0 through 8.0.0.1
+ * 
+ * 
+ * 
+ * 
+ * http://www-01.ibm.com/support/docview.wss?uid=swg24034497
+ * 
+
+ * For 7.0.0 through 7.0.0.2
+ * 
+ * 
+ * 
+ * 
+ * http://www.ibm.com/support/docview.wss?uid=swg24029452
+ * 
+
+ * For 6.1.5.0 through 6.1.5.3
+ * 
+ * 
+ * PM99205
+ * 
+   
+ * 
+ * http://www-01.ibm.com/support/docview.wss?uid=swg24023835
+ * 
+
+ * For 6.1.0.0 through 6.1.0.6
+ * 
+ * 
+ *  
+ * PM99205
+ * 
+ * 
+ * http://www-01.ibm.com/support/docview.wss?uid=swg24023835
+ * 
+
+
+Remediation/Fixes for 3. (custom code) 
+
+ * 
+ * WebSphere Portal 8.5 
+   WebSphere Portal 8.0 
+   WebSphere Portal 7.0 
+   WebSphere Portal 6.1 
+
+ * 
+
+ * 
+ *  Include a copy of the Apache Batik package from Apache that contains a fix as part of your custom code.
+   In this case take care that the updated version takes precedence in classpath (See also section "Class Loading" [http://www-01.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.base.doc/ae/trun_classload.html?cp=SSEQTP_8.5.5%2F1-8-2-5&lang=en] in the IBM Application Server documentation).
+   This option is available for all affected IBM WebSphere Portal releases. Apply a Cumulative Fixe for WebSphere Portal, containing PI38847, upgrading the Apache Batik version.
+   This option is available for IBM WebSphere Portal 8.x releases. 
+
+ *  For 8.5.0 
+   ▪ Apply Cumulative Fix 6 (CF06) 
+   (Combined Cumulative Fixes for WebSphere Portal 8.5.0: http://www-01.ibm.com/support/docview.wss?uid=swg24037786 [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]) 
+
+ *  For 8.0.0 through 8.0.0.1
+   ▪ Upgrade to Fix Pack 8.0.0.1 with Cumulative Fix 17 (CF17) 
+   (Combined Cumulative Fixes for WebSphere Portal 8.0.0.1: http://www-01.ibm.com/support/docview.wss?uid=swg24034497 [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]) 
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www-03.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 29 June 2015: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

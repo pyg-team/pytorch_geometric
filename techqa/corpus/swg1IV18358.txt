@@ -1,0 +1,185 @@
+Title: IBM IV18358: WebSphere MQ Unicode message conversion on AIX fails with "AMQ6047: Conversion not supported." - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.9 [http://www-01.ibm.com/support/docview.wss?uid=swg24033008]
+Fix Pack 7.1.0.2 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24033287]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When WebSphere MQ tries to convert Unicode messages exchanged
+   with the remote system it writes message "AMQ6047: Conversion
+   not supported." to its error logs.
+   
+   The explanation reads, "WebSphere MQ is unable to convert
+   string data tagged in CCSID 1208 to CCSID 437". On your system
+   you may see different CCSID numbers like 037, 437, 500, or 1200.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WebSphere MQ relies on the AIX base operating system to perform
+   data conversion on its behalf. In order to support Unicode
+   conversion AIX provides several optional filesets:
+   bos.iconv.ucs.com     Unicode converters for AIX sets
+   bos.iconv.ucs.ebcdic  Unicode converters for EBCDIC sets
+   bos.iconv.ucs.pc      Unicode converters for PC sets
+   You should install these filesets from the AIX operating system
+   installation media if you need to convert data to and from
+   Unicode on your system.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Customers wanting to convert messages to Unicode CCSIDs on AIX.
+   
+   Platforms affected:
+   AIX
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The AIX converter between Unicode and the other character set
+   is not installed on your system.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere MQ relies on the AIX base operating system to
+   perform data conversion on its behalf. In order to support
+   Unicode conversion AIX provides several optional filesets:
+   
+   bos.iconv.ucs.com     Unicode converters for AIX sets
+   bos.iconv.ucs.ebcdic  Unicode converters for EBCDIC sets
+   bos.iconv.ucs.pc      Unicode converters for PC sets
+   
+   You should install these filesets from the AIX operating system
+   installation media if you need to convert data to and from
+   Unicode on your system.
+   
+   The AIX installation instructions in the WebSphere MQ
+   Information Center will be updated to document that these
+   filesets should be installed if Unicode conversion will be
+   performed.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.9
+   --------           --------------------
+   AIX                U849391
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.2
+   --------           --------------------
+   AIX                7.1.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV18358
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7221
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-28
+   
+   
+ * CLOSED DATE
+   2012-05-14
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7221
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,244 @@
+Title: IBM IV35429: MQ 7.1/7.5 ON SOLARIS SPARC, FULL INSTALL IMAGE - GSKIT NOT INSTALLED WHEN SELECTING OPTION 1 - WEBSPHERE MQ SERVER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.5 Fix Pack 7.5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24035286]
+Fix Pack 7.1.0.3 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035405]
+WebSphere MQ v7.5.0.2 Hypervisor for RHEL [http://www-01.ibm.com/support/docview.wss?uid=swg24036533]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem occurs when installing WebSphere MQ 7.1/7.5 on Solaris.
+   
+   When running pkgadd and then selecting Package #1 - WebSphere
+   MQ Server, the GSKit component is not installed.
+   
+   According to the MQ Information Center selecting #1 should
+   include:  base,runtime,server,java, and GSKit.
+   .
+   Package will be installed in "/opt/mqm7102"
+   Is this OK? [y,n,?,q] y
+   .
+   --->       1)  WebSphere MQ Server
+   2)  Man pages
+   3)  Sample programs
+   4)  WebSphere MQ Client libraries (including
+   Java, JMS and Web Services support)
+   5)  IBM (c) Java runtime for Solaris(TM)
+   6)  IBM (c) Global Security Kit for WebSphere
+   MQ
+   7)  WebSphere MQ Extended Transactional Client
+   8)  Spanish message catalog
+   9)  French message catalog
+   ...
+   Enter options to be installed [1-20,all,q,?] 1
+   ..
+   After successful install, running 'dspmqver -a' produces the
+   error AMQ8250 at the end of the output of dspmqver.
+   For example:
+   .
+   # dspmqver -a
+   Name:        WebSphere MQ
+   Version:     7.1.0.2
+   Level:       p710-002-121029
+   BuildType:   IKAP - (Production)
+   Platform:    WebSphere MQ for Solaris (SPARC platform)
+   Mode:        64-bit
+   O/S:         SunOS 5.10
+   InstName:    Installation3
+   InstDesc:
+   InstPath:    /opt/mqmMV/mqm7102
+   DataPath:    /var/mqm
+   Primary:     No
+   MaxCmdLevel: 711
+   
+   Name:        WebSphere MQ classes for Java
+   Version:     7.1.0.2
+   Level:       k710-002-120928
+   Build Type:  Production
+   
+   Name:        Java Message Service Client
+   Version:     7.1.0.2
+   Level:       k710-002-120928
+   Build Type:  Production
+   
+   Name:        WebSphere MQ classes for Java Message Service
+   Version:     7.1.0.2
+   Level:       k710-002-120928
+   Build Type:  Production
+   
+   Name:        IBM WebSphere MQ JMS Provider
+   Version:     7.1.0.2
+   Level:       k710-002-120928 mqjbnd=k710-002-120928
+   Build Type:  Production
+   
+   Name:        Common Services for Java Platform,Standard Edition
+   Version:     7.1.0.2
+   Level:       k710-002-120928
+   Build Type:  Production
+   
+   DistHub Build Type:
+   DistHub Build Level: DH610-GOLD
+   Webscale Distribution Hub Core
+   
+   AMQ8250: The 32-bit GSKit component is not installed.
+   
+   AMQ8250: The 64-bit GSKit component is not installed.
+   
+   GSKit is also not installed when selecting the client only
+   option #4, and when installing the client only image.
+   
+   Users can work around this issue but explicitly selecting the
+   GSKit component for installation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  When running pkgadd select options/packages 1 and 6.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users that have selected only the server or the client component
+   with the expectation that this will install the GSKit component
+   implicitly.
+   
+   Platforms affected:
+   Solaris (SPARC),Solaris (x86-64)
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The Global Security Kit (GSKit) component of WebSphere MQ is not
+   installed when only selecting the WebSphere MQ Server or
+   WebSphere MQ Client libraries component during the Solaris
+   interactive installation process.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The checking in the installation options script for solaris has
+   been updated to ensure that all of the components that should be
+   installed, are actually installed.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.3
+   --------           --------------------
+   Solaris (SPARC)    7.1.0.3
+   Solaris (x86-64)   7.1.0.3
+   
+   Platform           v7.5
+   --------           --------------------
+   Multiplatforms     7.5.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV35429
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ SOL SPARC
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7223
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-17
+   
+   
+ * CLOSED DATE
+   2013-03-26
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ SOL SPARC
+   
+   
+ * FIXED COMPONENT ID
+   5724H7223
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

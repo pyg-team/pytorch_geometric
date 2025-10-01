@@ -1,0 +1,163 @@
+Title: IBM IV71251: MISSING INFO IN READMES OF INTERIM FIXES AND FIXPACKS CONTAINING APAR IV51784 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  READMEs of interim fixes and fixpacks containing UNIX OS agent
+   APAR IV51784 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV51784] do not warn about the need of running the DB2
+   tablespace upgrade SQL scripts. This is necessary because of a
+   set of new attributes introduced by this APAR into the System
+   attribute group that make the warehouse tables for this group
+   cross the 4k tablespace boundary.
+   
+   
+   Affected Platforms / Versions:
+   This issue affects UNIX OS Agent 6.22 FP9 IF6 and IF7, 6.23 FP5
+   and 6.30 FP3
+   
+   Diagnostics: Errors in Summarization & Pruning agent like this
+   one:
+   
+     SQL                : ALTER TABLE "ITMUSER"."System_H" ADD
+   "LAT_System_Software_Version" VARCHAR (96)
+     template SQL       :
+   == 11154 t=work2 SQLException occured. SQL State = 54010 , SQL
+   Error Code = -670
+   == 11155 t=work2 com.ibm.db2.jcc.am.SqlException: The row
+   length of the table exceeded a limit of "4005" bytes. (Table
+   space "USERSPACE1".).
+   
+   Initial Impact:
+   High, summarized System tables in the warehouse are empty
+   
+   Additional Keywords: UNIXOS
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Run the kux_61migr_System_NN.sql scripts as described in:
+   "Appendix A. Upgrading for warehouse summarization" of the UNIX
+   OS Agent User's Guide.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem Description: Missing information related to warehouse
+    upgrade SQL scripts in APAR IV51784 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV51784]
+   
+   Problem/Problem Summary:
+    There is the need of running the DB2 tablespace upgrade SQL
+    scripts before applying APAR IV51784 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV51784]. This is necessary
+    because of a set of new attributes introduced by this APAR
+    into the KUX System attribute group that make the summarized
+    warehouse tables for this group cross the 4k tablespace
+    boundary. This is not documented in the APAR text, nor in the
+    Interim Fixes that contain it.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Document type: Technote
+   Document locations:
+       http://www-01.ibm.com/support/docview.wss?uid=swg24037446 [http://www-01.ibm.com/support/docview.wss?uid=swg24037446]
+       http://www-01.ibm.com/support/docview.wss?uid=swg24038004 [http://www-01.ibm.com/support/docview.wss?uid=swg24038004]
+       http://www-01.ibm.com/support/docview.wss?uid=swg1IV51784 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV51784]
+   Document names: IBM(R) Tivoli(R) Monitoring: UNIX(R) OS Agent
+                                    6.2.2.9-TIV-ITM_UNIX-IF0006
+                   IBM(R) Tivoli(R) Monitoring: UNIX(R) OS Agent
+                                    6.2.2.9-TIV-ITM_UNIX-IF0007
+                   IV51784 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV51784]: RFE 36694 MODIFY ZOMBIE PROCESSES
+                                      CALCULATION METHOD
+   Chapter: n/a
+   Page number(s): n/a
+   Detail of the change: information added to the "Known problems
+          and workarounds" sections of technotes "UNIX OS agent
+          6.2.2 FP9 IF6" and "UNIX OS agent 6.2.2 FP9 IF7",
+          as well as to the comments of APAR IV51784 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV51784]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV71251
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040U
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-20
+   
+   
+ * CLOSED DATE
+   2015-03-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

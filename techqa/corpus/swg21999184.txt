@@ -1,0 +1,155 @@
+Title: IBM Silent installation of release IBM SPSS Statistics 24 on Macintosh OSX Sierra (10.12) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I perform a silent installation of IBM SPSS Statistics for Macintosh OSX Sierra 10.12.x?
+
+There are two ways to install Statistics 24 on Macintosh operating systems (Supported platforms for this release are Apple Macintosh Yosemite (10.10.x), El Capitan (10.11.x) and Sierra (10.12.x). 
+
+CAUSE
+A) If you would like to install release 24 interactively see the video: Installing IBM SPSS Statistics 24 for Mac OS [https://developer.ibm.com/predictiveanalytics/2016/03/18/video-available-installing-ibm-spss-statistics-24-for-mac-os/]
+
+B) If you would like to perform a silent installation of SPSS Statistics 24 on Macintosh OSX Sierra, see below steps.
+If you like to perform a silent installation on Mac 10.10.x and 10.11.x see Technote 1979609 [http://www.ibm.com/support/docview.wss?uid=swg21979609] instead.
+
+
+In general please refer to the installation material available on IBM SPSS Statistics 24 Documentation [http://www-01.ibm.com/support/docview.wss?uid=swg27047033] web page.
+
+
+ANSWER
+Performing a silent installation of IBM SPSS Statistics 24 on Macintosh OSX 10.12 Sierra 
+
+
+[/support/docview.wss?uid=swg21999184&aid=1] [/support/docview.wss?uid=swg21999184&aid=1]
+
+1. Please verify if Java is installed on the machine. See Release notes - IBM SPSS Statistics 24.0 [http://www-01.ibm.com/support/docview.wss?uid=swg27047057].
+If Java is not installed on the Macintosh machine you may get an error upon silent installation
+on Mac OS 10.10 or later: "No Java runtime present, requesting install". 
+To find out which Java version is installed on the Mac click Apple symbol – System Preferences and open the Java Control Panel
+
+For silent installation it is a prerequisite to have first Java JDK installed in order for silent installation to work on MacOSX 10.12 Sierra. 
+
+To get to the Java JDK download page, you can navigate to it from Oracle Java website
+
+a. Go to https://www.java.com/en/ [https://www.java.com/en/]
+
+b. Select 'Download'
+
+c. Select 'See All Java downloads'
+
+d. Select 'Looking for the JDK?'
+
+e. Select 'Go to JDK downloads' under 'Where do I get JDK download', which takes you here:
+
+http://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html#javasejdk [http://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html#javasejdk]
+
+f. Select Download button under JDK for Java SE 8u121
+
+g. Select the Download file for Mac OS X
+
+h. Or the Download page for the latest JDK (Java SE 8u121) is here:
+
+http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html [http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html] 
+
+[/support/docview.wss?uid=swg21999184&aid=2] [/support/docview.wss?uid=swg21999184&aid=2]
+
+[/support/docview.wss?uid=swg21999184&aid=3] [/support/docview.wss?uid=swg21999184&aid=3]
+
+After download start the installer file jdk-8u121-macosx-x64.dmg and follow the instructions on the screen. It is important to install under the Administrator user account. 
+Install Java for all users.
+
+[/support/docview.wss?uid=swg21999184&aid=4] [/support/docview.wss?uid=swg21999184&aid=4]
+
+2. Please make sure you download the correct file for the silent installation:
+In your list of available downloads locate: IBM SPSS Statistics Client 24.0 Mac OS Silent Multilingual (CND2FML ). 
+The file name for this package is SPSS_Statistics_24_mac_silent.dmg.
+
+The packageIBM SPSS Statistics Client 24.0 Mac OS Multilingual (CND2EML )
+is for interactive installation only. The file name for the interactive installer is: SPSS_Statistics_24_mac.dmg
+
+3. Copy the file SPSS_Statistics_24_mac_silent.dmg on the Macintosh computer where you like to install . For example copy it into a new folder or the desktop.
+4. Unpack the *.dmg file into this folder or onto the desktop. 
+
+[/support/docview.wss?uid=swg21999184&amp;aid=5]
+
+5. You should see two files: SPSS_Statistics_Installer.bin and installer.properties 
+Copy both files to a folder from where you would like to install or to the desktop of the MAC. 
+It is important that the file installer.properties is placed in the same folder as the installer *.bin file SPSS_Statistics_Installer.bin.
+
+Installer.properties is the options file you can edit is to run the installation wizard in silent mode. 
+This lets you specify wizard settings without having to run the installation wizard in graphical or console mode. 
+
+[/support/docview.wss?uid=swg21999184&aid=6] [/support/docview.wss?uid=swg21999184&aid=6]
+On below example all files are copied to the desktop:
+
+[/support/docview.wss?uid=swg21999184&aid=7] [/support/docview.wss?uid=swg21999184&aid=7]
+
+6. Open Installer.properties file in a Text Editor (for example TextEdit.app on Finder – Applications) and edit it for your needs.
+Property Parameters that can be changed are:
+
+a) Installation directory:
+
+#USER_INSTALL_DIR=<value>
+
+This parameter property is optional and not active by default. The installation is therefore performed on default path:
+
+/Applications/IBM/SPSS/Statistics/24 for Mac
+
+If you want to change the directory remove the # and define another subdirectory of the /Applications menu. It is recommended to use the default 
+installation directory.
+
+b) Authorization code:
+If this property is specified, the product is authorized automatically using the authorization code. If this property is not specified, 
+you must run the License Authorization Wizard to authorize manually. If you like to use multiple authorization codes, separate them by colons 
+(for example, authcode1:authcode2).
+
+###AUTHCODE=<value>
+
+If you like to license automatically you need to use your 20 digit authorization code ready. A valid internet connection must be established before you start 
+the silent installation. Example code:
+
+AUTHCODE=66abcdefghi22abcdefg
+
+c) Installation of Python and the Python Essentials 
+By default Python is installed automatically (option 1 on below parameter):
+
+InstallPython=1
+#InstallPython=0
+
+d) Network License LSHOST
+If you use a network license you need to enter the IP address or the host name of the computer where the Network License manager is running on 
+LSHOST parameter instead of using the AUTHCODE parameter above.
+
+LSHOST=
+
+e) Commuter license checkout
+The parameter where you can define the number of days the commuter license can be checked out. Do not comment out this setting. 
+It must always specify a value. Default number of days is 7.
+
+COMMUTE_MAX_LIFE=7
+
+f) Proxy User
+Finally you can define the proxy user parameter if needed. See different options for this parameter on installer.properties file.
+
+Save the file with same name installer.properties.
+
+[/support/docview.wss?uid=swg21999184&aid=8] [/support/docview.wss?uid=swg21999184&aid=8]
+
+7. After you edited installer.properties file open Terminal.app (Finder – Applications – Utilities – Terminal.app). 
+Change directory to where you copied the installer file SPSS_Statistics_Installer_Silent.bin and the edited installer.properties file and start
+the installation by the command below.
+
+sudo ./SPSS_Statistics_Installer.bin -f installer.properties
+
+On the example below the files were copied to the desktop. When prompted enter your sudo user ID and password to start the silent installation 
+of IBM SPSS Statistics 24.
+
+[/support/docview.wss?uid=swg21999184&aid=9] [/support/docview.wss?uid=swg21999184&aid=9]
+
+
+In the 24 folder you should see below content. Double click on SPSSStatistics to launch the application. If you haven't inserted your authorization code into
+the installer.properties file, you can launch the license Authorization Wizard after the silent installation to license the software.
+
+[/support/docview.wss?uid=swg21999184&amp;aid=10]

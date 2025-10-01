@@ -1,0 +1,63 @@
+Title: IBM Running the ClearQuest Web server results in the application error with faulting the java.exe, jvm.dll - United States
+
+Text:
+java.exe; jvm.dll; cqweb TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Running the ClearQuest Web server results in the application error with faulting the java.exe, jvm.dll when using IBM Rational ClearQuest. 
+
+SYMPTOM
+There is the error reported in the application event log in the Windows OS even viewer. 
+
+Event Type: Error
+Event ID: 1000
+Source: Application Error
+Message: Faulting application java.exe, version 142.2006.11.24, faulting module jvm.dll, version 142.2006.11.24, fault address 0x000ae8c9. There is the message that Java core file written in the requestmgr-nn.stderr under the <install dir>\Rational\ClearQuest\cqweb\cqregsvr\logs.
+
+
+
+JVMDG217: Dump Handler is Processing Signal 11 - Please Wait.
+JVMDG303: JVM Requesting Java core file
+JVMDG304: Java core file written to <install directory>\Rational\ClearQuest\cqweb\cqserver\javacore.YYYYMMDD.HHMMSS.ssss.txt
+JVMDG215: Dump Handler has Processed Exception Signal 11. 
+There is the Java core file under the <install Directory>\Rational\ClearQuest\cqweb\cqserver.  
+
+0SECTION TITLE subcomponent dump routine NULL =============================== 
+
+1TISIGINFO signal 11 received 
+
+1TIDATETIME Date: YYYY/MM/DD at HH:MM:SS 
+
+1TIFILENAME Javacore filename: <install directory>\Rational\ClearQuest\cqweb\cqserver\javacore.YYYYMMDD.HHMMSS.ssss.txt 
+
+NULL ------------------------------------------------------------------------ 
+
+0SECTION XHPI subcomponent dump routine 
+
+NULL ============================== 
+
+1XHEXCPCODE Exception code: C0000005 Access Violation 
+
+1XHEXCPADDRESS Fault address: 100995B9 01:000985B9 
+
+1XHEXCPMODULE Fault module: <install directory>\Rational\common\Java142_07\JRE\bin\classic\jvm.dll
+
+
+
+CAUSE
+The Javacore dump explains the jvm.dll failed to run with the exception code C0000005 Access Violation, so the ClearQuest Web Request Manager Java process crashed unexpectedly.
+
+
+
+RESOLVING THE PROBLEM
+The IBM Rational ClearQuest version 7.0.1 is built with the IBM JRE 1.4.2 SR7. 
+
+If the problem happens frequently, upgrade to the latest JRE and see if that resolves the issue. 
+
+ * For updating the latest IBM JRE, refer to the section [Updating the JRE for ClearQuest 7.0.x ] in technote 1284358: JRE security alert for IBM JRE 1.4.2 SR7 for ClearQuest 7.0.x [http://ibm.com/support/docview.wss?uid=swg21284358].
+
+
+If the problem still exists after the upgrade, contact IBM Rational support with diagnostic information described in technote 1257084: MustGather: ClearQuest Web Server [http://ibm.com/support/docview.wss?uid=swg21257084]. 
+RELATED INFORMATION
+#Technote 1246317: Java versions packaged with ClearQues [http://www.ibm.com/support/docview.wss?uid=swg21246317]
+IBM RedBook: WebSphere Application Server V6 Problem De [http://www.redbooks.ibm.com/abstracts/sg246798.html]

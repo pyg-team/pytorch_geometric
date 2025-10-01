@@ -1,0 +1,53 @@
+Title: IBM Timeout on RuleApp deployment from Rule Team Server - United States
+
+Text:
+deployment; ruleapp; ruleset; generate; check; timeout; thread hung; cache; IRL TECHNOTE (FAQ)
+
+QUESTION
+ RuleApp deployment or ruleset generation take a long time to eventually timeout. 
+
+ANSWER
+The time required to deploy a RuleApp is spent generating the IRL (engine runtime code) of the ruleset, packaging the archive, and finally checking the ruleset.
+The time required to generate the IRL and package the archive is directly linked to the size of the ruleset and of its artifacts, so removing unused rules and BOM elements to reduce the size of the resulting ruleset will help. You should also enable to option to "Build automatically" in the "Edit Project Options" section of the 'Project' tab in Rule Team Server to have the IRL generated when you save rule artifacts (see section "WebSphere ILOG JRules BRMS V7.1 > WebSphere ILOG Rule Team Server online help > Project: Manage your project > Project options" of the JRules 7.1 documentation [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1239.html]).
+
+The IRL is also cached when you deploy the RuleApp, so any re-deployment will benefit from the cache and show a significant improvement in the time required to generate the ruleset.
+
+If you do not see a build time improvement after having generated the RuleApp/ruleset once, it could be that there is an issue when Rule Team Server attempts to write the IRL files on the file system of the machine where the application server hosting Rule Team Server is located. 
+
+The location of the cache is one of the Rule Team Server configuration parameters defined in jrules-teamserver-<appserver>.ear/teamserver.war/WEB-INF/lib/teamserver-model-XXX.jar/ilog/rules/teamserver/preferences.properties:
+
+# Path where the files generated during the build should be. 
+# The path is determined in the following order 
+# - use of the following property 
+# - use of the system property denoted by 'java.io.tmpdir' plus 
+'rtscache_<username>' (Ex: <temp dir>/rtscache_<username>) 
+# - <server home>/rtscache_<username> 
+# where username is given by the system property denoted by 'user.name' 
+build.path =
+
+See section "WebSphere ILOG JRules BRMS V7.1 > WebSphere ILOG Rule Team Server online help > Configure: Manage your project configuration > Configuring your Rule Team Server installation > Configuration parameter maintenance" of the JRules 7.1 documentation [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1330.html] for more information on the Rule Team Server configuration parameters.
+
+Ensure that the user running the application server has rights to write in the folder set to host the cache in your configuration, and that the directory (potentially an OS temp directory) is not cleaned by any process.
+
+Once the IRL has been cached, most of the deployment time will be spent checking the archive. If you still need to reduce the deployment time you can disable the rule analysis check options in "Project Options" on the 'Project' tab in Rule Team Server (see section "WebSphere ILOG JRules BRMS V7.1 > WebSphere ILOG Rule Team Server online help > Project: Manage your project > Project options" of the JRules 7.1 documentation [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1239.html]). 
+
+For explanations on the different rule analysis consistency checks, see section "WebSphere ILOG JRules BRMS V7.1 > WebSphere ILOG Rule Team Server online help > Analyze: Check your projects > Check project consistency > Consistency checks" of the JRules 7.1 documentation [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1232.html].
+
+Finally, regarding possible thread hung warnings and timeout errors caused by the time spent deploying the RuleApp, the associated thresholds can be customized.
+
+For example, in WebSphere Application Server, you can adjust the time after which warnings such as the following will be triggered: 
+
+WSVR0605W: Thread "WebContainer : 0" (0000002a) has been active for 717852 milliseconds and may be hung. There is/are 1 thread(s) in total in the server that may be hung.
+
+See section "Network Deployment (All operating systems), Version 7.0 > Troubleshooting and support > Diagnosing problems (using diagnosis tools) > Configuring the hang detection policy" of the WebSphere AS 7 documentation [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/ctrb_hangdetection.html].
+
+Also, since JRules V7 you can avoid a timeout ("WTRN0006W: Transaction XYZ has timed out after X seconds.") by adjusting the ilog.rules.teamserver.transaction.timeout context parameter in the web.xml of the Rule Team Server web application.
+
+RELATED INFORMATION
+#Performance improvements for Rule Team Server [http://www.ibm.com/support/docview.wss?uid=swg21584855]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Modules:Rule Team Server Platform Independent 8.5, 8.0, 7.5

@@ -1,0 +1,68 @@
+Title: IBM Required WebSphere Interim Fixes for WebSphere Portal V7.0.0.1 - United States
+
+Text:
+7001NFR; WPv7001GA 7001eGA; WAS Fixes DOWNLOADABLE FILES
+
+ABSTRACT
+ This document lists the fix packs and interim fixes required for the operation of IBM WebSphere Portal version 7.0.0.1 deployed on these levels of supporting software. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+TAB NAVIGATION
+ * Fix Pack Download [http://www.ibm.com/support/docview.wss?uid=swg24029135]
+ * Required WebSphere Fixes [http://www.ibm.com/support/docview.wss?uid=swg24029137]- selected tab,
+ * Fix List [http://www.ibm.com/support/docview.wss?uid=swg27020891#7001]
+
+List of minimum levels of required fix packs and interim fixes for WebSphere Application Server and Process Server deployed with WebSphere Portal version 7.0.0.1. 
+
+The required fix pack level and additionally recommended maintenance for WebSphere Portal V7.0.0.1 to function properly when deployed with WebSphere Application Server or Process Server is listed in this document. The minimum fix pack levels required are: 
+
+
+ * WebSphere Application Server: V7.0.0.13 (distributed platforms) 
+ * [optional:] WebSphere Process Server (client code version tested): V7.0.0.3 
+ * [optional:] WebSphere eXtreme Scale: V7.1.0.0 
+ * [optional:] WebSphere Virtual Enterprise V6.1.1.2
+
+
+Download links for these fix packs (choose the appropriate platform from the page):  * WebSphere Application Server version 7.0.0.13 for distributed platforms: http://www.ibm.com/support/docview.wss?uid=swg24027977 [http://www.ibm.com/support/docview.wss?uid=swg24027977] 
+ * WebSphere Process Server fix packs can be retrieved from http://www.ibm.com/software/integration/wps/support/download.html [http://www.ibm.com/software/integration/wps/support/download.html] 
+ * WebSphere eXtreme Scale fix packs can be retrieved from http://www.ibm.com/support/entry/portal/Downloads/Software/WebSphere/WebSphere_eXtreme_Scale [http://www.ibm.com/support/entry/portal/Downloads/Software/WebSphere/WebSphere_eXtreme_Scale] 
+ * WebSphere Virtual Enterprise Server fix packs can be retrieved from http://www.ibm.com/software/webservers/appserv/extend/support/download.html [http://www.ibm.com/software/webservers/appserv/extend/support/download.html]
+
+
+
+Installation and support for these fixes and fix packs is provided by the appropriate WebSphere product support teams, not WebSphere Portal support. When installing non-Portal interim fixes, you must use the appropriate Update Installer [http://www.ibm.com/support/docview.wss?uid=swg21205991] which is not provided with the downloads, and NOT the WebSphere Portal Update Installer. 
+
+Service releases later than the levels listed above might also be used and in most cases are considered to be untested but supported as described in the WebSphere Portal Support Statement [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/WebSphere_Portal_Support_Statement_wp7]. 
+
+Customers choosing to install a later service level of WebSphere Application Server or Process Server must ensure on their own that the level they are using includes some or all of the co-requisite Application Server or Process Server interim fixes listed in the Information Center and Release Notes, and then install any additional individual interim fixes not included.
+
+The fixes listed below are needed to address any specific problems documented in the associated APARs, in addition to the minimum fix pack level listed above:
+
+WebSphere Application Server for distributed platforms version 7.0.0.13
+Retrieve and install the fixes for the following APARs from Fix Central: 
+
+ * PM21689 [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Application+Server&release=7.0.0.13&platform=Windows&function=fixId&fixids=7.0.0.0-WS-WAS-IFPM21689&includeRequisites=1&downloadMethod=http&source=fc]: WMM TO VMM MIGRATION DOES NOT MIGRATE REALM STANZA 
+ * PM26681 [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Application+Server&release=7.0.0.13&platform=All&function=aparId&apars=PM26681&source=fc]: Integrated fix for APAR IZ75061 in Java 6 SR8-FP1 ("ZIPFILE.CLOSE() DOESN'T CLOSE INPUTSTREAMS OPENED WITH ZIPFILE.GETINPUTSTREAM()")
+
+
+WebSphere Process Server V7.0.0.3 (or higher service levels) 
+No additional fixes required for WebSphere Portal at the time of release. 
+
+WebSphere eXtreme Scale V7.1.0.0 (or higher service levels) 
+No additional fixes required for WebSphere Portal at the time of release. Refer to the technote " Configuring HTTP session manager with WebSphere Portal [Configuring%20HTTP%20session%20manager%20with%20WebSphere%20Portal]" at http://www.ibm.com/support/docview.wss?uid=swg21457955 [http://www.ibm.com/support/docview.wss?uid=swg21457955] for more information. 
+
+WebSphere Virtual Enterprise (formerly "Extended Deployment") V6.1.1.2 (or higher service levels) 
+No additional fixes required for WebSphere Portal at the time of release. DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] WebSphere Application Server fixes 2/17/2011 English 70011 FC [http://www.ibm.com/software/webservers/appserv/was/support/] [ ] 
+TECHNICAL SUPPORT
+ Contact IBM Support using ESR: http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]
+WebSphere Portal Product support: http://www.ibm.com/software/genservers/portal/support/ [http://www.ibm.com/software/genservers/portal/support/]
+WebSphere Application Server Product support: http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]
+WebSphere Process Server Product support: http://www.ibm.com/software/integration/wps/support/ [http://www.ibm.com/software/integration/wps/support/]

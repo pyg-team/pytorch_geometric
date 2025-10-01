@@ -1,0 +1,52 @@
+Title: IBM What is causing HADR to fail on the standby with "Too many logs, need to reclaim." - United States
+
+Text:
+Infinite logging recovery manager HADR Too many logs; need to reclaim Standby db2redom recovery TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ HADR Standby server reporting "Too many log, need to reclaim." trying to start HARD. 
+
+SYMPTOM
+"Too many logs, need to reclaim" message in db2diag.log trying to start HADR on the standby server 
+
+after executing a REORG operation on the DB2 HADR Primary server using the following steps : 
+
+
+ 1. Stop HADR on the Primary Server. 
+ 2. Stop HADR on Standby Server. 
+ 3. On the Primary Server, update the database parameter LOGSECOND to -1 from 200 
+ 4. On the Primary Server, start the REORG process. 
+ 5. Once completed, update the LOGSECOND to 200 from -1. 
+ 6. Start HADR on the Primary server. 
+ 7. Start HADR on the Standby 
+
+
+2013-03-04-03.35.57.688207-360 I783180569A494 LEVEL: Error 
+PID : 20250880 TID : 83625 PROC : db2sysc 0 
+INSTANCE: db2inst1 NODE : 000 DB : MYDB 
+APPHDL : 0-31403 APPID: *LOCAL.DB2.130304092232 
+EDUID : 83625 EDUNAME: db2redom (MYDB) 0 
+FUNCTION: DB2 UDB, recovery manager, sqlpPRecProcLog, probe:1086 
+DATA #1 : String, 81 bytes 
+INFO ONLY: Too many logs, need to reclaim . 
+Original head 201233, new head: 201233 
+
+When changing to infinite logging on the Primary, the Standby is still configured for maximum 256 (LOGPRIMPAY + LOGSECOND) log files. Therefore, when the Primary exceeds 256 logs due to the REORG operation, the DB2 instance can handle infinite logging but the Standby will fail since the its not configured for infinite logging. 
+CAUSE
+This is NOT a valid configuration for an HADR database because HADR doesn't support infinite logging. It is recommended that both the Primary and Standby have the same configurations on both sides, specially any log related parameters. Check the link below which provides a summary of HADR restrictions on DB2 server.
+
+
+RESOLVING THE PROBLEM
+Since infinite logging is not supported in HADR configuration you can do the following : 
+
+ 
+
+ * Test the log devices write speed. Check the HADR simulator and the DB2 Log scanner links below. 
+ * Test the network speed between the the primary and standby. Refer to the DB2 Log Scanner link below on how you can accomplish this. 
+ * Increase LOGPRIMARY and LOGSECOND database parameters to 250 on both Primary and Standby databases. 
+ * The value of the database parameter LOGFILSIZ should be increased if the database has a large number of update, delete, or insert transactions running against it which will cause the log file to become full very quickly. 
+
+Keep in mind that changing the values of LOGPRIMARY, LOGSECOND and LOGFILSIZ, do not require restarting the instance. However, changes for those parameters take effect only when the database is reactivated. All applications must first disconnect from the database then deactivate and activate the database again. RELATED INFORMATION
+ Restrictions for high availability disaster recovery [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.db2.luw.admin.ha.doc/doc/c0011760.html]
+HADR Simulator [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/DB2HADR/page/HADR%20simulator]
+DB2 Log Scanner [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/DB2HADR/page/db2logscan]

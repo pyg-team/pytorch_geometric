@@ -1,0 +1,63 @@
+Title: IBM Administrative functions against Resource Manager fails with DGL5164A error. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Resource Manager administrative functions such as quiesce/unquiescing the resource manager fails with DGL5164A error.
+Connection to the Resource Manager from System Administration client will also fail.
+The error is resolved by restarting CM RM application server. 
+
+SYMPTOM
+userID.dklog.log will show an entry similar to the following: 
+
+ 
+DGL5164A: Response from resource manager with an error: 'Internal Server
+Error'
+at com.ibm.mm.sdk.rm.DKRMStoreSMS.send(DKRMStoreSMS.java:1970)
+at com.ibm.mm.sdk.rm.DKRMStoreSMS.send(DKRMStoreSMS.java:1843)
+at
+com.ibm.mm.sdk.rm.DKRMStoreSMS.request(DKRMStoreSMS.java:1656)
+at com.ibm.mm.sdk.rm.DKRMStoreSMS.logon(DKRMStoreSMS.java:419)
+
+
+SytemOut.log may show an entry similar to the following:
+
+[16/07/25 4:15:01:381 JST] 0000174d SSLHandshakeE E 
+SSLC0008E: Unableto initialize SSL connection. Unauthorized access was
+denied or securitysettings have expired. Exception is 
+javax.net.ssl.SSLException:Received fatal alert: bad_certificate at 
+com.ibm.jsse2.j.a(j.java:3) at com.ibm.jsse2.nc.a(nc.java:103)
+at com.ibm.jsse2.nc.a(nc.java:545) 
+at com.ibm.jsse2.nc.j(nc.java:71)
+at com.ibm.jsse2.nc.b(nc.java:371) 
+at com.ibm.jsse2.nc.a(nc.java:509) 
+at com.ibm.jsse2.nc.unwrap(nc.java:458) 
+
+
+CAUSE
+SSL authentication between the Web server plugin on IBM HTTP Server (IHS) and WebSphere Appliction Server (WAS) had failed due to an expired certificate. 
+
+ 
+WAS will send the expired certificate to SSL client if both of the following are true:
+
+(1) The server certificate was valid during starting-up of the server, and the certificate got expired when the server was running.
+(2) Either global security is disabled or "Dynamically update the run time when SSL configuration changes occur" is disabled. 
+
+CM only supports using SSL for Resource Manager administrative functions, so a successful SSLHandshake needs to occur in order to complete administrative functions.
+
+With default configuration, the CM client's certificate authentication is set to FALSE, so trust manager will accept any certificate.
+SSL connection will not fail even if the certificate has expired.
+
+However, if the SSL port on the IHS side is specified as the https port in Resource Manager Property, Resource manager connects to WAS via IHS over SSL. The authentication by the Web server plugin will fail if the certificate has expired.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Enable Global Security setting 
+ 2. Extend the expiration date of the personal certificate. 
+ 3. Change Content Manager's SSL manager from IHS to WAS. 
+
+From CM System Admin Client, go to rmdb Property Window, change the https port from the one on IHS (443) to the port on WAS server 
+(9443).

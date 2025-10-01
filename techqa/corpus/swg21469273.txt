@@ -1,0 +1,41 @@
+Title: IBM Sentby address value is malformed when sending to internet addresses - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When sending an iCal meeting to Google, Yahoo, or other internet addresses, the invitee sees the sent by field as Notes name%doman@domain.com, which is incorrect. The Sent-by value is malformed in the text/html contained within the multipart/alternative block of the outgoing MIME message. 
+
+The problem looks as follows:
+[/support/docview.wss?uid=swg21469273&aid=1] [/support/docview.wss?uid=swg21469273&aid=1]
+
+
+CAUSE
+The Sent-by value is malformed in the text/html contained within the multipart/alternative block of the outgoing MIME message. 
+
+The resulting iCalendar is correct, as are the MIME headers so responses that are generated should work fine. However, this is a display only issue. 
+
+The bad sender value does not appear in the plain text description within the iCalendar. Nor does the bad name appear in the text/html generated in the multipart/related section (which the iCalendar DESCRIPTION references via ALTREP). 
+
+This only happens if the invitee's mail system displays the text/HTML alternative representation of the message itself, as google and yahoo mail does in the inbox. Once the meeting is accepted, both google and yahoo will add an entry to the calendar and will no longer show the bad value in the calendar entry (they use the plain text description contained in the iCalendar).
+
+
+RESOLVING THE PROBLEM
+There are several workarounds for this problem: 
+
+1) Depending on Domino server version, you can resolve the problem by changing the notes sender's location document to format messages addressed to internet addresses to "Notes Rich Text Format," as shown below:
+[/support/docview.wss?uid=swg21469273&aid=2] [/support/docview.wss?uid=swg21469273&aid=2] 
+
+2) You can also resolve the problem by sending in compatibility mode. This will remove the HTML representation of the message and send plain text only. 
+
+This can be controlled via policy (client detection tab) for only specific domains (*@gmail.com, *@yahoo.com, etc) 
+
+or 
+
+This can be turned on for specific meetings via a "some invitees use other mail programs" option on the meeting form that becomes available with the following notes.ini setting:
+$CSCompatibilityMode=2 
+
+or 
+
+This can be turned on for ALL iCalendar sent (even to notes users) via the following notes.ini setting:
+DisallowRelatedIcalendarMime=2

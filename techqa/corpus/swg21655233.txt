@@ -1,0 +1,19 @@
+Title: IBM Understanding the warning message MIME conformance violation - United States
+
+Text:
+RFC; MIME; Conformance; CRLF; CR; LF; DataPower TECHNOTE (FAQ)
+
+QUESTION
+ In my logs I observed the following message: 
+
+MIME conformance violation: 7bit/8bit line too long (continuing)
+
+What does this message mean and how is it resolved? 
+
+CAUSE
+Clarification of the cause of this warning message and it's effect are required.
+
+ANSWER
+DataPower sends this message to warn that the request is not in conformance with the 998 character limit set by the RFC 2045 standard which states that 7 bit and 8 bit parts of a MIME message must have no more than 998 characters between <CR><LF>'s. 
+
+DataPower does not alter the message at all and simply warns the user that the message is not conforming to this standard, It is a warning that it is possible that a backend server could have an issue with messages not honoring this standard.

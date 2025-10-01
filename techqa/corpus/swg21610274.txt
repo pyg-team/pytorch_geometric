@@ -1,0 +1,45 @@
+Title: IBM Failure to apply trial or evaluation floating license for RTW - United States
+
+Text:
+Rational Test Workbench; RTW; Rational Integration Tester; RIT; license; floating; trial; evaluation TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to apply IBM Rational Test Workbench (RTW) license results in failure. 
+
+SYMPTOM
+Steps to Reproduce: 
+
+ 1. Download trial or evaluation floating license key for IBM Rational Test Workbench (RTW) from Rational License Key Center 
+ 2. Double click the downloaded license (.upd) file to import into Rational License Key Administrator (LKAD) 
+ 3. After importing the license file, restart the license server
+
+
+Expected result: RTW license should be listed on Rational License Key Administrator Actual result: RTW license is not shown on LKAD and user cannot continue using the product
+
+CAUSE
+License key information is not applied on the license server.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+WORKAROUND: 
+
+Apply the following steps to circumvent the issue: 
+
+ 1. Open the license key (.upd) file with Notepad or text editor and copy the contents of this file to clipboard.
+    
+    
+ 2. Open the rational_server_temp.dat file with notepad or text editor. 
+    
+    If Rational License Key Server (RLKS) v8.1.x is installed in default path, you can find this file at C:\Program Files(x86)\IBM\RationalRLKS\common
+    
+    
+ 3. Paste the content of the clipboard into this file at the end. 
+    
+    
+ 4. Restart the License Server (Start > All programs > IBM Rational > License tools (LMTOOLS) > Start/Stop/ReRead tab > Stop Server > Start Server > ReRead License file).
+    
+    
+ 5. Check LKAD if RTW license is shown and you can start the product successfully.

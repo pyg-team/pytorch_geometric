@@ -1,0 +1,69 @@
+Title: IBM Configuring IBM Case Manager for mobile - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ You can configure IBM Case Manager for mobile access and run Case Manager Client on your iPad. You can also enable browsing and searching for cases on iPhone. 
+
+CONTENT
+Configuring IBM Case Manager for mobile access 
+
+To configure IBM Case Manager for mobile access: 
+
+ 1. Open the IBM Content Navigator administration tool in a browser:
+    http://server:port/navigator/?desktop=admin
+    server is the IBM Content Navigator IP address or fully qualified server name.
+    port is the IBM Content Navigator port number. 
+ 2. On the Desktops page, select the desktop that you are using (Case Manager is the default desktop) and click Edit. 
+ 3. Click the Mobile tab. 
+ 4. Ensure that the Mobile application access option is set to Enable. 
+ 5. In the list of features, select Case or Case Search (depending on your version of IBM Case Manager) and then click Save.
+
+
+Opening Case Manager Client on your iPad After you configure IBM Case Manager for mobile access, you can download the IBM Content Navigator app and open Case Manager Client on your iPad. 
+
+To open Case Manager Client on your iPad: 
+
+ 1. Download and install the IBM Content Navigator app from the Apple App Store: https://itunes.apple.com/us/app/ibm-content-navigator/id538507846 [https://itunes.apple.com/us/app/ibm-content-navigator/id538507846] 
+ 2. From your iPad, in Settings > Navigator > CASE MANAGER, ensure that the Mobile user interface setting is turned on. 
+ 3. Open the IBM Content Navigator app, connect to a desktop, and then tap the Case icon in the left pane.
+
+
+Enabling case search on iPhone 
+
+You can enable browsing and searching for cases on iPhone by configuring your target object store. 
+ 1. Configure your target object store:  1.  Open the Administration Console for Content Platform Engine in a browser:
+         http://content_platform_engine_server:port/acce
+         content_platform_engine_server is the name of the server where Content Platform Engine is deployed.
+         port is the HTTP port that is used by the web application on the server where Content Platform Engine is deployed. 
+     2.  Log in and open the target object store. 
+     3.  In the navigation tree, select IBM Case Manager in the following location:
+         Browse/Root Folder/IBM Case Manager 
+     4.  In the right pane, click the Properties tab and set the value of the IsHiddenContainer property to True. 
+     5.  In the navigation tree, select Deployed Solution in the following location:
+         Data Design/Classes/Folder/Deployed Solution 
+     6.  In the right pane, click the Properties tab and set the value of the Is Hidden property to True. 
+     7.  In the navigation tree, select Deployed Case Type in the following location:
+         Data Design/Classes/Folder/Deployed Case Type 
+     8.  In the right pane, click the Properties tab and set the value of the Is Hidden property to True. 
+     9.  In the navigation tree, select Case Folder in the following location:
+         Data Design/Classes/Folder/Base Case/Case Folder 
+     10. In the right pane, click the Properties tab and set the value of the Is Hidden property to False.
+    
+    
+ 2. Set the target object store as the default repository and ensure that mobile access is enabled:  1. Open the IBM Content Navigator administration tool in a browser:
+        http://server:port/navigator/?desktop=admin
+        server is the IBM Content Navigator IP address or fully qualified server name.
+        port is the IBM Content Navigator port number. 
+     2. On the Desktops page, select the desktop that you are using (Case Manager is the default desktop) and click Edit. 
+     3. Click the General tab. 
+     4. In the Authentication area, in the Repository field, enter the target object store name. Then click Save. 
+     5. Click the Mobile tab. 
+     6. Ensure that the Mobile application access option is set to Enable. 
+     7. In the list of features, select Case or Case Search (depending on your version of IBM Case Manager) and then click Save and Close.
+    
+    
+
+
+You can now browse and search for cases on iPhone by tapping the Case icon.

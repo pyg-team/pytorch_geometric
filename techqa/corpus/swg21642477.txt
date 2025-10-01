@@ -1,0 +1,37 @@
+Title: IBM Frameable Content : Potential Clickjacking - United States
+
+Text:
+Clickjacking TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The web server does not appear to prevent the hosted application being loaded by a 3rd party site within an iframe. As such, the web applications hosted on the server are open to clickjacking style attacks. 
+
+CAUSE
+displaying the TSAM UI in a frame within another application is working as designed. 
+
+Why? 
+
+TSAM UI originally had methods to prevent it from being displayed within a frame. However, many clients wanted to integrate the ootb UI with their own 
+custom UI and complained about that. Therefore, the behavior was changed 
+again for the sake of better integration capabilities.
+
+
+RESOLVING THE PROBLEM
+If the client decides that they do not want to integrate the UI and run 
+
+it stand-alone, they can configure their IHS so that the UI may not be displayed in a frame. 
+How? 
+In httpd.conf add the line 
+
+Header always append X-Frame-Options DENY 
+
+to the configuration of your host or vhost. 
+For this to work you need to load the headers module, which is not loaded by default. 
+To load it, uncomment the line 
+
+#LoadModule headers_module modules/mod_headers.so 
+
+And restart the webserver. 
+
+The IHS is basically a modified Apache server so most of the Apache 
+commands and help on the web can be applied to IHS as well.

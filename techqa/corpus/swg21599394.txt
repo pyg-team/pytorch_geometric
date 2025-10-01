@@ -1,0 +1,12 @@
+Title: IBM Configure IBM Case Manager for SSO with Tivoli Access Manager - United States
+
+Text:
+icm icm sso icm tam sso tam sso case manager sso case manager sso tam acm sso acm tam TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure IBM Case Manager v5.1.0.1 or later releases, for Single Sign-On (SSO) with Tivoli Access Manager? 
+
+ANSWER
+Follow the procedures in the attached document to configure SSO for IBM Case Manager using Tivoli Access Manager. 
+
+ConfiguringICMforSSOwithTAM.pdf [/support/docview.wss?uid=swg21599394&aid=2]ConfiguringICMforSSOwithTAM.pdf [/support/docview.wss?uid=swg21599394&aid=1]

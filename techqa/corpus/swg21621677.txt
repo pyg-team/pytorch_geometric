@@ -1,0 +1,87 @@
+Title: IBM New Service Integration Technology Enhancements in WebSphere Application Server  8.5 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are the new Service Integration Technology enhancements in WebSphere Application Server 8.5 (WAS 8.5)? 
+
+ANSWER
+Following is a list of new features for Service Integration Technology in WAS v8.5 
+
+1) Stopping messaging engine and fail over on database connectivity failures: 
+
+Prior to WAS v8.5, when the messaging engine loses database connectivity the application server is terminated and the messaging engine fails over to the standby instance. Since the server is terminated, all the other applications running in that server are affected.
+
+In WAS v8.5, when a database connectivity failure occurs the messaging engine instance is stopped gracefully and failed over to the standby instance. So the other applications running within the server continue to run. 
+
+2) Messaging engine holds short duration database locks:
+Prior to WAS v8.5, the messaging engine, which is configured to use a data store, always maintained a database lock to ensure that no other instance of the messaging engine becomes active. The database lock is not released when the JVM hangs, which affects the messaging engine at the time of failover. The standby instance of the messaging engine is unable to get a lock on the messaging engine database during startup. This impacts the failover and High Availability. The long running locks also impact the database backup and maintenance.
+
+In WAS v8.5, the messaging engine can be configured to hold short duration locks on database tables, the locks are released as soon as the messaging engine takes ownership of the database. The messaging engine holds ownership of the database as long as it is active and processing. The moment the messaging engine goes down or stops processing messages, the ownership is lost to another instance as decided by the HA manager. The standby instance has no trouble coming up as there are no database locks held by the failed messaging engine.
+
+A new database settings parameter: Restrict long running locks with default setting as No is added.
+
+3) Recover messaging engine configuration from message store:
+
+Prior to WAS v8.5, if the configuration files were corrupted, it was not possible to recover the lost messaging engine. 
+
+In WAS v8.5, a new wsadmin command, ‘recoverMEConfig’, has been added. This command recovers the lost/corrupted messaging engine configuration by reading the data from the message store. The message store may be a file store or a data store. 
+
+This command connects to the message store which was used by the corrupted messaging engine and recovers the configuration of the corrupted messaging engine, its queue and topic destinations. After the command completes, the user can start and run the newly recovered messaging engine to process the persistent messages of the crashed messaging engine.
+
+Refer to the online information center for more details about the command ‘recoverMEConfig [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/topic/com.ibm.websphere.nd.multiplatform.doc/ae/rjk_recoverme_config.html]' .
+
+4) Automatic re-enablement of disabled messaging engine:
+
+Prior to WAS v8.5 , if the messaging engine instance is not able to access the database, that instance is disabled and it fails over to the standby instance. The disabled messaging engine is not available for failover. The disabled messaging engine instance remains in disabled state until the server is restarted or it is enabled manually through core group settings. 
+
+In WAS v8.5, the disabled messaging Engine is re-enabled after 30 seconds automatically. If the standby instance is also not able to access the database, it fails over to the re-enabled messaging engine instance, each instance is re-enabled up to 5 times and then it remains in the disabled state. When the messaging engine goes to disabled state after getting re-enabled 5 times it can be enabled by restarting the server or through core group settings. 
+
+A new customer property is added in v8.5 to support this feature: sib.meEnableInstanceOnFailure . Please refer to the Custom properties link in the bottom of this tech note for more information for how to set this property.
+
+How to enable the messaging Engine through core group settings:
+
+Servers -> Core groups -> Core group settings
+
+Click the name of the core group containing the servers you're interested in.
+
+Click the Runtime tab -> Click the Show groups button -->
+
+Click the line which as WSAF_SIB_MESSAGING_ENGINE=YOUR_ME_NAME -->
+
+Check the server name and click on Enable.
+
+5) Re-delivery count of message retained after messaging engine restart: 
+
+When the delivery of a message fails, the messaging engine attempts to delivery the message repeatedly and the delivery count is incremented. Prior to WAS v8.5 , the re-delivery count is not persisted in the message store, so the count is reset to zero on messaging engine restart. 
+
+In WAS v8.5, it can be configured to persist the re-delivery count to the message store, and it is retained after the messaging engine restarts. 
+
+
+6) Improvements to service integration bus performance:
+
+These Messaging Engine performance enhancements are applicable only when a data store is used for the message store.
+
+Prior to WAS v8.5, SIBus runs reconstitution (that is, loading all the objects from data base) sequentially from a single thread. 
+
+WAS v8.5 Improved messaging engine startup time by loading the destinations concurrently in a multi-core architecture. The concurrent loading is possible if the message store is configured with the database which supports parallel reads by multiple threads. The performance improvement is directly proportional to the parallel processing capability of the database and the capacity of the system on which the messaging engine is running.
+
+Now reconstitution phase (that is, loading all required objects from data base during Messaging Engine startup) by default uses number of threads equal to number of cores/processors in machine. For example in case of dual core machine, it uses two dedicated threads for reconstitution.
+
+A new customer property: sib.processor.maxReconstituteThreadpoolSize [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/index.jsp?topic=%2Fcom.ibm.websphere.nd.doc%2Fae%2Frjj_custom_props.html] is added in v8.5 to support this feature. 
+
+RELATED INFORMATION
+ Automatic re-enablement of Messaging Engine: [https://mediacenter.ibm.com/media/t/0_6kb6jhn5]
+Stop messaging engine and failover: [https://mediacenter.ibm.com/media/t/0_hkujgfr2]
+Better disaster recovery: [https://mediacenter.ibm.com/media/t/0_enlonlqm]
+Restrict long running locks: [https://mediacenter.ibm.com/media/t/0_07t0lcch]
+SIB Custom properties [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/index.jsp?topic=%2Fcom.ibm.websphere.nd.doc%2Fae%2Frjj_custom_props.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere MQ Configuration Business Integration WebSphere Process Server Business Integration WebSphere Service Registry and Repository Business Integration IBM Business Process Manager Standard Business Integration WebSphere Enterprise Service Bus Business Integration WebSphere Partner Gateway - Express 
+PRODUCT ALIAS/SYNONYM
+ WebSphere Application Server WAS SIB SIBUS SI BUS

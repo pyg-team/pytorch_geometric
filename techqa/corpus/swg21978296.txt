@@ -1,0 +1,59 @@
+Title: IBM Problems configuring HTTPS for ClearCase Remote Client Wide Area Network Server (CCRC WAN server) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Problem 1
+
+Connecting to a CCRC WAN server via HTTPS to IHS (https://<server_name>/ccrc) can fail. When using IHS automatic configuration during an installation of ClearCase, the plugin is not configured correctly for HTTPS to trust the WAS profile's keys if the WAS profile is not using a publicly-signed certificate. This is very likely to occur if you create a new WAS profile while installing CCRC WAN server.
+
+Problem 2
+
+The generated plugin configuration file on Windows may omit "(x86)", causing failures when connecting to https://<server_name>/ccrc. (NOTE: This problem applies to ClearQuest as well; simply edit pathnames to change from "<Drive>:\Program Files\..." to "<Drive>:\Program Files (x86)\" as needed.) 
+
+DIAGNOSING THE PROBLEM
+Problem 1 
+
+ * Visit https://<server>/ccrc/admin/version in a browser. If you see an error such as "The server encountered an internal error or misconfiguration and was unable to complete your request," then check the server log. 
+ * The server log is named in the plugin configuration file, which is named in the HTTP configuration file. The HTTP configuration file includes the line "WebSpherePluginConfig ". The file name on that line is the plugin configuration file. In the plugin file, there is a directive "<Log ... Name="filename">". That file is the HTTP error log. Check that log file: if you see errors such as "openStream: Failed in r_gsk_secure_soc_init: GSK_ERROR_BAD_CERT(gsk)" then you need to update IHS to trust the SSL certificates used by your WAS profile.
+
+
+Problem 2 
+
+Connection fails due to incorrect default pathname. When the installer configures the plugin between IBM HTTP Server and your WebSphere Application Server profile, some uses of "Program Files" on Windows 64-bit servers may be wrong. 
+RESOLVING THE PROBLEM
+Problem 1 
+
+ 
+
+ 1. Find the WAS profile key file with WAS admin console:
+    a. Connect to the WAS admin console (such as http://<server_name>:16060/ibm/console for the CC profile that was created during installation).
+    b. Open "Security" (on the left-hand side). Follow links to "SSL certificate and key management" > "Key stores and certificates". 
+    c. Make a note of the path to NodeDefaultKeyStore (relative to the profile root). 
+ 2. Find the IHS Plugin key file:
+    a. Find the IHS plugin configuration file, listed as "WebSpherePluginConfig" in the httpd.conf file.
+    b. In the IHS plugin file, find the keyring property inside the server connection for your WAS profile (port 16443 if created automatically when you installed CCRC WAN server).
+    c. Make a note of the keyring file name. 
+ 3. Import the server certificates to the IHS plugin keyring file:
+    a. Run ikeyman from the IHS installation location, such as "C:\Program Files\IBM\HTTPServer\bin\ikeyman".
+    b. Open the plugin keyring file (type CMS). 
+    c. Click the "Import..." button.
+    d. Set the type to PKCS12, then browse to the file, NodeDefaultKeyStore: prefix the path with the profile directory, resulting in a pathname like this: C:\Program Files\IBM\RationalSDLC\common\ccrcprofile\config\cells/dfltCell/nodes/dfltNode/key.p12. (The password is "WebAS".) Optionally, rename the certificate before accepting the import. 
+ 4. Close the key database. 
+ 5. Test the new connection:
+    a. Restart IHS (Windows: control panel; UNIX: apachectl).
+    b. Connect to the server with HTTPS to confirm a working connection (https://<server_name>/ccrc/admin/version). If the connection shows the installed version of ClearCase, it is operational.
+
+
+Problem 2
+
+
+ 1. Find the IHS plugin key file (Step 2 above). 
+ 2. Edit the file to change pathnames from "<Drive>:\Program Files\..." to "<Drive>:\Program Files (x86)\" as needed. Check all the instances of such pathnames in the configuration file, and compare them to the file system. 
+ 3. Restart IHS and test the connection (Step 5 above).
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearQuest

@@ -1,0 +1,65 @@
+Title: IBM Analyze Event Mapping fails with high CPU utilisation - United States
+
+Text:
+netcool; impact; netcool/impact; nci; event; reader; omnibus; eventreader; omnibuseventreader; filter; map; mapping; analyze; analysis; analyse; tool; cpu TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CPU increases drastically when using the tool in an EventReader with more than 10 Filters
+
+
+
+SYMPTOM
+The host's CPU utilisation by Impact becomes excessively high when the Analyze Event Mapping tool of the EventReader is used against a configuration in excess of 10 Filters.
+
+
+CAUSE
+This has been identified as a product defect under APAR IV22560 "ANALYZE EVENT MAPPING TOOL FAILS AND HAMMERS CPU" [link below]
+
+RESOLVING THE PROBLEM
+The fix has been confirmed as resolving the behaviour by both Level 3 and Level 2 Support in independent tests.
+
+
+
+
+With the code fix in place it is then enabled by the setting of the property - for Impact 5.1.1:
+
+analyzer.bypass=true
+
+for Impact 6.x:
+
+impact.analyzer.bypass=true
+
+in the file - for Impact 5.1.1:
+
+$NCHOME/guiserver/etc/server.props
+
+for Impact 6.x:
+
+$NCHOME/impact/server/server.props
+
+The fix is designed to circumvent the Filter overlap analysis tool part of the Analyze Event Map if the number of Filters is greater than 10.
+
+The fix produces the message:
+
+INFO [CommonFilterAnalysis] analyzer.bypass read from server.props is: true
+
+In the netcool.log file following start-up to indicate that the property is enabled. If not enabled this reads:
+
+INFO [CommonFilterAnalysis] analyzer.bypass read from server.props is: false
+
+So that either way confirmation is provided that the fix is in place, even if it is not enabled.
+
+APAR IV22560 is fixed in:
+
+IBM Tivoli Netcool/Impact V5.1.1 Fix Pack 2 (5.1.1-TIV-NCI-FP0002) onwards
+IBM Tivoli Netcool/Impact V6.1.0 Fix Pack 2(6.1.0-TIV-NCI-FP0002) onwards
+IBM Tivoli Netcool/Impact V6.1.1 Fix Pack 1 (6.1.1-TIV-NCI-FP0001) onwards
+IBM Tivoli Business Service Manager V6.1.1 Fix Pack 1(6.1.1-TIV-BSM-FP0001) onwards
+IBM Tivoli Business Service Manager V6.1.0 Fix Pack 2(6.1.0-TIV-BSM-FP0002) onwards
+
+Relevance to Impact 7 has not been confirmed at time of publication.
+
+
+
+RELATED INFORMATION
+ APAR: IV22560 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV22560]

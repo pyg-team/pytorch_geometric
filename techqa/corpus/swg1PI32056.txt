@@ -1,0 +1,245 @@
+Title: IBM PI32056: 340981: LIFECYCLE PROJECT ADMINISTRATION PROJECT EDITOR DOES NOT WORK CORRECTLY WITH MORE THAN ONE SERVER OF SAME APPLICATION - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description:
+   If there are multiple servers with the same domain (for example,
+   2 IBM Rational Change and Configuration (CCM) servers)  and the
+   Lifecycle Project Area (LPA) template configures multiple
+   artifact containers for the domain, the LPA "Create Project
+   Area" does not work correctly.
+   There are two problems:
+   1. Multiple drop downs appear on the row for the first
+   application container, with no drop downs on other rows for the
+   same application
+   2. When the project areas are created, they can be created in
+   the wrong server because the drop down was created on the wrong
+   row.
+   
+   Steps to reproduce:
+   1. Log in to an environment where you have multiple CCM
+   applications registered with the same IBM Rational
+   JazzTeamServer (JTS). Assuming there are 2 CCMs in this case and
+   their context root are 'ccm' and 'ccm2'.
+   2. Go to LPA Create Project page.
+   4. Select Template: Quality Professional, Analyst, Developer -
+   with separate Quality Management Tasks and Requirements Change
+   Requests
+   Notice that there are 2 drop downs on the row for the first
+   Change and Configuration Management container. There is no drop
+   down on the rows for the second Change and Configuration
+   Management container. This is not correct.
+   5. Select "ccm2" in the second drop down
+   6. Enter a name for the project
+   7. Save. Notice that the projects are all created in ccm. This
+   is not correct. At least one of them should be created in ccm2.
+   
+   
+   What is the expected output?
+   - In step 4, there should be a drop down per application
+   container
+   - In step 7, The projects should be created in the application
+   selected during the LPA creation.
+   
+   What do you see instead?
+   - In step 4, multiple drop downs appear on the row for the first
+   application container, with no drop downs on other rows for the
+   same application
+   - In step 7, The projects are all created in CCM.
+   
+   
+   Refer to the following work item on Jazz.net for further
+   details:
+   https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo]
+   rkItem/340981
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  You can manually create a project in each CCM repository and use
+   the 'link to existing' option to select to use these projects
+   when creating a new lifecycle project.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Description:                                                 *
+   * If there are multiple servers with the same domain (for      *
+   * example,                                                     *
+   * 2 IBM Rational Change and Configuration (CCM) servers)  and  *
+   * the                                                          *
+   * Lifecycle Project Area (LPA) template configures multiple    *
+   * artifact containers for the domain, the LPA "Create Project  *
+   * Area" does not work correctly.                               *
+   * There are two problems:                                      *
+   * 1. Multiple drop downs appear on the row for the first       *
+   * application container, with no drop downs on other rows for  *
+   * the                                                          *
+   * same application                                             *
+   * 2. When the project areas are created, they can be created   *
+   * in                                                           *
+   * the wrong server because the drop down was created on the    *
+   * wrong                                                        *
+   * row.                                                         *
+   *                                                              *
+   * Steps to reproduce:                                          *
+   * 1. Log in to an environment where you have multiple CCM      *
+   * applications registered with the same IBM Rational           *
+   * JazzTeamServer (JTS). Assuming there are 2 CCMs in this case *
+   * and                                                          *
+   * their context root are 'ccm' and 'ccm2'.                     *
+   * 2. Go to LPA Create Project page.                            *
+   * 4. Select Template: Quality Professional, Analyst, Developer *
+   * -                                                            *
+   * with separate Quality Management Tasks and Requirements      *
+   * Change                                                       *
+   * Requests                                                     *
+   * Notice that there are 2 drop downs on the row for the first  *
+   * Change and Configuration Management container. There is no   *
+   * drop                                                         *
+   * down on the rows for the second Change and Configuration     *
+   * Management container. This is not correct.                   *
+   * 5. Select "ccm2" in the second drop down                     *
+   * 6. Enter a name for the project                              *
+   * 7. Save. Notice that the projects are all created in ccm.    *
+   * This                                                         *
+   * is not correct. At least one of them should be created in    *
+   * ccm2.                                                        *
+   *                                                              *
+   *                                                              *
+   * What is the expected output?                                 *
+   * - In step 4, there should be a drop down per application     *
+   * container                                                    *
+   * - In step 7, The projects should be created in the           *
+   * application                                                  *
+   * selected during the LPA creation.                            *
+   *                                                              *
+   * What do you see instead?                                     *
+   * - In step 4, multiple drop downs appear on the row for the   *
+   * first                                                        *
+   * application container, with no drop downs on other rows for  *
+   * the                                                          *
+   * same application                                             *
+   * - In step 7, The projects are all created in CCM.            *
+   *                                                              *
+   *                                                              *
+   * Refer to the following work item on Jazz.net for further     *
+   * details:                                                     *
+   * https://jazz.net/jazz/resource/itemName/com.ibm.team.workite *
+   * m.Wo                                                         *
+   * rkItem/340981                                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  User Interface Code changed. Fixed and verified in CLM 6.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI32056
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * REPORTED COMPONENT ID
+   5724V0400
+   
+   
+ * REPORTED RELEASE
+   405
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-29
+   
+   
+ * CLOSED DATE
+   2015-06-26
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * FIXED COMPONENT ID
+   5724V0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

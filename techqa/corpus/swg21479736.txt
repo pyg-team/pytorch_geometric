@@ -1,0 +1,59 @@
+Title: IBM A method to replace unwanted characters in a string variable with spaces - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm using SPSS for Windows and I've imported some data that was collected and entered in a different application. The data in some string variables contains embedded control characters -- carriage returns, for example -- that I need to get rid of. I could do it manually, but would take more time than I have. My problem is that I can't figure out how to automate a search: I don't know how to enter the character so SPSS can search for it.
+
+Is there a way to automate something like this that I'm missing? 
+
+RESOLVING THE PROBLEM
+The easiest way to deal with this issue is to identify all the characters you might wish to keep, and keep only those. Any character not listed in a string of your creation will be dropped and replaced by a space.
+
+The following syntax will operate on a variable called 'strvar':
+
+*First create a scratch variable sufficiently large to hold the work in progress.
+
+STRING #hold (A255).
+
+*Loop through each position in 'strvar'.
+
+LOOP #i = 1 to LENGTH(strvar).
+
+*Extract each successive character in 'strvar', upshift the case,
+and see if it can be found anywhere in the list of acceptable characters fed to
+the INDEX function.
+
+*If the character is found, add it to #hold.
+
+*If the character is not found, add a space to #hold.
+
+*NOTE: If you are replacing the unwanted character with a space,
+this step (consisting of the ELSE and second COMPUTE) is not
+strictly necessary, because SPSS will re-pad the string
+to the right with spaces anyway.
+
+* The step is left in, however, in case you wish to replace
+the unwanted characters with a character other than a space.
+
+DO IF INDEX("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,?/:;'!#$%&()", SUBSTR(UPCASE(strvar), #i, 1)) > 0.
+COMPUTE #hold = CONCAT(SUBSTR(#hold, 1, (#i-1)), SUBSTR(strvar, #i, 1)).
+ELSE.
+COMPUTE #hold = CONCAT(SUBSTR(#hold, 1, (#i-1)), " ").
+END IF.
+END LOOP.
+
+*Finally, set 'strvar' equal to the contents of '#hold'. 
+
+COMPUTE strvar = #hold.
+EXECUTE.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 43351

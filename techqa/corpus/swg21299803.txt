@@ -1,0 +1,105 @@
+Title: IBM WMB/IIB MustGather: problems with runtime message processing (on UNIX and Linux) - United States
+
+Text:
+Runtime Message Processing MustGather; MustGathers; Must Gather; Collect Troubleshooting Data; MustGatherDocument; Collecting; Trouble; Shooting TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are using WebSphere Message Broker (WMB) or IBM Integration Bus (IIB) and are seeing behavior problems or errors with the processing of your messages on the Broker runtime. 
+
+This MustGather document explains how to troubleshoot this problem by yourself, how to generate diagnostic data when the problem is happening, how to collect the available data from your system, and how share that data with IBM support. 
+
+ENVIRONMENT
+These instructions are for WebSphere Message Broker or IBM Integration Bus on AIX, HP-UX, Linux, and Solaris systems.
+Return to the WMB / IIB MustGather index [http://www-01.ibm.com/support/docview.wss?uid=swg21209857] for other systems.
+
+RESOLVING THE PROBLEM
+ 
+
+
+STEP 1: SELF-GUIDED TROUBLESHOOTING
+
+ 1. Consider Using the Test Client in trace and debug mode [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/af52260_.htm].
+ 2. 
+ 3. A user level trace [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321#1] is intended to assist users with understanding how their ESQL is processed.
+    It will also show a high level view of the message flow behavior.
+ 4. 
+ 5. Check for known issues:
+    Resolving problems when developing message models [http://www.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/com.ibm.etools.mft.doc/au16520_.htm]
+    Resolving problems when developing message flows [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/au16530_.htm] Dynamic guide to troubleshooting Message Broker [https://developer.ibm.com/integration/docs/ibm-integration-bus/troubleshooting/dynamic-problem-determination-guides/]
+    IIB and WMB Frequently Asked Questions [http://www-01.ibm.com/support/docview.wss?uid=swg21650025]
+    Resolving problems when processing messages [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/au16550_.htm]
+    [http://www.ibm.com/software/htp/cics/tserver/support/]WebSphere Message Broker support site [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Message_Broker]
+    
+    
+    
+
+
+
+STEP 2: COLLECT DATA
+
+ 1. mqsidc
+    See: mqsidc usage instructions [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/bu46012_.htm]
+     * When running the tool, select the option for 'Broker Collector', when prompted.
+    
+    
+ 2. 
+ 3. Abend files
+     * Some runtime failures cause an abend. The syslog (see below) will record the time and location of any *.abend files created.
+       You can also manually check for abend files in the directory: {MQSI_WORKPATH}/common/errors 
+    
+    
+ 4. 
+ 5. Project Interchange files for the problematic flow/set/ESQL/model
+     * You can export your Message Flow and Message Set project(s) into an archive file for easy transmission to IBM Support.
+       See: Exporting files from the Workbench [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/an27100_.htm] 
+    
+    
+ 6. 
+ 7. Traces If the problem occurs during a runtime test or with the Toolkit test facility, WMB execution group traces [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321] can be used to gain a better understanding of the problem.  * A user level trace [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321#1] is intended to assist users with understanding how their ESQL is processed. It will also show a high level view of the message flow behavior.
+     * A service level trace [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321#2] is intended to be provided to IBM Support to assist in the diagnosis of your issue.
+    
+    
+ 8. 
+ 9. General Broker information
+    If the mqsidc tool was not run, then capture this information manually  * Record the WebSphere Message Broker version, release, and maintenance level.
+       This can be captured using the command 'mqsiservice -v'..
+     * Record the operating system version, release, and maintenance level.
+     * Record the version, release, and maintenance level of any related products and components for the problematic application.
+     * Collect the local error log.
+       On UNIX and Linux systems, the local error log is the syslog.
+       The location of your syslog is configured in the syslog daemon.
+       See: Configuring the syslog daemon [http://www.ibm.com/support/knowledgecenter/en/SSKM8N_8.0.0/com.ibm.etools.mft.doc/an04230_.htm]
+     * Collect the Standard Output/Error logs.
+       On UNIX and Linux systems, WMB writes information to both 'stdout' and 'stderr' files.
+       These files are located under the Message Broker workpath.
+       See: Standard System Logs [https://www.ibm.com/support/knowledgecenter/SSMKHH_10.0.0/com.ibm.etools.mft.doc/au14165_.htm]
+    
+    
+
+
+
+ATTENTION: A good problem description is one of the most important tools IBM needs to analyze your data!
+When sending data to IBM, be sure to update your PMR or send a note with the following information:
+
+ *  Tell us what errors you saw, where you saw them, and what time they happened Let us know if you made any changes to WebSphere Message Broker or the system before the problem Share any other observations which you think will help us to better understand the problem 
+
+
+
+STEP 3: SUBMIT DATA TO IBM
+
+ * Use IBM Service Request [http://www.ibm.com/support/servicerequest/] to open or view a problem record with IBM.
+ * Send your data to IBM [http://www.ibm.com/support/docview.wss?uid=swg21392217] for further analysis.
+
+
+
+
+Please see the IBM Software Support Handbook [http://www14.software.ibm.com/webapp/set2/sas/f/handbook/home.html] for more information on working with IBM support.
+
+
+
+Back to top
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

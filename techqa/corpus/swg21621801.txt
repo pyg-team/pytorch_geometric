@@ -1,0 +1,19 @@
+Title: IBM Manually installing the Deployment Engine installation component - United States
+
+Text:
+DEL2; TIPL2; TIPL2INST; Deployment Engine; reinstall; install manually TECHNOTE (FAQ)
+
+QUESTION
+ What is the procedure to install DE manually? 
+
+CAUSE
+In the course of troubleshooting or resolving installation issues, manually installing DE may be required.
+
+ANSWER
+The following procedure assumes you have IBM JRE 1.6 installed on the target host and that the base installation package for the product is accessible on the target host.
+
+1. From a command prompt, change directories to <IBM JRE 1.6 HOME>/bin
+2. Execute:
+./java -jar <product unpack location>cdimage*/DE/.data/setup.jar -javaHome <IBM JRE 1.6 HOME>
+
+The installer will should return an "Installation successful" message.

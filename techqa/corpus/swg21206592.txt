@@ -1,0 +1,20 @@
+Title: IBM Procedures for installing WAS fixpacks on a TAM Web Portal Manager system - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is the recommended procedure for installing WebSphere Application Server (WAS) fixpacks on a system with Tivoli Access Manager Web Portal Manager (WPM)? 
+
+ANSWER
+When WebSphere fixpacks are installed, they replace the PD.jar that TAM (WPM) is using with their own one, which is different. This will cause the WPM to fail. As a result, the TAM files need to be put back. There are different ways to do this (only need to do one of them)... 
+
+1) use the pdjrtecfg command to unconfigure the java runtime, and then re-configure it..
+pdjrtecfg -action unconfig -java_home {jre_home| all}
+pdjrtecfg -action config -host policy_server_host -port policy_server_port -java_home jre_home [-domain domain_name] -config_type full
+
+2) using the regular pdconfig tool, you can simply unconfigure and re-configure the web portal manager (including the java runtime)
+
+3) after installing the WAS fix, you can run the {TAM_HOME}/sbin/pdjrteupg command 
+
+(it doesn't matter in this case if you use the "full" or "standalone" option)

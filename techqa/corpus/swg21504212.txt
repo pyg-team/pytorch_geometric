@@ -1,0 +1,22 @@
+Title: IBM Could not login error configuring tasks in Rulerunner Quattro Manager - United States
+
+Text:
+login tasks rulerunner quattro TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When configuring Rulerunner threads in Rulerunner Quattro Manager with IBM Datacap Taskmaster Capture, a list of the tasks do not appear after selecting the three check boxes for the application on the Workflow:Job Task tab. Instead, an error appears stating:
+
+Login error.
+Could not login. User ID(domain\Windowsuser), Password or Station
+ID is incorrect, or Station ID is already in use. Please correct and try again. 
+
+CAUSE
+This occurs when the Station ID is invalid or has not been given permissions for the application.
+
+RESOLVING THE PROBLEM
+To correct: 
+
+ 1. Run Taskmaster Client and log in to the application. 
+ 2. From the Settings menu, select Stations. 
+ 3. If the station does not exist, select Add and create it using the Station ID configured in Rulerunner Quattro Manager. 
+ 4. If the station already exists, make sure that Permissions are checked for All or the tasks that Rulerunner will be executing.

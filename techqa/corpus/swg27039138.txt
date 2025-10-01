@@ -1,0 +1,157 @@
+Title: IBM "Choose Licenses" feature in Content Platform Engine 5.2 Fix Pack 2 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Content Platform Engine 5.2 Fix Pack 2 includes a new task, Choose Licenses, in Configuration Manager. 
+
+CONTENT
+Prerequisites: 
+
+Content Platform Engine 5.2 or Content Platform Engine 5.2 Fix Pack 1
+
+
+Feature Details:
+
+With the Choose Licenses task in Configuration Manager, you choose one of the following license types for your installed products:
+
+
+ * User Value Unit (UVU) 
+ * Processor Value Unit (PVU) for Production Environments 
+ * Processor Value Unit (PVU) for Non-Production Environments
+   
+
+Your licensing choice applies to IBM FileNet Content Manager or IBM Content Foundation, whichever product is installed on your system. The licensing choice also applies to IBM Case Foundation if it is installed on your system. 
+
+You can optionally apply your licensing choice to IBM Case Manager if the following conditions are met:  * IBM Case Foundation is installed on your system. 
+ * You choose PVU Production or PVU Non-Production licensing.
+
+
+Note: You cannot apply UVU licensing to IBM Case Manager. 
+
+Important: The output of the Choose Licenses task is an association between the installed product and the license type you chose. This association is used by internal tools to generate usage reports. You should run the task if your licensing is PVU Production, PVU Non-Production, or changing to UVU. 
+
+Using the graphical user interface to edit and run the Choose Licenses task 
+
+When you run Configuration Manager by using the graphical user interface, the Choose Licenses task is the first task that appears in the the profile in the navigation pane. Depending on which products are installed on your system, the edit pane for the Choose Licenses task displays the following check boxes: 
+ * License for IBM FileNet Content Manager or License for IBM Content Foundation, depending on which product is installed on your system. The check box is selected by default and cannot be cleared. 
+   
+ * License for IBM Case Foundation, if the product is installed on your system. This check box is selected by default and cannot be cleared.
+   
+ * License for IBM Case Manager, if IBM Case Foundation is installed on your system. This check box is cleared by default. Whether the check box can be selected depends on which licensing type you choose when you edit the Choose Licenses task.
+
+
+
+To edit and run the Choose Licenses task as part of a new profile: 
+ 1. Double-click the task icon in the navigation panel to open the task in the edit pane.
+    
+ 2. In the edit pane, choose an entry from the Choose license type list.
+    
+ 3. You can apply your licensing choice to IBM Case Manager by selecting its check box if the following conditions are met:  * IBM Case Foundation is installed on your system. 
+     * You chose either PVU Production or PVU Non-Production licensing in step 2.
+       
+    
+    
+ 4. Click File > Save to save your work.
+    
+ 5. Run the Choose Licenses task by clicking Run Task.
+    
+    
+
+To add and run the Choose Licenses task in an upgrade profile: 
+ 1. Right-click any task icon in the navigation pane and choose Add New Task. In the context menu, select the Choose Licenses task. The new task is added to the profile.
+    
+ 2. Edit and run the Choose Licenses task as you would in a new profile.
+
+
+Using the command-line interface to generate and run the Choose Licenses task 
+
+The -task option in Configuration Manager commands has a new value, configurepricingmodel, to specify the Choose Licenses task. You specify the Choose Licenses task in commands as follows: 
+
+-task configurepricingmodel 
+
+The generateconfig command has a new option, -license, to choose the license type. You specify the license type in the generateconfig command as follows: 
+
+-license license_type  * license_type 
+ * 
+ * UVU
+ * 
+ * "PVU Production
+ * "
+ * 
+ * "PVU Non-Production
+ * "
+ * 
+
+Note The license type value must be delimited by double quotation marks (") if it contains embedded blanks. 
+
+You can specify the new task value configurepricingmodel and command option -license license_type when you generate or execute the configuration file for the Choose Licenses task. 
+
+For example, you can execute the following command to run the Choose Licenses task: 
+
+configmgr_cl execute [-task task_type | -taskfile task_file_name ] -profile myprofile [-silent] [-force] [-help]  * task_type 
+ * 
+ * configurepricingmodel
+ * 
+ * 
+ * task_file_name 
+ * 
+ * configurepricingmodel.xml.
+ * 
+ * myprofile 
+ * 
+
+
+In an upgrade scenario, after you create an upgrade profile, you can execute the following command to generate the Choose Licenses task: 
+
+configmgr_cl generateconfig -appserver app_server_type -task task_type -profile upgrade_profile_name 
+ * app_server_type 
+ * 
+ * WebSphere
+ * 
+ * WebLogic
+ * 
+ * JBoss
+ * 
+ * 
+ * task_type 
+ * 
+ * configurepricingmodel
+ * 
+ * 
+ * upgrade_profile_name 
+ * 
+
+
+For IBM Case Manager, additional informational messages are displayed in the Console box in graphical user interface mode and in the configurepricingmodel.ok file in the status folder in command-line interface mode if IBM Case Foundation is installed on your system. On your IBM Case Manager system, run the script that is indicated in the message. 
+
+If you chose the PVU Production or PVU Non-Production license type, one of the following messages appears after you run the Choose Licenses task, depending on the operating system: 
+On Windows:  * INFO: Run the <Case_Manager_Install_Dir>\removetagfiles.bat script on your IBM Case Manager machine.
+
+
+On AIX, HPUX, Linux, Linux for System z, or Solaris:  * INFO: Run the <Case_Manager_Install_Dir>/removetagfiles.sh script on your IBM Case Manager machine.
+
+Note: The removetagfiles script deletes the default UVU license files that get installed with IBM Case Manager. 
+
+If you chose the UVU license type, one of the following messages appears after you run the Choose Licenses task, depending on the operating system: 
+On Windows:  * INFO: Run the <Case_Manager_Install_Dir>\addtagfiles.bat script on your IBM Case Manager machine.
+
+
+On AIX, HPUX, Linux, Linux for System z, or Solaris:  * INFO: Run the <Case_Manager_Install_Dir>/addtagfiles.sh script on your IBM Case Manager machine.
+
+Note: The addtagfiles script restores the UVU license files in IBM Case Manager. 
+
+Update to the "Configure Bootstrap and Text Extraction " task 
+
+The licensing choices that are stored in the software tag files are written into the Content Platform Engine EAR file as part of the "Configure Bootstrap and Text Extraction" task execution. 
+
+The IBM® System Dashboard for Enterprise Content Management Listener component will be configured with that licensing information for future usage reporting. 
+
+If you rerun the "Choose Licenses" task with a different set of licensing choices, you must rerun the "Configure Bootstrap and Text Extraction" and "Deploy Application" tasks so that the running application always has the correct licensing information. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Foundation Content Engine

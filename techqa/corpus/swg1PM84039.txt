@@ -1,0 +1,134 @@
+Title: IBM PM84039: NEED A STATEMENT ON .XLS/.XLSX USED AS A DATA SOURCE IN TI - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer needs to work from Excel sheets and wants to be able to
+   use them as a data source in TI via Architect, as this works
+   through Performance Modeler - this alignment is requested in
+   enhancement COGCQ00708694, but has not yet been implemented.
+    Our documentation states the text source needs to be a
+   comma-delimited file (i.e. .cma/.csv).  If the user tries to use
+   xls anyway it creates gibberish in the preview.  Given that they
+   shouldn't be using the xls/xlsx file, TI in Architect should not
+   allow the user to choose the xls option - that is the defect
+   here.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This is not a defect. The product is working as designed.
+   
+   
+   Among the data sources supported by TurboIntegrator (TI) are tex
+   t files formatted as character-separated values or CSV. Common s
+   eparator characters are the comma, the colon, the semicolon, the
+    tab, the vertical bar (also referred to as pipe) and the space
+   character. As the comma is widely used as separator character CS
+   V is generally understood as comma-separated values.
+   
+   A general standard for the CSV file format does not exist. Thus
+   a standard file suffix for a CSV file does not exist. Although t
+   he .CSV and .CMA file suffixes are widely used, a CSV file can u
+   se any random file suffix including the .XLS or the .XLSX file s
+   uffix. Thus the TI Editor of TM1 Architect and TM1 Perspectives
+   can not hide files having the .XLS or the .XLSX file suffix.
+   
+   
+   Typically a .XLS or .XLSX file suffix indicates that the file in
+    question is an Excel workbook.
+   
+   The TI Editor of TM1 Architect and TM1 Perspectives does not sup
+   port Excel workbooks as data sources. Only the TI Editor of TM1
+   Performance Modeler supports Excel workbooks as data sources.
+   
+   Using the TI Editor of TM1 Architect or TM1 Perspectives, you ha
+   ve two options when Excel workbooks are your data sources:
+   Either export the Excel workbooks into CSV files.
+   Or you may use the Excel workbooks as ODBC data sources which ar
+   e queried using the Microsoft ODBC Driver for Excel.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM84039
+   
+   
+ * REPORTED COMPONENT NAME
+   TM1 SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724W49SE
+   
+   
+ * REPORTED RELEASE
+   A11
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-04
+   
+   
+ * CLOSED DATE
+   2014-12-10
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

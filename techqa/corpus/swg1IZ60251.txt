@@ -1,0 +1,200 @@
+Title: IBM IZ60251: WMQ JMS V7 LIBRARIES UNDER WEBSPHERE APPLICATION SERVER V6.1    CAUSE PERFORMANCE DEGRADATION, COMPARED TO WMQ V6 LIBRARIES. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24025627]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You configure WebSphere Application Server V6.1 to use the
+   WebSphere MQ (WMQ) V6 classes for Java Message Service (JMS)
+   and take some statistics and profiling to have a baseline on
+   performance.
+   
+   Then you replace the WMQ JMS libraries with the V7 version.
+   
+   You noticed that the performance difference was significantly
+   poorer using the V7 libraries. Further analysis show that the
+   WMQ V7 have the default tracing as enabled, and the trace
+   overhead is affecting the performance.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Enable the following Java system property under WebSphere
+   Application Server V6.1 and restart the server.
+   This will disable the WMQ tracing within the application
+   server:
+     com.ibm.msg.client.commonservices.trace.standalone=true
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of WebSphere Application Server (WAS)
+   V6.1 that configure the application server to use the WebSphere
+   MQ (WMQ) V7 classes for Java Message Service (JMS) as their JMS
+   provider.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When using the WMQ V7 classes for JMS with WAS V6.1, the WMQ
+   classes for JMS will always send trace data to the application
+   server by default. To do this, it constructs a number of
+   internal objects containing trace data which are sent to the
+   WAS tracing code - the WAS code then decides whether to write
+   the data to its trace file or simply throw the objects away
+   (depending on whether WAS JMS trace is enabled or not).
+   
+   Analysis of heap dumps collected by the customer that raised
+   this problem has shown that there are a large number of these
+   objects (sometimes multiple copies of the same thing), some of
+   which can be quite big. The objects will be discarded once the
+   WAS tracing code has decided whether to log them or not, so
+   there is no memory leak - however, this does mean that the
+   memory footprint of the WAS 6.1 JVM is much larger when using
+   WMQ V7 than it was when using WMQ V6.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WMQ V7 classes for JMS have been changed so that tracing is
+   disabled rather than enabled by default. This has the advantage
+   of bringing the memory footprint back in line with what was
+   seen when using the WMQ V6 classes for JMS.
+   
+   To enable tracing within a WAS V6.1 environment, the trace
+   string specified must include the trace group jmsApi.
+   
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.1
+   --------           --------------------
+   Windows            U200310
+   AIX                U827232
+   HP-UX (PA-RISC)    U826485
+   HP-UX (Itanium)    U826884
+   Solaris (SPARC)    U827125
+   Solaris (x86-64)   U827374
+   iSeries            tbc_p700_0_1_1
+   Linux (x86)        U826321
+   Linux (x86-64)     U827231
+   Linux (zSeries)    U827105
+   Linux (Power)      U826779
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ60251
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7224
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-08
+   
+   
+ * CLOSED DATE
+   2009-10-28
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7224
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

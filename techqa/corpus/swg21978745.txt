@@ -1,0 +1,47 @@
+Title: IBM Transaction Reporter appears to disconnect from TEPS on AIX - United States
+
+Text:
+Conversation timeout; network interface card; TEPS disconnects from TEMS; APAR IV77462; Transaction Reporter workspaces turn gray; Remote Procedure Call (RPC) ; 71TT-PLAN; 71TT-INS; 71TT-CONF; 71TT-RPT; 71TT-WV; 71TT-TS TECHNOTE (FAQ)
+
+QUESTION
+ Why do my Transaction Reporter workspaces turn gray in the TEP and stop displaying data? The Transaction Reporter process is still running. 
+
+CAUSE
+The TEPS frequently disconnects from the TEMS.
+
+ANSWER
+
+When the TEPS resides on AIX, the Transaction Reporter workspaces may go gray (disabled) due to a TEPS 6.x defect. Remote Procedure Call (RPC) communication errors appear in the TEPS *_cq_KfwServices_5*.log files on the TEPS host. 
+
+This defect causes the TEPS to constantly lose connection with the hub TEMS.
+
+Error seen in multiple TEPS logs: 
+
+(56D232A2.0002-91:kdcc1sr.c,924,"rpc__sar") Conversation timeout: 
+"ip.pipe:#172.16.78.41:1918", 1C010008:00000000, 0, 121(0), FFFF/43, 
+D140831.1:1.1.1.13, tms_ctbs630fp5:d5135a 
+
+If you observe this error in the TEPS logs, try installing the fix for APAR IV77462 at the TEPS. See details in the Related URLs. 
+
+A separate issue is that you may also need to prevent the Transaction Reporter from switching network interface cards.
+
+Bind the TO agent a network card using the KDEB_INTERFACELIST setting in the ITM_HOME/config/to.ini file on the Transaction Reporter host. This setting prevents the TO agent from switching network interface cards and appearing to disconnect from the TEPS.
+
+KDEB_INTERFACELIST=<nic-ip-address> 
+
+where <nic-ip-address> is the IP address of one of the network interface card. 
+
+After adding KDEB_INTERFACELIST to the to.ini file, restart the Transaction Reporter.
+
+RELATED INFORMATION
+ AIX Portal Server fails with Remote Procedure Call [http://www.ibm.com/support/docview.wss?uid=swg21968342]
+
+
+
+
+HISTORICAL NUMBER
+ 05019.004.000 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfT 7.4
+T7.4

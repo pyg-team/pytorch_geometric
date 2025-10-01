@@ -1,0 +1,51 @@
+Title: IBM Incorrect providerURL causes ConfigEngine wp-add-property task to fail in cluster - United States
+
+Text:
+property extension; cluster; wp-add-property; configengine; la.providerURL; Bootstrap port TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+When adding an LDAP attribute by running "ConfigEngine[.bah|.sh] wp-add-property", the task fails with the following errors:
+
+[wplc-add-property] [datetime] Looking up EJB: corbaloc:iiop:localhost:10031...
+[wplc-add-property] [datetime] security.LoadSCI
+[wplc-add-property] [datetime] security.GettingConfig
+[wplc-add-property] [datetime] security.AuthTarget
+[wplc-add-property] [datetime] security.ClientCSI
+[wplc-add-property] [datetime] Cannot find EJB: ejb/com/ibm/websphere/wim/ejb/WIMServiceHome
+[wplc-add-property] javax.naming.NameNotFoundException: Context: theCell/clusters/theCluster, name: ejb/com/ibm/websphere/wim/ejb/WIMServiceHome: First component in name websphere/wim/ejb/WIMServiceHome not found. [Root exception is org.omg.CosNaming.NamingContextPackage.NotFound: IDL:omg.org/CosNaming/NamingContext/NotFound:1.0]
+
+
+CAUSE
+An incorrect la.providerURL was set.
+
+RESOLVING THE PROBLEM
+ 
+
+When adding a new LDAP attribute to the security configuration in either a standalone or federated security environment, you must run the ConfigEngine tasks, wp-la-install-ear and then wp-add-property, with the following entries in the wkplc.properties file: 
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+In a clustered environment, you should update the value for la.providerURL to point to the Deployment Manager's hostname and port number, instead of leaving it as the default value. You can find the BOOTSTRAP port of the Deployment Manager from the WebSphere Integrated Solution Console (aka the "adminconsole") or from serverindex.xml under <dmgr_profile>/config/cells/<cell>/nodes/<node>. 
+
+By default, the port would be 9809. 
+So instead of : 
+la.providerURL=corbaloc:iiop:localhost:10031 
+
+The entry should be: 
+la.providerURL=corbaloc:iiop:dmgr.example.com:9809  
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products AIX, HP-UX, IBM i, Linux, Solaris, Windows, z/OS 7.0, 6.1

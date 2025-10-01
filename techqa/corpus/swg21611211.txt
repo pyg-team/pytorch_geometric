@@ -1,0 +1,76 @@
+Title: IBM Service Integration Bus messaging engine startup fails with CWSOM1041E Exception - United States
+
+Text:
+CWSIS1591E CWSIS0002E CWSOM1041E BufferUnderflowException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have restarted WebSphere Application Server. After the restart, the messaging engine fails to start due to CWSOM1041E Exception 
+
+SYMPTOM
+The following errors are logged in the SystemOut.log: 
+
+CWSOM0003I: ObjectManager using logFile /XXX/messageStores/XXXCluster/log/Log has shut down.
+CWSIS1591E: The file store has caught an unexpected exception during initialisation.
+CWSIS0002E: The messaging engine encountered an exception while starting. Exception: com.ibm.ws.sib.msgstore.SeverePersistenceException: Unexpected exception caught initializing file store: CWSOM1041E: ObjectManager caught Exception={0}(java.nio.XXX Exception). 
+
+FFDCs are produced with the following stack:
+
+FFDC Exception:java.nio.BufferUnderflowException 
+SourceId:com.ibm.ws.objectManager.SingleFileObjectStore:open 
+ProbeId:1:260:1.35 Reporter:com.ibm.ws.objectManager.SingleFileObjectStore@3c073c07
+java.nio.BufferUnderflowException
+at java.nio.Buffer.nextGetIndex(Buffer.java:492)
+at java.nio.HeapByteBuffer.getInt(HeapByteBuffer.java:336)
+at com.ibm.ws.objectManager.SingleFileObjectStore.open(SingleFileObjectStore.java:157)
+at com.ibm.ws.objectManager.ObjectManagerState.mergeObjectStores(ObjectManagerState.java:2731)
+at com.ibm.ws.objectManager.ObjectManagerState.becomeCloneOf(ObjectManagerState.java:2698)
+at com.ibm.ws.objectManager.Token.setManagedObject(Token.java:213)
+at com.ibm.ws.objectManager.CheckpointStartLogRecord.performRecovery(CheckpointStartLogRecord.java:175)
+at com.ibm.ws.objectManager.ObjectManagerState.performRecovery(ObjectManagerState.java:728)
+at com.ibm.ws.objectManager.ObjectManagerState.performWarmStart(ObjectManagerState.java:593)
+at com.ibm.ws.objectManager.ObjectManagerState.<init>(ObjectManagerState.java:472)
+at com.ibm.ws.objectManager.ObjectManager.createObjectManagerState(ObjectManager.java:293)
+at com.ibm.ws.objectManager.ObjectManager.initialise(ObjectManager.java:237)
+at com.ibm.ws.objectManager.ObjectManager.<init>(ObjectManager.java:197)
+at com.ibm.ws.sib.msgstore.persistence.objectManager.PersistentMessageStoreImpl.start(PersistentMessageStoreImpl.java:352)
+at com.ibm.ws.sib.msgstore.impl.MessageStoreImpl.start(MessageStoreImpl.java:1518)
+at com.ibm.ws.sib.admin.impl.JsMessagingEngineImpl.start(JsMessagingEngineImpl.java:609)
+at com.ibm.ws.sib.admin.impl.HAManagerMessagingEngineImpl.activate(HAManagerMessagingEngineImpl.java:995)
+at com.ibm.ws.sib.admin.impl.JsActivationThread.run(JsActivationThread.java:92)
+
+FFDC Exception:com.ibm.ws.objectManager.PermanentNIOException 
+SourceId:com.ibm.ws.objectManager.ObjectManagerState:performRecovery 
+ProbeId:1:745:1.57 Reporter:com.ibm.ws.objectManager.ObjectManagerState@5e795e79
+com.ibm.ws.objectManager.PermanentNIOException: CWSOM1041E: ObjectManager 
+caught Exception={0}(java.nio.XXX Exception). 
+at com.ibm.ws.objectManager.SingleFileObjectStore.open(SingleFileObjectStore.java:264)
+at com.ibm.ws.objectManager.ObjectManagerState.mergeObjectStores(ObjectManagerState.java:2731)
+at com.ibm.ws.objectManager.ObjectManagerState.becomeCloneOf(ObjectManagerState.java:2698)
+at com.ibm.ws.objectManager.Token.setManagedObject(Token.java:213)
+at com.ibm.ws.objectManager.CheckpointStartLogRecord.performRecovery(CheckpointStartLogRecord.java:175)
+................
+Caused by: java.nio.BufferUnderflowException
+at java.nio.Buffer.nextGetIndex(Buffer.java:492)
+at java.nio.HeapByteBuffer.getInt(HeapByteBuffer.java:336)
+at com.ibm.ws.objectManager.SingleFileObjectStore.open(SingleFileObjectStore.java:157)
+
+
+CAUSE
+The messaging engine filestore Temporary Store and Permanent Store files were deleted without deleting the log file.
+Note: It is not recommended to delete the filestore files unless otherwise advised by IBM since all the messages in the filestore will be lost by performing this action.
+
+
+RESOLVING THE PROBLEM
+Delete the messaging engine filestore log file. Restart the JVM .This should create all the filestore files for the messaging engine.
+
+RELATED INFORMATION
+ File Stores [https://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.multiplatform.doc/ae/cjm1410_.html]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Enterprise Service Bus SIBus AIX, HP-UX, Linux, Solaris, Windows Business Integration WebSphere MQ Service Integration Technologies /SIB AIX, HP-UX, Linux, Solaris, Windows Business Integration WebSphere Process Server SIB (service integration bus) AIX, HP-UX, Linux, Solaris, Windows Business Integration WebSphere Service Registry and Repository Not Applicable AIX, HP-UX, Linux, Solaris, Windows 
+HISTORICAL NUMBER
+ 62529 001 754

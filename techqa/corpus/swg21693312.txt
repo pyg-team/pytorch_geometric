@@ -1,0 +1,85 @@
+Title: IBM Security Bulletin: TLS padding vulnerability affects IBM Security SiteProtector  (CVE-2014-8730) - United States
+
+Text:
+PSIRT SECURITY BULLETIN
+
+SUMMARY
+ Transport Layer Security (TLS) padding vulnerability via a POODLE (Padding Oracle On Downgraded Legacy Encryption) like attack affects IBM Security SiteProtector System and IBM Security SiteProtector Appliance. 
+
+VULNERABILITY DETAILS
+
+CVE-ID: CVE-2014-8730 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-8730]
+
+DESCRIPTION: 
+Product could allow a remote attacker to obtain sensitive information, caused by the failure to check the contents of the padding bytes when using CBC cipher suites of some TLS implementations. A remote user with the ability to conduct a man-in-the-middle attack could exploit this vulnerability via a POODLE (Padding Oracle On Downgraded Legacy Encryption) like attack to decrypt sensitive information and calculate the plaintext of secure connections.
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/99216 [https://exchange.xforce.ibmcloud.com/vulnerabilities/99216] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+ * IBM Security SiteProtector System versions 3.0, 3.1 and 3.1.1 
+ * IBM Security SiteProtector Appliance versions SP2001 and SP3001 (these appliances are vulnerable if they are using SiteProtector versions 3.0, 3.1 or 3.1.1). 
+
+REMEDIATION/FIXES
+ Apply the appropriate eXPress Updates (XPUs) as identified in the SiteProtector Console Agent view:
+
+For SiteProtector 3.0:
+
+SiteProtector Core Component: ServicePack3_0_0_6.xpu
+Event Collector Component: RSEvntCol_WINNT_ST_3_0_0_5.xpu
+Agent Manager Component: AgentManager_WINNT_XXX_ST_3_0_0_33.xpu
+
+
+For SiteProtector 3.1:
+
+SiteProtector Core Component: ServicePack3_1_0_3.xpu
+Event Collector Component: RSEvntCol_WINNT_ST_3_1_0_3.xpu
+Agent Manager Component: AgentManager_WINNT_XXX_ST_3_1_0_15.xpu
+
+For SiteProtector 3.1.1:
+
+SiteProtector Core Component: ServicePack3_1_1_1.xpu
+Event Collector Component: RSEvntCol_WINNT_ST_3_1_1_1.xpu
+Agent Manager Component: AgentManager_WINNT_XXX_ST_3_1_1_3.xpu
+Express Update Server Component: UpdateServer_3_1_1_1.pkg
+Event Archiver Component: EventArchiver_3_1_1_1.pkg
+
+Please note that the Express Update Server and Event Archiver components automatically update.
+
+WORKAROUNDS AND MITIGATIONS
+On each machine running a SiteProtector component or on the appliance, perform the following steps:
+
+
+ 1. Select the Start button > right-click Computer > Properties > Advanced system settings > Environment Variables... 
+ 2. Under System variables, add a new variable GSK_STRICTCHECK_CBCPADBYTES with a value of 1. 
+ 3. Restart all the SiteProtector services including issDaemon.
+
+
+On each machine running a X-press Update Server, perform the following steps: 
+
+ 1. Edit the file C:\Program Files\ISS\SiteProtector\Application Server\webserver\IHS\conf\httpd.conf. 
+ 2. After line "SSLAttributeSet 445 1", insert a new line "SSLAttributeSet 471 1" 
+ 3. Restart the service SiteProtector Web Server.
+
+
+
+You should verify applying this configuration change does not cause any compatibility issues. GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,143 @@
+Title: IBM Security warning messages or blocking for Java applets might occur in IBM ECM web clients because of changed signing requirements in the Java Runtime Environment (JRE) - United States
+
+Text:
+Workplace XT 1.1.4; Workplace XT 1.1.5; Workplace 4.0.2; Workplace 4.0.2.14; WEBi 1.0.4; Block potentially unsafe components from being run?; Java 7 update 51 FLASH (ALERT)
+
+ABSTRACT
+ Security warning messages or blocking for Java applets can occur in IBM Content Navigator, IBM FileNet Workplace XT, IBM FileNet Application Engine (Workplace), and IBM WEBi when the applications attempt to run a Java applet. This problem can occur with various versions of the JRE. Starting with JRE 1.7.0_51 and 1.8.0_77, applets might not run, in which case you must take certain actions to resolve the problem. 
+
+CONTENT
+This document identifies specific compatibility issues with certain JRE versions for certain ECM web client versions.
+
+ 
+
+For the latest information about supported JRE versions, see the Prerequisites section in the Software Product Compatibility Reports for your web client: [www.ibm.com/software/reports/compatibility/clarity/osForProduct.html]
+http://www.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html [http://www-969.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html] 
+
+SYMPTOM
+For any Java applets in the IBM Enterprise Content Management (ECM) web clients, for example, when you open items in the viewer in IBM Content Navigator, you might see security warning messages. Starting in JRE 1.7.0_51 and 1.8.0_77, instead of warning messages, applets might be blocked unless you take the appropriate action described in Resolving the problem.  
+
+CAUSE
+Updates were made to the Java trust and signing requirements. ENVIRONMENT
+This problem can occur for the following versions of IBM ECM web clients with certain versions of the Oracle JRE: 
+
+
+
+Oracle JRE version IBM Content Navigator* IBM FileNet Application Engine IBM FileNet Workplace XT* IBM WEBi* 1.6.0_38 and earlier, 1.7.0_17 and earlier Warnings do not occur in the following versions:  * 2.0 
+ * 2.0.1, 2.0.1.1, 2.0.1.1 Interim Fix 001, 2.0.1.1 Interim Fix 002 
+ * 2.0.2 
+
+Warnings occur in the following versions:  * 2.0.1.2 
+ * 2.0.2.1 and later
+
+Warnings do not occur in the following version:  * 4.0.2.13
+
+Warnings do not occur in the following version:  * 1.1.5.2
+
+Warnings do not occur in the following versions:  * 1.0.4.4 
+ * 1.0.4.5
+
+1.6.0_45 Warnings occur in the following versions:  * 2.0 
+ * 2.0.1 (The print applet and FileNet viewer applet are fixed in 2.0.1.1 Interim Fix 002) 
+ * 2.0.2.1
+
+Warnings occur in all versions. Warnings occur in all versions. Warnings do not occur in the following version:  * 1.0.4.5
+
+1.7.0_21 and 1.7.0_25 Warnings occur in the following versions:  * 2.0 
+ * 2.0.1 (The print applet and FileNet viewer applet are fixed in 2.0.1.1 Interim Fix 002) 
+ * 2.0.2.1 and later 
+ * 2.0.3
+
+Warnings occur in all versions. Warnings occur in all versions. Warnings occur in all versions. 1.7.0_45 Warnings occur in the following versions:  * 2.0 
+ * 2.0.1, 2.0.1.1, 2.0.1.1 Interim Fix 001, 2.0.1.1 Interim Fix 002 
+ * 2.0.2 
+ * 2.0.3
+
+
+Warnings do not occur in the following versions:  * 2.0.1.2 
+ * 2.0.2.1
+
+Warnings do not occur in the following version:  * 4.0.2.14
+
+Warnings do not occur in the following version:  * 1.1.5.2 Interim Fix 001**
+
+Warnings do not occur in the following version:  * 1.0.4.501
+
+1.7.0_51 (January 2014) Java applets are blocked in the following versions:  * 2.0 
+ * 2.0.1, 2.0.1.1, 2.0.1.1 Interim Fix 001, 2.0.1.1 Interim Fix 002 
+ * 2.0.2 
+
+
+Java applets are not blocked in the following versions:  * 2.0.1.2 
+ * 2.0.2.1 
+ * 2.0.3
+
+Java applets are not blocked in the following version:  * 4.0.2.14
+
+Java applets are not blocked in the following versions:  * 1.1.5.2 Interim Fix 001**
+
+Java applets are not blocked in the following versions:  * 1.0.4.501
+
+1.8.0_77 Warnings occur in the following versions:  * 2.0.2 
+ * 2.0.3
+
+Warnings occur in all versions. Warnings occur in all versions. Warnings occur in all versions. 
+*Information for Content Manager OnDemand administrators about the line data applet viewer: The line data applet viewer, which is used for viewing Content Manager OnDemand documents from IBM Content Navigator, WEBi, and Workplace XT, might provide warnings with specific versions of the JRE. This viewer is provided by the OnDemand Web Enablement Kit (ODWEK); updates are provided as part of ODWEK deliverables. To resolve issues with the line data applet viewer, update your ODWEK installation to a version supported by your JRE. For example, if using JRE 1.7.0_51, upgrade to ODWEK 9.0.0.3 or pick up the updated files for ODWEK 8.5.0.8. For more information, see http://www-01.ibm.com/support/docview.wss?uid=swg21660454 [http://www-01.ibm.com/support/docview.wss?uid=swg21660454].  
+
+**Information for Workplace XT and Application Engine (JRE 1.7.0_51 only): You must install the latest updates from Process Engine and Content Engine, or Content Platform Engine for the Designer applets (for example, Process Designer and Search Designer) as well as the process applets (for example, process tracker) to load properly. 
+
+To resolve potential problems with blocked Designer and process applets, upgrade IBM Content Manager to one of the following versions: 
+
+Product version Fix ID 5.2  * 5.2.0.2-P8CPE-IF003
+
+5.1  * 5.1.0.4-P8CE-IF001 
+ * 5.0.0.5-P8PE-IF001
+
+5.0  * 5.0.0.2-P8CE-IF001 
+ * 5.0.0.5-P8PE-IF001
+
+4.5  * 4.5.1.7-P8CE-IF002 
+ * 4.5.1.4-P8PE-IF004
+
+
+
+Information for eClient: This issue has been addressed for eClient in a test fix for eClient V8.4.3 Fix Pack 3. Please contact IBM Software Support to obtain the fix for this issue. RESOLVING THE PROBLEM
+Choose one of the following options to resolve the problem: 
+
+ * Upgrade your IBM ECM web client version to a fix pack level that resolves the warnings that occur in the version of the JRE that you are running. As IBM ECM web client updates become available, this flash is updated to reflect whether the JRE warnings will occur in those versions.
+
+ * Implement a rule set: It is possible to implement an Oracle Java Rule Set, which allows an enterprise to declare certain applets as safe. Use the Rule Set feature in JRE version 1.7.0_40 and later to develop a list of safe applets for your site. 
+ * Allow applets that have a trusted signature, for example, a valid International Business Machines Corporation (IBM) signature. Click Allow, Don't Block, or Run to allow the applet to run.
+
+
+If you block the application (if you click Block, Do Not Allow, or Don't Run), the Java applet will not run.  
+
+Important: In January 2014, Oracle will release JRE version 1.7.0_51 (7u51) and expire older versions of the JRE. 
+
+For any IBM ECM web clients that you use, applets that are not updated to satisfy the latest JRE security requirements can fail to load with JRE 1.7.0_51. To avoid security warnings and to enable IBM ECM web client applets to load properly, you must upgrade each IBM ECM web client to the latest fix when you upgrade the JRE to version 1.7.0_51. 
+
+For IBM FileNet Application Engine and IBM FileNet Workplace XT, you must also install the latest Process Engine and Content Engine files, or Content Platform Engine files. 
+
+For IBM Content Navigator and IBM WEBi, you must also install the latest ODWEK files. You must also install ODWEK if you are using Workplace XT with IBM FileNet Content Federation Services for Content Manager OnDemand. 
+
+
+
+UNBLOCKING A BLOCKED JAVA APPLET
+If you blocked a Java applet that is signed by IBM in an IBM ECM web application, you can unblock the applet by clearing the JRE cache: 
+
+1. Close all web browsers. 
+
+2. Clear the Java cache by deleting the temporary internet files in the Java Control Panel. See Oracle documentation for specific steps to clear Java cache. 
+
+
+Tip: Some web browser versions might also block Java applets, where Java loads only after the user allows the instance or specifies for Java to load automatically for an entire website. Refer to the documentation for your web browser for more information about resolving the problem.
+
+RELATED INFORMATION
+ JRE Expiration Date [http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/client-security.html#jexpire]
+Java 7 Update 45 Release Notes [http://www.oracle.com/technetwork/java/javase/7u45-relnotes-2016950.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management FileNet Content Manager Workplace XT 1.1.4, 1.1.5 Enterprise Content Management FileNet Content Manager Application Engine 4.0.2 Enterprise Content Management Content Navigator Not Applicable 2.0.3, 2.0.2, 2.0.1, 2.0 Enterprise Content Management IBM Web Interface for Content Management WEBi 1.0.4

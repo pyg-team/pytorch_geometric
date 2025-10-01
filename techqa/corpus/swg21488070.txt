@@ -1,0 +1,33 @@
+Title: IBM Output Export is not working properly in Statistics 18.0.3 and 19.0.0 when I try to export output to an Excel workbook containing formulas - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am working with Statistics 18.0.3 or version 19.0.0 and created some tables in the viewer which I would like to export into an existing Excel 2003 workbook containing formulas. However, when I run my OUTPUT EXPORT syntax command to overwrite my existing Excel file I receive the error below:
+
+Error message: 'Cannot create this file. Please verfiy the correct file name was given.'
+
+The formula I use is not complex, it is a IF formula like in this example: if(A2>A3;1;0). 
+
+RESOLVING THE PROBLEM
+This problem has been reported to SPSS Development - Workaround Available. The issue is resolved in IBM SPSS Statistics 20.
+
+
+As a workaround for earlier releases please download the following zip file from Apache.org:
+http://archive.apache.org/dist/poi/release/bin/poi-bin-3.0.1-FINAL-20070705.zip [http://archive.apache.org/dist/poi/release/bin/poi-bin-3.0.1-FINAL-20070705.zip]
+
+Log in as Administrator on the computer where you have the export issue. 
+In the zip file you will find a jar file named poi-3.0.1-FINAL-20070705.jar. Extract it to a temporary folder on your computer and rename it to poi-3.0.1.jar. 
+Close all Statistics 18.0.3 or 19.0.0 instances and navigate to the installation directory of Statistics 18.0.3.
+Rename the existing file poi-3.0.1.jar to poi-3.0.1.orig and copy the other poi-3.0.1.jar file from your temporary directory into the Statistics 18.0.3 installation directory.
+Start Statistics 18.0.3 and perform your export into an existing Excel workbook with formula again, it will work without any issues.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 91838

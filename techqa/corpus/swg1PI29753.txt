@@ -1,0 +1,143 @@
+Title: IBM PI29753: DB_LOADER: ERROR: UNEXPECTED ERROR FROM DATABASE LIBRARY (8) IN "\ATRIA\LIB\DB\DB__LOAD.C" LINE 3936 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When loading a ClearCase VOB database of a UCM project VOB as
+   schema 80
+     either as part of reformatvob or mkreplica
+    then db_loader will fail if any UCM stream has too many
+   internal folders.
+   
+   A stream has, by design, up to 3 internal folders as containers
+   for its child objects
+    an "Activity Folder" to contain UCM activities
+     a "Stream Folder" to contain child streams
+     a "Timeline Folder" to contain component timelines
+   
+   If it has multiple folders of the same type, then it cannot be
+   loaded as a schema 80 database.
+   
+   There is a race condition that can lead to a stream having
+   multiple "Timeline Folder"s
+   If two operations are initiated a very close point in time, on a
+   stream that does not yet have a timeline folder,
+     then both processes may decide to reae the timeline folder,
+   resulting in the stream having two.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Contact IBM Rational Client Support to obtain a tool that will
+   merge multiple folders into one
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users migrating ClearCase VOB database from schema 54 to     *
+   * schema 80.                                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When loading a ClearCase VOB database of a UCM project VOB   *
+   * as schema 80 either as part of reformatvob or mkreplica then *
+   * db_loader will fail if any UCM stream has too many internal  *
+   * folders.                                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A special tool was created to merge multiple timeline folders to
+   one on schema 54. After the fix, this schema 54 pvob can be
+   migrated to schema 80.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI29753
+   
+   
+ * REPORTED COMPONENT NAME
+   CLRCASE MSITE W
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3200
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-11-17
+   
+   
+ * CLOSED DATE
+   2016-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

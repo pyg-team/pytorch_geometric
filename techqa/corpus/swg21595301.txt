@@ -1,0 +1,46 @@
+Title: IBM "JAXB can't handle interfaces" error message when the MTDS WAR file is built - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Ant task that builds the WAR file for a web service or a monitored transparent decision service (MTDS) fails with a "JAXB can't handle interfaces" error message. 
+
+SYMPTOM
+The following errors might show in a stack when you run the Ant task provided to build a web service or a monitored transparent decision service in debug mode:
+
+<an XOM interface> is an interface, and JAXB can't handle interfaces.
+this problem is related to the following location:
+... 
+
+<an XOM interface> does not have a no-arg default constructor.
+this problem is related to the following location: 
+
+...
+
+
+CAUSE
+In Rule Studio, the MTDS client for Rule Execution Server wizard uses the JAXB API to generate a web service component. 
+
+
+The "<class> is an interface, and JAXB can't handle interfaces" error message indicates a limitation of that API.
+
+
+RESOLVING THE PROBLEM
+To work around those errors, you can add the following annotation to the XOM interfaces listed in the error message: 
+
+ * 
+ * @XmlJavaTypeAdapter(AnyTypeAdapter.class)
+
+
+Refer to the JAXB documentation [http://jaxb.java.net/guide/Mapping_interfaces.html] for details.
+
+RELATED INFORMATION
+ Transparent decision services and rule execution [http://pic.dhe.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global949.html]
+Creating a WS/MTDS project for RuleApps [http://pic.dhe.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global949.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0, 7.5

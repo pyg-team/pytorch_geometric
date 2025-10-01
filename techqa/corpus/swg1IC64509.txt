@@ -1,0 +1,156 @@
+Title: IBM IC64509: IN DPF, CONNECTING TO A QUIESCED DATABASE BY A USER WHO HAS     QUIESCE_CONNECT AUTHORITY MAY STILL THROW A SQL20157N ERROR - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.1 Fix Pack 9 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24026384]
+DB2 Version 9.1 Fix Pack 10 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24029027]
+DB2 Version 9.1 Fix Pack 11 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24031281]
+DB2 Version 9.1 Fix Pack 12 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033023]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In DPF environments, After granting quiesce_connect on the
+   database to the user and even to its group, if the instance is
+   quiesced as follows "db2 quiesce instance <instancename> group
+   cmodprod immediate", connect to the database by setting DB2NODE
+   to another partition would  fail with SQL20157N error though
+   theuser has quiesce_connect authority.
+   
+    For example:
+   db2 "grant quiesce_connect on database to user usr1"
+   db2 "grant quiesce_connect on database to group grp1"
+   db2 quiesce instance <instancename> group grp1 immediate
+   
+   As usr1:
+   export DB2NODE=1
+   db2 terminate
+   db2 connect to <dbname>
+   SQL20157N  User "usr1 " does not have the QUIESCE_CONNECT
+   privilege. SQLSTATE=08004
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Invoke the quiesce command using the user option instead for
+   every user belonging to the group.
+   db2 quiesce instance <inst_name> user usr1 immediate
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users in a DPF Environment                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * IN DPF, CONNECTING TO A QUIESCED DATABASE BY A USER WHO HAS  *
+   * QUIESCE_CONNECT AUTHORITY MAY STILL THROW A SQL20157N ERROR  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to Version 9.1 Fixpak 9                              *
+   * or                                                           *
+   * Use the workaround listed                                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem was first first fixed in Version 9.1 Fixpak 9
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC64509
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-11
+   
+   
+ * CLOSED DATE
+   2010-04-19
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC65138 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC65138] IC65139 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC65139] IZ66828
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY
+   UP

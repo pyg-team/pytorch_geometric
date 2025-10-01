@@ -1,0 +1,33 @@
+Title: IBM What is causing "hung display" transactions in the image system? - United States
+
+Text:
+Hangs and Deadlocks TECHNOTE (FAQ)
+
+QUESTION
+ For several years I have been experiencing what we call "hung display" transactions in the image system. I average 14 or 15 per month, and while they don't last long because the help desk intervenes quickly, they are annoying. I have tried several fixes, which didn't help. I'm still having image system slowdowns in response time due to hung image display transactions (DISP). Is there a solution? 
+
+ANSWER
+We would need to get a snapshot of the hung transactions in order to determine which resource is causing the hang. DISP hangs can occur for a number of reasons and several solutions exist, depending upon the nature of the problem:
+
+
+ *  Explicit enqueues (ENQs) on resources
+   There was a problem with IODM 2.2 enqueuing on resource EKCCUBPR. This was fixed in APAR PN55486 (PTF UN60897). There was also a performance problem with OWMS transactions that was fixed in APAR PN55631 (PTF UN61092). DB2® threads no longer available to process object retrievals Memory not available to process object retrievals
+   If the resource is DB2 threads or system memory, these need to be increased to match the intended workload. Request is for an object on optical Too many DISP transactions submitted by end users 
+
+
+IODM 2.2 APARs PN67574 and PN67575 (PTF UN77405) provide sample exits for managing DISP transactions. They allow DISP to be "throttled" to reduce the amount of DB2 threads and system memory that is used. The sample exits also prevent long retrieval requests (like optical) from consuming system resources, as well as prevent end-users from submitting too many DISP requests. These exits cannot be used "as is"; they need to be customized and tuned to your environment. Highmark is a good resource for tuning these exits.  *  Workstation stops responding to host requests
+   Workstation hangs can be a constant source of problems. Causes can include:  1. Users not responding to the IWPM logo screen (OK button) 
+    2. IWPM failing to respond to host requests 
+    3. PC communications problems 
+    4. Mismatched VTAM® settings (such as pacing), router problems, etc. 
+   
+   
+   If the suspend resource type shows up as ZCIOWAIT at the host, this might indicate that the workstation has stopped responding. To prevent communication problems from hanging DISPs, these possible solutions exist:  1. Define a transaction profile for DISP, and set RTIMOUT to an appropriate value (such as 60 seconds). This will cause DISP transactions to be purged if a workstation fails to respond in a timely manner. 
+    2. APAR II07638 specifies some OS/2® workstation parameters that can be adjusted to reduce the occurrence of hangs. 
+    3. ODMKILL is a sample program that we make available on an as-is basis. This program checks to see if any DISP transaction has been hung too long in the system and purges it. This code isn't officially supported as part of the IODM product. However, we have done some limited testing, and it seems to work. 
+    4. If the hang is reproducible "at will," it is possible that there is a workstation bug. In this case, a problem should be opened with IWPM support.
+   
+   
+   IODM Version 3.1 includes all of the APAR fixes that are mentioned above. In addition, IODM Version 3.1 allows communication timeout values to be set for TCP/IP workstations; this is effective in preventing communication-related workstation hangs. Unfortunately, no similar mechanism is available for advanced program-to-program communication (APPC) communications (other than RTIMOUT).
+   
+   We have added the Disperse Display Transaction exit. This allows a user to intercept a display transaction prior to it starting, and to split displays between DASD Tclass queues and Optical (or tape) Tclass queues. More information is available in the IODM 3.1 manuals at:

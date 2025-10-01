@@ -1,0 +1,78 @@
+Title: IBM Security Bulletin: Vulnerabilities in nss and nspr affect IBM SmartCloud Provisioning 2.1 for Software Virtual Appliance - United States
+
+Text:
+CVE-2013-1740; CVE-2014-1490; CVE-2014-1491; CVE-2014-1492; CVE-2014-1544; CVE-2014-1545 SECURITY BULLETIN
+
+SUMMARY
+ Vulnerabilities have been identitied in nss and nspr packages that affect IBM SmartCloud Provisioning 2.1 for Software Virtual Appliance (CVE-2013-1740, CVE-2014-1490, CVE-2014-1491, CVE-2014-1492, CVE-2014-1544, CVE-2014-1545). 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2013-1740 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-1740]
+DESCRIPTION: Mozilla Network Security Services might allow a remote attacker to obtain sensitive information, which is caused by an error in the ssl_Do1stHandshake() function. An attacker might exploit this vulnerability to return unencrypted, unauthenticated data from PR_Recv.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/90394 [https://exchange.xforce.ibmcloud.com/vulnerabilities/90394] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N) 
+
+CVEID: CVE-2014-1490 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1490]
+DESCRIPTION: Mozilla Firefox,Thunderbird and SeaMonkey, using the Mozilla Network Security Services (NSS) library, might allow a remote attacker to execute arbitrary code on the system, which is caused by a use-after-free in libssl's session ticket processing. An attacker might exploit this vulnerability to execute arbitrary code on the system with elevated privileges.
+CVSS Base Score: 9.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/90885 [https://exchange.xforce.ibmcloud.com/vulnerabilities/90885] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:C/I:C/A:C) 
+
+CVEID: CVE-2014-1491 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1491]
+DESCRIPTION: An unspecified error in Mozilla Firefox,Thunderbird and SeaMonkey using the Mozilla Network Security Services (NSS) library has an unknown impact and attack vector.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/90886 [https://exchange.xforce.ibmcloud.com/vulnerabilities/90886] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N) 
+
+CVEID: CVE-2014-1492 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1492]
+DESCRIPTION: An unspecified error in Mozilla Network Security Services (NSS) related to the processing of wildcard characters embedded within the U-label of an internationalized domain name in a wildcard certificate has an unknown impact and remote attack vector.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91988 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91988] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N) 
+
+CVEID: CVE-2014-1544 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1544]
+DESCRIPTION: Mozilla Firefox and Thunderbird might allow a remote attacker to execute arbitrary code on the system, which is caused by a use-after-free error in the PK11_ImportCert() function when adding NSSCertificate structures. By persuading a victim to visit a specially crafted Web site, a remote attacker might exploit this vulnerability using unknown attack vectors to execute arbitrary code on the vulnerable system or cause a denial of service.
+CVSS Base Score: 9.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/94776 [https://exchange.xforce.ibmcloud.com/vulnerabilities/94776] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:C/I:C/A:C) 
+
+CVEID: CVE-2014-1545 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1545]
+DESCRIPTION: Mozilla Netscape Portable Runtime (NSPR) might allow a remote attacker to execute arbitrary code on the system, which is caused by an out-of-bounds write error in the sprintf and console functions. By persuading a victim to visit a specially crafted Web site, a remote attacker might exploit this vulnerability using unknown attack vectors to execute arbitrary code on the vulnerable system or cause a denial of service.
+CVSS Base Score: 9.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/93715 [https://exchange.xforce.ibmcloud.com/vulnerabilities/93715] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:C/I:C/A:C)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM SmartCloud Provisioning 2.1 for Software Virtual Appliance 
+
+REMEDIATION/FIXES
+The recommended solution is download IBM SmartCloud Provisioning 2.1 Fix Pack 5 for Software Virtual Appliance Interim Fix 2 from Fix Central [http://www-933.ibm.com/support/fixcentral/] and apply it as soon as practical.
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ * 30 November 2014: Original copy published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

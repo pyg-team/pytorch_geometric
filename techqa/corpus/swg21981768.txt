@@ -1,0 +1,41 @@
+Title: IBM Daeja ViewONE Pro (streaming) and Virtual Streaming doesn't work with Load balanced URL - United States
+
+Text:
+repository access error; load balance; externalHost1 internalHost TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Sometimes IBM Daeja ViewONE Streaming doesn't work with Load balanced URL while using ICN 2.0.3 Fix Pack (IF) 4 with IBM FileNet Content Manager 5.2.1 on Windows that has IBM Daeja viewer 4.1.5 IF001 to work with the IBM Datacap Navigator plugin 9.0.1. 
+
+SYMPTOM
+When you try to open a document in the viewer, an intermittent error message shows up which indicates that the document or annotation could not be loaded or unable to generate page due to repository access error. 
+
+
+CAUSE
+This error is caused when the load balancer routes the request to another node.
+
+ENVIRONMENT
+IBM Content Navigator ICN 2.0.3FP4
+FileNet Content Manager 5.2.1
+Daeja viewer 4.1.5 IF001
+Datacap Navigator plugin 9.0.1
+
+DIAGNOSING THE PROBLEM
+When a document is opened by the user with load balanced URL, the request fails with an error.
+
+RESOLVING THE PROBLEM
+You need to set the configuration parameters (externalHost and internalHost) for Daeja ViewONE Virtual and Document Streaming by using the administration tool for IBM Content Navigator. You can also add multiple sets of externalHost and internalHost variables with multiple load balancers.
+
+You need to set the parameters in the following way:
+
+
+
+
+ 1. Open the administration tool in the web client. 
+ 2. Click Settings -> Daeja ViewONE -> Virtual/Professional tab
+    externalHost1=load.balanced.host/navigator
+    internalHost1=localhost:9080/navigator 
+ 3. Click Settings -> Daeja ViewONE -> Document Streaming tab
+    externalHost1=load.balanced.host/navigator
+    internalHost1=localhost:9080/navigator 
+ 4. Save your changes. 
+ 5. Restart the IBM Content Navigator server for the configuration changes to take effect.

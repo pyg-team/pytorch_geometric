@@ -1,0 +1,70 @@
+Title: IBM Enabling IBM FileNet Content Engine server tracing - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to enable and collect trace logs for the Content Engine server. 
+
+CAUSE
+While troubleshooting problems it may be necessary to collect detail tracing information for support.
+
+ANSWER
+Upgrade to the newest version of content engine. 
+
+The steps required to enable and collect server trace files for support is as follows:
+
+
+ 1. Use Administration Console for Content Platform Engine (ACCE) or FileNet Enterprise Manager (FEM) to enable tracing. 
+ 2. Optional, but helpful, to shutdown the server and purge any pre-existing trace and error files ( p8_server_trace.log and p8_server_error.log ). 
+ 3. Reproduce the problem or error that the trace logs are being collected for. 
+ 4. Turn tracing off.
+
+
+Do not leave tracing on all the time. It will slow the system down significantly. 
+Do not turn on tracing for all subsystems. This will result in a severe performance hit and often times the P8 Administrator cannot get back into the system using ACCE or FileNet Enterprise Manager to turn it off. 
+
+TRACE CONTROL WITH ACCE OR FILENET ENTERPRISE MANAGER
+
+Trace logging can be controlled using ACCE or FileNet Enterprise Manager at the server instance, the virtual server, the site, or the domain levels. Although trace logging is most commonly enabled at the Domain level (especially in clustered configurations), the server adheres to the following order of precedence when determining what subsystems are enabled for tracing. 
+
+Server Instance > Virtual Server > Site > Domain 
+
+Refer to the following to enable trace logging at the appropriate level: 
+
+Server Instance: In the ACCE or Enterprise Manager tree, expand Sites > <Site-name> > Virtual Servers > <Virtual-Server-name> > <Server-Instance-name> > Trace Logging 
+
+Virtual Server: In the ACCE or Enterprise Manager tree, expand Sites > <Site-name> > Virtual Servers > <Virtual-Server-name> > Trace Logging 
+
+Site: In the ACCE or Enterprise Manager tree, expand Sites > <Site-name> > Trace Logging 
+
+Domain: Right-click on the domain root node and select Properties, then the Trace Control tab. 
+
+You can enable or disable all available trace logging components either collectively or independently. 
+
+Once a Trace Logging component is found at a given level, that component is used for all subsystems. For example, if EJB tracing is enabled at the Server Instance level for server myServer and Database tracing is enabled at the Domain level, then the p8_server_trace.log file on myServer will contain EJB tracing, while all other servers in the P8 Domain will contain Database tracing. 
+
+To enable or disable components for trace logging, perform the following procedure:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+The minimum trace subsystem required to troubleshoot a problem is Error. 
+
+Please note that enabling every subsystem can adversely affect the system's behavior. Only enable those subsystems listed in the appropriate tech note or on advice from your support representative. 
+
+COLLECTING TRACE FILES
+
+Here are the locations where trace files are produced for each application server. In a cluster environment, the log files must be collected from each server. 
+ 1. WebSphere - <install-root>/profiles/<profile-name>/FileNet/<server-name>/p8_server_trace.log
+    
+ 2. WebLogic - <install-root>/user_projects/domains/<domain-name>/FileNet/<server-name>/p8_server_trace.log
+    
+ 3. JBoss - <install-root>/bin/FileNet/<server-name>/p8_server_trace.log
+
+
+HOW TO GET MORE INFORMATION
+More information about server tracing can be found in the "Trace logging" section of the FileNet P8 Documentation (IBM FileNet P8 Documentation > Developer Help > FileNet P8 Administration > Content Engine Administration > Trace Logging). You can download the IBM FileNet P8 Documentation [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg27010422] from the Product Documentation for FileNet P8 Platform Web page.

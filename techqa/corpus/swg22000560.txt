@@ -1,0 +1,22 @@
+Title: IBM Sterling B2B Integrator and Apache Struts Vulnerability CVE-2017-5638 - United States
+
+Text:
+apache struts vulnerability TECHNOTE (FAQ)
+
+QUESTION
+ Is IBM Sterling B2B Integrator or IBM Sterling File Gateway affected by the Apache Struts vulnerability CVE-2017-5638? 
+
+ANSWER
+IBM Sterling B2B Integrator and IBM Sterling File Gateway are not affected by the Apache Struts vulnerability CVE-2017-5638. 
+
+CVE-2017-5638 only affects Apache Struts 2.x. Sterling B2B Integrator and Sterling File Gateway use Apache Struts 1.1. There are currently no plans to move to a newer version of Apache Struts.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling File Gateway All All Editions 
+HISTORICAL NUMBER
+ CVE-2017-5638 
+
+PRODUCT ALIAS/SYNONYM
+ Sterling SI SBI B2BSI gateway

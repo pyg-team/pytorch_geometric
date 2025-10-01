@@ -1,0 +1,24 @@
+Title: IBM Questions regarding upgrading IBM Enterprise Content Management System Monitor from 5.1 to 5.2 - United States
+
+Text:
+clean update Data Base TECHNOTE (FAQ)
+
+QUESTION
+ Questions regarding upgrading IBM Enterprise Content Management System Monitor from 5.1 to 5.2, what happens concerning Database content like the History Table? What changes were made for the settings for the "Close Logfile Event older than" and the "Delete closed Events older than" on the Database Cleanup page? 
+
+ANSWER
+Historical Data will be copied to the Report Tables.
+It will not be deleted.
+The Report Tables is a new feature.
+
+The DB Cleanup confirmation will still preserve the old values prior to the upgrade. When changing the "Close logfile events older than" and/or "Delete closed events older than", it is limited to keeping up to 90 days maximum.
+
+Keeping the old values can impact performance. 
+This is the reason why the new Report Tables were introduced. 
+Adjust the configuration to keep no more than 90 days of Historical Data. 
+
+However, setting the time to keep Report Data for as long as needed is allowed.
+Report Data cleanup can be disabled. 
+Monitor that enough space is available for this storage.
+
+NOTE: The "Delete reporting data older than" is checked by default, and it's set to 1 year. It is required to adjust this setting after the upgrade to avoid losing Report Data older than 1 year.

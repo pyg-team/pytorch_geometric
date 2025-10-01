@@ -1,0 +1,21 @@
+Title: IBM Enabling Decision Validation Services and Decision Warehouse in Rules Team Server and Rule Execution Server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installing the Decision Validation Services module, the Rule Team Server do not show the Decision Validation Services ( DVS ) features and and the tab Decision Warehouse in the Rule Execution Server console is greyed out. 
+
+CAUSE
+The license embedded in Rule Execution Server (RES) and Rule Team Server (RTS) war does not reflect the fact that Decision Warehouse is a product with a valid license. This license is updated during DVS installation in every depending modules,
+
+RESOLVING THE PROBLEM
+After installing DVS locally redeploy the web application RES and RTS, so that the new license is taken into account. Refer to chapter "Deploying the war " of the documentation for details.
+
+
+Also note that in some WebSphere configurations, you may have to restart the Application Server and clean the deployment folder to ensure that the cache is emptied and the latest version is taken into account, there are located in the WebSphere\AppServer\profiles\<profileInstance>\temp\<Node>\<server> and WebSphere\AppServer\profiles\<profileInstance>\cache\<Node>\<server> .
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise

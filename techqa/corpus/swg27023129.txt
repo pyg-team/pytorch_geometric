@@ -1,0 +1,72 @@
+Title: IBM WebSphere MQ resource adapter v7.1 and later statement of support - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains the statement of support for the WebSphere MQ resource adapter provided with WebSphere MQ V7.1 and later. 
+
+CONTENT
+WebSphere MQ V7.1 and later includes a J2EE Connector Architecture (JCA) V1.5 resource adapter. The resource adapter implements the JCA V1.5 interfaces and can be used in J2EE 1.4 (or later) compliant application servers to access the resources of a WebSphere MQ queue manager. 
+
+Using the resource adapter with WebSphere Application Server Version 7 and Version 8
+The WebSphere MQ messaging provider in WebSphere Application Server Version 7 and Version 8 includes a version of the WebSphere MQ resource adapter. The version of the resource adapter supplied with the Application Server should be used in these environment. 
+
+Updates to the WebSphere MQ resource adapter that is installed with the application server are included in WebSphere Application Server Fix Packs.
+
+For more details please see:
+
+Information about using the WebSphere MQ messaging provider for WebSphere Application Server Version 7.0 [http://publib.boulder.ibm.com/infocenter/prodconn/v1r0m0/topic/com.ibm.scenarios.wmqwasusing.doc/topics/swg21316899.htm]
+
+Information about using the WebSphere MQ messaging provider for WebSphere Application Server Version 8.0 [http://publib.boulder.ibm.com/infocenter/prodconn/v1r0m0/topic/com.ibm.scenarios.wmqwasusing.doc/topics/swg21498708.htm]
+[http://publib.boulder.ibm.com/infocenter/prodconn/v1r0m0/topic/com.ibm.scenarios.wmqwasusing.doc/topics/swg21498708.htm]
+Information about using the WebSphere MQ messaging provider for WebSphere Application Server Version 8.5 [http://publib.boulder.ibm.com/infocenter/prodconn/v1r0m0/topic/com.ibm.scenarios.wmqwasusing.doc/topics/swg21498708_85.htm]
+
+Identifying which WebSphere MQ client is shipped with WebSphere Application Server [http://publib.boulder.ibm.com/infocenter/prodconn/v1r0m0/topic/com.ibm.scenarios.wmqwasusing.doc/topics/swg21248089.htm]
+
+
+Using the resource adapter with WebSphere Application Server Version 6.1
+The resource adapter must not be used with WebSphere Application Server Version 6.1. To access the resources of a WebSphere MQ queue manager from within WebSphere Application Server, use the WebSphere MQ messaging provider. [http://publib.boulder.ibm.com/infocenter/prodconn/v1r0m0/topic/com.ibm.scenarios.wmqwasusing.doc/topics/swg21307203.htm]
+Information about using WebSphere MQ as the JMS Provider for WebSphere Application Server Version 6.1 [http://publib.boulder.ibm.com/infocenter/prodconn/v1r0m0/topic/com.ibm.scenarios.wmqwasusing.doc/topics/swg21307203.htm] 
+
+
+Using the resource adapter with other application servers
+For all other J2EE 1.4 (or later) compliant application servers, problems following successful completion of the WebSphere MQ resource adapter Installation Verification Test (IVT) can be reported to IBM for the investigation of WebSphere MQ product trace and other WebSphere MQ diagnostic information. If the WebSphere MQ resource adapter IVT cannot be run successfully, problems encountered are likely to be caused by incorrect deployment or incorrect resource definitions which are application server specific and the problems should be investigated using application server documentation and / or the support organization for that application server.
+
+IBM has tested the resource adapter on the application servers listed below
+
+
+ * WebSphere Application Server Community Edition V2.1.1.5 
+ * JBoss Application Server V6.0.0
+
+
+Example scripts and detailed instructions for running the IVT with JBoss V6.0.0 and WAS CE V2.1.1.5 can be found in the WebSphere MQ 7.1 and V7.5 Information Centers. 
+
+
+General issues 
+
+Session interleaving is not supported: 
+Some application servers provide a capability called session interleaving, where the same JMS session can be used in multiple transactions, although it is only enlisted in one at a time. This is not supported by the WebSphere MQ resource adapter, and can lead to the issues shown below: 
+ * An attempt to put a message to a WebSphere MQ queue fails with reason code 2072 (MQRC_SYNCPOINT_NOT_AVAILABLE). 
+ * Calls to xa_close() fail with reason code -3 (XAER_PROTO), and an FDC with probe ID AT040010 is generated on the WebSphere MQ queue manager being accessed from the application server.
+
+
+Please see your application server documentation for how to disable this capability. 
+
+
+
+Java™ Transaction API (JTA) Specification of how XA resources are recovered for XA transaction recovery: 
+Section 3.4.8 of the JTA specification does not define a specific mechanism by which XA resources are recreated to perform XA transactional recovery. As such, it is up to each individual transaction manager (and therefore application server) how XA resources involved in an XA transaction are recovered. It is possible that, for some application servers, the WebSphere MQ resource adapter does not implement the application server specific mechanism utilized to perform XA transactional recovery. 
+
+IBM has tested XA transactional recovery with the WebSphere MQ 7.1 resource adapter on the following application servers: 
+ * WebSphere Application Server V7.0, V8.0 and V8.5. 
+ * WebSphere Application Server Community Edition V2.1.1.5 
+ * JBoss Application Server V6.0.0
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2011/10/11 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

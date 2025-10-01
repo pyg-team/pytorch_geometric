@@ -1,0 +1,77 @@
+Title: IBM Headers are incorrect when you export data to Excel from Jazz Reporting Service - United States
+
+Text:
+JRS; Export; Export the report to Microsoft Excel; Microsoft Excel TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to export data to Microsoft Excel from IBM Jazz Reporting Service (JRS) results in problems with the column headings. 
+
+SYMPTOM
+When you update the spread sheet with the data from the web the headings will not be correct. 
+
+
+Steps to reproduce: 
+
+ 1.  Open a blank Microsoft Excel work sheet
+     
+     
+ 2.  Generate a simple report In JRS
+     
+     
+ 3.  Click on the [Export] button
+     
+     
+ 4.  Copy the URL given in the dialog:
+     For example: 
+     https://clm.admin.ws/rs/query/182/dataservice?report=171&limit=-1&basicAuthenticationEnabled=true 
+ 5.  Click 'Data' > 'From Web' in the Excel workbook
+     
+     
+ 6.  Paste the URL into the Address field and [Go]
+     
+     
+ 7.  Accept any confirmation dialogs.
+     
+     
+ 8.  Log in with your Jazz Platform credentials.
+     
+     
+ 9.  Click [Import] when the XML data is loaded into dialog
+     
+     
+ 10. Select 'Existing worksheet in the 'Import Data' dialog for "Where do you want to put the data?" and [OK]
+     
+     
+
+
+Result: The data is loaded and the first two rows are not formatted correctly as headings. 
+
+You will see the same of you select "New Worksheet".
+
+
+CAUSE
+The headings are not part of the data exported from JRS and are put in there by MS Excel.
+
+
+DIAGNOSING THE PROBLEM
+Paste the URL into a web browser: https://clm.admin.ws/rs/query/182/dataservice?report=171&limit=-1&basicAuthenticationEnabled=true 
+
+The browser should display a xml document. That is the document that MS Excel will receive when it executes the query. 
+Notice that the xml document only contains query result, it doesn't contain any information about header. This is by design.
+
+
+
+ 1. When you use the URL in MS Excel it issues the query, and gets the xml document back. MS Excel inserts the dummy header and extra column about XSD Schema URI.
+    
+    
+ 2. When you select "Download a spreadsheet with live data" or "Download a static spreadsheet with the current report results" you will see that the header is created correctly. This is because we provided macros which does some data clean up in MS Excel.
+
+RESOLVING THE PROBLEM
+To resolve the problem: 
+
+ 1. You can use the steps above and then either remove the headings or correct them manually
+    
+    or
+    
+    
+ 2. Use the other export options "Download a spreadsheet with live data" or "Download a static spreadsheet with the current report results".

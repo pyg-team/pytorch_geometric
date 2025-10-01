@@ -1,0 +1,261 @@
+Title: IBM PM19050: JAVA.LANG.NOSUCHMETHODEXCEPTION: MYMETHODNAME OCCURS WHEN INVOKING AN SCA COMPONENT OVER AN EJB BINDING - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following exception might occur when trying to invoke an SCA
+   component over the EJB binding:
+   
+   [6/29/10 9:09:22:570 PDT] 0000003b MessageImpl   >  setFaultBody
+   Entry
+   org.osoa.sca.ServiceRuntimeException:
+   java.lang.NoSuchMethodException: MyMethodName
+    at
+   com.ibm.ws.soa.sca.binding.ejb.util.EJBHandler.invokeLocalCORBAC
+   all(Unknown Source)
+    at
+   com.ibm.ws.soa.sca.binding.ejb.util.EJBHandler.invoke(Unknown
+   Source)
+    at
+   com.ibm.ws.soa.sca.binding.ejb.EJBBindingInvoker.invoke(Unknown
+   Source)
+    at
+   com.ibm.ws.soa.sca.runtime.impl.RuntimeExtensionManager.invokeNe
+   xtInterceptor(RuntimeExtensionManager.java:237)
+    at
+   com.ibm.ws.soa.sca.runtime.impl.RuntimeExtensionManager.processM
+   essage(RuntimeExtensionManager.java:98)
+   
+   
+   The error occurs if the original operation on the target EJB
+   started with a lower case letter.  In this example, the target
+   EJB method name would be 'myMethodName'.
+   
+   
+   The client code looks like this:
+   
+   package ejbexport.i1.binding;
+   ...
+   public interface I1 {
+       @WebMethod(operationName = "MyMethodName")
+       ...
+       public String myMethodName(
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The operation name is calculated by looking at the JSR-181
+   annotation.  In this example, that is:
+   @WebMethod(operationName = "MyMethodName")
+   
+   To work around the problem, remove the above annotation.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of the IBM WebSphere Application      *
+   *                  Server V7 Feature Pack for Service          *
+   *                  Component Architecture (SCA).               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When using the EJB binding of the       *
+   *                      Feature Pack for SCA with a service     *
+   *                      or reference defined using a            *
+   *                      WSDL-derived Java interface, the        *
+   *                      runtime does not correctly handle a     *
+   *                      WSDL operation name beginning with an   *
+   *                      uppercase letter.                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Though the Feature Pack for Service Component Architecture
+   requires references and services using the EJB bindings
+   (binding.ejb) to be defined in terms of a Java interface, this
+   Java interface can be derived from a WSDL portType.  Typically
+   the Java interface would be generated from the WSDL portType
+   using a tool such as wsimport or Rational Application
+   Developer.
+   
+   For mapping between WSDL and Java, The Feature Pack for Service
+   Component Architecture defers to the Java API for XML-Based
+   Web Services (JAX-WS) specification. JAX-WS specifies that a
+   WSDL operation beginning with an uppercase letter will be
+   mapped to a Java method with the first letter converted to
+   lowercase.  This results in the possibility of a WSDL
+   operation name such as "MyOperation" being mapped to a Java
+   interface method such as:
+   
+   ...
+   import javax.jws.WebService;
+   import javax.jws.WebMethod;
+   
+   @WebService
+   
+   public interface MyInterface {
+       ...
+   
+       @WebMethod(operationName = "MyOperation")
+       public String myOperation(String input);
+   
+       ...
+   }
+   
+   The Feature Pack for Service Component Architecture
+   binding.ejb implementation will internally confuse the
+   @WebMethod 'operationName' value (i.e. the WSDL operation
+   name) and the Java method name.
+   
+   This can result in symptoms like this, on a reference
+   configured with binding.ejb:
+   
+   java.lang.NoSuchMethodException: MyOperation
+       at
+   com.ibm.ws.soa.sca.binding.ejb.util.JavaReflectionAdapter.getMet
+   hod(JavaReflectionAdapter.java:90)
+       at
+   com.ibm.ws.soa.sca.binding.ejb.util.EJBHandler.invokeLocalCORBAC
+   all(EJBHandler.java:251)
+       at
+   com.ibm.ws.soa.sca.binding.ejb.util.EJBHandler.invoke(EJBHandler
+   .java:124)
+       at
+   com.ibm.ws.soa.sca.binding.ejb.EJBBindingInvoker.invoke(EJBBindi
+   ngInvoker.java:68)
+       at
+   com.ibm.ws.soa.sca.runtime.impl.RuntimeExtensionManager.invokeNe
+   xtInterceptor(RuntimeExtensionManager.java:237)
+       at
+   com.ibm.ws.soa.sca.runtime.impl.RuntimeExtensionManager.processM
+   essage(RuntimeExtensionManager.java:98)
+   
+   or this on a service configured with binding.ejb:
+   
+   javax.ejb.EJBException: Operation myOperation was not found
+    at
+   test.sca.bindings.ejb.BService4Bean_78744.myOperation(Unknown
+   Source)
+    at
+   test.sca.bindings.ejb.EJSRemote0SLBService4Bean_78744_7448f90f.m
+   yOperation(EJSRemote0SLBService4Bean_78744_7448f90f.java)
+       .... more depending on circumstances ...
+   Caused by: java.lang.NoSuchMethodError: Operation myOperation
+   was not found
+    at
+   com.ibm.ws.soa.sca.binding.ejb.EJBServiceBindingProvider.invokeS
+   erviceOperation(EJBServiceBindingProvider.java:256)
+    at
+   com.ibm.websphere.soa.sca.binding.ejb.BaseEJB3SessionBeanImpl.in
+   voke(BaseEJB3SessionBeanImpl.java:65)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Feature Pack for Service Component Architecture was
+   changed to correctly use the Java method name in the context
+   of binding.ejb reference-side and service-side dispatches in
+   cases where we were incorrectly looking at the @WebMethod
+   'operationName'.
+   
+   APAR PM19050 is currently targeted for inclusion in Service
+   Level (Fix Pack) 1.0.1.9 of WebSphere Application Server v7
+   Feature Pack for Service Component Architecture (SCA).  Please
+   refer to the Recommended Updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM19050
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS SCA FEATURE
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0854
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-22
+   
+   
+ * CLOSED DATE
+   2010-08-17
+   
+   
+ * LAST MODIFIED DATE
+   2010-08-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS SCA FEATURE
+   
+   
+ * FIXED COMPONENT ID
+   5724J0854
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

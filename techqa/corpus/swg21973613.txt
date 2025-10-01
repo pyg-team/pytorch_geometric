@@ -1,0 +1,52 @@
+Title: IBM Multi bytes "-" character is garbled by EIF probe on cross platform - United States
+
+Text:
+EIF Probe; LFA; Netcool/OMNIbus; Multi bytes "-"; ShiftJIS; cross platform; UNIX; garbled; UTF-8 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How should I resolve the issue that multi bytes "-" character is garbled by EIF probe on cross platform? 
+
+SYMPTOM
+When an event is sent by Log File Agent on Windows platform to EIF probe on UNIX/Linux platform, only multi bytes "-" character in Japanese string on the event was garbled. At the same time, all the other characters including multi bytes characters in the event message are shown correctly.
+
+
+CAUSE
+Multi bytes "-" character is handled as Shift-JIS's 0x817C on Japanese Windows. 
+
+Inside of Java program, Japanese characters are handled as UTF-8 characters after converting them from Shift-JIS characters. Since EIF probe uses Java program, EIF probe handles multi byte characters as UTF-8 characters.
+
+For some specific characters, UTF-8 code page uses OS dependent code numbers.
+Multi bytes "-" character is the one of the specific characters 
+On Windows platform: 0xEFBC8D.
+On UNIX/Linux platform: 0xE28892
+
+When an event message including Shift JIS characters is sent from Windows platform to UNIX/Linux platform by using Log File Agent, multi bytes "-" is transformed to '0xEFBC8D'.
+But EIF probe on UNIX platform expects to receive '0xE28892' as multi bytes '-' character.
+Therefore; EIF probe can't process '0xEFBC8D', and transform it to '?' character as unknown character.
+
+
+
+ENVIRONMENT
+On one machine, log file agent sends events as Japanese Windows platform. 
+
+On another machine, Tivoli EIF probe receives events as Japanese UNIX/Linux platform. 
+
+
+DIAGNOSING THE PROBLEM
+Collect network trace data on UNIX/Linux platform. 
+
+Review multi bytes "-" character in event message from Windows platform. 
+
+You can see '0xEFBC8D' as multi bytes "-" when the message is sent via Log File Agent on Windows platform. 
+
+* You can see '0xE28892' as multi bytes "-" when the message is sent via posteifmsg on Windows. 
+
+In this case, this is EIF probe expected, and EIF probe can work fine.
+
+
+RESOLVING THE PROBLEM
+Fix for this code page issue is included in Tivoli EIF probe version 13.2. 
+
+Therefore; you can apply with Tivoli EIF probe version 13.2. 
+
+Would you contact IBM support if you need EIF probe version 13.2?

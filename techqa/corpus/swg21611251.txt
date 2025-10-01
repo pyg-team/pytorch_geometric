@@ -1,0 +1,62 @@
+Title: IBM Universal Agent historical data collection stops - United States
+
+Text:
+dp_data failed; port 1919; dch; Dp; communication issue; attempted maximum of 300 times; DCH can not receive; DP-to-DCH lost socket connectivity. TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Universal Agent works fine for a while, then after some time and with no apparent external actions, it suddenly stops sending the collected historical data to the Warehouse Proxy Agent. 
+
+SYMPTOM
+Looking at the logs, you can observe that the agent actually performed a clean stop after the following messages:
+(502C8DB4.0000-52:kumpdchr.c,273,"KUMP_DCHreceiveDataTask") Error: DCH can not receive data from ASFS DP; attempted maximum of 300 times
+(502C8DB4.0001-52:kumpdchr.c,274,"KUMP_DCHreceiveDataTask") Possible cause: DP-to-DCH lost socket connectivity. Exiting and terminating UA. 
+
+The Universal Agent log files also show the following messages that are strictly related to the error scenario: 
+
+(5036F364.0000-5:kumpdchc.c,590,"KUMP_DCHclientRoutine") *** dp_data failed. status -1 for source <tabname1> table <Table_Name1> handle 449576992
+...
+(50371D8A.0000-5:kumpdchc.c,590,"KUMP_DCHclientRoutine") *** dp_data failed. status -1 for source <tabname2> table <Table_Name2> handle 49576987
+
+
+CAUSE
+DP and DCH are two Universal Agent tasks talking via internal socket connectivity.
+This is not a firewall issue because DP and DCH most often are executed in the same process, running on the same machine.
+They are anyway experiencing communication problems, because the tasks are suddenly no longer able to use port 1919.
+Problem is intermittent, at the beginning the port is available, so it is indeed possible that an external software, like port scanner or any other security software, interrupts UA's usage of port 1919.
+The UA then closes because there is a limit for DCH-to-DP communication errors to 300 consecutive failures, at which point UA is exited and terminated, since no data can be passed between DCH (data clearing house, the task that handles the collected data and send it to TEMS) and DP (the data provider task, the one that performs data collection).
+
+
+RESOLVING THE PROBLEM
+As first step, investigate about network and security software that may have a role with the interruption of port 1919 communication. Likely a port scanner is wrongly configured and is causing this problem.
+Possible workarounds are:
+
+1) Try using a different port than 1919 for DCH-DP communication. It can be done by changing the value of parameter DCH_PORT_NUMBER into the UM configuration file. 
+
+
+Set KUMA_DCH_PORT=<another available port>
+
+This is set in the Universal Agent configuration file
+- Windows - %CANDLE_HOME%\tmaitm6\KUMENV 
+- UNIX/Linux - $CANDLEHOME/config/um.ini 
+
+Restart the Universal Agent to make the change effective.
+
+2) After having performed the actions at point 1 above, monitor the situation for some time and check if the problem is solved. If the problem reoccurs try setting the following keyword in the UA configuration file:
+
+KUMP_LOCAL_DATA=N
+
+as suggested in detail in the following technote :
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21444057 [http://www-01.ibm.com/support/docview.wss?uid=swg21444057]
+
+If both solutions do not help, and if problem occurs again with the same error messages, please set the following traces : 
+
+KBB_RAS1= ERROR (UNIT:kumamain Error State) (UNIT:kumadtl Err Fl Det St Met) (UNIT:kumdch Error State) (UNIT:kumdipc Error State Metrics) (UNIT:kumpfile Error State) (UNIT:kumpdpda Error Output State) (UNIT:kumpdpsr ALL) (UNIT:kumpdchc Error Flow State Detail) 
+(UNIT:kumpdchr Error Flow Detail) (UNIT:kumpqwda ALL) (UNIT:kumpenqs Error Flow Detail)
+
+in the Universal Agent configuration file, then restart the UA agent, wait for problem to reoccur and finally collect the output file from the pdcollect command on the UA machine and send it to IBM customer support.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Tivoli Monitoring Universal Agent 6.2.2

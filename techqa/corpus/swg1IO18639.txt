@@ -1,0 +1,122 @@
+Title: IBM IO18639: INSUFFICIENT PRIVILEGES TO PERFORM OPERATINO ERROR WHEN ADDING A DOCUMENT USING ENTRY TEMPLATE CONFIGURED W/EDS DEPENDENT PROPS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The user when trying to add a document from workplace can add
+   successfully using the entry template. The same user with same
+   entrytemplate gets an 'Insufficient rights to perform
+   operation" error in ICN.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When you try to add a document to the repository, IBM Content
+   Navigator attempts to modify system-defined hidden properties if
+    you modify properties that are configured with external data
+   service (EDS) dependent properties. This behavior can cause the
+   Add action to fail with the following error message:
+   
+   Insufficient privileges to perform operation
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  IBM Content Navigator does not assign values to system-defined
+   properties during the Add action.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO18639
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   ISCONTNAV
+   
+   
+ * REPORTED RELEASE
+   201
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-16
+   
+   
+ * CLOSED DATE
+   2013-05-16
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   ISCONTNAV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R201 PSY
+   UP

@@ -1,0 +1,28 @@
+Title: IBM nco_confpack export of Trigger groups conversions - United States
+
+Text:
+nco_confpack; trigger export; export; import; conversions TECHNOTE (FAQ)
+
+QUESTION
+ Why are trigger groups and conversions not listed as objects in the nco_confpack export list? 
+
+CAUSE
+When a specific trigger is exported or imported, it's trigger group is automatically exported/imported as well. If no trigger from a particular group is exported/imported, then that group will not be exported/imported either. 
+
+The reason the OwnerGID and OwnerUID conversions are not listed is because these are generated automatically for each user when an import is done. The id being imported for the user or group may already be in use on the object server that is receiving the import, in which case the next available id is used instead. 
+
+
+ANSWER
+When running 
+
+nco_confpack -export -server <OSname1>,<OSname2> -file <filename> -user <OSname1:><user1>,<OSname2:><user2>
+
+the Trigger Groups are not listed in the export list. Also, the OwnerUID and OwnerGID conversions are not listed in the export list. 
+
+ 
+
+Export/Import a trigger from the group in order to export/import the Trigger group. 
+
+ 
+
+Export/import the particular user in order to export/import the OwnerUID and OwnerGID.

@@ -1,0 +1,164 @@
+Title: IBM JR54111: MEMORY LEAK OCCURS ON DEPLOYMENT MANAGER PROFILE - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.5.0.1-WS-BPM-IFJR54111 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.0.1-WS-BPM-IFJR54111&source=SAR]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you use web service integration with policy set and
+   policy set binding enabled. You might notice that the memory
+   cost on the deployment manager keeps increasing until you see
+   an OutOfMemory exception on the deployment manager profile.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM Business Process Manager (BPM)          *
+   *                  Advanced                                    *
+   *                  IBM BPM Standard                            *
+   *                  IBM BPM Express                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When you use web service integration    *
+   *                      with policy set and policy set          *
+   *                      binding enabled. You might notice       *
+   *                      that the memory cost on the             *
+   *                      deployment manager keeps increasing     *
+   *                      until you see an OutOfMemory            *
+   *                      exception on the deployment manager     *
+   *                      profile.                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   To load the policy set and binding configuration when you use
+   web service integration, a workspace is created to process the
+   configurations. If the workspace is created on a remote
+   deployment manager (dmgr) server, web service integration code
+   cannot release the newly created workspace after its use. As a
+   result, the memory use keeps increasing on the dmgr server for
+   the duplicate workspace.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be included in a future IBM BPM V8.5.6.0 Cumulative
+   Fix that ensures the remote workspace can be released after use.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for Cumulative Fix 2:
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select APAR or SPR, enter Cumulative Fix 2, and click
+   Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR54111
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-08-20
+   
+   
+ * CLOSED DATE
+   2015-09-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

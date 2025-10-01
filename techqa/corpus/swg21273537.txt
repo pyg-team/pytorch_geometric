@@ -1,0 +1,47 @@
+Title: IBM How the RequisiteWeb and ClearQuest Web integration works - United States
+
+Text:
+Understanding How; 1273537; integrations; CQWeb; ReqWeb; CQI; proxy requirement TECHNOTE (FAQ)
+
+QUESTION
+ What are the technical details about how the Rational ReqWeb and Rational ClearQuest (CQ) integration works? This technote can be used as a guide for troubleshooting integration issues. 
+
+ANSWER
+From Rational RequisiteWeb you can perform two types of ClearQuest Web Related actions, View and Create ClearQuest Proxy Requirements. 
+
+Viewing CQ Requirements from RequisiteWeb: 
+
+ 1. When you first attempt to view a CQ Requirement from a RequisiteWeb session you are presented with a proxy CQLogin Dialog. This .jsp page is actually owned by ReqWeb and is displaying the CQ Connection and User Database as it is set in the .rsp file. 
+ 2. Once you have entered your ClearQuest Username and Password ReqWeb will generate a cqweb shortcut URL that will display the proxy record. This URL will look like:
+
+ * 
+ * 
+ * <cqwebserver>/cqweb/main?schema=<cqdbset>&contextid=<cqdbname>&shortcut=true&command=GetEntity&entityDefName=Requirement&entityId=<dbid>
+ * 
+
+
+Where: 
+<cqwebserver> = CQWeb Server name taken CQWebURL parameter from .rqs file. 
+<cqdbset> = ClearQuestDbConnectionName from rsp file. 
+<cqdbname> = ClearQuestDatabaseName from rsp file. 
+<dbid> = dbid of CQ Requirement Proxy from "CQ Requirement" attribute 
+
+Note: 
+If the CQ Web server does not have the CQ Database integrated with this particular project registered with the same database Connection name as set in the rsp file then this URL will fail. 
+
+Creating CQ Requirements from RequisiteWeb:  1. When you first attempt to create a CQ Requirement from a RequisiteWeb session you are presented with a proxy CQLogin Dialog. This .jsp page is actually owned by ReqWeb and is displaying the CQ Connection and User Database as it is set in the .rsp file. 
+ 2. The CQ User and PW supplied at this proxy login window along with the Connection Name and Database Name is passed to the CQ API on the ReqWeb Server in order to create the "CQ Requirement" record in the ClearQuest Database. At this point CQWeb is never used. The proxy Login is just used to collect necessary data to submit the new record using the CQ API that is installed locally.
+
+
+For this reason the Connection that is set in the .rsp file must be the same name as the connections registered on both the ReqWeb and ClearQuest Web Servers. 
+
+Note: 
+In many cases the ReqWeb and CQWeb server will be the same machine so this will not be a concern. Also, if the "IBM WebSphere Application Server V6 - RWP ReqWeb servlet" Service is running as a Domain User you must make sure that the ClearQuest Connection is registered correctly for this user. To verify this, log into the ReqWeb Server as this user and launch the ClearQuest Maintenance Tool. 
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational ClearQuest Software Development Rational RequisitePro

@@ -1,0 +1,194 @@
+Title: IBM JR45661: "NO DATA TO DISPLAY" IN MY PERFORMANCE SCOREBOARD DUE TO ORPHANED GROUPS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.0.1 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24034495]
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After a process application has been archived and deleted, the
+   participant group from the process application may still remain
+   in the
+   BPM database.  These orphaned groups may cause My Performance
+   scoreboard
+   to return "No data to display".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users using BPM Portal Performance          *
+   *                  Scoreboard.                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: "NO DATA TO DISPLAY" IN MY              *
+   *                      PERFORMANCE SCOREBOARD DUE TO           *
+   *                      ORPHANED GROUPS                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   After a process application has been archived and deleted, the
+   participant group from the process application may still remain
+   in the BPM database. These orphaned groups may cause My
+   Performance scoreboard to return "No data to display".
+   Error/stacktrace:
+   [09/01/13 09:13:57:696 CET] 00000066 wle           I
+   CWLLG0381I:
+   Oldreport is org.mozilla.javascript.UniqueTag@49c349c3:
+   NOT_FOUND.
+   [09/01/13 09:13:58:119 CET] 00000066 DMAdapter     I
+   com.ibm.ws.ffdc.impl.DMAdapter getAnalysisEngine FFDC1009I:
+   Analysis
+   Engine using data base:
+   C:\IBM\PROFILES\BPM751PC\properties\logbr\ffdc\adv\ffdcdb.xml
+   [09/01/13 09:13:58:126 CET] 00000066 FfdcProvider  W
+   com.ibm.ws.ffdc.impl.FfdcProvider logIncident FFDC1003I: FFDC
+   Incident
+   emitted on
+   C:\IBM\PROFILES\BPM751PC\logs\ffdc\bpmServer_7ca47ca4_13.01.09_0
+   9.13.58.
+   107573526079358287362.txt
+   com.ibm.ws.rsadapter.jdbc.WSJccSQLJConnection.commit 587
+   [09/01/13 09:13:58:155 CET] 00000066 wle           E
+   CWLLG0382E:
+   Failed to get content of report PM Process Analysis  with
+   pageName My
+   Performance.  Error: org.mozilla.javascript.WrappedException:
+   Wrapped
+   com.lombardisoftware.server.eai.core.ConnectorException:
+   com.lombardisoftware.client.delegate.BusinessDelegateException:
+   Snapshot
+   with ID Snapshot.44262e4c-9293-4cfd-92ed-90a2be5c464f not
+   found.
+   (<JSScript>#26)
+   org.mozilla.javascript.WrappedException: Wrapped
+   com.lombardisoftware.server.eai.core.ConnectorException:
+   com.lombardisoftware.client.delegate.BusinessDelegateException:
+   Snapshot
+   with ID Snapshot.44262e4c-9293-4cfd-92ed-90a2be5c464f not
+   found.
+   (<JSScript>#26)
+   at
+   org.mozilla.javascript.Context.throwAsScriptRuntimeEx(Context.ja
+   va:1773)
+   at org.mozilla.javascript.MemberBox.invoke(MemberBox.java:183)
+   at
+   org.mozilla.javascript.FunctionObject.call(FunctionObject.java:4
+   67)
+   at
+   org.mozilla.javascript.Interpreter.interpretLoop(Interpreter.jav
+   a:3330)
+   at script(<JSScript>:26)
+   ....
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Additional logic was added to discard records related to
+   orphaned groups.
+   
+   Installation instruction can be downloaded from Fix Central
+   along with JR45661 iFix file.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR45661
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-07
+   
+   
+ * CLOSED DATE
+   2013-04-23
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

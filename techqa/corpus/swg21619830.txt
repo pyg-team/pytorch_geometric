@@ -1,0 +1,41 @@
+Title: IBM WebSphere fails to start after changing the XMETA password for Information Server - United States
+
+Text:
+DataStage TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere fails to start after changing the XMETA password for Information Server. Here is the error in the SystemOut.log file: Connection authorization failure occurred. Reason: User ID or Password invalid. ERRORCODE=-4214, SQLSTATE=28000 
+
+SYMPTOM
+WebSphere fails to start.
+
+
+CAUSE
+Backup copies of obj-conf.jar and other ojb-conf.jar artifacts left behind in the <wasprofile>/informationServer/apps/lib and <ISInstall>/ASBServer/apps/lib directories.
+
+DIAGNOSING THE PROBLEM
+Look in the SystemOut.log found in <WAS Install>/profiles/<profile name>/logs/<server name>, by default at 8.5 and above /opt/IBM/WebSphere/AppServer/profiles/InfoSphere/logs/server1, for the following errors: 
+
+12/5/12 16:07:51:112 CST] 00000000 SystemOut O org.apache.ojb.broker.accesslayer.ConnectionFactoryAbstractImpl] ERROR: Error getting Connection from DriverManager with url (jdbc:db2://tqdtsu01.servdinf.sat.gob.mx:50001/xmeta) and driver (com.ibm.db2.jcc.DB2Driver)
+[12/5/12 16:07:51:113 CST] 00000000 SystemOut O [jcc][t4][2013][11249][3.58.135] Connection authorization failure occurred. Reason: User ID or Password invalid. ERRORCODE=-4214, SQLSTATE=28000
+[12/5/12 16:07:51:135 CST] 00000000 OjbPersistent E
+org.apache.ojb.broker.PersistenceBrokerException: Can't lookup a connection
+at org.apache.ojb.broker.accesslayer.ConnectionManagerImpl.localBegin(Unknown Source)
+at org.apache.ojb.broker.core.PersistenceBrokerImpl.beginTransaction(Unknown Source)
+at org.apache.ojb.broker.core.DelegatingPersistenceBroker.beginTransaction(Unknown Source)
+at org.apache.ojb.broker.core.DelegatingPersistenceBroker.beginTransaction(Unknown Source)
+at com.ascential.xmeta.persistence.orm.impl.ojb.OjbPersistentEObjectPersistenceRegistry.loadPackageCache(OjbPersistentEObjectPersistenceRegistry.java:437)
+at com.ascential.xmeta.persistence.orm.impl.ojb.OjbPersistentEObjectPersistenceRegistry.initialize(OjbPersistentEObjectPersistenceRegistry.java:134)
+...
+Investigation revealed that there was both a backup copy of ojb-conf.jar and old ojb-conf.jar artifacts in the <wasprofile>/informationServer/apps/lib and <ISInstall>/ASBServer/apps/lib directories which took precedence over the correct ojb-conf.jar.
+
+
+RESOLVING THE PROBLEM
+Please check the following: 
+
+ 1. The Xmeta password changed at database level and OS level. 
+ 2. Run the following commands as root:
+    cd into InformationServer/ASBServer/bin directory ./AppServerAdmin.sh -db -user repository_userid [-password repository_password] 
+ 3. Confirm that you can connect to XMETA database using the new password, e.g. on DB2 run: db2 connect to XMETA user <user name> using <password> 
+ 4. If backup copy of ojb-conf.jar was created for debugging in the <wasprofile>/informationServer/apps/lib and <ISInstall>/ASBServer/apps/lib directories they should be deleted as they may take precedence over the correct ojb-conf.jar. 
+ 5. Restart WebSphere.

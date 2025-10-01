@@ -1,0 +1,143 @@
+Title: IBM PM15298: Incorrect error message when hook is timeout - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem description:
+   When a hook is in process for a long time, an error message pops
+    up saying 'Request is taking more than 360000 seconds. Cancelli
+   ng your request.'
+   *The error message and time taken to have the error pop up varie
+   s with different session timeout setting
+   -if CM server session timeout setting is 1800, when hook runs fo
+   r more than 6 min, error pops up showing
+   'Request is taking more than 360000 seconds. Cancelling your req
+   uest.'
+   -if CM server session timeout setting is 3600, when hook runs fo
+   r more than 9 min, error shows
+   'Request is taking more than 540000 seconds. Cancelling your req
+   uest.'
+   
+   Steps to recreate the error message
+   1) in CQ designer, create a value change hook in a dropdown list
+   , when the drop down list value is changed, set a value to 'test
+   Field' textbox.
+     perl script:
+     sleep(420);
+     $entity-?SetFieldValue('testField','testMessage');
+   2) make sure the CM server session timeout is set to 1800
+   3) in CQ web, change the value of the dropdown list to fire the
+   hook
+   
+   Observe:
+   About 6 min after the hook is fired, an error saying 'Request is
+    taking more than 360000 seconds. Cancelling your request.' pops
+    up.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When a hook is executing for a long time in the ClearQuest
+   7.1 Web Client, an inaccurate error message pops up saying
+   "Request is taking more than 360000 seconds. Canceling your
+   request."  It should say 3600 seconds.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Due to higher priority change requests we have no plans to
+   address this change request in the next 18 months.  As
+   priorities change this request may be reopened.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM15298
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3600
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-26
+   
+   
+ * CLOSED DATE
+   2010-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

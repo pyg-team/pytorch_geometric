@@ -1,0 +1,72 @@
+Title: IBM Planning to upgrade to IBM i 7.2 (Software) - United States
+
+Text:
+ PLANNING
+
+ Planning to upgrade to IBM i 7.2 (Software) 
+
+
+
+IBM i Support [http://www.ibm.com/support/entry/portal/product/ibm_operating_systems/ibm_i] Planning [//www.ibm.com/support/docview.wss?uid=nas8N1022012] Upgrade planning [//www.ibm.com/support/docview.wss?uid=nas8N1022013] Technology Refresh [//www.ibm.com/support/docview.wss?uid=nas8N1022014] Resaves [//www.ibm.com/support/docview.wss?uid=nas8N1022015] Customer Notices [//www.ibm.com/support/docview.wss?uid=nas8N1022016] Technical databases [//www.ibm.com/support/docview.wss?uid=nas8N1022017] 
+
+ *  Planning [//www.ibm.com/support/docview.wss?uid=nas8N1022012 ] 
+ *  Upgrade planning [//www.ibm.com/support/docview.wss?uid=nas8N1022013] 
+
+ * IBM i 7.3 [//www.ibm.com/support/docview.wss?uid=nas8N1022023] 
+ * IBM i 7.2 [//www.ibm.com/support/docview.wss?uid=nas8N1022024] 
+ * IBM i 7.1 [//www.ibm.com/support/docview.wss?uid=nas8N1022025] 
+ * Future Software/Hardware [//www.ibm.com/support/docview.wss?uid=nas8N1022026] 
+ * Releases [//www.ibm.com/support/docview.wss?uid=nas8N1022027] 
+
+
+
+
+
+
+
+SOFTWARE PLANNING
+The following products and functions which were supported on IBM i 7.1 are not supported on IBM i 7.2. Plans should be made to replace or discontinue use of these products and functions prior to upgrading to i 7.2
+
+Software Suggested replacement IBM Navigator for i Due to changes in how browsers handle self-signed certificates, IBM Navigator for i will no longer be shipped with SSL enabled by default. Users can configure SSL using the instructions found at this link: http://ibm.co/2f1vzYU [http://ibm.co/2f1vzYU]. In addition, any saved URL's for IBM Navigator for i will not work by default because we are now using HTTP and port 2004 instead of HTTPS and port 2005. 5722-WE2 IBM Web Enablement for i Migrate to IBM WebSphere Application Server V8.5.5 or higher. Older versions of WebSphere Application Server require Java 6 which will be going out of service in December 2017. 5733-W80 IBM WebSphere Application Server V8.0 Migrate to IBM WebSphere Application Server V8.5.5 or higher. Older versions of WebSphere Application Server require Java 6 which will be going out of service in December 2017. 5722-BZ1 IBM Business Solutions None 5770-DE1 IBM DB2 Extenders Version 9.5 for i Replaced by new integrated XML features in IBM DB2 for i, which is included in IBM i V7.1 and later. 5733-FXD IBM Integrated Domino Fax for i5/OS None 5761-JV1 IBM Developer Kit for Java, Option 8 J2SE 5.0 32
+
+Note: Java 5.0 is no longer in support(as of May 2015). Upgrade to newer Java level using option 14 or 15 of IBM Developer Kit for Java - option 14 Java SE 7 32 bit
+
+- option 15 Java SE 7 64 bit
+
+5761-JV1 IBM Developer Kit for Java, Option 9 J2SE 5.0 64 bit
+
+Note: Java 5.0 is no longer in support (as of May 2015). Upgrade to newer Java level using option 14 or 15 of IBM Developer Kit for Java - option 14 Java SE 7 32 bit
+
+- option 15 Java SE 7 64 bit
+
+5761-JV1 IBM Developer Kit for Java , Option 13 J2SE 1.4 64 bit
+
+Note: Java 1.4 is no longer in support. Upgrade to newer Java level using option 14 or higher of IBM Developer Kit for Java - option 14 Java SE 7 32 bit
+
+- option 15 Java SE 7 64 bit
+
+5761-JV1 Developer Kit for Java Option 10 Java SE Development Kit 6 Note: Java 6.0 will go out of support in December 2017.
+
+Note: Options 11 & 12 of Developer Kit for Java (5761-JV1) are going out of service in April 2018. Upgrade to a newer level of Java using Options 14 or higher. 5733-OAR IBM Rational Open Access RPG Edition This function is now part of 5770-WDS IBM Rational Development Studio for i. V7.2 5733-OPS – Option 1 Option 1, Node.js enablement, has been deprecated and will no longer receive support or fixes. It is recommended that newer versions of Node.js be used. 5733OPS Option 5 has delivered Node.js v4, and Option 10 has delivered Node.js v6. For more information about the Node.JS offerings, see the product page on developerWorks: [https://ibm.co/1Jr4VDl]https://ibm.co/1Jr4VDl [https://ibm.co/1Jr4VDl] 5733-QU2 IBM DB2 Web Query for i Replacement product is IBM DB2 Web Query for i (Express Edition is 5733-WQE, Standard Edition is 5733-WQS). Refer to [http://www.ibm.com/systems/power/software/i/db2/webquery/] [https://ibm.co/1Jr4VDl]http://www.ibm.com/systems/power/software/i/db2/webquery/ [http://www.ibm.com/systems/power/software/i/db2/webquery/]. 5733-QU3 IBM DB2 Web Query Report Broker Replacement product is IBM DB2 Web Query for i (Express Edition is 5733-WQE, Standard Edition is 5733-WQS). Refer to [http://www.ibm.com/systems/power/software/i/db2/webquery/] [https://ibm.co/1Jr4VDl]http://www.ibm.com/systems/power/software/i/db2/webquery/ [http://www.ibm.com/systems/power/software/i/db2/webquery/]. 5733-QU4 IBM DB2 Web Query Software Development Kit Replacement product is IBM DB2 Web Query for i (Express Edition is 5733-WQE, Standard Edition is 5733-WQS). Refer to [http://www.ibm.com/systems/power/software/i/db2/webquery/] [https://ibm.co/1Jr4VDl]http://www.ibm.com/systems/power/software/i/db2/webquery/ [http://www.ibm.com/systems/power/software/i/db2/webquery/]. 5770-RD1 IBM Content Manager OnDemand for i, Option 10 OnDemand Common Server Feature This function is integrated into the base 5770-RD1 IBM Content Manager OnDemand for i, V7.2 5770-RD1 IBM Content Manager OnDemand for i, Option 11 OnDemand Web Enablement Kit This function is integrated into the base 5770-RD1 IBM Content Manager OnDemand for i, V7.2 5733-SO1 IBM Express Runtime Web Environments for i For IBM i V7.1 and earlier, IBM Express Runtime Web Environments provided an integrated package of products and an installation wizard to facilitate installation and configuration of the products on IBM i. Now IBM i 7.2 clients will manually install and configure the required products in their environments. 5733-W61 IBM WebSphere Application Server, V6.1 Upgrade to IBM WebSphere Application Server, V8.0 or later. 5733-W70 IBM WebSphere Application Server, V7.0 Upgrade to IBM WebSphere Application Server, V8.0 or later. 5770-XL1 IBM i Access for Linux Replacement product is IBM i Access Client Solutions. Refer to [<a href=]" > [https://ibm.co/1Jr4VDl] [http://www.ibm.com/systems/power/software/i/db2/webquery/]http://www.ibm.com/systems/power/software/i/access/solutions.html [http://www.ibm.com/systems/power/software/i/access/solutions.html] Back to top
+
+
+
+
+
+
+
+ADDITIONAL RESOURCES
+ * Entitled Systems Support (License keys and software) [//www.ibm.com/eserver/ess/]
+ * IBM Power Systems Redbooks [//www.redbooks.ibm.com/portals/power]
+ * IBM i Redbooks publications [http://www.redbooks.ibm.com/redbooks.nsf/searchsite?SearchView&query=%22ibm+i%22]
+ * IBM i storage solutions [//www.ibm.com/systems/power/software/i/management/storage/index.html]
+ * IBM i Knowledge Center [//www.ibm.com/support/knowledgecenter/ssw_ibm_i/welcome]
+ * IBM Knowledge Center [//www.ibm.com/support/knowledgecenter/]
+ * developerWorks for IBM i [https://www.ibm.com/developerworks/learn/ibmi/]
+ *  
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2

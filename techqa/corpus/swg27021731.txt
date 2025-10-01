@@ -1,0 +1,266 @@
+Title: IBM Installing interim fixes for WebSphere Application Server Version 8.0.0.0 on IBM i operating systems - United States
+
+Text:
+WASV8RNotes; V8RNotes RELEASE NOTES
+
+ABSTRACT
+ This document provides information about how to locate and install interim fixes that are available for WebSphere Application Server Version 8.0.0.0 on IBM i operating systems. 
+
+CONTENT
+Interim fixes provide corrective service for specific known problems. 
+
+There are several interim fixes that are available for WebSphere Application Server Version 8.0.0.0. You can use IBM Installation Manager to update the product with the interim fixes. For a list of interim fixes that are available for WebSphere Application Server Version 8.0.0.0 and specific information about each interim fix, perform the following actions:
+
+
+ 1. Go to Fix Central [http://www.ibm.com/support/fixcentral/].
+    
+    
+ 2. Select WebSphere as the product group.
+    
+    
+ 3. Select WebSphere Application Server as the product.
+    
+    
+ 4. Select 8.0.0.0 as the installed version.
+    
+    
+ 5. Select your operating system as the platform, and click Continue.
+    
+    
+ 6. Select Browse for fixes, and click Continue.
+    
+    
+ 7. Click More Information under each interim fix to view information about the interim fix.
+    
+    
+ 8. Recommendation: Make a list of the names of the interim fixes that you would like to install.
+
+
+There are two basic ways to update WebSphere Application Server Version 8.0.0.0 with the interim fixes: 
+
+ * Access the live service repository that contains the interim fixes, and use web-based updating 
+ * Download the files that contain the interim fixes from Fix Central, and use local updating
+
+
+
+Access the live service repository that contains the interim fixes, and use web-based updating  * 
+ * 
+ * 
+ * 
+ * Application Client for IBM WebSphere Application Server: 
+ * 
+ * http://www.ibm.com/software/repositorymanager/V8WASSupplements
+ * 
+ * 
+ * Application Client for IBM WebSphere Application Server (ILAN): 
+ * 
+ * http://www.ibm.com/software/repositorymanager/V8WASSupplementsILAN
+ * 
+ * 
+ * DMZ Secure Proxy Server for IBM WebSphere Application Server: 
+ * 
+ * http://www.ibm.com/software/repositorymanager/com.ibm.websphere.NDDMZ.v80
+ * 
+ * 
+ * IBM Web Enablement for IBM i
+ * 
+ * http://www.ibm.com/software/repositorymanager/com.ibm.websphere.WEBENAB.v80
+ * 
+ * 
+ * IBM WebSphere Application Server: 
+ * 
+ * http://www.ibm.com/software/repositorymanager/com.ibm.websphere.BASE.v80
+ * 
+ * 
+ * IBM WebSphere Application Server Trial: 
+ * 
+ * http://www.ibm.com/software/repositorymanager/V8WASBASETrial
+ * 
+ * 
+ * IBM WebSphere Application Server - Express: 
+ * 
+ * http://www.ibm.com/software/repositorymanager/com.ibm.websphere.EXPRESS.v80
+ * 
+ * 
+ * IBM WebSphere Application Server – Express Trial: 
+ * 
+ * http://www.ibm.com/software/repositorymanager/V8WASEXPRESSTrial
+ * 
+ * 
+ * IBM WebSphere Application Server for Developers: 
+ * 
+ * http://www.ibm.com/software/repositorymanager/com.ibm.websphere.DEVELOPERS.v80
+ * 
+ * 
+ * IBM WebSphere Application Server for Developers (ILAN): 
+ * 
+ * http://www.ibm.com/software/repositorymanager/V8WASDeveloperILAN
+ * 
+ * 
+ * IBM WebSphere Application Server Network Deployment: 
+ * 
+ * http://www.ibm.com/software/repositorymanager/com.ibm.websphere.ND.v80
+ * 
+ * 
+ * IBM WebSphere Application Server Network Deployment Trial: 
+ * 
+ * http://www.ibm.com/software/repositorymanager/V8WASNDTrial
+ * 
+ * 
+ * Web Server Plug-ins for IBM WebSphere Application Server: 
+ * 
+ * http://www.ibm.com/software/repositorymanager/V8WASSupplements
+ * 
+ * 
+ * Web Server Plug-ins for IBM WebSphere Application Server (ILAN): 
+ * 
+ * http://www.ibm.com/software/repositorymanager/V8WASSupplementsILAN
+ * 
+ * 
+ * Tip: 
+ * 
+ * 
+ * 
+ * http://www.ibm.com/software/repositorymanager/offering_ID
+ * 
+ * 
+ * 
+ * offering_ID
+ * 
+ * WebSphere Application Server Version 8 product offerings for supported operating systems
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  If you do not already have an Installation Manager credentials file containing your IBM software user ID and password, create one that will allow you to access the repository.
+   
+   Note: These are the credentials that you use to access protected IBM software websites.
+   
+   For information on creating a keyring file for Installation Manager, read Storing credentials [http://publib.boulder.ibm.com/infocenter/install/v1r4/index.jsp?topic=/com.ibm.silentinstall12.doc/topics/t_store_credentials.html] in the Installation Manager Information Center.
+   
+   Tip: When creating a keyring file, append /repository.config at the end of the URL location if the imutilsc command is unable to find the URL that is specified.
+   
+   Sign on to the IBM i system with a user profile that has *ALLOBJ and *SECADM special authorities. 
+   
+   On a CL command line, run the STRQSH command to start the Qshell command shell.
+   
+   Make sure that the umask is set to 022.
+   
+   To verify the umask setting, issue the following command: umask
+   
+   To set the umask setting to 022, issue the following command: umask 022
+   
+   Change to the Installation_Manager_binaries/eclipse/tools directory, where Installation_Manager_binaries is the installation root directory for the Installation Manager. 
+   
+   On IBM i systems, the root directory for the Installation Manager is /QIBM/ProdData/InstallationManager.
+   
+   Install the interim fix:
+   
+   ./imcl install interim_fix_name
+   -installationDirectory product_installation_location
+   -repositories repository_URL
+   -keyringkeyring_file
+   
+   Optional: List all installed packages to verify the installation:
+   
+   ./imcl listInstalledPackages -long
+   
+
+
+
+Download the files that contain the interim fixes from Fix Central, and use local updating  * 
+ * 
+ * 
+ * 
+ *  Use Installation Manager to update WebSphere Application Server Version 8.0.0.0 with the interim fixes.
+   
+   Use the IBM Packaging Utility on a Windows system to generate a new repository that contains all of the interim fixes that you downloaded, transfer the repository to your IBM i system, then use Installation Manager to update WebSphere Application Server Version 8.0.0.0 with all of the interim fixes as a group. For information on using the Packaging Utility, see the Installation Manager Information Center [http://publib.boulder.ibm.com/infocenter/install/v1r4/index.jsp].
+   
+   
+ * 
+ * 
+ * 
+ *  Go to Fix Central [http://www.ibm.com/support/fixcentral/].
+   
+   Select WebSphere as the product group.
+   
+   Select WebSphere Application Server as the product.
+   
+   Select 8.0.0.0 as the installed version.
+   
+   Select your operating system as the platform, and click Continue.
+   
+   Select Browse for fixes, and click Continue.
+   
+   Select the interim fixes that you want to download, and click Continue.
+   
+   Select your download options, and click Continue.
+   
+   Click I agree to agree to the terms and conditions.
+   
+   Click Download now to download the interim fixes. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  Sign on to the IBM i system with a user profile that has *ALLOBJ and *SECADM special authorities. 
+   
+   On a CL command line, run the STRQSH command to start the Qshell command shell.
+   
+   Make sure that the umask is set to 022.
+   
+   To verify the umask setting, issue the following command: umask
+   
+   To set the umask setting to 022, issue the following command: umask 022
+   
+   Change to the Installation_Manager_binaries/eclipse/tools directory, where Installation_Manager_binariesis the installation root directory for the Installation Manager. 
+   
+   On IBM i systems, the root directory for the Installation Manager is /QIBM/ProdData/InstallationManager.
+   
+   Install the interim fix:
+   
+   ./imcl install interim_fix_name
+   -installationDirectory product_installation_location
+   -repositories compressed_file
+   
+   Optional: List all installed packages to verify the installation:
+   
+   ./imcl listInstalledPackages -long
+   
+   
+
+For more information on updating WebSphere Application Server, see Updating the product on IBM i operating systems [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=matt&product=was-nd-iseries&topic=tins_upgrade_is]. 
+
+Tip: You can also install interim fixes using silent response files with Installation Manager. For information on creating and using response files, read the Installation Manager Information Center [http://publib.boulder.ibm.com/infocenter/install/v1r4/index.jsp] and the WebSphere Application Server Version 8 Information Center [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=matt]. 
+
+Restriction: You cannot use the iRemoteInstall command to install an interim fix. 
+
+Note on removing an interim fix: 
+ * 
+ * 
+ * 
+ *  Sign on to the IBM i system with a user profile that has *ALLOBJ and *SECADM special authorities. 
+   
+   On a CL command line, run the STRQSH command to start the Qshell command shell.
+   
+   Make sure that the umask is set to 022.
+   
+   To verify the umask setting, issue the following command: umask
+   
+   To set the umask setting to 022, issue the following command: umask 022
+   
+   Change to the Installation_Manager_binaries/eclipse/tools directory, where Installation_Manager_binaries is the installation root directory for the Installation Manager. 
+   
+   On IBM i systems, the root directory for the Installation Manager is /QIBM/ProdData/InstallationManager.
+   
+   Uninstall the interim fix:
+   
+   ./imcl uninstall interim_fix_name
+   -installationDirectory product_installation_location 
+
+RELATED INFORMATION
+ WebSphere Application Server Version 8.0 release notes [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=matt&product=was-nd-mp&topic=relnotes]
+Installation Manager Version 1.4.x Information Center [http://publib.boulder.ibm.com/infocenter/install/v1r4/index.jsp]

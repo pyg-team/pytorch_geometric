@@ -1,0 +1,65 @@
+Title: IBM Must Gather: PureData Systems for Analytics Crash or Restart - United States
+
+Text:
+MustGather crash pda restart netezza rca rootcause TECHNOTE (FAQ)
+
+QUESTION
+ What to collect when a PureData System for Analytics Crashes or Restarts for IBM technical support to carry out Root Cause Analysis (RCA)? 
+
+CAUSE
+NPS crashes, fails over or restarts
+
+ANSWER
+Contact IBM Technical Support via PMR. Once a PMR has been created share time and date of incident, confirm system is in stable online state and provide the following information (substitute <PMR#.Branch#.Country#> with valid complete PMR number, Branch and Country codes separated by dots(.) ):
+
+su - nz 
+
+mkdir -p /nzscratch/pmr<PMR#.Branch#.Country#>
+cd /nzscratch/pmr<PMR#.Branch#.Country#>
+
+/nz/kit/bin/adm/nzhealthcheck 2>&1 | tee healthcheck.out
+##Copy report to /nzscratch/pmr<PMR#.Branch#.Country#>:
+cp /nz/kit.<nspVersion>/log/nzhealthcheck/Netezza_System_Health_Check_Report_<date>_<time>.txt .
+
+nzstats > nz.txt
+nzrev >> nz.txt
+nzds -issues >> nz.txt
+nzhw -issues >> nz.txt
+nzspupart -issues >> nz.txt
+nzhw -type spu -detail >> nz.txt
+
+##If you have nzlogcollector please run the following:
+/nz/support/bin/adm/nzlogcollector/nzlogcollector -symptom crash -days 5
+
+## Collect pg.log and dbos.log for dates when restart occurred (please include logs for day before and after is possible)
+cp /nz/kit/log/postgress/pg.log .
+cp /nz/kit/log/dbos/dbos.log .
+
+tar -czvf bootsvr.tgz /nz/kit/log/bootsvr/ 
+tar -czvf startupsvr.tgz /nz/kit/log/startupsvr/ 
+tar -czvf sysmgr.tgz /nz/kit/log/sysmgr/ 
+tar -czvf eventmgr.tgz /nz/kit/log/eventmgr/
+
+tar cvzf HA1_messages.tgz /var/log/messages*
+ssh ha2 "/nzscratch/HA2_messages.tgz /var/log/messages*"
+scp root@ha2:nzscratch/HA2_messages.tgz .
+
+crm_mon -1 > crm_mon.out
+ssh ha2 !!
+ps aux|grep heartbeat > HA1_ps.aus.heartbeat.out
+ssh ha2 "ps aux|grep heartbeat > /nzscratch/HA2_ps.aus.heartbeat.out"
+scp root@ha2:nzscratch/HA2_ps.aus.heartbeat.out .
+
+find -L /nz/kit/log -iname 'core*' -exec ls -alh {} \; > spucores.out
+find -L /nz/data -iname 'core*' -exec ls -alh {} \; >> spucores.out
+## if spucores.out contains a crash report please send it to the PMR as well 
+
+cd ..
+tar -czvf <PMR#.Branch#.Country#>.tgz /nzscratch/pmr<PMR#.Branch#.Country#>
+
+Send us <PMR#.Branch#.Country#>.tgz with all the information. 
+
+Reference Technote:
+
+How to properly collect a PureData Systems for Analytics Health Check Report using nzhealthcheck?
+http://www.ibm.com/support/docview.wss?uid=swg21903167 [http://www.ibm.com/support/docview.wss?uid=swg21903167]

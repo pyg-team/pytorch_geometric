@@ -1,0 +1,204 @@
+Title: IBM JR51409: RECEIVE SQL ERROR WHEN LOG IN OR SYNCHRONIZE USERS THAT HAVE LONG LDAP DISTINGUISHED NAMES, LONGER THAN 128 CHARACTERS - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.0.1.3-WS-BPM-IFJR51409 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.3-WS-BPM-IFJR51409&source=SAR]
+8.0.1.2-WS-BPM-IFJR51409 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.2-WS-BPM-IFJR51409&source=SAR]
+Version 8.5 Refresh Pack 6 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24039185]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you have users that have LDAP distinguished names that are
+   longer than 128 characters, a number of actions can result in a
+   database SQL constraint violation.
+   
+   These actions include:
+   * user login to IBM BPM Process Portal
+   * user login to IBM BPM Process Center Console
+   * user login to IBM BPM Process Admin Console
+   * attempt to synchronize user in IBM BPM Process Admin Console
+   * attempt to add User to Team definition in BPM Process Designer
+   
+   The SQL error will be similar to the these errors:
+   
+   Error from Oracle database:
+   
+   Error 500:
+   com.lombardisoftware.client.delegate.BusinessDelegateException:
+   PreparedStatementCallback; uncategorized SQLException for SQL
+    insert
+   into LSW_USR_XREF (USER_ID,USER_NAME,FULL_NAME,PROVIDER) values
+   (?,?,?,?) ; SQL state  72000 ; error code  12899 ; ORA-12899:
+   value too large for column "BPM_DES"."LSW_USR_XREF"."PROVIDER"
+   (actual: 131, maximum: 128) ; nested exception is
+   java.sql.SQLException: ORA-12899: value too large for column
+   "BPM_DES"."LSW_USR_XREF"."PROVIDER" (actual: 131, maximum: 128).
+   
+   OR a slightly different presentation of the same exception
+   
+   insert into LSW_USR_XREF(USER_ID, USER_NAME, FULL_NAME,
+   PROVIDER) values (?,?,?,?)];
+   SQL state [72000]; error code [12899]; ORA-12899: value too
+   large for column LSW_USR_XREF.PROVIDER.
+   
+   
+   Error from DB2 database:
+   
+   CWLLG2229E: An exception occurred in an EJB call.  Error:
+   PreparedStatementCallback; SQL [insert into LSW_USR_XREF
+   (USER_ID,USER_NAME,FULL_NAME,PROVIDER) values (?,?,?,?)]; Error
+   for batch element #1: DB2 SQL Error: SQLCODE=-545,
+   SQLSTATE=23513, SQLERRMC=DB2ADMIN.LSW_USR_XREF.PROVIDER,
+   DRIVER=4.11.69; nested exception is
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException:
+   Error for batch element #1: DB2 SQL Error: SQLCODE=-545,
+   SQLSTATE=23513, SQLERRMC=DB2ADMIN.LSW_USR_XREF.PROVIDER,
+   DRIVER=4.11.69
+   com.lombardisoftware.core.TeamWorksException:
+   PreparedStatementCallback; SQL [insert into LSW_USR_XREF
+   (USER_ID,USER_NAME,FULL_NAME,PROVIDER) values (?,?,?,?)]; Error
+   for batch element #1: DB2 SQL Error: SQLCODE=-545,
+   SQLSTATE=23513, SQLERRMC=DB2ADMIN.LSW_USR_XREF.PROVIDER,
+   DRIVER=4.11.69; nested exception is
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException:
+   Error for batch element #1: DB2 SQL Error: SQLCODE=-545,
+   SQLSTATE=23513, SQLERRMC=DB2ADMIN.LSW_USR_XREF.PROVIDER,
+   DRIVER=4.11.69
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The database table LSW_USR_XREF can store up to 128 characters
+   in the PROVIDER column. If the distinguished name of a user is
+   longer than 128 characters, you receive an SQL error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.0.1.3 and V8.5.5.0 that
+   enlarges the column size of the PROVIDER column in table
+   LSW_USR_XREF to 256 so that users may have LDAP distinguished
+   names that are longer than 128 characters.
+   
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR51409:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR51409, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR51409
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-30
+   
+   
+ * CLOSED DATE
+   2014-11-14
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    JR51417 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR51417]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP
+   
+   
+ * R855 PSY
+   UP

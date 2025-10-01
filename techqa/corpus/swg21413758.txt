@@ -1,0 +1,15 @@
+Title: IBM Received Error: The P8 administrator ID validation failed!, error on FileNet P8 Server Configuration window when running the Initial Configuration of IBM InfoSphere Content Collector. - United States
+
+Text:
+ICC TECHNOTE (FAQ)
+
+QUESTION
+ Why is the validation of P8 administrator ID failed with the following error message in the Initial Configuration of IBM® InfoSphere Content Collector ? 
+
+"The P8 administrator ID validation failed" 
+
+CAUSE
+The Filenet Content Engine Client with API option has not been installed. The API option is not selected by default. 
+
+ANSWER
+Install Filenet Content Engine Client by selecting API option.

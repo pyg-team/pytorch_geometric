@@ -1,0 +1,66 @@
+Title: IBM Enabling SSL connection between WebSphere Portal and Microsoft Exchange Server - United States
+
+Text:
+ssl; connection; Enabling ssl connection; Exchange Server; 1WP10004P; 1wp10004p.zip; Exchange2003.war; exchange 2003; Secure Sockets Layer; encrypted communication; encrypt; Portlet; Exchange 2003 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+You want to set up Secure Sockets Layer (SSL) encrypted communication between IBM® WebSphere® Portal and Microsoft® Exchange Server® when using the IBM Portlet Application for Microsoft Exchange 2003.
+
+RESOLVING THE PROBLEM
+You can use one of the methods below to set up SSL communication.
+METHOD 1: 
+Use the certificate exported from the Portal. You can use this method when you do not have a certificate already configured for the Exchange Server and do not plan to request one.
+
+On the Portal server:
+
+1. Run the utility, <WSAS_root>/bin/ikeyman.
+
+2. Open <WSAS_root>/etc/DummyServerKeyFile.jks (default password is"WebAS").
+
+3. Export the key using the Export/Import button. Select the key file type as PKCS12 and name the file, <fileName>.pfx, using "WebAS" as the password.
+
+On the Exchange Server: 
+
+4. Open the Internet Information Services (IIS) Manager, right-click Default Web Site and choose Properties --> Directory Security.
+
+5. Add 443 as the SSL port on the primary panel. Click Advanced, add the Exchange Server's IP address and associate it with port 443.
+
+6. In testing, Product Development did not select "Require Secure Channel" under Directory Security --> Secure Communications. This leaves Port 80 open for other unencrypted traffic. You may choose to limit this in your own environment but it was not tested.
+
+7. Under Directory Security --> Secure Communications --> Server Certificate, go through the panels to import the certificate exported in Step 3 above (remember the password = "WebAS").
+
+On the Portal server:
+
+8. Configure the Exchange 2003 portlet to "Use a secure connection." 
+
+You can verify the configuration is communicating over 443/SSL channel as expected using a network monitor.
+
+METHOD 2:
+Use the certificate already in use by the Exchange Server.
+
+On the Exchange Server:
+
+1. In the IIS Manager --> Web Sites, right-click Default Web Site --> Properties --> Directory Security --> Server Certificate. Export the certificate in .pfx format.
+
+2. On the Directory Security tab --> Secure Communications --> Edit, check "Ignore client certificates." In some cases, it may also be necessary to add the certificate to the Server Trust List.
+
+In the Microsoft Internet Explorer browser:
+
+3. Import the certificate by selecting Tools --> Internet Options --> Content Tab --> Certificates button --> Import --> Next, navigate to the .pfx key file.
+
+4. Export the key in .cer format. Select the key, then Export --> Do not export the private key --> Next --> Base 64 encoded (.cer), and choose file name given in Step 3 above.
+
+On the Portal server:
+
+5. Use <WSAS_root>/bin/iKeyMan to open <WSAS_root>/java/jre/lib/security/cacerts file (sample password is "changeit"). Import the .cer file exported in Step 4.
+
+6. Configure the Exchange 2003 portlet to "Use a secure connection."
+
+RELATED INFORMATION
+ IBM Portlet Application for Microsoft Exchange 2003 [http://catalog.lotus.com/workplace?NavCode=1WP10004P]
+IBM Microsoft Exchange 2003 Portlet documentation [http://www.ibm.com/developerworks/websphere/zones/portal/catalog/doc/1wp10004p/index.html]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products Installation & Configuration AIX, HP-UX, i5/OS, Linux, Solaris, Windows 5.0.2.3, 5.0.2.2 Enable, Experience

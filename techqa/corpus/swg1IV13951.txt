@@ -1,0 +1,249 @@
+Title: IBM IV13951: WINDOWS SYSTEMS THE CONFIGURATION OF AGENT FOR SIEBEL INSTANCE WITH SERVER TYPE OF "SIEBEL SERVER ONLY" DOES NOT WORK - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   Windows
+     Siebel Agent 6.24, image part number CZV4CEN
+   Problem Description:
+     After installed and configured 6.24 Siebel Agent, two symtoms
+      showed
+     1. Agent Connection Status is "No" in the Agent Connection
+     Status view of the agent's top level workspace in the
+     agent's top level workspace in the Tivoli Enterprise Portal.
+   
+   
+     2. Examination of the configuration values set in the cfg file
+     and those shown in the agent's log file proves that default
+     values from the wrong configuration section were used.
+   
+   Recreate Instructions:
+       1. Install the "Monitoring Agent for Siebel" on Windows.
+       2. Configure an instance of the Monitoring Agent for Siebel.
+           Example:
+           Server Type:
+               Instance Name: sections
+               Server type(s): Siebel server only
+           Server Type: Server
+               Siebel Enterprise name: SCRM
+               Siebel Server name: s80winorac5
+               Siebel Server base install directory:
+       S:\siebel\siebsrvr
+               Siebel Server Admin ID: SADMIN
+               Siebel Server Admin password: ******
+               Siebel Server software version: version 8.0
+               Siebel Gateway Name Server and optional port:
+       S:\siebel\gtwysrvr
+           Additional logs:
+               <Leave all 10 fields blank>
+       3. Start the agent instance.
+       4. Open the kubsieb log file (example: C:\IBM\ITM\TMAITM6
+       \logs\S80WINORAC5_ub_sections_kubsieb_4cc06d37-01.log)
+       5. [PROBLEM] Find "KUB_SIEBEL_ENTERPRISE". You should see it
+       set to the value "siebel"
+       6. Open the configuration file for the agent instance
+          (example: C:\IBM\ITM\TMAITM6\s80winorac5_ub_sections.cfg)
+       7. Confirm
+           a. SERVER_TYPE=SERVER
+           b. KUB_SIEBEL_ENTERPRISE=SCRM inside SECTION=KUB_SERVER
+              ("SCRM" should have been seen in the log in step 5
+              above.)
+           c. KUB_SIEBEL_ENTERPRISE=siebel inside
+              SECTION=KUB_SERVER_AND_GATEWAY
+              (This should NOT have been used unless the
+              SERVER_TYPE was
+              "SERVER_AND_GATEWAY")
+   
+   
+   Additional Information:
+     1. more information is in defect 140524 and technotes
+     http://www-01.ibm.com/support/docview.wss?uid=swg21450348 [http://www-01.ibm.com/support/docview.wss?uid=swg21450348]
+     2. Siebel Agent 6.24 (CZV4CEN) is based on installer 06220200
+     3. To recreate the issue Siebel server is not required.
+        The following info is from the Agent team
+     Q1: Is a Siebel server required to recreate the issue?
+         No, if you consider this an ITM Config write defect.
+         You can see the error
+         in the cfg file after configuration as described in
+         http://www-01.ibm.com/support/docview.wss?uid=swg21450348 [http://www-01.ibm.com/support/docview.wss?uid=swg21450348]
+   
+      Q2: If yes, is the Sieble server on the same machine(local)
+      as the Siebel agent or remotely on another machine?
+      The Siebel agent is a local agent only.
+   
+      Q3: If local, please ask the Seible Agent team to provide
+      test environment with Sieble Server to recreate, debug and
+      test Please see the answer to question 1 about not needing
+      Siebel server.
+      you consider this and ITM Config read defect, then I can work
+      on providing access to a Siebel Server, however, can you
+      please use the information in
+      http://www-01.ibm.com/support/docview.wss?uid=swg21450348 [http://www-01.ibm.com/support/docview.wss?uid=swg21450348]
+      to determine whether is is an ITM Config write or ITM Config
+      read defect.
+   
+   
+   
+   
+   Local Fix:
+     Reconfigure the agent instance and configure values for all
+     server types that share configuration variables with the
+     target server type. Then re-select
+     the correct server type and complete the configuration.
+   
+   
+     For example, when configuring for a Siebel server only:
+   
+       1. Choose "Both Siebel and Gateway server".
+       2. Click Next, and fill in all fields that are also used on
+          the Siebel server
+          only server type (all fields except the Siebel Gateway
+          Name Server base install directory>.
+       3. Click Back, select "Siebel server only", then complete
+          the configuration.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Configuration of an IBM Tivoli Composite Application Manager for
+   Applications Agent for Siebel CRM instance with the server type
+   of "Siebel server only" does not work correctly.
+   
+   
+   During agent configuration, the unused server type sections are
+   written to the configuration file with default values. When the
+   agent is started, some of those default values are used, instead
+   of the values from the selected server type section.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Support has been added for agents to specify whether default
+   values are used instead of the values from the selected server
+   type section. For this to be effective, the Siebel agent needs
+   to implement this new setting (see APAR IV19099).
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+   
+   | fix pack | 6.2.2-TIV-ITM-FP0009
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Reconfigure the agent instance and configure values for all
+   server types that share configuration variables with the target
+   server type. Then re-select the correct server type and complete
+   the configuration.
+   
+      For example, when configuring a Siebel server:
+   
+       1.  Choose "Both Siebel and Gateway server".
+       2.  Click Next, and fill in all fields that are also used on
+   the "Siebel server only" server type. Excluded the Siebel
+   Gateway Name Server base install directory field.
+       3.  Click Back and select "Siebel server only", then
+   complete the configuration.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV13951
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-25
+   
+   
+ * CLOSED DATE
+   2012-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IV19099
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

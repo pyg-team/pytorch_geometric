@@ -1,0 +1,118 @@
+Title: IBM Recommended fixes and settings for WebSphere Commerce V6.0 - United States
+
+Text:
+v16TOC PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ A comprehensive list of recommended, generally available (GA) fixes for IBM WebSphere Commerce V6.0. 
+
+CONTENT
+
+Products that are applicable to this technote
+This technote includes recommended fixes for WebSphere Commerce, and for WebSphere Application Server, WebSphere MQ and DB2 when used with WebSphere Commerce.
+
+If you are an IBM i (iSeries) user, you should also review the PTF tables for WebSphere Commerce Version 6.0 on i5/OS V5R4, i5/OS V5R3, and System i V6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg21239904] technote.
+
+Determining your current Fix Pack level
+If you are unsure of the Fix Pack level you are running on, follow the technote Determining the Fix Pack level for WebSphere Commerce and its associated products [http://www-01.ibm.com/support/docview.wss?uid=swg21358358] for details.
+
+
+Recommended fixes by product
+Review the list of fixes for the products that are applicable to you:
+
+
+
+[/support/docview.wss?uid=swg21414685&amp;aid=1] WebSphere Commerce [/support/docview.wss?uid=swg21414685&amp;aid=2] WebSphere Application Server [/support/docview.wss?uid=swg21414685&amp;aid=3] WebSphere MQ [/support/docview.wss?uid=swg21414685&amp;aid=4] DB2 
+Recommended settings
+
+In addition to the fixes listed in this technote, it is recommended that you review the following documents: 
+ * Recommended Dynacache Settings for WebSphere Commerce [http://www-01.ibm.com/support/docview.wss?uid=swg21358672] 
+ * DB2 Registry variables which help reduce locking in a WebSphere Commerce database [http://www-01.ibm.com/support/docview.wss?uid=swg21321598] 
+
+
+
+
+
+
+
+WebSphere Commerce V6 .0 recommended fix information 
+
+
+WebSphere Commerce V6.0 Fix Type Released Comments [http://www.ibm.com/support/docview.wss?rs=3046&uid=swg24029232] 
+Fix Pack 11 (6.0.0.11) [http://www.ibm.com/support/docview.wss?rs=3046&uid=swg24029232] Fix Pack 02 March 2011 
+See the WebSphere Commerce Version 6.0 Fix Pack master technote [http://www-01.ibm.com/support/docview.wss?uid=swg21246009] for additional information, and the Commerce information center for the list of APARs included in each Fix Pack [http://publib.boulder.ibm.com/infocenter/wchelp/v6r0m0/index.jsp?topic=/com.ibm.commerce.admin.doc/refs/rig_new_and_changed.htm].
+
+Review WebSphere Commerce V6.0 Security Bulletins:
+WebSphere Commerce V6.0 Security Bulletins [http://www.ibm.com/support/search.wss?q=security+bulletin&tc=SSC8NWD+SSCKKVP+SSCFQW6+SSC7LNT&atrn=SWVersion&atrv=6.0&rankprofile=8]
+
+Other Fixes LATEST [http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21285009] Interim Fix 16 Jan 2009 
+For Coremetrics Enabled Sites: 
+Latest Coremetrics fix for IBM WebSphere Commerce
+SI32088 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?fixes=4.0.0.0-WS-WCFeaturePack4-IFSI32088&productid=WebSphere%20Commerce&brandid=5] Interim Fix 08 Oct 2008 
+For WebSphere Commerce
+Feature Pack 4:
+SI32088 - Corrects an issue in Management Center when offer price range is deleted [http://www-01.ibm.com/support/docview.wss?rs=3046&uid=swg21320979].
+Back to top
+
+
+WebSphere Application Server recommended fix information
+
+
+
+
+
+WebSphere Application Server V6.1 Fix Type Released Comments Fix Pack 47 (6.1.0.47) [http://www-01.ibm.com/support/docview.wss?uid=swg24035508] Fix Pack 13 Jan 2014 
+The WebSphere Application Server Fix Pack 45
+download package contains updates for the following products:  * WebSphere Application Server (includes Deployment manager) 
+ * Java SDK 1.5 SR16 
+ * WebSphere IBM HTTP Server (IHS) 
+ * WebSphere Application Server Plug-ins
+
+
+Note for all V6.1 users:
+In order to update WebSphere Application Server to 6.1.0.27 or higher first ensure WebSphere Commerce is running with Fix Pack 8 (6.0.0.8) or higher or contact WebSphere Commerce Support to obtain the following iFix: LI74720. Back to top
+
+
+
+DB2 recommended fix information 
+
+
+ * 
+ * 
+ * :
+   
+   Recommended Fix Packs for DB2 for Linux, UNIX and Windows
+ * 
+ * http://www.ibm.com/support/docview.wss?uid=swg21321001
+ * 
+ * 
+
+Back to top
+
+
+WebSphere MQ recommended fix information 
+
+ * 
+ * 
+ * 
+ *  
+ * 
+ * :
+   
+ * 
+ * 
+ * Recommended Fixes for WebSphere MQ
+ * 
+ * http://www.ibm.com/support/docview.wss?uid=swg27006037
+ * 
+ * 
+
+Back to top
+
+
+
+Change history 
+Last updated: 26 Jun 2013  
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce WebSphere Commerce - Express i5/OS, Linux, Windows 6.0 Express Commerce WebSphere Commerce Developer Enterprise Maintenance Windows 6.0 Enterprise Commerce WebSphere Commerce Developer Professional Maintenance Windows 6.0 Developer Professional Edition Commerce WebSphere Commerce Developer Express Maintenance Windows 6.0 Developer Express

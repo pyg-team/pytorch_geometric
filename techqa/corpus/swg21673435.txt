@@ -1,0 +1,19 @@
+Title: IBM Can you have multiple WebSphere Portal installs on the same machine? - United States
+
+Text:
+portal; install TECHNOTE (FAQ)
+
+QUESTION
+Can you have multiple WebSphere Portal installs on the same machine?
+
+CAUSE
+There may be a reason one would like to install multiple WebSphere Portal (but separate) environments on the same machine.
+
+ANSWER
+ The answer is YES.
+
+There is no problem with installing 2 completely separate Portal installs on the same machine. When you install the second one just make sure you change the install path for both WAS and Portal in the IIM panels.
+
+IIM will throw warning messages that you already have a WAS/Portal combination installed, but it should allow you to proceed as long as you change the installation paths. IIM will append an "_1" to the package names in its registry for the second installation. This allows IIM to catalog each install separately and also allows one installation to be upgraded without it affecting the other installation. 
+
+Discuss this topic [https://www.ibm.com/developerworks/community/forums/html/topic?id=1eaf4866-b582-4fd7-9c22-ece6dcfbf0bb&ps=25] further in the WebSphere Portal forum.

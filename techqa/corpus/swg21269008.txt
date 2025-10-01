@@ -1,0 +1,76 @@
+Title: IBM MQ Explorer fails with  "An error has occurred when creating this view" - United States
+
+Text:
+MQ Explorer An error has occurred when creating this view RC_50045 50045 AMQ4999 50017 Desktop Heap TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are attempting to do administration of many WebSphere MQ Queue Managers (15+), both local and remote. You receive the following message in the left hand tree view, and you do not see your queue managers listed.
+
+"An error has occurred when creating this view". 
+
+CAUSE
+This can be caused by a shortage of Desktop Heap memory shortage.
+
+RESOLVING THE PROBLEM
+Increase the Desktop Heap from the default 512, to a value of 768 or 1024 may be appropriate. 
+
+
+
+
+The size of the desktop heap allocated for a desktop associated with a window station can be changed in the following registry value: 
+
+HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\SubSystems\Windows 
+
+To locate this value in the Windows Registry please follow the steps below. 
+
+1. From the Windows Start menu select Run.
+2. Run the command 'regedit'.
+3. Under My Computer select HKEY_LOCAL_MACHINE -> SYSTEM -> CurrentControlSet -> Control -> Session Manager -> SubSystems.
+4. The 'Windows' value will be on the right hand window panel.
+5. Double click to edit this entry with the recommended values given in the next two paragraphs.
+
+[/support/docview.wss?uid=swg21269008&aid=1] [/support/docview.wss?uid=swg21269008&aid=1] 
+
+The default data for this registry value will look something like the following (all on one line): 
+
+%SystemRoot%\system32\csrss.exe ObjectDirectory=\Windows SharedSection=1024,3072,512 Windows=On SubSystemType=Windows ServerDll=basesrv,1 ServerDll=winsrv:UserServerDllInitialization,3 ServerDll=winsrv:ConServerDllInitialization,2 ProfileControl=Off MaxRequestThreads=16 
+
+There are 3 values for the 'Windows SharedSection'. As can be seen above, these are 1024,3072,512 (Sometimes the last value may not be present (512)). The last value represents the size of the desktop heap for each desktop that is associated with a "noninteractive" Windows station. MUSR_MQADMIN is usually the user ID configured under dcomcnfg to run the IBM® MQSeries® Services as "noninteractive". The user should be able to modify this value to successfully launch all of their queue managers. A value of perhaps 768 or 1024 may be appropriate. 
+
+
+Example recommended setting:
+[/support/docview.wss?uid=swg21269008&amp;aid=2] 
+
+Note: The machine requires a restart for the new parameter to take effect. 
+
+ 
+
+Additional Diagnostic Details 
+
+An MQ Explorer trace shows the following entries: 
+
+
+13:38:04.223 99 java.util.MissingResourceException: Can't find resource for bundle java.util.PropertyResourceBundle, key RC_50045 
+13:38:04.223 99 -------} Message.getMessage() rc=50017 
+13:38:04.223 99 ------} CommonServices.getSystemMessageId() rc=0 
+13:38:04.223 99 ------{ Message.getMessage() 
+13:38:04.223 99 An unexpected error ({0}) has occurred. (AMQ4999) 
+13:38:04.223 55 java.util.MissingResourceException: Can't find resource for bundle java.util.PropertyResourceBundle, key MQIA_CMD_SERVER_CONTROL.proptitle 
+13:38:04.223 32 ------{ Attr.constructor() 
+13:38:04.223 99 -----} ConvertReasonCode.getSystemMessage() rc=0 
+13:38:04.223 32 ------} Attr.constructor() rc=0 
+13:38:04.223 13 ------} AttrTypeString.constructor() rc=0 
+13:38:04.223 10 ------} AttributeOrderPersistence.loadAttributeOrderItem() rc=0 
+13:38:04.223 55 --------} Message.getMessage() rc=50017 
+13:38:04.223 32 -------{ Attr.toString() 
+13:38:04.223 32 --------{ AttrTypeEnum.getEnumeratedValue() 
+13:38:04.223 99 java.util.MissingResourceException: Can't find resource for bundle java.util.PropertyResourceBundle, key RC_50045 
+13:38:04.239 84 ------} AttrInt.constructor() rc=0 
+13:38:04.239 94 ------} Attr.toString() rc=0 
+13:38:04.223 99 Message = An unexpected error (50045) has occurred. (AMQ4999), msgID = AMQ4999, reason = 50045, comp = 2, severity = 20 
+
+
+
+
+HISTORICAL NUMBER
+ 12278 379 000

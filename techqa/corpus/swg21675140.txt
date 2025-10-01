@@ -1,0 +1,90 @@
+Title: IBM Installation/upgrade fails with error: Wrong Deployment Engine - United States
+
+Text:
+DEL2; Wrong Deployment Engine TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installation fails with below error: 
+Wrong Deployment Engine 
+You are updating an instance of Netcool/OMNIbus that was installed using the Tivoli Deployment Engine (DE) located in different dir. 
+
+SYMPTOM
+The IA log contains below information: 
+
+Wrong Deployment Engine 
+You are updating an instance of Netcool/OMNIbus that was installed using the Tivoli Deployment Engine (DE) located at
+"/home/netcool/.acsi_njctivprobedv01.smbcgroup.com".
+However you are now using the DE located at
+"/usr/ibm/common/acsi".
+
+
+Refer to the Troubleshooting section of the Netcool/OMNIbus Installation and Deployment Guide for possible causes of this problem. Note that you should terminate this installation and then resolve the problem before trying again. 
+
+
+->1- Stop installer (recommended)
+2- Attempt to continue 
+
+ENTER THE NUMBER FOR YOUR CHOICE, OR PRESS <ENTER> TO ACCEPT THE 
+DEFAULT:
+
+
+CAUSE
+Above error can occur if multiple instances of DE exist on the same server. 
+
+ * The global instance is created under /usr/ibm/common/acsi dir when the installation is done as root user. 
+ * The local instance get created under non-root users home dir when installation is done as non-root.
+
+DIAGNOSING THE PROBLEM
+1. Run the command below to determine how many instances of DE exists on the server. It should list all the instances of DE. The output may look as follows. 
+
+
+<DE-HOME>/bin/de_instance_locator.sh (de_instance_locator.bat for Windows)
+
+[netcool@nc-server1 bin]$ ./de_instance_locator.sh 
+Current User: netcool
+Multi-user mode DE installation details 
+========== ==== == ============ ======= 
+Installed Version : 1.4.0.12 
+Install location : /usr/ibm/common/acsi 
+Checking the working status of the DE installation... 
+No JRE found. 
+DE Installation status : UNDEFINED 
+Single-user mode DE installation details 
+=========== ==== == ============ ======= 
+Installed Version : 1.4.0.16 
+Install location : /home/netcool/.acsi_njctivprobedv01.smbcgroup.com 
+
+Checking the working status of the DE installation... 
+ListIU run : OK 
+Version Application installed UUID 
+----------- ------------------------------ ---- 
+
+libicu40 0B850F92331F4E75B6CD88B2FDFFDB93 
+4.0.1.0 
+probe-nco-p-email 0F86F255150A450EA2B130BA71E51C29 
+
+2. Run the commands below and look to see which DE is associated to the product in question.
+
+<DE-HOME>/bin/de_lsrootiu.sh (or de_lsrootiu.sh.bat)
+<DE-HOME>/bin/listIU.sh (or listIU.bat in Windows)
+
+
+RESOLVING THE PROBLEM
+Once it is determined which instance of DE is associated with the product being upgraded, use either one of the following two options to resolve this issue. (The steps below may vary depending on which DE instance is associated with the product in question.) 
+
+For example, assume the DE instance under the non-root user's home dir is associated with the product. Try option #1 first. If the issue is not resolved, then go with 2nd option. 
+
+Option 1) Run this command to hide the global DE instance from other users. Login as root before running this command: /usr/ibm/common/acsi/bin/de_security -singleUser 
+
+Option 2) Rename the global DE directory: 
+
+ mv /usr/ibm/common/acsi /usr/ibm/common/acsi.bak 
+
+Once the installation is complete, rename it to its original name. If this DE instance is not being used by any other product, either remove it or keep it. Note: If there is any doubt, do not remove it! 
+
+It is recommended to take a backup of DE before doing the upgrade. Please see below URL on how to take a backup: 
+
+http://pic.dhe.ibm.com/infocenter/tivihelp/v45r1/index.jsp?topic=%2Fcom.ibm.tivoli.tpm.ins.doc%2Finstall%2Ftrins_restorede.html [http://pic.dhe.ibm.com/infocenter/tivihelp/v45r1/index.jsp?topic=%2Fcom.ibm.tivoli.tpm.ins.doc%2Finstall%2Ftrins_restorede.html] 
+
+
+After the steps above try running the install again as a non-root user.

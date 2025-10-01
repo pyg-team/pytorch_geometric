@@ -1,0 +1,178 @@
+Title: IBM PI54733: DFHAP0707 DFHAP0001 ABEND0C4 AKEA IN DFHMQTRU TRANSACTION CKTI ABEND ASRA - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Running CICS TS 4.2, you experience the following errors at
+   startup:
+   DFHMQ0386 I STARTCKTI initiated from TERMID=MQ12
+             TRANID=CKSQ USERID=PRDFPC00 and is accepted.
+   DFHMQ0386 I STARTCKTI initiated from TERMID=MQ02
+             TRANID=CKSQ USERID=SYSSDS00 and is accepted.
+   .
+   DFHAP0707 An abend (code 0C4/AKEA) has occurred in
+             task related user exit program DFHMQTRU.
+   DFHAP0001 An abend (code 0C4/AKEA) has occurred at
+             offset X'0000CC0A' in module DFHMQTRU.
+   DFHAC2236 Transaction CKTI abend ASRA in program DFHMQTRU
+   The region eventually came down.
+   .
+   This abend0C4 is occuring in procedure PROCESS_MAILBAG, within
+   the SEARCH_GMAIL routine-offset x'2Be' in DFHMQTRQ.
+   This appears to involve a serialization problem, similar but
+   not the same as APAR PM84649 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM84649].
+   Additional Symptom(s) Search Keyword(s): KIXREVEPH
+   Global mailbag cleanup
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS Users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A CICS region connected to WebSphere MQ *
+   *                      abends S0C4 in module DHMQTRU when the  *
+   *                      CICS-WebSphere MQ adapter is being      *
+   *                      started.                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A CICS region is connected to WebSphere MQ and several CKTI
+   trigger monitor tasks are being started. When the CICS-WebSphere
+   MQ adapter is starting an abend S0C4 occurs at offset x'CC0A' in
+   DFHMQTRU.
+   
+   Additional keywords: ABENDS0C4 AP0707 AP0001
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The processing in DFHMQTRU to unchain CKTI tasks when the
+   CICS-WebSphere MQ adapter is being started has been altered so
+   that it now runs serially for each task.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *              *********
+               * HIPER *
+               *********
+   FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI54733
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-12-30
+   
+   
+ * CLOSED DATE
+   2016-02-17
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI56309 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI56309] UI35483 UI35484
+   
+   
+
+MODULES/MACROS
+ *  DFHMQTRU
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY UI35483 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI35483]
+   UP16/02/25 P F602 ¢
+   
+   
+ * R700 PSY UI35484 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI35484]
+   UP16/02/25 P F602 ¢
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

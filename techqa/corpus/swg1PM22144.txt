@@ -1,0 +1,291 @@
+Title: IBM PM22144: UPDATE VERSION NUMBER IN HWSROUPM/HWSAUTPM AND APAR SEQUENCE NUMBER IN HWSTCPIB - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Update the version number in HWSROUPM and HWSAUTPM. Also update
+   the apar sequence number in HWSTCPIB.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IMS V11 IMS Connect users using the      *
+   *                 Open Database function and HWSTECL0 exit.    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The HWSAUTPM and HWSROUPM parmlist      *
+   *                      require an updated version number,      *
+   *                      and HWSTCPIB requires an updated apar   *
+   *                      number.                                 *
+   ****************************************************************
+   * RECOMMENDATION: INSTALL CORRECTIVE SERVICE FOR APAR/PTF      *
+   ****************************************************************
+   The HWSAUTPM and HWSROUPM parmlist require an updated
+   version number, and HWSTCPIB requires an updated apar
+   number.
+   
+   Additional keywords:  IMSOPENDB OPENDATABASE
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  GEN:
+   KEYWORDS:
+   
+   *** END IMS KEYWORDS ***
+   Add new version number to HWSAUTPM and HWSROUPM parmlist.
+   
+   Add new apar number to HWSTCPIB.
+   
+   HWSMDRCV, HWSMDXMT, HWSSDCLS, HWSSCDCON, HWSSDDSC, HWSSDOPN,
+   and HWSSDOTD are recompiled to pick up new version number
+   in HWSAUTPM/HWSROUPM and/or new apar number in HWSTCPIB.
+   
+   HWSAUTH0 and HWSROUT0 exits are also added for recompile.
+   
+   *************************************
+    IMS V11 Exit routines  (SC19243701)
+   *************************************
+   
+   Chapter 90. IMS Connect function-specific exit routines
+   
+   IMS Connect DB Routing user exit routine (HWSROUT0)
+   Parameter list
+   
+   Table 307. HWSROUT0 user exit routine parameter list
+   Field Name      Offset  Length  Description
+   ROUPM_Pver      X'00'   X'04'   Version number of the parameter
+                                   list
+                                   ROUPM_PVER2 = 2
+                                   ROUPM_PVERMAX = ROUPM_PVER2
+   ROUPM_Function  X'04'   X'04'   Function Type
+                                      'INIT' Initialization
+                                      'ROUT' Routing
+                                      'TERM' Termination
+   ROUPM_Aclstruct X'08'   X'04'   Address of client's ID structure
+   ROUPM_Flag1     X'0C'   X'01'   Flag byte
+   ROUPM_Ebcdic                    x'80'   - EBCDIC
+   ROUPM_IPv6                      x'40'   - IPv6
+   ROUPM_RRS                       x'20'   - ODBM RRS is
+                                                requested
+                   X'0D'   X'07'   Reserved
+   ROUPM_AUsrdataL X'14'   X'04'   Address of user data length
+   ROUPM_AUsrdata  X'18'   X'04'   Address of DRDA user data
+   ROUPM_AInAlias  X'1C'   X'04'   Address of 4-character string of
+                                   IMS alias name
+   ROUPM_AInPsbnm  X'20'   X'04'   Address of 8-character string of
+                                   the PSB name
+   ROUPM_Xib       X'24'   X'04'   XIB address
+   ROUPM_AOutlias  X'28'   X'04'   Address of 4-character string of
+                                   IMS alias set by exit (output)
+   ROUPM_AOutOdbm  X'2C'   X'04'   Address of 8-character string of
+                                   ODBM name set by exit (output)
+   ROUPM_ARetcode  X'30'   X'04'   Address of fullword return code
+                                   set by exit (output)
+   ROUPM_ARsncode  X'34'   X'04'   Address of fullword reason code
+                                   set by exit(output)
+   
+   IMS Connect DB security user exit routine (HWSAUTH0)
+   Parameter list
+   
+   Table 308. HWSAUTH0 user exit routine parameter list
+   Field name      Offset  Length  Description
+   AUTPM_PVERMAX   X'00'   X'04'   Version number of the parameter
+                                   list
+                                   AUTPM_PVER2 = 2
+                                   AUTPM_PVERMAX = AUTPM_PVER2
+   AUTPM_Aclstruct X'04'   X'04'   Address of client's ID structure
+   AUTPM_Flag1     X'08'   X'01'   Flag byte
+   AUTPM_Ebcdic                    x'80'   - EBCDIC
+   AUTPM_IPv6                      x'40'   - IPv6
+                   X'09'  X'07'    Reserved
+   AUTPM_AusrDataL X'10'  X'04'    Address of user data length
+   AUTPM_AusrData  X'14'  X'04'    Address of DRDA user data
+   AUTPM_AIUserid  X'18'  X'04'    Address of user ID
+   AUTPM_APssword  X'1C'  X'04'    Address of password
+   AUTPM_ARetcode  X'20'  X'04'    Address of fullword return code
+                                   set by the exit (output)
+   AUTPM_ARsncode  X'24'  X'04'    Address of fullword reason code
+                                   set by the exit (output)
+                                   Reason code 0 - if return code
+                                                   is 0
+                                   Reason code &#172;0 - if return code
+                                                    is 4
+   AUTPM_AOUserid  X'28'  X'04'    Address of 8-character user ID
+                                   set by the exit (output)
+   AUTPM_AOGrpid   X'2C'  X'04'    Address of 8-character group ID
+                                   set by the exit (output)
+   
+   IMS Connect Event Recorder exit routine (HWSTECL0)
+     Control blocks and DSECTS for event recording
+        TCP/IP Information Block (TCPIB)
+   
+   Table 418. TCP/IP Information Block (TCPIB) contents
+   Element           Length   Usage and meaning
+   LENGTH            2        Length of the TCPIP block, including
+                              the length of the field.
+   BLOCK_ID          1        Block ID = X'01' identifying the
+                              block as a TCPIB.
+                     1        Reserved
+   VERSION           2        The version and release of IMS
+                              Connect in the VVRR format.
+   APAR_COUNT        2        A sequential count field starting at
+                              one and incrementing by one for any
+                              APAR changing the format or content
+                              of the control block. The number
+                              resets to one at each new release.
+                              APAR_COUNT = 2
+   
+   PORT_NUMBER       2        The port number associated with the
+                              TCP/IP event being recorded.
+   LOCAL_PC_NUM      4        The PC number used by the local
+                              connection.
+   SOCKET_NUM        2        The socket number associated with the
+                              request. This field is redefined to
+                              LOCAL_PC_NUM. A 2-byte reserved field
+                              follows this field to account for the
+                              4-byte length of LOCAL_PC_NUM.
+   SOCKET_FLAG       1        A flag byte identifying information
+                              about the socket.
+                              1. Listen socket.
+                              2. Session socket.
+   PORT_FLAG         1        A flag byte identifying information
+                              about the port.
+                              1. SSL port.
+                              2. Local port.
+                              3. DRDA port.
+   LENGTH_ISSUED     4        The length values associated with the
+                              read or write command.
+   LENGTH_EXECUTED   4        The length value actually executed by
+                              the read or write command.
+   LOCAL_SND_LEN     4        Overlays LENGTH_ISSUED. For the local
+                              interface,the lengths for a local
+                              send operation.
+   LOCAL_RCV_LEN     4        Overlays LENGTH_EXECUTED. For the
+                              local interface, the lengths for a
+                              local receive operation.
+                              operation.
+                              local receive operation.
+   EVENT_DATA        4        Data or flag bits or both associated
+                              with the event.
+                              This data can be unique for each
+                              event recording the TCPIB.
+   RETURN_CODE       4        Return code associated with the
+                              request.
+   TCPIP REASON_CODE 4        Reason code received from TCP/IP.
+   LOCAL REASON_CODE 8        Reason code received from local
+                              interface.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM22144
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V11
+   
+   
+ * REPORTED COMPONENT ID
+   5635A0200
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2010-09-08
+   
+   
+ * CLOSED DATE
+   2010-10-02
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK61044
+   
+   
+
+MODULES/MACROS
+ *  HWSAUTH0 HWSAUTPM HWSMDRCV HWSMDXMT HWSROUPM
+   HWSROUT0 HWSSDCLS HWSSDCON HWSSDDSC HWSSDOPN HWSSDOTD HWSTCPIB
+   
+   
+    
+   
+   
+
+Publications Referenced SC19243701 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V11
+   
+   
+ * FIXED COMPONENT ID
+   5635A0200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY UK61044 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK61044]
+   UP10/10/06 P F010
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

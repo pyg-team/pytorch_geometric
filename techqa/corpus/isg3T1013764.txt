@@ -1,0 +1,17 @@
+Title: IBM How do I configure mbatchd multithreading? - United States
+
+Text:
+LSB_QUERY_PORT mbatchd multithreading TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do I configure mbatchd multithreading? 
+
+RESOLVING THE PROBLEM
+How to set multi-threaded MBD (LSB_QUERY_PORT, lsf.conf) as well as parameters pertaining to the query port solution for LSF 5.1 and 6.1.
+
+Please refer to the following documentation:
+/pcc/support/work/support/notes/lsbatch/queryPort51_61.doc 
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

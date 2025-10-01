@@ -1,0 +1,24 @@
+Title: IBM Can run Jobstream from within Data Manager but not published task - United States
+
+Text:
+batch, job stream, publish task, hang, hangs, hung TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running a job stream from within Data Manager, that contains a procedure node calling a batch file, it works fine, however, when I publish the job stream to the portal it hangs. 
+
+SYMPTOM
+No error message, just keep srunning
+
+CAUSE
+A prompt page is being launched but because the job is run froma published task, it is never displaye and the job hangs.
+
+ENVIRONMENT
+Windows
+
+RESOLVING THE PROBLEM
+Log into to a server as the user running the C8 service and launch Data Manager, execute the job stream and see if there are any security prompts that you need to enter info. Address those so that the job stream from within Data Manager runs without prompt, then re-publish to portal and try again.
+
+Steps:Depending on what kind of prompts you get, whether they be security prompts, windows prompts or some other message, they need to be addressed so that the job stream runs without any prompts from Data Manager when logged in as the user running the Cognos 8 service. 
+
+HISTORICAL NUMBER
+ 1040825

@@ -1,0 +1,157 @@
+Title: IBM IV33854: MISSING SYMBOL LINKS OF WMQ LIBRARY FILES IN /USR/LIB CAUSES MQ AGENT FAILED TO GET THE STANDBY QMGRS STATUS. - United States
+
+Text:
+  A FIX IS AVAILABLE
+ITCAM Agents for WebSphere Messaging Version 7.1.0 Fix Pack 01 (7.1.0-TIV-XEforMsg-FP0001) [http://www-01.ibm.com/support/docview.wss?uid=swg24035244]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  missing symbol links of WMQ library files in /usr/lib causes mq
+   agent failed to get the standby Qmgrs status.
+   
+   Environment:
+     OS: AIX 64bit
+     WMQ: 7.0.1 and later
+     Mulit-instance queue manager
+   
+   Detailed Recreation Procedure:
+   1. issue dltmqlnk command or remove /usr/lib/mqm* files
+   2. Put WMQ lib path (default is /usr/mqm/lib) into LIBPATH of
+   the mq.ini
+   3. start the Qmgr by command strmqm -x
+   4. start the mq agent and TEP shows that Qmgr status is NOT
+   AVALIABLE
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  MQ agent at version 7.0.1 provides 32 bit binary only but it
+   allows to run in 64 bit operating system where 64 bit WebSphere
+   MQ queue manager can be installed in customer scenarios.
+   Some WebSphere MQ libraries are required by MQ agent and it
+   looks for the libraries from /usr/lib directory as the first
+   place, however if there is no symbolic links under /usr/lib
+   because they are deleted for some reasons. It is recommended to
+   add the actual WebSphere MQ library path at the beginning of
+   LIBPATH or LD_LIBRARY_PATH variables in mq.ini. However, there
+   is case that MQ agent invokes dspmq command which is actually 64
+   bit internally and it cannot work dues to the setting in the
+   environment variable. As the result, the queue manager status
+   can be incorrect in Queue Manager Status workspace.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code change was made in MQ agent to unset the LIBPATH or
+   LD_LIBRARY_PATH when WebSphere MQ command is invoked and it
+   resolves the issue of dspmq failure and does not affect the
+   other functions.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV33854
+   
+   
+ * REPORTED COMPONENT NAME
+   OMG XE MSG DIST
+   
+   
+ * REPORTED COMPONENT ID
+   5724N1300
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-12-20
+   
+   
+ * CLOSED DATE
+   2013-09-12
+   
+   
+ * LAST MODIFIED DATE
+   2013-09-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMG XE MSG DIST
+   
+   
+ * FIXED COMPONENT ID
+   5724N1300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

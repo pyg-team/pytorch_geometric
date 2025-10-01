@@ -1,0 +1,16 @@
+Title: IBM Query Studio filter icon missing - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Query Studio filter icon missing from report output (pdf, excel 2007) but shows correctly in html. 
+
+ENVIRONMENT
+Distributed
+
+RESOLVING THE PROBLEM
+Copy image file from gateway webcontent\common\images\filter.gif to same location on dispatchers. If the directory structure doesn't exist, create it
+
+RELATED INFORMATION
+ Understanding how Cognos locates images in pdf and html [http://www-01.ibm.com/support/docview.wss?uid=swg21340590]

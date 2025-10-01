@@ -1,0 +1,128 @@
+Title: IBM Configuration overview of setting up user login authentication for the search application in OmniFind Enterprise Edition - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We would like to enable user authentication for the search application using LDAP as user repository.
+
+How do you set up the system and are there any points to consider? 
+
+RESOLVING THE PROBLEM
+Following is the tasks overview when you enable the user login authentication for the search application in OmniFind Enterprise Edition. 
+
+Note: This technote does not cover how to configure Single Sign On(SSO) with LTPA token. But this configuration is needed to configure SSO with LDAP token.
+
+Tasks overview
+
+
+ 1. Prepare the LDAP server used as a user repository for user authentication. 
+ 2. "Configure Embedded Application Server Login Settings" from the administration console of OmniFind Enterprise Edition to point to the LDAP server you prepared. 
+ 3. When you install OmniFind Enterprise Edition with WebSphere Application Server(WAS) deployment, configure the global security from the administration console of WAS. 
+
+
+
+Hints and Tips for each tasks 
+
+1. Prepare the LDAP server used as a user repository for user authentication. 
+
+1. For a list of supported LDAP servers, refer to Requirements for OmniFind Enterprise Edition and OmniFind Starter Edition Version 9.1 in the related information below. 
+
+2. Consult with your LDAP server administrator or confirm your requirement about which attribute should be used as login user name. ldapsearch tool is helpful to find that information. For further detail of ldapsearch tool, refer to Using ldapsearch to debug LDAP configuration problems in the related information. 
+
+2. "Configure Embedded Application Server Login Settings" from the administration console of OmniFind Enteprise Edition 
+
+1. When you configure the embedded application server login, select "Enable login" check box and "LDAP server" check box. 
+
+You need to specify following information. Consult with your LDAP server administrator for the correct entries: 
+ * LDAP server name 
+ * LDAP server port number 
+ * Base DN 
+ * (If required) Use credentials to access the LDAP server(LDAP User name and LDAP password)  * This information is used as bind user, and it depends on your LDAP server configuration.
+   
+   
+
+
+2. Select "Search Administrator" check box along with selecting "LDAP Server" check box. 
+
+This check box is useful when you troubleshoot this LDAP related configuration. (When this check box is selected, you can still login to OmniFind's administration console as enterprise search administrator even if LDAP server configuration is having a problem.) 
+
+3. You need to edit ES_NODE_ROOT/master_config/esldap.xml file if you will use a login user name attribute other than uid. By default, login user name attribute is set as uid. 
+
+For example, if you want to use mail attribute as login user name, you need to change the following entry from uid to mail: 
+
+<entry key="userIdAttribute">uid</entry> 
+
+When you edit the file, make sure that OmniFind is stopped with the esadmin system stopall command, and edit the file with utf-8 aware editor. 
+
+For further detail, refer to How do I configure OmniFind Enterprise Edition to use my email id for LDAP authentication on Jetty? in related information. 
+
+4. Once you have finished the configuration, restart OmniFind with esadmin system stopall/startall command and test the following URL via browser on the search server: 
+
+http:// <search server hostname> : <port:8394 by default> /ESSearchServer/snoop 
+
+If the user authentication related configuration is done properly, you will be challenged to input user name and password. Type the user name with the attribute that you set and password that is registered in the specified LDAP server and see that you can get the snoop page correctly. 
+
+5. When you install OmniFind Enterprise Edition with default configuration, the search application is deployed on embedded application server(Jetty). 
+
+After above steps are done, you can test if the user authentication configuration for the search application works. 
+
+Make sure at least one collection's search is up and running from the administration console of OmniFind, then enter the following URL via browser: 
+
+http:// <search server hostname> : <port:8393 by default> /search/ 
+
+See if the login prompt appears and you can login with the user name with the attribute that you set and the password. 
+
+3. Configure the global security from the administration console of WebSphere Application Server 
+
+When you install OmniFind Enterprise Edition with WebSphere Application Server(WAS), the search application itself is deployed on WAS. Thus you must configure the global security from WAS administration console. 
+
+1. To enable the user authentication for the search application, select "Enable application security" check box, and configure the User account repository at the bottom of the page. 
+
+2. If you use LDAP server for user authentication for the application, you might want to configure the Standalone LDAP repository or Federated repositories. 
+
+Depending on your requirement, configure the LDAP server related information the same as when you configure the LDAP server configuration from the administration console of OmniFind. 
+ * primary host name (LDAP server) 
+ * port (port) 
+ * Distinguished name of a base entry that uniquely identifies this set of entries in the realm (Base DN) 
+ * (If required) Bind distinguished name (Use credentials to access to the LDAP server, LDAP User name) 
+ * (If required) Bind password (Use credentials to access to the LDAP server, LDAP password)
+
+
+3. Also, make sure that "Login properties" is set the same as userIdAttribute attribute in ES_NODE_ROOT/master_config/esldap.xml . If you changed the attribute from the steps above, you need to change the login properties as well. 
+
+4. When you select the federated repositories as User account repository in WAS administration console, make sure that the user defined in each realm does not collide. 
+
+For example, suppose: 
+
+1) You installed WebSphere Application Server with local wsadmin user 
+2) You configure the LDAP server as a part of federated repositories 
+
+If wsadmin user does exist in LDAP server's realm, the collision occurs and the wsadmin user might not be able to login to the search application (or WAS administration console even if the user is specified as primary administrative user when enabling WAS administrative security). 
+
+If needed contact IBM support for further assistance. 
+
+5. After the configuration is done, save the changes and restart WAS. Test if the user authentication configuration for the search application works. 
+
+When you examine the login for the search application, make sure at least one collection's search is running and ready for search. 
+
+6. When you configure WAS along with IBM HTTP Server(IHS)/HTTP Plug-in, you can examine the following URL via browser, 
+
+http:// <search server hostname> : <port> /search/ (Access via IHS/HTTP Plug-in) 
+
+and see if the login prompt appears. You can login with the user name with the attribute that you set and the password. 
+
+Note that port number depends on your IHS and HTTP plug-in configuration. (By default, port 80 is configured for IHS and HTTP Plug-in is configured with WAS.) 
+
+7. If you have problems with IHS and HTTP Plug-in, and you can not see the page with the URL in previous step, use the following URL via browser to access WAS directly: 
+
+http:// <search server hostname> : <port:WC_defaulthost> /search/ (Access to WAS directly) 
+
+See if the login prompt appears and you can login with the user name with the attribute that you set and the password. 
+
+Note that the port number depends on your WAS configuration. From WAS administration console, confirm which port number the WC_defaulthost property is pointing to. (You need to refer to ESSearchServer WAS server configuration (not server1) where the search application is deployed.) 
+
+Once you confirm this URL works, the problem could be HTTP Plug-in configuration. Troubleshoot further for HTTP Plug-in configuration, and contact IBM support if you need further assistance. RELATED INFORMATION
+ Requirements for OmniFind Enterprise Edition and OmniFi [http://www.ibm.com/support/docview.wss?uid=swg27017874]
+Using ldapsearch to debug LDAP configuration problems [http://www.ibm.com/support/docview.wss?uid=swg21113384]
+How do I configure OmniFind Enterprise Edition to use m [http://www.ibm.com/support/docview.wss?uid=swg21458430]

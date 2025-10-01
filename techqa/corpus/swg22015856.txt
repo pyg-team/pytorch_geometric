@@ -1,0 +1,48 @@
+Title: IBM End of support (EOS) announcement: IBM Security Network Protection (XGS) firmware versions 5.3.1 and 5.3.3 - United States
+
+Text:
+ PRODUCT LIFECYCLE
+
+ABSTRACT
+ Starting 31 August 2018, IBM will no longer support IBM Security Network Protection (XGS) firmware versions 5.3.1 and 5.3.3. 
+
+CONTENT
+Effective 31 August 2018, the following XGS firmware versions will no longer be supported by IBM Security: 
+
+ * IBM Security Network Protection firmware version 5.3.3 
+ * IBM Security Network Protection firmware version 5.3.1
+
+
+To identify the firmware version running on your XGS appliances, perform one of the following tasks:  * Log into the the XGS local manager interface (LMI) as admin, and look for the Firmware Version in the System Summary section. 
+ * Log into the the XGS command-line interface (CLI) as admin, run firmware list, and look for the Firmware Version line. 
+ * If your XGS appliance is registered to SiteProtector:  1. Log into the SiteProtector Console, and select the group in which the agent resides. 
+    2. Go to Agent View section, locate the entry for your XGS appliance, and then look at the Version column. 
+   
+   
+
+To continue receiving your warranted product services and support, upgrade your current firmware version to IBM QRadar Network Security 5.4.0.4 or later. 
+
+If you have specific questions about upgrading to the latest version or you would like assistance with upgrading, please contact IBM Technical Support [http://www.ibm.com/support/customercare/sas/f/handbook/contacts.html]. 
+
+Contact your IBM Account Manager or learn more here [http://www.ibm.com/software/products/en/network-protection] for product offering questions. 
+
+
+Frequently asked questions (FAQ) 
+
+Q: Why are these versions being put at EOS? 
+A: Retiring the older firmware versions is necessary to ensure that the installed firmware is benefiting from up-to-date security research and meeting the latest security standards. 
+
+Q: To what XGS firmware version should I upgrade? 
+A: Upgrade your current firmware version to IBM QRadar Network Security 5.4.0.4 or later. 
+
+Q: What happens if I do not upgrade to the latest version, and continue using 5.3.3 and 5.3.1 even when they reach EOS? 
+A: While EOS firmware version can still get security upgrades, they will not get any fixes including PSIRT fixes and bug fixes. Using EOS XGS firmware will make your infrastructure vulnerable to attacks. 
+
+Q: Will there still be new updates for IBM QRadar Network Security firmware? 
+A: Yes. The next major update IBM QRadar Network Security 5.5 is scheduled to be released in September 2018. 
+Note: The planned release date and update contents are subject to change. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM QRadar Network Security Firmware Firmware 5.4

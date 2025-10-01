@@ -1,0 +1,54 @@
+Title: IBM Unable to install the trial version of a product with IBM Installation Manager - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You encounter any the following issues when you try to download the trial version of a product from the developersWorks© site and then install it with Installation Manager:
+
+- Your download fails in Download Director and you receive an error. 
+- In Installation Manager, there are no options for downloading a trial product.
+- You receive the "Installation Manager cannot find any packages to install" error. 
+
+RESOLVING THE PROBLEM
+See the corresponding Resolution section for the issue you encountered: 
+
+
+
+ * Issue
+   Your download fails in Download Director and you receive an error similar to:
+   https://www.ibm.com/software/rational/repositorymanager/action/getInitData. Downloading https://www.ibm.com/software/rational/repositorymanager/action/getInitData. Downloading 'https://www.ibm.com/software/rational/repositorymanager/action/getInitData' to 'C:\DOCUME˜1\userid\LOCALS˜1\Temp\cicdip_userid\1290118237027\nf\cicURLLgetInitData2653034659546954646.tmp'. Connection refused: connect Elapsed time 00:00.48.
+   Resolution
+    1. Click OK to close the error message.
+    2. Turn off or disable any firewall software that you have running.
+    3. Restart the download.
+    4. 
+   
+   
+ * Issue
+   In Installation Manager, there are no options for downloading a trial product, the only option is for downloading Installation Manager 1.4.1.
+   Resolution
+    1. Click Cancel to shut down Installation Manager.
+    2. Restart Installation Manager. For example in Windows, click Start -> Programs -> IBM Installation Manager ->IBM Installation Manager and then Click Install.
+    3. Enter your authentication information.
+    4. Continue with the installation.
+    5. 
+   
+   
+ * Issue
+   When you click Install in Installation Manager, you receive an error similar to:
+   "Installation Manager cannot find any packages to install. In order to access the packages, you must configure a repository connection and ensure that you access the network or your repository media..." 
+   Resolution
+    1. Click Cancel to shut down Installation Manager.
+    2. Restart Installation Manager. For example in Windows, click Start -> Programs -> IBM Installation Manager ->IBM Installation Manager and then Click Install.
+    3. Enter your authentication information.
+    4. Continue with the installation.
+   
+   
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management Optim Development Studio Linux, Windows 2.2.1 Information Management Optim Database Administrator for DB2 for Linux- UNIX and Windows Linux, Windows 2.2.3 Information Management InfoSphere Data Architect Installation Linux, Windows 7.5.3

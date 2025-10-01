@@ -1,0 +1,209 @@
+Title: IBM IC97780: AFTER RESTART LIGHT, DB2 MEMBER CANNOT FAILBACK BUT KEEPS IN "WAITING_FOR_FAILBACK" STATE - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 10.5 Fix Pack 3 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036705]
+DB2 Version 10.5 Fix Pack 3a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037555]
+DB2 Cancun Release 10.5.0.4 (also known as Fix Pack 4) for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038261]
+DB2 Version 10.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24044110]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After network failure like pulling RoCE adapters from member
+   host Host2, it successfully fails over. However, after plugging
+   back the adapters, member 1 cannot failback but keeps in
+   "WAITING_FOR_FAILBACK" state.
+   Here is a sample output of db2instance -list
+   
+   
+   
+   ID     TYPE            STATE       HOME_HOST      CURRENT_HOST
+   ALERT PARTITION_NUMBER  LOGICAL_PORT   NETNAME
+   --     ----            -----       ---------      ------------
+   ----- ----------------  ------------   -------
+   0    MEMBER          STARTED           Host1             Host1
+   NO                0      0           Host1-roce1,Host1-roce2
+   
+   1    MEMBER  WAITING_FOR_FAILBACK      Host2             Host1
+   YES                0      1           Host1-roce1,Host1-roce2
+   
+   128     CF           PRIMARY           Host3             Host3
+   NO                -      0           Host3-roce1,Host3-roce2
+   
+   129     CF              PEER           Host4             Host4
+   NO                -      0           Host4-roce1,Host3-roce2
+   
+   
+   
+   HOSTNAME       STATE    INSTANCE_STOPPED  ALERT
+   
+   --------       -----    ----------------  -----
+   
+      Host1      ACTIVE                  NO     NO
+   
+      Host2      ACTIVE                  NO    YES
+   
+      Host3      ACTIVE                  NO     NO
+   
+      Host4      ACTIVE                  NO     NO
+   
+   There is currently an alert for a member, CF, or host in the
+   data-sharing instance. For more information on the alert, its
+   impact, and how to clear it, run the following command:
+   'db2cluster -cm -list -alert'.
+   
+   And from db2diag.log, you can see the following errors
+   
+    2013-10-23-12.50.25.202060+540 I556075A704          LEVEL:
+   Severe
+    PID     : 8126504              TID : 1              PROC :
+   db2rocm 1 [db2sdin1]
+    INSTANCE: db2sdin1             NODE : 001
+    HOSTNAME: Host2
+    EDUID   : 1                    EDUNAME: db2rocm 1 [db2sdin1]
+    FUNCTION: DB2 UDB, high avail services, rocmGetHCARSCTHandles,
+   probe:1177
+    MESSAGE : ZRC=0x827300AC=-2106392404=HA_ZRC_CONFIGURATION_ERROR
+              "HA is configured incorrectly"
+    DATA #1 : String, 135 bytes
+    No RSCT handles were found for any HCA.  Make sure the host for
+   the CF or member is configured correctly.  (db2nodes.cfg and
+   /etc/hosts)
+    DATA #2 : Codepath, 8 bytes
+    3:6
+    DATA #3 : Database Partition Number, PD_TYPE_NODE, 2 bytes
+    1
+   
+   db2hareg -dump would look like as follows, NL reocrd for MEMBER
+   type is disordered that NL for Member 1 is before the one for
+   Member 0
+   
+   A05000000000000,IN,100,2,0,1
+   A05000000000000,DN,Host2,,Host2-roce1,Host2-roce2
+   A05000000000000,MO,/db2sd, ,0,24,0
+   A05000100000000,RU,32872,32736
+   A05000000000000,NL,1,Host2,0,Host2-roce1,Host2-roce2,-,MEMBER
+   A05000000000000,NL,128,Host3,0,Host3-roce1,Host3-roce2,-,CF
+   A05000000000000,DN,Host3,,Host3-roce1,Host3-roce2
+   A05000000000000,NL,129,Host4,0,Host4-roce1,Host4-roce2,-,CF
+   A05000000000000,DN,Host4,,Host4-roce1,Host4-roce2
+   A05000000000000,NL,0,Host1,0,Host1-roce1,Host1-roce2,-,MEMBER
+   A05000000000000,DN,Host1,,Host1-roce1,Host1-roce2
+   A05000100000000,DB,P1DB,1
+   A05000100000000,MO,/db2data,P1DB,0,10,0
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Update to DB2 UDB version 10.5 fixpack 3.                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem was first fixed in DB2 UDB Version 10.5 Fixpack 3.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC97780
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-19
+   
+   
+ * CLOSED DATE
+   2014-03-10
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA50 PSN
+   UP

@@ -1,0 +1,30 @@
+Title: IBM The ingestion process might fail when ingesting large files into IBM Water Operations for Waternamics - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An execution group in IBM Integration Bus might crash during the ingestion of a large file into IBM Water Operations for Waternamics. By default, IBM Water Operations for Waternamics allocates 1 GB of heap space to each execution group, which is sufficient to process files that are less than 15 MB. If the input file is larger than 15 MB, then the execution group might crash. 
+
+SYMPTOM
+When an execution group in IBM Integration Bus crashes, it might not be apparent that a failure occurred because the execution group restarts automatically. Error messages are generated in the ingestion log file, and a file with a .abend extension that contains details of the failure is created in the directory /var/mqsi/common/errors, for example, WIH_BROKER.8577630f-2cbd-49f4-b067-795b1074abbb.31801.31821.abend. Also, when an execution group runs out of memory, a heap dump file is usually created in the /var/mqsi/common/errors directory.
+
+
+CAUSE
+The execution group in IBM Integration Bus crashes because of insufficient memory during the ingestion process if the input file is larger than 15 MB. 
+
+DIAGNOSING THE PROBLEM
+Examine the log files and the contents of the /var/mqsi/common/errors directory. 
+
+RESOLVING THE PROBLEM
+To resolve the problem, choose one of the following two solutions:
+
+
+
+
+ * Ensure that input files do not exceed 15 MB by splitting larger input files into multiple smaller files. 
+ * Increase the heap allocation for the execution group. For example, the following steps describe how to increase the heap allocation to 3 GB for an execution group that is named VDS_CITY so that input files of 40 MB can be ingested.  1. Log on to the analytics server. 
+    2. Enter the following commands as the mqmconn user:  * source /opt/IBM/IIB10/server/bin/mqsiprofile 
+        * mqsichangeproperties WIH_BROKER –e VDS_CITY -o ComIbmJVMManager -n jvmMaxHeapSize -v 3000000000 
+        * mqsistop WIH_BROKER –i 
+        * mqsistart WIH_BROKER

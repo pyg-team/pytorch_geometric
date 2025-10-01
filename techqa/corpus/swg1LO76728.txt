@@ -1,0 +1,148 @@
+Title: IBM LO76728: NOTES NINE WEB PLUG IN CRASHES BROWSER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is using an application with an embedded browser.
+   He types Notes:home in the browser window and the browser
+   crashes
+   A fatal error has been detected by the Java Runtime Environment
+   EXCEPTION_ACCESS_VIOLATION
+   JRE version: 6.0_20-b05
+   # Java VM: Java HotSpot(TM) Client VM (16.3-b04 mixed mode
+   windows-x86 )
+   # Problematic frame:
+   # C  [nnpapirt.dll+0x163d4]
+   
+   
+   He created a jar file which can recreate the crash.
+   
+   Install Notes Nine browser plugin
+   
+   
+   Run the jar "CrashPluginSnippet.jar"
+   
+   It creates a javacore with
+   
+    Dump Event "gpf" (00002000) received
+   
+   core.20130821.105200.3272.0001.dmp
+   
+   and
+   Snap.20130821.105200.3272.0003.trc
+   
+   Dump Event "gpf" (00002000) received
+   
+   
+   1XMCURTHDINFO  Current thread
+   NULL           ----------------------
+   3XMTHREADINFO      "main" J9VMThread:0x00133600,
+   j9thread_t:0x0038537C,
+   java/lang/Thread:0x00B61960, state:R, prio=5
+   3XMJAVALTHREAD            (java/lang/Thread getId:0x1,
+   isDaemon:false)
+   3XMTHREADINFO1            (native thread ID:0x15D0, native
+   priority:0x5,
+   native policy:UNKNOWN)
+   3XMTHREADINFO3           Java callstack:
+   4XESTACKTRACE                at
+   org/eclipse/swt/internal/win32/OS.DispatchMessageW(Native
+   Method)
+   4XESTACKTRACE                at
+   org/eclipse/swt/internal/win32/OS.DispatchMessage(Bytecode PC:7)
+   4XESTACKTRACE                at
+   org/eclipse/swt/widgets/Display.readAndDispatch(Bytecode PC:64)
+   4XESTACKTRACE                at
+   CrashPluginSnippet.main(CrashPluginSnippet.java:26)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# JKEG9AUCZP.
+   The change team could not reproduce the problem or determined
+    that the problem has already been corrected.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO76728
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   853
+   
+   
+ * STATUS
+   CLOSED UR5
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-23
+   
+   
+ * CLOSED DATE
+   2013-09-03
+   
+   
+ * LAST MODIFIED DATE
+   2013-09-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

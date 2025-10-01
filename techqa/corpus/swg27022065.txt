@@ -1,0 +1,54 @@
+Title: IBM Open Mic Webcast: Notes in Citrix XenApp environments 28 September 2011 (audio replay, presentation, Q&A) - United States
+
+Text:
+STEwebcastDocument; lste_webcast; Tech Exchange; STEwebcast; openmic call; open microphone call; discussion; conference call; customer call; Citrix; submit; ask the experts; discuss; open mic; questions; answers; questions and answers; q&a; replay; recording; webcast; FAQ; best practice; transcript; IBM Lotus Notes on Citrix environments WEBCAST
+
+ABSTRACT
+ IBM hosted an Open Mic Webcast with Lotus Development and Support Engineers on 28 September 2011. The topic was "IBM Lotus Notes in Citrix XenApp environments." Check back for the Q&A transcript. 
+
+CONTENT
+ 
+
+For more information about our Open Mic webcasts, visit the IBM Collaboration Solutions Support Open Mics [http://www.ibm.com/software/lotus/support/lotus-open-mics/] page.
+
+
+
+Presentation & Audio Recording 
+Presentation 
+[/support/docview.wss?uid=swg27022065&aid=2]OpenMic_NotesCitrix_09_28_2011.pdf [/support/docview.wss?uid=swg27022065&aid=1] 
+
+
+Audio recording 
+Lotus_Notes_on_Citrix_XenApp_OpenMic_Sept282011.mp3 [ftp://public.dhe.ibm.com/software/lotus/info/notes/Lotus_Notes_on_Citrix_XenApp_OpenMic_Sept282011.mp3] 
+
+
+
+Q&A 
+Q. Since ID Vault is not supported in Citrix environments until Notes 8.5.3, does that mean it’s known to not work in prior versions? 
+A. The statement about support of 8.5.3 just implies that we tested it formally in 8.5.3 and that no testing has been done on previous releases. It doesn’t mean that if used prior to 8.5.3 you’ll find any issues or that there are functional issues with it. 
+
+Q. I’m planning to upgrade a Notes installation on a Presentation Server 4.5 from Notes 7.0.2 to 8.5.2 Fix Pack 1. Any advice or pitfalls or best practices we should be aware of prior to doing that? Is an upgrade preferable or a clean install? 
+A . With 7.0.2 you should have had the Single User Install because we didn’t support multi-user until 8.5.1, so I would recommend uninstalling Notes 7.x and then doing an install of Notes 8.5.1 or 8.5.2. Then, any subsequent upgrades you could just do an in-place upgrade without backing out the previous build. 
+
+Q.Intermittently, users are not able to log in and we receive an error message that “the Administration program could not be used while the Domino server is running”. 
+A. I’ve found that if users completely terminate their ICA session that will leave Notes running in their session. And when the user tries to launch Notes again the error will occur. 
+
+If you’re publishing it as an application, advise users to do a File > Exit to cleanly close the ICA session and to avoid leaving ghost sessions on the XenApp server. You may also want to check with Citrix to see if they have suggestions on handling cases where ICA sessions are terminated but the processes are still running. 
+
+Q. Regarding the recommendation to leverage file server roaming capability where possible, is Domino roaming preferred for that versus Domino file server roaming? For example we want to implement using Domino server because we think it’s easier and we’ve already got a connection established to the mail server to roam to that server, but in the presentation the recommendation was to leverage file server roaming. 
+A. You can use either one. The presentation focused on file server roaming because you can implement it using a policy and you don’t need to have a Domino application installed on that server in order to set it up as a roaming server. From the client side it’s still the same functionality for the most part. For example, some customers don’t want to have that application running on that remote server. 
+
+Q.Regarding Notes Shared Login not being supported for Citrix environments, will it work but it just not supported? 
+A. Not reliably. It may appear to work but you cannot rely on it working. Note that the technology we’re looking at for supporting Shared Login in the future not only will proivde support in the Citrix environment but also provide support in Mac and Linux as well. So we’ll have a much more comprehensive solution going forward. 
+We’re actively working on that solution. At Lotusphere 2012 you’ll hear a lot more on that solution and its potential availability. 
+
+Q. Are there recommendations on how to easily move to a multi-user installation from a single-user installation of Notes 8.5.1 Fix Pack 2 in a XenApp 5.0 environmen? 
+A. Run the Multi-user Migration Assistant tool, which is available in the Deployment Toolkit with 8.5.3. 
+
+Q. I read in the forum that the Admin client and the Designer client are not supported on Citrix. Is that correct? 
+A. Correct, neither the Domino Administrator client nor the Domino Designer clients are supported on Citrix. 
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2011/7/1

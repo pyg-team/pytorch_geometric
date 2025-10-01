@@ -1,0 +1,34 @@
+Title: IBM How to add line break in list header? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This is the required result in the list header...
+
++-------------+---------
+| ABC | 
+| (1) | 
++-------------+---------
+| ... |
++-------------+---------
+... 
+
+Note, by default, ABC(1) will appear in one line in the list header. 
+
+RESOLVING THE PROBLEM
+The easiest way to accomplish this would be unlock the header, and add a "table" object with two rows, and put the two lines of text in the two rows. We can turn off the lines and padding to make it look cleaner.
+
+Another option is to select the cell, and change the "Spacing & Breaking" property to enable "Break words when necessary". However, we can't explicitly control where the break occurs (although we can influence it by specifying the width of the column, and adjusting the lable name as appropriate.
+
+Steps: Add a table to list header:  1. Select the header cell where we wish to have two rows pf text
+ 2. Click the "Unlock" icon on the Report Studio tool bar.
+ 3. From the Insertable Items "Toolbox", drag a "Table" object into the list header cell. Specify 1 column and 2 rows (or as many rows as required)
+ 4. Add text or data items to the cells of the table as appropriate. 
+
+Turn on word breaks:
+
+ 1. Select the header cell where we wish to have two rows of text
+ 2. Find the "Spacing & Breaking" property, and click the ellipses (...) beside the property.
+ 3. Enable the option" Break words when necessary". and click "OK".
+ 4. Modify the "Size & Overflow" property as necessary to make the line break where required. Note that if we want the text to break without affecting the column width, we could unlock the cell and adjust the width of the text item itself.

@@ -1,0 +1,135 @@
+Title: IBM How to install GUI Certificates in Guardium - United States
+
+Text:
+GUI certificates; installing; Guardium TECHNOTE (FAQ)
+
+QUESTION
+ How to install GUI Certificates for Guardium appliances? 
+
+ANSWER
+
+
+
+YouTube Video How to install GUI certificates in Guardium (9.46) Step by step guide for installing a Guardium GUI certificate signed by an internal organization certificate authority. Watch the video on YouTube [https://www.youtube.com/watch?v=eukVKnbS9WE] (9.46)  
+
+Steps to install GUI Certificates. 
+
+1) Obtain the public certificate for your CA signer. 
+
+You must request this from your CA (for example, Verisign) and it MUST be in PEM format.
+
+Notes:
+
+- the certificate MUST be in PEM (a .pem file), not binary format.
+
+- if the certificate is not self signed, you MUST obtain also the public certificate for each signer up to the lowest level (ie. the certificate hat is self signed). 
+
+
+
+2) For each of the certificates obtained in previous step, verify that they are signed and that you have obtained the certificate for each "signer" up to the lowest level (ie. the one that is self signed). You can use command below to show contents of a x509 certificate:
+
+openssl x509 -in t.pem -text -noout
+
+
+
+3) For EACH of the certificates (you must have one for each signer): store the certificate to indicate Guardium that from now on you will TRUST these signers. Use commands below, and when prompted, provide the content of .pem certificate.
+
+For versions before 9 GPU300, use:
+
+store trusted certificate
+
+For version 9 GPU300 and later, use:
+
+store certificate keystore
+
+
+
+4) Generate your certificate signing request with command:
+
+For versions before 9 GPU300, use:
+
+csr
+
+For version 9 GPU300 and later, use:
+
+create csr gui
+
+
+Fill in the data requested. For example: 
+
+C=US, ST=Massachusetts, L=Waltham, O=Guardium, Inc., OU=Support, CN=gmachine/emailAddress=support@guardium.com
+
+Notes:
+
+- For Common Name, we recommend you use hostname in FQDN format (fully qualified domain name). But if you connect to the GUI normally using the short hostname (ie. system1) instead of FDQN (system1.us.ibm.com), you will get a certificate error "Address Mismatch" you will either have to change the CN=system1 or connect with https://system1.us.ibm.com:8443/sqlguard to make use of the certificate.
+
+- Country Code must be 2 letters
+
+- In 8.0.1, we use a keysize=1024 bits. In 8.0.2 and 9, you will have a choice of 1024 or 2048.
+
+
+The csr or create csr gui commands will output something like this below. Save this to a file to provide it to your CA for "signing":
+
+----BEGIN CERTIFICATE REQUEST-------
+jlfklklfkflfl;k;;;;;;;;;;;;;;;;;;;;;;
+jkjkjlklklklklkl
+< bla bla bla >
+----END CERTIFICATE REQUEST---------
+
+
+
+5) Copy and paste the generated hash in previous step (from -----BEGIN CERTIFICATE REQUEST------- to----END CERTIFICATE REQUEST---------) into a text document. Now send this off to your CA for them to return the signed key..
+
+Note:
+
+- When submitting the request to your CA make sure you request the certificate to be in PKCS#7 PEM format.
+
+
+
+6) Wait for your CA to send you the signed certificate back. The CA signs the CSR and sends you back your signed key.
+
+
+
+7) Once you receive the signed certificate (another .pem file) from your CA, cat the content, it will look something like this below. Copy this to the Clipboard and go to next step:
+
+-----BEGIN CERTIFICATE-----
+< some code here>
+. . .
+. . .
+-----END CERTIFICATE-----
+
+
+
+8) Store the certificate using command below:
+
+
+For versions before 9 GPU300, use:
+
+store certificate console
+
+For version 9 GPU300 and later, use:
+
+store certificate gui
+
+You will receive something like the following prompt:
+
+Please paste your new server certificate, in PEM format.
+
+
+Paste the clipboard contents, including the BEGIN and END lines, and then press CTRL-D. You will be informed of the success or failure of the store operation.
+
+
+
+9) Restart the gui:
+
+For versions before 9 GPU300, use:
+
+restart GUI
+
+For version 9 GPU300 and later, use:
+
+restart gui
+
+RELATED INFORMATION
+ Certificate warning - ERR_CERT_COMMON_NAME_INVALID [http://www-01.ibm.com/support/docview.wss?uid=swg22014647]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21995937]

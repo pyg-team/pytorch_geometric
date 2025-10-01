@@ -1,0 +1,203 @@
+Title: IBM HD10408: DMUSPA : IF "EXPORT AS" USED IN "LIST BY PRODUCT", VIEWPOINT DO ESN'T SAVE CORRECTLY. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract:
+   DMUSPA : IF "EXPORT AS" USED IN "LIST BY
+   PRODUCT", VIEWPOINT DOESN'T SAVE
+   CORRECTLY.
+   -------------------------------------------------------
+   Description:
+   1. Select "Tools- Options- Digital Mockup- DMU
+   Space Analysis".
+   2. Check on "List by Conflict" in "Display in Results
+   box" field.
+   3. Start DMU and change work bench to "DMU
+   Space Analysis".
+   4. Select "Components- Existing Component" on
+   context menu.
+   5. Select 9 cgr files sent by customer.
+   6. Click CLASH icon and use conditions.  Types:
+   Clearance+Contact+Clash 25mm   Selection -
+   Selection Against All (1 product as
+   414195FBF5C65A9F)
+   7. Click "Results Window" icon.
+   8. Click top of list and modify viewpoint by mouse
+   as you want.
+   9. Repeat step 8 operation between second to last
+   of list.
+   10. Click "Export As" icon.
+   11. "Clash Publish - Warning" dialogbox is
+   displayed - OK.
+   12. Input folder name as "Clash" and select Type
+   as "*.xml"- OK.
+   13. Select "List by Product" tab.
+   14. Repeat between step 8 to step 11 under this
+   tab.
+   15. Input folder name as "Prod" and select Type
+   as "*.xml"- OK.
+   16. Viewing .xml file by Internet Explorer, you can
+   see some images.
+   17. No problem under "Clash" folder images,
+   because viewpoint of Results Window" is displayed
+   correctly.
+   But it is not proper under "Prod" folder images,
+   because all images are  the same as "Clash"
+   folder.
+   ---------------------------------------------------------
+   Result: The viewpoint obtained by "LIST BY
+   PRODUCT" option is not saved and is same as "List
+   by Conflict" option.
+   
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  DMUSPA : IF "EXPORT AS" USED IN "LIST BY PRODUCT", VIEWPOINT DO
+   ESN'T SAVE CORRECTLY.
+   Abstract:
+   DMUSPA : IF "EXPORT AS" USED IN "LIST BY
+   PRODUCT", VIEWPOINT DOESN'T SAVE
+   CORRECTLY.
+   -------------------------------------------------------
+   Description:
+   1. Select "Tools- Options- Digital Mockup- DMU
+   Space Analysis".
+   2. Check on "List by Conflict" in "Display in Results
+   box" field.
+   3. Start DMU and change work bench to "DMU
+   Space Analysis".
+   4. Select "Components- Existing Component" on
+   context menu.
+   5. Select 9 cgr files sent by customer.
+   6. Click CLASH icon and use conditions.  Types:
+   Clearance+Contact+Clash 25mm   Selection -
+   Selection Against All (1 product as
+   414195FBF5C65A9F)
+   7. Click "Results Window" icon.
+   8. Click top of list and modify viewpoint by mouse
+   as you want.
+   9. Repeat step 8 operation between second to last
+   of list.
+   10. Click "Export As" icon.
+   11. "Clash Publish - Warning" dialogbox is
+   displayed - OK.
+   12. Input folder name as "Clash" and select Type
+   as "*.xml"- OK.
+   13. Select "List by Product" tab.
+   14. Repeat between step 8 to step 11 under this
+   tab.
+   15. Input folder name as "Prod" and select Type
+   as "*.xml"- OK.
+   16. Viewing .xml file by Internet Explorer, you can
+   see some images.
+   17. No problem under "Clash" folder images,
+   because viewpoint of Results Window" is displayed
+   correctly.
+   But it is not proper under "Prod" folder images,
+   because all images are  the same as "Clash"
+   folder.
+   ---------------------------------------------------------
+   Result: The viewpoint obtained by "LIST BY
+   PRODUCT" option is not saved and is same as "List
+   by Conflict" option.
+   
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM IS PERMANENT RESTRICTION IN CATIA
+   Viewpoints are defined for one interference. It is not possible
+    to save a viewpoint for a group of interference (in case of th
+   e "list by product")
+   
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD10408
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5/NT/200
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2003-08-26
+   
+   
+ * CLOSED DATE
+   2003-10-27
+   
+   
+ * LAST MODIFIED DATE
+   2003-10-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

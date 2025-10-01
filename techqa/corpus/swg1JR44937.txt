@@ -1,0 +1,168 @@
+Title: IBM JR44937: After applying JR44699 customer is unable to delete process instances from Process Designer Inspector view - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.0.1 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24034495]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After applying JR44699 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR44699] customer is unable to delete process
+   instances from Process Designer Inspector view and the
+   following exception was experienced:
+   
+   org.omg.CORBA.BAD_OPERATION
+   >> SERVER (id=4773e3aa, host=localhost) TRACE START:
+   >> org.omg.CORBA.BAD_OPERATION: vmcid: 0x0 minor code: 0
+   completed: No
+   >> at
+   com.lombardisoftware.server.ejb.bpd_EJSRemoteStatelessBPDEndinge
+   Services_5d0c244a_Tie._invoke(_EJSRemoteStatelessBPDEngineServic
+   es_5d0c244a_Tie.java:209)
+   >> at
+   com.ibm.CORBA.iiop.ServerDelegate.dispatchInvokeHandler(ServerDe
+   legate.java:669)
+   ....
+   
+   This is caused by an iFix packaging issue, where the Process
+   Designer related iFix part was missing.
+   
+   This iFix JR44937 corrects this problem and supersedes JR44699 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR44699].
+   
+   BPD instance deletion using BPM AdminTasks is slow.
+   
+   On PS single cluster Envrionment, for snapshot R1_1, there are
+   about 67326 completed instances.
+   The database transaction log is large enough, about 4G totally.
+       db2 update db cfg using LOGFILSIZ   32768
+       db2 update db cfg using LOGPRIMARY  30
+   When trying to use "$AdminTask BPMDeleteSnapshot" to delete the
+   snapshot R1_1, the snapshot and related instances can't be
+   deleted even after 2 hours execution.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Problem Description:
+   When using the BPM AdminTasks 'BPMProcessInstancesCleanup' and
+   'BPMDeleteSnapshot' a timeout may occur and the commands may
+   fail.
+   
+   Problem Summary:
+   The stored procedure used underneath to carry out BPD instance
+   deletion is inefficient and needs refactoring. It does
+   superflous
+   updates to the temporary groups tables per deleted bpd instance
+   and was designed for single instance deletion only.
+   
+   
+   Problem Conclusion:
+   This fix replaces the stored procedure with explicit JDBC calls
+   better suited for bulk operation. It postpones the orphan task
+   temp group deletion to be run once only
+   after all bpd instances have been deleted. Further the
+   associated tasks will be deleted using batch update taking into
+   account that there are likely many task entries per bpd
+   instance.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem fixed
+   iFix available on top of V801 GA
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR44937
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-29
+   
+   
+ * CLOSED DATE
+   2013-02-04
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

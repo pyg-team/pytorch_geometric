@@ -1,0 +1,39 @@
+Title: IBM Event Viewer not updated when clicking on Gauges in the Health Dashboard - United States
+
+Text:
+Health Dashboard; Event viewer; gauge; web gui TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The event list in the Event Viewer is not updated when clicking on gauges in the Netcool Health Dashboard when using Internet Explorer 9 or 10. When using IE11 or Firefox the problem is not seen. 
+
+SYMPTOM
+Step to reproduce: 
+
+1. Log into DASH and open the Health Dashboard
+2. Ensure that the event list shown is the Event Viewer, not the AEL
+3. Ensure that the active view is the Self Monitoring view
+5. Click on a selection of gauges.
+
+Expected result: The event list is updated to show the events which match the related filter (if any such events exist).
+
+Actual result: No update from the Event Viewer. The same events are showing.
+
+
+CAUSE
+This third party API:
+
+var xmlDoc = new ActiveXObject( "Microsoft.XMLDOM" );
+
+in /ibm/console/webtop/scripts/ajax.js causes an exception with some IE9/IE10 browsers.
+Stepping over the above line throws the following exception:
+eventTransformer: Exception caught while attempting to read payload. Error was:Automation server can't create object
+
+The issue is caused by configuration changes on some Windows machines and is not a defect in OMNIbus Web GUI.
+
+
+RESOLVING THE PROBLEM
+Go to: 
+
+" IE9/10 > Internet Options > Security > Custom Level" and set
+1. "Run ActiveX controls and plug-ins" to Enable
+2. "Script ActiveX controls marked safe for scripting" to Enable

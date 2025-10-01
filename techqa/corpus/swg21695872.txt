@@ -1,0 +1,36 @@
+Title: IBM ASE 9.0 scan results in "Archive file not found" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Security AppScan Enterprise (ASE) 9.0 and 9.0.0.1 scans results in "Archive file not found". 
+
+SYMPTOM
+Running ASE scan occasionally results in "Archive file not found" error. In many cases, the error is transient and can't be reproduced. 
+
+The SdkDebug log shows errors: 
+
+Error: Failed to get "SOFTWARE\IBM\AppScan Standard" registry key
+....
+Could not find a part of the path 'C:\Program Files (x86)\IBM\AppScan Enterprise\Xslt\Scripts'. at AppScan.GuiLayerImpl.Scan.IssueInformationManager.Init()
+...
+Error: Results Expert Modules configuration file is invalid: Xml file not found. Expected at: C:\Program Files (x86)\IBM\AppScan Enterprise\ResultsExpert.xml
+
+
+CAUSE
+The scan is suspended before it can create an archive. 
+
+This is actually masking a deeper problem.
+
+
+RESOLVING THE PROBLEM
+This error message has not been seen in AppScan Enterprise version 9.0.3.4 nor 9.0.3.5. 
+
+
+ 
+
+If the problem repeates, set the following to see the original error: 
+
+ * uncheck the advanced option KEEP_LOCAL_DB 
+ * set "autoresume" to "0"

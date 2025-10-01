@@ -1,0 +1,29 @@
+Title: IBM Do you know how to import the Excel file to SPSS 16.0 for Mac? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am using SPSS 16.0J for Mac. I want to import the Excel files to my SPSS 16.0J.
+But if I open the data, SPSS replies "Error accessing the Excel file. If the file is open in another application, please close it and retry.". Other application did not open the Excel file!
+I cannot import the Excel file to SPSS even if I converted it into Excel4.0 file.
+Because Failure32365, I cannot import the Excel file to SPSS even if I converted it into text file.
+
+Do you know how to import the Excel file to SPSS 16.0 for Mac? 
+
+RESOLVING THE PROBLEM
+Please see the following details to resolve the issue.
+For the file you wish to open in SPSS:
+1. Save the the filename in English (single-byte characters) without spaces. Also make sure there are no double-byte Japanese characters in the file path.
+2. If it is an Excel 2008 file then use the Save As.. option and save the Excel workbook in 'Excel97-2004 Book(.xls)' file format.
+In SPSS:
+1. Start SPSS and got to Edit>>Options in the menu bar to option the SPSS options dialog.
+2. In the 'General' tab goto the 'Character Encoding for Data and Syntax' section and select the 'Unicode' option.
+3. Click on the "Apply" button to apply this setting and then OK to close the options dialog.
+
+Now open the Excel file within SPSS via File>>Data and select the Excel file format in the file types dropdown field.
+
+
+
+HISTORICAL NUMBER
+ 76270

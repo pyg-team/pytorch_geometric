@@ -1,0 +1,58 @@
+Title: IBM Toolbar icons greyed out in Company - Data Entry - Reported Values - United States
+
+Text:
+grey gray grayed out missing disabled nothing happens TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User clicks 'Company - Data Entry - Reported Values'. User selcts Data Entry form, and opens it into Excel. 
+One or more of the Controller toolbar icons appear inactive, despite the fact that the end user feels that they should be in bold (active). If the end users clicks on one of the inactive/grayed-out icons then nothing happens. 
+
+SYMPTOM
+On the left-hand side of the screen, a vertical toolbar ('ControllerDeLayout' appears), with the following icons/items: 
+
+ * Data Entry - Reported Values 
+ * Controller Online Help 
+ * Reload Form 
+ * Account Description 
+ * Shareholdings and Investments 
+ * Enter a Comment 
+ * Form Link 
+ * Intercompany Details 
+ * Why is the cell locked? 
+ * Save form 
+
+
+By design, the top three appear in black (bold), but the other 7 icons appear greyed-out (inactive), because they will only become active when the user has performed an action which makes them valid. For example, if the user makes an entry (e.g. 100) inside one of the cells (of this data entry form) then the icon 'save' should appear (as a blue icon). 
+
+However, one or more user(s) may find that icons that they expect should appear 'active' do not. In other words, when the user clicks on a cell that contains a form link, the icon 'Form Link' is still greyed out. CAUSE
+Issue with Microsoft Office 2003, which is solved in Service Pack 3.
+
+
+
+ENVIRONMENT
+Client device has Microsoft Office 2003 (Excel 2003) Service Pack 2 (SP2) installed.
+
+
+
+RESOLVING THE PROBLEM
+Upgrade client PC by applying Microsoft Office 2003 SP3. 
+
+ 
+
+Steps: 
+
+ 1. Download SP3 ('Office2003SP3-KB923618-FullFile-ENU.exe') from Microsoft 
+ 2. Logon to affected (bad) client PC as an administrator 
+ 3. Close all applications 
+ 4. Install Office2003SP3-KB923618-FullFile-ENU.exe 
+ 5. Test.
+
+RELATED INFORMATION
+# [\] KB 1026029 - Error excel idispatch pointer KB 1040578 - Opening 
+[\]
+
+
+
+
+HISTORICAL NUMBER
+ 1040941

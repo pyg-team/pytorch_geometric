@@ -1,0 +1,29 @@
+Title: IBM Upgrading Liberty profile for CICS TS and z/OS Connect EE to latest Fix pack - United States
+
+Text:
+5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 R700 700 R000 000 HCI7000 R710 710 R100 100 HCI7100 5655Y0401 5655-Y04 5655Y04 KIXINFO QUESTION/ANSWER
+
+QUESTION
+What APARs do I need to upgrade CICS Transaction Server for z/OS (CICS TS) and z/OS Connect Enterprise Edition (EE) to the latest Fix pack version of WebSphere Application Server Liberty profile?
+
+ANSWER
+Table 3. Fixes for WebSphere Application Server Liberty, by release of CICS Transaction Server for z/OS [https://www.ibm.com/support/knowledgecenter/SSGMCP_5.4.0/upgrading/upgrading-cics-cd-features.html#cics-cd-features__fixpacks] in Topic CICS Continuous Delivery features of the CICS TS documentation lists of all the CICS TS APARs that provide support for Liberty fix packs.
+
+The following table lists the APARs that you need to apply to z/OS Connect EE to upgrade the embedded level of WebSphere Application Server Liberty profile (with the most current Liberty Fixpack version listed first):
+
+Liberty Fix Pack version z/OS Connect 3.0 Release date 2.0 Release date 18.0.0.2 PI99563 [http://www.ibm.com/support/docview.wss?uid=swg1PI99563] July 2018 - - 18.0.0.1 PI95501 [http://www.ibm.com/support/docview.wss?uid=swg1PI95501] April 2018 - - 17.0.0.4 PI93830 [http://www.ibm.com/support/docview.wss?uid=swg1PI93830] February 2018 PI90337 [http://www.ibm.com/support/docview.wss?uid=swg1PI90337] March 2018 17.0.0.3 PI92254 [http://www.ibm.com/support/docview.wss?uid=swg1PI92254] January 2018 - - 17.0.0.2 PI85054 [http://www.ibm.com/support/docview.wss?uid=swg1PI85054] September 2017 PI86221 [http://www.ibm.com/support/docview.wss?uid=swg1PI86221] October 2017 17.0.0.1 - - PI82792 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI85054] July 2017 16.0.0.4 - - PI79272 [http://www.ibm.com/support/docview.wss?uid=swg1PI79272] April 2017 16.0.0.3 - - PI72673 [http://www.ibm.com/support/docview.wss?uid=swg1PI72673] December 2016 16.0.0.2 - - PI66869 [http://www.ibm.com/support/docview.wss?uid=swg1PI66869] September 2016 8.5.5.9 - - - - 8.5.5.8 - - PI63420 [http://www.ibm.com/support/docview.wss?uid=swg1PI63420] June 2016 
+The PTFs for these APARs are applied to CICS TS and z/OS Connect EE like any other PTFs. Note that it very is important that you follow the instructions in the ++HOLD actions for the PTFs.
+
+For more information, see the following documentation:
+
+ * Configuring a Liberty JVM server (in CICS TS) [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.3.0/com.ibm.cics.ts.java.doc/JVMserver/config_jvmserver_liberty.html]
+
+ * Configuring z/OS Connect for CICS [https://www.ibm.com/support/knowledgecenter/SSGMCP_5.4.0/configuring/web-services/zos_connect_config_paths.html]
+ * Configuring z/OS Connect EE [https://www.ibm.com/support/knowledgecenter/SS4SVW_3.0.0/com.ibm.zosconnect.doc/configuring/configuring.html]
+
+RELATED INFORMATION
+Software maintenance strategy for CICS TS for z/OS [http://www.ibm.com/support/docview.wss?uid=swg27048530] 
+
+Cross reference information Product Component Platform Version Edition z/OS Connect Enterprise Edition Maintenance z/OS 2.0, 3.0 
+PRODUCT ALIAS/SYNONYM
+CICS/TS CICS TS CICS Transaction Server zCEE

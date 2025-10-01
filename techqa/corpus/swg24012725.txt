@@ -1,0 +1,48 @@
+Title: IBM PK27218; 6.1: PK26726 packaging problem cause PK26726 to be uninstalled - United States
+
+Text:
+PK27218; PK27218; PK27218 DOWNLOADABLE FILES
+
+ABSTRACT
+ APAR PK26726 delivered a fix for crash in the deployment manager when using the admin console. It was then uncovered that installing service packs uninstalls PK26726. 
+
+DOWNLOAD DESCRIPTION
+PK27218 resolves the following problem:
+
+ERROR DESCRIPTION: 
+PK26726 provides an interim fix to the Java™ virtual machine. However, that interim fix contains a packaging error which will cause the interim fix to be uninstalled by any WebSphere Application Server fixpack install. 
+
+LOCAL FIX: 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+All IBM WebSphere Application Server version 6.1 users on IA64 hardware running the HPUX operating system.
+
+PROBLEM DESCRIPTION:
+The original APAR PK26726 delivered a fix for crash in the deployment manager running on HP-UX/IA64 when using the administrative console to do administration. It was then uncovered that installing WebSphere Application Server service packs would cause PK26726 to be uninstalled. This was deemed to be an issue for customers. This APAR provides a repackaged PK26726 which will not be automatically uninstalled when WebSphere Application Server service packs are installed.
+
+RECOMMENDATION:
+None
+
+This APAR provides a repackaged PK26726 which will not be automatically uninstalled by WebSphere Application Server service packs.
+
+PREREQUISITES
+Download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK27218/readme.txt] US English 4629 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 6.1.0.X-WS-WASJavaSDK-HpuxIA64-IFPK 06/28/2006 US English 65821915 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK27218/6.1.0.X-WS-WASJavaSDK-HpuxIA64-IFPK27218.pak] DD 6.1.0.X-WS-WASJavaSDK-HpuxPaRISC-IF 06/28/2006 US English 53655378 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK27218/6.1.0.X-WS-WASJavaSDK-HpuxPaRISC-IFPK27218.pak] DD 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server Support Web site (http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server]), or contact 1-800-IBM-SERV(U.S. only). 
+
+Cross Reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK 
+ [/support/docview.wss?uid=swg24012725&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24012725&aid=2]Problems (APARS) fixed
+PK27217, PK27218

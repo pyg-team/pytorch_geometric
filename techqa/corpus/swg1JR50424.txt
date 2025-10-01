@@ -1,0 +1,226 @@
+Title: IBM JR50424: USER AND GROUP ROLE ASSIGNMENTS ARE NOT PRESERVED AFTER CONVERTING FROM STAND-ALONE LDAP TO FEDERATED USER REGISTRY - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Download ISF roll-up 3 for InfoSphere Information Server Version 9.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24038550]
+Download ISF roll-up 4 for InfoSphere Information Server Version 9.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24038579]
+Download ISF roll-up 5 for InfoSphere Information Server Version 9.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039062]
+Download ISF roll-up 7 for InfoSphere Information Server Version 9.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039755]
+Download ISF roll-up 8 for InfoSphere Information Server Version 9.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24040599]
+Download ISF roll-up 11 for InfoSphere Information Server Version 9.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24042879]
+Download ISF roll-up 12 for InfoSphere Information Server Version 9.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24043551]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When converting Information Server from a stand-alone LDAP
+   configuration to a Federated user registry that includes the
+   same LDAP registry, the Information Server security roles
+   previously assigned to LDAP users and groups are no longer seen
+   by Information Server for the same users and groups. Likewise,
+   any Business Glossary asset permissions or Steward assignments
+   no longer work. In addition, errors occur in the Information
+   Server Web Console when opening Users or Groups. Additional
+   problems occur if a user or group previously assigned a role no
+   longer exists in the configured LDAP registry.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Some of the issues are caused by a known WAS issue and require a
+   WAS iFix (PM89827 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM89827]) to be installed. This iFix also requires a
+   configuration change to WAS to enable it.  However, this only
+   addresses the issues caused when a user or group no longer
+   exists in the external LDAP registry and only fixes the issue
+   when attributes are not mapped. So installation of this iFix
+   alone does little to address the complete list of problems and
+   thus should wait to be installed along with the complete
+   solution to this APAR.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Information Server security roles assigned to LDAP users and
+   groups, as well as Steward and access permissions configured in
+   Business Glossary, when the system is configured for a
+   stand-alone LDAP user registry, are saved in the Information
+   Server local repository and assigned to the LDAP full
+   distinguished name (DN) of the user or group. Once the user
+   registry is converted to Federated and this LDAP registry is
+   configured as one of the Federated repositories, by default
+   queries to the Federated registry expect short (RDN) user and
+   group names and return the names as short (RDN) names. For the
+   existing assigned roles in the Information Server local
+   repository to be properly associated with the LDAP entities, the
+   names must match with what the Federated registry returns.
+   
+   To continue using the existing role assignments, the Federated
+   configuration must be changed to expect and return long (DN)
+   names. This is done by changing the Federated User repository
+   attribute mapping configuration in the WebSphere Integrated
+   Solutions Console (WAS Admin Console).
+   1) login to the WAS Admin Console with valid WAS administrator
+      credentials
+   2) modify your configured Federated repository settings by
+      Selecting Security > Global security > select Federated
+      repositories in the Available realm definitions under User
+      account repository > click Configure...
+   3) click "User repository attribute mapping" under Additional
+      Properties
+   4) select groupSecurityName and userSecurityName and click Edit
+   5) for groupSecurityName, set Property for Input and Property
+      for Output values to uniqueName
+   6) for userSecurityName, set Property for Input value to
+      principalName and set Property for Output value to uniqueName
+   7) click Apply and then Save directly to the master
+      configuration
+   8) assuming you have already completed the rest of the Federated
+      configuration restart WebSphere for the changes to take
+      affect.
+   
+   To properly handle invalid user or group ids in the Information
+   Server local repository (users or groups that no longer exist in
+   any of the configured Federated repositories, or whose full DN
+   has changed since role assignment), you need to have the WAS
+   APAR fix for PM29846 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM29846] installed and enabled. PM29846 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM29846] is already
+   included in WAS 7.0.0.19, 8.0.0.1, 8.5.0.0 and above but is not
+   enabled by default. See details on how to manually enable at
+   http://www-01.ibm.com/support/docview.wss?uid=swg1PM29846 or
+   apply this Information Server patch for JR50424. A script is
+   included in this patch to automatically update security.xml to
+   enable the PM29846 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM29846] fix and occurs during patch installation.
+   
+   When LDAP attributes are mapped using the Information Server
+   DirectoryAdmin tool, so that LDAP user and group attributes from
+   the Federated registries can be viewed and searched in
+   Information Server clients, additional fixes are needed to
+   properly handle full DN names and invalid user and group ids in
+   the Information Server internal repository. This JR50424 patch
+   along with the WAS fixes for PI18109 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI18109] and PM89827 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM89827] must be
+   installed. The fix for PM89827 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM89827] is included in WAS 8.0.0.9 and
+   8.5.5.1 and above. At the time of this patch publication,
+   PI18109 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI18109] is only available as an iFix on top of WAS 8.5.5.2. For
+   additional information on mapped attributes in Information
+   Server, see "http://www-01.ibm.com/support/knowledgecenter/
+   SSZJPZ_9.1.0/com.ibm.swg.im.iis.found.admin.common.doc/topics/
+   diradmtl_displayldap.html".
+   
+   Also be aware that Federated registries that return more than
+   4500 users or groups produce a variety of issues that can result
+   in Out of Memory errors or Xmeta failures in Information Server.
+   The WAS fix for APAR PM82122 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM82122] is required to resolve this issue.
+   The fix for PM82122 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM82122] is available in WAS 8.0.0.7 and 8.5.5.1 and
+   above. For more information and availability of this fix see
+   http://www-01.ibm.com/support/docview.wss?uid=swg1PM82122. [http://www-01.ibm.com/support/docview.wss?uid=swg1PM82122.]
+   
+   IBM recommends updating WebSphere to version 8.5.5.2 or above.
+   WAS 8.5.5.2 has all required iFixes with the exception of
+   PI18109 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI18109] which can be found and installed using the IBM
+   Installation Manager once WAS 8.5.5.2 is installed. Check with
+   IBM Support on availability of the required iFixes (PM29846 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM29846],
+   PM82122 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM82122], PM89827 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM89827], and PI18109 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI18109]) on other versions of WebSphere
+   not explicitly noted above.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Install this patch as well as appropriate WAS release and/or
+   iFixes as described above and correctly configure Federated
+   registry in WebSphere as described.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR50424
+   
+   
+ * REPORTED COMPONENT NAME
+   INFO SRVR PLATF
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q3612
+   
+   
+ * REPORTED RELEASE
+   912
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-06
+   
+   
+ * CLOSED DATE
+   2014-07-18
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INFO SRVR PLATF
+   
+   
+ * FIXED COMPONENT ID
+   5724Q3612
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R912 PSY
+   UP

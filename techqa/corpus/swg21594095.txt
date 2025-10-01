@@ -1,0 +1,26 @@
+Title: IBM DataStage client connection fails with a licensing error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DataStage Client connection fails with the following error message: This client is not licensed to work against the selected domain. 
+
+SYMPTOM
+The DataStage client displays the following error message when the connection is attempted: "This client is not licensed to work against the selected domain". In the Information Server web console, there was no license information present, and it did not have the expected text "IBM InfoSphere DataStage Server Default License File installed" shown in the Issued to: field. 
+
+
+CAUSE
+Before installing Information Server, Fix Pack 6.0.2.29 had been applied to the WebSphere Application Server, along with its associated Java SDK SR11 fixpack, which is not compatible with Information Server 8.1 GA release. 
+
+ENVIRONMENT
+The problem was observed on 64-bit Redhat Linux, but may occur on other platforms as well but this has not been confirmed. 
+
+DIAGNOSING THE PROBLEM
+ISA Lite collection confirmed that WebSphere was installed with 6.0.2.29 version, and that the license information was not present. The installation log also confirmed the license information failed to apply during installation. Additionally, the LicensingServiceAdmin script failed with a java exception "mismatched serialization UIDs" when it was used to attempt to upload the default license file. 
+
+RESOLVING THE PROBLEM
+The solution was to downgrade the Java SDK to the SR10 version (the one associated with WAS Fix Pack 6.0.2.27) and then the LicensingServiceAdmin script was used to successfully load the default license file.
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21624698]

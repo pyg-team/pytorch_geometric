@@ -1,0 +1,146 @@
+Title: IBM IT23008: HOW DO WE SUPPRESS THE IBM ATTACHED TOOLS DIRECTORY FROM BEING CREATED FOR SECURE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+4.2.0.4-SterlingConnectDirectforUNIX-Solaris-x86-iFix088.Z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FSterling+Connect%3ADirect+for+UNIX&fixids=4.2.0.4-SterlingConnectDirectforUNIX-Solaris-x86-iFix088.Z&source=SAR]
+4.2.0.4-SterlingConnectDirectforUNIX-Solaris-SPARC-iFix088.Z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FSterling+Connect%3ADirect+for+UNIX&fixids=4.2.0.4-SterlingConnectDirectforUNIX-Solaris-SPARC-iFix088.Z&source=SAR]
+4.2.0.4-SterlingConnectDirectforUNIX-Linux-zSeries-iFix088.Z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FSterling+Connect%3ADirect+for+UNIX&fixids=4.2.0.4-SterlingConnectDirectforUNIX-Linux-zSeries-iFix088.Z&source=SAR]
+4.2.0.4-SterlingConnectDirectforUNIX-Linux-x86-iFix088.Z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FSterling+Connect%3ADirect+for+UNIX&fixids=4.2.0.4-SterlingConnectDirectforUNIX-Linux-x86-iFix088.Z&source=SAR]
+4.2.0.4-SterlingConnectDirectforUNIX-HPUX-IA-iFix088.Z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FSterling+Connect%3ADirect+for+UNIX&fixids=4.2.0.4-SterlingConnectDirectforUNIX-HPUX-IA-iFix088.Z&source=SAR]
+4.2.0.4-SterlingConnectDirectforUNIX-AIX-pSeries-iFix088.Z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FSterling+Connect%3ADirect+for+UNIX&fixids=4.2.0.4-SterlingConnectDirectforUNIX-AIX-pSeries-iFix088.Z&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  How do we suppress the IBM Attached Tools Directory from being
+   created
+   for Secure+? It is creating security issues by leaving behind
+   word
+   writable files
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   Sterling Connect:Direct for UNIX 4.2.0
+   Problem Description:
+   Invoking spadmin.sh, spcli.sh, or lcu.sh creates a
+   /tmp/.com_ibm_tools_attach directory used by the Java Attach
+   API.  The Java Attach API is not used in C:D, so the /tmp
+   directory creation is unnecessary and seen by some as a
+   possible security risk.
+   Platforms Affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Resolution Summary:
+   Fixed spadmin.sh, spcli.sh, and lcu.sh so that no
+   /tmp/.com_ibm_tools_attach directory is created.
+   Delivered In:
+   Sterling Connect:Direct for UNIX 4.2.0.4.iFix065
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT23008
+   
+   
+ * REPORTED COMPONENT NAME
+   STR CD FOR UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9907
+   
+   
+ * REPORTED RELEASE
+   420
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-11-02
+   
+   
+ * CLOSED DATE
+   2017-11-14
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR CD FOR UNIX
+   
+   
+ * FIXED COMPONENT ID
+   5725C9907
+   
+   
+
+APPLICABLE COMPONENT LEVELS

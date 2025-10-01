@@ -1,0 +1,174 @@
+Title: IBM PQ38020: USING THE CALLPAGE() METHOD TO RETRIEVE HTML FROM WITHIN A SERVLET RESULTS IN 500 INTERNAL SERVER ERROR . - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer gets 500 Internal Server Error on his browser when
+   he runs a servlet that uses the callPage method to retrieve
+   .html files. Retrieving jsp ( .jsp ) files from a servlet
+   using callPage() works successfully.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Change the .html suffix to .jhtml in the invocation of the
+   callpage method in the servlet and change the name of the file
+   from *.html to *.jhtml.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users who want to use callpage method    *
+   *                 from a servlet to serve a html page.         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Servlets using callpage method to serve *
+   *                      static html pages failed with Error     *
+   *                      Code 500 internal server error.         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When a Servlet used the callpage method to serve static html
+   pages to the browser, the WebSphere Application Server could not
+   serve the html pages for two reasons. One, the WebSphere
+   Application Server could not find the html pages, and two the
+   WebSphere Application Server could not resolve its actions for
+   handling *.html.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Instructions on how to enable the WebSphere Application Server
+   to find the html pages and resolve the actions for handling
+   *.html have been added to the "Application Server Planning,
+   Installing, and Using" book for the WebSphere Application
+   Server 1.2.
+   
+   1. Add the following line in  Partial Table of Contents of
+      Chapter 3
+       Adding html file types to the Application Server
+   
+   after
+    Adding JHTML files and JavaServer Pages(JSPs) to the
+    Application Server
+   
+   
+   2. Add the following section  in  Chapter 3
+    Adding html files to the Application Server
+   To enable the Application Server to serve html files
+   from a servlet as pages using the callPage method,
+   the following two configuration changes are needed.
+   
+      1. Add a Pass directive to the Web Server's
+         httpd.conf configuration file to specify the
+         template for serving the html files. For
+         example:
+   
+             PASS /myhtml/*  /u/john/mystuff/*
+   
+         A sample callPage invocation that would match this
+        PASS rule is:
+          ((com.sun.server.http.HttpServiceResponse)
+            res).callPage("/myhtml/callpagehtml.html", req)
+        where req is the request object and res is response
+        object.
+   
+      2. Add the property urltype.jsp=*.html to
+         the was.conf file, where *.html is a string
+         that identifies the URL template that should
+         be processed similarly to JSP or jhtml files.
+         This property indicates to the Application
+         Server that these files should be processed
+         the same way as JSP files or jhtml files
+         are processed.
+   
+   after the section
+      Adding JHTML files and JavaServer Pages(JSPs) to
+      the Application  Server
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ38020
+   
+   
+ * REPORTED COMPONENT NAME
+   DGW/WAS OS/390
+   
+   
+ * REPORTED COMPONENT ID
+   5697D4300
+   
+   
+ * REPORTED RELEASE
+   120
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2000-05-08
+   
+   
+ * CLOSED DATE
+   2000-07-12
+   
+   
+ * LAST MODIFIED DATE
+   2000-07-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced GC34475702 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

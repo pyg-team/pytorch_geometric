@@ -1,0 +1,107 @@
+Title: IBM Security Bulletin: Vulnerabilities in XML processing affect IBM DataPower Gateways - United States
+
+Text:
+CVE-2015-5312 CVE-2015-7497 CVE-2015-7498 CVE-2015-7499 CVE-2015-7500 CVE-2015-7941 CVE-2015-7942 CVE-2015-8241 CVE-2015-8242 CVE-2015-8317 SECURITY BULLETIN
+
+SUMMARY
+ IBM DataPower Gateways has addressed vulnerabilities in processing certain XML files that could cause a denial of service. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-5312 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-5312]
+DESCRIPTION: An unspecified error in Libxml2 related to an entity expansion flaw has an unknown impact and attack vector.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/108319 [https://exchange.xforce.ibmcloud.com/vulnerabilities/108319] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N) 
+
+CVEID: CVE-2015-7497 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7497]
+DESCRIPTION: Libxml2 is vulnerable to a denial of service, caused by a heap-based buffer overflow in the xmlDictComputeFastQKey() function. A remote attacker could exploit this vulnerability to cause a denial of service.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/108320 [https://exchange.xforce.ibmcloud.com/vulnerabilities/108320] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2015-7498 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7498]
+DESCRIPTION: An unspecified error in Libxml2 related to the processing of entities after encoding conversion failures have occured has an unknown impact and attack vector.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/108321 [https://exchange.xforce.ibmcloud.com/vulnerabilities/108321] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N) 
+
+CVEID: CVE-2015-7499 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7499]
+DESCRIPTION: An unspecified error in Libxml2 related to some parser errors has an unknown impact and attack vector.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/108322 [https://exchange.xforce.ibmcloud.com/vulnerabilities/108322] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N) 
+
+CVEID: CVE-2015-7500 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7500]
+DESCRIPTION: Libxml2 is vulnerable to a denial of service, caused by a memory access error when handling invalid entity boundaries. A remote attacker could exploit this vulnerability to cause a denial of service.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/108323 [https://exchange.xforce.ibmcloud.com/vulnerabilities/108323] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2015-7941 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7941]
+DESCRIPTION: Libxml2 is vulnerable to a denial of service, caused by a heap-based buffer overflow in the xmlParseEntityDecl or xmlParseConditionalSections function. By using specially-crafted XML data, a remote attacker could exploit this vulnerability to trigger an out-of-bounds read and cause the system to crash.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/108071 [https://exchange.xforce.ibmcloud.com/vulnerabilities/108071] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2015-7942 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7942]
+DESCRIPTION: Libxml2 is vulnerable to a denial of service, caused by a heap-based buffer overflow in the xmlParseConditionalSections function. By using specially-crafted XML data, a remote attacker could exploit this vulnerability to trigger an out-of-bounds read and cause the system to crash.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/108073 [https://exchange.xforce.ibmcloud.com/vulnerabilities/108073] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2015-8241 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-8241]
+DESCRIPTION: libxml2 is vulnerable to a buffer overflow, caused by improper bounds checking by the XML parser in xmlNextChar. By using a malformed XML file, a local attacker could overflow a buffer and execute arbitrary code on the system or cause the application to crash.
+CVSS Base Score: 5.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/108169 [https://exchange.xforce.ibmcloud.com/vulnerabilities/108169] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L) 
+
+CVEID: CVE-2015-8242 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-8242]
+DESCRIPTION: libxml2 is vulnerable to a stack-based buffer overflow, caused by improper bounds checking by the HTML parser in push mode in xmlSAX2TextNode. By using a malformed XML file, a local attacker could overflow a buffer and execute arbitrary code on the system or cause the application to crash.
+CVSS Base Score: 5.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/108170 [https://exchange.xforce.ibmcloud.com/vulnerabilities/108170] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L) 
+
+CVEID: CVE-2015-8317 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-8317]
+DESCRIPTION: libxml2 is vulnerable to a heap-based buffer overflow, caused by improper bounds checking by the xmlParseXMLDecl function. By using a malformed XML file, a local attacker could overflow a buffer and execute arbitrary code on the system or cause the application to crash.
+CVSS Base Score: 5.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/108316 [https://exchange.xforce.ibmcloud.com/vulnerabilities/108316] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM DataPower Gateway appliances versions 7.2.0.0 to 7.2.0.5 
+
+REMEDIATION/FIXES
+Fix is available in versions 7.2.0.6. Refer to APAR IT15089 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT15089] for URLs to download the fix. 
+
+You should verify applying this fix does not cause any compatibility issues.
+
+
+For DataPower customers using versions 6.x and earlier versions, IBM recommends upgrading to a fixed, supported version/release/platform of the product.
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 5/20/2016 Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

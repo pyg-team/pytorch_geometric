@@ -1,0 +1,141 @@
+Title: IBM PM16978: MEMORY LEAK OCCURS WHEN CALLING MULTIPLE CONCURRENT INVOCATIONS OF XML BASED MAP THAT IS USING THE XMLLIB() FUNCTIONS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A memory leak occurs when calling multiple concurrent
+   invocations of an XML based map that is using the XMLLIB()
+   functions.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTXCQ - WTX00034473
+   PB / PB
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   WebSphere Transformation Extender users that employ maps which
+   invoke the WTX-based XMLLIB functions, such as XPATH.
+   
+   Problem Description:
+   A memory leak is detected when using the WTX-based XMLLIB
+   functions.
+   
+   Platforms Affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WTX-based XMLLIB functions leak memory after each
+   invocation.  A fix has been coded to free any memory that is
+   allocated during the course of executing any of the XMLLIB
+   functions from a WTX map.
+   
+   Delivered in:
+   8.1.0.6, 8.2.0.5, 8.3.0.3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM16978
+   
+   
+ * REPORTED COMPONENT NAME
+   WSTX
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4000
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2010-06-23
+   
+   
+ * CLOSED DATE
+   2010-07-09
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WSTX
+   
+   
+ * FIXED COMPONENT ID
+   5724M4000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSY
+   UP
+   
+   
+ * R830 PSY
+   UP

@@ -1,0 +1,27 @@
+Title: IBM How to display Rich Text field information in a Notes view - United States
+
+Text:
+abstract; Notes; Frequently Asked Question; Workstation/Desktop; Application Development; Views TECHNOTE (FAQ)
+
+QUESTION
+Notes does not allow information in Rich Text fields (RTF) to appear in the columns of views. Is there any workaround?
+
+ANSWER
+By applying @Abstract, a designer can display Rich Text information in view columns. 
+
+For example, you have a Rich Text field called Body. To display text information from the Body field, create a computed field called TextForView, which grabs the text information from the Rich Text field. The formula could be:
+
+@Abstract( [TextOnly] ; 15360 ; "" ; "Body")
+
+The value 15360 is the maximum value that can be used. This is because a text field cannot display greater than 15360 characters in a view column. The designer of the view may want to consider what the maximum number of characters they want to display is, and use that value within the @Abstract formula. 
+
+Then, in the view column formula, reference the field, TextForView.
+If applying this function to existing documents the documents need to be refreshed (or edited and saved) to populate the computed field (TextForView in this example). To refresh selected documents create a SmartIcon/Toolbar icon with the following formula:
+
+@Command([ToolsRefreshSelectedDocs])
+
+It is necessary for the column formula to reference a secondary computed field containing the @Abstract formula because this function was not recommended for use within column formulas. See the Programmer's Guide for "Where does this @function work?" to determine in which context an @function will work.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Messaging Applications IBM Notes Views Windows 8.5, 8.0, 7.0

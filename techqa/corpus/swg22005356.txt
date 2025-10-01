@@ -1,0 +1,51 @@
+Title: IBM Account Information Error Cannot get user’s account information!
+_Not_TRANSLATED_(welcomeMsg) - United States
+
+Text:
+Account Information Error Cannot get user’s account information!; _Not_TRANSLATED_(welcomeMsg); Login; Non-system admin; users; Authors; Cognos Analytics; R6; B06 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Non-system admins receive “Account Information Error Cannot get user’s account information!”
+“_Not_TRANSLATED_(welcomeMsg)” error message upon login. 
+
+They do not have access to any content and have no user profile available. System administrators do not see any issues and Cognos functions as expected. 
+
+SYMPTOM
+Error code is thrown upon any non-system admin user login 
+
+Non-system admin users cannot navigate Cognos, access reports or account information 
+
+When trying to run a report user gets "Cannot open object report" 
+
+Additional symptoms: If the user has a Custom Sing in/Welcome/Theme enabled all users will receive " 
+
+AAA-AUT-0011 Invalid namespace was selected"
+[/support/docview.wss?uid=swg22005356&amp;aid=1] 
+[/support/docview.wss?uid=swg22005356&amp;aid=2] 
+[/support/docview.wss?uid=swg22005356&amp;aid=3] 
+
+CAUSE
+Default Traverse Permissions to All Authenticated Users under Capabilities was removed after Installation 
+
+[/support/docview.wss?uid=swg22005356&aid=4] [/support/docview.wss?uid=swg22005356&aid=4]
+
+
+ENVIRONMENT
+This error was see in: 
+
+-Distributed 11.0.6 (Cognos Analytics, R6, B06) environment 
+
+-Windows 2012 R2 
+
+
+DIAGNOSING THE PROBLEM
+Check to see if the Default Traverse Permissions to All Authenticated Users under Capabilities was removed
+
+
+
+RESOLVING THE PROBLEM
+Go into the Cognos Admin Console 
+
+Under the Security Tab, click Capabilities > Set Properties on the top right hand corner [/support/docview.wss?uid=swg22005356&amp;aid=5] > Permissions Tab 
+
+Make sure All Authenticated Users have Traverse Permissions

@@ -1,0 +1,150 @@
+Title: IBM PI84730: RHAPSODY 8.1.5 CRASH IN LINUX - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Rational Rhapsody 8.3.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24044061]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I have a model with a class "MyBaseClass" ccontaining a
+   Statechart. The
+   Statechart have, among others, a state "StateX" and an event
+   "eventX".
+   The class is a generalization of 3 different classes "MyClass1",
+   "MyClass2" and "MyClass3" which inherit the Statechart from the
+   class
+   "Base"
+   I open the model, select "Blase" class; double click on the
+   "Statechart" and delete the "StateX" and "eventX" from the
+   model.
+   I save the new model for further usage (and eventually close the
+   Rhapsody).
+   At this moment my expectation is that "StateX" and "EventX" has
+   been
+   completely removed from my model.
+   (I reopen the Rhapsody and) type Ctrl+F to search for "StateX"
+   or
+   "eventX". I find there are occurrences of those in "MyClass1",
+   "MyClass2" and "MyClass3".
+   I click on the reference and Rhapsody crashes.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Rhapsody                                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * RHAPSODY 8.1.5 CRASH IN LINUX                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The state remains because it was deleted from a base statechart
+   and the the derived statechart is not being updated
+   automatically.
+   Once the user clicks on the state in the search results, the
+   statechart is being updated against its base statechart and the
+   state is being deleted.
+   Fixed by adding safe programming.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI84730
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   815
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-07-19
+   
+   
+ * CLOSED DATE
+   2017-12-04
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R815 PSY
+   UP

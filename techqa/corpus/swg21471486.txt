@@ -1,0 +1,40 @@
+Title: IBM JVM engine crash after madconfig upgrade_instance while engine is running. - United States
+
+Text:
+50170000000OfLcAAK TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ "It is possible to corrupt the Initiate hub data dictionary if an instance upgrade is performed while the engine is running. One may see messages about tables being locked during the madconfig upgrade_instance. Evidence of the JVM crash will be seen by hs_err_pid####.log files in the mpinet_<instance name> instance directory for the hub. These log files will contain an exception similar to the following:
+
+#
+# An unexpected error has been detected by HotSpot Virtual Machine:
+#
+# EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x0000000078148dfb, pid=3620, tid=2780
+#
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (1.5.0_13-b05 mixed mode)
+# Problematic frame:
+# C [MSVCR80.dll+0x18dfb]
+#
+
+--------------- T H R E A D ---------------
+
+Current thread (0x000000002908f5a0): JavaThread ""pool-6-thread-2"" [_thread_in_native, id=2780]
+
+siginfo: ExceptionCode=0xc0000005, reading address 0x000000000000004e
+
+Registers:
+EAX=0x000000007ffffffe, EBX=0x000000000000004e, ECX=0x000000000000004e, EDX=0x0000000000000041
+ESP=0x000000002e61c250, EBP=0x000000002e61c5a0, ESI=0x0000000000000012, EDI=0x0000000000000073
+EIP=0x0000000078148dfb, EFLAGS=0x0000000000010202
+
+Top of Stack: (sp=0x000000002e61c250)
+0x000000002e61c250: 0000000000002001 0000000000000011",2008-10-27T16:36:47.000Z,00570000001B9ClAAK,,
+50170000000OU0vAAG,857,Is Oracle 11g supported with Initiate?,Reviewed,"Problem: Is it possible to confirm with Initiate what specific version of Oracle 11g they certify eg: Oracle database, clusterware and client versions 11.1.0.6.0 and any specific Oracle 11g patches they've tested and certified with Initiate 8.1? 
+
+RESOLVING THE PROBLEM
+ When we certify our software on a specific version of Oracle we use the latest Oracle version available when our software is going to be released. We have not had any issues in the past with point releases or patch level releases regarding the database software
+
+
+
+HISTORICAL NUMBER
+ 978

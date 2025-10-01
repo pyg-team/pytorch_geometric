@@ -1,0 +1,164 @@
+Title: IBM IT02885: LOTS OF "DB2ROCME 1 INSTANCE DB2INST 0 DB2CLUSTER GET_HOST_INFO"MESSAGES IN DB2DIAG.LOG - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+DB2 Version 10.1 Fix Pack 6 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24043366]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In db2 version v101, whenever command "db2instance", or
+   "db2cluster -list -alert" are executed, trivial log entry
+   "db2rocme 1 INSTANCE <instance name> <nodeID> DB2CLUSTER
+   GET_HOST_INFO" will be logged in db2diag.log, which is not
+   necessary.
+   
+     For example, similar messages below will be logged many times
+   in db2diag.log if this issue hits.
+   
+   2014-06-14-22.46.39.757306+540 I14803776A617        LEVEL: Event
+   PID     : 31850934             TID : 1              PROC :
+   db2rocme 0 [db2inst]
+   INSTANCE: db2inst              NODE : 000
+   HOSTNAME: db2host
+   EDUID   : 1                    EDUNAME: db2rocme 0 [db2inst]
+   FUNCTION: DB2 UDB, high avail services, db2rocm_main, probe:1282
+   DATA #1 : SQLHA Event Recorder header data (struct
+   sqlhaErPdInfo), PD_TYPE_SQLHA_ER_PDINFO, 80 bytes
+   Original timestamp: 2014-06-14-22.46.39.757230271
+   DATA #2 : String, 74 bytes
+   /db2inst/sqllib/adm/db2rocme 1 INSTANCE db2inst 0 DB2CLUSTER
+   GET_HOST_INFO
+   DATA #3 : String, 5 bytes
+   BEGIN
+   
+   2014-06-14-22.46.39.845423+540 I14804394A619        LEVEL: Event
+   PID     : 31850934             TID : 1              PROC :
+   db2rocme 0 [db2inst]
+   INSTANCE: db2inst              NODE : 000
+   HOSTNAME: db2host
+   EDUID   : 1                    EDUNAME: db2rocme 0 [db2inst]
+   FUNCTION: DB2 UDB, high avail services, db2rocm_main, probe:2207
+   DATA #1 : SQLHA Event Recorder header data (struct
+   sqlhaErPdInfo), PD_TYPE_SQLHA_ER_PDINFO, 80 bytes
+   Original timestamp: 2014-06-14-22.46.39.757271841
+   DATA #2 : String, 74 bytes
+   /db2inst/sqllib/adm/db2rocme 1 INSTANCE db2inst 0 DB2CLUSTER
+   GET_HOST_INFO
+   DATA #3 : String, 7 bytes
+   SUCCESS
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * pureScale user                                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 Version 10.1 FixPack 5 or higher.             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem was first fixed in DB2 UDB Version 10.1 FixPack 5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT02885
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-30
+   
+   
+ * CLOSED DATE
+   2015-07-21
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSN
+   UP

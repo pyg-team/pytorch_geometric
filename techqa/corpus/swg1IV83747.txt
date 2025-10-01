@@ -1,0 +1,282 @@
+Title: IBM IV83747: Deadlock closing JMS session in automatic client reconnection after APAR IV57472 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrading to a version of WebSphere MQ or IBM MQ that
+   contains the fix for APAR IV57472 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV57472]:
+   
+     http://www-01.ibm.com/support/docview.wss?uid=swg1IV57472 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV57472]
+   
+   a deadlock can occur when using the MQ JMS Automatic Client
+   Reconnect function when closing a JMS Session.
+   
+   A Javacore (thread dump) taken of the Java Runtime Environment
+   when this occurs shows two hung threads with the following Java
+   call stacks:
+   
+   Thread 1234: (state = BLOCKED)
+   - java.lang.Object.wait(long)
+   - java.lang.Object.wait()
+   - com.ibm.mq.jmqi.remote.api.RemoteHconn.checkUsable() line=2148
+   - com.ibm.mq.jmqi.remote.api.RemoteHconn.leaveNotifyCall(int)
+   line=915
+   -
+   com.ibm.mq.jmqi.remote.api.RemoteFAP.MQCLOSE(com.ibm.mq.jmqi.han
+   dles.Hconn, com.ibm.mq.jmqi.handles.Phobj, int,
+   com.ibm.mq.jmqi.handles.Pint, com.ibm.mq.jmqi.handles.Pint)
+   line=7354
+   -
+   com.ibm.mq.ese.jmqi.InterceptedJmqiImpl.MQCLOSE(com.ibm.mq.jmqi.
+   handles.Hconn, com.ibm.mq.jmqi.handles.Phobj, int,
+   com.ibm.mq.jmqi.handles.Pint, com.ibm.mq.jmqi.handles.Pint)
+   line=433
+   -
+   com.ibm.mq.ese.jmqi.ESEJMQI.MQCLOSE(com.ibm.mq.jmqi.handles.Hcon
+   n, com.ibm.mq.jmqi.handles.Phobj, int,
+   com.ibm.mq.jmqi.handles.Pint, com.ibm.mq.jmqi.handles.Pint)
+   line=189
+   -
+   com.ibm.msg.client.wmq.internal.WMQSyncConsumerShadow.closeInter
+   nal(boolean) line=418
+   -
+   com.ibm.msg.client.wmq.internal.WMQConsumerShadow.closeInternal(
+   java.util.concurrent.locks.ReentrantLock, boolean) line=266
+   -
+   com.ibm.msg.client.wmq.internal.WMQConsumerShadow.close(java.uti
+   l.concurrent.locks.ReentrantLock) line=365
+   -
+   com.ibm.msg.client.wmq.internal.WMQMessageConsumer.close(boolean
+   , java.util.concurrent.locks.ReentrantLock) line=378
+   -
+   com.ibm.msg.client.jms.internal.JmsMessageConsumerImpl.close(boo
+   lean) line=266
+   - com.ibm.msg.client.jms.internal.JmsSessionImpl.close(boolean)
+   line=390
+   - com.ibm.msg.client.jms.internal.JmsSessionImpl.close()
+   line=303
+   
+   Thread 9876: (state = BLOCKED)
+   - java.lang.Object.wait(long)
+   - java.lang.Object.wait()
+   - com.ibm.mq.jmqi.remote.util.ReentrantMutex.acquire(int, int)
+   line=137
+   - com.ibm.mq.jmqi.remote.util.ReentrantMutex.acquire(int)
+   line=74
+   -
+   com.ibm.mq.jmqi.remote.api.RemoteHconn.enterCall(com.ibm.mq.jmqi
+   .remote.util.ReentrantMutex, boolean, boolean) line=1854
+   -
+   com.ibm.mq.jmqi.remote.api.RemoteHconn.enterNotifyCall(boolean)
+   line=1836
+   -
+   com.ibm.mq.jmqi.remote.impl.RemoteReconnectThread.reconnect(com.
+   ibm.mq.jmqi.remote.api.RemoteHconn) line=241
+   - com.ibm.mq.jmqi.remote.impl.RemoteReconnectThread.run()
+   line=133
+   -
+   com.ibm.msg.client.commonservices.workqueue.WorkQueueItem.runTas
+   k() line=214
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disable the use of the MQ JMS Automatic Client Reconnect
+   function and have the classes for JMS application implement
+   reconnection logic.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the:
+   
+     - WebSphere MQ v7.1
+     - WebSphere MQ v7.5
+     - IBM MQ v8.0.0.1 (or later)
+   
+   classes for JMS that make use of the MQ JMS Automatic Client
+   Reconnect function and have the fix for APAR IV57472 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV57472].
+   
+   This includes:
+   
+     - WebSphere MQ v7.1.0.6 and v7.1.0.7
+     - WebSphere MQ v7.5.0.5 and v7.5.0.6
+     - IBM MQ v8.0.0.1 and later Fix Packs
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   APAR IV57472 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV57472]:
+   
+   http://www-01.ibm.com/support/docview.wss?uid=swg1IV57472 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV57472]
+   
+   addressed a race condition between two threads, one closing a
+   JMS Session and the other closing a JMS MessageConsumer, that
+   could result in the queue manager logging a AMQ9504 error
+   message.  Further details are contained within closing words for
+   APAR IV57472 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV57472].
+   
+   The fix for this issue was to ensure a second lock was held,
+   internally known as the "Notify Lock", when a thread was either
+   sending an MQCLOSE or MQDISC flow to the queue manager, as well
+   as holding the "Call Lock" which synchronises API calls for a
+   connection handle.
+   
+   However, this fix introduced a regression into the MQ classes
+   for JMS Automatic Client Reconnect logic that could have
+   resulted in a deadlock between an application thread closing a
+   JMS Session (and therefore making an MQCLOSE API call) and the
+   Automatic Client Reconnection thread.  This could have occurred
+   in the case where the connection, on which the MQCLOSE API call
+   was to be made, was found to be broken and client reconnect
+   processing was invoked.  In this scenario, the thread performing
+   the MQCLOSE API call waited for the reconnection processing to
+   complete but continued to hold the Notify Lock.  In order for
+   the reconnection thread to reestablish broken connections and
+   restore all connection handles on that connection, it requires
+   the "Notify Lock".
+   
+   As such, the Automatic Client Reconnection thread waited for the
+   Notify Lock before attempting to reconnect any broken connection
+   handles while the thread performing the MQCLOSE API call was
+   waiting for the reconnection to complete whilst holding the
+   Notify Lock.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The  MQ classes for JMS Automatic Client Reconnect code has been
+   updated to ensure threads that are performing MQCLOSE or MQDISC
+   API calls release the Notify Lock (which can be held after APAR
+   IV57472 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV57472]) while Automatic Client Reconnect processing is active.
+    Once connection handles have been reestablished by the
+   Automatic Client Reconnection thread, the application thread
+   performing the MQCLOSE or MQDISC API calls reacquires any locks
+   (including the Notify Lock) that are required to complete the
+   API call.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.1       7.1.0.8
+   v7.5       7.5.0.8
+   v8.0       8.0.0.6
+   v9.0 CD    9.0.1
+   v9.0 LTS   9.0.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV83747
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7224
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-14
+   
+   
+ * CLOSED DATE
+   2016-06-20
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7224
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

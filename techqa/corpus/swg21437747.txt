@@ -1,0 +1,30 @@
+Title: IBM Where can I find the Content Manager OnDemand for i e-mail newsletters? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I run Content Manager OnDemand for i and am looking for this year's e-mail newsletters that provide valuable hints and tips for the product. Are those available? 
+
+ANSWER
+Please note that Content Manager OnDemand newsletters for all platforms can now be accessed here [http://www.ibm.com/support/docview.wss?uid=swg27024130]. 
+Starting with the 4th quarter of 2011, the OnDemand Newsletter covers all platforms, not just i (formerly known as iSeries). The newsletter is delivered quarterly. Also, starting with the 2nd Quarter bulletin of 2016, the format has been changed so that it is easier to read on wide screen devices. We recommend that you use the full screen viewing option in Adobe Acrobat (Ctrl+L) for best results.
+
+Thank you for your support over these last 18 years! Questions about the OnDemand Newsletter should be directed to dbryant1@us.ibm.com. 
+
+Bulletins and newsletters for recent years are listed in the "Related information" section that follows. 
+
+
+
+Stay Informed by Receiving Product and Lifecycle Notifications:
+Click here [http://www.ibm.com/support/docview.wss?uid=swg21674106]
+
+RELATED INFORMATION
+ Getting on the e-mail list [http://www.ibm.com/support/docview.wss?uid=swg21188166 ]
+OnDemand for i 2010 bulletins [http://www.ibm.com/support/docview.wss?uid=swg21461049]
+OnDemand for i 2011 bulletins [http://www.ibm.com/support/docview.wss?uid=swg21579504]
+OnDemand for i 2012 newsletters [http://www.ibm.com/support/docview.wss?uid=swg21626253]
+OnDemand for i 2013 newsletters [http://www.ibm.com/support/docview.wss?uid=swg21665050]
+OnDemand for i 2014 newsletters [http://www.ibm.com/support/docview.wss?uid=swg21698945]
+OnDemand for i 2015 newsletters [http://www.ibm.com/support/docview.wss?uid=swg21979390]
+OnDemand for i 2016 newsletters [http://www.ibm.com/support/docview.wss?uid=swg22006011]

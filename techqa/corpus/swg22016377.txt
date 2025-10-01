@@ -1,0 +1,32 @@
+Title: IBM Mapping IMS to DB2 question - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ 
+I have a an IMS Customer table, which actually contains two different types of customer accounts, shipto customer accounts--where the product is shipped; and billto customer accounts---who receives the invoice. 
+
+The Customer root segment contains a FUNC column, which is valued at 'S' (Shipto only), 'M' (Billto only), or 'L' (Shipto and Billto). 
+
+I have a DB2 CUSTOMER and BILLING_PROFILE table. I want IMS Customer insert/updates directed to the DB2 CUSTOMER table. 
+
+Should I create 2 classic IMS source tables, one to map to the DB2 Customer; the other to map to the DB2 Billing_Profile? Is this possible? Or should I create a single base IMS Customer table and 
+create two VIEWS? Do I need to create table identification, or record exits? 
+
+ANSWER
+
+You want to define two separate tables. 
+
+The first will contain columns that map to the target DB2 table for the CUSTOMER table and the second table contains the columns for the BILLING_PROFILE target table. Both tables need to contain a column for the FUNC data item.
+
+You will then create two views one that does a SELECT * from the (Classic) CUSTOMER TABLE and contains the WHERE qualification on the FUNC as identified below. The second view does the same thing for the BILLING_PROFILE table.
+
+Use Classic data architect to alter the views for change data capture but not the base tables.
+
+Add the views to the CDC subscription and map the source columns to the appropriate DB2 columns in the appropriate table.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Classic Change Data Capture for z/OS

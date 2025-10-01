@@ -1,0 +1,48 @@
+Title: IBM How To: Limit the number of rows displayed in a list - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes how to limit the number of entries displayed in a list. 
+
+Example: X is a number (for example 10) In a "Top X" report, there is a tie for Xth place. This results in two entries having "X" as their rank, so the filter [Rank] <= X will actually return eleven entries. 
+
+The technique described below will remove one of these entries. The entry removed depends on the order in which the data is returned from the data source. 
+
+RESOLVING THE PROBLEM
+Use the running-count function to create a data item that increments at every row, and filter on that running-count.
+
+Steps:1) Add a data item to the query: running-count([data item to limit]). 
+
+If there are multiple sets of data being ranked, the running-count will need to reflect that instead:
+
+running-count([data item] for [grouping data item])
+
+2) Add a filter to the query:
+
+[running count data item] <= 10
+
+Alternate solution: 
+
+1) In Query 1, add every data item you want in the list report
+
+2) In the same query, create the query calculation rank.
+
+rank([dataitem] for report)
+
+3) Go to the Query explorer and click on Queries.
+
+4) Drag in a new Query (Query 2)
+
+5) Drag Query 1 to the right side of Query 2 (so that a subquery is created)
+
+6) Click on the query 2.
+
+7) Drag in every dataitem from the Query1 to Query 2.
+
+8) Add a new filter in Query2. (click on the query items tab, drag in rank and [rank] <=X )
+
+9) Go to the page, select the list, change the query from Query 1 to Query 2.
+
+The list will show the first X items in the list ranked based on the [dataitem].

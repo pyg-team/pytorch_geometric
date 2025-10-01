@@ -1,0 +1,70 @@
+Title: IBM Collecting Data: TEPS (Tivoli  Enterprise Portal Server) with Trace for diagnosing SOA as SDMS evaluator - United States
+
+Text:
+CAMSOAALL CAMSOALOG CAMSOADB CAMSOACD "collecting data" MustGather: TEPS (Tivoli Enterprise Portal Server) Trace diagnosing SOA SDMS evaluator TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ Instruction to capture TEPS data with trace. This trace is to use as SDMS (SOA Domain Management Server) evaluator, specifically. 
+
+ANSWER
+ 
+
+** Collecting TEPS data with Trace for diagnosing SOA issue ** 
+
+Procedure to ENABLE TEPS tracing and capture data 
+1. Enable tracing using the instructions below : 
+(There are 2 ways to do this. Choose one of the following to enable tracing.) Using GUI From MTEMS (Manage Tivoli Enterprise Monitoring Services utility) :  1. Right click on Tivoli Enterprise Portal Server 
+ 2. Select Advanced -> Edit trace parms... 
+ 3. From the "Trace Parameters" pop up window, from the drop down list of "Enter RAS1 Filters:", select "ERROR (UNIT:TepsQueryHelper ALL) (UNIT:EvaluatorHolderImpl ALL) (UNIT:KD4EVAL ALL)" 
+ 4. Select OK (to implement the change)
+
+Edit Property file  1. Open following file :  * Windows : <ITM_HOME>\CNPS\kfwenv 
+     * Unix : <ITM_HOME>/config/cq.ini
+    
+    
+ 2. Edit to set the value for KBB_RAS1 as following and save it.
+
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+2. Restart the TEPS for the new trace setting to take affect. 
+
+3. Allow the system to run for a minimum of 5 minutes, and then reproduce the issue. This will ensure that the trace includes a full interrogation of all agents. 
+
+4. Collect (zip up) and send the following directory. From TEPS installed System * Windows : <ITM_HOME>\CNPSJ\profiles\ITMProfile\logs\ITMServer 
+* Unix : <ITM_HOME>/<platform>/iw/profiles/ITMProfile/logs/ITMServer 
+5. Disable TEPS (Tivoli Enterprise Portal Server) trace setting. 
+
+
+Procedure to DISABLE TEPS tracing 
+1. Disable tracing using the instructions below. 
+(There are 2 ways to do this. Choose one of the following to disable tracing.) Using GUI From MTEMS (Manage Tivoli Enterprise Monitoring Services utility) :  1. Right click on Tivoli Enterprise Portal Server 
+ 2. Select Advanced -> Edit trace parms... 
+ 3. From the "Trace Parameters" pop up window, from the drop down list of "Enter RAS1 Filters:", select "ERROR" 
+ 4. Select OK (to implement the change) 
+ 5. Select "Yes" (to recycle the service)
+
+Edit Property file  1. Open following file :  * Windows : <ITM_HOME>\CNPS\kfwenv 
+     * Unix : <ITM_HOME>/config/cq.ini
+    
+    
+ 2. Edit to set the value for KBB_RAS1 as follows and save it.
+
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+2. Restart the TEPS for the new trace setting to take affect.  
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for SOA

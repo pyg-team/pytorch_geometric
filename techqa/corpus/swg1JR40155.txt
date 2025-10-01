@@ -1,0 +1,351 @@
+Title: IBM JR40155: CMVC 211891 - PREVENT STACKOVERFLOWERROR WHEN PROCESSING A TYPEDPROPERTY CONTAINING MALFORMED REPSONSE PROPERTY PARAMETERS. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.0.0-WS-WCServer-FP009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Commerce&fixids=7.0.0-WS-WCServer-FP009&source=SAR]
+WebSphere Commerce Version 7.0.0.4 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24030849]
+WebSphere Commerce Version 7.0.0.5 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24031380]
+WebSphere Commerce Version 7.0.0.6 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24032871]
+WebSphere Commerce Version 7.0.0.7 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24034686]
+WebSphere Commerce Version 7.0.0.8 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24037075]
+WebSphere Commerce Version 7.0.0.9 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24038826]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Procedures/Steps to reproduce problem:
+   
+   A Java.lang.StackOverflowError will be thrown when there are
+   some malformed response property parameters from the custom
+   command.  The error is thrown because there is a map in the
+   TypedProperty that references itself which causes it to loop
+   infinitely when trying to load the property list in to a string
+   :
+   
+   Observed Results:
+   
+   Java.lang.StackOverflowError found in the trace:
+   
+   [6/30/11 14:29:48:752 BST] 00000110 CommerceSrvr  E
+   com.ibm.commerce.struts.BaseAction execute CMN0409E: The
+   following error occurred during processing:
+   "java.lang.StackOverflowError".java.lang.StackOverflowError
+    at
+   com.ibm.commerce.datatype.PropertyHelper.getProtectedString(Prop
+   ertyHelper.java:353)
+    at
+   com.ibm.commerce.masking.MaskingFactory.mask(MaskingFactory.java
+   :107)
+    at
+   com.ibm.commerce.datatype.PropertyHelper.getProtectedString(Prop
+   ertyHelper.java:423)
+    at
+   com.ibm.commerce.masking.MaskingFactory.mask(MaskingFactory.java
+   :107)
+    at
+   com.ibm.commerce.datatype.PropertyHelper.getProtectedString(Prop
+   ertyHelper.java:423)
+    at
+   com.ibm.commerce.masking.MaskingFactory.mask(MaskingFactory.java
+   :107)
+    at
+   com.ibm.commerce.datatype.PropertyHelper.getProtectedString(Prop
+   ertyHelper.java:423)
+    at
+   com.ibm.commerce.masking.MaskingFactory.mask(MaskingFactory.java
+   :107)
+               .......
+               at
+   com.ibm.commerce.datatype.PropertyHelper.getProtectedString(Prop
+   ertyHelper.java:423)
+    at
+   com.ibm.commerce.webcontroller.WebControllerHelper.executeComman
+   d(WebControllerHelper.java:2684)
+    at
+   com.ibm.commerce.struts.BaseAction.invokeService(BaseAction.java
+   :1509)
+    at
+   com.ibm.commerce.struts.BaseAction.executeAction(BaseAction.java
+   :628)
+    at
+   com.ibm.commerce.struts.BaseAction.execute(BaseAction.java:150)
+    at
+   org.apache.struts.action.RequestProcessor.processActionPerform(R
+   equestProcessor.java:431)
+    at
+   org.apache.struts.action.RequestProcessor.process(RequestProcess
+   or.java:236)
+    at
+   org.apache.struts.action.ActionServlet.process(ActionServlet.jav
+   a:1196)
+    at
+   com.ibm.commerce.struts.ECActionServlet.processRequest(ECActionS
+   ervlet.java:218)
+    at
+   com.ibm.commerce.struts.ECActionServlet.doGet(ECActionServlet.ja
+   va:160)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:718)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:831)
+    at
+   com.ibm.ws.cache.servlet.ServletWrapper.serviceProxied(ServletWr
+   apper.java:307)
+    at
+   com.ibm.ws.cache.servlet.CacheHook.handleFragment(CacheHook.java
+   :576)
+    at
+   com.ibm.ws.cache.servlet.CacheHook.handleServlet(CacheHook.java:
+   250)
+    at
+   com.ibm.ws.cache.servlet.ServletWrapper.service(ServletWrapper.j
+   ava:259)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWr
+   apper.java:1657)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWr
+   apper.java:1597)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebApp
+   FilterChain.java:131)
+    at
+   com.ibm.commerce.campaigns.filter.CampaignsFilter.doFilter(Campa
+   ignsFilter.java:148)
+    at
+   com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(Fi
+   lterInstanceWrapper.java:188)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebApp
+   FilterChain.java:116)
+    at
+   com.ibm.commerce.likeminds.filter.LikeMindsFilter.doFilter(LikeM
+   indsFilter.java:183)
+    at
+   com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(Fi
+   lterInstanceWrapper.java:188)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebApp
+   FilterChain.java:116)
+    at
+   com.ibm.commerce.dynacache.filter.CacheFilter$1.run(CacheFilter.
+   java:377)
+    at
+   com.ibm.commerce.dynacache.filter.CacheFilter.doFilter(CacheFilt
+   er.java:508)
+    at
+   com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(Fi
+   lterInstanceWrapper.java:188)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebApp
+   FilterChain.java:116)
+    at
+   com.ibm.commerce.webcontroller.RuntimeServletFilter.doFilterActi
+   on(RuntimeServletFilter.java:367)
+    at
+   com.ibm.commerce.webcontroller.RuntimeServletFilter.access$0(Run
+   timeServletFilter.java:247)
+    at
+   com.ibm.commerce.webcontroller.RuntimeServletFilter$1.run(Runtim
+   eServletFilter.java:210)
+    at
+   com.ibm.commerce.webcontroller.RuntimeServletFilter.doFilter(Run
+   timeServletFilter.java:231)
+    at
+   com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(Fi
+   lterInstanceWrapper.java:188)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebApp
+   FilterChain.java:116)
+    at
+   com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(Fi
+   lterInstanceWrapper.java:188)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebApp
+   FilterChain.java:116)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain._doFilter(WebAp
+   pFilterChain.java:77)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterManager.doFilter(WebA
+   ppFilterManager.java:908)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(Ser
+   vletWrapper.java:934)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(Ser
+   vletWrapper.java:502)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.handleRequest
+   (ServletWrapperImpl.java:179)
+    at
+   com.ibm.ws.webcontainer.servlet.CacheServletWrapper.handleReques
+   t(CacheServletWrapper.java:91)
+    at
+   com.ibm.ws.webcontainer.WebContainer.handleRequest(WebContainer.
+   java:864)
+    at
+   com.ibm.ws.webcontainer.WSWebContainer.handleRequest(WSWebContai
+   ner.java:1583)
+    at
+   com.ibm.ws.webcontainer.channel.WCChannelLink.ready(WCChannelLin
+   k.java:186)
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleDiscr
+   imination(HttpInboundLink.java:445)
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleNewRe
+   quest(HttpInboundLink.java:504)
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.processRequ
+   est(HttpInboundLink.java:301)
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.ready(HttpI
+   nboundLink.java:275)
+    at
+   com.ibm.ws.tcp.channel.impl.NewConnectionInitialReadCallback.sen
+   dToDiscriminators(NewConnectionInitialReadCallback.java:214)
+    at
+   com.ibm.ws.tcp.channel.impl.NewConnectionInitialReadCallback.com
+   plete(NewConnectionInitialReadCallback.java:113)
+    at
+   com.ibm.ws.tcp.channel.impl.AioReadCompletionListener.futureComp
+   leted(AioReadCompletionListener.java:165)
+    at
+   com.ibm.io.async.AbstractAsyncFuture.invokeCallback(AbstractAsyn
+   cFuture.java:217)
+    at
+   com.ibm.io.async.AsyncChannelFuture$1.run(AsyncChannelFuture.jav
+   a:205)
+    at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1604)
+   
+   In the above stack trace the call of
+   com.ibm.commerce.masking.MaskingFactory.mask and
+   com.ibm.commerce.datatype.PropertyHelper.getProtectedString were
+   recurring hundreds of times and finally the StackOverFlowError
+   occurred.
+   
+   Expected Results:          The StackOverFlowError should not
+   occur
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   WebSphere Commerce users on v7.0.0.2
+   
+   PROBLEM ABSTRACT:
+   StackOverflowError occurs when processing a TypedProperty
+   containing malformed response property parameters from a custom
+   command
+   
+   BUSINESS IMPACT:
+   Not able to complete the custom command
+   
+   RECOMMENDATION:
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When tracing TypedProperty objects, we now maintain a list of
+   objects already traced.  This list is checked before tracing any
+   object contained within the TypedProperty.  An infinite loop is
+   prevented by only tracing an object once.
+   -------------------------------------------------------------
+   The latest available maintenance information can be obtained
+   from the Recommended Fixes for WebSphere Commerce technote:
+   http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296 [http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR40155
+   
+   
+ * REPORTED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * REPORTED COMPONENT ID
+   5724I3800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-20
+   
+   
+ * CLOSED DATE
+   2011-09-30
+   
+   
+ * LAST MODIFIED DATE
+   2011-09-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * FIXED COMPONENT ID
+   5724I3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

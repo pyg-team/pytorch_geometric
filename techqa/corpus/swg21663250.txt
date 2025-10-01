@@ -1,0 +1,91 @@
+Title: IBM Security Bulletin: IBM SPSS SamplePower vsflex8l ActiveX Control ComboList Property Remote Code Execution Vulnerability (CVE-2013-6724) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There is security vulnerability with an ActiveX control shipped by IBM SPSS SamplePower Version 3.0.1. This is corrected in IBM SPSS SamplePower 3.0.1 IF1. 
+
+VULNERABILITY DETAILS
+VULNERABILITY DETAILS: 
+CVE IDs: CVE-2013-6724 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-6724] 
+
+ 
+
+DESCRIPTION: 
+
+The latest available Interim Fix installer for IBM SPSS SamplePower provides a fix for getting or setting the "drop-down" list capability when editing a cell value. 
+
+As of January 30, 2014, IBM has not received any reports of customer issues related to these security vulnerabilities. 
+
+ 
+
+CVSS:
+Using the Common Vulnerability Scoring System (CVSS) v2, the security ratings for these issues are:
+
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/89279 [https://exchange.xforce.ibmcloud.com/vulnerabilities/89279] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:P/A:P)
+
+
+
+
+
+ACKNOWLEDGEMENT 
+
+These vulnerabilities were reported to IBM by Bluesea, working with ZDI. 
+
+
+
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM SPSS SamplePower for Windows V3.0.1
+
+
+REMEDIATION/FIXES
+The recommended solution is to download and install the IBM SamplePower 3.0.1 FP1 and apply the Interim Fix 3.0.1-IM-C30SAMP-WIN32-IF01 . 
+
+Fix* VRMF APAR How to acquire fix 3.0.1-IM-C30SAMP-WIN32-IF01 3.0.1.1 PI09800 3.0-IM-S3SAMPC-WIN32-FP001-IF001 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=SPSS&product=ibm/Information+Management/SPSS+SamplePower&release=3.0.0.1&platform=Windows+32-bit,+x86&function=all] Fix Pack: In order to remove the old version of the Control, the user should un-install the current release, download the available Sample Power 3.0.1 Fix Pack 1, install and re-license with your current Authorization Code. 
+
+1 Download the Interim Fix from IBM Fix Central (3.0.1-IM-C30SAMP-WIN32-IF01) 
+
+2. Install the IBM SamplePower 3.0.1. FP1 on top of your existing installation if not already completed. 
+
+3. Install the Interim Fix 3.0.1-IM-C30SAMP-WIN32-IF01 for SamplePower 3.0.1 on top of your existing installation. 
+
+3. Reboot if necessary. 
+
+ 
+
+ACKNOWLEDGEMENT 
+
+These vulnerabilities were reported to IBM by Bluesea, working with ZDI. 
+
+
+
+
+WORKAROUNDS AND MITIGATIONS
+None known apply the workaround. 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ January 30, 2014 Original Copy Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+RELATED INFORMATION
+ Need more help? Our SamplePower forum is Live! [https://developer.ibm.com/answers/search.html?f=&type=question&redirect=search%2Fsearch&sort=relevance&smartspace=predictive-analytics&q=sample+power%20%2B[statistics]%20%2B[modeler]%20%2B[licensing]%20%2B[spssstudent]%20%2B[r]%20%2B[python]%20%2B[scripting]%20%2B[extensibility]%20%2B[visualization]%20%2B[syntax]%20%2B[.net]%20%2B[textmining]%20%2B[collaboration]%20%2B[deployment]%20%2B[error]%20%2B[bluemix]%20%2B[errors]%20%2B[predictive-modeling]%20%2B[code]%20%2B[datacollection]%20%2B[authorization]%20%2B[news]%20%2B[wizard]%20%2B[streamsdev]%20%2B[License]%20%2B[mac]%20%2B[Licenses]%20%2B[installation]%20%2B[toolbar]%20%2B[java]]

@@ -1,0 +1,184 @@
+Title: IBM JR56110: SAVED ADVANCED SEARCHES ARE NOT RETURNING ITEMS WHEN RUN DIRECTLY - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+IBM InfoSphere Master Data Management Collaboration Server Version 11.4.0, Fix Pack 7 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FInfoSphere+Master+Data+Management+Collaboration+Server&fixids=11.4.0-WS-MDMCS-FP007IF000&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM InfoSphere Master Data Management Collaboration Server
+   11.4.0, there is an issue with advanced search which is at the
+   top of the left navigation pane  (not to be confused with
+   search template on LNP at the bottom). When an advanced saved
+   search named 'PMR' which is supposed to return 2 items (request
+   based on 2 primary keys) is clicked, and then on the 'run'
+   button directly, the search returns no item. However, when it
+   is first selected and after that if clicked on 'modify' and
+   then on 'search', the 2 items are correctly returned.
+   
+   This issue only happens with some attributes types of the
+   primary key. It does not work when the attribute is of type
+   sequence but works fine when the attribute type is STRING.
+   
+   For example, using the date example, there was a difference in
+   the results between the saved search 'run' and 'search'
+   after 'modify' was clicked; and a difference when using the
+   'OR'.
+   
+   'AND' saved search worked fine.
+   
+   Here are the repro steps:
+   
+   1. create some items in a catalog where the search key is the
+   primary key and can be of type sequence
+   2. create some saved  searches
+   
+   3. run the search by clicking on :
+   a) direct 'run' button
+   b) 'modify' and 'search' button
+   
+   Result:
+   a) does not work
+   b) works fine
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the 'modify' and 'search' button instead of 'run'
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Master Data Management Collaboration Server              *
+   * implementations are affected by this issue.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * In IBM InfoSphere Master Data Management Collaboration       *
+   * Server 11.4.0, there is an issue with advanced search which  *
+   * is at the top of the left navigation pane  (not to be        *
+   * confused with search template on LNP at the bottom). When an *
+   * advanced saved search named 'PMR' which is supposed to       *
+   * return 2 items (request based on 2 primary keys) is clicked, *
+   * and then on the 'run' button directly, the search returns no *
+   * item. However, when it is first selected and after that if   *
+   * clicked on 'modify' and then on 'search', the 2 items are    *
+   * correctly returned.                                          *
+   * This issue only happens with some attributes types of the    *
+   * primary key. It does not work when the attribute is of type  *
+   * sequence but works fine when the attribute type is STRING.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customers facing the issue reported by this APAR apply       *
+   * Master Data Management Collaboration Server version 11.4     *
+   * FP07 to gain resolution to this problem.                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for this problem has been included in Master Data
+   Management Collaboration Server version 11.4 FP07.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56110
+   
+   
+ * REPORTED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5100
+   
+   
+ * REPORTED RELEASE
+   B40
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-13
+   
+   
+ * CLOSED DATE
+   2016-09-10
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * FIXED COMPONENT ID
+   5724V5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB40 PSY
+   UP

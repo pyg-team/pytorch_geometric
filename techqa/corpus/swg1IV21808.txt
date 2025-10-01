@@ -1,0 +1,138 @@
+Title: IBM IV21808: MESSAGE BROKER FAILS TO PUT MESSAGE ON MQ WHEN KK3USEREXIT IS ENABLED AND PROPAGATE DELETE NONE IS SET IN A COMPUTE NODE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Message Broker is unable to place a message on a message queue
+   when the Data Collector for WebSphere Message Broker
+   (KK3UserExit) is active and the PROPAGATE DELETE NONE statement
+   is used in a Compute node.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Customers using ITCAM for Transactions 7.3
+   * Message Broker data collector in an environment with complex
+   * message flows involving a combination of HTTPRequest nodes,
+   * MQOutput nodes, and a Compute node with the PROPAGATE DELETE
+   * NONE statement set.
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The propagate delete none causes the
+   * message flow to persist any HTTPRequest header that was set by
+   * the data collector through out the message flow.  This HTTP
+   * header will causes problems at the MQOutput node.
+   ****************************************************************
+   * RECOMMENDATION: Apply ITCAM for Transactions 7.3 fix pack 1
+   * when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   
+   packages:
+                fix pack | 7.3.0.0-TIV-CAMTT-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV21808
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM TXN MQ DC
+   
+   
+ * REPORTED COMPONENT ID
+   5724S79MQ
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-28
+   
+   
+ * CLOSED DATE
+   2012-08-28
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM TXN MQ DC
+   
+   
+ * FIXED COMPONENT ID
+   5724S79MQ
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R730 PSY
+   UP

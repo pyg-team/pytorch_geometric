@@ -1,0 +1,103 @@
+Title: IBM Documentation corrections for IBM Datacap Version 9 - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ This document provides a collection of corrections to the 9.0 documentation. 
+
+CONTENT
+Documentation corrections: 
+
+PDF: IBM Datacap Application Development Guide
+(c2763750.pdf)
+
+Section: 
+Maintenance Manager actions > Application setup actions > SetupOpenApplicationEx [https://www.ibm.com/support/knowledgecenter/SSZRWV_9.0.0/com.ibm.dc.develop.doc/dcadgb26.htm]
+
+
+ * Issue
+ * 
+ * 
+ * 
+ * 
+ * 
+ * User
+ * 
+ * Password
+ * 
+ * Station 
+ * 
+ * blank
+ * 
+ * 
+ * 
+ * Correction
+ * 
+ * 
+ * 
+ * 
+ * 
+ * SetUser
+ * 
+ * SetStation
+ * 
+ * SetApplication 
+ * 
+ * SetupOpenApplicationEx
+ * 
+
+
+
+
+
+
+
+PDF: IBM Datacap System Administration Guide
+(c2763720.pdf) 
+
+Section:
+Configuring Datacap databases [http://www.ibm.com/support/knowledgecenter/SSZRWV_9.0.0/com.ibm.dc.admin.doc/dcade001.htm]
+
+
+ * Issue:
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Correction:
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  The machine where Datacap Server is installed. The machine where Rulerunner is installed, if an application calls actions that performs lookups to these databases. Other machines running the client software if the clients perform lookups or other queries to the database. 
+
+
+
+Section: 
+Creating a single Oracle database for a Datacap application [http://www.ibm.com/support/knowledgecenter/SSZRWV_9.0.0/com.ibm.dc.admin.doc/dcade009.htm] 
+ * Issue:
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Creating a single DB2 database for a Datacap application
+ * 
+ * Creating a single Microsoft SQL Server database for a Datacap application
+ * 
+ * 
+ * 
+ * Correction:
+ * 
+ *

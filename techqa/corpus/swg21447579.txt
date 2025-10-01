@@ -1,0 +1,25 @@
+Title: IBM Exception connecting to MS-SQL through JDBC driver 1.2 - United States
+
+Text:
+TDS protocol stream TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+Microsoft MS-SQL JDBC driver is failing to connect to SQL database.
+
+SYMPTOM
+BMWSD0429E: An SQLException was encountered while communicating with the database. 
+
+Error code: 0, SQL State: 08S01, 
+Message: The driver could not establish a secure connection to SQL Server by using Secure Sockets Layer (SSL) encryption. Error: The TDS protocol stream is not valid..DSRA0010E: SQL State = 08S01, Error Code = 0
+
+
+
+CAUSE
+Defect in JDBC driver 1.2
+
+
+
+RESOLVING THE PROBLEM
+Upgrade to MS-SQL JDBC driver version 2.0 
+
+http://social.msdn.microsoft.com/Forums/en-US/sqldataaccess/thread/6a0263ab-e35f-41b3-b4ca-fcdb1cfc8ac6 [http://social.msdn.microsoft.com/Forums/en-US/sqldataaccess/thread/6a0263ab-e35f-41b3-b4ca-fcdb1cfc8ac6]

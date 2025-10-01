@@ -1,0 +1,38 @@
+Title: IBM Issue with [blank] space on the path for WebSphere when upgrading the TRIRIGA Platform to 3.5.1 - United States
+
+Text:
+TRIINSTALL; TRIUPGRADE; TRIWEBSPHERE; TRILIBERTY; TRIJBOSS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The error popup box on "This installer ran into an error when it tried to determine the status of WebSphere. WebSphere should be started this point." 
+
+SYMPTOM
+WebSphere is running and the user is able to log in from the console. The user will get the same WebSphere popup error during installation requiring that the server is not started. 
+
+[Isn't the error thrown by our installer, and not by WAS?]
+
+
+CAUSE
+Having white spaces in the directory structured used for installation. 
+
+[...]Example is C:\Program Files\IBM\WebSphere
+
+[Highlight the path, showing the space]
+
+
+
+
+ENVIRONMENT
+TRIRIGA Application Platform 3.5.1
+
+
+
+DIAGNOSING THE PROBLEM
+According to the installation document for Tririga version 3.5.1, The TRIRIGA installer was [has been] updated to prevent installation into a full WebSphere environment whose cell, node, or server name contains an underscore in their name or a space in the path. These configurations are not allowed. (Tri-208915-IV80543)
+
+
+
+RESOLVING THE PROBLEM
+1. In order to resolve this issue, user must reinstall WebSphere to a path without a [blank] space. They cannot use the existing websphere directory as it currently exists.
+2. Note that the WebSphere with a space in the installation path from 3.5 onwards will not be supported. Support issues [will]that can arise in installing a Java Application into a path with a space.
+3. It is a good practice to omit "Program Files" in the Directory Structure during installation and place [all]every IBM Products under C:\IBM.

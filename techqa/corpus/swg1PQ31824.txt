@@ -1,0 +1,172 @@
+Title: IBM PQ31824: INTERNET EXPLORER(IE) BROWSER DOESN'T DISPLAY THE CERTIFICATE KEY SIZE OPTION WHEN USING CASERVLET FOR BROWSER CERT. REQUESTS. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The webserver CAServlet tool option for creating a browser
+   certificate request does not give the security administrator the
+   option to specify the key size(1024 or 512).  The option is
+   currently available for the Netscape browser.  Depending on the
+   level of encryption(US or Export) the customer may want to use
+   the strong encryption method.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The browser creates the certificate request and not the
+   webserver.  The Microsoft Internet Explorer browser determines
+   the level of encryption by the user's browser level.  If the
+   customer is using the IE export version the browser defaults to
+   512-bit.  If the customer is IE US security the browser defaults
+   to 1024-bit.  The customer will need to ensure users have the
+   correct level of IE installed before the certificate request
+   is created.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Those using the CA utility (CAServlet).      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When using the CA utility and an        *
+   *                      Internet Explorer browser you do not    *
+   *                      get the option to choose a different    *
+   *                      key size when requesting a browser      *
+   *                      certificate.                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When using the CA utility to create a certificate from an
+   Internet Explorer browser the user does not have the option to
+   choose the key size.  Internet Explorer does not allow the user
+   to select the size key he/she would want to use even if it
+   is less then what the browser can manage.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Internet Explorer Browsers only create keys the same size as the
+   browsers they are requested from, so a browser with 128 bit
+   encryption ability will only allow a 1024 bit key to be built
+   and a browser with 56 bit encryption will only allow a 512 bit
+   key to be built.  This is an Internet Explorer limitation.
+   
+   Changes need to made to the Certificate Authority utility
+   appendix in the Planning, Installing, and Using books for
+   releases 5.1 and 5.2, and Chapter 4 How do I act as a
+   certificate authority and issue my own certificates in the
+   Webmaster's Guide for release 5.0.  In the section that
+   explains how to Request a Browser Certificate the following
+   needs to be added:
+   Note: Internet Explorer Browsers only create keys the same size
+   as the browsers they are requested from, so a browser with 128
+   bit encryption would receive a 1024 bit key, a browser with
+   56 bit encryption would receive a 512 bit key from the CA
+   utility.
+   Internet Explorer does not allow the user to select the size
+   key he/she would want to use even if it is less then what
+   the browser can manage.
+   
+   For V5.2 IBM HTTP Server:
+   The update needs to be added to the Planning, Installing, and
+   Using book.
+   Updates for this book are available on the Web site at URL:
+   http://www.ibm.com/software/webservers/httpservers/doc52.html [http://www.ibm.com/software/webservers/httpservers/doc52.html]
+   
+   For V5.1 IBM HTTP Server:
+   The update needs to be added to the Planning, Installing, and
+   Using book.
+   Updates for this book are available on the Web site at URL:
+   http://www.ibm.com/software/webservers/httpservers/doc51.html [http://www.ibm.com/software/webservers/httpservers/doc51.html]
+   
+   For V5.0 Lotus Domino Go Webserver:
+   The update needs to be added to the Webmaster's Guide.
+   Updates for this book are available on the Web site at URL:
+   http://www.ibm.com/software/webservers/dgw/doc50.htm [http://www.ibm.com/software/webservers/dgw/doc50.htm]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ31824
+   
+   
+ * REPORTED COMPONENT NAME
+   DGW/WAS OS/390
+   
+   
+ * REPORTED COMPONENT ID
+   5697D4300
+   
+   
+ * REPORTED RELEASE
+   501
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   1999-10-17
+   
+   
+ * CLOSED DATE
+   2000-06-26
+   
+   
+ * LAST MODIFIED DATE
+   2000-06-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC31869002 SC31869001 SC31869100 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,146 @@
+Title: IBM PI08174: REPORTER LICENSE FEATURE IS NOT RETURNED WHEN RUNNING REPORTERPLUS GENERATION FROM IBM RATIONAL RHAPSODY - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Rhapsody 8.0.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24037021]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Attempts to use ReporterPlus generation from within Rational
+   Rhapsody results in the license feature Reporter not being
+   returned after being borrowed from the license server.
+   
+   REPRODUCING THE ERROR:
+   To reproduce the problem with a license server with the Reporter
+   feature:
+   
+   1. Open a Rhapsody project and select Tools -> ReporterPLUS ->
+   Report on all model elements.
+   
+   2. Close the ReporterPLUS Wizard by pressing Cancel.
+   
+   The Reporter feature is shown as checked out in the license
+   server log, but is not checked back in (returned) when the
+   ReporterPLUS Wizard is closed.
+   
+   WORKAROUND:
+   You must close Rhapsody for the Reporter feature to be returned
+   to the license server.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Reporter license feature is not returned when running
+   ReporterPlus generation from IBM Rational Rhapsody
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Reporter's license is now returned if it runs as dll (in
+   blocking mode).
+   It means this fix doesn't work under Eclipse and in
+   Create/Edit ReporterPLUS template.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI08174
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   805
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-16
+   
+   
+ * CLOSED DATE
+   2014-03-06
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R805 PSN
+   UP

@@ -1,0 +1,255 @@
+Title: IBM IT10205: JMSCMQ0002: THE METHOD 'MQCTL' FAILED JMSCMQ0001 ('MQCC_FAILED')REASON '2534' ('MQRC_OPERATION_NOT_ALLOWED') - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When an IBM MQ v8 classes for JMS application calls the method:
+   
+     JMSConsumer.close()
+   
+   the following JMSException is thrown to the application:
+   
+   com.ibm.msg.client.jms.DetailedJMSException: JMSCMQ0002: The
+   method 'MQCTL' failed.
+   A WebSphere MQ call failed.
+   Please see the linked exception for more information.
+   &#09;at
+   com.ibm.msg.client.wmq.common.internal.Reason.reasonToException(
+   Reason.java:595)
+   &#09;at
+   com.ibm.msg.client.wmq.common.internal.Reason.createException(Re
+   ason.java:215)
+   &#09;at
+   com.ibm.msg.client.wmq.common.internal.Reason.createException(Re
+   ason.java:253)
+   &#09;at
+   com.ibm.msg.client.wmq.internal.WMQConsumerOwnerShadow.suspendAs
+   yncService(WMQConsumerOwnerShadow.java:435)
+   &#09;at
+   com.ibm.msg.client.wmq.internal.WMQSession.suspendAsyncService(W
+   MQSession.java:1789)
+   &#09;at
+   com.ibm.msg.client.wmq.internal.WMQConsumerShadow.close(WMQConsu
+   merShadow.java:357)
+   &#09;at
+   com.ibm.msg.client.wmq.internal.WMQMessageConsumer.close(WMQMess
+   ageConsumer.java:569)
+   &#09;at
+   com.ibm.msg.client.jms.internal.JmsMessageConsumerImpl.close(Jms
+   MessageConsumerImpl.java:291)
+   &#09;at
+   com.ibm.msg.client.jms.internal.JmsMessageConsumerImpl.close(Jms
+   MessageConsumerImpl.java:227)
+   &#09;at
+   com.ibm.mq.jms.MQMessageConsumer.close(MQMessageConsumer.java:80
+   )
+       ...
+   Caused by: com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ call
+   failed with compcode '2' ('MQCC_FAILED') reason '2534'
+   ('MQRC_OPERATION_NOT_ALLOWED').
+   &#09;at
+   com.ibm.msg.client.wmq.common.internal.Reason.createException(Re
+   ason.java:203)
+   &#09;... 10 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  <html>None.
+   </html>
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the IBM MQ v8 classes for JMS who
+   have multi-threaded applications that can call:
+   
+     JMSContext.stop()
+   
+   and
+   
+     JMSConsumer.close()
+   
+   at the same time and register a MessageListener with the
+   JMSConsumer by calling the method:
+   
+     JMSConsumer.setMessageListener(MessageListener).
+   
+   where the JMSConsumer was created from the JMSContext on which
+   the method stop() is being called.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When an application calls:
+   
+     JMSContext.stop()
+   
+   to temporarily stop the delivery of messages to the application,
+   the IBM MQ classes for JMS stop message delivery by calling
+   MQCTL and specifying the MQOP_STOP operation code.
+   
+   When an application calls:
+   
+     JMSConsumer.close()
+   
+   the IBM MQ classes for JMS suspend the asynchronous message
+   delivery for the application by calling MQCTL and specifying the
+   MQOP_SUSPEND operation code.
+   
+   A timing issue existed where two threads, one performing a
+   JMSContext.stop() operation and the other performing a
+   JMSConsumer.close() operation, simultaneously determined that
+   the state of the asynchronous consumer was STARTED. It is valid
+   to transition a hConn associated with a asynchronous consumer
+   from the STARTED state to either SUSPENDED or STOPPED. As such,
+   both threads attempted to flow their respective MQCTL operations
+   to the queue manager to which the JMSContext was connected.
+   
+   If the thread performing the JMSContext.stop() operation flowed
+   the MQCTL with the MQOP_STOP code to the queue manager first,
+   then the queue manager would move the hConn associated with the
+   asynchronous consumer into a STOPPED state. After which, the
+   second thread would then flow its MQCTL with the MQOP_SUSPEND
+   code to the queue manager. However it is not valid to move the
+   hConn associated with an asynchronous consumer from STOPPED to
+   SUSPENDED state. As such, the queue manager returned an error
+   completion code with the reason code 2535
+   (MQRC_OPERATION_NOT_ALLOWED), which resulted in a JMSException
+   being thrown to the application from the JMSConsumer.close()
+   call.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The IBM MQ v8 classes for JMS have been updated to add
+   additional locking when checking and changing the state of an
+   asynchronous consumer.
+   
+   As a result, in the scenario where one thread is performing a
+   JMSContext.stop() operation while another is attempting a
+   JMSConsumer.close() operation, one thread will now obtain a lock
+   on the state of the asynchronous consumer, check that the
+   current state is suitable for MQCTL operation it wishes to
+   perform and if it is, flow its MQCTL call to the queue manager.
+   It will then release the lock on the asynchronous consumer,
+   allowing the second thread to continue and perform the same
+   steps.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.5
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT10205
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-07-21
+   
+   
+ * CLOSED DATE
+   2015-12-18
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

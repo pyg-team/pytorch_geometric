@@ -1,0 +1,83 @@
+Title: IBM Security Bulletin:  Multiple vulnerabilities in IBM Java SDK affect IBM Tivoli System Automation Application Manager (CVE-2016-5546, CVE-2016-5548, CVE-2016-5549, CVE-2016-5547, CVE-2016-2183) - United States
+
+Text:
+TSAAM; saam; tsa; psirt; WAS; websphere application server SECURITY BULLETIN
+
+SUMMARY
+ There are multiple vulnerabilities in IBM® SDK Java™ Technology Edition, Version 7 used by IBM Tivoli System Automation Application Manager. IBM Tivoli System Automation Application Manager has addressed the applicable CVEs.
+
+These issues were also addressed by WebSphere Application Server shipped with IBM Tivoli System Automation Application Manager. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2016-5546 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5546]
+DESCRIPTION: An unspecified vulnerability related to the Libraries component has no confidentiality impact, high integrity impact, and no availability impact.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/120869 [https://exchange.xforce.ibmcloud.com/vulnerabilities/120869] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N)
+
+CVEID: CVE-2016-5548 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5548]
+DESCRIPTION: An unspecified vulnerability related to the Libraries component could allow a remote attacker to obtain sensitive information resulting in a high confidentiality impact using unknown attack vectors.
+CVSS Base Score: 6.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/120864 [https://exchange.xforce.ibmcloud.com/vulnerabilities/120864] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:N)
+
+CVEID: CVE-2016-5549 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5549]
+DESCRIPTION: An unspecified vulnerability related to the Libraries component could allow a remote attacker to obtain sensitive information resulting in a high confidentiality impact using unknown attack vectors.
+CVSS Base Score: 6.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/120863 [https://exchange.xforce.ibmcloud.com/vulnerabilities/120863] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:N)
+
+CVEID: CVE-2016-5547 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5547]
+DESCRIPTION: An unspecified vulnerability related to the Libraries component could allow a remote attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/120871 [https://exchange.xforce.ibmcloud.com/vulnerabilities/120871] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L)
+
+CVEID: CVE-2016-2183 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2183]
+DESCRIPTION: OpenSSL could allow a remote attacker to obtain sensitive information, caused by an error in the DES/3DES cipher, used as a part of the SSL/TLS protocol. By capturing large amounts of encrypted traffic between the SSL/TLS server and the client, a remote attacker able to conduct a man-in-the-middle attack could exploit this vulnerability to recover the plaintext data and obtain sensitive information. This vulnerability is known as the SWEET32 Birthday attack.
+CVSS Base Score: 3.7
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/116337 [https://exchange.xforce.ibmcloud.com/vulnerabilities/116337] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Tivoli System Automation Application Manager 4.1.0.0 – 4.1.0.1
+
+REMEDIATION/FIXES
+The recommended solution is to apply the corresponding fix to IBM Tivoli System Automation Application Manager. To select the fix you need to apply in your environment, click on 'Download link' in the table below. 
+
+* If you are running IBM Tivoli System Automation Application Manager 4.1, please apply interim fix “4.1.0.1-TIV-SAAMR-<OS>-IF0004” where <OS> represents the operating system for which you want to install the interim fix of this product version. You can apply this interim fix on top of any fixpack of version 4.1.
+
+
+
+Product VRMF APAR IBM Tivoli System Automation Application Manager 4.1 Download link [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Tivoli+System+Automation+Application+Manager&release=All&platform=All&function=all] 
+Refer to the following security bulletin for vulnerability details and information about fixes addressed by WebSphere Application Server shipped with IBM Tivoli System Automation Application Manager. 
+
+Principal Product and Version(s) Affected Supporting Product and Version Affected Supporting Product Security Bulletin IBM Tivoli System Automation Application Manager 4.1 WebSphere Application Server 8.5 Security Bulletin: Multiple vulnerabilities in IBM® Java SDK affects WebSphere Application Server January 2017 CPU [http://www-01.ibm.com/support/docview.wss?uid=swg21998379] WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+IBM Java SDK Security Bulletin [http://www-01.ibm.com/support/docview.wss?uid=swg21997194] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 5 July 2017: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,104 @@
+Title: IBM Collecting Data for eMail Search for CommonStore for Lotus Domino and Exchange Server - United States
+
+Text:
+CommonStore; Problem Determination; Debug; eMail Search; text search; MustGather TECHNOTE (FAQ)
+
+QUESTION
+ What initial information should be collected when I experience product issues for eMail Search? 
+
+ANSWER
+The information that you send, detailed below, helps IBM Software Support understand your environment and type of problem. Because the support team usually needs this information anyway, sending the information with your request expedites the problem analysis and resolution process. Even if you have already contacted support, continue to collect the data. 
+
+First describe the problem and your system environment, then collect the data appropriate to your problem.
+
+General Information
+
+Problem Description  *  What messages do you see and where do they occur? Is the problem reproducible? If it is reproducible, describe in detail the steps you have taken to reproduce the problem. When did you start seeing this problem? How frequently does the problem occur? What type of system is the product running on (such as production, development, test or QA, staging)? Have you made any recent changes to the system? Is any other software running on the same computer as eMail Search and its prerequisite products? How does the problem impact your business? 
+ * 
+
+Environment  * Provide the following system details: Operating system type and version, including patches and service pack levels. CommonStore version, fix pack level, and any test fixes. Source system type and version (i.e. Exchange 2003) Target repository type, platform, and version (such as Content Manager 8.4 on AIX, OnDemand 7.1, TSM) Are both eMS server and client installed on the same machine? 
+
+
+Problem-Specific Information
+Under the heading that best matches the type of problem you are experiencing, collect the specified files and other data. In some cases, you need to run your system to collect data after changing your log settings.
+ * eMail Search Client
+   Open ems-config.xml in the eMail Search root directory and enable tracing through the <logging> section. The client will need to be restarted to pick up these changes.
+   
+   <logging>
+   - <!-- Sets the level of logging (Supported values = ALL, INFO, FINE,
+   - <!-- FINER, FINEST, SEVERE, WARNING).
+   -->
+   <level>ALL</level>
+   - <!-- The name of the log file outputed by eMS. 
+   -->
+   <file>C:\IBM\eMailSearch\logs\ems.log</file>
+   - <!-- Sets the maximum size of a single log file. This value is in bytes.
+   -->
+   - <!-- Therefore a value of 2000000 indicates a maximum size of 2Mb.
+   -->
+   <file-size>2000000</file-size> 
+   
+ * eMail Search Server
+   Open ems-server-config.xml in the eMail Search root directory and enable tracing through the <logging> section. The client will need to be restarted to pick up these changes.
+   
+   - <logging>
+   - <!-- Sets the level of logging (Supported values = ALL, INFO, FINE,
+   - <!-- FINER, FINEST, SEVERE, WARNING).
+   -->
+   <level>ALL</level>
+   - <!-- The name of the log file outputed by eMS.
+   -->
+   <file>C:\IBM\eMailSearch\logs\ems-server.log</file>
+   - <!-- Sets the maximum size of a single log file. This value is in bytes.
+   -->
+   - <!-- Therefore a value of 2000000 indicates a maximum size of 2Mb.
+   -->
+   <file-size>2000000</file-size> 
+   
+ * Text Search
+   From the directory where indexdocuments.bat (or indexdocuments.sh) is executed, review the <CommonStore Item Type>.log for any errors. 
+
+ * Native View
+   Open ems-config.xml in the eMail Search root directory and enable tracing through the <logging> section. Child elements can be added into this section to create the export logging needed.
+   
+   <logging>
+   <level>ALL</level>
+   <file>C:\IBM\eMailSearch\logs\ems.log</file>
+   <file-size>2000000</file-size>
+   <number-of-files>4</number-of-files>
+   <type>file</type>
+   <enable-native-logging>y</enable-export-logging>
+   <native-log-file>C:\IBM\eMailSearch\logs\DominoMailJNI.log</native-log-file>
+   </logging> 
+   
+   You can also look at the EMSLotus_PWMGR.log for cases where an incorrect password is being provided to the Domino server.
+   
+ * Document Preview or Retrieval
+   Enable tracing for both the eMail Search Server and eMail Search client to get log messages about the retrieve operation. You will need to review the ems.log and ems-server-config.log.
+   
+ * Export
+   Open ems-server-config.xml in the eMail Search root directory and enable tracing through the <logging> section. Child elements can be added into this section to create the export logging needed.
+   
+   <logging>
+   <level>ALL</level>
+   <file>C:\IBM\eMailSearch\logs\ems-server.log</file>
+   <file-size>2000000</file-size>
+   <number-of-files>4</number-of-files>
+   <type>file</type>
+   <enable-export-logging>ERROR</enable-export-logging>
+   <domino-export-log-file>C:\IBM\eMailSearch\logs\dominoExport.log
+   </domino-export-log-file>
+   <exchange-export-log-file>C:\IBM\eMailSearch\logs\exchangeExport.log
+   </exchange-export-log-file>
+   </logging> 
+   
+   You can also look at the EMSLotus_PWMGR.log for cases where an incorrect password is being provided to the Domino server.
+
+
+What to do next
+After you have collected the information, simply submit it to IBM support using one of the following methods:  *  IBM Support Assistant (ISA) Service Request (SR) FTP to the Enhanced Customer Data Repository (ECuRep) 
+
+
+For more information, read the article Submitting Diagnostic Information to IBM Technical Support for Problem Determination [http://www-01.ibm.com/support/docview.wss?uid=swg21229653]. [/support/docview.wss?uid=swg21414986&amp;aid=1] 
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management CommonStore for Exchange Server

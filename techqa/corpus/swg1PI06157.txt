@@ -1,0 +1,123 @@
+Title: IBM PI06157: INPLACE: RICH TEXT EDITOR INSERT LINK AND INSERT IMAGE WITHIN VI RTUAL PORTAL USES INCORRECT CONTEXT - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When editing a rich text field via inplace editing inside a
+   Virtual Portal and the Insert Link or Image button is clicked,
+   the dialog opens on the base Portal instance.
+   
+   As a result, libraries from the base Portal will be seen instead
+   of the current Virtual Portal instance.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When editing a rich text field via inplace editing inside a
+   Virtual Portal and the Insert Link or Image button is clicked,
+   the dialog opens on the base Portal instance.
+   
+   As a result, libraries from the base Portal will be seen instead
+   of the current Virtual Portal instance.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code was updated to ensure the dialog is scoped to the correct
+   Virtual Portal instance.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI06157
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-14
+   
+   
+ * CLOSED DATE
+   2013-11-14
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

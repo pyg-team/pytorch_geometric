@@ -1,0 +1,157 @@
+Title: IBM Maven and M2Eclipse support in Rational Application Developer v7.x, v8.x and v8.5.1 or higher - United States
+
+Text:
+RFE; RAD; maven; m2eclipse; support; third party; open source; plugin; rad wiki; wiki; gef; zest; org.eclipse.zest.core; dependency; GEF Zest; JEE; Java EE; J2EE; best practices; recommendations; support; eclipse; wtp; install; failed; Graphical Editing Framework Zest Visualization Toolkit; development; RSA; GEF Zest Visualization; installing; requirements; version; https://www.ibm.com/developerworks/forums/thread.jspa?threadID=330206&tstart=1&messageID=14558573 TECHNOTE (FAQ)
+
+QUESTION
+ Are you allowed to include m2eclipse with IBM Rational Application Developer for WebSphere Software v8 and is Maven supported? 
+
+CAUSE
+About to release Rational Application Developer v8 and you are looking for the ability to create Maven projects. 
+The following IBM developerWorks forum item discusses the GEF Zest requirement: 
+Install - M2Eclipse 0.10 cannot install [https://www.ibm.com/developerworks/forums/thread.jspa?threadID=330206&tstart=1&messageID=14558573]
+in which M2Eclipse 0.10 failed to install and the workspace log showed
+
+
+"... 
+
+!ENTRY org.eclipse.equinox.p2.operations 4 0 2010-06-01 13:12:16.956 
+
+!MESSAGE Operation details 
+
+!SUBENTRY 1 org.eclipse.equinox.p2.director 4 1 2010-06-01 13:12:16.957 
+
+!MESSAGE Cannot complete the install because one or more required items could not be found. 
+
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 0 2010-06-01 13:12:16.957 
+
+!MESSAGE Software being installed: Maven Integration for Eclipse (Required) 0.10.0.20100209-0800 (org.maven.ide.eclipse.feature.feature.group 0.10.0.20100209-0800) 
+
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 0 2010-06-01 13:12:16.957 
+
+!MESSAGE Missing requirement: Maven Integration for Eclipse (Editors) 0.10.0.20100209-0800 (org.maven.ide.eclipse.editor 0.10.0.20100209-0800) requires 'bundle org.eclipse.zest.core 0.0.0' but it could not be found 
+
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2010-06-01 13:12:16.958 
+
+!MESSAGE Cannot satisfy dependency: 
+
+.."
+
+
+
+
+
+
+ANSWER
+There is no direct support for Maven or any third party / open source tool / plugin such as M2Eclipse in Rational Application Developer (RAD) v7.x or v8.0.x, that is not shipped with the product. 
+
+ 
+
+The third party (open source) M2Eclipse, if compatible with Eclipse 3.6.2 (in Rational Application Developer 8.0.2 ), should be installable and useable according to vendor (provider) instructions. 
+
+Rational Application Developer v7.5.x is based on Eclipse 3.4.2. For open source or third party plugins, you need to contact the provider for assistance. For more general Eclipse plugin support details, refer to:
+Rational Application Developer Support for third party and open-source Eclipse plugins and tools [http://www.ibm.com/support/docview.wss?uid=swg21600040] 
+
+M2Eclipse/M2E (Maven Integration for Eclipse) is shipped and supported with RAD 8.5.1 or higher. More on this later.
+
+
+
+
+
+
+
+
+In the case of RAD v7.5.x or v8.0.x (both are end of service), it may be possible to use a third party (open source) Maven, even if it is not supported by RAD. 
+
+As an example, sonatype.org used to provide M2Eclipse ( Maven Integration for Eclipse ), a Maven implementation for Eclipse. The provider of m2eclipse or any other Maven plugin/implementation is responsible for any how-to, defect or install support (if any is available). 
+
+Note: In 2010, Sonatype announced that this project would be donated and incubated at Eclipse with a new name m2eclipse [http://eclipse.org/m2e/] , as per per: https://support.sonatype.com/entries/24316542-Where-did-http-m2eclipse-sonatype-org-sites-m2e-go- [https://support.sonatype.com/entries/24316542-Where-did-http-m2eclipse-sonatype-org-sites-m2e-go-] 
+As a historical example, the longer available sonatype M2Eclipse "Installation Requirements" document showed this excerpt:  * 
+   "... - Rational Application Developer (RAD) or Rational Software Architect (RSA) 7.5 is a commercial product from IBM and is based on eclipse 3.4 (unsupported) 
+   
+    
+   
+   ! If you are using RAD/RSA 7.5, install the "Graphical Editing Framework Zest Visualization Toolkit" under the most recent version of "GEF SDK" using the update site http://download.eclipse.org/tools/gef/updates/releases/before you install m2eclipse.
+   .."
+   
+   
+   
+
+
+The only exception to the provider being responsible, may be if the core Eclipse, J2EE/Java EE/WTP Tools or other tools provided in Rational Application Developer can be shown to be the cause of the problem. 
+
+
+
+
+[http://wiki.eclipse.org/GEF_Zest_Visualization] 
+GEF Zest Visualization [http://wiki.eclipse.org/GEF_Zest_Visualization] is not provided or supported with Rational Application Developer v7.x or v8.x. It should not be confused with the Graphical Editing Framework GEF (org.eclipse.gef) plugin, which is provided. The vendor (provider) should be contacted for assistance. Rational Application Developer is only responsible for any suspected problems or defects that can be demonstrated as caused by the Eclipse or other tools that are shipped, and is not responsible for any Maven implementation, how-to or install assistance. 
+
+
+
+Java EE Development using Rational Application Developer 7.5.5 or 8.0.x with Maven: 
+
+The following developerWorks article on best practices using Maven in Rational Application Developer v7.5 (also applicable to v8), is useful and is provided as-is: 
+
+Rational Application Developer Wiki [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Rational%20Application%20Developer%20Wiki]:
+Java EE Development using Rational Application Developer 7.5.5 and Maven [https://www.ibm.com/developerworks/community/forums/ajax/download/24e17223-2791-4e0f-8727-6be80aa46762/4a26f5ff-828c-4780-ba26-5d8e3f144ea6/RAD_755_MAVEN_0601.pdf] (pdf) 
+
+The article shows, for example, that for a dynamic web project in Rational Application Developer v7.5.5.x with Maven, is quite reasonable to have a Maven like structure specified in the dynamic web application create wizard (or as defaults in the workspace: Preferences > Java EE > Project): 
+
+ * 
+ * 
+ * 
+ * 
+ * Output Folder: 
+   src/main/webapp/WEB-INF/classes 
+ * Content Directory: 
+   src/main/webapp 
+
+
+
+Naturally, src/main/webapp/WEB-INF/lib contains jars. The article discusses much more, and is provided as is.  
+
+The following developerWorks article on using Maven Integration (m2e) - m2eclipse [http://eclipse.org/m2e/] with Rational Application Developer 8.0.3+ is a follow-on to the above article. It has been revised and enhanced in v8.0.4. It is useful and is provided as is:
+
+Rational Application Developer and M2Eclipse [https://www.ibm.com/developerworks/wikis/download/attachments/113607155/RAD_m2e-Nov.pdf?version=1] (pdf)
+
+Similar to the previous article, Maven, the m2eclipse feature, and its extended connectors (including m2e-wtp) are not supported by IBM Rational Application Developer 8.0.x. The IBM developerWorks Rational forum: "Development Tools (RAD, RSA, RDA, RSM, RWD) [http://www.ibm.com/developerworks/forums/forum.jspa?forumID=430&cat=24]", maybe another source of useful information on this topic. 
+
+ 
+
+
+
+
+
+
+ 
+
+M2Eclipse/M2E (Maven Integration for Eclipse) with RAD 8.5.1 or higher:
+
+
+M2Eclipse/M2E (Maven Integration for Eclipse) is shipped and supported with RAD 8.5.1 or higher.
+RAD only supports M2E as shipped and installed with the product. The Maven feature is not installed by default. It is necessary to select this feature when installing RAD 8.5.1 or higher using IBM Installation Manager (IM) or after the install using IM > Modify. If you have installed RAD 8.5.0, use IM > Update to get the latest fixpack 8.5.5.x and select the Maven feature
+
+Maven/M2E setup and usage is documented in RAD v8.5.1 Knowledge Center topic:
+Developing Maven projects [http://pic.dhe.ibm.com/infocenter/radhelp/v8r5/index.jsp?topic=%2Fcom.ibm.etools.maven.doc%2Ftopics%2Fmaven_intro.html].
+Note: This RAD 8.5.1 topic was incomplete, at the time of this technote. Consult the same RAD v9.x product version topic. For example:
+[RAD 9.1.1] Developing Maven projects [http://www-01.ibm.com/support/knowledgecenter/SSRTLW_9.1.1/com.ibm.etools.maven.doc/topics/maven_intro.html], and specifically the steps in child topic: [RAD 9.1.1] Setting up your environment [http://www-01.ibm.com/support/knowledgecenter/SSRTLW_9.1.1/com.ibm.etools.maven.doc/topics/setenv.html].
+
+These RAD 8.5.1+ articles/videos may be helpful:
+
+Maven Development with Rational Application Developer and WebSphere Developer Tools for Eclipse V8.5.1 [https://www.ibmdw.net/wasdev/docs/article_mavenradwdt/]
+
+Using Maven Integration tools in IBM Rational Application Developer; a two part video series [https://www.ibm.com/developerworks/community/blogs/nfrsblog/entry/using_maven_integration_tools_in_ibm_rational_application_developer_a_two_part_video_series2?lang=en]
+
+Other:
+
+IBM RAD is involved with the proposal/project:
+- Maven Integration for Web Tools Platform
+http://eclipse.org/proposals/technology.m2e.m2e-wtp/ [http://eclipse.org/proposals/technology.m2e.m2e-wtp/]
+, to enable Maven projects to be easily used in context of Eclipse WTP. Chuck Bridgham is the senior IBM mentor/representative.
+
+RELATED INFORMATION
+ devWorks Forum - 2010: Maven support? [http://www.ibm.com/developerworks/forums/thread.jspa?messageID=14479261&tstart=0]
+(m2e)clipse [http://www.eclipse.org/m2e/]
+M2E wiki [http://wiki.eclipse.org/Maven_Integration]
+Introduction to m2eclipse [http://www.theserverside.com/news/1363817/Introduction-to-m2eclipse]
+Maven: The Complete Reference [http://www.sonatype.com/books/mvnref-book/reference/]

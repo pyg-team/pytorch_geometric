@@ -1,0 +1,217 @@
+Title: IBM Unable to access TM1web server: -2146893042 TM1APIDOTNET Exception... - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error when attempting to log into TM1Web with Integrated Login in place. Integrated Login works correctly in Architect/Perspectives. 
+
+SYMPTOM
+Integrated Login Failed. Please Try Again... 
+
+-2146893042 TM1APIDOTNET Exception: - Failed to create client credential for integrated login 
+
+
+
+RESOLVING THE PROBLEM
+To avoid confusion, in this Technote the TM1Web server's machine name is: "machinename", with a FQDN of "machinename.cognos.com" and the Active Directory service account used to run TM1 is: "domain\username" (or "username"). 
+
+
+
+Have the Active Directory Administrator check the following 4 items.
+
+1) Check the SPNs with the setspn.exe utility (Please ensure the Command Prompt used to run the following commands is run as Administrator).
+
+a) setspn -L machinename
+
+This *SHOULD NOT* have any "HTTP" entries.
+
+Please note: Other entries like "HOST" can be ignored.
+
+
+b) setspn -L domain\username (or: setspn -L username)
+
+This should *ONLY* have "HTTP" entries of:
+
+HTTP/machinename
+&
+HTTP/machinename.cognos.com
+
+Please note: Other entries like "HOST" can be ignored.
+
+
+c) If any "HTTP" entries are detected that do not match the correct responses from step "b" please delete them with the following command/s (where appropriate):
+
+setspn -D HTTP/wrongmachinename
+setspn -D HTTP/wrongmachinename.cognos.com
+setspn -D HTTP/wrongmachinename wrongusername
+setspn -D HTTP/wrongmachinename.cognos.com wrongusername
+
+
+d) Ensure the SPNs are set against the machine's name and not a DNS "CNAME" entry (i.e.: If a "CNAME" exists on the DNS like: "tm1.cognos.com" and the server's FQDN is actually "machinename.cognos.com" ensure the SPN is set against "machinename" / "machinename.cognos.com" and *NOT* the "CNAME" entry).
+
+
+e) If the correct SPNs are missing from step "b" create them with the following commands:
+
+setspn -S HTTP/machinename domain\username
+setspn -S HTTP/machinename.cognos.com domain\username
+
+Please note: If either of the above commands respond with an error saying they already exist: You may need to delete them and then recreate them.
+
+
+2) Grant the service account User Delegation Rights. From the network's Domain Controller, run the Active Directory Users and Computers control panel. Assign delegation rights to the service account used to run TM1. To do this from the Domain Controller (there may be different wording depending on what OS the Domain Controller is), follow these steps: 
+
+a) Run the Active Directory Users and Computers control panel.
+b) Locate/search for the service account (i.e.: domain\username).
+c) Right click the service account and choose "Properties".
+d) Ensure "Account is sensitive and cannot be delegated" is unticked.
+e) Click the "Delegation" tab.
+
+Please note: If the "Delegation" tab is missing your SPNs are *NOT* set correctly. Go through Step 1 above to correct.
+
+f) Set "Trust this user for delegation to any service (Kerberos only)". Hit "Apply" and "OK".
+
+
+3) Whilst working on the service account: Also ensure the correct permissions are still set.
+
+a) "Replace Process Token" rights.
+b) "Act as part of Operating System" rights.
+c) "Impersonate a client after authentication" rights.
+d) Account belongs to the "Local Administrator" group.
+e) "Log on as a service" rights.
+f) If IIS 6 or 7 is in use, the service account user also needs to belong to the "IIS_WPG" group.
+
+
+4) Grant the Web Server System Delegation Rights. From the network's Domain Controller, run the Active Directory Users and Computers control panel. Assign delegation rights to the Web server system. To do this from the Domain Controller (there may be different wording depending on what OS the Domain Controller is), follow these steps:
+
+a) Run the Active Directory Users and Computers control panel.
+b) Click the "Computers" folder.
+c) Right-click the Web Server system (i.e. "machinename") and choose "Properties". 
+d) Click the "Delegation" tab
+e) Set "Trust this computer delegation to any service (Kerberos only)".
+f) Click "Apply" and "OK".
+
+
+Please Note: If any changes were made for the above 4 items please allow appropriate time for these settings to be propogated to the machine in question.
+
+
+
+On the server running TM1Web (and where appropriate the TM1 application server) check the following 10 items:
+
+5) If you are using a distributed installation (i.e.: Separate TM1Web and TM1 application servers), please confirm that Kerberos authentication is setup correctly by using the Microsoft DelegConfig script.
+
+Please note: This script can also detect if the Active Directory settings done above are correct.
+
+This can be setup using the following 3 URLs:
+
+http://blogs.iis.net/bretb/archive/2008/03/27/How-to-Use-DelegConfig.aspx [http://blogs.iis.net/bretb/archive/2008/03/27/How-to-Use-DelegConfig.aspx]
+DelegConfig - A Tool To help resolve Kerberos authentication and delegation issues
+
+http://blogs.technet.com/b/askds/archive/2009/01/26/addendum-making-the-delegconfig-website-work-on-iis-7.aspx [http://blogs.technet.com/b/askds/archive/2009/01/26/addendum-making-the-delegconfig-website-work-on-iis-7.aspx]
+Addendum: Making the DelegConfig website work on IIS 7
+
+http://www.iis.net/community/default.aspx?tabid=34&g=6&i=1887 [http://www.iis.net/community/default.aspx?tabid=34&g=6&i=1887]
+DelegConfig v2 beta (Delegation / Kerberos Configuration Tool)
+
+
+6) Add an "Authenticated Users" group (if it does not exist) and give full control to the following folders under C:\Inetpub\wwwroot\ (or it's equivalent)
+
+- TM1Web\
+- TM1Web\css\
+- TM1Web\Images\
+- TM1Web\Scripts\
+- TM1Web\TempCharts\
+- TM1WebEx\
+- TM1WebEx\ExcelSheet\
+- TM1WebEx\UserTempDir\
+
+
+7) Set Your Security Protocol to Kerberos. Follow these steps to configure your Web server to use the Kerberos security protocol: 
+
+a) Open a command prompt (with Administrator rights) 
+b) Migrate to the inetpub/AdminScripts directory
+c) Run the following command to set the security protocol to Kerberos:
+
+Cscript adsutil.vbs set w3svc/1/root/TM1Web/NTAuthenticationProviders "Negotiate,NTLM"
+
+The Negotiate, NTLM setting forces the Web server to try to use Kerberos first. If Kerberos fails, the web server will use NTLM. 
+
+
+8) Ensure that only "Windows Authentication" and "ASP.NET Impersonation" are enabled for the folders used by TM1Web.
+
+In the IIS Manager, go to "Sites", "Default Web Site", "TM1Web", under "IIS" open "Authentication".
+
+Ensure "Anonymous Authentication", "Basic Authentication", "Forms Authentication" are "Disabled".
+
+and
+
+"ASP.NET Impersonation" and "Windows Authentication" are "Enabled".
+
+For the following folders:
+- TM1Web\
+- TM1Web\css\
+- TM1Web\Images\
+- TM1Web\Scripts\
+- TM1Web\TempCharts\
+- TM1WebEx\
+- TM1WebEx\ExcelSheet\
+- TM1WebEx\UserTempDir\
+
+
+9) If you are using a distributed install (separate TM1Web and TM1 application servers) ensure the correct settings are enabled to allow Kerberos to function correctly.
+
+In the IIS Managaer, go to "Sites", "Default Web Site", "TM1Web", under "IIS" open "Authentication", "Windows Authentication", "Advanced Settings...".
+
+Ensure the following settings are in place:
+i) "Extended Protection" is "Off"
+ii) "Enable Kernel-mode authentication" is unticked.
+iii) Hit "OK".
+
+
+10) Ensure the correct permissions are given to "ASP.NET Impersonation" so that it can pass the correct login.
+
+In the IIS Managaer, go to "Sites", "Default Web Site", "TM1Web", under "IIS" open "Authentication", "ASP.NET Impersonation", "Edit..." and ensure "Authenticated user" is set.
+
+
+11) Ensure the Application Pool in use is set to run "TM1Web" correctly.
+
+In the IIS Manager:
+
+a) Go into "Application Pools", right click the Application Pool in use (i.e.: "TM1 Web"), select "Basic Settings...".
+
+Ensure the following settings are in place:
+i) ".NET Framework version:" is ".NET Framework v2.0.50727"
+ii) "Managed pipeline mode:" is "Integrated"
+iii) Hit "OK".
+
+b) Right click the Application Pool in use (i.e.: "TM1 Web"), select "Advanced Settings...".
+
+Ensure the following settings are in place:
+i) ".NET Framework Version" is "v2.0"
+ii) "Enable 32-Bit Applications" is "False" - Please note: This is specifically for the 64 bit version of TM1, if you are using the 32 bit version please change this to "True".
+iii) "Identity" is set to "domain\username"
+iv) Hit "OK"
+
+c) Go to "Sites". "Default Web Site", right click "TM1Web", select "Manage Application", "Advanced Settings...". Ensure that "Application Pool" is set to "TM1 Web" (i.e. The same Application Pool in step "b").
+
+
+12) Ensure that the service account used by the TM1 application server matches what TM1Web is using.
+
+a) For TM1Web: In IIS Manager, click "Application Pools", right click the Application Pool in use (i.e.: "TM1 Web"), select "Advanced Settings...", ensure "Identity" is set to "domain\username".
+b) For TM1Web: Open "Administrative Tools", "Services".
+
+Ensure the following settings are in place:
+i) "TM1 Admin Server (x64)" is set to "Log On As": "domain\username".
+ii) "TM1 Excel Service" is set to "Log On As": "domain\username".
+
+c) For the TM1 application server: Open "Administrative Tools", "Services".
+
+Ensure the following settings are in place:
+i) "TM1 Admin Server (x64)" is set to "Log On As": "domain\username".
+ii) "TM1 Server - *" (i.e.: "TM1 Server - Planning Sample") is set to "Log On As": "domain\username".
+
+
+13) Try setting SecurityPackageName=NTLM (in the tm1s.cfg config file) if the web server is on the same machine as the TM1 server. If the TM1Web server is a different machine to the TM1 application server this will not work (i.e.: It will be required to run as Kerberos).
+
+
+14) If the above steps do not resolve the problem look into the fact that this may not be a TM1 issue at all, it may be a trust issue between environments involved, especially if more than one domain is involved. Look into this before opening a PMR for the issue.

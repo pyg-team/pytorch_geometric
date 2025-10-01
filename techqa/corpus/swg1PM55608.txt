@@ -1,0 +1,140 @@
+Title: IBM PM55608: Import from Sparx EA not creating diagrams - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I'm not getting Sequence and Activity diagrams to get imported
+   correctly, with either 7.6.0.1 or
+   7.6.1 version of Rhapsody.
+   
+   To summarize again, Sparx EA Activities come in as full Rhapsody
+   Activities
+   instead of Actions, meaning that each individual Action has it's
+   own empty
+   Activity Diagram. Meanwhile, EA Activity Diagrams get imported
+   with an
+   incorrect name, and missing flows between Actions.
+   
+   Sequence diagrams get imported with a generic name (e.g.
+   EACollaboration_1)
+   and miss all the messages (they only have lifelines).
+   Furthermore, only one
+   Sequence Diagram gets imported for package, and the other ones
+   are completely missing.
+   
+   I have been using Sparx EA 9 in my testing efforts, while the
+   customer is
+   actual using EA 8. Both should be supported according to our
+   documentation,
+   but I noticed that I don't have the 'full roundtrip' option in
+   EA 9, while
+   it exists in EA 8.
+   
+   
+   I tried both XMI version 1.3 and 2.1 when exporting from EA (and
+   put the
+   appropriate version when I added that line to the file).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Import from Sparx EA not creating diagrams
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect is an enhancement request. Please open new RFE
+   for this issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM55608
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-09
+   
+   
+ * CLOSED DATE
+   2012-09-06
+   
+   
+ * LAST MODIFIED DATE
+   2012-09-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

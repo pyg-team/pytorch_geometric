@@ -1,0 +1,181 @@
+Title: IBM IC99829: AFTER CHANGING SVC/V7K IP ADDR, REMOVAL OF OLD ADDRESS REMOVES CONFIGURATION DESPITE HAVING MULTIPLE CONNECTIONS - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During removal of a device TPC-R is supposed to check whether or
+   not there are more than one connection to the device prior to
+   removing the configuration. If the connection is the only
+   provider to the device TPC-R needs to clean up any connections,
+   configuration data, or other artifacts. In this case the query
+   returned that there were no connections to the hardware, thus
+   removed all configuration data and ran a hard removal of
+   copysets despite the fact that there was a second connection.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Instead of adding a second connection, customers should export
+   all copyset CSV files -> soft remove the copysets (remove
+   copysets but keep the GC relationship in hardware) from the
+   session -> remove the old storage IP address -> re-import the
+   copysets -> start the session.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users wishing to change the IP address of their SVC devices  *
+   * whom have added the storage by IP rather than DNS name.      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * | fix pack  | 5.2.2-TIV-TPC-FP0000 - target 4Q 2014 |        *
+   *                                                              *
+   * http://www-01.ibm.com/support/docview.wss?&uid=swg21320822   *
+   *                                                              *
+   * The target dates for future fix packs do not represent a     *
+   * formal                                                       *
+   * commitment by IBM. The dates are subject to change without   *
+   * notice.                                                      *
+   *                                                              *
+   * TPC for replication does not directly support changing the   *
+   * IP address of a device that is already attached. This        *
+   * requires the user to do some manual steps in order to update *
+   * the IP address for the product.                              *
+   * * Change the IP addresses on the storage                     *
+   *  - This will cause TPC-R to lose connectivity with the       *
+   * storage                                                      *
+   *  - TPC-R session will go into Severe/Suspended state in the  *
+   * gui only (but replication continues on the hardware)         *
+   *                                                              *
+   * * In TPC-R add a new storage subsystems connection using the *
+   * new IP addresses                                             *
+   *  - TPC-R should successfully connect to the storage          *
+   * subsystems.  There will be 2 connections to the subsystem: a *
+   * successful one with the new IP addresses and a disconnected  *
+   * one with the old IP addresses.                               *
+   *  - Session/copyset/path data is not added nor changed in the *
+   * database. TPC-R just now has 2 connections to the same       *
+   * volumes                                                      *
+   *                                                              *
+   * * Resume the session via Start H1->H2 cmd                    *
+   *                                                              *
+   * * After a few minutes, the sessions should become            *
+   * Normal/Prepared again                                        *
+   * * Export copysets and create a backup of the database with   *
+   * the mkbackup command                                         *
+   * * Remove the disconnected storage                            *
+   *                                                              *
+   * On the final step, if using a SVC / Storwize V7000 / IFS     *
+   * device the removal of the disconnected storage will not      *
+   * detect that there is another connection to the storage and   *
+   * remove all copysets associated with the storage from all     *
+   * sessions even if they have active copy relationships. This   *
+   * in affect terminates the relationships and a full copy will  *
+   * be necessary to resume data replication.                     *
+   *                                                              *
+   * This fix will correct the check for additional connections   *
+   * prior to removing all copysets.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Use DNS name when adding storage. Then if the IP needs to be *
+   * changed, its simple as updating the DNS to point to the new  *
+   * IP and transparent to TPC-R                                  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC99829
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPC00
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-04
+   
+   
+ * CLOSED DATE
+   2014-03-13
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP
+   
+   
+ * R511 PSY
+   UP
+   
+   
+ * R520 PSY
+   UP

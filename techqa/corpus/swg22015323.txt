@@ -1,0 +1,39 @@
+Title: IBM How to add a host to GPFS cluster in Guardium Data Encryption - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I would like to add two new servers to a 8-node already configured GPFS cluster then set up the same guard point on those two added servers. 
+
+When DSM adds two servers to the host group, will the existing configured guard point information be automatically propagated to the two newly added servers? 
+
+Do I need to disable the 8 guard points of the existing host group and set a new guard point?
+
+
+ANSWER
+
+When you add a host to your GPFS cluster for installing the Vormetric agent, the host is added to the peer domain enabled on your cluster. The administration tasks are divided between DSM and GPFS. 
+
+You do not need to shut down GPFS or unmount your file systems on any member of your cluster until you mount GPFS file systems with GuardPoints on the new host. 
+
+1. On the DSM, define a host entry for the new host and add the host entry to the cluster host group for the GPFS cluster.
+
+2. Install and add the new host to your GPFS clusters. Do not mount your file systems on the newly added host until GuardPoints are enabled on the new host.
+
+NOTE: Mounting and accessing a file system on a node not installed with the Vormetric Agent will result in corruption if the file system is mounted with GuardPoints enabled on other nodes.
+
+3. Install the Vormetric agent on the new host. Register the host with the DSM at the end of the install.
+
+Upon successful registration, the Vormetric agent on the host is enabled and ready for operation.
+
+4. Verify cluster membership of the Vormetric agent to match GPFS cluster members.
+
+To verify, use lsrpnode command. The list of hosts reported in the output of lsrpnode must match the members of GPFS.
+
+# /usr/sbin/rsct/bin/lsrpnode -i
+
+NOTE: Before starting the application on the newly added node, mount your GPFS file systems.
+The GuardPoints configured on your GPFS file system will automatically be enabled on the new
+host upon mounting each GPFS file system. Once the GuardPoints are enabled, you can start
+your application service on the new host.

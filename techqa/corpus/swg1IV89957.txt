@@ -1,0 +1,204 @@
+Title: IBM IV89957: EXECUTESTITCHER PROCESSING ERROR - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+4.2.0-TIV-ITNMIP-zLinux-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-zLinux-FP0004&source=SAR]
+4.2.0-TIV-NOIHD-zLinux-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-NOIHD-zLinux-FP0004&source=SAR]
+4.2.0-TIV-ITNMIP-AIX-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-AIX-FP0004&source=SAR]
+4.2.0-TIV-ITNMIP-Linux-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-Linux-FP0004&source=SAR]
+4.2.0-TIV-NOIHD-AIX-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-NOIHD-AIX-FP0004&source=SAR]
+4.2.0-TIV-NOIHD-Linux-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-NOIHD-Linux-FP0004&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITNM 4.2, IF01, Core component ncp_disco
+   
+   We defined a lot of local variables in the stitcher and then
+   call
+   another stitcher like this:
+   ExecuteStitcher("GV_CreateMainNodeRecord", className, proxyName,
+   proxyAccessIP, sysDescr, sysObjectId, proxyMac, proxyRealIP,
+   proxyName,
+   proxyRealIP);
+   
+   When I do this, the executed stitcher does see all the 10
+   arguments,
+   but the values of ARG4-ARG9 are NULL. ARG10 is then filled with
+   the
+   value of ARG4.
+   This happens only when we submit the same variable multiple
+   times as an
+   argument   here for example proxyName and proxyRealIP.
+   
+   This works around the bug:
+   pName = eval(text, '$proxyName');
+   pIP = eval(text, '$proxyRealIP');
+   ExecuteStitcher("GV_CreateMainNodeRecord", className, proxyName,
+   proxyAccessIP, sysDescr, sysObjectId, proxyMac, proxyRealIP,
+   pName,
+   pIP);
+   
+   As you can see I only copied the variable content to another
+   variable
+   and the submitted this to the stitcher  now all works as
+   wanted...
+   
+   Looks like internally the process is using pointers and gets
+   screwed
+   when the same pointer is submitted twice as the argument.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This will need an APAR
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ITNM 3.9, 4.1.1 and 4.2 releases                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * EXECUTESTITCHER PROCESSING ERROR.                            *
+   * We defined a lot of local variables in the stitcher and then *
+   * call another stitcher.                                       *
+   * The executed stitcher does see all the 10 arguments, but the *
+   * values of ARG4-ARG9 are NULL. ARG10 is then filled with      *
+   * the value of ARG4. This happens only when we submit the same *
+   * variable multiple times as an argument                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to following fixpacks:                               *
+   * 4.1.1-ITNMIP-FP0003                                          *
+   * 4.2.0-ITNMIP-FP0004                                          *
+   * 3.9.0-ITNMIP-FP0006                                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Change to the ExecuteStitcher rule so that duplicate symbols in
+   the argument list are copied where required.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV89957
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S4500
+   
+   
+ * REPORTED RELEASE
+   420
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-13
+   
+   
+ * CLOSED DATE
+   2017-05-23
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * FIXED COMPONENT ID
+   5724S4500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R390 PSN
+   UP
+   
+   
+ * R390 PSY
+   UP
+   
+   
+ * R411 PSN
+   UP
+   
+   
+ * R411 PSY
+   UP
+   
+   
+ * R420 PSN
+   UP
+   
+   
+ * R420 PSY
+   UP

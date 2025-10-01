@@ -1,0 +1,232 @@
+Title: IBM PK04085: HTTP ZOS WEBSERVER FAILS AUTHENTICATION USING LDAP AND SPECIAL CHARACTERS DEFINED IN LDAP. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the HTTP Server for z/OS, LDAP and SAF authorization fails
+   inappropriately because of special characters in group names
+   defined in LDAP and lower case characters in the userID for
+   groups defined in SAF.
+      In the -vv trace you will see a trace that looks like:
+   Denied...... by Mask (userid) (no ACL, only Protect)
+   This is a normal message when a USER is denied access but, in
+   this case the USER should not be denied access.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All customers who use HTTP Server 5.3 for    *
+   *                 z/OS with groups defined in LDAP or SAF.     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Certain characters in names used for    *
+   *                      LDAP and SAF authentication cause       *
+   *                      failure to authorize.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In the HTTP Server for z/OS, LDAP and SAF authorization failed
+   inappropriately because of restrictions.
+   1 - Special characters in protection masks with group names
+   defined in LDAP:
+   Some groups defined in LDAP which had non-alpha characters in
+   group names could not be coded in the configuration file.
+   2 - Lowercase characters in the username entered at a browser
+   for resources protected by protection masks with SAF groups:
+   The username for groups defined in SAF was rejected at logon
+   because the user entered it in lower case.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The server is modified to overcome restrictions in the coding
+   of the Mask subdirective and in entering usernames which will
+   be authorized with SAF groups.
+   For groups defined in LDAP, the names coded in the Mask
+   may use a new method of encoding special characters, such as
+   double quotes.
+   For protection setups that use SAF groups, to simplify entering
+   the user name, the server changes the user name as it comes
+   from the browser to upper case for matching.
+   The user will not have to switch to upper case in order to
+   match the username in the SAF group.
+   
+   The following COMPID's are affected by these changes:
+   
+   5697D4300 LDGW for OS/390  Version 5
+   
+   PTF05D
+   The code changes are stored in CMVC under defect PK04085.
+   
+   APAR PK04085 has removed restrictions on the coding of LDAP
+   group names in Mask subdirectives in httpd.conf, and has
+   simplified the entry of usernames when the groupfile uses
+   %%SAF.
+   
+   In the Planning, Installing, and Using manual, in "Appendix
+   B. Configuration directives", under "Protection
+   subdirectives", under "Mask", add the following information:
+   If the group name of a group defined in LDAP contains
+   special characters, the program that parses the configuration
+   file may not handle them properly. To avoid this problem in
+   connection with LDAP groups only, there is a special encoding
+   system. Make sure the Groupfile subdirective appears in the
+   Protection setup previous to the Mask subdirective, then code
+   certain special characters as 3-character sequences in the
+   configuration file. The server will convert them to the
+   proper internal EBCDIC character.
+   Only these conversions are supported:
+    %20 - blank
+    %22 - double quote
+    %23 - hash/pound sign
+    %24 - dollar sign
+    %25 - percent sign
+    %26 - ampersand
+    %28 - single quote
+    %2B - plus sign
+    %2C - comma
+    %2F - forward slash
+    %3A - colon
+    %3B - semicolon
+    %3D - equal sign
+    %3F - question mark
+    %40 - at sign
+   Example:
+    Mask A%40%22a%2bc%22.c%25B%qzm
+       will be treated as
+    Mask A@"a+c".c%B%qzm
+   Note that "%qz" is not one of the supported coding sequences,
+   so it is not converted.
+   #
+   In "Appendix B. Configuration directives" under "Access
+   Control - Set up access control for the server", under
+   "Protection subdirectives", under "Groupfile - Specify the
+   location of the associated groupfile", in the "Notes" box, add
+   this text to note 4:
+       If you code %%SAF%% on the GroupFile subdirective, the
+       groups named in the Mask directive must have an OMVS
+       segment.
+   #
+   In the Planning, Installing, and Using manual, in
+   "Chapter 9. Setting up protection files for server resources",
+   under "Step 3. Decide which protection options to use", add
+   this text after the text "can be used to authenticate the
+   requester using SAF-based user IDs and passwords":
+       If you code %%SAF%% on the GroupFile subdirective, the
+       groups named in the Mask directive must have an OMVS
+       segment.
+   
+   * Cross Reference between External and Internal Names
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK04085
+   
+   
+ * REPORTED COMPONENT NAME
+   DGW/WAS OS/390
+   
+   
+ * REPORTED COMPONENT ID
+   5697D4300
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2005-04-12
+   
+   
+ * CLOSED DATE
+   2005-04-25
+   
+   
+ * LAST MODIFIED DATE
+   2005-05-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  IMWSAPRO IMWSDMDR IMWSGRP
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DGW/WAS OS/390
+   
+   
+ * FIXED COMPONENT ID
+   5697D4300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY UK02771 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK02771]
+   UP05/04/26 P F504
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

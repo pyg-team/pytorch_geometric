@@ -1,0 +1,44 @@
+Title: IBM I am receiving the message 'A problem caused the program to stop working correctly' when starting the Statistics program and the program will not start. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have a computer with the Microsoft Windows Vista operating system install. My Statistics program was working previously, but now I am receiving the message 'A problem caused the program to stop working correctly' when starting the Statistics program and the program will not start. 
+
+RESOLVING THE PROBLEM
+This problem most likely due to a change of security settings on your computer as a result of a Microsoft Windows Vista security update that changes the security settings on your computer. 
+
+Close all open windows.
+Select Start.
+Select Programs/All Program menu option.
+Select the SPSSInc folder.
+Select the folder that corresponds to the type of SPSS program you have installed.
+Right-click on the SPSS program icon.
+Select Properties (menu).
+Select Compatibility (tab).
+If "Run this program in compatibility mode for" is selected, remove the check-mark from the selection box.
+Locate the area labeled 'Privilege Level'.
+Locate the dialog check-box locate 'Run this program as an administrator' (if available).
+Select (place a check-mark in) 'Run this program as an administrator' (if available).
+Select Apply (button).
+Select 'Show settings for all users' (button).
+(If prompted by User Account Control, select the 'Allow' option.)
+If "Run this program in compatibility mode for" is selected, remove the check-mark from the selection box.
+Under the area labeled 'Privilege Level', locate 'Run this program as an administrator' (if available).
+Select (place a check-mark in) 'Run this program as an administrator' (if available).
+Select Apply (button).
+Select OK (button).
+Select OK (button).
+The Properties window should now close.
+Start your SPSS program.
+The problem should now be corrected
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 84634

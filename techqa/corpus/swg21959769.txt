@@ -1,0 +1,36 @@
+Title: IBM LED status indicators on the IBM Security Network Protection (XGS) and IBM Security Network Intrusion Prevention System (GX) appliances - United States
+
+Text:
+led; proventia GX; XGS TECHNOTE (FAQ)
+
+QUESTION
+ How do you determine an alert from the LED indicators on the XGS and GX appliances? 
+
+ANSWER
+The LED indicators on the front panel and on the network adapter ports of the GX and XGS appliances provide information that is related to the activity of the device, and can also report a failure or an alert.
+
+The following tables include the information that is related to the meaning of each LED and color indicator:
+
+Management Port (Network Adapter Indicators): 
+
+Management Port 1 & 2 Left Green Steady Link status UP Left Green Flashing Link status UP and data that is transmitted or received Right Amber Steady Link Speed 1Gbps Right Green Steady Link Speed 100Mbps Right Off Off Link Speed 10Mbps 
+
+Protected Ports (Security Interfaces): 
+
+Protected Ports Left Green Steady Link status UP [/support/docview.wss?uid=swg21959769&amp;aid=1] Left Green Flashing Link status UP and data that is transmitted or receive [/support/docview.wss?uid=swg21959769&amp;aid=1] Right Green Steady Link Speed 1Gbps [/support/docview.wss?uid=swg21959769&amp;aid=1] Right Abber Steady Link Speed 100Mbps [/support/docview.wss?uid=swg21959769&amp;aid=1] Right Off Off Link Speed 10Mbps 
+
+Power LED: 
+
+Green Steady Powered up Amber Flashing There is a power supply fault (redundant power supply) Off Off [/support/docview.wss?uid=swg21959769&amp;aid=1] 
+
+Hard Disk Activity LED: 
+
+LED Color State Description Blue Steady There is activity on the disk Amber On There is a HDD or RAID fault Off Off No activity nor fault 
+
+
+
+[/support/docview.wss?uid=swg21959769&aid=2] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21959769&aid=3] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21959769&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21959769&aid=5] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21959769&aid=6] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21959769&aid=7] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21959769&aid=8] [http://ibm.biz/ContactSecSupport] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Network Intrusion Prevention System Hardware Platform Independent Version Independent

@@ -1,0 +1,69 @@
+Title: IBM Important Announcement: IBM InfoSphere Master Data Management Collaboration Server versions 10.0.0 and 10.1.0 are being merged - United States
+
+Text:
+flash FLASH (ALERT)
+
+ABSTRACT
+ Effective immediately the InfoSphere MDM Collaboration Server 10.0.0 release will be merged with version 10.1.0. Future fixpack naming for all 10.x releases will reflect this integration beginning with 10.1.0 FP006. 
+
+CONTENT
+Effective immediately the InfoSphere MDM Collaboration Server 10.0.0 release will be merged with version 10.1.0. Future fix pack naming for all 10.x releases will reflect this integration beginning with 10.1.0 FP006. 
+
+This integration will force a change in the numbering sequence for 10.1.0 fix packs, which will pick up from the latest fix pack on 10.0 for example, FP005. Consequently, the previously communicated 10.1.0 FP002 will be renumbered as 10.1.0 FP006, 10.1.0-FP003 will be renumbered as 10.1.0-FP007 and so on. The next fix pack on 10.0 will be now the merged 10.1.0-FP006 patch. 
+
+This consolidation will not require any added effort beyond a fix pack upgrade for customers. This should improve future fix pack availability due to the additional cycle redundancies that had been required for delivery of fix packs on 10.0 and 10.1.
+
+If you are on version 10.0 this merge will automatically bring in several improvements (listed below) in the product available on 10.1 by virtue of a simple fix pack upgrade.
+- UI Simplification
+- Single-edit in-line editing with tabbing
+- Left navigation tree retained after refresh
+- Hiding of inaccessible menu bar buttons
+- Simplified menu bar with dynamic button layout for reduce clicks
+- Multi-edit in-line editing
+- Column widths based on attribute type in multi-edit
+- Single-edit pop up navigation through multi-edit 
+- Support for “OR” and “Between” (numeric) search
+- Display attributes for links (instead of primary key)
+- Submit search in the background from rich search
+- Advanced Business Rules through IBM Operational Decision Manager (iLog)
+
+This merge will be backward compatible with the software stack supported by 10.0 for example WAS 7.0, Internet Explorer 7.0 and 8.0, DB2 and Oracle versions supported on 10.0 have not changed for 10.1. However, it would be beneficial to move to the higher version of WAS and Internet Explorer supported by 10.1 for example, WAS 8.0 and Internet Explorer 9.0. 
+
+
+
+FAQs for 10.0 customers:
+
+
+1. Do I have to upgrade my database?
+No. If you are on a supported version of a DB for version 10.0, that will hold good for the merged fix pack.
+
+2. Are there any other pre-requisites, for example, need to install WAS 8?
+No other prerequisite. 
+
+3. Will it still be necessary to run a DB Schema upgrade?
+There is a minor upgrade needed for the DB schema, which can be done simply by running a migration script. 
+
+4. Will we still need to upgrade Perl run time or any other components?
+No.
+
+5. I am currently on a 10.0 fix pack, but the next fix pack I will get will be on 10.1. This sounds like a major version change. Should I be concerned?
+There is one extra step in the upgrade compared to a normal fix pack upgrade that involves installing v10.1 GA in a new environment. Following are the steps:
+a. Install version 10.1 GA in a new environment without configuration.
+b. Apply fix pack 6 in the new environment.
+c. Copy the configuration and all customization files from the old environment in the new environment.
+For complete documentation on this, refer to the migration section of 10.0.0-FP006 Release Notes.
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WPC
+MDMCS
+MDMPIM
+MDM Server for PIM
+WebSphere Product Center
+InfoSphere MDM Server for PIM
+InfoSphere Master Data Management Collaboration Server
+InfoSphere Master Data Management Collaborative Edition
+InfoSphere Master Data Management Server for Product Information Management

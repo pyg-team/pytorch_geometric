@@ -1,0 +1,26 @@
+Title: IBM I would like to have the CM dialogs popup in specific locations on my screen. How do I do this? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I would like to have the CM dialogs popup in specific locations on my screen. How do I do this? 
+
+ANSWER
+
+
+Dialogs can be positioned by specifying the location of the dialogs in the Ccm file. A user can have their own version of the Ccm file in their home directory or the system default Ccm file can be modified (See Installation and Administration Task Reference for more details). After entering in your desired entries, you will need to restart any existing sessions to make the changes effective. The format of the specifications is as follows: >  Ccm*<dialog>.<width | height | x | y>: <pixel value> 
+where <dialog> can be 
+cp message view 
+proj project view 
+hist history view 
+c_cout checkout dialog 
+c_cin checkin dialog 
+For example, to set the size and location of the project view, you would have the following entries: >  Ccm*proj.width: 500 
+Ccm*proj.height: 500 
+Ccm*proj.x: 80 
+Ccm*proj.y: 0 
+Saving Windows Positions on Windows: The Project View, Message View and History View now retain their size and position between sessions on Windows when the session is closed using the system close menu item or the 'x' icon. Using the File -> Exit menu item or the 'x' icon preserves the location, height, width and maximize setting of each view window. 5.1, 5.1cs, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5NACM00299AnswerProduct versionPartner ContentInternal ContentCategoryReference IDAuthor 
+
+HISTORICAL NUMBER
+ KB740

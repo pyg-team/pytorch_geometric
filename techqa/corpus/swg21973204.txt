@@ -1,0 +1,46 @@
+Title: IBM Security Bulletin: IBM Netezza Host Management is vulnerable to a published glibc vulnerability (CVE-2013-7423) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ GNU glibc could allow a local attacker to obtain sensitive information, caused by the writing of DNS queries to random file descriptors under high load by the getaddrinfo() function. An attacker could exploit this vulnerability to obtain sensitive information. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2013-7423 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-7423]
+DESCRIPTION: GNU glibc could allow a local attacker to obtain sensitive information, caused by the writing of DNS queries to random file descriptors under high load by the getaddrinfo() function. An attacker could exploit this vulnerability to obtain sensitive information.
+CVSS Base Score: 1.2
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/100647 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100647] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:H/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Netezza Host Management 5.3.5.0 and prior
+
+REMEDIATION/FIXES
+ 
+
+IBM Netezza Host Management 5.3.5.1 Link to Fix Central [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EInformation%2BManagement&product=ibm/Information+Management/Netezza+Platform&release=HOSTMGMT_5&platform=All&function=fixId&fixids=5.3.5.1-IM-Netezza-HOSTMGMT-fp96953&includeRequisites=1&includeSupersedes=0&downloadMethod=http&source=fc] WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 18 December 2015: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

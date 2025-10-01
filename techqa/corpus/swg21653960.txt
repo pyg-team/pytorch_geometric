@@ -1,0 +1,228 @@
+Title: IBM Security Access Manager for Mobile 8.0 support for compliance with NIST SP800-131a - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How does IBM Security Access Manager for Mobile 8.0 support compliance with NIST SP800-131a? 
+
+ANSWER
+This technical note answers the following questions: 
+
+ * 
+ * - How do I use IBM Security Access Manager for Mobile 8.0 in compliance with NIST SP800-131a?
+ * 
+ * 
+ * - How do I deploy IBM Security Access Manager for Mobile 8.0 in compliance with NIST SP800-131a transition mode?
+ * 
+ * 
+ * - How do I deploy IBM Security Access Manager for Mobile 8.0 in compliance with NIST SP800-131a strict mode?
+ * 
+ * 
+ *  - How do I configure client certificate authentication on the point of contact server in compliance with NIST SP800-131a strict mode?
+
+
+How do I use IBM Security Access Manager for Mobile 8.0 in compliance with NIST SP800-131a? 
+
+IBM Security Access Manager for Mobile 8.0 supports the requirements defined by the National Institute of Standards and Technology (NIST) Special Publications 800-131a. SP 800-131a strengthens security by defining stronger cryptographic keys and more robust algorithms. 
+
+The standard defines a period to allow customers time to transition to the new requirements. The transition period closes at the end of 2013. 
+
+See the NIST publication Transitions: Recommendation for Transitioning the Use of Cryptographic Algorithms and Key Lengths [http://csrc.nist.gov/publications/nistpubs/800-131A/sp800-131A.pdf]for the new standards defined by Special Publication 800-131, and details about allowed protocols, cipher suites, and key strength. 
+
+You can run IBM Security Access Manager for Mobile 8.0 in either of the two modes supported by NIST SP800-131a:  * 
+ * 
+ * 
+
+
+When configured in transition mode, server components support the transition mode Transport Layer Security (TLS) protocols, which include TLS 1.0 and TLS 1.1. Client components, such as the HTTPS client that performs one-time password (OTP) delivery and the syslog auditing client, support TLS 1.2 only. 
+
+When configured in strict mode, both the server components and the client components of IBM Security Access Manager for Mobile support TLS 1.2 only. 
+
+To deploy in transition mode, you need only select the mode during initial configuration of the appliance. To run in strict mode, you must also set an additional configuration option. 
+
+If your deployment uses client certificate authentication, and you want to use strict mode, you must complete additional configuration steps for the point of contact server. The point of contact server can be either IBM Security Access Manager WebSEAL or IBM Security Web Gateway Appliance 7.0. 
+
+See the remainder of this technical note for specific instructions. 
+
+How do I deploy IBM Security Access Manager for Mobile 8.0 in compliance with NIST SP800-131a transition mode? 
+
+When you install the appliance, select the option to enable FIPS 140-2 mode. This selection turns on compliance for NIST SP800-131a. 
+
+When enabled, NIST SP800-131a compliance is run in transition mode. You do not have to complete any further configuration steps in order to run in transition mode. 
+
+Notes: 
+ *  Enable FIPS 140-2 mode only if you must comply with the NIST SP800-131a requirements. There is no advantage to enabling FIPS 140-2 mode if your installation does not require this compliance. 
+
+ *  IMPORTANT: The setting of the FIPS 140-2 Mode option is permanent and cannot be turned off once enabled. To disable the option, you must reinstall the appliance. 
+
+ * If you enable FIPS 140-2 mode, the appliance is automatically restarted before it continues with the rest of the setup.
+
+ *  FIPS Limitation: For IBM Security Access Manager for Mobile, the FIPS 140-2 mode option in the appliance setup wizard does not turn on compliance for FIPS 140-2. It turns on compliance for NIST SP800-131a only. 
+
+ * Documentation errata: The current product documentation instructions for enabling FIPS 140-2 mode contains the following incorrect statement: "Enable the FIPS mode to turn on compliance for FIPS 140-2 and NIST SP800-131a." The correct statement is: "Enable this option to turn on compliance for NIST SP800-131a."
+
+ * For further information see the following topics in the Appliance Administration Guide:
+   Command-line interface initial appliance settings wizard [http://pic.dhe.ibm.com/infocenter/tivihelp/v2r1/topic/com.ibm.ammob.doc_8.0.0/reference/alps_cli_initial_appliance_settings_wizard.html]
+   Local management interface appliance setup wizard [http://pic.dhe.ibm.com/infocenter/tivihelp/v2r1/topic/com.ibm.ammob.doc_8.0.0/concept/con_lmi_settings_wizard.html]
+
+
+Q. How do I deploy IBM Security Access Manager for Mobile 8.0 in compliance with NIST SP800-131a strict mode? 
+
+Overview:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+Details: 
+To use strict mode, complete each of the following steps: 
+
+1. Select an action:  * 
+ * If your appliance is already installed in FIPS 140-2 mode
+ * 
+ * Skip this step. Continue with step 2 
+ * 
+ * If you have not yet installed the appliance in FIPS 140-2 mode:
+ * a. Install the appliance and choose to enable FIPS 140-2 mode. This selection turns on compliance for NIST SP800-131a. For more information, review the steps in this technical note, in the section for installing in transition mode. 
+   b. Continue with step 2. 
+
+
+2. Determine whether your deployment uses basic authentication or client certificate authentication, for communication between IBM Security Access Manager for Mobile and the point of contact server.  * 
+ * Basic Authentication
+ * 
+ * Skip this step, and continue with Step 3. 
+ * 
+ * Client certificate authentication: 
+ * a. Complete the configuration steps in the section “ How do I configure client certificate authentication on the point of contact server in compliance with NIST SP800-131a strict mode?”. This section is located at the end of this technical note. 
+   b. When finished, continue with Step 3. 
+
+
+3. To enable strict mode, use the appliance local management interface (LMI) to modify the advanced tuning parameter nist.sp800-131a.strict. This parameter is set by default to false. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  CAUTION: Strict mode requires the use of TLS 1.2. Some browsers support TLS 1.2 but have the support disabled by default. If you set the value of the nist.sp800-131a.strict parameter to true, and your browser is not configured to support TLS 1.2, you lose access to the appliance LMI. 
+ * 
+ * 
+ * Manage System Settings > System Settings > Advanced Tuning Parameters.
+ * 
+ * 
+ * 
+ *  Edit. 
+ * 
+ *  true.
+
+
+Q: How do I configure client certificate authentication on the point of contact server in compliance with NIST SP800-131a strict mode? 
+
+A: To comply with strict mode, configure the point of contact server to use TLS v.1.2 for client certificate authentication. 
+
+You must create a self-signed certificate, and configure the point of contact server to use TLS v1.2 with the Runtime Security Services External Authorization Service (EAS). Complete each of the following tasks: 
+
+Task 1 . Create a self-signed certificate. 
+
+ * 
+ * Client certificate authentication considerations
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+ * -- If your deployment uses the IBM Security Web Gateway Appliance (Web Reverse Proxy): 
+   
+    * 
+    * Configuring runtime security services for client certificate authentication
+    * 
+    * 
+    * 
+    * 
+    * 
+    * f. Provide the following information: 
+      Certificate Label: easusercert 
+      Certificate Distinguished Name: cn=easuser 
+      Key Size: 2048 
+      Expiration Time (in days): 365 
+      Signature Algorithm: SHA2withRSA 
+    * 
+    * Note: The user cn=easuser is the built-in user, but any user with sufficient permissions (as created by the IBM Security Access Manager for Mobile administrator) can be used instead. 
+   
+   
+ *   * 
+    *  Save
+    * 
+   
+   
+
+
+ * -- If your deployment uses WebSEAL 
+   
+    * 
+    * 
+    * 
+    * Certificate Label: easusercert 
+      Certificate Distinguished Name: cn=easuser 
+      Key Size: 2048 
+      Expiration Time (in days): 365 
+      Signature Algorithm: SHA2withRSA 
+   
+   
+ * 
+ *   * 
+   
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * IBM Security Access Manager for Web Version 7.0 WebSEAL Administration Guide
+    * 
+   
+   
+
+
+Task 2. Configure the point of contact server to use TLS v1.2 with the Runtime Security Services External Authorization Service (EAS) 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  
+ * If you deploy your point of contact server on the 
+ * same 
+ * computer as the appliance:
+
+
+ * 1. In the IBM Security Access Manager for Mobile appliance local management interface, select Reverse Proxy Settings > your_instance_name > Manage > Configuration > Edit to open the configuration file. Add the following parameter to the existing stanza: 
+    * 
+    * 
+    * 
+    * 
+   
+   2. Click Save. Deploy the changes. Restart the instance. 
+
+
+ * 
+ * If you deploy your point of contact server
+ * on a 
+ * different
+ *  computer from the appliance:
+ * 
+ * 
+ * 1. Open the Webseal instance configuration file for editing. For example:  * 
+   
+   
+ * 2. Add the following parameter to the existing stanza:  * 
+    * 
+    *

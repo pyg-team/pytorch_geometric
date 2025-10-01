@@ -1,0 +1,23 @@
+Title: IBM Considerations for running Content Manager OnDemand for i on a system that is also running high-availability software - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What special considerations exist for running Content Manager OnDemand for i on a system that is also running high-availability software (such as MIMIX)? 
+
+ANSWER
+In a Content Manager OnDemand environment where high-availability (HA) software (such as MIMIX) is running, follow these important rules: 
+
+ * Do not replicate with another system that is running a different major server version of Content Manager OnDemand. For example, if one system is running server version 9.0 and the other system is running server version 9.5, these two systems should not be replicated. This is due to database file changes from one major server level to the next. To determine your server version, click the link under the Related information heading below. 
+ * For any Content Manager OnDemand output queue or directory monitor, be sure that the user profile that the monitor job is running under has a home directory defined for it. The home directory (defined in the user profile with the HOMEDIR parameter) is used by the Content Manager OnDemand program that loads the data to contain temporary files. Be sure the directory actually exists; it does not get created automatically or validated when you name it in the HOMEDIR parameter. You might need to create it manually using the Create Directory (CRTDIR) command. If you have a home directory named in the user profile that does not actually exist, Content Manager OnDemand will use the root directory. 
+ * If you run an Add Report (ADDRPTOND) command or issue an ARSLOAD API call to archive a report, be sure that the user profile running the command or API has a home directory defined for it. 
+ * Confirm that the home directory for the user that is running the monitor job, the ADDRPTOND command, or the arsload API is not being replicated by the HA software. You may need to explicitly exclude that home directory so that it is not replicated.
+
+
+The home directory is used by Content Manager OnDemand to contain temporary files during the process of archiving data. If the directory that contains these temporary files is being replicated by the HA software, the files may be locked when Content Manager OnDemand tries to delete them, causing them to remain on the system. Because these are temporary files, they should not be locked during the load process and are not expected to be there after the data is loaded successfully. This can lead to unexpected and intermittent errors when you try to archive other spooled files in the future. 
+
+For example, a customer who was running HA software was occasionally finding reports in the Content manager OnDemand monitor job's error output queue. If the input spooled file was moved back to the monitored output queue, it would always store successfully the second time. The customer did not have a home directory defined for the user profile that ran the monitor job so all the temporary files were going into the root directory. The root directory was one of the directories that the HA software was replicating. 
+
+In this case, there were thousands of stream files in the root directory with extensions such as .parm, .utf8, .ind, .out, .res, .parm.0, etc. The HA software was trying to replicate these temporary files in the root directory like it was configured to do. Sometimes the HA replication process caused the files to be locked when Content Manager OnDemand tried to delete these files during the data loading process. The file locking was causing intermittent data load failures, and causing the files to be left in the root directory. RELATED INFORMATION
+ How to check Content Manager OnDemand server version [http://www.ibm.com/support/docview.wss?uid=swg21633423]

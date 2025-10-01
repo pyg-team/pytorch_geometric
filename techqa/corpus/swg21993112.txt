@@ -1,0 +1,37 @@
+Title: IBM Enable schema support for PureData System for Analytics - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to enable schema support 
+
+RESOLVING THE PROBLEM
+Starting from NPS V7.0.3, we can now create multiple schemas in a database. When we enable this option by setting a system wide variable to a non-zero value (by default this setting is disabled with zero), we can choose to either throw error when invalid schema is referenced in any query or throw warning and use default schema. Only admin or users with create/alter schema can create or make changes to schema. 
+
+In previous releases we used to have only one schema in a database and that was the database owner schema i.e. user who created the database becomes the default schema.
+
+The enable_schema_dbo_check variable controls whether the system allows users to create and manage multiple schemas in a database, and if so, the actions the system will take when processing a query with an Invalid schema.
+
+To enable multiple schema support, use the following procedure:
+
+1) Log in to the Netezza active host as the nz user.
+Using a text editor, open the /nz/data/postgresql.conf file.
+
+2) Locate the enable_schema_dbo_check variable and uncomment it by deleting the # character at the beginning of the line.
+
+3) Change the value of the variable to one of the following values:
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+4) Save the changes to the postgresql.conf file and close the file. 
+
+5) Run the nzstop and then the nzstart commands to restart the Netezza software for the change to take effect.

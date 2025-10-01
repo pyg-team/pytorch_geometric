@@ -1,0 +1,244 @@
+Title: IBM IV15813: REPORTING USER GUIDE FOR IBM TRIRIGA 3.2 REQUIRES ADDITION INSTRUCTIONS FOR STARTER AND JDBC DRIVERS ELSENOT CLEAR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ***Overview
+   
+   The BIRT report could have additional detail in setup of starter
+   reports and additional JDBC connections as vague in steps of
+   setup.
+   
+   Below examples and the addtional steps required that were
+   missing from the documentation.
+   
+   
+   Prob: Questions about setup and configuration of BIRT report
+   writing tool
+   
+   Envir: 10.2/3.2, Oracle 11gr2, Jboss 5.1.0, win2008
+   
+   Documentation is not clear as to how to use JDBC or datasets
+   with starter reports and adding addtional JDBC datasources.
+   
+   Missing steps.
+   
+   ----------------------------------------------------------------
+   Summary of methods for configuration.
+   
+   Starter Reports
+   
+   My Method
+   
+   I found unzip the start report archive and open the rptdesign
+   file in Eclipse,
+   you should find it has the data source and datasets configured.
+   
+   Client method
+   
+   Client found this alternate method which is also useful.
+   
+   In the 'Reporting User Guide' for IBM TRIRIGA 3.2, the BIRT
+   section on page 123.
+   
+   
+   Import the Starter Report into BIRT, Step 6. After I imported
+   the
+   starter form I did not see any data sources. The documentation
+   does
+   not advise how to deal with this.
+   
+   Here is what I finally found as a solution and think some of it
+   should
+   be included in this document.
+   If you don't see the Data Sources,
+   then go to the 'Window' menu > Open Perspective > choose
+   'Other'.
+   Select 'Resource (default)'
+   Drag the .rptdeisgn file into the main designer window.
+   Now when you change the Perspective back to 'Report Design' you
+   should
+   see the various options in the Data Explorer.
+   
+   ------------------------------------------------------------
+   
+    Adding JDBC connection
+   
+   Needs to be confirmed with Dev, via a documentation APAR
+   request.
+   
+   I found I could get a JDBC driver to work if I copied over the
+   TRIRIGA JDBC jar files to BIRT plugin directory.
+   
+   Then added these to the managed drivers and configured the JDBC
+   URL, Use Name, Password.
+   
+   The Driver Class is automatically populated so maybe this is the
+   explanation for being "optional"
+   
+   When I did this my test connection worked and I then could add a
+   dataset.
+   
+   I am going to ask L3 how to and if they can confirm these are
+   correct instructions.
+   
+   ----------------------------------------------------------------
+   L3 reply:
+   
+    Please generate the APAR for this APAR request. We will have
+   our documentation team update the the BIRT documentation.
+   
+   
+   
+   ----------------------------------------------------------------
+   
+   My environment is SQLServer can you let me know if you get the
+   Oracle to work.
+   
+   I found with the SQLServer drive I didn't need to specify the
+   port you may find similarly for Oracle.
+   
+   Additional Steps
+   
+   What I did?
+   
+   1. Copied JDBC JAR files
+   I copied over the two TRIRIGA jar files into the ecilipse plugin
+   directory, you only need one depending on
+   your database platform.
+   C:\Tririga\lib
+   -jtds-1.2.5.jar (SQLServer)
+   -ojdbc6.jar (Oracle)
+   <installdir>\eclipse\plugins
+   2. Click Manage Drivers... button
+   Depending on whether you connecting to Oracle or SQLServer.
+   Click manage Drivers... button.
+   Click add jar and add the two jars from above step 1.
+   
+   You should then beable to select Driver class
+   
+   Step 5,6,7,8 :-
+   Oracle
+   Driver Class: oracle.jdbc.OracleDriver (v11.2)
+   Database URL: jdbc:oracle:thin:@databaseserver:1521:orcl
+   User Name: tririga
+   Password: password
+   JNDI URL: jdbc/local/Datasource-TRIRIGA-data
+   
+   
+   
+   SQLServer
+   Driver Class: net.sourceforge.jtds.jdbc.Driver (v1.2)
+   Database URL: jdbc:jtds:sqlserver://demobase/tridata
+   User Name: tririga
+   Password: password
+   JNDI URL: jdbc/local/Datasource-TRIRIGA-data
+   
+   Step 9
+   Test Connection...
+   
+   Then click finish and setup the dataset.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Additional steps documented in APAR.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  BIRT Report Documentation will be updated in the upcoming
+   release
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  BIRT Report Documentation will be updated in the upcoming
+   release
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV15813
+   
+   
+ * REPORTED COMPONENT NAME
+   TRI APP PLTFM R
+   
+   
+ * REPORTED COMPONENT ID
+   5725F26RE
+   
+   
+ * REPORTED RELEASE
+   320
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-19
+   
+   
+ * CLOSED DATE
+   2012-02-20
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

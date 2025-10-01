@@ -1,0 +1,136 @@
+Title: IBM Substitution of product delivered SHA1 certificate by a more current certificate required to avoid loosing access capability to Management GUI or configured HTTP exports of IBM Storwize V7000 Unified - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Existing SHA-1 certificate needs to be replaced with SHA-2 certificate for IBM Storwize V7000 Unified
+
+
+CAUSE
+Major Browser vendors have published that their browsers will stop accepting SHA-1 SSL certificates by 2017.
+To avoid running with current browsers in this situation the current implemented by the product (self signed certificates) need to be exchanged.
+The same is true for officially signed SHA-1 based certificates that were brought in place.
+
+DIAGNOSING THE PROBLEM
+You need to exchange the existing SHA-1 certificates. Storwize V7000 Unified ships two different self signed SHA-1 based certificates to serve the following functions :
+
+
+1. Web GUI access to the management interface. This access is provided over the management network / IP addresses. Certificate provided for this function is referred to as GUI certificate.
+2. Access to configured HTTP exports. This access is provided over the public network / IP addresses. Certificate provided for this purpose is referred to as HTTP export certificate.
+
+The SSL certificate is tied to an IP address or host name. Since both, IP address and host name, need to differ between HTTP export access and Web GUI access, a common certificate will always cause an identity error in the user browser on one of them. Therefore two separate certificates are required.
+
+Starting with version 1.5.2.1 of V7000 Unified, both certificates can be exchanged by using the Management GUI.
+
+
+
+RESOLVING THE PROBLEM
+Please note : 
+
+Exchanging these certificates with self signed certificates requires reconfiguration of all client stations that are accessing either the Web GUI or the HTTP exports. At the client stations, an exception needs to be accepted or approved, to be able to access the corresponding web page.
+
+Step 1.
+You need a distinct certificate-key pair (a set of two files) for each function. The two functions are access to web GUI and access to HTTP exports. Thus, in total four files are required.
+A certificate file is named <my-cert-name>.crt
+A private key file is named <my-key-name>.key
+
+Case a - Officially signed SHA-1 based certificate
+Get in contact with your certification authority in case you have an officially signed SHA-1 based certificate to get a more current hashed/signed certificate.
+
+Case b - Create a self signed certificate certificate / key pair
+
+GUI certificate example
+
+openssl genrsa -out gui.key 2048
+openssl req -x509 -newkey rsa:4096 -sha256 -key gui.key -out gui.crt -days 365 \
+-subj "/C=CountryName/ST=State/L=Locality/O=OrganizationName/OU=MyDepartment/CN=Mgmt IP/name of the mgmt server"
+
+Here are sample values for the example mentioned above. 
+
+ * CountryName
+ * 
+ * = DE
+ * 
+ * 
+ * State
+ * 
+ * = Hessen
+ * 
+ * 
+ * Locality
+ * 
+ * = Frankfurt/Main 
+ * 
+ * 
+ * OrganizationName
+ * 
+ * = IBM
+ * 
+ * 
+ * OrganizationUnit
+ * 
+ * = Development 
+ * 
+ * Dept.1234 
+ * 
+ * commonName
+ * 
+ * = mgmtst001
+ * 
+ * 
+
+
+HTTP export certificate example 
+
+In the example listed below, a 4096 bit SHA-2 based key and certificate will be created that will be valid for 365 days. 
+ * openssl genrsa -out https.key 2048
+ * 
+ * openssl req -x509 -newkey rsa:4096 -sha256 -key https.key -out https.crt -days 365 \
+   -subj "/C=CountryName/ST=State/L=Locality/O=OrganizationName/OU=MyDepartment/CN=MyServer"
+   
+
+Here are sample values for the example mentioned above.  * CountryName
+ * 
+ * = DE
+ * 
+ * 
+ * State
+ * 
+ * = Hessen
+ * 
+ * 
+ * Locality
+ * 
+ * = Frankfurt/Main 
+ * 
+ * 
+ * OrganizationName
+ * 
+ * = IBM
+ * 
+ * 
+ * OrganizationUnit 
+ * = Development 
+ * 
+ * Dept.1234
+ * 
+ * commonName
+ * 
+ * = st001.virtual1.com
+ * 
+
+
+
+Step 2. 
+Replace Web GUI certificate with the new Web GUI key/certificate pair by using the Web GUI. Please do the procedure described in this [https://www.ibm.com/support/knowledgecenter/en/ST5Q4U_1.6.2/com.ibm.storwize.v7000.unified.162.doc/adding_https.html] IBM Knowledge Center topic. 
+
+Note: After exchanging the GUI Certificate, the management service needs to be restarted. 
+
+Then connect to the Web GUI using a web browser. Accept the exception for the self signed certificate and verify the GUI is accessible and you can log in. 
+
+Step 3. 
+Replace HTTP export certificate with the new HTTP export key/certificate pair by using the Web GUI. To do so, login to the management GUI and navigate to Settings -> NAS Protocol -> HTTPS page from the popup menu on left side. 
+
+After exchanging the certificate, please log off from the GUI and close the browser, so that connections to all the HTTPS exports are closed. 
+Then open a web browser and connect to one of the configured HTTP exports. Accept the exception for the self signed certificate and verify the HTTP export is accessible. This would require to log on with a NAS user who has the privilege to access the HTTP export.

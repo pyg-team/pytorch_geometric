@@ -1,0 +1,31 @@
+Title: IBM CWLAA6003 error occurring when editing WebGUI widgets - United States
+
+Text:
+DASHL2; CWLAA6003; error; import ; webGUI ; Omnibus TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While trying to edit most WebGUI widgets the following error is occurring:
+
+"CWLAA6003: Could not display the widget at this time, the widget's 
+module may be being updated." 
+
+The data for WebGUI 8.1server was imported from 7.4 server. 
+
+SYMPTOM
+Error: "CWLAA6003: Could not display the widget at this time, the widget's module may be being updated." 
+
+
+CAUSE
+Possible corruption of XML files
+
+ENVIRONMENT
+Omnibus 8.1.0.4 
+Dash 3.1.2.1 
+Jazz 1.1.2.1 
+
+RESOLVING THE PROBLEM
+Please follow the steps outlined in this technote on how to run the consolecli script to fix the affected XML files. 
+
+
+FixConfiguration tool for DASH XMLs
+http://www.ibm.com/support/docview.wss?uid=swg21698398 [http://www.ibm.com/support/docview.wss?uid=swg21698398]

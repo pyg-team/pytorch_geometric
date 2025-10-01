@@ -1,0 +1,55 @@
+Title: IBM ** Troubleshooting ** "Standard Error 76 ... mscorlib ... Could not find a part of the path..." when launching Controller - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User launches Controller. User receives error message. 
+
+SYMPTOM
+The error message will vary, but it will be similar to: 
+
+ [/support/docview.wss?uid=swg21642447&aid=1] [/support/docview.wss?uid=swg21642447&aid=1] 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 76
+ * 
+ * 
+ * mscorlib
+ * 
+ * 
+ * Could not find a part of the path 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+CAUSE
+There are several possible causes for similar errors: 
+
+Scenario #1 (likely) - Invalid cache files in end user's Windows profile Scenario #2 (rare) - Incorrect database connection nomenclature used  * Specifically, Oracle database connection settings are incorrect.
+
+RESOLVING THE PROBLEM
+Scenario #1 (likely)- Invalid cache files in end user's Windows profile 
+
+Clear the end user's cache files. 
+
+ * TIP: For instructions, see separate IBM Technote #1516661.
+
+
+Scenario #2 (rare) - Incorrect database connection nomenclature used 
+Modify the data source connection (in Controller configuration) to refer only to the Oracle SID (as defined in the Oracle tnsnames.ora file) and not SERVERNAME/SID.  * TIP: For instructions, see separate IBM Technote #1574732.
+
+RELATED INFORMATION
+ 1516661 - 'Standard Error 76 ... Could not find a part [http://www.ibm.com/support/docview.wss?uid=swg21516661]
+1574732 - Standard Error 76 mscorlib Could not find a p [http://www.ibm.com/support/docview.wss?uid=swg21574732]

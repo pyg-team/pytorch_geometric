@@ -1,0 +1,33 @@
+Title: IBM CVE-2014-0160 and the IBMi - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ CVE-2014-0160 - Heartbleed Vulnerability 
+
+This CVE does not effect System SSL. System SSL is accessed through GSKit, SSL_ and the Native IBM i JSSE interface.
+
+This CVE does not effect IBMJSSE2.
+
+This CVE does not effect the current versions of OpenSSL IBM i 6.1 (0.9.8y), 7.1 (0.9.8y).The issue was introduced into OpenSSL 1.0.1 which is newer than the IBM i supported versions.
+
+The simple answer in all cases is that IBM i is not effected by CVE-2014-0160 
+
+VULNERABILITY DETAILS
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 6.1

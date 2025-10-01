@@ -1,0 +1,52 @@
+Title: IBM Unable to Find or Browse for Sample with CommandCenter (Cognos) - United States
+
+Text:
+CommandCenter TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A report writer is in Report Studio, they are unable to browse and search for the sample images (or OpenPages images). 
+
+DIAGNOSING THE PROBLEM
+When a user tries to add an 'Image' object from CommandCenter, the user is unable to find the list of JPGs and GIFs that come along with CommandCenter even though the images are there. In an out of the box system, when the user clicks on 'Browse' button, the application should have some sample images at this server URL: http://localhost/crn/samples/images or http://localhost/cognos/samples/images. 
+
+Report Studio may return with a: 404 - Not Found mesage or a permission message.
+
+
+RESOLVING THE PROBLEM
+In order to view the list of sample images, the 'crn' or 'cognos' node in IIS must have the 'Directory Browsing' feature checked on. To enable directory browsing for CommandCenter: 
+
+ 1. Log onto the CommandCenter server. 
+ 2. Open up 'Internet Information Services' (aka IIS) 
+ 3. Under 'Default Web Site,' do a right mouse button click on the 'crn' node and select 'Properties' 
+ 4. Check on the 'Directory browsing' box. 
+ 5. Click on either the 'OK' or 'Apply' button.
+
+
+OR  1. Log onto the CommandCenter server. 
+ 2. Open up 'Internet Information Services (IIS) Manager' 
+ 3. In the 'Connections' pane, expand the servername node. 
+ 4. Expand the 'Sites' folder. 
+ 5. Expand the 'Default Web Site' folder. 
+ 6. Highlight the 'cognos' or 'cognos8' folder. 
+ 7. Double click on 'Directory Browsing' within the 'Feature View' pane. 
+ 8. In the 'Actions' section, click on the 'Enable' link.
+
+
+For customers using IIS 7.5, administrators will need to enable 'WebDAV Publishing.' Please refer to your IIS documentation for detailed steps. The high-level steps to enable 'WebDAV Publishing' are the following. Also please see the related links for some additional details on setting up the WebDAV settings in regards to reporting server:  1. Log onto the CommandCenter server. 
+ 2. Run the 'Server Manager' application as an administrator by going to: Start -> Administrative Tools -> Server Manager. 
+ 3. Expand 'Roles.' 
+ 4. Expand 'Web Server (IIS)' 
+ 5. Right-click on 'Web Server (IIS)' and select 'Add Role Service.' 
+ 6. Select the checkbox for 'WebDAV Publishing.' 
+ 7. Hit the 'Next >' button and complete the wizard. 
+ 8. Restart IIS by running: iisreset.
+
+
+Various versions of IIS may have different procedures for enabling 'Directory browsing.' Please consult the IIS documentation if the above steps don't directly align. RELATED INFORMATION
+#Configuring WebDAV for IIS 7.5 [http://www.ibm.com/support/docview.wss?uid=swg21506690]
+
+
+ 
+
+HISTORICAL NUMBER
+ 00000905

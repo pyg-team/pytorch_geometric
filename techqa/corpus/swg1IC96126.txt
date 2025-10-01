@@ -1,0 +1,159 @@
+Title: IBM IC96126: WHEN EXECUTING A SFTP GET SERVICE USING PARM "REMOTEFILEPATTERN"AND - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When executing a SFTP Get service using parm
+   "RemoteFilePattern" and filename contains a wild card to pull
+   all files, all files never pull down and BP hangs in
+   Waiting_On_IO. It was determined this only occurs when there is
+   an attempt to get a file the contains a space, for example a
+   filename of positions.txt 2 (a space is just prior to the 2).
+   
+   The SI SFTP Client log during the SFTP Get post error
+   'INVALID_CHARACTER_ERR: An invalid or illegal XML character is
+   specified.'
+   
+   To recreate this issue:
+   Execute a BP that contains the SFTP Client Get service with
+   parm RemoteFilePattern and filename contains a wild card to
+   attempt to retrieve all files from the SFTP server.
+   Ensure at least 1 of the files on the remote SFTP contains a
+   space, for example filename of positions.txt 2 (see a space is
+   just prior to the 2).
+   This test will result in the SFTP Get service hangs in
+   Waiting_On_IO. Also the SFTP Client log should post error
+   'INVALID_CHARACTER_ERR: An invalid or illegal XML character is
+   specified.'
+   Note:  You will need to manually go into the SI UI
+   Troubleshooter screen and terminate this hung BP.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  STRRTC - 382687
+   LRB / LRB
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   All Users
+   
+   Problem Description:
+   When a file name contains a space in it for ex: Test 1.txt"
+   (Please note a space between Test and 1) When executing a SFTP
+   Get service using parm "RemoteFilePattern" and filename contains
+   a wild card to pull all files, the files never pull and BP hangs
+   in Waiting_On_IO.
+   
+   Platforms Affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Resolution Summary:
+   Modified Code so that when using files name with a space does
+   not hangs the BP.
+   
+   Delivered In:
+   5020500
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC96126
+   
+   
+ * REPORTED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * REPORTED COMPONENT ID
+   5725D0600
+   
+   
+ * REPORTED RELEASE
+   524
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-20
+   
+   
+ * CLOSED DATE
+   2014-11-19
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * FIXED COMPONENT ID
+   5725D0600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R525 PSY
+   UP

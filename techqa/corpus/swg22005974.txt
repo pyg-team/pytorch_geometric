@@ -1,0 +1,63 @@
+Title: IBM Error message attempting to license Modeler 18.1. license-related error – specific symptom 25 - United States
+
+Text:
+SafeNet Error 25 license-related error – specific symptom 25 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SafeNet Error 25 is: 
+
+25 VLS_BAD_SERVER_MESSAGE Could not understand the message received from
+
+the 
+
+License Manager on the specified host. 
+
+SYMPTOM
+ 
+
+SafeNet Error 25 is: 
+25 VLS_BAD_SERVER_MESSAGE Could not understand the message received from
+the 
+License Manager on the specified host. The versions 
+of the client and License Manager are incompatible.SPSS Modeler 18.0 was
+contemporary with Sentinel RMS License Manager (lservrnt.exe) version 
+8.6.2.3001 (as given by the IBM Concurrent Licensing Tools 9.6.1)SPSS 
+Modeler 18.1 is contemporary with Sentinel RMS License Manager 
+(lservnt.exe) version 9.1.0.104 (as given by IBM concurrent Licensing 
+Tools 9.7*)[* Due to other problems, this image has been removed and 
+replaced. The new image is called (colloquially) "IBM Concurrent 
+Licensing Tools 9.1". 
+
+
+CAUSE
+ 
+
+SafeNet Error 25 is: 
+25 VLS_BAD_SERVER_MESSAGE Could not understand the message received from
+the 
+License Manager on the specified host. The versions 
+of the client and License Manager are incompatible.SPSS Modeler 18.0 was
+contemporary with Sentinel RMS License Manager (lservrnt.exe) version 
+8.6.2.3001 (as given by the IBM Concurrent Licensing Tools 9.6.1)SPSS 
+Modeler 18.1 is contemporary with Sentinel RMS License Manager 
+(lservnt.exe) version 9.1.0.104 (as given by IBM concurrent Licensing 
+Tools 9.7*)[* Due to other problems, this image has been removed and 
+replaced. The new image is called (colloquially) "IBM Concurrent 
+Licensing Tools 9.1". 
+
+ENVIRONMENT
+Modeler 18.1/RMS license manager 8.6.2.3001 
+
+DIAGNOSING THE PROBLEM
+the versioning of the IBM wrapper to the SafeNet installer into 
+agreement with the version if Sentinel, RMS License Manager that we are 
+delivering. It's 9.1 all around now.]I believe what you are seeing is a
+Client application with licensing components that are newer than the the
+License Manager itself. Remember, the License Manager can always 
+'downshift' to accommodate prior versions. however, it cannot magically
+"upshift" itself to accommodate licensing components/functionality it 
+does not have itself
+
+RESOLVING THE PROBLEM
+The customer will need to deploy "IBM Concurrent Licensing 
+Tools 9.1"

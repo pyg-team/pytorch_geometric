@@ -1,0 +1,31 @@
+Title: IBM BMT-MD-6001 or BMT-IMP-0016 error when running Metadata Wizard in Framework Manager - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When creating a new project using the Metadata Wizard, modelers are presented with the following error message after selecting a Data Source:
+BMT-MD-6001 Connection to the data source 'great_outdoors_sales' failed because a valid connection string was not specified. 
+
+ODBC data source connections will return the following error:
+BMT-IMP-0016 The provider type OD is not supported in this mode. 
+
+CAUSE
+The Framework Manager project is configured to use Dynamic Query Mode but no JDBC connection details have been entered in the Data Source connection in Cognos Administration. For more details regarding configuring connectivity for Dynamic Query Mode, please refer to the "Data Sources and Connections" section of the Administration and Security Guide. 
+
+Dynamic Query Mode does not support ODBC connections.
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, there are two possible steps: 
+
+ * 
+ * Switch to Classic Query Mode
+ *  If creating a new model, uncheck the "Use Dynamic Query Mode" option in the New Project window. If updating an existing model, select the Project item (the highest level item in the Project viewer panel) and in the Properties pane set the Query Mode property to Compatible. 
+ * 
+ * Configure JDBC Connection Details in Cognos Administration 
+ *  Using a web browser, navigate to the Cognos Connection URL. Log in as a user with Administrative privileges. Click Launch -> Cognos Administration. Click the Configuration tab. Click the name of the data source to be modeled. In the Actions column, click the Set Properties icon next to the appropriate Data Source connection. Click the Connection tab. Click the pencil icon next to the Connection String entry. Click the JDBC tab. Ensure "Enable JDBC connection" is checked and fill in the details for the data source connection. Click OK. Open Framework Manager and run the Metadata Wizard. 
+
+RELATED INFORMATION
+ Data Sources and Connections - Administration and Secur [http://pic.dhe.ibm.com/infocenter/cbi/v10r2m0/topic/com.ibm.swg.ba.cognos.ug_cra.10.2.0.doc/c_datasources.html?path=2_2_8#DataSources]
+Equivalent Cognos Analytics document [http://www.ibm.com/support/docview.wss?uid=swg21999719]

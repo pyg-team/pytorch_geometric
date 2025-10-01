@@ -1,0 +1,64 @@
+Title: IBM Microsoft® Windows Patch KB3042058 causing startup issues for both IBM Sterling B2B Integrator and IBM Sterling File Gateway - United States
+
+Text:
+SSL security SI SBI B2Bi SFG FLASH (ALERT)
+
+ABSTRACT
+ Applying Windows Patch KB3042058 could prevent startup of both IBM Sterling B2B Integrator and IBM Sterling File Gateway. 
+
+CONTENT
+IBM Support has received several production down calls from IBM Sterling B2B Integrator and IBM Sterling File Gateway customers running:
+Microsoft® Windows OS
+SQL Server database
+Oracle JDK 1.6
+
+and who have applied Microsoft® Windows Patch KB3042058 released in October 2015 (https://technet.microsoft.com/en-us/library/security/3042058.aspx [https://technet.microsoft.com/en-us/library/security/3042058.aspx]). After applying this OS patch, IBM Sterling B2B Integrator and IBM Sterling File Gateway are unable to start up with the following error:
+
+[2015-10-19 02:44:18.002] ERROR 000310100002 UTIL.FRAME_JDBC.ERR_ConnectionFactory_create [ConnectionFactory].create()
+[2015-10-19 02:44:18.002] ERROR [1445255601635] The driver could not establish a secure connection to SQL Server by using Secure Sockets Layer (SSL) encryption. Error: "SQL Server returned an incomplete response. The connection has been closed.".
+[2015-10-19 02:44:18.002] ERRORDTL [1445255601635]com.microsoft.sqlserver.jdbc.SQLServerException: The driver could not establish a secure connection to SQL Server by using Secure Sockets Layer (SSL) encryption. Error: "SQL Server returned an incomplete response. The connection has been closed.".
+
+
+This error appears to be caused by a compatibility issue with the ciphers in use on the server that is running SQL Server and the security providers in the Oracle JDK.
+
+This is similar to the issue reported in http://www-01.ibm.com/support/docview.wss?uid=swg21690335 [http://www-01.ibm.com/support/docview.wss?uid=swg21690335] .
+
+There are two ways to address this issue.
+1. Preferred solution: Patch IBM Sterling B2B Integrator to fixpack 5.2.4.2 or later. This involves moving to the IBM 1.7 JDK, which does not have this issue with the Windows patch. 
+
+
+2. Alternate solution. If you cannot apply the fixpack, this is an alternate solution that will address the issue without moving to the IBM JDK.
+This is the same solution which is listed in http://www-01.ibm.com/support/docview.wss?uid=swg21690335 [http://www-01.ibm.com/support/docview.wss?uid=swg21690335] .
+
+---------------------------------------------
+The following steps should be followed to resolve this issue:
+1. Log into the Windows server (using an administrator account) that is running the SQL Server database that IBM Sterling B2B Integrator is connecting to.
+
+2. Open the Group Policy Object Editor by opening a command prompt session and typing in 'gpedit.msc'
+
+3. Expand 'Computer Configuration' > 'Administrative Templates' > 'Network', and then click 'SSL Configuration Settings'.
+
+4. Under 'SSL Configuration Settings', click the 'SSL Cipher Suite Order' setting.
+
+5. On the left side of the upper box, ensure that 'Enabled' is selected.
+
+6. Under 'SSL Cipher Suites', copy the ENTIRE contents of the text box and save this in a text file on the server to back it up. Be sure to not skip this step!
+Tip: click in the box, press Ctrl+A to select all, then Ctrl+C to copy it. Then open Notepad and paste (Ctrl+V) the contents. Save this file to a safe location.
+
+7. Delete the entire contents of the text box, and then copy the following list of ciphers into the box. Be SURE to not add any line breaks or carriage returns to this list. This should all be one continuous line with no spaces or line breaks:
+TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_3DES_EDE_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA,TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+
+8. Click 'Apply' and then 'Ok'.
+
+9. Restart the Windows server to enable the change, and then restart the IBM Sterling B2B Integrator application and confirm that it can connect.
+
+The steps for this change (minus the new list of ciphers in step 7) can be found at the following link:
+http://msdn.microsoft.com/en-us/library/windows/desktop/bb870930%28v=vs.85%29.aspx [http://msdn.microsoft.com/en-us/library/windows/desktop/bb870930%28v=vs.85%29.aspx] . listed in http://www-01.ibm.com/support/docview.wss?uid=swg21690335 [http://www-01.ibm.com/support/docview.wss?uid=swg21690335]. This involves changing the cipher list on the server running SQL Server.
+---------------------------------------------
+
+Please contact IBM Customer Support if you have any further questions on this issue.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ SFG GIS SI SBI B2Bi

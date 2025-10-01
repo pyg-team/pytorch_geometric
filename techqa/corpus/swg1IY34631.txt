@@ -1,0 +1,241 @@
+Title: IBM IY34631: AM3.9, ACTIVE DIRECTORY, CONFIGURE AM AUTHORIZATION SERVER FAILED WITH 'INCOMPLETE' ERROR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PMR: 28179,600,760
+   CC: Hiroyuki Urushisako
+   .
+   Successfully configured Active Directory (single-domain), AM
+   Runtime,
+   and AM Policy Director to use Active Directory as user
+   registry. On the same machine,
+   configuring AM Authorization Server failed with 'incomplete'
+   error.
+   .
+   Here is the output of the config.log:
+   .
+   =======
+   2002/05/28-14:02:19:    Configuring Access Manager Authorization
+   Server.
+   C: Program Files Tivoli Policy Director  sbin ivacld_setup.exe
+                                                              -m
+   "********"
+   .
+   OpenConfFile: "C: Program Files Tivoli Policy Director  etc
+   pd.conf"
+       getentry:  C: Program Files Tivoli Policy Director  etc
+   pd.conf
+                   pdrteﾗ user-reg-type
+   .
+   CloseConfFile: C: Program Files Tivoli Policy Director  etc
+   pd.conf
+   .
+   OpenConfFile: "C: Program Files Tivoli Policy Director  etc
+   pd.conf"
+       getentry:  C: Program Files Tivoli Policy Director  etc
+   pd.conf
+                   pdrteﾗ user-reg-type
+   .
+   CloseConfFile: C: Program Files Tivoli Policy Director  etc
+   pd.conf
+   .
+   C: Program Files Tivoli Policy Director  bin svrsslcfg.exe
+   -config
+   -f "C: Program Files Tivoli Policy Director  etc ivacld.conf"
+   -d "C: Program Files Tivoli Policy Director  keytab"  -n ivacld
+   -P **** -r 7137 -l yes -s local  -S ****
+   .
+   Configuration of server ivacld is in progress.
+   This may take several minutes..
+   .
+   Invalid user identity is set.
+   .
+   SSL configuration failed
+   .
+   Error Configuring IVAcld(svrsslcfg) Server
+   .
+   2002/05/28-14:02:33:    Configuration failed
+   .
+   .
+   We have also tried to unconfigure the Authorization server, but
+   failed.
+   The following is the config.log during unconfiguration.
+   ======
+   2002/05/28-14:05:21: Unconfiguring Access Manager Authorization
+   Server.
+   C: Program Files Tivoli Policy Director  sbin ivacld_uninst.exe
+                                                    -deconfig -m
+   "********"
+   2002/05/28-14:05:23: Error Unconfiguring Access Manager
+   Authorization
+                        Server
+   .
+   The problem has been recreated in our lab,
+   .
+   Here is the recreation steps that was taken to configure the
+   Authorization Server with Active Directory as a User Registery.
+   As you can see, the procedure that was taken is exactly what is
+   written
+   in the manual.
+   .
+   <Env>
+   .
+   Machine A-----------------------------------
+   .
+   Windows 2000 Advanced Server with Service Pack 2
+   .
+   GSKit
+   Microsoft Active Directory
+   AM Runtime
+   AM Policy Server
+   AM Authorization Server
+   .
+   <Recreation Step>
+   .
+   1. Install the above components
+   .
+   2. Access Manager Configuration (Machine A)
+   .
+    -Start -> Programs -> Access Manager for e-business ->
+   Configuration
+    -Highlight "Access Manager Runtime" and click on "Configure"
+    -Choose "Active Directory" as your User Registry..
+    -Click "Next" and you will be prompted for the following
+   information.
+            - Multiple domains                No
+            - Host name                       amgr.amgrdom.com
+            - Primary domain name             dc=amgrdom,dc=com
+            - Enable encrypted connection     No
+            - Administrator ID                Administrator
+            - Administrator Password          password
+            - Policy Director data location   dc=amgrdom,dc=com
+   .
+   3. Access Manager Policy Server Configuration (Machine A)
+   .
+    -Start -> Programs -> Access Manager for e-business ->
+   Configuration
+    -Highlight "Access Manager Policy Server" and click on
+   "Configure"
+    -Click "OK", and enter the password for sec_master (password)
+    -The "Access Manager Policy Server SSL parameters" panel will
+   be
+     displayed (accept the default settings)
+   .
+   4. Access Manager Authorization Server Configuration (Machine A)
+   .
+    -Start -> Programs -> Access Manager for e-business ->
+   Configuration
+    -Enter the password for sec_master.
+   .
+   ===Configuration of Authorization Server Fails here with the
+   error
+   ===mentioned in page 3 of this pmr
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  no
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   see main problem description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   This is a permanent restriction passed down
+   from Microsoft as based on the Microsoft guideline for SAMAccoun
+   tName per Microsoft Knowledge Base article 316595.  This article
+    states that the Active Directory registry doesn't allow '.' to
+   be the last character of a user/group ID.  This issue has been a
+   ddressed via this defect and CMVC defects 28119 and 31145.  This
+    issue has been documented in the AM 4.1 FP2 README.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY34631
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR BASE
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0801
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2002-09-10
+   
+   
+ * CLOSED DATE
+   2003-04-03
+   
+   
+ * LAST MODIFIED DATE
+   2003-04-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

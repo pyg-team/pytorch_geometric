@@ -1,0 +1,187 @@
+Title: IBM IC92643: XA_START WAS FAILED WITH XAER_RMFAIL, IF PREVIOUS XA_TRANSACTION WAS FAILED WITH -911. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A xa_start was failed with XAER_RMFAIL, If you implemented XA
+   transactions as below.
+   
+   Global transaction
+   Local transaction
+   Global transaction
+   
+   For example.
+   1st global transaction was failed SQL0911N with RC=68
+   (Locktimeout).
+   There is no diaglog messages.
+   
+   2nd global transaction was failed in xa_start with XAER_RMFAIL
+   and recorded the following entry in db2diag.log.
+   2013-05-28-10.14.57.234656+540 I8893830A527         LEVEL: Error
+   PID     : 8126774              TID : 10309          PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000           DB   :
+   SAMPLE
+   APPHDL  : 0-54                 APPID:
+   192.168.1.1.64777.130528011455
+   AUTHID  : DB2INST1             HOSTNAME: host1
+   EDUID   : 10309                EDUNAME: db2agent (SAMPLE) 0
+   FUNCTION: DB2 UDB, relation data serv, sqlrxreg, probe:1
+   RETCODE : ZRC=0x801A006D=-2145779603=SQLZ_CA_BUILT
+             "SQLCA has already been built"
+   
+   Here is a scenario that 2nd global transaction was fail.
+   
+   1st global transaction was failed with -911.
+   Then xa_end and xa_rollback was executed.
+   Usually, we need to switch out of the xa_tranasction.
+   However, we do not do switch out of the xa_transaction.
+   So, 1st transaction is still xa transaction mode.
+   
+   Local transaction which is not in xa transaction.
+   Because local transaction is not needed with xa_start.
+   When local transaction was completed, the xa_commit was executed
+   in the local transaction.
+   In this time, xa_commit was returned XAER_RMFAIL.
+   
+   [jcc][t4][2041][11392][3.63.123] Error executing
+   XAResource.commit().  Server returned XAER_RMFAIL.
+   ERRORCODE=-4203, SQLSTATE=null
+   
+   2nd global transaction was executing xa_start.
+   The xa_start was failed XAER_RMFAIL.
+   Because 1st transaction is in the xa_transaction.
+   And local transaction was executed xa_commit, evenif this is a
+   local transaction.
+   
+   The fix is to switch out of the xa transaction during xa_failure
+   when the transaction is due to -911 error.
+   
+   After fixed, transaction was executed as below.
+   
+   1st global transaction was failed with -911.
+   1st global transaction is switched out of the xa_transaction.
+   Now, xa_transaction was completed.
+   
+   The local transaction was executed.
+   No xa_commit was executed.
+   Because 1st global transaction was completed,
+   and this is not a xa_transaction.
+   
+   2nd global transaction was not failed in xa_start.
+   2nd xa_transaction was successfully without xa error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 UDB to version 10.1 fix pack 2.               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem was first fixed in DB2 UDB Version 10.1 FixPack 2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC92643
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-28
+   
+   
+ * CLOSED DATE
+   2013-06-25
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSN
+   UP

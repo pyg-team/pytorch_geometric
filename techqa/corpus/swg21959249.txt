@@ -1,0 +1,53 @@
+Title: IBM Recommended License Manager version for the use with IBM SPSS Statistics 23, Modeler 17, & Amos 23. - United States
+
+Text:
+License Manager; Sentinel; Concurrent; Network; Statistics 23; Modeler 17; Amos; Text Analytics for Surveys; SamplePower; Visualization Designer TECHNOTE (FAQ)
+
+QUESTION
+ What is the recommended License Manager version for the use with IBM SPSS Statistics 23, Modeler 17, & Amos 23? 
+
+ANSWER
+Recommended License Manager version:
+For the usage with IBM SPSS Statistics 23, Modeler 17, & Amos 23, it is recommended to install the License Manager version 9.5.0.2. With this version you can manage network licenses for older IBM SPSS software releases as well. 
+
+The following list of IBM Software Products have the option of "Concurrent User" licensing and can be activated using the License Manager: 
+
+ * IBM SPSS Modeler Professional 
+   IBM SPSS Modeler Premium 
+   IBM SPSS Statistics Desktop 
+   IBM SPSS Statistics Developer 
+   IBM SPSS Amos 
+   IBM SPSS Text Analytics for Surveys 
+   IBM SPSS SamplePower 
+   IBM SPSS Visualization Designer 
+   
+   
+
+License Manager download: 
+On the IBM Software & Download Portal, there are several versions for the License Manager available depending on what operating system (OS) you would like to install the service. 
+
+If you would like to install the License Manager service and the Administration tool (WlmAdmin tool) to administer the network licenses on a Microsoft Windows OS the only download package you need is: 
+
+[Product Details] 
+IBM SPSS Concurrent Licensing Tools 9.5.0.2 - License Manager Microsoft Windows English - Part Number: CN3DVEN 
+File name: SPSS_CLT_9.5.0.2_LMMWEN.exe 
+Platform(s): Windows 7 Enterprise, Windows 7 Professional, Windows Vista Business, Windows Vista Enterprise, Windows XP Professional 
+Language(s): English 
+File Size: 102,832,432 bytes 
+
+For license managers for other operating systems search on part number CRUM3EN in the IBM Software & Download Portal. 
+IBM SPSS Statistics Concurrent User Licensing Server 23.0 English Multiplatform eAssembly (CRUM3EN) 
+
+IBM SPSS Statistics 23 Documentation, IBM SPSS Modeler 17 Documentation, & IBM SPSS Amos 23 Documentation: 
+Please see the "Concurrent_License_Administrator_Guide.pdf" for the license manager installation instructions by clicking on one of the documentation links below. RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+IBM SPSS Statistics 23 Documentation [http://www-01.ibm.com/support/docview.wss?uid=swg27043946]
+SPSS Modeler 17.0 Documentation [http://www-01.ibm.com/support/docview.wss?uid=swg27043831]
+IBM SPSS Amos 23 Documentation [http://www-01.ibm.com/support/docview.wss?uid=swg27043944]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Amos Business Analytics SPSS Modeler Business Analytics SPSS Text Analytics for Surveys Business Analytics SPSS SamplePower Business Analytics SPSS Visualization Designer

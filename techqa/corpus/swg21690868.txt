@@ -1,0 +1,34 @@
+Title: IBM Importing Test data from CSV with CJKT double byte characters into RQM - United States
+
+Text:
+CSV; Double byte code TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to import CJKT (Chinese, Japnese, Korean, Taiwan) Test data from CSV into IBM Rational Quality Manager (RQM) via Web UI results with test artifacts reflecting only characters with '?'. 
+
+SYMPTOM
+The test artifacts post CSV import displays only '?' in the data fields for Testcase/Testscript/Testplan.
+
+
+CAUSE
+Double byte characters need to be exported in a Unicode format.
+
+RESOLVING THE PROBLEM
+Perform the below steps to export the double byte characters in a Unicode format: 
+
+ 1. Open MS-Excel, CSV File.
+    
+    
+ 2. Click File > Save As.
+    
+    
+ 3. Choose file type as text files (.txt) and Save the file.
+    
+    
+ 4. Open the .txt file you just saved. 
+    
+    
+ 5. Create a CSV file from this Excel.
+
+RELATED INFORMATION
+#Excel Mulltibyte character [https://social.technet.microsoft.com/Forums/office/en-US/6f758567-0f12-4c02-8b67-ebc93d25e368/excel-2003-multi-byte-characters]

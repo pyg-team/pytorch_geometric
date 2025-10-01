@@ -1,0 +1,80 @@
+Title: IBM Configuring IBM Forms Server - API to support multiple applications running under different JVMs - United States
+
+Text:
+api; prefs; prefs.config; server configuration; JVM; java; workplace forms server; workplace forms; initilize; dtk; dtk.initilize TECHNOTE (FAQ)
+
+QUESTION
+In some scenarios, it may be a requirement to configure multiple applications on a single server to use different JVMs. 
+
+A common scenario is if you are deploying two different applications: 
+
+ * one includes servlets deployed under IBM® WebSphere® Application Server, and 
+ * the other is a portlet application that uses IBM Forms Server - Webform Server
+
+
+It is a known requirement that the IBM Forms Server - API must initialize the same version of Java™ that is being used by its container. Therefore the servlet application must use the JVM that ships with WebSphere Application Server, and the portlet application must use the JVM that ships with Webform Server. 
+ANSWER
+ Every IBM Forms Server - API application that is deployed on a server can refer to its own prefs.config file. The prefs.config file contains the path to the JVM to be used. 
+
+There are three parameters for the DTK.Initialize function: 
+
+ 1. A unique name that describes the application, 
+ 2. A version number associated to the application 
+ 3. The version of the API to be initialized.
+
+
+We will be using the first two parameters in this procedure. Steps:
+1. Create a folder within "/etc/PureEdge" that is named as <appname> <version>. For example, for the sample portlet application that ships with the API, you would name this folder "FormViewPortlet 1.0". 
+
+Note that the complete version number, as listed in the initialize call, is not used here; we are only specifying the first two digits of the version number.
+
+2. Create a prefs folder inside of the folder you created in Step 1.
+
+3. Create a prefs.config file that points to the JVM that will be used for this sample application (for example, within /etc/PureEdge/FormViewPortlet 1.0/prefs)
+
+You can also have a "default" prefs.config that is used by all other applications. It is up to you whether to explicitly create folders for each application, or to have a default file and then only folders for the applications that must point to separate JVMs. 
+
+ 
+
+When the API is initialized, it always looks for the prefs.config file in the following order: 
+
+on Microsoft Windows 
+
+1. In the application's directory for the current user 
+
+ * 
+ * 
+ * username
+ * 
+ * appname
+ * 
+ * appversion
+ * 
+
+
+2. In the default location for the current user  * 
+ * 
+ * username
+ * 
+
+
+3. In the application's directory for all users  * 
+ * 
+ * appname
+ * 
+ * appversion
+ * 
+
+
+4. In the default location for all users  * 
+ * 
+
+
+on Unix platforms 
+
+1. In the application's directory 
+/etc/PureEdge/<appname> <appversion>/prefs/prefs.config 
+
+2. In the default directory 
+
+ /etc/PureEdge/API 7.0/prefs/prefs.config

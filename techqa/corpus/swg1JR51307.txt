@@ -1,0 +1,217 @@
+Title: IBM JR51307: FEDERATE NODE FAILS WHEN JAVA 7.X IS ENABLED - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8560.cf1.delta.repository.2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.2&source=SAR]
+bpm.8560.cf1.delta.repository.1 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.1&source=SAR]
+8.5.0.1-WS-BPM-IFJR51307 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Advanced&fixids=8.5.0.1-WS-BPM-IFJR51307-ADV&source=SAR]
+8.5.5.0-WS-BPM-IFJR51307 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Advanced&fixids=8.5.5.0-WS-BPM-IFJR51307-ADV&source=SAR]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The federate node fails when Java 7.x is enabled and you see
+   the following exception:
+   
+   com.ibm.bpm.config.BPMConfig.addNode(): THROW
+   com.ibm.bpm.config.util.ConfigException: CWMCB0139E: Node
+   Node1 could not be federated.
+    at com.ibm.bpm.config.BPMConfig.addNode(BPMConfig.java:1464)
+    at
+   com.ibm.bpm.config.BPMConfig.configureDeploymentEnvironment(BPMC
+   onfig.java:684)
+    at
+   com.ibm.bpm.config.BPMConfig$Actions.createDe(BPMConfig.java:397
+   8)
+    at
+   com.ibm.bpm.config.cli.CreateAction.runInner(CreateAction.java:1
+   37)
+    at
+   com.ibm.bpm.config.cli.AbstractConfigAction.run(AbstractConfigAc
+   tion.java:127)
+    at
+   com.ibm.bpm.config.cli.CreateAction.run(CreateAction.java:33)
+    at com.ibm.bpm.config.BPMConfig.main(BPMConfig.java:272)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+      ...
+    at
+   com.ibm.wsspi.bootstrap.WSPreLauncher.main(WSPreLauncher.java:15
+   1)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No local fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM Business Process Manager (BPM)          *
+   *                  Advanced                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The federate node fails when Java 7.x   *
+   *                      is enabled and you see the following    *
+   *                      exception:                              *
+   *                      com.ibm.bpm.config.BPMConfig.addNode(): *
+   *                      THROW                                   *
+   *                      com.ibm.bpm.config.util.ConfigException *
+   *                      : CWMCB0139E: Node Node1 could not be   *
+   *                      federated.                              *
+   *                      at                                      *
+   *                      com.ibm.bpm.config.BPMConfig.addNode(BP *
+   *                      MConfig.java:1464)                      *
+   *                      at                                      *
+   *                      com.ibm.bpm.config.BPMConfig.configureD *
+   *                      eploymentEnvironment(BPMConfig.java:684 *
+   *                      )                                       *
+   *                      at                                      *
+   *                      com.ibm.bpm.config.BPMConfig$Actions.cr *
+   *                      eateDe(BPMConfig.java:3978)             *
+   *                      at                                      *
+   *                      com.ibm.bpm.config.cli.CreateAction.run *
+   *                      Inner(CreateAction.java:137)            *
+   *                      at                                      *
+   *                      com.ibm.bpm.config.cli.AbstractConfigAc *
+   *                      tion.run(AbstractConfigAction.java:127) *
+   *                      at                                      *
+   *                      com.ibm.bpm.config.cli.CreateAction.run *
+   *                      (CreateAction.java:33)                  *
+   *                      at                                      *
+   *                      com.ibm.bpm.config.BPMConfig.main(BPMCo *
+   *                      nfig.java:272)                          *
+   *                      at                                      *
+   *                      sun.reflect.NativeMethodAccessorImpl.in *
+   *                      voke0(Native Method)                    *
+   *                      ...                                     *
+   *                      at                                      *
+   *                      com.ibm.wsspi.bootstrap.WSPreLauncher.m *
+   *                      ain(WSPreLauncher.java:151)             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A change introduced in Java 7, which is described in the
+   Oracle Update Release Notes
+   (http://www.oracle.com/technetwork/java/javase/7u25-relnotes-
+   195
+   5741.html), results in logger implementation in the
+   com.ibm.ws.sca.common.jar (SCA) plug-in. This plug-in was not
+   updated to match this change.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.5.0 that updates the
+   logger implementation in the SCA plug-ins to match the Java 7
+   change.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR51307:
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select APAR or SPR, enter JR51307, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR51307
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-22
+   
+   
+ * CLOSED DATE
+   2014-11-02
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

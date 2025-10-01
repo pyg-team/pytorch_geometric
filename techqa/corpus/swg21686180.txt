@@ -1,0 +1,51 @@
+Title: IBM Sterling Selling and Fulfillment Foundation 9.3 JMS integration with JBoss EAP version 6 - United States
+
+Text:
+Jboss 6 jms TECHNOTE (FAQ)
+
+QUESTION
+ How to configure agent/integration server in IBM Sterling Selling and Fulfillment Foundation9.3 to connect to Jboss EAP version 6? 
+
+CAUSE
+Jboss EAP version 6 starts to use Hornet queues. The client to connect to these queues requires new sets of configuration in IBM Sterling Selling and Fulfillment Foundation.
+
+ANSWER
+Here are the configurations we need to add
+
+1. Install the following jboss jars using install3rdParty utility.
+
+hornetq-core-client-2.3.1.Final-redhat-1.jar
+hornetq-jms-client-2.3.1.Final-redhat-1.jar
+hornetq-jms-server-2.3.1.Final-redhat-1.jar
+jboss-ejb-client-1.0.21.Final-redhat-1.jar
+jboss-logging-3.1.2.GA-redhat-1.jar
+jboss-logmanager-1.4.0.Final-redhat-1.jar
+jboss-marshalling-river-1.3.16.GA-redhat-1.jar
+jboss-marshalling-1.3.16.GA-redhat-1.jar
+jboss-remote-naming-1.0.6.Final-redhat-2.jar
+jboss-remoting-3.2.16.GA-redhat-1.jar
+jboss-sasl-1.0.3.Final-redhat-1.jar
+netty-3.6.2.Final-redhat-1.jar
+remoting-jmx-1.1.0.Final-redhat-1.jar
+xnio-api-3.0.7.GA-redhat-1.jar
+xnio-nio-3.0.7.GA-redhat-1.jar
+hornetq-commons-2.3.1.Final-redhat-1.jar
+
+2. JBoss 6 is secured by default. The user named "<username>" with password "<password>" should be created in the ApplicationRealm as application User with the guest role using the EAP_HOME/bin/add_user.sh script.
+
+Modify customer_overrides.properties by adding the following properties:
+
+yfs.yfs.agent.override.icf=org.jboss.naming.remote.client.InitialContextFactory
+yfs.yfs.flow.override.icf=org.jboss.naming.remote.client.InitialContextFactory
+yfs.sci.queuebasedsecurity.userid=<username>
+yfs.sci.queuebasedsecurity.password=<password>
+yfs.isQueueSecEnabled=Y
+
+3. In Agent Config pass queue name you created on Jboss. For example 
+
+Here is the queue I created in jboss.
+<jms-queue name="queue1">
+<entry name="java:jboss/exported/jms/queue1"/>
+</jms-queue>
+
+In agent/Service, Add queue as jms/queue1 , QCF name as jms/RemoteConnectionFactory and provider URL as remote://<IP>:4447

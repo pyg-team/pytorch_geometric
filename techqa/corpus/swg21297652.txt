@@ -1,0 +1,31 @@
+Title: IBM CECI VERIFY PASSWORD command receives RESP 70 NOTAUTH RESP2 20 - United States
+
+Text:
+DFHXSSB determine_revoked_status esm_group_revoke_date group_is_revoked group_revoke_date PK10796 55655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have a CICS application that issues an EXEC CICS VERIFY PASSWORD command. This command fails with a security violation, only for a certain set of userids. You are able to recreate the failure using the CECI transaction which reports RESP=NOTAUTH (equates to x'70') and RESP2=20. A RESP2 of 20 means the user's connection to their default group has been revoked. You disagree that the associated group is revoked. 
+
+SYMPTOM
+CECI VERIFY PASSWORD command receives RESP=70 RESP2=20.
+
+
+CAUSE
+REVOKE DATE=DECEMBER 31, 2070 was coded for the default group.
+
+DIAGNOSING THE PROBLEM
+RACF date handling: RACF interprets dates with 2-digit years as follows. 
+
+(The yy value represents the 2-digit year.) 
+
+If 70 < yy <= 99, the date is interpreted as 19yy. 
+If 00 <= yy <= 70, the date is interpreted as 20yy.
+
+
+RESOLVING THE PROBLEM
+Code a revoke date, for the default group, with a year that is greater than zero and less than 70. This is currently the way RACF resolves the Y2K issue. This will have to change at some time far into the future (before 2070) but for now it is the current implementation. See CICS APAR PK10796 [http://www.ibm.com/support/docview.wss?uid=swg1PK10796] for additional background information on VERIFY PASSWORD.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

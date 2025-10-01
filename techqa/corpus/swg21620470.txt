@@ -1,0 +1,38 @@
+Title: IBM CLI commands that access sysmgr taking longer than usual - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Some commands access the clientmgr, such as nzstate, nzstats, etc. However, other commands such as nzhw, nzds, and nzsqa commands access sysmgr. These should run quickly, and when they take more than a couple seconds, there may be an issue. 
+
+SYMPTOM
+Commands such as 'nzhw', 'nzds' and 'nzsqa transactions -sys' taking longer than normal, anywhere between 4 and 60 seconds to return. 
+
+
+CAUSE
+Most likely, the sysmgr process is getting pinned. Something needs to be done to lower the utilization of sysmgr.
+
+DIAGNOSING THE PROBLEM
+First verify that the command 'nzhw' takes more than 3-4 seconds. Run the command several times to verify that at least once it takes a long time to return. 
+
+Second, run the 'top' command, and monitor the sysmgr process for a minute or two. Verify that the sysmgr is highly utilized, mostly between 90-100%. This is not normal.
+
+Next, check the processes that might be accessing sysmgr. Many times, there will be a monitoring script in place that is constantly executing and logging results of 'nzsqa' commands. To check processes:
+
+ps -ef | grep "nz "
+
+Look for something executing a script. In cases where this was an issue, we may see two instances of the same monitoring script running. The result may look like the following:
+
+[nz@netezza01 ~]$ ps -ef | grep "nz " 
+nz 4269 4268 0 Oct19 ? 00:00:00 [nz_watch_wrappe] <defunct> 
+nz 4274 1 0 Oct19 ? 00:01:39 /bin/sh /path/to/directory/nz_watch -sleep 60 -timeout 50 -to name@company.com 
+nz 20649 20648 0 Nov07 ? 00:00:00 [nz_watch_wrappe] <defunct> 
+nz 20654 1 0 Nov07 ? 00:00:59 /bin/sh /path/to/directory/nz_watch -sleep 60 -timeout 50 -to name@company.com 
+
+
+Notice there are two instances of the '/path/to/directory/nz_watch' script running. There should only be one, and the recommendation would be to stop one of these. 
+
+
+RESOLVING THE PROBLEM
+After determining what is pinning the sysmgr process, try stopping that and re-running the 'nzhw' command. In the example here, stop one of the processes executing the monitoring script, and retry the command.

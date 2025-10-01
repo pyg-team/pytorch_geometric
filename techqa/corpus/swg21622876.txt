@@ -1,0 +1,77 @@
+Title: IBM Some LDAP users are unable to log into TWS or TDWC - United States
+
+Text:
+TWS; TDWC; LDAP; referral TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Tivoli Workload Scheduler (TWS) or Tivoli Dynamic Workload Console (TDWC) successfully authenticates some LDAP users, but not others, and results in 'LDAP: error code 10 - 0000202B:' 
+
+CAUSE
+In products using WebSphere Application Server (WAS) configured for LDAP authentication, (for example, from FileNet Technote 1422365):
+---------------
+This can happen in a Multiple Domain LDAP environment where a user account in DomainA contains referral data in DomainB, which is outside of the domain in which the account existed.
+In this case, the Authentication configuration within the WebSphere application server (WAS) failed to access a user that existed in DomainA, because that user belonged to a group association in DomainB, which was not accessible.
+---------------
+
+The default in WAS LDAP settings is to ignore referrals to other LDAP servers. From WAS documentation:
+Lightweight Directory Access Protocol repository configuration settings
+http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/uwim_ldapreposettings.html [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/uwim_ldapreposettings.html]
+
+Support referrals to other LDAP servers
+Specifies how referrals that are encountered by the LDAP server are handled.
+
+A referral is an entity that is used to redirect a client request to another LDAP server. A referral contains the names and locations of other objects. It is sent by the server to indicate that the information that the client requested can be found at another location, possibly at another server or several servers. The default value is ignore.
+Default: ignore
+Range: 
+ignore - Referrals are ignored.
+follow - Referrals are followed automatically.
+
+
+DIAGNOSING THE PROBLEM
+Check the ...TWA/eWAS/profiles/TIPProfile/logs/SystemOut.log for the following LDAP error: 
+
+[1/17/13 13:24:05:066 EST] 00000074 exception E com.ibm.ws.wim.adapter.ldap.LdapConnection getAttributes CWWIM4520E The 'javax.naming.PartialResultException: [LDAP: error code 10 - 0000202B: RefErr: DSID-03100742, data 0, 1 access points ref 1: 'dev.abc123.local'
+
+
+RESOLVING THE PROBLEM
+LDAP referrals can be enabled through either the WebSphere Administrative Console (ISC) or by editing the wimconfig.xml file. 
+
+
+NOTE: Before making changes, run the 'TWA/wastools/backupConfig...' script. If there are any problems, running 'TWA/wastools/restoreConfig... WebSphereConfig_<date>.zip' will restore the Websphere environment back to the current settings.
+
+From the WebSphere administrative console page, complete the following steps:
+
+1. In the administrative console, selectSecurity > Global security.
+2. Under User account repository, selectFederated repositoriesfrom the Available realm definitions field and selectConfigure.
+3. Under Related items, selectManage repositories.
+4. Select the LDAP external repository that is preconfigured.
+5. In the LDAP Server section (below the type, hostname, and failover), change the "Support referrals to other LDAP servers" setting from 'ignore' to 'follow'.
+6. Restart WAS and verify the LDAP users can now log in and be authenticated.
+
+- Or - 
+
+To manually edit the wimconfig.xml files:
+
+1. As the root user or administrator, navigate to the TWA/eWAS/profiles/TIPProfile/config/cells/TIPCell/wim/config directory.
+2. Make a backup: copy wimconfig.xml to wimconfig.xml.bak.
+3. Edit wimconfig.xml, change the following line and then save the file.
+
+from:
+connectTimeout="0" derefAliases="always" referal="ignore" ...
+to:
+connectTimeout="0" derefAliases="always" referal="follow" ...
+4. Restart WAS and verify the LDAP users can now log in and be authenticated.
+
+Also, see the "Related information" section below for related information.
+
+RELATED INFORMATION
+ You see LDAP error code 10... [http://www.ibm.com/support/docview.wss?uid=swg21422365]
+WAS LDAP repository configuration settings [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/uwim_ldapreposettings.html]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Maestro
+TWS
+TWA

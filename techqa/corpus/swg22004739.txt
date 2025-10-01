@@ -1,0 +1,55 @@
+Title: IBM What is a 'lock code' and where can I find it? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I have been requested to provide the 'lock code' for my SPSS product and/or License Manager. How do I determine the lock code for my SPSS product/License Manager? 
+
+ANSWER
+The method for acquiring the lock code for a product installation varies by the product and operating system.
+Desktop/Client Product Installations
+
+Windows operating systems
+(1) Select Start.
+(2) Select 'Programs' (or 'All Programs') menu entry.
+(3) Select the program folder corresponding to the product (example: 'IBM SPSS Statistics')
+(4) Launch the 'License Authorization' program corresponding to the product version (example: 'IBM SPSS Statistics 24 License Authorization Wizard')
+(5) Select the 'Next' button.
+(6) In the lower left section of this window will appear 'Lock Code for this machine is'. Note the indicated lock code.
+(7) Select the 'Cancel button'.
+(8) Select the 'Yes' button. The License Authorization program will close.
+
+MacOS operating systems
+(1) Open Finder.
+(2) Select 'Go' menu.
+(3) Select 'Applications' entry.
+(4) Select 'IBM' icon.
+(5) Select 'SPSS' folder icon.
+(6) Select folder icon corresponding to the product (example: 'Statistics')
+(7) Select the folder corresponding to the product version (example: '24').
+(8) Launch 'License Authorization Wizard' program.
+(9) Select the 'License my product now' option.
+(10) Select 'Next'.
+(11) In the lower left section of this window will appear 'Lock Code for this machine is'. Note the indicated lock code.
+(12) Select the 'Cancel button'.
+(13) Select the 'Yes' button. The License Authorization program will close.
+
+
+License Manager
+
+License Manager on Windows Operating Systems
+(1a) Open an Administrator Command Prompt. 
+(1b) The Command Prompt title bar must read 'Administrator: Command Prompt' or the procedure may not execute properly.
+(2a) Change directory ('cd') to the License Manager installation directory. 
+(2b) If unsure as to the location of the License Manager installation directory, see TechNote 1989514 [http://www.ibm.com/support/docview.wss?uid=swg21989514].
+(3) Execute the following command: echoid
+(4) The response will include a value associated with 'Locking code 1'.
+(5) This is the License Manager lock code.
+
+License Manager on Linux [http://www.ibm.com/support/docview.wss?uid=swg21484024]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Amos Business Analytics SPSS Modeler Business Analytics SPSS Text Analytics for Surveys

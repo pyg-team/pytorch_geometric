@@ -1,0 +1,66 @@
+Title: IBM How to center the view to the top left of a page when applying zoom - United States
+
+Text:
+zoom TECHNOTE (FAQ)
+
+QUESTION
+ Using the zoom (+/-) button in the IBM Daeja ViewONE (Daeja) viewer results in the document being centered in the middle of the page.
+
+How can this be changed so that using the zoom (+/-) button results in the document being centered to the top left of the page? 
+
+CAUSE
+This is the default behaviour of the zoom function and there is currently no HTML parameter available that allows you to change the behaviour.
+
+ANSWER
+The following solution makes use of the embedded JavaScript API to achieve this requirement: 
+
+ * First create custom zoom buttons. The sample code below shows two buttons added to the HTML page directly below the viewer, using simple JavaScript. Alternatively, make use of the viewer Bar<N>Button<N> HTML parameter to add custom button(s) to any of the viewer toolbars. 
+ * Next, associate a function with the buttons that when clicked, invoke code that gets the current zoom level, increases it by a factor passed as a parameter and then sets the X and Y scroll bars to the top left corner. In this example a zoom factor of +/-0.25 is applied.
+   
+
+The JavaScript methods used are documented here JavaScript API Documentation [http://www-01.ibm.com/support/knowledgecenter/SSTPHR_4.1.2/com.ibm.viewone.configuring/dvoco116.htm?lang=en] 
+
+The following sample code illustrates this approach: 
+ * <HTML>
+ * 
+ * <body>
+ * 
+ * <script language="JavaScript">
+ * 
+ * function myCustomZoom(zoomfactor)
+ * 
+ * {
+ *  current = viewONE.getZoom(); 
+   next = current + zoomfactor; 
+   viewONE.setZoomAndXYScroll(next,0,0); 
+ * }
+ * 
+ * </script>
+ * 
+ * 
+ * <APPLET CODEBASE= "<URL to viewer applet files>"
+ *  ARCHIVE = "viewone.jar" 
+   CODE = "com.ibm.dv.client.Viewer.class" 
+   NAME = "viewONE" 
+   WIDTH = "98%" 
+   HEIGHT = "95%" 
+   HSPACE = "0" 
+   VSPACE = "0" 
+   ALIGN = "middle" 
+   MAYSCRIPT = "true"> 
+ * <param name="JavascriptExtensions" value="true">
+ * 
+ * <param name="filename" value="<URL to sample document">
+ * 
+ * </APPLET>
+ * 
+ * <BUTTON name="ZoomIn" onClick="myCustomZoom(0.25)">ZoomIn</button>
+ * 
+ * <BUTTON name="ZoomOut" onClick="myCustomZoom(-0.25)">ZoomOut</button>
+ * 
+ * </body>
+ * 
+ * </HTML>
+
+
+Note that the parameter <param name="JavascriptExtensions" value="true"> is required to enable JavaScript API support.

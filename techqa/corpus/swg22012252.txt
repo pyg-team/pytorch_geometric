@@ -1,0 +1,30 @@
+Title: IBM In Master Data Management (MDM) server, Setting up TLS1.2 doesn't seem to work - United States
+
+Text:
+SSL security TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In MDM, after following the steps to setup TLS1.2 in the below link it didn't seem to work. 
+https://developer.ibm.com/answers/questions/206952/how-do-i-configure-websphere-application-server-ss.html [https://developer.ibm.com/answers/questions/206952/how-do-i-configure-websphere-application-server-ss.html] 
+How to configure TLS1.2 for MDM to work with all services ,MQ, etc. ? 
+
+CAUSE
+TLS1.2 configuration is not setup correctly 
+
+RESOLVING THE PROBLEM
+In addition to the steps in the above link, do the following: 
+
+- Enabled TLSv1.2 at client side.
+- Corrected the entries for com.ibm.ssl.protocol=TLSv1.2 under ssl.client.props.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ IBM InfoSphere Master Data Management Server
+MDM Server
+MDM AE
+MDM Server Advanced Edition
+MDM Advanced Edition
+MDM SE
+MDM Server Standard Edition
+MDM Standard Edition

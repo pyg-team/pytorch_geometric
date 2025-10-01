@@ -1,0 +1,69 @@
+Title: IBM SSL errors after upgrading to ITDS 6.3 client - United States
+
+Text:
+CVE-2009-3555; RFC 5746; 5746; SSL; GSKit; TLS; TLS renegotiation; renegotiation; vulnerability; 116; The extended error is 116 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ LDAP connections over SSL will fail after upgrading to the ITDS 6.3 client when talking to LDAP servers running 6.2 or lower 
+
+SYMPTOM
+SSL connections will start failing after upgrading to the 6.3 client (or to GSKit 8)
+
+
+CAUSE
+Because of problems with the existing TLS renegotiation standard (in all SSL implementations), the standard was designed to be more secure. But this breaks backwards compatibility with older SSL implementations.
+
+DIAGNOSING THE PROBLEM
+Here's an example of the error you will receive if you attempt to connect over SSL using the ITDS 6.3 idsldapsearch utility talking to a server using the version of GSKit or SSL that doesn't implement this new standard: 
+
+ldap_simple_bind: Can't contact LDAP server 
+Attempted communication over SSL.
+The extended error is 116.
+
+In an ITDS LDAP client trace, the following errors may occur:
+
+045:16:52:19 T-343500048 Error - open_ssl_connection(): gsk_secure_soc_init() rc=406 GSK_ERROR_IO
+045:16:52:19 T-343500048 open_ldap_connection: open_ssl_connection failed with rc=116
+
+and:
+
+040:21:57:28 T5124 Error - open_ssl_connection(): gsk_secure_soc_init() rc=420 GSK_ERROR_SOCKET_CLOSED
+040:21:57:28 T5124 open_ldap_connection: open_ssl_connection failed rc=116
+
+In a network trace, the failure occurs during the attempt to renegotiate TLS.
+
+
+RESOLVING THE PROBLEM
+Multiple security exposures were discovered (CVE-2009-3555) in the TLS 1.x renegotiation standards. The weakness of the original design of the TLS renegotiation standard led to multiple vulnerabilities in SSL and the complete overhaul of the standard, which redesign causes the implementations of SSL/GSKit that contain this redesign to no longer work with versions of SSL libraries that haven't implemented this redesign. 
+
+
+The new standard is RFC 5746 [https://tools.ietf.org/html/rfc5746]. This is first implemented in GSKit 8 starting at GSKit 8.0.4.xx. This breaks backwards compatibility with any version of GSKit 7 that uses the old standards and attempts TLS renegotiation (or that do not disable TLS renegotiation).
+
+If you use GSKit 8.0.4.xx or later with an ITDS client to talk to any ITDS server using 7.0.4.27 or earlier, the connection will fail.
+
+Starting at GSKit 7.0.4.28 GSKit closes the security hole by disabling TLS renegotiation altogether (a GSKit client with this disabled doesn't fail when talking to a GSKit 8 client with RFC 5746 implemented). The complete implementation of RFC 5746 is provided in 7.0.4.33, which can be found here:
+
+Global Security Kit fixes on Fix Central [http://www-947.ibm.com/support/entry/portal/search_results/software/tivoli/tivoli_directory_server?sn=spe&filter=keywords:ibmsupportfixcentralsearch&q=GSKit#q%3DGlobal%20Security%20Kit%26filter%3Dlanguage%3Aen%2Bkeywords%3Aibmsupportfixcentralsearch%26spew%3Dfalse]
+
+Here are the following options for resolving this issue:
+
+1. Upgrade all components in the environment to use GSKit 7.0.4.28 or later or GSKit 8.0.4.xx or later. This problem affects all implementations of SSL, and all implementations should provide version of their product that implements the new standard.
+
+2. If not all the components can be upgraded to use an implementation of SSL that implements RFC 5746, then the following options are possible for the ITDS components:
+
+a) Install the GSKit 7 client < 7.0.4.28 and set GSKIT_CLIENT_VERSION:
+
+If already using the ITDS 6.3 client (which uses GSKit 8 by default), install GSKit 7 < 7.0.4.28, and set GSKIT_CLIENT_VERSION=7 to tell the client to use GSKit 7. Downgrading to GSKit 8 < 8.0.4.xx is not an option, since this version of GSKit is no longer available for download.
+
+b) Don't upgrade GSKit beyond 7.0.4.28:
+
+If using the ITDS 6.2 or lower client, do not upgrade to GSKit 7.0.4.33 until all the components can be upgraded. If using the 6.2 client and have already applied GSKit 8, see the discussion of the GSKIT_CLIENT_VERSION variable immediately above.
+
+But this is such a serious security hole that keeping the old implementation should no longer be an option.
+
+ 
+
+HISTORICAL NUMBER
+ 54224
+004
+000

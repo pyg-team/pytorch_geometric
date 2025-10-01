@@ -1,0 +1,59 @@
+Title: IBM MD05: MQSeries - Design considerations for large Clusters - United States
+
+Text:
+md05; websphere; business; integration; mqseries; mq; design; considerations; large; clusters DOWNLOADABLE FILES
+
+ABSTRACT
+ MD05 is intended to address some of the challenges encountered in the design of MQSeries queue manager cluster solutions for large-scale MQSeries installations. 
+
+DOWNLOAD DESCRIPTION
+This SupportPac is intended to address some of the challenges encountered in the design of MQSeries queue manager cluster solutions for large-scale MQSeries installations. It is based on work done with a major UK customer. 
+
+For the purposes of the SupportPac large-scale is defined as: 
+Any installation where, if a single cluster were used and all queue managers in the cluster needed to connect to a queue manager, the number of channels which that queue manager is required to run would be greater than the number which can be active simultaneously on that queue manager. 
+Potential growth and expansion should be considered when deciding whether an installation is large-scale. 
+
+The SupportPac addresses three main topics: 
+1. Whether to use one large 'sub-divided' cluster or several clusters, each taking a sub-set of the queue managers in the cluster. 
+2. Whether to use parallel processing or to implement a fail-over strategy 
+3. How to manage the installation operations to ensure that the repository queue managers do not have too many channels active at the same time. 
+
+POSSIBLE USES
+The methodology proposed in this SupportPac will be of use to MQSeries system designers, system administrators and application developers considering the use of MQSeries Queue Manager Clusters in large-scale environments. 
+
+
+SKILL LEVEL REQUIRED 
+The SupportPac assumes some knowledge of MQSeries Queue Manager Clusters. 
+
+DETAILS
+Author: John Jones, WebSphere MQ Early Support Programmes, Hursley
+Category: 2
+Released: 11Oct00
+Last Updated: 28May04
+Current Version: 1.0
+»Please note that the version number shown in the right-hand pane is the version of the MQ or WBI product that this SupportPac applies to. The date is the last webpage refresh. 
+
+To view the complete portfolio of WebSphere MQ SupportPacs please visit the WebSphere MQ SupportPacs homepage:
+http://www-1.ibm.com/support/docview.wss?rs=977&uid=swg27007205 [http://www-1.ibm.com/support/docview.wss?rs=977&uid=swg27007205]
+
+
+PREREQUISITES
+None
+
+INSTALLATION INSTRUCTIONS
+Not applicable
+
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options md05.pdf 11/10/2000 US English 87911 FTP [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/md05.pdf] 
+TECHNICAL SUPPORT
+ Category 2 SupportPacs are provided in good faith and AS-IS. There is no warranty or further service implied or committed and any supplied sample code is not supported via IBM product service channels. 
+
+You may submit a question or offer feedback on the SupportPac but please be aware that a response is NOT guaranteed. 
+Please read the LICENSE2 TXT file that accompanies the SupportPac to determine if you want to use it
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

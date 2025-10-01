@@ -1,0 +1,46 @@
+Title: IBM GIM35950I when installing CICS FMID due to hold errors against HIPER APARs - United States
+
+Text:
+GIM35950I GIM35950 HOLDERROR MSGGIM35950I MSGGIM35950 HIPER APARs reasonid sysmod 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The base FMID for CICS Transaction Server for z/OS (CICS TS) will not install due to unresolved HIPER APARs. You receive a message like the following for at least one APAR:
+
+GIM35950I 1 ERROR HOLD AQ47048 WAS NOT RESOLVED. EXCLUDED SYSMOD UQ54619 WOULD HAVE SUPERSEDED AQ47048. 
+
+CAUSE
+Reference web site: http://service.software.ibm.com/390holddata.html [http://service.software.ibm.com/390holddata.html]. This site indicates FMIDs will not be allowed to install when there is an outstanding unresolved HIPER APAR.
+
+RESOLVING THE PROBLEM
+To get around this problem include the following parameters in your SMP/E JCL:
+
+
+ 1. To bypass the HIPER APARs:
+    APPLY SELECT(fmid)
+    GROUPEXTEND
+    BYPASS HOLDERROR(XXnnnn) HOLDSYSTEM 
+    
+    Where fmid is the CICS FMID you are installing and XXnnnn is the APAR to be bypassed. For example, you would include AQ47048 in response to the GIM35950I message included in this problem.
+    
+    If there are multiple HIPERs with PE chains, you can either bypass the HOLDERROR for each APAR or code BYPASS (HOLDCLASS(HIPER)) to bypass all HIPER APARS to allow the base product to be applied. 
+    
+    
+ 2. To install the FMID: 
+    APPLY SELECT FORFMID(fmid)
+    BYPASS HOLDERROR HOLDSYSTEM
+    
+    
+ 3. To identify any missing HIPER maintenance after the FMID is installed:
+    REPORT ERRSYSMODS 
+
+
+
+You will then need to research each HIPER APAR and take appropriate action. 
+RELATED INFORMATION
+#Message GIM35950I [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/GIMMCD50/1.2.479?SHELF=EZ2MZ940&DT=20110603111000&CASE=]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

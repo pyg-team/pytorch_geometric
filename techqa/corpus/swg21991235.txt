@@ -1,0 +1,132 @@
+Title: IBM Installing and upgrading IBM Data Server Manager Version 2.1.1 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I install IBM Data Server Manager?
+How do I upgrade IBM Data Server Manager?
+How do I apply an IBM Data Server Manager license activation kit? 
+
+ANSWER
+
+
+The following sections provide information needed to install IBM Data Server Manager (DSM) Version 2.1.1, upgrade an existing installation to IBM Data Server Manager Version 2.1.1, and extend the functions by applying a license activation kit (LAK).
+
+ 
+
+ * To download the latest modification of IBM Data Server Manager, go to Fix Central [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/Data+Server+Manager&release=All&platform=All&function=all].
+ * For new users, download IBM Data Server Manager from developerWorks [https://www.ibm.com/services/forms/preLogin.do?source=swg-rddsm] or Passport Advantage [http://www.ibm.com/support/docview.wss?uid=swg24042233]
+
+NOTE: On Passport Advantage, you can also get Data Server Manager(V2.1.0) under IBM Performance Management Offering [http://www-03.ibm.com/software/products/en/db2-performance-management-offering] bundling ,especially to download the license activation kit (LAK) for Data Server Manager V2.1.0. After download and install the license activation kit, you can go to Fix Central [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/Data+Server+Manager&release=All&platform=All&function=all] or developerWorks [https://www.ibm.com/services/forms/preLogin.do?source=swg-rddsm] to get the latest modification releases and fix packs of IBM Data Server Manager.
+
+In the details that follow, replace <v.v.v> with the version you are installing or upgrading to and <platform> with your platform:
+
+ * For AIX, use aix. The downloaded file has the extension .tgz.
+ * For Linux x86-64, use linux-x86_64. The downloaded file has the extension .tgz.
+ * For Linux on Power Systems (little endian), use plinuxle (not supported in v1.1.1). The downloaded file has the extension .tgz.
+ * For Linux on System z, use zlinux. The downloaded file has the extension .tgz.
+ * For Windows, use win64. The downloaded file has the extension .zip.
+
+With DSM Version 2.1.1, you use setup scripts for both fresh installs and upgrades. Running these scripts when upgrading creates backups of the following essential directories: 
+
+ * config
+ * dscomponents
+ * dscomponents_with_rep
+ * java
+ * license
+ * dsweb 
+
+These scripts also relocate DSM binaries to the appropriate directories, to prevent leftover contents from interfering with DSM operations and to help keep DSM folder size under control.
+Note: When upgrading, copies of the original config, dscomponents, dscomponents_with_rep, java, license, and dsweb directories are saved in your <installdirectory>/dsm_bak directory.
+
+
+NEW INSTALLATION OF IBM DATA SERVER MANAGER VERSION 2.1.1
+To complete your first installation of IBM Data Server Manager:
+
+ 1. From the Registration to Download Data Server Manager [https://www.ibm.com/services/forms/preLogin.do?source=swg-rddsm] page, download the package ibm-datasrvmgr-<platform>. Alternatively, from Passport Advantage, download the package: ibm-dsm-ee-and-lak-<platform> for Enterprise Edition or ibm-dsm-base-<platform> for Base Edition.
+    
+    
+ 2. Extract the package contents. The extracted package expands into a /ibm-datasrvrmgr installation directory. For example, if you extract the package contents into C:\, the IBM Data Server Manager product expands into C:\ibm-datasrvrmgr. For the remainder of this Technote, the installation directory is referred to as <installdirectory>.
+    
+    
+ 3. Optionally review and modify <installdirectory>\setup.conf. The server parameters in this file have default values. For a silent install, you must make any modifications before running setup.Note: To apply any license activation kits, see Applying license activation kits. When finished, continue as follows.
+    
+    
+ 4. From the installation directory, run the setup script and follow the prompts. To run the script from a terminal window, enter the following command: setup -silent
+    
+    Note:You can use HTTPS with SSL security exclusively to connect to your Data Server Manager installation. To do so, enter the following values in your <installdirectory>/Config/dswebserver.properties file:
+    
+     * cookie.secureOnly=true
+     * port=-1
+    
+    
+
+Your IBM Data Server Manager server is ready for use.
+
+
+UPGRADING IBM DATA SERVER MANAGER TO THE LATEST RELEASE OR IFIX
+To upgrade IBM Data Server Manager to the latest release or iFix:
+
+ 1. From Fix Central [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/Data+Server+Manager&release=All&platform=All&function=all], download the IBM Data Server Manager upgrade package [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/Data+Server+Manager&release=All&platform=All&function=all] for your platform.
+ 2. Stop the Data Server Manager server or service. 
+ 3. If Data Server Manager is running as a Windows service, run <installdirectory>/bin/stopservice. Otherwise, run <installdirectory>/bin/stop.sh.
+ 4. Run <installdirectory>/bin/status, to verify that the service has stopped.Note: If you have customized any of the scripts in your existing DSM /bin folder, you will need to make a backup of these files before proceeding with the upgrade, as the upgrade process will overwrite your changes. Once the upgrade is complete, you can migrate your changes over to the newly created versions.
+    
+    
+ 5. Extract the contents of the IBM Data Server Manager package into the previous install directory. Allow the files to be overwritten and replaced.
+ 6. From the install directory, run the setup script.
+
+The upgrade is complete and your IBM Data Server Manager server is ready for use.
+
+
+ENABLING ENTERPRISE LEVEL CAPABILITIES
+You can automatically enable the enterprise level capabilities of IBM Data Server Manager Version 2.1.1 by connecting to any of the following DB2 editions, from the Data Server Manager console: 
+
+ * IBM DB2 Advanced Enterprise Server Edition
+ * IBM DB2 Advanced Workgroup Server Edition
+ * IBM DB2 Developer Edition
+ * IBM DB2 Direct Advanced Edition
+ * IBM DB2 on Cloud Advanced Edition
+ *  IBM DB2 Express, Workgroup, or Enterprise Edition databases, version 10.5.0.5 or higher, that have the IBM Performance Management Offering [http://www-03.ibm.com/software/products/en/db2-performance-management-offering]license certificate installed
+
+Once you establish a connection to your DB2 database, IBM Data Server Manager Version 2.1.1 should enable your enterprise capabilities automatically. To check the edition of DB2 you are connected to, go to Settings > Manage Connections and view the status of your database license in the DB2 Edition column of the Database Connections table. 
+
+Note: If the value displays as Unknown, click the value to manually update the status. If you are connecting to a database that you have recently upgraded to one of the additions listed above, you may need to reconnect to your database using the database selector.
+
+Enabling DB2 Versions prior to 10.5.0.5 that use the Performance Management Offering
+
+If you have a license entitlement to use the Performance Management Offering with a DB2 Express, Workgroup, or Enterprise database on DB2 10.5.0.4 and lower, you will need to install a license activation kit (LAK) appropriate to your operating system, on Data Server Manager
+
+Go to Downloading IBM Data Server Manager [http://www.ibm.com/support/docview.wss?uid=swg24042233] for a complete list of Enterprise edition LAKs for each supported operating system.
+
+To install an IBM Data Server Manager Version 2.1.1 license activation kit:
+
+ 1. Go to the Passport Advantage site and download the license activation kit package. For Data Server Manager Enterprise installations supporting a repository database on either DB2 for Linux, Unix, and Windows or DB2 for z/OS, use the ibm-dsm-lak-only-<platform> LAK.
+    
+    
+ 2. If setup.sh/setup.bat is not yet executed, extract each entitled license activation kit into the install directory. Allow files to be overwritten and replaced.For example, the dscomponents and license folders in the license activation kit should be extracted to the dscomponents and license folders in your install directory.
+    
+    From the install directory, run the setup script to start the Data Server Manager server or service.
+    
+    
+ 3. If Data Server Manager was already up & running:  1. Stop the Data Server Manager server or service.If Data Server Manager is running as a Windows service, run <installdirectory>/bin/stopservice. Otherwise, run <installdirectory>/bin/stop.sh.
+        
+        
+     2. Verify that the server is stopped, by running <installdirectory>/bin/status.
+     3. Extract each entitled license activation kit into your install directory. Allow files to be overwritten and replaced.
+     4. Start the Data Server Manager server or service.If Data Server Manager is running as a Windows service, run <installdirectory>/bin/startservice. Otherwise, run <installdirectory>/bin/start.sh.
+        
+        
+    
+    
+ 4. The Performance Management Offering LAK has been applied.
+ 5. 
+
+Note: In case of installation failure, you may:
+
+ * Verify that copies of the original Config, dscomponents, dscomponents_with_rep, java and license folders are saved in <installdirectory>/dsm_bak directory.
+ * Remove the Config, dscomponents, dscomponents_with_rep, java and license folders from <installdirectory>.
+ * Move the Config, dscomponents, dscomponents_with_rep, java and license folders from <installdirectory>/dsm_bak to <installdirectory>.
+ * Remove<installdirectory>/dsm_bak.
+ * Repeat steps from New Installation of IBM Data Server Manager.

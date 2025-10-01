@@ -1,0 +1,71 @@
+Title: IBM IlrProductionRulesetIntrospectionException when testing with SSP - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why is the Scenario Service Provider (SSP) not updated with the new XOM changes, after running the ANT task to update the SSP? When testing with the newly deployed XOM, an exception indicates a ruleset parsing failure.
+
+
+CAUSE
+The ANT task for updating the SSP contains a "xomClasses" target, which specifies the location from where the compiled XOM classes have to be picked. This location needs to be updated when you change the "Default Output Folder" in Eclipse, for the Java XOM project.
+
+ANSWER
+When testing the ruleset with SSP, you might see the following exception: 
+
+ * 
+ * ilog.rules.dvs.common.output.IlrProductionRulesetIntrospectionException: An error has been detected. Contact your Administrator as this error typically occurs when trying to retrieve the signature of the ruleset. The XOM may not be correctly deployed to the SSP. Check the error trace for more detailed information. 
+   at ilog.rules.dvs.runner.impl.IlrRunnerImpl.run(IlrRunnerImpl.java:167) 
+   at ilog.rules.dvs.runner.impl.IlrRunnerImpl.run(IlrRunnerImpl.java:123) 
+   at ilog.rules.dvs.ssp.impl.IlrSSPServiceImpl.run(IlrSSPServiceImpl.java:79) 
+   ....
+   
+ * Caused by: java.lang.RuntimeException: 
+   ilog.rules.res.xu.ruleset.impl.IlrCannotCreateRulesetException: Cannot create ruleset: /prodra1328026198513_2450c897_ece3_4a0e_9219_a42e10130fe4/1.0/prodrs1328026198513_2450c897_ece3_4a0e_9219_a42e10130fe4/1.0, error code: XU.ERROR.10009 
+   at ilog.rules.dvs.ssp.rsi.signature.IlrSSPRulesetSignatureFactory.getRulesetSignature (IlrSSPRulesetSignatureFactory.java:101) 
+   at ilog.rules.dvs.runner.impl.IlrRunnerImpl.run(IlrRunnerImpl.java:164) 
+   ... 28 more 
+   ... 
+ * Caused by: ilog.rules.res.xu.ruleset.impl.IlrCannotCreateRulesetException: Cannot create ruleset: /prodra1328026198513_2450c897_ece3_4a0e_9219_a42e10130fe4/1.0/prodrs1328
+   026198513_2450c897_ece3_4a0e_9219_a42e10130fe4/1.0, 
+   error code: XU.ERROR.10009 
+   at ilog.rules.res.xu.util.IlrResourceExceptionHelper.createCannotCreateRulesetException ( IlrResourceExceptionHelper.java:134) 
+   at ilog.rules.res.xu.ruleset.impl.IlrRulesetParsingWork.run(IlrRulesetParsingWork.java:80) 
+   at com.ibm.ejs.j2c.work.WorkProxy.run(WorkProxy.java:399) 
+   ... 1 more 
+   .... 
+ * Caused by: 
+   ilog.rules.res.xu.ruleset.impl.IlrCannotCreateRulesetException: Cannot create ruleset: /prodra1328026198513_2450c897_ece3_4a0e_9219_a42e10130fe4/1.0/prodrs1328
+   026198513_2450c897_ece3_4a0e_9219_a42e10130fe4/1.0, error code: XU.ERROR.10009 
+   at ilog.rules.res.xu.util.IlrResourceExceptionHelper.createCannotCreateRulesetException (IlrResourceExceptionHelper.java:134) 
+   at ilog.rules.res.xu.ruleset.impl.IlrXURulesetFactory.createRuleset(IlrXURulesetFactory.java:130) 
+   at ilog.rules.res.xu.ruleset.impl.IlrRulesetParsingWork.run(IlrRulesetParsingWork.java:69) 
+   ... 2 more 
+ * .... 
+ * 
+   Caused by: ilog.rules.res.xu.ruleset.impl.IlrRulesetParseException: Ruleset /prodra1328026198513_2450c897_ece3_4a0e_9219_a42e10130fe4/1.0/prodrs1328
+   026198513_2450c897_ece3_4a0e_9219_a42e10130fe4/1.0 parsing failed Problem occurred during translation loading: Error when translating rule 
+   "<rule name>": Cannot translate value "<class>/<method>", error code: XU.ERROR.10014 
+   at ilog.rules.res.xu.util.IlrResourceExceptionHelper.createRulesetParseException ( IlrResourceExceptionHelper.java:121) 
+   at ilog.rules.res.xu.ruleset.impl.IlrRulesetParser.createRulesetParseException (IlrRulesetParser.java:158) 
+   at ilog.rules.res.xu.ruleset.impl.IlrRulesetParser.parseArchive( IlrRulesetParser.java:141) 
+   at ilog.rules.res.xu.ruleset.IlrDefaultRulesetFactory.createRCERuleset( IlrDefaultRulesetFactory.java:86) 
+   at ilog.rules.res.xu.ruleset.impl.IlrXURulesetFactory.createRCERuleset( IlrXURulesetFactory.java:220) 
+   at ilog.rules.res.xu.ruleset.impl.IlrXURulesetFactory.createRuleset( IlrXURulesetFactory.java:104) 
+   ... 3 more 
+ * 
+
+This exception indicates that the ruleset parsing has failed because the XOM classes or methods that were used in the rule could not be resolved by the rule engine. This can happen when the XOM in the SSP is not updated with the changes made in the project workspace. One of the possible reasons is the location of the compiled XOM classes when using ANT to automate the SSP packaging [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=%2Fcom.ibm.websphere.ilog.jrules.doc%2FContent%2FBusiness_Rules%2FDocumentation%2F_pubskel%2FJRules%2Fps_JRules_Global722.html] [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=%2Fcom.ibm.websphere.ilog.jrules.doc%2FContent%2FBusiness_Rules%2FDocumentation%2F_pubskel%2FJRules%2Fps_JRules_Global722.html]. When you generate the files using the "Repackage XOM for remote DVS testing [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=%2Fcom.ibm.websphere.ilog.jrules.doc%2FContent%2FBusiness_Rules%2FDocumentation%2F_pubskel%2FJRules%2Fps_JRules_Global720.html]" wizard, it locates the compiled classes from the "Default output folder" of the XOM project, and creates a build file snippet as shown below: 
+
+ 
+
+ * <xomClasses> 
+   <fileset dir="${eclipse.workspace.dir}/myxom/bin" />
+   </xomClasses
+ * 
+ * 
+ * 
+
+The "${eclipse.workspace.dir}/myxom/bin" folder can change depending on your XOM project settings for the " Default output folder". This location is used in future SSP repackaging operations, when running the generated build file. If the location of the " Default output folder" changes on the XOM project, make sure to reflect this change in the build file. 
+
+For more information, refer to the " Source Tab" section in the Eclipse documentation for Java Build Path [http://help.eclipse.org/galileo/index.jsp?topic=/org.eclipse.jdt.doc.user/reference/ref-properties-build-path.htm]. Make sure that " Default output folder" and the fileset under xomClasses are matching.

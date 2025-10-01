@@ -1,0 +1,175 @@
+Title: IBM HD94860: EXCEL PROPERTY MAPPING DOES NOT WORK CORRECTLY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Scenario:
+   1. Launch Smarteam Data Model Designer V5 R19 SP6 with Smdemo
+   database.
+   2. Select Modify the database structure.
+   3. Add new lookup attribute into document class. (ex Name:
+   test)
+   4. Add new mapping rule between Excel and above new
+   attiribute.
+   - the mapping direction is one way from Excel to Smarteam
+   5. Add this attribute on the profile card of document class
+   through the form designer in admin console.
+   4. Set lookup table like following
+    Name, Description
+    0, test0
+    1, test1
+    2, test2
+    3, test3
+   5. Start Excel with Smarteam connection.
+   6. Change cell name which is match with above property
+   mapping rule.
+   7. Set the value of column "test0"
+   8. Save into Smarteam
+   9. open profile card
+   Result ==>  The value of mapped lookup table shows differnt
+   value(test1)
+   Expexted Result ===> The value of mapped lookup table should
+   show the same value in profile card as in excel.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  empty
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Scenario:
+   1. Launch Smarteam Data Model Designer V5 R19 SP6 with Smdemo
+   database.
+   2. Select Modify the database structure.
+   3. Add new lookup attribute into document class. (ex Name:
+   test)
+   4. Add new mapping rule between Excel and above new
+   attiribute.
+   - the mapping direction is one way from Excel to Smarteam
+   5. Add this attribute on the profile card of document class
+   through the form designer in admin console.
+   4. Set lookup table like following
+    Name, Description
+    0, test0
+    1, test1
+    2, test2
+    3, test3
+   5. Start Excel with Smarteam connection.
+   6. Change cell name which is match with above property
+   mapping rule.
+   7. Set the value of column "test0"
+   8. Save into Smarteam
+   9. open profile card
+   Result ==>  The value of mapped lookup table shows differnt
+   value(test1)
+   Expexted Result ===> The value of mapped lookup table should
+   show the same value in profile card as in excel.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THE PROBLEM WAS SUBMITTED ON :
+       I-PLM Collaborative Innovation VERSION V5R19.
+   THIS PROBLEM IS NOT REPRODUCIBLE ON :
+   I-PLM Collaborative Innovation VERSION V5R21 GA level
+   Additional Closure Information:
+   it is not reproducible on R20 SP2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD94860
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   519
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-25
+   
+   
+ * CLOSED DATE
+   2010-06-16
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569199970
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R521 PSN
+   UP

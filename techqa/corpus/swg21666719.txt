@@ -1,0 +1,42 @@
+Title: IBM Illegal group reference Exception thrown by the Alcatel 5620 SAM probe - United States
+
+Text:
+java.lang.IllegalArgumentException: Illegal group reference; SamServerUserName; Exception caught; NSHeadException on connect TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Alcatel 5620 SAM probe fails to fetch the events with an exception and then shuts down. 
+
+SYMPTOM
+The probe would show the following messages on the logs: 
+
+------------
+01/17/2014 02:18:28 PM: Error: SamHttpRequest : Failed to get property : java.lang.IllegalArgumentException: Illegal group reference
+01/17/2014 02:18:28 PM: Error: Exception caught during HTTP connection request
+01/17/2014 02:18:28 PM: Error: NSHeadException on connect - Exception caught during request HTTP connection to SAM.
+01/17/2014 02:18:28 PM: Debug: Found message of type FATALERROR: Probe failed to connect. Caused by: Exception caught during request HTTP connection to SAM.
+01/17/2014 02:18:28 PM: Debug: Joining probe initialisation thread
+01/17/2014 02:18:28 PM: Debug: exiting thread
+01/17/2014 02:18:28 PM: Debug: sent SleepInterrupt
+01/17/2014 02:18:28 PM: Debug: Joining should continue thread
+01/17/2014 02:18:28 PM: Debug: Shutting down probe
+01/17/2014 02:18:28 PM: Information: Probewatch: Unable to get events; Caused by: Probe failed to connect. Caused by: Exception caught during request HTTP connection to SAM.
+01/17/2014 02:18:28 PM: Error: Exception on shutdown - null
+01/17/2014 02:18:28 PM: Debug: Flushing events to object server
+01/17/2014 02:18:28 PM: Error: Unable to get events
+Caused by: Probe failed to connect. Caused by: Exception caught during request HTTP connection to SAM.
+01/17/2014 02:18:28 PM: Debug: Retry is false, will not reconnect
+01/17/2014 02:18:28 PM: Debug: Probe shutting down 
+
+------------
+
+
+CAUSE
+The Illegal group reference errors are thrown due to special characters like $ or # mentioned in the SAM Server username value defined in the probe property SamServerUserName.
+
+
+RESOLVING THE PROBLEM
+Make sure that there are no special characters in the SamServerUserName. 
+
+If there are, request the Alcatel SAM administrator to provide a new ASCII only username for use with the probe. 
+
+When the new username is provided ensure that the SAMServerPassword property is updated as well as the SamServerUserName.

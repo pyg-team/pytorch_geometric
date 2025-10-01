@@ -1,0 +1,146 @@
+Title: IBM PK10507: JMSTEXTMESSAGEIMPL IS NOT SERIALIZABLE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Attempting to deserialize a SIB message results in the
+   following:
+   
+   [10/08/05 19:00:09:363 BST] 00000046 SystemOut     O Returned
+   from SENDWRSP class:
+   com.ibm.ws.sib.api.jms.impl.JmsTextMessageImpl
+   [10/08/05 19:00:09:373 BST] 00000046 SystemOut     O _STUB
+   exception: java.rmi.MarshalException: CORBA BAD_PARAM
+   0x4f4d0006 Maybe; nested exception is:
+    java.io.NotSerializableException: java.lang.Object is not
+   serializable
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of WebSphere default messaging         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Beans and applications which work with  *
+   *                      JMS messages may report the following:  *
+   *                                                              *
+   *                      java.rmi.ServerException: RemoteExcepti *
+   *                      on occurred in server thread;           *
+   *                      nested exception is:                    *
+   *                               java.rmi.MarshalException: COR *
+   *                      BA BAD_PARAM 0x4f4d0006 Maybe;          *
+   *                      nested exception is:                    *
+   *                                                              *
+   *                      java.io.NotSerializableException:       *
+   *                      java.lang.Object is not serializable    *
+   *                                                              *
+   *                      at com.ibm.CORBA.iiop.UtilDelegateImpl. *
+   *                      wrapException(UtilDelegateImpl.java:690 *
+   *                      )                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The error is caused by one of the internal message classes,
+   which is not serializable.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The class has been made serializable and the problem is
+   resolved.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK10507
+   
+   
+ * REPORTED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * REPORTED COMPONENT ID
+   620400101
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-08-17
+   
+   
+ * CLOSED DATE
+   2005-09-22
+   
+   
+ * LAST MODIFIED DATE
+   2005-09-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * FIXED COMPONENT ID
+   620400101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

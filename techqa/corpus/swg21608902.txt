@@ -1,0 +1,42 @@
+Title: IBM The Deploy Case Manager Client task in IBM Case Manager Administrator Client can fail to create folders and files under the Business Space WebDAV filestore - United States
+
+Text:
+cmac; case manager; case manager administration client; icm 5.1; icm 5.0; deploy case manager client; webDav; could not create files; could not create folders; directory missing; files missing; folder missing; folders missing; deploy case client failed; depoly case client TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When users try to login to IBM Case Manager Client, the login page does not have the IBM Case Manager logo and trademark information. After successfully logging in to IBM Case Manager Client, the user does not see the IBM Case Manager information in the banner. 
+
+SYMPTOM
+Some files and folders are missing from the WebDAV filestore.
+
+
+CAUSE
+The user who launched the IBM Case Manager administration client did not have read, write and execute permissions to the folders and files under the <ICM_HOME> and <WAS_HOME> directories. 
+
+Where:
+<ICM_HOME> represents the IBM Case Manager installation directory
+<WAS_HOME> represents the WebSphere® Application Server installation directory
+
+and the user or group's full access permissions means read, write, and execute permissions
+
+
+RESOLVING THE PROBLEM
+Ensure that the user that runs the IBM Case Manager administration client has read, write, and execute permissions to the folders and files under the <ICM_HOME> and <WAS_HOME> directories. 
+
+
+For example, in environments with Windows operating systems, right click on the administration client program or its shortcut and select the "Run as Administrator" option to launch it. Then execute the administration client tasks to make sure that this user has full access permissions to the relevant directory structure.
+
+In environments with non-Windows operating systems, make sure that the AIX, Linux, or Solaris user you use to launch the administration client, or the group that this user belongs to, has full access permissions to the folder and files of the relevant directories.
+
+Where:
+<ICM_HOME> represents the IBM Case Manager installation directory
+<WAS_HOME> represents the WebSphere® Application Server installation directory
+
+and the user or group full access permissions means read, write, and execute permissions
+
+
+
+PRODUCT ALIAS/SYNONYM
+ Advanced Case Management
+Case Manager
+IBM Case Manager

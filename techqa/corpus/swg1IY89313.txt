@@ -1,0 +1,226 @@
+Title: IBM IY89313: S17551 - REQUEST IS NOT CORRECTLY LISTED WHEN "SUSPEND USER", "RESTORE USER" OR "DELETE USER" IS SELECTED IN VIEW COMPLETED RE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  **********************************************
+   **********************************************
+   Title: Request is not correctly listed when "Suspend User",
+   "Restore User" or "Delete User" is selected in View Completed
+   Requests.
+   
+   Problem Description:
+   Request isn't correctly listed when "Suspend User", "Restore
+   User" or "Delete User" is selected in "View Completed Requests".
+   
+   This phenomena occurs under Japanese language installed. This
+   can't see under English environment.
+   
+   In English environment, there are six filters that are related
+   to operations to user as follows:-
+   
+   - "Suspend User"
+   - "Suspend Users"
+   - "Restore User"
+   - "Restore Users"
+   - "Delete User"
+   - "Delete Users"
+   
+   On the other hand, there are only three filters that are related
+   to "User(s)" operations....  The reason is that Japanese doesn't
+   Have any word to distinguish "User" from "Users".
+   
+   Can Customer Recreate:
+   Yes, and Japan L2 regenerated.
+   
+   ITIM Server Version - 4.6 with FP21
+   
+   Server Environment
+   Operating System   : AIX5.3
+   Database server    : DB2 V8.1
+   Directory server   : IDS 6.0
+   Application Server : WebSphere V5.1
+   
+   Desired Behavior:
+   "Suspend User", "Restore User" or "Delete User" filter should
+   work correctly.
+   
+   Steps to Duplicate:
+   1) Install Japanese language using Language Support CD-Rom
+   2) Select Japanese from language selector
+   3) Login to ITIM
+   4) Create a person
+   5) Suspend the person
+   6) Restore the person
+   7) Delete the person
+   8) Go to filter setting of "View Completed Requests", then set
+      "Today" and "All Users".
+   9) On "View Completed Request", set "All" filter
+   10) Make sure that two completed requests above are listed.
+   11) Change the filter to "Suspend User", then make sure whether
+       the "Delete User" request is listed.
+       "Delete User" request should be there, but no request is
+       listed.
+   12) Check the same thing to "Restore User" and "Delete User".
+   
+   **********************************************
+   **********************************************
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  S17551
+   We have successfully reproduced the problem in our local ITIM
+   4.6 setup.
+   
+   For Japanese language, the translation for "Suspend User" and
+   "Suspend Users" are same.
+   Therefore while displaying the filters for user, ITIM displays
+   only one "Suspend User".  The reason for this is as follows:
+   
+   In Labels.properties file the key for  "Suspend User" is
+   "processType.US" and for "Suspend Users" is
+   "processType.MS". Therefore two entries are displayed in drop
+   down box. But, in case of Japanese language
+   pack values for both  process types are same in
+   labels_ja.properties. Therefore  only one value is displayed
+   to user as ITIM processes only unique names.
+   
+   As the same key is used for both process types, Internally ITIM
+   processes  only one value corresponding to both
+   process types. In this case  "suspend user"/"processType.MS" and
+   therefore only entries  for "suspend users' are
+   displayed in completed or pending  request tab.
+   Same case is applicable for other process types like "Delete
+   Users" and "Restore Users".
+   
+   
+   A temporary workaround for this issue is to use unique values
+   for such key/value  pairs in Labels_ja.properties for e.g  the
+   customer can differentiate the "Suspend Users" from "Suspend
+   User" by editing the above mentioned property to have a
+   value like "Suspend User(Multiple)"   in Japanese language. Same
+   workaround can be applied for other labels also
+   (Restore Users and Delete Users).
+   
+   
+   processType.MS =Suspend User(Multiple)
+   processType.US =Suspend User
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   Users affected:
+   Japanese language users.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   This fix for this APAR is contained in the
+   following maintenance packages:
+   | Interim Fix | 4.6.0-TIV-TIM-IF0027
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY89313
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM TIV ID MGR
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3403
+   
+   
+ * REPORTED RELEASE
+   460
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-09-10
+   
+   
+ * CLOSED DATE
+   2006-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2006-09-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     LANGPACK
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM TIV ID MGR
+   
+   
+ * FIXED COMPONENT ID
+   5724C3403
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R460 PSY
+   UP

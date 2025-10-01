@@ -1,0 +1,76 @@
+Title: IBM Data Studio 3.1.1 encounters issues when connecting to DB2 V10.1 FP1 or newer - United States
+
+Text:
+DB2 LUW v10.1 FP1 Data Studio 3.1.1 FLASH (ALERT)
+
+ABSTRACT
+ The Administration Explorer and Data Source Explorer from Data Studio 3.1.1 displays the incorrect database version. When connecting to DB2 for Linux, UNIX, and Windows Version 10.1 FP1, the database information is incorrectly displayed as (DB2 for Linux, UNIX, and Windows V9.1). 
+
+CONTENT
+ 
+
+Symptom:
+Symptoms include missing functionality and missing features in the Administration Explorer and Data Source Explorer.
+
+The Admin Explorer and Data Source Explorer incorrectly displays a DB2 V10.1 database version as DB2 for Linux, UNIX, and Windows V9.1 
+Example:
+[/support/docview.wss?uid=swg21610862&amp;aid=1]
+
+Many behavior and catalog changes were made from DB2 V9.1 to DB2 V10.1 FP1. Items were renamed, moved and removed. Because the database is incorrectly displayed as V9.1, Data Studio checks for information in places where it would be, if the database were V9.1. But of course it is actually DB2 V10.1 FP1 or later. So there might be possible problems when loading objects from the database catalog in the form of missing information, failures or errors. Another example would be delta ddl and generate ddl. They would be based on V9.1. objects, which is incorrect.
+
+
+Cause:
+During the database connection establishment, Data Studio 3.1.1 fails to properly classify the correct database version. When that happens, Data Studio falsely thinks that it is a DB2 V9.1 connection.
+
+
+Environment:
+All users of Data Studio 3.1.1 connecting to a database on 
+DB2 Version 10.1 fix pack 1 (10.1.0.1) or newer on Linux, UNIX and Windows.
+The following products are affected: 
+
+ * Data Studio 3.1.1 
+ * Optim Query Workload Tuner 3.1.1 
+ * InfoSphere Data Architect 8.1 
+ * InfoSphere Warehouse Design Studio V10.1
+
+
+
+Diagnosing the problem: 
+Use the following information to validate if you are encountering this issue. 
+ 1. Connect to a DB2 LUW V10.1 FP1 or later database using Data Studio 3.1.1 
+ 2. Database version information is displayed as V9.1 instead of V10.1 in the Admin Explorer and the Data Source Explorer 
+
+
+
+Resolving the problem: 
+A temporary fix can be implemented by obtaining a patch for RTC 14510 
+The patches are packaged with IBM Installation Manager. 
+Installation instructions are in the readme.txt included with the patch. 
+Download the corresponding patch for your product: 
+Product Version Download Data Studio 3.1.1 Fix Central [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information+Management&product=ibm/Information+Management/IBM+Data+Studio&release=3.1.1&platform=All&function=all] Optim Query Workload Tuner 3.1.1 Fix Central [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information+Management&product=ibm/Information+Management/IBM+Data+Studio&release=3.1.1&platform=All&function=all] InfoSphere Data Architect 8.1 Fix Central [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information+Management&product=ibm/Information+Management/Infosphere+Data+Architect&release=8.1.0.0&platform=All&function=all] InfoSphere Warehouse Design Studio 10.1 Contact the IBM InfoSphere 
+Warehouse support team to obtain a patch 
+for resolving this problem. 
+
+
+Technical Support 
+In the United States and Canada dial 1-800-IBM-SERV 
+View support contacts for other countries [http://www.ibm.com/planetwide/] 
+Open a Service Request [https://www.ibm.com/support/servicerequest/] with Technical Support 
+
+
+My Notifications 
+Sign-up to receive e-mail notification of changes to this document.  1. Sign in [http://www.ibm.com/support/mynotifications] to My Notifications 
+ 2. select Subscribe tab 
+ 3. select "Information Management" from the Software column 
+ 4. select the check box for "DB2 for Linux, UNIX and Windows" 
+    click the Continue button. 
+ 5. select the check box for "Flashes" and all other document types
+    click the Submit button.
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management DB2 for Linux- UNIX and Windows AIX, HP-UX, Linux, Solaris, Windows 10.1 Information Management InfoSphere Optim Query Workload Tuner for DB2 for Linux- UNIX and Windows 3.1.1 Information Management InfoSphere Data Architect 8.1 Information Management InfoSphere Warehouse DWE - Design Studio 10.1

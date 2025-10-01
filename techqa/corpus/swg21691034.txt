@@ -1,0 +1,162 @@
+Title: IBM Error TASK001X while upgrading Portal 8.0.0.1 to 8.0.0.1 CF14 during import-nodes sub-task - United States
+
+Text:
+upgrade; TASK001X; import-nodes; 404 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+While attempting to upgrade Portal to CF14 the upgrade fails during the import-nodes sub-task.
+
+SYMPTOM
+The ConfigTrace.log shows the following...
+
+import-nodes:
+
+--- Exception Thrown ---
+C:\Portal8\PortalServer\jcr\wp.content.repository.install\config\include
+s\jcr.install_cfg.xml:826: com.ibm.icm.jcr.task.TaskException:
+TASK001X: Remote task execution failed with response code 404 due to
+exception : Not Found . Please check the server log for more
+information.
+
+at
+com.ibm.icm.jcr.task.AbstractRemoteTask.execute(AbstractRemoteTask.java:
+840)
+
+at
+org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:275)
+
+at org.apache.tools.ant.Task.perform(Task.java:364)
+
+at org.apache.tools.ant.Target.execute(Target.java:341)
+
+at org.apache.tools.ant.Target.performTasks(Target.java:369)
+
+at
+org.apache.tools.ant.Project.executeSortedTargets(Project.java:1216)
+
+at
+org.apache.tools.ant.helper.SingleCheckExecutor.executeTargets(SingleChe
+ckExecutor.java:37)
+
+...
+
+Caused by: com.ibm.icm.jcr.task.TaskException: TASK001X: Remote task
+execution failed with response code 404 due to exception : Not Found .
+Please check the server log for more information.
+
+at
+com.ibm.icm.jcr.task.AbstractRemoteTask.execute(AbstractRemoteTask.java:
+825)
+
+... 75 more
+
+
+CAUSE
+The customer had previously disabled the autostart on several applications to improve the Portal startup time
+
+ENVIRONMENT
+Portal 8.0.0.1
+Windows
+
+DIAGNOSING THE PROBLEM
+from ConfigTrace.log...
+
+Wed Nov 19 16:49:42 CST 2014
+Target started: import-nodes
+
+import-nodes:
+--- Exception Thrown ---
+C:\Portal8\PortalServer\jcr\wp.content.repository.install\config\include
+s\jcr.install_cfg.xml:826: com.ibm.icm.jcr.task.TaskException:
+TASK001X: Remote task execution failed with response code 404 due to
+exception : Not Found . Please check the server log for more
+information.
+at
+com.ibm.icm.jcr.task.AbstractRemoteTask.execute(AbstractRemoteTask.java:
+840)
+at
+org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:275)
+
+...
+
+Caused by: com.ibm.icm.jcr.task.TaskException: TASK001X: Remote task
+execution failed with response code 404 due to exception : Not Found .
+Please check the server log for more information.
+at
+com.ibm.icm.jcr.task.AbstractRemoteTask.execute(AbstractRemoteTask.java:
+825)
+... 75 more
+
+From here I reviewed the SystemOut.log at the same timestamp and see
+the following...
+
+[11/19/14 16:49:43:804 CST] 00000042 filter E
+com.ibm.ws.webcontainer.filter.FilterInstanceWrapper doFilter
+SRVE8109W: Uncaught exception thrown by filter Extensible Filter:
+java.io.FileNotFoundException: SRVE0190E: File not found:
+/jcr/remotetask
+at
+com.ibm.ws.webcontainer.extension.DefaultExtensionProcessor._processEDR(
+DefaultExtensionProcessor.java:893)
+at
+com.ibm.ws.webcontainer.extension.DefaultExtensionProcessor.processEDR(D
+efaultExtensionProcessor.java:874)
+
+Both of these messages seems to indicate a problem with the WCM
+startup. This code is contained in the following
+application....JavaContentRepository.ear.
+
+Looking at your last Portal startup I saw this below which occurs
+during the wcm application startup....
+
+[11/19/14 15:57:54:566 CST] 00000009 ApplicationMg A WSVR0200I:
+Starting application: wcm
+
+....
+
+[11/19/14 16:00:36:812 CST] 00000005 TimeoutManage I WTRN0006W:
+Transaction
+00000149CA10760B000000012830B348BBD991CDC4031D0DFCED27CDD500F13F7FC95B79
+00000149CA10760B000000012830B348BBD991CDC4031D0DFCED27CDD500F13F7FC95B79
+00000001 has timed out after 120 seconds.
+[11/19/14 16:00:36:831 CST] 00000005 TimeoutManage I WTRN0124I: When
+the timeout occurred the thread with which the transaction is, or was
+most recently, associated was Thread[server.startup : 0,5,main]. The
+stack trace of this thread when the timeout occurred was:
+java.lang.Thread.blockedOn(Thread.java:1076)
+sun.reflect.GeneratedMethodAccessor21.invoke(Unknown Source)
+sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAcce
+ssorImpl.java:37)
+java.lang.reflect.Method.invoke(Method.java:611)
+
+Knowing this I further reviewed the SystemOut.log to see where the JCR
+web module gets loaded during startup....it should begin like this...
+
+SRVE0169I: Loading Web Module: JCRContentRepository.
+
+Your startup does not have this. This prompted me to review the
+deployment.xml from the JavaContentRepository application directory at
+this location...
+
+Portal8/wp_profile/config/cells/C001389391Cell/applications/JavaContentR
+epository.ear/deployments/JavaContentRepository/deployment.xml
+
+The contents show the following...
+
+<targetMappings xmi:id="DeploymentTargetMapping_1335003370698"
+enable="false" target="ServerTarget_1335003370698"/>
+
+The enable=false means that you have this application set to not
+autostart. Because of this it is not starting during Portal startup
+and therefore is not available when the config task attempts to
+communicate with it during the upgrade...and therefore causes the
+problem.
+
+RESOLVING THE PROBLEM
+Please make the following change in the WAS Admin Console...
+Applications > WebSphere enterprise applications >
+JavaContentRepository > Target specific application status > Check the
+box for the WebSphere_Portal server > Click Enable Auto Start > Save
+changes > restart Portal
+
+After making this change please attempt the CF upgrade again.

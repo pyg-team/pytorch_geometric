@@ -1,0 +1,284 @@
+Title: IBM IV69102: EMAIL SUBJECT IS TRUNCATED. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer is using a substitute variable :description
+   in a communication template.
+   
+   When the customer sends an e-mail from an SR using the
+   communication template, the e-mail subject is truncated
+   and e-mail message body is garbled in case that
+   SR.DESCRIPTION includes a carriage return code.
+   
+   There is a similar APAR IV03298 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV03298].
+   Although it should have been fixed in MAM 7.1.1.10,
+   the e-mail subject is still truncated with the following
+   scenario in MAM 7.1.1.13 environment.
+   
+   STEPS TO REPRODUCE:
+   1) From "Go To"-"System Configuration"-"Platform
+   Configuration"-"Communication Template", create a
+   new template with the following values.
+   
+   --------------------------------------------------
+   Template     :  PMR46653
+   Description  :  Comm Temp for PMR 46653
+   Applies To   :  SR
+   Accessible   :  ALL
+   Send From    :  maxadmin@localdomain
+   Subject      :  TEST :description
+   Message      :
+   ******************* English **********************
+   << Assignment / Approval >> Service Request
+   (USR1004080) was allocated to the workgroup
+   to which you belonged.
+   ---------------------------------------------------
+   
+   2) On "Recipients" tab, click "New Row" in "E-mail Address"
+   section and specify the following values.
+   
+   E-mail : maxadmin@localdomain
+   To?    : checked
+   
+   3) Then activate the communication template.
+   
+   4) From "Go To"-"System Configuration"-"Platform
+   Configuration"-"Application Designer", open SR application.
+   
+   5) On canvas, select "Service Request" tab and add a new
+   multiline textbox there specifying SR.DESCRIPTION in
+   "Attribute" field.
+   
+   6) From "Go To"-"Service Desk"-"Service Requests", create
+   a new SR specifying the following value in the multiline
+   textbox added in the previous step 5).
+   
+   a
+   a
+   
+   7) Select "Create"-"Communication" from "Select Action"
+   menu.
+   
+   8) On "Create Communication" window, specify a communication
+   template "PMR46653" in "Template" field and click "Send".
+   
+   CURRENT ERRONEOUS RESULT:
+   Checking the e-mail sent from Maximo, I can see that
+   e-mail subject is truncated like below.
+   
+   TEST a
+   
+   EXPECTED RESULT:
+   The customer expects that the e-mail subject should be
+   like below.
+   
+   TEST a a
+   
+   ADDITIONAL INFO:
+   Besides the e-mail subject is truncated, the e-mail message
+   could be also garbled depending on whether the mail server
+   can understand where the message body begins and the result
+   could change according to what kind of mail server is used.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Try not to include a carriage return in summary field of SR.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Maximo Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Email subject is truncated.                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to latest release.                                   *
+   ****************************************************************
+   The customer is using a substitute variable :description in a
+   communication template. When the customer sends an e-mail from
+   an SR using the communication template, the e-mail subject is
+   truncated and e-mail message body is garbled in case that
+   SR.DESCRIPTION includes a carriage return code.
+   
+   STEPS TO REPRODUCE:
+   1) From "Go To"-"System Configuration"-"Platform
+   Configuration"-"Communication Template", create a new template
+   with the following values.
+   --------------------------------------------------
+   Template     :  PMR46653
+   Description  :  Comm Temp for PMR 46653
+   Applies To   :  SR
+   Accessible   :  ALL
+   Send From    :  maxadmin@localdomain
+   Subject      :  TEST :description
+   Message      :
+   ******************* English **********************
+   << Assignment / Approval >> Service Request (USR1004080) was
+   allocated to the workgroup to which you belonged.
+   ---------------------------------------------------
+   
+   2) On "Recipients" tab, click "New Row" in "E-mail Address"
+   section and specify the following values.
+   E-mail : maxadmin@localdomain
+   To?    : checked
+   
+   3) Then activate the communication template.
+   
+   4) From "Go To"-"System Configuration"-"Platform
+   Configuration"-"Application Designer", open SR application.
+   
+   5) On canvas, select "Service Request" tab and add a new
+   multiline textbox there specifying SR.DESCRIPTION in "Attribute"
+   field.
+   
+   6) From "Go To"-"Service Desk"-"Service Requests", create a new
+   SR specifying the following value in the multiline textbox added
+   in the previous step 5.
+   a
+   a
+   
+   7) Select "Create"-"Communication" from "Select Action" menu.
+   
+   8) On "Create Communication" window, specify a communication
+   template "PMR46653" in "Template" field and click "Send".
+   
+   CURRENT ERRONEOUS RESULT:
+   Checking the e-mail sent from Maximo, I can see that e-mail
+   subject is truncated like below.
+   
+   TEST a
+   
+   EXPECTED RESULT:
+   The customer expects that the e-mail subject should be like
+   below.
+   
+   TEST a a
+   
+   ADDITIONAL INFO:
+   Besides the e-mail subject is truncated, the e-mail message
+   could be also garbled depending on whether the mail server can
+   understand where the message body begins and the result could
+   change according to what kind of mail server is used.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Email subject is not truncated.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+     | release\fix pack | Interim Fix Pack Release 7.1.1.13 TPAE
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV69102
+   
+   
+ * REPORTED COMPONENT NAME
+   ADMINISTRATION
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46A1
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-01
+   
+   
+ * CLOSED DATE
+   2015-04-01
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ADMINISTRATION
+   
+   
+ * FIXED COMPONENT ID
+   5724R46A1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

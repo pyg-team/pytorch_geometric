@@ -1,0 +1,130 @@
+Title: IBM JR58297: SECURITY APAR - MULTIPLE VULNERABILITIES IN IBM JAVA SDK AFFECT IBM PROCESS DESIGNER - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+8.5.7.201706-WS-BPMPCPD-IFJR58297 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.7.201706-WS-BPMPCPD-IFJR58297&source=SAR]
+bpm.8600.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8600.delta.repository&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Multiple vulnerabilities (CVEs) in IBM SDK Java Technology
+   Edition affect IBM Process Designer for IBM Business Process
+   Manager (BPM).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This interim fix will fix CVE-2017-3511 for IBM SDK Java 7.
+   
+   PRODUCTS AFFECTED
+   IBM BPM Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for the latest fixpack on all supported
+   affected releases of IBM BPM. This fix resolves the IBM SDK for
+   JAVA CPU April 2017 issues.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR58297
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-24
+   
+   
+ * CLOSED DATE
+   2017-10-02
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

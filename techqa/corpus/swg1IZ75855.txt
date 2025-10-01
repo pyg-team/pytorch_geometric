@@ -1,0 +1,239 @@
+Title: IBM IZ75855: AUTHENTICATION FAILS WHEN RUNNING TEMS AS NON-ROOT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description:
+   Authentication fails when running TEMS as non-root
+   
+   Environment:
+   ITM 6.2.1 IF02 and IF04 environment.
+   Hub TEMS on RHEL with LDAP authentication enabled
+   
+   setperm runs OK to lock down the Hub TEMS and run as non-root
+   user. RTEMS, Agents, etc... appear to be working OK and connect
+   to the ITM environment, but Hub TEMS appears unable to
+   authenticate users that either login to TEPS or run tacmd
+   commands.
+   
+   
+   From Hub TEMS logs:
+   (4BBB167C.0000-22:kdspac1.c,1570,"VPA1_CreatePath")
+   VPA1_CreatePath failure detected 1021.
+   (4BBB167C.0001-22:kdssqrun.c,951,"CreatePath") Create Path
+   Error. status 1021 path CT/DS:{SERVER=SRVR01 USER=KSH}
+   (4BBB167C.0002-22:kshdsr.cpp,351,"login") Create Path Error
+   st=1021 for 'user1' 'xxxxxxxx' 'ip.ssl'
+   
+   kdsvlunx
+   (4BBB167B.000B-1:kglcry.c,301,"checkICCStatus") ICC error
+   detected
+   (4BBB167B.000C-1:kglcry.c,269,"printICCStatus") majRC=2,
+   minRC=5, mode=999
+   (4BBB167B.000D-1:kglcry.c,271,"printICCStatus") desc=Failure in
+   loading functions
+   (4BBB167B.000E-1:kglcry.c,2398,"initializeICC") ICC
+   initialization failed
+   (4BBB167B.000F-1:kglcry.c,2792,"CRY_Decrypt") Function failed
+   with error code 37
+   (...)
+   (4BBB167C.0000-1:kglldp1.c,1167,"LDP1_ValidateLDAPSearch") User
+   user1 LDAP bind error user1@emea.mycorp.com
+   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx (49): Invalid
+   credentials.
+   
+   kuiras1:
+   +4BBB167C.0000 <faultstring>CMS logon validation
+   failed.</faultstring>
+   +4BBB167C.0000 <detail>user1</detail>
+   (...)
+   (4BBB167C.000D-1:kuitacmdmain.cpp,3120,"authenticateUser")
+   Invalid username or password.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Work around that gave satisfactory results on a specific
+   environment consisted in unsetting LD_LIBRARY_PATH then
+   reexporting it from kdsvlunx. This was achieved via creating a
+   soft link to a script that would do that before calling the
+   original kdsvlunx (renamed for the occasion).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  TEMS Authentication fails when running TEMS as non-root.
+   
+   On most Unix and Linux platforms, various GSKIT
+   initialization(s) will fail for setuid binaries if any of the
+   following apply:
+   
+   - Globally installed GSKIT version is incompatible with the
+   GSKIT installed by ITM.
+   - Incorrect or missing links for local GSKIT installation
+   prevent RUNPATH from finding correctGSKIT libraries.
+   - LDAP+SSL is enabled
+   
+   The failures are due to the way the runtime loader works for
+   setuid binaries on Unix/Linux platforms.  The runtime loader
+   ignores LD_LIBRARY_PATH (LIBPATH and/or SHLIB_PATH) for setuid
+   binaries and will only load shared libraries based on system
+   default path (trusted) and RUNPATH.  For all platforms except
+   AIX, the RUNPATH is only utilized for those shared libraries
+   loaded directly by the setuid binary.  For secondary (implicit)
+   runtime loading, the RUNPATH in the setuid binary is not used.
+   Also on linux, RUNPATH usage is altered by the presence of
+   LD_LIBRARY_PATH.  This means that on linux we cannot even rely
+   on RUNPATH preceding the system path in the case where an
+   incompatible global GSKIT is installed.
+   
+   To see these failures for IBM Tivoli Monitoring set KBB_RAS1 to:
+   
+   ERROR (UNIT:kdslg ALL) (UNIT:kdsvl ALL) (UNIT:kgllg ALL)
+   (UNIT:kglld ALL)
+   
+   Then restart the TEMS.
+   
+   You'll see in the IBM Tivoli Monitoring TEMS log:
+   
+   /opt/IBM/ITM/ls3266/ms/bin"
+   (4B3BB2B3.0001-24:kdspac1.c,1570,"VPA1_CreatePath")
+   VPA1_CreatePath failure detected 1021.
+   (4B3BB2B3.0002-24:kdssqrun.c,951,"CreatePath") Create Path
+   Error.  status 1021 path CT/DS:{SERVER=SRVR01 USER=KSH}
+   (4B3BB2B3.0003-24:kshdsr.cpp,351,"login") Create Path Error
+   st=1021 for '......' 'xxxxxxx' 'ip.ssl'
+   
+   You'll see something similar to one of the following in the IBM
+   Tivoli Monitoring kdsvlunx log for ICC failures:
+   
+   ICC Status for majRC=2, minRC=5, mode=999
+   ICC Status for majRC=An error occured in the ICC API,
+   minRC=Incompatible library - wrong architecture,
+   mode=FIPS mode is unknown (999)
+   
+   And for LDAP+SSL failures:
+   
+   (4BFAC320.0017-1:kglldp1.c,978,"LDP1_ValidateLDAPType") LDAP SSL
+   initialization (118), SSL failure reason code (118):
+   LDP1_Keyring /opt/IBM/ITM/keyfiles/keyfile.kdb, password
+   xxxxxxxx.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  There is no way to resolve the various GSKIT loader issues for
+   all platform within a setuid run binary so we will remove the
+   need to run setuid for those circumstances where GSKIT is
+   involved by moving the GSKIT related function's from kdsvlunx to
+   the main TEMS process, then invoking kdsvlunx as needed to
+   finish the authentication process.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.2.2-TIV-ITM-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ75855
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-11
+   
+   
+ * CLOSED DATE
+   2010-09-28
+   
+   
+ * LAST MODIFIED DATE
+   2010-10-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEMS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

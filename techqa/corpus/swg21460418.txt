@@ -1,0 +1,41 @@
+Title: IBM Q3 probes : Running multiple instances on the same probe server - United States
+
+Text:
+q3; Q3; Siemens SwitchCommander; Siemens RadioCommander; SRC; SSC; ConsolePort; AETitle; APTitle TECHNOTE (FAQ)
+
+QUESTION
+ Q3 : Siemens SwitchCommander : Multiple instances : What Q3 settings need to be unique? 
+
+ANSWER
+ 
+
+There are three main configuration settings to ensure are unique:- 
+
+ 
+
+1. The ConsolePort property must be unique. 
+
+2. The manager and agent must have unique descriptions [AE/AP Titles] for each host. 
+
+3. The manager.cfg configuration files must have unique identifiers;
+managerIdentity 
+name manager-id 
+
+.... 
+
+agentIdentity 
+name agent-id 
+... 
+agentController 
+name agent 
+managerIdentity manager-id 
+agentIdentity agent-id 
+agentSendControl 
+timeout 60 
+end 
+end 
+
+As well as these, the probes need to be configured to use unique files and P2P ports, where used.
+
+RELATED INFORMATION
+ Support's Guide to Q3 Probes [http://www-01.ibm.com/support/docview.wss?uid=swg21697361]

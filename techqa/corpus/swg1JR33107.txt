@@ -1,0 +1,181 @@
+Title: IBM JR33107: WHEN EVENTCOLLECTOR'S PANEL IS RELOADED AFTER INITIALLY CONFIG'N WITH CUSTOM VALUES,IT POPULATES BACK WITH DEFAULT DB CREDENTIALS - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 2 (6.2.0.2) [http://www-01.ibm.com/support/docview.wss?uid=swg24024407]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WPS Release: 6.1.0.0 at fp 6.1.0.3
+   
+   
+   All the environments (Dev, Int and Prod AIX5.3) are single
+   server
+   configuration. Due server resource issues, we have been
+   recreating the
+   environments in a new LPAR. These are the high level steps
+   followed:
+   a) Install WPS 6.1.0.0
+   b) Install fix pack 6.1.0.3
+   c) Create standalone profile without the BPC Sample
+   configuration
+   using the wizard
+   d) Manually create all the schemas in Oracle 9i (9.2.0.8)
+   e) Using Admin Console configure the profile to enable BPC
+   (successful)
+   f) Using Admin Console configure the Event Collector. This step
+   is
+   successfully completed, however when the page is reloaded, it
+   goes
+   back to the default configuration for the schema/user names and
+   password. And if I try to change it by pressing the edit button
+   and
+   save it, Admin Console comes back with an error.
+   
+   Since we can't wait to address this, and it is not a critical
+   component at this moment, I decided to leave the configuration
+   as-is
+   (with the wrong schema names) and then move on to add the
+   Observer app
+   and the BPC Explorer app (which were both successful)
+   
+   I am including some screen captures and logs for your reference.
+   Author has attached file: "PMR_94475.077.649.Logs.tar.gz" and
+   can be
+   retrieved at URL:
+       http://d25dbw26.mkm.can.ibm.com/wwqa/WWQAFiles.nsf/F/ [http://d25dbw26.mkm.can.ibm.com/wwqa/WWQAFiles.nsf/F/]
+   0B2B2A0656AE28E185257570004D1C94/$FILE/PMR_94475.077.649.Logs.ta
+   r.gz
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No local fix suggested.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  WebSphere Process Server v6.1.2 and v.6.2   *
+   *                  users                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An event collector in Websphere         *
+   *                      Application administration console      *
+   *                      for single server profile does not      *
+   *                      reflect the updated data source table   *
+   *                      after reload and gives errors when      *
+   *                      users make an attempt to modify data    *
+   *                      source table.                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The problem has been fixed by setting cell scope to get event
+   collector data source.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem can be fixed by applying iFix, or upgrade to the
+   next FixPack of v6.1.2. or v6.2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR33107
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-21
+   
+   
+ * CLOSED DATE
+   2009-07-30
+   
+   
+ * LAST MODIFIED DATE
+   2009-07-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R612 PSY
+   UP
+   
+   
+ * R620 PSY
+   UP

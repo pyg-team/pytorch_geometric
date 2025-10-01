@@ -1,0 +1,42 @@
+Title: IBM The console log gets heavily populated with Event Messages when DDM is enabled - United States
+
+Text:
+PHEY8S6FWX; DDM; Event Message; Clearing Event; Console log; Replication; Completed Successfully TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After enabling Domino Domain Monitor (DDM), the console log gets heavily populated with "Normal" Event Messages such as: 
+
+ Replication of <database name> from <database name> completed successfully 
+
+ Replication of <database name> to <database name> completed successfully 
+
+ 
+
+These messages are so intensive that they are too noisy and clog up the console log.
+
+
+
+CAUSE
+This is a code defect. 
+
+This logged event happens because one or more DDM "scheduled replication check" probe has been enabled. 
+
+They are clearing events. What that means is ... If a missed scheduled repl alert has been logged/opened in DDM.NSF, that DDM entry will automatically get closed when the replication actually happens. So every time a successful replication happens (that matches the probe), the clearing event is logged. If there is an matching open DDM.NSF entry, it will be found and closed. 
+
+The clearing event only gets logged to DDM.NSF if a the open entry already exists. 
+
+This clearing event is too noisy. The clearing event should never be logged to the Domino console or log.nsf. 
+
+I am not aware of a logging flag that will exclude the clearing event from console.log. But that could be implemented, similar to any of the other flags.
+
+
+RESOLVING THE PROBLEM
+SPR PHEY8S6FWX has been created to track this problem. 
+
+A fix will be implement to switch off the event messages being outputted to the console log
+
+
+
+
+ * 
+ *

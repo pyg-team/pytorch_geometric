@@ -1,0 +1,61 @@
+Title: IBM How to implement Active Directory against multiple domains in Collaboration & Deployment Services - United States
+
+Text:
+PEM PES C&DS CADS AD Active Directory multiple domain security provider TECHNOTE (FAQ)
+
+QUESTION
+ How can Active Directory against multiple domains in Collaboration & Deployment Services? 
+
+CAUSE
+In earlier versions of PES, the Security Provider Information was stored in files within the installation directory (such as ..\components\security\authConfig). 
+Starting with C&DS 4.0, this information is stored in the C&DS repository in the SPSSSEC_PROVIDERS table.
+When setup is first run, the default configuration is pushed to the database and there will be a setup of .preUpdate and .reference files in the ..\components\security\authConfig directory. Every time the configuration is changed, a new set of files is created. The set on the file system is a reflection of what is currently stored within the repository. 
+During server startup the security configuration is read (stored as BLOBs) from the database and not from the file system.
+Use the providerExchanage command found in the setup directory to upload new security providers.
+
+
+ANSWER
+Steps to implement Active Directory against multiple domains: 
+
+1) Navigate to C:\Program Files\IBM\SPSS\Collaboration and Deployment Services\4.2.1\Server\components\security\authConfig 
+
+2) Update the existing authActiveDirectoryLDAP.xml.preUpdate file to contain a unique displayName and id. Change the displayName, id and providerDescription to something meaningful. For example: 
+
+displayName = PaulsActiveDirectory 
+
+id = ADPRH 
+
+ProviderDescription = PaulsActiveDirectory 
+
+3) The first part of the XML, now looks like the following: 
+
+<provider displayName="PaulsActiveDirectory" id="ADPRH" 
+
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+
+xsi:noNamespaceSchemaLocation="../../dtd/authLdap.xsd"> 
+
+ <providerManager 
+
+ providerClass="com.spss.security.provider.ldap.LDAPProvider" 
+
+providerDescription="PaulsActiveDirectory"/> 
+
+4) Rename this file to something meaningful and save it into the setup directory. 
+
+ For example: authActiveDirectoryPaul.xml 
+
+5) Open a command prompt and change into the setup directory. For example: 
+
+C:\Program Files\IBM\SPSS\Collaboration and Deployment Services\4.2.1\Server\setup 
+
+6) Run the following command: 
+
+providerExchange.bat upload authActiveDirectoryPaul.xml 
+
+7) This new Security Provider will to show up within the Server Administration under Configuration => Security Providers. 
+
+8) You will then be able to modify the values for the provider and enable it.
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]

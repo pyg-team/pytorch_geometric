@@ -1,0 +1,13 @@
+Title: IBM Deleting Box folders and content from IBM Case Manager 5.3.0 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ After configuring Box as a repository for Case Manager, Case Client users would like to delete documents and/or folders created under the Box collaboration folder. There does not appear to be any mechanism to perform this deletion. 
+
+ANSWER
+There is no support for deleting documents and/or folders from a Box Collaboration folder created via Case Manager at this time. Case workers who created the Box collaboration folder will have Viewer/Uploader permission on the Box Collaboration folder, and therefore, will not be able to delete content within a Box collaboration folder as this may result in missing data in the associated cases. Users who are invited to collaborate on the Box collaboration folder have the same restriction. 
+
+Here is a link to Box collaboration permissions to clarify what permissions a Viewer/Uploader has
+https://community.box.com/t5/How-To-Guides-for-Sharing/What-Are-The-Different-Access-Levels-For-Collaborators/ta-p/144 [https://community.box.com/t5/How-To-Guides-for-Sharing/What-Are-The-Different-Access-Levels-For-Collaborators/ta-p/144]

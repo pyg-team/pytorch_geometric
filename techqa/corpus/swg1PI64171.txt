@@ -1,0 +1,139 @@
+Title: IBM PI64171: FRAMEWORK MANAGER RETURNS AN ERROR (RED BULLET, WHITE 'X') WITHOUT ERROR MESSAGE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Framework Manager returns an error (red bullet, white 'X')
+   without error message and thus prevents to import new metadata
+   or to test query subjects. Error situation occurred after
+   upgrade from IBM Cognos BI 10.2.1 FP5 to 10.2.2.x. The error
+   situation is seen under certain conditions or their combination,
+   for example: query based parameter maps to dynamically switch
+   data source Catalog/ Content Manager Data Source, prompt macros,
+   user defined functions or PowerCubes
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Several workarounds available. All require to replace macros/
+   parameter maps on data source properties pane to be able to
+   test/ import metadata. Depending on requirements within the
+   package (-> report usage) the property entries must be reverted
+   to macro definition.
+   
+   (a) Replace macro definition by known value for current required
+   data source, revert before publishing packages.
+   
+   (b) Replace macro by a more simple prompt macro for example
+   using a default: #prompt('WhichDB','token','myDB')#
+      -> same default as for Parameter Map
+      -> requires to verify proper handling later for report
+   users/consumers
+   
+   (c)  Replace macro by a simple mandatory prompt macro for
+   example: #prompt('WhichDB','token')#
+      -> all modelers must enter a valid value
+      -> to be verified: all report users/ consumers are connected
+   to their apropriate data source (report based solution)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM Cognos Analytic 11.0.7.0                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI64171
+   
+   
+ * REPORTED COMPONENT NAME
+   COG FRAMEWRK MG
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12FM
+   
+   
+ * REPORTED RELEASE
+   A22
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-14
+   
+   
+ * CLOSED DATE
+   2017-06-09
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RA22 PSN
+   UP

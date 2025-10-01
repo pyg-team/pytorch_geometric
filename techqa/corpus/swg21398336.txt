@@ -1,0 +1,29 @@
+Title: IBM Using PPM Debugging to troubleshoot FileNet P8 Process Engine (PE) issues - United States
+
+Text:
+vwppm.trc; vwrmi.log; RMI; PPM TECHNOTE (FAQ)
+
+QUESTION
+ How can I trace FileNet P8 Process Engine (PE) processing, including RMI calls? 
+
+ANSWER
+PPM Debugging is used to help troubleshoot issues involving the various components of the Process Engine, including all calls to the RMI (Remote Method Invocation) registry. PPM Debugging is a part of the PE Process Task Manager application, and by default it is disabled (Off).
+
+Sample usage: To enable PPM Debugging, perform the following steps: 
+
+ 1. Open the Process Task Manager on the PE server. 
+ 2. Highlight the PPM 
+ 3. Click on the Advanced tab and set the PPM Debugging to “On”. 
+
+
+This starts two trace log files: one logs the PPM processes, and one logs all calls to the RMI registry. The trace files are created in the directory from which the PPM is started, for example C:\windows\System32\, and are named vwppm.trc and vwrmi.log. 
+
+To capture an issue or problem occurrence in the logging, enable PPM Debugging (i.e., set to “On”) and then reproduce the problem (or wait for it to happen). Then, once the problem has been captured, immediately disable the PPM Debugging (i.e., set to “Off”). 
+
+Data to collect:  * The vwppm.trc and vwrmi.log files. 
+ * Provide the elog (\fnsw_loc\logs\elogs\elog<yyyymmdd>). 
+ * Provide a description of any known circumstances leading up to the issue along with any server error logs. 
+ * Document the time at which the issue occurred.
+
+
+For more information: See the P8 ECM on-line Help.

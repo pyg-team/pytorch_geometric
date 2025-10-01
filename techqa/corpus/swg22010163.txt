@@ -1,0 +1,21 @@
+Title: IBM Diagnosis log missing - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why my Classic dataserver log does not including the diagnosis log? 
+
+ANSWER
+
+I believe you must use log stream. 
+Do you specify STREAMNAME under CACLOG task? Something likes:
+
+STREAMNAME {CHANGED}=CDC123.DIAGLOG 
+
+If so, you will need to print them from the log stream you have set up. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Classic Data Event Publisher for z/OS

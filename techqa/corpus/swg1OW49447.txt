@@ -1,0 +1,139 @@
+Title: IBM OW49447: ABEND0C1 IN MODULE AOPSSCH. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS RETURNED (APAR CANNOT BE RESOLVED WITHOUT ADDITIONAL INFO FROM IBM OR CUSTOMER.)
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ABEND 0C1 in the PUMP address space:
+   .
+   IEA995I SYMPTOM DUMP OUTPUT
+   SYSTEM COMPLETION CODE=0C1  REASON CODE=00000001
+   TIME=05.13.08  SEQ=49628  CPU=0043  ASID=0073
+   PSW AT TIME OF ERROR  070C3000   80000004  ILC 2  INTC 01
+   NO ACTIVE MODULE FOUND
+   NAME=UNKNOWN
+   DATA AT PSW  00000000 - 040C0000  8132CB10  00000000
+   AR/GR 0: B00B019A/3029A4D8   1: 00000000/00F59800
+   2: 00000000/00000000   3: 00000001/84202000
+   4: 00000000/00000C60   5: 00000000/00FF0EF0
+   6: 00000000/00F59800   7: 00000000/3029A4D8
+   8: 00000000/80000000   9: 00000000/00000000
+   A: 00000000/84202000   B: 00000000/00FD2880
+   C: 00000000/00000C00   D: 00000000/00000C38
+   E: 00000000/00FF0EF0   F: 00000000/80000000
+   END OF SYMPTOM DUMP
+   .
+   The ABEND 0C1 occurred in module AOPSSCH and the
+   next sequential instruction to be executed in program AOPSSCH
+   was at displacement 00000876:
+   .
+           0000086A  41000001      LA    R0,1
+           0000086E  41102000      LA    R1,0(,R2)
+           00000872  1311          LCR   R1,R1
+           00000874  0A01          SVC   01        SUPERVISOR CALL
+    NSI==> 00000876  0700          BCR   0,R0
+           00000878  4510B32A      BAL   R1,810(,R11)
+           0000087C  0000          DATA  ..
+           0000087E  0024          DATA  ..
+           00000880  58101000      L     R1,0(,R1)
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is being returned as it was opened with insufficient
+   information to uniquely identify the cause of the problem.
+   Please resubmit an apar if an svc dump can be provided which
+   is taken as a result of this problem.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   OW49447
+   
+   
+ * REPORTED COMPONENT NAME
+   TIVOLI BSM OS/
+   
+   
+ * REPORTED COMPONENT ID
+   5698BSM00
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED RET
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2001-05-09
+   
+   
+ * CLOSED DATE
+   2002-01-07
+   
+   
+ * LAST MODIFIED DATE
+   2002-01-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIVOLI BSM OS/
+   
+   
+ * FIXED COMPONENT ID
+   5698BSM00
+   
+   
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,29 @@
+Title: IBM Where to obtain the license file sam41.lic for Tivoli System Automation Multiplatforms 4.1 (TSAMP) with DB2 10.5? - United States
+
+Text:
+sam41 license p TECHNOTE (FAQ)
+
+QUESTION
+ I am running DB2 for Linux, Unix, and Windows 10.5, where can I download the license file sam41.lic in order to license Tivoli System Automation Multiplatforms 4.1? 
+
+ANSWER
+Visit Downloading IBM DB2 Version 10.5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg21638030] which contains all the part numbers for DB2 10.5.
+
+
+If you have already purchased DB2 10.5, as indicated within the above link, one of the following part numbers can be downloaded depending on the platform you are on: 
+
+
+CIZ17MLIBM® Tivoli® System Automation Multiplatforms 4.1 for Linux® on System x, Linux® on POWER and Linux® on System z Multilingual
+CIZ18MLIBM® Tivoli® System Automation Multiplatforms 4.1 for AIX® 
+
+
+If you need help navigating the Passport Advantage website to search by part number, see: How do I download my DB2 license from Passport Advantage [http://www-01.ibm.com/support/docview.wss?uid=swg21305417] 
+
+
+Within the license folder of the extracted package, you will find the sam41.lic file
+
+To apply the license, use the samlicm [http://www.ibm.com/support/knowledgecenter/SSRM2X_4.1.0/com.ibm.samp.doc_4.1/samprgsamlicm.html] command as root:
+samlicm -i sam41.lic
+
+Once the license has been installed on all nodes the domain must be restarted (if there is one) for the license to be recognized.
+If there currently is no domain configured then the license will be recognized when a domain is created.

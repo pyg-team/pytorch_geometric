@@ -1,0 +1,46 @@
+Title: IBM CSV reports are not comma-separated - United States
+
+Text:
+csv report tcr comma separated tab separator cognos excel RSVP.CSV.DELIMITER TECHNOTE (FAQ)
+
+QUESTION
+ How can TCR be configured to use comma instead of tab as separator for CSV reports ? 
+
+ANSWER
+With TCR 2.x and 3.x, when generating a CSV report, the columns are separated using tab instead of the expected comma. 
+
+This is the default behavior.
+If you want to use comma instead of tab, follow below instruction to change CSV separator:
+
+1) From TCR toolbar, upper right corner,click Launch and then Administration
+
+[/support/docview.wss?uid=swg21663009&amp;aid=1] 
+
+2. On the Status tab, click System.
+
+[/support/docview.wss?uid=swg21663009&amp;aid=2] 
+3. You will see an an entry called System, with a drop-down menu arrow. From the System drop-down menu, select "Set properties". A new window is showed. 
+
+[/support/docview.wss?uid=swg21663009&amp;aid=3]
+
+4. Click the Settings tab.
+
+[/support/docview.wss?uid=swg21663009&aid=4] [/support/docview.wss?uid=swg21663009&aid=4]
+
+5. The very first element has name Advanced Settings in the category Environment, click Edit .
+
+[/support/docview.wss?uid=swg21663009&aid=5] [/support/docview.wss?uid=swg21663009&aid=5]
+
+
+6. In the Parameter field, write : RSVP.CSV.DELIMITER
+In the Value field, write the comma character (",")
+
+[/support/docview.wss?uid=swg21663009&aid=6] [/support/docview.wss?uid=swg21663009&aid=6]
+
+7. Click OK. 
+After 30 seconds, required for your changes to take effect, this setting will be activated and the next CSV report will be generated using comma as separator instead of tab.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Tivoli Common Reporting V2.1.1

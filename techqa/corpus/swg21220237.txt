@@ -1,0 +1,64 @@
+Title: IBM Looking up prices for CICS Transaction Server for z/OS and CICS Tools - United States
+
+Text:
+SMSG0028 RC4; RC04 return code 4; Retrieval of price data failed; RC = 4 ; price pricing ; CICS TS 4.1 ; 4.2 ; 5.1 5.2 ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 5655-Y04 5655Y04 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You would like to use IBMLink to check for the price or cost of the product. You are planning to upgrade to CICS Transaction Server for z/OS (CICS TS) 5.2, 5.1, 4.2 or 4.1 or to a new version of one of the CICS Tools. On the "Purchase/upgrade tools" menu, you select the "Look up IBM standard hardware and software prices (Price)" application. You enter the product number and the search results in a RC=4 (RC4) and message SMSG0028. 
+
+SYMPTOM
+You receive the following error in red text: 
+
+Retrieval of price data failed; RC = 4
+
+SMSG0028 Product is not in Data Base
+
+Note: For recent zSeries Software Prices, select ESWPrice from the Purchase/upgrade tools page.
+
+
+CAUSE
+Newer products are no longer entered in the Price application.
+
+
+RESOLVING THE PROBLEM
+Use the Look up zSeries Entitled Software prices (ESWPrice) application to find the price for CICS TS V5.2, V5.1, V4.2 or V4.1, and the CICS Tools. To do this, you can do the following:
+
+
+ 1. Sign onto IBMLink at http://www.ibm.com/ibmlink [http://www.ibm.com/ibmlink]
+    
+    
+ 2. On the ServiceLink screen, click on Purchase/upgrade tools: 
+    
+    [/support/docview.wss?uid=swg21220237&aid=1] [/support/docview.wss?uid=swg21220237&aid=1]
+    
+    
+ 3. Click on Look up IBM System z software prices (ESWPrice).
+    
+    [/support/docview.wss?uid=swg21220237&aid=2] [/support/docview.wss?uid=swg21220237&aid=2]
+    
+    
+ 4. Click on Product number, enter 5655-Y04 for CICS TS V5.2 and V5.1 or 5655-S97 for CICS TS V4.2 and V4.1, and then click on Search:
+    
+    [/support/docview.wss?uid=swg21220237&aid=3] [/support/docview.wss?uid=swg21220237&aid=3]
+    
+    You can get the prices for CICS Tools in the same way. The Product number for each of the CICS V5.2 Tools can be found in the CICS V5.2 Tools announcement [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS214-153] under "Program number". For example, 5655-Y22 is the Program number in the announcement letter for CICS Deployment Assistant for z/OS.
+    
+    
+ 5. Click on the "Entitlement Entity (EE)" of S0172DF for CICS TS for z/OS V5.2 and V5.1 or S015H9T for CICS TS V4.2 and V4.1. Both EEs will have a "Description" of CICS TS for z/OS:
+    
+    [/support/docview.wss?uid=swg21220237&aid=4] [/support/docview.wss?uid=swg21220237&aid=4]
+    
+
+Then the prices will display. 
+
+Note: There were no charges for upgrades to a higher release within a version. Therefore, the price for CICS TS V5.2 and CICS TS V5.1 are the same and the price for CICS TS V4.2 and CICS TS V4.1 are the same. 
+RELATED INFORMATION
+#Announcement letters for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21227090]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Interdependency Analyzer for z/OS Documentation z/OS 5.2, 5.1 Host Transaction Processing CICS Performance Analyzer for z/OS Documentation z/OS 5.2, 5.1 Host Transaction Processing CICS VSAM Recovery for z/OS Documentation z/OS 5.2, 5.1 Host Transaction Processing CICS VSAM Transparency for z/OS Documentation z/OS 2.1 Host Transaction Processing IBM Session Manager Documentation z/OS 3.2 Host Transaction Processing CICS Batch Application Control for z/OS Documentation z/OS 1.1.1 Host Transaction Processing CICS Configuration Manager for z/OS Documentation z/OS 5.2, 5.1 Host Transaction Processing CICS Online Transmission Time Optimizer Documentation z/OS 1.2 Host Transaction Processing CICS Deployment Assistant for z/OS Documentation z/OS 5.2, 5.1 
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

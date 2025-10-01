@@ -1,0 +1,26 @@
+Title: IBM Multiple Users and Systems Using one Rational Functional Tester Project - United States
+
+Text:
+rft; source control; clearcase TECHNOTE (FAQ)
+
+QUESTION
+ Can multiple users and systems be connected to one IBM Rational Functional Tester (RFT) project? 
+
+CAUSE
+There is no documentation in the Information Center on the best practice for multiple users working on one RFT project.
+
+ANSWER
+IBM Rational does not recommend that multiple users or computers be connected to the same RFT project at one time. If multiple users connect to a project, the project may become corrupted and you may experience permanent data loss. IBM does not support such usage.
+
+
+You may also notice the following behavior: 
+
+ * RFT may throw read/write errors when attempting to run scripts or create new artifacts in the project 
+ * RFT may be unable to generate artifacts at runtime such as logs, visuals, and other script output 
+ * Creating content may take an abnormally long time
+
+
+To enable support for multiple concurrent connections to a Rational Functional Tester project, you must implement a version control system. There are two supported solutions which both include out of the box support for integration with Rational Functional Tester, including mechanisms to automatically keep test scripts and their dependencies synchronized: 
+
+ *  IBM Rational Team Concert 
+ * IBM Rational ClearCase

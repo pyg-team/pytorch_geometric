@@ -1,0 +1,59 @@
+Title: IBM Error 'Exception has been thrown by the target of an invocation' in 'Data Entry - Group Journals' - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User clicks on 'Group - Data Entry - Group Journals'. User clicks 'printer' icon to print. User receives error message. 
+
+SYMPTOM
+ 
+
+Information
+Standard Error
+Number: 5
+Source: mscorlib
+Description: Exception has been thrown by the target of an invocation.
+OK
+
+TIP: The user may also have seen the following message the first time they tried to perform the print:
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+CAUSE
+The Controller application is trying to read the size of the paper/layout that the printer can print to. However, it has received an error. 
+
+ 
+There are many potential causes for this, for example: 
+
+ * Scenario#1 - There is no printer defined in Windows, for Controller to print to 
+ * Scenario#2 - The user does not have permission to print to their Windows session's default printer
+
+ENVIRONMENT
+This problem could potentially occur inside any environment, but it is more likely to occur inside a heavily 'locked down' environment such as inside a Citrix session.
+
+
+
+RESOLVING THE PROBLEM
+Ensure that: 
+
+ 1. There is a printer defined in Windows, for Controller to print to 
+ 2. The Windows user (running Controller) has permission to print to their Windows session's default printer 
+
+
+TIP: If you are deploying Controller via Citrix (or Microsoft Terminal Services) then you will probably need the assistance of your Citrix administrator to help ensure that the user's Citrix session has a valid default printer defined, and that the permissions are correct. 
+RELATED INFORMATION
+# [\] 
+[\]
+
+
+
+
+HISTORICAL NUMBER
+ 1040888

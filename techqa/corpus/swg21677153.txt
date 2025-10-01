@@ -1,0 +1,157 @@
+Title: IBM Enhanced EAR deployment and the isolated class loader attribute for a shared library - United States
+
+Text:
+Enhanced EAR; deployment; shared library; isolatedClassLoader; Use an isolated class loader for this shared library; classpath loading; editor; ibmconfig TECHNOTE (FAQ)
+
+QUESTION
+ How to edit the Enhanced EAR deployment extension files in Rational Application Developer (RAD) v8.0.4.x to set the isolated class loader attribute for a shared library in WebSphere Application Server (WAS) V7 or higher. 
+
+CAUSE
+This shared library setting was introduced with WAS v7.0 as described in this WAS v7 Knowledge Center (KC) item: Shared library settings [http://www-01.ibm.com/support/knowledgecenter/?lang=en#!/SSEQTP_7.0.0/com.ibm.websphere.soafep.multiplatform.doc/info/ae/ae/ucws_rsharedlib_inst.html?cp=SSEQTP_7.0.0], describing:
+
+
+...Use an isolated class loader for this shared library...
+... isolatedClassLoader={"true"|"false"} ..
+
+
+It is possible to set this in the WAS Admin Console when creating a shared library for WAS v7.x/v8.x. 
+
+ * 
+ * 
+   Shared Libraries > {your shared lib Name}
+   //==
+   ...
+   --------------
+   Class Loading
+   [x ] Use an isolated class loader for this shared library
+   //===
+   
+
+
+As shown in this screenshot: 
+
+[/support/docview.wss?uid=swg21677153&aid=1] [/support/docview.wss?uid=swg21677153&aid=1] 
+
+How can this be done for an Enhanced EAR deployment in the RAD 8.0.4.x? 
+ANSWER
+The Admin Console Shared Libraries: Class Loading setting
+[ ] Use an isolated class loader for this shared library
+has never been part of the Enhanced EAR editor deployment Shared Library settings in RAD v8.0.x and earlier. The editor uses/sets the following files for a shared library in the EAR folder<workspace>\TestEAR\META-INF\ibmconfig\ :
+
+
+..\cells\defaultCell\applications\defaultApp\deployments\defaultApp\deployment.xml
+and 
+..\cells\defaultCell\nodes\defaultNode\servers\defaultServer\libraries.xml
+
+
+The support for the isolated classloader for shared library setting was added in RAD 8.5.1 to the WAS "Deployment" editor:
+
+
+//== {Add|Edit} Library Entry
+...
+..
+--- Classpath Loading ---------------------------------
+[ ] Use an isolated classloader for this shared library
+-------------------------------------------------------
+//==
+
+
+ 
+
+As shown in this screenshot: 
+
+[/support/docview.wss?uid=swg21677153&aid=2] [/support/docview.wss?uid=swg21677153&aid=2]
+
+
+
+RAD 8.5.1+ versions have a checkbox to enable isolated shared library. If you select the checkbox, the <libraries:Library...> attribute 
+isolatedClassLoader={"true"|"false"}
+is added to the libraries.xml file. When the EAR is subsequently published to WAS v7.x/8.x using default publish settings, the WAS Admin console will show the "Use an isolated class loader for this shared library" checkbox set:
+
+Shared Libraries > {your shared lib Name}
+//==
+...
+--------------
+Class Loading
+[x ] Use an isolated class loader for this shared library
+
+//===
+
+
+
+In RAD 8.0.4.x you will need to manually edit the libraries.xml file after creating an Enhanced EAR deployment with a shared library. For example, in RAD 8.0.4.x it will result in these two files in the {EAR}\META-INF\ibmconfig folder:
+
+1. deployment.xml
+<workspace80>\TestEAR\META-INF\ibmconfig\cells\defaultCell\applications\defaultApp\deployments\defaultApp\deployment.xml 
+
+
+//----deloyment.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<appdeployment:Deployment xmi:version="2.0"
+xmlns:xmi="
+http://www.omg.org/XMI [http://www.omg.org/XMI]"
+
+xmlns:appdeployment="
+http://www.ibm.com/websphere/appserver/schemas/5.0/appdeployment.xmi"
+xmi:id="Deployment_1398720887895">
+<deployedObject xmi:type="appdeployment:ApplicationDeployment"
+xmi:id="ApplicationDeployment_1398720887895" startingWeight="10">
+<modules xmi:type="appdeployment:WebModuleDeployment"
+xmi:id="WebModuleDeployment_1398720887895" startingWeight="10000"
+uri="TestEAR60WAS8Web.war"/>
+<classloader xmi:id="Classloader_1398720887895" mode="PARENT_FIRST">
+<libraries xmi:id="LibraryRef_1398790128042"
+libraryName="spring-webmvc-3.2.3.RELEASE.jar"/>
+</classloader>
+</deployedObject>
+</appdeployment:Deployment>
+//-------end deployment.xml
+
+
+No change is required to the deployment.xml file!
+
+2. libraries.xml file:
+<workspace80>\TestEAR\META-INF\ibmconfig\cells\defaultCell\nodes\defaultNode\servers\defaultServer\libraries.xml 
+
+ * 
+ * 
+   //--- libraries.xml:
+   <?xml version="1.0" encoding="UTF-8"?>
+   <libraries:Library xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI [http://www.omg.org/XMI]"
+   xmlns:libraries="http://www.ibm.com/websphere/appserver/schemas/5.0/libraries.xmi"
+   xmi:id="Library_1398720887840"
+   name="spring-webmvc-3.2.3.RELEASE.jar"
+   description="spring-webmvc-3.2.3" isolatedClassLoader="true">
+   <classPath>C:\IBM-D\OpenSource-Jars\spring-webmvc-3.2.3</classPath>
+   </libraries:Library>
+   //--- end libraries.xml
+   
+
+
+
+You need to manually edit the file and add the <libraries:Library...> attribute as shown in the above libraries.xml file example: 
+
+isolatedClassLoader="true"
+
+
+
+Enhanced EAR deployment editors in RAD:
+The following editors are used to open an EAR Deployment Descriptor (application.xml) to see the Enhanced EAR deployment extensions:
+
+J2EE 1.x :
+- Use the traditional Application (1.x) Deployment Descriptor Editor which has a "deployment" tab
+
+JEE 5+ :
+- Right-click on your enterprise application project folder, and select Java EE -> Open WebSphere Application Server Deployment as described in RAD 8.0.4 IC topic:
+- 8.0: Defining deployment configurations for enterprise applications targeting a WebSphere Application Server [http://pic.dhe.ibm.com/infocenter/radhelp/v8/topic/com.ibm.servertools.doc/topics/cenhcear.html]
+
+and RAD v8.5 topic: 
+
+- 8.5: Defining deployment configurations for enterprise applications targeting a WebSphere Application Server [http://pic.dhe.ibm.com/infocenter/radhelp/v8r5/index.jsp?topic=%2Fcom.ibm.servertools.doc%2Ftopics%2Fcenhcear.html]
+
+
+For a broader overview of Shared Library support in RAD, see:
+Using WebSphere Application Server Shared Libraries in Rational Application Developer [http://www.ibm.com/support/docview.wss?uid=swg21303233]
+
+RELATED INFORMATION
+#Using WAS Shared Libraries in RAD [http://www.ibm.com/support/docview.wss?uid=swg21303233]

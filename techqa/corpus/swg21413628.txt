@@ -1,0 +1,69 @@
+Title: IBM Java Health Center Client -  a low overhead monitoring tool - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I monitor and diagnose my WebSphere Application Server environment without impacting performance? 
+
+ANSWER
+Also see: Extracting data from Java Health Center [http://www.ibm.com/support/docview.wss?uid=swg21423006] 
+
+ *  Java™ Health Center: 
+   Health Center is a very low overhead monitoring tool. It runs alongside an IBM Java application with a very small impact on the application's performance (less than 1%). Health Center monitors several application areas, using the information to provide recommendations and analysis that help you improve the performance and efficiency of your application. Health Center can save the data obtained from monitoring an application and load it again for analysis at a later date. 
+   
+   Starting with IBM Java 5 SR8 or IBM Java 6 SR1, The Health Center client can be installed within the IBM Support Assistant Team Server [http://www.ibm.com/software/support/isa/teamserver.html].
+   
+   The Health Center client has several different views, each reporting data regarding a different aspect of the JVM. The views available are: 
+   
+   
+    *  Classes: Information about classes being loaded CPU: Processor usage for the application and the system on which it is running Environment: Details of the configuration and system of the monitored application Garbage Collection: Information about the Java heap and pause times I/O: Information about I/O activities that take place Locking: Information about contention on inflated locks Method Trace: Information about method use over time Native Memory: Information about the native memory usage Profiling: Provides a sampling profile of Java methods including call paths Threads: Information about the live threads of the monitored JVM WebSphere® Real Time for Linux: Information about real-time applications 
+   
+   
+   
+   To Install Health Center: 
+   Health Center Client is installed as a plug-in for IBM Support Assistant (ISA), therefore, ISA must be installed prior to obtaining the Java Health Center. 
+   
+    * 
+    * IBM How to Install and Update Problem Determination Tools for IBM Support Assistant Team Server
+    * 
+    * 
+    * Generic JVM Argument
+    * 
+    * 
+    * 
+    *  
+      (WebSphere) Java Version Generic JVM Argument Java 7.0 and later
+      Java 6.0 SR5 and later
+      Java 5.0 SR10 and later -Xhealthcenter Java 6.0 SR1 through SR4
+      Java 5.0 SR8 and SR9 -agentlib:healthcenter -Xtrace:output=perfmon.out 
+   
+   
+
+ *   * 
+    * Connecting to an application by using the Health Center client
+    * 
+    * 
+    * 
+    * BEST PRACTICE:
+    * 
+    * 
+    * Platform Requirements
+    * 
+    * 
+    * 
+    * Note
+    * 
+    * inside 
+    * 
+    * 
+    *  Start the Health Center client, open the help documentation, then navigate to IBM Support Assistant>Problem Determination Tools>IBM Monitoring and Diagnostic Tools - Health Center>Monitoring a running application>Installing Health Center and install the agent from there. 
+    * 
+   
+   
+
+RELATED INFORMATION
+ IBM Monitoring and Diagnostic Tools for Java - Health C [http://www.ibm.com/developerworks/java/jdk/tools/healthcenter]
+HC 01 Overview of Health Center features [http://www.youtube.com/watch?v=5Tcktcl0qxs]
+IBM Monitoring and Diagnostic Tools for Java - Getting [http://www.ibm.com/developerworks/java/jdk/tools/healthcenter/getting_started.html]
+IBM Support Assistant [http://www.ibm.com/software/support/isa/]

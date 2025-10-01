@@ -1,0 +1,16 @@
+Title: IBM ADR date/time values lost on commit with IBM FileNet Capture Professional - United States
+
+Text:
+adr date time datetime TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When setting a Capture Professional date/time index to autoindex using the value of an ADR date/time field, such as ADR.Statistics:Recognition_DateTime, the value is lost when committing. 
+
+CAUSE
+For date/time fields ADR uses the format YYYYMMDD HH:MM, which is not recognized as a date/time field by most library systems including IBM FileNet Content Engine.
+
+RESOLVING THE PROBLEM
+There are two workarounds: 
+
+ * Put the ADR date/time value in a Custom Property set as a string. 
+ * Use a date/time field other than an ADR field, such as Properties.CreateDate.

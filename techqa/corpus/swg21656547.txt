@@ -1,0 +1,57 @@
+Title: IBM See PowerCube empty error (TR0220) in the Metrics cube build log after upgrading to IBM Connections 4.5 CR2 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+With Oracle or SQL server DB, see "(TR0220) The temporary file for PowerCube 'MetricsAuditCube' is empty" error in the cube build log after upgrading to IBM Connections 4.5 CR2. 
+
+This problem only happens with the back end database is Oracle or SQL server. Metrics cub build job works fine before upgrading to IBM Connections 4.5 CR2, and Metrics report displaying the correct data. After upgrading to CR2, see below error in the cube build log. 
+
+ * 
+ * 
+
+
+And Metrics report stop displaying new events data for people and participation theme after upgrading. Under certain circumstances, 'No date available' will be displayed for people and participation theme, and community Metrics report may fail to display. 
+
+RESOLVING THE PROBLEM
+This issue is caused by the sql statement missing in the IBM Connections 4.5 CR2 upgrade SQL script for Oracle and SQL server database. 
+
+
+Run following sql query to verify the problem:
+select * from metrics.f_user_event_count where user_id = 4 and (evt_ranking_id = 1000 or evt_ranking_id = 1001)
+
+If the value for the date_id colum for the records returned are not referring to date 'Jan 1, 2000', this confirms the metrics database has the problem.
+
+This issue can be fixed by run the attached fix up SQL scripts for corresponding database.
+
+Instruction to run the fix up SQL:
+For Oracle:
+1. Go to the Oracle sqlplus command directory
+2. Run command:
+
+For Windows: sqlplus /@ SID_Name as sysdba @ sql_location\fixup_on_45CR2_Oracle.sql 
+
+ * 
+
+For AIX/Linux: ./sqlplus /@ SID_Name as sysdba @ sql_location/fixup_on_45CR2_Oracle.sql  * 
+
+
+
+For SQL Server: 
+1. Go to the SQLServer sqlcmd command directory 
+2. Run command: 
+
+For Windows: sqlcmd -S Instance_name -i sql_location\fixup_on_45CR2_SQLSERVER.sql  * 
+
+
+
+After above step done, go to metricsmodel folder under Cognos transformer install path, and run script build-all.bat|sh to rebuild the powercube. 
+
+fixup_on_45CR2_Oracle.sql [/support/docview.wss?uid=swg21656547&aid=2]fixup_on_45CR2_Oracle.sql [/support/docview.wss?uid=swg21656547&aid=1] fixup_on_45CR2_SQLSERVER.sql [/support/docview.wss?uid=swg21656547&aid=4]fixup_on_45CR2_SQLSERVER.sql [/support/docview.wss?uid=swg21656547&aid=3] 
+
+
+
+
+ * 
+ *

@@ -1,0 +1,61 @@
+Title: IBM nzrestore failed restoring a database to a replication node - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ nzrestore failed to restore a database to replication node 
+
+SYMPTOM
+During the restore, nzrestore fails and puts this error message in restore log: 
+
+2014-05-01 16:50:22.384227 .... DB SQL 'insert into <table name> select * from external 
+'/nzscratch/tmp/bnr23067KfwKTT' using( format 'internal' compress 
+true);' failed - DB error - ERROR: Replication subordinate is not 
+permitted to issue insert, update, or delete against non-temporary 
+tables. 
+
+
+CAUSE
+ 
+
+Subordinate nodes cannot run INSERT, UPDATE, or DELETE operations against non-temporary tables. 
+
+Even if the target node being restored to had the replication role of MASTER when nzrestore started, but during the nzrestore it was changed to SUBORDINATE, then from that time forward INSERTs etc will fail.
+
+If the restore starts then fails part way through, then there must have been a role change during the nzrestore.
+
+
+
+ENVIRONMENT
+7.0.4 (P-3) replication (PTS) 
+
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+Check restoresvr.log under /nz/kit/log/restoresvr and look for errors like the below which say DML is not permissable on a SUBORDINATE against non-temporary tables. 
+
+
+2014-05-01 16:50:22.384227 .... DB SQL 'insert into <table name> select * from external 
+'/nzscratch/tmp/bnr23067KfwKTT' using( format 'internal' compress 
+true);' failed - DB error - ERROR: Replication subordinateis not 
+permitted to issue insert, update, or delete against non-temporary 
+tables.
+
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+1. Check replapplymgr.log under /nz/kit/log/replapplymgr and look for role change messages around the time nzrestore failed.
+
+2014-05-01 16:50:05.398798 .... Info: sending EVENT of type 'replStateChange':'Replication State Change'
+2014-05-01 16:50:05.398894 .... Info: Detected local master role demoted by remote node in replication set 28585.
+.........................
+2014-05-01 16:50:05.506670 .... Info: Role CHANGE from: 'Master' to 'None'
+2014-05-01 17:19:00.318290 .... Info: Role CHANGE from: 'None' to 'Subordinate'
+2014-05-01 17:21:55.296786 .... Info: Role CHANGE from: 'Subordinate' to 'None'
+2014-05-01 17:22:20.296451 .... Info: Role CHANGE from: 'None' to 'Master'

@@ -1,0 +1,164 @@
+Title: IBM MustGather: Connection pooling problems for WebSphere Application Server - United States
+
+Text:
+mustgather; mustgather; mustgather; MustGatherDocument; wascet; autopd TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting data for connection pooling problems for IBM WebSphere Application Server. Gathering this information before calling IBM support will help familiarize you with the troubleshooting process and save you time. 
+
+RESOLVING THE PROBLEM
+
+
+TAB NAVIGATION
+ * Learning more [http://www.ibm.com/support/docview.wss?uid=swg21247167]
+ * Troubleshooting [http://www.ibm.com/support/docview.wss?uid=swg21247168]
+ * Collecting data- selected tab,
+
+Collecting data for connection pooling problems for IBM WebSphere Application Server. Gathering this information before calling IBM support will help familiarize you with the troubleshooting process and save you time. 
+
+COLLECTING DATA MANUALLY
+ 1.  What is the exact version and edition of the WebSphere Application Server installed?
+     
+     For example: 
+     Base
+     Enterprise
+     WebSphere Business Integration Server Foundation
+     Network Deployment
+     
+     
+ 2.  What back-end system are you connecting to (database, messaging system, enterprise information system)? What is the name and version of the back-end system? If the back-end system is remote, what platform is it running on?
+     
+     
+ 3.  If you are connecting to a database, what is the name and version of the JDBC™ driver that you are using?
+     
+     
+ 4.  If you are connecting to a database, are you using a standard (V5) data source or a V4 data source?
+     
+     
+ 5.  If you are connecting to a database, does the same problem occur when you perform the same operation in a Java™ program running outside of WebSphere Application Server using the same JDBC driver to connect to the database?
+     
+     
+ 6.  Provide a full description of the problem that you have encountered, including the stack traces of any errors or exceptions that are occurring. Provide any logs that contain the errors or exceptions.
+     
+     
+ 7.  Under what circumstances does the problem occur? Does it occur every time a certain task is done or does it occur intermittently? Has this problem always occurred? If not, was a change recently made before the problem started to occur?
+     
+     
+ 8.  What are the names and JNDI names of the data sources or connection factories that are involved in the problem scenario?
+     
+     
+ 9.  Send the SystemOut.log file for the application server on which the problem occurs.
+     The file is located in the following directory: 
+     
+     profile_root/logs/server_name
+     
+     
+ 10. If the problem can be reproduced easily, enable a WebSphere Application Server trace:
+     
+     Note: If you are using a V4 data source, replace "WAS.j2c=all:RRA=all" with "com.ibm.ejs.cm.*=all" in the trace instructions below.
+      * You can review the following video that walks you through setting up the connection pooling trace in the Administrative Console. It goes through each step listed below to make sure the connection pooling trace is enabled correctly.
+        
+        
+        
+      * For releases of V9.0, V8.5, V8, and V7:  1.  In the Application Server Administrative Console, expand Troubleshooting and select Logs and Trace.
+             
+             
+         2.  In the Logging and Tracing page, select your server and then Diagnostic Trace. 
+             
+             
+         3.  Ensure that Enable Log is selected.
+             
+             
+         4.  Under Trace Output, select File, and accept the defaults. It is recommended to set the number of historical trace files to 10 and the size of each historical trace file to 100MB.
+             
+             
+         5.  Click OK and save your configuration. 
+             
+             
+         6.  Again, expand Troubleshooting and select Logs and Trace. 
+             
+             
+         7.  In the Logging and Tracing page, select your server and then Change Log Detail Levels.
+             
+             
+         8.  Enter the following trace string:
+             
+             If connecting to a database:
+             
+             *=info:WAS.j2c=all:RRA=all:Transaction=all
+             Note: Refer to Collecting JDBC Driver Tracing in WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg21654565] if DB2 or Oracle JDBC driver tracing is required.
+             
+             If connecting to a messaging system:
+             
+             *=info:WAS.j2c=all:Messaging=all:JMSApi=all:Transaction=all
+             
+             If connecting to an enterprise information system:
+             
+             *=info:WAS.j2c=all:com.ibm.connector2.*=all:Transaction=all
+             
+             
+         9.  Click OK and save your configuration.
+             
+             
+         10. Restart the Application Server.
+             
+             
+         11. Reproduce the problem. 
+             
+             
+         12. Send the resulting trace output file(s) along with the application server logs and FFDC files.
+             
+             
+        
+        
+     
+     
+ 11. If the problem takes time to reproduce, enable trace using the procedure under "Dynamic trace" in the document Setting up a trace in WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg21254706] which does not require a restart of the application server.
+     
+     
+ 12. Run the collector tool [https://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.multiplatform.doc/ae/ttrb_runct.html] to produce a JAR file containing your WebSphere Application Server configuration files and other logs that are useful to the WebSphere Application Server support team.
+     
+     
+ 13. Follow instructions to send diagnostic information to IBM support [http://www.ibm.com/support/docview.wss?uid=swg21153852].
+     
+     
+ 14. For a listing of all technotes, downloads, and educational materials specific to connection pooling, search the WebSphere Application Server support site [https://www-947.ibm.com/support/entry/myportal/product/websphere/websphere_application_server?productContext=224294509].
+
+
+
+Related information [http://www.ibm.com/support/docview.wss?uid=swg21153852] 
+Submitting information to IBM support [http://www.ibm.com/support/docview.wss?uid=swg21153852] 
+Steps to getting support for WebSphere Application Server [http://www.ibm.com/developerworks/websphere/support/appserver_support.html] 
+MustGather: Read first for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg21145599] 
+Troubleshooting guide for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg27005324] 
+
+EXCHANGING DATA WITH IBM SUPPORT
+To diagnose or identify a problem, it is sometimes necessary to provide Technical Support with data and information from your system. In addition, Technical Support might also need to provide you with tools or utilities to be used in problem determination. You can submit files using one of following methods to help speed problem diagnosis: 
+
+ * IBM Support Assistant (ISA) 
+ * Service Request (SR)
+ * E-mail 
+ * FTP to the Enhanced Customer Data Repository (ECuRep)
+
+
+
+
+Instructions for exchanging information with IBM Support [http://www.ibm.com/support/docview.wss?uid=swg21153852]
+
+READ FIRST AND RELATED MUSTGATHERS
+MustGather: Read first for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg21145599]
+
+
+
+
+ JMS problem [http://www.ibm.com/support/docview.wss?uid=swg21153217] 
+
+RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK Application Servers WebSphere Application Server - Express Java SDK AIX, HP-UX, Linux, Solaris, Windows 8.5, 8.0, 7.0, 6.1, 6.0, 5.1

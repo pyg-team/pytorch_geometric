@@ -1,0 +1,184 @@
+Title: IBM IV64602: APPAUTH_NDX1 IS BEING VIOLATED WHEN DEPLOYING DMMAXGROUP - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  STEPS TO REPRODUCE:
+   create a new package that uses DMMAXGROUP and
+   upload/deploy or preview. This is due to SHOWPORTLETDETAILS
+   being added in APAR  IV54674 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV54674]. Processing class needed to be
+   changed.
+   
+   Source
+   1 Create a new Security group called TEST and save. By default
+   it will
+   grant access to Start Center.
+   2. Create a new MM group, that has DMMAXGROUP,
+   3. Create new MM record with the group and use sql where to pick
+   groupname TEST
+   4. APPROVE, Create package, distribute
+   Target
+   1. Upload and deploy (you can use preview mode)
+   You will receive the error
+   
+   [ERROR] Cannot insert duplicate key row in
+   object 'dbo.applicationauth' with unique index 'appauth_ndx1'.
+   The
+   duplicate key value is (TEST_SC, STARTCNTR, SHOWPORTLETDETAILS).
+   com.microsoft.sqlserver.jdbc.SQLServerException: Cannot insert
+   duplicate key row in object 'dbo.applicationauth' with unique
+   index
+   'appauth_ndx1'. The duplicate key value is (TEST_SC, STARTCNTR,
+   SHOWPORTLETDETAILS).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Maximo users                                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * APPAUTH_NDX1 IS BEING VIOLATED WHEN DEPLOYING DMMAXGROUP     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply latest fix pack.                                       *
+   ****************************************************************
+   STEPS TO REPRODUCE:
+   Create a new package that uses DMMAXGROUP and upload/deploy or
+   preview as follows:
+   
+   1 Create a new Security group called TEST and save. By default
+   it will grant access to Start Center.
+   2. Create a new MM group, that has DMMAXGROUP,
+   3. Create new MM record with the group and use sql where to pick
+   groupname TEST
+   4. APPROVE, Create package, distribute Target
+   5. Upload and deploy (you can use preview mode)
+   
+   You will receive the following error:
+   
+   "Cannot insert duplicate key row in object 'dbo.applicationauth'
+   with unique index 'appauth_ndx1'. The duplicate key value is
+   (TEST_SC, STARTCNTR, SHOWPORTLETDETAILS).
+   com.microsoft.sqlserver.jdbc.SQLServerException: Cannot insert
+   duplicate key row in object 'dbo.applicationauth' with unique
+   index 'appauth_ndx1'. The duplicate key value is (TEST_SC,
+   STARTCNTR,SHOWPORTLETDETAILS).
+   
+   This is due to the introduction of the Start Center signature
+   security option SHOWPORTLETDETAILS to address APAR  IV54674 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV54674].
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code fix adds SHOWPORTLETDETAILS  to the processing class
+   business rules.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   	| release\fix pack\interim fix Release 7.5.0.8 of Base Services
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV64602
+   
+   
+ * REPORTED COMPONENT NAME
+   ADMIN & SECURIT
+   
+   
+ * REPORTED COMPONENT ID
+   TIVOADMIN
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-09-04
+   
+   
+ * CLOSED DATE
+   2014-11-05
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ADMIN & SECURIT
+   
+   
+ * FIXED COMPONENT ID
+   TIVOADMIN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

@@ -1,0 +1,11 @@
+Title: IBM announces replacement dates for Cognos Disclosure Management for BI parts - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ IBM has announced the dates when various IBM Cognos Disclosure Management for Business Intelligence (CDM for BI) parts will be replaced with IBM Cognos Disclosure Management (CDM) parts.
+
+
+CONTENT
+IBM has announced the dates when various IBM Cognos Disclosure Management for Business Intelligence (CDM for BI) parts will be replaced with IBM Cognos Disclosure Management parts. These parts are functionally identical and are from the same IBM product family (Program Number: 5725H97). See the announcement [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&appname=gpateam&supplier=897&letternum=ENUS913-269] for further details.

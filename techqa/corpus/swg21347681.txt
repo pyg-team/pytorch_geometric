@@ -1,0 +1,123 @@
+Title: IBM Publish to Data Mart - batch queue says 'running' and never finished, even 48 hours after started - United States
+
+Text:
+crash fail incomplete TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User launches 'Publish Data Mart' and selects Data Mart template. User chooses values and start the publish process. User opens the batch queue 2 minutes later, and sees the batch job is set to 'Running'. 
+
+Many hours (e.g. 48) later, user opens the batch queue again, and sees that the batch job is *still* set to 'running'. Batch job never completes (status is never 'finished'). 
+
+SYMPTOM
+There are no on-screen error messages. 
+
+ 
+Scenario #1
+Entries recorded inside Windows Event Viewer on the application (APP) and database (SQL) server:
+
+APP server:
+
+Event Type: Warning
+Event Source: VBRuntime
+Event Category: None
+Event ID: 1
+Date: 03/02/2008
+Time: 13:08:49
+User: N/A
+Computer: APPSERVERNAME
+Description:
+The VB Application identified by the event source logged this Application FrSrvFunc: Thread ID: 1956 ,Logged: Error occured at 03/02/2008 13:08:49 in FrSrvFunc, Error No=-2147217900, Source=Server Sub:Db_PushSqlRemore(..) , Description=The log file for database 'Production' is full. Back up the transaction log for the database to free up some log space., HelpFile= HelpContext=0 
+
+SQL server:
+
+Event Type: Error
+Event Source: MSSQLSERVER
+Event Category: (2)
+Event ID: 17055
+Date: 01/02/2008
+Time: 19:33:57
+User: N/A
+Computer: SERVERNAME
+Description:
+17053 :
+F:\sqllogs\Production_log.ldf: Operating system error 112(There is not enough space on the disk.) encountered.
+
+and:
+
+Event Type: Error
+Event Source: MSSQLSERVER
+Event Category: (2)
+Event ID: 17052
+Date: 01/02/2008
+Time: 19:33:57
+User: N/A
+Computer: SERVERNAME
+Description:
+Error: 9002, Severity: 17, State: 6
+The log file for database 'Production' is full. Back up the transaction log for the database to free up some log space.
+
+and:
+
+Event Type: Information
+Event Source: MSSQLSERVER
+Event Category: (2)
+Event ID: 17055
+Date: 01/02/2008
+Time: 19:34:46
+User: N/A
+Computer: SERVERNAME
+Description:
+17052 :
+Could not write a CHECKPOINT record in database ID 13 because the log is out of space.
+
+
+CAUSE
+There are several potential causes that can give the behaviour where the data mart publish remains at 'running' and does not appear to ever complete. 
+
+ * TIP: For more examples, see separate IBM Technote #2004635.
+
+
+This Technote discusses two scenarios:  * Scenario #1 - SQL server has run out of disk space. 
+ * Scenario #2 - The Data Mart publish is still running correctly, and simply needs more time to finish.
+
+DIAGNOSING THE PROBLEM
+Look inside the Windows Event Viewer (on both the Controller application server and database server) for entries inside the 'application log' which were recorded after the data mart publish was started.
+
+
+
+RESOLVING THE PROBLEM
+Scenario #1 
+
+ 
+
+ * Workaround - Free up disk space on the SQL server 
+ * Long Term Fix - Optimise your backup/maintenance routines to ensure that the SQL server's hard drives do not become full.  * Afterwards, place an alert on your server to automatically warn you when your hard drives are getting full.
+   
+   
+
+
+Steps for Fix 
+The typical root cause of this problem is due to huge transaction log files (" ldf" files). In most cases this problem is solves by implementing a suitable SQL Database Maintenance Plan, such as the one described in separate IBM Technote #1396973. 
+
+Afterwards, create/apply an automated routine to alert the I.T. administrator(s) if the SQL server's hard drives are becoming full.  * There are several third-party (non-IBM) techniques to do this. For example, see third-party (non-IBM) links below.
+
+
+Scenario #2 
+ * Workaround - Wait for process to complete. 
+ * Long Term Fix - Optimise your Data Mart environment to speed up the processing, and reduce the wait time.  * See separate IBM Technote #1347566 - Slow performance when publishing Data Mart
+   
+   
+
+RELATED INFORMATION
+ 1347569 - Controller SQL 2000 database optimisation and [http://www.ibm.com/support/docview.wss?uid=swg21347569]
+1396973 - Controller SQL 2005 & 2008 database optimisat [http://www.ibm.com/support/docview.wss?uid=swg21396973]
+THIRD PARTY - HOW TO: Configure a Low Disk Space Alert [http://support.microsoft.com/kb/324796]
+THIRD PARTY - Monitoring free drive space with Windows [http://terenceluk.blogspot.com/2012/10/monitoring-free-drive-space-with.html]
+THIRD PARTY - Configure a Low Disk Space Alert by Using [http://danieldrnek.wordpress.com/2012/03/22/low-disk-space-alert-windows-server-2008/]
+2004635 - ** Troubleshooting ** Data Mart job permanent [http://www.ibm.com/support/docview.wss?uid=swg22004635]
+
+
+
+
+HISTORICAL NUMBER
+ 1038328

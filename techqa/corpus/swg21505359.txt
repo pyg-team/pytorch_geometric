@@ -1,0 +1,37 @@
+Title: IBM Does the DB2 Workgroup Edition v9.7 include the DB2 pureScale feature? - United States
+
+Text:
+purescale; wse; ese; v9.8; workgroup; edition TECHNOTE (FAQ)
+
+QUESTION
+ Does the DB2 Workgroup Edition v9.7 include the DB2 pureScale feature? 
+
+ANSWER
+Starting on October 22nd, 2010 when DB2 V9.7 FP3a is made available, DB2 9.7 WSE customers are also entitled to use the DB2 pureScale Feature. 
+
+The use of DB2 pureScale Feature for DB2 9.7 WSE customers is restricted to a total cluster size of 4 Sockets. Note that the WSE 64 GB instance memory limit still applies to the pureScale entitlement that comes with WSE. 
+
+The pureScale feature cannot be enabled on a DB2 Workgroup Edition v9.7 install. In order to enable pureScale, a separate copy of DB2 Enterprise Server Edition v9.8 must be installed and configured: 
+
+ * Download the appropriate v9.8 package from Passport Advantage, depending on your operating system. These packages contain the install files for v9.8 as well as the license file db2dsf.lic located under the db2\license directory.
+   
+   CZJ0GEN - IBM DB2 pureScale Feature for Enterprise Server Edition Version 9.8.0.2 for Linux on Intel EM64T systems (x64)
+   
+   CZJ0FEN - IBM DB2 pureScale Feature for Enterprise Server Edition Version 9.8.0.2 for AIX
+   
+   
+ * An additional license file db2ese_ps.lic must be obtained from the following package.
+   
+   CZQN9ML - IBM DB2 9.7, Workgroup Server Edition - CPU Option Quick Start and Activation for Linux, UNIX and Windows 
+   
+
+
+db2ese_ps.lic must be applied after installing the new copy of v9.8. Use the command "db2licm -a db2ese_ps.lic" to add the license.  
+
+For information on the pureScale feature in DB2 v10.1, please see the following link:
+
+DB2 pureScale Feature included in DB2 server edition installations
+http://pic.dhe.ibm.com/infocenter/db2luw/v10r1/topic/com.ibm.db2.luw.wn.doc/doc/c0058984.html [http://pic.dhe.ibm.com/infocenter/db2luw/v10r1/topic/com.ibm.db2.luw.wn.doc/doc/c0058984.html]
+
+RELATED INFORMATION
+ How to download my DB2 license from Passport Advantag [http://www.ibm.com/support/docview.wss?uid=swg21305417]

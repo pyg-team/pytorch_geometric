@@ -1,0 +1,41 @@
+Title: IBM "Null userid is not supported" when logging into Decision Center console - United States
+
+Text:
+RTS; team server; teamserver; rule team server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After successfully logging in to Decision Center Console, IlrDataSourceException is thrown. 
+
+SYMPTOM
+The following error shows when logging into Decision Center: 
+
+ilog.rules.teamserver.model.IlrDataSourceException: Could not lookup 
+datasource named 'jdbc/ilogDataSource' Caused by: java.sql.SQLException: 
+Null userid is not supported. 
+
+
+CAUSE
+The error indicates a problem with database authentication. 
+
+
+DIAGNOSING THE PROBLEM
+Test connection on the datasource from the WAS admin console. 
+
+- If Test Connection fails, verify that J2C authentication data is configured
+- If Test Connection succeeds, it is likely that the runtime error from Decision Center was caused by the fact that Component-managed authentication alias is NOT defined for the datasource. 
+
+
+RESOLVING THE PROBLEM
+Select the J2C authentication alias for Component-managed authentication alias and then restart all WAS ND processes.
+
+Refer to this document [http://www.ibm.com/support/docview.wss?uid=swg21595296] for complete instruction on J2C authentication configuration in WebSphere Application Server for Decision Center V7.5. Step 7 describes the aforementioned solution.
+
+RELATED INFORMATION
+#Creating J2C authentication data [http://www.ibm.com/support/docview.wss?uid=swg21595296]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere ILOG JRules Installation Platform Independent 7.1, 7.0 Business Integration IBM Operational Decision Manager Platform Independent 8.5.1, 8.5

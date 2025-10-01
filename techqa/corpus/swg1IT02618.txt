@@ -1,0 +1,205 @@
+Title: IBM IT02618: AUTO REORG MAY NOT RECLAIM SPACE FOR COLUMN-ORGANIZED TABLES - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Cancun Release 10.5.0.4 (also known as Fix Pack 4) for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038261]
+DB2 Version 10.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24044110]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If maxOfflineReorgTableSize is set (> 0) in auto reorg policy
+   like below, the reclaimable space may not be automatically
+   reclaimed by db2acd for column-organized tables.
+   
+   <?xml version="1.0" encoding="UTF-8"?>
+   <DB2AutoReorgPolicy
+   xmlns="http://www.ibm.com/xmlns/prod/db2/autonomic/config" >
+   
+   <ReorgOptions  dictionaryOption="Rebuild"
+   indexReorgMode="Online"  useSystemTempTableSpace="true"
+   reclaimExtentsSizeForTables="100000" reclaimE
+   xtentsSizeForIndexObjects="50000" />
+   
+   <ReorgTableScope  maxOfflineReorgTableSize="1000000">
+   <FilterClause>TABSCHEMA NOT LIKE 'SYS%' AND
+   (TABSCHEMA,TABNAME) NOT IN (SELECT TABSCHEMA, TABNAME FROM
+   SYSCAT.EVENTTABLES)</FilterClause>
+   </ReorgTableScope>
+   </DB2AutoReorgPolicy>
+   
+   select T.RECLAIMABLE_SPACE FROM TABLE
+   (ADMIN_GET_TAB_INFO('SAPD01','/BIC/B0000444000')) T
+   
+        RECLAIMABLE_SPACE
+   --------------------
+          13522624
+   
+   You can check all the tables to be evaluated by running the
+   query below:
+   
+   -> db2 "WITH DP (SCHEMA, NAME, TBSPID) AS (SELECT DISTINCT
+   dp.tabschema, dp.tabname, dp.tbspaceid FROM
+   syscat.datapartitions as dp), DBPG (TBSPID, TBSPACETYPE, N
+   UMPARTS) AS (SELECT tbsp.tbspaceid, tbsp.tbspacetype,
+   count(dbpg.dbpartitionnum) FROM syscat.dbpartitiongroupdef as
+   dbpg, syscat.tablespaces as tbsp WHERE dbp
+   g.dbpgname = tbsp.dbpgname GROUP BY tbsp.tbspaceid,
+   tbsp.tbspacetype) SELECT DISTINCT a.schema, a.name,
+   a.reorg_state, a.reorg_history, a.reorg_index_schema,
+   a.reorg_index_name, a.reorg_index_online, b.clustered,
+   a.reorg_flag, b.stats_time,  a.reorg_time, d.tbspacetype,
+   b.tableorg, ((BIGINT(b.card) *
+   BIGINT(b.avgrowsize))/(BIGINT(d.numparts))) as table_size FROM
+   SYSTOOLS.HMON_ATM_INFO a, SYSCAT.TABLES b, DP c, DBPG d WHERE
+   a.schema =b.tabschema AND b.tabschema = c.schema AND a.name  =
+   b.tabname AND b.tabname = c.name AND c.tbspid = d.tbspid AND
+   a.stats_lock != 'Y' AND a.reorg_flag  = 'Y' AND (((b.clustered =
+   'Y') OR (b.clustered = 'T') OR (b.tableorg = 'C')) OR
+   ((b.clustered is NULL) AND ((b.stats_time > a.reorg_time) OR
+   (a.reorg_state > 4) OR (b.stats_time is not null AND
+   a.reorg_time is null) ) ) ) with ur"
+   
+   If any table has a negative table_size value, then all tables
+   after
+   this one will not be evaluated by db2acd including the one with
+   the negative table_size value.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There are two options:
+   
+   1) one is to update the FilterClause in auto reorg policy like
+   the below:
+   
+   <FilterClause>TABSCHEMA NOT LIKE 'SYS%' AND
+   (TABSCHEMA,TABNAME) NOT IN (SELECT TABSCHEMA, TABNAME FROM
+   SYSCAT.EVENTTABLES) AND (TABLEORG = 'R' OR (TABLEORG='C' AND
+   CARD = 0)) </FilterClause>
+   
+   And for those non-empty column-organized tables, manually run
+   "reorg table <tabname> reclaim extents ALLOW WRITE ACCESS'"
+   
+   2) another option is to set maxOfflineReorgTableSize to 0 so
+   that ATM will not check the
+   table size. And to avoid performing offline table reorg against
+   large tables when offline window is specified, user can exclude
+   those large tables in reorg policy explicitly.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * User who uses auto reorg to reclaim spaces for               *
+   * column-organized table                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 V10.5 Fix Pack 4.                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem first fixed in DB2 V10.5 Fix Pack 4.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT02618
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-18
+   
+   
+ * CLOSED DATE
+   2014-09-10
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA50 PSN
+   UP

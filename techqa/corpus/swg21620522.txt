@@ -1,0 +1,36 @@
+Title: IBM How can I find my saved searches and search templates in the new UI? - United States
+
+Text:
+filter TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ I saved some searches and search templates in the new UI. Where do I find them 
+
+ANSWER
+You can find your saved searches and search templates in the Search tab in the left navigation pane. In the Search tab, you can see your saved searches in the Saved Searches section. Make sure to click the "refresh" button to display the newly created saved search.
+To find a saved search template, click the arrow of the Select a Template list in the Search Templates section.
+
+[/support/docview.wss?uid=swg21620522&amp;aid=1]
+Your saved searches and search templates cannot be seen or used by another user currently. An enhancement request was created to address the need to allow saved searches and search templates to be used by multiple users. This request might be addressed in a future release.
+
+RELATED INFORMATION
+#Creating a search template in new UI [http://pic.dhe.ibm.com/infocenter/pim/v9r1m0/topic/com.ibm.pim.man.doc/pim_tsk_dev_creatingsearchtemplate.html?resultof=%22%73%65%61%72%63%68%22%20%22%74%65%6d%70%6c%61%74%65%22%20%22%74%65%6d%70%6c%61%74%22%20]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Master Data Management Collaboration Server AIX, Linux, Solaris 10.0, 10.1 
+PRODUCT ALIAS/SYNONYM
+ MDMCE
+MDMCS
+MDMPIM
+MDM Server for PIM
+MDM Collaboration Server
+InfoSphere MDM Server for PIM
+InfoSphere Master Data Management Collaboration Server
+InfoSphere Master Data Management Collaborative Edition
+InfoSphere Master Data Management Server for Product Information Management

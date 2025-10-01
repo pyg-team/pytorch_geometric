@@ -1,0 +1,31 @@
+Title: IBM Lotus Protector - Java based parts in web-ui can't be loaded (Java error: 'Could not process a schema file' ) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ after installing the most recent Java runtime update (Java 1.8.0 update 131) the Java based items in the LMI of Lotus Protector fail to load with the error 'Could not process a schema file' 
+
+SYMPTOM
+ 
+
+Error Message: 'Could not process a schema file'
+Details: Could not load class 'net.iss.cpe.plugins.AddressListSingleIpChooserSimpleType' for SimpleType 'http://www.iss.net/cml/MailSecurity/common:AddressNameSingleChooser' because of exception: net.iss.cpe.plugins.AddressListSingleIpChooserSimpleType
+
+[/support/docview.wss?uid=swg22002615&aid=1] [/support/docview.wss?uid=swg22002615&aid=1]
+
+
+CAUSE
+new security setting in Java 1.8.0 update 131
+
+
+RESOLVING THE PROBLEM
+ 
+
+1. open C:\Program Files (x86)\Java\jre1.8.0_131\lib\security\java.security in an editor
+2. search the line 'jdk.jar.disabledAlgorithms=MD2, MD5, RSA keySize < 1024' and change it to 'jdk.jar.disabledAlgorithms=MD2, RSA keySize < 1024'
+(explanation: remove MD5 from the 'jdk.jar.disabledAlgorithms' options line, so that the MD5 algorithm is enabled again)
+3. save the changes
+4. restart the web browser and load the Protector admin UI
+
+The Java based items should now load again without any issues

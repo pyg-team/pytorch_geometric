@@ -1,0 +1,190 @@
+Title: IBM IC92444: .Net client disconnects abruptly in a non-multiplexed environment resulting in svrconn channel not ending cleanly - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix Pack 7.1.0.4 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036454]
+WebSphere MQ V7.5 Fix Pack 7.5.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24036808]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Channel errors are reported by the queue manager when a .NET
+   client application running under non-multiplexed environment in
+   WebSphere MQ v7.1, disconnects.
+   
+   The application successfully connects to the queue manager and
+   processes messages. After closing the queues, a disconnect is
+   issued. No errors are reported by the client.
+   
+   The disconnect causes errors CSQX209E and CSQX599E at z/OS end:
+   
+   +CSQX209E CSQXRESP Connection unexpectedly terminated
+   126 channel SVRCONN.CHANNEL,
+   126 connection 99.99.99.99)
+   126 (queue manager )
+   126 TRPTYPE=TCP RC=00000000
+   +CSQX599E CSQXRESP Channel SVRCONN.CHANNEL ended abnormally
+   
+   If the client connects to a distributed queue manager, the
+   error seen on distributed queue manager is as follows:
+   
+   AMQ9209: Connection to host 'xxxx(yyyy)' for channel
+   SVRCONN.CHANNEL closed.
+   .
+   Additional keywords:
+   5655R3600 R010 R100
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of MQ 7.1 & 7.5 running .Net client applications in
+   non-multiplexed mode on Windows are affected by this APAR.
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   Channel errors are reported by the queue manager when a .NET
+   client application running under non-multiplexed environment
+   in WebSphere MQ v7.1 or v7.5, disconnects.
+   
+   The application successfully connects to the queue manager and
+   processes messages. After closing the queues, a disconnect is
+   issued. No errors are reported by the client. Whereas the
+   server side receives errors as the .Net client would not have
+   completed the disconnect activity cleanly. The .Net client is
+   supposed to send a close channel flow to the server to let the
+   server know that it can end the channel. As the .Net client
+   doesn't send across this flow to server, the server reports an
+   error and doesn't end the channel cleanly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR addresses the disconnect activity from the .Net
+   client side. As this was not being done cleanly which was
+   resulting in channel errors on the server side, this fix alters
+   the way in which the .Net client disconnects. The .Net client
+   now sends the required close channel flow to the server so that
+   the server can end the channel cleanly.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.4
+   --------           --------------------
+   Windows            7.1.0.4
+   
+   Platform           v7.5
+   --------           --------------------
+   Multiplatforms     7.5.0.3
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC92444
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-21
+   
+   
+ * CLOSED DATE
+   2013-05-30
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

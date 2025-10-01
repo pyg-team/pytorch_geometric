@@ -1,0 +1,240 @@
+Title: IBM PI67074: zOS Explorer - CREATING A NEW FILTER NO LONGER WORKS IN MY WORKSPACE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  zOS Explorer - When attempting to create a
+   new filter from the Remote Systems view, the 'Next' button is
+   greyed out although the filter string is valid.
+   
+   For example:
+   Right click on MVS Files>>New Filter
+   Filter string value,ABDC.*
+   The 'Next' button may be greyed out when it should not be
+   
+   The workspace .log file may have an entry like the following:
+   
+   org.eclipse.rse.ui
+   Error
+   Fri August 10:49:02 CEST 2016
+   Error in createPageControls of SystemNewFilterWizard
+   
+   java.lang.NullPointerException
+       at
+   org.eclipse.rse.ui.filters.dialogs.SystemNewFilterWizard.getFilt
+   erNameValidator(Unknown Source)
+       at
+   org.eclipse.rse.ui.filters.dialogs.SystemNewFilterWizard.getFilt
+   erNameValidator(Unknown Source)
+       at
+   org.eclipse.rse.ui.filters.dialogs.SystemNewFilterWizard.createP
+   ageControls(Unknown Source)
+       at
+   org.eclipse.jface.wizard.WizardDialog.createPageControls(Unknown
+   Source)
+       at
+   org.eclipse.jface.wizard.WizardDialog.createContents(Unknown
+   Source)
+       at org.eclipse.jface.window.Window.create(Unknown Source)
+       at org.eclipse.jface.dialogs.Dialog.create(Unknown Source)
+       at org.eclipse.jface.window.Window.open(Unknown Source)
+       at
+   org.eclipse.rse.ui.actions.SystemBaseDialogAction.run(Unknown
+   Source)
+       at org.eclipse.jface.action.Action.runWithEvent(Unknown
+   Source)
+       at
+   org.eclipse.jface.action.ActionContributionItem.handleWidgetSele
+   ction(Unknown Source)
+       at
+   org.eclipse.jface.action.ActionContributionItem.access$2(Unknown
+   Source)
+       at
+   org.eclipse.jface.action.ActionContributionItem$5.handleEvent(Un
+   known Source)
+       at org.eclipse.swt.widgets.EventTable.sendEvent(Unknown
+   Source)
+       at org.eclipse.swt.widgets.Display.sendEvent(Unknown Source)
+       at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+       at org.eclipse.swt.widgets.Display.runDeferredEvents(Unknown
+   Source)
+       at org.eclipse.swt.widgets.Display.readAndDispatch(Unknown
+   Source)
+       at
+   org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$9.r
+   un(Unknown Source)
+       at
+   org.eclipse.core.databinding.observable.Realm.runWithDefault(Unk
+   nown Source)
+       at
+   org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run
+   (Unknown Source)
+       at
+   org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(
+   Unknown Source)
+       at org.eclipse.ui.internal.Workbench$5.run(Unknown Source)
+       at
+   org.eclipse.core.databinding.observable.Realm.runWithDefault(Unk
+   nown Source)
+       at
+   org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Unknown
+   Source)
+       at org.eclipse.ui.PlatformUI.createAndRunWorkbench(Unknown
+   Source)
+       at
+   org.eclipse.ui.internal.ide.application.IDEApplication.start(Unk
+   nown Source)
+       at
+   org.eclipse.equinox.internal.app.EclipseAppHandle.run(Unknown
+   Source)
+       at
+   org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.run
+   Application(Unknown Source)
+       at
+   org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.sta
+   rt(Unknown Source)
+       at
+   org.eclipse.core.runtime.adaptor.EclipseStarter.run(Unknown
+   Source)
+       at
+   org.eclipse.core.runtime.adaptor.EclipseStarter.run(Unknown
+   Source)
+       at sun.reflect.NativeMethodAccessorImpl.invoke0(Native
+   Method)
+       at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown
+   Source)
+       at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown
+   Source)
+       at java.lang.reflect.Method.invoke(Unknown Source)
+       at org.eclipse.equinox.launcher.Main.invokeFramework(Unknown
+   Source)
+       at org.eclipse.equinox.launcher.Main.basicRun(Unknown
+   Source)
+       at org.eclipse.equinox.launcher.Main.run(Unknown Source)
+       at org.eclipse.equinox.launcher.Main.main(Unknown Source)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The error seen is only associated to the workspace, so starting
+   a new workspace resolves the issue.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  SystemFilterPoolManager.createSystemFilterPool() returns a
+   filter pool if it doesn't exist but, if it does already exist,
+   null is returned.  This is not normally a problem because this
+   is supposed to be called when there is no filter pool.  However,
+   in a customer scenario where a user's RSE filter metadata was
+   corrupt, having the existing pool returned (rather than null)
+   allows the customer to recover from the corruption.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  While it's not clear how a customer's filter metadata got
+   corrupt, changing the createSystemFilterPool() code to return an
+   existing filter pool rather than null (if one exists) allows
+   RSE to recover its filter support.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI67074
+   
+   
+ * REPORTED COMPONENT NAME
+   EXP FOR Z/OS CL
+   
+   
+ * REPORTED COMPONENT ID
+   5655EXP00
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-05
+   
+   
+ * CLOSED DATE
+   2016-09-06
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   EXP FOR Z/OS CL
+   
+   
+ * FIXED COMPONENT ID
+   5655EXP00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R301 PSY
+   UP

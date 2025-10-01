@@ -1,0 +1,20 @@
+Title: IBM NENU Fails to Delete Batches in IBM Datacap Taskmaster Capture - United States
+
+Text:
+nenu delete oracle TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ NENU is unable to delete batches in an Oracle 11g database. 
+
+SYMPTOM
+No batches are returned to NENU from the query search.
+
+
+CAUSE
+QuerySetAge() is unable to do a proper query against Oracle 11g.
+
+ENVIRONMENT
+Oracle 11g database
+
+RESOLVING THE PROBLEM
+Upgrading to 8.1.0.2 will resolve the problem.

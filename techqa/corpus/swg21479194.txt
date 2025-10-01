@@ -1,0 +1,74 @@
+Title: IBM Canonical Correlation with matrix input - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am attempting to use the macro provided with SPSS, 'Canonical correlation.sps', which I copied into my directory 'C:\spssjobs\', . I do not have the raw, case-level data, so I used the MATRIX DATA command to read a lower-triangular correlation matrix into an SPSS matrix data file. Here are my commands:
+
+TITLE 'CANONICAL CORRELATION'.
+MATRIX DATA VARIABLES = Y1 to Y6 X1 to X6
+/N=300 
+/ CONTENTS=CORR.
+BEGIN DATA.
+1.0
+.71 1.00
+.12 .12 1.00
+.34 .45 .43 1.00
+.27 .33 .24 .33 1.00
+.21 .11 .42 .46 .32 1.00
+.13 .27 .21 .39 .27 .38 1.00
+.18 .24 .15 .36 .33 .26 .62 1.00
+.08 .14 .09 .25 .13 .23 .44 .66 1.00
+.10 .16 .09 .25 .12 .28 .58 .66 .64 1.00
+.13 .23 .42 .50 .41 .47 .46 .47 .37 .53 1.00
+.08 .15 .36 .28 .21 .26 .30 .24 .19 .29 .58 1.00 
+END DATA.
+LIST.
+INCLUDE 'C:\spssjobs\Canonical correlation.sps'.
+cancorr SET1=y1 to y6 /
+SET2=x1 to x6/.
+
+The results don't look right. Something is clearly wrong with the numbers, as the output correlation matrix doesn't match what was specified as input. Is there a way to run a canonical correlation on aggregate data in SPSS? 
+
+RESOLVING THE PROBLEM
+The Canonical Correlation macro requires raw data and behaves as if the input data was comprised of raw scores, so the results you get are getting are indeed not correct. You can print canonical correlations from the MANOVA command, which will use matrix data input and is also only available as a syntax command. See Technote 1476005 for a brief description of the macro and MANOVA approaches to canonical correlation. The MANOVA example in that macro assumes raw data but the /MATRIX IN() subcommand can be used to signify that matrix input data is being used. 
+
+The following syntax will perform the canonical correlation on your data. The commands from MATRIX DATA to END DATA read the correlations, means, and standard deviations into the Data Editor as a matrix data file. The LIST command prints the matrix data contents to the output so that you can check that the data was read correctly. The MANOVA command uses the matrix data to perform the canonical correlation. The list of set 1 variables follows the command name MANOVA while the set 2 variables follow the keyword WITH.
+
+TITLE 'CANONICAL CORRELATION'.
+MATRIX DATA VARIABLES = y1 to y6 x1 to x6 
+/ N = 300 
+/ CONTENTS=CORR MEAN SD .
+BEGIN DATA.
+1.0
+.71 1.00
+.12 .12 1.00
+.34 .45 .43 1.00
+.27 .33 .24 .33 1.00
+.21 .11 .42 .46 .32 1.00
+.13 .27 .21 .39 .27 .38 1.00
+.18 .24 .15 .36 .33 .26 .62 1.00
+.08 .14 .09 .25 .13 .23 .44 .66 1.00
+.10 .16 .09 .25 .12 .28 .58 .66 .64 1.00
+.13 .23 .42 .50 .41 .47 .46 .47 .37 .53 1.00
+.08 .15 .36 .28 .21 .26 .30 .24 .19 .29 .58 1.00
+0 0 0 0 0 0 0 0 0 0 0 0
+1 1 1 1 1 1 1 1 1 1 1 1
+END DATA.
+LIST.
+MANOVA y1 to y6 with x1 to x6 
+/matrix = in(*) 
+/DISCRIM ALL ALPHA(1) 
+/PRINT=SIG(EIGEN DIM) .
+
+MANOVA expects means and standard deviations (SDs) for each cell in a design to be included in the matrix data. There were no factors in this MANOVA, so a single line of 0s was entered for the means and a single line of 1s was entered for the SDs. If you knew the 12 means and SDs, you could use them instead of the 0s and 1s. The keywords "MEAN SD" were added after "CORR" in the /CONTENTS subcommand of MATRIX DATA to indicate that means and SDs would follow the correlations.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 71228

@@ -1,0 +1,102 @@
+Title: IBM CB12: General insurance application (GENAPP) for IBM CICS TS - United States
+
+Text:
+GENAPP ; General insurance application ; CICS examples samples applications ; Java OSGi Cloud : WebSphere Liberty Profile enablement ; :CICS Transaction Server; CICS TS; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 R690 690 R900 900 HCI6800 5655-Y04 HCI6900 5655Y04 KIXINFO DOWNLOADABLE FILES
+
+ABSTRACT
+ SupportPac CB12 demonstrates application modernization for IBM CICS Transaction Server for z/OS (CICS TS), by modeling a general insurance application. 
+
+DOWNLOAD DESCRIPTION
+This SupportPac page was last updated on December 8, 2015. See New in this release for details of any changes.
+
+
+The primary purpose of this SupportPac is to demonstrate application modernization, by providing a general insurance application (known as GENAPP) for IBM CICS Transaction Server for z/OS (CICS TS). The GENAPP application has been developed in-house by the IBM Hursley CICS Development team to help with their testing of new CICS releases.
+
+GENAPP is designed to exercise various components of CICS TS; containing functions to insert, query, and delete policy information. In its original form GENAPP is driven using 3270 input, where the insurance policy information is stored in a DB2 database.
+
+GENAPP illustrates how a 3270-based 'green screen' application can be transformed to use many of the rich features and functions of the newer releases of CICS TS.
+
+Read Me
+Further details about GENAPP are available in the IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.3.0/com.ibm.cics.ts.samples.doc/topics/genapp.html].
+
+Possible Uses
+To test a variety of functions and components of CICS TS, using a typical application. GENAPP can be used to modify an existing legacy application to utilize new CICS functions and capabilities.
+
+Skill level required
+Intermediate, with knowledge of CICS systems configuration, operation, and applications.
+
+New in this release 
+
+ * Tested with and supported by CICS TS V5.3.
+
+
+Changes in previous release  * Customer Search GENAPP Extension using Liberty Profile has been updated to fully support CICS TS V5.2. 
+ * GENAPP Lite V5.1.0.2 supports fully SOAP and JSON web services in CICS TS V5.2. 
+ * GENAPP Lite removes the need for DB2 and uses only VSAM KSDS to hold customer and policy data. 
+ * Web service definition files are included for Customer Add and Customer Inquiry. 
+ * Sample Workload Simulator (WSIM) scripts and network definitions are included to drive the application.
+
+
+Details 
+Contributors: CICS Development (see below for details), IBM Hursley Park, UK 
+Category: 2 
+First released (base): 08Feb12 
+Last changed (base): 10Jul13 
+Current Version (base): 5.1.0.1 
+First released (lite): 14Feb14 
+Last changed (lite): 18Jul14 
+Current Version (lite): 5.1.0.2 
+
+DOWNLOAD PACKAGES 
+
+To download a file:  1. Click on a link below to accept the license terms, then save the file to your local machine. 
+ 2. Extract the saved file to a temporary directory on your local machine. This will create the necessary installation, documentation, and license files. 
+ 3. Follow the instructions in the included documentation to complete installation on your host system.
+
+
+
+GENAPP V5.1 base Download Compatible CICS TS release Release date Last updated GENAPP V5.1.0.1 base [http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?popup=Y&li_formnum=L-AFOS-8Q8MBF&accepted_url=ftp://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/cb12_51base_v1010.zip] (586KB) CICS TS V4.1, or later Feb 8, 2012 July 10, 2013 
+GENAPP V5.1 lite Download Compatible CICS TS release Release date Last updated GENAPP Lite V5.1.0.2 [http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?popup=Y&li_formnum=L-AFOS-8Q8MBF&accepted_url=ftp://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/cb12_lite_51base.zip] (303KB)
+This latest release of GENAPP Lite (V5.1.0.2) has full support for SOAP and JSON web services in CICS TS V5.2. CICS TS V4.1, or later Feb 14, 2014 July 18, 2014 
+GENAPP V5.1 base extensions Download Compatible CICS TS release Release date Last updated Policy Search GENAPP Extension using Java & OSGi [http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?popup=Y&li_formnum=L-APIG-9SGELU&accepted_url=ftp://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/cb12_42.zip] (341KB) CICS TS V4.2, or later March 22, 2013 February 14, 2014 Policy Search GENAPP Extension with Cloud Enablement [http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?popup=Y&li_formnum=L-APIG-9SGENT&accepted_url=ftp://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/cb12_51_cloud.zip] (890KB) CICS TS V5.1 March 22, 2013 February 14, 2014 Customer Search GENAPP Extension using Liberty Profile [http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?popup=Y&li_formnum=L-APIG-9RMFZQ&accepted_url=ftp://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/cb12_51_liberty.zip] (5.1) (392KB)
+Customer Search GENAPP Extension using Liberty Profile [http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?popup=Y&li_formnum=L-APIG-9RMFZQ&accepted_url=ftp://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/cb12_52_liberty.zip] (5.2) (433KB) CICS TS V5.1
+CICS TS V5.2 March 22, 2013
+December 18, 2014 July 18, 2017
+July 18, 2017 Business Rules GENAPP Extension [http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?popup=Y&li_formnum=L-APIG-9SGEQC&accepted_url=ftp://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/cb12_BusinessRules_v1000.zip] (413KB) CICS TS V4.1, or later April 26, 2013 April 26, 2013 
+
+Demonstration media Download Release date Policy Search GENAPP Extension using Java & OSGi demo (MP4 video) [ftp://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/cb12_42_demo.mp4] (4.42MB) March 22, 2013 CICS and Business Rules (FLV video) [ftp://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/cb12_CICS_and_Business_Rules.flv] (16.5MB) April 26, 2013 Note : Some web browsers do not support playing video directly from an FTP link. Instead, right-click on the FTP link and choose Save link as... to save the video locally. Navigate to the downloaded video file and play it using your preferred media player. 
+
+
+Previous GENAPP base release(s) Download Compatible CICS TS release Release date GENAPP V1.1 base [http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?popup=Y&li_formnum=L-AFOS-8Q8MBF&accepted_url=ftp://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/cb12.zip] (474KB) CICS TS V4.1, or later March 22, 2013 
+
+Contributors GENAPP base application Stewart Smith Policy and Customer Search extensions Ledina Hido-Evans, David Harris, Brad Roeger, Nic Townsend, Stephen Mitchell (BlueGen project) Business Rules extension Russell Bonner PREREQUISITES
+ 
+
+ * IBM CICS Transaction Server for z/OS V4.1 or later [http://www.ibm.com/software/htp/cics/tserver/] [http://www.ibm.com/software/htp/cics/tserver/v42/] 
+ * IBM DB2 [http://www.ibm.com/software/data/db2/]
+
+
+For details of compatibility with CICS TS of the GENAPP base application, or its extensions, consult the download tables above. 
+
+INSTALLATION INSTRUCTIONS
+(See above) 
+
+
+Documentation for GENAPP base and its extensions
+
+URL LANGUAGE SIZE(Bytes) Policy Search - Guide [http://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/PolicySearchInstructions.pdf] US English 206884 Policy Search (Cloud) - Guide [http://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/PolicySearchCloudInstructions.pdf] US English 761942 Customer Search (Liberty) - 5.1 Guide [http://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/CustomerSearchLibertyInstructions.pdf] US English 222585 Customer Search (Liberty) - 5.2 Guide [http://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/CustomerSearchLibertyInstructions_52.pdf] US English 223720 Business Rules - Guide [http://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/cb12_BusinessRulesInstructions.pdf] US English 215576 
+
+
+
+
+
+TECHNICAL SUPPORT
+ SupportPacs in this category are available at no charge to all licensed users of the CICS family products on the platforms specified in the SupportPac description. These SupportPacs are provided "AS-IS" (under the terms and conditions of the IBM International License Agreement for Non-Warranted Programs and of the associated License Information and other documentation). The terms and conditions of this license DO NOT provide for any entitlement to defect correction.
+
+To determine if you want to use this SupportPac, read the accompanying license file. 
+
+Other CICS SupportPacs
+To view the complete portfolio of CICS SupportPacs, go to the CICS SupportPacs Home Page [http://www.ibm.com/support/docview.wss?uid=swg27007241] 
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

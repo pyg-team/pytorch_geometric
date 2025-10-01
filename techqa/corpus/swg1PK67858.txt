@@ -1,0 +1,159 @@
+Title: IBM PK67858: USING ORACLE TRIGGERS TO SWITCH SCHEMAS FOR USERS OF PORTAL DATABASES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Filename to be modified:  com.ibm.wp.ent.doc/wpf/setup_oracle.ht
+   ml
+   
+   Changes to be made:
+   
+   A new section will need to be added in regards to using Oracle
+   triggers to switch schemas for users of Portal databases.  The
+   procedure is as follows:
+   
+   Preparation
+   1.  Install Oracle and make sure that the database complies with
+   the
+   requirements described in the Information Center (i.e. UNICODE
+   charset)
+   2.  Create two Oracle database users (i.e. "user1" and "user2")
+   3.  Create a logon trigger for "user2" that will set the default
+   schema name to the implicit schema of "user1"
+   CREATE OR REPLACE TRIGGER trig_switch_session_on_logon
+   AFTER LOGON ON DATABASE
+   DECLARE
+       username VARCHAR2(30);
+   
+   BEGIN
+   
+       username:=SYS_CONTEXT('USERENV','SESSION_USER');
+   
+       case
+   
+           when UPPER(username) like 'USER2' then EXECUTE IMMEDIATE
+   'alter session set current_schema = USER1';
+   
+      end case;
+   
+       exception
+           when case_not_found then null;
+   
+   END;
+   /
+   4.  Install Portal 6.0.1.x
+   
+   Database transfer
+   1.  Prepare wpconfig_db*.properties files (fill in user "user1"
+   as "wmm.DbUser")
+   2.  Run database transfer for WMM (or a complete database
+   transfer) Make sure the transfer completes successfully
+   
+   Rework datasources
+   1.  Start WebSphere_Portal and log on to the administrative
+   console
+   2.  Go to "Resources > JDBC Providers > (Oracle provider) > Data
+   sources > (WMM data source) > Authentication alias" and modify
+   user name and password from "user1" to "user2"
+   3.  Save configuration changes and restart WebSphere_Portal
+   
+   Test
+   1.  Verify that there are no exceptions in the logs
+   2.  Verify that Portal works properly
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Steps needed for the Portal Information Center to describe how
+   to use Oracle triggers to switch schemas
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Documentation will be corrected.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK67858
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-06-19
+   
+   
+ * CLOSED DATE
+   2008-06-23
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

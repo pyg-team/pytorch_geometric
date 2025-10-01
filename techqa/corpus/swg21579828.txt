@@ -1,0 +1,57 @@
+Title: IBM The Deployment Plan is not found or invalid - United States
+
+Text:
+gsk8iccs.dll; Deployment Plan; GSKit TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ What could have been the possible caused of fix pack 2 installation failure? 
+
+CAUSE
+When installing OMNIbus 7.3.1 FP2 the installation completes with the following error: 
+
+
+"OMNIbus installation completed. However, fatal error occurred during installation. Please check install log"
+
+n OMNIbus_InstallLog.log ===============================================
+Action memo:
+
+Deployment Plan execution general failure:: Check log files for further information. 
+...
+<snip>
+...
+Deployment Plan generation failure:
+COIException in: 
+createDeploymentPlan(C:/IBM/netcool/uninst/OMNIbusFP2/plan/install,DeploymetPackage Location:
+C:/work/Tivoli/Netcool/ReFP/7.3.1-TIV-NCOMNIbus-win32-FP0002/COI,...,... 
+)
+Status: Fatal Error
+Additional memo: - The Deployment Plan is not found or Invalid.
+
+
+Custom Action: com.ibm.ac.coi.ext.ia.plugin.COIPlanCreation Status: Fatal Error
+Additional memo: - class 
+com.ibm.ac.coi.ext.ia.plugin.COIPlanCreation FatalInstallException: The
+Deployment Plan is not found or Invalid. 
+Deployement Plan execution general failure: Status: Fatal Error
+Additional memo: Fatal Error - The Deployement 
+Plan Execution failed. 
+Custom Action: com.ibm.ac.coi.ext.ia.plugin.COIProcessPlan 
+Status: Fatal Error
+Additional memo: Fatal Error - class 
+com.ibm.ac.coi.ext.ia.plugin.COIProcessPlan FatalInstallException: The 
+Deployment Plan Execution Failed. =============================================== 
+In de_trace.log there is this message: 
+
+Caused by: java.io.FileNotFoundException:
+C:\IBM\netcool\platform\win32\lib\gsk8iccs.dll 
+
+
+
+
+
+ANSWER
+This is happens when another process is using GSKit and therefore the file cannot be upgraded. 
+Perhaps a probe, WEBGUI or ITNM is running and needs to be stopped before the OMNIbus fix pack is installed.

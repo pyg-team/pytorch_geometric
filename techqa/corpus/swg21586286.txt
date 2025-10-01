@@ -1,0 +1,23 @@
+Title: IBM How To Avoid Redirects for URL Mappings in v7 - United States
+
+Text:
+URL mapping redirect friendly.redirect.enabled TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Requests for URL mappings in v7 are redirected.
+
+SYMPTOM
+WebSphere Portal serves requests for URL mappings HTTP 302 redirects to URLs with the navigation state encoded. You would prefer WebSphere Portal to serve the page with an HTTP 200 instead (URL mapping remain in browser's address bar). 
+
+
+CAUSE
+In part, this has been identified as a product defect under APAR PM54353. Also, these redirects are by design for static pages, so the page that the URL mapping targets must be based on standard layout.
+
+RESOLVING THE PROBLEM
+1. Configure the URL mapping to a page with standard layout. Refer to the InfoCenter section on Adding Pages to distinguish between standard and static layout pages. 
+
+2. Either install PM54353 or implement its local fix (friendly.redirect.enabled=false).
+
+RELATED INFORMATION
+ PM54353 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM54353]
+InfoCenter: Adding Pages [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Adding_pages_wp7]

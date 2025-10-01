@@ -1,0 +1,72 @@
+Title: IBM WITHDRAWN:  MO04:  WebSphere MQ SSL Wizard - United States
+
+Text:
+mo04; SSL wizard; MQ; SECURITY DOWNLOADABLE FILES
+
+ABSTRACT
+ The WebSphere MQ SSL Wizard is a utility designed to ease the administration of a basic TLS/SSL channel. 
+
+DOWNLOAD DESCRIPTION
+Notice: This SupportPac has been moved to withdrawn state. It can be found on GitHub [https://github.com/ibm-messaging/mq-tls-ssl-wizard]
+
+
+The WebSphere MQ SSL Wizard takes input in series of entry panels and then generates a set of instructions to enable the user to define and start a TLS/SSL channel. The instructions generated include both the platform specific commands for creating the certificates (e.g. using RACF or GSKit) and the MQSC commands used to define and start the WebSphere MQ channel. 
+
+The WebSphere MQ channel can either be an MCA channel between two queue managers or a client connection channel to a queue manager. Sample source and binaries are shipped with the WebSphere MQ SSL Wizard for clients written in C, Java and JMS. 
+
+The WebSphere MQ SSL Wizard generates instructions for z/OS, UNIX and Windows, although some instructions (e.g. MQSC) may be run on other platforms.
+
+Possible Uses
+The WebSphere MQ SSL Wizard can be used as a learning tool for users new to WebSphere MQ SSL or as an administration assist tool for more advanced users.
+
+New in this Release
+• Improved Certificate Authority model.
+• Improved GUI layout.
+• Improved script formatting.
+• Updated client samples for WebSphere MQ V7.0.1.
+• Added diagrams to each GUI page.
+• Added gsk7capicmd command support.
+• Added FIPS/Sigalg for gsk7capicmd support.
+• Added SSLFIPS support with restricted SSLCIPH values.
+• Added basic multiple OU support.
+• Added full SSLPEER to channel definitions.
+• Added certificate expiry.
+• Added sample build instruction examples to doc. 
+• Removed all MD5 hashing algorithms.
+• Removed backwards compatibility of data files .
+• Changed SSLCAUTH to default to REQUIRED.
+• Changed sample passwords to be unique for each key database.
+• Documentation updates.
+• Bug fixes.
+• Many internals updates.
+
+Details
+Author: Ian Vanstone, SWG Federated Integration Test, Hursley
+Category: 2
+Released: 02Sep05 
+Last updated: 04Jan10
+Current Version: 2.0
+»Please note that the version number shown in the right-hand pane is the version of the WebSphere MQ or WebSphere MB product that this SupportPac applies to. The date is the last webpage refresh. 
+
+To view the complete portfolio of WebSphere MQ SupportPacs please visit the WebSphere MQ SupportPacs homepage. [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27007205]
+
+PREREQUISITES
+Java 2 Runtime Environment 1.4 and above
+
+INSTALLATION INSTRUCTIONS
+See mo04.pdf below.
+
+URL LANGUAGE SIZE(Bytes) mo04.pdf [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/mo04.pdf] US English 173932 
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options mo04.zip 04/01/2010 US English 592852 HTTP [http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?popup=Y&li_formnum=L-APIG-7Y4FXP&accepted_url=ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/mo04.zip] 
+TECHNICAL SUPPORT
+ Category 2 SupportPacs are provided in good faith and AS-IS. There is no warranty or further service implied or committed and any supplied sample code is not supported via IBM product service channels. 
+
+You may submit a question using the 'rate this page' below but a response is not guaranteed.
+
+Please read the license information contained within the zip file of this SupportPac to determine if you want to use it.

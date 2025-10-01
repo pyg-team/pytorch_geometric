@@ -1,0 +1,84 @@
+Title: IBM Collecting Data: Portal User Management Architecture (PUMA) for WebSphere Portal - United States
+
+Text:
+Collecting Data; Collecting Data; Collecting Data; MustGather; MustGather; MustGather; MustGatherDocument; PORTSE; PUMA; user management; API; SPI; profile; cache RECOMMENDED RESOURCES
+
+ABSTRACT
+ Collecting troubleshooting data for Portal User Management Architecture (PUMA) with IBM WebSphere Portal helps IBM Support to understand the problem and saves time analyzing the data. 
+
+CONTENT
+If you have already contacted IBM Support and must collect data to determine the nature of a problem in WebSphere Portal, review the information below for the available methods of data collection. Otherwise, review Collecting Data: Read first for WebSphere Portal. [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21672901] 
+
+Collecting Portal User Management Architecture (PUMA) information
+The PUMA SPI provides interfaces for accessing the profiles of a portal user or group. It is used to locate, create, modify, and delete users and groups. While it is implemented by administration portlets such as Manage Users and Groups, it can also be utilized in custom themes and portlets. Typical problem scenarios with PUMA involve retrieval and caching of user/group attribute information. 
+
+Data Collection
+
+Use the following instructions to collect the necessary troubleshooting data.
+
+I. Enabling trace logging 
+
+Enable tracing during problem recreation in order to investigate the specific behavior of the component(s). Choose to enable either static or dynamic tracing and proceed with the steps accordingly. For further information regarding logging and tracing in the portal, refer to the System event logging [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/trouble/adsyslog.dita] [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?topic=/com.ibm.wp.ent.doc/trouble/pd_intr_logs.html] topic in the WebSphere Portal Knowledge Center. 
+
+Trace String 
+
+*=info:com.ibm.wps.puma.*=all:com.ibm.wps.services.puma.*=all:
+com.ibm.wps.command.puma.*=all:com.ibm.wps.um.*=all:
+com.ibm.ws.wim.*=all:com.ibm.websphere.wim.*=all:
+com.ibm.wsspi.wim.*=all
+
+Note: 
+
+- If using rule based user groups, append the following string to the above trace: 
+
+:com.ibm.wps.vmm.adapter.*=all
+
+Option A: Enabling static (extended) tracing
+Static tracing is the recommended method of capturing data, as it collects data from server startup until problem recreation. 
+
+1. Log into the Integrated Solutions Console as the WebSphere Application Server administrator. 
+
+2. Click Troubleshooting->Logs and Trace->WebSphere_Portal->Diagnostic Trace. 
+
+3. On the Configuration tab, ensure Enable Log is selected. On this same tab, ensure you increase the Maximum File Size and and Maximum Number of Historical Files as needed to ensure that the tracing of the problem recreation is not overwritten due to the amount of traffic on the system and output of the tracing itself. 
+
+4. Click Change Log Level Details and enter the trace string value noted above under Trace String. 
+
+5. Click OK and save the changes. If clustered, sync the nodes.
+6. Restart the WebSphere_Portal application server.
+
+Option B: Enabling dynamic tracing
+Dynamic tracing can be used for situations that do not permit a server restart. 
+
+1. Log in as the Portal administrator. 
+
+2. Click Administration->Portal Analysis->Enable Tracing. The Enable Tracing portlet appears. 
+
+3. Type the trace string value noted above under Trace String into the field Append these trace settings. 
+
+4. Click the Add icon. Enable Tracing updates the field Current trace settings.
+
+Note: Restarting WebSphere Portal will remove traces that were set by using the Enable Tracing Administration portlet.
+
+II. Collecting and submitting logs and configuration data 
+
+1. Reproduce the problem. Collect screenshots, userId, and timestamp information as appropriate. 
+
+2. Run the following script from <wp_profile>/PortalServer/bin to collect the data: 
+
+ * Windows: wpcollector.bat 
+ * Linux/Unix/i: wpcollector.sh
+
+
+Note: If you wish to use wpcollector to FTP the files to IBM Support, include the -Dpmr=<pmr_number> parameter to indicate the relevant PMR #. For example: wpcollector.bat -Dpmr=11111,222,333 
+
+3. If you did not FTP your files via wpcollector, locate the "wp.mustgather.zip" file or the "<pmr #>-wp.mustgather-timestamp.zip" file in <wp_profile_root> [https://idoc2.swg.usma.ibm.com/portal/topic/com.ibm.wp.ent.doc_v70/reference/wpsdirstr.html#wpsdirstr__wp_profile_root]/filesForAutoPD/. Send the files to IBM Support by using the instructions outlined in Exchanging information with IBM Technical Support for problem determination [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571]. Note: When sending in logs for review, include any relevant screenshots, timestamps, userIds, etc. in order to expedite analysis of the issue. 
+
+ 
+
+Related Information 
+
+ * IBM Support Portal: WebSphere Portal Troubleshooting [http://www.ibm.com/support/entry/portal/Troubleshooting/Software/WebSphere/WebSphere_Portal] [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571] 
+ * WebSphere Portal Knowledge Center: Troubleshooting [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/trouble/troubleshooting.dita] 
+ * WebSphere Portal PUMA SPI [ftp://public.dhe.ibm.com/software/websphere/portal/javadoc/vrm/850/spi_docs/com/ibm/portal/um/package-summary.html] 
+ * Collecting Data: Read first for WebSphere Portal [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21672901]

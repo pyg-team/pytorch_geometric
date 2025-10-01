@@ -1,0 +1,36 @@
+Title: IBM FTP client through a proxy server - United States
+
+Text:
+FTP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Can the FTP client on the iSeries be used in conjunction with an external proxy server 
+
+RESOLVING THE PROBLEM
+Question 
+
+Today we have FileTransfer to external sources using FTP over internet. Internal Security Audit have requested that all external FTP traffic must go thru a central Proxy server. Are there any technical documents available to assist us in configuring our IBM i partition to use our central proxy server for FTP traffic to external parties over the Internet?
+
+
+Answer 
+Officially we do not support our FTP client through a Proxy server. There is nothing you can set up on the iSeries to preconfigure this. However, this does not mean it is not possible to use the iSeries FTP client through a Proxy server. We do not have any formal information available on this, as we do not officially support it.
+
+However, your Proxy server department should be able to tell you how you can connect your client through their Proxy server. 
+Commonly, it would be done something like this:
+
+FTP <proxyuser>@<proxyserver>
+
+When prompted for Userid, you would enter the following:
+
+<ftpserveruser>@<ftpserveraddress>
+
+The password would then be the password for the FTP server.
+
+How this is handled by your Proxy server would have to be provided by your proxy server personnel. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 
+HISTORICAL NUMBER
+ 616245762

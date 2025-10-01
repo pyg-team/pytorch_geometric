@@ -1,0 +1,62 @@
+Title: IBM Federated query with predicate (FBDCol = x'...') may get SQL0007N error - United States
+
+Text:
+SQL0007N; FOR BIT DATA TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why some Federated queries with predicate (FBDCol = x'...') get SQL0007N error 
+
+SYMPTOM
+create a table in data source: 
+
+db2 "create table sunwei (c1 varchar(16) for bit data)"
+
+create a nickname in Federation Server:
+db2 "create nickname n1 for LINUXSERV.schema1.sunwei
+
+db2 "select * from n1 where c1=x'6CA7DA37EFFD2749A6DBD5653C854765'"
+
+C1 
+-----------------------------------
+SQL1822N Unexpected error code "-7" received from data source "LINUXSERV".
+Associated text and tokens are " SQL0007N The character "|" following
+"A0."C1" = 'l§??. SQLSTATE=560BD
+
+
+CAUSE
+The db2 trace shows the remote statement changed the original predicate expression and an extra single quote (0x27) is also added into the string, see below: 
+
+5345 4C45 4354 2041 302E 2243 3122 2046 SELECT A0."C1" F
+524F 4D20 2244 4232 5639 3722 2E22 5355 ROM "DB2V97"."SU
+4E57 4549 2220 4130 2057 4845 5245 2028 NWEI" A0 WHERE (
+4130 2E22 4331 2220 3D20 276C A7DA 37EF A0."C1" = 'l..7.
+FD27 2749 A6DB D565 3C85 4765 2729 2046 .''I...e<.Ge') F
+4F52 2052 4541 4420 4F4E 4C59 OR READ ONLY
+
+The expected predicate is (A0."C1" = x'6CA7DA37EFFD2749A6DBD5653C854765').
+
+This problem can only be seen when Federation Server collating sequence is IDENTITY. And it works as designed in the federated environment. To understand this design, please see below:
+
+1) Using hex literals (x'...') does not mean FOR BIT DATA, nor does it mean IDENTITY collation. For example, on a case-insensitive collation database, the following predicate is true: 'A' = x'41' (41 is lower case 'a'). If we were to make the hex literal FOR BIT DATA, we would get wrong results. 
+
+2) When working with local table, we handle the literals in hex, so no problem with hex literals (x'...'). But in Federated env, we need to generate the remote statement. In this step, we will print out the hex literals (x'...') to ASCII literals unless we know it's FOR BIT DATA explicitly.
+
+3) In a non-IDENTITY db, we will wrap the hex literal with an internal BIT_STRING function in some contexts (like FBDCol = x'...') to force an IDENTITY comparison, this is not necessary for an IDENTITY db because all comparisons are IDENTITY. 
+
+4) Because of the BIT_STRING function in the non-IDENTITY db, Federation Server knows the hex literals (x'...') is FOR BIT DATA, then we do not print it out when generating remote statement. But in an IDENTITY db, we do not know it due to the design in 3).
+
+5) Single quotes is a special character in db2. The user hex literals contain this character, which made the string split to two parts in print-out step. That's why an extra single quote is seen.
+
+
+ENVIRONMENT
+Federation Server collating sequence: IDENTITY
+
+
+
+RESOLVING THE PROBLEM
+Use CAST function to force the hex literals to be FOR BIT DATA: 
+
+db2 "select * from n1 where c1=CAST(x'6CA7DA37EFFD2749A6DBD5653C854765'AS VARCHAR(16) FOR BIT DATA)"
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21657903]

@@ -1,0 +1,234 @@
+Title: IBM IY74178: 16656 - MANAGER ATTRIBUTE NOT WORKING WHEN SET AS MANDATORY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Title: Manager attribute not working when set as mandatory
+   
+   Description: Customer is trying to keep person entry and LDAP-X
+   account
+   entry in sync by setting the manager attribute to mandatory.
+   Account
+   compliance is set to correct, and the manager value on the
+   account is
+   being derived from the person entry via Java Script.
+   
+   When the person entry manager attribute changes, the following
+   is seen
+   in the ITIM log file:
+   
+     Processing MANDATORY value: GBUSH
+       Processing existing value: Superman3
+       Adding existing MANDATORY value: Superman3
+   
+   So it seems to determine it's different but does not change it.
+   
+   If other attributes that are derived from the person entry are
+   changed
+   on the person entry, they will be handled properly.  It's only
+   the
+   manager attribute that has this issue.
+   
+   Desired Behavior:  Customer would like for this to work
+   
+   Reproducible:  Yes, at customer site and in lab
+   
+   Steps to Reproduce:
+   
+   1.  I have the following to recreate the customers directory:
+   99user.ldif, dse.ldif and ldif export of the contents of their
+   suffix
+   (which includes the ITIM LDAP data and the target data of the
+   LDAP_X
+   agent.
+   2. I have their custom jar file (AgendwardsEnRole.jar)
+   and a fesiextension.properties that shows their customization.
+   Also
+   enRole.properties
+   3.  I have xforms.xml and MappingRules.xml for the LDAP-X
+   Account setup
+   4.  Create the iPlanet 5.2 server, Oracle database, ITIM server
+   and
+   LDAP-X agent using this data.
+   5.  Logon to ITIM (ITIM Manager with a password of "manager1")
+   6.  Go to My Organization/Manage People
+   7.  Select the person "Lacoss-Arnold,Jason Jay"
+   8.  Select "Access Personal Information"
+   9.  Go to the "Corporate Info" table
+   10. Go to the "Supervisor" attribute and click on Search
+   11. Select a different manager via the search control and submit
+   the
+   request.
+   12. Note that the Account Entry in the ITIM LDAP is not updated
+   and no
+   request is sent to the agent.  The completed request does show
+   that
+   policy evaluation was done, but it doesn't handle this attribute
+   properly.
+   
+   Environment:
+   
+   Customer - ITIM 4.5.1 FP16, iPlanet 5.1, Oracle 8.1.8, WebLogic
+   7.0 SP4,
+              LDAP_X Agent Version 4.4.1015
+   Lab1     - ITIM 4.5.1 FP16, iPlanet 5.2, Oracle 8.1.7, Weblogic
+   7.0 SP4,
+              LDAP-X Agent Version 4.4.1015
+   Lab2     - ITIM 4.5.1 FP50, iPlanet 5.2, Oracle 8.1.7, Weblogic
+   7.0 SP4,
+              LDAP-X Agent Version 4.4.1015
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  16656
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Problem:
+   The issue was that, after the 'Manager' attribute for Person
+   was modified, the Provisioning policy was not being evaluated
+   for any of the LDAPX accounts, which are non-compliant(though
+   Audit Log shows 'Enforce Policy' action to be Success).
+   Subsequently, NO Account Modification action was being kicked
+   off for the LDAPX accounts of that person.
+   Explanation:
+   After examining the various attributes defined on the
+   LDAPXAccount form through UI Customization, I found that there
+   are 2 attributes defined in the Business tab view.
+   1. 'Manager(Bad)' which is having 'Data Type' as 'Directory
+   String' and it refers to 'erxldapmanager' attribute in the LDAP
+   and
+   2. 'Supervisor' which is having 'Data Type' as 'Distinguished
+   Name' and it refers to 'manager' attribute in LDAP.
+   The problem was that this 'Supervisor' attribute was not
+   evaluated correctly during policy evaluation. This was because
+   the javascript returned a string, whereas ITIM expected it to
+   be a distinguished name that refers to some LDAP entry.
+   Resolution to the problem:
+   Use either the 'Manager(Bad)' erxldapmanager  attribute or the
+   'Supervisor' manager  attribute to store the Manager value of
+   the LDAPX account.
+   If 'Supervisor' (which refers to manager) attribute is to be
+   used:
+   ---------------------------------------------------------------
+   1. Set the 'Supervisor' attribute to a SearchControl' field
+   through UI Customization 2. In the SearchControl dialog, select
+   the 'Category' as Person. After this selection, the 'Profile'
+   field will be set to 'AGEEmployee', and 'Attribute' field will
+   be set to 'cn'.
+   3. Click on 'Ok' and save the form template.
+   In the Provisioning Policy defined for the LDAPX service, click
+   on 'Advanced Provisioning Parameter' list and locate the
+   Javascript for 'Supervisor'
+   attribute.
+   Modify it to the following:
+   {
+     var managers = subject.getProperty("manager");
+     var retval = "NA";
+       if (managers.length > 0) {
+          var manattr='';
+          var emptype = AgedwardsEnrole.getAttributeForDn
+          (managers 0 ,"employeetype");
+           if (emptype.length > 0) {
+               if (emptype 0  == "BRANCH") {
+                    manattr = AgedwardsEnrole.getAttributeForDn
+                    (managers 0 ,"uidbranch");
+                    }
+                   else {
+                    manattr = managers 0 ;
+                     }
+                  if (manattr == "attribute not found")
+                  { manattr = 'NA'; }
+                  if (manattr) { retval = manattr; }
+           }
+      }
+      return retval;
+   }
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY74178
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM TIV IDENT M
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3402
+   
+   
+ * REPORTED RELEASE
+   451
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-07-19
+   
+   
+ * CLOSED DATE
+   2005-08-02
+   
+   
+ * LAST MODIFIED DATE
+   2005-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,135 @@
+Title: IBM JR40340: WLE-5169 THE UPGRADE FROM TEAMWORKS 6.X OR WLE 7.X TO IBM BUSINESS PROCESS MANAGER V7.5.0 FIX PACK 1 FAILS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The upgrade from Teamworks 6.x or WebSphere Lombardi Edition 7.x
+   to IBM Business Process Manager V7.5.0 Fix Pack 1 fails with the
+   following message:
+   Target database schema version: 7.5.0 is not in the supported
+   list of versions to upgrade [7.5]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Code Fix.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Internal reported defect.                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Product upgrade from Teamworks 6.x or   *
+   *                      WLE 7.x to BPM 7.5.0 Fix Pack 1 fails.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Product upgrade from Teamworks 6.x or
+   WLE 7.x to BPM 7.5.0 Fix Pack 1 fails.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The official fix JR40340 fixed the upgrade failure due to
+   target database schema version mismatch. The error
+   happens when upgrading from TW 6.x.x to IBM BPM 7.5.0.1. The
+   problem can be fixed via modifying the upgrade_6x/upgrade.xml
+   file.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR40340
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-09
+   
+   
+ * CLOSED DATE
+   2011-08-17
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

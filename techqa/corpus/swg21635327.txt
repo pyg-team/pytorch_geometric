@@ -1,0 +1,17 @@
+Title: IBM Installation Manager GUI panel might contain the incorrect architecture for the Java 7 extension offering - United States
+
+Text:
+WASV855RNotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you use Installation Manager to install IBM WebSphere Application Server Version 8.5.5 or later with the 64-bit JDK feature and then install IBM WebSphere SDK Java Technology Edition Version 7.0 on top of it, Java 7 is laid down as 64-bit mode to match the bit version of the JDK 6 feature. When you check the "View installed Packages" panel in the Installation Manager GUI, however, the Java 7 extension offering architecture might be shown as 32 bit.
+
+
+CAUSE
+The WebSphere Application Server offering is a 32-bit offering even though it has a 64-bit JDK feature installed. The extension offering listing in the "View installed Packages" panel contains only the profile architecture and not the extension-offering architecture.
+
+RESOLVING THE PROBLEM
+No resolution is necessary.
+
+RELATED INFORMATION
+#WebSphere Application Server Version 8.5 release notes [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=phil&product=was-nd-mp&topic=relnotes]

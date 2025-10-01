@@ -1,0 +1,21 @@
+Title: IBM Running Web GUI browser sessions side by side - United States
+
+Text:
+omnibus web gui; login; dash; migration TECHNOTE (FAQ)
+
+QUESTION
+ In the course of migration from Web GUI 7.x to 8.1 I plan to run old and new installations side by side on the same machine. How can I avoid sessions logging each other out? 
+
+CAUSE
+It is possible to run multiple Web GUI installations of different versions on the same machine using different ports, but if you then try to run sessions to each installation from the same browser using the default configuration, the one session will log the other session out.
+
+ANSWER
+Here are three options: 
+
+Option 1 - Rename the session cookie in DASH (WAS 8.0):
+https://www-01.ibm.com/support/knowledgecenter/SSYJ99_8.0.0/admin/http_sessn_cookie.html?lang=en [https://www-01.ibm.com/support/knowledgecenter/SSYJ99_8.0.0/admin/http_sessn_cookie.html?lang=en]
+
+Option 2 - Configure Single Sign-on between the two installations:
+http://www-01.ibm.com/support/knowledgecenter/SSTPTP_1.3.0/com.ibm.netcool_ops.doc_1.3.0/omn_nmip/task/nnm_noi_configuresinglesignon.html [http://www-01.ibm.com/support/knowledgecenter/SSTPTP_1.3.0/com.ibm.netcool_ops.doc_1.3.0/omn_nmip/task/nnm_noi_configuresinglesignon.html]
+
+Option 3 - Use separate browsers for the two installations for the period of time that they run side-by-side (e.g. IE for one and FF for the other)

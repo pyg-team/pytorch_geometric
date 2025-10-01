@@ -1,0 +1,57 @@
+Title: IBM Using the ITCAM TEP workspaces with Sun Java - United States
+
+Text:
+tep; xerces; factoryconfigurationerror; java; sun; 1.5; 1.6; CAMADALL CAMADTEPDATA TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If TEP client (desktop, browser or Java Web Start) is running with Sun Java (both v1.5 or v1.6) instead of the IBM JVM, some of the ITCAM for WAS or ITCAM for AD workspaces will not show as expected. 
+
+SYMPTOM
+Impacted workspaces are the Application Servers Summary, the Topology View and possibly others. Here is an example: 
+
+[/support/docview.wss?uid=swg21438274&aid=1] [/support/docview.wss?uid=swg21438274&aid=1]
+
+
+CAUSE
+The Sun JVM does not include certain third-party software components, like Xerces and Xalan. Some ITM agents rely on these APIs. For example, the Xalan API is needed by ITCAM for SOA (see link below for a specific Technote).
+
+
+RESOLVING THE PROBLEM
+The workaround is to copy the Xerces JARs into the Sun Java jre\lib\ext directory. The JARs will be automatically included in the classpath. 
+
+Here are the steps:
+
+1) Close the TEP client
+
+2) Download the official Xerces2 (BINARY) from
+
+http://xerces.apache.org/mirrors.cgi [http://xerces.apache.org/mirrors.cgi]
+
+e.g. Xerces2 Java 2.9.1 - zip
+
+3) From this zip (or tar.gz), extract the two following JAR files:
+
+xercesImpl.jar
+xml-apis.jar
+
+4) Copy these two files to the following directory:
+
+<SUN_JVM_HOME>\lib\ext
+
+e.g. (Windows) C:\Program Files\Java\jre6\lib\ext
+e.g. (UNIX) /opt/jre6/lib/ext
+
+5) Clear the Sun Java JRE cache.
+
+Note: You will continue to observe the same behavior unless you clear the Java cache.
+
+6) Open the TEP client as usual.
+
+RELATED INFORMATION
+ Similar technote for ITCAM for SOA [http://www.ibm.com/support/docview.wss?uid=swg21429283]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for WebSphere ITCAM for WebSphere (Dist TEMA) AIX, Linux, Solaris, Windows 6.1

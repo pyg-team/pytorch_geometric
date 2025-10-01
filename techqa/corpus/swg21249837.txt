@@ -1,0 +1,27 @@
+Title: IBM How do I obtain the DB2 Content Manager for iSeries (5722-VI1) V5.3 product software? - United States
+
+Text:
+Passport Advantage; 5722VI1 V5R3; R5.3 FLASH (ALERT)
+
+ABSTRACT
+ The IBM® DB2® Content Manager for iSeries™, product number 5722-VI1, is no longer sent on the stacked media (CDs) that you receive with operating system upgrades. The product is now available from the Passport Advantage web site, where it can be downloaded. You must be Passport Advantage-entitled (with your software subscription) to the 5722-VI1 product before you can download it. 
+
+CONTENT
+You should verify with your IBM marketing representative or IBM business partner that you are Passport Advantage-entitled. If you are, you can go to the Passport Advantage web site and download the DB2 Content Manager for iSeries software. You can also request to get the software on a CD at the Passport Advantage web site through the "Media Access" option. 
+
+To download the software: 
+
+1. Go to http://www.ibm.com/software/howtobuy/passportadvantage [http://www.ibm.com/software/howtobuy/passportadvantage] and click the tab labelled Passport Advantage Online. That will bring you to http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm], where you will click Customer sign-in.
+
+2. Enter your registration ID. If you do not know what this is or you do not have a registration ID, contact the Passport Advantage group at 1-800-978-2246. Their hours of operation are Monday through Friday, 8 a.m. to 8 p.m. eastern time (EDT (summer) or EST (winter)), excluding U.S. legal holidays. For customers outside the U.S. or Canada, please see https://www-112.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [https://www-112.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html] . 
+
+3. Click on Software Download & Media Access on the left. On the Software Download tab, click on Download Finder. All entitled downloads should be listed. Select IBM DB2 Content Manager iSeries and then Continue. On the next panel, select the platform IBM i (i5 formerly i5/OS V5) and then click on Yes next to "If available,would you like to see previous versions of this product?", then Continue. On the screen that follows, click on the plus sign to expand Previous versions. Then look for the eAssembly named “IBM DB2 Content Manager iSeries V5.3 Multilingual eAssembly (CR1HGML)”. Click on the plus sign next to this entry.
+
+4. You will see that C85SVML is for the Server code (5722-VI1), C57T4ML is for the Content Manager iSeries Client code (V5.1 of the Client works on R5.3 of the server), and C82GAML is for the licensing agreement. Put a check mark next to the items you want or check Select All and then click I agree and Download now at the bottom of the page. 
+
+5. The code may get placed in c:\DownloadDirector, unless you get a chance to override this. The C85SVML.EXE for V5.3 extracts into two files –- the VI1 code and the C85SVML.TXT file, which has the directions for uploading to the iSeries and loading the Licensed Program Product, 5722-VI1. It is highly recommended that you print and review the PDF instruction file below rather than using the abbreviated instructions that are downloaded in the TXT file.
+
+CM Electronic Image Instructions 1-26-07.pdf [/support/docview.wss?uid=swg21249837&aid=2] [/support/docview.wss?uid=swg21249837&aid=1]
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager for iSeries Installation/Migration/Setup AS400, i5/OS 5.3 All Editions

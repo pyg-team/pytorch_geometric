@@ -1,0 +1,58 @@
+Title: IBM PolicyAtlas is down. PAEarlog.log shows this error: getCustodiansOnHoldMetric ORA-01427: single-row subquery returns more than one row - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ PolicyAtlas application is not starting up. PAEarlog.log shows this error: getCustodiansOnHoldMetric ORA-01427: single-row subquery returns more than one row.
+Full trace.
+[2016-05-06 09:40:06,082] null_Worker-3 com.secretseal.policyatlas.dao.MetricsDAO ERROR - SQL Exception has occured while executing query: getCustodiansOnHoldMetric ORA-01427: single-row subquery returns more than one row
+
+java.sql.SQLException: ORA-01427: single-row subquery returns more than one row
+
+
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:439)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:395)
+at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:802)
+at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:436)
+at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:186)
+at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:521)
+at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java:205)
+at oracle.jdbc.driver.T4CPreparedStatement.executeForDescribe(T4CPreparedStatement.java:861)
+at oracle.jdbc.driver.OracleStatement.executeMaybeDescribe(OracleStatement.java:1145)
+at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1267)
+at oracle.jdbc.driver.OraclePreparedStatement.executeInternal(OraclePreparedStatement.java:3449)
+at oracle.jdbc.driver.OraclePreparedStatement.executeQuery(OraclePreparedStatement.java:3493)
+at oracle.jdbc.driver.OraclePreparedStatementWrapper.executeQuery(OraclePreparedStatementWrapper.java:1491)
+at com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.pmiExecuteQuery(WSJdbcPreparedStatement.java:1110)
+at com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.executeQuery(WSJdbcPreparedStatement.java:712)
+at com.secretseal.policyatlas.dao.query.QueryConnection.executeQuery(QueryConnection.java:506)
+at com.secretseal.policyatlas.dao.MetricsDAO$2.executeOn(MetricsDAO.java:145)
+at com.secretseal.policyatlas.dao.query.QueryExecuter.execute(QueryExecuter.java:34)
+at com.secretseal.policyatlas.dao.query.QueryExecuter.execute(QueryExecuter.java:13)
+at com.secretseal.policyatlas.dao.MetricsDAO.getMetricData(MetricsDAO.java:141) 
+
+DIAGNOSING THE PROBLEM
+Please run this query to show PARENT_LEGAL_NOTICE_ID count. 
+
+select PARENT_LEGALNOTICE_ID,count(*) from LEGALNOTICE group by
+PARENT_LEGALNOTICE_ID
+having count(PARENT_LEGALNOTICE_ID)>1
+
+If one or more records are returned by this query , then you would get the error "java.sql.SQLException: ORA-01427: single-row subquery returns more than one row"
+
+
+RESOLVING THE PROBLEM
+1. Run this query 
+
+select PARENT_LEGALNOTICE_ID,count(*) from LEGALNOTICE group by
+PARENT_LEGALNOTICE_ID
+having count(PARENT_LEGALNOTICE_ID)>1
+
+2. Run this query.
+select * from LEGALNOTICE where PARENT_LEGALNOTICE_ID= < value from previous query>
+
+3) Update one of the records PARENT_LEGALNOTICE_ID to null
+UPDATE LEGALNOTICE SET PARENT_LEGAL_NOTICE_ID=null where NOTICEID=<noticeid value>
+commit.
+4) now you restart the application server.

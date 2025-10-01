@@ -1,0 +1,194 @@
+Title: IBM PM62447: MULTIPLE SUBQUERY IN @ONETOMANY LEADS TO STACKOVERFLOWERROR IN JPA 2.0 - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Description:
+   https://issues.apache.org/jira/browse/OPENJPA-1974 [https://issues.apache.org/jira/browse/OPENJPA-1974]
+   
+   JPQL with multiple subquery in @OneToMany annotated collection
+   property with eager fetch configuration, StackOverflowError is
+   thrown.
+   
+   java.lang.StackOverflowError
+   at
+   org.apache.openjpa.jdbc.sql.SelectImpl.aliasSize(SelectImpl.java
+   :2166)
+   at
+   org.apache.openjpa.jdbc.sql.SelectImpl.aliasSize(SelectImpl.java
+   :2160)
+   at
+   org.apache.openjpa.jdbc.sql.SelectImpl.aliasSize(SelectImpl.java
+   :2168)
+   at
+   org.apache.openjpa.jdbc.sql.SelectImpl.aliasSize(SelectImpl.java
+   :2160)
+   at
+   org.apache.openjpa.jdbc.sql.SelectImpl.aliasSize(SelectImpl.java
+   :2168)
+   at
+   org.apache.openjpa.jdbc.sql.SelectImpl.aliasSize(SelectImpl.java
+   :2160)
+   at
+   org.apache.openjpa.jdbc.sql.SelectImpl.aliasSize(SelectImpl.java
+   :2168)
+    ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of the Java Persistence API       *
+   *                  (JPA) 2.0 feature of the IBM WebSphere      *
+   *                  Application Server V7 Feature Pack for      *
+   *                  OSGi Applications and Java Persistence API  *
+   *                  2.0 who make use of subqueries              *
+   *                  involving eager @OneToMany collections.     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: StackOverflowError when performing      *
+   *                      multiple subquery in collection field   *
+   *                      with eager fetch.                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The following StackOverflowError is thrown when running a JPQL
+   query with multiple subqueries in an @OneToMany annotated
+   collection property with eager fetch configuration:
+   java.lang.StackOverflowError
+   at
+   org.apache.openjpa.jdbc.sql.SelectImpl.aliasSize(SelectImpl.java
+   :2166)
+   at
+   org.apache.openjpa.jdbc.sql.SelectImpl.aliasSize(SelectImpl.java
+   :2160)
+   at
+   org.apache.openjpa.jdbc.sql.SelectImpl.aliasSize(SelectImpl.java
+   :2168)
+   at
+   org.apache.openjpa.jdbc.sql.SelectImpl.aliasSize(SelectImpl.java
+   :2160)
+   at
+   org.apache.openjpa.jdbc.sql.SelectImpl.aliasSize(SelectImpl.java
+   :2168)
+   at
+   org.apache.openjpa.jdbc.sql.SelectImpl.aliasSize(SelectImpl.java
+   :2160)
+   at
+   org.apache.openjpa.jdbc.sql.SelectImpl.aliasSize(SelectImpl.java
+   :2168)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  With this fix code has been added to OpenJPA to fix the
+   StackOverflowError which can occur when executing a JPQL query.
+   
+   The fix for this APAR is currently targeted for inclusion
+   in Fix Pack 1.0.0.9 for the Feature Pack for OSGi Applications
+   and Java Persistence API 2.0.
+   
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM62447
+   
+   
+ * REPORTED COMPONENT NAME
+   JPA OSGI FEATUR
+   
+   
+ * REPORTED COMPONENT ID
+   5655N0257
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-04-13
+   
+   
+ * CLOSED DATE
+   2012-06-20
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM64825 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM64825]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JPA OSGI FEATUR
+   
+   
+ * FIXED COMPONENT ID
+   5655N0257
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

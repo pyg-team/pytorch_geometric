@@ -1,0 +1,180 @@
+Title: IBM IZ37153: IF THE PA30 RECORD IS LOCKED BY THE PERSONNEL NUMBER, THE ADD REQUEST SUCCESS BUT THE NO RECORD UPDATED AT ALL IN CUA - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IF the PA30 record is locked by the personnel number, the add
+   request success but the no record updated at all in CUA
+   
+   It's  a limitation of the SAP agent if the PA30 record is locked
+   for
+   that
+   personnel number, we're not able to add the records. No warning
+   or error
+   is returned in the ITIM Server so as of today you can use a
+   workaround
+   after the successful create,
+   
+   Customr Recreate:  yes
+   L2 Support Recreate:  Yes
+   
+   Desired Behavior:able to update the CUA infor properly even
+   though P30
+   record is locked.
+   Steps Duplicate:
+    1. Roc (U399208) logon to SAP sub system DRD 102, enter PA30
+   and view
+   the IT 105 info of personnel number 00000012. There is current
+   no data
+   stored. (See u900813-1.jpg in screenshots.zip)
+   2. Confirmed that there are two records with user id U399208 in
+   the Lock
+   Entry List. (See u900813-2.jpg in screenshots.zip)
+   3. Create an SAP CUA account u900813 in TIM with logical system
+   DRD 102
+   and personnel number 00000012 assigned. (See u900813-3.jpg in
+   screenshots.zip)
+   4. Confirmed that account u900813 is created in DRD 102. (See
+   u900813-4.jpg in screenshots.zip)
+   5. Confirmed that IT 105 info can not be updated for personnel
+   number
+   00000012. (Same as u900813-1.jpg in screenshots.zip)
+   
+   6. Roc exit PA30, confirmed that the records with user id
+   U399208 is
+   removed in the Lock Entry List. (See u900814-1.jpg in
+   screenshots.zip)
+   7. Create an SAP CUA account u900814 in TIM with logical system
+   DRD 102
+   and personnel number 00000012 assigned. (See u900814-2.jpg in
+   screenshots.zip)
+   8. Confirmed that IT 105 info is updated for personnel number
+   00000012.
+   (See u900814-3.jpg in screenshots.zip)
+   Environment: SAP agent 4.6.x and ITIM 4.6
+   Win 2003
+   TIM 4.6
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  SAP may have the HR recorded locked at the time
+    the TIM SAP Adapter attempts to establish the HR linking. This
+   may cause the linkage to fail, but this missing linkage will not
+    be detected on TIM until the next Recon.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  Beta version of the SAP Netweaver adapter has bee
+   n provided.
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  The new architecture of the SAP Adapter, SAP Netweaver
+    Adapter, will be available on Dec 8, 2008 and will not contain
+   this limitation.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ37153
+   
+   
+ * REPORTED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C34AG
+   
+   
+ * REPORTED RELEASE
+   460
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-11-11
+   
+   
+ * CLOSED DATE
+   2008-11-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  AGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

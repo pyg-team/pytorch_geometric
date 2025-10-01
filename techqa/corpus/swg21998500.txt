@@ -1,0 +1,36 @@
+Title: IBM Upgrade process of IBM Installation Manager for IBM Sterling B2B Integrator installation fails with the error - Message ID :CRIMA1194E - United States
+
+Text:
+IBM ; B2B ; Sterling Integrator ; Installation Manager TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Upgrade process of IBM Installation Manager (IIM) for IBM Sterling B2B Integrator installation fails with the error - Message ID :CRIMA1194E 
+
+CAUSE
+The issue caused by 32-bit version of IIM
+
+RESOLVING THE PROBLEM
+To resolve the issue, follow any of the options listed below. 
+
+
+1) Uninstall via the IIM:
+
+
+ * 
+ * update
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+2) The other option is to find the IIM install location which defaults to /home/user/IBM and /home/user/var/IBM. Then rename those IBM folders and try the upgrade again; It would not now detect the 32- bit IIM now. 
+
+
+3) Another option is to download the IIM 1.8.2 (or higher) 32-bit version of the IIM off the web and use it.

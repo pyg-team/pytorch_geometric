@@ -1,0 +1,29 @@
+Title: IBM Performance Analyzer Configuration window shows error "DB Connection Failure!" - United States
+
+Text:
+kpa.kpaxjdbc.execDirect; "Failed to execute query to determine if config parser task is required" TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In the TEP Client, using the Edit-->Performance Analyzer Configuration menu option to configure IBM Tivoli Performance Analyzer (ITPA) tasks causes a "DB Connection Failure!" error to appear. The ITPA is connecting to a DB2 Data Warehouse database. 
+
+CAUSE
+During the configuration of the ITPA the user must specify the location of the DB2 jar files db2jcc.jar and db2jcc_license_cu.jar. If the db2jcc4.jar resides in the same location as the required DB2 jar files (db2jcc.jar and db2jcc_license_cu.jar), the ITPA will not be configured correctly.
+
+ENVIRONMENT
+ITPA connecting to DB2 Data Warehouse database
+
+DIAGNOSING THE PROBLEM
+Review the $CANDLEHOME/logs/kpacma.log file generated after the configuration of the ITPA completes.
+
+
+
+
+Check the kpacma.log for DB2 errors:
+2013-05-23 10:21:27: Java exception : com.ibm.db2.jcc.a.bn: DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704, SQLERRMC=ITMUSER.KPATASKS, DRIVER=3.51.90
+2013-05-23 10:21:27: Stack trace : com.ibm.db2.jcc.a.bn: DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704, SQLERRMC=ITMUSER.KPATASKS, DRIVER=3.51.90
+
+Gather a directory listing of the PATH specified for the KPA_CLASSPATH in the $CANDLEHOME/config/pa.ini for the db2jcc.jar.
+
+
+RESOLVING THE PROBLEM
+Place the required DB2 jar files (db2jcc.jar and db2jcc_license_cu.jar) in a directory that does not contain the db2jcc4.jar file and reconfigure the ITPA.

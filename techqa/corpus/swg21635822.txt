@@ -1,0 +1,86 @@
+Title: IBM The Messaging Engine for IBM Business Process Manager (BPM) does not start after upgrading to a new version - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you start your support cluster members after upgrading IBM Business Process Manager to a new version, you might notice a CWLLG1031E exception code in the support cluster member SystemOut.log file. 
+
+SYMPTOM
+You can see the following exceptions in the FFDC log file when you start the messaging cluster member: 
+
+FFDC Exception:com.ibm.ws.sib.msgstore.PersistenceException SourceId:com.ibm.ws.sib.msgstore.impl.MessageStoreImpl.start ProbeId:755 Reporter:com.ibm.ws.sib.msgstore.impl.MessageStoreImpl@f1daefa
+com.ibm.ws.sib.msgstore.PersistenceException: CWSIS1501E: The data source has produced an unexpected exception: java.lang.IllegalStateException: CWSIS1532E: The table, BPMPERF00.SIBOWNERO, is missing.
+at com.ibm.ws.sib.msgstore.persistence.impl.PersistentMessageStoreImpl.start(PersistentMessageStoreImpl.java:206)
+at com.ibm.ws.sib.msgstore.impl.MessageStoreImpl.start(MessageStoreImpl.java:1524)
+at com.ibm.ws.sib.admin.impl.JsMessagingEngineImpl.start(JsMessagingEngineImpl.java:604)
+at com.ibm.ws.sib.admin.impl.HAManagerMessagingEngineImpl.activate(HAManagerMessagingEngineImpl.java:1005)
+at com.ibm.ws.sib.admin.impl.JsActivationThread.run(JsActivationThread.java:94)
+Caused by: java.lang.IllegalStateException: CWSIS1532E: The table, BPMPER00.SIBOWNERO, is missing.
+at com.ibm.ws.sib.msgstore.persistence.impl.Table.initialize(Table.java:236)
+at com.ibm.ws.sib.msgstore.persistence.impl.MEOuterOwnerTable.initialize(MEOuterOwnerTable.java:80)
+at com.ibm.ws.sib.msgstore.persistence.impl.TableManager$1.run(TableManager.java:260)
+at com.ibm.ws.sib.msgstore.persistence.impl.DatasourceController.performFirstAction(DatasourceController.java:225)
+at com.ibm.ws.sib.msgstore.persistence.impl.TableManager.initialize(TableManager.java:245)
+at com.ibm.ws.sib.msgstore.persistence.impl.PersistentMessageStoreImpl.start(PersistentMessageStoreImpl.java:197)
+... 4 more 
+
+ 
+
+
+You can see exceptions in the support cluster member or application cluster member SystemOut.log file that are similar to the following text:
+
+[4/17/13 17:32:41:236 EDT] 00000043 DataTransferS E CWLLG1031E: An exception has occurred. Error: CWSIA0241E: An exception was received during the call to the method JmsManagedConnectionFactoryImpl.createConnection: com.ibm.websphere.sib.exception.SIResourceException: CWSIT0008E: A successful connection was made to the bootstrap server at myserver.mycompany.com:1234:BootstrapSecureMessaging but the server returned an error condition: CWSIT0088E: There are currently no messaging engines in bus PERFDW.ProcessServerCell01.Bus running. Additional failure information: CWSIT0103E: No messaging engine was found that matched the following parameters: bus=PERFDW.ProcessServerCell01.Bus, targetGroup=null, targetType=BusMember, targetSignificance=Preferred, transportChain=InboundSecureMessaging, proximity=Bus.
+
+
+CAUSE
+When you upgrade the database by executing the upgradeProcessData.bat, upgradeProcessData.sh, upgrade7x.bat, or upgrade7x.sh command, the Messaging Engine tables are dropped.
+
+When you restart the Java™ virtual machines (JVM), the Messaging Engine creates new tables if the Create tables option for the Messaging Engine data store is selected and the database user has the required privileges to create the database tables. The following screen shot shows the location of this Create tables option:
+
+
+[/support/docview.wss?uid=swg21635822&amp;aid=1]
+
+
+You see the exception that is described in the Symptom section if the Create tables option is not selected or the database user does not have the privileges to create the database.
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, complete one of the following set of steps: 
+
+ * If the Messaging Engine database user has the required privileges to create database tables, complete the following steps in the WebSphere Administrative Console to verify that the Create tables option is selected:  1. Click Service integration > Buses > bus_name > [Topology] Messaging engines > engine_name.
+       
+       
+    2. Click Data store. The following screen shot shows the data store properties for the messaging engine:
+       
+       
+       [/support/docview.wss?uid=swg21635822&amp;aid=2]
+       
+       
+       When you select the Create tables option, the selected SIB tables are created automatically during the messaging engine start up process. The user ID should have the required privileges to create the tables. 
+       
+       
+    3. Repeat the steps for all of the messaging engines that are associated with the SIBus that is configured in your environment.
+       
+       
+    4. Restart the JVMs.
+       
+       
+   
+   
+
+If the database user does not have the required privileges to create new tables and the schema, complete the following steps:  1. Generate the SQL files for specific messaging engine database.
+    
+    
+ 2. Manually create the messaging engine tables before you start the JVMs. You can use Database Design Tool (DDT) utility or the sibDDLGenerator command to generate the required database scripts.
+
+RELATED INFORMATION
+ Creating database design files for specific components [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r0m1/topic/com.ibm.wbpm.imuc.ebpm.doc/topics/ddt_comp_nd_lin_db2.html]
+sibDDLGenerator [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/topic/com.ibm.websphere.nd.doc/info/ae/ae/rjm0630_.html]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Databases AIX, Linux, Linux zSeries, Windows 8.0.1, 8.0, 7.5.1 Business Integration IBM Business Process Manager Express Databases Linux, Linux zSeries, Windows 8.0.1, 8.0, 7.5.1 
+PRODUCT ALIAS/SYNONYM
+ BPM

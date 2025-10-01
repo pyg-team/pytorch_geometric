@@ -1,0 +1,41 @@
+Title: IBM DFHLG0784 RC08 RSN8E2 opening files with CICS VR Inventory Scavenger - United States
+
+Text:
+inventory scavenger IXG231I DFHLG0784 IXGCONN 00000008 RC08 X'000008E2' RSN8E2 8E2 X'00000008' X'000008E2' ; DFHFC0525 OPEN failed IxgRsncodeDasdOnlyConnected 5655P3000 R420 R42E R42K 5655-P30 5655P30 FMID HCCV420 JCCV42E JCCV42K R430 R43E R43K HCCV430 JCCV43E JCCV43K 5655Y2400 R510 R51C R51E R51K 5655-Y24 5655Y24 FMID HCCV510 JCCV51E JCCV51K TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A CICS file owning region (FOR) cannot open its recoverable VSAM files during initialization. You see error message DFHLG0784 with MVS logger return code 00000008 reason code 000008E2 followed by DFHFC0525 OPEN failed. You are in a multi-LPAR sysplex with CICS using DASD ONLY logging. You have CICS VSAM Recovery for z/OS (CICS VR) set up to use Inventory Scavenger. 
+
+SYMPTOM
+Your CICS joblog shows the following series of messages: 
+
+IXG231I IXGCONN REQUEST=CONNECT TO LOG STREAM xxxxxxx.xxxxx.xxxx.
+DFHLG0784 [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.messages.doc/DFHLG/DFHLG0784.html] The MVS logger has returned an error during operation IXGCONN CONNECT for log stream lsn. You cannot connect to a DASDONLY log stream that is already connected to another MVS image. MVS logger codes: X'00000008' X'000008E2'.
+DFHFC0525 [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.messages.doc/DFHFC/DFHFC0525.html] Non-RLS OPEN of file xxxxx failed because the forward recovery log stream could not be opened. Module DFHFCFS
+
+When you review the system log you find that there are a number of IXG231I messages pointing to CICS VR with the same LOGGER return and reason codes.
+
+
+CAUSE
+You have IPL'd one of your LPARs and another LPAR has control of the DASD-ONLY log streams.
+
+
+DIAGNOSING THE PROBLEM
+Reason code 8E2 [http://pic.dhe.ibm.com/infocenter/zos/v2r1/index.jsp?topic=%2Fcom.ibm.zos.v2r1.ieaa200%2Fx2cnn.htm] indicates another log stream in the sysplex is already connected to that log stream. Running with DASD ONLY log streams limits the access to the log streams to one LPAR at a time, even though the DASD where the log streams reside is shared throughout the sysplex.
+
+In this case, the forward recovery logs are being held by CICS VR because it has been set up to use inventory scavenger with no specified time. Therefore, the scavenger runs every 24 hours based off of the last IPL. The RCDS is shared among all of the CICS VR servers.
+
+
+
+RESOLVING THE PROBLEM
+Controlling when the inventory scavenger runs and specifying which records you want to deregister when inventory scavenger runs is key to avoiding contention: 
+
+ * You should set the time for your inventory scavenger to run after your CICS regions have started using the Setting CICS VR server address space scavenger parameters [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.cvr.doc/dwwug/setscavengerpara.html] panel.
+   
+ * You can also manage the size of your FWDRECOVLOG [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.doc/dfha2/topics/dfha2_forward_recov_logs.html] by specifying AUTODELETE(YES) and RETPD(dddd) [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.doc/dfha6/topics/dfha6bf.html] on the MVS log stream definition so the inventory scavenger only needs to clean up the records on the RCDS. Then you can set up the inventory scavenger so it no longer accesses the forward recovery log streams. To do this, change the CICS VR automatic log stream deregister panel (DWWPPSAD [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.cvr.doc/dwwig/dwwig000135.html]) so that the Retention period for blocks is BLANK.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Transaction Server Logger Domain z/OS 5.1, 4.2, 4.1, 3.2, 3.1 
+PRODUCT ALIAS/SYNONYM
+ CICSVR CICS VR CICS/VR

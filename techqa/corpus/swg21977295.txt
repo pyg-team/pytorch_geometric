@@ -1,0 +1,28 @@
+Title: IBM NFS log target behaviour changed with DataPower release 7.0 - United States
+
+Text:
+DataPower; NFS; logging; log target; performance TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why may I see increased load on my NFS servers after having upgraded to DataPower release 7.0 or later? 
+
+CAUSE
+Prior to release 7.0, a slow NFS server could cause unspecified general delays to other services on a device. A NFS server that dropped off the network could lead to an unplanned restart of the device when too many simultaneous write calls were waiting on a response from the NFS server. The overall impact on DataPower devices from unstable NFS impacted a number of users. 
+
+Prior to release 7.0, a NFS log target created or opened a file on the NFS mount for append under the following conditions:
+- When the log target was first created
+- When the log target was modified
+- When the file hits the configured maximum size
+
+In between those conditions, the log target would keep the file open and write each distinct log message to the end of the file. The DataPower NFS code batched the write operations before the messages were sent to the network. The open/write/close call was all be done by the shared main task. 
+
+In 7.0, the NFS log target was changed to use an asynchronous API to a dedicated NFS task. Each call to the API opens and closes the file before and after each write operation. The calls are no longer done within the shared main task but by the dedicated NFS task. The log target attempts to batch some of the write operations before calling the API.
+
+
+DIAGNOSING THE PROBLEM
+Review your DataPower configuration and packet-captures in regards to NFS log target traffic and also your NFS Server resource usage graphs (e.g. I/O, network, CPU).
+
+
+
+RESOLVING THE PROBLEM
+If you are affected, IBM Support recommends to reduce the number of NFS log targets on the device. Users can consolidate logging to NFS targets to the default domain as opposed to logging events in each domain individually.

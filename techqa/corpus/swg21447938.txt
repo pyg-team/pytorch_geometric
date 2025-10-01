@@ -1,0 +1,72 @@
+Title: IBM Collecting Data: Configuring Security for WebSphere Portal 7.0 - United States
+
+Text:
+Collecting Data; Collecting Data; Collecting Data; MustGather; MustGather; MustGather; MustGatherDocument; PORTSE); Security Configuration; Security task; LDAP RECOMMENDED RESOURCES
+
+ABSTRACT
+ Collecting troubleshooting data for Security configuration issues with IBM WebSphere Portal 7.0 expedites time to resolution by enabling IBM Support to provide informed problem analysis. 
+
+CONTENT
+If you have already contacted IBM Support and must collect data to determine the nature of a problem in WebSphere Portal, review the information below for the available methods of data collection. Otherwise, review Collecting Data: Read first for WebSphere Portal 7.0 [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21444911]. 
+
+Collecting Security Configuration specific information 
+
+Security configuration issues can include:
+* Enabling standalone ldap user registry (wp-modify-ldap-security)
+* Enabling federated ldap user registry (wp-create-ldap)
+* Validation tasks (validate-federated-ldap, validate-standalone-ldap)
+* Database User Registry (wp-create-db)
+* Change WebSphere Application Server admin user (wp-change-was-admin-user) or Websphere Portal admin user (wp-change-portal-admin-user) 
+* Other configuration tasks related to security such as updating realm, base entries entity types, etc.
+* Configuration Wizard
+
+Note: If you are using an LDAP server, send in LDIFs of the problematic users and/or groups. You can use ldapsearch [http://www-01.ibm.com/support/docview.wss?rs=203&ca=portall2&uid=swg21113384] to obtain the LDIFs. 
+
+Automated collection of troubleshooting data Automated log collection is available for this information and is the recommended method for improving accuracy of the data collection.
+
+IBM Support Assistant Lite (ISA Lite) for WebSphere Portal
+Download Tool [http://www.ibm.com/support/docview.wss?rs=688&ca=portall2&uid=swg24008662] | View Demo of Trace Collection [http://www.lotus.com/ldd/portalwiki.nsf/dx/isalite-fundamentals-version-1.3.3-for-ibm-websphere-portal]
+
+After downloading IBM Support Assistant Lite, perform the following steps to collect the data and send to IBM Support: 
+
+1. Extract the contents of the downloaded file to the <wp_profile_root>\PortalServer directory, which will create the subdirectory "ISALite" (e.g. c:\WebSphere\wp_profile\PortalServer\ISALite). 
+
+2. Run the runISALite.bat file (Windows) or runISALite.sh (UNIX or Linux) from the ISALite directory (e.g. c:\WebSphere\wp_profile\PortalServer\ISALite\runISALite.bat). 
+
+3. Once the tools starts, select the following Problem Type: WebSphere Portal->Installation and Configuration->Portal Configuration Problem. 
+
+4. Provide the output path and a file name of format "<PMR #>.isalite.zip" (e.g. 22222,111,000.isalite.zip). 
+
+5. Click Collect Data and follow the series of dialog boxes to set the tracing, reproduce the issue, and send the files to IBM Support. If you choose not to FTP the files to IBM via ISA Lite, then follow the instructions in Exchanging information with IBM Technical Support for problem determination [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571].
+
+
+Manual collection of troubleshooting data If you are unable to use IBM Support Assistant Lite (ISA Lite) for WebSphere Portal for automatic log collection, use the following instructions for manually collecting the necessary information.
+
+Collecting and submitting logs and configuration data: 
+
+1. Reproduce the problem. Collect screenshots, userId, and timestamp information as appropriate. 
+
+2. Run the following script from <wp_profile>/PortalServer/bin to collect the data: 
+
+ * Windows: wpcollector.bat 
+ * Linux/Unix/i: wpcollector.sh
+
+
+Note: If you wish to use wpcollector to FTP the files to IBM Support, include the -Dpmr=<pmr_number> parameter to indicate the relevant PMR #. For example: wpcollector.bat -Dpmr=11111,222,333 
+
+For a clustered environment, please also collect files for the Deployment Manager profile: use the -Ddmgr.root=<dmgr_root> parameter either alone or in conjunction with -Dpmr=<pmr_number> 
+
+Note: If you are manually submitting the files from both the WebSphere Portal server and the Deployment manager, please ensure that IBM Support can differentiate between the two sets of files. 
+
+3. If you did not FTP your files via wpcollector, locate the "wp.mustgather.zip" file or the "<pmr #>-wp.mustgather-timestamp.zip" file in <wp_profile_root> [https://idoc2.swg.usma.ibm.com/portal/topic/com.ibm.wp.ent.doc_v70/reference/wpsdirstr.html#wpsdirstr__wp_profile_root]/filesForAutoPD/. Send the files to IBM Support by using the instructions outlined in Exchanging information with IBM Technical Support for problem determination [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571]. Note: When sending in logs for review, include any relevant screenshots, timestamps, userIds, etc. in order to expedite analysis of the issue. 
+
+ 
+
+Related Information  * IBM Support Portal: WebSphere Portal Troubleshooting [http://www.ibm.com/support/entry/portal/Troubleshooting/Software/WebSphere/WebSphere_Portal] [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571] 
+ * WebSphere Portal Family wiki: Troubleshooting [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Troubleshooting_wp7] 
+ * Collecting Data: Read first for WebSphere Portal [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21444911]
+
+
+
+ * 
+ *

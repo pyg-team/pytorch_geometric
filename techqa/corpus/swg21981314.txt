@@ -1,0 +1,37 @@
+Title: IBM Security Bulletin: Potential security vulnerability in IBM WebSphere Application Server may affect Tivoli Netcool Performance Manager (CVE-2016-0306) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM WebSphere Application Server is shipped as a component of Tivoli Netcool Performance Manager. Information about a potential security vulnerability in IBM WebSphere Application Server if FIPS 140-2 is enabled. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2016-0306 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-0306]
+DESCRIPTION: IBM WebSphere Application Server could provide weaker than expected security, caused by the improper TLS configuration. A remote attacker could exploit this vulnerability to obtain sensitive information using man in the middle techniques.
+CVSS Base Score: 3.7
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/111423 [https://exchange.xforce.ibmcloud.com/vulnerabilities/111423] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N) 
+Please consult the security bulletins below for vulnerability details: 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21981086 [http://www-01.ibm.com/support/docview.wss?uid=swg21981086] http://www-01.ibm.com/support/docview.wss?uid=swg21979231 [http://www-01.ibm.com/support/docview.wss?uid=swg21979231]
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Principal Product and Version(s) Affected IBM WebSphere Application Server Version Tivoli Netcool Performance Manager version 1.3.2, 1.3.3, 1.4.0, 1.4.1 WAS version 8.0, 8.5 GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ April 13, 2016: Original Version 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

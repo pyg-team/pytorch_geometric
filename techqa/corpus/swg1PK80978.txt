@@ -1,0 +1,201 @@
+Title: IBM PK80978: DFHZC0002 CODE X'FA8B' IN MODULE DFHZGTA, INSTALLING TERMINAL FOR EPI CONNECTION. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A CTIN transaction has attached a CITS transaction to install
+   terminal ID LAAH.
+   The CITS transaction has created the surrogate TCTTE and after
+   the first phase of SYNCPOINT the task got suspended.
+   .
+   The CTIN transaction TIMEOUT after 2 minutes and call DFHZTSP to
+   FREEMAIN the surrogate TCTTE before attaching CDTS and then
+   suspend itself for another 2 minutes.
+   .
+   The storage used by the surrogate TCTTE that was FREEMAIN is
+   reused for terminal ID LAAE.
+   .
+   The CITS task is resumed and the second phase of SYNCPOINT,
+   PERFORM_COMMIT. During that phase DFHZGTA is called to ADD the
+   terminal ID to TMP. Because the storage has been resued for the
+   surrogate TCTTE the ADD is done against the wrong terminal ID,
+   LAAE, resulting in message DFHZC0002.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Message DFHZC0002 - A severe error      *
+   *                      (code X'FA8B') has occurred in DFHZGTA  *
+   *                      while installing a CICS Client          *
+   *                      Terminal.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A CICS CTIN transaction is attached because a CICS client
+   has requested that a terminal be autoinstalled. The CTIN
+   transaction attaches a CITS transaction to install the terminal
+   and suspends for 2 minutes to allow it to build the tctte.
+   
+   The CITS transaction becomes suspended in syncpoint processing
+   and does not complete within the time period. This results in
+   the CTIN task timing out and it then attempts to tidyup the
+   partially installed virtual terminal.
+   
+   As part of this tidyup a DFHIS TYPE=SKELCOM call is made to
+   delete the Surrogate tctte that has been built by the CITS
+   transaction. Then a CDTS transaction is attached to delete
+   the skeleton tctte.
+   
+   Meanwhile another unrelated task (CDTS for another terminal)
+   obtains a Surrogate and is given the newly freed storage
+   for its Surrogate.
+   
+   When the original CITS task resumes from its suspend it
+   continues to use the same Surrogate's storage which now
+   belongs to another terminal resulting in message
+   DFHZC0002 and a ZC0002 system dump, but other unpredictable
+   results may occur.
+   
+   Additional Keywords
+   tid_zct1_cits_timeout delete_virtual_terminal CTIN 0C4
+   S0C4 abend0C4 abendS0C4
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHZCT1 has been changed so that when a timeout of the CTIN task
+   occurs the deletion of the surrogate will be bypassed.
+   
+   This will mean that the Surrogate and Skeleton will now be freed
+   as part of CDTS processing.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *              *********
+               * HIPER *
+               *********
+   FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK80978
+   
+   
+ * REPORTED COMPONENT NAME
+   CICSTS V3 Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655M1500
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-20
+   
+   
+ * CLOSED DATE
+   2009-04-21
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK45855
+   
+   
+
+MODULES/MACROS
+ *     DFHZCT1
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICSTS V3 Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5655M1500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY UK45855 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK45855]
+   UP09/04/25 P F904
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

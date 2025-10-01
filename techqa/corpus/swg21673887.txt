@@ -1,0 +1,39 @@
+Title: IBM Omnibus/Webgui installation fails with error "No valid hosting environment" - United States
+
+Text:
+DEL2INST No valid hosting environment TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installation of Netcool Omnibus/Webgui fails with below error:
+
+<className>com.ibm.ac.si.cli.HostingEnvironmentException</className>
+<message>ACUCLI0001E No valid hosting environment was found for the target of the root IU.</message> 
+
+SYMPTOM
+Check the IA log and see if following error is present.
+
+ 
+2014-04-25 16:23:48.557-04:00 : FINE : processReq stdout: <?xml 
+version="1.0" encoding="UTF-8" ?> 
+<output:processReqOutput schemaVersion="1.3" implVersion="1.4.0.23" xmlns:output="http://www.ibm.com/namespaces/autonomic/solutioninstall/d eProcessReqOutput" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.ibm.com/namespaces/autonomic/solutioninst all/deProcessReqOutput deProcessReqOutput.xsd"> 
+<exceptions> 
+<exception> 
+<className>com.ibm.ac.si.cli.HostingEnvironmentException</className> 
+<message>ACUCLI0001E No valid hosting environment was found for 
+the target of the root IU.</message> 
+
+
+
+RESOLVING THE PROBLEM
+This error can happen if you deleted the target installation directory and removed the Deployment Engine (DE) related files, but the DE related files were not completely removed.
+
+ 
+Please follow steps in below technote to remove DE and the target installation dir. Also, please make sure you have enough free disk space in /tmp and the target installation directory. 
+CAUTION: Removing DE related files as described in below technote will completely remove the DE repository. This procedure should only be used if you are installing a base product from scratch and there is no other product installed (under same user id) which shares this DE repository. If you are not sure then do not perform these steps. 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21679379 [http://www-01.ibm.com/support/docview.wss?uid=swg21679379] 
+
+After above step try the install again. If it fails for any reason then please provide complete set of logs as described in below technote. 
+
+https://www-304.ibm.com/support/docview.wss?uid=swg21500633 [https://www-304.ibm.com/support/docview.wss?uid=swg21500633]

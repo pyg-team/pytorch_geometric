@@ -1,0 +1,36 @@
+Title: IBM GLCOMPONENTS restriction does not consider Application field value - United States
+
+Text:
+TPAESECURITY TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This will help you with information on limiting the GL accounts visibility 
+
+SYMPTOM
+You would like to create something like domain to hold a small set of glaccount for internal glaccount, because his glaccount list is over 10,000, for example.
+
+The easiest way to restrict the accounts to be displayed for users in a specific application is using the Object restrictions, as detailed in this documentation below :
+
+Restrict GL Account from certain groups
+http://www-01.ibm.com/support/docview.wss?uid=swg21902586 [http://www-01.ibm.com/support/docview.wss?uid=swg21902586]
+
+You have a field in Security Groups app, Data Restrictions tab, Object Restrictions subtab which is called Application, and that is where you are going to select the specific application name where you want to have this restriction applied, considering that you don't want to affect the whole system.
+
+However, this does not work this way for the GLCOMPONENTS.
+
+You want to restrict the GLCOMPONENTS table for a specific application based on a condition : COMPTEXT like '%TEST%'
+
+This works in Security Groups if the Application field is not set, however it would apply for the whole system.
+
+You want to have this restriction only against some applications and for some reason the "Application" field value is not working when setting up this qualified restriction. When you put a value on the Application field, it has no effect in that particular application. 
+
+It works only for the whole system when the Application field is null.
+
+
+RESOLVING THE PROBLEM
+Development confirmed that the current Maximo version that you are working with does not allow data restriction for the GL accounts at the application level. 
+
+GL accounts are organization based and any change applies to the whole organization, and that's why we cannot do application specific data restrict on GL accounts. It will apply to all the whole organization. 
+
+
+Should you need any assistance, please contact IBM Maximo Support

@@ -1,0 +1,142 @@
+Title: IBM IC68349: DB2EVMON SQLCA OUTPUT HAS CHANGED COMPARED TO DB2 V9.1 AND CANNOT BE PARSED EASILY - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.8 Fix Pack 4 for AIX and Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24030581]
+DB2 Version 9.8 Fix Pack 5 for AIX and Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24032798]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The output of an Event Monitor for Statements (write to file and
+   formatted with db2evmon) has changed between DB2 Version 9.1 and
+   9.5/9.7. This makes it hard for programs or scripts that parse
+   the output and depend on the previous format.
+   
+   V9.1:
+   -----
+   ...
+   SQLCA:
+    sqlcode: -204
+    sqlstate: 42704
+   
+   V9.5 and V9.7:
+   --------------
+   ...
+   SQLCA:
+    SQL0204N  "DBINST95.DDD" is an undefined name. SQLSTATE=42704
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 UDB Version 9.8 FixPack 4                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem was first fixed in Version 9.8 Fix Pack 4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC68349
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   980
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-03
+   
+   
+ * CLOSED DATE
+   2011-08-02
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ74272 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ74272]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R980 PSN
+   UP

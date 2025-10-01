@@ -1,0 +1,79 @@
+Title: IBM 7.0.0.1: WebSphere Application Server V7.0 Fix Pack 1 for IBM i - United States
+
+Text:
+7.0.0.1; 7.0.0.1; 7.0.0.1; V7Fixpack1; Fix Pack 1; FixPack 1; Fixpak 1; Fix pak 1; FixPack 1; Fixpak 1; Fix pak 1; Fix Pack 1; 7.001; 7001 DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM WebSphere Application Server Version 7 Fix Pack 1 for IBM i platforms, also known as Version 7.0.0.1 
+
+DOWNLOAD DESCRIPTION
+
+
+TAB NAVIGATION
+ * AIX [http://www.ibm.com/support/docview.wss?rs=180&uid=swg24021073]
+ * HP-UX [http://www.ibm.com/support/docview.wss?rs=180&uid=swg24021072]
+ * IBM i [http://www.ibm.com/support/docview.wss?rs=180&uid=swg24021071]- selected tab,
+ * Linux [http://www.ibm.com/support/docview.wss?rs=180&uid=swg24021070]
+ * Solaris [http://www.ibm.com/support/docview.wss?rs=180&uid=swg24021069]
+ * Windows [http://www.ibm.com/support/docview.wss?rs=180&uid=swg24021068]
+
+7.0.0.1: Fix Pack 1 for WebSphere Application Server Version 7 is provided for the following: 
+
+Components:  * Application Client
+ * Web server plug-ins
+ * IBM HTTP Server
+ * DMZ Secure Proxy Server
+
+
+
+Operating systems:  * IBM i releases V5R4M0, and V6R1M0
+
+
+
+
+
+New Maintenance Download Wizard
+Now Available. The Maintenance Download Wizard [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27013594] will step you through a series of selection panels to identify the recommended maintenance packages for your WebSphere Application Server V7 environment.
+
+PREREQUISITES
+1. Install the version 7 product from the appropriate compact disc or distribution media.
+
+2 . For customers installing WebSphere maintenance level 7.0.0.1, it is mandatory to use the latest version of Update Installer (7.0.0.1) to support all version 7.0.0.1 WebSphere products on the machine
+
+URL LANGUAGE SIZE(Bytes) Detailed System Requirements [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27012284] US English 1000 Update Installer 7.0 for WebSphere Software [http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg24020445] US English 1000 
+INSTALLATION INSTRUCTIONS
+
+Install Fix Pack 1 (7.0.0.1) on top of IBM WebSphere Application Server Version 7. See the Readme for IBM i for prerequisite PTF levels and instructions on how to install Fix Pack 1. 
+
+
+The Update Installer is not packaged as part of the Fix Pack download and needs to be acquired separately. To get the Update Installer needed to install this Fix Pack, follow the instructions provided in IBM Update Installer 7.0 for WebSphere Software. [http://www.ibm.com/support/docview.wss?rs=180&uid=swg24020445]
+
+URL LANGUAGE SIZE(Bytes) Readme for IBM i [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27014030] US English 22736 Fix List for WebSphere Application Server V7 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27014463] US English 22736 
+DOWNLOAD PACKAGE
+
+
+Download package What is Fix Central (FC)? [http://www.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html] What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options Application Server 12/08/2008 US English 541752022 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.0.0-WS-WAS-i5osPPC-FP0000001&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixpacks/was70/cumulative/cf7001/i5osPPC/7.0.0-WS-WAS-i5osPPC-FP0000001.pak] DD Application Client 12/08/2008 US English 269645625 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.0.0-WS-AppClient-i5osPPC-FP0000001&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixpacks/was70/cumulative/cf7001/i5osPPC/7.0.0-WS-AppClient-i5osPPC-FP0000001.pak] DD Web Server Plug-ins 12/08/2008 US English 53971260 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.0.0-WS-PLG-i5osPPC-FP0000001&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixpacks/was70/cumulative/cf7001/i5osPPC/7.0.0-WS-PLG-i5osPPC-FP0000001.pak] DD DMZ Secure Proxy Server 12/08/2008 US English 182087290 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.0.0-WS-NDDMZ-i5osPPC-FP0000001&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixpacks/was70/cumulative/cf7001/i5osPPC/7.0.0-WS-NDDMZ-i5osPPC-FP0000001.pak] DD 
+HOW CRITICAL IS THIS FIX?
+
+WebSphere Application Server Fix Pack 1: This Fix Pack must be installed on top of WebSphere Application Server V7.
+
+
+
+
+PROBLEMS SOLVED
+For details on problems fixed in Fix Pack 1, refer to the Fix list for V7.0 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27014463] document.
+
+
+
+KNOWN SIDE EFFECTS
+Adjustments are required to WebSphere MQ resource adapter configuration when updating WebSphere Application Server Version 7.0 profiles. Users of WebSphere MQ messaging provider, WebSphere MQ link, or the WebSphere MQ server may need to perform some manual steps when changing maintenance levels. Information on the affected profiles and what steps are required can be obtained from this Link [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/tmm_mig.htm]
+
+
+
+
+
+TECHNICAL SUPPORT
+ Contact 1-800-IBM-SERV (U.S. only) or visit WebSphere Application Server Support site on the Web at:
+http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/] 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server - Express General i5/OS, IBM i 7.0.0.1 Application Servers WebSphere Application Server Application Client i5/OS, IBM i 7.0.0.1 Application Servers WebSphere Application Server Plug-in i5/OS, IBM i 7.0.0.1

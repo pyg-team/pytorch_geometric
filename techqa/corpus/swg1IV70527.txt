@@ -1,0 +1,153 @@
+Title: IBM IV70527: INCREASED CHECKING IN VIRTUALDOMAIN FAILOVER FUNCTIONALITY - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.1.1-TIV-ITNMIP-Linux-FP0002 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.1.1-TIV-ITNMIP-Linux-FP0002&source=SAR]
+4.1.1_README_NLS_FP0002 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.1.1_README_NLS_FP0002&source=SAR]
+4.1.1_README_FP0002 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.1.1_README_FP0002&source=SAR]
+IBM Tivoli Network Manager IP Edition 4.1.1 Fix Pack 2, 4.1.1-TIV-ITNMIP-FP0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24041066]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The fix adds extra checking to the ncp_virtualdomain process so
+   that a backup virtual domain process only sends a failure event
+   for the primary domain if all it's processes are running, it
+   hasn't received a status event from the primary domain and the
+   new extra check that it has also received a status event for
+   itself to ensure the eventing system is operatonal on the
+   backup server.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ITNM 4.1.1 users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * extra checking to the ncp_virtualdomain process so           *
+   * that a backup virtual domain process only sends a failure    *
+   * event                                                        *
+   * for the primary domain if all it's processes are running, it *
+   * hasn't received a status event from the primary domain and   *
+   * the                                                          *
+   * new extra check that it has also received a status event for *
+   * itself to ensure the eventing system is operational on the   *
+   * backup server.                                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * | fixpack | 4.1.1-ITNMIP-FP0002                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Extra checks were needed for problems which could arise when
+   dealing with failover on large domains.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV70527
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S4500
+   
+   
+ * REPORTED RELEASE
+   411
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-03-04
+   
+   
+ * CLOSED DATE
+   2015-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * FIXED COMPONENT ID
+   5724S4500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R411 PSN
+   UP
+   
+   
+ * R411 PSY
+   UP

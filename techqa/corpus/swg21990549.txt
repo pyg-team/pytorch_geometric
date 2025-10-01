@@ -1,0 +1,127 @@
+Title: IBM How to migrate to the Change Management Integration (CMI) from the UCM/ClearQuest Integration (SQUID) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you migrate an IBM Rational ClearCase VOB from the UCM/ClearQuest integration (SQUID) to the Change Management Integration (CMI)? 
+
+ANSWER
+Overview
+The Change Management Integration (CMI) supports a two-step process for migrating from SQUID to CMI. In the first step, the utility cmi_migrate.pl is used to generate a file listing all activities in a user-specified project VOB that require task associations, based upon a user-specified list of CQ-enabled projects to migrate. It also performs cleartool operations to configure the project VOB and the streams associated with the specified projects for CMI, based upon user input. In the second step, the clmutil utility is run in migrate mode to parse the generated file and create the task associations on the activities and to update the Links tab on the ClearQuest records. 
+
+ClearQuest Web Configuration
+
+Apply the OSLC Links package to the database used in the integration. This package is required for CMI to be configured with ClearQuest.
+
+General considerations when migrating from SQUID to CMI 
+
+The migration does not remove the artifacts that were created by the SQUID integration, but it is recommended that the SQUID integration be placed in suspend mode or disabled after the migration process has been completed. Note that disabling the SQUID integration is irreversible and will remove all artifacts it has created in the VOB. If you do not yet want to disable the SQUID integration, you can instead suspend it temporarily. This can be done with the following command: 
+
+>cleartool chproject -crmenable user_dbname [-force] -suspend project_selector 
+
+Suspending the SQUID integration will keep all of the existing artifacts in place but will not create any new ones. Note that resuming the SQUID integration will prompt you to sync any unlinked activities to new CQ records. A suspended SQUID integration can be resumed with the following command: 
+
+>cleartool chproject -crmenable user_dbname [-force] -resume project_selector 
+
+A view context is required to resume a suspended SQUID integration. The -force option skips both the confirmation to suspend or resume the integration as well as the confirmation to sync each unlinked activity to a new CQ record (when resuming). If the -force option is not specified then ClearCase will prompt the user to confirm each activity individually. 
+
+Running cmi_migrate.pl 
+
+We recommend that the project VOB be locked -nusers for the User running the utility, so that other users do not accidentally generate new SQUID artifacts that will then have to be parsed. You must run the utility in a view context, using ratlperl. Note that you may need to modify your PATH, for example, on UNIX to include /opt/rational/common/bin. 
+
+> ratlperl cmi_migrate.pl 
+
+The cmi_migrate utility will request that you enter the desired mode; enter “ucm” to migrate from the SQUID integration. The utility will then request you to enter the VOB tag of the VOB you wish to migrate, the name of an existing temp directory, names for two files it will generate (default names are suggested), and a list of projects you wish to migrate. The utility will display a list of all streams in those projects. In the following UNIX example, User responses appear in italics. 
+
+ * 
+ * 
+ * ucm
+ * >Enter the VOB tag to migrate or return to quit: /test309_pvob
+   >VOB tag validated. 
+ * >Enter a temp directory for use with the migration or return to quit: /var/tmp 
+ * >Enter a file name to store migration configuration information or return to use the default (cmi_migration.txt): <CR> 
+ * >Enter a file name to store migration activity information or return to use the default (cmi_migration_activities.txt):<CR> 
+ * >Enter a comma-separated list of projects to migrate (e.g., "proj1,proj2") or return to quit:
+   >test309 
+ * >Validate project test309@/test309_pvob is clearquest enabled for user database SAMPL. 
+ * >Extracting information from crmregister ...
+   >Found the user database
+   SAMPL.
+   
+   >Finding streams in project test309@/test309_pvob ...
+   test309_int@/test309_pvob
+   test309_dev@/test309_pvob
+   
+
+
+At this point you can choose to enter CMI configuration information for all of the streams that require migration, or you can quit the utility and modify the cmi_migration.txt file manually. If you choose to quit, you can run the script again to resume the migration process. If you choose to continue, for each stream found in the specified projects, you will be asked if you wish to configure it now, configure it manually later, or skip configuration for it. You would choose to skip configuring a child stream, for instance, if you wanted it to inherit CMI configuration from its parent stream. (If you explicitly configure a child stream in CMI, it will not inherit any settings from its parent stream.) If you choose to configure the stream now, you will be prompted for a description for the CMI provider, a Query URI, and a name for the provider.  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * y
+ * >Note that child streams inherit CMI configuration from their parent streams unless you explicitly configure them. 
+ * >Do you want to configure stream test309_int@/test309_pvob?
+   >Enter 'y' to configure it now, 'n' to enter the information manually later, or 's' to skip configuring it.
+   >y
+   
+   >Please enter the remaining information for:
+   Stream:test309_int@/test309_pvob
+   UserDB:SAMPL
+   DBSet:9.0.0
+   Server URL:http(s)://some-host-name:12080/cqweb/oslc
+   >Enter the description (e.g. "CQ Web Server 1"):"New CQ Provider" 
+ * >Enter the query URI (e.g. "rcm.name=Public%20Queries/All%20Defects") or return to enter no query URI: rcm.name=Public%20Queries/All%20Defects 
+ * >Enter the Provider Name (e.g. "CQPROV1"): CQPROV1 
+ * >Do you want to configure stream test309_dev@/test309_pvob?
+   >Enter 'y' to configure it now, 'n' to enter the information manually later, or 's' to skip configuring it.
+   >s
+
+
+Once the configuration is complete, cmi_migrate will create the attribute type required by CMI, will run the mkcmprovider command to configure the VOB and the participating streams, and will generate a migration activities information file with the (default) name cmi_migration_activities.txt, that will contain entries for all VOB activities that require task associations in CMI. Manually completing entries in the cmi_migration.txt file 
+
+If you choose to manually enter configuration details for a stream, cmi_migrate will create a partially populated entry in the cmi_migration.txt file. You must complete the entry with a Description of the CQ Provider, a Query URI, and a provider Name. The Query URI is optional, and this field may be left blank. The completed entries should be separated by a blank line: 
+
+Stream:test309_int@\test309_pvob
+UserDB:SAMPL
+DBSet:9.0.0
+Server URL:http(s)://some-host-name:12080/cqweb/oslc
+Version:v1_0
+Description:"New CQ Provider"
+Query:rcm.name=Public%20Queries/All%20Defects
+Name:CQPROV1
+
+Stream:test309_dev@\test309_pvob
+UserDB:SAMPL
+DBSet:9.0.0
+Server URL:http(s)://some-host-name:12080/cqweb/oslc
+Version:v1_0
+Description:”New CQ Provider”
+Query:
+Name:CQPROV1
+
+
+
+Running clmutil in migrate mode 
+
+Once the migration activities information file has been generated, you can use the clmutil utility to generate the actual task associations. This utility must be run as root on UNIX or as Privileged User on Windows. It is installed in <ClearCase-home>/bin 
+
+You must be in a view context when you run clmutil in migrate mode. Any user can preview its actions by running: 
+
+> clmutil cmi_repair -verbose -preview -migrate -repair_file <migrate_activities_file_pname> 
+
+The migrate_activities_file_pname must be the full path to the activities information file generated by cmi_migrate.pl. In preview mode clmutil will list all of the CMI actions that would be attempted. 
+
+Before creating the task associations, you must use the cmiregister command to store the necessary credentials for CMI. As root or Privileged User run 
+
+> cmiregister add -cq -name <provider-name> -userdb <database-name> -dbset <dbset-name> -username <username> [-password <password>] 
+
+Supply a password only if one is needed by your ClearQuest installation. 
+
+To perform the actual work, run the utility as root or Privileged User, in a view context, without the -preview option: 
+
+> clmutil cmi_repair -verbose -migrate -repair_file <migrate_activities_file_pname> 
+
+You will see output for each association that is created. After the utility completes, you can describe an activity in a participating stream to view the associated tasks, and you can check the Links tab on the ClearQuest record to view the activity information. The migration process does not remove the artifacts that were created on the activities by the SQUID integration.

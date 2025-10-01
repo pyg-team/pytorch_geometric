@@ -1,0 +1,133 @@
+Title: IBM PO01912: ASSESSMENT CHECKBOX QUESTION JAVASCRIPT LOGIC ERROR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM Curam Child Welfare, during a Screening Assessment, the
+   Javascript logic automatically reverts back to the previously
+   checked answer but disables all answer options so the user is
+   stuck without doing a reset. Also if the user subsequently
+   attempts to change the answer by unchecking the previously
+   saved checked answer the logic does not revert back to the
+   original answer.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ASSESSMENT CHECKBOX QUESTION JAVASCRIPT LOGIC ERROR
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been addressed in v6.0.4.4 iFix5 which can be
+   downloaded via Fix Central
+   +++++++++++++++++++++++++++++++++++++++++++
+   CFSS-5946 - Unable to change answers formatted using check
+   boxes in SDM assessments
+   Previously, in a screening assessment if a user answered a
+   question by selecting a check box and saved the assessment, on
+   resuming the assessment the user was then unable to deselect
+   the previously selected answer. This issue has been fixed and a
+   user is now able to deselect the previously selected answer.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PO01912
+   
+   
+ * REPORTED COMPONENT NAME
+   CURAM CHILD WLF
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2607
+   
+   
+ * REPORTED RELEASE
+   604
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-12
+   
+   
+ * CLOSED DATE
+   2013-10-28
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  CW
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R604 PSY
+   UP

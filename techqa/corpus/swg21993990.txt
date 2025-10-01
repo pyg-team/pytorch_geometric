@@ -1,0 +1,26 @@
+Title: IBM CDZ - Getting CSPA003E with a return code of 420 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CDZ - Customer reported that session attempts with a remote node were failing. 
+
+SYMPTOM
+Unable to establish Secure+ session with remote node.
+
+
+CAUSE
+The remote node side had an expired server certificate. They replaced it, but did not get the new certificate in the correct folders and associated to the correct remote connections (from their viewpoint). 
+
+ENVIRONMENT
+IBM Sterling Connect:Direct for z/OS
+IBM Sterling B2B Integrator
+
+DIAGNOSING THE PROBLEM
+Review any documentation provided and request additional if needed. Would be best to get the complete CDZ joblog.
+
+RESOLVING THE PROBLEM
+Initially the only documentation provided was a CDZ session trace. A review of this revealed that the error message was CSPA003E Security Violation - SNODE authentication error. Several things can cause this. Further review of the CDZ session trace revealed the error message ENDING TLS/SSL HANDSHAKE, RC=420. The RC=420 is being returned from the TCP/IP stack and can be for any number of things. The most common cause of this can be that the two trading partners are having a protocol mismatch. Normally when it is a protocol mismatch we get additional error messages that indicate that to be the case. In this instance as best as we can tell there were no other messages to provide additional clues to what the problem might be. 
+
+Customer reported that in this case the problem was due to the remote node replacing an expired server certificate incorrectly. The server certificate is based off of the site certificate. Once the remote node got their certificate installed correctly and associated with the remote nodes they were able to establish Secure+ sessions. This issue will not allow the node with the bad server certificate to establish outbound or inbound Secure+ sessions.

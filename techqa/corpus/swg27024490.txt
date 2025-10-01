@@ -1,0 +1,25 @@
+Title: IBM Detailed System Requirements for v9.1 of the IBM InfoSphere Optim TDM Solution for Siebel CRM and Optim TDM Solution for Siebel CRM with Data Masking Option - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document summarizes the hardware, platforms, and software supported by v 9.1 of IBM® InfoSphere® Optim™ Test Data Management Solution for Siebel CRM and InfoSphere Optim Test Data Management Solution for Siebel CRM with Data Masking Option. 
+
+CONTENT
+ [http://www.ibm.com/support/docview.wss?uid=swg27021803]
+
+Version 9.1 of the Optim Test Data Management Solution for Siebel CRM and the Optim Test Data Management Solution for Siebel CRM with Data Masking Option is tested and distributed with the IBM InfoSphere Optim Test Data Management Solution, Version 9.1. Detailed hardware and software requirements for the Optim solution are at: http://www.ibm.com/support/docview.wss?uid=swg27036209 [http://www.ibm.com/support/docview.wss?uid=swg27024294].
+
+Note: Hardware and software requirements for the Optim solution may list database management systems and character sets that the Siebel CRM application does not support. Therefore, only a subset of the Optim solution information applies to the Optim Test Data Management Solution for Siebel CRM and the Optim Test Data Management Solution for Siebel CRM with Data Masking Option.
+
+SUPPORTED VERSIONS OF SIEBEL CRM
+The Optim Test Data Management Solution for Siebel CRM supports test data management for the following versions of Siebel Enterprise Applications (SEA) and Siebel Industry Applications (SIA):
+
+ * Siebel 8.1 (SIA only)
+ * Siebel 8.0
+ * Siebel 7.8
+ * Siebel 7.7
+ * Siebel 7.5
+
+The Optim Test Data Management Solution for Siebel CRM with Data Masking Option supports data masking for Version 8.1 of Siebel Industry Applications (SIA). It is also backward compatible with all other previous releases of Siebel.

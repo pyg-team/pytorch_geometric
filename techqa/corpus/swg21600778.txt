@@ -1,0 +1,42 @@
+Title: IBM Unable to expand folder in FileNet Workplace XT, error indicates, the file does not exist - United States
+
+Text:
+the file does not exist; unable to browse folder; workplace xt folder preferences TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ FileNet Workplace XT - Unable to expand folder, error indicates, the file does not exist 
+
+SYMPTOM
+When attempting to expand or select a folder in the left navigation pane of FileNet Workplace XT, the following error is be displayed: 
+
+The file does not exist \\%path_to_storage_area%\content\FN[n]\FN[n]\FN[n]\FN{%GUID1%}{%GUID2%}-0.xml 
+
+ 
+
+The same behavior will also occur if you right click the same folder and choose Preferences -> Customize Columns. The folder contents for the affected folders cannot be viewed in Workplace XT but can be displayed in FileNet Workplace or FileNet Enterprise Manager. 
+
+
+CAUSE
+Folder Preferences in FileNet Workplace XT may associate entry templates with folders or be used to customize the columns displayed in a certain folder. The latter feature is accessible by right clicking a folder in the Workplace XT left pane and choosing Preferences -> Customize Columns. When the list of columns is customized, a new instance of the Folder Preferences class is created in the respective object store along with a content element labeled file0.xml. 
+
+If an error is encountered when attempting to retrieve the content element that is associated with the Folder Preferences object for a certain folder, then the folder contents may not be displayed and an error indicating the path of the content element in the storage area is reported.
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+ 1. Using FileNet Enterprise Manager, right click on the object store where the folder in question resides and choose Search. For the 'Select from Table' dropdown choose 'Folder Preferences' and as criteria enter ID equal to {%GUID1%} where {%GUID1%} is the first GUID value that appears in the error message displayed in Workplace XT. 
+    
+    
+ 2. The query should return a single result. If you right click on it and choose Properties, then select file0.xml from the Annotation Content Elements list and choose View, confirm that you receive a similar error indicating that the file \\%path_to_storage_area%\content\FN[n]\FN[n]\FN[n]\FN{%GUID1%}{%GUID2%}-0.xml cannot be accessed. 
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Attempt to restore access to the Folder Preferences content element by investigating the failure. There could be an issue with the respective storage device, server, filesystem permissions. If the file is not found in the storage area path, research if it may be restored from backup.
+    
+    
+ 2. If all attempts to restore the file are exhausted and Consistency Checker has been run on the respective storage area to ensure that the problem is not wide spread, then you may export the Folder Preferences object found by querying in FileNet Enterprise Manager and then delete it.
+    
+    
+ 3. Following the deletion of the Folder Preferences object in FileNet Enterprise Manager, log out and then log back in to Workplace XT and the folder in question should be browseable. Right click the folder and choose Preferences -> Customize Columns to customize the columns that should be displayed.

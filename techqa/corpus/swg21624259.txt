@@ -1,0 +1,163 @@
+Title: IBM "Internal error ... <username>\ccr-config\.eclipse\... .fileTableLock (Access is denied.)" when using Java-based functionality via Citrix published application - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User tries to launch any Java-based menu item (for example "Maintain - Business Rules"). The expected "Downloading Components" screen does *not* appear (or may only appear extremely briefly). The "Loading user interface" message appears. What happens next depends on the environment:
+* EXAMPLE #1: In some environments, this message does not ever disappear (even after waiting a long time)
+* EXAMPLE #2: In other environments, user soon receives an error. 
+
+SYMPTOM
+Loading - Define Business Rules 
+
+Loading user interface...
+[/support/docview.wss?uid=swg21624259&amp;aid=1]
+
+
+ * Example #1 - The message (above) does not disappear.  * The expected new screen/window never appears. 
+    * There is no error message.
+   
+   
+ * Example #2 - After a few seconds, an error message appears (see below).
+   
+   Error
+   Internal error:
+   [Details] [OK]
+   
+   Error Details
+   Java.lang.RuntimeException: C:\Users\Administrator\ccr-config\.
+   eclipse\configuration\org.eclipse.osgi\.manager\.fileTableLock (Access
+   is denied.)
+   at org.eclipse.osgi.framework.internal.core.Framework.initialize
+   (Framework.java:192)
+   at org.eclipse.osgi.framework.internal.core.Framework.<init>(Framework.
+   java:162)
+   at org.eclipse.core.runtime.adaptor.EclipseStarter.startup
+   (EclipseStarter.java:261)
+   at com.ibm.cognos.ccr.integration.IntegrationServiceAdapter.
+   startEclipseAndServiceTracker(IntegrationServiceAdapter.java:347)
+   at com.ibm.cognos.ccr.integration.IntegrationServiceAdapter.run
+   (IntegrationServiceAdapter.java:192)
+   at java.lang.Thread.run(Thread.java:736)
+   Caused by: java.io.FileNotFoundException: C:\Users\Administrator\ccr-
+   config\.eclipse\configuration\org.eclipse.osgi\.manager\.fileTableLock
+   (Access is denied.)
+   at java.io.RandomAccessFile.<init>(RandomAccessFile.java:222)
+   at org.eclipse.core.runtime.internal.adaptor.Locker_JavaNio.lock
+   (Locker_JavaNio.java:33)
+   at org.eclipse.osgi.storagemanager.StorageManager.lock(StorageManager.
+   java:389)
+   at org.eclipse.osgi.storagemanager.StorageManager.open(StorageManager.
+   java:702)
+   at org.eclipse.osgi.internal.baseadaptor.BaseStorage.initFileManager
+   (BaseStorage.java:220)
+   at org.eclipse.osgi.internal.baseadaptor.BaseStorage.initialize
+   (BaseStorage.java:154)
+   at org.eclipse.osgi.baseadaptor.BaseAdaptor.initializeStorage
+   (BaseAdaptor.java:123)
+   at org.eclipse.osgi.framework.internal.core.Framework.initialize
+   (Framework.java:190)
+   ... 5 more
+
+[/support/docview.wss?uid=swg21624259&aid=2] [/support/docview.wss?uid=swg21624259&aid=2] CAUSE
+There are several possible causes for the JAVA 'loading' screen to never disappear. 
+
+ * For more examples, see separate IBM Technote #1446829.
+
+
+In addition, there are several possible causes for similar ".fileTableLock (Access is denied.)" errors.  * For more examples, see separate IBM Technotes, such as 1600088, 1600112 & 1599845.
+
+
+This IBM Technote specifically relates to the scenario the cause is that Controller is telling JAVA to write to the folder defined in the JAVA function "user.home", but there is a third-party bug (Oracle / Sun bug 4787931) in their JAVA program which means that the function "user.home" does not always resolve to the correct user's profile location. Specifically, it (incorrectly) uses the value of the wrong registry key (HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders\ Desktop).  * In some specialised environments, the end users may have an incorrect/invalid location for that registry key. This will cause JAVA to store files in the wrong location.
+
+
+Example #1: 
+In one real-life example, the I.T. administrator had created a policy where the value for "Desktop" had been changed to: \\vbracont8ap3\testshare$\sharefolder [/support/docview.wss?uid=swg21624259&aid=3] [/support/docview.wss?uid=swg21624259&aid=3] 
+
+JAVA (incorrectly) assumes that the user's Windows profile must therefore exist in a folder "one level above" that, which (in this case) equates to: \\vbracont8ap3\testshare$ 
+
+ * Therefore, when the user launches the JAVA-based Controller menu, it will try to write files into the folder \\vbracont8ap3\testshare$\ccr-config 
+ * If it does not have Windows file access (NTFS/share) rights to this location (for example cannot create the folder 'ccr-config'), then the problem will occur.
+
+
+
+Example #2: 
+In this scenario, the relevant folder exists, but the user does not have permission to write files inside that (existing) folder. 
+
+In one real-life customer case, it affected a customer who did not deliberately relocated their user's Windows profiles. In one real-life customer case, the issue only occurred when both of the following were true:  1. User is running Controller client via a Citrix published application 
+ 2. User does not have Windows administrative rights on the Citrix server.
+
+ * NOTE: The problem does not occur for all customers using Citrix (even if 1 and 2 are true above). It is a very rare occurrence. 
+
+
+In that real-life customer case, curiously the problem did not occur if either of the following were true:  * The same (non-administrative) user runs Controller via a Microsoft Terminal Services (RDP) "full desktop" session 
+ * The same (non-administrative) user runs Controller via a Citrix (ICA) "full desktop" session.
+
+ENVIRONMENT
+The issue does not occur in all environments - it will typically only occur where the user's user profile location has been modified from the default location. 
+
+ * Specifically the 'Desktop' setting inside the registry (see above).
+
+DIAGNOSING THE PROBLEM
+If the error message appears, seach for error message to see if it has a section relating to "ccr-config" (ccr dash config) similar to the following: 
+
+ * 
+ * <username>\ccr-config\.eclipse
+
+RESOLVING THE PROBLEM
+Fix: 
+
+Upgrade Controller 10.1.2155 (or later) which no longer relies on Java's incorrect "user.home" setting. 
+
+ 
+
+Workaround: 
+
+There are two methods: 
+
+ * Method #1 (Preferred)
+
+
+Ask your Citrix administrator to ensure that all end users have the correct value for their Windows user profile's registry key, located here:  * 
+ * Desktop
+
+
+For example, in one real-life example the customer's environment had this key always set to 'C:\Users\ Administrator\Desktop' for *all* users (not just the user "Administrator").  
+
+ * Method #2 (Less ideal)
+
+
+Modify NTFS permissions of the relevant folder (e.g. C:\Users\Administrator\ ccr-config) so that all users have read/write access. TIP: 
+
+ * The relevant folder will be the 'parent' folder ("one level above") of the value inside the registry key ("Desktop") 
+ * For example, if the registry key points to "\\vbracont8ap3\testshare$\sharefolder" then the end user needs to have read-write permission to the 'parent' folder: \\vbracont8ap3\testshare$
+
+
+Steps: 
+
+1. Logon to the Citrix server as a Windows administrator 
+
+2. Launch Windows explorer, and browse to the relevant folder (for example "C:\Users\Administrator") 
+
+3. Right-click on the subfolder "ccr-config" and choose "Properties" 
+
+4. Click "Security" tab and then click "Edit":
+[/support/docview.wss?uid=swg21624259&aid=4] [/support/docview.wss?uid=swg21624259&aid=4]
+
+5. Click "Add" and choose the group "Users", and click OK
+6. Highlight the "Users" group, and tick the box "Full Control" to allow
+[/support/docview.wss?uid=swg21624259&amp;aid=5]
+
+7. Click OK.
+
+
+RELATED INFORMATION
+#1600088 - Internal Error when using any Java based func [http://www.ibm.com/support/docview.wss?uid=swg21600088]
+1600112 - "Internal error ... Unable to create lock man [http://www.ibm.com/support/docview.wss?uid=swg21600112]
+1599845 - "Internal error ... manager\.fileTableLock (A [http://www.ibm.com/support/docview.wss?uid=swg21599845 ]
+Oracle / Sun bug 4787931 - System property "user.home" [http://bugs.sun.com/view_bug.do?bug_id=4787931]
+THIRD PARTY - Java’s “user.home” is Wrong on Windows [http://www.timehat.com/javas-user-home-is-wrong-on-windows/]
+THIRD PARTY - Java user.home is being set to %userprofi [http://stackoverflow.com/questions/2134338/java-user-home-is-being-set-to-userprofile-and-not-being-resolved]
+APAR PM82136 - "Internal error ... \ccr-confi [http://www-01.ibm.com/support/docview.wss?uid=swg1PM82136]
+1446829 - Message "Loading user interface" does not dis [http://www.ibm.com/support/docview.wss?uid=swg21446829]

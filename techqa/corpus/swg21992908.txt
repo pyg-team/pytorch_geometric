@@ -1,0 +1,22 @@
+Title: IBM Configuring Remote Syslog over TLS on Security Network Protection sensors - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you configure Remote Syslog over TLS on Security Network Protection (XGS) sensors? 
+
+ANSWER
+
+
+
+YouTube Video Configuring Remote Syslog Over TLS (10:17) How do you configure Remote Syslog over TLS for the IBM Security Network Protection (XGS) sensor? Watch the video on YouTube [https://www.youtube.com/watch?v=zBIe3Vi-rjQ] (10:17) 
+
+IBM Knowledge Center documentation 
+ * Configuring Remote Syslog over TLS [http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.3/com.ibm.alps.doc/concepts/alps_remote_syslog_tls_container.htm]
+
+
+
+
+
+[/support/docview.wss?uid=swg21992908&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21992908&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21992908&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21992908&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21992908&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21992908&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21992908&aid=7] [http://ibm.biz/ContactSecSupport]

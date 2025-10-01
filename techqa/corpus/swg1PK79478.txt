@@ -1,0 +1,243 @@
+Title: IBM PK79478: THE LTPA TIMEOUT AND AUTHENTICATION CACHE DESCRIPTIONS ARE      INCORRECT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The LTPA Timeout and Authentication Cache descriptions are
+   misleading and incorrect on multiple pages in the
+   Version 6.0, 6.1 and 7.0 Information Centers.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  This APAR affects all users of WebSphere    *
+   *                  Application Server who are setting up the   *
+   *                  authentication mechanism that will be used  *
+   *                  to exchange information between servers.    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The "Authentication cache timeout" and  *
+   *                      "Timeout value for forwarded            *
+   *                      credentials between servers" fields,    *
+   *                      which are set on the Authentication     *
+   *                      mechanisms and expiration page of the   *
+   *                      administrative console, are             *
+   *                      described in the Version 6.0, 6.1,      *
+   *                      and 7.0 Information Centers. However,   *
+   *                      their descriptions are misleading.      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The Version 6.0, 6.1, and 7.0 Information Centers include the
+   "Authentication mechanisms and expiration," "Configuring the
+   Lightweight Third Party Authentication mechanism," and
+   "Server-level security settings" topics. The first
+   two topics contain misleading or incomplete information about
+   the "Authentication cache timeout", and "Timeout value for
+   forwarded credentials between servers" fields. The third topic
+   contains incomplete information about the "Authentication
+   cache timeout" field.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following changes will be made to the Version 6.0, 6.1,
+   and 7.0 Information Centers for WebSphere Application Server:
+   
+   The description of the "Authentication cache timeout" and
+   "Timeout value for forwarded credentials between servers
+   fields" in the "Authentication mechanisms and expiration"
+   topic will be updated with the following text:
+   
+   Authentication cache timeout
+   
+   Specifies the time period during which the authenticated
+   credential in the cache is valid. This time period must be
+   less than the time period specified for the Timeout value for
+   forwarded credentials between servers field.
+   
+   If the application server infrastructure security is enabled,
+   the authentication cache timeout can influence performance.
+   The timeout setting specifies how often to refresh the
+   security-related caches. Security information pertaining to
+   beans, permissions, and credentials is cached. When the cache
+   timeout expires, all cached information not accessed within
+   the timeout period is purged from the cache. Subsequent
+   requests for the information result in a database lookup.
+   Sometimes, acquiring the information requires invoking a
+   Lightweight Directory Access Protocol (LDAP)-bind or native
+   authentication. Both invocations are relatively costly
+   operations for performance. Determine the best trade off for
+   the application, by looking at usage patterns and security
+   needs for the site.
+   
+   There is no relationship between the authentication cache
+   timeout value and the orb request timeout value.
+   
+   In a 20-minute performance test, setting the authentication
+   cache timeout so that a timeout does not occur during that 20
+   minute period yields a 40% performance improvement.
+   Data type  Integer
+   Units          Minutes and seconds
+   Default  10 minutes
+   Range:          Greater than 30 seconds
+   
+   
+   Timeout value for forwarded credentials between servers
+   
+   Specifies the period of time during which the server
+   credentials from another server are valid. After this time
+   period expires, the server credential from the other server
+   must be revalidated.
+   
+   Specify a value for this field that is greater than the value
+   specified for the Authentication cache timeout field.
+   Data type  Integer
+   Units  Minutes and seconds
+   Default  120 minutes
+   Range:  An integer between 5 and 35971
+   -------------------------
+   
+   The steps that refer to the "Authentication cache timeout" and
+   "Timeout value for forwarded credentials between servers
+   fields" in the "Configuring the Lightweight Third Party
+   Authentication mechanism" topic will be updated with the
+   following text:
+   
+   - Enter a positive integer value in the Authentication cache
+   timeout field.
+   
+   This timeout value determines how long the authenticated
+   credential in the cache remains valid.
+   
+   The optimal value for this field depends on your
+   configuration. If you have a small number of users, you should
+   specify a value that is higher than the default value. If you
+   have a large number of users, you should specify a value that
+   is lower than the default value. The value that you specify
+   for this field must be less than the value specified for the
+   Timeout value for forwarded credentials between servers field.
+   
+   The default value is 10 minutes.
+   
+   - Enter a positive integer in the Timeout value for forwarded
+   credentials between servers field.
+   
+   This value refers to how long the server credentials from
+   another server are valid before they expire. The default value
+   is 120 minutes. The value in the Timeout value for forwarded
+   credentials between servers field must be greater than the
+   value in the Authentication cache timeout field.
+   
+   
+   The description of the Authentication cache timeout field, in
+   the topic "Server-level security settings," will be updated to
+   read:
+   
+   Specifies the time period during which the authenticated
+   credential in the cache is valid. This time period must be
+   less than the time period specified for the Timeout value for
+   forwarded credentials between servers field.
+   Data type  Integer
+   Units  Minutes and seconds
+   Default  10 minutes and 0 seconds
+   Range  Greater than 30 seconds. Avoid setting Authentication
+   cache timeout value to 30 seconds or less.
+   -------------------------
+   
+   Note: Periodically, we update the documentation in our
+   information centers. Thus, the changes might exist in the
+   current documentation before you read this text. To access the
+   latest on-line documentation, go to the product library page
+   at http://www.ibm.com/software/webservers/appserv/library and
+   select the version and product that is appropriate for your
+   WebSphere Application Server environment.
+   
+   The modified documentation will be available in the February,
+   2009 update to the Information Centers.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK79478
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   61A
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-27
+   
+   
+ * CLOSED DATE
+   2009-02-10
+   
+   
+ * LAST MODIFIED DATE
+   2009-02-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,32 @@
+Title: IBM SOAP adapter returns Error Code -99999 'Adapter not found' in WMB - United States
+
+Text:
+Mercator; Ascential Datastage TX; WTX; WebSphere TX; SOAP; m4soap.jar; WTX Pack for Web Services TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using the SOAP adapter within a WebSphere Transformation Extender (WTX) map inside WebSphere Message Broker (WMB) it may fail with error code -99999 - Adapter not found 
+
+SYMPTOM
+All soap based operations fail, and if the LASTERRORMSG() and LASTERRORCODE() functions are used, they return 'Adapter not found' and -99999 respectively.
+
+
+CAUSE
+This error is caused by a failure to load the required library, because the m4soap.jar has not been copied to the shared classes folder of the WMB installation.
+
+ENVIRONMENT
+WTX maps called from WMB.
+
+DIAGNOSING THE PROBLEM
+A review of the JNI Layer trace will show a failure to correctly load the required Java library.
+
+RESOLVING THE PROBLEM
+It is essential to copy the m4soap.jar Java library to the shared-classes sub-directory for the SOAP adapter to work under WMB. The shared-classes sub-directory can be found in the work directory. The work directory can be found with this command:
+
+mqsireportbroker MB8BKR1 | grep Work\ path
+
+Example:
+
+$ mqsireportbroker MB8BKR1 | grep Work\ path
+Work path = '/var/mqsi'
+
+So in this case the m4soap.jar file needs to be copied from the WTX libs sub-directory to /var/mqsi/shared-classes.

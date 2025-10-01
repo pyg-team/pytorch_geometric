@@ -1,0 +1,10 @@
+Title: IBM Question about where to obtain the source code for Default External Rule files. - United States
+
+Text:
+Business rules TECHNOTE (FAQ)
+
+QUESTION
+ Where can I find the source code for DefaultExternalRules for InfoSphere MDM Server v10.0? 
+
+ANSWER
+The file MDM1010_Sample.tar.gz (about 167M) contains the source code for DefaultExternalRules. This sample package should be included with the main product package (about 3.3G) which can be downloaded from Software Downloads area of IBM's Passport Advantage web site.

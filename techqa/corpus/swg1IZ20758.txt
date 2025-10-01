@@ -1,0 +1,170 @@
+Title: IBM IZ20758: XC034002 AMQZLAA0 UNEXPECTED RESPONSE TO A PTHREAD_COND_TIMEDWAIT() REQUEST CAUSES WAITER CHAIN CORRUPTION - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V6.0 Fix Pack 6.0.2.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24020658]
+WebSphere MQ V7.0 for i5/OS Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022812]
+WebSphere MQ V7.0 Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022810]
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24025627]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24027266]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.10 (FP03) [http://www-01.ibm.com/support/docview.wss?uid=swg24029987]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  FDC's with Probe Id XC034002 are generated relating to
+   pthread_cond_[timed].
+   amqzlaa0 loops with nearly 100% CPU-usage.
+   Tracing shows that it going through the same two trace entries
+   over and over:
+   ---------{  kqiRemoveFromWaiterChain
+   ---------}! kqiRemoveFromWaiterChain rc=arcW_END_OF_LIST
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This problem would typically occur when a customer changed the
+   STATINT, STATMQI, STATCHL, or STATQ queue manager attribute.
+   
+   Platforms affected:
+   HP-UX (Itanium)
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   A recent change to HP appears to cause pthread_cond_timedwait()
+   to be more stringent in checking the timeout time. When
+   changing the queue manager object then the statistics
+   collection task was occasionally generating a negative wait
+   interval which was causing HP to generate this error. MQ then
+   handled the unexpected EINVAL response badly causing the waiter
+   chain to become corrupt, and the loop to occur.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  There are two parts to the fix, firstly the statistics
+   collection task is corrected so as not to pass negative
+   wait intervals, secondly the waiter chain error handling is
+   corrected so that the waiter block is removed from the chain of
+   waiters even in the case where the wait fails unexpectedly.
+   
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.5
+   --------           --------------------
+   HP-UX (Itanium)    U815818
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ20758
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ HP ITANIUM
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7208
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-04-22
+   
+   
+ * CLOSED DATE
+   2008-04-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ HP ITANIUM
+   
+   
+ * FIXED COMPONENT ID
+   5724H7208
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

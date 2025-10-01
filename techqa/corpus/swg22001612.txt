@@ -1,0 +1,76 @@
+Title: IBM 【セキュリティ情報】WebSphere Message Broker および IBM Integration Bus への IBM Java Runtime の複数の脆弱性の影響 (CVE-2016-3485) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ WebSphere Message Brokerで使用されるIBM®ランタイム環境Java™Technology Edition 6.0.16.26（およびそれ以前のバージョン）、WebSphere Message BrokerおよびIBM Integration Busで使用されるIBM®Runtime Environment Java™Technology Edition 7.0.9.40（およびそれ以前のバージョン）、およびIBM Integration Busで使用されるIBM®ランタイム環境Java™Technology Edition 7.1.3.40（およびそれ以前のバージョン）に複数のセキュリティー脆弱性が存在します。これらの問題は、2016年7月にIBM Java SDKアップデートの一部として公開されました。 
+
+VULNERABILITY DETAILS
+
+最新の情報については、下記URLの文書（英語）をご参照ください。
+Security Bulletin: Multiple vulnerabilities in IBM Java Runtime affect WebSphere Message Broker and IBM Integration Bus (CVE-2016-3485)
+http://www.ibm.com/support/docview.wss?uid=swg21994213 [http://www.ibm.com/support/docview.wss?uid=swg21994213]
+
+
+
+CVEID: CVE-2016-3485 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-3485]
+脆弱性の詳細:
+ネットワークコンポーネントに関連する Oracle Java SE および Java SE Embedded の特定されていない脆弱性は、機密性への影響はありません。整合性への影響は低く、可用性への影響はありません。
+CVSS Base Score: 2.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/115273 [https://exchange.xforce.ibmcloud.com/vulnerabilities/115273] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N) AFFECTED PRODUCTS AND VERSIONS
+ IBM Integration Bus V10, V9 
+
+WebSphere Message Broker V8
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/Fix IBM Integration Bus V10 IT16743 APAR は、Fix pack 10.0.0.7 に含まれています。
+https://www-304.ibm.com/support/docview.wss?uid=swg24043068 [https://www-304.ibm.com/support/docview.wss?uid=swg24043068] IBM Integration Bus V9 IT16743 APARは、Fix pack 9.0.0.7 に含まれています。
+http://www-01.ibm.com/support/docview.wss?uid=swg24043227 [http://www-01.ibm.com/support/docview.wss?uid=swg24043227] WebSphere Message Broker V8 IT16743 Interim fix は、全てのプラットフォームに対して IBM Fix Central から入手できます。
+http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Message+Broker&release=All&platform=All&function=aparId&apars=IT16743 [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Message+Broker&release=All&platform=All&function=aparId&apars=%20IT16743]
+
+8.0.0.7 より前の Fix pack をご使用されていて、IT03599が適用されていない場合は、Fix pack 8.0.0.7 以上にアップグレードするか、IBMサポートへ IT16735 を依頼する必要があります。 
+
+APAR IT16743 は、Fix pack 8.0.0.9 に含まれています。 
+For unsupported versions of the product IBM recommends upgrading to a fixed, supported version/release/platform of the product. WORKAROUNDS AND MITIGATIONS
+回避策はございません。
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+IBM Java SDK Security Bulletin [http://www.ibm.com/support/docview.wss?uid=swg21986642] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+公開済みのフィックスパックについては、以下のサイトよりご利用いただけます。 
+Recommended fixes for IBM Integration Bus and WebSphere Message Broker 
+http://www.ibm.com/support/docview.wss?uid=swg27006041 [http://www.ibm.com/support/docview.wss?uid=swg27006041] 
+
+フィックス・パックの公開予定については、以下のサイトよりご確認いただけます。 
+Integration Bus and WebSphere Message Broker planned maintenance release dates 
+http://www.ibm.com/support/docview.wss?uid=swg27006308 [http://www.ibm.com/support/docview.wss?uid=swg27006308] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+関連情報
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21994213]
+
+
+
+
+
+クロスリファレンス情報 区分 製品 コンポーネント プラットフォーム バージョン エディション Business Integration WebSphere Message Broker 8.0

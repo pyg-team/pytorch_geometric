@@ -1,0 +1,65 @@
+Title: IBM SiteProtector Database shows an Unhealthy status due to rejected events - United States
+
+Text:
+health; reject; event; database; SP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your database might show an Unhealthy status due to rejected events. 
+
+CAUSE
+The SiteProtector Database contains a health check for rejected events. Rejected events are events that were sent to SiteProtector that consisted of invalid data, or that were missing required data. Usually the events are from an out-of-date sensor that is no longer supported, but other situations can occur. 
+
+If you are seeing a large number of rejected events, you can find the cause for the rejections by reviewing the contents of the RejectReason column in the SensorDataRejected table.
+
+
+RESOLVING THE PROBLEM
+Below is a list of the different possible rejection reasons and an explanation for each: 
+
+
+
+A sensor address is required
+The sensor did not provide its IP address in the event. This is a sensor issue.
+
+Invalid OSGroupID: X not found in OSGroup table
+This is caused if the OSGroupID is not found in the RealSecureDB database. This can be due to an issue on the sensor, or a problem with the OSGroup table in the database (such as the database being out of date).
+
+Invalid TargetID: X not found in NetworkInterface table
+This is caused if the machine being targeted is not recognized by the database. This is most likely a problem inserting events into the database. Check your Event Collectors to ensure that they are not overloaded and check the SiteProtector Database Properties section to ensure its rows in staging (waiting to be processed) value is not high.
+
+Could not add source IP, X.X.X.X
+When trying to add the source IP address (X.X.X.X is the IP address in question) to the Networkinterface table, the operation failed. This is most likely a database issue. Check the MessageLog table for relevant sql errors.
+
+Could not add target IP, X.X.X.X
+When trying to add the target IP address (X.X.X.X is the IP address in question) to the Networkinterface table, the operation failed. This is most likely a database issue. Check the MessageLog table for relevant sql errors.
+
+Could not register sensor for unknown reason
+Could not find or add the sensor to the component table. This is a database issue. Check the MessageLog table for relevant sql errors.
+
+Invalid AlertName: X not found in SecurityChecks table
+This is probably one of the most common reasons. The event listed an AlertName that was not recognized by the database. IBM X-Force routinely adds and removes events and vulnerabilities from this table with every XPU. If you are seeing this as a reason for rejected events, ensure that your database is completely up to date and check the sensor that sent the event to ensure it is updated to the latest version as well. Skipping a database XPU for any reason can also cause this issue, but doing so is unsupported for this very reason.
+
+Invalid VulnStatus: X not found in VulnStatus Table
+The sensor provided a vulnerability status that the database did not recognize. This is most likely an out-of-date database. Ensure that the database is completely up to date.
+
+Invalid AlertPriority: X not found in Severity table
+The Severity that is provided by the sensor was not a valid Severity according to the database. This is most likely an out-of-date database. Update the database to the latest version.
+
+The column, ObjectName, cannot be null if ObjectType is greater than 0
+The ObjectName was not provided even though an ObjectType was provided. This is a sensor issue. Ensure that the sensor is at the latest version.
+
+Invalid ObjectType: X not found in ObjectType table
+An object type (the X shows the type in question) was not recognized as valid by the database. This is most likely an out-of-date database. Ensure that your database is completely up to date.
+
+Could not assign an ObjectID for unknown reason
+This is a problem when setting the objectID column. Check the MessageLog table for relative SQL Errors.
+
+If you are seeing rejected events and would like assistance with them, contact IBM Security Systems Customer Support [https://www.ibm.com/support/customercare/sas/f/handbook/contacts.html]. 
+
+
+
+
+[/support/docview.wss?uid=swg21436283&aid=1] [https://ibm.biz/BdHdjw] [/support/docview.wss?uid=swg21436283&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21436283&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21436283&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21436283&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21436283&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21436283&aid=7] [http://ibm.biz/ContactSecSupport] 
+
+
+HISTORICAL NUMBER
+ 4734

@@ -1,0 +1,13 @@
+Title: IBM Where can I find information about DB2 latest versions, compatibility between operating systems and version too? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Where can I find information about DB2 latest versions, compatibility between operating systems and version too? 
+
+ANSWER
+For compatibility questions on OS and versions, you can query for information using the tool referenced in the link (see below) to see what is the minimum operating system requirements per product, per each version of DB2, v11, v10.5, v10, v9.8 and v9.7
+
+RELATED INFORMATION
+ System requirements for IBM DB2 for LUW [https://www-01.ibm.com/support/docview.wss?uid=swg27038033]

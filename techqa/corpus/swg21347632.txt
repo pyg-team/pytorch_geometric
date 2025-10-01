@@ -1,0 +1,74 @@
+Title: IBM Error when trying to start the Controller batch process - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Administrator logs onto Controller application server, and launches IBM Cognos 8 Controller Configuration. 
+
+Administrator opens 'Batch Services' section, and highlights Process 'Controller Batch Process 1'. Administrator clicks on green 'play' button to start service. Administrator receives error message. 
+
+SYMPTOM
+** Main screen message:
+
+Cognos 8 Controller Configuration
+Unhandled exception has occurred in your application. If you click
+Continue, the application will ignore this error and attempt to continue.
+If you click Quit, the application will close immediately.
+
+The system cannot find the file specified.
+
+Details Continue Quit
+
+** Extra information when clicking 'details':
+
+See the end of this message for details on invoking
+just-in-time (JIT) debugging instead of this dialog box.
+
+************** Exception Text **************
+System.ComponentModel.Win32Exception: The system cannot find the file specified
+at Microsoft.VisualBasic.CompilerServices.Symbols.Container.InvokeMethod(Method TargetProcedure, Object[] Arguments, Boolean[] CopyBack, BindingFlags Flags)
+
+ at Microsoft.VisualBasic.CompilerServices.NewLateBinding.LateGet(Object Instance, Type Type, String MemberName, Object[] Arguments, String[] ArgumentNames, Type[] TypeArguments, Boolean[] CopyBack)
+
+ at Cognos.Controller.Configuration.ControllerConfiguration.toolBar_ButtonClick(Obje ct sender, ToolBarButtonClickEventArgs e)
+
+ at System.Windows.Forms.ToolBar.OnButtonClick(ToolBarButtonClickEventArgs e)
+at System.Windows.Forms.ToolBar.WmReflectCommand(Message& m)
+at System.Windows.Forms.ToolBar.WndProc(Message& m)
+at System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
+at System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+at System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+
+************** Loaded Assemblies **************
+mscorlib
+Assembly Version: 2.0.0.0
+Win32 Version: 2.0.50727.832 (QFE.050727-8300)
+CodeBase: 
+----------------------------------------
+ControllerConf
+Assembly Version: 8.2.388.0
+Win32 Version: 8.2.388.0
+CodeBase: 
+----------------------------------------
+System.Windows.Forms
+Assembly Version: 2.0.0.0
+Win32 Version: 2.0.50727.832 (QFE.050727-8300)
+CodeBase: 
+
+........
+
+
+CAUSE
+The Administrator has mistakenly tried to launch Controller Configuration on the wrong server (e.g. server#1).
+
+ENVIRONMENT
+Distributed Controller environment, with some Controller components on server #1, and other components on server#2. For example, server#1 = Cognos gateway (and/or reporting server) whilst server#2 = 'main' Controller application server (also known as WSS / COM+ server).
+
+RESOLVING THE PROBLEM
+Logon to the correct server (e.g. server#2) and launch the Controller Configuration application from there instead.
+
+ 
+
+HISTORICAL NUMBER
+ 1037971

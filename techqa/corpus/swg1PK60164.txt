@@ -1,0 +1,203 @@
+Title: IBM PK60164: FALSE Q_DEPTH_HIGH EVENT MESSAGES ARE GENERATED FOR TRANSMIT QUEUES (XMITQ) WHEN MESSAGES ARE TRANSPORTED VIA IGQ - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  False Q_DEPTH_HIGH event messages are generated for transmit
+   queues (xmitq) when messages are transported via IGQ
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Documentation required to determine if this APAR addresses
+   the problem:
+   If the ALERT message is an action based upon a situation against
+   the CURRENT EVENTS attribute group we need the following:
+   .
+   1).Output from MQSeries Events Workspace at the time of MQALERT
+   message. This workspace displays current resettable events, such
+   as queue full, queue depth high, channel stopped.
+   This information is accessible from TEPS front-end by selecting
+    "MQSeries Events" workspace
+   .
+   2).Write the events processed to another output queue and then
+   issue a batch job to read and display these messages.
+   This can be done by using SET EVENTQOUT PERFMQ(q_name) to write
+   events that we read into another queue.  The named queue must
+   exist.
+   .
+   3).Provide the message details from the queue using a batch job
+   such as CSQ4BCLR JCL. Sample in hilev.SCSQPROC
+   .
+   4).Queue Manager SVC Dump
+   .
+   5).Queue Manager Joblog
+   .
+   .
+   LOCAL FIX
+   The customer can write a situation using "MQSeries Events"
+   attribute group for queue depth high event.  This is a pure
+   event table that will generate an alert/event when we get the
+   queue depth high.  It does not depend on the resetting
+   queue depth low event.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS           *
+   *                 Version 6.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When using Intra Group Queuing and      *
+   *                      monitoring for performance events, the  *
+   *                      performance event messages for queue    *
+   *                      depth high (MQRC_Q_DEPTH_HIGH) and      *
+   *                      queue full (MQRC_Q_FULL) contain the    *
+   *                      name of an XMITQ rather than the        *
+   *                      SYSTEM.QSG.TRANSMIT.QUEUE which is the  *
+   *                      correct subject queue of the event.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When using Intra Group Queuing, messages are put to the
+   SYSTEM.QSG.TRANSMIT.QUEUE rather than an XMITQ. The decision to
+   use this queue is made during the put when the qmgr status in
+   the qsg is determined and its attributes queried to check for
+   using IGQ. If this is the case, then a flag is set indicating
+   IGQ should be used. But by this stage the XMITQ associated with
+   the target queue has already been determined and this name
+   placed into the IABL, this being used at a later stage in the
+   put by CSQMIAPM, called from CSQMPOM, when the performance event
+   message is created and written. Thus the XMITQ appears in
+   performance events when the actual put of a message is to the
+   SYSTEM.QSG.TRANSMIT.QUEUE
+   The problem is apparent in queue depth high (MQRC_Q_DEPTH_HIGH)
+   and queue depth full (MQRC_Q_FULL) performance event messages.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Shortly after the decision to use IGQ has been made, the
+   resolved queue name IABL.iaResolvedQName is set to
+   SYSTEM.QSG.TRANSMIT.QUEUE in CSQMPUT, this being the name used
+   when writing the performance event queue message. This occurs
+   before either the subject message or the event message is
+   written to the respective queues. This resolves the problem in
+   both queue depth high (MQRC_Q_DEPTH_HIGH) and queue full
+   (MQRC_Q_FULL) performance event messages.
+   000Y
+   CSQMPUT
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK60164
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-30
+   
+   
+ * CLOSED DATE
+   2008-02-14
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK33699
+   
+   
+
+MODULES/MACROS
+ *     CSQMPUT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK33699 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK33699]
+   UP08/02/28 P F802
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,36 @@
+Title: IBM AlwaysON HA configuration in ITM SQLServer agent - United States
+
+Text:
+koqagent cluster alwayson configuration itcam SQL Server TECHNOTE (FAQ)
+
+QUESTION
+ When SQL Server 2012 is configured in AlwaysOn High Availability configuration, what are the steps to properly monitor the database environment with ITM SQL Server Agent ? 
+
+ANSWER
+AlwaysON feature is not intended to realize HA for SQL Server services,it is a more integrated way to 
+perform database mirroring and realize high availability. 
+In SQL Server 2012 AlwaysOn introduces a new concept of "database group".
+Target for High Availability is the database group, not the 
+services as for the normal cluster configuration. Locally there are now 2 (or more) servers running an active instance per server. 
+The DB are grouped by groupID on which you create a LISTENER with its Server Name, IP and port.
+On one of the instances the DB will be on-line, while the secondary will be read-only because a Mirror service keeps them aligned with the one on primary server. 
+The Cluster service only task is to map Server Name, IP, and takes you to the physical 
+server that currently has active database group in that specific moment.
+
+----
+This is the AlwaysOn concept from a client application perspective. 
+For what concern KOQAGENT, you don't need to perform any specific 
+cluster configuration beside installing and configuring the KOQAGENT on 
+the nodes where the SQL Server instances are running. 
+If the SQL Server services are active and running on both nodes, we 
+will have the two KOQAGENT running on the respective node and 
+collecting data. 
+The SQL Server Agent 6.3 introduces new attribute groups and workspaces for AlwaysOn feature.
+So, after you configured the agents on the db nodes running SQL Server engines, you 
+only need to start them, and all the rest with regard to the AlwaysOn
+feature, is managed by the agent itself. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for Microsoft Application SQL Server agent

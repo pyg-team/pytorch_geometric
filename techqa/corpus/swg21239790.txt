@@ -1,0 +1,98 @@
+Title: IBM WebSphere wsadmin SOAP connector leads to performance issue - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM WebSphere Application Server wsadmin with SOAP connector leads to performance issue on federated configuration with even a single wsadmin command taking a very long time to complete. 
+
+CAUSE
+Some machines have both IPv6 and IPv4 protocol enabled and due to this the SOAP protocol defaults to attempt data transmission through IPv6, but this has performance overhead.
+
+RESOLVING THE PROBLEM
+ The solution is to use IPv4 by passing the following Java system property on the Java runtime: 
+
+
+
+
+-Djava.net.preferIPv4Stack=true 
+Enable the java.net.preferIPv4Stack property on both the wsadmin and dmgr process to see if it helps.  * To set it on wsadmin, edit the wsadmin.sh file (note, you might want to make a backup copy first). Add "-Djava.net.preferIPv4Stack=true \" (without quotes) after the line of "$JAVA_HOME/bin/java" \.
+   
+   Your resulting wsadmin.sh file should have the following:
+   
+   "$JAVA_HOME/bin/java" \
+   -Djava.net.preferIPv4Stack=true \
+   -Xbootclasspath/p:"$WAS_BOOTCLASSPATH" \ 
+   
+ * To set it on the dmgr process, you can add a custom property from the administrative console:
+   
+   System administration > Deployment manager > Java and Process Management > Process Definition > Java Virtual Machine > Custom Properties
+   
+   Add a new property:
+   
+   Name: java.net.preferIPv4Stack
+   Value: true 
+
+
+Save the change and restart dmgr 
+
+Important: Make this changes to all the servers including the NodeAgents and the AppServers (for example: server1) in that cell. 
+
+If this is not helping, send IBM Support wsadmin and the server traces (dmgr/node/AppServer process where the wsadmin is connected). If you are using -conntype NONE, then send us only wsadmin trace. 
+ * Setting traces for server process that wsadmin is connected (for example: dmgr). From the administrative console:  1. Select Troubleshooting > Logs and Trace.
+       
+       
+    2. Select the server (for example, dmgr) Diagnostic Trace Service. 
+       
+       
+    3. Under Additional Properties select > Change Log Detail Levels.
+       
+       
+    4. Select Runtime tab.
+       
+       
+    5. Enter following in the trace window:
+       
+       *=info:com.ibm.ws.management.*=all:com.ibm.websphere.management.*=all 
+       
+   
+   
+ * Set the traces for wsadmin: MustGather: wsadmin problems in WebSphere Application Server [http://www.ibm.com/support/docview.wss?&uid=swg21140940] 
+
+
+Notes:  * An alternate approach is to use RMI connector instead default SOAP
+   
+   ./wsadmin.sh/bat -conntype RMI 
+   
+ * Instead of setting it in the wsadmin.bat/sh file, this -Djava.net.preferIPv4Stack=true property can be passed thru wsadmin -javaoption during wsadmin start.
+   
+   For example:
+   
+   bin>wsadmin -javaoption -Djava.net.preferIPv4Stack=true 
+   For more details, see wsadmin tool [http://publib.boulder.ibm.com/infocenter/wasinfo/v6r1/index.jsp?topic=/com.ibm.websphere.nd.doc/info/ae/ae/rxml_commandline.html] in the information center. 
+   
+ * In version 6.1, set -Djava.net.preferIPv4Stack=true in the following file:
+   
+   install_root/bin/wsadmin.bat/sh 
+   All the profiles level wsadmin.bat/sh (for example:profile_root/dmgr/bin/wsadmin.bat/sh) actually calls install_root/bin/wsadmin.bat/sh.
+   
+   Example:
+   The following code snippet is from the profile_root/dmgr/bin/wsadmin.bat file: 
+   ----
+   @echo off
+   SETLOCAL
+   set WAS_USER_SCRIPT=C:\websphere\v61nd\profiles\Dmgr01\bin\setupCmdLine.bat
+   call "C:\websphere\v61nd\bin\wsadmin.bat" %*
+   ENDLOCAL & set MYERRORLEVEL=%ERRORLEVEL%
+   if defined PROFILE_CONFIG_ACTION (exit %MYERRORLEVEL%) else exit /b %MYERRORLEVEL%
+   ---- 
+
+RELATED INFORMATION
+ wsadmin.sh/bat tool takes approximately 20 minutes to g [http://www.ibm.com/support/docview.wss?uid=swg21174765]
+HostName lookup causes a JVM hang or slow response [http://www.ibm.com/support/docview.wss?uid=swg21170467]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

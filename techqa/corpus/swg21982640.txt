@@ -1,0 +1,91 @@
+Title: IBM '2632-122' TSA error when configuring TSA network tiebreaker - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While configuring TSA (Tivoli System Automation) with 'db2haicu' command, 
+'2632-322' error happens on the network quorum/tiebreaker configuration step.
+
+hostname2: 2632-122 /usr/sbin/rsct/bin/samtb_net validate Address
+"192.168.1.1" Log "1" Count "9": The following error was returned from
+the TieBreaker subsystem:
+/usr/sbin/rsct/bin/samtb_net: A file or directory in the path name does not exist.
+
+
+SYMPTOM
+hostname2 > db2haicu
+....<snippet>.. 
+Create the domain now? [1] 
+
+1. Yes
+2. No
+1
+Creating domain ha_new in the cluster ...
+Creating domain ha_new in the cluster was successful.
+
+( TSA domain itself is created successfully. )
+
+Configure a quorum device for the domain called ha_new? [1]
+1. Yes
+2. No
+
+(Input IP address and then error happens.)
+...<snippet>....
+
+
+hostname2: 2632-122 /usr/sbin/rsct/bin/samtb_net validate Address
+"192.168.1.1" Log "1" Count "9": The following error was returned from
+the TieBreaker subsystem:
+/usr/sbin/rsct/bin/samtb_net: A file or directory in the path name does not exist.
+
+
+
+CAUSE
+"/usr/sbin/rsct/bin/samtb_net" file is responsible for network quorum/tiebreaker configuration.
+And this function belongs to TSA.
+
+It happens when TSA is not correctly installed.
+For example, the current TSA bundle version in DB2 V10.1 and V10.5 release is 3.X.
+This TSA version is not supported in AIX 7.2 version.
+
+
+
+ENVIRONMENT
+AIX 7.2
+
+
+
+DIAGNOSING THE PROBLEM
+1. Check if the file actually exists on the system.
+ls -l /usr/sbin/rsct/bin/samtb_net
+
+2. Run the following TSA command and check if it does not report an error.
+
+samversion
+samlicm -s
+lssrc -ls IBM.GblResRM
+lssrc -ls IBM.RecoveryRM
+lssrc -ls IBM.TestRM
+
+
+
+RESOLVING THE PROBLEM
+Install the operating system version which is supported by the TSA version you intend to install.
+Or install supported TSA version manually that is compatible with the DB2 and operating system version.
+
+Supported TSA version for each DB2 release/fixpack can be found from 'IBM compatibility check' web page.
+( See 'Supported software' tab of 'Detailed System Requirement' page related each DB2 fixpack version. )
+
+RELATED INFORMATION
+ TSA 4.1.0.3 supports AIX 7.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24041217]
+IBM compatibility check [http://www-969.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html]
+Bundled TSA version with DB2 V10.1 [http://www.ibm.com/support/knowledgecenter/api/content/nl/en-us/SSEPGG_10.1.0/com.ibm.db2.luw.qb.server.doc/doc/r0051895.html]
+Bundled TSA version with DB2 V10.5 [http://www.ibm.com/support/knowledgecenter/#!/SSEPGG_10.5.0/com.ibm.db2.luw.qb.server.doc/doc/r0051895.html]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management DB2 for Linux- UNIX and Windows

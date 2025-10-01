@@ -1,0 +1,50 @@
+Title: IBM Datacap Taskmaster Capture Version 8.0.1 Fix Pack 1 download document - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document contains links to the download page and the Readme file for IBM Datacap Taskmaster Capture Version 8.0.1 Fix Pack 1. 
+
+DOWNLOAD DESCRIPTION
+When you click the HTTP link below, after you select the Product Group, Product, Installed Version and appropriate platform, a sign-in page opens. Enter your IBM ID and password to proceed. If you have forgotten your IBM ID or have never registered, follow the instructions on the sign in page.
+
+
+
+
+
+1. Click this link:
+http://www.ibm.com/support/fixcentral/ [http://www-933.ibm.com/support/fixcentral/]
+2. Select Product Group: Enterprise Content Management
+3. Select Product: Datacap Taskmaster Capture
+4. Select Installed Version: 8.0.1.0
+5. Select Platform: All
+6. Sign in with your IBM ID and Password, then click Submit
+7. Select Browse for fixes and click Continue
+8. Select the fix pack, click Continue, then download the package
+
+
+PREREQUISITES
+IBM Datacap Taskmaster Capture Version 8.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg27020850]
+
+INSTALLATION INSTRUCTIONS
+See the IBM Datacap Taskmaster Capture Version 8.0.1 Fix Pack 1 Readme file for installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Taskmaster Capture Version 8.0.1 Fix Pack 1 Readme [http://www-01.ibm.com/support/docview.wss?uid=swg27021511] English 6010 
+DOWNLOAD PACKAGE
+Download this Fix Pack from Fix Central.
+
+
+HOW CRITICAL IS THIS FIX?
+Recommended
+
+
+
+PROBLEMS SOLVED
+See the IBM Datacap Taskmaster Capture Version 8.0.1 Fix Pack 1 Readme for information about the issues solved and multi-language support added.
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Fix Central 5/13/2011 English 46114249 FC [http://www-933.ibm.com/support/fixcentral/] [ ]

@@ -1,0 +1,52 @@
+Title: IBM Which IBM WebSphere Application Server (WAS) Editions on IBM i Software Application Are Chargeable Items - United States
+
+Text:
+WAS; WebSphere; Edition; Offering; Chargeable TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides information about which IBM WebSphere Application Server for IBM i editions are chargeable and require the client to purchase a license for use. 
+
+ENVIRONMENT
+IBM i; IBM WebSphere Application Server
+
+RESOLVING THE PROBLEM
+Question: Is the IBM WebSphere Application Server on IBM i Software Application a chargeable item? 
+
+Answer: 
+There are four different types of offerings and three different editions available for IBM WAS on the IBM i.
+
+Express Edition (WAS v8.5 and earlier)
+The Express edition is the most common edition used by our client base. For this edition, there are two different offerings: 
+
+1. The Express (WEBENAB) edition for the IBM i is available free of charge as a feature code of the IBM Web Enablement product (5722-WE2). Note: The 5722-WE2 is not an installed LPP. 
+
+It can be obtained by ordering the IBM Web Enablement package from the IBM Entitled Software Support (ESS) Web site (https://www.ibm.com/eserver/ess/ [https://www.ibm.com/eserver/ess/]). You can also refer to the URL, http://www.ibm.com/support/docview.wss?uid=nas8N1010905 [http://www.ibm.com/support/docview.wss?uid=nas8N1010905], for more information on how to download this product offering.
+
+Or it can be ordered by contacting your IBM Business Partner or IBM Marketing Representative.
+
+You should refer to the following URL for more information:
+https://www-03.ibm.com/systems/power/software/i/websphere/v855/index.html [https://www-03.ibm.com/systems/power/software/i/websphere/v855/index.html]
+
+Because this offering is free, it is the most commonly ordered offering. 2. The Express edition is also available electronically using Passport Advantage; however, it is available only under the (chargeable) distributed Express license. Note: The Passport Advantage offering is the exact same product at the IBM Web Enablement offering. The only difference is the Passport Advantage offering is available for electronic download through the Passport Advantage Web site. 
+Base and Network Deployment (ND) Editions 
+
+WAS v8.5 and earlier 
+All Base and Network Deployment editions are chargeable. They can be obtained using Passport Advantage under the distributed Base and ND licenses. For additional information including pricing, you should contact your IBM Business Partner, IBM Marketing Representative, or call IBM at 1-800-IBM-4YOU (1-800-426-4968). 
+
+WAS v9.0 Base Edition 
+The Base edition is the most common edition used by our client base for WAS v9.0. For this edition, there are two different offerings: 1. The WAS v9.0 Base (WEBENAB) edition for the IBM i is available free of charge as a feature code of the IBM Web Enablement product (5733-WE3). Note: The 5733-WE3 is not an installed LPP. 
+
+It can be obtained by ordering the IBM Web Enablement package from the IBM Entitled Software Support (ESS) Web site (https://www.ibm.com/eserver/ess/ [https://www.ibm.com/eserver/ess/]). You can also refer to the URL, http://www.ibm.com/support/docview.wss?uid=nas8N1010905 [http://www.ibm.com/support/docview.wss?uid=nas8N1010905], for more information on how to download this product offering.
+
+Or it can be ordered by contacting your IBM Business Partner or IBM Marketing Representative.
+
+You should refer to the following URL for more information:
+https://www-03.ibm.com/systems/power/software/i/websphere/v90/index.html [https://www-03.ibm.com/systems/power/software/i/websphere/v90/index.html]
+
+Because this offering is free, it is the most commonly ordered offering. 2. The WAS v9.0 Base edition is also available electronically using Passport Advantage; however, it is available only under the (chargeable) distributed Base license. Note: The Passport Advantage offering is the exact same product at the IBM Web Enablement offering. The only difference is the Passport Advantage offering is available for electronic download through the Passport Advantage Web site. WAS v9.0 Network Deployment (ND) Edition 
+All Network Deployment editions are chargeable. They can be obtained using Passport Advantage under the distributed ND licenses. For additional information including pricing, you should contact your IBM Business Partner, IBM Marketing Representative, or call IBM at 1-800-IBM-4YOU (1-800-426-4968). 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 Operating System IBM i 7.2 
+HISTORICAL NUMBER
+ 19145307

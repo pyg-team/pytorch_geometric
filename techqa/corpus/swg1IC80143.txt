@@ -1,0 +1,121 @@
+Title: IBM IC80143: LDAP CLIENT DOES NOT DO SSL CACHING (EVEN IF SSL PROXY PROFILE 'CLIENT-SIDE SESSION CACHING' IS SET TO "ON") - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix packs for DataPower XML Security Gateway version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034955]
+Fix packs for DataPower B2B Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034956]
+Fix packs for DataPower Integration Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034957]
+Fix packs for DataPower Low Latency Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034958]
+Fix packs for DataPower Service Gateway version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034959]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DataPower's LDAP client does not do SSL caching; it uses a new
+   key exchange for every connection.
+   You can detect the problem if you configure an SSL proxy
+   profile. Set DataPower as an SSL client and set Client-side
+   Session Caching on. Then configure DataPower as an LDAP client
+   by using this SSL proxy profile.
+   If you initiate an LDAP connection from DataPower and capture
+   packets between DataPower and LDAP server, note that every
+   connection uses a new key exchange.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Affected are users intending to take advantage of SSL caching
+   using DataPower as an LDAP client.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix will be available in a future major release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC80143
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   402
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-01
+   
+   
+ * CLOSED DATE
+   2012-01-06
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R402 PSN
+   UP

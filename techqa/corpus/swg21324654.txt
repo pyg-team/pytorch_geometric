@@ -1,0 +1,34 @@
+Title: IBM Using search function in Rational Change results in "Search is not configured" error - United States
+
+Text:
+Search is not configured; search not working; KB9338 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to use the search function in IBM Rational Change results in the error "Search is not configured, contact your administrator". 
+
+CAUSE
+This message can be caused because indexing is in Rational Change is not enabled. 
+
+RESOLVING THE PROBLEM
+To resolve this issue, log into Rational Change as Admin and verify if indexing is enabled as follows: 
+
+For release 5.2:
+
+
+ * Click Administration > Search. Indexing should already be enabled. 
+   Check to see if indexing is "Currently Indexing Database" or if it is complete.
+
+
+
+For releases prior to 5.2:
+ * Navigate to the General tab and check Indexing Enabled
+
+
+
+Once the index is enabled, you will need to wait until the indexing is complete before searches are allowed. The length of time this takes is dependent on the size of the database. 
+
+Users must re-login after indexing has been enabled to ensure their Change sessions are aware of the indexing. 
+
+If in release 5.2 indexing is not enabled then check the log files to see if there are any relevant errors. Please report these errors to Rational Client Support [http://www.ibm.com/planetwide/]. 
+
+If indexing is already enabled then you need to check the log files to see if there are any relevant errors. Please report these errors to Rational Client Support [http://www.ibm.com/planetwide/].

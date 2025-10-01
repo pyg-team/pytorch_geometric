@@ -1,0 +1,117 @@
+Title: IBM How to make SSL ODBC connection from Linux to IBM DB2 for i - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to make SSL ODBC connection from Linux to IBM DB2 for i 
+
+ANSWER
+This document outlines how to get the IBM Access Client Solutions – Linux Application Package [http://www-03.ibm.com/systems/power/software/i/access/linux.html] to make SSL ODBC connections to DB2 for i. 
+It is assumed that the IBM i Access Client Solutions - Linux Application Package and the unixODBC product are already installed on the Linux client. 
+
+Server-side steps (using Digital Certificate Manager):
+
+__ Ensure a CA Certificate exists on Server system. Create one if it does not. 
+__ Ensure a server certificate signed by the CA exists. Create one if it does not.
+__ Assign the server certificate to the following IBM i server applications (host servers) :
+Central Server
+Database Server
+Signon Server
+Remote Command Server
+
+__ Export the CA certificate from the IBM i server and copy to the client linux system. If using FTP, ascii-mode conversion must be set (“ascii” command).
+
+[/support/docview.wss?uid=nas8N1022484&amp;aid=1]
+
+The above steps are detailed in:
+Digital Certificate Manager Getting Started [http://www-01.ibm.com/support/docview.wss?uid=nas8N1014938]
+
+
+
+Client-side steps:
+
+
+ Install the stunnel package in linux:
+$ sudo yum install stunnel
+Or
+$ sudo apt-get install stunnel4
+
+Store the exported CA certificate from the IBM i in file /etc/stunnel/YourSystemCA.txt. 
+$ cat /etc/stunnel/YourSystemCA.txt …should return:
+
+-----BEGIN CERTIFICATE-----
+[ actual certificate data here ]
+-----END CERTIFICATE-----
+
+
+Edit file /etc/stunnel/stunnel.conf to have the following:
+
+# Enable client mode
+client = yes
+# Debug and Foreground are for testing / Uncomment for debugging stunnel problems
+##debug = 5
+##foreground = yes
+
+# enable CA validation
+CAFile = /etc/stunnel/YourSystemCA.txt
+verify = 2
+
+# Following are the non-SSL to SSL port maps for ACS connections.
+# Services: 
+
+# Used for conversion tables (cwbnltbl)
+[as-central]
+accept = 127.0.0.2:8470
+connect = YourIBMiDNSname:9470
+
+# Used for ODBC (cwbrunsql, isql, DataManager, ...)
+[as-database]
+accept = 127.0.0.2:8471
+connect = YourIBMiDNSname:9471
+
+# Used for Remote commands (rmtcmd)
+[as-rmtcmd]
+accept = 127.0.0.2:8475
+connect = YourIBMiDNSname:9475
+
+# Used for Signon
+[as-signon]
+accept = 127.0.0.2:8476
+connect = YourIBMiDNSname:9476
+
+
+odbc.ini (DSN config):
+
+[ theODBC_SSLconnection ]
+Description = IBM i Access ODBC Driver 64-bit
+Driver = IBM i Access ODBC Driver 64-bit
+System = 127.0.0.2
+UserID = YourUSRPRF
+Password =
+Naming = 0
+DefaultLibraries = QGPL
+Database =
+ConnectionType = 0
+CommitMode = 2
+ExtendedDynamic = 1
+DefaultPkgLibrary = QGPL
+DefaultPackage = A/DEFAULT(IBM),2,0,1,0,512
+AllowDataCompression = 1
+MaxFieldLength = 32
+BlockFetch = 1
+BlockSizeKB = 128
+ExtendedColInfo = 0
+LibraryView = ENU
+AllowUnsupportedChar = 0
+ForceTranslation = 0
+Trace = 0
+
+
+Start the SSL tunnel with :
+$ sudo stunnel /etc/stunnel/stunnel.conf
+If successful, you will have some “stunnel” processes active (ps -eH | grep stunnel).
+
+
+Test SSL connectivity with:
+$ isql theODBC_SSLconnection YourUSRPRF YourUSRPWD

@@ -1,0 +1,70 @@
+Title: IBM CWWIM4001E occurs if LDAP cannot search based on external identifier - United States
+
+Text:
+objectGUID; distinguishedName; CWWIM4001E; EntityNotFoundException; externalIdAttributes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+If the LDAP server does not support searches for external identifiers, WebSphere Portal authentication fails. Some LDAP servers prohibit searches based on any operational attribute. LDAP servers generally consider the external identifier attribute an operational attribute.
+
+SYMPTOM
+With Virtual Member Manager (VMM) tracing enabled, the trace.log contains:
+... LdapAdapter > com.ibm.ws.wim.adapter.ldap.LdapAdapter WIM_SPI get ENTRY 
+<?xml version="1.0" encoding="UTF-8"?><sdo:datagraph ...>
+<wim:identifier externalId="adcb4d994ab4a355941fcde2aad3dda4" repositoryId="LDAPID" uniqueName="uid=user1,dc=ibm,dc=com"/>
+...
+</sdo:datagraph>
+...
+... LdapConnectio > com.ibm.ws.wim.adapter.ldap.LdapConnection getEntityByIdentifier ENTRY null adcb4d994ab4a355941fcde2aad3dda4 uid=user1,dc=ibm,dc=com null null true false
+... LdapConnectio > com.ibm.ws.wim.adapter.ldap.LdapConnection getAttributesByExtId ENTRY adcb4d994ab4a355941fcde2aad3dda4 [objectguid, objectClass, nsRole] null
+...
+... LdapConnectio > com.ibm.ws.wim.adapter.ldap.LdapConnection JNDI_CALL search(String, String, Object[], SearchControls ENTRY dc=ibm,dc=com (objectguid={0}) [[B@1ce21ce2] [searchScope: 2, timeLimit: 6000, countLimit: 0, returningObjFlag: true, returningAttributes: [objectguid, objectClass, nsRole]]
+...
+... exception 1 com.ibm.ws.wim.adapter.ldap.LdapConnection getAttributesByExtId com.ibm.websphere.wim.exception.EntityNotFoundException: CWWIM4001E The 'adcb4d994ab4a355941fcde2aad3dda4' entity was not found. at com.ibm.ws.wim.adapter.ldap.LdapConnection.getAttributesByExtId(LdapConnection.java:2246)...
+at com.ibm.wps.services.authentication.impl.AuthenticationServiceImpl.doWASLogin(AuthenticationServiceImpl.java:596)
+...
+at com.ibm.wps.engine.commands.LoginUserAuth.doAuthenticate(LoginUserAuth.java:85)
+
+
+CAUSE
+Depending on the security configuration, VMM may request elements of the user record by searching on its external identifier. CWWIM4001E occurs if the LDAP server does not support such searches. RFC 3928 recommends, but does not require, LDAPs to support such searches. Reference section 3.2 which states:
+
+
+"We RECOMMEND that the server provides a way to do efficient (i.e.,indexed) searches for values of UUID, e.g., by using a search filter like (entryUUID=<some UUID value>) to quickly search for and retrieve an entry based on its UUID."
+
+(UUID = Universally Unique Identifier, synonymous with external identifier, the term used by Virtual Member Manager for such attributes)
+
+
+In the example above the external identifier is objectGUID, an operational attribute for Microsoft Active Directory. This exception occurred because the proxy between WebSphere Portal and Microsoft Active Directory could not process the JNDI search on objectGUID.
+
+Your trace may reference an attribute other than objectGUID. Refer to the technote linked below for a table of external identifiers used by various LDAPs.
+
+
+DIAGNOSING THE PROBLEM
+Collect the Login MustGather and review the trace.
+
+
+
+RESOLVING THE PROBLEM
+Reconfigure VMM to use the distinguished name (DN), or some other unique and searchable attribute, as the external identifier. For any repositories experiencing such failures, modify wimconfig.xml changing (the externalIdAttributes might not be explicitly defined; this example is specific to Microsoft Active Directory): 
+
+
+<config:repositories id="LDAPID" ...
+...
+<config:attributeConfiguration> 
+<config:externalIdAttributes name="objectGUID" syntax="OctetString" />
+
+to (if not explicitly defined, add rather than modify this definition): 
+
+<config:repositories id="LDAPID" ...
+...
+<config:attributeConfiguration> 
+<config:externalIdAttributes name="distinguishedName" />
+
+If clustered, distribute/synchronize wimconfig.xml as needed. Restart WebSphere_Portal to register the change.
+
+Changing external identifiers may affect Portal Access Control. Refer to the technote linked below for a solution.
+
+RELATED INFORMATION
+ RFC 3928 [http://www.ietf.org/rfc/rfc3928.txt]
+Technote: Portal Access Control and external identifier [http://www.ibm.com/support/docview.wss?uid=swg21377025]
+Login MustGather (includes VMM tracing) [http://www.ibm.com/support/docview.wss?uid=swg21312738]

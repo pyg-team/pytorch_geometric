@@ -1,0 +1,32 @@
+Title: IBM Viewing the log using 'cmureport' produces 'Error: The Log File is not a version 2.0 Log File' at the end of the log. (SCI73578) - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Viewing the log using 'cmureport' produces 'Error: The Log File is not a version 2.0 Log File' at the end of the log. (SCI73578) 
+
+SYMPTOM
+Viewing the log using 'cmureport' produces 'Error: The Log File is not a version 2.0 Log File' at the end of the log.
+
+
+CAUSE
+corrupted log file logacct.dat
+
+RESOLVING THE PROBLEM
+stop Connect:Enterprise ( ceushutdown ) - delete corrupted logfile - restart Connect:Enterprise ( ceustartup )
+
+ 
+
+HISTORICAL NUMBER
+ PRI5952 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Connect:Enterprise UNIX
+Release 2.2.00 
+SCI73578

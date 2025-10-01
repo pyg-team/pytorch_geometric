@@ -1,0 +1,252 @@
+Title: IBM IT19794: MQ 7.5: DURING QUEUE MANAGER FAILOVER MQ JMS CLIENT MAY SEND DUPLICATE MESSAGE. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Additional Symptom(s) Search Keyword(s):
+   While sending a message using the method
+   MessageProducer.send(Message), the JMS client detected that
+   the queue manager had failed over and performed
+   automatic client reconnection. This was done before waiting for
+   the queue manager to confirm that the message was put
+   successfully.  Because the queue manager failed over after it
+   had received the message and before it could send back a reply,
+   the message was successfully put using a non-transacted JMS
+   session.
+   
+   After reconnecting, the JMS client sent the message again.
+   This resulted in the message arriving on the queue twice.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of:
+   
+   - The WebSphere MQ V7.5 classes for JMS.
+   - The IBM MQ V8.0 classes for JMS.
+   - The IBM MQ V9.0.0.x classes for JMS.
+   
+   who have JMS applications that:
+   
+   - Use a connection factory that has the CLIENTRECONNECTOPTIONS
+   property set to either QMGR or ANY to create a JMS connection to
+   a multi-instance queue manager.
+   - Create a non-transacted JMS session from the JMS connection.
+   - Create a JMS MessageProducer from the JMS session for a
+   destination hosted on the multi-instance queue manager, where
+   the destination has its PERSISTENCE property configured such
+   that non-persistent messages are sent to the destination.
+   - Use the JMS MessageProducer to send messages to the
+   destination.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When an application using the WebSphere MQ classes for JMS
+   connects to a multi-instance queue manager, using a Connection
+   Factory that has been configured to use automatic client
+   reconnection (as documented in the Automatic JMS client
+   reconnection topic in the MQ V8 and later sections of IBM
+   Knowledge Center :
+   https://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm [https://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm]
+   .mq.dev.doc/q032520_.htm), then the WebSphere MQ classes for JMS
+   will receive a notification from the queue manager when it fails
+   over. When the notification is received, the WebSphere MQ
+   classes for JMS will pause the application the next time it
+   tries to communicate with the queue manager and periodically
+   attempt to reconnect. When the multi-instance queue manager is
+   available again, and the WebSphere MQ classes for JMS have
+   reconnected, they will resume the application and allow it to
+   continue processing.
+   
+   When an application using the WebSphere MQ classes for JMS sends
+   a message to a JMS destination by calling one of the following
+   methods:
+   
+   - MessageProducer.send(Destination, Message)
+   - MessageProducer.send(Destination, Message, CompletionListener)
+   - MessageProducer.send(Destination, Message, int, int, int)
+   - MessageProducer.send(Destination, Message, int, int, int,
+   CompletionListener)
+   - MessageProducer.send(Message)
+   - MessageProducer.send(Message, CompletionListener)
+   - MessageProducer.send(Message, int, int, int)
+   - MessageProducer.send(Message, int, int, int,
+   CompletionListener)
+   
+   the WebSphere MQ classes for JMS will:
+   
+   - Send an MQPUT request to the queue manager.
+   - Wait for an MQPUT reply from the queue manager, indicating
+   that the message was put successfully.
+   
+   If a multi-instance queue manager failed over during these
+   operations, then the WebSphere MQ classes for JMS would abort
+   the current MQPUT operation and reconnect to the queue manager.
+   After reconnecting, the WebSphere MQ classes for JMS would
+   perform the MQPUT call again, to send the message for a second
+   time.
+   
+   If the application was using a non-transacted JMS session and
+   the messages that were being sent were non-persistent,  then if
+   the queue manager fail over occurred:
+   
+   - After the MQPUT request was sent to the queue manager
+   - And before the MQPUT reply was received
+   
+   the message would be put to the destination twice. Once before
+   the queue manager failed over, and for a second time after the
+   WebSphere MQ classes for JMS had reconnected.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ classes for JMS have been modified so that, if
+   automatic client reconnection occurs while sending a message to
+   a JMS destination using one of the methods shown below:
+   
+   - MessageProducer.send(Destination, Message)
+   - MessageProducer.send(Destination, Message, CompletionListener)
+   - MessageProducer.send(Destination, Message, int, int, int)
+   - MessageProducer.send(Destination, Message, int, int, int,
+   CompletionListener)
+   - MessageProducer.send(Message)
+   - MessageProducer.send(Message, CompletionListener)
+   - MessageProducer.send(Message, int, int, int)
+   - MessageProducer.send(Message, int, int, int,
+   CompletionListener)
+   
+   the WebSphere MQ classes for JMS will reconnect to the
+   multi-instance queue manager and:
+   
+   - Return from the method normally, if the MessageProducer was
+   created from a non-transacted JMS session and was being used to
+   put a non-persistent message to a destination.
+   - Throw a JMSException containing reason code 2003
+   (MQRC_BACKED_OUT) if the application was using a MessageProducer
+   created from a transacted JMS session.
+   - Throw a JMSException containing reason code 2549
+   (MQRC_CALL_INTERRUPTED) in all other situations.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.9
+   v8.0       8.0.0.7
+   v9.0 LTS   9.0.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT19794
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-20
+   
+   
+ * CLOSED DATE
+   2017-04-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-08-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7241
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

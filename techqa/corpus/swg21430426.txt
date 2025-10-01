@@ -1,0 +1,18 @@
+Title: IBM Upload of log target fails when using SCP or SFTP - United States
+
+Text:
+scp sftp maximum concurrent log target exceeded TECHNOTE (FAQ)
+
+QUESTION
+ When uploading a log target using SCP or SFTP, it fails with the following error: 
+
+09:08:31 system error 337199 0x810003f2 logging target (TestMsgs): Maximum number of concurrent scp or sftp exceeded.
+
+09:08:31 system error 337199 0x8100043d logging target (TestMsgs): Log upload of target TestMsgs failed.
+
+
+CAUSE
+This error is issued when multiple log targets attempt to upload at the same time via SCP or SFTP. DataPower has a limit of allowing only one SCP/SFTP connection at a time even if they are going to different servers. This limit was set in the early versions of the DataPower appliance to prevent CLI activity from potentially impacting the scalability or performance of the device.
+
+ANSWER
+Configure the log targets with unique settings such that they will not attempt to upload at the same time. For example, if the log targets are configured with the same event subscriptions and log size, change the subscription and/or log size on one of them so that they will not reach the log size at the same time and attempt the upload.

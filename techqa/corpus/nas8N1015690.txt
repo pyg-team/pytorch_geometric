@@ -1,0 +1,38 @@
+Title: IBM Allowing Only SSL Remote 5250 Console Connections - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ HMC Version 8 and later has a configuration option that allows the administrator to restrict remote 5250 console sessions to SSL only. 
+
+RESOLVING THE PROBLEM
+HMC Version 8 Release 8.1 and later 
+
+HMC Version 8 Release 8.1 and later allows administrators to disable non-secure remote 5250 console connections. This includes disabling non-SSL (port 2300) connections as well as many weak and medium strength cipher used by default for SSL connections (port 2301). Ciphers not compliant with NIST SP 800-131A (National Institute of Standards and Technology Special Publication 800-131A) can be disabled by setting the HMC security settings to nist_sp800_131a mode. 
+
+Note: This security mode applies to most servers on the HMC, not just the remote 5250 console. See the HMC release notes (readme.txt) for further release specific information before enabling.
+
+To enable NIST compliant ciphers on the HMC use the command:
+chhmc -c security -s modify --mode nist_sp800_131a
+
+Then reboot the hmc: 
+hmcshutdown -r -t now
+
+Version 7 and earlier
+Versions of the HMC prior to Version 8 do not have a configuration option that allows remote 5250 remote console connections to be restricted to SSL only. The same HMC 5250 proxy firewall setting applies to both SSL and non-SSL connections. 
+
+A circumvention is to block both 2300 and 2301 on the HMC remote interface (typically eth1) then use ssh to perform the encryption by connecting a ssh tunnel to loopback on the HMC.
+For example:
+- Connect a ssh session to the HMC with a port forward from an unused local port (30000 in the example) to loopback (127.0.0.1), port 2300.
+putty tunnel [/support/docview.wss?uid=nas8N1015690&amp;aid=1]
+
+- Connect the emulator session to the host/port with the ssh tunnel session.
+For IBM Access for Windows use the default userid of Q#HMC as well.
+PCOM emulator [/support/docview.wss?uid=nas8N1015690&aid=2] [/support/docview.wss?uid=nas8N1015690&aid=2]
+
+
+ 
+
+HISTORICAL NUMBER
+ 368664828

@@ -1,0 +1,10 @@
+Title: IBM Are there any impacts to IBM Infosphere MDM SE related to Leap Year (2016)? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Are there any potential impacts to the operation of the IBM Infosphere MDM product related to the fact that 2016 is a leap year? 
+
+ANSWER
+There are currently no known issues associated with any performance or stability impact to the IBM MDM software as the result of 2016 being a leap year.

@@ -1,0 +1,233 @@
+Title: IBM PM08970: INCORROUT (NO ROWS FOUND) WHEN IN MEMORY WORKFILE IS USED - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  INCORROUT (NO ROWS FOUND) WHEN IN MEMORY WORKFILE IS USED
+   
+   SQLINCORROUT SQLIMWF IMWF
+   DB2INCORR/K
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All DB2 for z/OS v8 and DB2 9 for z/OS users *
+   *                 of joins using sparse index access.          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An incorrect result set (no records     *
+   *                      found) can be returned for queries that *
+   *                      involve JOINs that use an in-memory     *
+   *                      workfile for DB2 sparse index           *
+   *                      processing.                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An incorrect result set (no records found) can be returned for
+   queries that involve JOINs that use an in-memory workfile for
+   DB2 sparse index processing.
+   
+   The problem can occur when an in-memory workfile is used for
+   sparse index processing and DB2 determines that some of the
+   columns in the sparse index are no longer needed.  So, for
+   further processing these fields are skipped.
+   
+   Furthermore, in the reported case the buffer containing the data
+   columns was not advanced (to the next column) when the column
+   was marked as "skipped".  If data columns are skipped, they are
+   typically the last columns in the in-memory workfile.  However
+   in this case, the skipped column was in the middle of the data
+   columns and subsequent columns were still needed.
+   
+   A few scenarios are presented here that could possibly create a
+   "skipped" column as described.  For this to occur, access path
+   selection would need to choose a query block materialization
+   plan.
+   
+   SCENARIO 1.
+   
+     Given the following table expression case.
+   
+     SELECT T1.C1, T2.C1, TX.C3
+     FROM T1, T2,
+          (SELECT D1.C1, D2.C1, D1.C3
+           FROM D1, D2
+           WHERE D1.C1 = D2.C1
+           AND ...) TX (C1, C2, C3)
+     WHERE T1.C1 = TX.C3
+     AND T1.C2 = T2.C2
+      ...
+   
+   Assume the table expression is in a separate query block and
+   requires materialization.  Since the table expression contains 3
+   columns (TX.C1, TX.C2, TX.C3) and only one column is referenced
+   in the main query block (TX.C3), the materialized work file will
+   contain 3 columns (TX.C1, TX.C2, TX.C3) and 2 columns, TX.C1 and
+   TX.C2, will be marked as "skipped".
+   
+   
+   SCENARIO 2.
+   
+     Given the following transitive closure predicate case.
+   
+     SELECT T1.C1, T3.C1
+     FROM T1, T2, T3, ...
+     WHERE T1.C1 = T2.C1
+     AND T1.C1 = T3.C1
+     AND ...
+   
+   For example, if during access path selection DB2 decides to put
+   T1 JOIN T2 into a separate query block and materialize the join
+   result, the query block result will contain T1.C1 and T2.C1 in
+   the workfile.  Since join predicates T1.C1 = T3.C1 and T1.C1 =
+   T2.C1 are equal type predicates, a transitive closure predicate
+   T2.C1 = T3.C1 is generated.
+   
+   Also, since T1.C1 = T2.C1 is already evaluated at the T1 JOIN T2
+   time, one of these 2 predicates
+   
+     T1.C1 = T3.C1
+     T2.C1 = T3.C1
+   
+   will only be chosen as a join predicate and the other marked as
+   a redundant predicate when processing the T3 table.  So, assume
+   that T1.C1 = T3.C1 is chosen and T2.C1 = T3.C1 is marked as
+   redundant, then the T2.C1 column (in the workfile) will be
+   marked as "skipped".
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code in DB2 is modified to correct sparse index processing
+   for in-memory workfiles when a column is marked "skipped" and
+   prepare for the next data column by advancing the buffer
+   pointer.
+   
+   Additional Keywords: SPARSEINDEX SQLINCORR SQLSPARSEINDEX
+                        SQLJOIN
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM08970
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-03
+   
+   
+ * CLOSED DATE
+   2010-04-05
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK55840 UK55841
+   
+   
+
+MODULES/MACROS
+ *  DSNDSIDX DSNISJNF DSNISJNN DSNXREOJ DSNXRFF
+   DSNXRFN  DSNXRGBJ DSNXROJ1 DSNXRSFJ DSNXRSFN DSNXRSGB DSNXRT1J
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY UK55840 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK55840]
+   UP10/04/21 P F004
+   
+   
+ * R910 PSY UK55841 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK55841]
+   UP10/04/21 P F004
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,147 @@
+Title: IBM PI35124: DFHPI0917W WHEN SERVICE_HANDLER_LIST ELEMENT IS WITHIN COMMENTS - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are migrating from CICS/TS 3.2 to CICS/TS 5.1 and the
+   install of the pipeline fails with:
+   DFHPI0917 W MM/DD/YYYY hh:mm:ss AORNAME WEBSERVICE
+   might perform unpredictably as the PIPELINE PIPEname2 is
+   non-SOAP.
+   This problem only occurs when the closing service_handler_list
+   element is part of a comment.
+   
+   Additional Symptom(s) Search Keyword(s): KIXREVSLY
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Remove 'service_handler_list'  from the closing comment  .
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: DFHPI0720 issued when installing a      *
+   *                      pipeline.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In the reported problem, a configuration ( config ) file
+   associated with a PIPELINE resource contained a comment
+   of:  </service_handler_list >, the XML read:
+   .
+   <!-- </service_handler_list> -->
+   .
+   Which is a valid comment.  However, this was not treated as
+   such.  DFHPIPL detects the service_handler_list end element and
+   assumes that there are no more service handlers present in the
+   file.  Message DFHPI0720 is issued when the valid service
+   handlers are located.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is being closed FIN with concurrence from the
+   submitting customer.  This means that a fix to this APAR is
+   expected to be delivered from IBM in a release which is being
+   developed at the time that the APAR was closed.
+   The latest release of the product to exit development at the
+   time this APAR was closed was:
+     CICS Transaction Server for z/OS V5.2
+   D100514
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI35124
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-16
+   
+   
+ * CLOSED DATE
+   2015-04-24
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSN
+   UP
+   
+   
+ * R900 PSN
+   UP

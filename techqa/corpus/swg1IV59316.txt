@@ -1,0 +1,240 @@
+Title: IBM IV59316: A WEBSPHERE MQ JMS APPLICATION GOT A NULLPOINTER EXCEPTION WHEN IT ATTEMPTED TO RETRIEVE AN EVENT/PCF MESSAGE. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fix Pack 8.0.0.2 for WebSphere MQ V8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24039436]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The JMS application attempting to retrieve an Event/PCF message
+   from an MQ queue incurred a NullPointer exception when
+   processing PCFParameters within the message. The application
+   performed the following steps:
+   
+   - Set the WMQ_RECEIVE_CONVERSION property on a JMS Destination
+   object to QMGR prior to creating the consumer for that
+   destination.
+   - Using the consumer to get a JMS message.
+   - Creating the PCFMessage object from the JMS message.
+   - Getting the parameters from the PCFMessage by calling the
+   methods PCFMessage.getParameters() and
+   PCFParameter.getParameterName().
+   - Calling methods on the value returned from
+   PCFParameter.getParameterName()
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of:
+   
+   - The WebSphere MQ V7.0.1 classes for Java
+   - The WebSphere MQ V7.0.1 classes for JMS
+   - The WebSphere MQ V7.0.1 OSGi bundles.
+   - The WebSphere MQ V7.0.1 Resource Adapter.
+   
+   who have applications that use the WebSphere MQ Headers package
+   to receive and process either PCF messages or event messages
+   from a queue.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The WebSphere MQ Headers package contains a class called
+   PCFParameter, which represents PCF parameter structures.
+   Applications that use the WebSphere MQ Headers package can use
+   the PCFParameter class to store either PCF parameters that are
+   sent to a queue manager as part of PCF requests, or the PCF
+   parameters that are returned in a PCF response.
+   
+   Every PCF parameter has a numerical parameter identifier
+   associated with it. The parameter identifier maps to a WebSphere
+   MQ constant value.
+   
+   The PCFParameter class contains a method called
+   PCFParameter.getParameterName(), which returns a String
+   representing the WebSphere MQ constant value that maps to the
+   numerical parameter identifier. If the PCF parameter is not
+   known to the WebSphere MQ Headers package (because the PCF
+   parameter was introduced in a later version of WebSphere MQ),
+   then the PCFParameter.getParameterName() method will return
+   null.
+   
+   WebSphere MQ V7.0.1 introduced a series of 16 new command format
+   Byte Parameter Types. The numerical identifiers for these Byte
+   Parameter Types, and the WebSphere MQ constant values for them,
+   are shown below:
+   
+   MQBACF_EVENT_ACCOUNTING_TOKEN 7001
+   MQBACF_EVENT_SECURITY_ID 7002
+   MQBACF_RESPONSE_SET 7003
+   MQBACF_RESPONSE_ID 7004
+   MQBACF_EXTERNAL_UOW_ID 7005
+   MQBACF_CONNECTION_ID 7006
+   MQBACF_GENERIC_CONNECTION_ID 7007
+   MQBACF_ORIGIN_UOW_ID 7008
+   MQBACF_Q_MGR_UOW_ID 7009
+   MQBACF_ACCOUNTING_TOKEN 7010
+   MQBACF_CORREL_ID 7011
+   MQBACF_GROUP_ID 7012
+   MQBACF_MSG_ID 7013
+   MQBACF_CF_LEID 7014
+   MQBACF_DESTINATION_CORREL_ID 7015
+   MQBACF_SUB_ID 7016
+   
+   The WebSphere MQ Headers package included with WebSphere MQ
+   V7.0.1 did not recognise these Bye Parameter Types. If an
+   application called PCFParameter.getParameterName() on a
+   PCFParameter object that represented one of these Byte Parameter
+   Types shown above, the method incorrectly returned null instead
+   of the WebSphere MQ constant value.
+   
+   Because the application which was using the WebSphere MQ Headers
+   package expected the PCFParameter.getParameterName() method
+   expected the method to return a String rather than null, it
+   called a method on the value returned from the method which
+   resulted in a NullPointerException being generated.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ Headers package included in WebSphere MQ V7.0.1
+   has been updated to recognise the 16 new command format Byte
+   Parameter Types that have the numerical parameter identifiers
+   7001-7016 which were introduced in that release.
+   
+   In addition to this, two JavaDoc changes have been made to the
+   PCFParameter class:
+   
+   - The JavaDoc for the PCFParameter.getParameterName() method has
+   been modified to indicate that the method will return null if it
+   is called for a PCFParameter that represents a parameter type
+   which was introduced in a later version of WebSphere MQ.
+   - The JavaDoc for the PCFParameter.hashCode() method has been
+   updated to describe what the method does.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.0       7.0.1.13
+   v7.1       7.1.0.7
+   v7.5       7.5.0.5
+   v8.0       8.0.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV59316
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86-64
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7230
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-16
+   
+   
+ * CLOSED DATE
+   2014-10-29
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86-64
+   
+   
+ * FIXED COMPONENT ID
+   5724H7230
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

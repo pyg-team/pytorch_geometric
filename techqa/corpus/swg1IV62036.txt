@@ -1,0 +1,103 @@
+Title: IBM IV62036: LOGIN PAGE MISSING AFTER ENABLING HTTP ACCESS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After doing required changes to enable HTTP protcol for DASH
+   admin console - it is not showing login page in HTTP mode.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When enabling HTTP and HTTPS the DASH login page is not
+   appearing. a defect caused a regression and is fixed in the next
+   release.
+   The fix for this APAR will be fixed in the next release
+   1.1.1-TIV-JazzSM-multi
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV62036
+   
+   
+ * REPORTED COMPONENT NAME
+   JAZZ SM TIP DAS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04JD
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-27
+   
+   
+ * CLOSED DATE
+   2014-08-11
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSY
+   UP

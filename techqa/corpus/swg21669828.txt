@@ -1,0 +1,31 @@
+Title: IBM DFHAP0001 0C4 AKEA in DBUGDBXX when using CA products with CICS TS 5.1 - United States
+
+Text:
+CAS9SAFC ICM 0C4 AKEA abend0C4 abends0c4 abendAKEA Link SVC6 Computer Associates ; 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are unable to shutdown Xpediter/CICS in you CICS region and you receive an abend0C4 in DBUGDBXX. 
+
+SYMPTOM
+DFHAP0001 An abend (code 0C4/AKEA) has occurred at offset X'00002200' in module DBUGDBXX.
+
+The symptoms of the problem are similar to the one described in APAR OA42454 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA42454]. However, the problem occurs with or without OMEGAMON active in the region.
+
+
+CAUSE
+You are missing a CA-ENF fix. Your current level of CA-ENF is making a similar mistake that the pre OA42454 version of OMEGAMON made. This causes the problem when CA-ENF intercepts control.
+
+DIAGNOSING THE PROBLEM
+From the dump, the 0C4 is at offset x'00002200' in program DBUGDBXX. The failing instruction is BF6F 2074 and register 2 (R2) has an address that is not valid: 0000000_40C55368. R2 is supposed to address DBUG's CPE at address 00000048_40C55368 (64bit).
+
+Prior to the 0C4, DBUGDBXX loaded R2 with the CPE address 00000048_40C55368 and then issued an EXEC CICS RELEASE command to release program DBUG. On completion of the RELEASE command, DBUGDBXX was attempting to reference CPE field CPE_CURRENT_USERS (R2+74), but the top half of R2 was cleared, causing the 0C4.
+
+It appears that R2 was updated during the RELEASE command processing.
+
+RESOLVING THE PROBLEM
+Apply CA-ENF fix RO66173. Contact [/support/docview.wss?uid=swg21669828&amp;aid=1]CA Technologies [http://www.ca.com/] if you need further assistance.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

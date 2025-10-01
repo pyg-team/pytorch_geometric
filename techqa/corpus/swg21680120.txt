@@ -1,0 +1,67 @@
+Title: IBM BMXAA7025E When Installing TAMIT - United States
+
+Text:
+TAMIT install; BMXAA7025E; TPAEUPDATEDB; 7210_23 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to install TAMIT on top of 7.1.1.12 results in the error BMXAA7025E during updatedb. 
+
+SYMPTOM
+After installing Maximo Asset Management 7.1.1.9 or later and then installing TAMIT to the same environment, will fail on updatedb with the error:
+BMXAA7025E -- Script failed while running.;
+sql#942;
+ORA-00942: table or view does not exist
+
+-- BEGINUPDATEDBERROR
+-- Error running file: V7210_23
+-- UPDATEDBFILE:V7210_23.dbc
+-- Script: Error
+psdi.util.MXSystemException: dbchange#ScriptFailure
+
+
+CAUSE
+The dependency for which scripts to run first is incorrect in the newer versions.
+
+ENVIRONMENT
+When installing TAMIT 7.2 on top of TPAE you will run in to this error.
+
+DIAGNOSING THE PROBLEM
+When installing TAMIT and the install fails, check the updatedb log. The full transcript of the error will look something like this, depending on database platform:
+
+insert into ibmcontentcatalog (ibmcontentcatalogid, description, hasld, url) values (IBMCONTENTCATALOGIDSEQ.nextval, 'SRM', 0, 'www.ibm.com/software/brandcatalog/ismlibrary/resources/catalog?&client=TSRM&sortBy=update_ts_desc&rc=TivoliServiceRequestManager&rc=IBM_Tivoli_AssetType_ISMContentInstallerPack')
+;
+
+BMXAA7025E -- Script failed while running.;
+sql#942;
+ORA-00942: table or view does not exist
+
+-- BEGINUPDATEDBERROR
+-- Error running file: V7210_23
+-- UPDATEDBFILE:V7210_23.dbc
+-- Script: Error
+psdi.util.MXSystemException: dbchange#ScriptFailure
+at psdi.dbmanage.ScriptRun.run(Unknown Source)
+at psdi.dbmanage.Utility.runDbcScriptLastGoodLine(Unknown Source)
+at psdi.tools.UpdateDB.runDbcScript(Unknown Source)
+at psdi.tools.UpdateDB.runDbcFileInfo(Unknown Source)
+at psdi.tools.UpdateDB.runScripts(Unknown Source)
+at psdi.tools.UpdateDB.startProcess(Unknown Source)
+at psdi.tools.UpdateDB.startProcess(Unknown Source)
+at psdi.tools.UpdateDB.loadScriptInfo(Unknown Source)
+at psdi.tools.UpdateDB.main(Unknown Source)
+Caused by: psdi.util.MXSystemException: sql#942
+at psdi.dbmanage.connection.DatabaseConnection.doSql(Unknown Source)
+at psdi.dbmanage.connection.OracleDatabaseConnection.doSql(Unknown Source)
+at psdi.dbmanage.connection.DatabaseConnection.doSql(Unknown Source)
+at psdi.dbmanage.statement.ChangeStatement.doSql(Unknown Source)
+at psdi.dbmanage.statement.FreeFormStatement.executeFreeFormStatement(Unknown Source)
+at psdi.dbmanage.statement.FreeFormStatement.run(Unknown Source)
+at psdi.dbmanage.statement.Script.runStatement(Unknown Source)
+at psdi.dbmanage.statement.Script.run(Unknown Source)
+
+RESOLVING THE PROBLEM
+You can change the dependencies. Update file c:\ibm\smp\maximo\applications\maximo\properties\product\tsd_common.xml so that the depends section prereqs contentcatalog.
+The tsd_common.xml file should change from:
+<depends>common_pmp,search_pmp</depends>
+to:
+<depends>common_pmp,search_pmp,contentcatalog</depends>

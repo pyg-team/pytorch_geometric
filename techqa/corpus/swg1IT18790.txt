@@ -1,0 +1,175 @@
+Title: IBM IT18790: PUREAPPLICATION SYSTEM: SYSTEM MONITORING FOR WEBSPHERE MQ AGENT DOES NOT START - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.2.3.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24043076]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The 1.0.9.0 System monitoring shared service and 1.0.9.0 System
+   Monitoring for WebSphere MQ were deployed within the same
+   environment profile on a PureApplication System that
+   exclusively uses externally managed cloud groups and externally
+   managed environemnt profiles. The pattern was deployed with a
+   single VM with an MQ software component. Within the pattern,
+   the MQ component name was defined to a unique name.
+   
+   After deployed, the new host for the deployed VM appears in the
+   TEPS console, and ITM for Linux OS and Workload agents is
+   present, but the agent for IBM MQ (MQSeries) is missing.
+   Attempts to connect the WebSphere MQ Agent from the instance
+   console of the pattern were unsuccessful.
+   
+   These errors were seen in /opt/IBM/maestro/ITCAMWMQ/logs:
+   
+   01/06/17 10:53:42 KMQMI115E Start time for QMgr mytest not
+   available, because the QMgr is not started. RC=0X8
+   SET GROUP NAME(GROUP1) DEFAULT(YES) RETAINHIST(120)
+   COMMAND(YES) MSGACCESS(DESC) EVENTS(REMOVE)
+   ACCOUNTINGINFO(REMOVE) STATISTICSINFO(REMOVE)
+   SET MANAGER NAME(mytest)
+   SET AGENT NAME(h0001079-1)
+   SET AGENT NAME(ipas-lpar-032-068)
+   SET AGENT NAME(ipas-lpar-109-038)
+   SET AGENT NAME(ipas-lpar-109-038)
+   SET QUEUE NAME(*) MGRNAME(mytest) QDEFTYPE(PREDEFINED)
+   SET CHANNEL NAME(*) MGRNAME(mytest)
+   PERFORM STARTMON SAMPINT(300) HISTORY(NO)
+   ITCAM agent for WebSphere MQ.
+   (c)Copyright IBM Corp., 2000,2009. All rights reserved.
+   
+   AMQ7048: The queue manager name is either not valid or not
+   known.
+   01/06/17 10:53:47 KMQMI184E Error in opening
+   /qmgrs/mytest/errors/AMQERR01.LOG file
+   ...
+   01/06/17 10:54:37 KMQMI184E Error in opening
+   /qmgrs/mytest/errors/AMQERR01.LOG file
+   
+   The output below confirmed that ITCAM for MQ agent was not
+   running:
+   -bash-4.1# /opt/IBM/maestro/ITCAMWMQ/bin/cinfo -r
+   
+   *********** Fri Jan  6 15:24:04 UTC 2017 ******************
+   User: root Groups: root
+   Host name : h0001079-0   Installer Lvl:06.23.05.00
+   CandleHome: /opt/IBM/maestro/ITCAMWMQ
+   ***********************************************************
+   ...no known processes are running
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Please contact IBM support
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Code has been added to prevent the duplication of the
+   "SET AGENT LINE" in the MQ configuration file during
+   virtual machine restarts.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix is being provided in PureApplication System and
+   BlueMix Local System version 2.2.3.0 in the System Monitoring
+   Pattern 1.0.10.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT18790
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   222
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-12
+   
+   
+ * CLOSED DATE
+   2017-04-14
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R223 PSY
+   UP

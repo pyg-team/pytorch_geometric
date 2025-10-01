@@ -1,0 +1,36 @@
+Title: IBM PureData System for Analytics Netezza Platform Software Final Fix (FF) Dates - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ The following table lists final fix (FF) release dates for the IBM PureData System for Analytics Netezza Platform Software. 
+
+CONTENT
+The table below reflects the last dates on which IBM will deliver final fixes of defects for a given version/release of PureData System for Analytics Netezza Platform Software (NPS). 
+
+Major Release Minor Release Maintenance (Dot) Releases Date Released Comments Final Fix Version 6 [/support/docview.wss?uid=swg21654526&amp;aid=1] 6.0.3 Jul-2011 Dec-2013 6.0.5 Sep-2011 Dec-2013 6.0.8 Aug-2012 Dec-2014 Version 7 [/support/docview.wss?uid=swg21654526&amp;aid=1] 7.0.0 Aug-2012 Merged with 7.0.2* Jun-2014 7.0.2 Jan-2013 Dec-2015 7.0.3 May-2013 Superceded by 7.0.4 Aug-2013 7.0.4 Oct-2013 Dec-2015 7.1.0 [/support/docview.wss?uid=swg21654526&amp;aid=1] Feb-2014 [/support/docview.wss?uid=swg21654526&amp;aid=1] Aug-2016 7.2.0 7.2.0 Oct-2014 [/support/docview.wss?uid=swg21654526&amp;aid=1] Jun-2017 7.2.1 Nov-2015 [/support/docview.wss?uid=swg21654526&amp;aid=1] TBD *7.0.0 and 7.0.2 have no feature content difference. 
+
+
+Major Releases, Maintenance and Fixpack follow these Guidelines:  * Major Release levels are supported for 3 years 
+ * Minor Release levels are supported for 2.5 years 
+ * Maintenance releases are supported for a minimum of 18 months 
+ * All fixpacks are cumulative of prior fixpack content 
+ * Client Kits and Drivers are maintained for a given platform for as long as the operating system vendor provides standard support.
+
+
+Major Releases, Maintenance and Fixpack conventions: 
+
+ 
+
+Release Type Example Names Purpose Major releases 6.0, 7.0 Releases that contain large areas of new functionality and capability. Minor releases 7.1.0 Releases that contain small enhancements and fixes. Maintenance (Dot) releases 7.2.1 Includes operational and minor enhancements as well as bug fixes. Fixpacks 7.2.1.3 Released twice a year and contain approximately 25 - 50 fixes. Patches 7.2.1.3-P2 Released every two months, except when fixpacks are being released. Fixes will be rolled into the next quarterly fixpack. 
+
+To view the Fixpack release schedule please refer to PureData System for Analytics Netezza Platform Software Fixpack Release Schedule. [http://www.ibm.com/support/docview.wss?uid=swg21654541] 
+
+To download Fixpacks refer to PureData System for Analytics Netezza Platform Releases [http://www.ibm.com/support/docview.wss?uid=swg27024235]. 
+
+To search for a product's End of Marketing/End of Support refer to http://www-01.ibm.com/software/support/lifecycle/index_a.html [http://www-01.ibm.com/software/support/lifecycle/index_a.html] 
+
+Note: We support all appliances (TF, Striper, Mako etc) till its End of Support (EoS) is announced, which is typically 5 yrs after End of Marketing (EoM) . For N100x appliance model, EoM was June 20, 2014 for TF appliances. RELATED INFORMATION
+ Fixpack Release Schedule [http://www.ibm.com/support/docview.wss?uid=swg21654541]
+Software Download Quicklist [http://www.ibm.com/support/docview.wss?uid=swg27024235]

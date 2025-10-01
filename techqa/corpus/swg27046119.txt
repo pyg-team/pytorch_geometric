@@ -1,0 +1,28 @@
+Title: IBM Unable to access IBM Enterprise Records administration client desktop - United States
+
+Text:
+Content Navigator RELEASE NOTES
+
+ABSTRACT
+ Unable to log in to the IBM Enterprise Records administration client desktop when running IBM Content Navigator V2.0.3.3-FP003. 
+
+CONTENT
+Symptom:
+
+
+Starting with IBM Content Navigator 2.0.3.3-FP003, you cannot log in to the IBM Enterprise Records administration client desktop. An error message similar to the following message is displayed:
+
+[/support/docview.wss?uid=swg27046119&aid=1] [/support/docview.wss?uid=swg27046119&aid=1]
+
+Resolution:
+
+Upgrade your IBM Enterprise Records software to 5.2.0.3 Fix Pack 003.
+
+Workaround:
+
+
+ 1. In the IBM Content Navigator web application > Admin desktop, go to the IBM Enterprise Records desktop application. 
+ 2. On the General tab, scroll down and expand Office Configuration. 
+ 3. In the "Add options in the Edit group" field, make sure that a value is selected (for example, Show all Add options (default) ). 
+ 4. Save and Close the IBM Enterprise Records desktop definition. 
+ 5. Refresh any open IBM Enterprise Records desktops in your browser.

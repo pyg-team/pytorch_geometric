@@ -1,0 +1,75 @@
+Title: IBM Tivoli Netcool/Impact V7.1.0.12 Interim Fix 5  (7.1.0.12-TIV-NCI-IF0005) - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This Interim Fix address defect reported in IBM Tivoli Netcool/Impact 7.1.0. FP12 
+
+DOWNLOAD DESCRIPTION
+This Interim Fix addresses the following defect:
+
+
+NOI : Event Analytics: Able to delete configuration with deployed Seasonality/Related Event Rules.
+
+When a configuration has deployed Seasonality or Related Event Rules, it should not be possible to delete the configuration.
+
+
+PREREQUISITES
+ 
+
+This Interim Fix must be installed on the GUI Server for Netcool/Impact 7.1.0 FP12.
+
+URL LANGUAGE SIZE(Bytes) 7.1.0-TIV-NCI-AIX-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0012&source=SAR] English 516961972 7.1.0-TIV-NCI-LINUX-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0012&source=SAR] English 521054369 7.1.0-TIV-NCI-SOLARIS-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0012&source=SAR] English 493968519 7.1.0-TIV-NCI-WINDOWS-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0012&source=SAR] English 507944647 7.1.0-TIV-NCI-ZLINUX-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0012&source=SAR] English 535064615 
+INSTALLATION INSTRUCTIONS
+ 
+
+Install Instructions
+==============
+1. Download and unzip the package onto a temporary location on your Impact environment.
+- Please note that this IF needs to be applied on Impact servers only!
+
+2. Stop the Impact back-end server. If installing on a cluster, stop all back-end servers and apply to Primary only.
+
+3. To Install run:
+
+chmod 774 install_IF.sh
+./install_IF.sh/bat <impacthome>
+
+
+For example:
+./install_IF.sh /opt/IBM/tivoli/impact
+
+
+4. The server will be restarted after install.
+
+
+This file is being replaced:
+(on Impact server):
+policy/NOI_GETANALYTICSCONFIG.js
+
+
+To Uninstall, run the uninstall_IF.sh/bat script
+<impacthome>/backup/install_IF5/7.1.0.12_IF0005/uninstall_IF.sh
+
+For example:
+/opt/IBM/tivoli/impact/backup/install_IF5/7.1.0.12_IF0005/uninstall_IF.sh
+
+
+To check that the IF has been applied, you can check the above listed files and also run the versioninfo.sh script.
+
+versioninfo.sh will display something like this, when run:
+========================================================================
+Impact Installed Component Version
+========================================================================
+Version: 7.1.0.12
+7.1.0.12_IF0005
+
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 7.1.0.12-TIV-NCI-IF0005-AIX 13 Feb 2018 English 67195 FC [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0.12-TIV-NCI-IF0005&source=SAR] [ ] 7.1.0.12-TIV-NCI-IF0005-Linux 13 Feb 2018 English 67195 FC [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0.12-TIV-NCI-IF0005&source=SAR] [ ] 7.1.0.12-TIV-NCI-IF0005-Windows 13 Feb 2018 English 67195 FC [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0.12-TIV-NCI-IF0005&source=SAR] [ ] 7.1.0.12-TIV-NCI-IF0005-Solaris 13 Feb 2018 English 67195 FC [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0.12-TIV-NCI-IF0005&source=SAR] [ ]

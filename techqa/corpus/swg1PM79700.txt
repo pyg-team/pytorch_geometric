@@ -1,0 +1,192 @@
+Title: IBM PM79700: MQRC 2082 MQRC_UNKNOWN_ALIAS_BASE_Q OPENING A QUEUE ALIAS POINTING TO A QLOCAL WITH QSGDISP SHARED - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  1)on QMA we :
+   -  defined a Qlocal A with QSGDISP QMGR
+    - defined a QALIAS having, as target queue,  the Qlocal A
+   
+   2)On QMB we defined a Qlocal A with QSGDISP SHARED.
+   
+   3)we delete from QMA the Qlocal A
+   
+   4)doing a display Qlocal A the shared queue A is only visible
+   on QMB where has been defined
+   
+   5)on QMA we tried to open the Qalias and we got rc2082
+   because the shared Qlocal A is not visible.
+   
+   6)if on QMA we opened the Qlocal A instead of alias , all
+   is working fine RC0 from MQOPEN.  then we are able
+   After that , even the open of the Qalias is working fine .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 0 Modification 1 and Version 7       *
+   *                 Release 1 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: MQRC_UNKNOWN_ALIAS_BASE_Q when a        *
+   *                      private base queue is deleted, but a    *
+   *                      shared base queue with the same name    *
+   *                      is available.                           *
+   *                      Also DISPLAY QSTATUS will not show      *
+   *                      the new shared queue.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The customer has a queue-sharing group (QSG). On one of the
+   qmgrs in the group (QMA) they have a private queue (QUEUE1) with
+   QSGDISP(QMGR) and a qalias pointing to it.
+   They then define QUEUE1 on another qmgr in the group (QMB) but
+   with QSGDISP(SHARED).
+   On QMA a MQOPEN against the qalias opens the private QUEUE1 and
+   messages are put to that queue as expected.
+   The private QUEUE1 is then deleted from QMA.
+   An MQOPEN of the qalias subsequently fails with RC 2082
+   MQRC_UNKNOWN_ALIAS_BASE_Q. But if an open is done on QUEUE1
+   the shared QUEUE1 is opened, and subsequent use of the qalias
+   works.
+   A DISPLAY QSTATUS of QUEUE1 will not show the shared queue on
+   QMA, but it does appear on QMB where it was defined.
+   The problem is due to the private QUEUE1 existing on QMA when
+   the shared QUEUE1 is defined on QMB so no IVSA is created.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CSQMOAQ1 has been altered to do locate with CSQI_CREATE_SQ_IVSA
+   if it cannot open the base queue on the first attempt.
+   CSQIDDEL has been altered to set the time from which to scan for
+   new shared queues to when the qmgr was started.
+   010Y
+   100Y
+   CSQIDDEL
+   CSQMOAQ1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  &#158;**** PE14/03/21 FIX IN ERROR. SEE APAR PI14223 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI14223]  FOR DESCRIPTION
+   &#158;**** PE15/07/02 FIX IN ERROR. SEE APAR PI44165 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI44165]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM79700
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   010
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-12-24
+   
+   
+ * CLOSED DATE
+   2013-03-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK92932 UK92933
+   
+   
+
+MODULES/MACROS
+ *  CSQIDDEL CSQMOAQ1
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R010 PSY UK92932 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK92932]
+   UP13/05/08 P F305
+   
+   
+ * R100 PSY UK92933 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK92933]
+   UP13/05/08 P F305
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

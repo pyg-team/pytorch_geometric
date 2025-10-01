@@ -1,0 +1,141 @@
+Title: IBM IY56618: When in a multi-master DC env, WebSEAL fails to configure if not pointing to same DC as the pdgmrd - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you have a multi-master Domain Contoler Active Directory
+   environment WebSEAL can fail configuration if nto using the same
+   domain controller as the pdmgrd.
+   
+   To recreate, configure a pdmgrd into AD, using Domain
+   Controller1. Then on another system, not using the ADSI
+   functionality but the LDAP client to 'talk' to AD, configure
+   the runtime to use a different Domain Controller, such as Domain
+   Controller2.
+   This step will complete and you can login to pdadmin as
+   sec_master, etc.
+   now, configure the WebSEAL, once it gets to 'starting' WebSEAL,
+   it will fail, and now is only 'partially' configured.
+   The problem seems to lie in the fact the data was not yet
+   replicated to the other Domain Controller. I can force the
+   replication, then manually run webseald and it will startup with
+   no error, but ports 80 and 443 do not goto listening
+   
+   A 'workaround' I found, and this is odd, was to confgiure the
+   runtime and webseal into the same DC as the pdmgrd, this
+   completes ok, then
+   change pd.conf and activedir_ldap.conf to point to the 2nd DC
+   
+   I replicate the data and the WebSEAL will still start and
+   respond to requests, and logins succeed
+   
+   I do not see any documentation regarding support of or how to
+   use TAM in an existing multi-master DC Active Directory
+   environment
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  configure into same DC as the pdmgrd, then replicate data, then
+   point the pd.conf and activedir_ldap.conf to point to DC2
+   then all still works
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   see main problem description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   TAM 5.1 is not designed to work in a multi-m
+   aster domain controller environment.  The customer may wish to o
+   pen an Enhancement Request for operability in such an environmen
+   t for a future release of the product.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY56618
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0811
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-05-06
+   
+   
+ * CLOSED DATE
+   2004-07-20
+   
+   
+ * LAST MODIFIED DATE
+   2004-07-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

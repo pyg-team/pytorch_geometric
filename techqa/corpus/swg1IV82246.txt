@@ -1,0 +1,166 @@
+Title: IBM IV82246: BUSINESS APPLICATION PHYSICAL TOPOLOGY DOES NOT WORK WHEN MANY SWITCHES/ROUTERS FOUND IN THE DATABASE. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running Business Application Physical topology on a
+   database with
+   huge number of switches/routers,
+   a StackOverFlowError with the following stacktrace can be found
+   within
+   ViewManager.log:
+   
+   java.lang.StackOverflowError
+   at
+   org.datanucleus.store.mapped.expression.StatementText.toStatemen
+   tString(
+   StatementText.java:227)
+   at
+   org.datanucleus.store.mapped.expression.StatementText.toStatemen
+   tString(
+   StatementText.java:228)
+   at
+   org.datanucleus.store.mapped.expression.StatementText.toStatemen
+   tString(
+   StatementText.java:228)
+   ........
+   
+   
+   The solution is to run the queries for switches/routers in
+   chunks.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When running Business Application Physical topology on a
+   database with
+   huge number of switches/routers,
+   a StackOverFlowError with the following stacktrace can be found
+   within
+   ViewManager.log:
+   
+   java.lang.StackOverflowError
+   at
+   org.datanucleus.store.mapped.expression.StatementText.toStatemen
+   tString(
+   StatementText.java:227)
+   at
+   org.datanucleus.store.mapped.expression.StatementText.toStatemen
+   tString(
+   StatementText.java:228)
+   at
+   org.datanucleus.store.mapped.expression.StatementText.toStatemen
+   tString(
+   StatementText.java:228)
+   ........
+   
+   
+   The solution is to run the queries for switches/routers in
+   chunks.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   | Fix Pack | 7.2.2-TIV-ITADDM-FP0006
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV82246
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   722
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-10
+   
+   
+ * CLOSED DATE
+   2016-06-17
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * FIXED COMPONENT ID
+   5724N5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R722 PSY
+   UP

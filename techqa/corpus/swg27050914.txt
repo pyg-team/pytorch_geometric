@@ -1,0 +1,24 @@
+Title: IBM Release notes for IBM Business Process Manager (BPM) V8.6 CF2018.03 - United States
+
+Text:
+knowledge collection; bpm; release notes; linux; power; decision tables; repository; exception; javascript syntax error; SQL Server; jdbc 4.2; process designer EDUCATION
+
+ABSTRACT
+ This document links you to the IBM BPM V8.6 CF2018.03 release notes. 
+
+CONTENT
+The following release notes pertain to IBM BPM V8.6 CF2018.03:
+
+
+ * Repository exception when uploading a document to the embedded IBM Business Process Manager document store to launch a process [http://www.ibm.com/support/docview.wss?uid=swg22014895] 
+ * Cannot create decision table editor after upgrading to CF 2018.03 [http://www.ibm.com/support/docview.wss?uid=swg22014843] 
+ * Upgrading IBM Business Process Manager from V8.6.x to V8.6 CF2018.03 fails on Linux on Power [http://www.ibm.com/support/docview.wss?uid=swg22014493] 
+ * JavaScript syntax error messages are not translated in the web Process Designer [http://www.ibm.com/support/docview.wss?uid=swg22014497] 
+ * Testing the database connection fails when installing IBM Business Process Manager V8.6 with SQL Server JDBC driver 4.2 [http://www.ibm.com/support/docview.wss?uid=swg22014485] 
+ * Errors in the SystemOut.log file after server start [http://www.ibm.com/support/docview.wss?uid=swg22015647]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ BPM

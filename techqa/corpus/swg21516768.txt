@@ -1,0 +1,45 @@
+Title: IBM Converting multiple file types with IBM Datacap Taskmaster Capture - United States
+
+Text:
+pdf tiff tif jpg conversion TECHNOTE (FAQ)
+
+QUESTION
+ I have batches containing multiple file types. How can I create a rule to convert them all to tiffs? 
+
+CAUSE
+Taskmaster Capture has several actions to convert file types to tiff format. However, some of these will abort if applied to the wrong file type. If the batch contains multiple file types, use this solution to convert all of them.
+
+ANSWER
+This ruleset will take all files with a DCO status of 49 and convert them to tiff format, setting the DCO status to 75. It uses the Convert action library. 
+
+ * Convert  * Convert to TIFF  * Function Images  * ChkDCOStatus("49") 
+          * ImageFileTypesToConvert("jpg,jpeg,gif,bmp") 
+          * ImageMonoType(1) 
+          * ImageMonoThreshold(50) 
+          * ImageToTIFF() 
+          * SetDCOStatus("75")
+         
+         
+       * Function TIFF  * ChkDCOStatus("49") 
+          * SplitMultipageTiff() 
+          * SetDCOStatus("75")
+         
+         
+       * Function PDF  * ChkDCOStatus("49") 
+          * PDFDocumentToImage() 
+          * SetDCOStatus("75")
+         
+         
+       * Function Word  * ChkDCOStatus("49") 
+          * WordDocumentToImage() 
+          * SetDCOStatus("75")
+         
+         
+       * Function Outlook  * ChkDCOStatus("49") 
+          * OutlookMessageToImageAndAttachment() 
+          * SetDCOStatus("75")
+         
+         
+       * Function Excel  * ChkDCOStatus("49") 
+          * ExcelWorkbookToImage() 
+          * SetDCOStatus("75")

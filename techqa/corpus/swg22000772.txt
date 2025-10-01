@@ -1,0 +1,26 @@
+Title: IBM Opening images in an iFrame via ICN bookmarks works for some, while some get blank viewer - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using IBM Content Navigator (ICN) bookmarks to open Daeja ViewONE Virtual in an iFrame for a custom ASP.NET application leaves some users with a blank viewer. 
+
+SYMPTOM
+No errors in Daeja virtual.log. Web browser trace shows the transaction is complete (HTTP200) but the image never displays in the viewer.
+
+
+CAUSE
+Users with the issue are running their browser (Microsoft Edge) in Internet Explorer 7 compatibility mode. IE 7 is not compatible with ICN 3.0 or Daeja Virtual 5.0
+
+DIAGNOSING THE PROBLEM
+Compare the browser configuration between the Edge users that are able to view images with the users that get a blank viewer.
+
+RESOLVING THE PROBLEM
+If IE 7 compatibility mode is not needed for another application simply disable compatibility mode to leave the browser in a supported mode.
+
+If IE7 compatibility mode is needed for another application: 
+
+
+For the page with the iframe you can try adding a meta tag to the header, telling the browser to use Edge compatibility rather than IE7 mode. 
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />

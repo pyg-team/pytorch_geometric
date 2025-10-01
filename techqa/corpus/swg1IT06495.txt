@@ -1,0 +1,140 @@
+Title: IBM IT06495: PUREAPPLICATION SYSTEM: EVENTS FROM EXTERNALLY ATTACHED SAN VOLUME CONTROLLER ARE TRIGGERING CALL HOME EVENTS - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.1.0.0 Interim Fix 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24039268]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A Pureapplication System device configured with an externally
+   attached SAN Volume Controller (SVC) can issue Call Home
+   events and generate IBM Support problem management reports
+   (PMRs) when the external SVC has issues that cause it to
+   generate events.  This will cause a unique Call Home PMR per
+   each external SVC event.
+   
+   The external device should not be triggering the
+   PureApplication System Call Home processing.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disable the specific event type coming from the SVC from
+   triggering Call Home processing.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  PureApplication System Call Home problem reports should
+   not be generated when the external storage is having issues.
+   Call Home events should be for internal PureApplication
+   System issues.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix is being provided to disable these events in
+   PureApplication System version 2.0.0.1 interim fix 2 and version
+   2.1.0.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT06495
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-14
+   
+   
+ * CLOSED DATE
+   2015-03-04
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY
+   UP
+   
+   
+ * R210 PSY
+   UP

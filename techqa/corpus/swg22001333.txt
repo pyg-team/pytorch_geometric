@@ -1,0 +1,35 @@
+Title: IBM New IBM Netezza ODBC driver feature on windows platform - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ This note describes additional steps required in configuring Netezza ODBC client on Windows to enable new feature. 
+
+CONTENT
+On a Windows platform, the IBM Netezza ODBC driver supports using empty username to enable reading user from Kerberos ticket stored in Kerberos Cache. This avoids supplying the user and password during ODBC connection. 
+
+
+This requires the Netezza PDA system to be in Kerberos authentication mode. This feature is provided in PDA version 7.2.1.4. 
+
+
+The following steps are required to enable the Single Sign-On (SSO) feature.
+ODBC driver configuration: 
+
+1. Install the Netezza 7.2.1.4 Windows ODBC driver 
+2. Add the Netezza ODBC Data source
+3. Enable to ODBC Data source setting to read user from Kerberos Cache
+4. Open the Advanced DSN option and enable the check box for Force Cache Username 
+5. Click OK button.
+
+Kerberos configuration: 
+
+1. Copy /nz/data/config/krb5.conf file from Netezza PDA Server to Windows client system and rename it to krb5.ini
+2. Copy the krb5.ini to default location C:\ProgramData\MIT\Kerberos5 
+
+OR 
+
+i. Copy the krb5.ini to any other customized location such as C:\Windows\krb5.ini. 
+ii. Set the system environment variable KRB5_CONFIG to this customized location. 
+
+Note: Once this option is enabled, user cannot provide username while connecting to NPS system from ODBC driver. Username will be fetched directly from existing ticket in Kerberos cache.

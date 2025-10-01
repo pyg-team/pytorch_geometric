@@ -1,0 +1,138 @@
+Title: IBM PJ44672: IBM FILENET CONFIGURATION MANAGER USER INTERFACE DISPLAYS AN UNSUPPORTED WEBLOGIC VERSION - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Filenet Configuration Manager User Interface (CMUI) displays
+   an unsupported WebLogic version.  Oracle WebLogic 12c (12.2.1)
+   is displayed in CMUI 5.2.1.6 drop-down list .  Oracle WebLogic
+   12c (12.2.1) option is not support with IBM FileNet Content
+   Platform Engine 5.2.1.6.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All platforms of 5.2.1.6-P8CPE-FP006 [Aix, Windows, Linux,   *
+   * zLinux, Solaris]                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * IBM Filenet Configuration Manager User Interface (CMUI)      *
+   * displays an unsupported WebLogic version.  Oracle WebLogic   *
+   * 12c (12.2.1) in CMUI 5.2.1.6 drop-down list .                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please do not use this option when working in Content        *
+   * Platform Engine 5.2.1.6 as it would cause configuration      *
+   * issues.                                                      *
+   * To use Oracle WebLogic 12c (12.2.1) option, you would need   *
+   * to upgrade to Content Plaform Engine 5.2.1.7-P8CPE-FP007 and *
+   * higher.                                                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Oracle WebLogic 12c (12.2.1) option is not supported with IBM
+   FileNet Content Platform Engine 5.2.1.6-P8CPE-FP006. This option
+   would be available in Content Plaform Engine 5.2.1.7-P8CPE-FP007
+   and latter.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ44672
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-02
+   
+   
+ * CLOSED DATE
+   2017-06-27
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS

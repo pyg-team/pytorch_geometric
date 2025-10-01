@@ -1,0 +1,47 @@
+Title: IBM Content Navigator known issue:  Additional packages for the IBM Content Navigator Configuration and Deployment tool are required - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ To use the Content Navigator Configuration and Deployment tool, additional packages for Red Hat Enterprise Linux and Novell SUSE Linux operating systems must be installed. 
+
+SYMPTOM
+Red Hat Enterprise Linux 
+
+ * Red Hat Enterprise Linux offers an optional installation scenario that does not include the X.org package. The X.org package contains libraries (in addition to other RHEL dependencies) that are required to run the IBM Content Navigator GUI installer. To work around this dependency, use either of the following approaches:  * Install by using the command line installer. 
+    * Download and install the following minimum versions of these packages on all Red Hat Enterprise Linux 6.0 x86_64 systems before starting the installer. The files are available on the original system media.  * DVD-ROM_mount_point/Server/compat-libstdc++-33-3.2.3-61.i386.rpm 
+       * DVD-ROM_mount_point/Server/compat-libstdc++-33-3.2.3-61.x86_64.rpm
+      
+      
+   
+   
+ * When installing and configuring IBM Content Navigator on Red Hat Enterprise Linux 6.x, the following packages are required:  * DVD-ROM_mount_point/Server/compat-libstdc++-296-2.96-144.el6.i686.rpm 
+    * DVD-ROM_mount_point/Server/libXp-1.0.0-15.1.el6.i686.rpm 
+    * DVD-ROM_mount_point/Server/libXft-2.1.13-4.1.el6.i686.rpm 
+    * DVD-ROM_mount_point/Server/libXtst-1.0.99.2-3.el6.i686.rpm 
+    * DVD-ROM_mount_point/Server/webkitgtk-01.2.3.1.el6.i686 
+    * DVD-ROM_mount_point/Server/PackageKit-gtk-module-version.el6 
+    * DVD-ROM_mount_point/Server/libcanberra-0.22-1.el6 
+    * Install both the x86_64 and i686 versions of the packages above in order for IBM Content Navigator Configuration and Deployment tool to launch.
+   
+   
+
+For Red Hat Enterprise Linux 6.2 the following additional packages are required to launch the installer and/or the IBM Content Navigator Configuration and Deployment tool  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Novell SUSE Linux Novell SUSE Linux offers an optional installation scenario that does not include the X.org package. The X.org package contains libraries (in addition to other SUSE dependencies) that are required to run the IBM Content Navigator GUI installers. To work around this dependency, use either of the following approaches: 
+
+ * Install the component by using the command line installer. 
+ * Download and install the following minimum versions of these packages on all Novell SUSE Linux systems before starting the installer. The files are available on the original system media.  * DVD-ROM_mount_point/Server/compat-libstdc++-33-3.2.3-61.i386.rpm 
+    * DVD-ROM_mount_point/Server/compat-libstdc++-33-3.2.3-61.x86_64.rpm

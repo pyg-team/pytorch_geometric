@@ -1,0 +1,85 @@
+Title: IBM 7.5.1: IBM Integration Designer V7.5.1 Interim Fix 001 for Windows - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and assemble IBM Integration Designer version 7.5.1 Interim Fix 001 for Windows platform. 
+
+DOWNLOAD DESCRIPTION
+
+
+TAB NAVIGATION
+ * Windows [http://www.ibm.com/support/docview.wss?uid=swg24031303]- selected tab,
+ * Linux [http://www.ibm.com/support/docview.wss?uid=swg24031302]
+ * Known issues [http://www.ibm.com/support/docview.wss?uid=swg27023561]
+
+
+
+
+
+
+
+[http://www.ibm.com/i/c.gif] IBM Integration Designer V7.5.1 Interim Fix 001 contains updates for the following: 
+ * Adapters
+
+
+Operating systems:  * Windows Server 2003, Enterprise Edition
+ * Windows Server 2003, Standard Edition
+ * Windows Server 2008 R2, Enterprise Edition
+ * Windows Server 2008 R2, Standard Edition
+ * Windows Vista Business Edition
+ * Windows Vista Enterprise Edition
+ * Windows Vista Ultimate Edition
+ * Windows XP Professional SP3
+ * Windows XP Professional x64 SP3 (in 32-bit mode)
+ * Windows 7, Enterprise Edition
+ * Windows 7, Professional Edition
+ * Windows 7, Ultimate Edition
+
+[http://www.ibm.com/i/c.gif] 
+
+
+To access a wide variety of technical resources for this product, see the IBM Integration Designer information center. [http://publib.boulder.ibm.com/infocenter/esbsoa/wesbv7r5m1/index.jsp?topic=%2Fcom.ibm.wbpm.wid.main.doc%2Fwelcome.html] [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/topic/com.ibm.wbit.help.mainwelcome.doc/topics/welcome.html] 
+
+PREREQUISITES
+Prior to applying this Interim Fix, if the Interim Fix will be installed directly from the IBM update server, then you must have IBM Integration Designer 7.5 or higher installed. If the Interim Fix will be installed locally, then you must have IBM Integration Designer V7.5.1 installed. Also, ensure that you have the IBM Installation Manager [https://www-304.ibm.com/support/docview.wss?uid=swg24030152] 1.5 or higher installed.
+
+URL LANGUAGE SIZE(Bytes) Detailed system requirements [http://www.ibm.com/support/docview.wss?uid=swg27022441] English 72342 
+INSTALLATION INSTRUCTIONS
+It is recommended that you install the Interim Fix directly from the IBM update server; however, it is also available for download. You might want to download and install the interim fix in the following situations: 
+
+
+ * You have a slow or unstable Internet connection and want to use a download manager that can resume the download. 
+ * 
+ * You have difficulty accessing the live IBM update servers from behind a firewall. 
+ * 
+ * You prefer to download the Interim Fix and install it later. 
+
+
+If you choose to download the fix, then perform the following steps: 
+ 1.  Download Interim Fix 001 (iid751_interim_fix001.zip). 
+ 2. 
+ 3. Extract the Interim Fix to a temporary directory, such as C:\temp\. 
+ 4. 
+ 5. For installation instructions, click on the link below.
+
+URL LANGUAGE SIZE(Bytes) Installation Instructions [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=/com.ibm.wbpm.wid.imuc.doc/topics/c_inintro.html] English 3158 
+DOWNLOAD PACKAGE
+
+
+
+
+HOW CRITICAL IS THIS FIX?
+Recommended
+
+
+
+PROBLEMS SOLVED
+IBM Integration Designer V7.5.1 Interim Fix 001 provides new features and fixes for IBM Integration Designer V7.5.1. For details, see the Fix list for IBM Integration Designer V7.5.1. [https://www-304.ibm.com/support/docview.wss?uid=swg27023524]
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Interim Fix 001 22 Nov 2011 English 19183716 FC [http://www.ibm.com/support/fixcentral/quickorder?source=dbluesearch&product=ibm%2FWebSphere%2FIBM+Integration+Designer&fixids=IID-7.5.1-Interim-Fix-001-MultiOS] [ ]

@@ -1,0 +1,34 @@
+Title: IBM Error received accessing MySQL Community with Modeler's Data Direct drivers. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Modeler error received connecting to MySQL Community edition.
+
+Error:
+Connections to MySQL Community Servers are not supported.
+Please contact MySQL to obtain a MySQL Enterprise or Commercial version. 
+
+CAUSE
+Data Direct does not support MySQL Community edition. 
+Information from Data Direct:
+
+"The DataDirect Connect for ODBC drivers support 5.0 and later versions of MySQL Commercial or MySQL Enterprise servers. We do not support any of the MySQL Community servers. "
+
+
+RESOLVING THE PROBLEM
+Modeler user can attempt to work with the drivers Data Direct refers them to, but Modeler has not been tested nor does it support the MySQL drivers. 
+Better solution would be to use a supported database. 
+Please refer to the SPSS Data Access Pack (SDAP) documentation included with the SDAP provided in your software download portal. 
+
+
+
+Refer to Technote #1481219 [http://www.ibm.com/support/docview.wss?uid=swg21481219] for more details about SDAP. 
+
+Refer to the Software Product Compatibility Reports [http://www.ibm.com/software/reports/compatibility/clarity/index.jsp] > Detailed system requirements to have a list of the supported operating systems, related software, hypervisors and hardware requirements.
+
+
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]

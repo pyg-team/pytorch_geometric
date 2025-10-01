@@ -1,0 +1,182 @@
+Title: IBM PI09596: NOCLASSDEFFOUNDERRORS FOR A PARTICULAR JSP SERVLET. CAUSES PERMANENT FAILURE OF LOADS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.3: WebSphere Application Server V8.5.5 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038133]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Under load, a NoClassDefFoundError for a particular JavaServer
+   Page (JSP) can be thrown:
+   com.ibm.ws.webcontainer.webapp.WebApp logServletError
+   SRVE0293E: [Servlet
+   Error]-[/TestApp/testPage.jsp]:
+   java.lang.Exception: java.lang.Error:
+   java.lang.NoClassDefFoundError:
+   org/apache/jsp/_testPage (wrong name: com/ibm/_jsp/_testPage)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM WebSphere Application Server Full       *
+   *                  Profile versions 7.0, 8.0 and 8.5.5 and     *
+   *                  Liberty Profile version 8.5.5 users of      *
+   *                  JavaServer Pages (JSP).                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Requests to a JSP file under load can   *
+   *                      fail with a NoClassDefFoundError.       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A confusing exception can be thrown during a JSP request under
+   load when the JSP Container is attempting to load the JSP
+   class with the com/ibm/_jsp package.  If an error is thrown
+   while loading the JSP class, the JSP Container will catch it
+   and then attempt to load the JSP class with the org/apache/jsp
+   package instead.  This can lead to the following error:
+   com.ibm.ws.webcontainer.webapp.WebApp logServletError
+   SRVE0293E: [Servlet
+   Error]-[/TestApp/testPage.jsp]:
+   java.lang.Exception: java.lang.Error:
+   java.lang.NoClassDefFoundError:
+   org/apache/jsp/_testPage (wrong name: com/ibm/_jsp/_testPage)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The JSP Container was modified to log a warning message
+   and also log the exception caught while trying to load the
+   original class.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 7.0.0.35, 8.0.0.10 and 8.5.5.3.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI09596
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-01-14
+   
+   
+ * CLOSED DATE
+   2014-05-23
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

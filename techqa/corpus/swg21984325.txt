@@ -1,0 +1,38 @@
+Title: IBM Data studio. Add new connection: Driver drop-down menu is empty - United States
+
+Text:
+"Data Studio" "driver drop-down" empty add connection TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you try to add new connection to the database from Data Studio the Driver drop-down menu is empty and you can not choose the driver for your connection 
+
+SYMPTOM
+Empty drop-down menu for the driver
+
+
+CAUSE
+Configuration settings
+
+ENVIRONMENT
+Data Studio client
+
+DIAGNOSING THE PROBLEM
+See Abstract
+
+RESOLVING THE PROBLEM
+Technote provides the solution using JDBC driver as an example. This apply for any driver that can be used for the connectivity to any supported datasource.
+
+In Preferences, under Data Management, Connectivity, there are a number of drivers available. Please add available driver(s) to the list and check if after this the JDBC driver drop-down menu is populated.
+Actually you can add some newer version of the JDBC driver (newer that the version we ship with the Data Studio product). 
+
+You can find steps to add the JDBC driver to the list of drivers from the following technote:
+
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21641858 [http://www-01.ibm.com/support/docview.wss?uid=swg21641858]
+=> just omit steps that are not related ...
+
+The newer versions of JDBC drivers (if required) could be seen from here: 
+http://www-01.ibm.com/support/docview.wss?uid=swg21363866 [http://www-01.ibm.com/support/docview.wss?uid=swg21363866]
+
+At the bottom of technote http://www-01.ibm.com/support/docview.wss?uid=swg21363866 [http://www-01.ibm.com/support/docview.wss?uid=swg21363866]
+you can see the link to site from where you can download the driver.

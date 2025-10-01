@@ -1,0 +1,33 @@
+Title: IBM OpenPages Reporting Framework Generation is Completing with Errors - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When launching the OpenPages reporting framework generation process, it is completing with errors. When clicking on 'Cognos Framework Generation' sub operation, why is the log showing: ERROR! java.net.ConnectException: Tried all: '1' addresses, but could not connect over HTTP to server?
+
+
+CAUSE
+The OpenPages application is unable to connect to URL and port utilized by the OpenPages Framework Model Service.
+
+ANSWER
+When an OpenPages 5.x administrator reviews the Cognos Framework Generation sub operation task, the log records: 
+
+Cognos Framework Generation [OPENPAGES_DEFAULT]: ERROR! java.net.ConnectException: Tried all: '1' addresses, but could not connect over HTTP to server: 'myreportingserver.ibm.com', port: '9080' 
+
+where myreportingserver.ibm.com is name of the reporting server and the OpenPages Framework Model Service is listening on port 9080. 
+
+When an OpenPages 6.x administrator reviews the Reporting Framework Subprocess sub operation task, the log records:
+
+Generating Framework Model, Facts and Dimensions, Custom Query Subjects. [DEFAULT]: ERROR! java.net.ConnectException: Tried all: '1' addresses, but could not connect over HTTP to server: 'myreportingserver.ibm.com', port: '8080' 
+
+where myreportingserver.ibm.com is name of the reporting server and the OpenPages Framework Model Service is listening on port 8080. 
+
+In most instances, the OpenPages administrator does not have the OpenPages Framework Model Service up and running on the reporting server. If the issue is occurring for a new installation, there could be a firewall blocking the connection. 
+
+To resolve the issue, an administrator should start the service and verify that the application server can make a valid connection.
+
+
+RELATED INFORMATION
+#Reporting Framework Troubleshooting Steps [http://www.ibm.com/support/docview.wss?uid=swg21514115]
+Integration Between OpenPages and Cognos [http://www.ibm.com/support/docview.wss?uid=swg21628148]

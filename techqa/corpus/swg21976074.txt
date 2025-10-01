@@ -1,0 +1,14 @@
+Title: IBM Unable to view certain attachments of type pdf on collection Notes in IBM Atlas using Google Chrome - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why do we get an error when we view certain attachments of type pdf on collection notes in IBM Atlas using Google Chrome?
+
+
+CAUSE
+We get " Duplicate headers received from server error" when you launch the attachment in the browser. This is caused by a comma in the pdf attachment name
+
+ANSWER
+To make those problem attachments work across browsers, the attachment should not have a comma in the file name.

@@ -1,0 +1,52 @@
+Title: IBM Clearing offline applications from AMC Applications list in TEP - United States
+
+Text:
+AMC Editor; offline entries; offline applications; clear offline entries; tacmd cleanMS; TEP; Applications; offline applications; offline; 71AMCON-PLAN; 71AMCON-CONF; 71AMCON-RPTG; 71AMCON-WV; 71AMCON-TS TECHNOTE (FAQ)
+
+QUESTION
+ 
+In the TEP console, most of the applications under the Application Management Console > Applications node in the Navigator tree are offline. Where do these applications come from, and how do you remove the offline applications from this view? 
+
+ANSWER
+
+In the Physical view, navigate to the AMC (Application Management Console) node in the Navigator tree, and open the Applications link. Notice that a number of applications are offline. 
+
+[/support/docview.wss?uid=swg21502342&amp;aid=1]
+
+These offline applications are mostly applications that are defined by default by the ITCAM for Transactions agents that you have installed. These default applications are normally shown as offline, because you have not defined a profile to start these applications and collect data. 
+
+Note that some of these applications may be shown offline because they were created for testing purposes and are no longer used. Other applications are shown as offline because these are active applications that are actually offline.
+
+For example, open the AMC Editor by clicking the AMC Editor icon in the TEP toolbar.
+
+[/support/docview.wss?uid=swg21502342&aid=2] [/support/docview.wss?uid=swg21502342&aid=2]
+
+Select Applications from the drop-down list. Note that this is the default selection when you open the AMC Editor. The applications listed here are mostly the default applications. These applications were added when you installed or upgraded the ITCAM for Transactions agents. The application names also appear in the Applications list in the TEP Navigator tree..
+
+[/support/docview.wss?uid=swg21502342&amp;aid=3] 
+
+In the TEP Navigator tree, one at a time, right-click these offline entries. Select the command Clear offline entry. For example: 
+
+
+[/support/docview.wss?uid=swg21502342&amp;aid=4]
+
+The offline entry is removed from the TEP Navigator tree. Note that the Clear offline entry command only makes the entry invisible. The applications that you clear become visible again when they come back online.
+
+Caution: The Delete command removes the workspace, not the item. Use Clear offline entry to remove an item.
+
+At this time, you have to select and clear these offline entries one at a time. You cannot select a group of offline entries and clear the group by selecting the Clear offline entry command. 
+
+Alternative: You can use the tacmd cleanMS command to clear offline managed systems. The command clears all offline entries in a single step. Offline entries are not displayed again until the applications come back online. Note that you must login to the TEMS using the tacmd login command before running the tacmd cleanMS command.
+
+Note: Starting in ITCAM for Transactions 7.3, FP01, there is a feature to configure the AMC to not monitor selected applications. Instead, you use the agent workspaces to monitor response-time data and script playback status. 
+
+RELATED INFORMATION
+ 7.3 Configure AMC to exclude agent data collection [http://www.ibm.com/support/knowledgecenter/SS5MD2_7.3.0.1/com.ibm.itcamt.doc_7.3.0.1/rt/Install_Guide/amc_config_unix.html]
+7.4 Configuring Application Management Console [http://www.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/rt/Install_Guide/amc_config_unix.html]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ T7.4
+ITCAMfT

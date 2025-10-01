@@ -1,0 +1,25 @@
+Title: IBM NetBackup scheduled backup failed - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why does my Veritas NetBackup™ scheduled backup fail? 
+
+ANSWER
+One or more of the following issues may be causing the scheduled backup to not start or fail.
+
+1. If the backup script was produced using the NPS Administrator GUI, it might not be executable. Use ls -l to review the permissions on the backup script. To make the script executable, run the following command:
+
+chmod a+x backup_script.sh
+
+2. On the Veritas NetBackup server, verify that the file path of the backup script is defined properly.
+
+3. In the backup script, verify that the nzbackup command is fully qualified.
+
+4. The scheduled tasks are run as root; for this reason, root must cache the associated database user's password using the nzpassword utility. If you used the NPS Administrator GUI to create the script, this user is the one that was selected at that time. 
+
+
+
+HISTORICAL NUMBER
+ NZ370329

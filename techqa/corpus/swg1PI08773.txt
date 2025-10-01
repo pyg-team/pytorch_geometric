@@ -1,0 +1,223 @@
+Title: IBM PI08773: ENF NOTIFICATION AND TRANSACTION AUTHORITY 14/04/03 PTF PECHANGE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Authority is removed from the user to run a transaction.
+   
+   The flow is as follows:
+   Enter transaction TRANA. The transaction is routed over to AOR
+   and executed successfully.
+   Enter security command to remove the profile (revoke transaction
+   permission) from the user.   ENF 71 is signal sent by security
+   manager at this time.
+   Enter transaction TRANA. The transaction is routed over to AOR
+   and immediately failed due to user no longer having security for
+   transaction.
+   
+   After application of the fix for PM67891 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM67891], the flow is as
+   follows:
+   Enter transaction TRANA. The transaction is routed over to AOR
+   and executed successfully.
+   Enter RACF command to remove the profile (revoke transaction
+   permission) from the user. ENF 71 signal is sent by security
+   manager at this time.
+   Enter transaction TRANA. The transaction is routed over to AOR
+   and STILL executed successfully.
+   
+   The ENF notification is received in the AOR and the USUDB is
+   correctly flagged.  However, after PM67891 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM67891], only non-terminal
+   signons removed the notified user from the user domain
+   directories.  When transaction routing is used the signon in
+   the AOR is a terminal signon.  The first transaction runs after
+   the user is revoked therefore finds the user in the user domain
+   directory and uses it so is allowed to run.
+   At the end of the transaction a deferred signoff is done.  This
+   would  put the user onto the timeout queue.  The notification
+   bit is on in the USUDB so the user gets deleted instead.  When
+   the second transaction runs the user is not found in the
+   directory so a full signon is done at which point we find that
+   the user is revoked.
+   Additional Symptom(s) Search Keyword(s): KIXREVEPH
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS Users with UK83850 or UK83851       *
+   *                 applied.                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CICS ignores RACF ENF notification      *
+   *                      in the AOR when a transaction           *
+   *                      is being routed.                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A terminal user is signed on in a TOR (terminal owning region).
+   They run a transaction that gets routed to the AOR (application
+   owning region). As transaction routing is being used a
+   surrogate terminal is created and a terminal signon is done
+   for the user. At the end of that transaction a deferred signoff
+   is done in the AOR and the user gets placed on the user
+   timeout queue.
+   The userid is then revoked in the ESM.  This causes an
+   ENF71 notification be sent to the TOR and the AOR.
+   CICS processes the notification and turns the
+   usud_notify_received flag on in the USUDB for this userid in
+   the TOR and the AOR.
+   The user then runs another transaction. This gets routed to
+   the AOR causing DFHSNUS to call DFHUSAD for
+   ADD_USER_WITHOUT_PASSWORD specifying a signon type of
+   ATTACH_SIGN_ON.
+   The routine in DFHUSAD only processes the ENF notification
+   for non_terminal users and so this user is not processed
+   because this is a terminal signon.  The user is found
+   on the timeout queue so gets removed from that queue
+   and the transaction is allowed to run.
+   At the end of the transaction a deferred signoff is done.
+   This would normally put the user on the timeout queue but
+   as the usud_notify_received flag is on the user is deleted
+   instead.
+   The terminal user runs a third transaction which is routed
+   to the AOR.  A terminal signon is done and the user is not
+   found so a full signon gets performed.  This finds that the
+   user is revoked and the transaction is not allowed to run.
+   DFHUSAD should include surrogate terminals when deciding
+   whether to delete a userid following a RACF ENF notification.
+   
+   Additional keywords: msgDFHSN0002 DFHSN0002
+                        USRDELAY DFHSNAS CODE X'2056' 2056
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  UK91017 UK91018 UK83850 UK83851
+   DFHUSAD has been changed so that all userids will be considered
+   for deletion when a RACF ENF notification is received.
+   If the userid is not on the USRDELAY timeout queue then
+   only non_terminal_signon userids will be deleted.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI08773
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-30
+   
+   
+ * CLOSED DATE
+   2014-04-03
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM96332 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM96332]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI16734 UI16735
+   
+   
+
+MODULES/MACROS
+ *  DFHAMPFI DFHAMRDI DFHAMST  DFHFCRP  DFHSNAS  DFHSNPU  DFHSNSG
+   DFHSNSU  DFHSNTU  DFHSNUS  DFHSNUST DFHUSAD  DFHUSADT DFHUSDM
+   DFHUSES  DFHUSXM  DFHZSGN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY UI16734 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI16734]
+   UP14/04/23 P F404 {
+   
+   
+ * R700 PSY UI16735 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI16735]
+   UP14/04/23 P F404 {
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

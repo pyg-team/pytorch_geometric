@@ -1,0 +1,31 @@
+Title: IBM CRIMA1168E error received when installing IBM Process Federation Server (PFS) in IBM Business Manager (BPM) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Installation Manager reports a CRIMA1168E error when installing IBM Process Federation Server (PFS) in IBM Business Manager (BPM). 
+
+SYMPTOM
+You receive the following error message and the installation fails: 
+
+CRIMA1168E: The installation directory ("/opt/im") must not be a parent or sub-directory of the shared resources directory ("/opt/im/IMShared")
+
+
+CAUSE
+IBM Installation Manager (IM) will give this error while installing IBM PFS if you have an IM directory structure in which the IM Share directory is a subdirectory of the IM Installation directory.
+
+
+RESOLVING THE PROBLEM
+Upgrade IBM Installation Manager to V1.8.1 before installing IBM Process Federation Server (PFS). To upgrade IM to V1.8.1, run the following command: 
+
+<PFS_Installer_image>/IM64/install
+
+Note: Use the same user ID of the original IM installation when you upgrade to IM V1.8.1.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Installation Manager AIX, Linux, Solaris, Windows 8.5.7, 8.5.6 
+PRODUCT ALIAS/SYNONYM
+ BPM

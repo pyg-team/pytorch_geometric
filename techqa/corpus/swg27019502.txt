@@ -1,0 +1,59 @@
+Title: IBM System requirements for IBM Data Studio Health Monitor - United States
+
+Text:
+dshm; health; monitor PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Before you install IBM Data Studio Health Monitor ensure that your system meets the following requirements for hardware and software. 
+
+CONTENT
+
+
+
+
+
+ * Software requirements
+ * Hardware requirements
+ * Data source support
+ * Web browser support
+
+
+
+
+SOFTWARE REQUIREMENTS
+Ensure that the computer on which you will install Data Studio Health Monitor meets the following platform requirements:
+
+Operating system 32-bit 64-bit AIX AIX 6.1 N Y AIX 7.1 N Y Linux on xSeries (x86, x86-64) Red Hat Enterprise Linux 5 N Y Red Hat Enterprise Linux 5.5 N Y SUSE Linux Enterprise Server 10 N Y SUSE Linux Enterprise Server 11 N Y Windows(x86, x86-64) Windows XP Professional Edition with Service Pack 2 Y Y Windows Vista 
+Business Edition, Enterprise Edition, and Ultimate Edition Y Y Windows 7
+Professional Edition, Enterprise, and Ultimate Edition Y Y Windows Server 2003
+Standard Edition, Enterprise Edition, and Datacenter Edition Y Y Windows Server 2003 R2
+Standard Edition, Enterprise Edition, and Datacenter Edition Y Y Windows Server 2008
+Standard Edition, Enterprise Edition, and Datacenter Edition Y Y Windows Server 2008 R2
+Standard Edition, Enterprise Edition, and Datacenter Edition N Y HARDWARE REQUIREMENTS
+Ensure that the computer on which you will install Data Studio Health Monitor meets the following minimum requirements:
+
+ * 200 MB of temporary disk space for installation images.
+ * 300 MB of available disk space.
+ * 1 GB of RAM.
+
+DATA SOURCE SUPPORT
+The Data Studio Health Monitor supports the following databases:
+
+ * DB2 for Linux, UNIX, and Windows V9.1
+ * DB2 for Linux, UNIX, and Windows V9.5
+ * DB2 for Linux, UNIX, and Windows V9.7
+ * DB2 for Linux, UNIX, and Windows V9.8
+
+WEB BROWSER SUPPORT
+Ensure that you have one of the following browsers on your client computer.
+
+ * Mozilla Firefox Version 3.6.x.
+ * Microsoft Internet Explorer Version 7.0.
+ * Microsoft Internet Explorer Version 8.0.
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2010/12/2 
+
+Cross Reference information Segment Product Component Platform Version Edition Information Management Data Studio Health Monitor Not Applicable

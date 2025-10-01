@@ -1,0 +1,104 @@
+Title: IBM "Standard Error ... 5 ... Value cannot be null. Parameter name: assemblyString" when use "Reports - Run" with DB2 database - United States
+
+Text:
+64 bit TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User clicks "Reports - Run". User selects choices, and clicks "Preview". An error message appears. 
+
+SYMPTOM
+Screen 
+
+Information
+Standard Error
+Number: 5
+Source: FrangoDirect.ExcelLinkD.FetchValues#ControllerProxyClient
+Description: Ssytem.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.ArgumentNullException: Value cannot be null.
+Parameter name: assemblyString
+at 
+Cognos.Controller.Proxy.CCRWS.ExcelLinkB_FetchValues(String....
+<...>
+[OK} 
+
+ 
+
+Event Viewer (Application Log) on Windows 2008 64-bit using Office 2007:
+Log Name: Application
+Source: Cognos Controller
+Date: 22/06/2011 12:57:11
+Event ID: 0
+Task Category: None
+Level: Warning
+Keywords: Classic
+User: N/A
+Computer: SERVERNAME
+Description:
+Standard Error
+Number: 5
+Source: FrangoDirect.ExcelLinkD.FetchValues#ControllerProxyClient
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.ArgumentNullException: Value cannot be null.
+Parameter name: assemblyString
+at Cognos.Controller.Proxy.CCRWS.ExcelLinkB_FetchValues(String sGuid, DataSet rsKeys, String sMcurr, Boolean bLocLang, String sUser, String sRep, Boolean bIsLnk, String sSortOrd, Int32 lOptBitSet)
+
+
+Event Viewer (Application Log) on Windows 2003 32-bit using Office 2003:
+Event Type: Warning
+Event Source: Cognos Controller
+Event Category: None
+Event ID: 0
+Date: 22/06/2011
+Time: 13:12:31
+User: N/A
+Computer: SERVERNAME
+Description:
+Standard Error
+Number: 5
+Source: FrangoDirect.ExcelLinkD.FetchValues#ControllerProxyClient
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.ArgumentNullException: Value cannot be null.
+Parameter name: assemblyString
+at Cognos.Controller.Proxy.CCRWS.ExcelLinkB_FetchValues(String sGuid, DataSet rsKeys, String sMcurr, Boolean bLocLang, String sUser, String sRep, Boolean bIsLnk, String sSortOrd, Int32 lOptBitSet)
+--- End of inner exception stack trace ---
+at Microsoft.VisualBasic.ErrObject.Raise(Int32 Number, Object Source, Object Description, Object HelpFile, Object HelpContext)
+at Cognos.Controller.Common.RaiseErrCli.RaiseError(Int32 lErrNo, String sErrSource, String sErrDesc, String sErrHelpFile, Int32 lErrHelpContext)
+at Cognos.Controller.Direct.ExcelLinkD.FetchValues(DataSet rsKeys, String sMcurr, Boolean bLocLang, String sRep, Boolean bIsLnk, String sSortOrd, Int32 lOptBitSet)
+at Cognos.Controller.Reports.ExcelLink.RunReportEx()
+
+For more information, see Help and Support Center at http://go.microsoft.com/fwlink/events.asp [http://go.microsoft.com/fwlink/events.asp].
+
+
+
+CAUSE
+Application server's IIS website's virtual directory "controllerserver" using default application pool settings, which do not allow 32-bit applications to run.
+
+
+
+ENVIRONMENT
+Controller application server based on 64 bit operating system (for example Windows 2003 64-bit, or Windows 2008 64-bit).
+
+
+
+RESOLVING THE PROBLEM
+Reconfigure IIS website's application pool to enable 32-bit applications. 
+
+ 
+Steps:
+For Windows 2008: 
+
+ 1.  Obtain a short amount of downtime (no users in the system) 
+ 2.  Logon to the Controller application server as an administrator 
+ 3.  Right-click on "Computer" and choose "manage" 
+ 4.  Expand "Roles - Web Server (IIS) - Internet Information Services" 
+ 5.  Expand <webserver> and expand <sites> - "Default Web Site" 
+ 6.  If using Controller 8.x, expand "cognos8". If using Controller 10.x, expand "ibmcognos" 
+ 7.  Right-click on "controllerserver" and choose "Manage application - advanced settings" 
+ 8.  At the top, make a note of the 'Application Pool'. TIP: By default, this will be "DefaultAppPool" 
+ 9.  Click "Cancel" 
+ 10. Open section <Servername> - "Application Pools" 
+ 11. Right-click on the relevant application pool (for example "DefaultAppPool") and choose "Advanced Settings" 
+ 12. Near the top, change the value for "Enable 32-Bit Applications" from the default ("false") to "True" 
+ 13. Click OK 
+ 14. Reboot the server
+
+RELATED INFORMATION
+#1448007 - 'An error occurred while trying to access ser [http://www.ibm.com/support/docview.wss?uid=swg21448007]
+1456317 - "IBM Cognos 8 Controller Link ... Attempt to [http://www.ibm.com/support/docview.wss?uid=swg21456317]

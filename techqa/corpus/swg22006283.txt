@@ -1,0 +1,23 @@
+Title: IBM DataPower Gateway for Citrix XenServer v7.6.0.0 is incompatible on initial release - United States
+
+Text:
+760limitation; 760limitation ve TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM DataPower Gateway 7.6.0.0 is incompatible with Citrix XenServer at the initial release. Because of this known issue, IBM is not releasing the v7.6.0 VHD images on IBM Passport Advantage, but you can download the v7.5.2 VHD images. To upgrade DataPower Gateway for XenServer, use a v7.6.0.1 or later scrypt4 firmware image from IBM Fix Central.
+
+If you use the v7.6.0.0 scrypt4 image to upgrade to v7.6.0.0:
+- You will receive errors on startup that 'xenfs.ko' cannot be loaded
+- The XenServer console will report 'XenServer tools not installed'. 
+
+RESOLVING THE PROBLEM
+ IBM still intends to make DataPower Gateway for Citrix XenServer available from IBM Passport Advantage. 
+
+To deploy DataPower Gateway for XenServer and run v7.6 firmware. 
+
+ 1. Download the v7.5.2 VHD images from IBM Passport Advantage. 
+ 2. Download and install a v7.6.0.1 or later scrypt4 firmware image from IBM Fix Central.
+
+
+DataPower Gateway for Linux v7.6.0 is supported on Citrix XenServer. DataPower Gateway for Linux is available as part of IBM DataPower Gateway Virtual Edition and is licensed under the same terms as IBM DataPower Gateway for Citrix XenServer. Customers who need DataPower Gateway v7.6.0 on Xen can migrate to DataPower Gateway for Linux.  * The advantage is better interoperability with XenServer tooling. 
+ * The disadvantage is the requirement to maintain the underlying Linux operating system.

@@ -1,0 +1,153 @@
+Title: IBM IT18157: MQ ERROR CODE 2010 IS VISIBLE WHEN SHARING CONVERSATION IS USED EVEN IF MXMSGML OF QMGR'S CHANNEL IS GREATER THAN MQ-QM MSG SIZE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix packs for DataPower Service Gateway version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037486]
+Fix packs for DataPower B2B Appliance version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037487]
+Fix packs for DataPower Integration Appliance version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037488]
+Fix packs for DataPower Gateway version 7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038524]
+Fix packs for DataPower Gateway version 7.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039783]
+Fix packs for DataPower Gateway version 7.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041543]
+Fix packs for DataPower Gateway version 7.5.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042194]
+Fix packs for DataPower Gateway version 7.5.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24042699]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MQ Error Code 2010 is visible when sharing conversation is used
+   even if MXMSGML of qmgr's channel is greater than mq-qm's
+   Maximum Message Size. The same condition works when non-sharing
+   conversation is used.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the Best practices that defines the following conditions.
+   
+   MAXMSGL attribute of qmgr =< Channel =< Queue =< mq-qm's
+   Maximum Message Size
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  MQRC 2010 will be reported, when the setting of the maximum size
+   of MQ message in DataPower is bigger than the setting of MQ
+   Server.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is available in 7.0.0.17, 7.1.0.14, 7.2.0.11, 7.5.0.5,
+   7.5.1.4 and 7.5.2.2
+   
+   For a list of the latest fix packs available, please see:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21237631 [http://www-01.ibm.com/support/docview.wss?uid=swg21237631]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT18157
+   
+   
+ * REPORTED COMPONENT NAME
+   DPWR SRV GTWAY
+   
+   
+ * REPORTED COMPONENT ID
+   DP905XG45
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-11-29
+   
+   
+ * CLOSED DATE
+   2017-01-10
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DPWR SRV GTWAY
+   
+   
+ * FIXED COMPONENT ID
+   DP905XG45
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R710 PSY
+   UP
+   
+   
+ * R720 PSY
+   UP
+   
+   
+ * R750 PSY
+   UP

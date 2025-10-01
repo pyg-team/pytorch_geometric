@@ -1,0 +1,60 @@
+Title: IBM Information to provide when contacting the BigFix Licensing Department - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The following information should be sent to the licensing team for issues such as new requests, renewals, extensions, product changes, seat count changes, and any other licensing change.
+
+The licensing team can be contacted at the following email address: TEM@dk.ibm.com
+
+Please provide the the following information:
+
+1. Your ICN (IBM Customer Number)
+2. The deployment's serial number (Can be found on the License Overview dashboard in the console)
+3. The Proof of Entitlements document (showing details of what was purchased)
+4. Your full contact information including the full name of the organization the deployment is licensed under
+5. Provide a full description of the the request: is it a new purchase, renewal, product change, seat count change, or other problem?
+6. If applicable, provide any screenshots of any expired notices or other errors or warnings you see in the console.
+
+Additionally, if you would like to be able to manage the subscription entitlement counts on your license you can do this by logging into the License Key Center @ http://tem.subscribenet.com/ [http://tem.subscribenet.com/] 
+
+If you are having problems accessing the License Key center or do not have an account please include a request for an account or a password reset along with the other information to TEM@dk.ibm.com.
+
+Please note:
+Licensing responds to customer requests within a 24-hour time frame. 
+
+Related KB Articles:
+
+How can I verify the BigFix License Server status?
+http://www-01.ibm.com/support/docview.wss?uid=swg21586308 [http://www-01.ibm.com/support/docview.wss?uid=swg21586308]
+
+Why is the BigFix BES Admin Tool failing to create a new user or failing to update my license file?
+http://www-01.ibm.com/support/docview.wss?uid=swg21505979 [http://www-01.ibm.com/support/docview.wss?uid=swg21505979]
+
+How do I manually upgrade my license for BigFix?
+http://www-01.ibm.com/support/docview.wss?uid=swg21505773 [http://www-01.ibm.com/support/docview.wss?uid=swg21505773]
+
+What is a Perpetual License for BigFix?
+http://www-01.ibm.com/support/docview.wss?uid=swg21505731 [http://www-01.ibm.com/support/docview.wss?uid=swg21505731]
+
+Why am I getting an installation error: "Unable to submit action site request: The authorization has already been redeemed for a license match a different public key."
+http://www-01.ibm.com/support/docview.wss?uid=swg21506147 [http://www-01.ibm.com/support/docview.wss?uid=swg21506147]
+
+How do I use the License Request Handler for a licensing request when the Installation Generator can't access the internet during an install of BigFix?
+http://www-01.ibm.com/support/docview.wss?uid=swg21505618 [http://www-01.ibm.com/support/docview.wss?uid=swg21505618]
+
+How do I enable sites from the BigFix License Overview dashboard?
+http://www-01.ibm.com/support/docview.wss?uid=swg21508035 [http://www-01.ibm.com/support/docview.wss?uid=swg21508035]
+
+How do I troubleshoot the error "Certificate mismatch" for the BigFix BES Admin tool?
+http://www-01.ibm.com/support/docview.wss?uid=swg21505734 [http://www-01.ibm.com/support/docview.wss?uid=swg21505734]
+
+What sort of SQL Server licensing is necessary for the BigFix Server?
+http://www-01.ibm.com/support/docview.wss?uid=swg21505975 [http://www-01.ibm.com/support/docview.wss?uid=swg21505975]
+
+How do I resolve the error "LicenseUpdater error: class FormatError" in BESRelay.log for BigFix?
+http://www-01.ibm.com/support/docview.wss?uid=swg21591528 [http://www-01.ibm.com/support/docview.wss?uid=swg21591528]
+
+What is a masthead file for BigFix?
+http://www-01.ibm.com/support/docview.wss?uid=swg21505775 [http://www-01.ibm.com/support/docview.wss?uid=swg21505775]

@@ -1,0 +1,30 @@
+Title: IBM Using a Remote Database Configuration with Content Manager OnDemand - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ IBM® Content Manager OnDemand is designed to be a tightly coupled database application where both the Content Manager OnDemand server and the database server run on the same system. The Content Manager OnDemand server is a lightweight front-end to the database and therefore utililzing a remote database can result in under-utilized resources (e.g. cpu, memory) where the Content Manager OnDemand server is running.
+
+Although not preferred, it is possible to run the Content Mananger OnDemand server against a remote database server. However, in the remote database server scenario, you might not be able to leverage certain functions Content Manager OnDemand offers. 
+
+CONTENT
+When using a remote database configuration with Content Manager OnDemand:
+
+
+ 1. ARSDB command restrictions for DB2 and Microsoft SQL Server:
+     * Creating the Content Manager OnDemand database (-c) cannot be used. You must manually create the database. After the database has been created, the arsdb -rtv command should be used to create the Content Manager OnDemand system tables and indexes. 
+     * Starting, stopping, and/or activating the database (-g, -h, -k) cannot be used.. 
+     * Backing up the database (-y, -Y, -X, -z, -Z) cannot be used.
+       
+       
+    
+    
+ 2. With the tablespace (DB2, Oracle) or filegroup (Microsoft SQL Server) option, Content Manager OnDemand is unable to create tablespaces or file groups:
+     * When choosing the following option for the application group database storage: System Managed Space Table Space - SMS (DB2), Use Tablespace (Oracle), or Use File groups (Microsoft SQL Server), Content Manager OnDemand looks for the directory, based on the ars.dbfs, that has the most available space to create the tablespace or file group. However, when the database server is remote, it is impossible for Content Manager OnDemand to analyze the available file systems on the remote server. The Content Manager OnDemand tablespace creation user exit must be created and used. See the arscsxit.h (in the installation directory) for information on the tablespace creation user exit. 
+     * For DB2 with remote database configuration, the best storage management is the Automatic Storage Table Space where DB2 controls the storage space. This option was added to the Content Management OnDemand support for multi platform since V9. 
+       
+    
+    
+ 3. ARSTBLSP command restrictions:
+     * Copy tables into their own table space (-a 0) cannot be used.

@@ -1,0 +1,44 @@
+Title: IBM Unable to Access Cognos 8 portal pages with Anonymous set to True, StoreID is invalid - United States
+
+Text:
+reset security TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to Access Cognos 8 portal pages with Anonymous set to True. 
+
+When Allow Anonymous access is set back to True in Cognos Configuration for somereason, an error appears after a succesful Anonymous login to Cognos Connection. 
+
+The login to Cognos 8 is happening, as the Welcome Page does show up. 
+
+Symptoms : 
+
+1. The Cognos 8 Welcome page displays, View or Manage Cognos Content causes the error, but all Studios work. 
+
+2. Immediate error is received, due to having changed the preferences to not show the Welcome Page. 
+
+SYMPTOM
+Audit.dispatcher.caf Request Failure SecureErrorId: 2006-07-21-14:12:00.652-#1
+Original Error: CM-REQ-4158 The search path "storeID("")" is invalid.
+
+CAUSE
+Permission for the Anonymous user have been changed in the portal in such a manner that access can no longer access be given.
+
+Reverting to Anonymous access from a secured Cognos 8 against a namespace can cause this issue.
+
+ENVIRONMENT
+Active Directory Server, Windows environment
+
+RESOLVING THE PROBLEM
+Recreate the Content Store database.
+
+Steps:  1. Set up secured access again, by setting Anonymous to False in Cognos Configuration, and restart the services.
+ 2. Login as Administrator, and do a Full Content Store Export, followed by a shutdown of Services.
+ 3. Remove the Content Store from the Database, and then open Cognos Configuration and delete the Content Store entry under Content Management.
+ 4. Re-add the Content Store Entry, ensuring that the Database connection values are correct. Test the login by right clicking Test on the content store.
+ 5. Change Anonymous to True, and then Start Cognos from Cognos Configuration. All the tables will be re-created in the database for the content store.
+ 6. Access Cognos 8, either as Anonymous or Administrator and restore the Full Content Store Deployment.
+
+
+
+HISTORICAL NUMBER
+ 1025225

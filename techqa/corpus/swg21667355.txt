@@ -1,0 +1,200 @@
+Title: IBM Sender-Receiver behavior when disconnect interval stops the channel pair: AMQ9002, AMQ9545 and AMQ9001 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You are reviewing the error logs for a WebSphere MQ (WMQ) queue manager that has a receiver channel, and you see the following entry for that channel.
+
+AMQ9545: Disconnect interval expired.
+EXPLANATION: Channel 'NAME' closed because no messages arrived on the transmission queue within the disconnect interval period.
+ACTION: None.
+
+You use runmqsc or MQ Explorer to find more details on the receiver channel and you cannot find the transmission queue or the disconnect interval period mentioned in the above entry.
+
+
+CAUSE
+This is not really an error, instead, it is an informational message.
+The receiver channel is not associated with a transmission queue and does not have a disconnect interval period. Instead, the sender channel is the one that is actually generating this informational message.
+
+What this means is that the transmission queue that is associated with the SENDER channel (of a sender-receiver channel pair) has not received messages to be transmitted during the disconnect interval period. Thus, after the end of that period is reached, then the SENDER channel determines that there is no point in still being active when there is nothing to transmit and it ends, generating this informational message.
+Then the SENDER channel sends a control command to the receiver channel to generate the same informational message and to end. 
+
+
+ANSWER
+Let's use the following scenario to better illustrate the situation: 
+
++ Configuration 
+
+a) Source queue manager WIN has a sender channel with the following attributes:
+
+
+ * runmqsc WIN
+ * 
+ * display channel(WIN.LNX) discint xmitq
+ * 
+ * AMQ8414: Display Channel details.
+ * 
+ * CHANNEL(WIN.LNX) CHLTYPE(SDR)
+ * 
+ * DISCINT(60) XMITQ(LNX)
+
+
+Note: The default DISCINT is 6000 (6,000 seconds), but for the purposes of this scenario, only 60 seconds were used (it is too short for normal usage, but ideal for illustrating the point). 
+b) Target queue manager LNX has a receiver channel. Notice that the attributes DISCINT and XMITQ are not valid attributes for a receiver channel and thus, they are ignored.
+
+
+ * runmqsc LNX
+ * 
+ * display channel(WIN.LNX) discint xmitq
+ * 
+ * AMQ8414: Display Channel details.
+ * 
+ * CHANNEL(WIN.LNX) CHLTYPE(RCVR)
+
+
++ Starting the sender channel 
+
+As mentioned in the following technote, there is no need to do a START CHANNEL on a Receiver channel: START CHANNEL command on a receiver or server-connection channel, only enables the channel, but it does not start it [http://www.ibm.com/support/docview.wss?uid=swg21667353] 
+
+Thus, the only START CHANNEL that is needed is the one for the sender channel. 
+ * runmqsc WIN
+ * 
+ * start channel(WIN.LNX)
+ * 
+ * AMQ8018: Start WebSphere MQ channel accepted.
+
+
+The sender channel will start: 
+ * display chstatus(WIN.LNX)
+ * 
+ * AMQ8417: Display Channel Status details.
+ * 
+ * CHANNEL(WIN.LNX) CHLTYPE(SDR)
+ * 
+ * CONNAME(9.27.46.xxx(1424)) CURRENT
+ * 
+ * RQMNAME(LNX) 
+ * STATUS(RUNNING)
+ * 
+ * SUBSTATE(MQGET) XMITQ(LNX)
+
+
+And the following entry is added into the WIN queue manager error log: 
+ * 3/14/2014 11:09:33 - Process(10148.1) User(MUSR_MQADMIN2) Program(runmqchl.exe)
+ * 
+ * Host(ANGELILLO) Installation(Installation2)
+ * 
+ * VRMF(7.5.0.2) QMgr(WIN)
+ * 
+ * AMQ9002: Channel 'WIN.LNX' is starting.
+ * 
+ * EXPLANATION: Channel 'WIN.LNX' is starting.
+ * 
+ * ACTION: None. 
+
+
+
++ The receiver channel is started after the sender channel has started 
+
+The start of the sender channel will cause the start of the receiver channel of the target queue manager: 
+ * runmqsc LNX
+ * 
+ * display chstatus(WIN.LNX)
+ * 
+ * AMQ8417: Display Channel Status details.
+ * 
+ * CHANNEL(WIN.LNX) CHLTYPE(RCVR)
+ * 
+ * CONNAME(9.27.47.yyy) CURRENT
+ * 
+ * RQMNAME(WIN) STATUS(RUNNING)
+ * 
+ * SUBSTATE(RECEIVE)
+
+
+And the following entry is added into the LNX queue manager error log: 
+ * 03/14/2014 11:09:33 AM - Process(25491.87) User(rivera) Program(amqrmppa)
+ * 
+ * Host(veracruz) Installation(Installation2)
+ * 
+ * VRMF(7.5.0.3) QMgr(LNX)
+ * 
+ * AMQ9002: Channel 'WIN.LNX' is starting.
+ * 
+ * EXPLANATION: Channel 'WIN.LNX' is starting.
+ * 
+ * ACTION: None.
+
+
++ Sender channel stops due to disconnect interval period from the transmission queue 
+
+Let's assume that for 60 seconds, the value in this example for the attribute DISCINT (the disconnect interval period), there are no messages in the transmission queue LNX which is associated with the sender channel WIN.LNX. This will stop the sender channel and the following entries will be added to the WIN queue manager error log. 
+
+Note that the transmission queue and the disconnect interval period mentioned in AMQ9545 are for the sender channel. 
+
+ 
+
+ * 3/14/2014 11:10:33 - Process(10148.1) User(MUSR_MQADMIN2) Program(runmqchl.exe)
+ * 
+ * Host(ANGELILLO) Installation(Installation2)
+ * 
+ * VRMF(7.5.0.2) QMgr(WIN)
+ * 
+ * AMQ9545: Disconnect interval expired.
+ * 
+ * EXPLANATION: Channel 'WIN.LNX' closed because no messages arrived on the transmission
+ * 
+ * queue within the disconnect interval period.
+ * 
+ * ACTION: None. 
+ * 
+ * -------------------------------------------------------------------------------
+ * 
+ * 3/14/2014 11:10:33 - Process(10148.1) User(MUSR_MQADMIN2) Program(runmqchl.exe)
+ * 
+ * Host(ANGELILLO) Installation(Installation2)
+ * 
+ * VRMF(7.5.0.2) QMgr(WIN)
+ * 
+ * AMQ9001: Channel 'WIN.LNX' ended normally.
+ * 
+ * EXPLANATION: Channel 'WIN.LNX' to host 'veracruz.x.com(1424)' ended normally.
+ * 
+ * ACTION: None. 
+
++ Receiver channel stops because the sender channel stopped 
+
+When the sender channel is stopping due to reaching the disconnect interval period, it will send a command to the corresponding receiver channel to stop, and the receiver channel will stop. The following entries will be added to the WIN queue manager error log. 
+
+Note that the transmission queue and the disconnect interval period mentioned in AMQ9545 are for the sender channel (not the receiver channel). 
+
+ 
+
+ * 03/14/2014 11:10:33 AM - Process(25491.86) User(rivera) Program(amqrmppa)
+ * 
+ * Host(veracruz) Installation(Installation2)
+ * 
+ * VRMF(7.5.0.3) QMgr(LNX)
+ * 
+ * AMQ9545: Disconnect interval expired.
+ * 
+ * EXPLANATION: Channel 'WIN.LNX' closed because no messages arrived on the transmission
+ * 
+ * queue within the disconnect interval period.
+ * 
+ * ACTION: None.
+ * 
+ * -------------------------------------------------------------------------------
+ * 
+ * 03/14/2014 11:10:33 AM - Process(25491.86) User(rivera) Program(amqrmppa)
+ * 
+ * Host(veracruz) Installation(Installation2)
+ * 
+ * VRMF(7.5.0.3) QMgr(LNX)
+ * 
+ * AMQ9001: Channel 'WIN.LNX' ended normally.
+ * 
+ * EXPLANATION: Channel 'WIN.LNX' to host 'angelillo (9.27.47.yyy)' ended normally.
+ * 
+ * ACTION: None.

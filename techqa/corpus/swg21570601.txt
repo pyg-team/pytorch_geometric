@@ -1,0 +1,30 @@
+Title: IBM Configuring RV2 for specific database types with IBM Datacap - United States
+
+Text:
+rv2 access sql oracle db2 TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure RV2 to use a specific database type, such as SQL or Oracle? 
+
+CAUSE
+Some databases require 
+
+ANSWER
+To configure RV2 
+
+ 1. On the machine hosting RV2, open the \Datacap\RV2 folder. 
+ 2. Backup reports.xml and then edit the original file. 
+ 3. Set dbtype as follows:  * dbtype="0" for Access 
+     * dbtype="1" for SQL Server 
+     * dbtype="2" for Oracle 
+     * dbtype="3" for DB2 (Datacap 9.0 only)
+    
+    
+ 4. Apply for all applicable reports. 
+ 5. Save reports.xml.
+
+
+If errors are encountered, review user permissions for the account running the Internet Information Services (IIS) application pool for RV2. The account must be able to access the datacap.xml and application (\<app_name>\<app_name>.app) files on the Taskmaster Server or wherever the application files are placed. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Datacap Taskmaster Capture Not Applicable Windows 8.1.0, 8.0.1

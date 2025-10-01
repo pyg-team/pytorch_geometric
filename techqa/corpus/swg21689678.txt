@@ -1,0 +1,16 @@
+Title: IBM The ITCAM Agent for J2EE 7.1.1 Installation and Customization Guide? - United States
+
+Text:
+CAMJ2INST CAMJ2ALL J2EE TEMA Install Customization Guide; 5724N9500 TECHNOTE (FAQ)
+
+QUESTION
+ Where can I find the ITCAM Agent for J2EE 7.1.1 Installation and Customization Guide? 
+
+ANSWER
+The ITCAM Agent for J2EE 7.1.1 Installation and Customization Guide is available in the knowledge center under the ITCAM for Applications 7.2.1.1 section at the following link-
+http://www-01.ibm.com/support/knowledgecenter/SS3JRN_7.2.1.1/com.ibm.itcamfapps_ad.doc_7211/j2ee_tema_installguide.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SS3JRN_7.2.1.1/com.ibm.itcamfapps_ad.doc_7211/j2ee_tema_installguide.html?lang=en]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for J2EE TEMA

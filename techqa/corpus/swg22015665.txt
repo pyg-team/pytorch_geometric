@@ -1,0 +1,64 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities in the IBM HTTP Server used in IBM WebSphere Application Server in IBM Cloud(CVE-2017-15710, CVE-2017-15715, CVE-2018-1301) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+There are multiple vulnerabilities in the IBM HTTP Server used by WebSphere Application Server. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2018-1301 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-1301]
+DESCRIPTION: Apache HTTPD is vulnerable to a denial of service, caused by an out-of-bounds access error after a header size limit has been reached reading the HTTP header. By sending a specially crafted HTTP request, an attacker could exploit this vulnerability to cause the service to crash.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/140852 [https://exchange.xforce.ibmcloud.com/vulnerabilities/140852] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L)
+
+CVEID: CVE-2017-15715 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-15715]
+DESCRIPTION: Apache HTTPD could allow a remote attacker to bypass security restrictions, caused by the < FilesMatch > expression matching '$' to a newline character in a malicious filename instead of the end of the filename. By matching the trailing portion of the filename, an attacker could exploit to bypass security controls that use the < FilesMatch > directive.
+CVSS Base Score: 3.7
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/140857 [https://exchange.xforce.ibmcloud.com/vulnerabilities/140857] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N)
+
+CVEID: CVE-2017-15710 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-15710]
+DESCRIPTION: Apache HTTPD is vulnerable to a denial of service, caused by an out-of-bounds memory write error. By sending a specially crafted Accept-Language header value, an attacker could exploit this vulnerability to cause the service to crash.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/140858 [https://exchange.xforce.ibmcloud.com/vulnerabilities/140858] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L)
+
+AFFECTED PRODUCTS AND VERSIONS
+These vulnerabilities affect the following versions and releases of IBM HTTP Server (powered by Apache) component in all editions of WebSphere Application Server and bundling products.
+
+ * Version 9.0
+ * Version 8.5
+
+REMEDIATION/FIXES
+To patch an existing service instance refer to the IBM WebSphere Application Server bulletins listed below:
+
+Security Bulletin: Multiple vulnerabilities in the IBM HTTP Server (CVE-2017-15710, CVE-2017-15715, CVE-2018-1301) [http://www-01.ibm.com/support/docview.wss?uid=swg22015344]
+
+Alternatively, delete the vulnerable service instance and create a new instance.
+
+WORKAROUNDS AND MITIGATIONS
+none.
+
+ADDITIONAL BLUEMIX ALERT INFORMATION
+Monitor the Bluemix console (https://console.ng.bluemix.net/status/ [https://console.ng.bluemix.net/status/]) for additional important product alerts.
+
+REFERENCE
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide]
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0]
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html]
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt]
+
+CHANGE HISTORY
+11 July 2018: Original document published
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin.
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES ""AS IS"" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

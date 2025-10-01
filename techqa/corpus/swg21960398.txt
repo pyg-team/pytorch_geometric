@@ -1,0 +1,79 @@
+Title: IBM Cleaning up orphaned role assignments in Tivoli Integrated Portal - United States
+
+Text:
+TIPL2; TIPL2CONF; TIPL2AUTH; orphaned; orphan; roles; role; DSID-0310020A; users; LDAP; CWWIM4527E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Steps required for removing role assignments for user IDs that no longer exist in the user repository. 
+
+SYMPTOM
+Error found in the systemOut related to orphaned role assignments:
+###
+WIMException:
+com.ibm.websphere.wim.exception.EntityNotFoundException: CWWIM4527E
+The LDAP entry
+'CN=bob,OU=netOps,DC=MyCompany,DC=com' was not found: 'javax.naming.NameNotFoundException: [LDAP: error code 32 - 0000208D: NameErr: DSID-0310020A, problem 2001 (NO_OBJECT), data 0, best match of:
+###
+
+
+CAUSE
+User IDs were removed from the user repository, or moved to a new OU resulting in orphaned role assignments in TIP
+
+RESOLVING THE PROBLEM
+Options for addressing orphaned roles are details by TIP fix pack level below:
+
+
+TIP 2.1 - 2.2.0.11: 
+
+ * 
+ * 
+ *  Upgrade to TIP 2.2.0.13 or TIP 2.2.0.15 as those fix packs include utilities for removal of orphaned role assignments. This is the recommended solution, but it is only an option if all products deployed in TIP are certified on the fix pack. IBM support may be able to manually remove the orphaned roles from the authorization policy files. Provide the following to IBM support to see if manual orphan role removal is possible:  * The contents of:
+      <TIP HOME>/profiles/TIPProfile/config/cells/TIPCell/commonauthz 
+    * The "UserReg.out" output file from the following command:
+      <TIP HOME>/profiles/TIPProfile/bin/wsadmin.[bat|sh] -lang jython -c "print AdminTask.searchUsers('[-principalName *]')" >> UserReg.out
+   
+   Replace the authorization policy files with copies from a new installation. Replace the full contents from <TIP HOME>/profiles/TIPProfile/config/cells/TIPCell/commonauthz from a new install. This option would result in loss of all previously assigned roles and would retain only the default role assignments for the primary administrative user (usually "tipadmin"). It would require all roles to be re-assigned. 
+
+
+2.2.0.13  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Manage Users
+ * 
+ * User Roles
+ * 
+
+
+2.2.0.15  * 
+ * 
+ * Note: 
+ * The 
+ * "RemoveOrphanedRoleMappings" option should only be run if the TIP instance is 
+ * started/running
+ * . 
+ * Also, create a backup of the following directory before running the utility:
+   <TIP HOME>/profiles/TIPProfile/config/cells/TIPCell/commonauthz
+   
+   The usage for the "RemoveOrphanedRoleMappings" option is as follows:
+   
+   <TIP HOME>/profiles/TIPProfile/bin/tipcli.[bat|sh] RemoveOrphanedRoleMappings --username <admin user name> --password <admin password> --maxUsersAndGroups <max. number of records to process>
+   
+   The utility will remove all orphaned rolls up to the number you set for the <max. number of records to process>. 
+   
+   For example, on a unix system:
+   ./tipcli.sh RemoveOrphanedRoleMappings --username tipadmin --password <tipadmin password> --maxUsersAndGroups 100
+   
+   Note for TIP HA/loadbalancing configurations:
+   Before running the "RemoveOrphanedRoleMappings" option on a node in a TIP HA cluster, disjoin all nodes. Run the "RemoveOrphanedRoleMappings" utility on one of the TIP servers and then join it back to the HA cluster. There is no need to run the cleanup utility on any other TIP server as they will pick up the change when they are added back to the cluster. After the first node is joined to the cluster, all other TIP servers can be join to the cluster again.

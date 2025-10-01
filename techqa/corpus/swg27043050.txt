@@ -1,0 +1,101 @@
+Title: IBM Detailed system requirements for the IBM InfoSphere Optim products for test data management on z/OS - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The IBM® InfoSphere® Optim™ products for test data management on z/OS consist of a number of components and products. The system requirements for the components and products are compiled in this document. 
+
+CONTENT
+
+
+Use the following links to view requirements by product:
+
+ * IBM InfoSphere Optim Test Data Management Enterprise Edition for z/OS
+ * IBM InfoSphere OptimTest Data Management Enterprise Edition for z/OS for Oracle Applications
+ * IBM InfoSphere Optim Test Data Management Solution for DB2 for z/OS
+ * IBM InfoSphere Optim Test Data Management Solution for z/OS - IMS/VSAM/SEQ
+ * InfoSphere Optim Test Data Management Solution for z/OS with Classic Federation
+ * IBM InfoSphere Optim Move for DB2 for z/OS
+ * IBM InfoSphere Optim Move for IMS/VSAM/SEQ
+
+IBM INFOSPHERE OPTIM TEST DATA MANAGEMENT ENTERPRISE EDITION FOR Z/OS
+ * Natively installed solution [http://www.ibm.com/support/docview.wss?uid=swg27041653]
+ * Distributed components:  *  Workstation and server [http://www.ibm.com/support/docview.wss?&uid=swg27043068]
+    *  Designer [http://www.ibm.com/support/docview.wss?&uid=swg27043069]
+    *  Web applications [http://www.ibm.com/support/docview.wss?&uid=swg27043070]
+    * IBM InfoSphere Federation Server v10.5 [http://www.ibm.com/support/docview.wss?&uid=swg27040515]
+    * IBM InfoSphere Classic Federation v11.1 [http://www.ibm.com/support/docview.wss?uid=swg27021357]
+   
+   
+ * IBM Infosphere Discovery for z/OS v4.6.2 [http://www.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html]
+ * IBM InfoSphere Big Insights Standard Edition v3.0 [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1369437433336&osPlatform=Linux]
+ *  IBM InfoSphere Information Governance Catalog v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27042343]
+ * with data masking option:  *  Optim Masking on Demand v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27043142]
+   
+   
+
+IBM INFOSPHERE OPTIMTEST DATA MANAGEMENT ENTERPRISE EDITION FOR Z/OS FOR ORACLE APPLICATIONS
+ * Natively installed solution [http://www.ibm.com/support/docview.wss?uid=swg27041653]
+ * Distributed components:  *  Workstation and server [http://www.ibm.com/support/docview.wss?&uid=swg27043068]
+    *  Designer [http://www.ibm.com/support/docview.wss?&uid=swg27043069]
+    *  Web applications [http://www.ibm.com/support/docview.wss?&uid=swg27043070]
+    * IBM InfoSphere Federation Server v10.5 [http://www.ibm.com/support/docview.wss?&uid=swg27040515]
+   
+   
+ * IBM InfoSphere Big Insights Standard Edition v3.0 [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1369437433336&osPlatform=Linux]
+ *  IBM InfoSphere Information Governance Catalog v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27042343]
+ * IBM InfoSphere Optim Test Data Management Solution for z/OS for PeopleSoft Enterprise 11.3 (native installation) [http://www.ibm.com/support/docview.wss?&uid=swg27041755]
+ * IBM InfoSphere Optim Test Data Management Solution for z/OS for PeopleSoft Enterprise 11.3 (distributed installation) [http://www.ibm.com/support/docview.wss?&uid=swg27041757]
+ * IBM InfoSphere Optim Test Data Management Solution for Siebel CRM 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041751]
+ * with data masking option:  *  Optim Masking on Demand v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27043142]
+   
+   
+
+IBM INFOSPHERE OPTIM TEST DATA MANAGEMENT SOLUTION FOR DB2 FOR Z/OS
+ * Natively installed solution [http://www.ibm.com/support/docview.wss?uid=swg27041653]
+ * Distributed components:  *  Workstation and server [http://www.ibm.com/support/docview.wss?&uid=swg27043068]
+    *  Designer [http://www.ibm.com/support/docview.wss?&uid=swg27043069]
+    *  Web applications [http://www.ibm.com/support/docview.wss?&uid=swg27043070]
+    * IBM InfoSphere Federation Server v10.5 [http://www.ibm.com/support/docview.wss?&uid=swg27040515]
+    * IBM InfoSphere Classic Federation v11.1 [http://www.ibm.com/support/docview.wss?uid=swg27021357]
+   
+   
+ * IBM Infosphere Discovery for z/OS v4.6.2 [http://www.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html]
+ * IBM InfoSphere Big Insights Standard Edition v3.0 [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1369437433336&osPlatform=Linux]
+ *  IBM InfoSphere Information Governance Catalog v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27042343]
+ * with data masking option:  *  Optim Masking on Demand v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27043142]
+   
+   
+
+IBM INFOSPHERE OPTIM TEST DATA MANAGEMENT SOLUTION FOR Z/OS - IMS/VSAM/SEQ
+ * Natively installed solution [http://www.ibm.com/support/docview.wss?uid=swg27041653]
+ * Distributed components:  * Using Optim Connect, the distributed components support processing of z/OS data in IMS versions 8.1, 9.1, and 10, as well as VSAM and sequential data.
+    *  Workstation and server [http://www.ibm.com/support/docview.wss?&uid=swg27043068]
+    *  Designer [http://www.ibm.com/support/docview.wss?&uid=swg27043069]
+    *  Web applications [http://www.ibm.com/support/docview.wss?&uid=swg27043070]
+   
+   
+ * with data masking option:  *  Optim Masking on Demand v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27043142]
+   
+   
+
+IBM INFOSPHERE OPTIM TEST DATA MANAGEMENT SOLUTION FOR Z/OS WITH CLASSIC FEDERATION
+ * Natively installed solution [http://www.ibm.com/support/docview.wss?uid=swg27041653]
+ * Distributed components:  *  Workstation and server [http://www.ibm.com/support/docview.wss?&uid=swg27043068]
+    *  Designer [http://www.ibm.com/support/docview.wss?&uid=swg27043069]
+    *  Web applications [http://www.ibm.com/support/docview.wss?&uid=swg27043070]
+    * IBM InfoSphere Federation Server v10.5 [http://www.ibm.com/support/docview.wss?&uid=swg27040515]
+    * IBM InfoSphere Classic Federation v11.1 [http://www.ibm.com/support/docview.wss?uid=swg27021357]
+   
+   
+
+IBM INFOSPHERE OPTIM MOVE FOR DB2 FOR Z/OS
+ * Natively installed solution [http://www.ibm.com/support/docview.wss?uid=swg27041653]
+ * with data masking option:  *  Optim Masking on Demand v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27043142]
+   
+   
+
+IBM INFOSPHERE OPTIM MOVE FOR IMS/VSAM/SEQ FOR Z/OS
+ * Natively installed solution [http://www.ibm.com/support/docview.wss?uid=swg27041653]
+ * with data masking option:  *  Optim Masking on Demand v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27043142]

@@ -1,0 +1,202 @@
+Title: IBM IT14680: PUREAPPLICATION SYSTEM: IBM SDK JAVA TECHNOLOGY EDITION VERSION 7.1 FIX PACK NOT SELECTABLE AFTER INSTALLATION MANAGER UPLOAD - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer has uploaded the following IBM WebSphere SDK Java
+   Technology Edition 7.1 fix package to the IBM Installation
+   Manager Repository on the PureApplication System:
+   
+   7.1.3.10_0001-WS-IBMWASJAVA-Linux.zip
+   
+   The package is not available from the instance console
+   (maintenance operation) under "maintenance fixes" or
+   "maintenance fixpacks". Since they cannot select it, they can
+   not apply the fix to the virtual machine instances.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use imcl manually to install the fix as described here:
+   
+   Why am I unable to install IBM WebSphere SDK Java Technology
+   Edition 7.1 fix package from PureApplication System maintenance
+   operations panel?
+   https://developer.ibm.com/answers/questions/263001/why-am-i-unab [https://developer.ibm.com/answers/questions/263001/why-am-i-unab]
+   le-to-install-ibm-websphere-sdk-java/
+   
+   See also:
+   Installation Manager Update Packages dialog does not list
+   WebSphere Liberty
+   https://developer.ibm.com/answers/questions/272058/installation- [https://developer.ibm.com/answers/questions/272058/installation-]
+   manager-update-packages-dialog-does-n/
+   
+   
+   To confirm that APAR IT14680 is the root cause of a problem
+   where a fix is not listed properly on the Manage > Maintenance
+   page:
+   
+   Confirm that Installation Manager lists the fix as available:
+   - SSH onto the virtual machine where the fix needs to be applied
+   - Update your SSH tool settings so that the commands you issue
+     and their output are saved in a file
+   - Issue the following commands
+   
+   sudo -u virtuser ./imcl listAvailableFixes <fix-name>
+   -repositories http://IBMWorkloadDeployer:8585/IMRepository/Compo [http://IBMWorkloadDeployer:8585/IMRepository/Compo]
+   
+   where <fix-name> is the name of the fix to be applied, for
+   example:
+   
+   sudo -u virtuser ./imcl listAvailableFixes
+   com.ibm.websphere.liberty.ND.v85_8.5.5009.20160227_1546
+   -repositories http://IBMWorkloadDeployer:8585/IMRepository/Compo [http://IBMWorkloadDeployer:8585/IMRepository/Compo]
+   
+   
+   
+   
+   If an external Installation Manager Repository is also
+   available, also issue
+   
+   sudo -u virtuser ./imcl listAvailableFixes <fix-name>
+   -repositories http://<external-IM-repository> [http://<external-IM-repository>]
+   
+   where <fix-name> is the name of the fix to be applied, and
+   <external-IM-repository>  is the URL for the external IM
+   repository.
+   
+   
+   
+   Enable tracing to collect logs with fixpack calculation
+   information included:
+   
+   - Select System > Workload Troubleshooting
+   - Add a trace for
+     "com.ibm.maestro.mgmt.resources.IfixMgmtResource"
+   - Set the trace level to ALL
+   - Recreate the problem
+   - Wait 2 hours
+   - Select System > Workload Troubleshooting again
+   - Download All Logs
+        (take care *not* to choose Download Latest Logs)
+   - Provide the trace.zip file to IBM support
+   
+   
+   To review the logs for information
+   - Unzip trace.zip and look for servers.zip
+   - Unzip servers.zip
+   - Unzip the Kernel Services logs inside servers.zip
+   - Review the Kernel Services logs for log entries from
+     IfixMgmtResource.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The code checking if a fix is applicable to a product installed
+   on a virtual machine was expecting to compare versions for
+   maintenance in the V.R.M.F formart (version, release,
+   maintenance, fix). The Java fix had an unhandled version
+   format.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix is being provided in PureApplication System version
+   2.2.0.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT14680
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   210
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-06
+   
+   
+ * CLOSED DATE
+   2016-04-07
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R220 PSY
+   UP

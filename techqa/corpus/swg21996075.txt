@@ -1,0 +1,36 @@
+Title: IBM The IBM Business Process Manager (BPM) launchpad does not start on Linux or UNIX environments when using Firefox - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The BPM launchpad does not start in a Linux or UNIX environment when using Firefox 45/Firefox 45 ESR (Extended Service Release) or above in IBM Business Process Manager. 
+
+SYMPTOM
+The start screen of the BPM launchpad does not open, and you may receive error messages similar to the following when you run the Launchpad.sh command: 
+
+GLib-GObject -WARNING **: Attempt to add property GnomeProgram::sm-connect after class was initialised
+GLib-GObject -WARNING **: Attempt to add property GnomeProgram::show-crash-dialog after class was initialised
+GLib-GObject -WARNING **: Attempt to add property GnomeProgram::display after class was initialised
+GLib-GObject -WARNING **: Attempt to add property GnomeProgram::default-icon after class was initialised
+GnomeUI -WARNING **: While connecting to session manager: None of the authentication protocols specified are supported.
+
+Or
+
+addons.xpi WARN Add-on commonlaunchpad@ibm.com is not correctly signed.
+
+
+CAUSE
+This issue is a result of the Firefox security update model change which is not supported by the BPM launchpad.
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, download a lower version of Firefox, such as version 38 to replace version 45 (or above) in your Linux or UNIX environment.
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Installation / Configuration AIX, Linux 8.5.7.CF201703, 8.5.7.CF201612, 8.5.7, 8.5.6, 8.5.5, 8.5.0.2, 8.5.0.1, 8.5, 8.0.1.3, 8.0.1.2, 8.0.1.1, 8.0.1, 8.0 Business Integration IBM Business Process Manager Express Installation / Configuration Linux 8.5.7.CF201703, 8.5.7.CF201612, 8.5.7, 8.5.6, 8.5.5, 8.5.0.2, 8.5.0.1, 8.5, 8.0.1.3, 8.0.1.2, 8.0.1.1, 8.0.1, 8.0 Business Integration IBM Business Monitor Installation AIX, Linux 8.5.7, 8.5.6, 8.5.5, 8.0.1.3, 8.0.1.2, 8.0.1.1, 8.0.1, 8.0 Business Integration IBM Integration Designer Installation Linux 8.5.7, 8.5.6, 8.5.5, 8.5.1.2, 8.5.1.1, 8.5.0.1, 8.5, 8.0.1.3, 8.0.1.2, 8.0.1.1, 8.0.1, 8.0 
+PRODUCT ALIAS/SYNONYM
+ BPM

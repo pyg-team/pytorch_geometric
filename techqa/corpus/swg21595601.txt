@@ -1,0 +1,36 @@
+Title: IBM DataStage job with ODBC Connector receives an error when using LOB Column - United States
+
+Text:
+Odbc Connector; LOB SQL CLOB BLOB TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When selecting data on a SQL server table using ODBC Connector stage the job sometime fails with the following error:
+
+table,0: ODBC function "SQLGetData" reported: SQLSTATE = 07009: Native Error Code = 0: Msg = [IBM(DataDirect OEM)][ODBC SQL Server Driver] Invalid Descriptor Index (CC_OdbcInputStream::getTotalSize, file CC_OdbcInputStream.cpp, line 349) 
+
+CAUSE
+Some ODBC drivers have a limitation when you are working with large object (LOB) columns. With the SQL Server drivers, if a select list contains a LOB column, the LOB column must be listed last in the select list.
+
+DIAGNOSING THE PROBLEM
+For these drivers, there are two different scenarios where the query fails:
+
+
+ * The LOB columns are not listed last. 
+ * You specify a wildcard asterisk (*) for the select list and the position of the LOB column in the table is not the last column in that table.
+
+
+When you use drivers that have this limitation and you have LOBs in your table, you must ensure that the LOB columns are listed last in the select list. 
+
+In this example, you have two LOB columns in the "Employees" table: "Description" and "Comments". If you write the following SELECT statement and run the job, the job fails: 
+
+select EmployeeID, Description , Comments , Photo from Employees 
+
+This is because the select list includes the Photo column after the LOB columns. 
+
+Edit this statement to move the LOBs to the end as specified in the following statement: 
+
+select EmployeeID, Photo, Description , Comments from Employees 
+
+The LOB columns are now at the end of the statement. The job will run successfully. 
+RESOLVING THE PROBLEM
+Ensure that the LOB columns are listed last in the select statement.

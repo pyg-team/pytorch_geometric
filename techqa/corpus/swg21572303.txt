@@ -1,0 +1,37 @@
+Title: IBM Rational Synergy 7.1 / Microsoft Source Code Control Interface (MSSCCI) 2.1 integration: Versions compatibility - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I'm using the IBM Rational Synergy 7.x / Microsoft Source Code Control Interface (MSSCCI) 2.1 integration.
+What are the requirements? 
+
+CAUSE
+This Technote ties together information from the following documents, and adds a comment about Synergy 7.2 compatibility: 
+
+ * "IBM Rational Synergy for Microsoft Source Code Control Interface Powerbuilder 2.1 User's Guide" [http://publib.boulder.ibm.com/infocenter/rsdp/v1r0m0/topic/com.ibm.help.download.synergy.doc/pdf71/pb_help_2.1.pdf] 
+ * "Latest on Synergy and Change" [ftp://public.dhe.ibm.com/partnerworld/iic/dallas/1.19_21.2011_Rational_Systems_Engineering_Conf/RSEC_TX2011_SynergyChange_Whats_new.pdf] 
+ * readme for "Synergy / MSSCCI 2.1.0.1 iFix001" [http://download4.boulder.ibm.com/sar/CMA/RAA/02bze/0/7.1-RATL-MSCCI-IF2.1.0.1.01.README.htm]
+
+
+
+
+
+
+
+ANSWER
+The "IBM Rational Synergy for Microsoft Source Code Control Interface Powerbuilder 2.1 User's Guide" presents the following requirements : 
+
+ *  PowerBuilder 10.5 Synergy 7.1 server (UNIX or Windows) Synergy 7.1 client on Windows XP Professional SP2 or Windows Vista (in version 2.1.01 iFix001, Windows Server 2003 R2 Standard Edition is added) 
+
+The document "Latest on Synergy and Change" (2010), as well as the readme for "Synergy / MSSCCI 2.1.0.1 iFix001" states this: 
+
+ *  The Synergy / MSSCCI 2.1 integration also supports Visual Studio 6 
+ * 
+ * 
+
+
+At the time this Technote was written, the support for Synergy 7.2 is officially not provided -- even in version 2.1.0.1 iFix001 (the readme still only claims compatibility with 7.1 and 7.1a). However, due to Synergy 7.2's similarity to 7.1, no major cases of Synergy 7.2 / MSSCCI 2.1.0.1 iFix001 integration incompatibility have been raised so far. 
+
+Support for PowerBuilder 12.5 is still strictly not provided in 2.1.0.1 iFix001.

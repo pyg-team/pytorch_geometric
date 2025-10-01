@@ -1,0 +1,92 @@
+Title: IBM (SFTP) Client terminates with error.  MAC check failed - United States
+
+Text:
+ssp; mac; sftp TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SFTP adapters were changed to enable SHA-2 compliant ciphers and MACS. 
+
+Trading Partner is using using Globalscape EFT Server Enterprise 7.2. 
+Connection fails with a 'MAC check failed' error. 
+
+SYMPTOM
+Client Logs 
+
+STATUS:> [5/16/2017 10:08:11 AM] Client's KEXINIT packet:
+cookie: EF3861832434325C0C476E5FAAE1A3E6
+kex algs: diffie-hellman-group14-sha1,diffie-hellman-group-
+exchange-sha1
+host key algs: ssh-rsa,ssh-dss
+c2s encr algs: twofish256-cbc,aes256-cbc,aes256-ctr,twofish-cbc,3des-
+cbc,twofish128-cbc,aes128-cbc,aes128-ctr,cast128-cbc,blowfish-cbc,arcfour
+s2c encr algs: twofish256-cbc,aes256-cbc,aes256-ctr,twofish-cbc,3des-
+cbc,twofish128-cbc,aes128-cbc,aes128-ctr,cast128-cbc,blowfish-cbc,
+arcfour
+c2s mac algs: hmac-sha2-512,hmac-sha2-256,hmac-sha1,hmac-md5,hmac-
+sha1-96,hmac-md5-96
+s2c mac algs: hmac-sha2-512,hmac-sha2-256,hmac-sha1,hmac-md5,hmac-
+sha1-96,hmac-md5-96
+c2s cmpr algs: zlib,none
+s2c cmpr algs: zlib,none
+c2s languages:
+s2c languages:
+1. kex follows: false
+STATUS:> [5/16/2017 10:08:11 AM] Starting first key exchange
+STATUS:> [5/16/2017 10:08:11 AM] Server version string: SSH-2.0-Maverick_SSHD
+Protocol version: 2.0
+STATUS:> [5/16/2017 10:08:11 AM] Server's KEXINIT packet:
+cookie: 1C5B3DD722EC9C3CED6CB74A83411C7B
+kex algs: diffie-hellman-group1-sha1,diffie-hellman-group-
+exchange-sha256,diffie-hellman-group-exchange-sha1
+host key algs: ssh-rsa
+c2s encr algs: aes128-ctr,aes256-ctr,aes192-ctr,aes256-cbc,aes192-cbc,3des-cbc
+s2c encr algs: aes128-ctr,aes256-ctr,aes192-ctr,aes256-cbc,aes192-cbc,3des-cbc
+c2s mac algs: hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-96,hmac-sha2-
+256-96,hmac-sha1,hmac-sha1-96
+s2c mac algs: hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-96,hmac-sha2-
+256-96,hmac-sha1,hmac-sha1-96
+c2s cmpr algs: none
+s2c cmpr algs: none
+c2s languages:
+s2c languages:
+1. kex follows: false
+STATUS:> [5/16/2017 10:08:11 AM] Server host key: algorithm = ssh-rsa, size = 2048
+MD5 Fingerprint: 9e:38:e2:2e:92:02:6b:4f:51:e8:1e:51:34:b2:a9:2e
+Bubble Babble: xizar-tihad-sasif-cogeg-saloc-gebaz-tahuc-dykeg-davov-gukul-sixix
+STATUS:> [5/16/2017 10:08:11 AM] First key exchange completed
+Negotiated algorithms:
+kex alg: diffie-hellman-group-exchange-sha1
+host key alg: ssh-rsa
+c2s encr alg: aes256-cbc
+s2c encr alg: aes256-cbc
+c2s mac alg: hmac-sha2-512
+s2c mac alg: hmac-sha2-512
+c2s cmpr alg: none
+s2c cmpr alg: none
+ERROR:> [5/16/2017 10:08:11 AM] MAC check failed
+ERROR:> [5/16/2017 10:08:11 AM] Can't connect to sftp.host.com:20022. SFTP21 error = #0.
+STATUS:> [5/16/2017 10:08:11 AM] SFTP21 connection closed.
+
+
+CAUSE
+Client software may have a problem with hmac-sha2-512.
+
+
+DIAGNOSING THE PROBLEM
+Suggest trying hmac-sha2-256 and removing or reorder list on SSP SFTP Adapter > Security. 
+
+ 
+
+Test OpenSSH client going to SSP SFTP adapter using only hmac-sha2-256 - Test Successful 
+
+Command: sftp -oPort=1234 -oMACS=hmac-sha2-512 userid@nodename
+
+
+RESOLVING THE PROBLEM
+Suggest client trying hmac-sha2-256.
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling Secure Proxy

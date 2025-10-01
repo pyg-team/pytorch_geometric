@@ -1,0 +1,166 @@
+Title: IBM LTO Ultrium 3581-2U Release Notes - United States
+
+Text:
+ FIX README
+
+ABSTRACT
+ LTO Ultrium 3581-2U Release Notes 
+
+CONTENT
+
+Problem
+3581-2U Release Notes Fix List
+
+IBM 3581-2U Library 3.50 Release Notes
+
+These release notes document the IBM 3581-2U 3.50 library firmware release.
+
+Component Firmware
+
+The following component firmware is required for this release: 
+
+ * Library: 3.50 
+ * Drives: LTO-3 64D0, LTO-2 5AT0
+
+
+Enhancements and Bug fixes  * Fix firewall/ subnet issue (already fixed in PFE 3.21): 
+   Due to a bug in rev. 3.20 it had not been possible to address the RMU across subnet boundaries 
+ * Resolve initialisation problem (already fixed in PFE 3.23):
+   under certain instances the loader did not always unload cartridges in sequential mode as expected 
+ * Merge codes into one common code for models L28, F28, L38, F38, L38 HVEC and F38 HVEC 
+ * Remove menu item “Model number” from OCP information menu 
+ * Fix FC status issue: 
+   The F28 had not been reporting the FC status correctly 
+ * Fix cartridge misinterpretation issue (CMVC 205) 
+   If the cartridge label of an LTO2 cartridge contained the combination “L1”, the cartridge type was changed from “L2” to “L1”.
+
+
+IBM 3581-2U Library 3.20 Release Notes 
+
+These release notes document the IBM 3581-2U 3.20 library firmware release. 
+
+Component Firmware 
+
+The following component firmware is required for this release:  * Library: 3.20 
+ * Drives: LTO-3 54K1, LTO-2 53Y2
+
+
+Enhancements and Bug fixes  * Cannot access to RMU via web browser if outside firewall 
+ * Options in the RMU are not working properly under Maintenance 
+ * Library device is taking a selection when set to Seq Mode
+
+
+
+
+IBM 3581-2U Library 3.00 Release Notes 
+
+These release notes document the IBM 3581-2U 3.10 library firmware release. 
+
+Component Firmware 
+
+The following component firmware is required for this release:  * Library: 3.10 
+ * Drives: LTO-3 54K1, LTO-2 53Y2
+
+
+Enhancements and Bug fixes  * Mac Address added to loader information page 
+ * Loader reset after changing WWNN 
+ * Correct error subcode for drive communication problems. 
+ * Drive status in QuickStatus corrected, factory defaults' added 
+ * Now relogin is possible after web page timeout 
+ * Now MONITOR is displayed when loader is locked by Serial Monitor 
+ * 'None' is displayed if no robotic activity 
+ * RMU - Autoloader- Status Number of Retries removed 
+ * ip-address configuration corrected 
+ * 24 not allowed in hh and 60 not allowed in mm and ss 
+ * Only digits are allowed to enter for OCP pin 
+ * No more empty fields are allowed when changing configuration 
+ * Prevent selecting the same actual ID 
+ * A rescan is done afer an import/export function if the barcode reader is enabled 
+ * Drive error status reworked 
+ * Messages during Library Verify Test is displayed on the webpage: 'Follow the instructions at the OCP!' 
+ * Bulk exchange function reworked to skip Drive unload in case of drive communication error. 
+ * Internal TUR function reworked to become ready also after unit attention 28 00. 
+ * Add fibre channel options to OCP and RMU menu 
+ * Naming of the host interface speed menu items changed 
+ * New fibre channel options implemented 
+ * Additional text added for 4 Gb/s option. 
+ * Loader-ID displayed correctly. 
+ * Error does not disappear until cancel or enter is pushed 
+ * Inventory cursor display for cartridge in drive and in transit reworked... 
+ * Cursor error in 'Already Reserved'- Screen removed 
+ * IP address always with leading '0' 
+ * Specify request for diagnostic cartridge implemented 
+ * LDI maintenance command 'Preserve Drive Dump' implemented. 
+ * Media type field removed from configuration struct. 
+ * RMU and OCP now dynamically formatting model number 
+ * Slider position table and load move tab in Robotics overwritten with Gen 2 values if detected. 
+ * Drive recalibration test implemented 
+ * Improved test for Bad Cartridges. 
+ * Additional check added for media removal prevention after unsuccessful unload. 
+ * High level recovery improved for Drive Load and Unload to skip retries in case of broken Drive communication. 
+ * Firmware Informations added on Firmware Update Page 
+ * Switch labels 'Barcode Reader Functional' and 'Barcode Reader Enabled' 
+ * Bugfix for hang in 'parking..' status when Drive communication failed. 
+ * Load and step adaption process reworked to take attention to comm errors. 
+ * Range of step adaption changed to match Gen 3 Drive. 
+ * Correct slot status if cartridge state is in drive and drive is empty.
+
+
+
+IBM 3581-2U Library 2.20 Release Notes 
+
+These release notes document the IBM 3581-2U 2.20 library firmware release. 
+
+Component Firmware 
+
+The following component firmware is required for this release:  * Library: 2.20 
+ * Drives: 4772
+
+
+Library firmware level 2.20 new functions: 
+ * Drive recalibration test added
+
+
+Library firmware level 2.20 problems resolved: 
+ * Login Page, ?, (Help for that page) 
+ * The "Support" link does not link to the ibm.com/lto/storage 
+ * Help and Login removed from the Login Page 
+ * Maintenance is misspelled on the RMU navigation frame 
+ * Wrong Drive Error Code displayed in Quick Status frame 
+ * User Name (Admin or Service) may be inadvertently lost: 
+ * RMU Drive Error Log Display 
+ * RMU Quick Status screen is hard to read and Header is incorrect 
+ * Reset item name on the RMU Configuration page 
+ * Advanced Diagnostics on the RMU (Service log On) 
+ * The Quick Status screen under option Drive Error Code 
+ * OCP user offline, RMU user should get a reserved message 
+ * RMU Configuration Reset menu does not show scsi id 
+ * RMU, Drive Information screen updated with drive firmware number 
+ * Serial Port ipa command 
+ * Thinstor Plus is displayed when "?" is clicked 
+ * RMU HELP pages modified 
+ * Thinstor listed on top of the drive error explanation 
+ * Advanced Diagnostics menu Drop Down selections 
+ * RMU hang state corrected 
+ * Incorrect Device config fields for SCSI and FC on RMU 
+ * RMU Under Advanced Diagnostics menu remove SCSI 
+ * RMU configuration menu changes 
+ * Cycle Power or Reset Notification Message on the RMU and OCP 
+ * The 3581 2U Autoloader forcing itself into reboot
+
+
+
+IBM 3581-2U Library 1.60 Release Notes 
+
+These release notes document the IBM 3581-2U 1.6 library firmware release. 
+
+Component Firmware 
+
+The following component firmware is required for this release:  * Library: 1.6 
+ * Drives: 4770
+
+
+
+Library firmware level 1.6 problems resolved: 
+ * SCSI speed now changeable per RMU 
+ * Corrected timeout condition in the XModem protocol handling on the host side due to new flash memory behavior.

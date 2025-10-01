@@ -1,0 +1,50 @@
+Title: IBM An unexpected exception occurs in IBM Business Process Manager (BPM) when selecting the IBM BPM Documents type to access an Enterprise Content Management (ECM) server on a native Turkish operating system - United States
+
+Text:
+ibpma85relnotes; ibpms85relnotes; ibpme85relnotes; ibpma8501relnotes; ibpms8501relnotes; ibpme8501relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you start the IBM Business Process Manager server on a Turkish operating system without having manually specified a Java virtual machine (JVM) language or when manually setting the JVM language to 'tr' for Turkish, an exception occurs in the SystemOut.log file. Also, IBM Business Process Manager document store operations start to fail. 
+
+SYMPTOM
+Operations accessing IBM Business Process Manager documents and Enterprise Content Management (ECM) operations on the IBM Business Process Manager document store fail. Also, defining the Content Filter for a Content Integration step Search operation or an Event Subscription in Process Designer fails.
+
+
+CAUSE
+The IBM Business Process Manager document store code fails when the JVM runs with a Turkish locale.
+
+DIAGNOSING THE PROBLEM
+In the SystemOut.log file of a stand-alone IBM Business Process Manager Express profile or a IBM Business Process Manager Standard or IBM Business Process Manager Advanced application cluster member, you find this error: 
+
+com.ibm.bpm.embeddedecm.exception.UnexpectedFailureException: CWTDS0000E: Beklenmeyenbirbaþarýsýzlýkoluþtu. Ayrýntýlar: 'FNRCE0066: An unexpected exception occurred. The unexpected exception is chained to this exception. The message is: com.filenet.engine.metadatacache.ObjectStoreCache (initialization failure)'
+Açýklama: Kuraldýþýdurumyayýnlandý.
+Ýþlem: Sunucugünlüðüdosyalarýnabakýn.
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, complete the following steps in the Process Admin Console: 
+
+ 
+
+ 1. Navigate to Servers > Server Types > WebSphere Application Servers.
+    
+    
+ 2. For a stand-alone server or for clusters where each server is part of the application server, navigate to Java and Process Management > Process Definition > Java Virtual Machine > Custom Properties and click New.
+    
+    
+ 3. Enter java.language as the name and en as the value. You can also choose another locale but do not choose "tr".
+    
+    
+ 4. Click OK.
+    
+    
+ 5. Save the configuration.
+    
+    
+ 6. If you have a cluster, synchronize the nodes and restart the application cluster. If you have a stand-alone server, restart it.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Process Server AIX, Linux, Linux zSeries, Solaris, Windows 8.5.0.1, 8.5 Business Integration IBM Business Process Manager Express Process Server Linux, Windows 8.5.0.1, 8.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

@@ -1,0 +1,46 @@
+Title: IBM ILMT Open Mic: Correcting 2 common misconceptions - 10 November 2016 (Includes link to replay; slides are attached) - United States
+
+Text:
+ISS_OPEN_MIC; Endpoint-open-mic; ilmt-open-mic; STEwebcastDocument WEBCAST
+
+ABSTRACT
+ The IBM License Metric Tool Support team addressed two of the most common misunderstandings about ILMT, typically represented by the following questions:
+Why is ILMT telling me I have Product A installed when I don't?
+Why is ILMT assigning too many cores and PVU to my VMs?
+From this presentation customers can gain a better understanding of what ILMT does, how the data is being presented, and what the customer's role is in using ILMT. 
+
+CONTENT
+Les Popow, ILMT specialist in Level 2 Support, spoke about Automated Bundling and how the products presented by ILMT are not to be taken at face value. He also described customer responsibilities, and 
+
+
+explained the reading of the ILMT Sub-capacity report. 
+
+After the presentation, Les answered questions from the audience.
+
+
+
+Audio Replay The recording of the session is available on the IBM Security Support You Tube channel [https://www.youtube.com/IBMSecuritySupport] at 
+https://youtu.be/XIfh-UAgeuc [https://youtu.be/XIfh-UAgeuc] 
+
+
+How to ask questions on the topic To ask a question, please use the "Community questions and discussion" section at the bottom of this page [http://www.ibm.com/support/docview.wss?uid=swg27048985#com.dblue.docview.dwAnswers.questions] or post your question on dW Answers [https://developer.ibm.com/answers/topics/ilmt.html]. 
+
+
+Presentation 2016-11-10 ILMT misconceptions OpenMic-v2.pdf [/support/docview.wss?uid=swg27048985&aid=2]2016-11-10 ILMT misconceptions OpenMic-v2.pdf [/support/docview.wss?uid=swg27048985&aid=1] 
+
+
+About Open Mic Webcasts This Open Mic session was the tenth webcast provided by IBM License Metric Tool Technical Support in 2016. Our goal is to provide insight on how ILMT and IBM BigFix Inventory work and to teach on-going sessions that help both users and administrators understand, maintain, troubleshoot, and resolve issues with the monitoring of their software assets. 
+
+IBM Security Support wants to help you take full advantage of your products. Join us for our Open Mic Webcast series as technical experts share their knowledge and answer your questions. These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient online webcast format. 
+Visit the Support technical exchanges for IBM Security [https://www-947.ibm.com/support/entry/portal/scheduled_tech_exchanges/ibm_security/ibm_security_support_%28general%29?productContext=-551864534] page to see lists of all scheduled and past Open Mic events 
+[https://www-947.ibm.com/support/entry/myportal/scheduled_tech_exchanges/security_systems/security_systems_support_%28general%29?productContext=-1089885148] 
+To be on the mailing list that gets notified about Security Support's Open Mic webcasts, send an e-mail to isssprt@us.ibm.com [isssprt@us.ibm.com?subject=ste%20subscribe%20Endpoint%20And%20Mobility%20Management] with the subject line: 
+ste subscribe Endpoint And Mobility Management 
+
+We welcome you to follow us on Twitter [http://bit.ly/1jZ80d3] @AskIBMSecurity [http://bit.ly/1jZ80d3]. 
+We welcome you to like us on Facebook [https://www.facebook.com/IBM-Security-Support-221766828033861]. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM BigFix Inventory

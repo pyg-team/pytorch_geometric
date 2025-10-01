@@ -1,0 +1,34 @@
+Title: IBM Setting header fields on messages sent through a Results action on IBM WebSphere DataPower SOA Appliance - United States
+
+Text:
+results action; fetch action; url-open; header; header injection; _extension/header/; set variable; set-variable; datapower; 9002; 9003; 9004; 9235 TECHNOTE (FAQ)
+
+QUESTION
+ I am sending data to a destination using the Results action but some of the HTTP headers seem to be missing upon arrival at the destination. I have tried 'Header Injection' but this still does not seem to work. How do I append the Header field(s) to the outgoing request? 
+
+ANSWER
+The IBM WebSphere DataPower SOA appliance provides a local variable that can be used to set the Header(s) in this case. The local variable in question is:
+var://local/_extension/header/
+
+In order for the Header field to be set properly, the header field will have to be set on the input context of the Results action using the var://local/_extension/header/ variable. If only one header needs to be set, then the Set Variable action can be used. If there are a number of headers to set, then the dp:set-variable extension function can be used to accomplish this in a stylesheet (XSL).
+
+For example, if you wish to set the Content-Type header on the input context of the Results action and the Results action's input context is 'testVar', then the following statement can used in your XSL:
+<xsl:template match="/">
+<dp:set-variable name="'var://context/testVar/_extension/header/Content-Type'" value="'text/xml'"/>
+</xsl:template>
+
+Similarly, if you wish to set a header by the name of 'SomeTestHeader' with a value of 'someTestHeaderValue' and the input context for the Results action is set to 'dpvar_2', then the statement to use will be similar to:
+<xsl:template match="/">
+<dp:set-variable name="'var://context/dpvar_2/_extension/header/SomeTestHeader'" value="'someTestHeaderValue'"/>
+</xsl:template>
+
+Once the XSL has been defined to set all the required headers, a Transform action that uses this XSL can be added before the Results action. The input and output context for the Transform action can both be set to NULL since the XSL just needs to execute and set the required header(s).
+
+If the Set Variable action is being used, then the action can be placed before the Results action as well. In this case, the input context of the Set Variable action will have to be the same as the Results actions (dpvar_2).
+
+Note: This same local variable can be used to set the Header field(s) when using the dp:url-open() extension function. In the case that, the Fetch action is being used and the Content-Type header has to be set, this will have to be done using the 'media-type' attribute of the xsl:output element. Below is sample snippet of such XSL statement:
+<xsl:output method="xml" media-type="text/xml" encoding="UTF-8"/>
+
+For more information about the var://local/_extension/header/ variable and dp:set-variable or dp:url-open extension functions, refer to the IBM WebSphere DataPower SOA Appliances: Extension Elements and Functions Catalog.
+
+To access documentation specific to each firmware version, see WebSphere DataPower Product Documentation. [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21377654]#firmware#doc

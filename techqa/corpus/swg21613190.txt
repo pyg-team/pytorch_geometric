@@ -1,0 +1,66 @@
+Title: IBM Launching Amos:  No valid license for Amos was found. ( 11,  4). - United States
+
+Text:
+Amos; 11; 4; No valid license for Amos was found. ( 11; 4).; License; License Authorization Wizard; Activate; Activation; Authorization Code TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I launch the Amos software, and I receive the following error: 
+
+"No valid license for Amos was found. ( 11, 4)." 
+
+SYMPTOM
+Launch Amos, and I receive the following error: 
+
+"No valid license for Amos was found. ( 11, 4)."
+
+Note: In some versions of Amos, if the lservrc file does not exist the first error message will be a Windows Pop-Up stating the following:
+"You have not yet run the License Authorization Wizard to activate Amos. Amos will stop running today unless you activate it."
+
+
+CAUSE
+Please verify that the software was properly installed as per the installation instructions. 
+
+The person who installed the software must be logged into the computer as the Local Administrator with administer privileges?
+
+There can be several possible causes for this error:
+
+(1) The software has not yet been activated and therefore no License File (lservrc) has been created. 
+
+ * 
+
+
+(2) When running the License Authorization Wizard the Licensing File (lservrc) was unable to be created.  * 
+
+
+(3) The license in the License File (lservrc) is invalid, for another software product, for a different version of the software, or has expired. 
+
+(4) The credentials used to log into the computer by the user do not have the correct permissions to read the license file (lservrc). Please see your local IT department for the correct permissions. 
+ENVIRONMENT
+Windows
+
+
+
+RESOLVING THE PROBLEM
+For what ever reason after the installation of the software the activation process did not complete properly. Just by re-running the license authorization wizard again may correct the problem. 
+
+ * 
+ * 
+
+
+1) Run the Amos License Authorization Wizard and activate the Amos Authorization Code. 
+
+ * 
+ * 
+ * 
+ * 
+
+
+2) Verify the licensing file (lservrc) was created in the Amos installation directory. 
+
+3) If the licensing file (lservrc) file exists, open the file with a text editor, and verify there is a license in the file. 
+
+4) If your user permissions do not have the correct permissions to read the license file (lservrc), it is as if the file does not exist. 
+
+See the "Causes" section in this TechNote for more details. RELATED INFORMATION
+ Need more help? Our AMOS forum is Live! [https://developer.ibm.com/answers/search.html?f=&type=question&redirect=search%2Fsearch&sort=relevance&q=%2B[amos]]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]

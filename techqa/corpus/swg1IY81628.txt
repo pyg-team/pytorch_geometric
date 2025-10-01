@@ -1,0 +1,181 @@
+Title: IBM IY81628: MQJMS2005 REASON CODE 2102 WHEN 2035 MQRC_NOT_AUTHORIZED OCCURRED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V6.0 Refresh Pack 6.0.2.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24013482]
+WebSphere MQ V6.0 for iSeries Refresh Pack 6.0.2.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24013496]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24027266]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.10 (FP03) [http://www-01.ibm.com/support/docview.wss?uid=swg24029987]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere MQ JMS application connects to a queue manager and
+   attempts to OPEN a queue. The MQOPEN fails because the USER ID
+   which is attempting the MQOPEN does not have the appropriate
+   authority. This is reported as reason code 2035 =
+   MQRC_NOT_AUTHORIZED. However, the exception which is
+   propagated back to the JMS application is MQJMS2005 with
+   reason code 2102 = MQRC_RESOURCE_PROBLEM.
+   
+   This is because we convert the MQException to a java
+   ResourceException, then later need the MQException form.
+   ADDITIONAL KEYWORDS: RC2035 RC2102 NOTAUTH authorized security
+   permissions resource problem javax.jms.JMSException: MQJMS2005
+   userid
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Correct the authorization problem by giving the userid the
+   authority it needs or by using a different userid.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of WebSphere MQ's JMS API
+   
+   Platforms affected:
+    All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   A security error (2035 MQRC_NOT_AUTHORIZED) occurs due to the
+   userid executing the code not having +inq authorizations to
+   the queue manager. Instead of this being propagated to the
+   application, it is caught, and a 2102 resource error
+   (MQRC_RESOURCE_PROBLEM) occurs instead.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQ Java API has been modified to correctly ensure that the
+   2035 security exception is correctly passed back to the
+   application.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Refresh Pack 6.0.2.0
+   --------           --------------------
+   Windows            U200253
+   AIX                U806614
+   HP-UX (PA-RISC)    U806615
+   HP-UX (Itanium)    U806659
+   Solaris (SPARC)    U806616
+   Solaris (x86-64)   U806856
+   iSeries            SI24240
+   Linux (x86)        U806639
+   Linux (x86-64)     U806667
+   Linux (zSeries)    U806641
+   Linux (Power)      U806659
+   Linux (s390x)      U806661
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY81628
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ FOR AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7201
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-02-14
+   
+   
+ * CLOSED DATE
+   2006-02-27
+   
+   
+ * LAST MODIFIED DATE
+   2007-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ FOR AIX
+   
+   
+ * FIXED COMPONENT ID
+   5724H7201
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

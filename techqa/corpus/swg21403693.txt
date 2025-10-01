@@ -1,0 +1,107 @@
+Title: IBM Operations error on add or modify operations - United States
+
+Text:
+operations error; schema update; schema edit; V3.modifiedschema; SQL0206N TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When working with directory server from any ldap client to perform an add/modify/replace on a specific attribute (of any entry), an operations error may be returned by the ldap server. The operations error can show up even when adding a new entry with the troubled attribute. 
+
+SYMPTOM
+The following symptoms are seen when the operations error is returned by the ldap server to the ldap client when working with a specific attribute. 
+
+Case A:- Entry Add:
+audit.log:
+AuditV3--2009-09-02-23:46:00.148+00:00DST--V3 Add--bindDN: cn=root--client: 10.110.16.63:19752--connectionID: 239--received: 2009-09-02-23:45:59.128+00:00DST--Operations error
+controlType: 1.3.18.0.2.10.19
+criticality: false
+entry: uid=1243658709,ou=users,ou=people,o=sample.com
+attributes: mail, uid, userpassword, givenname, description, objectclass, sn, cn, vzmanager
+
+ibmslapd ascii trace shows the following message:
+244:23:45:59 T3756 50077221 18 usec SQLPrepare(INSERT INTO DB2LDAP.VZMANAGER (EID, VZMANAGER, VZMANAGER_T, RVZMANAGER_T) VALUES ( ?, ?, ?, ? )) => 0,hstmt=f001c
+...
+244:23:45:59 T3756 henv=0,hdbc=0,hstmt=f001c,native retcode = -206; state = "42S22"; message = "[IBM][CLI Driver][DB2/NT] SQL0206N "VZMANAGER_T" is not valid in the context where it is used. SQLSTATE=42703"
+
+Case B:- Entry modify to replace attribute
+audit.log:
+AuditV3--2009-09-03-09:20:32.806+00:00DST--V3 Modify--bindDN: cn=root--client: 10.110.16.63:56808--connectionID: 595--received: 2009-09-03-09:20:32.795+00:00DST--Operations error
+object: eruid=ECatu,ou=systemUser,ou=itim,o=sample.com
+replace: erworkflow
+
+ibmslapd ascii trace shows the following message:
+245:09:20:32 T2057 K1339511 46294112 35 usec SQLPrepare(INSERT INTO IDSINST1.ERWORKFLOW (EID, ERWORKFLOW, RERWORKFLOW) VALUES ( ?, ?, ? )) => 0, hstmt=10000a
+...
+245:09:20:32 T2057 K1339511 henv=0,hdbc=0,hstmt=10000a,native retcode = -206; state = "42S22"; message = "[IBM][CLI Driver][DB2/AIX64] SQL0206N "RERWORKFLOW" is not valid in the context where it is used. SQLSTATE=42703"
+
+
+CAUSE
+Common cause of both Case A and Case B above are manual changes (via editing V3.* schema files) to the ldap schema definition on the attributes vzmanager and erworkflow respectively. 
+
+
+Case A: The initial size of vzmanager attribute was 40 (less than 240) char with a directory string syntax, when the database was initialized and the table got created.
+attributetypes: ( vzManager-OID NAME 'vzmanager' DESC 'vzmanager description' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+IBMattributetypes: ( vzManager-OID DBNAME ( 'vzmanager' 'VZMANAGER' ) ACCESS-CLASS NORMAL LENGTH 40 EQUALITY ORDERING SUBSTR APPROX REVERSE )
+This makes ITDS to create a table with the following DDL:
+CREATE TABLE "DB2LDAP "."VZMANAGER" (
+"EID" INTEGER NOT NULL , 
+"VZMANAGER" VARCHAR(40) NOT NULL , 
+"RVZMANAGER" VARCHAR(40) ) 
+IN "USERSPACE1" ; 
+
+But after the table got created the ldap schema definition of vzmanager got changed manually to the following, making the ldap schema definition non-matching with the corresponding database table definition:
+IBMattributetypes: ( vzManager-OID DBNAME ( 'vzmanager' 'VZMANAGER' ) ACCESS-CLASS NORMAL LENGTH 256 EQUALITY ORDERING SUBSTR APPROX REVERSE )
+
+Case B: The erWorkflow attribute was not provided with a specific IBMattributetypes definition, but a length was mentioned along with attributetypes definition, which makes it to take a length of 1024.
+attributetypes: ( 1.3.6.1.4.1.6054.1.1.42 NAME 'erWorkflow' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{1024} SINGLE-VALUE )
+This makes ITDS to create a table with the following DDL:
+CREATE TABLE "IDSINST1"."ERWORKFLOW" (
+"EID" INTEGER NOT NULL , 
+"ERWORKFLOW" VARCHAR(1024) NOT NULL , 
+"ERWORKFLOW_T" VARCHAR(240) NOT NULL , 
+"RERWORKFLOW_T" VARCHAR(240) NOT NULL ) 
+IN "USERSPACE1" ; 
+
+But after the table got created the ldap schema definition of erWorkflow got changed manually to the following, making the ldap schema definition non-matching with the corresponding database table definition (note that the size {1024} is removed, which makes ITDS to consider a default string syntax size of 240):
+attributetypes: ( 1.3.6.1.4.1.6054.1.1.42 NAME 'erWorkflow' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+
+
+RESOLVING THE PROBLEM
+CAUTION: Do not manually edit the ldap schema files or copy over other system's schema files when the database is already initialized and tables are created in an ldap server's database. 
+
+Note: Use ldap modify with a suitable ldif against a running ldap sever, to adjust the length of any attribute. The ldap server will evaluate the feasibility and will accept/reject the modify operation appropriately. Its always advised to make all necessary schema modifications before loading any data into the ldap server's database. 
+
+Case A: Manually undo the change made to the ldap schema definition on the vzmanager attribute to make its length back to 40. 
+
+ IBMattributetypes: ( vzManager-OID DBNAME ( 'vzmanager' 'VZMANAGER' ) ACCESS-CLASS NORMAL LENGTH 40 EQUALITY ORDERING SUBSTR APPROX REVERSE ) 
+
+If there is a need to have the size of 256 on the vzmanager attribute, follow the data reload procedure down below. 
+
+Case B: Manually update the ldap schema definition on the erWorkflow attribute to include the length:
+attributetypes: ( 1.3.6.1.4.1.6054.1.1.42 NAME 'erWorkflow' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{1024} SINGLE-VALUE ) 
+
+If there is a need to have the default size of 240 on the erWorkflow attribute, follow the data reload procedure down below. 
+
+Data reload procedure (with out disturbing ids/db2 instances): 
+
+- Export all data into an ldif file using "db2ldif -I instance -o data.ldif"
+- Drop the currently configured database using "idsucfgdb -I instance -r -n"
+- Examine the ldap schema and have necessary modifications done manually.
+- Create a new/blank database using "idscfgdb -I instance -a dbuser -w dbuserpw -t dbname -l /dblocation -n"
+- Note that the instances are neither being dropped nor their configuration being modified.
+- Load the ldif using either ldif2db or bulkload, which will initialize the database with table definitions as per the current ldap schema.
+- Also note to put any database level configuration updates as per your requirements. 
+
+ 
+
+Also see the technote titled "Increasing a string attribute larger than 240 characters [http://www.ibm.com/support/docview.wss?rs=767&uid=swg21397049]" for additional information.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITDS
+TDS
+ldap server
+DS
+Tivoli Directory Server
+Directory Server

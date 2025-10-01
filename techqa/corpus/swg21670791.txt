@@ -1,0 +1,49 @@
+Title: IBM Error Deleting Content from FileNet Content Engine - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to delete content using Content Engine results in multiple errors in the Content Engine logs.
+
+
+SYMPTOM
+Following errors are in the p8_server_trace.log or p8_server_error.log 
+
+Operation [delete] cannot be performed while content is being migrated to Fixed Content Device
+
+2014-04-09T23:39:01.537Z 33083308 CSTG FNRCE0066E - ERROR method name: rollfwdDeleteAllContentElements principal name: svcP8LDAPProd Global Transaction: false User Transaction: false Exception Info: An unexpected exception occurred. The unexpected exception is chained to this exception. Failed to delete content element file: \\FileStore\\Staging\content\FN3\FN5\A42C4B13-0EB2-40A1-AA02-40B20AFEA449{4C519564-E997-4971-8EC2-E5D6066D2418}0
+com.filenet.api.exception.EngineRuntimeException: FNRCE0066E: E_UNEXPECTED_EXCEPTION: An unexpected exception occurred. The unexpected exception is chained to this exception. Failed to delete content element file: \\FileStore\\Staging\content\FN3\FN5\A42C4B13-0EB2-40A1-AA02-40B20AFEA449{4C519564-E997-4971-8EC2-E5D6066D2418}0
+
+Caused by: com.filenet.api.exception.EngineRuntimeException: FNRCC0010E: CONTENT_CA_DELETE_FAILED: Unable to delete file: \\FileStore\\Staging\Staging\content\FN3\FN5\A42C4B13-0EB2-40A1-AA02-40B20AFEA449{4C519564-E997-4971-8EC2-E5D6066D2418}0.
+
+2014-04-09T23:39:02.709Z 28862886 ENG FNRCC0120E - ERROR method name: executeChangeWork principal name: svcP8AdminProd Global Transaction: true User Transaction: false Exception Info: Operation [delete] cannot be performed while content is being migrated to Fixed Content Device. Unable to delete object {DE8729C4-2663-4946-AC21-F1AF12E3EDDD} in enum property Versions.
+com.filenet.api.exception.EngineRuntimeException: FNRCC0120E: CONTENT_FXCA_OPERATION_FAILED_CONTENT_IS_MIGRATING: Operation [delete] cannot be performed while content is being migrated to Fixed Content Device. Unable to delete object {DE8729C4-2663-4946-AC21-F1AF12E3EDDD} in enum property Versions. failedBatchItem=0 errorStack={
+
+Caused by: com.filenet.api.exception.EngineRuntimeException: FNRCC0120E: CONTENT_FXCA_OPERATION_FAILED_CONTENT_IS_MIGRATING: Operation [delete] cannot be performed while content is being migrated to Fixed Content Device. failedBatchItem=0
+
+
+CAUSE
+The IBM WebSphere service is started with the Local System Account. The Local System Account does not have network access. Thus, the FileStore which is not local to the WAS server is not accessible to that user and documents cannot be deleted.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Access the WebSphere Server
+    
+    
+ 2. Open Services
+    
+    
+ 3. Right click on the IBM WeSphere Application Server Service
+    
+    
+ 4. Choose Properties
+    
+    
+ 5. Click on the Log On Tab
+    
+    
+ 6. Change from Local System Account to This Account using a user that has Network Access and Full
+    Control of the FileStore directory structure

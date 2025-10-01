@@ -1,0 +1,197 @@
+Title: IBM Frequently asked questions (FAQ) about WebSphere ILOG Decision Validation Services (last updated October 23, 2014) - United States
+
+Text:
+FAQ; IBM WebSphere ILOG Decision Validation Services; installation; usage; troubleshooting; cluster; clustering; DVS; decision validation services; information; software; hardware; requirements; support; download; multiple-execution server; execution; tests; multiple execution; rule executions; persist; Decision Warehouse; Test Suite; scenarios; Rule Team Server PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The following list includes frequently asked questions (FAQ) about WebSphere ILOG Decision Validation Services (DVS) to help you troubleshoot problems and enhance your use of the product. 
+
+CONTENT
+Note: As of March 2015, this FAQ is no longer updated. To find answers to your Operational Decision Manager questions, see the developerWorks Answers site at https://developer.ibm.com/answers/smartspace/odm/ [https://developer.ibm.com/answers/smartspace/odm/] or follow the ibmodm tag [https://developer.ibm.com/answers/topics/ibmodm.html]. To learn more about how to connect with the Operational Decision Manager community and get support, see https://developer.ibm.com/odm/home/connect/ [https://developer.ibm.com/odm/home/connect/]. 
+
+
+
+
+
+Do you have ideas for other FAQ about WebSphere ILOG Decision Validation Services (DVS)? Give us your feedback in the Rate this page section.
+Additional FAQ documents are available in the Related information section.
+
+
+
+
+FAQ table of contents 
+
+
+
+
+TAB NAVIGATION
+ * Installing
+
+ * Usage
+
+ * Troubleshooting
+
+
+
+Installing 
+
+Where can I find the software and hardware requirements for DVS?
+
+
+
+Where can I find information about downloading DVS? 
+#inst02
+
+Back to top
+
+
+
+Usage 
+
+Where can I find information about using DVS?
+
+
+
+How can I cluster Decision Validation Services?
+
+
+
+#use01Can I use the multiple-execution server to distribute the execution of tests?
+
+
+
+How do I prevent DVS rule executions from being persisted in the Decision Warehouse? 
+
+
+
+How do I use spaces as valid input values in a Decision Validation Services (DVS) Excel spreadsheet? 
+
+
+Back to top
+
+
+
+Troubleshooting 
+
+Where can I find support information for DVS?
+
+
+
+I do not have access to Test Suite or scenarios in Rule Team Server and the Decision Warehouse tab is not enabled, What should I do?
+
+
+
+How can I improve the performance of DVS and Decision Warehouse?
+
+
+Back to top
+
+
+
+
+
+
+FAQ questions and answers
+
+
+TAB NAVIGATION
+ * Installing
+
+ * Usage
+
+ * Troubleshooting
+
+
+
+Installing 
+The following questions and answers refer to installation. 
+
+
+ 
+FAQ: Where can I find the software and hardware requirements for DVS?
+Answer: See the WebSphere ILOG JRules Business Rule Management System Version 7.1, hardware and software requirements [http://www.ibm.com/support/docview.wss?uid=swg27018135]. 
+
+
+ 
+FAQ: Where can I find information about downloading DVS? 
+Answer: See the [http://www-01.ibm.com/support/docview.wss?uid=swg27018135]WebSphere ILOG JRules BRMS V7.1 Download document [http://www.ibm.com/support/docview.wss?uid=swg24030938]. 
+
+
+Back to top
+
+
+
+Usage 
+The following questions and answers refer to usage. 
+
+
+
+FAQ: Where can I find information about using DVS?
+Answer: See the online documentation [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp].
+
+
+ 
+FAQ: How can I cluster Decision Validation Services?
+Answer: See Clustering Decision Validation Services [http://www.ibm.com/support/docview.wss?uid=swg21425487].
+
+
+ 
+FAQ: Can I use the multiple-execution server to distribute the execution of tests?
+Answer: Yes. See Distribute Decision Validation Service tests on different Rule Execution Server instances [https://www.ibm.com/support/docview.wss?uid=swg21502095].
+
+
+ 
+FAQ: How do I prevent DVS rule executions from being persisted in the Decision Warehouse? 
+Answer: See [http://www-01.ibm.com/support/docview.wss?uid=swg27018135]Configure Decision Validation Services not to use Decision Warehouse [http://www.ibm.com/support/docview.wss?uid=swg21441394]. 
+
+
+ 
+FAQ: How do I use spaces as valid input values in a Decision Validation Services (DVS) Excel spreadsheet? 
+Answer: See Spaces as valid input values in a Decision Validation Services (DVS) Excel spreadsheet [http://www-01.ibm.com/support/docview.wss?uid=swg21677735]. 
+
+
+
+Back to top
+
+
+
+Troubleshooting 
+The following questions and answers refer to troubleshooting. 
+
+
+ 
+FAQ: Where can I find support information for DVS?
+Answer: Go to the online support center [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_ILOG_Decision_Validation_Services].
+
+
+ 
+FAQ: I do not have access to Test Suite or scenarios in Rule Team Server and the Decision Warehouse tab is not enabled, What should I do?
+Answer: See Enabling Decision Validation Services and Decision Warehouse in Rules Team Server and Rule Execution Server [http://www.ibm.com/support/docview.wss?uid=swg21440249].
+
+
+ 
+FAQ: How can I improve the performance of DVS and Decision Warehouse?
+Answer: The document Improve Performance of Decision Validation Services (DVS) and Decision Warehouse [http://www.ibm.com/support/docview.wss?uid=swg21588859] addresses how to improve performance when you are conducting DVS tests and using Decision Warehouse.
+
+
+
+Back to top
+
+
+RELATED INFORMATION
+ FAQ - Business Space powered by WebSphere [http://www.ibm.com/support/docview.wss?rs=0&uid=swg27020117]
+FAQ - IBM Business Monitor [http://www.ibm.com/support/docview.wss?rs=0&uid=swg27017940]
+FAQ - IBM Business Process Manager [http://www.ibm.com/support/docview.wss?uid=swg27021829]
+FAQ - WebSphere Business Compass [http://www.ibm.com/support/docview.wss?rs=0&uid=swg27017900]
+FAQ - WebSphere Integration Developer [http://www.ibm.com/support/docview.wss?rs=0&uid=swg27016440]
+FAQ - WebSphere ILOG Rule Team Server [http://www.ibm.com/support/docview.wss?uid=swg27023695]
+FAQ - WebSphere ILOG JRules [http://www.ibm.com/support/docview.wss?uid=swg27023694]
+FAQ - WebSphere Decision Center [http://www.ibm.com/support/docview.wss?uid=swg27023698]
+FAQ - WebSphere Decision Server Rules [http://www.ibm.com/support/docview.wss?uid=swg27023696]
+FAQ - WebSphere Decision Server Events [http://www.ibm.com/support/docview.wss?uid=swg27023697]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ IBM WebSphere ILOG Decision Validation Services

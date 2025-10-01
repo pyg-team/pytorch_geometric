@@ -1,0 +1,155 @@
+Title: IBM IV15697: ZERO VALUES IN SAP WORKSPACE FOR FRONT END NETWORK TIMES & GUI TIMES - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring for Applications: mySAP Agent, 6.2.0-TIV-ITM_SAP-IF0015 [http://www-01.ibm.com/support/docview.wss?uid=swg24033394]
+ITCAM Agent for SAP Applications, 7.1.0-TIV-ITM_SAP-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24033552]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem description
+   
+   mySAP 06.20.00.07 on AIX 6.1 64bit (have IF0014 but not applied
+   yet).
+   
+   Why are the values for Front-End Network Time and GUI-Time
+   zeroes?  Is
+   this because SAP is not tracking this metric and providing it to
+   mySAP?
+   
+   See attached screenshot.
+   .
+   Business impact ( BusImpact )
+   Performance information concerning response times or delays
+   should
+   never be zero. How can a response time measurement > 0 have
+   component
+   metrics that ARE all zero (0)?
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  IV15697: FUI Time and FENetTime values are zero
+   
+   
+    Why are the values for Front-End Network Time and GUI-Time
+   zeroes?  Is this because SAP is not tracking this metric and
+   providing it to mySAP?
+   
+   If we compare the values of Transaction Performance attribute
+   with  sap ST03N output then this will give mismatch values which
+   is reported by customer.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The formal fix for this APAR is contained in the following
+   package:
+   IBM(R) Tivoli(R) Monitoring for Applications: mySAP Agent,
+   Version 6.2.0
+   Limited Availability Fix: 0015, 6.2.0-TIV-ITM_SAP-IF0015
+   Component ID: 5724B97SO
+   Date: June, 2012
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV15697
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * REPORTED COMPONENT ID
+   5724B97SO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-15
+   
+   
+ * CLOSED DATE
+   2012-06-05
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * FIXED COMPONENT ID
+   5724B97SO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

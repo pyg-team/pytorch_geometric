@@ -1,0 +1,150 @@
+Title: IBM WebSphere ILOG JRules Business Rule Management System Version 7.1, hardware and software requirements - Windows - United States
+
+Text:
+DSRdoc PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document lists the hardware and software requirements for WebSphere ILOG JRules BRMS V7.1 on the Windows platform. 
+
+CONTENT
+This page describes the minimum product levels that must be installed before opening a problem report with the WebSphere ILOG JRules support team. Because other products frequently ship fixes, updates, and new releases, testing every configuration is not possible. In general, you can install and run with minor updates to supported products if those updates are forward compatible. 
+
+Supporting software (for example LDAP servers) can run, but does not need to run, on the same computer or operating system where the product runs. For additional information: 
+
+ * Check supporting software requirements to determine whether the supporting software runs locally or is connected remotely to the product. 
+ * Refer to the document corresponding to the operating system on which you want to run the supporting software, see List of supported operating systems for WebSphere ILOG JRules Version 7.1. [http://www.ibm.com/support/docview.wss?rs=4043&uid=swg27018135]
+
+
+This document identifies supporting software that runs on the Windows operating system on x86 platform. This table applies to WebSphere ILOG Decision Validation Services, JRules (including both the Rule Execution Server and Rule Studio modules) and Rule Team Server. 
+
+Operating Systems [/support/docview.wss?uid=swg27018144&amp;aid=1] For 32-bit Windows  * Microsoft Windows Server 2003 (Standard, Enterprise and Datacenter Edition) SP1, SP2, R2 
+ * Microsoft Windows Server 2008 (Standard, Enterprise and Datacenter Edition) SP1, SP2 
+ * Microsoft Windows Vista (Business, Enterprise and Ultimate Edition) SP1 
+ * Microsoft Windows XP SP2, SP3 
+ * For JRules 7.1.1 and future fix packs, Microsoft Windows 7 (Professional, Enterprise and Ultimate Edition)
+
+
+For 64-bit Windows  * Microsoft Windows Server 2003 (Standard, Enterprise and Datacenter x64 Edition) SP1, SP2, R2 
+ * Microsoft Windows Server 2008 (Standard, Enterprise and Datacenter x64 Edition) SP1, SP2 
+ * Windows Vista (Business, Enterprise and Ultimate Edition) SP1 
+ * Windows XP SP2, SP3 
+ * For JRules 7.1.1 and future fix packs, Microsoft Windows 7 (Professional, Enterprise and Ultimate Edition) and Microsoft Windows Server 2008 R2 (Standard, Enterprise and Datacenter x64 Edition) are supported
+   
+
+Hardware Requirements
+
+[/support/docview.wss?uid=swg27018144&amp;aid=1] For 32-bit Windows  * Intel Pentium at 3 GHz for single core system, 2.4 GHz for dual cores or faster 
+ * Intel EM64T or AMD Opteron (32-bit kernel support only) 
+ * Minimum 1 GB physical memory; 2 GB recommended 
+ * DVD/CD-ROM drive
+
+
+For 64-bit Windows  * AMD Opteron or Intel EM64T (64 bit kernel support) 
+ * Minimum 1 GB physical memory; 2 GB recommended 
+ * DVD/CD-ROM drive
+   
+
+Application Server [/support/docview.wss?uid=swg27018144&amp;aid=1]  * IBM WebSphere Application Server 6.1.0.21, 7.0 and future fix packs
+   (Base, Express, Network Deployment, Developers Edition)
+   IBM WebSphere Application Server product site [http://www.ibm.com/software/webservers/appserv/was/index.html] 
+ * IBM WebSphere Application Server Community Edition 2.1.1.3 and future fix packs 
+ * Apache Tomcat 6.0 and future fix packs 
+ * JBoss 4.2.3, 5.0.1, JBoss Enterprise Application Platform 4.3 and future fix packs
+   For JRules 7.1.1 and future fix packs, JBoss Application Server 5.1, JBoss Enterprise Application Platform 5.0 and future fix packs are supported 
+ * Sun Java System Application Server 8.2 and future fix packs 
+ * WebLogic Server 9.2.3, 10.0.1, 10.3.0, 11g R1 (10.3.1, 10.3.2, 10.3.3) and future fix packs
+   
+
+Java™ [/support/docview.wss?uid=swg27018144&amp;aid=1] For 32-bit Windows  * IBM 32-bit SDK for Windows 5.0, 6.0 and future fix packs 
+ * Oracle JRockit for Windows x86 5.0, 6.0 and future fix packs 
+ * Sun JDK for Windows x86, 5.0, 6.0 and future fix packs
+   
+
+For 64-bit Windows  * IBM 64-bit SDK for Windows 5.0, 6.0 and future fix packs 
+ * Oracle JRockit for Windows x64 5.0, 6.0 and future fix packs 
+ * Sun JDK for Windows x64, 5.0, 6.0 and future fix packs
+   
+
+Databases [/support/docview.wss?uid=swg27018144&amp;aid=1]  * Apache Derby 10.4 and future modification releases and fix packs or the version shipped with supported WebSphere Application Server [http://www.ibm.com/software/data/db2/support/db2zos/] 
+ * IBM DB2 for LUW 8.2, 9.1, 9.5, 9.7 and future modification releases and fix packs IBM DB2 product site [http://www.ibm.com/software/data/db2/] [http://www.ibm.com/systems/i/software/db2/index.html]
+   DB2 Express-C is not supported 
+ * MySQL 5.0 and future modification releases and fix packs 
+ * Oracle 10g, 11g and future modification releases and fix packs Oracle product site [http://www.oracle.com/database/index.html] 
+ * PostgreSQL 8.3 and future modification releases and fix packs 
+ * SQL Server 2005, 2008 and future modification releases and fix packs 
+ * Sybase 12.5 (reached its end of service life), 15 and future modification releases and fix packs
+   
+
+Java Database Connectivity (JDBC) Drivers [/support/docview.wss?uid=swg27018144&amp;aid=1]  * Derby JDBC Provider (XA) 10.4 or the version shipped with supported WebSphere Application Server 
+ * IBM DB2 Universal JDBC Provider (XA) from DB2 for z/OS 
+ * IBM DB2 Universal JDBC Provider (XA) 2.8 (type 4) 
+ * IBM Toolbox (XA) for Java/JTOpen JDBC Driver 4.8 (type 4) IBM Toolbox for Java product site [http://www.ibm.com/servers/eserver/iseries/toolbox/overview.html] 
+ * jTDS, jconnect Driver 
+ * JDBC3 Postgresql Driver 
+ * MySQL Connector/J 5.0 
+ * Oracle JDBC (XA) Driver 10g, 11g Oracle JDBC product site [http://www.oracle.com/technology/software/tech/java/sqlj_jdbc/index.html] 
+ * Pointbase driver (embedded with WebLogic Server) 
+ * Microsoft SQL Server JDBC Driver 1.2 
+ * WebLogic Type 4 JDBC Driver for DB2 
+ * WebLogic Type 4 JDBC Driver for SQL Server
+
+Process server [/support/docview.wss?uid=swg27018144&amp;aid=1]  * WebSphere Process Server 6.1, 6.2, 7.0 and future fix packs
+
+Tools & Utilities
+
+
+
+
+[/support/docview.wss?uid=swg27018144&amp;aid=1]  * Eclipse 3.4 and future fix packs with GEF 3.4, EMF 2.4, BIRT 2.4, DTP 1.6 installed (Supported for Rule Studio) 
+ * RAD 7.5.3, RSA 7.5.3, WID 6.2, 7.0, WebSphere Business Modeler 6.2, 7.0 and future fix packs (Supported for Rule Studio) 
+ * Microsoft Office 2003 SP3 or 2007 SP1 is required for defining Excel test scenarios when using Decision Validation Services. Only Excel 2003 format is supported.
+
+Web Browsers [/support/docview.wss?uid=swg27018144&amp;aid=1]  * Firefox 2.0, 3.0, 3.5, 3.6 and future fix packs 
+ * Internet Explorer 6.0, 7.0, 8.0 and future fix packs
+   
+
+
+
+This table identifies supporting software for Rule Solution for Office Version 7.0 that runs on the Windows operating system on x86 platforms. 
+
+
+Operating Systems [/support/docview.wss?uid=swg27018144&amp;aid=1] For 32-bit Windows  * Windows Vista (Business, Enterprise and Ultimate Edition) SP1 
+ * Windows XP SP2, SP3 
+ * For JRules 7.1.1 and future fix packs, Microsoft Windows 7 (Professional, Enterprise, Ultimate Edition) is supported
+   
+
+For 64-bit Windows (Supported since JRules 7.1.1 and future fix packs)  * Windows XP SP2, SP3 
+ * Windows Vista (Business, Enterprise and Ultimate Edition) SP1 
+ * Microsoft Windows 7 (Professional, Enterprise, Ultimate Edition) 
+ * Microsoft Windows Server 2008 R2 (Standard, Enterprise and Datacenter Edition)
+   
+   
+
+Hardware Requirements
+
+[/support/docview.wss?uid=swg27018144&amp;aid=1]  * Intel Pentium at 3 GHz for single core system, 2.4 GHz for dual cores or faster 
+ * Intel EM64T or AMD Opteron (32-bit kernel support only) 
+ * Minimum 500 MB physical memory; 1 GB recommended 
+ * DVD/CD-ROM drive
+   
+
+.NET Framework [/support/docview.wss?uid=swg27018144&amp;aid=1]  * 3.5 SP1 
+ * 4.0 Supported since version 7.1.1.1
+
+Tools & Utilities [/support/docview.wss?uid=swg27018144&amp;aid=1]  * Microsoft Office 2007 (Professional, Enterprise Edition) SP1 
+ * Microsoft Office 2007 Primary Interop Assemblies 
+ * Visual Studio Tools for Microsoft Office System Runtime 3.0
+   
+   Supported since version 7.1.1.1 
+ * Microsoft Office 2010 (Professional, Professional Plus), 32 bits and 64 bits editions 
+ * Visual Studio Tools for Microsoft Office System Runtime 4.0
+   
+
+
+
+Note: A modification release is a fix that delivers new functionality for a particular version and release. A fix pack is a cumulative collection of all fixes available up to that point for the base release. A fix pack can include fixes that have not been previously released and can span multiple products or components. A fix pack can be applied on top of any previously shipped maintenance to bring the system up to the current fix pack level. 
+
+WebSphere ILOG JRules Related information 
+WebSphere ILOG JRules Support Page [http://www.ibm.com/software/integration/business-rule-management/jrules/support/] 
+WebSphere ILOG JRules Documentation [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp] 
+WebSphere ILOG JRules Trial [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp]

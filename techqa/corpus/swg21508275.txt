@@ -1,0 +1,27 @@
+Title: IBM ldap-server-config attribute missing in ivacld.conf - United States
+
+Text:
+ldap.conf pdacld ivacld TECHNOTE (FAQ)
+
+QUESTION
+ Why is the ldap-server-config attribute missing from the ivacld.conf file? 
+
+CAUSE
+ivacld.conf.template file in TAM versions 5.1, 6.0, and 6.1 did not have this attribute, so when pdacld instances are configured, ivacld.conf will not include the ldap-server-config setting... also, for environments upgraded / migrated from one of these versions, legacy ivacld.conf files might not have been updated to include the ldap-server-config setting 
+
+ANSWER
+the ldap-server-config attribute can be added under the [ldap] stanza in ivacld.conf for any configured (existing) pdacld instances, in order to have pdacld reference a specific ldap.conf for purposes of setting up ldap replicas and failover/load-balancing schemes, etc... 
+
+** Note: for the topic of TAM components with respect to LDAP failover and load balancing, refer to the following technote: 
+
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21351533 [http://www-01.ibm.com/support/docview.wss?uid=swg21351533]
+
+RELATED INFORMATION
+ Setting up TAM to use ldap.conf for load-balancing and [http://www.ibm.com/support/docview.wss?uid=swg21351533]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ TAM TAMeB

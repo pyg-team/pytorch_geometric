@@ -1,0 +1,136 @@
+Title: IBM DatabaseMetaData Remarks Returned Vary by JDBC Driver - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The source for the value returned for the Remarks column from DatabaseMetaData varies between JDBC drivers. 
+
+RESOLVING THE PROBLEM
+The JDBC DatabaseMetaData object can return a result set with information about the columns in a table through the use of the getColumns method. For each column in the database table, there is a corresponding row in the metadata result set. The Remarks field is one of the values returned for each column in the table, and this value varies depending on if the Native or Toolbox JDBC driver is used. The two drivers obtain the information for the Remarks field from different sources. Although both drivers use information from the QSYS2.SYSCOLUMNS catalog table, the Native JDBC driver uses the Remarks column, and the Toolbox driver uses the "COLUMN_TEXT" column as the source for the field in the metadata. The following SQL statements would return the equivalent data as returned by the two drivers: 
+
+--Native JDBC:
+SELECT COLUMN_NAME, REMARKS FROM QSYS2.SYSCOLUMNS WHERE TABLE_NAME = 'QCUSTCDT' AND TABLE_SCHEMA='QIWS'
+
+--Toolbox JDBC:
+SELECT COLUMN_NAME, COLUMN_TEXT FROM QSYS2.SYSCOLUMNS WHERE TABLE_NAME = 'QCUSTCDT' AND TABLE_SCHEMA='QIWS'
+
+The COLUMN_TEXT value can be set in DDS using the TEXT function for a field. For example, given a table created with the following DDS source:
+R RDESCS
+FIELDNAME 25A B ALIAS(COLUMNALIAS) +
+TEXT('Field text') +
+COLHDG('Column' 'heading')
+
+The Remarks metadata value from the toolbox driver will be 'Field text'. The native driver will return a null string for the Remarks metadata value. The COLUMN_TEXT value can also be set through SQL by using the LABEL statement. For example, the following SQL statements could be used to create a table that returns remark data for the table and the columns:
+
+CREATE TABLE MIKSWENS.QCUSTLABEL ( 
+CUSNUM NUMERIC(6, 0) NOT NULL DEFAULT 0 , 
+LSTNAM CHAR(8) CCSID 37 NOT NULL DEFAULT '' , 
+INIT CHAR(3) CCSID 37 NOT NULL DEFAULT '' , 
+STREET CHAR(13) CCSID 37 NOT NULL DEFAULT '' , 
+CITY CHAR(6) CCSID 37 NOT NULL DEFAULT '' , 
+STATE CHAR(2) CCSID 37 NOT NULL DEFAULT '' , 
+ZIPCOD NUMERIC(5, 0) NOT NULL DEFAULT 0 , 
+CDTLMT NUMERIC(4, 0) NOT NULL DEFAULT 0 , 
+CHGCOD NUMERIC(1, 0) NOT NULL DEFAULT 0 , 
+BALDUE NUMERIC(6, 2) NOT NULL DEFAULT 0 , 
+CDTDUE NUMERIC(6, 2) NOT NULL DEFAULT 0 ) ; 
+
+LABEL ON TABLE MIKSWENS.QCUSTLABEL 
+IS 'AS/400 PC Support Customer File using LABEL ON' ; 
+
+LABEL ON COLUMN MIKSWENS.QCUSTLABEL
+( CUSNUM TEXT IS 'Customer number field' , 
+LSTNAM TEXT IS 'Last name field' , 
+INIT TEXT IS 'First and middle initial field' , 
+STREET TEXT IS 'Street address field' , 
+CITY TEXT IS 'City field' , 
+STATE TEXT IS 'State abbreviation field' , 
+ZIPCOD TEXT IS 'Zip code field' , 
+CDTLMT TEXT IS 'Credit limit field' , 
+CHGCOD TEXT IS 'Charge code field' , 
+BALDUE TEXT IS 'Balance due field' , 
+CDTDUE TEXT IS 'Credit due field' ) ;
+
+When using the native JDBC driver to get the metadata for the table created in the example above, the remarks would be null for all of the columns and the table itself. The native JDBC driver retrieves the remark data from a column in SYSCOLUMNS that cannot be set using DDS. In order to add remarks to a table that could be retrieved using the native JDBC driver, the SQL COMMENT ON statement can be used. An example eqivalent to the one above but using COMMENT ON instead of LABEL:
+
+CREATE TABLE MIKSWENS.QCUSTCOMMENT ( 
+CUSNUM NUMERIC(6, 0) NOT NULL DEFAULT 0 , 
+LSTNAM CHAR(8) CCSID 37 NOT NULL DEFAULT '' , 
+INIT CHAR(3) CCSID 37 NOT NULL DEFAULT '' , 
+STREET CHAR(13) CCSID 37 NOT NULL DEFAULT '' , 
+CITY CHAR(6) CCSID 37 NOT NULL DEFAULT '' , 
+STATE CHAR(2) CCSID 37 NOT NULL DEFAULT '' , 
+ZIPCOD NUMERIC(5, 0) NOT NULL DEFAULT 0 , 
+CDTLMT NUMERIC(4, 0) NOT NULL DEFAULT 0 , 
+CHGCOD NUMERIC(1, 0) NOT NULL DEFAULT 0 , 
+BALDUE NUMERIC(6, 2) NOT NULL DEFAULT 0 , 
+CDTDUE NUMERIC(6, 2) NOT NULL DEFAULT 0 ) ; 
+
+COMMENT ON TABLE MIKSWENS.QCUSTCOMMENT 
+IS 'AS/400 PC Support Customer File using COMMENT ON' ; 
+
+COMMENT ON COLUMN MIKSWENS.QCUSTCOMMENT
+( CUSNUM IS 'Customer number field' , 
+LSTNAM IS 'Last name field' , 
+INIT IS 'First and middle initial field' , 
+STREET IS 'Street address field' , 
+CITY IS 'City field' , 
+STATE IS 'State abbreviation field' , 
+ZIPCOD IS 'Zip code field' , 
+CDTLMT IS 'Credit limit field' , 
+CHGCOD IS 'Charge code field' , 
+BALDUE IS 'Balance due field' , 
+CDTDUE IS 'Credit due field' ) ;
+
+The table QCUSTCOMMENT would return null values for remarks retrieved using the toolbox JDBC driver or any other interface that uses the database host server to retrieve metadata. In order to create a table that would return consistant values for both types of drivers, use a combination of LABEL ON and COMMENT ON similar to the following example:
+
+CREATE TABLE MIKSWENS.QCUSTBOTH ( 
+CUSNUM NUMERIC(6, 0) NOT NULL DEFAULT 0 , 
+LSTNAM CHAR(8) CCSID 37 NOT NULL DEFAULT '' , 
+INIT CHAR(3) CCSID 37 NOT NULL DEFAULT '' , 
+STREET CHAR(13) CCSID 37 NOT NULL DEFAULT '' , 
+CITY CHAR(6) CCSID 37 NOT NULL DEFAULT '' , 
+STATE CHAR(2) CCSID 37 NOT NULL DEFAULT '' , 
+ZIPCOD NUMERIC(5, 0) NOT NULL DEFAULT 0 , 
+CDTLMT NUMERIC(4, 0) NOT NULL DEFAULT 0 , 
+CHGCOD NUMERIC(1, 0) NOT NULL DEFAULT 0 , 
+BALDUE NUMERIC(6, 2) NOT NULL DEFAULT 0 , 
+CDTDUE NUMERIC(6, 2) NOT NULL DEFAULT 0 ) ; 
+
+LABEL ON TABLE MIKSWENS.QCUSTBOTH 
+IS 'AS/400 PC Support Customer File using LABEL ON' ; 
+
+LABEL ON COLUMN MIKSWENS.QCUSTBOTH
+( CUSNUM TEXT IS 'Customer number field' , 
+LSTNAM TEXT IS 'Last name field' , 
+INIT TEXT IS 'First and middle initial field' , 
+STREET TEXT IS 'Street address field' , 
+CITY TEXT IS 'City field' , 
+STATE TEXT IS 'State abbreviation field' , 
+ZIPCOD TEXT IS 'Zip code field' , 
+CDTLMT TEXT IS 'Credit limit field' , 
+CHGCOD TEXT IS 'Charge code field' , 
+BALDUE TEXT IS 'Balance due field' , 
+CDTDUE TEXT IS 'Credit due field' ) ;
+
+COMMENT ON TABLE MIKSWENS.QCUSTBOTH 
+IS 'AS/400 PC Support Customer File using COMMENT ON' ; 
+
+COMMENT ON COLUMN MIKSWENS.QCUSTBOTH
+( CUSNUM IS 'Customer number field' , 
+LSTNAM IS 'Last name field' , 
+INIT IS 'First and middle initial field' , 
+STREET IS 'Street address field' , 
+CITY IS 'City field' , 
+STATE IS 'State abbreviation field' , 
+ZIPCOD IS 'Zip code field' , 
+CDTLMT IS 'Credit limit field' , 
+CHGCOD IS 'Charge code field' , 
+BALDUE IS 'Balance due field' , 
+CDTDUE IS 'Credit due field' ) ;
+
+
+
+HISTORICAL NUMBER
+ 426841146

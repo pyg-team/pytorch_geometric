@@ -1,0 +1,268 @@
+Title: IBM XWork Server 8.5.3 System Requirements - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document provides minimum system requirements for the 8.5.3 release of IBM XWork Server. Higher maintenance levels, such as fix packs and service packs, may be supported as they become available. However, new release versions are not supported at this time. 
+
+CONTENT
+
+
+For specific install requirements for Linux see: http://www.ibm.com/support/docview.wss?uid=swg27013075 [http://www.ibm.com/support/docview.wss?uid=swg27013075] and http://www.ibm.com/support/docview.wss?uid=swg21455332 [http://www.ibm.com/support/docview.wss?uid=swg21455332]
+
+ 
+
+IBM XWORK SERVER 8.5.3
+TAB NAVIGATION
+ *  AIX - selected tab, 
+ *  Linux 
+ *  Windows 
+
+TAB NAVIGATION
+ *  AIX 
+
+
+
+
+OUTLINE
+ * Hardware Requirements  *  Disk Space 
+    *  Display 
+    *  Memory 
+    *  Network Protocols 
+    *  Processor 
+   
+   
+ * Software Requirements  *  Operating System 
+   
+   
+ * Optional Supported Software  *  Virtualization 
+    *  Web Browsers 
+   
+   
+
+
+
+
+Hardware Requirements Group Notes Disk Space  * 1.5 GB minimum
+
+ * 1.5 GB or more recommended
+
+Disk swap space
+ * Same amount as physical RAM required; 2 times physical RAM recommended 
+
+
+Display  *  Any standard display (local or remote)
+
+Memory  *  512 MB minimum
+ *  512 MB or more recommended per CPU
+
+Network Protocols  *  TCP/IP (includes IPv6)
+
+Processor  * Power 4 and higher
+
+ Back to top 
+
+Operating Systems Operating System Attributes Notes AIX Platform listing of supported OS AIX 5.3 TL7 POWER System and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: POWER System  *  64-bit kernel
+
+AIX 6.1 POWER System and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: POWER System  *  64-bit kernel
+ *  Service Pack 4, APAR IZ10223, APAR IZ09961, APAR IZ10288, APAR IZ08022
+
+AIX 7.1 POWER System and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: POWER System  *  64-bit kernel
+
+ Back to top 
+
+Optional Supported Software Group Product Notes Virtualization Application Workload Partition (WPAR) AIX 6.1 and future fix packs IBM PowerVM Hypervisor (LPAR, DPAR, Micro-Partition) any supported version and future fix packs WPAR: Product installed in Global AIX Instance, executed in System Workload Partition AIX 6.1 and future fix packs WPAR: Product installed in System Workload Partition AIX 6.1 and future fix packs Web Browsers Apple Safari 3.0 and future fix packs Apple Safari 4.0 Apple Safari 5.0 Google Chrome 12 Microsoft Internet Explorer 6.0 and future fix packs  *  for Windows XP
+
+Microsoft Internet Explorer 7.0 and future fix packs  *  For Vista, v 7.0.6000.16448 or better
+ *  For XP, 7.0.5730.11 or better
+
+Microsoft Internet Explorer 8.0 and future fix packs  *  toleration mode
+
+Microsoft Internet Explorer 9.0 Mozilla Firefox 3.0 and future fix packs Mozilla Firefox 3.5 and future fix packs Mozilla Firefox 4.0 Mozilla Firefox 5.0  Back to top 
+
+
+
+
+TAB NAVIGATION
+ *  Red Hat Enterprise Linux (RHEL) 
+ *  Red Hat Enterprise Linux (RHEL) Server 
+ *  SUSE Linux Enterprise Server (SLES) 
+
+
+
+
+OUTLINE
+ * Hardware Requirements  *  Disk Space 
+    *  Display 
+    *  Memory 
+    *  Network Protocols 
+    *  Processor 
+   
+   
+ * Software Requirements  *  Operating System 
+   
+   
+ * Optional Supported Software  *  Virtualization 
+    *  Web Browsers 
+   
+   
+
+
+
+
+Hardware Requirements Group Notes Disk Space  *  1.5 GB minimum
+ *  1.5 GB or more recommended
+
+ Disk swap space
+
+ *  Same amount as physical RAM required;2 times physical RAM recommended
+
+Display  *  Any standard display (local or remote)
+
+Memory  *  512 MB minimum
+ *  512 MB or more recommended per CPU
+
+Network Protocols  *  TCP/IP (includes IPv6)
+
+Processor  *  Intel Pentium or higher and compatibles (32-bit and 64-bit chips as appropriate), or equivalents
+
+ Back to top 
+
+Operating Systems Operating System Attributes Notes Linux Platform listing of supported OS Red Hat Enterprise Linux (RHEL) 5 Advanced Platform x86-32 and future OS fix packs Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-32  *  XGL and SELinux must be disabled
+
+Red Hat Enterprise Linux (RHEL) 5 Advanced Platform x86-64 and future OS fix packs Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-64  *  XGL and SELinux must be disabled
+
+Red Hat Enterprise Linux (RHEL) 5 x86-64 and future OS fix packs Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-64  *  XGL and SELinux must be disabled
+
+Red Hat Enterprise Linux (RHEL) Server 6 x86-32 and future OS fix packs Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-32  *  XGL and SELinux must be disabled
+
+Red Hat Enterprise Linux (RHEL) Server 6 x86-64 and future OS fix packs Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-64  *  XGL and SELinux must be disabled
+
+SUSE Linux Enterprise Server (SLES) 10 x86-32 and future OS fix packs Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-32  *  XGL and SELinux must be disabled
+
+SUSE Linux Enterprise Server (SLES) 10 x86-64 and future OS fix packs Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-64  *  XGL and SELinux must be disabled
+
+SUSE Linux Enterprise Server (SLES) 11 x86-32 and future OS fix packs Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-32  *  XGL and SELinux must be disabled
+
+SUSE Linux Enterprise Server (SLES) 11 x86-64 and future OS fix packs Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-64  *  XGL and SELinux must be disabled
+
+ Back to top 
+
+Optional Supported Software Group Product Notes Virtualization VMware ESXi 4.0 and future fix packs Web Browsers Apple Safari 3.0 and future fix packs Apple Safari 4.0 Apple Safari 5.0 Google Chrome 12 Microsoft Internet Explorer 6.0 and future fix packs  *  for Windows XP
+
+Microsoft Internet Explorer 7.0 and future fix packs  *  For Vista, v 7.0.6000.16448 or better
+ *  For XP, 7.0.5730.11 or better
+
+Microsoft Internet Explorer 8.0 and future fix packs  *  toleration mode
+
+Microsoft Internet Explorer 9.0 Mozilla Firefox 3.0 and future fix packs Mozilla Firefox 3.5 and future fix packs Mozilla Firefox 4.0 Mozilla Firefox 5.0  Back to top 
+
+
+
+
+TAB NAVIGATION
+ *  Windows Server 
+
+
+
+
+OUTLINE
+ * Hardware Requirements  *  Disk Space 
+    *  Display 
+    *  Memory 
+    *  Network Protocols 
+    *  Processor 
+   
+   
+ * Software Requirements  *  Operating System 
+   
+   
+ * Optional Supported Software  *  Virtualization 
+    *  Web Browsers 
+   
+   
+
+
+
+
+Hardware Requirements Group Notes Disk Space  * 1.5 GB minimum per partition
+
+Disk swap space:
+ * 2 times the physical RAM installed 
+
+Display  * Color monitor required
+
+Memory  *  512 MB minimum
+ *  512 MB or more recommended per CPU
+
+Network Protocols  *  TCP/IP (includes IPv6)
+
+Processor  * 64 bit Domino Server: Intel EMT64 or higher and compatibles, or equivalents
+
+ *  Intel Pentium or higher and compatibles (32-bit and 64-bit chips as appropriate), or equivalents
+
+ Back to top 
+
+Operating Systems Operating System Attributes Notes Windows Platform listing of supported OS Windows Server 2003 Enterprise Edition x86-32 and future OS fix packs Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-32 Windows Server 2003 R2 Enterprise Edition x86-32 and future OS fix packs Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-32 Windows Server 2003 R2 Enterprise Edition x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: x86-64 Windows Server 2003 R2 Standard Edition x86-32 and future OS fix packs Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-32 Windows Server 2003 R2 Standard Edition x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: x86-64 Windows Server 2003 SP2 Enterprise Edition x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: x86-64 Windows Server 2003 SP2 Standard Edition x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: x86-64 Windows Server 2003 Standard Edition x86-32 and future OS fix packs Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-32 Windows Server 2008 Enterprise Edition x86-32 and future OS fix packs Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-32 Windows Server 2008 Enterprise Edition x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: x86-64 Windows Server 2008 R2 Enterprise Edition x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: x86-64 Windows Server 2008 R2 Standard Edition x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: x86-64 Windows Server 2008 Standard Edition x86-32 and future OS fix packs Bitness: 32 Bit
+Deployment Role: Server
+Hardware platform: x86-32 Windows Server 2008 Standard Edition x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Deployment Role: Server
+Hardware platform: x86-64  Back to top 
+
+Optional Supported Software Group Product Notes Virtualization VMware ESXi 4.0 and future fix packs Web Browsers Apple Safari 3.0 and future fix packs Apple Safari 4.0 Apple Safari 5.0 Google Chrome 12 Microsoft Internet Explorer 6.0 and future fix packs  *  for Windows XP
+
+Microsoft Internet Explorer 7.0 and future fix packs  *  For Vista, v 7.0.6000.16448 or better
+ *  For XP, 7.0.5730.11 or better
+
+Microsoft Internet Explorer 8.0 and future fix packs  *  toleration mode
+
+Microsoft Internet Explorer 9.0 Mozilla Firefox 3.0 and future fix packs Mozilla Firefox 3.5 and future fix packs Mozilla Firefox 4.0 Mozilla Firefox 5.0  Back to top

@@ -1,0 +1,66 @@
+Title: IBM Java, WebSphere MQ version and OS support for PathWAI Editor for Messages - United States
+
+Text:
+Java JRE PathWAI Editor for Messages 5724K3700TR TECHNOTE (FAQ)
+
+QUESTION
+ Which Java and WebSphere MQ versions are supported? 
+
+ANSWER
+Java(JRE) Support 
+
+1. Windows 
+
+32 bit Oracle Java is recommended. If a 64 bit Java(JRE) is used, PathWAI Editor for Messages service may not start. To set the JavaHome: 
+
+ modify kxymsged.control file under $CANDLEHOME$\msgedit\bin 
+
+For example: JavaHome=C:\Program Files (x86)\Java\jre7 
+
+Tested Java versions are: 
+
+Java 7 update 51(jre-7u51-windows-i586.exe)
+Java 6 update 45(jre-6u45-windows-i586.exe)
+
+2. Unix
+32 bit IBM Java is recommended. If a 64 bit Java(JRE) is used, PathWAI Editor for Messages service may not start. To set the Java home 
+
+modify $CANDLEHOME$/unix/MsgEdit/bin/kxyruns.sh
+For example: JAVA_HOME=/usr/java
+
+Tested Java versions are:
+
+AIX:
+java version "1.7.0"
+Java(TM) SE Runtime Environment (build pap3270_27sr2fp10-20141218_02(SR2 FP10))
+IBM J9 VM (build 2.7, JRE 1.7.0 AIX ppc-32 20141215_227395 (JIT enabled, AOT enabled)
+
+Notes: 
+1) $CANDLEHOME$ is directory where PathWAI Editor for Messages is installed.
+2) Technically, other Java versions will work but they have not been officially tested. Please open PMR if you have any issue.
+
+WebSphere MQ support
+Supported versions are:
+
+IBM MQ 9.0.1
+IBM MQ 9.0
+WebSphere MQ Version 8.0 (*)
+WebSphere MQ Version 7.5.x
+WebSphere MQ Version 7.1
+WebSphere MQ Version 7.0.1
+WebSphere MQ Version 7.0
+WebSphere MQ Version 6.0
+
+Notes:
+(*)Java 1.7 or above is must with WebSphere MQ 8.0. 
+
+OS Support
+
+Windows, AIX, HPUX, Solaris are supported. Linux is not supported.
+Supported Windows Versions:
+Windows 2016
+Windows 2012
+Windows 2008
+Windows 2003
+
+Technically, other Windows versions or UNIX versions will work but they have not been officially tested. Please open PMR if you have any issue.

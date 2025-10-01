@@ -1,0 +1,149 @@
+Title: IBM IC85712: DB2TRCSTARTUPSIZE HAS NO EFFECT - PERF ISSUE WITH CLIENTS, IF NO'DB2TRC ALLOC' ISSUED ON AIX - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.7 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033685]
+DB2 Version 9.7 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24034634]
+DB2 Version 9.7 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036646]
+DB2 Version 9.7 Fix Pack 9a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037559]
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Application running on a DB2 client performs poorly due to low
+   level semget calls issued by DB2
+   https://www-304.ibm.com/support/docview.wss?uid=swg21209523 [https://www-304.ibm.com/support/docview.wss?uid=swg21209523]
+   
+   We found the same issue on AIX for instance less clients. Poor
+   performance. Setting db2trcStartupSize in db2dsdriver.cfg file
+   has no effect. Because, after issuing a 'db2trc alloc' the
+   performance was as good as with the instance based client.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  issue "db2trc alloc" to fix the performance issue.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * 1) Non-instance based clients on AIX.                        *
+   * 2) Remote instance based clients on AIX                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * upgrade to v97fp7 or later releases.                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  db2_v97fp7 fixes this issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  run "db2trc alloc"
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC85712
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 CONNECT
+   
+   
+ * REPORTED COMPONENT ID
+   DB2CONNCT
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-03
+   
+   
+ * CLOSED DATE
+   2012-10-20
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC85794 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC85794]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 CONNECT
+   
+   
+ * FIXED COMPONENT ID
+   DB2CONNCT
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSY
+   UP

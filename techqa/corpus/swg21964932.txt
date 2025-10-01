@@ -1,0 +1,28 @@
+Title: IBM EIF probe error - Field xxxx not found - United States
+
+Text:
+itm field not found Esync3000 Esync3000Linux.bin TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ EIF probe log getting many errors with "Field 'xxxxx' not found" 
+
+SYMPTOM
+ITM events not seen in OMNIbus Event List
+
+
+CAUSE
+ITM fields/columns not in objectserver database.
+
+DIAGNOSING THE PROBLEM
+The error in the probe log will point to the include rules file and the missing fields which are defined in the rules file.
+Error: E-UNK-000-000: Rules file '/opt/IBM/tivoli/netcool/omnibus/probes/linux2x86/itm_event.rules' line 
+224: Field 'TECHostname' not found.
+
+RESOLVING THE PROBLEM
+Create the missing fields in ObjectServer. In this case, install the ITM integration with OMNIbus package (Esync3000<operatingsystem>.<bin or exe> on the OMNIbus ObjectServer box and it will provide the ITM_*.sql files to be run on the ObjectServer with nco_sql to create the new ITM fields/columns.
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ OMNIbus

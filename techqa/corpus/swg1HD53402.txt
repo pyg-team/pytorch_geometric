@@ -1,0 +1,169 @@
+Title: IBM HD53402: BAD RESULT OF EXPORT AS XML FILE OF FRENCH CLASHS RESULT - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Bad result of export as XML file of french clashs
+   result
+   Scenario :
+   1 - Launch DMU and load the CATProduct
+   2 - Enter  Space Analysis Workbench.
+   3 - Clich on the "Interfer" icon and launch the clash
+   computation
+   4 -Set the "contact&clach" and "between all
+   products" option.
+   5 -Validate by "Apply"
+   You can see that the first line has pertinent value.
+   6 - In the result window, select to sort the results
+   according the "pertinent" filter.
+   => There is only one result (the first line) left in
+   the table.
+   7 - Click on "export as" icon.
+   In the panel, choose to export as XML file and give
+   the directory and the filename for result.
+   8 - In a navigator (Internet explorer, here), open
+   the XML result file.
+   and the filename for result.
+   .
+   The XML file cannot be opened due to error
+   message due to french characters.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Bad result of export as XML file of french clashs result
+   Bad result of export as XML file of french clashs
+   result
+   Scenario :
+   1 - Launch DMU and load the CATProduct
+   2 - Enter  Space Analysis Workbench.
+   3 - Clich on the "Interfer" icon and launch the clash
+   computation
+   4 -Set the "contact&clach" and "between all
+   products" option.
+   5 -Validate by "Apply"
+   You can see that the first line has pertinent value.
+   6 - In the result window, select to sort the results
+   according the "pertinent" filter.
+   => There is only one result (the first line) left in
+   the table.
+   7 - Click on "export as" icon.
+   In the panel, choose to export as XML file and give
+   the directory and the filename for result.
+   8 - In a navigator (Internet explorer, here), open
+   the XML result file.
+   and the filename for result.
+   .
+   The XML file cannot be opened due to error
+   message due to french characters.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS MODIFICATION WILL BE INCLUDED IN CATIA
+   DOCUMENTATION DELIVERED WITH ENOVIA
+   VERSION 5 RELEASE 17.
+   Documentation Reference
+   Program Directory R16SP6
+   DMU Space Analysis program directories (3 brands)
+   MODIFICATION:
+   The following issue has been added under the
+   General issues section of the DELMIA, CATIA and
+   ENOVIA SPA program directories on R16 SP6 level.
+   Clash Results export in XML
+   French and Japanese languages are not supported
+   by the first XML type (First XML type: the XML
+   Export for clash process purpose check box is
+   cleared. For this XML type, any filters applied to the
+   results in the Clash dialog box are taken into
+   account so you can use the filters to export only
+   pertinent results).
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD53402
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA DMU HP-U
+   
+   
+ * REPORTED COMPONENT ID
+   569102800
+   
+   
+ * REPORTED RELEASE
+   516
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-06-01
+   
+   
+ * CLOSED DATE
+   2006-06-05
+   
+   
+ * LAST MODIFIED DATE
+   2006-06-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

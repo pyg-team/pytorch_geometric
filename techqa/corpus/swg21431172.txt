@@ -1,0 +1,38 @@
+Title: IBM Trying to connect with the DataStage clients gives an error 80011. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to connect to any of the InfoSphere DataStage clients you get the errors:
+Failed to connect to DataStage server: <servername>, project: <projectname>
+(User name and/or password incorrect (80011)). 
+
+CAUSE
+This error indicates that the login/password to Information Server was correct but the login to the DataStage server failed. There are a number of things that can cause this failure. Below is a check list on what to look for to resolve this issue. 
+
+ 1. Open the Information Server Web Console and go to Domain Management => DataStage credentials. If the registry is set to "Shared", skip to step 2. If the registry is set to "Not shared" then select the DataStage Server and click on "Open Configuration". 
+    Look at the user name and password for the default mapping. Retype the password to be sure it is correct.
+    Go back to DataStage credentials and click "Open User Credentials". Look at the list of users that have individual maps set and check to see if the user you are having issues with is there. If so, click on that user and retype the user name and password for the user's map.
+    
+ 2. Attempt to telnet or ssh into the DataStage server machine using the user name and password that you used in your user's mapping or, if the registry is shared, use the user name and password that you used on the DataStage login screen. Make sure that the user can connect with that same user name and password. This is the same for LDAP users. The LDAP users must be able to telnet or ssh into the DataStage server machine. 80011 will be given not only if the user/password is wrong but also if the password is expire and needs to be changed or if the account is locked. 
+    
+ 3. If you are using DataStage with PAM/LDAP, be sure that DataStage is configured correctly for PAM. For AIX, refer to technote:
+    http://www-01.ibm.com/support/docview.wss?uid=swg21398309 [http://www-01.ibm.com/support/docview.wss?uid=swg21398309]
+    For Linux refer to documentation:
+    http://publib.boulder.ibm.com/infocenter/iisinfsv/v8r0/index.jsp?topic=/com.ibm.swg.im.iis.productization.iisinfsv.install.doc/reference/wsisinst_config_pam_exp.html [http://publib.boulder.ibm.com/infocenter/iisinfsv/v8r0/index.jsp?topic=/com.ibm.swg.im.iis.productization.iisinfsv.install.doc/reference/wsisinst_config_pam_exp.html]
+    
+ 4. If you are using PAM on AIX and you have IMPERSONATION mode turned off, you will not be able to authenticate. AIX requires that pam_aix be accessed by a process running as root. Impersonation mode off and PAM will not work on AIX. For more information and possible workaround, please refer to technote:
+    http://www-01.ibm.com/support/docview.wss?uid=swg21516230 [http://www-01.ibm.com/support/docview.wss?uid=swg21516230]
+    
+ 5. If you are on 8.1 and have not applied FP1 and are using PAM/LDAP authentication with DataStage, you will need to install FP1 or install the patch for JR31215. This applies to all platforms except AIX..
+    
+ 6. Check that the dsrpcd process for the DataStage installation is running as the root user. If it is running as a user other than root, check to see if Impersonation Mode has been turned off.
+    To do this, cd to the DSEngine directory and run the following commands
+    . ./dsenv This will set up the DataStage environment
+    bin/smat -t This will print out the configurable parameters for InfoSphere DataStage
+    Look at the parameter list and be sure that IMPERSONATION is set to 1. If it is set to 1 then impersonation mode is turned on and the problem may be that the permissions in $DSHOME/bin have been altered and need to be fixed. 
+    Refer to technote for instructions on correcting the permissions:
+    http://www-01.ibm.com/support/docview.wss?uid=swg21412246&myns=swgimgmt&mynp=OCSSZJPZ&mync=R [http://www-01.ibm.com/support/docview.wss?uid=swg21412246&myns=swgimgmt&mynp=OCSSZJPZ&mync=R] 
+ 7. If you are on windows, check the local security policy for the user and/or group and be sure that under User Rights Assignments the user/group has "Log on locally" set. This is a requirement to connect with DataStage on windows. 
+ 8. If you are on Windows 2008, check the local security policy for the user and/or group and be sure that under User Rights Assignments the user/group has "Log on as batch job" set.

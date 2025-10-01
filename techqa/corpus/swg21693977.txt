@@ -1,0 +1,79 @@
+Title: IBM Security Bulletin: SSLv3 POODLE Attack (CVE-2014-3566) - United States
+
+Text:
+CVE-2014-3566; poodle SECURITY BULLETIN
+
+SUMMARY
+ SSLv3 POODLE Attack (CVE-2014-3566) impacts IBM Service Deliver Manager. 
+
+VULNERABILITY DETAILS
+Review the following security bulletins for vulnerability details and information about fixes: 
+
+ * Security Bulletin: Vulnerability in SSLv3 affects IBM WebSphere Application Server (CVE-2014-3566) [http://www.ibm.com/support/docview.wss?uid=swg21687173]
+   
+   
+ * Security Bulletin: Vulnerability in SSLv3 affects IBM HTTP Server (CVE-2014-3566) [http://www.ibm.com/support/docview.wss?uid=swg21687172]
+   
+   
+ * Security Bulletin: Vulnerability in SSLv3 affects IBM Tivoli Monitoring (CVE-2014-3566) [http://www.ibm.com/support/docview.wss?uid=swg21691775]
+   
+   Note: Only apply the patch on the IBM Tivoli Monitoring server and endpoints. Do not make the workaround changes for endpoints as mentioned in this ITM bulletin.
+   
+   
+ * Security Bulletin: Vulnerability in SSLv3 affects SmartCloud Cost Management / Tivoli Usage and Accounting Manager (CVE-2014-3566) [http://www.ibm.com/support/docview.wss?uid=swg21691886]
+   
+   
+ * Security Bulletin: Vulnerability in SSLv3 affects Directory Server (CVE-2014-3566) [http://www.ibm.com/support/docview.wss?uid=swg21687611]
+   
+   Note: If using AIX or Red Hat Enterprise Linux, upgrade from OpenSSL 0.9.8 to OpenSSL 0.9.8zd. 
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Principal Product and Version(s) Affected Supporting Product and Version IBM Service Delivery Manager 7.x WebSphere Application Server 6.1.0.0 through 6.1.0.47
+
+IBM HTTP Server (All versions)
+
+IBM Tivoli Monitoring  * Tivoli Enterprise Management Servers (TEMS) - 6.20 through 6.30 FP4 (all releases) 
+ * Agents – IBM Tivoli Monitoring Shared Libraries (ax component on UNIX/Linux) or Tivoli Enterprise Monitoring Agent Framework (GL component on Windows) - 6.20 through 6.30 FP4 
+ * Tivoli Enterprise Portal Server (TEPS)  * embedded WebSphere Application Server – 6.20 through 6.30 FP4 
+    * IBM HTTP Server (IHS) - 6.23 through 6.30 FP1
+   
+   
+ * Portal server communication with portal clients  * HTTP – 6.23 through 6.30 FP1 
+    * IIOP - Not affected 
+    * SSL/IIOP – 6.20 through 6.30 FP4
+   
+   
+ * Situation Update Forwarder (SUF) – 6.20 through 6.30 FP3
+
+
+SmartCloud Cost Management 2.1, 2.1.0.1, 2.1.0.2
+
+Tivoli Usage and Accounting Manager 7.3 (including all related fix packs)
+
+IBM Tivoli Directory Server 6.0, 6.1, 6.2, 6.3
+
+IBM Security Directory Server 6.3.1 
+
+OpenSSL 0.9.8 GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] CHANGE HISTORY
+ * 18 January 2016: Updated links to bulletins
+* 06 January 2015: Original copy published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Cloud and Virtualization Management IBM Tivoli Service Automation Manager Security Windows, AIX, Linux 7.2.1, 7.2.2, 7.2.3, 7.2.4

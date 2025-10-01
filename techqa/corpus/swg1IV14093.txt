@@ -1,0 +1,324 @@
+Title: IBM IV14093: OUTOFMEMORYEXCEPTION IN WEBSPHERE APPLICATION SERVER DUE TO HUNG FINALIZER THREAD WHILE PROCESSING WMQ CONNECTION EVENT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.9 [http://www-01.ibm.com/support/docview.wss?uid=swg24033008]
+Fix Pack 7.1.0.2 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24033287]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The finalizer thread for the WebSphere Application Server JVM
+   hung during the finalization processing of WebSphere MQ code
+   associated with the cleanup of ServerSession objects.  This led
+   to an OutOfMemoryException being thrown by the JVM, due to a
+   buildup of objects which were no longer being garbage
+   collected.
+   
+   A WebSphere MQ Resource Adapter trace shows the last few
+   entries before the thead hung were:
+   
+   [1/7/12 21:00:42:435] 00000056 1 ServerSession.close()
+   (ServerSessionImpl) [:/64026402] Entry
+   
+   [1/7/12 21:00:42:439] 00000056 78 CLASS. AME NO 3   (CLASS NAME
+   NOT AVAILABLE) [:/65d465d4] WorkImpl: getThread
+   Returning: null
+   
+   [1/7/12 21:00:42:439] 00000056 78 CLASS. AME NO 3   (CLASS NAME
+   NOT AVAILABLE) [:/64026402] ServerSessionImpl: close()
+   ServerSession isInUse and workImpl thread being closed is
+   not the same as current thread, getting isInUseLock
+   
+   [1/7/12 21:00:42:439] 00000056 78 CLASS. AME NO 3   (CLASS NAME
+   NOT AVAILABLE) [:/64026402] ServerSessionImpl: close()
+   Got isInUseLock
+   
+   
+   where there had already been a previous attempt to close() the
+   same ServerSession which received an exception:
+   
+   [1/7/12 20:50:21:725] 0000005d 1 ServerSession.close()
+   (ServerSessionImpl) [:/64026402] Entry
+   
+   [1/7/12 20:50:21:806] 0000005d 49 ServerSession.
+   (ServerSessionImpl) [:/64026402] Tracing exception:
+   com.ibm.msg.client.jms.DetailedJMSException: JMSWMQ0019:
+   Failed to disconnect from queue manager 'wasmqd_qm3' using
+   connection mode '1' and host name 'null'. Please see the linked
+   exception for more information.
+   at
+   com.ibm.msg.client.wmq.common.internal.Reason.reasonToException
+   (Reason.java:608)
+   at
+   com.ibm.msg.client.wmq.common.internal.Reason.createException(R
+   eason.java:236)
+   at
+   com.ibm.msg.client.wmq.internal.WMQSession.disconnect(WMQSessio
+   n.java:768)
+   at
+   com.ibm.msg.client.wmq.internal.WMQSession.close(WMQSession.jav
+   a:718)
+   at
+   com.ibm.msg.client.jms.internal.JmsSessionImpl.close(JmsSession
+   Impl.java:492)
+   at
+   com.ibm.msg.client.jms.internal.JmsSessionImpl.close(JmsSession
+   Impl.java:286)
+   at com.ibm.mq.jms.MQSession.close(MQSession.java:195)
+   at
+   com.ibm.mq.connector.inbound.ServerSessionImpl.close(ServerSess
+   ionImpl.java:318)
+   at
+   com.ibm.mq.connector.inbound.ServerSessionPoolImpl.closeInterna
+   l(ServerSessionPoolImpl.java:637)
+   at
+   com.ibm.mq.connector.inbound.ServerSessionPoolImpl.close(Server
+   SessionPoolImpl.java:557)
+   at
+   com.ibm.mq.connector.inbound.MessageEndpointDeployment.stop(Mes
+   sageEndpointDeployment.java:455)
+   at
+   com.ibm.mq.connector.ResourceAdapterImpl.endpointDeactivation(R
+   esourceAdapterImpl.java:523)
+   at
+   com.ibm.mq.connector.inbound.DeploymentReconnectionHandler.conn
+   ectionBroken(DeploymentReconnectionHandler.java:252)
+   at
+   com.ibm.mq.connector.inbound.MessageEndpointDeployment.onExcept
+   ion(MessageEndpointDeployment.java:729)
+   at
+   com.ibm.msg.client.jms.internal.JmsProviderExceptionListener.ru
+   n(JmsProviderExceptionListener.java:429)
+   at
+   com.ibm.msg.client.commonservices.workqueue.WorkQueueItem.runTa
+   sk(WorkQueueItem.java:209)
+   at
+   com.ibm.msg.client.commonservices.workqueue.SimpleWorkQueueItem
+   .runItem(SimpleWorkQueueItem.java:100)
+   at
+   com.ibm.msg.client.commonservices.workqueue.WorkQueueItem.run(W
+   orkQueueItem.java:224)
+   at
+   com.ibm.ws.wmqcsi.workqueue.WorkQueueManagerImpl$WorkQueueRunna
+   ble.run(WorkQueueManagerImpl.java:648)
+   at java.lang.Thread.run(Thread.java:736)
+   Caused by: com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ cal
+   l failed with compcode '2' ('MQCC_FAILED') reason '2009'
+   ('MQRC_CONNECTION_BROKEN').
+   at
+   com.ibm.msg.client.wmq.common.internal.Reason.createException(R
+   eason.java:223)
+   ... 18 more
+   Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2009
+   at
+   com.ibm.mq.jmqi.remote.internal.RemoteHconn.enterCall(RemoteHco
+   nn.java:474)
+   at
+   com.ibm.mq.jmqi.remote.internal.RemoteHconn.enterCall(RemoteHco
+   nn.java:396)
+   at
+   com.ibm.mq.jmqi.remote.internal.RemoteHconn.enterCall(RemoteHco
+   nn.java:371)
+   at
+   com.ibm.mq.jmqi.remote.internal.RemoteFAP.MQDISC(RemoteFAP.java
+   :2604)
+   at
+   com.ibm.msg.client.wmq.internal.WMQSession.disconnect(WMQSessio
+   n.java:746)
+   ... 17 more
+   Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2009
+   at
+   com.ibm.mq.jmqi.remote.internal.system.RemoteConnection.notifyR
+   econnect(RemoteConnection.java:5266)
+   at
+   com.ibm.mq.jmqi.remote.internal.RemoteRcvThread.run(RemoteRcvTh
+   read.java:468)
+   ... 5 more
+   
+   [1/7/12 20:50:21:806] 0000005d 2 ServerSession.close() Method
+   executed in 81 milliseconds
+   (ServerSessionImpl) [:/64026402] Exit
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the v7.0 and v7.1 WebSphere MQ JMS
+   Resource Adapter, running in an application server environment,
+   such as the WebSphere Application Server, who experience
+   connection errors (MQRC 2009) concurrently with a connection
+   being closed off by the application server.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   This issue was caused by the subsequent processing of an
+   exception which was thrown during an attempt to close a
+   ServerSession object.
+   
+   During the close, the underlying physical connection to the
+   queue manager is locked to ensure it is not reused by another
+   ServerSession.  However, if an exception was thrown during this
+   close attempt, the lock on the physical connection object
+   remained in use and was not released.
+   
+   The exception meant that the close of the ServerSession did
+   not complete successfully, leaving unreferenced objects on the
+   JVM heap.  At a later date, the JVM's finalizer thread would
+   attempt to close this again as part of garbage collection.
+   Since the connection to the queue manager was still locked, the
+   finalizer thread hung trying to acquire the lock.
+   
+   A hung finalizer prevents further garbage collection from
+   being undertaken, so this is typically observed at a later date
+   as an OutOfMemoryException when the heap has been exhausted.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified to ensure that the connection lock is
+   always released, even when an exception occurs as part of the
+   ServerSession closure, which prevents the problem from
+   occurring.
+   
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.9
+   --------           --------------------
+   Windows            U200337
+   AIX                U849391
+   HP-UX (PA-RISC)    U849723
+   HP-UX (Itanium)    U849728
+   Solaris (SPARC)    U849724
+   Solaris (x86-64)   U849730
+   iSeries            7.0.1.9
+   Linux (x86)        U849725
+   Linux (x86-64)     U849729
+   Linux (zSeries)    U849726
+   Linux (Power)      U849727
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.2
+   --------           --------------------
+   Windows            7.1.0.2
+   AIX                7.1.0.2
+   HP-UX (Itanium)    7.1.0.2
+   Solaris (SPARC)    7.1.0.2
+   Solaris (x86-64)   7.1.0.2
+   iSeries            7.1.0.2
+   Linux (x86)        7.1.0.2
+   Linux (x86-64)     7.1.0.2
+   Linux (zSeries)    7.1.0.2
+   Linux (Power)      7.1.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV14093
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7224
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-25
+   
+   
+ * CLOSED DATE
+   2012-04-29
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI14536
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7224
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

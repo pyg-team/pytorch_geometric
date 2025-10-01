@@ -1,0 +1,43 @@
+Title: IBM Unable to use Content Navigator 2.0.1 App on an iPad or iPhone - United States
+
+Text:
+iPad; iPhone; mobile; app; ICN TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installing IBM Content Navigator (ICN) 2.0.1.x and installing the Content Navigator iOS app, it is possible to connect to the ICN desktop but none of the mobile feature buttons work, e.g. the 'Favourites' button. Additionally, the mobile feature buttons do not display the correct icon.This only occurs in non-English environments. 
+
+SYMPTOM
+Steps to Reproduce; 
+
+ 1. Activate mobile access for ICN by following the documentation here. [http://pic.dhe.ibm.com/infocenter/cmod/v8r5m0/index.jsp?topic=%2Fcom.ibm.installingeuc.doc%2Feucco049.htm] 
+ 2. Download the ICN 2.0.1 app from the Apple AppStore. 
+ 3. Configure the ICN app desktop settings by opening the application and adding a new desktop. 
+ 4. Open the desktop front page and you will be presented with a screen similar to below:
+
+ * 
+ * [/support/docview.wss?uid=swg21623175&amp;aid=1]
+
+
+The expected icons are missing and replaced with a white page with links. These buttons do not work. 
+
+CAUSE
+Currently the ICN 2.0.1 app has only been fully qualified in English.
+
+
+RESOLVING THE PROBLEM
+Please log into the ICN Admin Panel and follow the steps below; 
+
+ 1. Navigate to "Desktops", select the desktop name and click "Edit". 
+ 2. In the desktop admin panel navigate to the tab "Mobile". 
+ 3. The Mobile tab will display an area for "features". Double clicking each feature name will present an option to rename them. As the mobile features have been hard-coded into the app these names must be written in English and are also case sensitive. Please rename the features using the following English names:  * Favorites 
+     * Browse 
+     * Search 
+     * Case Search 
+     * Datacap
+       
+       [/support/docview.wss?uid=swg21623175&aid=2] [/support/docview.wss?uid=swg21623175&aid=2]
+    
+    
+ 4. Save these settings and restart ICN in the application server. 
+ 5. When using the mobile app, enter the link to the desktop you want to access. The address should be in this format:
+    [Host Name]:[Port]/navigator/?desktop=DESKTOPNAME.

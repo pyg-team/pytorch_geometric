@@ -1,0 +1,128 @@
+Title: IBM How to Migrate Cluster Resources - IBM PureData System for Analytics - United States
+
+Text:
+netezza nps cluster migration nz failover TECHNOTE (FAQ)
+
+QUESTION
+ How to safely migrate the cluster between the PureData hosts. 
+
+CAUSE
+The migration process is done to move the active cluster resources to the standby host, making the standby host the new active host. 
+
+ This is done for many reasons. The most common reasons are ...
+
+Testing fail over and migration on IBM PureData HA cluster.
+Migrate to standby host so currently active host may be serviced.
+Migrate to standby for host reboot.
+
+
+ANSWER
+When connecting to the appliance some things to keep in mind... 
+
+
+You must have root access to perform a migration.
+It is best practice to login to the standby host that you will be migrating to directly as the root user.
+
+The hosts are in an active / passive configuration. The active host owns all of the resources.
+
+Do not connect to the Virtual / floating ip (also known as the VIP or wall ip) This interface will be shutdown and moved to the new active host during migration and your session will be disconnected 
+
+Do not login as nz user and then sudo to root. As part of the migration the users home directory is un-mounted and then remounted on the active host. 
+
+
+Health Checks
+
+Health of the appliance should be checked prior to the migration process.
+Note: Checks may be done from either host
+
+Check Health of the cluster
+As the root user issue the following command from either the active or standby host
+
+[root]# /opt/nz-hwsupport/install_tools/hb_doctor 
+
+The status for each check is reported. If all checks are [ ok ] you may proceed.
+Report failures to IBM support. 
+
+
+Check the drbd health 
+As the root user issue the following command from either the active or standby host
+
+[root]# service drbd status 
+
+The below output shows a healthy drbd connection status.
+
+[root]# service drbd status
+drbd driver loaded OK; device status:
+version: 8.4.4 (api:1/proto:86-101)
+GIT-hash: 74402fecf24da8e5438171ee8c19e28627e1c98a build by root@nz80826-h1, 2016-06-03 04:06:13
+m:res cs ro ds p mounted fstype
+0:r1 Connected Primary/Secondary UpToDate/UpToDate C /export/home ext3
+1:r0 Connected Primary/Secondary UpToDate/UpToDate C /nz ext3
+
+
+If your output does not appear as UpToDate/UpToDate please contact support before migrating. 
+
+Health of NPS
+As the nz user issue the following command from the active host
+
+[nz]$ nzhw -issues ; nzds -issues ; nzds -regenstatus 
+
+Issues here most likely will not stop a migration but should be noted. 
+
+============================================================
+
+Health checks are completed and it is time for the migration !!!
+
+Connected directly to either host as the root user run the command
+
+[root]# /nzlocal/scripts/heartbeat_admin.sh --migrate 
+
+This will shutdown the cluster services (Database etc..) and move them to the standby host.
+
+Once the migration is completed, the resources may be checked with the command
+
+[root]# crm_mon -i2 (control-c to exit) 
+
+Below shows the cluster resources running on HA1 with all resources started.
+(Your configuration may differ slightly)
+
+
+============
+Last updated: Wed Oct 12 11:15:46 2016
+Current DC: nz80000-h1 (3e8fc051-bbf0-488d-8e55-b22f8639b23d)
+2 Nodes configured.
+3 Resources configured.
+============
+
+Node: nz80000-h2 (4adecb0c-2d04-4c1b-8ca6-6603c399a70e): online
+Node: nz80000-h1 (3e8fc051-bbf0-488d-8e55-b22f8639b23d): online
+
+Resource Group: nps
+drbd_exphome_device (heartbeat:drbddisk): Started nz80000-h1
+drbd_nz_device (heartbeat:drbddisk): Started nz80000-h1
+exphome_filesystem (heartbeat::ocf:Filesystem): Started nz80000-h1
+nz_filesystem (heartbeat::ocf:Filesystem): Started nz80000-h1
+fabric_ip (heartbeat::ocf:IPaddr): Started nz80000-h1
+wall_ip (heartbeat::ocf:IPaddr): Started nz80000-h1
+nz_dnsmasq (lsb:nz_dnsmasq): Started nz80000-h1
+nzinit (lsb:nzinit): Started nz80000-h1
+fencing_route_to_ha1 (stonith:apcmastersnmp): Started nz80000-h2
+fencing_route_to_ha2 (stonith:apcmastersnmp): Started nz80000-h1
+
+
+Once all of the resources are started the Database will start coming up.
+
+Once the database is online, check the NPS health
+
+As the nz user issue the command 
+
+[nz]$ nzhw -issues ; nzds -issues ; nzds -regenstatus 
+
+This output should match what was found previously before the migration.
+
+Make sure to allow the database to come online fully before migrating back to the other host.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management IBM Netezza Analytics

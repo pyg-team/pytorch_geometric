@@ -1,0 +1,169 @@
+Title: IBM PM33376: A SVRCONN CHANNEL WAITING FOR A MESSAGE TO ARRIVE ON A QUEUE IS NOT POSTED WHEN A SUITABLE MESSAGE IS PUT TO THE QUEUE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When many svrconns are waiting for messages to arrive on queues,
+   and are all posted simultaneously, under some circumstances one
+   of them may not be posted and will hang.
+   ADDITIONAL SYMPTOMS :
+   TCP CONNECTIONS REMAIN IN CLOSEWAIT CLOSWAIT STATE
+   DATA NOT BEING READ BY APPLICATION
+   TCP CSM STORAGE FILLS ( SEE PM35359 [http://www-01.ibm.com/support/docview.wss?uid=isg1PM35359] PM39080 )
+   AND ASSOCIATED SOCKET REQUESTS CAN FAIL WITH ENOBUF
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  SET SHARECNV TO 0 TO DISABLE MULTIPLEXING
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 0 Modification 1.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Svrconn channels hang under heavy       *
+   *                      workload.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When CSQXACNO processes the async notification events table, and
+   the table contains >100 posted ECBs it resets the table after
+   processing the 100th entry to prevent the table from filling. An
+   error in this logic can cause it to reset the table using the
+   incorrect position, causing one ECB to be skipped. Depending on
+   what the skipped ECB is for, this can lead to a single svrconn
+   channel hanging, or the async notification task hanging
+   preventing further notifications from being processed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CSQXACNO is modified to prevent an ECB being skipped when
+   resetting the events table.
+   010Y
+   CSQXACNO
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM33376
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   010
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-23
+   
+   
+ * CLOSED DATE
+   2011-03-02
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK65368
+   
+   
+
+MODULES/MACROS
+ *  CSQXACNO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R010 PSY UK65368 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK65368]
+   UP11/03/12 P F103
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

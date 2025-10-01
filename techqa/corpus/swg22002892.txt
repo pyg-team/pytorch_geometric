@@ -1,0 +1,76 @@
+Title: IBM "Period xxxxYY for company ZZZZZ is locked by another user (ABC)" when trying to run a consolidation - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User creates a consolidation job. Afterwards, user opens batch queue. User notices that the consolidation failed to run correctly.
+
+If user opens the job, then they see that it failed because someone was locking a period. 
+
+SYMPTOM
+Inside 'Batch queue', the consolidation 'Finished with Error': 
+
+[/support/docview.wss?uid=swg22002892&aid=1] [/support/docview.wss?uid=swg22002892&aid=1] 
+
+ 
+
+After double-clicking on the relevant entry, the following message is seen:
+[/support/docview.wss?uid=swg22002892&amp;aid=2] 
+
+Period xxxxYY for company ZZZZZ is locked by another user (ABC). 
+
+Batch job is rescheduled 
+
+Reschedule limit reached, job is aborted.
+
+
+CAUSE
+There are several possible causes: 
+
+ 
+
+Scenario #1 - A different user (ABC) is currently using 'Company - Data Entry - Reported Values' 
+
+ * Specifically, they have a data entry form open, which relates to the period and company that you are trying to consolidate.
+
+
+Scenario #2 - A different user (ABC) was recently using 'Company - Data Entry - Reported Values', but unexpectedly crashed out of it (for example with an error message) 
+
+ * In other words, the user ABC is not actively/currently using Data Entry, but the Controller system still has the 'lock' (inside its database) which makes it think that the user ABC is still using Data Entry for the period/company combination that you are trying to consolidate.
+
+RESOLVING THE PROBLEM
+Scenario #1 (user actively using data entry) 
+
+Ask user ABC to exit their Data Entry session. 
+
+ * In other words, ask them to close their data entry form.
+
+
+Scenario #2 (user crashed unexpectedly out of data entry) 
+
+Fix: 
+Ask the user mentioned in the error message ('ABC' in our example) to reopen their Data Entry form, and then close/exit gracefully from it. 
+
+In other words, ask them to:  * 
+ * 
+ * 
+ * 
+ * 
+
+
+Workaround #1 (recommended if possible): 
+Perform a database optimise. 
+
+In other words: 
+1. Ensure all users out of the system 
+2. Click 'Maintain - User - Single mode' 
+3. Click 'Maintain - Database - Optimise' 
+4. Click 'Run' button. 
+
+===================================================== 
+Workaround #2 (only to be used if workaround #1 impossible): 
+If the above methods are not suitable for your situation, then it is possible to use a different (more complex / potentially unsafe) method: Manually clear the lock(s) from the database.  * TIP: For more details, see separate IBM Technote #1453847.
+
+===================================================== RELATED INFORMATION
+ 1453847 - How to manually/forcibly unlock a data entry [http://www.ibm.com/support/docview.wss?uid=swg21453847]

@@ -1,0 +1,57 @@
+Title: IBM WebSphere Portal Support in Rational Application Developer 7.5 - United States
+
+Text:
+RSDP; SDP; RAD; RSA; WPS; WAS; WTE; Portal; support; portal support; portal development; PAO; passport advantage TECHNOTE (FAQ)
+
+QUESTION
+ What are the requirements for IBM WebSphere Portal Server and underlying WebSphere Application Server to be supported in Rational Application Developer for WebSphere Software 7.5? 
+
+ANSWER
+Rational Application Developer 7.5 supports WebSphere Portal Server on WebSphere Application Server. 
+
+
+
+ * WebSphere Portal Server 6.0.0.0 (and later) on WebSphere Application Server 6.0 Base
+   
+   
+ * WebSphere Portal Server 6.1.0.0 (and later) on WebSphere Application Server 6.1 Base
+   
+   
+ * WebSphere Portal Server 6.1.0.1 (and later) on WebSphere Application Server 7.0 Base
+
+
+
+WebSphere Application Server should comply with WebSphere Portal Detailed System Requirements in Related Information.  
+
+Modification and Fix Pack
+Rational Application Developer continues to support the same Version and Release of WebSphere Portal Server with the subsequent Modification and Fix Pack unless otherwise specified not to be supported. 
+
+For details about V.R.M.F, refer V.R.M.F. Maintenance Stream Delivery Vehicle terminology in Related Information. 
+
+ 
+
+WebSphere Portal Server 6.0 Installation
+Rational Application Developer 7.5 does not include WebSphere Portal Server 6.0 as part of its installation. Users who have Rational Application Developer 7.5 support entitlement can download WebSphere Portal Server 6.0 included in Rational Application Developer 7.0 from IBM Passport Advantage Online [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm], if they previously had a Rational Application Developer v7.0 license. Otherwise they can use or purchase a stand-alone WebSphere Portal Server 6.0 server they are licensed for. 
+
+ 
+
+Limitation 
+
+Network Deployment of WebSphere Application Server is not supported in IBM Rational Application Developer 7.5. For details, refer Unable to test on IBM WAS Network Deployment in Related Information. 
+
+
+
+
+
+RELATED INFORMATION
+#WebSphere Portal detailed system requirements [http://www.ibm.com/support/docview.wss?uid=swg27007791]
+RAD7.5 Development Support for WebSphere Portal [http://publib.boulder.ibm.com/infocenter/radhelp/v7r5/index.jsp?topic=/com.ibm.etools.portal.doc/topics/cportaletover.html]
+Unable to test on IBM WAS Network Deployment Edition [http://www.ibm.com/support/docview.wss?uid=swg21385784]
+V.R.M.F. Maintenance Stream Delivery Vehicle terminolog [http://www.ibm.com/support/docview.wss?uid=swg27008656]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect for WebSphere Software Portal / Portlet Development Linux, Windows 7.5, 7.5.1, 7.5.2, 7.5.3

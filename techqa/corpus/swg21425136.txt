@@ -1,0 +1,49 @@
+Title: IBM Adding a new MIME type to IBM Content Collector with repository IBM FileNet P8 - United States
+
+Text:
+ICC; tiff; tif; application/octet-stream TECHNOTE (FAQ)
+
+QUESTION
+ How to add a MIME type to IBM Content Collector, if Content Collector is configured to use IBM FileNet P8 as repository? 
+
+ANSWER
+
+
+ 1. Stop the IBM Content Collector Task Routing Engine service and make sure that the Content Collector Configuration Manager is closed. Stopping the Task Routing Engine service stops all other relevant services.
+    
+    
+ 2. Edit the file <InstallDir>/ctms/ADF/P84x.adf, where <InstallDir> is the installation directory of IBM Content Collector. For each FileNet P8 task that contains the element <mimeTypeMap>, add a new entry for each new MIME type or extension that you want to add. 
+    For example, this entry makes the image/tiff MIME type work with both .tiff and .tif extension:  * 
+     * <mimeType name='image/tiff' >
+       <extension>.tiff</extension>
+       <extension>.tif</extension>
+       </mimeType>
+     * 
+     * 
+    
+    
+ 3. Restart the Content Collector Configuration Manager. A new file _mergedADF.tmp is created in the ctms directory.
+    
+    
+ 4. Make sure that the changes you made to the P84x.adf file are propagated to the_mergedADF.tmp file. Search for the extension that you have added to make sure that all of them occur in the _mergedADF.tmp file. 
+    
+    
+ 5. In the Content Collector Configuration Manager, select Tools > Task Route Service Configuration and set logging to "Trace 2 (verbose logging)". 
+    
+    
+ 6. In the task route designer of the Content Collector Configuration Manager, select each FileNet P8 task, change the description field, and save the changes. 
+    Important: You must select each FileNet P8 task, repeat the change, and save the configuration.
+    
+    
+ 7. Restart the IBM Content Collector Task Routing Engine service.
+    
+    
+ 8. Make sure that the changes have succeeded:  * Check the Task Routing Engine service log. If it contains a line like "10-02-18T18:21:36Z Trace2 Value for parameter 'MimeTypeParamId' evaluated to: 'image/tiff'TaskRoutingService.exe:0x3675c 0x998" instead of "10-02-18T18:21:36Z Trace2 Value for parameter 'MimeTypeParamId' evaluated to: 'application/octet-stream'TaskRoutingService.exe:0x3675c 0x998", the MIME type is properly set.
+     * Check in FileNet P8 if the MIME type was set correctly.
+    
+    
+
+
+Important: Do not copy the P84x.adf file and store it in the same folder as the original file when you edit it. If you do, the Content Collector Configuration Manager merges both files into the_mergedADF.tmp file. Depending on the order of the two files, your changes might not be applied.
+
+IBM Content Collector 3.0 Starting from version 3.0, mime type mapping for the P8 repository can be added, changed or deleted from the Content Collector Configuration Manager. Select the Connectors configuration task, then select IBM FileNet P8.

@@ -1,0 +1,115 @@
+Title: IBM README file for IBM XL C/C++ for Multicore Acceleration for Linux on x86 Systems, V9.0 Runtime Environment Component - United States
+
+Text:
+runtimeXlc runtimeXlclinux; 1289007 FIX README
+
+ABSTRACT
+ This README file is to accompany IBM XL C/C++ for Multicore Acceleration for Linux on x86 Systems, V9.0 Runtime Environment Component. It contains installation instructions and other useful information about this software. 
+
+CONTENT
+Copyright Information
+Licensed Materials - Property of IBM
+
+IBM XL C/C++ for Multicore Acceleration for Linux on x86 Systems, V9.0 - Runtime Environment Component (Web downloadable)
+5724-T42
+
+Copyright International Business Machines Corporation 2007. All rights reserved.
+US Government Users Restricted Rights – Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+
+
+System Prerequisites
+
+QS21 blade (target): 
+
+ * Red Hat Enterprise Linux 5.1 (RHEL 5.1) for IBM POWER technology-based systems 
+ * IBM Software Development Kit (SDK) for Multicore Acceleration Version 3.0
+
+
+x86 System (host):  * Red Hat Enterprise Linux 5.1 (RHEL 5.1) for Intel x86 Systems 
+ * IBM Software Development Kit (SDK) for Multicore Acceleration Version 3.0
+
+
+(The packages provided will install on both the host and target systems.) 
+
+
+Installation Instructions 
+
+To execute an application built with the XL C/C++ compiler, you need to install the following IBM C++ runtime on the QS21 blade: 
+
+1. Download, unzip and untar the "xlc.cbe.rte.*" package. For example: 
+
+gunzip xlc.cbe.rte.9.0.0.rhel5.x86.tar.gz 
+tar -xvf xlc.cbe.rte.9.0.0.rhel5.x86.tar 
+
+2. You must uninstall any previous version of the cell-xlc-rte rpm. To uninstall the package, use the following command: 
+
+rpm -e cell-xlc-rte-x.x.x-x 
+
+where x.x.x-x refers to the level of the rpm package installed on your system. To determine the level, use the following commands: 
+
+rpm -q cell-xlc-rte 
+
+3. Install the packages using the following command: 
+
+rpm -ivh cell-xlc-rte-x.x.x-x.i386.rpm 
+
+where x.x.x-x represents the version number. 
+
+
+If you need rpms from the addon package as well: 
+
+1. Download, unzip and untar the rpm packages. For example: 
+
+gunzip <filename>.tar.gz 
+tar -xvf <filename>.tar 
+
+2. You must uninstall any previous versions of the rpms if any are installed. Do not uninstall rpms that you are not upgrading. To uninstall an rpm package, use the following command: 
+
+rpm -e <package name> 
+
+You must uninstall rpm packages in the following order: 
+
+rpm -e cell-xlc-rte-lnk-x.x.x-x 
+rpm -e cell-xlc-rte-x.x.x-x 
+rpm -e cell-xlc-lib-x.x.x-x 
+
+where x.x.x-x refers to the level of the rpm package installed on your system. To determine the level, use the following commands: 
+
+rpm -q cell-xlc-rte-lnk 
+rpm -q cell-xlc-rte 
+rpm -q cell-xlc-lib 
+
+3. Install the packages using the following command: 
+
+rpm -ivh <package name> 
+
+You must install the rpm packages in the following order: 
+
+rpm -ivh cell-xlc-rte-x.x.x-x.i386.rpm 
+rpm -ivh cell-xlc-rte-lnk-x.x.x-x.i386.rpm 
+rpm -ivh cell-xlc-lib-x.x.x-x.i386.rpm 
+
+where x.x.x-x represents the version number. 
+
+
+Deinstallation Instructions 
+
+To uninstall this software perform the following steps: 
+
+rpm -e cell-xlc-rte-lnk-x.x.x-x 
+rpm -e cell-xlc-rte-x.x.x-x 
+rpm -e cell-xlc-lib-x.x.x-x 
+
+where x.x.x-x represents the version number. 
+
+In cases where an rpm package is required by other installed packages, that package may not uninstall. 
+
+
+Terms and Conditions 
+
+By downloading, installing, copying, accessing or using this software you agree to the terms and conditions outlined in the License Agreement. Please review the License Agreement [ftp://ftp.software.ibm.com/aix/products/ccpp/xlc-rte-malx-v9/LicenseAgreement.pdf] and License Information [ftp://ftp.software.ibm.com/aix/products/ccpp/xlc-rte-malx-v9/LicenseInformation.pdf] documents prior to proceeding with download or installation. 
+
+
+Providing feedback 
+
+IBM welcomes your comments. You may send them to: compinfo@ca.ibm.com [compinfo@ca.ibm.com].

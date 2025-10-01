@@ -1,0 +1,105 @@
+Title: IBM MustGather notes for SCO / ICO to OpenStack engagement - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ MustGather notes for SCO / ICO to OpenStack engagement 
+
+RESOLVING THE PROBLEM
+ 
+
+MustGather Recommendations for SCO / ICO to OpenStack Engagement 
+
+========================================================================
+Information/Logs needed by OpenStack
+
+I. Top Level Info
+
+- What exact version/SP of SCO / ICO (i.e. 2.4.0.1), and what LA level?
+
+- If SCO 2.3.x, what version of SCE is in use?
+- Hypervisor type and version (i.e. VMWare vCenter 5.5) ?
+
+II. MustGather Data (logs and configuration files)
+
+Note: If you have been asked to enable debug and recreate the 
+problem, please skip to section III and return here to gather 
+and send all the data.
+
+Please use the QMGCOLLECT.sh script to gather the required data.
+
+This picture shows option 1 selected which is  [/support/docview.wss?uid=nas8N1020620&amp;aid=1]
+
+The QMGCOLLECT.sh script is provided with instructions here:
+
+http://www-01.ibm.com/support/docview.wss?uid=nas8N1020618 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1020618]
+
+
+III. Recreation and Logs
+
+1. OpenStack Config files. Edit these to enable extra logging.
+
+/etc/nova/nova.conf
+/etc/nova/smartcloud.conf
+/etc/cinder/cinder.conf
+/etc/neutron/neutron.conf
+/etc/glance/glance.conf
+/etc/keystone/keystone.conf
+
+In each file, set these lines:
+
+debug = true
+verbose = true
+
+2. Restart the OpenStack services
+3. Recreate the issue (if possible).
+If possible use nova boot to recreate the error. See the following: 
+http://www-01.ibm.com/support/docview.wss?uid=swg21697917 [http://www-01.ibm.com/support/docview.wss?uid=swg21697917]
+Note the following:
+- The date/time of the recreation (start and end if it's a long
+recreate)
+- Information that can be used to identify the failure.
+- The VM name, hostname, IP address for deploy/delete failures
+- UUID of the instance and Name in the Cloud VS name in the GUI
+4. Gather the data, return to Section II above.
+5. If managing PowerVC, use QMGCOLLECT.sh option 2 (shown above) to 
+gather powervc-diag data. Alternatively, run /usr/bin/powervc-diag
+on the PowerVC system and upload the logs.
+
+6. Screen shots are helpful, if there is a visible failure of some sort.
+
+
+Send any/all data you collected. QMGCOLLECT.sh option 8 should help 
+with data upload, however if that does not work try one of the methods here:
+http://www-05.ibm.com/de/support/ecurep/send.html [http://www-05.ibm.com/de/support/ecurep/send.html]
+
+========================================================================
+
+Useful commands (Reference):
+
+Retrieving the SCE version on the Region Server
+telnet localhost 7777 --> version
+
+Restarting the OpenStack Services
+service qpidd start/stop/status/restart
+service openstack-smartcloud start/stop/status/restart
+service openstack-cinder-scheduler start/stop/status/restart
+service openstack-cinder-volume start/stop/status/restart
+service openstack-cinder-api start/stop/status/restart
+service openstack-glance-registry start/stop/status/restart
+service openstack-glance-api start/stop/status/restart
+service openstack-nova-api start/stop/status/restart
+service openstack-nova-cert start/stop/status/restart
+service openstack-nova-consoleauth start/stop/status/restart
+service openstack-nova-scheduler start/stop/status/restart
+service openstack-nova-conductor start/stop/status/restart
+service openstack-nova-novncproxy start/stop/status/restart
+service openstack-nova-network start/stop/status/restart
+service vilProxy start/stop/status/restart
+
+Restarting SCE
+service sce start /stop/status/restart
+
+Restarting PowerVC
+/opt/ibm/powervc/bin/powervc-services start/stop/status/restart

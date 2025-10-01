@@ -1,0 +1,58 @@
+Title: IBM ObjectServer Failover / Failback not working as expected - United States
+
+Text:
+gw_counterpart_down ; backup_counterpart_down; backup_counterpart_up; failover; failback; object server TECHNOTE (FAQ)
+
+QUESTION
+ backup_counterpart_down : Why does the ObjectServer not failover? 
+
+CAUSE
+The table replication fails due to complete successfully, causing an issue with the gw_counterpart_down signal
+
+ANSWER
+Netcool/OMNIbus v7.3.1 and above uses the gateway_triggers group of triggers to manage gateways. 
+
+These are trigger in the backup ObjectServer only which is defined by the property BackupObjectServer being set to true. 
+
+ 
+
+The ActingPrimary property is set with these triggers:
+resync_finished - ActingPrimary ->FALSE
+backup_counterpart_down - ActingPrimary ->TRUE
+
+and the primary_only trigger group enabled/disabled with these triggers:
+backup_counterpart_down
+execute procedure automation_enable;
+backup_counterpart_up
+execute procedure automation_disable;
+
+However, with the bi-directional gateway issues with the gw_counterpart_down signal can occur preventing the backup_counterpart_down from running, and so preventing a successful failover.
+
+To overcome this add the following FILTER to the bi-directional gateways table replication file[s] for the security.users table: 
+
+
+REPLICATE ALL FROM TABLE 'security.users'
+USING MAP 'SecurityUsersMap'
+FILTER WITH 'UserID > 0 and UserID < 65534'
+INTO 'transfer.users'; 
+
+It is recommended that asymmetric table replication is not performed for bi-directional gateways used for failover/failback.
+
+Note that the system, when running normally with the bi-directional gateway running will be in this state:
+AGG_P: 
+
+ActingPrimary : TRUE 
+
+BackupObjectServer : FALSE 
+
+primary_only - enabled
+AGG_B: 
+
+ActingPrimary : FALSE 
+
+BackupObjectServer : TRUE 
+
+primary_only - disabled
+
+RELATED INFORMATION
+ Configuring the Netcool OMNIbus v7 DSD gateway [http://www-01.ibm.com/support/docview.wss?uid=swg21308309]

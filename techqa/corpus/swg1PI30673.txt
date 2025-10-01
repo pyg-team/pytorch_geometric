@@ -1,0 +1,149 @@
+Title: IBM PI30673: STATEFUL SESSION BEAN COULD NOT BE PASSIVATED WHEN USING CURSORH OLDABLEJDBCREADERBEAN FRAMEWORK CLASS - United States
+
+Text:
+  A FIX IS AVAILABLE
+8.0.0.5: WebSphere Extended Deployment Compute Grid V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24040426]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The CursorHoldableJDBCReaderBean class is a stateful session
+   bean but contains fields that are not serializable.  This
+   results in the following error message in the logs when an
+   attempt to passivate the bean is made:
+   
+   ExtendedMessage: BBOO0221W: CNTR0001W: A Stateful SessionBean
+   could not be passivated:
+   BMStatefulBeanO(BeanId(XDCGIVT_611#XDCGIVTEJBs.jar#XDCGIVTCursor
+   HoldableJDBCReader,CBD67785DE14EBE4000004500000550700000000),
+   state = PASSIVATING)
+   com.ibm.ejs.container.passivator.StatefulPassivator@154f8ff3
+   java.io.NotSerializableException:
+   com.ibm.websphere.batch.devframework.datastreams.patternadapter.
+   JDBCConnection
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V8.5                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A java.io.NotSerializableException      *
+   *                      occurs when the                         *
+   *                      CursorHoldableJDBCReaderBean BDS        *
+   *                      framework example class is serialized.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The CursorHoldableJDBCReaderBean class is a stateful session
+   bean but contains fields that are not serializable. This
+   results in a java.io.NotSerializableException when this
+   session bean is passivated.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code update has been made to the serialization path to
+   prevent the above issue.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.2.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI30673
+   
+   
+ * REPORTED COMPONENT NAME
+   WXD COMPUTE GRI
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9301
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-02
+   
+   
+ * CLOSED DATE
+   2014-12-02
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI10451 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI10451]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WXD COMPUTE GRI
+   
+   
+ * FIXED COMPONENT ID
+   5725C9301
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

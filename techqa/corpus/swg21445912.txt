@@ -1,0 +1,47 @@
+Title: IBM Reporting issues with services that are run using the designer or the manager - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ If I have an issue while using Optim™ Designer or Optim Manager to run an service, what logs and information must I gather before I call IBM® Software Support? 
+
+ANSWER
+The information that you gather depends on whether you are running the service using the designer or using the manager. 
+
+
+For services that are run using the designer, copy the console output from the Console tab into a text editor and save to a text file.
+
+For services that are run using the manager, you must gather the following logs:
+
+
+ * Management server logs
+   Gather the entire contents of the log folder used by your application server. If you deployed the management server to WebSphere™ Application Server Community Edition, the log folder is located at {WASCE_HOME}/AppServerCommunityEdition/var/log, where {WASCE_HOME} is the folder to which you installed WebSphere Application Server Community Edition. 
+   The default folder for WebSphere Application Server Community Edition depends on the computer operating system and on the user who installed WebSphere Application Server Community Edition.  * Windows
+      C:\Program Files\IBM Optim\shared\WebSphere\ 
+    * AIX®/Linux/Unix  * Installed by root user
+         /opt/IBM/Optim/shared/WebSphere/ 
+       * Installed by user other than root
+         /home/{username}/IBM/Optim/shared/WebSphere/, where {username} is the user who installed WebSphere Application Server Community Edition
+      
+      
+   
+   
+ * Proxy logs
+   If you start the proxy from the command line or from the shortcut that is installed with the proxy, the log output is displayed in the console output window only. Copy and paste the log output from the console output window to a text editor and save to a text file. 
+   Alternately, you can change the proxy shortcut to send the log output to a text file using the tee command. Open the shortcut properties and add | tee proxyOutput.log to the end of the shortcut target to send the output to the proxyOutput.log file. To use the tee command in Windows, you must first install Windows PowerShell or some other program that includes the tee command. 
+   If you start the proxy as a Windows service, the proxy stores logs in the {PROXY_HOME}/log folder, where {PROXY_HOME} is the folder to which you installed the proxy. On Windows, the default folder for the proxy is C:\Program Files\IBM Optim\proxy\. 
+ * Service execution component logs
+   Logs for service execution components are saved to folders in the temporary directory of the computer. The folders have names of the form log{number} or Pr0cmndExecution{number}. There will be one of these folders for each service instance, so the user must use the timestamps on the folders to locate the correct folder. Gather the entire contents of the folder. 
+   The location of the temporary directory depends on the computer operating system.  * Windows
+      The value of the TEMP environment variable. 
+    * AIX/Linux/UNIX
+      The value of the TMPDIR environment variable 
+   
+   
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Information Management Optim Manager AIX, Linux, Solaris, Windows 2.2.0, 2.2.1, 2.2.2 Information Management Optim Management Server AIX, Linux, Solaris, Windows 2.2.0, 2.2.1, 2.2.2 Information Management Optim Proxy AIX, Linux, Solaris, Windows 2.2.0, 2.2.1, 2.2.2 Information Management Optim Management Console AIX, Linux, Solaris, Windows 2.2.0, 2.2.1

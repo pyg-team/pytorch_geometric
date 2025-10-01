@@ -1,0 +1,51 @@
+Title: IBM Managing endpoints for WebSphere Process Server (WPS) and WebSphere ESB (WESB) Exports with WebSphere MQ and MQJMS bindings - United States
+
+Text:
+v7rnotes esb7rnotes J2C Activation Spec TECHNOTE (FAQ)
+
+QUESTION
+ How do I pause and resume message processing for a WebSphere MQ Export Binding or MQJMS Export Binding in WebSphere Process Server and WebSphere Enterprise Service Bus V7? 
+
+ANSWER
+For *new* Service Component Architecture (SCA) applications in WebSphere Enterprise Service Bus and WebSphere Process Server V7, the MQ JMS and MQ SCA Binding has moved from using a Listener Port to using a J2C Activation Spec to control the message listener for inbound messages.
+With V6.2 applications, you used the ListenerPort MBean or Message Listener Service panels in the administrative console to control and monitor status for an endpoint registered for a MQ Export or MQ JMS Export using a Listener Port. With V7.0 applications, you use equivalent function in the J2CMessageEndpoint MBean to perform the same tasks.
+
+The use of J2CMessageEndpoint MBean to manage endpoints is described in the Managing the message endpoint lifecycle using wsadmin scripting [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.base.doc/info/aes/ae/txml_7msgend.html] topic within the WebSphere Application Server Information Center.
+
+The name of the J2CMessageEndpoint MBean that is used for an MQ or MQ JMS binding endpoint can be found using the ActivationSpec name or by reference to the unique MessageDrivenBean name.
+
+An example of finding the J2CMessageEndpoint MBean by the AcitivationSpec name:
+wsadmin>$AdminControl queryNames WebSphere:type=J2CMessageEndpoint,*,ActivationSpec=MQGet/Export1_MQEXPORT_AS
+
+If an ActivationSpec has been used for multiple endpoints, this query returns more than one MBean.
+
+Alternatively, you can use the unique MessageDrivenBean name for the MBean, which is derived from the application name, module name, and export name (or import name) as follows:
+MessageDrivenBean = application name + '#' + sca module name + export name + '#' + sca module name
+For example, for an MQExport 'Export1' in SCA module 'MQGet' in application 'MQGetApp'
+MessageDrivenBean = MQGetApp#MQGetExport1#MQGet
+
+Example of finding the J2CMessageEndpoint MBean by the MessageDrivenBean name:
+wsadmin>$AdminControl queryNames WebSphere:type=J2CMessageEndpoint,*,MessageDrivenBean=MQGetApp#MQGetExport1#MQGet
+
+When the correct MBean is located the 'pause' , 'resume', ' getStatus' and 'getActivationProperties' operations can be called.
+
+Examples of the above operations for an MQExport 'Export1' in SCA module 'MQGet' in application 'MQGetApp' :
+
+Pause Endpoint:
+wsadmin>$AdminControl invoke [$AdminControl completeObjectName WebSphere:type=J2CMessageEndpoint,*,MessageDrivenBean=MQG
+etApp#MQGetExport1#MQGet] pause
+
+Resume Endpoint:
+wsadmin>$AdminControl invoke [$AdminControl completeObjectName WebSphere:type=J2CMessageEndpoint,*,MessageDrivenBean=MQG
+etApp#MQGetExport1#MQGet] resume
+
+Get Endpoint Status:
+wsadmin>$AdminControl invoke [$AdminControl completeObjectName WebSphere:type=J2CMessageEndpoint,*,MessageDrivenBean=MQG
+etApp#MQGetExport1#MQGet] getStatus
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Process Server Messaging AIX, HP-UX, Linux, Solaris, Windows, z/OS 7.0 
+PRODUCT ALIAS/SYNONYM
+ WPS WESB

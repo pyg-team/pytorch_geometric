@@ -1,0 +1,120 @@
+Title: IBM How to reduce the size of a Controller database by deleting data from XDBTRICKLE - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer had noticed that their Controller database has grown in size, and would like to reduce the size of the database. Specifically they have noticed that the size of one particular database table ("xdbtrickle") is particularly large. 
+What can the customer do to reduce the size of the xdbtrickle table, and (thereby) the entire database? 
+
+SYMPTOM
+Very large size of database table 'xdbtrickle'.
+
+
+CAUSE
+The database table XDBTRICKLE is used for the following purposes: 
+
+ * 
+ * 
+ * 
+ *  Trickling Controller data into TM1 (via the 'FAP' functionality) 
+ * 
+ * 
+ *  Trickling Controller data into TM1 (via the 'FAP' functionality) Controller's audit functionality. 
+
+
+Therefore if the above functionality is enabled, then this causes all the data change details to be stored inside the table xdbtrickle. 
+=> Unless the customer remembers to regularly delete this data, the size of the database table will continue to grow. 
+ENVIRONMENT
+The XDBTRICKLE behaviour varies slightly, depending on which version of Controller is being used: 
+
+ 
+
+ * Controller 10.2.0 or later:
+ * 
+ * 
+ *  In other words, someone has performed all the steps necessary to publish data from the Controller database to a TM1 cube, via the 'FAP' function. 
+ * 
+ * Controller 10.1.1 or earlier:
+ * 
+ * 
+ * Enable tracking of data change details for Audit Trail and Financial Analytics Publisher
+ * 
+ * 
+ * [/support/docview.wss?uid=swg21624409&amp;aid=1]
+ * 
+ * 
+ *  Customer is publishing data to TM1 (via FAP) or the customer wants to record information about data changes (e.g. for SOX / auditing reasons). 
+
+DIAGNOSING THE PROBLEM
+If the Controller database is hosted on Microsoft SQL, then you can find the size of all the tables by running the SQL script that can be found inside separate IBM Technote #1345780.
+
+
+
+RESOLVING THE PROBLEM
+The instructions on how to reduce the size of the xdbtrickle table vary slightly (depending on what version of Controller you are using). 
+
+ 
+Controller 10.2.0 or later:
+This is an automatic process (occurs regularly automatically).
+
+It is configured inside the FAP client tool. 
+
+ * Specifically, change the value for 'Trickle tables purge every':
+
+[/support/docview.wss?uid=swg21624409&aid=2] [/support/docview.wss?uid=swg21624409&aid=2] 
+
+For example, set the value to '7' to make the XDBTRICKLE table get purged once a week.  * TIP: The time of the purging will always be midnight (based on the clock of the server which is running the Windows service 'IBM Cognos FAP Service') 
+ * Changes in the 'Trickle tables purge every' setting are registered immediately/automatically. In other words, there is no need to restart the FAP service (after making the change)
+
+ * Example:
+ * 
+ * 
+ *  Set 'Trickle tables purge every' to 7 Restart the Windows service 'IBM Cognos FAP Service' anytime on Saturday, between (say) 12:05am and 11:55pm 
+ * 
+
+
+Controller 10.1.1 or earlier : 
+It is only possible to delete the old data manually (not automatically). 
+
+Launch the menu item "Maintain - System Audit Log - Configuration" and using the option "Delete data change details older than (days)". 
+
+NOTE:  * If you are using "FAP" then make sure that the value you choose is at least 1 (to make sure that the current FAP trickle data is not deleted before it is transferred to the TM1 system) 
+ * Naturally this menu will delete the ability to review the system audit log for the data changes that you are deleting. Therefore, only delete data that you no longer need to audit the changes. 
+ * This action puts a high load on the database server, so it is best to delete the data change details often (many small deletes, rather than one very large delete) and at a time when the system is not busy.
+
+ * Steps:
+ * 
+ * 
+ *  Ensure that no other users are on the system (downtime) Be aware that this process can take some time to run (depending on the size of the table) Decide on how many days of data you need to keep (see TIPS above) Make sure that you have plenty of spare hard drive space left on your SQL server, since (see below for details) the process will cause the database files (mdf/ldf) to increase. As a precaution (just in case you ever need the data again) consider making a 'special' database backup, and archiving this (storing it safely) for posterity. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Delete data change details older than (days)
+ * 
+ * 
+ * 
+ *  For example, if you want to delete all the data *except* for the past week, then change this value to 7 
+ *  
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * IMPORTANT:
+ *  During this process, the Controller database data (mdf) and log (ldf) files will grow, due to all the changes  * However, these files (mdf and ldf) will now contain lots of spare (blank/unused) space
+   
+   Therefore, after this process is finished, you should ask your SQL DBA (I.T. administrator) to 'shrink' the database, to release all remaining spare space.
+   Your SQL DBA should know how to do this, but (for reference) suggested instructions are given inside separate IBM Technote #1367388.
+   
+
+TIP: There is a faster way to clear down the XDBTRICKLE table, however this needs the expert assistance of your Database Administrator. With Cognos Controller 10.1 this will also delete all your System Audit Log entries so only proceed with the faster method if the System Audit Log is either not being used or has been fully backed up. See Technote 1661294 - "Reset FAP and clear down XDBTRICKLE table" in Links below. RELATED INFORMATION
+ 1345780 - How to find out the size of each table inside [http://www.ibm.com/support/docview.wss?uid=swg21345780]
+1367388 - How to shrink a Microsoft SQL database transa [http://www.ibm.com/support/docview.wss?uid=swg21367388]
+1661294 - Reset FAP and clear down XDBTRICKLE table [http://www-01.ibm.com/support/docview.wss?uid=swg21661294]

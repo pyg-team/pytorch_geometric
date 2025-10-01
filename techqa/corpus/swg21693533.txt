@@ -1,0 +1,39 @@
+Title: IBM The MIME Adapter boundary demarcation is being enclosed with double quotes - United States
+
+Text:
+wstx; Mime adapter ; wtx boundary demarcation delimiter TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Websphere Transformation Extender (WTX) MIME Adapter boundary demarcation is being enclosed with double quotes. If the boundary parameter value is contained in double quotes, the quotes are used as part of the boundary delimiter as well. 
+
+CAUSE
+This has been identified as a product defect under APAR PI30815
+
+ENVIRONMENT
+MIME adapter
+
+DIAGNOSING THE PROBLEM
+If the boundary parameter value was contained in double quotes, the quotes were used as part of the boundary delimiter as well as shown in the below example: 
+
+---------------------------------------------------------- 
+Content-Type: multipart/related; boundary="00001" 
+MIME-Version: 1.0 
+
+--"00001" 
+Content-Type: text/xml; charset="UTF-8" 
+Content-ID: ACORD 
+--------------------------------------------------------- 
+
+The expected format is as below: 
+
+-------------------------------------------------------- 
+Content-Type: multipart/related; boundary="00001" 
+MIME-Version: 1.0 
+
+--00001 
+Content-Type: text/xml; charset="UTF-8" 
+Content-ID: ACORD 
+---------------------------------------------------------- 
+
+RESOLVING THE PROBLEM
+Applying the APAR fix resolves the issue

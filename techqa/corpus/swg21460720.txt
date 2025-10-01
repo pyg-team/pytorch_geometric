@@ -1,0 +1,28 @@
+Title: IBM JRules Execution Unit (XU) memory profiler - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What kind of information is collected by the XU memory profiler ? Where can it be accessed ? 
+
+ANSWER
+The agent, when enabled, will retrieve the information about estimated memory usage for the ruleset. A definite value for "rulesetEstimatedMemorySize" in the XU dump can be seen, when the profiler is enabled. The following screenshot shows where this information can be found:
+[/support/docview.wss?uid=swg21460720&aid=1] [/support/docview.wss?uid=swg21460720&aid=1]
+
+To view this information on Rule Execution Server console, one needs to execute a sample rule application on Rule Execution Server. For this purpose, a simple HelloWorld rule application is provided in this tech-note. Follow these steps:
+
+1. Deploy the ruleapp jar file using the Rule Execution Server console 
+2. Set the log level of Rule Execution Server to "Debug" on "Server Info" tab of Rule Execution Server
+3. Execute the ruleapp using Rule Execution Server console
+
+Once the ruleapp is executed, you should be able to see a similar information in the XU dump. 
+
+
+Note: the path to the Java agent for XU memory profiling may be erroneous in the product documentation, refer to APAR RS00553 [http://www-01.ibm.com/support/docview.wss?uid=swg1RS00553]
+
+HelloWorld.jar [/support/docview.wss?uid=swg21460720&aid=3]HelloWorld.jar [/support/docview.wss?uid=swg21460720&aid=2]
+HelloWorld.jar 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise

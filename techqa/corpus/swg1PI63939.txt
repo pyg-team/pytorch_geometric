@@ -1,0 +1,201 @@
+Title: IBM PI63939: CREATING THE SOLR INDEX FOR OPENPAGES SHOWS A DATABASE ERROR IN THE LOGS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When attempting to create a Solr for searching, a database error
+   is captured in the logs. The following sample stacktrace occurs:
+   
+   INFO  - 2016-05-21 00:55:37.055;
+   com.ibm.openpages.search.indexer.FullIndexerGRCObjects;
+   Indexing: SOXControl ...
+   INFO  - 2016-05-21 00:55:37.055;
+   com.ibm.openpages.search.db.DbRunningJobProcessPrograssLogger;
+   Issuing SQL statement (begin OP_PROCESS_MGR.add_process_log(?,
+   ?, ?, ?, ?, ?, ?); end;)
+   INFO  - 2016-05-21 00:55:37.175;
+   com.ibm.openpages.search.db.DbRunningJobProcessPrograssLogger;
+   Procedure call returned (1) rows were updated
+   INFO  - 2016-05-21 00:55:37.249;
+   com.ibm.openpages.search.indexer.FullIndexerGRCObjects; Issuing
+   SQL statement (select design_details, ctl_abcd, ctl_abcd,
+   rcsa_control_descripti, handoff_to, ctrl_risk_rtg, control_type,
+   update_operating_eff00, ctl_iaexpdesc, ctrl_classification,
+   update_operating_eff01, control_automated, tai_assets,
+   ctl_ctrlid, ctl_iaaddinfo, key_determination,
+   rcsa_taxonomy_lvl_3, obserbe_ctrl_stan, additional_description,
+   useofthirdparty, ctl_rcfloc, control_assessment, updopeff,
+   ctl_origin, ctl_iaactdesc, complexity, ctl_seqnum, ctl_identby,
+   full_path, expected_control, obserbe_ctrl_app, link_to_radar,
+   ctl_iaasesrtng, control_category, domain, modification_date,
+   ctl_iamonctl, name00, handoff_from, ctl_iamanauto, highfuncpre,
+   exp_control, key_control, ctl_src, classification, ctl_iataxloc,
+   eucs, ctrl_train_level, parent_folder, version_comments,
+   key_report_details, coso_component_princip, fraud_mit_ctrls,
+   ctl_proptaxnode, manual_or_automated, intopeff, keyreports,
+   audit_operating_effect, rcsa_control_id, description,
+   report_name, apps2, crtl_testtyperat, update_operating_effec,
+   control_method, ctrl_assert, control_risk_rating_ra, designeff,
+   operating_effectivenes, ctl_iaprevdet, py_deficiencies,
+   design_effectiveness, ctl_parentloc, control_id, highfuncdesc,
+   apps, finrisc_ctrl_desc, key_reports, control_metrics,
+   checked_in_by, operation_effectivenes, ctl_breakcrumb,
+   control_owner, frequency, euc_details, pmo_owner, creator,
+   creation_date, thirdpartyname, ctl_taxrelnode,
+   crtl_testtypeperf, ctl_iaprfrmr, pwc_owner,
+   financial_assertions, consultant_mgr, external_auditor_relia,
+   info_process_obj, coso_component, audit_design_effective,
+   ctl_tdrtaxloc3, compldesc, consultant_manager from SV_control
+   where reporting_period_id = -1)
+   ... ... ... ... ...
+   ... ... ... ... ...
+   FATAL - 2016-05-21 00:56:15.420;
+   com.ibm.openpages.search.indexer.FullIndexerGRCObjects;
+   com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error:
+   SQLCODE=-433, SQLSTATE=22001, SQLERRMC=ABCD Regulatory
+   Compliance Reform Strategy (John Doe) prepares t, DRIVER=4.17.29
+   com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error:
+   SQLCODE=-433, SQLSTATE=22001, SQLERRMC=NY Regulatory Reform
+   Strategy (Rosario Chiarenza) prepares t, DRIVER=4.17.29
+       at com.ibm.db2.jcc.am.hd.a(hd.java:739)
+       at com.ibm.db2.jcc.am.hd.a(hd.java:66)
+       at com.ibm.db2.jcc.am.hd.a(hd.java:135)
+       at
+   com.ibm.db2.jcc.am.ResultSet.completeSqlca(ResultSet.java:4126)
+       at
+   com.ibm.db2.jcc.am.ResultSet.earlyCloseComplete(ResultSet.java:4
+   108)
+   
+   Because of this error, only 4,343 out of 11,831 records were
+   indexed for the sample object type, SOXControl.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * openpages users                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * CREATING THE SOLR INDEX FOR OPENPAGES SHOWS A DATABASE ERROR *
+   * INTHE LOGS                                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customers should download OpenPages 7.3 from Passport        *
+   * Advantage. See the following document for details on         *
+   * obtaining OpenPages 7.3:                                     *
+   * http://www.ibm.com/support/docview.wss?uid=swg24042596       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  code change
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI63939
+   
+   
+ * REPORTED COMPONENT NAME
+   OPENPAGES GRC
+   
+   
+ * REPORTED COMPONENT ID
+   5725D5100
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-09
+   
+   
+ * CLOSED DATE
+   2016-11-09
+   
+   
+ * LAST MODIFIED DATE
+   2016-11-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OPENPAGES GRC
+   
+   
+ * FIXED COMPONENT ID
+   5725D5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R730 PSY
+   UP

@@ -1,0 +1,44 @@
+Title: IBM Not able to edit reports if Internet Explorer 11 is used - United States
+
+Text:
+IE11 TROUBLESHOOTING
+
+PROBLEM
+Reports are successfully run. Opening the report in the Edit Mode displays an error message saying that the specification is invalid.
+
+This problem occurs with the Internet Explorer 11 only. Chrome and Firefox both open the report in edit mode.
+
+SYMPTOM
+This document does not contain a valid report specification.
+
+Reason:
+The namespace prefix is not allowed to start with the reserved string "xml".
+
+URL:
+
+
+Line:
+8820
+
+Character:
+15
+
+Source:
+
+<XMLAttribute xmlns:xml="http://www.w3.org/XML/1998/namespace" output="no" name="RS_dataType" value="3"/>
+--------------^
+
+
+CAUSE
+The report was created by using Microsoft Edge and Queries copied inside the Queries Pane
+
+DIAGNOSING THE PROBLEM
+Xmlns:xml="http://www.w3.org/XML/1998/namespace" code is found in the report specification
+
+RESOLVING THE PROBLEM
+Removing the xmlns:xml="http://www.w3.org/XML/1998/namespace" code manually from the report specification.
+
+As Microsoft Edge is currently not a supported browser, it should not be used to create new reports.
+
+RELATED INFORMATION
+IBM Cognos Analytics 11.0.12 Supported Software Environments [http://www-01.ibm.com/support/docview.wss?uid=swg27047186]

@@ -1,0 +1,185 @@
+Title: IBM IV98289: WARRANTY CLAIM DETAILS REPORT IS NOT RUNNING IN DB2 ENVIRONMENT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ERROR DESCRIPTION:
+   WARRANTY CLAIM DETAILS REPORT IS NOT RUNNING IN DB2 ENVIRONMENT.
+   PROBLEM:
+   It occurs a syntax error in a sql statement on the SubDataset
+   when database is DB2:
+   DB2 SQL Error: SQLCODE=-182, SQLSTATE=42816, SQLERRMC=null,
+   DRIVER=4.11.69
+   PERFORMANCE ISSUE:
+   N/A
+   STEPS TO REPRODUCE:
+   Go to Warranty Claim app
+   Bring up any record and click in run report
+   Try to run Warranty Claim Details report in an environment with
+   DB2 installed on.
+   The following error is shown in the screen.
+   There was an exception on the server. Check your report
+   parameter values, or contact your system administrator, who can
+   find additional details in the server log.
+   Error in the log:
+   DB2 SQL Error: SQLCODE=-182, SQLSTATE=42816, SQLERRMC=null,
+   DRIVER=4.11.69
+   CURRENT ERRONEOUS RESULT:
+   DB2 SQL Error: SQLCODE=-182, SQLSTATE=42816, SQLERRMC=null,
+   DRIVER=4.11.69
+   EXPECTED RESULT:
+   Report should run with no error
+   ENVIRONMENT (SYSTEM INFO):
+   System Information
+   App Server
+   IBM WebSphere Application Server 8.5.5.3
+   Version
+   IBM Maximo Transportation 7.6.2.4 Build 20170221-0604 DB Build
+   V7624-02
+   Tivoli's process automation engine 7.6.0.7 Build 20170215-0100
+   DB Build
+   V7607-14
+   IBM TPAE Integration Framework 7.6.0.7 Build 20170130-1250 DB
+   Build
+   V7607-03
+   IBM Maximo Linear Management 7.6.0.0 Build 20170215-0100 DB
+   Build V7600-
+   22
+   IBM Maximo for Service Providers 7.6.3.0 Build 20170221-2101 DB
+   Build
+   V7630-21
+   IBM Maximo Asset Management Work Centers 7.6.0.1 Build
+   20161104-1046 DB
+   Build V7601-41
+   IBM Maximo Asset Management 7.6.0.7 Build 20170215-0100 DB
+   Build V7604-
+   01
+   Server OS
+   Windows 6.3
+   Server DB
+   DB2/NT64 10.5 (SQL10054)
+   (c) Copyright IBM Corp. 2017
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users on Maximo Transportation 7624                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The report didn't run on maximo with DB2                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix has been made
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV98289
+   
+   
+ * REPORTED COMPONENT NAME
+   MX TRANSPORTATI
+   
+   
+ * REPORTED COMPONENT ID
+   5724R5500
+   
+   
+ * REPORTED RELEASE
+   762
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-07-20
+   
+   
+ * CLOSED DATE
+   2017-07-26
+   
+   
+ * LAST MODIFIED DATE
+   2017-07-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MX TRANSPORTATI
+   
+   
+ * FIXED COMPONENT ID
+   5724R5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R762 PSY
+   UP

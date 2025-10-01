@@ -1,0 +1,150 @@
+Title: IBM IC35878: TSM SERVER NAME RESET CAUSES WINDOWS CLIENT AUTHENTICATION FAILURE - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer was adding a new TSM server to his operation. He
+   decided to change his naming convention which requires using the
+   SET SERVERNAME command to change the TSM server name. This
+   caused all of his Windows clients to become out of synch with
+   their generated passwords. The name of the TSM server is part of
+   the path in the registry to the stored password the client uses
+   to authenticate. When the servername changes, the client looks
+   in a new path in the registry for the password key and is not
+   able to find one. All Windows clients will fail their backups
+   if on a schedule and passwordaccess generate is used until there
+   is manual intervention on each client to reset the password
+   after the servername change.
+   -
+   Error messages in the dsmerror.log on the client will be the
+   standard login failure messages:
+   sesscntl.cpp (3183): sessOpen: Error 137 from signon
+   authentication.
+   -
+   However, the customer should also see this which indicates a
+   failure to find the registry key (because the servername is
+   now changed and it is part of the path to the key):
+   pssec.cpp ( 694): ReadPswdFromRegistry(): getRegValue():
+   Win32 RC=2 .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None. Use caution when changing the server name of the TSM
+   server using the SET SERVERNAME command. Windows client
+   passwords will have to be manually reset at the client to ensure
+   scheduled operations can continue.
+   ADDITIONAL KEYWORDS:
+   authentication schedule fail client servername reset
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Tivoli Storage Manager users of version  *
+   *                 5.1 and previous releases.                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The SET SERVERNAME command requires     *
+   *                      an warning to be added to the books.    *
+   *                      Using the SET SERVERNAME command can    *
+   *                      have far reaching ramifications.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Using the SET SERVERNAME command can cause client associations
+   to be lost and create other problems for the user. The command
+   must be used with great respect for the ramifications of
+   its use.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Warnings have been added to the documentation and will be
+   available in a future release of the product.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC35878
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER 510
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   51A
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2003-03-07
+   
+   
+ * CLOSED DATE
+   2003-03-12
+   
+   
+ * LAST MODIFIED DATE
+   2003-03-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced GC32076800 GC32077200 GC23469000 GC32077500 GC23469400 GC32077800 GC32078200 GC32076900 GC32077300 GC23469100 GC32077600 GC23469500 GC32077900 GC32078300 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

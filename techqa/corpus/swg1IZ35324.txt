@@ -1,0 +1,205 @@
+Title: IBM IZ35324: 6.2.2 THE SECURITY OPTION "SET WORK ORDER STATUS TO WAITING FOR MATERIALS" DOESN'T PREVENT USERS FROM CHANGING STATUS TO WMATL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ***Overview
+   
+   If the user group has "grant access" for "approve work order"
+   checked in the options section then the status "waiting for
+   material" is available, even if the security option "Set work
+   order status to waiting for materials" is unticked.
+   
+   Reproduced the problem on Maximo 6.2.2 and 6.2.1.
+   
+   Checked with P&T and they response.
+   
+   
+   /Bedford/IBM wrote on 17/10/2008 12:45:35 AM:
+   
+   > WMATL is a synonym of APPR so I can see why this might be
+   happening.
+   > I would call this a bug, but I'm not sure how we would fix it.
+   I see
+   > two options:
+   > 1. We fix it so you can grant APPR, but not grant WMATL and
+   this
+   > would do what you are expectring it to do
+   > or
+   > 2. We remove the WMATL sig option because it is merely a
+   synonym of
+   > APPR. I don't know if we can set a sig option to control
+   access to synonyms.
+   
+   >
+   > Steve, is it possible to grant access to a base Maximo status
+   like
+   > APPR, but then NOT grant access to a synonym like WMATL?
+   
+   
+   So adding a APAR.
+   
+   
+   ****Steps to reproduce.
+   
+   1. created a group WMATL and user WMATLUSER they have access to
+   work order application and at least one site.
+   
+   2. Uncheck the work order option
+   "set Work Order status to Waiting for Materials".
+   
+   3. Make sure the option
+   
+   "grant access" for "approve work order"
+   
+   4. Create a workorder and attempt change the status to waiting
+   materials.
+   
+   
+   I found on Maximo 6.2.2 it would allow me to change the status
+   to WMATL on a workorder, even though the security setting was
+   switched off.
+   
+   
+   
+   
+   Client using Maximo 6.2.2
+   
+   I reproduced this on Maximo 6.2.2 seems to be a bug or
+   miss-reading what this permission allows.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Maximo users                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CHANGING STATUS TO WMATL was checking   *
+   *                      sigoption APPR instead of WMATL         *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   6.2.2 THE SECURITY OPTION "SET WORK ORDER STATUS TO WAITING FOR
+   MATERIALS" DOESN'T PREVENT USERS FROM CHANGING STATUS TO WMATL
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  <CHANGING STATUS TO WMATL to check sigoption  WMATL.>
+   
+   
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | REL 6.2.4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ35324
+   
+   
+ * REPORTED COMPONENT NAME
+   SECURITY
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46SC
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-19
+   
+   
+ * CLOSED DATE
+   2008-10-20
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SECURITY
+   
+   
+ * FIXED COMPONENT ID
+   5724R46SC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

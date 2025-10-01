@@ -1,0 +1,33 @@
+Title: IBM New install for WebSphere MQ v7.1 and/or v7.5 creates two Windows service entries - United States
+
+Text:
+Windows Service; WMQ v7; 7.1; install; windows; IBM MQSeries; IBM WebSphere MQ(InstallationName); services TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installing WebSphere MQ (WMQ) v7.1 or v7.5, you notice there are two Windows services for WMQ. Which one should be active? 
+
+CAUSE
+When you install WMQ v7.1 or v7.5, it will create two entries in the Windows services. 
+
+ * IBM MQSeries 
+ * IBM WebSphere MQ(Installation Name)
+
+
+The service for IBM MQSeries should be set to Manual start (default). The service for IBM WebSphere MQ(Installation Name) should be set to autostart (default). 
+
+The IBM MQSeries service is created for legacy purposes. This service is only used if WMQ v7.0.1.x is also installed. If you only have WMQ v7.1 or v7.5, you should never have to use the IBM MQSeries service. 
+
+However, if you are running WMQ Broker or other software which is dependent on the "IBM MQSeries", you will need to enable the service even if you are not running WMQ v7.0.x. 
+
+The service that you get for the primary installation only is called the old name 'IBM MQSeries' and is expected only ever to run under LocalSystem. It's only purpose in life is to start the real (MQ_<INSTALLATION_NAME>) service. Hence ending "IBM MQSeries" service will cause the associated primary installation's service to end. If broker is dependent on "IBM MQSeries" services. 
+
+Ending "IBM MQSeries" service will end both broker and queue manager. The "IBM MQSeries" 
+service is only there to support applications that depend on it, but if they depend on it, they expect it to operate like the original "IBM MQSeries" service would have. 
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21633489]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

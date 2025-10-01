@@ -1,0 +1,31 @@
+Title: IBM MQ Support Portal page replaces the WebSphere MQ Support Portal page - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ The WebSphere MQ (WMQ) Support Portal page has been replaced by the IBM MQ Support Portal page. 
+
+CONTENT
+The WebSphere MQ product name was changed to IBM MQ starting with v8. Now that v9 has been available for a while, we have renamed the IBM Support Portal page for MQ from WebSphere MQ to IBM MQ. You will find content for all versions of MQ on the new IBM MQ Support Portal page [https://www.ibm.com/support/entry/portal/product/websphere/ibm_mq]. 
+
+If you have bookmarks or links to the old WebSphere MQ Support Portal page, you should update them to point to the new IBM MQ Support Portal page. We have put redirects in place to handle most forms of the old WebSphere MQ URL, but there are some variants that might not properly redirect to the new IBM MQ page. To avoid any problems with the URL redirect process, we recommend that you update your bookmarks and links to the new IBM MQ Support Portal page:https://www.ibm.com/support/entry/portal/product/websphere/ibm_mq [https://www.ibm.com/support/entry/portal/product/websphere/ibm_mq] 
+
+ 
+
+You can search for MQ, IBM MQ, or WebSphere MQ from the main IBM Support Portal page [https://www.ibm.com/support/entry/portal/support]. You will see the choice to select IBM MQ. You will not see "WebSphere MQ" in the search results since it has been replaced by the IBM MQ Support Portal page. 
+
+ 
+
+To receive notifications for MQ content, make sure your My Notifications subscriptions also include IBM MQ. Keep WebSphere MQ active as well, since the transition phase for our documents will take some time and you will want to receive notifications for both IBM MQ and WebSphere MQ documents. To manage your My Notifications subscriptions, go to the My Notifications site [https://www.ibm.com/support/mynotifications].
+
+RELATED INFORMATION
+ IBM MQ and WebSphere MQ Support Portal changes [https://www.ibm.com/developerworks/community/blogs/aimsupport/entry/IBM_MQ_and_WebSphere_MQ_Support_Portal_Changes]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere MQ AIX, Platform Independent, HP-UX, IBM i, Linux, OpenVMS, Solaris, z/VSE, Windows, z/OS 9.0, 8.0, 7.5, 7.1, 7.0, 6.0, 5.3.1, 5.3, 3.0 
+PRODUCT ALIAS/SYNONYM
+ IBMMQ MQ WMQ

@@ -1,0 +1,116 @@
+Title: IBM Security Bulletin: IBM Case Manager may be vulnerable to Apache Commons FileUpload code execution - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM Case Manager may be vulnerable to Apache Commons FileUpload code execution attacks. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2016-1000031 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-1000031]
+DESCRIPTION: Apache Commons FileUpload, as used in certain products, could allow a remote attacker to execute arbitrary code on the system, caused by deserialization of untrusted data in DiskFileItem class of the FileUpload library. A remote attacker could exploit this vulnerability to execute arbitrary code under the context of the current process.
+CVSS Base Score: 9.8
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/117957 [https://exchange.xforce.ibmcloud.com/vulnerabilities/117957] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H)
+
+AFFECTED PRODUCTS AND VERSIONS
+This vulnerability affects the following versions and releases: 
+
+ * IBM Case Manager 5.1.1.0 - 5.1.1.4 
+ * IBM Case Manager 5.2.0.0 - 5.2.0.4 
+ * IBM Case Manager 5.2.1.0 - 5.2.1.7 
+ * IBM Case Manager 5.3.0.0 
+ * IBM Case Manager 5.3.1.0
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix IBM Case Manager 5.3.0.0 - 5.3.1.0 PJ45083 5.3.2.0-ICM or later versions IBM Case Manager 5.2.1.0 - 5.2.1.7 PJ45082 5.2.1.7-ICM-IF002 or later versions IBM Case Manager 5.2.0.0 - 5.2.0.4 PJ45081 5.2.0.4-ICM-IF002 [https://www-945.ibm.com/support/fixcentral/swg/doSelectFixes?options.selectedFixes=5.2.0.4-ICM-IF002&continue=1]or later versions IBM Case Manager 5.1.1.0 - 5.1.1.4 PJ45077 5.1.1.4-ICM-IF001 [https://www-945.ibm.com/support/fixcentral/swg/doSelectFixes?options.selectedFixes=5.1.1.4-ICM-IF001&continue=1]or later versions 
+
+WORKAROUNDS AND MITIGATIONS
+The Apache Commons FileUpload jar file, which is installed by IBM Case Manager (ICM), can be manually updated to the latest version to mitigate the security vulnerability. 
+
+Below are the manual instructions on how to update the Apache Common FileUpload jar file with the respective ICM releases. 
+
+ 
+
+1) Download the new Apache Commons FileUpload binary from Apache:
+https://commons.apache.org/proper/commons-fileupload/download_fileupload.cgi [https://commons.apache.org/proper/commons-fileupload/download_fileupload.cgi] 
+
+2) Extract the contents and locate the commons-fileupload-1.3.3.jar file. 
+
+Note: As of the writing of the security bulletin, the latest version of FileUpload is v1.3.3. 
+
+ 
+
+IBM Case Manager 5.1.x release 
+
+3) Navigate to the <CaseManagement Install Folder>\CaseWidgets\CaseForms\WEB-INF\lib 
+
+4) Backup and remove the current commons-fileupload-1.xx.jar 
+
+5) Copy the new common-fileupload-1.3.3.jar file into the folder 
+
+6) Run Case Manager Admin Client (CMAC), and open an existing profile 
+
+7) Run the 'Deploy the Forms Application' task. 
+
+8) Restart the application server 
+
+ 
+
+IBM Case Manager 5.2.x release 
+
+3) Navigate to the <CaseManagement Install Folder>\configure\exploded_apps\forms\WEB-INF\lib 
+
+4) Backup and remove the current commons-fileupload-1.xx.jar 
+
+5) Copy the new common-fileupload-1.3.3.jar file into the folder 
+
+6) Run Case Manager configuration tool, and open an existing profile 
+
+7) Run the following tasks 
+
+ * Create Case Manager Application 
+ * Deploy the Forms Application
+
+
+8) Restart the application server  
+
+IBM Case Manager 5.3.x release 
+
+3) Navigate to the <CaseManagement Install Folder>\configure\exploded_apps\forms\WEB-INF\lib 
+
+4) Backup and remove the current commons-fileupload-1.xx.jar 
+
+5) Copy the new common-fileupload-1.3.3.jar file into the folder 
+
+6) Run Case Manager configuration tool, and open an existing profile 
+
+7) Run the following tasks 
+
+ * Create Case Manager Applications 
+ * Deploy the Forms Application
+
+
+8) Restart the application server 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 04 Dec 2017: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

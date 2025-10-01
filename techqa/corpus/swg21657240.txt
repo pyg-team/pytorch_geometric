@@ -1,0 +1,49 @@
+Title: IBM Does WPG Support AES*-CTR Ciphers? - United States
+
+Text:
+AES CTR WPG Cryptography Algorithms Ciphers TECHNOTE (FAQ)
+
+QUESTION
+ Does WPG Support AES*-CTR Ciphers? 
+
+CAUSE
+Government Trading Partner requesting if WPG supports the AES*-CTR cipher.
+
+ANSWER
+Algorithms supported in FIPS and non-FIPS mode 
+
+
+Following algorithms are supported in FIPS:
+Diffie-Hellman
+RSA, DSA
+SHA-1, SHA-384, SHA-224, SHA-512
+AES, DES, TDES (Triple DES)
+FIPS 186-2 – Algorithm for Pseudo Random Number generation (PRNG)
+Transport layer security: TLSv1
+Keystore format: JKS, JCEKS
+
+Following algorithms are supported in WebSphere Partner Gateway:
+Asymmetric Cryptography: RSA, DSA
+Hash Function: SHA-1, MD5, SHA-384, SHA-224, SHA-512, RIPEMD/160.
+Symmetric Cryptography: AES, DES, 3DES, RC2 (All with CBC mode), CAST5,
+Blowfish, Twofish.
+PRNG: IBMSecureRandom
+Signature algorithm: dsa-sha1, rsa-sha1
+Transport layer security: SSLv3, TLSv1
+Keystore format: PKCS#12, JKS, JCEKS, OpenPGP
+Symmetric key algorithms: AES and TripleDES with modification
+detection.
+Restriction: You can use TripleDES and AES algorithms only when both
+Modification Detection and FIPS mode are set.
+
+The following algorithms are not supported in FIPS but are supported in
+WebSphere Partner Gateway:
+Hash function: MD5. RIPEMD160
+Symmetric cryptography: RC2, CAST5, Blowfish, Twofish
+IBMSecureRandom PRNG provider (all cases of WebSphere Partner Gateway).
+Transport layer security: SSLv3
+Keystore format: PKCS#12
+
+As you can see WPG only supports the AES (All with CBC mode) for
+Symmetric Cryptography. There are no plans to support the
+AES*-CTR modes.

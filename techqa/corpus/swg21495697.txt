@@ -1,0 +1,81 @@
+Title: IBM Deploy History Manager Fails on Windows 2008 R2– Access is Denied - United States
+
+Text:
+Deploy History Manager access is denied fastback reporting configuration UAC user account control TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installing Fastback Reporting, the Deploy History Manager fails with FileNotFoundException error and access denied.
+
+
+SYMPTOM
+Unable to successfully configure Fastback Reporting after installation and the Deploy History Manager fails with messages similar to:
+Caused by: java.security.PrivilegedActionException: java.io.FileNotFoundException: C:\IBM\tivoli\tip1\profiles\TIPProfile\logs\wsadmin.traceout (Access is denied.)
+java.io.FileNotFoundException: C:\IBM\tivoli\tip1\profiles\TIPProfile\logs\wsadmin.valout (Access is denied.)
+
+
+CAUSE
+User Account Control on Windows 2008 is enabled.
+
+ENVIRONMENT
+Windows 2008 R2
+
+DIAGNOSING THE PROBLEM
+Run Deploy History Manager and examine the output. "Access is denied" messages will appear. Below is snippets from the output to show the errors of concern.
+
+
+TRAS0008E: Failed to open trace log file C:/IBM/tivoli/tip1/profiles/TIPProfile/logs/wsadmin.traceout com.ibm.ejs.ras.RasException: Unable to create FileOutputStream over file C:/IBM/tivoli/tip1/profiles/TIPProfile/logs/wsadmin.traceout
+
+Caused by: java.security.PrivilegedActionException: java.io.FileNotFoundException: C:\IBM\tivoli\tip1\profiles\TIPProfile\logs\wsadmin.traceout (Access is denied.)
+
+Caused by: java.io.FileNotFoundException: C:\IBM\tivoli\tip1\profiles\TIPProfile \logs\wsadmin.traceout (Access is denied.)
+
+WASX7318E: Received exception while declaring AdminControl; exception information: com.ibm.ws.scripting.ScriptingException: WASX7197E: Error creating validation output file C:/IBM/tivoli/tip1/profiles/TIPProfile/logs/wsadmin.valout; exception information: java.io.FileNotFoundException: C:\IBM\tivoli\tip1\profiles\TIPProfile\logs\wsadmin.valout (Access is denied.)
+[4/3/11 19:51:07:793 GMT-05:00] 0000000a AbstractShell A WASX7093I: Issuing message: "WASX7318E: Received exception while declaring AdminControl; exception information: com.ibm.ws.scripting.ScriptingException: WASX7197E: Error creating validation output file C:/IBM/tivoli/tip1/profiles/TIPProfile/logs/wsadmin.valout;
+exception information: java.io.FileNotFoundException: C:\IBM\tivoli\tip1\profiles\TIPProfile\logs\wsadmin.valout (Access is denied.)"
+[4/3/11 19:51:07:793 GMT-05:00] 0000000a AbstractShell E WASX7120E: Diagnostic information from exception with text "com.ibm.ws.scripting.ScriptingException:
+WASX7197E: Error creating validation output file C:/IBM/tivoli/tip1/profiles/TIPProfile/logs/wsadmin.valout; exception information: java.io.FileNotFoundException: C:\IBM\tivoli\tip1\profiles\TIPProfile\logs\wsadmin.valout (Access is denied.)
+.
+.
+Error: wsadmin jython processing failed!
+Press any key to continue . . .
+
+
+RESOLVING THE PROBLEM
+Make sure that the user is the Administrator or a user with Administrator privileges and do the following: 
+
+
+Go to Start->Run. Type secpol.msc.
+Expand Security Settings->Local Policies. Click on Security Options.
+
+The following policies need to be disabled:
+User Account Control: Detect application installations and prompt for evaluation
+User Account Control: Only elevate executables that are signed and validated
+User Account Control: Only elevate UIAccess applications that are installed in secure locations
+User Account Control: Run all administrator in Admin Approval Mode
+User Account Control: Switch to the secure desktop when prompting for elevation
+User Account Control: Visualize file and registry write failure to per-user locations
+
+Try running deploy history manager again, if that fails, uninstall FastBack Reporting from Add/Remove programs. Then reinstall it from the Fastback Server installation package and follow the directions below.
+
+1. Make sure the Tivoli Ccommon Rreporting server is started:
+Start-> Programs-> Tivoli Common Reporting-> Start Tivoli Common Reporting Server
+
+2. Start the Browser and log into the Tivoli Integrated Portal (this is to verify valid user/password):
+Start-> Programs-> Tivoli Common Reporting-> Start Tivoli Common Reporting Browser
+
+3. Run the Deploy History Manager script:
+Programs > Tivoli Storage Manager > FastBack > Reporting > Deploy History Manager.
+Log in with user and password used in step 2.
+
+Verify the Deploy History Manager completes successfully.
+Running Deploy History Manager should end with:
+
+History Manager update successful.
+************************************************************************
+Configuration processing completed
+*************************************************************************
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TSM TCR TIP

@@ -1,0 +1,42 @@
+Title: IBM Logon Error: Can't write to the registry key - United States
+
+Text:
+Logon Error; Attempt to call function "RegCreateKeyEx"; web; core; key; 1129202 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote offers a resolution to the error: "Logon Error: Can't write to the registry key", when you attempt to log in to IBM® Rational® ClearQuest® Web. The databases list on the logon page is also empty. 
+
+CAUSE
+This error was known to occur on the 2002 version of the ClearQuest Web server. The core key has not been created or is corrupted. Full text of the error is as follows:
+
+"Logon Error: Can't write to the registry key
+"Software\Rational Software\ClearQuest\2002.05.00\Core\Databases\NPI\MASTR" under either HKEY_LOCAL_MACHINE or HKEY_CURRENT_USER. Error: Attempt to call function "RegCreateKeyEx" on registry key "HKEY_LOCAL_MACHINE\Software\Rational Software\ClearQuest\2002.05.00\Core\Databases" failed. System error: Access is denied."
+
+
+RESOLVING THE PROBLEM
+Follow these steps to recreate the core key:
+
+
+ 1. Start regedt32.exe on the Web Server machine 
+ 2. If they exist, remove the following keys:
+    
+    \\HKEY_LOCAL_MACHINE\Software\Rational Software\ClearQuest\2002.05.00\Core
+    \\HKEY_CURRENT_USER\Software\Rational Software\ClearQuest\2002.05.00\Core
+    
+ 3. Start the ClearQuest Maintenance Tool and reconnect to your schema repository. This recreates the core key.
+
+
+If you still experience this issue after recreating or verifying the registry key, there may be an IIS permission problem. Refer to technote 1227686 [http://www-1.ibm.com/support/docview.wss?uid=swg21227686] for a solution regarding IIS permissions. NOTE: Please note that the connections to your master and production databases will be lost by deleting these keys. To save these connections, export the cqprofile.ini file from the ClearQuest Maintenance Tool - File > Export Profile. Then you can import this .ini file to restore the connections. 
+
+
+NOTE: This solution contains information about modifying the registry. Before making any modifications to the registry, it is strongly recommended that you make a backup of the existing registry. For more information describing how to back up the registry, refer to the Microsoft Knowledge Base Article - See also Microsoft knowledge base article 256986 http://support.microsoft.com/kb/256986 [http://support.microsoft.com/kb/256986].
+
+
+
+
+
+
+
+
+HISTORICAL NUMBER
+ 129001710

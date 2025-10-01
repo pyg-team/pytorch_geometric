@@ -1,0 +1,128 @@
+Title: IBM IV59173: SSL CERTIFICATE EXCEPTION WHEN CONNECT TO TEM SUA - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITIC 7.5.1.1
+   Description:
+   
+   SSL Certificate exception when connect to TEM SUA
+   
+   Details:
+   
+   The following exception gets thrown:
+   
+   javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.util.j: PKIX
+   path building failed:
+   java.security.cert.CertPathBuilderException: unable to find
+   valid certification path to requested target
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  SSL CERTIFICATE EXCEPTION WHEN CONNECT TO TEM SUA
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in SCCD 7512
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV59173
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION COM
+   
+   
+ * REPORTED COMPONENT ID
+   5724R47IC
+   
+   
+ * REPORTED RELEASE
+   722
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-11
+   
+   
+ * CLOSED DATE
+   2014-05-13
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION COM
+   
+   
+ * FIXED COMPONENT ID
+   5724R47IC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R722 PSY
+   UP

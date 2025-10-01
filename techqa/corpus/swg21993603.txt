@@ -1,0 +1,14 @@
+Title: IBM Publishing a package in Framework Manager generates error BMT-MDC-0001 Unable to publish - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to publish a package in Framework Manager we get this error: BMT-MDC-0001 Unable to publish.
+And when selecting the data source in the Metadata Wizard within Framework Manager we get this error: BMT-MD-6001 Connection to the data source 'name of data source' failed because a valid connection string was not specified. 
+
+CAUSE
+In the Framework Manager > Cognos Configuration, the Dispatcher URI for external applications was set to be the same as the Gateway URI. 
+
+RESOLVING THE PROBLEM
+ Change the Dispatcher URI for external applications in the Framework Manager > Cognos Configuration to be the dispatcher URI that is set in Cognos BI Configuration. Then save the Framework Manager Cognos Configuration with this change.

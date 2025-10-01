@@ -1,0 +1,124 @@
+Title: IBM Collecting Data:  Security for IBM Web Content Management 7.0 - United States
+
+Text:
+Collecting Data; Collecting Data; Collecting Data; WCM; Security; MustGather; MustGather; MustGather; MustGatherDocument RECOMMENDED RESOURCES
+
+ABSTRACT
+ Collecting troubleshooting data for IBM Web Content Management Security issues with IBM® WebSphere® Portal 7.0 expedites time to resolution by enabling IBM Support to provide informed problem analysis. 
+
+CONTENT
+If you have already contacted IBM Support and must collect data to determine the nature of a problem in WebSphere Portal, review the information below for the available methods of data collection. Otherwise, review Collecting Data: Read first for WebSphere Portal 7.0. [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21444911] 
+
+Collecting Web Content Management Security specific information
+Use these data collection instructions if you are having issues with the usage and function of the Web Content Management Security features.
+
+
+Questions I. Environment: 
+
+ 1. Web server product and version installed, if any (local or remote and on what platform?) 
+ 2. LDAP server product and version installed, if any (on what platform?) 
+ 3. Database product and version installed, if any other than Derby (local or remote and on what platform?) 
+ 4. If an external security manager is in use, please specify (include platform): 
+ 5. Tivoli® Access Manager 
+ 6. Computer Associates eTrust SiteMinder™ 
+ 7. Other 
+
+
+II. Detailed problem description: 
+Provide a detailed description of the issue you are reporting. When recreating the issue to collect the traces requested below, document your click-by-click recreate scenario. Include the approximate time of each action and the resource and user names involved. 
+
+Please provide screen captures which show the access control settings for the library, site area, content, components, presentation templates, and authoring templates involved in the reported issue. 
+
+Also be sure to include information such as how the content is being rendered. Are you accessing the content using the Web Content Management servlet? Local rendering portlet or remote rendering portlet? 
+
+Does the reported issue affect all users or just a subset of users? Provide the full DN of several failing users and several working users.  
+
+Manual collection of troubleshooting data I. Enabling trace logging 
+
+Enable tracing during problem recreation in order to investigate the specific behavior of the component(s). Choose to enable either static or dynamic tracing and proceed with the steps accordingly. For further information regarding logging and tracing in the portal, refer to the System event logging [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/System_event_logging_wp7] [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?topic=/com.ibm.wp.ent.doc/trouble/pd_intr_logs.html] topic in the WebSphere Portal 7.0 Information Center. 
+
+Option A: Enabling static (extended) tracing
+Static tracing is the recommended method of capturing data, as it collects data from server startup and WCM Security trace data related to building group memberships and permissions. 
+
+1. Log into the Integrated Solutions Console as the WebSphere Application Server administrator. 
+
+2. Click Troubleshooting->Logs and Trace->WebSphere_Portal->Diagnostic Trace. 
+
+3. On the Configuration tab, ensure Enable Log is selected. On this same tab, ensure you increase the Maximum File Size and and Maximum Number of Historical Files as needed to ensure that the tracing of the problem recreation is not overwritten due to the amount of traffic on the system and output of the tracing itself. 
+
+4. Click Change Log Level Details and enter the following trace string: 
+
+com.ibm.wps.engine.*=all:
+com.ibm.wps.services.puma.*=all:
+com.ibm.wps.puma.*=all:com.ibm.wps.um.*=all:
+com.ibm.wps.sso.*=all:
+com.ibm.wps.services.authentication.*=all:
+com.ibm.ws.security.*=all:
+com.ibm.ws.wim.*=all:com.ibm.websphere.wim.*=all:
+com.ibm.wsspi.wim.*=all:com.ibm.workplace.wcm.*=all:
+com.aptrix.*=all:
+com.presence.connect.wmmcomms.*=all:
+com.presence.connect.profile.*=finest 
+5. Click OK and save the changes. 
+6. Restart the WebSphere_Portal application server. 
+
+Option B: Enabling dynamic tracing 
+Dynamic tracing can be used for situations that do not permit a server restart. Note: For tracing WCM Security issues related to building group memberships and permissions, it's recommended to use Option A "static tracing". 
+
+1. Log in as the Portal administrator. 
+
+2. Click Administration->Portal Analysis->Enable Tracing. The Enable Tracing portlet appears. 
+
+3. Type the required trace string into the field Append these trace settings: 
+
+com.ibm.wps.engine.*=all:
+com.ibm.wps.services.puma.*=all:
+com.ibm.wps.puma.*=all:com.ibm.wps.um.*=all:
+com.ibm.wps.sso.*=all:
+com.ibm.wps.services.authentication.*=all:
+com.ibm.ws.security.*=all:
+com.ibm.ws.wim.*=all:com.ibm.websphere.wim.*=all:
+com.ibm.wsspi.wim.*=all:com.ibm.workplace.wcm.*=all:
+com.aptrix.*=all:
+com.presence.connect.wmmcomms.*=all:
+com.presence.connect.profile.*=finest 
+4. Click the Add icon. Enable Tracing updates the field Current trace settings. 
+
+Note: Restarting WebSphere Portal will remove traces that were set by using the Enable Tracing Administration portlet. 
+
+II. Collecting and submitting logs and configuration data 1. Reproduce the problem with traces enabled. Collect screenshots, userId, and timestamp information as appropriate. 
+
+2. Run the following script from <WebSphere>/PortalServer/bin to collect the data: 
+
+ * Windows: wpcollector.bat 
+ * Linux/Unix/i: wpcollector.sh
+
+
+Note: If you wish to use wpcollector to FTP the files to IBM Support, include the -Dpmr=<pmr_number> parameter to indicate the relevant PMR #. For example: wpcollector.bat -Dpmr=11111,222,333 
+
+3. If you did not FTP your files via wpcollector, locate the "wp.collector.files.zip" file or the "<pmr #>-wp.data.files-timestamp.zip" file in <wp_profile_root> [https://idoc2.swg.usma.ibm.com/portal/topic/com.ibm.wp.ent.doc_v70/reference/wpsdirstr.html#wpsdirstr__wp_profile_root]/filesForAutoPD/. Send the files to IBM Support by using the instructions outlined in Exchanging information with IBM Technical Support for problem determination [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571]. 
+III. Manual File Collection
+
+If you do not use the wpcollector tool in step II above to collect files, please collect and send the following files manually after recreating the problem with trace enabled.
+
+
+ * <WP_profile_root>/logs/WebSphere_Portal/SystemOut.log 
+ * <WP_profile_root>/logs/WebSphere_Portal/SystemErr.log 
+ * <WP_profile_root>/logs/WebSphere_Portal/trace.log 
+ * <WP_profile_root>/config/cells/<cellname>/security.xml 
+ * <WP_profile_root>/config/cells/<cellname>/nodes/<nodename>/servers/WebSphere_Portal/resources.xml (located in /clusters/<cluster_name> for clustered server) 
+ * <WP_profile_root>/config/cells/<cellname>/wim (including sub-directories) 
+ * <WP_profile_root>/config/cells/<cellname>/fileRegistry.xml 
+ * <WP_profile_root>/wcm/shared/app/config/wcmservices/WCMConfigServices.properties
+
+
+Send the files to IBM Support by using the instructions outlined in Exchanging information with IBM Technical Support for problem determination [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571]. Note: When sending in logs for review, include any relevant screenshots, timestamps, userIds, etc. in order to expedite analysis of the issue. 
+
+Related Information  *  [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571] [http://www-947.ibm.com/support/entry/portal/Troubleshooting/Software/Lotus/Lotus_Web_Content_Management]WCM Troubleshooting wiki articles [http://www-10.lotus.com/ldd/portalwiki.nsf/xpViewCategories.xsp?lookupName=WCM%20Troubleshooting] 
+ * IBM Support Portal: Lotus Web Content Management Troubleshooting [http://www-947.ibm.com/support/entry/portal/Troubleshooting/Software/Lotus/Lotus_Web_Content_Management] 
+ * Collecting Data: Read first for WebSphere Portal [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21444911]
+
+
+
+ * 
+ *

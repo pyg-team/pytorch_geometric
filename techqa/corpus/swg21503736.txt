@@ -1,0 +1,24 @@
+Title: IBM Monitoring long Java processes with UX agent - United States
+
+Text:
+ITM; java; unix; high cpu; kuxagent; process; long TECHNOTE (FAQ)
+
+QUESTION
+ The UX agent consumes a lot of CPU when the "Missing process" situation with multiple wildcards is running:
+
+( MISSING(UNIXPS.UCOMMAND) == ('*scapethomsonp*java*')) 
+
+ANSWER
+A new "Process Filter" attribute has been added in ITM 6.22.2 IF03 (6.2.2.2-TIV-ITM_UNIX-IF0003).
+A detailed description of this attribute can be found here: 
+http://www-01.ibm.com/support/docview.wss?uid=swg21451510 [http://www-01.ibm.com/support/docview.wss?uid=swg21451510] 
+
+The "Process filter" attribute is a regular expression filter: you need to use ".*" as a wildcard.
+
+The situation - which will decrease the CPU usage - should look like this:
+( Process Filter (Unicode) == '.*scapethomsonp.*' AND MISSING(Process Command (Unicode)) == ( '*java*' ))
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management IBM Monitoring

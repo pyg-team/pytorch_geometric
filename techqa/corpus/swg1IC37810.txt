@@ -1,0 +1,193 @@
+Title: IBM IC37810: SoDA:UNABLE TO EXTRACT SPECIFIC ELEMENT TYPES FROM XDE DIAGRAMS AND THEREFORE UNABLE TO EXTRACT ATTRIBUTES SPECIFIC TO ELEMENTS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  XDE and SoDA 2003 (Tested with XDE JAVA).
+   WORD 2000
+   WIndows 2000 sp3
+   
+   Subject:
+   Not possible to extract specific elements from diagrams in XDE,
+   to get related attributes.
+   TEXT:
+   It's very common that customers want to list e.g. the classes
+   only from  a class diagram after showing the diagram image in
+   IBM Rational SoDA(R).
+   In IBM Rational XDE(TM) with Soda 2003 this is not possible.
+   The only command that seams to work is to extract ALL elements.
+   If we try to extract e.g. elements where is a class, use-case or
+   actor, nothing is returned.
+   This is a VERY important feature that is commonly used with SoDA
+   and Rose today.
+   This customer that has this problem will be moving from Rose to
+   XDE but they need to be able to do this in SoDA with XDE since
+   it's done today with Rose.
+   This issue also creates a problem with extracting the desired
+   information on the actuall elements.
+   If you in XDE repeats on classes you have the option to extract
+   e.g. stereotype and many other things, with this issue, sicne
+   ELEMENTS is the only thing that works, all elem,ent type
+   specific attributes etc fails to be extractable since on
+   elements you can jsut get basic info like NAME.
+   You can see that the REPEAT Element, a Element, using
+   Diagram.ContainedElements   command only has a very low number
+   of display options....
+   So - Not possible to extract specific elements on diagram, which
+   leads to problems showing the important attribute data on e.g.
+   classes/use-cases.
+   The example attached includes a XDE model a template and a
+   example report, if you generate the report it's easy to see what
+   is missing and what commands that fails.
+   Also if you repeat for element you get an extra "PRINT" element
+   returned which i can't see anywhere in the diagram - perhaps
+   another defect??
+   C:XDE_Model:XDE:Model:Model.Path=ﾪSclass\x20example\x2Emdx
+   DISPLAY XDE_Model.Name
+   DISPLAY XDE_Model.Path
+   REPEAT Package, a Package, using XDE_Model.Packages
+    DISPLAY Package.Name
+    REPEAT Diagram, a Diagram, using Package.OwnedDiagrams
+     DISPLAY Diagram.Name
+     REPEAT Element, a Element, using Diagram.ContainedElements
+   (WORKS)
+      DISPLAY Element.Label
+     LIMIT
+     REPEAT Class, a Class, using Diagram.ContainedElements  (FAILS
+   - RETURNS NOTHING)
+      DISPLAY Class.Name
+     LIMIT
+     REPEAT Actor, a Actor, using Diagram.ContainedElements  (FAILS
+   - RETURNS NOTHING)
+      DISPLAY Actor.Name
+     LIMIT
+     REPEAT UseCase, a UseCase, using Diagram.ContainedElements
+   (FAILS - RETURNS NOTHING)
+      DISPLAY UseCase.Name
+     LIMIT
+   Extra info... Add if you want:
+   ct
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  One thing that could work as a hard workaorund is to have one
+   package for each diagram and the extract the classes from the
+   package. But that might mean redesign of the whole model..
+   None availaable.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Added a new relationship on the XDE Diagram called
+   ContainedModelElements.  This relationship returns the model
+   elements corresponding to each view retuned by the
+   ContainedElements relationship.  The tricky thing to remember
+   here is that ContainedElements is a general relationship
+   introduced by the Element artifact type.  It simply returns the
+   elements that any given element owns.   In the case of diagrams,
+   this relationship returns the views contained by the diagram.
+   The new relationship, ContainedModelElements, returns the model
+   element for each view found with ContainedElements.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in XDE 2003.06.13
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC37810
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL SODA VXXX
+   
+   
+ * REPORTED COMPONENT ID
+   5724F5000
+   
+   
+ * REPORTED RELEASE
+   ALL
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2003-10-16
+   
+   
+ * CLOSED DATE
+   2004-11-01
+   
+   
+ * LAST MODIFIED DATE
+   2004-11-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     DEFSRXXX
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RALL PSY
+   UP

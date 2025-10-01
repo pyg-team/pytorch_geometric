@@ -1,0 +1,176 @@
+Title: IBM IV02108: NOT LOGGED INITIALLY REMAINS ACTIVATED AFTER COLUMN DEFAULTS CHANGED - United States
+
+Text:
+AIX SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If user-defined column defaults are altered while in a NOT
+   LOGGED INITIALLY transaction, the NOT LOGGED INITIALLY
+   (NLI) flag may be written to disk. Examples of such actions
+   include:
+   - adding a column with a user default
+   - altering a column to include a user default
+   - altering a column to remove a user default
+   - dropping the last column in a table that included a user
+   default
+   
+   In these situations, the NLI flag would be turned off
+   in memory, allowing DB2 to operate normally. However, if the
+   affected table's control block is flushed from memory (e.g.
+   database was deactivated), the table's control information will
+   be read from disk into memory. When the NLI flag becomes active
+   in memory, DB2 will stop logging transactions related to the
+   affected table. Other unexpected behaviour may occur due to the
+   lack of logging.
+   
+   This flag can be reset to its proper value both in memory and on
+   disk by performing a classic reorg on the table.
+   
+   To find if the NLI flag been written to disk for a table,
+   use the DB2DART utility with the "/DD" parameter on page 0 of
+   table with "/V YES".
+   
+   In the output, search for the heading "Record Type = Table
+   Directory Record". Underneath, table directory flags similar to
+   the one below can be found. The NLI flag is the sixth bit from
+   the end. If it is set to "1" like the example below, then the
+   table is affected by this APAR.
+   
+   Flags = x0000000106000024
+      bit representation = 00000000 00000000 00000000 00000001
+                           00000110 00000000 00000000 00100100
+   
+   When the table is running in this semi-permanent non-logged
+   mode, interrupting an index creation on the table partway
+   through can result in a corrupted table. If this happens, the
+   table is inaccessible and cannot be dropped. A restore from
+   backup is needed to solve the corruption issue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If corruption has not yet occurred on the table, perform classic
+   reorg on the affected table. If the lack of logging is a
+   concern, perform a backup.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * If an alter column operation affecting user-defined defaults *
+   * occurs during a not logged initially transaction, the NLI    *
+   * flag is written to disk. This would result in no logging and *
+   * other negative side-effects.                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 V9.5 Fix Pack 9.                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem was first fixed in DB2 UDB Version 9.5 Fix Pack 9.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV02108
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4100
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-17
+   
+   
+ * CLOSED DATE
+   2012-03-23
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC77211 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC77211] IC77212 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC77212]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * FIXED COMPONENT ID
+   5765F4100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSN
+   UP

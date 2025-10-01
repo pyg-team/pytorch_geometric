@@ -1,0 +1,120 @@
+Title: IBM SNA API tracing of DB2 - United States
+
+Text:
+DB2; SNA API Trace TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to instruct DB2 to pass the desired environment variables to its child processes. 
+
+RESOLVING THE PROBLEM
+This document applies to: 
+
+ * AIX V4 & V5 & higher 
+ * CS/AIX V5, V6, & V7 
+ * DB2 V6 & V7 
+   
+
+You may encounter problems when trying to enable SNA API tracing with DB2 Version 6 and later. These problems arise from the design of DB2 because it maintains strict control of the environment provided to its child processes. The rest of this document describes how to instruct DB2 to pass the desired environment variables to its child processes. 
+
+Note: In each of the following scenarios, enabling SNA API tracing requires that DB2 be stopped. 
+
+SNA API trace requirements To enable SNA API tracing with DB2 Version 6 and later, the following environment variables must be set in the DB2 environment: 
+
+SNATRC=/tmp/snaapi.trc::
+SNACTL=1
+SNATRCRESET=NO 
+
+When a program uses the SNA API libraries, the libraries check these variables to determine if the library calls should be traced and where to save the tracing. 
+
+The variable SNATRC enables tracing and identifies where to save the tracing. The two colons (::) at the end of the line are very important; they must not be omitted. 
+
+Note: The file identified by the SNATRC variable should be writable by the process being traced: the DB2 instance owner, for example db2inst1. If multiple instances are being traced, they should each be pointed to a unique trace file. 
+
+The variable SNACTL disables the application's ability to disable traces, even when the application was written to disable traces. 
+
+The variable SNATRCRESET prevents the trace file from being cleared and reset by each process being traced; without this, multiple processes being traced would eradicate each other's trace data. 
+
+
+Tracing the DB2 Client 
+
+This section applies to a DB2 client connecting directly to the host, not through a gateway. 
+
+The DB2 client does not present any problem. The DB2 client does not maintain strict control over its environment. To pass environment variables to the DB2 client processes, export the variables and restart the DB2 client. 
+
+To enable SNA API tracing, issue the following commands: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+To disable SNA API tracing, issue the following commands:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Tracing the DB2 Server The DB2 server maintains strict control over its environment and must be instructed to pass the desired environment variables. There are two ways to do this: 
+
+The db2set command The $HOME/sqllib/cfg/vendor.cfg file  * 
+ * The db2set command
+ * The db2set command is documented in the DB2 Command Reference. You can use the command to instruct DB2 to pass the desired environment variables on to its child processes. 
+ * To enable SNA API tracing, issue the following commands: 
+ * db2set -all, which gets the current setting of DB2ENVLIST 
+   db2set DB2ENVLIST=' xxx SNATRC SNACTL SNATRCRESET' 
+   #where xxx is the current setting of DB2ENVLIST from the db2set -all command. 
+   db2stop 
+   export SNATRC=/tmp/snaapi.trc:: 
+   export SNACTL=1 
+   export SNATRCRESET=NO 
+   db2start 
+ * 
+ * 
+ * db2set DB2ENVLIST=' xxx' 
+   #where xxx is everything except the SNATRC, SNACTL, and SNATRCRESET variables. If blank, do not enter anything after the = sign. 
+   db2stop 
+   unset SNATRC 
+   unset SNACTL 
+   unset SNATRCRESET 
+   db2start 
+   
+ * The $HOME/sqllib/cfg/vendor.cfg file
+ * Create the file $HOME/sqllib/cfg/vendor.cfg, where $HOME is the DB2 instance owner's home directory. Add a line to this file for each variable to be passed. 
+ * To enable SNA API tracing, edit $HOME/sqllib/cfg/vendor.cfg and add the following lines: 
+ * SNATRC=/tmp/snaapi.trc:: 
+   SNACTL=1 
+   SNATRCRESET=NO 
+ * 
+ * 
+ * db2stop 
+   db2start 
+ * 
+ * 
+ * SNATRC=/tmp/snaapi.trc:: 
+   SNACTL=1 
+   SNATRCRESET=NO 
+ * 
+ * 
+ * db2stop 
+   db2start 
+
+
+Tracing older DB2 versions DB2 V2 & V5 use what are now considered the back-level SNA APIs. Tracing of these APIs is not enabled by the use of environment variables and so do not require any special handling when DB2 is involved. Just perform back-level API tracing as normal. Should the need arise to pass other environment variables to DB2 V2 or V5 for other reasons, follow the instructions as described above.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Networking Communications Server for Data Center Deployment All AIX 7.0.0.0 
+PRODUCT ALIAS/SYNONYM
+ CS/AIX

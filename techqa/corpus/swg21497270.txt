@@ -1,0 +1,22 @@
+Title: IBM OmniFind Enterprise Edition default search portlet does not display results correctly - United States
+
+Text:
+oee; WCM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have deployed the OmniFind Enterprise Edition default search portlet into WebSphere Portal 6.1.5.1.
+
+The typeahead does not display correctly in the portlet. However, if I try the same test in the OmniFind default search application, the typeahead appears fine.
+
+This only happens when using Internet Explorer 7. It does not happen when using Firefox. 
+
+RESOLVING THE PROBLEM
+
+This is probably occurring because of the specific theme and skin of the portlet getting used.
+Check the theme in the Portal administration page. 
+
+
+The OmniFind portlet works correctly with the "Portal" and "Tab Menu" themes.
+
+First check that the search results appear correct when using one of these two themes.
+Then, begin debugging your own custom portlet further to see why it may differ.

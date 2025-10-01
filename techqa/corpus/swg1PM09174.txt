@@ -1,0 +1,142 @@
+Title: IBM PM09174: Selector includes do not reflect the actual value - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  For a Selector that has an include, if the include value is chan
+   ged, it doesn t work correctly. In fact, it works WORSE than inc
+   orrectly. The GUI shows that it has changed, but internally, it
+   does not get updated. selection will actually bring in the 'OLD'
+    selector criteria.
+   
+   
+   Steps to Reproduce
+   1. Create three selectors: a,b,c
+   2. set a to include b
+   3. Save a
+   4. Run the attached API script
+   5. change a to include c instead of b
+   6. rerun the script
+   
+   Result:
+   a still shows that it includes b and not c
+   
+   Workaround: Actually delete the include, then create a new inclu
+   de.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When running the script the value of the include does not
+   appear to change.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  We do not use value for included selectors.  The script
+   should be looking at the include uuid. The default value
+   for a new include selector property has been changed to a
+   blank to prevent future confusion.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM09174
+   
+   
+ * REPORTED COMPONENT NAME
+   BUILD FORGE EE
+   
+   
+ * REPORTED COMPONENT ID
+   5724S2701
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-04
+   
+   
+ * CLOSED DATE
+   2010-11-03
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUILD FORGE EE
+   
+   
+ * FIXED COMPONENT ID
+   5724S2701
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSN
+   UP

@@ -1,0 +1,32 @@
+Title: IBM Tivoli Monitoring 6 JRE Update (6.X.X-TIV-ITM_JRE_TEP-20170817 ) - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This fix updates the IBM® SDK, Java™ Technology Edition for the portal server to address documented security vulnerabilities. 
+
+DOWNLOAD DESCRIPTION
+This fix updates the IBM SDK Java Technology Edition Java Runtime Environment (JRE) which the portal server distributes to clients. 
+
+
+The vulnerabilities addressed by this fix exist when the affected JRE is installed on systems running the Tivoli Enterprise Portal Browser client or Java WebStart client. 
+
+The affected JRE is installed on a system when logging into the IBM Tivoli Enterprise Portal using the Browser client or WebStart client and a JRE at the required level does not exist. The portal provides an option to download the provided JRE to the system. 
+
+This fix provides updated JRE packages for the portal server which can be downloaded by new client systems. Once the fix has been installed on the portal server, instructions in the README can be used to update the portal clients.
+
+There are two fixes provided: 
+
+
+
+Fix Name Description 6.X.X-TIV-ITM_JRE_TEP_6.16.45.00 This is a fix for IBM Tivoli Monitoring version 6.23.01.00 through 6.23.05.00. It contains the updated IBM Runtime Environment, Java Technology Edition, Version 6 SR16 FP45 and IBM Runtime Environment, Java 2 Technology Edition, Version 5 SR16 FP14 for portal server distribution. 6.X.X-TIV-ITM_JRE_TEP_7.10.05.00 This is a fix for IBM Tivoli Monitoring version 6.30.00.00 and above. It contains the updated IBM Runtime Environment, Java Technology Edition, Version 7.1 SR4 FP5 and IBM Runtime Environment, Java Technology Edition version 6 SR16 FP45 for portal server distribution. INSTALLATION INSTRUCTIONS
+Please refer to the README file located in Fix Central for additional information.
+
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 6.X.X-TIV-TM_JRE_TEP-20170817 17 Aug 2017 English 1 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.3.0&function=fixId&fixids=6.X.X-TIV-ITM_JRE_TEP-20170817] [ ] 
+ [/support/docview.wss?uid=swg24043981&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24043981&aid=2]Problems (APARS) fixed
+IV98947

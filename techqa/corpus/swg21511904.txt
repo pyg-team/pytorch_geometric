@@ -1,0 +1,73 @@
+Title: IBM What can I do if I see my Guardium Appliance getting full? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What can I do if I see my Guardium Appliance getting full?
+
+Symptoms
+* Cannot login to GUI
+* Tomcat error on GUI
+* Size of DB from System View approaching 100%
+* Receiving alerts indicating the DB size is getting larger
+
+
+CAUSE
+The DB filling up can be caused by the following - amongst other things 
+
+ *  Spikes in the data being captured A policy setting that allows too much data to be logged in the Internal Database Keeping too much data on the Internal Database Collecting data from too many Databases (STAPs) 
+
+ANSWER
+Recommended Viewing 
+
+
+
+
+
+YouTube Video Preventing and Reacting to Guardium Database Full Issues (22:59) Prevent your Guardium internal database filling up, troubleshoot, and take action to reduce the space when needed. Watch the video on YouTube [https://www.youtube.com/watch?v=ZrCz4FDqx2g&index=10&list=PLFip581NcL2WzC2LpTMT28rml3br5WO9V] (22:59) 
+
+
+The above video is fairly comprehensive - Below is one example of how you may attempt to purge some older data 
+
+
+The quickest way to reduce the DB % Full is to induce a purge of some older data now. 
+v9 - Administration Console --> Data Management --> Data Archive --> Run Once Now 
+v10 - Manage -> Data Management -> Data Archive -> Run Once Now 
+
+Example - If you have " Purge data older than 30 days" set currently, and presuming you have all necessary backups and Archives of your system and you are happy to attempt to purge off slightly more data now 
+ *  Make a note of current DB % Full Set "Purge Data Older than" to 25 days Make sure the "Purge" check-box is checked Make sure the "Archive" check-box is unchecked Make sure the "Allow purge without exporting or archiving" is checked Click "Run Once now" Check progress of the purge via v9 Guardium Monitor --> Archive/Aggregation Log. v10 Reports -> Guardium Operational Reports -> Aggregation/Archive Log. 
+ *   *   * 
+       *  Purge process DONE 
+         
+         [/support/docview.wss?uid=swg21511904&aid=1] [/support/docview.wss?uid=swg21511904&aid=1] 
+      
+      
+   
+   Once that is finished make a note of the current DB % Full from System View 
+
+
+If a difference in the DB % Full in the right direction is noticed then consider issuing the above commands again for slightly less days - eg purge older than 20 days. 
+ * Remember to check the Archive check-box when finished performing these adhoc purges
+
+
+Looking at the causes for this problem you may want to also consider the following 
+
+- See the technote - Why is my Guardium internal database filling up? [http://www-01.ibm.com/support/docview.wss?uid=swg21696497] 
+
+- Amend the policy to capture only the necessary data  * 
+ * 
+ * 
+ * 
+
+
+- Switch one or more of the Databases being captured via the STAPs to another Collector. 
+
+
+- Amend the Archive and Purge settings to purge more data off each day  * 
+
+
+- After purging you may need to optimize the database. See the technote - Guardium internal database full percentage is not decreasing, even after a successful purge [http://www-01.ibm.com/support/docview.wss?uid=swg21676156] 
+
+If that does not help or you cannot access the GUI, then engage IBM Technical Support in the usual manner RELATED INFORMATION
+ Why is my Guardium internal database filling up? [http://www.ibm.com/support/docview.wss?uid=swg21696497]

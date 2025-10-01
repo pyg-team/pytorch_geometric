@@ -1,0 +1,57 @@
+Title: IBM Guardium GDE - When DBPATH is Guarded in a Cluster environment, the "CREATE DATABASE" results in error "Container not accessible" - DB2 v10.5 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Guardium GDE - When DBPATH is Guarded in a Cluster environment, the "CREATE DATABASE" results in error "Container not accessible" - DB2 v10.5 
+
+
+CAUSE
+The following environment was noted with the problem 
+
+Win MSCS 
+DB2 10.5
+
+A standalone environment has no issue. 
+DB2 10.1 in cluster environment has no issue.
+
+Environment: 
+
+Windows Workgroup Server 2012
+DB2 10.5.8 Active/standby with MSCS (Microsoft cluster)
+Vormetric Encryption Expert and Key Agent Version 5, Service Pack 1
+5.1.3.15
+
+DB2 version 10.1 was upgraded to version 10.5 using the upgrade steps [https://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.db2.luw.qb.upgrade.doc/doc/t0022647.html] 
+
+
+After the upgrade, users are able to connect to the primary db successfully. When switching to the failover node the connection to the backup database fails
+
+DB2 returns the following implying that container access is denied. 
+
+MESSAGE : ZRC=0x8402001E=-2080243682=SQLB_CONTAINER_NOT_ACCESSIBLE
+"Container not accessible"
+
+When the database path is unguarded, the "CREATE DATABASE" is successful.
+
+
+In DB2 10.5 when using with Guardium, an admin account called db2admin is needed with rights in Guardium. 
+
+When Guardium is not used, DB2 10.5 works with the Local System.
+In DB2 v10.1, Guardium works with the Local System 
+
+
+
+
+ANSWER
+To resolve, create admin account db2admin and give this account the right permissions to allow 
+
+read, write and execute on the GDE mount point. 
+
+
+
+
+
+RELATED INFORMATION
+ Guardium GDE DB2 tablespaces 'offline' [http://www.ibm.com/support/docview.wss?uid=swg21318818]

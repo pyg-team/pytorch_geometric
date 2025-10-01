@@ -1,0 +1,168 @@
+Title: IBM IZ04635: STATIC BATCH UPDATE DOES NOT WORK PROPERLY IN SQLJ/JDBC - United States
+
+Text:
+AIX SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description: When the sqlj/jdbc batch update is committed the
+   second time, the lob will be closed.
+   
+   SQL:
+   INSERT INTO
+        DB2OSC.DSN_WCC_INST_SUMMY(SRCID, PERMANENT_INSTID,
+   SNAPSHOT_INSTID, SUMMARY)
+        VALUES(:hostVar_0, :hostVar_1, :hostVar_2, :hostVar_3)
+          };
+   
+   Exception:
+   
+   com.ibm.db2zos.osc.sc.da.exception.OSCSQLException:
+   com.ibm.db2.jcc.b.SqlException:
+   [ibm][db2][jcc][t4][20122][11713] Error invalid lob object.  See
+   attached Throwable for details.
+    at
+   com.ibm.db2zos.osc.sc.da.DynamicSQLExecutorImpl.batchUpdatePrepa
+   redStmt(Unknown Source)
+    at com.ibm.db2zos.osc.dc.wcc.impl.CacheSource.extract(Unknown
+   Source)
+    at com.ibm.db2zos.osc.dc.wcc.impl.CacheSource.sample(Unknown
+   Source)
+    at com.ibm.db2zos.osc.dc.wcc.task.CaptureTask.run(Unknown
+   Source)
+    at java.lang.Thread.run(Thread.java:803)
+   Caused by: com.ibm.db2.jcc.b.SqlException:
+   [ibm][db2][jcc][t4][20122][11713] Error invalid lob object.  See
+   attached Throwable for details.
+    at com.ibm.db2.jcc.c.jb.a(jb.java:1178)
+    at com.ibm.db2.jcc.c.jb.a(jb.java:1127)
+    at com.ibm.db2.jcc.c.jb.a(jb.java:758)
+    at com.ibm.db2.jcc.c.jb.a(jb.java:189)
+    at com.ibm.db2.jcc.c.tb.a(tb.java:172)
+    at com.ibm.db2.jcc.b.ih.a(ih.java:1872)
+    at com.ibm.db2.jcc.b.ih.a(ih.java:2968)
+    at com.ibm.db2.jcc.b.ih.a(ih.java:2790)
+    at com.ibm.db2.jcc.b.ih.b(ih.java:2710)
+    at com.ibm.db2.jcc.b.ih.executeBatch(ih.java:1554)
+    ... 5 more
+   Caused by: com.ibm.db2.jcc.b.SqlException: Invalid operation:
+   lob closed
+    at com.ibm.db2.jcc.b.qc.b(qc.java:164)
+    at com.ibm.db2.jcc.c.jb.a(jb.java:1164)
+    ... 14 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  User'saffected: All that use sqlj batch
+   Problem summary: A batching SQLJ application throws ObjectClosed
+   exception when executed in a loop. This defect has now been
+   fixed in the SQLJ Runtime code
+   Problem details: See above
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in jcc driver version 2.10.113 (version from zOS: ht
+   tp://www-01.ibm.com/support/docview.wss?rs=64&context=SSEPEK&q1=
+   PK44367 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK44367]&uid=swg1PK44367&loc=en_US&cs=utf-8&lang=en) and db2 UDB
+   LUW starting from v2.10.99, so v2.11 will have it, v8fp16 and
+   above
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ04635
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE SOL
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4102
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-09-11
+   
+   
+ * CLOSED DATE
+   2009-04-30
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IZ04637 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ04637]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE SOL
+   
+   
+ * FIXED COMPONENT ID
+   5765F4102
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSY
+   UP

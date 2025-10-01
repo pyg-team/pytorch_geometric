@@ -1,0 +1,232 @@
+Title: IBM IC70460: EIF PROBE DOES NOT PROPERLY HANDLE TPC ALERTING EVENTS DUE TO MISSING $SOURCE ATTRIBUTE. EIF UNABLE TO ALERT AS EXPECTED. - United States
+
+Text:
+AIX  A FIX IS AVAILABLE
+4.2.1 Interim Fix 1 (November 2011) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24031346]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DETAIL OF PROBLEM:
+   EIF/Omnibus probes of TPC servers will fail to get TPC alert
+   information, due to TPC's failure to provide the needed $source
+   value to EIF.  The events come from TPC into the Omnibus EIF
+   probe without a source attribute.  Because of that, the probe
+   rules fail and the events are not processed correctly.
+   Sample EIF log output:
+   3/31/2010 5:33:03 PM: Debug: D-UNK-000-000: Flushing events to
+   object server
+   3/31/2010 5:44:27 PM: Debug: D-UNK-000-000: [Event Processor]
+   EventString:
+      messageID=ALR0076W;
+      stopTime="<date_time_string>";
+      startTime="<date_time_string>";
+      msg="Performance monitor failure for device 2107.xxxxx.";
+      recordCnt="0";
+      deviceName="2107.xxxxx";
+      adapter_host=host.customer.com;
+      error="HWNPM2022E A performance monitor for device
+   DS8000-xxxx (2107.xxxxxxx) is already active. A new monitor for
+   the
+   same device cannot be started until the previous monitor
+   completes or is cancelled.";
+      hostname=host.customer.com;
+      alertName="user.alertName";
+      origin=<ip_address>;
+   END
+   In cases like this EIF should process the alert but does not.
+   This results in the user not receiving alerts for events they've
+   configured EIF to alert on.
+   RECREATE STEPS:
+   Run EIF probe of TPC server, observe TPC alerts not being
+   processed correctly.
+   ________________________________________________________________
+   DB2 Version used for Server:    N/A
+   The defect is against component:   5608TC100
+   Server/Manager build/release (TPC):   4.1.1.55
+   Agent build/release (TPC):    N/A
+   Server/Manager (OS):     Windows 2003
+   Agent (OS):       N/A
+   ________________________________________________________________
+   Problem as described by customer:  Events sent from TPC 4.1.1 to
+   EIF probe are not processed correclty.
+   Initial customer impact (low/med/high):  med
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None Known
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Customers of TPC 4.1.1 and 4.2.0 releases    *
+   *                 sending TEC Event to Tivoli Enterprise       *
+   *                 Console (TEC) or Omnibus                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: TEC Events contained values in wrong    *
+   *                      properties, which caused OMNIbus        *
+   *                      rules files to not process TPC TEC      *
+   *                      Event correctly and show source and     *
+   *                      orgin data incorrectly.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   -
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following propeties are changed according to the use of
+   the rules file for OMNIbus and the property definition for
+   TEC Events:
+   
+   TEC EVENT DEFINITION for the
+   following properties:
+   
+   
+   Source:
+   "IBM Totalstorage Productivity Center"
+   
+   Origin:
+   Ip Address of TPC Server
+   
+   Hostname:
+   DNS Name of TPC Server
+   
+   Sub_source:
+   Ip Address of failing Computer or leave it empty
+   
+   Sub_origin:
+   Ip Address of failing Computer or leave it empty
+   
+   
+   The fix for this APAR is targeted for the following maintenance
+   packages:
+   
+   | fix pack | 4.1.1-TIV-TPC-FP0005 - target October 2010
+   | fix pack | 4.2.1-TIV-TPC-GA - target October 2010
+   
+   http://www-01.ibm.com/support/docview.wss?&uid=swg21320822 [http://www-01.ibm.com/support/docview.wss?&uid=swg21320822]
+   
+   The target dates for future fix packs do not represent a formal
+   commitment by IBM. The dates are subject to change without
+   notice.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC70460
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC FOR FABRIC
+   
+   
+ * REPORTED COMPONENT ID
+   5608TC100
+   
+   
+ * REPORTED RELEASE
+   41W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / Pervasive
+   
+   
+ * SUBMITTED DATE
+   2010-08-09
+   
+   
+ * CLOSED DATE
+   2010-09-10
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC FOR FABRIC
+   
+   
+ * FIXED COMPONENT ID
+   5608TC100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R41A PSY
+   UP
+   
+   
+ * R41L PSY
+   UP
+   
+   
+ * R41W PSY
+   UP
+   
+   
+ * R42A PSY
+   UP
+   
+   
+ * R42L PSY
+   UP
+   
+   
+ * R42W PSY
+   UP

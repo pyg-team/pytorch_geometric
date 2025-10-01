@@ -1,0 +1,183 @@
+Title: IBM IV82451: SSL PROTOCOL SELECTION OF TLS 1.0, TLS 1.1, TLS 1.2 - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 7 (6.3.0-TIV-ITM-FP0007) [http://www-01.ibm.com/support/docview.wss?uid=swg24041633]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Transport Layer Security (TLS) cryptographic protocol is the
+   industry stardard used for Secure Socket Layer (SSL)
+   communication.
+     This APAR allows selective TLS protocol selection for use by
+     either a Tivoli Monitoring agent or a Tivoli Monitoring
+   server.
+   Detailed Recreation Procedure:
+     There is no product-provided means of setting or restricting
+     the versions of Transport Layer Security to TLS 1.0, 1.1 or
+   1.2 .
+   Related Files and Output:
+     The GSKit level and TLS protocol use is now presented in the
+     RAS1 log during SSL initialization.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No workaround available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  There is no GSKit v8 TLS protocol selection mechanism.
+   
+   
+   Transport Layer Security (TLS) cryptographic protocol is the
+   industry standard used for Secure Socket Layer (SSL)
+   communication.  There is no product-provided means of setting or
+   restricting the versions of Transport Layer Security to TLS 1.0,
+   1.1 or 1.2 .
+   
+   In order for this APAR to be properly implemented in your
+   environment, a new environment variable has been added.  See the
+   "Install Actions" section of the APAR conclusion for more
+   details.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR allows TLS protocol selection for use by either a
+   Tivoli Monitoring agent or a Tivoli Monitoring server.  By
+   default, TLS 1.0, 1.1 and 1.2 protocols are enabled for
+   non-FIPS, non-SuiteB, non-CC, and non-SP800 users.  These
+   keywords are NOT intended to be used for GSKit V8 users who run
+   with specific subsets of GSKit protocols: FIPS mode, CC Mode,
+   SP800 mode, or SuiteB mode.
+   
+   Install Actions:
+   Assuming none of the specialized modes are enabled, the
+   following GSKit/KDEBE environment variables can be set to
+   disable their respective named protocols by setting the
+   environment variable value to NO:
+   KDEBE_TLS10_ON
+   KDEBE_TLS11_ON
+   KDEBE_TLS12_ON
+   The final disposition of the TLS protocols are displayed during
+   "ssl_provider_constructor" initialization in the RAS1 log.  The
+   following is a display of the expected default settings when no
+   overrides are configured:
+   "ssl_provider_constructor") TLS 1.0 protocol enabled
+   "ssl_provider_constructor") TLS 1.1 protocol enabled
+   "ssl_provider_constructor") TLS 1.2 protocol enabled
+   It is recommended that the <pc>.environment file in
+   $CANDLEHOME/config be used to house these GSKit / KDEBE
+   environment variables.  For example, to force the kuxagent to
+   use TLS 1.2 exclusively, the following would be coded in the
+   ux.environment file:
+   KDEBE_TLS10_ON=NO
+   KDEBE_TLS11_ON=NO
+   These same statements in the ms.environment file would force the
+   TEMS server in this CANDLEHOME environment to accept ONLY the
+   TLS 1.2 protocol in SSL connection establishment.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.3.0-TIV-ITM-FP0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV82451
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-09
+   
+   
+ * CLOSED DATE
+   2016-04-25
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    OA52203 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA52203]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEMS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

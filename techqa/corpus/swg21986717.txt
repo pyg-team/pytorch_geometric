@@ -1,0 +1,13 @@
+Title: IBM Some Matters are not available in Atlas - United States
+
+Text:
+Matters Atlas Extensions TECHNOTE (FAQ)
+
+QUESTION
+ Why are some matters not available in Atlas? 
+
+CAUSE
+Missing Matters in source database
+
+ANSWER
+The external source database specified in the MatterDBPullerAgent.xml did not have the Matters and as a result was not imported into Atlas.

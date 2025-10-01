@@ -1,0 +1,127 @@
+Title: IBM IT08837: TYPE 8436: UPGRADE TO RAID FIRMWARE IS NEEDED - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fix packs for DataPower Gateway version 7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038524]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An upgrade to the RAID firmware is needed.  Issuing "boot image"
+   to install this firmware upgrade on Type 8436 appliance
+   platforms might take an additional few minutes for the RAID
+   firmware upgrade.  The increase is one time for the initial
+   "boot image" only.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Affected are all users of the RAID storage on an IBM DataPower
+   Gateway (Type 8436).
+   
+   CLI command "show raid-logical-drive" might show "writeThrough"
+   Write Policy in effect instead of "writeBack".
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is available in 7.1.0.5.
+   
+   For a list of the latest fix packs available, please see:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21237631 [http://www-01.ibm.com/support/docview.wss?uid=swg21237631]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT08837
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-14
+   
+   
+ * CLOSED DATE
+   2015-06-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSN
+   UP

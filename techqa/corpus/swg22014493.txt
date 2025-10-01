@@ -1,0 +1,30 @@
+Title: IBM 2018.03 Release Note: Upgrading IBM Business Process Manager from V8.6.x to V8.6 CF2018.03 fails on Linux on Power - United States
+
+Text:
+BPM; CF201803; 201803 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you are upgrading IBM Business Process Manager (BPM) V8.6.x to V8.6 cumulative fix 2018.03 on Linux on Power, the upgrade fails during the post-installation configuration phase. There is a "Cannot create symbolic link" error in the Installation Manager log. 
+
+SYMPTOM
+The error in the Installation Manager log looks similar to the following error. 
+
+<logger>com.ibm.cic.common.logging.LogManager</logger>
+<class>org.eclipse.equinox.log.internal.ExtendedLogReaderServiceFactory</class>
+<method>safeLogged</method>
+<message>Error during "post-install configure" phase:
+CRIMA1025E: Cannot create symbolic link "/opt/IBM/BPM/v8/java/bin/ControlPanel" for target file "jcontrol" It already exists for "../jre/bin/jcontrol".</message>
+</entry>
+</log>
+
+
+RESOLVING THE PROBLEM
+To successfully upgrade IBM BPM V8.6.x to V8.6. 2018.13 on Linux on Power for the first time: 
+
+ *  Upgrade WebSphere Application Server V8.5.5.12 to WebSphere Application Server V8.5.5.13. Upgrade IBM BPM V8.6.x to IBM BPM V8.6 2018.03. 
+
+
+If you have already tried the upgrade and got the error:  *  Delete the following files:
+   WAS_install/java/jre/jcontrol
+   WAS_install/java/jre/ControlPanel
+   WAS_install/properties/login.info Upgrade WebSphere Application Server V8.5.5.12 to WebSphere Application Server V8.5.5.13. Upgrade IBM BPM V8.6.x to IBM BPM V8.6 2018.03.

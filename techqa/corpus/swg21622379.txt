@@ -1,0 +1,19 @@
+Title: IBM Duplicate tabs in Service Request application - United States
+
+Text:
+TPAESCCD; SR; duplicate; tab TECHNOTE (FAQ)
+
+QUESTION
+ Why are there duplicate tabs in the Service Requests application? 
+
+ANSWER
+For the affected user, please check the security groups that they belong to.
+1. Go To -> Security -> Security Groups
+2. Filter each of the security groups that the user belongs to and open the record.
+3. In Application tab, filter for 'Service Request' application.
+4. At the option section, filter for 'show desk'
+5. You will see :-
+(a) Show Desk Agent Expert View - This should be checked
+(b) Show Desk Agent Simplified View - This should be unchecked.
+
+You should only have 'Show Desk Agent Expert View' checked. By default, only security group SDADESKAGENT has 'Show Desk Agent Simplified View' checked.

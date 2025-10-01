@@ -1,0 +1,13 @@
+Title: IBM Manually uninstalling the common agent from the target computer - United States
+
+Text:
+511; common agent; uninstall; manually TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to manually uninstall the common agent from the target computer using Tivoli Provisioning Manager 5.1.1 
+
+SYMPTOM
+The inventory scan fails after a successful Tivoli common agent new installation has been performed on a UNIX target computer, because the Common Inventory Technology (CIT) subagent has not been installed on that target computer. The issue is caused by the manual steps performed in order to uninstall the Tivoli common agent from the UNIX target computer.
+
+RESOLVING THE PROBLEM
+When manually uninstalling the Tivoli common agent from the UNIX target computer, ensure you remove also the /etc/cit directory, in addition to the /opt/tivoli/cit directory.

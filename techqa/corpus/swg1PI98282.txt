@@ -1,0 +1,119 @@
+Title: IBM PI98282: DECISION WAREHOUSE CONFIGURATION: DEFAULT-DVS-DW.PROPERTIES WORKS WHILE DVS-DW.PROPERTIES DOES NOT WORK - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  To configure DW, the documented way is to use a file named
+   dvs-dw.properties (and ensure it is available in the
+   classpath), but only naming it default-dvs-dw.properties
+   (similar to the internal default config file) worked in this
+   case.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1) cd $HBRWORKPATH/config/res
+   2) cp dvs-dw.properties default-dvs-dw.properties
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: USERS EXPLOITING THE CASCADING RULEST        *
+   *                 CAPABILITY AND ALSO USING DECISION           *
+   *                 WAREHOUSING                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CASCADING RULESETS DO NOT PICKUP THE    *
+   *                      CORRECT DECISION WAREHOUSE DATABASE     *
+   *                      INFORMATION                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   USE THE LOCAL FIX TO WORKAROUND THIS ISSUE WHICH WILL BE FIXED
+   IN THE NEXT RELEASE
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI98282
+   
+   
+ * REPORTED COMPONENT NAME
+   WS ODM FOR Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y1700
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-05-23
+   
+   
+ * CLOSED DATE
+   2018-06-07
+   
+   
+ * LAST MODIFIED DATE
+   2018-06-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,172 @@
+Title: IBM PM20071: ITCAM FOR APPLICATION DIAGNOSTICES FOR WEBSPHERE AGENT SILENT CONFIGURATION NOT WORKING WITH SPECIAL CHARACTER '.'. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.2-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP2 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24029067]
+7.1.0.2-TIV-ITCAMAD-IF0006: ITCAM for Application Diagnostics V7.1 FP2 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24031010]
+7.1.0.2-TIV-ITCAMAD-IF0007: ITCAM for Application Diagnostics V7.1 FP2 IF7 [http://www-01.ibm.com/support/docview.wss?uid=swg24031710]
+7.1.0.2-TIV-ITCAMAD-IF0010: ITCAM for Application Diagnostics V7.1 FP2 IF10 [http://www-01.ibm.com/support/docview.wss?uid=swg24032110]
+7.1.0-TIV-ITCAMAD-FP0003: ITCAM for Application Diagnostics V7.1 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032604]
+7.1.0.3-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP3 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032985]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITCAM for Application Diagnostices for WebSphere Agent silent
+   configuration fails when special character '.' is used as part
+   of a directory name.  Example:
+   KYN_WAS_HOME./opt/WebSphere/V6.
+   1/AppServer/profiles/AppSrvs=/opt/WebSphere/V6.1/AppServer
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1) Create symbolic links, for example in the directory
+   /opt/Websphere
+   create a link (ln -s /opt/Websphere/V6.1 /opt/Websphere/V6_1)
+   V6_1 --> V6.1
+   and replace in the response file all strings /opt/Websphere/V6.1
+   by /opt/Websphere/V6_1.
+   2) Modify profile registry
+   (/opt/Websphere/V6.1/profiles/profileRegistry.xml), replacing
+   the profile
+   path to value matching with response file, example for AppSrv01:
+   path="/opt/Websphere/V6_1/profiles/AppSrv01".
+   This will not change Websphere structure, this will only remove
+   dots from response file.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of ITCAM for Application Diagnostics
+   * 7.1.0.1, who use response files for silent data collector
+   * configuration, if WebSphere installation
+   * path contains '.' (dot).
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Character '.' has a special meaning for
+   * some types of properties in a response files, and may cause
+   * wrong data interpretation and configuration process fault.
+   ****************************************************************
+   * RECOMMENDATION: Update ITCAMfAD using interim fix 3
+   * 7.1.0.1-TIV-ITCAMAD-IF0003 or newer.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed configurator contains an improved response file parser.
+   Parser allows an usage of the escape sequences @nnnn, where
+   nnnn consisting of 16-bit digits, is Unicode character code.
+   Problematic character '.' in the WebSphere path may be replaced
+   by the sequence '@002E'. For example:
+   KYN_WAS_HOME./opt/WebSphere/V6.1/AppServer/profiles/AppSrvs=/opt
+   /WebSphere/V6.1/AppServer
+   should be replaced by:
+   KYN_WAS_HOME./opt/WebSphere/V6@002E1/AppServer/profiles/AppSrvs=
+   /opt/WebSphere/V6@002E1/AppServer
+   
+   The fix for this APAR is a part of maintenance package:
+    interim fix pack 7.1.0.1-TIV-ITCAMAD-IF0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM20071
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92DC
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-09
+   
+   
+ * CLOSED DATE
+   2010-10-21
+   
+   
+ * LAST MODIFIED DATE
+   2010-10-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92DC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

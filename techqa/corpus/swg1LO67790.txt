@@ -1,0 +1,139 @@
+Title: IBM LO67790: THE COMMUNITY FILE UPLOAD BOX CONTAINS EMBEDDED STYLE ELEMENTS I N HTML INSTEAD OF CSS WHICH PREVENTS THEMING IT. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The community file upload box contains embedded style elements
+   in HTML instead of CSS which prevents theming it. For example:
+   
+   <a role="treeitem"
+   aria-controls="lconn_files_widget_FilePicker_0_content"
+   href="javascript:;"
+   style="display: block; white-space: nowrap; text-decoration:
+   none; font-weight: bold; font-size: 1.1em; margin: 0px 1px;
+   clear: both; position: relative; outline-color: rgb(0, 0, 0);
+   background-color: rgb(50, 79, 118); color: rgb(255, 255, 255);
+   padding-left: 15px;"
+   title="Recent Files"
+   tabindex="0"
+   aria-selected="true">
+   <span style="display: inline-block; padding-bottom: 3px;
+   padding-top: 3px; padding-right: 5px; background-color: rgb(50,
+   79, 118);">Recent Files</span></a>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To theme/customize the community file upload box, modify this
+   line of code by changing the color as you wish in the following
+   files:
+   
+   colors:{divider:"#EAECEE",separator:"#E5E5E5",background:"#FFFFF
+   F",foreground:"#000000",menuText:"#000000",secondaryText:"#84848
+   4",selectedBackground:"#324f76",selectedMenuText:"#FFFFFF"}
+   
+   1.
+   <WAS_PROFILE_HOME>/installedApps/WASSPCell01/Files.ear/qkr.share
+   .files.war/js/built/bundle_actions.js
+   2.
+   <WAS_PROFILE_HOME>/installedApps/WASSPCell01/Files.ear/qkr.share
+   .files.war/js/built/community-widget.js
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Issue to be addressed in the next major version of the product.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# MJAS8RJ69A.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO67790
+   
+   
+ * REPORTED COMPONENT NAME
+   CONNECT COMMUNI
+   
+   
+ * REPORTED COMPONENT ID
+   5724S6802
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-04
+   
+   
+ * CLOSED DATE
+   2012-05-31
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R301 PSY
+   UP

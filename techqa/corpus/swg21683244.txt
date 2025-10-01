@@ -1,0 +1,35 @@
+Title: IBM License agreement Next and Update buttons are disabled during IBM Rational RequisitePro Upgrade - United States
+
+Text:
+RNRP7.1.3.11; RNRP7.1.3.12; RNRP7.1.3.13; RNRP7.1.3.14; RNRP7.1.4.4; RNRP7.1.4.5; RNRP7.1.4.6; RNRP7.1.4.7; ReqPro; update; 7.1.2; 7.1.3; 7.1.4; license agreement; button; disabled TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to Update Rational RequisitePro from version 7.1.2.x to version 7.1.3.11 or 7.1.4.4 using IBM Installation Manager on Graphical User Interface(GUI) mode, the Next and Update buttons on the License agreement panel are disabled. 
+
+SYMPTOM
+When trying to Update Rational RequisitePro from version 7.1.2.x to version 7.1.3.11 or 7.1.4.4 using IBM Installation Manager on GUI mode, the Next and Update buttons on the License agreement panel are disabled (as shown below) and therefore the Update operation is unable to continue. 
+
+[/support/docview.wss?uid=swg21683244&aid=1] [/support/docview.wss?uid=swg21683244&aid=1]
+
+
+CAUSE
+IBM Installation Manager is not able to find a Rational RequisitePro method and therefore throws a "Unhandled event loop exception" message on the log.
+
+
+ENVIRONMENT
+Environments running Microsoft Windows performing an interactive Update of IBM Rational RequisitePro from version 7.1.2.x to version 7.1.3.11 or 7.1.4.4 
+
+
+
+RESOLVING THE PROBLEM
+There are three possibles workarounds: 
+
+ 1. The first option is to use Installation Manager GUI to perform an Update to a previous version:  * For example, Update Rational RequisitePro to version 8.0.0.10 or 8.0.1.3. 
+     * After this operation, performing an Update to a higher version (like 8.0.0.11) using Installation Manager GUI mode is possible due to the Next and Update buttons on the license agreement panel appear enabled. 
+    
+    
+ 2. A second option is to perform a silent Update. This issue will not be encountered when performing a silent Update. For more information about silent operations, consult this technote [http://www-01.ibm.com/support/docview.wss?uid=swg21351537]. 
+ 3. The third option is to uninstall the current version of Rational RequisitePro and perform a clean Install of the newer version.
+
+RELATED INFORMATION
+#IBM Rational RequisitePro response files [http://www.ibm.com/support/docview.wss?uid=swg21351537]

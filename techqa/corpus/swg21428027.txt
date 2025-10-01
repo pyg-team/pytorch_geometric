@@ -1,0 +1,24 @@
+Title: IBM Build Forge v7.0.2.x run queue is filled with purge jobs - United States
+
+Text:
+purge; run queue; RATLC01311925; buildforge TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+This technote explain to how to clean up your run queue in IBM Rational Build Forge when it is filled up by purges. 
+
+SYMPTOM
+Schedule jobs and select jobs will not run and you only see jobs to be purged under the jobs window.
+
+CAUSE
+The run queue has been filled up with purges.
+
+RESOLVING THE PROBLEM
+ If you still have X number of purges still queued to run and you are not able to kick off your jobs, follow these steps: 
+
+ 1. Check your class purge schedule that kicks off at a time that does not conflict with your days or weeks work. Ensure all you current class purges do not conflict with this. 
+ 2. Remove the purges currently waiting delete from bf_builds where bf_state='W' and bf_process='P'; 
+ 3. Monitor the jobs and ensure that builds are running 
+
+
+
+If your problem still exists, contact IBM Rational Build Forge support.

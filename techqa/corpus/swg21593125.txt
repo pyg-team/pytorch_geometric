@@ -1,0 +1,31 @@
+Title: IBM Unable to start or stop IHS v8.0 from WAS v8.0 admin console - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ My IBM HTTP Server (IHS) v8.0 web server is on an unmanaged node that does NOT have a WebSphere nodeagent. I created a web server definition in the WebSphere Application Server (WAS) v8.0 administrative console. However, I am unable to start or stop the IHS web server from the WAS admin console. It just gives an error saying that it "can not connect ..." 
+
+RESOLVING THE PROBLEM
+For previous versions of IBM HTTP Server (IHS), including v7.0 and prior, when you installed IHS it would automatically configure the IHS Admin Server on the same system. 
+
+When you are using IHS on a WebSphere Node (part of a WAS ND Cell), it is not necessary to use the IHS Admin Server, because the WAS nodeagent does the administration of IHS instead.
+
+However, when you are using IHS on a system that does NOT have a WAS nodeagent, then you MUST use the IHS Admin Server for remote administration.
+
+When you install IHS v8.0 it does NOT automatically configure the IHS Admin Server. So, you must do this yourself using one of the following methods of your choice:
+
+1) You can use the new Plug-in Configuration Tool (PCT) which is part of the new WebSphere Customization Toolbox (WCT). For detailed steps please read this page in the WAS v8.0 Information Center:
+
+Configuring a web server and an application server profile on the same machine
+http://publib.boulder.ibm.com/infocenter/wasinfo/v8r0/topic/com.ibm.websphere.base.doc/info/aes/ae/tins_webplugins_local.html [http://publib.boulder.ibm.com/infocenter/wasinfo/v8r0/topic/com.ibm.websphere.base.doc/info/aes/ae/tins_webplugins_local.html]
+
+OR
+
+2) You can use the setupadm and htpasswd commands on the command line:
+
+Setting up a remote web server
+http://publib.boulder.ibm.com/infocenter/wasinfo/v8r0/topic/com.ibm.websphere.base.doc/info/aes/ae/tihs_remotesetup.html [http://publib.boulder.ibm.com/infocenter/wasinfo/v8r0/topic/com.ibm.websphere.base.doc/info/aes/ae/tihs_remotesetup.html]
+
+RELATED INFORMATION
+#A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21618224]

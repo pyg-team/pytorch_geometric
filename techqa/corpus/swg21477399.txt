@@ -1,0 +1,28 @@
+Title: IBM Using OR in a conditional statement. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am using SPSS/Statistics and am trying to construct a conditional statement for a variable. I think I need to use an OR within the statement but SPSS keeps ignoring it when I run the select if. How do I use an OR to get what I want? 
+
+RESOLVING THE PROBLEM
+To use OR successfully, first go to Data->Select Cases->If condition is satisfied. Click over the variable you want to include in the conditional statement followed by an equal sign and the condition. Then press the pipe symbol in the keypad which looks like this, '|'. This pipe stands for OR. You could also type in OR in the box. Next click over the variable name again followed by an equals sign and the second condition. Press continue and then OK. 
+
+If you wanted to select only cases for the variable SEX that equaled 1 OR 2, it would look like the example below in SPSS Command Syntax:
+
+FILTER OFF.
+USE ALL.
+SELECT IF(SEX = 1 | SEX = 2).
+EXECUTE .
+
+Remember using an OR in your condition will allow for more cases to be included. The use of AND will restrict the condition.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 25468

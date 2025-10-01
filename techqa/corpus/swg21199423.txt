@@ -1,0 +1,88 @@
+Title: IBM Upgrading the WebSphere Test Environment version 6 in Rational products - United States
+
+Text:
+Upgrade Test Environment 6.0; WTE; 6.0; Test Environment; upgrade; fixpack; Fix; Pack; WebSphere; Server; v6; WebSphere Test Environment; Unit Test Environment; UTE; RSA; RAD; RWD; 81489 756 000; 1199423; maintenance; update TECHNOTE (FAQ)
+
+QUESTION
+ How do you upgrade the integrated WebSphere Test Environment version 6 in Rational Application Developer for WebSphere Software, Rational Software Architect or Rational Web Developer to a newer release? 
+
+ANSWER
+The recommended procedure is to use the IBM Installation Manager that is used to install/upgrade Rational Application Developer for WebSphere Software itself. 
+
+(For example, upgrading the WebSphere Test Environment 7.0 to 7.0.0.1 in Rational Application Developer for WebSphere Software 7.5; refer to the download 4021481 [http://ibm.com/support/docview.wss?uid=swg24021481] for more information.)
+
+An effort is in progress to make all future WebSphere Application Server fixpacks available using the IBM Installation Manager installs, so if the WebSphere Test Environment upgrades show up in the list of available upgrades, then proceed as usual using IBM Installation Manager.
+
+Otherwise, you will need to use the stand-alone WebSphere Application Server procedures for upgrades as follows:
+
+
+ 1. You first need to obtain the appropriate WebSphere Application Server (WAS) version 6 Fix Pack from the WebSphere Application Server support page. Upgrading WAS also means upgrading the WebSphere Application Server JDK, which many times is a separate download. You should follow the WebSphere Application Server upgrade instructions as provided in the links referenced below.
+    
+    
+ 2. Using Rational Application Developer for WebSphere Software as an example, the next step is to determine the exact version of the version 6 integrated WebSphere Test Environment you have installed by executing the following command:
+    
+    <RAD InstallationDirectory>\runtimes\base_v6\bin\versionInfo
+    
+    (The actual file name is versionInfo.bat on Microsoft Windows operating systems and versionInfo.sh on Linux operating systems.)
+    
+    In this example, the integrated WebSphere Test Environment version 6 installed with Rational Application Developer version 6.0 returns this information:
+    
+    Name IBM WebSphere Application Server
+    Version 6.0.0.0
+    ID BASE
+    Build Level o0444.14
+    Build Date 11/5/04
+    
+    To determine the IBM Java SDK version you have, execute the command:
+    
+    <RAD InstallationDirectory>\runtimes\base_v6\java\bin\java - fullversion
+
+
+
+
+
+
+
+WebSphere Application Server Fix Pack installation instructions adapted for the Rational Application Developer integrated WebSphere Test Environment: 
+
+The following modified instructions are a simplified supplement and are not meant to be a replacement for the complete WebSphere Application Server Fix Pack installation instructions (see the "Applying WebSphere Application Server Service" link below). To apply this Fix Pack against the integrated WebSphere Application Server, perform the following steps: 
+ 1. Ensure that all WebSphere Test Environment version 6 servers are terminated. 
+ 2. Extract the WebSphere Application Server update to the 
+    <RAD Installation Directory>\runtimes\base_v6\ directory. 
+    This should result in creation of an update Installer directory in the base_v6 directory. 
+ 3. Open a command prompt and run the WebSphere Application Server update file: 
+    <RAD Installation Directory>\runtimes\base_v6\updateinstaller\update.exe 
+ 4. The WebSphere Application Server Update Installer wizard automatically detects the installation location of the integrated WebSphere Test Environment. Therefore, you can use the default values whenever there is a field prompting for the installation location.
+
+
+Note 1: Each WebSphere Application Server version 6.x server fixpack or Java SDK cumulative fix under Downloads in the WebSphere Support site comes with install instructions in the Readme. You should follow these instructions carefully. 
+
+Please follow the instructions as per the WAS version you are using, be it WAS 6.0 or 6.1 (Note: Only Rational Application Developer for WebSphere Software 7 adds WebSphere Application Server 6.1 as and additional Test Environment.) Choose the appropriate WebSphere Application Server upgrade from the following link: http://ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://ibm.com/support/docview.wss?rs=180&uid=swg27004980] 
+
+(Please note that the WebSphere Application Server runtimes for the Rational Application Developer for WebSphere Software default installation, are found under the directory: 
+<your RAD installation>\runtimes\base_v6 (or base_v61) for WebSphere Application Server 6.0 (or 6.1 respectively). 
+
+Note 2: As of Fix Pack 6.0.2.21 the "Update Installer" utility is no longer packaged with the Fix Pack. 
+You need to download the Update Installer 6.1.0.9 and install it as a stand-alone program, from the Update Installer version 6.1 download page: 
+http://ibm.com/support/docview.wss?rs=180&uid=swg24012718 [http://ibm.com/support/docview.wss?rs=180&uid=swg24012718] 
+
+Extract the content of download.updii.6109.windows.ia32.zip to a temp directory and run install.exe to install the Update Installer program. 
+From then on, you will start the program from the Windows Start menu: 
+Start > All Programs > IBM WebSphere > Update Installer for WebSphere 6.1 Software > Update Installer 
+
+This version of Update Installer can be used to install 6.0.2.21 Fix Pack and later versions. Please read the Update Installer instructions on how to use it, and find the latest WebSphere Application Server and its latest JDK updates from the WebSphere Application Server Support site, linked below. 
+
+
+
+RELATED INFORMATION
+#WAS v6 Information Center [http://publib.boulder.ibm.com/infocenter/ws60help/]
+Applying WAS Service [http://publib.boulder.ibm.com/infocenter/ws60help/index.jsp?topic=/com.ibm.websphere.express.doc/info/exp/ae/tins_ptfLevels.html]
+WebSphere Application Server Support [http://www.ibm.com/software/webservers/appserv/was/support/]
+WTE 7.0.0.1 upgrade [http://www.ibm.com/support/docview.wss?uid=swg24021481]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Web Developer for WebSphere Software Integrated Test Environment Windows, Linux 6.0, 6.0.0.1, 6.0.1.0, 6.0.1.1, 6.0.1.2 Software Development Rational Software Architect Integrated WebSphere Test Environment Linux, Windows 6.0, 6.0.0.1, 6.0.1, 6.0.1.1, 6.0.1.2, 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4, 7.0.0.5

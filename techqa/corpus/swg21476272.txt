@@ -1,0 +1,26 @@
+Title: IBM Error VLS0016 : Invalid Characters when licensing Sentinel 8 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm installing my SPSS product's network license on Sentinel 8. I run "spssactivator <authcode>", and I receive the following error:
+
+"Error (VLS0016): <license code>: Invalid Characters - <license code>". When I attempt to run echoid.exe to get a lock code, I receive the following message:
+
+"Locking Code 1: 0-0"
+
+How can I license Sentinel and get my network license products running? 
+
+RESOLVING THE PROBLEM
+It appears that the machine cannot license using the criterion specified in echoid.dat. At this point, the workaround is to change echoid.dat to contain a different value, such as 0x004. You can then run echoid.exe to verify that you're generating a valid lock code, and either generate a license manually via our Customer Service department, or license using spssactivator (in version 16.0 and earlier) or licensactivator (in version 17.0 and later)
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 74892

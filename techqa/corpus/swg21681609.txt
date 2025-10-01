@@ -1,0 +1,43 @@
+Title: IBM Mapping SiteProtector IBM QRadar Network Security IQNS (XGS) policy names to local appliance XML files - United States
+
+Text:
+xgs; security; network; protection; policy; path TECHNOTE (FAQ)
+
+QUESTION
+ If you are reviewing an appliance support file or appliance system log, how can you tell which policy is relevant to the error based on the xml file that is referenced in the error message? 
+
+ANSWER
+In many cases, this information is not commonly important. However, you might want to export specific policy files from your IQNS Series appliance for import into SiteProtector. You can export the current policy files, or create a support file and open it in many common archiver applications (WinRAR, 7zip, etc). 
+
+Note: The currently active policy or schema version of each policy (ex: ∗_∗ ) may change depending on installed firmware version. A useful way to find the active policy is to examine the latest modified date for the files in the directory specified. In most situations, the highest version will be the currently active policy file.
+
+
+Common Policies
+
+
+
+Policy Name Firmware
+Introduced Locally stored appliance policy path Administrator Settings 5.1 /etc/policies/cml/alps/local_admin_configuration/local_admin_configuration∗_∗ .xml Advanced Threat Policy 5.2 /etc/policies/cml/alps/atp/translation_rules/translation_rules∗_∗.xml Advanced Threat Protection Agents 5.2 /etc/policies/cml/alps/atp/agents/agents∗_∗.xml Advanced Tuning Parameters 5.1 /etc/policies/cml/alps/device_params/device_params∗_∗.xml Flowdata 5.1 /etc/policies/cml/alps/flowdata/flowdata∗_∗.xml IPS Event Filter 5.1 /etc/policies/cml/alps/event_filter/event_filter∗_∗.xml Inbound SSL Decryption 5.2 /etc/policies/cml/alps/ssl_inbound/ssl_inbound∗_∗.xml Manage Application Databases 5.1 /etc/policies/cml/alps/update_dca/update_dca∗_∗.xml Management Interface Access 5.3 /etc/policies/cml/alps/management_acl/management_acl∗_∗.xml NTP Servers 5.1 /etc/policies/cml/alps/time/time∗_∗.xml Network Access 5.1 /etc/policies/cml/alps/acl/acl∗_∗.xml One-Time Scheduled Installation 5.1 /etc/policies/cml/alps/update_scheduled_install/update_scheduled_install∗_∗.xml OpenSignatures 5.3 /etc/policies/cml/alps/custom_signatures/custom_signatures∗_∗.xml OpenSignature Settings 5.3 /etc/policies/cml/alps/custom_signatures/custom_signatures_config/custom_signatures_config∗_∗.xml Passive Authentication 5.1 /etc/policies/cml/alps/passive_auth/passive_auth∗_∗.xml SNMP Management 5.3 /etc/policies/cml/alps/management_snmp/management_snmp∗_∗.xml Outbound SSL Inspection [/support/docview.wss?uid=swg21681609&amp;aid=1] /etc/policies/cml/alps/ssl/ssl∗_∗.xml SSL Inspection Settings 5.1 /etc/policies/cml/alps/ssl_settings/ssl_settings∗_∗.xml Scheduled Security Updates 5.1 /etc/policies/cml/alps/update_xforce/update_xforce∗_∗.xml System Alerts 5.1 /etc/policies/cml/alps/system_alerts/system_alerts∗_∗.xml Update Servers 5.1 /etc/policies/cml/alps/update_license_server/update_license_server∗_∗.xml 
+Agent-Specific Policies 
+
+Policy Name Locally stored appliance policy path Management Interface /etc/policies/cml/alps/management_network/management_network∗_∗.xml Protection Interfaces /etc/policies/cml/alps/adapter/adapter∗_∗.xml Flexible Performance /etc/policies/cml/alps/perf_level/perf_level∗_∗.xml Static Routes /etc/policies/cml/alps/route/route∗_∗.xml SiteProtector Management (LMI Only) /etc/policies/cml/alps/management/management∗_∗.xml 
+Shared Object Policies 
+
+Policy Name Locally stored appliance policy path Intrusion Prevention /etc/policies/cml/alps/ips/ips∗_∗.xml Remote Directory Servers /etc/policies/cml/alps/remote_auth_servers/remote_auth_servers∗_∗.xml 
+
+
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21681609&aid=2] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21681609&aid=3] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21681609&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21681609&aid=5] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21681609&aid=6] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21681609&aid=7] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21681609&aid=8] [http://ibm.biz/ContactSecSupport] 
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21965303]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Network Protection Firmware Firmware Version Independent

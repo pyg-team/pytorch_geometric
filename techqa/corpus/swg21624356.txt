@@ -1,0 +1,40 @@
+Title: IBM Non-fatal error “ORA-00942: table or view does not exist” when running UpdateDB.bat for MAXROWSTAMP table - United States
+
+Text:
+TPAEORACLE; UpdateDB; MAXROWSTAMP; ORA-00942 TECHNOTE (FAQ)
+
+QUESTION
+ Why am I seeing the similar following non-fatal error message when running UpdateDB.bat file?
+
+Product Base Services updatedb process starts...
+java.sql.SQLException: ORA-00942: table or view does not exist
+at oracle.jdbc.driver.SQLStateMapping.newSQLException(SQLStateMapping.ja 
+va:74)
+at oracle.jdbc.driver.DatabaseError.newSQLException(DatabaseError.java:1 31)
+at oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError.java :204)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:455)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:413)
+at oracle.jdbc.driver.T4C8Oall.receive(T4C8Oall.java:1034)
+at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.Java:194)
+at oracle.jdbc.driver.T4CPreparedStatement.executeForRows(T4CPreparedStatement.java:953)
+at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStateme nt.java:1222)
+at oracle.jdbc.driver.OraclePreparedStatement.executeInternal(OraclePreparedStatement.java:3387)
+at oracle.jdbc.driver.OraclePreparedStatement.executeUpdate(OraclePrepar 
+edStatement.java:3468)
+at oracle.jdbc.driver.OraclePreparedStatementWrapper.executeUpdate(Oracl epreparedStatementWrapper.java:1062)
+at psdi.tools.UpdateDB.updateMaxRowStamp(Unknown Source)
+at psdi.tools.UpdateDB.loadScriptInfo(Unknown Source) 
+
+CAUSE
+This error message is printed out when the UpdateDB.bat code is putting the highest value of ROWSTAMP into each column of a temp table. It's expecting the temp table to exist and it does not. It either creates the table and continues, or it ignores this and continues. 
+
+In the code, when this error occurs it just keeps going without throwing an exception and it just prints stack trace info.
+
+This info is related to translations, and relevant when UpdateDB changes something to be translatable. The only impact would be a fix pack that added a new L_tablename or loaded new translated data into existing L-tables and you will see a following UpdateDB error on the logs. 
+
+ANSWER
+The temp table MAXROWSTAMP table is missing. You may create it using Database Configuration to get rid of this harmless warning message in such scenario. 
+
+For creating the MAXROWSTAMP temp table, please follow the instruction on the attached file below ( Creating_MAXROWSTAMP_Object_71x.doc )
+
+Creating_MAXROWSTAMP_Object_71x.doc [/support/docview.wss?uid=swg21624356&aid=2]Creating_MAXROWSTAMP_Object_71x.doc [/support/docview.wss?uid=swg21624356&aid=1]

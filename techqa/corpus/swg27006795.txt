@@ -1,0 +1,94 @@
+Title: IBM System Requirements for WebSphere MQ V6 on Solaris x86-64 platform - United States
+
+Text:
+SOE WebSphere MQ Solaris x86-64 V6.0 V6 V6.0 version 6 version6.0 version6 requirements requirement SystemRequirementsDocument virtualization PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains system requirements for WebSphere MQ V6 on Solaris x86-64 platform. 
+
+CONTENT
+ 
+
+The System Requirements documented on this page are for the Solaris x86-64 platform. If you require support information about Solaris on the SPARC platform please refer to the Solaris SPARC platform System Requirements [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27006263].
+
+
+
+Operating Systems [/support/docview.wss?uid=swg27006795&amp;aid=1]  * Solaris 10 (with SunSolve-recommended Patch Cluster level)
+
+Hardware Requirements [/support/docview.wss?uid=swg27006795&amp;aid=1]  * Solaris x86-64 platform: AMD64, EM64T, and compatible processors - any hardware that is explicitly compatible and fully capable of running the specified operating system, all the corresponding supporting software shown below, and any associated applications unmodified.
+
+Java™ and JMS Client [/support/docview.wss?uid=swg27006795&amp;aid=1]  * 32 bit  * Sun Java 2 Platform Standard Edition, Version 1.4.2 
+    * Sun Java 2 Platform Standard Edition, Version 5.0 
+    * IBM 32-bit SDK for Solaris, Java 2 Technology Edition, Version 1.4.2 (supplied with WebSphere MQ) 
+    * IBM 32-bit SDK for Solaris, Java 2 Technology Edition V5.0 (SR1 or above) [Only if the JDK is supplied with another IBM product] 
+    * IBM 32-bit SDK for Solaris, Java 2 Technology Edition V6.0 (SR3 or above) [see note 10] 
+   
+   
+ * 64 bit  * Sun Java 2 Platform Standard Edition, Version 5.0 
+    * IBM 64-bit SDK for Solaris, Java 2 Technology Edition V5.0 (SR1 or above) [Only if the JDK is supplied with another IBM product] 
+    * IBM 64-bit SDK for Solaris, Java 2 Technology Edition V6.0 (SR3 or above) [see note 10] 
+   
+   
+
+Databases [/support/docview.wss?uid=swg27006795&amp;aid=1] Where IBM WebSphere MQ is acting as the transaction manager.
+ * IBM DB2 V9.5 for Linux, UNIX, and Windows [see note 10]#Notes 
+ * IBM DB2 V9.7 for Linux, UNIX, and Windows [see note 11]#Notes
+
+Compilers [/support/docview.wss?uid=swg27006795&amp;aid=1]  * Sun ONE Studio 10 Enterprise Edition for Solaris (C and C++) 
+ * Sun Studio 12 [see note 11]
+
+Connectivity [/support/docview.wss?uid=swg27006795&amp;aid=1]  * TCP/IP (provided by the operating system)
+
+Transaction Manager [/support/docview.wss?uid=swg27006795&amp;aid=1] Where one of these products is acting as the transaction manager and IBM WebSphere MQ is acting as a resource manager, it's recommended that you contact the transaction manager vendor in the first instance for support. 
+ * IBM WebSphere Application Server, including the WebSphere Application Server client container, V6.0.2 (see this document [http://www.ibm.com/support/docview.wss?rs=175&context=SSAL2T&q1=resiliency&uid=swg21307212&loc=en_US&cs=utf-8&lang=en] for more information) 
+ * IBM WebSphere Application Server, including the WebSphere Application Server client container, V6.1 (see this document [http://www.ibm.com/support/docview.wss?rs=175&context=SSAL2T&q1=resiliency&uid=swg21307203&loc=en_US&cs=utf-8&lang=en] for more information) 
+ * BEA WebLogic Server 8.1 + SP5 on Solaris 10 and Sun's JDK 1.4x [see note 9] 
+
+SOAP Support [/support/docview.wss?uid=swg27006795&amp;aid=1]  * IBM 32-bit SDK for Solaris, Java 2 Technology Edition, V1.4.2 . 
+ * Apache Axis V1.1 (supplied with WebSphere MQ)
+
+Cryptography Cards [/support/docview.wss?uid=swg27006795&amp;aid=1] Refer to the Cryptography Card List for WebSphere MQ v6 and v7 [http://www.ibm.com/support/docview.wss?rs=171&context=SSFKSJ&context=SSEP7X&q1=cryptography&uid=swg21326434&loc=en_US&cs=utf-8&lang=en] document for further information. Notes:
+
+
+ 1.  JDBC/XA usage is not supported on this platform. 
+ 2.  Sun platform with 64-bit hardware, 32-bit and 64-bit WebSphere MQ APIs are supported and the OS must have a 64-bit kernel. 
+ 3.  On platforms where WebSphere MQ provides a 64-bit product, both 32-bit and 64-bit MQ APIs are supported and the OS must be capable of running 64-bit applications. 
+ 4.  On 64-bit platforms where WebSphere MQ provides both a 32-bit and a 64-bit product, there is NO migration path from V6 32-bit Queue Managers to V6 64-bit Queue Managers. You are strongly advised to install WebSphere MQ 64-bit products on 64-bit platforms as there is a migration path from V5 32-bit products to V6 64-bit products. 
+ 5.  The 'MQ Explorer' is not supported on this platform. 
+ 6.  Solaris Zones support information [http://www.ibm.com/support/docview.wss?rs=171&uid=swg21233258]. 
+ 7.  For details of the Support Statement for JCA (on WebSphere MQ V6.0.2.1 or later only) please see here. [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27009524] 
+ 8.  Defect support is available for virtualisation environments where they relate to releases of this platform already supported by WebSphere MQ. Unless stated elsewhere in the system requirements, WebSphere MQ has not been specifically tested in virtualisation environments. WebSphere MQ Support is therefore unable to assist in issues related to configuration and setup, or issues that are directly related to the virtualisation environment itself. 
+ 9.  The use of the WebSphere MQ classes for JMS in EJBs and MDBs is fully supported. The WebSphere MQ base classes for Java are supported with restrictions - for more details see, Using WebSphere MQ Java Interfaces in J2EE/JEE Environments [http://www.ibm.com/support/docview.wss?rs=171&context=SSFKSJ&dc=DB520&uid=swg21266535&loc=en_US&cs=UTF-8&lang=en&rss=ct171websphere] [http://www-01.ibm.com/support/docview.wss?rs=171&context=SSFKSJ&dc=DB520&uid=swg21266535&loc=en_US&cs=UTF-8&lang=en&rss=ct171websphere]. 
+ 10. WebSphere MQ V6.0.2.5 or later is required. 
+ 11. WebSphere MQ V6.0.2.#Notes#Notes8 or later is required.
+
+
+
+Change History 
+ * 26 October 2005: Published the page. 
+ * 19 March 2006: Added support for BEA WebLogic Server 8.1. 
+ * 31 March 2006: Added Solaris Zones support information. 
+ * 2 May 2006: Added support for IBM SDK V5.0. 
+ * 30 March 2007: Added note 7. 
+ * 10 March 2008: Added virtualisation note. 
+ * 10 July 2008: In the Transaction Manager section added the IBM WebSphere Application Server V6.0.2 and V6.1 entries. 
+ * 10 October 2008: Added note 9. 
+ * 22 December 2008: Added the Cryptography Cards section. 
+ * 7 April 2009: Added support for IBM 32/64-bit SDK for Solaris, Java 2 Technology Edition V6.0. 
+ * 23 June 2009: Added support for IBM DB2 V9.5 for Linux, UNIX, and Windows. 
+ * 22 October 2009: Added support for Sun Studio 12. 
+ * 24 January 2010: Added support for IBM DB2 V9.7 for Linux, UNIX, and Windows. 
+ * 8 May 2011: Updated expiry date to keep current. 
+ * 2 May 2014: Updated expiry date
+
+
+RELATED INFORMATION
+ All WebSphere MQ system requirements [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27006467]
+WebSphere MQ Library [http://www.ibm.com/software/integration/wmq/library/]
+Recommended fixes [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

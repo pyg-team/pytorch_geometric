@@ -1,0 +1,41 @@
+Title: IBM Archiving SharePoint MultiChoice list column value to proper format - United States
+
+Text:
+ MANUAL
+
+ABSTRACT
+ You can archive SharePoint MultiChoice list column value to a proper format if you created metadata and its properties, completed the column mapping at IBM Content Collector side, and created a multi-value property template at the repository side. 
+
+CONTENT
+Before you begin
+
+
+
+
+ 1. Create user-defined metadata and metadata properties, and map those with the SharePoint column.
+ 2. Complete the required changes to P8 Create Version Series task.
+ 3. Keep the repository changes ready with you.
+
+
+Procedure 
+To archive SharePoint MultiChoice list column value to a proper format, complete the following steps: 
+ 1.  Open ICC Configuration Manager, and click the Metadata and Lists tab.
+ 2.  In the left pane, click user-defined metadata, create a user-defined metadata, and click Save.
+ 3.  In the General pane, from the Metadata Properties section, create a new metadata property as explained in the following steps:  1. Give any name in the Property ID and Display name fields. For example, Multichoice, select the data type as String, and select the Multi-value check box. This is needed in case of multi-choice list.
+      2. Click OK, and save the configuration.
+     
+     
+ 4.  Click the Task Routes tab, and from the left top corner pane, double-click your task route. For example, SP to P8 – with versions.
+ 5.  From the task route, select SP Collector, and click the General tab from the SharePoint Collector pane. From the Metadata section, select the Add user-defined metadata to output check box, and from the list, select the metadata that you created.
+ 6.  Click the Collection Sources tab, and double-click your connection. An Edit Collection Source window opens.
+ 7.  Click the Column Mapping tab, and from the Site or list list, select Documents. From Metadata Property, select Multichoice, and select MultichoiceList (a SharePoint column) from the Column list. Click OK and save the configuration.
+ 8.  Connect to the repository, and go to your respective object store. For example, OS2.
+ 9.  Open Data Design > Property Template, right-click Property Template, and create a new property template. Provide any name, such as MultiChoiceList, and click Next. Select data type as String, and click Next.
+ 10. Again click Next, and from Single or Multi-value ? option, select Multi ?. From Multi, select Unique and ordered values (such as the list of primary colors) option, and click Next > Finish.
+ 11. Expand the Classes folder and navigate to Documents > ICCDocuments > ICCFileInstance 2, and double-click ICCSharePointInstance 2.
+ 12. Click the Property Definition tab, click Add and add the newly created property template (MultiChoiceList), and click Save. The MultiChoiceList property is added to Properties. To verify, scroll down the properties and check.
+ 13. Go back to the Task Routes tab, and click P8 Create Version Series task. From the Property Mappings section, scroll down and double-click MultiChoiceList. An Edit Expression window opens.
+ 14. Select Metadata, select your metadata from the list and property accordingly, and then click OK. Save the configuration, and then restart the configuration manager.
+ 15. Now archive any document. After archival, you can see the value for MultiChoiceList property in Property Value column at repository in the correct format. For example,  * Yellow
+      * Green
+      * Red

@@ -1,0 +1,136 @@
+Title: IBM Receiving "javax.servlet.jsp.JspException: Missing message for key errorpage.title" error when trying to start the administrative console - United States
+
+Text:
+Admin Console; Admin GUI; Console; javax.servlet.jsp.JspException; Missing message for key; errorpage.title TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The administrative console in IBM WebSphere Application Server will not open and the SystemOut.log file shows the following information:
+
+This is the request to initialize the console servlet: 
+
+[5/13/04 15:26:27:779 CEST] 209fab71 WebGroup I SRVE0180I: [adminconsole] [/admin] [Servlet.LOG]: /secure/error.jsp: init 
+
+Immediately after is the stack:
+
+[5/13/04 15:26:28:229 CEST] 209fab71 WebGroup E SRVE0026E: [Servlet Error]-[Missing message for key errorpage.title]: javax.servlet.jsp.JspException: Missing message for key errorpage.title
+at org.apache.struts.taglib.bean.MessageTag.doStartTag
+(MessageTag.java:242)
+at org.apache.jsp._error._jspService
+(_error.java:138)
+at com.ibm.ws.webcontainer.jsp.runtime.HttpJspBase.service
+(HttpJspBase.java:89)
+at javax.servlet.http.HttpServlet.service
+(HttpServlet.java:853)
+at com.ibm.ws.webcontainer.jsp.servlet.JspServlet$JspServletWrapper.service
+(JspServlet.java:344)
+at com.ibm.ws.webcontainer.jsp.servlet.JspServlet.serviceJspFile
+(JspServlet.java:662)
+at com.ibm.ws.webcontainer.jsp.servlet.JspServlet.service
+(JspServlet.java:760)
+at javax.servlet.http.HttpServlet.service
+(HttpServlet.java:853)
+at com.ibm.ws.webcontainer.servlet.StrictServletInstance.doService
+(StrictServletInstance.java:110)
+at com.ibm.ws.webcontainer.servlet.StrictLifecycleServlet._service
+(StrictLifecycleServlet.java:174)
+at com.ibm.ws.webcontainer.servlet.ServicingServletState.service
+(StrictLifecycleServlet.java:333)
+at com.ibm.ws.webcontainer.servlet.StrictLifecycleServlet.service
+(StrictLifecycleServlet.java:116)
+at com.ibm.ws.webcontainer.servlet.ServletInstance.service
+(ServletInstance.java:283)
+.... 
+
+CAUSE
+There are three possible causes:
+
+RESOLVING THE PROBLEM
+The three solutions appear here starting with the solution to the problem that occurs most often to the problem that occurs least often. Work through them in the order listed. 
+
+
+When you try to login to the administrative console, a prefrences.xml file is created in WAS_HOME\wstemp\user_dir. If creation of preferences.xml fails due to lack of disk space, it leaves prefrences.xml file with zero length. This zero length prefrences.xml file causes the SAXParseException Premature end of file.
+
+a. Clean up the disk space problem.
+
+b. Delete the WAS_HOME\wstemp\user_dir\prefrences.xml file 
+
+c. Try to login to administrative console. This builds new prefrences.xml with correct data so you can login to the administrative console. 
+
+
+
+ 1. To resolve the issue:
+    
+    a. Disable WebSphere Application Server security by stopping WebSphere Application Server (Network Deployment and nodeagent).
+    
+    b. Make a backup copy of the WAS_HOME/config/cells/node name/security.xml file. 
+    
+    c. Edit the WAS_HOME/config/cells/node name/security.xml. Edit the line starting with "<security:Security" so that its enabled parameter is set to false and enforceJava2Security is set to false. Exit and save changes.
+    
+    d. Start WebSphere Application Server (Network Deployment and/or nodeagent).
+    
+    e. Start the administrative console.
+    
+    f. Expand System Administration section.
+    
+    g. Delete all Console Users and Console Groups that are not valid.
+    
+    h. Save the configuration.
+    
+    i. If this is a Federated Environment, perform a synchronization. Skip if this is a Base Environment.
+    
+    j. Enable security again.
+    
+    
+ 2. NOTE: Save your current configuration by executing the following command from the <WAS_HOME>/bin directory:
+    
+    For Windows platforms: backupConfig.bat
+    For UNIX platforms: ./backupConfig.sh
+    
+    
+ 3. Uninstalling and reinstalling of the administrative console:
+    
+    a. Start the wsadmin tool from the WAS_HOME/bin directory:
+    
+    wsadmin.sh/bat -conntype NONE
+    
+    b. List all the applications:
+    
+    $AdminApp list
+    
+    Note: This shows all the applications installed. If you have more than one "adminconsole", uninstall all the adminconsole applications.
+    
+    c. Uninstall the administrative console:
+    
+    $AdminApp uninstall adminconsole
+    
+    d. Save the changes:
+    
+    $AdminConfig save
+    
+    e. List all the applications:
+    
+    $AdminApp list
+    
+    You should not see the administrative console listed.
+    
+    
+    a. Install the administrative console:
+    
+    $AdminApp install $WAS_HOME/installableApps/adminconsole.ear "-node my_Base_Node -cell my_Cell -server server1 -appname adminconsole"
+    
+    
+    b. Save the changes:
+    
+    $AdminConfig save
+    
+    c. List all the applications:
+    
+    $AdminApp list 
+
+
+You now see the administrative console listed and can start it. 
+
+If you still experience problems open a PMR with IBM Support [https://www-304.ibm.com/usrsrvc/account/userservices/jsp/login.jsp?persistPage=true].  
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

@@ -1,0 +1,40 @@
+Title: IBM Unable to start Object Server due to libnipc - United States
+
+Text:
+OB; libnipc_server_r; libslserver_r.so; OmniSecureLoginFreeLoginToken; omnibus TECHNOTE (FAQ)
+
+QUESTION
+ Why symbol resolution error appears when starting Object Server ? 
+
+CAUSE
+Error noted below appears while starting Object Server due to missing/corrupted library file:
+
+Could not load program 
+/opt/IBM/tivoli/netcool/omnibus/platform/aix5/bin/nco_objserv: 
+Symbol resolution failed for 
+/opt/IBM/tivoli/netcool/platform/aix5/lib/libnipc_server_r.so because: 
+Symbol OmniSecureLoginFreeLoginToken (number 139) is not exported from 
+dependent module /opt/IBM/tivoli/netcool/platform/aix5/lib/libslserver_r.so. 
+System error: Error 0 
+Examine .loader section symbols with the 'dump -Tv' command. 
+
+
+ANSWER
+To resolve this issue, customer may rebuild the affected environment. 
+
+Alternatively, compare the file size of failing library file(s) with a working installation. If the file size differs, you may try the following steps:
+
+Assumption : Server A has the corrupted library files (where Object Server is not starting up) and Server B is the working installation.
+
+1. Backup/rename the affected library files on the Server A - follow the directory/location mentioned in the error above.
+2. Copy the affected library files from Server B over to Server A, same directory/location mentioned in the error above.
+3. Start the Object Server and see if the error resolves.
+
+If Object Server starts well, it's a good news and that shows that the affected library files are corrupted. Otherwise, please contact IBM Support for assistance.
+
+Note : Ensure the corrupted server (Server A) and working installation (Server B) are on the same version and fix pack level.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ OMNIbus

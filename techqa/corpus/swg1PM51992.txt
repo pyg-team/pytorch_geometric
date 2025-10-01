@@ -1,0 +1,148 @@
+Title: IBM PM51992: WCM WEBSPHERE MOBILE PROTAL ACCELERATOR - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+Fixes integrated in WebSphere Portal 8.0.0.0 Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24033155]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using Websphere mobile portal accelerator, URLs generated
+   by the WCM Local rendering portlet are not XML encoded by
+   default.
+   
+   As a result errors like the following:
+   org.xml.sax.SAXParseException: The reference to entity "urile"
+   must end with the ';' delimiter. at
+   com.volantis.xml.xerces.util.ErrorHandlerWrapper
+   .createSAXParseException
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A code fix for this issue is integrated into the 7.0.0.1
+   Combined Cumulative Fix 10 (PM51141 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM51141]) which is available from Fix
+   Central:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickord
+   er?productid=WebSphere%20Portal&brandid=5&apar=PM51141 [http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?productid=WebSphere%20Portal&brandid=5&apar=PM51141]
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the 7.0.0.1
+   Combined Cumulative Fix 10 (PM51141 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM51141]) which is available from Fix
+   Central:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickord
+   er?productid=WebSphere%20Portal&brandid=5&apar=PM51141 [http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?productid=WebSphere%20Portal&brandid=5&apar=PM51141]
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM51992
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-10
+   
+   
+ * CLOSED DATE
+   2011-12-14
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

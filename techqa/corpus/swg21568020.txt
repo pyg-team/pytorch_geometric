@@ -1,0 +1,47 @@
+Title: IBM Enabling and disabling password-less login to Admin GUI client - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I enable and disable logging into the NPS Admin GUI Client without a password? 
+
+ANSWER
+The Admin GUI client allows for encrypted passwords to be stored on the local client machines. This document shows how to enable the feature and undo it. 
+
+To cache the password for a user do the following:
+
+1. Launch NPS Admin GUI client.
+2. Enter NPS server hostname.
+3. Enter NPS server username.
+4. Enter NPS server password for the username in Step 3.
+5. Check the "save encrypted password locally" box.
+
+You will now be able to log on using only a hostname and username. The password will be supplied from the stored encrypted value.
+
+
+
+
+
+
+
+
+If you would like to undo this and remove the encrypted password from the system, you need to delete the password from the Windows registry. 
+
+1. Click the Start Menu. 
+2. Choose: Run 
+3. Type: regeditto launch the editor 
+4. Navigate to the following key: 
+HKEY_CURRENT_USER\Software\Netezza\PasswordCache 
+5. Locate the key with a name of: Entries 
+
+The encrypted password is stored in the format: 
+
+192.168.3.194:admin:2:6GM9QiaUKjNo$CGLv4O0MsmI= 
+
+6. Remove the value for the host or user for which you want to clear the encrypted password. 
+
+The NPS Admin GUI client login will revert to the normal procedure of requiring a password. 
+
+HISTORICAL NUMBER
+ NZ170936

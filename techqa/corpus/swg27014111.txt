@@ -1,0 +1,64 @@
+Title: IBM Cognos 8 Planning 8.4 Software Environments - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Cognos 8 Planning 8.4 software environments 
+
+CONTENT
+ 
+
+Supported Locales, Character Sets, and Languages
+
+The locale, character set, and language information found on the page linked below are supported by IBM Cognos 8.4 Planning products.
+
+ * Supported Locales, Character Sets, and Languages [http://www.ibm.com/support/docview.wss?rs=3449&uid=swg27014060]
+
+
+
+System Requirements
+
+ * IBM Cognos 8 Planning 8.4 System Requirements [http://download.boulder.ibm.com/ibmdl/pub/software/data/cognos/documentation/docs/en/planning/8.4/cp_inst_cr_winux.pdf]
+   (as found in the IBM Cognos 8 Planning 8.4 Installation and Configuration Guide) 
+
+ 
+
+Supported Environments Ending with IBM Cognos 8 Planning
+
+Cognos is committed to supporting the latest technologies being used by our customers. As we move forward in our support for these newer technologies, IBM Cognos 8.4 Planning will be the last release to support the following environments: 
+
+ * Relational Databases
+ * Oracle 9i
+ * Microsoft SQL Server 2000
+
+
+
+Software Environments
+
+All versions stated of an environment presume the initial release of a 3rd party product without any need for patches/service packs or equivalent terms unless stated. Equally, unless stated, IBM Cognos presumes that the 3rd party product has not been configured to disable new features (compatibility modes) and that all patches/service packs are upward compatible for our products from the versions stated.
+
+ IBM Cognos Planning 8.4 is a 32-bit product and will integrate with 3rd party 32-bit libraries only. 
+
+All references to Windows refer to Windows on x86 Architecture. 
+
+Software environments listed for IBM Cognos 8 Planning 8.4 are listed as active, compatible or not supported. Environments denoted as active are the environments tested by Cognos. Although environments denoted as compatible may also be tested, testing may be limited or support may be based on upward compatibility statements from Cognos partners and third-party vendors. Older releases of environments may transition over time from active to compatible as significant testing would have occurred in previous Cognos releases.
+
+
+
+Software Environment Section Navigation 
+Operating Systems | Database Support
+External Data Sources | Web Browsers
+Excel Hosts | Third Party Components
+IBM Cognos 8.4 Platform | Terminal Servers 
+
+Operating Systems Support Microsoft Windows Server 2008 (Web, Standard, Enterprise and Datacenter Editions) Compatible Microsoft Windows Server 2003 R2 SP2 Standard Edition Active Microsoft Windows Server 2003 R2 SP2 (Web, Enterprise and Datacenter Editions) Compatible Microsoft Windows Server 2003 SP2 Standard Edition Active Microsoft Windows Server 2003 SP2 (Web, Enterprise, and Datacenter Editions) Compatible Microsoft Windows Server 2003 R2 (Web, Standard, Enterprise and Datacenter Editions) Compatible Microsoft Windows Server 2003 SP1 (Web, Standard, Enterprise and Datacenter Editions) Compatible Microsoft Windows Vista SP1 (Web And Admin Clients only) Active Microsoft Windows Vista (Web and Admin Clients only) Compatible Microsoft Windows XP Professional SP3 Active Microsoft Windows XP Professional SP2 Compatible Microsoft Windows 2000 SP4 
+(Advanced, Datacenter, Professional, and Server Edition) Compatible (Clients - Classic only) 
+Planning Database Support Database Support Support IBM DB2 UDB 9.5 Active IBM DB2 UDB 9.1 Compatible IBM DB2 UDB 8.2 Compatible Microsoft SQL Server 2005 via Native Client Active Microsoft SQL Server 2005 via OLE-DB Compatible Microsoft SQL Server 2000 SP4 via OLE-DB Compatible Oracle 11g Release 1 via Oracle 11g Release 1 client with ODAC 11.1.0.6.21 (SP1 and above) Active Oracle 11g Release 1 via Oracle 10g Release 2 Client Compatible Oracle Real Application Clustering (Oracle 10g Release 2) Compatible Oracle 10g Release 2 via Oracle 10g Release 2 Client Compatible Oracle 10.1.0.3 (10g) via 10.1.0.3 client or via 9.2.0.6 Oracle client, 9.2.0.4 OLE DB Provider, and Oracle client patch set 3557062 Compatible Oracle 9i Release 2 via 9.2.0.6 Oracle client, 9.2.0.4 OLE DB Provider, and Oracle client patch set 3557062 Compatible 
+External Data Sources Data Source Support SAP NetWeaver 2004s BI (Unicode) Compatible SAP BW 3.5 Active Cognos 8 Packages Data Source Support Cognos 8 BI 8.4 Cognos Packages Compatible 
+Web Browsers Operating System Support Firefox 3 Windows Active Firefox 2 Windows Compatible Internet Explorer 7.0 Windows Active Internet Explorer 6.0 SP2 Windows Compatible Internet Explorer 6.0 SP1 Windows Compatible 
+Excel Hosts and Interoperability Support Excel 2007 Active Excel 2003 Compatible Excel 2002 Compatible 
+Third Party Components (embedded/bundled) Support MDAC 2.8 Active MDAC 2.7 Compatible 
+Terminal Servers Support Note: Analyst, Contributor and Finance are supported products in a Citrix environment. These products, used in conjunction with other Cognos products on Citrix, are not supported. Citrix Presentation Server 4.0 Active Citrix Metaframe XP Compatible Windows 2008 Windows Terminal Services Compatible Windows 2003 Windows Terminal Services Compatible Windows 2000 Windows Terminal Services Compatible 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Planning -- Windows 8.4

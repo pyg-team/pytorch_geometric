@@ -1,0 +1,21 @@
+Title: IBM Where can I find the compatibility information for the old IBM TRIRIGA versions? - United States
+
+Text:
+TRIINSTALL; TRICONFIG; Compatibility; matrix; information; old; version TECHNOTE (FAQ)
+
+QUESTION
+ Where can I find the compatibility information for the old IBM TRIRIGA versions? 
+
+CAUSE
+Need to check compatibility for the old IBM TRIRIGA versions, and the page I could find only shows this information for the most recent version only.
+
+ANSWER
+The IBM TRIRIGA compatibility information for the old versions is available on this link: Archive of IBM TRIRIGA Support Matrices [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM+TRIRIGA1/page/Archive+of+IBM+TRIRIGA+Support+Matrices]
+
+When opening it, click on the Attachments tab for the complete IBM TRIRIGA Support and Compatibility Matrix information for the old versions in PDF files. 
+
+[/support/docview.wss?uid=swg21980835&aid=1] [/support/docview.wss?uid=swg21980835&aid=1] 
+
+
+
+The most recent IBM TRIRIGA version has its Support and Compatibility Matrix information on this link instead: Complete IBM TRIRIGA Support and Compatibility Matrix [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM+TRIRIGA1/page/Complete+IBM+TRIRIGA+Support+and+Compatibility+Matrix]

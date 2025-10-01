@@ -1,0 +1,120 @@
+Title: IBM Using IBM Installation Manager for installing WebSphere Application Server Version 7.0 feature packs - United States
+
+Text:
+ngi; install manager; feature packs; cea DOWNLOADABLE FILES
+
+ABSTRACT
+ Usage of the IBM Installation Manager with IBM WebSphere Application Server Version 7.0 is limited to install, update, and uninstall of version 7 feature packs only. 
+
+DOWNLOAD DESCRIPTION
+
+
+
+Important: For users of WebSphere Application Server Version 8.0, download the latest version of the IBM Installation Manager from the following site:
+http://www.ibm.com/support/entry/portal/Recommended_fix/Software/Rational/IBM_Installation_Manager [http://www-947.ibm.com/support/entry/portal/Recommended_fix/Software/Rational/IBM_Installation_Manager] 
+IBM Installation Manager is a single installation program that can use remote or local software repositories to install, modify, or update certain IBM products. It determines and shows available packages, checks prerequisites and interdependencies, and installs or modifies the selected packages. You also use IBM Installation Manager to uninstall the packages that it installed. 
+
+IBM WebSphere Application Server Version 7.0 feature packs are the first WebSphere Application Server products to be installed by IBM Installation Manager. Earlier tools that are based on InstallShield® MultiPlatform are used to install, update, and uninstall the Version 7.0 base product as well as previous versions of WebSphere Application Server. 
+
+Download Package 
+Download the IBM Installation Manager files that are appropriate for your operating system from the download Web site by clicking on the HTTP link: 
+
+Download Release date Language Download options IBM Installation Manager V1.4.4 (Latest) 3 Jun 2011 US English HTTP [https://www.ibm.com/services/forms/preLogin.do?source=swg-iimv144] IBM Installation Manager V1.4.3 (Previous) 21 Mar 2011 US English HTTP [https://www.ibm.com/services/forms/preLogin.do?source=swg-iimv143] IBM Installation Manager V1.4.2 (Previous) 9 Dec 2010 US English HTTP [https://www.ibm.com/services/forms/preLogin.do?source=swg-iimv142] 
+Known Issues 
+ * The Installation Manager does not synchronize with WebSphere Application Server if WebSphere Application Server is at higher fix pack level than recommended for the feature pack.
+   
+   Solution: Download the latest version of WebSphere Application Server import repositories and add it to the Installation Manager:
+   http://public.dhe.ibm.com/software/websphere/downloads/was/import/ [http://public.dhe.ibm.com/software/websphere/downloads/was/import/]
+   
+   
+ * The import mechanism in versions of Installation Manager earlier than Version 1.4.0 does not correctly validate the prerequisite Installation Manager level and the synchronization check fails with WebSphere Application Server Version 7.0 Fix Pack 11 and later. 
+   
+   Solution: You must use IBM Installation Manager Version 1.4.0 or later to install, modify, or uninstall a feature pack with WebSphere Application Server Version 7.0 Fix Pack 11 and later.
+   
+   
+ * Initially, the generally available version of IBM Installation Manager Version 1.4.4 does not have the links to the repositories for the WebSphere Application Server Version 7 feature packs listed in the Repositories section of the Preferences. A customer installing IBM Installation Manager Version 1.4.4 on top of an earlier version (Version 1.4.2 or Version 1.4.3 for example) should have the repository links saved from the previous installation.
+   
+   Solution: Missing repository links can be added manually. Go to File > Preferences > Repositories in the Installation Manager GUI, click Add Repository, and add the following two repository links: [https://www.ibm.com/software/rational/repositorymanager/repositories/websphere/repository.config] [http://public.dhe.ibm.com/software/websphere/repositories/repository.config] 
+
+
+www.ibm.com/software/rational/repositorymanager/repositories/websphere/repository.config 
+public.dhe.ibm.com/software/websphere/repositories/repository.config 
+
+
+Installation Instructions 
+If you are using IBM Installation Manager for the first time, simply download and install the latest version 1.4.4. You can use Installation Manager either as an update to an existing installation or for a first-time installation. The instructions for each method of installation are outlined here. 
+
+Installing IBM Installation Manager 
+
+If IBM Installation Manager is not currently installed, you can install the latest version 1.4.4 by completing these steps.  1. Find the platform specific install kit zip file name in the table below and then download it from the download URL for IBM Installation Manager V1.4.4 [https://www.ibm.com/services/forms/preLogin.do?source=swg-iimv144]site.
+    
+    File name Operating system 1.4.4-WS-IM-WinX86.zip Windows® 1.4.4-WS-IM-LinuxX86.zip
+    1.4.4-WS-IM-LinuxPPC.zip
+    1.4.4-WS-IM-LinuxS390.zip Linux 1.4.4-WS-IM-SolarisSPARC.zip
+    1.4.4-WS-IM-SolarisX86.zip Solaris 1.4.4-WS-IM-HpuxPaRISC.zip
+    1.4.4-WS-IM-HpuxIA64.zip HP-UX 1.4.4-WS-IM-AixPPC.zip AIX 
+    
+ 2. Extract the compressed file into an appropriate directory.
+    
+    
+ 3. Run install.exe (Windows) or install (Linux/Solaris/HP-UX/AIX). The Installation Manager installer starts.
+    
+    
+ 4. Follow the installer wizard pages to install Installation Manager. Note: IBM Installation Manage starts after the installation is completed.
+
+
+Update an existing installation of IBM Installation Manager 
+
+If an older version of Installation Manager is currently installed, and you want to upgrade to the latest version 1.4.4, use 1 of the following 2 methods:  1. Use the update capability of IBM Installation Manager (Note: Do this if the computer that has Installation Manager installed also has access to the Internet.):  1. Run Installation Manager.
+        
+        
+     2. Verify that updates are enabled. Open File > Preferences... > Updates and select Search for Installation Manager update.
+        
+        
+     3. Verify that service repositories are searched. Open File > Preferences... > Repositories and select Search service repositories during installation and updates.
+        
+        
+     4. On the start page of the Installation Manager, click Update.
+        
+        
+    
+    
+ 2. Download and run a platform specific install kit (Note: Do this if the computer that has Installation Manager installed does not have access to the Internet.):  1. Download the platform specific install kit zip file from the download URL for IBM Installation Manager V1.4.4 [https://www.ibm.com/services/forms/preLogin.do?source=swg-iimv144]site. For example, download zip file 1.4.4-WS-IM-WinX86.zip for Windows.
+        
+        
+     2. Extract the compressed file to a directory. For example, extract to C:\temp.
+        
+        
+     3. Run the install.  * For a GUI based install, run install.exe on Windows or install on Linux and UNIX systems.
+           
+        
+        
+    
+     * 
+     * 
+     *  For a silent install, open a command prompt to the extracted directory.  * For Windows, use the following command:
+          
+          installc --launcher.ini silent-install.ini 
+          
+        * For Linux and UNIX systems, use the following command:
+          
+          ./install --launcher.ini silent-install.ini 
+          
+       
+       
+    
+    
+
+
+Using Installation Manager and Repository 
+You can use IBM Installation Manager to import existing WebSphere Application Server Version 7.0 installations into Installation Manager and then to install, update, and uninstall IBM WebSphere Application Server Version 7.0 feature packs. A repository is a location that stores data for installing, modifying, rolling back, updating, or uninstalling packages. The following links provide the detailed information on how to use a repository to install, import, update, modify, and uninstall packages on your computer using Installation Manager:  * Repository preferences [http://publib.boulder.ibm.com/infocenter/install/v1r2/index.jsp?topic=/com.ibm.cic.agent.ui.doc/topics/t_specifying_repository_locations.html] 
+ * Installing updates [http://publib.boulder.ibm.com/infocenter/install/v1r2/index.jsp?topic=/com.ibm.cic.agent.ui.doc/topics/t_install_updates.html] 
+ * Modifying installed packages [http://publib.boulder.ibm.com/infocenter/install/v1r2/index.jsp?topic=/com.ibm.cic.agent.ui.doc/topics/t_modify_install_pkg.html] 
+ * Importing installed packages [http://publib.boulder.ibm.com/infocenter/install/v1r2/index.jsp?topic=/com.ibm.cic.agent.ui.doc/topics/t_import_pkg.html] 
+ * Rolling back updates [http://publib.boulder.ibm.com/infocenter/install/v1r2/index.jsp?topic=/com.ibm.cic.agent.ui.doc/topics/t_rollback_updates.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server - Express Install and migration AIX, HP-UX, Linux, Solaris, Windows 7.0

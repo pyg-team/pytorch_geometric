@@ -1,0 +1,179 @@
+Title: IBM IV25859: Probe ZC045010 and XC332063 FDCs for application using Shared HCONNs with Linux Threads at MQ 6.0.2.11 or later. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V6.0 Fix Pack 6.0.2.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24033317]
+WebSphere MQ V6.0 for iSeries Fix Pack 6.0.2.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24033319]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24035627]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Probe ZC045010 FDCs from function zcpError and probe XC332063
+   FDCs from xlsWaitEvent, together with those FDCs identifying
+   that the ThreadingModel is LinuxThreads, is a good indicator of
+   encountering this issue.
+   
+   The issue also requires that the application reporting the probe
+   XC332063 FDCs is using shared HCONNs. This is indicated if the
+   FDC Trace History shows references to zutAquireSharedPCD and
+   zutReleaseSharedPCD functions.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If there is no specific need, avoid the use of the Linux
+   threading model by removing the LD_ASSUME_KERNEL=2.4.19
+   environment variable setting for the queue manager and
+   applications.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   You may be exposed to this issue if you have ALL of the
+   following: using MQ V6.0.2.11 or later MQ V6 fixpacks; using
+   the Linux thread model (because you have set environment
+   variable LD_ASSUME_KERNEL=2.4.19); and you have applications
+   using shared HCONNs.
+   
+   Platforms affected:
+   Linux (Power),Linux (s390x),Linux (x86),Linux (x86-64),
+   Linux (zSeries)
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   Use of Linux threads causes particular difficulties for the
+   queue manager checking the liveness of processes. The queue
+   manager must be particularly careful to ensure the check is made
+   against the process id, not against the Linux thread-process.
+   
+   Unfortunately, some cleanup checking introduced at MQ 6.0.2.11
+   mistakenly did use the thread-process, causing an issue in the
+   circumstance where the connecting application used a shared
+   HCONN.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The cleanup checking was corrected to avoid making a liveness
+   check against a Linux thread-process.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.12
+   --------           --------------------
+   Linux (x86)        U842210
+   Linux (x86-64)     U842215
+   Linux (zSeries)    U842211
+   Linux (Power)      U842212
+   Linux (s390x)      U842214
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV25859
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7204
+   
+   
+ * REPORTED RELEASE
+   602
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-07
+   
+   
+ * CLOSED DATE
+   2012-08-21
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86 V6
+   
+   
+ * FIXED COMPONENT ID
+   5724H7204
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R602 PSY
+   UP

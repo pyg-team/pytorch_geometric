@@ -1,0 +1,51 @@
+Title: IBM Getting frequency tables with cumulative frequencies as well as percents - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I'm running the SPSS Statistics FREQUENCIES procedure with a variable that has a ordering of interest to me. I get cumulative percentages in my frequency table output, but I would also like to get cumulative frequencies. Is there a way to add this column to the output? 
+
+ANSWER
+The FREQUENCIES procedure does not offer the capability to add a cumulative frequency column to its frequency table output. There are various ways a table could be produced that adds such a column. One would be to use the AGGREGATE procedure to create a new dataset containing the ordered set of values and their counts, then use these to compute cumulative frequencies, percentages and cumulative percentages and finally to list these using SUMMARIZE (Analyze>Report>Case Summaries). Another would be to use the OMS (Output Management System) facilities to write the frequencies table to a file and create the additional column and use SUMMARIZE to list final results. 
+
+This latter approach is shown below. In order to apply these commands, all that need be done is to copy and paste them into a syntax file (File>New>Syntax will open a new syntax file), replace the string "Varname" with the name of the appropriate variable and specify Run>All. Optionally, you can specify a title for the resulting table within the pair of single quotes on the TITLE subcommand of the SUMMARIZE command. 
+
+
+DATASET NAME original.
+DATASET DECLARE temp WINDOW=HIDDEN.
+OMS
+/SELECT ALL
+/IF COMMANDS=['Frequencies']
+/DESTINATION VIEWER =NO.
+OMS
+/SELECT TABLES
+/IF COMMANDS=['Frequencies'] SUBTYPES=['Frequencies']
+/DESTINATION FORMAT=SAV NUMBERED=TableNumber_
+OUTFILE='temp'.
+FREQUENCIES VARIABLES=Varname.
+OMSEND.
+DATASET ACTIVATE temp.
+SELECT IF ~ MISSING(CumulativePercent).
+IF $CASENUM=1 CumulativeFrequency=Frequency.
+IF $CASENUM>1 CumulativeFrequency=Frequency+LAG(CumulativeFrequency).
+EXECUTE.
+FORMATS CumulativeFrequency (F8.0).
+VARIABLE LABELS CumulativeFrequency 'Cumulative Frequency'.
+RENAME VARIABLES Var2=Varname.
+OMS
+/SELECT TABLES TEXTS
+/IF COMMANDS=['Summarize'] SUBTYPES=['Case Processing Summary']
+/DESTINATION VIEWER=NO.
+SUMMARIZE
+/TABLES=Varname Frequency Percent CumulativeFrequency CumulativePercent
+/FORMAT=LIST NOCASENUM NOTOTAL
+/TITLE=''
+/MISSING=VARIABLE
+/CELLS=NONE.
+OMSEND.
+DATASET ACTIVATE original WINDOW=ASIS.
+DATASET CLOSE temp.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

@@ -1,0 +1,79 @@
+Title: IBM Importing new versions results in the "Error adding reference for SHA-256 {uniqueID}"error - United States
+
+Text:
+error adding reference; sha-256; uniqueID; RuntimeException; HashReferenceTracker; SingletonRepository; import; new version; error on manual integration TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to import new versions fail with the error: "Error adding reference for SHA-256 {uniqueID}", when using IBM uDeploy. 
+
+SYMPTOM
+When you attempt to import new versions, manually or automatically, you see errors like the following: 
+
+
+2014-02-03 10:13:42,590 - Error on manual integration for b390d2f4-ffa2-4cd9-bda4-8cfe6ec773f3
+java.lang.RuntimeException: Error adding reference for SHA-256
+{168c1d115af0450742d19aae358888716057f83d3e4ec688d509848ea471c89a}
+at com.urbancode.vfs.store.HashReferenceTracker.add
+(HashReferenceTracker.java:211)
+at com.urbancode.vfs.SingletonRepository.updateReferenceCounts
+(SingletonRepository.java:337)
+
+
+
+CAUSE
+Adding new versions to a Component causes reference files to be updated in the CodeStation Repository. This error happens when the references file exist, but are empty.
+
+
+DIAGNOSING THE PROBLEM
+Proceed as follows: 
+
+ 1. Make a note of the first two couples of digits of the unique identifier that appears in the error message:
+    
+    
+    java.lang.RuntimeException: Error adding reference for SHA-256
+    {168c1d115af0450742d19aae358888716057f83d3e4ec688d509848ea471c89a}
+    
+    
+    In the above example, the relevant digits are 16 and 8c.
+    
+    
+ 2. Search for the following file:
+    
+    
+    <server_installation>/var/repository/references/16/8c/references
+    
+    
+    Note that the path contains two subdirectories named like the couple of digits identified in Step 1.
+    
+    
+ 3. Verify that the file exists, but it is empty (it has a size of zero bytes). You can verify this using the commands:
+    ls -l on UNIX/Linux
+    dir on Microsoft Windows
+
+RESOLVING THE PROBLEM
+SOLUTION 
+
+Delete all the references files that are empty (have a size of zero bytes): 
+
+ 1. Delete the above file and try the import again. You might still have an error message, but the unique identifier should be different.
+    
+    
+ 2. Repeat the same procedure to locate and delete any other reference files that are empty. The following procedures can help finding these files, in case there are many.
+    
+    On UNIX/Linux, use the following command:
+    
+    
+    find <server_installation>/var/repository/references/ -size 0
+    
+    
+    On Windows, use the Search capability of the Explorer:
+    
+    [/support/docview.wss?uid=swg21664315&aid=1] [/support/docview.wss?uid=swg21664315&aid=1]
+    
+    and select the special Size: Empty (0 KB):
+    
+    [/support/docview.wss?uid=swg21664315&aid=2] [/support/docview.wss?uid=swg21664315&aid=2]
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Software Development IBM UrbanCode Deploy General Information AIX, HP-UX, Linux, Mac OS X, Solaris, Windows 6.0, 6.0.1, 6.0.1.1, 6.0.1.2

@@ -1,0 +1,218 @@
+Title: IBM PK10733: SOAP RESPONSE RECEIVED CONTAINS HEADER BUT AN EMPTY BODY TAG. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using the WebSphere 6.0 test environment that is provided with
+   Rational Application Developer 6.0 and using the emitters
+   provided with WebSphere AppServer 6.0, the SOAP message returned
+   is as follows:
+   .
+   The SOAP Request is
+   <soapenv:Envelope
+   xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+   xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <soapenv:Header><p7:ProcessRequestHeader
+   xmlns:p7="http://v1x1.requestheader.wbxml.ts.ibm.net/">
+   <p7:SendingTimeStamp>2005-07-08T04:00:00.000Z</p7:SendingTimeSta
+   mp></p7:
+   ProcessRequestHeader></soapenv:Header>
+   <soapenv:Body><p785:PmrOperationRequest
+   xmlns:p785="http://v1x0.pmrservice.message.ts.ibm.net/">
+   <p785:yourrequestdatahere>Jul 8, 2005
+   </p785:yourrequestdatahere></p785:PmrOperationRequest></soapenv:
+   Body>
+   </soapenv:Envelope>
+   .
+   The SoapResponse is this
+   <soapenv:Envelope
+   xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+   xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <soapenv:Header><p611:ProcessResponseHeader
+   xmlns:p611="http://v1x1.responseheader.wbxml.ts.ibm.net/">
+   <p611:SendingTimeStamp>2005-07-08T14:56:42.061Z</p611:SendingTim
+   eStamp><
+   /p611:ProcessResponseHeader>
+   </soapenv:Header><soapenv:Body/></soapenv:Envelope>
+   .
+   The ResponseData and  its _Ser, _Deser and _Helper class
+   are generated.
+   .
+   The code used to generate the response is
+    pmrOperationResponse.value.setResponseData(new
+   ResponseData());
+   pmrOperationResponse.value.getResponseData().
+   setPlaceYourResponseDataHere("Some response data");
+   .
+   However, the body is empty. The BindingImpl of the WebSphere
+   WebServices implementation is putting data into the object that
+   is sent in the response rather than putting it in the response
+   itself.
+   .
+   The WebServices app was developed using WAS 6 emitters and
+   runtimes to develop web services.
+   A top down approach was used, starting from WSDL to generate
+   skeleton web services.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Application Server users of web    *
+   *                 services                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If a web services application takes     *
+   *                      inout parameters, and one of the        *
+   *                      out parameters is a header, this will   *
+   *                      cause the resulting SOAP body           *
+   *                      in the serialized message to be empty.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   SOAP body in a serialized message will be empty if a
+   header parameter is included in inout parameters
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed the engine's SOAPElement class so that when header
+   parameters are detected, disable SOAP body-SOAPElement
+   tree conversion.
+   
+   The fix for this APAR is currently targeted for inclusion
+   in fixpack 6.0.2.3.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK10733
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-08-22
+   
+   
+ * CLOSED DATE
+   2005-09-02
+   
+   
+ * LAST MODIFIED DATE
+   2005-09-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  WEBSRVCE
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP

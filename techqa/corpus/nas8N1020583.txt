@@ -1,0 +1,193 @@
+Title: IBM System i NODEJS: Common questions & basic facts - United States
+
+Text:
+node.js npm npm.js nodejs TECHNOTE (FAQ)
+
+QUESTION
+ 
+What is node.js & npm.js?
+
+New to IBM System i for V7R1 and up are the node and npm Open Source programs. Included in LPP media 5733OPS is the NODEJS package which includes several IBM programmed libraries. This documentation supplies some standard knowledge information about IBM i NODEJS package and these libraries. 
+
+ANSWER
+NOTICE: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. 
+
+Background: 
+
+The node.js runtime engine that is based off of Google V8 TM engine. It was designed to provide a self contained, rapid architecture design for deploying standard JS applications within a short amount of time. 
+
+The npm (node package manager) module is also included within the NODEJS package. This is a module designed for node.js to assist in dependancy management and provide node.js more robust functions and limitless performance options. 
+
+Included with the standard node.js runtime engine and the npm module are several IBM System i specific add-ons. First is the DB2 i connector which allows JS programs inside of node.js runtime access a DB2 i database. Second is an xstoolkit library that allows node.js programs ability to use full XML services (ability to pull DOM objects like LPP information and system values from the System i). 
+
+
+
+
+ *  - [http://www.ibm.com/i/c.gif] Requirements: 
+   Open Source license program 5733OPS is now available for download . The image files are available through the Entitled Software Support (ESS) portal: www.ibm.com/eserver/ess/ 
+   
+   You will need to burn a DVD or create an image catalog to install the options onto the operating system. 
+   
+   Note: If you do not have access to this download on ESS, you will need to work with your Business Partner or with the Boulder Key Center (1-800-446-8989). 
+   
+   Node.js for V7R3 
+   5770SS1 option 33-Portable Application Solutions Environment (PASE) 
+   5733SC1 option 1-OpenSSH, OpenSSL, zlib functions, IBM Portable Utilities for i 
+   SF99729 - HIPERS (highly recommended for latest SC1 PTFs) 
+   5733OPS option *BASE, 1, 5, 10 – Node.js runtime for IBM i 
+   SF99225 - OPS Group (SI61395) 
+   SF99730 - CUMME (highly recommended latest for PASE updates) 
+   
+   NOTE: *BASE for user agreement. Option 1 is Node.js ver. 0, Option 5 is Node.js ver 4, Option 10 is Node.js ver 6 
+   
+   Node.js for V7R2 
+   5770SS1, option 33-Portable Application Solutions Environment (PASE) 
+   5733SC1, option 1-OpenSSH, OpenSSL, zlib functions, IBM Portable Utilities for i 
+   SF99719 - HIPERS (highly recommended for latest SC1 PTFs, specifically SI62642) 
+   5733OPS option *BASE, 1, 5, 10 – Node.js runtime for IBM i 
+   SF99223 - OPS Group (Specifically SI61395) 
+   SF99720 - CUMME (highly recommended latest for PASE updates) 
+   
+   NOTE: *BASE for user agreement. Option 1 is Node.js ver. 0, Option 5 is Node.js ver 4, Option 10 is Node.js ver 6 
+   
+   Node.js for V7R1 
+   5770SS1, option 33-Portable Application Solutions Environment (PASE) 
+   5733SC1, option 1-OpenSSH, OpenSSL, zlib functions, IBM Portable Utilities for i 
+   SF99709 - HIPERS (highly recommended for latest SC1 PTFs, specifically SI62643) 
+   5733OPS option *BASE, 1, 5, 10 – Node.js runtime for IBM i 
+   SF99123 - OPS Group (specifically SI61395) 
+   SF99710 - CUMME (highly recommended latest for PASE updates) 
+   
+   NOTE: *BASE for user agreement. Option 1 is Node.js ver. 0, Option 5 is Node.js ver 4, Option 10 is Node.js ver 6 
+   
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] Object Location: 
+   
+   Overview of IBM System i NODEJS folder structrure: 
+   
+   Node.js (version 2) 
+   Directory structure of NODEJS inside of /QOpenSys/QIBM/ProdData/Node directory. [/support/docview.wss?uid=nas8N1020583&aid=1] [/support/docview.wss?uid=nas8N1020583&aid=1] 
+   
+   Node.js (version 4) 
+   Directory /QOpenSys/QIBM/ProdData/OPS/Node4 [/support/docview.wss?uid=nas8N1020583&aid=2] [/support/docview.wss?uid=nas8N1020583&aid=2] 
+   
+   Binary and installation directory: 
+   
+   /QOpenSys/QIBM/ProdData/Node/bin/ 
+   libgcc_s.a 
+   libstdc++.a 
+   node 
+   npm (sym)/QOpenSys/QIBM/ProdData/Node/lib/node_modules/npm/bin/npm-cli.js 
+   
+   
+   Additional Program Locations: 
+   
+   Provide -----------------------------| /QOpenSys/usr/lib (real) 
+   -----------global -------------------| /QOpenSys/lib (sym) 
+   ---------------------function -------| /usr/lib (sym) 
+   .......................................................libgcc_s.a 
+   .......................................................libstdc++.a 
+   
+   Provide global function -----------| /usr/bin (sym) 
+   .......................................................node 
+   .......................................................npm 
+   
+   Module location(s): 
+   
+   Installed modules and frameworks may exist in these additional folder locations: 
+   
+   /usr/lib 
+   /usr/lib/node_modules (sym) --> /QOpenSys/usr/lib/node_modules 
+   /QOpenSys/QIBM/ProdData/Node/lib/node_modules 
+   
+   Executing ' npm root' can also provide module location. 
+   
+   Note: Do not confuse these two locations they are not linked. 
+   /QOpenSys/usr/lib/node_modules 
+   /QOpenSys/QIBM/ProdData/Node/lib/node_modules 
+   
+   Key Info: Modules installed globally typically mean they have been installed in /usr/lib/node_modules. Modules installed locally mean they reside working directory, typically this is the /home/<user>/.node_module/. 
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] All about npm command: 
+   
+   IBM System i NODEJS package also includes the npm module (command). This module allows users to manage dependencies, repackage instances & dependancies, install other modules, review module ownership & contributors, and much more. It works very similar the old bash command 'pkgmakeinst' (pm), so in essence it could be considered 'node pm'. 
+   
+   NOTICE: IBM System i version of npm has been ported from original Open Source module (npmjs.org), however some functions may not correlate due to coding differences. 
+   
+   Installing a module: 
+   
+   npm install <module name> 
+   ex. npm install ibm_db 
+   
+   
+   Uninstalling a module: 
+   
+   npm uninstall <module name> 
+   ex. npm uninstall ibm_db 
+   
+   Key Info: If standard method of uninstalling a module does not work you could attempt these methods as well. 
+   
+   npm uninstall -g ibm_db 
+   npm rm ibm_db --save (also removes any dependencies) 
+   
+   
+   Review & search for module information: 
+   
+   To search for contributors use 'view' option. 
+   npm view <modulename> contributors 
+   npm view <modulename>@“>=3.18.0" contributors 
+   
+   where ' 3.18.0' = version number 
+   
+   To search for module publisher info use 'owner' option. 
+   npm owner ls <modulename> 
+   
+   To search for a specific module you can use 'search option. 
+   npm search <regular expression or module name> 
+   ex. npm search ibm* 
+   
+   Key Info: You can use npm command obtain module information for assistance with module problems. 
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] All about node command: 
+   IBM System i NODEJS package includes the node.js command. This executes the runtime engine that establishes a virtual machine for your JS program. Currently, the only method to execute the node command is through PASE session. It is not recommended to use a standard QShell session. 
+   
+   NOTICE: IBM System i version of node has been ported from original Open Source module (nodejs.org), however some functions may not correlate due to coding differences. 
+   
+   Execute your JS script (node instance) 
+   
+   call qp2term 
+   
+   $node myprogram.js 
+   {where ‘ myprogram.js’ is your script name} 
+   
+   After your instance starts, you can connect to your server by opening a browser session: http://yourservername: 
+   
+   NOTE: node & npm are global commands 
+   
+   
+   End your JS script (node instance) 
+   
+   Press 'Esc' button while in PASE and then press ' 2'. 
+   
+   Operational Assistant Menu Screen with 9 options to select from. [/support/docview.wss?uid=nas8N1020583&aid=3] [/support/docview.wss?uid=nas8N1020583&aid=3] 
+   
+   
+   Search for item Function ' PGM-node'. If you are running DB2 i connection or additional frameworks, you may see multiple jobs for 'PGM-node'. 
+   Screen of Work with User Jobs and search item under PGM-node. [/support/docview.wss?uid=nas8N1020583&aid=4] [/support/docview.wss?uid=nas8N1020583&aid=4] 
+   
+   Place option ' 4' on all items listed under as PGM-node and press ' Enter'. Confirm by pressing ' Enter' again. This will end those jobs. 
+   
+   Key Info: An alternate to ending your instance is using ' SysReq' and option ' 02' for the function sequence. Though this too will end your job for your node instance, however you may still have residual jobs for any other modules or add-ons created by your node.js application ie. DB2 i connection and XML function. 
+   
+
+
+For Troubleshooting and basic problem analysis please refer to DCF N1020591. Additional information on node.js and npm.js please also refer to www.nodejs.org [http://nodejs.org/] & www.npmjs.org [http://npmjs.org/]. These sources are in no way affiliated or supported by IBM. Be advised that IBM System i NODEJS packages are ported versions and may not fully function as originally intended by Open Source packages. This may be due to coding differences and security issues on the System i.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 7.3

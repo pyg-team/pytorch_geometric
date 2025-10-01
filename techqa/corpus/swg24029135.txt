@@ -1,0 +1,48 @@
+Title: IBM 7.0.0.1 Download: WebSphere Portal and WCM V7.0 fix pack 1 - United States
+
+Text:
+7001eGA V7001 V7.0.0.1 7.0.0.1 7001 d/l DOWNLOADABLE FILES
+
+ABSTRACT
+ This cumulative fix pack updates IBM WebSphere Portal and Web Content Manager to version 7.0.0.1. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+TAB NAVIGATION
+ * Fix pack Download [http://www.ibm.com/support/docview.wss?uid=swg24029135]- selected tab,
+ * Required WebSphere Fixes [http://www.ibm.com/support/docview.wss?uid=swg24029137]
+ * Instructions [http://www.ibm.com/support/docview.wss?uid=swg27020271]
+ * Fix List [http://www.ibm.com/support/docview.wss?uid=swg27020891]
+
+Download document for WebSphere Portal and Web Content Manager version 7.0.0.1
+
+
+This fix pack includes a cumulative collection of fixes and updated support for several underlying components. This fix pack updates the IBM WebSphere Portal 7.0 (7.0.0.0) level to the 7.0.0.1 release level. The fix pack can be used to upgrade the IBM Web Content Manager 7.0 (7.0.0.0) level to the 7.0.0.1 service release level. This fix pack can also be used to upgrade IBM WebSphere Portal Express 7.0 (7.0.0.0) level to the 7.0.0.1 service release level. 
+
+The complete list of fixes integrated into this refresh pack is found in the technote "Fix list for WebSphere Portal Version 7.0 [http://www.ibm.com/support/docview.wss?uid=swg27020891]," linked above in the "Fix List" tab. 
+
+
+Be sure to also download the file WP_PTF_7001.ptflist and place it in the same directory as the WP_PTF_7001.jar file before installing this fix pack with the Portal Update Installer. This file contains the list of integrated fixes and will inform you of the status of any fixes you currently have installed for WebSphere Portal or Lotus Web Content Manager.
+
+Additional notes:
+
+WebSphere Portal allows you to choose between the Extend, Enable and Server Edition corresponding to the license. During the install you can select the Base Install option to avoid the configuration of Web Content Manager on your system ifor the Extend or Enable editions. If you used the Base Install option for the Extend or Enable edition and did not enable Blogs later on, you need to install the fix for APAR PM33177 [http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?productid=WebSphere%20Portal&brandid=5&apar=PM33177] before applying this fix pack. While the fix pack will uninstall the fix, it will remain on the system. 
+If you are unsure which install option or edition you used the fix will not cause issues on other editions or installs. 
+
+When clicking the navigation in a page navigation component in the WCM JSR-286 Web Content Viewer Portlet to render search results an exception can happen. This issue will be fixed shortly. Be sure to stay current with the Recommended Updates [http://www.ibm.com/support/docview.wss?uid=swg24027857] for V7.0.0.1.
+
+Refer to the WebSphere Portal V7.0.0.1 hardware and software requirements document for the minimum levels and fixes required for WebSphere Application Server or Process Server or Extended Deployment. 
+
+Installation and support for WebSphere Application Server, Process Server, eXtreme Scale or Extended Deployment fixes and fix packs is provided by the appropriate WebSphere product support teams, not WebSphere Portal support.
+
+URL LANGUAGE SIZE(Bytes) Installation in a stand-alone environment [http://www.ibm.com/support/docview.wss?uid=swg27020279] English 7001 Installation in a clustered environment [http://www.ibm.com/support/docview.wss?uid=swg27020271] English 7001 
+DOWNLOAD PACKAGE
+The download link on Fix Central points to the V7.0.0.1 Recommended Updates package which includes the fix pack plus other fixes recommended by Support, Service and fellow customers to ensure the reliability and availability of your portal environment. Details of exactly what is included are here [http://www.ibm.com/support/docview.wss?uid=swg24027857#7001] (link opens in new window).
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Fix+pack+with+recommended+updates 17 Feb 2011 English 462838379 FC [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?product=ibm/WebSphere/WebSphere+Portal&release=7.0.0.0&platform=All&function=fixId&fixids=7.0.0-WP-Multi-FP001&includeRequisites=1&includeSupersedes=0&downloadMethod=http] [ ] 
+ [/support/docview.wss?uid=swg24029135&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24029135&aid=2]Problems (APARS) fixed
+Multiple APARs fixed, refer to Fix List [http://www.ibm.com/support/docview.wss?uid=swg27020891] above

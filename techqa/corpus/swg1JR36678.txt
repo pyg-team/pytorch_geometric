@@ -1,0 +1,170 @@
+Title: IBM JR36678: WHEN THE HIERARCHY WINDOW ON THE LEFT NAVIGATION PANE IS SMALL THE CATEGORY NAME IS PARTIALLY VISIBLE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the hierarchy window on the left navigation pane of
+   InfoSphere MDM Server for PIM is small the category name is
+   partially visible.
+   
+   Steps to reproduce:
+   1. Login to a InfoSphere MDM Server for PIM instance.
+   2. Make sure one or more hierarchy appear on the left navigation
+   pane.
+   3. Resize the left navigation pane until the horizontal scroll
+   bar appears for any of the hierarchy window.
+   Note: Make sure there are multiple categories under a hierarchy
+   that has the horizontal scroll bar
+   
+   Actual Result:
+   The category name that shows up right above the horizontal
+   scroll bar is partially visible.
+   
+   Expected Result:
+   The complete category name appear on the hierarchy
+   window.
+   
+   
+   Keywords: browser, user interface
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Resize the left navigation pane to the larger size.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All Master Data Management Server for Product Information
+   Management implementations are affected by this issue
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When the hierarchy window on the left navigation pane of
+   InfoSphere MDM Server for PIM is small the category name is
+   partially visible.
+   
+   Steps to reproduce:
+   1. Login to a InfoSphere MDM Server for PIM instance.
+   2. Make sure one or more hierarchy appear on the left navigation
+   pane.
+   3. Resize the left navigation pane until the horizontal scroll
+   bar appears for any of the hierarchy window.
+   Note: Make sure there are multiple categories under a hierarchy
+   that has the horizontal scroll bar
+   
+   Actual Result:
+   The category name that shows up right above the horizontal
+   scroll bar is partially visible.
+   
+   Expected Result:
+   All the category names appear correctly on the hierarchy window.
+   ****************************************************************
+   RECOMMENDATION:
+   Upgrade to product version 900-TF004
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for this problem has been included in Master Data
+   Management Server for Product Information Management version
+   9.0.0-TF004.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR36678
+   
+   
+ * REPORTED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5100
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-24
+   
+   
+ * CLOSED DATE
+   2011-03-30
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * FIXED COMPONENT ID
+   5724V5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

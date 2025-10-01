@@ -1,0 +1,62 @@
+Title: IBM Impact performance Events/second basic test - United States
+
+Text:
+OMNIbus; Impact; Event Rate; Performance; object server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Is there a simple test to carry out to have an idea of how many events Impact can processed with a given policy? How can the results be measured? 
+
+SYMPTOM
+To have an idea of the performance of Impact on a given server, what would be an easy and simple test?
+
+
+ENVIRONMENT
+Impact (not Clustered) and OMNIbus (7.3.1 or 7.4)
+
+DIAGNOSING THE PROBLEM
+There are several methods to insert a high number of events into OMNIbus using probes (such as the Simnet Probe), tools like the EventGenerator, but the simplest one is a text file with N insert statements finished with a 'go' command:
+
+
+insert into alerts.status (Identifier, Summary, Severity) values ('Event 0', 'Event 0 for performance testing',2); 
+
+.......... 
+
+insert into alerts.status (Identifier, Summary, Severity) values ('Event N', 'Event N for performance testing',2); 
+
+go 
+
+ 
+
+cat File.sql | $OMNIHOME/bin/nco_sql -server NCOMS -user xxx -password xxxx 
+
+ 
+
+A policy in Impact will receive these events, perform a simple operation with them. Depending on how realistically the test is designed, it can be a lookup in an external Database and an enrichment of the event with the values returned or just setting a field in the ObjectServer. The entry in the event reader table with the policy to be executed should have an ObjectServer field as a flag whose value the policy should change when it finishes. This will avoid events being processed more than once, as well as provide data for use in the performance calculations. 
+
+ImpactFlag = 0 -> Enrichment 
+
+
+
+
+
+RESOLVING THE PROBLEM
+First it has to be confirmed all events have been processed. This can be done using the command line tool nco_sql 
+
+select count(*) from alerts.status where ImpactFlag = 1; 
+
+go 
+
+ 
+
+Once we see all events we've injected with ImpactFlag to 1 we can make the final calculation - also in nco_sql - as follows: 
+
+select min(StateChange),max(StateChange) from alerts.status where ImpactFlag = 1;
+MIN( StateChange ) MAX( StateChange )
+------------------ ------------------
+1385392435 1385392547
+
+(1 row affected) 
+
+ 
+
+The subtraction of these two numbers divided by the number of events inserted gives an indication of the number of events/second the server can process

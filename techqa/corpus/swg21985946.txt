@@ -1,0 +1,36 @@
+Title: IBM Upgrading to Jazz for Service Management Version 1.1.3.0 using Installation Manager results in a permission denied error - United States
+
+Text:
+jazzsm1130relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When upgrading Jazz for Service Management to Version 1.1.3.0 using Installation Manager, the installation fails with the following error:
+
+Cannot run program "/space/IBM/JazzSM/ui/bin/wrapper.sh" (in directory "/space/IBM/JazzSM/ui/bin"): error=13, Permission denied [/space/IBM/JazzSM/install/tip/tipWrapp
+erInstall.xml:215] 
+
+CAUSE
+During the upgrade process the non-root user does not have the correct permissions to run the shell script. This is due to the following:
+1. Jazz for Service Management is installed as a non-root user
+2. Installation Manager is installed in user mode through root user
+
+
+RESOLVING THE PROBLEM
+The upgrade must be initiated by using the attached script, which gives the non-root user (who originally installed this Jazz for Service Management instance) the correct permissions for the upgrade process. 
+
+
+The script takes two mandatory arguments and one optional argument.
+
+Usage: ./JazzSMgrpModeUpgrade.sh "IM_Install_Location" 
+"JazzSM_Install_Location [http://www.ibm.com/support/knowledgecenter/SSEKCU_1.1.3.0/com.ibm.psc.doc/ref/psc_r_pathnames.html]""[Response_file_with_absolute_Path]"
+
+For example (showing default installation paths): ./JazzSMgrpModeUpgrade.sh "/home/root/IBM/InstallManager/" "/opt/IBM/JazzSM/" "/opt/Download/dash_upgrade_rsp.xml"
+
+
+For IM GUI mode installation, provide the 2 mandatory arguments; IM_Install_Location and JazzSM_Install_Location. 
+This argument combination invokes Installation Manager in GUI mode and lead you through the rest of the upgrade process.
+
+For IM Silent installation, provide all 3 arguments; IM_Install_Location , JazzSM_Install_Location, and Response_file_with_absolute_Path.
+This argument combination invokes Installation Manager in silent mode to upgrade JazzSM.
+
+JazzSMgrpModeUpgrade.sh [/support/docview.wss?uid=swg21985946&aid=2]JazzSMgrpModeUpgrade.sh [/support/docview.wss?uid=swg21985946&aid=1]

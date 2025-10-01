@@ -1,0 +1,69 @@
+Title: IBM GUI login as sklmAdmin gives a white blank screen using IE version 9 - United States
+
+Text:
+browser gui portal console logging log in login UI user interface ie ie9 v9 v 9 version TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using Internet Explorer (IE) 9 for SKLM 2.5 UI. 
+
+SYMPTOM
+Can not configure SKLM
+
+
+CAUSE
+Wrong setting on the Internet Explorer version 9.
+
+RESOLVING THE PROBLEM
+Using Windows Internet Explorer 9 web browser, a completely white and blank screen shows after we successfully log into SKLM portal with //, then ip, then :, then 9080/ibm/SKLM/jsp/Main.jsp using ID SKLMAdmin and pw. 
+
+SystemOut.log:
+[1/24/14 10:07:02:510 EST] 000000a6 webapp E com.ibm.ws.webcontainer.webapp.WebApp logServletError SRVE0293E: [Servlet Error]-[GenericServletWrapper]: java.lang.IllegalStateException: Cannot forward. Response already committed.
+at com.ibm.ws.webcontainer.webapp.WebAppRequestDispatcher.dispatch(WebAppRequestDispatcher.java:1149)
+
+[1/24/14 10:07:02:759 EST] 000000a6 webapp E com.ibm.ws.webcontainer.webapp.WebApp reportRecursiveError Error Page Exception:
+
+[1/24/14 12:36:10:519 EST] 000000a0 webapp E com.ibm.ws.webcontainer.webapp.WebApp logServletError SRVE0293E: [Servlet Error]-[Static File wrapper]: com.ibm.wsspi.webcontainer.ClosedConnectionException: OutputStream encountered error during write
+at com.ibm.ws.webcontainer.channel.WCCByteBufferOutputStream.write(WCCByteBufferOutputStream.java:188)
+
+Caused by: java.io.IOException: Async IO operation failed (1), reason: RC: 10054 An existing connection was forcibly closed by the remote host.
+
+[1/24/14 12:36:10:660 EST] 000000a0 ServletWrappe E com.ibm.ws.webcontainer.servlet.ServletWrapper service SRVE0068E: An exception was thrown by one of the service methods of the servlet [/error.jsp] in application [isclite]. Exception created : [java.lang.IllegalStateException: SRVE0199E: OutputStream already obtained
+at com.ibm.ws.webcontainer.srt.SRTServletResponse.getWriter(SRTServletResponse.java:836)
+
+[1/24/14 12:36:10:894 EST] 000000a0 webapp E com.ibm.ws.webcontainer.webapp.WebApp reportRecursiveError Error Page Exception:
+
+[1/24/14 12:40:31:112 EST] 000000a1 SystemOut O WSCUrlFilter I/O exception
+
+[1/24/14 12:40:31:112 EST] 000000a1 filter E com.ibm.ws.webcontainer.filter.FilterInstanceWrapper doFilter SRVE8109W: Uncaught exception thrown by filter WSCUrlFilter: java.io.FileNotFoundException: SRVE0190E: File not found: /css/images/isclite/ButtonBackground.gif
+at com.ibm.ws.webcontainer.extension.DefaultExtensionProcessor._processEDR(DefaultExtensionProcessor.java:909)
+
+However, logging in with: https//localhost:9083/ibm/console/logon.jsp displays the correct GUI and you can create and delete users successfully.
+SKLM otherwise is working fine as far as all the services, ports, CLI, DB2 connection, etc.... 
+
+The solution is to modify "Browser mode" and "Document mode" to "Internet Explorer 9 Standards - IE9" and it should show the proper UI as follows:
+
+1. Launch IE 9
+
+2. Give below URL in browser address bar to launch SKLM 2.5 login page by typing 
+(https//ip-address:9080/ibm/SKLM/login.jsp).
+
+3. Login using correct SKLM credential for example SKLMAdmin and password.
+
+4. If blank screen or distorted screen is shown then proceed with step-5 else you have good browser settings and you don't need to follow this document further
+
+5. Keep focus on browser window and Press F12 or click on developer tools link as shown in below screen shot
+
+6. Developer tools will be opened on the bottom of the browser as shown in below
+screen shot.
+
+7. By Default Document mode setting is set to Quirks. Change it to “Internet Explorer 9
+Standards” by clicking on it and select: “Internet Explorer 9 Standards” from the drop down menu.
+
+8. Page will refresh and GUI should be shown properly
+
+Attached is the step-by-step document on how to do this setting with screen shots. 
+
+sklm_ui_with_ie_9.pdf [/support/docview.wss?uid=swg21663562&aid=2]sklm_ui_with_ie_9.pdf [/support/docview.wss?uid=swg21663562&aid=1]
+
+RELATED INFORMATION
+#

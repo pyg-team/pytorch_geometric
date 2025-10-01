@@ -1,0 +1,203 @@
+Title: IBM PI81199: UCD BLUEPRINT DESIGN SERVER RUNNING ON WINDOWS PLATFORM DOES NOTGENERATE LOG FILES - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Starting UCD Blueprint Design Server as a Windows service does
+   not generate any console log files such as stdout.out and
+   stderr.out files that are equivalent to patterns.out and
+   patterns.err files in C:\installation_directory\logs directory.
+   Affected versions are up to UCD Blueprint Design Server 6.2.4.1.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1) Navigate to "C:\installation_directory\bin\service"
+   2) Edit service.cmd file using your favourite editor and
+   navigate to the below line.
+   "%SRV%" //US//%SERVICE_NAME% --LogPath "%SERVER_HOME%\logs\" ||
+   goto configFailed
+   3) You must replace the above line with the following line.
+   "%SRV%" //US//%SERVICE_NAME% --LogPath "%SERVER_HOME%\logs" ||
+   goto configFailed
+   NOTE: logs\" is replaced with logs"
+   4) Open cmd with "Run as administrator" option and execute the
+   following command.
+   Let's say, the exising Windows service name for UCD Blueprint
+   Design Server is ucd-bpd.
+   sc delete ucd-bpd
+   "C:\installation_directory\bin\service\service.cmd" install
+   ucd-bpd
+   5) Start UCD Blueprint Design Server from Windows service.
+   6) Now, if you go to C:\installation_directory\logs directory,
+   you should be able to see the following files.
+   stdout_Today's DATE.log
+   stderr_Today's DATE.log
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * UCD Blueprint Design Server 6.2.3.0 running on Windows       *
+   * platform as a service.                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Problem Statement aka Comment line, work item summary...     *
+   * UCD Blueprint Design Server running on Windows platform does *
+   * not generate log files.                                      *
+   *                                                              *
+   * Problem Analysis (when applicable or fill what is            *
+   * applicable)                                                  *
+   * Firstly, the content of C:\Program                           *
+   * Files\ibm-ucd-patterns\opt\tomcat\bin\setenv.bat file is     *
+   * wrong.                                                       *
+   * C:/> "C:\Program                                             *
+   * Files\ibm-ucd-patterns\bin\start_server.cmd"                 *
+   * '#' is not recognized as an internal or external command,    *
+   * operable program or batch file.                              *
+   * 'CATALINA_OUT' is not recognized as an internal or external  *
+   * command,                                                     *
+   * operable program or batch file.                              *
+   * 'CATALINA_OPTS' is not recognized as an internal or external *
+   * command,                                                     *
+   * operable program or batch file.                              *
+   *                                                              *
+   * C:\> type "C:\Program                                        *
+   * Files\ibm-ucd-patterns\opt\tomcat\bin\setenv.bat"            *
+   * # Defines options for launching Tomcat                       *
+   *                                                              *
+   * CATALINA_OUT=C:\Program                                      *
+   * Files\ibm-ucd-patterns\logs\patterns.out                     *
+   * CATALINA_OPTS="@JAVA_LIB_PATH@                               *
+   * -Dcom.ibm.crypto.provider.DoRSATypeChecking=false"           *
+   *                                                              *
+   * As a result of this, unlike UCD BPD Server on Linux          *
+   * platform, UCD BPD Server on Windows platform picks up        *
+   * log4j.properties file resides in C:\Program                  *
+   * Files\ibm-ucd-patterns\opt\tomcat\webapps\landscaper\WEB-INF *
+   * \classes directory instead of C:\Program                     *
+   * Files\ibm-ucd-patterns\logs directory.                       *
+   *                                                              *
+   * Start UCD Blueprint Design Server as a Windows service but   *
+   * there is no patterns.out nor patterns.err files generated in *
+   * C:\Program Files\ibm-ucd-patterns\logs directory. It would   *
+   * be fine as long as console logs such as stdout.out and       *
+   * stderr.out files are generated.                              *
+   * But stdout.out and stderr.out files are *not* generated in   *
+   * C:\Program Files\ibm-ucd-patterns\logs directory.            *
+   * The root cause of the problem is that the service.cmd file   *
+   * resides in "C:\Program Files\ibm-ucd-patterns\bin\service"   *
+   * directory is wrong.                                          *
+   * Run regedit and navigate to                                  *
+   * Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Urbancode\Anthill3\UCD- *
+   * BPD\Parameters\Log                                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in UCD 6.2.5.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI81199
+   
+   
+ * REPORTED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * REPORTED COMPONENT ID
+   5725M5400
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-05-08
+   
+   
+ * CLOSED DATE
+   2017-07-27
+   
+   
+ * LAST MODIFIED DATE
+   2017-07-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * FIXED COMPONENT ID
+   5725M5400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R624 PSY
+   UP

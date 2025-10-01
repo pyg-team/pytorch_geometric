@@ -1,0 +1,189 @@
+Title: IBM IZ18954: DELAY IN SENDING MESSAGES WHEN PIPELINING IS USED WITH SSL - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V6.0 Fix Pack 6.0.2.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24020658]
+WebSphere MQ V7.0 for i5/OS Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022812]
+WebSphere MQ V7.0 Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022810]
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24025627]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24027266]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.10 (FP03) [http://www-01.ibm.com/support/docview.wss?uid=swg24029987]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Typically messages will be building up on the transmission queue
+   and one of the channel Dual Unit Of Work(DUOW) threads will be
+   waiting on a mutex and the other thread will be waiting on poll.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  fix required
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users using SSL pipelined message channels.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   GSKit Default Socket mutex behaviour is locking out dual unit of
+   work threads because of mutex acquired by GSKit in I/O call
+   back functions. Default Socket mutex behaviour is not desirable
+   to MQ.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  MQ SSL code has been modified to change the default GSKit
+   Socket mutex behaviour and release its mutex before calling the
+   callbacks.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.5
+   --------           --------------------
+   Windows            U200292
+   AIX                U815929
+   HP-UX (PA-RISC)    U815636
+   HP-UX (Itanium)    U815818
+   Solaris (SPARC)    U815659
+   Solaris (x86-64)   U815928
+   iSeries            SE32853
+   Linux (x86)        U815767
+   Linux (x86-64)     U815808
+   Linux (zSeries)    U815805
+   Linux (Power)      U815806
+   Linux (s390x)      U815807
+   
+                      v7.0
+   Platform           Fix Pack 7.0.0.1
+   --------           --------------------
+   Windows            U200301
+   AIX                U821414
+   HP-UX (PA-RISC)    U820765
+   HP-UX (Itanium)    U821296
+   Solaris (SPARC)    U820766
+   Solaris (x86-64)   U820880
+   iSeries            tbc_p700_0_0_1
+   Linux (x86)        U821407
+   Linux (x86-64)     U821295
+   Linux (zSeries)    U821294
+   Linux (Power)      U820881
+   
+   The latest available maintenance can be obtained from
+   'Websphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'Websphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ18954
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7201
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-04-01
+   
+   
+ * CLOSED DATE
+   2008-06-16
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V6
+   
+   
+ * FIXED COMPONENT ID
+   5724H7201
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

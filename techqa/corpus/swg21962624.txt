@@ -1,0 +1,77 @@
+Title: IBM While running the ConfigWizard to transfer the Portal databases to DB2 the process fails and the following errors are in the ConfigTrace.log, SQLCODE=-286, SQLSTATE=42727 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While running the ConfigWizard to transfer the Portal databases to DB2 the process fails and the following errors are in the ConfigTrace.log, SQLCODE=-286, SQLSTATE=42727 
+
+SYMPTOM
+The ConfigTrace.log shows the following... 
+
+[sqlproc] CREATE TABLE release.WEB_MOD (
+[sqlproc] OID CHAR(18) FOR BIT DATA NOT NULL,
+[sqlproc] FILE_NAME VARCHAR(255),
+[sqlproc] PATH VARCHAR(1024),
+[sqlproc] CONTEXT_ROOT VARCHAR(255) NOT NULL,
+[sqlproc] WAS_DISPLAY_NAME VARCHAR(255) NOT NULL,
+[sqlproc] IS_ACTIVE INTEGER NOT NULL,
+[sqlproc] IS_REMOVABLE INTEGER DEFAULT 1 NOT NULL,
+[sqlproc] GUID VARCHAR(255),
+[sqlproc] MAJOR_VERSION INTEGER,
+[sqlproc] MINOR_VERSION INTEGER,
+[sqlproc] ANON_SESSION INTEGER DEFAULT 0 NOT NULL,
+[sqlproc] IS_PREDEPLOYED INTEGER DEFAULT 0 NOT NULL,
+[sqlproc] CREATED BIGINT NOT NULL,
+[sqlproc] MODIFIED BIGINT NOT NULL,
+[sqlproc] WEB_MOD_NAME VARCHAR(255),
+[sqlproc] IS_JSR_TYPE INTEGER DEFAULT 0 NOT NULL,
+[sqlproc] CONSTRAINT PK15 PRIMARY KEY (OID),
+[sqlproc] CONSTRAINT UN15A UNIQUE (CONTEXT_ROOT)
+[sqlproc] )
+
+[sqlproc] Error during statement execution!
+[sqlproc] com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error:
+SQLCODE=-286, SQLSTATE=42727, SQLERRMC=4096;DBUSER, DRIVER=4.17.29
+[sqlproc] at com.ibm.db2.jcc.am.hd.a(hd.java:747)
+[sqlproc] at com.ibm.db2.jcc.am.hd.a(hd.java:66)
+[sqlproc] at com.ibm.db2.jcc.am.hd.a(hd.java:135)
+
+....
+
+[sqlproc] Ant Database Properties:
+
+[sqlproc] DbDomain specific settings (release):
+[sqlproc] DbType = db2
+[sqlproc] DbUrl =
+jdbc:db2://ACMECORP.org:61550/ACMEDATABASE:returnAlias=0
+;
+[sqlproc] DbName = ACMEDATABASE
+[sqlproc] DbSchema = release
+[sqlproc] DbUser = DBUSER
+[sqlproc] DbPassword = PASSWORD_REMOVED
+
+[sqlproc] DbType specific settings (db2):
+[sqlproc] db2.DbDriver = com.ibm.db2.jcc.DB2Driver
+[sqlproc] db2.DbLibrary =
+/opt/was/drivers/db2type4/db2jcc4.jar |
+/opt/was/drivers/db2type4/db2jcc_license_cu.jar
+[sqlproc] _________________________________________________________
+[sqlproc] _________________________________________________________
+[sqlproc] ERROR: Error during the execution of the sql files.
+
+
+CAUSE
+In this case, the problem was because the user (DBUSER) did not have proper DB2 database permissions on the database schemas. In this case, the 'release' schema was causing the problem.
+
+
+ENVIRONMENT
+Portal 8.5 
+
+Linux 
+
+DB2
+
+
+RESOLVING THE PROBLEM
+Have the DBA correct the permissions issue so the database user listed in the error message has access to the database schemas related to Portal.

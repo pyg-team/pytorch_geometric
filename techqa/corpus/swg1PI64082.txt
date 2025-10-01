@@ -1,0 +1,250 @@
+Title: IBM PI64082: MISSING ARTIFACTS AFTER MIGRATION - DEADLOCKS AND ROLLED BACK TRANSACTIONS DURING ADDTABLES (390569) - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM Rational Collaborative Lifecycle Management (CLM), when
+   upgrading to version 6, the addTables script may encounter
+   database deadlocks, resulting in certain artifacts not being
+   visible after the upgrade. The addTables log shows:
+   
+   "2015-07-13 10:41:07,644 CRJAZ1318E The server could not connect
+   to the database. Try the operation again.
+   Serialization failure
+   
+   The participant number 2 is blocked by 1:
+   The requested lock is: Table lock(1) on VVCMODEL.VERSION
+   (mode=Exclusive(5)) (escalation=1)
+   The locks held by this participant are:
+   Table row lock(2) on VVCMODEL.VERSION (mode=Exclusive(5))
+   (escalation=0)
+   Internal Variation lock(9) on . (mode=Share(3)) (escalation=0)
+   [...]
+   SQL: INSERT INTO VVCMODEL.VERSION (STATE_ID, ITEM_ID,
+   CONTEXT_ID, MODIFIED, MODIFIED_BY_ITEM_ID,
+   CONFIGURATION_ITEM_ID, CONCEPT, VERSION, STORAGE, CURRENT_COL,
+   DELETED, UNREFERENCED, CREATION_TIME, INTERNAL,
+   CHANGE_SET_ITEM_ID, CREATOR_ITEM_ID, PREVIOUS_VERSION_ITEM_ID,
+   IGNORED) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+   ?, ?)
+   SQL Exception #1
+   SQL Message: DB2 SQL Error: SQLCODE=-911, SQLSTATE=40001,
+   SQLERRMC=2, DRIVER=4.17.28
+   SQL State: 40001
+   Error Code: -911
+   
+   com.ibm.db2.jcc.am.SqlTransactionRollbackException: DB2 SQL
+   Error: SQLCODE=-911, SQLSTATE=40001, SQLERRMC=2, DRIVER=4.17.28
+   at com.ibm.db2.jcc.am.fd.a(fd.java:734)
+   at com.ibm.db2.jcc.am.fd.a(fd.java:66)
+   at com.ibm.db2.jcc.am.fd.a(fd.java:135)
+   at com.ibm.db2.jcc.am.uo.c(uo.java:2771)
+   at com.ibm.db2.jcc.t4.ab.t(ab.java:1046)
+   at com.ibm.db2.jcc.t4.ab.l(ab.java:443)
+   at com.ibm.db2.jcc.t4.ab.a(ab.java:62)
+   at com.ibm.db2.jcc.t4.o.a(o.java:50)
+   at com.ibm.db2.jcc.t4.ub.b(ub.java:220)
+   at com.ibm.db2.jcc.am.vo.sc(vo.java:3526)
+   at com.ibm.db2.jcc.am.vo.b(vo.java:4489)
+   at com.ibm.db2.jcc.am.vo.kc(vo.java:807)
+   at com.ibm.db2.jcc.am.vo.executeUpdate(vo.java:781)
+   at
+   com.ibm.team.repository.service.internal.db.jdbcwrappers.stat.Pr
+   eparedStatementStatWrapper.executeUpdate(PreparedStatementStatWr
+   apper.java:79)
+   [...]"
+   
+   Please refer to the following jazz.net work item for more
+   information on this defect:
+   https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo]
+   rkItem/390569
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Restore the pre-migration environment from backup and re-try the
+   upgrade.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * In IBM Rational Collaborative Lifecycle Management (CLM),    *
+   * when                                                         *
+   * upgrading to version 6, the addTables script may encounter   *
+   * database deadlocks, resulting in certain artifacts not being *
+   * visible after the upgrade. The addTables log shows:          *
+   *                                                              *
+   * "2015-07-13 10:41:07,644 CRJAZ1318E The server could not     *
+   * connect                                                      *
+   * to the database. Try the operation again.                    *
+   * Serialization failure                                        *
+   *                                                              *
+   * The participant number 2 is blocked by 1:                    *
+   * The requested lock is: Table lock(1) on VVCMODEL.VERSION     *
+   * (mode=Exclusive(5)) (escalation=1)                           *
+   * The locks held by this participant are:                      *
+   * Table row lock(2) on VVCMODEL.VERSION (mode=Exclusive(5))    *
+   * (escalation=0)                                               *
+   * Internal Variation lock(9) on . (mode=Share(3))              *
+   * (escalation=0)                                               *
+   * [...]                                                        *
+   * SQL: INSERT INTO VVCMODEL.VERSION (STATE_ID, ITEM_ID,        *
+   * CONTEXT_ID, MODIFIED, MODIFIED_BY_ITEM_ID,                   *
+   * CONFIGURATION_ITEM_ID, CONCEPT, VERSION, STORAGE,            *
+   * CURRENT_COL,                                                 *
+   * DELETED, UNREFERENCED, CREATION_TIME, INTERNAL,              *
+   * CHANGE_SET_ITEM_ID, CREATOR_ITEM_ID,                         *
+   * PREVIOUS_VERSION_ITEM_ID,                                    *
+   * IGNORED) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,   *
+   * ?, ?,                                                        *
+   * ?, ?)                                                        *
+   * SQL Exception #1                                             *
+   * SQL Message: DB2 SQL Error: SQLCODE=-911, SQLSTATE=40001,    *
+   * SQLERRMC=2, DRIVER=4.17.28                                   *
+   * SQL State: 40001                                             *
+   * Error Code: -911                                             *
+   *                                                              *
+   * com.ibm.db2.jcc.am.SqlTransactionRollbackException: DB2 SQL  *
+   * Error: SQLCODE=-911, SQLSTATE=40001, SQLERRMC=2,             *
+   * DRIVER=4.17.28                                               *
+   * at com.ibm.db2.jcc.am.fd.a(fd.java:734)                      *
+   * at com.ibm.db2.jcc.am.fd.a(fd.java:66)                       *
+   * at com.ibm.db2.jcc.am.fd.a(fd.java:135)                      *
+   * at com.ibm.db2.jcc.am.uo.c(uo.java:2771)                     *
+   * at com.ibm.db2.jcc.t4.ab.t(ab.java:1046)                     *
+   * at com.ibm.db2.jcc.t4.ab.l(ab.java:443)                      *
+   * at com.ibm.db2.jcc.t4.ab.a(ab.java:62)                       *
+   * at com.ibm.db2.jcc.t4.o.a(o.java:50)                         *
+   * at com.ibm.db2.jcc.t4.ub.b(ub.java:220)                      *
+   * at com.ibm.db2.jcc.am.vo.sc(vo.java:3526)                    *
+   * at com.ibm.db2.jcc.am.vo.b(vo.java:4489)                     *
+   * at com.ibm.db2.jcc.am.vo.kc(vo.java:807)                     *
+   * at com.ibm.db2.jcc.am.vo.executeUpdate(vo.java:781)          *
+   * at                                                           *
+   * com.ibm.team.repository.service.internal.db.jdbcwrappers.sta *
+   * t.Pr                                                         *
+   * eparedStatementStatWrapper.executeUpdate(PreparedStatementSt *
+   * atWr                                                         *
+   * apper.java:79)                                               *
+   * [...]"                                                       *
+   *                                                              *
+   * Please refer to the following jazz.net work item for more    *
+   * information on this defect:                                  *
+   * https://jazz.net/jazz/resource/itemName/com.ibm.team.workite *
+   * m.Wo                                                         *
+   * rkItem/390569                                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is fixed in the Rational Collaborative Lifecycle
+   Management 6.0.2 iFix003 release
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI64082
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * REPORTED COMPONENT ID
+   5724V0400
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-13
+   
+   
+ * CLOSED DATE
+   2016-07-14
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * FIXED COMPONENT ID
+   5724V0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

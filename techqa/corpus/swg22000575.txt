@@ -1,0 +1,20 @@
+Title: IBM InfoSphere Information Server vulnerability to CVE-2017-5638 regarding Apache Struts 2 - United States
+
+Text:
+struts2; CVE-2017-5638 TECHNOTE (FAQ)
+
+QUESTION
+ Is InfoSphere Information Server vulnerable to CVE-2017-5638 regarding Apache Struts 2? 
+
+ANSWER
+Information Server components do not package struts2 at all in any of the versions (i.e. v8.1, v8.5, v9.1, v11.3 and v11.5).
+
+All these versions use struts1. 
+
+IIS v8.7, v9.1, v11.3 and v11.5 has been upgraded from struts 1.2.8 to struts 1.2.9-sp3. 
+
+Vulnerability tests have been run against the IIS admin console which is not vulnerable to CVE-2017-5638.
+
+Also, WebSphere is not vulnerable to CVE-2017-5638 per this technote:
+
+http://www.ibm.com/support/docview.wss?uid=swg22000122 [http://www.ibm.com/support/docview.wss?uid=swg22000122]

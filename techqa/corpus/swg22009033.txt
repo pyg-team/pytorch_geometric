@@ -1,0 +1,36 @@
+Title: IBM Failure to redirect from HTTP to HTTPS on WebUI login - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Failure to redirect from HTTP to HTTPS on WebUI login, and other odd WebUI behavior. 
+
+CAUSE
+The WebUI is set to communicate on ports 80 and 443, for HTTP and HTTPS, by default. These network ports can be set to any value during WebUI enablement. It is critical that the chosen ports remain open, and that no other applications are using them.
+
+DIAGNOSING THE PROBLEM
+Use the netstat command to check your running services: 
+
+Linux: netstat –l 
+Windows: netstat -an
+
+
+RESOLVING THE PROBLEM
+If you detect port conflicts or notice unusual WebUI behavior, you have several options. 
+
+
+• Change where the WebUI is running. Adjust the network ports of essential WebUI services on the box:
+Client settings:
+_WebUI_HTTPS_Port (default: 443)
+_WebUI_Redirect_Port (default: 80)
+_WebUIAppEnv_APP_PORT_MIN (default 5001)
+_WebUIAppEnv_APP_PORT_MAX (default 5999)
+
+• Turn off the conflicting network service. Examples of competing services can include:
+SQL Server Reporting Services (ReportServer)
+Web Deployment Agent Service (MsDepSvc)
+BranchCache (PeerDistSvc)
+Sync Share Service (SyncShareSvc)
+World Wide Web Publishing Service (W3SVC)
+Internet Information Server (WAS, IISADMIN)

@@ -1,0 +1,217 @@
+Title: IBM PI58097: HTTP Response header with invalid Date string is added to the re sponse on a WebServices request - United States
+
+Text:
+  A FIX IS AVAILABLE
+16.0.0.2: WebSphere Application Server Liberty 16.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24042163]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  HTTP Response header with an invalid Date string is added
+   to the response on a WebServices request.
+   
+   com/ibm/ws/webcontainer/srt/SRTServletResponse.addHeader(SRT
+   Serv
+   letResponse.java:2153)
+   
+   org/apache/cxf/transport/http/Headers.copyToResponse(Headers
+   .jav
+   a:457(Compiled Code))
+   at
+   org/apache/cxf/transport/http/AbstractHTTPDestination.flushH
+   eade
+   rs(AbstractHTTPDestination.java:637)
+   at
+   org/apache/cxf/transport/http/AbstractHTTPDestination$Wrappe
+   dOut
+   putStream.close(AbstractHTTPDestination.java:807)
+   at
+   org/apache/cxf/transport/AbstractConduit.close(AbstractCondu
+   it.j
+   ava:56)
+   at
+   org/apache/cxf/transport/http/AbstractHTTPDestination$BackCh
+   anne
+   lConduit.close(AbstractHTTPDestination.java:742)
+   at
+   org/apache/cxf/interceptor/MessageSenderInterceptor$MessageS
+   ende
+   rEndingInterceptor.handleMessage(MessageSenderInterceptor.ja
+   va:6
+   2)
+   at
+   org/apache/cxf/phase/PhaseInterceptorChain.doIntercept(Phase
+   Inte
+   rceptorChain.java:307(Compiled Code))
+   
+   (enteredlock:org/apache/cxf/phase/PhaseInterceptorChain@0x00
+   0000
+   00FAE289 A8,
+   entrycount: 1)
+   at
+   org/apache/cxf/interceptor/OutgoingChainInterceptor.handleMe
+   ssag
+   e(OutgoingChainInterceptor.java:83)
+   at
+   org/apache/cxf/phase/PhaseInterceptorChain.doIntercept(Phase
+   Inte
+   rceptorChain.java:307(Compiled Code))
+   
+   (enteredlock:org/apache/cxf/phase/PhaseInterceptorChain@0x00
+   000
+   000F9D3E3 08,entrycount: 1)
+   at
+   org/apache/cxf/transport/ChainInitiationObserver.onMessage(C
+   hain
+   InitiationObserver.java:124)
+   at
+   org/apache/cxf/transport/http/AbstractHTTPDestination.invoke
+   (Abs
+   tractHTTPDestination.java:259)
+   at
+   com/ibm/ws/jaxrs20/endpoint/AbstractJaxRsWebEndpoint.invoke(
+   Abst
+   ractJaxRsWebEndpoint.java:134)
+   at
+   com/ibm/websphere/jaxrs/server/IBMRestServlet.handleRequest(
+   IBMR
+   estServlet.java:149)
+   at
+   com/ibm/websphere/jaxrs/server/IBMRestServlet.doPost(IBMRest
+   Serv
+   let.java:107)
+   
+   Root cause:
+   Multi-threads invoke the same method(getTimeAsString()) of
+   CachedTime class at the same time.
+   at
+   javax/servlet/http/HttpServlet.service(HttpServlet.java:707)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty - Web Services (JAX-WS, JAX- *
+   *                  RS)                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: User get an invalid date from response  *
+   *                      header                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This is a synchronize issue, in multi-thread environment the
+   date will not correct.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix this by adding a synchnorized keyword to make sure the
+   response date is correct
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 16.0.0.2.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI58097
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * REPORTED COMPONENT ID
+   5725L2900
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-25
+   
+   
+ * CLOSED DATE
+   2016-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * FIXED COMPONENT ID
+   5725L2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

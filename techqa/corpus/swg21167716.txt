@@ -1,0 +1,23 @@
+Title: IBM Meeting times off by one hour in Two Day and One Work Week views - United States
+
+Text:
+calendaring & scheduling; c&s; DST; daylight saving time; daylight savings time; off by one hour; incorrect; 2; 3; am; pm; a.m.; p.m.; NZDST07; DST2007; DST 2007; Daylight saving time; time off by one hour; APAR LO06275; APAR LO02497; AusDST08; BraDST07; WA DST TECHNOTE (FAQ)
+
+QUESTION
+In the Notes calendar, you notice that meetings times are off by one hour in either the Two Days or One Work Week view. However, if you hover the mouse over the meeting or open the meeting, you can see the correct time. 
+
+The problem occurs only if the first day displayed in the view is the day that Daylight Saving Time begins or ends. Entries that fall on Sunday are correct, but all entries on the other days appear an hour off. 
+
+This issue does not occur in the One Work Week view if your calendar preferences do not have Sunday enabled in the selection, "Days displayed in a work week." Entries affected by this issue will appear an hour later than expected in the spring and an hour later than expected in the fall.
+
+The screen shot below demonstrates this issue in spring when Daylight Saving Time begins. The 2 a.m. entry appears in the 3 a.m. slot. Note the mouse-over reflects the expected time: 2 a.m. On the first day of Daylight Saving Time, there should be no 2 a.m. entry.
+
+[/support/docview.wss?uid=swg21167716&aid=1] [/support/docview.wss?uid=swg21167716&aid=1]
+
+In the example above, the flyover depicts the correct time but in the Two Day view, all entries on this day (April 3) are off by one hour.
+
+
+ANSWER
+This issue was reported to Quality Engineering as SPR# BTLW5XM4HV and there are no plans to address this situation. Use the weekly or monthly calendar view to avoid this problem. 
+
+This is a general Daylight Saving Time issue and is not related to changes in Daylight Saving Time rules.

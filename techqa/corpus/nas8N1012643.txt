@@ -1,0 +1,57 @@
+Title: IBM Messages CPE3420 and CPIAD08 Are Logged In Host Server Daemon Joblog. - United States
+
+Text:
+HOSTSERVERS; MSGCPE3420; MSGCPIAD08 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document discusses the cause and resolution when messages CPE3420 and CPIAD08 are logged in a host server's joblog. 
+
+RESOLVING THE PROBLEM
+Problem 
+
+Client applications are unable to connect to one or more iSeries Access Host Servers on the IBM i Server. The client might receive a CWBCO1047 in their application. The daemon job for the Host Server will log a CPE3420 and CPIAD08 with the following details.
+
+CPE3420 Diagnostic 10 11/10/09 10:35:35.738755 QZBSCOMM QSYS *STMT QZBSCOMM QSYS *STMT
+From module . . . . . . . . : QZBSCOMM
+From procedure . . . . . . : SndErrnoMsg__FPc
+Statement . . . . . . . . . : 13
+To module . . . . . . . . . : QZBSCOMM
+To procedure . . . . . . . : SndErrnoMsg__FPc
+Statement . . . . . . . . . : 13
+Message . . . . : Address already in use.
+CPIAD08 Diagnostic 40 11/10/09 10:35:35.738819 QZBSCOMM QSYS *STMT QZBSCOMM QSYS *STMT
+From module . . . . . . . . : QZBSCOMM
+From procedure . . . . . . : SndCPIAD08__FiN21
+Statement . . . . . . . . . : 38
+To module . . . . . . . . . : QZBSCOMM
+To procedure . . . . . . . : SndCPIAD08__FiN21
+Statement . . . . . . . . . : 38
+Message . . . . : Host server communications error occurred on bind() -
+Inet socket.
+Cause . . . . . : Error code 3420 was received while processing the bind()
+- Inet socket function for the host server communications. Recovery . . . :
+See any previously listed message(s) to determine the cause of the error;
+if necessary, correct the error and issue the request again.
+
+A CWBPING fails to establish a socket to the host server. In addition, WRKACTJOB shows the daemon job is active.
+
+Cause
+
+When the bind failure in message CPIAD08 refers to Inet socket, this error means that another job has already established a server socket and is listening on the local port. It is possible also that there is no currently active job that is using that port. It is possible for a job to end without releasing the port and, short of ending TCP, there is no way to force that port to be freed up if there is no active job on the port presently. To see if there is an active job using the port, you should do the following: 
+
+1. Issue the command NETSTAT *CNN, and press Enter. 2. Press F15, and type the port number in the field for Local port range: Lower value and press Enter . 
+
+The top-most entry in this subsetted list should have an asterisk or star for the value in the Remote Address and Remote Port columns; this is the listening socket server. 
+
+Enter option 8 on this line to display the job. If you will see a job displayed, it is the one that is listening on this port; if you are getting the errors listed above, it is not the expected daemon host server job. If there is no job listed or if the port does not show in a listen status and you are still receiving message CPIAD08 with the 3420 return code, you will need to use the second resolution or end and restart TCP/IP on your system to get past the error. Resolution 
+
+There are two resolutions which will work. 
+
+o First, you could end the job that is currently listening on the host server local port. This approach is going to end a daemon job for some service that you may be using though, and you should not take this approach unless you understand what the job is that is listening on the contested port and you understand the implications to your system and your business if you end that daemon. 
+
+o The second resolution relies on the flexibility that it built into the clients that use and host servers. The clients typically use a connection to the port mapper to determine the port that will be used to connect to a specific service. Those services are defined in the TCP service table on the IBM i, and that service table can be modified to change the port for the service that is being affected. Use the WRKSRVTBLE command to view and edit the service table. For an example case, I will suppose that the error was occurring when the central host server was starting. The WRKSRVTBLE command shows that the service name for this server is "as-central" and the default port for it is 8470. Suppose that you found that some other software was now using that port so you need to modify this service. You can see that there are options in the WRKSRVTBLE screen to add, remove, and display the details for an entry, but edit is not an option (if it were, this would be easier). You want to view the details on the service first. You should take a screen shot of these details or make some other note of them. Next, you must delete the entry and then add it back with the same service name, protocol name, and aliases as the original entry had; however, you must modify the port to be one that is both a higher number than 1024 and not presently in use daemon on your system (that means that in NETSTAT *CNN you do not see this port listed on a line with stars in the Remote Address and Remote Port columns). 
+
+Finally, start the host server on the IBM i server using the STRHOSTSVR command.  
+
+HISTORICAL NUMBER
+ 541926085

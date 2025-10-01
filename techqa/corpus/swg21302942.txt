@@ -1,0 +1,62 @@
+Title: IBM WMB/IIB MustGather: Problems with Installation or Uninstallation on z/OS - United States
+
+Text:
+Installation; Uninstallation; (component); MustGather; MustGathers; Must Gather; Collect Troubleshooting Data; MustGatherDocument; Collecting; Trouble; Shooting TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are experiencing Installation and/or Uninstallation problems in WebSphere Message Broker (WMB) or IBM Integration Bus (IIB) on z/OS. You would like to know what documentation you must collect (MustGather) so that the WMB/IIB Support team can diagnose your problem. If you gather this documentation before contacting support it will expedite the troubleshooting process, and save you time. 
+
+RESOLVING THE PROBLEM
+
+
+
+STEP 1: SELF-GUIDED TROUBLESHOOTING
+
+ * Confirm that you have met all criteria for installing Websphere Message Broker (WMB) or IBM Integration Bus (IIB) by referring to the System Requirements [http://www.ibm.com/software/integration/wbimessagebroker/requirements/] page. 
+ * Useful links 
+   Installing service on z/OS and Multiple concurrent installations at different levels [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/ah14790_.htm]
+   Installation and Uninstallation authorization [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/ah20608_.htm] [http://www.ibm.com/support/knowledgecenter/SSMKHH_10.0.0/com.ibm.etools.mft.doc/ah14790_.htm]
+
+
+
+STEP 2: COLLECT DATA
+
+ * Complete broker joblog WMB V7 or V8: Viewing broker joblogs [http://www.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/com.ibm.etools.mft.doc/an20101_.htm]
+   IIB V9: Viewing broker joblogs [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/an20101_.htm?lang=en]
+   
+   
+    * Joblogs are vital in that they provide component messages, environment details, product level data and other useful information. 
+   
+   
+ * 
+
+
+
+ATTENTION: A good problem description is one of the most important tools IBM needs to analyze your data!
+When sending data to IBM, be sure to update your PMR or send a note with the following information:
+
+ *  Tell us what errors you saw, where you saw them, and what time they happened Let us know if you made any changes to WebSphere Message Broker or the system before the problem Share any other observations which you think will help us to better understand the problem 
+
+
+
+STEP 3: SUBMIT DATA TO IBM
+
+ * Use IBM Service Request [http://www.ibm.com/support/servicerequest/] to open or view a problem record with IBM.
+ * Send your data to IBM [http://www.ibm.com/support/docview.wss?uid=swg21392217] for further analysis.
+
+
+
+
+Please see the IBM Software Support Handbook [http://www14.software.ibm.com/webapp/set2/sas/f/handbook/home.html] for more information on working with IBM support.
+
+
+
+Back to top
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Message Broker Installation z/OS 7.0, 8.0 
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

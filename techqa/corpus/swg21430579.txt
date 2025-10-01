@@ -1,0 +1,21 @@
+Title: IBM Deleting a multi-instance queue manager configuration in IBM i - United States
+
+Text:
+Multi-Instance DLTMQM RMVMQMINF CHGMQMJRN TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to delete a multi-instance queue manager configuration in IBM i 
+
+RESOLVING THE PROBLEM
+To delete a multi-instance queue manager, it is recommended that you end remote journaling and remove all queue manager instances before issuing the DLTMQM command for the original queue manager. 
+
+ 1. Use the CHGMQMJRN command to stop remote journaling between the queue managers on each server.
+    CHGMQMJRN MQMNAME('<QMGR_NAME>') RMTJRNRDB('<REMOTE_RDB_SERVER_NAME>') RMTJRNSTS(*INACTIVE) 
+ 2. End all instances of the queue manager, from the primary server as follows:
+    ENDMQM MQMNAME(<QMGR_NAME>) OPTION(*IMMED) INSTANCE(*ALL) ENDCCTJOB(*YES) 
+ 3. Issue the RMVMQMINF to remove the instance of the queue manager from each server. RMVMQMINF MQMNAME(<QMGR_NAME>) 
+ 4. For the original instance of the queue manager, issue the DLTMQM command to delete the queue manager.
+    DLTMQM MQMNAME(<QMGR_NAME>)
+
+RELATED INFORMATION
+ When issuing the DLTMQM for a mult-instance qmgr [http://www.ibm.com/support/docview.wss?uid=swg21430431]

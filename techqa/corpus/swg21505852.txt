@@ -1,0 +1,108 @@
+Title: IBM BigFix Client CPU Utilization - United States
+
+Text:
+TEM; cpu; usage; 250; googlebigfix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CPU utilization by the BigFix client and how to govern the amount ot CPU the BigFix client uses 
+
+RESOLVING THE PROBLEM
+The amount of CPU the BigFix client uses on an endpoint machine is governed by the following two client settings: 
+
+ * _BESClient_Resource_WorkIdle 
+ * _BESClient_Resource_SleepIdle
+
+
+Note: Descriptions for these and other client settings can be found here [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Endpoint%20Manager/page/Configuration%20Settings]. 
+
+By default, the _BESClient_Resource_WorkIdle setting is set to 10 and the _BESClient_Resource_SleepIdle setting is set to 480. 
+
+The BigFix client will do work (evaluate relevance) for a designated amount of time then go to sleep for a designated amount of time. The WorkIdle setting controls how many milliseconds to work before going to sleep in each cycle and the SleepIdle setting controls how many milliseconds to sleep after performing work in cycle. If the WorkIdle setting is high in comparison to the SleepIdle setting, then the BigFix client will evaluate Fixlet relevance faster, but the CPU usage will be higher. By default, WorkIdle is 10 milliseconds and SleepIdle is 480 Milliseconds. Since 10 is 2% of 480 you can expect the BigFix client to use at most 2% of the CPU. Both WorkIdle and SleepIdle have maximum values of 500. 
+
+To determine the upper bound on the amount of CPU the agent will use with your custom settings, use the formula: 
+
+Max agent %CPU = workidle / (workidle + sleepidle) 
+Example (default settings): 10 / (10 + 480) = 2% 
+
+You can easily manage these settings and adjust the amount of CPU the BigFix client will use via Task # 168 in the BES Support site. 
+
+The task offers you the ability to set the client CPU usage to any of 5 different modes (via 5 different actions and preset values in the action script). 
+
+_BESClient_Resource_WorkIdle _BESClient_Resource_SleepIdle CPU Mode CPU Upper bound Note 2 500 very low < 0.5% Not Recommended 10 480 default < 1-2% Default 25 460 medium < 5% Not Recommended 50 450 high < 10% Not Recommended 100 400 very high < 20% Not Recommended 
+For AIX components using an LPAR: 
+
+- Max agent % CPU calculation for AIX LPAR with Entitled Capacity for 
+Mode of Uncapped and Mode of Capped. 
+- Usage _BESClient_Resource_Entitlement=100 for AIX LPARs with mode of 
+Uncapped can be considered to use to eliminate 
+reduction of Max Agent CPU% by Entitled Capacity. 
+
+For the behavior of pSeries Hypervisor see the example below: 
+
+With Mode: Uncapped, Entitled Capacity : 0.10, if the AIX LPAR uses 
+0.10 CPU core, then 100% usage. If the physical CPU cores in the 
+pSeries pool are not fully utilized, then pSeries hypervisor will allow 
+the AIX LPAR to use more of CPU cores. You can also use pSeries LPAR 
+weighting to give certain AIX LPARs like production higher priority for 
+CPU resources than other AIX LPARs like development. 
+
+- BigFix computer settings _BESClient_Resource_WorkNormal, 
+_BESClient_Resource_SleepNormal when the BigFix agent is running a task 
+that can be set. 
+
+Questions and Answers: 
+
+Question 1: 
+From http://www-01.ibm.com/support/docview.wss?uid=swg21505852 [http://www-01.ibm.com/support/docview.wss?uid=swg21505852] 
+For Red Hat, SLES, Windows: 
+Max agent % CPU = workidle / (workidle + sleepidle) 
+0.0476 = 20 / (20 + 400) 
+0.0476 x 100 = 4.76% 
+... 
+_BESClient_Resource_WorkIdle 
+Statement "The "Entitled Capacity : 0.10," means we have 1/10th of a 
+CPU so all calculations for the workidle/sleepidle need to have 0.1 
+multiplied against them as the system has told us we have 10% of a full 
+CPU." 
+For AIX LPARs is the calculation the following? 
+Max agent % CPU = (workidle / (workidle + sleepidle) ) x Entitled 
+Capacity 
+0.00476 = (20 / (20 + 400)) x 0.10 
+0.00476 x 100 / = 0.476% of CPU available to AIX LPAR can be used 
+
+Answer: 
+Above is true that the BigFix Max agent % CPU with be multiplied by the 
+AIX LPAR Entitled Capacity to further reduce BigFix Max agent % CPU for 
+AIX LPARs with mode of Uncapped or mode of Capped. The BigFix Max 
+agent % CPU is based on a single physical CPU core. 
+... 
+Question 2: 
+For AIX LPAR with Mode: Uncapped from lparstat -i, can I turn off 
+lparstat -i Entitled Capacity to reduce Max agent %CPU by setting the 
+BigFix AIX computer _BESClient_Resource_Entitlement to 100? 
+
+Answer: 
+Yes 
+... 
+Question 3: 
+For BigFix agent on AIX LPAR with _BESClient_Resource_Entitlement to 
+100, will the behaviour be the same as Linux on Intel and Windows on 
+VMware for limiting Max agent %CPU to a single physical CPU core? 
+
+Answer: 
+Yes. 
+There is also BigFix computer setting 
+_BESClient_Resource_WorkNormal, _BESClient_Resource_SleepNormal when 
+the BigFix agent is running a task that can be set. 
+
+
+Some Notes:  * Test these settings on a limited set of endpoint machines before deploying them to the majority of your deployment endpoint machines. 
+ * In practice, the CPU usage is typically lower than this ratio (because the agent will often be waiting for IO and it will yield its CPU time). 
+ * All of these calculations apply to a single processor, so if you have multiple processors the overall % of agent CPU is reduced significantly because it is divided by the number of processors. For example, if you want your agent to use less than 5% of CPU and it has 4 processors, you must set workidle to 100 and sleepidle to 400 because [100 / (100 + 400)] / 4 = 5%. 
+ * If you adjust the CPU usage away from the default and experience issues, switch the CPU usage back to the default values. 
+ * These CPU settings strictly govern BES Client evaluating content in the evaluation mode of the client's cycle. The BigFix agent may use up to 50% of the CPU at times during the execution parts of its operation (i.e. initiating an install). These CPU spikes are normal and are expected to be short lived to where they would not be typically noticeable. If the BES Client experiences a sustained CPU spike it may mean there is a problem in the client executing on a problematic action or a systemic issue. This would need to be investigated and the problem determined through analyzing the client logs [http://www-01.ibm.com/support/docview.wss?uid=swg21505873#clientlogs] and/or client debug logging [http://www-01.ibm.com/support/docview.wss?uid=swg21505873#clientdebuglogging]
+
+
+
+HISTORICAL NUMBER
+ 250

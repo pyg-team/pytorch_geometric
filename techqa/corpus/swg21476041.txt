@@ -1,0 +1,52 @@
+Title: IBM Decimal separators are commas - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am running SPSS for Windows and all of my decimal separators in the SPSS Data Editor and SPSS Viewer are commas rather than periods. How can I change them to periods? 
+
+RESOLVING THE PROBLEM
+LOCALE Subcommand (SET command)
+SET (command),SET (command),SET (command)
+LOCALE subcommand,LOCALE subcommand,LOCALE subcommand
+LOCALE (subcommand),LOCALE (subcommand),LOCALE (subcommand)
+SET command,SET command,SET command
+The LOCALE subcommand allows you to change the locale used for data analysis. By default, the locale is set to the computer's system locale if possible. With the LOCALE subcommand, you can override the default behavior and process data files in other locales without changing your computer's system or user locale.
+
+The default locale is the current operating system locale.
+
+The LOCALE subcommand persists. The next time that PASW Statistics is started on your computer, PASW Statistics will run in that locale.
+
+If the locale ID does not match the system locale, not all output will be rendered correctly.
+
+In code page mode, locale changes that also change the encoding can only be made when there are no open datasets. For information on code page mode and Unicode mode, see UNICODE Subcommand.
+
+You can use SHOW LOCALE to view the current PASW Statistics locale.
+
+Example
+SET LOCALE='Japanese'.
+When you are connecting to a server, the relevant locale ID is defined in the loclmap.xml file, which is located on the server computer. Check with your server administrator for available locale IDs.
+
+Locale ID values of the general form Language_Country.codepage#, which were valid in previous releases, are not valid in release 16.0 or later. In most instances, the "Language" portion of the old locale specification should be a valid locale ID in release 16.0 or later. For example, instead of 'Japanese_Japan.932', you could specify simply 'Japanese'. For a complete list of names and aliases that can be used to specify locale, go to http://www.iana.org/assignments/character-sets [http://www.iana.org/assignments/character-sets] 
+
+Two-letter language abbreviations adhere to the ISO 639-1 standard: http://www.loc.gov/standards/iso639-2/php/code_list.php [http://www.loc.gov/standards/iso639-2/php/code_list.php] 
+
+Two-letter country codes adhere to the ISO 3166 standard: http://en.wikipedia.org/wiki/ISO_3166-1 [http://en.wikipedia.org/wiki/ISO_3166-1] 
+
+Example
+SET LOCALE='ja_JP.Shift_JIS'
+"ja" is the two-letter language code for Japanese.
+
+"JP" is the two-letter country code for Japan.
+
+"Shift_JIS" is the name of the character set.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 14356

@@ -1,0 +1,50 @@
+Title: IBM SNMP Probe : APAR  IV15415 : Requirements - United States
+
+Text:
+nco_p-mttrapd; snmp v3; snmpv3; traps; gskit; engineid; EngineID; IV15415 TECHNOTE (FAQ)
+
+QUESTION
+ SNMPv3 traps : Why are traps not parsed as expected? 
+
+CAUSE
+ IV15415 comes in two parts - The MTTrapd probe must be at least probe-nco-p-mttrapd-14 and Netcool/OMNIbus 7.3.1 must be at least Fix Pack 5
+
+ANSWER
+ 
+
+There was a bug fix implemented in both the MTTrapd probe and the Netcool/OMNIbus library: 
+
+
+IV15415 - V731:GSKIT LIBNCRYPT CAUSES SOME SNMPV3 TRAPS TO BE DISCARDED BY
+THE MTTRAPD PROBE 
+
+Although the README for the probe mentions probe-nco-p-mttrapd-12:
+
+
+PATCH probe-nco-p-mttrapd-12
+============================
+REVISION 1:
+-----------
+IV15415 - Fixed Mttrapd probe not able to receive SNMP v3 traps on Omnibus 7.3.1 (GSKit 8) 
+
+
+The actual GA product release with bug fix in is probe-nco-p-mttrapd-14, released in November 2012.
+
+Therefore for the bug fix to be implemented both Netcool/OMNIbus v7.3.1. fix pack 5 and the probe-nco-p-mttrapd-14 need to be installed. 
+
+ 
+
+ListIU.sh should show:
+Name: SIU-probe-nco-p-mttrapd Version: 1.14.0.0 
+Name: SIU-gskit Version: 8.14.2300.0
+Name: SIU-libncrypt Version: 2.0.7.0 
+
+With the probe version being as follows for Netcool/OMNIbus v7.3.1 on Solaris:
+nco_p_mttrapd -version
+Netcool/OMNIbus MTTrapd probe - Version 7.3.1
+(C) Copyright IBM Corp. 1994, 2007
+
+Netcool/OMNIbus Probe API Library Version 7.3.1
+Release ID: 14.0.14
+API Release ID: 5.21.50
+Software Compile Date: Wed Nov 14 08:19:36 UTC 2012 on sol8-build2.hursley.ibm.com (SunOS 5.8 Generic_117350-33)

@@ -1,0 +1,61 @@
+Title: IBM The frs-curi.sh script fails to import widgets - United States
+
+Text:
+dash widgets frs-curi import operation failed registry services dash dashboard restcli installation WASX7017E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Creating the Registry Services Dashboard Provider fails during the import of widgets 
+
+SYMPTOM
+During the create process of the Registry Services Dashboard Provider, the following error may be displayed while executing the frs-curi.sh (both install and update) script:
+Widget import operation did not complete successfully
+WASX7017E: Exception received while running file "frs-curi.py";
+exception information: com.ibm.bsf.BSFException: exception from Jython:
+Traceback (innermost last):
+File "<string>", line 624, in ?
+File "<string>", line 203, in _update
+File "<string>", line 252, in _importWidgetDefinitions
+Exception: Widget import operation did not complete successfully
+
+
+ENVIRONMENT
+Jazz for Service Management 1.1.0.3
+
+DIAGNOSING THE PROBLEM
+The installation logs are indicating that the frs-curi.sh script failed at the very last step, where it will import Registry Services widgets:
+
+
+In the wsadmin.traceout log:
+[1/15/15 11:41:24:781 CET] 00000001 AbstractShell A WASX7091I: Executing script: "frs-curi.py" 
+[1/15/15 11:41:41:100 CET] 00000001 DeployBundleA E com.ibm.isclite.DeployBundleActivator start(BundleContext context) Entry
+[1/15/15 11:41:42:086 CET] 00000001 visit W com.ibm.ws.ecs.internal.scan.impl.InfoVisitor visitMethod No stack was captured 
+[1/15/15 11:41:42:087 CET] 00000001 ecs W com.ibm.ws.ecs.internal.scan.context.impl.ScannerContextImpl scanJAR unable to open input stream for resource com/ibm/frs/api/exception/package-info.class in archive WEB-INF/lib/COMMON.jar 
+java.lang.NullPointerException 
+at com.ibm.ws.ecs.internal.scan.impl.InfoVisitor.visitMethod(InfoVisitor.java:421) 
+at org.objectweb.asm.ClassReader.accept(Unknown Source) 
+at org.objectweb.asm.ClassReader.accept(Unknown Source) 
+... 
+
+Since the widgets were not imported, when trying to open one of the pages (which uses these widgets), you will get errors in Jazz.
+
+
+RESOLVING THE PROBLEM
+The installation can be manually patched by importing the Registry Services widgets into DASH, using this command:
+
+<DASH_HOME>/bin/restcli.sh import -username <username> -password <password> -source <widget_definition_file>
+
+For example:
+/opt/IBM/JazzSM/ui/bin/restcli.sh import -username <was_username> -password <was_password> -source /opt/IBM/JazzSM/registry/installableApps/frs.dash.widgets.zip
+
+Note that you have to replace <was_username> and <was_password> with the user and password used to install JazzSM (usually smadmin).
+
+After importing the widgets, you will have to restart DASH and Registry Services applications in Websphere.
+
+RELATED INFORMATION
+#Create the Registry Services Dashboard Provider [https://www.youtube.com/watch?v=UMQIeHTimEI]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ jazzsm

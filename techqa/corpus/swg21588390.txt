@@ -1,0 +1,37 @@
+Title: IBM Duplicate Plug-in Propagation result messages seen using WebSphere Application Server release V8 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running the Plug-in Propagation from either the WebSphere administration console or command line, you may see duplicate result messages. 
+
+SYMPTOM
+These duplicate messages will also be recorded in the configure_<webserver>_webserver.log which is generated during the use of the Plugin Configuration Tool. 
+
+example:
+{Plugins_Home}\logs\config\configure_IHS_webserver.log
+
+
+IBM WebSphere Application Server, Release 8.0
+WebSphere Plugin Configuration Generator
+Copyright IBM Corp., 1997-2008
+
+PLGC0062I: The plug-in configuration file is propagated from C:\WebSphere\AppServer\profiles\dmgr01\config\cells\WASCell01\nodes\WASNode01\servers\webserver1\plugin-cfg.xml to C:\WebSphere\Plugins/config/webserver1/plugin-cfg.xml on the Web server computer.
+
+PLGC0048I: The propagation of the plug-in configuration file is complete for the Web server. WASCell01.WASNode01.webserver1.
+
+
+PLGC0062I: The propagation of the plug-in configuration file from C:\WebSphere\AppServer\profiles\dmgr01\config\cells\WASCell01\nodes\WASNode01\servers\webserver1\plugin-cfg.xml to C:\WebSphere\Plugins/config/webserver1/plugin-cfg.xml on the Web server computer.
+
+PLGC0048I: The propagation of the plug-in configuration file is complete for the Web server. WASCell01.WASNode01.webserver1
+
+
+CAUSE
+A code path was discovered in which, if security is disabled, the propagation processing will occur twice.
+
+
+RESOLVING THE PROBLEM
+The additional propagation does not have any adverse affects on the environment. The duplicate messages can safely be ignored. 
+
+This issue will be corrected in the next major release of the WebSphere Application Server.

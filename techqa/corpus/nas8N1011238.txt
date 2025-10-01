@@ -1,0 +1,72 @@
+Title: IBM Message CPF34DC Received when Using WRKWTR or WRKOUTQ Commands - United States
+
+Text:
+MSGCPF34DC TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document discusses an issue where message CPF34DC "An error occurred during a mutex operation on writer &1. The return code is 3406" is received when using either the Work with Writers (WRKWTR) or Work with Output Queue (WRKOUTQ) command. 
+
+RESOLVING THE PROBLEM
+This document discusses an issue where message CPF34DC - An error occurred during a mutex operation on writer &1. The return code is 3406 is received when using either the Work with Writers (WRKWTR) or Work with Output Queue (WRKOUTQ) command. 
+
+This document was last updated on 14 February 2012.
+
+
+
+
+
+
+
+
+
+End the Writers Associated with Message CPF34DC and Clean Up all Associated Output Queues 
+
+The issue with receiving message CPF34DC - An error occurred during a mutex operation on writer &1. The return code is 3406 on one or more writer jobs can typically be circumvented by doing the following: 
+
+1. Looking at message CPF34DC to see the name of the writer, and then using the End Writer (ENDWTR) command with the When to end writer (OPTION) parameter set to *IMMED to end the writer immediately. For example:
+
+ENDWTR WTR(writer-name) OPTION(*IMMED) 2. If the writer does not end within 10 minutes, you should call the QSPENDWA (End Writer Abnormally) program with the name of the writer job. For example:
+
+CALL QSPENDWA <writer-name> 3. Once the writer has ended, run the Work with Output Queue (WRKOUTQ) command with the Output (OUTPUT) parameter set to *PRINT, while the writer is still ended. For example:
+
+WRKOUTQ OUTQ(library-name/output-queue-name) OUTPUT(*PRINT)
+
+Note: Special code has been added to the Work with Output Queue (WRKOUTQ) command to clean up the index of the output queue when OUTPUT(*PRINT) is specified on the WRKOUTQ command. 4. If running 6.1 or 7.1 i5/OS, run the Start Spool Reclaim (STRSPLRCL) command for this specific output queues, while the writer is still ended. For example:
+
+STRSPLRCL OUTQ(library-name/output-queue-name) ASPGRP(*)
+
+If running 5.4 i5/OS, call the QSPFIXUP program, while the writer is still ended. For example:
+
+CALL PGM(QSPFIXUP) 5. Restart the printer writer or remote writer, and then check to see if the issue has been resolved. 
+End all Writers and Clean Up All Output Queues 
+
+If ending and cleaning up the individual output queues associated with message CPF34DC does not resolve the problem, or if you are receiving message CPF34DC for several writer jobs, you should try doing the following: 1. End all of your writers immediately using the End Writer (ENDWTR) command:
+
+ENDWTR WTR(*ALL) OPTION(*IMMED)
+
+Note: The default for the OPTION parameter on the ENDWTR command is *CNTRLD (controlled) which means that the writer will not end until all RDY (Ready) spooled files have been printed or sent. Therefore, if you do not specify the *IMMED (immediately), the writer is not ended until the current spooled file has printed. 2. If any writer does not end within 10 minutes, you should call the QSPENDWA (End Writer Abnormally) program with the name of the writer job. For example:
+
+CALL QSPENDWA <writer-name> 3. If running 6.1 or 7.1 i5/OS, next run the Start Spool Reclaim (STRSPLRCL) command for all output queues, while all of the writers are still ended. For example:
+
+STRSPLRCL OUTQ(*ALL/*ALL) ASPGRP(*)
+
+If running 5.4 i5/OS, call the QSPFIXUP program, while all of the writers are still ended. For example:
+
+CALL PGM(QSPFIXUP) 4. Restart your printer writers and remote writers individually, or by using the following commands:
+
+STRRMTWTR OUTQ(*ALL)
+
+STRPRTWTR DEV(*ALL)
+
+and then check to see if the issue has been resolved. 
+
+For More Information 
+
+For more information on ending writer jobs, please refer to the following document: 
+
+N1017971: Cannot End a Writer or the QSPL Subsystem [http://www-01.ibm.com/support/docview.wss?uid=nas8N1017971]  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 620583253

@@ -1,0 +1,142 @@
+Title: IBM Portal 8.0 upgrade fails with RepositoryException SER3009E: Import of one or more files failed -  RT7005E: Property Definition not found - United States
+
+Text:
+fix pack fixpack installation install upgrade 8.0.0.1 8001 8 0 1 fails failure fail run-wcm-admin-task RepositoryException SER3009E import-nodetypes RT7005E RT7547E SER3032E portalPreupdateVersion TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The Portal 8.0 upgrade executes a ConfigEngine script called 'import-nodetypes' which updates some nodetype definitions in the database. If this script was not run, or if it was run improperly, the upgrade may fail when executing 'run-wcm-admin-task'.
+
+Note: 'run-wcm-admin-task' may fail for several reasons. It is important to check the SystemOut.log to understand the underlying cause of the failure. This technote will focus on the message "RT7005E: Property Definition not found" that is seen in the SystemOut.log
+
+SYMPTOM
+In the ConfigTrace, the 'import-nodetypes' task may be successfully executed or non-existent:
+=========================================
+import-nodetypes:
+[echo] importing nodeTypes using C:/IBM/WebSphere/PortalServer/wcm/prereq.wcm/config/nodetypes/ibmcontentwcm_v6tov7.nodetypes file
+[importNodeTypes] Mar 1, 2013 5:52:52 PM com.ibm.icm.jcr.RepositoryFactory init
+[importNodeTypes] INFO: RT7512I: Initializing RepositoryFactory.
+[importNodeTypes] Mar 1, 2013 5:52:52 PM com.ibm.icm.jcr.RepositoryImpl getRepository
+[importNodeTypes] INFO: RT7511I: Loading Repository: Default.
+.
+.
+.
+[importNodeTypes] INFO: RT7513I: Initialized RepositoryFactory.
+Target finished: import-nodetypes
+=========================================
+
+
+ 
+
+Later in the ConfigTrace, the following error is seen: 
+
+
+=========================================
+run-wcm-admin-task:
+[echo] VirtualPortalContext = , VirtualPortalHost = 
+[echo] Initialized: host myhostname.mydomain.com vpContext 
+[echo] To call ConfigModuleClient: host myhostname.mydomain.com vpContext 
+[ConfigModuleClient] Connecting to login address: http ://myhostname.mydomain.com:10039/wps/wcm/login
+[ConfigModuleClient] Connecting to task address: http ://myhostname.mydomain.com:10039/wps/wcm/myconnect?MOD=data&processLibraries=false&taskType=import&input.dir=D%3A%2FIBM%2FWebSphere%2Fwp_profile%2FConfigEngine%2Fconfig%2Fwork%2Fct_import%2Fweb+content+templates&importLibrary=%24%7Bimport.library%7D with user name: wpsadmin
+[ConfigModuleClient] No output will be shown while this task is running. Check the SystemOut.log for progress information.
+[ConfigModuleClient] <html><head><title>IBM Web Content Manager Utility: DataModule</title></head><body><h2>Log for Utility: DataModule</h2><p></p>Starting utility: DataModule<br/>
+[ConfigModuleClient] <font color=red>Check PortalServer log files for the detailed log of the module from 3/1/13 12:54 AM</font><br/>Preserve dates option: False<br/>
+[ConfigModuleClient] Report only mode <br/>
+[ConfigModuleClient] Force unlock option: True<br/>
+[ConfigModuleClient] Failed to complete: com.aptrix.pluto.util.RepositoryException: Message: Failed to import the directory "C:/IBM/WebSphere/wp_profile/ConfigEngine/config/work/ct_import/web content templates". Error message: Message: com.ibm.icm.jcr.command.CommandException: SER3009E: Import of one or more files failed., Cause: com.ibm.icm.jcr.command.CommandException: SER3009E: Import of one or more files failed., Cause: java.lang.Exception: Failed to import the directory "C:/IBM/WebSphere/wp_profile/ConfigEngine/config/work/ct_import/web content templates". Error message: Message: com.ibm.icm.jcr.command.CommandException: SER3009E: Import of one or more files failed., Cause: com.ibm.icm.jcr.command.CommandException: SER3009E: Import of one or more files failed.<br/>
+</body>
+--- Exception Thrown ---
+C:\IBM\WebSphere\PortalServer\wcm\prereq.wcm\config\includes\prereq.wcm_cfg.xml:3829: An exception occurred while executing the task: Status returned 500: Internal server error
+at com.ibm.workplace.wcm.maintenance.module.ConfigModuleClient.execute(ConfigModuleClient.java:103)
+at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:275)
+at org.apache.tools.ant.Task.perform(Task.java:364)
+at org.apache.tools.ant.Target.execute(Target.java:341)
+=========================================
+
+
+At the corresponding time in the SystemOut.log:
+
+=========================================
+[3/1/13 0:54:31:574 EST] 00000138 ImportStatusC I RT7547E: [03/01/2013 00:54:31 EST] Counting the number of files to import.
+[3/1/13 0:54:31:589 EST] 00000138 ImportStatusC I RT7560E: Total files for C:\IBM\WebSphere\wp_profile\ConfigEngine\config\work\ct_import\web content templates : 118.
+[3/1/13 0:54:31:589 EST] 00000138 ImportStatusC I RT7548E: [03/01/2013 00:54:31 EST] Importing 118 files.
+[3/1/13 0:54:31:589 EST] 00000138 AbstractImpor I RT7561E: Importing from directory: C:\IBM\WebSphere\wp_profile\ConfigEngine\config\work\ct_import\web content templates.
+[3/1/13 0:54:32:291 EST] 00000138 AbstractSysVi E SER3032E: Invalid XML.
+javax.jcr.nodetype.ConstraintViolationException: RT7005E: Property Definition not found for property ibmcontentwcm:inplaceCreate with parent /contentRoot/icm:libraries[20]/Components/create article/ibmcontentwcm:elements of nodetype ibmcontentwcm:inlineEditElement
+at com.ibm.icm.jcr.PropertyImpl.computeTypeAndDefinition(PropertyImpl.java:195)
+at com.ibm.icm.jcr.PropertyImpl.<init>(PropertyImpl.java:135)
+at com.ibm.icm.jcr.NodeImpl.setProperty(NodeImpl.java:3992)
+=========================================
+
+
+CAUSE
+This can be caused by a few things. 
+
+1. The ConfigEngine's registry.xml is not updated with every v8.0.0.1 task for this Portal profile. This is more likely to happen to additional profiles in a multiple profile environment. 
+
+ 
+
+2. The icm.properties file points to another database than the Portal datasources. 
+
+ 
+
+3. If the Portal binaries have been upgraded and the CONFIG-WP-PTF-CF task is being manually run to apply a CF, an extra parameter may be needed for the CONFIG-WP-PTF-CF task to complete successfully. Failure to include this parameter can lead to the error.
+
+
+DIAGNOSING THE PROBLEM
+Check the ConfigTrace and SystemOut to see if the above errors appear.
+<profile_root>/ConfigEngine/log/ConfigTrace.log
+<profile_root>/logs/WebSphere_Portal/SystemOut.log
+
+Note: This technote applies to a failure of 'run-wcm-admin-task' that throws the error "RT7005E: Property Definition not found" in the SystemOut.log. 
+
+ 
+
+Check if icm.properties is pointing to the same database as the datasources in the WAS Admin console.
+<profile_root>/PortalServer/jcr/lib/com/ibm/icm.properties
+
+
+RESOLVING THE PROBLEM
+1. If this is an additional profile being upgraded, ensure the following steps are taken to update ConfigEngine's registry.xml. This must be done on each additional profile. 
+
+
+a. Ensure the WebSphere_Portal server is stopped on the profile you intend to upgrade.
+b. Execute the following ConfigEngine command to clear the ConfigEngine registry:
+
+<profile_root>/ConfigEngine/ConfigEngine.sh|bat -uninstall -offeringList PortalServer -unregisterOnly
+
+c. Execute the following ConfigEngine command to repopulate the ConfigEngine registry:
+
+<profile_root>/ConfigEngine/ConfigEngine.sh|bat -install -offeringRoot <portal_install_root> -installPath <portal_install_root> -expandBinaries false
+
+where <portal_install_root> is your actual Portal Installation root, for example /opt/IBM/WebSphere/PortalServer.
+
+d. Relaunch the ConfigEngine command to upgrade the profile.
+
+
+
+2. If it was found that icm.properties or the datasources are pointing to different databases, follow these steps to correct the problem:
+
+a. Update wkplc_dbdomain.properties with the correct hostname for each
+DbUrl property:
+
+<profile_root>/ConfigEngine/properties/wkplc_dbdomain.properties
+
+b. Execute this command to validate the properties:
+
+.<profile_root>/ConfigEngine/ConfigEngine.sh|bat validate-database-connection
+
+c. Provided the above command was successful, run this task:
+
+<profile_root>/ConfigEngine/ConfigEngine.sh|bat connect-database
+
+This step should update both the datasources and icm.properties.
+
+d. Relaunch the upgrade.
+
+
+
+3. If applying a CF and the CONFIG-WP-PTF-CF task is being run manually to upgrade the profile, ensure the correct parameters are passed in. Refer to the Additional Configuration Steps in the CF readme linked below.
+
+RELATED INFORMATION
+ CF install instructions (standalone) [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/IBM_WebSphere_Portal_V8.0.0.1_Combined_Cumulative_Fix_Instructions_standalone_cf8001]
+CF install instructions (cluster) [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/IBM_WebSphere_Portal_V8.0.0.1_Combined_Cumulative_Fix_Instructions_cluster_cf8001]

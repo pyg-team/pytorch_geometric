@@ -1,0 +1,16 @@
+Title: IBM BMT-IMP-0002  Failed to execute metadata request in Framework Manager with DQM projects in Oracle 11g Client - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to import DQM metadata in Framework Manager with Oracle 11g client, the user gets 
+the below error message.
+All datasources connections test successfully with CQM and DQM. Importing CQM metadata works fine. 
+
+SYMPTOM
+ BMT-IMP-0002 Failed to execute metadata request. Ocijdbc11 (Not found in java.library.path).
+
+
+RESOLVING THE PROBLEM
+In the JDBC connection definition, use the "Service ID" option with "Server Name" instead of TNS Names Alias.

@@ -1,0 +1,124 @@
+Title: IBM Using the pedbconvert tool for MSSQL and DB2 databases - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The pedbconvert tool is a conversion tool for MSSQL and DB2 databases. The tool is used to convert time columns to columns that can support time values past 2038. It also converts byte-based string data columns to character-based columns for better support of multi-byte character sets. 
+
+CONTENT
+1 Overview 
+
+The following information is intended for a database administrator who, in conjunction with the Process Engine administrator, is involved in planning a Process Engine upgrade to Content Platform Engine version 5.2.
+
+After you upgrade the Process Engine database to the Content Platform Engine 5.2 workflow system by using the peupgrade tool, you can run the pedbconvert tool. The tool makes database changes that enable support for dates beyond 2038 and for byte-based to character-based strings conversion, which includes support for GB18050 character sets. The pedbconvert tool applies only to DB2 and Microsoft SQL Server databases; it is not necessary for Oracle databases. Run the pedbconvert tool if the database was upgraded from Process Engine 4.5.x or if the advanced upgrade tool was not run for the previous Process Engine 5.0 upgrade. 
+
+The pedbconvert tool does not need to be run if your server isolated regions were created with the Process Engine 5.0 software.
+
+You can run the pedbconvert tool any time after you complete the upgrade of the Process Engine database. You will want to schedule the run sooner after upgrade in the following cases: 
+
+ * You need support for dates beyond 2038. 
+ * You need support for GB18030 character sets with a SQL Server database. 
+ * You have had improperly truncated strings with multibyte characters, where a partial character is left at the end of a string. 
+ * During the upgrade, you could not accurately estimate how many bytes are in a character (called the expansion factor) for your database character set. 
+ * You are running on MS SQL Server. Performance issues could be experienced when indexes include keys that are string columns which have not been converted.
+
+
+The workflow system isolated region is locked while the pedbconvert tool is running so the region along with its work items are not accessible during this time. To minimize disruptions, run the pedbconvert tool at a maintenance interval when users are not accessing the system. 2 Using the pedbconvert tool 
+
+The pedbconvert tool converts the database of the isolated region that is specified by the connection point parameter. If you run the tool without any parameters, all tables in the region are converted. Conversion of 32-bit to 64-bit time fields and the conversion of string field data types in user tables are completed for the isolated region. After the tool is run with the default settings, the database column size factor becomes obsolete and the tool does not need to be run again for the isolated region.
+
+
+
+Database String field data type New string field data type ORACLE* varchar(20) varchar(20 CHAR) DB2 9.7 and later Varchar Vargraphic MS SQL Varchar Nvarchar 
+Database Time field data type New time field data type ORACLE* number(10) number(19) DB2 Integer Bigint MS SQL Integer Bigint 
+* The Oracle conversion is done automatically during upgrade when you use the peupgrade tool. 
+
+You can use the pedbconvert tool to change the database column size factor if, during the upgrade, the size factor was not accurately estimated. Use the –f option with a size 3 - 6. If you do not run the pedbconvert tool, the same conversion occurs on queues and rosters if a transfer operation is done, and that queue or roster is modified. The transfer does not, however, convert date or string fields on logs if logs are modified. The conversion that is done by the transfer does not take any additional time beyond what transfer would take if you already ran the pedbconvert tool.
+
+IMPORTANT In Process Engine 5.0 and Content Platform Engine 5.2, the required character set for DB2 is UTF-8. UTF-8 is required in DB2 to support the vargraphic data types that are used as the standard in Content Platform Engine 5.2. 
+
+
+
+2.1 Setup 
+
+Before you run the pedbconvert tool, back up your workflow system database. 
+
+Consider using a replica of the Process Engine database to perform the upgrade and optionally run the pedbconvert tool. By performing these steps with a replica database before you actually upgrade the database, you can determine if configuration changes, such as increasing page sizes, are required. You can also determine the time that is required to perform the database upgrade and run the pedbconvert tool. For more information about using replica systems and databases, see Migration upgrade overview and roadmap [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.planprepare.doc/p8ppu118.htm]. 
+
+Based on the time that is required to complete the upgrade and optionally run the pedbconvert tool, you can determine whether both can be completed at the time of the Process Engine database upgrade for Content Platform Engine 5.2 or if only the upgrade can be completed and the pedbconvert must be scheduled for a later time. 
+
+
+The pedbconvert tool is installed as part of the Tools component when you install Content Platform Engine. 
+
+2.2 Background 
+
+
+String fields
+For SQL Server and DB2 databases, moving to character-based string fields might require more database space. If the majority of the data consists of single-byte ASCII characters, the use of nvarchar and vargraphic data types approximately doubles the required space. But if the characters are from a Chinese character set, for example, where most characters are already double or triple byte, the amount of database space that is used might be reduced when the database uses nvarchar and vargraphic data types.
+
+If, however, nvarchar or vargraphic are not used, you must choose an expansion factor, which indicates how many bytes are used per character. This expansion factor must be chosen based on the database character set and language that used at your site. Most character sets can be accommodated by an expansion factor of 3. Some character sets, however, have as many as 6 bytes per character, so a value up to 6 might be needed. 
+
+It is expected that DB2 has a 32K page size. The maximum declared sizes of all columns in a table cannot exceed the page size. Choosing too high an expansion factor for DB2 might result in an error: maximum page size exceeded. For details, see techdocs 7020392 and 7036552, which document DB2 table space page size and database requirements and how to determine Process Engine table space page size requirements.
+
+Date fields
+If you choose not to convert to 64-bit date fields, you might experience the following issues: 
+
+ * If a work object is dispatched to a queue that exposes a 32-bit time field and the value is a 64-bit value, an error occurs and the work object is moved to the malfunction map. 
+ * If Process Engine attempts to add a record to a log table where the date value exceeds the exposed 32-bit field, the following data is given:  * In the log record, the value is truncated to a flag value to fit in the 32-bit column 1/18/2038 7FFFFFFE. Also, the F_Text field of the record contains information about the overflowed column name and its original value before truncation. 
+    * In the system log, a message states that the log record that is specified by table name, eventtype, and timestamp is adjusted for 32-bit columns where the value exceeds the field size. This is a hint that the column size must be changed to accommodate the larger value in the event log.
+   
+   
+   
+
+2.3 Usage statement Usage: pedbconvert connection_point
+{-h }
+[-f size_factor ]
+[-Y user_name+password]
+
+Description of parameters:
+
+connection_point:The connection point name to the specific workflow system on which you want pedbconvert to run.
+
+-h: Displays the parameters and descriptions.
+
+-f size_factor: The database column size factor. If this option is specified, the queue, roster, and log tables are expanded for character column length. Valid size factors are 3 through 6. This option is obsolete after the pedbconvert tool is run to convert time and character data types. 
+
+-Y user_name+password: Log in using this user name and password. The user must belong to the Process Administrator Group.
+
+Messages are logged to the screen (stdout). You can set up the command to redirect output to a file.
+
+The server maintains a log file for pedbconvert execution named pedbconvertdatabase_connection_name_result.txt. This file is located in the application data directory for the node: 
+
+
+ * WebSphere Application Server: 
+
+install_root /profiles/ profile_name /FileNet/ server_instance_name  * WebLogic Server:
+
+weblogic_install /user_projects/domains/ domain_name /FileNet/AdminServer  * JBoss Application Server: 
+
+jboss_install /jboss-as/bin/FileNet/ server_instance_name 
+
+If errors occur during the conversion, check the log file for information and resolve the errors. 
+
+2.4 Command options 
+
+To run the pedbconvert tool: 
+
+Enter one of the following commands at the command prompt: 
+
+To run pedbconvert to convert the time and string fields: 
+pedbconvert connection_point [-Y user_name + password ] 
+ * 
+
+
+To run pedbconvert to change the size factor: 
+pedbconvert connection_point –f size_factor [-Y user_name + password ] 
+ * 
+
+
+2.5 Command-line samples pedbconvert myConnPoint -Y pwtestadmin+mypw 
+
+ * 
+
+pedbconvert myConnPoint –f 3 -Y pwtestadmin+mypw  *

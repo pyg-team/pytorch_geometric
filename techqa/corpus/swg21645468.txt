@@ -1,0 +1,27 @@
+Title: IBM WebSphere DataPower ApplianceTibco EMS object sends log messages after deletion - United States
+
+Text:
+Tibco EMS; EMS; log; identical; event; detection; DataPower TECHNOTE (FAQ)
+
+QUESTION
+ How can I stop my Tibco EMS object from continuing to send the following error messages every 5 minutes even after it's been deleted:
+
+
+
+20130703T201712Z [tibco-ems][error] tibems-server(exampleTibEMS): tid(95): Failed to resolve host - testhost.example.com
+
+20130703T201712Z [tibco-ems][error] tibems-server(exampleTibEMS): tid(95): Failed to resolve host - testhost.example.com
+
+20130703T201712Z [mgmt][error] tibems-server(exampleTibEMS): tid(95): Operation state transition to up failed
+
+
+CAUSE
+Tibco EMS objects in the down - Pending state may continue to attempt to bring the object up even after it has been deleted in firmware versions which do not contain APAR IC85076.
+
+ANSWER
+This issue can be resolved by installing a fixpack which contains APAR IC85076
+http://www-01.ibm.com/support/docview.wss?uid=swg1IC85076 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC85076] 
+
+After installing the fixpack containing the APAR, the Tibco EMS object will stop trying to bring itself up within 5 minutes and you will not see error messages listed in the question section.
+
+Alternatively, Identical Event Detection can be configured in a log target to suppress identical events from the same object over a defined suppression period. Identical Event Detection can be configured for a log target in the Web GUI (Status>Main>Logging Targets) or from the CLI using the command event-detection in log target mode.

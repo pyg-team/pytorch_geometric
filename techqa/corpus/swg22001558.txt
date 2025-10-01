@@ -1,0 +1,18 @@
+Title: IBM Unable to login to StoredIQ Dataserver and Gateway using ssh - United States
+
+Text:
+StoredIQ ssh TECHNOTE (FAQ)
+
+QUESTION
+ Why I am not able to login to StoredIQ Dataserver and Getway using ssh? 
+
+CAUSE
+Restriction in remote login using ssh
+
+ANSWER
+ 
+
+ 1. Review the file /etc/ssh/sshd_config on the specific server using console 
+ 2. Make sure PermitRootLogin is set to yes 
+ 3. Save the change in the file 
+ 4. Restart the appliance

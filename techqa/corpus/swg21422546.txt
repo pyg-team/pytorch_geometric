@@ -1,0 +1,20 @@
+Title: IBM ClassCastException when using New Group Scorecard - United States
+
+Text:
+com.ibm.ws.cache.servlet.CacheProxyRequest; org.apache.jetspeed.portlet.PortletRequest; scorecard; new group scorecard TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+ClassCastException is encountered when using the New Group Scorecard button.
+
+SYMPTOM
+java.lang.ClassCastException: com.ibm.ws.cache.servlet.CacheProxyRequest
+incompatible with org.apache.jetspeed.portlet.PortletRequest
+
+
+CAUSE
+This is caused by enabling servlet caching.
+
+RESOLVING THE PROBLEM
+Disable servlet caching. As per the screenshot below, this can be disabled by using the administration console and navigating to "Application servers > WebSphere Portal > Web container" and unchecking the "Enable servlet caching" box. 
+
+[/support/docview.wss?uid=swg21422546&amp;aid=1]

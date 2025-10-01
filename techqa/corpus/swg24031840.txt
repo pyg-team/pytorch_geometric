@@ -1,0 +1,49 @@
+Title: IBM Content Collector Text Search Support 2.2.0.2 for IBM CommonStore - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document contains links to the download page for IBM Content Collector Text Search Support 2.2.0.2 for IBM CommonStore 8.4. 
+
+DOWNLOAD DESCRIPTION
+Apply this fix pack package to use the Text Search Support for IBM Content Manager V8 component of IBM Content Collector 2.2 Fix Pack 2 with IBM CommonStore 8.4.
+
+
+Below is a list of the problems that were fixed in this fix pack. 
+
+APAR number Component APAR title HE07256 [http://www.ibm.com/support/docview.wss?uid=swg1HE07256] Text Search (Content Manager) The IBM Content Collector indexer for text search cannot process non-compliant S/MIME Microsoft Exchange email HE08747 [http://www.ibm.com/support/docview.wss?uid=swg1HE08747] Text Search (Content Manager) The IBM Content Collector indexer for text search cannot process Lotus Domino documents with uncompressed time/date fields HE10691 [http://www.ibm.com/support/docview.wss?uid=swg1HE10691] Text Search (Content Manager) DB2 error "SQL0605W" prevents afuIndexTool from running (If an APAR link does not work, the detailed information for that APAR is not yet available from the Support page. Try again in a day or two.)  
+
+PREREQUISITES
+See the "Text-search function" section in the prerequisite document for IBM Content Collector 2.2 for detailed system requirements for Text Search Support 2.2.0.2.
+
+URL LANGUAGE SIZE(Bytes) Text Search Support 2.2.0.2 prerequisites [https://www-304.ibm.com/support/docview.wss?uid=swg27019702#CMTS] English 1 
+INSTALLATION INSTRUCTIONS
+For information about how to install and use the Text Search Support for IBM Content Manager V8 component, read the readme file for the Text Search Support component. 
+
+The readme file is part of the fix pack package.
+
+URL LANGUAGE SIZE(Bytes) Readme file for Text Search Support 2.2 FP2 [http://www.ibm.com/support/docview.wss?uid=swg27023249] English 1 
+DOWNLOAD PACKAGE
+The IBM Content Collector Text Search Support for IBM Content Manager V2.2 Fix Pack 2 download package consists of the following files: 
+
+ * 2.2.0.2-IBM-ICC-CM8Text-FP002.txt: The readme file 
+ * 2.2.0.2-IBM-ICC-CM8Text-AIX-FP002.tar.gz: Contains Text Search Support for Content Manager 8 on AIX 
+ * 2.2.0.2-IBM-ICC-CM8Text-Linux32-FP002.tar.gz: Contains Text Search Support for Content Manager 8 on Linux 
+ * 2.2.0.2-IBM-ICC-CM8Text-Linuxz-FP002.tar.gz : Contains Text Search Support for Content Manager 8 on Linux for zSeries 
+ * 2.2.0.2-IBM-ICC-CM8Text-Solaris-FP002.tar.gz: Contains Text Search Support for Content Manager 8 on Solaris 
+ * 2.2.0.2-IBM-ICC-CM8Text-WIN-FP002.zip: Contains Text Search Support for Content Manager 8 on Windows
+
+DOWNLOADING THE FIX PACK
+When you click the download links below, a sign-in page opens. Enter your IBM ID and password to proceed. If you have forgotten your IBM ID or have never registered, follow the instructions on the sign-in page.
+
+Download the readme file and the fix pack deliverables that are required for your environment.
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Text Search Support 2.2.0.2 4 Nov 2011 Language Independent 1 FC [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Information+Management&product=ibm/Information+Management/Content+Collector&release=All&platform=All&function=fixId&fixids=2.2.0.2-IBM-ICC-CM8Text-FP002&includeRequisites=1&includeSupers] [ ] 
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management CommonStore for Lotus Domino TextSearch AIX, Windows Server 2003 8.4 
+
+ [/support/docview.wss?uid=swg24031840&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24031840&aid=2]Problems (APARS) fixed
+HE07256, HE08747, HE10691

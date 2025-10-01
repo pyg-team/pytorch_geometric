@@ -1,0 +1,133 @@
+Title: IBM IT10294: PUREAPPLICATION SYSTEM: CWZIP3534E CALL HOME CONNECTION DID NOT COMPLETE SUCCESSFULLY, HTTP ERROR = 404 - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System and Software Version 2.1.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24040424]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PureApplication System V2.1.0.1
+   
+   The user had Call Home enabled on a PureApplication System
+   version 2.1.0.0 system and upgraded to PureApplication System
+   version 2.1.0.1. The Call Home function of the system stopped
+   working.
+   
+   An error is displayed in the Events page:
+   CWZIP3523E IBM PureApplication System is not able to
+   communicate with IBM for Call Home events
+   
+   The Test Connection operation fails with the error:
+   CWZIP3534E Call Home connection did not complete successfully,
+   http error = 404
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Code changes introduced in the Call Home function in
+   PureApplication System version 2.1.0.1 were not handled
+   correctly in the upgrade scenario where Call Home was already
+   configured in a system running version 2.1.0.0.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix has been provided in PureApplication System version
+   2.1.0.2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT10294
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   210
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-23
+   
+   
+ * CLOSED DATE
+   2015-07-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R210 PSY
+   UP

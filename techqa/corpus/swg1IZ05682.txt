@@ -1,0 +1,330 @@
+Title: IBM IZ05682: ADMINTASK RECONFIGURETAM PORT CONFLICT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment WAS ND 6.1.0.7 ( customer ) recreated here on WAS
+   6.1.0.11  + TAM 6.0 for JACC.
+   
+   
+   PROBLEM
+   
+   by using the WAS command line utility :
+   
+   
+   wsadmin>$AdminTask reconfigureTAM -interactive
+   
+   This command configures embedded Tivoli Access Manager on the
+   WebSphe
+   Application Server node or nodes specified.
+   
+   WebSphere Application Server Node Name (nodeName): [*]
+   *Tivoli Access Manager Policy Server (policySvr):
+   tam_server:7135
+   *Tivoli Access Manager Authorization Servers (authSvrs):
+   tam_authz_server1:7136:1,tam_authz_server2:7136:2
+   *WebSphere Application Server administrator's distinguished name
+   (wasAdminDN): cn=wasadmin,dc=ibm,dc=com
+   *Tivoli Access Manager user registry distinguished name suffix
+   (dnSuffix): dc=ibm,dc=com
+   Tivoli Access Manager administrator's user name (adminUid):
+   ec_master]  *Tivoli Access Manager administrator's user password
+   (adminPasswd):
+   wasadmin_password
+   Tivoli Access Manager security domain (secDomain): [Default]
+   Embedded Tivoli Access Manager listening port set (portSet):
+   900:8999]  8900:8999
+   
+   Force (force): [no] yes
+   Defer (defer): [yes] yes
+   
+   Configure embedded Tivoli Access Manager
+   
+   F (Finish)
+   C (Cancel)
+   
+   F.
+   
+   
+   
+   The pocess ends saying that the WAS servers need to be
+   restarted, however by looking at the DM SystemOut.log it is
+   possible to see that before stopping the DM you have   :
+   
+   
+   ....
+   
+   [10/1/07 20:24:40:380 CEST] 00000012 AMWASConfigMe I
+   com.tivoli.pd.as.jacc.cfg.TAMConfigController execute() IBM AMAS
+   config AWXJC0048E   An error occurred during the configuration.
+   The details are:
+   com.tivoli.pd.as.jacc.cfg.ConfigActionFailedException:
+   AWXJC0050E   The Tivoli Access Manager user, sec_master, failed
+   to add the Tivoli Access Manager user,
+   JACC_1842022848/tamjaccdm.secsupport.com, to the Tivoli Access
+   Manager group, iv-admin. The details are:
+   Wrappered Exception:
+   java.net.BindException: Address already in use
+   [
+   HPDCO1050E   Socket could not be created (8900).
+   ]..
+   [10/1/07 20:24:41:467 CEST] 00000012 DCSStackImpl  I
+   DCSV8011I: DCS Stack DefaultCoreGroup at Member
+   tamjaccdmCell01\tamjaccdmCellManager01\dmgr: Member received a
+   request for shutdown.
+   [10/1/07 20:24:41:641 CEST] 00000012 FailureScopeC A
+   WTRN0105I: The transaction service has shutdown successfully
+   with no transactions requiring recovery.
+   [10/1/07 20:24:41:660 CEST] 00000012 TCPChannel    I
+   TCPC0002I: TCP Channel TCP_5 has stopped listening on host *
+   (IPv6) port 9352.
+   [10/1/07 20:24:41:690 CEST] 00000012 ServerCollabo A
+   WSVR0024I: Server dmgr stopped
+   
+   
+   
+   
+   
+   
+   AFTER RESTART the configuration seems to be done again but this
+   time succesfully:
+   
+   
+   WebSphere Platform 6.1 [ND 6.1.0.11 cf110734.37]  running with
+   process name tamjaccdmCell01\tamjaccdmCellManager01\dmgr and
+   process id 2693
+   Host Operating System is Linux, version 2.6.5-7.97-default
+   Java version = J2RE 1.5.0 IBM J9 2.3 Linux x86-32
+   j9vmxi3223-20060504 (JIT enabled)
+   J9VM - 20060501_06428_lHdSMR
+   JIT  - 20060428_1800_r8
+   GC   - 20060501_AA, Java Compiler = j9jit23, Java VM name = IBM
+   J9 VM
+   was.install.root = /opt/IBM/WebSphere/AppServer
+   user.install.root = /opt/IBM/WebSphere/AppServer/profiles/Dmgr01
+   Java Home = /opt/IBM/WebSphere/AppServer/java/jre
+   ws.ext.dirs =
+   /opt/IBM/WebSphere/AppServer/java/lib:/opt/IBM/WebSphere/AppServ
+   er/profiles/Dmgr01/classes:/opt/IBM/WebSphere/AppServer/classes:
+   /opt/IBM/WebSphere/AppServer/lib:/opt/IBM/WebSphere/AppServer/in
+   stalledChannels:/opt/IBM/WebSphere/AppServer/lib/ext:/opt/IBM/We
+   bSphere/AppServer/web/help:/opt/IBM/WebSphere/AppServer/deployto
+   ol/itp/plugins/com.ibm.etools.ejbdeploy/runtime
+   Classpath =
+   /opt/IBM/WebSphere/AppServer/profiles/Dmgr01/properties:/opt/IBM
+   /WebSphere/AppServer/properties:/opt/IBM/WebSphere/AppServer/lib
+   /startup.jar:/opt/IBM/WebSphere/AppServer/lib/bootstrap.jar:/opt
+   /IBM/WebSphere/AppServer/lib/j2ee.jar:/opt/IBM/WebSphere/AppServ
+   er/lib/lmproxy.jar:/opt/IBM/WebSphere/AppServer/lib/urlprotocols
+   .jar:/opt/IBM/WebSphere/AppServer/deploytool/itp/batchboot.jar:/
+   opt/IBM/WebSphere/AppServer/deploytool/itp/batch2.jar:/opt/IBM/W
+   ebSphere/AppServer/java/lib/tools.jar
+   Java Library path =
+   /opt/IBM/WebSphere/AppServer/java/jre/bin:/opt/IBM/WebSphere/App
+   Server/java/jre/bin/j9vm:/opt/IBM/WebSphere/AppServer/java/jre/b
+   in:/opt/IBM/WebSphere/AppServer/bin:/usr/lib
+   ************* End Display Current Environment *************
+   [10/1/07 20:25:21:874 CEST] 0000000a ManagerAdmin  I
+   TRAS0017I: The startup trace state is *=info.
+   [10/1/07 20:25:23:543 CEST] 0000000a ManagerAdmin  I
+   TRAS0111I: The message IDs that are in use are deprecated
+   [10/1/07 20:25:24:125 CEST] 0000000a AdminInitiali A
+   ADMN0015I: The administration service is initialized.
+   [10/1/07 20:25:25:821 CEST] 0000000a PluginConfigS I
+   PLGC0057I: The plug-in configuration service started
+   successfully.
+   [10/1/07 20:25:25:891 CEST] 0000000a ManagedObject I
+   Processing extension point
+   com.ibm.wsspi.extension.managed-object-metadata-collector
+   [10/1/07 20:25:26:032 CEST] 0000000a SSLComponentI I
+   CWPKI0001I: SSL service is initializing the configuration
+   [10/1/07 20:25:26:271 CEST] 0000000a WSKeyStore    W
+   CWPKI0041W: One or more key stores are using the default
+   password.
+   [10/1/07 20:25:26:373 CEST] 0000000a SSLConfigMana I
+   CWPKI0027I: Disabling default hostname verification for HTTPS
+   URL connections.
+   [10/1/07 20:25:26:429 CEST] 0000000a SSLDiagnostic I
+   CWPKI0014I: The SSL component's FFDC Diagnostic Module
+   com.ibm.ws.ssl.core.SSLDiagnosticModule registered successfully:
+   true.
+   [10/1/07 20:25:26:479 CEST] 0000000a SSLComponentI I
+   CWPKI0002I: SSL service initialization completed successfully
+   [10/1/07 20:25:26:494 CEST] 0000000a DiagnosticCon I
+   com.ibm.wsspi.rasdiag.DiagnosticConfigHome
+   setStateCollectionSpec RASD0012I: Updating State Collection Spec
+   from Uninitialized Value to .*:.*=0
+   [10/1/07 20:25:27:798 CEST] 0000000a SecurityDM    I
+   SECJ0231I: The Security component's FFDC Diagnostic Module
+   com.ibm.ws.security.core.SecurityDM registered successfully:
+   true.
+   [10/1/07 20:25:27:885 CEST] 0000000a AuditServiceI A
+   SECJ6004I: Security Auditing is disabled.
+   [10/1/07 20:25:28:151 CEST] 0000000a SystemOut     O
+   com.tivoli.pd.as.jacc.cfg.TAMConfigService initialize() About to
+   initialize PDAdmin with the value
+   /opt/IBM/WebSphere/AppServer/java/jre
+   [10/1/07 20:25:29:125 CEST] 0000000a AMWASConfigMe I
+   com.tivoli.pd.as.jacc.cfg.TAMConfigService
+   processAction(Properties) IBM AMAS config About to perform the
+   embedded Tivoli Access Manager configuration action, reconfig,
+   in the following WebSphere Application Server context:
+   cell=tamjaccdmCell01,node=tamjaccdmCellManager01,server=dmgr.
+   [10/1/07 20:25:33:405 CEST] 0000000a SystemOut     O
+   The unconfiguration completed successfully.
+   
+   [10/1/07 20:25:34:230 CEST] 0000000a SystemOut     O
+   The unconfiguration completed successfully.
+   
+   [10/1/07 20:25:35:153 CEST] 0000000a SystemOut     O
+   The unconfiguration completed successfully.
+   
+   [10/1/07 20:25:35:249 CEST] 0000000a SystemOut     O
+   Unconfiguration of:
+   Access Manager Runtime for JavajvmHome:
+   /opt/IBM/WebSphere/AppServer/java/jre
+    is in progress.  This might take several minutes.
+   
+   [10/1/07 20:25:35:255 CEST] 0000000a SystemOut     O
+   Unconfiguration of: Access Manager Runtime for Java
+   completed successfully.
+   
+   [10/1/07 20:25:35:275 CEST] 0000000a SystemOut     O
+   Configuration of Access Manager Runtime for Java is in progress.
+   This might take several minutes.
+   [10/1/07 20:25:35:450 CEST] 0000000a SystemOut     O
+   Configuration of Access Manager Runtime for Java completed
+   successfully.
+   [10/1/07 20:25:43:402 CEST] 0000000a SystemOut     O
+   The configuration completed successfully.
+   
+   [10/1/07 20:25:57:570 CEST] 0000000a SystemOut     O
+   The configuration completed successfully.
+   
+   [10/1/07 20:26:11:021 CEST] 0000000a SystemOut     O
+   The configuration completed successfully.
+   
+   [10/1/07 20:26:12:481 CEST] 0000000a SystemOut     O AWXWS0021I
+   Logging all activity to the file
+   /opt/IBM/WebSphere/AppServer/profiles/Dmgr01/logs/pdwas_migrate.
+   log.
+   [10/1/07 20:26:12:982 CEST] 0000000a AMWASCacheMes I
+   com.tivoli.pd.as.cache.DynamicRolePurgeTask DynamicRolePurgeTask
+   IBM AMAS cache AWXRB0022I   The cache purging task was
+   initialized with a cleanup size of 1,000.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Increase the range port of one unit
+   
+   from 8900-8999 to 8901-8999
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *    Problem with overloading server port when
+   re-configuring JACC.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *    The resolution for this problem is
+   delivered as part of WebSphere Application Server patch PK54346
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ05682
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0814
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-02
+   
+   
+ * CLOSED DATE
+   2007-11-08
+   
+   
+ * LAST MODIFIED DATE
+   2007-11-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * FIXED COMPONENT ID
+   5724C0814
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

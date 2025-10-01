@@ -1,0 +1,44 @@
+Title: IBM CRJAZ0339I SQLException error when accepting change sets using Rational Team Concert - United States
+
+Text:
+RTC; Team Concert; SCM; check in; deliver; failed; unable to accept; upgrade; RTC2.0.0.2ifix1; stream; change set; 79605; 487; 000; CRJAZ0339I; SQLException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to resolve a CRJAZ0339I error, that can occur when trying to accept change set delivered from a stream using IBM Rational Team Concert. 
+
+SYMPTOM
+After upgrading to Rational Team Concert 2.0.0.2ifx1 from Rational Team Concert 2.0.x, you are unable to accept any change set delivered from any of the stream in the Jazz Team server repository. The following error is presented from the Rational Team Concert eclipse client when try to accept change set: 
+
+[/support/docview.wss?uid=swg21426711&aid=1] [/support/docview.wss?uid=swg21426711&aid=1]
+
+
+The following error is thrown to the jazz.log: 
+
+ * 
+ * com.ibm.team.repository.common.InternalRepositoryException: 
+   CRJAZ0329I SQL statement execution failedVendor specific exception
+   SQL: Insert Into {REPOSITORY.ITEM_TYPES} ({ITEM_UUID}, {ITEM_TYPE_DBID}) VALUES (?, ?)
+   SQL Exception #1
+   SQL Message: ORA-01653: unable to extend table JAZZDBUSER.REPOSITORY_ITEM_TYPES by 128 in tablespace JAZZDBUSER
+   SQL State: 72000
+   Error Code: 1653
+
+
+CAUSE
+This error is thrown by Oracle where the JAZZDBUSER table space is hosting on. The reason is because the JAZZDBUSER table space did not have a large enough area of free contiguous space in which can fit the tables being added by the upgrade.
+
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, follow the steps below: 
+
+ 1. Roll back Rational Team Concert Jazz Team server to the version it is upgraded from using the Roll Back option provided by IBM Installation Manager. 
+ 2. Ask Oracle DBA to replace the existing JAZZDBUSER table space with a backup prior to the upgrade.
+    Note: Ensure Jazz Team server is shut down during the table space roll back process. 
+ 3. Ask Oracle DBA to turn on the autoextend option for the JAZZDBUSER table space. 
+ 4. Proceed with the upgrade again following the appropriate upgrade instruction.
+
+
+
+Leverage the Jazz Community Jazz and Rational Team Concert have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://www-01.ibm.com/support/docview.wss?uid=swg21319600] for details and links.

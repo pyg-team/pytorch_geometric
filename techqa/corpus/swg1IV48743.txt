@@ -1,0 +1,167 @@
+Title: IBM IV48743: FALSE POSITIVES FROM SITUATION ON LINUX FILE PATTERN GROUP - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Please open an apar with the following severity and information:
+   Severity: 3
+   Approver:PB
+   Compid: 5724C04LN
+   Abstract: False positives from situation on Linux File Pattern
+   group
+   Environment: The Monitoring Agent for Linux OS 6.2.3
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Situations defined against the File Pattern attribute group may
+   trigger false alerts when applied to large files.
+   
+   Due to a lack in controlling the timeout for the underlying grep
+    command that the OS agent spawns for the Linux File Pattern
+   group, the Match Count attribute may evaluate as Not Collected
+   (-2) if a timeout does occur. If this condition is not permanent
+    and a subsequent query returns a valid Match Count, situations
+   based on Match Count delta function will trigger even if Match
+   Count did not really change.
+   
+   In order for this APAR to be properly implemented in your
+   environment, a new environment variable has been added. See the
+   "Install Actions" section of the APAR conclusion for more
+   details.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Introduced new environment variable KLZ_GREP_TIMEOUT with
+   default value 5 seconds, minimum allowed value 3 seconds and
+   maximum value 30 seconds. Increasing the timeout should mitigate
+    the occurrence of above described cases.
+   
+   Install Actions:
+   Set the environment variable KLZ_GREP_TIMEOUT in the Monitoring
+   Agent for Linux OS configuration file.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   | fix pack | 6.2.3-TIV-ITM-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV48743
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04LN
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-13
+   
+   
+ * CLOSED DATE
+   2013-10-18
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * FIXED COMPONENT ID
+   5724C04LN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP
+   
+   
+ * R630 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R621 PSN
+   UP
+   
+   
+ * R622 PSN
+   UP

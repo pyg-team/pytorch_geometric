@@ -1,0 +1,24 @@
+Title: IBM dbexport receives an error 201, when trying to export a database - United States
+
+Text:
+dbexport; 201; unldobj; reserved TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to export a database with the DBexport utility I receive a 201 error while trying to export the schema of a certain table. 
+
+RESOLVING THE PROBLEM
+ 
+Q. 
+
+Why is it that I receive this 201 error when I try to export a database using the dbexport utility:
+
+*** prepare unldobj
+201 - A syntax error has occurred.
+
+A. 
+
+One cause of this error is the use of a reserved word in either one of the column names or the table name itself.
+
+For further details on reserved words, refer to the IBM Informix Dynamic Server Guide to SQL Syntax .
+
+Important: This is only one possible cause of the problem. If this document does not provide you with a solution to your problem, you should search for other documents that refer to this topic.

@@ -1,0 +1,34 @@
+Title: IBM Downloading IBM MQ for HPE NonStop V8.0.1 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM MQ for HPE NonStop V8.0.1 
+
+DOWNLOAD DESCRIPTION
+ 
+
+IBM MQ for HPE NonStop V8 uses the IBM continuous delivery (CD) support model to ensure that all key function that is provided in IBM WebSphere MQ for HP NonStop Server V5.3.1 will also be made available in IBM MQ for HPE NonStop Version 8.0.x. A long term support model for V8 is not available. Clients who adopt IBM MQ for HPE NonStop V8.0 must follow the continuous delivery support model, which includes the installation of subsequent Version 8.0.x modification level updates to keep their IBM MQ environment current. Once Version 8.0.x achieves functional parity with Version 5.3.1, IBM intends that long term support with defect fixes provided via fixpacks will then be made available.
+
+You can download the IBM MQ for HPE NonStop V8 Continuous Delivery releases from Passport Advantage. 
+
+Search for the following part numbers for V8.0.1:
+
+CNP2FML - IBM MQ for HPE NonStop i V8.0.1
+CNP2GML - IBM MQ for HPE NonStop X V8.0.1
+
+For installation instructions, see https://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.hpnss.doc/Installing/in00000.htm [http://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.hpnss.doc/Installing/in00000.htm]. URL LANGUAGE SIZE(Bytes) IBM MQ for HPE NonStop V8 Installation Instructions [https://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.hpnss.doc/Installing/in00000.htm] English 1 
+
+
+
+
+TECHNICAL SUPPORT
+ For Passport Advantage Online support, see:
+http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]
+
+To access a wide variety of technical resources for this product, see the IBM MQ product home pages:
+http://www.ibm.com/software/products/en/ibm-mq [http://www.ibm.com/software/products/en/ibm-mq]
+
+To see latest information and technotes, go to the WebSphere MQ support portal:
+http://www.ibm.com/support/entry/portal/Software/WebSphere/WebSphere_MQ [http://www.ibm.com/support/entry/portal/Software/WebSphere/WebSphere_MQ]

@@ -1,0 +1,27 @@
+Title: IBM Traffic distribution algorithm for Proventia Network Security Controller - United States
+
+Text:
+NSC; hash; algorithm; traffic; distribution TECHNOTE (FAQ)
+
+QUESTION
+ How does the Network Security Controller determine how to distribute traffic? 
+
+ANSWER
+The Network Security Controller aggregates 10GbE traffic to 1GbE ports for inspection by Proventia GX Network Intrusion Prevention System sensors.
+
+There is an internal switch that maps the 10GB traffic to various configurations of 1GB ports. All flows that start on a port pair (1GB segment) will be maintained on that 1GB segment. The distribution of flows is based on a hashing algorithm that is based on source and destination MAC address and IP address plus protocol and port number for 5-tuple enabled by default (L4_long_hash_en=1). Disabled uses only source and destination MAC address and IP address.
+
+There is no active management of the traffic to load balance on the 1GB ports.
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21436909&aid=1] [http://ibm.biz/KnowledgCentr] [/support/docview.wss?uid=swg21436909&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21436909&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21436909&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21436909&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21436909&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21436909&aid=7] [http://ibm.biz/ContactSecSupport] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Network Controller Not Applicable Firmware 1.0 
+HISTORICAL NUMBER
+ 5415

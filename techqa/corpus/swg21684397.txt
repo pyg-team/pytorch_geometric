@@ -1,0 +1,22 @@
+Title: IBM Bulk-Load via DB2 Connector stage silently drops records when there is partition-key datatype mismatch between job and external schema - United States
+
+Text:
+DB2 CONNECTOR LOAD DATASTAGE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Records get silently dropped during bulk-load when there is a partition-key datatype mismatch between the job and external table schema. 
+
+CAUSE
+When the partition-key data type in the job design is selected as 'Varchar', DB2 Connector determines the partition that the row should belong to and transfers this information to DB2 for further processing. DB2 upon receiving this information, reverifies the partition information based on the data-type of the partition-key, which has been defined as 'Char' before loading. As padding would be involved when its a 'Char' datatype, the partition information calculated by DB2 sometimes would not match the partition information sent from DB2 Connector. Therefore, rows are discarded silently by DB2 and DB2 Connector doesn't record this information in job log.
+
+DIAGNOSING THE PROBLEM
+1) Check if the rows from source match rows loaded in DB2 table
+
+
+2) Verify if partition-key data types mismatch between job design and DB2 table
+
+
+RESOLVING THE PROBLEM
+1) Manually change the data type in job design to ensure the consistency. 
+
+2) Apply patch for APAR JR48331 to abort job with warning message of rows getting dropped.

@@ -1,0 +1,64 @@
+Title: IBM Missing values for PVU Full Capacity or PVU Subcapacity for IBM DB2 Workgroup Server Edition - Authorized User v9.7. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Missing values for PVU Full Capacity or PVU Subcapacity for IBM DB2 Workgroup Server Edition - Authorized User v9.7. 
+
+CAUSE
+In the Manage Software Inventory tab, the agents are not reporting back any values for PVU Full Capacity or PVU Subcapacity for IBM DB2 Workgroup Server Edition PVU Option, Part # D55TWLL. The agents are in OK status and no issues with software scan. The software catalog, PVU table and Tier Table are all updated with the latest version. 
+
+Check to confirm if DB2 is actually installed and running with these two DB2 commands:
+
+db2level command:
+
+
+DB21085I Instance "db2srv1" uses "64" bits and DB2 code release "SQL09075" with level identifier "08060107". 
+Informational tokens are "DB2 v9.7.0.5", "s111017", "IP23285", and Fix Pack "5". Product is installed at "/opt/IBM/db2/V9.7". 
+
+
+
+db2licm -l command:
+
+
+Product name: "DB2 Workgroup Server Edition" 
+License type: "Authorized User Option" 
+Expiry date: "Permanent" 
+Product identifier: "db2wse" 
+Version information: "9.7" 
+Max number of Value Units: "480" 
+Max amount of memory (GB): "64" 
+Enforcement policy: "Soft Stop" 
+Number of licensed authorized users: "5" 
+Product name: "DB2 Connect Server" 
+Expiry date: "Expired" 
+Product identifier: "db2consv" 
+Version information: "9.7" 
+Concurrent connect user policy: "Disabled" 
+Enforcement policy: "Soft Stop" 
+
+
+
+
+
+ANSWER
+Since DB2 product comes with a different types of license, depending which a type of license is registered the DB2 product. 
+
+
+
+Based on the above outputs from db2licm -l command, the "DB2 Workgroup Server Edition" is registered as "Authorized User Option" license type. 
+
+With this "Authorized User Option" license type, it does not report any PVU usage. It is important to know which license type should be used and ensure to use a correct activation license key file to activate the DB2 product.
+
+More information about different activation license types:
+
+http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=%2Fcom.ibm.db2.luw.qb.server.doc%2Fdoc%2Fr0006748.html [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=%2Fcom.ibm.db2.luw.qb.server.doc%2Fdoc%2Fr0006748.html] 
+. 
+http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=%2Fcom.ibm.db2.luw.licensing.doc%2Fdoc%2Fr0053241.html [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=%2Fcom.ibm.db2.luw.licensing.doc%2Fdoc%2Fr0053241.html] 
+
+To correct this issue, reactivate the DB2 product using the db2wse_c.lic activation key file which is for this DB2 product with CPU option. See below.
+
+License Certificate for 5765-F35 IBM DB2 Workgroup Server Edition, V9.7 (CPU Option)
+
+Once that is done, the PVU value will be reported after next software scan is done.

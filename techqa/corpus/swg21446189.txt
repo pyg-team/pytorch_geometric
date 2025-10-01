@@ -1,0 +1,24 @@
+Title: IBM WebSphere Application Server Community Edition database pool issues with Oracle database - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ "Connect identifier was empty" or "Unknown host specified" issues when creating database pools with Oracle database using TranQL Local or XA Resource Adapter for Oracle in WebSphere Application Server Community Edition v2.1.1.4. 
+
+SYMPTOM
+The errors due to inappropriate values set to resource adapter properties when creating the database pools with Oracle database in WebSphere Application Server Community Edition (hereafter Community Edition). 
+
+
+RESOLVING THE PROBLEM
+Setting appropriate values for the resource adapter properties resolves issues. 
+
+ * The appropriate value for Data Source Name is the name of the datasource class in the jdbc driver jar file.
+   
+   
+ * The value for TNS Entry Name is the appropriate entry in the tnsnames.ora file in Oracle database. 
+
+
+Following the example property values: 
+
+Property Value Database Name XE (Name of the DB) User Name oracleuser (schema name) Password password of user Confirm Password password of user Service Name XE (TNS alias of Database) Data Source Name oracle.jdbc.xa.client.OracleXADataSource Description description Network Protocol TCP Port Number 1521 (Port ) Server Name localhost (host name of the database) Driver Type thin TNS Entry Name (DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))(CONNECT_DATA =(SERVER = DEDICATED)(SERVICE_NAME = XE)))

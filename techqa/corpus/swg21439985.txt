@@ -1,0 +1,36 @@
+Title: IBM REST API exceptions occur for WebSphere Process Server (WPS) when using the Business Process Choreographer Explorer - United States
+
+Text:
+FileNotFoundException; SSLException; rest/bpm/bfm; rest/bpm/htm; BPC; Explorer; view process state; process structure; REST API; REST; v612rnotes; v62rnotes; v70rnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Various exceptions are received when using functions in Business Process Choreographer Explorer that require a connection to the REST APIs on the BPE and Task containers. These exception can occur when you try to use the process template structure view or the process state view. 
+
+SYMPTOM
+You might see the following errors in the SystemOut.log file:
+
+java.io.FileNotFoundException: https //MyHost::9443/rest/bpm/bfm/v1/processTemplate/_PT: 12345678.87654321.00000855.12345678/processModel 
+
+javax.net.ssl.SSLException: Unrecognized SSL message, plaintext connection? 
+
+These errors are generic HTTP connection errors. However, in this case, they are being caused by the Representational State Transfer (REST) API calls. In the stack trace of the error message, you should see the Business Process Choreographer Explorer AJAXProxy connection, as shown here: 
+
+ * 
+ * at java.net.HttpURLConnection.getResponseCode(HttpURLConnection.java:373) 
+   at com.ibm.net.ssl.www2.protocol.https.b.getResponseCode(b.java:14) 
+   at com.ibm.bpc.explorer.servlet.AjaxProxy.doForward(AjaxProxy.java:189) 
+
+
+CAUSE
+The problem is caused by having incorrect Business Flow Manager and Human Task Manager REST API settings for the Business Process Choreographer Explorer. 
+
+RESOLVING THE PROBLEM
+The REST API settings should point to the server and port where the BPE and Task Container applications are installed. If application security is enabled, then it should be directed to the Secure Sockets Layer (SSL) port on the server. You must also ensure that the correct context roots are used to reach the REST API web modules. Having a web server or a proxy that is hosting the REST API modules can add extra complexity to determining the correct URL to use. Ensure that the URL is set so that the REST API web modules of the BPE and Task container applications can be reached. 
+
+
+See the related information for more details on these configuration settings in the WebSphere Process Server Information Center.
+
+RELATED INFORMATION
+ REST API: The URL is not configured correctly [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/topic/com.ibm.websphere.bpc.doc/doc/bpc/t5_rest_api.html]
+Business Process Choreographer Explorer settings [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/index.jsp?topic=/com.ibm.websphere.wbpmhelp.doc/com.ibm.ws.console.bpc.bpcconfiguration/bpc_explorer.html]
+Configuring Rest API for Business Flow Manager [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/index.jsp?topic=/com.ibm.websphere.bpc.doc/doc/bpc/t2co_console_top_wiz.html]

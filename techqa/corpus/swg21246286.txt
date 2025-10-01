@@ -1,0 +1,42 @@
+Title: IBM Using a backslash with certain characters prevents a successful search - United States
+
+Text:
+Edit; Find; Search; Literal; slash; Find Next; Replace; backslash; characters; \f; \n; \t; does not search; searching; looking for; literal string; literal; string; double backslashes; backslashes; slashes; double; single TECHNOTE (FAQ)
+
+QUESTION
+In Lotus Notes®, if you use the Edit --> Find Next or Edit --> Find/Replace feature and enter text containing the characters, "\f", "\n", or "\t", it will not search for that literal string. 
+
+Example 1: Your document contains the text, "\frog". You do an Edit --> Find, type "\frog" as the string to find, and receive a " '[FF]rog' was not found" message.
+
+Example 2: Your document contains the text, "\temp". You do an Edit --> Find, type "\temp" as the string to find, and receive a " '[TAB]emp' was not found" message.
+
+Example 3: Your document contains the text, "\nice". You do an Edit --> Find, type "\nice" as the string to find, and receive a " '[NL]ice' was not found" message.
+
+All other characters preceded by backslash are treated as literals. For example, your document contains the text, "\apple". You do an Edit --> Find, type "\apple" as the string to find, and the search will find it. 
+
+
+
+CAUSE
+The backslash ("\") in a search string is treated as a delimiter for specifying special characters: 
+
+
+-- \f or \F matches the special ASCII character for Form Feed, which is how you can find form feeds in the document.
+
+-- \n or \N matches the special ASCII character for New Line, which is how you can find hard returns in the document.
+
+-- \t or \T matches the special ASCII character for tab, which is how you can find tabs in the document.
+
+
+ANSWER
+If you want to search for the strings, "\f", "\n", and "\t", double the backslash character ("\\f" or "\\n" or "\\t"). With this syntax, the first backslash serves as an escape character, indicating that the second backslash should be treated as the literal backslash character. 
+
+
+With any other characters, placing an extra backslash before a backslash has no effect. Searching for "\apple" and "\\apple" performs the same search for the literal string, "\apple". 
+
+Therefore, using double backslash characters in searches is always safe and always obtains consistent results.
+
+
+
+
+ * 
+ *

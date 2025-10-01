@@ -1,0 +1,55 @@
+Title: IBM UCA tasks or System tasks for WebSphere Lombardi Edition are not being executed - United States
+
+Text:
+CWWIM4513E SECJ0369E SECJ0055E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes a situation when the UnderCover Agent (UCA) tasks, System tasks, or both are not being executed after changing the tw_admin password. 
+
+SYMPTOM
+The following error messages can be found in Java™ virtual machine (JVM) logs: 
+
+Process Center: <WLE Installation Directory>/process-center/logs/twprocsvr/SystemOut.log
+Runtime environment:: <WLE Installation Directory>/process-server/logs/twprocsvr/SystemOut.log 
+
+
+[5/1/13 2:06:52:534 GMT-07:00] 000000c7 exception W com.ibm.ws.wim.adapter.urbridge.URBridge login 
+com.ibm.websphere.wim.exception.PasswordCheckFailedException: CWWIM4513EThe password match failed for the 'tw_admin' principal name.
+at com.ibm.ws.wim.adapter.urbridge.URBridge.login(URBridge.java:671)
+at com.ibm.ws.wim.ProfileManager.loginImpl(ProfileManager.java:3450)
+at com.ibm.ws.wim.ProfileManager.genericProfileManagerMethod(ProfileManager.java:281)
+at com.ibm.ws.wim.ProfileManager.login(ProfileManager.java:385)
+at com.ibm.websphere.wim.ServiceProvider.login(ServiceProvider.java:485)
+at com.ibm.ws.wim.registry.util.LoginBridge.checkPassword(LoginBridge.java:169)
+at com.ibm.ws.wim.registry.WIMUserRegistry$1.run(WIMUserRegistry.java:181)
+at com.ibm.ws.security.auth.ContextManagerImpl.runAs(ContextManagerImpl.java:4566)
+at com.ibm.ws.security.auth.ContextManagerImpl.runAsSystem(ContextManagerImpl.java:4654)
+... 
+
+...
+Caused by: com.ibm.websphere.security.PasswordCheckFailedException: Password check failed for user tw_admin(Error trying to authenticate Internal user tw_admin (reason: com.lombardisoftware.security.TeamWorksSecurityException: Internal user failed to login))
+at com.lombardisoftware.security.provider.authentication.websphere.TWInternalProviderImpl.checkPassword(TWInternalProviderImpl.java:53)
+at com.ibm.ws.wim.adapter.urbridge.URBridge.login(URBridge.java:668)
+... 64 more
+
+[5/1/13 2:06:52:546 GMT-07:00] 000000c7 LTPAServerObj E SECJ0369E: Authentication failed when using LTPA. The exception is <null>.
+[5/1/13 2:06:52:547 GMT-07:00] 000000c7 MethodDelegat A SECJ0055E: Authentication failed for tw_admin. The user id or password might have been entered incorrectly or misspelled. The user id might not exist, the account could have expired or disabled. The password might have expired.
+
+
+
+CAUSE
+One common reason for this issue is an expired or improperly changed password for the tw_admin account. This account is used to execute system activities in the stock product. An incorrect password for the tw_admin account across all the configuration settings causes an impossibility to execute all System tasks as well as UCAs.
+
+By default, stock accounts, including tw_admin, are stored in the Process Center or Process Server database (internal security provider). If these accounts are moved to an external security provider, such as a corporate LDAP server, review the account expiration settings.
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, complete one of the following tasks: 
+
+ * If the tw_admin account is defined in a Lightweight Directory Access Protocol (LDAP) server, verify whether the account is expired or disabled. Enable the account, if necessary.
+   
+   
+ * If you know that the password has been changed using the Process Admin Console recently, restore the previous password using Process Admin Console. Then, restart the environment.
+   
+   
+ * If you need to change the password of tw_admin account see the process that is described in the Changing the default user passwords on IBM WebSphere Lombardi Edition [http://www.ibm.com/support/docview.wss?uid=swg21448216] document.

@@ -1,0 +1,17 @@
+Title: IBM Depreciation multiplier question - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Should Amortization, Accumulated Depreciation, and Accumulated Amortization be included in the Depreciation multiplier since they are related to depreciation? 
+
+RESOLVING THE PROBLEM
+You have a depreciation multiplier. In accounting terms, there is a difference between amortization and depreciation.
+
+If you want to perform ratios calculations that deal individually with amortization and depreciation, then you would need to modify the application to include an amortization multiplier, then you would need to add new "user defined" multipliers".
+
+ 
+
+HISTORICAL NUMBER
+ 1013578

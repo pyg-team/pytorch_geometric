@@ -1,0 +1,25 @@
+Title: IBM Help function : "Page cannot be displayed" error in webbrowser - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You open the help/topics in IBM SPSS Statistics v20 or later. It opens your default webbrowser but you get the message : Page cannot be displayed. 
+
+CAUSE
+The help function uses the computer name and a random port to open de help topics in the default webbrowser.
+If your computer name contains invalid characters the connection cannot be made and the help topics will not be displayed with a message "Page cannot be displayed".
+Herewith the windows message when you enter invalid characters for your computer name :
+"The computer name "geneviève_pc" contains one or more non-standard characters. Standard characters include letters (A-Z, a-z), digits (0-9), and hyphens (-). Using a non-standard name will
+prevent other usres from finding your computer on the network, unless your network is using the Microsoft DNS server."
+
+ENVIRONMENT
+Windows
+
+RESOLVING THE PROBLEM
+to resolve the issue, please change the name of your computer by using standard characters via control panel / System / computer name / change.
+A reboot of your system is needed after this change.
+
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

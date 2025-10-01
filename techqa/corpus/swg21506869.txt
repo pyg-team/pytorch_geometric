@@ -1,0 +1,39 @@
+Title: IBM Are there any special instructions for Salesforce on Information Server 8.5? - United States
+
+Text:
+salesforce.com TECHNOTE (FAQ)
+
+QUESTION
+ Are there any special instructions for Salesforce on Information Server (IS) 8.5? 
+
+ANSWER
+Most of the information regarding the Salesforce Pack 1.5 will be available in the Readme provided with the pack. 
+
+Here is some important information for Salesforce Pack 1.5 on IS 8.5 that is not included in the Readme: 
+
+ 1. We do not have any client side installation for Salesforce Pack 1.5 on IS 8.5. This means the installation of Salesforce Pack is only done on the IS 8.5 Server machine. 
+ 2. CC_EXT_JNI_DIRS is no longer being used. CLASSPATH is being used. This 
+    will be set automatically during the installation of Salesforce Pack 1.5, but manual intervention is needed once Salesforce Pack 1.5 is installed on IS 8.5. You will have to manually change the CLASSPATH environment variable on the IBM InfoSphere DataStage server as follows:  *  Unix or Linux 
+       Edit the value for the CLASSPATH environment variable in the dsenv file from 
+       /opt/IBM/InformationServer/ASBNode/apps/etc/com.ibm.ws.security.crypto.jar 
+       to 
+       /opt/IBM/InformationServer/ASBNode/eclipse/plugins/com.ibm.isf.client_8.5.0.0/com.ibm.ws.security.crypto.jar
+       
+     * Microsoft Windows 
+       Edit the value for the CLASSPATH environment variable in the System Properties from c:\IBM\InformationServer\ASBNode\apps\etc\com.ibm.ws.security.crypto.jar 
+       to 
+       c:\IBM\\InformationServer\ASBNode\eclipse\plugins\com.ibm.isf.client_8.5.0.0\com.ibm.ws.security.crypto.jar
+       
+       After the changes to CLASSPATH are made the Engine and the NodeAgents need to be restarted on both Unix or Linux and Windows.
+       
+       Note: The instructions above use the default install location if you installed to a different location you need to adjust the path accordingly.
+       
+    
+    
+ 3. If you have previously defined the CC_JNI_EXT_DIRS environment variable, you must remove it before running the InfoSphere Information Server Pack for Salesforce.com, Version 1.5 on InfoSphere Information Server, Version 8.5. 
+ 4. To avoid a Java runtime "out of memory" error, you must append -Dcom.ibm.tools.attach.enable=no to the existing CC_JVM_OPTIONS environment variable. 
+    
+    For example:
+    CC_JVM_OPTIONS="-Dcom.ibm.SSL.ConfigURL=file:/opt/IBM/InformationServer/ASBNode/eclipse/plugins/com.ibm.isf.client/ssl.client.props -Dcom.ibm.tools.attach.enable=no"; export CC_JVM_OPTIONS
+    
+ 5. The environment variable CC_SALESFORCE_MSG_LEVEL is no longer used and should be removed if it exists.

@@ -1,0 +1,44 @@
+Title: IBM Enterprise Content Management System Monitor (ECM SM) FP2 install on Client is failing - United States
+
+Text:
+CDESG1522 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Upgrading to Enterprise Content Management System Monitor (ECM SM) 5.2.0.002 and attempting to install and update Cala Client from Server is failing. 
+
+SYMPTOM
+[CDESG1522I] Result of task execution on server 
+
+=====================================================================
+------Standard Output------
+Using CALA_REX user admin
+IBM FSM CALA Monitoring Agent will be stopped now....
+IBM FSM CALA Monitoring Agent successfully stopped
+ERROR downloading file "repos/massinstall/clients/no-dns-used1.happy.bank-
+dns.com.cfg"
+ERROR downloading file "repos/massinstall/types/Cannot determine setting for CLIENT_INSTALL_TYPE from D:/IBM/FSM/cala/temp/no-dns-used1. 
+happy.bank-dns.com.cfg.cfg"
+No configuration archive (SETTINGS_GLOBAL=CONFIGURATION_ARCHIVE;;
+<FILENAME>;;<Platform>) specified - exiting
+IBM FSM CALA Monitoring Agent will be started now....
+IBM FSM CALA Monitoring Agent successfully started
+
+
+CAUSE
+When updating CALA using the task "Install and Update CALA", never use:
+
+
+ * Update configuration settings
+
+
+This option uses the so called Mass Installation facility. It was developed to install CALA on a large amount of servers using configuration files rather than configuring each FileNet system manually to ECM SM. 
+RESOLVING THE PROBLEM
+Try updating CALA using the task "Install and Update CALA", by using options:
+
+
+ * Update binaries 
+ * Update monitor archives 
+ * Keep monitor settings
+
+
+[/support/docview.wss?uid=swg21975414&amp;aid=1]

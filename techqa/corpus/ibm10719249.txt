@@ -1,0 +1,20 @@
+Title: IBM Changes Planned for IBM Order Management 18.next - United States
+
+Text:
+ EDUCATION
+
+ABSTRACT
+Overview of changes planned for IBM Order Management 18.next
+
+CONTENT
+IBM’s statements regarding its plans, directions, and intent are subject to change or withdrawal without notice at IBM’s sole discretion. Information regarding potential future products is intended to outline the general product direction and it should not be relied on in making a purchasing decision. The information mentioned regarding potential future products is not a commitment, promise, or legal obligation to deliver any material, code or functionality. Information about potential future products may not be incorporated into any contract. The development, release, and timing of any future features or functionality described for the products remains at IBM’s sole discretion.
+
+The following changes would be available in the 18.next update:
+
+Feature Description Upgrade Impact Agent or Integration Servers to support only TLS 1.2 protocol for secure communication 
+
+IBM plans to enable TLS v1.2 protocol on agent and integration server JVMS by default, which cannot be overridden.
+
+Yes 
+
+IBM does not recommend the use of older versions of TLS protocol. Customers are expected to validate that their implementation is coded for TLS 1.2 support and fix, if there are any issues. After the upgrade, if any code that is implemented does not support TLS 1.2 protocol, the specific integration will fail.

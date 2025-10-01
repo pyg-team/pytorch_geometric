@@ -1,0 +1,64 @@
+Title: IBM Installing Firmware Using the USB Port on the Service Processor - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes how to install firmware using the USB port on the service processor on a system that is not managed by an HMC. 
+
+RESOLVING THE PROBLEM
+Installing firmware using the USB port on the service processor on a system that is not managed by an HMC: 
+
+This method is generally recommended if you are directed to do so by your next level of support, by an isolation procedure, or after exchanging the service processor assembly.
+
+Downloading the server firmware fix and copying it to a USB flash drive
+
+Note: These instructions are written for the generic USB flash drive without any added software.
+
+To download the fix and copy to a USB flash drive, you should follow these steps: 
+
+1. From a computer or server with an Internet connection, go to this Recommended Fixes [http://www-912.ibm.com/s_dir/slkbase.nsf/ibmscdirect/e58d7bbf0eac9a2786256ead005f54d8?OpenDocument&TableRow=3.2#3.] page. 2. Locate the desired firmware from the previous step and save the associated .rpm and .xml files (as an example, EL350_118_038.rpm). 3. Verify that your USB flash drive is formatted to FAT32. If it is not, you should complete the following steps:
+
+a. Plug your USB flash drive into the USB slot of your server or computer. A message will display informing you that the operating system recognizes the drive, and it is ready to use.
+
+b. Double-click My Computer, and then right-click the appropriate device drive.
+
+c. Select Format. The Format Removable Disk dialogue box is displayed.
+
+d. Ensure that the File system field displays FAT32 and that the Quick Format check box is cleared. All other fields remain in their default setting.
+
+e. Click Start. Attention: A warning message will display to inform you that the format action will erase all of the data in the flash memory. Click OK to allow the process to continue.
+
+f. Click OK when the action is complete. 4. Insert the blank, formatted USB flash drive into the USB port on the server or computer where you copied the .rpm and .xml files. A message will display informing you that the operating system recognizes the drive and it is ready to use. 5. Copy the .rpm and .xml files to the USB flash drive. 6. To remove the USB flash drive safely, double-click the Safely Remove Hardware icon in the lower right corner of the screen. 7. Follow the prompts to remove the USB flash drive. 8. Continue with installing the server firmware through the USB port on the service processor assembly. 
+Installing the server firmware through the USB port on the service processor assembly 
+
+To install the server firmware through the USB port on the service processor assembly, perform the following steps: 
+
+Important Note: Do not interrupt this process after you begin. 1. Ensure that the server is in service processor standby. Service processor standby is indicated when the server is powered off, and the power-on LED on the control panel is blinking slowly. 2. Insert the USB flash drive into one of the following: 
+
+o The top USB port on the back on a rack-mounted system
+o The right-most USB port on a deskside system 
+For additional information, refer to the Location Codes section in the host model of the service guide. 
+
+The firmware level will load automatically. The level of firmware on the USB flash drive will be installed onto both the P and T sides of the service processor assembly. 
+
+Several checkpoints will be posted on the control panel during the installation of the firmware. They are as follows: 
+
+o C100B101: The firmware image is being installed on a side of the flash. 
+o C100B102: The firmware image is being installed on the other side of the flash. 
+o C100B103: The firmware installation has been completed successfully. 
+
+Note: If a C100B104 code is displayed, the firmware installation has failed. You should perform the following steps: 
+
+1. Ensure that the USB flash drive contains the firmware fix. If necessary, copy the firmware to the USB flash drive again. 
+2. Retry the task with another USB flash drive. 
+3. If necessary, consult your service provider. 
+4. After checkpoint C100B103 is displayed on the control panel, you can safely remove the USB flash drive. 
+5. Continue with verifying that the firmware installed correctly. 
+
+Verifying that the firmware installed correctly 
+
+To verify that the firmware installed correctly, you should perform the following steps: 1. Access the ASMI and view the level of server firmware displayed in the upper-right corner below the copyright statement on the Welcome pane. 2. Verify that the level of server firmware that is displayed is the level that you installed. 3. If the level of server firmware that is displayed is not the level that you installed, retry installing the firmware using another USB flash drive. If the problem persists, contact your next level of support. 
+
+HISTORICAL NUMBER
+ 591426009

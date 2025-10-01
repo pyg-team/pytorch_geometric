@@ -1,0 +1,47 @@
+Title: IBM Explanation of connection pool and session pool settings for JMS connection factories - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In WebSphere Application Server, all JMS connection factories, including queue connection factories (QCFs) and topic connection factories (TCFs) have connection pool and session pool settings that can be configured. 
+
+This technote explains the following points:
+
+
+ * 
+ * The difference between these pools and their relationship
+ * 
+ * The maximum number of TCP/IP connections to a WebSphere MQ queue manager that is expected with a given set of connection pool and session pool settings
+ * 
+ * The manner in which these settings are affected when message listener ports are configured to use the connection factory
+ * 
+
+
+
+RESOLVING THE PROBLEM
+In the JMS programming model, an application must get a JMS connection and a JMS session to send a message. A typical JMS application that sends messages looks like this:
+QueueConnectionFactory qcf = (QueueConnectionFactory)ctx.lookup("jms/qcf");
+Queue queue = (Queue)ctx.lookup("jms/q");
+QueueConnection jmsconn = qcf.createQueueConnection();
+QueueSession session = jmsconn.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+QueueSender sender = session.createSender(queue);
+TextMessage message = session.createTextMessage("Message Text");
+sender.send(message);
+
+The call to createQueueConnection gets a connection from the connection pool. The call to createQueueSession gets a session from the session pool.
+
+By default, the Max Connections property for the connection pool and session pool is 10. This means that there can be a maximum of 10 connections or sessions in each pool. Each connection in the connection pool has its own session pool. This means that there can be 10 session pools that can have a maximum of 10 sessions each. 
+
+Each session represents a TCP/IP connection to the queue manager. With the settings mentioned here, there can be a maximum of 100 TCP/IP connections. If you are using WebSphere MQ, it is important to tune the queue manager's MaxChannels setting, located in the qm.ini file, to a value greater than the sum of the maximum possible number of sessions from each JMS connection factory that connects to the queue manager.
+
+In addition to sending messages, the connection pools and session pools are used by the WebSphere Application Server message listener ports to receive messages and pass them to the message driven bean (MDB) associated with the listener port. When a listener port is defined, it is configured with a JMS connection factory. Each listener port uses one connection from the connection factory's connection pool. 
+
+There is also a setting on the listener port called Maximum sessions. The value of this property is the number of sessions that are used in the session pool of the connection that is used by the listener port. This influences the number of messages that can be concurrently processed by the listener port. The number of listener ports configured to use a connection factory, as well as the Maximum sessions settings on the listener ports, should be taken into consideration when tuning the connection pool and session pool settings. 
+
+Note: If the Maximum sessions for a listener port is greater than the Max Connections setting for the session pool, the Maximum sessions is changed to the value of Max Connections when the listener port starts.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

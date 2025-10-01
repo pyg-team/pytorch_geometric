@@ -1,0 +1,57 @@
+Title: IBM How to inform users if user account has been locked out for Domino HTTP authentication - United States
+
+Text:
+login; log in; log-in; sign in; rolling login; continuous prompting; again and again; credentials; sso; session-based authentication; internal password lockout; three strikes; lock out; how to; tell users; inform users; how to tell; internet lockout; http server; domino web server; http TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+As the administrator, you enable either single-server or multi-server session authentication for a Lotus® Domino® Web server. You have also set up the Internet Password Lockout feature and configure the Domino Web Server configuration database (domcfg.nsf). 
+
+The default log-in form supplied by the Domino Web Server configuration database, however, does not tell your users if their account is locked out or if authentication failed due to their account being locked out. How can you inform your users if their Domino HTTP password has been locked out?
+
+
+SYMPTOM
+A user who is locked out who tries to authenticate to the Domino server using a Web browser is prompted for the user name and password over and over again without any errors in the resulting log-in form. 
+
+(These symptoms can also occur in other situations if you are using single sign-on. Refer to technotes 1090417 [http://www.ibm.com/support/docview.wss?rs=899&uid=swg21090417]and 1216978 [http://www.ibm.com/support/docview.wss?rs=899&uid=swg21216978]for other causes of continuous prompting.)
+
+
+DIAGNOSING THE PROBLEM
+If the following are true, then the resolution below may address this problem for you: 
+
+ 1. The "Session Authentication" field of the "Internet Protocols -> Domino Web Engine" tab of the Server document or Internet Site document is set to either "Single Server" or "Multiple Servers (SSO)". If this field is set to "Disabled", then you are not experiencing this issue. 
+ 2. A domcfg.nsf database exists on your Domino server. 
+ 3. The Internet Lockout database (inetlockout.nsf) database exists on your Domino server. 
+ 4. The user experiencing this problem has a document in the "Locked Out Users" view of the inetlockout.nsf database, indicating the account is locked.
+
+RESOLVING THE PROBLEM
+You can provide the user with a better error message by performing these steps to modify the default form: 
+
+ 1. Open your server's domcfg.nsf database in the Domino Designer client. 
+ 2. Open the $$LoginUserForm, and click the "<Computed Value>" field, as shown in this screen capture:
+    
+    [/support/docview.wss?uid=swg21308550&amp;aid=1]
+    
+ 3. In the Programmer's Pane, add a line similar to the following:
+    
+    sLockedOut := "Your account has been locked out";
+    
+    Screen capture of updated formula:
+    [/support/docview.wss?uid=swg21308550&amp;aid=2]
+    
+ 4. Scroll down further in the Programmer's Pane, and add a line similar to the following:
+    
+    reasonType = "5"; sLockedOut;
+    
+    Screen capture of updated formula:
+    [/support/docview.wss?uid=swg21308550&amp;aid=3]
+    
+ 5. Save and Close the $$LoginUserForm.
+
+
+Now when your users are locked out, they receive a useful message in the standard log-in form from the domcfg.nsf database. You can use this information to customize other log-in forms to have different informational messages depending on the reason for the authentication or authorization failure. 
+
+Note that if you do not have a domcfg.nsf database or if you have Session authentication disabled, your users already receive useful messages if their Internet password has been locked out.
+
+RELATED INFORMATION
+ Log-in screen appears again after successful log-in [http://www.ibm.com/support/docview.wss?uid=swg21090417]
+Common questions and problems with Single Sign-on (SSO) [http://www.ibm.com/support/docview.wss?uid=swg21216978]

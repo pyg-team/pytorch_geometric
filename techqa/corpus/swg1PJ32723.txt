@@ -1,0 +1,193 @@
+Title: IBM PJ32723: P8EF 4.0 - RENDER FORM COMMAND IN AEUIS WHICH IS BASED ON EFORMS JAVA API DO NOT HAVE TIFF COMPRESSION IMPEMENTED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ***PLEASE PROVIDE THE FOLLOWING INFORMATION
+   THIS FIELD IS REQUIRED.***
+   Description of Problem (full details)
+   Customer previously were using HTML eForms Print Service with
+   eForms for Open Client (OCeF). The HTML eForms Print Service
+   allows them to convert the form data into compressed TIFF
+   files. Valid compression schemes were LZW, none, CCITT3 and
+   CCITT4, with LZW being the default.
+   Customer is now doing a pilot with P8 4.0 in five of their
+   branches.
+   When they use the Render Form command in Application Engine UI
+   Service (AEUIS) they noticed that the resulting TIFF is
+   uncompressed and average file size is over 1MB, significantly
+   larger when compared to the TIFF files produced by HTML eForms
+   Print Service.
+   <<.../ecm_help/developer_help/workplace/guide/aeuis_cmd_ref.htm
+   #1410>>
+   The Render Form command in AEUIS in turn is using the eForms
+   Java API which support several other compression types, but
+   not the LZW, CCITT3, and CCITT4.
+   <<.../ecm_help/developer_help/eforms_java_api/javadocs/com/file
+   net/eforms/api/TiffCompressionType.html
+   Customer expect that when they migrated from OCeF to P8eF,
+   they will be able to continue to convert their form data files
+   into compressed TIFF files using AEUIS Render Form command as
+   they have done in the past using HTML eForms Print Service.
+   As of now the uncompressed TIFF files produced by AEUIS is too
+   large to be practical / usable.
+   The inability to render form data into compressed TIFF files is
+   a major road block for customer in continuing their P8 4.0
+   Pilot.
+   How long has the problem been occurring (recent changes)? :
+   Since P8 4.0 install.
+   Does this occur on more than one station / server? :
+   Yes.
+   Is there a workaround? :
+   No.
+   What is the impact to the customer/system? :
+   The inability to render form data into compressed TIFF files is
+   a major road block for customer in continuing their P8 4.0
+   Pilot.
+   Can the problem be replicated on an internal system?  Y
+   By Who (L3, Support, etc..)
+   By L2 (CSS)
+   Steps to Reproduce:
+   1. Use AEUIS to render a form data file into TIFF.
+   For Example:
+   http://bcpp840:9080/Workplace/integrationWebBasedCommand?_comma
+   ndId=1410&op=render&mimeType=application%2Fx-filenet-formdata&i [http://bcpp840:9080/Workplace/integrationWebBasedCommand?_commandId=1410&op=render&mimeType=application%2Fx-filenet-formdata&i]
+   mage=tiff&timeZone=PST&objectStoreName=OS01&id={58FDDB9B-9FCC-4
+   F5B-BD92-1092AAB58FBC}
+   2. Check the TIFF header using free 3rd party tool such as
+   AsTIFFTagViewer. Notice the Compression tag = uncompressed.
+   Actual Results:
+   TIFF file produced is uncompressed (large)
+   Expected Results:
+   TIFF file produced should be compressed (much smaller in size)
+   Are there any similar or related Defects? If Y provide ECMDB #s
+   N
+   What logs were collected and where are they located?
+   Customer Configuration/Environment :
+   Server OS : Linux (version: 2.6.9-42.0.10.ELsmp #1 SMP Fri Feb
+   16
+   Client OS : Windows XP
+   Database :
+   Network:
+   App Server : Websphere 5.1.1.13
+   Browser : IE 6.0
+   Note if non US Language:
+   Other Product Component Versions:
+   Non Web Environment N
+   P8AE-4.0.1 + P8AE-4.0.1-1002
+   P8PE-4.0.1 pe410.023x pui410.010
+   P8eF-4.0.1
+   P8CE-4.0.0-002 - dap420.104
+   CSS test environment is running on Windows 2003 platform with
+   the following patch levels:
+   P8AE-4.0.1 on WebSphere
+   P8CE-4.0.1
+   P8PE-4.0.2
+   eF-4.0.1
+   Non Web Environment  N
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  P8eF-4.0.1 users.Rendering a TIFF image with an unsupported comp
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix provided in P8eF-4.0.1-003 or above.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ32723
+   
+   
+ * REPORTED COMPONENT NAME
+   APPLICATION ENG
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7610
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-23
+   
+   
+ * CLOSED DATE
+   2008-05-13
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APPLICATION ENG
+   
+   
+ * FIXED COMPONENT ID
+   5724R7610
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

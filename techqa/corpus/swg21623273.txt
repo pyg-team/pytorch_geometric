@@ -1,0 +1,66 @@
+Title: IBM No database connection after Oracle 11.1 to 11.2 upgrade - United States
+
+Text:
+database; connection; jdbc; jndi; oci TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading Oracle v11.1 to 11.2 and running the changeDataSourceProperties script to update WebSphere, you are unable to connect to the TWS database using the Dynamic Workload Console (DWC), the Job Scheduling Console (JSC), or the command line, 
+
+SYMPTOM
+Several messages are displayed in the SystemOut.log: 
+
+
+AWSJDB802E An internal error has occurred while connecting to the database. The database connection is not available.
+AWSJCO026E User "twscli" is not authorized to perform the action "MODIFY" on an object 
+J2CA0045E: Connection not available while invoking method createOrWaitForConnection for resource jdbc/twsdb.
+AWSJCO028E The object cannot be accessed because the user "server:DefaultNode_DefaultNode_twaserver" is not defined in the Security file.
+AWSJCO052E User "twsadmin" is not authorized to perform the action "DISPLAY" on the file "GLOBALOPTS".
+
+
+CAUSE
+Oracle Type2 driver is being used instead of Type4
+
+
+ENVIRONMENT
+TWS v8.5.x or TWS v8.6
+Oracle database
+
+
+
+DIAGNOSING THE PROBLEM
+Look at the output from the showDataSourceProperties script to determine if Oracle Type2 or Type4 is being used. There will be entries for the Type2 or Type4 JndiName, DatabaseName, and ServerName under either the Oracle Type2 Resource Properties or the Oracle Type4 Resource Properties section:
+
+################################################################
+Oracle Type2 Resource Properties
+################################################################
+OracleType2JndiName=jdbc/twsdb
+OracleType2DriverType=
+OracleType2URL=jdbc:oracle:oci:@tivwk_app
+OracleType2DatabaseName=tivwkr_app
+OracleType2ServerName=raven-shayd.com
+
+################################################################
+Oracle Type4 Resource Properties
+################################################################
+OracleType4JndiName=
+OracleType4DriverType=
+OracleType4URL=jdbc:oracle:thin:@//localhost:1521/ORCL
+OracleType4DatabaseName=tivwrk
+OracleType4ServerName=localhost
+
+*******************************
+In the examples above, Type2 is being used as you can see the properties OracleType2JndiName=jdbc/twsdb and OracleType2ServerName=raven-shayd.com have entries and there are no entries for these under the Oracle Type4 Resource Properties panel.
+
+
+
+RESOLVING THE PROBLEM
+Change DataSourceProperties for Oracle from Type2 to Type4 according to the information in Technote # 1450492: http://www-01.ibm.com/support/docview.wss?uid=swg21450492 [http://www-01.ibm.com/support/docview.wss?uid=swg21450492] 
+
+Stop and restart the embedded WebSphere Application Server (eWAS) for this to take effect.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Maestro
+TWS
+TWA

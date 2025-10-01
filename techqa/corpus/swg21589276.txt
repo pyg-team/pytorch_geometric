@@ -1,0 +1,49 @@
+Title: IBM Error due to failed attempts in recreating TAM configuration files on DataPower WebGUI may trigger CLI error log entry. - United States
+
+Text:
+dp tam TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Failed attempts to create TAM configuration files may result in a CLI error log message when using IBM WebSphere DataPower SOA Appliance WebGUI. 
+
+SYMPTOM
+The user may see a CLI error log message if encountering an error when trying to create TAM configuration files using the WebGUI: 
+
+20120223T055052Z [cli][error] : tid(1445745): === Line 2: create-tam-files <full CLI command>
+
+
+ 
+
+The CLI error may be seen in addition to other TAM log category errors such as:
+
+
+20120223T055052Z [tam][error] tam: tid(1445745): Failed to create Tivoli Access Manager client configuration file 
+
+20120223T055052Z [tam][error] tam: tid(1445745): Failed to generate Tivoli Access Manager client files
+
+
+CAUSE
+The cause of the log message in the CLI log is that there was an error when trying to "create" the TAM configuration files. 
+
+This may commonly be caused by using invalid or incorrect parameters for the create TAM files operation.
+
+
+ENVIRONMENT
+IBM WebSphere DataPower SOA Appliance integration with TAM
+
+
+
+DIAGNOSING THE PROBLEM
+Attempt to "create" TAM configuration files in the DataPower WebGUI, but receive an error. 
+
+Checking the logs, the operation seems to have failed. 
+
+In the CLI log, there appears to have a "CLI" related error: 
+
+20120223T055052Z [cli][error] : tid(1445745): === Line 2: create-tam-files <full CLI command>
+
+
+RESOLVING THE PROBLEM
+The user should examine the properties used for the TAM configuration files and validate these. 
+
+For example, if the administrative user name is incorrect, please correct.

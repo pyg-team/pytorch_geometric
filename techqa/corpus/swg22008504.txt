@@ -1,0 +1,48 @@
+Title: IBM Why check value couldn't be changed - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We had IEM 9.2.9.36 for IEM server, console and relay. We had enabled the "CIS Checklist for Windows 2016 MS" and then created a custom site and copied the CIS checklist fixlets over to the new custom site.
+Then we wanted to change some value of the check. For example:
+1) select the checklist fixlet
+2) at the description tab, enter the new value and click save
+we noticed that this value was not taking effect as the number of applicable computer for that particular check remains the same.
+Also one thing we noticed was that there was a pop-up error when we clicked on the fixlet. Below is the error.
+
+An error has occurred in the script on this page.
+Line: 1
+Char: 4523
+Error: Automation server can't create object
+Code: 0
+URL: about:blank
+
+Why the error happened?
+
+
+RESOLVING THE PROBLEM
+1) For the error, it is caused by restrictive Internet Explorer security permissions. To fix this problem, the security option "Initialize and script ActiveX controls not marked as safe for scripting (not secure)" for the Internet zone must be enabled. The steps to solve this problem are as follows:
+Create an instance of Internet Explorer and click "Tools".
+1. Go to internet options.
+2. Select security tab.
+3. Under Custom level.
+4. Ensure that "Initialize and script active x controls is not
+marked safe for scripting".
+5. Apply the new settings. Restart the IBM Endpoint Manager Console or start a new instance of it and the problem should be fixed.
+
+Note: I tried moving the BES Server's domain into the Trusted sites
+zone and Local intranet zone and tried enabling the security option
+there but that didn't seem to work. It only worked when it was enabled
+for the Internet zone.
+
+2)After you have follow all the steps above, then please do as follows.
+
+1. Navigate to \Users\{USERNAME}\AppData\Local\BigFix.
+2. Delete the Enterprise Console directory.
+3. Reboot the Bigfix root server service.
+4. Re-launch the Bigfix console again.
+5. Create the custom checklist again to see if your problem is solved.
+
+RELATED INFORMATION
+ Error: Automation Server can't create object [http://social.technet.microsoft.com/Forums/ie/en-US/8db7ec28-45ca-4859-b051-f0571a4da14e/error-automation-server-cant-create-object]

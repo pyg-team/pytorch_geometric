@@ -1,0 +1,82 @@
+Title: IBM Purge service in Sterling B2B Integrator failing with connection closed on DB2  when doing getAutoCommit - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Purge service in Sterling B2B Integrator is always failing with the same DB2 error : Invalid operation: Connection is closed. ERRORCODE=-4470, SQLSTATE=08003 When doing setAutoCommit or getAutoCommit. 
+
+SYMPTOM
+[2013-07-31 12:04:08.484] ERROR [1375265048484] [jcc][t4][10335][10366]
+[3.57.82] Invalid operation: Connection is closed. ERRORCODE=-4470,
+SQLSTATE=08003
+[2013-07-31 12:04:08.484] ERRORDTL [1375265048484]com.ibm.db2.jcc.am.
+ho: [jcc][t4][10335][10366][3.57.82] Invalid operation: Connection is
+closed. ERRORCODE=-4470, SQLSTATE=08003
+at com.ibm.db2.jcc.am.bd.a(bd.java:666)
+at com.ibm.db2.jcc.am.bd.a(bd.java:60)
+at com.ibm.db2.jcc.am.bd.a(bd.java:120)
+at com.ibm.db2.jcc.am.jb.Yb(jb.java:4921)
+at com.ibm.db2.jcc.am.jb.getAutoCommit(jb.java:908)
+at com.sterlingcommerce.woodstock.util.frame.jdbc.ConnectionWrapper.
+getAutoCommit(ConnectionWrapper.java:178)
+at com.sterlingcommerce.woodstock.util.frame.jdbc.SqlUtil.shouldRetry
+(SqlUtil.java:724)
+at com.sterlingcommerce.woodstock.util.frame.jdbc.SqlUtil.executeUpdate
+(SqlUtil.java:397)
+at com.sterlingcommerce.woodstock.util.frame.jdbc.JDBCService.
+executeUpdate(JDBCService.java:2140)
+at com.sterlingcommerce.woodstock.services.archive.purge.PurgeService.
+run(PurgeService.java:963)
+at com.sterlingcommerce.woodstock.services.archive.purge.PurgeService.
+doRunLoop(PurgeService.java:797)
+at com.sterlingcommerce.woodstock.services.archive.purge.PurgeService.
+doRunLoop(PurgeService.java:750)
+at com.sterlingcommerce.woodstock.services.archive.purge.PurgeService.
+distributeWork(PurgeService.java:673)
+at com.sterlingcommerce.woodstock.services.archive.purge.PurgeService.
+processData(PurgeService.java:581)
+at com.sterlingcommerce.woodstock.services.archive.purge.
+PurgeServiceImpl.processData(PurgeServiceImpl.java:52)
+at com.sterlingcommerce.woodstock.workflow.activity.engine.
+ActivityEngineHelper.invokeService(ActivityEngineHelper.java:1818)
+at com.sterlingcommerce.woodstock.workflow.activity.engine.
+ActivityEngineHelper.nextMainLogic(ActivityEngineHelper.java:631)
+at com.sterlingcommerce.woodstock.workflow.activity.engine.
+ActivityEngineHelper.next(ActivityEngineHelper.java:362)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.
+doWork(WorkFlowQueueListener.java:440)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.
+run(WorkFlowQueueListener.java:236)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.
+onMessage(WorkFlowQueueListener.java:197)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.
+onMessage(WorkFlowQueueListener.java:184)
+at com.sterlingcommerce.woodstock.workflow.queue.wfTransporter.run
+(wfTransporter.java:444)
+at com.sterlingcommerce.woodstock.workflow.queue.BasicExecutor$Worker.
+run(BasicExecutor.java:508)
+at java.lang.Thread.run(Thread.java:736)
+
+
+CAUSE
+db2diag.log showed the following error:
+ADM1541W Application "db2jcc_application" with application handle 
+"0-9663" and application id "10.144.215.153.41044.1307311003" 
+executing under authentication id "DB2INST1" has been forced off of 
+the database for violating database configuration parameter 
+NUM_LOG_SPAN (current value "8"). The unit of work will be rolled 
+back.
+
+DIAGNOSING THE PROBLEM
+db2diag.log
+
+RESOLVING THE PROBLEM
+Increase the log file size and the number of primary and secondary log files.
+
+
+
+
+The num_log_span value can also be adjusted. 
+
+See also System Administration > Performance Management [http://www.ibm.com/support/knowledgecenter/SS3JSW_5.2.0/com.ibm.help.performance_mgmt.doc/overview.html?lang=en]

@@ -1,0 +1,38 @@
+Title: IBM Using the Jboss silent install and config response files. - United States
+
+Text:
+Jboss default install config response files CAMADALL CAMADINST TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ How do I use the JBoss silent install and config response files? Are any default files provided? 
+
+ANSWER
+Here are the sample default files that have been created using the GUI. These are default files and should be customized for your own environment. 
+
+The parameters that you should change in these default files, at the very least, are your own hostname, the MS kernel hostname, the JBoss User name and password, the JBoss start dir, server directory and path. Change any other parms as needed in your environment. 
+
+After you have customized the files to your very own environment, check the file permissions and userid you are using to install and configure. Then use these commands: 
+
+To install, use the command as follows:
+./setup_DC_<OS>..bin -silent [-is:log <log_file> ] -options <response_file>
+For example,
+./setup_DC_lin.bin -silent -is:log /tmp/DClog.txt -options ./itcam_install.rsp
+
+After installing, cd to the 'config_dc' dir by doing:
+cd $DC_HOME/installer/config_dc
+
+Then configure as follows:
+./config_dc.sh -silent -options <response_file>
+For example,
+./config_dc.sh -silent -options ./itcam_config.rsp
+
+If you get any errors, look in the /var/ibm/tivoli/common/CYN/logs dir for the log files.
+
+itcam_install.rsp [/support/docview.wss?uid=swg21445891&aid=2] itcam_install.rsp [/support/docview.wss?uid=swg21445891&aid=1]
+itcam_config.rsp [/support/docview.wss?uid=swg21445891&aid=4] itcam_config.rsp [/support/docview.wss?uid=swg21445891&aid=3] 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for J2EE Jboss ITCAMAD

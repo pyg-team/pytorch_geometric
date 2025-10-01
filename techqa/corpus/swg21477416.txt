@@ -1,0 +1,19 @@
+Title: IBM SPSS is predicting beyond the period specified on the PREDICT command - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm forecasting a time series in SPSS. My PREDICT command specifies to predict through a given time point, which is not the last case in the file, but SPSS insists on predicting through the end of the file. Why is this happening? 
+
+RESOLVING THE PROBLEM
+The PREDICT command is paired with the USE command. If USE is not specified, the default is USE ALL, or all cases in the file. If the end point on PREDICT is greater than the end point on USE, then what is specified on PREDICT is honored. However, if the end point on the PREDICT command is earlier than that specified or implied on the USE command, it is ignored and the later point specified or implied for USE is used instead. You can handle this by specifying the USE period explicitly
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 62858

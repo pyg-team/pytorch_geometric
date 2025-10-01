@@ -1,0 +1,75 @@
+Title: IBM ncp_oql for poller service snmppoller not responsive - United States
+
+Text:
+poller; snmppoller; register TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ Using ncp_oql to interrogate additional registered pollers might be unresponsive when performing advanced troubleshooting. Request Timed Out .... No service provider listening. 
+
+DIAGNOSING THE PROBLEM
+When interrogating ncp_oql for multiple pollers it is best to start with a list of running pollers 
+
+[netcool@nc:/opt/IBM/tivoli/netcool/precision/bin] $ ./itnm_status
+OMNIbus:
+is not installed in $NCHOME on this system.
+Network Manager:
+Domain: NCOMS411
+ncp_ctrl RUNNING PID=31431 NCOMS411
+ncp_store RUNNING PID=31697 NCOMS411
+ncp_class RUNNING PID=31698 NCOMS411
+ncp_model RUNNING PID=31829 NCOMS411
+ncp_disco RUNNING PID=31846 NCOMS411
+ncp_d_helpserv RUNNING PID=31699 NCOMS411
+ncp_config RUNNING PID=31700 NCOMS411
+ncp_poller(default) RUNNING PID=32086 NCOMS411
+icmpPoller RUNNING PID=32087 NCOMS411
+snmpPoller RUNNING PID=32088 NCOMS411
+testPoller RUNNING PID=32089 NCOMS411
+nco_p_ncpmonitor RUNNING PID=31701 NCOMS411
+ncp_g_event RUNNING PID=31942 NCOMS411
+ncp_webtool RUNNING PID=31702 NCOMS411
+ncp_virtualdomain RUNNING PID=32638 NCOMS411
+Tivoli Integrated Portal:
+Server RUNNING PID=29819
+[netcool@nc:/opt/IBM/tivoli/netcool/precision/bin] $
+
+
+RESOLVING THE PROBLEM
+[netcool@nc:/opt/IBM/tivoli/netcool/precision/bin] $ ./ncp_oql -username admin -service snmppoller -poller snmppoller -domain NCOMS411 
+
+ncp_oql ( IBM Tivoli Network Manager OQL Interface )
+Copyright (C) 1997 - 2010 By IBM Corporation. All Rights Reserved. See product license for details.
+
+IBM Tivoli Network Manager Version 4.1.1 (Build 11) 64 bit created by ncpbuild at 13:14:25 Wed May 21 BST 2014
+
+Poller specified with service SnmpPoller is snmppoller
+Using subject ITNM/SNMPPOLLER/QUERY/snmppoller
+Using no authentication
+|nc:1.> show databases;
+|nc:2.> go
+Request Timed Out .... No service provider listening
+
+The -poller option for ncp_oql must be an exact match of the poller name from itnm_status
+
+[netcool@nc:/opt/IBM/tivoli/netcool/precision/bin] $ ./ncp_oql -username admin -service SNmppoLLer -poller snmpPoller -domain NCOMS411
+ncp_oql ( IBM Tivoli Network Manager OQL Interface )
+Copyright (C) 1997 - 2010 By IBM Corporation. All Rights Reserved. See product license for details.
+
+IBM Tivoli Network Manager Version 4.1.1 (Build 11) 64 bit created by ncpbuild at 13:14:25 Wed May 21 BST 2014
+
+Poller specified with service SnmpPoller is snmpPoller
+Using subject ITNM/SNMPPOLLER/QUERY/snmpPoller
+Using no authentication
+|nc:1.> show databases;
+|nc:2.> go
+.
+{
+databases=['config','monitors','ncpoller','profiling','snmpStack'];
+}
+( 1 record(s) : Transaction complete )
+|nc:1.>
+
+Notice the -service parameter can handle any spelling of snmppoller. But the -poller name must be an exact character match for the name of the poller.

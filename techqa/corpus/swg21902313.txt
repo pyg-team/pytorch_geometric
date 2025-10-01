@@ -1,0 +1,17 @@
+Title: IBM Access Server can not connect datstore by FQDN after InfoSphere CDC/AS400 is migrated to another machine with different ip change - United States
+
+Text:
+Access Server; FQDN; IP address TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CDC/AS400 is migrated to another AS/400 machine with different IP address. The datastore is configured with FQDN instead of ip address on Management Console. Access Server keeps connecting to the old IP address after the DNS resolution has been changed to the new IP address. 
+
+CAUSE
+ Access Server does not "cache" IP addresses, but the JVM does. Here is a document on the IBM site that talks about it: 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21207534 [http://www-01.ibm.com/support/docview.wss?uid=swg21207534]
+
+
+
+RESOLVING THE PROBLEM
+Restart Access Server to override the option.

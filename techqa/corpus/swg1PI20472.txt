@@ -1,0 +1,156 @@
+Title: IBM PI20472: SERVER NAMES IN HISTORICAL SAMPLES USE "SERVER NAME" PARAMETER VALUE DEFINED IN ITM SITUATIONS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+ITCAM for J2EE V7.1.1 Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24040521]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Server names in historical samples use "server name" parameter
+   value defined in ITM situations.
+   The sudden appearance of the unexpected server names during the
+   real time data collection has been verified by providing a
+   debug version of "kwjwb.jar".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Temporary remove the "Server Name" column from the situatiion
+   definition, until a fix is available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   ITCAM KYN environments with ITM situations that
+   have server name in filter argument.
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   
+   When the server name is specified in the situation filter, the
+   name is being applied to that attribute group for the data
+   collected from all other servers.  For example, if a situation
+   is created by selecting "Server Name = MyServer1" for J2C
+   Connection Pool attribute group, the data collected for this
+   group from all other servers will have MyServer1 as the value in
+   the Server Name.
+   
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   releases:
+   
+     | Interim Fix | 7.2.0.0-TIV-ITCAMAD_WS-IF0006
+     | Interim Fix | 7.1.0.3-TIV-ITCAMAD-IF0009
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  The server name is not required in the situation.  Instead, the
+   distribution should be used to assign it to the proper
+   server(s).
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI20472
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS TEM
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92WD
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-20
+   
+   
+ * CLOSED DATE
+   2014-10-31
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS TEM
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92WD
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

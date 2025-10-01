@@ -1,0 +1,139 @@
+Title: IBM Configuration and deployment command-line reference for IBM Content Navigator, Version 2.0 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ You can configure and deploy IBM Content Navigator by using the command-line version of IBM Content Navigator Configuration and Deployment Tool. 
+
+CONTENT
+The scripts for these tools are in theECMClient\configure\directory, whereECMClientis the root directory for the installed IBM Content Navigator server. Alternatively, you can use the graphical user interface version of the IBM Content Navigator Configuration and Deployment Tool. 
+
+About this task 
+
+You begin by generating the configuration XML files that define the configuration and deployment settings for your IBM Content Navigator instance. Next, edit the files to provide values for your environment. Then, apply the settings by running the tasks from a command prompt. You must generate, edit, and run a complete set of configuration XML files to configure a IBM Content Navigator application. If you are deploying multiple IBM Content Navigator application instances on the same application server, you must generate, edit, and deploy a complete set of configuration files for each instance. 
+
+Important:Store the configuration files for each instance in a separate profile directory.
+
+You can complete the configuration tasks by generating all of the configuration XML files before editing, running, or verifying any of the tasks; or you can generate, edit, run, and verify one file at a time.
+
+Syntax for the configmgr_cl or configmgr_cl.exe command 
+
+You can use this diagram to understand the accepted values for each parameter.
+
+>>-configmgr_cl.exe--| generateConfig |---------------------------><
+
+|-- -appserver--+-websphere-+--+-- -configure_FileNetP8-+--yes--+--->
+'-weblogic--' '--no---' 
+
+>-- -configure_CM-+--yes--+-- -configure_CMOD-+--yes--+------------->
+'--no---' '--no---'
+
+
+>-- -db--+-db2--------+--------------------------------------------->
++-db2zos-----+
++-mssql------+
++-oracle-----+
+'-oracle_rac-'
+
+>-- -deploy--+-standard--+------------------------------------------>
++-cluster---+
+'-netdeploy-'
+
+>-- -ldap_Repository--+-federated--+-- -ldap--+-tivoli------------+->
+'-standalone-' +-activedirectory---+
++-adam--------------+
++-ca----------------+
++-edirectory--------+
++-oid---------------+
+'-oracledirectorySE-'
+
+>-- -profile----fully_qualified_path_of_a_profile_directory ------->
+
+>--+-------------------+------------------------------------------|
+'-|-- more ->-- con '
+
+
+Important: You must include all three repository arguments (configure_FileNetP8, configure_CM, andconfigure_CMOD) in your command.
+
+
+Example command
+The command is configmgr_cl.exe for Microsoft Windows. The command is configmgr_cl for AIX, Linux, and Linux on System z. 
+
+configmgr_cl.exe generateConfig-appserverwebsphere 
+-configure_FileNetP8 yes-configure_CMyes-configure_CMOD no
+-db db2-deploy standard-ldap_Repositoryfederated
+-ldap tivoli -profile C:\Location to my profile directory path\ | more > con
+
+
+Taskstaskname
+When you generate the XML file or run the task to apply your configuration settings, for the-taskparameter, use the followingtasknametask values.
+
+
+
+Task taskname Description downloadcejarstask You must configure the web application to use the version of the Content Engine client connector files that match the version of Content Engine that you are running. (FileNet P8) configureodwek Configures the web application to use Content Manager OnDemand Web Enablement Kit. (Content Manager OnDemand) 
+
+You must install and configure Content Manager OnDemand Web Enablement Kit on the IBM Content Navigator server before you can complete this task. configurecm8task Configures the web application to use the Content Manager connector. (IBM Content Manager) configurepe Configures the Process Engine connection. (FileNet P8)
+
+Ensure that you are running a supported version of Process Engine before you run this task. In addition, ensure that the version of the Process Engine client connector files on the IBM Content Navigator server match the version of Process Engine that you are running. 
+
+This task applies only to FileNet P8 users who intend to use FileNet P8 workflows. configurejdbcecm Creates a JDBC provider and datasource on the application server, and updates the SQL script file. configureldap Configures your web application server to use the Content Engine LDAP repository. (FileNet P8)
+
+On the web application server where you are deploying IBM Content Navigator, if you have an existing LDAP repository that matches the settings on your Content Engine LDAP repository, you can skip this task. importltpakey Imports your Content Engine LTPA keys to the IBM Content Navigator web application server. (FileNet P8)
+
+You must export the LTPA key file from the Content Engine server and save it to the IBM Content Navigator server before you run this task. configureloginmodules Creates two JAAS login entries, for FileNet P8 and IBM Content Navigator, on the WebSphere Application Server administrative console. (WebSphere Application Server only) rebuildear Builds the IBM Content Navigator EAR file. 
+
+For the configuration directory, ensure that you specify a network share directory. For high availability environments, this network share must be accessible to all IBM Content Navigator nodes in the cluster during configuration and run time. deployapplication Deploys the web application to your WebSphere Application Server environment.
+
+You must complete the other web application configuration tasks before you can deploy the web application to your WebSphere Application Server environment.  
+
+Procedure 
+
+1. Generate the configuration XML files for an IBM Content Navigator instance by running the following command for each task. Do not type any line breaks when you enter the command.
+configmgr_cl.exe generateConfig-appserverwebsphere -configure_FileNetP8 yes-configure_CMyes-configure_CMOD yes-db db2-deploy standard-ldap_Repositoryfederated-ldap tivoli
+-profile fully_qualified_path_of_a_profile_directory | more > con 
+
+ 
+
+This command creates configuration XML files in the profile directory that you specified in the-profileargument. The configuration XML files contain the properties for the various configuration tasks. 
+
+ 
+
+2. Start the IBM Content Navigator Configuration and Deployment Tool (GUI version), and open the profile that you created in the previous step. Click Preferences > Basic Settings and select the Save all passwords to file when saving a task or profile check box. 
+
+Important: The command-line interface cannot save or store passwords to run commands. To save your passwords, you must use the GUI version of the tool. If you do not want to use the GUI version of the tool, you must manually enter the password into the XML file for your configuration profile each time that you run the command. 
+
+ 
+
+3. Edit the configuration XML files to provide values for your environment. The XML files are in the profile directory that you specified in your command. 
+
+ 
+
+4. Run the configuration XML files. Running the configuration XML files applies the settings. You use theexecutecommand to apply your configuration settings from the command line. If you need to run the configuration XML files for a profile that was created or edited in the Configuration Manager graphical user interface, verify that the XML files contain values for the required passwords before you attempt to run the files. 
+
+To run the configuration XML files: 
+
+a. Start the application server if it is not already running. 
+
+b. Change the current directory to the location of the configmgr_cl.exe file: 
+
+ * 
+ * C:\Program Files (x86)\IBM\ECMClient\configure\
+ * 
+ * 
+ * /opt/IBM/ECMClient/configure/
+
+
+c. Run the configuration XML file, by either running all the files at the same time or by running each task individually:  * Run all configuration files at the same time by running the command:
+   
+   Operating system Command Windows configmgr_cl.exe execute-profilefully_qualified_path_of_a_profile_directory AIX, Linux, Linux for system z configmgr_cl execute-profilefully_qualified_path_of_a_profile_directory 
+
+ * Run the configuration files one task at a time by specifying the task when you run the command: Remember:Do not type any line breaks when you enter the command. 
+   
+   Operating system Command Windows configmgr_cl.exe execute-tasktaskname
+   -profilefully_qualified_path_of_a_profile_directory
+   | more > con AIX, Linux, Linux for system z configmgr_cl execute-tasktaskname
+   -profilefully_qualified_path_of_a_profile_directory
+   | more > con 
+
+Tip:The | more > conoption shows the status of the task while the task is running.

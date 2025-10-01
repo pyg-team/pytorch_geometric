@@ -1,0 +1,55 @@
+Title: IBM Security Bulletin: PowerKVM is affected by glibc vulnerabilities (Multiple CVEs) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ PowerKVM is affected by multiple glibc vulnerabilities. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2014-6040 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6040]
+DESCRIPTION: The GNU C Library (glibc) is vulnerable to a denial of service, caused by the improper validation of input by the iconv() function when converting IBM933, IBM935, IBM937, IBM939 or IBM1364 encoded data to UTF-8. An attacker could exploit this vulnerability to cause the application to crash. 
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/#/vulnerabilities/95616 [https://exchange.xforce.ibmcloud.com/#/vulnerabilities/95616] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P) 
+
+CVEID: CVE-2014-8121 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-8121]
+DESCRIPTION: GNU C Library (glibc) is vulnerable to a denial of service, caused by the failure to properly check if a file is open by DB_LOOKUP in nss_files/files-XXX.c in the Name Service Switch (NSS). By performing a look-up on a database while iterating over it, an attacker could exploit this vulnerability to cause the application to enter into an infinite loop. 
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/#/vulnerabilities/102652 [https://exchange.xforce.ibmcloud.com/#/vulnerabilities/102652] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P) 
+
+CVEID: CVE-2014-7817 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7817]
+DESCRIPTION: GNU C Library (glibc) could allow a local attacker to execute arbitrary commands on the system, caused by an error in the wordexp() function. An attacker could exploit this vulnerability to execute arbitrary commands on the system. 
+CVSS Base Score: 4.6
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/#/vulnerabilities/98852 [https://exchange.xforce.ibmcloud.com/#/vulnerabilities/98852] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:L/Au:N/C:P/I:P/A:P) 
+
+AFFECTED PRODUCTS AND VERSIONS
+PowerKVM 2.1
+
+REMEDIATION/FIXES
+Fix is made available via Fix Central (https://ibm.biz/BdEnT8 [https://ibm.biz/BdEnT8]) in 2.1.1 SP2 (build 51) and all later builds and fix packs. For systems currently running fix levels of PowerKVM prior to 2.1.1, please see http://download4.boulder.ibm.com/sar/CMA/OSA/05e4c/0/README [http://download4.boulder.ibm.com/sar/CMA/OSA/05e4c/0/README] for prerequisite fixes and instructions. Customers can also update from 2.1.1 (GA and later levels) by using "yum update".
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] CHANGE HISTORY
+ 26 May 2015: Initial version
+5 June 2016 - Updated remediation plan 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

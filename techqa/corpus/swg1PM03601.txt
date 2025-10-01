@@ -1,0 +1,152 @@
+Title: IBM PM03601: GenerateDirectory change doesn't always trigger DMCA - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Sometimes when generating code the full path to the include is n
+   ot generated. This only happens rarely, but when it does we have
+    no way of resolving the issue. This is a complete showstopper a
+   s this prevents compilation of the code when it happens.
+   
+   A typical scenario is that we use a 'usage' dependency to anothe
+   r class/package in the model. The code is then generated to look
+    like this:
+   
+   
+   #include ?nameofpkg?
+   
+   
+   It should look like this:
+   
+   
+   #include ?parentPkg/nameofpgk?
+   
+   
+   We have no idea what causes this, so we cant reproduce the probl
+   em consistently. Code that builds fine one day can suddenly stop
+    working.  Typically when this happens we have to rebuild the en
+   tire module from scratch as we have never been able to find the
+   cause.
+   
+   ============================================
+   
+   I've noticed after changing this property, that the code view do
+   esn't
+   always update correctly. So to all intent it looks as though the
+   
+   property has not had an effect on the re-generated code. Right-c
+   licking
+   the class and selecting the edit code option opens a new code vi
+   ew
+   window this time showing the correct include path.
+   
+   
+   
+   It may be that at some point this property was disabled in your
+   project
+   and when re-enabled, rhapsody failed to properly re-generated th
+   e code.
+   Of course as you say this would then not compile, because you ha
+   d the
+   directory structure for the packages (created when the property
+   was
+   enabled) but no paths in the include statements (removed when th
+   e
+   property was disabled).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ?Lang?_CG::Package::GenerateDirectory change doesn't always
+   trigger DMCA
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is how the feature is designed to work.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM03601
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   740
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-15
+   
+   
+ * CLOSED DATE
+   2010-03-23
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

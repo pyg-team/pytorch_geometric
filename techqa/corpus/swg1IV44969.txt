@@ -1,0 +1,164 @@
+Title: IBM IV44969: UPDATING THE WIMCONFIG.XML FILE - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.1.0-TIV-BSM-FP0004-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-zlinux&source=SAR]
+6.1.0-TIV-BSM-FP0004-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-windows&source=SAR]
+6.1.0-TIV-BSM-FP0004-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-solaris&source=SAR]
+6.1.0-TIV-BSM-FP0004-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-linux&source=SAR]
+6.1.0-TIV-BSM-FP0004-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-aix&source=SAR]
+6.1.0-TIV-NCI-FP0004-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-zlinux&source=SAR]
+6.1.0-TIV-NCI-FP0004-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-windows&source=SAR]
+6.1.0-TIV-NCI-FP0004-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-solaris&source=SAR]
+6.1.0-TIV-NCI-FP0004-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-aix&source=SAR]
+6.1.0-TIV-NCI-FP0004-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-linux&source=SAR]
+6.1.0-TIV-NCI-FP0003-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-zlinux&source=SAR]
+6.1.0-TIV-NCI-FP0003-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-windows&source=SAR]
+6.1.0-TIV-NCI-FP0003-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-solaris&source=SAR]
+6.1.0-TIV-NCI-FP0003-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-linux&source=SAR]
+6.1.0-TIV-NCI-FP0003-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-aix&source=SAR]
+6.1.0-TIV-BSM-FP0003-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-solaris&source=SAR]
+6.1.0-TIV-BSM-FP0003-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-aix&source=SAR]
+6.1.0-TIV-BSM-FP0003-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-zlinux&source=SAR]
+6.1.0-TIV-BSM-FP0003-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-windows&source=SAR]
+6.1.0-TIV-BSM-FP0003-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-linux&source=SAR]
+IBM Tivoli Business Service Manager V6.1.0 Fix Pack 2(6.1.0-TIV-BSM-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24032540]
+IBM Tivoli Netcool/Impact V6.1.0 Fix Pack 2(6.1.0-TIV-NCI-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24032739]
+IBM Tivoli Netcool/Impact V6.1.0 Fix Pack 4(6.1.0-TIV-NCI-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24042500]
+IBM Tivoli Business Service Manager V6.1.0 Fix Pack 4(6.1.0-TIV-BSM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24042501]
+IBM Tivoli Netcool/Impact V6.1.0 Fix Pack 4(6.1.0-TIV-NCI-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24042516]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When trying to update wimconfig.xml as describe in 6.1 Admin
+   Guide
+   
+   http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/index.jsp
+   ?topic=%2Fcom.ibm.netcoolimpact.doc6.1%2Fadmin%2Fimag_install_in [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/index.jsp?topic=%2Fcom.ibm.netcoolimpact.doc6.1%2Fadmin%2Fimag_install_in]
+   stall_impactgui_into_tipserver_in_webgui.html
+   
+   
+   It will receive a denied message in the Object server log
+   
+   The password obtain with nci_crypt is not the one expected here
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  After wimconfig.xml is updated using confvmm4ncos.sh, it needs
+   to be copied in following location too
+   
+   $NCHOME/tipv2/profiles/ImpactProfile/config/cells/ImpactCell/wim
+   /config/
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Follow the steps 'Updating the wimconfig.xml file' in        *
+   * Administration Guide,                                        *
+   * it will receive a denied message in the Object server log    *
+   * The password obtain with nci_crypt is not the one expected   *
+   * here                                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * NONE                                                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The text will be included in the next pubs for Impact 6.1 FP02
+   in the Adminstration Guide
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV44969
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-07-01
+   
+   
+ * CLOSED DATE
+   2013-07-31
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC23882903 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

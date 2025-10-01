@@ -1,0 +1,25 @@
+Title: IBM Post-migration steps after migrating from TXSeries 5.1 - United States
+
+Text:
+TXSeries; 5.1; Migration; post migration steps TECHNOTE (FAQ)
+
+QUESTION
+ What are the post-migration steps to be completed on the TXSeries environment when migrating from TXSeries 5.1 to a later TXSeries release? 
+
+ANSWER
+This document summarizes the basic requirements and changes to the environment settings that needs to be updated on the new environment. You need to complete the standard migration procedures for the region, SFS and data provided in the Information Center. 
+
+ * Recompile your CICS C applications with the xlc_r compiler. You might have compiled your TXSeries 5.1 applications using the draft 4 compiler ( xlc_r4). You also need to recompile the PL/I applications using pli_r instead of pli_r4. 
+ * Recompile your applications with a new compiler if you are using Micro Focus COBOL applications. You also need to recompile your Micro Focus COBOL runtime for CICS. 
+ * If you are not using the switch load file provided with TXSeries, you have to recompile your database and WebSphere MQ switch load file manually. Using the old switch load file can result in improper database updates. 
+ * Unset the RPC_SUPPORTED_PROTSEQS and ENCINA_BINDING_FILE variables from your environment. 
+ * Ensure that DCE is not running on the server before starting a region or SFS. Later versions of TXSeries uses sarpcd process for remote procedure call (RPC) services. sarpcd and DCE does not work together on the same server. 
+ * TXSeries 6.1 and later has XA Resiliency feature introduced. The CICS region will be available even if one of the XA-configured database is unavailable. Hence, you need to ensure that the response from SQL statements are handled appropriately in the application. 
+ * Recompile the external call interface (ECI) and external presentation interface (EPI) applications using the libraries provided by CICS Universal Client or CICS Transaction Gateway. RPC-based ECI and EPI are no longer supported. 
+ * You can find equivalent variables to the ENCINA or DCE variables from TXSeries 5.1 in the version of the Information Center to which you are migrating. 
+ * TXSeries is no longer installed as a component in the operating system. You need to use the cicscp version command to know the version of TXSeries installed on your server. 
+ * cics:cics owns the log volumes and the data volumes that are used for SFS from TXSeries 6.2 onwards. Modify the ownerships accordingly, if you are using existing log volumes and an existing data volumes for SFS.
+
+
+
+Contact your IBM support representative for any specific requirements and queries in this regard.,

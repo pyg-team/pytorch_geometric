@@ -1,0 +1,38 @@
+Title: IBM Upgrade Planning for IBM i Version 7.2 - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ Links to information regarding upgrade planning to IBM i version 7.2 
+
+CONTENT
+This document contains links to information regarding upgrade planning to IBM i Version 7.2. 
+
+7.2 Memo to users [http://www-01.ibm.com/support/knowledgecenter/ssw_ibm_i_72/rzaq9/rzaq9.pdf]
+
+
+7.2 Installing, upgrading, or deleting IBM i and related software [http://www-01.ibm.com/support/knowledgecenter/ssw_ibm_i_72/rzahc/sc415120.pdf]
+
+
+System to IBM i Maps [http://www-01.ibm.com/support/docview.wss?uid=ssm1platformibmi]
+
+
+Required PTFs for upgrading to IBM i 7.2 [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20and%20Related%20Software/page/Required%20PTFs%20for%20upgrading%20to%20IBM%20i%207.2]
+[https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20and%20Related%20Software/page/Required%20PTFs%20for%20upgrading%20to%20IBM%20i%207.2]IBM i Resave listing [http://www-947.ibm.com/systems/support/i/planning/resave/v7r2.html]
+
+
+Listing of the 7.2 upgrade media labels and their contents [http://www-01.ibm.com/support/docview.wss?uid=nas8N1012504&aid=1]
+
+
+SF98172: IBM i Upgrade and Migration Corrections [http://www-912.ibm.com/s_dir/sline003.NSF/7f02fa4a8460c21f86256c450052b184/dea91b612be284fe86257cee00495782?OpenDocument]
+[http://www-912.ibm.com/s_dir/sline003.NSF/7f02fa4a8460c21f86256c450052b184/dea91b612be284fe86257cee00495782?OpenDocument]
+Master Document for Server Firmware and HMC Code Wizard [http://www-912.ibm.com/s_dir/SLKBase.nsf/DocNumber/408316083]
+
+
+Ensuring the system meets disk storage requirements for upgrades [http://www-01.ibm.com/support/knowledgecenter/ssw_ibm_i_72/rzahc/rzahcevaldskstorreq.htm]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2

@@ -1,0 +1,44 @@
+Title: IBM DB2 WRONG DATA TYPE SQL error when publishing a rule project to RTS - United States
+
+Text:
+DB; rule designer; decision center TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Synchronization between Rule Studio and Rule Team Server (RTS) fails with a "WRONG DATA TYPE" error. 
+
+SYMPTOM
+You get the following error when publishing a project to RTS on WebLogic: 
+
+<Debug> <JDBCDriverLogging> <aixth98> <appdev_jrules_aixth98> <[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <> 
+<1333129090586> <BEA-000000> <java.sql.SQLException: [BEA][DB2 JDBC Driver][DB2]VALUE OF INPUT HOST VARIABLE NUM 2 NOT USED; WRONG DATA TYPE 
+
+
+CAUSE
+A non-supported database driver is used. 
+
+
+ENVIRONMENT
+The above error is displayed when using the WebLogic driver for DB2 with JRules V7.1, since only IBM drivers are supported in that version.
+
+
+
+DIAGNOSING THE PROBLEM
+Refer to the server logs for the full error message and make sure you are using one of the supported drivers.
+
+
+
+RESOLVING THE PROBLEM
+Switch to a supported driver. 
+
+Refer to the following links to find the list of supported drivers in the product hardware and software requirements for the version you are using.
+
+RELATED INFORMATION
+#JRules V7.0 hardware and software requirements [http://www.ibm.com/support/docview.wss?uid=swg27015807]
+JRules V7.1 hardware and software requirements [http://www.ibm.com/support/docview.wss?uid=swg27018135]
+ODM hardware and software requirements [http://www.ibm.com/support/docview.wss?uid=swg27023067]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Modules:Rule Team Server Platform Independent 8.5, 8.0, 7.5

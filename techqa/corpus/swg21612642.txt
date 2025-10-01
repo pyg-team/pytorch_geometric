@@ -1,0 +1,50 @@
+Title: IBM How to hide or remove Sign up and Edit my profile link from Page Builder (PB2) theme - United States
+
+Text:
+Sign up; Signup; Edit my profile; Pagebuilder2; Page builder; PB2; remove; hide TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+How to hide or remove Sign up and Edit my profile link from Page Builder (PB2) theme's banner files.
+
+RESOLVING THE PROBLEM
+In general, as mentioned in the Portal info center, Page builder menus located at : fs-type1/themes/PageBuilder2/menuDefinitions
+
+http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Page_builder_menus_wcm7 [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Page_builder_menus_wcm7]
+
+
+So to remove/hide the Sign up link do the following : 
+
+1) Connect to your fs-type1 using a webDav :
+hxxp://localhost:10039/wps/mycontenthandler/dav/fs-type1
+
+
+2) Go to fs-type1/themes/PageBuilder2/menuDefinitions/ directory 
+
+3) modify bannerLink.json 
+
+from
+
+visibilityFn: com.ibm.pb.contextMenu.sharedActions.isAnonymous,
+id: "BannerLinks:signUp"
+
+to
+
+visibilityFn: function(ID, resourceType, metadata, obj){ return false;}, 
+id: "BannerLinks:signUp"
+
+
+To remove/hide the Edit my profile link do the following :
+1) modify userActions.json file in fs-type1/themes/PageBuilder2/menuDefinitions/ directory
+
+from
+
+visibilityFn: com.ibm.pb.contextMenu.sharedActions.isAuthenticated,
+id: "UserActions:selfCare"
+
+to
+
+visibilityFn: function(ID, resourceType, metadata, obj){ return false;}, 
+id: "UserActions:selfCare"
+
+
+Note: you may want to clear the browser cookies and cache before testing.

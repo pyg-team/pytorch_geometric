@@ -1,0 +1,22 @@
+Title: IBM Amount of RAM required to host Rational DOORS on Citrix - United States
+
+Text:
+memory required; Citrix; DOORS; RAM; resources; custom sizing; analyze environment; performance TECHNOTE (FAQ)
+
+QUESTION
+ How much RAM does a Citrix system need to host the IBM Rational DOORS client? 
+
+CAUSE
+Documentation for setting up IBM Rational DOORS on Citrix does not identify adequate system resources to support the application.
+
+ANSWER
+IBM Rational DOORS is a 32 bit application. Thus, each DOORS client process (doors.exe) is capable of consuming up to 2 GB of RAM. The actual memory consumed depends on what resources the application needs and will vary depending on how you utilize DOORS. 
+
+How you size your Citrix system depends on: 
+
+ *  The total number of concurrent DOORS users you expect
+   
+   How much memory you expect each DOORS process to consume
+   
+
+A very conservative approach would be to allocate 2 GB of RAM multiplied by the peak number of users expected (in addition to enough RAM for the operating system and other applications being hosted). However, that can get expensive as the number of concurrent DOORS users increases. Thus, many clients choose to allocate less than 2 GB of RAM per DOORS process -- how low you go depends on your analysis of DOORS usage pattern. If the Citrix server does not have enough RAM to support the applications it is hosting, you will see performance problems. If the load is overwhelming enough, the Citrix server itself may crash. If you need your environment analyzed to determine how to size your Citrix system, please contact your account manager for assistance. Custom sizing recommendations are outside the scope of the IBM Rational DOORS Support team.

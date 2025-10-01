@@ -1,0 +1,164 @@
+Title: IBM IC65573: 2298 MQRC_FUNCTION_NOT_SUPPORTED EXCEPTION WHEN CONNECTING A    .NET APP TO A SYSTEM WHICH DOES NOT SUPPORT THE SPI VERBS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a .NET application is talking to a server which does not
+   support SPI query calls, the application fails with a 2298
+   (FUNCTION_NOT_SUPPORTED) when it attempts to query the SPI
+   levels. This results in the MQCONNX call failing.
+   The following exception is seen in a WebSphere MQ trace:
+   -----}! SPINewHObj (rc=MQRC_FUNCTION_NOT_SUPPORTED)
+   ----}  UnmanagedNmqiMQ.SPIQuerySPI(Hconn,int,ref int,
+   ref int,ref int,ref int,out int,out int) (rc=OK)
+   ---}  UnmanagedNmqiMQ.MQCONNX(String,ref MQCNO,Hconn,
+   Phconn,out int,out int) (rc=OK)
+   --}  UnmanagedNmqiMQ.MQCONNX(String,MQConnectOptions,
+   Phconn,out int,out int) (rc=OK)
+   MQException CompCode: 2 Reason: 2298
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of .NET talking to WebSphere MQ systems which do not
+   support the SPI verbs, such as WebSphere MQ for VSE.
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The .NET unmanaged layer assumed that it could query the
+   supported SPI interfaces, and failed to take into account there
+   are systems, such as on VSE, which do not even implement the
+   query function. When used against such a system, an unexpected
+   MQRC_FUNCTION_NOT_SUPPORTED was being returned but not handled.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The .NET unmanaged interface has been modified to correctly
+   handle a MQRC_FUNCTION_NOT_SUPPORTED when querying the
+   supported SPI versions, and handle that return code correctly
+   as though no SPI verbs are supported.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.2
+   --------           --------------------
+   Windows            U200316
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC65573
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-14
+   
+   
+ * CLOSED DATE
+   2010-01-28
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

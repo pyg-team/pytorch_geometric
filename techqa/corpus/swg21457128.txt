@@ -1,0 +1,80 @@
+Title: IBM Unable to start service: Some services stop automatically if they have no work to do... - United States
+
+Text:
+message; pop up; pops up TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error thrown when attempting to start the TM1 service or Admin Server. 
+
+SYMPTOM
+Error similar to: 
+
+The TM1 Server - <server name> service on Local Computer started and then stopped. Some services stop automatically if they have no work to do, for example, the Performance Logs and Alerts service.
+
+CAUSE
+Possible missing license, incorrect path in registry or port number conflict.
+
+
+
+DIAGNOSING THE PROBLEM
+Look at the Event Viewer error details (last line) for more info. The last line will indicate: Invalid License, Missing License, Can't find data, Missing file, etc.
+
+
+
+RESOLVING THE PROBLEM
+All installations must be done while logged in as an administrator. If using Windows server 2008 R2, it is necessary to right-click on the executable and choose to Run as Administrator, even if logged in as an administrator. If the installation was done without doing that, it is necessary to uninstall and reinstall using Run as Administrator.
+
+Other things to check: 
+
+Check the Processes tab of the Task Manager to be sure that the service you are trying to start is not already running. This is most likely to happen if it is the Admin Server that is not starting. Check to see if the Process tm1admsrv.exe or tm1admsd.exe. If so, stop that service via the task manager and then try restarting the service. 
+
+Check the Event Viewer for associated errors. 
+
+ * If the Event Viewer error says something about the license then check the registry to be sure that the ConfigPath is pointing to the data directory (or location of the tm1s.cfg, if not in the data directory). The license (tm1s.lic ) may be in the wrong place (should be in the data directory) or the path may be incorrect. (Note that the license file does not exist for TM1 versions 9.5x and higher.) Follow these steps to check the registry:
+   
+   NOTE: Modifying registry settings should be done with caution; if done incorrectly it can have undesired consequences. Be sure to follow Microsoft guidelines. If you are not familiar/comfortable with working with the registry, please contact your system admin or log a PMR and a support analyst can assist you.
+   
+   1. Go to Start > Run
+   2. Type in Regedit
+   3. Then go to HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services
+   4. Then look for name of the server (Planning Sample, Sdata, CustomData)
+   5. Click on the server and look at the ConfigPath on the right. If the path is correct check to see that a valid license is in the data directory. If the registry is showing the wrong path it can be changed by double-clicking the ConfigPath and entering the correct path. 
+
+
+If you make any changes be sure to refresh the Services view before trying to start the service again. 
+ * Verify that the path to the data directory is also correct in the tm1s.cfg file.
+
+ * If the license is in the data directory (if required for version being used)and the paths are all set, then change the account that starts the service to Local System Account. If it works using the local account it tells you that the service account user being used does not have access to the directory where the tm1s.cfg file is - give full control permission to the service account user and then switch back to that user.
+
+ * If that does not solve the problem then check port number alignment for the tm1adminsvr and tm1admsrv_ssl at C:\WINDOWS\system32\drivers\etc > services. Make sure that the port numbers are one on top of the other and that they look like this:
+
+5495/tcp 
+5498/tcp 
+
+Make sure there are no spaces, for example, you do NOT want to see: 
+5495 /tcp 
+or 
+5498/ tcp 
+
+If there are spaces, remove the spaces and save the changes. 
+ *  When using TM1Web this error may occur if the port the TM1ExcelService is running on is hung up for some reason. Sometimes a reboot of the web server will clear the issue, and certainly rebooting weekly would be a good practice. 
+
+ * If still getting the error, have your system admin check to see if the port is being used by another application. If it is, perhaps the other application knocks the TM1ExcelService out or hangs it requiring the reboot. If the port is being used permanently by another application you can assign the tm1excelservice to use another port. 
+
+
+To modify the port number follow the steps below: 
+
+1. Modify the port number in "C:\Inetpub\wwwroot\TM1Web\Web.config": 
+
+<!-- TM1ExcelServicePortNumber: Port number at which the TM1ExcelService is listening --> 
+
+<add key="TM1ExcelServicePortNumber" value="4795" /> 
+
+2. Find the TM1ExceService.exe.config (in the install directory bin folder) and modify the port number as follows: 
+
+<!-- TM1ExcelServicePortNumber: Port number at which the TM1ExcelService will listening --> 
+<add key="TM1ExcelServicePortNumber" value="4795" /> 
+
+Make sure to set theTM1ExcelServicePortNumber key value in TM1ExcelService.exe.config to the identical TM1ExcelServicePortNumber key value in Web.config. 
+
+3. Try to restart the TM1 Excel Service in the Windows Services console.

@@ -1,0 +1,59 @@
+Title: IBM Performance Tuning for IBM Security Access Manager client on WebSphere DataPower SOA Appliance - United States
+
+Text:
+DataPower; ISAM; Security Access Manager TAM; Tivoli Access Manager; Performance TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The settings in the default IBM Security Access Manager configuration file might affect transactional throughput when performing authentication and authorization with Security Access Manager under load. 
+
+SYMPTOM
+When you create a Security Access Manager configuration file on a DataPower appliance or on a Security Access Manager system, the default entries in the Security Access Manager configuration file do not contain any optimization with respect to performance. By default, these options are not enabled or configured, because of the diverse nature of Security Access Manager and DataPower deployments. 
+
+Specifically, caching of registry searches is not enabled. This feature represents the largest performance improvement that is available. 
+
+When Security Access Manager authenticates or authorizes a user, it must perform several searches against the registry server in the Tivoli Access Manager (server) environment. When registry-caching is not enabled, these searches must be performed on each operation. Because each search is an external network operation, a performance penalty is incurred, which significantly increases the load on the registry server. 
+
+The Security Access Manager configuration file contains a parameter that enables caching of registry search results. When enabled, there are additional parameters to control the number of users or groups that the client will cache and the length of time a cached entry is valid. 
+
+Additionally, you can define configuration entries that direct the Security Access Manager client to ignore irrelevant registry suffixes. 
+
+For both improved performance and high availability, define registry server replica. These definitions include preference indicators to distribute load across multiple registry servers.
+
+
+CAUSE
+The configuration file for the Security Access Manager client on the DataPower appliance is not optimized for the operating environment.
+
+
+ENVIRONMENT
+The configuration file for the Security Access Manager client on the DataPower appliance is not optimized for the operating environment.
+
+
+
+DIAGNOSING THE PROBLEM
+A noticeable degradation of DataPower transactional performance when Security Access Manager is in use for authentication, authorization, or both authentication and authorization.
+
+
+
+RESOLVING THE PROBLEM
+Perform an appropriate analysis of available performance tuning options for Security Access Manager for your planned operational conditions. See the Security Access Manager Knowledge Center for details on the performance tuning configurations that can be applied. 
+
+For example, the following parameters in the [ldap] stanza can be set to improve performance. The values provided are for only illustrative purposes. 
+
+[ldap]
+cache-enabled = yes
+cache-group-expire-time = 300 # number of seconds a cached group entry is considered valid
+cache-group-membership = yes
+cache-group-size = 64 # maximum number of groups stored in the cache
+cache-policy-expire-time = 30 # number of seconds a cached (LDAP) policy entry is considered valid
+cache-policy-size = 20 # maximum number of (LDAP) policy entries stored in the cache
+cache-use-user-cache = yes # defines whether account and password validity is stored in the cache
+cache-user-expire-time = 30 # number of seconds a cached user entry is considered valid
+cache-user-size = 256 # maximum number of user entries stored in the cache 
+
+After you apply these options to the configuration file, the Security Access Manager client on the DataPower appliance, you must restart the appliance for the options to take effect. 
+
+If any of the Security Access Manager servers (registry or authorization servers) are on AIX systems, review the 'Enabling tcp_nodelayack can improve network performance' Technote in the related URL section, and, if applicable, apply the suggestions to these servers.
+
+RELATED INFORMATION
+#ISAM 6.1.1 [ldap] stanza reference [http://www-01.ibm.com/support/knowledgecenter/SSPREK_6.1.1/com.ibm.itame.doc_6.1.1/am611_admin448.htm%23wq628]
+Enabling tcp_nodelayack can improve network performance [http://www.ibm.com/support/docview.wss?uid=swg21385899]

@@ -1,0 +1,227 @@
+Title: IBM IZ92223: UNINSTALL.SH DOES NOT REMOVE ECLIPSE HS CORRECTLY - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  APAR Type:            Field
+   
+   Approver Initials:    AS
+   Severity:             2
+   Reported Release:     622
+   Compid:               5608A41CI Distributed Installer
+   ABSTRACT:             uninstall.sh does not remove Eclipse HS
+   correctly
+   
+   
+   PROBLEM DESCRIPTION:
+   
+   
+   uninstall.sh does not remove all of the files belonging to the
+   Eclipse
+   Help Server, including the kf*.ver file.
+   This causes an uninstall followed by a reinstall to fail.
+   
+   
+   RECREATE INSTRUCTIONS:
+   
+   
+   The steps that were performed are:
+   1) Install TEPS and OS agent 6.22.03
+   2) Install some some TEPS and TEPW application support.
+   3) Run cinfo -t and verify that Eclipse help server is listed as
+      version 6.22.03
+   4) Run ls $CANDLEHOME/*/kf and verify that there are (correctly)
+      multiple kf trees.
+   5) Run uninstall.sh for Eclipse Help Server and then TEPS only.
+   6) PROBLEM: Run cinfo -t and notice that kf is still listed as
+   installed
+   7) PROBLEM: Run ls $CANDLEHOME/*/kf and verify that most files,
+      but not all, are missing.
+   8) Install TEPS 6.22.02
+   9) PROBLEM: Run cinfo -t and verify that Eclipse help server is
+   still
+      listed as version 6.22.03
+   10) Manually rename $CANDLEHOME/registry/kf*.ver to
+       $CANDLEHOME/registry/kf*.ver.old
+   11) Manually remove all kf trees by rm -rf $CANDLEHOME/*/kf
+   12) Reinstall TEPS 6.22.02 and respond yes to same version
+   question.
+   13) Reinstall some TEPS and TEPW application support and respond
+   yes
+       to same version question.
+   14) Run cinfo -t and verify that Eclipse help server is now
+   listed
+       as version 6.22.02
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1) Run uninstall.sh for Eclipse help server
+   
+   2) Manually rename $CANDLEHOME/registry/kf*.ver to
+      $CANDLEHOME/registry/kf*.ver.old
+   3) Manually remove all kf trees by rm -rf $CANDLEHOME/*/kf
+   4) Reinstall TEPS 6.22.02 and respond yes to same version
+   question.
+   5) Reinstall some TEPS and TEPW application support and respond
+   yes
+       to same version question.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  uninstall.sh does not remove all of Eclipse Help System files
+   and directories
+   
+   On 64-bit platforms, uninstall.sh does not completely remove the
+   Eclipse Help System when the portal server is uninstalled.
+   
+   In addition, on both 32-bit and 64-bit systems, application
+   support files are removed when any of the following are
+   uninstalled:
+   
+      - Tivoli Enterprise Portal Browser Client
+      - Tivoli Enterprise Portal Desktop Client
+      - Tivoli Enterprise Portal Server
+   
+   While the uninstall removes the application support files, it
+   does not remove the control files that cause them to show up in
+   cinfo -i and cinfo -t output. As a result, it looks like
+   application support is still installed even though it was
+   removed with its parent component.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was changed to completely remove the Eclipse Help
+   System when the portal server is uninstalled. The code was also
+   changed to remove the control files for application support so
+   cinfo -i and cinfo -t do not report false positives.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+      | fix pack | 6.2.2-TIV-ITM-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  After uninstalling the portal server (which includes the Eclipse
+   Help System), manually remove any remaining
+   CANDLEHOME/<arch>/kf. After uninstalling, the following
+   products, manually remove the corresponding control files:
+   
+      Product                  Control Files to Remove
+   
+      --------------------------------------------------
+      Tivoli Enterprise Portal Browser Client
+   CANDLEHOME/registry/*tpw.ver
+      Tivoli Enterprise Portal Desktop Client
+   CANDLEHOME/registry/*tpd.ver
+      Tivoli Enterprise Portal Server:
+   CANDLEHOME/registry/*tps.ver
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ92223
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-01-13
+   
+   
+ * CLOSED DATE
+   2011-03-17
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

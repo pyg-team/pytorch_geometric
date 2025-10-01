@@ -1,0 +1,47 @@
+Title: IBM API Connect V5.0.6.6 is available - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ IBM API Connect V5.0.6.6 is available, which addresses several APARs and includes product enhancements. 
+
+CONTENT
+
+
+IBM API Connect V5.0.6.6 is now available and provides important development and APAR fixes. 
+
+We advise all users of IBM API Connect V5.0.6 to install this update to take advantage of the fixes. Users of IBM API Connect 5.0 to 5.0.6 also should consider upgrading to V5.0.8. 
+
+
+SUPPORT LIFECYCLE POLICY FOR IBM API CONNECT VERSION 5.0.6.X:
+IBM API Connect Version 5.0.6.x is a Long Term Supported (LTS) release and is a recommended product level for which support, including defect and security updates, will be provided through cumulative, in-place Fix Packs until the effective end of support (EOS) date for IBM API Connect Version 5.0. An LTS release is intended for customers that may need a longer-term deployment for their environment. 
+
+Note that IBM API Connect Version 5.0.8.x has also been designated an LTS release. 
+
+See http://www-01.ibm.com/support/docview.wss?uid=swg22006450 [http://www-01.ibm.com/support/docview.wss?uid=swg22006450] for more details on the IBM API Connect v5.0.x Support Lifecycle. 
+
+
+APAR FIXES
+THE FOLLOWING APARS WERE ADDRESSED BY IBM API CONNECT V5.0.6.6, ALONG WITH OTHER INTERNALLY RAISED QUALITY FIXES:
+APAR Summary LI79874 ACCESS-CONTROL-ALLOW-CREDENTIALS HEADER INCORRECTLY SET TO FALSE FOR 404 ERROR CODE RESPONSE LI79889 SOAP REQUESTS WITH CONTENT-TYPE OF APPLICATION/SOAP+XML MAY FAIL WITH A 404 NOT FOUND ERROR LI79914 JSON TO XML MAPPING WITH ONLY TOP LEVEL ELEMENTS NOT WORKING AS EXPECTED LI79918 INVALID JSON PAYLOAD RESULTS IN HTTP 500 INSTEAD OF HTTP 400 LI79924 EMPTY RESPONSE PAYLOAD IS PARSED AS XML LI79929 A VALIDATE POLICY USED TO VALIDATE XML AGAINST A DEFINITION CONTAINING AN "ALLOF" PROPERTY MAY UNEXPECTEDLY FAIL LI79938 ANALYTICS RECORDS MAY BE LOST IF A QUERY PARAMETER HAS NO NAME LI79947 OAUTH PROVIDER API THAT CALLS DELETE /OAUTH2/ISSUED RETURNS AN ERROR LI79956 OAUTH REVOKE PERMISSIONS RETURNS SIGN IN PAGE. LI79958 IP MULTICAST PEERING GROUP DOWN WHEN USING APIC WITH DATAPOWER ON DOCKER LI79964 OPEN SOURCE APACHE HTTP SERVER VULNERABILITIES LI79974 IF INVOKE POLICY TARGET-URL'S RESPONSE IS A SOAP FAULT, API WILL RETURN "INVALID XML PAYLOAD RECEIVED" LI79979 USING VALIDATION POLICY TO VALIDATE AGAINST THE REQUEST MAY FAIL LI79984 CROSS-SITE SCRIPTION (REFLECTED) LI79985 UNAUTHORIZED MODIFICATION OF INFORMATION LI79986 NODE.JS TOUGH-COOKIE MODULE IS VULNERABLE TO A DENIAL OF SERVICE LI79989 OPENSSL VULNERABILITIES LI80063 API CONNECT APACHE HTTP SERVER VULNERABILITY (CVE-2014-0226) 
+
+UPGRADE PATHS FOR API CONNECT:
+For more information on IBM API Connect upgrade paths, see Supported Upgrade Paths. [http://www-01.ibm.com/support/docview.wss?uid=swg21984408] 
+
+There are specific validated upgrade paths between IBM® API Management Version 4.0 or later and IBM API Connect Version 5.0 or later. For more information, see Validated upgrade paths for API Connect [http://www.ibm.com/support/knowledgecenter/SSMNED_5.0.0/com.ibm.apic.overview.doc/overview_apic_upgrade_path.html] 
+
+In addition to the specific validated upgrade paths for the API Management appliance, you must upgrade your IBM DataPower Gateway appliance. For more information, see Upgrading DataPower for Gateway servers [http://www.ibm.com/support/knowledgecenter/SSMNED_5.0.0/com.ibm.apic.overview.doc/apply_main_gateway.html]. 
+
+Upgrading the gateway to firmware level 7.5.0.1 is strongly recommended for the best experience. 
+
+
+
+DOWNLOADS:
+ Full installation and upgrade files for IBM API Connect Version 5.0.6.6 (Enterprise, Professional & Essentials) can be downloaded from Fix Central: IBM API Connect Version 5.0.6.6 [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+API+Connect&release=5.0.6.5&platform=All&function=all] 
+
+Ensure that you have read and understood the installation instructions before downloading and using the installation or upgrade files. You can find detailed installation instructions in IBM API Connect Knowledge Center -- Installing API Connect [https://www.ibm.com/support/knowledgecenter/SSMNED_5.0.0/com.ibm.apic.install.doc/capic_plan_install_overview.html].
+
+
+
+What is Fix Central (FC)? [http://www.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html]

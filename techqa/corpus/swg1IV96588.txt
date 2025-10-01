@@ -1,0 +1,263 @@
+Title: IBM IV96588: BMXAA6713E - THE MBO FETCH OPERATION FAILED IN THE MBOSET WITH THE SQL ERROR CODE -20423. USING WILDCARD WITH DB2 TEXT SEARCH. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM:
+   When using the DB2 text search functionality and specifying the
+   wildcard % or * character the following error occurs:
+   
+   BMXAA6714E - The data for the next record in the mboset could
+   not be retrieved for the SQL query select * from
+   ...
+   com.ibm.db2.jcc.am.SqlException: Error occurred during text
+   search processing on server "localhost" using index
+   "MAXINDEX.LXIL1". The error message is ""IQQS0032E The query
+   xxx% cannot be proces".. SQLCODE=-20423, SQLSTATE=38H10,
+   DRIVER=4.11.69
+   
+   PERFORMANCE ISSUE:  No
+   
+   STEPS TO REPRODUCE:
+   
+   1. Implement DB text search on the MAXIMO.LONGDESCRIPTION table
+   using the ToggleDB2TextSearch utility
+   
+   2. Create 4 Work Orders with the following values for
+   DESCRIPTION_LONGDESCRIPTION
+   Test text search 123
+   Test text search 1234
+   Test text search 123
+   abcde
+   
+   3. Add LONGDESCRIPTION.LDTEXT to the More Search fields dialog
+   (label Ldtext)
+   
+   4. More Search Fields / Ldtext: 123
+   Finds:
+   Test text search 123
+   Test text search 123
+   
+   5. More Search Fields / Ldtext: 123*
+   BMXAA6713E - The MBO fetch operation failed in the mboset with
+   the SQL error code -20423. The record could not be retrieved
+   from the database.
+   
+   6. More Search Fields / Ldtext: 123%
+   BMXAA6713E - The MBO fetch operation failed in the mboset with
+   the SQL error code -20423. The record could not be retrieved
+   from the database.
+   
+   7. More Search Fields / Ldtext: "123*"
+   Finds:
+   1004        Test text search 123
+   1022        Test text search 1234
+   1039        Test text search 123
+   
+   CURRENT ERRONEOUS RESULT:
+   SQL errors are returned when the wildcard characters are not
+   enclosed in double-quotes.
+   
+   EXPECTED RESULT:
+   It should not be necessary to enclose search terms using
+   wildcard characters in double-quotes.
+   
+   ENVIRONMENT:
+   Reported on:
+   SCCD 7.5.3
+   TPAE 7.5.0.8-IFIX20151202-1227
+   
+   Replicated on:
+   ICD 7.6.0.1
+   TPAE 7.6.0.3-IFIX20170120-1436 Build 20160113-2204
+   
+   Database DB2
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Enclose search terms using wildcard characters in double-quotes
+   when searching fields that have been enabled for DB2 text search
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Maximo users of full text search on db2.                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When using the DB2 text search functionality and specifying  *
+   * the wildcard % or * character the following errors occur:    *
+   * BMXAA6714E - The data for the next record in the mboset      *
+   * could not be retrieved for the SQL query select * from...    *
+   * ...                                                          *
+   * com.ibm.db2.jcc.am.SqlException: Error occurred during text  *
+   * search processing on server "localhost" using index          *
+   * "MAXINDEX.LXIL1". The error message is ""IQQS0032E The query *
+   * 123% cannot be proces".. SQLCODE=-20423, SQLSTATE=38H10,     *
+   * DRIVER=4.11.69                                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   STEPS TO REPRODUCE:
+   
+   1. Make sure db2 is text search enabled and implement DB text
+   search on the MAXIMO.LONGDESCRIPTION table using the
+   ToggleDB2TextSearch utility
+   
+   2. Create 4 Work Orders with the following values for
+   DESCRIPTION_LONGDESCRIPTION
+   Test text search 123
+   Test text search 1234
+   Test text search 123
+   abcde
+   
+   3. Add LONGDESCRIPTION.LDTEXT to the More Search fields dialog
+   (label Ldtext)
+   
+   4. More Search Fields / Ldtext: 123
+   Finds:
+   Test text search 123
+   Test text search 123
+   
+   5. More Search Fields / Ldtext: 123*
+   BMXAA6713E - The MBO fetch operation failed in the mboset with
+   the SQL error code -20423. The record could not be retrieved
+   from the database.
+   
+   6. More Search Fields / Ldtext: 123%
+   BMXAA6713E - The MBO fetch operation failed in the mboset with
+   the SQL error code -20423. The record could not be retrieved
+   from the database.
+   
+   7. Add quotation marks around the search value as follows: More
+   Search Fields / Ldtext: "123*"
+   Finds:
+   1004        Test text search 123
+   1022        Test text search 1234
+   1039        Test text search 123
+   
+   CURRENT ERRONEOUS RESULT:
+   SQL errors are returned when the wildcard characters are not
+   enclosed in double-quotes.
+   
+   EXPECTED RESULT:
+   It should not be necessary to enclose search terms using
+   wildcard characters in double-quotes.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   	  Release 7.6.0.9 of Base Services
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV96588
+   
+   
+ * REPORTED COMPONENT NAME
+   ADMINISTRATION
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46A1
+   
+   
+ * REPORTED RELEASE
+   760
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-05-25
+   
+   
+ * CLOSED DATE
+   2017-07-19
+   
+   
+ * LAST MODIFIED DATE
+   2017-07-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ADMINISTRATION
+   
+   
+ * FIXED COMPONENT ID
+   5724R46A1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R760 PSY
+   UP

@@ -1,0 +1,171 @@
+Title: IBM IC47696: BIP5180E WHEN PARSING WITH THE IDOC DOMAIN. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  E: WMBv6 W2003 DB2 8.2 migration from WMQIv2.1 CSD06
+   D: customer is starting to migrate from V2.1 to V6 and
+      encounters problems when running migrated
+      msgflows which use IDOcs (SAP)
+      .
+   
+      to try to find where the problem lies customer defined a
+      simple msgflow (MQinput + trace + MQOutput)
+      and got msg BIP5180E and BIP5285E
+      telling the parser cannot find the message ID
+      associated with the IDOC segment on the MRM ....
+      .
+      the same flow works fine in V2.1 .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  It has been confirmed that the customer has encountered
+   defect 43330 and this is why the IDOC parse is failing
+   with a BIP5180E.
+   
+   It has been now identified a fix to this problem and have
+   tested the proposed solution against the customers scenario.
+   With the fix applied the IDOC parse was successful and no
+   BIP5180E was generated.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All WMB v6 IDOC Parser users                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A BIP5180E exception is thrown when     *
+   *                      parsing a message with the IDOC         *
+   *                      parser.                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The IDOC parser is a built-in parser that parses a DC and DD
+   structure in the message tree. It uses the MRM to parse a fixed
+   length segment in the DD.sdatatag field. When specifying the
+   IDOC domain, an MRM messageSet and MRM messageFormat is
+   specified in the Set and Format fields. When parsing using
+   the MRM domain a message type is also required to identify
+   which message to use within the named messageSet. This is
+   taken from the input message itself, specifically the
+   DD.segnam field. The DD.segnam field is always a 30 character
+   field and so if a segment name is less than 30 characters the
+   value is padded with spaces. When the IDOC parser uses this
+   name and passes it to the MRM parser as a Message Type value
+   the spaces are still present on the name. The MRM should
+   tolerate spaces on the message type value and should remove
+   these before attempting to match the message type value with
+   a message identifier in the messageSet.
+   
+   A problem existed such that the MRM did not remove the
+   trailing spaces from the message type name and hence did not
+   find a match in the messageSet. A BIP5180E exception is
+   thrown indicating the message could not be found in the
+   messageSet.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem has been resolved such that the trailing spaces
+   are tolerated and a match can be made if a message of the
+   named type does exist in the named messageSet. If the named
+   message does not exist in the messageSet then a BIP5180E will
+   be thrown and this would be correct.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC47696
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB M BRKER WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0500
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-01-27
+   
+   
+ * CLOSED DATE
+   2006-01-31
+   
+   
+ * LAST MODIFIED DATE
+   2006-01-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB M BRKER WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724J0500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

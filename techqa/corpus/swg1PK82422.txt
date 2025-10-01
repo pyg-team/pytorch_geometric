@@ -1,0 +1,156 @@
+Title: IBM PK82422: UNABLE TO EDIT IMAGES WITHIN THE RICHTEXT EDITOR - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.3 Download: WebSphere Portal and WCM V6.1 fix pack 3, 6.1.5 feature pack [http://www-01.ibm.com/support/docview.wss?uid=swg24025054]
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  We have finaly migrate our WCM content from 5.1.0.4 to
+   6.0.1.5.CF8
+   
+   We found existing migrated content documents which can not be
+   edited
+   anymore. These documents contain images within the richtext
+   editor. It
+   is also not possible to open and close (without save) these
+   documents.
+   When we open and close such a document. We get following error
+   message:
+   
+   
+   
+   In the SystemOut.log we found the following exception:
+   [3/4/09 9:12:05:820 CET] 0000004e AbstractComma E   <Null
+   Message>
+   
+   java.lang.IllegalArgumentException:
+   Invalid ICC Profile Data
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  test fix provided and solved the problem
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Unable to render specific images
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In the SystemOut.log we found the following exception:
+   [3/4/09 9:12:05:820 CET] 0000004e AbstractComma E   <Null
+   Message>
+   
+   java.lang.IllegalArgumentException:
+   Invalid ICC Profile Data
+   
+   Issue was due to invalid image being uploaded to WCM, however
+   WCM was failing in an unecessary way rather than reporting
+   the exception and skipping the image.
+   
+   The image file itself was to blame, had to do with invalid
+   format for web images.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK82422
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-03-13
+   
+   
+ * CLOSED DATE
+   2009-08-20
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP
+   
+   
+ * R61A PSY
+   UP

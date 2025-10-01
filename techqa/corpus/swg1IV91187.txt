@@ -1,0 +1,158 @@
+Title: IBM IV91187: NOI SE_PROCESSEVENT DOES NOT ESCAPE CARRIAGE RETURN/LINE FEED CHARS - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-LINUX-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0009&source=SAR]
+7.1.0-TIV-NCI-ZLINUX-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0009&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0009&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0009&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0009&source=SAR]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 9(7.1.0-TIV-NCI-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24043378]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 10(7.1.0-TIV-NCI-FP0010) [http://www-01.ibm.com/support/docview.wss?uid=swg24043588]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 11(7.1.0-TIV-NCI-FP0011) [http://www-01.ibm.com/support/docview.wss?uid=swg24043858]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 12 (7.1.0-TIV-NCI-FP0012) [http://www-01.ibm.com/support/docview.wss?uid=swg24044312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Impact policy for NOI - SE_PROCESSEVENT - generates and error
+   when it attempts to process rules created from events (rows) in
+   alerts.status which contain a carriage return/line feed
+   character in the event fields (e.g.: specifically Summary or
+   Identifier).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * An error was observed with the Impact policy SE_PROCESSEVENT *
+   * when it                                                      *
+   * attempted to process rules created from events (rows) in     *
+   * alerts.status                                                *
+   * which contained a carriage return/line feed character in the *
+   * event fields                                                 *
+   * (specifically Summary or Identifier).                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   a javascript error was being generated in  the policy log and
+   the events were
+   not being displayed in the GUI
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The javascript NOI code has been updated.
+   Newline and carriage return characters are now escaped.
+   
+   The fix for this APAR is contained in the following
+   maintenance package:
+   | Fix Pack | 7.1.0-TIV-NCI-FP0009
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV91187
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-12-01
+   
+   
+ * CLOSED DATE
+   2017-01-17
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UNKNOWN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

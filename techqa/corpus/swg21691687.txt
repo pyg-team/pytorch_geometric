@@ -1,0 +1,23 @@
+Title: IBM Command line deployment tool to deploy ODM Applications with custom Database URL - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to deploy ODM Applications with custom Database URL? 
+
+RESOLVING THE PROBLEM
+Sometimes you may need to deploy ODM Applications that have been configured with a Database custom URL, such as below: 
+
+http://www.ibm.com/support/docview.wss?uid=swg21568607 [http://www-01.ibm.com/support/docview.wss?uid=swg21568607]
+
+However, that is not supported by the current odmdeploy tool. Here we are providing a Eclipse project which contains a sample command-line tool that uses the Decision Optimization Center Java Deployment API to deploy an ODM application without checking for custom DB URLs. It can be used to generate an executable jar file that allows to deploy ODM applications and ODM project folder directly to server. Note that this very simple tool bypasses HTTPs certificate validation. 
+
+CustomeDBDeployerProject.zip [/support/docview.wss?uid=swg21691687&aid=2]CustomeDBDeployerProject.zip [/support/docview.wss?uid=swg21691687&aid=1] 
+
+ 
+
+Please refer to the file readme.txt for further information. 
+
+
+Note that ODM applications deployed this way might not be administrable directly from Decision Optimization Center IDE, as the IDE might attempt to redeploy the ODM application. In order to manage the ODMApp users, the easiest way is to use ODM Studio, log in using administrator credentials (i.e. member of odmeadmins group defined in Websphere Application Server) and manage users from there.

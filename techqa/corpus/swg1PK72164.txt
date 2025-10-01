@@ -1,0 +1,342 @@
+Title: IBM PK72164: Insufficient access rights exception during XMLAccess export - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.1 Download: WebSphere Portal and Web Content Management V6.1, fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24020387]
+6.1.0.2 Download: WebSphere Portal and Web Content Management V6.1, fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022898]
+6.1.0.3 Download: WebSphere Portal and WCM V6.1 fix pack 3, 6.1.5 feature pack [http://www-01.ibm.com/support/docview.wss?uid=swg24025054]
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Insufficient access rights exception during XMLAccess export -
+   XMLAccess output contains:
+   ...
+       <status element="unknown" result="failed">
+           <message
+   id="EJPXA0001E">com.ibm.wps.command.xml.XmlCommandException:
+   EJPXA0001E:
+   An error occurred while processing the XML configuration
+   request.
+   unknown</message>
+   
+   <message>com.ibm.wps.model.exceptions.NlsAccessControlException:
+   EJQCV000
+   5E: The user does not have all permissions to view the folder
+   with ID =
+   RootFolder.</message>
+       </status>
+   ...
+   
+   and SystemOut.log contains:
+   ...
+    at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1473)
+   Caused by:
+   com.ibm.wps.model.exceptions.NlsAccessControlException:EJQCV0005
+   E: The
+   user does not have all permissions to view the folder with ID =
+   RootFolder.
+    at
+   com.ibm.wps.ai.io.service.TemplateCatalogServiceImpl.getRootFold
+   er(Tem
+   plateCatalogServiceImpl.java:262)
+    at
+   com.ibm.wps.ai.io.service.TemplateCatalogServiceImpl.getRootFold
+   er(Tem
+   plateCatalogServiceImpl.java:64)
+    at
+   com.ibm.wps.command.xml.items.TemplateFolderItem.createAll(Templ
+   ateFol
+   derItem.java:202)
+    ... 32 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Although access rights to use XMLAccess have been assigned to
+   a user or group, during an XMLAccess export execution an
+   exception occurs indicating, that the user "does not have all
+   permissions to view the folder with ID = RootFolder". The log
+   file shows an exception similar to the one below.
+   
+      [9/16/08 8:27:37:484 CEST] 00000034 Engine        E
+   com.ibm.wps.command.xml.Engine processSax EJPFB0002E: Exception
+   occurred.
+   
+   
+   com.ibm.wps.command.xml.XmlCommandException: EJPXA0001E: An
+   error occurred while processing the XML configuration request.
+   unknown
+   
+       at
+   com.ibm.wps.command.xml.items.TemplateFolderItem.createAll(Templ
+   ateFolderItem.java:233)
+   
+       at
+   com.ibm.wps.command.xml.factory.TemplateFolderItemFactory.create
+   AllItems(TemplateFolderItemFactory.java:97)
+   
+       at
+   com.ibm.wps.command.xml.PortalItem.createChildren(PortalItem.jav
+   a:102)
+   
+       at
+   com.ibm.wps.command.xml.ExportEngine.loadItem(ExportEngine.java:
+   504)
+   
+       at
+   com.ibm.wps.command.xml.ExportEngine.exportPortal(ExportEngine.j
+   ava:117)
+   
+       at
+   com.ibm.wps.command.xml.Engine.processSax(Engine.java:487)
+   
+       at
+   com.ibm.wps.command.xml.XmlCommand.execute(XmlCommand.java:181)
+   
+       at
+   com.ibm.wps.command.xml.XmlCommandServlet.processInternal(XmlCom
+   mandServlet.java:314)
+   
+       at
+   com.ibm.wps.command.xml.XmlCommandServlet.process(XmlCommandServ
+   let.java:301)
+   
+       at
+   com.ibm.wps.command.xml.XmlCommandServlet.doPost(XmlCommandServl
+   et.java:244)
+   
+       at
+   javax.servlet.http.HttpServlet.service(HttpServlet.java:763)
+   
+       at
+   javax.servlet.http.HttpServlet.service(HttpServlet.java:856)
+   
+       at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWr
+   apper.java:1095)
+   
+       at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(Ser
+   vletWrapper.java:569)
+   
+       at
+   com.ibm.ws.wswebcontainer.servlet.ServletWrapper.handleRequest(S
+   ervletWrapper.java:478)
+   
+       at
+   com.ibm.ws.webcontainer.servlet.CacheServletWrapper.handleReques
+   t(CacheServletWrapper.java:90)
+   
+       at
+   com.ibm.ws.webcontainer.WebContainer.handleRequest(WebContainer.
+   java:748)
+   
+       at
+   com.ibm.ws.wswebcontainer.WebContainer.handleRequest(WebContaine
+   r.java:1461)
+   
+       at
+   com.ibm.ws.webcontainer.channel.WCChannelLink.ready(WCChannelLin
+   k.java:118)
+   
+       at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleDiscr
+   imination(HttpInboundLink.java:458)
+   
+       at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleNewIn
+   formation(HttpInboundLink.java:387)
+   
+       at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.ready(HttpI
+   nboundLink.java:267)
+   
+       at
+   com.ibm.ws.tcp.channel.impl.NewConnectionInitialReadCallback.sen
+   dToDiscriminators(NewConnectionInitialReadCallback.java:214)
+   
+       at
+   com.ibm.ws.tcp.channel.impl.NewConnectionInitialReadCallback.com
+   plete(NewConnectionInitialReadCallback.java:113)
+   
+       at
+   com.ibm.ws.tcp.channel.impl.AioReadCompletionListener.futureComp
+   leted(AioReadCompletionListener.java:165)
+   
+       at
+   com.ibm.io.async.AbstractAsyncFuture.invokeCallback(AbstractAsyn
+   cFuture.java:217)
+   
+       at
+   com.ibm.io.async.AsyncChannelFuture.fireCompletionActions(AsyncC
+   hannelFuture.java:161)
+   
+       at
+   com.ibm.io.async.AsyncFuture.completed(AsyncFuture.java:136)
+   
+       at
+   com.ibm.io.async.ResultHandler.complete(ResultHandler.java:195)
+   
+       at
+   com.ibm.io.async.ResultHandler.runEventProcessingLoop(ResultHand
+   ler.java:743)
+   
+       at
+   com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:873)
+   
+       at
+   com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1473)
+   
+      Caused by:
+   com.ibm.wps.model.exceptions.NlsAccessControlException:EJQCV0005
+   E: The user does not have all permissions to view the folder
+   with ID = RootFolder.
+   
+       at
+   com.ibm.wps.ai.io.service.TemplateCatalogServiceImpl.getRootFold
+   er(TemplateCatalogServiceImpl.java:256)
+   
+       at
+   com.ibm.wps.ai.io.service.TemplateCatalogServiceImpl.getRootFold
+   er(TemplateCatalogServiceImpl.java:62)
+   
+       at
+   com.ibm.wps.command.xml.items.TemplateFolderItem.createAll(Templ
+   ateFolderItem.java:203)
+   
+       ... 31 more
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Permission checks were corrected for the XMLAccess use case.
+   
+   Failing Module(s):
+      XML Access
+      Portal Access Control
+      Composite Applications
+   
+   Affected Users:
+      All users
+   
+   Version Information:
+       Portal Version(s): 6.1.0.0
+        Pre-Requisite(s):
+         Co-Requisite(s): ---
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   A fix is available from Fix Central:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PK72164&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PK72164&productid=WebSphere%20Portal&brandid=5]
+   
+   You may need to type or paste the complete address into your Web
+   browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK72164
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7699
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-16
+   
+   
+ * CLOSED DATE
+   2008-10-29
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7699
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

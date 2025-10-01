@@ -1,0 +1,207 @@
+Title: IBM IV84967: IBM MIB MANAGER TRAP VARBIND ORDER INCORRECT - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.1.0-TIV-NCOMNIbus-ZLinux-FP0013 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-ZLinux-FP0013&source=SAR]
+8.1.0-TIV-NCOMNIbus-Windows-FP0013 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-Windows-FP0013&source=SAR]
+8.1.0-TIV-NCOMNIbus-Linux-FP0013 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-Linux-FP0013&source=SAR]
+8.1.0-TIV-NCOMNIbus-AIX-FP0013 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-AIX-FP0013&source=SAR]
+8.1.0-TIV-NCOMNIbus-ZLinux-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-ZLinux-FP0012&source=SAR]
+8.1.0-TIV-NCOMNIbus-Windows-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-Windows-FP0012&source=SAR]
+8.1.0-TIV-NCOMNIbus-Linux-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-Linux-FP0012&source=SAR]
+8.1.0-TIV-NCOMNIbus-AIX-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-AIX-FP0012&source=SAR]
+8.1.0-TIV-NCOMNIbus-ZLinux-FP0011 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-ZLinux-FP0011&source=SAR]
+8.1.0-TIV-NCOMNIbus-Windows-FP0011 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-Windows-FP0011&source=SAR]
+8.1.0-TIV-NCOMNIbus-Linux-FP0011 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-Linux-FP0011&source=SAR]
+8.1.0-TIV-NCOMNIbus-AIX-FP0011 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-AIX-FP0011&source=SAR]
+8.1.0-TIV-NCOMNIbus-ZLinux-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-ZLinux-FP0010&source=SAR]
+8.1.0-TIV-NCOMNIbus-Windows-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-Windows-FP0010&source=SAR]
+8.1.0-TIV-NCOMNIbus-Linux-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-Linux-FP0010&source=SAR]
+8.1.0-TIV-NCOMNIbus-AIX-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-AIX-FP0010&source=SAR]
+8.1.0-TIV-NCOMNIbus-ZLinux-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-ZLinux-FP0009&source=SAR]
+8.1.0-TIV-NCOMNIbus-Windows-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-Windows-FP0009&source=SAR]
+8.1.0-TIV-NCOMNIbus-Linux-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-Linux-FP0009&source=SAR]
+8.1.0-TIV-NCOMNIbus-AIX-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=8.1.0-TIV-NCOMNIbus-AIX-FP0009&source=SAR]
+Tivoli Netcool/OMNIbus 8.1.0 Fix Pack 9, 8.1.0-TIV-NCOMNIbus-FP0009 [http://www-01.ibm.com/support/docview.wss?uid=swg24042761]
+Tivoli Netcool/OMNIbus 8.1.0 Fix Pack 10, 8.1.0-TIV-NCOMNIbus-FP0010 [http://www-01.ibm.com/support/docview.wss?uid=swg24042764]
+Tivoli Netcool/OMNIbus 8.1.0 Fix Pack 11, 8.1.0-TIV-NCOMNIbus-FP0011 [http://www-01.ibm.com/support/docview.wss?uid=swg24043466]
+Tivoli Netcool/OMNIbus 8.1.0 Fix Pack 12, 8.1.0-TIV-NCOMNIbus-FP0012 [http://www-01.ibm.com/support/docview.wss?uid=swg24043823]
+Tivoli Netcool/OMNIbus 8.1.0 Fix Pack 13, 8.1.0-TIV-NCOMNIbus-FP0013 [http://www-01.ibm.com/support/docview.wss?uid=swg24043836]
+Tivoli Netcool/OMNIbus 8.1.0 Fix Pack 14, 8.1.0-TIV-NCOMNIbus-FP0014 [http://www-01.ibm.com/support/docview.wss?uid=swg24043957]
+Tivoli Netcool/OMNIbus 8.1.0 Fix Pack 15, 8.1.0-TIV-NCOMNIbus-FP0015 [http://www-01.ibm.com/support/docview.wss?uid=swg24044023]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  We are running MIB Manager for Netcool/Omnibus version 8.1
+   
+   
+   We discovered an issue with SNMPV2 traps being generated mib
+   manager.
+   The variable bindings are being packaged incorrectly, in the
+   wrong
+   order.
+   RFC 1448 states for SNMPv2 traps:
+   
+   The 1st two varbinds are in the reverse order and causing some
+   parsing
+   issues. The sysuptime should be the 1st varbind, but it is the
+   second.
+   I attached a wireshark trace below showing the order.   The trap
+   OID
+   should be the 2nd varbind, mib manager is putting it as the 1st
+   one.
+   
+   RFC 1448 states for SNMPv2 traps
+   
+   (1) The first variable is sysUpTime.0 [9].
+   
+   (2) The second variable is snmpTrapOID.0 [11], which contains
+   the
+   administratively assigned name of the notification
+   
+   Here's the error we are getting because of the wrong order of
+   the
+   sysuptime(timeticks) varbind.
+   
+   SnmpException: Trap parsing failed. Trap does not have timeticks
+   as
+   varbind. Dropping trap from /10.214.69.174
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Possibly Use an Older Version:
+   
+   I was able to track down an older version if the Netcool Mib
+   manager
+   under its prior name - mib2rules (version 5.3).
+   
+   It works correctly in this older version, so think this is a new
+   bug.
+   I attached a wireshark capture of the trap send using this older
+   version and the varbinds are in the correct order. The sysuptime
+   is the
+   first varbind.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of the MIB Manager facility to generate traps          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The MIB manager function to generate test traps sends the    *
+   * OID as the first varbind and the system up time as the       *
+   * second varbind when generating SNMPv2 traps. This does not   *
+   * conform to the RFC 1448 specification which states that      *
+   * system up time should be the first varbind and OID the       *
+   * second for SNMPv2 traps.                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply the maintenance vehicles listed in the Problem         *
+   * Conclusion.                                                  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  he fix for this APAR is contained in the following maintenance
+   packages:
+   | fix pack | 8.1.0-TIV-NCOMNIbus-FP0009
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV84967
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-20
+   
+   
+ * CLOSED DATE
+   2016-11-10
+   
+   
+ * LAST MODIFIED DATE
+   2016-11-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * FIXED COMPONENT ID
+   5724O4800
+   
+   
+
+APPLICABLE COMPONENT LEVELS

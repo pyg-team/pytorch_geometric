@@ -1,0 +1,199 @@
+Title: IBM PI86605: CONTINUATION OF CORRECTIONS TO THE DOCUMENTATION IN THE KNOWLEDGE CENTERS FOR IBM WEBSPHERE APPLICATION SERVER V8.5 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR is a continuation of APAR APAR number. It addresses
+   issues. This APAR is a continuation of APAR PI82107 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI82107]. It
+   addresses issues that customers encountered with IBM WebSphere
+   Application Server Version V8.5. These issues were
+   resolved as knowledge center updates for September, 2016.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  This APAR provides a cumulative list of     *
+   *                  the documentation issues for June, 2017     *
+   *                  that affect users of IBM WebSphere          *
+   *                  Application Server Version 8.5.             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Knowledge Centers for WebSphere     *
+   *                      Application Server Version 8.5 need     *
+   *                      to reflect customer enhancement         *
+   *                      requests received in problem            *
+   *                      management records (PMRs). These        *
+   *                      enhancements can include fixing         *
+   *                      technical inaccuracies or clarifying    *
+   *                      vague information.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   See the Problem conclusion section for a description of the
+   issues, which are described in customer PMRs, and the
+   documentation change or changes that will address these issues.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Note: We update our knowledge centers monthly. The following
+   Version 8.5 modifications will be available in the month_year
+   update to the Knowledge Centers. To access the latest on-line
+   documentation, go to the product library page at
+   http://www.ibm.com/software/webservers/appserv/library and
+   select the version and product that is appropriate for your
+   WebSphere Application Server environment.
+   
+   The following Version 8.5 issues will be addressed:
+   
+   ID: 781157
+   Problem: Customer was configuring SSL between the IHS
+   administration server and the WebSphere deployment manager
+   when he encountered an error trying to stop or start IHS from
+   the admin console, "Could not make a connection to the IBM
+   HTTP Administration server on node
+   server_nodename/webserver_name"
+   IHS admin_error.log has the error, SSL0223E.  SSL Handshake
+   Failed, No certificate
+   Knowledge center topic, Configure SSL between the IBM HTTP
+   Server Administration Server and the deployment manager, is
+   unclear and incomplete and needs updating.
+   
+   Resolution: Topic, Configure SSL between the IBM HTTP
+   Server Administration Server and the deployment manager, is
+   updated as follows:
+   Procedure step 1 a and b now reads:
+   Procedure
+   
+    (1) Obtain a server certificate. Create a CMS key database
+   and create a new self-signed certificate for the IHS
+   administration server.
+        -   Use the iKeyman utility or gskcapicmd command line for
+   distributed operating systems. Use the gskkyman tool for z/OS ?
+   operating systems. For more information about command line
+   instructions for creating the CMS key database and self-signed
+   certificate, see IBM HTTP Server certificate management .
+       The following steps assume that you are using the iKeyman
+   facility
+        a.   Use the IHS iKeyman utility graphical user interface
+   to create a CMS key database file. For more information, see
+   Working with key databases
+        b.   Use the IHS iKeyman utility graphical user interface
+   to create a new self-signed certificate for the IHS
+   Administration Server and save the certificate as
+   /conf/admin.kdb. For more information, see Creating a
+   self-signed certificate.
+   
+   Step 3 b NOTE (bullet #3) now reads:
+   In the admin.conf file, the SSLServerCert label name must
+   match the certificate label name of the personal certificate
+   in ikeyman stored in the IHS admin.conf's admin.kdb file. If
+   these labels do not match, IHS does not start from the
+   WebSphere administration console and the IHS admin_error.log
+   will log the error SSL0223E: SSL Handshake Failed, No
+   certificate.
+   
+   Step #3 b bullet #4 now reads and bullet #5 is new:
+    If the self-signed personal certificate in the IHS admin.kdb
+   file is not flagged as the default certificate, the previous
+   example uses the SSLServerCert directive.
+   Alternatively, instead of using SSLServerCert, open the
+   admin.kdb in ikeyman and click view/edit the self-signed
+   certificate under the personal certificate section. At the
+   bottom of the page, check the box set the certificate as the
+   default.
+   
+   ----
+   ID:
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI86605
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-30
+   
+   
+ * CLOSED DATE
+   2017-08-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

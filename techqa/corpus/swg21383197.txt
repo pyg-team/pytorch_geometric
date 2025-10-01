@@ -1,0 +1,27 @@
+Title: IBM How to allow or hide suppression options in IBM Cognos BI studios? - United States
+
+Text:
+Supression options; zero value TECHNOTE (FAQ)
+
+QUESTION
+ How to allow or hide suppression options in IBM Cognos BI studios ? 
+
+CAUSE
+The suppress options are not visible in IBM Cognos BI studios. The related button is not available in the toolbar.
+
+ANSWER
+You can set suppression properties for the package published with Framework Manager. 
+These properties determine if IBM Cognos BI studio users can suppress the following type of values : Zero values, Divide by zero, Missing values, overflow values. 
+
+When a package is created, the suppression properties are automatically set to true. 
+If you want to change the values on a published package, you must re-publish the package. 
+
+Steps to Set Suppression 
+
+1. In the Project Viewer, click the package you want to modify. 
+
+2. In the Properties tab, find the suppression property and click to select the required value. 
+
+ * Allow Null Suppression - When true, this property makes suppression available to IBM Cognos BI studio users. When false, suppression is not available in the published package. 
+ * Allow Multi-Edge Suppression -When true, users can select multi-edge or single edge suppression options. When false, users will only have access to single edge suppression. The Allow Null Suppression property must also be true. 
+ * Allow Access to Suppression Options - When true, users can choose the types of values that will be suppressed, such as zero or missing values. By default, all the types of values are suppressed. The Allow Null Suppression property must also be true.

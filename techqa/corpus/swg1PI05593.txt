@@ -1,0 +1,241 @@
+Title: IBM PI05593: RDZ INTERNAL V8515 DEFECTS/ENHANCEMENTS (RSE) - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+8.5.1.6: UI24911 PTF for Rational Developer for System z Host Options [http://www-01.ibm.com/support/docview.wss?uid=swg24039252]
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  RDZ INTERNAL V8515 DEFECTS/ENHANCEMENTS (RSE)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: 01.RDz 7.6.x client users                    *
+   *                 02.All RDz users                             *
+   *                 03.All RDz users                             *
+   *                 04.All RDz users                             *
+   *                 05.system admin                              *
+   *                 06.All RDz users                             *
+   *                 07.All RDz users                             *
+   *                 08.All RDz users                             *
+   *                 09.RDz support                               *
+   *                 10.RDz support                               *
+   *                 11.All RDz users                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 01.When searching on a PDS using a      *
+   *                         7.6.2.x client connected to a        *
+   *                         8.5.1.4 host, an error is returned   *
+   *                         stating Job Failed.                  *
+   *                      02.NullPointerException occurred in     *
+   *                         MVS miner when a client attempts to  *
+   *                         expand home directory.               *
+   *                      03.Unable to rename a data set to a     *
+   *                         data set with z/OS 2.1 system.       *
+   *                      04.When the number of "IEC150I 913-38"  *
+   *                         errors exceeds the LE ERRCOUNT       *
+   *                         value, LE will kill the process      *
+   *                         which brings about the RACF error.   *
+   *                      05.improve distributed Dynamic VIPA     *
+   *                         support                              *
+   *                      06.A customer cannot know who           *
+   *                         connected to which server, unless    *
+   *                         the customer invokes Display         *
+   *                         command or searches the logs         *
+   *                         historically.                        *
+   *                      07.NullPointerException occurred in     *
+   *                         MVSfileSystemMiner when the session  *
+   *                         was shut-downed during startup.      *
+   *                      08.There is no way for RDz client to    *
+   *                         know the actual server version.      *
+   *                         This can be a problem under some     *
+   *                         conditions.                          *
+   *                      09.FEKLOGS fails with "Line too long"   *
+   *                         if a user is a member of a large     *
+   *                         number of RACF groups                *
+   *                      10.FEKLOGS enhancements                 *
+   *                      11.NPE when ISPF Gateway cannot start   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   01.The RDz server response for the search command from RDz
+      7.6.2.x clients was not initialized properly in the server.
+   02.RSE Client sends C_NOTIFICATION command to MVS Miner before
+      the MVS Miner completes its initialization.
+   03.In TSO of z/OS 2.1, TSO Cleanup command is executed after
+      the completion of the rename command, but MVS miner is not
+      coded to accept the results of the Cleanup command.
+   04.When the number of "IEC150I 913-38" errors exceeds the LE
+      ERRCOUNT value, LE will kill the process which brings about
+      the RACF error.
+   05.improve distributed Dynamic VIPA support, which can be
+      enabled with the _RSE_JAVAOPTS -Denable.dDVIPA=true option
+      in rsed.envvars
+   06.A customer cannot know who connected to which server, unless
+      the customer invokes Display command or searches the logs
+      historically.
+   07.NullPointerException occurred in MVSfileSystemMiner finish()
+      when the session was shut-downed during startup.
+   08.There is no way for RDz client to know the actual server
+      version. This can be a problem under some conditions.
+   09.FEKLOGS fails with "Line too long" if a user is a member of
+      a large number of RACF groups on z/OS 1.13 or older
+   10.FEKLOGS enhancements to support new log location
+      $daemon.log/server
+   11.NPE when ISPF Gateway cannot start
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  01.The RDz server was fixed to initialize server response for
+      the search command from RDz 7.6.2.x clients.
+   02.Now, MVS miner can handle C_NOTIFICATION command even if its
+      initialization is not completed.
+   03.Now, MVS miner is changed to accept the results of the
+      Cleanup command.
+   04.Now, RDz server program keeps in mind the cases where the
+      913-38 errors occurs. This causes a client not to bring
+      about the same RACF error but the client can see the same
+      913-38 dialog. This mechanism can decrease the number of
+      913-38 errors. RDz server program introduces a new property
+      of "enable.saf.check". If this property has true, then the
+      913-38 errors are logged in safWarning file. Each line of
+      the log has a userid and dataset name where 913-38 occurred.
+   05.improve distributed Dynamic VIPA support, which can be
+      enabled with the _RSE_JAVAOPTS -Denable.dDVIPA=true option
+      in rsed.envvars
+   06.Now, RDz is enhanced to logs the list of the active clients
+      when there is a change in the active clients. A new
+      property, "display.users", is introduced to enable this new
+      capability.
+   07.Now, MVSfileSystemMiner finish() will check the status so
+      that it could not bring about NPE.
+   08.There is a mechanism that DataStore client and server
+      exchange their versions during the connection establishment
+      phase. The DataStore server version is controlled by the
+      property of DSTORE_VERSION. Now, RDz daemon picks up the
+      server version from SMP information and sets the server
+      version forcibly to the DSTORE_VERSION property.
+   09.output of "id" command is trimmed to 2048 characters
+   10.FEKLOGS enhancements to support new log location
+      $daemon.log/server
+   11.Show error message in TSO command server
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI05593
+   
+   
+ * REPORTED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0723
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-07
+   
+   
+ * CLOSED DATE
+   2014-06-17
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  FEKFCMSG FEKFCORE FEKFCOR6 FEKFDIVP FEKFDST0 FEKFENVR FEKFMAIN
+   FEKFMAI6 FEKFMINE FEKFZOS  FEKLOGR  FEKPBIT  FEKPBITS FEKSETUP
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * FIXED COMPONENT ID
+   5724T0723
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY UI18898 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI18898]
+   UP14/07/03 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

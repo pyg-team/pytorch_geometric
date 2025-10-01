@@ -1,0 +1,127 @@
+Title: IBM IY50407: SYSROUTE OF IY42077:CROSS SITE SCRIPTING FAILED WHEN THERE IS A "?" IN THE URI - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Both APAR:IY42077 [http://www-01.ibm.com/support/docview.wss?uid=swg1IY42077] and this one relate to WebSEAL's support
+   for protecting Web servers
+   against cross-site scripting attacks.
+   
+   The problem is "bad requests are not recorded in request.log"
+   
+   When the filtering does work, there's no entry written to the
+   log to indicate that anything was filtered.
+   
+   Michael T. at the Gold Coast confirmed
+   that these requests should definitely be logged,
+   especially in this case, as otherwise there's no way
+   to determine
+   who's trying to attack you.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When there is a "?" in the URI, WebSEAL does not
+   filter the request, ie, still find <script> tag in web
+   server access log.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 3.8-PWS-FP15.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY50407
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV POL DIR 3.8
+   
+   
+ * REPORTED COMPONENT ID
+   5698PDD11
+   
+   
+ * REPORTED RELEASE
+   380
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2003-10-31
+   
+   
+ * CLOSED DATE
+   2003-10-31
+   
+   
+ * LAST MODIFIED DATE
+   2003-10-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IY42080 [http://www-01.ibm.com/support/docview.wss?uid=swg1IY42080]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IY50409 [http://www-01.ibm.com/support/docview.wss?uid=swg1IY50409]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV POL DIR 3.8
+   
+   
+ * FIXED COMPONENT ID
+   5698PDD11
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R380 PSY
+   UP

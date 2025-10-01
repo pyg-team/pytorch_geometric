@@ -1,0 +1,34 @@
+Title: IBM How to execute Metric Maintenance tasks from the command line or script - United States
+
+Text:
+batch shell TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes how to launch Metric Maintenance tasks through the command-line and/or script. 
+
+CAUSE
+Earlier versions of IBM Cognos Metrics Manager included *.bat/*.sh files for each task in the Services Control menu, which could be run from the command line or as part of a script. In Cognos 8, the Services Control menu has been replaced by the Metric Maintenance menu, and these tasks do not have corresponding *.bat/*.sh files to run outside of the user interface.
+
+RESOLVING THE PROBLEM
+Execute Metric Maintenance tasks using TRIGGER.bat
+
+Steps:  1.  Log into Cognos Connection as an administrator.
+ 2.  Create a new job in Cognos Connection to run the desired Metric Maintenance task(s).
+ 3.  Click on the Schedule icon (under the action column) next to the job link in Cognos Connection.
+ 4.  Under Frequency, click on By Trigger.
+ 5.  Specify a Start and End time (during this time , if you run the Trigger.bat file, it will be executed).
+ 6.  Define a name for the trigger.
+ 7.  Open a DOS command window on the server machine
+ 8.  Navigate to <install path>/webapps/utilities/trigger
+ 9.  Run the Trigger.bat (Windows) or Trigger.sh (UNIX) file as follows: Trigger.* <Gateway URL> <username> <password> <Namespace ID> <comma separated trigger list>. For example (Windows):
+     
+     Trigger.bat /Cognos8/cgi-bin/cognos.cgi"" >http://<server>/Cognos8/cgi-bin/cognos.cgi Administrator Password! "Local NT ID" trigger1
+     
+ 10. If the trigger has been fired successfully you will get the following message in the DOS window:
+     "Trigger: <trigger name> fired successfully
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Metrics Studio 
+HISTORICAL NUMBER
+ 1033709

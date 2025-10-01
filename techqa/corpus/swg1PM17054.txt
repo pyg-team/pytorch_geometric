@@ -1,0 +1,226 @@
+Title: IBM PM17054: WEBSERVICE CALL TO A REMOTE CLIENT USING SSL FAILING WITH ASYNCH OPERATION FAILED RC: 76 ON SECOND CONNECTION ATTEMPT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24027977]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24027999]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for IBM i [http://www-01.ibm.com/support/docview.wss?uid=swg24028000]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24028001]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for Solaris [http://www-01.ibm.com/support/docview.wss?uid=swg24028002]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028003]
+7.0.0.13: Java SDK 1.6 SR8FP1 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24028004]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24028875]
+7.0.0.15: Java SDK 1.6 SR9 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24028881]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24029071]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for IBM i [http://www-01.ibm.com/support/docview.wss?uid=swg24029072]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24029073]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for Solaris [http://www-01.ibm.com/support/docview.wss?uid=swg24029074]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24029075]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+7.0.0.17: WebSphere Application Server V7.0 Fix Pack 17 [http://www-01.ibm.com/support/docview.wss?uid=swg24029634]
+7.0.0.17: Java SDK 1.6 SR9 FP1 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24029894]
+7.0.0.19: WebSphere Application Server V7.0 Fix Pack 19 [http://www-01.ibm.com/support/docview.wss?uid=swg24030660]
+7.0.0.21: WebSphere Application Server V7.0 Fix Pack 21 [http://www-01.ibm.com/support/docview.wss?uid=swg24031366]
+7.0.0.23: WebSphere Application Server V7.0 Fix Pack 23 [http://www-01.ibm.com/support/docview.wss?uid=swg24032493]
+7.0.0.25: WebSphere Application Server V7.0 Fix Pack 25 [http://www-01.ibm.com/support/docview.wss?uid=swg24033267]
+7.0.0.27: WebSphere Application Server V7.0 Fix Pack 27 [http://www-01.ibm.com/support/docview.wss?uid=swg24033882]
+7.0.0.29: WebSphere Application Server V7.0 Fix Pack 29 [http://www-01.ibm.com/support/docview.wss?uid=swg24034966]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+7.0.0.31: WebSphere Application Server V7.0 Fix Pack 31 [http://www-01.ibm.com/support/docview.wss?uid=swg24036768]
+7.0.0.27: Java SDK 1.6 SR13 FP2 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035324]
+7.0.0.33: WebSphere Application Server V7.0 Fix Pack 33 [http://www-01.ibm.com/support/docview.wss?uid=swg24037573]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A web service client in WebSphere Application Server tries to
+   make an SSL connection to a 3rd party (non-WebSphere
+   Application Server) web service provider.  The first connection
+   (first web service call) always works.  The second and
+   subsequent connections (web service calls) always fail.
+   
+   ----------------------------------------------------------------
+   --------
+   Failing case:  A cached session is used to attempt the SSL
+   connection.
+   Note that the 'getSSLContext_JSSE2' method call returns a cache
+   hit in the failing case.  The remote server side (3rd party web
+   service provider) does NOT support cached connections.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No workaround
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V6.1 and V7.0                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The 3rd party web service provider      *
+   *                      does not support cached SSL             *
+   *                      connections. Cached SSL connections     *
+   *                      are the default behavior for            *
+   *                      WebSphere Application Server            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The default behavior for WebSphere Application Server is to
+   use cached SSL connections. Since the third party web service
+   does not support SSL connections, the initial outbound
+   connection would be successful, and all subsequent connections
+   will be rejected by the third party web service because each
+   subsequent connection uses cached session data.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The SSL connection code was enhanced to support a new JVM
+   system property: "com.ibm.ws.ssl.skipSSLContextCache". This
+   property, when set to true, will cause each outbound SSL
+   connection to not use any cached connection data, treating each
+   connection as a new SSL connection.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 6.1.0.35 and 7.0.0.13.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM17054
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   61A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-23
+   
+   
+ * CLOSED DATE
+   2010-07-13
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

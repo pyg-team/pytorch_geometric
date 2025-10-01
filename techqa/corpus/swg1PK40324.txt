@@ -1,0 +1,215 @@
+Title: IBM PK40324: IBM Z/OS SECURITY SERVER 1.6 OR 1.7 - LDAP SDBM WITH RACF BACKEND, IS NOT SUPPORTED BY WEBSPHERE FEDERATED REPOSITORY - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere Federated repositories do not support a z/OS LDAP
+   server with an SDBM backend (RACF). Only a StandAlone repository
+   supports z/OS LDAP SDBM.
+   
+   The infoCenter should be updated to reflect this restriction.
+   
+   Here are the relevant topics in the information center where
+   it should be mentioned that LDAP with z/OS SDBM is only
+   supported for a StandAlone registry and not Federated
+   Repositories.
+   
+   -"Using a single built-in, file-based repository in a new
+   configuration under Federated repositories"
+   (twim_filebased_unconfig)
+   And
+   - "Federated repositories" (cwim_fedrepos) - contains a table
+   discussing the differences between federated repositories and
+   other user registry implementations.
+   
+   If you try to configure a Federated Repository with a z/OS
+   LDAP SDBM server, the administrative console reports that the
+   primary administrative userid does not exist in the
+   repository. In the job outputs, the following error is seen:
+   
+   <cut>
+   Trace: 2006/11/17 13:43:16.624 01 t=8C8598 c=UNK key=P8
+   (13007002)
+   ThreadId: 00000038
+   FunctionName: search(String, String, Object&#65419;&#65448;&#65451; SearchControls)
+   SourceId: com.ibm.websphere.wim.exception
+   Category: SEVERE
+   ExtendedMessage:
+   com.ibm.websphere.wim.exception.WIMSystemException: CWWIM4520E
+   The 'javax.naming.OperationNotSupportedException:
+   &#65419;&#65448;&#65451;DAP: error code 53 - R000130 The syntax of filter '(|
+   (objectclass=RACFUSER)(objectclass=RACFUSER))' is not valid.&#65419;&#65448;&#65451;;
+   remaining name
+   'racfid=valence,profiletype=USER,ou=itsoracf,o=itso'; resolved
+   object com.sun.jndi.ldap.LdapCtx@74d474d4' naming exception
+   occurred during processing.
+   </cut>
+   
+   Here, the primary administrative userid provided was:
+   racfid=valence,profiletype=USER,ou=itsoracf,o=itso
+   
+   The LDAP log will show the following messages:
+   
+   <cut>
+   <== xlate_from_to();
+   rc=0x0
+   entering parseMostlySimpleFilter with filter :(|
+   (objectclass=RACFUSER)(objectclass=RACFUSER)):
+   parseMostlySimpleFilter: simple equality
+   filter
+   parseSimpleFilter: found
+   extra '('
+   ==>
+   xlate_local_to_utf8
+   
+   ==> xlate_from_to() from=IBM-1047, to=UTF-8
+   R000130 The syntax of filter '(|(objectclass=RACFUSER)
+   (objectclass=RACFUSER))' is not
+   valid.
+   </cut>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NONE - Documentation needs updating
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere Application Server    *
+   *                 V6.1.0 for z/OS                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The customer experienced an error when  *
+   *                      trying to configure a a z/OS LDAP serve *
+   *                      with an SDBM backend (resource access   *
+   *                      control facility (RACF))                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If one tries to configure a federated repository with a z/OS
+   LDAP SDBM server, the administrative console reports that the
+   primary administrative userid does not exist in the repository.
+   The restriction that WebSphere Application Server federated
+   repositories DO NOT support a z/OS LDAP server with an SDBM
+   backend (resource access control facility (RACF))is not
+   documented in the information center.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  APAR PK40324 requires changes to documentation.
+   
+   NOTE: Periodically, we refresh the documentation on our
+   Web site, so the changes might have been made before you
+   read this text. To access the latest on-line
+   documentation, go to the product library page at:
+   
+   
+   http://www.ibm.com/software/webservers/appserv/library [http://www.ibm.com/software/webservers/appserv/library]
+   
+   The information center topic, Federated repositories, will
+   include the restriction:
+   WebSphere Application Server federated repositories DO NOT
+   support a z/OS LDAP server with an SDBM backend (resource
+   access control facility (RACF)).
+   
+   The information center topic, Using a single built-in,
+   include the restriction:
+   WebSphere Application Server federated repositories DO NOT
+   support a z/OS LDAP server with an SDBM backend (resource
+   access control facility (RACF)).
+   
+   The information center topic, Using a single built-in,
+   file-based repository in a new configuration under Federated
+   repositories, will include the restriction:
+   WebSphere Application Server federated repositories DO NOT
+   support a z/OS LDAP server with an SDBM backend (resource
+   access control facility (RACF)).
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK40324
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-03-01
+   
+   
+ * CLOSED DATE
+   2007-03-21
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

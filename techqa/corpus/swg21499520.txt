@@ -1,0 +1,20 @@
+Title: IBM DataStage job with iWay Enterprise stage is failing with the error, ERROR: ILLEGAL SYMBOL - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DataStage job with iWay Enterprise stage is failing with the following error:
+
+iWay_Enterprise_1: SQLCODE IS -104 (HEX: FFFFFF98) XOPEN: 42000 
+: DSNT408I SQLCODE = -104, ERROR: ILLEGAL SYMBOL ".". SOME SYMBOLS TH
+: MIGHT BE LEGAL ARE: , FROM INTO 
+: DSNT418I SQLSTATE = 42601 SQLSTATE RETURN CODE 
+: DSNT415I SQLERRP = DSNHPARS SQL PROCEDURE DETECTING ERROR 
+: DSNT416I SQLERRD = 3 0 0 -1 315 502 SQL DIAGNOSTIC INFORMATION 
+: DSNT416I SQLERRD = X'00000003' X'00000000' X'00000000' 
+: X'FFFFFFFF' X'0000013B' X'000001F6' SQL DIAGNOSTIC 
+: INFORMATION 
+
+RESOLVING THE PROBLEM
+It was found that the SQL query had some control characters in it. Most likely when it was copy and pasted into the stage. To remove the control characters switch to single line mode. Once the control characters were removed the job ran successfully.

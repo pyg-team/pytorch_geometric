@@ -1,0 +1,69 @@
+Title: IBM Configuring and running simple JMS P2P and Pub/Sub applications in MQ 7.0, 7.1, 7.5 and 8.0 - United States
+
+Text:
+JMSAdmin; Initial Context; Context Factory WHITE PAPER
+
+ABSTRACT
+ The objective of this document is to provide step-by-step instructions for configuring and running simple JMS Point-to-Point (P2P) and Publish and Subscribe (Pub Sub PubSub Pub-Sub Pub/Sub Publish/Subscribe) applications in WebSphere MQ V7 for UNIX and Windows. 
+
+CONTENT
+MQ 7.0.1 was used to run the examples in this techdoc. When using MQ 7.1, 7.5, 8.0 or later, the new command "setmqenv" (introduced with MQ 7.1) needs to be used during the initial setup. The following technote has the complete list of steps customized for using MQ 7.1 or later: 
+
+ Detailed example of running JMSAdmin on MQ 7.1, 7.5 and 8.0 [http://www.ibm.com/support/docview.wss?uid=swg21614256] 
+
+In UNIX, the JMSAdmin tool is used to populate the Java Naming and Directory Interface (JNDI) with the JMS Administrative objects that serve as a link between the JMS application and the physical queues and topics in the queue manager. This JNDI is in the form of a file named ".bindings".
+
+In Windows and in Linux x86, in addition to the JMSAdmin tool, the GUI MQ Explorer tool can be used to populate the JNDI into a file named ".bindings".
+
+This techdoc has the following chapters:
+
+Chapter 1:
+- The necessary customization for the environment in order to run JMS programs in UNIX
+- The customization of JMSAdmin.config and how to run the JMSAdmin tool in UNIX.
+- How to create a Connection Factory, a Queue and a Topic object into the JNDI via the JMSAdmin tool.
+
+Chapter 2:
+- The necessary customization for the environment in order to run JMS programs in Windows.
+- The customization of JMSAdmin.config and how to run the JMSAdmin tool in Windows.
+- How to create a Connection Factory, a Queue and a Topic object into the JNDI via the JMSAdmin tool
+
+Chapter 3:
+- How to create a Connection Factory, a Queue and a Topic object into the JNDI via the MQ Explorer in Windows.
+
+Chapter 4:
+- How to run in UNIX, 2 excellent samples provided with MQ V7 that show how to use the JNDI to do Point-to-Point (queue based) messaging, and how to do Pub/Sub (topic based).
+Complete runs for the scenarios are included.
+
+- These 2 samples are located at:
+UNIX: /opt/mqm/samp/jms/samples
+Windows: C:\Program Files\IBM\WebSphere MQ\tools\jms\samples
+JmsJndiConsumer.java
+JmsJndiProducer.java
+These samples are provided in source Java code and in compiled format. The source files have good explanation of the code. The samples use: IBM JMS API (v1.1, unified domain).
+
+- MQ also ships 2 other samples that do not use the JNDI. They are not discussed in this techdoc, but are mentioned in case that you want to review and use them:
+JmsConsumer.java
+JmsProducer.java
+
+Chapter 5:
+- Similar to Chapter 4, but for Windows.
+
+Chapter 6:
+- How to troubleshoot common problems during setup and runtime.
+
++ Software used:
+WebSphere MQ V7.0.1.3 in Solaris 10 with Java 1.5
+WebSphere MQ V7.0.1.6 in Linux x86-32bit with Java 1.6
+WebSphere MQ V7.0.1.6 in Windows XP with Java 1.6
+
+Attached PDF file: 
+Configuring and running a simple JMS P2P and Pub-Sub application in MQ V7.pdf
+
+
+File: Configuring and running a simple JMS P2P and Pub-Sub application in MQ V7.pdf 
+
+
+Configuring and running a simple JMS P2P and Pub-Sub application in MQ V7.pdf [/support/docview.wss?uid=swg27023212&aid=2]Configuring and running a simple JMS P2P and Pub-Sub application in MQ V7.pdf [/support/docview.wss?uid=swg27023212&aid=1]
+
+PRODUCT ALIAS/SYNONYM
+ MQ WMQ MQSeries

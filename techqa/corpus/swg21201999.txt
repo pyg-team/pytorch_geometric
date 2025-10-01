@@ -1,0 +1,35 @@
+Title: IBM Checkpoints in WebSphere MQ logging - United States
+
+Text:
+checkpoint circular logging force checkpoint circular logging force TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides details about checkpoint activity in WebSphere MQ such as when a checkpoint is created, why a checkpoint is created and how to force a checkpoint to occur. 
+
+RESOLVING THE PROBLEM
+By default a checkpoint will be taken after every 10,000 persistent MQGET and/or MQPUT operations, or every 30 minutes, if at least 100 messages have been GET and/or PUT, which ever occurs first. Additionally, a check point will also be taken when the ENDMQM, or the RCDMQMIMG commands have been performed. 
+
+Checkpoint processing is a three stage process: 
+
+ 1. The first stage is only carried out if the log is full or getting full (has passed an internal logger threshold). If either of these is true, Transaction Manager(TM) is called to release log space one transaction at a time until the log full condition is cleared or the log space is being held because the last checkpoint is pretty old. The TM does this by rolling back active transactions or taking soft log images of prepared transactions. One transaction is processed at a time and the space threshold is rechecked with each iteration. 
+ 2. The second stage is the checkpoint itself. If the log is full or getting full, the checkpoint is only taken if it will release log space. If the log is not getting full, a checkpoint is taken unconditionally. 
+ 3. The third stage is to attempt to reduce the log head once more. 
+    
+    Over period of time, some of the log records become unnecessary for restarting the Queue Manager While using circular logging, the Queue Manager reclaims freed space in the log files. This activity is transparent to the user and you do not see the amount of disk space used reduce, because the space allocated is quickly reused. A checkpoint removes messages put in completed transactions from the circular log. 
+    
+    To increase check-point frequency or to force checkpointing, use the following tuning parameters:  * CheckPointLogRecdMax - A checkpoint is taken after this many logged operations. Default Value is 10000, Max value is 100000. Min Value is 1000. 
+     * CheckPointLogRecdMin - Every 'CheckPointWaitLen' a checkpoint is taken if this many logged operations have occurred. Default value is 100, minimum value is 0 & maximum value is 2000 
+     * CheckPointWaitLen - Default value is 30 minutes, minimum value is 5 minutes and maximum value is 60 minutes. 
+       
+       Note: It is not advisable to change these values unless required as they will have an impact on the performance.
+    
+    
+
+RELATED INFORMATION
+ For more examples click here [http://www.mqtechconference.com/sessions_v2016/MQTC_v2016_More_Mysteries_of_the_IBM_MQ_Logger_final.pdf]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

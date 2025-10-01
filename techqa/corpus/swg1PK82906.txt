@@ -1,0 +1,156 @@
+Title: IBM PK82906: PROCESS UNSIGNED PACKED DECIMAL FIELDS WITHOUT REQUIRING AN EXIT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Change CICS VT to process unsigned packed decimal VSAM data
+   automatically and thus remove the need for an exit ( shipped
+   as PACKC2F ). The change is implemented via a new field type
+   in CICS VT mapping, which is 'U'. Automapper has also been
+   modified to detect unsigned packed decimal fields in COBOL
+   copybooks and implement this field type automatically.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of CICS VSAM Transparency          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Add support for Unsigned packed decimal *
+   *                      data                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Change CICS VT to process unsigned packed decimal VSAM
+   data automatically and thus remove the need for an exit.
+   The change is implemented via a new field type in CICS VT
+   mapping, which is 'U'. Automapper has also been modified
+   to detect unsigned packed decimal fields in COBOL
+   copybooks and implement this field type automatically.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Support has been added for Unsigned packed decimal data.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK82906
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS VSAM TRANS
+   
+   
+ * REPORTED COMPONENT ID
+   5697I7600
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-03-19
+   
+   
+ * CLOSED DATE
+   2009-05-22
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK46729 UK46747 UK46750
+   
+   
+
+MODULES/MACROS
+ *     VIDCONV  VIDFLD00 VIDFLI00 VIDFLI2H VIDFLU00
+   VIDGNRTB VIDMCOPY VIDMCPI  VIDMCPIH
+   
+   
+    
+   
+   
+
+Publications Referenced SC34699300 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS VSAM TRANS
+   
+   
+ * FIXED COMPONENT ID
+   5697I7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY UK46729 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK46729]
+   UP09/05/29 P F905
+   
+   
+ * R201 PSY UK46747 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK46747]
+   UP09/05/29 P F905
+   
+   
+ * R202 PSY UK46750 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK46750]
+   UP09/05/29 P F905
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

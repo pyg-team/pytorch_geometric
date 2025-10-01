@@ -1,0 +1,37 @@
+Title: IBM Download IBM Datacap Version 9.0.0 Feature Pack 3 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document contains links to the download page and the readme file for IBM Datacap Version 9.0.0 Feature Pack 3 
+
+DOWNLOAD DESCRIPTION
+You can download IBM Datacap Version 9.0.0 Feature Pack 3 from Fix Central. 
+
+Follow these instructions to obtain Feature Pack 3 from Fix Central. If you have forgotten your IBM ID or have never registered, follow the instructions on the sign-in page. 
+
+1. Click this link: http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/].
+2. Select Product Group: Enterprise Content Management.
+3. Select Product: Datacap.
+4. Select Installed Version: 9.0.0.0.
+5. Select Platform: All and click Continue.
+6. Select Browse for fixes and click Continue.
+7. Select the feature pack, click Continue. 
+8. Sign in with your IBM ID and Password, then click Submit.
+9. Download the package.
+
+For a list of resolved problems, see the "Issues fixed in IBM Datacap 9.0 Feature Pack 3" topic in the feature pack readme: http://www.ibm.com/support/docview.wss?uid=swg27046433 [http://www.ibm.com/support/docview.wss?uid=swg27046433]
+
+INSTALLATION INSTRUCTIONS
+You can find instructions for installing IBM Datacap in IBM Knowledge Center: 
+
+URL LANGUAGE SIZE(Bytes) IBM Datacap documentation [http://www.ibm.com/support/knowledgecenter/SSZRWV_9.0.0/com.ibm.datacaptoc.doc/datacap_9.0.0.htm ] English 1000 
+DOWNLOAD PACKAGE
+You can download IBM Datacap Version 9.0.0 Feature Pack 3 from Fix Central [http://www.ibm.com/support/fixcentral/]. The instructions are in the Download description section.
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options Fix Central 25 Sep 2015 English 1000 HTTP [http://www.ibm.com/support/fixcentral/]

@@ -1,0 +1,69 @@
+Title: IBM Application Server does not start up after disabling the ITCAM Agent for WebSphere - United States
+
+Text:
+5724Y92DC TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ After disabling the ITCAM for AD/Applications Agent for WebSphere, the WebSphere Application Server may not start up correctly after a server restart. 
+
+CAUSE
+The ITCAM calls are still present in the JVM and/or OSGi cache.
+
+DIAGNOSING THE PROBLEM
+Messages similar to the following will be seen in the SystemOut.log
+
+[10/16/14 9:10:44:496 CDT] 0000000a ResourceMgrIm E WSVR0017E: Error encountered binding the J2EE resource, paeus, as jdbc/paeus/paeusdb fromfile:/csapps/websphere/was61/drt1-app-node2-farm/profiles/node/config/cells/drt1-network-farm-was61/clusters/stln-paeus1/resources.xml
+
+
+and 
+
+java.lang.NoClassDefFoundError: 
+com.ibm.tivoli.itcam.toolkit.ai.boot.aspectmanager.IDefinedFieldObjectAccessor at org.eclipse.osgi.framework.internal.core.BundleLoader.findClass(BundleLo 
+ader.java:402) 
+
+
+RESOLVING THE PROBLEM
+To resolve the problem you should clear the JVM and OSGi cache. 
+
+To clear the OSGi class cache:
+
+For UNIX platforms, run the following script in each profile:
+<WebSphere_HOME>/profiles/profile_name/bin/osgiCfgInit.sh
+
+For Windows platforms, run the following script in each profile:
+<WebSphere_HOME>\profiles\profile_name\bin\osgiCfgInit.bat
+
+
+To clear the JVM's class cache (Windows, Linux and AIX only) :
+
+For UNIX platforms, run the following script:
+<WebSphere_HOME>/bin/clearClassCache.sh
+
+For Windows platforms, run the following script:
+<WebSphere_HOME>\bin\clearClassCache.bat
+
+And clear the following directory contents:
+<WinUsers_home>\Local Settings\ApplicationData\javasharedresources\
+
+where WinUsers_home is either C:\Documents and Settings\DefaultUser OR C:\Users depending on your current version of Windows.
+
+Please note:
+
+1. You should not delete the cache while any of the JVM's are running and using the cache. The server has to be stopped before clearing the cache.
+
+2. You must be logged in as the user who started WebSphere Application Server.
+
+3. For Windows the clearClassCache.bat may not work if you are using Windows Services. Please follow these steps:
+
+Clear the following directory contents:
+
+For Windows XP/Windows 2003:
+
+C:\Documents and Settings\DefaultUser\Local Settings\ ApplicationData\javasharedresources\
+
+For Window Vista/Windows 7/Windows 2008:
+
+C:\Users\[WSAS_User]\AppData\Local\javasharedresources\

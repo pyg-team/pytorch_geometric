@@ -1,0 +1,22 @@
+Title: IBM Copy a large pivot table makes SPSS Viewer unresponsive and does not seem to finish. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I would like to copy a large pivot table from SPSS Viewer in order to paste it in an Excel sheet but it seems that it does not work. Viewer is unresponsive and does not seem to finish. I look into the Task Manager and noticed that CPU usage is at 100% . 
+I sometimes get a message that states:
+"SPSS has encountered a problem with memory. Please attempt to save your work and then exit."
+What is the problem? 
+
+RESOLVING THE PROBLEM
+This problem has been filed with SPSS Development. We apologize for any inconvenience this has caused. Please make sure that you have installed the 17.0.2 Patch. Additional Performance improvement will be seen with PASW Statistics 19.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 74968

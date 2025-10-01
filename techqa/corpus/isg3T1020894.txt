@@ -1,0 +1,102 @@
+Title: IBM Security Bulletin: IBM Platform Cluster Manager (CVE-2014-0094, CVE-2014-0112, CVE-2014-0113, CVE-2014-0116) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Several security vulnerabilities have been reported against Apache Struts 2 through May 2014. IBM Platform Cluster Manager’s GUI uses Struts 2 as a framework for Java web applications. A version of the package that is vulnerable to these issues is included in several past versions of IBM Platform Cluster Manager. The latest versions of Struts 2 address all the vulnerabilities and can be applied through the fix detailed in the Remediation section. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2014-0094 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0094]
+DESCRIPTION: 
+Apache Struts could allow a remote attacker to bypass security restrictions, caused by an error in ParametersInterceptor. An attacker could exploit this vulnerability using the class parameter to manipulate the ClassLoader used by the application server.
+
+CVE-2014-0094
+CVSS Base Score: 5 
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/92205 [http://xforce.iss.net/xforce/xfdb/92205] for the current score 
+CVSS Environmental Score*: Undefined 
+CVSS Vector: (AV:N/AC:L/AU:N/C:N/I:P/A:N)
+
+CVEID: CVE-2014-0112 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0112]
+DESCRIPTION: 
+Apache Struts could allow a remote attacker to execute arbitrary code on the system, caused by an incomplete fix related to ParametersInterceptor and the failure to restrict access to the class parameter. An attacker could exploit this vulnerability using the class parameter to manipulate the ClassLoader used by the application server to execute arbitrary code on the system.
+
+CVE-ID: CVE-2014-0112 
+CVSS Base Score: 7.5
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/92740 [http://xforce.iss.net/xforce/xfdb/92740] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:P/A:P)
+
+CVEID: CVE-2014-0113 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0113]
+DESCRIPTION: 
+Apache Struts could allow a remote attacker to execute arbitrary code on the system, caused by an incomplete fix related to CookieInterceptor and the failure to restrict access to the getClass() method. An attacker could exploit this vulnerability using CookieInterceptor when configured to accept all cookies to manipulate the ClassLoader used by the application server to execute arbitrary code on the system.
+
+CVE-ID: CVE-2014-0113
+CVSS Base Score: 7.5
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/92742 [http://xforce.iss.net/xforce/xfdb/92742] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:P/A:P)
+
+CVEID: CVE-2014-0116 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0116]
+DESCRIPTION: 
+Apache Struts could allow a remote attacker to bypass security restrictions, caused by the failure to properly restrict access to the getClass() method by the CookieInterceptor class. An attacker could exploit this vulnerability to manipulate the ClassLoader used by the application server.
+
+CVE-ID: CVE-2014-0116
+CVSS Base Score: 4.3
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/93024 [http://xforce.iss.net/xforce/xfdb/93024] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N)
+
+Affected Products and Versions
+IBM Platform Cluster Manager 3.2, 4.1.x
+
+
+Remediation/Fixes 
+
+We strongly recommend that you apply the following fix from FixCentral to avoid this potential security exposure. 
+
+
+
+Product VRMF Fix Number IBM Platform Cluster Manager 3.2, 4.1.x #234952 
+
+Workarounds and Mitigations 
+None 
+
+Reference 
+[https://www-304.ibm.com/support/docview.wss?uid=swg21496117&wv=1] · Complete CVSS Guide [http://www.first.org/cvss/v2/guide] 
+· On-line Calculator V2 [http://nvd.nist.gov/cvss.cfm?calculator&adv&version=2] 
+
+
+Related Information 
+IBM Secure Engineering Web Portal [https://www-304.ibm.com/jct03001c/security/secure-engineering/] IBM Product Security Incident Response Blog [https://www.ibm.com/blogs/PSIRT] 
+
+Acknowledgement 
+None 
+
+Change History 
+31 May, 2014 Original Copy Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+
+Disclaimer
+
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum Cluster Foundation

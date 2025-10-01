@@ -1,0 +1,137 @@
+Title: IBM JR21602: INSTALL CAN FAIL IF PATH STATEMENT IS CLOSE TO 1024 IN SIZE AND WILL REPLACE PATH WITH A COLON. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  * Cust reporting the installation failed because the path was  *
+   * was larger than 1024. The path statement was actually less   *
+   * than 1024 if the system variables were translated, such as   *
+   * %snaroot% to c:\IBMCS which would be 8 vs 9 chars. After the *
+   * error is acknowledged, the path statement is replaced with a *
+   * colon leaving the system unusable.                           *
+   *                                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  * InstallShield fails when it's told to pass a string > 1024   *
+   * characters from function to function. This can happen if the *
+   * IBMCS directory is added to the end of a very long path      *
+   * (greater than 950 characters).                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  * Parts registry.rul and setup.ins updated to check for this   *
+   * particular situation, so that if a path is already too long, *
+   * we abort the installation.                                   *
+   * NOTE: There is no apar fix available for 612 customers, but  *
+   *       the problem will be resolved in 6.1.3 (CSD3), if there *
+   *       is one.                                                *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR21602
+   
+   
+ * REPORTED COMPONENT NAME
+   COMM SERV NT 6.
+   
+   
+ * REPORTED COMPONENT ID
+   5639F2503
+   
+   
+ * REPORTED RELEASE
+   612
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-05-02
+   
+   
+ * CLOSED DATE
+   2005-05-24
+   
+   
+ * LAST MODIFIED DATE
+   2005-05-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  SETUP
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   COMM SERV NT 6.
+   
+   
+ * FIXED COMPONENT ID
+   5639F2503
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R612 PSN
+   UP

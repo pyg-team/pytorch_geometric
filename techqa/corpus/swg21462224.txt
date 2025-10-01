@@ -1,0 +1,81 @@
+Title: IBM The reverse migration using Master script does not start bcgbus ME - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The reverse migration using Master script does not start bcgbus ME.
+
+The log message is as follows:
+
+[12/22/10 17:26:23:652 GMT+05:30] 0000001d SibMessage E [BCGBus:bcgmasCluster.000-BCGBus] CWSIS0002E: The messaging engine encountered an exception while starting. Exception: com.ibm.ws.sib.msgstore.PersistenceException: CWSIS1501E: The data source has produced an unexpected exception: com.ibm.ws.sib.msgstore.InvalidConstructor: CWSIS0001E: An item does not have an accessible (public) default constructor {0}.
+[12/22/10 17:26:23:714 GMT+05:30] 0000001d ConnectionEve A J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adapter for resource datasources/bcgMASDS. The exception which was received is (none)
+[12/22/10 17:26:23:719 GMT+05:30] 0000001d ConnectionEve A J2CA0090I: This is an English only message: No exception was received from the Resource Adapter. Information may be available in previous messages or exceptions..
+..... 
+
+RESOLVING THE PROBLEM
+The steps to roll back the WebSphere Application Server profile migration for WebSphere Partner Gateway is as follows: 
+
+ 1. Ensure that all WebSphere Partner Gateway transactions are completed and no messages exist in the messaging engine(s).
+
+2. Stop the clusters and node agents of WebSphere Partner Gateway on WebSphere Application Server v7 (on non -Windows execute this step as wpguser).
+
+3. Stop the Deployment manager of WebSphere Partner Gateway on WebSphere Application Server v7 (on non -Windows execute this step as wpguser).
+
+4. Run the bcgHubRevertMigrate.bat/sh (run as root on non-Windows ).
+
+5. Run the bcgDmgrRevertMigrate.bat/sh (run as root on non-Windows ).
+
+6. Optionally, remove the WebSphere Partner Gateway profiles on WebSphere Application Server v7 .
+<WAS_V7_HOME>/bin: ./manageprofiles.sh -delete -profileName <profilename>
+Note: This step is not mandatory to revert WebSphere Partner Gateway from WebSphere Application Server v7 to WebSphere Application Server v6.1.
+
+7. Backup the MAS database / schema. Refer individual database documentation for steps to take backup.
+
+8. Connect to the MAS database / schema as bcgmas user and drop the SIB tables.
+
+DB2 :
+
+db2 connect to bcgmas user bcgmas using <password>
+
+db2 drop table SIB000
+db2 drop table SIB001
+db2 drop table SIB002
+db2 drop table SIBCLASSMAP
+db2 drop table SIBKEYS
+db2 drop table SIBLISTING
+db2 drop table SIBOWNER
+db2 drop table SIBOWNERO
+db2 drop table SIBXACTS
+
+Oracle :
+
+sqlplus bcgmas/<password>@<sid>
+
+SQL> drop table SIB000;
+SQL> drop table SIB001;
+SQL> drop table SIB002;
+SQL> drop table SIBCLASSMAP;
+SQL> drop table SIBKEYS;
+SQL> drop table SIBLISTING;
+SQL> drop table SIBOWNER;
+SQL> drop table SIBOWNERO;
+SQL> drop table SIBXACTS;
+
+9. If the "create tables" option for the Message Store in the Messaging Engine (WAS Admin console) is not checked, go through this additional step.
+
+DB2 :
+
+Connect to bcgmas as instance owner and execute the script sibddl_db2.sql under <BCGMASDB>/Scripts/DB2 location.
+
+db2 connect to bcgmas user db2inst1 using <password>
+
+db2 -td! -f sibddl_db2.sql
+
+Oracle: 
+
+Execute the script sibddl_ora.sql under <BCGMASDB/Scripts/Oracle location connected as sys user.
+
+sqlplus -L "sys/<password>@<sid> as sysdba" @sibddl_ora.sql
+
+12. Start the node agents / Clusters of WebSphere Partner Gateway on WebSphere Application Server v6.1 .

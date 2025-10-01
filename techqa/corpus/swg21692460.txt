@@ -1,0 +1,77 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities in modules from the IBM SDK for Node.js affect the Cordova tools packaged in Rational Developer for i Modernization Tools Java Edition and Rational Developer for AIX and Linux (CVE-2014-7191 and CVE-2014-7192) - United States
+
+Text:
+CVE-2014-7191; CVE-2014-7192; PSIRT; 2241 SECURITY BULLETIN
+
+SUMMARY
+ Security vulnerabilities have been discovered in the syntax-error and qs modules packaged in the IBM SDK for Node.js and Cordova platform packaged in Rational Developer for i Modernization Tools Java Edition and Rational Developer for AIX and Linux. The fix upgrades IBM SDK for Node.js to 1.1.0.9. 
+
+VULNERABILITY DETAILS
+ 
+
+Subscribe to My Notifications to be notified of important product support alerts like this.  * Follow this link [https://www.ibm.com/systems/support/myview/subscription/css.wss/subscriptions?methodName=startSearchToSubscribe&uctug_rational_dcfsbblurb_2013-11-05_myn_adoption_promo] for more information (requires login with your IBM ID)
+
+CVEID: CVE-2014-7191 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7191] 
+
+Description: Node.js is vulnerable to a denial of service, caused by an error in the qs module when parsing a string representing a deeply nested object. An attacker could exploit this vulnerability to block the event loop for an extended period of time and cause a denial of service. 
+
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/96729 [https://exchange.xforce.ibmcloud.com/vulnerabilities/96729] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P) 
+
+ 
+
+CVEID: CVE-2014-7192 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7192] 
+
+Description: A vulnerability in the Node.js syntax-error module could allow a remote attacker to execute arbitrary code on the system, caused by the improper validation of input prior to being used in an eval() call. An attacker could exploit this vulnerability to inject and execute arbitrary script on the system. 
+
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/96728 [https://exchange.xforce.ibmcloud.com/vulnerabilities/96728] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:P/A:P)
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Product Name Versions Affected IBM Rational Developer for i, RPG and COBOL + Modernization Tools, Java Edition 9.1 Rational Developer for AIX and Linux, AIX COBOL Edition 9.1 Rational Developer for AIX and Linux, C/C++ Edition 9.1 REMEDIATION/FIXES
+Update the product to the 9.1.1 level to address this vulnerability:
+
+
+
+Product VRMF Remediation/First Fix IBM Rational Developer for i, RPG and COBOL + Modernization Tools, Java Edition 9.1  * Update the currently installed product using Installation Manager. For instructions on installing this update using Installation Manager, review the topic Updating Installed Product Packages [http://www.ibm.com/support/knowledgecenter/SSAE4W_9.1.0/com.ibm.etools.iseries.install.doc/topics/t_upgrading.html] in the IBM Knowledge Center. 
+ * Or, you can optionally download the update manually and apply Rational Developer for i 9.1.1 [http://www.ibm.com/support/docview.wss?uid=swg24038688] 
+
+Rational Developer for AIX and Linux, AIX COBOL Edition or C/C++ Edition 9.1  * For all client versions, update the currently installed product using Installation Manager. For instructions on installing this update using Installation Manager, review the topic Updating Installed Product Packages [http://www.ibm.com/support/knowledgecenter/SSPSQF_9.1.0/com.ibm.etools.install.rdal.doc/topics/t_upgrading.html] in the IBM Knowledge Center. 
+ * For server updates or to manually download and apply the client updates see Rational Developer for AIX and Linux 9.1.1 [http://www.ibm.com/support/docview.wss?uid=swg24038689]
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ * 15 December 2014: Original copy published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Developer for i General Information Linux, Windows 9.1 Modernization Tools- Java Edition Software Development Rational Developer for AIX and Linux General Information Linux, Windows 9.1 AIX COBOL Edition, C/C++ Edition

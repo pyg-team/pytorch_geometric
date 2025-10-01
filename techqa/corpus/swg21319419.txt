@@ -1,0 +1,48 @@
+Title: IBM CICS TS 5.4 downward compatibility with older releases of CICS - United States
+
+Text:
+CICS downward compatibility ; mandatory eligable LPA modules ; LINKLIST ; SDFHLPA SDFHLINK DFH$UMOD ; multiple releases ; migrates migration migrating upgrades upgrading ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 R700 700 R000 000 HCI7000 R710 710 R100 100 HCI7100 5655Y0401 5655-Y04 5655Y04 KIXINFO upgrade2cics54 TECHNOTE (FAQ)
+
+QUESTION
+ You are upgrading to CICS Transaction Server for z/OS (CICS TS) V5.4. To make the transition easier you would like to be able to run multiple versions of CICS in the same z/OS LPAR. You need to know, is CICS TS V5.4 downward compatible with the older releases of CICS TS 4.1, 4.2, 5.1,5.2 and 5.3 that you are still running? 
+
+CAUSE
+Currently in your production z/OS LPAR you have a CICS TS V5.1 SDFHLPA library in the link pack area (LPA) and a CICS TS V5.1 version of the library SDFHLINK in the LNKLIST. You would like to know if you can use the CICS TS V5.4 libraries in the LINKLIST and LPA instead of the CICS TS V5.1 libraries. Your production regions will be running CICS TS V5.1 and your test regions will be running V5.4 in the same LPAR.
+
+ANSWER
+ You can run your CICS TS V5.4 regions in parallel with your older CICS regions within the same LPAR. The key thing to remember is that the eight CICS mandatory LPA modules [https://www.ibm.com/support/knowledgecenter/SSGMCP_5.4.0/installing/dfha11h.html] must be from your CICS TS V5.4 libraries and must be what you install in the LPA within the LPAR. The modules will be downward compatible and your CICS TS V4.1, V4.2, V5.1, V5.2 and V5.3 systems will work with these modules. The mandatory LPA modules are found in hlq.SDFHLPA and are: 
+
+ 
+DFHCSVC
+DFHDSPEX
+DFHDUMPX
+DFHIRP
+DFHSSEN
+DFHSSGC
+DFHSSWT
+DFH99SVC 
+
+Remember, there are LPA-required and LPA-eligible modules. [https://www.ibm.com/support/knowledgecenter/SSGMCP_5.4.0/installing/dfha1l5.html] The CICS modules that are LPA eligible are listed in member DFH$UMOD that can be found in hlq.SDFHSAMP. These modules are not required to be in the LPA and are NOT guaranteed to be downward compatible. Therefore, they can only be used by the release of CICS to which they relate. For example, if you currently have the CICS TS V5.1 versions of these modules in the LPA, you will need to run with LPA=YES for your CICS TS V5.1 regions and LPA=NO for your CICS TS V5.4 regions. The LPA system initialization table (SIT) parameter only applies to the eligible LPA modules and not the mandatory eight modules in SDFHLPA. If you have two releases only one of them can specify LPA=YES. 
+
+As for LINKLIST, the CICS TS V5.4 modules in SDFHLINK [https://www.ibm.com/support/knowledgecenter/SSGMCP_5.4.0/installing/dfha13c.html] are compatible with earlier releases of CICS so they can be used with CICS TS V4.1,V4.2, V5.1, V5.2 and V5.3. However, the modules for trace and dump formatting (like DFHPD690, DFHTG690, DFHTR690, DFHTT690) are release dependant. The last three numbers of the modules indicate the release of CICS. Modules ending with:
+
+710 are for CICS TS 5.4
+700 are for CICS TS 5.3
+690 are for CICS TS 5.2
+680 are for CICS TS 5.1
+670 are for CICS TS 4.2
+660 are for CICS TS 4.1
+650 are for CICS TS 3.2
+640 are for CICS TS 3.1 
+
+So, you should leave the modules ending in 700, 690, 680, 670, 660, 650, and 640 in the LINKLIST for use with CICS TS V5.3, V5.2, V5.1, V4.2, V4.1, V3.2, and V3.1 if you are running with any of these releases.
+
+RELATED INFORMATION
+ CICSPlex SM (CPSM) 5.4 downward compatibility [http://www.ibm.com/support/docview.wss?uid=swg21366477]
+CICS TS 5.4 downward compatibility with CICS Tools [https://developer.ibm.com/answers/questions/382549/cics-ts-54-downward-compatibility-with-older-relea/]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

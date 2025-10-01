@@ -1,0 +1,154 @@
+Title: IBM PM28274: DWA: Table re-draw/refresh issue with Internet Explorer - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Rational DOORS Web Access Version 1.4.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24029261]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DOORS Web Access 1.4.0 is not refreshing/re-drawing the module
+   frame properly when a table containing standard text is
+   displayed and while using the frame's scrollbar to scroll down
+   or up.  This only occurs in Internet Explorer. There does not
+   seem to be a problem when using Firefox.
+   
+   This has been tested on Internet Explorer 6 and 7 on Windows XP,
+   Internet Explorer 8 on Windows Vista and Windows 7.
+   
+   To reproduce the problem:
+   
+   1. Open a module in DWA (either in review or edit), which
+   contains a multiple column, multiple row table containing text
+   in various cells and large enough rows to take up more than can
+   be displayed at one time.
+   2. Once the table is displayed and drawn, scroll down the table
+   using the module's scroll bar.
+   3. The text from the previous rows and columns will be displayed
+   on top of the current rows and columns.
+   
+   4. They can be (usually) refreshed by hovering the mouse cursor
+   over each cell in various places and occasionally when clicking
+   on the module frame's title bar.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Verified using IE7.
+   
+   As user scrolls horizontally or vertically using the scroll
+   bars, the text within the table cells do not appear to
+   follow the scrolling and remain stationary while all other
+   module items move.
+   
+   As in the possible workarounds, we found that using the
+   mouse to hover over each cell corrects the positioning of
+   that cell's content.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem has been fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM28274
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC DOORS WE
+   
+   
+ * REPORTED COMPONENT ID
+   5724V97WA
+   
+   
+ * REPORTED RELEASE
+   140
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-12-06
+   
+   
+ * CLOSED DATE
+   2011-03-30
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC DOORS WE
+   
+   
+ * FIXED COMPONENT ID
+   5724V97WA
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R140 PSN
+   UP

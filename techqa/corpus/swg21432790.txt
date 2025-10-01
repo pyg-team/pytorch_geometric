@@ -1,0 +1,70 @@
+Title: IBM Adding a new TM1 server on AIX - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I add a new TM1 server on AIX ? 
+
+ANSWER
+When you install TM1 server on AIX, it will offer to install the Planning Sample model for you. It is recommended you accept this as it will give you the framework within which to add new servers. Be sure to install as root or a user that has root privileges, as this is required to create the startup script under /etc. 
+
+After installation notice two files: 
+
+ 
+
+/etc/rc.d/rc2.d/S89IBM_TM1 
+
+<TM1 install directory>/bin/tm1s_start_Planning_Sample 
+
+ 
+
+S89IBM_TM1 will start and stop, at system boot and shutdown, the TM1 admin server and any TM1 servers that are defined on the system. By default you will only have the Planning Sample model to begin with. Notice that this script can be called from the command line and will accept one of two possible parameters: 
+
+start 
+
+stop 
+
+For each TM1 server that is started, there will be a call to a script in the tm1 bin directory, for example 
+
+
+# start the TM1 Server
+if [ -x "/opt/tm1/bin/tm1s_start_Planning_Sample" ] ; then
+echo "Starting tm1 server Planning Sample..."
+"/opt/tm1/bin/tm1s_start_Planning_Sample"
+fi 
+
+ 
+
+The script /opt/tm1/bin/tm1s_start_Planning_Sample defines necessary environment variables to enable startup of the server and then starts the server.
+
+
+ 
+
+To create a new, empty TM1 server: 
+
+1.) Create a new directory, and make a copy of tm1s.cfg from the Planning Sample model and place it into this new directory. For TM1 version 9.4 you will also need a copy of your licensing file tm1s.lic. 
+
+2.) Edit tm1s.cfg and make necessary changes, at a minimum to the DataBaseDirectory and PortNumber parameters (When multiple TM1® servers are installed on a single computer, each server must use a unique port number) 
+
+3.) Make a copy of tm1s_start_Planning_Sample in the bin directory, giving it an appropriate name, for example tm1s_start_NewModel. 
+
+4.) Edit tm1s_start_NewModel, and edit the tm1data_path to point to the data directory of your new data model.
+
+5.) Edit /etc/rc.d/rc2.d/S89IBM_TM1 and make a copy of the section that starts the Planning Sample server, making appropriate edits. For example:
+
+# start the TM1 NewModel Server
+if [ -x "/opt/tm1/bin/tm1s_start_NewModel" ] ; then
+echo "Starting tm1 server New Model..."
+"/opt/tm1/bin/tm1s_start_NewModel"
+fi 
+
+ 
+
+The first time you start this server you can do so by calling the new script from the command line (assuming the admin server is already running), for example: 
+
+ 
+/opt/tm1/bin/tm1s_start_NewModel
+
+When you start it the first time you should see all minimum necessary (empty) objects get created in the data directory. 
+NOTE: When you try to execute this script, if you receive a message like "File Not Found" that means you are not executing it as the user that created it. This is why it is crucial that you perform all operations here as the same user that installed TM1, which must have root privileges.

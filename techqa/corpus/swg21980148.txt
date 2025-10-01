@@ -1,0 +1,10 @@
+Title: IBM Can IBM Content Navigator be installed on Windows and be deployed to an Application Server that is running on a Unix Platform. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Can IBM Content Navigator be installed on Windows and be deployed to an Application Server that is running on a Unix Platform. 
+
+ANSWER
+This is not a supported configuration.

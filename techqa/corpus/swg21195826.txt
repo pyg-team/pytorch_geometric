@@ -1,0 +1,74 @@
+Title: IBM AEXZ and DFHSJ0201 call to CEEPIPI wth INIT_SUB_DP failed when using EJB Server - United States
+
+Text:
+SJ0201 DFHSJ0201 ABENDAEXZ AEXZ DFHEJ0723 DFHEJ1518 EJB DFHSJIN INIT_SUB_DP_FAILED PIPI_RETURN_CODE(8) 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ You are upgrading your region to CICS Transaction Server for z/OS (CICS TS) V2.3 or higher, and setting up an EJB server that was working in CICS TS V2.2. During CICS initialization, you receive message DFHSJ0201 A call to CEEPIPI with function code INIT_SUB_DP has failed and DFHDU0203I A transaction dump was taken for dumpcode: AEXZ (abendAEXZ). 
+
+SYMPTOM
+Following is a more complete list of the messages received: 
+
+DFHSJ0201 A call to CEEPIPI with function code INIT_SUB_DP has failed. 
+DFHDU0202 SDUMPX COMPLETE. SDUMPX RETURN CODE X'00' 
+IEA794I SVC DUMP HAS CAPTURED: nnn
+DUMPID=001 REQUESTED BY JOB (jobname)
+DUMP TITLE=CICS DUMP: SYSTEM=jobname CODE=SJ0201 ID=1/0001 
+DFHEJ0701 I CorbaServer aaaa has been created. 
+DFHSO0107 TCPIPSERVICE bbbb has been opened on port nnnnn at IP address xxx.xxx.xxx.xxx. 
+DFHSO0107 TCPIPSERVICE cccccccc has been opened on port nnnnn at IP address xxx.xxx.xxx.xxx. 
+DFHDU0203I A transaction dump was taken for dumpcode: AEXZ, Dumpid: 1/0002. DFHEJ0723 E CorbaServer aaaa has failed Resolution during Shelf creation. 
+DFHEJ0762 I CorbaServer aaaa has been set to be disabled. 
+DFHEJ1518 E CorbaServer aaaa is UNUSABLE.
+
+CAUSE
+The SDFJAUTH library is required for Java™ support but is not in the STEPLIB concatenation of your CICS JCL.
+
+
+
+DIAGNOSING THE PROBLEM
+The CICS trace shows the following: 
+
+1961 APLJ EXIT - FUNCTION(PIPI_INIT_SUB_DP) RESPONSE(OK)
+PIPI_TOKEN(0BCF2BB0) PIPI_RETURN_CODE(8)
+0215 SJIN *EXC* - INIT_SUB_DP_FAILED - FUNCTION
+(PIPI_INIT_SUB_DP) 
+EXECUTION_KEY(CICS) PIPI_TABLE_ADDRESS(0C0095B8)
+PIPI_RUNTIME_OPTIONS()PIPI_SERVICE_RTNS(CB041F8)
+
+IPCS command L 0CB041F8 length(x'1000') where 0CB041F8 is the PIPI_SERVICE_RTNS address displays the following:
+LIST 0CB041F8. ASID(X´0138´) LENGTH(X´1000´) AREA 
+ASID(X´0138´) ADDRESS(0CB041F8.) KEY(80)
+0CB041F8. 00000006 00000000
+0CB04200. 0CB04214 00000000 00000000 8C000000 8C0000CC
+the fourth word is supposed to be the load address but it is zero.
+
+IPCS command L 0C0095B8 length(x'1000') where 0C0095B8 is the PIPI_TABLE_ADDRESS address displays the following:
+LIST 0C0095B8. ASID(X´0138´) LENGTH(X´1000´) AREA
+ASID(X´0138´) ADDRESS(0C0095B8.) KEY(80)
+0C0095B8. C3C5C5E7 D7E3C2D3| CEEXPTBL|
+0C0095C0.00000001 00000010 00000002 00000000|................|
+0C0095C0 C4C6C8E2 D1C3E2D3 00000000 00000000|DFHSJCSL........|
+This means that module DFHSJCSL was loaded dynamically and is missing.
+
+
+RESOLVING THE PROBLEM
+Do the following: 
+
+ 1. APF-authorize the SDFJAUTH library [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.installation.doc/topics/dfha1n9.html] by adding it to the list of APF-authorized libraries in the appropriate PROGxx (or IEAAPFxx) member in SYS1.PARMLIB.
+    
+    
+ 2. Add a STEPLIB DD statement for the hlq.SDFJAUTH library in your CICS startup job.
+
+RELATED INFORMATION
+#DFHSJ0201 [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.messages.doc/cics_mc/dfhsj/SJ0201.html]
+Abend AEXZ [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.messages.doc/cics_mc/AExx_abend_codes/AEXZ.html]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

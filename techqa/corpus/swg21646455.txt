@@ -1,0 +1,116 @@
+Title: IBM Synchronize LTPA keys between TDWC v8.6 and TWS v8.5.1 - United States
+
+Text:
+TWS; TDWC; LTPA; token; keys; AWSJCO005E; CORBA; NO_PERMISSION TECHNOTE (FAQ)
+
+QUESTION
+ What is the procedure to synch LTPA keys between Tivoli Dynamic Workload Console (TDWC) and Tivoli Workload Scheduler (TWS) using the WebSphere Administration Console on both TWS's embedded WebSphere Application Server (eWAS) and TDWC's eWAS? 
+
+ANSWER
+This example shows TDWC v8.6 and TWS v8.5.1 installed on the same workstation. Both are installed with their own eWAS instance. 
+
+Step 1. Assemble the WebSphere Administration Console URLs 
+
+a. Login as root (UNIX) or an Administrative user (Windows) 
+
+b. cd <TWAHome>/wastools 
+
+c. ./showHostProperties.sh (showHostProperties.bat on Windows) 
+
+Using the output from step 2c, record the value for adminSecurePort. 
+
+- For TDWC the default value is 29043. 
+
+- For TWS the default value is 31124 
+
+The WebSphere Administration Console URLs will look like this:
+- ....://<hostname>:<adminSecurePort>/ibm/console 
+
+For example:
+- TDWC: ....://pvt123.private.tivoli.com:29043/ibm/console 
+
+- TWS: ....://pvt123.private.tivoli.com:31124/ibm/console 
+
+ 
+
+Step 2. Access TWS's WebSphere Administration Console and export an LTPA key. 
+
+ 
+
+a. Open a browser and enter the WebSphere Administration Console URL that was assembled for the TWS 8.5.1 instance. Login using the WebSphere administrative user and password
+[/support/docview.wss?uid=swg21646455&amp;aid=1]
+
+
+
+b. Expand the [+]Security portfolio selection and select "Secure administration, applications, and infrastructure".
+[/support/docview.wss?uid=swg21646455&amp;aid=2]
+
+
+c. Select "Authentication mechanisms and expiration"
+[/support/docview.wss?uid=swg21646455&aid=3] [/support/docview.wss?uid=swg21646455&aid=3]
+
+
+
+d. In the "Cross-cell single sign-on" section enter a new password and a file name to be exported. Select the [ Export Keys ] button then select the [ Apply ] button.
+[/support/docview.wss?uid=swg21646455&aid=4] [/support/docview.wss?uid=swg21646455&aid=4]
+
+
+
+e. A message will pop up at the top of the panel. Select "Save" 
+[/support/docview.wss?uid=swg21646455&aid=5] [/support/docview.wss?uid=swg21646455&aid=5]
+
+
+
+f. Continue to disable automatic key generation. Go back into the panel named "Authentication mechanisms and expiration" Then, in the section named "Key generation", select "Key set groups"
+[/support/docview.wss?uid=swg21646455&aid=6] [/support/docview.wss?uid=swg21646455&aid=6]
+
+
+
+g. Select on the key set group name "NodeLTPAKeySetGroup"
+[/support/docview.wss?uid=swg21646455&aid=7] [/support/docview.wss?uid=swg21646455&aid=7]
+
+
+h. Uncheck the "Automatically generate keys" checkbox in the section named "Key generation" and select the [ Apply ] button at the bottom of the panel.
+[/support/docview.wss?uid=swg21646455&aid=8] [/support/docview.wss?uid=swg21646455&aid=8]
+
+i. Select "Save" in the message that appears at the top of the panel as in sub-step e. above.
+
+j. Log out of the WebSphere Administration Console by selecting the blue "Logout" action at the top right of the panel.
+
+
+Step 3. Launch the WebSphere Administration Console for TDWC v8.6 and import the LTPA key that was exported from TWS's WebSphere.
+
+a. Open a browser and enter the WebSphere Administration Console URL that was assembled for the TDWC v8.6 instance. Login using the WebSphere administrative user and password as seen in 2a above.
+NOTE: Remember: https://<hostname>:<adminSecurePort>/ibm/console
+
+b. Expand the [+]Security portfolio selection and select "Global Security" 
+[/support/docview.wss?uid=swg21646455&amp;aid=9]
+
+
+c. Select "LTPA" in blue text under the section on the right named "Authentication"
+[/support/docview.wss?uid=swg21646455&aid=10] [/support/docview.wss?uid=swg21646455&aid=10]
+
+
+d. In the LTPA page enter the same password and filename as entered for the LTPA key that was exported from TWS's eWAS and select the [ Import keys ] button. Then select [ Apply ]
+
+[/support/docview.wss?uid=swg21646455&aid=11] [/support/docview.wss?uid=swg21646455&aid=11]
+
+
+e. Select "Save" in the message that pops up at the top of the panel.
+[/support/docview.wss?uid=swg21646455&aid=12] [/support/docview.wss?uid=swg21646455&aid=12]
+
+f. Continue to disable automatic key generation. Go back to the "Global Security" -> "LTPA" panel. Then, in the section named "Key generation", click "Key set groups"
+NOTE: Steps 3g. through 3j are the same as 2g through 2j.
+g. Select on the key set group name "NodeLTPAKeySetGroup"
+h. Uncheck the "Automatically generate keys" checkbox in the section named "Key generation" and click the [ Apply ] button at the bottom of the panel.
+i. Select "Save" in the message that appears at the top of the panel as in sub-step e. above.
+j. Logout of the WebSphere Administration Console by clicking the blue "Logout" action at the top right of the panel.
+
+
+Step 4. Test the Engine connection from TDWC v8.6 to TWS v8.5.1 
+
+NOTE: It may be necessary to restart both TWS and TDWC WebSphere instances.
+
+RELATED INFORMATION
+ Configuring to use the same LTPA token_keys [http://pic.dhe.ibm.com/infocenter/tivihelp/v47r1/topic/com.ibm.tivoli.itws.doc_8.6.0.1/awsadshareltpa.htm]
+TWS v8.4 with TDWC v8.5 LTPA Keys [http://www.ibm.com/support/docview.wss?uid=swg21377224]

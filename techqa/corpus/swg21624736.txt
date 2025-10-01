@@ -1,0 +1,50 @@
+Title: IBM SIMPLimitExceededException occurred while sending messages to a queue - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using the WebSphere Application Server (WAS) Message Engine, at either the client or applicaiton side you see this exception: SIMPLimitExceededException and your application or client is unable to send the messages to the SIB desination and requests are failed. In the SystemOut.log, the following exception is thrown:
+
+javax.jms.JMSException: CWSIA0067E: An exception was received during the call to the method JmsMsgProducerImpl.sendMessage: com.ibm.ws.sib.processor.exceptions.SIMPLimitExceededException: CWSIK0025E: The
+destination <queue name> on messaging engine <ME_NAME> is not available because the high limit for the number of messages for this destination has already been reached..
+
+
+CAUSE
+This error implies that the queue point (or remote queue point) for which the application is producing has exceeded its high message threshold. 
+The error can occur for a topic as well.
+
+
+RESOLVING THE PROBLEM
+1) Check the current message depth of the queue point. If the message depth is at or above the high message threshold we expect this exception. Reasons this could happen are: 
+
+ * 
+ * 
+ * 
+ * 
+ * i) Increase the speed of the consumer applications; for example, increase the number of threads used by an MDB, or connect consuming applications directly to this messaging engine. 
+   ii) Reduce the speed of the producing applications. 
+
+
+2) If the queue point has not reached the high message threshold, the failing producing application might be connected to a messaging engine that does not own the queue point for the destination. A remote queue point has been created by this messaging engine and the messages have been built up here:  * 
+ * 
+ * 
+ * 
+ * 
+ * Determine if the outbound messages sent value is increasing over time. Refresh the panel after a few seconds to see if the number changes: 
+   
+   i) If the outbound messages sent value is not increasing, make sure the remote messaging engine that owns the queue point is running. If not, start it. After the messaging engine is started, the outbound messages should drain from the remote queue point into the queue point. If the messages are not sent, examine the application server SystemOut.log files and search for occurrences of message CWSIT0029I. If you see this message, check the message body to see if the messaging engines match those hosting any queue points that interest you. 
+   For example: CWSIT0029I: The connection for messaging engine ME_1 in bus <Bus_Nam> to messaging engine <ME_2> stopped. 
+   This message generally implies a network connectivity problem. Resolving connectivity issues enables the messages to be delivered to the queue point. 
+   
+   ii) If the outbound messages sent value is increasing, messages are successfully being transmitted to the corresponding queue point. The reason for the large number of outbound messages is that the rate of message production is faster than they can be transmitted. This situation might be due to a slow network connection between messaging engines or to other network traffic interfering with this connection’s performance. Improving the network connection should increase message throughput. If it does not, the message production rate must be reduced to prevent the backlog. 
+
+RELATED INFORMATION
+ Service Integration Bus and Stuck Messages [http://www-01.ibm.com/support/docview.wss?uid=swg27036467]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere MQ Configuration Business Integration WebSphere Process Server Business Integration WebSphere Service Registry and Repository Business Integration IBM Business Monitor Business Integration WebSphere Enterprise Service Bus Business Integration WebSphere Partner Gateway Advanced Edition Business Integration WebSphere Partner Gateway Enterprise Edition 
+PRODUCT ALIAS/SYNONYM
+ WebSphere Application Server WAS SIB SIBUS SI BUS

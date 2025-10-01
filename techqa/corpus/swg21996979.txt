@@ -1,0 +1,75 @@
+Title: IBM Security Bulletin: Vulnerabilities in OpenSource GNU Glibc affect IBM Netezza Host Management (CVE-2015-8778,CVE-2015-8779,CVE-2014-9761) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ OpenSource GNU Glibc is used by IBM Netezza Host Management. IBM Netezza Host Management has addressed the applicable CVEs. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-8778 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-8778]
+DESCRIPTION: GNU C Library (glibc) could allow a remote attacker to execute arbitrary code on the system, caused by an integer overflow in hcreate and hcreate_r. An attacker could exploit this vulnerability to trigger an out-of-bound memory access and execute arbitrary code on the system or cause the application to crash.
+CVSS Base Score: 5.6
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/111086 [https://exchange.xforce.ibmcloud.com/vulnerabilities/111086] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L) 
+
+CVEID: CVE-2015-8779 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-8779]
+DESCRIPTION: GNU C Library (glibc) is vulnerable to a stack-based buffer overflow, caused by improper bounds checking by the catopen function. By sending an overly long string, a remote attacker could overflow a buffer and execute arbitrary code on the system or cause the application to crash.
+CVSS Base Score: 5.6
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/111087 [https://exchange.xforce.ibmcloud.com/vulnerabilities/111087] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L) 
+
+CVEID: CVE-2014-9761 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-9761]
+DESCRIPTION: GNU C Library (glibc) is vulnerable to a stack-based buffer overflow, caused by improper bounds checking by the nan function. By sending an overly long string, a remote attacker could overflow a buffer and execute arbitrary code on the system or cause the application to crash.
+CVSS Base Score: 5.6
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/111085 [https://exchange.xforce.ibmcloud.com/vulnerabilities/111085] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L)
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+ *  IBM Netezza Host Management 5.4.1.2 - 5.4.11.0
+
+REMEDIATION/FIXES
+To resolve the reported CVE for Red Hat Enterprise Linux (RHEL) on PureData System for Analytics N200x and N3001 platforms only, update to the following IBM Netezza Host Management release: 
+
+Product VRMF Remediation/First Fix IBM Netezza Host Management 5.4.12.0 Link to Fix Central [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/Information+Management/Netezza+Platform&release=HOSTMGMT_5&platform=All&function=fixId&fixids=5.4.12.0-IM-Netezza-HOSTMGMT-fp117949] 
+The Netezza Host Management software contains the latest RHEL updates for the operating systems certified for use on IBM Netezza/PureData System for Analytics appliances. IBM recommends upgrading to the latest Netezza Host Management version to ensure that your hosts have the latest fixes, security changes, and operating system updates. IBM Support can assist you with planning for the Netezza Host Management and operating system upgrades to your appliances. 
+
+For more details on IBM Netezza Host Management security patching: 
+Red Hat Enterprise Linux (RHEL) Security Patching for IBM PureData System for Analytics appliances [http://www-01.ibm.com/support/docview.wss?uid=swg21615012] WORKAROUNDS AND MITIGATIONS
+Mitigation of the reported CVEs for Red Hat Enterprise Linux (RHEL) applies to the following platforms only:
+
+PureData System for Analytics N1001
+IBM Netezza High Capacity Appliance C1000
+IBM Netezza 1000
+IBM Netezza 100
+
+CVE-2014-9761: Do not use any applications which call the affected nan* functions. These functions are used only very rarely.
+CVE-2015-8778: Do not use any applications which call hcreate or hcreate_r with a large size argument. These functions are used only rarely, and most callers supply a constant argument. Other applications calculate the size argument in such a way that the error condition cannot be triggered.
+CVE-2015-8779: Do not use applications which call catopen with unbounded strings. The catopen function is rarely used. Typical application usage involves passing a short, constant string to catopen, so most applications are not affect even if they call catopen.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21615012 [http://www-01.ibm.com/support/docview.wss?uid=swg21615012] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 9 February 2017: Original version published
+1 March 2017: Added PDA security patching link
+12 June 2017: Republished. Modified affected version and added remediation details and fix central link 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

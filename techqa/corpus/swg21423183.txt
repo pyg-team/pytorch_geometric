@@ -1,0 +1,39 @@
+Title: IBM Required license FEATURES  for the IBM Rational Rhapsody product suite editions - United States
+
+Text:
+Rhapsody Architect; Rhapsody Architect; RPRE; RhapsodyArchitect; RPUAutosar; RPSysArch; RPSysDesign TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ What license FEATURES are required for Rational Rhapsody Architect for Software, Rational Rhapsody Architect for System Engineers and Rational Rhapsody Designer for System Engineers? 
+
+ANSWER
+ 
+
+There are separate license features for Rational Architect for Software, Rational Architect for System Engineering and Rational Designer for System Engineers. 
+
+For Rational Architect for Software you should have the following:
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+For Rational Architect for System Engineers you should have the following: 
+ * 
+
+
+For Rational Designer for System Engineers you should have the following: 
+ * 
+
+
+You may visit the License Key Center to manage and generate your license keys via the on-line service located at: 
+
+https://www-01.ibm.com/software/rational/support/licensing/ [https://www-01.ibm.com/software/rational/support/licensing/] 
+
+If you have any further issues/concerns regarding your licenses you may also call the IBM Rational Client Support team for assistance. The number to reach the support is 1-800-IBM-SERV (1-800-426-7378)

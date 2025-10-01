@@ -1,0 +1,49 @@
+Title: IBM Backup VM fails after upgrading vCenter to 5.5.0 U3b - United States
+
+Text:
+TSM; TDP; VMware; Spectrum Protect; VE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Backup of a virtual machine is failing after upgrading the vCenter server to version 5.5.0 U3b. This is caused by a change in the vCenter server that disables SSLv3. 
+
+SYMPTOM
+Backup VM is failing with following error message: 
+
+
+03/08/2016 01:17:14 ANS1228E Sending of object 'VIRTUAL_MACHINE' failed.
+03/08/2016 01:17:14 ANS5283E The operation was unsuccessful.
+
+
+
+CAUSE
+This issue is caused by a change in the VMware vCenter server after the upgrade to version 5.5.0 U3b. After upgrading the VMware vCenter server, SSLv3 is disabled and TLSv1 must be used for communication with the VMware vCenter server.
+TLSv1 requires VMware VDDK 5.5.4, which is currently not integrated with Tivoli Storage Manager - Data Protection for VMware 7.1.0 or 7.1.1
+
+
+DIAGNOSING THE PROBLEM
+Review a trace of the failing Backup VM operation. The root cause can be found here: 
+
+
+03/08/2016 03:02:15.084 [005684] [7544] : vmvddksdk.cpp (1168): 2016-03-08T03:02:15.084-06:00 [07544 error 'HttpConnectionPool-000000'] [ConnectComplete] Connect failed to <cs p:0000005949f2c110, TCP:192.168.1.2:443>; cnx: (null), error: class Vmacore::Ssl::SSLException(SSL Exception: error:140000DB:SSL routines:SSL routines:short read)
+
+03/08/2016 03:02:15.084 [005684] [7544] : vmvddksdk.cpp (1168): 2016-03-08T03:02:15.084-06:00 [07544 trivia 'Default'] Setting error in state 1 : class Vmacore::Ssl::SSLException(SSL Exception: error:140000DB:SSL routines:SSL routines:short read)
+
+
+Note: Instructions to collect a trace can be found in the 'Related Information' section (Tracing Data Protection for VMware; Technote #1497489).
+
+
+RESOLVING THE PROBLEM
+Upgrade Tivoli Data Protection for VMware to 7.1.2 or 7.1.3, having a supported VMware VDDK.
+
+RELATED INFORMATION
+ VMware VDDK 5.5.4 Release Notes [https://www.vmware.com/support/developer/vddk/vddk-554-releasenotes.html]
+VMware vCenter Server 5.5 Update 3b Release Notes [http://pubs.vmware.com/Release_Notes/en/vsphere/55/vsphere-vcenter-server-55u3b-release-notes.html]
+Tivoli Storage Manager - VDDK compatibility guide [http://www.ibm.com/support/docview.wss?uid=swg21672351]
+Tracing Data Protection for VMware [http://www.ibm.com/support/docview.wss?uid=swg21497489]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Storage Management Tivoli Storage Manager for Virtual Environments Data Protection for VMware Linux, Windows 6.4, 7.1

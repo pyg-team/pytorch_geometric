@@ -1,0 +1,19 @@
+Title: IBM Using DB2 Read On Standby (ROS) Feature with TSAMP - United States
+
+Text:
+ROS; ReadOnStandby; HADR; TSAMP; TSA; SIP TECHNOTE (FAQ)
+
+QUESTION
+ How to use the DB2 Read on Standby Feature (ROS) with Tivoli System Automation for Multiplatforms (TSAMP) 
+
+ANSWER
+DB2 provides feature named "Read On Standby" for HADR to allow read operation from the HADR standby side. To use this feature with TSAMP some special settings needs to be done described in the URL: http://www.ibm.com/developerworks/data/library/techarticle/dm-1301db2hadrstandby/ [http://www.ibm.com/developerworks/data/library/techarticle/dm-1301db2hadrstandby/]
+After setting up HADR and ROS an virtual IP (Service IP (SIP) from TSA perspective) can be created to automate the ROS in automated HADR environments using TSAMP.
+
+NOTE: The ROS is for read operation on the standby side and not for any read operation on the HADR primary side. It is a less privileged operation and in case of large synchronization operations between HADR primary and standby it can come to delays/interruption using ROS.
+
+There's also document describing the setup of the Service IP for ROS. 
+When a takeover takes place the ROS IP moves over to the new standby side.
+
+Details on how to setup are also described here:
+http://public.dhe.ibm.com/software/data/sw-library/db2/papers/DB2ROS_VIP.pdf [http://public.dhe.ibm.com/software/data/sw-library/db2/papers/DB2ROS_VIP.pdf]

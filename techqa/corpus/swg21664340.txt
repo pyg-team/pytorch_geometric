@@ -1,0 +1,44 @@
+Title: IBM java.lang.UnsatisfiedlinkError: no rcl_ibmratl in java.library.path starting UrbanCode Deploy - United States
+
+Text:
+rcl_ibmratl; ucd; unsatisfiedLinkError TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to start UrbanCode Deploy version 6.0.1 or later result in the error java.lang.UnsatisfiedLinkError: no rcl_ibmratl in java.library.path 
+
+SYMPTOM
+ The error java.lang.UnsatisfiedLinkError: no rcl_ibmratl in java.library.path null is shown in the <installdir>/var/log/deployserver.out or in the terminal console. 
+
+image (click to enlarge)
+[/support/docview.wss?uid=swg21664340&aid=1] [/support/docview.wss?uid=swg21664340&aid=1]
+
+
+CAUSE
+The Native Libraries for the Rational Common Licensing (RCL) API are missing.
+
+The library should be in the java.library.path for the JVM.
+
+
+RESOLVING THE PROBLEM
+Procedure: 
+
+ 1. Find the correct architecture library corresponding to the JAVA bitness configured with your UrbanCode Deploy server under the directory: <UCDInstallDir>/lib/rcl/
+    
+    Note: <UCDInstallDir>/lib/rcl/OS specific directory/[sub directory for 32 or 64 bit]/>
+    
+    
+ 2. Add the library to the java.library.path in the set_env file located in the <UCDInstallDir>/bin directory.
+
+
+
+For example on a Linux and/or Microsoft Windows with a 32bit JVM installation, the configuration should look like: 
+
+Linux: 
+JAVA_OPTS="-Xmx1024m -XX:MaxPermSize=192m -XX:-OmitStackTraceInFastThrow -Dcatalina.base=\"/opt/udeploy/server/opt/tomcat\" -Dcatalina.home=\"/opt/udeploy/server/opt/tomcat\" -Djava.awt.headless=true -Djava.endorsed.dirs=\"/opt/udeploy/server/endorsed\" -Djava.library.path=\"/opt/udeploy/server/lib/rcl/linux/x386_32\" 
+
+Note: where opt/udeploy/server corresponds to the installation directory of UCD 
+
+Windows: 
+set JAVA_OPTS=-Xmx512m -XX:MaxPermSize=192m -XX:-OmitStackTraceInFastThrow -Dcatalina.base="C:\IBM\ibm-ucd\server\opt\tomcat" -Dcatalina.home="C:\IBM\ibm-ucd\server\opt\tomcat" -Djava.endorsed.dirs="C:\IBM\ibm-ucd\server\endorsed" -Djava.library.path="C:\IBM\ibm-ucd\server\lib\rcl\win\x386_32" 
+
+Note: where C:\IBM\ibm-ucd\server corresponds to the installation directory of UCD)

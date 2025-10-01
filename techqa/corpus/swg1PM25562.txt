@@ -1,0 +1,125 @@
+Title: IBM PM25562: ISSUES WHEN USING WEBSPHERE EDGE LOAD BALANCER TO LOAD BALANCE AMONG TIVOLI LDAP SERVERS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A customer wants to use WebSphere Edge Server Load Balancer
+   version 6.1.0.42 to load balance multiple Tivoli LDAP servers
+   with Cognos 8 apps on Websphere.??Customer is seeing the
+   following issues only when using the LDAP load balancer:?-
+   timeouts due to inactivity hang the browser and require a new
+   one to be opened?- intermittently, it can take several minutes
+   to login??IBM Webshere L2 and L3 folks has investigated and see
+   that Cognos is using some sort of connection  pooling/reuse and
+   that it is trying to use a connection that has been  already
+   closed by the LDAP server for inactivity but since the
+   connection is going through a VIPA, Cognos is issuing TCP
+   retries until a new connection is established. This is the cause
+   of our poor performance when connected to the LDAP through the
+   VIPA but is an issue that can be addressed on the Cognos end of
+   the equation by cleaning up the LDAP connections.   ??Questions
+   posed by IBM websphere folks ?(1) Does cognos have a parameter
+   to control how long it will let    ?inactive connections linger
+   before cleaning them ? ?(2) If not, is there a   hardcoded value
+   how long a connection can exist with no traffic before  cleaning
+   ? If there is a hard coded value, LB needs for its
+   staletimeoutto be set slightly higher than this hard coded
+   value. If there is no   such control for cognos, there needs to
+   be because connections can fail ?with no further traffic and if
+   they aren't cleaned up, the connection   ?pool will be exhausted
+   after some amount of time.??We know that Cognos do use
+   connection pooling of default 20 for LDAP connection but we do
+   not know whether the advance setting
+   "unbindLDAPHandleAfterUse=True" will help in this case or if
+   there is anything else that could help the issue of using the
+   LDAP load balancer. Need also answers to the above questions.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is a duplicate of PM25560 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM25560]
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM25562
+   
+   
+ * REPORTED COMPONENT NAME
+   COG8 BI SECURIT
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12SE
+   
+   
+ * REPORTED RELEASE
+   841
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-29
+   
+   
+ * CLOSED DATE
+   2011-02-23
+   
+   
+ * LAST MODIFIED DATE
+   2011-09-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,150 @@
+Title: IBM How does FileNet Business Process Manager Case Analyzer process the events from the Process Engine (PE) and Content Engine (CE) event logs? - United States
+
+Text:
+Case Analyzer; Event Processing Overview; Events collection; Events Publishing TECHNOTE (FAQ)
+
+QUESTION
+ How does Case Analyzer process the events from PE and CE event logs? 
+
+CAUSE
+Customers need additional information on the event processing framework of Case Analyzer to better understand its functionality.
+
+ANSWER
+ 
+
+Introduction
+
+
+IBM Case Analyzer acts as an extract, transform, load ( ETL) tool to extract event information from the IBM FileNet Process Engine and IBM FileNet Content Engine and publishes them to a relational database (RDBMS) schema as a set of Fact and Dimension tables. The RDBMS table data is leveraged by an Online Analytical Processing (OLAP) database for reporting. The RDBMS table data is also consumed by Cognos® Real Time Monitoring (RTM) dashboards for providing live dashboard support. This document highlights the technical details of the event processing and publishing framework at a high level. This document is intended for people who are familiar with FileNet P8 platform particularly the Content Engine and the Process Engine. 
+
+ 
+
+Components
+
+
+[/support/docview.wss?uid=swg21605882&aid=1] [/support/docview.wss?uid=swg21605882&aid=1]
+
+
+ 
+
+IBM Case Analyzer and Cognos RTM are comprised of the following modules. Each module has a specific role in the overall processing and publishing of events.
+
+
+ * Case Analyzer Engine – server that processes and publishes the events 
+ * Case Analyzer Clients 
+ * Microsoft® Excel Reports 
+ * Cognos BI Reports 
+ * Cognos RTM Dashboards 
+ * PAAMO – OLAP cube updates and processing 
+ * Case Analyzer Process Task Manager (PTM) – Administrative tool for configuration, maintenance and job scheduling 
+ * Database Objects – stored procedures, views and user-defined fields (UDFs)
+
+
+Dispatcher
+
+
+The dispatcher module queries the events logs from Process Engine and Content Engine using JDBC and Content Engine APIs respectively and constructs Case Analyzer events which are consumed by the the publisher module. 
+
+Event Processing Conditions
+
+
+ * The events that are generated before the installation of Case Analyzer do not get processed. 
+ * When Case Analyzer is restarted, it continues from the last event that has been processed in the previous run. 
+ * When there is a gap in the sequence of events, based on an internal logic, the dispatcher decides to either wait or to continue ignoring the gap. This is to make sure that no events are lost at the source.
+
+
+Ignored Events 
+Not all events as it is seen in the source event log table is processed by Case Analyzer. 
+
+In case of Content Engine events: 
+
+ * Only Case and Task related events are processed. 
+ * Only create, update and delete events are processed. 
+ * Case creation event without initialization state is ignored.
+
+
+In case of Process Engine events:  * Message related events are not processed.
+   
+   That is, when the event type “F_EventType” is one among the following, the event is ignored (110, 120, 125, 170, 172, 174, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 400, 410, 420, 430, 440, 450, 460, 470, 480). 
+ * Events with tracker status ON “F_TrackerStatus == 1” are ignored.
+
+
+Publisher
+
+
+The publisher consumes the events created by the dispatcher, transforms and publishes them to the Case Analyzer RDBMS. 
+
+Event Transformation
+
+
+Every source (PE/CE) event contain data related to measures or dimensions. For example, a workflow related event will contain the workflow number and datasource_key, which will form part of the dimensional data and will contain measure columns for aggregation. Such measure column data are pushed into the fact tables whereas the dimension related columns are pushed into the dimensional tables. 
+
+Event transformation is the phase where the source event is split into fact and dimensional data. Dimensional tables act as parent tables in the star schema which are referenced by the fact tables. 
+
+Dimensional data cache
+
+
+Each dimension table contains a caching mechanism for aiding better performance. When the data is first pushed into the dimension table or when the dimension table is looked up for reference, the dimension keys are cached in the Case Analyzer process memory. When new events arrive, the cache is reference to get the dimension keys before querying the RDBMS. 
+
+The System Monitor screen in the Case Analyzer Process Task Manager provides the statistics of the current dimensional caching hit ratio. The greater the cache hit ratio, the better the performance is. 
+
+Database Update
+
+
+Case Analyzer collects events over a period of time and at regular intervals commits these events onto the CA RDBMS. Database update happens in pre-defined time interval which can be configured from the PTM. A database update is also triggered when the cache is full. 
+
+When a database update happens, the CA engine publishes the fact table data stored in memory onto RDBMS. 
+
+
+List of Fact and Dimension tables
+
+
+Fact tables and dimension tables can be identified by the prefix “F_” and “D_” respectively. Fact tables reference the dimension tables using foreign key constraints at the RDBMS level. If a pictorial representation of the relationship is required, a database diagram can be constructed by selecting the interested fact and dimension tables using database tools. 
+
+Data for the dimension tables is filled during event “transformation”. Data in these tables gets committed regardless of the events getting published onto the fact tables. Hence for example when a certain workflow XXX is transformed, an entry is put into D_DMWorkflow table even if the events related to this workflow are not published due to other reasons (eg. quarantined events). 
+
+Fact table data is published during a database update. On a successful database update call, the fact data is committed. On exceptional cases, the database update is rolled back and Case Analyzer will have to start processing the event sequence greater than the previous successful database commit. 
+
+ 
+
+User defined fields (UDFs)
+
+
+Administrators and business analysts can define custom fields on the Process Engine (using the Process Configuration Console) and on the Content Engine (using FileNet Enterprise Manager). These custom fields can then be exposed to Case Analyzer as UDFs either as Dimensions or as Measures. 
+
+When a UDF is exposed as a dimension, a new dimension table is created in the RDBMS with the name 'D_DMDataField_<uniqueName>'. Foreign keys are placed in the selected fact tables to reference this new UDF dimension. UDF dimension data can be absolute entries where it gets filled in during event transformation OR they can be relative entries in the form of Ranges. Based on the Floor and Ceil values, respective key values are placed in the fact tables. This is useful for rolling up data for a range rather than for an absolute dimensional entry. 
+
+Measures are candidates for aggregation and hence when a UDF measure is created, it goes and sits in the selected Fact tables as a new field. 
+
+
+RDBMS Maintenance modules
+
+
+Pruning
+
+
+Pruning is an operation which a CA database administrator can execute to cleanup the internal bookkeeping data from the CA RDBMS. Pruning does not have any impact on the reporting data and hence the reports will remain intact. This leads to improved performance on DML operations. Take care of the below things while using this feature. 
+
+ * Make sure the transaction log is big enough or it is allowed to grow automatically 
+ * The pruning operation will start from where it left when it is rerun after an abort or a failure
+
+
+
+Compression 
+Contrary to pruning, compression aggregates the data at a higher level, so as to reduce the number of records. Generally historical data is compressed and recent data is left uncompressed. 
+
+Let us take an example. Consider the customer has data for 10 years between 2002 and 2012. They want the data of 2012 to be compressed at a daily level up to the last month, and the data of all the previous years to be compressed at the monthly level. In this scenario, the administrator will provide the monthly end date as December 31, 2011 and the daily end date as for example May 31, 2012. By doing this, the customer will have one record for each month up to 2011 and one record for each day starting January 1, 2012 to May 31, 2012. The current month data (example June 2012) is left untouched. 
+
+Before executing compression, make sure that the SQL Server query timeout is set to unlimited. These are long running operations. One more important thing to consider is that the database data that is compressed cannot be undone. Take a backup before this operation. Additionally, if this operation is aborted, the administrator will have to restore the CA RDBMS from a backup. 
+
+ 
+
+Process Cubes
+
+
+Cube processing is an operation which updates the OLAP cubes with the latest data in the fact and dimension tables. Cube processing can either be manually launched or can be scheduled to run in an off peak hour. This could be an expensive and long running operation based on the volume of data. 
+
+ * Scheduling cube processing at an off peak hour is advised. 
+ * Cubes are recreated from scratch every time when cube processing operation is run and hence initializing (recreating) the OLAP database will not lead to any loss of data. 
+ * If your OLAP server is in a remote machine, make sure the Microsoft SQL Server Windows® service on the remote machine is started using the domain user (ca_administrator) and this domain user has full access of the OLAP database. 
+ * Microsoft SQL Server Management Studio tools can be used for troubleshooting OLAP related issues. Datasource accuracy, process cube errors, among other things, can be verified in Microsoft SQL Server Management Studio.

@@ -1,0 +1,68 @@
+Title: IBM Enabling FIPS 140-2 cryptography in the TEM environment - United States
+
+Text:
+772; Configuring FIPS 140-2 enabling cryptography; googlebigfix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to set cryptographic functions throughout the TEM Platform. 
+
+RESOLVING THE PROBLEM
+TEM uses cryptographic functions throughout the TEM Platform. The BigFix Cryptographic Module is used exclusively to perform these functions. For instance, every time an operator logs in to the TEM console, creates a new user, initiates an action, or subscribes to new content there are cryptographic operations performed by the module. This module has been certified by NIST as compliant with the FIPS 140-2 standard.
+
+
+Successful validation under the FIPS 140-2 standard means that these crucial software routines have received an exceptional level of scrutiny and testing by a government approved laboratory. FIPS 140-2 has four evaluation levels with Levels 1 and 2 applicable to software. TEM chose the more stringent Level 2 validation and was successfully certified on 12 computing platforms. 
+
+Configuring FIPS 140-2 on the TEM Server
+Setting the "__BESClient_Cryptography_FipsMode" value of "required" below will mean that the TEM products will not start or will cease to run if the BigFix Cryptographic Module enters an error state. 
+
+The following steps are required to force TEM into using only the FIPS validated Cryptographic library: 
+1. Launch the TEM Admin Tool and login with Admin. (On the TEM Server: Start > All Programs > Tivoli Endpoint Manager > Tivoli Endpoint Manager Administration Tool
+2. Click on the Masthead Management Tab.
+3. Click on the Edit Masthead button.
+4. Check the "Require use of FIPS 140-2 compliant cryptography" checkbox to enable.
+5. Click the OK button.
+6. Enter the Admin password to perform the action.
+7. Check the current client log file for the following entry: 
+
+Example log file location:
+C:\Program Files\BigFix Enterprise\BES Client\__BESData\__Global\Logs\YYYYMMDD.log 
+
+FIPS 140-2 Enable log file message
+At 14:36:12 -0700 - 
+FIPS mode enabled by masthead.
+At 14:36:13 -0700 - 
+Cryptographic module initialized successfully in FIPS mode. 
+
+FIPS 140-2 Disabled log file message
+At 14:58:28 -0700 - 
+FIPS mode disabled by default.
+Unrestricted mode 
+
+To force the TEM installation, (i.e. Server, Relay and Clients) into using only the FIPS validated Cryptographic library. 
+1. Launch the TEM Console.
+2. From Computers tab, right-click on any listed computer and choose Edit Computer Settings.
+3. Click the Add button.
+4. In the Add Custom Settings dialog enter: 
+
+ * Setting Name: "__BESClient_Cryptography_FipsMode" 
+ * Setting Value: "required"
+
+5. Click OK. 
+6. In the Target tab of the dialog select All computers... and select All computers in the selection area. When FIPS mode is successfully enabled all cryptographic operations -- digital signatures, encryption, SHA1 hashing, etc. -- will be performed using the FIPS 140-2 Level 2 certified cryptographic module. 
+
+Notes 
+
+ * The above setting will enforce FIPS mode, the client will refuse to load if the Cryptographic Module encounters an error at start up. If you do not perform this step, the system will run in FIPS mode but will degrade to "regular" non-FIPS mode if the Cryptography Module encounters an error on start up. 
+ * The most common error related to FIPS mode startup occurs on AIX and HP-UX when there is not enough system entropy available for the Cryptographic Module. 
+ * The FIPS Mode setting and the Message Level Encryption (MLE) setting are independent of each other. It is possible to turn on FIPS without turning on MLE and vice versa.
+
+
+Other information  * Does TEM have Message Level Encryption? [http://www-01.ibm.com/support/docview.wss?uid=swg21506127] 
+ * BigFix Message Level Encryption (MLE) Tech Note [https://www.ibm.com/developerworks/mydeveloperworks/wikis/home?lang=en#/wiki/Tivoli%20Endpoint%20Manager/page/Message%20Level%20Encryption] 
+ * BigFix Message Level Encryption (MLE) in the Forums [http://forum.bigfix.com/viewtopic.php?id=2313] 
+ * BigFix's FIPS 140-2 Certificate [http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/1401val2009.htm#1080]
+
+ 
+
+HISTORICAL NUMBER
+ 772

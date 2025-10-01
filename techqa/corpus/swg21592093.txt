@@ -1,0 +1,24 @@
+Title: IBM SPSS Student Version and Graduate Pack Resources - United States
+
+Text:
+SPSS Support Acquisition Statistics Stats Grad Pack Student TECHNOTE (FAQ)
+
+QUESTION
+ Where do I get support for IBM SPSS Student Version or Graduate Pack software? 
+
+ANSWER
+Step 1: 
+For installation & licensing issues on Student version and Graduate pack, contact your vendor. 
+
+ * Hearne [http://www.hearne.software/Software/SPSS-Grad-Packs-for-Students-by-IBM/FAQ] 
+ * On the Hub [http://onthehub.com/] 
+ * StudentDiscounts.com [http://studentdiscounts.com/contact-us.aspx] 
+ * JourneyEd [https://www.journeyed.com/contact] 
+ * thinkEDU [https://thinkedu.desk.com/] 
+ * Studica [http://www.studica.com/technical-support]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Amos Windows Not Applicable Grad Pack, Shrinkwrap, Campus Business Analytics SPSS Modeler Platform Independent Not Applicable Business Analytics SPSS Text Analytics for Surveys Windows Not Applicable Business Analytics SPSS Statistics Platform Independent Not Applicable Campus Edition, Grad Pack, Student Version

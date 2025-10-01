@@ -1,0 +1,48 @@
+Title: IBM ISCDC/IIDR 10.2 for Microsoft SQL Server 2008 fails with error: INSERT failed because the following SET options have incorrect settings: 'ARITHABORT' when mapping tables. - United States
+
+Text:
+ISCDC; IIDR; ARITHABORT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When mapping tables, InfoSphere Change Data Capture fails with the message: 
+
+An error occurred while turning on supplemental logging for <table_name>.|An error has occurred scraping the log. The SQL error code is '0'. The SQL state is: ISCDC. The error message is: "A SQL exception has occurred. The SQL error code is '1934'. The SQL state is: HY000. The error message is: |[CDC][SQLServer JDBC Driver][SQLServer]INSERT failed because the following SET options have incorrect settings: 'ARITHABORT'. Verify that SET options are correct for use with indexed views and/or indexes on computed columns and/or filtered indexes and/or query notifications and/or XML data type methods and/or spatial index operations. 
+
+SYMPTOM
+When creating subscriptions, during the step to map tables, you can get the message: 
+
+An error occurred while turning on supplemental logging for <table_name>.|An error has occurred scraping the log. The SQL error code is '0'. The SQL state is: ISCDC. The error message is: "A SQL exception has occurred. The SQL error code is '1934'. The SQL state is: HY000. The error message is: |[CDC][SQLServer JDBC Driver][SQLServer]INSERT failed because the following SET options have incorrect settings: 'ARITHABORT'. Verify that SET options are correct for use with indexed views and/or indexes on computed columns and/or filtered indexes and/or query notifications and/or XML data type methods and/or spatial index operations. 
+
+ 
+
+The subscription method will be refresh and status park. 
+
+CDC will not allow you to change the replication method to mirror. 
+
+
+CAUSE
+ARITHABORT is a MS SQL parameter. 
+
+According to Microsoft's documentation, you should always set ARITHABORT to ON in your logon sessions. Setting ARITHABORT to OFF can negatively impact query optimization leading to performance issues.
+
+When using compatibility mode, on the server DB to SQL 2000 it will change the way ARITHABORT parameter works. 
+
+
+ENVIRONMENT
+IIDR 10.2 for MS SQL Server 2008
+CDC 6.5.1 for MS SQL Server 2008
+
+
+
+DIAGNOSING THE PROBLEM
+Check the compatibility mode in your database: Right click on the database -> properties -> options -> compatibility mode. 
+
+
+
+
+
+
+
+RESOLVING THE PROBLEM
+Set the compatibility mode to SQL Server 2008 (100)
+Restart the instance

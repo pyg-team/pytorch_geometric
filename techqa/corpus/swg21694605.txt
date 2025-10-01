@@ -1,0 +1,26 @@
+Title: IBM DASH login and page load performance slow or hangs - United States
+
+Text:
+DASHL2; DASHL2PERF; hang; performance; login; slow; JazzSM; DASH TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Logging into the Dashboard Application Service Hub component of Jazz for Service Management (JazzSM) is very slow or hangs. 
+
+SYMPTOM
+A pop-up window eventually appears with the following message:
+
+###
+This console displays content from the below servers that appear to be using untrusted certificates. Content from untrusted servers cannot be viewed in the console. Please click each link below to open a new window where you may determine if you would like to accept the certificate and allow the content to be displayed. When you are done, you may close the new windows and dismiss this warning. 
+
+<servers list>
+###
+
+
+CAUSE
+One or more Console Integrations configured in DASH are unable to connect to it's target remote system. DASH L3/Development is investigating why the connection failure causes the performance problem for logins and page navigation.
+
+DIAGNOSING THE PROBLEM
+Check all Console Integration definitions to ensure they are working
+
+RESOLVING THE PROBLEM
+Remove or fix any non-working Console Integrations

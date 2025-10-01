@@ -1,0 +1,82 @@
+Title: IBM Why is IBM Rational Developer for z Systems CICS remote debug session failing with 'CEE3200S The system detected a program interruption'? - United States
+
+Text:
+RDz; Debug; Integrated Debugger TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While debugging a CICS remote program using IBM Rational Developer for z System's (RDz) Integrated Debugger, the remote debug session fails with message 'CEE3200S The system detected a program interruption', never reaching the client. 
+
+SYMPTOM
+After entering the transaction ID on the CICS terminal, the user will be immediately met with message "DFHAC2206 Transaction XXXX failed with abend ASRA. Updates to local recoverable resources backed out." 
+
+This subsequently produces a CEE dump and other messages that are which is written to the CICS joblog: 
+
+
+CEE3200S The system detected a program interruption.
+From compile unit PROGXXXX at entry point PROGXXXX at compile unit offset +00022292 at 
+entry offset +00022292 at address 15672B22.
+
+CEE3DMP V2 R1.0: Condition processing resulted in the unhandled condition. 03/29/16 10:31:58 AM Task Number: 1970 Transaction ID: XXXX
+
+CEE3845I CEEDUMP Processing started.
+
+Information for enclave PROGXXXX
+
+Information for thread 8000000000000000
+
+Traceback:
+DSA Entry E Offset Statement Load Mod Program Unit Service Status
+1 CEEHDSP +00004A4C CEEHDSP UI90017 Call
+2 CEECGEX +000001FE CEECGEX HLE7790 Call
+3 IGZIPCM +00000464 IGZIPCM Exception
+4 IGZCCTL +000008E0 IGZCCTL Call
+5 IGZEINI +0000062E IGZEINI Call
+6 IGZCBSO +0000036E IGZCBSO Call
+7 IGZCFCC +000002FC IGZCFCC UI19860 Call
+8 PROGXXXX +00022292 PROGXXXX Call
+9 CEECRINV +00000306 CEECRINV HLE7790 Call
+10 CEECRINI +00000B4E CEECRINI UI90017 Call
+
+
+Condition Information for Active Routines
+Condition Information for IGZIPCM (DSA address 1212B168)
+CIB Address: 121E1C80
+Current Condition:
+CEE0198S The termination of a thread was signaled due to an unhandled condition.
+Original Condition:
+CEE3200S The system detected a program interruption.
+Location:
+Program Unit: IGZIPCM Entry: IGZIPCM Statement: Offset: +00000464
+
+
+
+CAUSE
+The exception was caused by port 8001 being blocked by the company firewall
+
+
+DIAGNOSING THE PROBLEM
+Host side: 
+1. Collect the SVC output (which is in the JESMSGLG and JESYSMSG) . 
+2. Collect the CEEMSG output from the CICS job log or to make it easy just provide the entire CICS job output.
+
+
+Client side:
+1. EPDC trace
+To enable EPDC trace collection :
+Menu > Window > Preference > run / debug > compiled debug > select "trace engine connection"
+choose a directory for the file to be saved - this way you can find it
+and send it to IBM
+
+2. Engine log
+The engine log can be obtained by going to the following location in RDz:
+Menu > Window > preferences. Run/Debug > Compiled Debug > System z Integrated
+Debugger.
+In the textfield 'Additional command line options' enter:
+-qtrace=c:\engine.log
+
+3. The .log file from <workspace>/.metadata directory 
+
+
+
+RESOLVING THE PROBLEM
+A possible workaround is to switch from using the DIRECT&10.12.123.111 directive to using DBM.USERID which will cause Debug Manager to use the RSE connection to find the appropriate user.

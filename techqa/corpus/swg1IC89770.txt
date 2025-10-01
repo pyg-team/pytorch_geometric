@@ -1,0 +1,240 @@
+Title: IBM IC89770: DISPLAY CHSTATUS SHOWS 00000000 IN THE RVERSION FIELD WHEN APPLICATIONS USING THE V7.0.1 CLASSES FOR JMS ARE CONNECTED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.10 [http://www-01.ibm.com/support/docview.wss?uid=swg24034145]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.10 [http://www-01.ibm.com/support/docview.wss?uid=swg24034909]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An application using the WebSphere MQ V7.0.1 classes for JMS is
+   connected to a WebSphere MQ V7.0.1 queue manager using the
+   CLIENT transport.
+   
+   When the runmqsc command:
+   
+   DISPLAY CHSTATUS(channel name)
+   
+   is run on the queue manager for the channel that the
+   application has used to connect to the queue manager, the
+   following output is displayed:
+   
+   RVERSION(00000000)
+   RPRODUCT(MQJM)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects two categories of user:
+   
+   1. Users of the WebSphere MQ command runmqsc who run:
+   
+   DISPLAY CHSTATUS(channel name)
+   
+   to display the status of a channel.
+   
+   2. Users of the WebSphere MQ Explorer who display the status of
+   a Channel by highlighting a Channel in the Channels pane, right
+   clicking and selecting Status->Channel Status... from the pop-
+   up menu.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   Applications that connect to WebSphere MQ using the CLIENT
+   transport provide version information to the queue manager
+   about the level of WebSphere MQ Client code that the
+   application is running. This version information is in the
+   format:
+   
+   VVRRMMFF
+   
+   where:
+   
+   - VV = Version
+   - RR = Release
+   - MM = Maintenance level
+   - FF = Fix level
+   
+   The runmqsc command:
+   
+   DISPLAY CHSTATUS(channel name)
+   
+   will report this version information in the RVERSION attribute.
+   
+   The WebSphere MQ Explorer shows the version information in the:
+   
+   Remote Version
+   
+   column in the Channel Status window.
+   
+   
+   In order to determine the version information to pass to a
+   queue manager, the WebSphere MQ V7.0.1 classes for Java and
+   classes for JMS, and the WebSphere MQ V7.0.1 Resource Adapter,
+   looked inside the MANIFEST.MF file contained within the file:
+   
+   com.ibm.mq.jmqi.jar
+   
+   for the property:
+   
+   version
+   
+   However, the MANIFEST.MF file did not contain an entry for this
+   property. This caused the WebSphere MQ classes for Java and
+   classes for JMS, and the WebSphere MQ Resource Adapter,to
+   specify:
+   
+   00000000
+   
+   as the version number being used.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ V7.0.1 classes for Java and classes for JMS,
+   and the WebSphere MQ V7.0.1 Resource Adapter, have been updated
+   to use the information in the property:
+   
+   com.ibm.mq.jmqi
+   
+   within the MANIFEST.MF file contained within the JAR file:
+   
+   com.ibm.mq.jmqi.jar
+   
+   to determine what version information to pass to the queue
+   manager.
+   
+   Applications using the WebSphere MQ Resource Adapter or Java
+   and JMS clients which have this APAR applied will report
+   their version information correctly to the queue manager,
+   which will be reflected in the information returned by
+   runmqsc and the MQ Explorer.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.10
+   --------           --------------------
+   Windows            U200352
+   AIX                U853055
+   HP-UX (PA-RISC)    U853082
+   HP-UX (Itanium)    U853087
+   Solaris (SPARC)    U853083
+   Solaris (x86-64)   U853089
+   iSeries            7.0.1.10
+   Linux (x86)        U853084
+   Linux (x86-64)     U853088
+   Linux (zSeries)    U853085
+   Linux (Power)      U853086
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC89770
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-23
+   
+   
+ * CLOSED DATE
+   2013-01-24
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

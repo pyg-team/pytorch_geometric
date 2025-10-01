@@ -1,0 +1,65 @@
+Title: IBM Using BOM methods with arguments as attributes in ScoreCard modeler - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When creating the attributes in a Scorecard, I can not see the Business Object Model (BOM) methods with arguments. Is there a way to workaround this? 
+
+ANSWER
+Scorecard generation wizard does not consider methods that takes a parameter since there is no way to specify those parameters in the Scorecard table. 
+
+There is a particular usecase where the definition of virtual attribute in the BOM can be automated so that they are then visible when creating a Scorecard table. 
+
+Considering you have a class where the attributes are stored as a collection of objects and this class has a simple getter with a parameter to get each attribute. 
+
+The simple approach you can follow is to create local definition in the scorecard table using the precondition, those local objects can then be used as attributes with in the scorecard table. With a collection, it is a tedious to repeat those bindings for each scorecard and the generated rules do not support more than 20 bindings. 
+
+Another approach is to create virtual BOM attributes mapping with the object from the collection. This way, the attributes are reflected directly in the BOM and you can reference them immediately when creating a new scorecard table. 
+
+This document provides a tool as an Eclipse plug-in to automate the creation of those virtual attributes 
+
+The plug-in main dialog looks like below: 
+
+
+[/support/docview.wss?uid=swg21424310&amp;aid=1]
+
+
+The plug-in looks for the rule projects in your workspace, that contain parameters with BOM methods that return a Collection of specific type. These rule projects are displayed in the first combo-box. 
+When you select one of the rule projects, the plug-in then displays the list of parameters for that corresponding project.
+
+Using the ruleset parameters you selected , the plug-in will display the getter methods in that ruleset parameter, which contain arguments and which return a datatype that the collection would return.
+
+The next section of the plug-in contains provision for specifying the name of the attribute to be generated and the corresponding argument that the get method would take, so that a "translation" property can 
+be created for that attribute. 
+
+Attribute Name is the name your attribute will have in the scorecard.
+Parameter initialization : the value of the parameter of the getter method that will return the attribute 
+It is important to make sure that the parameter initialization is provided properly so that the code can execute. An example would look like this: 
+
+if the getter method takes a String as argument: 
+
+attr0 "Name" 
+attr1 "Name1" 
+
+
+if the getter method takes a custom object as argument: 
+
+attr0 new CustomObject("Name") 
+attr1 new CustomObject("Name1") 
+
+
+Once all the information is filled,use the "Generate" button, to create the attributes in the BOM and you can now create your scorecard tables simply selecting those virtual attributes.
+
+To deploy the plug-in, place the Jar file (attribute_creator_plugin_1.0.0.jar) in the plugins folder location of Rule Studio and restart the Rule Studio. 
+
+attribute_creator_plugin_1.0.0.jar [/support/docview.wss?uid=swg21424310&aid=3] [/support/docview.wss?uid=swg21424310&aid=2]
+
+For example: <JRules-Install-Folder>\eclipse\plugins
+
+If you want to learn more about the implementation or customize this plug-in to your need review the source code is provided.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise

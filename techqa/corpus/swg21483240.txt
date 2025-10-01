@@ -1,0 +1,31 @@
+Title: IBM why can I not see my DSN configured on the server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Our IBM SPSS MODELER Server is a 64 bit Server and installed on Windows 2003 server. IBM SPSS Modeler Client is 32 bit.
+(driver Access Pack included)
+There are however 2 programs where the ODBC connections can be defined :
+- Windows/system32/odbcad32.exe -->1
+- Windows/SysWOW64/odbcad32.exe --> 2
+
+If all drivers are installed in (2) ,where standard screen to define connections using 'Start - administration Tool Data sources (ODBC)' is (1) , the datasources aren't visible in the SQL data Source Node (Modeler server connection mode) .
+
+The DSN we see are those which are defined (or available) in (1) which do not allow us the use our databases.
+Changing the shortcut in 'Start - Administration Tool - data Sources(ODBC)' to 'Windows/SysWOW64/odbcad32.exe' doesn't resolve this use 
+
+RESOLVING THE PROBLEM
+The 32-bit ODBC administrator is found at Windows/SysWOW64/odbcad32.exe on 64-bit Windows systems, the one at Windows/system32/odbcad32.exe is the 64-bit ODBC administrator. So if you install 32-bit ODBC drivers you can configure them using Windows/SysWOW64/odbcad32.exe (these should be the only drivers that this administrator will display and allow you to configure DSN's using). Once you've configured DSN's 32-bit applications installed on the system will be able to use them. 
+
+If you have a 64-bit application installed you need to install the 64-bit ODBC drivers. Once you have done this you then use Windows/system32/odbcad32.exe to configure 64-bit DSN's (system DSN's for services like IBM SPSS MODELER Server) and once you've done this the 64-bit application will pick them up. Windows/system32/odbcad32.exe should only allow you to select 64-bit ODBC drivers to configure DSN's with).
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Modeler Modeler Windows 16.0, 15.0 
+HISTORICAL NUMBER
+ 82715

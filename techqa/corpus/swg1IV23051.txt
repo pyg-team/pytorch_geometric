@@ -1,0 +1,174 @@
+Title: IBM IV23051: INSTANCE CONFIGURATION NOT UPDATED ON 32->64BIT UPGRADE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 4 (6.2.3-TIV-ITM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24034252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  APAR Type:            Internal
+   Approver Initials:    TR
+   Severity:             2
+   Reported Release:     623
+   Compid:               5608A41CI Distributed Installer
+   ABSTRACT:             Instance configuration not updated on
+   32->64bit upgrade
+   PROBLEM DESCRIPTION:
+   When an agent is converted from 32-bit to 64-bit, the instance
+   configuration is not updated to reflect the new library path.
+   .
+   RECREATE INSTRUCTIONS:
+   1) Install the 6.2.2 FP2 HMC Base agent (CI1MREN)
+   2) Configure an instance for the HMC Base agent
+   3) Upgrade agent to 6.2.2 FP3
+   4) Attempt to start the agent
+   .
+   Observe the agent does not start. Messages in the log reflect
+   why:
+   .
+   exec(): 0509-036 Cannot load program
+   /opt/IBM/ITM/aix526/ph/bin/kphagent because of the following
+   errors:
+    0509-150   Dependent module
+   /opt/IBM/ITM/tmaitm6/aix523/lib/libkbb.a could not be loaded.
+    0509-103   The module has an invalid magic number.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Reconfigure the instance.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When an agent upgrade causes conversion from 32-bit to 64-bit,
+   the underlying configuration files are not updated accordingly.
+    When you attempt to start the agent, the operating system
+   complains that it cannot find 32-bit libraries.  For example:
+   
+   exec(): 0509-036 Cannot load program
+   /opt/IBM/ITM/aix526/ph/bin/kphagent because of the following
+   errors:
+   0509-150   Dependent module
+   /opt/IBM/ITM/tmaitm6/aix523/lib/libkbb.a could not be loaded.
+   0509-103   The module has an invalid magic number.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was changed to automatically reconfigure most agent
+   instances as part of the upgrade process.
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+   
+      | fix pack | 6.2.3-TIV-ITM-FP0003
+   
+   Note: Search the IBM technical support web site for maintenance
+   package availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Use "itmcmd config" to reconfigure the agent instance.  As a
+   side effect, the library references are corrected.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV23051
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-14
+   
+   
+ * CLOSED DATE
+   2012-10-25
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP

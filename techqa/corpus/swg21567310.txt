@@ -1,0 +1,72 @@
+Title: IBM Prerequisites for enabling ClearCase 8.0 features - United States
+
+Text:
+CC:feature level; schema; vob schema; feature level 7; vob schema 80; chflevel; reformatvob; RATLC01124650; PK29946; FL7schema 80 TECHNOTE (FAQ)
+
+QUESTION
+ What are the prerequisites needed to activate the new features in IBM Rational ClearCase 8.0 feature level 7? 
+
+CAUSE
+You need to know how to properly configure your existing ClearCase environment to take advantage of the new features in ClearCase version 8.0 feature level 7
+
+ANSWER
+To raise VOBs to feature level 7, it must first be upgraded to schema 80. Prerequisites for enabling 8.0 features are as follows: 
+
+
+Synchronous Request for Mastership (SRFM) 
+
+ 
+
+ * ClearCase clients must be running 7.1.2.2 or later. 
+ * VOB requires feature level 6 
+ * VOB server requires 7.1.2.2 or later 
+   
+
+
+
+Preserving microsecond timestamps at checkin 
+ * Any checkin occurring on a V8.x client will result in a microsecond timestamp being recorded. (The VOB server does NOT need to be at 8.0 or later.) To take advantage of more granular time stored in ClearCase event records, this change together with a bug fix made in 8.0 (APAR PK29946 [https://www.ibm.com/support/docview.wss?uid=swg1PK29946]) eliminates a problem on Microsoft Windows when using Microsoft Visual Studio .Net that could result in incorrect actions taken by the IDE due to lack of time granularity in modification timestamps. 
+
+
+UCM performance improvements  
+
+ * UCM caching improvements  * All VOB feature levels and schemas are supported. 
+    * Clients must be at 8.0 or later to take advantage of the updated caches which reduce the number of RPCs to the VOB server
+      
+   
+   
+ * Improved database schema representation for UCM objects  * VOB requires schema 80 and feature level 7 
+    * VOB server requires 8.0 or later 
+    * Clients must be at 8.0 to take advantage of the new schema representations; older clients will continue to work using existing RPCs 
+      
+   
+   
+
+Evil twin detection and prevention 
+
+ * VOB requires schema 80 and feature level 7 
+ * VOB server requires 8.0 or later 
+ * Clients must be at 8.0 or later to detect and prevent evil twins from being created
+   
+
+
+Pre-defined unicode element types 
+
+ * VOB requires feature level 7 (which requires schema 80) 
+ * VOB server requires 8.0 or later 
+ * Clients must be at 8.0 or later to use new element types
+   
+
+
+ClearTeam Explorer - Rational Team Concert (RTC) Work Item linking and searching 
+
+ * VOB requires schema 80 and feature level 7 
+ * VOB server requires 8.0 or later 
+ * Clients must be at 8.0 or later to store and retrieve the RTC work items associated with versions
+
+
+Refer to technote 1119269 [https://www.ibm.com/support/docview.wss?uid=swg21119269]About Feature Levels and ClearCase for further details about feature levels. 
+
+ 
+
+Refer to technote 1566805 [http://www.ibm.com/support/docview.wss?uid=swg21566805]New features in ClearCase and ClearCase MultiSite 8.0 for further information about the new features introduced in ClearCase 8.0.

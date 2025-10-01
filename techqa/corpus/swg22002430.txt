@@ -1,0 +1,15 @@
+Title: IBM Unable to install the command line interface to import StoredIQ for Legal data - United States
+
+Text:
+commandline python import proxy TECHNOTE (FAQ)
+
+QUESTION
+ Why am I not able to install the command line interface to import StoredIQ for Legal data? 
+
+CAUSE
+The command line interface is being installed on a desktop which is using a proxy server. The proxy server requires authentication and is throwing the following error:
+Could not fetch URL https://pypi.python.org/simple/: [https://pypi.python.org/simple/:] connection error: ('Cannot connect to proxy.', error('Tunnel connection failed: 407 authenticationrequired',))
+
+
+ANSWER
+The Proxy Admin setup a rule to allow access to python and updated a certificate to allow https access to an external URL.

@@ -1,0 +1,17 @@
+Title: IBM Fail to access any link on FileNet Workplace XT - United States
+
+Text:
+session management TECHNOTE (FAQ)
+
+QUESTION
+ After we log in FileNet Workplace XT (WPXT), "This application window has expired and is no longer valid" will show up if we click any links 
+
+CAUSE
+Websphere application server session management timeout is set to -1, while WPXT session management is set
+to 30 minutes
+
+
+ANSWER
+1. Change the Websphere application server session management timeout to 30 minutes. 
+
+2. Restart Websphere

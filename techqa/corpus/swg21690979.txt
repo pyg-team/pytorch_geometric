@@ -1,0 +1,49 @@
+Title: IBM How can I use the strloc() function to test for the ASCII Control Characters for a Tab or a Carriage Return in a Case Foundation Process Engine workflow? - United States
+
+Text:
+non-printable ASCII; control characters; workflow definition TECHNOTE (FAQ)
+
+QUESTION
+ How can I use the strloc() function to test for the ASCII Control Characters for a Tab or a Carriage Return? 
+
+CAUSE
+strloc() will test for ASCII Print Characters, but there is no clear information on how to test for ASCII Control Characters
+
+ANSWER
+In the IBM FileNet Process Engine 5.x.x versions, the strloc() function can be used to find some non-printable characters, also known as Control Characters.
+
+The current implementation of strloc() in the PE server uses the java String.indexOf function. It will find tabs and carriage returns when using an appropriate method for entering those non-printable ASCII characters into the expression as parameters to the strloc() function call.
+
+Horizontal Tab (HT) Control Character:
+In FileNet Process Designer you are able to use the Expression Builder dialog (accessible from most if not all of the edit boxes in Process Designer where you can enter an expression). In the Expression Builder dialog it is possible to enter an HT character from the keyboard ("Tab" key). The Expression Builder dialog ignores Control character sequences, so you can't type Ctrl+i, for example. 
+
+
+Carriage Return (CR) Control Character:
+You cannot use the Expression Builder dialog for the CR character ("Return" key), but you can edit that character into the Workflow pep file using the XML escape sequence &#10;
+
+For example :
+<Assign LVal="loc_of_RT" RVal="strloc (&quot;AB&#10;C&quot;, &quot;&#10;&quot;)" />
+
+
+NOTE: If you are directly editing the pep file, you cannot use any ASCII control characters that are not legal in XML (the pep file is an XML file) - the only control characters that you can use that would be valid in a pep/XML file are HT, CR and LF ( 0x09, 0x0A, 0x0D ). You should be able to enter those characters using XML escaped characters; experimentation with individual specifics will be needed. One can easily find a list of valid ASCII characters for an XML file by doing a search on the Internet.
+
+
+What might be the best method: Use the hex function
+
+For example, the following will find an HT character ("Tab" key - hexadecimal value 0x09 in ASCII) in myStringField
+
+strloc ( myStringField, hex ("09") )
+
+The following is from the current documentation for the hex function :-
+
+" hex
+
+This function translates a string literal of hexadecimal character codes into an ASCII string. The hex function can express any character, although you generally use it for characters that do not have ASCII representations, such as tabs.
+Every two hex digits represent one character in the resulting string. An odd number of hex characters in the string literal results in an error. Use the following syntax:
+
+hex (hex_codes)
+
+where hex_codes is a string literal containing the hex code for a character or a series of characters.
+The following example returns the string abc because 61, 62, and 63 are the hexadecimal codes for those characters.
+
+hex ("616263")

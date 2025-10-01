@@ -1,0 +1,94 @@
+Title: IBM How to configure the WTX JMS Adapter to connect a TIBCO EMS JMS server using SSL - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to configure the IBM WebSphere® Transformation Extender (WTX) Java Message Service (JMS) Adapter to connect to and communicate with a TIBCO® Enterprise Message Service™ (EMS) JMS server by using Secure Socket Layer (SSL) protocol. 
+
+SYMPTOM
+The WTX JMS Adapter may fail to connect to a TIBCO EMS JMS server using SSL protocol.
+
+
+CAUSE
+Additional configuration SSL properties need to be defined in a jndi.properties file in order for the WTX JMS Adapter to successfully communicate using the SSL protocol.
+
+RESOLVING THE PROBLEM
+Refer to the following reference information when configuring TIBCO EMS JMS with SSL:
+
+The TIBCO Enterprise Message Service (EMS) Users Guide provides information in "Chapter 18 - Using the SSL Protocol" under the "Configuring SSL in EMS Clients" > "Configuring SSL" which refers to "Creating Connection Factories for Secure Connections" and "Performing Secure Lookups" for details on how to create a connection factory with SSL parameters in EMS.
+
+https://docs.tibco.com/pub/enterprise_message_service/6.1.0-august-2011/doc/pdf/tib_ems_users_guide.pdf [https://docs.tibco.com/pub/enterprise_message_service/6.1.0-august-2011/doc/pdf/tib_ems_users_guide.pdf]
+
+1) In "Chapter 12 - Using the EMS Implementation of JNDI" the "Creating Connection Factories for Secure Connections" section provides guidance on creating a Connection Factory for SSL.
+
+create factory MySSLFactory generic url=ssl://7243
+ssl_verify_host=enabled ssl_expected_hostname=myServer
+ssl_trusted=certs/server_root.cert.pem
+
+2) In "Chapter 12 - Using the EMS Implementation of JNDI" the "Performing Secure Lookups" section provides guidance on how to create an InitialContext that can be used to perform Java Naming and Directory Interface (JNDI) lookups using the SSL protocol. For Java, the following example is provided for com.tibco.tibjms.naming.TibjmsInitialContextFactory.
+
+Hashtable env = new Hashtable();
+env.put(Context.INITIAL_CONTEXT_FACTORY,
+"com.tibco.tibjms.naming.TibjmsInitialContextFactory");
+env.put(Context.PROVIDER_URL, tibjmsnaming://jmshost:7223);
+env.put(Context.URL_PKG_PREFIXES, "com.tibco.tibjms.naming")
+env.put(TibjmsContext.SECURITY_PROTOCOL, "ssl");
+env.put(TibjmsContext.SSL_ENABLE_VERIFY_HOST,
+new Boolean("false"));
+Context context = new InitialContext(env);
+
+3) In "Chapter 11 - Developing an EMS Client Application" the "Java Programmer's Checklist" provides guidance on the which jar file should be added to the CLASSPATH.
+
+Add the full pathnames for the following jar files to your CLASSPATH:
+
+jms.jar
+tibjms.jar
+
+If SSL is used for communication, add the following file to the CLASSPATH:
+
+tibcrypt.jar
+
+===============================
+
+With the above information, the following configuration steps were determined to be needed to use TIBCO EMS JMS with SSL.
+
+1) Use the EMS Administration Tool (tibemsadmin.exe) to create a Connection Factory for SSL similar to the following.
+
+create factory QueueConnectionFactorySSL queue url=ssl://localhost:7243 multicast_enabled=false ssl_verify_host=disable
+ssl_trusted=C:\tibco\ems\certs\server.cert.pem
+
+2) Use WTX JMS Adapter commands to specify the required and optional parameters.
+
+For example:
+
+-T -ICTXF com.tibco.tibjms.naming.TibjmsInitialContextFactory -ICTXFURL ssl://localhost:7243 -CFN QueueConnectionFactorySSL -QN queue1 -UN user -PW password
+
+3) Use a jndi.properties file to specify the additional InitialContext values that are required for SSL.
+
+Create a jndi.properties text file and add the JNDI property values needed for TIBCO EMS JMS with SSL when using the TibjmsInitialContextFactory.
+
+The following JNDI properties appear to be needed. Different JNDI properties may be needed depending on the configuration. The "security_protocol" property set to a value of "ssl" is required.
+
+com.tibco.tibjms.naming.security_protocol=ssl
+com.tibco.tibjms.naming.ssl_trusted_certs=C:\tibco\ems\certs\server.cert .pem
+com.tibco.tibjms.naming.ssl_enable_verify_host=false
+
+The jndi.properties file needs to be copied to the Java Runtime Environment (JRE) /lib/ directory (for example, <wtx_install>/java/lib/ directory).
+
+4) The following TIBCO EMS jar files were added to the CLASSPATH.
+
+jms.jar
+tibjms.jar
+tibcrypt.jar
+
+For the WTX JMS Adapter, the jar files can be defined under the [External Jar Files] section of the dtx.ini file.
+
+[External Jar Files]
+jar1=C:\tibco\ems\lib\jms.jar
+jar2=C:\tibco\ems\lib\tibjms.jar
+jar3=C:\tibco\ems\lib\tibcrypt.jar
+
+or
+
+jar1=C:\tibco\ems\lib\jms.jar;C:\tibco\ems\lib\tibjms.jar;C:\tibco\ems\lib\tibcrypt.jar

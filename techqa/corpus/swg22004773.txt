@@ -1,0 +1,57 @@
+Title: IBM Secure Proxy factory default certificate expiring [Fri Dec 01 10:54:13 EST 2017] - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ALERT: The Secure Proxy factory certificate expiring can cause an outage.
+
+The factory certificate that comes with the product is expiring December 1, 2017 at 10:54 PM EST. The factory certificate is installed as the default certificate and is used for the secure connections to the CM GUI and between the CM and engine. If customers have not installed their own certificate to replace the factory certificate, after the expiration date, the CM will no longer be able to communicate with the engine to push configurations and will not be able access the CM GUI securely through a web browser.
+
+NOTE: If the certificate expires in your SSP environment DO NOT stop the engine. Even though you may not be able to access the CM, the engine will still keep functioning as normal. The CM will just not be able to push any configuration to the engine. You need to replace the expired certificate immediately before the engine is stopped or goes down for some reason. 
+
+DIAGNOSING THE PROBLEM
+To tell if the CM and Engine is still using the factory certificate you can run the shell script configureCmSsl.sh or configureCmSsl.bat located in the Secure Proxy CM install bin directory. 
+
+Here is an example for running the script:
+sspuser@l1suse1:~/SSP3430tst/sspcm1/bin> ./configureCmSsl.sh -s
+IBM Sterling Secure Proxy V3.4.3.0
+Copyright (c) 2017 IBM
+
+Enter the system passphrase: <Enter the system passphrase for SSP CM>
+Loading configuration files...
+
+CM configuration:
+SSL/TLS protocol : TLSv1
+Cipher suites : [TLS_RSA_WITH_AES_128_CBC_SHA, TLS_RSA_WITH_3DES_EDE_CBC_SHA]
+Key store file : ../conf/system/cmkeystore
+Trust store file : ../conf/system/cmtruststore
+Server alias : factory
+Client alias : factory
+
+Web server configuration:
+Host : localhost
+Port : 8443
+Https enabled : true
+Client auth enabled: false
+SSL/TLS protocol : TLSv1
+Cipher suites : [TLS_RSA_WITH_AES_128_CBC_SHA, TLS_RSA_WITH_3DES_EDE_CBC_SHA]
+Key store file : ../conf/system/cmkeystore
+Trust store file : ../conf/system/cmtruststore
+Server alias : factory
+
+Certificates in CM key store:
+[factory]
+alias : factory
+subject : CN=Sterling Secure Proxy Factory Certificate, OU=Development, O=Sterling Commerce, L=Irving, ST=Texas, C=US
+issuer : CN=Sterling Secure Proxy Factory Certificate, OU=Development, O=Sterling Commerce, L=Irving, ST=Texas, C=US
+serial : 1
+version : 3
+validity: Valid from [Tue Dec 04 10:54:13 EST 2007] to [Fri Dec 01 10:54:13 EST 2017]
+
+
+RESOLVING THE PROBLEM
+There is a new factory certificate that expires in 2037 on our Fix Central 
+
+website that you can download along with a README file with instructions for installing the new factory certificate. Here is the link:
+https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Other+software&product=ibm/Other+software/Sterling+Secure+Proxy&release=3.4.3.0&platform=All&function=all [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Other+software&product=ibm/Other+software/Sterling+Secure+Proxy&release=3.4.3.0&platform=All&function=all]

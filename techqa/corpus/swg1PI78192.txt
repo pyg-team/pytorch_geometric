@@ -1,0 +1,204 @@
+Title: IBM PI78192: UserRegistry methods that throw RuntimeExceptions can cause federated repository failures - United States
+
+Text:
+  FIXES ARE AVAILABLE
+17.0.0.2: WebSphere Application Server Liberty 17.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24043541]
+17.0.0.3: WebSphere Application Server Liberty 17.0.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24044079]
+17.0.0.4: WebSphere Application Server Liberty 17.0.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24044285]
+18.0.0.1: WebSphere Application Server Liberty 18.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24044624]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When searching for a domain user <username>/<domain> the
+   slash
+   character causes an exception in basicRegistry:
+   
+   PatternSyntaxException: Illegal/unsupported escape sequence
+   near
+   index
+   
+   This causes all further registry searches to fail, even if
+   the
+   allowOpIfRepoDown option is set.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  need fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty- Virtual Member Manager      *
+   *                  (VMM)                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: UserRegistry implementations that throw *
+   *                      RuntimeExceptions can cause Federated   *
+   *                      Repository failures                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Customer has both an LDAP registry and utilizing the
+   BasicRegistry. A  java.util.regex.PatternSyntaxException occurs
+   when searching using a  principal name in the form of
+   realm\username. This RuntimeException is uncaught in Federated
+   Repositories causing select UserRegistry calls to fail. This
+   will occur even if the configuration is set to allow operations
+   if repositories are down.
+   
+   For the example above, the following failures may be seen:
+   
+   Caused by: java.util.regex.PatternSyntaxException:
+   Illegal/unsupported escape sequence near index 12
+   MYDOMAIN001\MYUSER
+               ^
+   	at java.util.regex.Pattern.error(Pattern.java:1966)
+   	at java.util.regex.Pattern.escape(Pattern.java:2482)
+   	at java.util.regex.Pattern.atom(Pattern.java:2209)
+   	at java.util.regex.Pattern.sequence(Pattern.java:2141)
+   	at java.util.regex.Pattern.expr(Pattern.java:2007)
+   	at java.util.regex.Pattern.compile(Pattern.java:1707)
+   	at java.util.regex.Pattern.<init>(Pattern.java:1362)
+   	at java.util.regex.Pattern.compile(Pattern.java:1039)
+   	at java.util.regex.Pattern.matches(Pattern.java:1144)
+   	at java.lang.String.matches(String.java:1907)
+   	at
+   com.ibm.ws.security.registry.basic.internal.BasicRegistry.search
+   Map(BasicRegistry.java:445)
+   	at
+   com.ibm.ws.security.registry.basic.internal.BasicRegistry.getUse
+   rs(BasicRegistry.java:387)
+   	at
+   com.ibm.ws.security.wim.RepositoryManager.getFederationUREntityT
+   ype(RepositoryManager.java:896)
+   	at
+   com.ibm.ws.security.wim.ProfileManager.getImpl(ProfileManager.ja
+   va:335)
+   	at
+   com.ibm.ws.security.wim.ProfileManager.genericProfileManagerMeth
+   od(ProfileManager.java:260)
+   	at
+   com.ibm.ws.security.wim.ProfileManager.get(ProfileManager.java:2
+   17)
+   	at com.ibm.ws.security.wim.VMMService.get(VMMService.java:218)
+   	at
+   com.ibm.ws.security.wim.registry.util.BridgeUtils.getEntityByIde
+   ntifier(BridgeUtils.java:462)
+   	at
+   com.ibm.ws.security.wim.registry.util.UniqueIdBridge.getUniqueUs
+   erId(UniqueIdBridge.java:170)
+   	at
+   com.ibm.ws.security.wim.registry.WIMUserRegistry.getUserSecurity
+   Name(WIMUserRegistry.java:311)
+   	... 55 more
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Federated Repositories code was updated to handle all
+   exception types.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 17.0.0.2.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI78192
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * REPORTED COMPONENT ID
+   5725L2900
+   
+   
+ * REPORTED RELEASE
+   CD0
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-14
+   
+   
+ * CLOSED DATE
+   2017-05-11
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * FIXED COMPONENT ID
+   5725L2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RCD0 PSY
+   UP

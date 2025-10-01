@@ -1,0 +1,162 @@
+Title: IBM PQ13409: LOGON HANG/LOOP OF USERS WHEN EXTERNAL APPL DEFINITIONS IN RACF,AND NONE OF THE APPLS ARE DEFINED TO THE GROUP IN NVAS. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using external application authorization, racf administrator
+   has defined a series of applications in racf which have been
+   defined to the nvas system.  The appls have a racf appl def
+   which allows the users of that external group to have read
+   access to those applications.  None of the applications have
+   previously been defined to the group via the nvas adminstration,
+   they have only been defined to the nvas system via admin option
+   4.  When a user attempts for the first time to logon to this
+   group by filling in the nvas userid, password and group name on
+   the application selection panel, the user hangs and nvas goes
+   into a high cpu loop.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Define at least one of the applications that have been defined
+   to this group using the nvas assign an appl to a group admin
+   panel.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All NV/AS users.                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The logon to NVAS, using an external    *
+   *                      group, hangs and NVAS loops when the    *
+   *                      external group has not applications     *
+   *                      associated.                             *
+   ****************************************************************
+   * RECOMMENDATION: APPLY THE PTF FIXING THIS APAR               *
+   ****************************************************************
+   At logon time, the used group is checked to get the associated
+   applications.
+   The processing starts a scan of the related control blocks
+   but when there are not applications the logon hangs and the
+   NVAS address space loops.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code now checks the rigth scan of the involved control
+   blocks.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ13409
+   
+   
+ * REPORTED COMPONENT NAME
+   NVAS/ESA MVS 2.
+   
+   
+ * REPORTED COMPONENT ID
+   569503601
+   
+   
+ * REPORTED RELEASE
+   111
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   1998-02-23
+   
+   
+ * CLOSED DATE
+   1998-03-10
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ15263
+   
+   
+
+MODULES/MACROS
+ *     EMSEUARR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NVAS/ESA MVS 2.
+   
+   
+ * FIXED COMPONENT ID
+   569503601
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R111 PSY UQ15263 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ15263]
+   UP98/03/13 P F803 Ž
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

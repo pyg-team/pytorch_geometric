@@ -1,0 +1,157 @@
+Title: IBM JR34336: PARTIAL SUCCESS WHEN AUGMENTING WPS-FABRIC PROFILE W/ MONITOR - HAPPENING AFTER MED FIXPACK INSTALLED. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Recreate Steps:
+   summary of the problem (sequence to reproduce the error):
+   
+       * install WPS
+       * create a WPS profile
+       * install fabric
+       * augment the wps profile with fabric
+       * install monitor
+       * augment wps/fabric profile with monitor
+   
+   RECREATE STEPS FROM AIX
+   Use the process described in plusOne DPE infocenter
+   http://sal-plus1-ic.rtp.raleigh.ibm.com:9504/help/index.jsp [http://sal-plus1-ic.rtp.raleigh.ibm.com:9504/help/index.jsp]
+   
+   1. Install DB2 FP3b
+   2. Install WPS 6.2 GM - advanced profile using db2 (use defaults
+   for the most part except deselect configure BPC)
+   3. configure BPC container manually
+   4. configure BPC explorer manually
+   5. apply wps 6201 fixpack to existing profile
+   6. Install WSRR 6202 (use defaults)
+   7. Install Fabric 62 GM - augment profile using db2
+   8. Install Fabric 6201
+   9. Install Monitor 62 - augment profile using db2 (select
+   defaults for the most part - select to deploy Human task monitor
+   model)
+   
+   Error occurs here - INSTPARTIALSUCCESS
+   
+   
+   Actual Results:  the augmentation completes with a partial error
+   message
+   
+   Expected Results:  INSTCONFSUCCESS
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This code fix is targeted to be included in the following fix
+   pack:
+   6.2.0.0 Fix Pack 2 (v 6.2.0.2)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This code fix is targeted to be included in the following fix
+   pack:
+   6.2.0.0 Fix Pack 2 (v 6.2.0.2)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This code fix is targeted to be included in the following fix
+   pack:
+   6.2.0.0 Fix Pack 2 (v 6.2.0.2)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR34336
+   
+   
+ * REPORTED COMPONENT NAME
+   WBS FABRIC FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724R3100
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-23
+   
+   
+ * CLOSED DATE
+   2009-09-23
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WBS FABRIC FOR
+   
+   
+ * FIXED COMPONENT ID
+   5724R3100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

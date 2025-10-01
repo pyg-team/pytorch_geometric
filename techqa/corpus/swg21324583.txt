@@ -1,0 +1,38 @@
+Title: IBM How do I run a triple redundant license server? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I run a triple redundant license server? 
+
+ANSWER
+
+
+The license file for a triple redundant server will contain a line for each server. For example: 
+
+SERVER server10 6cfa2112 19353 
+SERVER server11 6abc292b 19353 
+SERVER server12 6abf31db 19353 
+
+In a triple redundant server set-up, at least two of the three servers must be running so that licenses can be checked out. If a connection exists to only one of the servers, error messages will appear. 
+
+If you are running in a three-server environment and are having problems with the license, perform the tests that are listed below. Perform the tests in the order that they are listed: 
+
+ Note: If this problem persists after you perform the steps below, you may want to consider switching to a single-server environment 
+
+ Note: When using a three-server environment, it is strongly recommended that all three servers be on the same subnet. If this is not the case, you should consider using three machines which are in the same physical location and are on the same subnet 
+
+ 1. Verify that two of the three license managers are still running. On UNIX systems, use the DBAdmin utility (Display the license status). On Windows systems, run the FLEXlm LMTOOLS utility in the DOORS flex folder. If the license manager is not already running on all servers, start it on all of them. 
+ 2. Check to see whether the LM_LICENSE_FILE environment variable is set. If it is, verify that the settings are correct. 
+ 3. Verify that the same license file exists on all three license servers in the licensing directory. The hostnames of all three servers must appear in these files and in the same order. If the license files are not the same on all three servers, make corrections as necessary and restart the license manager. 
+ 4. Verify that the date and time on all license servers are consistent and correct. Make corrections as necessary and restart the license manager 
+ 5. Verify that the hostid has not changed on any of the license servers. If any hostid has changed, you need to obtain and install new licenses on all license servers. 
+ 6. Verify that the license manager and utilities are installed locally on each license server. If not, run the installation from the product CD and choose to install the license server only. See the installation manual for your product and platform for more information. 
+
+If you continue to have problems, contact your local Support office. 
+
+DOORS All, TAU AllDOORS-FAQ-090AnswerProduct versionPartner ContentInternal ContentCategoryReference ID 
+
+HISTORICAL NUMBER
+ KB7260

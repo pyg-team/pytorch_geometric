@@ -1,0 +1,216 @@
+Title: IBM IC55371: SQL-STATEMENT NOT VISIBLE IN "CUSTOM SUMMARY" WITHIN OPERATIONAL REPORTING WHEN THERE ARE PRECEEDING SPACES IN COLUMN NAME - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Adding an SQL-statement to the "Custom Summary" section of the
+   Operational Reports or Operational Monitors of TSM Operational
+   Reporting on Windows will only return the column and
+   corresponding value when
+   .
+   a) only one column is selected from a database table or
+   b) more than one columns are selected from a database table and
+   the one having the longest column name in the output is
+   configured in SQL VARIABLE and REPORT LABEL fields.
+   .
+   Starting with the Operational Reporting feature of the TSM
+   Management Console 5.4 the output parsing was changed to ignore
+   columns where the column name in the output begins with one or
+   more space characters. When using a single column SQL-statement
+   which is recommended for the use in "Custom Summary" section of
+   the Operational Report and Operational Monitor (as only one
+   column and the corresponding value can be displayed here) there
+   is no problem as there are no preceeding space characters in the
+   output. The problem only occurs when using a SQL-statement
+   returning more than one column.
+   .
+   The code will be changed to allow preceeding space characters in
+   the SQL output.
+   .
+   Example 1:
+   SQL-statement: select node_name as node from nodes where not
+   contact is NULL
+   SQL VARIABLE: node
+   Report Label: node
+   .
+   Result:
+   .
+   ANS8000I Server command: 'select node_name as node from nodes
+   where not contact is NULL'
+   
+   NODE: BANANA
+   
+   NODE: DEBUG-TP
+   
+   NODE: MACHINE1
+   
+   ANS8002I Highest return code was 0.
+   .
+   The first result of this query will be displayed with column
+   name NODE in the "Custom Summary" of the Operational Report or
+   Operational Monitor.
+   .
+   Example 2a:
+   SQL-statement: select node_name as node,contact as
+   contact_details from nodes where not contact is NULL
+   SQL VARIABLE: node
+   Report Label: node
+   .
+   Result:
+   .
+   ANS8000I Server command: 'select node_name as node,contact as
+   contact_details from nodes where not contact is NULL'
+   
+              NODE: BANANA
+   CONTACT_DETAILS: banana-joe
+   
+              NODE: DEBUG-TP
+   CONTACT_DETAILS: DEBUGGER *987-9876
+   
+              NODE: MACHINE1
+   CONTACT_DETAILS: Tester *123-1234
+   
+   
+   ANS8002I Highest return code was 0.
+   .
+   The line for this SQL-statement will be missing in the "Custom
+   Summary" of the Operational Report or Operational Monitor as
+   there are preceeding spaces in the output of the SQL-statement.
+   .
+   Example 2b:
+   SQL-statement: select node_name as node,contact as
+   contact_details from nodes where not contact is NULL
+   SQL VARIABLE: contact_details
+   Report Label: contact_details
+   .
+   Result of the SQL-statement is the same as in example 2a.
+   .
+   The first result of this query will be displayed with column
+   name CONTACT_DETAILS in the "Custom Summary" of the Operational
+   Report or Operational Monitor as CONTACT_DETAILS is the longest
+   SQL column name without preceeding spaces in the output.
+   .
+   
+   TSM Versions Affected:
+   TSM Management Console (Operational Reporting) 5.4 & 5.5 on
+   Windows
+   
+   Initial Impact: Low
+   
+   Additional Keywords:
+   wzrdhlpr.exe, TSMOR, SQL statement, query, notification rule
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use only one column to query when adding custom SQL-statements
+   to the "Custom Section" of Operational Report and Operational
+   Monitor.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All TSM Server Users of                      *
+   *                 Windows Management Console.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See ERROR DESCRIPTION.                  *
+   ****************************************************************
+   * RECOMMENDATION: Multiple column SQL statements are not       *
+   *                 allowed for the "Custom Summary" section     *
+   *                 of the Operational Reports or Operational    *
+   *                 Monitors of TSM Operational Reporting.       *
+   ****************************************************************
+   *
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is a permanent restriction.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC55371
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   54W
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-02-22
+   
+   
+ * CLOSED DATE
+   2008-03-29
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,148 @@
+Title: IBM PM74400: ITCAM DATA COLLECTOR THREADS HANG WAITING FOR DMGR CONNECTION. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If there is a time delay in obtaining Dmgr connection or
+   communication, RMI communication threads from Managing server
+   pile up causing excessive creation of threads.  An optimization
+   is required in JMXDelegate to eliminate the periodic
+   conversation with Dmgr as this is done only in a cluster
+   environment to obtain the cluster name.
+   
+   
+   
+   Users Affected: Potentially all WebSphere platforms running
+   ITCAM for Application Diagnostics.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   DESCRIPTION:
+   ITCAM Data Collector connects to the Websphere Deployment
+   manager to get the status of cluster members and also to obtain
+   the statistics like Database connection pool max size.
+   
+   This connection sometimes causes the Managing server
+   communication RMI threads to hang if the Dmgr is not reachable.
+   
+   This APAR removes the logic to contact Dmgr and obtains the
+   necessary data through other means.
+   
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   release:
+   
+   | interim fix | 7.1.0.3-TIV-ITCAMAD-IF0008
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM74400
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * REPORTED COMPONENT ID
+   5698B48DC
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-04
+   
+   
+ * CLOSED DATE
+   2013-03-30
+   
+   
+ * LAST MODIFIED DATE
+   2013-09-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * FIXED COMPONENT ID
+   5698B48DC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

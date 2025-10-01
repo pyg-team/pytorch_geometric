@@ -1,0 +1,109 @@
+Title: IBM How do Sterling SCA/MCF/MCSF applications handle Integration Server JMS failover? - United States
+
+Text:
+Performance Tuning; STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do Sterling SCA/MCF/MCSF applications handle Integration Server JMS failover? 
+
+SYMPTOM
+
+
+Problem Statement: To achieve JMS failover in Integration Server configuration, so that messages do not backup in any particular queue. Problem Description: There are two JMS Servers forming a virtual cluster as in reality they are on independent machines. These servers have identical Queues, and a load balancer farms messages into either of the Queues. 
+An Integration Server runs on each of these servers and they expect to read and process messages from both the queues, so that if any one of the queue goes down, then the JMSReceiver/Sterling service can continue to read from the other backup queue. 
+In the service definition of the JMS Receiver component, the Provider URL is a comma-separated entry e.g. Provider URL = JMSServer1, JMSServer2 
+RESOLVING THE PROBLEM
+
+
+The product does not support this configuration of comma-separated URL’s for active-active failover.
+
+ 
+
+ If the JMS Server is outside a cluster, the JMS Receiver Provider URL identifies one machine to which the Integration Server will connect. 
+(This configuration might work, in the sense, some threads might latch on and listen on Queue1, and some threads listen on Queue2. Once this happens, they will stay in that specific pattern/ratio for the lifetime of that Integration Server JVM. However, it is more of a lottery system than logic, the way the threads are farmed out. It therefore is not sensible to depend on this comma-separated URL logic to achieve division of labor between the threads.) 
+
+The CORRECT process configuration on how to achieve active-active JMS failover configuration for Integration Server is: Create a clone of the existing service. 
+
+
+Service 1 will listen on JMSQueue1; 
+Service 2 will listen on JMSQueue2. 
+
+If for any reason, Queue on JMSServer1 goes down, it is expected that the load balancer that feeds messages knows that Queue1 is down and to start pumping messages to Queue2. 
+
+With the new configuration, Service2 will now take the brunt of processing these messages at double the load.
+To implement the new configuration modify the existing service from
+
+ "JMSReceiver (1, 2) -> XSL -> api ->parse+manipulate+etc -> end”,
+
+so that the processing part of the service is a Reusable Service (sync) 
+and 
+Service 1 = JMSReceiver (1) -> Reusable SyncService -> End 
+Service 2 = JMSReceiver (2) -> Reusable SyncService -> End 
+
+Why is failover required for Integration Server scenario? 
+
+
+Failover is required in an environment where two separate WAS instances (active-active, separate physical locations) exist, and WAS 1 is brought down, then the Integration services that were using the JMS destination associated with WAS 1 can use the WAS 2 JMS destination instead.
+
+How, then is the failover scenario handled for Integration Servers by the Sterling SCA product?
+
+An Integration Server, by nature, is always in an active-passive mode of failover. Sterling does not provide a setting or a property that can support an active-active failover mode like it does for agents. 
+
+To implement the failover scenario for Integration Servers, customers can duplicate the set of services that are running on their current environment and copy it over to the backup environment. Each duplicate service can point to a new queue that will receive the same messages that the original queue belonging to the original service was receiving. This will thus, result in an active-active failover scenario.
+
+ 
+
+Why has Sterling not implemented Integration Server failover mechanism as for Agents through backup Provider URLs?
+
+In case of Agent failover, all the active-active Agents must connect to the same JMS Queue. The JMS queue contains a unique message for each transaction that the Agent has to process. All threads of a particular Agent (across physical servers and JVMs) read off one message at a time from the queue - thus avoiding conflicting/overlapping transactions. 
+
+
+Hence, the single point of failure in this solution is the Queue itself. If the queue fails, all instances of the agent will fail as well, with no option to handle failovers. To address this problem, Sterling provided a mechanism of assigning backup provider URLs to support failovers. 
+However, in the case of Integration Servers, one can pull the same message from multiple queues using duplicate services. Hence, there is a good option present to configure the failover scenario as previously described.
+
+What are the technical challenges of coming up with failover mechanism for Integration Servers similar to Agent Servers? 
+
+
+Technically, one can configure Integration Servers to read off the backup provider URL in the same manner as Agent Servers. However, some inherent problems go along with it.
+In the case of Agent Servers, Sterling did not have a choice but to provide a fix because of the JMS queue being the single point of failure. In case of Integration services, however, one can configure multiple queues to work on incoming messages eliminating queues as a single point of failure. 
+
+If the change is to redirect all messages to a backup queue, then configure multiple services to receive from the same queue using individual message selectors. However, this can cause a drag on the system and result in performance issues.
+
+In addition, in future Sterling would like to implement the Message Driven Beans (MDB) mechanism for pulling messages from the queues. Since this involves a third-party established standard for processing queues and the Application Server drives it, Sterling will have minimal control over it.
+
+How can the customers’ best implement the workaround suggested by Sterling? 
+
+
+One does not need to duplicate synchronous services. In this case, the Application Server will take care of the failover scenario. Apply this workaround only to mission-critical, asynchronous services since this is where the business logic will reside. 
+
+The best way to achieve the duplication would be abstract the services that contain complex business logic and model them as composite services within Sterling. This will make it easy for customers to get the duplication implemented since the crucial business logic will be independent of the queues narrowing down the components, which need change. Needless to state, this logic needs to be well tested before deployment.
+
+Are there any advantages of implementing the workaround as opposed to fixing it similar to Agent Server failover? 
+
+
+With the duplication of the services workaround, customers will get an active-active failover mode as opposed to the active-passive mode when providing a backup provider URL.
+
+
+
+HISTORICAL NUMBER
+ NFX4092 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+Integration Server
+
+
+Severity
+
+
+Normal
+
+
+Type
+
+
+NormalFix

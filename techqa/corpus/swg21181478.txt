@@ -1,0 +1,116 @@
+Title: IBM About Java Runtime (JRE) and ClearCase Web - United States
+
+Text:
+ccweb; rwp; java; jre; vm; jvm; sr4; 1181478; Instructions at referenced memory xxxxxx. Memory could not be read.; Instructions at referenced memory xxxxxx; Memory could not be read TECHNOTE (FAQ)
+
+QUESTION
+ What steps do I need to take when no suitable Java Runtime Environment (JRE) has been detected on my computer while attempting to start the IBM® Rational® ClearCase® Web (CCWeb) client on Microsoft® Windows®? 
+
+ANSWER
+
+
+
+
+
+
+
+
+Installing the required JVM for use with CCWeb
+
+Changing the default back to the Microsoft JVM
+
+Uninstalling a JRE when Multiple JREs are present
+
+Additional information
+
+
+
+
+
+Installing the required JVM for use with CCWeb 
+
+The Microsoft® JVM is not a supported JVM for running CCWeb. However, in some cases other applications running on your computer might require that the Microsoft JVM be specified as the default JVM in Internet Explorer. As long as you have an appropriate version of the Java Runtime Environment installed on your computer, the Internet Explorer settings will not conflict with how ClearCase interacts with the JRE. 
+
+Either option will allow the ClearCase applications to run:
+
+Option 1: Install JRE 1.4.1 or 1.4.2 and leave the Microsoft JVM as the default JVM in Internet Explorer. 
+
+ * Execute the downloaded installer on your local machine 
+ * When prompted for Setup Type select Custom installation 
+ * On the Select Browsers page clear the Microsoft Internet Explorer check box
+
+
+
+Option 2: Install JRE as the default JVM in Internet Explorer  * Find and execute the downloaded installer on your local machine 
+ * When prompted for Setup Type select Typical installation to accept the defaults
+
+
+
+
+
+
+Changing the default back to the Microsoft JVM 
+
+If you accidentally install the JVM as the default JVM for Internet Explorer during the steps above, you can re-set the Microsoft JVM as the default JVM by changing the settings in the Internet Options dialog in Internet Explorer: 
+ 1. Start Internet Explorer
+    
+ 2. Click Tools > Internet Options
+    
+ 3. On the Advanced tab, under Java, clear the Use Java 2 v1.4.1 for <applet> check box
+
+
+ Back to top 
+
+
+
+
+
+Uninstalling a JRE when Multiple JREs are present
+
+If you have multiple instances of 1.4.1 or 1.4.2 JREs installed on a system and uninstall one of them, the ClearCase application may no longer detect that an appropriate JRE remains installed. If this occurs you can correct this situation by re-installing the JRE you wish to keep on the system.
+
+
+
+
+
+
+Additional information
+
+What is a JRE?
+A Java Runtime Environment (JRE) is required to run a Java Application. A JRE interprets the code in the Java application and translates it to the native machine language. Different JREs implement different features of Java, therefore it is important that the correct JVM be used for any given Java application.
+
+
+Which JRE does ClearCase Web support? 
+
+ * Sun JRE 1.4.1 or 1.4.2 
+ * IBM JRE 1.4.1 or 1.4.2
+
+
+
+Which JRE is Internet Explorer currently using?
+ 1. Start Internet Explorer
+    
+ 2. Click Tools > Internet Options
+    
+ 3. On the Advanced tab, look for the headings: Microsoft VM or Java (Sun)
+    
+    Inspect the check boxes to determine which JVM Internet Explorer will uses by default. For example, if Use Java 2 v1.4.1 for <applet> under the Java (Sun) heading is checked, then this Sun JVM will be used as the default with Internet Explorer.
+
+
+
+Where can I get a supported version of Java?  * IBM developer Kits at http://www-128.ibm.com/developerworks/java/jdk/index.html [http://www-128.ibm.com/developerworks/java/jdk/index.html] 
+ * You can get the latest version of Java from java.com [http://java.com] 
+ * You can get older version of Java including the 1.4.2 J2RE from http://java.sun.com/products/archive/ [http://java.sun.com/products/archive/]
+
+
+ Back to top 
+
+RELATED INFORMATION
+ An error has occurred in Internet Explorer [http://www.ibm.com/support/docview.wss?uid=swg21224916]
+Getting started with the ClearCase Remote Client [http://www.ibm.com/support/docview.wss?uid=swg21205629]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase ClearCase Web (CCWeb) Software Development Rational ClearCase ClearCase Web (CCWeb)

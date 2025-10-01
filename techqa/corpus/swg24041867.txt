@@ -1,0 +1,61 @@
+Title: IBM ITCAM Agents for WebSphere Messaging Version 7.1.0 Fix Pack 01 Interim fix 04 (7.1.0.1-TIV-XEforMsg-IF0004) - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This is the fourth interim fix after ITCAM Agents for WebSphere Messaging Version 7.1.0 fixpack 01 
+
+DOWNLOAD DESCRIPTION
+This interim fix addresses a list of APARs in previous version and refreshes the Java certificate of application support files.
+
+PREREQUISITES
+1. ITCAM Agents for WebSphere Messaging Version 7.1.0 Fix Pack 1 must be installed. 
+
+
+ See the link below for details:
+http://www-01.ibm.com/support/docview.wss?uid=swg24035244 [http://www-01.ibm.com/support/docview.wss?uid=swg24035244]
+
+2. Make sure that the software installed in your environment is compatible with this interim fix.
+
+Supported WebSphere MQ
+* WebSphere MQ 6.0
+* WebSphere MQ 7.0
+* WebSphere MQ 7.0.1
+* WebSphere MQ 7.1 
+* WebSphere MQ 7.5
+* WebSphere MQ 7.5.0.1
+* WebSphere MQ 8.0.0.0 
+
+Supported IBM broker products:
+* WebSphere Message Broker V7.0
+* WebSphere Message Broker V8.0 
+* WebSphere Message Broker V8.0.0.1 
+* WebSphere Message Broker V8.0.0.2
+* WebSphere Message Broker V9.0.0.0 
+* WebSphere Message Broker V9.0.0.1
+* WebSphere Message Broker V9.0.0.2
+
+Note: WebSphere Message Broker 6.1 is not supported since 7.1.0 Fix Pack 1 Interim Fix 2 because of CMP change adoption for broker discovery function.
+
+Supported IBM Tivoli Monitoring
+* IBM Tivoli Monitoring 6.2.3 fix pack 1 or later
+
+INSTALLATION INSTRUCTIONS
+Refer to readme on Fix Central
+
+DOWNLOAD PACKAGE
+ 
+
+ * 1. For distributed systems, download installation image 7.1.0.1-TIV-XEforMsg-IF0004 from fix central below
+ * 2. For z/OS systems, install the following PTFs to bring your system to an equivalent level. FMID Maintenance level HKMQ710 UA80431 HKQI710 UA80400 HKCF710 UA80415 HKMC710 UA80416 
+ * 3. For the z/OS customer who has no agents running on distributed systems, download IBM Tivoli OMEGAMON XE for Messaging V7.3.0 Application Support Files for z/OS 7.1.0.1-TIV-XEforMsg-IF0004-AppSupt-ZOS from Fix Central. 
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 7.1.0.1-TIV-XEforMsg-IF0004 1 Mar 2016 English 1 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=Tivoli%2BComposite%2BApplication%2BManager&product=ibm/Tivoli/Tivoli+Composite+Application+Manager+for+Applications&release=All&platform=All&function=fixId&fixids=7.1.0.1-TIV-XEforMsg-IF0004&inc] [ ] 7.1.0.1-TIV-XEforMsg-IF0004-AppSupt-ZOS 1 Mar 2016 English 1 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7ETivoli&product=ibm/Tivoli/Tivoli+OMEGAMON+XE+for+Messaging+for+zOS&release=All&platform=All&function=fixId&fixids=7.1.0.1-TIV-XEforMsg-IF0004-AppSupt-ZOS&includeSupersedes=0&source=fc] [ ] 
+ [/support/docview.wss?uid=swg24041867&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24041867&aid=2]Problems (APARS) fixed
+IV79995, IV75485, IV67229, IV66949, IV64689, IV70694, IV76825, IV64012, IV64669, IV72265, OA48272, IV75363, IV66788

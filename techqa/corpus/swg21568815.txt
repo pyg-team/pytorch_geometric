@@ -1,0 +1,22 @@
+Title: IBM Verifying the installed software versions on an IBM Smart Analytics System for AIX - United States
+
+Text:
+BCU; Balanced Warehouse; software level; firmware level; version; Smart Analytics System; balanced configuration unit; ISAS TECHNOTE (FAQ)
+
+QUESTION
+ What commands can I use to verify the software versions installed on my IBM Smart Analytics System for AIX? 
+
+ANSWER
+This document provides the AIX commands to verify the software versions. Refer to the related links on this page to access commands for Linux. 
+If your IBM Smart Analytics System is installed with the IBM Smart Analytics System Control Console software, you can issue the "miinfo -d" command to see a detailed list of the software versions installed on the management node, all core warehouse nodes (administration, data, and standby nodes), and warehouse application nodes in your IBM Smart Analytics System environment.
+
+If your IBM Smart Analytics System does not have the IBM Smart Analytics System Control Console software installed, you can use the following commands to see the software versions installed in your IBM Smart Analytics System environment. 
+
+
+
+[/support/docview.wss?uid=swg21568815&amp;aid=1] Component​​ Command IBM Smart Analytics System Operating System Software IBM AIX​​ oslevel -s IBM General Parallel File System ​​ lslpp -l | grep -i gpfs IBM Reliable Scalable Cluster Technology (RSCT)​​ lslpp -L |grep -i rsct
+lssrc -ls IBM.RecoveryRM IBM Systems Director Platform Control for Power​​ lslpp -l | grep -i pflayer IBM Systems Director Express Edition​​ lslpp -l | grep -i director IBM Smart Analytics System Enterprise Software IBM InfoSphere Warehouse​​ cat /usr/IBM/dwe/warehouse_97/version.txt IBM DB2 Enterprise Server Edition (ESE) for Linux, UNIX, and Windows​​ db2level IBM WebSphere Application Server​​ cat /usr/IBM/dwe/97/appserver_001/isw/appServer/profiles/AppSrv01/properties/version/profile.version IBM DB2 Performance Expert​​ pelevel IBM Tivoli System Automation for Multiplatforms​​ lslpp -L |grep -i sam 
+lssamctrl ActiveVersion IBM Smart Analytics System Control Console​​ miinfo -d IBM Smart Analytics System Business Intelligence Software IBM Cognos 8 BI Server​​ cat <install_dir>/cmplst.txt | grep C8BISRVR_version IBM Cognos 8 Go! Dashboard​​ cat <install_dir>/cmplst.txt | grep EXDASHBOARDS_version IBM Cognos 8 BI Samples​​ cat <install_dir>/cmplst.txt | grep C8BISAMPLES_version IBM Cognos 8 Supplementary Languages Documentation​​ cat <install_dir>/cmplst.txt | grep C8BILP_version IBM WebSphere Application Server​​ cat <install_dir>/profile.versioncat <install_dir>/profile.version IBM HTTP Server​​ VersionInfo.sh | grep Version IBM Java SDK​​ java -version IBM DB2 ESE for Linux, UNIX, and Windows​​ db2level (as instance owner) IBM Tivoli System Automation for Multiplatforms​​ lslpp -L |grep -i sam 
+lssrc -ls IBM.RecoveryRM IBM Remote Support Manager for Storage​​ /rsm/rsm-release IBM DS Storage Manager​​ lslpp -ah SMClient.aix.rte RELATED INFORMATION
+ IBM Smart Analytics System validated stack pages [http://www.ibm.com/support/docview.wss?uid=swg21429594]
+Verifying the installed software versions on Linux [http://www.ibm.com/support/docview.wss?uid=swg21576435]

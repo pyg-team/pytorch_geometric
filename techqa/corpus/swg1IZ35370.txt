@@ -1,0 +1,181 @@
+Title: IBM IZ35370: PROMPT TO CHANGE PASSWORD WHEN WEBSEAL BIND-DN EXP. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ** <PDFI>
+   **************************************************************
+   Problem: When a user attempts a login with a valid account but
+   the WebSEAL instances' bind-dn password has expired after the
+   instance was started and all the open LDAP connections that were
+   opened before the password had expired have closed due to the
+   connection-inactivity setting in ldap.conf, the user gets a
+   message that THEIR password has expired.
+   Steps to Duplicate: See below.
+   Desired Behavior: A more appropriate message should be
+   displayed.
+   Environment: IDS 6.0, Solaris 8, TAM 6.0.0.13.
+   ** </PDFI>
+   *************************************************************
+   
+   I was able to recreate by adjusting,
+   
+   [ldap]
+   max-server-connections = 1
+   connection-inactivity = 120
+   
+   in ldap.conf and setting,
+   
+   pwdMaxAge=180
+   
+   I start with ibm-pwdPolicy=false.  WebSEAL instance A starts and
+   after 120 seconds, the 1 LDAP connection times out and closes.
+   Then after 60 more seconds all the passwords are expired.  I
+   then use another instance (B) started at the sametime but with
+   connection-inactivity=0 to login as nlloyd, get properly
+   redirected to the change password page, change my password and
+   log in.  I verify with pdadmin -a nlloyd that I can login.  Now
+   I go back to A, attempt a login as nlloyd, and get,
+   
+   User nlloyd's password has expired Change password for nlloyd
+   
+   with the following in msg__webseald.log,
+   
+   2008-10-10-22:57:12.011-05:00I----- 0x16B480C9 webseald ERROR
+   rgy ira ira_ldap.c 2348 0x00000017
+   HPDRG0201E   Error code 0x3 was received from the LDAP server.
+   Error text: "Error, Password has expired -
+   dn:cn=FORMS-AUTH-webseald/lucid,cn=SecurityDaemons,secAuthority=
+   Default".
+   
+   2008-10-10-22:57:12.012-05:00I----- 0x132120E0 webseald WARNING
+   ias authsvc pdauthn.cpp 1514 0x00000017
+   HPDIA0224W   The password for user nlloyd has expired.
+   
+   From the customer,
+   
+   Is this a bug, or by design? If the bind account is expired, why
+   would TAM send the user to the password expired message and
+   request the user to change their password?  That doesn't make
+   sense and appears to be broken.  Wouldn't it be better to just
+   give the user an authentication fail message?  The user is only
+   getting confused thinking their password expired and needs to be
+   changed, which it isn't and they can't change it anyway since
+   webseal cannot bind to ldap.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Reset bind-dn password.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When a user attempts a login with a valid accou
+   nt but the WebSEAL instances' bind-dn password has expired after
+    the instance was started and all the open LDAP connections that
+    were opened before the password had expired have closed due to
+   the connection-inactivity setting in ldap.conf, the user receive
+   s a message that their password has expired.  A more appropriate
+    message should be displayed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is a permanent restriction as the TAM d
+   esign does not allow for Server ID password policy to take into
+   account the registry password policies as TAM doesn't manage reg
+   istry password policies.  If the registry password policies are
+   turned ON then the TAM server IDs password policy may be affecte
+   d and their password may be expired.  If the TAM server IDs pass
+   word violates the registry password policies, it can result in u
+   nexpected failure and adversely affect the behavior of the TAM b
+   lade servers like WebSEAL or the Authorization Server.  This is
+   a limitation of TAM when working with registry password policy.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ35370
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR E-BU
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0800
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-20
+   
+   
+ * CLOSED DATE
+   2009-02-20
+   
+   
+ * LAST MODIFIED DATE
+   2009-02-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

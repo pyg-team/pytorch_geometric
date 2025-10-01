@@ -1,0 +1,50 @@
+Title: IBM Impact of Removing Pre- and Post-Processing *EXITS from Lotus Server Backups - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When product BRMS is initialized on a system that has Lotus Domino server(s) installed, Lotus server backup control groups are created that include first and last items which are pre- and post-processing *EXIT entries. These *EXIT items are empty in that no command to run is specified. These empty *EXIT entries are required and serve a special purpose. 
+
+RESOLVING THE PROBLEM
+When product BRMS is initialized on a system that has Lotus Domino server(s) installed, Lotus sever backup control groups are created that include first and last items which are pre- and post-processing *EXIT entries. These *EXIT items are empty in that no command to run is specified. These empty *EXIT entries are required and serve a special purpose. DO NOT REMOVE these two *EXIT items. Removing these exits can cause unpredictable results. An example of what can happen is provided here when these exits are removed. 
+
+If the first backup item is specified as an *EXIT, it is processed before certain control group attributes are implemented. If the last backup item is specified as an *EXIT, it is processed after certain other attributes are implemented. Removal of these pre- and post-processing exits changes the timing of implementing certain control group attributes for Lotus Domino server backup.
+
+For instance, BRMS created a control group QLTSSVR on a system with DOMINO1 and DOMINO2 servers as follows:
+
+Display Backup Control Group Entries
+
+Group . . . . . . . . . . : QLTSSVR 
+Default activity . . . . : *BKUPCY 
+Text . . . . . . . . . . : Online backup of all Lotus servers
+
+Backup
+Seq Items Exit command
+10 *EXIT 
+20 *EXIT QNOTES/SAVDOMBRM SERVER('DOMINO1') CTLGRP(QLTSSVR
+30 *EXIT QNOTES/SAVDOMBRM SERVER('DOMINO2') CTLGRP(QLTSSVR)
+40 *EXIT 
+
+In control group QLTSSVR, the following attributes were specified:
+
+Automatically backup
+media information . . . . . . . . . *OBJ 
+Append to media . . . . . . . . . . . . *YES 
+
+When BRMS control group was run, an active tape volume that met all media criteria for that backup was mounted in the tape device specified for that backup. BRMS correctly backed up servers DOMINO1 and DOMINO2 data to that volume and proceeded to back up media information files from QUSRBRM library to that same volume.
+
+The pre-processing attribute to append to media and post-processing attribute to back up media information were correctly implemented.
+
+However, when first or last *EXIT entries are removed, or a SAVDOMBRM is added to the first or last *EXIT, results will be unpredictable. 
+
+
+
+o First server DOMINO1 backup was done and the attribute to allow APPEND to active media was ignored. This caused BRMS to request an expired (or new) tape volume. o The post-processing attribute to automatically back up media information was done before DOMINO2 data backup rather than after. 
+The following information serves as reference material and is provided at the BRMS Web page on Domino Sever backups: o If the first entry in a control group is an *EXIT, it is processed before any subsystem or job queue processing is done during STRBKUBRM pre-processing. o If the last entry in a control group is an *EXIT, it is processed after any subsystem or job queue processing is done during STRBKUBRM post-processing. o Because of these two facts, the control groups supplied by BRMS with a SAVDOMBRM *EXIT or a SAVLQPBRM *EXIT contain empty pre and post *EXITs. These *EXITs are required for online Lotus Server backups to occur correctly. However, you can choose to change the pre and post data so that a pre and post exit does the processing that you require around the SAVDOMBRM or SAVLQPBRM command processing. Reference [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Backup%2C%20Recovery%20and%20Media%20Services%20%28BRMS%29%20for%20i/page/Control%20group%20EXIT%20entries]: 
+BRMS Web page at the following URL [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Backup%2C%20Recovery%20and%20Media%20Services%20%28BRMS%29%20for%20i/page/Control%20group%20EXIT%20entries]:  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 
+HISTORICAL NUMBER
+ 483347333

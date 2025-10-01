@@ -1,0 +1,173 @@
+Title: IBM IV67231: INSTALLING AND RUNNING IMPACT 5.1.X AND BELOW HAVE ROOT USER RESTRICTION BUT DO NOT HAVE IT IN IMPACT 6.1.1 ONWARDS. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-ZLINUX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0006&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0006&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0006&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0006&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0006&source=SAR]
+7.1.0-TIV-NCI-ZLINUX-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0005&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0005&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0005&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0005&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0005&source=SAR]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 2(7.1.0-TIV-NCI-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24038298]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 3(7.1.0-TIV-NCI-FP0003) [http://www-01.ibm.com/support/docview.wss?uid=swg24040149]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 5(7.1.0-TIV-NCI-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24041270]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 6(7.1.0-TIV-NCI-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24042426]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 7(7.1.0-TIV-NCI-FP0007) [http://www-01.ibm.com/support/docview.wss?uid=swg24042688]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 8(7.1.0-TIV-NCI-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24042885]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 9(7.1.0-TIV-NCI-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24043378]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 10(7.1.0-TIV-NCI-FP0010) [http://www-01.ibm.com/support/docview.wss?uid=swg24043588]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 11(7.1.0-TIV-NCI-FP0011) [http://www-01.ibm.com/support/docview.wss?uid=swg24043858]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 12 (7.1.0-TIV-NCI-FP0012) [http://www-01.ibm.com/support/docview.wss?uid=swg24044312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  - QuickStartGuide describes that the root user should not be
+   used for installation.
+   http://www-01.ibm.com/support/knowledgecenter/api/content/SSSHYH
+   _6.1.1/com.ibm.netcoolimpact.doc6.1.1/QuickStartGuide.pdf [http://www-01.ibm.com/support/knowledgecenter/api/content/SSSHYH_6.1.1/com.ibm.netcoolimpact.doc6.1.1/QuickStartGuide.pdf]
+   
+   "On UNIX systems, use a non-root user account that has read and
+   write privileges on the installation directory to start
+   the installer. You cannot use the root (superuser) account to
+   start the Tivoli Netcool/Impact installer."
+   
+   
+   - However, the other hand, following administration guide
+   indicate that the any user can be used for installation on page
+   15.
+   http://www-01.ibm.com/support/knowledgecenter/api/content/SSSHYH
+   _6.1.1/com.ibm.netcoolimpact.doc6.1.1/AdministrationGuide.pdf [http://www-01.ibm.com/support/knowledgecenter/api/content/SSSHYH_6.1.1/com.ibm.netcoolimpact.doc6.1.1/AdministrationGuide.pdf]
+   
+   "On UNIX systems, you can run the installer as any user that has
+   read, write, and execute permissions to the target directory."
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  It was found that we had the root user restriction in Impact 511
+   but do not have it in Impact 611 onwards. One can install Impact
+   using the root user. If installed with the root user, root must
+   be used to start/stop the product. One cannot use one user to
+   install and another user to start and stop the product.
+   
+   
+   Therefore this APAR is to correct our QuickStartGuide for Impact
+   6.1.1 onwards.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The Quick Start guide mentiones that on unix, one must use   *
+   * non-root to install Impact but the Admin guide stated any    *
+   * user can be used. It was found that we had the root user     *
+   * restriction in Impact 511 but do not have it in Impact 61    *
+   * onwards. So we need to fix Quick Start guide.                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * NONE                                                         *
+   ****************************************************************
+   Quick Start Guide needs to be updated to mention that any user
+   can be used to install Impact.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This documentation update will be in the next release of the
+   Impact 611 publications.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV67231
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   611
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-11-25
+   
+   
+ * CLOSED DATE
+   2014-12-20
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

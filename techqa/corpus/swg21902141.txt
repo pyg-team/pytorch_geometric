@@ -1,0 +1,13 @@
+Title: IBM Scheduled reports stay in "Executing" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Scheduled reports begin to run and will sometimes complete successfully, but other times will remain in "Executing" and never complete. 
+
+ENVIRONMENT
+A VPN Connection exists between Cognos and the Data Source DB.
+
+RESOLVING THE PROBLEM
+Disable keep-alive on both ends of the VPN tunnel.

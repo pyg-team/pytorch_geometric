@@ -1,0 +1,125 @@
+Title: IBM Supported configurations and support policy for Citrix products - United States
+
+Text:
+citrix; meta frame; Notes; Workstation/Desktop; Notes Client Functionality; Platform; metaframe presentation server; presentation server; nd8egaupdate TECHNOTE (FAQ)
+
+QUESTION
+What is IBM Support's policy for Citrix XenApp support? What configurations are supported?
+
+ANSWER
+
+You should refer to the Release Notes [http://www.ibm.com/developerworks/lotus/documentation/releasenotes] that accompany each Notes client release for specific information on supported configurations for that product version. 
+
+For your convenience, the following table summarizes the supported configurations for Citrix product versions and Lotus Notes client versions. Be aware that this table includes Notes releases that have reached end of service (EOS) and are no longer supported. For product availability and end of support dates, refer to the IBM Software Support Lifecycle Web site [http://www.ibm.com/software/support/lifecycle/].
+
+Important Note: Starting with Notes 8.5.1, only multi-user installations are supported on Citrix/XenApp. For more information, see technote #1447614 -- Basic Steps to Install Lotus Notes 8.5.1 or 8.5.2 Multi-User on Citrix XenApp [http://www.ibm.com/support/docview.wss?uid=swg21447614]. 
+
+IBM Notes and XenApp General Support Statement: If a XenApp version supports the Operating System that Notes requires, then IBM will support customers running on it. For example, XenApp 7.15 is not explicitly listed in the table below, but IBM will support this version because XenApp 7.15 supports the Operating System version that Notes supports. The same is expected for future XenApp 7.x versions.
+
+
+
+Citrix version Supported for.. XenApp 7.15 and 7.16 IBM Notes 9.0.1 FP10 (and above)  * Standard or Basic 
+ * Multi-user only
+
+XenApp 7.8, 7.9, 7.11, 7.12, and 7.14 IBM Notes 9.0.1 FP9 (and above)  * Standard or Basic 
+ * Multi-user only
+
+XenApp 7.7 IBM Notes 9.0.1 FP7 (and above)  * Standard or Basic 
+ * Multi-user only
+
+XenApp 7.6 IBM Notes 9.0.1 FP3 (and above)  * Standard or Basic 
+ * Multi-user only
+
+XenApp 7.5 IBM Notes 9.0.1 FP2 (and above)  * Standard or Basic 
+ * Multi-user only
+
+XenApp 6.5 IBM Notes 9.0 (and above)  * Standard or Basic 
+ * Multi-user only
+
+XenApp 6.5 Notes 8.5.3 FP1 (and above)  * Standard or Basic 
+ * Multi-user only
+
+XenApp 6.0 Notes 8.5.3  * Standard or Basic 
+ * Multi-user only
+
+XenApp 5.0 (formerly Citrix Presentation server) Notes 8.5.1, 8.5.2 & 8.5.3  * Standard or Basic 
+ * Multi-user only
+
+Presentation Server 4.5 Notes 8.5.1, 8.5.2 & 8.5.3  * Standard or Basic 
+ * Multi-user only
+
+
+Notes 8.5.0  * Standard or Basic 
+ * Single-user
+
+
+Notes 8.0.2 & Notes 8.0.1  * Standard or Basic 
+ * Single-user
+
+
+Notes 8.0.0  * Basic Configuration 
+ * Single-user
+
+
+Supported Operating Systems 
+Running IBM Notes within XenApp is supported on any server platform that XenApp supports. For details, click on the link below, select the product "XenApp and XenDesktop", then select your XenApp version: 
+
+https://docs.citrix.com/en-us.html [https://docs.citrix.com/en-us.html] 
+
+Note : 64-bit Windows 2003 is supported with only Notes 8.5.1 or later releases 
+
+Requirement for Citrix ICA client 
+Deploying Lotus Notes clients on Terminal Server Edition or Windows Server with Terminal Services alone, without Citrix XenApp ICA client, is not a supported configuration. An enhancement request SPR# RBOD6WG3MP has been submitted to Quality Engineering requesting support for installing and running a Notes client on Windows Terminal Services without the Citrix ICA client . 
+Currently, there are no plans to change this functionality. 
+
+Published Application Support 
+Publishing Lotus Notes as an application is not supported by IBM because it is not an IBM product or technology. To isolate issues, IBM Support may ask that you launch Lotus Notes from the Citrix Desktop to see if the problem can be reproduced. If any issues arise while using this configuration, you must refer to Citrix support for additional assistance. 
+
+Citrix XenApp versus Citrix XenDesktop 
+The difference between Citrix XenApp (formerly Presentation Server) and Citrix XenDesktop is XenDesktop is a Desktop Virtualization technology, which can use popular server desktop models, for example VDI (Virtual Desktop Infrastructure) or Blade PCs. Whereas Citrix XenApp is the new name for Citrix Presentation Server. 
+
+IBM Client Application Access (ICAA) Supportability for Citrix XenApp 
+ICAA 1.0.0.1 and 1.0.1 are supported on Citrix XenApp 6.5, 7.5, and 7.6. Similar to Notes Client, running ICAA within XenApp is supported on any server platform that XenApp supports. 
+
+
+-- Lotus Notes and iNotes support policy for hosted virtual desktop environments [http://www.ibm.com/support/docview.wss?uid=swg21516087] 
+
+
+Technical Support 
+IBM Support will assist with installing the Notes client locally on a machine running the supported versions of Citrix XenApp (formerly Presentation Server) and Microsoft Windows 2003/2008 Terminal Services or Microsoft Windows NT Server 4.0 Terminal Server Edition. Please contact Citrix or Microsoft support for technical assistance regarding remote "thin" client issues, including the way the "thin" clients communicate with the installed Notes client on a Citrix/Terminal Server box. 
+
+A Citrix XenApp (formerly Presentation Server) solution is a supported configuration only when using the Lotus Notes client, and not the Domino Administrator or Domino Designer clients. 
+
+Citrix XenApp is loaded on top of Microsoft Windows Server with Terminal Services enabled. Therefore, if you have a specific multi-user problem, Citrix may refer you to Microsoft. 
+
+WebMail and Lotus Domino Web Access support 
+Beginning with the Notes/Domino 8.0.1 release, iNotes Web Access (formerly Domino Web Access) is supported. For earlier versions, as noted in the related document "DAMO 6.5.x: Not Supported on Windows Terminal Service or Citrix" ( #1202444 [http://www.ibm.com/support/docview.wss?rs=463&uid=swg21202444]) and "Is Domino Web Access Supported on Citrix?" ( #1211630 [http://www.ibm.com/support/docview.wss?rs=463&uid=swg21211630]), using Domino (iNotes) Web Access or Domino (iNotes) Access for Microsoft Outlook with Citrix XenApp is not a supported configuration. As well, using WebMail in the Citrix environment is not supported. For earlier releases, a Citrix XenApp solution is a supported configuration only when using the Lotus Notes client. 
+
+
+
+
+
+
+
+Release Notes 
+For your convenience, excerpts from the latest release notes are provided below. 
+
+8.0.2 
+The Notes Client (Standard and Basic Configuration), and Domino Web Access, are supported on Citrix Presentation Server 4.5 on Windows 2003 server, using ICA clients. 
+
+8.0.1 
+The Notes Client (Basic Configuration), and Domino Web Access, are supported on Citrix Presentation Server 4.5 on Windows 2003 server, using ICA clients. 
+
+The Notes Client (Standard Configuration) is now supported on Citrix Presentation Server 4.5, on Windows 2003 server, using ICA clients. 
+
+(Addition to release note: Currently Windows 2003 server 64-bit is not supported for Notes client 8.0.x in a Citrix environment. An enhancement request SPR# SGOI76SCQD has been submitted.) 
+
+8.0 
+The Notes Client (Basic Configuration) is supported on Citrix Presentation Server 4.5 on Windows 2003 server, using ICA clients. (Addition to release note: Windows 2003 server (32-bit only)) RELATED INFORMATION
+ Running Notes.ini and/or Notes Data dir on a server? [http://www.ibm.com/support/docview.wss?uid=swg21086958]
+Troubleshooting Notes client performance on Citrix [http://www.ibm.com/support/docview.wss?uid=swg21210016]
+Is Notes 8.5.2.x supported on Citrix XenApp 6.0? [http://www.ibm.com/support/docview.wss?uid=swg21451179]
+Lotus Notes and iNotes support policy for hosted virtua [http://www.ibm.com/support/docview.wss?uid=swg21516087]
+What versions of Lotus Notes support Citrix XenApp 6.5? [http://www.ibm.com/support/docview.wss?uid=swg21578153]
+IBM Lotus Notes and Lotus iNotes 8.5.3 on Citrix XenApp [https://www.ibm.com/developerworks/lotus/documentation/notes853xenapp/]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21974029]

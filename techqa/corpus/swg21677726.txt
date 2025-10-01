@@ -1,0 +1,39 @@
+Title: IBM Configure ANT tasks to connect to Rule Execution Server and Decision Center over HTTPS - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ There are a number of ANT tasks provided by ODM to perform administrative tasks concerning Rule Execution Server and Decision Center (such as deploying ruleApps to Rule Execution Server). How can I configure them to work over HTTPS? 
+
+ANSWER
+
+1. Set JAVA_HOME to point to the JDK that is bundled with with ODM.
+This would prevent the following error when running the ANT task: 
+
+ * java.net.SocketException: 
+   java.lang.ClassNotFoundException: Cannot find the specified class 
+   com.ibm.websphere.ssl.protocol.SSLSocketFactory 
+
+2. Set the secured attribute for the ANT task to true. 
+3. Add the server certificate to the Eclipse JVM truststore 
+a. Get the server certificate: 
+If you do not have direct access to the certificate stored on the server, you can obtain the server certificate from the client web browser. For details on how to export SSL certificate, see the vendor's documentation for each browser. 
+For example, when browsing the Decision Center console over HTTPS from Internet Explorer, a Security Alert dialog box is displayed. Click View Certificate > Details tab > Copy to file, and then follow the steps in the Export wizard. This exports the certificate to a .cer file (DER encoded binary). 
+b. Import the server certificate into the Eclipse JVM truststoreusing the keytool -import command. For example, 
+
+<JAVA_HOME>/jdk/bin/keytool.exe -import -file [PATH TO THE SERVER CERTIFICATE OBTAINED IN STEP 3.a] -alias [CERTIFICATE ALIAS] -keystore <JAVA_HOME>/jdk/jre/lib/security/cacerts 
+
+where <JAVA_HOME> points to the Eclipse JVM that you use to launch Eclipse (Rule Designer). 
+c. Verify that the key is added correctlyusing the keytool -list command. See the Java keytool documentation [http://docs.oracle.com/javase/1.5.0/docs/tooldocs/windows/keytool.html]for details. 
+4. Pass the trusted key to the ANT JVMusing the javax.net.ssl.keyStore property. This property must point to the file location of the updated cacerts. 
+For example, on Windows: 
+set ANT_OPTS=" - Djavax.net.ssl.trustStore=<JAVA_HOME>\jdk\jre\lib\security\cacerts " 
+On Linux: 
+export ANT_OPTS=" -Djavax.net.ssl.trustStore=<JAVA_HOME>\jdk\jre\lib\security\cacerts " 
+5. Run the ANT task again to connect to the Rule Execution Server or Decision Center over HTTPS. 
+RELATED INFORMATION
+#Connection to Rule Team Server cannot be established [http://www-01.ibm.com/support/docview.wss?uid=swg21586966]
+Ant tasks for RuleApp management [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5/index.jsp?topic=%2Fcom.ibm.wodm.dserver.rules.ref.res%2Fant_tasks%2Ftpc_ant_tasks_ruleapps_intro.html]
+Synchronizing using Ant tasks [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5/index.jsp?topic=%2Fcom.ibm.wodm.dcenter.synchro%2Ftopics%2Ftpc_synch_headless.html]
+Administering Decision Center [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5/index.jsp?topic=%2Fcom.ibm.wodm.dcenter.admin%2Ftopics%2Fwodm_dcenter_admin.html]

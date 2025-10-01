@@ -1,0 +1,214 @@
+Title: IBM PI78289: GRID VIEW IGNORES MANDATORY FIELDS ON NEW VALUES - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Editing rows on the grid view will not validate mandatory fields
+   that are already empty and not changed.
+   If the field already has a value, and the user deletes the
+   value, then the validation succeeds.
+   
+   
+   Prerequisites:
+   
+   OpenPages installed
+   
+   Set up profile/field
+   1.	Log into the OpenPages UI as OpenPagesAdministrator
+   2.	Navigate to Administration -> Profiles
+   3.	Click on OpenPages Platform 2
+   4.	Scroll down to Associated Users and associate
+   OpenPagesAdministrator to this profile, if not already
+   5.	Under Object Types, click on SOXBusEntity
+   6.	Across from Object Fields, click on Include
+   7.	Tick the checkbox next to Comment and click Include
+   8.	Under Object Fields, click on Comment
+   9.	Click on the Edit button, tick Required, and click Save
+   10.	On the cookie trail, click on SOXBusEntity to go back to the
+   object details
+   11.	Under Navigational Views, click on Add New
+   12.	Give the view a name of BEGrid, click next, next and next
+   again
+   13.	Click on Choose Fields
+   14.	Tick Description and Comment, then click Apply, then Finish
+   
+   Create test data
+   1.	On the top right, click on Add New and select Business Entity
+   2.	Enter Ent01 as the name, then click Save
+   
+   
+   Steps to Reproduce:
+   
+   1.	Log into the OpenPages UI as OpenPagesAdministrator
+   2.	Navigate to Organization -> Business Entities
+   3.	Change the View to BEGrid
+   4.	In the quick filter, enter % and press enter
+   5.	Doubleclick on the row for Ent01 to enter edit mode
+   6.	Enter a value for Description but leave the mandatory Comment
+   field empty, then press Enter. Note that this allows you to save
+   the record and ignores the mandatory field.
+   7.	Doubleclick on the same row again to enter edit mode, enter a
+   value for Comment, then press enter to save.
+   8.	Doubleclick on the same row again to enter edit mode, empty
+   the Comment field, then attempt to save again. This time the
+   field is validated.
+   
+   
+   Expected Results:
+   
+   The grid view should validate all fields to see if they are
+   mandatory, even if no change is made to them.
+   
+   Actual Results:
+   
+   The grid view does not validate fields that have not been
+   changed, even if they are mandatory.
+   
+   Error Message:
+   
+   None
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * OpenPages Users                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * GRID VIEW IGNORES MANDATORY FIELDS ON NEW VALUES             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customers should download OpenPages 7.3 FP1 from Passport    *
+   * Advantage. See the following document for details on         *
+   * obtaining OpenPages 7.3 FP1:                                 *
+   * http://www.ibm.com/support/docview.wss?uid=swg24043595       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem: Rows containing fields that are set as required in the
+   profile may be saved, even if the required fields are empty.
+   
+   Cause: Fields that are required in the Field Group are validated
+   by the platform.  However, fields that are required in the
+   profile are only validated on the client.  (This is true of the
+   Detail page as well).  For the grid view, fields were only being
+   validated if they changed.  In this case, the value did not
+   change but was still invalid because it was a field that was
+   added after the object was created.  This problem would also
+   occur if a field became required after the object already
+   existed.
+   
+   Solution:
+   Always validate the required fields even if they have not
+   changed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI78289
+   
+   
+ * REPORTED COMPONENT NAME
+   OPENPAGES GRC
+   
+   
+ * REPORTED COMPONENT ID
+   5725D5100
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-15
+   
+   
+ * CLOSED DATE
+   2017-05-15
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OPENPAGES GRC
+   
+   
+ * FIXED COMPONENT ID
+   5725D5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R730 PSY
+   UP

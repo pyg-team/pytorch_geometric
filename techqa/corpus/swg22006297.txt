@@ -1,0 +1,40 @@
+Title: IBM TFIM silent installation fails on WebSphere Application Server v7.0.0.37 - United States
+
+Text:
+TFIM silent installation PureJavaProductServiceImpl$DiskSpaceCheck TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to silently install TFIM using a response file will fail on WebSphere Application Server v7.0.0.37 or later with warning message "Checking required disk space requires file service native support.". 
+
+SYMPTOM
+When attempting to install TFIM silently on WAS 7.0.0.37 or later fixpack level the installation process will fail with messages observed such as:
+
+Mar 17, 2017 11:44:03 AM null null
+WARNING: ADMC0046W
+Mar 17, 2017 11:44:03 AM null null
+WARNING: Could not find tmx4jTransform.jar in null/etc/tmx4jTransform.jar - Interoperability to older versions of WebSphere is disabled
+Mar 17, 2017 11:44:03 AM null null
+INFO: ssl.disable.url.hostname.verification.CWPKI0027I
+Mar 17, 2017 11:44:03 AM null null
+INFO: Client code attempting to load security configuration
+Mar 17, 2017 11:44:03 AM null null
+INFO: Client code attempting to load security configuration
+(Mar 17, 2017 11:44:04 AM), Install, com.installshield.product.service.product.PureJavaProductServiceImpl$DiskSpaceCheck, wrn, Checking required disk space requires file service native support.
+(Mar 17, 2017 11:44:04 AM), Install, com.installshield.product.wizardbeans.InstallCheckPanel, wrn, Exiting wizard because one or more product checks failed (see previous log messages for details).
+
+
+
+CAUSE
+The Installer code that TFIM uses is not compatible with the updated Java SDK that WAS fixpack 37 and later provides.
+
+ENVIRONMENT
+This problem may be experienced when attempting to install TFIM on the following WAS build levels:
+WAS 7.0.0.37 & higher
+WAS 8.0.0.10 & higher
+WAS 8.5.5.4 & higher
+
+
+RESOLVING THE PROBLEM
+The silent installation of TFIM on WAS v7 should be performed when WAS is at fixpack level 27 or earlier, and once installed, WAS may be updated to a later fixpack level if required.
+
+Alternatively, the TFIM installation may be performed interactively on WAS 7.0.0.37 and later by using the workaround demonstrated in https://youtu.be/nw5pE9cTs50 [https://youtu.be/nw5pE9cTs50].

@@ -1,0 +1,47 @@
+Title: IBM Importing Rational License file with IPv6 address as Hostid results in "The License Keys are not for this machine" error - United States
+
+Text:
+IPv6; Rational; License; Key; Administrator; Importing; License; File TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to import any IBM Rational license file(s) generated from IBM Rational license key center (LKC) having a IPv6 address as a hostid on License Key Administrator (LKAD) results in the error "The license keys are not for this machine." 
+
+SYMPTOM
+Importing the license using LKAD results in the error: 
+
+The License Keys are not for this machine 
+
+
+image
+[/support/docview.wss?uid=swg21662823&amp;aid=1]
+
+
+CAUSE
+The Rational License Key Administrator is unable to handle licenses with IPv6 addresses as hostid.
+
+
+ENVIRONMENT
+Applies to all instances of LKAD installed.
+
+
+
+RESOLVING THE PROBLEM
+Procedure:
+
+
+ 1. Navigate to the installation directory of IBM Rational License Key server (RLKS)
+    
+    
+ 2. Open the file rational_server_perm.dat / rational_server_temp.dat in a text editor
+    
+    
+ 3. Copy and Paste the contents from the newly generated license file, using the IPv6 address to the rational_server_perm.dat / rational_server_temp.dat
+    
+    
+ 4. Save & Re-read license file to run new license file
+    
+    LKAD should now reflect the newly imported license files.
+    
+
+
+Note: If the floating license file being imported is a permanent license, the default file to which the license needs to manually imported is "rational_server_perm.dat" . If there is a license file already already in use generated with a different hostid, this would need to be overwritten completely. In case of Temporary licenses, there is no hostid specific licenses.

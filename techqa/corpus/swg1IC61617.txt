@@ -1,0 +1,266 @@
+Title: IBM IC61617: NULLPOINTEREXCEPTION'S FROM SERVICE MESSAGE OBJECT (SMO) AND JXPATH CODE ACCESSING THE SERVICE DATA OBJECT(SDO) - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 2 (6.2.0.2) [http://www-01.ibm.com/support/docview.wss?uid=swg24024407]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Initial access of SDO/EMF models can generate
+   NullPointerException's under load. for example, when accessing
+   SMO via xpath in custom code, or using XSLT transformations.
+   .
+   [4/2/09 18:53:04:482 CEST] 0000003e MFCImplementa E
+   CWSXM0202E: An unexpected exception occurred when processing
+   mediation flow for component CodeModule in module CodeModule
+   [4/2/09 18:53:04:485 CEST] 0000003e MFCImplementa 3   Tracing
+   exception:
+   com.ibm.wsspi.sibx.mediation.flow.MediationRuntimeException:
+   CWSXM1025E:
+   An unexpected exception occurred when the flow was called: null
+    at com.ibm.wsspi.sibx.mediation.flow.ejb.MediationFlowBean.
+   invokeRequestFlow(MediationFlowBean.java:247)
+    at com.ibm.wsspi.sibx.mediation.flow.ejb.
+   EJSLocalStatelessCodeModule_d2cf95a7.invokeRequestFlow(Unknown
+   Source)
+    at com.ibm.ws.sibx.scax.mediation.component.ejb.
+   EJBMediationFlowComponentImpl.invokeRequestFlow
+   (EJBMediationFlowComponentImpl.java:223)
+    at com.ibm.ws.sibx.scax.runtime.handler.
+   MFCImplementationHandler.processMessage
+   (MFCImplementationHandler.java:199)
+    at com.ibm.ws.sca.internal.message.impl.MessageDispatcherImpl.
+   processMessage(MessageDispatcherImpl.java:1287)
+    at com.ibm.ws.sca.internal.message.impl.ManagedMessageImpl.
+   process(ManagedMessageImpl.java:834)
+   .
+   .
+   .
+   Caused by: java.lang.NullPointerException
+    at org.eclipse.emf.ecore.util.EcoreUtil.getAdapter(EcoreUtil.
+   java:148)
+    at com.ibm.ws.bo.bomodel.util.BOUtil.adaptType(BOUtil.java:752)
+    at com.ibm.ws.bo.bomodel.util.BOUtil.getType(BOUtil.java:739)
+    at com.ibm.ws.bo.bomodel.util.BOUtil.set(BOUtil.java:267)
+    at com.ibm.ws.bo.bomodel.impl.BusinessObjectImpl.set
+   (BusinessObjectImpl.java:900)
+    at com.ibm.ws.sibx.mediation.primitives.bomapper.
+   BOMapperMediation.mediate(BOMapperMediation.java:378)
+   .
+   .
+   .
+   Wrapped by:
+   com.ibm.websphere.sca.ServiceRuntimeException: CWSXM0202E: An
+   unexpected
+   exception occurred when processing mediation flow for component
+   AcquisitionAgent in module AcquisitionAgent: caused by:
+   com.ibm.wsspi.sibx.mediation.flow.MediationRuntimeException:
+   CWSXM1025E:
+   An unexpected exception occurred when the flow was called: null
+    at com.ibm.ws.sibx.scax.runtime.handler.
+   MFCImplementationHandler.processMessage
+   (MFCImplementationHandler.java:214)
+    at com.ibm.ws.sca.internal.message.impl.MessageDispatcherImpl.
+   processMessage(MessageDispatcherImpl.java:1287)
+    at com.ibm.ws.sca.internal.message.impl.ManagedMessageImpl.
+   process(ManagedMessageImpl.java:834)
+    at com.ibm.wsspi.sca.ejb.module.impl.ModuleSessionBean.
+   processUOWMessage(ModuleSessionBean.java:336)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of WebSphere Enterprise Service Bus    *
+   *                 and WebSphere Process Server v6.0.2,         *
+   *                 v6.1.x and v6.2 who are accessing the SMO    *
+   *                 via XPath in custom code or running XSLT     *
+   *                 transformations under load.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The type information for SDO/EMF is     *
+   *                      initialised at first access, however    *
+   *                      the initialisation code is not          *
+   *                      thread-safe. When multiple threads      *
+   *                      try to initialise the type              *
+   *                      information, one thread may be          *
+   *                      building the type info while another    *
+   *                      is trying to access it. This can        *
+   *                      cause NPEs. Multiple threads are seen   *
+   *                      when multiple messages enter a          *
+   *                      mediation concurrently, particularly    *
+   *                      at startup when the type info is        *
+   *                      still unitialised.                      *
+   ****************************************************************
+   * RECOMMENDATION: If you encounter this problem then you are   *
+   *                 advised to install the fix pack which        *
+   *                 contains the code update associated with     *
+   *                 this APAR.                                   *
+   *                                                              *
+   *                 A warm startup can also help, ie. run 1      *
+   *                 message through the mediation before         *
+   *                 increasing the load.                         *
+   ****************************************************************
+   Initial access of SDO/EMF models can generate NPEs under load,
+   eg when accessing SMO via xpath in custom code, or using XSLT
+   transformations.
+   
+   Stack traces start with:
+   Caused by: java.lang.NullPointerException
+   at org.eclipse.emf.ecore.util.EcoreUtil.getAdapter
+   (EcoreUtil.java:148)
+   at org.eclipse.emf.ecore.sdo.util.SDOUtil.adaptProperty
+   (SDOUtil.java:557)
+   at
+   org.eclipse.emf.ecore.sdo.util.SDOUtil.getContainmentProperty(
+   SDOUtil.java:510)
+   at org.eclipse.emf.ecore.sdo.impl.EDataObjectImpl.
+   getContainmentProperty(EDataObjectImpl.java:225)
+   
+   or:
+   Caused by: java.lang.NullPointerException
+   at org.eclipse.emf.ecore.util.EcoreUtil.getAdapter
+   (EcoreUtil.java:148)
+   at org.eclipse.emf.ecore.sdo.util.SDOUtil.adaptProperty
+   (SDOUtil.java:557)
+   at org.eclipse.emf.ecore.sdo.impl.ETypeImpl.adaptProperties
+   (ETypeImpl.java:312)
+   at org.eclipse.emf.ecore.sdo.impl.ETypeImpl.getPropertiesGen
+   (ETypeImpl.java:220)
+   at org.eclipse.emf.ecore.sdo.impl.ETypeImpl.getProperties
+   (ETypeImpl.java:322)
+   at org.eclipse.emf.ecore.sdo.impl.ETypeImpl.getEProperty
+   (ETypeImpl.java:380)
+   at org.eclipse.emf.ecore.sdo.impl.ETypeImpl.getProperty
+   (ETypeImpl.java:365)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified such that this problem no longer occurs
+   
+   
+   There are no known side effects associated with this fix.
+   There is no known alternative workaround should you encounter
+   this problem.
+   
+   
+   This code fix was targeted to be included in the following fix
+   packs:
+   
+        6.0.2 Fix Pack 6 (v6.0.2.6)
+        6.1.0 Fix Pack 4 (v6.1.0.4)
+        6.1.2 Fix Pack 4 (v6.1.2.4)
+        6.2.0 Fix Pack 2 (v6.2.0.2)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC61617
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724I8200
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-22
+   
+   
+ * CLOSED DATE
+   2009-08-04
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724I8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSN
+   UP
+   
+   
+ * R200 PSY
+   UP
+   
+   
+ * R300 PSY
+   UP
+   
+   
+ * R612 PSY
+   UP
+   
+   
+ * R620 PSY
+   UP

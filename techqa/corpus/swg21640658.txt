@@ -1,0 +1,82 @@
+Title: IBM ITM 6.2.x Linux and Unix O/S Agents in a 6.3 environment may result in zero-value weighted averages - United States
+
+Text:
+5724C04WP FLASH (ALERT)
+
+ABSTRACT
+ Using any 6.2.x version of the ITM Linux or Unix O/S agents in an environment that has been upgraded to support a 6.3 Linux or Unix O/S agents will result in values of 0 for certain aggregated attributes. 
+
+CONTENT
+A enhancement was made to the 6.3.0 version of the Linux and Unix O/S agents to increase the accuracy of the aggregated data. The Linux and UNIX OS agents added WHSC columns in the ODI files (docklz and dockux) to handle receiving invalid row data. Customers that migrate their ITM environment to 6.3 that still have 6.2.x agents will experience a condition where certain attributes will appear as 0. The affected tables and related attributes are listed below: 
+
+Linux_OS agent:
+Table Linux Network / KLZNET
+Bytes_Received_per_sec
+KBytes_Transmitted_Count
+
+Table Linux_CPU / KLZCPU
+Busy_CPU
+Idle_CPU
+Wait_IO_CPU
+Steal_CPU_Percent
+System_CPU
+
+Table Linux_VM Stats / KLZVM
+Memory_Free
+Memory_Free_Pct
+Memory_Used
+Memory_Used_Pct
+Net_Memory_Used
+Net_Memory_Used_Pct
+Total_Memory_Free
+Total_Memory_Free_Pct
+
+Table Linux_IO_Ext / KLZIOEXT
+Transfers_bytes_per_sec
+Read_bytes_per_sec
+Write_bytes_per_sec
+
+Table Linux_LPAR / KLZLPAR
+Number_of_Physical_CPUs
+Max_Physical_CPUs
+Entitlement_Used
+
+UNIX OS agent:
+Table System, SP2System / UNIXOS, SP2OS
+Block_Reads
+Block_Writes
+CPU_Busy
+Idle_CPU
+NonBlock_Reads
+NonBlock_Writes
+Physical_Consumption
+System_CPU
+User_CPU
+Virtual_Memory_Percent_Used
+Number_of_CPUs
+
+Table Disk_Performance / UNIXDPERF
+Disk_Read_Bytes_Sec
+Disk_Write_Bytes_Sec
+Transfer_Rate
+Read_Transfers_per_Sec
+Write_Transfers_per_Sec
+
+Table Network / UNIXNET
+Received_MB
+Transmitted_MB
+Frames_Received_per_sec
+Frames_Transmitted_per_sec
+
+Table Unix_Memory / UNIXMEM
+Avail_Real_Mem_MB
+Avail_Real_Mem_Pct
+Used_Real_Mem_Pct
+Used_Real_Mem_MB
+
+
+APAR IV43893 has been created to address this issue. A fix will be provided for 6.3 FP01, and this will be included as part of 6.3 FP02. You must install this patch before you add 6.3 O/S agent Application Support or upgrade to the 6.3 version of the Linux or Unix O/S agents. 
+
+The fixes for APAR IV43893 are attached to this document. Please see the README file for installation instructions.
+
+6.3.0-TIV-ITM-FP0001-IV43893.zip [/support/docview.wss?uid=swg21640658&aid=2]6.3.0-TIV-ITM-FP0001-IV43893.zip [/support/docview.wss?uid=swg21640658&aid=1] 6.3.0-TIV-ITM-FP0001-IV43893.tar [/support/docview.wss?uid=swg21640658&aid=4]6.3.0-TIV-ITM-FP0001-IV43893.tar [/support/docview.wss?uid=swg21640658&aid=3]6.3.0-TIV-ITM-FP0001-IV43893.README [/support/docview.wss?uid=swg21640658&aid=6]6.3.0-TIV-ITM-FP0001-IV43893.README [/support/docview.wss?uid=swg21640658&aid=5]

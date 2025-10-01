@@ -1,0 +1,35 @@
+Title: IBM How to workaround cqload importschema errors and import a schema into ClearQuest - United States
+
+Text:
+CQ; cqload; exportschema; importschema; -dbset; ""; cmd; command; command line; importing; exporting; 1290597 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to import a schema into IBM® Rational® ClearQuest® if a cqload importschema command fails. 
+
+CAUSE
+There are many causes as to why the cqload importschema command might fail. This technote is not going to address all the possible reasons why the cqload importschema command may fail, but will offer a workaround that you may use when it fails. 
+
+Note: There is no guarantee that this technote will work for every situation in which cqload export schema fails. However, it will allow you to import the schema in questions into a new schema repository and continue with your projects.
+
+RESOLVING THE PROBLEM
+Steps to workaround cqload importschema failures that might allow you to import the schema.
+
+
+ 1. Login to the ClearQuest master schema repository that has the schema that you want to export using the ClearQuest Designer.
+    
+    
+ 2. From the menu bar, select File > New Schema and create a new schema based off the schema that you are trying to export but can not use cqload exportschema. This will create a new schema (NewSchemaName) based off of the schema that you are trying to export.
+    
+    
+ 3. Run the cqload exportschema command using the new schema (NewSchemaName) that was created in Step 2.
+    
+    cqload exportschema -dbset 7.0.0 admin "" NewSchemaName "c:\NewSchema.txt"
+    
+    Note: "" refers to a blank password.
+    
+    
+ 4. You should now be able to import the new schema that was created in Step 3.
+    
+    cqload importschema -dbset 7.0.1 admin "" "c:\NewSchema.txt"
+    
+    Note: If you want the schema names to be the same in the source and target schema repository, then after importing the schema, simply create a new schema in the target schema repository based off the one that was imported in Step 4 and give it the name of the original schema.

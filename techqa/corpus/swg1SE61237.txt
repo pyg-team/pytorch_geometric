@@ -1,0 +1,136 @@
+Title: IBM SE61237: MQM400-F/STRINGHIGHUSE4K-T/LIBMQZST-MSGMCH0601 WRKMQMQSTS ON A QUEUE WITH LARGE NUMBER OF ATTACHED HANDLES RESULTS IN MCH0601 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After an application update, it was found that the application
+   was looping incorrectly forgetting to close and disconnect from
+   the Queue Manager. This resulted in several jobs with many
+   handles to the queue. Somewhere between 20000-25000 handles on
+   the queue, WRKMQMQSTS will fail with mch0601 instead of listing
+   the jobs with 20000+ connections to the queue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  After an application update, it was found that the application
+   was looping incorrectly forgetting to close and disconnect from
+   the Queue Manager. This resulted in several jobs with many
+   handles to the queue. Somewhere between 20000-25000 handles on
+   the queue, WRKMQMQSTS will fail with mch0601 instead of listing
+   the jobs with 20000+ connections to the queue.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  MQ code fails to allocate a large memory segment with single
+   level storage on IBM i in MQ 7.0.1. From MQ 7.1.0 onward,
+   teraspace storage is enabled, so this problem is not seen.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SE61237
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ ISERIES V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7226
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-05
+   
+   
+ * CLOSED DATE
+   2015-02-12
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  RCHMGR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ ISERIES V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7226
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP
+   
+   
+ * R710 PSY
+   UP

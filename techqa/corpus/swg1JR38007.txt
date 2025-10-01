@@ -1,0 +1,160 @@
+Title: IBM JR38007: INFORMATION SERVER 8.1 - DB2 CONNECTOR STAGE TRUNCATE OPTION    FAILS - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM InfoSphere Information Server, Version 8.5 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24029154]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This problem can only occur when "Generate truncate statement at
+   runtime" is "Yes" and when the generated "ALTER TABLE TableName
+   ACTIVATE NOT LOGGED INITIALLY WITH EMPTY TABLE" statement fails
+   such as when the user does not have privileges for that
+   statement.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set the
+   "Generate truncate statement at runtime" property to "No" and in
+   the "Truncate statement" property specify the "DELETE FROM
+   ANLYSIS.ANL_REL_AVAIL_PERF" statement.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   DB2 Connector generated truncate statement fails on Unix
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   On Unix, when the DB2 Connector's "Generate truncate statement
+   at runtime" property is "Yes" and when the generated "ALTER
+   TABLE TableName ACTIVATE NOT LOGGED INITIALLY WITH EMPTY TABLE"
+   statement fails such as when the user does not have privileges
+   for that statement, the connector then generates a "DELETE
+   FROM TableName" statement that fails with the following errors:
+   
+   DB2 reported: SQLSTATE = 42601: Native Error Code = -104: Msg =
+   [IBM][CLI Driver][DB2/AIX64] SQL0104N  An unexpected token
+   "END-OF-STATEMENT" was found following "???".  Expected
+   tokens may include:  "JOIN <joined_table>".  SQLSTATE=42601
+   An error occurred when truncating the table. Statement =
+   ?????????
+   
+   ****************************************************************
+   RECOMMENDATION:
+   Install the patch for JR38007 which has a prerequisite that the
+   patch for JR36020 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR36020] is already installed.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The DB2 Connector now generates the delete statement correctly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR38007
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36DS
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-15
+   
+   
+ * CLOSED DATE
+   2010-10-21
+   
+   
+ * LAST MODIFIED DATE
+   2010-10-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  ENGINE
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * FIXED COMPONENT ID
+   5724Q36DS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSN
+   UP

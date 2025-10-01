@@ -1,0 +1,226 @@
+Title: IBM IZ34049: SILENT INSTALL OF NT AGENT WITH MULTIPLE PROTOCOL IS NOT COMPLETELY CONFIGURED OR STARTED WHEN SILENT INSTALL FINISHES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   All Windows platforms where the NT agent is being installed
+   silently
+     and multiple protocols are used for connection to the remote
+   TEMS.
+     This is a Windows ONLY APAR.
+   
+   Problem Description:
+     NT Agent is installed via a silent install and multiple
+   protocol
+     values are specified in the silent.txt file used for
+   installation. The
+     NT agent is configured, but may not start. Reconfig of the
+   agent using
+     the GUI without changing any parameters causes the agent to
+   start and
+     report to the host TEMS.
+   
+   Detailed Recreation Procedure:
+     To recreate:
+     1. Install NT Agent silently using the following values in the
+        silent.txt file.
+        [ACTION TYPE]
+        [INSTALLATION SECTION]
+        License Agreement=I agree to use the software only in
+   accordance
+   with the installed license.
+        Install Directory=C:\IBM\ITM
+        Install Folder=IBM Tivoli Monitoring
+        EncryptionKey=IBMTivoliMonitoringEncryptionKey
+        SSLEnable=Y
+        [FEATURES]
+        KNTWICMA=Monitoring Agent for Windows OS
+        [CMA_CONFIG]
+        Protocol1=ip.spipe
+        Protocol2=ip.pipe
+        IPPIPE_Port=1918
+        IPPIPE_Host=TEMS_HOSTNAME|IPADDRESS
+        IPSPIPE_Port=3660
+        IPSPIPE_Host=TEMS_HOSTNAME|IPADDRESS
+        FTO Flag=N
+     2. The agent will install and will configure, but will or may
+   not
+        start. Looking at registry information for
+        HKLM\Software\Candle\KNT\ver610\Primary\Environment
+        value KDC_FAMILIES shows no configuration data, no ports or
+        protocols All the agent defaults are set properly, but the
+   specific
+        KNT agent is not configured properly to start.
+     3. Reconfig in the GUI using the default values supplied, will
+        configure the agent properly and allow it to start and
+   report to
+        the requested TEMS.
+   
+   Additional Information:
+   ------------------------
+   
+   Customer mentioned that specifying 2 protocols but in upper case
+   in the silent response file works well:
+   Protocol1=IP.SPIPE
+   Protocol2=IP.PIPE
+   
+   However, if either one protocol or 2 protocols are specified
+   in lower case, the installation fails:
+   Protocol1=ip.spipe
+   or:
+   Protocol1=ip.spipe
+   Protocol2=ip.pipe
+   
+   Related Files and Output:
+     Nothing additional has to be done, Install Log does not
+   indicate there
+     was an error, or that components were not configured. The NT
+   agent
+     just doesn't report into TEMS.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround:
+     1. Use the GUI to reconfigure the agent.
+     2. Use Remote Deploy createnode to deploy the NT agent with 1
+        protocol.
+        tacmd createnode -h target_host -u target_admin_id -w
+   password
+           -p PROTOCOL=IP.PIPE|IP.SPIPE
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Silent install for Agents will not accept protocol values that
+   are NOT uppercase.  If lowercase is specified, when the Agent is
+   configured in the background the protocol is not recognized so
+   the Agent does not start or will not stay up.  If the protocol
+   values are entered in uppercase the Agent will configure and
+   start.  This also applies to Agents deployed and configured by
+   Remote Deploy.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The silent install or Remote Deploy of Agents fails because the
+   Agent does not configure or start when the silent install or
+   Remote Deploy completes.  Protocol checks were case sensitive in
+   the code so only UPPERCASE worked.  If lowercase or mixed case
+   was used the protocol was not recognized so the config failed,
+   or only one protocol (default) was used to the host machine so
+   the agent would not connect.  This is only a problem on Windows.
+   
+   The code was changed to support case insensitive compare so both
+   lowercase and UPPERCASE work.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+      | interim fix | 6.2.0.2-TIV-ITM-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Specify the protocol values in UPPERCASE for Remote Deploy or in
+   the silent install config file for Windows.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ34049
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-07
+   
+   
+ * CLOSED DATE
+   2009-02-17
+   
+   
+ * LAST MODIFIED DATE
+   2009-02-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

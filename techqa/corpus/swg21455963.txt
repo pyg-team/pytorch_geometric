@@ -1,0 +1,60 @@
+Title: IBM Receiving error BMXAA3757E starting MXServer. - United States
+
+Text:
+BMXAA6518E; IMBOT; BMXAA3757E; BMXAA7369I; RMI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Following error is received starting MXServer:
+BMXAA6518E - Service IMBOT is not loaded. 
+
+SYMPTOM
+Following messages and exceptions are received starting up MXServer: 
+
+BMXAA6518E - Service IMBOT is not loaded. See the enclosed exception 
+for detail. 
+psdi.util.MXSystemException: BMXAA3757E - The ServiceStorage: IMBOT 
+service could not be configured. 
+com.ibm.tivoli.im.bot.AbstractIMBotDriver 
+at psdi.server.ServiceStorage.configure(ServiceStorage.java:337) 
+at psdi.server.ServiceCoordinator.configure(ServiceCoordinator. 
+java:102) 
+at psdi.server.MXServer.configure(MXServer.java:2190) 
+at psdi.server.MXServer.start(MXServer.java:3067) 
+at com.ibm.tivoli.tpm.maximo.helper.MXServerHelper.startMXServer 
+(MXServerHelper.java:67) 
+at com.ibm.tivoli.tpm.util.Activator$1.run(Activator.java:116) 
+Caused by: 
+java.lang.NoClassDefFoundError: com.ibm.tivoli.im.bot. 
+AbstractIMBotDriver 
+at java.lang.J9VMInternals.verifyImpl(Native Method) 
+at java.lang.J9VMInternals.verify(J9VMInternals.java:69) 
+at java.lang.J9VMInternals.initialize(J9VMInternals.java:131) 
+at java.lang.Class.forNameImpl(Native Method) 
+at java.lang.Class.forName(Class.java:130) 
+at psdi.mbo.ServiceInfo.getServiceClass(ServiceInfo.java:94) 
+at psdi.server.ServiceStorage.configure(ServiceStorage.java:333) 
+... 5 more 
+Caused by: 
+java.lang.ClassNotFoundException: com.ibm.tivoli.im.bot. 
+AbstractIMBotDriver 
+at org.eclipse.osgi.framework.internal.core.BundleLoader. 
+findClass(BundleLoader.java:405) 
+at org.eclipse.osgi.framework.internal.core.BundleLoader. 
+findClass(BundleLoader.java:350) 
+at org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader. 
+loadClass(DefaultClassLoader.java:83) 
+at java.lang.ClassLoader.loadClass(ClassLoader.java:605) 
+... 12 more 
+27 Oct 2010 11:27:27:926 [INFO] BMXAA7369I - RMI must be enabled for 
+this server to perform that function. 
+eTPM 108 adapter(s) registered 
+
+
+RESOLVING THE PROBLEM
+To resolve this problem, run the following query and try starting MXServer again:
+update MAXSERVICE set ACTIVE=0 where SERVICENAME='IMBOT'; 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Service Request Manager AIX, Linux, Windows 2003 server 7.1.2, 7.2, 7.2.1

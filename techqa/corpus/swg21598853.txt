@@ -1,0 +1,22 @@
+Title: IBM Time taken to log off a user from shared desktop - United States
+
+Text:
+shared desktop slow logoff TECHNOTE (FAQ)
+
+QUESTION
+ The time taken for a user to be logged off in a shared desktop scenario can be longer than expected. 
+
+ANSWER
+When a user is logged off in a shared workstation situation, Access Agent will close any applications/processes that the user has started, either by themselves or as part of the login of that users, ie there can be hidden processes involved.
+If these application and/or processes do not close immediately, ie are requiring time to stop or in some cases might be trying to get user input before closing, then there will be delays before the user is logged out.
+
+If the log out 'hangs', then there could be a process that can not be terminated. This would need to be identified and a method found to allow it to be terminate. An example of such a process is a component that comes with McAfee Virus software packages. This process normally can not be terminated, except by processes added to its exclusion list, ie specifying which application are allowed to kill the process.
+
+It may be that an application requires to be logged out before it will close. These type of applications will need a logout profile creating to handle the logout correctly, otherwise you will see delays and problems due to these.
+
+ 
+
+HISTORICAL NUMBER
+ 49424
+019
+866

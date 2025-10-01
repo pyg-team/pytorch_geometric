@@ -1,0 +1,152 @@
+Title: IBM PK93890: ERROR CYNVE0739E AND SUN JDK 1.5 HEAP DUMP NOT ENABLED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Actually the Sun JVM version is 1.5(.0_17) and WAS is 6.1.0.13,
+   but the heap functionality is not given by default.
+   
+   The VE comes up with the CYNVE0739E message ... feature not
+   supported for Sun JDK. The property is also not set in the
+   datacollector.properties file and needs to be added manually.
+   
+   This is a defect, we should NOT check for heap dump feasibility
+   for Sun JDK on JDK 1.5 and above.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually enable the Heap Dump feature by editing the specific
+   server datacollector.properties.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem Description: ITCAM prevents Heap anlaysis on all
+   WebSpehre versions on Solaris platform if
+   "internal.doheapdump=true" property is not set in the
+   datacollector.properties file.
+   
+   Problem Summary: By default, ITCAM Data collector prevents users
+   on Solaris and HP platforms from creating Heap Analysis reports
+   on Java 5.0, which uses JVMTI.  In prior JDKs (1.3.1 and 1.4.2),
+   this feature is unstable and may cause the system to crash
+   sometimes.  However, this feature is stable with JVMTI and ITCAM
+   should not prevent the Heap Analysis feature by forcing the
+   users to specify the "internal.doheapdump=true" property setting
+   in the
+   <DC_HOME>/runtime/<server>/<server>.datacollector.properties
+   file.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A check has been added for SUN non-JVMTI platforms only to
+   require the "internal.doheapdump=true" property.  By setting
+   this property the user becomes aware that the system can become
+   potentially unstable when the Heap Analysis functionality is
+   performed.  However, for systems running Java 5.0 and above,
+   this check has been removed and the functionality is available
+   by default.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+   | interim fix | 6.1.0.5-TIV-ITCAMfWAS_MP-IF0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK93890
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * REPORTED COMPONENT ID
+   5724L6200
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-14
+   
+   
+ * CLOSED DATE
+   2009-11-06
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * FIXED COMPONENT ID
+   5724L6200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

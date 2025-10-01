@@ -1,0 +1,39 @@
+Title: IBM 升级到WAS V8.5后，与MQ的连接报开始报没有权限“2035 MQRC_NOT_AUTHORIZED”？ - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+问题（摘要）
+ 升级到WAS V8.5后，与MQ的连接报开始报没有权限“2035 MQRC_NOT_AUTHORIZED”？ 
+
+症状
+您配置的WAS的WebSphere MQ messaging provider 的连接工厂（connection factory），没有配置认证别名（authentication Alias），也没有在程序中提供所使用的用户ID. 您发现在WAS从以前的版本（WAS V7.0 或者WAS V8.0)升级到WAS V8.5之后，创建与MQ队列管理器的连接时， 返回下面没有权限的报错：
+.
+JMSCMQ0001: WebSphere MQ call failed with compcode '2' ('MQCC_FAILED') reason '2035' ('MQRC_NOT_AUTHORIZED') 
+.
+
+
+原因
+这是因为出于安全的考虑，WebSphere MQ V7.1 classes for JMS 及以后版本与之前的WebSphere MQ V7.0.1 classes for JMS 相比，提供给MQ队列管理器的缺省用户行为发生了改变。 
+
+- 当使用WAS V7.0和V8.0时，打包的是WebSphere MQ V7.0.1 classes for JMS，缺省会将一个空的用户ID传递给MQ队列管理器
+
+- 当使用WAS V8.5时，打包的是MQ V7.1 classes for JMS，如果没有配置认证别名，缺省就会使用Java System Property user.name配置的用户， 如果此用户没有权限访问MQ队列管理器，就会报上面没有权限的错误。
+
+
+
+环境
+WebSphere Application Server V8.5 及以上版本
+
+
+
+解决问题
+如果用户不希望修改程序（即在程序中配置使用的用户ID），可以通过配置认证别名或者Java System Property user.name为有权限的MQ用户即可解决上面的权限问题。 
+
+
+WebSphere MQ的知识中心包含了如何规划用户认证，其中包含对客户端的访问控制,可供参考：
+
+WebSphere MQ
+> Security 
+> Planning for your security requirements 
+>> Planning authorization

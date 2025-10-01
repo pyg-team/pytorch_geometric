@@ -1,0 +1,104 @@
+Title: IBM Security Bulletin: WebSphere MQ is affected by the following OpenSSL vulnerabilities: CVE-2014-0224 & CVE-2014-3470 - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Security vulnerabilities have been discovered in OpenSSL that were reported on June 5th 2014 by the OpenSSL project. 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2014-0224 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0224]
+DESCRIPTION: OpenSSL is vulnerable to a man-in-the-middle attack, caused by the use of weak keying material in SSL/TLS clients and servers. A remote attacker could exploit this vulnerability using a specially-crafted handshake to conduct man-in-the-middle attacks to decrypt and modify traffic. 
+
+CVSS Base Score: 5.8
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/93586 [http://xforce.iss.net/xforce/xfdb/93586] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:P/A:N)
+
+CVE-ID: CVE-2014-3470 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3470]
+
+DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by the implementation of anonymous ECDH ciphersuites. A remote attacker could exploit this vulnerability to cause a denial of service.
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/93589 [http://xforce.iss.net/xforce/xfdb/93589] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:N/A:P)
+
+AFFECTED PRODUCTS AND VERSIONS
+The man-in-the-middle attack vulnerability (CVE-2014-0224) is known to affect the following offerings; 
+
+ * IBM WebSphere MQ V5.3 for HP NonStop Server 
+ * Support Pac MAT1 - IBM WebSphere MQ client for HP Integrity NonStop Server 
+ * Support Pac MA9B - IBM Mobile Messaging and M2M Client Pack - Eclipse Paho MQTT C Client libraries for Linux & Windows platforms only
+
+
+In addition, the denial of service vulnerability (CVE-2014-3470) is known to affect the following offerings;  * Support Pac MA9B - IBM Mobile Messaging and M2M Client Pack - Eclipse Paho MQTT C Client libraries for Linux & Windows platforms only
+
+
+Note that the Paho MQTT C client libraries provided for Linux and Windows platforms in IBM WebSphere MQ 7.1 and IBM WebSphere MQ 7.5 are also affected. 
+
+
+This vulnerability does NOT affect any version or release of the following offerings on any other platforms:  * IBM WebSphere MQ Client 
+ * IBM WebSphere MQ Server 
+ * IBM WebSphere MQ Managed File Transfer 
+ * IBM WebSphere MQ Advanced Message Security
+
+REMEDIATION/FIXES
+All affected product offerings and SupportPacs have been patched or updated to OpenSSL 1.0.1h. 
+Unless otherwise specified the openssl version command should be used to determine whether OpenSSL 1.0.1h is installed or whether fixes are required; 
+
+ 
+
+IBM WebSphere MQ V5.3 for HP NonStop Server Integrity 
+
+ * Apply fixpack 5.3.1.10 [http://www.ibm.com/support/docview.wss?uid=swg24037761] or later (contains OpenSSL 1.0.1h)
+
+
+
+IBM WebSphere MQ V5.3 for HP NonStop Server S-Series  * Apply the WMQv5319-PATCH4 patch which can be obtained directly from IBM Support
+   (contains patched OpenSSL 0.9.7d).
+   This patch can only be applied to a WMQv5319 installation
+   
+ * The vproc versioning tool provided by HP should show T0085G06_12JUN2014_V53_1_9_PATCH4 for amqcctca and amqcctca_r libraries for systems that have applied this patch
+
+
+Support Pac MAT1 - IBM WebSphere MQ client for HP Integrity NonStop Server 
+
+ * Reinstall client package [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/WebSphere/WebSphere+MQ&release=All&platform=All&function=fixId&fixids=MQ-7100-hpns-ia64-OpenSSL101h&includeRequisites=1&includeSupersedes=0&downloadMethod=http&source=fc] (refreshed image contains OpenSSL 1.0.1h)
+
+
+IBM WebSphere MQ 7.1 & IBM WebSphere MQ 7.5 MQTT C Client libraries for Linux & Windows platforms only 
+
+ * Install the patched MQTT libraries provided by MA9B Support Pac client package [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere%20MQ&release=All&platform=All&function=fixId&fixids=1.0.0.4-WS-MQCP-MA9B-OpenSSL101h&includeRequisites=1&includeSupersedes=0&downloadMethod=http&source=fc]
+
+
+Support Pac MA9B - IBM Mobile Messaging and M2M Client Pack - Eclipse Paho MQTT C Client libraries for Linux & Windows platforms only 
+
+ * Reinstall client package [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere%20MQ&release=All&platform=All&function=fixId&fixids=1.0.0.4-WS-MQCP-MA9B-OpenSSL101h&includeRequisites=1&includeSupersedes=0&downloadMethod=http&source=fc] (contains OpenSSL 1.0.1h) 
+ * The MQTTVersion command should be used to confirm the OpenSSL version number.
+
+WORKAROUNDS AND MITIGATIONS
+None known.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+OpenSSL Project vulnerability website [http://www.openssl.org/news/vulnerabilities.html] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 19th June 2014 - Original Version Published
+1st July 2014 - Confirmed MQTT libraries provided by MQ 7.1 & MQ 7.5 should use MA9B download 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21677029]

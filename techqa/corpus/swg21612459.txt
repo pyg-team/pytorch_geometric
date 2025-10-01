@@ -1,0 +1,29 @@
+Title: IBM Tivoli Netcool/Impact: Hibernate function example corrected, RemoveHibernation function added - United States
+
+Text:
+Netcool/Impact; Hibernate function; RemoveHibernation; Timeout; TimeOut TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The example in the information center for the Hibernate function does not mention the RemoveHibernation function. There is also a typo in the example, where 'Timeout' should read 'TimeOut'. 
+
+RESOLVING THE PROBLEM
+The Hibernate function example requires the following updates: 
+
+The example for the Hibernate function previously was:
+
+The following example shows how to cause a policy to hibernate for one minute.
+// Call Hibernate and pass an action key and the number of seconds
+// to hibernate as input parameters
+ActionKey = "ActionKey" + GetDate();
+TimeOut = 60;
+Hibernate(ActionKey, NULL, Timeout);
+
+The updated version includes the RemoveHibernation function in the example and corrects the typo: 
+
+The following example shows how to cause a policy to hibernate for one minute.
+// Call Hibernate and pass an action key and the number of seconds
+// to hibernate as input parameters
+ActionKey = "ActionKey" + GetDate();
+Timeout = 60;
+Hibernate(ActionKey, null, Timeout);
+RemoveHibernation(ActionKey);

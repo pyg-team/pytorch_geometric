@@ -1,0 +1,104 @@
+Title: IBM Is there a limit to the number of folders and views there can be in a database? - United States
+
+Text:
+at most; more than; less than; folder count; view count; number of views; # of views; # of folders; number of folders; any ceiling; any limitation; any limit; 10495 handles; memory problem; maximum amount of folders; how large; max; Notes; Workstation/Desktop; Application Development; Folders TECHNOTE (FAQ)
+
+QUESTION
+Is there a limit to the number of folders and views there can be in a Notes database?
+
+ANSWER
+There is not a predetermined limit but the database is limited by the number of "handles" that can be used. The number of handles is limited to 10,495. Notes can run out of memory handles when creating the sitemap for the list of views and folders in a database. It usually manifests itself in one of the following error messages:
+In Notes 6.x and later:
+"Insufficient memory - too many design elements (Desk Design Pool)."
+
+Prior to Notes 6.x: 
+
+ * 
+
+
+If there are a very large number of folders in a given database Notes attempts to allocate memory for each one of the folders and views while creating a sitemap for them. Eventually, Notes can fail to allocate enough memory as it can't track where all the memory is (due to the limitation on the maximum number of handles). 
+
+Workaround : 
+
+Manually delete a large number of folders or views from the database ( right mouse click -> Remove Folder ). 
+Use a more reasonable or practical number of folders/views in the database ( less than 3000) . 
+
+It is a best practice to use shorter names for folders and views. 
+There is a separate issue where the entire path can not be greater than 130 characters. 
+One folder or view name can not be greater than 64 characters. 
+
+Title: Maximum character length and nesting levels for views and folders 
+Doc #: 1099040 
+URL: http://www.ibm.com/support/docview.wss?uid=swg21099040 [http://www.ibm.com/support/docview.wss?uid=swg21099040] 
+
+In cases where the one of the above errors occurs you may not be able to open a Notes database. 
+
+Note: The use of a slash (/) or a backslash (\) in a folder name can cause unpredictable results within a database. For example, the use of these two characters is known to cause view problems as well as problems with the unread marks count for folders. 
+
+Solution : 
+
+How to reduce the number of folders in an existing database that is close to or over the limit? 
+
+1. Create a selective replica(s) with only a subset of the folders 
+File / new replica / Advanced / Place a check mark beside: Documents in specified views or folders > 
+manually select all the folders to add to new replica 
+
+OR 
+
+2. Enable server-based archiving - note this only removes the live documents from the database. 
+Folders are design documents. 
+You have to use an agent to remove the empty folders. 
+
+Is there a way to have Domino automatically delete empty folders? 
+Doc Number:1415116 
+
+Hide details for Sample LotusScript code [/support/docview.wss?uid=swg21097770&amp;aid=1] Sample LotusScript code 
+Sample LotusScript code 
+
+NOTE: The below is a sample script, provided to illustrate one way to approach this issue. In order for this example to perform as intended, the script must be laid out exactly as indicated below. IBM Support will not be able to customize this script for a customer's own configuration. 
+
+Option Public 
+Option Declare 
+
+Sub Initialize() 
+Dim session As New NotesSession 
+Dim db As NotesDatabase 
+Dim view As NotesView 
+Dim views As Variant 
+Dim IBMSuppliedFolder As Boolean 
+
+Set db = session.CurrentDatabase 
+views = db.Views 
+ForAll v In views 
+If v.IsFolder Then 
+If InStr(v.Name, "$") = 0 Then 
+IBMSuppliedFolder=False 
+Else 
+IBMSuppliedFolder=True 
+End If 
+
+If v.EntryCount = 0 And Not IBMSuppliedFolder Then 'Folder must be empty and not contain $ in name 
+'Messagebox "Folder " & v.Name & " removed." 
+v.Remove 
+End If 'End of v.EntryCount... 
+End If 'End of v.IsFolder 
+End ForAll 
+End Sub 
+
+If new folders are continuously added to the database then a permanent solution is to redesign the way that the database is used or to continuously Archive the database. 
+
+1. Configure archiving on the database 
+
+[/support/docview.wss?uid=swg21097770&amp;aid=2] 
+
+2. Run "load compact -A database.nsf" to extract documents and initially create the archive database. 
+Create a Program document to run "load compact -A database.nsf" weekly, or as needed. 
+
+3. Run the Delete Empty folders Agent on the source database. 
+Create a scheduled agent in the database - target = none 
+
+There shouldn't be a problem is the user recreates a deleted folder - as long as they use the same spelling. 
+
+Lotus uses the Folder name when it archives documents. RELATED INFORMATION
+ Maximum Character Length and Nesting Levels for Views a [http://www.ibm.com/support/docview.wss?uid=swg21099040]
+'No sitemap found' error occurs intermittently when acc [http://www.ibm.com/support/docview.wss?uid=swg21304849]

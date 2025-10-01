@@ -1,0 +1,73 @@
+Title: IBM Installation of Rational ClearCase or Rational ClearQuest fails if GSKit is not installed on the system - United States
+
+Text:
+ClearCase; ClearQuest; RN7.1.1; ihs error; mod_was_ap20_http.so; 7.1.1; ld.so http fatal; gskit; SRX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You install IBM Rational ClearCase or IBM Rational ClearQuest. If the system does not have GSKit installed, the installation fails with the following error:
+
+Error executing "/opt/IBM/RationalSDLC/common/IHS/bin/ihs_startup" operation (status=1). See agent output log for more information: /var/ibm/InstallationManager/logs/native/YYYYMMDD_HHMM.log 
+
+
+SYMPTOM
+The contents of the referenced log file contain the error:
+
+Starting IHS...
+IHS failed to start. Check log files in /opt/rational/common/IHS/logs
+
+The contents of <install_temp_dir>/IHSLogs/ihs_start.log, where <install_temp_dir> is the temporary location the user has specified during installation will contain the error below. The default value of <install_temp_dir> is "/tmp".
+
+Cannot load /opt/rational/common/IHS/modules/mod_was_ap20_http.so into server: ld.so.1: httpd: fatal: libgsk7cms.so: open failed: No such file or directory 
+
+CAUSE
+ During the installation, the IBM HTTP Server is started before the GSKit is installed.
+
+RESOLVING THE PROBLEM
+Note: This issue has been fixed in 7.1.1.1 
+
+To work around this issue, download GSKit and then manually install GSKit on your system before installing Rational ClearCase or Rational ClearQuest. 
+
+To download and manually install GSKit, take the following steps: 
+
+1. Download and extract: GSKit.<platform>_<version>.zip from the native folder on the repository
+
+If using ESD or DVD images, the .zip file can be found in the disks/disk1/ad/native/ directory with the name file000020. Copy the .zip file and rename it to GSKit.zip
+
+2. Extract the GSKit.zip file using the compress utility to a folder other than the install location (for example,. /tmp).
+
+3. Navigate to <GSKit_dir>/common/GSKit, where <GSKit_dir> is the directory where you extracted the GSKit.zip file. 
+
+4. Run the command(s) specific to your platform to install GSKit :
+
+Sun 5
+pkgadd -a ./admin -n -d . gsk7bas
+
+Linux
+rpm -Uh --nodeps --ignorearch --force --prefix /opt gsk7bas<version>.i386.rpm
+
+HP-UX
+chmod u+x <GSKit extraction dir>/common/GSKit/gsk7bas/catalog/gsk7bas/gsk7bas/checkinstall
+chmod u+x <GSKit extraction dir>/common/GSKit/gsk7bas/catalog/gsk7bas/gsk7bas/postinstall
+chmod u+x <GSKit extraction dir>/common/GSKit/gsk7bas/catalog/gsk7bas/gsk7bas/preremove
+swreg -l depot <GSKit extraction dir>/common/GSKit/gsk7bas/catalog/gsk7bas/gsk7bas/
+swinstall -s <GSKit extraction dir>/common/GSKit/gsk7bas/catalog/gsk7bas/gsk7bas/ gsk7bas
+
+AIX
+installp -acgXd . gskta.rte
+
+5. Install Rational ClearCase or Rational ClearQuest
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational ClearQuest Installation AIX, HP-UX, Linux, Solaris 7.1.1 
+PRODUCT ALIAS/SYNONYM
+ ClearCase
+ClearQuest
+CC
+CQ
+unix
+IHS
+IBM HTTP Server

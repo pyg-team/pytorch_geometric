@@ -1,0 +1,30 @@
+Title: IBM Probe rule example to match variable to array - United States
+
+Text:
+probe rules; rules file; syntax; function TECHNOTE (FAQ)
+
+QUESTION
+ How can I match a variable value to an array key? 
+
+ANSWER
+Below is an example to populate an array and match a variable value to the array. 
+# The real array key ("one" in the first example) would be a variable, the "1" is used to set the value to the non empty string 
+myarray["one"] = "1" 
+myarray["two"] = "1" 
+myarray["thre"] = "1" 
+
+# This populates the array with the value we want to check.
+myarray["checkthisvalue"] = "1" 
+
+
+# This sets the variable containing the value we want to check 
+$In = "checkthisvalue" 
+
+# If the value has never been seen before myarray[$In] will return the empty string if (! match(myarray[$In], "")) 
+{ 
+@Summary = "Match" 
+} 
+else 
+{ 
+@Summary = "No match" 
+}

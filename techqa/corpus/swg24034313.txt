@@ -1,0 +1,140 @@
+Title: IBM Download IBM Business Process Manager Advanced Version 8.5 (AIX) - United States
+
+Text:
+PAODownloadDocument; passport advantage; 8.5; AIX DOWNLOADABLE FILES
+
+ABSTRACT
+ This document provides the eAssembly part numbers that are required to download IBM Business Process Manager Advanced Version 8.5 files from the Passport Advantage website. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+IBM Business Process Manager is a comprehensive and consumable business process management platform that provides visibility and management of business processes. It includes tools and a runtime environment for process design, execution, monitoring, and optimization. It is specifically designed to enable process owners and business users to engage directly in the improvement of their business processes.
+
+This document provides the eAssembly part numbers that are required to download the IBM Business Process Manager Advanced Version 8.5 product from the Passport Advantage website [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm].
+
+
+More information
+For more information, see the Latest information and critical fixes for Business Process Manager Advanced, Release notes [http://www.ibm.com/support/docview.wss?uid=swg27038756] and Installing IBM Business Process Manager Advanced [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/index.jsp?topic=/com.ibm.wbpm.imuc.ebpm.doc/topics/inst_cfg.html] documents. 
+
+
+Space requirements
+Refer to the Hardware and software requirements [http://www.ibm.com/support/docview.wss?uid=swg27023005] page for this platform for space requirements. 
+
+
+
+Downloading and assembling the product 
+
+ 1. Ensure that your workstation has sufficient space to store both the files you must download from IBM Passport Advantage and the extracted installation image.
+    
+    
+ 2. Navigate to the Passport Advantage website [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] and download all of the parts that you need. The parts are listed by platform in the tabbed sections of this document. 
+    (For information about how to access Passport Advantage, see the Passport Advantage Quick reference guide in the Learn more section on the Passport Advantage website [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm].) 
+    
+    
+ 3. Download all of the required parts for the product installation image from IBM Passport Advantage to a temporary directory.
+    
+    
+ 4. Extract the downloaded files to one directory. 
+    
+    
+ 5. Open the Quick Start Guide, which is located in the Quick Start image, to access documentation to help with product installation.
+
+
+
+
+TAB NAVIGATION
+ * AIX [http://www.ibm.com/support/docview.wss?uid=swg24034313]- selected tab,
+ * Linux [http://www.ibm.com/support/docview.wss?uid=swg24034312]
+ * Solaris [http://www.ibm.com/support/docview.wss?uid=swg24034311]
+ * Windows [http://www.ibm.com/support/docview.wss?uid=swg24034310]
+
+
+
+Supported platforms 
+
+For supported platforms, including required version levels, refer to the Hardware and software requirements [http://www.ibm.com/support/docview.wss?uid=swg27023005].
+
+
+Downloadable parts 
+
+To install IBM Business Process Manager Advanced on an AIX platform, download the images that are listed within the tables in the following sections. 
+
+Required and optional software is labeled in the tables. Your need for parts depends on your usage and configuration choices. You can find components that you might want to use in your topology, but which run on another platform, on the tabbed page that corresponds to that platform.
+
+
+
+Required software 
+eAssembly Image Description CRMM3ML
+
+[/support/docview.wss?uid=swg24034313&amp;aid=1] CIL91ML IBM Business Process Manager Advanced Version 8.5 Quick Start Guide CIL92ML
+CIL93ML IBM Business Process Manager Advanced Version 8.5 for AIX, 64-bit
+
+Make sure that you download all of the images and extract them to the same location. Includes: 
+
+ * IBM Business Process Manager Advanced Version 8.5 
+ * IBM WebSphere Application Server Network Deployment V8.5.0 Fix Pack 2
+
+
+Optional software 
+IBM WebSphere Application Server Network Deployment V8.5 supplements 
+Use the following supplemental software if you are using a separate HTTP server or need to do load balancing.  
+
+eAssembly Image Description CRMM7ML
+CI6X0ML
+CI6X1ML
+CI6X2ML IBM WebSphere Application Server V8.5 Supplements for Multiplatform, Multilingual
+Make sure that you download all of the images and extract them to the same location. 
+
+
+IBM DMZ Secure Proxy Server 
+
+eAssembly Image Description CRMM7ML
+CI6Y7ML
+CI6Y8ML IBM DMZ Secure Proxy Server, Multiplatform, Multilingual 
+
+
+IBM Edge Components 
+eAssembly Image Description CRMM7ML CI8KEML IBM Edge Components: Load Balancer for IPv4 and IPv6, Multiplatform, Multilingual 
+
+
+IBM Tivoli software 
+eAssembly Image Description CRMM3ML CZZ86ML IBM Tivoli Access Manager for e-business V6.1.1 for AIX CZK73ML IBM Tivoli Directory Server V6.3 Client-Server with entitlement for AIX 
+
+IBM DB2 Enterprise Server Edition V10.1 
+Use the following supplemental software if you do not already have a database to use with IBM Business Process Manager and want to use IBM DB2. 
+
+
+
+eAssembly Image Description CRMM3ML CI6W9ML IBM DB2 Enterprise Server Edition 10.1 for AIX English CI71NML IBM DB2 V10.1 Enterprise Server Edition Restricted Use Quick Start Guide and Activation for Linux, UNIX and Windows Multilingual 
+
+
+IBM Worklight 
+
+eAssembly Image Description CRMM3ML CIGX3EN Quick Start Guide for Worklight Enterprise Edition V5.0.6 for Multiplatforms English Only CIGX4EN IBM Worklight Enterprise Edition V5.0.6 zip of Installation Manager Repository for IBM Worklight Studio Multiplatforms English Only CIGX5EN IBM Worklight Enterprise Edition V5.0.6 zip of Installation Manager Repository for IBM Worklight Server Multiplatforms English Only 
+Accessing and installing recommended fixes for IBM Business Process Manager V8.5 
+For information about accessing and installing interim fixes for IBM Business Process Manager, see Required interim fixes for IBM Business Process Management products [http://www.ibm.com/support/docview.wss?uid=swg24035108]. 
+
+
+PREREQUISITES
+See the prerequisites section in IBM Business Process Manager Advanced 8.5 on AIX [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1333099388565&osPlatform=AIX] detailed system requirements.
+
+INSTALLATION INSTRUCTIONS
+Make sure that you download the Quick Start Guide from your product eAssembly. Open the PDF file and follow the instructions to install the product. 
+
+
+Detailed installation instructions for your product are available on the IBM Business Process Management information center [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/index.jsp].
+
+DOWNLOAD PACKAGE
+Download IBM Business Process Manager Advanced Version 8.5 for AIX platforms from the Passport Advantage website [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm].
+
+
+
+
+TECHNICAL SUPPORT
+ See Passport Advantage Online support at http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html].
+
+See IBM Business Process Manager Advanced support at http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Advanced [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Business_Process_Manager_Advanced]. 
+
+PRODUCT ALIAS/SYNONYM
+ BPM

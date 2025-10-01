@@ -1,0 +1,17 @@
+Title: IBM DPR-ERR-2056 while running reports in pdf and excel - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Simple Reports with hardly 300-400 records fail with DPR-ERR-2056 while running in pdf and excel .
+Reports work fine in html,csv,xml 
+
+CAUSE
+Report design had images which could not be found at the defined location
+
+ENVIRONMENT
+Issue occurred in a new migrated Cognos environment
+
+RESOLVING THE PROBLEM
+Added all the required images from the old Cognos Environment to the New Cognos environment in the same location that was defined in the reports (image path)

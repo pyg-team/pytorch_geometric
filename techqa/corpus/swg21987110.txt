@@ -1,0 +1,21 @@
+Title: IBM BiDi languages are not supported for Maximo Asset Health Insights 7.6.0.x - United States
+
+Text:
+ah760defect TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ Arabic, Hebrew 
+
+PROBLEM(ABSTRACT)
+ The graphic user interface (GUI) is corrupted when the user language is set to Arabic or Hebrew. 
+
+SYMPTOM
+Although Arabic and Hebrew are translated and supported for IBM® Maximo® Asset Management 7.6.0.5, they are not supported in the IBM® Maximo® Asset Health Insights Work Center. The layout might be misaligned or corrupted.
+
+
+RESOLVING THE PROBLEM
+Set the user's language to a non-BiDi language.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Maximo Asset Health Insights

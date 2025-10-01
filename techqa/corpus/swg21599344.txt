@@ -1,0 +1,49 @@
+Title: IBM Installation using MS SQL 2008 R2 Express - United States
+
+Text:
+OSD; tpmfosd; tpmfi; sqlexpress; MSSQL; tcpport TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installing TPM for OS Deployment with a dedicated Microsoft SQL server can pose some challenges. 
+
+SYMPTOM
+When trying to configure a new database using the Microsoft SQL Server Management Studio you find that you are unable to connect locally to the database server. The connection attempt spends about 5 seconds and then eventually responds with an error indicating a communication problem.
+
+
+CAUSE
+The SQL Server is probably using Dynamic ports which appears to have some inconsistency on Windows platforms.
+
+ENVIRONMENT
+Windows Server 2008 R2 64 bit
+
+RESOLVING THE PROBLEM
+First, you can simplify the database management by using a local Administrator account on the Windows 2008 R2 64-bit server. Login as the local Administrator prior to installing and configuring MS SQL Server.
+
+
+
+
+Once you have installed MS SQL server, we suggest using static TCP port 1433 rather than the default configuration which uses TCP Dynamic ports. This can be configured by using the Sql Server Configuration Manager located from Start > All Programs > Microsoft SQL Server 2008 R2 > Configuration Tools.
+
+Expand the SQL Server Network Configuration and select the Protocols for SQLEXPRESS (or Protocols for AUTODEPLOY depending on your environment). On the right hand panel, right click TCP/IP and enable it if is not already. Then right click and select Properties. In the properties panel select the Ip Addresses tab and scroll to the bottom. In the section "IPAll" clear out the TCP Dynamic Ports value and specify 1433 in the TCP Port field.
+[/support/docview.wss?uid=swg21599344&aid=1] [/support/docview.wss?uid=swg21599344&aid=1]
+
+After this change it is necessary to restart the SQL Server (SQLEXPRESS) service for this change to take effect.
+
+With this change now in place you can proceed to create the MS SQL database using the Microsoft SQL Server Management Studio. In general use all the default options.
+
+With the MS SQL database created you are now ready to create the System DSN 'AutoDeploy' using the Control Panel > Administrative Tools > Data Sources (ODBC) administrator tool. Be sure to specify the SQL Server driver, give it the name 'AutoDeploy' and point it to the local MS SQL server by using fqdn. Specify Windows NT Authentication and use the "Client Configuration..." button to de-select Dynamic and then indicate Port Number: 1433. This is necessary in order to match the SQL Server configuration change made above. If all settings have been configured correctly the new data source will be created without an issue and upon completion the data source can be tested and should be completed successfully. 
+[/support/docview.wss?uid=swg21599344&amp;aid=2]
+
+After this point you are ready for the 64 bit TPMOSD installation. Use all the default settings and when prompted for the Database Parameters, it will find the previously created 'AutoDeploy' System DSN. You do not need to specify any DBGW account or password:
+[/support/docview.wss?uid=swg21599344&aid=3] [/support/docview.wss?uid=swg21599344&aid=3]
+
+Installation will complete successfully and a few minutes later you should be ready to login.
+
+RELATED INFORMATION
+#Multiserver infrastructure [http://www-01.ibm.com/support/knowledgecenter/SS3HLM_7.1.1.16/com.ibm.tivoli.tpm.osd.doc_7.1.1.16/install/tosd_instmultiserver.htm]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Provisioning Manager for Images Windows Systems and Asset Management Tivoli Provisioning Manager Windows 7.1.1, 7.2, 7.2.0.1, 7.2.0.2, 7.2.1

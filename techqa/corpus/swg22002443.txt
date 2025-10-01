@@ -1,0 +1,39 @@
+Title: IBM FileNet Workplace XT war and ear files are unusually small - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When creating the IBM FileNet Workplace XT archive files with either the Content Platform Engine Client Files installation or the IBM Case Manager's "Deploy IBM FileNet Workplace XT" configuration manager task , the resulting war and ear files are only a few kilobytes in size and contain the create_web_client_war.sh and create_web_client_ear.sh files.
+
+
+
+DIAGNOSING THE PROBLEM
+The ceclient_install_log or warerr.log file will contain the following error:
+
+ERROR:
+"create_web_client_war.sh[5]: cd: .WorkplaceXT: [No such file or
+directory]"
+
+When attempting to install the resulting archive file to IBM WebSphere Application Server, the following error is returned.
+
+IWAE0006E Archive is not a valid WAR File because the deployment descriptor can not be found (case sensitive): WEB-INF/web.xml 
+
+RESOLVING THE PROBLEM
+The create_web_client_war.sh script that creates the web_client.war file contains a change directory (CD) operating system command so the WorkplaceXT directory will be included in the archive. This CD command fails with a "No such file or directory" error. 
+
+This failure can be caused by the CDPATH operating system environment variable being set. The CDPATH environment variable is used to define the base directory to be used for the CD command. A side effect of setting the CDPATH is that CD commands in scripts may jump to unintended directories. 
+
+ 
+
+For example, the error below indicates that the operating system cannot find the WorkplaceXT directory off the root of the file system instead of the expected "<WorkplaceXT_install_directory>/IBM/FileNet/webclient/" directory. 
+
+ 
+
+ERROR:
+"create_web_client_war.sh[5]: cd: .WorkplaceXT: [No such file or
+directory] 
+
+ 
+
+To resolve this problem, unset the CDPATH operating system environment variable while creating the IBM FileNet Workplace XT war and ear files.

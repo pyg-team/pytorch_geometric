@@ -1,0 +1,58 @@
+Title: IBM vMDM Web Services application could not authenticate using mdmadmin - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ vMDM Web Services application could not authenticate using mdmadmin 
+
+SYMPTOM
+ WebSphere users are from a Federated Repository backed by Active
+Directory
+vMDM Web Services application could not authenticate to the MDM
+Operational Server using the mdmadmin WebSphere User ID.
+End users could not authenticate to the MDM Operational Server using
+their WebSphere User ID.
+The User ID was visible in the WebSphere Console under "Manage
+Users".
+The following error appears in the WebSphere SystemOut.log:
+
+[2/4/14 14:18:35:159 EST] 000000e5 NativeLog E
+com.ibm.mdm.mds.log.LogAdapter error IXN=, ERR=EINVAL, MSG=Context
+switching from usrLogin 'CN=mdmadmin,OU=Service Accounts,OU=Security
+Principles,DC=corpdev,DC=exampledev,DC=example,DC=com' to 'mdmadmin' is
+prohibited.
+
+The User ID 'CN=mdmadmin,OU=Service Accounts,OU=Security
+Principles,DC=corpdev,DC=exampledev,DC=example,DC=com' is inserted into
+MPI_USRHEAD
+
+
+CAUSE
+The User Repository Attribute Mapping used different values for Input
+and Output. This causes vMDM to reject the authentication.
+Refer Technote 1429115, modified 2010-04-29.
+
+RESOLVING THE PROBLEM
+Modify the WebSphere configuration. Instructions for performing this
+manually are in the Technote.
+Instructions for doing this through the console are:
+
+log into the WebSphere Console
+Browse to Security -> Global security
+In the "User Account Repository" section, Under the "Available realm
+definitions" the setting should be "Federated Repositories".
+Press the "Configure" button.
+In the Federated Repositories configuration page, in the "Additional
+properties" section, follow the "User repository attribute mapping"
+Confirm that for the attribute "userSecurityName" the "Property for
+Output " value is "externalName"
+Tick the box next to userSecurityName and press the edit button.
+Replace "externalName" with "principalName".
+Save the setting and resynchronise the nodes.
+Restart the Application Server
+
+
+Note that the authentication process still seems to be case sensitive -
+the error can still occurr where the user enters their account name in a
+different case than it is stored in the User Repository.

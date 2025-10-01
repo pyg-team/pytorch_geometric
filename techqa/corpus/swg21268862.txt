@@ -1,0 +1,10 @@
+Title: IBM What is the process running on USS (UNIX Systems Services) for the DB2 Query Monitor agent? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ There should be a process that is running on USS for the DB2® Query Monitor agent. When I run the ps -e command, I don't see the started task for DB2 Query Monitor. 
+
+ANSWER
+'/appl/db2tools/cqmv2r2/bin/runjava' is the DB2 Query Monitor process.

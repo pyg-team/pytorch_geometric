@@ -1,0 +1,163 @@
+Title: IBM PM28510: XMLACCESS EXPORT OF URL-MAPPINGS BROKEN - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  XMLAccess export of url-mappings inside a virtual portal
+   produces output that cannot be imported as-is in another
+   virtual portal because the virtual portal url-mapping, parent
+   of the exported url-mapping, is exported as a "locate"
+   without a label attribute.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Add label attribute manually.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  XMLAccess export of url-mappings inside a virtual portal
+   produces output that cannot be imported as-is in another virtual
+   portal because the virtual portal url-mapping, parent of the
+   exported url-mapping is exported as a "locate" without a label
+   attribute.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR adds the "label" attribute to the "locate" action as
+   required.
+   
+   Manual Steps:
+      None
+   
+   Failing Module(s):
+      XML Access
+   
+   Affected Users:
+      All users
+   
+   Version Information:
+       Portal Version(s): 6.1.0.3
+        Pre-Requisite(s): PM02234 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM02234]
+                     (or the respective cumulative fix)
+         Co-Requisite(s): ---
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   A fix is available from Fix Central:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PM28510&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PM28510&productid=WebSphere%20Portal&brandid=5]
+   
+   You may need to type or paste the complete address into your Web
+   browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM28510
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   61C
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-12-09
+   
+   
+ * CLOSED DATE
+   2011-01-18
+   
+   
+ * LAST MODIFIED DATE
+   2011-01-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R615 PSY
+   UP
+   
+   
+ * R61C PSY
+   UP

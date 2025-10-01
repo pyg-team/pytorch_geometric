@@ -1,0 +1,41 @@
+Title: IBM Downloading WebSphere MQ Version 7.1.0.0 from the Passport Advantage website - United States
+
+Text:
+7.1 WebSphere MQ download DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM WebSphere MQ Version 7.1.0.0 eAssembly images from the Passport Advantage website. 
+
+DOWNLOAD DESCRIPTION
+
+
+
+TAB NAVIGATION
+ * Overview [http://www.ibm.com/support/docview.wss?uid=swg24036432]- selected tab,
+ * MQ V7.1.0.7 [http://www.ibm.com/support/docview.wss?uid=swg24041880]
+ * MQ V7.1.0.3 [http://www.ibm.com/support/docview.wss?uid=swg24040031]
+ * MQ V7.1.0.2 [http://www.ibm.com/support/docview.wss?uid=swg24034214]
+ * MQ V7.1.0.0 [http://www.ibm.com/support/docview.wss?uid=swg24019472]
+
+Contents For IBM WebSphere MQ Version 7.1.0.0, this section provides the part number and description of each eAssembly, followed by a list of the installation images available in the eAssembly.
+
+Note (27 May 2015): 
+
+ 1. The eImages listed here are no longer available for download.
+ 2. eAssembly CRG5DML has been reused as the container for later MQ V7.1 refreshes.
+
+
+
+Downloading the relevant eAssembly images from the Passport Advantage web site  1. Go to the Passport Advantage [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] website.
+ 2. Sign in to download all of the images that you need.
+ 3. Unpack each of the parts onto your system.
+
+
+WebSphere MQ V7.1 for Multiplatform Multilingual eAssembly
+
+Part Number Description CRG5DML WebSphere MQ V7.1 Multiplatform Multilingual eAssembly CI3CCML WebSphere MQ V7.1 Quick Start Guide for Multiplatform Multilingual eImage CI3CDML WebSphere MQ V7.1 Documentation for Windows Multilingual eImage CI3CEML WebSphere MQ V7.1 Documentation for Linux Multilingual eImage CI3CGML WebSphere MQ V7.1 for Windows Multilingual eImage CI3CHML WebSphere MQ V7.1 for AIX Multilingual eImage CI3CIML WebSphere MQ V7.1 for i5/OS Multilingual eImage CI3CJML WebSphere MQ V7.1 for Solaris on SPARC Multilingual eImage CI3CKML WebSphere MQ V7.1 for Solaris on x86-64 Multilingual eImage CI3CLML WebSphere MQ V7.1 for HP-UX on Itanium Multilingual eImage CI3CMML WebSphere MQ V7.1 for Linux on x86 32-bit Multilingual eImage CI3CNML WebSphere MQ V7.1 for Linux on x86-64 Multilingual eImage CI3CPML WebSphere MQ V7.1 for Linux on POWER Multilingual eImage CI3CQML WebSphere MQ V7.1 for Linux on System z 64-bit Multilingual eImage CI3CRML WebSphere MQ V7.1 Client for Windows Multilingual eImage CI3CSML WebSphere MQ V7.1 Client for AIX Multilingual eImage CI3CTML WebSphere MQ V7.1 Client for i5/OS Multilingual eImage CI3CUML WebSphere MQ V7.1 Client for Solaris on SPARC Multilingual eImage CI3CVML WebSphere MQ V7.1 Client for Solaris on x86-64 Multilingual eImage CI3CWML WebSphere MQ V7.1 Client for HP-UX on Itanium Multilingual eImage CI3CXML WebSphere MQ V7.1 Client for Linux on x86 32-bit Multilingual eImage CI3CYML WebSphere MQ V7.1 Client for Linux on x86-64 Multilingual eImage CI3CZML WebSphere MQ V7.1 Client for Linux on POWER Multilingual eImage CI3D0ML WebSphere MQ V7.1 Client for Linux on System z Multilingual eImage 
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

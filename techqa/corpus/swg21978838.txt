@@ -1,0 +1,22 @@
+Title: IBM Netcool Operations Insight v1.4 - Network Health Dashboard v4.2 update required to function with Netcool/OMNIbus WebGUI v8.1.0.5 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Netcool/OMNIbus WebGUI v8.1.0.5 introduces an API change designed to improve GUI performance and scalability in the browser for event-based widgets. This API change reduces the number of browser connections as well as bandwidth requirements.
+
+Network Health Dashboard v4.2 utilizes this API in its event-based widgets (Event Timeline and Unavailable Resources) and an update is required in the Network Health Dashboard to accommodate the updated WebGUI API. The WebGUI API update is not backwards compatible, so you must apply this Network Health Dashboard update when you upgrade to Netcool/OMNIbus WebGUI v8.1.0.5. Otherwise, the Network Health Dashboard Event Timeline and Unavailable Resources widgets will no longer work. 
+
+SYMPTOM
+When Network Health Dashboard v4.2 is installed on the same server as Netcool/OMNIbus WebGUI v8.1.0.5, no event data is returned for the event-based widgets (Event Timeline and Unavailable Resources).
+
+
+CAUSE
+A modification to the WebGUI API in Netcool/OMNIbus WebGUI 8.1.0.5 is not backwards compatible and requires an update to the Network Health Dashboard.
+
+RESOLVING THE PROBLEM
+ 
+
+Network Health Dashboard v4.2 for Netcool Operations Insight v1.4 IV82130 Please call IBM service and reference APAR IV82130, to obtain a fix. 
+Note : When applying this fix for IV82130, it is important that the browser cache be cleared after the fix is installed.

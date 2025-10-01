@@ -1,0 +1,54 @@
+Title: IBM RDp 8.5 installation fails with "CRIMC1020E: plug-in not found" error - United States
+
+Text:
+install; CRIMC1020E; plug-in; plug in; plugin TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to install IBM Rational Developer for Power systems (RDp) 8.5 results in the error "CRIMA1161E". 
+
+SYMPTOM
+The full error message is as follows:
+
+CRIMC1020E: plug-in com.ibm.etools.iseries.dds.tui.pseudo_8.5.0.v20120601_0008 not found 
+
+'plug-in com.ibm.etools.iseries.dds.tui.pseudo_8.5.0.v20120601_0008' does not exist in C:\Users\Cliff\DownloadDirector\disk1\InstallerImage_win32 (at C:\Users\Cliff\DownloadDirector\disk1\InstallerImage_win32\plugins\com.ibm.etools.iseries.dds.tui.pseudo_8.5.0.v20120601_0008.jar). 
+
+'plug-in com.ibm.etools.iseries.dds.tui.pseudo_8.5.0.v20120601_0008' not found in C:\Users\Cliff\DownloadDirector\disk1. 
+
+CRIMC1020E: feature com.ibm.iseries.dds.tui.pseudo_8.5.0.v20120601_0008 not found 
+
+'feature com.ibm.iseries.dds.tui.pseudo_8.5.0.v20120601_0008' does not exist in C:\Users\Cliff\DownloadDirector\disk1\InstallerImage_win32 (at C:\Users\Cliff\DownloadDirector\disk1\InstallerImage_win32\features\com.ibm.iseries.dds.tui.pseudo_8.5.0.v20120601_0008.jar). 
+
+'feature com.ibm.iseries.dds.tui.pseudo_8.5.0.v20120601_0008' not found in C:\Users\Cliff\DownloadDirector\disk1. 
+
+CRIMC1020E: plug-in com.ibm.etools.iseries.rpgle.core.pseudo_8.5.0.v20120516_0117 not found 
+
+'plug-in com.ibm.etools.iseries.rpgle.core.pseudo_8.5.0.v20120516_0117' does not exist in C:\Users\Cliff\DownloadDirector\disk1\InstallerImage_win32 (at C:\Users\Cliff\DownloadDirector\disk1\InstallerImage_win32\plugins\com.ibm.etools.iseries.rpgle.core.pseudo_8.5.0.v20120516_0117.jar). 
+
+'plug-in com.ibm.etools.iseries.rpgle.core.pseudo_8.5.0.v20120516_0117' not found in C:\Users\Cliff\DownloadDirector\disk1. 
+
+CRIMC1020E: plug-in com.ibm.etools.iseries.services.qsys.pseudo_8.5.0.v20120328_1942 not found 
+
+'plug-in com.ibm.etools.iseries.services.qsys.pseudo_8.5.0.v20120328_1942' does not exist in C:\Users\Cliff\DownloadDirector\disk1\InstallerImage_win32 (at C:\Users\Cliff\DownloadDirector\disk1\InstallerImage_win32\plugins\com.ibm.etools.iseries.services.qsys.pseudo_8.5.0.v20120328_1942.jar). 
+
+'plug-in com.ibm.etools.iseries.services.qsys.pseudo_8.5.0.v20120328_1942' not found in C:\Users\Cliff\DownloadDirector\disk1. 
+
+CRIMC1020E: plug-in com.ibm.rational.rdpower.product.rpgtoolsfeature.pseudo_8.5.0.v20120430_2338 not found 
+
+'plug-in com.ibm.rational.rdpower.product.rpgtoolsfeature.pseudo_8.5.0.v20120430_2338' does not exist in C:\Users\Cliff\DownloadDirector\disk1\InstallerImage_win32 (at C:\Users\Cliff\DownloadDirector\disk1\InstallerImage_win32\plugins\com.ibm.rational.rdpower.product.rpgtoolsfeature.pseudo_8.5.0.v20120430_2338.jar). 
+
+'plug-in com.ibm.rational.rdpower.product.rpgtoolsfeature.pseudo_8.5.0.v20120430_2338' not found in C:\Users\Cliff\DownloadDirector\disk1.
+.......
+
+
+
+
+Followed by several more of the same message for different plugins.
+
+CAUSE
+You cannot install RDp 8.5 in the same package as a previous version of RDp.
+
+
+
+RESOLVING THE PROBLEM
+When installing RDp 8.5, create a New Package.

@@ -1,0 +1,49 @@
+Title: IBM MP0B:  WebSphere MQ - JMS V7.1 Performance Evaluations - United States
+
+Text:
+MP0B: WebSphere MQ - JMS V7.1 Performance Evaluations DOWNLOADABLE FILES
+
+ABSTRACT
+ MP0B presents the results of performance evaluations using the JMS clients supplied with WebSphere MQ V7.1, on AIX, Linux, Windows and z/OS. 
+
+DOWNLOAD DESCRIPTION
+This SupportPac includes:
+
+
+• Performance measurements with graphs and tables to present the performance capabilities of WebSphere MQ JMS V7.1
+• Discussion of Performance enhancements included in WebSphere MQ JMS V7.1
+
+Possible Uses
+This SupportPac is designed for people who:
+• Will be designing and implementing solutions using WebSphere MQ JMS for AIX, Linux, Windows or z/OS.
+• Want to understand the performance limits of WebSphere MQ, JMS on these platforms.
+• Want to understand how to tune WebSphere MQ, JMS for these platforms.
+
+Skill Level Required
+The reader should have a general awareness of JMS and WebSphere MQ in order to make best use of this SupportPac.
+
+Details
+Author: Rachel Norris, WebSphere MQ Performance, Hursley
+Category: 2
+Released: 22Dec11
+SupportPac Version: 1.0
+»Please note that the version number shown in the right-hand pane is the version of the WebSphere MQ or WebSphere MB product that this SupportPac applies to. The date is the last webpage refresh. 
+
+To view the complete portfolio of WebSphere MQ SupportPacs please visit the WebSphere MQ SupportPacs homepage. [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27007205]
+
+PREREQUISITES
+None.
+
+INSTALLATION INSTRUCTIONS
+None.
+
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options mp0b.pdf 22 Dec 2011 US English 547422 FTP [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/mp0b.pdf] 
+TECHNICAL SUPPORT
+ Category 2 SupportPacs are provided in good faith and AS-IS. There is no warranty or further service implied or committed and any supplied sample code is not supported via IBM product service channels. 
+
+You may submit a question and return email address using the 'rate this page' below, but a response is not guaranteed.

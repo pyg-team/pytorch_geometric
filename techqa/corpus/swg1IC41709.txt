@@ -1,0 +1,161 @@
+Title: IBM IC41709: ClearCase Multisite:multitool: Error: Operation "remote_get_repl ica_properties" failed incompatible versions of ClearCase - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  chepoch -actual and lsepoch -actual fail with the following
+   error:
+   C:\>multitool lsepoch -actual newrep@\myvob
+   For VOB replica "\myvob":
+    multitool: Error: Incompatible versions of ClearCase software
+   and/or databases:
+   "servers.ibm.com:C:\VOBSTORE\myvob.vbs".
+   
+   multitool: Error: Trouble opening VOB database:
+   "servers.ibm.com:C:\VOBSTORE\myvob.vbs".
+   
+   C:\>multitool chepoch -actualnewrep@\myvob
+   multitool: Error: Incompatible versions of ClearCase software
+   and/or databases:
+   "servers.ibm.com:C:\VOBSTORE\myvob.vbs".
+   
+    multitool: Error: Trouble opening VOB database:
+   "servers.ibm.com:C:\VOBSTORE\myvob.vbs".
+    multitool: Error: Operation "remote_get_replica_properties"
+   failed
+    ("server2.ibm.com"): incompatible versions of ClearCase
+   software and/or databases.
+   
+   CAUSE:: The vob server at one site upgraded to ClearCase
+   2003.06(R)  and left the vob at feature level 3.
+   The other site stayed at ClearCase 2002.05 and left the feature
+   level at 3.  This defect is an incompatibility of 2003.06 with
+   a down rev multisited vob.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Upgrade both sites to ClearCase 2003.06
+   OR
+   Downgrade the 2003.06 site to 2002.05
+   OR
+   Don't use the "-actual" option of lsepoch/chepoch
+     - Do lsepoch AT the replica
+     - Do chepoch by specifying all the epoch numbers
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  See APAR Error Description.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Updated the implementation of chepoch -actual and lsepoch
+   -actual to more efficiently gather epoch information on a remote
+   replica.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC41709
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL CLEARCASE
+   
+   
+ * REPORTED COMPONENT ID
+   5724F1400
+   
+   
+ * REPORTED RELEASE
+   ALL
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-07-21
+   
+   
+ * CLOSED DATE
+   2006-03-07
+   
+   
+ * LAST MODIFIED DATE
+   2006-03-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  na
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL CLEARCASE
+   
+   
+ * FIXED COMPONENT ID
+   5724F1400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RALL PSN
+   UP

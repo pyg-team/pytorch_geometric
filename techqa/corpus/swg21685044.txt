@@ -1,0 +1,30 @@
+Title: IBM Withdrawal of the Oracle and ODBC probes for download - United States
+
+Text:
+nco_p_oracle; nco_p_odbc; Oracle; DB2; Sybase; MSSQL; download; passport advantage TECHNOTE (FAQ)
+
+QUESTION
+ Oracle and ODBC probes : Why are they not on passport advantage? 
+
+CAUSE
+The Oracle and ODBC probes were withdrawn on the 31st August 2014.
+
+ANSWER
+ 
+
+The Oracle probe and ODBC probe are being end of lifed. 
+
+ 
+
+Customers who use the Oracle probe or ODBC probe should plan to migrate their installations to the JDBC probe. 
+
+ 
+
+Please review the online manual for the JDBC probe and Support's guide to the JDBC probe to determine how to install and configure the JDBC probe. 
+
+ 
+
+The Oracle probe and the ODBC probe will no longer be eligible for software support after the 30th June 2015.
+
+RELATED INFORMATION
+ Support's Guide to the JDBC Probe [http://www-01.ibm.com/support/docview.wss?uid=swg21655794]

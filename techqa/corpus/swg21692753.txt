@@ -1,0 +1,38 @@
+Title: IBM PureData System for Analytics Software Support Tools compatibility with NPS releases - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Where can I download the latest Software Support Tools package for my IBM PureData System for Analytics NPS release? 
+
+CAUSE
+Starting in September 2014 with the NPS 7.2.0.0, 7.1.0.2, 7.0.4.5, 7.0.2.13, and 6.0.8.17 releases, the Netezza Software Support Tools are shipped as part of the NPS software releases and fix packs. 
+
+ANSWER
+The NPS 7.2.0.0, 7.1.0.2, 7.0.4.5, 7.0.2.13, and 6.0.8.17 releases (and later fix packs and patches in those releases) automatically install the Netezza Software Support Tools. Each NPS kit also includes a standalone Software Support Tools kit (nz-sw-support-tools-version.tar.gz) to allow you to install the latest tools without upgrading the NPS appliance release. 
+
+IMPORTANT: The Netezza Software Support Tools are no longer available as a separate Fix Center menu download component. To install or upgrade to the latest tools, go to the latest NPS release and either upgrade NPS to that release, or download and install the separate Software Support Tools kit. 
+
+The Software Support Tools kits support all the NPS releases in the related streams. That is, the 6.0.8 Software Support Tools kit supports all the NPS Release 6.x versions. The latest 7.x Netezza Software Support Tools kits support all of the NPS Release 7.x versions.
+
+Your IBM account must be entitled to download the Software Support Tools kits from Fix Central. You must be able to log in to the Netezza host as nz to install the download kit. 
+
+
+If your Netezza appliances is running NPS release 6.x: 
+
+ 1. Go to the latest fix pack 6.0.8.17-P2 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EInformation%2BManagement&product=ibm/Information+Management/Netezza+NPS+Software+and+Clients&release=NPS_6.0.8&platform=All&function=fixId&fixids=6.0.8.17-P2-IM-Netezza-NPS-fp88790&includeRequisites=1&includeSupersedes=0&downloadMethod=http&source=fc]. 
+ 2. Download the nz-sw-support-tools-v6.0.8.17-P2.tar.gz kit. Save the kit in an empty temporary directory (such as /export/home/nz/swst) on or accessible by the NPS active host. 
+ 3. Log in to the NPS active host as the nz user and change to the location where you saved the tools kit. 
+ 4. Run the gunzip nz-sw-support-tools-v6.0.8.17-P2.tar.gz command to unzip the file. 
+ 5. Run the tar xvf nz-sw-support-tools-v6.0.8.17-P2.tar to uncompress the archive. 
+ 6. Run the ./INSTALL-IBM_Netezza_Software_Support_Tools command to install the tools. The IBM Netezza Support Tools will be installed in the /nz/support-IBM_Netezza-6.0.8.17.P2-141024-1744 directory.
+    
+
+
+If your Netezza appliance is running NPS release 7.x:  1. Go to the latest fix pack for the NPS releases [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EInformation%2BManagement&product=ibm/Information+Management/Netezza+NPS+Software+and+Clients&release=All&platform=All&function=all&source=fc]. Select the most recent 7.x fix pack at the top of the list. 
+ 2. Download the nz-sw-support-tools-version.tar.gz kit, where version is the NPS version of the recent fix pack. Save the kit in an empty temporary directory (such as /export/home/nz/swst) on or accessible by the NPS active host. 
+ 3. Log in to the NPS active host as the nz user and change to the location where you saved the tools kit. 
+ 4. Run the gunzip nz-sw-support-tools-version.tar.gz command to unzip the file, where version is the version of the kit that you downloaded. 
+ 5. Run the tar xvf nz-sw-support-tools-version.tar to uncompress the archive. Specify the version of the kit that you downloaded. 
+ 6. Run the ./INSTALL-IBM_Netezza_Software_Support_Tools command to install the tools. The IBM Netezza Support Tools will be installed in the /nz/support-IBM_Netezza-version-reldate-build directory.

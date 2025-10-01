@@ -1,0 +1,25 @@
+Title: IBM Firmware Update from IBM Service Web Site Repository Fails with ACT01724 - United States
+
+Text:
+MSGACT01724 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempting to update an older release of firmware from the Web site repository might fail with the following message: ACT01724 - The operation failed due to an internal code failure. 
+
+RESOLVING THE PROBLEM
+Problem Description 
+
+The HMC is used to update the licensed internal code of the managed system. The user selects the Change Internal Code option and invokes the Start Change Internal Code Wizard. They then select a LIC Repository of IBM service Web site. The user sees that a newer firmware level of the same release is available; however, the update fails with the following message: ACT01724 - The operation failed due to an internal code failure. In this example, the managed system was at release (EC) 01SF210 level 26. Level 28 showed as being available. The current release (EC) available was 01SF220.
+
+Problem Resolution
+
+The Web site repository stores only the most recent firmware level for the most recent release. The attempt to update an older release from the Web site repository identifies that a newer level of the current release exists but is not available in this repository.
+
+The recommended resolution is to use the Manufacturing Equipment Specification Upgrade (or on more current HMCs - Upgrade Licensed Internal Code to a new release) option to upgrade to the new release of firmware. The MES (or Upgrade) option requires optical media. Obtain the optical media that contains the new server firmware release from your service provider. Firmware release upgrades can also be performed through Operating System updates from a service partition. See the eServer Information Center for further details.
+
+If it is necessary to update the current release to a newer level, the user must use the IBM support system repository or an Operating System update with the appropriate PTF level. The IBM support system repository (RETAIN) contains all available levels of server firmware fixes.
+
+ 
+
+HISTORICAL NUMBER
+ 357585992

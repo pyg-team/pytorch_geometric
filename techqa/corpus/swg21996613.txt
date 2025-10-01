@@ -1,0 +1,25 @@
+Title: IBM Why is the Data Access Plan not visible in Modeler's Analytic Data view Drop down? - United States
+
+Text:
+ADV Data Access Plan Analytic Data View real time batch access ADV Enterprise View EV TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to use the Data View source node in IBM SPSS Modeler do not show any Data Access Plans in the Analytic Data view drop down box. 
+
+SYMPTOM
+No Data Access Plans in the Analytic Data view drop down box.
+
+
+CAUSE
+Only Real Time Data Access Plans had been created.
+Modeler can only use Batch Data Access Plans.
+
+ENVIRONMENT
+Modeler 18
+
+DIAGNOSING THE PROBLEM
+Review what type of Data Access Plans have been created in Deployment Manager client.
+
+RESOLVING THE PROBLEM
+Modeler does not do real-time scoring. You would not see the real-time data access plan. 
+However, you would see a batch data access plan if one exists. So you can create a batch data access plan just like your real time access plan which can then be used in Modeler.

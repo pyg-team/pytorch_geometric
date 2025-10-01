@@ -1,0 +1,43 @@
+Title: IBM IPSec issues EZD0902I and IPSec tunnels fail with message EZD1075I - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We received this message from IPSec: 
+
+EZD0902I Peer certificate failed validation - System SSL CMS error : 03353022 Certificate is expired. 
+
+All IPSec TCPIP stack tunnels began to fail with message EZD1075I. 
+
+We are not using NSSD. 
+
+SYMPTOM
+Our current x.509 certificates were scheduled to expire soon so RACF support renamed the 'old' certificate on the IKED keyring and added the new certificate to the keyring. The 'new' certificate was marked as the default. 
+
+When the old certificate eventually expired, the following message was issued - "EZD0902I [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/F1A1C8B0/SPTWQ421] Peer certificate failed validation - System SSL CMS error : 03353022 Certificate is expired". In addition, all the TCPIP stack IPSec tunnels began to fail with message EZD1075I [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/F1A1C8B0/SPTWQ607] Received ISAKMP error notification message : Invalid certificate 
+
+Tunnel refreshes were not returning the new and valid certificate. We had to remove the 'old' personal site certificate from the keyring and recycle IKED.
+
+
+DIAGNOSING THE PROBLEM
+If NSSD had been running on the systems with the expired certificate, you would not have lost your IPSec connections when the old certificate expired.
+
+The Network Security Services server daemon (NSSD) provides certificate and network management services for IPSec, in addition to other services for XML appliances. 
+. 
+NSS allows for centralized configuration and administration of certificates. It provides a central, SAF-enabled repository for RSA certificates along with signature services within the most trusted zones. NSS digital signature services allows central administration of RACF certificates and private keys. 
+
+
+
+RESOLVING THE PROBLEM
+Configure the NSS Server: see "Preparing to provide network security services [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/F1A1B3B0/2.11.3?SHELF=f1a1bkd0&DT=20110608115203]" [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/F1A1B3B0/2.11.3.4.3?SHELF=f1a1bkd0&DT=20110608115203] in Chapter 20 "Network Security Services" in the IP Configuration Guide. 
+
+ 1. Start the NSS Server: see "Starting the NSS server [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/F1A1B3B0/2.11.3.7.1?SHELF=f1a1bkd0&DT=20110608115203]" in the IP Configuration Guide. See also "Network Security Services for IPSec Clients" in the IBM Redbooks publication [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/F1A1B3B0/2.11.3?SHELF=f1a1bkd0&DT=20110608115203] [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/FRAMESET/F1A1B3B0/2.11.3?SHELF=f1a1bkd0&DT=20110608115203]V1R10 Communications Server TCP/IP Implementation Volume 4: Security and Policy-Based Networking [http://www.redbooks.ibm.com/redbooks/pdfs/sg247699.pdf]. 
+ 2. Configure the IKE daemon to define a stack as an NSS client. See the following topics in "Configuring the IKE daemon":  1. "Using network security services [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/F1A1B3B0/2.10.13.6?SHELF=f1a1bkd0&DT=20110608115203]" 
+     2. "Steps for configuring the IKE daemon [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/F1A1B3B0/2.10.13.8?SHELF=f1a1bkd0&DT=20110608115203]". For more information, see Appendix 1.5.5 Step 5 Setting up the IKE daemon for digital signature authentication (optional) [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/F1A1B3B0/APPENDIX1.5.5?SHELF=f1a1bkd0&DT=20110608115203].
+    
+    
+ 3. Add an 'old' expired certificate to the IKED and NSSD keyrings.
+
+
+When both IKED and NSSD are up and running, IPSec is activated even if a copy of the old expired certificate (along with the new certificate) is in the keyring.

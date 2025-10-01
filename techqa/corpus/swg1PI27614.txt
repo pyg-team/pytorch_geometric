@@ -1,0 +1,212 @@
+Title: IBM PI27614: RATIONAL DEVELOPER FOR SYSTEM Z (RDZ) INTEGRATED DEBUGGER ON ZOS 2.1 MAY CAUSE ABENDS0C4 IN CEEHDSP DEBUGGING C PROGRAM - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+9.1.1: UI23762 PTF for Rational Developer for System z Host Options [http://www-01.ibm.com/support/docview.wss?uid=swg24039081]
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Rational Developer for System z - RDz - v9.1
+   Integrated debugger on zOS 2.1 may cause ABENDS0C4 in CEEHDSP
+   when debugging a C program.
+   
+   You may experience this abend0c4 when you step through to the
+   end of a C program.
+   
+   You can find the message below in the JCL that you submit.
+   
+   CEE3204S The system detected a protection exception
+   (System Completion Code=0C4).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  none available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: 01.z/OS security admin                       *
+   *                 02.RDz users relying on LE user exit for     *
+   *                    debugging                                 *
+   *                 03.All Integrated Debugger RDz users.        *
+   *                 04.Users who debug C/C++ using RDz and the   *
+   *                    Integrated debugger.                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 01.z/OS 2.1 no longer allows bypassing  *
+   *                         BPX.SERVER with UID 0.               *
+   *                      02.Synchronize RDz's LE user exit with  *
+   *                         updates done for IBM Debug Tool      *
+   *                         13.1 APAR PI24559 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI24559].                   *
+   *                      03.The Integrated Debugger produces     *
+   *                         many log messages in the DBM log     *
+   *                         and the system log. For example, in  *
+   *                         the DBM the following messages can   *
+   *                         be repeatedly seen: 14:36:38         *
+   *                         socket(4): read: length(17)          *
+   *                         errno(121) 15:24:57 socket(3):       *
+   *                         recv: communicationThread:           *
+   *                         key(48120519) closed by peer         *
+   *                         In the system log, the following     *
+   *                         messages can also be repeatedly      *
+   *                         seen at the end of each debug        *
+   *                         session: AQEP004E Transmit to        *
+   *                         engine failure AQEP007I Message      *
+   *                         error                                *
+   *                      04.When stepping in a C/C++ program     *
+   *                         using the Integrated Debugger with   *
+   *                         RDz, the job being debugged may      *
+   *                         terminate at the end of the program. *
+   *                         The job log will contain the message *
+   *                         below CEE3204S The system detected a *
+   *                         protection exception (System         *
+   *                         Completion Code=0C4).                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   01.z/OS 2.1 no longer allows bypassing BPX.SERVER with UID 0.
+      So RDz (Rational Developer for System z) no longer supports
+      the UID 0 scenario.
+   02.Synchronize Rational Developer for System z's LE user exit
+      used by Integrated Debugger with updates done for IBM Debug
+      Tool 13.1 APAR PI24559 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI24559].
+   03.The Integrated Debugger was unnecessarily placing errors and
+      informational message in the DBM log and the system log that
+      were either being handled, or are only required when tracing
+      is needed.
+   04.Rational Developer for System z (RDz) In the case of C/C++
+      programs, the Integrated Debugger failed to determine the end
+      of the program and stepping at the end of the program would
+      cause the job being debugged to terminate with ABEND S0C4 in
+      CEEHDSP.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  01.RDz no longer supports using UID 0 to bypass the BPX.SERVER
+      permit requirement.
+   02.Synchronize Rational Developer for System z's LE user exit
+      used by Integrated Debugger with updates done for IBM Debug
+      Tool 13.1 APAR PI24559 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI24559].
+   03.The Integrated Debugger will no longer log messages for
+      handled errors, or informational messages when tracing is
+      not enabled.
+   04.The Integrated Debugger was not correctly determining the end
+      of a program, and has now been modified in order to prevent
+      ABEND S0C4 when stepping at the end of a program.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI27614
+   
+   
+ * REPORTED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0723
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-14
+   
+   
+ * CLOSED DATE
+   2014-12-05
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  AQECIC32 AQECIC41 AQECIC51 AQECSD   AQECTL
+   AQED3XXT AQEEVDBG AQEEV006 AQEJCL   AQELDR31 AQELDR64 AQEL3Z3
+   AQEL3Z6  AQEL6Z3  AQEL6Z6  AQEMVS31 AQEMVS64 AQEQV006 AQERACF
+   AQESVC03 AQEW3Z3  AQEW3Z6  AQEXPL31 AQEZPCM  FEKFDBGM FEKRACF
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * FIXED COMPONENT ID
+   5724T0723
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY UI23650 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI23650]
+   UP14/12/09 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

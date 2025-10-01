@@ -1,0 +1,49 @@
+Title: IBM System requirements for IBM InfoSphere Optim Performance Manager Extended Insight  V5.3.1 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document describes the system requirements for IBM® InfoSphere® Optim™ Performance Manager Extended Insight Version 5.3.1. 
+
+CONTENT
+
+
+TABLE OF SUPPORTED SYSTEM REQUIREMENTS
+Always up-to-date system requirement reports can be dynamically generated using the Software Product Compatibility Reports (SPCR) tool [http://www-969.ibm.com/software/reports/compatibility/clarity/index.html]. 
+
+For your convenience, the sections below offer detailed system requirement reports for different contexts (by Operating System, by component). Note that clicking a link will always generate a new, up-to-date report.
+
+
+
+
+REQUIREMENTS
+BY PLATFORM
+ * AIX [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=DF2858C0E8EE11E2829502480925FE1B&osPlatform=AIX]
+ * HP [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=DF2858C0E8EE11E2829502480925FE1B&osPlatform=HP]
+ * Inspur K-UX [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=DF2858C0E8EE11E2829502480925FE1B&osPlatform=Inspur K-UX]
+
+ * Linux [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=DF2858C0E8EE11E2829502480925FE1B&osPlatform=Linux]
+ * Solaris [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=DF2858C0E8EE11E2829502480925FE1B&osPlatform=Solaris]
+ * Windows [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=DF2858C0E8EE11E2829502480925FE1B&osPlatform=Windows]
+
+ * Supported Hypervisors [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/vesForProduct?deliverableId=DF2858C0E8EE11E2829502480925FE1B]
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * Extended Insight client [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=DF2858C0E8EE11E2829502480925FE1B&duComponent=Miscellaneous_DF309620E8EE11E2829502480925FE1B]
+
+ * TEP plug in [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=DF2858C0E8EE11E2829502480925FE1B&duComponent=Miscellaneous_DF313260E8EE11E2829502480925FE1B]
+
+
+
+
+RELATED INFORMATION
+ *  System requirements for IBM InfoSphere Optim Performance Manager for DB2 for Linux, UNIX, and Windows V5.3.1 [http://www.ibm.com/support/docview.wss?uid=swg27043073] 
+ *  Compatibility matrix for IBM InfoSphere Optim Performance Manager V5.3.1 and previous products or versions [http://www-01.ibm.com/support/docview.wss?uid=swg27023428] 
+
+PRODUCT DESCRIPTIONS
+You install the Extended Insight client component on each computer where a database application is running that you want to monitor. For more information, see Installation architecture of IBM InfoSphere Optim Performance Manager Extended Insight [http://www.ibm.com/support/knowledgecenter/SS9PE5_5.3.1/com.ibm.datatools.perfmgmt.installconfig.doc/opmei_basic_architecture.html].

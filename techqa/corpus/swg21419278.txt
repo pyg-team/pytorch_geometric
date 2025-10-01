@@ -1,0 +1,41 @@
+Title: IBM TAM E-SSO AccessAgent v8.1 support on 64-bit Windows operating systems - United States
+
+Text:
+AccessAgent 64 bit x64 TECHNOTE (FAQ)
+
+QUESTION
+ Does TAM E-SSO AccessAgent v8.1 support 64-bit Windows operating systems? 
+
+ANSWER
+Yes, but with the following limitations:
+1. Single sign-on for Windows applications works only for 32 bit applications, and does not work for native 64 bit applications.
+
+2. Smart card is not supported on 64-bit operating systems.
+
+3. EnGINA and TAM E-SSO Credential Provider do not work on 64-bit operating systems.
+
+4. EnNetworkProvider does not work on 64-bit operating systems.
+
+5. EncUserInit on 64-bit operating system does not work by default installation. You have to manually configure EncUserInit under the native 64-bit registry hive. To manually configure it in the native 64-bit hive:
+
+- After AccessAgent installation is completed before restart, open the registry editor to modify the following registry entry by appending [TAM E-SSO Install Folder]\EncUserInit.exe:
+
+HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon::Userinit
+
+- Example:
+c:\windows\system32\userinit.exe, c:\program files (x86)\encentuate\EncUserInit.exe
+
+*Note: The preceding configuration for EncUserInit is only applicable to Citrix and Terminal Server.
+
+Implications for Customer Deployments
+
+Windows Terminal Server
+- To avoid the need for users to log on twice (once to Terminal Server, and then to AccessAgent), the remote AccessAgent has to communicate with the local AccessAgent through the terminal services virtual channel. There is no other way to avoid double logon since both EnGINA and EnNetworkProvider are not supported.
+- Hence, for thin client deployments and from any computer where there is no local AccessAgent, users will have to manually log on to the remote AccessAgent separately.
+
+Citrix XenApp or MetaFrame Presentation Server
+- To avoid the need for users to log on twice (once to Citrix, and then to AccessAgent), the remote AccessAgent has to communicate with the local AccessAgent through the Citrix virtual channel. Note that this requires the use of the Terminal Services Software Development Kit [http://publib.boulder.ibm.com/infocenter/tivihelp/v2r1/topic/com.ibm.itamesso.doc/concepts/SPI_overview.html](http://publib.boulder.ibm.com/infocenter/tivihelp/v2r1/index.jsp?topic=%2Fcom.ibm.itamesso.doc_8.1%2Fconcepts%2FSPI_overview.html [http://publib.boulder.ibm.com/infocenter/tivihelp/v2r1/index.jsp?topic=%2Fcom.ibm.itamesso.doc_8.1%2Fconcepts%2FSPI_overview.html]). There is no other way to avoid double logon since both EnGINA and EnNetworkProvider are not supported.
+- Hence, for thin client deployments and from any computer where there is no local AccessAgent, users will have to manually log on to the remote AccessAgent separately.
+
+Client Workstation
+- Users will have to manually log on to AccessAgent after logging on to Windows. This is unavoidable since both EnGINA and EnNetworkProvider are not supported.

@@ -1,0 +1,142 @@
+Title: IBM JR43936: PROCESS ADMIN CONSOLE NAGIVATION PANEL DOES NOT SCROLL WHEN CONTENT EXCEEDS BROWSER FRAME SIZE. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 7.5.1 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24033036]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Process admin console nagivation panel does not scroll when
+   content exceeds browser frame size.  So if a user has a lot of
+   human task expose as a service there, not all of the human task
+   service will get displayed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users with BPM Process Server installed.    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The left navigation panel of the        *
+   *                      process admin console does not          *
+   *                      properly display all it's content in    *
+   *                      the web browser.                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When the amount of content displaying on the left navigational
+   panel of the process admin console page exceeds it's default
+   height length, content may be cut off by the overlapping panel
+   below.  The verticle scroll bar does not become available when
+   the content expands beyond the panel's default height.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been implemented to make the veritcle scroll bar
+   available when the content exceeds. Users can now scroll
+   veritcally to view all content within that panel. The fix will
+   be available in fix pack v7.5.1.1 and v8.0.1.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR43936
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-30
+   
+   
+ * CLOSED DATE
+   2012-11-07
+   
+   
+ * LAST MODIFIED DATE
+   2012-11-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

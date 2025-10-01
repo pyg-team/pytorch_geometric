@@ -1,0 +1,37 @@
+Title: IBM How to change the batch selection mode in IBM Datacap Taskmaster Capture - United States
+
+Text:
+Batch Selection TECHNOTE (FAQ)
+
+QUESTION
+ How to change the batch selection mode in IBM Datacap Taskmaster Capture. 
+
+CAUSE
+Need to change the way a shortcut selects the next batch to process.
+
+ANSWER
+For Datacap 8.0.1 or earlier: 
+
+ 1. Log into Taskmaster Client. 
+ 2. Go to Settings > Shortcuts. 
+ 3. Select the icon for the task to be changed. 
+ 4. On the right section under Batch Selection Mode select the desired mode. 
+ 5. Click Apply/Done.
+
+
+For Datacap 8.1 or newer:  1. Log into Datacap Web. 
+ 2. Go to Administrator > Shortcuts. 
+ 3. Select the icon for the task to be changed. 
+ 4. On the right section for Mode select the desired mode. 
+ 5. Click Apply/Done.
+
+
+Available batch selection modes: 
+ *  Auto mode - Automatically selects the next available batch. This batch is determined by using first in first out (FIFO) technology. For a batch creation task, it automatically creates a batch. 
+ * Manual mode - Shows a list of all available batches, and the user selects which batch they want to run. 
+ * Manual for Hold mode - Only shows a list of all the batches that the current user has on hold. If that user has no batches on hold, the system reverts to Auto mode. 
+ * Prompt mode - Allows the user to select which of the three previous modes they want to run.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Datacap Windows 9.0.1, 9.0.0 All Editions

@@ -1,0 +1,60 @@
+Title: IBM Install CC in NGZ solaris did not work w/ mvfsconfig exported - United States
+
+Text:
+install; global zone; non-global zone; NGZ; GZ; Installation Manager TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How can you use ClearCase that was configured in Global Zone in Non-global zone in IBM Rational ClearCase? 
+
+SYMPTOM
+root@z1dnt30d:/> ./clearcase stop 
+Unmounting VOBs... 
+cleartool: Error: The MVFS file system is not installed or not loaded, 
+or the 'viewroot' is not mounted or is inaccessible: not a ClearCase 
+object. 
+Trouble unmounting active VOBs(32:1) 
+root@z1dnt30d:/> ./clearcase start 
+ClearCase daemons: albd_server mount: Operation not applicable to FSType
+mvfs 
+Trouble mounting the viewroot "/view"(16:1) 
+Mounting public VOBs... 
+cleartool: Error: The MVFS file system is not installed or not loaded, 
+or the 'viewroot' is not mounted or is inaccessible: not a ClearCase 
+object. 
+Trouble mounting public VOBs(32:1) 
+A series of retries will be attempted in the background 
+by process 10250. To disable further retries, 
+delete /tmp/ClearCase.retrying 
+
+
+
+CAUSE
+If ClearCase is installed on the GZ, and you already have per-NGZ MVFS cache settings enabled, DO NOT include the following within any NEW NGZ configuration:
+
+fs:
+dir: /var/adm/rational/clearcase/mvfsconfig
+special: /var/adm/rational/clearcase/mvfsconfig/zone/z1dnt30d
+raw not specified
+type: lofs
+options: [ro,nodevices]
+
+ENVIRONMENT
+Solaris 10 with Global and Non-global zones configured.
+
+DIAGNOSING THE PROBLEM
+zonecfg -z ngz-name 
+
+
+Check for existence of lines:
+fs:
+dir: /var/adm/rational/clearcase/mvfsconfig
+special: /var/adm/rational/clearcase/mvfsconfig/zone/z1dnt30d
+raw not specified
+type: lofs
+options: [ro,nodevices]
+
+
+RESOLVING THE PROBLEM
+NGZ Rational Clearcase must overlay GZ file system.
+
+Do not include in lofs

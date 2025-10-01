@@ -1,0 +1,70 @@
+Title: IBM Developer Documentation for IBM Content Foundation: 
+Alternatives to Unsupported Components - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ For unsupported components in IBM Content Foundation, some developer documentation requires clarification. 
+
+CONTENT
+Some developer documentation in the information center requires clarification in regards to unsupported components in IBM Content Foundation. The developer documentation can be found in the Developing IBM FileNet P8 applications [http://pic.dhe.ibm.com/infocenter/iconf/v5r2m0/nav/10] section of the information center. 
+
+There are unsupported components in IBM Content Foundation that are documented as if they were supported. The contexts in which the unsupported components are documented can be misleading, or leave the reader without an obvious alternative for accomplishing certain tasks in IBM Content Foundation. For those tasks, this techdoc provides alternative components or methods.
+
+FileNet Enterprise Manager
+
+FileNet Enterprise Manager (FEM) is not supported in IBM Content Foundation. In general, wherever FEM is referenced, use the Administration Console for Content Platform Engine to perform the task.
+
+However, in the following documentation, you cannot simply replace FEM with the Administration Console to perform the documented operations.
+
+
+ * In the Content Engine Java and .NET Developer's Guide, some topics state that you can use FEM to create SQL searches. Note that Administration Console for Content Platform Engine does not provide that feature. You can, however, create SQL searches with IBM Content Navigator.
+   
+ * In the Content Engine Java and .NET Developer's Guide, the “Feature Addon Concepts” topic includes a subsection called “Creating Addons/XML Manifest”, which provides a high-level procedure for creating an XML file that's used in the creation of a feature addon. Because the procedure requires the use of FEM, it will not work with IBM Content Foundation. Replace the XML Manifest [http://pic.dhe.ibm.com/infocenter/iconf/v5r2m0/topic/com.ibm.p8.ce.dev.ce.doc/addon_concepts.htm] subsection with the following:
+   
+   Import Dataset
+   
+   An import dataset contains a representation of the objects to be installed. To create an import dataset, define your AddOn objects in the Content Engine and export them to an XML dataset file, as follows:
+    1. Using IBM Administration Console for Content Platform Engine, create an object store with no addons installed. 
+    2. Define the classes, objects, and properties that form the feature addon. 
+    3. Using IBM FileNet Deployment Manager [http://pic.dhe.ibm.com/infocenter/iconf/v5r2m0/topic/com.ibm.p8.common.deploy.doc/overview_intro.htm], create an export manifest that specifies the addon metadata that you created in the previous step.
+       The export manifest is used to create the export dataset. 
+    4. Using ImpExpCmdTool [http://pic.dhe.ibm.com/infocenter/iconf/v5r2m0/topic/com.ibm.p8.ce.admin.tasks.doc/exportingimporting/ei_command_line_arguments.htm], create the export dataset.
+       The export dataset consists of the metadata that you created with IBM Administration Console for Content Platform Engine. The dataset that's exported from ImpExpCmdTool is the dataset that's imported into the addon when it is created.
+   
+   
+
+IBM FileNet Rendition Engine 
+
+The IBM FileNet Rendition Engine is not supported in IBM Content Foundation. Only DITA publishing and copy publishing are supported. Therefore, the publishing topics in Content Engine Java and .NET Developer's Guide, and the reference documentation for the com.filenet.api.publishing package, do not apply to publishing with the IBM FileNet Rendition Engine. 
+
+Search Designer 
+
+Workplace XT is not supported in IBM Content Foundation. However, some developer documentation topics state that you can create stored searches and search templates using the Search Designer application in Workplace XT. In IBM Content Foundation, you can use the search view in IBM Content Navigator to create stored searches and search templates. 
+
+COM API and Java API Compatibility Layers 
+
+The COM API and Java API Compatibility Layers are not supported in IBM Content Foundation. However, some developer documentation topics reference these API compatibility layers. To work with IBM Content Foundation, a 3.5.x Content Engine COM API application or a 3.5.x Content Java API application must be rewritten to use the Content Engine .NET API or the Content Engine Java API, both of which are included with IBM Content Foundation. 
+
+The documentation for Content Platform Engine Client Download Service indicates that the service allows you to download the Java API Compatibility Layer to support Content Engine API 3.x clients. Although the download will work, a 3.5.x Content Java API application is not supported with IBM Content Foundation. 
+
+Process Tracker 
+
+In some developer documentation topics, references to the Process Tracker application might infer or explicitly state that the application can be accessed from Workplace or Workplace XT, which are unsupported in IBM Content Foundation. 
+
+In IBM Content Foundation, Process Tracker is available in the Administration Console for Content Platform Engine. From the Workflow System of the object store, open Process Administrator, from which you can access Process Tracker. 
+
+Case Analyzer and Process Simulator 
+
+Case Analyzer and Process Simulator are not supported in IBM Content Foundation. This exclusion impacts the following classes in the Content Engine APIs: 
+ * com.filenet.api.admin.CmProcessEngineConfiguration
+   The properties associated with Case Analyzer, such as AnalysisExporterEnabled, cannot be used.
+
+ * com.filenet.api.admin.CmEventExportStore
+   This class can only be used with the Case History publishing service.
+
+
+JBoss 
+
+The JBoss application server is not supported in IBM Content Foundation. Several developer documentation topics reference JBoss. Please ignore these references.

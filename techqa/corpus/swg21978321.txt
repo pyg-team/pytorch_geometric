@@ -1,0 +1,20 @@
+Title: IBM Running HR Loader in  Single Threaded mode in Atlas Extensions. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ In Atlas Extensions, How to run HRLoader in a single threaded mode? 
+
+ANSWER
+There is a filed called integration.properties under <Atlas installlocation>/Atlas/Properties folder. 
+
+This integration.properties is the initialization file for "Atlas Extensions " Component of the Atlas application. 
+
+This integration.properties file has a property called MULTI_THREADED_PERSON. 
+
+By default there is no value added to this property. If there is no value mentioned for this property ,then the HRLoader runs in multithreaded mode with five concurrent threads by default. 
+
+If you want to run the HRLoader in the single threaded mode, then you can comment the property like below . 
+
+#MULTI_THREADED_PERSON=

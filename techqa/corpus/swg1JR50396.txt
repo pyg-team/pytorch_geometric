@@ -1,0 +1,251 @@
+Title: IBM JR50396: Delta indexing will fail when there are > 1000 records in the TI_DELTA_CATENTRY table using Oracle - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Steps to reproduce problem:
+   1. This is oracle specific problem
+    2. In CMC, Catalog tool, attribute dictionary, select some AD
+   to be facetable
+    3. Check ti_delta_catentry to ensure that entries is more than
+   1000
+    4. launch delta index by store preview or by updateSearchIndex
+   scheduler job
+   
+    Observed Results:
+    delta index failed with error in log:
+    [3/27/14 16:21:15:412 EDT] 00000038 SearchUpdateH E
+   com.ibm.commerce.catalog.facade.server.helpers.SearchUpdateHelpe
+   r invalidateCacheForCatalogEntry(String, boolean, List)
+   java.sql.SQLSyntaxErrorException: ORA-01795: maximum number of
+   expressions in a list is 1000
+   
+      at
+   oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:445)
+      at
+   oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:396)
+      at
+   oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:879)
+      at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:450)
+      at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:192)
+      at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:531)
+      at
+   oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedState
+   ment.java:207)
+      at
+   oracle.jdbc.driver.T4CPreparedStatement.executeForDescribe(T4CPr
+   eparedStatement.java:884)
+      at
+   oracle.jdbc.driver.OracleStatement.executeMaybeDescribe(OracleSt
+   atement.java:1167)
+      at
+   oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleSt
+   atement.java:1289)
+      at
+   oracle.jdbc.driver.OraclePreparedStatement.executeInternal(Oracl
+   ePreparedStatement.java:3584)
+      at
+   oracle.jdbc.driver.OraclePreparedStatement.executeQuery(OraclePr
+   eparedStatement.java:3628)
+      at
+   oracle.jdbc.driver.OraclePreparedStatementWrapper.executeQuery(O
+   raclePreparedStatementWrapper.java:1493)
+      at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.pmiExecuteQuer
+   y(WSJdbcPreparedStatement.java:1082)
+      at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.executeQuery(W
+   SJdbcPreparedStatement.java:703)
+      at
+   com.ibm.commerce.foundation.server.services.dataaccess.JDBCQuery
+   Service.myExecuteQuery(JDBCQueryService.java:1110)
+      at
+   com.ibm.commerce.foundation.server.services.dataaccess.JDBCQuery
+   Service.myExecuteCachedQuery(JDBCQueryService.java:1207)
+      at
+   com.ibm.commerce.foundation.server.services.dataaccess.JDBCQuery
+   Service.executeQuery(JDBCQueryService.java:897)
+      at
+   com.ibm.commerce.catalog.facade.server.helpers.SearchUpdateHelpe
+   r.populateTemplateWithProductParentCategories(SearchUpdateHelper
+   .java:3872)
+      at
+   com.ibm.commerce.catalog.facade.server.helpers.SearchUpdateHelpe
+   r.invalidateCacheForCatalogEntry(SearchUpdateHelper.java:3437)
+      at
+   com.ibm.commerce.catalog.facade.server.event.consumer.CatalogEnt
+   ryIndexing.run(CatalogEntryIndexing.java:449)
+      at
+   com.ibm.commerce.threadmanagement.internal.BaseWork.run(BaseWork
+   .java:139)
+      at
+   com.ibm.ws.asynchbeans.J2EEContext$RunProxy.run(J2EEContext.java
+   :264)
+      at
+   java.security.AccessController.doPrivileged(AccessController.jav
+   a:228)
+      at
+   com.ibm.ws.asynchbeans.J2EEContext.run(J2EEContext.java:1137)
+      at
+   com.ibm.ws.asynchbeans.WorkWithExecutionContextImpl.go(WorkWithE
+   xecutionContextImpl.java:199)
+      at
+   com.ibm.ws.asynchbeans.CJWorkItemImpl.run(CJWorkItemImpl.java:18
+   8)
+      at
+   com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1656)
+   
+    [3/27/14 16:21:15:413 EDT] 00000038 CatalogEntryI E
+   com.ibm.commerce.catalog.facade.server.event.consumer.CatalogEnt
+   ryIndexing run() java.sql.SQLSyntaxErrorException: ORA-01795:
+   maximum number of expressions in a list is 1000
+   
+    [3/27/14 16:21:15:433 EDT] 00000038               W
+   com.ibm.commerce.threadmanagement.internal.BaseWorkListener
+   workCompleted(WorkEvent arg0)
+   com.ibm.commerce.foundation.internal.common.event.exception.Comm
+   onEventSystemException: CWXFS3101E: A problem is encountered
+   while performing a delta indexing. The abstract of the cause is
+   "com.ibm.commerce.foundation.internal.common.event.exception.Com
+   monEventSystemException: CWXFS3101E: A problem is encountered
+   while performing a delta indexing. The abstract of the cause is
+   "java.sql.SQLSyntaxErrorException: ORA-01795: maximum number of
+   expressions in a list is 1000
+    ".".
+   
+    The runtime cache invalidate code does not have Oracle 1000 max
+   parameter limitation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If there are > 1000 entries in the TI_DELTA_CATENTRY table, run
+   a full preprocess/buildindex rather than a delta.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+    WebSphere Commerce v7 users who are using Oracle and run a
+   delta indexing job.
+   
+    PROBLEM ABSTRACT:
+    Delta indexing will fail when there are > 1000 records in the
+   TI_DELTA_CATENTRY table using Oracle
+   
+    BUSINESS IMPACT:
+    Delta indexing will fail, the search index will not be updated.
+   
+    RECOMMENDATION:
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The runtime cache invalidate code has been updated to handle
+   scenario when catalog entry IDs exceed the Oracle 1000 max
+   parameter limitation.
+    -------------------------------------------------------------
+    The latest available maintenance information can be obtained
+   from the Recommended Fixes for WebSphere Commerce technote:
+    http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296 [http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR50396
+   
+   
+ * REPORTED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * REPORTED COMPONENT ID
+   5724I3800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-03
+   
+   
+ * CLOSED DATE
+   2014-07-21
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * FIXED COMPONENT ID
+   5724I3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

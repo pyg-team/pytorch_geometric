@@ -1,0 +1,26 @@
+Title: IBM Brocade Network Advisor - Discover Fabrics - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I know if the switches are configured correctly for monitoring in Network Advisor? What should I check for? Why can't I monitor performance for my Brocade switches in Spectrum Control? 
+
+ANSWER
+If Network Advisor cannot connect to the switches to manage them using the SNMP interface, Spectrum Control will only receive limited information about them and may result in situations where switch performance data cannot be collected because it cannot get the fibre channel port information. 
+
+Here is an example of the Discover Fabrics panel in Network Advisor showing 4 different status situations for switches within a fabric. Each case is described below.
+[/support/docview.wss?uid=swg22014180&aid=1] [/support/docview.wss?uid=swg22014180&aid=1] 
+
+ 1. Although it is not the ideal seed switch, the first switch (carnival) is shown as discovered. It might be at an older firmware level. Refer to the release notes for Network Advisor for supported switches and select a switch that meets the requirements better if possible. This message should not interfere with monitoring the switches with Spectrum Control. 
+ 2. The green check mark and discovered status with no extra messages for this switch (saturn) is ideal. There should be no issue monitoring this switch in Spectrum Control. 
+ 3. The third switch (circus) also shows as discovered but adds in a status of not manageable. Due to the SNMP communication failure in Network Advisor, Spectrum Control will not receive fibre channel port details for this switch and monitor switch port performance for this switch. Refer to the Network Advisor release notes for supported switch models and firmware levels. If this switch can be upgraded to a supported firmware level, this issue could likely be resolved. 
+ 4. The fourth switch (circus2) represents a common condition where the switch does not have the correct SNMP credentials provided. This typically occurs when the seed switch has different credentials than other switches in the fabric. You can individually set the credentials for a switch by selecting the switch and then choosing Edit to resolve this. As long as it shows the SNMP communication failed and that the SNMP credentials might be invalid, Spectrum Control will not get switch port information and cannot monitor the switch port performance for this switch.
+
+
+In general, resolve any issues monitoring the switches in Network Advisor to allow Spectrum Control to get all of the information. If Spectrum Control is missing switches or ports, go back and check the switches in Network Advisor, resolve any issues, and then run a probe again.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Storage Management IBM Spectrum Control Advanced Edition

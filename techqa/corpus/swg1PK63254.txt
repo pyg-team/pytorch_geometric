@@ -1,0 +1,145 @@
+Title: IBM PK63254: EVENT SERVER DOES NOT PICK UP MESSAGES AFTER JBOSS RESTART. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the JBOSS server is restarted while the Event Server is
+   running, new JMS messages placed on the JMS queue after the
+   JBOSS restart, are not picked up by the Event Server.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  LOCAL FIX:
+   WTXCQ - WTX00025343
+   TR / TR
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The JMS adapter's listener can now seamlessly reconnect to the
+   JMS server after it has been recycled.  Before this fix, the WTX
+   adapter could not automatically determine whether or not the
+   JBOSS JMS server was up and running or not.   As a result, JMS
+   messages would go unprocessed until the WTX launcher was itself
+   recycled.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The JMS adapter's listener can now seamlessly reconnect to the
+   JMS server after it has been recycled.  Before this fix, the WTX
+   adapter could not automatically determine whether or not the
+   JBOSS JMS server was up and running or not.   As a result, JMS
+   messages would go unprocessed until the WTX launcher was itself
+   recycled.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK63254
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE LAUNC
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4011
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2008-03-25
+   
+   
+ * CLOSED DATE
+   2008-05-12
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE LAUNC
+   
+   
+ * FIXED COMPONENT ID
+   5724M4011
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP
+   
+   
+ * R801 PSY
+   UP
+   
+   
+ * R810 PSY
+   UP
+   
+   
+ * R820 PSY
+   UP

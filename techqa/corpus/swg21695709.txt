@@ -1,0 +1,62 @@
+Title: IBM Selecting which connections to monitor with the Extended Oracle agent - United States
+
+Text:
+config/rz_<inst>.config; 5724V09ORIN; 5724V09ORTR TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Extended Oracle agent can be configured to enable or disable monitoring of connections listed in the tnsnames.ora. 
+
+CAUSE
+The RZ agent reads the tnsnames.ora file and verifies all the connections are available. 
+
+RESOLVING THE PROBLEM
+
+
+If you apply the latest fixpack for ITCAM Extended Agent for Oracle Database 
+you have two choices to stop monitoring remote or local connections listed in the tnsnames.ora. 
+
+
+ 1. Turn off the related monitoring functions. The environment variables KRZ_LISTENER_PING_INTERVAL and KRZ_TNS_PING_INTERVAL control the interval. If the value is less than 1, then the agent exits the thread and stops checking. Set the INTERVALs to 0 to stop listener/netservice monitoring as temp solution. 
+    
+ 2. Disable the agent from loading listener/tnsnames from TNS_ADMIN or ORACLE_HOME, then define self-interested entry in the tns-patch, such as /opt/IBM/ITM/config/orcl/tnsnames.ora.
+    
+    Ignore Oracle Listener/Net Service definition. 
+    A new environment variable, KRZ_LOAD_ORACLE_NET is available to decide if the Listener and Net Service End Points from the files below need to be monitored. 
+    
+    In Unix/Linux platforms: 
+    $ORACLE_HOME/network/admin/listener.ora 
+    $ORACLE_HOME/network/admin/tnsnames.ora 
+    $TNS_ADMIN/network/admin/listener.ora
+    $TNS_ADMIN/network/admin/tnsnames.ora
+    
+    In Windows platform:
+    %ORACLE_HOME%\network\admin\listener.ora
+    %ORACLE_HOME%\network\admin\tnsnames.ora
+    %TNS_ADMIN%\network\admin\listener.ora
+    %TNS_ADMIN%\network\admin\tnsnames.ora 
+    
+    If this new variable is set with value 'false', then the agent does not load Listener or Net Service definition from files above even if the agent is configured with ORACLE HOME directory. 
+    
+    For example, set these variables in the rz_<instance>.config file:
+    KRZ_TNS_PING_INTERVAL='0' 
+    KRZ_LOAD_ORACLE_NET='FALSE' 
+    
+    The agent still loads Listener or Net Service definition if agent is configured with a TNS PATH directory which contains the files listener.ora or tnsnames.ora.
+    
+
+
+When deploying a new extended oracle agent remotely use -e option of the tacmd addsystem command to specify the environment variable: 
+
+tacmd addSystem 
+{-t|--type} TYPE 
+{-n|--node} MANAGED-OS 
+{-p|--property} SECTION.NAME=VALUE... 
+[{-e|--environment} NAME=VALUE ...] 
+[{-o|--option|--options} NAME=VALUE ...] RELATED INFORMATION
+ tacmd addsystem [http://www.ibm.com/support/knowledgecenter/SS3JRN_7.2.1/com.ibm.itm.doc_6.3/cmdref/addsystem.htm]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ itcamfapps

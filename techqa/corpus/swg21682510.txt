@@ -1,0 +1,95 @@
+Title: IBM Supportability Q&A about IBM Notes and OS X 10.10.x - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ This technote contains questions and answers pertaining to installing and running IBM Notes on Apple's OS X 10.10.x Yosemite. This document now covers a later Mac 9.0.1 slipstream from May 2015 that adds v2 signing which prevents warnings under OS X 10.10 and 10.9.5 both during install and when running with Mac firewall enabled. 
+
+CONTENT
+ 
+
+** For related technotes about Notes and other OS X versions, refer to the Index of Supportability Q&A technotes for Notes and OS X and Windows (technote 1998488) [http://www.ibm.com/support/docview.wss?uid=swg21998488] ** 
+
+
+Q1. Does IBM Notes support Apple's OS X 10.10 Yosemite? 
+Yes. 
+
+Q2. What versions of Notes will be supported on Apple's OS X 10.10 Yosemite?  * IBM Notes 9.0.1 slipstream with 9.0.1 Fix Pack 2 or above is required for support. Prior releases, including Notes 8.5.x, are not supported. 
+ * A slipstream is a re-release of an existing package. In this instance, the 9.0.1 IBM Notes Mac installer was modified to function on Yosemite and the 9.0.1 package was re-posted under new part numbers. (See Q5 for the new part numbers.)
+
+
+Q3. What steps do I take to install Notes on a new Yosemite computer?  * -- Step 1
+ * 
+ *  
+ * 
+ * http://support.apple.com/kb/DL1572
+ * 
+ * -- Step 2:
+ * 
+ * (see download information below
+ * 
+ * 
+ * -- Step 3
+ * 
+ *  
+ * 
+
+
+
+Q4. If I already have Notes 9.0.1 installed, do I need to re-install the slipstream? 
+No. The slipstream is needed only to avoid the following error message, which occurs when installing Notes 9.0.1 for the first time on a Mac running OS X 10.10 Yosemite:  * 
+   "IBM Notes 9.0.1 Social Edition can't be installed on this computer. This can only be installed on Mac OS X 10.6 or above. Current OS Version is too low."
+
+
+
+Q5. Where can I download the Mac slipstream version of Notes 9.0.1?  * The Notes 9.0.1 slipstream can be downloaded from IBM Passport Advantage Online [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] and Partner downloads under the part numbers listed below. This slipstream was modified on Tuesday, May 5th 2015 (original slipstream was posted on Thursday, October 16, 2014). 
+ * IBM Connections Cloud and IBM SmartCloud Notes customers, refer to the following FAQ document for download instructions: FAQ: Software downloads for IBM SmartCloud Notes customers [http://www.ibm.com/support/docview.wss?uid=swg21674504].
+
+
+Q6. Where can I download latest Sametime release that supports Yosemite? 
+For details on where to download the latest Sametime package, see technote 1688304 and follow the link for "Sametime Clients" in the table. 
+
+ *  Description Passport Advantage 
+   Part Number Comments IBM Notes 9.0.1 Mac English CN3B9EN Revised 5/7/2015 IBM Notes 9.0.1 Mac Simplified Chinese and Traditional Chinese CN3AXML Revised 5/7/2015 IBM Notes 9.0.1 Mac Japanese and Korean CN3AYML Revised 5/7/2015 IBM Notes 9.0.1 Mac French, Brazilian Portuguese and Spanish CN3AZML Revised 5/7/2015 IBM Notes 9.0.1 Mac Italian and German CN3B0ML Revised 5/7/2015 IBM Notes 9.0.1 Mac Danish and Dutch CN3B1ML Revised 5/7/2015 IBM Notes 9.0.1 Mac Finnish, Norwegian and Swedish CN3B2ML Revised 5/7/2015 IBM Notes 9.0.1 Mac Polish and Russian CN3B3ML Revised 5/7/2015 IBM Notes 9.0.1 Mac Portuguese and Turkish CN3B4ML Revised 5/7/2015 ** Evaluation Kits ** IBM Notes 9.0.1 Mac English- Evaluation CN3BAEN Added 5/7/2015 IBM Notes 9.0.1 Mac Simplified Chinese and Traditional Chinese- Evaluation CN3B5ML Added 5/7/2015 IBM Notes 9.0.1 Mac Japanese and Korean- Evaluation CN3B6ML Added 5/7/2015 IBM Notes 9.0.1 Mac French, Brazilian Portuguese and Spanish- Evaluation CN3B7ML Added 5/7/2015 IBM Notes 9.0.1 Mac Italian and German- Evaluation CN3B8ML Added 5/7/2015 
+
+
+
+Q7. Where can I download the Mac version of Notes 9.0.1 Fix Pack 3?  * 
+ * 
+ * Interim Fixes for 9.0.1.x versions of IBM Notes, Domino, iNotes & Notes Browser Plug-in
+ * 
+ * 
+ * 
+ * 
+ *  Fix Central Fix ID File name & Download link Notes_901FP3IF3_MAC_Standard 901FP3SHF226_MAC_standard.tar [http://www.ibm.com/support/fixcentral/swg/selectFix?product=ibm%2FLotus%2FLotus+Notes&fixids=Notes_901FP3IF3_MAC_Standard&function=fixId&parent=ibm/Lotus] 
+
+
+Q8. Are there any known issues? 
+
+
+ * Notes 9.0.1 Fix Pack 2 and Notes 9.0.1 Fix Pack 3 includes compatibility fixes for support of OS X 10.10 including:  *  Fix Release SPR Description 9.0.1 Fix Pack 2 PSPS9KW6WT Notes Mac client cannot input any text running under OS X 10.10 Yosemite. 9.0.1 Fix Pack 2 PSPS9LV9JP Notes client crash shortly after launch running under OS X 10.10 Yosemite. 9.0.1 Fix Pack 2 WQWG9KR7XF Fixes Notes install failure when installing Notes on Mac OS X 10.10 Yosemite. 9.0.1 Fix Pack 2 ZMYY9M2DEN Notes Mac client crash when opening certain Preferences panes, such as Basic, running OS X 10.10 Yosemite 9.0.1 Fix Pack 3 NPEI9G98S8 [Mac]Dictation doesn't work on Standard Notes (also addresses ZMYY9QAAMG: The system Chinese input method does not work in Notes on Mac OS X Yosemite) 9.0.1 Fix Pack 3 RUYA9QMR6U Fixes IBM Notes hang on Mac OS X 10.10 when pasting cells from MS Excel 2011 
+   
+   
+
+
+ * IBM Notes 9.0.1 slipstream 1 (superseded by slipstream 2, see below) was released October 16, 2014 to coincide with the Fall release of OS X 10.10. The slipstream remedied an IBM Notes 9.0.1 install issue that results in the following error and prevents 9.0.1 from installing:
+
+ *  "IBM Notes 9.0.1 Social Edition can't be installed on this computer. This can only be installed on Mac OS X 10.6 or above. Current OS Version is too low." 
+
+ * To avoid the version signature warning, the Notes 9.0.1 slipstream (and fix packs prior to 9.0.1 Fix Pack 3) should be installed by (1) control clicking IBM Notes Installer.mpkg app icon, and then by (2) selecting "Open". These steps are used to exempt Developer ID signature protection from a unidentified developer. For more information about signed apps, refer to Apple Article ID HT5290 (http://support.apple.com/kb/HT5290 [http://support.apple.com/kb/HT5290]). This issue was addressed in 9.0.1 Slipstream 2 and 9.0.1 Fix Pack 3 by moving to Apple version 2 signatures.
+
+ * IBM Notes 9.0.1 slipstream 2 was released May 5, 2015 and added Apple V2 signing to avoid a signature warning. Prior to this slipstream the package was signed with Apple version 1 signatures that would result in a warning installing on OS X 10.10 or OS X 10.9.5. The items fixed in this slipstream are as follows: 
+ *   * SPR# HANA9MVK4K - Mac V2 signing required for OS X 10.10 / 10.9.5. This would result in the following message on a Macintosh during install: '"IBM Notes Installer.mpkg" can't be opened because it is from an unidentified developer.'
+   
+    * SPR# TBAY9MPSAL - Mac install kits have unsigned Java files resulting in the following message from the Apple Macintosh Firewall feature: 'Do you want the application "Eclipse" to accept incoming network connections?'
+   
+   
+
+RELATED INFORMATION
+ Featured documents for IBM Notes Domino iNotes [http://www.ibm.com/support/docview.wss?uid=swg27017389]
+Supportability Q&A about IBM Notes and OS X 10.9.x [http://www.ibm.com/support/docview.wss?uid=swg21655004]
+Supportability Q&A about Lotus Notes and OS X 10.8.x [http://www-01.ibm.com/support/docview.wss?uid=swg21599884]
+Q&A about Notes Traveler support for Apple iOS 8.x [http://www-01.ibm.com/support/docview.wss?uid=swg21683614]
+Interim Fixes for 9.0.1.x Notes Domino and iNotes [http://www-01.ibm.com/support/docview.wss?uid=swg21657963]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21694164]

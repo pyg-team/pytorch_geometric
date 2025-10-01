@@ -1,0 +1,18 @@
+Title: IBM Citrix load test recommendations - United States
+
+Text:
+Citrix; Size; Sizing; agent; virtual; tester; amount; RAM; memory; RPT; load; test; clients TECHNOTE (FAQ)
+
+QUESTION
+ What are the recommended preparations for your agents and your load tests for IBM Rational Performance Tester (RPT) Extension for Citrix Presentation Server? 
+
+CAUSE
+You need to anticipate the amount of remote agent computer and the Citrix environment to use for the load test.
+
+ANSWER
+First, review the supported Citrix environments [http://www.ibm.com/support/docview.wss?uid=swg21459253] and the Citrix Testing Guidelines [http://pic.dhe.ibm.com/infocenter/rpthelp/v8r3m0/index.jsp?topic=%2Fcom.ibm.rational.test.lt.citrix.doc%2Ftopics%2Fccitreqs.html]. 
+
+For RPT Citrix load tests sizing, a good number is 20 virtual testers (VTs) per Gigabyte (Gb) of RAM on an agent computer. Above 20 VTGb-1 of RAM, you might encounter performance issues.
+
+
+For Citrix and especially for long load test durations, the Long Run Mode [http://pic.dhe.ibm.com/infocenter/rpthelp/v8r3m0/index.jsp?topic=%2Fcom.ibm.rational.test.lt.doc%2Ftopics%2Ftrunlongtests.html] is usually the right choice.

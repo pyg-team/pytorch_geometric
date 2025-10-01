@@ -1,0 +1,14 @@
+Title: IBM Where can I find a list of cluster administrators ? - United States
+
+Text:
+cluster administrators TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Where can I find a list of cluster administrators ? 
+
+RESOLVING THE PROBLEM
+Where can I find a list of cluster administrators ?Cluster administrators are listed in the ClusterAdmins section of LSF_CONFDIR/lsf.cluster.cluster_name
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

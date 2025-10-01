@@ -1,0 +1,52 @@
+Title: IBM Method to reduce the batch queue delay from the default (20 seconds) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ End-user runs a batch job (for example "Consolidation with Status"). This adds an entry to the batch-queue, which he/she can see inside Maintain - Batch queue - View. If they refresh this screen, it takes a short time (typically 20 seconds) to start running.
+
+NOTE: In some cases (e.g. if the customer has multiple database connections configured) the delay may be longer. 
+
+SYMPTOM
+Delay (typically 20 seconds) between creating a job, and this job changing to "Running".
+
+
+CAUSE
+There are many potential causes for delays (between creating a consolidation job and it actually starting to run). 
+
+ * TIP: For more examples, see separate IBM Technote #1346819.
+
+
+This Technote specifically relates to the scenario where (by design) there is a 20 second delay between when Controller checks each database connection (UDL file) to see if there is a job to process.  * For more information, see separate IBM Technote #1346819.
+
+RESOLVING THE PROBLEM
+Controller 10.2 onwards: 
+
+Modify the setting "Database polling frequency (seconds)", located inside Controller Configuration:
+[/support/docview.wss?uid=swg21635155&aid=1] [/support/docview.wss?uid=swg21635155&aid=1]
+
+Controller 10.1.1:
+Modify this 20 second interval size by using the (undocumented) parameter "BTC_TIMER_INTERVAL". 
+
+ * This controls the time period between the "pollings" 
+ * 
+   IMPORTANT: Be aware that this parameter is an undocumented/unsupported parameter. Therefore:  * This parameter/ability may be removed from future versions of the product 
+    * This parameter has not been thoroughly tested, so customers should use it only at their own risk.
+   
+   
+
+
+Steps: 
+The location of this key varies depending on the operating system on the Controller application server:  * Windows 32-bit: HKEY_LOCAL_MACHINE\SOFTWARE\VB and VBA Program Settings\FrangoController\Settings 
+ * Windows 64-bit (e.g. Windows 2008 R2): HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\VB and VBA Program Settings\FrangoController\Settings
+
+[/support/docview.wss?uid=swg21635155&aid=2] [/support/docview.wss?uid=swg21635155&aid=2] 
+NOTE:  * By default, the key will not be present (you will have to manually create it) 
+ * The default value is 20000 (20 seconds) 
+ * It can be adjusted down to a minimum of 2000 (2 seconds) if desired 
+ * TIP: If you set it to 0 it will default back to 20 seconds 
+
+
+IMPORTANT: This tweak is not supported so there is no guarantee that it will work in future releases. RELATED INFORMATION
+#1346819 - Why is it that when I perform a consolidation [http://www.ibm.com/support/docview.wss?uid=swg21346819]

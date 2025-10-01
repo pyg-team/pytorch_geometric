@@ -1,0 +1,59 @@
+Title: IBM Configuration of the ITCAM agent on AIX leads to Java heap errors. - United States
+
+Text:
+JAVA_OPTS CAMADALL CAMADINST java heap java.lang.OutOfMemoryError CFG5045E TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Configuration of the ITCAM agent on AIX leads to Java heap errors. 
+
+SYMPTOM
+During configuration of the YN agent, you will see these errors: 
+
+java.lang.OutOfMemoryError: Java heap space
+at org.python.core.PyException.tracebackHere(PyException.java:158)
+at org.python.core.PyException.tracebackHere(PyException.java:145)
+at org.python.core.PyTableCode.call(PyTableCode.java:169)
+at org.python.core.PyBaseCode.call(PyBaseCode.java:301)
+at org.python.core.PyBaseCode.call(PyBaseCode.java:141)
+at org.python.core.PyFunction.__call__(PyFunction.java:327)
+at org.python.core.PyFunction.__call__(PyFunction.java:322)
+at org.python.core.PyInstance.ifindfunction(PyInstance.java:168)
+at org.python.core.PyInstance.__findattr_ex__(PyInstance.java:148)
+at org.python.core.PyObject.__findattr__(PyObject.java:863)
+at org.python.core.PyInstance.invoke_ex(PyInstance.java:328)
+
+java.lang.OutOfMemoryError: java.lang.OutOfMemoryError: Java heap space
+CFG5045E The configuration process is being terminated due to errors listed above.
+
+
+CAUSE
+Low heap settings in the JAVA_OPTS parameter.
+
+
+ENVIRONMENT
+AIX - Distributed
+
+
+
+RESOLVING THE PROBLEM
+The Java heap settings are set in the config.sh script in the JAVA_OPTS line. For AIX, the default settings are way too low. 
+
+Please do these changes to get it to work: 
+
+Make a backup of the config.sh file, then edit it. 
+
+Search for the following line JAVA_OPTS in the config.sh file:[/support/docview.wss?uid=swg21959444&aid=1] [/support/docview.wss?uid=swg21959444&aid=1] 
+
+Change the JAVA_OPTS="-Xms256m -Xmx256m" to a higher value like this: 
+
+JAVA_OPTS="-Xms512m -Xms512m" 
+
+Save file, restart the config again and see if it works now without any Out of Java heap messages.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfAD ITCAM4AD ITCAM for App Diagnostics

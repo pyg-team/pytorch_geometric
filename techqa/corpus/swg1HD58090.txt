@@ -1,0 +1,179 @@
+Title: IBM HD58090: PDG / RULES ARE RENAMED INSIDE UDF. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PDG / RULES ARE RENAMED INSIDE UDF.
+   Scenario.
+   .
+   1) Open the CATPart
+   2) Create a geometrical set named TestUDF &
+   instanciate the UDF in it
+   (use the same names)
+   Do not care about the message:
+   Edit the UDF & display it s internal components:
+   Some rules are renamed Rgle.1 even if in the
+   definition they have a name.
+   .
+   Expected Result
+   .
+   The rules should keep their original names. Here
+   only the first & the last rule keep their name.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  PDG / RULES ARE RENAMED INSIDE UDF.
+   PDG / RULES ARE RENAMED INSIDE UDF.
+   Scenario.
+   .
+   1) Open the CATPart
+   2) Create a geometrical set named TestUDF &
+   instanciate the UDF in it
+   (use the same names)
+   Do not care about the message:
+   Edit the UDF & display it s internal components:
+   Some rules are renamed Rgle.1 even if in the
+   definition they have a name.
+   .
+   Expected Result
+   .
+   The rules should keep their original names. Here
+   only the first & the last rule keep their name.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  THE PROBLEM WAS SUBMITTED ON :
+   CATIA VERSION 5 RELEASE 17.
+   THIS PROBLEM IS NOT REPRODUCIBLE ON :
+   CATIA VERSION 5 RELEASE 18 GA level AND ON
+   V5R17SP04.
+   .
+   The problem is also not reproducible on R17 SP02
+   when recreate the rule and recreate the UDF.
+   .
+   Incident Diagnosis
+   - names of udf internals are not following naming
+   rules
+   - in some cases, several features have same name
+   Explanation
+   Note that rules displayed are internal features.
+   They are never shown to final users except in a
+   debugging command available only with PKT license
+   The technical reason of such behaviour was that
+   objects inside udfs are instantiated and their names
+   can were lost during instantiation in some cases
+   which has old modelisation.
+   However renaming the rules solves the problem
+   .
+   Method of recreation.
+   Rename initial objects (rules used for udf creation)
+   in R17 level, and recreate the udf reference. Now
+   instantiate the UDF user will see that the names of
+   rules is correct.
+   1) Open the Part
+   2) Go to the relations tree
+   3) Rename all rules
+   4) Recreate the UDF reference
+   5) Now instantiate the UDF , rule names are correct
+   one.
+   .
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD58090
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   517
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-10-16
+   
+   
+ * CLOSED DATE
+   2006-12-15
+   
+   
+ * LAST MODIFIED DATE
+   2007-02-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569151000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R517 PSN SP51704
+   UP07/02/27 I 1000

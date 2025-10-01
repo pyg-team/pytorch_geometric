@@ -1,0 +1,160 @@
+Title: IBM Importing gives error "No file system is defined for scheme: sourcecontrol" - United States
+
+Text:
+RTC; DM; RSADM; sourcecontrol; org.eclipse.core.internal.filesystem.Policy.error; org.eclipse.core.runtime.CoreException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to import an IBM Rational Software Architect workspace results in the error "No file system is defined for scheme: sourcecontrol" and no resources are imported, when using IBM Rational Software Architect Design Manager and IBM Rational Team Concert. 
+
+SYMPTOM
+Steps to reproduce: 
+
+ 1. Install IBM Rational Team Concert server, IBM Rational Design Manager server, IBM Rational Software Architect, IBM Rational Software Architect Design Manager Client and IBM Rational Team Concert Client Extension, in the same IBM Installation Manager Package Group, and IBM Rational Software Design Manager Import Engine
+    
+ 2. Start Rational Software Architect on a new workspace
+    
+ 3. Create a new UML Modeling Project with some UML models
+    
+ 4. Share the UML Modeling Project in Rational Team Concert
+    
+ 5. Configure the Design Manager Import Engine with the default value for the Eclipse Installation Directory
+    
+ 6. Configure the Import Definition in Design Manager
+    
+ 7. Select to import the entire workspace created in Step 2
+    
+ 8. Request the import from Design Manager
+
+
+Results:  * The modeling project is not imported 
+ * This stack trace appears in the Rational Software Architect workspace, in the .metadata\.log file:
+
+
+!SESSION 2013-04-10 17:52:34.350 -----------------------------------------------
+eclipse.buildId=unknown
+java.fullversion=JRE 1.6.0 IBM J9 2.4 Windows Server 2008 R2 amd64-64 jvmwa6460sr11-20120801_118201 (JIT enabled, AOT enabled)
+J9VM - 20120801_118201
+JIT - r9_20120608_24176ifx1
+GC - 20120516_AA
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
+Framework arguments: -application com.ibm.xtools.rmpc.importEngineHook
+Command-line arguments: -data C:\temp\workspace -application com.ibm.xtools.rmpc.importEngineHook
+
+!ENTRY org.eclipse.equinox.app 0 0 2013-04-10 17:52:36.303
+!MESSAGE Product com.ibm.xtools.importengine.product could not be found.
+
+!ENTRY org.eclipse.core.resources 2 10035 2013-04-10 17:52:36.459
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+
+!ENTRY org.eclipse.core.resources 4 567 2013-04-10 17:52:36.975
+!MESSAGE Workspace restored, but some problems occurred.
+!SUBENTRY 1 org.eclipse.core.resources 4 567 2013-04-10 17:52:36.975
+!MESSAGE Could not read metadata for 'ModelingProjectInRTC'.
+!STACK 1
+org.eclipse.core.runtime.CoreException: No file system is defined for scheme: sourcecontrol
+at org.eclipse.core.internal.filesystem.Policy.error(Policy.java:55)
+at org.eclipse.core.internal.filesystem.Policy.error(Policy.java:50)
+at org.eclipse.core.internal.filesystem.InternalFileSystemCore.getFileSystem(InternalFileSystemCore.java:65)
+at org.eclipse.core.internal.filesystem.InternalFileSystemCore.getStore(InternalFileSystemCore.java:107)
+at org.eclipse.core.filesystem.EFS.getStore(EFS.java:470)
+at org.eclipse.core.internal.localstore.FileStoreRoot.createStore(FileStoreRoot.java:105)
+at org.eclipse.core.internal.localstore.FileSystemResourceManager.initializeStore(FileSystemResourceManager.java:512)
+at org.eclipse.core.internal.localstore.FileSystemResourceManager.read(FileSystemResourceManager.java:735)
+at org.eclipse.core.internal.resources.SaveManager.restoreMetaInfo(SaveManager.java:876)
+at org.eclipse.core.internal.resources.SaveManager.restoreMetaInfo(SaveManager.java:856)
+at org.eclipse.core.internal.resources.SaveManager.restore(SaveManager.java:705)
+at org.eclipse.core.internal.resources.SaveManager.startup(SaveManager.java:1527)
+at org.eclipse.core.internal.resources.Workspace.startup(Workspace.java:2134)
+at org.eclipse.core.internal.resources.Workspace.open(Workspace.java:1883)
+at org.eclipse.core.resources.ResourcesPlugin.start(ResourcesPlugin.java:410)
+at org.eclipse.osgi.framework.internal.core.BundleContextImpl$1.run(BundleContextImpl.java:783)
+at java.security.AccessController.doPrivileged(AccessController.java:277)
+at org.eclipse.osgi.framework.internal.core.BundleContextImpl.startActivator(BundleContextImpl.java:774)
+at org.eclipse.osgi.framework.internal.core.BundleContextImpl.start(BundleContextImpl.java:755)
+at org.eclipse.osgi.framework.internal.core.BundleHost.startWorker(BundleHost.java:370)
+at org.eclipse.osgi.framework.internal.core.AbstractBundle.start(AbstractBundle.java:284)
+at org.eclipse.osgi.framework.util.SecureAction.start(SecureAction.java:417)
+at org.eclipse.osgi.internal.loader.BundleLoader.setLazyTrigger(BundleLoader.java:265)
+at org.eclipse.core.runtime.internal.adaptor.EclipseLazyStarter.postFindLocalClass(EclipseLazyStarter.java:106)
+at org.eclipse.osgi.baseadaptor.loader.ClasspathManager.findLocalClass(ClasspathManager.java:453)
+at org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader.findLocalClass(DefaultClassLoader.java:216)
+at org.eclipse.osgi.internal.loader.BundleLoader.findLocalClass(BundleLoader.java:393)
+at org.eclipse.osgi.internal.loader.SingleSourcePackage.loadClass(SingleSourcePackage.java:33)
+at org.eclipse.osgi.internal.loader.BundleLoader.findClassInternal(BundleLoader.java:466)
+at org.eclipse.osgi.internal.loader.BundleLoader.findClass(BundleLoader.java:422)
+at org.eclipse.osgi.internal.loader.BundleLoader.findClass(BundleLoader.java:410)
+at org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader.loadClass(DefaultClassLoader.java:107)
+at java.lang.ClassLoader.loadClass(ClassLoader.java:626)
+at com.ibm.xtools.rmpc.importhook.internal.ImportHook.calculateDeltaOperations(ImportHook.java:112)
+at com.ibm.xtools.rmpc.importhook.internal.ImportHook.start(ImportHook.java:69)
+at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+at org.eclipse.equinox.internal.app.AnyThreadAppLauncher.run(AnyThreadAppLauncher.java:26)
+at java.lang.Thread.run(Thread.java:738) 
+
+
+
+CAUSE
+The Design Manager Import Engine contains a basic Eclipse installation. This is not appropriate for importing projects stored in Rational Team Concert.
+
+
+
+ENVIRONMENT
+ 
+
+ * IBM Rational Software Architect 8.5.1 
+ * IBM Rational Software Architect Design Manager 4.0.1 
+ * IBM Rational Team Concert 4.0.1
+
+DIAGNOSING THE PROBLEM
+Method 1: 
+
+ 
+
+ 1. Click Start > Programs > Rational Software Architect Design Manager Import Engine > Configure import engine
+    
+    
+ 2. Verify the value of the text field is Eclipse Installation Directory
+
+
+Method 2: 
+ 1. Open the log fileC:\Program Files\IBM\RSADMImportEngine\importEngine.log
+    
+    
+ 2. Check that the value of the entry is Eclipse directory
+
+
+Apr 10, 2013 3:51:39 PM INFO : Import engine starts 
+Apr 10, 2013 3:51:39 PM INFO : Engine name: MyImportEngine 
+Apr 10, 2013 3:51:39 PM INFO : User id: jazzadmin 
+Apr 10, 2013 3:51:39 PM INFO : Front server url: https://dm-fully-qualified-hostname:9443/dm 
+Apr 10, 2013 3:51:39 PM INFO : Eclipse directory: C:/Program Files/IBM/RSADMImportEngine/ 
+
+RESOLVING THE PROBLEM
+SOLUTION 
+
+ 
+
+ 1. Click Start > Programs > Rational Software Architect Design Manager Import Engine > Configure import engine
+    
+    
+ 2. Set the value of the text field Eclipse Installation Directory to be the installation of the Rational Team Concert Client. In this case, since Rational Team Concert Client Extension was installed on an existing installation of Rational Software Architect, the value of the directory is C:\Program Files\IBM\SDP as in the following screen capture:
+
+
+[/support/docview.wss?uid=swg21634062&aid=1] [/support/docview.wss?uid=swg21634062&aid=1]  
+
+Leverage the Jazz Community The Jazz based products have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+
+Review technote 1319600: Leveraging the Jazz Community on Jazz.net [http://www.ibm.com/support/docview.wss?uid=swg21319600] for details.
+
+
+
+RELATED INFORMATION
+#DM Import with ANT [https://jazz.net/wiki/bin/view/Main/RSADM_RTC_And_Ant]
+Import Engine [http://pic.dhe.ibm.com/infocenter/rdmhelp/v4/index.jsp?topic=%2Fcom.ibm.rcam.install.doc%2Ftopics%2Ft_import_engine_configure_rsa.html]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Team Concert Integrations: IBM Linux, Windows 4.0, 4.0.0.1, 4.0.0.2, 4.0.1, 4.0.2 Software Development Rational Software Architect Integrations: IBM Linux, Windows 8.0, 8.0.1, 8.0.2, 8.0.3, 8.0.4, 8.0.4.1, 8.0.4.2, 8.5, 8.5.1 Software Development Rational Software Architect for WebSphere Software Integrations: IBM Linux, Windows 8.0, 8.0.1, 8.0.2, 8.0.3, 8.0.4, 8.0.4.1, 8.0.4.2, 8.5, 8.5.1

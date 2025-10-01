@@ -1,0 +1,30 @@
+Title: IBM Clustering Decision Validation Services - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can we cluster Decision Validation Services (DVS)? 
+
+ANSWER
+When running test suites and simulations from Rule Team Server (RTS), the Scenario Service Provider (SSP), which is the execution component of DVS, has to be deployed on the same server Java Virtual Machine (JVM) as the Rule Execution Server management console. 
+Since the SSP is a client to Rule Execution Server and it invokes Rule Execution Server locally using a POJO rule session, you will need to deploy an Execution Unit (XU) along with the Rule Execution Server console and SSP. 
+
+In a clustered environment, without customization, you will have to deploy the SSP and Rule Execution Server management console on the same server outside the cluster, and no other SSP should be deployed inside the cluster.
+
+Or you can make use of IlrSSPResolver [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/html/api/html/ilog/rules/teamserver/model/testing/IlrSSPResolver.html]to cluster the SSP on nodes where the XU is deployed, and implement load balancing through the IlrSSPResolver. IlrSSPResolver can be used to resolve the SSP location based on the Rule Execution Server management console URL chosen to run the test: in its getSSPURL() method, you can define at which URL you want to find the SSP. A sample implementation can be found at this technote [http://www-01.ibm.com/support/docview.wss?uid=swg21502095].
+
+You can refer to the following documentation on how to deploy the SSP:
+WebSphere ILOG JRules V7.X.Y: Java EE add-ons [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=/com.ibm.websphere.ilog.jrules.install.doc/Content/Business_Rules/Documentation/_pubskel/JRules_Application_Servers/ps_Installing_JRules_IC.html] > Installing on <your application server> > Installing Decision Validation Services > Deploying the Decision Validation Services archive
+
+RELATED INFORMATION
+#Clustering Rule Team Server [http://www.ibm.com/support/docview.wss?uid=swg21400812]
+Clustering the Rule Execution Server console [http://www.ibm.com/support/docview.wss?uid=swg21426014]
+Clustering a transparent decision service [http://www.ibm.com/support/docview.wss?uid=swg21473114]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise

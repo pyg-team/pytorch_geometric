@@ -1,0 +1,104 @@
+Title: IBM Getting Heapdumps on the HP-UX Platform - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document details how to configure the HP-UX Java™ Virtual Machine (JVM) to get heapdumps. This may be necessary for diagnosing memory and/or performance problems for IBM WebSphere Application Server on HP-UX. The following is a list of available generic JVM arguements, per release level. 
+
+RESOLVING THE PROBLEM
+
+General Note for all versions:
+By default, heapdumps on HP-UX are generated in ASCII format. To get the binary, set the _JAVA_BINARY_HEAPDUMP environment variable as given below before generating dumps.
+
+export _JAVA_BINARY_HEAPDUMP=1 
+
+When using jmap:
+- The jmap command must be launched by the same user that launched the target JVM process, or else it might fail .
+- The 32bit version of jmap must be run against 32bit processes, and 64bit jmap for 64bit processes.
+
+
+[http://www.ibm.com/i/v14/rules/dotted_blue_rule_443.gif] 
+
+
+Java 6
+
+To produce a dump in the event of a heap OutOfMemoryError...
+
+-XX:+HeapDumpOnOutOfMemoryError
+
+To manually produce a heapdump with SIGQUIT (kill -3)...
+
+-XX:+HeapDump
+
+To manually generate headumps with jmap...
+
+[32bit] jmap -dump:live,format=b,file=dump.hprof <pid>
+[64bit] jmap -J-d64 -dump:live,format=b,file=dump.hprof <pid>
+
+
+[http://www.ibm.com/i/v14/rules/dotted_blue_rule_443.gif] 
+
+
+
+1.5.0.05 to current version
+
+To produce a dump in the event of a heap OutOfMemoryError...
+
+-XX:+HeapDumpOnOutOfMemoryError
+
+
+To manually produce a heapdump with SIGQUIT (kill -3)...
+
+-XX:+HeapDumpOnCtrlBreak
+- or -
+-XX:+HeapDump
+
+
+
+1.5.0.03 to 1.5.0.04
+These releases contain the -XX:+HeapDump functionality, as described above for 1.4.2.10
+
+
+[http://www.ibm.com/i/v14/rules/dotted_blue_rule_443.gif] 
+
+
+
+1.4.2.11 to current version
+
+To produce a dump in the event of an OutOfMemoryError...
+
+-XX:+HeapDumpOnOutOfMemoryError
+
+
+To manually produce a heapdump with SIGQUIT (kill -3)...
+
+-XX:+HeapDumpOnCtrlBreak
+- or -
+-XX:+HeapDump
+
+
+
+1.4.2.10
+
+To manually produce a heapdump with SIGQUIT (kill -3)...
+
+-XX:+HeapDump
+
+
+
+1.4.2.09 and older
+This version of the Sun JDK on HP does not have the ability to create heapdumps. An upgrade is required.
+
+
+[http://www.ibm.com/i/v14/rules/dotted_blue_rule_443.gif] 
+
+
+
+Upgrade
+Recommended Fixes for WebSphere Application Server
+http://www.ibm.com/support/docview.wss?uid=swg27004980 [http://www.ibm.com/support/docview.wss?uid=swg27004980]
+
+Additional Links
+Where to set generic JVM arguments in IBM WebSphere Application Server
+http://www.ibm.com/support/docview.wss?uid=swg21417365 [http://www.ibm.com/support/docview.wss?uid=swg21417365]

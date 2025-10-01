@@ -1,0 +1,75 @@
+Title: IBM Deploy Rule Team Server 7 on JBoss 5 - United States
+
+Text:
+classloading jboss configuration MyFaces JSF TECHNOTE (FAQ)
+
+QUESTION
+ How do I install Rule Team Server (RTS) 7.X on JBoss Application Server 5.X without modifying its configuration as indicated in the JRules documentation?
+
+
+CAUSE
+When installing RTS on JBoss, the first step indicated by the documentation at WebSphere ILOG JRules BRMS V7.1: Java EE add-ons > Installing on JBoss > Installing Rule Team Server > Installing Rule Team Server on JBoss 5.x > Cleaning up your environment [http://pic.dhe.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.install.doc/Content/Business_Rules/Documentation/_pubskel/JRules_Application_Servers/ps_Installing_JRules_IC361.html] is to remove JSF libraries that are provided with the JBoss server.
+
+This step is required to avoid conflicts between MyFaces libraries of RTS and the JBoss server. 
+
+However, modifying the server configuration may not be acceptable if the server libraries are used by other applications. 
+The following errors show at startup/deployment when no change is done:
+
+[[/teamserver]] Exception sending context initialized event to listener instance of class org.jboss.web.jsf.integration.config.JBossJSFConfigureListener
+com.sun.faces.config.ConfigurationException: CONFIGURATION FAILED! com.sun.faces.lifecycle.LifecycleFactoryImpl incompatible with javax.faces.lifecycle.LifecycleFactory
+at com.sun.faces.config.ConfigManager.initialize(ConfigManager.java:213)
+...
+Caused by:
+java.lang.ClassCastException: com.sun.faces.lifecycle.LifecycleFactoryImpl incompatible with javax.faces.lifecycle.LifecycleFactory
+at com.sun.faces.config.processor.LifecycleConfigProcessor.process(LifecycleConfigProcessor.java:93)
+... 
+
+[[/teamserver]] Exception thrown by attributes event listener
+java.lang.ClassCastException: com.sun.faces.application.ApplicationAssociate incompatible with com.sun.faces.application.ApplicationAssociate
+at com.sun.faces.application.ApplicationAssociate.getInstance(ApplicationAssociate.java:197)
+...
+
+[[/teamserver]] Exception sending context destroyed event to listener instance of class org.jboss.web.jsf.integration.config.JBossJSFConfigureListener
+java.lang.ClassCastException: com.sun.faces.application.ApplicationAssociate incompatible with com.sun.faces.application.ApplicationAssociate
+at com.sun.faces.application.ApplicationAssociate.getInstance(ApplicationAssociate.java:197)
+...
+
+
+ANSWER
+Follow this procedure to modify the default RTS EAR for JBoss 5, which will allow you to deploy and use RTS without modifying the JBoss 5 distribution: 
+
+ 
+
+ 1. Add jboss-classloading.xml to jrules-teamserver-JBOSS5.ear/META_INF with the following entry: 
+    
+    <classloading xmlns="urn:jboss:classloading:1.0" 
+    domain="jrules-teamserver-JBOSS5.ear" 
+    export-all="NON_EMPTY" 
+    import-all="true" 
+    parent-first="false"> 
+    </classloading>
+    
+    
+ 2. Add jboss-classloading.xml in teamserver.ear/teamserver.war/WEB-INF with the following entry: 
+    
+    <classloading xmlns="urn:jboss:classloading:1.0" 
+    parent-first="false" 
+    domain="teamserver.war" 
+    parent-domain="jrules-teamserver-JBOSS5.ear" 
+    export-all="NON_EMPTY" 
+    import-all="true"> 
+    </classloading>
+    
+    
+ 3. Edit web.xml in /WEB-INF of teamserver.war to indicate in the WAR that a JSF implementation is bundled in it. Add the following context-param: 
+    
+    <context-param>
+    <param-name>org.jboss.jbossfaces.WAR_BUNDLES_JSF_IMPL</param-name> 
+    <param-value>true</param-value> 
+    </context-param> 
+
+
+Note: Starting in V7.5 of the product, now called Operational Decision Manager (ODM), these modifications are no longer necessary. The default EAR provided to run RTS (now called Decision Center) on JBoss 5 can be deployed without changes.
+
+RELATED INFORMATION
+#Operational Decision Manager Download document [http://www.ibm.com/support/docview.wss?uid=swg24031636]

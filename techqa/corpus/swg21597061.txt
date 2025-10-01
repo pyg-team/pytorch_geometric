@@ -1,0 +1,99 @@
+Title: IBM Compatibility across releases for ClearCase clients and servers - United States
+
+Text:
+RNCC8.0; RNCC8.0.0.1; RNCC8.0.0.2; RNCC8.0.0.3; RN7.1; RN7.1.x; RN7.1.2; RN7.1.2.3; RN7.1.2.4; RN7.1.2.5; RN7.1.2.6; RN7.1.2.7; ClearCase PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ IBM Rational ClearCase operations require communication between multiple client and server components. If some components run different ClearCase versions, operations can be interrupted or stopped by software compatibility issues. To prevent problems, use the compatibility information in this technote to make sure that all components in your environment can operate together successfully. 
+
+CONTENT
+All versions of the ClearCase software running on the clients and servers in your environment must be compatible. 
+Compatibility considerations
+
+When considering compatibility issues, keep these points in mind: 
+
+ *  Compatibility is guaranteed if all components run the same ClearCase version.
+   
+ * Before upgrading clients and servers, review the ClearCase compatibility information to ensure that the ClearCase version you are upgrading to is compatible with the versions running on other clients and servers in your environment.
+   
+ * If you are using ClearCase in a UCM environment, review the known issues:  * Technote #1402608: Accessing UCM component reports error: More than one version with label of type [http://www.ibm.com/support/docview.wss?rs=984&uid=swg21402608] 
+    * Technote #1402557: UCM Full Baseline fails to label a single version of every element in the component [http://www.ibm.com/support/docview.wss?rs=984&uid=swg21402557]
+      
+   
+   All compatibility issues in a UCM environment can be avoided by upgrading the server to a version that is at the same level or newer than the version running on the client.
+
+ * Note: 
+ * 
+
+
+Additional information  * For more information about Rational product compatibility, use the Software Product Compatibility Reports [https://www.ibm.com/software/reports/compatibility/clarity/index.jsp] web site from IBM support to run reports about operating systems, prerequisites, server virtualization environments, and other product compatibility information. 
+ * For information about version terminology, see technote #7008656 V.R.M.F. Maintenance Stream Delivery Vehicle terminology explanation [http://www.ibm.com/support/docview.wss?uid=swg27008656].
+
+
+
+
+
+
+
+ClearCase Compatibility Information 
+
+
+The following tables show the compatibility paths when ClearCase components are not running the same versions of Rational ClearCase. In these tables, Client refers to Rational ClearCase client software which includes one or more of these components:
+
+
+ * ClearCase native client.
+   
+ * ClearCase client using ClearTeam Explorer for dynamic views only.
+   
+ * CM/CCRC WAN server, which by default also serves as a view server for web views.
+
+
+These tables provide a list of compatible combinations for client, view server, VOB server, Rational ClearCase Remote Client, and CM Server. 
+ * Table 1. Client version compatibility with VOB server
+ * 
+ * Table 2. Client version compatibility with View server
+ * 
+ * Table 3. View server compatibility with VOB server
+ * 
+ * Table 4. CM Client compatibility with CM/CCRC WAN Server
+ * 
+ * 
+ * Table 5. VOB database compatibility
+ * 
+ * 
+
+Table 1. ClearCase Client version compatibility with VOB server. Client #In%20these%20tables%2C%20Client%20refers%20toversion VOB Server version 2003.06.xx 7.0.0.x 7.0.1.x 7.1.x.y 7.1.2.x 8.0.0.x 8.0.1.x 9.0.0.x 9.0.1.x 7.0.0.x (5) N Y Y Y Y (1) Y (2) Y #2%20-%20FL7%20feature%20support%20needs%20cli (2) (6) Y #2%20-%20FL7%20feature%20support%20needs%20cli (2) (6) Y #2%20-%20FL7%20feature%20support%20needs%20cli (2) (6) 7.0.1.x (5) N Y #2%20-%20FL7%20feature%20support%20needs%20cli Y Y Y (1) Y (2) Y (2) (6) Y (2) (6) Y (2) (6) 7.1.x.y N Y Y Y Y (1) Y (2) Y (2) (6) Y (2) (6) Y (2) (6) 7.1.2.x N Y Y Y Y (1) Y (2) Y (2) (6) Y (2) (6) Y (2) (6) 8.0.0.x N Y Y Y Y Y Y (6) Y (6) Y (6) 8.0.1.x N Y Y Y Y Y Y Y Y 9.0.0.x N Y Y Y Y Y Y Y Y 9.0.1.x N Y Y Y Y Y Y Y Y 
+
+Table 2. ClearCase Client version compatibility with View server. Client version View server #View%20server%20refers%20to%20CM%2FCCRC%20WAN version 2003.06.xx 7.0.0.x 7.0.1.x 7.1.x.y 7.1.2.x 8.0.0.x 8.0.1.x 9.0.0.x 9.0.1.x 7.0.0.x (5) N Y Y Y Y Y Y (6) Y (6) Y (6) 7.0.1.x (3) (5) N Y Y Y Y Y Y (6) Y (6) Y (6) 7.1.x.y (3) N Y Y Y Y Y Y (6) Y (6) Y (6) 7.1.2.x (3) N Y Y Y Y Y Y (6) Y (6) Y (6) 8.0.0.x (4) N Y Y Y Y Y Y (6) Y (6) Y (6) 8.0.1.x N Y Y Y Y Y Y Y Y 9.0.0.x N Y Y Y Y Y Y Y Y 9.0.1.x N Y Y Y Y Y Y Y Y 
+
+
+Table 3. View server compatibility with VOB server View server version VOB Server version 2003.06.xx 7.0.0.x 7.0.1.x 7.1.x.y 7.1.2.x 8.0.0.x 8.0.1.x 9.0.0.x 9.0.1.x 7.0.0.x (5) N Y Y Y Y (1) Y (2) Y (2) (6) Y (2) (6) Y (2) (6) 7.0.1. x (5) N Y Y Y Y (1) Y (2) Y (2) (6) Y (2) (6) Y (2) (6) 7.1.x.y N Y Y Y Y (1) Y (2) Y (2) (6) Y (2) (6) Y (2) (6) 7.1.2.x N Y Y Y Y (1) Y (2) Y (2) (6) Y (2) (6) Y (2) (6) 8.0.0.x N Y Y Y Y Y Y (6) Y (6) Y (6) 8.0.1.x N Y Y Y Y Y Y Y Y 9.0.0.x N Y Y Y Y Y Y Y Y 9.0.1.x N Y Y Y Y Y Y Y Y 
+
+
+Table 4. CM Client compatibility with CM/CCRC WAN Server (See the note for this table.) Rational ClearTeam Explorer (8.0)
+or 
+Rational ClearCase Remote Client 
+or 
+Rational ClearCase Change Management API Version CM Server Version CCRC WAN Server [/support/docview.wss?uid=swg21597061&amp;aid=1] 7.1 7.1.0.1 7.1.02 7.1.1 7.1.1. y [/support/docview.wss?rs=0&uid=swg2545E811087F22E9685257A0F00543804#1.%20For%20the%20purposed%20of%20this%20table&loc=en_US] 7.1.2 7.1.2. y [/support/docview.wss?rs=0&uid=swg2545E811087F22E9685257A0F00543804#1.%20For%20the%20purposed%20of%20this%20table&loc=en_US] 8.0.0. y (y>=0) [/support/docview.wss?rs=0&uid=swg2545E811087F22E9685257A0F00543804#1.%20For%20the%20purposed%20of%20this%20table&loc=en_US] 8.0.1.x 9.0.0.x 9.0.1.x 7.0.1 Rational ClearCase Remote Client only N N N N N N N N N N N 7.1 Y Y N N N N N N N N N 7.1.0.1 N Y N N N N N N N N N 7.1.0.2 N N Y N N N N N N N N 7.1.1 N N N Y Y Y Y N N N N 7.1.1.x N N N N [/support/docview.wss?rs=0&uid=swg2545E811087F22E9685257A0F00543804#1.%20For%20the%20purposed%20of%20this%20table&loc=en_US] Y if x<=y N if x>y [/support/docview.wss?rs=0&uid=swg2545E811087F22E9685257A0F00543804#1.%20For%20the%20purposed%20of%20this%20table&loc=en_US]
+
+Y Y N N N N 7.1.2 N N N N N Y Y N N N N 7.1.2.x N N N N N N [/support/docview.wss?rs=0&uid=swg2545E811087F22E9685257A0F00543804#1.%20For%20the%20purposed%20of%20this%20table&loc=en_US] Y if x<=y N if x>y [/support/docview.wss?rs=0&uid=swg2545E811087F22E9685257A0F00543804#1.%20For%20the%20purposed%20of%20this%20table&loc=en_US]
+
+N N N N 8.0.0.x (x>=0) N N N N N N N Y Y Y Y 8.0.1.x N N N N N N N Y (7) Y Y Y 9.0.0.x N N N N N N N Y (7) Y Y Y 9.0.1.x N N N N N N N N Y Y Y Note: In V8.0.0.x, backward and forward compatibility is supported between the CM Client and CCRC WAN server. 
+
+
+
+Table 5. VOB database compatibility Version <=9.0.0.x or >=9.0.1.1 9.0.1 <=9.0.0.x or >=9.0.1.1 Y See the note for this table. 9.0.1 See the note for this table. Y Note: For version 9.0.1, the 32-bit linux_x86 offering is compatible with earlier releases, but the 64-bit linux_x86_64 offering requires VOB database reformatting. For more information about VOB database compatibility, see technote #2004783 VOB on-disk format is not compatible between 32-bit and 64-bit Linux platforms in ClearCase version 9.0.1 [http://www.ibm.com/support/docview.wss?uid=swg22004783]. 
+
+
+Footnotes: 
+(1) - Support for SRFM only in version 7.1.2.1 or newer.
+(2) - FL7 feature support needs client at version 8.0.0.0 or newer.
+(3) - ClearCase native client only.
+(4) - ClearCase native client and ClearTeam Explorer for dynamic view support only.
+(5) - For 7.0.0.x and 7.0.1.x releases, the x includes all iFixes and patch releases.
+(6) - VOBs at FL8 with ACLs enforced require clients and view servers at 8.0.1.
+(7) - Only with ACLs disabled.
+
+
+
+ Back to top

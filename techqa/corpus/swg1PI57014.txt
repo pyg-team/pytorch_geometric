@@ -1,0 +1,173 @@
+Title: IBM PI57014: RPE TEMPLATES DO NOT WORK PROPERLY WHEN OPENED IN RHAPSODY - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Rational Rhapsody 8.1.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24042078]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Summary:
+   
+   The customer is trying to generate reports based off of the RPE
+   templates. Using diagram.dta
+   (C:\Users\[User]\IBM\Rational\Rhapsody\8.1.3\Share\RPE\Templates
+   \ProjectContentReport) and the elevator sample project, the
+   report only generates what seems to be document headers. See
+   attached screenshot.
+   
+   Is this the correct output? If not, how can we get it to show up
+   properly? The customer has reported that several templates don't
+   work properly, but obviously we'll try and troubleshoot this one
+   first.
+   
+   See attached video (.fbr) for reproduction steps. I was able to
+   reproduce and got the exact same result.
+   
+   
+   Full description from the customer:
+   
+   "Tools > Publish > Generate Report presents several report
+   templates.  I am using the standard Elevator sample.  Some of
+   the reports work, but some do not.  The attached video shows
+   that the Diagrams template creates a report with nothing in it.
+   I see this with other models too.  It seems to be an error.  Am
+   I doing something wrong or is this a major defect? "
+   
+   Business Impact
+   
+   This is from a Sales Rep:
+   
+   "This is a basic functionality that needs to work, easily
+   and well.  I have a  prospect that is about to compare this with
+   Sparx EA"
+   
+   ---
+   
+   Chris Sutton Feb 9, 2016 3:38 AM
+   I can also reproduce this via the Tools menu. No diagram images.
+   
+   However, the same template "Diagrams.dta" via RPE generates the
+   report containing diagram images.
+   
+   It appears this was defective before and fixed:
+   
+   https://jazzop05.rtp.raleigh.ibm.com:9943/jazz/web/projects/Rhap
+   sody#action=com.ibm.team.workitem.viewWorkItem&id=194732 [https://jazzop05.rtp.raleigh.ibm.com:9943/jazz/web/projects/Rhapsody#action=com.ibm.team.workitem.viewWorkItem&id=194732]
+   
+   Looks like a regression defect to me. The workaround is to use
+   RPE (requires license)  or to use R+
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Rhapsody 8.1.4                                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * RPE TEMPLATES DO NOT WORK PROPERLY WHEN OPENED IN RHAPSODY   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 8.1.5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI57014
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   813
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-10
+   
+   
+ * CLOSED DATE
+   2016-04-25
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R814 PSY
+   UP

@@ -1,0 +1,58 @@
+Title: IBM "System.IO.DirectoryNotFoundException: Path not found" when importing CSV file via Import Specification - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ "Transfer - External Data - Import from Flat Files". User chooses "Import Specification" and clicks "Client". User clicks 'browse' and browses to a folder. User chooses import file (CSV) file and starts the import process. An error message appears. 
+
+SYMPTOM
+Screen: 
+
+Information
+Standard Error
+Source: ControllerProxyClient
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. --->
+System.IO.DirectoryNotFoundException: Path not found
+at FrDImportBT.clsExtImportClass.DoImport(String sGuid.......
+<.....>
+[OK]
+
+Event Viewer (Application log):
+Log Name: Application
+Source: Cognos Controller
+Date: 2011-06-27 15:46:00
+Event ID: 0
+Task Category: None
+Level: Warning
+Keywords: Classic
+User: N/A
+Computer: PCNAME
+Description:
+Standard Error
+Source: ControllerProxyClient
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.IO.DirectoryNotFoundException: Path not found
+at FrDImportBT.clsExtImportClass.DoImport(String sGuid, String sUser, Boolean bCaseExpVal, Int32 lBatchId, String sSpecName, String sStructureType, String sPrompts, Int32 lLLocale, Boolean& bError, Int32& lError, String& sErrorMsg, Recordset rsFileDataAndInfo, Recordset& rsRecon, Recordset& rsLog)
+at Cognos.Controller.Proxy.CCRWS.clsExtImport_DoImport(String sGuid, String sUser, Boolean bCaseExpVal, Int32 iBatchId, String sSpecName, String sStructureType, String sPrompts, Int32 iLLocale, Boolean& bError, Int32& iError, String& sErrorMsg, DataSet dsFileDataAndInfo, DataSet& dsRecon, DataSet& dsLog)
+--- End of inner exception stack trace ---
+at Cognos.Controller.ControllerSoapHttpClientProtocol.Invoke(String methodname, Object[] parameters)
+at Cognos.Controller.Proxy.FrDImportBT.WSFrDImportBT.clsExtImport_DoImport(String sGuid, String sUser, Boolean bCaseExpVal, Int32 iBatchId, String sSpecName, String sStructureType, String sPrompts, Int32 iLLocale, Boolean& bError, Int32& iError, String& sErrorMsg, DataSet dsFileDataAndInfo, DataSet& dsRecon, DataSet& dsLog)
+at Cognos.Controller.Direct.DIimportD.ImportExternalData(String sSpecName, String sStructureType, String sPrompts, DataSet dsFileDataAndInfo, DataSet& dsLog, Boolean bCaseExpValue, Int32 iBatchId, Boolean& bErr, Int32& iError, String& sErrorMsg)
+at Cognos.Controller.ControllerDImport.clsDImport.ImportData(String sSpecName, String sStructureType, Int32 iBatchId, String sImportDir, String sImportFile, String sPrompts, DataSet& dsLog, Boolean& bErr, Int32& iError)
+at Cognos.Controller.Forms.Form.frmDIstartimp.ImportExternalData()
+at Cognos.Controller.Forms.Form.frmDIstartimp.IForm_DoClick(Int32 lCmd, String& sTag)
+
+
+
+CAUSE
+Controller application server's COM+ Windows user is not a member of the local 'Administrators' group on the application server.
+
+
+
+RESOLVING THE PROBLEM
+Add the Controller application server's COM+ Windows user account to the local Windows 'Administrators' group on the application server. Afterwards, obtain a short period of downtime and reboot the application server.
+
+
+
+RELATED INFORMATION
+#1347608 - Event Viewer 'Error occurred - in FrangoBusin [http://www.ibm.com/support/docview.wss?uid=swg21347608]

@@ -1,0 +1,26 @@
+Title: IBM Performance tips for an Oracle based RequisitePro database - United States
+
+Text:
+RequisitePro; reqpro; oracle; database; db; performance; query; views; table; 152384701; 152288; tips; tricks; perf; enhance; speed; truncate; indexes; optimization; cost-based optimization; optimisation; cost-based optimisation; optimise; sql server TECHNOTE (FAQ)
+
+QUESTION
+ How can you improve the performance of an Oracle based IBM Rational RequisitePro (ReqPro) projects? 
+
+CAUSE
+You would like to improve the performance when you work with ReqPro projects on an Oracle database.
+
+ANSWER
+ANSWER 
+
+The following are some suggestions for enhancing performance of Oracle based ReqPro databases: 
+
+ * Truncate the temporary tables in the RequisitePro schema. Refer to Creating an SQL job that truncates RequisitePro temp tables [http://www-01.ibm.com/support/docview.wss?&uid=swg21174400] for information on how to truncate the temporary tables. 
+ * Drop and Recreate the Oracle or Microsoft SQL Server views in the RequisitePro schema. Refer to Dropping and recreating user views in the RequisitePro database that contain data [http://www-01.ibm.com/support/docview.wss?&uid=swg21166046] for instructions on how to drop and recreate the Oracle or SQL Server views in the ReqPro schema. [http://www.ibm.com/support/docview.wss?uid=swg21123214] [http://www.ibm.com/support/docview.wss?uid=swg21166046] 
+ * Increase performance by analyzing tables and rebuilding indexes. The technote How to improve Oracle database performance by analyzing the RequisitePro tables and indexes [http://www-01.ibm.com/support/docview.wss?&uid=swg21131361] contains instructions on how to analyze the tables and rebuild indexes. 
+ * Determine which optimization mode the database is running. The technote Different optimization modes set in an Oracle database can affect the performance of RequisitePro [http://www-01.ibm.com/support/docview.wss?&uid=swg21152355] provides information on how to determine the optimization mode the database is running. 
+ * If the database uses cost-based optimization, analyze the RequisitePro tables and indexes according to the technote How to improve Oracle database performance by analyzing the RequisitePro tables and indexes [http://www-01.ibm.com/support/docview.wss?&uid=swg21131361].
+
+ 
+
+HISTORICAL NUMBER
+ 152384701

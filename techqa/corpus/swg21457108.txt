@@ -1,0 +1,76 @@
+Title: IBM TM1 Server crash: MEMORY_ALMOST_FATAL_LEVEL - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TM1 server crashes with warning/error in log. 
+
+SYMPTOM
+TM1 server comes down.
+
+CAUSE
+Server is out of memory.
+
+DIAGNOSING THE PROBLEM
+Lines similar to those below are noted in the tm1server.log (tm1smsg.log for older versions of TM1):
+
+
+2968 WARN 2008-03-08 12:24:23,873 TM1.Server.Memory CommonAlloc() outOfMemory Exception <<< MEMORY_ALMOST_FATAL_LEVEL >>> - threadID "2968" - apifunc# "0"
+
+2968 INFO 2008-03-08 12:24:24,186 TM1.Chore Chore "AdminTasks" executed by scheduler - memory exception
+
+4988 ERROR 2008-03-08 12:27:24,979 TM1.Client Out of Memory - Clients will not log out, auto aborting
+
+4988 FATAL 2008-03-08 12:27:25,042 TM1.Server Server terminated
+
+
+RESOLVING THE PROBLEM
+Anytime there is a 'FATAL' error thrown, the server is going down. The reason the server is going down is because of the information in the WARN and ERROR messages preceding it. The memory limit has been reached. 
+
+
+There was a change made in version 9.1 after SP3 that prevents the server from going down immediately after a fatal memory error. Instead, it waits for clients to log out and does not let any new ones come in until memory drops appropriately. However, the memory drop is unlikely so it really just allows the server to shut down more gracefully, given that it will ultimately shut down.
+
+This is sometimes seen when customers upgrade from versions prior to 9.1 to 9.1x or higher, as the model footprint is larger in the newer versions. It could also be that the model has simply outgrown the available RAM on the machine. 
+
+If using a 32bit server, Microsoft sets a hard limit on the amount of RAM that one application can access, and the limit is 2GB. It is possible to access another gig of RAM by setting the 3gig switch in the boot.ini file to force the machine to use 3GB per application, assuming that there is at least 4GB of available RAM on the machine. 
+
+IBM Cognos TM1 adheres to Microsoft’s policy regarding which OS should be used when applying the 3GB RAM switch - see link below.
+
+Important Notes
+• TM1 is developed NOT using the Address Windowing Extensions (AWE) API set. 
+• TM1 does NOT use PAE. A single 32-bit TM1 servers can at most use 3 GB memory.
+• If you want the TM1 server to access more than 3 GB of RAM you must upgrade to a 64-bit platform.
+
+Tuning Procedure
+The following procedure describes how to tune RAM so that 3 GB is available to the TM1 server. This procedure requires you to edit the boot.ini file. Changes to the boot.ini file can adversely affect your system. Please make sure you understand these steps before proceeding. 
+
+If your system has two or more partitions, please ensure that you make the changes to the boot.ini file in the correct partition.
+
+1. Verify that your operating system is one of the operating systems that support RAM tuning (see link).
+
+2. Open c:\boot.ini in a text editor.
+
+3. Add the /3GB switch to the end of the last line of boot.ini.
+The following example shows a boot.ini file prior to applying the /3GB switch:
+[boot loader]timeout=5
+default=multi(0)disk(0)rdisk(0)partition(1)\WINDOWS
+[operating systems]
+multi(0)disk(0)rdisk(0)partition(1)\WINDOWS="Windows Server 2003, Enterprise" /fastdetect
+
+The following example shows the same boot.ini file after applying the /3GB switch:
+[boot loader]
+timeout=5
+default=multi(0)disk(0)rdisk(0)partition(1)\WINDOWS
+[operating systems]
+multi(0)disk(0)rdisk(0)partition(1)\WINDOWS="Windows Server 2003, Enterprise" /fastdetect /3GB
+
+4. Reboot the physical server on which the TM1 server runs.
+
+If the server is already set to address 3GB of RAM, then there is no choice except to go to a 64bit machine. On a 64bit, you can run 32bit TM1 and it will then be able to address 4GB of memory. Or you may want to consider a 64bit TM1 server which is only limited by the amount of available memory on the machine.
+
+If already using a 64bit TM1 server and getting the out of memory error, then add more RAM to the machine, as TM1 is only limited by the amount of available memory.
+
+
+RELATED INFORMATION
+#Microsoft 3GB switch [http://support.microsoft.com/default.aspx?scid=kb;en-us;291988]

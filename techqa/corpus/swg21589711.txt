@@ -1,0 +1,43 @@
+Title: IBM Tivoli XML Probe configuration with MQ 7 - United States
+
+Text:
+xml; jms; MQ7; message bus TECHNOTE (FAQ)
+
+QUESTION
+ What are the configuration steps to configure XML probe to listen to MQ 7 queue 
+
+ANSWER
+Ensure the following packages are installed:
+common-transformer
+common-transportmodule
+gateway-libngjava
+probe-nonnative-base
+gateway-nco-g-xml
+probe-nco-p-xml
+
+Then follow the follow steps:
+--------
+1. Copy WAS 7 client jar from <WAS_HOME>/runtimes to<OMNIHOME>/java/jars
+com.ibm.ws.ejb.thinclient_7.0.0.jar
+com.ibm.ws.sib.client.thin.jms_7.0.0.jar
+com.ibm.ws.messagingClient.jar
+com.ibm.ws.orb_7.0.0.jar
+
+2. Copy MQ 7 java jms client jar from <MQ_HOME>/java/lib
+to<OMNIHOME>/java/jars
+com.ibm.mqjms.jar
+com.ibm.mq.jar
+
+3. Modify <OMNIHOME>/probe/java/nco_p_xml.env
+SIBC_JARS=${OMNIHOME}/java/jars/com.ibm.ws.ejb.thinclient_7.0.0.jar:$
+{OMNIHOME}/java/jars/com.ibm.ws.sib.client.thin.jms_7.0.0.jar:$
+{OMNIHOME}/java/jars/com.ibm.ws.messagingClient.jar:$
+{OMNIHOME}/java/jars/com.ibm.mqjms.jar:${OMNIHOME}/java/jars/com.ibm.mq.jar
+SIBC_ORB_JAR=${OMNIHOME}/java/jars/com.ibm.ws.orb_7.0.0.jar
+
+4. Create WAS JMS resource for MQ QueueConnectionFactory and MQ Queue,
+Modify Omnibus jmsTransport.properties
+
+5. MQ QM listener has to be started
+
+6. Start XML probe

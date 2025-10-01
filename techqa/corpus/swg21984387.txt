@@ -1,0 +1,33 @@
+Title: IBM Customer needs to remove a datanode from Hadoop Cluster, what are the steps to remove the datanode - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are the steps to remove a datanode from a Hadoop Cluster 
+
+CAUSE
+Customer needs to replace a dying node, or reduce the cluster size or do a general maintenance 
+In the process a datanode will have to be removed from the cluster 
+
+
+ANSWER
+Following are the steps : 
+
+ To complete the decommissioning of a datanode from a cluster - this datanode needs to be up and running. Now switch to the host on which the datanode needs to be decommissioned and click on Decommission Option 
+
+[/support/docview.wss?uid=swg21984387&aid=1] [/support/docview.wss?uid=swg21984387&aid=1]
+
+Once the Decommission Option is selected, the Datanode is then decommissioned. In the process the blocks are recopied on to other nodes, as required by the NameNode, and after that , this datanode is marked as Decommissioned. Following diagram, shows the status of the DataNode after it is decommissioned. 
+
+ 
+
+[/support/docview.wss?uid=swg21984387&aid=2] [/support/docview.wss?uid=swg21984387&aid=2]
+
+Once the datanode is decommissioned, click Stop to stop the datanode, and then click Delete, to Delete the datanode. After this process is complete, Ambari will now request the user to restart the stale components for HDFS , accept the option to restart and let ambari go ahead and refresh the components. This will also require a restart for the NameNode and complete the restart of the Namenode. 
+
+ 
+
+Refresh HDFS Configuration from Ambari page, this will now only show the remaining datanodes. 
+
+If datanode is removed , make sure that the Yarn Node Manager is also decommissioned from this node using similar steps to removing the datanode

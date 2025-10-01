@@ -1,0 +1,34 @@
+Title: IBM The Enterprise COBOL SQL CoProcessor gives compiler errors.  The SQL PreProcessor does not give the same errors. - United States
+
+Text:
+MSGIGYPS0209-W MSGDSNH206I MSGIGYPS0209 IGYPS0209; 1244064 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When the user compiles an Enterprise COBOL program with the DB2/SQL PreProcessor, no compiler statements are flagged as in error. 
+When he uses the Enterprise COBOL CoProcessor, with the SQL option specified, he gets this and similar errors: 
+IGYPS0209-W DSNH206I DSNHANAL STATEMENT REFERENCES COLUMN 
+'AAAAA'.'BBBBB''CCCCC', WHICH IS NOT DECLARED IN THE SPECIFIED TABLE(S) 
+
+CAUSE
+There are DB2/SQL Precompiler options that relax or enforce the official DB2 standard to varying degrees. 
+In this case, the PreProcessor options were set with these overrides: 
+// EXEC PGM=DSNHPC,
+// PARM='HOST(COBOL),APOSTSQL,SQL(DB2),STDSQL(NO)' 
+
+
+RESOLVING THE PROBLEM
+When the COBOL CoProcessor was run with the same overrides: 
+
+ CBL SQL('HOST(COBOL),APOSTSQL,SQL(DB2),STDSQL(NO)') 
+the statements were not flagged as errors.
+
+
+NOTE 1) The DB2/SQL PreProcessor default options are used by the Enterprise COBOL SQL CoProcessor. Informational APAR II13782 lists some options that cannot be overridden when the CoProcessor is used. 
+
+NOTE 2) The options needed to be set for matching or similar results will vary for each customer installation. 
+
+NOTE 3) A list of differences is in the Enterprise COBOL for z/OS Compiler and Runtime Migration Guide GC23-8527 chapter 18 and in Enterprise COBOL for Z/OS Programming Guide SC23-8529 chapter 21.
+
+
+RELATED INFORMATION
+#COBOL reference manuals [http://www.ibm.com/software/awdtools/cobol/zos/library]

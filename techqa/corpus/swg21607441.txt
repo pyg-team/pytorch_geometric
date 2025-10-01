@@ -1,0 +1,44 @@
+Title: IBM "(0x80040E14): ORA-00932: inconsistent datatypes: expected DATE got NUMBER" when using "Company - Copy – Company Journals Between Periods" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User launches "Company" - "Copy – Company Journals Between Periods". User chooses selections, and then clicks "Run". User receives error message. 
+
+SYMPTOM
+Number: 5 
+
+Source: FrangoDirect.CopyValuesD.CompJouBetweenPerVer#ControllerProxyClient 
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.Runtime.InteropServices.COMException (0x80040E14): ORA-00932: inconsistent datatypes: expected DATE got NUMBER 
+at FrCopyValuesBT.CopyValuesTClass.CopyValues(String sPrg, Recordset rsComp, Recordset rsCurrType, Recordset rsBtyp, Recordset rsPerakt, Boolean bOB, Boolean bLog, String sGuid, String sUser, Boolean bAllJournalTypes, Boolean bForceCopy, String sPerAkt, String sFrPerAkt, String sToPerakt, String sFrBol, String sToBol, Boolean bSignChange, Int32& lRetValue, Recordset rsVkod, Boolean bIncludeSubGroups, String sConsType, Int32& lErrorCode, String& sErrorMsg) 
+at Cognos.Controller.Proxy.CCRWS.CopyValuesT_CopyValues(String sPrg, DataSet rsComp, DataSet rsCurrType, DataSet rsBtyp, DataSet rsPerAkt, Boolean bOB, Boolean bLog, String sGuid, String sUser, Boolean bAllJournalTypes, Boolean bForceCopy, String sPerakt, String sFrPerAkt, String sToPerakt, String sFrBol, String sToBol, Boolean bSignChange, Int32& lRetValue, DataSet rsVkod, Boolean bIncludeSubGroups, String sConsType, Int32& lErrorCode, String& sErrorMsg) 
+--- End of inner exception stack trace --- 
+at Microsoft.VisualBasic.ErrObject.Raise(Int32 Number, Object Source, Object Description, Object HelpFile, Object HelpContext) 
+at Cognos.Controller.Common.RaiseErrCli.RaiseError(Int32 lErrNo, String sErrSource, String sErrDesc, String sErrHelpFile, Int32 lErrHelpContext) 
+at Cognos.Controller.Direct.CopyValuesD.CompJouBetweenPerVer(DataSet rsComp, DataSet rsCurrType, DataSet rsBtyp, Boolean bOB, Boolean bLog, Boolean bAllJournalTypes, Boolean bForceCopy, String sFrPerAkt, String sToPerAkt, Int32& lRetValue, Int64& lErrorCode, String& sErrorMsg) 
+at Cognos.Controller.Forms.Form.frmCopyCompJourPeriod.IRun_DoRun() 
+
+The VB Application identified by the event source logged this Application FrCopyValuesBT: Thread ID: 5356 ,Logged: Error occured at 7/20/2012 2:54:07 PM in FrCopyValuesBT, Error No=-2147217900, Source=FrCopyValuesBT.CopyValuesT.CopyValues, Description=ORA-00932: inconsistent datatypes: expected DATE got NUMBER, HelpFile= HelpContext=0 
+
+CAUSE
+Code production problem (APAR PM69831) in Controller.
+
+
+
+RESOLVING THE PROBLEM
+Fix: 
+
+Upgrade to Controller 10.1.1 FP1 (10.1.1671) or later. 
+
+ 
+
+Workaround: 
+
+Update a temporary table (UCOPV_COPYVALUES_XBJR) by running a SQL script. 
+
+ * Please contact IBM Support for more details.
+
+RELATED INFORMATION
+#APAR PM69831 [https://www-304.ibm.com/support/entdocview.wss?uid=swg1PM69831]
+1616343 - Cognos Controller 10.1.1 FP1 now available [http://www.ibm.com/support/docview.wss?uid=swg21616343]

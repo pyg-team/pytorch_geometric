@@ -1,0 +1,141 @@
+Title: IBM IY90277: WHEN CREATING MORE THEN 20 DATASOURCES, SOME DATA TYPES ARE NOT SHOWN WHEN CREATING DATATYPES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Specific Binary: nci_server
+   Last Modified By:
+   Version: 3.1b484
+   Component: Server
+   Product Group: Impact
+   Product: Impact
+   Prority: Med
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Netcool/Impact Users who are using       *
+   *                 Impact DSA and Data Types                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: WHEN CREATING MORE THEN 20 DATASOURCES, *
+   *                      SOME DATA TYPES ARE NOT SHOWN WHEN      *
+   *                      CREATING DATATYPES                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Step to Replicate: 1) Setup and configure Impact Server 2)
+   Create more than 20 Data Sources for any type of database 3) Go
+   to the Data Types Tab click on Drop Down list to choose a Data
+   Source to create a Data Type. 4) You will see only up to 20
+   Data sources
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in FP 5 3.0.1-TIV-NCI-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY90277
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-10-04
+   
+   
+ * CLOSED DATE
+   2007-09-24
+   
+   
+ * LAST MODIFIED DATE
+   2007-09-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     IMPACT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY
+   UP

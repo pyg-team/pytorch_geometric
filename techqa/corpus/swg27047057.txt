@@ -1,0 +1,51 @@
+Title: IBM Release notes - IBM SPSS Statistics 24.0 - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ Release notes - IBM SPSS Statistics 24.0 
+
+CONTENT
+IBM® SPSS® Statistics 24.0 is now available. Compatibility and other issues are addressed.
+
+
+
+
+Contents 
+
+ * Description 
+ * System requirements and installation 
+ * Known issues
+
+Description IBM SPSS Statistics is the world’s leading statistical software used to solve business and research problems by means of ad-hoc analysis, hypothesis testing, and predictive analytics. Organizations use IBM SPSS Statistics to understand data, analyze trends, forecast and plan to validate assumptions and drive accurate conclusions. 
+
+System requirements and installation 
+
+ * For information on installation, see the installation documents [http://www.ibm.com/support/docview.wss?uid=swg27047033]. 
+ * For information system requirements, see the system requirements [http://www.ibm.com/software/analytics/spss/products/statistics/requirements.html]. 
+ * For information on downloading the product, see the Download Document [http://www.ibm.com/support/docview.wss?uid=swg24041224] . 
+
+
+Known issues At time of publication, the following issues were known. 
+
+
+Issue: If you are installing the SPSS Statistics client by running the silent installer on Mac OS 10.10 or later, it may fail with the message: “No Java runtime present, requesting install”. 
+Solution: Java 1.5 or later runtime must be installed.
+
+Issue: On AIX operating systems, procedures that require Java 8 will cause an error. Possible error messages include "Could not create the Java Virtual Machine" and "Port Library failed to initialize".
+Solution: The AIX operating system should meet the SDK 8 platform requirement: AIX V6.1 with Technology level 9 and Service Pack 3, AIX V7.1 with Technology level 3 and Service Pack 3, or AIX V7.2.
+
+Issue: You cannot import data from, or export data to, an Informix database running on a pLinux Redhat server.
+
+Issue: On Windows operating systems, the JAWS screen reader cannot read text in drop-down lists where you can edit the text (also referred to as a combo box)."
+
+Issue: When using Remote Desktop Protocol to connect to a Windows operating system running SPSS Statistics, you cannot copy the content from the Data Editor window to applications running on your local computer.
+
+Issue: On Mac OS, if SPSS Statistics is already running, you cannot open a file by double-clicking the file.
+Solution: Drag-and-drop the files onto the application, or use the File menu to open files.
+
+Issue: You cannot remote install Statistics via SSH on Mac OS X 10.10 or later if no users are logged on.
+Solution: At least one users must be logged on.
+
+Issue: You cannot use the reservations groups for Sentinel License Manager on Linux.

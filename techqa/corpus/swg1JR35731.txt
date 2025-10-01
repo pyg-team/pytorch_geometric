@@ -1,0 +1,169 @@
+Title: IBM JR35731: WHEN EXPORTING PROJECTS FROM WID 6.1.2 INTERMITTNTLY ****MAPPING.XML FILE IS MISSING - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  *******************
+   
+   PROBLEM DESCRIPTION
+   *******************
+   The customer exports his Project as EAR file out of WID
+   6.1.2ifix004.
+   Sometimes the created EAR file is missing some ****mapping.xml
+   files as
+   e.g. the
+   KXPlusLoan_rules_MP00EJB.jar/KXPlus_Loan_Rules_MP00EJB/META-INF/
+   KXPlus_Loan_Rules_MP00_Rule_JyoukenShijiHTTPExport_mapping.xml
+   
+   It could be the case that during creation of the EJB Staging
+   projects
+   the files get lost.
+   
+   We need WPS L3 to have a look at this PMR as the issue seems to
+   be with
+   the EJB staging projects that are created by runtime.
+   
+   
+   *******************
+   REPRODUCTION
+   *******************
+   We couldn't reproduce the problem locally yet, but the customer
+   can
+   reproduce it 1 out of 10 times on a japanese WID 6.1.2ifix004.
+   So this
+   may be a timing related issue:
+   
+   The steps the account team used to reproduce the problem are
+   mentioned
+   below:
+   0. Download "59016.69D.760.20100217_ReProduce_PI_and_log.zip"
+   file
+      from ECuRep
+      Open a new workspace and de-activate the Auto-build option in
+   WID's
+      project menu
+   
+   1. Import PI "Projects_with_dummy_PI.zip" into workspace.
+   
+   2. Try following steps several times
+      (In my environment, I reproduced the problem in 10 tries.)
+     2.1  Rename project name of "LB_KXPlus_WF_01" to another name
+          (like "LB_KXPlus_WF_02").
+     2.2  Rename project name of "KXPlus_Loan_Rules_MP00_01" to
+          another name (like "KXPlus_Loan_Rules_MP00_02").
+     2.3  Delete all ...App, ...EJB, ...Web projects within the
+          workspace.
+     2.4  Select "Project" > "Clean" to clean build the projects
+          within the workspace.
+     2.5  Check all "ejbModule/META-INF" folder of ...EJB projects
+          if it has "10" ...mapping.xml files.
+     2.6  If the generation fails, the number of ...mapping.xml
+   files
+          is less than 10 (9, in my environment)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  State of cache kept in BaseContentDescriber becomes inconsistent
+   with current workspace causing missing generated artifacts.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  An ifix provided to address the issue
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR35731
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   612
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-23
+   
+   
+ * CLOSED DATE
+   2011-02-18
+   
+   
+ * LAST MODIFIED DATE
+   2011-02-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    JR35732
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R612 PSY
+   UP

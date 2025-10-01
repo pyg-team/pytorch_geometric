@@ -1,0 +1,31 @@
+Title: IBM DASH list widget will not display status icons - United States
+
+Text:
+DASHL2; DASHL2CONF; list widget; status icon; missing; impact; IPL; TWL; 3.1.1; common_assets TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Status in the Dashboard Application Services Hub (DASH TWL) list widget is displayed as text only. The status icon is not displayed in DASH release 3.1.1 
+
+CAUSE
+Status icons that were included in previous DASH releases were inadvertently not included in the DASH 3.1.1 release. The issue is addressed in the next DASH release 3.1.2.
+
+DIAGNOSING THE PROBLEM
+In DASH 3.1.1 add a list widget to a page and configure it to display status for a dataset. Save the widget and see if the status icons are displayed.
+
+RESOLVING THE PROBLEM
+The fix is included in the 3.1.2 release that is due to be released at the end of April 2015. 
+
+As a workaround, the status icons can be copied from a previous DASH release to the affected 3.1.1 installation. Copy the contents from the following directory on the previous DASH release, to the same directory in the 3.1.1 installation:
+
+
+
+
+<JazzSM Home>/profile/installedApps/JazzSMNode01Cell/isc.ear/isclite.war/secure/isclite/scripts/tipdojo/ibm/tivoli/tip/navwidget/themes/resources/common_assets 
+
+Restart the DASH instance after the files have been copied over. 
+
+Alternatively, the attached file can be unpacked in the following directory on the 3.1.1 DASH install: 
+
+<JazzSM Home>/profile/installedApps/JazzSMNode01Cell/isc.ear/isclite.war/secure/isclite/scripts/tipdojo/ibm/tivoli/tip/navwidget/themes/resources/
+
+common_assets.tar [/support/docview.wss?uid=swg21699279&aid=2]common_assets.tar [/support/docview.wss?uid=swg21699279&aid=1]

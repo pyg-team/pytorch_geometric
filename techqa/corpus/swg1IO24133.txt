@@ -1,0 +1,131 @@
+Title: IBM IO24133: ICN IS MISSING TWO IMPORTANT MIME TYPES USED BY SAP - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+2.0.3-ICN-FP007-zLINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=2.0.3-ICN-FP007-zLINUX&source=SAR]
+2.0.3-ICN-FP007-WIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=2.0.3-ICN-FP007-WIN&source=SAR]
+2.0.3-ICN-FP007-LINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=2.0.3-ICN-FP007-LINUX&source=SAR]
+2.0.3-ICN-FP007-AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=2.0.3-ICN-FP007-AIX&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Since ICN does not recognize the two mime types
+   'application/x-zip-compressed' and 'text/csv', it will add the
+   ext bin or dat to the document name when dowloading or viewing.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No work around
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  fixed
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO24133
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   ISCONTNAV
+   
+   
+ * REPORTED RELEASE
+   203
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-12-16
+   
+   
+ * CLOSED DATE
+   2016-04-04
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   ISCONTNAV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R203 PSY
+   UP

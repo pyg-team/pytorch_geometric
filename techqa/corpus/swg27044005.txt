@@ -1,0 +1,59 @@
+Title: IBM Updating dependencies for a QRadar Host installed on SoftLayer or AWS - United States
+
+Text:
+Softlayer dependencies; QRadar integration with Softlayer; AWS dependencies; Amazon Web Server dependencies; QRadar integration with AWS PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Follow these steps to edit dependencies that are used in the Softlayer or Amazon Web Service (AWS) IBM Security QRadar installation. 
+
+CONTENT
+SoftLayer 
+
+1. Install the mailcap dependency by using the following command: 
+
+rpm --quiet -q mailcap || yum install /media/cdrom/Packages/mailcap-*
+
+
+2. To confirm that the 32-bit dependencies are installed correctly, enter the following commands: 
+
+yum install -y libxml2 libxml2.i686 audit-libs audit-libs.i686 glibc glibc.i686 device-mapper-multipath zlib zlib.i686 libcom_err
+libcom_err.i686 nspr nspr.i686 nss nss.i686 nss-util nss-util.i686 krb5-libs krb5-libs.i686 keyutils-libs keyutils-libs.i686 openssl
+openssl.i686 httpd-tools httpd-devel httpd mod_ssl keyutils keyutils.i686 keyutils-libs keyutils-libs.i686 openldap openldap.i686
+openldap-clients cyrus-sasl-lib cyrus-sasl-lib.i686 pam pam.i686 libgcc libgcc.i686 elfutils-libelf elfutils-libelf.i686 libstdc++
+libstdc++.i686
+
+
+3. Disable the RHN satellite network by using the following commands: 
+
+sed -i -e 's/enabled = 1/enabled = 0/' /etc/yum/pluginconf.d/rhnplugin.conf
+
+
+
+Amazon Web Service
+
+1. To confirm that the 32-bit dependencies are installed correctly, enter the following commands: 
+
+yum erase samba-client samba4-libs samba-common samba-winbind-clients samba-winbind
+yum install -y libxml2 libxml2.i686 audit-libs audit-libs.i686 glibc glibc.i686 device-mapper-multipath zlib zlib.i686 libcom_err
+libcom_err.i686 nspr nspr.i686 nss nss.i686 nss-util nss-util.i686 krb5-libs krb5-libs.i686 keyutils-libs keyutils-libs.i686 openssl
+openssl.i686 httpd-tools httpd-devel httpd mod_ssl keyutils keyutils.i686 keyutils-libs keyutils-libs.i686 openldap openldap.i686
+openldap-clients cyrus-sasl-lib cyrus-sasl-lib.i686 pam pam.i686 libgcc libgcc.i686 elfutils-libelf elfutils-libelf.i686 libstdc++
+libstdc++.i686
+
+
+2. Disable the RHN satellite network by using the following command: 
+
+sed -i -e 's/enabled = 1/enabled = 0/' /etc/yum/pluginconf.d/rhnplugin.conf
+
+
+
+
+
+
+Where do I find more information?
+If you have additional questions or some of this content is not clear, you can see the QRadar forum or contact customer support: 
+
+
+ * Online QRadar Customer Forums [https://ibm.biz/BdR2kC] 
+ * Submit and manage your support tickets online 24x7 using IBM Service Request [http://www.ibm.com/software/support/servicerequest/quick_start.html] 
+ * QRadar Downloads - IBM Fix Central [http://www.ibm.com/support/fixcentral/options?selection=Security+Systems;ibm/Other+software/IBM+Security+QRadar+SIEM]

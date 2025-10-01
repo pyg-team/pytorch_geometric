@@ -1,0 +1,57 @@
+Title: IBM Security Bulletin: Vulnerability in IBM InfoSphere Information Server installer could expose sensitive information (CVE-2015-1901) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM InfoSphere Information Server could allow a local user under special circumstances to execute commands during installation processes that could expose sensitive information. 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2015-1901 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1901]
+DESCRIPTION: IBM InfoSphere Information Server could allow a local user under special circumstances to execute commands during installation processes that could expose sensitive information.
+CVSS Base Score: 1.2
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/101638 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101638] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:H/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+The following product, running on all supported platforms, are affected:
+IBM InfoSphere Information Server: versions 8.5, 8.7, 9.1 and 11.3
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix InfoSphere Information Server 11.3 JR52549 --Use the IBM InfoSphere Information Server version 11.3.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24040138] for new installations
+--Update to the latest Updater for 11.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038034] before applying any patch InfoSphere Information Server 9.1 JR52549 --Before any new 9.1 install, or an Append Install to an existing 9.1 installation, download the 9.1.2.0 is-suite and apply Installer Patch [http://www.ibm.com/support/fixcentral/swg/quickorder?&product=ibm/Information+Management/IBM+InfoSphere+Information+Server&function=fixId&fixids=is912_JR52549_installer*] against is-suite before running the install.
+--Before applying any patch to an existing 9.1 installation, update to the latest Unified Update installer [http://www.ibm.com/support/fixcentral/swg/quickorder?&product=ibm/Information+Management/IBM+InfoSphere+Information+Server&function=fixId&fixids=is_unified_update_installer_*] InfoSphere Information Server 8.7 JR52549 --Before any new 8.7 install, or an Append Install to an existing 8.7 installation, download the 8.7.0.2 is-suite and apply Installer Patch [http://www.ibm.com/support/fixcentral/swg/quickorder?&product=ibm/Information+Management/IBM+InfoSphere+Information+Server&function=fixId&fixids=is8702_JR52549_installer_multi] against is-suite before running the install
+--Before applying any patch to an existing 8.7 installation, update to the latest Unified Update installer [http://www.ibm.com/support/fixcentral/swg/quickorder?&product=ibm/Information+Management/IBM+InfoSphere+Information+Server&function=fixId&fixids=is_unified_update_installer_*] InfoSphere Information Server 8.5 JR52549 --Before any new 8.5 install, or an Append Install to an existing 8.5 installation, apply Installer Patch [http://www.ibm.com/support/fixcentral/swg/quickorder?&product=ibm/Information+Management/IBM+InfoSphere+Information+Server&function=fixId&fixids=is85_JR52549_installer_multi] against the 8.5.0.0 is-suite before running the install
+--Before applying any patch to an existing 8.5 installation, update to the latest Updater for 8.5 [http://www.ibm.com/support/fixcentral/swg/quickorder?&product=ibm/Information+Management/IBM+InfoSphere+Information+Server&function=fixId&fixids=is85_update_installer_*] 
+
+Note: The same fix may be listed under multiple vulnerabilities. Installing the fix addresses all vulnerabilities to which the fix applies. Also, some fixes require installing both a fix pack and a subsequent patch. While the fix pack must be installed first, any additional patches required may be installed in any order. WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 08 June 2015: Original Version Published
+09 July 2015: Updated to include fix for 9.1, 8.7 and 8.5 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Information Server AIX, HP-UX, Linux, Solaris, Windows 11.3, 8.5, 8.7, 9.1

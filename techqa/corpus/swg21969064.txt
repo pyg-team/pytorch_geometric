@@ -1,0 +1,37 @@
+Title: IBM Maximum Number of Variables Exceeded Error in IBM SPSS Statistics - United States
+
+Text:
+Maximum number of variables exceeded; Statistics 23.0 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have installed IBM SPSS Statistics. When I launch the program, I get an error message that the maximum number of variables has been exceeded. There is no data in the Data Editor Windows yet. What is happening? 
+
+SYMPTOM
+Launch Statistics 23.0, click a cell to enter in data, immediately a Windows pop-up error message states "Maximum number of variables exceeded".
+
+
+CAUSE
+SPSS Statistics is not able to find a valid license. Please verify you are using the correct authorization code version for your version of SPSS. For example a SPSS Statistics 23 authorization code can only be applied to SPSS Statistics 23, not 22 or lower. 
+
+If your authorization code is for your version of SPSS, then download and apply the Statistics 23.0.0.2 fixpack from the following location.
+
+http://www-01.ibm.com/support/docview.wss?uid=swg24040559 [http://www-01.ibm.com/support/docview.wss?uid=swg24040559]
+
+If you are unable to download the fixpack, follow the instructions below:
+
+1) Browse into the SPSS installation directory. It should be either C:\Program Files\IBM\SPSS\Statistics\version number or C:\Program Files(x86)\IBM\SPSS\Statistics\version number
+2) Locate the file spssprod.inf and open it.
+3) Locate the line Daemonhost=
+4) Change it to read Daemonhost=no-net
+5) If you get an error resaving the file about permission denied, save the spssprod,inf file to your desktop and then copy the new file into the version folder and overwrite the old file
+6) Launch SPSS.
+
+
+
+ENVIRONMENT
+Windows 10
+
+ 
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

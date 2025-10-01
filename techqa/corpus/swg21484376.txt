@@ -1,0 +1,44 @@
+Title: IBM How do I set the SPSS_COMMUTE_MAX_LIFE environment variable on Apple Macintosh operating systems? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I would like to change the settings for the maximum time that a commuter license can be checked out. I am familiar with setting the SPSS_COMMUTE_MAX_LIFE environment variable in Microsoft Windows operating systems, but how do I change this environment variable on Apple Macintosh operating systems? 
+
+ANSWER
+The following information can be found in the Sentinel License Manager Network License Administrator's Guide:
+
+The maximum length of time a user can check out a commuter license is specified by the SPSS_COMMUTE_MAX_LIFE environment variable on the desktop computer. Set the value of this variable to the maximum number of days for which an end user can check out a commuter license. This should be a number between 1 and 30. On Mac and Linux, you can store this environment variable in the statisticsenv.sh script.
+
+Environment variables for PASW Statistics are stored in the 'statisticsenv.sh' script file. The 'statisticsenv.sh' file can be edited using the following procedure:
+
+Select the Macintosh hard drive icon on the Desktop (e.g. 'Macintosh HD')
+Select the 'Applications' folder.
+Locate the program launch icon of the version of Statistics program for which you wish to configure the maximum life of the commuter license.
+Select the program launch icon using either (1) Ctrl+click or (2) right-click.
+Select 'Show Package Contents'.
+Select 'Contents'.
+Select 'MacOs'.
+Locate the file named 'statisticsenv.sh'.
+Open the file with TextEdit.
+If the SPSS_COMMUTE_MAX_LIFE environment variable is not already defined in the file, add a line like the following at the end of the file:
+
+export SPSS_COMMUTE_MAX_LIFE='x'
+
+(Where 'x' is a number between '1' and '30'.)
+If the line is already present in the file, change 'x' to reflect the maximum number of days that a commuter license can be checked out by this computer.
+Select 'File'.
+Select 'Close'.
+Select 'Save'.
+Close all open windows.
+The commuter utility should now allow the client computer to check out a commuter license for 'x' number of days
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 85576

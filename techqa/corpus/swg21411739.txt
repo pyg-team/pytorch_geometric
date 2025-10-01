@@ -1,0 +1,51 @@
+Title: IBM Using WebSphere Application Server v6.1.0.27 with SAP WebSphere Application Server with WebSphere Application Server adapters v6.2.0.3 and v7 results in StackOverflow exception - United States
+
+Text:
+RN7.5.5; SRX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Running SAP 6.2.0.3 or SAP7.0.0.0 inbound or outbound scenario on WebSphere Application Server v6.1.0.2.7 results in a java.lang.StackOverflowError from the SAP GUI client or server console log. 
+
+SYMPTOM
+Running a SAP v6.2.0.3 or SAP v7.0.0.0 inbound or outbound scenario on WebSphere Application Server v6.1.0.27 results in a java.lang.StackOverflowError from the SAP GUI client or server console log. Here is a sample exception thrown from inbound scenario: 
+
+
+[11/12/09 23:33:53:359 EST] 00000051 SAPRAResource I SAPJcoServerStatusHandler serverStateChangeOccurred Server thread JCO_SERVER_471077 changed state from [ LISTENING ] to [ STOPPED ]
+[11/12/09 23:33:53:515 EST] 00000051 SAPRAResource I SAPJcoServerStatusHandler traceServerState Event Listener : JCO_SERVER_471077 , State is : ALIVE 
+[11/12/09 23:33:53:515 EST] 00000051 SAPRAResource I SAPJcoServerStatusHandler traceServerState Event Listener : JCO_SERVER_471077 , State is : STARTED 
+[11/12/09 23:33:53:515 EST] 00000051 SAPRAResource I SAPJcoServerStatusHandler serverStateChangeOccurred Server thread JCO_SERVER_471077 changed state from [ STARTED ] to [ STARTED ]
+[11/12/09 23:33:53:531 EST] 00000051 SAPRAResource I com.ibm.j2ca.sap.inbound.SAPEventListenerManager startAleEventListeners Server JCO_SERVER_471077 obtained. Number of connections - 1
+[11/12/09 23:33:53:531 EST] 00000051 ActivationSpe I J2CA0523I: The Message Endpoint for ActivationSpec sapale1 (com.ibm.j2ca.sap.SAPActivationSpecWithXid) and MDB Application MyInboundEJBEAR#MyInboundEJB.jar#MyInboundMDB is activated.
+[11/12/09 23:33:53:546 EST] 00000051 EJBContainerI I WSVR0057I: EJB jar started: MyInboundEJB.jar
+[11/12/09 23:33:53:578 EST] 00000051 ApplicationMg A WSVR0221I: Application started: MyInboundEJBEAR
+[11/12/09 23:34:58:421 EST] 00000063 SAPRAResource E SAPJcoServerStatusHandler serverExceptionOccurred CWYAP1003E: The following error has occurred: Exception: java.lang.Exception, Message: java.lang.StackOverflowError. Cause: java.lang.StackOverflowError, Message: null. Explanation=See the exception details for more information. UserAction=See the exception details for information about the problem.
+[11/12/09 23:34:58:750 EST] 00000063 SAPRAResource E SAPJcoServerStatusHandler serverExceptionOccurred CWYAP1003E: The following error has occurred: Exception: java.lang.Exception, Message: java.lang.StackOverflowError. Cause: java.lang.StackOverflowError, Message: null. Explanation=See the exception details for more information. UserAction=See the exception details for information about the problem.
+[11/12/09 23:35:02:531 EST] 00000010 TimeoutManage I WTRN0006W: Transaction 00000124EBD0D643000000010000004C787A83D5FADEE8118C04F4E094A7D37892248FD900000124EBD0D643000000010000004C787A83D5FADEE8118C04F4E094A7D37892248FD900000001 has timed out after 120 seconds.
+[11/12/09 23:35:03:109 EST] 00000042 TimeoutManage I WTRN0006W: Transaction 00000124EBD0D885000000010000004D787A83D5FADEE8118C04F4E094A7D37892248FD900000124EBD0D885000000010000004D787A83D5FADEE8118C04F4E094A7D37892248FD900000001 has timed out after 120 seconds.
+[11/12/09 23:35:03:375 EST] 00000064 SAPRAResource I SAPJcoServerStatusHandler serverStateChangeOccurred Server thread JCO_SERVER_471077 changed state from [ ALIVE ] to [null]
+[11/12/09 23:35:03:390 EST] 00000064 SAPRAResource I com.ibm.j2ca.sap.inbound.SAPEventListenerManager restartListeners CWYAP3027W:RetryLimit is configured as 0. The adapter will try to restart the ALE event listeners infinitely. The current retry number is 1. Explanation=ALE event listeners have stopped listening and are being restarted. UserAction=If the restart retries fail, restart the adapter or the application that is using the adapter. Make sure the RetryInterval property is set to an appropriate value.
+[11/12/09 23:35:04:921 EST] 00000065 SAPRAResource I SAPJcoServerStatusHandler traceServerState Event Listener : JCO_SERVER_471077 , State is : STOPPING 
+[11/12/09 23:35:04:921 EST] 00000065 SAPRAResource I SAPJcoServerStatusHandler serverStateChangeOccurred Server thread JCO_SERVER_471077 changed state from [ TRANSACTION ] to [ STOPPING ]
+[11/12/09 23:35:06:078 EST] 00000064 SAPRAResource I com.ibm.j2ca.sap.inbound.SAPEventListenerManager checkListenerHealth Checking listener health after restart.
+[11/12/09 23:35:07:078 EST] 00000064 SAPRAResource I com.ibm.j2ca.sap.inbound.SAPEventListenerManager checkListenerHealth Checking listener health after restart. 
+
+
+
+
+CAUSE
+This is caused by WebSphere Application Server v 6.1.0.27 having JRE 1.5 SR10
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+
+The customer can do one of the following:
+
+1) Install WebSphere Application Server v6.1.0.29 as a stand-alone installation instead of the 6.1.0.27 version that ships within Rational Application Developer v7.5.5, and deploy their application to that server.
+
+2) Wait for a future Rational Application Developer fixpack that contains the newer WebSphere Application Server v6.1.0.29 server
+
+
+3) Wait for a SR11 and apply to WebSphere Application Server v 6.1.0.27.

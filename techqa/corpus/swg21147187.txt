@@ -1,0 +1,68 @@
+Title: IBM Explanation of .contrib files left for every version just delivered in UCM - United States
+
+Text:
+deliver; rebase; .contrib; contrib; contrib files; view private files; 1147187; RATLC00608266 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why there is a .contrib file created for each version that was merged into the target view as a result of an IBM® Rational® ClearCase® UCM deliver or rebase operation. 
+
+SYMPTOM
+ 
+
+After completing a deliver or rebase operation, for any merged file versions, there is a .contrib file left in the view context. Some of these files can be substantially large, and multiple deliveries (or rebases) will result in accumulating files like, .contrib.n.
+
+CAUSE
+ 
+
+This is currently the expected behavior. Deliver (and rebase) operations use findmerge/merge functionality for merging element versions. These methods preserve the target view's current contents to a .contrib file.
+
+
+RESOLVING THE PROBLEM
+ 
+
+The .contrib files are generally used to compare the file's previous contents with its new after-merge version; moreover, these files are view-private and can be removed. 
+
+There has been discussion around the ability to allow the end-user to disable/enable the .contrib creation; however, with UCM, since all checkouts involved in deliver or rebase activities are reserved, there is no chance of loss changes as a result of the merge. The .contrib file, in regards to UCM, does not serve the same purpose, or hold the same significance as with base ClearCase. 
+
+Change request (RFE) RATLC00608266, was opened to improve the logic used for leaving .contrib files after a deliver or rebase operation. There is no danger for loss of data as a result of the .contrib not getting created. 
+
+This behavior has changed in ClearCase 7.0. [http://www-1.ibm.com/support/docview.wss?rs=984&uid=swg24012293]where feature level 5 was introduced. When using the native client, contrib files are no longer generated when merges occur during deliver and rebase (the Rational ClearCase Remote Client continues to create and use these files). This information is documented in the ClearCase 7.0 Release Notes [http://publib.boulder.ibm.com/infocenter/cchelp/v7r0m0/index.jsp?topic=/com.ibm.rational.clearcase.help.doc/cc_ms_release_notes.htm]under the topic of Improvements in Unified Change Management (UCM). 
+
+
+
+
+Remove multiple .contrib files The .contrib files are view-private files and can be removed using regular DOS® commands, such as del on Microsoft® Windows® or rm on UNIX® and Linux®. 
+
+Note: The following examples were performed on Windows, but similar functionality should be available for UNIX and Linux. 
+
+
+Set into the view, mount and cd into a VOB from the command line and run the following command to remove all contrib files from that view/VOB context.
+
+del /s *.contrib* 
+
+ 
+
+Example to walk through all of the VOBs mounted in your view, and remove any file with a .contrib extension. 
+
+ 1. Set into the view and execute the following command:
+    
+    for /R %i IN (*.contrib) do del %i
+    
+    
+ 2. You may want to review the files before removing them, if so, run the following command:
+    
+    for /R %i IN (*.contrib) do echo %i
+    
+    
+ 3. More information on the for command can be found from the DOS prompt by issuing the following command:
+    
+    for /? 
+
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase UCM

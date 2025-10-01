@@ -1,0 +1,25 @@
+Title: IBM Download IBM Datacap Version 9.1.2 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM Datacap Version 9.1.2. 
+
+DOWNLOAD DESCRIPTION
+To download IBM Datacap Version 9.1.2 from Fix Central, complete the following instructions:
+
+
+ 1.  Contact IBM representative to obtain the Individual fix IDs. For more information, see IBM Support [https://www.ibm.com/support/home/?lnk=ushpv18hcwh1&lnk2=support]. 
+ 2.  Click this link: https://www-945.ibm.com/support/fixcentral/ [https://www-945.ibm.com/support/fixcentral/]. The Fix Central page opens, and displays the Find Product section. 
+ 3.  Sign in using your IBM credentials. If you have forgotten your IBM ID or have never registered, complete the instructions on the sign-in page. 
+ 4.  In the Product selector field, type Datacap, and click the Go arrow. 
+ 5.  From the list, select Datacap. 
+ 6.  From the Installed Version list, select 9.1.2.0, and click Continue. 
+ 7.  In the Platform list, ensure that Windows 64-bit, x86 is displayed, and then click Continue. 
+ 8.  On the Identify fixes page, in the Individual fix IDs field, type the fix ID in the format as: 9.1.2.0_Datacap_Production_Install:xxxxxxx, and then click Continue. 
+ 9.  On the Select fixes page, verify that the correct product version is selected, and then click Continue. 
+ 10. On the Download options page, select the appropriate option, and click Continue. 
+ 11. Complete the on-screen instructions to complete the download.
+
+URL LANGUAGE SIZE(Bytes) IBM Datacap 9.1.2 Knowledge Center [https://www.ibm.com/support/knowledgecenter/SSZRWV_9.1.2/com.ibm.datacaptoc.doc/datacap_9.1.2.htm] English 1000

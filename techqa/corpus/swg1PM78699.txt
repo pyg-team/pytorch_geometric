@@ -1,0 +1,189 @@
+Title: IBM PM78699: [WI 243266] Setup wizard fails to create tables with J2EE connection type - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description:
+   
+   The Setup Wizard fails when having DataSource data pool
+   connection with WAS to connect to DB2 repository. During step 3
+   Create Database Tables of  Configure Database for ccm, the
+   following error is thrown:
+   
+   The
+   'com.ibm.team.repository.service.internal.DatabaseCreationRestSe
+   rvice'
+   service failed to activate because a service that it depends on,
+   'com.ibm.team.repository.service.IServerDescriptionService',
+   failed to be activated. For more details, open the help system
+   and search for CRJAZ1972E.ID CRJAZ1972E
+   com.ibm.team.repository.common.transport.TeamServiceRegistryExce
+   ption
+   ..
+   ..
+   
+   How to reproduce:
+   - Use DataSource data pool connection with WAS to connect to DB2
+   - Run the setup wizard, specify J2EE as connection type, and
+   give the proper value for J2EE DataSource
+   - At step 3 the error occurs
+   
+   This happens because the repotool that gets involved in the
+   setup wizard cannot handle DataSource data pool connections
+   
+   Workaround:
+   Configure JDBC connection first, run the setup wizard and create
+   the tables within the setup.
+   After the setup is run successfully the DataSource Data pool
+   connection can be used without issues.
+   
+   Note that when an upgrade has to be done later, the repotool
+   gets involved.  Change back to
+   JDBC connection for running the upgrade scripts.
+   
+   For further information see:
+   https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo]
+   rkItem/243266
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The Setup Wizard fails when having DataSource data pool
+   connection with WAS to connect to DB2 repository. During
+   step 3 Create Database Tables of  Configure Database for
+   ccm, the following error is thrown:
+   
+   The
+   "com.ibm.team.repository.service.internal.DatabaseCreationRe
+   stService" service failed to activate because a service that
+   it depends on,
+   "com.ibm.team.repository.service.IServerDescriptionService",
+   failed to be activated. For more details, open the help
+   system and search for CRJAZ1972E.ID CRJAZ1972E
+   com.ibm.team.repository.common.transport.TeamServiceRegistry
+   Exception
+   ..
+   ..
+   
+   How to reproduce:
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem Summary:  The ConnectionPoolService class uses lock
+   files to make sure two processes are not connected to the
+   same database. The lock file name is a hash based on the
+   db.jdbc.location setting.  When datasources are being used,
+   the db.jdbc.location setting is removed, causing a default
+   "db2://" location, which causes conflicts between
+   applications using datasources.
+   
+   The fix is to base this hash on the db.j2ee.dataSource
+   setting when using datasources.  There's still a small hole
+   where two apps defined in two different app servers on the
+   same machine may access two different datasources with the
+   same name under different JNDI scopes. But that's unlikely
+   to ever be encountered.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM78699
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * REPORTED COMPONENT ID
+   5724V0400
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-12-07
+   
+   
+ * CLOSED DATE
+   2013-07-29
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * FIXED COMPONENT ID
+   5724V0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSN
+   UP

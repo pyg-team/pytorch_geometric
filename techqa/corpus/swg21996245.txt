@@ -1,0 +1,48 @@
+Title: IBM API Connect V5.0.6.0 is available - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ IBM API Connect V5.0.6.0 is available, which addresses several APARs, and includes product enhancements. 
+
+CONTENT
+
+
+IBM API Connect V5.0.6.0 is now available, which provides important development and APAR fixes, and includes product enhancements as well as a more consistent user experience. 
+
+For information on new features that have been included in V5.0.6.0, see What's new for this release [https://www.ibm.com/support/knowledgecenter/SSMNED_5.0.0/com.ibm.apic.overview.doc/overview_whatsnew.html]. 
+
+We advise all users of IBM API Connect V5.0 to install this update to take advantage of the fixes. 
+
+
+SUPPORT LIFECYCLE POLICY FOR IBM API CONNECT VERSION 5.0.6.0:
+IBM API Connect Version 5.0.6.x is a Maintenance Support Release and provides predictable support through regular, cumulative, in-place iFixes until the effective EOS date of IBM API Connect Version 5.0 
+
+A Maintenance Support Release is a recommended product level for which support, including defect and security updates, will be provided over a specified period of time. A Maintenance Support Release is intended for customers that may need a longer term deployment for their environment. 
+
+
+APAR FIXES
+THE FOLLOWING APAR WERE ADDRESSED BY IBM API CONNECT V5.0.6.0, ALONG WITH OTHER INTERNALLY RAISED QUALITY FIXES:
+APAR Summary LI79443 NEED LOGIN/LOGOUT MESSAGE IN AUDIT SYSLOG LI79442 TEMPORARY DBSPACE IS TOO SMALL LI79430 Contents confidential. LI79428 DEVELOPER PORTAL SITE UPDATE TASKS LOCKED LI79425 DEVELOPER PORTAL APP MIGRATIONS DON'T WORK FOR SUPERSEDED PRODUCTS/PLANS LI79418 IN DEVELOPER PORTAL, PASSWORD POLICY VALIDATION NOT WORKING PROPERLY ON INVITED USER ACTIVATION PAGE LI79419 Contents confidential. LI79401 Contents confidential. LI79399 ERROR ENCOUNTERED WHEN TRYING TO USE THE KEEP HTTP METHOD ON AN INVOKE POLICY LI79393 Contents confidential. LI79391 THE RATE LIMIT IS MISALIGNED WITH EACH OPERATION IN BROWSER FROM ADVANCE PORTAL LI79390 API MANAGER UI INCONSISTENT WHILE ENTERING SCOPE NAME FOR OAUTH UNDER THE SECURITY DEFINITIONS FOR AN API LI79383 VALIDATE POLICY DOESNT WORK WITH DEFINITION OF 'REQUEST' WHEN BASEPATH IS ´/´ LI79373 HTTP 500 ERROR WHEN CALLING A REST API WITH A JSON INPUT STRING THAT CONTAINS A '<' CHARACTER LI79353 ANALYTICS FAILS DUE TO KIBANA ERROR LI79376 DEVELOPER TOOLKIT: DIRECT PUBLISH FAILS WITH ERROR 'Field value too long' LI79375 DEVELOPER PORTAL: MANUAL FAILOVER FAILS WHEN ISSUING THE COMMAND 'BOOTSTRAP_CLUSTER -PI' LI79374 API CONNECT TOOLKIT: 'UNABLE TO READ PROPERTY UNDEFINED' ERROR WHEN PRODUCT AND API YAML FILES ARE IN DIFFERENT FOLDERS LI79367 WHEN ORG/ENV MISSING/WRONG IN API CALL, ERROR RESPONSE IS ALWAYS IN JSON, REGARDLESS OF ACCEPT HEADER LI79357 ASSEMBLY INVOKE OPERATION ALWAYS SENDING CONTENT-TYPE HEADER OF APPLICATION/XML TO ENDPOINT LI79349 Developer Portal: Image in a custom block URL is not restored properly on restore_site to new site LI79342 ADVANCED DEVELOPER PORTAL: 'RESEND INVITATION' DOESN'T SEND A NEW EMAIL TO USER WHEN USING A SCIM USER REGISTRY LI79341 GETTING DIFFERENT RESULT API YAML FILE FROM APIC TOOLKIT AND API MANAGER LI79336 Unable to publish multiple APIs with same name in the same product LI79322 OAUTH2 TOKEN NOT CREATED ON THE SCOPE VALUE GIVEN LI79320 API CONNECT: GETTING GATEWAY SCRIPT ERROR USING APIM.CUSTOM.JS FROM A GATEWAY EXTENSION SCRIPT LI79317 API CONNECT: INVOKING A SOAP SERVICE WITH SSL AUTHENTICATION CAUSES DATAPOWER TO REBOOT IF TLS-PROFILE IS UNDEFINED LI79274 THE AUDIT LOG ONLY SHOWS 'ORG NOTIFYAPIDELETESUCCESS' WHILE DELETING API LI79429 VALUE FOR SOAP-OPERATION NEEDS TO MATCH FIRST BODY ELEMENT NAMESPACE AND TYPE LI79406 ISSUE CREATING SOAP API USING IMPORTED WSDL LI79395 API CONNECT: ADVANCED DEVELOPER PORTAL DOES NOT SHOW API RESPONSE TYPE FOR PATHS/METHODS HAVING TWO OUTPUTS LI79456 RESTORE DEVELOPER PORTAL CMD GIVES ERROR MESSAGE 
+Note: iFix1 (5.0.6.0-iFix1-APIConnect-Portal-20161220-2006) has been issued for the Developer Portal to cover APAR LI79456. 
+
+UPGRADE PATHS FOR API CONNECT:
+For more information of details on IBM API Connect upgrade paths, see Supported Upgrade Paths. [http://www-01.ibm.com/support/docview.wss?uid=swg21984408] 
+
+There are specific validated upgrade paths between IBM® API Management Version 4.0 or later and IBM API Connect Version 5.0 or later. For more information, see Validated upgrade paths for API Connect [http://www.ibm.com/support/knowledgecenter/SSMNED_5.0.0/com.ibm.apic.overview.doc/overview_apic_upgrade_path.html] 
+
+In addition to the specific validated upgrade paths for the API Management appliance, you must upgrade your IBM DataPower Gateway appliance. For more information, see Upgrading DataPower for Gateway servers [http://www.ibm.com/support/knowledgecenter/SSMNED_5.0.0/com.ibm.apic.overview.doc/apply_main_gateway.html]. 
+
+Upgrading the gateway to firmware level 7.5.0.1 is strongly recommended for the best experience. 
+
+
+
+DOWNLOADS:
+ Full installation and upgrade files for IBM API Connect Version 5.0.6.0 (Enterprise, Professional & Essentials) can be downloaded from Fix Central: IBM API Connect Version 5.0.6.0 [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+API+Connect&release=5.0.6.0&platform=All&function=all] 
+
+Ensure that you have read and understood the above Important installation instructions before downloading and using the installation or upgrade files.
+
+
+
+What is Fix Central (FC)? [http://www.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html]

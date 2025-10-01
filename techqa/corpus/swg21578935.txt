@@ -1,0 +1,34 @@
+Title: IBM Pages and Portlets Troubleshooting - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ Troubleshooting tips when working with Pages and Portlets within IBM Cognos Connection. 
+
+CAUSE
+IBM Cognos & Portlet configuration
+
+RESOLVING THE PROBLEM
+Attached is a document that covers the following topics: 
+
+ * "CPS-CCM-1209 Unable to create a URL connection to the requested WSDL file" occurs when attempting to add a IBM Cognos Portlet to a Page
+
+ * When attempting to open an IBM Cognos portlet in a page, an error such as 'Unable to process the request" appears with no additional details
+
+ * Microsoft Sharepoint: Single signon using shared secret does not work
+
+ * Portlet WSDL are reverting to HTTP when HTTPS is configured in the environment
+
+ * How to configure a mixed Websphere Portal Server environment where one server is HTTPS and another is HTTP with the CPSProtocolScheme value is set to HTTPS. 
+ * How to configure a front end Load Balancer to balance all portlet requests 
+ * How to configure IBM Cognos Metrics Manager portlets 
+ * How to enable the additional logging for Portlets 
+ * How to monitor the WSRP communication between the portlets installed in an enterprise portal (e.g. IBM Websphere Portal Server, Microsoft Sharepoint) and the IBM Cognos server 
+ * How to tune performance for IBM Cognos Connection Page
+
+
+Pages and Portlets Troubleshooting.doc [/support/docview.wss?uid=swg21578935&aid=2] [/support/docview.wss?uid=swg21578935&aid=1]

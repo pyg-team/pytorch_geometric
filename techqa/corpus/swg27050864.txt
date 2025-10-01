@@ -1,0 +1,84 @@
+Title: IBM Converting a PDF to a searchable PDF - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ IBM Datacap has several different ways to convert an existing PDF to a searchable PDF. This guide is for those, who have a PDF that does not contain searchable text, or partially contains searchable text, and convert it into a PDF with searchable text. 
+
+CONTENT
+
+
+ 
+
+ 1. Possible Approaches There are the following two basic approaches to recognize text within a PDF: 
+    
+     1. Convert the PDF pages to images then combine those images into a searchable PDF.
+     2. Convert the existing PDF to a searchable PDF in one step.
+    
+    
+    
+    
+    
+    The first approach, where the PDF is first converted to an image than the images are rebuilt into a PDF, is usually the best approach. The primary benefit to first converting to an image is that this step allows for image processing prior to recognition. In image processing, the image can be adjusted to improve the quality of the recognized text.
+    
+    The following are the steps that can only be performed on a separate image: 
+    
+     * Orientation / Rotation correction
+     * Image deskew
+     * Image cleanup and adjustment though border removal, despeckling, line removal, and so on.
+    
+    
+    
+    These are very strong reasons to first create an image then perform recognition, and why it is typically the best path. Because the document is split into multiple pages, the new PDF can be built from all of the pages or from a subset of pages.
+    
+    
+ 2. Recommended Steps The following are general steps to perform full page recognition in this situation: 
+    
+     1. Convert the source PDF to images.
+     2. Use image enhancement to fix rotation, deskew, and enhance the images.
+     3. Convert the images to a searchable PDF.
+    
+    
+    
+    The following shows the basic steps that can be integrated into an application as needed: 
+    
+     1. Convert the PDF to Images This is an example ruleset that will convert the PDF to images. While it is possible to also perform recognition in this step, there is no need because it will occur when building the PDF. The images must to be fixed to recognize well. This rueset snapshot from Datacap Studio converts a PDF to separate images without performing recognition in this step.
+        
+        [/support/docview.wss?uid=swg27050864&aid=1] [/support/docview.wss?uid=swg27050864&aid=1]
+        
+        Notes  * The actions enable the convPdfIgnoreContent variable. This prevents any extraction or recognition on the PDF during the conversion process as it is not needed at this step.
+         * The conversion to image is set to 18, which is a loss-less fax compression. Always use a loss-less compression for images that will have recognition performed. Fax is a compression that produces very small black and white images without losing quality.
+         * This conversion is setup to convert gray scale and color pages within the PDF to black and white. This is not required but can improve recognition quality by dropping out light shaded backgrounds. Some image enhancement functionality requires a black and white image. If color pages need to stay in color, that is possible as well. Color pages of 24 bits or less can be recognized.
+        
+        
+     2. 
+     3. Perform Image Enhancement Configure Image Enhancement to run on each image. At a minimum, run automatic rotation and deskew on images that will be recognized. Border cropping or removal might also help. If you find there are other enhancements that will also clean up the images, such as despeckle or line removal, they can be run as well.
+        
+        Here the action RotateImageOCR_A is used because it rotates the image based on the target language, which is usually the most reliable method. Image enhancement actions also have an automatic rotate, but they rotate based on image geometry while the OCRA rotation will rotate based on the target language.
+        
+        After that, the Image Enhancement ruleset is used to deskew the images. Configure the settings in the Image Enhancement ruleset to adjust images as needed. Ensure to select the target page type in the DCO tree. An image can be loaded in the left panel and the immediate enhancement results can be seen in the right panel. Adjust the values until the resulting image has crisp text with a clean background. Some enhancements work best in certain orders so you can reorder the enhancements as needed. It is also possible to perform enhancements multiple times by adding a second instance of an enhancement to the list in the ruleset.
+        
+         [/support/docview.wss?uid=swg27050864&aid=2] [/support/docview.wss?uid=swg27050864&aid=2] 
+        
+        
+     4. Convert the images to a searchable PDF Before you complete this step, all of the pages that will be placed into a single PDF must be in the same document object in the DCO. The “CreateDocuments” step can be performed prior to the image enhancement, if needed, but it must be completed prior to building the PDF. For example, if there are 100 pages, then all of the pages must be built into a document object where all of the extracted pages are contained within that document object. The steps are unique for each application, and are not covered here.
+        
+        This ruleset would be run on a document level object as can seen in the rule snapshot from Datacap Studio. It will gather all of the pages, and perform recognition on them as it builds the PDF. The result will be a PDF that has searchable text.
+        
+        [/support/docview.wss?uid=swg27050864&aid=3] [/support/docview.wss?uid=swg27050864&aid=3]
+        
+        The example shows the action "RecognizeToPDFOCR_A" from the OCR/A action library. There is a similar action for the OCR/S engine called "RecognizeToPDFOCR_S". They use different recognition engines but both of them will create a PDF with searchable text. It is recommended to test each of them to see which works best on your images.
+        
+        Depending on the version of Datacap you have, the action that builds the PDF might also have the ability to rotate and deskew as the PDF is built. If these are the only two image enhancements you need, then potentially you could eliminate the separate image enhancement step.
+        
+        
+    
+    
+ 3. Concluding Remarks These are the basic steps that are recommended to create a searchable PDF from a PDF that is not searchable. These segments can be integrated into an application as appropriate. This approach is flexible as page types can be assigned to further control how the new pages are manipulated. Pages can be removed or pages from other sources could be added as needed.
+    
+    If no other processing is required, then these steps will create the PDF. It should be obvious that additional steps could be added to use these images within your application.
+    
+    When configuring recognition, review the action help for other settings that may be available to improve recognition. Some action libraries have a “top-level” help topic as well that can be accessed from within Datacap Studio by clicking on the parent node, providing general help for the entire library.
+    
+    For additional information to get the best quality recognition, see Best Practices for optimal text recognition in IBM Datacap [http://www-01.ibm.com/support/docview.wss?uid=swg27050111].

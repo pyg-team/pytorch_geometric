@@ -1,0 +1,32 @@
+Title: IBM Error "ACUIR00003E" is occurring when executing the listIU.sh script - United States
+
+Text:
+TIPL2INST; listIU.sh; ACUIR00003E; error TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During the execution of the listIU.sh script in Tivoli Integrated Portal, the following error is occurring: 
+"ACUIR00003E The query failed with return code, 2." 
+
+SYMPTOM
+When running '/home/ncosys/.acsi_ncosys/bin/listIU.sh', it is failing with the following error: 
+
+ACUIR00003E The query failed with return code, 2. 
+
+
+CAUSE
+Some directories and files, such as the tmp/ and db.lck files had a different owner than the admin that installed the product.
+
+DIAGNOSING THE PROBLEM
+Check the ownership of the directories and file in: 
+
+/home/ncosys/.acsi_ncosys/repos/IURegistryDB]# ls -ltr 
+
+-rwxrwxrwx 1 ncosys ncoadmin 897 Jun 9 2011 service.properties* drwxrwxrwx 2 ncosys ncoadmin 4096 Jun 9 2011 seg0/ 
+drwxrwxrwx 2 ncosys ncoadmin 256 Jan 20 00:15 log/ 
+drwx------ 2 jtobin staff 256 May 4 00:15 tmp/ 
+-rw------- 1 jtobin staff 4 May 4 00:15 dbex.lck 
+-rw------- 1 jtobin staff 38 May 4 00:15 db.lck 
+
+
+RESOLVING THE PROBLEM
+In the above example, have the system administrator change the group and owner of the files back to ncosys and ncoadmin.

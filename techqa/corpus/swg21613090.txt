@@ -1,0 +1,96 @@
+Title: IBM When would I want to install the APAR fix IO15281 for the Content Manager for iSeries Client Application Version 5 Release 1? - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ I'm using the Content Manager for iSeries Client Application Version 5 Release 1 and I am having firewall timeout issues. Would APAR fix IO15281 help address this problem? 
+
+CONTENT
+The APAR fixes that follow Fix pack 19 are listed on the ftp://ftp.software.ibm.com/as400/products/contentmanager/v530/client/ [ftp://ftp.software.ibm.com/as400/products/contentmanager/v530/client/] web site.
+
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Definitions of these settings (see http://support.microsoft.com/kb/158474 [http://support.microsoft.com/kb/158474] for more guidance): 
+
+KeepAliveTime: The idle time before TCP starts the next keep alive action. To our system, CM Client will try to do a live check after being idle for such a period, so this period must be shorter than the settings that firewall starts to close idle connections. That is to say, CM Client will tell firewall "Hey, I am still working" before firewall thinks it is not used. 
+
+KeepAliveInterval: This is the interval where TCP sends another keep alive package if it does not receive a response from the previous one. To our system, CM Client will send a keep alive package to the server, and if it does not get a response from the server for the KeepAliveInterval period, then it will send the keep alive package again. 
+
+MaxDataRetries: This is the package counts that TCP connect will try if it does not get any response. To our system, CM Client will send MaxDataRetries packages to the server if it does not get any response, and then it will think the TCP has disconnected. If it gets any response, then it thinks the connection is still alive. 
+
+These settings are at the system level, and it affects all TCP/IP connections which enable keepalives (as we enabled in IO15281 when establishing a TCP/IP connection with the server). These changes only require the CM Client to restart, rather than requiring the PC to reboot. 
+
+Make sure you are the Windows Administrator if you try to add, update or remove registry entries. 
+
+
+If this information does not address your question, contact IBM software support for further assistance. 
+Stay Informed by Receiving Product and Lifecycle Notifications:
+Click here [http://www.ibm.com/support/docview.wss?uid=swg21674106]
+
+RELATED INFORMATION
+ Downloading APAR fix IO15281 [ftp://ftp.software.ibm.com/as400/products/contentmanager/v530/client/]

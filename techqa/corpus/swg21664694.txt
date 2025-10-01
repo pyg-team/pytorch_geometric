@@ -1,0 +1,32 @@
+Title: IBM How to serve all Rational Statemate licenses if there are multiple INCREMENT Lines - United States
+
+Text:
+error (-4; 342) ; statemamte kernel 4.2 ; multiple ; INCREMENT line; license TECHNOTE (FAQ)
+
+QUESTION
+ How do you make IBM Rational Statemate Kernel 4.2 consume all licenses with multiple INCREMENT lines? 
+
+CAUSE
+Post migration from I-Logix to Telelogic Statemate 4.2 is not able to handle multiple INCREMENT lines in the license file. This is because always the INCREMENT line with the oldest maintenance expiry date is taken first.
+
+ANSWER
+Post migration from I-Logix to Telelogic Statemate 4.2 is not able to handle multiple INCREMENT lines in the license file independent of which license server version and daemon is running. This means,Statemate 4.2 only accesses the first INCREMENT line. 
+
+Example: If a License file has 2 INCREMENT lines like below
+
+INCREMENT Kernel telelogic 2013.0731 permanent 1
+INCREMENT Kernel telelogic 2013.1231 permanent 12
+
+Statemate 4.2 only accesses the first INCREMENT line:
+
+INCREMENT Kernel telelogic 2013.0731 permanent 1 
+
+with the oldest maintenance date and ignore the next INCREMENT line
+
+This results in error message '(Licensed number of users already reached. (-4,342)') after 1 license being consumed.
+
+Changing the order of INCREMENT lines in the license.dat file does not help because always the INCREMENT line with the oldest maintenance expiry date is taken first.
+
+You will have to contact IBM Rational Sales team (1800 728 1212) to renew the maintenance and have a common support end date.
+
+Alternatively upgrading the Statemate version to 4.3 or higher will solve the problem.

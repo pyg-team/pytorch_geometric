@@ -1,0 +1,20 @@
+Title: IBM Transport files for non-unicode - United States
+
+Text:
+unicode SAP basis 7.0 agent 7.1.1 supported K711_00098U.ITM R711_00098U.ITM TECHNOTE (FAQ)
+
+QUESTION
+ MySAP agent is version 7.1.1. In the ABAP directory of the SAP agent DVD, there are transport files for unicode (K711_00098U.ITM & R711_00098U.ITM) but there are none for the Non-Unicode. Where can you get the K711_00xxx.ITM & R711_00xxx.ITM files? 
+
+CAUSE
+TEP is not displaying the ABAP information properly.
+
+ANSWER
+Non-unicode is not supported by the 7.1.1 SAP agent version but supported by 7.1.0. Starting from the 7.1.1 SAP agent, the support for non-unicode is removed and this decision has been taken by product management.
+This means, there will be no non-unicode transport files for SAP agent 7.1.1. SAP agent 7.1 was the last version which supported it.
+The reason for this is that SAP does not support non-unicode with 7.0 basis and above so the v711 Agent only provides a unicode transport.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITM Tivoli Monitoring ITCAM agent SAP

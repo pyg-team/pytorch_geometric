@@ -1,0 +1,20 @@
+Title: IBM User receiving Notice Sender Execution Failed Alert after upgrading to Atlas 6.0.3.3 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why does the user receive Notice Sender Execution Failed Alert after upgrading to Atlas 6.0.3.3? 
+
+CAUSE
+The error message is "java.sql.SQLException: ORA-00604: error occurred at recursive SQL level 1 ORA-01628: max # extents (32765) reached for rollback" and is caused by MATTERPERFORMER_TEXT
+
+ANSWER
+ 
+
+ 1. Backup Atlas Database 
+ 2. Using sqlplus login to Atlas Database using PSSAPL user 
+ 3. Run the Following commands in SQL prompt 
+ 4. EXEC ddl_util.drop_index('MATTERPERFORMER_TEXT'); 
+ 5. EXEC ddl_util.drop_ctx_pref('MatterPerformer_Pref10G'); 
+ 6. commit;

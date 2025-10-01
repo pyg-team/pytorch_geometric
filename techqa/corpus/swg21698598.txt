@@ -1,0 +1,90 @@
+Title: IBM Security Bulletin: Vulnerabilities in GSKit affect Rational DOORS (CVE-2015-0138, CVE-2014-6221) - United States
+
+Text:
+gskit; CVE-2013-6747; CVE-2014-6221 SECURITY BULLETIN
+
+SUMMARY
+ GSKit is an IBM component that is used by IBM Rational DOORS. The GSKit that is shipped with Rational DOORS contains multiple security vulnerabilities including the “FREAK: Factoring Attack on RSA-EXPORT keys" TLS/SSL client and server vulnerability. Rational DOORS has addressed the applicable CVEs. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2014-6221 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6221]
+DESCRIPTION: Random Data Generation using GSKit MSCAPI/MSCNG Interface Code does not generate cryptographically random data. An attacker could use this weakness to gain complete confidentially and/or integrity compromise. 
+
+CVSS Base Score: 8.8
+CVSS Temporal Score: See http://exchange.xforce.ibmcloud.com/#/vulnerabilities/98929 [http://exchange.xforce.ibmcloud.com/#/vulnerabilities/98929] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:C/I:C/A:N) 
+
+CVEID: CVE-2015-0138 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0138]
+DESCRIPTION: A vulnerability in various IBM SSL/TLS implementations could allow a remote attacker to downgrade the security of certain SSL/TLS connections. An IBM SSL/TLS client implementation could accept the use of an RSA temporary key in a non-export RSA key exchange ciphersuite. This could allow a remote attacker using man-in-the-middle techniques to facilitate brute-force decryption of TLS/SSL traffic between vulnerable clients and servers. 
+
+This vulnerability is also known as the FREAK attack. 
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See http://exchange.xforce.ibmcloud.com/#/vulnerabilities/100691 [http://exchange.xforce.ibmcloud.com/#/vulnerabilities/100691] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N)
+
+
+AFFECTED PRODUCTS AND VERSIONS
+Rational DOORS: 9.3.0.0 - 9.3.0.9, 9.4.0.0 - 9.4.0.3, 9.5.0.0 - 9.5.0.3, 9.5.1.0 - 9.5.1.4, 9.5.2.0 - 9.5.2.3, 9.6.0.0 - 9.6.0.2, 9.6.1.0 - 9.6.1.1 
+
+
+The following Rational DOORS components are affected: 
+
+ * Rational DOORS desktop client 
+ * Rational DOORS database server 
+ * Rational DOORS interoperation server
+
+REMEDIATION/FIXES
+Upgrade to the fix pack that corresponds to the version of Rational DOORS that you are running, as shown in the following table. Upgrade the Rational DOORS client, the Rational DOORS database server, and the Rational DOORS interoperation server. You should verify applying this fix does not cause any compatibility issues.
+
+
+
+Rational DOORS version Upgrade to fix pack 9.3
+9.3.0.1 - 9.3.0.9 9.3.0.10 [http://www.ibm.com/support/docview.wss?uid=swg24039556] 9.4
+9.4.0.1 - 9.4.0.3 9.4.0.4 [http://www.ibm.com/support/docview.wss?uid=swg24039555] 9.5
+9.5.0.1 - 9.5.0.3 9.5.0.4 [http://www.ibm.com/support/docview.wss?uid=swg24039554] 9.5.1
+9.5.1.1 - 9.5.1.4 9.5.1.5 [http://www.ibm.com/support/docview.wss?uid=swg24039553] 9.5.2
+9.5.2.1 - 9.5.2.3 9.5.2.4 [http://www.ibm.com/support/docview.wss?uid=swg24039552] 9.6.0
+9.6.0.1 - 9.6.0.2 9.6.0.3 [http://www.ibm.com/support/docview.wss?uid=swg24039551] 9.6.1
+9.6.1.1 9.6.1.2 [http://www.ibm.com/support/docview.wss?uid=swg24039550] 
+For Rational DOORS version 9.2.x and earlier, IBM recommends upgrading to a fixed, supported version/release/platform of the product. If you are using Rational DOORS Web Access, after you upgrade but before you start the Rational DOORS Web Access server, edit the core configuration file and set the required version of the interoperation server to the version of the fix pack upgrade, as described in this procedure. 
+
+Procedure: 
+
+ 1. To edit the Rational DOORS Web Access core configuration file, open the festival.xml file, which is in the server\festival\config directory.
+    
+    
+ 2. Add the following line in the <f:properties> section:
+    
+    <f:property name="interop.version" value="9.n.n.n"/>
+    
+    Replace "9.n.n.n" with the version of the fix pack upgrade: 9.3.0.10, 9.4.0.4, 9.5.0.4, 9.5.1.5, 9.5.2.4, 9.6.0.3, or 9.6.1.2.
+    
+    
+ 3. Save and close the file. 
+
+
+After this revision, only the specified version of the interoperation server can access the Rational DOORS database. 
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ * 20 March 2015: Original copy published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,159 @@
+Title: IBM SE62968: COBOL Copybook contains "FILLER" padding in uppercase/lowercase letters - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Additional Symptom(s) Search Keyword(s): CCSID 5026 lowercase
+   Japanese language environment 2962
+   
+   The word FILLER became fILLER at 8.0.0.3. It was FILLER at 7.1
+   and prior release. The customer understands that Job CCSID 5026
+   is unsupported by MQ. However, they are expecting MQ to correct
+   the typo lowercase characters to uppercase characters from the
+   point of view of quality.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   IBM MQ users who utilize the COBOL Copybooks and have jobs which
+   cannot handle mixed uppercase and lowercase characters
+   
+   
+   Platforms affected:
+   IBM iSeries
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   In IBM MQ V8 the "FILLER" padding in the COBOL copybooks is in
+   uppercase and lowercase letters, ie "fILLER". For jobs which
+   cannot handle lowercase characters, such as in CCSID 5026, this
+   results in problems parsing the copybooks.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  While CCSID 5026 is not supported with IBM MQ, the COBOL
+   copybooks should be corrected to be all uppercase characters as
+   previously.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.5
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SE62968
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ ISERIES V8.
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7254
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-10-06
+   
+   
+ * CLOSED DATE
+   2015-10-26
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  RCHMGR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ ISERIES V8.
+   
+   
+ * FIXED COMPONENT ID
+   5724H7254
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

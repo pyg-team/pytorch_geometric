@@ -1,0 +1,34 @@
+Title: IBM MDM CE DocStore maintenance job is not working correctly, DB2 SQLCODE=-628 returned - United States
+
+Text:
+SQLCODE 628; ALTER TABLE; MDM; PIM; MDM CE; MDMCS; docstore maintenance; activate not logged initially TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ MDM CE provides some build-in reports, for example, IBM MDMPIM DocStore Maintenance Report. The purpose of this report is to do Document Store maintenance based on customer’s setting in lookup table - IBM_MDMPIM_DocStore_Maintenance_Lookup. When users run this report, they found that the documents directory in document store were not purged or archived correctly. By checking the MDM CE log file, we can find this error message
+
+2016-03-22 18:51:36,126 [sch_worker_0] ERROR WPCIBMMDMPIMDocStoreMaintenanceScript14586528171570 JOB_ID:3003- CWPCM0002E:Generic error / Exception: Exception:Could not execute update for string
+ALTER TABLE DOCS_TO_PURGE ACTIVATE NOT LOGGED INITIALLY WITH EMPTY TABLE
+... 
+Caused by: com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error:
+SQLCODE=-628, SQLSTATE=42613, SQLERRMC=ACTIVATE NOT LOGGED INITIALLY,
+DRIVER=3.69.24 
+
+CAUSE
+The process of DocStore maintenance report job find the document directories to work on, create a temporary table DOCS_TO_PURGE, pick the first directory then put the documents id and path under this directory that should be purged/archived in DOCS_TO_PURGE. Take action on the documents in DOCS_TO_PURGE. Then clear the DOCS_TO_PURGE table, drop this table. Finally move to the next directory. This process iterates until it’s done on all the directories. 
+
+The error message was caught during the step – clear the DOCS_TO_PURGE table. The SQL we used to clear this temporary table is 
+“ALTER TABLE DOCS_TO_PURGE ACTIVATE NOT LOGGED INITIALLY WITH EMPTY TABLE”
+
+For “DB2 Error : SQLCODE=-628, SQLSTATE=42613”, you can refer to the DB2 KnowledgeCenter
+http://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.messages.sql.doc/doc/msql00628n.html?lang=en [http://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.messages.sql.doc/doc/msql00628n.html?lang=en]
+This error generally means that the “activate not logged initially” is conflicting with your current setting.
+
+Customers should check if they have enabled a database configuration - BLOCKNONLOGGED on their MDM CE database. If this configuration is enabled, then ALTER TABLE statements will fail if the NOT LOGGED INITIALLY parameter is specified. This configuration is disabled by default. Please check this KnowledgeCenter url for reference
+
+http://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.admin.config.doc/doc/r0055068.html [http://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.admin.config.doc/doc/r0055068.html]
+
+
+RESOLVING THE PROBLEM
+Disable BLOCKNONLOGGED in your MDM CE database configuration: 
+
+db2 update db cfg for $mdmce_sid using BLOCKNONLOGGED NO

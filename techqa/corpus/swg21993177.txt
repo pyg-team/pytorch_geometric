@@ -1,0 +1,44 @@
+Title: IBM Knowledge Collection: PureData System for Analytics nzcallHome - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ A compilation of links to documents and resources to help you configure and make use of the nzcallHome functionality of IBM PureData System for Analytics. 
+
+CONTENT
+Nzcallhome 
+
+The callhome service is an automated notification process that detects problem conditions on the IBM® PureData™ System for Analytics appliances and reports them to IBM Netezza® Support. 
+
+The callhome service is an optional feature that improves and simplifies the work to report the most common types of problems that could occur on the appliance. If you enable callhome, the service watches your system for issues such as failed SPUs/S-Blades or disks, host failovers, unexpected system state changes, or SPU core files. When it detects a problem, the callhome service automatically gathers the basic information for the problem, and contacts IBM Support with information about the problem. 
+
+The callhome service contacts the automated IBM Support servers, which open a PMR for your system that is then assigned to a Support engineer for investigation. The PMR is identical to a PMR that you create when you report problems for your Netezza appliance. The callhome service ensures that the PMR contains the required information about the system and problem. You can review and update the PMR with more information and follow its progress as you would for any PMR that you create. The customer contacts that you designate also receive an email with the PMR number. 
+
+
+Prerequisites
+
+-NPS 7.2.x
+-Connection to IBM servers. See Configure access to IBM servers [https://www.ibm.com/support/knowledgecenter/SSULQD_7.2.1/com.ibm.nz.adm.doc/c_sysadm_cfg_access_ibm_serv.html]
+
+How to setup
+
+If you have NPS 7.2.0.x [https://www.ibm.com/support/knowledgecenter/SSULQD_7.2.0/com.ibm.nz.adm.doc/c_sysadm_about_callhome_service.html]
+
+If you have NPS 7.2.1.X [https://www.ibm.com/support/knowledgecenter/SSULQD_7.2.1/com.ibm.nz.adm.doc/c_sysadm_about_callhome_service.html]
+
+
+
+Important Notes:
+
+-Transition from nzOpenPMR and end of support for MAIL ONLY option to open PMRs [http://www-01.ibm.com/support/docview.wss?rs=688&uid=swg21978639]
+nzOpenPMR (NPS 7.1.x) is no longer supported method to report problems
+Only IDAA systems are supported to use mail option to open PMRs. If you have standard PDA appliance (non IDAA system) and have the MAIL ONLY mode enabled all new generated PMRs will be automatically closed.
+
+-How to migrate nzevents from nzOpenPmr to nzcallHome [http://www-01.ibm.com/support/docview.wss?uid=swg21993172]
+Due to the deprecation of nzOpenPMR if you upgrade to NPS 7.2.x you will need to reconfigure your call home setup to make use of the new nzcallHome command.
+
+-Use proxy server to connect to IBM support servers [http://www-01.ibm.com/support/docview.wss?uid=swg21979708]
+This option is only available in NPS 7.2.1.x and we only support non authenticated proxy servers.
+
+-Model N3001-001 (aka Mako Ultra Lite) nzCallHome is only supported in NPS 7.2.1.X

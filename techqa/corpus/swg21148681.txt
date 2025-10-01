@@ -1,0 +1,78 @@
+Title: IBM Error: unable to set access control list for <view>: Access is denied - United States
+
+Text:
+Permission denied; unable to set access control list; clearviewtool/server_id_nt; Access is denied; out-of-synch; identity.sd; groups.sd; Failed to set identity on view: Permission denied.; Error: unable to set access control list; 1148681; clearviewtool/server_id_nt: Error: unable to set access control list; clearviewtool/view: Error: Failed to set identity on view: Permission denied; access denied/permission denied TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why attempts to create a new IBM® Rational® ClearCase® view on Microsoft® Windows® fails with an access denied error. 
+
+SYMPTOM
+ 
+
+Attempts to create a view on Windows reports the error: 
+
+
+clearviewtool/server_id_nt: Error: unable to set access control list for \\host\share\view.vws: Access is denied.
+clearviewtool/server_id_nt: Error: protection on <path to .vws> is out-of-synch with identity.sd and groups.sd
+
+clearviewtool/view: Error: Failed to set identity on view: Permission denied.
+
+CAUSE
+ 
+
+The cause of this problem relates to restrictive permissions on either the view share or directory to which the view is being created.
+
+
+RESOLVING THE PROBLEM
+ 
+
+
+Permissions are too restrictive on one or both of the following:
+
+
+ 1. The root of the view storage drive (for example, C:\) has restrictive permissions.
+    
+    To resolve:  1. In Windows Explorer, right-click the root of the drive containing the view storage 
+        
+        
+     2. Select Properties > Security tab
+        
+        
+     3. Ensure that both the ClearCase user group and the clearcase_albd user have Full Control to this drive.
+        
+        
+    
+    
+ 2. The view storage share (for example, C:\ClearCase_Storage) has restrictive permissions. 
+    
+    To resolve:  1. In Windows Explorer, right-click the ClearCase_Storage Folder
+        
+        
+     2. Select Properties > Sharing Tab
+        
+        
+     3. Ensure that the "Share this folder" radio button is selected
+        
+        
+     4. Click the permissions button and make sure that the ClearCase User group and the clearcase_albd user have full control to this Folder and its subdirectories. 
+    
+    
+
+
+Refer to technote 1143292 [http://www-01.ibm.com/support/docview.wss?rs=984&uid=swg21143292] About ClearCase permissions on Windows for further details regarding ClearCase permission requirements on Windows hosts. 
+
+
+Note: If you are uncertain of the names of the ClearCase User group and/or clearcase_albd user in either of the steps above, then set the permissions to: Everyone Full Control. This can be adjusted later once you have verified the problem has been resolved. 
+
+
+RELATED INFORMATION
+#About ClearCase permissions on Windows [http://www.ibm.com/support/docview.wss?uid=swg21143292]
+About ClearCase privileged users on Windows [http://www.ibm.com/support/docview.wss?uid=swg21146253]
+Failed to record hostname [http://www.ibm.com/support/docview.wss?uid=swg21234135]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase View: Snapshot Software Development Rational ClearCase View: Snapshot

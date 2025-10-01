@@ -1,0 +1,133 @@
+Title: IBM IZ32722: DB2LOOK NOT DISPLAYING AUTORESIZE INFORMATION FOR SYSTEM GENERAT ED TABLESPACES (#2) - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+DB2 Version 9.5 Fix Pack 3b for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24022591]
+DB2 Version 9.5 Fix Pack 4 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24023213]
+DB2 Version 9.5 Fix Pack 3a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24021838]
+DB2 Version 9.5 Fix Pack 3 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24021563]
+DB2 Version 9.5 Fix Pack 4a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24024215]
+DB2 Version 9.5 Fix Pack 5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24025421]
+DB2 Version 9.5 Fix Pack 6a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027747]
+DB2 Version 9.5 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028731]
+DB2 Version 9.5 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24030302]
+DB2 Version 9.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032087]
+DB2 Version 9.5 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033308]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  By default, databases are automatically enabled for automatic
+   storage and the system generated tablespaces use automatic
+   storage by default. SYSCATSPACE and USERSPACE1 use DMS under
+   the covers with AUTORESIZE = YES (by default). Auto-resize can
+   be turned off using ALTER TABLESPACE but when db2look is used
+   to capture the DDL for a database, it is not showing if
+   auto-resize is off
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  DB2LOOK NOT DISPLAYING AUTORESIZE INFORMATION FOR SYSTEM
+   GENERATED TABLESPACES
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem is fixed in 9.5 Fix Pack 3 for Linux, UNIX, and Windows.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ32722
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4100
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-18
+   
+   
+ * CLOSED DATE
+   2009-04-07
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * FIXED COMPONENT ID
+   5765F4100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSY
+   UP

@@ -1,0 +1,99 @@
+Title: IBM Optim Performance Manager Extended Insight for DB2 for Linux, UNIX, and Windows, 
+Version 4.1 releases: new features and enhancements - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document describes the new features and enhancements in Version 4.1 of IBM® Optim™ Performance Manager Extended Insight for DB2® for Linux®, UNIX®, and Windows® and its modifications and fix packs. 
+
+CONTENT
+For information about new features in IBM Optim Performance Manager for DB2 for Linux, UNIX, and Windows Version 4.1, see the following technote: 
+
+https://www.ibm.com/support/docview.wss?uid=swg27019428 [https://www.ibm.com/support/docview.wss?uid=swg27019428]
+
+
+ * Version 4.1.1 
+ * Version 4.1.0.1 
+ * Version 4.1
+
+
+
+Version 4.1.1 
+
+Optim Performance Manager Extended Insight, Version 4.1.1 
+
+Optim Performance Manager Extended Insight Version 4.1.1 is available either as an update for an existing copy of the 4.1.0.x version of the product, or as a full installation. Optim Performance Manager Extended Insight Version 4.1.1 provides key enhancements in the following categories. 
+
+Up and running: Simplified product activation 
+For Optim Performance Manager Extended Edition. one single activation kit now activates both Optim Performance Manager and Extended Insight. In previous releases, there were two activation kits, one for the product license and one for Extended Insight. If you have installed a different edition of Optim Performance Manager you can run the single activation kit to upgrade to Extended Edition and activate Extended Insight in one step. 
+
+Up and running: Ability to change the default retention period of SQL statements that are collected by Extended Insight 
+Optim Performance Manager Extended Insight retrieves all statements from the package cache of the monitored database and saves them in a dimension table. If the saved statements are not executed within a certain time period by an Extended Insight client, Optim Performance Manager deletes them from the dimension table. For DB2 for Linux, UNIX, and Windows databases, the default retention period is one hour. For DB2 for z/OS databases, the default retention period is one week. 
+
+In some environments, especially if you use Extended Insight for DB2 for z/OS databases, the default retention period might be too short. Statements might be deleted before the Extended Insight clients execute them, causing missing statement text on the Extended Insight dashboard. 
+
+You can now extend the pruning interval by setting the one of the following properties in the db2pesrv.prop file in the repository server working directory, then restarting Optim Performance Manager: 
+
+clean.dimension_minimum_retention_period = <number of hours> 
+clean.dimension_minimum_retention_period.<instance_id> = <number of hours> 
+
+Up and running: Event monitor improvements 
+Optim Performance Manager now uses the TRUNCATE command to delete data records from the DB2 V9.7 package cache, unit of work or lock event monitor tables on the monitored databases. In previous releases, Optim Performance Manager used DROP/CREATE statements to prune the read data records which caused the DB2 recovery history file to get very large. 
+The package cache and unit of work event monitor are used by the Extended Insight monitoring profile and the lock event monitor is used by the Locking monitoring profile. 
+
+
+Up and running: Extended Insight architecture simplification  * The architecture of Extended Insight has been simplified to use only two communication ports for the communication of all Extended Insight Clients with Optim Performance Manager. These ports are specified during Optim Performance Manager installation or activation and saved in the repository database, and can be changed on the Performance Manager Server panel in the web console. In previous releases the number of needed ports grew with the number of monitored database for which the Extended Insight monitoring profile were enabled.
+
+ *  An Optim Performance Manager server running on an IPv6 configured system now supports Extended Insight clients that are running on IPv4 configured systems. In previous releases, all Extended Insight client machines and the Optim Performance Manager server machine had to have matching IP levels, either all IPv4 or all IPv6. 
+
+ * An Optim Performance Manager server with multiple network cards is now supported for Extended Insight.
+
+ * Auto-discovery of the Extended Insight controller via UDP multicasting is deprecated in this release. The controller will continue to broadcast its location via UDP multicast for the benefit of down-level clients. 
+
+Back to Top 
+Version 4.1.0.1 
+
+Optim Performance Manager Extended Insight, Version 4.1.0.1 
+
+Optim Performance Manager Extended Insight Version 4.1.0.1 provides key enhancements in the following categories. 
+
+Up and running enhancements 
+If you have DB2 client package at DB2 V9.7 Fix Pack 3 level or later, you can now silently install and configure Extended Insight into an existing DB2 client package for CLI applications. By using this installation method, you can move the existing DB2 client package with the embedded Extended Insight installation to another location without having to reinstall and reconfigure Extended Insight. In SAP environments, for example, SAP copies the DB2 client package with the embedded Extended Insight installation from the Network File System (NFS) share to the SAP system whenever an SAP application server is started. 
+
+You can create a WebSphere environment variable for a pureQuery path and update multiple JDBC provider classpaths with this variable at the same time. 
+
+You can validate your CLI configuration for Extended Insight by using the db2cli validate command for data server client packages V9.7, Fix Pack 2 or later. 
+
+Common monitoring console for DB2 Linux, UNIX, and Windows 
+The same Optim Performance Manager server can be used to monitor DB2 databases on both distributed and z/OS systems. To get the license for monitoring DB2 for z/OS databases with Optim Performance Manager, you also need OMEGAMON XE for DB2 on z/OS V5.1. 
+
+SQL statement execution details on the data server 
+With this enhancement, you get all the details about individual SQL statements and their execution on the data server side. For example, you can identify which SQL statement causes high I/O times or lock wait contention. 
+
+Improved diagnostic capabilities 
+New metrics provide additional information for improved diagnostics. The new statement failure rate metric, for example, helps you determine whether short transaction response times indicate that the system has problems due to rolled back transactions. Additionally, you can use the new masking feature to reduce the number of client information field values that are used for aggregation of transactions into workload clusters. 
+
+Advanced Tivoli integration support 
+The configuration of ITCAM data collection is fully integrated into the Optim Performance Manager monitoring configuration dialog. Additionally, the launch-in-context capabilities are extended. For example, you can open the operating system monitoring details for a selected application client. 
+
+New workloads supported 
+Workload support is now available for .Net applications, CLI static SQL applications, and Type 2 applications for JDBC and CLI. (See the system requirements for details.) 
+
+Autonomic enforcement of performance objectives 
+You can configure Optim Performance Manager to continually adjust the Workload Manager configuration of a DB2 database so that your workloads meet their performance objectives. 
+Back to Top 
+Version 4.1 
+
+Optim Performance Manager Extended Insight, Version 4.1 
+
+DB2® Performance Expert Extended Insight Feature is renamed in this release to Optim™ Performance Manager Extended Insight. Extended Insight monitors database workloads by collecting response times and classifying each defined workload by user, application, and system. You can identify the top SQL statements that run in the data server and identify workloads with problems by checking response times, warning percentages, and critical percentages. New solution-oriented dashboard
+The Extended Insight dashboard helps determine which workloads have problems by providing information about response time during a given time period, in a response time histogram, and in an alert history. You can select the specific workload that you want to analyze by user, by application, or both. 
+
+Broader scope of supported applications with Extended Insight 
+In addition to supporting Java™ applications and WebSphere® Application Server applications, Optim Performance Manager also supports CLI applications. Also included in this release are predefined application views for WebSphere Application Server, SAP, Cognos®, DataStage®, and InfoSphere™ SQL Warehouse tasks.
+
+Integration with Tivoli Composite Application Monitoring 
+After you install Extended Insight, you can integrate your Optim Performance Manager with IBM Tivoli® Composite Application Manager (ITCAM) for Application Diagnostics and ITCAM for Transactions in a Tivoli Enterprise Portal (TEP) Console for end-to-end transaction monitoring. When the integration is complete, you can run extended insight monitoring from your TEP console.
+
+Back to Top

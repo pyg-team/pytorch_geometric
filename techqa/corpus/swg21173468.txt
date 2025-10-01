@@ -1,0 +1,165 @@
+Title: IBM MQ Error Log, FFST and Dump Locations - United States
+
+Text:
+MustGather; MustGathers Must Gather; MustGatherDocument; FFSTs; FFST; FFDCs; FFDC; FDC; CDF; JOB logs; minidump; mini dump; dump; directory; location TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ As it runs, IBM MQ logs error messages, creates FFSTs (also known as FDC files), and generates other diagnostic output files such as IBM i job logs, Windows minidumps and z/OS dumps. MQ can also generate data such as FFSTs, z/OS dumps and MQ line trace CDF files when requested by the administrator. This document explains where those files can be found on different platforms. 
+
+RESOLVING THE PROBLEM
+ 
+
+ * Linux and UNIX
+ * Windows
+ * IBM i
+ * HP Integrity NonStop Server
+
+ * IBM z/OS
+ * IBM z/VSE
+ * HP NonStop Server
+ * HP OpenVMS
+
+
+
+LINUX AND UNIX
+
+MQ maintains a set of error logs and writes FFSTs and other diagnostic files to the /var/mqm/errors directory. 
+
+MQ error logs are named AMQERR01.LOG, AMQERR02.LOG and AMQERR03.LOG, with AMQERR01.LOG containing the most recent messages. The messages roll over into AMQERR02.LOG and AMQERR03.LOG files when AMQERR01.LOG reaches a threshold size. 
+
+MQ FFST files are named AMQnnnnn.mm.FDC, where nnnnn is the id of the process reporting the error and mm is a sequence number, normally 0. 
+Back to top
+
+
+
+WINDOWS
+MQ diagnostic dumps are written to the errors subdirectory of the MQ data directory, which was selected when MQ was first installed on the system as the default location for queue managers. The default diagnostic dump location is:
+
+
+
+ 1.  IBM MQ V8.0
+ 2.  
+ 3.  C:\ProgramData\IBM\MQ\errors
+ 4.  
+ 5.  
+ 6.  
+ 7.  C:\ProgramData
+ 8.  
+ 9.  %PROGRAMDATA%
+ 10. 
+ 11. 
+ 12. 
+ 13. 
+ 14. WebSphere MQ V7.5, V7.1, V7.0 and V6.0
+ 15. 
+ 16. C:\Program Files (x86)\IBM\WebSphere MQ\errors
+
+
+
+If you do not know the MQ data directory, you can use the amquregn utility [http://www.ibm.com/support/docview.wss?uid=swg21621003#registry] to display the MQ "WorkPath" registry key. Ignore any doubled backslash characters in the result and look in the errors subdirectory to find MQ diagnostic files. In the following example, the MQ diagnostic dump directory is D:\Data\IBM\MQ\errors: 
+
+ 1.  Finding the MQ data directory on Windows
+ 2.  
+ 3.  C:\Program Files\IBM\MQ\bin> 
+ 4.  amquregn amquregn.ctl | FINDSTR WorkPath
+ 5.  
+ 6.  .."WorkPath"="D:\\Data\\IBM\\MQ"
+ 7.  
+ 8.  ...."WorkPath"="D:\\Data\\IBM\\MQ"
+ 9.  
+ 10. 
+
+
+
+MQ FFST files are named AMQnnnnn.mm.FDC, where nnnnn is the id of the process reporting the error and mm is a sequence number, normally 0. 
+
+For some less common problems, MQ may also generate Windows minidump files named AMQnnnnn.ttttt.mm.dmp, where nnnnn is the id of the process reporting the error, ttttt is a thread identifier, and mm is a sequence number, normally 0. 
+Back to top
+
+
+
+IBM I
+MQ diagnostic dumps are written to the /QIBM/UserData/mqm/errors directory. 
+
+MQ FFST files are named AMQnnnnn.mm.FDC, where nnnnn is the id of the process reporting the error and mm is a sequence number, normally 0.
+
+MQ also records the job log to this directory when a job generates an FFST. Job logs are named AMQnnnnn.mm.JOB, where nnnnn is the id of the job reporting the error and mm is a sequence number, normally 0.
+
+
+Back to top
+
+
+
+HP INTEGRITY NONSTOP SERVER
+The MQ client for HP Integrity NonStop Server writes its diagnostic dumps to the var/mqm/errors subdirectory of the OSS installation directory selected at installation time [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm.mq.doc/q113450_.htm].
+
+MQ FFST files are named AMQnnnnn.mm.FDC, where nnnnn is the id of the process reporting the error and mm is a sequence number, normally 0.
+
+
+Back to top
+
+
+
+IBM Z/OS
+MQ dumps are located in a system dump data set and may be identified by their title. Dumps requested by MQ will begin with the four-character subsystem name of the MQ queue manager. For example:
+
+
+
+ 1. Dump Title for a Queue Manager with a Subsystem Name of CSQ1
+ 2. 
+ 3. CSQ1,ABN=5C6-00E20016,U=SYSOPR ,C=R3600.701.MMC -CSQMTRG2,M=CSQGFRCV, LOC=CSQSLD1 .CSQSVSTK+0000057AF
+
+
+
+
+Comms dumps requested by the operator might not contain the queue manager name, depending on the comment the operator specifies in the dump command. Check for message IEA611I or IEA911E in the syslog to determine the dump data set name and also to see whether the dump is complete or partial. For example: 
+
+ 1.  Syslog messages for dumps
+ 2.  
+ 3.  IEA611I COMPLETE DUMP ON DUMP.MQT1MSTR.DMP00074
+ 4.  
+ 5.  DUMPID=074 REQUESTED BY JOB(MQT1MSTR)
+ 6.  
+ 7.  FOR ASID(005E)
+ 8.  
+ 9.  
+ 10. IEA911E PARTIAL DUMP ON SYS1.MCEVS4.DMP00039
+ 11. 
+ 12. DUMPID=039 REQUESTED BY JOB(DMSGTODI)
+ 13. 
+ 14. FOR ASID(00D2)
+
+
+
+Back to top
+
+
+
+IBM Z/VSE
+
+MQ dumps are normally stored by z/VSE in the z/VSE dump library. 
+Back to top
+
+
+
+HP NONSTOP SERVER
+WebSphere MQ V5.3.1 and V5.3 for HP NonStop Server writes its diagnostic dumps to the var/mqm/errors subdirectory of the queue manager subvolume. In OSS this is accessible as $MQNSKVARPATH/errors.
+
+MQ FFST files are named AMQccppppp.mm.FDC, where cc is the number of the CPU in which the process reporting the error is running, ppppp is the process identification number (PIN) and mm is a sequence number, normally 0.
+
+Back to top
+
+
+
+HP OPENVMS
+WebSphere MQ V6.0 for HP OpenVMS writes its diagnostic dumps to the MQS_ROOT:[MQM.ERRORS] directory.
+
+MQ FFST files are named AMQnnnnn_mm.FDC, where nnnnn is the id of the process reporting the error and mm is a sequence number, normally 0.
+
+
+Back to top
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

@@ -1,0 +1,183 @@
+Title: IBM PI27924: USERTRANSACTION CANNOT BE USED FROM A CDI INSTANCE CREATED WITHIN THE CONTEXT OF AN EJB - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  @Resource UserTransaction not injectable into CDI bean when
+   called by @Stateless EJB
+   
+   a @Stateless @WebService class using CDI based
+   @ApplicationScoped @Transactional services
+   when CDI based Service gets initialized from within the
+   @Stateless @WebService  will fail with the UserTransaction in
+   CDI beans being null.
+   
+   [10/13/14 15:55:49:564 CEST] 0000014d HybridUserTra >
+   getObjectInstance
+   Entry
+   Reference Class Name:
+   javax.transaction.UserTransaction
+   
+   <null>
+   [10/13/14 15:55:49:564 CEST] 0000014d HybridUserTra <
+   getObjectInstance
+   :  Exit
+   
+   com.ibm.wsspi.injectionengine.InjectionException:
+   UserTransaction may only be looked up by or injected into an
+   EJB if that EJB is configured to use bean managed
+   transactions.  EJB
+   xxxx-ear-4.0.0.0#dev77-service.jar#xxxxxImpl is
+   configured for container managed transactions.
+   
+   [10/13/14 15:55:49:569 CEST] 0000014d InjectionBind E
+   CWNEN0030E: The @Resource factory encountered a problem
+   getting the object instance
+   xxxxx.xxxxxx.BeanManagedUserTransactionStrategy/userTransaction
+   binding object.  The exception message was:
+   UserTransaction may only be looked up by or injected into an EJB
+   if that EJB is configured to use bean managed transactions.  EJB
+   xxxxxxxxx is configured for container managed transactions.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of Enterprise Java Beans (EJB)    *
+   *                  and Context and Dependency Injection (CDI)  *
+   *                  in IBM WebSphere Application Server V8.5    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: UserTransaction cannot be used from a   *
+   *                      CDI bean created in the context of an   *
+   *                      EJB.                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The injection of a UserTransaction object uses the same logic
+   as lookup of a UserTransaction object.  Lookup of
+   UserTransaction is prevented when it occurs within the context
+   of an EJB that uses container-managed transactions, and the
+   UserTransaction object returned within the context of an EJB
+   that uses bean-managed transactions can only be used within
+   the context of an EJB that uses bean-managed transactions.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The injection of a UserTransaction object has been
+   changed to separate logic for injection, and the logic only
+   applies restrictions when the object being created is an EJB
+   rather than checking the current component context.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.5.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI27924
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-17
+   
+   
+ * CLOSED DATE
+   2014-10-23
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

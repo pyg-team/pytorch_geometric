@@ -1,0 +1,26 @@
+Title: IBM Creating or saving a document leaves DB2 database in SQLSTATE=57011 - United States
+
+Text:
+SQL0289N; cannot open; document; SQLSTATE=57011; db2; database; table space; increase; 1281491 TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ When you try to create or save a document in IBM® Rational RequisitePro® with DB2 as the backend database, error SQL0289N appears. 
+
+SYMPTOM
+The following error occurs:
+"Unable to save the document. 
+Reason [IBM][CLI Driver][DB2/NT] SQL0289N Unable to allocate new pages in table space "DB2ADMIN_DATA". SQLSTATE=57011"
+
+
+CAUSE
+The table space has reached its maximum size and all of the containers are full. Alternately, there is not enough space between the current size and the maximum size for containers to be extended or added, so an automatic increase in space is not possible.
+
+RESOLVING THE PROBLEM
+Have the database administrator increase the maximum size for the table space. 
+
+Refer to the DB2 Universal database link below and search for the error code SQL0289N [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=%2Fcom.ibm.db2.luw.messages.sql.doc%2Fdoc%2Fmsql00289n.html].
+
+As a reference on how you initially created the table space, review the copy of scripts that created the RequisitePro DB2 schema.

@@ -1,0 +1,15 @@
+Title: IBM Sticky field not propagating with IBM Datacap Taskmaster Capture - United States
+
+Text:
+sticky checkbox TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In an application configured for the Sticky function in prelayout.aspx, the value does not propagate even when the Sticky checkbox is checked in IBM Datacap Taskmaster Capture. 
+
+CAUSE
+Although the Sticky feature is intended to provide a method to propagate values to subsequent pages, the option itself only makes the checkbox feature. It does not provide the actual functionality to move the value.
+
+RESOLVING THE PROBLEM
+Datacap Taskmaster does not provide a method to move the value when Sticky is checked. A custom action must be written to provide this functionality.
+
+This solution is specific to 8.0.1. For 8.1, see the Datacap Knowledge Center, Sticky Variable [http://www.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.develop.doc/dcadg480.htm?lang=en].

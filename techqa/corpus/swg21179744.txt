@@ -1,0 +1,48 @@
+Title: IBM Document Content Search Does Not Work - United States
+
+Text:
+Search; content; power search; index; content index TECHNOTE (FAQ)
+
+QUESTION
+ In the DB2 Document Manager Desktop a user can search for documents using words contained within those documents. There are two methods for searching, through the Power Search or through a customized search template. 
+
+CAUSE
+The documents must be indexed for content searches. The search may not yield the expected results if: 
+
+ * Indexing is not enabled for the library 
+ * Individual documents are not indexed 
+ * The index fails
+
+ANSWER
+
+
+
+DB2 Content Manager systems only 
+
+Issue 1: Most likely the search was conducted against All Item Types, but not all of the item types were marked as Text Searchable. To correct this problem, perform the following actions:
+
+
+ 1. On the Search dialog, Library page, make sure you select specific item types to search that were marked for text indexing. 
+ 2. To ensure that an item type’s configuration was marked as text searchable, open the Item Type Configuration dialog and verify that the Text searchable option is selected.
+
+
+Issue 2: For Power Searches, the default action is to search across all item types. The problem might be too many Item types in the DB2® Content Manager system. To correct this problem, perform the following actions: 
+ 1. To determine if this is the problem, on the Library Configuration dialog, Login Security page, select Maintain server trace logs. 
+ 2. Apply the change and update the cache. The trace logs are stored in the Logs subdirectory in the DB2® Document Manager’s installation directory. The log file’s name will contain the User ID. 
+ 3. Perform a search and then look at the user’s trace log to find any DGL error messages, specifically DGL7146A. This error appears when the query string is too long or complex. The maximum query length is 64k. If the DB2 Content Manager system has a large number of item types, a library-wide search query can exceed the 64k query length. When performing a Power search, on the Library page, specify the exact item types for the search. Do the same for custom template searches.
+    
+
+
+Domino.Doc systems only The document’s file cabinet was not marked for indexing initially, or the index is out of date. To correct this problem, perform the following actions: 
+
+ 1. On the Domino Administrator dialog, the Files page, select the file cabinet and look at the file properties. 
+ 2. On the Index page (magnifying glass icon), verify that the database is marked for indexing and that the index is up to date. The index can be created and updated from this dialog. 
+
+
+Panagon systems only Documents were not marked for indexing or failed to be indexed. To correct this problem, perform the following actions: 
+
+ 1. For a DB2 Document Manager view template, add the property Indexing Status (version) and then update cache to implement the change. 
+ 2. In the DB2 Document Manager Desktop, search for the desired documents by property values. 
+ 3. Once the document is listed in the search results, verify that the Indexing Status (version) value is set to “Indexed”. If it is not indexed, submit the document for indexing by using the Version Index command on the Desktop. Documents can also be submitted for indexing on the Add and Checkin Dialogs. 
+ 4. If none of the documents will index, verify that the Content Services Search Manager is started. 
+ 5. Check the services' logs for any errors. Certain document types may not meet Content Services Search Manager criteria for indexing.

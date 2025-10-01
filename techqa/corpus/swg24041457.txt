@@ -1,0 +1,66 @@
+Title: IBM Download IBM Network Performance Insight, Version 1.1.0 - United States
+
+Text:
+npi 110 download DOWNLOADABLE FILES
+
+ABSTRACT
+ This document explains how to download IBM Network Performance Insight Version 1.1.0. 
+
+DOWNLOAD DESCRIPTION
+Download the files for the components you require. The files required for each component are listed in the tables below. Then, review the Release summary [http://www-01.ibm.com/support/knowledgecenter/SSCVHB_1.1.0/release_notes/cnpi_release_notes.dita?lang=en], and follow the instructions in the installation section [http://www-01.ibm.com/support/knowledgecenter/SSCVHB_1.1.0/install/cnpi_install_about.dita?lang=en] to install the product.
+
+
+ * Netcool Operations Insight - Performance Management V1.1.0 Linux English
+
+
+Additional components include:  * Jazz for Service Management 1.1.2.1 for AIX Multilingual (Launchpad, PRS, Jazz Repository, TDI) 
+ * Jazz for Service Management 1.1.2.1 for Linux Multilingual (Launchpad, PRS, Jazz Repository, TDI) 
+ * Jazz for Service Management 1.1.2.1 for Windows Multilingual (Launchpad, PRS, Jazz Repository, TDI) 
+ * IBM WebSphere Application Server V8.5.5.4 for Jazz for Service Management 1.1.2.0 for AIX Multilingual 
+ * IBM WebSphere Application Server V8.5.5.4 for Jazz for Service Management 1.1.2.0 for Linux Multilingual 
+ * IBM WebSphere Application Server V8.5.5.4 for Jazz for Service Management 1.1.2.0 for Windows Multilingual 
+
+Netcool Operations Insight - Performance Management V1.1.0 is supported on the following platforms: 
+ * Red Hat Enterprise Linux 6.x (x86_64)
+
+
+For a complete list of features and functions of Network Performance Insight, see the Release summary [http://www-01.ibm.com/support/knowledgecenter/SSCVHB_1.1.0/release_notes/cnpi_release_notes.dita?lang=en]. Downloadable electronic images 
+
+Download the parts that you need. You need parts appropriate to the platforms that you are using. 
+
+Required parts 
+
+Network Performance Insight 
+
+Part no. Description CN7Y9ML Netcool Operations Insight - Performance Management Quick Start Guide V1.1 Multilingual CN82UEN Netcool Operations Insight - Performance Management V1.1 Linux English Note: IBM Network Performance Insight is referred to as IBM Netcool Operations Insight - Performance Management in the media and they both refer to the same product capability. 
+
+Jazz for Service Management 1.1.2.1 for Network Performance Insight 1.1.0 
+
+Part no. Description CN6W8ML Jazz for Service Management 1.1.2.1 QuickStart Multiplatform Multilingual CN6W9ML Jazz for Service Management 1.1.2.1 for AIX Multilingual (Launchpad, PRS, Jazz Repository, TDI) CN6WAML Jazz for Service Management 1.1.2.1 for Linux Multilingual (Launchpad, PRS, Jazz Repository, TDI) CN6WCML Jazz for Service Management 1.1.2.1 for Windows Multilingual (Launchpad, PRS, Jazz Repository, TDI) CN552ML IBM WebSphere Application Server V8.5.5.4 for Jazz for Service Management 1.1.2.0 for AIX Multilingual CN553ML IBM WebSphere Application Server V8.5.5.4 for Jazz for Service Management 1.1.2.0 for Linux Multilingual CN555ML IBM WebSphere Application Server V8.5.5.4 for Jazz for Service Management 1.1.2.0 for Windows Multilingual PREREQUISITES
+For detailed system requirements, see IBM Knowledge Center for Network Performance from here [http://www-01.ibm.com/support/knowledgecenter/SSCVHB_1.1.0/install/ctnpm_requirements.dita?lang=en].
+
+INSTALLATION INSTRUCTIONS
+For installation instructions, see the product installation in IBM Knowledge Center from here [http://www-01.ibm.com/support/knowledgecenter/SSCVHB_1.1.0/install/cnpi_install_about.dita?lang=en].
+
+DOWNLOAD PACKAGE
+Download IBM Network Performance Insight 1.1.0 for the supported platforms from the Passport Advantage website: 
+http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]
+
+
+
+
+
+TECHNICAL SUPPORT
+ 
+Passport Advantage Online support:
+https://www-112.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [https://www-112.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]
+
+Software support for Network Performance Insight:
+http://www-01.ibm.com/support/electronicsupport/?cmp=101AM&ct=101AMES5&cr=01_Net&cm=M&csr=IBMESA&cn=MyN [http://www-01.ibm.com/support/electronicsupport/?cmp=101AM&ct=101AMES5&cr=01_Net&cm=M&csr=IBMESA&cn=MyN]
+
+Network Performance Insight software Technical training:
+https://tnpmsupport.persistentsys.com/updated_trainings [https://tnpmsupport.persistentsys.com/updated_trainings]
+
+
+PRODUCT ALIAS/SYNONYM
+ Netcool Operations Insight - Performance Management

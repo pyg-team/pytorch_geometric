@@ -1,0 +1,30 @@
+Title: IBM The selection variable exceeds the maximum for the target list / Error # 4757 in column 256.  Text: (End of Command) in SPSS 13.0.x - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am trying to run a SPLIT FILE on a string variable in SPSS 13.0.x and am receiving an error message either:
+
+The selection variable exceeds the maximum for the target list
+
+or
+
+Error # 4757 in column 256. Text: (End of Command)
+No more than 8 split file variables may be used by the SPLIT FILE command.
+Note that long string variables account for multiple split file variables.
+This command not executed.
+
+What is going on and how may I run my SPLIT FILE? 
+
+RESOLVING THE PROBLEM
+This error is caused by running a SPLIT FILE command on a string variable exceeding a width of 64 characters. You will either need to decrease the width of the variable or use the Automatic Recode (Transform->Automatic Recode) option to recode it into a numeric variable. You may then run the SPLIT FILE on the numeric variable
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 55770

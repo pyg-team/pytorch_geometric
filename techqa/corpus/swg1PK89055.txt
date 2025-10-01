@@ -1,0 +1,175 @@
+Title: IBM PK89055: THE "PRETEST EXISTING POOLED CONNECTIONS" VALUE IS CHANGING     BACK TO THE DEFAULT WHEN ANOTHER FIELD IS CHANGED IN CONSOLE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment: Microsoft Windows2003 Server
+   WebSphere Application Server Network Deployment edition,
+   version 6.1.0.9
+   
+   Problem: The "Pretest existing pooled connections" value is
+   changing back to the default when another field is changed.
+   -
+   Problem Details:
+   
+   This is the panel where the setting is modified:
+   
+   Data sources > Default Datasource > WebSphere Application
+   Server data source
+   
+   First, check the "Pretest existing pooled connections" and save
+   the configuration. Then, bring up the panel again and change
+   the "Minimum connections", and then bring up the panel again
+   and see that Pretest existing pooled connections" is
+   unchecked. The resource.xml file now shows
+   testConnection="false" again.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V6.0.2                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Pretest Connections value is        *
+   *                      being changed in the console.           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   On the administrative console, under JDBC Providers >
+   <provider> > Data Sources > <data source> > WebSphere
+   Application Server data source properties, the checkbox for
+   Pretest connections is sometimes cleared after loading the
+   Connection Pool Properties or Advanced Connection Pool
+   properties screens.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code change was made so that the checkbox value is no longer
+   cleared until you specifically uncheck it.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 6.0.2.39.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK89055
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-16
+   
+   
+ * CLOSED DATE
+   2009-07-23
+   
+   
+ * LAST MODIFIED DATE
+   2009-07-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK70088 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK70088]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP

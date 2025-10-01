@@ -1,0 +1,84 @@
+Title: IBM Can't find resource for bundle java.util.PropertyResourceBundle, key - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempting to creating new objects (jobs for example) within Deployment Manager Content Repository, an error occurs. 
+
+SYMPTOM
+All C&DS installation and configuration files show no issues. 
+
+
+The end user was experiencing the following error:
+AxisFault
+faultCode: {http://schemas.xmlsoap.org/soap/envelope/ [http://schemas.xmlsoap.org/soap/envelope/]}Server
+faultSubcode:
+faultString: Can't find resource for bundle
+java.util.PropertyResourceBundle, key
+02000004e48c8724000001549c007e138701
+faultActor:
+faultNode:
+faultDetail:
+{http://xml.apache.org/axis/ [http://xml.apache.org/axis/]}stackTrace:Can't find resource for bundle
+java.util.PropertyResourceBundle, key
+02000004e48c8724000001549c007e138701
+at
+org.apache.axis.message.SOAPFaultBuilder.createFault(SOAPFaultBuilder.ja
+va:222)
+
+
+
+CAUSE
+An issue with the WebSphere profile.
+
+
+ENVIRONMENT
+C&DS 7 on zLinux (s390x) 
+
+Web Sphere version 8.5
+
+
+DIAGNOSING THE PROBLEM
+Within WebSphere the systemout.log had messages in it that corresponded to the generated incident reports within /ffdc for example:
+
+Systemout.log 
+[5/9/16 15:57:42:261 BRT] 00000001 WSKeyStore W CWPKI0041W: One or 
+more key stores are using the default password. 
+[5/9/16 15:57:42:271 BRT] 00000001 SSLConfigMana I CWPKI0027I: 
+Disabling default hostname verification for HTTPS URL connections. 
+
+Systemout.log 
+5/9/16 18:33:26:880 BRT] 00000059 authz I CWWIM2000I 
+Initialization of the authorization component completed successfully. 
+[5/9/16 18:33:27:016 BRT] 00000059 FfdcProvider W 
+com.ibm.ws.ffdc.impl.FfdcProvider logIncident FFDC1003I: FFDC Incident 
+emitted on /opt/wasprofile/profiles/ibmSPSSCads7Prod/logs/ffdc/cads7_296
+1fb64_16.05.09_18.33.26.9456687163562944221549.txt 
+com.ibm.websphere.security.PasswordCheckFailedException 190 
+
+Review ffdc log files: (First 4 /ffdc logs have this information within them) 
+ffdc\ffdc\cads7_2961fb64_16.05.09_18.33.26.9456687163562944221549.txt 
+[5/9/16 18:33:26:945 BRT] FFDC 
+Exception:com.ibm.websphere.wim.exception.PasswordCheckFailedException 
+SourceId:com.ibm.websphere.security.PasswordCheckFailedException 
+ProbeId:190 Reporter:com.ibm.websphere.security.PasswordCheckFailedExcep
+tion@c1865892 
+com.ibm.websphere.wim.exception.PasswordCheckFailedException: CWWIM4537E
+No principal is found from the 'admin' principal name. 
+at com.ibm.ws.wim.ProfileManager.loginImpl(ProfileManager.java:3939) 
+. 
+. 
+. 
+java.lang.Exception::serialVersionUID:-3387516993124229948 
+java.security.GeneralSecurityException::serialVersionUID:894798122053539
+237 
+
+
+
+
+RESOLVING THE PROBLEM
+Creating a new WebSphere profile and redeploying into that profile resolved the customer's issue.
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]

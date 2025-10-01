@@ -1,0 +1,217 @@
+Title: IBM PK29675: SERVERS WITH STRUTS AND FRAME WORK APPLICATIONS HANG IN A DEADLOCK DURING THE SERVER INITIALIZATION - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer was running the application which started some
+   processing during WebSphere initialization, and the
+   initialization never completed. A deadlock occurred
+    because two threads (TCB 7f9588, the main thread, and TCB
+   7cbe88, the WebContainer thread) were waiting on each other.
+   .
+   - ANALYZE RESOURCE
+     Resource NAME=Mutex Object ADDR=27B4E160
+       held by jobname BBWG41AS ASID0178 TCB=007F9588
+       required by jobname BBWG41AS ASID0178 TCB=007CBE88
+   - Traceback (java stack for t=7f9588
+   Thread:   0x7f9588  ExecEnv: 0x23939ad8  Thread name:
+   P=2042:O=0:CT
+   at java/lang/Object.wait(Native Method)
+   at java/lang/Thread.join(Thread.java:959)
+   at java/lang/Thread.join(Thread.java:1012)
+   at com/ibm/ws/webcontainer/WebContainer.addWebApplication(WebCon
+   ...
+   - Traceback (java stack for t=7cbe88)
+   Thread:   0x7cbe88  ExecEnv: 0x239d65d0  Thread name: Thread-17
+   at com/ibm/som/corba/rt/StubServices.callMethodE(Native Method)
+   at
+   com/ibm/som/corba/rt/_PseudoOrbStub.BOA_init(_PseudoOrbStub.java
+   :317)
+   at com/ibm/ws390/orb/ORB.set_parameters(ORB.java:202)
+   at org/omg/CORBA/ORB.init(ORB.java:397)
+   at aa/bb/xxxxxx/yyy1004/CIZD1119.getORB(CIZD1119.java)
+   ...
+   .
+   This problem occurred only when the customers ran Struts and
+   Frame Work applications in which the user method initialized
+   ORB to communicate the Frame Work Servers during server
+   initialization.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere Application Server    *
+   *                 V6.0.1 for z/OS                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: WebSphere Application Server for z/OS   *
+   *                      Servant initialization hangs when       *
+   *                      loading Web Applications.               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The thread that performs the Web Application loading becomes
+   deadlocked with the main thread performing server
+   initialization.
+   
+   This occurs when the Web Application performs an ORB.init
+   during the Web Application initialization code.
+   
+   An analysis of the two threads in question at the time of the
+   deadlock will show the following java stacks:
+   
+   Main Thread:
+    at java/lang/Object.wait(Native Method)
+    at java/lang/Thread.join(Thread.java:959)
+    at java/lang/Thread.join(Thread.java:1012)
+    at com/ibm/ws/webcontainer/WebContainer.addWebApplication(...)
+    at com/ibm/ws/runtime/component/WebContainerImpl.install(W...)
+    at com/ibm/ws/runtime/component/WebContainerImpl.start(Web...)
+    at com/ibm/ws/runtime/component/ApplicationMgrImpl.start(A...)
+    at com/ibm/ws/runtime/component/DeployedApplicationImpl.fi...
+    at com/ibm/ws/runtime/component/DeployedModuleImpl.start(D...)
+    at com/ibm/ws/runtime/component/DeployedApplicationImpl.st...
+    at com/ibm/ws/runtime/component/ApplicationMgrImpl.startAp...
+    at com/ibm/ws/runtime/component/ApplicationMgrImpl.start(A...)
+    at com/ibm/ws/runtime/component/ContainerImpl.startCompone...
+    at com/ibm/ws/runtime/component/ContainerImpl.start(Contai...)
+    at com/ibm/ws/runtime/component/ApplicationServerImpl.star...
+    at com/ibm/ws/runtime/component/ContainerImpl.startCompone...
+    at com/ibm/ws/runtime/component/ContainerImpl.start(Contai...)
+    at com/ibm/ws/runtime/component/ServerImpl.start(ServerImp...)
+    at com/ibm/ws/runtime/WsServer.start(WsServer.java:145)
+    at com/ibm/ws/runtime/WsServer.main(WsServer.java:243)
+    at com/ibm/ws390/orb/CommonBridge.WsServerStartup(CommonBr...)
+    at com/ibm/ws390/orb/ServerRegionBridge.initCSI(ServerRegi...)
+    at com/ibm/ws390/orb/ORBEJSBridge.initCSI(ORBEJSBridge.jav...)
+   
+   Web Application Loading Thread:
+    at com/ibm/som/corba/rt/StubServices.callMethodE(Native Me...)
+    at com/ibm/som/corba/rt/_PseudoOrbStub.BOA_init(_PseudoOrb...)
+    at com/ibm/ws390/orb/ORB.set_parameters(ORB.java:202)
+    at org/omg/CORBA/ORB.init(ORB.java:397)
+    at (...Web Application code that performs ORB.init...)
+    at com/ibm/ws/webcontainer/srt/WebGroup.notifyServletConte...
+    at com/ibm/ws/webcontainer/srt/WebGroup.init(WebGroup.java...)
+    at com/ibm/ws/webcontainer/WebContainer.addWebApplication1...
+    at com/ibm/ws/webcontainer/WebContainer.run(WebContainer.j...)
+    at java/lang/Thread.run(Thread.java:513)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code under ORB.init was modified to avoid such a deadlock
+   from occuring.
+   
+   APAR PK29675 is currently targeted for inclusion in Service
+   Level (Fix Pack) 6.0.2.17 of WebSphere Application Server V6.0.1
+   for z/OS.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK29675
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-08-09
+   
+   
+ * CLOSED DATE
+   2006-12-08
+   
+   
+ * LAST MODIFIED DATE
+   2010-10-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK29665
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  BBOUBINF
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY UK20460 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK20460]
+   UP06/12/19 P F612
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

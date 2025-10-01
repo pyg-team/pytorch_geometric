@@ -1,0 +1,155 @@
+Title: IBM IT06288: LOW MESSAGE THROUGHPUT IN HL7DFDLINPUT AND HL7DFDLOUTPUT NODES - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The HL7DFDLInput node uses a lot of CPU when the message size
+   increases.
+   
+   The HL7DFDLOutput node can exhibit high latency (but not high
+   CPU) because the output message is emitted in two separate
+   TCP/IP packets.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The internals of the HL7DFDLInput and HL7DFDLOutput nodes are
+   not accessible, so these problems cannot be addressed without
+   this APAR fix.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of IBM Integration Bus Healthcare Pack who deploy
+   message flows containing the HL7DFDLInput or HL7DFDLOutput node.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The HL7DFDLInput node uses a large amount of CPU when receiving
+   an HL7 message.
+   The HL7DFDLOutput node can incur latency leading to low
+   throughput when sending an HL7 message.
+   
+   
+   
+   
+   
+   
+   There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0. For details
+   visit
+   http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.e
+   tools.mft.doc/bb23814_.htm [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/bb23814_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Both problems are addressed in the product by modifying the
+   logic in the respective nodes.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT06288
+   
+   
+ * REPORTED COMPONENT NAME
+   IIB HEALTHCARE
+   
+   
+ * REPORTED COMPONENT ID
+   5725C1820
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-02
+   
+   
+ * CLOSED DATE
+   2015-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IIB HEALTHCARE
+   
+   
+ * FIXED COMPONENT ID
+   5725C1820
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R300 PSY
+   UP

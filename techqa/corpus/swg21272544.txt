@@ -1,0 +1,23 @@
+Title: IBM Discard weekend events in the probe rules - United States
+
+Text:
+omnibus; probe rules; weekend; discard; event; exclude TECHNOTE (FAQ)
+
+QUESTION
+ How can I discard events that happened on Saturday and Sunday in a probe rules file ? 
+
+CAUSE
+You can use the getdate function to get the day of week, and drop events received on the weekend.
+
+ANSWER
+ 
+
+The following code will discard events that happened on Saturday and Sunday:
+
+@weekday=timetodate(getdate(),"%u");
+switch (@weekday)
+{
+case 6|7:
+discard
+default:
+}

@@ -1,0 +1,88 @@
+Title: IBM Open Mic Q&A: Customizing the Notes Install Kit - July 21, 2010 - United States
+
+Text:
+STEwebcastDocument; lste_webcast; open mic; open mic; lotus notes; replay; q &a; questions and answers; openmic call; open microphone call; discussion; conference call; customer callwplcopenmic2010; open mic 2010; faq; webcast; web cast; Customizing the Notes Install Kit WEBCAST
+
+ABSTRACT
+ IBM hosted an Open Mic conference call with Lotus Development and Support Engineers to discuss "Customizing the Notes Install Kit" on Wednesday, July 21, 2010. 
+
+CONTENT
+You can find questions and answers that were posted prior to the call in the Notes/Domino 8.5 forum: Customizing the Notes Install Kit [http://www.lotus.com/ldd/nd85forum.nsf/ShowMyTopicsAllFlatweb/cd465a5040c41f498525775e0072b64a?OpenDocument]
+
+
+
+
+Questions and Answers:
+*************************************************************
+Q: Where can I find the customization tool kit? 
+
+A:The customization tool kit is available in the utility sub directory in your install kit.
+
+*************************************************************
+Q: Can I create a dynamic policy with a different desktop setting and incorporate the smart upgrade settings that I want and still leave the original policy alone with same desktop settings?
+
+A: You can add a dynamic policy and use auto populated groups. You will still have to add the smart upgrade settings into the desktop settings document.
+
+*************************************************************
+Q: I am trying to run the upgrade on a Macintosh. It requires username and password for the admin. Is there a way to get around this where it can use those rights up front?
+
+A: There is nothing built into Notes to do this but there is third party software available to repackage applications on the Mac I believe to accomplish this.
+
+*************************************************************
+Q: Regarding the Plugin customization.ini file. When I put in new settings, will the older clients accept the plugins without deleting the Workspace, or will I have to push this down using the desktop policy settings?
+
+A: The Plugin customization.ini are merged into the platform customization's ini file on upgrade. So whatever you have in your install source will be pushed down and they should be reread and utilized on the launch for the users.
+
+*************************************************************
+Q: Is it possible to update the Sametime embedded clients as part of the customized install kit? We have the 8.0.2 version, we would like the 8.5 version.
+
+A: Using 8.5, there is an add-on Sametime installer, which is a separate executable that will install Sametime into an existing Notes installation. In the future, we are looking into customizing an install kit where you can merge packages together that have one installer rather than change a series of installers.
+
+Also see: "Methods to add Sametime 8.5 client to the Notes 8.5.1 client platform" [http://www.ibm.com/support/docview.wss?uid=swg21420476]. 
+
+*************************************************************
+Q: Is there anything to be aware of when modifying or customizing the install kit and deploying through smart upgrade?
+
+A: It depends on how much you want to customize. It is best to let technical support know what files you want to customize so we can test to make sure the customization will work correctly.
+
+Product documentation for customizing the install kit is in the Domino 8.5 Admin Guide: "Customizing the Notes install kit" [http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/topic/com.ibm.help.domino.admin85.doc/H_PROCESS_OVERVIEW_3511_OVER.html].
+
+*************************************************************
+Q: is the InstalledSHield Tuner available for download at the Passport Advantage site? 
+
+A: Yes. For more information, refer to "Is the InstallShield Tuner for Notes available for download?" [http://www.ibm.com/support/docview.wss?rs=899&uid=swg21226984]
+
+*************************************************************
+Q: Can you preset client Preferences using the InstallShield Tuner? There are many client preferences that are not active by default. 
+
+A: You can if the preferences are in the notes.ini file. If they are in the plugin customizations ini files, you cannot preset client preferences using the tuner. 
+
+*************************************************************
+Q: Is it possible to slipstream the Fix Packs into the 8.5.1 install?
+
+A: Not in one step, but you can chain the installations together so it appears to be one step. 
+
+*************************************************************
+Q: I want to deploy 8.5.1 with the smallest footprint possible. Is there a package I can download or do I have to modify the current installation package? 
+
+A: you can download a Basic Notes client install kit. Also, have a look at the Lotusphere presentation of Jeff Mitchell : Lotusphere 2010 Presentation: http://www.lotus.com/ldd/installblog.nsf/dx/chained-installs [http://www.lotus.com/ldd/installblog.nsf/dx/chained-installs]
+
+*************************************************************
+Q: I understand that Notes 8.5.1 upgrade has a prerequisite for clients to be configured with the Multi-user client. At that time it was said that this was not an automatic conversion for single user Notes client installs. Is this still the case? If not, how are you upgrading your clients from single user Notes clients? 
+
+A: Notes 8.5.1 does not require multi-user, we still have a single user mode. On Vista and Windows 7, multi-user is the default due to access restrictions.
+
+*************************************************************
+Q: How do you repack the install kit into a single .exe after customizing it if you're not using SURunAsAdmin? 
+
+A: WinZipSe supports this and we are working on a new feature of SURunAs that will allow you to create a single file exe without needing a username/password. 
+
+
+
+
+
+
+Follow highlights from these Open Mics live on Twitter using #ICSOpenMic or following us on Twitter @IBM_ICSsupport. For more information about our Open Mic webcasts, visit the IBM Collaboration Solutions Support Open Mics [http://www.ibm.com/software/lotus/support/lotus-open-mics/] page.
+
+
+July21OpenMic2.odp [/support/docview.wss?uid=swg27021315&aid=2] [/support/docview.wss?uid=swg27021315&aid=1]

@@ -1,0 +1,154 @@
+Title: IBM IC82723: Enable thread-safe while populating "externalTxnKeyMap" data in TAIL component - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Current TAIL component is not thread-safe while populating
+   "externalTxnKeyMap" data. When TAIL is on and workload is
+   high, there may be some thread hang warning message which is
+   related to java.util.HashMap.get() method in SIMJMS Thread Pool.
+   
+   
+   
+   [2/24/12 15:26:54:871 EST] 0000000c ThreadMonitor W WSVR0605W:
+   Thread   "SIBJMSRAThreadPool : 4" (00000041) has been active for
+   676466 milliseconds and may be hung. There is/are 10 thread(s)
+   in total in the server that may be hung.
+   at java.util.HashMap.get(HashMap.java:303)
+   at
+   com.dwl.base.tail.component.TAILAdminServicesComponent.getExtern
+   alTAILKeyBObjs(TAILAdminServicesComponent.java:1101)
+   at
+   com.dwl.tcrm.tail.TCRMTAILComponent.stackIt(TCRMTAILComponent.ja
+   va:355)
+   at
+   com.dwl.tcrm.common.TCRMCommonComponent.stackTail(TCRMCommonComp
+   onent.java:493)
+   at
+   com.dwl.base.DWLCommonComponent.postExecute(DWLCommonComponent.j
+   ava:469)
+   at
+   com.dwl.tcrm.common.TCRMCommonComponent.postExecute(TCRMCommonCo
+   mponent.java:271)
+   at
+   com.dwl.tcrm.coreParty.controller.TCRMCorePartyTxnBean.createSus
+   pects(TCRMCorePartyTxnBealen0v0n.java:6482)
+   at
+   com.dwl.tcrm.coreParty.controller.EJSLocalStatelessTCRMCoreParty
+   Txn_8d87cf59.createSuspects(Unknown Source)
+   at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+   ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This problem has been fixed in 9.0.1.31, 9.0.2.27 and
+   10.0.0.0.3. Please
+   download and install this PTF if you experience this problem.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  See Above
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Originally reported as PMR #84550,215,616.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC82723
+   
+   
+ * REPORTED COMPONENT NAME
+   MASTR DATA MGT
+   
+   
+ * REPORTED COMPONENT ID
+   5724S7800
+   
+   
+ * REPORTED RELEASE
+   902
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-04-18
+   
+   
+ * CLOSED DATE
+   2012-06-12
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC82999
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MASTR DATA MGT
+   
+   
+ * FIXED COMPONENT ID
+   5724S7800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R901 PSY
+   UP

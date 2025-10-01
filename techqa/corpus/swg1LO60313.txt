@@ -1,0 +1,139 @@
+Title: IBM LO60313: RRDB - THE LOG INFORMATION FOR THE AUTOREMINDER AGENT PROVIDES I NCORRECT OR MISLEADING INFORMATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  852 server with 852 resource template
+   Setup and autoreminder in a resource database site document
+   Set autoreminder to run on all rooms/resource and all
+   reservations.  Run weekly.  I performed my testing on a
+   Wednesday so I chose to
+   send the autoreminder on Wednesdays.
+   Create a few test reservations.  I simply created a 15 day
+   repeating meeting, which excluded weekends so this was a total
+   of 12 reservations
+   Now, Open the designer client and go to Code -> Agents.  Open
+   Agents in the main view
+   Enable the autoreminder agent and then right click on the agent
+   and select test.  Same results will happen if you hit run.
+   You'll get a dialog box with verbiage
+   "Running on all documents in the database:"  - in my testing
+   the total count was 21 documents
+   "Found 21 documents matching the search criteria"
+   Problem:  The message above is misleading as the total document
+   count always matches the count of documents that match the
+   search criteria, and that shouldn't be the case.
+   In my testing, only 7 reservations actually matched the search
+   criteria, so the message should have read "Found 7 documents
+   matching the search criteria"
+   In my customer's case, over 2000 documents were found, the same
+   count was found for matching the search criteria which is
+   giving the customer great alarm.
+   Side Issue:  The total count should only include reservations.
+   Currently, this count includes all documents in the database
+   including, room/resource docs, site docs, blocker docs, etc...
+   The document count in general is misleading as well since
+   customers assume the autoreminder agent is only relevant to
+   reservations
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# TBAY8GJJ3Q.
+   
+   This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO60313
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   852
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-21
+   
+   
+ * CLOSED DATE
+   2011-05-06
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R852 PSN
+   UP

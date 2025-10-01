@@ -1,0 +1,165 @@
+Title: IBM PI67575: RUNNING ADVANCED SEARCH TO FIND JAPANESE COMPONENT OR BASELINE RETURNS NO RESULTS IN IE 10 OR IE 11 - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Team Concert 6.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24043127]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When performing an Advanced search on a component or baseline
+   with a Japanese name in IBM Rational Team Concert (RTC), there
+   are no search results when using Microsoft Internet Explorer 10
+   or 11.
+   
+   Steps to Reproduce:
+   1. Open JKE Banking sample in Eclipse client
+   2. Open e.g the BRM stream and add a component which has a
+   Japanese name (e.g. "NihongoKonpounentoÂˆ" in Japanese)
+   3. Open Firefox browser to project dashboard (e.g. JKE Banking)
+   4. Select [Source Control] > [Advanced Search] > select the
+   Components radio button > enter e.g. "Nihongo"Âž in Japanese as
+   the "Name
+   begins with" search string
+   5. Notice that the component with Japanese name is found.
+   6. Copy the same URL to the dashboard and open it in IE 10 or
+   11.
+   7. Notice that the same component is not found in IE.
+   8. Try entering "a" in the "Name begins with" search string
+   instead (English ASCII)
+   9. Notice that "Account Mgmt" component is found in IE.
+   
+   Expected behavior:
+   Advanced search would get search result for Japanese component
+   or baseline name regardless of browser used.
+   
+   Actual behavior:
+   Japanese component or baseline names do not appear in Advanced
+   search results when using IE 10 or 11.
+   
+   Review the following work item on Jazz.net for further details:
+   https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo]
+   rkItem/398572
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use Firefox browser to perform the Advanced search.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * 398572: Advanced search does not find Japanese component or  *
+   * baseline using IE 10 or 11                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * 398572: Advanced search does not find Japanese component or  *
+   * baseline using IE 10 or 11                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  398572: Advanced search does not find Japanese component or
+   baseline using IE 10 or 11
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI67575
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * REPORTED COMPONENT ID
+   5724V0400
+   
+   
+ * REPORTED RELEASE
+   602
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-15
+   
+   
+ * CLOSED DATE
+   2016-12-22
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * FIXED COMPONENT ID
+   5724V0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R603 PSY
+   UP

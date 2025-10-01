@@ -1,0 +1,45 @@
+Title: IBM Security Bulletin:  Vulnerability in IBM SDK Java Technology Edition affects IBM Development Package for Apache Spark (CVE-2015-7575) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There is a vulnerability in IBM® SDK Java™ Technology Edition, Version 8.0 that is used by the IBM Development Package for Apache Spark. This vulnerability, commonly referred to as “SLOTH”, was disclosed as part of the IBM SDK updates in January 2016. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-7575 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7575]
+DESCRIPTION: The TLS protocol could allow weaker than expected security caused by a collision attack when using the MD5 hash function for signing a ServerKeyExchange message during a TLS handshake. An attacker could exploit this vulnerability using man-in-the-middle techniques to impersonate a TLS server and obtain credentials. This vulnerability is commonly referred to as “SLOTH”.
+CVSS Base Score: 7.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/109415 [https://exchange.xforce.ibmcloud.com/vulnerabilities/109415] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/UI:U/C:H/I:L/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Development Package for Apache Spark v1.6.0 and earlier.
+
+REMEDIATION/FIXES
+IBM Development Package for Apache Spark v1.6.0.1 and later
+
+WORKAROUNDS AND MITIGATIONS
+Users can address the issue by updating the /jre/lib/security/java.security file as follows (both steps are required): 
+
+ * Add MD5 to the jdk.certpath.disabledAlgorithms property - e.g. jdk.certpath.disabledAlgorithms=MD2, RSA keySize < 1024, MD5 
+ * Add MD5withRSA to the jdk.tls.disabledAlgorithms property - e.g. jdk.tls.disabledAlgorithms=SSLv3, RC4, DH keySize < 768, MD5withRSA
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] ACKNOWLEDGEMENT
+CVE-2015-7575 was reported to IBM by Karthikeyan Bhargavan at INRIA in Paris, France 
+
+CHANGE HISTORY
+ 29 February 2016 : Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

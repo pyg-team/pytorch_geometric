@@ -1,0 +1,221 @@
+Title: IBM HD63414: PS: LOADING OF DESIGN MODE AND VISUALIZATION MODE IS DIFFERENT. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PS: LOADING OF DESIGN MODE AND
+   VISUALIZATION MODE IS DIFFERENT.
+   .
+   SETTINGS:
+   1) Select "Tools" > "Options" by menu
+   bar. "Option" dialog box is displayed.
+   2) Select "Assembly Design" on the tree.
+   3) Select "General" tab.
+   4) Select "Automatic" as "Compute exact update
+   status at open".
+   5) Select "General" on the tree.
+   6) Select "Document" tab.
+   7) Rearrange "Linked Document Localization" as
+   Following. "Folder of the pointing
+   document" "Relative folder" "Folder of link"
+   8) Click "OK".
+   9) Restart CATIA.
+   .
+   SCENARIO:
+   0) Start CATIA.
+   Check form of "Part3.CATPart:
+   1) Open the file: "Part3.CATPart".
+   Workbench: "GSD". (Please confirm that the
+   surface is a cylinder.)
+   2) Open the file: "Part3.CATPart" in "BBB" folder.
+   Workbench: "GSD".
+   (Please confirm that the surface is a square.)
+   3) Close those files.
+   In the case of "Design mode:
+   4) Open the file: "T9466.CATProduct" in "BBB"
+   folder. Workbench: "Assembly Design".
+   (Please confirm that the surface of square is
+   displayed.)
+   5) Select "File" > "Save Management" by menu
+   bar. "Save Management" dialog box is displayed.
+   6) Click "Save As". "Save As" dialog box is
+   displayed.
+   7) Click "Moves to the upper folder". Folder is
+   changed to upper.
+   8) Click "Save". "Save Management" dialog box is
+   displayed.
+   9) Click "OK". (Save the only "CATProduct" to
+   upper folder.)
+   10) Close this file.
+   11) Open the "CATProduct" file saved at Step
+   9. "Open" dialog box is displayed. "Part3" is not
+   loaded.
+   12) Click "Close".
+   13) Close this file.
+   Change the option:
+   14) Delete the "CATProduct" file saved at Step 9.
+   15) Select "Tools" > "Options" by menu
+   bar. "Option" dialog box is displayed.
+   16) Select "Product Structure" on the tree.
+   17) Select "Cache Management" tab.
+   18) Activate "Work with cache system".
+   19) Click "OK".
+   20) Restart CATIA.
+   In the case of "Visualization mode:
+   21) Open the file: "T9466.CATProduct" in "BBB"
+   folder. Workbench: "Assembly Design".
+   (Please confirm that the surface of square is
+   displayed by CGR.)
+   22) Select "File" > "Save Management" by menu
+   bar. "Save Management" dialog box is displayed.
+   23) Click "Save As". "Save As" dialog box is
+   displayed.
+   24) Click "Moves to the upper folder". Folder is
+   changed to upper.
+   25) Click "Save". "Save Management" dialog box is
+   displayed.
+   26) Click "OK". (Save the only "CATProduct" to
+   upper folder.)
+   27) Close this file.
+   28) Open the "CATProduct" file saved at Step
+   26. "Open" dialog box is displayed. The surface of
+   cylinder is displayed by CGR. This is problem.
+   (CGR of "Par3" which exists in the same folder
+   as "Product1" is displayed.)
+   29) Click "Part3.1(Part3.CATPart)" on the tree by
+   MB3.
+   30) Select "Representations" > "Design Mode" by
+   context menu. Display is not changed to design
+   mode. This is problem.
+   .
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  null
+   ==========*===========*==========
+   THIS APAR IS CONSIDERED AS A SUGGESTION
+   FOR IMPROVEMENT WHICH CANNOT BE
+   INCORPORATED IN VERSION V5R18
+   PLEASE CONTACT YOUR SUPPORT DEPARTMENT IN
+   ORDER TO OPEN A REQUIREMENT FORM.
+   .
+   Incident Diagnosis:
+   PS: LOADING OF DESIGN MODE AND
+   VISUALIZATION MODE IS DIFFERENT.
+   .
+   Development Request Justification:
+   New setting needs to be developed.
+   .
+   Concerning this issue, specific to the Visualization
+   Mode, here is the explanation
+   1. First, the 2 CATParts has the same name but not
+   the same UUID (internal identifier).
+   2. The Visualisation & Cache process is based on
+   DocId. Here, we are able the retrieve a correct
+   DocId for the CATPart (in the father of BBB
+   directory), but we are not able to check whether
+   this DocId contains the reference object of the
+   instance. To do so, we need to open the document
+   and solve the Instance-Reference link (that is to
+   see if UUID match between Instance and
+   Reference). And we cannot do such operation
+   because it can lead to huge regression (one would
+   need to open all the CATPart in this case,which is
+   not acceptable).
+   .
+   There is a possiblity to develop a new setting that
+   allows user to perform this check, but this will be a
+   new development which cannot be done in actual
+   releases as it requires a full new functionnal
+   development. We invite you to follow Enhancement
+   Request process to participate to this development
+   definition.
+   .
+   .
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD63414
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   517
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-04-16
+   
+   
+ * CLOSED DATE
+   2007-06-08
+   
+   
+ * LAST MODIFIED DATE
+   2007-06-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

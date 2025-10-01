@@ -1,0 +1,98 @@
+Title: IBM Security Bulletin: Vulnerability in Apache Commons FileUpload DiskFileItem File Manipulation affects IBM Spectrum Conductor with Spark 2.2.0 (CVE-2016-1000031) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ A security vulnerability relating to remote code execution CVE-2016-1000031 has been reported against Apache Commons FileUpload DiskFileItem File Manipulation, which IBM Spectrum Conductor with Spark 2.2.0 uses as a framework for some services. Commons FileUpload 1.3.3 addresses this vulnerability and can be applied through the manual steps detailed in the Remediation section. 
+
+VULNERABILITY DETAILS
+CVEID:CVE-2016-1000031
+DESCRIPTION:A vulnerability in IBM Spectrum Conductor with Spark 2.2.0 could allow a remote attacker to execute arbitrary code on the system, caused by deserialization of untrusted data in DiskFileItem class of FileUpload library. A attacker could exploit this vulnerability to execute arbitrary code under the context of the current process.
+CVSS V3 Base Score:7.5 HIGH
+CVSS V3 Vector:CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H [https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator?name=CVE-2016-1000031&vector=AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H](legend [https://nvd.nist.gov/vuln-metrics/cvss])
+CVSS V3 Impact Score: 5.9
+CVSS V3 Exploitability Score: 3.9
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Spectrum Conductor with Spark 2.2.0. All architectures. The remediation steps are provided in this document.
+
+REMEDIATION/FIXES
+None
+
+WORKAROUNDS AND MITIGATIONS
+1.1 Log on to each management host in the cluster and download the commons-fileupload-1.3.3-bin.tar.gz package from the following location:
+
+http://archive.apache.org/dist/commons/fileupload/binaries/commons-fileupload-1.3.3-bin.tar.gz [http://archive.apache.org/dist/commons/fileupload/binaries/commons-fileupload-1.3.3-bin.tar.gz]
+
+1.2 Stop the following services:
+
+> egosh service stop WEBGUI REST ascd plc purger
+
+1.3 For backup purposes, move the following files, which will be replaced by new files:
+
+> mkdir -p /tmp/cf121backup/
+
+> mkdir -p /tmp/cf131backup/
+
+Make note of the file owner, group, and permissions for the following files:
+>ls -la $EGO_TOP/gui/3.5/lib/commons-fileupload-*.jar
+>ls -la $EGO_TOP/perf/3.5/lib/commons-fileupload-*.jar
+>ls -la $EGO_TOP/ascd/2.2.0/lib/commons-fileupload-*.jar
+>ls -la $EGO_TOP/wlp/usr/servers/rest/apps/3.5/deploymentrest/WEB-INF/lib/commons-fileupload-*.jar
+
+> mv $EGO_TOP/gui/3.5/lib/commons-fileupload-*.jar /tmp/cf131backup
+
+> mv $EGO_TOP/perf/3.5/lib/commons-fileupload-*.jar /tmp/cf121backup/
+
+> rm $EGO_TOP/ascd/2.2.0/lib/commons-fileupload-*.jar
+
+> rm $EGO_TOP/wlp/usr/servers/rest/apps/3.5/deploymentrest/WEB-INF/lib/commons-fileupload-*.jar
+
+1.4 On each management host, decompress the commons-fileupload-1.3.3-bin.tar.gz package and copy the following files to your cluster directory:
+
+> tar zxf commons-fileupload-1.3.3-bin.tar.gz
+
+> cp commons-fileupload-1.3.3-bin/commons-fileupload-1.3.3.jar $EGO_TOP/gui/3.5/lib/
+
+> cp commons-fileupload-1.3.3-bin/commons-fileupload-1.3.3.jar $EGO_TOP/perf/3.5/lib/
+
+> cp commons-fileupload-1.3.3-bin/commons-fileupload-1.3.3.jar $EGO_TOP/ascd/2.2.0/lib/
+
+> cp commons-fileupload-1.3.3-bin/commons-fileupload-1.3.3.jar $EGO_TOP/wlp/usr/servers/rest/apps/3.5/deploymentrest/WEB-INF/lib/
+
+If needed, restore the original file permissions with:
+> chmod ### [file]
+
+If needed, restore the original file owner and group with:
+> chown [user]:[group] [file]
+
+1.5 On each management host, clean up the GUI work directories:
+
+> rm -rf $EGO_TOP/gui/work/*
+
+> rm -rf $EGO_TOP/gui/workarea/*
+
+NOTE: If you configured theWLP_OUTPUT_DIRparameter andAPPEND_HOSTNAME_TO_WLP_OUTPUT_DIRis set to true in the $EGO_CONFDIR/wlp.conf file, you must clean up the $WLP_OUTPUT_DIR/webgui_hostname/gui/workarea/ directory.
+
+1.6 Launch a web browser and clear your browser cache.
+
+1.7 Start the following services:
+
+> egosh service start WEBGUI REST ascd plc purger
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

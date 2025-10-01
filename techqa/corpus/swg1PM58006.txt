@@ -1,0 +1,173 @@
+Title: IBM PM58006: Document limitations of support for ejbDeploy with a DB2 V10 for z/OS backend - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Application Developer for WebSphere Software 8.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24032855]
+Rational Software Architect Interim Fix 1 for 8.0.4.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24036852]
+Rational Software Architect for WebSphere Software Interim Fix 1 for 8.0.4.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24036853]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract:
+   
+   Attempts to execute ejbDeploy with a DB2 V10 for z/OS backend
+   and targeting WebSphere Application Server v7 fail for all
+   versions lower than v7.0.0.23.
+   
+   Problem:
+   
+   1. You configure an EJB 2.1 project with a DB2 V10 for z/OS
+   backend and you target WebSphere Application Server V7.0.0.x
+   with x ? 23.
+   
+   2. You execute ejbDeploy from the command line of the WebSphere
+   Application Server V7.0.0.x.
+   
+   Results:
+   
+   The command fails with an error like the following (in versions
+   greater than V7.0.0.15):
+   
+   The mapping for backend DB2UDBOS390_V10_1 is invalid.
+   The database software is not supported.
+   More details are available in the file
+   META-INF/backends/DB2UDBOS390_V10_1/SQLModelMigration.log.
+   
+   and fails with different errors in previous FixPacks.
+   
+   Expected result:
+   
+   The product documentation should document that ejbDeploy with
+   DB2 V10 for z/OS targeting WebSphere Application Server v7.0.0.x
+   is only supported starting from WebSphere Application Server
+   V7.0.0.23.
+   
+   Local fix:
+   
+   There is no known workaround at this time.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The WebSphere Application Server ejbDeploy documentation
+   does not indicate that a backend of type DB2 V10 for z/OS is
+   not supported in WebSphere Application Server version
+   7.0.0.x with x ? 23.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The documentation has been updated to indicate that
+   WebSphere Application Server v7.0 ejbDeploy starting
+   supporting backends of type DB2 V10 for z/OS as of
+   v7.0.0.23.
+   
+   http://publib.boulder.ibm.com/infocenter/radhelp/v8/topic/co
+   m.ibm.ejbdeploy.doc/topics/terunejbdeploy.html [http://publib.boulder.ibm.com/infocenter/radhelp/v8/topic/com.ibm.ejbdeploy.doc/topics/terunejbdeploy.html]
+   
+   The fix for this APAR is included in Rational Application
+   Developer v8.0.4.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM58006
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   753
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-13
+   
+   
+ * CLOSED DATE
+   2012-05-15
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R753 PSN
+   UP

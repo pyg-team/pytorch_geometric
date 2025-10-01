@@ -1,0 +1,153 @@
+Title: IBM ECM(Enterprise Content Management) AP Support Monthly Newsletter(September 2017) - United States
+
+Text:
+ECM; ECM AP Support; newsletter NEWS
+
+ABSTRACT
+ The ECM AP Support Monthly Newsletter is your trusted source of support news, including useful tools, important product updates and fixes, upcoming key support dates, top technotes, and more. 
+
+CONTENT
+Thank you for choosing IBM ECM products. Our worldwide team of support experts is committed to helping you get the most value from your investment in IBM software, hardware, and services. 
+
+This newsletter provides a snapshot of relevant support information for your product, including news, recent technotes, and education resources. You are receiving this newsletter because you have previously contacted technical support or have subscribed to My Notifications. We hope you find the content in this newsletter useful in the proactive support and maintenance of your IBM product. 
+
+
+
+
+
+ *  In the Spotlight 
+ *  Our WhatsApp Group Chat "ECML2Support" is online! 
+ *  End of Support (EOS) Notification & Heads-up 
+ *  New Product Releases 
+ *  Micro TV 
+ *  Frequently Used Links 
+ *  Contact us 
+
+
+
+
+
+
+In the Spotlight 
+
+
+Recently released important technotes 
+IBM FileNet CPE 
+
+ * IBM FileNet Content Manager - End of Support Announcement for Administration Console for Content Platform Engine (ACCE) 5.2.0
+   http://www.ibm.com/support/docview.wss?uid=swg22008388 [http://www.ibm.com/support/docview.wss?uid=swg22008388] 
+ * Security Bulletin: Multiple vulnerabilities may affect IBM® SDK Java™ Technology Edition Version 7, 8 and IBM® Runtime Environment Java™ Version 7, 8 in IBM FileNet Content Manager, and IBM Content Foundation
+   http://www.ibm.com/support/docview.wss?uid=swg22007456 [http://www.ibm.com/support/docview.wss?uid=swg22007456] 
+ * Security Bulletin: Vulnerability in Apache Tomcat Commons FileUpload affect FileNet Content Manager, and IBM Content Foundation (CVE-2016-3092)
+   http://www.ibm.com/support/docview.wss?uid=swg21987187 [http://www.ibm.com/support/docview.wss?uid=swg21987187]
+
+IBM Content Navigator  * IBM Content Navigator - End of Support Announcement for ICN builds 2.0.0 / 2.0.1 / 2.0.2
+   http://www.ibm.com/support/docview.wss?uid=swg22008256 [http://www.ibm.com/support/docview.wss?uid=swg22008256] 
+ * Security Bulletin: ICN 2.0.2 is susecptible to two Apache Struts vulnerabilities (CVE-ID: CVE-2016-1181 and CVE-ID: CVE-2016-1182)
+   http://www.ibm.com/support/docview.wss?uid=swg21988647 [http://www.ibm.com/support/docview.wss?uid=swg21988647]
+
+IBM Case Manager  * Security Bulletin: Apache Commons FileUpload vulnerable to denial of service (CPU consumption) are affecting Case Manager Client (CVE-2016-3092)
+   http://www.ibm.com/support/docview.wss?uid=swg21990390 [http://www.ibm.com/support/docview.wss?uid=swg21990390] 
+ * "All Assigned Work" in-baskets, or in-baskets on a user queue, will always be sorted by "Assigned To" (F_BoundUser) even when a different default sort column is configured in Case Manager Builder
+   http://www.ibm.com/support/docview.wss?uid=swg21964805 [http://www.ibm.com/support/docview.wss?uid=swg21964805]
+   
+
+ Back to top 
+
+
+
+Our WhatsApp Group Chat "ECML2Support" is online! 
+
+
+[/support/docview.wss?uid=swg22009035&amp;aid=1] 
+Our WhatsApp Group Chat " ECML2Support" is online! Welcome to join us by clicking URL https://chat.whatsapp.com/K77qZWLP1YmCb3OrAQWBcJ [https://chat.whatsapp.com/K77qZWLP1YmCb3OrAQWBcJ]. 
+
+You can actually discuss technical issues with our support engineers(The PMR process is applied when needed), not to mention the various relevant information that will be shared including IBM ECM technotes, newsletter, product flash alerts and so on. So why wait? 
+
+ Back to top 
+
+
+
+End of Support (EOS) Notification & Heads-up 
+
+
+
+Recently end of support version and patch  * IBM FileNet Content Manager - Administration Console for Content Platform Engine (ACCE) 5.2.0 will reach EOS on 31-Dec-2017 
+ * IBM Content Navigator 2.0.0 / 2.0.1 / 2.0.2 will reach EOS on 31-Dec-2017
+
+ Back to top 
+
+
+
+New Product Releases 
+
+
+Recently released new version and new patch  * Daeja ViewONE Virtual 5.0.1 iFix 6
+   https://download4.boulder.ibm.com/sar/CMA/OSA/075g1/0/5.0.1_DAEJA_VIEWONE_IFIX006_Readme.htm [https://download4.boulder.ibm.com/sar/CMA/OSA/075g1/0/5.0.1_DAEJA_VIEWONE_IFIX006_Readme.htm] 
+ *  Daeja ViewONE Virtual 4.1.5.1 iFix 20 
+ * Daeja ViewONE Professional 4.1.5.1 iFix 20 
+ * Daeja ViewONE Standard 4.1.5.1 iFix 20
+   https://download4.boulder.ibm.com/sar/CMA/OSA/075g5/0/4.1.5.1_DAEJA_VIEWONE_IFIX020_Readme.htm [https://download4.boulder.ibm.com/sar/CMA/OSA/075g5/0/4.1.5.1_DAEJA_VIEWONE_IFIX020_Readme.htm]
+
+ Back to top 
+
+
+
+
+Micro TV 
+
+
+Recently released Micro TV -- five minutes short videos to understand product better! 
+
+Find our "FileNet Starter Kit", a series of five-minutes short videos for new users of FileNet, IBM Content Navigator, and IBM Case Manager! 
+
+Now available on YouTube: 
+https://www.youtube.com/channel/UCFeh-ciIuPcibDl45TT1oWQ [https://www.youtube.com/channel/UCFeh-ciIuPcibDl45TT1oWQ] 
+
+New in this month: 
+
+"IBM Case Manager 5.3.1 Installation and Configuration" 
+
+"Understanding FileNet CPE 5.2.1 File Storage Area" 
+
+"IBM Case Manager 5.3 At A Glimpse" 
+
+More to come in next month... 
+
+ Back to top 
+
+
+
+Frequently Used Links 
+
+
+Most useful links for customers  *  Fix Central (where to download fixpacks)
+   https://www.ibm.com/support/fixcentral/ [https://www.ibm.com/support/fixcentral/] 
+ *  Product Lifecycle (when product will reach EOS)
+   http://www-01.ibm.com/software/data/support/lifecycle/index.html [http://www-01.ibm.com/software/data/support/lifecycle/index.html] 
+ *  WorldWide Contact list (phone number list to reach IBM Support worldwide)
+   https://www.ibm.com/planetwide/ [https://www.ibm.com/planetwide/] 
+ *  Upload files directly to PMR
+   https://www.ibm.com/planetwide/ [https://www.ibm.com/planetwide/]
+
+ Back to top 
+
+
+
+Contact us 
+
+
+[/support/docview.wss?uid=swg22009035&amp;aid=2]IBM ECM AP Support team will be hosting several OpenMic live sessions (via conf call and remote session) to AP customers this year. Please feel free to let us know any specific topics you are interested in by sending email to swsupt@cn.ibm.com with subject line "OpenMic_ECM". Your input is highly appreciated! 
+
+[/support/docview.wss?uid=swg22009035&amp;aid=3] 
+Welcome to call our toll free number [https://www.ibm.com/planetwide/index.html#region] to seek help from IBM technical support staff. You can also submit a service request (SR) [https://www-947.ibm.com/support/servicerequest/Home.action]online. 
+
+Also find us by subscribing to our WeChat account: 
+[/support/docview.wss?uid=swg22009035&amp;aid=4] 
+IBM ECM AP Support [http://www-01.ibm.com/support/docview.wss?uid=swg22001678#1] 
+
+ Back to top 
+
+
+The IBM privacy statement: http://www.ibm.com/privacy/ [http://www.ibm.com/privacy/] 
+Copyright and trademark registration information: http://www.ibm.com/legal/copytrade.shtml [http://www.ibm.com/legal/copytrade.shtml]

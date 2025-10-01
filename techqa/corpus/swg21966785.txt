@@ -1,0 +1,59 @@
+Title: IBM How to do a silent install of IBM SPSS Modeler 17? - United States
+
+Text:
+silent install msi TECHNOTE (FAQ)
+
+QUESTION
+ How to do a silent install of IBM SPSS Modeler 17? 
+
+CAUSE
+This has been identified as a product defect under APAR PI47109
+
+ANSWER
+The following text shows an example of the MSI command: 
+
+C:>msiexec.exe /i ModelerClient64.msi /qn /l*v 
+c:\temp\Modeler_Silent_Install.log INSTALLDIR="C:\Program 
+Files\IBM\SPSS\Modeler\17" DISABLE_COMMUTE=1 LICENSETYPE="Network" 
+LSHOST="netlicense.mylocation.mycompany.com" 
+
+Note: The above command will restart the machine automatically. 
+Ensure you save and close all applications before executing the above command. 
+
+If you are using a single license for the Modeler Client installation then remove the LICENSETYPE parameter and modify LSHOST to ="no-net". Once the installation is completed ensure you run the License
+Authorization Wizard application to license the Modeler Client. 
+
+e.g: 
+
+C:>msiexec.exe /i ModelerClient64.msi /qn /l*v 
+c:\temp\Modeler_Silent_Install.log INSTALLDIR="C:\Program 
+Files\IBM\SPSS\Modeler\17" DISABLE_COMMUTE=1 LSHOST="no-net" 
+
+This means you can push the install, but you still have to run the License Authorization Wizard because every client would have its own authorization code. 
+
+For a Modeler Server Windows silent install: 
+
+Change the parameters 
+
+From: 
+
+c:\>msiexec.exe /i ModelerServer64.msi /qn /l*v 
+c:\temp\Modeler_Silent_Install.log INSTALLDIR="C:\Program 
+Files\IBM\SPSS\Modeler\17" DISABLE_COMMUTE=1 LICENSETYPE="Network" 
+LSHOST="netlicense.mylocation.mycompany.com" 
+
+To: 
+
+c:\>msiexec.exe /i ModelerServer64.msi /qn /l*v 
+c:\temp\Modeler_Silent_Install.log INSTALLDIR="C:\Program 
+Files\IBM\SPSS\ModelerServer\17" DISABLE_COMMUTE=1 SERVERMOD=1 
+
+Where the value for SERVERMOD depends on the type of installation you 
+have. You can choose from the following values: 
+
+0 - Non-Production Mode. If you purchased a separate non-production installation, enter this option. This installation cannot be employed for production use. 
+1 - Production Mode. A production installation is a standard installation of SPSS Modeler Server. It is appropriate for production use. 
+
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]

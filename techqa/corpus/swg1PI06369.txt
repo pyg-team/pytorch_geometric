@@ -1,0 +1,129 @@
+Title: IBM PI06369: STORAGE ISSUES RELATED TO CAPTURING CICS VR (BATCH) CHANGES. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Storage issues related to capturing CICS VR (batch) changes.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Data Replication for VSAM                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Storage issues related to capturing     *
+   *                      CICS VR (batch) changes.                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Storage issues related to capturing CICS VR (batch) changes.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Multiple issues were corrected to fix problems related to
+   capturing CICS VR log records to prevent running out of storage
+   in the memory pool and capture cache.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI06369
+   
+   
+ * REPORTED COMPONENT NAME
+   CLASSIC FED & E
+   
+   
+ * REPORTED COMPONENT ID
+   5697I8200
+   
+   
+ * REPORTED RELEASE
+   B10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-18
+   
+   
+ * CLOSED DATE
+   2013-11-20
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI12738
+   
+   
+
+MODULES/MACROS
+ *  CECCLRVC CECCLRVD CECCLRVE CECCLRVH CECCLRVI
+   CECCLRVQ CECCLRVR CECCLRVS CECCLRVT CECCLRVU
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CLASSIC FED & E
+   
+   
+ * FIXED COMPONENT ID
+   5697I8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS

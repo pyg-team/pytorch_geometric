@@ -1,0 +1,63 @@
+Title: IBM ** Troubleshooting ** "IFile_DoSave" error when trying to create / save new user - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Administrative user clicks "Maintain - Rights - Users". User creates a new user. User clicks 'save'. User receives error message. 
+
+SYMPTOM
+[/support/docview.wss?uid=swg22007891&amp;aid=1] 
+
+Information
+Standard Error
+Number: 5
+Source: mscorlib:FrangoClient.frmUserAndInstallationRights.SaveUser:FrangoClient.frmUserAndInstallationRights.IFile_DoSave
+Description: Exception has been thrown by the target of an invocation.
+at Microsoft.VisualBasic.ErrObject.Raise(Int32 Number, Object Source, Object Description, Object HelpFile, Object HelpContext)
+at Cognos.Controller.Common.RaiseErrCli.RaiseError(Int32 lErrNo, String sErrSource, String sErrDesc, String sErrHelpFile, Int32 lErrHelpContext)
+at Cognos.Controller.Forms.Form.frmUserAndInstallationRights.IFile_DoSave()
+at Cognos.Controller.Forms.Form.frmUserAndInstallationRights.IForm_DoClick(Int32 lCmd, String& sTag)
+
+
+CAUSE
+There are several known causes for this (or similar) errors: 
+
+ 
+
+ * Scenario #1 - There is an existing user (already in the system) who already has the same name as the user who is being added  * For more details, see separate IBM Technote #1631985.
+   
+   
+
+ * Scenario #2 - Code production problem in Controller 8.x.  * For more details, see separate IBM Technote #1413861.
+   
+   
+
+ * Scenario #3 - Client device is a member of a specific (incompatible) Windows Active Directory domain.  * For more details, see separate IBM Technote #2007894.
+   
+   
+
+RESOLVING THE PROBLEM
+Scenario #1 
+
+Do not create duplicate users. 
+
+ * For more details, see separate IBM Technote #1631985.
+
+
+Scenario #2
+Upgrade to Controller 10.1 or later. 
+
+ * For more details, see separate IBM Technote #1413861.
+
+
+Scenario #3 
+
+In some environments it is necessary to only perform this function using a client PC that is a member of the same Windows Active Directory domain that the Controller application server belongs to. 
+
+ * For more details, see separate IBM Technote #2007894.
+
+RELATED INFORMATION
+ 1631985 - "Standard Error 5 ... IFile_DoSave ... Except [http://www.ibm.com/support/docview.wss?uid=swg21631985]
+1413861 - "Standard Error - 91 - Object reference not s [http://www.ibm.com/support/docview.wss?uid=swg21413861]
+2007894 - "IFile_DoSave" error when trying to save new [http://www.ibm.com/support/docview.wss?uid=swg22007894]

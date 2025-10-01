@@ -1,0 +1,155 @@
+Title: IBM RS00164: MISSING AND ERRONEOUS INSTRUCTIONS FOR INSTALLATION OF THE RES CONSOLE IN A JBOSS CLUSTER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  1) At "WebSphere ILOG JRules V7.0.2 Installing on JBoss >
+   Installing Rule Execution Server > Rule Execution Server
+   deployment on cluster environments > JBoss clusters", the
+   documentation states:
+   
+   "To implement failover for the management console, deploy the
+   EAR for JBoss in each <JBOSS_HOME>/server/all/deploy-hasingleton
+   in the cluster. This allows you to have the management console
+   run on a single server in the cluster."
+   However, when you only do that, the RES console will start
+   before the datasource (jdbc/resdatasource) is bound in the JNDI
+   tree, thsi will cause a NameNotFoundException at the RES console
+   startup.
+   We should add the following to the paragraph above:
+   You also need to specify the dependency of the HA singleton on
+   the res datasource, by editing the file
+   <JBOSS_HOME>/server/all/deploy/deploy-hasingleton-service.xml,
+   and add:
+   
+   <depends>jboss.jdbc:datasource=jdbc/bresdatasource,service=metad
+   ata</depends>
+   
+   to the HASingletonController mbean descriptor:
+   
+     <mbean code="org.jboss.ha.singleton.HASingletonController"
+   name="jboss.ha:service=HASingletonDeployer">
+     ...
+     </mbean>
+   
+   2) In the same page, we state:
+   "Use the following to launch a server instance in a cluster:
+   $JBOSS_HOME/bin/run.bat -c all -b 0.0.0.0 "
+   
+   The "-b 0.0.0.0" parameter is superfluous or can even lead to a
+   cluster node not being detected. In effect, binding on 0.0.0.0
+   means the server will attempt to bind to the first network
+   interface it can find. If the node has more than one interface
+   (for instance a physical network card and a VPN connection),
+   this can cause the node to bind to a different network from the
+   other nodes in the cluster, in which case it will not be seen by
+   them.
+   
+   We should either remove this parameter or add a mention like "-b
+   <server_address> where <server_address> is an IP address that
+   can be reached by the other servers in the cluster".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  As specified in the problem description
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  At "WebSphere ILOG JRules V7.0.2 Installing on JBoss >
+   Installing Rule Execution Server > Rule Execution Server
+   deployment on cluster environments > JBoss clusters", the
+   documentation lacks several points.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Documentation has been augmented
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS00164
+   
+   
+ * REPORTED COMPONENT NAME
+   WS ILOG JRULES
+   
+   
+ * REPORTED COMPONENT ID
+   5724X9800
+   
+   
+ * REPORTED RELEASE
+   702
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-18
+   
+   
+ * CLOSED DATE
+   2010-06-28
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

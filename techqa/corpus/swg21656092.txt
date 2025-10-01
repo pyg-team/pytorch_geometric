@@ -1,0 +1,18 @@
+Title: IBM Using a fixlet to assign an IBM Endpoint Manager for Remote Control  target to a target group - United States
+
+Text:
+GroupLabel; target fixlet; target wizard; target groups; IBM Endpoint Manager for Remote Control; Tivoli Endpoint Manager for remote Control TECHNOTE (FAQ)
+
+QUESTION
+ How can I use the GroupLabel target property in a target configuration task to assign a target to a target group? 
+
+ANSWER
+By default the IBM Endpoint Manager for Remote Control server does not allow targets to override the target groups that they are placed in when they first register. This behaviour is controlled by the allow.target.group.override property in the trc.properties file. The value of the property is set to false by default. Therefore, it needs to be set to true for the target to be assigned to the target group that is set in the GroupLabel property in the target. There is no need to restart the server after this property is changed.
+
+However, the GroupLabel value applies only if allow.target.group.override is set to true, when the target registers with the server for the first time. If a target is already registered with the server, and allow.target.group.override is set to true, you cannot run a target configuration task to modify the target group membership. When you run the task, the target contacts the server but because it is already registered, it does not modify its group membership.
+
+The workflow to use this feature successfully from the IBM Endpoint Manager for Remote Control console would be as follows.:
+1- Set allow.target.group.override=true in the trc.properties file on the server.
+2- Deploy new targets in either P2P mode or by specifying a blank Server URL property, so that the targets do not register with the server until the GroupLabel property is set.
+3- Use the target configuration wizard to set the correct Server URL property and also set the GroupLabel property.
+Note: The target group name that is set in GroupLabel must already be defined in the IBM Endpoint Manager for Remote Control server.

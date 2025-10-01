@@ -1,0 +1,64 @@
+Title: IBM Improve Performance of Decision Validation Services (DVS) and Decision Warehouse - United States
+
+Text:
+performance; JRules; DVS. Decision Warehouse; DWH; WODM; Decision Validation Services; improvement; Decision Center; Decision Server TECHNOTE (FAQ)
+
+QUESTION
+ How can I improve the performance of Decision Validation Services (DVS) and Decision Warehouse? 
+
+ANSWER
+
+Improving the performance of DVS testing and the Decision Warehouse involves reducing the size of the execution trace data generated during tests, and also some architectural and environmental configurations that might be suited to your use case. The following are recommendations you can consider incorporating:
+
+Reduce the size of the execution data: 
+
+ * Filter data [http://www.ibm.com/support/docview.wss?uid=swg21586717] using the ruleset properties: monitoring.filters and monitoring.inout.filters. 
+ * Reduce the BOM serialization overhead:  * Override the toString() method for the ruleset parameters to return minimal information 
+    * Set the ruleset property ruleset.bom.enabled to "false" to remove support for BOM based serialization. This property is set to "true" by default when extracting rulesets from Rule Team Server (RTS) and Decision Center, and needs to be explicitly set to "false" in order to deactivate it. (You should set it to "true" if you need to generate an Excel report from a Test Suite/Simulation in RTS.)
+   
+   Refer to the documentation Optimizing Decision Warehouse for v7.1.x or earlier [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=%2Fcom.ibm.websphere.ilog.jrules.doc%2FContent%2FBusiness_Rules%2FDocumentation%2F_pubskel%2FJRules%2Fps_JRules_Global733.html] and WODM [http://publib.boulder.ibm.com/infocenter/dmanager/v7r5/index.jsp?topic=%2Fcom.ibm.dserver.res%2FContent%2FBusiness_Rules%2F_pubskel%2FInfocenter_Primary%2Fps_DS_Rule_Execution_Server1571.html]. 
+ * Reduce the number of columns in the Excel files by using the Ignore for DVS flag for the arguments in the DVS constructor, in Rule Studio [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=%2Fcom.ibm.websphere.ilog.jrules.doc%2FContent%2FBusiness_Rules%2FDocumentation%2F_pubskel%2FJRules%2Fps_JRules_Global715.html] or Rule Designer [http://publib.boulder.ibm.com/infocenter/dmanager/v7r5/index.jsp?topic=%2Fcom.ibm.dserver.rulestudio%2FContent%2FBusiness_Rules%2F_pubskel%2FInfocenter_Primary%2Fps_DS_Rule_Designer1303.html&resultof=%22Adding%22%20%22ad%22%20%22removing%22%20%22remov%22%20%22columns%22%20%22column%22%20%22from%22%20%22Excel%22%20%22excel%22%20%22file%22%20]. 
+ * You can also choose to not write the traces to a database (Decision Warehouse) as shown in this sample [http://www.ibm.com/support/docview.wss?uid=swg21441394].
+
+
+Configure Decision Warehouse:  * Manage the production and test environments separately [http://publib.boulder.ibm.com/infocenter/dmanager/v7r5/index.jsp?topic=%2Fcom.ibm.dserver.overview%2FContent%2FBusiness_Rules%2F_pubskel%2FInfocenter_Primary%2Fps_DS_Overview83.html], and use a different Decision Warehouse instance for each environment. 
+ * Write asynchronously to Decision Warehouse:  * Using a JMS provider, such as WebSphere MQ or OpenJMS. 
+    * Using MDBs or in batch using a ETL tool, such as Clover.ETL or Cognos ETL.
+   
+   
+ * Perform an asynchronous update to Decision Warehouse, as shown in this sample [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=%2Fcom.ibm.websphere.ilog.jrules.doc%2FContent%2FBusiness_Rules%2FDocumentation%2F_pubskel%2FJRules%2Fps_JRules_Global1781.html] for v7.1.x and earlier (and this sample [http://publib.boulder.ibm.com/infocenter/dmanager/v7r5/index.jsp?topic=%2Fcom.ibm.dserver.samples%2FContent%2FBusiness_Rules%2F_pubskel%2FInfocenter_Primary%2Fps_DS_Samples588.html] for WODM). 
+ * Capture the Decision Warehouse trace as an asynchronous operation in application servers supporting thecommonj WorkManager API, as shown in this sample [http://www.ibm.com/support/docview.wss?uid=swg21433167]. 
+ * Estimate the database capacity [http://www.ibm.com/support/docview.wss?uid=swg21430461] that should be allocated. 
+
+Refer to the documentation at Auditing executed decisions [http://publib.boulder.ibm.com/infocenter/dmanager/v7r5/index.jsp?topic=%2Fcom.ibm.dserver.overview%2FContent%2FBusiness_Rules%2F_pubskel%2FInfocenter_Primary%2Fps_DS_Overview83.html] for detailed recommendations for configuring Decision Warehouse. 
+
+Configure Rule Execution Server (RES):  * Do not use a production RES for your tests and simulations. Instead dedicate a separate RES instance for testing. 
+ * Set the optimal XU and SSP pool sizes (in v7.1.x or earlier [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=%2Fcom.ibm.websphere.ilog.jrules.doc%2FContent%2FBusiness_Rules%2FDocumentation%2F_pubskel%2FJRules%2Fps_JRules_Global206.html] and WODM [http://publib.boulder.ibm.com/infocenter/dmanager/v7r5/index.jsp?topic=%2Fcom.ibm.dcenter.overview%2FContent%2FBusiness_Rules%2F_pubskel%2FInfocenter_Primary%2Fps_DC_Overview2884.html]). 
+ * Increase the size of the database connection pool for the RES data source. 
+ * Dedicate more processing resources to the handling of DVS tests:  * Deploy the SSP along with the RES console on a dedicated server. (By default tests are run on a single SSP, see Clustering Decision Validation Services [http://www.ibm.com/support/docview.wss?uid=swg21425487]). 
+    * Otherwise, distribute the DVS tests [http://www.ibm.com/support/docview.wss?uid=swg21502095] on different RES instances.
+   
+   
+ * Improve RES performance [http://www.ibm.com/support/docview.wss?uid=swg21589513].
+
+
+Configure Rule Team Server (RTS) or Decision Center:  * Install RTS and RES on separate computers. 
+ * Reduce the size of the Decision Warehouse trace when running scenario suites from RTS, as shown in this sample [http://www.ibm.com/support/docview.wss?uid=swg21438208]. 
+ * Improve RTS performance [http://www.ibm.com/support/docview.wss?uid=swg21584855].
+
+
+Configure Rule Studio or Rule Designer:  * Increase the heap size for DVS testing [http://www.ibm.com/support/docview.wss?uid=swg21427125]. 
+ * Improve Rule Studio or Rule Designer performance [http://www.ibm.com/support/docview.wss?uid=swg21589514].
+
+
+
+In addition, refer to the sections Enhancing the performance of Decision Warehouse and Enhancing the performance of Decision Validation Services in the IBM Redpaper: Proven Practices for Enhancing Performance: A Q&A for IBM WebSphere ILOG BRMS 7.1 [http://www.redbooks.ibm.com/redpapers/pdfs/redp4775.pdf]. RELATED INFORMATION
+#Improving the performance of Decision Center [http://publib.boulder.ibm.com/infocenter/dmanager/v7r5/index.jsp?topic=%2Fcom.ibm.dcenter.overview%2FContent%2FBusiness_Rules%2F_pubskel%2FInfocenter_Primary%2Fps_DC_Overview2884.html]
+Improving Decision Validation Services performance [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=%2Fcom.ibm.websphere.ilog.jrules.doc%2FContent%2FBusiness_Rules%2FDocumentation%2F_pubskel%2FJRules%2Fps_JRules_Global206.html]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere ILOG Decision Validation Services Performance Platform Independent 7.1, 7.0

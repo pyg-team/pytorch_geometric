@@ -1,0 +1,49 @@
+Title: IBM How to enable report templates for Cognos Workspace Advanced - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Report tempates are added to the templates.xml and resources.xml but do not show up in Cognos Workspace Advanced. 
+
+SYMPTOM
+No user defined report template in Cognos Workspace Advanced.
+
+
+CAUSE
+The report template has to be enabled /referenced first to be available for Cognos Workspace Advanced. 
+
+DIAGNOSING THE PROBLEM
+The new report template in available for Report Studio but unavailable in Cognos Workspace Advanced.
+
+RESOLVING THE PROBLEM
+Like for Report Studio in the resources.xml, the new user defined report template has to be referenced as well for Cognos Workspace Advanced.
+
+
+
+
+This can be done by editing the "profile_bua_standalone.xml" file locates in the folder [C10_Installation_Folder]\webcontent\pat\profiles\ . 
+
+Prerequisite: the new template must be already added to the templates.xml 
+
+ 
+
+Steps: 
+
+* Open the profile_bua_standalone.xml using a text editor 
+
+* Search for the listView section in the file
+
+* Add the reference to your new template: 
+
+<listView id="New" action="show">
+<listItem templateName="Blank"/>
+<listItem templateName="List"/>
+<listItem templateName="NewTemplate"/>
+<listItem templateName="Crosstab"/>
+<listItem templateName="Financial"/>
+<listItem templateName="Chart"/>
+<listItem isBrowse="true"/>
+</listView>
+
+* You may need to restart the Cognos service to make those changes take effect.

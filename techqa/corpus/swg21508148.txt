@@ -1,0 +1,33 @@
+Title: IBM How can I push out an install or patch for the Modeler Client? - United States
+
+Text:
+push silent install client patch msi TECHNOTE (FAQ)
+
+QUESTION
+ How can I push out an install or patch for the IBM SPSS Modeler Client application? 
+
+ANSWER
+A Modeler install or patch can be pushed out to the clients with the following steps. 
+
+Step 1: Harvest the .msi and accompanying files required for silent install. To do this: 
+
+* Go to: Start > Run and type '%temp%' to navigate to the temporary path for Windows Installer programs. Delete all contents within this folder. 
+
+* Run the installer executable (SPSS_Modeler_141_win64.exe) as normal. When it finishes extracting and decompressing the .msi file and the end-user is required to click 'Continue', minimise this window. 
+
+* Switch to the %temp% folder and locate the folder with the 'ModelerClient64.msi' file. Copy ALL contents within this folder and paste it to a local folder (e.g. C:\Temp\Modeler\ClientInstall). 
+
+* Once copied, switch back to the installation wizard and hit 'Cancel'. 
+
+Step 2: Use the command prompt to execute the 'MsiExec' command: 
+
+* Open a command prompt window as an Administrator and run the following command: (substitute <path> with the location of your .msi file) 
+
+MsiExec.exe /i "<path>\ModelerClient.msi" /qn /L*v logfile.txt INSTALLDIR="C:\Program Files\IBM\SPSS\Modeler\14" LICENSETYPE="Network" LSHOST="mylicserver" 
+
+* For a full list of Silent Install options, please refer to the 'NetworkLicenseAdministratorsGuide.pdf' > 'Installaing the Product on the Local Desktop Computers > Pushing an Installation to Windows Computers. 
+
+Once that you have confirmed that Modeler Client is operational, repeat the steps to extract the .msi file for Modeler Client Fix Pack 1. Please note that it is highly recommended to delete the contents of the temporary folder as the Fix Pack and Client installations use the same file names. This is to prevent the accidental copying of the Client installation instead of the Fix Pack install.
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]

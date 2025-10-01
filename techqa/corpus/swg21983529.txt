@@ -1,0 +1,23 @@
+Title: IBM Tivoli Integrated Portal fix pack installation on Linux hangs during the WASFP step - United States
+
+Text:
+TIPL2; TIPL2INST; find; chcon; WASFP; installation failure; Tivoli Integrated Portal; hang; hung; Linux TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Tivoli Integrated Portal fix pack installation hangs while executing the WASFP step on a Linux platform wiht SELinux enabled. 
+
+SYMPTOM
+Installation seem to hang. 
+
+
+CAUSE
+When SELinux is enabled, the following command is executed to set the context of files needed by the upgrade:
+find <TIP Home> -name *.so -exec /usr/bin/chcon -t textrel_shlib_t {} ;
+The command can take a long time to run.
+
+DIAGNOSING THE PROBLEM
+If the installation appears to be hung while on the WASFP step execute the following command to see if the find command in question is running:
+ps -eaf |grep find
+
+RESOLVING THE PROBLEM
+Disable SELinux for the duration of the TIP upgrade. It can be enabled again once the TIP upgrade is complete.

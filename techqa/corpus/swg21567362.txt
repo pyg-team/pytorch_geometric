@@ -1,0 +1,41 @@
+Title: IBM ITCAM4Tx: WRT 7.3 in appliance mode, agent does not show data - United States
+
+Text:
+71WRT-PLAN; 71WRT-CONF; 71WRT-WV; 71WRT-TS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A customer installed Web Response Time agent V7.3 on Windows server 2008 R2 in order to monitor remote network traffic. 
+However, WRT agent TEP workspaces were empty. They are able to monitor remote network traffic with WRT agent installed on AIX, but couldn't do the same things with wrt agent in appliance mode on
+Windows. 
+TCP network capture was taken using wireshark to be sure that there is traffic on the network device they wanted to monitor. Then they set up trace levels (KBB_RAS1=ALL) and gathered logs. 
+
+SYMPTOM
+No monitoring application or transaction data shown on TEP WRT workspaces.
+
+
+CAUSE
+After analysing WRT logs and network packet capture, it was found that there is only traffic in one direction. 
+
+For example there are http GET requests to <ip-address> and ACKs for the responses, but there are no packets in the other direction (those containing the response data and the 200 OK.) 
+This seems to indicate the spanned port to the appliance is only supplying traffic in one direction. It was also observed some traffic on port 8080, but that port is not configured for monitoring.
+
+
+ENVIRONMENT
+Windows WRT v7.3
+
+
+
+DIAGNOSING THE PROBLEM
+Take a wireshark capture, and set debug levels on WRT agent, and review logs and wireshark results.
+
+
+
+RESOLVING THE PROBLEM
+Make sure and verify with the network administration team in your environment that the spanned/spanning port is configured for two way communications.
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfT WRT Web response time

@@ -1,0 +1,129 @@
+Title: IBM MustGather: Classloader problems for WebSphere Application Server - United States
+
+Text:
+MustGather; MustGather; MustGather; MustGatherDocument; autopd TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The following MustGather will assist you in setting up the traces and collecting the data required to analyze a classloader issue. 
+
+RESOLVING THE PROBLEM
+
+
+Collecting data for problems with the IBM® WebSphere® Application Server classloader component. Gathering this MustGather information before calling IBM support will help you understand the problem and save time analyzing the data
+This MustGather is needed to analyze exceptions such as: ClassNotFoundException, NoClassDefFoundError, ClassCastException, NoSuchMethodError, LinkageError, UnsatisfiedLinkError, VerifyError, UnsupportedClassVersionError, IncompatibleClassChangeError, ClassFormatError.
+
+COLLECTING DATA MANUALLY
+
+NOTE: Please see the following link for instructions for Liberty Profile:
+MustGather: Classloader problems for WebSphere Application Server Liberty Profile [http://www-01.ibm.com/support/docview.wss?uid=swg21972177]
+
+
+Perform the following steps to collect WebSphere Application Server specific information. 
+
+
+ 1. Enable and collect Application Server traces with the following trace string:
+    
+    com.ibm.ws.classloader.*=all
+    
+    For more details, see How to set up a trace [http://www.ibm.com/support/docview.wss?uid=swg21254706].
+    
+    
+ 2. Enable Java™ Virtual Machine (JVM) classloader traces through the Admin console:
+    
+     1. Select Servers, choose Application servers and select the server you want to configure.
+        
+        
+     2. In the Server Infrastructure section, open Java and Process Management and select Process Definition.
+        
+        
+     3. Under Additional Properties, select Java Virtual Machine.
+        
+        
+     4. Check the Verbose class loading checkbox.
+        
+        
+     5. Add the following string to the Generic JVM arguments field:
+        
+        -Dws.ext.debug=true -Dws.osgi.debug
+        
+        
+     6. Click OK.
+        
+        
+    
+    
+ 3. Save the changes. Stop the server.
+    
+    
+ 4. Clear the JVM and OSGi class cache. For more details, see How to clear the WebSphere Class Caches [http://www-01.ibm.com/support/docview.wss?uid=swg21607887]..
+    
+    
+ 5. Backup and delete all WebSphere log files for this WebSphere process (SystemOut*.log, SystemErr*.log, native_stderr.log, native_stdout.log, startServer.log, stopServer.log and trace.log). 
+    
+    The log files are located in the following directory:
+    
+    <profile_root>/logs/server_name/*
+    
+    Clear all WebSphere Application Server FFDC logs. FFDC files are located in the following directory:
+    
+    <profile_root>/profile_name/logs/ffdc/*
+    
+    Note: If you have configured to write FFDC log files into a different location, then clear them accordingly. 
+    
+    
+ 6. Restart the server. Reproduce the issue. Make sure the classloader exception is generated in the WebSphere logs (SystemOut.log) and the trace file (trace.log).
+    
+    
+ 7. Run the collector tool against the problem profile.
+    
+     * Gathering information with the collector tool - V7.0 [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/ttrb_runct.html] 
+     * Gathering information with the collector tool - V8.0 [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=matt&product=was-nd-iseries&topic=ttrb_runct] 
+     * Gathering information with the collector tool - V8.5 [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=phil&product=was-base-dist&topic=ttrb_runct] 
+     * Gathering information with the collector tool - V9.0 [http://www.ibm.com/support/knowledgecenter/SSEQTP_9.0.0/com.ibm.websphere.base.doc/ae/ttrb_runct.html]
+       
+       
+       
+    
+    
+ 8.  Send the collector output to IBM: Exchanging information with IBM support [http://www.ibm.com/support/docview.wss?uid=swg21153852].
+    
+    
+    
+
+
+Related information [http://www.ibm.com/support/docview.wss?uid=swg21153852] 
+Submitting information to IBM support [http://www.ibm.com/support/docview.wss?uid=swg21153852] 
+Steps to getting support for WebSphere Application Server [http://www.ibm.com/developerworks/websphere/support/appserver_support.html] 
+MustGather: Read first for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg21145599] 
+Troubleshooting guide for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg27005324] 
+
+EXCHANGING DATA WITH IBM SUPPORT
+To diagnose or identify a problem, it is sometimes necessary to provide Technical Support with data and information from your system. In addition, Technical Support might also need to provide you with tools or utilities to be used in problem determination. You can submit files using one of following methods to help speed problem diagnosis: 
+
+ * IBM Support Assistant (ISA) 
+ * Service Request (SR)
+ * E-mail 
+ * FTP to the Enhanced Customer Data Repository (ECuRep)
+
+Instructions for exchanging information with IBM Support [http://www.ibm.com/support/docview.wss?uid=swg21153852]
+
+
+
+
+READ FIRST AND RELATED MUSTGATHERS
+MustGather: Read first for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg21145599]
+
+
+
+
+ Dynamic Cache Problem [http://www.ibm.com/support/docview.wss?uid=swg21193837] JNDI Problem [http://www.ibm.com/support/docview.wss?uid=swg21143296] JTS Problem [http://www.ibm.com/support/docview.wss?uid=swg21153216] ORB Problem [http://www.ibm.com/support/docview.wss?uid=swg21157005] Scheduler Problem [http://www.ibm.com/support/docview.wss?uid=swg21220349] Session Management Problem [http://www.ibm.com/support/docview.wss?uid=swg21192604] Workload Management Problem [http://www.ibm.com/support/docview.wss?uid=swg21052165] 
+
+RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server - Express Java SDK AIX, HP-UX, Linux, Solaris, Windows 8.5, 8.0, 7.0, 6.1, 6.0 Application Servers Runtimes for Java Technology Java SDK

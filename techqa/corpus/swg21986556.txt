@@ -1,0 +1,49 @@
+Title: IBM db optimization tool.sh script returns ORA-01450: maximum key length (3215) exceeded - United States
+
+Text:
+ORA-01450: maximum key length (3215) exceeded; db optimization tool.sh -r -i; Index Rebuild TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer is using the db_optimization_tool.sh script to rebuild indexes on the Oracle database. 
+
+SYMPTOM
+Oracle returns the following error:
+SQL State: 60000
+Error Code: 604
+Message: ORA-00604: error occurred at recursive SQL level 1
+ORA-01450: maximum key length (3215) exceeded
+
+
+
+CAUSE
+This error can occur if some indexes are greater than 3215 bytes.
+
+ENVIRONMENT
+All
+
+DIAGNOSING THE PROBLEM
+db optimization tool.sh script returns ORA-01450: maximum key length (3215) exceeded
+
+RESOLVING THE PROBLEM
+The issue can be resolved by using the following SQL Syntax:
+
+alter index ACH_RET_INFO_PK rebuild nologging parallel (degree 16) online
+
+With the option " nologging parallel (degree 16) " the ORA-01450 error is not thrown.
+You can use the "db_execFile.sh" script under the /si/install/bin directory with an input text file containing the exact SQL commands you want to be executed.
+Attached is a sample input file with the most important Indexes that need to be executed.
+
+Sample command line:
+
+Unix / Linux: ./db_execFile.sh -i ./idx_list.txt -j 
+
+Windows: db_execFile.cmd -i ./idx_list.txt -j 
+
+
+
+
+
+Please note the list of Indexes may vary depending on the version of SI so the list attached is not exhaustive.
+
+
+idx_list.txt [/support/docview.wss?uid=swg21986556&aid=2]idx_list.txt [/support/docview.wss?uid=swg21986556&aid=1]

@@ -1,0 +1,107 @@
+Title: IBM Fix pack 8001 installation fails - ADMA5029E: WebSphere_Portal_2 cannot be found as a server - United States
+
+Text:
+portal fix pack fixpack 8001 8.0.0.1 install installation fail fails failure ADMA5029E ADMA5042E WCMD0003E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+During the 8001 fix pack installation, ConfigEngine executes a wsadmin script which tries to read the server definition for any vertical cluster members added to the node. If the Dmgr was not running during the upgrade, it may fail.
+
+SYMPTOM
+In ConfigTrace, the process is not connecting to the Dmgr: 
+
+========================================
+Fri Mar 22 21:19:10 GMT 2013
+Target started: action-set-managed-node-flag
+
+action-set-managed-node-flag:
+[echo] Is this a Managed Node ? true
+Target finished: action-set-managed-node-flag
+Fri Mar 22 21:19:11 GMT 2013
+Target started: action-set-conntype-property
+
+action-set-conntype-property:
+[echo] wsadminConnType set to: NONE
+Target finished: action-set-conntype-property 
+
+======================================== 
+
+ 
+
+The wsadminConnType should be set to SOAP in a cluster. Further in the ConfigTrace, we see this error: 
+
+ 
+
+========================================
+
+[wsadmin] WASX7357I: By request, this scripting client is not connected to any server process. Certain configuration and application operations will be available in local mode.
+[wsadmin] AppName wcm
+[wsadmin] ADMA5017I: Uninstallation of wcm started.
+[wsadmin] ADMA5042E: Targets [webserver1] are not found in the repository. Server index entries for these targets are not updated.
+[wsadmin] com.ibm.websphere.management.exception.AdminException: ADMA5029E: Cluster member WebSphere_Portal_2 that is defined in the cluster configuration for PortalCluster cannot be found as a server.
+[wsadmin] at com.ibm.ws.management.application.task.ConfigRepoHelper._getAllServersAsSystem(ConfigRepoHelper.java:1362)
+[wsadmin] at com.ibm.ws.management.application.task.ConfigRepoHelper.access$000(ConfigRepoHelper.java:164)
+[wsadmin] at com.ibm.ws.management.application.task.ConfigRepoHelper$1.run(ConfigRepoHelper.java:1296)
+[wsadmin] at com.ibm.ws.security.auth.ContextManagerImpl.runAs(ContextManagerImpl.java:5453)
+
+[wsadmin] ADMA5105E: Updates to the server index entry failed for the last node in 
+[wsadmin] ADMA5011I: The cleanup of the temp directory for application wcm is complete.
+[wsadmin] ADMA5107E: The application wcm cannot be uninstalled.
+[wsadmin] WASX7017E: Exception received while running file "/opt/IBM/WebSphere/AppServer/profiles/wp_profile/ConfigEngine/config/work/was/curJaclScript.jacl"; exception information: com.ibm.ws.scripting.ScriptingException: WASX7133E: Application uninstall of wcm failed: see previous messages for details.
+
+[wsadmin] WASX7341W: No "save" was performed before the interactive scripting session exited; configuration changes will not be saved.
+/opt/IBM/WebSphere/ConfigEngine/config/includes/apply_PTF.xml:49: Java returned: 105
+at org.apache.tools.ant.taskdefs.Java.execute(Java.java:87)
+at com.ibm.websphere.ant.tasks.WsAdmin.execute(WsAdmin.java:409)
+
+BUILD FAILED
+/opt/IBM/WebSphere/PortalServer/installer/wp.update/config/includes/cumulative_fix.xml:53: The following error occurred while executing this line:
+/opt/IBM/WebSphere/ConfigEngine/config/includes/apply_PTF.xml:49: /opt/IBM/WebSphere/ConfigEngine/config/includes/apply_PTF.xml:49: Java returned: 105
+Total time: 1 minute 50 seconds 
+
+======================================== 
+
+ 
+
+In Installation Manager native logs, you may see the following error if an incorrect Dmgr profile name is passed in: 
+
+ 
+
+========================================
+check-if-ok-to-start-dmgr:
+
+iim-start-dmgr:
+[exec] WCMD0003E: The specified profile "Dmgr01" cannot be found.
+If a default profile exists and you wish to use it, the -profileName
+parameter is not required.
+[exec] Result: 1
+[exec] Current profile - wp_profile
+========================================
+
+CAUSE
+The Dmgr is not started during the upgrade, so the installation process cannot connect to it.
+
+
+
+RESOLVING THE PROBLEM
+1. If using a remote Dmgr, be sure it is started prior to attempting the upgrade. 
+
+2. If using a local Dmgr and Installation Manager requires you to stop it prior to attempting the upgrade, follow these steps: 
+
+a. Verify the Dmgr profile name by navigating to the Dmgr's AppServer/bin folder and execute this command: 
+
+ 
+
+./manageprofiles.sh|bat -listProfiles 
+
+ 
+
+b. Pass in the correct Dmgr profile name according to the installation option you are using: 
+
+
+http://www-10.lotus.com/ldd/portalwiki.nsf/xpDocViewer.xsp?lookupName=Readme+8.0.0.1#action=openDocument&res_title=Upgrade_instructions_for_WebSphere_Portal_and_Web_Content_Manager_V8.0.0.1_clustered_servers_8001&content=pdcontent [http://www-10.lotus.com/ldd/portalwiki.nsf/xpDocViewer.xsp?lookupName=Readme+8.0.0.1#action=openDocument&res_title=Upgrade_instructions_for_WebSphere_Portal_and_Web_Content_Manager_V8.0.0.1_clustered_servers_8001&content=pdcontent]
+
+
+
+
+ * 
+ *

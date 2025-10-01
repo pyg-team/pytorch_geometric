@@ -1,0 +1,154 @@
+Title: IBM IT08663: SOME SSL CONNECTIONS WHICH FAIL TO COMPLETE HANDSHAKE MIGHT NOT TIME OUT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix packs for DataPower XML Security Gateway version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034955]
+Fix packs for DataPower B2B Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034956]
+Fix packs for DataPower Integration Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034957]
+Fix packs for DataPower Low Latency Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034958]
+Fix packs for DataPower Service Gateway version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034959]
+Fix packs for DataPower Service Gateway version 6.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036407]
+Fix packs for DataPower B2B Appliance version 6.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036409]
+Fix packs for DataPower Integration Appliance version 6.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036410]
+Fix packs for DataPower Service Gateway version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037486]
+Fix packs for DataPower B2B Appliance version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037487]
+Fix packs for DataPower Integration Appliance version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037488]
+Fix packs for DataPower Gateway version 7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038524]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When attempting to establish a TCP connection with a destination
+   server, and the server doesn't respond to SSL handshake,
+   DataPower might not time out.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Affected are all Datapower configurations that set up
+   connections to remote hosts using any SSL-wrapped protocol, for
+   example when using HTTPS to connect to the backend.
+   
+   The SSL connection establishment may intermittently fail
+   early in SSL handshake, hanging the entire transaction.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is available in 6.0.0.16, 6.0.1.12, 7.0.0.9, 7.1.0.6 and
+   7.2.0.0
+   
+   For a list of the latest fix packs available, please see:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21237631 [http://www-01.ibm.com/support/docview.wss?uid=swg21237631]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT08663
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-06
+   
+   
+ * CLOSED DATE
+   2015-07-30
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP
+   
+   
+ * R601 PSN
+   UP
+   
+   
+ * R700 PSN
+   UP
+   
+   
+ * R710 PSN
+   UP
+   
+   
+ * R720 PSN
+   UP

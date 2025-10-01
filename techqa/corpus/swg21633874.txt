@@ -1,0 +1,52 @@
+Title: IBM Portal v8 Installation fails with 'No locks available' message - United States
+
+Text:
+CRIMC1020E; No locks; NFS; unix; CRIMC1017E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When attempting to install WebSphere Portal v8, the installation may fail when it is retrieving/reading the repository files. 
+
+SYMPTOM
+In the IIM output, you may see various errors like:
+
+=================
+CRIMC1086E: Failed to read artifact table of contents at
+'/portal/repository/Setup'.
+
+Cannot read the table of contents file from the repository. You
+might have an issue with your network connection. A table of contents
+file located under the atoc directory in the source repository might be
+corrupted. If you retrieve the file from a machine or a network in your
+environment, the file system might be mounted incorrectly.
+
+Verify your network connection. If the source repository files
+were transfered from a different location before the installation,
+verify that the files were not altered during the transfer operation.
+Copy the source files to a different file system and install from that
+file system.
+
+java.io.IOException: No locks available
+=================
+
+
+You may also see additional messages like this for various files:
+
+===============
+CRIMC1017E: Failed to locate plug-in
+com.ibm.cic.check.agent13.update_8.0.0.201301231755.
+CRIMC1020E: plug-in com.ibm.wps.offerings.check_8.0.0.201301231755 not
+found
+===============
+
+
+CAUSE
+The root cause of the problem is final exception in the first error listed above:
+
+java.io.IOException: No locks available
+
+This error is related to how the NFS drive that contains the repository files was mounted on the system.
+
+RESOLVING THE PROBLEM
+To resolve the problem re-mount the NFS drive that contains the repository files, and include the "nolock" option in the mount command. 
+
+IBM Installation Manager should then be able to retrieve the files.

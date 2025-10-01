@@ -1,0 +1,165 @@
+Title: IBM JR44672: ACRONYMS IN ARCHIVED SNAPSHOTS ARE NOT TAKEN INTO CONSIDERATION - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 7.5.1 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24033036]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When trying to create snapshot of a process app, users may
+   encounter failure and exception below:
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException:
+   Error for batch element #1:
+   DB2 SQL Error: SQLCODE=-803, SQLSTATE=23505,
+   SQLERRMC=3;DB2INST1.
+   LSW_SNAPSHOT, DRIVER=3.61.65
+   
+   This full exception message would be:
+   [2/7/13 15:48:13:498 GMT] 0000003a wle  E   Exception while
+   creating the snapshot
+   com.lombardisoftware.client.delegate.BusinessDelegateException:
+   com.lombardisoftware.client.delegate.BusinessDelegateException:
+   PreparedStatementCallback; SQL [update LSW_SNAPSHOT set
+   CREATED_ON = ?,NAME = ?,ACRONYM = ?,DESCRIPTION = ?,
+   SEQ_NUM = ?,ERROR_COUNTER = ?,ORIG_CREATED_ON = ?,ACTIVATED_ON =
+   ?,
+   ARCHIVED_ON = ?,REPOSITORY_BRANCH_ID = ?,CREATED_BY_USER_ID = ?,
+   BRANCH_ID = ?,PROJECT_ID = ?,CHANGE_DATA = ?,IS_ACTIVE = ?,
+   IS_BLA_ACTIVE = ?,IS_STARTED = ?,IS_INSTALLED =
+   ?,IS_BLA_INSTALLED = ?,
+   IS_TIP_DEPLOYED = ?,IS_DEFAULT = ?,IS_ARCHIVED = ? where
+   SNAPSHOT_ID =
+   ?];
+   Error for batch element #1: DB2 SQL Error: SQLCODE=-803,
+   SQLSTATE=23505, SQLERRMC=3;DB2INST1.LSW_SNAPSHOT,
+   DRIVER=3.61.65;
+   nested exception is
+   DB2 SQL Error: SQLCODE=-803, SQLSTATE=23505,
+   SQLERRMC=3;DB2INST1.
+   LSW_SNAPSHOT, DRIVER=3.61.65
+    at
+   com.lombardisoftware.client.delegate.BusinessDelegateException.a
+   sBusinessDelegate
+   
+   
+   Acronym generation code in BPM 7501 did not take into
+   consideration the
+   acronym of archived snapshots. This resulted in non-unique
+   acronym
+   generation and subsequent Constraint Violations exceptions in
+   DB. This fix will check for all existing acronyms in archived or
+    unarchived state while
+   generating unique acronym.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of BPM Express, Standard, and         *
+   *                  Advanced.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Acronyms in archived snapshots are not  *
+   *                      taken into consideration when           *
+   *                      generating acronyms, resulting in non-  *
+   *                      unique acronyms.                        *
+   *                      Acronym generation code in BPM 7501 did *
+   *                      not take into consideration the acronym *
+   *                      of archived snapshots. This resulted in *
+   *                      non-unique                              *
+   *                      acronym generation and subsequent       *
+   *                      Constraint Violations exceptions in DB. *
+   *                      This fix will check for all existing    *
+   *                      acronyms in archived or unarchived      *
+   *                      state while generating unique acronym.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This will be fixed in a future release pack.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR44672
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-07
+   
+   
+ * CLOSED DATE
+   2013-02-05
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

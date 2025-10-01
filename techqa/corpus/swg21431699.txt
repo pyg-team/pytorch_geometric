@@ -1,0 +1,36 @@
+Title: IBM InfoSphere Foundation Tools components, Version 8.1.1 Fix Pack 2 fix list - United States
+
+Text:
+ia811relnotes; ft811relnotes; mdwb811relnotes; bg811relnotes; ift811relnotes bga811relnotes foundation tools fixlist; list of apars for 811; FixesByVersionDocument; FixListDocument FIX README
+
+ABSTRACT
+ Summary of fixes included in IBM InfoSphere Foundation Tools components, Version 8.1.1 Fix Pack 2 release. 
+
+CONTENT
+
+InfoSphere Business Glossary, Version 8.1.1 Fix Pack 2:
+
+
+
+Component APAR number Description BG Admin JR35819 Fixed issue with CSV import on non-UTF encoded files and added options to choose the output format during CSV export. BG Admin JR36416 Added support for CSV import/export with a non-comma separator. 
+
+
+InfoSphere Information Analyzer, Version 8.1.1 Fix Pack 2: 
+
+
+Component APAR number Description Information Analyzer JR34697 For an Oracle IADB, exception details are now shown when fields from Data Sources tab or Statistics and Attributes tab are included in Data rule report output. Information Analyzer JR35503 Fixed issue that, while running jobs, user is unable to set an alternate PX configuration file. Information Analyzer JR35664 Improves performance of opening the column analysis job run screen when many columns are selected. Information Analyzer JR35758 When publishing to DataStage, the min/max values and format, will now be truncated to 255 characters. Information Analyzer JR35906 Fixed issue where column analysis of large number of tables produces the following DataStage connect error: No RPC Connection active. Also, the default parallelization will be reduced to 2. Information Analyzer JR35954 DB2 Connection handles will now be freed for drill down operations against a non-UTF8 DB2 data source. Information Analyzer JR36091 Fixed that a rerun of MCPK duplicate check fails when field separator and null indicator are changed. Information Analyzer JR36161 Fixed that, if a rule executable has any bindings to a constant, exporting it to another
+system fails during the import. In this issue, the rule gets partially imported and any attempt to delete or save the rule hangs the system. Information Analyzer JR36195 Fixed that the Column Format Violations report will not truncate column names to 10 characters. Information Analyzer JR36265 Improved the precision of percentage values and prevented false display of 0% and 100%. Information Analyzer JR36270 Fixes incorrect values for valid/invalid percentage in the Domain Quality table assessment report. Information Analyzer JR36298 Improved data rules job performance by replacing a sequential operator in the job flow with a parallel group operator. Information Analyzer JR36371 Fixed that the interface hangs when creating a new Global Logical variable in Metadata Management or when selecting the Global Logical variable tab in Data Quality. Information Analyzer JR36373 Can now use TRIM in an in_reference_column Data rule that involves char and varchar columns. Information Analyzer JR36414 Fixed filtering by Column name to work in the Column Analysis screen. Information Analyzer JR36436 Fixed issue that free form rules containing "and/or" combinations and complex expression cannot be opened. Information Analyzer JR36480 Lookup on reference tables will now use the filter criteria. Information Analyzer JR36489 In Column Frequency - Most Frequent Formats report, the Y scale in the chart has data truncated to 6 digits; added support for 10 digits. Information Analyzer JR36624 For a Data rule with more than one join key, all join keys will now be executed. 
+
+
+InfoSphere Fast Track, Version 8.1.1 Fix Pack 2: 
+
+Component APAR number Description FastTrack JR34656 Fixed issue that the deletion and re-importation of table metadata invalidates FastTrack mapping. FastTrack JR35261 Fixed issue that, when using the Teradata connector with FastTrack, several orphan sessions are left on the Teradata database. FastTrack JR36168 Fixes an error when modifying project properties. FastTrack JR34457 Fixed issue that when exporting a mapping definition from the FastTrack client to CSV, the annotations of the lookup definitions do not get exported. FastTrack JR35134 Fixed issue that the lookup annotation is not included in the mapping specification report. 
+RELATED INFORMATION
+ Version 8.1.1 fix list [http://www.ibm.com/support/docview.wss?uid=swg21420508]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Business Glossary 8.1.1.2, 8.1.1.1, 8.1.1 Information Management InfoSphere FastTrack 8.1.1.2, 8.1.1.1, 8.1.1 Information Management InfoSphere Information Analyzer 8.1.1.2, 8.1.1.1, 8.1.1 Information Management InfoSphere Metadata Workbench 8.1.1.2, 8.1.1.1, 8.1.1

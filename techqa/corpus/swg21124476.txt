@@ -1,0 +1,82 @@
+Title: IBM Example on forward and reverse engineering with Visual Basic - United States
+
+Text:
+vb; example; rei; round; trip; engineer; engineering; example; 1124476 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote provides a step by step round trip example with Visual Basic and Rational Rose® 
+
+RESOLVING THE PROBLEM
+Below are the steps to do a forward and reverse engineer of a Visual Basic
+1. Make sure your default language is set to Visual Basic
+a. Go to Tools / Options / Notation
+b. Under Default Language select Visual Basic 
+c. Click OK 
+2. Now we will create a class called Person
+a. Right click on the Logical View
+b. Select New / Class
+c. Right Click on the new class
+d. Go to Open Specifications / General Tab
+e. In the Name type Person
+3. Next we want to create an attribute called Hair color
+a. In the Open Specifications of the class select the Attributes tab
+b. Right click in the white area and select insert
+c. Double click on name (the attribute we created)
+d. In the Name type Hair Color
+e. Under Type select String and click OK
+4. Now we want to create an operation called drive
+a. In the Open Specifications of the class click on the Operations Tab 
+b. Right click in the white area and select insert
+c. We will want to name this operation drive
+d. Double click on opname (the default name of the operation)
+e. In the General Tab under name type Drive
+f. We want the return type to be Boolean 
+g. Click OK and then OK again on the Class Specification 
+5. Now we want to generate code
+a. Right click on the class
+b. Select Update Code
+c. You will see a Code Update Tool Wizard
+d. Click on Create a Visual Basic component and assign class to it
+e. In the new tab select standard exe and click OK
+f. Now on the wizard you will see Visual Basic / Project1 / Person with checks next to them
+g. Click Next 
+h. You will see Components assigned to Visual Basic Language Project1 <<Standard EXE>> and person under that
+i. Click Finish
+j. It will ask you to save the model. Save the model as VB in the location you want (mine is in D:\Temp)
+k. It will update your code and it will say code update is complete click close
+
+You have successfully generated your code. 
+
+Now we will make a change to the code and reverse engineer that into Rose
+1. Now you want to open the code by double clicking on the person.cls file
+Mine is in D:\Temp\person.cls 
+2. In Visual Basic on the right side expand Project1
+3. Expand Class Modules
+4. Double click on Person (Person.cls)
+5. Now you will see the code for this
+6. At the end of the line '## ModelID= click Enter
+7. Now you want to type Private EyeColor as string
+8. Save the project as the same
+9. Now in Rose open a blank model
+a. File / New 
+10. Now we will reverse engineer the code
+a. Go to Tools / Visual basic / Update Model from Code
+b. You will then see a Model update Tool Wizard
+c. Select Add a Visual Basic Component
+d. Click the Recent Tab
+e. Select Project1 and click Add and OK
+f. Expand Visual Basic / Project1 / person
+g. Now you want to click Next
+h. It will say Model Update Tool Finish 
+i. Click finish
+j. It will say save model as type VB1 and click Save
+k. It will start to update code 
+l. Next you will see Model Update Tool Summary click Close
+m. Now expand Logical View / Reverse Engineer / Project1
+n. Under the class Person you will see EyeColor
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Rose Enterprise 2001a.04.00, 2002.05.00, 2002.05.20, 2003.06.00, 2003.06.01, 2003.06.12, 2003.06.13 
+HISTORICAL NUMBER
+ 17204

@@ -1,0 +1,19 @@
+Title: IBM Quick Start Guide for IBM InfoSphere Information Server Pack for JD Edwards EnterpriseOne Version 1.6. - United States
+
+Text:
+Quick Start Guide for IBM WebSphere DataStage Pack for JD Edwards EnterpriseOne Version 1.6.0 PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Use this guide to get started with a basic installation of IBM WebSphere DataStage Pack for JD Edwards EnterpriseOne. 
+
+CONTENT
+Click on the PDF file to view the Quick Start Guide. 
+
+
+
+
+To view the accessible version of the Quick Start Guide, click on the HTML file. Alternatively, download both the HTML and the GIF file to the same directory, then open the HTML file in a browser. 
+
+Language PDF file HTML and GIF files 
+(accessible version) English i46dejqs.pdf [/support/docview.wss?uid=swg27012659&aid=2]i46dejqs.pdf [/support/docview.wss?uid=swg27012659&aid=1] i46dejqs.html [/support/docview.wss?uid=swg27012659&aid=4]i46dejqs.html [/support/docview.wss?uid=swg27012659&aid=3][/support/docview.wss?uid=swg27012659&aid=6]archqsg91.gif [/support/docview.wss?uid=swg27012659&aid=5] 
+For additional information, view the release notes at http://publib.boulder.ibm.com/infocenter/iisinfsv/v9r1/index.jsp?topic=/com.ibm.swg.im.iis.ds.entpak.jde.relinfo.doc/topics/jde_about_this_release.html [http://publib.boulder.ibm.com/infocenter/iisinfsv/v9r1/index.jsp?topic=/com.ibm.swg.im.iis.ds.entpak.jde.relinfo.doc/topics/jde_about_this_release.html]

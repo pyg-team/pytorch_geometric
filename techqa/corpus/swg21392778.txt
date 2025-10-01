@@ -1,0 +1,97 @@
+Title: IBM After deleting source folder in an EJB project, files get copied to workspace metadata during publishing - United States
+
+Text:
+EJB project; copied; publish; performance; PK90406; RAD; RSA; RSA WS; RATLC01373783; RATLC01373808 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After deleting a source folder in an EJB project, IBM Rational Application Developer version 7.0 show a dialog "Files get copied during" while publishing to the IBM WebSphere Application Server. 
+
+As a result, publishing gets delayed if the project contains a large number of Java classes or resources. 
+
+SYMPTOM
+Step to reproduce: 
+
+ 
+1. Create an EJB project with one session bean
+
+2. Create a new source folder called deploy 
+
+3. Within the view Project Explorer (or Enterprise Explorer for Rational Application Developer v7.5), delete the folder deploy 
+
+4. Create a source folder ejbdeploy 
+
+5. Select EJB Deployment within the Project Properties and, on the Property page, select the ejbdeploy folder as EJB Deployment source folder 
+
+6. Publish to WebSphere Application Server version 6.1
+Result: A dialog appears indicating that files are copied. This might appear if you have a number of classes in your ejbModule or ejbdeploy folder.
+
+
+
+CAUSE
+The problem is currently tracked by APAR PK90406 and Eclipse Bug 284579. It got solved within Rational Application Developer 7.0.0.10.
+
+
+
+ENVIRONMENT
+This applies to all versions of WebSphere Application Server
+
+
+
+DIAGNOSING THE PROBLEM
+The .class files get copied from projects in workspace to the directory <workspace>/.metadata/org.eclipse.wst.server.core.tmpX/...
+
+
+
+RESOLVING THE PROBLEM
+Do the following to workaround the problem: 
+
+
+1. Open within view Navigator
+2. Open within the project, for which files get copied, the file .settings/org.eclipse.wst.common.component 
+
+3. If the project is called EJB and the deleted source folder was called deploy, the file will look like this: 
+
+ 
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0"> 
+<wb-module deploy-name="EJB"> 
+<wb-resource deploy-path="/" source-path="/ejbModule"/> 
+<wb-resource deploy-path="/" source-path="/deploy"/>
+<property name="java-output-path" value="ejbModule"/> 
+</wb-module>
+</project-modules> 
+
+4. The workaround involves removing the following line: 
+<wb-resource deploy-path="/" source-path="/deploy"/> 
+
+so that the file looks like: 
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0"> 
+<wb-module deploy-name="EJB"> 
+<wb-resource deploy-path="/" source-path="/ejbModule"/> 
+<property name="java-output-path" value="ejbModule"/> 
+</wb-module>
+</project-modules> 
+
+The problem of leaving stale lines for removed source folders within the file org.eclipse.wst.common.component is tracked by Eclipse Bug 285790. See the links in the Related information section for further details. 
+
+
+
+RELATED INFORMATION
+#Bug 284579: Single root check failing when source folde [https://bugs.eclipse.org/bugs/show_bug.cgi?id=284579]
+Comparison of a single-root module to a non single-root [http://www.ibm.com/support/docview.wss?uid=swg21302931]
+Bug 285790: Ensure refactoring removes component entrie [https://bugs.eclipse.org/bugs/show_bug.cgi?id=285790]
+Recommended fixes for Rational Application Developer 7. [http://www.ibm.com/support/docview.wss?rcss=rad&uid=swg27007823#ver70]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Java Development Linux, Windows 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4, 7.0.0.5, 7.0.0.6, 7.0.0.7, 7.0.0.8, 7.0.0.9 All Editions 
+PRODUCT ALIAS/SYNONYM
+ RAD/RSA/RSA WS

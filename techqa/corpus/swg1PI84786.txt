@@ -1,0 +1,306 @@
+Title: IBM PI84786: DATAPOWER PLUGIN FAILS TO CONNECT TO DATAPOWER IF PASSWORD CONTAINS DOLLAR OR AMPERSAND - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using the DataPower plugin, if the password contains dollar
+   ($) or ampersand (&), the connection will fail with an error
+   like:
+   
+   C:\UCD\6.2.3\agent\var\plugins\com.ibm.datapower_8_49ed659d3a65b
+   06cb32a9
+   20351b140c82901d700cfba7c765519adcd167776d4/dcm/apache-ant-1.9.7
+   /bin/ant
+   .bat -f
+   C:\UCD\6.2.3\agent\var\plugins\com.ibm.datapower_8_49ed659d3a65b
+   06cb32a9
+   20351b140c82901d700cfba7c765519adcd167776d4/dcm/deploy.ant.xml
+   -Ddcm.dir=C:\UCD\6.2.3\agent\var\plugins\com.ibm.datapower_8_49e
+   d659d3a6
+   5b06cb32a920351b140c82901d700cfba7c765519adcd167776d4/dcm
+   -Dhost=server_name -Dport=5550 -Duid=user_name
+   -Dpwd=****
+   -Dwork.dir=C:\UCD\6.2.3\agent\var\work\DataPowertest\./tmp
+   -Ddomain=domain_name -Denvironment=dev
+   -Dbackup.file=C:\Temp\DataPower.bak
+   backup-domains
+   command:
+   C:\UCD\6.2.3\agent\var\plugins\com.ibm.datapower_8_49ed659d3a65b
+   06cb32a9
+   20351b140c82901d700cfba7c765519adcd167776d4\dcm\apache-ant-1.9.7
+   \bin\ant
+   .bat -f
+   C:\UCD\6.2.3\agent\var\plugins\com.ibm.datapower_8_49ed659d3a65b
+   06cb32a9
+   20351b140c82901d700cfba7c765519adcd167776d4/dcm/deploy.ant.xml
+   -Ddcm.dir=C:\UCD\6.2.3\agent\var\plugins\com.ibm.datapower_8_49e
+   d659d3a6
+   5b06cb32a920351b140c82901d700cfba7c765519adcd167776d4/dcm
+   -Dhost=apicl2-test-dp.rtp.raleigh.ibm.com -Dport=5550
+   -Duid=lziosi
+   '-Dpwd=****'
+   -Dwork.dir=C:\UCD\6.2.3\agent\var\work\DataPowertest\./tmp
+   -Ddomain=PMR92863 -Denvironment=dev
+   -Dbackup.file=C:\Temp\DataPower.bak
+   backup-domains
+   Unable to locate tools.jar. Expected to find it in
+   C:\java8\lib\tools.jar
+   Buildfile:
+   C:\UCD\6.2.3\agent\var\plugins\com.ibm.datapower_8_49ed659d3a65b
+   06cb32a9
+   20351b140c82901d700cfba7c765519adcd167776d4\dcm\deploy.ant.xml
+   
+   clean:
+   
+   -init-dir:
+     [mkdir] Created dir:
+   C:\UCD\6.2.3\agent\var\work\DataPowertest\tmp
+     [mkdir] Created dir:
+   C:\UCD\6.2.3\agent\var\plugins\com.ibm.datapower_8_49ed659d3a65b
+   06cb32a9
+   20351b140c82901d700cfba7c765519adcd167776d4\dcm\schemas
+   
+   -check-std-args:
+   
+   check-access:
+   
+   BUILD FAILED
+   C:\UCD\6.2.3\agent\var\plugins\com.ibm.datapower_8_49ed659d3a65b
+   06cb32a9
+   20351b140c82901d700cfba7c765519adcd167776d4\dcm\deploy.ant.xml:2
+   75:
+   Unable to reach <server-name> or the userid/password doesn't
+   work.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Replace the single dollar sign with a double dollar sign:
+   
+   $ sign -> $$
+   
+   Escape the & with &amp;
+   
+   & sign -> &amp;
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Windows DataPower plugin users with special characters in    *
+   * password                                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Windows Ant cannot properly escape many special characters.  *
+   * This will show itself in many different ways when running a  *
+   * command either manually or through the plugin.               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Option 1) Do not use special characters                      *
+   * Option 2) Upgrade to version 15 of the DataPower plugin      *
+   * where we surround the password in double quotes. (A double   *
+   * quote character will not be properly escaped.)               *
+   * Option 3) If this occurs in other properties, try            *
+   * surrounding them in double or single quotes.                 *
+   * Option 4) Install the UCD Agent or run the command on a      *
+   * Linux machine.                                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available in version 15 of the plugin.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI84786
+   
+   
+ * REPORTED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * REPORTED COMPONENT ID
+   5725M5400
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-07-20
+   
+   
+ * CLOSED DATE
+   2017-08-14
+   
+   
+ * LAST MODIFIED DATE
+   2017-08-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * FIXED COMPONENT ID
+   5725M5400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP
+   
+   
+ * R600 PSY
+   UP
+   
+   
+ * R601 PSN
+   UP
+   
+   
+ * R601 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R610 PSY
+   UP
+   
+   
+ * R611 PSN
+   UP
+   
+   
+ * R611 PSY
+   UP
+   
+   
+ * R612 PSN
+   UP
+   
+   
+ * R612 PSY
+   UP
+   
+   
+ * R613 PSN
+   UP
+   
+   
+ * R613 PSY
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R620 PSY
+   UP
+   
+   
+ * R621 PSN
+   UP
+   
+   
+ * R621 PSY
+   UP
+   
+   
+ * R622 PSN
+   UP
+   
+   
+ * R622 PSY
+   UP
+   
+   
+ * R623 PSN
+   UP
+   
+   
+ * R623 PSY
+   UP
+   
+   
+ * R624 PSN
+   UP
+   
+   
+ * R624 PSY
+   UP
+   
+   
+ * R625 PSN
+   UP
+   
+   
+ * R625 PSY
+   UP

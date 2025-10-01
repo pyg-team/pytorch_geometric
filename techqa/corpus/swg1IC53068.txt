@@ -1,0 +1,131 @@
+Title: IBM IC53068: Not possible to open ReqPro Access project in RSA - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  It is not possible to open customer Access project in RSA
+   Customer ReqPro version: 7.0.0.0
+   RSA version: 6.0.1.1  ifix004 applied
+   I am attaching to this escalation the customer db and model,
+   siemens.zip.  Project opens fine in ReqPro, but when opening in
+   RSA the error below appears (at about 22%)
+   Opening project... (Error: An internal error occurred during:
+   "Opening project...")
+   After changing the database to SqlServer with
+   datatransportWizard, it is then possible to open the project.
+   Switching back to Access we get the original error.
+   Can this be accepted as a defect?  I found defect RATLC00140029.
+    This looks the same kind of thing, but this had been fixed in
+   the RSA version the customer is using. We reproduced with the
+   same version.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  A customer was unable to open a Rational(R) RequisitePro(R)
+   project based in Microsoft(R) Access(TM) in the integration
+   with Rational Software Architect. This defect was caused by
+   database tables that were not properly closed when loading
+   the data from the database.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The tables are now properly closed while the loading the
+   Rational RequisitePro project.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC53068
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL REQ PRO VX
+   
+   
+ * REPORTED COMPONENT ID
+   5724F3800
+   
+   
+ * REPORTED RELEASE
+   ALL
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-06-26
+   
+   
+ * CLOSED DATE
+   2008-03-27
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL REQ PRO VX
+   
+   
+ * FIXED COMPONENT ID
+   5724F3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RALL PSN
+   UP

@@ -1,0 +1,181 @@
+Title: IBM Enabling Oracle Universal Connection Pooling (UCP) in WebSphere Application Server - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I enable Oracle Universal Connection Pooling (UCP) in WebSphere® Application Server? 
+
+ANSWER
+Oracle Universal Connection Pooling (UCP) is supported, but not certified for the WebSphere Application Server. This means you can get support from WebSphere when you use UCP, but that it has not been fully tested. UCP has been tested to ensure that it can be configured and is being used when connecting to an Oracle database.
+Note: While Oracle UCP can be used with other databases, using it with databases other than Oracle is not supported for use with WebSphere.
+
+You can configure a JDBC provider and data sources for the provider in order to use UCP instead of using the WebSphere application server's connection pooling. UCP can be used with both connection pooling data sources and XA data sources.
+
+Do not try to configure UCP using the WebSphere connection pool settings on the data source. WebSphere pooling is turned off and the pooling configuration is ignored when using Oracle UCP. UCP can be configured via custom properties on the data source or can be set by the application by using the setters on the UCP interfaces.
+
+
+Note: For information on using UCP with Websphere Application Server v7, see APAR PM44388 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM44388]
+
+
+Example of how to configure Oracle UCP using the administrative console: 
+
+ 1. Start the administrative console.
+    
+    
+ 2. Expand Resources > JDBC.
+    
+    
+ 3.  Create the JDBC provider:  1.  Select JDBC providers.
+         
+         
+     2.  Select the Scope that you wish to create the JDBC provider at, then select New....  * For Database type, select Oracle.
+            
+            
+          * For Provider type, select Oracle JDBC Driver UCP.
+            
+            
+          * For Implementation type, select either Connection pool data source or XA data source depending on which type the application needs.
+            
+            
+         
+         
+     3.  Click Next.
+         
+         
+     4.  The classpath will be automatically filled in with ojdbc6.jar and ucp.jar.
+         
+         
+     5.  Set the Directory location to where these JARs are located.
+         
+         
+     6.  Be sure to use a matching pair of jars. For example, if using Oracle 11.2.0.1 driver, be sure to use the odjbc6.jar and ucp.jar from that version.
+         
+         
+     7.  Click Next.
+         
+         
+     8.  Verify the Summary information looks correct.
+         
+         
+     9.  You should see the ojdbc6.jar and the ucp.jar configured on the "Class path".
+         
+         
+     10. You should see ${ORACLE_JDBC_DRIVER_PATH} set to the directory that contains these two JARs.
+         
+         
+     11. You will see "oracle.ucp.jdbc.PoolDataSourceImpl" if Connection pool data source was selected. You will see "oracle.ucp.jdbc.PoolXADataSourceImpl" if XA data source was selected.
+         
+         
+     12. Click Finish, then select Save.
+         
+         
+    
+    
+ 4. The JDBC providers list will be shown. To create a data source:  1.  Select the provider you just created.
+         
+         
+     2.  Select Data sources.
+         
+         
+     3.  Select New...
+         
+         
+     4.  Fill in the JNDI name.
+         
+         
+     5.  Click Next.
+         
+         
+     6.  Enter the URL for the Oracle database.
+         
+         
+     7.  The Data store helper class name will already have the selection set to Oracle11g data store helper.
+         
+         
+     8.  Click Next.
+         
+         
+     9.  Set the "security aliases" as appropriate for this data source.
+         
+         
+     10. Click Next.
+         
+         
+     11. Review Summary and click Finish.
+         
+         
+     12. Click Save.
+         
+         
+    
+    
+ 5. Select the data source you just created and press "Test connection" if you want to check if the data source can connect to the database.
+    
+    If the connection fails, you may see this message:
+    
+    The test connection operation failed for data source Oracle JDBC Driver UCP DataSource on server server1 at node appaloosaNode01 with the following exception: java.sql.SQLException: Exception occurred while getting connection: oracle.ucp.UniversalConnectionPoolException: Cannot get Connection from Datasource DSRA0010E: SQL State = null, Error Code = 29. View JVM logs for further details.
+    
+    Look at the JVM server and FFDC logs for messages that indicate the problem with the connection.
+    
+    
+ 6. Resolve any problems with connection to the database and try again until the test connection is successful.
+
+
+
+The data source will be configured to use UCP with the default settings for UCP. The following properties are automatically set on the data source: 
+ * WebSphere connection pooling is turned off. To verify this, select "Connection pools > Maximum connections" to see it is set to zero.
+   
+   Note: Changing to a value other than zero will cause WebSphere to track the number of connections attempted which can conflict with the number that Oracle UCP is tracking. It is not advisable to change this setting.
+   
+   
+ * WebSphere prepared statement caching is turned off. To verify this, select "WebSphere Application Server data source properties to see that "Statement cache size" is set to zero.
+   
+   Note: WebSphere prepared statement caching can only be used when WebSphere connection pooling is turned on. See Oracle UCP instructions for how to turn on Oracle statement caching if this is needed.
+   
+   
+ * Data source custom properties are set. To verify this, select Custom properties and check: connectionFactoryClassName is set to oracle.jdbc.pool.OracleDataSource or oracle.jdbc.xa.client.OracleXADataSource. 
+   
+   Note: Setting this to another value will cause exceptions.
+   
+   
+ * Data source custom properties set internally, but not displayed:  * 
+   
+   
+
+Do not alter any of these properties. Changing any of these properties could cause the data source to no longer to work properly. 
+
+You may want to add additional custom properties to configure UCP. For example, to set the maximum pool size for UCP: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Name: maxPoolSize 
+   Value: 5 
+   Type: java.lang.String 
+ * 
+
+
+UCP properties can be set in the application. For example: 
+ * if
+ * 
+ * class
+ * 
+ * PoolDataSource pds =  * 
+    * class
+    * 
+   
+   pds.setMaxPoolSize(5); 
+ * 
+ * else
+ * if
+ * 
+ * class
+ * 
+ * PoolXADataSource pdsxa =  * 
+    * class
+    * 
+   
+   pdsxa.setMaxPoolSize(5); 
+ *

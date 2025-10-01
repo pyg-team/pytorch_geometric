@@ -1,0 +1,244 @@
+Title: IBM PM58834: RESOLVER INCORRECTLY CACHES DNS NXDOMAIN REPLY WITH T_CNAME TYPE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  z/OS Resolver is not correctly caching a DNS response that
+   contains NXDOMAIN and ONLY a CNAME without any A, AAAA or PTR
+   records included.
+   
+   The failing scenario is as follows:
+   
+   The resolver is setup with a SearchList of abc.com and xyz.com
+   and caching is enabled. A Ping is issued for name JOE. The first
+   name resolution query request occurs for JOE.abc.com, the DNS
+   responds with NXDomain and also returns a T_DNAME and also a
+   T_CNAME, but it did not include any A, AAAA or PTR records in
+   the response. This record was then incorrectly added to the
+   cache, although the resolver trace shows that it was
+   successfully added. The resolver then processes a query
+   request to resolve JOE.xyz.com, as this was the next domain name
+   in the searchlist. This received a NOERROR response and added to
+   resolver cache. Then another PING for name JOE was issued and
+   again the first searchList entry was appended for domain
+   abc.com and the request was passed to the resolver
+   cache, the resolver trace shows that the negative cache entry
+   was retrieved, however the res_query and res_querydomain
+   functions did not fail with retval = -1 and reason 78981005, as
+   they should have, instead they showed successful. This then
+   caused the resolver code to not continue on to the next domain
+   name in the searchlist, xyz.com, and the second PING failed
+   with unknown host.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  disable caching in Resolver or correct DNS to not send CNAME or
+   DNAME without corresponding A, AAAA or PTR record.
+   
+   verification steps:
+   
+   Review of resolver trace from cache lookup for invalidly cached
+   negative lookup record:
+   
+    Querying resolver cache for JOE.abc.com
+    EZBRECFR:  RetVal = 0, RC = 0, Reason = 0x00000000
+   Negative Cache information from 10.128.252.210 was retrieved
+   res_query Succeeded        <------should reflect a failure
+   res_querydomain Succeeded  <------should reflect a failure
+   res_search Succeeded
+   GetAddrInfo Closing IOCTL Socket 0x00000000
+    BPX1CLO:  RetVal = 0, RC = 0, Reason = 0x00000000
+   GetAddrInfo Failed:  RetVal = -1, RC = 1, Reason = 0x78AE1004
+   GetAddrInfo Ended: 2012/02/19 17:24:05.670160
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of the IBM Communications Server   *
+   *                 for z/OS Version 1 Release(s) 11, 12,        *
+   *                 and 13 IP: Resolver caching                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The resolver DNS cache incorrectly      *
+   *                      indicated that a hostname that received *
+   *                      a T_CNAME resource record with a DNS    *
+   *                      reply of NXDOMAIN contained a valid     *
+   *                      IP address. This could lead to          *
+   *                      "Unknown host" messages from clients    *
+   *                      that requested resolution of the        *
+   *                      hostname.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The resolver DNS reply cache processing incorrectly processed
+   a DNS NXDOMAIN reply that also included T_CNAME data as being
+   a good (NOERROR) DNS reply. This would cause a resolver API
+   request for the hostname to complete successfully even though
+   no IP addresses were present. This could lead to clients
+   issuing a "Unknown host" message.
+   +-------------------------------------------------------------+
+   + Please check our Communications Server for OS/390 homepages +
+   + for common networking tips and fixes.  The URL for these    +
+   + homepages can be found in Informational APAR II11334 [http://www-01.ibm.com/support/docview.wss?uid=isg1II11334].       +
+   +-------------------------------------------------------------+
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The resolver's DNS caching logic is amended to correctly
+   process the NXDOMAIN reply that also returned T_CNAME data.
+   
+   After applying the maintenance, use the following guidelines to
+   stop and restart the resolver.
+   
+   NOTE: While the resolver is stopped all name to IP address and
+   IP address to name resolutions will FAIL.
+   
+   1. If you have LLA running, then refresh it with the system
+      operator command
+         MODIFY  LLA,REFRESH
+   
+   2. Stop the resolver
+      a. If you have not customized the resolver, issue the system
+         operator command
+            STOP RESOLVER
+      b. If you have customized the resolver, issue the system
+         operator command
+            STOP <procname>
+            where <procname> is the name of your PROCLIB member
+   
+   3. Restart the resolver
+      a. If you have not customized the resolver, issue the system
+         operator command
+        START IEESYSAS.RESOLVER,PROG=EZBREINI,SUB=MSTR,REUSASID=YES
+      b. If you have customized the resolver, issue the system
+         operator command
+            START <procname>,REUSASID=YES  or
+            START <procname>,SUB=MSTR,REUSASID=YES
+              where <procname> is the name of your PROCLIB member
+   
+   
+   * Cross Reference between External and Internal Names
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM58834
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   1B0
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-22
+   
+   
+ * CLOSED DATE
+   2012-03-07
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK76874 UK76875 UK76887
+   
+   
+
+MODULES/MACROS
+ *  EZBRECMR EZBRECSR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * FIXED COMPONENT ID
+   5655HAL00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R1B0 PSY UK76887 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK76887]
+   UP12/04/07 P F204
+   
+   
+ * R1C0 PSY UK76874 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK76874]
+   UP12/04/07 P F204
+   
+   
+ * R1D0 PSY UK76875 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK76875]
+   UP12/04/07 P F204
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

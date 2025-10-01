@@ -1,0 +1,119 @@
+Title: IBM JR56869: YOU RECEIVE AN ADME0005E ERROR FOR THE BPM CONTEXT ROOT CONFIG COMPONENT WHEN THE IBM BPM CLUSTER MEMBER STARTS - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2016.12.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.12.delta.repository&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2016.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043062]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you start several cluster members on the same machine at
+   the same time, you might see the following ADME0005E error in
+   the <profile_root>/logs/<serverName>/SystemOut.log file:
+   
+   [10/5/16 14:26:33:103 KST] 0000010d NotificationD E
+   ADME0005E: The following notification listener was removed
+   because it did not handle a notification within 300000ms:
+   ListenerInfo: [listener=com.ibm.bpm.crconfig.component.
+   BPMContextRootConfigComponent@10d2b8bb;ntfyInfo=NotificationInfo
+   :[name=WebSphere:name=Discovery,process=De1.AppClusterMember1,
+   platform=common,node=Node1,version=8.5.5.10,type=Discovery,
+   mbeanIdentifier=Discovery,cell=PCCell,spec=1.0;filter=null];
+   handback=null]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The IBM BPM context root service initializes synchronously in
+   the notification listener. When many applications are installed,
+   the initialization takes longer than the 5 minutes, during which
+   time a notification listener must finish its work. As a result,
+   the ADME0005E error is recorded.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56869
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-21
+   
+   
+ * CLOSED DATE
+   2016-10-30
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

@@ -1,0 +1,74 @@
+Title: IBM Accessing Rule Team Server or Rule Execution Server on WAS 7 over HTTPS - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When trying to connect to Rule Team Server or Rule Execution Server on WebSphere Applicaiton Server (WAS) 7.0 over HTTPS, why do I still get an SSLHandshakeException after setting the property "ilog.rules.res.allowSelfSignedCertificate"to "true" ? 
+
+CAUSE
+In WAS 7, the default server certificate is not self-signed. It is signed by a default server root certificate. See WebSphere Application Server V7 certificate management enhancements [ftp://ftp.software.ibm.com/software/iea/content/com.ibm.iea.was_v7/was/7.0/Security/WASv7_CertificateManagementEnhancements.pdf] for more details.
+As a result, the property "ilog.rules.res.allowSelfSignedCertificate" is no longer effective in allowing a non-trusted default server certificate from WAS7 over HTTPS.
+
+For instance, when attempting to publish a project to Rule Team Server from Rule Studio, the following stacktrace can be observed:
+
+ilog.rules.teamserver.model.IlrConnectException: IO error when contacting "https://localhost:9451/teamserver"
+...
+Caused by: javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.util.g: PKIX path building failed: java.security.cert.CertPathBuilderException: PKIXCertPathBuilderImpl could not build a valid CertPath.; internal cause is:
+java.security.cert.CertPathValidatorException: The certificate issued by CN=9.52.145.119, OU=Root Certificate, OU=SamplesCell, OU=SamplesNode, O=IBM, C=US is not trusted; internal cause is:
+java.security.cert.CertPathValidatorException: Certificate chaining error
+
+
+ANSWER
+To access Rule Team Server or Rule Execution Server(RES) on WAS7 over HTTPS, use one of the following two solutions: 
+
+Solution A: Add the server certificate to the client JVM's truststore 
+We recommend this solution as it conforms to the proper usage of HTTPS: by default, only trusted certificates are supported for HTTPS. 
+
+ 1. Obtain the server certificate. 
+    If you do not have direct access to the certificate stored on the server, you can obtain the server certificate from the client Web browser. See vendor specific documentation for each browser for details on how to export SSL certificate. 
+    For instance, when browsing to the RES console over HTTPS from Internet Explorer, you will see a Security Alert dialog box. View Certificate > Details tab > Copy to file and then follow the Export Wizard. This will export the certificate to a .cer file (DER encoded binary). 
+ 2. Import the server certificate to the client JVM truststore using the "keytool -import" command. For instance,
+    
+    <JAVA_HOME>/jdk/bin/keytool.exe -import -file [PATH TO THE SERVER CERTIFICATE OBTAINED IN STEP 1] -alias [CERTIFICATE ALIAS] -keystore <JAVA_HOME>/jdk/jre/lib/security/cacerts
+    
+    where <JAVA_HOME> points to the client JVM. 
+    The client JVM is the JVM with which you run the Ant commands. 
+    
+    Verify that the key is properly added by the "keytool -list" command. 
+    See Java keytool documentation [http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/keytool.html] for details. 
+ 3. Pass the trusted key to the Ant task with the"javax.net.ssl.keyStore" property pointing to the updated cacerts. You may need to define an absolute file location for cacerts. See this section [http://publib.boulder.ibm.com/infocenter/brjrules/v7r0/index.jsp?topic=/ilog.rules.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1863.html] of the documentation for details. 
+
+
+Solution B: Configure a self signed certificate for the WAS 7 server, which hosts Rule Team Server/Rule Execution Server, and then use the "ilog.rules.res.allowSelfSignedCertificate" property on the client side  1.  Log into the WebSphere Application Server management console 
+ 2.  Expand Security and click SSL certificate and key management from the left-hand pane 
+ 3.  Click Key stores and certificates under Related Items 
+ 4.  Click NodeDefaultKeyStore from your list of key stores and trust stores 
+ 5.  Click Personal certificates under Additional Properties 
+ 6.  Click Create > Self-signed certificate 
+ 7.  Type the following values for the certificate:
+     Alias
+     default self-signed
+     Common name
+     server_IP_address 
+ 8.  Click OK and then click Save
+     
+     Now that you have a self signed personal certificate, the following steps configure the server to use it for inbound SSL connections:
+     
+     
+ 9.  Click Security > SSL certificate and key management > Manage endpoint security configurations 
+ 10. Click your node under the Inbound tree node in Local topology 
+ 11. Click SSL configurations under Related Items 
+ 12. Click NodeDefaultSSLSettings 
+ 13. Select your newly created self signed certificate (default self-signed) as the default server certificate alias 
+ 14. Click OK and then click Save. 
+ 15. Run the Ant "res-deploy" task with the "ilog.rules.res.allowSelfSignedCertificate" property set to "true". See this document [http://www.ibm.com/support/docview.wss?uid=swg21400817] for details
+
+RELATED INFORMATION
+ Resolving "SunCertPathBuilderException" [http://www.ibm.com/support/docview.wss?uid=swg21400817]
+Creating a personal certificate [http://publib.boulder.ibm.com/infocenter/rbdhelp/v7r5m0/index.jsp?topic=/com.ibm.egl.pg.doc/topics/pegl_richui_security_sslexample.html]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise

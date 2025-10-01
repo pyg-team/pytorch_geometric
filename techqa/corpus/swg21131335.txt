@@ -1,0 +1,263 @@
+Title: IBM Utility to collect ClearCase logs and diagnostic data on Windows - United States
+
+Text:
+CollectingData; clearbug2; clearbug; collect; diagnostic; logs; cbug; cbug2; clearbug 2; clearbug-2; clearbug_2; c-bug; c-bug2; 1131335; clearcase clearbug; ccbug; cc bug; ccbug2; cc bug2; debugging; trace; troubleshooting; verbose; clear bug; clearcase bug; clearcasebug; tracing; RATLC01271315; ISA; ISA Lite; IBM support Assistant; diagnosing TECHNOTE (FAQ)
+
+QUESTION
+ How can you collect IBM Rational ClearCase logs and diagnostic data on Microsoft Windows to assist IBM Rational Client Support? 
+
+ANSWER
+
+There are 3 options you can use to proactively collect general information and diagnostic data on a problem machine to assist technical support in troubleshooting your problem.
+
+
+
+
+New and Improved ClearBug2 automated collection utility
+
+
+ClearBugNT semi-automated utility shipped with ClearCase (requires some manual intervention)
+
+
+Manual data collection
+
+
+
+
+
+
+ 
+
+CLEARBUG 2 
+
+Name of Utility: Clearbug2 
+
+
+
+Clearbug 2 
+Clearbug2.zip [/support/docview.wss?uid=swg21131335&aid=2]Clearbug2.zip [/support/docview.wss?uid=swg21131335&aid=1] 
+
+
+
+
+What does it do? Clearbug2 collects various pieces of information that assist Rational Support in gathering diagnostic data of your problematic environment.
+
+
+Usage: clearbug2 -help | -ver | -nowinmsd | -liconly | -longvobs | -longviews
+
+Switches:
+'-help' = This help menu
+'-ver' = Display the Clearbug Version
+'-nowinmsd' = This will skip the collection of Winmsd
+'-liconly' = Collect only RCL/FlexLM information
+'-longvobs' = Collect lsvob -long listing.
+'-longviews' = Collect lsview -long listing.
+'-fulllogs' = Collect cleartool getlog -all -full.
+
+Any or all of -nowinmsd, -longvobs, -longviews and -fulllogs can be used. -liconly will bypass all but license data collection.
+
+Where can I get it? File is attached at the top of this technote.
+
+On Windows, this information includes: 
+
+ * WinMSD (optional) 
+ * Host information 
+ * ClearCase Version information 
+ * Network information 
+ * System Logs 
+ * ClearCase information 
+ * Flex/LM license Data, including  * Flex/LM Registry data 
+    * Flex/LM license server status, including keys in use ("lmutil lmstat -a" output) 
+    * Flex/LM license server log if run on a Windows License server. 
+    * Flex/LM license files for Rational products
+   
+   
+ * (Optionally) Expanded VOB and view registry data. 
+ * Windows memory management keys related to pool usage 
+ * Server and Workstation service "parameter" keys that may impact paged pool usage. 
+
+
+
+How to execute:  1. Copy the Clearbug2.zip archive to the server whose diagnostic data you wish to collect.
+    
+    
+ 2. Unzip the Clearbug2.zip archive to a location on the host. 
+    
+    
+ 3. Execute Clearbug2.exe (double-click the executable). The following console window will open:
+    
+    [/support/docview.wss?uid=swg21131335&amp;aid=3]
+    
+    Note 1: Collecting the WINMSD takes time as there is a lot of information Windows has to compile. Time to complete will vary. To omit the collection of the WINMSD, run clearbug2 from the command line using the following syntax:
+    
+    clearbug2 -nowinmsd
+    
+    Example:
+    
+    C:\temp>clearbug2 -nowinmsd
+    
+    **Skipping collection of winmsd information**
+    
+    
+    Note 2: Collecting the tracert information may take some time when there are either a large number of network "hops" to reach the desired remote hosts (Domain controller, License and/or registry server). There is currently no way to avoid this delay.
+    
+    
+    Note 3: In order to improve clearbug2 runtime in environments with a large number of VOBs and/or views, clearbug2 now collects local view and VOB information using cleartool the -quick option or the -host checks. As a result, the tool may not collect the full list of local VOBs and views. Two new options -- -longvobs and -longviews -- will collect full cleartool lsvob -long and cleartool lsview -long output in cases like these.
+    
+    
+ 4. When complete, a file called clearbug.zip will be created on the desktop. If the clearbug2 tool cannot create the archive, a warning similar to the following will:
+    
+    [/support/docview.wss?uid=swg21131335&aid=4] [/support/docview.wss?uid=swg21131335&aid=4]
+
+
+
+
+
+Disclaimer All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+
+
+ Back to top 
+
+
+
+
+ 
+
+CLEARBUG 
+
+Name of Utility: clearbugnt.exe
+
+Found in: C:\Program Files\Rational\ClearCase\etc\utils
+
+What does it do? Clearbug collects various pieces of information that assist Rational Support in gathering diagnostic data of your problematic environment.
+
+On Windows, this information includes: 
+
+ * Host information 
+ * ClearCase Version information 
+ * Network information 
+ * System Logs 
+ * ClearCase information
+
+
+
+How to execute:  1. Go to a command prompt (do not run from 4NT, batch, or other third party shell).
+    
+    
+ 2. Change to the %clearcase_home%\etc\utils directory. 
+    
+    
+ 3. Type "clearbugnt" and hit enter. 
+    
+    Note: You will need to close the System Information Logs window when it pops up. That will be collected separately later.
+    
+    
+ 4. A file called clearbug.zip will be created in the %rational_home%\etc\utils directory (you must have write access to this directory).
+
+
+ Back to top 
+
+
+
+
+CCDOCTOR 
+
+Name of Utility: ccdoctor.exe (ClearCase Doctor)
+
+
+Found in: C:\Program Files\Rational\ClearCase\bin
+
+
+What does it do? ClearCase Doctor collects various pieces of information that assist Rational Support in gathering diagnostic data of your problematic environment.
+How to execute: 
+
+ 1. Go to a command prompt and type "ccdoctor" and hit enter. This will launch the ClearCase Doctor.
+    
+    
+ 2. Click 'Start Analysis' 
+    
+    
+ 3. Select: Analysis > Save As... from the pull down menu and save this file with the default '.ccdoc' extension.
+    
+    
+ 4. Add this file to the clearbug.zip file.
+
+
+
+ Back to top 
+
+
+
+
+WINMSD (Msinfo32) 
+
+Name of Utility: winmsd.exe (Windows Management System Diagnostic)
+
+
+Found in: C:\WINDOWS\system32/winmsd.exe
+
+
+What does it do? WinMSD, is a utility used to gather detailed configuration information about computers running Windows. It can be beneficial for Support to use this information to troubleshoot ClearCase issues. 
+
+Note: You can start Microsoft System Information with Winmsd.exe as in Windows NT 4.0, but the difference under Windows 2000, XP and 2003 is that Winmsd.exe is a stub executable file that starts Msinfo32.exe. Msinfo32.exe is located in the Program Files\Common Files\Microsoft Shared\MSInfo folder. 
+
+How to execute: 
+
+Note: WINDOWS 2000 and WINDOWS XP users must collect the winmsd information manually as clearbugnt has a defect that does not automatically collect this information. 
+
+ 1. Go to Start > Run type “winmsd” and hit enter.
+    
+    
+ 2. Go to File > Save and save as System Information File. (.nfo)
+    
+    
+ 3. Add this file to the clearbug.zip file.
+
+
+View Microsoft articles for more information:  * KB232848 [http://support.microsoft.com/kb/q232848/] -- How to Create a WinMSD Report 
+ * KB255713 [http://support.microsoft.com/kb/q255713/] -- Command-Line Parameters for MSINFO32
+
+
+ Back to top 
+
+
+
+
+ 
+
+MANUAL COLLECTION: 
+
+In the event you cannot or do not wish to run the automated utilities, below are the manual instructions to collect the most basic logs and information required to initially troubleshoot most problems. 
+
+ 
+
+ 1. Collect the output of cleartool getlog -all -last 50 
+    
+    Note: If the ALBD service is not running, the following error will occur albd_contact call failed and the logs will not be collected.
+    
+ 2. Collect the Windows System and Application logs using the Event Viewer.
+    
+    Start > Run type eventvwr.msc /s
+    
+    Use the "action" menu to save the application, system and security log as a .evt file.
+    Review Microsoft KB article 308427 [http://support.microsoft.com/?scid=308427] for more details.
+    
+ 3. Collect the output of cleartool hostinfo -long -properties -full
+    
+ 4. Collect the installed programs by running grabber.exe. The readme file and grabber.exe executable are contained in the grabber.zip file attached below.
+    
+    
+
+Grabber grabber.zip [/support/docview.wss?uid=swg21131335&aid=6] [/support/docview.wss?uid=swg21131335&aid=5] 
+ Back to top 
+
+RELATED INFORMATION
+ Data Collection Utility for UNIX and Linux [http://www.ibm.com/support/docview.wss?uid=swg21208895]
+Manual Data Collection on UNIX and Linux [http://www.ibm.com/support/docview.wss?uid=swg21197528]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase Utilities and Tools

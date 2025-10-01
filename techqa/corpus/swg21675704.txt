@@ -1,0 +1,36 @@
+Title: IBM MIB Manager does not start on AIX - United States
+
+Text:
+MibManager; nco_mibmanager; AIX; LIBPATH; libswt; libswt-pi-gtk-3738.a TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After execution of $NCHOME/omnibus/bin/nco_mibmanager the command finishes without any further actions 
+
+SYMPTOM
+If the MibManager fails to start, a log file is generated in $OMNIHOME/platform/aix5/mibmanager/configuration/
+
+eg log output:
+
+java.lang.UnsatisfiedLinkError: Could not load SWT library. Reasons:
+.
+/opt/IBM/tivoli/netcool/omnibus/platform/aix5/mibmanager/configuration/org.eclipse.osgi/bundles/118/1/.cp/libswt-pi-gtk-3738.a (No such file ordirectory)
+swt-pi-gtk (Not found in java.library.path)
+/.swt/lib/aix/ppc/libswt-pi-gtk-3738.a (No such file or directory)
+/.swt/lib/aix/ppc/libswt-pi-gtk.a (No such file or directory)
+
+
+CAUSE
+The root cause is usually a missing library or an incomplete LIBPATH
+
+DIAGNOSING THE PROBLEM
+Check if there are any missing dependencies/libs that the libswt-pi-gtk-3738.a requires and if the LIBPATH contains all the paths to these libs
+
+eg 
+ldd /opt/IBM/tivoli/netcool/omnibus/platform/aix5/mibmanager/configuration/org.eclipse.osgi/bundles/118/1/.cp/libswt-pi-gtk-3738.a
+
+echo $LIBPATH
+
+RESOLVING THE PROBLEM
+Check if you have all the required packages installed (see the below link) and lib install paths in the LIBPATH variable
+
+[http]://www-01.ibm.com/support/knowledgecenter/api/content/SSSHTQ_7.4.0/com.ibm.netcool_OMNIbus.doc_7.4.0/omnibus/wip/install/concept/omn_pln_supportedoperatingsystems.html?locale=en

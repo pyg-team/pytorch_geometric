@@ -1,0 +1,108 @@
+Title: IBM Change Management Server (CM Server) Administrative Security - United States
+
+Text:
+RN7.1; RN7.1.0.1; RN7.1.0.2; RN7.1.1; SRX; Admin Security; CM Server; WebSphere Application Server; WAS; Admin Console; Integrated Solutions Console; WebSphere administrative console; AdminConsole; ClearCase; ClearQuest; Change Management; Change Management Server; CM Server; gddcccm TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Administrative security protects Change Management Server (CM Server) from unauthorized access to the WebSphere Application Server administrative functions. These administrative functions include access to the WebSphere Application Server administrative console and stopping the WebSphere Application Server. By enabling administrative security, you can secure your CM Server environment. 
+
+RESOLVING THE PROBLEM
+
+The following information outlines how to enable administrative security for WebSphere Application Server and includes special considerations on Windows, the UNIX system, and Linux platforms 
+
+ 1. I. Enabling Administrative Security - All Platforms
+     1. Start the WebSphere Application Server administrative console. By default, the administrative console is located at the following URL: http: //localhost:12060/ibm/console 
+     2. If security is currently disabled, you are prompted for a user name. Log in. 
+        Attention: Do not use the administrative user name. 
+     3. Click Security > Secure administration, applications, and infrastructure. 
+     4. Use the Security Configuration wizard to configure security:  1. In step 1 of the wizard, select a security level. Ensure that Application security and Java 2 security are disabled. 
+         2. In step 2, select a user repository. Consider choosing the federated repository or LDAP repository. For more information, see the WebSphere Application Server v6.1 product documentation [http://www.ibm.com/support/knowledgecenter/SSEQTP_6.1.0/com.ibm.websphere.base.doc/info/aes/ae/csec_sec_config_wizard.html]. 
+         3. In step 3, enter the administrative user name and password. 
+            Attention: The user name must be different from the user name that is running WebSphere Application Server. 
+         4. In step 4, confirm your selections and click Finish.
+            
+        
+        
+     5. Optional: Configure the user repository in the User account repository section of the Security > Secure administration, applications, and infrastructure page.
+        
+     6. Click Apply and then click Save directly to the master configuration to save the changes.
+        
+     7. Enable ClearQuest Web for CM Server administrative security:  1.  Edit the file CqServerConn.properties. The location of the file is:  * On Windows:
+               <drive>:\install_dir\common\CM\profiles\cmprofile\installedApps\node-name\RationalClearQuestWeb.ear\CQWebModule.war\WEB-INF\classes\CqServerConn.properties 
+             * On UNIX system and Linux:
+               install_dir/common/CM/profiles/cmprofile/installedApps/node-name/RationalClearQuestWeb.ear/CQWebModule.war/WEB-INF/classes/CqServerConn.properties
+               
+            
+            
+         2. Add the administrative user name to the following line: TEAM_SERVER_ADMIN_AUTHENTICATION_KEY=
+            For example: 
+            TEAM_SERVER_ADMIN_AUTHENTICATION_KEY=admin-user-name 
+         3. Add the administrative password to the following line: TEAM_SERVER_ADMIN_AUTHENTICATION_VALUE=
+            For example:
+            TEAM_SERVER_ADMIN_AUTHENTICATION_VALUE=admin-user-name 
+         4. 
+        
+        
+     8. Restart CM Server for the administrative security changes to take effect.
+        
+        Once administrative security is enabled, you must provide the administrative user name and password to log in to the WebSphere Application Server administrative console and to stop the server. If you choose to stop the server by using the stopServer script, you must add the user and password arguments to the stopServer command line:
+        
+        stopServer -user <admin-user-name> -password <admin-password> 
+    
+     * Attention UNIX system and Linux users using versions of CM Server earlier than 7.1.1: The cmserver_shutdown and cmserver_restart scripts do not accept the -user and -password arguments. Instead, you are prompted for this information. See the section "The UNIX System and Linux - Security Considerations" below for instructions on how to avoid the prompt. This restriction has been lifted in version 7.1.1 and later. 
+     * Windows - Updating the WebSphere Application Server WAS Service
+       
+       CM Server runs as a Windows service. You must update the service with stop arguments. These arguments provide the administrative user name and password to WebSphere Application Server when stopping or restarting CM Server. Run the following commands in a command prompt window, substituting admin-user-name and admin-password with the administrative user name and password, respectively. 
+     *   1. cd <drive>:\install_dir\common\eWAS\bin 
+        2. WASService.exe -add "cmprofile" -serverName server1 -profilePath "<drive>:\install_dir\common\CM\profiles\cmprofile" -stopArgs "-user admin-user-name -password admin-password" -encodeParams
+           
+       
+       
+     * The UNIX System and Linux - Security Considerations
+       
+       Passing the administrative user name and password to the stopServer.sh script exposes the user name and password to anyone who issues the ps -ef command. To avoid using the -user and -password options, perform the following steps:
+        1. cd /opt/rational/common/CM/profiles/cmprofile/properties
+           
+        2. Edit the file soap.client.props and change the values of the following properties:  * com.ibm.SOAP.securityEnabled=true 
+            * com.ibm.SOAP.loginUserid=<admin-user-name> 
+            * com.ibm.SOAP.loginPassword=<password>
+              
+           
+           
+        3. Encode the property value com.ibm.SOAP.loginPassword by running the following script: 
+           /opt/rational/common/eWAS/bin/PropFilePasswordEncoder.sh soap.client.props com.ibm.SOAP.loginPassword
+           
+        4. Verify that the password is encoded and then remove the file soap.client.props.bak.
+           
+        5. Check that the proper file permissions are set for sensitive WebSphere Application Server files, such as properties files and executable files. At a minimum, check that the permissions are set to prevent general users from accessing these files. Only WebSphere Application Server administrators should be granted access to these files.
+           
+           
+       
+       
+    
+    
+ 2. Disabling and Re-Enabling Administrative Security
+
+ * 
+ *  Start the WebSphere Application Server administrative console. By default, the administrative console is located at the following URL: http://localhost:12060/ibm/console
+   Log in by using the administrative user name and password.
+   Click Security > Secure administration, applications, and infrastructure.
+   Clear Enable administrative security.
+   Click Apply to save your changes
+   Restart CM Server to effect the changes.
+   
+ * 
+ * 
+ * 
+ *  Select Enable administrative security.
+   Clear Application security and Java 2 security.
+   Click Apply to save your changes.
+   Restart CM Server to effect the changes. 
+
+
+
+Installing and Upgrading CM Server You must temporarily disable administrative security before upgrading or making any other changes to your CM Server installation by using IBM Installation Manager.
+
+RELATED INFORMATION
+#WebSphere Application Server V6.1 InfoCenter [http://www.ibm.com/support/knowledgecenter/SSEQTP_6.1.0/com.ibm.websphere.base.doc/info/aes/ae/tsec_csec2.html]
+IBM WebSphere Application Server V6.1 Security Handbook [http://www.redbooks.ibm.com/redbooks/pdfs/sg246316.pdf]

@@ -1,0 +1,18 @@
+Title: IBM How can IBM Tivoli Monitoring (ITM) for Maximo agent be uninstalled? - United States
+
+Text:
+TPAEPERFORMANCE; Uninstall; ITM; Agent; Maximo TECHNOTE (FAQ)
+
+QUESTION
+ How can IBM Tivoli Monitoring (ITM) for Maximo agent be uninstalled? 
+
+CAUSE
+Need to uninstall ITM for Maximo agent. 
+
+ANSWER
+Please, refer to the link "Tivoli Monitoring Agent for Maximo 7.1.1 Feature Pack", and there you will see a link to the documentation for Tivoli Monitoring 6.2.2 Fix Pack 2 at the following information center:
+http://publib.boulder.ibm.com/infocenter/tivihelp/v15r1/topic/com.ibm.itm.doc_6.2.2fp2/welcome.htm [http://publib.boulder.ibm.com/infocenter/tivihelp/v15r1/topic/com.ibm.itm.doc_6.2.2fp2/welcome.htm] .
+
+When expanding the menu on the left panel for "Version 6.2.2 Fix Pack 2" and getting to "Installation Guides" and then "Installation and Setup Guide" you will see that there will be a PDF version available (http://pic.dhe.ibm.com/infocenter/tivihelp/v15r1/topic/com.ibm.itm.doc_6.2.2fp2/itm_install.pdf [http://pic.dhe.ibm.com/infocenter/tivihelp/v15r1/topic/com.ibm.itm.doc_6.2.2fp2/itm_install.pdf]). If you open this installation document you will see under chapter "Appendix H. Uninstalling IBM Tivoli Monitoring" (page 581) on the instructions on how to uninstall the product.
+
+Specific information about uninstalling ITM agent may be found on the same PDF file under “Uninstalling an individual IBM Tivoli Monitoring agent or component” (page 584).

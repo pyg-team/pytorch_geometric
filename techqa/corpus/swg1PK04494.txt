@@ -1,0 +1,186 @@
+Title: IBM PK04494: IMS CONNECT'S SSL PORT HANGS DURING THE SSL HANDSHAKE PROCESS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After a client connects to IMS Connect via a single SSL port,
+   the SSL port intermittently hangs during the SSL Handshake.
+   In looking at the dump, the thread module flow is:
+   HWSSCVC0 (PQ87160) -> HWSLEPS0 (PQ93307) -> CEE
+   The IP VERBX LEDATA command with the CAA & DSA parameters
+   reveals the following function trace:
+   CEEPIPI -> @@GETFN -> @@FECB -> SSL00 ->
+   secureSocketInitialization -> gsk_secure_socket_init ->
+   gsk_perform_v3_server_handshake -> gsk_read_v3_record ->
+   secureSocRecv -> recv (waiting!!)
+   So we are waiting for SSL handshake data from the client.
+   The problem is the following:
+   When we issued the  gsk_secure_socket_init  call, the socket is
+   in blocking mode and so we don't come back until we get data
+   from the client side. How long do we wait?  That depends:
+   If the client is connected but we never get SSL Handshake data
+   from the client's side, then we'll hang forever.
+   If the client has (after doing a connect), gone away
+   ungracefully (powered off, etc.) then TCP/IP will know that the
+   the client has gone away after the KEEPALIVE values have been
+   satisfied. And then when TCP/IP knows the client has gone away,
+   it will inform our read and we will then come out of the hang.
+   There can be numerous reasons why the client side is not
+   responding: Network problems,  client not there (powered off,
+   etc.), Or client simply coded incorrectly!
+   In any case, IMS Connect needs to be able to "tolerate" a client
+   not responding during an SSL Handshake.
+   Other environments (like JSSE) provide a timer capability for a
+   SSL Handshake. It is my understanding that no such timer
+   facility exists in z/OS System SSL. So one possible solution
+   would be to do ths SSL Handshake in Non-blocking mode.
+   To do the handshake in Non-Blocking mode we would have to
+   provide a callback routine in io_setsocketoptions().
+   The other thing that can minimize the duration of the hang is to
+   provide a socket level KEEPALIVE option. This would reduce the
+   hang from minutes to seconds.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IMS CONNECT 9.1 Users.                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: IMS CONNECT's SSL port hangs during     *
+   *                      the SSL HANDSHAKE process.              *
+   ****************************************************************
+   * RECOMMENDATION: INSTALL CORRECTIVE SERVICE FOR APAR/PTF      *
+   ****************************************************************
+   After a client connects to IMS Connect via a single SSL port,
+   the SSL port intermittently hangs during the SSL Handshake.
+   The hang can occur whenever the client does not respond
+   during the SSL handshake process.  This could be because of
+   network problems/delays or the client has gone away (e.g.
+   powered off).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  AIDS: RIDS/SYS RIDS/CNTRL SYS CNTRL
+     DEP: NONE
+     GEN:
+   
+   *** END IMS KEYWORDS ***
+   HWSSSL00 was changed to perform SSL handshake in non-blocking
+   mode.
+   
+   This change reduces the hang to a wait on the client in case
+   the client does not respond (during the SSL handshake).
+   The wait time is up to 5 seconds.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK04494
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V9
+   
+   
+ * REPORTED COMPONENT ID
+   5655J3800
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2005-04-19
+   
+   
+ * CLOSED DATE
+   2005-08-08
+   
+   
+ * LAST MODIFIED DATE
+   2006-10-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK00692
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK06120
+   
+   
+
+MODULES/MACROS
+ *  HWSSSL00
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V9
+   
+   
+ * FIXED COMPONENT ID
+   5655J3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY UK06120
+   UP05/08/16 P F508 Ž

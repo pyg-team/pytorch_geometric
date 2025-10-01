@@ -1,0 +1,30 @@
+Title: IBM Creating Graphs with Multiple lines using Legacy Dialogs & Chart Builder in SPSS - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am using SPSS 15 and using the dataset 1991 U.S. General Social Survey.
+
+I want to produce line graphs with multiple lines. The variables I use are both scale (age & educ).
+
+I produce the graph as below
+
+1) Graphics->Legacy Dialogs->Line->Multiple->Set to "summaries for groups of case" and click on Define.
+2) Select "age" into Category Axis and "educ" into Define Lines By and generate the graph.
+
+However, using Chart Builder->Lines->Multiple and selecting age as x-axis and using educ as the set color will not allow this action. I do not know why the legacy graph will allow multiple lines that are scale and Chart builder will not. I do know if the you change the variable measure from scale to nominal or ordinal you will be able to place the variable into the color category.
+
+Why? 
+
+RESOLVING THE PROBLEM
+The Chart Builder is a new feature of SPSS. It is SPSS' first graphics engine that will distinguish the difference between the measure of a variable. The color feature for the Chart Builder is meant to break the line up into different categories, thus SPSS would expect a categorical variable used. Since a scaled variable is not a categorical variable, SPSS will not allow such a variable to be used. If you would like to use a scale variable in the color, you can change the variable measure both in the Custom Tables dialog and in syntax
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 70933

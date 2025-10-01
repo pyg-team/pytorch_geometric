@@ -1,0 +1,10 @@
+Title: IBM Want to see the audit history of that document. How to enable this option in ICN? - United States
+
+Text:
+audit history ; document; enable; option; ICN TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When searching a document using search temple in ICN, we want to see the audit history of that document. How to enable this option in ICN? Whether is it possible or not either in this version or future version? Audit History tab after selecting document property from search result. I need to change the label "Add Document Using Entry Template". Need to change the label "Entry template" and 'Enter or select an entry template'. 
+
+RESOLVING THE PROBLEM
+The code that manages tabs in the properties dialog is marked as private so should not be overridden. The sample plugin that ships with Content Navigator shows how to add a custom section to the dialog --you may be able to use that instead of using a tab.

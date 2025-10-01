@@ -1,0 +1,12 @@
+Title: IBM What is the latest version of IBM Platform HPC - United States
+
+Text:
+IBM Phpc SCF TECHNOTE (FAQ)
+
+QUESTION
+ What is the latest version of IBM Platform HPC(PHPC)? 
+
+ANSWER
+IBM Platform HPC stands for IBM Platform High Performance Computing. The latest version of IBM Platform HPC is version 4.2.1.. 
+
+IBM Spectrum Cluster Foundation(SCF) starts with version 4.2.2. It comes with Community Edition(CE) version only, and it bundles with IBM LSF Suites.

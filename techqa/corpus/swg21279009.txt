@@ -1,0 +1,43 @@
+Title: IBM Error: 'Event correlation cache is full...' when cache grows to maximum size - United States
+
+Text:
+Event Correlation cache; events; correlation; cache; event correlation; holding area; Domino Domain Monitoring; DDM; ddm events; correlated; previously encountered events; previous events; previous encounters; grows to maximum size; maximum size; maximum; size; error; Event correlation cache is full; You can increase its size via the NOTES.INI setting; EVENT_CORRELATION_POOL_SIZE; pool size; notes.ini; adjust cache size TECHNOTE (FAQ)
+
+QUESTION
+In Lotus Domino®, the Event Correlation cache is used as a holding area in which Domino Domain Monitoring (DDM) events are correlated to previously encountered events. When this cache grows to its maximum size, the server reports the following error: 
+
+ * 
+ * 
+ * 
+
+How do you adjust the cache size? 
+ANSWER
+The EVENT_CORRELATION_POOL_SIZE is configurable from 5MB to 100MB and defaults to 10 MB. However, note that the parameter is specified in bytes. To set the parameter correctly, choose a desired pool size in megabytes and multiple by 1024 twice. 
+
+
+Example:
+The following is the correct setting to achieve a 100 MB pool size.
+
+
+ * 
+
+
+The parameter would then be set as follows. 
+ * 
+
+
+Even with the maximum configured pool size, you may still see the above error. This occurs because Domino creates cached documents that are 2MB in size and the server allows a maximum of 200 cached documents by default. 
+
+Since 2MB x 200 is greater than the maximum allowable pool size, the error can occur unless additional parameters are enacted to control the document size and/or the maximum number of cached documents. The following notes.ini parameters are available for these purposes. 
+ * 
+ * 
+ * 
+
+
+To ensure that the Event Correlation cache will not be exhausted when configured to the maximum 100MB size, use these parameters so that the following formula is true: 
+ * 
+
+RELATED INFORMATION
+#Error: '...Event correlation cache is full...' occurs a [http://www.ibm.com/support/docview.wss?uid=swg21249231]
+Event Management and Best Practices [http://www.redbooks.ibm.com/redbooks/SG246094/wwhelp/wwhimpl/java/html/wwhelp.htm]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21604069]

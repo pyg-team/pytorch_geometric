@@ -1,0 +1,68 @@
+Title: IBM Reformatvob fails to upgrade the VOB schema - United States
+
+Text:
+reformatvob; schema; 1123219 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote describes a problem where the IBM® Rational® ClearCase® utility reformatvob does not upgrade the VOB schema version (for example from 53 to 54) and provides instructions on how to resolve the issue. 
+
+CAUSE
+ 
+
+Attempts to reformat a VOB database (for example from schema version 53 to 54) by running cleartool reformatvob <vobstorage> appear to succeed (as there is no error) however, upon review of VOB (cleartool describe vob:\vobtag), the database is still at the old schema version (for example schema 53). 
+
+Example output:
+
+M:\my_view\test>cleartool describe -long vob:\test
+versioned object base "\test"
+created 13-Jan-00.08:34:19 by user.group@host1
+VOB family feature level: 2
+VOB storage host:pathname "host1:D:\vobs\test.vbs"
+VOB storage global pathname "\\host1\vobs\test.vbs"
+database schema version: 53
+VOB ownership:
+owner DOMAIN\user
+group DOMAIN\group
+Attributes:
+FeatureLevel = 2
+
+
+The cause of the issue is likely related to the upgrade. 
+
+When the installation of ClearCase is initiated, you are given a choice to install the NEW VOB database schema (one exception being the UNIX link-only install where you are not asked). If the installation was completed WITHOUT database schema 54 being installed, a cleartool reformatvob will not be able to upgrade to VOB database schema version 54.
+
+The installation of ClearCase MUST be using the latest database format in order for the reformatvob command to work.
+
+Run cleartool -ver to see which VOB database schema version was installed. 
+
+%>cleartool -ver
+ClearCase version 4.0 (Mon Nov 22 10:34:32 1999)
+clearcase patch p4.0.NT-1 (Tue Dec 28 10:48:26 1999)
+clearcase patch p4.0.NT-2 (Tue Dec 28 10:51:26 1999)
+@(#) MVFS version 4.0 (Nov 5 1999 20:36:43)
+cleartool V4.0 (Fri Nov 12 09:18:11 1999)
+db_server V4.0 (Fri Nov 5 20:24:52 1999)
+VOB database schema version: 53 <== needs to be 54 for reformatvob to work in this example
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 
+
+Uninstall Rational ClearCase, reinstall using the latest database format option and run the cleartool reformatvob again. 
+
+Review the IBM Rational ClearCase Command Reference on the topic of reformatvob (cleartool man reformatvob) for more information.
+
+
+
+RELATED INFORMATION
+#Manually uninstall ClearCase on Windows [http://www.ibm.com/support/docview.wss?uid=swg21179647]
+Manually uninstall ClearCase on Solaris [http://www.ibm.com/support/docview.wss?uid=swg21134883]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase Database

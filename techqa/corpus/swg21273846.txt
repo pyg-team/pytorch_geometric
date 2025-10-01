@@ -1,0 +1,23 @@
+Title: IBM Events deleted in primary Object Server return after a few minutes - United States
+
+Text:
+Omnibus; objectserver; deleted; events; alerts; resync; bidirectional; delete; re-appear TECHNOTE (FAQ)
+
+QUESTION
+ I have deleted some events in my primary ObjectServer and those events have returned after 1 to 2 minutes, why? 
+
+CAUSE
+The bidirectional object server gateway replicated data from the backup object server to the primary object server.
+
+ANSWER
+ 
+
+Omnibus Primary and Backup ObjectServers use a bidirectional gateway to synchronize data. At any time there are 2 sets of data, one on each Object Server. The gateway does not treat either set of data as the master, it simply transfers data as it is received.
+
+If anything changed the data in backup ObjectServer after the event was deleted on the primary ObjectServer, this can cause the delete on the Primary to be overwritten. Depending on the gateway's timing, it could transfer the update from the Backup to the Primary Object Server first, thus re-inserting the events into the Primary.
+
+The root cause of this kind of problem is, something changed the data on Backup ObjectServer. This should not happen since clients should only be connected to the Primary ObjectServer when it is available.
+
+In most case, it is done by automations, so all automation that will update the alert.status table should be disabled on the backup ObjectServer.
+
+Configure an automation to detect if the primary is up, if it is up, the automation should disable all automations that update alerts.status table and if the primary ObjectServer is down, enable all automations. There are default automations provided for this with Omnibus 7.2 and later.

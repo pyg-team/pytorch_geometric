@@ -1,0 +1,18 @@
+Title: IBM DotEdit Click'n'Key Populating from Preceding Page in IBM Datacap Taskmaster Capture - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In DotEdit, when selecting text on one page, then selecting another page, the data from the first page is still populated in the second page's fields in IBM Datacap. 
+
+SYMPTOM
+The second page's fields, actually belong to the first page.
+
+
+CAUSE
+The page having the issue (eg. second page) does not have a CCO file in the batch folder. 
+
+RESOLVING THE PROBLEM
+Verify that each page displayed to a Verify user has a CCO file (a page data file). 
+Recog_Shared > AnalyzeImage action will resolve the issue if used on each page.

@@ -1,0 +1,32 @@
+Title: IBM Differing Row Counts in Source and Target Tables - InfoSphere Change Data Capture for z/OS - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When I count the rows in my source and target tables, why do I receive a different number of rows? 
+
+ANSWER
+If tables are mapped to non-standard replication types, such as Live Audit, Summarization or Consolidation, it is expected that the rows on source and target tables will not match. For standard mappings, it would be expected that the source and target tables are the same. This may not be true at all points in time.
+
+
+
+
+
+Mirroring 
+
+When users are actively updating source tables, it is quite normal to have a different number of rows in the source and target tables. When mirroring is active, changes made on the source tables may be in transit to the target system when the count is taken. When mirroring is not active, changes made to the source system have not yet been replicated. So a difference in the number of rows in the source and target tables would be the expected outcome. 
+
+Another possibility to consider is the number of users with write access to the tables in the target database. Could a user have made updates directly to the target table? 
+
+To produce an accurate count of both source and target tables you must ensure that all changes made on the source system have been successfully applied on the target system and that no users are actively updating tables on either side while the counts are being performed. 
+
+After Refreshing 
+
+There have been cases where it appeared that more rows were replicated to the target during a Table Refresh than existed on the source table and duplicate key errors were received during the target apply. The cause was corruption in the table on the source database – the extra rows were actually in the table, but not recorded in the index. 
+
+When InfoSphere CDC for z/OS retrieves the rows for refresh, no WHERE clause is specified. In this situation, DB2 must retrieve all rows in the table, so it is less expensive to perform this operation without using the index. 
+
+When you count the rows in a table, DB2 will use the index defined on the table to perform this count as this is a less expensive way to perform this operation. Similarly if you run a select with a “group by … having count > 1” clause to look for duplicate keys, use of the index is less expensive. 
+
+This can be investigated by running the DB2 CHECK INDEX utility, which will provide a count of the actual number of rows in the table and give details on rows that do not have a corresponding index entry.

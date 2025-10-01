@@ -1,0 +1,74 @@
+Title: IBM The Eclipse documentation for generating JAXB classes is incomplete - United States
+
+Text:
+RAD; Generate; JAXB classes; xjc; XJCFacade; com.sun.tools.xjc.XCJFacade; JAXB; necessary libraries; jars; eclipse; schema; xsd; Generate Java; java TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to generate JAXB classes using the class generation wizard in IBM Rational Application Developer for WebSphere Software (RAD) 8.x results in the error "NoClassDefFoundError: com.sun.tools.xjc.xjcfacade" when you right-click on {SomeSchema}.xsd > Generate > JAXB Classes. 
+
+SYMPTOM
+The full error message is as follows: 
+
+
+
+//-- JVM Launcher
+(X) could not find main class: com.sun.tools.xjc.XJCFacade.
+Program will exit.
+//--
+
+
+Console reports:
+
+
+..
+... NoClassDefFoundError: com.sun.tools.xjc.XCJFacade
+caused by
+... java.lang.ClassNotFoundException: com.sun.tools.xjc.XCJFacade
+..
+
+
+Additional errors seen:
+
+The classpath for this project does not appear to contain the necessary libraries to proceed with class generation. Please ensure that a JAXB implementation is available on the classpath.
+
+
+
+CAUSE
+This message appears because the Generate > JAXB classes wizard belongs to base Eclipse and requires additional libraries to be configured in the runtime to complete successfully.
+
+
+RESOLVING THE PROBLEM
+In Rational Application Developer, you can generate JAXB classes from a schema using one of the following methods: 
+
+ 
+
+ * OPTION 1: When using Rational Application Developer (RAD), the recommended way is to use the Generate > Java option when right clicking on your schema file.
+   
+   The redbook: Rational Application Developer for WebSphere Software V8 Programming Guide [http://www.redbooks.ibm.com/redbooks/pdfs/sg247835.pdf], has an example of the workaround using right-click on {SomeSchema}.xsd, and select:
+   Generate > Java. This is in section: 8.4.1 Generating JAXB classes from an XML schema
+   
+   Note: The "XML" tools feature in RAD must be installed/selected in IBM Installation Manager (IM).
+   If not done so, use IM > Modify to select/install this feature.
+   This feature is also available in Rational Software Architect for WebSphere ( RSA4WS)
+   ----
+   
+   OR (not recommended)
+   
+ * OPTION 2: Continue to use the Generate > JAXB classes wizard with an applied workaround. 
+   
+   Note: Generate > JAXB classes has been removed in RAD 9.0
+   
+   WORKAROUND for RAD 8.x:
+   
+   Although IBM Support will not provide or assist in getting necessary libraries/jars, it has been found the reported error can be avoided by adding the following jaxb jars to the project Java Build Path: Libraries:
+   
+   "jaxb-xjc-2.1.10.1.jar", "jaxb-xjc-2.1.9-osgi.jar" and jaxb-impl-2.1.12.jar"
+   
+   Using the jaxb jars, it was possible to use the Generate > JAXB classes with no errors from the wizard.
+   
+   The com.sun.tools.xjc.XJCFacade class was in jaxb-xjc-2.1.10.1.jar and it had dependencies on the other jars. 
+   
+   Note: Depending on your schema and jaxb version, there may be other dependencies/jars. 
+   You need to search for relevant jaxb jars online. 
+   
+   The jaxb jars and any generated artifacts are not supported by IBM.

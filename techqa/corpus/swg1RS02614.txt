@@ -1,0 +1,140 @@
+Title: IBM RS02614: RULE DESIGNER XOM DEPLOYMENTS APPEAR TO REQUIRE USE OF DEFAULT XOM .JAR NAME - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Operational Decision Manager V8.8.0.1: Interim Fix 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24043312]
+Operational Decison Manager z/OS 8.8.1.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24043654]
+Operational Decision Manager V8.8.1.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24043530]
+Operational Decision Manager V8.9.0.1 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24043671]
+Operational Decison Manager z/OS 8.9.0.1 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24043670]
+Operational Decision Manager V8.9.1 Download Document [http://www-01.ibm.com/support/docview.wss?uid=swg24044122]
+Operational Decision Manager V8.9.1 Mod Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24044253]
+Operational Decision Manager V8.7.1.2: Interim Fix 72 [http://www-01.ibm.com/support/docview.wss?uid=swg24044272]
+Operational Decision Manager V8.9.0.2: Interim Fix 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24044358]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  xom jar file re-naming (to allow for versioning of assets) does
+   not work anymore.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The cobol xom config file generated from an ODM 8.0 RuleDesigner
+   (resources/cobol/CobolXomConfig.xml) includes an attribute
+   "marshallerName" which overrides the default name of the
+   generated marshaller jar for the cobol xom.This attribute was
+   not included in the new cobol xom config file since ODM 8.6.
+   This APAR is about re-include the "marshallerName" attribute in
+   order to offer the possiblity to configure the filename of the
+   generated marshaller.jar.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02614
+   
+   
+ * REPORTED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6903
+   
+   
+ * REPORTED RELEASE
+   880
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-18
+   
+   
+ * CLOSED DATE
+   2017-02-02
+   
+   
+ * LAST MODIFIED DATE
+   2017-02-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * FIXED COMPONENT ID
+   5725B6903
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R880 PSY
+   UP

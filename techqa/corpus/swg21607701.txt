@@ -1,0 +1,26 @@
+Title: IBM Support's Guide to the Nortel IEMS Probe - United States
+
+Text:
+nco_p_nortel_iems; SNMPGETNEXT.; NlmConfigGlobalEntryLimit TECHNOTE (FAQ)
+
+QUESTION
+ Nortel IEMS Probe : How does the probe get events? 
+
+ANSWER
+The Nortel IEMS Probe is a direct SNMP monitoring probe similar to the MTTrapd (SNMP) probe.
+The probe acquires event data by acting as a trap daemon and monitoring SNMP traps and events on both UDP and TCP sockets. 
+
+When the probe starts, it performs a full resynchronization with the Nortel IEMS server using SNMPGET and SNMPGETNEXT. The probe then processes new alarms as they are generated. The Nortel IEMS server stores the most recently generated alarms in a cache table.
+
+It is possible to specify the number of alarms held in the cache table using the NlmConfigGlobalEntryLimit property (default 25). The value of NlmConfigGlobalEntryLimit must reflect the value set on the Nortel IEMS server.
+
+Each alarm has a sequence number. If the Nortel IEMS probe misses one or
+more alarm, such as it receives alarms that do not have consecutive sequence
+numbers, it will perform either a full or an incremental resynchronization with the
+Nortel IEMS server.
+
+The type of synchronisation depends on the number of consecutive events that the probe has missed. If the number of consecutive events missed by the Nortel IEMS probe is greater than the number specified by the NlmConfigGlobalEntryLimit property, the probe performs a full resynchronization.
+
+If the number of consecutive events missed by the probe is less than or equal to this number, the probe performs an incremental resynchronization 
+
+NortelIEMSProbe_SupportsGuide_20.pdf [/support/docview.wss?uid=swg21607701&aid=2]NortelIEMSProbe_SupportsGuide_20.pdf [/support/docview.wss?uid=swg21607701&aid=1]

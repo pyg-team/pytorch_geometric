@@ -1,0 +1,172 @@
+Title: IBM IC69174: WMQ XMS .NET V2.0 CLIENT IS FAILING WITH CWSMQ0006E MQ RC=2278  MQRC_CLIENT_CONN_ERROR AND 2058 MQRC_Q_MGR_NAME_ERROR - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24028106]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24028109]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When trying to use a WebSphere MQ IBM Message Service Client
+   for .NET (XMS .NET) v2.0 to do a MQCONNX to connect to a queue
+   manager, it is failing with
+   IBM.XMS.XMSException: CWSMQ0006E: An exception was received
+   during the call to the method ConnectionFactory.
+   CreateConnection: System.IO.IOException.
+   
+   The MQ trace reveals that when trying to find a match for the
+   queue manager name it is failing with Reason: 2058 0x0000080a
+   MQRC_Q_MGR_NAME_ERROR and after the 2058 error there is also
+   a reason 2278 0x000008e6  MQRC_CLIENT_CONN_ERROR.
+   
+   An XMS trace reveals the following exception associated with
+   trying to find the correct client entry in the client channel
+   table (CCDT)
+   System.ArgumentOutOfRangeException
+   Message: 'maxValue' must be greater than zero.
+   Parameter name: maxValue
+   StackTrace:
+   at System.Random.Next(Int32 maxValue)
+   at IBM.WMQ.MQChannelListEntry.OrderWeightedChannelEntry()
+   at IBM.WMQ.MQChannelTable.CreateChannelEntryLists
+   (MQChannelListEntrynameList)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users with .Net clients of version 7.0.1.1 and above and using
+   a CCDT table from queue manager prior to version 7.0.1.1.
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The WebSphere MQ .Net client 7.0.1.1 version and above will fail
+   to read Channel Definitions properly when a CCDT table created
+   from a pre-7.0.1.1 version queue manager is being used.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem was due to the additional properties added as part
+   of 7.0.1.1 client.  These values where not getting initialized
+   to default values when CCDT tables created from older version of
+   queue managers were used.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.4
+   --------           --------------------
+   Windows            U200323
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC69174
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-11
+   
+   
+ * CLOSED DATE
+   2010-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ76985
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

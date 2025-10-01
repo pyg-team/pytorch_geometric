@@ -1,0 +1,17 @@
+Title: IBM Finding the latest refreshed version of TWSz / IWSz  version 9 manuals? - United States
+
+Text:
+TWS z/OS IWS TECHNOTE (FAQ)
+
+QUESTION
+ Where can the latest version of the manuals for TWSz 9.1 and 9.2 and IWSz 9.3 be found? 
+
+ANSWER
+Use these links for COMPID 5697WSZ01 (IWS z/OS and TWS z/OS) 
+
+ 
+9.3 manuals: ftp://public.dhe.ibm.com/software/tivoli/workload_scheduler_zos/9.3/ [ftp://public.dhe.ibm.com/software/tivoli/workload_scheduler_zos/9.3/]
+
+9.2 manuals; https://www.ibm.com/support/knowledgecenter/SSRULV_9.2.0/com.ibm.tivoli.itws.doc_9.2/pdfguides.html [https://www.ibm.com/support/knowledgecenter/SSRULV_9.2.0/com.ibm.tivoli.itws.doc_9.2/pdfguides.html]
+
+9.1 manuals https://www.ibm.com/support/knowledgecenter/SSRULV_9.1.0/com.ibm.tivoli.itws.doc_9.1/pdfguides.html [https://www.ibm.com/support/knowledgecenter/SSRULV_9.1.0/com.ibm.tivoli.itws.doc_9.1/pdfguides.html]

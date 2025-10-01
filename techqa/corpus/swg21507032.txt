@@ -1,0 +1,28 @@
+Title: IBM Could not retrieve application list with Rulerunner Quattro Manager - United States
+
+Text:
+exception connection application list TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to connect on the Datacap Login tab in Rulerunner Quattro Manager with IBM Datacap Taskmaster Capture, an exception error occurs. 
+
+SYMPTOM
+The full error message is: 
+
+An unexpected exception has occured
+The following exception was detected:
+Error while establishing connection to Application Service
+Exception: 'Could not retrieve application list.'
+
+
+CAUSE
+Rulerunner Quattro Manager cannot locate or access the datacap.xml file for the Taskmaster server.
+
+
+RESOLVING THE PROBLEM
+On the Rulerunner station: 
+
+ 1. Run Taskmaster Application Manager. 
+ 2. Highlight the application name and click on the Service tab. 
+ 3. Set a valid path pointing to the datacap.xml file for the application.
+    Example: \\TaskmasterServer\Datacap\datacap.xml

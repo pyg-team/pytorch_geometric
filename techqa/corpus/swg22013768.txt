@@ -1,0 +1,21 @@
+Title: IBM Mount Catalog/Index point questions - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I use a ZFS file system to hold the metadata catalog. I run customization job to create a mount point on this file system:
+
+MOUNT FILESYSTEM('DNTIMS.CDCCLASS.IMST.ZFS') MOUNTPOINT('/opt/IBM/isclassic113/catalog') 
+
+TYPE(ZFS) MODE(RDWR) NOSETUID 
+
+1) losing the mount point after weekend IPL, what is the suggested solution?
+
+2) Can I use the same mount point '/opt/IBM/isclassic113/catalog' for 3 system, TEST, QA and PROD? When I manually mount the IMST file system, the TEST system only asks for a mount point. What would do for QA and PROD? 
+
+ANSWER
+1. You should be able to use parmlib member BPXPRMxx to setup a mount command that is issued with the IPL.
+2. You "could" do so. But you would need to use different names for caccat and cacindx. If you want to do something like this, you should probably create three directories, which could all exist under the same mount point. For example, mount the zFS aggregate as /opt/IBM/isclassic113 and then create directory structures beneath that for TEST, QA and PROD to segregate these files.
+
+Most sites probably have rules requiring the separation and ESM protection of the ZFS aggregates to avoid unintended access or mistakes from impacting other environments. In those cases, I'd expect three aggregates and three separate mount points so they can be protected independently.

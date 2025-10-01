@@ -1,0 +1,232 @@
+Title: IBM PI66942: WAS-INSTALL PLUG-IN STEP REMOVE DEPLOYMENT MANAGER PROFILE DELETES THE PROFILE DIRECTORY AND NOT JUST THE CONTENT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After running the manageprofiles command to remove the profile,
+   the Remove Deployment Manager Profile plug-in step is deleting
+   the profile directory. This logic causes a problem if the
+   profile directory is on a mounted drive.
+   
+   Running manageprofiles
+   command: /opt/IBM/WebSphere/AppServer/bin/manageprofiles.sh
+   -delete -profileName dmgr -profilePath
+   /opt/IBM/WebSphere/AppServer/profiles/DeploymentManager
+   INSTCONFSUCCESS: Success: The profile no longer exists.
+      [delete] Deleting
+   /opt/IBM/WebSphere/AppServer/profiles/DeploymentManager/configur
+   ation/.lastTouched
+      [delete] Deleting
+   /opt/IBM/WebSphere/AppServer/profiles/DeploymentManager/configur
+   ation/org.eclipse.core.runtime/.manager/.fileTableLock
+   ...
+      [delete] Deleting
+   /opt/IBM/WebSphere/AppServer/profiles/DeploymentManager/configur
+   ation/org.eclipse.equinox.app/.manager
+      [delete] Deleting
+   /opt/IBM/WebSphere/AppServer/profiles/DeploymentManager/configur
+   ation/org.eclipse.equinox.app
+      [delete] Deleting
+   /opt/IBM/WebSphere/AppServer/profiles/DeploymentManager/configur
+   ation/org.eclipse.core.runtime/.manager
+      [delete] Deleting
+   /opt/IBM/WebSphere/AppServer/profiles/DeploymentManager/configur
+   ation/org.eclipse.core.runtime
+      [delete] Deleting
+   /opt/IBM/WebSphere/AppServer/profiles/DeploymentManager/configur
+   ation
+      [delete] Deleting
+   /opt/IBM/WebSphere/AppServer/profiles/DeploymentManager
+   Removing a WebSphere Deployment Manager profile failed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No workaround known.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Issues with WAS plugin                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Version 4 of the WAS Install plug-in now allows users to avoid
+   deleting the directory if needed.  The Remove Node Profile and
+   Remove Deployment Manager Profile steps now include a Delete
+   Profile Directory property.  If the user unchecks the Delete
+   Profile Directory checkbox, the delete command will not be run.
+   
+   Version 4 of the WAS Install plug-in can be found here:
+   https://developer.ibm.com/urbancode/plugin/websphere-application [https://developer.ibm.com/urbancode/plugin/websphere-application]
+   -server-install/
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI66942
+   
+   
+ * REPORTED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * REPORTED COMPONENT ID
+   5725M5400
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-03
+   
+   
+ * CLOSED DATE
+   2016-08-22
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * FIXED COMPONENT ID
+   5725M5400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP
+   
+   
+ * R600 PSY
+   UP
+   
+   
+ * R601 PSN
+   UP
+   
+   
+ * R601 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R610 PSY
+   UP
+   
+   
+ * R611 PSN
+   UP
+   
+   
+ * R611 PSY
+   UP
+   
+   
+ * R612 PSN
+   UP
+   
+   
+ * R612 PSY
+   UP
+   
+   
+ * R613 PSN
+   UP
+   
+   
+ * R613 PSY
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R620 PSY
+   UP
+   
+   
+ * R621 PSN
+   UP
+   
+   
+ * R621 PSY
+   UP

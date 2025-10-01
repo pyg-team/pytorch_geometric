@@ -1,0 +1,168 @@
+Title: IBM JR50335: RESUMED TASKS FROM A FAILED STATE DO NOT SHOW UP IN TEAM PERFORMANCE BUT DOES IN THE PROCESS PORTAL WORK LIST - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Version 8.5 Refresh Pack 6 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24039185]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After a failed process instance is resumed, its tasks show up
+   in the Process Portal Work list but are missing from the Team
+   Tasks list in the Team Performance dashboard.
+   .
+   The scenario is described as below.
+   
+   0. Manager A1 is from Manager Team A, and user B1 is from User
+   Team B.
+   1. Initialize a process instance and assign it to user Team B.
+   2. User B1 claims the task
+   3. A1 logins to BPM portal and checks the Team Performance
+   dashboard. In the tab Team Task, task is listed and belongs to
+   B1.
+   4. B1 works on his task, but some error occurs that make the
+   process failed
+   5. A1 also finds the task has disappeared from the team task
+   list.
+   6. Administrator C fixes the error and resumes the failed
+   instance.
+   7. B1 continues working on his task, but does not finish it (not
+   moving it to next stage).
+   8. A1 still can't find the task in the team task list.
+   9.a B1 finishes the task and moves to the next stage. Then A1
+   can find the task in the team task list.
+   9.b B1 reassigns the task to the someone else. Then A1 can find
+   the task in the team task list.
+   
+   The issue is that the task is still missing in the team task
+   list, even though it has been resumed and someone has worked on
+   it.
+   
+   PRODUCTS AFFECTED:
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Tasks for resumed instances are not showing up in the Team
+   Performance dashboard because an instance event is not fired
+   when the instance is  resumed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for IBM BPM V8.5.0.1 is available that fixes the missing
+   task issue in the Team Performance dashboard by correctly firing
+    a monitor event for a resumed instance.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR50335:
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select APAR or SPR, enter JR50335, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR50335
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-27
+   
+   
+ * CLOSED DATE
+   2014-07-23
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

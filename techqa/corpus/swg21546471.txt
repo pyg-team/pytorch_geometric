@@ -1,0 +1,56 @@
+Title: IBM Outbound ODBC Import Map not updating processed column - Table Key column in map is defined as a "Float" in the database (SCI51704) - Sterling Gentran:Server for Microsoft Windows - United States
+
+Text:
+Mapping; Translation; STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Outbound ODBC Import Map not updating processed column - Table Key column in map is defined as a "Float" in the database (SCI51704) 
+
+SYMPTOM
+Outbound ODBC Import Map not updating processed column (field in output update record defined as float) 
+Outbound translation going into infinite an loop 
+Inbound translation fails with an error
+
+
+CAUSE
+Update statement WHERE clause had a database column defined as a Float data 
+type.
+
+RESOLVING THE PROBLEM
+
+
+When a field is defined as a "Table Key" in an Update record, translator uses this column in the WHERE clause of the Update statement. Database columns with a data type of Float are not supported for use in the WHERE clause of an Update statement created by an ODBC map.
+
+
+
+
+
+
+
+Float data types are considered approximate numeric values. When using float data types there will usually be some degree of rounding on the original number and therefore will cause the Update statement issued by the translator to fail. 
+
+
+
+Example: Value in the float column is: 150.000000
+It is possible that the float value could be rounded when the Update statement is built. Update <tablename</SPAN></A>> set <processedcolumn</SPAN></A>> = 2 where <tableKey</SPAN></A>> = '150.00001'
+This would cause the update statement to fail as the Key field value no longer matches the value in the table. 
+
+ 
+
+HISTORICAL NUMBER
+ PRI6492 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Gentran:Server for Windows
+All Releases 
+GENTRAN:Server for Windows NT
+All Releases 
+ODBC Mapping 
+Field in the output update record has the 
+"Table Key" option selected 
+SCI51704

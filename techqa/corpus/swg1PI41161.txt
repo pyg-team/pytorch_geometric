@@ -1,0 +1,145 @@
+Title: IBM PI41161: TOTALS DISAPPEARING FROM THE COLUMN WHEN THE COLUMN IS MOVED IN WORKSPACE ADVANCED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Totals disappearing from the column when the column is moved in
+   Workspace Advanced. This is a report created in Report Studio
+   with totals shown in the header and when this report is opened
+   in workspace advanced, the totals are lost.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM Cognos Business Intelligence 10.2.2 Fix Pack  *
+   * 3                                                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code Fix
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  A fix for this APAR is targeted for IBM COGNOS 10.2.2 BI Fix
+   Pack 3.
+   The Fix Pack Release Schedule can be found at
+   http://www.ibm.com/software/analytics/support/fixes/pbi_schedule [http://www.ibm.com/software/analytics/support/fixes/pbi_schedule]
+   .html.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI41161
+   
+   
+ * REPORTED COMPONENT NAME
+   COG WRKSPC ADV
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12BA
+   
+   
+ * REPORTED RELEASE
+   A21
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-14
+   
+   
+ * CLOSED DATE
+   2015-10-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI38091 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI38091]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   COG WRKSPC ADV
+   
+   
+ * FIXED COMPONENT ID
+   5724W12BA
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA22 PSN
+   UP

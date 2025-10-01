@@ -1,0 +1,41 @@
+Title: IBM Creating a Windows service for DB2 Content Manager resource manager in WebSphere Application Server Version 6 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The IBM® DB2® Content Manager server installation deploys resource manager Web application. The default is to install that web application into its own WebSphere® Application Server, named icmrm by default. That server can be started by running [app_server_root]\bin\startServer [server_name]. This note describes how to install that WebSphere Application Server as a Windows® service when using WebSphere Application Server V6. 
+
+ANSWER
+An alternative to starting a WebSphere Application Server with "[app_server_root]\bin\startServer" is to add a Windows service.
+WebSphere installation documentation describes defining a service when using WAS V5. For V6, the -profilePath option must be specified.
+
+
+ 1. cd app_server_root\bin 
+ 2. wasservice -add icmrm -serverName server_name -profilePath "profile_root"
+    where  * server_name is the application server's name. The DB2 Content Manager server installation defaults the server name to icmrm. 
+     * profile_root is the fully-qualified path of the profile in which the server was installed. The DB2 Content Manager server installation defaults to the default profile, in which case the profile_root is app_server_root\profiles\default
+    
+    
+ 3. Verify that the service is in Control Panel --> Services as "IBM WebSphere Application Server V6 - icmrm" 
+ 4. You can modify the startup type either in Services, or specify 
+    '-startType automatic | manual | disabled' on the above wasservice command.
+
+
+Uninstalling DB2 Content Manager will not uninstall the service. You can remove the service definition with:  1. cd app_server_root\bin 
+ 2. WASService.exe -remove icmrm
+
+
+Example of adding icmrm server in the default profile as a service 
+
+C:\Program Files\IBM\WebSphere\AppServer\bin>wasservice -add icmrm -serverName icmrm -profilePath "c:\Program Files\IBM\WebSphere\AppServer\profiles\default" 
+Adding Service: icmrm 
+Config Root: c:\Program Files\IBM\WebSphere\AppServer\profiles\default\config 
+Server Name: icmrm 
+Profile Path: c:\Program Files\IBM\WebSphere\AppServer\profiles\default 
+Was Home: C:\Program Files\IBM\WebSphere\AppServer\ 
+Start Args: 
+Restart: 1 
+IBM WebSphere Application Server V6 - icmrm service successfully added. 
+
+For more information on WebSphere Application Server services in Windows

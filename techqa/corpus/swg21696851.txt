@@ -1,0 +1,78 @@
+Title: IBM ClearCase SCM adapter deprecation and support, and CTE - United States
+
+Text:
+RAD; CC; RCC; SCM; adapter; deprecated; withdrawn; CTE; ClearCase ClearTeam explorer extension; CCRC; ClearCase v8; clearcase; clear team; clearcase; RSA; snapshot; snapshot views TECHNOTE (FAQ)
+
+QUESTION
+ What is the IBM Rational ClearCase SCM adapter deprecation and support for IBM Rational Application Developer (RAD) 8.5.5, 9.0.x and 9.1.x? 
+
+CAUSE
+The 32-bit option to install RAD 9.1.1 was not used. The adapter only install into a 32-bit RAD install. After reading the ClearCase (CC) SCM adapter was deprecated, it was assumed it was not shipped with RAD 9.1.1.
+
+ANSWER
+The ClearCase (CC) SCM Adapter is deliberately not documented as removed in technote: Removed and deprecated functions in Rational Application Developer (for RAD 9x products) [http://www.ibm.com/support/docview.wss?uid=swg27038549]... and in the RAD 9.1 Knowledge Center (KC) linked below.
+
+This was first announced as deprecated in RAD 8.5.5: Deprecated, removed, or stabilized functions in the 8.5 Rational Software Delivery Platform design, construction, and modeling products [http://www.ibm.com/support/docview.wss?uid=swg27024872]
+
+
+As of RAD 9.5, the Rational ClearCase(R) SCM adapter is withdrawn and no longer shipped or supported. This component is no longer preferred solution for ClearCase integration with Eclipse. Use Rational ClearTeam Explorer (CTE) which is provided with Rational ClearCase (CC) and supported by IBM CC Support. CTE is not shipped with RAD. For reference: RAD 9.5 Announce showing withdrawn functions [http://www-01.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&appname=gpateam&supplier=872&letternum=ENUSAP15-0371]
+
+
+There are more details in the RAD Knowledge Center (KC) version specific topics for "Integrating Rational Application Developer and Rational ClearCase": 
+
+ * 8.5.5 [http://www.ibm.com/support/knowledgecenter/SSRTLW_8.5.5/com.ibm.javaee.doc/topics/rintegratingclearcase.html] 
+ * 9.0.1 [http://www.ibm.com/support/knowledgecenter/SSRTLW_9.0.1/com.ibm.javaee.doc/topics/rintegratingclearcase.html] 
+ * 9.1.0 [http://www.ibm.com/support/knowledgecenter/SSRTLW_9.1.0/com.ibm.java.ee.doc/topics/rintegratingclearcase.html] 
+ * 9.1.1 [http://www.ibm.com/support/knowledgecenter/SSRTLW_9.1.1/com.ibm.java.ee.doc/topics/rintegratingclearcase.html]
+
+
+As an example, the above RAD 9.0.1 topic has this product version relative statement: 
+
+Note: The support for Rational ClearCase SCM Adapter is deprecated. It is only supported with the 32-bit installation of Rational Application Developer, version 9.0.x, or earlier. In Rational ClearCase version v8, or later, Rational ClearTeam Explorer (CTE) Extension is the preferred Rational ClearCase integration with Rational Application Developer and Eclipse IDE.
+
+The above technotes and KC items show the SCM CC adapter as deprecated for RAD 8.5.5 and RAD 9.0.1+. The key points being: 
+
+ *  A deprecated feature can be removed within 2 or more future versions/releases of a product after the initial deprecation notice 
+ * It is still an available feature that can be selected for a 32-bit RAD 8x to 9.1 core parts "Install" in IBM Installation Manager (IM). You must select the 32-bit option/radio button in IM to install RAD. The default on a 64-bit Operating system is RAD 64-bit. 
+ *  It is not a separate download. It is part of the core parts for RAD 8x/9.x. All the downloadable parts from IBM PassPort Advantage making up RAD are documented in the Rational Application Developer for WebSphere Software eAssembly Parts List [http://www.ibm.com/support/docview.wss?uid=swg27044039]. There are tabs for 9.1.1, 9.1.0, 9.0, 8.5.1, 8.5 
+ * There is more information in this ClearCase technote on future directions fro the SCM Adapter: "About Rational ClearCase SCM Adapter in Rational ClearCase version 8.0 [http://www.ibm.com/support/docview.wss?uid=swg21589163]" 
+ * That information and the RAD 8.5.5/9.x Knowledge Centers document the recommendation to move to "ClearCase ClearTeam Explorer Extension" (CTE) which is provided and supported by ClearCase for Eclipse in general. RAD does not provide support for the CTE plugin, apart from any general third party eclipse plugin issue that can be shown to be a problem in RAD or Eclipse itself. It is supported by IBM ClearCase Support. For more information on installing and using the CTE, refer to the "Getting started with the ClearCase ClearTeam Explorer extension" topic for your specific RAD 8.5.5/9.x version:  * 8.5.5 [http://www.ibm.com/support/knowledgecenter/SSRTLW_8.5.5/com.ibm.workenvironment.doc/topics/clearcase/cc_intro.html] 
+    * 9.0.1 [http://www.ibm.com/support/knowledgecenter/SSRTLW_9.0.1/com.ibm.workenvironment.doc/topics/clearcase/cc_intro.html] 
+    * 9.1.0 [http://www.ibm.com/support/knowledgecenter/SSRTLW_9.1.0/com.ibm.workenvironment.doc/topics/clearcase/cc_intro.html] 
+    * 9.1.1 [http://www.ibm.com/support/knowledgecenter/SSRTLW_9.1.1/com.ibm.workenvironment.doc/topics/clearcase/cc_intro.html] 
+    * 9.5.0 [http://www-01.ibm.com/support/knowledgecenter/SSRTLW_9.5.0/com.ibm.workenvironment.doc/topics/clearcase/cc_intro.html]
+   
+   
+
+
+In Rational ClearCase (CC) version 8.0, the Rational ClearTeam Explorer (CTE) Extension is the preferred ClearCase integration with Eclipse and the SCM Adapter is still supported for ClearCase version 8.0. The above RAD KC topics explain from where to download CTE 8.0.0.0 and how to install it. They also stress, the CC SCM Adapter must be uninstalled first. IBM CC Support can provide further assistance. 
+
+More is explained in technote: 
+- About Rational ClearCase SCM Adapter in Rational ClearCase version 8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg21589163] 
+CC SCM had snapshot views, which were not originally in CTE. ClearCase v8.0.1.x has now documented support for CTE snapshots in the above technote (Apr 27, 2015) : 
+
+"..From ClearCase 8.0.1.6, CTE supports snapshot view. If you are using 8.0.0.x or pre-8.0.1.6 version and snapshot views are a requirement of your ClearCase usage, then the SCM Adapter should be used." 
+,with more integrations supported from CTE snapshot views from 8.0.1.7 on, as mentioned in this YouTube: 
+- ClearCase Snapshot View support in ClearTeam Explorer and CM API [https://www.youtube.com/watch?v=1N136jqi8ow] 
+CC/CTE Documentation is more clear regarding the use of dynamic views since for that, the native client must be running on the same machine. At the time of this technote (Dec 2015), it was not clear that snapshot views also needed the CC native client on version 8.0.1.6 at least, where snapshot views started to be supported (including the CTE extension) . Snapshot views are well behaved when CC, CC Native Client and CTE are all at least on v8.0.1.7 
+
+
+Background: 
+
+As of ClearCase V8.0, the GUI that was always part of CCRC (ClearCase Remote Client) was given a name, the ClearTeam Explorer (CTE). For more information refer to this dW Answers question: 
+- Can ClearTeam Explorer and CCRC co-exists? [https://developer.ibm.com/answers/questions/229880/can-clearteam-explorer-and-ccrc-co-exists.html] 
+This is also useful: 
+- Feature Comparison Matrix for CCRC, CTE, CCWeb, Native ClearCase GUI and SCM Adapter [http://www-01.ibm.com/support/docview.wss?uid=swg21233090] 
+
+The ClearCase (CC) 8.0.1(.9) detailed system requirements: 
+http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1316006977787&duComponentIds=Desktop_1316006980780 [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1316006977787&duComponentIds=Desktop_1316006980780], under 'Supported Software' show that Eclipse runtime environments 3.6 to 4.4 are supported. 
+This Eclipse range covers RAD 8.5.x to 9.5. RAD v9.5.0, for example, is based on Eclipse 4.4.2 plus bugzilla patches, with IBM Java 8.0.1.10. 
+If more information or help is needed with using CTE, contact IBM Support for ClearCase.
+
+RELATED INFORMATION
+ Rational ClearCase SCM adapter not available for 64-bit [http://www.ibm.com/support/docview.wss?uid=swg21502974]
+Feature Comparison Matrix for CCRC CTE CCWeb Native .. [http://www.ibm.com/support/docview.wss?uid=swg21233090]
+RAD support for 3rd party & open-source Eclipse plugins [http://www.ibm.com/support/docview.wss?uid=swg21600040]
+CC KC:Developing software w Rational ClearTeam Explorer [https://www-01.ibm.com/support/knowledgecenter/SSSH27_8.0.1/com.ibm.rational.clearcase.ccrc.help.doc/topics/c_ccrc_dev_container.htm]
+Installation of CTE into an existing IDE (..Eclipse [http://www.ibm.com/support/docview.wss?uid=swg24031012]
+Rational ClearCase Release Notes version 8.0.1.x [http://www.ibm.com/support/docview.wss?uid=swg27037036]

@@ -1,0 +1,93 @@
+Title: IBM Guidelines for configuring Android Studio applications in AppScan Source - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are some guidelines and best practices for configuring Android Studio applications in IBM Security AppScan Source? 
+
+ANSWER
+ 
+
+ 1. You should verify the system requirements: 
+    
+    Detailed System Requirements for IBM AppScan Source [http://www.ibm.com/support/docview.wss?uid=swg27027486]
+    
+    
+    
+ 2. You should get the right people involved:
+    
+     1. Development team members working with the source code in Android Studio.  * People able to easily identify project facets and source frameworks. 
+         * People who can help set up a test environment containing the complete buildable source of the application. 
+        
+        
+     2. Deployment team members.  * People responsible for managing the running model of the application. 
+         * People who can identify Android support modules or dependent libraries required for Android Studio application runtime compilation. 
+         * People who have access to a built or compiled version of the application.
+        
+        
+     3. Automation/Build team members.  * People who can provide build scripts used to identify dependencies (such as libraries and project dependencies). 
+         * If you are using Gradle: People who can identify or provide the Gradle scripts that will contain the rules for building the application. 
+         * If you are using Maven Central or JCenter: People who can identify or provide any libraries (such as class path artifacts) required to compile the application. 
+         * People who can identify output locations and environment variables used to build and deploy the Android application.
+           
+           
+           
+        
+        
+    
+    
+ 3. You should have the right artifacts and information available:
+    
+     1. For tools used to build the application:  * Gradle – gather the build script and any class path or properties used to locate build artifacts.
+        
+        
+     2. For source code:  * Gather all application dependencies (for example, .jar files, .class files, and .zip files). 
+         * Know the version and path of the Android SDK used by or used to build the application. 
+         * Ensure that the Android SDK, the Android Support Library, and the correct Android build tools are downloaded using the SDK Manager. For more information, see http://developer.android.com/tools/support-library/setup.html [http://developer.android.com/tools/support-library/setup.html]. This will install the Support Library to the <sdk>/extras/android/support directory (where <sdk> is the location of your Android SDK directory).
+        
+        
+     3. Ensure that AppScan Source for Analysis is installed (the latest version is recommended). 
+     4. Ensure that the AppScan Enterprise Server is installed or available (latest version is recommended).
+        
+        
+        
+    
+    
+ 4. Configure an Android Studio project in AppScan Source:
+    
+     1.  Create a new application in AppScan Source for Analysis by completing one of these actions:  * Select File > Add Application > Create a new application from the main menu bar. 
+          * In the Explorer view toolbar, click the Add Application Menu down-arrow button and select Create a new application from the menu. 
+          * In the Explorer view, right-click All Applications and then select Add Application > Create a new application from the menu.
+         
+         
+     2.  Enter a Name for the application. 
+     3.  Browse to the Working Directory in which to save the application. The new application file name extension will be .paf. 
+     4.  In the Select Project Type page, select Java/JSP as the project type and click Next:
+         
+         [/support/docview.wss?uid=swg21966841&aid=1] [/support/docview.wss?uid=swg21966841&aid=1]
+         
+         
+         
+     5.  In the Project Sources page, identify the module source roots of your Android Studio project and add the sources manually or allow AppScan Source to find all valid source roots automatically. To find source roots automatically, click Find Source Roots, browse to the root directory that contains your Android project and modules, and then select the source roots of your modules.
+         
+         [/support/docview.wss?uid=swg21966841&aid=2] [/support/docview.wss?uid=swg21966841&aid=2]
+         
+         
+     6.  Click Next. 
+     7.  In the JSP Project Dependencies page, click Next. 
+     8.  In the Java Project Dependencies page, specify the Android SDK build tools and platforms directories as well as the Android Support Library directory. For example:
+          * <sdk>/build-tools/<required version> 
+          * <sdk>/platforms/android-<required version> 
+          * <sdk>/extras/support/
+            
+            Note: Before doing this, you must have already downloaded and installed the build tools and Android Support Library, as described in section 3.b above.
+            
+         
+         
+     9.  Set the dependencies required by your project (ensure that you specify the Android SDK libraries and any other libraries that you need for your Android app):
+         [/support/docview.wss?uid=swg21966841&aid=3] [/support/docview.wss?uid=swg21966841&aid=3]
+         
+         
+     10. Select Precompiled classes and specify the output directory of your Android project. For example, <project_dir>/build/intermediates/classes/<debug or release>, where <project_dir> is the source root directory of your Android project. 
+     11. Click Finish.

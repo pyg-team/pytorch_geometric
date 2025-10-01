@@ -1,0 +1,147 @@
+Title: IBM IT03500: LOW PERFORMANCE OF QUERIES ON ADMSINTABINFO - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Queries on ADMSINTABINFO are slow even if all TCBs are loaded in
+   memory already.
+   
+   I set DBHEAP to 40000, should be able to store 20000 tables' TCB
+   info, actually about 10000 tables in that db.
+   Check with "db2pd -db testdb -tcb" to make sure all tables TCB
+   was in DBHEAP.
+   
+   time db2 "select tabname from sysibmadm.admintabinfo where
+   reorg_pending='Y'"
+   
+   TABNAME
+   ----------------------------------------------------------------
+   ----------------------------------------------------------------
+   ADMIN99
+   ADMIN999
+   
+     2 record(s) selected.
+   
+   real    2m48.74s
+   user    0m0.01s
+   sys     0m0.01s
+   
+   I still saw bufferpool data read as below
+   
+   Buffer pool data logical reads             = 337188
+   Buffer pool data physical reads            = 323543
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All DB2 V9.7 users.                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 V9.7 Fix Pack 11 or higher.                   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in DB2 V9.7 Fix Pack 11.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT03500
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-31
+   
+   
+ * CLOSED DATE
+   2015-10-13
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IT04356 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT04356] IT04358 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT04358]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSN
+   UP

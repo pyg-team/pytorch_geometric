@@ -1,0 +1,134 @@
+Title: IBM JR59531: YOU NOTICE HIGH CPU WHEN PERFORMING A TASK SEARCH - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you are using IBM Business Process Manager (BPM) V8.5.7, you
+   might notice high CPU usage when you run a task search,
+   accompanied by report about hung threads from the application
+   server. A deeper analysis of the hung threads stacks shows that
+   all the threads are hung in the
+   com.ibm.bpm.dashboards.data.TaskListItem.fetchUserInfo method.
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This issue is caused by hung threads.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be included in a future release of IBM Business
+   Automation Workflow that synchronizes access to a shared
+   resource in
+   com.ibm.bpm.dashboards.data.TaskListItem.fetchUserInfo, fixing
+   the hung threads issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR59531
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-05-09
+   
+   
+ * CLOSED DATE
+   2018-05-23
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS

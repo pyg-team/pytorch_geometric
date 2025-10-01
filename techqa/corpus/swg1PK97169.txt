@@ -1,0 +1,225 @@
+Title: IBM PK97169: CICS TS 3.2 AOR GOES SOS WHEN CICS WEBSERVICE REQUEST IS DYNAMICALLY ROUTED FROM CICS TS 4.1 TOR. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A CICS TS 4.1 TOR dynamically routed a CICS WEBSERVICE request
+   to CICS TS 3.2 AOR. When the 3.2 AOR tried to IMPORT the request
+   it attempted a large getmain using an invalid getmain length and
+   the AOR went SOS :
+   DFHSM0133 CICS is under stress (short on storage above 16MB).
+   .
+   In the AOR trace we saw:
+   AP 4E00 APCR  ENTRY IMPORT_ALL            SIBUS
+   RZ 0120 RZTA  ENTRY RECEIVE_REQUEST    24302C18 , A36E0D38 ,
+   AP 4900 APTC  ENTRY RECEIVE         2474ABD0,24302C18,000000
+   AP 4901 APTC  EXIT  RECEIVE/OK      24302C18 , 00000008 , 00
+   RZ 0121 RZTA  EXIT  RECEIVE_REQUEST/OK  24302C18,00000008, 0
+   SM 0301 SMGF  ENTRY GETMAIN 40404038,YES,00,CHANBUFF,TASK31
+   .
+   The bad getmain length 40404038 caused the CICS to go SOS.
+   .
+   Problem is occurring :
+   TOR CICS TS 4.1 ------  AOR CICS TS 3.2  Error: AOR is SOS
+   TOR CICS TS 3.2 ------- AOR CICS TS 4.1  Error: AOR DUMPCODE:
+                                            ABENDAPCR02
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CICS/TS 3.2 AOR goes SOS when CICS      *
+   *                      WEBSERVICE request is dynamically       *
+   *                      routed from a CICS/TS 4.1 TOR.          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A CICS/TS 4.1 TOR dynamically routes a CICS WEBSERVICE request
+   to a CICS/TS 3.2 AOR. When the 3.2 AOR tries to process the
+   incoming requeststream CICS goes short on storage (SOS),
+   message DFHSM0133 CICS is under stress.
+   At CICS/TS 4.1 the length of the PIIS_STUB_FUNCTION_HEADER has
+   increased from 'A4'x to 'D8'x. The PIIS_STUB_FUNCTION_HEADER is
+   followed by an eight byte header containing the Channel
+   Structure length. DFHAPCR IMPORT_ALL processing at CICS/TS 3.2
+   indexes past the PIIS_STUB_FUNCTION_HEADER (which it expects to
+   be 'A4'x long) before issuing a receive for the Channel
+   Structure header. The 8 bytes of data received are not the
+   Channel Stucture header, rather the data at offset +'A4'x in to
+   the CICS/TS 4.1 PIIS_STUB_FUNCTION_HEADER, giving a length of
+   '40404040'x. DFHAPCR subtracts 8 from this value to get
+   '40404038'x which is used as the getmain length for the Channel
+   Structure, causing CICS to go SOS.
+   
+   Additional keywords: MSGDFHSM0133 SM 1206 SM1206 APCR
+                        APCR02 ABENDAPCR ABENDAPCR02 CHANBUFF
+                        cttClientIpAddr ctcTargetSystem IPv6
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CICS been changed to set a version number in the outgoing
+   requeststream, and to identify the correct version of an
+   incoming requeststream and process it accordingly.
+   
+   A corresponding change has been made for CICS TS/3.2 in APAR
+   PK97936 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK97936].
+   
+   The CICS Transaction Server for z/OS Version 4 Release 1 Trace
+   Entries manual, SC34-7013-00, will be updated in the Pipeline
+   manager domain trace points chapter. Two new trace entries will
+   be added after Point ID 'PI 0904'.
+   
+   Under column heading 'Point ID' add  'PI 0905'
+   Under column heading 'Module'   add  'DFHPIWT'
+   Under column heading 'Lvl'      add  'PI Exc'
+   Under column heading 'Type'     add  'Bad CTT version'
+   Under column heading 'Data'     add  '1 PIWT parameter list'
+                                        '2 CTT'
+   
+   Under column heading 'Point ID' add  'PI 0906'
+   Under column heading 'Module'   add  'DFHPIWT'
+   Under column heading 'Lvl'      add  'PI 2'
+   Under column heading 'Type'     add  'CTT'
+   Under column heading 'Data'     add  '1 CTT'
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX TOO LARGE FOR RETAIN, THE FIX MAY BE AVAILABLE IN DLL
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK97169
+   
+   
+ * REPORTED COMPONENT NAME
+   CICSTS V3 Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655M1500
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-25
+   
+   
+ * CLOSED DATE
+   2010-01-26
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK53803 UK53807 UK53827 UK53828
+   
+   
+
+MODULES/MACROS
+ *     DESPIDC  DESPIIS  DESPITH  DESPITRI DESPIWT
+   DFHPIAP  DFHPIAT  DFHPIATA DFHPIATC DFHPIATM DFHPIATT DFHPIDCC
+   DFHPIDCD DFHPIDM  DFHPIDSH DFHPIDUF DFHPIISC DFHPIISI DFHPILN
+   DFHPIMM  DFHPIPM  DFHPIPMA DFHPIPMM DFHPIPMT DFHPIPM2 DFHPIPS
+   DFHPIPSA DFHPIPST DFHPIRE  DFHPIREA DFHPIREM DFHPIRET DFHPIRM
+   DFHPIRS  DFHPIRT  DFHPISN  DFHPISNA DFHPISNC DFHPISND DFHPISNM
+   DFHPISNT DFHPISN1 DFHPISN2 DFHPIST  DFHPITE  DFHPITH  DFHPITQ
+   DFHPITQ1 DFHPITRI DFHPITS  DFHPIUCC DFHPIUCD DFHPIUCH DFHPIUCL
+   DFHPIUCO DFHPIUE  DFHPIWT
+   
+   
+    
+   
+   
+
+Publications Referenced SC34701300 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY UK53803 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK53803]
+   UP10/01/29 P F001
+   
+   
+ * R601 PSY UK53807 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK53807]
+   UP10/01/29 P F001
+   
+   
+ * R602 PSY UK53827 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK53827]
+   UP10/01/29 P F001
+   
+   
+ * R603 PSY UK53828 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK53828]
+   UP10/01/29 P F001
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

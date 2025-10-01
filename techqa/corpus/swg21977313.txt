@@ -1,0 +1,13 @@
+Title: IBM Documentation unclear regarding UNIX Application support for ITM - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Currently there is no AIX application support package available for download . Although in the IBM Tivoli Monitoring for Tivoli Network Manager IP User's Guide is referencing UNIX , instead of just Linux 
+
+CAUSE
+Statements are not very clear about supported application support platforms.
+
+ANSWER
+ITNM 4.1.1 does not provide AIX application support for ITM agent for ITNM. ITNM 4.2 however does provide AIX application support.

@@ -1,0 +1,154 @@
+Title: IBM IC80339: OPTIM PERFORMANCE MANAGER - TABLE USAGE, PERFORMANCE OVERVIEW OR BASELINE COMPARISON DETAIL REPORTS MAY SHOW SQLCODE=-107 OR -727 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Table Usage Report, Performance Overview Report and Baseline
+   Comparison Detail Report show exceptions at the end of the
+   Report when OPM in Installed on DB2 Version 9.1.
+   .
+   There are issues with DB2 Column Names when temporary tables are
+   created in DB2 9.1.The length of the column names cannot exceed
+   30 Characters
+   .
+   Possible errors in OPM Logs (DSServer.log):
+   .
+   org.eclipse.birt.report.data.oda.jdbc.JDBCException: SQL
+   statement does not return a ResultSet object.
+   SQL error #1:DB2 SQL Error: SQLCODE=-107, SQLSTATE=42622,
+   SQLERRMC=OVERALL_POOL_HIT_RATIO_TOT_CHNG;30, DRIVER=3.63.81
+   SQL error #2:DB2 SQL Error: SQLCODE=-727, SQLSTATE=56098,
+   SQLERRMC=2;-107;42622;OVERALL_POOL_HIT_RATIO_TOT_CHNG|30,
+   DRIVER=3.63.81
+   SQL error #3:DB2 SQL Error: SQLCODE=-727, SQLSTATE=56098,
+   SQLERRMC=2;-107;42622;OVERALL_POOL_HIT_RATIO_TOT_CHNG|30,
+   DRIVER=3.63.81;
+       com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error:
+   SQLCODE=-107, SQLSTATE=42622,
+   SQLERRMC=OVERALL_POOL_HIT_RATIO_TOT_CHNG;30, DRIVER=3.63.81
+   .
+   Cannot get the result set metadata.
+       org.eclipse.birt.report.data.oda.jdbc.JDBCException: SQL
+   statement does not return a ResultSet object.
+   SQL error #1:DB2 SQL Error: SQLCODE=-104, SQLSTATE=42601,
+   SQLERRMC=;);AS, DRIVER=3.63.81
+   SQL error #2:DB2 SQL Error: SQLCODE=-727, SQLSTATE=56098,
+   SQLERRMC=2;-104;42601;|)|AS, DRIVER=3.63.81
+   SQL error #3:DB2 SQL Error: SQLCODE=-727, SQLSTATE=56098,
+   SQLERRMC=2;-104;42601;|)|AS, DRIVER=3.63.81;
+       com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error:
+   SQLCODE=-104, SQLSTATE=42601, SQLERRMC=;);AS, DRIVER=3.63.81
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Install OPM on DB2 Version > 9.1.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  There are issues with DB2 column names when temporary tables are
+   created in DB2 9.1. The length of the column names cannot exceed
+   30 Characters.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Install InfoSphere Optim Performance Manager fixpack 5.1.1.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC80339
+   
+   
+ * REPORTED COMPONENT NAME
+   OPT PER MGR DB2
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y9400
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-12
+   
+   
+ * CLOSED DATE
+   2012-05-03
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OPT PER MGR DB2
+   
+   
+ * FIXED COMPONENT ID
+   5724Y9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP

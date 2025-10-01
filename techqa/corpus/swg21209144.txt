@@ -1,0 +1,77 @@
+Title: IBM CL/SUPERSESSION application status - United States
+
+Text:
+ckm VTAM INQUIRE APPLID ACB AVAILABILITY 5608A2400 R147 R470 R471 R472 R473 R474 R475 5608-A24 5608A24 FMID MLS1470 MLS1471 MLS1472 MLS1473 MLS1474 MLS1475 kixinfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How current is the application status displayed on a user's main menu? Where does the status come from and how is it interpreted? 
+
+RESOLVING THE PROBLEM
+When applications are defined to IBM CL/SUPERSESSION, they are added to a monitor queue so their availability can be displayed for users. The application status is updated based on the MONITOR interval defined in the TLVPARM configuration member KLGINGWY. The default interval is five minutes, that is, after an initial VTAM INQUIRY for the application status, a new status will be requested every five minutes for all of the applications currently on the monitor queue.
+CL/SUPERSESSION adds sessions to the monitor queue when they are added to a USER, GROUP, or the GLOBAL profile using the VIGSTAT dialog function with the parameter "MONITOR." APPLDEF'ed sessions are automatically added to the monitor queue. 
+
+
+A monitored application can have one of six status values:
+
+
+ * ACT - An active session currently exists for the VTAM application name. 
+ * INAC - The application is defined to VTAM, but the ACB is not open. 
+ * UNAV - The application is active, but not available for logons. 
+ * STOP - The VTAM application name issued a SETLOGON OPTCD=STOP command. The application is attempting to stop establishing sessions, but new sessions are accepted. 
+ * QSCE - The VTAM application name issued a SETLOGON OPTCD=QUIESCE command. The application is active, but new sessions cannot be established. 
+ * UNDF - The application is not defined to VTAM.
+
+
+(NOTE: an older unsupported dialog function, VIGAPPL, can return an application status of PIMS which means an APPLDEF command contained the IMS operand, but there was no matching IMS command.) 
+
+
+The status of an application is ascertained from the VTAM Inquire Feedback Word: 
+ * ACT
+   The application program is active. The application program has opened its ACB with MACRF=LOGON and has issued SETLOGON OPTCD=START. It has not subsequently issued SETLOGON OPCTD=QUIESCE or SETLOGON OPCTD=STOP. Therefore, the application program can act as the PLU in a session.
+   
+ * INACT
+   The application program is inactive. If this is a same-domain request, the application program's ACB is not open. If this is a cross-domain request, the application program's ACB is not open, or an inactive CDRSC, representing the application, was found in the host of the program that issued the INQUIRE request. No sessions can be established with the application program.
+   
+ * UNAV
+   The application program has opened its ACB with MACRF=NLOGON. Therefore, it does not accept sessions that it did not itself initiate by OPNDST OPTCD=ACQUIRE, and it cannot act as the SLU in a session.
+   
+ * STOP
+   The application program has opened its ACB with MACRF=LOGON and has not yet issued SETLOGON OPTCD=START or has issued subsequent SETLOGON OPCTD=STOP. If SETLOGON OPCTD=START has not yet been issued, the application program is not yet enabled for sessions in which it acts as the SLU and attempts to initiate such sessions are rejected. If SETLOGON OPCTD=STOP is issued, the program requests to temporarily stop establishing sessions. This indicator is by convention only; that is, the SSCP does not take any action to prevent the initiation of sessions with this application program just because this indicator is set. The effect of SETLOGON OPTCD=STOP can be reversed by issuing SETLOGON OPTCD=START.
+   
+ * QSCE
+   VTAM returns this code in two cases. The application either issued SETLOGON OPTCD=QUIESCE, or the application is pending recovery. In either case, no new sessions can be established. To reverse SETLOGON OPTCD=QUIESCE, the application program closes and reopens the ACB. To leave the recovery pending state, the application program issues OPEN ACB.
+   
+ * UNDF
+   The UNDF status is an internal status set when there is no VTAM INQUIRE status, that is, if the INQUIRE fails because the APPLID is not known to VTAM.
+   
+   
+
+Interpreting application status: 
+The current status of a monitored application is retrieved by running the VIGSTAT dialog function with the parameter "GET" which CL/SUPERSESSION does whenever a user returns to the main menu or presses the F5 (REFRESH) key. 
+
+The displayed value of the session's availability is dependent on the interpretation of the status returned from the VTAM INQUIRE. The dialog KLSSTAT is used to update the status for sessions displayed on the user's main menu. 
+
+The status displayed on the main menu can generally be interpreted as follows: 
+ * "Available" or blank or null
+   VIGSTAT returned the value "ACT." Refer to the description above.
+   
+ * "Quiesced"
+   VIGSTAT returned the value "QSCE." Refer to the description above.
+   
+ * "Stopped"
+   VIGSTAT returned the value "STOP." Refer to the description above.
+   
+ * "Unavailable" 
+   VIGSTAT returned the value "INAC" or "UNAV." Refer to the description above.
+   
+ * "Undefined"
+   VIGSTAT returned the value "UNDF." Refer to the description above.
+   
+ * "Unknown"
+   An initial status has not yet been received from the VTAM INQUIRE. The request is possibly still in flight. The status for a newly-added session might briefly display as "Unknown," and change after the F5 Refresh key is pressed. If an "Unknown" status persists, the request may be hung in VTAM; while a session is internally marked as waiting for a VTAM status, a new request won't be made.
+
+
+(NOTE: Additional status such as Setup, Takedown, Active, and Current may also appear. These are CL/SUPERSESSION internal status codes.)  
+
+PRODUCT ALIAS/SYNONYM
+ LS147

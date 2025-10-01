@@ -1,0 +1,21 @@
+Title: IBM Shell required for installing Linux OS agent on Red Hat Linux 5 or 6 - United States
+
+Text:
+RHEL5 RHEL6 ksh shell Tivoli Monitoring Agent for Linux TECHNOTE (FAQ)
+
+QUESTION
+ Which Shell is required to install the Linux OS agent on Red Hat Linux 5 or Red Hat Linux 6? 
+
+CAUSE
+Installation of the agent fails with the error message
+[root@aw-mqha CZF7VEN-622fp2]# sh install.sh /opt/IBM/ITM
+install.sh: line 327: syntax error in conditional expression:
+unexpected token `('
+install.sh: line 327: syntax error near `+(['
+install.sh: line 327: ` [[ "$1" = +([0-9]) ]] && rc=$1'
+
+
+ANSWER
+The ksh package provided by Red Hat is required for installing the Linux OS agent on Red Hat Linux 6. This optional package (ksh-version.rpm Korn shell) which is available on Red Hat Linux 5 and 6 needs to be installed before attempting to install the Linux OS agent. pdksh will not work for installing IBM Tivoli Monitoring agents on Red Hat Linux 6. 
+
+Even though pdksh will work with Red Hat Linux 5, the preferred ksh package is the Red Hat Linux 5 ksh rpm file

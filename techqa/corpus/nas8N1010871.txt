@@ -1,0 +1,58 @@
+Title: IBM Passport Advantage Part Numbers of WebSphere 7.0 on IBM i - United States
+
+Text:
+WAS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using the Search engine in Passport Advantage to find products can be difficult. This document provides the part numbers of the WebSphere Application Server Version 7.0 products on IBM i. 
+
+RESOLVING THE PROBLEM
+Using the Search engine in Passport Advantage to find products can be difficult. This document provides the part numbers of the WebSphere Application Server Version 7.0 products on IBM i. 
+
+To simplify the search engine, here are the part numbers for the WebSphere Application Server Version 7.0 products on IBM i.
+
+
+
+ *  - [http://www.ibm.com/i/c.gif] WebSphere Application Server - Express V7.0 (eAssembly CR77AML) 
+   
+   o Product Installation Media with fixpack 7.0.0.0 (C1F98ML) - 817Mb
+   o Supplements Media (C1F9AML) - 525Mb
+   
+   
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] WebSphere Application Server - Base V7.0 (eAssembly CR77PML) 
+   
+   o Product Installation Media with fixpack 7.0.0.0 (C1G0IML) - 817Mb
+   o Supplements Media (C1G0JML) - 525Mb
+   
+   
+   
+
+
+
+ *  - [http://www.ibm.com/i/c.gif] WebSphere Application Server - Network Deployment V7.0 (eAssembly CR785ML) 
+   
+   o Product Installation Media with fixpack 7.0.0.0 (C1G2ZML) - 818Mb
+   o Supplements Media (C1G30ML) - 525Mb
+   
+   
+   
+
+
+
+ *  - [http://www.ibm.com/i/c.gif] WebSphere Application Server for Developers V7.0 (eAssembly CR78IML) 
+   
+   o Product Installation Media with fixpack 7.0.0.0 (C1FW3ML) - 817Mb
+   o Supplements Media (C1FW4ML) - 525Mb 
+   
+   
+   
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 
+HISTORICAL NUMBER
+ 640374525

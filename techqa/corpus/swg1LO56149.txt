@@ -1,0 +1,133 @@
+Title: IBM LO56149: NOKIA SYNC SETTINGS CHANGED DURING UPGRADE TO 852. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Nokia user had Auto Sync turned off on the device and it was
+   turned back on when upgrading to 852.  This is because there are
+   a number of new settings under the scheduled catagory so the old
+   setting was not preserved.  We will update to preserve a setting
+   of AutoSync Off.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  After upgrade, reset your sync settings on the device.  The new
+   schedule sync settings are very nice.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If customer had turned off AutoSync on their Nokia client then
+   upgraded to 852 AutoSync would get turned back on.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is a result of different sync settings for 852 vs 851.  The
+   server was updated to not change this setting on an upgrade.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  This fix will be in 8521 and any future releases.  See this
+   technote for additional maintenance information:
+   http://www.ibm.com/support/docview.wss?uid=swg24019529 [http://www.ibm.com/support/docview.wss?uid=swg24019529]
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO56149
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS NOTES TRA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6204
+   
+   
+ * REPORTED RELEASE
+   852
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-05
+   
+   
+ * CLOSED DATE
+   2010-12-03
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS NOTES TRA
+   
+   
+ * FIXED COMPONENT ID
+   5724E6204
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R852 PSY
+   UP

@@ -1,0 +1,176 @@
+Title: IBM PM67391: WMQ Z/OS :QUEUE MANAGER ISSUED ABEND ABN=602-00000000 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Description&#65496;
+   Queue manager issued abend  ABN=602-00000000 suddenly,the
+   follow error message could be found in syslog:
+   15:30:21.66:
+   CSQN212E CSQ1 COMMAND SERVER ERROR PUTTING TO REPLY TO QUEUE
+   15:30:21.90:
+   CSQN203I CSQ1 QUEUE MQ.SERVER.REPLY, MQCC=2 MQRC=8025
+   15:30:22.07:
+   IEA794I SVC DUMP HAS CAPTURED:
+   DUMPID=001 REQUESTED BY JOB (MQH2MSTR)
+   DUMP TITLE=CSQ1,ABN=602-00000000,U=DEFSTC , -CS
+   QM1PGW,M=CSQGFRCV,PSW=070C100080FF09FE,ASID=005F
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix&#65496;
+   no.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 0 Modification 1 and Release 1       *
+   *                 Modification 0.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Abend 602-00000000 occurs in CSQM1P1W   *
+   *                      when a message is put to a queue.       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An application putting a message to a queue identifies a
+   suitable handle for an MQGET with MQGMO_SIGNAL waiting on the
+   queue, and calls CSQM1P1W to post the getting application.
+   After CSQM1P1W removes the handle from the get wait chain, but
+   before it performs the post, the getting application closes the
+   queue, causing the handle to be freed.
+   When CSQM1P1W subsequently attempts the post, the handle may
+   have been reused, causing the post to be issued with an invalid
+   ASCB and leading to the reported S602 abend.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Additional serialisation is added between CSQM1P1W and CSQMCLS2
+   to prevent the handle being freed by MQCLOSE while CSQM1P1W is
+   still referring to it.
+   010Y
+   100Y
+   CSQMCLS2
+   CSQMHNDL
+   CSQM1P1W
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM67391
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   010
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-21
+   
+   
+ * CLOSED DATE
+   2012-07-06
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM64639 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM64639]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK80088 UK80089
+   
+   
+
+MODULES/MACROS
+ *  CSQMCLS2 CSQMHNDL CSQM1P1W
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R010 PSY UK80088 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK80088]
+   UP12/07/26 P F207
+   
+   
+ * R100 PSY UK80089 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK80089]
+   UP12/07/26 P F207
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

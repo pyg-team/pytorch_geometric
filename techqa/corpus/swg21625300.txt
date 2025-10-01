@@ -1,0 +1,30 @@
+Title: IBM Decision Center customization not working when deployed along others - United States
+
+Text:
+RTS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When applying more than one business rule management/rule governance or rule authoring extension to Rule Team Server or Decision Center, some of them no longer work. 
+
+SYMPTOM
+The customization works well on its own, but not when packaged into the Rule Team Server or Decision Center WAR/EAR along with other business rule management/rule governance or authoring extensions.
+
+
+CAUSE
+Having several preferences.properties files found on the same resource path within the Decision Center WAR classpath (containing in particular WEB-INF/lib/*.jar + WEB-INF/classes) causes all but one to be ignored, hence the corresponding customization to be inactive.
+
+This would typically happen if you have one file for each extension packaged at the root of the corresponding customization JAR file, as it has been suggested by our sample documentation.
+
+RESOLVING THE PROBLEM
+The solution is therefore to combine all the properties of your customizations into one single preferences.properties file, which you can put in the WEB-INF/classes folder for example.
+
+RELATED INFORMATION
+#ODM V8.0.1 IlrPropertyManager API doc [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.ref.res/html/api/html/ilog/rules/util/prefs/IlrPropertyManager.html]
+Integrating rule authoring extensions into DC V8.0.1 [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dcenter.custom/topics/tpc_custdc_authoring_dc.html]
+Integrating business rule management extensions into DC [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dcenter.custom/topics/tpc_model_rm_integrating.html]
+Repackaging the Decision Center V8.0.1 archive [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.family.config.was/shared_config_topics/tpc_rts_ant_repackaging_was_linux.html]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere ILOG JRules Modules:Rule Team Server (RTS) Platform Independent 7.1, 7.0

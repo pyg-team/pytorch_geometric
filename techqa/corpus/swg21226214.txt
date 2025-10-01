@@ -1,0 +1,80 @@
+Title: IBM Citrix not supported with Rational Application Developer 6.x or WebSphere Studio Application Developer 5.1.x - United States
+
+Text:
+RAD; v6; WSAD; v5; license; citrix; terminal services; multiple users; users; PMR 16952 7TD 000; PMR 86303 379 000; 1226214; v7.0.0.3; RSA TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ For many users, it might not be clear whether Citrix is supported with IBM® Rational® Application Developer (RAD) version 6.x or WebSphere® Studio Application Developer (WSAD) version 5.1.x, or whether it is in violation of your license agreement if you use RAD version 6.x or WSAD version 5.1.x with Citrix. This technote clarifies these issues. 
+
+RESOLVING THE PROBLEM
+Citrix is not supported with RAD version 6 or Rational Software Architect (RSA) version 6. The Citrix support statement is discussed later in this technote. Regarding multiple-use licenses, please see the following licensing information and contact your IBM sales representative for information regarding your specific license: 
+
+Selecting the correct IBM Rational software product license
+http://www-306.ibm.com/software/rational/howtobuy/licensing/ [http://www-306.ibm.com/software/rational/howtobuy/licensing/]
+
+The following information item defines a Floating License and an Authorized User license:
+
+
+ * What is a Floating license?
+ * 
+ * 
+ * 
+ * 
+ * What is an Authorized User license?
+ * 
+ * 
+ * 
+ * 
+ * 
+
+ * Note:
+ * 
+
+--------------------------------------------------------------------------------- 
+Rational Application Developer version 6 support statement for Citrix: 
+
+Some customers have requested that Rational Web Developer, Rational Application Developer, and Rational Software Architect be supported in a Citrix shared/hosted environment, At this time, IBM plans to conduct a technical evaluation to assess supporting Citrix in the future and to assess the engineering effort that would be necessary to deliver support for Citrix. 
+
+Customers who are interested in Citrix support should investigate the floating license type available for RWD, RAD and RSA version 6 that allows multiple concurrent users. This model does not provide a hosted runtime scenario, but does provide a shared licensing model. 
+
+IBM makes no commitment regarding Citrix support at this time. Evaluation or support plans may change at any time at IBM's sole discretion based on market opportunities or other factors. All statements regarding IBM future direction or intent are subject to change or withdrawal without notice and represent goals and objectives only. All information is 
+provided on an "as is" basis, without any warranty of any kind. 
+
+Signed, 
+Beverly DeWitt 
+Product Manager, Rational Developer Tools (2006-07-29) 
+--------------------------------------------------------------------------------- 
+
+Summary: 
+
+IBM does not support Citrix with RAD version 6.x or WSAD version 5.x, but there is a Floating License model available with RAD 6. 
+
+Related Note on Microsoft® Windows® Server 2003 Terminal Services : 
+
+You can use WSAD or RAD with Microsoft Windows Server 2003 Terminal Services, but to obtain any support for the products, it is necessary to be able to reproduce any problem on a standard supported workstation. Although Terminal Services might provide multiple user access to a machine, this does not change the condition that your WSAD or RAD License may only allow use by a single specific individual: 
+
+...An IBM Rational Authorized User license allows a single, specific individual to use an IBM Rational product... 
+
+This applies to any multiple-user access server product or service. 
+
+Always consult your local IBM sales representative regarding any questions or requests you might have regarding your license. 
+
+RSA/RAD v7.0.0.3 to RAD v9.1.0: 
+Citrix Presentation Server is supported by the RSA product family as of the 7.0.0.3 release, provided.. 
+Under certain conditions Citrix Presentation Server is supported by the Rational Software Delivery Platform desktop products as of the 7.0.0.3 release. [http://www-01.ibm.com/support/docview.wss?uid=swg27012391#7003] 
+Note: 
+- The server must run on an operating system that is supported by Rational Application Developer. 
+- You must use a floating license for sharing license keys with multiple users. The use of an authorized user license (or permanent license) is not supported. 
+
+As of RAD 9.1.1 there is no explicit support for Hosted Environments such as Citrix. 
+Refer to: Support for virtualization technologies [www.ibm.com/support/docview.wss?uid=swg21515607]. RELATED INFORMATION
+#Citrix [http://www.citrix.com/lang/English/home.asp]
+Support for virtualization technologies [http://www.ibm.com/support/docview.wss?uid=swg21515607]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Licensing Linux, Windows 6.0, 6.0.0.1, 6.0.1, 6.0.1.1, 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3 Software Development WebSphere Studio Application Developer Install and migration Linux, Windows 5.1.2 
+HISTORICAL NUMBER

@@ -1,0 +1,31 @@
+Title: IBM Webcast: Top Ten reasons to upgrade to WebSphere Cast Iron latest OS 7.x - United States
+
+Text:
+wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; Cast Iron Hypervisor; Cast Iron Live; Cast Iron Physical WEBCAST
+
+ABSTRACT
+ Cast Iron product has been improved and many new features have been introduced in the latest version of OS. This presentation discusses the top ten useful features in detail. The objective of the presentation is to provide the detailed information on the latest features of WebSphere Cast Iron OS.
+
+Level of Difficulty: Intermediate 
+
+Presenter(s): Vani Madupu and Shinsou (Al) Wang
+
+Date: 26 May 2015 
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]Top10UsefulfeaturesV3.pdf [/support/docview.wss?uid=swg27045651&aid=2]Top10UsefulfeaturesV3.pdf [/support/docview.wss?uid=swg27045651&aid=1] 
+Click the PDF file above to play the slide presentation for this Webcast. Right-click and select Save As to store the file on your local computer for later review.
+
+Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]To replay the recording of this Webcast, click on Download Audio [ftp://ftp.software.ibm.com/software/websphere/techexchange/May-26-2015-Madupu-Wang.mp3] (audio in MP3 format, Length: 28 minutes) then open the PDF file above.
+
+Right-click and select Save As to store the file on your local computer for later playback.
+
+Problem listening to the audio replay?
+If you are having a problem listening to the audio when you use a left-click on the audio link above, you need to download the MP3 file to your local computer before playback by doing a right-click and Save As.
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchange [http://www.ibm.com/software/websphere/webcast]
+Time Zone Converter [http://www.timeanddate.com/worldclock/converter.html]

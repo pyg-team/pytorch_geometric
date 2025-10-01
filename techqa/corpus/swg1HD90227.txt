@@ -1,0 +1,186 @@
+Title: IBM HD90227: NO DETAILED DESCRIPTION ABOUT PLMBATCHV5TOV4MIGRATION IN V4 IN TEGRATION MANUAL - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Scenario: -
+   1.  Go to CATIA Infrastructure Users Guide /
+   Basic Tasks / Running
+   Batches / Running Batches
+   Using the Batch Monitor / Accessing
+   the
+   Batch Monitor,
+   following descriptions are found:
+   i) PLMBatchV5ToV4Migration: lets you convert CATIA Version 5
+   models into CATIA Version 4 models. Refer to the
+   Version 5 -
+   V4 Integration User's Guide.
+   ii) The
+   Version 5 to Version 4 migration batch (named
+   "PLMBatchV5ToV4Migration") is now available directly from
+   the
+   Batch Monitor.
+   iii) Also, only CATProduct &
+   CATPart are displayed as the File Type
+   for
+   the input when running the PLMBatchV5ToV4Migration  batch.
+   RESULT:
+   (1) There is no description about
+   PLMBatchV5ToV4Migration in the V4
+   integration manual
+   (2) The
+   user can see while running the batch that only CATProduct &
+   CATPart are allowed However,since there is no documentation
+   regarding
+   the batch customer does not know what are the
+   supported file types
+   EXPECTED RESULT :
+   (1)  The
+   documentation should have all the information about
+   PLMBatchV5ToV4Migration in the V4 integration manual
+   (2)
+   The documentation should also include the supported file types
+   for PLMBatchV5ToV4Migration.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Scenario: -
+   1.  Go to CATIA Infrastructure Users Guide / Basic Tasks /
+   Running
+         Batches / Running Batches Using the Batch Monitor /
+   Accessing the
+         Batch Monitor, following descriptions are found:
+   
+   i) PLMBatchV5ToV4Migration: lets you convert CATIA Version 5
+   
+            models into CATIA Version 4 models. Refer to the
+   Version 5 -
+            V4 Integration User's Guide.
+   ii) The Version 5 to Version 4 migration batch (named
+   
+           "PLMBatchV5ToV4Migration") is now available directly
+   from the
+            Batch Monitor.
+   iii) Also, only CATProduct & CATPart are displayed as the
+   File Type
+         for the input when running the PLMBatchV5ToV4Migration
+   batch.
+   RESULT:
+   (1) There is no description about PLMBatchV5ToV4Migration in
+   the V4 integration manual
+   (2) The user can see while running the batch that only
+   CATProduct & CATPart are allowed However,since there is no
+   documentation regarding the batch customer does not know what
+   are the supported file types
+   EXPECTED RESULT :
+   (1)  The documentation should have all the information about
+   PLMBatchV5ToV4Migration in the V4 integration manual
+   (2)  The documentation should also include the supported file
+   types for PLMBatchV5ToV4Migration.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS MODIFICATION WILL BE INCLUDED IN THE DOCUMENTATION
+   DELIVERED WITH Virtual Design VERSION V5R21
+   NOTE THAT DOCUMENTATION WILL ALSO BE INCLUDED IN  V5R20 SP1.
+   Additional Closure Information:
+   INCIDENT DIAGNOSIS:
+   There is no description about PLMBatchV5ToV4Migration in V4
+   Integration manual
+   .
+   Documentation change:
+   The description about PLMBatchV5ToV4Migration  has been added
+   under:
+   Manual: V4 Integartion
+   Chapter: User Task
+   Converting CATIA Version 5 Models into CATIA Version 4 with
+   the PLMV5ToV4Migration Batch
+   Documentation Text
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD90227
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   519
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-29
+   
+   
+ * CLOSED DATE
+   2009-12-14
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,56 @@
+Title: IBM Software support for IBM WebSphere Commerce in a VMware environment - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This note clarifies the support provided when IBM WebSphere Commerce customers operate in a VMware (virtualization) environment. 
+
+CONTENT
+IBM WebSphere Commerce Support policy statement for VMware environments: 
+
+IBM WebSphere Commerce Support accepts usage or defect-related service requests for IBM WebSphere Commerce Express, IBM WebSphere Commerce Professional and IBM WebSphere Commerce Enterprise editions running under Linux or Microsoft Windows within a VMware ESX 3.5 Server, or a later version. This support statement applies to IBM WebSphere Commerce V6.0 and Version 7.0.
+
+The additional software stack products might have their own unique support requirements and they must be honored as well. For example, here are the support statements from:
+
+
+ *  IBM DB2 [http://www.ibm.com/developerworks/wikis/display/im/DB2+Virtualization+Support] IBM WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg27004311]
+   
+
+Due to the wide availability of multi-core server architectures, it may also become necessary to run WebSphere Commerce in a virtualized environment, such that the correct proportion of server capacity is utilized in order to remain within software licensing compliance guidelines. For example, running WebSphere Commerce with VMware helps to ensure that the appropriate number of licensed Processor Value Units (PVU) are deployed for only the allowable amount of capacity available on a physical server machine. 
+
+Resolving technical support problems 
+If you submit a standard usage or defect-related service request, and you are running IBM WebSphere Commerce in a VMware ESX Server environment, IBM WebSphere Commerce Support will make reasonable efforts to resolve the problem. If it appears that the problem is unique to the VMware environment, IBM might require you to recreate the problem in a native, non-VMware environment. 
+
+Performance and capacity considerations 
+Partitioning of hardware into multiple virtual servers can have a dramatic affect on performance. Application Servers can be very sensitive to processor caching and overall memory constraints. Moreover, software virtualization resource availability for Application Server can be completely unpredictable. IBM WebSphere Commerce can make no guarantees with respect to performance or scalability in a virtualized environment. 
+Furthermore, you should expect that part of your system capacity will be used by the virtualization software to manage and service resource requests. Depending on your virtualization configuration and use case scenarios, the overhead of operating in virtualized environment could be as much as 30% or more of your overall native, non-VMware IBM WebSphere Commerce available capacity. 
+
+Before deploying to production on the virtualized environment, perform adequate performance, scalability, and capacity testing to ensure that your site meets your business requirements (such as response time and throughput). 
+
+For information about configuring your software stack products in a virtualized environment, see the most current product documentation. For example: 
+ * Using IBM WebSphere Application Server in a VMware ESX 3.5 Server environment [http://www.vmware.com/partners/vmware/ESX_WAS_WP.pdf]
+   
+   It is recommended that an IBM WebSphere Commerce virtualized environment be in a single tenant configuration and not on over-committed hardware.
+   
+ * Using IBM DB2 in a VMware ESX 3.5 Server environment [http://www.vmware.com/pdf/db2_scalability_wp_vi3.pdf]
+   
+   It is recommended that you operate the IBM WebSphere Commerce database within a native, non-VMware environment.
+
+
+Notes: 
+1. The preceding statement is a clarification for supporting IBM WebSphere Commerce within a VMware ESX environment. 
+
+2. IBM Software products relying on virtualization provided by VMware are eligible for sub-capacity Software licensing [http://www-01.ibm.com/software/lotus/passportadvantage/subcapacityattachments.html]. 
+
+3. VMware is a third-party (non-IBM) software product that provides a hypervisor environment. For additional VMware vendor and product information go to URL: http://www.vmware.com [http://www.vmware.com/] 
+
+3. You can refer to IBM Software Support Virtualization Policy for IBM Software [http://www-01.ibm.com/software/support/virtualization_policy.html] 
+
+
+ORIGINAL PUBLICATION DATE
+ 2009/6/9 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce WebSphere Commerce - Express Commerce WebSphere Commerce Professional

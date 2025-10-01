@@ -1,0 +1,146 @@
+Title: IBM IY65038: POLICY SERVER CANNOT START AFTER CHANGING THE PASSWORD OF THE LDAP SSL KDB (AM_KEY.KDB) AND USING THE STASH FILE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Access Manager 5.1 on Windows2k (Did not test any other
+   Operating Systems), user has the Policy Server configured for
+   SSL to LDAP.  User decided to change the password of the
+   password via the GSK7IKM utility and storing that password in a
+   stash file as the previous password was stored.  When restarting
+   the Policy Server, the application failed to start via the
+   services control panel. (I also verified that it failed via a
+   commandline start via the foreground).
+   
+   I was still able to open up the kdb file with the new password
+   via IKeyMan and also LDAP was able to restart without any
+   issues.
+   
+   When I went back into GSK7IKM and changed the password, saving
+   it to stash, back to the orginal, the Policy Server started up
+   successfully.
+   
+   I have reproduced all of this on my system in the Lab.
+   
+   I did one other test in which I changed the password of the
+   am_key.kdb and then went into the config file of the Policy
+   Server and added the line
+   ssl-keyfile-pwd = <password>.
+   
+   This DID allow the Policy Server to start using the new
+   password.
+   
+   I am guessing the problem is in how the Policy Server reads the
+   stash file, or a caching problem in the Policy Server.
+   
+   Please review.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the conf file to specify the password using the
+   ssl-keyfile-pwd = <password>
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   This issue has been unreproducible in the L3 la
+   b environment.  The customer was able to resolve this issue by u
+   sing "pdadmin -local config modify...." command to change the pa
+   ssword for the Key Database file.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY65038
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR E-BU
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0800
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-11-19
+   
+   
+ * CLOSED DATE
+   2004-12-01
+   
+   
+ * LAST MODIFIED DATE
+   2004-12-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ACCESS MGR E-BU
+   
+   
+ * FIXED COMPONENT ID
+   5724C0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSN
+   UP

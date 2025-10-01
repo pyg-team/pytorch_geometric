@@ -1,0 +1,96 @@
+Title: IBM Collecting Data: for Tivoli Business Service Manager - Issues with Events - United States
+
+Text:
+5724C5100; Collecting Data; Collecting Data; Collecting Data; MustGather; MustGatherDocument TECHNOTE (FAQ)
+
+QUESTION
+ What to collect for IBM support to help analyze and understand a TBSM event issue? 
+
+ANSWER
+Update PMR, Provide the following items to allow support to analyze a TBSM problems with events:
+
+1) Provide a concise problem description that includes things like:
+a timeline, sequence of events, any error messages issued, and a scenario on how to recreate the problem you encountered. 
+
+2) Send TBSM version information as outlined in Version Technote [http://www.ibm.com/support/docview.wss?uid=swg21509592]
+
+3) Can you recreate the Issue? if so and your TBSM system is:
+TBSM 4.2.1 FP3 (or greater) OR TBSM 6.1 FP1 (or greater) OR any version of TBSM 6.1.1, Then please turn on event logging: (for other TBSM versions leave default trace levels): 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+4) If you can recreate the issue: Try sending a test event from a TBSM service instance. 
+(Send test Event)  * http://www-01.ibm.com/support/knowledgecenter/SSSPFK_6.1.1/com.ibm.tivoli.itbsm.doc_6.1.1/ServiceConfigurationGuide/bsmu_vwmt_send_test_events.html?lang=en
+
+
+5) Collect TBSM server logs see Log and Trace Files Technote [http://www-1.ibm.com/support/docview.wss?rs=767&uid=swg21509617] : (See section Log Collection (on Unix OR on Windows): [http://www-304.ibm.com/support/docview.wss?rs=767&uid=swg21509491] [http://www-1.ibm.com/support/docview.wss?rs=767&uid=swg21509617] 
+ * 
+
+
+
+6) Also COLLECT the following screen shots from your environment to help troubleshoot: 
+(see attachment for examples of these screen shots) 
+ * 
+ * Problem Event
+ * 
+ * 
+ * 
+ * 
+ * Problem Event
+ * 
+ * Event details window
+ * 
+ * Identifier 
+   Node 
+   RAD_ServiceName 
+   RAD_FilterIDList 
+   RAD_UserFunctionName 
+   RAD_FunctionName 
+   RAD_ServiceTypeID 
+   Serial 
+   Summary 
+   Severity 
+   (and any fields that are defined in an incoming status rule that may be involved in for this PMR) 
+ * 
+ * 
+ * Problem Event
+ * 
+ * Identification fields
+ * 
+ * 
+ * 
+ * 
+ * Problem Event
+ * 
+ * Rules
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * [Preview data ...]
+ * 
+ * 
+ * 
+ * 
+ * Problem Event
+ * 
+ * 
+ * 
+ * 
+ * Event
+ * 
+ * Rule
+ * 
+
+Event_Example_Shots.doc [/support/docview.wss?uid=swg21598760&aid=2]Event_Example_Shots.doc [/support/docview.wss?uid=swg21598760&aid=1]

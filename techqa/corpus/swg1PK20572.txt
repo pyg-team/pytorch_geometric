@@ -1,0 +1,192 @@
+Title: IBM PK20572: CUSTOMER CAN'T IMPORT A QUERY IF ITS SIZE IS MORE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I have test it and clearquest close up without errors he
+   disappears immediately as soon as you start the import, also the
+   trace file didn't catch any error.
+   ran a trace using Dependency Walker and got the following in the
+   trace:
+   [CQ 67.853, 20060227, 21:54:31, 6512, 6780, 398] Throw: Cannot
+   open the query from file C:\Escalations\RATLC00980497\DW Wilma -
+   RTL_ALL.qry: Out of memory..
+   Second chance exception 0xC0000005 (Access Violation) occurred
+   in "USER32.DLL" at address 0x77D4B226.
+   Exited "CLEARQUEST.EXE" (process 0x1A7C) with code -1073741819
+   (0xC0000005).
+   Entrypoint reached. All implicit modules have been loaded.
+   So it looks like ClearQuest is running out of memory when trying
+   to import the query
+   For the customer schema and the query please see the
+   escalation:RATLC00980497
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ClearQuest runs out of stack memory when processing a query
+   expr
+   ession more than 2000 terms deep.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Although this code is subject to a memory limitation, it is
+   behaving normally. For the reasons explained here, we do not
+   intend to change this code.
+   In this case, the customer created a very large query with
+   over 2000 terms.  As I understand it, they were of the form
+   Id = 100 or Id = 102 or Id = 103 or Id = 125 or ..., and so
+   on for 2000+ terms.  Obviously no human would ever type in
+   such a monster expression, but they used a program to
+   generate the query.  Essentially, they were using the query
+   to indicate that certain defects belonged to a certain set,
+   the set of defects listed in the query.  There are of course
+   many other ways of indicating set memberships in ClearQuest,
+   and in database applications in general.  In ClearQuest, one
+   could have applied a keyword to all defects in the set, for
+   example, or perhaps some other field could have been set to
+   a certain value.  A very simple query would then return all
+   the defects in the set.
+   When ClearQuest processes queries, it does so using a
+   recursive algorithm.  To evaluate a query, for example, it
+   is natural to call a routine that evaluates an expression.
+   When this routine finds a subexpression, such as another
+   term in the expression, it just calls itself since the
+   subexpression is just another expression and should be
+   parsed and processed like any other expression.  When
+   queries are exported and imported, serialization and
+   deserialization routines also use recursive calls to process
+   the query.  Any such recursive routine will put a new call
+   frame on the call stack each time it is called.  When it is
+   called recursively 2000+ times deep, it will put 2000+ call
+   frames on the stack.  This will eventually cause stack
+   memory to run out, giving the error that was observed in
+   this case.  There are thus at least three algorithms that
+   recursively process queries (export, import, and evaluation)
+   and each will have some limit at which it runs out of
+   memory.  In this case, the deserialization algorithm used on
+   import is the one that ran out of memory first, but even if
+   that algorithm could be rewritten to use less memory, one of
+   the other algorithms will just run out of memory at some
+   somewhat higher limit. Even the rewritten algorithm will
+   still have some limit, even if it is higher than before.
+   Trying to rewrite algorithms to squeeze out some extra
+   memory usage will thus not help the customer as long as they
+   use the monster-expression approach.  These enormous
+   expressions will always be easier to generate than to
+   process, given finite memory.
+   There are also substantial risks to rewriting these
+   algorithms.  They work well as they are written now and they
+   use industry-standard recursive expression-evaluation
+   algorithms that have stood the test of time, not just in
+   ClearQuest but in many other applications, such as
+   compilers, as well.  Rewriting them is not something that
+   makes sense for us to do.
+   The solution should thus be for the customer to use a
+   different way of indicating set memberships of database
+   records.  There are many ways of using a database properly
+   to do so.  Using ClearQuest keywords is one approach, as
+   mentioned above.  It might also be possible to have a binary
+   field that indicates the membership.  This field could be
+   indexed if needed for good performance.  Setting certain
+   values in integer or text fields might be another way. The
+   best way depends on the customer's specific requirements,
+   but modern relational databases offer many good ways to do
+   so.  With all these approaches, the corresponding queries
+   are very small, consisting only of a single or a handful of
+   terms. My understanding is that the customer is already
+   using some such approach as a "workaround" to get past the
+   memory limitation.  Their "workaround" should also be their
+   permanent solution.
+   In summary, we do not plan to rewrite our algorithms that
+   process query expressions.  They work well as they are, they
+   will always have memory limitations, and relational
+   databases offer a number of better ways of indicating the
+   set memberships the customer is trying to represent.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK20572
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3600
+   
+   
+ * REPORTED RELEASE
+   604
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-02-28
+   
+   
+ * CLOSED DATE
+   2006-12-01
+   
+   
+ * LAST MODIFIED DATE
+   2006-12-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

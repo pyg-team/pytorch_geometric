@@ -1,0 +1,90 @@
+Title: IBM Performance issue on Mac OS X Launching and Closing SPSS Statistics 21 or 22. - United States
+
+Text:
+Mac OS X; Performance; open; close; exit; launch; 10.6.x 10.7.x 10.8.x 10.9.x TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ With SPSS Statistics 21 or 22 software installed on Mac OS X. 
+The software was running normally, but for what ever reason, the program might fail or close improperly by using Force Quit several times. 
+
+CAUSE
+This has been identified as a product defect under APAR PM90266
+
+ENVIRONMENT
+This technote applies with any Mac OS X compatible with Statistics 21 or 22, Not version 23. 
+
+- IBM SPSS Statistics 21 release is supported on Apple Macintosh 10.6 (Snow Leopard), 10.7 (Lion), and 10.8 (Mountain Lion) with Intel processor. 
+
+- IBM SPSS Statistics 22 release is supported on Apple Macintosh 10.7 (Lion), and 10.8 (Mountain Lion) with Intel processor. 
+Note: IBM SPSS Statistics 22 for Macintosh (Mavericks, OSX 10.9 Operating System) is not officially supported until Statistics 22 FixPack 1 is released. 
+
+
+Note: Windows computers see 
+Technote 1652535
+http://www-01.ibm.com/support/docview.wss?uid=swg21652535 [http://www-01.ibm.com/support/docview.wss?uid=swg21652535]
+
+Note: For Statistics 23.0 Windows or Mac OS X, refer to technote: 1640411
+http://www-01.ibm.com/support/docview.wss?uid=swg21640411 [http://www-01.ibm.com/support/docview.wss?uid=swg21640411]
+
+
+DIAGNOSING THE PROBLEM
+One or more of the following symptoms might occur that this resolution can solve. 
+
+(1) Statistics takes an abnormally longer time to start and close than when the software was initially installed. 
+
+(2) Very slow response and performance with using the software. 
+
+(3) The 'Data Editor' menu no longer appears under the Main menu bar.
+
+
+RESOLVING THE PROBLEM
+Delete the following file: com.ibm.spss.plist on your Macintosh to dramatically reduce the opening and closing of the Statistics software. 
+
+- You can delete it by opening the Finder and locate the Library/Preferences folder: /Library/Preferences/com.ibm.spss.plist
+(1) Restart your Mac.
+(2) Open 'Finder'.
+(3) Select the 'Home' (house) icon (folder) in the left-hand pane.
+(4) Select the 'Go' menu at top of screen.
+(5) Press the 'Option' key. The list of menu options will now include 'Library'.
+(6) Select the 'Library' menu option.
+(7) Open the 'Preferences' folder.
+(8) Rename the com.ibm.spss.plist object to old_com.ibm.spss.plist 
+
+
+- Another option is to use the Terminal application and do the following:
+rm -fR ~/Library/Preferences/com.ibm.spss.plist 
+
+ 
+
+Finish and test your changes by doing the following: 
+
+(9) Launch Statistics
+(10) Work with the program a bit.
+(11) Close the software (It should be quicker, do not force quit)
+(12) Re-launch Statistics
+(13) Work with the program a bit.
+(14) Close the software (do not force quit)
+(15) Launch the software 
+
+
+NOTE: When you launch Statistics for the first time, it will take a little longer than subsequent launches, until you reboot your computer again. This is related to Java initialization routines. 
+
+
+- FYI: Additionally, if you are using Mac OSX Mavericks 10.9.x, you need to stop the process that protects this file and restores it (it is deleted):
+
+Since OSX 10.9.x Mavericks a cached copy of your "plist" file is stored that uses a background process: CFPREFSD
+Deleting the "plist" file and restarting SPSS Statistics does not create a new copy of these files.
+Rather, Mavericks restore its cached copy. 
+Only by stopping the "cfprefsd" process and starting SPSS Statistics, will it generate a new "plist" preference file and default toolbar.
+
+When you go to Finder - Applications - Utilities and open Activity Monitor on the 10.9.x computer you see that there is a CFPREFSD process visible for root user and for the current logged in user.
+You need to stop the CFPREFSD process for the current user. Do so in the Terminal application by running the following command:
+
+killall -u {CURRENT_USER} cfprefsd
+
+Where {CURRENT_USER} is replaced with the person's user ID. One can get the user ID by typing "whoami" at a Terminal prompt. 
+
+Should removing these files and running the program does not resolve the issue, you might need to remove all of them and reinstall the program.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

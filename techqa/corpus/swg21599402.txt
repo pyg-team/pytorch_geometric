@@ -1,0 +1,17 @@
+Title: IBM How to log out from Case Manager Client in SSO environments - United States
+
+Text:
+icm; icm sso; icm sso logout; icm tam sso; icm siteminder sso; icm spnego sso; sso logout; case manager sso; case manager sso logout; siteminder TECHNOTE (FAQ)
+
+QUESTION
+ When IBM Case Manager is configured for Single Sign-On (SSO) with Tivoli Access Manager or Kerberos/SPNEGO, what is the correct procedure to log out from Case Manager Client? 
+
+ANSWER
+When IBM Case Manager is configured for SSO with Tivoli Access Manager or Kerberos/SPNEGO or CA SiteMinder, the user should close the browser to log out of the current Case Manager Client session. Even if the user clicks the Log out button on the Case Manager Client, the recommendation is to also close the browser. Closing the browser ensures that the current session of Case Manager Client is ended.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ Advanced Case Management
+Case Manager
+IBM Case Manager

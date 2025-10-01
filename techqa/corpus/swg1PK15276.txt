@@ -1,0 +1,231 @@
+Title: IBM PK15276: INCORRECT FILTER MAPPING: VIOLATES THE SERVLET SPECIFICATION ON HANDLING OF VALID PARTIAL REQUESTS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Incorrect Filter Mapping: WAS 6.0.2 violates the servlet
+   specification on handling of valid partial requests.
+   
+   
+   "If a Web container receives a valid partial request, the Web
+   container
+   must examine the welcome file list defined in the deployment
+   descriptor.
+   The welcome file list is an ordered list of partial URLs with no
+   trailing or leading /. The Web server must append each welcome
+   file in
+   the order specified in the deployment
+   descriptor to the partial request and check whether a static
+   resource or
+   servlet in the WAR is mapped to that request URI. The Web
+   container must
+   send the request to the first resource in the WAR that matches.
+   The
+   container may send the request to the welcome resource with a
+   forward, a
+   redirect, or a container specific mechanism that is
+   indistinguishable
+   from a direct request."
+   
+   WAS v6 correctly translated this request to
+   http://host:port/portal/index.jsp [http://host:port/portal/index.jsp]
+   But it didn't invoke our filter (e.g.,
+   EnvironmentalWrapperFilter)
+   before it evaluated the 'index.jsp'.
+   
+   If we issued the request like this:
+   http://host:port/portal/index.jsp, [http://host:port/portal/index.jsp,]
+   we observed that our filter was invoked before the 'index.jsp'
+   was
+   evaluated.
+   
+   According servlet specification, these two requests
+   
+   http://host:port/portal
+   http://host:port/portal/index.jsp [http://host:port/portalhttp://host:port/portal/index.jsp]
+   
+   This behavior is not correct and only happens in WAS 6.0.2. On
+   versions
+   prior to WAS 6.0.1.2, hitting either of the above URLs results
+   in the
+   filter being correctly invoked.
+   
+   It appears to be bug introduced between WAS 6.0.1.2 and WAS
+   6.0.2
+   
+   Workaround:As a temporary workaround, downgrade the WAS version
+   to 6.0.1.2.It works fine prior to the WAS 6.0.1.2 level.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround:As a temporary workaround, downgrade the WAS version
+   to 6.0.1.2.It works fine prior to the WAS 6.0.1.2 level.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of Websphere Application Server        *
+   *                 version 6.0.2, who use Servlet Filters in    *
+   *                 their applications.                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Filters configured are not invoked for  *
+   *                      a Welcome Page when request is made     *
+   *                      with a partial URI (/).                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Whenever a request is made with a partial URI for a Welcome
+   page, the webcontainer uses forward dispatcher mechanism to
+   serve the request.
+   
+   According to the servlet Spec 2.4/WAS 6 onwards the Filter
+   mechanism is re-written to serve only direct requests (and not
+   forward/include requests) unless specificed explicitly in the
+   web.xml by using <dispatcher> tags.
+   
+   This resulted in the above mentioned problem.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code Changes has been made to make sure that the configured
+   Filters are invoked for any request made with a partial URI
+   (either for a Welcome Page or Directory browsing).
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fixpack 6.0.2.7.
+   
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK15276
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-11-16
+   
+   
+ * CLOSED DATE
+   2005-12-28
+   
+   
+ * LAST MODIFIED DATE
+   2006-01-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  WEBCONTA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP

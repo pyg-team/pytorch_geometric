@@ -1,0 +1,45 @@
+Title: IBM CFGACCWEB2 - WebSphere Profile Does Not Exist Error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides information about a problem where the IBM Access for Web's CFGACCWEB2 command fails with the following message: The WebSphere profile does not exist. 
+
+RESOLVING THE PROBLEM
+The Access for Web CFGACCWEB2 command fails with the following message: 
+
+The WebSphere profile does not exist.
+
+The cmds.log file is not created and /qibm/UserData/Access/Web2/logs/cmdstrace.log shows the following error:
+
+...
+Get the path where the WAS profile was created.
+Retrieving the installation path of the WebSphere profile: was61svr
+Verify this path exists: /QIBM/UserData/WebSphere/AppServer/V61/Express/profileRegistry/profileregistry.xml
+Checking to see if path exists: /QIBM/UserData/WebSphere/AppServer/V61/Express/profileRegistry/profileregistry.xml
+Exception occured checking to see if the path exists.
+An exception occured logging to cmds.log.
+The path/file was not found.
+An exception occured logging to cmds.log.
+The WebSphere profile path retrieved was set to 'null'.
+The WebSphere profile does not exist.
+Writing this value to the data queue: 4
+...
+
+To correct the error, you must verify that QSERVER subsystem is active and QPWFSERVSO job is active under it. 
+
+Restricting access to the host servers will cause all or portions of Access for Web to fail. This information is included in the Info Center in a section on Exit Programs. It is equally true that if the host servers are not running the Access for Web configuration will fail. 
+
+To link to the topic in the V6R1 Info Center, go to the following URL:
+http://publib.boulder.ibm.com/infocenter/iseries/v6r1m0/topic/rzamm/rzammsecurity.htm [http://publib.boulder.ibm.com/infocenter/iseries/v6r1m0/topic/rzamm/rzammsecurity.htm]
+
+To link to the topic in the V7R1 Info Center, go to the following URL:
+http://publib.boulder.ibm.com/infocenter/iseries/v7r1m0/index.jsp?topic=%2Frzamm%2Frzammsecurity.htm [http://publib.boulder.ibm.com/infocenter/iseries/v7r1m0/index.jsp?topic=%2Frzamm%2Frzammsecurity.htm]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 578575486

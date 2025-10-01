@@ -1,0 +1,143 @@
+Title: IBM IZ63116: SUBTRACTIONS IN EVENT READER FILTERS CAUSE PROCESSING TO FAIL - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+5.1.1-TIV-NCI-FP0003-Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=5.1.1-TIV-NCI-FP0003-Linux&source=SAR]
+5.1.1-TIV-NCI-FP0003-HPUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=5.1.1-TIV-NCI-FP0003-HPUX&source=SAR]
+5.1.1-TIV-NCI-FP0003-win [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=5.1.1-TIV-NCI-FP0003-win&source=SAR]
+5.1.1-TIV-NCI-FP0003-Solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=5.1.1-TIV-NCI-FP0003-Solaris&source=SAR]
+5.1.1-TIV-NCI-FP0003-Linuxs390 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=5.1.1-TIV-NCI-FP0003-Linuxs390&source=SAR]
+5.1.1-TIV-NCI-FP0003-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=5.1.1-TIV-NCI-FP0003-aix&source=SAR]
+IBM Tivoli Netcool/Impact V5.1.1 Fix Pack 1 (5.1.1-TIV-NCI-FP0001) [http://www-01.ibm.com/support/docview.wss?uid=swg24026299]
+IBM Tivoli Netcool/Impact V5.1.1 Fix Pack 2 (5.1.1-TIV-NCI-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24031659]
+IBM Tivoli Netcool/Impact V5.1.1 Fix Pack 3 (5.1.1-TIV-NCI-FP0003) [http://www-01.ibm.com/support/docview.wss?uid=swg24036880]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using a subtraction sign in an Impact event reader filter
+   
+   e.g. FirstOccurrence > LastOccurrence - 60
+   
+   prevents event processing.  Errors in netcool.log
+   
+   com.micromuse.common.parser.PolicyException: Unhandled
+   Exception: java.lang.ArithmeticException in policy:  at line: 1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Where possible, avoid using subtractions in your event reader
+   filter.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Filter with subrtraction causes Reader not to work
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  If Event Reader filter includes non impact operation such as:
+   LastOcurrence > getdate - 60 , it throws an exception with
+   invalid operands. getdate is an omnibus filter not Impact's. If
+   the user want to do that, one has to add a property to avoid the
+   check aganist the filter.
+   impact.<readername>.parserestrictionfilter=false.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ63116
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-15
+   
+   
+ * CLOSED DATE
+   2009-12-31
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP

@@ -1,0 +1,223 @@
+Title: IBM PI19546: IMPORT VERSION WITH TEMPLATE GIVES "ERROR CREATING NEW VERSION: NULL" - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Import version with Template gives "Error Creating New Version:
+   null"
+   
+   How to reproduce:
+   1) Create a Component. &#194;&#160;I used a source config type of "File
+   System (Versioned).
+   2) Import Versions:
+   
+   RESULT:
+   
+   Import is successful
+   
+   3) Create a Template. &#194;&#160;In the Template, specify a Source Config
+   Type. &#194;&#160;Again, I used "File System (Versioned).
+   4) Associate this Template with the Component you created above.
+   5) Import Versions:
+   
+   RESULT:
+   
+   You get the following error:
+   
+   Error Creating New Version: null
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Any                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Import version with Template gives "Error Creating New       *
+   * Version:                                                     *
+   * null"                                                        *
+   *                                                              *
+   * How to reproduce:                                            *
+   * 1) Create a Component. &#195;&#130; I used a source config type of     *
+   * "File                                                        *
+   * System (Versioned).                                          *
+   * 2) Import Versions:                                          *
+   *                                                              *
+   * RESULT:                                                      *
+   *                                                              *
+   * Import is successful                                         *
+   *                                                              *
+   * 3) Create a Template. &#195;&#130; In the Template, specify a Source   *
+   * Config                                                       *
+   * Type. &#195;&#130; Again, I used "File System (Versioned).             *
+   * 4) Associate this Template with the Component you created    *
+   * above.                                                       *
+   * 5) Import Versions:                                          *
+   *                                                              *
+   * RESULT:                                                      *
+   *                                                              *
+   * You get the following error:                                 *
+   *                                                              *
+   * Error Creating New Version: null                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to UCD version 6.2.0.0                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in UCD version 6.2.0.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI19546
+   
+   
+ * REPORTED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * REPORTED COMPONENT ID
+   5725M5400
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-06-06
+   
+   
+ * CLOSED DATE
+   2015-10-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * FIXED COMPONENT ID
+   5725M5400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP
+   
+   
+ * R600 PSY
+   UP
+   
+   
+ * R601 PSN
+   UP
+   
+   
+ * R601 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R610 PSY
+   UP
+   
+   
+ * R611 PSN
+   UP
+   
+   
+ * R611 PSY
+   UP
+   
+   
+ * R612 PSN
+   UP
+   
+   
+ * R612 PSY
+   UP
+   
+   
+ * R613 PSN
+   UP
+   
+   
+ * R613 PSY
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R620 PSY
+   UP

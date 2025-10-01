@@ -1,0 +1,181 @@
+Title: IBM PK56676: THE VERSION 6.1 DOCUMENTATION ON THE PROFILE CREATION BEHAVIOR FOR STARTING UP AS A WINDOWS SERVICE NEEDS TO BE CLARIFIED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Information Center for WebSphere Application Server
+   Version 6.1 needs to be clarified as it relates to starting
+   a profile as a Microsoft Windows service.
+   
+   During the creation of profile in 6.0.X the user will get a
+   option at the "Windows service definition" step to select
+   startup type with "Manual, Automatic or Disabled"
+   
+   In WebSphere Application Server V6.1, the default
+   value for the Windows Service is automatic. This information
+   is explained in the "Default values for the Windows Service"
+   section of the following topics:
+   -"Creating an application server profile"
+   (tpro_instancessaappserv)
+   -"Creating a deployment manager profile" (tpro_instancesdmgr)
+   -"Creating a cell profile" (tpro_instancescell)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Change the startup type to "manual" in the Windows Services
+   panel.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: This APAR affects users who are creating a   *
+   *                 cell profile, a deployment manager           *
+   *                 profile, or an application server profile    *
+   *                 using the Profile Management tool, and       *
+   *                 wanting to run the resulting process as a    *
+   *                 Microsoft Windows service. This APAR         *
+   *                 applies to WebSphere Application Server      *
+   *                 Version 6.1.                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The documentation does not provide      *
+   *                      information on changing the default     *
+   *                      startup type for the Windows service    *
+   *                      from automatic to another value.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The documentation for "Creating a deployment manager profile",
+   "Creating a cell profile", and "Creating an application server
+   profile" in the section on the Windows service defaults says
+   "The startup type is automatic. The values for the startup
+   type are those values that the Windows operating system
+   imposes." However, the documentation does not tell the user
+   how to change the startup type.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following information has been appended to "Creating a
+   deployment manager profile", "Creating a cell profile", and
+   "Creating an application server profile" topics:
+   "If you want a startup type other than automatic, you can
+   either select another available option from the drop down list
+   or change the startup type after you create the profile. You
+   can also remove the created service after profile creation,
+   and add it later with the desired startup type. You can choose
+   not to create a service at profile creation time and
+   optionally create it later with the desired startup type."
+   
+   Date that the information will be available externally to
+   customers:
+   Periodically, we update the documentation in our information
+   centers. Thus, the changes might have been made before you
+   read this text. To access the latest on-line documentation,
+   complete the following steps:
+   1. Go to the product library page at the following Web site:
+   http://www.ibm.com/software/webservers/appserv/library [http://www.ibm.com/software/webservers/appserv/library]
+   2. Locate the appropriate version and product.
+   3. Under "Documentation - Information center format", click
+   the appropriate link. In most cases, the WebSphere Application
+   Server documentation is available in both an online version
+   and in an IBM Eclipse Help System version. For more
+   information on the IBM Eclipse Help system, see the following
+   Web site: http://www.alphaworks.ibm.com/tech/iehs [http://www.alphaworks.ibm.com/tech/iehs]
+   
+   If you install the IBM Eclipse Help System, you must also
+   install the appropriate help system plug-in for the WebSphere
+   Application Server documentation in its eclipse/plugins
+   directory. The plug-in is available from our product library
+   page.
+   
+   The modified documentation will be available in the March 2008
+   update to the information centers.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK56676
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   61W
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-11-16
+   
+   
+ * CLOSED DATE
+   2007-11-28
+   
+   
+ * LAST MODIFIED DATE
+   2007-11-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,28 @@
+Title: IBM The transaction log for the database is full. - United States
+
+Text:
+commit; transaction; full. TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Running a build using Relational Table delivery you get this error: 
+
+DS-DBMS-E400: UDA driver reported the following on connection 'market01':
+DMS-E-GENERAL, A general exception has occurred during operation 'execute'.
+[IBM][CLI Driver][DB2/NT] SQL0964C The transaction log for the database is full. SQLSTATE=57011 
+
+RESOLVING THE PROBLEM
+If processing a large volume of data the transaction log may become full, generating the error. This error will continue to occur until the log is increased to be large enough.
+
+There are two options to resolve the issue:
+
+1) Increase the size of the database log file by increasing the value of LOGFILSIZ.
+
+2) Set the Commit Interval of the Delivery Module to an appropriate number (e.g 5000) so the commit be issued.
+
+By default, a COMMIT instruction is not issued until all the data rows have been delivered. The entire delivery is executed as a single transaction.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Data Manager Business Analytics Cognos Series 7 DecisionStream 
+HISTORICAL NUMBER
+ 1014530

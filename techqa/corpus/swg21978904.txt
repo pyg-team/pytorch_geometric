@@ -1,0 +1,23 @@
+Title: IBM Attempts to Install RDz v9.5.x with Debug Tools for z/OS Explorer in same IM package result in error CRIMA1071E - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to Install IBM Rational Developer for System z (RDz) version 9.5.1 or higher in the same install package in IBM Installation Manager (IM) with IBM Debug Tools for z/OS Explorer version 13.3.13.0 or higher will result in CRIMA1071E error 
+
+SYMPTOM
+The following error can be seen in the IM: 
+
+CRIMA1071E: The installation package 'IBM Debug Tools for zOS Explorer' 
+requires components supplied by other packages. 
+
+
+RESOLVING THE PROBLEM
+Remove Debug Tools for z/OS Explorer selection from "Install Packages" list in IM. 
+
+ 
+
+Debug Tools for z/OS explorer components are included in RDz and cannot be installed with RDz. This information is included in the IM Details section for IBM Debug Tools for z/OS Explorer: 
+
+IBM Debug Tool Plug-in containing Compiled Language Debugger, DTCN, DTSP, Instrument JCL for Debugging, Code Coverage and Load Module Analyzer Plug-ins. This must NOT be installed into IBM Rational Developer for System z as it already contains the Debug perspective

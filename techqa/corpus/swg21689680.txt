@@ -1,0 +1,19 @@
+Title: IBM The ITCAM Agent for J2EE 7.1.1 User's Guide - United States
+
+Text:
+J2EE TEMA User Guide CAMJ2INST CAMJ2ALL; 5724N9500 TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ Where can I find the ITCAM Agent for J2EE 7.1.1 User's Guide? 
+
+ANSWER
+The ITCAM Agent for J2EE 7.1.1 User's Guide is available in the Knowledge Center under the ITCAM for Applications 7.2.1.1 section at the following link-
+http://www-01.ibm.com/support/knowledgecenter/SS3JRN_7.2.1.1/com.ibm.itcamfapps_ad.doc_7211/itcam_71_j2ee_tema_help/kyj_overview.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SS3JRN_7.2.1.1/com.ibm.itcamfapps_ad.doc_7211/itcam_71_j2ee_tema_help/kyj_overview.html?lang=en]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for J2EE TEMA

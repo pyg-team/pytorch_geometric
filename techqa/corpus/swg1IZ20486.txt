@@ -1,0 +1,237 @@
+Title: IBM IZ20486: NON DEFAULT POLICY SERVER PORT NOT SET CORRECTLY FOR SOLARIS INSTALLATION. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.0.0-ISS-TAM-IF0039-LIN_NPTL [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-LIN_NPTL&source=SAR]
+6.0.0-ISS-TAM-IF0039-WIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-WIN&source=SAR]
+6.0.0-ISS-TAM-IF0039-SOL-X86 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-SOL-X86&source=SAR]
+6.0.0-ISS-TAM-IF0039-SOL [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-SOL&source=SAR]
+6.0.0-ISS-TAM-IF0039-S390 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-S390&source=SAR]
+6.0.0-ISS-TAM-IF0039-LIN-PPC [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-LIN-PPC&source=SAR]
+6.0.0-ISS-TAM-IF0039-LIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-LIN&source=SAR]
+6.0.0-ISS-TAM-IF0039-HP-IA64 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-HP-IA64&source=SAR]
+6.0.0-ISS-TAM-IF0039-HP [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-HP&source=SAR]
+6.0.0-ISS-TAM-IF0039-AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-AIX&source=SAR]
+6.0.0-ISS-TAM-IF0037-WIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-WIN&source=SAR]
+6.0.0-ISS-TAM-IF0037-SOL-X86 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-SOL-X86&source=SAR]
+6.0.0-ISS-TAM-IF0037-SOL [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-SOL&source=SAR]
+6.0.0-ISS-TAM-IF0037-S390 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-S390&source=SAR]
+6.0.0-ISS-TAM-IF0037-LIN-PPC [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-LIN-PPC&source=SAR]
+6.0.0-ISS-TAM-IF0037-LIN_NPTL [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-LIN_NPTL&source=SAR]
+6.0.0-ISS-TAM-IF0037-LIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-LIN&source=SAR]
+6.0.0-ISS-TAM-IF0037-HP-IA64 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-HP-IA64&source=SAR]
+6.0.0-ISS-TAM-IF0037-HP [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-HP&source=SAR]
+6.0.0-ISS-TAM-IF0037-AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-AIX&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem
+   -------
+   
+   When a non default port (e.g. 7136) for the policy server is set
+   on Solaris during configuration the tcp-req-port in ivmgrd.conf
+   is still set to the default of 7135.
+   
+   Steps to Duplicate
+   ------------------
+   
+   1). Default installation of ITDS 6.
+   2). Native installation of prerequisites for Policy server.
+   3). Native installation of Policy server - this completes
+   successfully.
+   4). Install FP15 for installed components.
+   5). Use pdconfig to configure policy server but select 7136 for
+   'Policy server SSL port'.
+   6). Once configuration completes successfully view the
+   ivmgrd.conf file & tcp-req-port = 7135
+   
+   The master-port value in pd.conf is modified correctly to 7136
+   (for both windows & Solaris).
+   
+   Environment
+   ------------
+   
+   Solaris 9 & Solaris 10
+   TAM6 Fix Pack 15
+   
+   Further Testing
+   ----------------
+   
+   On request from L3 the following was requested -
+   
+   Please modify /opt/PolicyDirector/sbin/PDMgr_config script and
+   add the following:
+   
+   
+   Find this line in the script
+   
+   queryUser MGRSSLPORT pdbcg "$ammsg_pdnodce_ivmgrport"
+   "$ammsg_pdnodce_ivmgrport_def" FALSE
+   
+   and put the following i.e. same line but add some echo statement
+   before and after.
+   
+   echo "MGRSSLPORT =$MGRSSLPORT"
+   queryUser MGRSSLPORT pdbcg "$ammsg_pdnodce_ivmgrport"
+   "$ammsg_pdnodce_ivmgrport_def" FALSE (around line 5824)
+   echo "MGRSSLPORT =$MGRSSLPORT"
+   
+   Also put "set -x" right before the line:
+   
+   echo "MGRSSLPORT =$MGRSSLPORT"
+   
+   Testing Analysis
+   ----------------
+   
+   Looking at resulting output it shows that MGRSSLPORT is taken
+   from the user input & is set to 7136. It keeps the value &
+   applies it to set the TAM run time -
+   
+   bassslcfg -config -f no -c
+   /var/PolicyDirector/keytab/pdcacert.b64 -h e450 -p 7136
+   
+   The above is set around line 6048 of the script which is towards
+   the end so we can presume it keeps the MGRSSLPORT value as 7136
+   throughout.
+   
+   Looking through the PDMgr_config script I cannot see where it
+   applies the value for tcp-req-port. It takes its original value
+   (7135) in ivmgrd.conf from the template but I was looking for
+   something like from line 6038 -
+   
+   # set the apropriate ivmgrd.conf entries
+   pdconf -f $IVMGRDCONFFILE setentry ldap ssl-keyfile-keyfile
+   $IVKEYDBDIR/$OLD_SSL_KEYFILE_BASE
+   pdconf -f $IVMGRDCONFFILE setentry ldap ssl-keyfile-dn
+   $OLDIVMGRD_SSL_DN
+   
+   So I would have expected a setentry ivmgrd tcp-req-port
+   $MGRSSLPORT value but cannot find one in the script.
+   
+   Conclusion
+   -----------
+   
+   The correct port is set in pd.conf by PDMgr_config but it does
+   not put the same value in ivmgrd.conf.
+   
+   We need a setentry value  i.e. "setentry ivmgrd tcp-req-port
+   $MGRSSLPORT"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually edit ivmgrd.conf file value for tcp-req-port value
+   after script configuration.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  On UNIX platforms, tcp-req-port in ivmgrd.conf
+   file does not get set correctly when ssl default port is not cho
+   sen.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is expected to be cont
+   ained in the following maintenance delivery vehicles:
+   | LA interim fix | 6.0.0-TIV-TAM-LA0018
+   | fix pack | 6.0.0-TIV-TAM-FP0019
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ20486
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR E-BU
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0800
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-04-18
+   
+   
+ * CLOSED DATE
+   2008-05-29
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ACCESS MGR E-BU
+   
+   
+ * FIXED COMPONENT ID
+   5724C0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP

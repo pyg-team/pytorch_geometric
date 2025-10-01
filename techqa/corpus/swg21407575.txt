@@ -1,0 +1,62 @@
+Title: IBM FileNet P8 Verity K2 Administration Web Server service fails to start after installation and no errors are given. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Verity services fail to start after installation of IBM FileNet Content Search Engine. 
+
+SYMPTOM
+The following error activity is seen in the IBM FileNet Content Search Engine application server log (jakarta_service log file in ...\verity\appserver\logs): 
+
+[2009-10-19 09:50:18] [info] Running Service...
+[2009-10-19 09:50:18] [info] Starting service...
+[2009-10-19 09:50:18] [173 javajni.c] [error] The specified module could not be found.
+[2009-10-19 09:50:18] [764 prunsrv.c] [error] Failed creating java C:\Program Files\Java\jdk1.5.0_19\bin\jre\bin\server\jvm.dll
+[2009-10-19 09:50:19] [982 prunsrv.c] [error] ServiceStart returned 1
+[2009-10-19 09:50:59] [info] Run service finished.
+[2009-10-19 09:50:59] [info] Procrun finished.
+
+
+CAUSE
+
+The IBM FileNet Plan and Prepare documentation for P8 4.5.1 says to add the JDK/JRE "bin" directory to the JAVA_HOME environment variable. The "bin" directory is not the correct directory. Specifying the bin directory will allow the IBM FileNet Content Search Engine installation to complete, but the services will not start.
+
+The error activity above indicates that Verity is looking too deep into the JRE path and cannot find the files it expects to find.
+
+The IBM FileNet Content Search Engine writes the path for the Java JRE in the Microsoft Windows Registry and these keys are referenced when starting the Verity K2 Administration Web Server service.
+
+
+ENVIRONMENT
+Microsoft Windows
+
+
+
+DIAGNOSING THE PROBLEM
+Review the Verity Application Server logs (...\verity\appserver\logs).
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Change your Microsoft Windows JAVA_HOME environment variable to remove the ...\bin.
+     * Correct example: JAVA_HOME = C:\Java\jdk1.4.0_15
+       
+     * Incorrect example: JAVA_HOME = C:\Java\jdk1.4.0_15\bin
+       
+       
+    
+    
+ 2. Open Microsoft Windows Registry and go to:
+     * 32-bit Windows - 'HKLM\software\Apache Software Foundation\Procrun 2.0\Parameters\Java' 
+     * 64-bit Windows - 'HKLM\software\Wow6432node\Apache Software Foundation\Procrun 2.0\Parameters\Java'
+    
+    
+ 3. Edit the java path entries that include the ..\bin folder and remove the \bin from the path.
+    
+    
+ 4. Reboot the server.
+    
+    
+ 5. Check that the Verity services are both started and that you can log into the Verity Dashboard site.

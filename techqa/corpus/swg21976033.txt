@@ -1,0 +1,17 @@
+Title: IBM OpenSSH Private Key Cryptoleak Impact on Sterling B2B Integrator - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What versions of Sterling B2Bi (if any) are affected by the following OpenSSH bugs (CVE-2016-0777 and CVE-2016-0778)? 
+
+ANSWER
+OpenSSH is not included with Sterling B2B Integrator and Sterling B2B Integrator does not use OpenSSH.
+Sterling B2B Integrator uses Maverick java API for SSH.
+
+Additional information from the IBM Product Security Incident Response (PSIRT) Blog [https://www.ibm.com/blogs/psirt/]:
+
+
+ * IBM Security Bulletin: Vulnerabilities in OpenSSH affect AIX (CVE-2016-0777 and CVE-2016-0778) [https://www.ibm.com/blogs/psirt/ibm-security-bulletin-vulnerabilities-in-openssh-affect-aix-cve-2016-0777-and-cve-2016-0778/] 
+ * SECURITY (Doc Number=4586): Vulnerabilities in OpenSSH affect AIX [http://www-01.ibm.com/support/docview.wss?uid=isg1SSRVPOAIX72SECURITY160201-1004]

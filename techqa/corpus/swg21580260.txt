@@ -1,0 +1,61 @@
+Title: IBM Compatibility of IBM Business Process Manager (BPM) and IBM WebSphere Portal releases - United States
+
+Text:
+dashboard; task; portlets; services; REST; API TECHNOTE (FAQ)
+
+QUESTION
+ Which configuration combinations are supported to use the Coach portlets or other business process integration portlets from IBM Business Process Manager Advanced Versions 7.5.x, 8.0.x, or 8.5.x with WebSphere Portal? What are the required prerequisites? 
+
+CAUSE
+WebSphere Portal can be installed on IBM WebSphere Application Server Version 6.1, 7.0, 8.0, 8.5.x.
+
+ANSWER
+The following matrix covers which configurations are supported in a two-cell configuration. 
+
+ 
+
+Because of version dependencies on WebSphere Application Server, do not install IBM Business Process Manager and WebSphere Portal in a single cell.
+
+For IBM Business Process Manager task completion, connect with IBM Business Process Manager using the WebSphere Portal Unified Task List and REST APIs.
+
+For IBM Business Process Manager dashboards, connect with IBM Business Process Manager using JSR-286 portlets for human services that were generated in IBM Business Process Manager and are exposed as dashboards using IBM Web Services Remote Portlets (WSRP) 2.0.
+
+
+
+Access Method Portlets generated in IBM Business Process Manager for human services exposed as dashboards Web services (SOAP) or 
+REST APIs Prerequisites None specific None specific Versions [/support/docview.wss?uid=swg21580260&amp;aid=1] [/support/docview.wss?uid=swg21580260&amp;aid=1] IBM Business Process Manager WebSphere Portal Human services exposed as dashboards in IBM Business Process Manager are exported as portlets and deployed on WebSphere Portal Server using WSRP 2.0. Portlets (for example, the Unified Task List portlet) using REST API or web services calls against Business Process Manager 8.5.7 8.5 Supported (preferred) Supported (preferred) 8.5, 8.5.5, 8.5.6, 8.5.7 8.0.0.x CF06 Supported (preferred) Supported (preferred) 8.5, 8.5.5, 8.5.6, 8.5.7 7.0.0 
+Fix Pack 2 Supported (preferred) Supported (preferred) 8.0.1 8.0.0.x CF06 Supported (preferred) Supported (preferred) 8.0.1 7.0.0 
+Fix Pack 2 Supported (preferred) Supported (preferred) 8.0 7.0.0 
+Fix Pack 2 Not supported Supported 7.5.1 7.0.0
+Fix Pack 2 Not supported Supported 7.5.1 6.1.5 Not supported Supported 7.5 7.x Not supported Supported 7.5 6.1.5 Not supported Supported 
+
+In addition, the following access methods are still possible. However the access methods in the previous table are preferred. 
+
+Access Method Using EJB Stubs
+(portlets or WebSphere Portal business process integration portlets generated in WebSphere Integration Developer or Integration Designer) Business Process Manager Human Task iWidgets using REST APIs Prerequisites IBM Business Process Manager client installation on WebSphere Portal Server IBM Business Process Manager Advanced Human Task iWidgets installed and deployed on WebSphere Portal Server Versions [/support/docview.wss?uid=swg21580260&amp;aid=1] [/support/docview.wss?uid=swg21580260&amp;aid=1] IBM Business Process Manager WebSphere Portal Portlets using EJB calls to connect with IBM Business Process Manager (not preferred) IBM Business Process Manager Human Task iWidgets using REST API calls (not preferred) 8.5.7 8.5 Not supported Supported (not preferred)
+Need Dojo V1.6.1 
+from the V7.0.0 Fix Pack 2 theme 8.5, 8.5.5, 8.5.6, 8.5.7 8.0.0.x CF06 Supported Supported (not preferred)
+Need Dojo V1.6.1 
+from the V7.0.0 Fix Pack 2 theme 8.5, 8.5.5, 8.5.6, 8.5.7 7.0.0 
+Fix Pack 2 Supported Supported (not preferred)
+Need Dojo V1.6.1 
+from the V7.0.0 Fix Pack 2 theme 8.0.1 8.0.0.x CF06 Supported Supported (not preferred)
+Need Dojo V1.6.1 
+from the V7.0.0 Fix Pack 2 theme 8.0.1 7.0.0 
+Fix Pack 2 Supported Supported (not preferred)
+Need Dojo V1.6.1 
+from the V7.0.0 Fix Pack 2 theme 8.0 7.0.0 
+Fix Pack 2 Supported using IBM Business Process Manager V7.5.x client Supported (not preferred)
+Need Dojo V1.6.1 
+from the V7.0.0 Fix Pack 2 theme 7.5.1 7.0.0
+Fix Pack 2 Supported Supported (not preferred)
+Need Dojo V1.6.1 
+from the V7.0.0 Fix Pack 2 theme 7.5.1 6.1.5 Not supported Not supported 7.5.1 6.1.5 Supported using WebSphere Process Server V6.2 client Not supported 7.5 7.x Supported Supported (Dojo V1.4.3) 7.5 6.1.5 Not supported Not supported 7.5 6.1.5 Supported using the WebSphere Process Server V6.2 client Not supported 
+
+For information about using business process integration portlets from WebSphere Process Server V7.x with WebSphere Portal server, see Compatibility of WebSphere Process Server V7 and WebSphere Portal [http://www.ibm.com/support/docview.wss?uid=swg21448202].  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM BPM Advanced Pattern on Red Hat Enterprise Linux Server Not Applicable Linux Red Hat - xSeries 8.0 
+PRODUCT ALIAS/SYNONYM
+ BPM
+WebSphere Portal

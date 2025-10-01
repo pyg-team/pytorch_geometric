@@ -1,0 +1,57 @@
+Title: IBM Updated Daeja releases for FileNet Workplace and Workplace XT - United States
+
+Text:
+certificate; expire; expiration; JAR TECHNOTE (FAQ)
+
+QUESTION
+ Daeja release (4.0.48), packaged with FileNet Workplace 4.0.2 and Workplace XT 1.1.5 contains JAR file certificates that expire on June 11, 2016. How does one obtain an updated Daeja release for Workplace and Workplace XT that contains newer JAR file certificates? 
+
+ANSWER
+Both FileNet Workplace 4.0.2.14 IF1 and Workplace XT 1.1.5.2 IF2 have been qualified with Daeja 4.1.5 iFix002 which contains updated JAR file certificates that expire on May 19, 2018. 
+
+Daeja 4.1.5 iFix002 has been packaged as a separate LA fix for each product. 
+
+Each LA contains: 
+
+ * The Daeja 4.1.5 iFix002 ZIP file 
+ * A Readme file that describes how to install the new Daeja release over the existing Daeja release. Note: Use this Readme that provides specific instructions on how to overly the new Daeja release over the existing one for WP and WPXT. Please ignore the generic Readme that is contained with in the Daeja ZIP file.
+
+
+The Workplace and Workplace XT LA fixes are available on Fix Central (www.ibm.com/support/fixcentral [www.ibm.com/support/fixcentral]). Please use the information below to obtain them: 
+
+ 
+
+For Workplace: 
+
+ * 
+ * 
+ * Product selector: FileNet Application Engine 
+ * Installed Version: 4.0.2.* 
+ * Platform: All 
+ * Individual fix IDs: 4.0.2.14-P8AE_VIEW_415_IF002:VIEW115LA002 
+ * Select interim fix: 4.0.2.14-P8AE_VIEW_415_IF002 
+ * Or 
+ * The direct link to the fix on Fix Central is: http://tinyurl.com/hpoftt2 [http://tinyurl.com/hpoftt2]
+
+
+For Workplace XT: 
+
+ * 
+ * 
+ * Product selector: FileNet Workplace XT 
+ * Installed Version: 1.1.5.* 
+ * Platform: All 
+ * Individual fix IDs: 1.1.5.2-WPXT-VIEWONE415-iFix002:415002 
+ * Select interim fix: 1.1.5.2-WPXT-VIEWONE415-iFix002 
+ * Or 
+ * The direct link to the fix on Fix Central is: http://tinyurl.com/j2xgpb4 [http://tinyurl.com/j2xgpb4]
+
+RELATED INFORMATION
+ Updating IBM ECM products that use Java security certif [http://www.ibm.com/support/docview.wss?uid=swg21693461]
+Daeja Java Applet Security Restrictions [http://www.ibm.com/support/docview.wss?uid=swg21686804]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management FileNet Content Manager Workplace XT AIX, HP-UX, Linux, Solaris, Windows 1.1.5

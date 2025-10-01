@@ -1,0 +1,34 @@
+Title: IBM Missing objectClass in VMM configuration causes "LDAP: error code 2 - Bad search filter". - United States
+
+Text:
+ldap error code 2; CWWIM4520E; missing objectclass; objectclass; object class; PersonAccount; wimconfig.xml; log in; login; logon; bad search filter TECHNOTE (FAQ)
+
+QUESTION
+The WebSphere Application Server Deployment Manager (WSAS DMGR) and WebSphere Portal cannot be stopped. Users cannot log in to the IBM Websphere Integrated Solutions Console (ISC) or IBM Websphere Portal user interface. SystemOut.log records the following exception: 
+
+com.ibm.ws.wim.adapter.ldap.LdapConnection search(String, String, Object[], SearchControls) 
+com.ibm.websphere.wim.exception.WIMSystemException: CWWIM4520E The 'javax.naming.CommunicationException: [LDAP: error code 2 - Bad search filter]; Remaining name: 'o=test,dc=mycompany,dc=com'; Resolved object: 'com.sun.jndi.ldap.LdapCtx@3c923c92'' naming exception occurred during processing.
+at com.ibm.ws.wim.adapter.ldap.LdapConnection.search(LdapConnection.java:2737)
+at com.ibm.ws.wim.adapter.ldap.LdapConnection.checkSearchCache(LdapConnection.java:2677)
+at com.ibm.ws.wim.adapter.ldap.LdapConnection.search(LdapConnection.java:2854)
+at com.ibm.ws.wim.adapter.ldap.LdapConnection.searchEntities(LdapConnection.java:3059)
+
+Why does this happen and how can I recover from this issue?
+
+
+CAUSE
+The stanza for PersonAccount entity type in wimconfig.xml is missing the objectClass: 
+
+ <config:ldapEntityTypes name="PersonAccount" searchFilter=""/>
+
+
+ANSWER
+Back up profile/config/cells/cellname/wim/config/wimconfig.xml. Then add the appropriate objectClass for the PersonAccount entity type, save the wimconfig.xml, and restart the server. 
+
+For example, in an environment using IBM® Tivoli® Directory Server (ITDS) as the LDAP, change it to: 
+
+<config:ldapEntityTypes name="PersonAccount" searchFilter="">
+<config:objectClasses>inetOrgPerson</config:objectClasses>
+</config:ldapEntityTypes>
+
+(In a clustered environment, the change should be made to copy of this file in the <dmgr_profile> on the dmgr node and propagated to the Portal nodes.)

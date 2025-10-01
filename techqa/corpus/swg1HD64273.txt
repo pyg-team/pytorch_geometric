@@ -1,0 +1,194 @@
+Title: IBM HD64273: CONTROL PROCESS SERVER SIZE DOES NOT MATCH WITH DECONNECTION/RE CONNECTION LIMIT NOTICED IN PRACTICE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Control process server size does not match with
+   deconnection/reconnection limit noticed in practice
+   .
+   1- Set Catsettings in ENOVIA V5 VPM - ENOVIA V5
+   VPM Logon - Control process server size - to a
+   chosen limit.
+   2- Load in VPMNAV a big PRC (more than 1000
+   nodes)
+   2- Refresh and Collapse
+   3- Expand all
+   4- Note size of the process VDO0OrbServer when
+   deconnection / reconnection to server occurs.
+   Results:
+   We haven't a behaviour according to limit we had
+   set. Deconnection / Reconnection doesn't occur
+   when expected. We have a significant difference
+   between value set in settings and size of the
+   process measured.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Control process server size does not match with deconnection/re
+   connection limit noticed in practice
+   Control process server size does not match with
+   deconnection/reconnection limit noticed in practice
+   .
+   1- Set Catsettings in ENOVIA V5 VPM - ENOVIA V5
+   VPM Logon - Control process server size - to a
+   chosen limit.
+   2- Load in VPMNAV a big PRC (more than 1000
+   nodes)
+   2- Refresh and Collapse
+   3- Expand all
+   4- Note size of the process VDO0OrbServer when
+   deconnection / reconnection to server occurs.
+   Results:
+   We haven't a behaviour according to limit we had
+   set. Deconnection / Reconnection doesn't occur
+   when expected. We have a significant difference
+   between value set in settings and size of the
+   process measured.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  null
+   ==========*===========*==========
+   THIS MODIFICATION WILL BE INCLUDED IN CATIA
+   DOCUMENTATION DELIVERED WITH ENOVIA
+   VERSION 5 RELEASE 19 GA.
+   NOTE THAT DOCUMENTATION WILL ALSO BE
+   INCLUDED IN V5R18SP02.
+   Note:
+   It will also be included in R18 SP02 and V5R17SP06
+   program directory.
+   NEW INFORMATIONS:
+   The following has been inserted:
+   .
+   Server size control in VPM Navigator
+   .
+   In order for customers to determine the threshold
+   of memory size above which the current server is
+   killed and new one is started, the following
+   clarifications may be helpfull.
+   First, it is important to remind that memory used
+   by a process (eg. VDO0OrbServer for ENOVIA
+   server) consists of 3 parts: memory used to load
+   the dll's, memory used for the stack, and
+   dynamically allocated memory (=heap). For
+   obtaining the current memory size on the server,
+   the current functionality is retrieving the size of the
+   heap.
+   Based on the above statement, the determination
+   of the memory size would go as follows:
+   .
+   1. With no disconnect size defined, run some
+   scenarios where VPMNav is loaded until the
+   performance becomes noticeably slower...or the
+   product crashes, maybe, on AIX when the heap
+   limit (2G max) is reached. As these scenarios are
+   run, use ps v - for aix - or other permutation
+   of ps to keep track of the memory usage of
+   VDO0OrbServer.
+   .
+   2. So we now have a feel for a memory size we
+   don't like. The memory limit should be smaller than
+   that and that is where a little trial and error is
+   involved. So let's say that we set a limit which is
+   80% of the size we found in #1. With the setting
+   defined, run the product until disconnect/reconnect
+   occurs. If you do this a few times, you will see that
+   the disconnect always happens approximately X
+   amount over the limit, if you are looking at the
+   measurement using pid (X by the way is basically
+   the memory used for loading the dll's and for the
+   stack).
+   .
+   3. So the limit would then be defined as the (size-
+   we-found-in-#1) - X - safety factor (80%).
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD64273
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA V5 VPM N
+   
+   
+ * REPORTED COMPONENT ID
+   569151400
+   
+   
+ * REPORTED RELEASE
+   517
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-05-15
+   
+   
+ * CLOSED DATE
+   2007-06-19
+   
+   
+ * LAST MODIFIED DATE
+   2007-06-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,164 @@
+Title: IBM PM09233: CLASSCASTEXCEPTION ERROR WHEN ACCESSING PORTLET FACTORY. COEXISTENCE PROBLEM BETWEEN DC AND AXIS ON WAS PORTAL SERVER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment
+   ===========
+   ITCAM for WAS DC (6.1 + FP05)
+   Websphere Portal 6.1.5 / 6.1.0.2
+   
+   Problem Description
+   ===================
+   After applying the DC to the WAS Portal Instance, when the
+   Portlet Factory is accessed the following ClassCastException is
+   seen in the SystemOut.log
+   .
+   java.lang.ClassCastException: org.apache.axis.MessageContext
+   incompatible with org.apache.axis.MessageContext
+   at
+   com.ibm.tivoli.itcam.axis.webservices.AxisClientHanlder.handleRe
+   sponse(AxisClientHanlder.java:122)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disable Axis instrumentation by adding the following property
+   to <DC_HOME>/runtime/<serve>/custom/toolkit_custom.properties:
+   
+   com.ibm.tivoli.itcam.toolkit.ai.axis.enablewebservice=false
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  CLASSCASTEXCEPTION ERROR WHEN ACCESSING PORTLET FACTORY.
+   COEXISTENCE PROBLEM BETWEEN DC AND AXIS ON WAS PORTAL SERVER
+   
+   Problem Description
+   ===================
+   After applying the DC to the WAS Portal Instance, when the
+   Portlet Factory is accessed the following ClassCastException is
+   seen in the SystemOut.log
+   .
+   java.lang.ClassCastException: org.apache.axis.MessageContext
+   incompatible with org.apache.axis.MessageContext
+   at
+   com.ibm.tivoli.itcam.axis.webservices.AxisClientHanlder.handleRe
+   sponse(AxisClientHanlder.java:122)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS IS A COEXISTENCE PROBLEM BETWEEN DC AND AXIS ON WAS PORTAL
+   SERVER.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+   | interim fix | 6.1.0.5-TIV-ITCAMfWAS_MP-IF0009
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Disable Axis instrumentation by adding the following property
+   to <DC_HOME>/runtime/<serve>/custom/toolkit_custom.properties:
+   
+   com.ibm.tivoli.itcam.toolkit.ai.axis.enablewebservice=false
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM09233
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * REPORTED COMPONENT ID
+   5724L6200
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-08
+   
+   
+ * CLOSED DATE
+   2010-04-01
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * FIXED COMPONENT ID
+   5724L6200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

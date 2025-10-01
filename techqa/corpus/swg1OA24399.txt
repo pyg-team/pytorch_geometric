@@ -1,0 +1,167 @@
+Title: IBM OA24399: KMQ CAN'T HANDLE 2 SUBNODE REGISTRATIONS AT THE SAME TIME WHEN THE 2 DIFFERENT QUEUE MANAGERS ARE MONITORING THE QSG - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+6.0.1.1-TIV-XEforMsg-IF0002 - OMXE for Messaging 6.0.1 FP01 IF02 [http://www-01.ibm.com/support/docview.wss?uid=swg24021966]
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  KMQ can't handle 2 subnode registrations at the same time when
+   the 2 different queue managers are monitoring the QSG
+   
+   Problem occurs when the two agents are trying to join at the
+   same time.
+   XXX0 successfully joins and thinks it is the agent monitoring
+   the QSG.
+   However, because XXX1 incorrectly registers the QSG subnode
+   (MQYY:MQQSG), the requests for QSG data are incorrectly going
+   to XXX1.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  na
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All OMEGAMON XE for WMQ users.               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: KMQ can't handle 2 subnode              *
+   *                      registrations at the same time when the *
+   *                      2 different queue managers are          *
+   *                      monitoring the QSG  Problem occurs when *
+   *                      the two agents are trying to join at    *
+   *                      the same time. XXX0 successfully joins  *
+   *                      and thinks it is the agent monitoring   *
+   *                      the QSG. However, because XXX1          *
+   *                      incorrectly registers the QSG subnode   *
+   *                      (MQYY:MQQSG), the requests for QSG data *
+   *                      are incorrectly going to XXX1.          *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   KMQ can't handle 2 subnode registrations at the same time when
+   the 2 different queue managers are monitoring the QSG  Problem
+   occurs when the two agents are trying to join at the same time.
+   XXX0 successfully joins and thinks it is the agent monitoring
+   the QSG. However, because XXX1 incorrectly registers the QSG
+   subnode (MQYY:MQQSG), the requests for QSG data are incorrectly
+   going to XXX1.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Changes made to fix the problem.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA24399
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG XE WEBSPHM
+   
+   
+ * REPORTED COMPONENT ID
+   5608A1100
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-25
+   
+   
+ * CLOSED DATE
+   2008-04-19
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA40600 OA26426 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA26426]
+   
+   
+
+MODULES/MACROS
+ *  KMQAGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG XE WEBSPHM
+   
+   
+ * FIXED COMPONENT ID
+   5608A1100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY UA40600 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA40600]
+   UP08/04/24 P F804
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

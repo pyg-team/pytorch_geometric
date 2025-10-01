@@ -1,0 +1,138 @@
+Title: IBM PI79689: RPT 9.1 COMPATIBILITY REPORT SHOULD SHOW SUPPORT FOR WINDOWS 10 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Although RPT has supported Windows 10 since RPT 9.0.0.1, the
+   Software Product Compatibility Report - Detailed System
+   Requirements for RPT 9.1 contains no entries for Windows 10 in
+   the "Operating Systems", see:
+   
+   http://www-969.ibm.com/software/reports/compatibility/clarity-re
+   ports/report/html/softwareReqsForProduct?deliverableId=954BC1F09 [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=954BC1F09]
+   B3911E6A121FF7B62CD6B8A&osPlatforms=Windows&duComponentIds=D000|
+   A000&mandatoryCapIds=13|42|26&optionalCapIds=30|201|1|24|132|184
+   |186
+   
+   The Compatibility Report for RPT 9.0.1 does show Windows 10
+   support:
+   
+   http://www-969.ibm.com/software/reports/compatibility/clarity-re
+   ports/report/html/softwareReqsForProduct?deliverableId=BE0E7DA0A [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=BE0E7DA0A]
+   43911E5B45ECE73969C6316&osPlatforms=Windows&duComponentIds=D000|
+   A000&mandatoryCapIds=13|42|26&optionalCapIds=30|201|1|24|132|184
+   |186
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Windows 10 is supported by RPT 9.1; this is just a documentation
+   defect.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * RPT Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The Software Product Compatibility Report - Detailed System  *
+   * Requirements for RPT 9.1 contains no entries for Windows 10  *
+   * in the "Operating Systems"                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  As of June 26, 2017, the Compatibility Report for RPT 9.1 lists
+   Windows 10 Enterprise as a supported OS.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI79689
+   
+   
+ * REPORTED COMPONENT NAME
+   PERF TESTER WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724J9601
+   
+   
+ * REPORTED RELEASE
+   901
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-04-10
+   
+   
+ * CLOSED DATE
+   2017-06-26
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,20 @@
+Title: IBM ITCAM SOA DataPower latency values might not match DataPower's internal latency numbers - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why are DataPower's logged latency values sometimes higher than the WSAgent latency values available from ITCAM SOA for IBM WebSphere DataPower SOA Appliances? 
+
+SYMPTOM
+For slower DataPower response transactions, such as when the probe is enabled, latencies reported by ITCAM SOA may be noticeably smaller than the DataPower transaction latencies, which include both request and response times. ITCAM SOA currently includes only request processing time and not response processing time.
+
+
+CAUSE
+ITCAM SOA "front side" latency values as reported by WSAgent do not include response processing latencies. However, if the response processing latency is small, the reported time spent in DataPower is a good approximation. 
+
+This behavior has been present in DataPower from the beginning, so changing the "front side" latency to include response latency required product redesign. The response latency is included beginning with version 6.0.0
+
+
+ENVIRONMENT
+Monitoring DataPower via ITCAM SOA

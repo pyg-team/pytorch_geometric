@@ -1,0 +1,277 @@
+Title: IBM InfoSphere Streams best practices for performance - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Use these best practices while developing InfoSphere Streams applications to ensure the best performance. 
+
+CAUSE
+The performance of InfoSphere Streams applications can be significantly affected by the specific coding choices made during application implementation.
+
+ANSWER
+InfoSphere Streams supports a rich application development environment that provides multiple methods to accomplish the same result. This document describes three considerations to be aware of while coding an InfoSphere Streams application. Use the tips provided here to help choose a method that will provide the best application performance. Note that additional performance considerations for InfoSphere Streams applications can be found in the InfoSphere Streams Knowledge Center in the SPL Compiler Usage Reference > Performance considerations for Streams Applications topic. 
+
+Consideration 1: Avoid use of the Reflective Type System in primitive operators 
+
+The Reflective Type System allows an application to determine the types and values of attributes within a tuple at runtime. The Reflective Type System (reflection) is described in the InfoSphere Streams Knowledge Center in the SPL Toolkit Development Reference > Advanced Operator Implementation Topics > Using the Reflective Type System topic. If you are using the types ValueHandle or Meta:BaseType, you are using the Reflective Type System. While convenient to code, use of reflection can slow down the performance of your application. 
+
+As an example, this is a slow way to build a string from the fields in a tuple: 
+
+ * for(ConstTupleIterator ti=tuple.getBeginIterator();
+ * 
+ * ti!=tuple.getEndIterator(); ++ti)
+ * 
+ * {
+ * 
+ * ConstTupleAttribute attribute = *ti; 
+ * 
+ * std::string name = attribute.getName();
+ * 
+ *  
+ * ConstValueHandle
+ * handle = attribute.getValue();
+ * 
+ * std::string temp = handle.toString();
+ * 
+ * buf << temp << ",";
+ * 
+ * }
+ * 
+
+
+Instead, the SPL compiler can determine the tuple attributes once at compile time thereby avoiding the overhead of doing this at run time. The following code also builds a string from the fields in a tuple but will perform much faster:  * <%
+ * 
+ * my $numAttrs = $inputPort->getNumberOfAttributes();
+ * 
+ * my $comma = "";
+ * 
+ * for (my $i = 0; $i < $numAttrs; ++$i)
+ * 
+ * {
+ * 
+ * my $attr = $inputPort->getAttributeAt($i); 
+ * 
+ * my $attrName = $attr->getName();
+ * 
+ * my $type = $attr->getSPLType();
+ * 
+ * if (SPL::CodeGen::Type::isString($type)) {%>
+ * 
+ * buf <%=$comma%> << ituple.get_<%=attrName>().c_str(); 
+ * 
+ * <%}
+ * 
+ * elsif (SPL::CodeGen::Type::isIntegral($type) ||
+ * 
+ * SPL::CodeGen::Type::isFloatingpoint($type)) {%> 
+ * 
+ * buf <%=$comma%> << ituple.get_<%=$attrName%>();
+ * 
+ * <%}
+ * 
+ * else {%>
+ * 
+ * buf <%=$comma%> << 'X';
+ * 
+ * <%}
+ * 
+ * $comma = " << ','";
+ * 
+ * }%>
+ * 
+
+
+As another example, the assignFrom operator uses reflection. Therefore, this is a slow way to copy a tuple:  * newTuple.
+ * assignFrom
+ * (origTuple, false);
+ * 
+
+
+This is a better way is to use explicit attribute copies:  * newTuple.get_attr1() = origTuple.get_attr1();
+ * 
+ * newTuple.get_attr2() = origTuple.get_attr2();
+ * 
+ * ...
+ * 
+
+
+The following code is another better way that will generically iterate over all the fields and copy those with matching names and types:  * <%
+ * 
+ * my $inputPort = $model->getInputPortAt(0);
+ * 
+ * my $outputPort = $model->getOutputPortAt(0);
+ * 
+ * my $tupleType = $inputPort->getSPLTupleType(); %>
+ * 
+ * IPort0Type const& t = static_cast<IPort0Type const&>(tuple); 
+ * 
+ * OPort0Type otuple;
+ * 
+ * <%
+ * 
+ * my @names = SPL::CodeGen::Type::getAttributeNames($tupleType); 
+ * 
+ * my @types = SPL::CodeGen::Type::getAttributeTypes($tupleType); 
+ * 
+ * for (my $i = 0; $i < scalar(@names); ++$i) {
+ * 
+ * my $n = $names[$i];
+ * 
+ * my $attr = $outputPort->getAttributeByName($n);
+ * 
+ * next if !$attr;
+ * 
+ * next if $types[$i] ne $attr->getSPLType(); %>
+ * 
+ * otuple.set_<%=$n%>(t.get_<%=$n%>());
+ * 
+ * <%}%>
+ * 
+
+
+Another use of reflection is to check the type of a field in a tuple:  * ValueHandle
+ * handle = tuple.getAttributeValue("someAttribute"); if(handle.getMetaType() == SPL::Meta::Type::LIST)
+ * 
+ * ...
+ * 
+
+
+This is a better way to do this, which leverages the SPL compiler to make the check at compile time:  * <%
+ * 
+ * my $outputPort = $model->getOutputPortAt(0);
+ * 
+ * my $attr = $outputPort->getAttributeByName("someAttribute"); 
+ * 
+ * if (SPL::CodeGen::Type::isList($attr->getSPLType())) {
+ * 
+ * ...
+ * 
+ * %>
+ *  
+ * 
+
+
+Consideration 2: Avoid repetitive use of the SPL time(), timeStringToTimestamp(), or toTimestamp() standard toolkit function variations that include a specified timezone The time(), timeStringToTimestamp(), and toTimestamp() functions are described in the InfoSphere Streams Knowledge Center in the SPL Standard Toolkit Types and Functions > Builtin SPL Functions topic. These functions each have variations that allow specification of an arbitrary timezone to use in the time conversion. There is significant system overhead involved in converting to an arbitrary timezone so avoid frequent calls to these variations of the functions.
+
+For the time() function, this variation is much faster: 
+
+ * public void time (timestamp time, mutable tuple<int32 sec, 
+ * 
+ * int32 min, int32 hour, int32 mday, int32 mon, 
+ * 
+ * int32 year, int32 wday, int32 yday, int32 isdst, 
+ * 
+ * int32 gmtoff, rstring zone> result)
+ * 
+ * 
+
+
+compared to this variation:  * public void time (timestamp time, 
+ * rstring 
+ * timezone
+ * ,
+ * 
+ * 
+ * mutable tuple<int32 sec, int32 min, int32 hour, 
+ * 
+ * int32 mday, int32 mon, int32 year, int32 wday, 
+ * 
+ * int32 yday, int32 isdst, int32 gmtoff, 
+ * 
+ * rstring zone> result)
+ * 
+ * 
+ * 
+
+For the timeStringToTimestamp() function, these variations are much faster:  * public timestamp timeStringToTimestamp (rstring dmy, 
+ * 
+ * rstring hmsmilli, 
+ * 
+ * boolean useLocaleMonths)
+ * 
+ * 
+ * public timestamp timeStringToTimestamp (ustring dmy, 
+ * 
+ * ustring hmsmilli, 
+ * 
+ * boolean useLocaleMonths)
+ * 
+ * 
+
+
+compared to these variations:  * public timestamp timeStringToTimestamp (rstring dmy, 
+ * 
+ * rstring hmsmilli, 
+ * 
+ * rstring timezone,
+ * 
+ * 
+ * boolean useLocaleMonths)
+ * 
+ * 
+ * public timestamp timeStringToTimestamp (ustring dmy, 
+ * 
+ * ustring hmsmilli, 
+ * 
+ * ustring timezone,
+ * 
+ * 
+ * boolean useLocaleMonths)
+ * 
+ * 
+
+
+For the toTimestamp() function, this variation is much faster:  * <string T> public timestamp toTimestamp (enum {YYYYMMDDhhmmss,...},T str)
+ * 
+ * 
+
+
+compared to this variation:  * <string T> public timestamp toTimestamp (enum {YYYYMMDDhhmmss,...},T str, 
+ * T timezone
+ * )
+ * 
+ * 
+ * 
+
+
+Consideration 3: Use bounded strings when a string field is a known consistent length When working with string variables that have a consistent and known length, performance will be improved by specifying the length on their declaration. Specifying the length of the string avoids the overhead of dynamically allocating memory for the string at runtime. 
+
+As an example, consider the declaration of a tuple consisting of three fields: 
+
+ * A 16-character transaction identifier 
+ * A 10-character customer identifier 
+ * A 10-character location identifier
+
+
+Describing the tuple in the following way will be more efficient:  * type
+ * 
+ * dataSchema = tuple<
+ * 
+ * rstring
+ * [16]
+ * transactionID,
+ * 
+ * rstring
+ * [10]
+ * customerID,
+ * 
+ * rstring
+ * [10]
+ * locationID>;
+ * 
+
+
+compared to this version:  * type
+ * 
+ * dataSchema = tuple<
+ * 
+ * rstring transactionID,
+ * 
+ * rstring customerID,
+ * 
+ * rstring locationID>;
+ * 
+
+RELATED INFORMATION
+#InfoSphere Streams Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSCRJU/SSCRJU_welcome.html]

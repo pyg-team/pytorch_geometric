@@ -1,0 +1,43 @@
+Title: IBM Gathering DB2 database statistics - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Improve performance of OpenPages application functions (such as importing instance data using Fastmap, importing meta-data using Object Manager, updating OpenPages repository using SCOR rules), by collecting performance statistics for DB2 server and by rebinding OpenPages pl/sql packages. 
+
+ENVIRONMENT
+OpenPages GRC Platform using DB2 database
+
+RESOLVING THE PROBLEM
+Up-to-date statistics are necessary for the proper performance of OpenPages applications that use DB2 server. Use this script to force DB2 server to collect statistics with the option to rebind all OpenPages pl/sql packages. You must schedule to run this script using a task scheduler, cronjob, or similar utility. By default, the script rebinds all of OpenPages pl/sql packages and requires that all OpenPages application services are stopped before the script runs. Use the option -n to skip rebinding of OpenPages pl/sql packages. For details on stopping servers, see Chapter 18, Starting and Stopping Server in the Administration guide. 
+
+The script must be executed from the primary OpenPages application server. There is no need to run this script from all cluster member servers. However, all cluster member services must be stopped prior to script execution to rebind OpenPages pl/sql packages.
+
+If you get error message SQL1026N, this means the database is in use. Verify that OpenPages services are not running and disconnect all active connections to the database. 
+
+Scheduling suggestions: 
+
+ * Schedule the script to run daily without rebinding of OpenPages pl/sql packages. 
+ * Schedule the script to run once a week with rebinding of OpenPages pl/sql packages. 
+
+
+
+Script Usage: 
+This procedure is relevant for DB2 database only. 
+
+Windows: 
+
+On DB2 CLP (db2cmd), navigate to <OP_HOME>|aurora|bin|db2stats directory and execute CollectSchemaStatistics.bat [-n] [-i] 
+
+AIX and Linux: 
+
+On DB2 CLP, navigate to <OP_HOME>|aurora|bin|db2stats directory and execute CollectSchemaStatistics.sh [-n] [-i] 
+
+Script execution time varies depending on OpenPages application usage. 
+
+
+Usage: CollectSchemaStatistics.bat [-n] [-i] 
+Parameters: 
+[-n] - Skip rebinding database packages. 
+[-i ] - Run the script in interactive mode if " -i" is specified.

@@ -1,0 +1,39 @@
+Title: IBM B2B Mail Client Adapter Fail to connect to mail server - United States
+
+Text:
+java.security.cert.CertPathValidatorException: Certificate chaining error; AccessMailJ; get folder exception = javax.mail.MessagingException: Connect failed; javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.util.g: PKIX path building failed: java.security.cert.CertPathBuilderException: PKIXCertPathBuilderImpl could not build a valid CertPath. TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ B2B Mail Client Adapter fails due to javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.198util.g: PKIX path building failed: java.security.cert.CertPathBuilderException: PKIXCertPathBuilderImpl could not build a valid CertPath. 
+
+SYMPTOM
+b2bmailclient.log in DEBUG mode shows this trace
+
+[2016-07-19 08:42:59.196] ALL 000000000000 GLOBAL_SCOPE SimpleMailClient starts, KK-ABC-B2BSMTPMAILCLIENT is locked
+[2016-07-19 08:42:59.196] DEBUG 000000000000 GLOBAL_SCOPE AccessMailJ, non weblogic application server detected
+[2016-07-19 08:42:59.196] DEBUG 000000000000 GLOBAL_SCOPE AccessMailJ, SSL session ...
+[2016-07-19 08:42:59.296] DEBUG 000000000000 GLOBAL_SCOPE AccessMailJ, setup SSL Options done
+[2016-07-19 08:42:59.3] DEBUG 000000000000 GLOBAL_SCOPE AccessMailJ, retry set = 1 , interval = 1
+[2016-07-19 08:42:59.3] DEBUG 000000000000 GLOBAL_SCOPE AccessMailJ, connection try = 1
+[2016-07-19 08:42:59.3] DEBUG 000000000000 GLOBAL_SCOPE JSSESSLSocketImpl.getDefault()- JSSE SSL Socket Factory Implementation ...
+[2016-07-19 08:42:59.3] DEBUG 000000000000 GLOBAL_SCOPE JSSESSLSocketImpl.getDefault()- Server Authentication
+[2016-07-19 08:42:59.307] DEBUG 000000000000 GLOBAL_SCOPE JSSESSLSocketImpl.getDefault()- factory = com.ibm.jsse2.SSLSocketFactoryImpl@16de16de
+[2016-07-19 08:42:59.307] DEBUG 000000000000 GLOBAL_SCOPE JSSESSLSocketImpl.getDefault()- JSSE SSL Socket Factory done...
+[2016-07-19 08:42:59.307] DEBUG 000000000000 GLOBAL_SCOPE SSLSocketControl, unlocked
+[2016-07-19 08:42:59.368] DEBUG 000000000000 GLOBAL_SCOPE Printing StackTrace!
+[2016-07-19 08:42:59.368] DEBUG 000000000000 GLOBAL_SCOPE AccessMailJ, get folder exception = javax.mail.MessagingException: Connect failed;
+nested exception is:
+javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.util.g: PKIX path building failed: java.security.cert.CertPathBuilderException: PKIXCertPathBuilderImpl could not build a valid CertPath.; internal cause is: 
+java.security.cert.CertPathValidatorException: The certificate issued by CN=Trusted Root, OU=GoodTrust, O=Washington, C=UHEA is not trusted; internal cause is: 
+java.security.cert.CertPathValidatorException: Certificate chaining error
+
+
+CAUSE
+Incorrect CA certificates configured in B2B Mail Client Adapter
+
+DIAGNOSING THE PROBLEM
+Look for above log trace
+
+RESOLVING THE PROBLEM
+Obtain right CA certificates from remote mail server either directly contacting server administrator or through Certificate Capture Utility (under Trading Partner -> Digital Certificates) in SB2Bi dashboard UI. Check those certificates into SB2Bi CA store through Trading Partner -> Digital Certificates -> CA.
+Later configure these certificates as CA Certificates of B2B Mail Client Adapter instance in use.

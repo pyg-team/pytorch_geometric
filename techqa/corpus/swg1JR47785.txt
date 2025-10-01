@@ -1,0 +1,120 @@
+Title: IBM JR47785: DOC BPMCONFIG COMMAND SAMPLES DOES NOT CONTAIN PROFILE PATH PROPERTY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Sample configuration properties files for use with the
+   BPMConfig command does not contain profile path property
+   
+   Please add the following properties
+   
+   bpm.dmgr.profilePath=/usr/IBM/bpm85/profiles/Dmgr1
+   bpm.de.node.1.profilePath=/usr/WebSphere/profiles/CustomProfile1
+   
+   Ref Location :
+   http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/topic/com.ibm. [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/topic/com.ibm.]
+   wbpm.imuc.doc/topics/samplecfgprops.html#sampleconfigurationprop
+   ertiesfiles__tab-4
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Sample configuration properties files for use with the BPMConfig
+    command does not contain profile path property
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  InfoCenter was updated to include missing information.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR47785
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-13
+   
+   
+ * CLOSED DATE
+   2013-09-27
+   
+   
+ * LAST MODIFIED DATE
+   2013-09-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

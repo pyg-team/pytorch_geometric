@@ -1,0 +1,135 @@
+Title: IBM IC76115: IF A WEB SERVICE PROXY IS HANDLING TRAFFIC WHILE ITS DOMAIN IS RESTARTED, AN APPLIANCE RESTART MIGHT RESULT. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a Web Service Proxy is handling traffic and the
+   domain is restarted, an appliance restart might occur.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do not restart the domain when a Web Service Proxy handles
+   traffic.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Affected are DP systems running a Web Service Proxy service.
+   
+   When a stylesheet used by the WS Proxy is cleared from the
+   stylesheet cache while that WS Proxy service is handling data
+   traffic, the appliance's firmware may restart.
+   
+   This is caused by a programming error in accessing WS Proxy data
+   structures.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is available on 3.8.0.13, 3.8.1.12 and 3.8.2.4.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC76115
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   381
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-04
+   
+   
+ * CLOSED DATE
+   2011-06-15
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R380 PSN
+   UP
+   
+   
+ * R381 PSN
+   UP
+   
+   
+ * R382 PSN
+   UP

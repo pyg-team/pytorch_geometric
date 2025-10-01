@@ -1,0 +1,154 @@
+Title: IBM IV89578: WEBTOOLS EMAIL OPTION NOT WORKING - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.1.1-TIV-ITNMIP-Linux-FP0002 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.1.1-TIV-ITNMIP-Linux-FP0002&source=SAR]
+4.1.1_README_NLS_FP0002 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.1.1_README_NLS_FP0002&source=SAR]
+4.1.1_README_FP0002 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.1.1_README_FP0002&source=SAR]
+4.2.0_README_FP0002.txt [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0_README_FP0002&source=SAR]
+4.2.0-TIV-ITNMIP-Linux-FP0002 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-Linux-FP0002&source=SAR]
+4.2.0-TIV-ITNMIP-AIX-FP0002 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-AIX-FP0002&source=SAR]
+4.2.0-TIV-NOIHD-Linux-FP0002 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-NOIHD-Linux-FP0002&source=SAR]
+4.2_README_FP0002.txt [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2_README_FP0002&source=SAR]
+4.2.0-TIV-NOIHD-AIX-FP0002 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-NOIHD-AIX-FP0002&source=SAR]
+IBM Tivoli Network Manager IP Edition 4.1.1 Fix Pack 2, 4.1.1-TIV-ITNMIP-FP0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24041066]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  customer that is unable to find documented steps for
+   configuring the 'Send: E-Mail To ' webtool in ITNM 4.2.  We are
+   also
+   unable to find any documentation for this.  The customer has
+   already
+   enabled the SMTP client on the server where ITNM 4.2 is
+   installed.  Can
+   IBM provide us with steps or a link to any documentation that
+   details
+   how to configure the webtool?
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  na
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * users of Webtools                                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * the email option in webtools does not work                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * | fix pack | 4.1.1-ITNMIP-FP0002 , | fix pack |              *
+   * 4.2.0-ITNMIP-FP0002                                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  the ncp_webtool.cgi script was fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV89578
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S4500
+   
+   
+ * REPORTED RELEASE
+   420
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-30
+   
+   
+ * CLOSED DATE
+   2016-10-17
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * FIXED COMPONENT ID
+   5724S4500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R420 PSN
+   UP
+   
+   
+ * R420 PSY
+   UP

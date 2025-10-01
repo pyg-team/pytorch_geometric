@@ -1,0 +1,199 @@
+Title: IBM JR55902: DOC: BPM UPGRADE ROLLBACK INSTRUCTION UPDATES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Instructions for BPM upgrade rollback instruction update
+   
+   http://www-01.ibm.com/support/docview.wss?uid=swg27044938 [http://www-01.ibm.com/support/docview.wss?uid=swg27044938]
+   
+   1. Installation Manager rollback to previous version does not
+   reinstall the IFixes which were deleted during the Fixpack
+   upgrade. Review the installation history and reinstall all the
+   IFixes which were associated with the previous version
+   
+   ===============
+   
+   2.missng "-Declipse.bundle.setTCCL=false"
+   
+   http://www-01.ibm.com/support/docview.wss?uid=swg27044938 [http://www-01.ibm.com/support/docview.wss?uid=swg27044938]
+   
+   If you rolled back to a version earlier than V8.5.6 (V8.5.0.x
+   or V8.5.5), then, before you can start the deployment
+   environment, you must define a JVM argument for the WebSphere
+   server JVMs that run Business Space. In the administrative
+   console, go to Servers > Server Types > WebSphere application
+   servers. For each IBM BPM application cluster member (IBM BPM
+   Advanced and IBM BPM Standard), or for the single IBM BPM
+   application server (IBM BPM Express), perform the following
+   steps:
+   
+       In the Name column, select the server link.
+   
+       In the Server Infrastructure section, expand Java and
+   Process Management and select Process definition.
+   
+       In the Additional Properties section, select Java Virtual
+   Machine.
+   
+       If "-Declipse.bundle.setTCCL=false" is not shown among the
+   existing entries in the Generic JVM arguments field, add it to
+   any existing entries and save your changes.
+   
+       Synchronize your changes to the managed nodes.
+   
+       To pick up the configuration changes, restart the IBM BPM
+   application cluster (for IBM BPM Advanced or IBM BPM Standard)
+   or the single IBM BPM application server (for IBM BPM Express).
+   ============
+   
+   3. Add cross reference for rollback instructions between
+   Install TAb and Profile upgrade TAB .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  DOC: BPM UPGRADE ROLLBACK INSTRUCTION UPDATES
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ERROR DESCRIPTION:
+   Instructions for BPM upgrade rollback instruction update
+   
+   http://www-01.ibm.com/support/docview.wss?uid=swg27044938 [http://www-01.ibm.com/support/docview.wss?uid=swg27044938]
+   
+   1. Installation Manager rollback to previous version does not
+   reinstall the IFixes which were deleted during the Fixpack
+   upgrade. Review the installation history and reinstall all the
+   IFixes which were associated with the previous version
+   
+   ===============
+   
+   2.missng "-Declipse.bundle.setTCCL=false"
+   
+   http://www-01.ibm.com/support/docview.wss?uid=swg27044938 [http://www-01.ibm.com/support/docview.wss?uid=swg27044938]
+   
+   If you rolled back to a version earlier than V8.5.6 (V8.5.0.x
+   or V8.5.5), then, before you can start the deployment
+   environment, you must define a JVM argument for the WebSphere
+   server JVMs that run Business Space. In the administrative
+   console, go to Servers > Server Types > WebSphere application
+   servers. For each IBM BPM application cluster member (IBM BPM
+   Advanced and IBM BPM Standard), or for the single IBM BPM
+   application server (IBM BPM Express), perform the following
+   steps:
+   
+       In the Name column, select the server link.
+   
+       In the Server Infrastructure section, expand Java and
+   Process Management and select Process definition.
+   
+       In the Additional Properties section, select Java Virtual
+   Machine.
+   
+       If "-Declipse.bundle.setTCCL=false" is not shown among the
+   existing entries in the Generic JVM arguments field, add it to
+   any existing entries and save your changes.
+   
+       Synchronize your changes to the managed nodes.
+   
+       To pick up the configuration changes, restart the IBM BPM
+   application cluster (for IBM BPM Advanced or IBM BPM Standard)
+   or the single IBM BPM application server (for IBM BPM Express).
+   ============
+   
+   3. Add cross reference for rollback instructions between
+   Install TAb and Profile upgrade TAB .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR55902
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-11
+   
+   
+ * CLOSED DATE
+   2016-06-12
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

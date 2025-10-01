@@ -1,0 +1,178 @@
+Title: IBM LO39731: UI: DAY-AT-A-GLANCE PLUGIN DOES NOT AUTOMATICALLY REFRESH FOR TH E NEXT DAY. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Added by Greg Klouda - 10/10/07
+   
+   Original design was to reposition the side calendar to the
+   current time only
+   when the user closed and then reopened the side calendar.  As a
+   result of this
+   the side calendar doesn't update to the current day (when would
+   we do this,
+   would it be confusing to users working at midnight to see the
+   side calendar
+   suddenly switch days, etc).
+   
+   John suggests we get more feedback before deciding to change
+   this behavior.
+   
+   Hi Greg,
+   I've heard this request a few more times. I think it is
+   deferrable out of 8.01.
+   I think its worth keeping on the books for 8.5 as we may hear
+   similar input
+   once more people start using it.
+   Thanks,
+   JL
+   ----------------------------------------------------------------
+   ----------------
+   ----------------------------------------------------------------
+   ----------------
+   ----------------------------------------------------------------
+   ----------------
+   -------------------------------------------------
+   
+   Day-At-A-Glance Java Plug-in does not automatically refresh when
+   client is left
+   running over night:
+   
+   Steps to reproduce:
+   
+   Open Day-At-A-Glance plug-in and leave it running overnight.
+   The next day, the calendar view is not refreshed and will still
+   display the
+   previous day.  However, the second half of the plug-in will
+   refresh.
+   
+   In the example below, the client was left running on Tuesday,
+   October 2nd.  The
+   screen shot is from today.  Notice that the first date displayed
+   still reflects
+   the previous day while the second date displayed (with the
+   "Today" button) did
+   refresh for the next day.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Click on the "Today" button and it will refresh the plug-in's
+   view.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO39731
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES/DOMINO 7X
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-04-20
+   
+   
+ * CLOSED DATE
+   2009-10-09
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NOTES/DOMINO 7X
+   
+   
+ * FIXED COMPONENT ID
+   5724E6200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSN
+   UP

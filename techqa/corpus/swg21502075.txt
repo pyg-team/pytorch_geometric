@@ -1,0 +1,34 @@
+Title: IBM Can I customize the portlet columns in IBM® FileNet® Application Connector for SAP® R/3®, J2EE Edition? - United States
+
+Text:
+modify; set; portlet; Display TECHNOTE (FAQ)
+
+QUESTION
+ How do I define what columns are displayed in a IBM® FileNet® Application Connector for SAP® R/3®, J2EE Edition portlet? 
+
+CAUSE
+The default columns (e.g. Document Number, Step Name, Status, Received On) do not meet your requirements.
+
+ANSWER
+The following information is from the ACSAP 2.1 Interim Fix 7 readme file. It describes how to customize the portlets and specifies that it can only be done on systems running ACSAP 2.1 Interim Fix 5 and above. 
+
+Portlet Customization
+Starting with ACSAP 2.1 Interim Fix 5, the QCim (queue) portlet for Workplace can be set up to display a custom set of item attributes by modifying one of the installed files. Please keep in mind that future portlet updates may overwrite the layout and restore the default columns. To keep the customized layout, the configuration part at the beginning of the <InstallHome>/FileNet/AE/Workplace/js/portlet.js file (<InstallHome>/FileNet/Workplace/js/portlet.js for AE 3.5.x) can be modified after installing the latest update.
+
+Using a text editor, change the following default settings:
+
+var DISPLAY_GUID = true; 
+var DISPLAY_SUBJECT = false; 
+var DISPLAY_STEP_NAME = true; 
+var DISPLAY_STATUS = true; 
+var DISPLAY_RECEIVED_ON = true; 
+
+Set according to your individual preferences, using the true and false keywords, e.g.
+
+var DISPLAY_GUID = false; 
+var DISPLAY_SUBJECT = true; 
+var DISPLAY_STEP_NAME = false; 
+var DISPLAY_STATUS = false; 
+var DISPLAY_RECEIVED_ON = true; 
+
+After the modification, the Workplace application needs to be redeployed and the browser cache must be cleared on the client machines.

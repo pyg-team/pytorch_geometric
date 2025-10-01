@@ -1,0 +1,40 @@
+Title: IBM ClearAuthenticationCache and LTPA Token - United States
+
+Text:
+ClearAuthenticationCache; LTPA; httponly; microsoft; internet explorer; cookie; token TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+WebSphere Portal prompts a previously-authenticated user to log in again.
+
+SYMPTOM
+You log on to WebSphere Portal with Microsoft Internet Explorer. You navigate to some page (within or external to your portal) which executes javascript:
+document.execCommand("ClearAuthenticationCache","false");
+
+The next time you request content protected by WebSphere Portal (anything under the .../myportal/... context, by default) you are prompted to log in again.
+
+
+CAUSE
+ClearAuthenticationCache clears all authentication credentials from Internet Explorer's cache, including cookies. This means that LTPAToken2 will be deleted from the client's cookie store. When the client fails to present LTPAToken2 in a request for protected content, WebSphere Application Server considers the request unauthenticated and will redirect the request to prompt for reauthentication.
+
+
+DIAGNOSING THE PROBLEM
+Capture traffic from the client browser using a tool like Fiddler. Check the HTTP headers and see when the browser fails to present LTPAToken2 with a request for WebSphere Portal protected content. Review page and script content immediately prior to the failure to see if ClearAuthenticationCache has been run.
+
+
+
+RESOLVING THE PROBLEM
+If you control the problematic script, find some alternative to ClearAuthenticationCache such that the cookies WebSphere Portal relies upon (LTPAToken2, JSESSIONID, any external security manager cookies, etc.) are preserved. 
+
+If you do not control the problematic script, users must reauthenticate. Configuring user session persistence may mitigate the effect. 
+
+ 
+
+Consider enabling addHttpOnlyAttributeToCookies to set the HTTPOnly flag on LTPAToken2 to mitigate problems like this. At the time of this writing, HTTPOnly does not mitigate ClearAuthenticationCache but it could mitigate javascript access to LTPAToken2 through the document.cookie property. HTTPOnly implementation varies between browsers and releases. RFC 6265 does not clearly specify how browsers must manage such operations.
+
+RELATED INFORMATION
+ addHttpOnlyAttributeToCookies [http://publib.boulder.ibm.com/infocenter/wasinfo/fep/topic/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/usec_seccustomprop.html#addHttpOnlyAttributeToCookies]
+HTTPOnly implementation variance [https://www.owasp.org/index.php/HttpOnly]
+ClearAuthenticationCache [http://msdn.microsoft.com/en-us/library/ms536979%28VS.85%29.aspx]
+What ClearAuthenticationCache clears [http://blogs.msdn.com/b/ieinternals/archive/2010/04/05/understanding-browser-session-lifetime.aspx]
+RFC 6265 [http://tools.ietf.org/html/rfc6265]
+User Session Persistence [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Configuring_user_session_persistence_wp7]

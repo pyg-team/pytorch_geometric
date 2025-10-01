@@ -1,0 +1,32 @@
+Title: IBM ITCAM for J2EE JBOSS V5 DC Configuration. - United States
+
+Text:
+ITCAMforJ2EE JBOSS TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Trying to configure the JBoss DC, V6.1.0.4 with IFix's 2,3 and 4 installed and JBOSS V5. The configuration fails, with the message: 
+Cannot connect to the JBoss server. 
+Make sure that the JBoss is running or check whether the Server 
+Host/Port specified are correct. 
+Please be sure of that JNP service is not only bound on localhost and 
+JNP service should be able to be connected via domain name like 
+testdomain.com:1099. 
+
+SYMPTOM
+The configuration fails, with the message: 
+Cannot connect to the JBoss server. 
+
+
+CAUSE
+The problem was that the DC configuration tool tries to connect to the JBoss server's JNP service on port 1099, using the real hostname. This worked fine with JBoss 4. In JBoss 5, JBoss changed how they bind the JNP port. They now bind it ONLY to locahost, not the real hostname or IP.
+
+RESOLVING THE PROBLEM
+The problem was that the DC configuration tool tries to connect to the JBoss server's JNP service on port 1099, using the real hostname. This worked fine with JBoss 4. In JBoss 5, JBoss changed how to bind the JNP port. It now binds ONLY to locahost, not the real hostname or IP. Thus when re-running the config and specified localhost port 1099, it worked. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMforJ2EE

@@ -1,0 +1,78 @@
+Title: IBM SQL0443N with -727 when calling catalog functions such as SYSIBM.SQLTABLES - United States
+
+Text:
+SQL0443N; 727; -551; SQL0551N; -805; sql0805; sql0805n; catalog; tables; function; -727; metadata stored procedures; sqlcolumns; sqltables TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The following errors are examples of what you may encounter:
+
+SQL0443N error, Routine "SYSIBM.SQLTABLES" (Specific Name "TABLES") has returned an error SQLSTATE with diagnostic text "SYSIBM:CLI:-727". SQLSTATE=38553) when attempting to connect to a database from a client or application. 
+
+CAUSE
+The general cause is that db2schema.bnd file needs to be re-bound to the database server. 
+
+Another possible cause is that the SELECT privilege was revoked from a set of system catalog tables. When a user tries to execute one of DB2's schema API's such as SYSIBM.SQLTABLES or SYSIBM.SQLCOLUMNS the execute will fail with a -551 error.
+
+
+RESOLVING THE PROBLEM
+To resolve the error first perform the following steps on your server machine: 
+
+
+1) cd to \sqllib\bnd directory (if on Linux® or UNIX® /sqllib/bnd) 
+2) db2 connect to <database> 
+3) db2 bind db2schema.bnd blocking all grant public sqlerror continue 
+4) db2 terminate
+
+If the error persists you need to determine if a -551 error is being returned. To determine this increase the DIAGLEVEL to 4 on the database server and execute the application again. You will see a similar entry in your db2diag.log if it fails:
+
+2009-11-11-12.18.18.236714-300 I93487E809 LEVEL: Info
+PID : 27734 TID : 183039802560PROC : db2agent (SAMPLE)
+INSTANCE: db2 NODE : 000 DB : SAMPLE
+APPHDL : 0-31 APPID: *LOCAL.db2.011111111803
+AUTHID : TESTID
+FUNCTION: DB2 UDB, oper system services, sqlofica, probe:10
+DATA #1 : SQLCA, PD_DB2_TYPE_SQLCA, 136 bytes
+sqlcaid : SQLCA sqlcabc: 136 sqlcode: -727 sqlerrml: 43
+sqlerrmc: 2 -551 42501 TESTID|SELECT|SYSIBM.SQLTABLES
+sqlerrp : SQLRA02C
+sqlerrd : (1) 0x801A006D (2) 0x00000000 (3) 0x00000000
+(4) 0x00000000 (5) 0xFFFFFFC4 (6) 0x00000000
+sqlwarn : (1) (2) (3) (4) (5) (6)
+(7) (8) (9) (10) (11)
+sqlstate: 56098 
+
+
+In this example, the -727 error is returned because of a -551 error. The -551 error is saying that userid TESTID does not have SELECT privilege on the table SYSIBM.SQLTABLES.
+
+Granting the appropriate privilege will fix the problem.
+
+Below are the specific system catalog tables that the SELECT privilege is required for in order for DB2's schema API's to work:
+
+SYSIBM.SQLTABLES
+SYSIBM.SYSTABLES
+SYSIBM.SQLTABLETYPES
+SYSIBM.SQLTABLEPRIVILEGES
+SYSIBM.SYSCOLUMNS
+SYSIBM.SQLSPECIALCOLUMNS
+SYSIBM.SQLCOLPRIVILEGES
+SYSIBM.SYSDUMMY1
+SYSIBM.SQLPRIMARYKEYS
+SYSIBM.SQLSTATISTICS
+SYSIBM.FOREIGNKEYS
+SYSIBM.SYSINDEXES
+SYSIBM.SQLPROCEDURES
+SYSIBM.SQLPROCEDURECOLS
+SYSIBM.SYSROUTINES
+SYSIBM.SYSROUTINEPARMS
+SYSIBM.SQLTYPEINFO
+SYSIBM.SQLUDTS
+SYSIBM.SQLSCHEMAS
+SYSIBM.SYSRELS
+SYSIBM.SYSKEYCOLUSE
+SYSIBM.SYSTABCONST
+SYSIBM.SYSDATATYPES
+
+It is recommended to grant SELECT privilege to users and groups that have access to the database for all of these tables.
+
+Example:
+db2 "GRANT SELECT ON TABLE SYSIBM.SQLTABLES TO USER DB2INST1";

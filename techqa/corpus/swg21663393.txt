@@ -1,0 +1,45 @@
+Title: IBM Error 500 when logging in to Rule Team Server/Decision Center after a time-out - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The customer is getting an error logging in after being logged out while using the Rule Team Server (RTS)/Decision Center (DC) console
+. 
+
+SYMPTOM
+The customer gets the following error message when logging in after a time-out of the console session: 
+
+ * 
+ * Error 500
+   javax.servlet.Servletexception:javax.servlet.servletexception: 
+   unsepecified service: null
+   
+
+
+The log shows a stack with a SocketTimeoutException, whose root cause is an AsyncTimeoutException. 
+CAUSE
+This occurs when the Decision Center Session Management section settings are configured differently from having: 
+
+ * "Override session management" checked. 
+ * "security integration" unchecked.
+
+DIAGNOSING THE PROBLEM
+Verify in the WAS administrative console that your Decision Center settings are those above. 
+
+See the WAS documentation at "Reference > Settings > Session management settings [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/topic/com.ibm.websphere.nd.multiplatform.doc/ae/uprs_rsession_manager.html]" for more information.
+
+
+RESOLVING THE PROBLEM
+Change the Decision Center settings to the ODM default in the WAS admin console under Session Management and restart the application: 
+
+ * "Override session management" checked. 
+ * "security integration" unchecked.
+
+RELATED INFORMATION
+#Configuring Decision Center on WAS [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/topic/com.ibm.odm.distrib.config.was/config_dc_websphere/tpc_was_config_dc_console.html]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Decision Center Platform Independent 8.5, 8.0, 7.5 Edition Independent

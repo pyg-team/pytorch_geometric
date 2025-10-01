@@ -1,0 +1,146 @@
+Title: IBM PO02471: Hung Threads while loading tab sessions. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In a production environment, it is possible to encounter hung
+   threads while loading user tab sessions. The issue manifests
+   with the following logging:
+   
+   Thread "WebContainer : 39" (0000054d) has been active for
+   742082 milliseconds and may be hung.  There is/are 47 thread(s)
+   in total in the server that may be hung.
+           at java.lang.ClassLoader.loadClass(ClassLoader.java:650)
+           at javax.xml.parsers.FactoryFinder.newInstance(Unknown
+   Source)
+           at
+   javax.xml.parsers.FactoryFinder.findJarServiceProvider(Unknown
+   Source)
+           at javax.xml.parsers.FactoryFinder.find(Unknown Source)
+           at
+   javax.xml.parsers.DocumentBuilderFactory.newInstance(Unknown
+   Source)
+           at
+   curam.util.common.tab.XmlHelper.createParser(XmlHelper.java:111)
+           at
+   curam.util.common.tab.TabConfigAccessImpl.searchForResource(TabC
+   onfigAccessImpl.java:624)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Hung Threads while loading tab sessions.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  APAR  PO02471 is addressed in 6.0.5.3 iFix 7.
+   See Release Note :
+   http://www-01.ibm.com/support/docview.wss?uid=swg27041595 [http://www-01.ibm.com/support/docview.wss?uid=swg27041595]
+   Previously, an issue existed where the threads could
+   potentially hang while loading user tab sessions.
+    This was due to the document builder instances created in the
+   XmlHelper class which were not cached and reused per thread.
+   This issue has been resolved.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PO02471
+   
+   
+ * REPORTED COMPONENT NAME
+   CURAM SOCIAL PG
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2600
+   
+   
+ * REPORTED RELEASE
+   605
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-11
+   
+   
+ * CLOSED DATE
+   2014-03-12
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  TEC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R605 PSY
+   UP

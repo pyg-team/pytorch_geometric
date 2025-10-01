@@ -1,0 +1,40 @@
+Title: IBM BEAST Secure Socket Layer (SSL) 3.0 and Transport Layer Security (TLS) 1.0 exploit  (CVE-2011-3389) - United States
+
+Text:
+CVE-2011-3389 FLASH (ALERT)
+
+ABSTRACT
+ Information on possible BEAST TLS 1.0 and/or SSL 3.0 attacks and options to address this issue. 
+
+CONTENT
+Although this is not an Access Manager for e-business exposure, IBM is aware that many of our customers may be exposed to this issue, and therefore, we are sharing the following information, that we have presently, to assist our customers. 
+VULNERABILITY DETAILS:
+
+CVE ID: CVE-2011-3389
+
+Exposure Description: 
+On 23 September 2011, researchers demonstrated a new attack called BEAST (short for Browser Exploit Against SSL/TLS) at a security conference in Argentina, as reported by various media outlets worldwide. The researchers claim they have found a way to gain access to sensitive information transmitting over the network that is protected using the Secure Socket Layer (SSL) 3.0 and Transport Layer Security (TLS) 1.0 protocols. By persuading a victim to visit a Web site, a remote attacker could exploit this vulnerability using man-in-the-middle techniques to decrypt HTTPS sessions and obtain sensitive information such as user authentication cookies that could be further leveraged to obtain sensitive information such as account and credit card numbers, user names, passwords, etc.
+
+
+CVSS:
+
+CVSS Base Score: 4.3
+Temporal Score: See the X-Force document titled SSL/TLS information disclosure (70069) for the current score.
+CVSS Environment Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+
+
+REMEDIATION/SOLUTIONS:
+
+Protection against the BEAST TLS 1.0 (or earlier) or SSL 3.0 threat: 
+
+Apply a Fix: 
+
+Contact your Web Browser Vendor: Web browser vendors are working on providing modifications (fixes) on the client side that remediate this type of threat. We recommend implementing remediation provided by Web browser vendors, when it is available. 
+Once this fix is installed on the client side (such as a browser), there will be no need for any corresponding fix on the server side. 
+
+REFERENCES: 
+Complete CVSS Guide: National Vulnerability Database's Common Vulnerability Scoring System V2 Calculator On-line IBM Internet Security Systems (ISS) X-Force Vulnerability Database's SSL/TLS information disclosure (70069) CVE-2011-3389*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Flash. 
+
+
+Note: According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

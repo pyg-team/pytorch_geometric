@@ -1,0 +1,225 @@
+Title: IBM IV35907: TSAM 723 DOESN'T AUTOMATICALLY CANCEL EXPIRED PROJECTS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Projects not automatically cancelled at their expiration date
+   due to error (CTJZH7712E unexpected exception thrown by a Java
+   class) during escalation PMRDPICRSR (which creates the project
+   decommission SR) while running TSAM 723.
+   
+   SysOut.log contains errors, including the following:
+   --------
+   [1/8/13 19:03:23:357 PST] 00000036 SystemOut     O
+   [maximo-ESCALATION.ESCPMRDPICRSR][ERROR][SR ] class
+   com.ibm.ism.pmrdp.common.actions.CreateServiceRequestByEscalatio
+   nAction Failed to create service request by escalation acion in
+   com.ibm.ism.pmrdp.common.actions.CreateServiceRequestByEscalatio
+   nAction. applyCustomAction. EXCEPTION
+   psdi.util.MXApplicationException:
+   BMXAA4156E - Not a valid data type.
+   
+   [1/8/13 19:03:23:383 PST] 00000036 SystemOut     O
+   [maximo-ESCALATION.ESCPMRDPICRSR][ERROR][SR ] Failed to execute
+   action on escalation: {PMRDPICRSR} reference point: {80}  for
+   object{PMZHBRESSCHED} with id {1829}
+   psdi.util.MXApplicationException: ctjzh#CTJZH7712E <<<<<
+       at
+   com.ibm.ism.pmrdp.common.actions.CreateServiceRequestByEscalatio
+   nAction.
+   +...
+   Caused by:
+   psdi.util.MXApplicationException: BMXAA4156E - Not a valid data
+   type.
+       at psdi.util.MaxType.setValue(MaxType.java:678)
+       at psdi.mbo.MboValue._setValue(MboValue.java:1347)
+       at psdi.mbo.MboValue.setValue(MboValue.java:1333)
+       at psdi.mbo.Mbo.setValue(Mbo.java:2625)
+       at psdi.mbo.Mbo.setValue(Mbo.java:2585)
+       at
+   com.ibm.ism.pmrdp.common.actions.CreateServiceRequestByEscalatio
+   nAction.
+   applyCustomAction(CreateServiceRequestByEscalationAction.java:40
+   0)
+       ... 13 more
+   [1/8/13 19:03:23:384 PST] 00000036 SystemOut     O
+   [maximo-ESCALATION.ESCPMRDPICRSR][ERROR][SR ] BMXAA6701E - The
+   discardable MBO for an mboset could not be retrieved. The SQL
+   error code is: -4470
+   +...
+   [1/8/13 19:03:23:384 PST] 00000036 SystemOut     O
+   [maximo-ESCALATION.ESCPMRDPICRSR][ERROR][SR ] Failed to execute
+   reference point. psdi.util.MXSystemException: BMXAA4210E -
+   Database error number -4470 has occurred.
+       [jcc][t4][10120][10898][3.62.57] Invalid operation: result
+   set is closed. ERRORCODE=-4470, SQLSTATE=null
+   ------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  LA fix to be delivered.  In the meantime, check with L3 for:
+   "hotfix_723_CreateServiceRequestByEscalationAction.sh"
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Tivoli Service Automation Manager
+   7.2.3
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   TivSAM 7.2.3 does not automatically cancel expired projects
+   ****************************************************************
+   * RECOMMENDATION:
+   The SystemOut.log contains errors/exceptions as follows:
+   
+   SystemOut O
+   [maximo-ESCALATION.ESCPMRDPICRSR][ERROR][SR ] class
+   com.ibm.ism.pmrdp.common.actions.CreateServiceRequestByEscalatio
+   nAction Failed to create service request by escalation acion in
+   com.ibm.ism.pmrdp.common.actions.CreateServiceRequestByEscalatio
+   nAction. applyCustomAction. EXCEPTION
+   psdi.util.MXApplicationException: BMXAA4156E - Not a valid data
+   type.
+   
+   SystemOut O
+   [maximo-ESCALATION.ESCPMRDPICRSR][ERROR][SR ] Failed to execute
+   action on escalation: {PMRDPICRSR} reference point: {80} for
+   object{PMZHBRESSCHED} with id {1829}
+   psdi.util.MXApplicationException: ctjzh#CTJZH7712E <<<<<
+   at
+   com.ibm.ism.pmrdp.common.actions.CreateServiceRequestByEscalatio
+   nAction.
+   +...
+   Caused by:
+   psdi.util.MXApplicationException: BMXAA4156E - Not a valid data
+   type.
+   at psdi.util.MaxType.setValue(MaxType.java:678)
+   at psdi.mbo.MboValue._setValue(MboValue.java:1347)
+   at psdi.mbo.MboValue.setValue(MboValue.java:1333)
+   at psdi.mbo.Mbo.setValue(Mbo.java:2625)
+   at psdi.mbo.Mbo.setValue(Mbo.java:2585)
+   at
+   com.ibm.ism.pmrdp.common.actions.CreateServiceRequestByEscalatio
+   nAction.applyCustomAction(CreateServiceRequestByEscalationAction
+   .java:400)
+    ... 13 more
+   SystemOut O
+   [maximo-ESCALATION.ESCPMRDPICRSR][ERROR][SR ] BMXAA6701E - The
+   discardable MBO for an mboset could not be retrieved. The SQL
+   error code is: -4470
+   
+   SystemOut O
+   [maximo-ESCALATION.ESCPMRDPICRSR][ERROR][SR ] Failed to execute
+   reference point. psdi.util.MXSystemException: BMXAA4210E -
+   Database error number -4470 has occurred.
+   [jcc][t4][10120][10898][3.62.57] Invalid operation: result set
+   is closed. ERRORCODE=-4470, SQLSTATE=null
+   
+   For permanent resolution apply Tivoli Service Automation Manager
+   7.2.4 Fixpack 1 when available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   | fix pack | 7.2.4-TIV-TSAM-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV35907
+   
+   
+ * REPORTED COMPONENT NAME
+   TSAM (& INSTALL
+   
+   
+ * REPORTED COMPONENT ID
+   5724W7800
+   
+   
+ * REPORTED RELEASE
+   723
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-28
+   
+   
+ * CLOSED DATE
+   2013-01-29
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSAM (& INSTALL
+   
+   
+ * FIXED COMPONENT ID
+   5724W7800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R724 PSY
+   UP

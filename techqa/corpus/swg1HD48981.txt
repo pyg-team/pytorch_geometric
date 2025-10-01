@@ -1,0 +1,169 @@
+Title: IBM HD48981: DMUNAV : EXPORT ANNOTATED VIEW AS XML CREATES ALMOST - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DMUNAV : EXPORT ANNOTATED VIEW AS XML
+   CREATES ALMOST EMPTY FILE.
+   SCENARIO:
+   01 File/open:"Test.CATProduct" (empty Product).
+   02 Start - DMU - DMU NAvigator.
+   03 select function/icon 'Annotated View' function.
+   04 In the appearing toolbar 'DMU 2D Marker' -
+   select icon:'Exits from the Annotated View button'.
+   05 Expand the Applications node in the product
+   structure tree.
+   06 Expand the Annotated Views node.
+   07 Right-Click the Annotated View View.1.
+   08 Select 'Annotated Views file export' in the
+   contextual menu under View.1 object.
+   09 In the Save As dialogue window save the XML
+   file.
+   .
+   RESULT: ERROR: File is not written correctly. Open
+   the file in the Internet Explorer or in any editor and
+   you can see, only two lines have been written.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  DMUNAV : EXPORT ANNOTATED VIEW AS XML CREATES ALMOST
+   EMPTY FILE.
+   DMUNAV : EXPORT ANNOTATED VIEW AS XML
+   CREATES ALMOST EMPTY FILE.
+   SCENARIO:
+   01 File/open:"Test.CATProduct" (empty Product).
+   02 Start - DMU - DMU NAvigator.
+   03 select function/icon 'Annotated View' function.
+   04 In the appearing toolbar 'DMU 2D Marker' -
+   select icon:'Exits from the Annotated View button'.
+   05 Expand the Applications node in the product
+   structure tree.
+   06 Expand the Annotated Views node.
+   07 Right-Click the Annotated View View.1.
+   08 Select 'Annotated Views file export' in the
+   contextual menu under View.1 object.
+   09 In the Save As dialogue window save the XML
+   file.
+   .
+   RESULT: ERROR: File is not written correctly. Open
+   the file in the Internet Explorer or in any editor and
+   you can see, only two lines have been written.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON CATIA
+   VERSION 5 RELEASE 17 GA level.
+   NOTE THAT THIS PROBLEM WILL ALSO BE
+   FIXED ON V5R16SP04.
+   .
+   Now you get the expected results.
+   .
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD48981
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 AIX
+   
+   
+ * REPORTED COMPONENT ID
+   569101000
+   
+   
+ * REPORTED RELEASE
+   516
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-01-30
+   
+   
+ * CLOSED DATE
+   2009-05-09
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5 AIX
+   
+   
+ * FIXED COMPONENT ID
+   569101000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R516 PSN
+   UP
+   
+   
+ * R517 PSN
+   UP
+   
+   
+ * R518 PSN
+   UP

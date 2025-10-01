@@ -1,0 +1,183 @@
+Title: IBM PQ05759: ROUTED / NCPROUTE WILL UNDER CERTAIN CIRCUMSTANCES IGNORE METRIC UPDATES. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  RouteD / NCPROUTE were designed to avoid routing loops, but
+   under some circumstances will ignore metric updates which will
+   show up as intermittently ignoring updates from adjacent
+   routers.
+   The trace showed metric updates coming in from adjacent routers
+   with higher hop counts and we accepted them, but didn't
+   increase our routing metrics.  We see 'update from router' type
+   information, but the metrics are not changed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: To all RouteD and NCPROUTE users.            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: RouteD/NCPROUTE will under special      *
+   *                      circumstances ignore the metric         *
+   *                      updates.  In general, routes with       *
+   *                      shorter metrics are retained but        *
+   *                      are not changed to higher metrics       *
+   *                      to avoid routing loops.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If RouteD/NCPROUTE receives a routing update for a route
+   containing a higher metric than the one in its routing tables,
+   it ignores the update to comply with the rule of retaining
+   routes with shorter metrics and to avoid routing loops.
+   Routing loops can occur in network configurations where
+   RouteD/NCPROUTE communicates with an adjacent router over
+   multiple connections.  Due to timing conditions, a metric
+   change may occur in one router but not in the other resulting
+   in routing loops.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been changed to allow RouteD/NCPROUTE to update metrics
+   when applicable.  That is, whenever RouteD/NCPROUTE receives an
+   routing update from its peer with a different metric, it will
+   perform the metric update.  However, depending upon the network
+   configuration (usually when there are multiple connections
+   between routers), potential problems with routing loops may
+   occur.  Care must be taken in network configuration to avoid
+   routing loops.  RIP enhancements per RFCs in future releases
+   may be required to handle routing loop problems.
+   +
+   In addition, code was modified to set the expiration timer to
+   the standard 2 minutes from 3 minutes for a route that is not
+   network reachable (infinite metric 16).  For the stale route
+   timeout, code was modified to have the route change occur at
+   90 second rather than after 90 seconds meaning the route change
+   will occur at 120 seconds.  This is longer than the required
+   standard of 90 seconds.  The stale timeout is only applicable
+   to routes that can be learned over at least 2 interfaces on
+   on MVS running RouteD (or a NCP client managed by NCPROUTE)
+   from a common network and that the routes have equal metrics.
+   
+   * Cross Reference between External and Internal Names
+   EZAAD09L (RTINPUT )  EZBNRINP (NRINPUT )  EZAAD09L (RTINPUT )
+   EZBNRINP (NRINPUT )
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ05759
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   320
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / Pervasive / Xsystem
+   
+   
+ * SUBMITTED DATE
+   1997-06-23
+   
+   
+ * CLOSED DATE
+   1997-07-01
+   
+   
+ * LAST MODIFIED DATE
+   1997-08-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ06854 UQ06855
+   
+   
+
+MODULES/MACROS
+ *  EZAAD09L EZBNRINP
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * FIXED COMPONENT ID
+   5655HAL00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY UQ06854 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ06854]
+   UP97/07/29 P F707
+   
+   
+ * R320 PSY UQ06855 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ06855]
+   UP97/07/29 P F707
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

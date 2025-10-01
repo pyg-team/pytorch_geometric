@@ -1,0 +1,36 @@
+Title: IBM Configuring defaultRowPrefetch for an Oracle JDBC driver - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The setting defaultRowPrefetch is used to help increase the performance of queries to Oracle databases and we sometimes find customers who want to enable this feature for Oracle database connections to increase the prefetched rows. 
+
+Oracle JDBC drivers have a feature built in as an extension that allows you to set the number of rows that are prefetched while the full result set is being formulated. This is to reduce the number of trips back and forth to the database. 
+
+
+SYMPTOM
+If defaultRowPrefetch is set as a custom property on the datasource, this will not work as the defaultRowPrefetch is not a datasource property but a property on the connection itself .
+
+
+CAUSE
+defaultRowPrefetch is a property of the connection and not of the datasource
+
+ENVIRONMENT
+WebSphere Application Server using an Oracle JDBC driver
+
+DIAGNOSING THE PROBLEM
+Customer sets this property and does not see it work. This may result in longer times to getting the full result set and more round trips to the database.
+
+RESOLVING THE PROBLEM
+The Oracle defaultRowPrefetch can be set in an attempt to speed up queries to a database that return multiple rows. But, it cannot be set as a custom property in a datasource. Please see below:
+
+The way to set this connection property is as follows:. 
+
+
+
+
+You cannot set defaultRowPrefetch as a JVM property. It would have to be named 
+oracle.jdbc.defaultRowPrefetch for that to work. You can only use this property 
+by loading it into a Properties object in the code and then calling 
+getConnection with the Properties object.

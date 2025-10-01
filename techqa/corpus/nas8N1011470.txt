@@ -1,0 +1,123 @@
+Title: IBM How to Obtain the 7.1 IBM i Access for Windows Client - United States
+
+Text:
+INSTALL TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document includes instructions for obtaining the 7.1 IBM i Access for Windows Client. 
+
+RESOLVING THE PROBLEM
+This document includes instructions for obtaining the 7.1 IBM i Access for Windows Client. 
+
+Important Note:
+
+The ESS Web site is supported by the ESS team. For further assistance with downloading this product, you should visit the following Web site:
+
+https://www-304.ibm.com/servers/eserver/ess/ProtectedServlet.wss [https://www-304.ibm.com/servers/eserver/ess/ProtectedServlet.wss] 
+
+Select CONTACTS on the right, and locate the appropriate number for your country.
+
+In the event you need to contact the ESS support team, the important information (along with the instructions above) to provide to the ESS support representative is listed below:
+
+1. Serial number: Which will be associated with a valid customer number.
+2. Product ID: Which is either 572SS1 if the i is at V5R4M0, or 5761SS1 for 6.1.0. i OS.
+3. Feature code 6287. 
+
+Make sure you request: i5/OS 5722SS1 or 5761SS1 feature 6287. 
+NOTE: These instructions are based on the i OS version that IBM shows your system to be entitled at. This value could be different that what is actually installed on your IBM i.  * 
+ * 
+ * 
+
+ *  - [http://www.ibm.com/i/c.gif] IBM i OS at r7.x Instructions  
+   
+   1. Use the Entitled Software Support (ESS) [https://www.ibm.com/servers/eserver/ess] Web site. 
+   
+   a. Sign in with IBM userid and password (or register)
+   b. Select My entitled software on left hand side
+   c. On the left-hand side, if Software downloads link does not exist select Register IBM customer number. (if Software download link is there go to step f.)
+   d. Enter your Machine serial number or Customer Number (Submit).
+   e. Toward the top of the page, you should see the following:
+   To continue working with your current customer numbers, click the following link. 
+   Click the link.
+   f. Select Software Downloads.
+   g. Enter your Machine serial number (continue to next page).
+   h. Select OS version from the OS version Selection drop down.
+   i. Select 5770-SS1 from the Product Selection and continue. 
+   j. Select the correct language and continue.
+   k. Select hide/show next to Product 5770-SS1, continue.
+   l. Select hide/show next to feature 6287 IBM i Access 7.1 or 7010 i Access for Windows. and select IBM i Access for Windows (which gives you only the PC side media). and continue
+   m. Select I Agree to the license 
+   n. Choose the option Click Here to use HTTP At the bottom of the page
+   n. Double click the IBM_i_Access_for_Windows_DVD_042010.iso.zip and save.
+   
+   Once the file is downloaded and unzipped, it will be necessary to interact with the .iso image. The options for working with an .iso image are to burn the image to DVD or mount the image as a virtual optical drive. These will require a software application that is capable of reading the .iso image and making the Access for Windows installer files visible. There are several applications available both for purchase and free, however IBM does not endorse any one particular application over another. 2. You will also need to obtain the latest service pack from the following site:
+   
+   http://www-03.ibm.com/systems/power/software/i/access/windows_sp.html [http://www-03.ibm.com/systems/power/software/i/access/windows_sp.html] 
+
+
+
+ *  - [http://www.ibm.com/i/c.gif] IBM i OS at r6.1 Instructions  
+   
+   1. Use the Entitled Software Support (ESS) [https://www.ibm.com/servers/eserver/ess] Web site. 
+   
+   a. Sign in with IBM userid and password (or register)
+   b. Select My entitled software on left hand side
+   c. On the left-hand side, if Software downloads link does not exist select Register IBM customer number. (if Software download link is there go to step f.)
+   d. Enter your Machine serial number or Customer Number (Submit).
+   e. Toward the top of the page, you should see the following:
+   To continue working with your current customer numbers, click the following link. 
+   Click the link.
+   f. Select Software Downloads.
+   g. Enter your Machine serial number (continue to next page).
+   h. Select OS version from the OS version Selection drop down.
+   i. Select 5761-SS1 from the Product Selection and continue. 
+   j. Select the correct language and continue.
+   k. Select hide/show next to Product 5761-SS1, continue.
+   l. Select hide/show next to feature 6287 610 7.1 System i Access. and select
+   IBM i Access for Windows DVD (which gives you only the PC side media). and continue
+   m. Select I Agree to the license 
+   n. Choose the option Click Here to use HTTP At the bottom of the page
+   n. Double click the IBM_i_Access_for_Windows_DVD_042010.iso.zip and save.
+   
+   Once the file is downloaded and unzipped, it will be necessary to interact with the .iso image. The options for working with an .iso image are to burn the image to DVD or mount the image as a virtual optical drive. These will require a software application that is capable of reading the .iso image and making the Access for Windows installer files visible. There are several applications available both for purchase and free, however IBM does not endorse any one particular application over another. 2. You will also need to obtain the latest service pack from the following site:
+   
+   http://www-03.ibm.com/systems/power/software/i/access/windows_sp.html [http://www-03.ibm.com/systems/power/software/i/access/windows_sp.html] 
+   
+
+
+
+
+ *  - [http://www.ibm.com/i/c.gif] IBM i5/OS at V5R4M0 Instructions  
+   
+   1. Use the Entitled Software Support (ESS) [https://www.ibm.com/servers/eserver/ess] Web site. 
+   
+   a. Sign in with IBM userid and password (or register)
+   b. Select My entitled software on left hand side
+   c. On the left-hand side, if Software downloads link does not exist select Register IBM customer number. (if Software download link is there go to step f.)
+   d. Enter your Machine serial number or Customer Number (Submit).
+   e. Toward the top of the page, you should see the following:
+   To continue working with your current customer numbers, click the following link. 
+   Click the link.
+   f. Select Software Downloads.
+   g. Enter your Machine serial number (continue to next page).
+   h. Select OS version from the OS version Selection drop down.
+   i. Select 5722-SS1 from the Product Selection and continue. 
+   j. Select the correct language and continue.
+   k. Select hide/show next to Product 5722-SS1, continue.
+   l. Select hide/show next to feature 6287 540 7.1 System i Access. and select
+   IBM i Access for Windows DVD (which gives you only the PC side media). and continue
+   m. Select I Agree to the license 
+   n. Choose the option Click Here to use HTTP At the bottom of the page
+   n. Double click the IBM_i_Access_for_Windows_DVD_042010.iso.zip and save.
+   
+   Once the image is downloaded, it will be necessary to unzip and burn the image to DVD. This will require a DVD creation application that is capable of converting the .iso image back to DVD. There are several applications available both for purchase and free however IBM does not endorse any one particular application over another. 2. You will also need to obtain the latest service pack from the following site:
+   
+   http://www-03.ibm.com/systems/power/software/i/access/windows_sp.html [http://www-03.ibm.com/systems/power/software/i/access/windows_sp.html] 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 
+HISTORICAL NUMBER
+ 603799489

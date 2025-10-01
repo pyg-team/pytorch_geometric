@@ -1,0 +1,140 @@
+Title: IBM Configure WebSphere Portal to throw a 404 error for nonexistent URLs - United States
+
+Text:
+404; 320; http; error; redirect; friendly; invalid; mapping; URL; pathinfo; state; decoding; fallback TECHNOTE (FAQ)
+
+QUESTION
+ IBM WebSphere Portal is successfully installed and configured. Without logging in, end-users occasionally mistype a URL which does not exist. Then users are redirected to either the Portal login page or the Portal home page. How can Portal be configured to throw a 404 error message rather than issuing a 302 redirect? 
+
+CAUSE
+The default behavior of WebSphere Portal is to send an HTTP 302 redirect to the end user. A modification to the Portal configuration is required to throw an HTTP 404 instead.
+
+ANSWER
+ 
+
+Throwing a 404 error 
+
+To configure WebSphere Portal to throw 404 errors for nonexistent URLs, perform the following steps: 
+
+ 
+
+1) Login to the WAS Console / Deployment Manager. 
+
+
+2) Navigate to Resources > Resource Environment > Resource Environment Providers > WP ConfigService > Custom Properties 
+
+ 
+
+3) Create a new custom property 
+
+Name: friendly.pathinfo.enabled
+Value: false
+Type: java.lang.String
+
+
+4) Create a new custom property 
+
+Name: friendly.pathinfo.invalid
+Value: true
+Type: java.lang.String
+
+
+5) Create a new custom property 
+
+Name: friendly.redirect.enabled
+Value: false
+Type: java.lang.String
+
+
+6) Create a new custom property 
+
+Name: state.decoding.fallback
+Value: false
+Type: java.lang.String
+
+
+7) Create a new custom property 
+
+Name: wps.mappingurl.invalid
+Value: true
+Type: java.lang.String
+
+
+
+*Note: The end result of steps #3-#7 should look like the following:
+[/support/docview.wss?uid=swg21674823&amp;aid=1] 
+
+ 
+
+ 
+
+8) Save changes. If clustered sync nodes. 
+
+9) Restart the Portal server(s). 
+
+ 
+
+For a description of what each of these properties does see the related URL below. 
+
+ 
+
+Servlet Level 404 Handling 
+
+Note - the configuration changes noted in the previous section will account for use cases where WebSphere Portal is processing the URLs - such as /wps/portal/nonexistentURL, /wps/myportal/nonexistentURL, etc. If you wish to expand you use cases to cover /wps/nonexistentURL and more generally /wps/* URLs which do not exist, see the Technote below for how to update wps.ear to handle 404 errors on a servlet level:
+http://www.ibm.com/support/docview.wss?uid=swg21411195 [http://www.ibm.com/support/docview.wss?uid=swg21411195] 
+
+ 
+
+ 
+
+WCM Friendly URLs 
+
+If you are on Portal 8.5 and leverage WCM Friendly URLs - upgrade to Portal 8.5 Cumulative Fix 03 or later and implement additional configuration settings as noted in the Portal 8.5 Infocenter [http://www.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/wcm/configure_validate_friendly_urls.dita?lang=en]. This Technote will be updated in the near future with further details of how to implement these settings. 
+
+ 
+
+WARNING: If you are on Portal 7.0 or 8.0 and you have WCM Friendly URLs configured - those Friendly URLs will no longer work correctly if the settings in this Technote are implemented. Friendly URLs on Portal pages will continue to function correctly but resolution of the WCM Friendly URLs will fail. WCM URLs that utilize the urile query parameter will continue to work but WCM Friendly URLs will fail. Unfortunately - there are no plans at present to backport WCM Friendly URL functionality to Portal 7.0 or 8.0. Open a feature request [https://www.ibm.com/developerworks/rfe/] if you would like to see this functionality backported. 
+
+ 
+
+
+Updated Behavior for Access Control 
+
+If a user does not have permissions to view a page, the default behavior of WebSphere Portal is to 302 redirect the user to the first page they have access to. See Technote 1411109 [http://www.ibm.com/support/docview.wss?uid=swg21411109] for more details. With these configuration changes, a 404 will be thrown instead with the following error message: 
+
+
+Error 404: EJCBD0006E: The resolution of a URI failed. Refer to the SystemOut.log for more detailed information. 
+
+ 
+
+Handling 404 errors 
+
+With the HTTP 404 now thrown end users will be presented with a white screen with details that they were attempting to access a nonexistent URLs. However, this will leave end users in a state of confusion and unsure what to do as a next step. It is recommended to implement graceful error handling of the 404 once it is thrown. This may be performed in 1 of 2 manners: 
+
+ 
+
+1) By implementing a custom 404 error message in WebSphere Portal:
+http://www.ibm.com/support/docview.wss?uid=swg21411195 [http://www.ibm.com/support/docview.wss?uid=swg21411195] 
+
+
+Example end result: 
+
+[$67928E7E84BD1FF5.jpg] [/support/docview.wss?uid=swg21674823&amp;aid=2] OR  
+
+2) By implementing a custom 404 error message in WebSphere Application Server proxy server or other proxy software:
+http://www.ibm.com/support/docview.wss?uid=swg21393358 [http://www.ibm.com/support/docview.wss?uid=swg21393358]
+
+Example end result:
+[/support/docview.wss?uid=swg21674823&aid=3] [/support/docview.wss?uid=swg21674823&aid=3] 
+
+This option is the recommended option if you have a proxy server available. Rather than customizing each individual application for HTTP 404 error handling, you may instead create a general page which can be used across multiple applications.
+
+RELATED INFORMATION
+ Configuration Service properties [http://www.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/admin-system/srvcfgref_config.dita?lang=en]
+Can WebSphere Portal be configured to send a specific 3 [http://www.ibm.com/support/docview.wss?uid=swg21411109]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal AIX, HP-UX, IBM i, Linux, Solaris, Windows, z/OS 7.0, 6.1

@@ -1,0 +1,21 @@
+Title: IBM User's Display Name is Not on the Start Center or Their Inbox - United States
+
+Text:
+display; username; user; person; startcenter; start center TECHNOTE (FAQ)
+
+QUESTION
+ Using Application Server Security (LDAP) the display Name is not on the user's Start Center or their Inbox 
+
+ANSWER
+When using Application Server Security (LDAP) information from the directory server is synchronized with the Maximo tables. If the users record has a blank Display Name field when the cron task runs to synchronize with Maximo, the DISPLAYNAME field in the PERSON table will also be blank. When the user logs in their inbox and Start Center page will not have their name. 
+For example: a user navigates to the user application in Maximo and edits the details of a user's record by entering a value for Display Name. By doing this, the user who's had their record edited will see their name (or Display Name value) appear in the Start Center in the upper left after "Welcome, " and in the inbox after "Assignments found for "
+
+However, this Display Name value in the user application will be overwritten when the user/group information gets refreshed when the LDAP sync cron task is run and LDAP data is imported. This will result in no name listed.
+
+To ensure this does not happen, You will need to add a value for the Display Name field on the directory server for the Maximo users. So when the cron task runs to synchronize user/group information in Maximo, the Display Name will always contain the desired value and the correct names will be listed in the Start Center and inbox.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management for IT All Systems and Asset Management Maximo Asset Management Essentials All

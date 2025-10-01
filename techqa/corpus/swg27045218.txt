@@ -1,0 +1,49 @@
+Title: IBM Open Mic Webcast: Avoiding pitfalls in XGS/SiteProtector Updates and Licensing - Tuesday, 24 March 2015 [includes link to replay; presentation slides are attached] - United States
+
+Text:
+infrasec-open-mic; ISS_OPEN_MIC; STEwebcastDocument WEBCAST
+
+ABSTRACT
+ Clients took the opportunity to listen to an experienced Support technical leader teach about the smartest ways to update and license IBM Security SiteProtector System software and XGS appliances.
+(Note that the attached presentation now includes the Q&A from the event.) 
+
+CONTENT
+IBM wants your product deployment to go smoothly. In this Open Mic, callers learned some tips for making that happen. Our goal in Open Mics is to provide insight on how IBM Security products work and to teach on-going sessions that help users and administrators understand, maintain, troubleshoot, and resolve issues with their XGS appliance. This Open Mic session will be the sixth webcast provided by IBM Infrastructure Security Technical Support. 
+
+ * Topic: Avoiding pitfalls in XGS/SiteProtector Updates and Licensing 
+ * New Date: Tuesday, March 24, 2015 
+ * Time: 11:00 AM ET (15:00 UTC/GMT, UTC-4 hours) for 60 minutes
+
+
+Presentation OpenMic_IBM_InfraSecPitfalls_Lic&Updates-final.pdf [/support/docview.wss?uid=swg27045218&aid=2]OpenMic_IBM_InfraSecPitfalls_Lic&Updates-final.pdf [/support/docview.wss?uid=swg27045218&aid=1] 
+
+
+Audio Replay The recorded session now is on the IBM Security Support YouTube channel [https://www.youtube.com/user/IBMSecuritySupport]: 
+https://www.youtube.com/watch?v=GfUVTM0otQA [https://www.youtube.com/watch?v=GfUVTM0otQA] 
+where the Description in You Tube includes links to specific sections within the video, for your convenience. 
+
+
+
+Where to ask follow up questions on the topic We created a post in IBM dW Answers forum for you to ask questions about this "XGS" topic. 
+Refer to 
+Do you have any tips for updating or licensing XGS appliance or SiteProtector? 
+URL: https://developer.ibm.com/answers/questions/179974/do-yiou-have-any-tips-for-updating-or-licensing-xg/ [https://developer.ibm.com/answers/questions/179974/do-yiou-have-any-tips-for-updating-or-licensing-xg/] 
+
+
+About Open Mic Webcasts IBM Security Systems Support wants to help you take full advantage of your products. Join us for our Open Mic Webcast series as technical experts share their knowledge and answer your questions. These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient online webcast format. 
+
+Visit the Support technical exchanges for Security Systems [https://www-947.ibm.com/support/entry/myportal/scheduled_tech_exchanges/security_systems/security_systems_support_%28general%29?productContext=-1089885148] page to see lists of all scheduled and past Open Mic events 
+[https://www-947.ibm.com/support/entry/myportal/scheduled_tech_exchanges/security_systems/security_systems_support_%28general%29?productContext=-1089885148] 
+To be notified about Security Support's Open Mic webcasts, follow us on Twitter [http://bit.ly/1jZ80d3] @AskIBMSecurity [http://bit.ly/1jZ80d3]. 
+
+
+
+
+
+[/support/docview.wss?uid=swg27045218&aid=3] [https://ibm.biz/BdHdjw] [/support/docview.wss?uid=swg27045218&aid=4] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg27045218&aid=5] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg27045218&aid=6] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg27045218&aid=7] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg27045218&aid=8] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg27045218&aid=9] [http://ibm.biz/ContactSecSupport] 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Network Protection

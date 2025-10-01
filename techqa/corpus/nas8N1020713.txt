@@ -1,0 +1,91 @@
+Title: IBM Security Bulletin: Vulnerabilities in GNU C Library Affect Power Hardware Management Console (CVE-2013-7423, CVE-2014-7817, CVE-2014-9402, CVE-2015-1472) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ GNU C Library is used by Power Hardware Management Console (HMC). HMC has addressed the applicable CVEs. 
+
+VULNERABILITY DETAILS
+CVEID:CVE-2013-7423 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-7423]
+DESCRIPTION:The send_dg function in resolv/res_send.c in GNU C Library (aka glibc or libc6) before 2.20 does not properly reuse file descriptors, which allows remote attackers to send DNS queries to unintended locations via a large number of request that trigger a call to the getaddrinfo function.
+CVSS Base Score: 1.2
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/100647 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100647] for the current score.
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:H/Au:N/C:P/I:N/A:N) 
+
+CVEID:CVE-2014-7817 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7817]
+DESCRIPTION:The wordexp function in GNU C Library (aka glibc) 2.21 does not enforce the WRDE_NOCMD flag, which allows context-dependent attackers to execute arbitrary commands, as demonstrated by input containing "$((`...`))".
+CVSS Base Score: 4.6
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/98852 [https://exchange.xforce.ibmcloud.com/vulnerabilities/98852] for the current score.
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:L/Au:N/C:P/I:P/A:P)
+
+CVEID:CVE-2014-9402 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-9402]
+DESCRIPTION:The nss_dns implementation of getnetbyname in GNU C Library (aka glibc) before 2.21, when the DNS backend in the Name Service Switch configuration is enabled, allows remote attackers to cause a denial of service (infinite loop) by sending a positive answer while a network name is being process.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/99289 [https://exchange.xforce.ibmcloud.com/vulnerabilities/99289] for the current score.
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:N/A:P)
+
+CVEID:CVE-2015-1472 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1472]
+DESCRIPTION:The ADDW macro in stdio-common/vfscanf.c in the GNU C Library (aka glibc or libc6) before 2.21 does not properly consider data-type size during memory allocation, which allows context-dependent attackers to cause a denial of service (buffer overflow) or possibly have unspecified other impact using a long line containing wide characters that are improperly handled in a wscanf call.
+CVSS Base Score: 4.6
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/100635 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100635] for the current score.
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:L/Au:N/C:P/I:P/A:P)
+
+AFFECTED PRODUCTS AND VERSIONS
+Power HMC V7.7.3.0
+Power HMC V7.7.8.0
+Power HMC V7.7.9.0
+
+The following versions are affected by only CVE-2013-7423:
+
+Power HMC V8.8.1.0 
+Power HMC V8.8.2.0
+Power HMC V8.8.3.0
+
+REMEDIATION/FIXES
+The following fixes are available on IBM Fix Central at http://www-933.ibm.com/support/fixcentral/ [http://www-933.ibm.com/support/fixcentral/] 
+
+ 
+
+Product VRMF APAR Remediation/First Fix Power HMC V7.7.3.0 SP7 MB03905 Apply eFix MH01517 Power HMC V7.7.8.0 SP2 MB03906 Apply eFix MH01518 Power HMC V7.7.9.0 SP2 MB03907 Apply eFix MH01519 
+Power HMC 
+V8.8.1.0SP2 
+MB03920 
+Apply eFix MH01532 
+Power HMC 
+V8.8.2.0 SP1 
+MB03926 
+Apply eFix MH01538 
+Power HMC 
+V8.8.3.0 
+MB03927 
+Apply eFix MH01539 
+Notes: 1. For unsupported releases IBM recommends upgrading to a fixed, supported release of the product. 2. After applying the PTF, you should restart the HMC. 3. HMC V7.7.3 support is extended only for managing the Power 775 (9125-F2C), also called "PERCS" and "IH". End of Service date for managing all other server models was 2013.05.31. WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 12 May 2015: Original Version Published
+28 July 2015: Added Version 8 for CVE-2013-7423: 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

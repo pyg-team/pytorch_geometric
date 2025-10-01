@@ -1,0 +1,58 @@
+Title: IBM Connections Search: Crawling for the Activities component fails to complete due to incorrect values for the SYSTEM_LASTMOD column in the ACTIVITIES.OA_NODE table - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When trying to create a new search index for IBM Connections, crawling for the Activities component fails to complete successfully. 
+
+The same thing happens regardless whether the new index is being created via a backgroundindex command or not.
+
+
+SYMPTOM
+The crawling process goes into a loop when accessing seedlist for a particular activity.
+
+When the issue happens, the same persisted seedlist .xml files are created over and over again
+continuously in a loop.
+
+The SystemOut.log file for Search shows that shortly after crawling "Phase 1" begins, the seedlist requests go into a loop and keep repeating the same "Last Event Uuid": 
+
+
+[2/11/18 9:47:07:467 CET] 00001117 SeedlistFetch I com.ibm.connections.search.seedlist.crawler.impl.SeedlistFetcher setNextURL CLFRW0604I: Current activities seedlist state: [Finish Date:
+Sun Feb 11 03:10:33 CET 2018; Start Date: Thu Jan 01 08:00:00 CET 1970; Last Modified: Thu Jan 01 08:00:00 CET 1970; Last Event Uuid: 0ac27bbb-167a-4ee1-9607-25289fdd4839; Finished: false; Started: true; Phase: 1; Cascaded Deletion Entry: 0; Deletion Entry: 0; Initial Crawl: true; Event Date: Thu Jan 01 08:00:00 CET 1970; State Session ID: 1518315033330+207; ]. URL parameters:
+[Action=GetDocuments;Range=1000;Start=136;].
+....
+[2/11/18 11:59:53:365 CET] 00001117 SeedlistFetch I
+com.ibm.connections.search.seedlist.crawler.impl.SeedlistFetcher setNextURL CLFRW0604I: Current activities seedlist state: [Finish Date: Sun Feb 11 03:10:33 CET 2018; Start Date: Thu Jan 01 08:00:00 CET 1970; Last Modified: Thu Jan 01 08:00:00 CET 1970; Last Event Uuid: 0ac27bbb-167a-4ee1-9607-25289fdd4839; Finished: false; Started: true; Phase: 1; Cascaded Deletion Entry: 0; Deletion Entry: 0; Initial Crawl: true; Event Date: Thu Jan 01 08:00:00 CET 1970; State Session ID: 1518315033330+207; ]. URL parameters:
+[Action=GetDocuments;Range=1000;Start=130180;].
+
+
+CAUSE
+In the Activities database, (OPNACT), the table containing that Uuid entry is ACTIVITIES.OA_NODE. 
+
+Seedlist crawling depends on the value of column SYSTEM_LASTMOD in that table. 
+
+The value in that column for the above Uuid was "1970-01-01 08:00:00.0" which makes its activities seedlist entry unable to be successfully retrieved.
+
+
+ENVIRONMENT
+IBM Connections 5.5
+
+
+
+DIAGNOSING THE PROBLEM
+Running the following SQL query for the OPNACT database revealed the bad value for the OA_NODE.SYSTEM_LASTMOD column: 
+
+SELECT * FROM ACTIVITIES.OA_NODE WHERE ACTIVITYUUID = '0ac27bbb-167a-4ee1-9607-25289fdd4839'
+
+
+RESOLVING THE PROBLEM
+ Update the timestamp of SYSTEM_LASTMOD equal to that of LASTACCESSED, and then trigger initial crawling.
+
+
+Run the following SQL statement:
+UPDATE ACTIVITIES.OA_NODE
+SET ACTIVITIES.OA_NODE.SYSTEM_LASTMOD = ACTIVITIES.OA_NODE.LASTMOD WHERE ACTIVITIES.OA_NODE.SYSTEM_LASTMOD='01-01-70 08:00:00,000000000'
+
+
+This will update all incorrect activities with SYSTEM_LASTMOD set to 01-01-70 08:00:00,000000000.

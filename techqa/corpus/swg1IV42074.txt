@@ -1,0 +1,143 @@
+Title: IBM IV42074: WEBSPHERE MQ INFORMATION CENTER SHOULD BE CLEARER ON THE REASON PERSISTENT MESSAGES SHOULD BE HANDLED WITHIN A UNIT OF WORK. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There are potential performance issues when processing
+   persistent messages within and outside a unit of work
+   (syncpoint). This information is not mentioned in the
+   Infocenter. SupportPac MP6N states very plainly "Processing
+   messages inside syncpoint can help reduce the amount of time
+   the queue managers takes to write a group of persistent messages
+   to the log disk." But this information is not in the Information
+   Center.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of WebSphere MQ.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   WebSphere MQ InfoCenter is not explicit on the performance
+   implications of writing persistent messages outside a unit of
+   work.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ InfoCenter will be updated to be more
+   explicit on the potential performance problems when writing
+   persistent messages outside a unit of work.
+   
+   WMQ 7.5 topic "Message persistence"
+   http://pic.dhe.ibm.com/InfoCenter/wmqv7/v7r5/index.jsp?
+   topic=%2Fcom.ibm.mq.doc%2Ffg10810_.htm [http://pic.dhe.ibm.com/InfoCenter/wmqv7/v7r5/index.jsp?topic=%2Fcom.ibm.mq.doc%2Ffg10810_.htm]
+   
+   A note should be added as follows.
+   Note:  A combination of the writing persistent messages within
+   a unit of work and writing persistent messages outside a unit
+   or work can cause potentially severe performance problems for
+   your applications.  This is particularly true when the same
+   target queue is used for these operations.
+   
+   WMQ 7.5 topic "&#65279;Is your application or system running
+   slowly?"
+   http://pic.dhe.ibm.com/InfoCenter/wmqv7/v7r5/index.jsp?
+   topic=%2Fcom.ibm.mq.doc%2Ffa15070_.htm [http://pic.dhe.ibm.com/InfoCenter/wmqv7/v7r5/index.jsp?topic=%2Fcom.ibm.mq.doc%2Ffa15070_.htm]
+   
+   Please add a sentence similar to the following:
+   "A common cause of slow application performance or the build
+   up of messages on a queue (usually a transmit queue) is one or
+   more applications which write persistent messages outside a
+   unit of work. For more details see <LINK TO PREVIOUS SECTION>"
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV42074
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7221
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-08
+   
+   
+ * CLOSED DATE
+   2013-05-22
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

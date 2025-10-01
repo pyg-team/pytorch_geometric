@@ -1,0 +1,180 @@
+Title: IBM PI83486: STACKOVERFLOWERROR GENERATED DUE TO THE JSP TABLIBRARYCACHE RECURSES INTO LOADWEBINFMAP WITH THE VALUE "/WEB-INF" - United States
+
+Text:
+  FIXES ARE AVAILABLE
+17.0.0.3: WebSphere Application Server Liberty 17.0.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24044079]
+17.0.0.4: WebSphere Application Server Liberty 17.0.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24044285]
+18.0.0.1: WebSphere Application Server Liberty 18.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24044624]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The application fails to start with the below
+   StackOverflowError:
+   
+   com.ibm.ws.container.service.state.internal.ApplicationState
+   Mana
+   ger
+   probeid = 32
+   Stack Dump = java.lang.StackOverflowError
+   at java.util.regex.Pattern.newSlice(Pattern.java:3335)
+   at java.util.regex.Pattern.atom(Pattern.java:2210)
+   ....
+   at com.ibm.ws.jsp.taglib.TagLibraryCache
+   .loadWebInfMap(TagLibraryCache.java:617)
+   at com.ibm.ws.jsp.taglib.TagLibraryCache
+   .loadWebInfMap(TagLibraryCache.java:629)
+   at com.ibm.ws.jsp.taglib.TagLibraryCache
+   .loadWebInfMap(TagLibraryCache.java:629)
+   at com.ibm.ws.jsp.taglib.TagLibraryCache
+   .loadWebInfMap(TagLibraryCache.java:629)
+   at com.ibm.ws.jsp.taglib.TagLibraryCache
+   .loadWebInfMap(TagLibraryCache.java:629)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty - JavaServer Pages (JSP) 2.2 *
+   *                  and 2.3                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A java.lang.StackOverflowError is       *
+   *                      thrown for web modules with loose Jar   *
+   *                      files containing a WEB-INF folder.      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A StackOverflowError will be thrown if a web module contains
+   references to a loose Jar file within the module's WEB-INF/lib
+   folder that contains a WEB-INF folder, preventing the
+   application from starting successfully. An exception similar to
+   the one below will be reported:
+   
+   java.lang.StackOverflowError
+   at java.util.regex.Pattern.newSlice(Pattern.java:3335)
+   at java.util.regex.Pattern.atom(Pattern.java:2210)
+   ....
+   at
+   com.ibm.ws.jsp.taglib.TagLibraryCache.loadWebInfMap(TagLibraryCa
+   che.java:617)
+   at
+   com.ibm.ws.jsp.taglib.TagLibraryCache.loadWebInfMap(TagLibraryCa
+   che.java:629)
+   at
+   com.ibm.ws.jsp.taglib.TagLibraryCache.loadWebInfMap(TagLibraryCa
+   che.java:629)
+   at
+   com.ibm.ws.jsp.taglib.TagLibraryCache.loadWebInfMap(TagLibraryCa
+   che.java:629)
+   at
+   com.ibm.ws.jsp.taglib.TagLibraryCache.loadWebInfMap(TagLibraryCa
+   che.java:629)
+   ...
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The JSP engine was modified to scan loose Jar files correctly to
+   prevent the StackOverflowError.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 17.0.0.3.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI83486
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * REPORTED COMPONENT ID
+   5725L2900
+   
+   
+ * REPORTED RELEASE
+   CD0
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-06-22
+   
+   
+ * CLOSED DATE
+   2017-09-25
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * FIXED COMPONENT ID
+   5725L2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RCD0 PSY
+   UP

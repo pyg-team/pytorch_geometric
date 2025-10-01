@@ -1,0 +1,52 @@
+Title: IBM Unable to install or deploy an application in Websphere Application Server - United States
+
+Text:
+Websphere Application Server deploy deployment application install failed java.lang.ExceptionInInitializerError TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to deploy an application in Websphere Application Server 
+
+SYMPTOM
+Error WSVR0501E when attempting to deploy applications to Application Server
+
+
+CAUSE
+Third-party application .jar file is in the /qibm/userdata/java400/ext directory. This directory should never be used to store application specific .jar files.
+
+ENVIRONMENT
+Websphere Application Server
+
+DIAGNOSING THE PROBLEM
+When trying to deploy the application using the Web Adminstration GUI you will get errors: 
+
+
+
+
+WASX7015E Exception running command; WASX7132E Application install ... failed. 
+
+Standard error: java.lang.ExceptionInInitializerError. 
+
+Websphere Application Server SystemOut.log (ie: /qibm/userdata/websphere/appserver/v85/express/profile/myprofile/logs/myserver/systemout.log) shows: 
+
+
+WSVR0501E: Error creating component com.ibm.ws.websvcs.component.WASAxis2ComponentImpl
+java.lang.ExceptionInInitializerError
+at java.lang.J9VMInternals.initialize(J9VMInternals.java:257)
+
+
+
+RESOLVING THE PROBLEM
+This problem may be the result of a third-party application .jar file from the /qibm/userdata/java400/ext directory. 
+
+ 
+
+Here is an example of what should be in this directory by default (V7R2 system was used for this example), using the EDTF '/qibm/userdata/java400/ext' command from the OS command line: 
+
+
+db2_classes.jar 
+<outines_classes.jar (actual filename: db2routines_classes.jar)
+eim.jar 
+eimos400.jar 
+i5osCCAmri *DIR
+ibmjcehdw.jar 
+runtime.zip

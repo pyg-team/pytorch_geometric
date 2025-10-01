@@ -1,0 +1,24 @@
+Title: IBM E-AUT-102-007: Failed to bind to LDAP server for user <username> - United States
+
+Text:
+E-AUT-102-007; omnibus; error; object server TECHNOTE (FAQ)
+
+QUESTION
+ Error code E-AUT-102-007: Failed to bind to LDAP server for user <username>. What is this error telling us? 
+
+CAUSE
+The ObjectServer is unable to reach the LDAP server where a specific user should be authenticated.
+
+ANSWER
+Example: 
+
+Failed to bind to LDAP server for user username. (81:Can't contact LDAP server) 
+
+LDAP user unable to login to the ObjectServer. The ObjectServer is configured to authenticate users to LDAP, but either the configuration is incorrect or the LDAP server is currently unreachable.
+
+
+Suggestion:
+The availability of the LDAP server should be checked using an LDAP client outside of OMNIbus. If the server is available then the LDAP authentication setup should be checked. See the linked URL.
+
+RELATED INFORMATION
+ LDAP Configuration Documentation [https://www.ibm.com/support/knowledgecenter/SSSHTQ_7.4.0/com.ibm.netcool_OMNIbus.doc_7.4.0/omnibus/wip/install/task/omn_con_sec_configureldap.html]

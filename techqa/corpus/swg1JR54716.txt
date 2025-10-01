@@ -1,0 +1,145 @@
+Title: IBM JR54716: NO WAY TO SET THE X-FRAME-OPTIONS HEADER TO PREVENT CLICKJACKING - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Business Process Manager (BPM) does not enable you to set
+   the X-FRAME-OPTIONS header that allows administrators to define
+   whether and how IBM BPM user interface content can be embedded
+   in HTML iframes on either the same or other domains.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix that adds a feature for setting the X-FRAME-OPTIONS header
+   in HTTP responses will be available in the IBM BPM V8.5.0.2 fix
+   pack and is available in IBM BPM starting with V8.5.6.
+   
+   In V8.5.0.2, a per server Java Virtual Machine (JVM) custom
+   property named "com.ibm.bpm.security.xframeoptionsheader" was
+   added. The value of this property is injected as the value of
+   the X-FRAME-OPTIONS header. Set this value to SAMEORIGIN to
+   allow users to embed IBM BPM user interfaces in iframes from the
+   same origin. For example, a coach can be embedded in an iframe
+   within IBM Process Portal. If you must embed IBM BPM user
+   interface content in other origins, add these domains to a
+   whitelist by using the ALLOW-FROM notation.
+   
+   For more information about clickjacking and the X-FRAME-OPTIONS
+   header, see "Clickjacking Defense Cheat Sheet" at
+   https://www.owasp.org/index.php/Clickjacking_Defense_Cheat_Sheet [https://www.owasp.org/index.php/Clickjacking_Defense_Cheat_Sheet]
+   .
+   
+   In V8.5.6.0, a deployment environment level custom property
+   replaces the per JVM custom property. You can set this property
+   by using wsadmin scripting as shown in the following example:
+   
+   AdminTask.setBPMProperty(['-de', 'De1', '-name',
+   'ProcessServer.XFrameOptionsHeaderValue', '-value',
+   'SAMEORIGIN'])
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR54716
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-11-12
+   
+   
+ * CLOSED DATE
+   2016-01-29
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

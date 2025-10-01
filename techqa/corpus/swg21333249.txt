@@ -1,0 +1,100 @@
+Title: IBM Return Dataset from Oracle Stored Procedure - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How can I get Oracle stored procedures to return data to Impromptu? 
+
+RESOLVING THE PROBLEM
+To get an overview of stored procedure creation and possibilities of integration with Impromptu, please refer to documents 72018 and 88300.
+
+If the procedure creates a new dataset, instead of modifying an existing table, to access that dataset we need to perform the following Steps:1. Create a temporary working table in Oracle, for example, TEMPWORK.
+2. Let the stored procedure write the results of its operations to TEMPWORK.
+3. Create a sub-report (or a new report) based on TEMPWORK.
+
+In a multi user environment, several users might run the same report at the same time, so you need to distinguish the records written by a given user.
+
+This can be done by adding a new column (for example, USRID) to TEMPWORK, which contains the database user name for any particular record.
+Populate the USRID column in the stored procedure, using the USER function. For example:
+
+UPDATE TEMPWORK
+SET ....<other columns>..., USRID=USER;
+
+You can then filter the table in the Impromptu sub-report using the User ID Impromptu function (USRID=User Id).
+
+However, there still might be a possibility of several users logging on with the same user name concurrently.
+In this situation, you might use Oracle session information to identify the records belonging to a particular session.
+Instead of adding a USRID column, you can add a SESSID column, containing the Auditing Session Id. You can set it using the USERENV function:
+
+UPDATE TEMPWORK
+SET ....<other columns>..., SESSID=USERENV('SESSIONID');
+
+To be able to filter on this column in Impromptu, you need to create a view on this information in the database. For example:
+
+CREATE VIEW SESS_VIEW AS
+SELECT USERENV('SESSIONID') AS MY_SESSION FROM DUAL;
+
+You need to bring this view into the Impromptu catalog and create a join:
+
+SESS_VIEW.MY_SESSION = TEMPWORK.SESSID
+
+Now you can filter the sub-report with the above condition.
+
+------------------------------------------------------------------------------------------
+The following is a step-by-step example (using table name S_EMPLOYEE instead of TEMPWORK):
+------------------------------------------------------------------------------------------
+
+In Oracle (using, for example, SQL*Plus):
+
+1. Define a table as in the following example:
+
+create table s_employee(
+EMP_ID NUMBER(7),
+LAST_NAME VARCHAR2(25),
+FIRST_NAME VARCHAR2(25),
+SALARY NUMBER(11,2),
+SESSID NUMBER
+);
+
+2. Define a view as follows:
+
+create view sess_view as
+select userenv('SESSIONID') as my_session from dual;
+
+3. Define a procedure as follows:
+
+CREATE or REPLACE PROCEDURE set_salary
+(v_emp_id IN S_Employee.Emp_id%TYPE,
+v_new_salary IN S_Employee.salary%TYPE)
+AS
+BEGIN
+delete from s_employee
+where sessid = userenv('SESSIONID');
+insert into s_employee VALUES (v_emp_id, 'Trial', 'Employee', v_new_salary, 
+
+userenv('SESSIONID'));
+COMMIT;
+END set_salary;
+/
+-------------------------------
+
+In Impromptu:
+
+1. Create a catalog based on both tables and join them:
+
+sess_view.my_session = s_employee.sessid
+
+2. Create a report based on the Stored Procedure template. The query should look like this:
+
+call SET_SALARY(?id?,?salary?)
+
+?id? and ?salary? are numeric type-in prompts. 
+
+3. Drag the list frame to minimize it.
+4. Insert a sub-report which queries the s_employee table, and then filter it on Sessid = My Session.
+
+ 
+
+HISTORICAL NUMBER
+ 118699

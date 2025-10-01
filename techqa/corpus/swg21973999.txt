@@ -1,0 +1,42 @@
+Title: IBM Firefox 38.4 ESR crashes when closing a running Java applet in Windows. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Firefox 38.4 ESR crashes when closing a running Java applet in Windows. 
+This issue impacts on Web GUI usage for all features involving applets, e.g. AEL, dashboards, maps, map editor, etc. 
+
+ENVIRONMENT
+This issue has been reproduced in Windows environments, using the following JREs: 
+
+* Oracle JRE 7: U15, U71, U80, U91
+* Oracle JRE 8: U65
+* IBM JRE7: SR9 FP10
+
+The issue has not been reproduced using the following JREs:
+
+* Oracle JRE 8: U66-b18
+* IBM JRE7: SR8 FP10, SR9 FP20 with APAR IV78787 
+
+
+DIAGNOSING THE PROBLEM
+1. Launch Firefox 38.4 ESR on a Windows platform. 
+
+2. Open a Web GUI page featuring a Java applet (e.g. AEL).
+
+3. Click through any necessary security warnings.
+
+4. Wait for the applet to load and start running.
+
+5. Attempt to close the applet, for example by clicking the "close" button on its page, or by logging out.
+
+Expected result: the applet closes, the browser continues to function properly.
+
+Actual result: the browser crashes. 
+
+
+RESOLVING THE PROBLEM
+Upgrade to Firefox 38.5 ESR. 
+
+Alternatively downgrade to Firefox 38.3 ESR, or use Internet Explorer.

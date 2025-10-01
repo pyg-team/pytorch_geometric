@@ -1,0 +1,106 @@
+Title: IBM Security Bulletin:  IBM WebSphere Cast Iron Solution is affected by Tomcat vulnerabilities - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM WebSphere Cast Iron Solution has addressed the following vulnerabilities. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2017-5664 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-5664]
+DESCRIPTION: Apache Tomcat could allow a remote attacker to bypass security restrictions, caused by the improper handling of specific HTTP request methods for static error pages by the Default Servlet error page mechanism. By sending a specially crafted GET request, an attacker could exploit this vulnerability to bypass HTTP method restrictions and cause the deletion or replacement of the target error page.
+CVSS Base Score: 6.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/126962 [https://exchange.xforce.ibmcloud.com/vulnerabilities/126962] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:L) 
+CVEID: CVE-2017-5647 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-5647]
+DESCRIPTION: Apache Tomcat could allow a remote attacker to obtain sensitive information, caused by an error in the processing of pipelined requests in send file. An attacker could exploit this vulnerability to obtain sensitive information from the wrong response.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/124400 [https://exchange.xforce.ibmcloud.com/vulnerabilities/124400] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N) 
+
+CVEID: CVE-2018-1305 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-1305]
+DESCRIPTION: Apache Tomcat could allow a remote attacker to bypass security restrictions, caused by the failure to properly enforce security constraints that are defined by annotations of Servlets in certain cases. An attacker could exploit this vulnerability to bypass security constraints to access restricted resources.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/139475 [https://exchange.xforce.ibmcloud.com/vulnerabilities/139475] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N) 
+
+CVEID: CVE-2018-1304 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-1304]
+DESCRIPTION: Apache Tomcat could allow a remote attacker to bypass security restrictions, caused by the failure to properly enforce security constraint definitions that contain a URL pattern of "" (the empty string) that exactly maps to the context root. An attacker could exploit this vulnerability to bypass security constraints to access restricted resources.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/139476 [https://exchange.xforce.ibmcloud.com/vulnerabilities/139476] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N)
+
+CVEID: CVE-2017-15706 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-15706]
+DESCRIPTION: Apache Tomcat could provide weaker than expected security, caused by the incorrect documentation of the CGI search algorithm used by the CGI Servlet to identify which script to execute. The error resulted in the failure of some scripts to execute as expected and other scripts may have been executed unexpectedly.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/138486 [https://exchange.xforce.ibmcloud.com/vulnerabilities/138486] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N) 
+
+CVEID: CVE-2017-15698 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-15698]
+DESCRIPTION: Apache Tomcat Native Connector could allow a remote attacker to bypass security restrictions, caused by the improper handling of fields longer than 127 bytes when parsing the AIA-Extension field of a client certificate. The parsing error resulted in the OCSP check being omitted and made it possible for client certificates that should have been rejected to be accepted.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/138491 [https://exchange.xforce.ibmcloud.com/vulnerabilities/138491] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N)
+
+CVEID: CVE-2017-12616 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-12616]
+DESCRIPTION: Apache Tomcat could allow a remote attacker to obtain sensitive information, caused by an error when using VirtualDirContext. By sending a specially crafted request, an attacker could exploit this vulnerability to bypass security constraints and view the source code of JSPs for resources.
+CVSS Base Score: 6.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/132276 [https://exchange.xforce.ibmcloud.com/vulnerabilities/132276] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N) 
+
+CVEID: CVE-2017-7674 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-7674]
+DESCRIPTION: Apache Tomcat could provide weaker than expected security, caused by the failure to add an HTTP Vary header indicating that the response varies depending on Origin by the CORS Filter. A remote attacker could exploit this vulnerability to conduct client and server side cache poisoning.
+CVSS Base Score: 7.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/130248 [https://exchange.xforce.ibmcloud.com/vulnerabilities/130248] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L) 
+
+CVEID: CVE-2017-7675 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-7675]
+DESCRIPTION: Apache Tomcat could allow a remote attacker to bypass security restrictions, caused by a flaw in the HTTP/2 implementation. By using a specially-crafted URL, an attacker could exploit this vulnerability to bypass security restraints.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/130247 [https://exchange.xforce.ibmcloud.com/vulnerabilities/130247] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+WebSphere Cast Iron v 7.5.1.0, 7.5.0.1, 7.5.0.0
+WebSphere Cast Iron v 7.0.0.2, 7.0.0.1, 7.0.0.0
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix Cast Iron Appliance 7.5.1.0
+7.5.0.1
+7.5.0.0 LI80087 7.5.1.0-CUMUIFIX-021 [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=7.5.1.0&platform=All&function=fixId&fixids=7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.scrypt2,7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.vcrypt2,7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.32bit.sc-linux,7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.sc-linux,7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.32bit.sc-win,7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.sc-win,7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.docker,7.5.1.0-WS-WCI-20180604-1920_H11_64-CUMUIFIX-021.32bit.studio,7.5.1.0-WS-WCI-20180604-1920_H11_64-CUMUIFIX-021.studio&includeSupersedes=0] Cast Iron Appliance 7.0.0.2
+7.0.0.1
+7.0.0.0 LI80087 7.0.0.2-CUMUIFIX-041 [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=7.0.0.2&platform=All&function=fixId&fixids=7.0.0.2-WS-WCI-20180604-1919_H8_64-CUMUIFIX-041.scrypt2,7.0.0.2-WS-WCI-20180604-1919_H8_64-CUMUIFIX-041.vcrypt2,7.0.0.2-WS-WCI-20180604-1919_H8_64-CUMUIFIX-041.32bit.sc-linux,7.0.0.2-WS-WCI-20180604-1919_H8_64-CUMUIFIX-041.32bit.sc-win,7.0.0.2-WS-WCI-20180604-1919_H8_64-CUMUIFIX-041.sc-linux,7.0.0.2-WS-WCI-20180604-1919_H8_64-CUMUIFIX-041.sc-win,7.0.0.2-WS-WCI-20180604-1920_H9_64-CUMUIFIX-041.32bit.studio,7.0.0.2-WS-WCI-20180604-1920_H9_64-CUMUIFIX-041.studio&includeSupersedes=0] WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 08 Jun 2018: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

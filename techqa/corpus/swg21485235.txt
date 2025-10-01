@@ -1,0 +1,26 @@
+Title: IBM When to upgrade the Sentinel RMS License Manager for the IBM SPSS Products - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If I upgrade to the latest version of an IBM SPSS product (such as Statistics or Modeler), do I need to upgrade Sentinel RMS License Manager as well? 
+
+RESOLVING THE PROBLEM
+A new version of the Sentinel RMS License Manager is bundled with each new version of an IBM SPSS Product. It is recommended to upgrade this utility, when upgrading the IBM SPSS Products. 
+
+A new version of the Sentinel License Manager will serve licenses to the current versions of IBM SPSS product offerings and will ensure backwards compatibility for previous versions as well. 
+
+
+We do not recommend having different versions of the Sentinel RMS License Manager co-existing on a system. If you already have an older version of the Sentinel RMS installed on your system, uninstall it before installing the new one.
+
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 87074

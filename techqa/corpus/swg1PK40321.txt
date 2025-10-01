@@ -1,0 +1,162 @@
+Title: IBM PK40321: ABENDU0462, MSGCSV002I WHEN DFSREXX1 LOADED > 32767 TIMES - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DFSREXX0 issues a LOAD for module DFSREXX1 every time one of the
+   IBM-supplied IVP REXX transactions (i.e. PART, ADDPART, etc.) is
+   run.  MSGCSV002I REQUESTS FOR MODULE DFSREXX1 EXCEED MAXIMUM USE
+   COUNT is issued after DFSREXX1 has been LOADed 32,767 times.
+   DFSREXX0 should be modified to use the CSVQUERY macro to attempt
+   to locate the module in storage.  The LOAD should be done only
+   if DFSREXX1 has not already been LOADed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All IMS V10 users running REXX              *
+   *                  transaction programs.                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: MSGCSV002I when running IMS REXX        *
+   *                      transaction application programs.       *
+   ****************************************************************
+   * RECOMMENDATION: INSTALL CORRECTIVE SERVICE FOR APAR/PTF      *
+   ****************************************************************
+   MSGCSV002I occurs when the use count for module DFSREXX1
+   exceeds 32767. A LOAD SVC is issued for module DFSREXX1
+   each time an IMS REXX transaction application program is
+   invoked. The module is not loaded for each call but the
+   module use count is incremented for each LOAD call.
+   The use count is decremented for each DELETE SVC call.
+   Module DFSREXX0 issued the LOAD SVC but no DELETE SVC is
+   ever issued. This caused the module use count to reach its
+   maximum value and caused message CSV002I to be issued.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  AIDS: RIDS/SYS RIDS/CNTRL SYS CNTRL
+     DEP: NONE
+     GEN:
+   
+   *** END IMS KEYWORDS ***
+   Module DFSREXX0 has been changed to not issue the LOAD SVC
+   if module DFSREXX1 has already been loaded.
+   DFSREXX0 now will use the CSVQUERY macro to locate a copy of
+   DFSREXX1. If a return code of 0 is received from the CSVQUERY
+   call (indicating the module has been located) then the LOAD SVC
+   will not be issued.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK40321
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V10
+   
+   
+ * REPORTED COMPONENT ID
+   5635A0100
+   
+   
+ * REPORTED RELEASE
+   010
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2007-02-28
+   
+   
+ * CLOSED DATE
+   2007-08-17
+   
+   
+ * LAST MODIFIED DATE
+   2007-10-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK37842 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK37842]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK28357
+   
+   
+
+MODULES/MACROS
+ *  DFSREXX0
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V10
+   
+   
+ * FIXED COMPONENT ID
+   5635A0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R010 PSY UK28357 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK28357]
+   UP07/09/11 P F709
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

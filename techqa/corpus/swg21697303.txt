@@ -1,0 +1,19 @@
+Title: IBM What are IBM's plans surrounding support for IBM HTTP Server (IHS) bundled with Domino? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+What are IBM's plans surrounding support for IBM HTTP Server (IHS) bundled with Domino? 
+
+
+
+ANSWER
+IBM plans to remove support for IBM HTTP Server bundled with Domino in a future maintenance release now that native Domino TLS functionality has been added to the product. The bundled IBM HTTP Server proved a good solution for Domino customers who needed better security functionality over the native Domino HTTP protocol on a Windows server platform. However, that solution is limited in scope since it covers only HTTPS and Windows. 
+
+With native implementation of TLS 1.0, as detailed in technote 1687167 [http://www.ibm.com/support/docview.wss?uid=swg21687167], and TLS 1.2, as detailed in technote 1697925 - TLS 1.2 deliveries for IBM Notes & Domino 9.x [http://www.ibm.com/support/docview.wss?uid=swg21697925], the IBM HTTP Server bundled with Domino is no longer needed. The native implementation of TLS 1.2 covers all platforms and a broader set of protocols beyond HTTP, making it a full solution. 
+
+
+
+RELATED INFORMATION
+ How is IBM Domino impacted by the POODLE attack? [http://www.ibm.com/support/docview.wss?uid=swg21687167]

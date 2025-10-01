@@ -1,0 +1,190 @@
+Title: IBM IZ68094: DISABLE SP_SPACEUSED FROM SYBASE AGENT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  -------------
+   Environment:
+   -------------
+   Sybase Agent 06.20.01.04,
+   OS: ANY
+   
+   ---------------------
+   Problem Description:
+   ---------------------
+   
+   According to Sybase debug 472679, as running "sp_spaceused"
+   stored procedure without any parameters against a database with
+   a very large log device, response time may be slow.
+   
+   http://www.sybase.com/detail?id=1061617 [http://www.sybase.com/detail?id=1061617]
+   
+   -------------------------------
+   Detailed Recreation Procedure:
+   -------------------------------
+   You need to use a database with large log device to re-create
+   and verify the problem.
+   
+   
+   1) Create a database name "userdb"
+   
+   disk init  name  = 'userdatadevice1',
+   physname  = '/opt/sybase/data/userdatadevice1.dat',
+   size  = '10M', dsync = true
+   go
+   
+   disk init  name  = 'userlogdevice1',
+   physname  = '/opt/sybase/data/userlogdevice1.dat',
+   size  = '5000M', dsync = true
+   go
+   
+   CREATE DATABASE userdb
+        ON userdatadevice1 = '10M' -- 5120 pages
+    LOG ON userlogdevice1 = '5000M' -- 5120 pages
+    WITH OVERRIDE
+   go
+   
+   2. Repeat to run the sp_spaceused in isql and use "top" on Linux
+   or
+   "topas" on AIX to check system CPU usage. Sybase process named
+   "dataserver" will have high CPU usage percentage.
+   
+   use userdb
+   go
+   
+   exec sp_spaceused
+   go
+   
+   
+   --------------------------
+   Related Files and Output:
+   --------------------------
+   N/A
+   
+   ----------
+   Approver:
+   ----------
+   N/A
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ***************************************************************
+   * USERS AFFECTED:
+   ITM for Database:Sybase Agent Version 6.20
+   ***************************************************************
+   * PROBLEM DESCRIPTION:
+   High Sybase resources consumption due to the use of stored
+   procedure
+   ***************************************************************
+   * RECOMMENDATION:
+   Apply 6.2.0-TIV-ITM_SYB-IF0007 when available
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR will be contained
+   in 6.2.0-TIV-ITM_SYB-IF0007 ETA 2010 April.30.
+   
+   Similar with the Oracle agent, a new 'Extended Parameters' field
+   will be provided at agent configuration time. Typing cursor name
+   in the field, means that the stored procedure in the cursor will
+   not be executed by the agent when the agent starts. The relative
+   numeric attributes are set to zero, and the relative non-numeric
+   attributes are set to ''.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ68094
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON SYBASE
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96SO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-14
+   
+   
+ * CLOSED DATE
+   2010-03-16
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON SYBASE
+   
+   
+ * FIXED COMPONENT ID
+   5724B96SO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

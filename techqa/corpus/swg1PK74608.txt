@@ -1,0 +1,168 @@
+Title: IBM PK74608: THE VERSION 7.0 INFORMATION CENTER TABLE IS MISSING THE EJB 1.1 AND J2EE 1.2 SPECIFICATIONS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The WebSphere Application Server Version 7.0
+   Information Center "Specifications and API
+   documentation" topic does not include links to the
+   specifications for Java 2 Platform, Enterprise Edition
+   (J2EE) 1.2, and Enterprise bean (EJB) 1.1.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of WebSphere Application Server   *
+   *                  who need to know which versions of Java 2   *
+   *                  Platform, Enterprise Edition (J2EE), and    *
+   *                  Enterprise bean (EJB) are supported for the *
+   *                  different versions of WebSphere             *
+   *                  Application Server.                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The "Specifications and API             *
+   *                      documentation" topic for WebSphere      *
+   *                      Application Server Version 6.0, 6.1,    *
+   *                      and 7.0 contains tables, which list     *
+   *                      the various specifications and APIs     *
+   *                      that should be used when developing     *
+   *                      applications. These tables do not       *
+   *                      include references to Java 2            *
+   *                      Platform, Enterprise Edition (J2EE)     *
+   *                      1.2, and Enterprise bean (EJB) 1.1.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The "Specifications and API documentation" topic contains
+   tables that list, by product version, the specifications that
+   apply to any type of application and specifications that apply
+   to Enterprise bean (EJB) applications. These tables need to be
+   updated to indicate that Platform, Enterprise Edition (J2EE)
+   1.2, and Enterprise bean (EJB) 1.1 specifications are
+   supported in WebSphere Application Server Version 5.1, 6.0,
+   and 6.1, but are not supported in Version 7.0.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Note: Periodically, we update the documentation in our
+   information centers. Thus, the changes might exist in the
+   current documentation before you read this text. To access the
+   latest on-line documentation, go to the product library page
+   at: http://www.ibm.com/software/webservers/appserv/library and
+   select the version and product that is appropriate for your
+   WebSphere Application Server environment.
+   
+   The modified documentation will be available in the December
+   2008 update to the information centers.
+   
+   The following changes will be made to the "Specifications
+   and API documentation" topic, which is contained in the
+   WebSphere Application Server Version 6.0, 6.1, and 7.0
+   Information Centers:
+   
+   - The table of specifications and APIs that apply for all
+   applications will be updated to indicate that the
+   specification for Platform, Enterprise Edition (J2EE) 1.2 can
+   be used for applications that are running on WebSphere
+   Application Server Versions 5.1,6.0, and 6.1 but not for
+   Version 7.0.
+   
+   - The table of specifications and APIs that apply for
+   Enterprise bean (EJB) applications will be updated to indicate
+   that the specification for Enterprise bean (EJB) 1.1 can
+   be used for applications that are running on WebSphere
+   Application Server Versions 5.1,6.0, and 6.1 but not for
+   Version 7.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK74608
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-28
+   
+   
+ * CLOSED DATE
+   2008-10-29
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

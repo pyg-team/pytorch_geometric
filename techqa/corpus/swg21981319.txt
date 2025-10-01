@@ -1,0 +1,46 @@
+Title: IBM The Collaboration and deployment (CADS) server fails to start after a frech installation. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Collaboration and deployment (CADS) server fails to start after a frech installation.
+
+
+SYMPTOM
+The configuration of a fresh CADS installation completes successfully but the CADS server fails to start. 
+
+The CADS server fails to start with the message in the application server's server .log (jboss in this case) as illustrated in the example below:
+
+10:16:44,471 INFO [org.apache.catalina.core] (MSC service thread 1-3) JBWEB001079: Container org.apache.catalina.core.ContainerBase.[jboss.web].[default-host].[/] has not been started
+10:16:44,506 INFO [org.jboss.as] (MSC service thread 1-4) JBAS015950: JBoss EAP 6.1.0.GA (AS 7.2.0.Final-redhat-8) stopped in 85ms
+
+
+CAUSE
+Running a non-supported version of Java. for your application server. 
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+The application server's ( jboss-eap-6.1 in this case)' server. log contains a message showing which version of Java is used 
+eg "java.runtime.version = 1.8.0_73-b02" . 
+
+ 
+
+The CADS configuration log engine.log shows "All operations completed successfully" and contains no errors.
+
+
+
+RESOLVING THE PROBLEM
+Ensure you have a supported version of Java running for your application server. 
+
+ 
+For example JBoss EAP 6.1.0 is not supported with Java 8. Jboss EAP 6.3.3 (supporting java 8) is not supported with CADS 6.0; CADS 6.0 only supports JBOSS eap 6.0 or JBOSS eap 6.1.
+Consult the IBM product compatibility matrix to verify which application servers are supported for a specific version of CADS..
+
+
+Once the proper supported version of Java has been installed, rerun the CADS configuration tool pointing to the new Java install
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]

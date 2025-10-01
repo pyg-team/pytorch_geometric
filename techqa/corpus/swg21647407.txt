@@ -1,0 +1,15 @@
+Title: IBM Is Microsoft Failover Clustering supported with IBM Datacap Taskmaster Capture? - United States
+
+Text:
+microsoft failover cluster TECHNOTE (FAQ)
+
+QUESTION
+ Is Microsoft Failover Clustering (formerly Microsoft Cluster Services) supported with Datacap Taskmaster? 
+
+ANSWER
+Microsoft Failover Clustering is supported with Datacap Taskmaster with the following conditions: 
+
+ * Failover Clustering is only supported with the Taskmaster Server service, not Taskmaster Web, Rulerunner, or any other service. 
+ * IBM does not provide any documentation on how to set up or configure Failover Clustering for use with Datacap Taskmaster. 
+ * Datacap should be installed on the local drive of each Taskmaster server, not on the clustered drive. 
+ * IBM recommends Failover Clustering as one option for providing Taskmaster Server failover capability as part of a high availability system. Multiple Datacap Taskmaster 8.1 Servers can be load balanced using standard network appliances, which also provides high availability.

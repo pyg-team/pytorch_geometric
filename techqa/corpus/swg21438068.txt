@@ -1,0 +1,30 @@
+Title: IBM Configuring WebSphere ESB to use WebSphere Transformation Extender in a WebSphere ESB multi-server environment - United States
+
+Text:
+WTX primitive Integration Server multi-server WESB setup TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure WebSphere® Enterprise Service Bus (ESB) to use WebSphere Transformation Extender in a WebSphere ESB multi-server environment? 
+
+ANSWER
+
+Use this procedure in a WebSphere ESB multi-server environment, or in a single-server environment when you have not used the WebSphere Transformation Extender for Integration Servers setup script. 
+
+
+1. Log into the admin console. 
+
+2. Go to Application servers> your_server> Java and Process Management>Process Definition> Environment Variables.
+
+3. Create the variable DTX_HOME_DIR with the WebSphere Transformation Extender installation directory(WTX_INSTALL_DIR)as its value.
+
+4. Create the variable DTX_TMP with the value WTX_INSTALL_DIR/bin. 
+
+5. Create the variable DTX_TMP_DIR with the value WTX_INSTALL_DIR/tmp. 
+
+6. Go to Application servers> your_server> Java and Process Management> Process Definition> Java Virtual Machine.
+
+7. Add WTX_INSTALL_DIR/libs/dtxpi.jar to the CLASSPATH.
+
+8. Use the admin console to add the WTX_INSTALL_DIR/libs path. The variable to be added differs by platform. For example, on a Sun Solaris platform, go to Application servers> your_server> Java and Process Management>Process Definition> Environment Variablesand create the variable LD_LIBRARY_PATH with the value WTX_INSTALL_DIR/libs.
+
+9. Restart the server.

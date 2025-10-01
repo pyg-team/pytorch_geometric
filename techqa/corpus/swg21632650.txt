@@ -1,0 +1,22 @@
+Title: IBM How to configure LDAP and SSL with IBM Datacap? - United States
+
+Text:
+SSL; LDAP; security; TMWeb.net; LDAPS TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure LDAP and SSL with IBM Datacap for use with TMWeb.net? 
+
+ANSWER
+LDAP and SSL configurations are relatively independent.
+First, configure LDAP on your system and verify that you can log in using TM Web Client. Here is a link to the InfoCenter:
+
+http://pic.dhe.ibm.com/infocenter/datacap/v8r1m0/topic/com.ibm.dc.install.doc/dcitws004.htm [http://pic.dhe.ibm.com/infocenter/datacap/v8r1m0/topic/com.ibm.dc.install.doc/dcitws004.htm]
+
+Once LDAP is configured properly, do the following to enable SSL:
+
+1. Set USESSL=1 in the \Datacap\tmweb.net\server.ini file.
+2. Configure IIS with your SSL certificate (if available) and enable the appropriate HTTP port (443 is standard) for your website. This is covered in Microsoft IIS documentation. If you need assistance with this step, please contact Microsoft.
+3. Point your web browser to the HTTPS://<yoursite>:443
+
+
+Note: this is different than configuring LDAP over SSL (LDAPS). LDAPS is currently not supported with Datacap. Please contact your IBM Sales/Account Representative to discuss this issue. They can assist with creating a Software Enhancement Request.

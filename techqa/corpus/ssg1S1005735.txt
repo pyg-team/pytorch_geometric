@@ -1,0 +1,75 @@
+Title: IBM Security Bulletin: SLOTH - Weak MD5 Signature Hash vulnerability may affect DS8000 - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ SLOTH - Weak MD5 Signature Hash vulnerability may affect DS8000 (CVE-2015-7575) 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-7575 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7575]
+
+DESCRIPTION: The TLS protocol could allow weaker than expected security caused by a collision attack when using the MD5 hash function for signing a ServerKeyExchange message during a TLS handshake. An attacker could exploit this vulnerability using man-in-the-middle techniques to impersonate a TLS server and obtain credentials.
+CVSS Base Score: 7.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/109415 [https://exchange.xforce.ibmcloud.com/vulnerabilities/109415] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:L/A:N) 
+
+
+Detail
+
+Port 1750 is used by the DS Network Interface legacy client to connect to DS8000 services and is documented as having an RSA1024 public key signed with MD5. For more information please see the link below:
+http://www.ibm.com/support/knowledgecenter/ST5GLJ_8.0.0/com.ibm.storage.ssic.help.doc/f2c_securitybp_updatecert.html [http://www.ibm.com/support/knowledgecenter/ST5GLJ_8.0.0/com.ibm.storage.ssic.help.doc/f2c_securitybp_updatecert.html]
+
+Disabling this port has been available since R7.2 ( and is supported in all levels higher than this). The facility to disable this port was also made available in R6.3SP13. For level information please see:
+http://www-01.ibm.com/support/docview.wss?uid=ssg1S1004456 [http://www-01.ibm.com/support/docview.wss?uid=ssg1S1004456]
+
+
+
+IBM recommends disabling the legacy port ( by using the dscli manageaccess command) after verifying that all applications which use the DS Network Interface Client have been updated to support port 1751, and updating the DS8000 microcode to at least the versions indicated above. Disabling the port will ensure that there is no exposure to this vulnerability.
+
+
+Please note that versions of JAVA later than January 2016 may also have disabled support for MD5 signed keys and effectively force applications which embed the DS Network Interface Client to use the secure port only. Consult the applicable product documentation for information on how to re-enable this support if use of the legacy port is required.
+
+Also note that DSCLI must be at a minimum R7.2 level ( even for R6.3 users) to be able to issue the manageaccess command.
+
+For dscli download information please select the applicable levels at:
+
+
+
+https://www.ibm.com/support/fixcentral/options [https://www.ibm.com/support/fixcentral/options] 
+AFFECTED PRODUCTS AND VERSIONS
+All
+
+REMEDIATION/FIXES
+N/A
+
+WORKAROUNDS AND MITIGATIONS
+See the detail above
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ Added a note to indicate minimum DSCLI levels required.
+Provide Link to FixCentral for DSCLI dowload. 
+Use generic link to FixCentral 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Disk Storage Systems DS8870 Disk Storage Systems System Storage DS8700 Disk Storage Systems System Storage DS8800 Disk Storage Systems DS8880

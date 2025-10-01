@@ -1,0 +1,36 @@
+Title: IBM Data Collector configuration for NetWeaver instance fails - United States
+
+Text:
+Data Collector; NetWeaver; configuration; permissions; group; access TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When multiple instances of SAP NetWeaver are installed on a single operating system instance, configuration of the Data Collector for one or several NetWeaver instances fails. 
+
+CAUSE
+You need to set permissions for the Data Collector installation directory.
+
+DIAGNOSING THE PROBLEM
+The following messages might be present in the configuration log file: 
+
+User that runs NetWeaver application server can not access the ITCAM DC home directory, or the user is not the member of the user group of ITCAM DC.
+
+
+RESOLVING THE PROBLEM
+The admin users for every SAP NetWeaver instance must belong to the same group (for example, sapsys). 
+
+When installing the Data Collector, run the installation program as a user belonging to the same group. Alternatively, change the group of the Data Collector installation tree (DC_home) to this group, for example: 
+
+chgrp -R sapsys /opt/IBM/itcam/J2EE/DC 
+
+For all files and directories in the tree, the group must have at least the same permissions as the owner. To achieve this in the simplest way, grant the group read, write, and execute permissions for all files in the tree, for example: 
+
+chown -R g+rwx /opt/IBM/itcam/J2EE/DC 
+
+Also, make sure that the group has read and write permissions for the Tivoli logging directory (by default, /var/ibm/tivoli/common), 
+
+To configure each SAP NetWeaver instance that you need to monitor, run the Data Collector configuration tool using the admin user for the instance.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for J2EE ITCAM J2EE NETWEAVER Solaris, AIX, HP-UX, Linux 6.1

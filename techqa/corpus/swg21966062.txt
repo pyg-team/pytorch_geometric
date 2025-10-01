@@ -1,0 +1,108 @@
+Title: IBM Micro Focus Cobol (MF Cobol) Stored Procedures may hang - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why do Micro Focus (MF) Cobol stored procedures defined as THREADSAFE sometimes hang? 
+
+CAUSE
+There is a known limitation for Micro Focus Cobol Stored Procedures defined as THREADSAFE which may sometimes result in a hang. The MF Cobol run-time does not cater for simultaneous dynamic loading and unloading of libraries dependent on it.
+
+ANSWER
+An example: 
+
+
+Ran db2fodc -hang -alldbs while DB2 is hanging; found the application handle from the gathered db2pd information.
+...
+Applications: 
+Address AppHandl [nod-index] NumAgents CoorEDUID Status C-AnchID C-StmtUID L-AnchID L-StmtUID Appid WorkloadID WorkloadOccID CollectActData CollectActPartition CollectSectionActuals 
+0x0780000004180080 556 [000-00556] 1 3343 UOW-Executing 485 1 209 1 xx.x.xx.xxx.xxxxx.150803084437 1 127 
+...
+
+Using the associated AnchID & StmtUID, determined that it was an MF Cobol stored procedure "MYSUB001" executing:
+...
+CALL DB2INST1.MYSUB001(?,?,?,?,?,?,?,?,?,? ) 
+...
+
+From the associated trap file we could see the agent had invoked the fenced routine and was waiting (in semop) to receive a response from the FMP.
+
+Generated a core for the associated FMP process and from it could see the following:
+
+(dbx) thread
+thread state-k wchan state-u k-tid mode held scope function
+$t1 run 0xf1000a00e027bb18 running 120586403 k no sys semop 
+*$t2 run running 73859303 k no sys _mutex_lock 
+$t3 run 0xf1000f0a1001d540 blocked 30736467 k no sys _event_sleep 
+>$t4 run 0x09001000a53efa90 blocked 35651829 k no sys _global_lock_common
+$t5 run 0xf1000a00e027cd98 running 32571481 k no sys semop 
+$t6 run 0xf1000a00e027ce40 running 95748101 k no sys semop 
+$t7 run 0xf1000a00e027cb98 running 89522217 k no sys semop 
+$t8 run 0xf1000a00e027c418 running 64422015 k no sys semop 
+
+
+(dbx) where
+_mutex_lock(??, ??, ??) at 0x90000000098b06c
+do_lock() at 0x90000002594c11c
+mFt_op_gmonitor_write() at 0x90000002594db60
+clear_XCT() at 0x900000025967124
+mFt_ld_tab_remove() at 0x900000025966d48
+ld_dynlnk_sym_cleanup() at 0x9000000259e7434
+mFt_mm_key_free_var_exec@AF64_35() at 0x9000000259437b0
+mFt_mm_key_free_var_exec() at 0x9000000259417fc
+ld_dynlnk_sym_del_p() at 0x9000000259e57bc
+ld_dynlnk_lib_del_p@AF56_14() at 0x9000000259ea0f8
+ld_dynlnk_lib_del_p() at 0x9000000259e5928
+lddynlnk._mFsounload() at 0x9000000259e935c
+ldtab._mFsofini() at 0x900000002845aa4
+mod_fini1(??, ??) at 0x9fffffff000ae9c
+usl_fini_mods(??, ??, ??, ??) at 0x9fffffff000c184
+u_unload(??, ??, ??, ??, ??, ??, ??) at 0x9fffffff0009440
+uunload(??, ??, ??) at 0x9fffffff000a220
+unload(??) at 0x900000000002538
+terminateAndUnload(??) at 0x90000000005b3b8
+dlclose(??) at 0x900000000099720
+sqloUnloadModule(??) at 0x900000007dc8d14
+sqlerReleaseOLEDBProvider.fdpr.chunk.1(IUnknown**)(??, ??, ??, ??) at 0x900000007af5118
+sqlerLibraryUnloadDaemon(??) at 0x900000007fc23ac
+
+(dbx) thread current 4
+warning: Thread is in kernel mode, not all registers can be accessed.
+(dbx) where
+_global_lock_common(??, ??, ??) at 0x90000000097d83c
+_mutex_lock(??, ??, ??) at 0x90000000098b210
+mFt_rt_savarea_step_start() at 0x90000002595c65c
+_mFginitdat() at 0x900000025a0c5f8
+MYSUB001.init() at 0x900000002410abc
+MYSUB001() at 0x9000000024106dc
+SP000001_0x30a8() at 0x900000002416f30
+SP000001() at 0x9000000024130d4
+.sqloInvokeFnArgs.fdpr.chunk.1(??, ??, ??) at 0x9000000080a7948
+sqloLatchCAS64.sqlerInvokeOLEUDF.fdpr.chunk.22(unsigned int,void**,sqleInvokerCB*)(??, ??) at 0x9000000080a7cc4
+sqloLatchCAS64.sqlerInvokeOLEUDF.fdpr.chunk.10(unsigned int,void**,sqleInvokerCB*)(??, ??) at 0x900000007dd4474
+sqlerFmpListener.fdpr.chunk.28(??, ??, ??, ??, ??) at 0x9000000080bcd1c
+sqlerWorkerThreadEntry(void*)(??) at 0x9000000084dc860
+
+
+This showed us that the two threads were deadlocked with each other with the lock being in the MF Cobol run-time code.
+
+Possible work around:
+
+Moving to NOT THREADSAFE may work as immediate relief as there will not be concurrent user module loading and unloading. 
+
+Compile all routines into a single large library rather than having many smaller libraries. This will eliminate simultaneous loading and unloading of MF run-time dependent libraries.
+
+If a single library isn't possible, compile as few as possible larger libraries as this will reduce the chances for simultaneous loading and unloading of libraries.
+
+
+Clarification of the hang:
+- db2fodc -hang and core file of the associated FMP are needed.
+To collect first look of hang issue, follow Collecting data for DB2 hang on AIX [http://www-01.ibm.com/support/docview.wss?uid=swg21324849] 
+To generate a core file, follow Collecting data: DB2 Stored Procedures Problems [http://www-01.ibm.com/support/docview.wss?uid=swg21383251] 
+To collect necessary executable files for loading the core file. On AIX use snapcore. Follow Collecting data for DB2 Abend (crash) [http://www-01.ibm.com/support/docview.wss?uid=swg21326400] 
+
+
+RELATED INFORMATION
+ Collecting data for DB2 hang on AIX [http://www-01.ibm.com/support/docview.wss?uid=swg21324849]
+Collecting data: DB2 Stored Procedures Problems [http://www-01.ibm.com/support/docview.wss?uid=swg21383251]
+Collecting data for DB2 Abend (crash) [http://www-01.ibm.com/support/docview.wss?uid=swg21326400]

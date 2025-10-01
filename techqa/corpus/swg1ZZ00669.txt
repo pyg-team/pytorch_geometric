@@ -1,0 +1,125 @@
+Title: IBM ZZ00669: ICO DEPLOYMENT SERVER PASSWORD CHANGE REQUIRES UPDATES INTO OPENSTACK RELATED CONF FILES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On this page:
+   https://www.ibm.com/support/knowledgecenter/SS4KMC_2.4.0.4/com [https://www.ibm.com/support/knowledgecenter/SS4KMC_2.4.0.4/com]
+   .i
+   bm.sco.doc_2.4/t_changing_ds_password.html
+   steps are missing to update the admin_password value into the
+   various conf files.
+   The steps are documented in a different page,
+   "8. Edit the configuration files for the component to replace
+   the existing password with the encrypted_new_password value in
+   the admin_password parameter."
+   https://www.ibm.com/support/knowledgecenter/SS4KMC_2.4.0.4/com [https://www.ibm.com/support/knowledgecenter/SS4KMC_2.4.0.4/com]
+   .i
+   bm.sco.doc_2.4/r_how_to_change_the_various_passwords.html
+   and the same steps need to be applied in the deployment server
+   manual password changes.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  the customer needs to update the admin_password value as well,
+   when making the manual changes for the openstack service users.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   ICO DEPLOYMENT SERVER PASSWORD CHANGE REQUIRES UPDATES INTO
+   OPENSTACK RELATED CONF FILES.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  IBM knowledge center 2.4.0.5 is updated with changes .The
+   documentation link will be available after release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00669
+   
+   
+ * REPORTED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2800
+   
+   
+ * REPORTED RELEASE
+   240
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-30
+   
+   
+ * CLOSED DATE
+   2017-09-18
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

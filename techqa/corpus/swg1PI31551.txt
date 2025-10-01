@@ -1,0 +1,127 @@
+Title: IBM PI31551: SILENT INSTALL OF 32-BIT R ESSENTIALS FAILS ON 64-BIT OS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I have attempted the silent installation of the 32-bit R
+   Essentials for SPSS Statistics 22 FP1 (22.0.0.1) on a 64-bit
+   Windows operating system. SPSS Staistics 22.0.0.1 on this
+   computer is also 32-bit. After completing the installation
+   process, it seemed that the R Essential files had not installed.
+   I was able to install the essentials using the setup wizard, but
+   wish to be able to do a silent install.
+   There is a defect in regard to the silent installation of the
+   32-bit R Essentilas for SPSS Statistics 22 FP1 on a 64-bit
+   operatings system, such that the files are copied to the wrong
+   directory. The defect has been filed with Development and is
+   being addressed. The work-arounds are to install the R
+   Essentials by the installation wizard or instal the 64-bit
+   versions of SPSS Statistics 22.0.0.1 and the 64-bit R
+   Essentials.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * see APAR text                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * This issue has been addressed in IBM SPSS Statistics 23      *
+   * release                                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been addressed in IBM SPSS Statistics 23      *
+   * release                                                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI31551
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   M00
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-15
+   
+   
+ * CLOSED DATE
+   2015-05-18
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RN00 PSN
+   UP
+   
+   
+ * RN00 PSY
+   UP

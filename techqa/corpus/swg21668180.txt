@@ -1,0 +1,55 @@
+Title: IBM The upgrade_6x script for IBM Business Process Manager (BPM) results in a java.lang.ClassNotFoundException error - United States
+
+Text:
+upgrade_6x; .ClassNotFoundException; migration; .ClassNotFoundException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you attempt to upgrade Lombardi Teamworks V6.2 in-flight instances to IBM Business Process Manager Advanced V8.5, you see a "java.lang.ClassNotFoundException" message. 
+
+SYMPTOM
+When you run the upgrade_6x script, you receive error messages that are similar to the following text:
+
+$ ./upgrade_6x.sh -c upgrade.properties -b legacyteamworks.xml -profileName psNode01 -deConfigFile
+/apps/IBM/WebSphere/AppServer/proc/DEVConfig.properties
+
+IBM Business Process Manager 8.5.0 Migration
+
+/apps/IBM/WebSphere/AppServer/bin
+
+WAS_HOME is /apps/IBM
+
+Exception in thread "main" java.lang.NoClassDefFoundError: org.apache.
+
+tools.ant.Main
+
+Caused by: java.lang.ClassNotFoundException: org.apache.tools.ant.Main
+
+at java.net.URLClassLoader.findClass(URLClassLoader.java:434)
+
+at java.lang.ClassLoader.loadClassHelper(ClassLoader.java:699)
+
+at java.lang.ClassLoader.loadClass(ClassLoader.java:678)
+
+at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:358)
+
+at java.lang.ClassLoader.loadClass(ClassLoader.java:661)
+
+Could not find the main class: org.apache.tools.ant.Main. Program will
+
+exit.
+
+
+CAUSE
+Within the upgrade_6x script, the following code is incorrect: 
+
+SCRIPT_DIR=´dirname ${0}'
+
+
+RESOLVING THE PROBLEM
+Within the upgrade_6x script, change SCRIPT_DIR=´dirname ${0}' to the following code:
+SCRIPT_DIR=$WAS_HOME/BPM/Lombardi/tools/upgrade/upgrade_6x
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ BPM

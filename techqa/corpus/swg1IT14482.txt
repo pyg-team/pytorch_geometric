@@ -1,0 +1,251 @@
+Title: IBM IT14482: IBM SPECTRUM CONTROL COMMAND "AGENT.SH VERSIONALL" DISPLAYS ERRORS AND MISSING MODULE. - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+IBM Spectrum Control V5.2.10 (May 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24041940]
+IBM Spectrum Control V5.2.10.1 (July 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24042484]
+IBM Spectrum Control V5.2.11 (August 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24042489]
+IBM Spectrum Control V5.2.12 (November 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24042717]
+IBM Spectrum Control V5.2.13 (March 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043142]
+IBM Spectrum Control V5.2.14 (May 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043414]
+IBM Spectrum Control V5.2.15 (August 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043749]
+IBM Spectrum Control V5.2.15.2 (November 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24044286]
+IBM Spectrum Control V5.2.16 (March 2018) [http://www-01.ibm.com/support/docview.wss?uid=swg24044454]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  "agent.sh versionall" command used to retrieve the SRA binaries
+   version number displays an error.
+   Additionally, the HBAInfo binary reports a missing module.
+   
+   ./agent.sh versionall
+      Agent                    : 5.2.9.0
+      DbMonitor                : 5.2.9.0
+      Discovery                : 5.2.9.0
+      FabricDiscovery          : 5.2.9.0
+   ./agent.sh[277]: /opt/IBM/TPC/agent/bin/./FabricProbe:  not
+   found.
+      FabricProbe       :
+   ./agent.sh[278]: /opt/IBM/TPC/agent/bin/./FabricZoneControl:
+   not found.
+      FabricZoneControl :
+   exec(): 0509-036 Cannot load program
+   /opt/IBM/TPC/agent/bin/./HBAInfo because of the following
+   errors:
+           0509-150   Dependent module
+   /home/build/tpc_5.2stable/src/../lib/pcre/lib/libpcrecpp.a(libpc
+   recpp.so.0) could not be loaded.
+           0509-022 Cannot load module
+   /home/build/tpc_5.2stable/src/../lib/pcre/lib/libpcrecpp.a(libpc
+   recpp.so.0).
+           0509-026 System error: A file or directory in the path
+   name does not exist.
+   
+      HBAInfo           :
+      NasFilerProbe     : 5.2.9.0
+      PathPlanner       : 5.2.9.0
+      Probe             : 5.2.9.0
+      Scan              : 5.2.9.0
+      SRAutil           : 5.2.9.0
+   
+   
+   Affected version: IBM Spectrum Control 5.2.8, 5.2.9.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * IBM Spectrum Control users with 5.2.8 and 5.2.9 version SRAs *
+   * running agent.sh verisionall.                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Two problems:                                                *
+   *                                                              *
+   * 01. When executing agent.sh's versionall command, errors are *
+   * reported due to missing binaries.                            *
+   *                                                              *
+   * example:                                                     *
+   * ./agent.sh versionall                                        *
+   * Agent             : 5.2.9.0                                  *
+   * DbMonitor         : 5.2.9.0                                  *
+   * Discovery         : 5.2.9.0                                  *
+   * FabricDiscovery   : 5.2.9.0                                  *
+   * ./agent.sh[277]: /opt/IBM/TPC/agent/bin/./FabricProbe:  not  *
+   * found.                                       <-------        *
+   * FabricProbe       :                                          *
+   * ./agent.sh[278]: /opt/IBM/TPC/agent/bin/./FabricZoneControl: *
+   * not found.                           <-------                *
+   * FabricZoneControl :                                          *
+   * exec(): 0509-036 Cannot load program                         *
+   * /opt/IBM/TPC/agent/bin/./HBAInfo                             *
+   * because of the following errors:                             *
+   * 0509-150   Dependent module                                  *
+   * /home/build/tpc_5.2stable/src/../lib/pcre/lib/libpcrecpp.a(l *
+   * ibpcrecpp.so.0) could not be loaded.               <-----    *
+   * module incorrectly linked                                    *
+   * 0509-022 Cannot load module                                  *
+   * /home/build/tpc_5.2stable/src/../lib/pcre/lib/libpcrecpp.a(l *
+   * ibpcrecpp.so.0).                                             *
+   * 0509-026 System error: A file or directory in the path name  *
+   * does not exist.                                              *
+   * HBAInfo           :                                          *
+   * NasFilerProbe: 5.2.9.0                                       *
+   * PathPlanner    : 5.2.9.0                                     *
+   * Probe                : 5.2.9.0                               *
+   * Scan                  : 5.2.9.0                              *
+   * SRAutil              : 5.2.9.0                               *
+   *                                                              *
+   *                                                              *
+   * 02. On AIX, when executing the HBAInfo binary, errors are    *
+   * seen due to binary being incorrecly linked.                  *
+   *                                                              *
+   * The following error message can been seen either by manually *
+   * invoking the Probe binary or in the agent.trace file on AIX, *
+   * when the HBAInfo binary is invoked.                          *
+   *                                                              *
+   * exec(): 0509-036 Cannot load program                         *
+   * /tpc_sra/ecooke/vcloud140/agent/bin/HBAInfo because of the   *
+   * following errors:                                            *
+   *         0509-150   Dependent module                          *
+   * /home/build/tpc_5.2stable/src/../lib/pcre/lib/libpcrecpp.a(l *
+   * ibpcrecpp.so.0) could not be loaded.                         *
+   *         0509-022 Cannot load module                          *
+   * /home/build/tpc_5.2stable/src/../lib/pcre/lib/libpcrecpp.a(l *
+   * ibpcrecpp.so.0).                                             *
+   *         0509-026 System error: A file or directory in the    *
+   * path name does not exist.                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fix maintenance when available and upgrade the SRA to  *
+   * 5.2.10 or later.                                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The server and the Storage Resource agent must be upgraded to a
+   level with the fix.  The fix for this APAR is targeted for the
+   following maintenance package:
+   
+   | refresh pack | 5.2-TIV-TPC-RP0010 - target 2Q16
+   
+   Fixed in IBM Spectrum Control 5.2.10.
+   
+   http://www.ibm.com/support/docview.wss?&uid=swg21320822 [http://www.ibm.com/support/docview.wss?&uid=swg21320822]
+   
+   The target dates for future refresh packs do not represent a
+   formal commitment by IBM. The dates are subject to change
+   without notice.
+   
+   | MDVREGR 5.2-TIV-TPC-RP0008 |
+   | MDVREGR 5.2-TIV-TPC-RP0009 |
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT14482
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPC00
+   
+   
+ * REPORTED RELEASE
+   529
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-25
+   
+   
+ * CLOSED DATE
+   2016-03-28
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  SRA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC
+   
+   
+ * FIXED COMPONENT ID
+   5608TPC00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R529 PSY
+   UP
+   
+   
+ * R528 PSY
+   UP

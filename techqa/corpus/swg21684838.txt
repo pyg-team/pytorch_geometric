@@ -1,0 +1,137 @@
+Title: IBM Security Bulletin: IBM Security Network Protection is affected by multiple vulnerabilities (CVE-2013-1740, CVE-2014-1490, CVE-2014-1491, CVE-2014-1492, CVE-2014-1544, CVE-2014-1545) - United States
+
+Text:
+PSIRT SECURITY BULLETIN
+
+SUMMARY
+ Multiple security vulnerabilities have been discovered in Network Security Services (NSS) and Netscape Portable Runtime (NSPR) versions used by IBM Security Network Protection. NSS is a component that supports the development of security-enabled applications. NSPR provides platform independence for operating system facilities. 
+
+VULNERABILITY DETAILS
+
+CVE-ID: CVE-2013-1740 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-1740]
+
+DESCRIPTION: Mozilla Network Security Services could allow a remote attacker to obtain sensitive information, caused by an error in the ssl_Do1stHandshake() function. An attacker could exploit this vulnerability to return unencrypted, unauthenticated data from PR_Recv.
+
+The attack does not require local network access, authentication, or specialized knowledge and techniques. An exploit would not affect the integrity of data or availability of the system, but it could impact the confidentiality of information.
+
+Affected Versions: Mozilla Network Security Services (NSS) before 3.15.4
+
+CVSS:
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/90394 [https://exchange.xforce.ibmcloud.com/vulnerabilities/90394] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+
+CVE-ID: CVE-2014-1490 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1490]
+
+DESCRIPTION: Mozilla Firefox, Thunderbird and SeaMonkey, using the Mozilla Network Security Services (NSS) library, could allow a remote attacker to execute arbitrary code on the system, caused by a use-after-free in libssl's session ticket processing. An attacker could exploit this vulnerability to execute arbitrary code on the system with elevated privileges.
+
+The attack does not require local network access or authentication, but some specialized knowledge and techniques are required. An exploit would affect the integrity of data, confidentiality of information and the availability of the system.
+
+Affected Versions: Mozilla Network Security Services (NSS) before 3.15.4
+
+CVSS:
+CVSS Base Score: 9.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/90885 [https://exchange.xforce.ibmcloud.com/vulnerabilities/90885] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:C/I:C/A:C) 
+
+
+CVE-ID: CVE-2014-1491 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1491]
+
+DESCRIPTION: An unspecified error in Mozilla Firefox,Thunderbird and SeaMonkey using the Mozilla Network Security Services (NSS) library has an unknown impact and attack vector.
+
+The attack does not require local network access or authentication, but some specialized knowledge and techniques are required. An exploit would not affect the availability of the system or confidentiality of information, but it could impact the integrity of data.
+
+Affected Versions: Mozilla Network Security Services (NSS) before 3.15.4
+
+CVSS:
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/90886 [https://exchange.xforce.ibmcloud.com/vulnerabilities/90886] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N) 
+
+
+CVE-ID: CVE-2014-1492 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1492]
+
+DESCRIPTION: An unspecified error in Mozilla Network Security Services (NSS) related to the processing of wildcard characters embedded within the U-label of an internationalized domain name in a wildcard certificate has an unknown impact and remote attack vector.
+
+The attack does not require local network access or authentication, but some specialized knowledge and techniques are required. An exploit would not affect the availability of the system or confidentiality of information, but it could impact the integrity of data.
+
+CVSS:
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91988 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91988] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N) 
+
+
+CVE-ID: CVE-2014-1544 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1544]
+
+DESCRIPTION: Mozilla Firefox and Thunderbird could allow a remote attacker to execute arbitrary code on the system, caused by a use-after-free error in the PK11_ImportCert() function when adding NSSCertificate structures. By persuading a victim to visit a specially-crafted Web site, a remote attacker could exploit this vulnerability using unknown attack vectors to execute arbitrary code on the vulnerable system or cause a denial of service.
+
+The attack does not require local network access or authentication, but some specialized knowledge and techniques are required. An exploit would affect the integrity of data, confidentiality of information and the availability of the system.
+
+Affected Versions: NSS 3.x used in Firefox before 31.0, and Firefox ESR 24.x before 24.7 
+
+CVSS:
+CVSS Base Score: 9.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/94776 [https://exchange.xforce.ibmcloud.com/vulnerabilities/94776] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:C/I:C/A:C)
+
+
+CVE-ID: CVE-2014-1545 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1545]
+
+DESCRIPTION: Mozilla Netscape Portable Runtime (NSPR) could allow a remote attacker to execute arbitrary code on the system, caused by an out-of-bounds write error in the sprintf and console functions. By persuading a victim to visit a specially-crafted Web site, a remote attacker could exploit this vulnerability using unknown attack vectors to execute arbitrary code on the vulnerable system or cause a denial of service.
+
+The attack does not require local network access or authentication, but some specialized knowledge and techniques are required. An exploit would affect the integrity of data, confidentiality of information and the availability of the system.
+
+Affected Versions: Mozilla Netscape Portable Runtime (NSPR) before 4.10.6
+
+CVSS:
+CVSS Base Score: 9.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/93715 [https://exchange.xforce.ibmcloud.com/vulnerabilities/93715] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:C/I:C/A:C)
+
+AFFECTED PRODUCTS AND VERSIONS
+Products: IBM Security Network Protection (XGS) models 3100, 4100, 5100
+
+Firmware versions: 5.1, 5.1.1, 5.1.2, 5.1.2.1, 5.2
+
+REMEDIATION/FIXES
+IBM has provided patches for all affected versions. Follow the installation instructions in the README files included with the patch.
+
+5.1.0.0-ISS-XGS-All-Models-Hotfix-FP0012 for IBM Security Network Protection products at version 5.1 [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?product=ibm/Tivoli/IBM+Security+Network+Protection&release=5.1&platform=Windows&function=fixId&fixids=5.1.0.0-ISS-XGS-All-Models-Hotfix-FP0012&includeRequisites=1&includeSupersedes=0&downloadMethod=http] 
+
+
+5.1.1.0-ISS-XGS-All-Models-Hotfix-FP0007 for IBM Security Network Protection products at version 5.1.1 [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?product=ibm/Tivoli/IBM+Security+Network+Protection&release=5.1.1&platform=Windows&function=fixId&fixids=5.1.1.0-ISS-XGS-All-Models-Hotfix-FP0007&includeRequisites=1&includeSupersedes=0&downloadMethod=http]
+
+
+5.1.2.0-ISS-XGS-All-Models-Hotfix-FP0008 for IBM Security Network Protection products at version 5.1.2 [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?product=ibm/Tivoli/IBM+Security+Network+Protection&release=5.1.2&platform=Windows&function=fixId&fixids=5.1.2.0-ISS-XGS-All-Models-Hotfix-FP0008&includeRequisites=1&includeSupersedes=0&downloadMethod=http]
+
+
+5.1.2.1-ISS-XGS-All-Models-Hotfix-FP0004 for IBM Security Network Protection products at version 5.1.2.1 [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?product=ibm/Tivoli/IBM+Security+Network+Protection&release=5.1.2.1&platform=Windows&function=fixId&fixids=5.1.2.1-ISS-XGS-All-Models-Hotfix-FP0004&includeRequisites=1&includeSupersedes=0&downloadMethod=http]
+
+
+5.2.0.0-ISS-XGS-All-Models-Hotfix-FP0004 for IBM Security Network Protection products at version 5.2 [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?product=ibm/Tivoli/IBM+Security+Network+Protection&release=5.2&platform=Windows&function=fixId&fixids=5.2.0.0-ISS-XGS-All-Models-Hotfix-FP0004&includeRequisites=1&includeSupersedes=0&downloadMethod=http]
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

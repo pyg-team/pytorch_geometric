@@ -1,0 +1,45 @@
+Title: IBM Rational Quality Manager error: The page isn't redirecting properly - United States
+
+Text:
+RQM; redirecting; JVM; java.lang.StackOverflowError; java; lang; StackOverflowError; page isn't redirecting properly TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to resolve a page is not redirecting properly error, that can occur when starting IBM Rational Quality Manager. 
+
+SYMPTOM
+Getting the following error in the browser when trying to launch Rational Quality Manager: 
+
+
+The page isn't redirecting properly
+Firefox has detected that the server is redirecting the request for this address in a way that will never complete.
+
+The following error may be found in the jazz.log: 
+
+
+Start Level Event Dispatcher] ERROR et.jazz.ajax.internal.registry.WebUIRegistryReader - A RuntimeException has occurred while starting the WebUI services
+java.lang.StackOverflowError  at java.util.ArrayList.readObject(ArrayList.java:609)
+
+
+
+
+CAUSE
+One of the possible causes for this error is the JVM stack size being set too low
+
+
+
+RESOLVING THE PROBLEM
+If you are using Tomcat, follow the instructions below to increase the stack size: 
+
+ 
+
+ 1. Stop the Rational Quality Manager server 
+ 2. Go to the Rational Quality Manager server installation directory (the default location is C:\Program Files\IBM\RQM\server) 
+ 3. Right click on the server.startup.bat file and select Edit 
+ 4. Find the line that starts with: 
+    
+    set JAVA_OPTS=-Djava.awt.headless=true -DORACLE_JDBC="%ORACLE_JDBC%" ...
+    
+ 5. Towards the end of that line, change the value from -Xss512k to -Xss768k
+
+
+The -Xss argument determines the size of the stack. If the stack space is set too low, eventually you will get the java.lang.StackOverflowError. If the stack space is set too high you will run out of memory. So you might have to experiment with this setting and find one that works for your system. Typically, it should be set between 768k and 1024k.

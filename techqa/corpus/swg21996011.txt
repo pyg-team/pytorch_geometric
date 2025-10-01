@@ -1,0 +1,13 @@
+Title: IBM About V segment of rapid increase of temporary solution - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to temporary alleviate V segment of rapid growth 
+
+CAUSE
+How to temporary alleviate V segment of rapid growth
+
+ANSWER
+Sometimes appear the phenomenon of rapidly increasing V segment. This kind of situation, is usually applied. Therefore, the first thing to observe changes of the application. An emergency, can alleviate to restart the database server, and then, adjust the corresponding application again.

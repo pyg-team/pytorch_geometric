@@ -1,0 +1,112 @@
+Title: IBM Cannot start Websphere Application Server because DB2 XMeta database cannot be contacted. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Websphere Application Server (WAS) fails to come up when used with Information Server because WAS is unable to contact the DB2 XMeta database. In the WAS SystemOut.log is has the errors:
+
+Error getting Connection from DriverManager with url (jdbc:db2://db2server:50000/xmeta) and driver (com.ibm.db2.jcc.DB2Driver)
+
+Caused by: com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: 
+SQLCODE=-5005, SQLSTATE= , SQLERRMC=null, DRIVER=3.58.135 
+
+SYMPTOM
+Webpshere Application Server fails to start, inspection of the SystemOut.log shows the following 
+
+ 
+
+Caused by: org.apache.ojb.broker.accesslayer.LookupException: Error getting Connection from DriverManager with url (jdbc:db2://db2server:50000/xmeta) and driver (com.ibm.db2.jcc.DB2Driver) 
+
+ at 
+
+org.apache.ojb.broker.accesslayer.ConnectionFactoryAbstractImpl.newConne ctionFromDriverManager(Unknown Source) 
+
+ at 
+
+org.apache.ojb.broker.accesslayer.ConnectionFactoryPooledImpl$ConPoolFac 
+
+tory.makeObject(Unknown Source) 
+
+ at 
+
+org.apache.commons.pool.impl.GenericObjectPool.borrowObject(GenericObjec 
+
+tPool.java:771) 
+
+ ... 44 more 
+
+Caused by: com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: 
+
+SQLCODE=-5005, SQLSTATE= , SQLERRMC=null, DRIVER=3.58.135 
+
+
+CAUSE
+Webspshere Application Server is failing to connect to the xmeta repository. There is a requirement for Webspshere Application Server to connect to the xmeta repository in order to start when used with Information Server,
+
+
+ENVIRONMENT
+Information Server with db2 as xmeta repository database.
+
+
+
+DIAGNOSING THE PROBLEM
+As the db2 instance owner (often db2inst1 with Information Server) cd from its home directory to sqllib and source the db2profile shell script (. ./db2profile), then attempt to connect to the xmeta database as the xmeta user. 
+
+eg 
+
+db2 connect to <xmeta> user <xmetauser> using <xmetauserpassword> 
+
+This will report a file access error to file SQLDBCONF. 
+
+Inspection of the db2diag.log shows the following 
+
+Target file = 
+
+/apps/IBM/InformationServer/Repos/xmeta/db2inst1/NODE0000/SQL00001/SQLDBCONF DATA #2 : String, 192 bytes 
+
+ Real user ID of current process = 10002 
+
+ Effective user ID of current process = 10002 
+
+ Real group ID of current process = 10005 
+
+ Effective group ID of current process = 10005 
+
+DATA #3 : String, 41 bytes 
+
+current sbrk(0) value: 0x000000000adb9000 
+
+DATA #4 : String, 396 bytes 
+
+Information of each subdirectory leading up to the first inaccessible one is shown in the format below : 
+
+ <UID>:<GID>:<permissions> (subdirectories) 
+
+ 
+
+ 10000:7777:755 (apps) 
+
+ 0:0:755 (IBM) 
+
+ 10000:0:755 (InformationServer) 
+
+ 10000:0:755 (Repos) 
+
+ 10000:0:755 (xmeta) 
+
+ 10000:10005:775 (db2inst1) 
+
+ 10000:10005:775 (NODE0000) 
+
+ 10000:10005:751 (SQL00001) 
+
+ 10000:10005:600 (SQLDBCONF) 
+
+ 
+
+Inspection of the access rights shows that db2inst1 (the instance owner) is not the owner of these files
+
+
+RESOLVING THE PROBLEM
+From /apps/IBM/InformationServer/Repos/ directory change back the owner of these files the the db2 instance owner using chown recursively.

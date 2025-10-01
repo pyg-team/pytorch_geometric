@@ -1,0 +1,32 @@
+Title: IBM Configuring floating license keys from IBM Installation Manager results in "The server could not be reached" error - United States
+
+Text:
+IM; IBM IM; configuration; floating license; SDP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to configure floating license keys from IBM Installation Manager on a client machine results in the error "the server could not be reached". 
+
+SYMPTOM
+The full error message is as follows:
+
+The server could not be reached. Please contact your System Administrator for further details.
+
+
+This error is displayed when configuring floating license keys from IBM Installation Manager from the client machine even after IBM Rational License Key Administrator was able to pick floating license keys from the license server.
+
+CAUSE
+Possible causes include: 
+
+ * IPv4 and IPv6 may be enabled from the client machine where the error message is displayed
+   or 
+ * May have incorrect information for the license server in the hosts file
+
+RESOLVING THE PROBLEM
+To resolve this error: 
+
+ 1. Ensure IPv6 is disabled and only IPv4 is displayed when checking for the IP address from the command line. 
+ 2. Open Windows Explorer and navigate to C:\Windows\System32\drivers\etc 
+ 3. Edit the hosts file 
+ 4. Insert the correct IP address, leave a space, type the fully qualified domain name of the license server machine at end of the hosts file 
+ 5. Save the hosts file 
+ 6. Restart the machine

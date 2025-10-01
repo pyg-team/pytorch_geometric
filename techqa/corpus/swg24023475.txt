@@ -1,0 +1,58 @@
+Title: IBM Download IBM Tivoli Netcool Performance Manager Version 1.2.1 Tier 5 TechPack - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document explains how to download the IBM® Tivoli® Netcool® Performance Manager Version 1.2.1 Tier 5 Technology Pack from Passport Advantage®. 
+
+DOWNLOAD DESCRIPTION
+Tivoli Netcool Performance Manager is a bundled product consisting of Tivoli Netcool/Proviso® 4.4.3 and Tivoli Netcool Performance Manager 1.2.1 - Wireless component, plus additional Technology Packs for each product.
+
+
+
+
+
+After logging into the IBM Passport Advantage Online [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] Web site, click Software download & media access, then click Download finder, then select Find by product description and type in Netcool. Expand the Tivoli Software eAssembly, and select the image that you want to download from that list. All Tivoli Netcool Performance Manager Version 1.2.1 Tier 1 Technology Pack download images are described below. 
+
+More information 
+The IBM Tivoli Netcool Performance Manager library of publications are available from this Web site: Tivoli Network Management Information Center [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/index.jsp] 
+
+Downloading and assembling the product 
+
+ 1. Download all of the parts that you need. The parts are listed by platform in the tabbed sections of this document. 
+ 2. Unpack each of the parts onto your system. 
+ 3. Follow the instructions in the product installation guides to install the technology pack.
+
+
+Supported Operation Systems 
+ * Sun Microsystems Solaris (SPARC), Linux® and IBM AIX®
+
+
+Downloadable parts
+Refer to the tables below for details about required parts. You must download the required parts for your platform. Required parts
+To install the Tivoli Netcool Performance Manager Version 1.2.1 Tier 5 Technology Pack, you need to download the following parts:
+
+
+
+Part Number Description CR8ZAEN Netcool/Proviso Technology Packs 4.3.x Tier 5 Technology Packs CZ03KEN Netcool/Proviso Nortel CS2000 Technology Pack 2.3.1.0 4.3W for Solaris/AIX English CZ5MVEN Netcool/Proviso Technology Pack Bundle 1.1.1.0 Multiplatform English CZ5MWEN Netcool/Proviso Technology Pack Installer 2.4.1.0 Multiplatform English CZ5NNEN Netcool/Proviso Nortel CS2000 Technology Pack 2.4.1.0 Multiplatform English CZB3XEN IBM Tivoli Netcool Performance Manager for Wireless Tier 5 Technology Packs V9.1.2 Solaris English PREREQUISITES
+For installation prerequisites, see the respective product installation guides for Tivoli Netcool/Proviso and Tivoli Netcool Performance Manager 1.2.1 - Wireless Component, in the Tivoli Network Management Information Center at: http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/index.jsp [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/index.jsp]
+
+INSTALLATION INSTRUCTIONS
+For installation instructions, see the respective product installation guides for Tivoli Netcool/Proviso and Tivoli Netcool Performance Manager 1.2.1 - Wireless Component, in the Tivoli Network Management Information Center at: http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/index.jsp [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/index.jsp]
+
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Please visit Passport Advantage 18/12/2009 English 1 FC [http://www-306.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] [ ] 
+TECHNICAL SUPPORT
+ Passport Advantage Online support at: http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html] 
+
+Software support for Netcool/Proviso: 
+http://www-01.ibm.com/software/sysmgmt/products/support/NetcoolProviso.html [http://www-01.ibm.com/software/sysmgmt/products/support/NetcoolProviso.html]
+
+Software support for Tivoli Netcool Performance - Wireless Component:
+http://www-01.ibm.com/software/sysmgmt/products/support/TivoliNetcoolPerformanceManagerforWireless.html [http://www-01.ibm.com/software/sysmgmt/products/support/TivoliNetcoolPerformanceManagerforWireless.html]

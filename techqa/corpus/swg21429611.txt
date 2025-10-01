@@ -1,0 +1,74 @@
+Title: IBM CWWBE0027E: No authorization for the requested action when login to BPC Explorer - United States
+
+Text:
+CWWBE0027E; BPC Explorer; CWTKA0003E; SQLCODE: -302; SQLSTATE: 22001; SQLERRMC: null; DB2 SQL error; v602rnotes; v61rnotes; v612rnotes; v62rnotes; v70rnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While trying to login to Business Process Choreographer Explorer, you receive error CWWBE0027E. 
+
+SYMPTOM
+ The Business Process Choreographer trace file shows the following error as the main cause of the above error: 
+
+TraceHTM 3 
+com.ibm.task.framework.TaskManagerServiceImpl.writeLogAndTraceEntry(Task
+ManagerServiceImpl.java:16019) CWTKA0003E: Unexpected exception during
+execution.
+com.ibm.task.api.UnexpectedFailureException: CWTKA0003E: Unexpected 
+exception during execution. 
+com.ibm.db2.jcc.b.SqlException: DB2 SQL error: SQLCODE: -302, SQLSTATE: 
+22001, SQLERRMC: null 
+at com.ibm.db2.jcc.b.ig.e(ig.java:1594)
+at com.ibm.db2.jcc.b.ig.a(ig.java:1223) 
+
+ 
+This error occurs when the Business Process Choreographer engine is executing the following query: 
+
+TraceBPE 3 
+com.ibm.bpe.database.Tom.queryWorkItem(Tom.java:8056) Query string =
+SELECT DISTINCT TA.TKIID , TA.ACTIVATED , TA.APPLIC_DEFAULTS_ID , 
+TA.BUSINESS_RELEVANCE , TA.COMPLETED , TA.CONTAINMENT_CTX_ID ,
+TA.CTX_AUTHORIZATION , TA.DUE , TA.EXPIRES , TA.FIRST_ACTIVATED , 
+TA.FOLLOW_ON_TKIID , TA.HIERARCHY_POSITION , TA.IS_AD_HOC , 
+TA.IS_ESCALATED , TA.IS_INLINE , TA.IS_WAIT_FOR_SUB_TK , TA.KIND ,
+TA.LAST_MODIFIED , TA.LAST_STATE_CHANGE , TA.NAME , TA.NAME_SPACE , 
+TA.ORIGINATOR , TA.OWNER , TA.PARENT_CONTEXT_ID , TA.PRIORITY , 
+TA.STARTED , TA.STARTER , TA.STATE , TA.SUPPORT_AUTOCLAIM , 
+TA.SUPPORT_CLAIM_SUSP , TA.SUPPORT_DELEGATION , TA.SUPPORT_SUB_TASK , 
+TA.SUSPENDED , TA.TKTID , TA.TOP_TKIID , TA.TYPE FROM WORK_ITEM WI,
+TASK TA WHERE (WI.OBJECT_ID = TA.TKIID) AND ((TA.KIND IN (? ,? ,? ,?
+)AND TA.STATE IN (? ,? ,? )AND WI.REASON IN (? ,? ,? ))AND (WI.OWNER_ID 
+=? OR (WI.OWNER_ID IS NULL AND (WI.EVERYBODY =? OR WI.GROUP_NAME IN (?
+,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? 
+,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? 
+,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? 
+,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? 
+,? ,? ))))) ORDER BY TA.PRIORITY , TA.ACTIVATED DESC WITH UR 
+
+
+CAUSE
+ The DB2 SQL error: SQLCODE: -302 was thrown because a group name, which was one of the parameters in the above query, was longer than 128 characters.
+There is a restriction regarding the length of names in the Business Process Choreographer database. A name must not be longer than 128 characters. In other words, the table is designed for a maximum length of 128 characters for these names.
+
+
+RESOLVING THE PROBLEM
+This is working as designed. You must use group names that are less than 128 characters. However, if you are unable to change the group names that are longer than 128 character, there is a partial work around for this problem. This work around is provided in the following interim fixes for the specific code levels.
+
+
+IZ69358 [https://www-304.ibm.com/support/docview.wss?uid=swg1IZ69358] for WPS v620 code level
+
+IZ69359 [https://www-304.ibm.com/support/docview.wss?uid=swg1IZ69359] for WPS v700 code level 
+
+
+These fixes provide the following work around: 
+
+When executing a read query that has group names longer than 128 chars, the BPC engine will ignore the exception and continue to retrieve information out of the BPC database for each individual member of the group that has names shorter than 128 chars. All the users which are inside the group that have a name longer than 128 chars will not get any result. This will allow you to login to the BPC explorer and to continue to work with the system. This is not going to work if the query is doing an Insert with long group names. This is a permanent restriction on DB2. Only a Read is possible for group names longer than 128 chars. 
+
+ 
+
+ * Note: The above Interim fixes are not available for public download. To obtain the interim fixes for your code level, please contact IBM Software Support (for Business Process Choreographer). 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WPS
+WebSphere Process Server

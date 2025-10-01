@@ -1,0 +1,84 @@
+Title: IBM Installation Tips for IBM Rational Application Developer on Microsoft Windows 7 systems - United States
+
+Text:
+RN8.0.3; RN8.0.4; Windows 7; installation; 1497776; UAC; user account control; mapped network drive; network drive TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English, Simplified Chinese 
+
+QUESTION
+ For installation of IBM Rational Application Developer on any Microsoft Windows 7 operating systems:
+-If an administrator user installs the product and configures its features on a Microsoft Windows 7 system, can the standard user start the workbench, create profiles, or start the server inside the workbench?
+-What tips are available when an administrator user installs the product and WebSphere® Application Server under the C:\Program Files directory? 
+
+CAUSE
+ 
+User Account Control for Microsoft Windows 7 systems
+
+You must use a Microsoft Windows user account that has full administrator account privileges for certain operations on Windows 7 operating systems. This also applies to Windows Vista, Windows Server 2008 R2, and Windows Server 2008 operating systems.
+The standard user account created in Windows 7 systems cannot perform administrative tasks, such as installing or changing settings on the computer. 
+
+Run the application server process as a Windows service 
+
+You can configure the WebSphere Application Server to run the application server process as a Windows service when creating a profile.
+Commands that involve Windows services or access to the Windows system registry require this type of full authority due to the Windows User Account Control (UAC) implementation for those operating systems. As a result, the standard user might not be able to start the server.
+
+
+ANSWER
+Part 1: Administrator to administer Rational Application Developer for standard user to use 
+
+
+On Windows 7 systems, if an administrator user installs Rational Application Developer V8.0.x, the standard user is not going to have write access in the installation directory. For a standard user to create the server profile, the administrator must complete the following steps: 
+
+
+ 1. Do not configure a new profile to enable the Run the application server process as a Windows service check box. 
+ 2. When the administrator user installs Rational Application Developer with WebSphere Application Server V6.1 or V7.0 , the administrator must not create a profile during installation.
+    When the standard user starts Rational Application Developer, a prompt displays requesting to create a profile. The standard user must select a directory which they have write permission. The Finish button is not available until you specify a valid directory with write permission. After the profile is created, the standard user can start the server. 
+ 3. For installing Rational Application Developer with WebSphere Application Server V8.0 on all operating systems, part of the installation path for WebSphere Application Server V8.0 needs read and write permission. For more installation details, see Installing IBM WebSphere Application Server, version 8.0 [http://publib.boulder.ibm.com/infocenter/radhelp/v8/topic/com.ibm.rad.install.doc/topics/t_install_was8.html] topic.
+    
+    
+    Tip: During the installation, the IBM®Installation Manager modifies the permission of some files under the following directories, such that the standard user has access when profiles are managed:
+    
+    <x>\runtimes\<server version>\logs\
+    <x>\runtimes\<server version>\properties
+    
+    Where <x> is the installation directory of Rational Application Developer.
+
+
+Part 2: Installing Rational Application Developer under C:\Program Files directory Only the administrator user can install Rational Application Developer and WebSphere Application Server under C:\Program Files directory. 
+
+ 
+
+Case 1: Only administrator users are going to develop, test, and publish applications with Rational Application Developer and the local test servers. You are not planning to use any of the standard user accounts. 
+
+When administrator user starts Rational Application Developer and creates a profile inside workbench, why is the profile path default to a user path C:\Users\Username\AppData\Local directory instead of C:\Program Files directory? 
+
+By default, although you are logged on as an administrator in the Windows operating system, you are given the permission of a standard user. Certain tasks require administrative authority to create the server profile under C:\Program Files directory, you must start Rational Application Developer as an administrator: 
+
+ * In the Windows Explorer, navigate and right-click on the eclipse.exe executable file and select run as administrator. 
+
+
+As a result, you are able to create the profile under C:\Program Files directory.  
+
+Case 2: Both administrator user and standard user are going to develop, test, and publish applications with Rational Application Developer and local test servers in Windows operating systems. 
+
+Follow the instructions in Part 1. When the administrator user is installing the WebSphere Application Server, do not create a profile. Let the standard user create the profile. 
+
+Do not create server profile inside C:\Program Files directory for the following reasons: 
+
+User Access Control
+
+The User Access Control (UAC) prompt might be required, because the modification of C:\Program Files directory. This depends on the level set in the UAC.
+The standard user might not have access to this directory even if the Installation Manager sets the permission to those directories. In addition, there could be a limitation in Rational Application Developer that prevents the UAC prompt from displaying when the Profile Management tool starts from within Rational Application Developer. 
+
+There are some situations where it may be necessary to temporarily disable UAC. This can be done as per this Microsoft technote: Turn User Account Control on or off [http://windows.microsoft.com/en-us/windows/turn-user-account-control-on-off#1TC=windows-7]. For example, this was the case in this RAD technote: A mapped network drive is not visible on Windows 7 in File > Open wizard [http://www.ibm.com/support/docview.wss?uid=swg21568262]. 
+
+
+UAC Virtualization (virtualized directory)
+
+A warning message can display in the Installation Manager about a UAC virtualization. The standard user does not have permission to write to some directories, for example the C:\Program Files directory and the write operation is redirected to C:\Users\Username\AppData\Local\VirtualStore\Program Files directory. 
+
+As a result, for the standard user virtual copies of the files are created. The profiles created might be stored in a virtualized directory, therefore, the administrator user is not going to see the same profiles created by the standard user.
+
+RELATED INFORMATION
+#Permission problems running the workbench on Windows 7 [http://www.ibm.com/support/docview.wss?uid=swg21497776]

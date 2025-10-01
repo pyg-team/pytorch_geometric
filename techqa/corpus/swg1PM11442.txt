@@ -1,0 +1,195 @@
+Title: IBM PM11442: RACF SECURITY VIOLATIONS ACCESSING FFDC DIRS & CLASSINFO.TEXT.DATA - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+7.1.0-TIV-ITCAMAD-FP0001: ITCAM for Application Diagnostics V7.1 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24027199]
+7.1.0.1-TIV-ITCAMAD-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24027898]
+7.1.0.2-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP2 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24029067]
+7.1.0.2-TIV-ITCAMAD-IF0006: ITCAM for Application Diagnostics V7.1 FP2 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24031010]
+7.1.0.2-TIV-ITCAMAD-IF0007: ITCAM for Application Diagnostics V7.1 FP2 IF7 [http://www-01.ibm.com/support/docview.wss?uid=swg24031710]
+7.1.0.2-TIV-ITCAMAD-IF0010: ITCAM for Application Diagnostics V7.1 FP2 IF10 [http://www-01.ibm.com/support/docview.wss?uid=swg24032110]
+7.1.0-TIV-ITCAMAD-FP0003: ITCAM for Application Diagnostics V7.1 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032604]
+7.1.0.3-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP3 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032985]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer has users that are  getting RACF Security
+   violations (ich408i errors) on
+   was61.JTT.JTT3DTTC.lassinfo.text.data.
+   This file is permission mode 660 rw-rw----
+   
+   
+   NOTE:
+   Once this fix is installed a user should:
+   Delete classinfo.text.data. After the server is retarted the
+   permissions should show 777 rwxrwxrwx
+   
+   The FFDC directory change will only happen if we change the
+   
+   CYN.handler.snap.className property in the runtime copy of
+   cynlogging.properties.
+   find the property and change it to:
+   
+   .
+   CYN.handler.snap.className=com.ibm.tivoli.itcam.toolkit.ai.jffdc
+   .CYNJLog
+   SnapHandler
+   
+   .
+   The ffdc files opened by itcam should then be opened with  777
+   (a+rwx)
+   permissions.
+   The file can be found in:
+   config_home/runtime/appserver_version.node_name.server_name
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   *
+   * z/OS systems running an application with SyncToOsThread
+   * (synchronizing J2EE principal with z/OS RACF ACEE) with
+   * calls made in the user's security context.
+   *
+   ****************************************************************
+   *
+   * PROBLEM DESCRIPTION:
+   *
+   * When using SyncToOsThread, calls made in the user's security
+   * context may cause errors accessing FFDC directories,
+   * classinfo.text.data file, etc.
+   *
+   * Examples:
+   *
+   * CH408I USER(PEON) GROUP(SUPPORT) NAME(TEST MINIMAL USER) 572
+   * /u/itcam61fp5/runtime/was61.TVT6034.server1/was61.TVT6034.ser
+   * ver1.classinfo.text.data
+   * CL(FSOBJ   ) FID(01E3F6F0F3F4F4001103000247D50000)
+   * INSUFFICIENT AUTHORITY TO OPEN
+   * ACCESS INTENT(RW-)  ACCESS ALLOWED(OTHER      ---)
+   * EFFECTIVE UID(0000001957)  EFFECTIVE GID(0000000400)
+   *
+   * ICH408I USER(PEON) GROUP(SUPPORT) NAME(TEST MINIMAL USER) 573
+   * /u/itcam61fp5/runtime/was61.TVT6034.server1/logs/CYN/FFDC/201
+   * 0.04.06
+   * CL(DIRACC  ) FID(01E3F6F0F3F4F4001103000247E60000)
+   * INSUFFICIENT AUTHORITY TO OPENDIR
+   * ACCESS INTENT(R--)  ACCESS ALLOWED(OTHER      ---)
+   * EFFECTIVE UID(0000001957)  EFFECTIVE GID(0000000400)
+   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The solution to this APAR is to change the specified file or
+   directory to 777 (a+rwx) permission.  This has been applied to
+   FFDC sub directories and classinfo.text.data.
+   
+   The fix for this APAR is available in the following maintenance
+   package:
+   
+     | interim fix | 6.1.0.5-TIV-ITCAMfWAS_MP-IF0011
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM11442
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS ZOS D
+   
+   
+ * REPORTED COMPONENT ID
+   5698A7100
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-02
+   
+   
+ * CLOSED DATE
+   2010-05-27
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS ZOS D
+   
+   
+ * FIXED COMPONENT ID
+   5698A7100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

@@ -1,0 +1,69 @@
+Title: IBM Accessing documents via external hyperlinks fails with an HTTP 500 error indicating, Unknown Referrer - United States
+
+Text:
+AE referral; 4.0.2 Fix Pack 14 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading to FileNet Application Engine 4.0.2-014 accessing documents via external hyperlinks (URLs) fails with a HTTP 500 error indicating 'Unknown Referrer'. 
+
+SYMPTOM
+When document hyperlinks such as the URLs generated via the Application Engine 'Show Hyperlink' action are accessed from webpages or applications hosted on servers other than the one where Application Engine is deployed, the following error is displayed : 
+
+Error 500--Internal Server Error 
+javax.servlet.ServletException: Unknown Referrer
+at com.filenet.ae.toolkit.server.servlet.filter.SecurityPluginFilter.doFilter(SecurityPluginFilter.java:197)...
+
+
+
+CAUSE
+FileNet Application Engine 4.0.2-014 and later includes a security enhancement and by default will block any external links for which the Referral HTTP Header does not match the name of the server where Application Engine is deployed. 
+
+
+
+DIAGNOSING THE PROBLEM
+If the URL of the document being accessed ( for example : http://<AE_Server>:<port>/Workplace/getContent?vsId=<versionSeries>&objectStore=<osName>&objectType=<type>) is then pasted in the Address field of a browser, the respective document is accessed without any problems. Users are prompted to log on to Workplace first if a valid session has not been previously established. 
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 
+
+ 1. Edit the SecurityFilter.xml file located in the installed Application Engine directory ( ...\AE\Workplace\WEB-INF). 
+    
+    
+    The preferred and more secure option option is to list the names of all other server hosts which may contain hyperlinks pointing back to Workplace while leaving the checkReferrer value set to 'true'. Include the names of the various servers under the addr property, for example : 
+    
+    <list key="trustedReferrerCheck"> 
+    <object key="trustedReferrer">
+    <setting key="checkReferrer">true</setting>
+    <array key="addr">
+    <value>trustedhost1.corp.com</value> 
+    <value>trustedhost2.corp.com</value>
+    </array>
+    </object>
+    </list> 
+    
+    
+    Another option is to set the checkReferrer value to false if you do not wish any document hyperlinks to be inspected for the Referral HTTP Header ( pre-AE 4.0.2-014 behavior):
+    
+    <list key="trustedReferrerCheck">
+    <object key="trustedReferrer">
+    <setting key="checkReferrer">false</setting>
+    <array key="addr">
+    <value></value>
+    <value></value> 
+    </array>
+    </object>
+    </list>
+    
+    
+ 2. Rebuild the Application Engine ( Workplace) WAR and EAR files by executing the scripts from the ..\AE\Deploy directory. Undeploy the Workplace web application from the J2EE Application Server and delete the temporary directory for the application then redeploy the Workplace application to the respective J2EE Application Server. 
+    
+    
+    For details, please see one of the following topics in the FileNet P8 Platform Product Documentation:
+    
+    “Deploy Application Engine (WebSphere).”
+    “Deploy Application Engine (WebLogic).”
+    “Deploy Application Engine (JBoss).”

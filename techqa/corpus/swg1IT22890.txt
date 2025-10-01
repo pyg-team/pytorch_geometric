@@ -1,0 +1,167 @@
+Title: IBM IT22890: USER NODE DEFINED SIMULATOR DOES NOT DISPLAY THE LARGE ICON - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When creating a User Defined Node,  you can select the ICONS
+   needed for the node.
+   You get get this issue if you save the UDN first and then import
+   the  ICONS.
+   If you create the UDN, import the ICONS and  save then the
+   problem does not occur.
+   
+   If you start the simulator to try out the UDN, then the message
+   flow displays the default UDN icon instead of the ICON selected
+   via the UDN editor palette.
+   
+   The same applies if you install the node.
+   
+   
+   Additional Symptom(s) Search Keyword(s):
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There are two directories under the ICONS, one call obj30 and
+   one called obj32. Update both icons to the large icon.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All user of IBM Integration Toolkit V9 and V10 creating a User
+   Defined node.
+   
+   
+   Platforms affected:
+   Windows on x86-64 platform, Linux on x86-64 platform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The default ICON is displayed on the message flow or displayed
+   using the simulation mode.
+   This occurs if a User defined node is created and saved. and an
+   ICON is later imported and saved  afterwards.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product has been changed to correctly update the ICON if it
+   is imported after saving the User defined Node.
+   The user will need to re-import the ICON for this fix to work
+   correctly.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v10.0      10.0.0.12
+   v9.0       9.0.0.11
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available,information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT22890
+   
+   
+ * REPORTED COMPONENT NAME
+   IIB TOOLKIT
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0541
+   
+   
+ * REPORTED RELEASE
+   A00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-23
+   
+   
+ * CLOSED DATE
+   2018-03-21
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IIB TOOLKIT
+   
+   
+ * FIXED COMPONENT ID
+   5724J0541
+   
+   
+
+APPLICABLE COMPONENT LEVELS

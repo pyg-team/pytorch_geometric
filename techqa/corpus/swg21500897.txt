@@ -1,0 +1,62 @@
+Title: IBM DB2 can display errors when under heavy process load with IBM Business Process Manager - United States
+
+Text:
+ibpma75relnotes; db2; configure; configuration; paramaters; DB2 parameters; database; ibpme75relnotes; ibpms75relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM DB2 database can display the CWLLG2068E error message when it is under heavy process load. 
+
+SYMPTOM
+The following information displays with this error message: 
+
+CWLLG2068E: An unexpected exception occurred during an attempt to generate the next primary key. Error: org.springframework.jdbc.UncategorizedSQLException: PreparedStatementCallback; uncategorized SQLException for SQL [update lsw_pri_key set high_key = ? where table_id = ?]; SQL state [57011]; error code [-964]; DB2 SQL Error: SQLCODE=-964, SQLSTATE=57011, SQLERRMC=null, DRIVER=3.61.65; nested exception is com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: SQLCODE=-964, SQLSTATE=57011, SQLERRMC=null, DRIVER=3.61.65
+
+
+RESOLVING THE PROBLEM
+Use one of the following solutions to resolve the problem based on your environment:
+
+
+ * Business Process Manager databases are maintained by an administrator. 
+   If your Business Process Manager databases are maintained by a database administrator, gather the server log files and FFDC entries, and then consult the database administrator. For IBM DB2, the database administrator must adjust the settings for LOGFILSIZ, LOGPRIMARY and LOGSECOND based on your environment.
+   
+   
+
+ * Running a standalone environment
+   If you are running a standalone Business Process Manager 7.5 environment and are maintaining your own databases, consult the database documentation. For IBM DB2, you might need to adjust the LOGFILSIZ, LOGPRIMARY, and LOGSECOND parameters. To find the current values of these parameters on IBM DB2, issue the following commands from a command prompt:
+   
+    * db2 get database config for BPMDB
+      
+      
+    * db2 get database config for PDWDB
+   
+   
+   
+   Note: BPMDB and PDWDB are the default database names. If you used different database names during the installation, substitute the correct database name.
+   
+   
+
+To increase the LOGFILSIZ, use the following command, where xxxx is the new value for the LOGFILSIZ: 
+
+
+db2 update database config for BPMDB using LOGFILSIZ xxxx 
+
+
+Increasing the number of primary and secondary logs is done with a similar command, where yy and zz are the new values: 
+
+ * db2 update database config for BPMDB using LOGPRIMARY yy
+   
+   
+ * db2 update database config for BPMDB using LOGSECOND zz
+   
+   
+   You must update these settings for both the BPMDB and the PDWDB.
+   
+   
+
+Note: Increasing the LOGPRIMARY value also increases the disk requirements for the log files because the primary log files are preallocated during the very first connection to the database. Each log file has a size that is equal to LOGFILSIZ. You can use the database system monitor to help size the primary log files. See the IBM DB2 documentation for more information about these values and how to monitor them. 
+
+
+The correct value for these parameters is specific to your environment. When you increase these values, increase them in small increments from their current settings until the problem is resolved.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Databases Linux, Windows 8.0.1, 8.0, 7.5.1.2, 7.5.1.1, 7.5.1, 7.5.0.1, 7.5 Business Integration IBM Business Process Manager Standard Databases AIX, Linux, Solaris, Windows 8.0.1, 8.0, 7.5.1.2, 7.5.1.1, 7.5.1, 7.5.0.1, 7.5

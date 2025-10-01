@@ -1,0 +1,52 @@
+Title: IBM What are the privileges required by the IBM Bigfix components/users on Windows? - United States
+
+Text:
+permissions; privileges; IEM; TEM; SUA; 455; googlebigfix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Bigfix users and component have a few required permissions/privileges. Most of these can be obtained in a default configuration by using a local administrator account. 
+
+RESOLVING THE PROBLEM
+IBM Bigfix users and component have a few required permissions/privileges. Most of these can be obtained in a default configuration by using a local administrator account. The details include the following: 
+
+
+INSTALLATION
+ * All IBM Bigfix components (server, relay, console, agent) require local administrative level privileges to install.
+ * The privileges are required to write to protected system locations and to create services (except the console installer).
+ * For agent installations on Unix/Linux computers, root level privileges are required for installation.
+ * If the SQL Server database is on the local system, the IBM Bigfix Server installer can use the local admin privileges to fully install and configure the database.
+ * If the SQL Server database is on a remote system, the user running the IBM Bigfix Server installer will need privileges to create new databases, create tables in the new databases, create database user roles, create SQL Server users, and more. This requires 'sa' level privileges to the database (although the named 'sa' user is not required).
+
+UPGRADES
+ * All IBM Bigfix upgrades can be performed through IBM Bigfix using the privileges of the local agents (except for Server upgrades using remote databases). 
+ * Manual upgrades can be performed with administrator privileges on all components. 
+
+CONSOLE USER ACCESS
+ * TEM Console users require SQL Server users with access to read/write certain parts of the database. The "TEM_Console_User" role created in the database at installation time defines minimum privileges of the users.
+ * By default, SQL Server authenticated accounts are used for console users. However, NT Authenticated accounts can be used for the console users as long as they have "TEM_Console_User" access.
+ * Before the users can log in to the IBM Bigfix Console, they must have an entry in the TEM USERINFO table in the BFEnterprise database. The IBM Bigfix Admin tool automatically creates this entry when the user is created.
+ * TEM Consoles must have read/write access to the local user's temporary and user data folders (by default, this folder is stored at "C:\Documents and Settings\[username]\Local Settings\Application Data" on most Windows versions)
+ * TEM Console users must be able to read/write access to "HKEY_CURRENT_USER\Software\BigFix"
+
+TEM SERVER COMPONENTS
+ * The TEM Server services are always installed as the local SYSTEM account, because the services need local admin rights to the system they are running on, full permission to read/write to the file system, registry and the database.
+ *  If a remote database is being used, the services that access the database (FillDB, GatherDB, and Web Reports Server) can be configured to run as domain accounts. However, the domain account still needs to be part of the local admin group, in order to be successful for read/write privileges to the file system and registry. Plus the domain account must have DataBase Ownership (DBO) rights to the databases (SA privileges are only needed to create the database instances). 
+ * Specifically : 
+ *  FillDB requires read/write access to the BFEnterprise database. If DSA is being used, FillDB additionally requires access to the database master tables to replicate user information (for both the local and remote SQL Servers). FillDB requires master.db_owner and bfenterprise.db_owner or sa if using SQL 2000 and for SQL 2005, it must be sa or control server privilege. GatherDB requires read/write access to the Server folder (and subfolders) and read/write access to the Windows temporary folder. GatherDB requires read/write access to the BFEnterprise database. All server components need full access to the all registry keys under HKLM\Software\BigFix\Enterprise Server and HKLM\Software\BigFix\EnterpriseClient NMAP Import Service needs to run as a Domain User when accessing a Remote Database. The standard local system will not allow access to the SQL database this Service should be configured like other IBM Bigfix services in a Remote Database environment. In IBM Bigfix 8.2+, the BES Root Server service also requires database access similar to Gather DB - it must have Read/Write access to the database. 
+ * Web Reports
+ *  Web Reports Server requires read/write access to the IBM Bigfix Server folder (and subfolders) and read/write access to the Windows temporary folder. Web Reports Server requires read access to BFEnterprise database, write access to the "AggregatedBy" table in the BFEnterprise database. Roles needed for this are bes_console_user and bes_approval_level_1. Web Reports Server also requires read/write access to the BESReporting database. This requires the DBO role Web Reports Server requires full access to HKEY_LOCAL_MACHINE\SOFTWARE\BigFix\Enterprise Server\FillAggregateDB (Note that by default this key is only accessible to the SYSTEM account and if you change the Web Reports Server to run as a different user, you MUST change the permissions on these subkeys manually. 
+   
+ * TEM Relays
+ * 
+ * 
+ * 
+ * IBM Bigfix Admin Tool
+ *  The IBM Bigfix Admin tool is a part of the IBM Bigfix Server responsible for administration of the system and for installation and upgrade requires full database privileges For non-installation/upgrade tasks, the user of the BigFix Admin tool requires full read/write privileges on the BFEnterprise database and also the ability to create and delete database users (master.db_securityadmin or master.db_owner). 
+ * TEM Agents
+ * 
+ *  Querying the properties of the computer -- The IBM Bigfix Agent will look at various parts of the system when it is evaluating relevance for properties and for Fixlets. Some of this information is available to any user, but much of this information is privileged (including access to parts of the filesystem, package databases, registry, process list, hardware details, security settings, operating system configurations, and more). Without LocalSystem access, some of the out-of-the-box properties and Fixlets would not work. Running commands on the computer -- The IBM Bigfix Agent will run actions on the computers to do many functions including install patches, install software, change system configurations, copy/move/delete files, change registry commands, run package manager commands, etc. These commands are typically privileged commands that require administrative/root access on the computer. Without the appropriate access, the commands would fail and the agent would report an error. Also, on Linux/Unix systems, running actions as a non-root user that updates system files is potentially problematic due to file group permissions issues. Additional information on the Windows LocalSystem account can be found here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms684190(v=vs.85).aspx [http://msdn.microsoft.com/en-us/library/windows/desktop/ms684190(v=vs.85).aspx] 
+
+ 
+
+HISTORICAL NUMBER
+ 455

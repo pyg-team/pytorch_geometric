@@ -1,0 +1,83 @@
+Title: IBM Domino X.509 authentication failed using TSL 1.2 on IE - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+Microsoft IE clients stop authenticating with existing X.509 certificates 
+
+after upgrading Domino server from 901FP3 to 901FP4. Domino server already has keyring which is SHA-2 With RSA Encryption.
+The issue happens on MS Internet Explorer only (IE 9/10/11 all have problem) under TLS1.2. Firefox and Chrome browsers authenticate successfully. IE browser authenticates successfully only if TLS 1.2 is disabled.
+
+We tried to add SSL_DISABLE_TLS_10=1 in Domino notes.ini and disable TLS 1.0 
+and 1.1, only enable 1.2, this issue still exists. 
+
+
+CAUSE
+Domino 9.0.1 Fix Pack 3 Interim Fix 2 or later start to support TLS 1.2. To use TLS l.2, both Domino server and browser must not use certificate with the MD5 hashing algorithm. In this case, IE still use certificate with MD5 hashing algorithm, so causes the failure.
+
+
+ANSWER
+Enabled below Domino notes.ini parameters and gather logs. 
+
+DEBUG_SSL_ALL= 3 
+DEBUG_SSL_HANDSHAKE=2 
+DEBUG_SSL_CERT=1 
+DEBUG_SSL_CIPHERS=2 
+
+For IE + TSL 1.2, we got "Anonymous" when authenticated: 
+[0060:000A-0324] 23/11/2015 03:20:33.79 PM SSL_Handshake> After handshake2 state HandshakeServerIdle (3) 
+[0060:000A-0324] 23/11/2015 03:20:33.79 PM SSL_Handshake> Protocol Version = TLS1.2 (0x303) 
+[0060:000A-0324] 23/11/2015 03:20:33.79 PM SSL_Handshake> Cipher = 
+ECDHE_RSA_WITH_AES_256_CBC_SHA (0xC014) 
+[0060:000A-0324] 23/11/2015 03:20:33.79 PM SSL_Handshake> KeySize = 256 
+bits 
+[0060:000A-0324] 23/11/2015 03:20:33.79 PM SSL_Handshake> Elliptic 
+Curve = NIST P-256 (23) 
+[0060:000A-0324] 23/11/2015 03:20:33.79 PM SSL_Handshake> Server RSA 
+key size = 2048 bits 
+[0060:000A-0324] 23/11/2015 03:20:33.79 PM SSL_Handshake> SSLErr = 0 
+[0060:000A-0324] 23/11/2015 03:20:33.79 PM SSL_Handshake> TLS/SSL 
+Handshake completed successfully 
+[0060:000A-0324] 23/11/2015 03:20:33.79 PM int_MapSSLError> Mapping SSL 
+error 0 to 0 [SSLNoErr] 
+[0060:000A-0324] 23/11/2015 03:20:33 PM User not authenticated 
+[/48256BAE0016FB41/menu_nd.html] Anonymous 
+
+After getting the certificate of IE, and importing it into IE 11, details in IE show that the "signature algorithm" and "signature hash algorithm" are "md5". 
+
+The operational sequence is this: (A) User's IE initiates session with Domino 
+(B) Domino sets protocol to TLS1.2 in Server Hello message 
+(C) User's IE can NOT send the above certificate (since it is md5), so it sends a blank Client Certificate message 
+(D) Domino can not authenticate client since no valid client certificate
+is received. 
+
+Solution: 
+Replacing the current IE certificate with a valid TLS1.2 compatible certificate (signed with RSA not MD5 algorithm) resolves the problem. 
+
+Appendix:
+1. About IE can not use MD5 for TLS 1.2, please refer to below technote from Microsoft regarding Client side certificates:
+https://connect.microsoft.com/IE/feedback/details/812229/client-side-certificates-no-longer-being-presented-to-web-server-intermittent [https://connect.microsoft.com/IE/feedback/details/812229/client-side-certificates-no-longer-being-presented-to-web-server-intermittent] 
+
+Excerpt: 
+When TLS1.1/1.2 support was implemented in 2008, MD5 was not included on
+the supported hash algorithms list. Therefore, MD5 client certs that can
+be selected with TLS<1.2, cannot be selected with TLS1.2. More users are
+running into this now that TLS1.2 is enabled by default in IE. On the 
+other hand, MD5 cert usage is steadily declining (August SSL Pulse tests
+found zero MD5 cert usage on the Web). 
+
+2.About Firefox can still use MD5 for TLS 1.2, please refer to below technote. https://www.mozilla.org/en-US/security/advisories/mfsa2015-150/ [https://www.mozilla.org/en-US/security/advisories/mfsa2015-150/] 
+
+Excerpt: 
+Mozilla Foundation Security Advisory 2015-150 
+MD5 signatures accepted within TLS 1.2 ServerKeyExchange in server signature 
+Announced: December 22, 2015 
+Products: Firefox, Firefox ESR 
+Fixed in:
+Firefox 43.0.2
+Firefox ESR 38.6 
+
+Description: 
+Security researcher reported an issue in Network Security Services (NSS) where MD5 signatures in the server signature within the TLS 1.2 ServerKeyExchange message are still accepted. This is an issue since NSS has officially disallowed the accepting MD5 as a hash algorithm in signatures since 2011. This issues exposes NSS based 
+clients such as Firefox to theoretical collision-based forgery attacks. This issue was fixed in NSS version 3.20.2.

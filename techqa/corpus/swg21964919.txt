@@ -1,0 +1,17 @@
+Title: IBM Attribute text greater than 1024 Characters does not display in view in IBM Rational DOORS Next Generation - United States
+
+Text:
+hidden; attribute; string TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attribute text greater than 1024 Characters does not display in view in IBM Rational DOORS Next Generation (RDNG) 
+
+SYMPTOM
+If attribute text is greater than 1024 characters the attribute value is not displayed.
+
+
+CAUSE
+There is a 1024 character limit for displaying attributes within a view.
+
+RESOLVING THE PROBLEM
+- Shorten the attribute text value to less than 1024 characters.

@@ -1,0 +1,177 @@
+Title: IBM PI62975: IEC036I 002-18,IGC0005E,PDGSMFRD,SMFREPRT,AUDWORK,56EF,TPY005, SYS16137.T114349.RA000.PDGSMFRD.AUDWORK.H01 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SYSTEM COMPLETION CODE=002  REASON CODE=00000018
+   TIME=10.33.03  SEQ=24083  CPU=0000  ASID=0182
+   PSW AT TIME OF ERROR  075C1000   80E4B92E  ILC 2  INTC 0D
+      ACTIVE LOAD MODULE           ADDRESS=00E49000
+   OFFSET=0000292E
+      NAME=IFG0199B
+      DATA AT PSW  00E4B928 - 41003038  0A0DB20A  00509808
+      AR/GR 0: 009FF198/00E4BB3C   1: 00000000/A4002000
+            2: 00000000/00006660   3: 00000000/00E4BB04
+            4: 00000000/009BC420   5: 00000000/009FFA58
+            6: 00000000/009BC6C4   7: 00000000/FFFFFF2B
+            8: 00000000/009BC6E4   9: 00000000/009BDAE8
+            A: 00000000/009C1460   B: 00000000/009BAFF0
+            C: 00000000/00000000   D: 00000000/7F691CE8
+            E: 00000000/80E4B60E   F: 00000000/00000018
+   END OF SYMPTOM DUMP
+   IEF450I PDGSMFRD SMFREPRT - ABEND=S002 U0000 REASON=00000018
+   ABEND0C1 processing of unusually long IFCID 145.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: OMEGAMON XE for DB2 PE/DB2PM                 *
+   *                 users of component                           *
+   *                 - Batch Reporting                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: OMPE Batch Audit Report / Trace job     *
+   *                      may produce IEC036I message for Audit   *
+   *                      Workfile followed by abnormal job       *
+   *                      termination when processing IFCID 145.  *
+   ****************************************************************
+   * RECOMMENDATION: Apply this PTF.                              *
+   ****************************************************************
+   PROBLEM SUMMARY:
+   OMPE Batch Audit Report / Trace job may produce IEC036I message
+   for Audit Workfile followed by abnormal job termination while
+   processing IFCID 145. That may happen when IFCID 145 length is
+   close to 32 kbytes due to complex SQL statement and many
+   partitions accessed for partitioned table.
+   
+   PROBLEM CONCLUSION:
+   Code changed to fix this problem.
+   
+   KEYWORDS:
+   OMPE AUDIT REPORT TRACE IFCID145 IEC036I ABEND0C1
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code changed to fix this problem.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI62975
+   
+   
+ * REPORTED COMPONENT NAME
+   OM XE DB2PE/PM
+   
+   
+ * REPORTED COMPONENT ID
+   5655OPE00
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-24
+   
+   
+ * CLOSED DATE
+   2016-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2017-02-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI41234 UI41235 UI41236
+   
+   
+
+MODULES/MACROS
+ *  FPECHATS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OM XE DB2PE/PM
+   
+   
+ * FIXED COMPONENT ID
+   5655OPE00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R511 PSY UI41234 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI41234]
+   UP16/10/01 P F609
+   
+   
+ * R520 PSY UI41235 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI41235]
+   UP16/10/01 P F609
+   
+   
+ * R530 PSY UI41236 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI41236]
+   UP16/10/01 P F609
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

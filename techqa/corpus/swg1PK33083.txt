@@ -1,0 +1,223 @@
+Title: IBM PK33083: ICH408I AND MQJMS2013 WITH REASON 2035 AFTER MIGRATING FROM MQ V5.3.1 TO MQ V6.0 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This customer is in process of migrating from z/OS 1.6 / MQ 5.3
+   to z/OS 1.7 / MQ V6 and see that one of their applications are
+   no longer running under the new environment. The application
+   still runs fine under the old environment. The application runs
+   under WebSphere Application Server for z/OS and accesses MQ with
+   a J2C Authentication Alias. Under the new environment we are
+   getting the following messages:
+   .
+   In Queue Manager:
+   ICH408I USER(GKFWI0JM) GROUP(#GKFADM ) NAME(USER CUSTOMER STORE
+   )
+     LOGON/JOB INITIATION - NOT AUTHORIZED TO APPLICATION
+   .
+   In WebSphere Application Server, servant region:
+   javax.jms.JMSSecurityException: MQJMS2013: invalid security
+   authentication supplied for MQQueueManager
+   com.ibm.mq.MQException: MQJE001: Completion Code 2, Reason 2035
+   .
+   The customer feels the ICH408I message points to the RACF
+   ressource class APPL as APPL is activated but there seems to be
+   no defined profile for MQ.
+   .
+   The Change Team reponse:
+   For the authentication of an MQ JMS connection, MQ should not be
+   requesting for RACF to check authority to a particular APPL.
+   Looking in the output supplied by the customer, the ICH408I
+   messages seem to indicate that the request being made to RACF
+   contains an APPL value that is unprintable (represented by dots
+   in the message). Looking at the security routine which issues
+   the RACROUTE VERIFY request, changes have been made at MQ V6 to
+   allow the use of an appl name for authentication with a
+   passticket. It looks like the code which checks whether an appl
+   name is supplies is incorrect, resulting in a null appl name
+   being passed to RACF when no appl name should be used.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  A ++APAR is available from the change team.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Websphere MQ for z/OS Version 6 *
+   *                 connecting a JMS application to MQ in        *
+   *                 bindings  mode.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When connecting a JMS application to    *
+   *                      WMQ in bindings mode, and the           *
+   *                      connection factory specifies a user ID  *
+   *                      and password, with the APPL class       *
+   *                      activated in the ESM, the following     *
+   *                      messages are seen if the user ID also   *
+   *                      has the restricted attribute set.       *
+   *                                                              *
+   *                      In the queue manager:                   *
+   *                                                              *
+   *                      ICH408I USER(usrname) GROUP(grpname)    *
+   *                      NAME(USER CUSTOMER STORE ) LOGON/JOB    *
+   *                      INITIATION - NOT AUTHORIZED TO          *
+   *                      APPLICATION ........                    *
+   *                                                              *
+   *                      where, notably, the APPL value is       *
+   *                      represented by dots as it is            *
+   *                      non-character data.                     *
+   *                                                              *
+   *                      In the WebSphere Application Server,    *
+   *                      servant region:                         *
+   *                                                              *
+   *                      javax.jms.JMSSecurityException:         *
+   *                      MQJMS2013: invalid security             *
+   *                      authentication supplied for             *
+   *                      MQQueueManager Completion Code 2,       *
+   *                      Reason 2035                             *
+   *                                                              *
+   *                      and WAS fails to connect to WMQ.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The problem occurs in the code which checks the user ID and
+   password with a RACROUTE VERIFY call.  The code was enhanced to
+   allow an APPL to be specified when authenticating using a
+   passticket (e.g.  from CICS or IMS).  However, user ID and
+   password authentication should still be done without APPL on the
+   RACROUTE call.  When checking a user ID and password, CSQHCHK7
+   passes a null APPL name to CSQHVRFY.
+   
+   However, CSQHVRFY expects a space in the first character of the
+   APPL name (csApplname) if no name is to be used.  Since CSQHCHK7
+   has passed nulls, CSQHVRFY uses a call that passes the APPL name
+   on the RACROUTE VERIFY call.
+   
+   If APPL security checking is turned on, and the user ID has the
+   restricted attribute set, the call fails.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been changed to ensure that an APPL is not
+   specified on the RACROUTE VERIFY call when checking a user ID
+   and password.
+   000Y
+   CSQHCHK7
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK33083
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-10-17
+   
+   
+ * CLOSED DATE
+   2007-01-09
+   
+   
+ * LAST MODIFIED DATE
+   2007-02-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK21121
+   
+   
+
+MODULES/MACROS
+ *     CSQHCHK7
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK21121 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK21121]
+   UP07/01/19 P F701
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

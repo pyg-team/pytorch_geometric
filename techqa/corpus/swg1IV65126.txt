@@ -1,0 +1,191 @@
+Title: IBM IV65126: CONFIGURING AN AGENT WITH SECONDARY TEMS THE HOTSTDBY COLUMN ON MTEMS DOES NOTINDICATE YES IT REMAINS NO. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 5 (6.3.0-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24039236]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   ITM 6.3.0 environment with Agents only and Agents with TEMS
+     to which they connect. The behavior seems to be different when
+     TEMS is present in the environment.
+   Problem Description:
+     When reconfiguring an agent with a secondary TEMS connection
+   the
+     HotStdby column on Manage Tivoli Enterprise Services
+   Monitoring
+     (MTEMS) does not indicate Yes, it does not change. The
+   behavior
+     changed between 6.2.3 and 6.3.0. On 6.2.3 adding a secondary
+   TEMS
+     connection changes the HotStdby column on MTEMS from No to
+   Yes.
+     However, on 6.3.0 when a secondary TEMS connection is enabled
+   the
+     HotStdby column does not change.
+   Recreate Instructions:
+     Example that shows the HotStdby column correctly.
+     ITM release is 6.3.0 GA or any 6.3.0 fixpack.
+     1.  Install a HUB TEMS that has at least a Windows OS Agent
+         connected to it.
+     2.  Do NOT configure the Hub TEMS for failover or a secondary
+         TEMS.
+     3.  On the Windows OS agent Reconfigure and select "Optional
+         Secondary TEMS Configuration"
+     4.  Configure Secondary TEMS Configuration
+     5.  Enter the protocol and hostname and/or IP Address and
+   press
+         OK and then OK to accept the changes.
+     6.  Observe the MTEMS and you will see that the HotStdby
+   column
+         will change from "NO" to "YES".
+     Failing Scenario
+     1.  Install just the Windows OS agent.
+     2.  On the Windows OS agent Reconfigure and select "Optional
+         Secondary TEMS Configuration"
+     3.  Configure Secondary TEMS Configuration
+     4.  Enter the protocol and hostname and/or IP Address and
+   press
+         OK and then OK to accept the changes.
+     5.  Observe the MTEMS and you will see that the HotStdby
+   column
+         does NOT change from "NO" to "YES".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There is no workaround for this issue. The setting is purely
+   cosmetic.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  HotStdby column of Manage Tivoli Enterprise Monitoring Services
+   is not correct.
+   
+   
+   Agents can be configured with Hot Standby or Secondary TEMS
+   (Tivoli Enterprise Monitoring Server).  When configured this
+   way, the HotStdby column of Manage Tivoli Enterprise Monitoring
+   Services (MTEMS) always shows "No" when the value should be
+   "Yes".  The underlying configuration file for the agent is
+   correct.  The MTEMS just shows the wrong value.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was changed to display the correct value.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.3.0-TIV-IT
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  To verify the true setting, select the agent on the MTEMS,
+   right-click, and select "Reconfigure".  If the check box
+   "Optional Secondary TEMS Connection" is selected, then the
+   setting is in effect.  Once the setting is verified, cancel
+   the reconfigure.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV65126
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-22
+   
+   
+ * CLOSED DATE
+   2015-01-21
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

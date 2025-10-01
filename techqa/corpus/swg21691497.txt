@@ -1,0 +1,31 @@
+Title: IBM CDM - Database Roles for product installation, upgrade and continuous usage - United States
+
+Text:
+cdm database roles; sql roles cdm TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ What are the required database roles in order install, upgrade or run IBM Cognos Disclosure Management? 
+
+CAUSE
+The need to determine what database roles are required to install, upgrade or run CDM.
+
+ANSWER
+For a new installation of Cognos Disclosure Management, please ensure that the following roles are applied to the Microsoft SQL user account used in the installation process: 
+
+ * Server roles:
+   - db_creator
+   - Public 
+ * Database roles:
+   - db.owner
+   1. 
+
+For a Cognos Disclosure Management product upgrade or for continuous usage, please ensure that the following roles are active: 
+ * Server roles:
+   - Public
+   1. 
+ * Database roles:
+   - db_datareader
+   - db_datawriter

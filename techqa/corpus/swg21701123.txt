@@ -1,0 +1,36 @@
+Title: IBM HADR monitoring states - United States
+
+Text:
+hadr monitoring states monitor HADR_Role role database Standard Primary Standby Unknown HADR_State state Disconnected Local_Catchup Remote_Catchup_Pending Remote_Catchup Peer Disconnected_Peer HADR_Connect_Status connection status Connected Congested TECHNOTE (FAQ)
+
+QUESTION
+ What are the states and roles that the DB2 agent recognizes with HADR monitoring? 
+
+ANSWER
+You can create a situation based on attribute group DB2 HADR. Following attributes should be considered. 
+
+HADR_Role - The current HADR role of the database 
+Standard=0 
+Primary=1 
+Standby=2 
+Unknown=-1 
+
+HADR_State - The current HADR state of the database 
+Disconnected=0 
+Local_Catchup=1 
+Remote_Catchup_Pending=2 
+Remote_Catchup=3 
+Peer=4 
+Disconnected_Peer=5 
+Unknown=-1 
+
+HADR_Connect_Status - The current HADR connection status of the database 
+Connected=0 
+Congested=1 
+Disconnected=2 
+Unknown=-1 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ itm itcam db2 agent

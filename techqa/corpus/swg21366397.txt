@@ -1,0 +1,121 @@
+Title: IBM MustGather: Data Collection for an application hang and system hangs on Windows - United States
+
+Text:
+1366397; CC; clearcase; application hang; system hangs; windows application hang; windows system hang; system hang; MUSTGATHERDOCUMENT TECHNOTE (FAQ)
+
+QUESTION
+ How do I collect the necessary output for support to analyze application and system hangs that occur on Microsoft Windows related to IBM Rational processes? 
+
+ANSWER
+
+STEP 1: Identify the problem
+
+
+ 1. WHICH process is hanging? (Example: clearexplorer.exe, db_server.exe ....) 
+ 2. WHAT operation was being performed when the hang occurred? (Example: shutting down GUI, performing X operation ....) 
+ 3. HOW often do the errors occur? (Example: every night at X time, every day around X time ....) 
+ 4. HOW many machines does this happen on? (Example: ALL, one or X number)
+
+ 
+
+STEP 2: Collect relevant logs
+
+Collect the logs from a good machine and a bad machine and compare the two for differences. 
+
+For example review technote 1131335 [http://www-1.ibm.com/support/docview.wss?uid=swg21131335] for more information on collecting ClearCase logs from Windows.
+
+
+ 
+
+STEP 3: Collecting the User or Memory Dump for the hang
+
+
+The following tools can be used to help collect data about application or system hangs. The instructions for each of the tools are provided below: 
+
+ 
+
+3a) Collecting application hangs (Send the dump file to IBM Rational Client Support for analysis) 
+
+ 
+
+ * Collecting user dumps for Windows XP and Windows 2003:
+   
+   Refer to the Microsoft KB241215 [http://support.microsoft.com/kb/241215] .
+   
+
+ * Collecting user dumps for Microsoft Windows Vista and later:
+   
+
+Refer to Creating User Mode Dumps [http://msdn.microsoft.com/en-us/library/windows/desktop/bb787181%28v=vs.85%29.aspx] 
+[http://support.microsoft.com/kb/931673] 
+ * Using GenMiniDump.exe (Note: GenMiniDump.zip is attached below): 
+    1. Place genminidump.exe and dbghelp.dll in a folder 
+    2. cd into that folder 
+    3. Run the following from cmd: genminidump.exe <PID> or genminidump.exe <Process name> Example: C:\Temp\GenMiniDump\genminidump msdev.exe
+   
+   
+
+
+ * Using .dump command in windbg 
+    1. Download windbg:  * Install Debugging Tools for Windows 32-bit Version [http://www.microsoft.com/whdc/devtools/debugging/installx86.mspx]
+          Note: WinDbg Quick Links [http://windbg.dumpanalysis.org/] 
+       
+       
+    2. Attach to process and run .dump <filename> or .dump /ma <filename>
+       
+   
+   
+
+
+Disclaimer All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+
+
+3b) Collecting System Hangs
+Note: this type of crash may also be requested for an application hang by engineering.
+
+CONFIGURE WINDOWS FOR A MEMORY DUMP: 
+
+Refer to Forcing a System Crash from the Keyboard [http://msdn.microsoft.com/en-us/library/windows/hardware/ff545499(v=vs.85).aspx] 
+
+ 
+
+Instructions:
+
+
+ 1. Click Start > Settings > Control Panel and double-click System
+    
+ 2. On the Advanced tab, click Settings in the Startup and Recovery section. 
+    
+ 3. Ensure the Write Debugging Information drop down box has Kernel memory dump selected and note the Dump File: location window as this is where the dump file(s) will be saved. 
+    Note: Only collect a complete memory dump when request by IBM Rational Client Support. 
+ 4. Ensure Overwrite any existing file is checked. 
+ 5. Ensure the Automatically restart box is checked.
+
+
+
+Example Kernel memory dump screenshot (from XP): 
+[/support/docview.wss?uid=swg21366397&amp;aid=1]
+
+
+
+Example Complete memory dump screenshot (from XP): 
+
+
+[/support/docview.wss?uid=swg21366397&amp;aid=2] 
+
+
+
+
+
+
+
+Send the dump file to IBM Rational Client Support for analysis.
+
+
+[/support/docview.wss?uid=swg21366397&amp;aid=3] RELATED INFORMATION
+ Data collection for mem ref and blue screens on Windows [http://www.ibm.com/support/docview.wss?uid=swg21149985]
+A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21455516]
+
+
+GenMiniDump.zip [/support/docview.wss?uid=swg21366397&aid=5] [/support/docview.wss?uid=swg21366397&aid=4]

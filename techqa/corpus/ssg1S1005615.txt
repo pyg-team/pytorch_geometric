@@ -1,0 +1,53 @@
+Title: IBM Security Bulletin: Vulnerability in MD5 Signature and Hash Algorithm affects IBM XIV Gen3 systems and IBM XIV Management Tools (CVE-2015-7575) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The MD5 “SLOTH” vulnerability on TLS 1.2 affects IBM XIV Gen3 systems and IBM XIV Management Tools. 
+
+VULNERABILITY DETAILS
+ 
+
+CVEID: CVE-2015-7575 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7575]
+DESCRIPTION: The TLS protocol could allow weaker than expected security caused by a collision attack when using the MD5 hash function for signing a ServerKeyExchange message during a TLS handshake. An attacker could exploit this vulnerability using man-in-the-middle techniques to impersonate a TLS server and obtain credentials.
+CVSS Base Score: 7.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/109415 [https://exchange.xforce.ibmcloud.com/vulnerabilities/109415] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:L/A:N) AFFECTED PRODUCTS AND VERSIONS
+ 
+
+ * IBM XIV Gen3 systems running microcode versions 11.0 or later are affected. 
+ * IBM XIV Management Tools (IBM XIV GUI, XIV TOP and XCLI) up to version 4.8 (including), and IBM Hyper-Scale Manager up to version 1.9.0 (including) are affected.
+
+REMEDIATION/FIXES
+IBM XIV Management tools: IBM XIV Management Tools version 4.8.0.1 and the bundled IBM Hyper-Scale Manager version 1.9.1 are blocking by default the usage of MD5 signature algorithms. If the customer is using certificates supplied by a 3rd party CA for the IBM Hyper-Scale Manager server, it is advised to contact the company’s CA to verify all certificates don't use MD5 signature algorithms.
+The IBM XIV Management Tools hotfix can be obtained from the IBM Fix Central website at:
+http://www-933.ibm.com/support/fixcentral/ [http://www-933.ibm.com/support/fixcentral/] 
+
+You should verify applying this fix does not cause any compatibility issues. The fix disables MD5 signature hash by default. If you change the default setting after applying the fix, you will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the MD5 signature hash and take appropriate mitigation and remediation actions. WORKAROUNDS AND MITIGATIONS
+IBM XIV Gen3 systems: IBM's internally supplied certificates are not vulnerable to the attack. If the customer is using certificates supplied by a 3rd party CA, the customer should contact the company’s CA to verify all certificates don't use the RSA-MD5 or ECDSA-MD5 signature algorithms. IBM XIV Gen3 systems use SSL certificates only for LDAP, KMIP, IPSEC, or CIM services. XCLI service are not vulnerable to this attack when using the default internally supplied certificate, unless the certificate was changed by the customer. 
+
+TLS1.2 connections that use certificates, signed by RSA-MD5 or ECDSA-MD5 signature algorithms, are vulnerable to the SLOTH attack. The SLOTH attack reduces the strength of the encryption used in the specific TLS1.2 connections using these certificates.
+Since storage management is usually on an internal and separate network, exposure to this vulnerability is limited to users with access to the management network.
+The impact is limited to management communication only, as IBM XIV does not use SSL encryption in the data path.
+
+
+
+You should verify applying this configuration change does not cause any compatibility issues. Not disabling the MD5 signature hash will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the MD5 signature hash and take appropriate mitigation and remediation actions. GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] ACKNOWLEDGEMENT
+Reported to IBM by Karthikeyan Bhargavan at INRIA in Paris, France 
+
+CHANGE HISTORY
+ January 27 2016: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

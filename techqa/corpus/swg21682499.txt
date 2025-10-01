@@ -1,0 +1,45 @@
+Title: IBM APM UI Java filenotfoundException error - United States
+
+Text:
+5724G7000TR; 5724G70UITR TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After restart of the apmui server you are able to log in to the APMUI portal 
+
+but cannot display any of the applications. 
+
+SYMPTOM
+This error occurs 
+Exception thrown by application class 'com.ibm.ws.jsp.webcontainerext. 
+AbstractJSPExtensionProcessor.findWrapper:474' 
+java.io.FileNotFoundException: JSPG0036E: Failed to find resource 
+/ibm/tivoli/apm/rest/apm/switcher.jsp 
+at com.ibm.ws.jsp.webcontainerext.AbstractJSPExtensionProcessor. 
+findWrapper(AbstractJSPExtensionProcessor.java:474) 
+at com.ibm.ws.jsp.webcontainerext.AbstractJSPExtensionProcessor. 
+getServletWrapper(AbstractJSPExtensionProcessor.java:368) 
+at com.ibm.ws.webcontainer.filter.WebAppFilterManager.invokeFilters 
+(WebAppFilterManager.java:986) 
+at [internal classes] 
+
+
+This error shows in the pdcollector
+CWWKE0701E: FrameworkEvent ERROR 
+
+
+RESOLVING THE PROBLEM
+Stop the APMUI with the following command 
+ps -ef | grep apmui 
+
+
+ 1. If the APMUI does not stop kill the process with the following command 
+    kill -9 <PROCESS_NUMBER> 
+ 2. Remove directory <APMUI_HOME>\wlp\usr\servers\apmui\workarea with the following command 
+    cd <APMUI_HOME>\wlp\usr\servers\apmui 
+    rm -rf workarea 
+ 3. Start the APMUI
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ apmui apm application performance management

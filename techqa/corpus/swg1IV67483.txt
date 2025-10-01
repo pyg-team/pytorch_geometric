@@ -1,0 +1,172 @@
+Title: IBM IV67483: WATCHDOG RESTARTS WINDOWS OS AGENT DUE TO EXCEEDING MEMORY THRESHOLD. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 7 (6.3.0-TIV-ITM-FP0007) [http://www-01.ibm.com/support/docview.wss?uid=swg24041633]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the memoryThreshold value is set in the
+   kntcma<_default>.xml file, and the memory
+   working set size exceeds a 32-bit value, the
+   OS agent will be restarted as it will determine
+   the memory threshold has been exceeded.
+   
+   Related Files and Output:
+   The Windows OS Agent RAS1 log file will contain a
+   message simlar to the following:
+   
+   kcawd.cpp,661,"checkHealth") Agent <kntcma> PID <####>
+   will be restarted; memory usage <-2147483648>
+   exceeded threshold of <##########>
+   
+   This can result in offline managed system alerts
+   triggering repeatedly, or the NT agent staying offline
+   if the restart count is exceeded.
+   
+   A primary symptom is a large negative value for the
+   "memory usage".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Watchdog restarts Windows OS Agent due to exceeding memory.
+   
+   
+   If the memoryThreshold value is set in the kntcma<_default>.xml
+   file, and the memory working set size exceeds a 32-bit value,
+   the OS agent will be restarted as it will determine the memory
+   threshold has been exceeded.
+   
+   The Windows OS Agent RAS1 log file will contain a message simlar
+   to the following.  Note the memory usage is listed as a negative
+   number.
+   
+   kcawd.cpp,661,"checkHealth") Agent <kntcma> PID <####> will be
+   restarted; memory usage <-2147483648> exceeded threshold of
+   <##########>
+   
+   The Problem was reported against the Windows OS agent; the code
+   was updated to support 64-bit values for the Monitoring Agent
+   for Windows OS as well as the Monitoring Agent for Linux OS and
+   Monitoring Agent for UNIX OS.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been updated to support 64-bit values for the operating
+    system memory.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.3.0-TIV-ITM-FP0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Disable Watchdog on Windows using the following steps:
+   - Using MTEMS, select the Monitoring Agent for Windows OS
+   - Right click and select Advanced...Edit Variables
+   - Select Add...
+   - Add Variable:  KCA_CAP_DIR
+     Add Value:     =
+   - Save and restart the agent
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV67483
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040W
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-12-02
+   
+   
+ * CLOSED DATE
+   2016-03-15
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * FIXED COMPONENT ID
+   5724C040W
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

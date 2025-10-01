@@ -1,0 +1,29 @@
+Title: IBM Unable to open Active Event List - United States
+
+Text:
+AEL; unable to open AEL; Event list issue TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Opening the AEL displays a Java certificate issue.
+
+Users receive a "Java Application Blocked" pop-up error window with the following message. 
+
+Application blocked by Java Security. For security, applications must now meet the requirements for the High or Very High security settings, or be part of the Exception Site List, to be allowed to run. 
+
+CAUSE
+The URL not in the trusted list or your security settings have blocked an untrusted application from running. 
+
+RESOLVING THE PROBLEM
+Control panel -->java icon( right click and open) -->Security --> Edit site list--> add the URL 
+
+(https:\\hostname [https://hostname/]) --> then manage certificates--> add the site from the website you may get the padlock in the URL. 
+
+Clear the cache -->close browser and try again. 
+Sometimes it takes a few attempts to open and close browsers. 
+
+ 
+
+HISTORICAL NUMBER
+ 49303
+000
+834

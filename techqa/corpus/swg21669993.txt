@@ -1,0 +1,21 @@
+Title: IBM Steps to respond on behalf of another custodian. - United States
+
+Text:
+recipient ; Atlas TECHNOTE (FAQ)
+
+QUESTION
+ What are the steps required to respond on behalf of another custodian ? 
+
+ANSWER
+ 
+
+ 1.  Login to Atlas as administrator and go to Admin --> Components. 
+ 2.  Access a Matter that you are the Attorney or Paralegal for. 
+ 3.  Search for Component called "Allow Paralegal or Attorney Confirmation" and make sure "Allow Any User to Respond" is set to 'Yes" and "Allow Paralegal or Attorney to Record A Confirmation" is set to "NO". 
+ 4.  Go to the Hold Notice that was sent to the custodian. 
+ 5.  In the Notices Sent section click on the Recipients link for the Original Notice or last Auto-reminder for which the custodian needs to respond to. 
+ 6.  On the Notice Recipients Log List screen you will see a check box next to the custodians for whom you can confirm on behalf of. 
+ 7.  Click the check box next to the custodian who you are confirming for. 
+ 8.  Click on the Confirm button will be displayed in the top right. 
+ 9.  Enter the reason describing why you need to confirm on behalf of the custodian. 
+ 10. Click Apply to save the confirmation.

@@ -1,0 +1,29 @@
+Title: IBM Unable to connect to application in DotEdit or DotScan on client for IBM Datacap Taskmaster Capture - United States
+
+Text:
+admin database TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ On a client environment DotEdit and Dot Scan are unable to connect to the Admin Database for any application in IBM Datacap TaskmasterCapture. 
+
+SYMPTOM
+In the DotEdit logs the client system receives generic error "CConnection::Couldn't secure parameters".
+
+
+CAUSE
+Either the encryption keys are not valid or a roaming Windows profile is being used.
+
+RESOLVING THE PROBLEM
+Copy from Taskmaster server C:\Datacap\Taskmaster\dc_KTF.xml to your local system C:\Datacap\Taskmaster
+
+
+ 1. On client system open a Command Prompt window 
+ 2. Type
+    cd c:\Datacap\Taskmaster 
+ 3. Then type
+    dcskey.exe -i 
+ 4. If you are still unable to connect then Remove the client system from the domain 
+ 5. On the client delete the local folder of the domain user 
+ 6. Reconnect the client to the domain 
+ 7. Log into client with domain user 
+ 8. Repeat steps 1 through 4 and connect with DotEdit and DotScan

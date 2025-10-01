@@ -1,0 +1,130 @@
+Title: IBM PM78359: UPDATE IBM WEBSPHERE MQ JCA RESOURCE ADAPTER TO VERSION 7.0.1.6 - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Update the IBM WebSphere MQ JCA Resource Adapter shipped with
+   IBM WebSphere Application Server Versions 7.0 and 8.0 to
+   WebSphere MQ fix pack 7.0.1.6
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: New maintenance is available for the    *
+   *                      IBM WebSphere MQ JCA Resource Adapter.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   New maintenance is available for the IBM WebSphere MQ JCA
+   Resource Adapter shipped with the product.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix updates the version of the IBM WebSphere MQ JCA
+   Resource Adapter shipped with the product to the latest
+   available release, 7.0.1.6.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 7.0.0.21 and 8.0.0.2.  Please refer to the Recommended
+   Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM78359
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-12-04
+   
+   
+ * CLOSED DATE
+   2012-12-04
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM46219 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM46219]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY

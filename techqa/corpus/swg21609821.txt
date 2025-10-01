@@ -1,0 +1,47 @@
+Title: IBM Tivoli Storage Manager V6 server upgrade fails on DB2 - United States
+
+Text:
+de lock allowed locked TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A Tivoli Storage Manager server is upgraded to V6. The upgrade installation properly upgrades the Tivoli Storage Manager server to V6 but fails to upgrade the DB2 component. 
+
+CAUSE
+Residual lock files leftover in Deployment Engine log directory, resulting from previous failed installation attempt
+
+DIAGNOSING THE PROBLEM
+The upgrade installation logs are captured in the /var/tivoli/tsm/logs.zip file. 
+
+In this file, review the DB2_2_1.log file at the following location : 
+
+coi\plan\install\MachinePlan_localhost\00002_DB2_2_1\logs\[INSTALL_date_time]/DB2_2_1.log
+
+It shows the following error :
+
+executePackage:
+[echo] de.descriptor.source.file is update_input.xml
+[copy] Copying 1 file to /opt/tivoli/tsm/_uninst/plan/tmp
+[echo] Running command: /usr/ibm/common/acsi/bin/de_processreq.sh
+[echo] isInstallFixpack value: ${isInstallFixpack}
+[exec] Result: 100
+[echo] Command ended with RC: 100
+[echo] product.log.file is: /opt/tivoli/tsm/_uninst/plan/install/MachinePlan_localhost/00002_DB2_2_1/logs
+
+The coi/plan/install/MachinePlan_localhost/00002_DB2_2_1/DB2.log file shows the following error :
+
+<exception>
+<className>com.ibm.ac.si.runtime.lock.LockNotAllowedException</className>
+<message>lock_not_allowed</message>
+
+
+
+RESOLVING THE PROBLEM
+In this case, a previous upgrade attempt had failed due to lack of temporary space. There were residual Deployment Engine lock files which caused the failure to upgrade DB2. Follow the steps below to resolve this issue. 
+
+ 1. Remove the lock files using the following commands from a unix shell 
+    
+    cd /usr/ibm/common/acsi/logs 
+    rm .lock* 
+    
+ 2.  
+ 3. Re-run the upgrade. This should upgrade the DB2 component.

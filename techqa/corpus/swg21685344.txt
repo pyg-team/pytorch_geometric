@@ -1,0 +1,40 @@
+Title: IBM Access to TWSz engines via TDWC gives AWSUI0778E error - United States
+
+Text:
+twsz zconnector dwc tdwc TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ AWSUI0778E error is received attempting to access a Tivoli Workload Scheduler for z/OS (TWSz) engine from Tivoli Dynamic Workload Console (TDWC),
+
+
+
+
+SYMPTOM
+AWSUI0778E There has been an authentication failure: the user name or password is wrong
+
+
+DIAGNOSING THE PROBLEM
+First, check the normal solutions to this issue: 
+
+
+1. Check that the username and password defined in the Engine connection on the TDWC side are correct.
+2. Check that the RACF user is defined correctly on the TWSz side
+
+NOTE: This Technote assumes that you are able to log into TDWC without issue. The error is received when trying to access TWS functions after logging into TDWC (such as "Monitor Jobs", etc.).
+
+
+RESOLVING THE PROBLEM
+1. Open WebSphere Administration Console (link found under "Settings" in TDWC).
+2. Navigate to "Applications" on left pane.
+3. Click to "Application Types" -> "WebSphere enterprise applications".
+4. On right pane, check under "Application Status" column for "ZConnector". You should see a green arrow, not a red "X". 
+5. If a red "X" is seen, check the checkbox next to ZConnector and click the "Start" button on top.
+6. Try the TWS function again that was giving the error.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Maestro
+TWSz
+TWS
+TWA

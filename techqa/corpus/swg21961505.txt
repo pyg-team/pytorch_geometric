@@ -1,0 +1,21 @@
+Title: IBM SiteProtector appliance data sheet - United States
+
+Text:
+SPA; SP4001 TECHNOTE (FAQ)
+
+QUESTION
+ What are the system specifications for the SiteProtector appliances? 
+
+ANSWER
+
+
+
+IBM Security SiteProtector SP4001
+Form factor 1U, rack mountable Dimensions (mm/in.) [/support/docview.wss?uid=swg21961505&amp;aid=1] Weight (kg/lb) [/support/docview.wss?uid=swg21961505&amp;aid=1] Power Supply 2x Acbel Model FSA021 CPU 1x Quad Core Intel i7-2600 3.40 GHz Memory 32 GB DDR3 DRAM Video port 1x VGA, front panel Operating System Windows Server 2012 R2 (for Embedded Systems Standard) Database Embedded SQL Svr Std Runtime 2014 (Standard) Storage 800 GB Micron M500DC SSD, 2.5” form factor Network ports 6x 1 GbE copper ports General availability 30 January 2015 End of Support 30 December 2022 IBM Security SiteProtector SP3001 Form factor 2U, rack mountable Dimensions (mm/in.) 89/ 3.5 (H) x 483/ 19 (W) x 610/ 24 (D) Weight (kg/lb) 27/ 59.5 Power Supply 2x 3Y Power Technology : Ym-2721A (720W) CPU 1x Quad Core Intel Xeon E5540 2.53 GHz Memory 12 GB DDR3 DRAM, ECC- REG Video port VGA, front panel Operating System Microsoft Windows Server 2008 R2 Standard Database Microsoft SQL Server 2008 R2 Enterprise Storage 4x 600 GB hard disk drive (HDD) removable 10K rpm, 2.5" form factor Network ports 2x 1 GbE copper ports USB ports 3x ports, front panel General availability 08 December 2011 End of Support 09 July 2019 Proventia Management SiteProtector SP2001 Form factor 2U, rack mountable Dimensions (mm/ in.) 88/ 3.5 (H) x 429/ 16.9 (W) x 520/ 20.5 (D) Weight (kg/ lb) 18/ 39.68 Power Supply 2x internal power supply, hot-plug, AC 120/230 V CPU 2x Xeon 2.8 GHz Memory 4 GB of Ram Video port 1x VGA, rear panel Operating System Microsoft Windows Server 2003 Database Microsoft SQL Server 2005 Storage 2x 74 GB Network ports 1x Management RJ45, rear panel
+1x Unused port, rear panel USB ports 2x ports, rear panel General availability 29 June 2009 End of Support 31 December 2016 
+Proventia Management SiteProtector SP1001 Form factor 2U, rack mountable Dimensions (mm/in.) 88/ 3.5 (H) x 429/ 16.9 (W) x 520/ 20.5 (D) Weight (kg/lb) 18 / 40 Power Supply 2x internal power supply, hot-plug, AC 120/230 V CPU 2x Xeon 2.8 GHz Memory 4 GB of RAM Video port 1x DVI-D, rear panel
+1x VGA, rear panel Operating System Microsoft Windows Server 2003 Database Microsoft SQL Server 2005 Storage 2x 74 GB hard disk drive (HDD) hot-swap Network ports 1x Management RJ45, front panel USB ports 2x USB 2.0 - Type A, front panel General availability 17 June 2008 End of Support 30 November 2014 
+
+
+
+[/support/docview.wss?uid=swg21961505&aid=2] [https://ibm.biz/BdHdjw] [/support/docview.wss?uid=swg21961505&aid=3] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21961505&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21961505&aid=5] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21961505&aid=6] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21961505&aid=7] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21961505&aid=8] [http://ibm.biz/ContactSecSupport]

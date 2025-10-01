@@ -1,0 +1,41 @@
+Title: IBM The conversion of CHAR to DATETIME resulted in a DATETIME value out of range. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The error below may occurr when you are using SQL Server 6.5 via an ODBC connection and performing a filter on dates (e.g.: between startdate and enddate) using prompts. The DB column is of type datetime.
+
+The report is working when you use a impromptu function to convert datetime to date. In this special case whith a high volume of data this would lead to a slowdown in performance due to the local processing of the impromptu functions.
+
+
+Error - 
+
+Error -239:
+
+DMS-E-GENERAL, Error during operation prepare request' DMS-E-MATHEXCEPTION, arithmetic error
+[Microsoft][ODBC SQL Server Driver][SQL Server]The conversion of CHAR to DATETIME resulted in a DATETIME value out of range. 
+
+CAUSE
+The reason for this message is a non SQL 92 compliant formatting of dates on the SQL Server (e.g. in this special case a manual SQL in iSQL showed you had to type in a date in format yyyy-dd-mm).
+
+RESOLVING THE PROBLEM
+I) Make a backup copy of your cogdmod.ini
+
+Modify cogdmod.ini by adding the following entry in the already existant MICROSOFT SQL SERVER section:
+
+[Exceptions Literals DATABASE:MICROSOFT SQL SERVER]
+Timestamp_Format_Str="YYYY DD MM HH MM SS"
+
+or
+
+II) ODBC Driver Option:
+Use county settings for showing currency-, number-, date- and time values.
+(in german: LÃ¤ndereinstellungen bei der Anzeige von WÃ¤hrungs-, Zahlen-, Datums- und Zeitangaben verwenden.)
+
+or 
+
+III) Use the Imprompu function 'datetime to date' which will result in local processing and therefore may have an impact on perfomance.  
+
+HISTORICAL NUMBER
+ 905813

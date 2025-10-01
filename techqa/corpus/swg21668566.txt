@@ -1,0 +1,58 @@
+Title: IBM Dollar sign ($) in BOM prevents rule editing in Rule Solutions for Office - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a Business Object Model (BOM) class or member name contains a dollar sign ($), you cannot edit the rule in Rule Solutions for Office and Microsoft Office Word or Excel. 
+
+SYMPTOM
+When you open an action rule or a decision table in Rule Solutions for Office, you get the following error message: 
+
+[/support/docview.wss?uid=swg21668566&amp;aid=1]
+
+GBROC0012E: The vocabulary of the RuleDoc contains invalid or corrupt data. Rule authoring will be restricted to the built-in vocabulary.
+
+The details section shows line XXX : symbol '}' expected, got '$'.
+The expected symbol can also be line XXX : symbol ';' expected, got '$'.
+
+The message is followed by an exception stack :
+[/support/docview.wss?uid=swg21668566&aid=2] [/support/docview.wss?uid=swg21668566&aid=2]
+
+GBROC0014E: Rule Solution for Office has encountered an unexpected error: Index was out of range. Must be non-negative and less than the size of the collection. Parameter name: index
+
+at System.ThrowHelper.ThrowArgumentOutOfRangeException()
+
+at System.Collections.Generic.List`1.get_Item(Int32 index)
+
+at ILOG.Rules.Office.Word.RuleDocumentManager.DoSaveAsDraft()
+
+at ILOG.Rules.Office.Word.WordAddIn.<OnDocumentAdded>b__5(Object o)
+
+at ILOG.Rules.Office.Common.RsoAddIn.SaveAsDraft(Object document, Action`1 saveHandler)
+
+You can also get the following exception stack:
+
+Object reference not set to an instance of an object.
+at ILOG.Rules.Blx.Forms.RuleEditor.remove_VocabularyRequested(EventHandler value)
+at ILOG.Rules.Office.Excel.AddIn.OnSheetDeactivate(Object Sh)
+at CallSite.Target(Closure , CallSite , AddIn , Object )
+at System.Dynamic.UpdateDelegates.UpdateAndExecuteVoid2[T0,T1](CallSite site, T0 arg0, T1 arg1)
+at ILOG.Rules.Office.Excel.AddIn.OnWorkbookDeactivate(Workbook Wb)
+
+
+CAUSE
+Rule Solutions for Office does not support the dollar sign ($) in BOM.
+
+
+DIAGNOSING THE PROBLEM
+See above error messages.
+
+
+
+RESOLVING THE PROBLEM
+You can use Rule Designer or Decision Center Enterprise console to edit the rules. 
+
+If you must use Rule Solutions for Office, rename the BOM classes and members to remove the dollar sign ($) from their names. 
+
+This change affects the BOM names and not the vocabulary, and does not require refactoring of the business rules.

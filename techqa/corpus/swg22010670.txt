@@ -1,0 +1,44 @@
+Title: IBM Which Roles and Features need to be installed when installing IIS on a Windows server? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are the roles and features which need to be installed when installing IIS on a Windows server for setting up Single Signon with IBM Cognos Analytics? 
+
+ANSWER
+When installing IIS there are some roles/features that you may need to install depending on how you intend to configure IIS...
+
+For Microsoft Windows 2008 Server... 
+
+ 1.  Click Server Manager > Roles > Web Server (IIS). 
+ 2.  Ensure that Common HTTP Features, or the features you require are enabled. 
+ 3.  If ISAPI extensions is set to Not installed, select ISAPI extensions and click Add Role Service.
+
+
+For Microsoft Windows 2012 Server...  1. In the Add Roles and Features Wizard, click Role-based or feature-based installation, and click Next. 
+ 2. Select your server, and click Next. 
+ 3. Select Web Server (IIS), if it is not already installed, ensure that Common HTTP Features is selected, and click Next until you get to the Role Services section of the wizard. 
+ 4. Expand Application Development. 
+ 5. Select ISAPI extensions if it is not already selected, and click Next. 
+ 6. Click Install.
+
+
+For Microsoft Windows 7 or 8...  1. Select Internet Information Services if it is not already selected. 
+ 2. Expand Internet Information Services > World Wide Web Services. 
+ 3. Ensure that Common HTTP Features, or the features you require are enabled. 
+ 4. Expand Application Development Features. 
+ 5. If ISAPI extensions is not selected, select ISAPI extensions. 
+ 6. Click OK.
+
+
+There are several options and drop downs so if you can't find an option initially it might be in a drop down option. 
+
+You will also need to install Application Request Routing for configuring SSO as that enabled the option for the URL rewrite rule, you can download it from this link: 
+
+https://www.iis.net/downloads/microsoft/application-request-routing [https://www.iis.net/downloads/microsoft/application-request-routing]  
+
+Please Note: Windows Authentication is not checked by default during the initial config of IIS 
+
+RELATED INFORMATION
+ Use the ISAPI gateway on Microsoft Internet Information [https://www.ibm.com/support/knowledgecenter/en/SSEP7J_10.2.2/com.ibm.swg.ba.cognos.c8pp_inst.10.2.2.doc/t_inst_usetheisapigateway.html]

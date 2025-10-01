@@ -1,0 +1,82 @@
+Title: IBM Failure in loading native library db2jcct2, UnsatisfiedLinkError: ERRORCODE=-4472 - United States
+
+Text:
+DB2 JDBC JCC Unsatisfied Link UnsatisfiedLinkError db2jcct2 4472 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Java application failing with UnsatisfiedLinkError, resulting in the failure to load native DB2 library (db2jcct2) for establishing a type 2 connection. 
+
+SYMPTOM
+Applications failing to load the Data Server Driver for a Type 2 connection may return one of the following messages: 
+
+ * 
+ * [jcc][10389][12245][3.53.70] Failure in loading native library db2jcct2, java.lang.UnsatisfiedLinkError: db2jcct2 (No such file or directory): ERRORCODE=-4472, SQLSTATE=null
+ * [jcc][10389][12245][3.57.110] Failure in loading native library db2jcct2, java.lang.UnsatisfiedLinkError: Can't find library db2jcct2 (libdb2jcct2.so or .so) ERRORCODE=-4472
+
+
+CAUSE
+The application environment is not configured correctly for loading the DB2 native library.
+
+RESOLVING THE PROBLEM
+The IBM® Data Server Driver for JDBC and SQLJ supports two types of connectivity: type 2 connectivity and type 4 connectivity. 
+
+
+Type 2 connectivity requires a DB2 client (or server) installation and has a restriction in that the "bitness" of the java application must match with the DB2 client ( or server) instance.
+
+So a 32bit java application using type 2 connectivity can only work with a 32bit DB2 client (or server) instance and a 64bit java application using type 2 connectivity can only work with a 64bit DB2 client (or server) instance for connectivity to a remote (or local) database. The bitnes of the remote database instance does not matter, only that of which is configured in the client application environment.
+
+Example, if install the IBM Data Server Driver for JDBC and SQLJ on a Windows 64-bit operating system then one cannot use IBM Data Server Driver for JDBC and SQLJ type 2 connectivity to connect to a DB2 Database for Linux, UNIX, and Windows instance from a 32-bit Java application.
+
+If the above requirement has been met and yet continue failing at loading the native db2 library then check that library path is being set correctly.
+
+The JVM used for the application environment must load the correct library, depending on its bit type (32-bit or 64-bit). A 32-bit JVM can only load the 32-bit DB2 native libraries and a 64-bit JVM can only load the 64-bit DB2 native libraries.
+
+
+ * Windows:
+ * 
+ * 
+ * LIB
+ * 
+ *  
+   db2jcct2.dll is located in %DB2HOME%\bin 
+   
+   Associated libraries (*.lib) are located in:  * 
+    * 
+    * 
+   
+   
+ * 
+ * Unix and Linux:
+ * 
+ * 
+ *  
+   libdb2jcct2.so is located in:  * 
+    * INSTHOME/sqllib/lib32
+    * 
+    * 
+    * 
+    * INSTHOME/sqllib/lib64
+   
+   
+
+
+
+As a workaround when unable to meet the above requirements, consider upgrading the application to use a Type 4 (TCP/IP) JDBC connection. The Data Server Driver for Type 4 connection does nott require the use of the native DB2 libraries. If using the DriverManager interface, specify the type of connectivity through the URL.
+
+
+ * URL format for IBM Data Server Driver for JDBC and SQLJ type 4 connectivity
+ * 
+ * URL format for IBM Data URL format for IBM Data Server Driver for JDBC and SQLJ type 2 connectivity
+
+
+If using the DataSource interface, specify the type of connectivity through the driverType property  * 
+ * 
+ * 
+ *  
+   
+   [/support/docview.wss?uid=swg21419978&aid=1] [/support/docview.wss?uid=swg21419978&aid=1] 
+   https://www.ibm.com/developerworks/community/forums/html/topic?id=77777777-0000-0000-0000-000014106186&ps=25 [https://www.ibm.com/developerworks/community/forums/html/topic?id=77777777-0000-0000-0000-000014106186&ps=25] 
+
+RELATED INFORMATION
+#URL format for IBM Data Server Driver for JDBC and SQLJ [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_r0052342.html]
+Upgrade essentials for database applications [http://pic.dhe.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.qb.upgrade.doc/doc/c0023412.html]

@@ -1,0 +1,26 @@
+Title: IBM Changing FileNet Application Engine and  Filenet Workplace XT session time out settings - United States
+
+Text:
+session timeout weblogic Workplace XT TECHNOTE (FAQ)
+
+QUESTION
+ How to control user timeout session in Application Engine and Workplace XT when deployed in a Weblogic server environment? 
+
+ANSWER
+This is configured using the Weblogic server Session Timeout settings. 
+
+Session Timeout 
+You can specify an interval of time after which HTTP sessions expire. When a session expires, all data stored in the session is discarded. You can set the interval in either the web.xml or weblogic.xml: 
+
+
+Weblogic.xml
+Set the timeout-secs parameter value in the session-descriptor element of the WebLogic-specific deployment descriptor, weblogic.xml. This value is set in seconds. For more information, see session-descriptor. 
+
+ 
+
+Web.xml
+Set the session-timeout element in the J2EE standard Web application deployment descriptor, web.xml. 
+
+
+RELATED INFORMATION
+ http://download.oracle.com/docs/cd/E13222_01/wls/docs10 [http://download.oracle.com/docs/cd/E13222_01/wls/docs100/webapp/sessions.html#wp139518]

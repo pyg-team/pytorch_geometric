@@ -1,0 +1,197 @@
+Title: IBM Create Survey from Template - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I create a survey from a template? 
+
+ANSWER
+(1) To begin creating your survey, select Create a survey from the Employee Voice main menu or select the Create a survey tile on Employee Voice homepage. 
+
+(2) Select the Templates on the Survey Library page. This tab displays all survey templates available. 
+
+ 
+
+(3) Locate the survey template you wish to utilize and select Duplicate. 
+
+ 
+
+(4) Update the Display Name and Description and select Duplicate. The Build page launches.
+
+
+[/support/docview.wss?uid=swg22003920&aid=1] [/support/docview.wss?uid=swg22003920&aid=1] 
+
+
+[/support/docview.wss?uid=swg22003920&aid=2] [/support/docview.wss?uid=swg22003920&aid=2] 
+
+
+Note: In the survey workspace, all the survey components contained in the original template are displayed. 
+
+
+(5) Begin updating your survey as follows. 
+
+ 
+
+(6) Select the Actions dropdown arrow on the Build page to select one of the following options. 
+
+· Publish – Marks the survey as ready for administration, allowing the Project Administrator to distribute the survey to survey participants utilizing the Distribute a survey tile on the Employee Voice main page. 
+
+· Generate Preview – Launches a new window for the Project Administrator to preview the survey in a similar view a survey participant would see. 
+
+· Delete – Deletes the survey. 
+
+· Export – Allows the Project Administrator to export the survey. 
+
+· Import – Allows the Project Administrator to import a survey.
+
+
+Note: Currently there are two functional differences between the survey preview and the actual participant experience: 
+
+(a) No survey select page 
+
+(b) Save and Finish later will not show. This will be resolved in an upcoming code push. 
+
+ 
+
+(7) Share the Generate Preview link by clicking on the Share Survey Link arrow [/support/docview.wss?uid=swg22003920&amp;aid=3] icon. You can copy the preview link or email it.
+
+
+Note: This link remains active for seven calendar days. 
+
+
+
+
+[/support/docview.wss?uid=swg22003920&amp;aid=4] 
+
+(a) Select Cancel to close the survey Build page and return to the Survey Library WITHOUT saving any changes you have made since the last time you have saved your survey. 
+
+ 
+
+(8) Select Save to save any changes you have made during your recent Build session.
+
+
+Important: After publishing a survey you can no longer move/add/delete question(s) or answer(s) options. You can edit screen text, page title, informational text and add or remove new languages. To save these changes, you must re-publish the survey.
+
+
+
+
+
+
+
+(9) Utilized the pencil icon [/support/docview.wss?uid=swg22003920&amp;aid=5] to enter your survey content in the Welcome, Page (s) and Thank You message fields. 
+
+ 
+
+(10) Continue building your survey utilizing the Library, Custom and Settings functions in the Build tab on the right-hand side of the screen as applicable.
+
+
+[/support/docview.wss?uid=swg22003920&aid=6] [/support/docview.wss?uid=swg22003920&aid=6] 
+
+(11) Select Library to access and add IBM Core Content items sorted by Category. 
+
+(a) Select the right arrow icon [/support/docview.wss?uid=swg22003920&amp;aid=7] for each category to view all survey items within that category. 
+
+(b) Select the plus + icon for the question and select which page you would like the question to be added to. 
+
+
+TIP! You can also drag and drop items from the library into your survey workspace. 
+
+
+
+
+[/support/docview.wss?uid=swg22003920&amp;aid=8] 
+
+(c) Once the item has been added: Edit the item text, update the Category, and update the item scale. 
+
+(d) Once you are satisfied with the item details, select Save. To discard the item without saving, select Cancel.
+
+
+[/support/docview.wss?uid=swg22003920&amp;aid=9] 
+
+
+ 
+
+(12) Select Custom to add custom survey pieces including: custom questions, scales, comments, page breaks, and informational survey text (such as, Welcome, Instructions, Definitions, and Thank You). To add a custom question: 
+
+(a) First select the question type by selecting the plus + icon for the questions type you wish to utilize and select which page you would like the question to be added to. You can also drag and drop the question type into your survey workspace.
+
+
+TIP! You can also drag and drop items from the library into your survey workspace. 
+
+
+
+
+[/support/docview.wss?uid=swg22003920&amp;aid=10] 
+
+ 
+
+(b) Select one of the four following question types.
+
+
+Note: The user can select scale type and number of points.
+
+
+· Multiple Choice (select many) - Select one or more answers. 
+
+· Multiple Choice (select one) - Select only one answer. 
+
+· Rating Scales – Select a level of agreement, satisfaction, likelihood, confirmation to the question. 
+
+· Open Ended Text – Free entry text box (aka: comment question). 
+
+Once the question type has been added: 
+
+(a) Add the item text. 
+
+(b) Select or add a new Category and update the item scale. 
+
+(c) Once you are satisfied with the item details, select Save. If you wish to discard the item without saving, select Cancel.
+
+
+[/support/docview.wss?uid=swg22003920&amp;aid=11] 
+
+To add a Page Break, select the plus + icon.
+
+
+Note: There currently is not a way to move the Page Break, however the current work around is to move the applicable question(s) below the page break utilizing the move arrows or drag and drop functionality. 
+
+In the Survey build experience, a user who attempts to delete page 1 will be unable to save the survey. This ensures that a survey cannot unintentionally be saved without content. If the user does not require the assembled content on page 1, then these elements can be individually removed by using the Delete Item icon
+
+
+To add Informational Text (such as instructions or definitions): 
+
+(a) Select the plus + icon and select the page you would like the text to be added to. The Informational Text will be added to the bottom of the selected page. 
+
+(b) Enter your text in the text field and select Save. 
+
+(c) Use the up/down arrow icons [/support/docview.wss?uid=swg22003920&amp;aid=12] to move the text to the appropriate position within that page. 
+
+ 
+
+(13) Select Settings to save a survey as a usable template, control survey visibility across other Project Administrators, define survey navigation settings, and mark survey items as required.
+
+
+Important: To save a survey as a template, visibility must be set to Public.
+
+
+In addition to updating the details of your questions and text when initially adding them to the survey the following functions are available for the Project Administrator for individual survey components. 
+
+· Edit - Select the pencil icon [/support/docview.wss?uid=swg22003920&amp;aid=13] to fully edit the survey item or text. If the text within the survey component you are editing can be further formatted (bold, italics, bullets, etc.), select the text format icon [/support/docview.wss?uid=swg22003920&amp;aid=14] to display the editor tool bar. 
+
+[/support/docview.wss?uid=swg22003920&amp;aid=15] 
+
+· Duplicate - Select the duplicate paper icon [/support/docview.wss?uid=swg22003920&amp;aid=16] to duplicate or copy the survey item or text. 
+
+· Delete - Select the trash can icon [/support/docview.wss?uid=swg22003920&amp;aid=17] to delete the survey item or text. 
+
+· Move - Select the up/down arrow icons [/support/docview.wss?uid=swg22003920&amp;aid=18] to move the survey component before or after the most immediate survey component.
+
+
+[/support/docview.wss?uid=swg22003920&aid=19] [/support/docview.wss?uid=swg22003920&aid=19] 
+
+ 
+
+(14) When you are satisfied with your survey content, select Save to save the item, Preview to preview the item, Publish, to publish the item, or Cancel to discard the item without saving. 
+
+Important: After publishing a survey you can no longer move/add/delete question(s) or answer(s) options. You can edit screen text, page title, informational text and add or remove new languages. To save these changes, you must re-publish the survey.

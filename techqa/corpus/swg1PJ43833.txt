@@ -1,0 +1,160 @@
+Title: IBM PJ43833: MEMORY FOOTPRINT OF IE V11 INCREASES WHEN ACCESSING WORK ITEMS WITH A 400+ PROPERTIES PAGE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+IBM Case Manager V5.2.1 Fix Pack 4 for Linux for System z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.4-ICM-ZLINUX-FP004&source=SAR]
+IBM Case Manager V5.2.1 Fix Pack 4 for Windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.4-ICM-WIN-FP004&source=SAR]
+IBM Case Manager V5.2.1 Fix Pack 4 for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.4-ICM-LINUX-FP004&source=SAR]
+IBM Case Manager V5.2.1 Fix Pack 4 for AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.4-ICM-AIX-FP004&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In working with work items where the work details page contains
+   a
+   properties view containing 400+ properties, the memory footprint
+   of Microsoft Internet Explorer V11 browser will increase.  The
+   memory footprint does not decrease much even after the work item
+   has been closed.  The situation gets worst when multiple work
+   items are open at the same time.
+   
+   This is also an issue with Mozilla Firefox and Google Chrome,
+   but the memory growth is much less, and the memory footprint
+   after the work items are closed is less severe.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Design a properties view for a work details page with much less
+   properties shown to a user at one time.
+   Use an alternative browser such as Mozilla Firefox or Google
+   Chrome that has better memory management.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * IBM Case Manager client users using Internet Explorer        *
+   * accessing a solution which contains a page where there are a *
+   * lot of properties.                                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Update to 5.2.1.4-ICM-FP004 or later.                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.2.1.4-ICM-FP004.  With this fix, IBM Case Manager
+   reduces the amount of memory usage that is used when displaying
+   a page with a lot (400+) of properties.  Users might still see
+   an increase of memory usage of a browser after the page with a
+   lot of properties have been closed, but this is significantly
+   reduced.  The amount of additional memory that is still consumed
+   varies with different browsers as some of this is related to the
+   different styles of memory management each browsers have.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ43833
+   
+   
+ * REPORTED COMPONENT NAME
+   CASE MGR INSTAL
+   
+   
+ * REPORTED COMPONENT ID
+   5725A1503
+   
+   
+ * REPORTED RELEASE
+   521
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-12-17
+   
+   
+ * CLOSED DATE
+   2016-05-05
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CASE MGR CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5725A1501
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R521 PSY
+   UP

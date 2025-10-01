@@ -1,0 +1,125 @@
+Title: IBM PM85464: WCM RESOURCES FAIL TO RENDER FOR ANONYMOUS USERS ON THE RENDERIN G PORTLET - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.0 Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24033155]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After updating to CF04 8.0.0.0, WCM resources (such as images
+   and file resources) do not display for anonymous users on the
+   rendering portlet.
+   
+   The URL of the anonymous resource items are incorrectly
+   generated using the secured servlet (myconnect) path instead of
+   the unsecured sevlet path (connect).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  After updating to CF04 8.0.0.0, WCM resources (such as images
+   and file resources) do not display for anonymous users on the
+   rendering portlet.
+   
+   The URL of the anonymous resource items are incorrectly
+   generated using the secured servlet (myconnect) path instead of
+   the unsecured sevlet path (connect).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The anonymous access check was modified to ensure the resource
+   URLs are generated with the correct servlet path.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM85464
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-24
+   
+   
+ * CLOSED DATE
+   2013-03-26
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

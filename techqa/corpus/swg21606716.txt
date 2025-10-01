@@ -1,0 +1,57 @@
+Title: IBM Message RT7507E: Unable to initialize Repository: Default occurs in SystemOut.log after successful database transfer from Derby to DB2 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Message RT7507E: Unable to initialize Repository: Default occurs in SystemOut.log after successful database transfer from Derby to DB2
+
+SYMPTOM
+You may see this stacktrace in SystemOut.log after successfully completing the database transfer from Derby to DB2
+
+[6/25/12 16:10:19:213 CEST] 0000002e InitServlet E INI8504E:One or more initialization step failed. Please check the server log for details.
+com.ibm.icm.jcr.RepositoryExistsException: RT7507E: Unable to initialize Repository: Default.
+at com.ibm.icm.jcr.RepositoryFactory.init(RepositoryFactory.java:218)
+at com.ibm.icm.jcr.RepositoryFactory.getRepository(RepositoryFactory.java:479)
+at com.ibm.icm.jcr.servlet.InitServlet.init(InitServlet.java:56)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.init(ServletWrapper.java:336)
+at com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.init(ServletWrapperImpl.java:168)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.loadOnStartupCheck(ServletWrapper.java:1341)
+at com.ibm.ws.webcontainer.webapp.WebApp.doLoadOnStartupActions(WebApp.java:588)
+at com.ibm.ws.webcontainer.webapp.WebApp.commonInitializationFinally(WebApp.java:559)
+at com.ibm.ws.webcontainer.webapp.WebAppImpl.initialize(WebAppImpl.java:421)
+at com.ibm.ws.webcontainer.webapp.WebGroupImpl.addWebApplication(WebGroupImpl.java:88)
+at com.ibm.ws.webcontainer.VirtualHostImpl.addWebApplication(VirtualHostImpl.java:169)
+at com.ibm.ws.webcontainer.WSWebContainer.addWebApp(WSWebContainer.java:749)
+at com.ibm.ws.webcontainer.WSWebContainer.addWebApplication(WSWebContainer.java:634)
+at com.ibm.ws.webcontainer.component.WebContainerImpl.install(WebContainerImpl.java:422)
+at com.ibm.ws.webcontainer.component.WebContainerImpl.start(WebContainerImpl.java:714)
+at com.ibm.ws.runtime.component.ApplicationMgrImpl.start(ApplicationMgrImpl.java:1160)
+at com.ibm.ws.runtime.component.DeployedApplicationImpl.fireDeployedObjectStart(DeployedApplicationImpl.java:1369)
+at com.ibm.ws.runtime.component.DeployedModuleImpl.start(DeployedModuleImpl.java:638)
+at com.ibm.ws.runtime.component.DeployedApplicationImpl.start(DeployedApplicationImpl.java:967)
+at com.ibm.ws.runtime.component.ApplicationMgrImpl.startApplication(ApplicationMgrImpl.java:766)
+at com.ibm.ws.runtime.component.ApplicationMgrImpl.start(ApplicationMgrImpl.java:2153)
+at com.ibm.ws.runtime.component.CompositionUnitMgrImpl.start(CompositionUnitMgrImpl.java:445)
+at com.ibm.ws.runtime.component.CompositionUnitImpl.start(CompositionUnitImpl.java:123)
+at com.ibm.ws.runtime.component.CompositionUnitMgrImpl.start(CompositionUnitMgrImpl.java:388)
+at com.ibm.ws.runtime.component.CompositionUnitMgrImpl.access$500(CompositionUnitMgrImpl.java:116)
+at com.ibm.ws.runtime.component.CompositionUnitMgrImpl$CUInitializer.run(CompositionUnitMgrImpl.java:994)
+at com.ibm.wsspi.runtime.component.WsComponentImpl$_AsynchInitializer.run(WsComponentImpl.java:349)
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1659)
+
+
+
+
+
+CAUSE
+Root cause was having another copy of icm.properties in .\wp_profile\PortalServer\jcr\lib\com\ibm\icm, in this case by making a backup copy in the same directory with name icm-copy.properties
+
+RESOLVING THE PROBLEM
+Remove the copy so that the only file in .\wp_profile\PortalServer\jcr\lib\com\ibm\icm is icm.properties
+
+RELATED INFORMATION
+ Fiddler [http://www.fiddlertool.com]
+Plug-in MustGather [http://www-01.ibm.com/support/docview.wss?uid=swg21174894]
+WebSphere Portal tracing [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/WebSphere_Portal_runtime_logs_wp7]
+IHS Rewrite rules (mod_rewrite Apache module) [http://publib.boulder.ibm.com/infocenter/wasinfo/fep/index.jsp?topic=%2Fcom.ibm.websphere.ihs.doc%2Finfo%2Fihs%2Fihs%2Frihs_apachemods.html]

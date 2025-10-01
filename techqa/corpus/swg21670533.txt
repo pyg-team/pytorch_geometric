@@ -1,0 +1,17 @@
+Title: IBM How to use Rational ClearCase credmap command - United States
+
+Text:
+credmap; NOBODY; mapping TECHNOTE (FAQ)
+
+QUESTION
+ How do you use IBM Rational ClearCase credmap to verify the group assignments between Windows and Unix? 
+
+CAUSE
+As a user, you would like to use the ClearCase® utility: credmap to confirm if the user mappings are correct between the Unix/Linux environments and the Windows environment to access ClearCase® successfully
+
+ANSWER
+The credmap command maps the Windows usernames and group names with Unix environment. If there is no correct mapping, the output will show as NOBODY. It is important to map the correct user and groups to get the access to ClearCase® VOBs. 
+
+To know more about credmap, access the Infocenter [http://www-01.ibm.com/support/knowledgecenter/SSSH27_8.0.1/com.ibm.rational.clearcase.cc_ref.doc/topics/credmap.htm?cp=SSSH27_8.0.1%2F10-0-2-1-23-4&lang=en].
+
+Note: The existing documentation [http://pic.dhe.ibm.com/infocenter/cchelp/v8r0m0/index.jsp?topic=/com.ibm.rational.clearcase.cc_ref.doc/topics/credmap.htm] on credmap talks about the mapping between Windows username and primary group but it fails to mention about the additional groups. ClearCase sends upto 32 groups under the credmap and it's important to have the mapping set correctly for the proper execution of ClearCase.

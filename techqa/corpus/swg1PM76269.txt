@@ -1,0 +1,252 @@
+Title: IBM PM76269: PERFORMANCE WAREHOUSE ENTERS LOOP WITH ABENDS S301 AFTER INITIALABEND S202 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Performance Warehouse abends S202 in module FPEZPMS then
+   loops with repetitve S301 abends
+   
+    04.03.40 STC17995  FPEV9999I **** DB2 PM/PE SYMPTOM RECORD ****
+    04.03.40 STC17995  FPEV9999I LVLS/OMEGAMON XE PE/PM
+    04.03.40 STC17995  FPEV9999I VALU/PCHK
+    04.03.40 STC17995  FPEV9999I AB/S/202
+    04.03.40 STC17995  FPEV9999I AB/U/000
+    04.03.40 STC17995  FPEV9999I RIDS/FPEZPMS#l
+    04.03.40 STC17995  FPEV9999I RIDS/
+    04.03.40 STC17995  FPEV9999I PTFS/DA  ?
+    04.03.40 STC17995  FPEV9999I ADRS/
+    04.03.40 STC17995  FPEV9999I PSW /078C2000 814AF356
+    04.03.40 STC17995  FPEV9999I REGS 0-1/00000000 00000BD8
+    04.03.40 STC17995  FPEV9999I REGS 2-3/80010080 915766AA
+    04.03.40 STC17995  FPEV9999I REGS 4-5/00000000 0057666A
+    04.03.40 STC17995  FPEV9999I REGS 6-7/1076D4C8 00FC7880
+    04.03.40 STC17995  FPEV9999I REGS 8-9/014B0D48 00000000
+    04.03.40 STC17995  FPEV9999I REGS A-B/7F44BA18 7FFFBAF8
+    04.03.40 STC17995  FPEV9999I REGS C-D/00000BE0 00091330
+    04.03.40 STC17995  FPEV9999I REGS E-F/00FF1000 91491098
+    04.03.40 STC17995  IEA995I SYMPTOM DUMP OUTPUT  256
+       256             SYSTEM COMPLETION CODE=202  REASON
+   CODE=00000000
+       256              TIME=04.03.40  SEQ=61906  CPU=0081
+   ASID=026D
+       256              PSW AT TIME OF ERROR  078C2000   814AF356
+   ILC 4  INTC 10
+       256                NO ACTIVE MODULE FOUND
+       256                NAME=UNKNOWN
+       256                DATA AT PSW  014AF350 - B20A2000
+   1F44BF43  503AB20A
+       256                GR 0: 00000000   1: 00000BD8
+       256                   2: 80010080   3: 915766AA
+       256                   4: 00000000   5: 0057666A
+       256                   6: 1076D4C8   7: 00FC7880
+       256                   8: 014B0D48   9: 00000000
+       256                   A: 7F44BA18   B: 7FFFBAF8
+       256                   C: 00000BE0   D: 00091330
+       256                   E: 00FF1000   F: 91491098
+       256              END OF SYMPTOM DUMP
+    04.03.40 STC17995  FPEV9999I **** DB2 PM/PE SYMPTOM RECORD ****
+    04.03.40 STC17995  FPEV9999I LVLS/OMEGAMON XE PE/PM
+    04.03.40 STC17995  FPEV9999I VALU/SVCE
+    04.03.40 STC17995  FPEV9999I AB/S/301
+    04.03.40 STC17995  FPEV9999I AB/U/000
+    04.03.40 STC17995  FPEV9999I RIDS/FPEZPMS#l
+    04.03.40 STC17995  FPEV9999I RIDS/
+    04.03.40 STC17995  FPEV9999I PTFS/DA  ?
+    04.03.40 STC17995  FPEV9999I ADRS/
+    04.03.40 STC17995  FPEV9999I PSW /070C1000 80FFAD84
+    04.03.40 STC17995  FPEV9999I REGS 0-1/80000000 80301000
+    04.03.40 STC17995  FPEV9999I REGS 2-3/00000B80 00000BD8
+    04.03.40 STC17995  FPEV9999I REGS 4-5/008C48C8 008C3B70
+    04.03.40 STC17995  FPEV9999I REGS 6-7/10F6B030 00FC7880
+    04.03.40 STC17995  FPEV9999I REGS 8-9/00000001 00FFB0F8
+    04.03.40 STC17995  FPEV9999I REGS A-B/00000BE0 008FEDB0
+    04.03.40 STC17995  FPEV9999I REGS C-D/00000080 00000001
+    04.03.40 STC17995  FPEV9999I REGS E-F/00FF1A62 00000000
+    04.03.40 STC17995  IEA995I SYMPTOM DUMP OUTPUT  275
+       275             SYSTEM COMPLETION CODE=301
+       275              TIME=04.03.40  SEQ=61907  CPU=0080
+   ASID=026D
+       275              PSW AT TIME OF ERROR  070C1000   80FFAD84
+   ILC 2  INTC 0D
+       275                NO ACTIVE MODULE FOUND
+       275                NAME=UNKNOWN
+       275                DATA AT PSW  00FFAD7E - 00181610
+   0A0DB219  00005820
+       275                AR/GR 0: 8F9CD47A/80000000   1:
+   00000000/80301000
+       275                      2: 00000000/00000B80   3:
+   00000000/00000BD8
+       275                      4: 00000000/008C48C8   5:
+   00000000/008C3B70
+       275                      6: 00000000/10F6B030   7:
+   00000000/00FC7880
+       275                      8: 00000000/00000001   9:
+   00000000/00FFB0F8
+       275                      A: 00000000/00000BE0   B:
+   00000000/008FEDB0
+       275                      C: 00000000/00000080   D:
+   00000000/00000001
+       275                      E: 00000000/00FF1A62   F:
+   00000001/00000000
+       275              END OF SYMPTOM DUMP
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Turn off Performance Warehouse in RKD2PAR member(s)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: OMEGAMON XE for DB2 PE/DB2PM                 *
+   *                 users of component:                          *
+   *                 -   Performance Warehouse users              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Performance Warehouse (PWH) subtask *
+   *                      load module FPEZPMS abends with code    *
+   *                      S202 followed by abends with code S301  *
+   *                      in a loop.                              *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION: Apply this PTF                               *
+   *                                                              *
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The posting of an ECB in a list of ECBs fails. The consecutive
+   call to the wait macro abends because the ECB had not been
+   cleared. The abend handler returns control to the same code
+   segment without clearing the ECB which results in a loop of
+   abends S301.
+   
+   PROBLEM CONCLUSION:
+   The code has been corrected to check the ECB before it gets
+   posted. In case of abends Performance Warehouse will stop and
+   issue the already existing message FPEV5002I.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been corrected to check the ECB before it gets
+   posted. In case of abends Performance Warehouse will stop and
+   issue the already existing message FPEV5002I.
+   
+   KEYWORDS : ABEND S202 S301 FPEZPMS PWH
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM76269
+   
+   
+ * REPORTED COMPONENT NAME
+   OM XE DB2PE/PM
+   
+   
+ * REPORTED COMPONENT ID
+   5655OPE00
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2012-11-01
+   
+   
+ * CLOSED DATE
+   2012-12-05
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK90058 UK90059
+   
+   
+
+MODULES/MACROS
+ *     DGO@PC1  DGOVMSTR DGOZPC1  DGOZTEX
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OM XE DB2PE/PM
+   
+   
+ * FIXED COMPONENT ID
+   5655OPE00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY UK90059 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK90059]
+   UP12/12/08 P F212
+   
+   
+ * R511 PSY UK90058 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK90058]
+   UP12/12/08 P F212
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

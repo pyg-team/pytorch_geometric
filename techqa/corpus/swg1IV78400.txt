@@ -1,0 +1,330 @@
+Title: IBM IV78400: MQRC_BACKED_OUT (2003) when option MQGMO_SYNCPOINT_IF_PERSISTENT is used - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using the WebSphere MQ classes for JMS, messages on a queue
+   may be encountered which have an MQMD and an RFH2 which have
+   conflicting values for the message persistence.
+   
+   If the get option 'MQGMO_SYNCPOINT_IF_PERSISTENT' is used by the
+   WebSphere MQ classes for JMS, eventually the error message MQRC
+   2003 'MQRC_BACKED_OUT' is returned by the queue manager
+   indicating that the messages could not be consumed because the
+   unit of work under which the message was being consumed was
+   backed out.  This is returned to the application via a JMS
+   Exception, which takes the form:
+   
+   com.ibm.msg.client.jms.DetailedTransactionRolledBackException:
+   JMSWMQ2002: Failed to get a message from destination 'MY_QUEUE'.
+   WebSphere MQ classes for JMS attempted to perform an MQGET;
+   however WebSphere MQ reported an error. Use the linked exception
+   to determine the cause of this error.
+     at
+   com.ibm.msg.client.wmq.common.internal.Reason.reasonToException(
+   Reason.java:603)
+     at
+   com.ibm.msg.client.wmq.common.internal.Reason.createException(Re
+   ason.java:236)
+     at
+   com.ibm.msg.client.wmq.internal.WMQMessageConsumer.checkJmqiCall
+   Success(WMQMessageConsumer.java:130)
+     at
+   com.ibm.msg.client.wmq.internal.WMQConsumerShadow.getMsg(WMQCons
+   umerShadow.java:1440)
+     at
+   com.ibm.msg.client.wmq.internal.WMQSyncConsumerShadow.receiveInt
+   ernal(WMQSyncConsumerShadow.java:239)
+     at
+   com.ibm.msg.client.wmq.internal.WMQConsumerShadow.receive(WMQCon
+   sumerShadow.java:1144)
+     at
+   com.ibm.msg.client.wmq.internal.WMQMessageConsumer.receive(WMQMe
+   ssageConsumer.java:469)
+     at
+   com.ibm.msg.client.jms.internal.JmsMessageConsumerImpl.receiveIn
+   boundMessage(JmsMessageConsumerImpl.java:883)
+     at
+   com.ibm.msg.client.jms.internal.JmsMessageConsumerImpl.receive(J
+   msMessageConsumerImpl.java:546)
+     at
+   com.ibm.mq.jms.MQMessageConsumer.receive(MQMessageConsumer.java:
+   258)
+     ... ... ...
+   Caused by: com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ call
+   failed with compcode '2' ('MQCC_FAILED') reason '2003'
+   ('MQRC_BACKED_OUT').
+     at
+   com.ibm.msg.client.wmq.common.internal.Reason.createException(Re
+   ason.java:223)
+     ... 11 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Ensure that applications which create the messages that are put
+   to the queue causing this problem do not put conflicting values
+   for the message persistence between the MQMD and the RFH2
+   headers.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the WebSphere MQ classes for JMS
+   which are consuming messages from queues where the MQMD and RFH2
+   headers have conflicting values for the message persistence.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When a MQ-JMS application consumes a message from a queue, the
+   MQ GetMessageOption 'MQGMO_SYNCPOINT_IF_PERSISTENT' may be used
+   by the MQ-JMS classes to request the message from the queue
+   manager.
+   
+   For example, an application might create a JMS Session using the
+   syntax:
+   
+      javax.jms.Connection.createSession(false,
+   Session.AUTO_ACKNOWLEDGE);
+   
+   and then go on to consume a message from a queue using the
+   method:
+   
+     javax.jms.MessageConsumer.receive(5000);
+   
+   
+   In doing this, depending on the environment and associated
+   transactional scope (eg. 1 or 2 phase commit) the MQ-JMS classes
+   may use the MQGMO option:
+   
+       'MQGMO_SYNCPOINT_IF_PERSISTENT'
+   
+   This instructs the queue manager to start a syncpoint
+   (transaction boundary) if the message persistence is set to
+   persistent.  In the 1-phase commit environment, this syncpoint
+   is committed before the message is returned to the application
+   in the JMS Session AUTO_ACKNOWLEDGE scenario.
+   
+   When using the "MQGMO_SYNCPOINT_IF_PERSISTENT', the MQ-JMS
+   classes used the JMS DeliveryMode value of the consumed message
+   to know if the message consumption act needed to be acknowledged
+   with the queue manager.
+   
+   However, this JMS DeliveryMode value could be derived from two
+   locations within the MQ message:
+   
+   (1) MQMD 'Persistence' field
+   (2) MQRFH2 'Delivery' field, as seen in an MQRFH2 header with
+   the form:
+   
+         <jms>
+             <Dlv dt='i4'>1</Dlv>
+         </jms>
+   
+   If the optional MQRFH2 <Dlv> element is present, as stated in
+   the documentation its value is used to specify the DeliveryMode
+   of the JMS message, regardless of what the MQMD Persistence
+   field is set to.
+   
+   The consequence of this is that if the MQRFH2 Delivery field is
+   present and set to have a value which indicates that the message
+   is NON_PERSISTENT, but the MQMD states that the message is
+   persistent, the message will be handed to the consuming
+   application without committing the syncpoint with the queue
+   manager.  If this cycle is repeated, eventually one of two
+   failures will be encountered, depending upon which resource
+   limit is encountered first:
+   
+   (a) The queue manager will run out of transaction log space, and
+   report a MQRC 2003 'MQRC_BACKED_OUT' back to the JMS
+   application, via the exception seen above.
+   
+   (b) The queue manager will reach its configured maximum
+   syncpoint limit, and will report a MQRC 2024
+   'MQRC_SYNCPOINT_LIMIT_REACHED' back to the application.  The JMS
+   exception for this case will be of the form:
+   
+   com.ibm.msg.client.jms.DetailedResourceAllocationException:
+   JMSWMQ2002: Failed to get a message from destination 'MY_QUEUE'.
+   WebSphere MQ classes for JMS attempted to perform an MQGET;
+   however WebSphere MQ reported an error. Use the linked exception
+   to determine the cause of this error.
+     at
+   com.ibm.msg.client.wmq.common.internal.Reason.reasonToException(
+   Reason.java:588)
+     at
+   com.ibm.msg.client.wmq.common.internal.Reason.createException(Re
+   ason.java:236)
+     at
+   com.ibm.msg.client.wmq.internal.WMQMessageConsumer.checkJmqiCall
+   Success(WMQMessageConsumer.java:130)
+     at
+   com.ibm.msg.client.wmq.internal.WMQConsumerShadow.getMsg(WMQCons
+   umerShadow.java:1440)
+     at
+   com.ibm.msg.client.wmq.internal.WMQSyncConsumerShadow.receiveInt
+   ernal(WMQSyncConsumerShadow.java:239)
+     at
+   com.ibm.msg.client.wmq.internal.WMQConsumerShadow.receive(WMQCon
+   sumerShadow.java:1144)
+     at
+   com.ibm.msg.client.wmq.internal.WMQMessageConsumer.receive(WMQMe
+   ssageConsumer.java:469)
+     at
+   com.ibm.msg.client.jms.internal.JmsMessageConsumerImpl.receiveIn
+   boundMessage(JmsMessageConsumerImpl.java:883)
+     at
+   com.ibm.msg.client.jms.internal.JmsMessageConsumerImpl.receive(J
+   msMessageConsumerImpl.java:546)
+     at
+   com.ibm.mq.jms.MQMessageConsumer.receive(MQMessageConsumer.java:
+   258)
+   ...  ... ...
+   Caused by: com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ call
+   failed with compcode '2' ('MQCC_FAILED') reason '2024'
+   ('MQRC_SYNCPOINT_LIMIT_REACHED').
+     at
+   com.ibm.msg.client.wmq.common.internal.Reason.createException(Re
+   ason.java:223)
+           ... 11 more
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ classes for JMS have been updated such that
+   when determining if the message needs to be acknowledged with
+   the queue manager when using the 'MQGMO_SYNCPOINT_IF_PERSISTENT'
+   option , it will always use the MQMD Persistence field
+   regardless of what is defined in the MQRFH2.
+   
+   Note that the DeliveryMode as specified on the JMS message is
+   unchanged.  As documented, it will continue to have the value as
+   defined in the MQRFH2 if present, regardless of the value
+   defined within the MQMD.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.1       7.1.0.8
+   v7.5       7.5.0.8
+   v8.0       8.0.0.6
+   v9.0 CD    9.0.1
+   v9.0 LTS   9.0.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV78400
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7221
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-10-27
+   
+   
+ * CLOSED DATE
+   2016-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7221
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

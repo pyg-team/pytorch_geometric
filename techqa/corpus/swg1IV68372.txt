@@ -1,0 +1,157 @@
+Title: IBM IV68372: LOGIN TO MAXIMO IN ADDITIONAL LANGUAGE CAUSES CORE DUMP WITH SQL SERVER DATABASE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem :
+   
+   Maximo 7.6 with SQL server database core dumps when a user logs
+   in as an additional language.  Logging in with base language
+   does not cause an issue.
+   
+   User receives
+   Error 500 - Internal server error
+   BMXAA4087E The maxmessage value for group login and key welcome
+   could not be retrieved.
+   
+   
+   BMXAA6713E The MBO fetch operation failed in the mboset with
+   the SQL error code 0. The record could not be retrieved from
+   the database.
+   com.microsoft.sqlserver.jdbc.SQLServerException : The
+   converstion from timestamp to BIGINT is unsupported
+   
+   Reporting Environment
+   Maximo 7.6.0.0
+   Windows 2012
+   Microsoft SQL Server 11
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * SQLServer users with additional language trying to log in to *
+   * Maximo                                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * LOGIN TO MAXIMO IN ADDITIONAL LANGUAGE CAUSES CORE DUMP WITH *
+   * SQL SERVER DATABASE                                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fixpack Release 7.6.0.0 of Base Services or request an *
+   * interim fix                                                  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix has been made to issue above.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV68372
+   
+   
+ * REPORTED COMPONENT NAME
+   SYSTEM PERFORMA
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46PF
+   
+   
+ * REPORTED RELEASE
+   760
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-07
+   
+   
+ * CLOSED DATE
+   2015-01-08
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SYSTEM PERFORMA
+   
+   
+ * FIXED COMPONENT ID
+   5724R46PF
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R760 PSY
+   UP

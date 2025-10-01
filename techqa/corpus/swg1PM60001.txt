@@ -1,0 +1,192 @@
+Title: IBM PM60001: Rational Developer for System z (RDz) Remote Index Search default directory not set correctly - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Rational Developer for System z (RDz) Remote Index Search
+   default directory is not set as expected according to the GUI or
+   the documentation.
+   
+   In the documentation it states that the default directory for
+   the Remote Index Search is:
+    /u/userid/.eclipse/RSE/USERID
+   However, If rsed.envvars contains
+   _RSE_JAVAOPTS='$_RSE_JAVAOPTS -Duser.log=/var/rdz/logs'
+   then, the directory INDEX is created in   /var/rdz/logs/USERID
+   instead.
+   
+   There is no documentation that states this setting affects the
+   Remote Index Search default directory.
+   
+   There are 2 issues here:
+   First the name of the directory listed in the RDz client window
+   is:
+   /u/USERID/.eclipse/RSE/INDEX
+   It should be:
+    /u/USERID/.eclipse/RSE/userid/INDEX
+   
+   Second, if -Duser.log is set to another directory, the default
+   given by the RDz client and passed to the host is not used.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Remote Index Users (z/OS UNIX, or MVS)   *
+   *                 who use either files with different          *
+   *                 encodings, or who run the RDz server with    *
+   *                 a different code page than what is           *
+   *                 configured in the the RSE connection on      *
+   *                 the client.                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When the client RSE connection, or the  *
+   *                      MVS subsystem is configured with a      *
+   *                      different code page than what is being  *
+   *                      used on the server, MVS member names    *
+   *                      may be misrepresented in the Remote     *
+   *                      Index search results, resulting in      *
+   *                      the inability to open the matching      *
+   *                      file from the Remote Index Search view. *
+   *                      In addition, searches where users haved *
+   *                      defined mixed code pages for files that *
+   *                      are indexed may fail to find matches,   *
+   *                      since the files will have been indexed  *
+   *                      using the code page that the RDz server *
+   *                      is running with.                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The Remote Index Search function was running using the code page
+   that is defined in the rsed.envvars file (_RSE_HOST_CODEPAGE)
+   regardless of whether a connection or the MVS subsystem has a
+   different code page configured.  This can result MVS PDS names,
+   and MVS PDS member names which contain character code points
+   0x5B, 0x7B, ox7C being incorrectly represented in the
+   Remote Index Search View.
+   In addition, since the Remote Index also used the RDz host
+   code page to generate indexes, if a z/OS UNIX directory or file
+   was defined in the RSE view to be a different code page than the
+   server, or if the MVS PDS or MVS PDS member was defined on the
+   client to be in a different code page, the index would have been
+   incorrectly generated, resulting in missing matches when
+   searches are performed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Remote Index function will now respect client configurations
+   for code pages, at the connection, and MVS subsystem level, as
+   well as the z/OS UNIX directory and file, MVS PDS, and MVS PDS
+   member code page configurations when generating an index, in
+   addition to searching an index.
+   Client APAR PM56858 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM56858] is also required to be applied for this fix
+   to be fully functional.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM60001
+   
+   
+ * REPORTED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0723
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-08
+   
+   
+ * CLOSED DATE
+   2012-09-04
+   
+   
+ * LAST MODIFIED DATE
+   2012-09-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  FEKFMCDZ FEKFMLUC FEKFMVSC FEKFMVSL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * FIXED COMPONENT ID
+   5724T0723
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY UK81498 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK81498]
+   UP12/09/05 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

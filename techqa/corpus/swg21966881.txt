@@ -1,0 +1,70 @@
+Title: IBM Business Process Manager users receive errors that session has expired - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you are using CA Wily Introscope to monitor performance in the same environment with IBM Business Process Manager, you might receive messages that a user session has expired. Before you can continue working on IBM BPM, you must log out and log in again. 
+
+CAUSE
+WebSphere Application Server has session security integration enabled by default. Enabling this feature guards against the possibility of session data being hijacked by another user. 
+The Wily Introscope agent might try to access an active user session to monitoring purposes. Because Wily does not have the same authenticated user, the session security integration feature prevents Wily from accessing that user session. 
+
+By having a custom property named InvalidateOnUnauthorizedSessionRequestException set to true, the session manager will invalidate the active user session. This causes the "session expired" messages for the IBM BPM user. (The default value for InvalidateOnUnauthorizedSessionRequestException is false.)
+
+
+DIAGNOSING THE PROBLEM
+To verify you have this problem, you can turn on tracing for the Web container, the session, security, and IBM BPM using these tracing strings: 
+
+
+*=info:com.ibm.ws.webcontainer*=all:com.ibm.wsspi.webcontainer*=all:HTTPChannel=all:GenericBNF=all:com.ibm.ws.session.*=all:com.ibm.ws.security.*=all:com.ibm.websphere.security.*=all:com.ibm.websphere.wim.*=all:com.ibm.wsspi.wim.*=all:com.ibm.ws.wim.*=all:WLE.*=all 
+
+You might see entries in the stack trace similar to the following lines:
+
+at com.wily.introscope.agent.servlethelper.ServletRequestHelper.getSession(ServletRequestHelper.java:286)
+at com.wily.introscope.agent.servlethelper.ServletRequestHelper.get(ServletRequestHelper.java:513)
+at com.wily.introscope.agent.trace.hc2.HttpServletLazyMapProvider.get(HttpServletLazyMapProvider.java:63)
+at com.wily.util.adt.LazyMap.get(LazyMap.java:182)
+at com.wily.introscope.agent.trace.hc2.HttpServletLazyMap.putAllParameters(HttpServletLazyMap.java:191)
+at com.wily.introscope.agent.trace.hc2.HttpServletTracer.IInvocationDataParameterCallback_addParameters(HttpServletTracer.java:782)
+at com.wily.introscope.agent.trace.InvocationData.addParameterCallbacks(InvocationData.java:3486)
+at com.wily.introscope.agent.feature.VirtualStackFeatureHelper.fillComponentParams(VirtualStackFeatureHelper.java:157)
+at com.wily.introscope.agent.feature.VirtualStackFeatureHelper.getTransanctionSnapShotFromInvocationData(VirtualStackFeatureHelper.java:235)
+at com.wily.introscope.agent.feature.VirtualStackFeatureHelper.getTransactionSnapshotFromStack(VirtualStackFeatureHelper.java:75)
+at com.wily.introscope.agent.feature.StallFeatureBase.reportStall(StallFeatureBase.java:50)
+at com.wily.introscope.agent.feature.StallCheckBehaviorCorrect.ITimestampedRunnable_execute(StallCheckBehaviorCorrect.java:61)
+at com.wily.util.heartbeat.IntervalHeartbeat$BehaviorNode.execute(IntervalHeartbeat.java:972)
+at com.wily.util.heartbeat.IntervalHeartbeat.executeNextBehaviorAndCalculateSleepTime(IntervalHeartbeat.java:491)
+at com.wily.util.heartbeat.IntervalHeartbeat.access$2(IntervalHeartbeat.java:445)
+at com.wily.util.heartbeat.IntervalHeartbeat$HeartbeatRunnable.run(IntervalHeartbeat.java:668)
+at java.lang.Thread.run(Thread.java:784)
+
+
+
+RESOLVING THE PROBLEM
+To prevent the sessions from expiring, choose one of the following options: 
+
+ * Stop the Wily agent. 
+ * Remove the custom property InvalidateOnUnauthorizedSessionRequestException=true by completing the following steps: 1. Log in to the administrative console. 
+   
+   2. Click server_name > Session Manager > Custom properties. 
+   
+   3. Select the InvalidateOnUnauthorizedSessionRequestException property, which is set to true, and delete it.
+   The purpose of this setting in BPM default configuration is to "gracefully" terminate existing sessions and create new sessions in shared browser scenarios. With this setting removed, you may see temporary exceptions in cases two users share the same browser instance and try to switch identity without closing the browser in between. 
+   
+   4. Click Apply and then save the master configuration. 
+   
+   5. Restart the servers. 
+   
+   
+ * Disable specific Wily configurations that reuse the session IDs from existing users.
+
+RELATED INFORMATION
+ CA Technologies: Session killed by agent heartbeat [http://www.ca.com/us/support/ca-support-online/product-content/knowledgebase-articles/tec1314663.aspx]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard AIX, Linux, Solaris, Windows 8.5.7.CF201706, 8.5.7.CF201703, 8.5.7.CF201612, 8.5.7.CF201609, 8.5.7.CF201606, 8.5.7, 8.5.6.2, 8.5.6.1, 8.5.6, 8.5.5, 8.5.0.2, 8.5.0.1, 8.5, 8.0.1.3, 8.0.1.2, 8.0.1.1, 8.0.1, 8.0 Business Integration IBM Business Process Manager Express Linux, Windows 8.5.7.CF201706, 8.5.7.CF201703, 8.5.7.CF201612, 8.5.7.CF201609, 8.5.7.CF201606, 8.5.7, 8.5.6.2, 8.5.6.1, 8.5.6, 8.5.5, 8.5.0.2, 8.5.0.1, 8.5, 8.0.1.3, 8.0.1.2, 8.0.1.1, 8.0.1, 8.0 
+PRODUCT ALIAS/SYNONYM
+ BPM

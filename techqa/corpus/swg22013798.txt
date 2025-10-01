@@ -1,0 +1,103 @@
+Title: IBM DB2 SQL Error SQLCODE=-204 Starting up OpenPages Services - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+End user see an error 500 in the browser when he loads the OpenPages URL.
+
+An Administrator will also see errors starting OpenPages services. 
+
+CAUSE
+The <server>-OPNode1Server1-startup.log file has the following: 
+
+[/support/docview.wss?uid=swg22013798&amp;aid=1] ===================================================================================
+<INFO> OpenPages STARTUP: start
+<INFO>
+===================================================================================
+
+<INFO> Loading bootstap data ...
+<INFO> Connecting to the OPX services ...
+
+Initialization error:com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704, SQLERRMC=GRCOP.DUAL, DRIVER=4.21.29
+at com.ibm.db2.jcc.am.kd.a(kd.java:810)
+at com.ibm.db2.jcc.am.kd.a(kd.java:66)
+at com.ibm.db2.jcc.am.kd.a(kd.java:140)
+...
+at com.ibm.ws.runtime.component.CompositionUnitMgrImpl$CUInitializer.run(CompositionUnitMgrImpl.java:985)
+at com.ibm.wsspi.runtime.component.WsComponentImpl$_AsynchInitializer.run(WsComponentImpl.java:524)
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1892)
+-- nested by --
+EXCEPTION : com.openpages.aurora.service.persistence.PersistentObjectNotFoundException
+ERROR CODE : OP-00710
+MESSAGE : Object not found in the database.
+at com.openpages.aurora.service.persistence.PersistenceManager.getNewId(PersistenceManager.java:526)
+at com.openpages.aurora.service.persistence.PersistenceManager.createAndGetObjectId(PersistenceManager.java:166)
+at com.openpages.aurora.service.persistence.PersistenceManager.createObject(PersistenceManager.java:128)
+...
+at com.ibm.ws.runtime.component.CompositionUnitMgrImpl$CUInitializer.run(CompositionUnitMgrImpl.java:985)
+at com.ibm.wsspi.runtime.component.WsComponentImpl$_AsynchInitializer.run(WsComponentImpl.java:524)
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1892)
+--- nested by ---
+ERROR CODE : -700
+EXCEPTION : Database error occured!
+TYPE : com.openpages.aurora.service.persistence.CreateObjectFailedException
+at com.openpages.aurora.service.persistence.PersistenceManager.createAndGetObjectId(PersistenceManager.java:244)
+at com.openpages.aurora.service.persistence.PersistenceManager.createObject(PersistenceManager.java:128)
+at com.openpages.aurora.service.persistence.PersistenceManager.createObject(PersistenceManager.java:118)
+...
+at com.ibm.ws.runtime.component.CompositionUnitMgrImpl$CUInitializer.run(CompositionUnitMgrImpl.java:985)
+at com.ibm.wsspi.runtime.component.WsComponentImpl$_AsynchInitializer.run(WsComponentImpl.java:524)
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1892)
+-- nested by --
+EXCEPTION : com.openpages.aurora.service.security.SecurityServiceException
+ERROR CODE : OP-00700
+MESSAGE : Persistence error.
+RUNTIME MESSAGE: SecurityService Application Error: Authentication.
+at com.openpages.aurora.service.security.SecurityUtil.login(SecurityUtil.java:349)
+at com.openpages.aurora.service.security.SecurityServiceManager.login(SecurityServiceManager.java:115)
+at com.openpages.aurora.service.security.SecurityServiceBean.login(SecurityServiceBean.java:134)
+...
+at com.ibm.ws.runtime.component.CompositionUnitMgrImpl$CUInitializer.run(CompositionUnitMgrImpl.java:985)
+at com.ibm.wsspi.runtime.component.WsComponentImpl$_AsynchInitializer.run(WsComponentImpl.java:524)
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1892) 
+"SQLCODE=-204, SQLSTATE=42704" is a DB2 error code indicating 'object does not exist'; in this case, it is indicating that the DUAL object is not present. 
+
+DUAL tables are related to DB2_COMPATIBILITY_VECTOR registry variable. 
+
+RESOLVING THE PROBLEM
+ 
+
+Execute next commands in the OpenPages DB2 instance with all the OpenPages services stopped: 
+
+1. Unset the DB2_COMPATIBILITY_VECTOR registry 
+
+db2set DB2_COMPATIBILITY_VECTOR= 
+
+2. Set the DB2_COMPATIBILITY_VECTOR = ORA registry on the OpenPages DB2 instance 
+
+db2set DB2_COMPATIBILITY_VECTOR=ORA 
+
+3. Stop database manager 
+
+db2stop 
+
+4. Clean up memory 
+
+ipclean -a 
+
+5. Start database manager 
+
+db2start 
+
+ 
+
+Start OpenPages services and check the logs again to confirm there are no errors. 
+
+ 
+
+RELATED INFORMATION
+ SQLCODE=-204 SQLSTATE=42704 when connecting to new Cont [http://www-01.ibm.com/support/docview.wss?uid=swg21613531]
+DB2_COMPATIBILITY_VECTOR registry variable [https://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.db2.luw.apdv.porting.doc/doc/r0052867.html]
+db2set - DB2 profile registry command [https://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0002025.html]

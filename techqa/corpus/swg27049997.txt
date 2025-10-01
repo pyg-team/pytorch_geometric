@@ -1,0 +1,17 @@
+Title: IBM SPSS Collaboration and Deployment Services 8.1 Fix List - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ A comprehensive list of defect corrections for SPSS Collaboration and Deployment Services 8.1. Details of the fixes are listed below. If you have questions about a particular defect, please contact Customer Support.
+
+Note: A particular list may contain a combination of APAR references and internal defect numbers. This was necessitated to provide a complete list of corrected defects as we continue to transition our internal defects to APARs. Items with a PI or PM reference are APARs and are searchable on IBM.COM. If you have questions about a particular defect, please contact Customer Support. 
+
+CONTENT
+ 
+
+SPSS COLLABORATION AND DEPLOYMENT SERVICES 8.1
+ * 8.1 [http://www.ibm.com/support/docview.wss?uid=swg24043673]- selected tab,
+
+Issues corrected in SPSS Collaboration and Deployment Services 8.1 Release Number Description PI53701 [https://www.ibm.com/support/entdocview.wss?uid=swg1PI53701&wv=1] C&DS configTool fails to deploy to Application Server if database password contains a double quote ("). PI56409 [https://www.ibm.com/support/entdocview.wss?uid=swg1PI56409&wv=1] Documentation: Domain creation should include reference to LDAP recognition. PI61292 [https://www.ibm.com/support/entdocview.wss?uid=swg1PI61292&wv=1] "Cache Session Timeout" setting appears to be valid for PEA only and not DM client or PEB. PI62268 [https://www.ibm.com/support/entdocview.wss?uid=swg1PI62268&wv=1] Documentation needs to be updated to remove incomplete instructions to set score logging to different database. PI63850 [https://www.ibm.com/support/entdocview.wss?uid=swg1PI63850&wv=1] C&DS Install/Config Doc contains incorrect JBoss location to configure SSO PI64532 [https://www.ibm.com/support/entdocview.wss?uid=swg1PI64532&wv=1] Documentation: C&DS 8.0 Deployment Manager Installation Guide still references ability to install from the repository. PI65345 [https://www.ibm.com/support/entdocview.wss?uid=swg1PI65345&wv=1] C&DS cannot connect to the secure DB2 server which has TLS v1.2 enabled PI69902 [https://www.ibm.com/support/entdocview.wss?uid=swg1PI69902&wv=1] Documentation: ADV Data Access Plan does not display any Terminal nodes if they are within a Modeler Supernode. PI71371 [https://www.ibm.com/support/entdocview.wss?uid=swg1PI71371&wv=1] Unexpected permissions are being inherited in a C&DS repository PI73395 [https://www.ibm.com/support/entdocview.wss?uid=swg1PI73395&wv=1] [https://www.ibm.com/support/entdocview.wss?uid=swg1PI73395&wv=1] Process for WebSphere server terminates when attempting to score record. PI77955 [https://www.ibm.com/support/entdocview.wss?uid=swg1PI77955&wv=1] C&DS PEB does not display Predictor Effectiveness Information if WebSphere is used as the App Server PI78295 [https://www.ibm.com/support/entdocview.wss?uid=swg1PI78295&wv=1] Duplicated log lines created in Job History for stream with jython script. PI80182 [https://www.ibm.com/support/entdocview.wss?uid=swg1PI80182&wv=1] Documentation: Canceling General Job step which executing Python script, doesn't stop the execution of python script

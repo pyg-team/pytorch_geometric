@@ -1,0 +1,24 @@
+Title: IBM End of Support announcement for CICS Performance Monitor for z/OS 1.2 - United States
+
+Text:
+CICS PM 1.2 EOS ; end of support; out of support; product lifecyle; end of lifecycle; withdrawal from support; withdrawn from support ; out of support; withdrawal announcement letter ; 5655I4600 R200 5655-I46 5655I46 FMID HCMZ200 PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ CICS Performance Monitor for z/OS (CICS PM) V1.2 was withdrawn from support 3 December 2011. This document contains a link to the Software withdrawal and discontinuance of service announcement letter and product replacement information. 
+
+CONTENT
+The Software withdrawal and discontinuance of service announcement letter that says CICS PM V1.2 ( 5655-I46 ) was withdrawn from support 3 December 2011 is 910-169 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS910-169]. The following product replacement program information is included in this announcement: 
+
+
+5655-I46, CICS Performance Monitor for z/OS V1.2, is being replaced by 5698-B49, OMEGAMON® XE for CICS on z/OS V4.2, announced in Software Announcement 209-425 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&appname=gpateam&supplier=897&letternum=ENUS209-425], dated December 01, 2009.
+
+
+RELATED INFORMATION
+#Tivoli OMEGAMON XE for CICS on z/OS web page [http://www.ibm.com/software/tivoli/products/omegamon-xe-cics/]
+End of Service dates for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21154953]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICSPM CICS PM

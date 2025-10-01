@@ -1,0 +1,18 @@
+Title: IBM What happens to the Holds, Collections and Interviews when I complete or deactivate the associated Request? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What happens to the Holds, Collections and Interviews when I complete or deactivate the associated Request? 
+
+ANSWER
+Complete Request When you mark a Request as completed, no new Holds, Collections or Interviews can be created or conducted using this Request. In addition, the Collection and Interview Plans will be marked as complete. When you press the Complete button, you can choose whether the Hold Notices within this Request should continue to be sent or suspended. You will be given the following options: 
+
+ * Complete the request and stop sending the notices under this request. - All hold and release notices within this request will be suspended. You can resume each notice individually, if needed. 
+ *  Complete the request and continue sending any active or related hold and release notices. - All hold and release notices within this request will continue to be published according to their processing workflow. You may suspend each notice individually. 
+
+You can still see the Request if you change the status search filter to show "Completed" Requests. Deactivate Request When you click the button to deactivate a Request, you will be presented with a pop-up dialog confirming that you want to deactivate the Request. If you click OK, the request will be marked inactive and removed from the list of Requests. The Holds associated with this Request are not automatically suspended. You can still see the Request if you change the status search filter to show "Completed" Requests. 
+
+HISTORICAL NUMBER
+ 285

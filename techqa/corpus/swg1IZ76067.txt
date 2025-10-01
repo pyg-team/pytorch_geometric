@@ -1,0 +1,205 @@
+Title: IBM IZ76067: 'USERID BLOCKED' MESSAGE WHEN TURNING ADMIN MODE ON AND WRONG PW ENTERED ONCE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem appears on 7116 ,7115 and lower don't have this
+   1.Go to Security Groups -Action menu -Security controls
+   -make sure logintracking is enabled
+   2. Go to Database configuration -List tab
+   3. click on magnifying glass /or filter to display list of
+   records
+   4. Go to Action menu - Manage admin mode
+   -turn admin mode on
+   5. Dialog box for userid and password appears
+   6. Type in userid ( admin user) and wrong password ( on purpose)
+   and give electronic signature
+   -click ok
+   System appears frozen
+   7.Exit application
+   8.Try login back again , get message
+   -Userid is blocked ,please contact system administrator '
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: all                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Problem appears on 7116 ,7115 and lower *
+   *                      don't have this                         *
+   *                                                              *
+   *                      1.Go to Security Groups -Action menu    *
+   *                      -Security controls                      *
+   *                                                              *
+   *                      -make sure logintracking is enabled     *
+   *                                                              *
+   *                      2. Go to Database configuration -List   *
+   *                      tab                                     *
+   *                                                              *
+   *                      3. click on magnifying glass /or filter *
+   *                      to display list of                      *
+   *                                                              *
+   *                      records                                 *
+   *                                                              *
+   *                      4. Go to Action menu - Manage admin     *
+   *                      mode                                    *
+   *                                                              *
+   *                      -turn admin mode on                     *
+   *                                                              *
+   *                      5. Dialog box for userid and password   *
+   *                      appears                                 *
+   *                                                              *
+   *                      6. Type in userid ( admin user) and     *
+   *                      wrong password ( on purpose)            *
+   *                                                              *
+   *                      and give electronic signature           *
+   *                                                              *
+   *                      -click ok                               *
+   *                                                              *
+   *                      System appears frozen                   *
+   *                                                              *
+   *                      7.Exit application                      *
+   *                                                              *
+   *                      8.Try login back again , get message    *
+   *                                                              *
+   *                      -Userid is blocked ,please contact      *
+   *                      system administrator '                  *
+   *                                                              *
+   *                      LOCAL FIX:                              *
+   *                                                              *
+   *                      n/a                                     *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   'USERID BLOCKED' MESSAGE WHEN TURNING ADMIN MODE ON AND WRONG
+   PW  ENTERED ONCE
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is a defect.  For Admin Mode, no need to write login
+   tracking records for all records on list tab.
+   
+   
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | REL 7.1.1.8 - BS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ76067
+   
+   
+ * REPORTED COMPONENT NAME
+   SECURITY
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46SC
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-17
+   
+   
+ * CLOSED DATE
+   2010-05-25
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SECURITY
+   
+   
+ * FIXED COMPONENT ID
+   5724R46SC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

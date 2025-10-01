@@ -1,0 +1,50 @@
+Title: IBM Customize System REST Services Context Root: /rest - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In a network deployment environment with more than one cluster or single server that hosts REST gateway services for system REST service endpoints, the web module context root is set to "/rest" by default and cannot be changed. The problem affects Representational State Transfer (REST) endpoints that are serviced by the "REST Services Gateway" application. 
+
+SYMPTOM
+The proxy configuration for system REST service endpoints is more difficult to set up with more than one deployed REST Services Gateway without a unique context root. 
+
+
+CAUSE
+This default behavior is because unique web module context roots simplify the configuration of proxy servers in order to identify the REST URL with its target cluster.
+
+RESOLVING THE PROBLEM
+The following steps outline how to change the default context root /rest. 
+
+This example assumes that you want to service REST endpoints on an additional cluster named MyCluster with a web module context root /myrest instead of the default /rest.
+
+The following steps might be scripted with the help of the WebSphere Application Server administrative console command assistance. The steps outline the manual procedure for illustrative purposes or for a one time configuration.
+
+
+ 1. Start the deployment manager and log into the administrative console. 
+ 2. Go to the REST services configuration panel and click Console > Servers > Clusters > WebSphere application server clusters > MyCluster > Business integration heading > REST services 
+ 3. Deploy the default REST Services Gateway by clicking OK. Optionally, enter the virtual host name and port. The REST services are deployed unless you see the following message in the console:
+    REST services are not yet configured. 
+ 4. Undo the deployment target mapping MyCluster from the REST Services Gateway application. Click Console > Applications > Application Types > WebSphere enterprise applications > REST Services Gateway > Manage Modules.
+    Remove the WebSphere:cell=w7dbaCell,cluster=MyCluster mapping by selecting all but the one to remove and click Apply. 
+ 5. Deploy the application found under the WebSphere Application Server installation root, which is installableApps/RESTServiceGateway.ear, and map it to cluster MyCluster.
+    In the WebSphere Application Server application installation wizard, name the new instance of the application to be unique, for example REST Services Gateway MyCluster.
+    An example of a good naming scheme is to append the deployment target name to the application name. 
+ 6. Change the context root of the newly installed application. Click Console > Applications > Application Types > WebSphere enterprise applications > REST Services Gateway MyCluster > Context Root For Web Modules. 
+ 7. Update the REST service provider configuration with the new context root.
+    Open a command prompt and start wsadmin. Run the following Jython administrative command:
+    AdminTask.updateRESTServiceProvider(['-clusterName', 'MyCluster', '-appName', 'REST Services Gateway', '-webModuleName', 'rest.gateway.war', '-contextRoot', '/myrest'])
+    AdminConfig.save() 
+ 8. Verify in the administration console that the context root and the REST service endpoint URLs show the new context root. Click Console > Services > REST services > REST service providers > REST Services Gateway (with scope MyCluster)
+
+
+Note:  * You cannot rename the application in the REST services provider configuration. This restriction does not impact the renaming of the context root. The matching REST service provider is identified by its scope and web module.
+   For this reason, do not rename the application name in step 7. The appName parameter remains as 'REST Services Gateway'. 
+ * Ensure that all REST service endpoints are configured in step 2. If you need to make changes in step 2, follow step 7 to update the context root. The context root is reset to /rest in the REST services configuration panel.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Business Monitor Business Space AIX, HP-UX, Linux, Solaris, Windows, z/OS 7.0 Business Integration WebSphere Business Compass Business Space AIX, Linux, Windows 7.0 Business Integration WebSphere Business Services Fabric Business Space AIX, Linux, Solaris, Windows, z/OS 7.0 Business Integration WebSphere Enterprise Service Bus Business Space AIX, HP-UX, Linux, Solaris, Windows, z/OS 7.0 
+PRODUCT ALIAS/SYNONYM
+ WPS
+WESB

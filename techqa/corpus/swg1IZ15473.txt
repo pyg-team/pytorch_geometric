@@ -1,0 +1,155 @@
+Title: IBM IZ15473: ALCATEL 5620 SAM V5 PROBE DOES NOT EXIT AFTER                   RECONNECTIONATTEMPTS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After lossing connections with Alcatel 5620 SAM, the probe will
+   try to reconnect, if the connection could not be re-established
+   after ReconnectionAttepts was reached, the probe will not stop
+   itself, which is different with other probes
+   LOCAL FIX:
+   If the customer don't want history data, they can set XMLretriev
+   e to 0 , in which case the probe will stop after
+   ReconnectionAttemps was reached.
+   
+   FIX
+   ---
+   XmlRetrieve" was set to 0. We need to reset it when
+   "XmlRetrieve" is set to 1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Alcaltel SAM V5
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All the users of the probe                   *
+   *                 nco_p_alcatel_sam_v5                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: After lossing connections with Alcatel  *
+   *                      5620 SAM, the probe will  try to        *
+   *                      reconnect, if the connection could not  *
+   *                      be re-established after                 *
+   *                      ReconnectionAttepts was reached, the    *
+   *                      probe will not stop itself, which is    *
+   *                      different with other probes             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Problem : After lossing connections with Alcatel 5620 SAM, the
+   probe will  try to reconnect, if the connection could not be
+   re-established after ReconnectionAttepts was reached, the probe
+   will not stop
+   
+   Solution : A concession patch was provided by L3 which fixed
+   the issue. More details in the diary field of the remedy
+   ticket. itself, which is different with other probes
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Date of Release : Q1 2009
+   
+   Date of Release: 03/31/09 Fix Pack Name:
+   probe-nco-p-alcatel-5620-sam-v5-0_2
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ15473
+   
+   
+ * REPORTED COMPONENT NAME
+   ALCATEL 5620 SA
+   
+   
+ * REPORTED COMPONENT ID
+   5724P17AS
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-02-13
+   
+   
+ * CLOSED DATE
+   2008-04-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

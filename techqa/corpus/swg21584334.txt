@@ -1,0 +1,21 @@
+Title: IBM What does the mpimshow utility do and how do I run it? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What does the mpimshow utility do and how do I run it? 
+
+ANSWER
+The mpimshow diagnostic utility is used to dump the in-memory contents of a member identified by memRecno. The entire contents of the member are dumped to stdout including derived data.
+This command takes “memRecno” as input text at the command line. It outputs the detailed information for a member as text. You can specify -html to output the file in an html format or -xml to output the file in a xml formation. This command only operates in ODBC mode.
+
+Steps to run the mpimshow utility:
+
+
+ 1. On the computer hosting the Hub, open a command line window and navigate to the MAD_ROOTDIR\bin directory. (Note: if MAD_ROOTDIR/bin is in your path you do not need to navigate to bin directory) 
+ 2. Make sure your profile is loaded. The profile will contain the MAD_ROOTDIR, MAD_HOMEDIR, etc... 
+ 3. Syntax is mpimshow <entity type> <memrecno>. Save the output to a file example: mpimshow id 100 -html > c:\temp\mpimshow\100.html) 
+ 4. Navigate to the file, open it and read the results.
+
+Note: Running mpimshow without the -html will produce a text file representation.

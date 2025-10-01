@@ -1,0 +1,144 @@
+Title: IBM IZ34687: INCORRECT GL CREDIT ACCOUNT POPULATES FOR TOOL ON WORK ORDER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Log in to maxdemo instance as Wilson
+   Go to Profile | Default Information
+   Verify or update the record so that BEDFORD is the Default
+   Insert Site
+   Click OK
+   
+   Go to Financial | Chart of Accounts
+   Highlight EAGLENA Organization
+   Select Action | Organization Default Accounts
+   Select a valid value for the Tool Control Account field such as
+   6200-300-400
+   Click OK and verify that this is different from the Global
+   Rotating
+   Suspense Account
+   Click OK and Save the record
+   
+   Go to Inventory | Tools
+   Enter GREASE in the Tool field and hit Enter
+   Open the record for GREASE
+   Select Action | Tool/Organization Details
+   Select a valid value for the GL Account which is different from
+   the Tool
+   Control Account
+   Click OK and Save the record
+   
+   Go to Inventory | Storerooms
+   Enter CENTRAL in the Location field and hit Enter
+   Verify that there is a valid GL Control Account, and that it is
+   different than both the Tool Control Account and the GL Accounts
+   which
+   were verified or created thus far
+   
+   Go to Work Orders | Work Order Tracking
+   Hit Enter in the Work Order field
+   Open the record for any Work Order with a status of APPR, such
+   as 1002
+   Go to the Actuals tab and go to the Tools sub-tab
+   Click on the Select Tools button
+   Check the checkbox for GREASE and click OK
+   Expand the details and note the GL Debit Account and GL Credit
+   Account, they do not come from any discernable source
+   
+   If you create a new Work Order, with no Asset or Location, the
+   same result.
+   
+   
+   Online Help indicates that this the value of this field,
+   tooltrans.glcreditacct, is the Tool Control Account
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  THis is not a bud. It is working as designed. See log for more
+   details.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ34687
+   
+   
+ * REPORTED COMPONENT NAME
+   WORK ORDER TRAC
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46WO
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-14
+   
+   
+ * CLOSED DATE
+   2008-10-24
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

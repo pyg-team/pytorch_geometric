@@ -1,0 +1,181 @@
+Title: IBM PJ37482: TIVOLI MONITORING AGENT FOR Z/TPF LINUX INSTALLER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  See problem summary.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  na
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  PAR NUMBER:  PJ37482
+   PRODUCT:  z/TPF
+   FUNCTIONAL AREA:  Monitoring Agent
+   SHIPPED IN PUT:  7
+   
+   ABSTRACT:
+   Linux and AIX Application Support Installer for the Tivoli
+   Monitoring Agent for z/TPF PJ32921 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ32921]
+   
+   PACKAGE CONTENTS:
+   Source Segments:
+   None.
+   
+   Object Only Binaries:
+   None.
+   
+   Configuration Independent Binaries:
+   None.
+   
+   Support Files:
+   None.
+   
+   OTHER BINARIES TO BUILD: NO
+   None.
+   
+   COMMENTS:
+   The Monitoring Agent for z/TPF is composed of agent
+   applications and agent application support files. The agent
+   applications run on Windows only and are the pieces that
+   communicate with TPF. The agent application support files are
+   the pieces that function with the components of an ITM Tivoli
+   Monitoring (ITM) environment.
+   
+   The Monitoring Agent for z/TPF installer run on the Windows
+   platform only and can install the agent applications and/or the
+   agent application support files. If the ITM environment is
+   running on linux or AIX, a separate installer is required to
+   install the agent application support files on those platforms.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  SOLUTION:
+   This APAR creates an application support installer (ASI) to
+   install agent application support file on linux or AIX. This
+   installer is in addition to the Windows agent installer. The
+   new ASI is available for download for z/TPF and TPF4.1
+   customers from the TPF Tools web page
+   http://www.ibm.com/software/htp/tpf/maint/toolsztpf.html. [http://www.ibm.com/software/htp/tpf/maint/toolsztpf.html.]
+   
+   COREQS: NO
+   None.
+   
+   MIGRATION CONSIDERATIONS: NO
+   None.
+   
+   BUILD COMMANDS AND INSTRUCTIONS: NO
+   None.
+   
+   UPDATED INFORMATION UNITS: NO
+   None.
+   
+   See your IBM representative if you need additional information.
+   
+   DOWNLOAD INSTRUCTIONS:
+   http://www.ibm.com/software/htp/tpf/maint/maintztpf.html [http://www.ibm.com/software/htp/tpf/maint/maintztpf.html]
+   
+   APAR URL:
+   http://www.ibm.com/software/htp/tpf/ztpfmaint/put7/PJ37482.htm [http://www.ibm.com/software/htp/tpf/ztpfmaint/put7/PJ37482.htm]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ37482
+   
+   
+ * REPORTED COMPONENT NAME
+   Z/TPF
+   
+   
+ * REPORTED COMPONENT ID
+   5748T1501
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2010-02-23
+   
+   
+ * CLOSED DATE
+   2010-05-19
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   Z/TPF
+   
+   
+ * FIXED COMPONENT ID
+   5748T1501
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSY
+   UP

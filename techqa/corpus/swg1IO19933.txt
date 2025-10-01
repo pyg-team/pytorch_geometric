@@ -1,0 +1,124 @@
+Title: IBM IO19933: UNABLE TO VIEW MO:DCA DOCUMENTS. OVERLAYS ARE NOT SHOWING UP - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Download IBM Content Navigator Version 2.0.2 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24038083]
+Download IBM Content Navigator Version 2.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038160]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After applying ICN 202 the customer is still unable to view
+   overlays for MO:DCA documents. Only getting the metadata.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Code defect - No work around
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  fixed
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO19933
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   ISCONTNAV
+   
+   
+ * REPORTED RELEASE
+   202
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-25
+   
+   
+ * CLOSED DATE
+   2013-12-26
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   ISCONTNAV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R202 PSY
+   UP

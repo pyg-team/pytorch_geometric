@@ -1,0 +1,55 @@
+Title: IBM Open Mic Replay: Troubleshooting WTX, BPE, and EDI in WebSphere Partner Gateway Open Mic - United States
+
+Text:
+wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; WPG; Open Mic; WTX; BPE; EDI; troubleshooting WEBCAST
+
+ABSTRACT
+ This WebSphere Support Technical Exchange Open Mic session gives you an opportunity to interact with support staff from WebSphere Partner Gateway on questions related to troubleshooting WTX, BPE, and EDI. 
+
+CONTENT
+Open Mic sessions are conducted in a question and answer format. The table below provides a time index (minutes:seconds) to the recording and describes the questions or topics discussed. You can fast forward to any question using the time index, a table containing the panel of experts is also included.
+
+
+
+
+
+To play or download the audio of this Open Mic session, see the Audio Section of this document.
+
+
+
+
+
+
+
+
+
+
+Open Mic session 
+3 November, 2009 - 11:00 a.m. - 12:00 p.m. EST 
+
+Time Questions asked 00:00 Silence 00:00 General introduction 04:12 Technical introduction 07:54 Why do I need re-enveloping while using WTX as the transformation engine? 10:12 What is SI Bus? Why does WPG need it? How do I monitor it? 15:34 If my document state shows in-progress forever, what do I need to check? 17:56 How do I get notified when EDI Functional Acknowledgements are overdue? 21:19 I get the error message "End of Record reached without record delimiter detected" - How do I fix this error? 23:45 What is the mputren command? Why and when do we need this command in the FTP Scripting Sender script? 26:41 What is a translation table in the DIS client? How does it affect EDI processing? 29:31 How do I bypass the "Duplicate interchange detected" error? 32:30 How do I change the default segment delimiter for EDI messages? 34:35 Do we need to use the DIS client tooling in case we want to do the EDI processing using WTX and WTX design studio? 36:05 If I am using WebSphere Partner Gateway and I do transformation of messages in WPG, what circumstances would come around where I would ever want to use WTX? 40:20 Closing remarks 42:09 End of Call 
+Panel of Experts: Atul Gohad Senior Staff Software Engineer Sreelatha Sankaranarayanan Staff Software Engineer Ay-Chyi Boudreaux Advisory Software Engineer Michael Glenn Staff Software Engineer Narayan Prasad Advisory Software Engineer 
+
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]WSTE-11032009-OpenMic-TroubleshootingWTXBPEEDIinWPG-Boudreaux.pdf [/support/docview.wss?uid=swg27017046&aid=2] [/support/docview.wss?uid=swg27017046&aid=1]
+
+
+[http://www.ibm.com/i/v14/icons/sout.gif] Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]Click on Download Audio [ftp://public.dhe.ibm.com/software/websphere/techexchange/Nov-03-2009-Boudreaux.mp3] to play the recording of this 42 minutes conference call (5.0MB - MP3 format). Right-click and select Save As to store the file on your local computer for later playback. Remember that you can fast forward to any question using the time index.
+
+
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchange [http://www.ibm.com/software/websphere/webcast]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Partner Gateway Enterprise Edition Not Applicable AIX, Linux, Windows 6.2

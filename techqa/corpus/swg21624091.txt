@@ -1,0 +1,22 @@
+Title: IBM Support of VIOS Premium agent for Flex System Manager - United States
+
+Text:
+VIOS Premium agent Flex System Manager FSM ITM Tivoli Monitoring system p support certified TECHNOTE (FAQ)
+
+QUESTION
+ Does the VIOS Premium agent support the Flex System Manager? 
+
+CAUSE
+The VIOS User's Guide only describes a procedure to configure the agent in HMC environments. It does not mention Flex System Manager (FSM) because the document was written before FSM was available. It already documents the user@hostname syntax, which is also valid for FSM environments, but this is not mentioned explicitly.
+
+ANSWER
+The VIOS agent is certified with Flex System Manager. No changes were required, so no interim fix is required to add support.
+
+A revised User's Guide has been published, and it has a note to use FSMuser@FSMhostname in the configuration: 
+
+http://www-01.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ibm.itm.doc_6.3/pvios/fac_config_agent_specific.htm?cp=SSTFXA_6.3.0&lang=en [http://www-01.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ibm.itm.doc_6.3/pvios/fac_config_agent_specific.htm?cp=SSTFXA_6.3.0&lang=en]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITM System P VIOS Premium agent

@@ -1,0 +1,31 @@
+Title: IBM Message handling by WMB/IIB TCPIPServerOuput nodes - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using a Websphere Message Broker (WMB) or IBM Integration Bus (IIB)TCPIPServerOuput node, a message intended for one client application might be received by a different application. 
+
+SYMPTOM
+If you are testing with Telnet, a message intended for a client application might be received by the Telnet program instead.
+
+
+CAUSE
+By default, the TCPIPServerOuput Node attempts to use the same connection for receiving messages from the input stream and writing output to the output stream. However, when it is unable to use the same connection (because the connection has broken, for example) it obtains another connection from the Connection Manager and attempts to write the output. This is the default behavior.
+
+RESOLVING THE PROBLEM
+To resolve this problem, set the following property on the TCPIPServerOutput node: 
+
+TCPIPServerOutput node -> Properties ->Request->ID location->
+$LocalEnvironment/TCPIP/Input/ConnectionDetails/Id
+
+When this property has been set, the TCPIPServerOutput node will always use the same connection for sending the output as was used to receive the input; this ensures that the output is sent to the correct client application and not to the Telnet program or to any other client application.
+
+Note: Ensure that the ConnectionDetails/Id property of the LocalEnvironment is not lost before the message reaches the TCPIPServerOutput node. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Bus Application Development AIX, Linux, Windows 9.0 
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

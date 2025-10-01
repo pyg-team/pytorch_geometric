@@ -1,0 +1,153 @@
+Title: IBM IZ10773: CORRUPT OR INVALID SHARECLASSES CACHE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: JVMSHRC030E The Shared Class Cache you are
+   attaching has invalid header.
+   JVMSHRC031E The Shared Class Cache you are attaching has
+   incompatible JVM version.
+   JVMSHRC025E error attaching shared memory
+   JVMSHRC017E Error code: -308
+   .
+   Stack Trace: N/A
+   .
+   JVM/WAS application fails to start.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1) Run java -Xshareclasses:destroy <cachename> when there are no
+   JVMs connected to the cache.
+   and/or 2) remove the /tmp/javasharedresources/ or C:\Documents
+   and Settings\<userid>\Local Settings\Application
+   Data\javasharedresources directory.
+   or 3) Run clearClassCache.sh from your WAS_HOME/bin directory.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The JVM writes a control file when Xshareclasses is used, which
+   contains the shmid of the shared memory area for a given cache.
+   This is how the cache name and the shmid is connected. When the
+   system shuts down and reboots, the control file still exists,
+   but the shmid will no longer be valid. The current design
+   assumes that the shmid does not get reused by another process.
+   When the JVM starts up, it will fail to get memory associated
+   with the shmid, allocates a new cache and changes the value in
+   the control file to the new shmid.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   5.0.0 SR5
+   .
+   The JVM now checks that the shmid points to a valid java cache
+   before attaching to it and proceeds without Shared Classes
+   support if the cache is not valid.
+   eg.
+   JVMSHRC097E ERROR: Shared Cache "somecache" is corrupt. No new
+   JVMs will be allowed to connect to the cache.
+   Existing JVMs can continue to function, but cannot update the
+   cache.
+   .
+   To obtain the fix:
+   Install build 20070206 or later
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ10773
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA 5 J9 COMMO
+   
+   
+ * REPORTED COMPONENT ID
+   620500127
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-12-13
+   
+   
+ * CLOSED DATE
+   2007-12-13
+   
+   
+ * LAST MODIFIED DATE
+   2007-12-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA 5 J9 COMMO
+   
+   
+ * FIXED COMPONENT ID
+   620500127
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSN
+   UP

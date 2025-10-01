@@ -1,0 +1,130 @@
+Title: IBM PI57725: AST 9.0.3.1: Export scan to ASE as XML fails - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Security AppScan Standard 9.0.3 Fix Pack 2 at Fix Central [http://www-01.ibm.com/support/docview.wss?uid=swg24042152]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  1) Expected behavior:
+   AppScan won't fail on Exporting a Standard 9031 Scan file to
+   XML/Publish Results to AppScan Enterprise
+   2) Observed behavior:
+   AppScan fails on Exporting a Standard 9031 Scan file to
+   XML/Publish Results to AppScan Enterprise
+   3) Workarounds (if applicable):
+   N/A
+   4) Reproduction Steps:
+   Open the client&#226; &#153;s provided .scan file
+   File > Export > &#226; &#156;Scan Results as .XML&#226; &#157;  - note the error
+   that appears when the progress bar is 100%
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * AppScan Standard                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * AppScan fails on Exporting a Standard 9031 Scan file to      *
+   * XML/Publish Results to AppScan Enterprise                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI57725
+   
+   
+ * REPORTED COMPONENT NAME
+   SEC APPSCAN ENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724T5200
+   
+   
+ * REPORTED RELEASE
+   903
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-22
+   
+   
+ * CLOSED DATE
+   2016-05-01
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SEC APPSCAN STD
+   
+   
+ * FIXED COMPONENT ID
+   5724T5900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R903 PSY
+   UP

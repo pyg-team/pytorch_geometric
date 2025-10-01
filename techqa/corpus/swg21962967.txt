@@ -1,0 +1,30 @@
+Title: IBM Setting TDWC session timeout to infinite - United States
+
+Text:
+oom; TDWC; no timeout; leak TECHNOTE (FAQ)
+
+QUESTION
+ Any considerations on setting TDWC session timeout to infinite? 
+
+CAUSE
+It is possible to set TDWC session timeout to practically infinite by following settings.
+1.<TWA_home>/eWAS/profiles/tdwc_profile/config/cells/tdwc_cell/nodes/tdwc_node/servers/tdwc_server/server.xml
+Parameter and value: invalidationTimeout="-1"
+
+2.<TWA_home>/eWAS/profiles/tdwc_profile/config/cells/tdwc_cell/applications/isclite.ear/deployments/isclite/deployment.xml
+Parameter and value: invalidationTimeout="-1"
+
+3.<TWA_home>/eWAS/profiles/tdwc_profile/config/cells/tdwc_cell/security.xml
+Parameter and value: timeout=""2147483647"
+
+
+
+ANSWER
+If you set session timeout to infinite, Http sessions do not timeout and memory used during these sessions will never be released until the actual log out is performed from TDWC. 
+
+
+This could lead to high memory consumption and eventually OOM of java heap.
+
+It is recommended to have finite session timeout values, so that unused memory will be released after session timeout time.
+
+Be careful that closing the browser using "x", without logging out from TDWC, will cause memory to remain until WebSphere is stopped.

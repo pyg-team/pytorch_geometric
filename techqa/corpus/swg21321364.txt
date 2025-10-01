@@ -1,0 +1,49 @@
+Title: IBM Deployment Engine failed to initialize message seen on TCR installation - United States
+
+Text:
+5724T6900 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TCR uninstallation does not remove the Deployment Engine. 
+
+SYMPTOM
+After uninstalling TCR v1.2 and attempting to reinstall, you will see the following message: 
+
+Deployment Engine failed to initialize. The installer will now shut down. Please check with the log files for a more complete description of the failure.
+
+
+CAUSE
+The Deployment Engine was not removed during the TCR uninstallation.
+
+
+RESOLVING THE PROBLEM
+Perform the following steps to proceed with a manual uninstallation of TCR v1.2: 
+
+
+1. Stop WAS process and remove WAS service 
+
+TIP_HOME is your installation directory, where xxxxx is the port chosen during install (default is 16310): 
+For Windows only: 
+TIP_HOME\bin\WASService.exe -stop TIPProfile_Port_xxxxx 
+TIP_HOME\bin\WASService.exe -remove TIPProfile_Port_xxxxx 
+For UNIX/Linux: 
+Stop the server 
+
+2. Remove TIP_HOME 
+
+3. Remove Deployment Engine 1.3.x 
+
+* Note: Delete DE only if it is used by TCR and no other product is using DE *
+
+It is imperative to remove any previous version of DE before deploying this release. To remove previous version of DE, proceed as follow. For non-root user, DE exists under "/home/user_home_directory/.acsi*. Follow the 3 steps below with the adjusted path to the files. (Assumes install drive is C:, adjust as needed)
+
+* Unix: Source the DE environment: ". /var/ibm/common/acsi/setenv.sh" 
+* Remove DE 1.3.x: "/usr/ibm/common/acsi/bin/si_inst.sh -r -f" 
+* Remove Db backup: "rm -rf /usr/ibm/common/acsi" 
+* Remove acsi var: "rm -rf /var/ibm/common/acsi" 
+
+* Windows: Source the DE environment: "C:\Program Files\IBM\Common\acsi\setenv.cmd" 
+* Remove DE 1.3: "C:\Program Files\IBM\Common\acsi\bin\si_inst.bat -r -f"
+* Remove Db backup: "rmdir /s C:\Program Files\IBM\Common\acsi"
+
+Note: If the si_inst.bat -r -f command fails or the removal of the C:\Program Files\IBM\Common\acsi fails, you may need to stop the IBM ADE service.

@@ -1,0 +1,74 @@
+Title: IBM How to either rename, delete, or create a new workflow in IBM Datacap - United States
+
+Text:
+Rename; delete; create; workflow TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to rename, delete, or create a new workflow through IBM Datacap TMweb or Datacap Navigator Administrator. 
+
+SYMPTOM
+Although a workflow is either renamed, deleted, or created via IBM Datacap TMweb or Datacap Navigator Administrator, the change does not seem to take full affect.
+
+
+CAUSE
+When either renaming, deleting, or creating a Workflow, changes are not only performed via TMweb or Datacap Navigator Administrator, but also via the Datacap Application Manager, and as well as making some manual modifications to the corresponding application's configuration files and database.
+
+DIAGNOSING THE PROBLEM
+You will notice any workflow changes only made via TMweb or Datacap Navigator Administrator will not appear anywhere else in Datacap when logging into the application after said modification.
+
+RESOLVING THE PROBLEM
+RENAME Workflow/Job:
+1) Via Windows Explorer (c:\datacap\MyApp\dco_Workflow1), rename your Workflow's related dco folder (eg. from: dco_Workflow1 to: dco_Workflow3)
+2) Via Datacap Application Manager, Find the same Workflow and rename it there as well (eg. from: Workflow1 to: Workflow3)
+3) Via Datacap Application Manager, in the renamed Workflow, find the "Setup DCO" configuration box and look for the newly renamed dco (c:\datacap\MyApp\dco_Workflow3), look for the application's old dco xml and rename it as well (eg. from: Workflow1.xml to: Workflow3.xml )
+4) Proceed to Windows Explorer (c:\datacap\MyApp\dco_Workflow3) and locate the newly renamed XML (eg. Workflow3.xml), open it in edit mode to rename the entry inside (eg. from: Workflow1 to: Workflow3)
+5) While you are there, proceed to the related rules folder (c:\datacap\MyApp\dco_Workflow3\rules) and open the collection.xml in edit mode to rename the entry inside (eg. from: Workflow1 to: Workflow3).
+6) Stop TMweb in IIS (or wTM in IIS or the Datacap Windows Service for Datacap Navigator) and stop the Datacap Server.
+7) Start the Datacap Server, then start TMweb (or wTM in IIS or the Datacap Windows Service for Datacap Navigator).
+8) Log into TMWeb (or Datacap Navigator) to your related application (eg. MyApp) and go to the Administrator section
+9) Highlight the old Workflow name (eg. Workflow1) and rename it as well (eg. Workflow3) and hit Apply
+10) Rename any Jobs at this point as well, if necessary.
+11) If anything was renamed at all, whether it only be the Workflow or Job, be sure to look at each Task under the newly named workflow, in all of the Jobs, to make sure a "Setup" link is blue and available to configure. If not, be sure to push the button to the right as it should read "Create Setup". If the button reads "Copy setup" instead, then ignore. If "Create Setup" was clicked, click Apply after to save this for that task.
+12) While still in the Administrator section, check under both the Users (Groups if LDAP/ADSIS) and Stations to confirm that you still have permissions to the newly named workflow/Jobs/Tasks.
+13) Logout of TMweb (or Datacap Navigator), Stop TMweb in IIS (or wTM in IIS or the Datacap Windows Service for Datacap Navigator) and stop the Datacap Server.
+14) Start the Datacap Server, then start TMweb (or wTM in IIS or the Datacap Windows Service for Datacap Navigator).
+15) Log into Datacap Studio. You should now see the new Worklfow name correctly (eg. Workflow3) to log into.
+16) Once successfully logged in, you should also see the DCO (Document hierarchy) and Rulesets tabs with the new Workflow name (eg. Workflow3)
+17) If you proceed to Datcap Studio's Test tab, you now see the new Workflow/jobs and their related tasks listed under the Workflow tab.
+
+
+
+
+NOTE: In addition, be sure to also verify any direct references to the workflow in the following locations: 
+
+ * Review actions for old workflow name (eg. SQL queries directly referencing the old workflow). 
+ * Look in the database for the references to the correct DCO folder (eg. c:\Datacap\MyApp\Workflow1, should be c:\Datacap\MyApp\Workflow3). Specifically, check in Admin database, under the dco table in the dco_setup column.
+
+
+
+DELETE Workflow: 
+1) Log into TMWeb (or wTM in IIS or the Datacap Windows Service for Datacap Navigator) to your related application (eg. MyApp) and go to the Administrator section 
+2) Highlight the Workflow name (eg. Workflow1) and click Remove 
+3) Via Datacap Application Manager, Find the same Workflow (eg. Workflow1), Click the the small red "X" to remove it. Save Changes at the bottom 
+4) Via Windows Explorer, under your application folder (eg. c:\datacap\MyApp) locate and delete the old workflow folder (c:\datacap\MyApp\dco_Workflow1) 
+
+CREATE new/extra Workflow: 
+1) Via Windows Explorer, under your application folder, locate an existing workflow folder (c:\datacap\MyApp\dco_Workflow1), make a copy and rename to your liking (eg. from: dco_Workflow1 to: dco_Workflow2) 
+2) Via Datacap Application Manager, under your application folder, in the Workflows section, click the "Add new" button. 
+3) In this newly created section, title the new Workflow to match the renamed dco folder copied in the step above (eg. Workflow2) 
+3) Via Datacap Application Manager, in the new Workflow, find the "Setup DCO" configuration box and look for the newly renamed dco (c:\datacap\MyApp\dco_Workflow2), look for the application's old dco xml and rename it as well (eg. from: Workflow1.xml to: Workflow2.xml ) 
+4) Proceed to Windows Explorer (c:\datacap\MyApp\dco_Workflow2) and locate the newly renamed XML (eg. Workflow2.xml), open it in edit mode to rename the entry inside (eg. from: Workflow1 to: Workflow2) 
+5) While you are there, proceed to the related rules folder (c:\datacap\MyApp\dco_Workflow3\rules) and open the collection.xml in edit mode to rename the entry inside (eg. from: Workflow1 to: Workflow2). 
+6) Stop TMweb in IIS and stop the Datacap Server. 
+7) Start the Datacap Server, then start TMweb. 
+8) Log into TMWeb (or wTM in IIS or the Datacap Windows Service for Datacap Navigator) to your related application (eg. MyApp) and go to the Administrator section, and be sure the Workflow section is selected (normally it is by default) 
+9) Click "New" and name it to match the Workflow added in the Datacap Application Manager (eg. Workflow2) 
+10) Add any Jobs at this point as well. 
+11) Add tasks to your new jobs 
+11) Be sure to look at each Task under the newly created workflow, in all of the Jobs, to make sure a "Setup" link is blue and available to configure. If not, be sure to push the button to the right as it should read "Create Setup". If the button reads "Copy setup" instead, then ignore. If "Create Setup" was clicked, click Apply after to save this for that task. 
+12) While still in the Administrator section, check under both the Users (Groups if LDAP/ADSIS) and Stations to confirm that you have permissions to the newly named workflow/Jobs/Tasks. 
+13) Logout of TMweb (or wTM in IIS or the Datacap Windows Service for Datacap Navigator), Stop TMweb in IIS and stop the Datacap Server. 
+14) Start the Datacap Server, then start TMweb (or wTM in IIS or the Datacap Windows Service for Datacap Navigator). 
+15) Log into Datacap Studio. You should see the new Worklfow name correctly (eg. Workflow2) to log into. 
+16) Once successfully logged in, you should also see the DCO (Document hierarchy) and Rulesets tabs with the new Workflow name (eg. Workflow2) 
+17) If you proceed to Datcap Studio's Test tab, you now see the new Workflow/jobs and their related tasks listed under the Workflow tab

@@ -1,0 +1,55 @@
+Title: IBM Commands to manually uninstall BigFix Client on Non-Windows platform - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Commands to manually uninstall BigFix Client on non-Windows platform using the built in package manager. 
+
+ANSWER
+Commands to manually uninstall BigFix Client on Linux:
+1. Stop the Agent process
+/etc/init.d/besclient stop 
+
+2. Run the following rpm command to find the current rpm package.
+rpm -qa |grep -i BESA 
+
+3. Uninstall IEM Client listed on item 2 
+rpm -e BESAgent-XXX 
+
+4. Remove directories left behind manually 
+rm -rf /var/opt/BESClient 
+rm -rf /opt/BESClient 
+rm -rf /etc/opt/BESClient 
+or
+rm -rf /etc/opt/BESClient /var/opt/BESClient /opt/BESClient 
+
+[/support/docview.wss?uid=swg21986361&aid=1] [/support/docview.wss?uid=swg21986361&aid=1]
+
+
+Commands to manually uninstall BigFix Client on AIX:
+
+1. Stop the agent process before removing it. 
+
+ * 
+
+
+2. Uninstall Bigfix Client using "installp -u BESClient" command  * 
+ * 
+
+3. Remove directories left behind manually using "rm -fr <directories left behind>" command 
+rm -rf /etc/opt/BESClient /var/opt/BESClient /opt/BESClient/ 
+
+[/support/docview.wss?uid=swg21986361&aid=2] [/support/docview.wss?uid=swg21986361&aid=2] 
+Commands to manually uninstall BigFix Client on Solaris: 
+
+1. Stop the agent process before removing it.  * 
+ * 
+
+2. Uninstall Bigfix Client using "installp -u BESClient" command  * 
+ * 
+
+3. Remove directories left behind manually using "rm -fr <directories left behind>" command  * 
+
+
+Per how to remove the BigFix client on Mac, please refer to http://www-01.ibm.com/support/docview.wss?uid=swg21505762 [http://www-01.ibm.com/support/docview.wss?uid=swg21505762]

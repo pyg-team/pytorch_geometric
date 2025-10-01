@@ -1,0 +1,28 @@
+Title: IBM Elevated CPU in the TN3270 address space - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Higher than expected levels of CPU (MIPS) are being used by the Telnet server address space. 
+
+CAUSE
+A common cause of elevated CPU usage in TN3270 is higher than expected levels of connection activity, especially if encrypted sessions (SSL, TLS) are configured. This, in turn, can be caused by multiple sessions being disconnected and the client systems immediately reconnecting.
+
+DIAGNOSING THE PROBLEM
+Examine the SYSLOG or the TN3270 JOBLOG for EZZ6034I [https://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.zos.v2r2.halb101/ezz6034i.htm] (or EZZ6035I [https://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.zos.v2r2.halb101/ezz6035i.htm]) messages with SESS DROP or CONN DROP actions. Multiple connection drops will likely occur in batches with the same reason listed; and if there are more than two in a 15 second interval, only two messages where the second has a LUNAME MULTIPLE will be generated. The same IP address will probably show up at regular intervals. These messages will not show up if DEBUG CONN OFF [https://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.zos.v2r2.halz001/telnetdebugstatement.htm] has been configured in the PROFILE for the affected ports. 
+
+If SMFTERM [https://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.zos.v2r2.halz001/telnetsmfinitsmftermstatements.htm] is configured, you can examine the resulting 118 or 119 records to see reasons for past session drops, or to get a complete list of affected client addresses. Collecting a TELNET CTRACE [http://www.ibm.com/support/docview.wss?rs=852&uid=swg21318807#diag] will also show the complete set of client addresses.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ * If you have control over all the client systems, consider changing their configuration to disable Auto-Reconnect or reduce the number of retries (if available). 
+ * If the drop reason is INACT-K, consider disabling the KEEPINACTIVE [https://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.zos.v2r2.halz001/telnetkeepinactivestatement.htm] timer (set to 0). 
+ * If the drop reason is INACT-S, consider disabling the INACTIVE [https://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.zos.v2r2.halz001/telnetinactivestatement.htm] timer (set to 0). 
+ * If the drop reason is INACT-P, consider disabling the PRTINACTIVE [https://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.zos.v2r2.halz001/telnetprtinactivestatement.htm] timer (set to 0). 
+ * If the drop reason is INACT-PF, this is typically a one time event (per client). However, this situation can occur often if an OBEYFILE [https://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.zos.v2r2.halu101/varyp1btn.htm#varyp1btn] command is being regularly performed on the server; review the reasons for why these OBEYFILEs are being performed. 
+ * If the drop reason is ERR 1001, 1006, or 1027, or there are many with TKOVER, the cause might be that an intermediate firewall has an idle session timer. See TechNote 1269806 [http://www.ibm.com/support/docview.wss?rs=852&uid=swg21269806] for recommendations on how to configure the TIMEMARK and SCANINTERVAL [https://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.zos.v2r2.halz001/telnetscanintervalandtimemark.htm] values to avoid this problem. 
+ * If TKOSPECLU [https://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.zos.v2r2.halz001/telnettkospeclutkospeclurecon.htm] is configured, there may be two (or more) client systems configured to request the same LU name. If they are both configured for immediate reconnect and a short takeover interval is specified (especially if it is 0), then there will be constant activity between these two. 
+ * If this is a z/OS 1.9 (or higher) system and the server is using SSL/TLS encryption for these sessions (SECUREPORT [https://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.zos.v2r2.halz001/telnetportsecureportttlsport.htm]), then consider converting to use AT-TLS (TTLSPORT and associated policies [https://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.zos.v2r2.halz001/attlspolicypolicyagent.htm]) to perform this encryption. The result can be lower CPU overhead for the SSL handshake and the encryption and decryption processes. Further reductions can be achieved by ensuring that System SSL is configured [https://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.zos.v2r2.halz002/tlsssl_ssl_csfserv.htm] to use the Cryptographic Coprocessors (if available on this system).

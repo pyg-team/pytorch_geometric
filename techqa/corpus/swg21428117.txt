@@ -1,0 +1,78 @@
+Title: IBM Collecting Data for IBM FileNet Content Engine (CE) Installation or Upgrade Issues - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What information should be collected when you experience a problem during an IBM FileNet Content Engine (CE ) installation or upgrade? 
+Collecting this information before calling IBM support will help you understand the problem and save time analyzing the data. 
+
+ANSWER
+The installation, upgrade or migration of FileNet P8 Content Engine (CE) is a complex task and comprised of multiple steps. Depending on the step or phase of the install/upgrade being completed, different logs will be of use in troubleshooting any issues encountered. The major steps of a CE installation/upgrade can be broken down into 4 phases: 
+
+ 1. Content Engine Installation 
+ 2. Content Engine Configuration/Deployment 
+ 3. Creating the P8 Domain 
+ 4. Upgrading the Content Engine Data
+
+
+The sections below outline the logs that should be reviewed and attached to a PMR if an issue is encountered at a given phase. 
+
+Note: The default paths given below are in Unix format; they are essentially the same paths in Windows, just replace "/" with "\". Only in situations where the Windows path is a different location will the Windows path be specified. 
+
+Content Engine Installation: Laying down the binaries  *  <CE_install_path>/ce_install_4_5_1.txt <CE_install_path>/ce_install_5.0.txt <CE_install_path>/ce_install_5.1.0.txt <CE_install_path>/ce_install_summary.txt 
+ * 
+ * 
+ *  Windows  * C:\Program Files\Zero G Registry\.com.zerog.registry.xml 
+    * C:\Program Files (x86)\Zero G Registry\.com.zerog.registry.xml
+   
+   Unix  * if logged in as root during install:  * /var/.com.zerog.registry.xml 
+      
+      
+    * if logged in as userduring install:  *  <user_home_dir>/.com.zerog.registry.xml 
+      
+      
+   
+   
+
+Content Engine Configuration/Deployment: Running the Configmgr tool CE_install_path/tools/configure/logs/P8ConfigMgr_Console.log CE_install_path/tools/configure/profiles/profile_name/<specific xml script of failing task> CE_install_path/tools/configure/profiles/profile_name/tmp_directory/<specific xml script of failing task>  * 
+ * WebSphere Application Server (WAS)
+ *  WAS admin console – can be used to verify if tasks completed successfully  * JDBC datasources created successfully and a test connection is successful 
+    * LDAP configurations settings are configured as expected 
+    * FileNetEngine application is listed under Enterprise applications and deployed to the expected application server
+   
+   SystemOut.log for dmgr WAS_install_path/profiles/dmgr/logs/dmgr01/SystemOut.log SystemOut.log for CEserver – if failing the deploy task WAS_install_path/profiles/profile_name/logs/CEserver_name/SystemOut.log 
+ * Oracle WebLogic Application Server 
+ *  Weblogic Administration console – can be used to verify if tasks completed successfully  * JDBC datasources created successfully and a test connection is successful 
+    * LDAP configurations settings are configured as expected 
+    * FileNetEngine application is listed under Enterprise applications and deployed to the expected application server
+   
+   CE_Servername.log - if failing the deploy task <Weblogic root>/<server-name>/<server-name>.log 
+ * 
+ * JBoss Application Server
+ *  LDAP issues - check the login-config.xml server.log - if failing the deploy task <jboss install home>/server/default/conf/log/server.log 
+
+Creating the P8 Domain 
+WebSphere Application Server (WAS) WAS_install_root/profiles/<profile_name>/FileNet/<CE_server_name>/ p8_server_trace.log WAS_install_root/profiles/<profile_name>/FileNet/<CE_server_name>/ p8_server_error.log 
+
+Oracle WebLogic Application Server Weblogic_install_root/user_projects/domains/<domain_name>/FileNet/server_name/p8_server_trace.log Weblogic_install_root/user_projects/domains/<domain_name>/FileNet/server_name/p8_server_error.log 
+
+JBoss Application Server Jboss_install_root/bin/FileNet/,server_name>/p8_server_trace.log Jboss_install_root/bin/FileNet/<server_name>/p8_server_error.log 
+Upgrading the Content Engine Data 
+Standalone Upgrader Tool (only available for 3.5.x upgrades) your_upgrade_status.xml CE_install_path/tools/upgrade/upgrader_trace.log 
+Web Upgrade Tool (only available for 3.5.x upgrades)  * WebSphere Application Server (WAS) WAS_install_root/profiles/profile_name/FileNet/upgrader/upgradexxx.log WAS_install_root/profiles/profile_name/FileNet/upgrader/logs/*.log 
+ * Oracle WebLogic Application Server Weblogic_install_root/user_projects/domains/domain_name/FileNet/server_name/p8_server_trace.log Weblogic_install_root/user_projects/domains/domain_name/FileNet/server_name/p8_server_error.log 
+
+ * JBoss Application Server Jboss_install_root/bin/FileNet/server_name/p8_server_trace.log Jboss_install_root/bin/FileNet/server_name/p8_server_error.log 
+
+
+
+Automatic Upgrader Tool (only available for 4.x and higher upgrades)  * WebSphere Application Server (WAS) WAS_install_root/profiles/<profile_name>/FileNet/<CE_server_name>/ p8_server_trace.log WAS_install_root/profiles/<profile_name>/FileNet/<CE_server_name>/ p8_server_error.log 
+
+ * Oracle WebLogic Application Server Weblogic_install_root/user_projects/domains/<domain_name>/FileNet/server_name/p8_server_trace.log Weblogic_install_root/user_projects/domains/<domain_name>/FileNet/server_name/p8_server_error.log 
+
+ * JBoss Application Server Jboss_install_root/bin/FileNet/,server_name>/p8_server_trace.log Jboss_install_root/bin/FileNet/<server_name>/p8_server_error.log 
+
+
+Automatic Upgrader technote for adjusting its behavior: 
+http://www-01.ibm.com/support/docview.wss?uid=swg21428407 [http://www-01.ibm.com/support/docview.wss?uid=swg21428407]

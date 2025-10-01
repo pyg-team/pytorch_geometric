@@ -1,0 +1,25 @@
+Title: IBM Changing the licensing mode of RIT-Agent - United States
+
+Text:
+RIT-Agent; RTVS; RPTS; licensing TECHNOTE (FAQ)
+
+QUESTION
+ Can you change the IBM Rational Integration Tester Agent (RIT-Agent) licensing type after installation? 
+
+CAUSE
+You have installed RIT-Agent and selected one type of licensing.
+You need to change the license type due to error or having a different licensing agreement with IBM.
+
+For example, you have installed in Agent Mode and wish to switch to PVU Mode.
+
+
+ANSWER
+It is not possible to change the licensing type after installation. 
+
+You need to uninstall and reinstall the product again and enter the new license type in IBM Installation Manager (IM). 
+
+See Installing Rational Test Virtualization Server [http://www-01.ibm.com/support/knowledgecenter/SSBLQQ_8.6.0/com.ibm.rational.rtvs.ref.doc/topics/c_inst_rtvs_overview.html] in the Rational Test Workbench Knowledge Center [http://www-01.ibm.com/support/knowledgecenter/SSBLQQ_8.6.0/com.ibm.rational.rit.nav.doc/rtw_version_welcome.html]. 
+
+ 
+
+See also this technote: RIT-Agent fails to start after installation [http://www-01.ibm.com/support/docview.wss?uid=swg21659470] for configuration changes that might be required after changing license type.

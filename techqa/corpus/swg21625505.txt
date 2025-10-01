@@ -1,0 +1,55 @@
+Title: IBM Restoring the IBM Installation Manager history with IBM Business Process Manager (BPM) and WebSphere Enterprise Service Bus (WESB) - United States
+
+Text:
+installation manager im history restore recover import TECHNOTE (FAQ)
+
+QUESTION
+ How can you restore the installation history in IBM Installation Manager after you reinstall IBM Installation Manager? 
+
+ANSWER
+Note: This document contains a procedure that might be better handled by using the "imcl -reinstallIM" command-line function of Installation Manager, which you should try before using these steps. Use of the following steps should be considered a last resort.
+
+
+IBM Installation Manager keeps a history of the applications that it has installed on a machine. If IBM Installation Manager must be completely re-installed, the ability to import or restore the previous history is required; otherwise, all of the applications must be re-installed. To restore the installation history, complete the following steps: 
+
+ 1. Rename the /etc/.ibm/registry/InstallationManager.dat file to /etc/.ibm/registry/InstallationManager.datOLD 
+    
+    
+ 2. Make a backup copy of the /var/ibm/InstallationManager directory just in case, but leave the original /var/ibm/InstallationManager directory in place. The /var/ibm/InstallationManager directory is the IBM Installation Manager application data location that contains all the important IBM Installation Manager product install history information.
+    
+    
+ 3. Rename the old IBM Installation Manager install location (by default)/opt/IBM/InstallationManager to /opt/IBM/InstallationManagerOLD
+    
+    
+ 4. Install the latest version of IBM Installation Manager as a fresh IBM Installation Manager install. There is no need to use the-reinstallIM option.
+    
+    
+    
+    When the new IBM Installation Manager is installed, launch it and check to make sure everything is in order, and the history is there. A good command-line check is: 
+    /opt/IBM/InstallationManager/eclipse/tools/imcl listInstalledPackages
+    
+    
+    
+    You should see output similar to this text:
+    com.ibm.bpm.STD.V80_8.0.0.20120504_0135 
+    com.ibm.websphere.ND.v80_8.0.3.20120320_0536
+    8.0.0.0-WS-BPM-IFJR43689_8.0.0.20120808_2354
+    8.0.0.0-WS-BPM-IFJR44064_8.0.0.20121110_1718
+    8.0.0.0-WS-BPM-IFJR44341_8.0.0.20121018_1544
+    8.0.0.0-WS-BPM-IFJR44697_8.0.0.20121114_1010
+    com.ibm.cic.agent_1.6.0.20120831_1216 
+    [root@linux4627 tools]# ./imcl version
+    Installation Manager (installed)
+    Version: 1.6.0
+    Internal Version: 1.6.0.20120831_1216
+
+
+
+
+If everything is working as desired, you can safely delete the renamed files, renamed directories, and backup files that you used in the previous steps.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Installation / Configuration AIX, Linux, Solaris, Windows 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Express Installation / Configuration Linux, Windows 8.0.1, 8.0, 7.5.1, 7.5 Business Integration WebSphere Enterprise Service Bus Install AIX, HP-UX, Linux, Solaris, Windows 7.5.1, 7.5, 7.0 
+PRODUCT ALIAS/SYNONYM
+ BPM
+WESB

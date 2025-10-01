@@ -1,0 +1,147 @@
+Title: IBM PM91396: SPSS CONCURRENT LICENSING DOCUMENTATION DIRECTS USERS TO AN INAPPROPRIATE RESOURCE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are deploying a UNIX, Linux, or Mac version of "IBM SPSS
+   Statistics Concurrent User Licensing Server 21.0 English
+   Multiplatform eAssembly (CRK3GEN)" and creating a redundant pool
+   of license servers utilizing IPv6.  You follow the documentation
+   which refers you to the "IBM SPSS Concurrent Licensing Tools 9.5
+   - License Manager Administrator Microsoft Windows English
+   (CI8Z8EN)" package and specifically the "WrlfTool.exe"
+   executable for creating the redundant server file (lservrlf)
+   used by the servers in the redundant pool.
+   
+   You find that having created the "lservrlf" file in this way
+   your clients cannot find licenses and your License Administrator
+   tool (WlmAdmin.exe) does not recognize licenses on these
+   servers.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  For this scenario, the 'WrlfTool.exe' is really only appropriate
+   for deployments on a Windows environment.  For Unix, Linux, and
+   Mac OS X, use the command line tool 'rlftool' found in the
+   licensing components installation path.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of Statistis client License Manager 9.5.0.0  on    *
+   * Unix/Linux wishing to monitor their redundant license pool   *
+   * via command line rather than MS Windows-specific             *
+   * Administration Tool.                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * In our documentation we direct the end user to create the    *
+   * redundant license file using the SLM 8.5 Tools               *
+   * (WrlfTool.exe)                                               *
+   * This is approrpriate only for license managers deployed to   *
+   * MS Windows, as these are the only SLM 8.5 we make available  *
+   * for our users.  Unix, Linux and Mac all have SLM version     *
+   * 8.2.x.  Directing these users to the SLM 8.5 WrlfTool.exe    *
+   * sets them up to fail in Japanese, IPv6 environments, as the  *
+   * SLM 8.2.x licenseManagers will not unserstand the '~'        *
+   * separator.                                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been addressed in  the Statistics Client      *
+   * License Manager 9.5.0.2                                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Please upgrade to Statistics 23.0 and the Statistics Client
+   License Manager 9.5.0.2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM91396
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   L00
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-19
+   
+   
+ * CLOSED DATE
+   2015-03-19
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

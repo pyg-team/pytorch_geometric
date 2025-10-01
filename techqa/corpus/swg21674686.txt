@@ -1,0 +1,23 @@
+Title: IBM WebSphere Transformation Extender Trading Manager produces a 999 with UFO data when processing a file with a * Repetition Separator - United States
+
+Text:
+WTX; Trading Manager; Repetition Separator; 999 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In WebSphere Transformation Extender (WTX) Trading Manager, with acknowledgements turned on, a 999 with mixed data element separators is created when processing an inbound 834 file that uses ^ as a data element separator and * as a repetition separator.
+
+UFO = Unidentified Foreign Object 
+
+CAUSE
+This is an defect. The internal 999 file created had to be readjusted to use a correct repetition, x12_library.mms need to be modified for both 997 and 999 repetition element creation.
+
+RESOLVING THE PROBLEM
+Please contact IBM WebSphere Transformation Extender support to request a patch for APAR PI14997. The fix will be included in next release.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Mercator
+Ascential
+DataStage TX
+WTX

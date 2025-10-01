@@ -1,0 +1,32 @@
+Title: IBM Request-type data collected by ITCAM for WAS TEMA - United States
+
+Text:
+ITCAM; L1; L2; was; DC; BCI; CAMADALL; CAMADAGENT TECHNOTE (FAQ)
+
+QUESTION
+ What are the Request-type data collected by ITCAM for WAS TEMA (YN agent) and how are they obtained? In what TEP workspaces are they displayed? What are common reasons for missing data in such workspaces? 
+
+ANSWER
+Request data workspaces get their data from the Byte Code Injection (BCI) done by ITCAM Data Collector into the application and WebSphere system classes. Whenever the instrumented code is executed, ITCAM callbacks are invoked which feed the monitoring data regarding the user transaction to its clients. Request Aggregator is one of the clients which aggregates the request data from these BCI-generated events and stores them for retrieval by TEMA.
+Request Data Monitoring Level and Sampling Rate can be set during TEMA configuration.
+
+Request data are displayed in the following TEP workspaces:
+
+- Application Health: Tracks the health of applications and requests based on threshold values obtained from baselining user requests. It is available both at Level 1 and at Level 2 monitoring.
+
+- Request Analysis: Tracks elapsed time for request completion and breaks down the elapsed time into various J2EE tasks (JDBC, JMS, JNDI). It is available both at Level 1 and at Level 2 monitoring.
+
+- Datasources: Tracks operations done on every configured Data source. It requires Level 2 monitoring.
+
+- JMS Summary: Tracks the time spent on various JMS operations – Browse, Send, Receive for both Queues and Topics. It requires Level 2 monitoring
+
+Missing data in Datasources and JMS Summary workspaces may depend on insufficient Monitoring Level (L2 is required).
+
+Also note that for Request Data to be displayed in workspaces enough user transactions have to be monitored and collected by the Request Aggregator in the Data collector. The Request Collection Sampling Rate (%) setting determines how many requests have to be sampled. If the user load is really low and this percentage is set to 2% (the default value), then it is very likely that the time duration between transactions getting monitored will be large. Hence, these workspaces may not display data for a long time. 
+
+Finally it must be clear that PMI instrumentation level is relevant only for Resource type data, and not for Request type data that are discussed here.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for Application Diagnostics

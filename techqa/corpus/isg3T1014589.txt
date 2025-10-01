@@ -1,0 +1,14 @@
+Title: IBM license converting question - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ license converting question 
+
+RESOLVING THE PROBLEM
+Dear support,While supporting IDS (CSN: 1-2GNJ7) on some ongoing hosts tests, we were wondering if it's possible to know some details (or if there's some documentation) on LSF licensing not contained in "Platform LSF licensing" chapter of the Administration guide.Some example info I'm referring to is:- An LSF server license may be divided into 5 LSF client licenses- An LSF class E license can be used as a lower class licenseCan you please share some details on the above points?Are there other feature "switch" operations permitted?This would help us in testing cluster hosts changes knowing what we can do without asking for demo or LCA. They have LSF 7.0.5Thank you.Best regards-- Roberto MedaNICE Supportroberto@nice-software.comwww.nice-software.comwww.enginframe.comTel: +39 0141 90.15.16Fax: +39 0141 01.98.29Please always cc support@nice-software.comThere are some rules on the base->client conveting and other license switching.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

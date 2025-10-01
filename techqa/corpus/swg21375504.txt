@@ -1,0 +1,16 @@
+Title: IBM RSA SE Licenses not released after TIMEOUT period expires - United States
+
+Text:
+rsa timeout; license timeout; rsase license; rsa license; rsa se license; license not released; timeout license; licenses not released; release license; software architect license release; software architect license timeout TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote identifies why Floating licenses are not released by the License Server after the TIMEOUT period specified in the options file has expired. This technote currently only applies to IBM® Rational® Software Architect Standard Edition, but may also apply to RSA and RSM. 
+
+CAUSE
+It appears to be some background service run by modeling plugins or some RSASE plugins is making license checkout calls in the background, thus the Floating license does not timeout as long as the eclipse is open.
+
+RESOLVING THE PROBLEM
+This is reported as a defect. 
+
+
+The current work-around for this problem is to close Rational Software Architect when the work has been completed. Then the license will be returned to the pool.

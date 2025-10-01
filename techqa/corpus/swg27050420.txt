@@ -1,0 +1,73 @@
+Title: IBM Infrastructure Security Support September 2017 Newsletter - United States
+
+Text:
+newsletter; security NEWSLETTER
+
+ABSTRACT
+ Infrastructure Security Support September 2017 Newsletter: Covering IBM Security SiteProtector, IBM QRadar Network Security [formerly IBM Security Network Protection (XGS)], and IBM Security Network Intrusion Provention System (GX) troubleshooting, news, announcements, training opportunities and how-to articles for users and administrators. 
+
+CONTENT
+
+
+Infrastructure Security Support Newsletter 
+September 2017 
+
+This newsletter is intended to help you, a valued IBM client who has contacted technical support, be proactive in the support and administration of your software. We hope you find it useful!  New for you 
+
+ 
+
+ 1.  August Mid-Month XPU 3708.18021 Release [https://exchange.xforce.ibmcloud.com/search/xpu%203708.18021] 
+    PAM update 3708.18021 contains 10 new events, 2 new moderate event responses, and 2 new aggressive event responses. 
+ 2.  September Super Tuesday XPU 3709.08142 Release [https://exchange.xforce.ibmcloud.com/search/xpu%203709.08142] 
+    PAM update 3709.08142 contains 39 new events, 
+     21 new moderate event responses, and 21 new aggressive event responses. 
+    
+    
+ 3.  Rapid Release XPU 3709.13135 [https://exchange.xforce.ibmcloud.com/search/xpu%203709.13135] 
+    PAM update 3709.13135 contains no new events, 1 new moderate event response, and 1 new aggressive event response. 
+ 4.  IBM Security Network Protection firmware update 5.3.1.14 Readme [http://www.ibm.com/support/docview.wss?uid=swg22007212&acss=danl_4723_web] 
+    IBM Security Network Protection firmware version 5.3.1.14, a firmware update for the XGS NGIPS network protection platform, includes CVE fixes to the IBM Security Network Protection firmware Version 5.3.1. Additionally, this technote includes compatibility, installation, and other getting-started information. 
+ 5.  IBM Security Network Protection firmware update 5.3.3.4 Readme [http://www.ibm.com/support/docview.wss?uid=swg22007211&acss=danl_4723_web] 
+    IBM Security Network Protection firmware version 5.3.3.4, a firmware update for the XGS NGIPS network protection platform, includes the following defect fixes to the IBM Security Network Protection firmware Version 5.3.3. Additionally, this technote includes compatibility, installation, and other getting-started information. 
+ 6.  IBM QRadar Network Security firmware update 5.4.0.2 readme [http://www.ibm.com/support/docview.wss?uid=swg22007210&acss=danl_4723_web] 
+    IBM QRadar Network Security firmware version 5.4.0.2, a firmware update for the XGS NGIPS platform, includes the following defect fixes to the IBM QRadar Network Security firmware Version 5.4.0. Additionally, this technote includes compatibility, installation, and other getting-started information. 
+
+ Learn more 
+
+ 
+
+ 1.  The IBM Security Learning Academy [https://www.securitylearningacademy.com/] 
+    We invite you to take full advantage of a FREE resource by visiting the IBM Security Learning Academy to start building your security skills today! 
+ 2.  Accessing Product Documentation for IBM Security products [http://www.ibm.com/support/docview.wss?uid=swg21434378&acss=danl_4723_web] 
+    Where can you find product documentation for IBM Security products? 
+
+ Get help 
+
+ 
+
+ 1.  End of support notification: IBM Security SiteProtector System 3.1.1 [http://www.ibm.com/support/docview.wss?uid=swg3g491809c98841g92&acss=danl_4723_web] 
+    IBM Security SiteProtector System 3.1.1 will reach End of Support on 2022-12-30. For more information about this product, please visit the IBM software support lifecycle site. 
+ 2.  
+    End of support notification: IBM Security SiteProtector System 3.0.0 [http://www.ibm.com/support/docview.wss?uid=swg3a133332k87727q77&acss=danl_4723_web] 
+    IBM Security SiteProtector System 3.0.0 will reach End of Support on 2022-12-30. For more information about this product, please visit the IBM software support lifecycle site. 
+ 3.  Security Bulletin: IBM Security Network Intrusion Prevention System is affected by a vulnerability in OpenSSL (CVE-2016-2183) [http://www.ibm.com/support/docview.wss?uid=swg22007331&acss=danl_4723_web] 
+    IBM Security Network Intrusion Prevention Systems has addressed the following vulnerability in OpenSSL. The vulnerability is known as the SWEET32 Birthday attack (CVE-2016-2183). 
+ 4.  Security Bulletin: IBM Security Network Protection is affected by a vulnerability in coreutils (util-linux) [http://www.ibm.com/support/docview.wss?uid=swg22003046&acss=danl_4723_web] 
+    A security vulnerability has been discovered in coreutils (util-linux), which is used by IBM Security Network Protection. 
+ 5.  Security Bulletin: Multiple vulnerabilities in IBM Java Runtime affect IBM Security Network Protection [http://www.ibm.com/support/docview.wss?uid=swg22003341&acss=danl_4723_web] 
+    There are multiple vulnerabilities in IBM® Runtime Environment Java™ Version 7 used by IBM Security Network Protection. IBM Security Network Protection has addressed the applicable CVEs. 
+ 6.  Security Bulletin: IBM Security Network Protection is affected by Vulnerabilities in GNU Bash [http://www.ibm.com/support/docview.wss?uid=swg22003045&acss=danl_4723_web] 
+    Security vulnerabilities have been discovered in GNU Bash, which is used by IBM Security Network Protection. IBM Security Network Protection has addressed the applicable CVEs. 
+ 7.  Security Bulletin: Multiple vulnerabilities in IBM Java SDK affect IBM Security Network Protection [http://www.ibm.com/support/docview.wss?uid=swg22007918&acss=danl_4723_web] 
+    There are multiple vulnerabilities in IBM® SDK Java™ Technology Edition, Version 7 Service Refresh 10 Fix Pack used by IBM Security Network Protection. These issues were disclosed as part of the IBM Java SDK updates in July 2017. 
+ 8.  Security Bulletin: IBM Security Network Protection is affected by a vulnerability in glibc [http://www.ibm.com/support/docview.wss?uid=swg22005764&acss=danl_4723_web] 
+    IBM Security Network Protection has addressed the following vulnerability: A security vulnerability has been discovered in glibc. 
+
+ Stay connected 
+
+
+[http://aimrtp1.rtp.raleigh.ibm.com:8080/v1/nl/image-render/infrasec-facebook.png] [https://www.facebook.com/pages/IBM-Security-Support/221766828033861] [http://aimrtp1.rtp.raleigh.ibm.com:8080/v1/nl/image-render/infrasec-twitter.png] [https://twitter.com/AskIBMSecurity] [http://aimrtp1.rtp.raleigh.ibm.com:8080/v1/nl/image-render/infrasec-youtube.png] [http://aimrtp1.rtp.raleigh.ibm.com:8080/v1/nl/image-render/learning_academy.jpg] [https://www.youtube.com/user/IBMSecuritySupport] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM QRadar Network Security Security IBM Security Network Intrusion Prevention System Security IBM Security SiteProtector System

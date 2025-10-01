@@ -1,0 +1,85 @@
+Title: IBM Troubleshooting database problems by using built-in serviceability features of IBM Collaborative Lifecycle Management - United States
+
+Text:
+repodebug; mbean; database; performance; slow; timeout; sqlexception TECHNOTE (FAQ)
+
+QUESTION
+ How do I troubleshoot potential database-related problems or enable verbose logging for SQL queries for IBM Collaborative Lifecycle Management (CLM)? 
+
+ANSWER
+There are a few different ways to approach database performance from the application perspective. The methods that are described are most useful when an application administrator does not have direct access to vendor utilities that can perform similar, if not more verbose, database analysis. Note these are not direct replacements for things like Oracle's Automated Workload Repository (AWR) but can certainly help narrow in on database-related problems so that you can provide your DBA with database metrics from the applications perspective, if not resolve the problem on your own. 
+
+ 1. Database diagnostics
+
+
+There are three database diagnostics available from the applications /admin -> Diagnostics page. Verify that these diagnostics are all green after running all diagnostics.  *  Database Performance - This diagnostic performs queries against the database for 60 seconds to ensure that the performance is within the expected limits. If needed, export the diagnostics by using the Export Results button on the diagnostics page and look at the file that is called com.ibm.team.repository.service.diagnostics.database.internal.databaseStatisticsDiagnostic.html contained within the Diagnostics.zip file.˘ Database - Reports the database and JDBC versions along with a performance measurement. If the performance measurement is exceeds 2500 ms, an error is reported and the network latency between the application server and database should be investigated. Also, consider performing a health check on the database by using the vendor-specific DMBS tools available. Consult a DBA if needed. Database Indices - Ensures that the out-of-the-box database indices are in place on the database. If indices are missing, you can run repotools-<app> -rebuildIndices [https://www.ibm.com/support/knowledgecenter/SSYMRC_6.0.4/com.ibm.jazz.install.doc/topics/r_repotools_rebuildindices.html] to re-create them. This is a fairly quick operation (usually under 10 minutes), not to be confused with repotools -reindex all which is a much more time consuming task that can take hours or possibly days to complete. 
+
+2. Performance widget - Provides a high-level performance overview from an applications dashboard. See the Performance Health Check [https://jazz.net/blog/index.php/2012/05/15/performance-health-check/]wiki article on jazz.net for more information. 
+
+[/support/docview.wss?uid=swg22010123&amp;aid=1] 3. Repodebug "Querystats" - Provides statistics on SQL queries run on the database by a given application. Enabling RepoDebug along with a more detailed description of its capabilities is available here [https://jazz.net/wiki/bin/view/Main/RepoDebug]. To access querystats, enable repodebug on the application you are investigating and access https://<server>:<port>/<application>/repodebug/database/queryStats, or navigate to the /repodebug page and click Database -> Querystats. 
+
+ 
+
+Note: While some features of Repodebug require access control and restarting the server, Querystats can be enabled and run without restarting the server. 
+
+ 
+
+Below are some helpful tips when running and analyzing output from repodebug querystats: 
+
+ *  Start repodebug just before reproducing a performance-related use case and stop it just after the problem has been reproduced. This allows for a more simplified analysis, as leaving querystats that are enabled over a longer period will often skew the results or provide more detail than needed. Keep in mind that there are likely other users in the system doing work, which will also be rolled in to your output. Note that the READ queries are displayed in the top section, the WRITE queries are displayed in the middle, and the OTHER section (ROLLBACK/COMMIT/CONNECT/CLOSE) are shown at the bottom of the output. Make sure to review all sections when analyzing the output. Do not be alarmed when you see multiple ROLLBACKs in the OTHER section, as ROLLBACK is just how the application terminates read queries. Ensure the average time of the ROLLBACKs is in the low/single digit ms range (ideally closer to zero ms). The numbers that are shown are in milliseconds and are a true measurement of how long a query took to run on the database side (does not account for latency between the application server and the database server). When looking at output from repodebug, pay special attention to the number, totalTime and avgTime columns. The queries are sorted by totalTime, which means the query that ran the longest, whether it is one or many executions, are shown at the top of the output for each section. Sometimes it might be necessary to determine what code was responsible for running a given query. This can be accomplished by clicking on the hash value of a query in the output and selecting ENABLESTACKS. Once stacks have been enabled, the associated stack trace is shown in the statistics for the query when clicking the hash value again, or by refreshing the page if you are already in the statistics for a given query that has stacks enabled. You will notice that the parameters of queries are not printed in the output from querystats. If it is necessary to see queries containing parameters, use vendor-specific database tracing tools or enable the logging that is described below. For example, if a query shows SELECT * FROM VVCMODEL.VERSION WHERE URL IN (?, ?, ?) and you need to know the value of the ?'s, use the logging below. This is helpful to capture in the event you want to generate an EXPLAIN plan on the query. 
+
+4. Verbose SQL logging - Enable this for a given application when you want to see all SQL queries in the application log file. This can be done either in the applications log4j.properties file, or by using repodebug. There are two loggers available: 
+
+log4j.logger.sqlTxLogger - Will output all SQL to the application log file 
+log4j.logger.com.ibm.team.repository.service.internal.ExecuteDataQuery - To be used with sqlTxLogger, will print the parameters from the SQL statements. 
+ * To enable using repodebug
+ * 
+ * 
+ * 
+ * https://clmweb.ibm.com/rm/repodebug [https://clmweb.ibm.com/rm/repodebug]
+ * 
+ * 
+ * 
+ * sqlTxLogger
+ * 
+ * 
+ * 
+ * 
+ * Edit Level
+ * 
+ * DEBUG
+ * 
+ * submit. 
+ * 
+ * com.ibm.team.repository.service.internal.ExecuteDataQuery
+ * 
+ * 
+ * 
+ * To enable using log4j
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * log4j.logger.sqlTxLogger
+ * =DEBUG
+ * 
+ * log4j.logger.com.ibm.team.repository.service.internal.ExecuteDataQuery
+ * =DEBUG (
+ * Note
+ * 
+ * )
+ * 
+ * 
+ * 
+ * Reload Log Settings option
+ * 
+ * Reload Log Settings
+ * 
+ * 
+ * 
+
+
+5. Mbeans - For 6.0.3 and higher, an Mbean exists that will allow you to consume a wide variety of metrics from the server, one of them being an SQL activity metric, which will display the top 25 slowest SQL queries. An extensive article on mbeans is forthcoming on jazz.net, however if you are already familiar with consuming Mbeans, you can enable com.ibm.team.repository.service.internal.serviceability.SQLActivityMetricsTask from the applications /admin -> Advanced Properties page by setting Enable SQL Activity Metrics MBean to True. Mbeans can be consumed by a java client or performance monitoring tool, but can also visualized from repodebug using /repodebug -> mxBeans.

@@ -1,0 +1,53 @@
+Title: IBM GMT Clock automatically changes! - United States
+
+Text:
+TWSz SMF SMFPRM00 record type 90 DST Standard Time TECHNOTE (FAQ)
+
+QUESTION
+ Does the GMT automatically change? 
+
+ANSWER
+The answer is yes when the following SMF record '90' is detected as per the following documentation: 
+
+-
+Managing the Workload
+- 
+SC32-1263-06 
+- 
+pg. 301 
+Time zones 
+To avoid shutting down and restarting the Tivoli Workload Scheduler 
+for z/OS systems for daylight savings time, set record 90 in member 
+SMFPRMxx of the SYS1.PARMLIB. At daylight savings time, the time is 
+updated automatically. See Updating SMF Parameters in the Planning 
+and Installation for more information 
+------------------------------------------------------------------------
+Customization and Tuning 
+- 
+SC32-1265-06 
+- 
+pg. 314 
+Customizing GMT clock 
+If you change the local time on a tracker, Tivoli Workload Scheduler 
+for z/OS updates the GMT clock automatically as follows: 
+1. 
+It creates a new clock record and sends a Tivoli Workload Scheduler 
+event to the affected tracker. 
+2. 
+The event triggers a refresh of the GMT clock. 
+3. 
+The event is also forwarded to the controller for synchronization. 
+Note: 
+The auto-detect function works regardless of whether the local time 
+is changed using the set date or set clock command or using the sysplex
+timer. The SMF type 90 record that is required to auto-detect the 
+local time change is created regardless of how the local time is 
+changed. 
+-
+The information is applicable to DST and Standard Time. 
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TWSz TWS

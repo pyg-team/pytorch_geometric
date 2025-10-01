@@ -1,0 +1,28 @@
+Title: IBM Standby configuration on a WebSphere DataPower SOA Appliance is set up by ethernet interface, not by appliance - United States
+
+Text:
+datapower; standby; stand by; failover; fail; fail over; backup; ethernet; ethernet interface; port; device; appliance; 7993; 7993; 7993; machine type 7993 TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ The DataPower standby configuration on a WebSphere DataPower SOA Appliance is configured at the ethernet interface level for separate appliances, not as a backup for another interface on a single appliance. 
+
+RESOLVING THE PROBLEM
+The Standby capability of the DataPower appliance allows one device to serve as a failover for another device. Two ethernet interfaces on the same appliance may not be used as members of a standby group and cannot back each other up. Ethernet interfaces on different appliances must be used as members of a standby group to back each other up. This functionality is set up by ethernet interface, not by appliance. 
+
+Another method to say this is that a device may have only one instance of a standby group.
+
+More information about the standby functionality, including how to configure the ethernet interfaces, can be found in the IBM WebSphere DataPower Administrators Guide. 
+
+Standby configuration may also be configured on the command line, using the standby command in Interface Configuration Mode as documented in the IBM WebSphere DataPower CLI Reference Guide.
+
+To access the product documentation, see WebSphere DataPower Product Documentation Portal. [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21377654]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower Integration Appliance XI50 Business Integration WebSphere DataPower XML Security Gateway XS40 Business Integration WebSphere DataPower XML Accelerator XA35

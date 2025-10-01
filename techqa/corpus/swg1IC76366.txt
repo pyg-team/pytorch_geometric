@@ -1,0 +1,157 @@
+Title: IBM IC76366: SIMILAR TO WLE-2012/APAR IC75822, VISIBILITY PROPERTIES AND EVENT PROPERTIES DO NOT WORK SINCE UPGRADE TO 7.2. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DESC:
+   We upgraded our Lombardi Edition to v7.2 and it seems to have
+   broken the Visibility and Event properties for controls such as
+   Checkbox controls. For instance I have attached a twx file,
+   please import it to see what we are trying to do.
+   
+   There are two checkboxes and it was working just fine on v7.1.
+   One checkbox would become disabled (greyed out) when the other
+   checkbox is selected. This is no longer working. I have tried in
+   different Process Centers all on v7.2 and neither of them work
+   correctly. The attached screenshot is the javascript errors we
+   get in the browser.
+   
+   This is WebSphere Lombardi Edition v7.2 for Linux on System Z.
+   
+   Thanks for your help.
+   
+   Business impact: Visibility and Event properties do not work for
+   any Process Application.
+   
+   
+   BUSINESS IMPACT (REASON FOR HOTFIX)
+   Process Applications usability features do not work as expected,
+   causes inability for Lombardi coaches to process component
+   controls in the manner in which they are intended.
+   
+   We are in a dev cycle, but I would say we are blocked by this
+   issue and
+   cannot move to production if the coaches do not work the way
+   they are
+   intended.  Not only does this cause confusion for the end-user
+   when
+   fields are not hidden or disabled according to coach selections,
+   but it
+   could cause bad or incorrect business data to be submitted on
+   the
+   coaches.  This type of bug can also cause unnecessary helpdesk
+   support
+   calls and end-user frustration.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Appears to be regression.  No work-around at this time.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ERROR DESCRIPTION:
+   
+   DESC:
+   We upgraded our Lombardi Edition to v7.2 and it seems to have
+   broken the Visibility and Event properties for controls such as
+   Checkbox controls. For instance I have attached a twx file,
+   please import it to see what we are trying to do.
+   
+   There are two checkboxes and it was working just fine on v7.1.
+   One checkbox would become disabled (greyed out) when the other
+   checkbox is selected. This is no longer working. I have tried in
+   different Process Centers all on v7.2 and neither of them work
+   correctly. The attached screenshot is the javascript errors we
+   get in the browser.
+   
+   This is WebSphere Lombardi Edition v7.2 for Linux on System Z.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC76366
+   
+   
+ * REPORTED COMPONENT NAME
+   WS LOMBARDI EDI
+   
+   
+ * REPORTED COMPONENT ID
+   5725A0900
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-16
+   
+   
+ * CLOSED DATE
+   2011-07-18
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

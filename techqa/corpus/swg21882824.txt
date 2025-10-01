@@ -1,0 +1,55 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities have been identified in IBM Endpoint Manager for Patch Management shipped with IBM Cloud Orchestrator and IBM SmartCloud Orchestrator - United States
+
+Text:
+CVE-2015-4000; CVE-2015-1788; CVE-2015-1789; CVE-2015-1790; CVE-2015-1791; CVE-2014-3567; CVE-2014-0224; CVE-2014-3566; CVE-2014-6137; CVE-2014-6113; CVE-2015-2808; CVE-2015-0286; CVE-2015-0289 SECURITY BULLETIN
+
+SUMMARY
+ IBM Endpoint Manager for Patch Management is shipped as a component of IBM Cloud Orchestrator, IBM Cloud Orchestrator Enterprise, IBM SmartCloud Orchestrator, and IBM SmartCloud Orchestrator Enterprise. 
+
+VULNERABILITY DETAILS
+Review the security bulletins for IBM Endpoint Manager for Patch Management for vulnerability details and for information about fixes.
+
+
+ * Security Bulletin: Vulnerabilities in OpenSSL affect IBM Endpoint Manager (CVE-2015-0286, CVE-2015-0289) [http://www-01.ibm.com/support/docview.wss?uid=swg21971235] -- NEW
+   
+   
+ * Security Bulletin: Vulnerability in Diffie-Hellman ciphers affects IBM Endpoint Manager (CVE-2015-4000) [http://www.ibm.com/support/docview.wss?uid=swg21971242]
+   
+   
+ * Security Bulletin: Vulnerabilities in OpenSSL including Logjam affect IBM Endpoint Manager (CVE-2015-1788 CVE-2015-1789 CVE-2015-1790 CVE-2015-1791 ) [http://www.ibm.com/support/docview.wss?uid=swg21971238][http://www-01.ibm.com/support/docview.wss?uid=swg21967888] 
+ * Security Bulletin: Vulnerability in RC4 stream cipher affects IBM Endpoint Manager (CVE-2015-2808*) [http://www-01.ibm.com/support/docview.wss?uid=swg21967888][http://www.ibm.com/support/docview.wss?uid=swg21692516] 
+ * Security Bulletin: IBM Endpoint Manager Platform 9.1 is affected by two OpenSSL vulnerabilities, the "POODLE" vulnerability, and two XSS vulnerabilities [http://www.ibm.com/support/docview.wss?uid=swg21692516]
+   
+   
+ * Security Bulletin: IBM Endpoint Manager Platform 9.0 is affected by two OpenSSL vulnerabilities and the "POODLE" vulnerability [http://www.ibm.com/support/docview.wss?uid=swg21692193]
+   
+   
+ * Security Bulletin: Vulnerability in RC4 stream cipher affects IBM Endpoint Manager (CVE-2015-2808) [http://www.ibm.com/support/docview.wss?uid=swg21883852]
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Principal Product and Version Affected Supporting Product and Version IBM Cloud Orchestrator 2.5 IBM Endpoint Manager for Patch Management 9.2 IBM Cloud Orchestrator 2.4, 2.4.0.1, and 2.4.0.2  IBM Cloud Orchestrator Enterprise 2.4, 2.4.0.1, and 2.4.0.2
+
+IBM Endpoint Manager for Patch Management 9.1 IBM SmartCloud Orchestrator 2.3, 2.3.0.1  IBM SmartCloud Orchestrator Enterprise 2.3 and 2.3.0.1
+
+IBM Endpoint Manager for Patch Management 9.0 GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ * 08 February 2016: added link to bulletin CVE-2015-0286, CVE-2015-0289
+* 19 November 2015: added Security Bulletin for vulnerability in Diffie-Hellman ciphers and OpenSSL including Logjam 
+* October 14 2015: added Security Bulletin: Vulnerability in RC4 stream cipher affects IBM Endpoint Manager (CVE-2015-2808*)
+* 19 August 2015: added new release IBM Cloud Orchestrator 2.5
+* 08 May 2015: Added Security Bulletin: Vulnerability in RC4 stream cipher affects IBM Endpoint Manager (CVE-2015-2808)
+* 30 April 2015: Original copy published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

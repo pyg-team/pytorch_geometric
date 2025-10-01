@@ -1,0 +1,98 @@
+Title: IBM WebSphere Commerce search server must use a separate Web server - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Customers with a WebSphere Commerce topology containing Solr and WebSphere Commerce sharing a single Web server must change the configuration. 
+
+CONTENT
+Beginning in WebSphere Commerce Version 7.0 Feature Pack 2, WebSphere Commerce provides new search capabilities [more information about this new search capability is available in the WebSphere Commerce Information Center [http://publib.boulder.ibm.com/infocenter/wchelp/v7r0m0/topic/com.ibm.commerce.developer.doc/concepts/csdmanagesearch.htm]]. The new search capability is implemented in a separate J2EE application based on Solr technology. This WebSphere Commerce Solr application requires its own Web server and is not intended to share the WebSphere Commerce application Web server. Customers who have previously deployed the search server and configured it to share the WebSphere Commerce web server are strongly recommended to update their configuration. Sharing a Web server is not advised and not recommended due to subsequent administration challenges. The following instructions help with the transition from a shared Web server topology to using a separate Web server for the currently deployed Solr application.
+
+
+Note:
+If you have administrative security (global security) configured in the WebSphere Application Server WebSphere Commerce search server 'solrServer' and/or if you have federated your WebSphere Commerce search server, the steps only work if you are using WebSphere Commerce search from Feature Pack 3 or higher. 
+
+ 
+
+Procedure: 
+
+ 1. Install the Web server that will be used by the WebSphere Commerce Solr application and configure it as required. See Step 6 'Configure the Web server for the Solr application" of the Deploying the WebSphere Commerce Search Server topic [http://publib.boulder.ibm.com/infocenter/wchelp/v7r0m0/topic/com.ibm.commerce.developer.doc/tasks/tsdsearchbuilddeployfirst.htm] in the WebSphere Commerce Information Center: 
+ 2. Remove the existing Web server definition for the solrWebserver  * Ensure that your administrative server is started. If WebSphere Commerce Solr application is managed by WebSphere Application Server Deployment Manager (dmgr), start the deployment manager and all node agents. Your cluster can also be started. If WebSphere Commerce Solr application is not managed by WebSphere Application Server Deployment Manager (dmgr), start the WebSphere Application Server solrServer. 
+     * Log into the administrative console for the WebSphere Application Server started in the previous step. See the WebSphere Application Server Information Center [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.nd.doc/info/ae/ae/tcon_startstop.html] for more information about accessing and logging into the administrative console. 
+     * In the administration console, navigate to the Servers -> Server Types -> Web Servers section. Select the check box next to 'solrWebserver' and click the delete button. Save your changes. In steps 4 and 5 below you will recreate the 'solrWebserver Web server definition with updated / corrected values. 
+     * You can log out from and close the WebSphere Application Server administration console.
+    
+    
+ 3. Update the solr-deploy.properties file  * On the system with the Search deployment scripts, locate the solr-deploy.properties file and make a backup.
+       
+       If you deployed search 'locally' (that is, on the system where WebSphere Commerce is installed) then the path to the file will be:
+       <WC_InstallDir>/components/foundation/subcomponents/search/deploy/properties/solr-deploy.properties 
+       
+       If you deployed search on a remote machine then the file would be on that machine at the following path:
+       <working_dir>/search/deploy/properties/solr-deploy.properties
+       
+     * Open the solr-deploy.properties file in a text editor and update the values in the properties file pertaining to your Web server configuration. The properties to examine are: webserverHostname, webserverOS, webserverDefinitionType, webserverInstallLocation, webserverConfigFile, pluginInstallLocation 
+     * Save the solr-deply.properties file
+    
+    
+ 4. Rerun the ANT targets PrepareWASEnvironment ConfigWebserver GeneratePlugin in the deploySearch.xml script  * If you deployed search 'locally' (that is, on the system where WebSphere Commerce is installed) then do the following 
+     * Windows:  * Ensure you are logged in as a user in the administrators group 
+        * Open a command prompt 
+        * Change directory to the WebSphere Commerce 'bin' directory. For example: cd C:\Program Files\WebSphere\CommerceServer70\bin 
+        * Run the script: 
+          config_ant -buildfile ..\components\foundation\subcomponents\search\deploy\deploySearch.xml[-DsolrHome=solrHome][-DSolrWASAdminUser=SolrWASadmin -DSolrWASAdminPassword=SolrWASadmin_pwd]PrepareWASEnvironment ConfigWebserver GeneratePlugin
+       
+       
+     * UNIX, Linux:  * Ensure you are logged in as the non-root user 
+        * Open a command shell 
+        * Change directory to the WebSphere Commerce 'bin' directory. 
+          For example: cd /usr/IBM/WebSphere/CommerceServer70/bin 
+        * Run the script: 
+          ./config_ant.sh -buildfile ../components/foundation/subcomponents/search/deploy/deploySearch.xml[-DsolrHome=solrHome][-DSolrWASAdminUser=SolrWASadmin -DSolrWASAdminPassword=SolrWASadmin_pwd]PrepareWASEnvironment ConfigWebserver GeneratePlugin
+          
+          Where:
+          solrHome: The WebSphere Application Server administrator user ID for the Solr cell.
+          SolrWASadmin: The WebSphere Application Server administrator user ID for the Solr cell.
+          SolrWASadmin_pwd: The WebSphere Application Server administrator password for the Solr cell. 
+          
+          The SolrWASadmin and SolrWASadmin_pwd parameters are needed only (and can be used only) when you are using WebSphere Commerce search from Feature Pack 3 or higher, and WebSphere Application Server administrative security has been enabled on the search server and Solr cell
+          
+       
+       
+     * If you deployed search 'remotely' the do the following 
+     * Windows:  * Ensure you are logged in as a user in the administrators group 
+        * Open a command prompt 
+        * Change directory to the WebSphere Application Server 'bin' directory. 
+          For example: cd C:\Program Files\WebSphere\AppServer\bin 
+        * Run the script: 
+          ws_ant -buildfile .working_dir/search/deploy/deploySearch.xml[-DsolrHome=solrHome][-DSolrWASAdminUser=SolrWASadmin -DSolrWASAdminPassword=SolrWASadmin_pwd] PrepareWASEnvironment ConfigWebserver GeneratePlugin
+       
+       
+     * UNIX, Linux:  * Ensure you are logged in as the non-root user 
+        * Open a command shell 
+        * Change directory to the WebSphere Application Server 'bin' directory. 
+          For example: cd /usr/IBM/WebSphere/AppServer/bin 
+        * Run the script: 
+          ./ws_ant.sh -buildfile working_dir/search/deploy/deploySearch.xml[-DsolrHome=solrHome][-DSolrWASAdminUser=SolrWASadmin -DSolrWASAdminPassword=SolrWASadmin_pwd] PrepareWASEnvironment ConfigWebserver GeneratePlugin
+          
+          Where:
+          solrHome: The WebSphere Application Server administrator user ID for the Solr cell.
+          SolrWASadmin: The WebSphere Application Server administrator user ID for the Solr cell.
+          SolrWASadmin_pwd: The WebSphere Application Server administrator password for the Solr cell. 
+          
+          The SolrWASadmin and SolrWASadmin_pwd parameters are needed only (and can be used only) when you are using WebSphere Commerce search from Feature Pack 3 or higher, and WebSphere Application Server administrative security has been enabled on the search server and Solr cell
+          
+       
+       
+    
+    
+ 5. Propagate / copy the newly generated plugin-cfg.xml to the right path for Web server (as specified in the Web server configuration from step 1 above. 
+ 6. Start the search Web server solrWebserver 
+ 7. Update wc-search.xml's query URL to point to the new Solr Web server. See the topics "WebSphere Commerce search configuration file [http://publib.boulder.ibm.com/infocenter/wchelp/v7r0m0/topic/com.ibm.commerce.developer.doc/tasks/tsdwcsearchworkingwith.htm]" and "Changing properties in the WebSphere Commerce search configuration file [http://publib.boulder.ibm.com/infocenter/wchelp/v7r0m0/topic/com.ibm.commerce.developer.doc/tasks/tsdwcsearchcom.htm]" in the WebSphere Commerce V7.0 Information Center for details on properly updating this file. 
+ 8. On the Web server that was previously shared between Commerce and Solr, remove the configuration information that was specific for the Solr application  * It no longer needs to listen on the search port. Remove the entry:
+       Listen host_name:3737 
+     * Regenerate and propagate the plug-in for that Web server
+    
+    
+ 9. Restart all WebSphere Commerce servers, WebSphere Commerce search servers, and Web servers

@@ -1,0 +1,68 @@
+Title: IBM Importing a license.upd file results in License Keys are not for this machine error - United States
+
+Text:
+host; details; import; licensing update file; upd; License keys are not for this machine; LKAD; .upd; 22049; Licensing; General Information; Windows; 2003.06.00; 2003.06.01; 2003.06.10; 2003.06.12; 2003.06.13; 2003.06.14; 2003.06.15; 2003.06.16; License Keys are not for this machine; license.upd; license; 1125500; 22049 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to import a license.upd file to run IBM Rational Software results in the error "License Keys are not for this machine". 
+
+CAUSE
+There are several possible causes for this error. 
+
+ 1. The host ID in the license.upd file does not match the host ID of the computer it is being imported on. 
+ 2. The license.upd file is unable to import into the correct license.dat file. 
+ 3. The host name or IP Address in the license.upd file does not match the host name or IP Address of the computer it is being imported on. 
+ 4. The wrong host id identifier was used when creating the license key in the License Key Center. You might have entered the disk id as host id, but then used as identifier "Ethernet Address Windows, Linux or Unix" instead of "Disk Serial Number (Windows only), or entered the ethernet address of the machine hosting the license(s) but forget to change the host id identifier to "Ethernet Address Windows, Linux or Unix"
+
+RESOLVING THE PROBLEM
+To resolve this error, perform the following: 
+
+ 1. Check the Host Details.
+    
+    Go to Start > Run... type in hostinfo and click OK.
+    
+    This will display the Host Name and Disk Serial Number (Host ID). The Ethernet ID is also available by clicking on the Alternate Host ID button. 
+    
+    These details must match the license file exactly. To check the host details of the license file, open the .upd file with any text editor, and scroll down until you find the lines:
+    
+    #-# Host Name for this machine: <hostname>
+    #-# Host ID for this machine: <Host ID>
+    
+    *** If the license file was requested with the Host ID (diskID), the DISK_SERIAL_NUM= prefix must appear in front of the Host ID.
+    
+    For example: #-# Host ID for this machine: DISK_SERIAL_NUM=1234abcd
+    
+    Note: Dashes in the diskID will render the license file invalid as well
+    
+    *** If the license file was requested with the Alternate Host ID, the DISK_SERIAL_NUM= prefix should not appear in front of the Host ID
+    
+    For example: #-# Host ID for this machine: 00b0d0f68fea
+    
+ 2. The Ethernet ID in the license file is correct, but the file still will not import.  1. With some versions of the Rational License Key Administrator, when you use the Ethernet ID as the Host ID, even if it is correct, it will not import. 
+     2. Additionally, Windows 2000 allows for establishment of a virtual network environment where network access is not available. This is done using the Microsoft Loopback Adapter. Rational License Key Administrator does not import .upd files generated using the Ethernet ID of the Loopback Adaptor.
+        
+        In either scenario (A or B), overcome them by renaming the license.upd file to the *.dat file, and save it in the correct location.
+        
+        If the license.upd file is for Floating licenses, rename it to rational_server_perm.dat.
+        If the license.upd file is for Nodelock licenses, rename it to rational_perm.dat.
+        
+        The *.dat file needs to be saved in <install_dir>:\Program Files\Rational\common
+        
+        For Floating licenses, the Rational License Server must be started before the new licenses will take effect.
+        
+        Starting the License Server manually:
+        
+        On a Windows 2000 system:  1. Go to Start > Settings > Control Panel, open Administrative Tools and open Services 
+         2. Double click the FLEXlm License Manager in the Services listing 
+         3. In the General tab, click Stop if the service is started and then click the Start 
+        
+        
+    
+     * On a Windows NT system:
+     *  Click Start > Settings > Control Panel and then open Services Double click the FLEXlm License Manager in the Services listing In the General tab, click Stop if the service is started and then click the Start
+       
+       
+    
+    
+
+To correct the mistake in item 4 in the cause, you will first need to return the erroneous license key(s) using the "View and return keys" link in the left margin of your IBM Rational License Key Center and then create new keys using the correct host details,

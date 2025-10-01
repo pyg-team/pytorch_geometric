@@ -1,0 +1,133 @@
+Title: IBM JR59388: TO CONNECT SQL SERVER DATABASE, SUPPORT IS REQUIRED FOR IBM BPM USING SQLJDBC42.JAR WITH JAVA 8 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+8.6.0.201712-WS-BPM-IFJR59388 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager&fixids=8.6.0.201712-WS-BPM-IFJR59388&source=SAR]
+8.6.0.0-WS-BPM-IFJR59388 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager&fixids=8.6.0.0-WS-BPM-IFJR59388&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  According to the Microsoft SQLServer database statement,
+   sqljdbc42.jar supports Java 8 and later versions. Therefore,
+   support for IBM Business Process Manager (BPM) is needed so you
+   can use sqljdbc42.jar with Java 8 to connect to the Microsoft
+   SQL Server database.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  LOCAL FIX:Ø
+   N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available that enables IBM BPM to support to use
+   sqljdbc42.jar with Java 8 so you can connect to a Microsoft  SQL
+   Server database. This problem is already fixed in IBM BPM V8.6
+   CF2017.09 and later versions.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR59388
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM
+   
+   
+ * REPORTED COMPONENT ID
+   5737A5700
+   
+   
+ * REPORTED RELEASE
+   860
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-04-10
+   
+   
+ * CLOSED DATE
+   2018-04-20
+   
+   
+ * LAST MODIFIED DATE
+   2018-04-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM
+   
+   
+ * FIXED COMPONENT ID
+   5737A5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS

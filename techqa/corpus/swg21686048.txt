@@ -1,0 +1,99 @@
+Title: IBM Recreate the database indexes for Event Notification in order to improve performance - United States
+
+Text:
+[KickstartTemplateField]mdmrnv114 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The indexes used on the mpi_entoque_??? table and the mpi_evtxmsg_??? table are not optimized for the SELECT statements executed against them for Event Notification. Optmizing these indexes greatly improves the performance of the database query thereby improving the performance of Event Notification. 
+
+SYMPTOM
+Slow query times for the mpi_entoque_??? table and the mpi_evtxmsg_??? table.
+
+
+CAUSE
+The columns used in the query are either not present in the index or they are ordered incorrectly for the index to be used. As a result, query times are slow for a full table scan.
+
+ENVIRONMENT
+ALL
+
+DIAGNOSING THE PROBLEM
+Executing the database platform's specific performance report will reveal slow query times for the mpi_entoque_??? table and the mpi_evtxmsg_??? table.
+
+RESOLVING THE PROBLEM
+Recreate the database indexes. To do so, drop the existing index and create the new index. See the examples for the creation of the indexes for each database platform. 
+
+
+
+
+The indexes must be recreated for each entity type. (In the examples, replace the ??? with the entity types configured for the system.) In addition, storage groups and tables spaces might need to be completed for certain database platforms.
+
+DATABASE PLATFORM: DB2 LUW
+
+CREATE INDEX MPI_ENTOQUE2_??? ON MPI_ENTOQUE_???
+(WRKOWNER ASC,
+AUDRECNO ASC,
+WRKPRIOR ASC,
+MEMRECNO ASC); 
+
+CREATE INDEX MPI_EVTXMSG2_??? ON MPI_EVTXMSG_???
+(CHECKSUM ASC,
+EVTTYPENO ASC,
+EVTDESTNO ASC);
+
+
+
+
+DATABASE PLATFORM: DB2 for z/OS
+
+CREATE INDEX MPI_ENTOQUE2_??? ON MPI_ENTOQUE_???
+(WRKOWNER ASC,
+AUDRECNO ASC,
+WRKPRIOR ASC,
+MEMRECNO ASC) USING STOGROUP <STOGROUP_NAME>; 
+
+CREATE INDEX MPI_EVTXMSG2_??? ON MPI_EVTXMSG_???
+(CHECKSUM ASC,
+EVTTYPENO ASC,
+EVTDESTNO ASC) USING STOGROUP <STOGROUP_NAME>;
+
+
+
+
+DATABASE PLATFORM: Oracle
+
+CREATE INDEX MPI_ENTOQUE2_??? ON MPI_ENTOQUE_???
+(WRKOWNER ASC,
+AUDRECNO ASC,
+WRKPRIOR ASC,
+MEMRECNO ASC) TABLESPACE <INDEX_SPACE>; 
+
+CREATE INDEX MPI_EVTXMSG2_??? ON MPI_EVTXMSG_???
+(CHECKSUM ASC,
+EVTTYPENO ASC,
+EVTDESTNO ASC) TABELSPACE <INDEX_SPACE>;
+
+
+
+
+DATABASE PLATFORM: Microsoft SQL Server
+
+CREATE INDEX mpi_entoque2_??? ON <SCHEMA>.mpi_entoque_???
+(wrkowner ASC, 
+audrecno ASC, 
+wrkprior ASC, 
+memrecno ASC); 
+
+CREATE INDEX mpi_evtxmsg2_??? ON mpi_evtxmsg2_???
+(checksum ASC,
+evttypeno ASC,
+evtdestno ASC);
+
+RELATED INFORMATION
+ Product documentation - Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSWSR9_11.4.0]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management Initiate Master Data Service Information Management InfoSphere Master Data Management Server Information Management InfoSphere Master Data Management Server for Product Information Management

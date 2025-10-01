@@ -1,0 +1,66 @@
+Title: IBM FSR - Save Failed Warning when browsing through Word objects. - United States
+
+Text:
+FSR; GPO; Save Failed TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to leave a Word object in Cognos Financial Statement Reporting you receive the following warning message:
+
+"Save failed for the object Word_ObjectName because Microsoft Office is not responding. Please close any open Microsoft Office dialog boxes and try again. See logs for details." 
+
+SYMPTOM
+Inside the log file, Clarity.FSR.UI_yyyy_mm_dd.log you will see the following error message:
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 0 Office did not respond when attempting to Save Data for the object 'Word_ObjectName'
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 1 Message:
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 2 Office is not responding.
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 3 Call Stack:
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 4 at Clarity.FSR.Office.WordWrapperEX.Word2010Save(Object wordDocument, String filename, String objectName, Int32 objectId)
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 5 at Clarity.FSR.Office.WordWrapperEX.SaveWord(Object wordDocument, String filename, String objectName, Int32 objectId)
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 6 at Clarity.FSR.UI.Controls.WordControl.SaveDocument()
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 7 at Clarity.FSR.UI.Forms.LayoutForm.HasFileChanged(ObjectRow or, Boolean objectIsEditable, Boolean IsReferenceObject, String& XmlData, Boolean IsNew)
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 8 at Clarity.FSR.UI.Editors.ObjectEdit.UpdateContentInDatarow(ObjectRow or, String xmlData, Boolean newRow, Boolean isNewFile, Boolean discardExcel, Boolean typeChanged, workflow workFlow, List`1 globalVariables)
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 9 at Clarity.FSR.UI.Editors.ObjectEdit.SetObjectRow(String nodeId, ObjectRow or, Boolean NewRow, Boolean DiscardExcel, List`1 globalVariables)
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 10 at Clarity.FSR.UI.Forms.LayoutForm.SaveData(Boolean ShowAlert, Boolean NormalUpdate, Boolean DiscardExcel, CallSource caller)
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 11 
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 12 INNER EXCEPTION:
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 13 Message:
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 14 Exception has been thrown by the target of an invocation.
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 15 Call Stack:
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 16 at System.RuntimeType.InvokeDispMethod(String name, BindingFlags invokeAttr, Object target, Object[] args, Boolean[] byrefModifiers, Int32 culture, String[] namedParameters)
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 17 at System.RuntimeType.InvokeMember(String name, BindingFlags bindingFlags, Binder binder, Object target, Object[] providedArgs, ParameterModifier[] modifiers, CultureInfo culture, String[] namedParams)
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 18 at System.Type.InvokeMember(String name, BindingFlags invokeAttr, Binder binder, Object target, Object[] args)
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 19 at Clarity.FSR.Office.WordWrapperEX.Word2010Save(Object wordDocument, String filename, String objectName, Int32 objectId)
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 20 
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 21 INNER EXCEPTION:
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 22 Message:
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 23 The value specified by CompatibilityMode is prohibited due to administrator policy. Please contact your administrator for more information.
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 24 Call Stack:
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 25 
+2013/09/12 12:34:11.521 21124 0 Clarity.FSR.UI Error 26 
+
+
+CAUSE
+This is caused by the Group Policy defined for "Set default compatibility mode on file creation"
+
+ENVIRONMENT
+FSR 6.6.1.0 and newer
+Office 2010 and 2007
+
+DIAGNOSING THE PROBLEM
+1. Open a Word object that is editable inside FSR;
+2. Leave the Word object;
+
+After step two you receive the following warning:
+
+
+
+
+[/support/docview.wss?uid=swg21649688&amp;aid=1]
+
+
+
+RESOLVING THE PROBLEM
+From the Domain Controller perform the following steps:
+1. Go to Group Policy Management Console;
+2. Identify the GPO for "Set default compatibility mode on file creation" in Word, by default this is under User Configuration > Administrative Templates > Classic Administrative Templates (ADM) > Microsoft Word 2010 > Word Options > Save 
+3. Change the "Set default compatibility mode on file creation" GPO to Full functionality mode

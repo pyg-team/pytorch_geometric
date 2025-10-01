@@ -1,0 +1,99 @@
+Title: IBM WebSphere Application Server fails to start after migrating the Content Manager for Enterprise Edition V8.4 (CM)  database instance from 32-bit to 64-bit. - United States
+
+Text:
+WebSphere hang 32 to 64 bit upgrade hang TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The WebSphere Application Server startServer.sh server1 command hangs after the migration of the CM DB2 instance from 32-bit to 64-bit. 
+
+SYMPTOM
+The startServer.sh hangs with the SystemOut.log frozen at the following line: 
+
+[MM/DD/YY HH:MM:SS:SSS TZ] threadid SharedPool I J2CA0086W: Shareable connection MCWrapper id 12345678 Managed connection WSRdbManagedConnectionImpl@1efe1efe State:STATE_TRAN_WRAPPER_INUSE Thread Id: 0000001a Thread Name: server.startup : 2 Handle count 1
+from resource ibm/cm/rm/icmrm/jdbc/rmdb was used within a local transaction containment boundary.
+
+
+CAUSE
+During the migration of the CM DB2 database instance from 32-bit to 64-bit the library server database and the resource manager database were not rebound.
+
+
+ENVIRONMENT
+AIX, DB2, WebSphere Application Server V6
+
+
+
+DIAGNOSING THE PROBLEM
+ 1. Verify that the SystemOut.log is no longer logging messages beyond the shareable connection warning message – J2CA0086W. 
+
+ 
+2: Confirm that the resource manager is waiting for a response from DB2 in the following location:
+
+ICMRM:TRACE YYYY-MM-DD HH:MM:SS.SSSSSS context: [server.startup : 0] - sql: SELECT PROPERTYNAME, PROPERTYVALUE, PROPERTYBINARY FROM RMCONFIGURATION - getRMProperties(ARMSMSMetadataManagerDB.java:2591)
+
+This can be done by capturing a trace on the resource manager. Modify the following file to enable debug logging for the resource manager:
+
+/usr/IBM/WebSphere/AppServer/profiles/AppSrv01/installedApps/hostnameNode01Cell/icmrm.ear/icmrm.war/icmrm_logging.xml
+
+such that it looks like the following:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/ [http://jakarta.apache.org/log4j/]"
+debug="false">
+<!--RM log4j configuration fileGenerated on Wed Dec 02 09:22:21 EST
+2009Note: This file should not be modified directly.-->
+<appender name="FILE" class="org.apache.log4j.FileAppender">
+<param name="File"
+value="/tmp/ibm_pmrno_bno_cno.logfile"/>
+<layout
+class="com.ibm.mm.icmrm.logging.Log4jPatternLayout">
+<param name="ConversionPattern" value="ICMRM:%-7p
+%d{GMT} context:%x [%t] - %-50m - %M(%F:%L)%n"/>
+</layout>
+</appender>
+<root>
+<priority value="DEBUG"
+class="com.ibm.mm.icmrm.logging.ICMRMPriority"/>
+<appender-ref ref="FILE"/>
+</root>
+</log4j:configuration>
+
+Then restart the WebSphere Application Server server1 and check that the resource manager is waiting for a response from a query into the RMCONFIGURATION table. For example:
+
+tail /tmp/ibm_pmrno_bno_cno.logfile
+
+3: During the hang condition follow the instructions in the following technote under the section “Collecting data manually.”
+
+MustGather: Performance, hang, or high CPU issues on AIX [http://www-01.ibm.com/support/docview.wss?uid=swg21052641]
+
+The three javacore files produced will show that the Resource Manager is waiting on a request to the DB2 Type 4 driver:
+
+XMTHREADINFO "server.startup : 2" (TID:0x349A4600, sys_thread_t:0x336EF8EC, state:R, native ID:0x001F4039) prio=5
+4XESTACKTRACE at java/net/SocketInputStream.socketRead0(Native Method)
+4XESTACKTRACE at java/net/SocketInputStream.read(SocketInputStream.java:155)
+4XESTACKTRACE at com/ibm/db2/jcc/c/hb.b(hb.java:184)
+.
+.
+4XESTACKTRACE at com/ibm/mm/icmrm/mdmanager/sms/ARMSMSMetadataManagerDB.getRMProperties(ARMSMSMetadataManagerDB.java:2593)
+
+
+RESOLVING THE PROBLEM
+Confirm that you have followed all the steps in the section, “Upgrading to 64-bit DB instances and DB2 V9 on AIX or Solaris”, in the following document: 
+
+
+http://www.ibm.com/support/docview.wss?uid=swg21284899&aid=1 [http://www.ibm.com/support/docview.wss?uid=swg21284899&aid=1]
+
+In addition to these steps you must add a rebind of the Resource Manager database after the rebind of the Library Server database. For example:
+
+db2rbind rmdb -l rmbindlog -u rmadmin -p password all
+
+Finally, before running config_CM, you must enable debug logging and verify that the config_CM utility completed successfully by closely examining the debug log.
+
+IBM_CM_LOGLEVEL=7
+export IBM_CM_LOGLEVEL
+config_CM
+vi /opt/IBM/db2cmv8/log/cmconfig.log
+
+RELATED INFORMATION
+ WebSphere mustgather [http://www.ibm.com/support/docview.wss?uid=swg21052641]
+Upgrading to 64 bit DB2 instances [http://www.ibm.com/support/docview.wss?uid=swg21284899&aid=1]

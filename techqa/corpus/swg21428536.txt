@@ -1,0 +1,40 @@
+Title: IBM Invalid character in certificate label causes SSL0227E message - United States
+
+Text:
+IHS SSL SSL0227E Invalid character SSLServerCert TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to complete SSL handshake; SSL0227E message appears in Web server error log. 
+
+SYMPTOM
+After configuring the SSLServerCert directive in the httpd.conf file, and specifying the label for the desired certificate, SSL handshake fails. The following message is observed in the error log of the Web server:
+
+SSL0227E: SSL Handshake Failed, Specified label could not be found in the key file
+
+
+CAUSE
+The certificate label name, when viewed in the Key Management Utility (iKeyman), should not contain reserved characters such as "; ; - _" ( semicolon, colon, dash, and so on). These are reserved characters and should not be used as part of the label name.
+
+ENVIRONMENT
+IBM HTTP Server with SSL enabled
+
+RESOLVING THE PROBLEM
+
+
+
+ 1. Rename the certificate label name and remove the reserved characters.
+    
+    
+ 2. Update the SSLServerCert directive in the httpd.conf file with the corrected certificate label name.
+    
+    
+ 3. Restart the Web server.
+
+
+Renaming options:  * V7 Use the iKeyman GUI from IBM HTTP Server V7. The iKeyman GUI within IBM HTTP Server version 7 has the option to rename a certificate label.
+   
+   (All Java 1.6 based Global Security Kit (GSKit) versions provide the option of renaming the certificate label)
+   
+   On IBM HTTP Server versions prior to V7, there is no option in the iKeyman GUI to rename the certificate label. In that case, one option would be to move the kdb file to a machine with IBM HTTP Server V7, rename the certificate label on that machine using the iKeyman from IBM HTTP Server V7 and then copy the kdb file back to the original machine. 
+   
+   Note: The certificate label name cannot be changed using the command-line gsk7cmd "modify" option. Currently the only modifiable field is the Certificate trust field. For more details, refer to the Key Management Utility command-line interface (gsk7cmd) syntax [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.ihs.doc/info/ihs/ihs/rihs_ikeycmdsyn.html].

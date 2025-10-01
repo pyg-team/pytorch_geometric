@@ -1,0 +1,198 @@
+Title: IBM PM77236: UNEXPECTED TABLESPACE GROWTH DURING UPDATE'S WHEN ROW-LEVEL-LOCKING & SMALL MAXROWS VALUE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Tablespaces may not be using available space on a page for
+   UPDATE's, causing unexpected tablespace growth.
+   .
+   This growth problem may occur when all of the following occur:
+   .
+    1) Row-Level-Locking is in affect.
+    2) Multiple units-of-work are updating the same page at the
+       same time.  Some change must be affected holes (shrinking
+       or deleting a row).
+    3) The page already has MAXROWS number of rows on it.
+   .
+   When space is being looked for on a page, but another update
+   is already in progress on the same page that affect holes, by
+   either changing a row to be smaller or deleting a row, then
+   the holes on that page cannot be used at this point.
+   The contiguous freespace at the end of the page, if any,
+   might be able to be used.
+   .
+   The current code, at the point described above, checks the
+   number of rows, to see if it is already at the MAXROWS value,
+   and if it is, then other pages are then checked for space.
+   This logic is correct, if the operation is an INSERT, but not
+   correct for an UPDATE, as it would not be adding a new row, and
+   the existing space on the page could have been used.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Increase the MAXROWS value.
+   Change to Page-Level-Locking.
+   Avoid updates to same pages, if possible.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: DB2 9 and 10 for z/OS users of tablespaces   *
+   *                 with MAXROWS attributes under RRL - row      *
+   *                 level locking.                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Unexpected Growth of tablespaces        *
+   *                      under massive concurrent delete and     *
+   *                      update operations.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Under the following circumstances, the tablespace can grow:
+    (1) The tablespace is defined without hash organization.
+    (2) Row-Level-Locking is in affect
+    (3) Multiple units-of-work are updating the same page
+        at the same time and the total RIDs already reached the
+        MAXROWS.
+    (4) The page has reached the MAXROWS limit, but the page
+        has contiguous free space to hold updated row size.
+   Today, DB2 code verifies the MAXROWS limit first and eliminates
+   the need to use contiguous free space within the page during
+   the UPDATE operation which creates a bigger size of row.
+   As a result, the updated row was processed as an overflow
+   record which is then inserted to other data pages and caused
+   more data pages to be created.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DB2 code is modified to ignore the MAXROWS checking for UPDATE
+   operation which allows the UPDATE to use the contiguous free
+   space if it is adequate.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM77236
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-16
+   
+   
+ * CLOSED DATE
+   2013-01-03
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK90725 UK90726
+   
+   
+
+MODULES/MACROS
+ *  DSNIREPR DSNISGRT DSNISMRT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY UK90725 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK90725]
+   UP13/01/19 P F301
+   
+   
+ * R910 PSY UK90726 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK90726]
+   UP13/01/19 P F301
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

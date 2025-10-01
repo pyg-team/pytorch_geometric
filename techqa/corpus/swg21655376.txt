@@ -1,0 +1,37 @@
+Title: IBM Steps to do a silent configuration of the WebLogic J2EE Data Collector. - United States
+
+Text:
+silent install config configuration J2EE DC Weblogic TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ Steps to do a silent configuration of the WebLogic J2EE Data Collector. 
+
+ANSWER
+These are the detailed and easy steps to do a silent configuration of the ITCAM for J2EE WebLogic DC. 
+
+(Note: This is for an Unix-based J2EE WebLogic DC but can be used for a J2EE WebLogic DC on Windows also. Just change the paths in the attached response file to the Windows format. Also note that this is a silent config only and assumes that you have already done the silent install [http://www-01.ibm.com/support/docview.wss?uid=swg21654993].) [http://www-01.ibm.com/support/docview.wss?uid=swg21654993] 
+
+1. Set the JAVA_HOME variable to the JRE path being used. Most DC installations will require JRE 1.5 or higher. To set the JAVA_HOME, simply use the export command. For example, export JAVA_HOME=/usr/java6. 
+
+2. Detach the attached default itcam_configure.rsp file provided here. Open this file and change the hostnames, the paths, userid and any other parameter that applies to your specific environment. The password parameter is commented out in the file, but you can use it on the command-line (see screenshot below.) 
+
+3. Check the userid being used to configure the DC. In my case this is root. In your case, the userid may be non-root but must have sufficient permissions to read, write and execute the files under the J2EE WebLogic directories. 
+
+4. Start your J2EE server. The server must be running before configuration is attempted. 
+
+5. Now run the silent config as shown in the screenshot below. Immediately after the silent config command, do a echo $? as shown in the screenshot below and check the return code, it should say 0. If not, then you have an error, look at the trace-install.log logfile to see what caused it. 
+
+6. If you get a return code of 0, check your server config file to see if its configured successfully. (For example, in WebLogic, look at the startWebLogic.sh file to see if the itcam arguments are inserted correctly.) If successful, restart the WebLogic server to pick up the new changes. 
+
+Here's the config_dc.sh command to do the silent configuration of the J2EE WebLogic DC. Notice the password is passed on the command-line here in case you don't want to specify it in the response file.
+[/support/docview.wss?uid=swg21655376&aid=1] [/support/docview.wss?uid=swg21655376&aid=1]
+
+itcam_configure.rsp [/support/docview.wss?uid=swg21655376&aid=3]itcam_configure.rsp [/support/docview.wss?uid=swg21655376&aid=2] 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for J2EE ITCAM J2EE WEBLOGIC Solaris, Solaris Opteron, AIX, HP-UX, Linux, Windows 6.1 
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM for J2EE ITCAMfAD

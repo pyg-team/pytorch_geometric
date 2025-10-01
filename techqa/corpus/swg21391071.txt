@@ -1,0 +1,16 @@
+Title: IBM How do I find the total number of annotations and the documents that have annotations on IBM FileNet Image Services - United States
+
+Text:
+MKF_tool; f_annotationflag TECHNOTE (FAQ)
+
+QUESTION
+ How do I find annotations and how to identify which documents have annotations associated with them in FileNet Image Services? 
+
+ANSWER
+FileNet Image Services annotations are stored in the Permanent database as a proprietary FileNet format with, size, color, font, format and the actual annotation content information.
+To count total number of annotations on an Image Services System: 
+
+ * 
+
+
+To identify the documents that have annotations:  *

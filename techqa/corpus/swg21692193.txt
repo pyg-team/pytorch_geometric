@@ -1,0 +1,73 @@
+Title: IBM Security Bulletin: IBM Endpoint Manager Platform 9.0 is affected by two OpenSSL vulnerabilities and the "POODLE" vulnerability - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Vulnerabilities have been discovered in the OpenSSL libraries used by IBM Endpoint Manager 9.0. Two of these vulnerabilities could allow attackers to create a denial of services attack or to craft a man-in-middle attack to hijack sessions or to get sensitive information.
+
+Attackers could also hijack a browser session to gain sensitive session information using the "POODLE" attack. 
+
+VULNERABILITY DETAILS
+An OpenSSL advisory was announced October 15 of 2014. Two of the vulnerabilities detailed in this advisory affect IBM Endpoint Manager Platform 9.0. 
+
+The first one is a memory leak in the tls_decrypt_ticket function that allows an attacker to craft a denial of service attack by creating a session ticket that triggers an integrity-check failure.
+
+
+CVE-ID: CVE-2014-3567 [http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-3567]
+
+CVSS Base Score: 7.1
+CVSS Temporal Score: 5.3
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:N/A:C) [https://nvd.nist.gov/cvss.cfm?version=2&name=CVE-2014-3567&vector=%28AV:N/AC:M/Au:N/C:N/I:N/A:C%29] 
+
+For the official OpenSSL advisory, check: https://www.openssl.org/news/secadv_20141015.txt [https://www.openssl.org/news/secadv_20141015.txt]
+
+
+The second OpenSSL vulnerability affecting IEM Platform 8.2 is the SSL/TLS MITM vulnerability, It allows an attacker to use a man-in-the-middle attack to force the use of a weak keying material to decrypt or modify traffic between a vulnerable client and server. 
+
+CVE-ID: CVE-2014-0224 [https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-0224]
+
+CVSS Base Score: 6.8
+CVSS Temporal Score: 6.1
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:P/A:P) [https://nvd.nist.gov/cvss.cfm?version=2&name=CVE-2014-0224&vector=%28AV:N/AC:M/Au:N/C:P/I:P/A:P%29] 
+
+
+For the official OpenSSL advisory, check: https://www.openssl.org/news/secadv_20140605.txt [https://www.openssl.org/news/secadv_20140605.txt] 
+
+IEM Platform 8.2 is also vulnerable to the "POODLE" attack. The SSL 3.0 protocol, which can be used in OpenSSL, is susceptible to a padding-oracle attack. An attacker hijacking a Web browser session could gain sensitive session information through this attack. 
+
+CVE-ID: CVE-2014-3566 [https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-3566] 
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: 3.7
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N) [https://nvd.nist.gov/cvss.cfm?version=2&name=CVE-2014-3566&vector=%28AV:N/AC:M/Au:N/C:P/I:N/A:N%29] 
+
+
+For more technical details on this vulnerability, see the following document: https://www.openssl.org/~bodo/ssl-poodle.pdf [https://www.openssl.org/~bodo/ssl-poodle.pdf]
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Endpoint Manager 9.0 (9.0.853 and earlier) is affected by these vulnerabilities. Version 9.0.876 fixes the vulnerability.
+
+REMEDIATION/FIXES
+If you are using Endpoint Manager 9.0, you should upgrade to version 9.0.876.
+
+Upgrade fixlets are available in BES Support version 1198
+Manual upgrades are available at http://support.bigfix.com/bes/install/downloadbes.html [http://support.bigfix.com/bes/install/downloadbes.html]
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

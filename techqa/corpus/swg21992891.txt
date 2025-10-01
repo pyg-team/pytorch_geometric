@@ -1,0 +1,39 @@
+Title: IBM Connecting to WebSphere MQ leads JMS error in Sterling Order Management - United States
+
+Text:
+MQ; websphere; jar TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to connect to WebSphere MQ from IBM Sterling Order Management leads to the error java.lang.reflect.InvocationTargetException. 
+
+SYMPTOM
+Following error message can be seen in the application server logs: 
+
+[10/20/16 22:28:17:370 IST] 00000233 SystemOut O 2016-10-20 22:28:17,368:ERRORDTL:WebContainer : 5: [1476982697368]java.lang.reflect.InvocationTargetException
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:88)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:55)
+at java.lang.reflect.Method.invoke(Method.java:613)
+.
+Caused by: java.lang.NoSuchMethodError: com/ibm/mq/jmqi/handles/Hconn.getQmgrSplCapability()Lcom/ibm/mq/constants/QmgrSplCapability;
+at com.ibm.mq.ese.jmqi.InterceptedJmqiImpl.jmqiConnect(InterceptedJmqiImpl.java:313)
+at com.ibm.mq.ese.jmqi.ESEJMQI.jmqiConnect(ESEJMQI.java:337)
+
+
+CAUSE
+WMQ jars are bundled as part of the SSFS ear. 
+
+
+DIAGNOSING THE PROBLEM
+SSFS application when launched in WebSphere Application Server (WAS), throws JMS connectivity error while attempting to connect to WebSphere MQ (WMQ) for reading or writing messages. A possible scenario when such error can occur is when there are services containing JMS components to connect to WMQ which gets triggered as events.While deploying application in WAS, WMQ jars should not be bundled along the ear. WAS already has pre-defined WMQ jars used for connectivity.
+
+
+
+RESOLVING THE PROBLEM
+Steps to resolve: 
+
+ 1. Remove WMQ jars from the APPDynamicclasspath.cfg and re-build the ear, 
+    
+    
+    
+ 2. Add the following jars to the WAS classpath:providerutil.jar andfscontext.jar.

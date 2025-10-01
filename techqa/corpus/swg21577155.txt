@@ -1,0 +1,80 @@
+Title: IBM WebSphere Partner Gateway(WPG) - SQL error might be seen when WPG application database is hosted on an unsupported DB2 version - United States
+
+Text:
+SQLCODE: -440; SQLCODE: -727; BCGBPE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SQLCODE : -440 error might be seen WPG logs when WPG application database(Typically BCGAPPS) is hosted on an unsupported DB2 version against BCGBPE application while starting WPG servers. 
+
+SYMPTOM
+ 
+
+When WPG application database(BCGAPPS) is installed on unsupported DB2 version, below exception can be seen in WPG application database installation log Build.log: 
+
+ *  
+   DB_SYSPROPERTIESS_AH1.sql 
+   DB21034E The command was processed as an SQL statement because it was not a valid Command Line Processor command. During SQL processing it returned: 
+   SQL0104N An unexpected token "END" was found following "g, v_exceptionflg); ". Expected tokens may include: "DECLARE". LINE NUMBER=92. SQLSTATE=42601 
+   
+   and 
+   
+   DB_SYSPROPERTIESS_AH2.sql 
+   DB21034E The command was processed as an SQL statement because it was not a valid Command Line Processor command. During SQL processing it returned: 
+   SQL0104N An unexpected token "END" was found following "g, v_ExceptionFlg); ". Expected tokens may include: "DECLARE". LINE NUMBER=108. SQLSTATE=42601 
+   
+   
+   
+
+If above exception has been ignored while installing remaining WPG components then the following exception can be seen in the JVM log (i.e. SystemOut.log) while starting WPG servers:  *  
+   [01/01/11 1:23:09:876 UTC] 00000012 DocumentManag E 
+   com.ibm.bcg.server.cache.docmgr.DocumentManagerConfig 
+   getDAEProperties Error in getting property value 
+   com.ibm.db2.jcc.a.SqlException: 
+   DB2 SQL error: SQLCODE: -440, SQLSTATE: 42884, SQLERRMC: DB_SYSPROPERTIESS_AH1;PROCEDURE 
+   at com.ibm.db2.jcc.a.lg.e(lg.java:1600) 
+   at com.ibm.db2.jcc.a.lg.a(lg.java:1210) 
+   at com.ibm.db2.jcc.b.gb.g(gb.java:140) 
+   .... 
+   .... 
+   ---- Begin backtrace for Nested Throwables 
+   com.ibm.db2.jcc.a.SqlException: DB2 SQL error: SQLCODE: -727, 
+   SQLSTATE: 56098, SQLERRMC: 2;-440;42884; 
+   DB_SYSPROPERTIESS_AH1|PROCEDURE 
+   at com.ibm.db2.jcc.a.lg.e(lg.java:1600) 
+   at com.ibm.db2.jcc.a.mg.a(mg.java:1826) 
+   
+   .... 
+   .... 
+   [01/01/11 1:23:09:876 UTC] 00000012 ApplicationMg W WSVR0101W: An error occurred starting, BCGBPE 
+ * 
+
+The BCGBPE application is flagged as Failed state on WAS admin console. 
+
+CAUSE
+The above exception is happening due to DB2 database code change from supported version to new versions(E.g. DB2 9.5 Fixpack 5, DB2 9.1 Fixpack7 and above versions)
+
+
+
+ENVIRONMENT
+DB2
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+To resolve the issue please apply the WPG fixpack which is supported on current DB2 level.
+
+Please refer to the following URL for WPG fixpack release notes and information regarding supported DB2 database levels.
+Fix packs by version for WebSphere Partner Gateway
+http://www.ibm.com/support/docview.wss?rs=2310&uid=swg27009177 [http://www.ibm.com/support/docview.wss?rs=2310&uid=swg27009177]
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Partner Gateway Advanced Edition AIX, HP-UX, Linux, Solaris, Windows 6.2 
+PRODUCT ALIAS/SYNONYM
+ WPG

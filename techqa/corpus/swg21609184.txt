@@ -1,0 +1,191 @@
+Title: IBM Configuring ClearQuest to prefill OSLC 2.0 linked records - United States
+
+Text:
+OSLC; mapping; prefill TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure ClearQuest to prefill new OSLC 2.0 linked records using the OSLC 2.0 specification? 
+
+ANSWER
+The ability to prefill new OSLC 2.0 linked records in associated projects has been added in ClearQuest version 8.0.0.4. 
+
+1. How do I control prefill functionality?
+The prefill functionality is controlled by a configuration file called oslc-mappings.xml. The configuration file is located in the following application server directory:
+
+
+<profile root>\installedApps\<cell>\TeamEAR.ear\cqweb.war\WEB-INF\classes
+
+
+<profile root> is the root directory of the WebSphere profile and where ClearQuest is deployed. <cell> is the name of the WebSphere cell. You manually make changes to the configuration file. After you save the changes, you must restart the ClearQuest enterprise application for the changes to take effect. 
+
+
+2. What do I need to change in the configuration file?
+The configuration file has example entries that are commented out. To enable the prefill functionality, copy the sample entries and then make the changes that are appropriate for your environment.
+
+There are two sections in oslc-mappings.xml. The first section, oslcRecordConfig, maps ClearQuest record fields to OSLC properties. The second section, oslcProjectPrefillConfig, controls the OSLC properties that are used during the creation of new records. Both of these sections are required to enable ClearQuest to prefill new records.
+
+
+3. About the oslcRecordConfig section
+The oslcRecordConfig section maps specific ClearQuest record fields to specific OSLC properties.
+There should be one oslcRecordConfig section for each ClearQuest record type that you want to use to prefill new records. For example, if you want to prefill from both the Defect record type and the Customer record type in your 8.0.0/SAMPL database, you will have two oslcRecordConfig sections, as shown in the following example: 
+
+
+
+
+
+<oslcRecordConfig type="cq.record:Defect@8.0.0/SAMPL">
+
+      * 
+ * 
+ * 
+
+
+</oslcRecordConfig>
+
+<oslcRecordConfig type="cq.record:Customer@8.0.0/SAMPL">
+
+      * 
+ * 
+ * 
+
+
+</oslcRecordConfig>
+ 
+
+
+
+Each of these sections will have one or more oslcFieldMapping attributes. Each oslcFieldMapping attribute maps a single ClearQuest field to a corresponding OSLC property. These mappings can be used for generic ClearQuest field to OSLC property mapping. There is no limit to the number of OSLC properties that you can map in this section. However, the only OSLC properties that are currently used for prefilling a record creation dialog are dcterms:title and dcterms:description. 
+In the earlier example, notice that the OSLC property dcterms:title is mapped to the ClearQuest field Headline, and that the OSLC property dcterms:description is mapped to the ClearQuest field Description. 
+
+
+
+<oslcRecordConfig type="cq.record:Defect@8.0.0/SAMPL">
+
+      * 
+ * name="dcterms:title" field="Headline"
+ * 
+ * 
+ * 
+ * name="dcterms:description" field="Description"
+ * 
+
+
+</oslcRecordConfig>
+ 
+
+
+
+If you want to provide mappings for the same record type in different schema repositories or in different user databases, you must provide oslcRecordConfig sections for each schema repositories or database. The following example shows the configuration for different schema repositories and user databases: 
+
+
+
+<oslcRecordConfig type="cq.record:Defect@8.0.0/SAMPL">
+
+      * 
+ * 
+ * 
+
+
+</oslcRecordConfig>
+
+<oslcRecordConfig type="cq.record:Defect@7.0.0/TEST">
+
+      * 
+ * 
+ * 
+
+
+</oslcRecordConfig>
+
+<oslcRecordConfig type="cq.record:Defect@7.0.0/PROD">
+
+      * 
+ * 
+ * 
+
+
+</oslcRecordConfig>
+ 
+
+
+
+4. About the oslcProjectPrefillConfig section
+The oslcProjectPrefillConfig section controls the OSLC properties that are used during the creation of new records. There will be one oslcProjectPrefillConfig section for each related project for which you want to provide prefill information. Nested in oslcProjectPrefillConfig is one or more sections for each ClearQuest record type for which you want to provide prefill information. For example, if you want to prefill information for a project called RTC 4.0 Change Management, and you want to prefill from both Defect and Customer record types in your 8.0.0/SAMPL database, you will have one oslcProjectPrefillConfig that contains two oslcRecordPrefill sections: 
+
+
+
+<oslcProjectPrefillConfig projectName="RTC 4.0 (Change Management)" supportsPrefillMarkup="true">
+
+      * 
+ * Defect
+ * 
+ * 
+          <oslcPrefillProperty name="dcterms:title" prefix="ClearQuest Headline: "/>
+          
+   
+   <oslcPrefillProperty name="dcterms:description" prefix="Problem Description:&lt;br/&gt;"/>
+         
+ * 
+ * 
+ * 
+ * Customer
+ * 
+ * 
+          <oslcPrefillProperty name="dcterms:title" prefix="ClearQuest Customer Name: "/>
+          
+   
+   <oslcPrefillProperty name="dcterms:description" prefix="Customer Description:&lt;br/&gt;"/>
+         
+ * 
+
+
+</oslcProjectPrefillConfig>
+ 
+
+
+
+Each oslcRecordPrefill section can contain up to two oslcPrefillProperty lines. Currently, only dcterms:title and dcterms:description are supported for prefill. 
+
+
+5. More about oslcProjectPrefillConfig
+The supportsPrefillMarkup attribute indicates whether the project supports rich text. This attribute determines what type of line breaks to use when prefilling information from ClearQuest into the related project. If you set the value of this attribute to "true" and the project does not support rich text, you may notice "&lt;br/&gt;" in your prefilled data instead of line breaks. If you set the attribute value to "false" and the project supports rich text, you may notice that all of the prefilled multiline data appears on a single line. 
+If the project supports rich text, you may be able to use HTML tags with the prefix. In the following example, there are begin and end tags for bold and italic, and two line breaks: 
+
+
+
+<oslcProjectPrefillConfig projectName="RTC 4.0 (Change Management)" supportsPrefillMarkup="true">
+
+      * 
+ * 
+          <oslcPrefillProperty name="dcterms:title" prefix="ClearQuest Headline: "/>
+          
+   
+   <oslcPrefillProperty name="dcterms:description" prefix="
+          &lt;b&gt;&lt;i&gt;ClearQuest
+   
+           * 
+    * &lt;/b&gt;&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;
+    * 
+   
+    
+         
+ * 
+
+
+</oslcProjectPrefillConfig>
+ 
+
+
+
+
+6. Which OSLC providers support prefill? 
+Prefilling creation dialog boxes from ClearQuest works with the following OSLC 2.0 providers:  * Rational Team Concert 
+ * Rational ClearQuest
+
+
+The OSLC 2.0 specification lists prefilling of creation dialog boxes as an optional capability. Prefilling creation dialog boxes from ClearQuest will work with other OSLC 2.0 providers if the provider implements the optional OSLC 2.0 prefill specification. 
+
+
+7. How do these configuration parameters interact with the OSLC mappings set in cqrest.properties ? 
+If there are any OSLC mappings set in the cqrest.properties file, only the mappings set in the cqrest.properties file are used. In addition, if the cqrest.properties mappings are being used, none of the prefill properties ( oslcProjectPrefillConfig) will be used. 
+If you need generic OSLC property mappings for GET/POST/PUT calls, and you also need to be able to prefill record forms, you can migrate and remove the values from the cqrest.properties file to the oslc-mappings.xml file in the oslcRecordConfig section. As noted previously, there is no limit to the number of OSLC properties that you can map in this section.

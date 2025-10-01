@@ -1,0 +1,24 @@
+Title: IBM Using Linux SuSE 9/10/11 with ITCAM for AD 7.1 or ITCAM for WAS 6.x. - United States
+
+Text:
+SuSE Linux port conflicts 50000 50001 CAMADALL CAMADINST TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Some port conflicts to be aware of when installing ITCAM for WAS on SuSE Linux Enterprise Server version 9/10/11 with ITCAM for WAS or ITCAM for AD. 
+
+RESOLVING THE PROBLEM
+If you're using SuSE Linux Enterprise Server v9/v10/v11, you may find that the port 50000 is already used for the telnet interface of the mrt program in /etc/services. 
+
+If you're using DB2 and want to use port 50000 for a DB2 instance, then you should first comment out 50000 in /etc/services before installing DB2. Otherwise, DB2 will use 50001 as the port to be used for the DB2 instance it creates. 
+
+However, if you want to maintain 50000 as the default port for the telnet interfaces for the mrt program in /etc/services, then make no changes to /etc/services. Proceed to install DB2 and choose port 50001 during your DB configuration. This will maintain 50000 as the default port for mrt, and also use port 50001 as the port to be used for ITCAM for WAS scripts and DB configurations. 
+
+You don't have to do this on Red Hat Linux version v4 or v5. Port 50000 can be used directly in Red Hat Linux versions when you install DB2 and create DB2 instances, its only SuSE Linux that has 50000 in /etc/services.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfAD ITCAM4AD ITCAM for Application Diagnostics ITCAM for WAS

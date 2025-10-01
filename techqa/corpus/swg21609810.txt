@@ -1,0 +1,31 @@
+Title: IBM Upgrading from 8.0.0.x to 8.0.0.4 or a later release can sometimes cause ClearCase MultiSite synchronization to fail for Feature Level 6 VOB families - United States
+
+Text:
+CC; RNCC8.0.0.4; sync; synchronization; import; FL6; feature level 6; multitool: Warning: Cannot read header of packet; is not a sync. packet; is not a sync; packet; Cannot read header of packet; packet; RNCC8.0.0.8; RNCC8.0.1.1; RNCC8.0.1 PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ This technote provides details about how to prevent synchronization issues with Feature Level 6 VOB families after upgrading from IBM Rational ClearCase MultiSite 8.0.0.x to 8.0.0.4 or a later patch. 
+
+CONTENT
+ClearCase 8.0.0.4 contains a fix for defect APAR PM71680 [http://www.ibm.com/support/docview.wss?uid=swg1PM71680](packet header mismatch between Feature Level 6 VOBs hosted on ClearCase 7.1.2.x machines and Feature Level 6 VOBs hosted on ClearCase 8.0.0.x machines). This fix restores Feature Level 6 packet compatibility with ClearCase 7.1.2.x, but hosts running older ClearCase 8.0.0.x versions also will not be compatible with hosts running ClearCase 8.0.0.4. 
+
+
+If you have a Feature Level 6 VOB family with all VOB servers running ClearCase 8.0.0.x, and you want to upgrade to ClearCase 8.0.0.4 (or a later patch), you must upgrade all of the family VOB servers at the same time. 
+
+
+A VOB server running ClearCase 8.0.0.x that is hosting a Feature Level 6 VOB replica will be unable to import packets for that replica generated on a 8.0.0.4 (or later) VOB server, and will generate export packets from that replica that are not readable (cannot be imported) by a 8.0.0.4 (or later) VOB server. 
+
+Packet imports fail with warning message:
+
+multitool: Warning: Cannot read header of packet
+/opt/rational/clearcase/shipping/ms_ship/incoming/sync_abc_2012-08-
+23T095226+0200_2316: Invalid argument
+multitool: Error: File
+/opt/rational/clearcase/shipping/ms_ship/incoming/sync_abc_2012-08-
+23T095228+0200_8428 is not a sync. packet
+
+
+An alternative solution is to raise the VOB family feature level to 7 or higher, but that requires you first to run cleartool reformatvob on all members of the VOB family to change their VOB schemas to schema version 80. 
+
+
+Refer to the IBM Rational ClearCase product documentation [http://www.ibm.com/support/knowledgecenter/SSSH27]under the topic of reformatvob for further information about the command.

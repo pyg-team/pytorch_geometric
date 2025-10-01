@@ -1,0 +1,163 @@
+Title: IBM JR49376: THE TEAMWORKS LOGIN PAGE DOES NOT LOAD CORRECTLY AFTER UPGRADING TO IBM BPM 8.0.1.2 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After you upgrade to IBM BPM V8.0.1.2, the /teamworks/login.jsp
+   does not render correctly in a BPM deployment environment that
+   consists of multiple clusters.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM Business Process Manager (BPM)          *
+   *                  V8.0.1.2 Advanced,Standard, and Express     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The /teamworks/login.jsp does not       *
+   *                      render correctly after you upgrade to   *
+   *                      IBM BPM 8.0.1.2, because the resource   *
+   *                      URIs contain the string  'null', the    *
+   *                      following example is of an incorrect    *
+   *                      URI for the login_logo.png image and    *
+   *                      the correct form of the URI for the     *
+   *                      same resource:                          *
+   *                      The incorrect location is               *
+   *                      teamworks/null/contenthandler/mm/dav/fi *
+   *                      lestore/login/bspace/images/login_logo. *
+   *                      png                                     *
+   *                      The correct location is                 *
+   *                      /mum/contenthandler/mm/dav/filestore/lo *
+   *                      gin/bspace/images/login_logo.png        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   After you upgrade to IBM BPM V8.0.1.2, the
+   /teamworks/login.jsp does not render correctly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for IBM BPM V8.0.1.2 is available so that
+   /teamworks/login.jsp works correctly.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR49376:
+   
+   1. Select the product group, product, installed version, and
+   platform, and click Continue.
+   2. Select APAR or SPR, enter JR49376, and click Continue.
+   
+   When downloading fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   After you apply the fix, restart the Deployment Manager.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR49376
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-02-14
+   
+   
+ * CLOSED DATE
+   2014-02-25
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

@@ -1,0 +1,172 @@
+Title: IBM IZ26991: DB2 9: MSCS FAILOVER FAILS AFTER INSTANCE MIGRATION IN DPF CASE - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+DB2 Version 9.1 Fix Pack 7 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24022678]
+DB2 Version 9.1 Fix Pack 6 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24020890]
+DB2 Version 9.1 Fix Pack 6a for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24021876]
+DB2 Version 9.1 Fix Pack 7a for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24024113]
+DB2 Version 9.1 Fix Pack 8 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24024502]
+DB2 Version 9.1 Fix Pack 9 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24026384]
+DB2 Version 9.1 Fix Pack 10 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24029027]
+DB2 Version 9.1 Fix Pack 11 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24031281]
+DB2 Version 9.1 Fix Pack 12 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033023]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the MSCS (Microsoft CLustering Service) with DB2 DPF
+   environment, when the DB2 v8 (clustered) instance is migrated
+   from v8 to v9 using db2imigr.exe on one machine in the
+   cluster, only the nodes currently on that machine were
+   migrated. The nodes on other machines in the same cluster were
+   not migrated.
+   The reason for this problem is that other machines in the
+   cluster were removed from the "DB2CLUSTERLIST", which is
+   under HKLM\Cluster\IBM\DB2\Profiles\[instanceName]. Thus, the
+   failover of a node to another machine will faile because the
+   service on the other machine is not migrated, so it still
+   points to the old (v8) DB2 executables.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  One fix the user can try is: To add those machines back to the D
+   B2CLUSTERLIST after the instance migration, using the "db2iclus.
+   exe ADD ..." command line.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   DB2 on Windows MSCS
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   In the MSCS (Microsoft CLustering Service) with DB2 DPF
+   environment, when the DB2 v8 (clustered) instance is migrated
+   from v8 to v9 using db2imigr.exe on one machine in the cluster,
+   only the nodes currently on that machine were  migrated. The
+   nodes on other machines in the same cluster were  not migrated.
+   
+   The reason for this problem is that other machines in the
+   cluster were removed from the "DB2CLUSTERLIST", which is
+   under HKLM\Cluster\IBM\DB2\Profiles\[instanceName]. Thus, the
+   failover of a node to another machine will faile because the
+   service on the other machine is not migrated, so it still
+   points to the old (v8) DB2 executables.
+   ****************************************************************
+   RECOMMENDATION:
+   Install DB2 V91 FP6 or higher, and then migrate the V8 DB2
+   instance.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem is fixed in DB2 V9.1 FP6
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ26991
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4100
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-15
+   
+   
+ * CLOSED DATE
+   2008-12-20
+   
+   
+ * LAST MODIFIED DATE
+   2008-12-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  INSTALL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * FIXED COMPONENT ID
+   5765F4100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSN
+   UP

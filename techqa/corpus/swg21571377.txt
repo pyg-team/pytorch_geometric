@@ -1,0 +1,49 @@
+Title: IBM DataPower SOA Appliance: TAM Connectivity Error HPDAC0928E - United States
+
+Text:
+HPDAC0928E Datapower SSL TAM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DataPower is unable to connect to Tivoli Access Manager (TAM) and error HPDAC0928E is logged in the DataPower error logs.
+
+There are a number of root causes associated with this error such as invalid LDAP configuration, incorrect password, corrupt keystore, or inability to establish a connection to the LDAP server due to wrong port specification, invalid SSL configuration, or other.
+
+The following describes how to correct this issue when it is due to use of unsupported certificate type in the SSL connection. The same certificate may work for RBM LDAP over SSL in DataPower but it is not supported by the TAM client. 
+
+SYMPTOM
+Errors in DataPower log such as: 
+
+"Tivoli Access Manager authorization client log message: TAM server error: azn_initialize : HPDAC0928E The attempt to initialize the LDAP registry failed." 
+
+
+CAUSE
+The Certificate being used for SSL connectivity is in an incorrect format.
+
+
+An IBM Certificate Management Services (CMS) key database file (ie. one with a .kdb extension) file must be used to configure any TAM client for SSL to the TAM registry. The DataPower TAM client uses the TAM RTE / TDS client (just like WebSEAL). The TAM RTE / TDS client does not support the use of .p12 files. 
+
+See the link from the TAM information center for information on configuring SSL to the TDS registry: http://publib.boulder.ibm.com/infocenter/tivihelp/v2r1/index.jsp?topic=%2Fcom.ibm.itame.doc_6.1%2Fam61_install348.htm&path=3_6_0_2_0_6_5_6 [http://publib.boulder.ibm.com/infocenter/tivihelp/v2r1/index.jsp?topic=%2Fcom.ibm.itame.doc_6.1%2Fam61_install348.htm&path=3_6_0_2_0_6_5_6] 
+
+ 
+
+The options for configuring the TAM runtime LDAP connection for distributed platforms via pdconfig can be found here: 
+
+http://publib.boulder.ibm.com/infocenter/tivihelp/v2r1/index.jsp?topic=%2Fcom.ibm.itame.doc_6.0%2Fam60_install164.html [http://publib.boulder.ibm.com/infocenter/tivihelp/v2r1/index.jsp?topic=%2Fcom.ibm.itame.doc_6.0%2Fam60_install164.html] 
+
+
+ENVIRONMENT
+DataPower TAM ssl
+
+
+
+DIAGNOSING THE PROBLEM
+Connection Problems. Errors such as HPDAC0928E in datapower error log
+
+
+
+RESOLVING THE PROBLEM
+If using a certificate of an unsupported or incorrect format such as .p12, the following steps may resolve the issue: 
+
+1) Export the signer certificate (and the client certificate if mutual SSL authentication is required). 
+
+2) Use it to create a new .kdb file that contains your certificates. The TAM administrator should be able to assist with this, especially if their WebSEAL deployments use SSL to the TAM registry server.

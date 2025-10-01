@@ -1,0 +1,18 @@
+Title: IBM Impact of "Leap Second" addition on Web GUI - United States
+
+Text:
+shift; phase; date; GMT TECHNOTE (FAQ)
+
+QUESTION
+ What is the effect of Leap Second time addition on Web GUI? 
+
+CAUSE
+Occasionally, a leap second is added to Coordinated Universal Time (UTC) in order to synchronize atomic clocks with astronomical time to within 0.9 seconds.
+
+ANSWER
+There is no impact of this time addition to Web GUI.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ OMNIbus

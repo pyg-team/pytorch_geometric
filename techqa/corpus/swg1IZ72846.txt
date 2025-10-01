@@ -1,0 +1,141 @@
+Title: IBM IZ72846: WRONG MESSAGE OR NULL MESSAGE WHEN USING WORK-MANAGER BASED NAVIGATION - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 3 (6.2.0.3) [http://www-01.ibm.com/support/docview.wss?uid=swg24027123]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Wrong message or null message when using work-manager based
+   navigation.
+   When the WPS is configured to use work-manager based navigation,
+   the following use of the BPC EJB API may result in
+   messages or variables showing wrong or null data objects:
+   a) The local BPC EJB API is used
+   b) The input message of a human task or business process is
+   submitted using the local BPC EJB API
+   c) The input message is used in java code after it has been
+   submitted to BPC for further processing
+   .
+   Reason: The work-manager based navigation comes with an object
+   cache for efficient read access to data objects. In the scenario
+   described, without the i-fix, a reference to the data object in
+   the inter transaction cache is passed to the client making the
+   local EJB calls. Later use of the data object may occur by the
+   client code and by the BPC container, which leads to wrong or
+   null data.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Possible workaround without installing the i-fix: Set the inter
+   transaction cache size to 0; this will prevent the data (input
+   message e.g.) to be cached and re-used for later operations.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem will be fixed
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix will be include in V620 FP3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ72846
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * REPORTED COMPONENT ID
+   5655FLW11
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-12
+   
+   
+ * CLOSED DATE
+   2010-05-04
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IZ72848 IZ72849 IZ72850
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * FIXED COMPONENT ID
+   5655FLW11
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

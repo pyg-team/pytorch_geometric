@@ -1,0 +1,43 @@
+Title: IBM User unable to login to TIP if any one repository become unavailable. - United States
+
+Text:
+TIPL2CONF; tipadmin unable can not login TECHNOTE (FAQ)
+
+QUESTION
+ If Tivoli Integrated Portal is configured with multiple repositories in the federated repository and one of them is not available then why can no user including tipadmin login into to TIP? 
+
+CAUSE
+There is a configurable option to allow or disallow logins when one repository in the federated repository is unavailable. The default setting does not allow logins if one of the user repositories in the federated repository is unavailable. 
+
+ANSWER
+To allow logins from the remaining available repositories, do the following:
+
+1. Run wsadmin.sh command as below. Use tipadmin user Id and password to login. In the following example TIPRealm is the Realm name. If you have changed the Realm name then you need to use that name instead.
+
+If you are not sure what is the Realm name, you can check it from WAS Administration Console in TIP. Launch " WAS Administration Console" and click on "Global security" and then " Federated Repositories" and look for Realm Name. 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * wsadmin>
+ * 
+ * 
+ * 
+ * wsadmin>
+ * 
+ * 
+ * 
+ * wsadmin>
+ * 
+ * 
+ * 
+
+2. Restart TIP server 
+
+Now when a repository becomes unavailable, the authentication will still succeed as long as the user Id in question resides in a repository that is still available. 
+
+To undo above change run $AdminTask command with -allowOperationIfReposDown false parameter.

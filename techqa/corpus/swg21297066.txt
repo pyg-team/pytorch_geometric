@@ -1,0 +1,46 @@
+Title: IBM TEC Health Agent wont start - Library error 0509-124 - United States
+
+Text:
+health agent TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Starting the TEC Health Agent receives the following errors
+
+0509-036 Cannot load program
+0509-150 Dependent module libkbb.a could not be loaded. 
+0509-124 The program is a discontinued 64-bit object file. 
+
+CAUSE
+Improper version of the TEC Health Agent is installed
+
+RESOLVING THE PROBLEM
+The Tivoli Enterprise Monitoring Agent has two type of agent installs for AIX: 
+
+aix513 is the 32 bit version of AIX
+aix516 is the 64 bit version of AIX
+
+In this case, the output of cinfo -i was as follows:
+
+ka Monitoring Agent for Tivoli Enterprise Console
+aix513 Version: 03.90.00.00
+
+The output of cinfo -i on an AIX 64 bit system should be:
+
+ka Monitoring Agent for Tivoli Enterprise Console
+aix516 Version: 03.90.00.00
+
+Remove the current installation of the TEC Health Agent and reinstall it with the 64 bit version of the software.
+
+Additional Error Information:
+
+
+exec(): 0509-036 Cannot load program
+/opt/IBM/ITM/aix513/ka/bin/kkaagent because of the following errors: 0509-150 Dependent module
+/opt/IBM/ITM/tmaitm6/aix513/lib/libkbb.a could not be loaded. 0509-124 
+The program is a discontinued 64-bit object file.
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ tec

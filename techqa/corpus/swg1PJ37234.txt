@@ -1,0 +1,157 @@
+Title: IBM PJ37234: BADLY FORMATTED AND OUT OF RANGE NUMERIC VALUES IN CEWS UPDATE REQUESTS RESULT IN NULL PROPERTY VALUES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a badly formatted or out of range value was passed as a
+   property value via CEWS, the CE server validation code was
+   discarding such values instead of throwing an exception.  The
+   result was null values being saved to the repository for those
+   properties.
+   
+   For example, if a caller tried to update an integer property
+   value with "555555555555" (555.5 billion), no exception was
+   thrown and the persisted value was null.
+   
+   This situation was only possible via a custom application making
+   direct calls to CEWS.  The CE .NET API, CE Java API, and CE
+   server do not produce these types of illegal values when sending
+   data over the network.  Most Web services toolkits for client
+   use also have safeguards against this.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * P8CE-4.0.1-011 and prior users with applications making      *
+   * direct calls to CEWS (not using IBM FileNet CE Java API or   *
+   * .NET API)                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * If a badly formatted or out of range value was passed as a   *
+   * property value via CEWS, the CE server validation code was   *
+   * discarding such values instead of throwing an exception.     *
+   * The result was null values being saved to the repository for *
+   * those properties.                                            *
+   *                                                              *
+   * For example, if a caller tried to update an integer property *
+   * value with "555555555555" (555.5 billion), no exception was  *
+   * thrown and the persisted value was null.                     *
+   *                                                              *
+   * This situation was only possible via a custom application    *
+   * making direct calls to CEWS.  The CE .NET API, CE Java API,  *
+   * and CE server do not produce these types of illegal values   *
+   * when sending data over the network.  Most Web services       *
+   * toolkits for client use also have safeguards against this.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customers with applications that directly call CEWS should   *
+   * do testing to see if their Web services toolkit prevents     *
+   * such values from being sent from to the CE server.  If not,  *
+   * of if there is any doubt, it is recommended to update to     *
+   * P8CE-4.0.1-012 or later.                                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CE server code now throws an exception for this condition
+   instead of silently discarding the values.  The change is
+   included in P8CE-4.0.1-012.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ37234
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-18
+   
+   
+ * CLOSED DATE
+   2010-07-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PJ37233
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

@@ -1,0 +1,85 @@
+Title: IBM The many advantages of InfoSphere Metadata Asset Manager - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ InfoSphere Metadata Asset Manager was added to InfoSphere Information Server at version 8.7 as a significant new feature for better metadata management.This document details the many advantages that InfoSphere Metadata Asset Manager has over the previous metadata import tool, Import Export Manager. 
+
+CONTENT
+InfoSphere Information Server has always provided a single shared metadata repository from which our tools read and share common metadata as well as persist their own metadata (InfoSphere Data Stage Jobs, InfoSphere Information Analyzer results, etc). Other tools such as InfoSphere Business Glossary allow you to categorize and develop the terms that describe your business, and then link them to the metadata assets that are the technical contributors to these concepts. In all of these cases, importing and maintaining high quality metadata in the metadata repository of InfoSphere Information Server is key to yielding high quality results. 
+
+So how can you be confident that the metadata that you have imported into InfoSphere Information Server is good? That is one of the key questions that InfoSphere Metadata Asset Manager was created to answer.
+
+Importing with Import Export Manager
+
+Let us review the metadata import process with our legacy import tool, Import Export Manager. The process with InfoSphere Import Export Manager boils down to: 
+
+ 1. Select your desired bridge. 
+ 2. Specify the parameters and arguments required by the bridge. 
+ 3. Start the import.
+
+
+At the end of this process, metadata is written directly to the shared metadata repository. What we have discovered with years of experience with customers, is that this process is never quite so simple, especially when you are importing for the first time from a new source. 
+
+When you work with a new metadata source, several questions arise as you follow the import steps:  * Have I specified the right parameters and clicked all the right buttons in the importer? 
+ * Am I actually getting the metadata that I expected to get based on those selections? 
+ * Finally, is the metadata any good? Is it what I expected to see from that particular source?
+
+
+To answer these questions, if you have imported by using Import Export Manager you must run the import and then browse the metadata in the repository through a tool such as InfoSphere Metadata Workbench, or the Repository Tree window in InfoSphere Data Stage. 
+
+In many cases, since this is the first time that you have run this particular bridge, or imported from this particular source, what you find in the repository might not be what you expected. It might not have made the right selection, or the metadata itself might not reflect the updates that you expected to see. 
+
+In any case, it is written and persisted in the shared metadata repository, which is often not what you want once you have realized that it is "bad" metadata. At this point you need to browse for, find, and delete the items, then repeat the import. Depending on the source metadata and other issues, this import-browse-delete-reimport process might take several cycles before you are truly happy with what is being imported. All the time that the import is being tuned however, bad metadata is being written to the repository that you must find and delete. We can manage metadata better than this. 
+
+Importing with InfoSphere Metadata Asset Manager
+InfoSphere Metadata Asset Manager introduces a new metadata management area that is devoted exclusively to this import problem. We call it a "staging area", and it consists of multiple import areas, each one devoted to a single bridge, and the configuration setting for an import. 
+
+When you run an import, metadata is directly persisted into this import area for this import. With the metadata persisted, you can use InfoSphere Metadata Asset Manager to browse and validate that the parameters that have been used are correct and that metadata is what you expected. If for some reason you need to change something, and want to get rid of this metadata, you can delete all metadata associated with the import with one click. No hunting and deleting. Further, since this has been in the staging area, your import has not affected any metadata in the shared repository. You are free to continue to tweak your selection criteria or other parameters, or check the source system and re-import, all without affecting others who might be using InfoSphere Data Stage or other tools. 
+
+Once metadata has been imported in to an InfoSphere Metadata Asset Manager staging area, InfoSphere Metadata Asset Manager provides several other benefits, none of which existed in InfoSphere Import Export Manager.  * Before you publish your import to the shared repository, you can run a "share preview" to see how the imported metadata will match and update metadata that is already in the metadata repository. 
+ * If you are unsure if the metadata has changed since the previous import, you can compare this import and an earlier one to determine which objects are the same, which ones are new, and which objects have been deleted. 
+ * Analytics are run on the import to help you assess the quality of it. This can determine if there are duplicates or other potential errors in metadata. 
+ * When you are ready to publish your import to the shared repository you can perform a “share". InfoSphere Metadata Asset Manager records when you performed this operation as well as all the metadata that was shared to the metadata repository. This provides audit capabilities.
+
+
+New imports with InfoSphere Metadata Asset Manager usually follow this general process:,  1. Create an import area, selecting the bridge or connector that accesses the source metadata. 
+ 2. Specify the parameters and arguments required by the bridge or connector. 
+ 3. Run the import 
+ 4. Review the analysis for duplicates and other issues  * Optionally browse and review the imported metadata. 
+     * Optionally compare with previous imports (if you are reimporting). 
+     * Optionally preview the result of sharing to the metadata repository.
+    
+    
+ 5. Share the import with the metadata repository.
+
+
+Additional enhancements 
+InfoSphere Metadata Asset Manager also provides many other enhancements:  * Ease of use:  * Import wizards support easier parameter selections and allow you to move within the wizard screens easily. 
+    * Detailed on-screen help is available for every bridge and every parameter. 
+    * You can test connection parameters and credentials prior to use. 
+    * You can view imported assets in InfoSphere Metadata Workbench with a simple click.
+   
+   
+ *  More functionality:  * Import from multiple bridge servers. 
+    * Import by using connectors. 
+    * You can run both express and managed imports. 
+    * You can clean up invalid characters without having to reimport. 
+   
+   
+
+Feature summary 
+InfoSphere Metadata Asset Manager introduces the following features:  * A staging area for imports, separate and distinct from the shared metadata repository. 
+ * Imports are directly persisted into the staging area with no modification or reconciliation, allowing for accurate review of the metadata before you share it to the metadata repository. 
+ *  Analytics on an import provide information about its quality, such as the number of duplicates and invalid identities. 
+ * You can compare reimports with earlier versions to determine what has changed. 
+ * You can compare the metadata in a staged import with metadata in the metadata repository to determine what the impact of sharing it will be. This is done without affecting any objects in the metadata repository. 
+ * The history of imports lets us determine which objects have been deleted, allowing for true synchronization with external metadata sources. 
+ * Imports can be shared and reshared with the metadata repository.
+
+
+Conclusion 
+After you compare the import processes of InfoSphere Import Export Manager and the new InfoSphere Metadata Asset Manager, it is clear that InfoSphere Metadata Asset Manager can provide you with much more insight into the metadata that you have imported, and much more confidence that it is correct when it is shared with the metadata repository. 
+
+We believe that InfoSphere Metadata Asset Manager is a significant step forward in allowing you to have a truly managed metadata integration process when it comes to bringing new metadata into your InfoSphere Information Server metadata repository.

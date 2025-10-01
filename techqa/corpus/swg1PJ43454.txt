@@ -1,0 +1,158 @@
+Title: IBM PJ43454: DUPLICATE ROWS OF BUTTONS ARE DISPLAYED WHEN CUSTOM ACTIONS ARE ADDED TO THE TOOLBAR OF THE IN-BASKET WIDGET - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+5.2.1.2-ICM-WIN-IF001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.2-ICM-WIN-IF001&source=SAR]
+5.2.1.2-ICM-LINUX-IF001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.2-ICM-LINUX-IF001&source=SAR]
+5.2.1.2-ICM-AIX-IF001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.2-ICM-AIX-IF001&source=SAR]
+5.2.1.2-ICM-ZLINUX-IF001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.2-ICM-ZLINUX-IF001&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Adding a toolbar button to the In-basket widget where the button
+   is associated with a custom action that is deployed as part of a
+   custom widget, the row of toolbar buttons on the In-basket
+   widget will get duplicated.
+   
+   If the custom action is also added to the In-basket widget as a
+   menu, then the duplicate row of buttons goes away.
+   The issue only appears on initial load of the solution with a
+   new browser process.  If the browser is reused after a logout or
+   subsequent load of the same page, then the duplication no longer
+   exists.
+   
+   The issue cannot be reproduced with the OOTB action.
+   This issue is only a problem for FireFox browsers, it does not
+   occur with Internet Explorer or Chrome.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workarounds include:
+   1. Add the custom action to the In-basket menu in addition to
+   the toolbar.
+   2. Use a browser other than FireFox
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users accessing a customized solution with custom buttons on *
+   * the In-basket associated with custom actions.                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Update to 5.2.1.2-ICM-IF001.                                 *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.2.1.2-ICM-IF001.  Users accessing a page that
+   contains custom buttons on the In-basket widget will no longer
+   see duplicate rows of buttons.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ43454
+   
+   
+ * REPORTED COMPONENT NAME
+   CASE MGR CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5725A1501
+   
+   
+ * REPORTED RELEASE
+   521
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-27
+   
+   
+ * CLOSED DATE
+   2015-10-05
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CASE MGR CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5725A1501
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R521 PSY
+   UP

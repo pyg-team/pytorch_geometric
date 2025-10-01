@@ -1,0 +1,206 @@
+Title: IBM IC97973: TPC 5.X VERSION.TXT FILES CONTAIN TIVOLI INTEGRATED PORTAL VERSION INFO THAT DOESN'T CORRELATE WITH TIP VERSIONS/FP LEVELS - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+Fix Pack 5.1.1.5 (July 2014) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24038061]
+Fix Pack 5.1.1.6 (March 2015) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24039585]
+Fix Pack 5.1.1.9 (October 2015) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24041064]
+Fix Pack 5.1.1.10 (April 2016) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24042386]
+Fix Pack 5.1.1.12 (October 2016) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24042864]
+Fix Pack 5.1.1.13 (February 2017) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24043314]
+Fix Pack 5.1.1.14 (June 2017) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24043763]
+Fix Pack 5.1.1.15 (Sept 2017) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24043949]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TIP version information reporting is inconsistent, resulting in
+   additional requests for information from customer environments
+   when troubleshooting TPC/TIP issues.  An example of this
+   inconsistency:
+   In the TPC 5.1.1.2 version.txt file, the following information
+   about TIP is displayed:
+   TPC V5.1.1.2 Build 20130918-1551
+   TIP 2.2 Driver 12
+   tip driver number 201302100416
+   This does not match the TIP version information that's
+   registered with the Deployment Engine (DE) component as shown
+   when issuing queries directly to the DE - for example:
+   <identityName>TIPCore</identityName>
+   <version>2.2.0.9</version>
+   The TPC version.txt file(s) should contain consistent component
+   version information to aid in product serviceability, for cases
+   when the TPC and TIP support teams need to collaborate to
+   resolve a PMR.  Version information in this format which shows
+   TIP fixpack level helps to more quickly identify appropriate
+   fixes/patches for problems encountered.
+   RECREATE STEPS:
+   N/a
+   ________________________________________________________________
+   DB2 Version used for Server:    N/A
+   The defect is against component:   5608TPC00
+   Server/Manager build/release (TPC):   5.1.1
+   Agent build/release (TPC):    N/A
+   Server/Manager (OS):     All supported server platforms
+   Agent (OS):       N/A
+   ________________________________________________________________
+   Problem as described by customer:   N/A.  Product serviceability
+   improvement
+   Initial customer impact (low/med/high): med
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To obtain valid/understandable TIP version information:
+   Windows:
+   cd "C:\Program Files\IBM\Common\acsi"
+   setenv.cmd
+   cd "C:\Program Files\IBM\Common\acsi\bin"
+   de_lsrootiu.cmd
+   UNIX and Linux:
+   . /var/ibm/common/acsi/setenv.sh
+   cd /usr/ibm/common/acsi/bin
+   ./de_lsrootiu.sh
+   Provide the resulting output to the support representative with
+   TPC/TIP log collection.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Those who have installed TPC 5.1.0 through 5.1.1.3.          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See ERROR DESCRIPTION.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Use steps in LOCAL FIX until fix maintenance is applied.     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The version.txt file will contain another line that will specify
+   the TIP version from the Deployment Engine.
+   
+   The fix for this APAR is targeted for the following maintenance
+   package:
+   
+   | refresh pack | 5.2-TIV-TPC-RP0001 - target March 2014
+   | fix pack | 5.1.1-TIV-TPC-FP0005 - target July 2014
+   
+   http://www-01.ibm.com/support/docview.wss?&uid=swg21320822 [http://www-01.ibm.com/support/docview.wss?&uid=swg21320822]
+   
+   The target dates for future refresh packs or fix packs do not
+   represent a formal commitment by IBM. The dates are subject to
+   change without notice.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC97973
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPC00
+   
+   
+ * REPORTED RELEASE
+   511
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-26
+   
+   
+ * CLOSED DATE
+   2014-01-14
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  INSTALL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC
+   
+   
+ * FIXED COMPONENT ID
+   5608TPC00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP
+   
+   
+ * R511 PSY
+   UP

@@ -1,0 +1,31 @@
+Title: IBM How to determining the total scan time duration in AppScan Standard - United States
+
+Text:
+1302428; Watchfire; Scan_Log.log; AppScan; scan duration; scan time; scan log; scanlog.log; scanflow; TotalScanDuration TECHNOTE (FAQ)
+
+QUESTION
+ How do you determine the total scan time duration in IBM Security AppScan Standard? 
+
+CAUSE
+After completing a scan, you are not sure how or where to find information that shows how long the scan took to complete.
+
+ANSWER
+Currently, AppScan Standard does not contain a menu option that allows you to determine the scan duration. However, you can find it in the following ways: 
+
+ * In ScanLog.log log
+   The AppScan Scan Log, ScanLog.log, can be used to determine the duration of a scan. This file is found by default in: C:\Program Files\IBM\Rational AppScan\Logs.
+   
+   When the scan has completed, the scan duration can be found in the Scan Log from the following line once your scan has finished:
+   
+   [ScanFlow] Scan stopped; scan duration: 00:44:04.7812500 
+   
+   The timestamp, 00:44:04, indicates that the scan has run for 44 minutes and 4 seconds.
+
+
+ * In scan XML file 
+   You can find the scan duration by exporting the scan results to XML, then searching the file for the tag <TotalScanDuration>, which is usually near the start of the file.
+
+
+
+HISTORICAL NUMBER
+ 00003038

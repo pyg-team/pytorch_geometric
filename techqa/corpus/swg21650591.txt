@@ -1,0 +1,54 @@
+Title: IBM Installation of OMNIbus FP8 fails with "Incorrect install location” - United States
+
+Text:
+de; fp; omni; install; upgrade; fp8 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempt to install IBM Netcool/OMNIbus FP8 (7.3.0-TIV-NCOMNIbus-linux2x86-FP0008) results in error: "Incorrect install location. The path you entered did not have any Netcool/Omnibus components installed. Please check and try again" 
+
+CAUSE
+Seems user did non-root install originally but carried out OMNIbus FP8 installation as root. 
+
+ENVIRONMENT
+IBM Netcool/OMNIbus 7.3.0 with IBM Deployment Engine (DE), non-root installation
+
+DIAGNOSING THE PROBLEM
+Review which user performed the base/previous installation - mostly, a non-root user. 
+
+
+
+
+Ensure that you have a back-up server with same environment/installation.
+
+
+
+RESOLVING THE PROBLEM
+Please follow the workaround noted below to resolve the issue :
+
+1. Take backup of DE from backup server using command below: 
+
+
+"<DE_INSTALL_LOCATION>\bin\de_backupdb -bfile backupFile" 
+
+
+
+2. Copy the DE "backupFile" from backup server to primary server.
+
+3. Please take backup of the "/usr/ibm/common/acsi/repos", copy repos folder to some other location in primary server.
+
+4. Restore DE backup on primary server using command below: 
+
+
+"/usr/ibm/common/acsi/bin/de_restoredb -bfile backupFile" 
+
+
+
+4. Now, re-try the FP installation
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Netcool/OMNIbus Linux 7.3.0 All Editions 
+PRODUCT ALIAS/SYNONYM
+ DE

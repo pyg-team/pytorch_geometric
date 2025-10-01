@@ -1,0 +1,44 @@
+Title: IBM What are the recommended number of Mailbox ODBC Connections and Delivery Threads (SCI21911) - Sterling Gentran:Server for Microsoft Windows - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ What are the recommended number of Mailbox ODBC Connections and Delivery Threads (SCI21911) 
+
+ANSWER
+The ODBC and thread connections are dependent on number of processors. It is not recommended to increase those values beyond the number of processors on the machine. (It actually does no good - and can cause resource contention issues).
+
+For example for a dual processor machine - you would set the Mailbox ODBC connections to 2 and the Message threads to 2. That way each message thread has an individual ODBC connection that can be used to connect to the database for simultaneous processing.
+
+The thread count and ODBC connection counts should be set the same.
+
+ 
+
+HISTORICAL NUMBER
+ PRI1101 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+GENTRAN:Server for Windows NT
+Release 3.2 SP1 
+GENTRAN:Distributed NT 
+Server
+Release 3.2 
+GENTRAN:Server for Windows NT
+Release 3.1.1 
+
+GENTRAN:Server for Windows NT
+Release 3.0.1 
+SCI21911
+
+
+Goal
+
+
+FAQ:What are the recommended number of Mailbox ODBC Connections and Mailbox 
+Delivery Threads?

@@ -1,0 +1,138 @@
+Title: IBM LO72396: "DOCUMENT.GETITEMVALUEDATETIMEARRAY" METHOD RETURNS VECTOR CONTAINING A SINGLE NULL VALUE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The "Document.getItemValueDateTimeArray" method returns a
+   vector containing a single NULL value.
+   
+   The "Document.getItemValue" method when used on the same field
+   returns a vector containing two elements, both are type
+   "lotus.domino.local.DateTime".
+   
+   
+   STEPS TO REPRODUCE:
+   1.  Download the attached file.
+   2.  Place the file in the Notes or Domino data directory.
+   3.  Open the database in the Notes client.
+   4.  Open the Java Debug Console.
+       >  Tools :: Show Java Debug Console
+   5.  Run the agent "Test".
+   
+   
+   SAMPLE AGENT OUTPUT:
+   Document.getItemValueDateTimeArray method:
+   element @ 0:  null
+   
+   Document.getItemValue method:
+   type of lotus.domino.local.DateTime
+   element @ 0:  10/23/2012 12:20:35 PM CDT
+   type of lotus.domino.local.DateTime
+   element @ 1:  10/30/2012 12:20:35 PM CDT
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the "Document.getItemValue" method instead.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# CJON8ZJUQU.
+   This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO72396
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   852
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-29
+   
+   
+ * CLOSED DATE
+   2012-11-13
+   
+   
+ * LAST MODIFIED DATE
+   2012-11-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R852 PSN
+   UP

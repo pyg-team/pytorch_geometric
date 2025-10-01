@@ -1,0 +1,41 @@
+Title: IBM InfoSphere Streams SWS failure during instance startup and Unable to access NameService - United States
+
+Text:
+Streams not starting; Streams Nameservice TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Streams Web Service (SWS) fails when you start the instance. The following error message is displayed when the Streams instance starts: "ERROR: NSSupport.nsNameService() Unable to access NameService". 
+
+CAUSE
+This problem is caused by a bug related to the "leap second" adjustment on RHEL61 and CENTOS6.
+
+ENVIRONMENT
+This problem can occur in InfoSphere Streams version 2.0.0.2 and later.
+
+
+In particular, it can occur under the following conditions: 
+
+ * The host is running RHEL61 or CENTOS6 on an x86_64 architecture. 
+ * The (optional) SWS is running. 
+ * The NameServiceUrl property of the instance is set to the default value "DN:".
+
+
+DIAGNOSING THE PROBLEM
+Run this command to determine if the leap second adjustment has run: 
+
+
+dmesg | grep leap 
+
+This output is displayed if the leap second adjustment has run:
+
+Clock: inserting leap second 23:59:60 UTC
+
+
+RESOLVING THE PROBLEM
+Reboot the InfoSphere Streams host or enter: 
+
+/etc/init.d/ntpd stop; date; date `date +"%m%d%H%M%C%y.%S"`; date 
+
+then, if you rely on the ntpd daemon: 
+
+/etc/init.d/ntpd start

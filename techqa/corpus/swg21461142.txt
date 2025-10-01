@@ -1,0 +1,49 @@
+Title: IBM SSO with IIS7.5 is not working. - United States
+
+Text:
+SSO IIS7.5 SingleSignOn Kerberos TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer is trying to configure Single SignOn (SSO) for Cognos connections.
+
+User launches Cognos Connection website. User receives an error message. 
+
+SYMPTOM
+HTTP 401 Unauthorized: Access is denied due to invalid credentials Webserver Message Page
+
+
+CAUSE
+IIS server's Windows Authentication method does not have the proper Provider configured (or installed).
+
+ENVIRONMENT
+Microsoft Windows Internet Information Server 7 (IIS7.5 only), where the Cognos virtual directory has:
+
+
+ * Anonymous Authentication disabled (turned off) 
+ * Windows Authentication is enabled (turned on).
+
+DIAGNOSING THE PROBLEM
+First of all, verify that users can log in with Username and Password first without using SSO. Also check the web server is 'trusted for delegation' in its properties box in Active Directory if you are using Kerberos Authentication. 
+
+ * Afterwards, check the Windows Authentication Provider setting (for the correct provider being installed).
+
+RESOLVING THE PROBLEM
+Confirm the IIS providers. 
+
+ 
+Steps:
+The following steps are based on IIS 7.5: 
+
+ 1. Open the Windows IIS Manager from Administration Tools. 
+ 2. Select the Cognos Virtual Directory (cgi-bin). 
+ 3. Select the Authentication icon under IIS settings. 
+ 4. Ensure Anonymous Authentication is disabled. 
+ 5. Select Windows Authentication. 
+ 6. Select Providers... (under Actions on the right). 
+ 7. If Negotiate is missing from the list, select from drop down prompt. 
+ 8. Click the Add button then click the Okay button. 
+ 9. Stop / Start the Default Website.
+
+
+If the above does not solve the problem, then: 
+10. Also check the web server is 'trusted for delegation' in its properties box in AD.

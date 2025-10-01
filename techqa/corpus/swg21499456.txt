@@ -1,0 +1,77 @@
+Title: IBM How to automatically clear local cache when closing Controller - United States
+
+Text:
+CLEARCACHEONLAUNCH TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer would like the Controller 'local cache' files to be automatically deleted when the end user closes the Controller client. How can that be done? 
+
+SYMPTOM
+There are several potential reasons why an end user will want to clear their local cache files. 
+
+ * Typically the reason is the one explained inside separate Technote 1381197.
+
+
+CAUSE
+By design, Controller stores its cache files inside the following folder: 
+%APPDATA%\Cognos\CCR
+
+ENVIRONMENT
+The feature was first available in Controller 8.5.1549 (also known as Controller 8.5.1 IF9). 
+
+ * It is not possible to use it with any earlier Controller 8.x versions.
+
+
+It is also available from Controller 10.1.364 onwards (also known as Controller 10.1 IF4). 
+
+ * It is not possible to use it with any earlier Controller 10.x versions.
+
+
+TIP: To find out what version of Controller you are using, perform the following steps: 
+
+ 1. Launch Controller 
+ 2. Click "Help - System Information" 
+ 3. The version of Controller is displayed at the top.
+
+RESOLVING THE PROBLEM
+Ensure that you are using Controller 8.5.1549 or later 8.x version, or Controller 10.1.364 or later. Afterwards, add the server preference "CLEARCACHEONEXIT" (with value "TRUE") to the database where you wish to enable the "delete cache files on exit" functionality. Repeat for each individual database. 
+
+ 
+
+Steps: 
+
+1. Launch Controller 
+
+2. Choose the relevant database (for example "production") 
+
+3. Logon as an administrator 
+
+4. Click "Maintain - Configuration - General"
+[/support/docview.wss?uid=swg21499456&aid=1] [/support/docview.wss?uid=swg21499456&aid=1] 
+
+5. Click tab "Server Preferences" 
+
+6. Inside "Variable Name" type "CLEARCACHEONEXIT" 
+
+7. Inside "Variable Value" type "TRUE"
+[/support/docview.wss?uid=swg21499456&aid=2] [/support/docview.wss?uid=swg21499456&aid=2] 
+
+8. Click Save 
+
+9. Close Controller 
+
+10. Repeat the above steps for each and every database connection where you want this behaviour to occur. 
+
+ 
+
+============================================== 
+
+TIP: The above will affect ALL users who use that database. If you (for some reason) have some users who prefer that this feature does NOT occur for them, then they need to add a 'local preference' to their Controller client:
+[/support/docview.wss?uid=swg21499456&amp;aid=3] 
+
+ *  Local preference = KEEPCACHEONEXIT Value =TRUE 
+
+[/support/docview.wss?uid=swg21499456&amp;aid=4] ==============================================
+
+RELATED INFORMATION
+ 1381197 - New structures can't be seen by all users [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21381197]

@@ -1,0 +1,40 @@
+Title: IBM Why does my TRANSLATE function fail with SQL0176N ? - United States
+
+Text:
+Translate; cast; codeset TECHNOTE (FAQ)
+
+QUESTION
+ Why does my TRANSLATE function fail with SQL0176N ? 
+
+ANSWER
+The TRANSLATE function may not work as expected if the code set is changed from ISO8859-1 to UTF-8.
+This is because some characters are interpreted differently in each of these code sets. For example, the character 'ü' is treated as two byte character in UFT-8 where as in ISO8859-1 it is treated as one byte character.
+
+When using the TRANSLATE function, if the arguments are of data type CHAR or VARCHAR, the corresponding characters in to-string-exp and from-string-exp must have the same number of bytes (except in the case of a zero-length string). For example, it is not valid to convert a single-byte character to a multi-byte character, or to convert a multi-byte character to a single-byte character. The pad-char-exp argument cannot be the first byte of a valid multi-byte character (SQLSTATE 42815).
+
+The workaround is to cast the first argument of the TRANSLATE function (if there are multiple TRANSLATE functions, cast the first argument of the inner most TRANSLATE) to VARGRAPHIC, this forces all the arguments to be GRAPHIC and thus all 2 byte characters. 
+
+Original statement : 
+
+select CAST( TRANSLATE('Here goes my test text'
+, CAST('' AS CHAR(1))
+, CAST(TRANSLATE('Here goes my test text'
+, ''
+, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+=-`<>?,./;:"[]{}\|''üéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥P_áíóúñÑªº¿¡«»µMu'''
+, '') AS CHAR(127) )
+) AS VARCHAR(30000)
+) FROM SYSIBM.SYSDUMMY1;
+
+Statement with workaround:
+
+select CAST( TRANSLATE('Here goes my test text'
+, CAST('' AS CHAR(1))
+, CAST(TRANSLATE(VARGRAPHIC('Here is the test text')
+, ''
+, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+=-`<>?,./;:"[]{}\|''üéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥P_áíóúñÑªº¿¡«»µMu'''
+, '') AS CHAR(127) )
+) AS VARCHAR(30)
+) FROM SYSIBM.SYSDUMMY1;
+
+RELATED INFORMATION
+ TRANSLATE scalar function [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_10.1.0/com.ibm.db2.luw.sql.ref.doc/doc/r0000862.html?cp=SSEPGG_10.1.0%2F2-9-4-1-167&lang=en]

@@ -1,0 +1,20 @@
+Title: IBM Cannot import a TeamWorks/WebSphere Lombardi Edition export if it contains multiple toolkit snapshots - United States
+
+Text:
+Cannot import TeamWorks/WebSphere Lombardi Edition export ; multiple toolkit snapshots FLASH (ALERT)
+
+ABSTRACT
+ If you attempt to perform an import of an export that has dependencies on 2 or more toolkits, the import process goes into a loop such that the user is taken back to the upload screen after clicking Next. 
+
+CONTENT
+This issue occurs for Process Applications and Toolkits and when the import is performed using the Web Browser or Authoring Environment. A hot fix has been developed to address this problem. This hot fix requires the WebSphere Lombardi Edition 7.2.0 original release and should be applied to the Process Center only.
+
+When you encounter this error, your WebSphere Lombardi Edition installation is unaffected because it is a client side error and no updates occur on the server as a result of this failure. 
+
+Download the interim fix from Fix Central by clicking on the following link: 
+
+APAR IC73090 [http://www-933.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?brandid=5&productid=WebSphere+Lombardi+Edition&vrmf=7.2&fixes=WLE-7.2.0-IC73090] 
+
+The package includes two README files; WLE-7.2.0-IC73090-Install-Win.txt, providing installation instructions for Windows platforms, and WLE-7.2.0-IC73090-Install-Unix.txt, providing installation instructions for UNIX-based platforms. The install of this interim fix is automated using scripts. Only one WAR file, which is named repository.war, is being updated in the Process Center. 
+
+This fix is related to browser activity and some browsers may cache old Process Center data. Therefore, force a browser refresh with Ctrl+F5.

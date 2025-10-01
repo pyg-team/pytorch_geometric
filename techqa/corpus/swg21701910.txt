@@ -1,0 +1,28 @@
+Title: IBM NormalizeCCO merging lines with IBM Datacap Taskmaster Capture - United States
+
+Text:
+normalizecco; merge lines; recognition TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After running NormalizeCCO, words on separate lines are merged into a single line of text when using IBM Datacap Taskmaster Capture. 
+
+SYMPTOM
+In the following image, Word 1 and Word 2 are on separate lines, but after NormalizeCCO is run may show in a single line as Word Word 1 2. 
+
+[/support/docview.wss?uid=swg21701910&amp;aid=1]
+
+
+CAUSE
+When text is not cleanly printed in lines, such as when the font varies or the text is vertically offset, Datacap may not always be able to locate text when loading field values. The NormalizeCCO goes through the CCO file, and cleans up all the entries so they appear in regular lines. For most images this improves ultimate recognition results, but for some complex images, NormalizeCCO cannot determine where to separate the lines and merges all words into a single line.
+
+
+RESOLVING THE PROBLEM
+Add the following action prior to NormalizeCCO. 
+
+ * 
+ * 
+
+The first parameter is the percentage of a line that two words must be offset to be considered as separate lines. If the value is not set, the default is 50. In the example, if two words are vertically offset by more than 35% of the height of the words, then they are considered to be on separate lines. Lower values are more likely to split words into separate lines. Higher values are more likely to merge words into a single line. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Datacap Not Applicable Windows 9.0.1, 9.0.0

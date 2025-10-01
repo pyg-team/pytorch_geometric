@@ -1,0 +1,119 @@
+Title: IBM Known problems and limitations in WebSphere Lombardi Edition, version 7.2.0 - United States
+
+Text:
+Known issues; WLE; 7.2 RELEASE NOTES
+
+ABSTRACT
+ This techdoc describes known issues and limitations in IBM WebSphere Lombardi, version 7.2.0, and provides workarounds where available. 
+
+CONTENT
+Known problems are documented in logical groupings (such as "Using Lombardi Authoring Environment") for easier readability. A brief description of each known problem is provided as well as a tracking number. For additional information about a particular issue, go to the IBM Customer Support web site at http://www.ibm.com/support/ [http://www.ibm.com/support/]
+
+
+
+
+WebSphere Lombardi Edition 7.2.0 Quick Start Guide 
+
+ * 
+ * 
+ *  AIX on POWER:
+   http://www.ibm.com/support/docview.wss?uid=swg24028645 [http://www.ibm.com/support/docview.wss?uid=swg24028645] Solaris on SPARC: 
+   http://www.ibm.com/support/docview.wss?uid=swg24028665 [http://www.ibm.com/support/docview.wss?uid=swg24028665] Linux: 
+   http://www.ibm.com/support/docview.wss?uid=swg24027951 [http://www.ibm.com/support/docview.wss?uid=swg24027951] Windows: 
+   http://www.ibm.com/support/docview.wss?uid=swg24027952 [http://www.ibm.com/support/docview.wss?uid=swg24027952] 
+
+
+Installing and configuring WebSphere Lombardi Edition  * 
+ * Special characters in temp directory cause installation to fail
+ * 
+ * 
+ * Double byte characters cause installation issues
+   On Windows platforms, if you choose to install to a directory that includes double-byte characters or if the path to which the TEMP and TMP environment variables are set includes double-byte characters, Lombardi servers do not start as expected. To work around this issue, delete the Windows service for the Lombardi server (either IBMWAS70Service - RuntimeServer01 or IBMWAS70Service - ProcessCenter01) and then start the Lombardi server manually as instructed in your WebSphere Lombardi
+   Edition Installation and Configuration Guide. (THU-8780) 
+ * User name and password for runtime Process Server connection cannot be changed
+   Installation of process apps to a server in a runtime environment fails when you change either of the following settings: 
+ *  The <repository-server-designated-user> or <repository-server-designated-password> properties in the <Lombardi_home>/process-server/config/system/99Local.xml file from the default value of tw_author to any other value. The default password for the tw_author user account on the Process Center or a runtime environment. 
+ * 
+ * 
+ * Installation completes with warnings
+   In some cases, installation on Windows platforms completes with warnings displayed in the Installation Complete panel of the installer and the Startup IBM WebSphere Lombardi Edition checkbox that is normally displayed is missing. To work around this issue, first check the wle_install.log file to ensure your installation completed successfully and then start Lombardi servers from the command line as instructed in your WebSphere Lombardi Edition Installation and Configuration Guide. (THU-10384) 
+ * Authoring Environment fails to start from a path that contains Unicode characters
+   If the path to which you install Lombardi Authoring Environment includes Unicode characters, it does not start as expected. To work around this problem, install to a directory that does not include Unicode characters. (THU-10389)
+
+
+Running Lombardi Process Center  * 
+ * Process Center JVM intermittently hangs and is unresponsive
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  
+ * http://www.ibm.com/support/docview.wss?&uid=swg24026858
+ * 
+ * 
+
+
+Using Lombardi Process Center Console  * 
+ * Importing .twx file that includes multiple toolkit snapshots causes Process Center Console to hang
+ * 
+ * 
+
+
+Using Lombardi Authoring Environment  * 
+ * Type generation for updated WSDL fails
+ * 
+ * 
+ * Only UTF-8 encoding is supported when adding managed files to process apps or toolkits
+   When adding external files (such as JARs or JS files) to process applications or toolkits as managed files, several character encodings are listed as available in the editor in the Designer view. However, WebSphere Lombardi Edition currently supports only UTF-8 encoding. If you select an encoding other than UTF-8, BPDs or services that rely on these files fail with errors when you try to run them. (THU-8532) 
+ * SQL Call Stored Procedure (SQL Result) service overrides your data source name by using defaults
+   The data mapping for the SQL Call Stored Procedure (SQLResult) service in the System Data toolkit has the Use Default option enabled/checked for the dataSourceName input variable. This setting causes the input of tw.local.dataSourceName to be ignored. You can work around this issue by creating your own version of the SQL Call Stored Procedure (SQLResult) service and disabling the Use Default option for the dataSourceName input variable. (THU-8562) 
+ * Decision gateways in services do not retain decision values when focus is changed before saving
+   If Advanced Features are enabled in Lombardi Authoring Environment, any values that you add to decision gateways (to include a decision on one or more of the lines) are lost if you change the focus to another item in a service diagram before saving. To work around this problem, save values that you add to decision gateways before changing focus in a service diagram. (THU-8581) 
+ * Firing an attached timer fails in runtime environments
+   If you attach a timer to an activity in Lombardi Authoring Environment, run the BPD that contains the activity on the Process Center Server, select the token that's on the timer in the Inspector execution state window, right click and choose the Fire Timer option, the BPD progresses as expected. However, if you install the process app that includes the same BPD on a Process Server in a runtime environment and perform the same steps in the Inspector to run the BPD and fire the timer, Lombardi Authoring Environment generates a null pointer exception. (THU-9090) 
+ * Client certificate alias field for Web Service Integration components fails to retain specified value
+   When creating Integration services that include Web Service Integration components in Lombardi Authoring Environment, the Client certificate alias field in the Security tab fails to retain the default value if you do not explicitly select it. As a result, if you have chosen to implement Username Token authentication, the Integration service fails with an exception when you run it. To work around this issue, explicitly select the default Client certificate alias (myclient) from the drop-down list. (THU-10188) 
+ * Web Service Integration components in Integration services do not properly validate security configuration
+   When you choose to implement Username Token authentication for Web Service Integration components included in Integration services, Lombardi Authoring Environment does not validate the security settings that you specify before invoking Web Services. As a result, Integration services that include Web Service Integration components may fail when you run them. To work around this issue, double-check your Web Service Integration component security settings and ensure that you have
+   explicitly selected values for all fields even when using a default value. (THU-10190) 
+ * Document Attachment Coach control does not display values for all selected properties
+   When using the Document Attachment Coach control to display a list of ECM documents, the control displays values only for those properties that are included in the initial properties table where you can establish a filter in the Presentation tab. If additional properties are included in the Display columns table in the Presentation tab, the resulting Coach does not display values for those properties. To work around this issue, ensure that the same properties are included in the initial table and the Display columns table in the Presentation tab for the Document Attachment Coach control. (THU-10256) 
+ * Document Attachment Coach control does not display documents if no filters are specified
+   When using the Document Attachment Coach control to display a list of documents from IBM Content Integrator, no documents are displayed in the resulting Coach if you specify an item class name, add all properties, and then do not specify a filter value for any of those properties in the Presentation tab. To work around this issue, specify a filter value for at least one property in the initial table in the Presentation tab for the Document Attachment Coach control. (THU-10259) 
+ * Updating Blueworks Live subscriptions fails in upgraded Designer
+   If you upgrade to WebSphere Lombardi Edition 7.2.0 from version 7.1.0 and your existing process apps include subscriptions to
+   Blueworks Live processes, updating those subscriptions fails. Specifically, when you right-click a subscribed process in the Blueprints 
+   section of the library and select the Update from Blueprint option, the operation fails with an error. To work around this issue,
+   first select the Open in Blueprint option for each subscribed process. After opening each subscribed process, the update option
+   works as expected. (THU-10414) 
+
+
+Using Lombardi Process Portal  * 
+ * Changing search condition causes search to fail in Process Portal
+ * 
+ * 
+ * Scoreboard names are corrupted for new snapshot of Process Portal process app
+   After creating a new snapshot of the Process Portal process app in the Process Center Console and activating the new snapshot, names for all default scoreboards are corrupted in the list under My Scoreboards when you log into the Process Portal. (THU-10244)
+
+
+Using Lombardi Process Admin Console  * 
+ * Some EPVs fail to display in Process Admin Console
+ * 
+ * 
+
+
+WebSphere Lombardi Edition for Microsoft Office Add-on and WebSphere Lombardi Edition for Microsoft SharePoint Add-on  * 
+ * Setting authentication mode
+ * 
+ * 
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WLE Lombardi

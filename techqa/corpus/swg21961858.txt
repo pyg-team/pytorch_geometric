@@ -1,0 +1,30 @@
+Title: IBM Not able to create a local user in DASH - United States
+
+Text:
+DASHL2; DASHL2CONF; permissions; filebased repository; user create TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer was not able to create a new user in the local filebased repository of Dashboard Application Services Hub. 
+
+CAUSE
+DASH was installed as a non-root user, but was started as root, which changed file ownership and permissions.
+
+DIAGNOSING THE PROBLEM
+The system log will show errors like the following: 
+
+[6/30/15 14:21:46:316 NZST] 00000040 FileDocument E ADMR0104E: The 
+system is unable to read document 
+cells/JazzSMNode01Cell/applications/isc.ear/deployments/isc/isclite.war/ 
+WEB-INF/isc.dir/WP300/prefs.xml: java.io.IOException: Permission denied 
+
+
+
+RESOLVING THE PROBLEM
+If the DASH installation was done as a non-root user, check the DASH installation for files owned by root. For example: 
+
+Change directories to the DASH installation directory (usually /opt/IBM/JazzSM). 
+
+Execute: 
+find . -user root | xargs ls -latr 
+
+Change ownership of any files that are owned by root back to the user that was used to install DASH.

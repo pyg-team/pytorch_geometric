@@ -1,0 +1,44 @@
+Title: IBM WebSphere Portal 7.0.0.1 Known Runtime issues - United States
+
+Text:
+7001eGA V7001 V7.0.0.1 RELEASE NOTES
+
+ABSTRACT
+ This document contains a list of known Runtime issues for WebSphere Portal 7.0.0.1. 
+
+CONTENT
+ 
+
+
+
+
+
+
+
+
+Known issues for Runtime of WebSphere Portal 7.0.0.1 
+
+
+Problem: If a portal page has multiple WCM JSR-286 Web Content Viewer Portlets which render authoring tool links, these links redirect to the WCM authoring portlet instead of launching a lightbox dialog with the authoring template. 
+Solution: A fix for this issue is scheduled to be included in CF11 or CF12 for 7.0.0.1 
+
+Problem: The FileTransferApplet does not load on Chrome releases later than 7.0. When editing WCM items with Rich text or Html fields, an error will be displayed in the browser informing the same 
+Solution: The tag which loads the applet has an incorrect attribute. A fix for this issue is scheduled to be included in CF11 or CF12 for 7.0.0.1. 
+
+Problem: When pre-rendering websites using IBM Web Content Management, siteareas with commas in the name cannot be processed. 
+Solution: The config property which is used to specify the list of siteareas to be prerendered, needs to be modified to not use comma as a separator. A fix for this issue is scheduled to be included in CF11 or CF12 for 7.0.0.1. 
+
+Problem: When using the IBM WCM Authoring portlet, items in a project which are directly referenced in one of the fields of another item may appear locked with publish pending status once the project is published. 
+Solution: The items get incorrectly locked when they are internally edited by WCM in order to update references. A fix for this issue is scheduled to be included in CF11 or CF12 for 7.0.0.1. 
+
+Problem: The WCM authoring portlet will have scrollbars on right and bottom (in addition to any browser scrollbars) when the browser is Firefox.. 
+Solution: The interaction between the theme and WCM authoring portlet html has a error, causing the problem. A fix for this issue is scheduled to be included in CF11 or CF12 for 7.0.0.1. 
+
+Problem: Newly added WCM libraries might not be listed in the "Web Content Libraries" portlet on all nodes of the cluster due to an issue in cache replication. 
+Solution: The workaround would be to restart nodes which have the stale library list. A fix for this issue is scheduled to be included in CF11 or CF12 for 7.0.0.1 
+
+Problem: WCM items scheduled to publish or expire on a future date fail to do so after migration from 6.0 to 7.0 
+Solution: A fix for this issue is scheduled to be included in CF12 or CF13 for 7.0.0.1. 
+
+Problem: If using a page navigation component in the WCM JSR-286 Web Content Viewer Portlet to render search results, clicking the navigation can result in an exception. 
+Solution: A fix for this issue is scheduled to be provided for 7.0.0.1 shortly.

@@ -1,0 +1,215 @@
+Title: IBM IY78866: MISSING TEC 3.9 DOCUMENTATION OF DNS REQUIREMENTS ON SOLARIS 8-10 - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description:
+   .
+   Missing TEC 3.9 documentation of dns requirements on
+   Solaris 8-10
+   .
+   Failing Component: Incorrect Docs (READMEs)
+   .
+   Customer Recreate Environment:
+   Solaris version 8 or later without local (/etc/hosts) or cached
+   hostname (nscd) resolution enabled.
+   .
+   Database:               N/A
+   TME Framework:          N/A
+   Install Method:         N/A
+   TEC Server:             N/A
+   TEC Gateway:            N/A
+   TEC UI Server:          N/A
+   TEC Console:            N/A
+   Risk Manager Server:    N/A
+   Risk Manager Gateway:   N/A
+   Risk Manager Agent:     N/A
+   Websphere Server:       N/A
+   Endpoint Level:         N/A
+   TMR / TEC Same Machine: N/A
+   Affected Locale:        N/A
+   .
+   Collected Information:
+   .
+   .
+   Last Known Good Level: None
+   Level 3 Acknowledged: DH
+   .
+   Recreate Steps:
+   On any Solaris (release 8 or later) managed node or TMR where
+   TEC is installed, stop nscd if running (/etc/init.d/nscd stop).
+   Also remove the managed node hostname from /etc/hosts if it is
+   there (comment it out for now).  Attempt to run any TEC
+   commands, wstatesvr, wstopesvr etc. and you will get some sort
+   of core dump error:
+   
+        # wstatesvr
+        Bus Error (core dumped)
+   
+   
+   
+   
+   
+   .
+   SUGGESTED CORRECTIONS ARE:
+   
+   When running TEC 3.9.0 at any fixpack level on Solaris 8 or
+   later you will get core dumps starting or running TEC commands
+   if the nscd process is not running and local dns resolution
+   isn't enabled for hostname resolution of the managed node where
+   TEC is installed. This is the problem documented in TME APAR
+   IY38638 and in Technote 1108249 (see also related technotes:
+   1108256, 1107432 and 1143037).  Also note that since the
+   underlying problem is in the 3.7.x TME libraries used by TEC,
+   the actual installed version of TME does not matter since even
+   with TMF 4.1.1, TEC is still linked against the 3.7.1 shared TMF
+   libraries in order to provide for backwards compatability.
+   
+   To correct the problem you need to either enable nscd or ensure
+   that hostnames for dependent managed nodes are locally
+   resolvable.
+   
+   For nscd:
+   
+   start the nscd process by running "/etc/init.d/nscd start".
+   In order to avoid DNS lookup - which causes the core dump -
+   the hostname or ip address of the TEC Server can be added
+   to the /etc/hosts file (on systems where /etc/nsswitch.conf
+   reads "hosts: files ...") as an alternative. It may still
+   be necessary however to start nscd (which stands for Name
+   Server Cache Daemon).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  On Solaris 8 or later, TEC server processes and/or client
+   commands may core dump if nscd or /etc/hosts not properly
+   configured due to TMF issue (APAR IY38638).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When running TEC 3.9.0 at any fixpack level on Solaris 8 or
+   later you may get core dumps starting or running TEC commands
+   if the nscd process is not running and local dns resolution
+   isn't enabled for hostname resolution of the managed node where
+   TEC is installed. This is the problem documented in TME APAR
+   IY38638 and in Technote 1108249 (see also related technotes:
+   1108256, 1107432 and 1143037).  Also note that since the
+   underlying problem is in the 3.7.x TME libraries used by TEC,
+   the actual installed version of TME does not matter since even
+   with TMF 4.1.1, TEC is still linked against the 3.7.1 shared TMF
+   libraries in order to provide for backwards compatability.
+   
+   In order to avoid DNS lookup, which causes the core dump, you
+   need to either enable nscd (Name Server Cache Daemon) or ensure
+   that hostnames for dependent managed nodes are locally
+   resolvable
+   via /etc/hosts and properly configured /etc/nsswitch.conf.
+   
+   For nscd:
+   
+   Ensure that /etc/nscd.conf contains(see technote 1108249):
+   
+    enable-cache hosts yes
+   
+   then start the nscd process by running:
+   
+    /etc/init.d/nscd start
+   
+   For /etc/hosts:
+   
+   
+   Add entries for the hostname(s) or ip address(es) of the TEC
+   Server
+   to the /etc/hosts file.  Also make sure that /etc/nsswitch.conf
+   has:
+    hosts: files ....
+   and not
+    hosts: dns ...
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY78866
+   
+   
+ * REPORTED COMPONENT NAME
+   TIVOLI ENT.CONS
+   
+   
+ * REPORTED COMPONENT ID
+   5698TEC00
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-11-14
+   
+   
+ * CLOSED DATE
+   2005-11-29
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

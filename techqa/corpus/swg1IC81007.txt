@@ -1,0 +1,157 @@
+Title: IBM IC81007: MSCE FAILOVER OF DB2 RESOURCE NOT WORKING AFTER INSTANCE TYPE UPDATED FROM WSE TO ESE - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  User has a cluster of DB2 machines managed by MSCS. They
+   want to convert the instance from WSE to ESE. After running
+   db2iupdt the MSCS resource for the instance is no longer able
+   to failover. In the process, DB2 service name on the standby
+   machine gets a "-0" appended. For example, if it was SERVER1 it
+   becomes SERVER1-0.
+   
+   The following procedure may result in the error:
+   
+   1. Create a cluster instance
+   
+   db2icrt -u tsmdev2\clustergrp server1
+   
+   2. Create a cluster group:
+   
+   db2mscs -f:db2mscs.cfg
+   
+   ...where db2mscs.cfg contains:
+   
+      DB2_INSTANCE=Server1
+      CLUSTER_NAME=xxx
+      GROUP_NAME=TSM SERVER1 Group
+      DB2_LOGON_USERNAME=tsmdev2\clustergrp
+      DISK_NAME=Disk F:
+   
+   3. Test failover using Cluster Manager - it works both ways.
+   
+   4. From Cluster Manager bring DB2 resources offline.
+   
+   5. Update the instance:
+   
+   db2iupdt SERVER1 /u:tsmdev2\clustergrp,clustergrp
+   
+   6. Restart the DB2 resource on the primary - success
+   
+   7. Test failover - does not work
+   
+   DB2 service does not start on the standby because it has "-0"
+   appended to its name (i.e., SERVER1-0).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Apply the following procedure to work around the error:
+   
+   1. Un-cluster the DB2 instance before upgrade
+   2. Upgrade the instance from a WSE to ESE
+   3. Re-cluster the upgraded DB2 instance to the MSCS cluster
+      via some db2mscs command.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The problem occurs because the Windows service and MSCS resource
+   names are different for the same DB2 instance before and after
+   upgrade. As observed, DB2 appends "-0" to the Windows service
+   name during upgrade (to reflect the node number), which is
+   normal for ESE instance. The two actions (failover and service
+   rename) are both valid; however, they are also mutually
+   exclusive in the current release.
+   
+   This scenario is deemed a limitation in the current release.
+   Support for this instance update scenario will be considered
+   in a future release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC81007
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-24
+   
+   
+ * CLOSED DATE
+   2012-01-24
+   
+   
+ * LAST MODIFIED DATE
+   2012-01-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSY
+   UP

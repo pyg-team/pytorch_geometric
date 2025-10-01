@@ -1,0 +1,27 @@
+Title: IBM How to generate report for Activity Diagram in IBM Rational Rhapsody Reporter Plus - United States
+
+Text:
+Rational Rhapsody Reporter Plus; Activity Diagram; Tabular format TECHNOTE (FAQ)
+
+QUESTION
+ How can I generate report for Activity Diagram in IBM Rational Rhapsody Reporter Plus? 
+
+CAUSE
+You may have to customize Rational reporter plus to export all the activity diagram and activity diagrams elements in a tabular format.
+
+ANSWER
+Please use the attached template while generating the reports for Activity diagrams and all the elements of Activity diagrams. 
+
+Steps: 
+
+ 1. Rational Rhapsody ->Tool->Reporter Plus>Report on all the models- 
+ 2. Select Generate Microsoft Word Document 
+ 3. Select the attached template and finish 
+ 4. It will save the the document in the given path .
+
+
+
+
+Disclaimer All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+Activity.zip [/support/docview.wss?uid=swg21987140&aid=2]Activity.zip [/support/docview.wss?uid=swg21987140&aid=1]

@@ -1,0 +1,27 @@
+Title: IBM Creating a new Data Store in Information Analyzer console displays an error "Error Occurred while loading translation library" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Creating a new Data Store in Information Analyzer console using the Connector type as ODBCConnector for Netezza database displays an error "ODBC function {0} reported: SQLSTATE = HY000; Native Error Code = 45: Msg = Error Occurred while loading translation library" 
+
+CAUSE
+The database drivers are installed while InfoSphere Information Server is running and the environment variables for the database drivers has been added to the dsenv file.
+
+DIAGNOSING THE PROBLEM
+In Information Analyzer console navigate to Data Stores under Metadata Management. Select the Host Computer and click new Data Store. Select the Connector as ODBCConnector and provide the Netezza connection string, user name and password details. Click on Connect and you receive an error "ODBC function {0} reported: SQLSTATE = HY000; Native Error Code = 45: Msg = Error Occurred while loading translation library"
+
+RESOLVING THE PROBLEM
+Follow the steps outlined in the Technote link below to configure the Netezza database connection using ODBC drivers:
+
+
+http://www.ibm.com/support/docview.wss?uid=swg21424633 [http://www.ibm.com/support/docview.wss?uid=swg21424633]
+
+Once the changes are made to the dsenv file restart the Nodeagents. 
+
+Command to restart NodeAgent:
+
+<ISHOME>/ASBNode/bin/NodeAgents.sh restart
+
+For example : # /opt/IBM/InformationServer/ASBNode/bin/NodeAgents.sh restart

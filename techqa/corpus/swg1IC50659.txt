@@ -1,0 +1,264 @@
+Title: IBM IC50659: AE IC47491 FIX COMPLETION - TSM SERVER HANG AFTER DELETE VOLUME COMMAND(S) ISSUED - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The TSM Server may get into a temporary hang state
+   after a delete volume is issued. There is a timing window
+   where a delete volume thread can get into a deadlock
+   with another thread that is responsible for deleting
+   queued up empty scratch volumes. The problem is
+   dependent upon the frequency of delete volume
+   requests and how many scratch volumes are being
+   queued up for deletion after becoming empty from
+   processes like reclamation, delete filespace, etc...
+   The severity of the hang is also dependent upon how
+   many threads get stacked up behind the 2 threads
+   stuck in a deadlock. In some severe cases, the TSM
+   Server may become completely inactive from a
+   Query Proc/Session perspective.
+   .
+   NOTE: The hang should resolve itself after the amount of
+   time specified by the resourcetimeout has expired
+   based on when the define/update command was issued.
+   The default resourcetimeout value is 60 minutes. However,
+   depending upon the number of volume deletion requests, the
+   hang symptoms may continue beyond the initial resource timeout.
+   
+   .
+   Platforms affected: All TSM 5.2.7+ and 5.3.3+ Servers
+   .
+   Customer/L2 Diagnostics:
+   If the TSM Server becomes partially hung, meaning that an
+   admin session can still be opened and most queries
+   complete, the following series of show commands should
+   be issued every 10-15 minutes during the hang for a period
+   of 40-60 minutes. If this problem is being encountered, the
+   following thread states will be found in the show thread output:
+   .
+   NOTE: Different platforms may or may not show the
+   callstack of each thread. If the callstack is unavailable, the
+   problem can be identified by validating the presence
+   of each thread and the wait conditions shown below.
+   .
+   Thread 45: AsScratchDeleteThread
+    tid=11726, ktid=2568223, ptid=122, det=1, zomb=0, join=0,
+   result=0, sess=0
+     Awaiting cond waitP->waiting (0x14137dde0), using mutex
+   TMV->mutex
+   (0x111f762b8), in tmLock (0x1000421c0)
+     Stack trace:
+       0x0900000000507554 _cond_wait_global
+       0x0900000000507f64 _cond_wait
+       0x0900000000508a2c pthread_cond_wait
+       0x000000010000d91c pkWaitCondition
+       0x00000001000421c8 tmLock
+       0x000000010033d4dc LockBackupOptimization
+       0x000000010033e9d8 AfResetBackupOptimization
+       0x000000010031d358 bfResetBackupOptimization
+       0x0000000100242388 DeleteVolId
+       0x0000000100242b74 DeleteScratch
+       0x000000010024340c AsScratchDeleteThread
+       0x000000010000e9dc StartThread
+       0x09000000004f150c _pthread_body
+   .
+   .
+   Thread 95: AdmVolDelThread
+    tid=24375, ktid=2580531, ptid=0, det=1, zomb=0, join=0,
+   result=0, sess=0
+     Awaiting cond latchP->notHeld (0x136f8caa0), using
+   mutex SSV->mutex (0x13732a298), in AcquireXLatch (0x10002c67c)
+     Stack trace:
+       0x0900000000507554 _cond_wait_global
+       0x0900000000507f64 _cond_wait
+       0x0900000000508a2c pthread_cond_wait
+       0x000000010000d91c pkWaitCondition
+       0x000000010002c684 AcquireXLatch
+       0x0000000100257034 AsAcquireVolLatchTracked_29_2
+       0x00000001003338f4 AsPrepareTxn
+       0x00000001002fd254 ssPrepareTxn
+       0x0000000100068c54 CollectVotes
+       0x00000001000699dc tmEnd
+       0x000000010075e2b4 AdmVolDelThread
+       0x000000010000e9dc StartThread
+       0x09000000004f150c _pthread_body
+   .
+   Initial Impact: Medium
+   .
+   Additional Keywords:  AsScratchDeleteThread scratchlist
+                         AsAcquireVolLatch 48060 AF_LOCK_BACKUPOPT
+                         IC47491 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC47491] resq hung backup stgpool storage
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Issue delete volume commands when the TSM Server is not busy
+   with otherprocesses and sessions to avoid the potential
+   contention.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: TSM Servers for any platform running         *
+   *                                                     multiple *
+   *                  delete volumes processes at                 *
+   *                             the same time.                   *
+   *                                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See ERROR  DESCRIPTION.                 *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION: Apply fixing level when available. This      *
+   *                 problem is currently projected to be fixed   *
+   *                 in levels 5.2.10, 5.3.4.2 and 5.4.1. Note    *
+   *                 that this is subject to change at the        *
+   *                 discretion of IBM.                           *
+   *                                                              *
+   ****************************************************************
+   
+   The TSM Server may hang when multiple delete volume
+   processes are running concurrently.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The TSM server code has been updated to prevent
+   a possible hang.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC50659
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   52A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-09-22
+   
+   
+ * CLOSED DATE
+   2006-11-17
+   
+   
+ * LAST MODIFIED DATE
+   2007-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PK34891 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK34891] PK42462 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK42462]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMSV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R52A PSY
+   UP
+   
+   
+ * R52H PSY
+   UP
+   
+   
+ * R52L PSY
+   UP
+   
+   
+ * R52P PSY
+   UP
+   
+   
+ * R52S PSY
+   UP
+   
+   
+ * R52W PSY
+   UP
+   
+   
+ * R53A PSY
+   UP
+   
+   
+ * R53H PSY
+   UP
+   
+   
+ * R53L PSY
+   UP
+   
+   
+ * R53S PSY
+   UP
+   
+   
+ * R53W PSY
+   UP

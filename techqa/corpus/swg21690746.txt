@@ -1,0 +1,30 @@
+Title: IBM Enterprise Content Management System Monitor 5.2 component CALA_REX Agent uninstall return error message - United States
+
+Text:
+CALA_REX Agent; uninstall TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Expected step to perform CALA_REX Agent uninstall:
+1. uninstall Cala first using the Cala installer (the Java WebStart application that you launch from the web console);
+2. uninstall Cala Rex client, to use the uninstaller executable or just use Windows to remove the application.
+
+Error retruns at step 2. The error is: unable to locate executable.
+This issue will block the uninstall process. 
+
+CAUSE
+It has been verified as a installer defect on Windows, Enterprise Content Management System Monitor version 5.2. 
+
+The APAR number is: PJ42736
+
+
+RESOLVING THE PROBLEM
+Code fix will be provided in ECMSM 5.2 later Fix Pack, for APAR PJ42736. 
+
+
+Work around un-install steps:
+1. In Windows command line: “sc stop cala_rex_cliagent", and then “sc delete cala_rex_cliagent".
+2. Delete the directory containing the cala rex installation.
+In testing environment the default path is: C:\Program Files\IBM\ECMSM_AGENT.
+3. Remove the existing CALA_REX Agent info from Windows control panel.
+Just select CALA_REX Agent from the list and the click "Uninstall" button, and click "OK" in the pop up dialog box, to confirm remove this entry.
+4. Search the Registry for CALA_REX and delete all the folders that you find. Normally this should not be necessary, the installer should just overwrite the existing registry entries.

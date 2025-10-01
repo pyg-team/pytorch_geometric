@@ -1,0 +1,16 @@
+Title: IBM Tally increased for ITM events but first & last occurrences are the same - United States
+
+Text:
+eif probe itm event duplicate tally TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ITM events of certain situation has a Tally of 2 and the First occurrence and Last Occurrence are the same. 
+
+CAUSE
+The ITM situation has been configured to send to 2 event destinations and both are to the EIF Probe.
+
+DIAGNOSING THE PROBLEM
+On the ITM side use "tacmd listeventdest" to check for the list of event destinations that ITM can send to. Use "tacmd vieweventdest" to check the setting of those event destinations and where is the target destination.
+
+RESOLVING THE PROBLEM
+Edit the ITM Situation to send to only one event destination which is the EIF probe.

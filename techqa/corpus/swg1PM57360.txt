@@ -1,0 +1,142 @@
+Title: IBM PM57360: RDz LPEX Editor gets closed after debug session - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  APAR Error Description:
+   Abstract: In Rational Developer for System Z (RDz) version
+   8.0.3, when stopping a debug session, RDz will close the editor
+   containing the source being debugged but also the last PL/I
+   source edited.
+   Problem: Problem seems to appear on second debug session.
+   
+   1) Connect to RDz host
+   2) Create a new z/OS project and subproject
+   3) Edit a PL/I program like MYSOURCE.PLI(TSTPLI1) with the LPEX
+   editor
+   4) Generate JCL for Compile/Link/Go for program
+   5) Submit the JCL
+   6) When debugger has started and is waiting at first line of
+   TSTPLI1: stop it
+   7) Editor TSTPLI1.pli gets closed
+   
+   If after step 3 another editor source file is open (for example
+   a JCL), at step 7 it is the last editor that gets closed (ie the
+   JCL).
+   
+   Local fix:
+   There is no known workaround at this time.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When terminating a debug session for a host application, any
+   other files that are opened in System z LPEX Editor may be
+   closed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When the debugger was closing the debug session, the System z
+   LPEX Editor will no longer close unrelated files.
+   
+   The problem listed in this APAR has been resolved with
+   IBM Rational Developer for System z V8.0.3.2 Fix Pack which
+   is available from the Recommended Fixes support download page:
+   http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335 [http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM57360
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   803
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-03
+   
+   
+ * CLOSED DATE
+   2012-03-29
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * FIXED COMPONENT ID
+   5724T0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R803 PSY
+   UP

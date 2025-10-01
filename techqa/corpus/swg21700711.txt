@@ -1,0 +1,143 @@
+Title: IBM How to create an Enhanced EAR shared library - United States
+
+Text:
+RAD; RSA; shared library; Enhanced EAR; WebSphere Application Server Deployment; class pat; classpath; shared libraries; libraries.xml; deployment.xml; ibmconfig; remote server TECHNOTE (FAQ)
+
+QUESTION
+ In Rational Application Developer (RAD), how do you add a shared library jar in the Enhanced EAR/WebSpehere Deployment Editor. The shared libraries specified in some folder C:/my-shared-libraries were not loaded at runtime. Where are the details of the shared library? 
+
+CAUSE
+The path of the shared library was added to the Native path in the Enhanced EAR editor
+Enhanced EAR has a shared library , as shown by the resulting libraries.xml file:
+
+...\workspace\TestEAR\META-INF\ibmconfig\cells\defaultCell\nodes\defaultNode\servers\defaultServer\libraries.xml
+
+
+//---libraries.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<libraries:Library xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:libraries=" http://www.ibm.com/websphere/appserver/schemas/5.0/libraries.xmi" xmi:id="Library_1425957071401" name="my-shared-libraries" isolatedClassLoader="true">
+<nativePath>my-shared-libraries</nativePath>
+</libraries:Library>
+//---------
+
+
+The shared libraries specified in folder C:/my-shared-libraries were not loaded at runtime
+
+ANSWER
+
+You need to use the Class path, not Native path in the WebSphere Application Server Deployment editor. It has also been referred to as the Enhanced EAR editor in earlier RAD releases. 
+
+
+To open the Enhanced EAR editor.
+RC on the Java EE EAR project > Java EE > Open WebSphere Application Server Deployment. 
+
+
+Add/Edit a Share Library entry and give it a "Name" and under "Class path", add the full path to a folder containing all the jars to be part of the shared library or the path to a file for a specific jar. 
+
+ 
+
+[/support/docview.wss?uid=swg21700711&aid=1] [/support/docview.wss?uid=swg21700711&aid=1]
+
+Editing and saving anything in this editor, will result in the creation of the folder:
+{workspace}\TestEAR\META-INF\ibmconfig\
+, containing various WAS deployment descriptors associated with the enhanced EAR .
+
+The Shared Library entries are: 
+
+ *  Name: {some library name} 
+ * Class path: 
+   Enter the entries on the class path. For example: 
+   C:/{Path with my jars}/ 
+   OR 
+   C:/{Some Path to a specific jar}/MySpecificJAR.jar. 
+ * Native library path: Enter a list of DLLs and .so files for use by the JNI code.
+
+
+
+
+
+More details in WAS 855 Knowledge Center topic: - Shared library settings [http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/ucws_rsharedlib_inst.html] : 
+
+
+"..
+-Classpath
+Specifies a list of paths that the product searches for classes and resources of the shared library. If a path in the list is a file, the product searches the contents of that Java archive (JAR) or compressed .zip file. If a path in the list is a directory, then the product searches the 
+contents of JAR and compressed files in that directory. For performance reasons, the product searches the directory itself only if the directory contains subdirectories or files other than JAR or compressed files.
+..
+- Native library path
+Specifies the class path for locating platform-specific library files for shared library support; for example, .dll, .so, or *SRVPGM objects.
+If you specify a value for Native library path, the native libraries are not located by application or shared library class loaders unless the 
+following conditions exist: ....
+.."
+
+
+An Example of WAS deployment descriptors for some shared library(s): 
+
+{workspace}\TestEAR\META-INF\ibmconfig\cells\defaultCell\nodes\defaultNode\servers\defaultServer\ libraries.xml 
+
+
+
+//-- libraries.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI [http://www.omg.org/XMI]" 
+xmlns:libraries="http://www.ibm.com/websphere/appserver/schemas/5.0/libraries.xmi">
+
+<libraries:Library xmi:id="Library_1426110634506" name="log4j-1.2.14.jar" description="My log4j-1.2.14.jar" 
+isolatedClassLoader="false">
+<classPath>C:\IBM-D\OpenSource-Jars\log4j\log4j-1.2.14.jar</classPath>
+</libraries:Library>
+
+<libraries:Library xmi:id="Library_1426112734000" name="spring-webmvc-3.2.4" description="My spring-webmvc-3.2.4 jars" 
+isolatedClassLoader="false">
+<classPath>C:\IBM-D\OpenSource-Jars\spring-webmvc-3.2.4</classPath>
+</libraries:Library>
+
+</xmi:XMI>
+//---
+
+
+{workspace}\TestEAR\META-INF\ibmconfig\cells\defaultCell\applications\defaultApp\deployments\defaultApp\ deployment.xml 
+
+//-- deployment.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<appdeployment:Deployment xmi:version="2.0" 
+xmlns:xmi="http://www.omg.org/XMI [http://www.omg.org/XMI]" 
+xmlns:appdeployment="http://www.ibm.com/websphere/appserver/schemas/5.0/appdeployment.xmi" xmi:id="Deployment_1426110634554">
+<deployedObject xmi:type="appdeployment:ApplicationDeployment" xmi:id="ApplicationDeployment_1426110634554" startingWeight="10">
+<modules xmi:type="appdeployment:WebModuleDeployment" xmi:id="WebModuleDeployment_1426110634555" startingWeight="10000" uri="TestEARWeb.war"/>
+<classloader xmi:id="Classloader_1426110634555" mode="PARENT_FIRST">
+
+<libraries xmi:id="LibraryRef_1426114915339" libraryName="spring-webmvc-3.2.4"/>
+
+<libraries xmi:id="LibraryRef_1426114915340" libraryName="log4j-1.2.14.jar"/>
+
+</classloader>
+</deployedObject>
+</appdeployment:Deployment>
+//---------
+
+
+
+------------------------------
+
+
+
+Will this work with the Class path being on a "remote" WAS server?
+
+Placing that full path shared library entry on the Enhance EAR "Class path" will pick up the jars or a specific jar. That path is specific to the host of the WAS server the EAR is published/deployed to.
+
+In the case of a remote server you need to use the publish setting: "Run server with resources on Server", as per
+RAD 9.1.1 KC topic: - Publishing settings for a WebSphere Application Server [http://www-01.ibm.com/support/knowledgecenter/SSRTLW_9.1.1/com.ibm.servertools.doc/topics/tpublishv6.html] .
+The EAR is copied/installed to the remote server on deploy in RAD.
+
+If this was a local server using "Run server with resources within the workspace" it would also work, since WAS always searches all the EAR descriptors files for information , and any in <EAR_PROJECT>\META-INF\ibmconfig.
+
+To remove the Enhanced EAR deploy settings, remove the ibmconfig/ folder from the EAR. This could be done in RAD or directly in the EAR after the EAR is exported for installation to a WAS server. The deploy settings/resources that were in the Enhanced EAR could be specified using the admin console an/or wsadmin scripts.
+
+
+
+
+
+RELATED INFORMATION
+ Using WAS Shared Libraries in RAD [http://www.ibm.com/support/docview.wss?uid=swg21303233]
+Enhanced EAR deployment and the isolated class loader.. [http://www.ibm.com/support/docview.wss?uid=swg21677153]

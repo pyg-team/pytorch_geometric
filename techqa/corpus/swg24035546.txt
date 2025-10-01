@@ -1,0 +1,70 @@
+Title: IBM Download IBM Netcool Network Management V9.2.1 for HP-UX - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and install IBM Netcool Network Management V9.2.1 using the Passport Advantage website. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+Netcool Network Management provides network discovery and event and network management, including identification and resolution of root-causes and system, network, and service failures, and configuration management capabilities for network devices. Inventory and connectivity data is integrated with IBM Tivoli Netcool/OMNIbus event data. Network management staff can visualize and understand the layout of complex networks and the impact of network events and failures, and work with events to locate, diagnose, and solve network problems in real time.
+
+Netcool Network Management 9.2.1 consists of the following products: IBM Tivoli Netcool/OMNIbus V7.4, IBM Tivoli Network Manager IP Edition V3.9 (or IBM Tivoli Network Manager IP Edition V4.1 on Linux), and IBM Tivoli Netcool Configuration Manager V6.4.
+
+More information
+
+The libraries of publications for the products in Netcool Network Management are available from this website: IBM Tivoli Network Management Information Center [http://www.ibm.com/support/knowledgecenter/SSNFET].
+
+Downloading and assembling the product
+
+ 1. Navigate your browser to the Find Downloads and Media [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] page on the IBM Passport Advantage Online website. You must log on to continue. 
+ 2. Select the Find by part number search option under Download finder options. 
+ 3. Search for each downloadable image by part number (parts are listed and described by operating system in the tabbed section of this document). 
+ 4. Download all of the parts that you need.
+ 5. Unpack each of the parts into a single temporary directory on your system. If you want to install Tivoli Netcool/OMNIbus as part of the Network Manager installation process, you must download the Tivoli Netcool/OMNIbus installation package to a specific location and point the Network Manager installer to that location. Do not extract or rename the Tivoli Netcool/OMNIbus installation package.
+ 6. Open the Quick Start image and follow the instructions in the Quick Start Guide to install the base product.
+
+[http://www.ibm.com/i/c.gif] [http://www.ibm.com/i/c.gif] AIX [http://www.ibm.com/support/docview.wss?rs=3120&uid=swg24035538] [http://www.ibm.com/i/c.gif] HP-UX [http://www.ibm.com/support/docview.wss?rs=3120&uid=swg24035546] [http://www.ibm.com/i/c.gif] Linux [http://www.ibm.com/support/docview.wss?rs=3120&uid=swg24035545] [http://www.ibm.com/i/c.gif] Linux zSeries [http://www.ibm.com/support/docview.wss?rs=3120&uid=swg24035547] [http://www.ibm.com/i/c.gif] Solaris [http://www.ibm.com/support/docview.wss?rs=3120&uid=swg24035549] [http://www.ibm.com/i/c.gif] Windows [http://www.ibm.com/support/docview.wss?rs=3120&uid=swg24035548] [http://www.ibm.com/i/c.gif] [http://www.ibm.com/i/c.gif] Supported operating systems
+
+Network Manager IP Edition V3.9 and Netcool Configuration Manager V6.4 are not supported on HP-UX operating systems. Tivoli Netcool/OMNIbus is supported on HP-UX.
+
+The base product and all required and optional parts are supported on HP-UX on Itanium. Certain parts, not including the base product, are supported on HP-UX PA-RISC.
+
+See the Software Product Compatibility Reports [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1311792011350&osPlatform=HP] website for the HP-UX on Itanium operating systems on which Tivoli Netcool/OMNIbus is supported.
+
+Downloadable parts
+
+There are downloadable parts for the base products and components. Refer to the links below for details about what each part contains. These parts are contained in the eAssembly CRP14ML.
+
+Parts for Tivoli Netcool/OMNIbus V7.4
+
+ For the downloadable parts for Tivoli Netcool/OMNIbus V7.4 on HP-UX operating systems, see www.ibm.com/support/docview.wss?rs=3120&uid=swg24033294 [http://www.ibm.com/support/docview.wss?rs=3120&uid=swg24033294].
+
+Quick Start Guide
+
+The Quick Start Guide is available for download in the eAssembly CRL03ML, which contains the following part.
+
+Assembly # Description CIQ3YML
+
+IBM Netcool Network Management Quick Start Guide
+
+
+
+
+PREREQUISITES
+For software and hardware prerequisites, see the Planning sections in the documentation.
+
+URL LANGUAGE SIZE(Bytes) Netcool Network Management V9.2.1 documentation [http://www.ibm.com/support/knowledgecenter/SSNFET_9.2.1/omn_nmip/welcome/kc_welcome-444.html] English 1 
+INSTALLATION INSTRUCTIONS
+
+
+Follow the instructions in the Quick Start Guide to install the product.
+
+URL LANGUAGE SIZE(Bytes) Netcool Network Management V9.2.1 Quick Start Guide [http://www.ibm.com/support/knowledgecenter/SSNFET_9.2.1/omn_nmip/welcome/kc_welcome-444.html] English 1 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options IBM Passport Advantage Online 30 Aug 13 English 1 HTTP [http://www-01.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] 
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Network Manager IP Edition AIX, Linux, Solaris, Windows 3.9 Systems and Asset Management Tivoli Netcool/OMNIbus AIX, HP-UX, Linux, Solaris, Windows, Linux zSeries 7.4.0

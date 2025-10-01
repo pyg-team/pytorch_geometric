@@ -1,0 +1,91 @@
+Title: IBM T4 silent install fails on Windows under Active Directory Account - United States
+
+Text:
+T4; CRT; Active Directory; silent install; Windows; 71CRT-PLAN; 71CRT-INS; 71CRT-TS TECHNOTE (FAQ)
+
+QUESTION
+ 
+Why does the T4 Client Response Time agent installation fail in silent mode under an Active Directory account on a local Windows workstation? 
+
+CAUSE
+
+Under Windows, Tivoli only recognizes the Administrator account on the local workstation.
+
+
+ANSWER
+ 
+
+Scenario:
+
+
+You log on under an Active Directory account that is a member of the Administrator's group. The silent install fails with very strange log messages. Here, you are not using Tivoli Configuration Manager (TCM) to remotely deploy the agent.
+
+The abort messages make no sense at all, especially on workstations where Tivoli products have not previously been installed. 
+
+Why is the silent install process failing?
+
+Logged messages follow. Here, the locale is Brazil.
+
+[GSKit installs OK.]
+
+3-27-2008 11:35:48 Installed Version of GSKit is [0007.0000.0003.0018]
+3-27-2008 11:35:48 CD Version of GSKit is [0007.0000.0003.0018]
+3-27-2008 11:35:48 GSKit is at proper version.
+
+[Java is OK.]
+
+3-27-2008 11:35:49 Java home found at C:\Program Files\IBM\Java142\jre
+3-27-2008 11:35:49 JAVA_HOME value C:\PROGRA~1\IBM\Java142\jre set by SetEnvironmentVariableA
+3-27-2008 11:35:49 Java exe is [C:\PROGRA~1\IBM\Java142\jre\bin\javaw.exe]
+
+[Then, the script reports an abort sequence and exits.]
+
+3-27-2008 11:37:11 - CAT
+3-27-2008 11:37:11 - 
+3-27-2008 11:37:11 - CAT Install Log cannot be opened
+3-27-2008 11:37:11 - CAT Install Failed
+3-27-2008 11:37:11 - Check Install log (install.log) at CAT_INSTALLER dir printed below
+3-27-2008 11:37:11 - CAT may already have been installed
+3-27-2008 11:37:11 - CAT_INSTALLER files may not have been found
+3-27-2008 11:37:11 - ITM_HOME: C:\IBM\ITM
+3-27-2008 11:37:11 - CAT_INSTALLER:C:\IBM\ITM\tmaitm6\cat_image
+3-27-2008 11:37:11 - CAT_INSTALLED:C:\IBM\ITM\tmaitm6\cat
+3-27-2008 11:37:11 EOF Plugin results file
+3-27-2008 11:37:12 Exit to MessageDialog to display CallPoint Results
+3-27-2008 11:37:12 OnAbort Entered
+3-27-2008 11:37:12 Copy abort log from C:\IBM\ITM\InstallITM\IBM Tivoli Composite Application Manager for Client Response Time 20080327 1135.log to C:\IBM\ITM\InstallITM\Abort IBM Tivoli Composite Application Manager for Client Response Time 20080327 1135.log
+3-27-2008 11:37:12 ABORT: CMA Directory Count=1
+3-27-2008 11:37:12 ABORT: CMA(1) value TMAITM6
+3-27-2008 11:37:12 --- LOCAL EnvSettings at ABORT ---
+3-27-2008 11:37:12 ABORT: EnvKey(ICCRTE_DIR) Value(C:\Program Files\IBM\GSK7)
+3-27-2008 11:37:12 ABORT: EnvKey(KEYFILE_DIR) Value(C:\IBM\ITM\keyfiles)
+3-27-2008 11:37:12 ABORT: EnvKey(PATH) Value(C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\Arquivos de programas\Arquivos comuns\Autodesk Shared\;C:\Arquivos de programas\Autodesk\DWG TrueView\;C:\Program Files\IBM\GSK7\bin;C:\Program Files\IBM\GSK7\lib)
+3-27-2008 11:37:12 ABORT: EnvKey(LIBPATH) Value()
+3-27-2008 11:37:12 ABORT: EnvKey(KDEBE_KEY_LABEL) Value()
+3-27-2008 11:37:12 ABORT: EnvKey(KDEBE_KEY_RING) Value()
+3-27-2008 11:37:12 ABORT: EnvKey(KDEBE_KEYRING_STASH) Value()
+3-27-2008 11:37:12 ABORT: EnvKey(CANDLE_HOME) Value()
+3-27-2008 11:37:12 ABORT: KinCrypt.dll not loaded, or could not be unloaded
+3-27-2008 11:37:12 ABORT: Kglbase.dll not loaded, or could not be unloaded
+3-27-2008 11:37:12 ABORT: Kbb.dll not loaded, or could not be unloaded
+3-27-2008 11:37:12 Directory D:\DOCUME~1\y0gq\CONFIG~1\Temp\{587F0A09-5148-CF9C-9060-B91DE336D9C5}\license deleted
+3-27-2008 11:37:12 Directory D:\DOCUME~1\y0gq\CONFIG~1\Temp\{587F0A09-5148-CF9C-9060-B91DE336D9C5}\InstallITM deleted
+3-27-2008 11:37:12 Directory D:\DOCUME~1\y0gq\CONFIG~1\Temp\plugin_tmp deleted
+3-27-2008 11:37:12 Directory D:\DOCUME~1\y0gq\CONFIG~1\Temp\logs deleted
+3-27-2008 11:37:12 HandleInstallDirectory(ABORT)
+3-27-2008 11:37:12 RegistryGetKeyValue Key(HKLM\SOFTWARE\Candle\OMEGAMON) Value(InstallDir) ERROR:O sistema não pode encontrar o arquivo especificado.
+3-27-2008 11:37:12 Registry key (SOFTWARE\Candle\OMEGAMON) value (InstallDir) not found, exiting.
+3-27-2008 11:37:12 RC_INFO: 
+
+Solution:
+
+The T4 Client Response Time agent silent install process only succeeds when you log onto the workstation under a local Administrator account. 
+
+RELATED INFORMATION
+ ITCAM 7.3 life cycle [http://www.ibm.com/software/support/lifecycleapp/PLCDetail.wss?synkey=Y126067R51028J24-O585999X22860W87-F775004X76484Y69]
+
+
+ 
+
+HISTORICAL NUMBER
+ 21512.228.631

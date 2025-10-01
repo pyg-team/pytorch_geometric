@@ -1,0 +1,27 @@
+Title: IBM Running Cast Iron Google Analytics TIP generates the error: Request doesn't have a Content-Type - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Running the Cast Iron Google Analytics TIP generates the following error: Exception while processing web service activity. Error message: Request doesn't have a Content-Type.
+
+
+
+CAUSE
+Orchestration was trying to invoke a Web Service that was not available.
+
+
+
+RESOLVING THE PROBLEM
+Download the Google Login Web Service TIP and publish it to an appliance. Then point the Google Analytics orchestration to call that Web Service to authenticate with the Google Web Service.
+
+
+
+HISTORICAL NUMBER
+ 00001291 
+
+PRODUCT ALIAS/SYNONYM
+ Cast Iron Solution
+Cast Iron Operating System
+Cast Iron Studio

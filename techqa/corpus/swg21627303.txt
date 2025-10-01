@@ -1,0 +1,87 @@
+Title: IBM Placement of the ondemand.xsd schema file for Content Manager OnDemand for i - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ XML input files for the ARSXML batch administration API require specification of the ondemand.xsd schema file. Where should this file be placed on the IBM i server? 
+
+ANSWER
+The xsi:noNamespaceSchemaLocation directive in the XML files used as input to the OnDemand ARSXML batch administration API expects a Uniform Resource Identifier (URI) pointing to the ondemand.xsd file. The location (path) specified must follow the syntax and conventions set forth in the Internet Engineering Task Force (IETF) Request for Comments 1630. The user executing the ARSXML API must be able to access this resource. You must also remember that if you make copies of the ondemand.xsd file, you must keep those copies in sync with the latest version of the file supplied by IBM.
+You have a number of choices for the location of your ondemand.xsd file and the way in which you specify the path to the ondemand.xsd file in your XML files. Note that, as stated under the ARSXML EXPORT heading below, if you are running OnDemand server version 8.5.0.5 or higher and use the ARSXML EXPORT function to create your XML files that will then be used as input in an ARSXML IMPORT, you might not need to be concerned about the location of your ondemand.xsd schema file or the specification of the xsi:noNamespaceSchemaLocation directive.
+
+Absolute URI
+
+One possibility for the location and specification of the ondemand.xsd file is to specify a fully qualified absolute URI to the ondemand.xsd file in your XML, pointing to the file in the location as shipped from IBM. For example, the absolute URI to the ondemand.xsd file that IBM ships with Content Manager OnDemand for i is:
+
+<onDemand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance [http://www.w3.org/2001/XMLSchema-instance]"
+xsi:noNamespaceSchemaLocation="/QIBM/ProdData/OnDemand/bin/xml/ondemand.xsd"
+
+Relative URI
+
+The URI can also be specified relative to the location of the input XML file. For example, if your input XML file is called users.xml, and the locations of users.xml and ondemand.xsd are:
+
+/arstest/arsxml/xml/users.xml
+/arstest/arsxml/ondemand.xsd
+
+Then the corresponding entry in users.xml would be:
+
+<onDemand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance [http://www.w3.org/2001/XMLSchema-instance]"
+xsi:noNamespaceSchemaLocation="../ondemand.xsd"
+
+Similarly, if the locations of users.xml and ondemand.xsd are:
+
+/arstest/arsxml/xml/users.xml
+/arstest/arsxml/schema/ondemand.xsd
+
+Then the corresponding entry in users.xml would be:
+
+<onDemand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance [http://www.w3.org/2001/XMLSchema-instance]"
+xsi:noNamespaceSchemaLocation="../schema/ondemand.xsd"
+
+Same Directory
+
+The most convenient location is the same directory as the XML input file. In the example above, if both of the files, users.xml and ondemand.xsd, are located in the same directory, such as /arstest/arsxml/xml/, then the corresponding entry in the users.xml file would be:
+
+<onDemand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance [http://www.w3.org/2001/XMLSchema-instance]"
+xsi:noNamespaceSchemaLocation="ondemand.xsd"
+
+Symbolic Link
+
+On IBM i systems, the preferred method is to create a symbolic link to the IBM-supplied ondemand.xsd file instead of copying the file. This method has the advantage of immediately using any updates that IBM makes to the ondemand.xsd file. The following command will create a symbolic link in directory /arstest/arsxml/xml that links to the IBM-supplied ondemand.xsd in
+/QIBM/ProdData/OnDemand/bin/xml.
+
+ADDLNK OBJ('/QIBM/ProdData/OnDemand/bin/xml/ondemand.xsd')
+NEWLNK('/arstest/arsxml/xml/ondemand.xsd') LNKTYPE(*SYMBOLIC)
+
+The corresponding entry in users.xml would then be:
+
+<onDemand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance [http://www.w3.org/2001/XMLSchema-instance]"
+xsi:noNamespaceSchemaLocation="ondemand.xsd"
+
+ARSXML EXPORT
+
+Beginning at server version 8.5.0.5, the XML files that are created as output from the ARSXML EXPORT function will contain a full path name for the ondemand.xsd schema file. No changes are required in the XML file prior to using the XML to import the OnDemand objects into another server, unless the XML is to be used to import objects into a server that is not an IBM i server. 
+
+This 8.5.0.5 server enhancement saves an OnDemand administrator from being required to know where the ondemand.xsd file is located, and to be concerned with how to specify that path in their XML files. Server versions prior to 8.5.0 5 did not specify an explicit path name for the ondemand.xsd file in the XML from an export, and because of that, OnDemand administrators had choose one of the methods outlined in this document to be sure the ondemand.xsd file would be located correctly. If that step was not done, the ARSXML API might use an incorrect schema file located in an incorrect directory, or attempt to use one that could not be found. 
+
+For example, prior to server version 8.5.0.5, the first few lines of the XML file resulting from an ARSXML EXPORT might look similar to this:
+
+<?xml version="1.0" encoding="UTF-8" ?> 
+<onDemand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance [http://www.w3.org/2001/XMLSchema-instance]" 
+xsi:noNamespaceSchemaLocation="ondemand.xsd" >
+
+At server version 8.5.0.5 and higher, the first few lines will look similar to this instead:
+
+<?xml version="1.0" encoding="UTF-8" ?> 
+<onDemand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance [http://www.w3.org/2001/XMLSchema-instance]"
+xsi:noNamespaceSchemaLocation="/QIBM/ProdData/OnDemand/bin/xml/ondemand.xsd" >
+
+Error Messages
+
+The following messages are displayed if the ondemand.xsd file cannot be located:
+
+06/15/09 17:10:09: A parsing error occurred in file , Line 3, Column 62:
+cvc-elt.1: Cannot find the declaration of element 'onDemand'.
+06/15/09 17:10:09: Finished processing file /arstest/arsxml/xml/adduser02.xml.
+Return Code=[2]

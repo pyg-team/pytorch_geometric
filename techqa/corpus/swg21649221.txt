@@ -1,0 +1,65 @@
+Title: IBM Runstats reads non-leaf page due to index corruption - United States
+
+Text:
+SQLI_PRG_ERR ; sqlischs; non-leaf; runstats; db2dart; index; corruption TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During runstats execution, it may read a non-leaf page due to a corrupted index. This leads to the corresponding database being marked bad, logging terminated, and the database brought down. 
+
+SYMPTOM
+The following messages will be dumped in the db2diag.log: 
+
+2013-08-29-16.55.24.375000+120 I107211991F502 LEVEL: Error
+PID : 2464 TID : 3652 PROC : db2syscs.exe
+INSTANCE: DB2 NODE : 000 DB : IBM
+APPHDL : 0-5556 APPID: *LOCAL.DB2.XXXX
+AUTHID : DB2USER
+EDUID : 3652 EDUNAME: db2agent (IBM)
+FUNCTION: DB2 UDB, trace services, sqlt_logerr_string (secondary
+logging fu, probe:0
+DATA #1 : String, 35 bytes
+Runstats is reading a non-leaf page
+
+2013-08-29-16.55.24.375000+120 I107212495F540 LEVEL: Severe
+PID : 2464 TID : 3652 PROC : db2syscs.exe
+INSTANCE: DB2 NODE : 000 DB : IBM
+APPHDL : 0-5556 APPID: *LOCAL.DB2.XXXX
+AUTHID : DB2USER
+EDUID : 3652 EDUNAME: db2agent (IBM)
+FUNCTION: DB2 UDB, index manager, sqlischs, probe:2703
+RETCODE : ZRC=0x87090054=-2029453228=SQLI_PRG_ERR "Program error"
+DIA8575C An index manager programming error occurred.
+
+2013-08-29-16.55.24.406000+120 I107213578F523 LEVEL: Severe
+PID : 2464 TID : 3652 PROC : db2syscs.exe
+INSTANCE: DB2 NODE : 000 DB : IBM
+APPHDL : 0-5556 APPID: *LOCAL.DB2.XXXX
+AUTHID : DB2USER
+EDUID : 3652 EDUNAME: db2agent (IBM)
+FUNCTION: DB2 UDB, index manager, sqlischs, probe:500
+MESSAGE : Index object = {TBSPACEID=<4>; OBJECTID=<19>} Parent object =
+{TBSPACEID=<2>; OBJECTID=<19>}
+
+From the above example, the corrupted index belongs to tablespace 4 and it is index object 19. The corrupted index's parent table resides in tablespace 2 and table object 19.
+
+
+CAUSE
+The root cause of the problem is due to the identified index being corrupted. 
+
+
+RESOLVING THE PROBLEM
+Mark the corrupted index as invalid by running the following command when the database is offline (ie. no connections to the database): 
+
+db2dart <DB NAME> /MI /TSI <tablespace ID> OI/ <index object ID>
+
+
+In order to mark the corrupted index from the above example as invalid: 
+
+db2dart IBM /MI /TSI 4 OI/ 19 
+
+
+The corrupted index will be rebuilt depending on the value you've set for the index recreation time configuration parameter (ie. INDEXREC). Please see the link below for details.
+
+RELATED INFORMATION
+ INDEXREC [http://publib.boulder.ibm.com/infocenter/db2luw/v10r1/topic/com.ibm.db2.luw.admin.config.doc/doc/r0000258.html]
+db2dart [http://publib.boulder.ibm.com/infocenter/db2luw/v10r1/topic/com.ibm.db2.luw.admin.cmd.doc/doc/r0003477.html]

@@ -1,0 +1,77 @@
+Title: IBM Mustgather for WebSphere DataPower SOA Appliances NFS log target - United States
+
+Text:
+mustgather; MustGather TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An NFS static mount and log target have been configured in WebSphere DataPower but log data is not being written to the NFS mount point 
+
+SYMPTOM
+Problems configuring an NFS static mount may include: 
+
+ * Log messages  * 0x00330019 nfs-static-mount (): Operation state transition to up failed 
+    * 0x80e002d3 NFS server xxx at xxx has no compatible versions/transports of NFS available 
+    * 0x80e002ce RPC mount version 1 mount procedure error 13 for export 
+    * Repeated log entries: Attempting mount of NFS filesystem
+   
+   
+ * Log messages intended for the NFS mount point may not be written to the log as expected. 
+ * The Logging Target status is Warning or Failure. 
+ * The Logging Target Status is Active, but the Processed Events count is zero.
+
+
+
+CAUSE
+Authorization or permissions may not be configured to allow DataPower to write to the NFS mount point or the log target may not be configured correctly on the DataPower appliance.
+
+
+
+DIAGNOSING THE PROBLEM
+See the Resolving the Problem section below for suggestions on how to resolve the issue. If those suggestions fail to resolve the problem, collect the following seven items and send them to IBM Support to help diagnose the problem: 
+
+ 
+
+ 1. The NFS server operating system and version. For example, if your NFS server is running on AIX, use the oslevel -s command to collect the AIX operating system version. 
+ 2. Output from command showmount -a. Command showmount -a on your NFS server will list your DataPower appliance and any other clients using mount points. IBM Support will want to verify that the hostname and path listed in this output matches the hostname and path configured in the DataPower NFS static mount. 
+ 3. Output from command nfsstat. Command nfsstat issued on your NFS server will provide version information which can be compared against the version specified in your DataPower NFS static mount configuration. 
+ 4. DataPower configuration export. Export your DataPower configuration as described in Collecting Data in the Related information section below. 
+ 5. Verification that the mount works elsewhere. Test mount to this host/folder from a Windows workstation or Linux station and include the steps you tried and your result with the other information you have collected. 
+ 6. Create a packet capture of the network traffic between DataPower and your NFS server:  * Disable your NFS static mount by clicking on admin-state disabled. 
+     * Choose Control panel --> Troubleshooting to access the packet capture feature 
+     * Start a one-minute packet capture for the ethernet interface that would be used to connect to the NFS server 
+     * Enable your NFS static mount by clicking on admin-state enabled. 
+     * Look for the NFS mount error message in your log to make sure you see the error occurred while the capture is running.
+    
+    
+ 7. For Unix NFS servers, file /etc/exports. The etc/exports file specifies how your mount point is defined. If the issue is associated with permissions, this file may provide helpful information. A very simple exports file that allows any user to use the mount point might only have one line listing the mount point path, for example: /home/dpuser
+
+RESOLVING THE PROBLEM
+Here are tips which have resolved NFS issues: 
+
+ 
+
+ * Set the System Identifier on WebGUI page Administration-- > Device --> System Settings to the host name associated with the IP address for your appliance. If your DataPower appliance has not been assigned a hostname, make up any unique name and specify it as the system identifier. 
+ * From your NFS server, try to ping the DataPower hostname specified in the System Identifier. If the ping fails, try adding the DataPower hostname to the /etc/hosts file. If your DataPower appliance has only been assigned an IP address and not a hostname, specify the unique System Identifier from the previous step as the hostname. 
+ * Try using the IP address of your NFS server rather than its hostname in your static NFS mount configuration to verify the issue is not DNS related. 
+ * If you are using an NFS mount in conjunction with a log target  * Verify that a simple file name is specified in your Log Target configuration without a preceding directory name for the NFS File Name field. For example, specify mylog.txt rather than /mydir/mylog.txt for the Log Target NFS File Name. 
+    * Check the Logging Targets Status in the DataPower Web GUI by selecting Status > Main > Logging Targets  * If the Logging Target status is Warning or Failure and the error info is "Log Creation Failed" DataPower may not have permission to create a file on the NFS server. Check the file permissions on the NFS server and confirm DataPower has Read-Write access.  * Unix: Issue command ls -ltra. 
+          * Windows: Right click on the Windows folder and choose Properties > NFS Advanced Sharing > NFS Share Permissions.
+         
+         
+       * If the Logging Target Status is Active, the Processed Events count is zero and the NFS mount status is [up], the problem may be in the log target configuration, rather than in the NFS settings. Check the log target Event Subscriptions and Event Filters; maybe there are no messages currently matching these settings, and therefore no messages should be processed by the log target.
+      
+      
+   
+   
+ * If you change file /etc/exports as part of trying to resolve the problem, consider restarting your NFS server with a command such as exportfs -av 
+ * If you are using NFS version 4, the single export for an NFSv4 server affects configuration of the DataPower NFS Static Mount object property called Remote NFS Export.  * For NFS version 3, the Remote NFS Export typically uses the form host:/path, where host is the DNS name or IP address of the NFS server, and path is the path exported by the host to mount. That is, An export /path on NFS version 3, would be configured as host:/path. 
+    * For NFS version 4, the Remote NFS Export property can be simply host:/ rather than host:/path; therefore, on NFS version 4, an export /path, would be configured as host:/
+   
+   
+ * Review the tuning recommendations in the Related information below.
+
+RELATED INFORMATION
+#NFS Static Mounts and WebGUI File Management [http://www.ibm.com/support/docview.wss?uid=swg21329055]
+DataPower off-device logging - a configuration example [http://www.ibm.com/support/docview.wss?uid=swg21269136]
+Collecting data: WebSphere DataPower SOA Appliances pro [http://www.ibm.com/support/docview.wss?uid=swg21235587]
+Tuning the NFS mount on the DataPower and B2B [http://www.ibm.com/support/docview.wss?uid=swg21585229]

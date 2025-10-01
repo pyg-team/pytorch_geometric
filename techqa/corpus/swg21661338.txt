@@ -1,0 +1,46 @@
+Title: IBM DSRA8040I Failed to connect to the DataSource - United States
+
+Text:
+CAMADALL CAMADWASDC CAMADUSE sysbase jdbc TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ DSRA8040I Failed to connect to the DataSource with ITCAM and Sybase JDBC connector 
+
+SYMPTOM
+In the SystemOut.log 12/19/13 10:49:28:952 CET] 0000001c DataSourceCon E DSRA8040I:
+Failed to connect to the DataSource. Encountered "": java.lang. 
+NoClassDefFoundError: com/sybase/jdbc4/jdbc/SybCallableStatement 
+
+
+CAUSE
+The errors and stack traces we found (which are included in the 
+attached file "analysis.txt") suggested that the Byte Code 
+Instrumentation (BCI) used by the ITCAM Data Collector conflicts with 
+the Sybase JDBC driver implementation. The version of the ITCAM Data 
+Collector is 7.2.0.0.4, note that we are using the latest Sybase JDBC 
+driver: 
+
+ENVIRONMENT
+ITCAM 7.2 and Sysbase JDBC
+
+RESOLVING THE PROBLEM
+We selectively disable the BCI for only the JDBC 
+interface calls from the JEE runtime in WebSphere. 
+We added the following line to the appropriate ITCAM Data Collector 
+configuration file toolkit_custom.properties: 
+
+com.ibm.tivoli.itcam.toolkit.ai.enablejdbc=false 
+
+Note that the toolkit_custom.properties can be found here: 
+
+/opt/IBM/maestro/ITCAMWAS/dchome/7.2.0.0.4/runtime/was80. 
+CloudBurstCell_1.CloudBurstNode_1.DefaultAppSrv01. 
+server1/custom/toolkit_custom.properties 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAMfAD ITCAM for App Diagnostics

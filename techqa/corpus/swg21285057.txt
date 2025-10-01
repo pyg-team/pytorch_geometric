@@ -1,0 +1,122 @@
+Title: IBM MustGather: Web server administration problems for IBM HTTP Server - United States
+
+Text:
+HTTP Admin Administration; HTTP Server V6.0; MustGatherDocument; MustGather; HTTP Administrative Console v6.1 TECHNOTE (FAQ)
+
+QUESTION
+ Unable to start or stop your IBM® HTTP Server using the IBM WebSphere® Application Server Administrative Console? Gathering this information before calling IBM support will help familiarize you with the troubleshooting process and save you time. 
+
+ANSWER
+The following instructions demonstrate how to collect the files and information that is needed for debugging IBM HTTP Server administration issues through the administrative console:
+Before gathering the MustGather data for the failed Start, use the following steps to verify that the status is being handled correctly.
+
+First, verify that the STATUS is working
+
+Start IHS from a Unix Machine using Apachectl -start from the command line or with Windows Services on Windows, then open the WebSphere Administration console and verify that the Status is properly reflected as Green.
+
+Stop IHS from a Unix Machine using Apachectl -stop from the command line or with Windows Services on Windows, then open the WebSphere Administration console and verify that the Status is properly reflected as RED.
+
+Status is accomplished by a Java socket connect from the Deployment Manager (DMGR) machine to the target web server machine. The DMGR will attempt to connect using the hostname and port as defined in the Web Server definition in the WebSphere Administration Console. If you are not getting the correct Status, this is an indication that something is preventing the DMGR from connecting to the web server machine. It could be configuration or a firewall issue.
+
+Review the following troubleshooting technotes for further suggestions:
+http://www-01.ibm.com/support/docview.wss?uid=swg21431586 [http://www-01.ibm.com/support/docview.wss?uid=swg21431586]
+http://www-01.ibm.com/support/docview.wss?uid=swg21261119 [http://www-01.ibm.com/support/docview.wss?uid=swg21261119]
+
+Proceed to gathering the MustGather data below if the above troubleshooting suggestions do not help in resolving the problem.
+
+Trace instructions for Unmanaged (remote) web server definition:
+
+
+ 1. Stop the IBM HTTP Server (IHS) and IHS administration server 
+ 2. Edit IHS_install_root/conf/admin.conf and change the directive LogLevel warn to LogLevel debug 
+ 3. Edit IHS_install_root/conf/httpd.conf and change the directive LogLevel warn to LogLevel debug 
+ 4. Backup and then delete the files under IHS_install_root/logs 
+ 5. Restart IHS administration server 
+ 6. Backup and then delete the files and folders in the following directories:  1. WebSphere_install_root/profiles/Dmgr01/logs 
+     2. install_root/logs/profiles/AppSrv01/nodeagent/logs
+    
+    
+
+7. Enable logging for the Deployment Manager (DMGR) process using the following trace string:  * 
+ * DMGR
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * http://www-01.ibm.com/support/docview.wss?uid=swg21254706
+ * 
+ * 
+
+8. Save the changes to the master configuration and reproduce the problem 
+9. Collect the following data:  *  Run the Collector tool [http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/ttrb_runct.html?lang=en] on the Network Deployment (for federated environment only) or base Application Server profiles. This should include the trace.log file from the Node Agent and the trace.log file from the DMGR and all of the configuration files. Provide the collector output file. IBM Http Server: httpd.conf, error.log, and access.log IBM Administration Server: admin.conf, admin_error.log, and admin_access.log For Unix on the web server machine, issue this command to obtain the IHS Administration user ID and provide the output file: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Windows: IHS_install_root/bin/ Apache.exe -V 
+   Unix: IHS_install_root/bin/ Apachectl.sh -V 
+ * 
+
+
+10. Follow instructions to send diagnostic information to IBM support [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852] 
+
+
+Trace instructions for Managed (local) web server definition: 
+ 1. Stop the IBM HTTP Server (IHS) 
+ 2. Backup and delete the files under IHS_install_root/logs 
+ 3. Edit IHS_install_root/conf/httpd.conf and change the directive LogLevel warn to LogLevel debug 
+ 4. Backup and then delete the files and folders in the following directories:  1. WebSphere_install_root/profiles/Dmgr01/logs 
+     2. WebSphere_install_root/logs/profiles/AppSrv01/nodeagent/logs
+    
+    
+ 5. Enable logging for the Deployment Manager (Dmgr) and the node agent processes using the following trace string:  * 
+     * DMGR
+     * 
+     * 
+     * 
+     * 
+    
+    
+
+ *  NODEAGENT 
+   *=info: 
+   com.ibm.ws.management.nodeagent.NodeAgent=all=enabled: 
+   com.ibm.ws.management.metadata.NodeAgentCollector=all=enabled: 
+   com.ibm.ws.management.tools.GenericServerProcHelper=all=enabled: 
+   com.ibm.ws.console.core.*=all=enabled: 
+   com.ibm.ws.process.*=all=enabled: 
+ * 
+ * 
+ * 
+ * http://www-01.ibm.com/support/docview.wss?uid=swg21254706
+ * 
+
+6. Save the changes to the master configuration and reproduce the problem 
+
+7. Collect the following data:  *  Run the collector tool on the Network Deployment (for federated environment only) or base Application Server profiles. This should include the trace.log file from the Node Agent and the trace.log file from the DMGR and all of the configuration files. Provide the collector output file. IBM Http Server: httpd.conf, error.log, and access.log For Unix: Issue the following command on the Node agent machine: 
+ * ps -ef | grep java > was.proc 
+   Send the was.proc file 
+ * 
+ * Windows: IHS_install_root/bin/ Apache.exe -V 
+   Unix: IHS_install_root/bin/ apachectl.sh -V 
+ * 
+
+
+8. Follow instructions to send diagnostic information to IBM support [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852]. RELATED INFORMATION
+ Incorrect status of web server shown in the WebSphere A [http://www-01.ibm.com/support/docview.wss?uid=swg21431586]
+Troubleshooting: Connection problems to the IBM HTTP Se [http://www-01.ibm.com/support/docview.wss?uid=swg21261119]

@@ -1,0 +1,117 @@
+Title: IBM PI08116: CANNOT MOVE FIELD BAR IN QUERY WHEN USING INTERNET EXPLORER 10 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ClearQuest 8.0.0.6 and 8.0.0.8
+   Internet Explorer 10
+   I tested with Internet Explorer 10.0.12
+   This problem does not happen in Internet Explorer 11 but the
+   client cannot upgrade to 11 because 10 is their company standard
+   
+   When creating or editing a query on the Web, you cannot use your
+   mouse to select the scroll bar to the right of the field list
+   and move it up and down.  You can use your scroll wheel to
+   scroll in the list, you can select an empty place and right
+   click on the scroll area and the bar will move and the field
+   list will scroll but you can't select the bar with the mouse and
+   move the bar with the mouse.
+   
+   I'll attach a document with a screen print.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  IE9 is currently supported with this release of ClearQuest Web,
+   please use IE9 as a temporary workaround.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This is a duplicate of PI08291 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI08291].
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI08116
+   
+   
+ * REPORTED COMPONENT NAME
+   CLRQUEST MSITE
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3700
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-13
+   
+   
+ * CLOSED DATE
+   2014-01-08
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

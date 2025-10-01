@@ -1,0 +1,22 @@
+Title: IBM Error importing ITCAM data into Rational Performance Tester - United States
+
+Text:
+1281514; RPT; IWAY0179e; ITCAM; ITCAMM; TCAMfWebSphere; TCAMfWAS; LDAP; management server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to resolve an error that can occur when importing ITCAM data into IBM® Rational® Performance Tester (RPT). 
+
+SYMPTOM
+The following error is encountered when attempting to import ITCAM data into Rational Performance Tester: 
+
+ * 
+ * 
+   IWAY0179e: An internal error occurred while connecting to the management server
+
+RESOLVING THE PROBLEM
+One possible problem would be if the user is using an LDAP environment in which the usernames were created using uppercase letters (for example T51139). 
+
+
+A similar account bound to this LDAP account was created in TCAMfWebSphere using lowercase letters. Logging into TCAMfWAS's web portal works when you type the lowercase version; somewhere along the line something must adjust for the different case. However, using the lowercase letters to authenticate to the web service over LDAP, as the RPT data import is trying to do, causes an error because LDAP only is aware of the uppercase username. 
+
+This can be discovered by looking at the trace-ws.log file in the /var directory (on the ITCAM AIX system) which indicated that authentication to the Web service has failed.

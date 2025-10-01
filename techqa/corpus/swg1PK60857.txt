@@ -1,0 +1,179 @@
+Title: IBM PK60857: UNABLE TO OBTAIN JMS CONNECTION AFTER MESSAGING ENGINE RESTARTS AFTER UNEXPECTED TERMINATION. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24021203]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After an application server hosting a messaging engine is
+   terminated (for example by killing the process, or due to a
+   machine failure), it may not be possible to establish a new
+   JMS connection after the messaging engine becomes available
+   again.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of the default messaging provider for *
+   *                  WebSphere Application Server v6.0 and v6.1. *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Messaging connections enlisted in a     *
+   *                      local transaction were not removed      *
+   *                      from the connection pool after a        *
+   *                      connection failure.  This reduced the   *
+   *                      number of valid connections available   *
+   *                      to applications.                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Messaging connections were not handling local transaction
+   failures appropriately.  Connections that had failed,
+   triggering a transaction rollback, were not being removed from
+   the connection pool and were staying in a connection state of
+   STATE_ACTIVE_INUSE until the server was stopped.  If this
+   problem occurs many times it may be possible for the entire
+   connection pool to contain only broken connections preventing
+   new, working connections from being created.
+   
+   With "WAS.j2c=all" trace enabled this was seen as a connection
+   leak. For example
+   
+   Connection Leak Logic Information:
+     MCWrapper id 5d37eb3b  Managed connection
+   [com.ibm.ws.sib.api.jmsra.impl.JmsJcaManagedConnection@137123717
+   9 ...]  State:STATE_ACTIVE_INUSE Thread Id: 6b0beb52 Thread
+   Name: MDBThread_ResourceAdapter : 0 Handle count 1
+        Start time inuse Fri Apr 18 17:22:07 JST 2008 Time inuse
+   59 (seconds)
+        Last allocation time Fri Apr 18 17:22:08 JST 2008
+          getConnection stack trace information:
+   com.ibm.ejs.j2c.ConnectionManager.allocateConnection(ConnectionM
+   anager.java:792)
+   com.ibm.ws.sib.api.jmsra.impl.JmsJcaConnectionFactoryImpl.create
+   Connection(JmsJcaConnectionFactoryImpl.java:249)
+   
+   This problem affects connections created by JMS applications
+   (as in the example above), as well as connections created by
+   other IBM components such as WebSphere Process Server (which
+   may show as SibRaManagedConnection classes in the J2C trace).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR fixes the problem.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fixpack 6.0.2.31 and 6.1.0.21.  Please refer to the Recommended
+   Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK60857
+   
+   
+ * REPORTED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * REPORTED COMPONENT ID
+   620400101
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-02-11
+   
+   
+ * CLOSED DATE
+   2008-07-01
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * FIXED COMPONENT ID
+   620400101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

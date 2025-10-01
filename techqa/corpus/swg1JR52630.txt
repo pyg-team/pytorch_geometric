@@ -1,0 +1,255 @@
+Title: IBM JR52630: CONCURRENT PROBLEMS OCCUR WHEN YOU SERIALIZE A BUSINESS OBJECT IN EAGER PARSING MODE - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8560.cf1.delta.repository.2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.2&source=SAR]
+bpm.8560.cf1.delta.repository.1 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.1&source=SAR]
+8.5.6.0-WS-BPM-IFJR52630 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Advanced&fixids=8.5.6.0-WS-BPM-IFJR52630-ADV&source=SAR]
+8.5.5.0-WS-BPM-IFJR52630 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Advanced&fixids=8.5.5.0-WS-BPM-IFJR52630-ADV&source=SAR]
+8.5.0.1-WS-BPM-IFJR52630 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Advanced&fixids=8.5.0.1-WS-BPM-IFJR52630-ADV&source=SAR]
+8.0.1.3-WS-BPMADVWESB-IFJR52630 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Advanced&fixids=8.0.1.3-WS-BPMADVWESB-IFJR52630-ADV&source=SAR]
+7.5.1.2-WS-BPMADVWESB-IFJR52630 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Advanced&fixids=7.5.1.2-WS-BPMADVWESB-IFJR52630-ADV&source=SAR]
+7.0.0.5-WS-WBI-IFJR52630 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Process+Server&fixids=7.0.0.5-WS-WBI-IFJR52630&source=SAR]
+InfoSphere Information Server, Version 11.5 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24040702]
+InfoSphere Information Server, Version 11.5 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24040703]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+InfoSphere Information Server, Version 11.5.0.2 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24043652]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During your load test, when multiple threads serialize the
+   same business object to XML, the serialization might fail. You
+   see the following exception in the FFDC log file:
+   
+   org.eclipse.emf.common.util.BasicEList$BasicIndexOutOfBoundsExce
+   ption
+   SourceId:org.eclipse.emf.common.util.BasicEList$BasicIndexOutOfB
+   oundsException caught trying to serialize BO
+   {http://sample/nameSpace, SampleBO} ProbeId:214
+   org.eclipse.emf.common.util.BasicEList$BasicIndexOutOfBoundsExce
+   ption: index=0, size=0
+    at
+   org.eclipse.emf.common.util.BasicEList.get(BasicEList.java:512)
+    at
+   org.eclipse.emf.ecore.xmi.impl.XMLSaveImpl.writeTopObjects(XMLSa
+   veImpl.java:658)
+    at
+   org.eclipse.emf.ecore.xmi.impl.XMLSaveImpl.traverse(XMLSaveImpl.
+   java:553)
+    at
+   org.eclipse.emf.ecore.xmi.impl.XMLSaveImpl.save(XMLSaveImpl.java
+   :233)
+    at
+   com.ibm.ws.bo.bomodel.util.BOResourceImpl.doSave(BOResourceImpl.
+   java:107)
+    at
+   org.eclipse.emf.ecore.resource.impl.ResourceImpl.save(ResourceIm
+   pl.java:993)
+    at
+   com.ibm.ws.bo.bomodel.util.SerializerUtil$1.run(SerializerUtil.j
+   ava:144)
+    at
+   java.security.AccessController.doPrivileged(AccessController.jav
+   a:327)
+    at
+   com.ibm.ws.bo.bomodel.util.SerializerUtil.privilegedSave(Seriali
+   zerUtil.java:135)
+    at
+   com.ibm.ws.bo.service.BOXMLSerializerImpl.save(BOXMLSerializerIm
+   pl.java:575)
+   
+   This error occurs only in eager parsing mode.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM WebSphere Process Server                *
+   *                  IBM Business Process Manager (BPM)          *
+   *                  Advanced                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: During your load test, when multiple    *
+   *                      threads serialize the same business     *
+   *                      object to XML, the serialization        *
+   *                      might fail. You see the following       *
+   *                      exception in the FFDC log file:         *
+   *                      org.eclipse.emf.common.util.BasicEList$ *
+   *                      BasicIndexOutOfBoundsException          *
+   *                      SourceId:org.eclipse.emf.common.util.Ba *
+   *                      sicEList$BasicIndexOutOfBoundsException *
+   *                      caught trying to serialize BO           *
+   *                      {http://sample/nameSpace, SampleBO}     *
+   *                      ProbeId:214                             *
+   *                      org.eclipse.emf.common.util.BasicEList$ *
+   *                      BasicIndexOutOfBoundsException:         *
+   *                      index=0, size=0                         *
+   *                      at                                      *
+   *                      org.eclipse.emf.common.util.BasicEList. *
+   *                      get(BasicEList.java:512)                *
+   *                      at                                      *
+   *                      org.eclipse.emf.ecore.xmi.impl.XMLSaveI *
+   *                      mpl.writeTopObjects(XMLSaveImpl.java:65 *
+   *                      8)                                      *
+   *                      at                                      *
+   *                      org.eclipse.emf.ecore.xmi.impl.XMLSaveI *
+   *                      mpl.traverse(XMLSaveImpl.java:553)      *
+   *                      at                                      *
+   *                      org.eclipse.emf.ecore.xmi.impl.XMLSaveI *
+   *                      mpl.save(XMLSaveImpl.java:233)          *
+   *                      at                                      *
+   *                      com.ibm.ws.bo.bomodel.util.BOResourceIm *
+   *                      pl.doSave(BOResourceImpl.java:107)      *
+   *                      at                                      *
+   *                      org.eclipse.emf.ecore.resource.impl.Res *
+   *                      ourceImpl.save(ResourceImpl.java:993)   *
+   *                      at                                      *
+   *                      com.ibm.ws.bo.bomodel.util.SerializerUt *
+   *                      il$1.run(SerializerUtil.java:144)       *
+   *                      at                                      *
+   *                      java.security.AccessController.doPrivil *
+   *                      eged(AccessController.java:327)         *
+   *                      at                                      *
+   *                      com.ibm.ws.bo.bomodel.util.SerializerUt *
+   *                      il.privilegedSave(SerializerUtil.java:1 *
+   *                      35)                                     *
+   *                      at                                      *
+   *                      com.ibm.ws.bo.service.BOXMLSerializerIm *
+   *                      pl.save(BOXMLSerializerImpl.java:575)   *
+   *                      This error occurs only in eager         *
+   *                      parsing mode.                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Because business object serialization is not thread safe in
+   eager parsing mode, when multiple threads serialize the same
+   business object to XML the concurrent problem might occur.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM WebSphere Process Server V7.0.0.5
+   and IBM BPM V7.5.1.2, V8.0.1.3, V8.5.0.1, V8.5.5.0, and
+   V8.5.6.0 that synchronizes the business object when
+   serializing it to avoid the multiple-threads issue.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR52630:
+   
+   1. Select IBM WebSphere Process Server or IBM Business Process
+   Manager Advanced from the product selector, the installed
+   version to the fix pack level, and your platform, and then
+   click Continue.
+   2. Select APAR or SPR, enter JR52630, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR52630
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-25
+   
+   
+ * CLOSED DATE
+   2015-04-22
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP

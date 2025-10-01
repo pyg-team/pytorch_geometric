@@ -1,0 +1,22 @@
+Title: IBM Online docs for ILMT and TAD4D 7.5 - United States
+
+Text:
+ILMT; Docs; Documentation TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ How can I access IBM License Metric Tool (ILMT) & Tivoli Asset Discovery for Distributed (TAD4D) 7.5 online documentation? 
+
+ANSWER
+Here is ILMT 7.5 documentation link:
+http://www.ibm.com/support/knowledgecenter/SS8JFY_7.5.0/com.ibm.lmt75.doc/ic-homepage_lmt.html [http://www-01.ibm.com/support/knowledgecenter/SS8JFY_7.5.0/com.ibm.lmt75.doc/ic-homepage_lmt.html]
+
+Here is TAD4D 7.5 online documentation link:
+http://www.ibm.com/support/knowledgecenter/SSHT5T_7.5.0/com.ibm.tad4d75.doc/ic-homepage_tad4d.html [http://www-01.ibm.com/support/knowledgecenter/SSHT5T_7.5.0/com.ibm.tad4d75.doc/ic-homepage_tad4d.html]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Security Tivoli Asset Discovery for Distributed

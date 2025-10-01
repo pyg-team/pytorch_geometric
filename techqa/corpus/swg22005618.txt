@@ -1,0 +1,83 @@
+Title: IBM SQL Agent : Using the Windows Performance Monitor tool to gather data of the MSSQL Agent and Collector processes - United States
+
+Text:
+Perfmon logman data collector TECHNOTE (FAQ)
+
+QUESTION
+ How can I use the Windows Performance Monitor tool to gather data of the MSSQL Agent and Collector processes? 
+
+ANSWER
+Windows Performance Monitor is a Microsoft Management Console (MMC) snap-in that combines the functionality of the previous stand-alone tools including Performance Logs and Alerts, Server Performance Advisor, and System Monitor. Windows Performance Monitor provides a graphical user interface for customizing the Data Collector Sets and the Event Trace Sessions. 
+You can use the Windows Performance Monitor to monitor the amount of resources that are used by the applications and processes. 
+
+
+Enabling the performance counters
+The user ID, which you use to enable the perfmon counters, must be a member of the local Performance Log Users, Administrators, or an equivalent group. 
+
+Use one of the following methods to enable and collect perfmon counters. 
+
+1. Using the logman utility
+2. Using the Performance Monitor Tool (GUI)
+
+Using the logman utility
+To enable and collect perfmon counters by using the logman utility, complete the following tasks: 
+
+1. At the command prompt, run the following command: 
+
+logman create counter <collectername> -f <fileformat> -v <versionformat> -c "counter1” “counter2”-si <interval> -o <outputfile> 
+
+Following are the switch values:
+-f –The format of the output file that is used for collecting performance data. Specify any of the following valid formats: bin, bincirc, csv, tsv, and SQL. 
+-v – The version of the output file. Specify the version in the nnnnn or mmddhhmm format. 
+-c – The path of the counter that is being monitored. Separate multiple counters with space.
+-si – Data collection interval in the [[hh:]mm:]ss format. The default value is 15 seconds. 
+-o – Path for storing the collection data.
+Example: logman create counter datacollector -f csv -v mmddhhmm -c "\Memory\*" "\Process(koqagent)\*" "\Process(koqcoll)\*"-si 00:15 -o "c:\perflogs\daily_log_trial"
+The perfmon data collector set is now created. 
+
+ Tip: For detailed information about the logman utility, see 
+
+ https://technet.microsoft.com/en-in/library/bb40956.aspx [https://technet.microsoft.com/en-in/library/bb40956.aspx] 
+
+2. After the perfmon counters are created, to start the data collection, run the following command: logman start datacollector
+Where 
+datacollector - The name of counter that is created with the logman create command.
+3. To stop the data collection, run the following command: logman stop datacollector
+Where 
+datacollector- The name of counter, that is created with the logman create command.
+
+
+Using the Performance Monitor Tool
+To enable perfmon counters, complete the following tasks: 
+
+1) Click Start, type perfmon in the search box, and press Enter. The Performance Monitor window opens.
+2) In the Windows Performance Monitor navigation pane, expand Data Collector Sets, right-click User Defined, point to New, and click Data Collector Set. The Create new Data Collector Set wizard opens.
+3) Enter a name for your data collector set. 
+4) Click Create manually (Advanced) and click Next.
+5) Click Create data logs, select the Performance counter button, and then click Next.
+6) To open the Add Counters dialog box, click Add.
+7) In the Available Counters area, select the following items:
+a. From the Memory list, select all counters for Memory and click Add.
+b. From the Process list, select all counters for Process. 
+c. From the Instances of selected object list, select the Koqcoll and Koqagent processes, and then click Add
+8) When you finish adding the performance counters, click Next to continue the configuration. 
+9) Note the file path of the directory where the collector data is saved.
+10) Click Finish to exit and save the current configuration.
+What to do next
+Before collecting the performance counter data, change the format of the collection document. 
+
+Changing the format of the collection document
+1. In the Windows Performance Monitor navigation pane, expand Data Collector Sets.
+2. Select the user-defined data collector set that you added. 
+3. In the right pane, right-click the name of the data collector set, and click Properties. 
+4. Select the log format as Comma Separated.
+5. Retain the default sample interval of 15 seconds and click OK. 
+6. In the Windows Performance Monitor navigation pane, right-click the new data collector set and click Start.
+Result
+The perfmon data collection starts for the new user-defined data collector set.
+
+
+What to do next
+To verify that the data is being properly collected, navigate to the root directory that is mentioned in step 9 of the Enabling the performance counters procedure. Verify that a .xls file with the name of data collector set is being generated and updated with the perfmon data. 
+
+Tip: To stop the perfmon data collection, in the Windows Performance Monitor navigation pane, right-click the data collector set, and click Stop.

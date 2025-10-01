@@ -1,0 +1,53 @@
+Title: IBM Running TI process spikes results with 'Out of memory' Error. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+User starts running a large TI process. On the application server, the memory of the TM1 processes (for example tm1sd.exe) begins to rise. After some time, the memory used spikes above 2GB of memory. User receives error message from the TM1 system.
+
+SYMPTOM
+Message from xxx application: Server is out of memory. Connection to the server will be closed
+
+CAUSE
+By default, 32-bit editions of Windows only allows for 2GB of memory to be allocated to applications regardless of the memory available on the actual system. 
+
+ENVIRONMENT
+Windows Server 2003 32-bit.
+
+RESOLVING THE PROBLEM
+Fix:
+
+
+
+
+Upgrade TM1 server from a Windows 32-it edition, to a 64-bit edition. 64-bit operating systems can address a vast amount more RAM than 32-bit editions. 
+
+ 
+
+Workaround: 
+
+It is possible to enable a "3Gb Switch" in order to allow more memory (3Gb instead of 2Gb) to be used by applications running on a 32-bit version of Windows. 3Gb may be enough to process this TM1 cube. 
+
+NOTE: Increasing the memory available (from 2Gb to 3Gb) to applications will reduce (from 2Gb to 1Gb) the memory available for the Windows operating system itself. Therefore, changing this setting may have a detrimental affect on your server. Please consult Microsoft website for their official advice on this setting. 
+
+ 
+
+Steps: 
+
+ 
+To Set the /3GB Startup Switch in Windows Server 2003: 
+
+ 1. Right-click My Computer and select Properties. The System Properties dialog box will appear. 
+ 2. Click the Advanced tab. 
+ 3. In the Startup and Recovery area, click Settings. The Startup and Recovery dialog box will appear. 
+ 4. In the System startup area, click Edit. This will open the Windows boot.ini file in Notepad. 
+ 5. In the [Operating Systems] section, add the following switches to the end of the startup line that includes the /fastdetect switch: /3GB 
+ 6. Save the changes and close Notepad. 
+ 7. Click OK two times to close the open dialog boxes, and then restart the computer for the change to take effect.
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Business Intelligence & Financial Performance Management Cognos 8 Controller Controller Windows 8.5 Edition Independent

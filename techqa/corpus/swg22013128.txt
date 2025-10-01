@@ -1,0 +1,13 @@
+Title: IBM BundleException problems reported in the log, and IBM Data Studio V4.1.3 failed to start on Windows 32-bit - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Data Studio failed to start after you installed IBM Data Studio Version 4.1.3 on Windows 32-bit. If you check the log file, you can notice that multiple "org.osgi.framework.BundleException" problems are reported. 
+
+RESOLVING THE PROBLEM
+Use IBM Data Studio V4.1.2 on Windows 32-bit. 
+
+To download Data Studio V4.1.2, click the following link:
+IBM Data Studio (4.1.2, Windows) [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%20Management&product=ibm/Information+Management/IBM+Data+Studio&release=4.1.2&platform=Windows&function=fixId&fixids=DS412_FOR_WINDOWS&includeSupersedes=0]

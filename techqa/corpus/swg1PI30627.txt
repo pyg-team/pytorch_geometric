@@ -1,0 +1,194 @@
+Title: IBM PI30627: UPDATE RUN-WCM-ADMIN-TASK TASK TO INCLUDE A PORTAL SERVER START - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CF installed failed because of 500 error from
+   run-wcm-admin-task. In ConfigTrace.log, errors are shown as
+   below.
+   
+   /opt/IBM/WebSphere/PortalServer/wcm/prereq
+   .wcm/config/includes/prereq.wcm_cfg.xml:3793: An exception
+   occurred while executing the task: Status returned 500: Internal
+   server error
+           at org.apache.tools.ant.ProjectHelper
+   .addLocationToBuildException(ProjectHelper.java:539)
+           at org.apache.tools.ant.taskdefs.Ant.execute(Ant
+   .java:384)
+           at org.apache.tools.ant.taskdefs.CallTarget
+   .execute(CallTarget.java:107)
+           at com.ibm.wps.config.tasks.AntCallTask
+   .execute(AntCallTask.java:13)
+           at org.apache.tools.ant.UnknownElement
+   .execute(UnknownElement.java:275)
+           at org.apache.tools.ant.Task.perform(Task.java:364)
+           at org.apache.tools.ant.taskdefs.Sequential
+   .execute(Sequential.java:64)
+           at com.ibm.wps.config.If.execute(If.java:77)
+           at org.apache.tools.ant.UnknownElement
+   .execute(UnknownElement.java:275)
+           at org.apache.tools.ant.Task.perform(Task.java:364)
+           at org.apache.tools.ant.Target.execute(Target.java:341)
+           at org.apache.tools.ant.Target.performTasks(Target
+   .java:369)
+           at org.apache.tools.ant.Project
+   .executeSortedTargets(Project.java:1216)
+           at org.apache.tools.ant.Project.executeTarget(Project
+   .java:1185)
+           at org.apache.tools.ant.helper.DefaultExecutor
+   .executeTargets(DefaultExecutor.java:40)
+           at org.apache.tools.ant.Project.executeTargets(Project
+   .java:1068)
+           at org.apache.tools.ant.Main.runBuild(Main.java:668)
+           at org.apache.tools.ant.Main.startAnt(Main.java:187)
+           at org.apache.tools.ant.Main.start(Main.java:150)
+           at com.ibm.wps.config.ConfigEngine.process(ConfigEngine
+   .java:953)
+           at com.ibm.wps.config.ConfigEngine.main(ConfigEngine
+   .java:219)
+           at sun.reflect.NativeMethodAccessorImpl.invoke0(Native
+   Method)
+           at sun.reflect.NativeMethodAccessorImpl
+   .invoke(NativeMethodAccessorImpl.java:48)
+           at sun.reflect.DelegatingMethodAccessorImpl
+   .invoke(DelegatingMethodAccessorImpl.java:25)
+           at java.lang.reflect.Method.invoke(Method.java:600)
+           at com.ibm.ws.bootstrap.WSLauncher.main(WSLauncher
+   .java:277)
+   Caused by: /opt/IBM/WebSphere/PortalServer/wcm/prereq
+   .wcm/config/includes/prereq.wcm_cfg.xml:5127: The following
+   error occurred while executing this line:
+   /opt/IBM/WebSphere/PortalServer/wcm/prereq
+   .wcm/config/includes/prereq.wcm_cfg.xml:1666: The following
+   error occurred while executing this line:
+   /opt/IBM/WebSphere/PortalServer/wcm/prereq
+   .wcm/config/includes/prereq.wcm_cfg.xml:3793: An exception
+   occurred while executing the task: Status returned 500: Internal
+   server error
+           at org.apache.tools.ant.ProjectHelper
+   .addLocationToBuildException(ProjectHelper.java:539)
+           at org.apache.tools.ant.taskdefs.Ant.execute(Ant
+   .java:384)
+           at org.apache.tools.ant.taskdefs.CallTarget
+   .execute(CallTarget.java:107)
+           at com.ibm.wps.config.tasks.AntCallTask
+   .execute(AntCallTask.java:13)
+           at org.apache.tools.ant.UnknownElement
+   .execute(UnknownElement.java:275)
+           at org.apache.tools.ant.Task.perform(Task.java:364)
+           at org.apache.tools.ant.Target.execute(Target.java:341)
+           at org.apache.tools.ant.Target.performTasks(Target
+   .java:369)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 15 (PI26801 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI26801]) for Portal
+   8.0.0.1 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI26801
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  We need to make sure that Portal server is started
+   before we run any run-wcm-admin-task task.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI30627
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-01
+   
+   
+ * CLOSED DATE
+   2015-02-09
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

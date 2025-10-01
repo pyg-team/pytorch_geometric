@@ -1,0 +1,176 @@
+Title: IBM Configuring JDBC Over SSL with an Externally-signed Certificate - United States
+
+Text:
+use SSL; encrypted JDBC TECHNOTE (FAQ)
+
+QUESTION
+ How to configure JDBC over SSL with an externally-signed certificate. 
+
+ANSWER
+
+
+BEFORE YOU BEGIN
+
+Once the PKCS #12 key store has been copied to the windows machine, it needs to be imported on the server for use by SQL Server. 
+
+Please note that the instructions and screen captures below are from a server running Windows Server 2008 R2. There may be some variations to the instructions and dialog boxes depending on the OS being used. 
+
+PROCESS
+
+
+STEP 1: IMPORT THE PKCS #12 KEY STORE USING THE MICROSOFT MANAGEMENT CONSOLE (MMC)
+
+ 1.  On the Start menu, click Run, and in the Open box, type 'mmc' and click OK.
+     
+     
+ 2.  Microsoft Management Console (MMC) will open.
+     
+     
+ 3.  In the MMC console, on the File menu, click Add/Remove Snap-in.
+     
+     
+ 4.  In the Add/Remove Snap-in dialog box, click Certificates, click Add.
+     
+     
+ 5.  In the Certificates snap-in dialog box, click Computer account, and then click Next.
+     
+     
+ 6.  In the Select Computer dialog box, click Local computer, and then click Finish.
+     
+     
+ 7.  In the Add/Remove Snap-in dialog box, click OK.
+     
+     
+ 8.  In the Certificates snap-in, expand Certificates, and then right-click Personal, point to All Tasks, and then click Import.
+     
+     
+ 9.  In the Certificate Import Wizard, click Next.
+     
+     
+ 10. Click Browse, locate and select the PKCS #12 key store file, click Next.
+     
+     
+ 11. Enter the password for the private key, click Next.
+     
+     
+ 12. Click Place all certificates in the following store. Please note that the Certificate store should be set to Personal. Verify that the Personal is selected as the Certificate store, Click Next
+     
+     
+ 13. If Personal is not selected as the Certificate store, click Browse and select Personal in the Select Certificate Store dialog, click Ok, click Next 
+     
+     
+ 14. Click Finish to complete the Certificate Import Wizard.
+     
+     
+ 15. A pop up will notify that the import was successful, Click OK.
+     
+     
+ 16. A Certificates folder will be created within the Personal folder. This will containing the imported certificate.
+     
+     
+ 17. In the Certificates snap-in, right click on the imported certificate, point to All Tasks, and then click Manage Private Keys.
+     
+     
+ 18. In the Permissions for <host name> private keys dialog, Click Add.
+     
+     
+ 19. In the Select Users or Groups dialog, click Advanced.
+     
+     
+ 20. In the Advanced Select Users or Groups dialog, click Find Now. This will populate the Search results.
+     
+     
+ 21. In the populated search results, scroll down and select the SQL service account SQLServerMSSQLUser$<Host Name>$<SQL Server Instance>, click OK.
+     
+     
+ 22. Please note that if the above steps are not followed to grant the SQL service account read permissions, SQL Server will fail to load the imported certificate due to insufficient permissions. You will see the following entry in SQL Server log:
+     
+     
+     Server Unable to load user-specified certificate [Cert Hash(sha1) "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"]. 
+     
+     
+     The server will not accept a connection. You should verify that the certificate is correctly installed. See “Configuring Certificate for Use by SSL” in Books Online.
+     
+     
+ 23. In the Select Users or Groups dialog, click OK.
+     
+     
+ 24. In the Permissions for <host name> private keys dialog, click OK.
+     
+     
+ 25. In the Certificates snap-in, right click on the imported certificate, click Copy.
+     
+     
+ 26. In the Certificates snap-in, expand Trusted Root Certification Authorities, right click on Certificates, click Paste.
+     
+     
+ 27. In the Certificates snap-in, expand Personal, click on Certificates, right click on the imported certificate, click Properties
+     
+     
+ 28. In the Certificate Properties dialog, click Enable only the following purposes, uncheck everything except for Server Authentication, click Ok.
+     
+     
+ 29. In the Certificates snap-in, expand Personal, click on Certificates, double click on the imported certificate.
+     
+     
+ 30. Certificate dialog will open. Determine whether the certificate meets the following requirements:
+     -On the General tab, you receive the following message: “You have a private key that corresponds to this certificate.”
+     -On the Details tab, the value for the Subject field must be server name.
+     -The value for the Enhanced Key Usage field must be Server Authentication.
+     -On the Certification Path tab, the server name must appear under Certification path.
+     -On the details tab, take note of the value for the Thumbprint field. This will be used later on in Step 6 to verify the correct certificate is being loaded by SQL Server.
+
+
+
+
+STEP 2: MODIFY THE SQL SERVER CONFIGURATION TO FORCE ENCRYPTION
+ 1. On the Start menu, click Run, and in the Open box, type 'SQLServerManager10.msc' and click OK. Please note that this will open the configuration manager for SQL Server 2008. For SQL Server 2005, use 'SQLServerManager.msc'.
+    
+    
+ 2. In SQL Server Configuration Manager, expand SQL Server Network Configuration, right click on Protocols for <SLQ Server Instance>, click Properties
+    
+    
+ 3. In the Protocols for <SQL Server Instance> Properties dialog, Flags tab, change the value for the Force Encryption flag, to Yes.
+    
+    
+ 4. In the Protocols for <SQL Server Instance> Properties dialog, click the Certificate tab, click on the Drop down for Certificate, select the certificate imported in Step 4, click OK.
+    
+    
+ 5. Click OK on the warning that pops up.
+
+
+
+
+STEP 3: VERIFY THAT SQL SERVER IS SETUP FOR USING ENCRYPTION
+ 1. On the Start menu, click Run, and in the Open box, type 'ssms' and click OK.
+    Please note that this will open the SQL Server Management Studio for SQL Server 2008. For SQL Server 2005, use 'sqlwb'.
+    
+    
+ 2. In the Connect to Server dialog, enter the relevant information and connect to the server.
+    
+    
+ 3. In object Explorer, right click on the Server, click Restart. Note that the service can be restarted from SQL Server Configuration Manager (under SQL Server Services) as well.
+    
+    
+ 4. Click Yes on the restart dialog.
+    
+    
+ 5. In Object Explorer, expand Management, expand SQL Server Logs, double click on the Current log. Log File View will open. Scroll down through the log entries or use the search functionality to find an entry similar to the following
+    
+    
+    The certificate [Cert Hash(sha1) "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"] was successfully loaded for encryption.
+    
+    
+    Verify that the hash value matches the Thumbprint value from Step 4.
+
+
+
+
+STEP 4: ENABLE “USE SSL” OPTION
+ 1. Edit the appropriate JDBC log source in QRadar Log Sources configuration
+    
+    
+ 2. Select the “Use SSL” option
+    
+    
+ 3. Save configuration

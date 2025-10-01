@@ -1,0 +1,191 @@
+Title: IBM WebSphere SSL Video Tutorials: Learning more about WebSphere SSL - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Frequently Asked questions for the Secure Sockets Layer (SSL) component in the WebSphere® Application Server. This document contains video tutorials to help you with your SSL configuration tasks. 
+
+RESOLVING THE PROBLEM
+
+
+[/support/docview.wss?uid=swg22001665&amp;aid=1] This document contain frequently asked questions as well as video tutorials for the Secure Sockets Layer (SSL) component in WebSphere® Application Server traditional. This can help address common issues with this component before calling IBM support and save you time.
+
+
+TAB NAVIGATION
+ * 
+ * Learn More- selected tab,
+ * 
+ * Troubleshoot [http://www.ibm.com/support/docview.wss?uid=swg21989352]
+ * 
+ * Collect data [http://www.ibm.com/support/docview.wss?uid=swg21162961]
+
+TAB NAVIGATION
+Runtime: 
+
+ * 
+ * 
+ * Websphere traditional- selected tab,
+ * 
+ * 
+
+TAB NAVIGATION
+ * 
+ * 
+ * FAQ [http://www-01.ibm.com/support/docview.wss?uid=swg21999963]
+ * 
+ * 
+ * Video Tutorials- selected tab,
+
+Overview 
+This topic contains videos that go over frequently asked questions for the Secure Sockets Layer (SSL) component in Websphere Application Server traditional. This can help address common issues with this component before calling IBM support and save you time.
+
+
+
+How can I gather JSSE client side traces for command operations such as 'stopServer' or 'syncNode'?
+
+The following video shows how can you enable JSSE traces on the client side when running commands such as 'stopServer' or 'syncNode':
+
+
+
+
+
+How do I identify and resolve SSL trust problems when WAS connects to an external server? 
+
+The following video shows how to debug and solve common SSL trust errors when connecting to an external server using WebSphere traditional: 
+
+
+
+
+
+
+How do I replace the default SSL certificate on a WebSphere Application Server?
+
+The following video demonstrates how to replace the default SSL certificate on WebSphere traditional:
+
+
+
+
+More information can be found in the Creating new SSL certificates to replace existing ones in a cell [https://www.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.base.doc/ae/tsec_sslreplacecell.html] task in the Knowledge Center.
+
+
+How do I replace the WAS self signed SSL certificate with a CA certificate? 
+
+The following video demonstrates how to replace the WebSphere Application Server self signed SSL certificate with a CA certificate:
+
+
+
+
+
+
+How do I change my WebSphere SSL configuration to use protocol TLSv1.2 in a Standalone Application Server?
+
+The following video shows how to change a stand-alone WebSphere traditional SSL configuration to use protocol TLSv1.2 using the admin console:
+
+
+
+
+How do I configure my WebSphere Network Deployment Manager and Nodes to use SSL protocol SSL_TLSv2?
+
+The following video shows how to configure WebSphere Network Deployment Manager and it's nodes to use SSL protocol SSL_TLSv2
+
+
+
+
+How do I enable SSLv3 on fixpack 7.0.0.41, 8.0.0.13, and 8.5.5.10 and above? 
+
+The following video goes over the process of enabling SSLv3 in WebSphere Application Server fixpack 7.0.0.41, 8.0.0.13 and 8.5.5.10 and above. For additional information, please search for this question in the FAQ [http://www-01.ibm.com/support/docview.wss?uid=swg21999963] tab above.
+
+
+
+
+
+
+How do I install the unrestricted SDK policy files in WebSphere Application Server from IBM.com?
+
+The following video demonstrates how to retrieve the unrestricted SDK policy files from ibm.com and install them on WebSphere traditional:
+
+
+
+
+
+How to install the jurisdiction policy files so they are not overwritten when upgrading the JDK? 
+
+The following video demostrates how jurisdiction policy files can be installed in a way that they won't be overwritten when upgrading the JDK:
+
+
+
+
+To reference your jdk version, please see the IBM SDK Policy files [https://www.ibm.com/support/knowledgecenter/en/SSYKE2_8.0.0/com.ibm.java.security.component.80.doc/security-component/sdkpolicyfiles.html] topic in the Knowledge Center.
+
+
+How do I use the keytool command to verify the certificate chain for WebSphere Application Server? 
+
+The following video demonstrates keytool can be used to verify the certificate chain for WebSphere traditional: 
+
+
+
+
+
+How do I change the default certificate to 2048 bits and SHA256 algorithm in WAS V7.0.0.23+ using Commandline? 
+
+The following video demonstrates how change the default certificates in WebSphere traditional to 2048 bits and SHA256 algorithm using command line:
+
+
+
+
+
+How do I change the default certificate to 2048 bits and SHA256 algorithm in WAS V7.0.0.23+ using the Administrative Console? 
+
+The following video demonstrates how change the default certificates in WebSphere traditional to 2048 bits and SHA256 algorithm using the Administrative Console:
+
+
+
+
+
+How to retrieve a signer cert from remote ssl port and add to truststore in WAS? 
+
+The following video demonstrates how to retrieve a signer certificate from a remote SSL port in order to add it to a WebSphere traditional truststore:
+
+
+
+
+More information can be found in the Retrieving signers from a remote SSL port [https://www.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.nd.doc/info/ae/ae/tsec_sslretrievesignersport.html] task in the Knowledge Center.
+
+
+
+How to change strength/customize cipher suite groups in WebSphere Application Server?
+
+The following video demonstrates how to change the strength or customize cipher suite groups in WebSphere traditional:
+
+
+
+
+
+
+How can I look at SSL trace to ensure cipher suites and SSL protocols match?
+
+The following video explains how to review the SSL traces in order to ensure that the cipher suites and the SSL protocol match.
+
+
+
+
+How to fix GSK_ERROR_BAD_CERT (gsk rc=414) in plug-in log?
+
+The following video demonstrates how fix the GSK_Error_BAD_Cert (gsk rc=414) plug-in error WebSphere traditional:
+
+
+
+
+
+How do I update the 'java.security' file algorithm properties? 
+
+The following video demonstrates how you can update the java.security file algorithm properties after applying fixpacks 9.0.0.0, 8.5.5.10, 8.0.0.13, 7.0.0.41. For more information please refer see APAR PI54960 [http://www-01.ibm.com/support/docview.wss?uid=swg21975698] 
+
+
+
+
+
+
+[/SUPPORT/DOCVIEW.WSS?UID=SWG22001665&AMP;AID=2] NOTE:
+This document uses the term WebSphere traditional to refer to WebSphere Application Server v9.0 traditional, WebSphere Application Server v8.5 full profile, WebSphere Application Server v8.0 and earlier, WebSphere classic, traditional WebSphere, traditional WAS and tWAS.

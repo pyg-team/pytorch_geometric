@@ -1,0 +1,145 @@
+Title: IBM PM97233: RDZ V901 ZPICL ENHANCEMENT - RSE INTEGRATION - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+9.0.1: UI13095 PTF for Rational Developer for System z Host Options [http://www-01.ibm.com/support/docview.wss?uid=swg24036667]
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  RDZ V901 ZPICL ENHANCEMENT - RSE integration
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: 01.integrated debugger users                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 01.enhancement to embed the integrated  *
+   *                         debugger in RDz                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   01.enhancement to embed the integrated debugger in RDz
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  01.enhancement to embed the integrated debugger in RDz
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM97233
+   
+   
+ * REPORTED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0723
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-17
+   
+   
+ * CLOSED DATE
+   2013-11-29
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  FEKFCORE FEKFCOR6 FEKFENVR FEKFILE  FEKFOMVS
+   FEKFZOS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * FIXED COMPONENT ID
+   5724T0723
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY UI13095 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI13095]
+   UP13/12/12 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,20 @@
+Title: IBM Upside-down question marks in text - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In a multi-lingual installation on Oracle, text in various languages appear as upside-down question marks. 
+
+SYMPTOM
+No error message, just characters appearing as upside-down question marks.
+
+
+RESOLVING THE PROBLEM
+Ensure that the NLS_LANG database parameter is the same as your SOURCE database. For example, if your source database is WE8ISO8859P1 (one of the most common), your NLS_LANG should be AMERICAN_AMERICA.WE8ISO8859P1.
+
+Steps:1. Run the following SQL statement in SQL Plus: SELECT * FROM NLS_DATABASE_PARAMETERS 2. Evaluate what the NLS_LANG is vs. the locale parameter on the source database
+
+3. Ensure that they are the same value and set the value appropriately
+
+4. Restart the DB and test

@@ -1,0 +1,37 @@
+Title: IBM Installation of a TIP Fix Pack fails with ADMU7704E - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The installation of a Tivoli Integrated Portal fix pack fails due to issues with the Windows TIP service. 
+
+DIAGNOSING THE PROBLEM
+The IA log may have the following errors:
+Tool information is being logged in file
+E:\IBM\tivoli\tipv2\profiles\TIPProfile\logs\server1\startServer.log 
+ADMU7701I: Because server1 is registered to run as a Windows Service, 
+the request to start this server will be completed by starting the associated Windows Service. 
+
+ADMU7704E: Failed while trying to start the Windows Service associated with server: server1; probable error executing WASService.exe: Starting Service: V2.1_TIPProfile_Port_16310
+Failed to start service: The service cannot be started, either because it is disabled or 
+because it has no enabled devices associated with it.
+
+
+RESOLVING THE PROBLEM
+1. Try to stop and start TIP/Webgui from Windows Service Manager Panel. 
+
+2. If above fails then disable the service from the Windows Service Manager Panel and then try to stop and start TIP from command line as follows. 
+cd <TIPHOME>/bin
+(example; cd C:\IBM\tivoli\tipv2\profiles\TIPProfile\bin)
+stopServer.bat server1 -username <tipadmin> -password <password> 
+
+startServer.bat server1 
+
+Note: Change the user Id and password based on your environment. 
+
+3. If you can stop and start the server from the command line, then leave the Windows service disabled and try the installation again. 
+
+If it fails again then please open a PMR with IBM support and provide logs as described in the following technote:
+
+https://www-304.ibm.com/support/docview.wss?uid=swg21468983 [https://www-304.ibm.com/support/docview.wss?uid=swg21468983]

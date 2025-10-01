@@ -1,0 +1,32 @@
+Title: IBM Spectrum Protect for Virtual Environments: Data Protection for VMware is backing up pagefile.sys - United States
+
+Text:
+Tivoli Storage Manager for Virtual Environments; IBM Spectrum Protect for Virtual Environments TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Spectrum Protect for Virtual Environments: Data Protection for VMware (formerly Tivoli Storage Manager for Virtual Environments: Data Protection for VMware, or short Data Protection for VMware) is automatically backing up the pagefile.sys file on a Microsoft Windows VM. This data is not needed for recovery. 
+
+CAUSE
+Data Protection for VMware is backing up all blocks of a VM that have changed since the last backup (with IFINCR/IFFULL). Since the pagefile.sys file on a Windows VM frequently changes, it is possible that this file contributes to the backup volume. 
+
+RESOLVING THE PROBLEM
+The content of the pagefile.sys is withdrawn when a VM is rebooted. However, Data Protection for VMware does not provide an option that excludes this file from the backup. 
+
+To address this issue, two workarounds exist: 
+
+Workaround 1: 
+
+ * 
+
+
+Workaround 2:  * 
+ * 
+
+
+During a restore operation, the excluded disks are not recreated. During boot of the VM, the operating system automatically creates the pagefile.sys file on an existing disk, typically the boot drive. If the missing disk is added to the VM later, the next reboot relocates the pagefile.sys file to the original disk. This workaround has been tested. It is still recommended to run your own validation. You can validate this workaround with the full VM instant access/restore function. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Storage Management Tivoli Storage Manager for Virtual Environments Data Protection for VMware

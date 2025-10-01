@@ -1,0 +1,27 @@
+Title: IBM Detailed System Requirements for v9.1 of the IBM InfoSphere Optim Test Data Management Solution for PeopleSoft Enterprise with Data Masking Option - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document summarizes the hardware, platforms, and software supported by version 9.1 of the IBM® InfoSphere® Optim™ Test Data Management Solution for PeopleSoft Enterprise and the IBM InfoSphere Optim Test Data Management Solution for PeopleSoft Enterprise with Data Masking Option. 
+
+CONTENT
+
+
+Version 9.1 of the InfoSphere Optim Test Data Management Solution for PeopleSoft Enterprise with Data Masking Option is tested and distributed with the IBM InfoSphere Optim Test Data Management Solution, Version 9.1. Detailed hardware and software requirements for the InfoSphere Optim Test Data Management Solution are at: http://www.ibm.com/support/docview.wss?uid=swg27036209 [http://www.ibm.com/support/docview.wss?uid=swg27024294]. 
+
+SUPPORTED PEOPLESOFT ENTERPRISE SOFTWARE
+Version 9.1 of the InfoSphere Optim Test Data Management Solution for PeopleSoft Enterprise with Data Masking Option provides test data management support for the following PeopleSoft suites: 
+
+ * Customer Relationship Management (CRM) (Version 9.0)
+ * Enterprise Performance Management (EPM) (Version 9.0)
+ * Financial and Supply Chain Management (FSCM) (Versions 9.0 and 9.1)
+ * Human Capital Management (HCM) (Versions 9.0 and 9.1)
+ * Human Capital Management/Campus Solutions (HCM/CS) (Version 9.0)
+
+It also provides data masking support in Human Capital Management, Versions 9.0 and 9.1.
+
+In addition, PeopleTools v8.48, v8.49, v8.50, and v8.51 are supported.
+
+For a list of the supported modules in each suite, see the IBM InfoSphere Optim Test Data Management Solution for PeopleSoft Enterprise Installation Guide and the IBM InfoSphere Optim Test Data Management Solution for PeopleSoft Enterprise with Data Masking Option Installation and User Guide.

@@ -1,0 +1,28 @@
+Title: IBM Silent Install - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Silent install of any of the Tivoli Monitoring components fails. 
+
+CAUSE
+When the complete path to the silent response file is not specified as part of the command invoking the silent install, it fails with the following error message in the log file: 
+
+------------------------------------------------------------
+08-16-2012 09:52:31: Silent install configuration file: silent_response.txt
+08-16-2012 09:52:31: 
+08-16-2012 09:52:31: AgentDeployRunning=FALSE.
+08-16-2012 09:52:31: 
+08-16-2012 09:52:31: SEVERE: You must agree to the License Agreement.
+08-16-2012 09:52:31: SEVERE: Silent install config error.
+08-16-2012 09:52:31: Silent install config error.
+------------------------------------------------------------
+
+
+
+RESOLVING THE PROBLEM
+Specify the complete path to the silent response file while launching the silent install. 
+
+e.g.
+setup /z"/sfE:\TEMP\silent_response.txt" /s /f2"C:\temp\itm6_agent_setup.log"

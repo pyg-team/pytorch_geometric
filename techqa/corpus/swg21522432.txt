@@ -1,0 +1,54 @@
+Title: IBM The TLS/SSL handshake did not succeed (SCI94161) - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The TLS/SSL handshake did not succeed (SCI94161) 
+
+SYMPTOM
+
+
+Trading partner getting handshake failures 
+
+ndmmsg -f /opt/cdunix/ndm/cfg/snbc209/msgfile.cfg CSPA202E mod.name=SECURE+ short.text=SSL handshake failure, reason=&VAR1 long.text=The TLS/SSL handshake did not succeed. This may happen if a common ciphersuite could not be negotiated.
+
+
+
+
+SYSTEM ACTION->The session is failed.
+
+
+
+
+RESPONSE->Correct the ciphersuite list to contain a common ciphersuite.
+
+
+
+
+If the problem persists, contact Sterling Commerce Customer support.
+
+
+RESOLVING THE PROBLEM
+
+
+1. Recreate the certificates
+2. Recreate the communication setup
+
+ 
+
+HISTORICAL NUMBER
+ PRI25359 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+
+
+Gentran Integration Suite, Release 4.1 
+GIS communicating with Connect 
+Direct Secure Plus 
+SCI94161

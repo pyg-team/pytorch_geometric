@@ -1,0 +1,93 @@
+Title: IBM Download IBM Integration Designer V8.5.7 - United States
+
+Text:
+PAODownloadDocument; Passport advantage; 8.5.7 DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM Integration Designer eAssembly images from the Passport Advantage website. 
+
+DOWNLOAD DESCRIPTION
+IBM Integration Designer is the "one tool, one set of skills" solution for end-to-end integration in your service-oriented architecture (SOA). Based on Eclipse, Integration Designer is a tool for building SOA-based business process management (BPM) and integration solutions across IBM Business Process Manager, IBM WebSphere Enterprise Service Bus, and IBM WebSphere Adapters. It simplifies integration with rich features that accelerate the adoption of SOA by rendering existing IT assets as service components, encouraging reuse and efficiency. 
+
+The IBM Integration Designer Version 8.5.7 test environment includes the IBM Process Server. You can use this test environment to monitor BPEL processes. You can install the Business Monitor V8.5.7 server on top of the process server and create a profile with process server and monitoring capabilities.
+
+More information 
+
+ * Latest information and critical fixes for IBM Integration Designer, Release notes [http://www.ibm.com/support/search.wss?tc=SSTLXK&atrn=SWVersion&atrv=8.5.7] 
+ * Installing IBM Integration Designer [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.7/com.ibm.wbpm.wid.imuc.doc/topics/c_inintro.html] 
+ * Hardware and software requirements [http://www.ibm.com/support/docview.wss?uid=swg27022441]
+
+Downloading the relevant eAssembly images from the IBM Passport Advantage website 
+
+ 1. Ensure that your workstation has sufficient space to store both the files you must download from IBM Passport Advantage and the extracted installation image. 
+ 2. Go to the IBM Passport Advantage [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] website. 
+ 3. Sign in and download the images that you need to a temporary directory. The parts are listed by platform in the table below.
+    Required and optional software is labeled in the table. Your need for parts depends on your usage and configuration choices. 
+ 4. Extract the downloaded files to one directory.
+    Important: Do not use the utility provided by Windows to decompress the files. Launchpad updates fail if this utility is used.
+    
+    
+    
+ 5. Open the Quick Start Guide, located in the Quick Start image, to access documentation to help with product installation.
+
+
+Downloadable parts 
+You must extract these required packages to the same directory on your local system. If you do not extract them to the same directory, the Installation Manager fails with Java™ virtual machine (JVM) errors. Description Linux on x86 64-bit Image 
+[eAssembly CRZ9VML ] Windows x86 64-bit Image 
+[eAssembly CRZ9VML ] Required: [/support/docview.wss?uid=swg24041573&amp;aid=1] [/support/docview.wss?uid=swg24041573&amp;aid=1] IBM Integration Designer Quick Start Guide
+
+IBM Integration Designer V8.5.7, Multilingual
+Download all images and extract them to the same location.
+
+
+IBM Integration Designer V8.5.7 test environment, Multilingual
+Download all of the images and extract them to the same location as Integration Designer.
+
+
+
+IBM CICS Transaction Gateway Application Developer V9.0, Multilingual CN954ML
+
+CN955ML
+CN956ML
+CN957ML
+
+CN95CML
+CN95DML
+CN95EML
+
+
+CIL7IML
+CN954ML
+
+CN955ML
+CN956ML
+CN957ML
+
+CN958ML
+CN959ML
+CN95AML
+CN95BML
+
+CIL7JML
+PREREQUISITES
+IBM Integration Designer detailed system requirements [http://www.ibm.com/support/docview.wss?uid=swg27022441].
+
+INSTALLATION INSTRUCTIONS
+Make sure that you download the Quick Start Guide from your product eAssembly. Open the PDF file, and follow the instructions to install the product. 
+
+Detailed installation instructions for your product are available in the IBM Business Process Management product [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.7/com.ibm.wbpm.main.doc/kc-homepage-bpm.html] documentation.
+
+
+
+
+
+
+TECHNICAL SUPPORT
+ See Passport Advantage Online support at:
+http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html].
+
+See Integration Designer support at:
+http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Integration_Designer [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_Integration_Designer]. 
+
+PRODUCT ALIAS/SYNONYM
+ IID

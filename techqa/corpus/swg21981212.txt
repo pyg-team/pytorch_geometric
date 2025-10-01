@@ -1,0 +1,51 @@
+Title: IBM Efficiently computing minimal multiple column primary keys - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How does Information Analyzer version 11.5 analyze multiple column primary keys?
+How can a non-minimal multiple column primary key be efficiently validated? 
+
+CAUSE
+Information Analyzer version 11.5 uses a new algorithm and only displays the minimally-sized MCPKs rather than all existing MCPKs like in earlier versions.
+
+ANSWER
+Efficiently computing minimal multiple column primary keys 
+
+The approach to compute multiple column primary keys has changed in 
+Information Analyzer version 11.3. Now, only the set of minimally-sized
+multiple column primary keys (MCPK) is returned. Since the new procedure is
+pruning all column combinations from further consideration that are
+bigger than a minimal MCPK, the computation is much more efficient
+than before that change.
+
+This means no restriction in functionality, because per definition
+every non-minimal MCPK can be derived by adding any set of columns 
+to a minimal MCPK. That is why it suffices to only list the set of 
+minimal MCPKs. 
+
+
+Validating a non-minimal multiple column primary key
+
+If a given column combination shall be checked
+for being an MCPK, there are two alternative procedures:
+1. Define a virtual column consisting of the concatenation of all
+of your columns and run column analysis on it.
+Thus, you can find out if there are any duplicate rows 
+for the virtual column, i.e., if it is an MCPK or not. 
+It will also appear in the result set of
+an MCPK analysis where it can be selected as a primary key. 
+2. Run MCPK first. Then identify a minimal MCPK whose columns
+are a subset of your given column combination. Select that 
+minimal MCPK as primary key which will automatically create
+a virtual column for it. Finally, add all missing columns 
+to that virtual column to obtain your given column combination.
+It is also possible to change the order of columns
+of that virtual column. Note that such virtual columns 
+are mapped to a compound key when a physical model is 
+generated from the analysis results. 
+
+Of course, the second option involves computing all minimal
+MCPKs which is considerably more expensive than only verifying
+an individual column combination for being an MCPK.

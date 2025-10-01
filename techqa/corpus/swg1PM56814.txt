@@ -1,0 +1,164 @@
+Title: IBM PM56814: ALTER THE MODIFY UTILITY CODE TO DECREASE THE NUMBER OF LOCKS AQUIRED AND HELD. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  We recently saw a number of LPLs occurring during a large
+   Modify Utility run.
+   The Modify Utility will get an x row lock for each row in the
+   SYSCOPY and SYSLGRNX tablespace that qualifies to be deleted.
+   A larger number of locks will be taken that V10 catalog
+   tablespaces use row level locking.
+   We need to make sure that the DB2 code is not getting and
+   holding locks when it accesses the SYSCOPY and SYSLGRNX
+   tablespaces for non qualifying rows.
+   Additional symptom: DXR142E LOCK STRUCTURE DSNPRG1_LOCK1 in use
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1) Increase the size of the v10 lock structure.
+   2) Decrease the scope of the Modify Utility.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All DB2 10 for z/OS users of the MODIFY      *
+   *                 RECOVERY utility.                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: MODIFY RECOVERY executed on a V10 NFM   *
+   *                      data sharing system receives ABEND04E   *
+   *                      RC00E40190 RC00C900BF (IRLM out of      *
+   *                      storage condition).                     *
+   ****************************************************************
+   * RECOMMENDATION: Apply corrective PTF when available.         *
+   ****************************************************************
+   The MODIFY RECOVERY utility executed on a V10 NFM data sharing
+   system receives ABEND04E 00E40190 00C900BF (IRLM out of storage
+   condition) when there are a very large number of
+   SYSIBM.SYSLGRNX records to delete.
+   In V10 NFM, locksize for SYSLGRNX has been changed from
+   page level locking to row level locking, so the number of total
+   locks requested by MODIFY RECOVERY can increase dramatically.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MODIFY RECOVERY utility has been changed to commit more
+   aggressively during the deletion of SYSLGRNX records so that
+   the row level locks are released more frequently.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM56814
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-26
+   
+   
+ * CLOSED DATE
+   2012-03-12
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK77007
+   
+   
+
+MODULES/MACROS
+ *  DSNUBCOP DSNUMDEL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY UK77007 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK77007]
+   UP12/03/28 P F203
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,166 @@
+Title: IBM IC43070: RECLAMATION DOES NOT ONLY PROCESS ACTIVE FILES FROM OFFSITE VOLUMES - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The tsm administrator guide for AIX, HP-UX, LINUX  documents
+   in chapter 9, section "Defining a Copy Storage Pool", Table
+   22, for the "Reclamation threshold": ".. Reclamation is a
+   process that moves any remaining active, fragmented files
+   from one volume to another volume, thus making the original
+   volume available for reuse. .. When a copy storage pool
+   volume that is offsite becomes eligible for reclamation, the
+   reclamation process attempts to retrieve the active files on
+   the reclaimable volume from a primary or copy storage pool
+   volume that is onsite. .."
+   This must be corrected since also inactive files will be
+   processed by reclamation. However how reclamation works
+   should not be explained in this table.
+   Instead The entry should read:
+   "Specifies when to initiate reclamation of volumes in the
+   copy storage pool. Reclamation is a process that moves any
+   remaining files from one volume to another volume, thus
+   making the original volume available for reuse. A volume is
+   eligible for reclamation when the percentage of unused space
+   on the volume is greater than the reclaim parameter value.
+   Reclamation processing works differently for offsite storage
+   pool volumes and virtual volumes. When a copy storage pool
+   volume that is offsite becomes eligible for reclamation, the
+   reclamation process attempts to retrieve the files on the
+   reclaimable volume from a primary or copy storage pool
+   volume that is onsite. The process then writes these files
+   to an available volume in the original copy storage pool.
+   See Reclamation for Copy Storage Pools and Reclamation of
+   Volumes with the Device Type of SERVER for more details.
+   Reclamation processing works differently for offsite storage
+   pool volumes and virtual volumes. When a copy storage pool
+   volume that is offsite becomes eligible for reclamation, the
+   reclamation process attempts to retrieve the files on the
+   reclaimable volume from a primary or copy storage pool
+   volume that is onsite. The process then writes these files
+   to an available volume in the original copy storage pool.
+   See Reclamation for Copy Storage Pools and Reclamation of
+   Volumes with the Device Type of SERVER for more details."
+   In the administrator guide for windows, the table is in
+   chapter 10, same section, table number is '23'.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Tivoli Storage Manager users.            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Information about the reclamation       *
+   *                      threshold parameter in a table          *
+   *                      in the Administrator's Guides was       *
+   *                      misleading because it implied           *
+   *                      that only active files are processed    *
+   *                      by reclamation. The following           *
+   *                      is the misleading text:                 *
+   *                      * Reclamation is a process that moves   *
+   *                      any remaining active, fragmented        *
+   *                      files from one volume to another,       *
+   *                      thus making the original volume         *
+   *                      available for reuse...When a copy       *
+   *                      storage pool volume that is offsite     *
+   *                      becomes eligible for reclamation,       *
+   *                      the reclamation process attempts to     *
+   *                      retrieve the active files on the        *
+   *                      reclaimable volume from a primary       *
+   *                      or copy storage pool volume that is     *
+   *                      onsite.                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Both active and inactive files are reclaimed by reclamation.
+   
+   The updated documentation will be available in the next
+   release.
+   
+   Note that this is subject to change at the discretion
+   of IBM.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC43070
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER 510
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   52A
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-10-12
+   
+   
+ * CLOSED DATE
+   2004-10-18
+   
+   
+ * LAST MODIFIED DATE
+   2004-10-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced GC32076803 GC32077203 GC32078203 GC32077503 GC32077803 GC32078203 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

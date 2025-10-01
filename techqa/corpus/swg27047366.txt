@@ -1,0 +1,94 @@
+Title: IBM Content Navigator documentation correction: Syncing content across multiple devices - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document provides updates for IBM Content Navigator version 2.0.3.6. Now you can sync an item without making the item a favorite, and Mac OS X is supported. 
+
+CONTENT
+Syncing content across multiple devices
+
+
+When you modify and save documents and folders that are enabled for sync, syncing those items checks those changes in to the repository. The changes are also synced across all your devices. 
+
+About this task 
+
+Syncing your files saves time because you do not need to manually check out, check in, and download items that you work with regularly. You can also ensure that other users of those documents receive the changed content. For example, you can work on a blueprint document at an office and save it, which then makes it available to workers in the field.
+
+
+Figure 1. Content that is synced across multiple devices 
+
+[/support/docview.wss?uid=swg27047366&amp;aid=1] 
+
+You enable documents and folders for sync by: 
+
+ * Right-clicking a document or folder in the Browse or Search view and selecting Enable Sync 
+ * Right-clicking a document or folder, selecting Add to Favorites and enabling the item for sync.
+
+
+Syncing ensures that you are always working with the latest committed changes, even as you work on multiple devices. When you modify and save a synced file, the file is automatically checked in to the repository and is available to anyone who can access, download, check out, and sync that file. 
+Important: You cannot use a mapped network drive as your sync folder. Procedure 
+
+To configure items for sync: 
+
+1. Install IBM® Navigator Sync. After the installation, the IBM Navigator Sync icon is added to your Microsoft Windows taskbar. 
+
+2. Open IBM Navigator Sync. 
+
+3. Connect to the web client: 
+
+ * 
+ * 
+ * b. If prompted, enter the URL that you use to connect to the web client from your browser, for example, http://myserver.mycompany.com:9080/navigator/?desktop=AccountsPayable. 
+ * c. Click Start Sync Syncing begins immediately. 
+ * The desktop that you are connected to is created as a subfolder in the default sync folder location: C:\Users\User\Documents\IBM Content Navigator Sync. For example, if you connected to the AccountsPayable desktop in the previous step, your sync folder would contain a folder named AccountsPayable. 
+ * Any folders and documents that you enable for sync appear in the sync folder. You can begin working with the files immediately. Any changes that you save are synced during your next scheduled sync.
+
+
+4. Optional: Modify the default sync settings:  * 
+ * 
+ * b. If you don't want to use the default sync folder location, click Change Folder and specify a different folder on your workstation. Do not move the sync folder by dragging it to a different location on your workstation. 
+ * Remember: You cannot use a mapped network drive as your sync folder. 
+ * c. Schedule how often you want to sync your files with the repository. 
+ * d. Specify whether you want the sync client to start automatically when you start your workstation. 
+ * e. Click OK.
+
+
+5. Optional: Configure any additional desktops that you need to connect to.  * 
+ * 
+ * b. Select Desktops and then click Add. 
+ * c. Enter the information that you need to connect to the desktop and click OK. 
+ * Each desktop that you connect to is created as a different folder in your sync folder. When you add a desktop, you can optionally specify a display name to use for the desktop in your sync folder. If you don't specify a display name, the name of the desktop is used. 
+   
+   Important: Do not remove or rename the desktop folders from the file explorer on your workstation. If you want to remove or rename a folder, you must edit the desktop definition on the Desktops tab of the Preferences window. You can modify and rename only folders that exist in a repository.
+   
+
+
+6. In IBM Content Navigator, enable items for sync in one of the following ways:  * From the Browse or Search view, right-click a document or folder and click Enable Sync. 
+ * Right-click a document or folder that you access regularly, click Add to Favorites, and specify that you want to sync the item. After you enable an item for sync, the sync icon indicates that the item is enabled for sync. You can see the icon in the Favorites, Browse, and Search views. 
+   
+   Additionally, the item is automatically synced to your workstation. For example, if you synced a folder called Important Documents, the Important Documents folder is created in your sync folder on your workstation in the automatically generated desktop folder, for example in C:\...\My_Sync_Folder\My_Desktop\Important Documents. 
+   
+   When you edit and save a document in the Important Documents folder on your workstation, the document is synced to the repository and across all your devices during the next scheduled sync.
+   
+   
+
+
+7. Create new documents or folders in the repository by dragging items to the sync folder:  *  Drag new content from your workstation to a valid folder in your sync folder. Dragging new content to the sync folder adds the content to the repository. Tip: You must drag the new content to a folder that exists in the repository and is synced to your sync folder. You cannot drag items to the root level of the desktop or to the root level of the sync folder. Dragging new content to the desktop level or to the root level of the sync folder will not add the item to the repository because IBM Navigator Sync does not have context for where to add the new content to the repository. 
+   
+   For example, if you drag a new folder to C:\...\Sync_Folder\Desktop_A\Planning Documents, where Planning Documents is a folder that exists in a repository, the new folder is added to the repository under Planning Documents. However, if you drag a new folder to C:\...\Sync_Folder\Desktop_A, the content is not added to a repository because this destination specifies only the level of the desktop, and a desktop can be configured with multiple repositories, or the desktop can be configured to prevent users from adding unfiled documents. 
+   
+   The following diagram shows you instances of where you can and cannot drag your content to the sync folder from your local file system. 
+   
+   Figure 2. Example of valid and invalid locations to drag new content to the sync folder to add to the repository 
+   
+   [/support/docview.wss?uid=swg27047366&amp;aid=2] 
+   
+   Entry templates are not applied to documents that you drag to the sync folder. If you sync a folder that is associated with an entry template, when you drag a new document to that folder in the sync folder, the document is added to the repository with the base Document class and without the properties of the associated entry template. 
+   
+   
+ * In IBM Content Navigator, verify that the item is created in the corresponding folder in the repository, and that the item is enabled for sync.
+
+
+What to do next You can also access, modify, and add new content to your synced folders in the IBM Content Navigator app on a mobile device.

@@ -1,0 +1,181 @@
+Title: IBM IV76581: ERROR BMXAA9031E OCCURS WHEN USING THE SUMMARIZE FUNCTION IN AD HOC/QBR REPORT IN A NON-ENGLISH MAXIMO ENVIRONMENT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  STEPS TO REPRODUCE:
+   - Find a Maximo 7.6.0.x environment and  install the Japanese
+   language pack on this environment.
+   
+   Test on English 7.6.0.x environment first of all:
+   - Log in to Maximo using the English language.
+   - Open Work Order Tracking application
+   - On Actions menu on left, click on "Create Report" option
+   - The Query-Based report window opens up
+   - On first tab, leave 'List' selected
+   - Click on the Summarize tab
+   - Filter by WOPRIORITY and then click on that field to bring it
+   in box below
+   - Click on the "Average" button
+   - Click on 'Add Values' button
+   - That field and its calculation "Average (WOPriority)" now
+   shows in the Summaries table.
+   - Click on the Preview button.
+   - The report opens in a new browser window.
+   - "Average (WOPriority)" and its value shows above the list of
+   records in the report.
+   
+   Then test the issue again using a Japanese 7.6.0.x environment:
+   - Log in using the Japanese language on login screen
+   - Open Work Order Tracking application (icon for WO)
+   - On left menu , click on "Create Report" option (using icon to
+   find it)
+   - on Query-Based report window, leave 'List' selected
+   - Click on the 'Summarize' tab (4th tab from the left)
+   - Filter by WOPRIORITY and then click on that field to bring it
+   below
+   - Click on the "Average" button (3rd button from left)
+   - Click on 'Add Values' button (on right)
+   - That field should show in the Summaries table but you get the
+   following error instead:
+   "BMXAA9031E: The data type for the selected field is not
+   compatible with the selected function. Select another data type
+   or function"
+   - The report cannot be run unless you click on "Clear Values"
+   in the Summarize tab.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Maximo Users using a non-English language                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Error BMXAA9031E occurs when using the summarize function in *
+   * adhoc/qbr report in a non-english maximo environment         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fixpack release 7.6.0.3 of TPAE or request an interim  *
+   * fix                                                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  No error occurs when using the adhoc/qbr summarize functions
+   with non-english language
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV76581
+   
+   
+ * REPORTED COMPONENT NAME
+   AD HOC REPORTIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46AH
+   
+   
+ * REPORTED RELEASE
+   760
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-08-31
+   
+   
+ * CLOSED DATE
+   2015-10-21
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   AD HOC REPORTIN
+   
+   
+ * FIXED COMPONENT ID
+   5724R46AH
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R760 PSY
+   UP

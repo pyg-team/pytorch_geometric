@@ -1,0 +1,55 @@
+Title: IBM Dump ODM script:  Collect ODM information helpful to diagnose WebSphere Application Server uninstall issues on AIX - United States
+
+Text:
+mustgather; mustgather; mustgather; odm; odmdump; vpd; aix; MustGatherDocument; wasemp TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting data for problems uninstalling WebSphere® Application Server V7.0, V6.1, V6.0, V5.1, or V5.0 on the AIX® platform. Gathering this information before calling IBM® support helps familiarize you with the troubleshooting process and saves you time. 
+
+CAUSE
+Issues arising from manually uninstalling releases of WebSphere Application Server V7.0, V6.1, V6.0, V5.1, and V5.0 on AIX are resolved by analysis of the AIX ODM VPD. The following describes the procedure necessary to collect information about the AIX ODM VPD for IBM® support.
+
+RESOLVING THE PROBLEM
+If you have already contacted support, continue to the component-specific MustGather information. Otherwise, click: MustGather: Read first for all WebSphere Application Server products [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21145599].
+
+About the AIX ODM and the information collected 
+
+The AIX ODM is a database repository. The VPD is a subset of tables from the ODM which contains information about products installed on the system.
+
+On occasion, the ODM VPD can become corrupt. Changes in the WebSphere Application Server product installer in newer versions have improved the product's handling of the ODM, which means that ODM-related problems are rare. However, for those occasions where the integrity of the ODM VPD is suspect, it is helpful for IBM Support to collect data about the ODM and review it to determine whether the ODM is intact or corrupt.
+
+The script named ODMdump.sh, attached below, queries the relevant ODM VPD tables, and places the content into a single compressed archive. The archive can be sent to IBM Support for further review. The product installer can potentially affect two different ODM repositories: The standard ODM stored in /usr/lib/objrepos, and the "alternative" ODM stored in /etc/objrepos. The script will collect information from both ODM repositories by default.
+
+In order to use this script, follow this procedure:
+
+
+ 1. Log in to the AIX system as the root user.
+    
+    Note: If it is not possible to obtain root access to the system, then please try to run the script as the same user responsible for installing the WebSphere products. In that case, the script may produce some errors, but this is expected. Please let IBM Support that you were not able to run the script as root.
+    
+ 2. Create a temporary directory on the system.
+    
+    
+ 3. Transfer the attached script to the temporary directory.
+    
+    
+ 4. Run the following command in the temporary directory:
+    
+    chmod +x dumpODM.sh 
+    
+ 5. Run the script using the following command:
+    
+    ./dumpODM.sh 
+    
+ 6. The script will produce a file named odmvpd_info.tar.gz. Follow instructions to send the file to IBM support [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852] for further analysis.
+
+
+
+File (click icon to download) Version Description dumpODM.sh [/support/docview.wss?uid=swg21204260&aid=2] [/support/docview.wss?uid=swg21204260&aid=1] 1.2 This script dumps ODM VPD data from AIX systems for further analysis by IBM Support. It produces a single archive file containing text entries from the ODM VPD. RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

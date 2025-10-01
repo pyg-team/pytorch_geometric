@@ -1,0 +1,153 @@
+Title: IBM PI27255: CANNOT OPEN A CUSTOM SPD FILE AS NORMAL USER OF ADMINISTRATOR GROUP WHEN USING OPEN INSTALLED DIALOG ON CUSTOM DIALOG BUILDER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You work with IBM SPSS Statistics 22 FP1 on a Windows 7 64 bit
+   computer. The program was installed by a user who is member of
+   the local administrator group of the machine but due to other
+   operating system restrictions this user has for example no full
+   write permission on C:\Program Files etc.
+    On Utilities - Custom Dialogs - Custom Dialog Builder (CDB) you
+   create a new dialog and save the SPD file on a local location
+   Use File - Save As and save the SPD file as e.g. dialog1.spd on
+   e.g. C:\users\<user name>\documents folder
+   Then, still on CDB you click File - Install
+   
+   You are informed that the dialog is installed to C:\Users\<user
+   name>\AppData\Local\IBM\SPSS\Statistics\22\CustomDialogs\dialog1
+   
+   Your installed dialog works fine.
+   However when you go back to  Utilities - Custom Dialogs - Custom
+   Dialog Builder and click on 'Open Installed' dialog
+   your custom dialog will not open. You can only the other
+   installed dialogs which come with program installtion this way.
+   Nothing happens when you select your SPD file on Open Installed
+   Dialog. The canvas of CDB stays blank
+   This does only happen when you use the File - Open Installed
+   (Open installed Dialog) menu.
+   When you use the File - Open menu (Open a dialog specification)
+   instead and select the dialog1.spd from the local path were you
+   saved it will open
+   Also when you use the folder icon (open saved dialog) on CDB and
+   locate your SPD file it will open and you can edit it.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue will be addressed in a future release.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * see APAR text                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * This issue has been addressed in IBM SPSS Statistics 23      *
+   * Release. Please upgrade to the new release.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been addressed in IBM SPSS Statistics 23      *
+   * Release. Please upgrade to the new release.                  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This issue has been addressed in IBM SPSS Statistics 23 Release.
+   Please upgrade to the new release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI27255
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   M00
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-08
+   
+   
+ * CLOSED DATE
+   2015-03-05
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RN00 PSN
+   UP
+   
+   
+ * RN00 PSY
+   UP

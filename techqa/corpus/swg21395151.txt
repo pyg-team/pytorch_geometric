@@ -1,0 +1,34 @@
+Title: IBM FileNet Workplace configuration error "Property not defined: RoleName. [Code=null]" - United States
+
+Text:
+Code=null， RoleName; OMFC/Search/ExecuteXML//RETRIEVE_PROPERTY_NOT_DEFINED; Workplace configuration; Site Preference TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When we log into Workplace for first time, After configure the bootstrap.properties and click apply, we get the error "Property not defined: RoleName. [Code=null]" 
+
+SYMPTOM
+Error: 
+
+com.filenet.api.exception.EngineRuntimeException;Property not defined: RoleName. [Code=null] ... Object Reference [ANY:0] ID "{00000000-0000-0000-0000-000000000000}" in ObjectStore "null"; OMFC/Search/ExecuteXML//RETRIEVE_PROPERTY_NOT_DEFINED 
+
+
+CAUSE
+During Object Store creation, the Access Role not created 
+
+
+DIAGNOSING THE PROBLEM
+During Object Store creation, the Access Role not created
+
+
+
+RESOLVING THE PROBLEM
+Solution: 
+
+- When using Wizard to create an Object Store, need to select the full set of addon extensions. RoleName (Access Roles) will be created with the install of the Workplace Addon Extensions.
+
+- Or if no addon extensions are selected during the object store creation, you can add the set of addoon extentions to the object store after its creation.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ FileNet

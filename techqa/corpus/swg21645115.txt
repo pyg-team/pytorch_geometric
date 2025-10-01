@@ -1,0 +1,75 @@
+Title: IBM InfoSphere Information Server SAP Pack utilizing the CTS option in ABAP stage to aid in SAP system migration - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to configure the CTS option in ABAP extract stage to aid in SAP system migration using InfoSphere Information Server Pack for SAP? 
+
+CAUSE
+The ABAP stage supports the SAP Change and Transport System (CTS) to load the program. The ABAP programs generated without CTS bypass the CTS system and are unavailable for SAP system migration. 
+The recommendation is to generate the programs using the CTS option. CTS support for the ABAP stage includes the assignment of a package and the actual transport request. 
+Use the following link for details:
+Loading ABAP programs by using CTS [http://pic.dhe.ibm.com/infocenter/iisinfsv/v8r7/topic/com.ibm.swg.im.iis.ds.entpak.sapr3.use.doc/topics/t_pack_r3_loading_abap_programs_using_sap_cts.html]
+
+
+ANSWER
+Start with enabling the CTS option: 
+
+
+[/support/docview.wss?uid=swg21645115&aid=1] [/support/docview.wss?uid=swg21645115&aid=1] 
+2. After you click on 'Generate the program' or 'LoadProgram to R/3' button the new dialog window will pop up giving the below error: 
+
+
+[/support/docview.wss?uid=swg21645115&amp;aid=2] 
+
+
+Note: You will be getting the same above error for both the options (Generate & Load). 
+
+
+
+3. Request a developer access key from an SAP Security team for the user, if necessary. Then log in with SAPGUI with the user and try to manually create a ZTF_TEST program in se38. It will prompt for the access key: 
+
+ 
+[/support/docview.wss?uid=swg21645115&amp;aid=3] 
+Once you entered it, it saves the ZTF_TEST program. 
+
+ 
+
+4. Go back to the ABAP Extract Stage in the DataStage job and click on the 'LoadProgram to R/3' button. This will prompt for a Package and a Request. After the ABAP program is uploaded, it will become a part of the selected Package under the Programs category. 
+
+
+ [/support/docview.wss?uid=swg21645115&amp;aid=4] 
+
+ 
+
+NOTE: Do not select package $TMP. ABAP programs loaded to $TMP cannot be made available for transport. 
+
+5. Choose the Package, then click Upload:
+[/support/docview.wss?uid=swg21645115&amp;aid=5] 
+
+6. Choose a request from the list:
+[/support/docview.wss?uid=swg21645115&amp;aid=6]
+
+[/support/docview.wss?uid=swg21645115&aid=7] [/support/docview.wss?uid=swg21645115&aid=7] 
+
+ 
+
+Details: 
+
+The first request will be created while the first job connection is uploaded. This will allow you to add the ABAP program of any other job into the same request. 
+
+Note: The request ID is the SAP transport request ID, so it has already added the ABAP program to the SAP transport. In this example the request/transport ID is RP5K901034. 
+
+Going forward you can use one request ID per project and provide those request IDs to the SAP Administrator to include to the transports. Once you completed adding ABAP programs, the SAP Administrator can release the transport request and move to subsequent SAP systems. 
+Only objects ( ABAP programs) should be in the same request, as the SAP Administrator can move only complete requests. If you have programs for two SAP systems and want to move the first set before the second set, then put those objects into different requests. 
+
+Limitations: 
+
+ * When the CTS support is enabled the user cannot use the option "DataStage job loads the program at runtime" or "Delete the program from R/3 after it runs". These options are only supported without using CTS. 
+ * When the CTS support is enabled, additional security checks are implemented to verify if the user is authorized to run the ABAP program. 
+ * Released ABAP programs cannot be modified using the original request ID which was used to upload the program. You can modify a released ABAP program with the same ABAP program name if you assign a new request ID to it. 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Information Server Pack for SAP Applications

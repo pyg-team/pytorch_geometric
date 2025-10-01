@@ -1,0 +1,199 @@
+Title: IBM JR43362: PROCESSES STARTED BY THE REST API WITHOUT SPECIFYING SNAPSHOTID ARE NOT SHOWN IN PROCESS INSPECTOR - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.0 Refresh Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24033777]
+Version 7.5.1 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24033036]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  BPD Instances are not shown in Process Inspector when the
+   following method it used to start the BPD.
+   
+   The BPD is started via the POST (start) method of the
+   /rest/bpm/wle/v1/process REST API and the optional snapshotId
+   parameter is not set. If only the processAppId is set then the
+   BPD is started for the default snapshot.
+   
+   The BPD instance is created with the TIP column of the
+   LSW_BPD_INSTANCE table set to 'T' instead of 'F'. This causes
+   the BPD to not be visible in the Process Inspector of the
+   Process Designer. It could also lead to other issues since the
+   BPD instance is incorrectly associated with the TIP.
+   
+   Here is an example of the REST API used to start the process:
+   http://myServer:9080/rest/bpm/wle/v1/process/action=start
+   &parts=header|data [http://myServer:9080/rest/bpm/wle/v1/process/action=start&parts=header|data]
+   &bpdId=25.1fbaa86d-ea86-4517-bdb3-457ab075a4c2
+   &processAppId=2066.796ee9c4-80ed-4181-93cd-ea3707091c14
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use snapshotID instead of processAppID when starting the BPD via
+   the REST API
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of BPM Express, Standard and          *
+   *                  Advanced.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Problem Description:                    *
+   *                      A REST API may be used to start a       *
+   *                      process using either the                *
+   *                      processAppId, snapshotId, or both. &#130; &#160;
+   *                      If the snapshotId is not specified,     *
+   *                      and the process is being started in a   *
+   *                      Process Server runtime instance (as     *
+   *                      opposed to Process Center), then the    *
+   *                      resulting process will not be           *
+   *                      displayed from Process Inspector. &#130; &#160;
+   *                      Here is an example of the REST API      *
+   *                      used to start the process:              *
+   *                      http://myServer:9080/rest/bpm/wle/v1/pr *
+   *                      ocess/action=start&parts=header|data&bp *
+   *                      dId=25.1fbaa86d-ea86-4517-bdb3-         *
+   *                      457ab075                                *
+   *                      a4c2&processAppId=2066.796ee9c4-80ed-   *
+   *                      41                                      *
+   *                      81-93cd-ea3707091c14&params={ &#162;&#226;&#130;&#172; &#166;}
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Problem Description:
+   A REST API may be used to start a process using either the
+   processAppId, snapshotId, or both. &#130; &#160; If the snapshotId is not
+   specified, and the process is being started in a Process
+   Server runtime instance (as opposed to Process Center), then
+   the resulting process will not be displayed from Process
+   Inspector. &#130; &#160; Here is an example of the REST API used to start
+   the process:
+   http://myServer:9080/rest/bpm/wle/v1/process/action=start&parts=
+   header|data&bpdId=25.1fbaa86d-ea86-4517-bdb3- [http://myServer:9080/rest/bpm/wle/v1/process/action=start&parts=header|data&bpdId=25.1fbaa86d-ea86-4517-bdb3-]
+   457ab075a4c2&proces
+   sAppId=2066.796ee9c4-80ed-4181-93cd-ea3707091c14&params={ &#162;&#226;&#130;&#172; &#166;
+   The problem occurs due to an error in the BPM runtime which
+   caused the process to appear to be running in Process Center,
+   instead of the Process Server runtime instance. &#130; &#160; As a result,
+   the Inspector did not display the process when filtering on
+   the server name and snapshotId number. &#130; &#160; The problem can be
+   seen by examining the database table &#130; &#160; LSW_BPD_INSTANCE for th
+   snapshotId. &#130; &#160; The processes that do not display in Inspector
+   will have the value 'T' in the TIP column.
+   Possible workaround: the problem can be avoided by specifying
+   snapshotId instead of processAppId when starting the process
+   with REST.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem was fixed in APAR JR43362, available in fix central.
+   It is also fixed in future fix packs and releases.
+   Install/Dependency information is available in the
+   readme.txt on FixCentral. When the user goes to the download
+   files page in FixCentral the readme will be available with the
+   fix package as a seperate download.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR43362
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-06
+   
+   
+ * CLOSED DATE
+   2012-09-26
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP

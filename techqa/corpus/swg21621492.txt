@@ -1,0 +1,112 @@
+Title: IBM Changing timeout values to allow import of large files to InfoSphere Business Glossary or to InfoSphere Information Governance Catalog - United States
+
+Text:
+import; import fails; timeout; times out; bg87relnotes; bg91relnotes; bg85relnotes; igc113relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Importing large business glossary files, such as the XML files provided with IBM Industry Models, might fail due to exceeding the timeout values set in WebSphere Application Server and InfoSphere Information Server. You can change these values so that the import succeeds. 
+
+SYMPTOM
+You receive either of the following messages: 
+
+ * 
+ * Errors occurred while importing data from the 
+ * filetype
+ * .
+ * 
+ * 
+ * filetype
+ * 
+
+
+or 
+ * Undefined error occurred.
+
+
+CAUSE
+ Time for the import process exceeds time-out values set in WebSphere Application Server/WebSphere Application Server Liberty Profile and in InfoSphere Information Server.
+
+
+RESOLVING THE PROBLEM
+You must raise time-out values that are configured in WebSphere Application Server and InfoSphere Information Server. 
+
+
+The following example defines several time-out values in WebSphere Application Server and in WebSphere Application Server Liberty Profile. These time-out values might not be suitable for your needs, so you must change the values accordingly. 
+
+1. To configure the higher time-out values in WebSphere Application Server (see step 2 to configure WebSphere Application Server Liberty Profile):
+
+
+ *  Log in to the WebSphere Application Server Integrated Solutions Console. Remove any per session time-out:  1. Under Servers, select WebSphere application servers > server1. 
+    2. Under Container settings, select Web Container Settings > Web container. 
+    3. Under Additional Properties, select Session management. 
+    4. Under Session timeout, select Set timeout and type 1440 in the Minutes field. 
+    5. Click OK.
+   
+   
+ *  
+   [/support/docview.wss?uid=swg21621492&aid=1] [/support/docview.wss?uid=swg21621492&aid=1] 
+   
+   
+ * 
+ *   * 
+    * Servers
+    * 
+    *  WebSphere application servers > server1
+    *  >
+    * Additional Properties > Web server plug-in properties
+   
+   
+   [/support/docview.wss?uid=swg21621492&aid=2] [/support/docview.wss?uid=swg21621492&aid=2] 
+ * 
+ * 
+ *   1. Under Servers, Select Application servers > server1. 
+    2. Select the Configuration tab. 
+    3. SelectTransaction service in Container Settings > Container Services section. Set theTotal transaction lifetime timeoutto 86400.
+   
+    * [/support/docview.wss?uid=swg21621492&amp;aid=3]
+   
+   
+   iv. On the same page, set the Maximum transaction timeout to 86400.  *  [/support/docview.wss?uid=swg21621492&aid=4] [/support/docview.wss?uid=swg21621492&aid=4] 
+   
+    * 
+    * 
+    * Apply 
+    * 
+    * Save 
+    * 
+    * 
+    * 
+   
+   5. Raise the LTPA time-out:  *  Under Security, select Global security. Under Authentication, select LPTA. Set the LTPA timeout to 1440. Click OK. 
+    * 
+    * [/support/docview.wss?uid=swg21621492&amp;aid=5]
+   
+   
+
+
+
+2. To configure the higher time-out values in WebSphere Application Server Liberty Profile: 
+ *  Open the file IS_Install_dir/wlp/usr/servers/iis/server.xml,where IS_Install_dir is the installation directory for WebSphere Application Server Liberty Profile. Edit the following variables and set them to the values indicated below:  1. <httpSession ... invalidationTimeout="3600" ... /> 
+    2. <ltpa expiration="7600m"/> 
+    3. <transaction ... clientInactivityTimeout="36000" propogatedOrBMTTranLifetimeTimeout="72000" totalTranLifetimeTimeout="72000" ... />
+   
+   
+
+
+3. To configure the higher timeout value in InfoSphere Information Server: 
+ *  Log in to the InfoSphere Web Administrative Console. Click the Administration tab. Select Session Management > Active Sessions, then select the session you want to change. Select Global Session Properties, then set the Inactive Session Timeout to 86400. Click Save. 
+ * 
+ * [/support/docview.wss?uid=swg21621492&amp;aid=6]
+ * 
+ * 
+ * 
+
+4. Restart WebSphere Application Server or WebSphere Application Server Liberty Profile to apply the changes. RELATED INFORMATION
+ Configuring istool parameter - step #2 [http://www-01.ibm.com/support/knowledgecenter/SSZJPZ_11.3.0/com.ibm.swg.im.iis.productization.iisinfsv.install.doc/topics/wsisinst_config_bg.html]
+Long import due to Term History [http://www.ibm.com/support/docview.wss?uid=swg21663894]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Business Glossary AIX, HP-UX, Linux, Solaris, Windows 9.1.0.1, 9.1, 8.7.0.1, 8.7, 8.5.0.3, 8.5.0.2, 8.5.0.1, 8.5 Information Management InfoSphere Information Server Information Governance Catalog AIX, HP-UX, Linux, Solaris, Windows 11.5.0.1, 11.5, 11.3

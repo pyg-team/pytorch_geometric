@@ -1,0 +1,38 @@
+Title: IBM Download IBM Content Manager OnDemand for Multiplatorms Version 9.0 - United States
+
+Text:
+Content Manager OnDemand for Multiplatforms Version V9.0; download V9.0; CMOD V90 DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM® Content Manager OnDemand for Multiplatforms Version 9 Release 0 using the Passport Advantage® Online Web site. 
+
+DOWNLOAD DESCRIPTION
+
+
+[http://www.ibm.com/i/c.gif] IBM Content Manager OnDemand for Multiplatforms is an enterprise middleware system that provides instant access to bills and invoices and facilitates electronic statement management.
+
+Space requirements
+
+ * Minimum of 9 GB of DASD spread over at least two disks plus sufficient storage for documents. For Linux: 2 GB of storage space for the base system, OnDemand and related software, and paging space 
+ * Magnetic storage for the database, report data, and temporary work space. A minimum of 8 GB of space and two separate disks are required in addition to sufficient disk space for report storage. 
+
+Downloading the product  1. From a browser, navigate to the Find Downloads and Media [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] page on the IBM Passport Advantage Online Web site. You must log on to continue. 
+ 2. Under Highlights, click Software download & media access.
+ 3. Click Download finder under Software Download.
+ 4. Under Download finder options, click All downloads.
+ 5. Scroll down, under All downloads, expand Information Management.
+ 6. Expand IBM Content Manager OnDemand V9.0 Multiplatform Multilingual. All available product components are displayed. Under each product component, click License agreement to view license information, and click Download estimate to view an estimate of download time.
+ 7. Select the components that you want to download, or select the check box Select all.
+ 8. After you click Download now, a Download Director window opens. The components that you selected are downloaded to the C:\DownloadDirector directory.
+
+PREREQUISITES
+For product prerequisites, see the following links: Hardware and software requirements [http://www-01.ibm.com/support/docview.wss?rs=129&uid=swg27021456]
+
+INSTALLATION INSTRUCTIONS
+See the Information center [http://pic.dhe.ibm.com/infocenter/cmod/v9r0m0/index.jsp] for installation instructions.
+
+DOWNLOAD PACKAGE
+To download the product, see the Downloading the product section above.
+
+TECHNICAL SUPPORT
+ Product support is available on the Web at: Content Manager OnDemand for Multiplatforms [ http://www-947.ibm.com/support/entry/portal/overview/software/enterprise_content_management/content_manager_ondemand_for_multiplatforms]

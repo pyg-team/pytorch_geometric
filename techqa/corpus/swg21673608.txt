@@ -1,0 +1,28 @@
+Title: IBM An error occurs when printing reports in Rational DOORS if an attribute includes an ampersand (&) character - United States
+
+Text:
+&; attribute TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you print a report in IBM Rational DOORS that uses the Rational Publishing Engine or Document Generation feature, and if the report includes an attribute with an ampersand (&) in the attribute name or value, an error occurs. The error occurs when using the JavaScript output function on content that includes an attribute with the ampersand. 
+
+SYMPTOM
+The following error is displayed: 
+
+CRRPE3095E Output processing could not continue due to an error.
+javax.xml.stream.XMLStreamException: The reference to entity
+'ie' must end with the ';' delimiter.
+....
+CRRPE1064I Aborting engine execution...
+
+
+CAUSE
+This issue has been identified as a product defect.
+
+
+RESOLVING THE PROBLEM
+ 
+
+WORKAROUND:
+
+Avoid including the & character in attributes.

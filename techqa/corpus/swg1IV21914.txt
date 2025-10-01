@@ -1,0 +1,268 @@
+Title: IBM IV21914: CENTOSPLUGIN ERROR WITH CENTOSPROTOCOL. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Cusomter's problem description:
+   
+   There appears to be some sort of problem with the installed
+   Download Plugin. When I try to deploy a fixlet for one of my
+   CentOS systems, the action stays in a "Pending Dowload" state.
+   
+   On the server in the directory where my server is installed
+   "E:\Program Files\BigFix Enterprise\BES
+   Server\DownloadPlugins\CentOSProtocol\logs"
+   
+   I open the last log file and see:
+   
+   [Wed May 23 15:33:52 2012] BigFix CentOS Download Plugin v1.1
+   [Wed May 23 15:33:52 2012] Running plugin with
+   DLoad::WinHttpUAIface
+   [Wed May 23 15:33:54 2012] ERROR: Download for CentOSProtocol:
+   //5/82cfb68cb126c61b85ce1591c9fadcecd83e8a50/glibc-devel-2.5-81.
+   el5_8.2.
+   x86_64.rpm failed: Request failed: Unable to find any packages
+   named .
+   [Wed May 23 15:33:54 2012] ERROR: Download for CentOSProtocol:
+   //5/d392b8cfc015222b10d13033a0640ecc1a6081ce/glibc-2.5-81.el5_8.
+   2.
+   x86_64.rpm failed: Request failed: Unable to find any packages
+   named .
+   [Wed May 23 15:33:55 2012] ERROR: Download for CentOSProtocol:
+   //5/da71351540918dec662a6b3394d2a7fe593b0bcf/glibc-devel-2.5-81.
+   el5_8.2.
+   i386.rpm failed: Request failed: Unable to find any packages
+   named .
+   [Wed May 23 15:33:57 2012] ERROR: Download for CentOSProtocol:
+   //5/de49ac78185a88cd428b377e1b27528823072e39/glibc-headers-2.5-8
+   1.el5_8.
+   2.x86_64.rpm failed: Request failed: Unable to find any packages
+   named .
+   [Wed May 23 15:33:57 2012] ERROR: Download for CentOSProtocol:
+   //5/e620364cd2766ad9746cdf510bb765c6f13e8d9d/glibc-2.5-81.el5_8.
+   2.i686.
+   rpm failed: Request failed: Unable to find any packages named .
+   [Wed May 23 15:33:58 2012] ERROR: Download for CentOSProtocol:
+   //5/f9872eb8cc78df698338cc752f2e5acbfb19925a/glibc-common-2.5-81
+   .el5_8.
+   2.x86_64.rpm failed: Request failed: Unable to find any packages
+   named .
+   
+   
+   ================
+   
+   
+   I ran the "BES Relay/Server: Register Download Plug-in for
+   CentOS Linux" Tasklet against the TEM server as described in the
+   description of the task.
+   
+   I tried randomly a couple of fixlets on 2 different
+   workstations: "CEBA-
+   2012:0560 - Wget Bug Fix Update - CentOS 5 x86_64" and
+   "CESA-2012:0468
+   - Libtiff Security Update - CentOS 5 x86_64"
+   
+   I added the log file for both of these attempts.
+   
+   
+   Action: 26529 Retry Mirror Request
+   url 1 2995204 bytes of 2995204: http://software.bigfix. [http://software.bigfix.]
+   com/download/bes/dep/centos/depgraphs/DEP_CentOS5_x64/DEP_CentOS
+   5_x64.
+   xml.20120515-1135.bz2
+   url 2 534656 bytes of 534656: http://software.bigfix. [http://software.bigfix.]
+   com/download/bes/dep/centos/pkgdeps/pkgdeps-x64
+   url 3:
+   CentOSProtocol://5/9bdad7c7271223981bdb54304fd93a7767233936/wget
+   -
+   1.11.4-3.el5_8.2.x86_64.rpm
+   url 4 4150896 bytes of 4150896: http://software.bigfix. [http://software.bigfix.]
+   com/download/bes/dep/centos/edr/CentOSEDRPlugin-x64-1.1
+   
+   Action: 26530 Retry Mirror Request
+   url 1 2995204 bytes of 2995204: http://software.bigfix. [http://software.bigfix.]
+   com/download/bes/dep/centos/depgraphs/DEP_CentOS5_x64/DEP_CentOS
+   5_x64.xml.20120515-1135.bz2
+   url 2: CentOSProtocol:
+   //5/6ccf976438c48ebbfd59905db918ab71eb58c3aa/libtiff-3.8.2-14.el
+   5_8.i386.rpm
+   url 3: CentOSProtocol:
+   //5/e719b634fa1165c3e178cf43d1eebaba83e10817/libtiff-3.8.2-14.el
+   5_8.x86_64.rpm
+   
+   
+   =====================
+   
+   It seems that it could not find any rpm package when using the
+   CentOSProtocolmethod.  This similar type of problem existed in
+   Redhat is usually related to an user account on Redhat network
+   does not have subscription to download any rpm package.  In
+   this case, I am not certain that CentOS vendor does require a
+   subscription to download any rpm package as the Register CentOS
+   Plugin does not prompt to enter Vendor username and password.
+   
+   
+   C:\Program Files\BigFix Enterprise\BES
+   Server\DownloadPlugins\CentOSProtocol\plugin.ini file. See
+   sample below:
+   .
+   [Logger]
+   verbose              = 1
+   logfile              = logs/CentOSPlugin.log
+   timestampLogfile     = 1
+   timestampMsgs        = 1
+   debug                = 5
+   maxAgeLogFiles       = 14
+   maxSizeLogFiles      = 52428800
+   [UA]
+   proxy                =
+   proxyUser            =
+   proxyPass            =
+   packageDetailsDir    = C:\Program Files\BigFix Enterprise\BES
+   Server\GatherDBData\gather\Linux RPM Patching\CurrentSiteData
+   
+   
+   Also I went on an official mirror for centos and was able to
+   locate the packages no problem:
+   
+   http://ftp.telus.net/pub/centos/5/updates/x86_64/RPMS/libtiff-3. [http://ftp.telus.net/pub/centos/5/updates/x86_64/RPMS/libtiff-3.]
+   8.2-14.el5_8.x86_64.rpm
+   
+   and
+   
+   http://ftp.telus.net/pub/centos/5/updates/x86_64/RPMS/wget-1.11. [http://ftp.telus.net/pub/centos/5/updates/x86_64/RPMS/wget-1.11.]
+   4-3.el5_8.2.x86_64.rpm
+   
+   Also if I am logging into the linux host and run 'yum update' I
+   have no problem updating the system.
+   
+   
+   ======================
+   
+   Could be something with the CentOSPlugin where CentOSProtocol is
+   pointing to a different URL.
+   
+   
+   New bug has been created:
+   
+   http://bugs.bigfix.com/bugzilla/show_bug.cgi?id=49999 [http://bugs.bigfix.com/bugzilla/show_bug.cgi?id=49999]
+   
+   This APAR is to associate with that new bug.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The latest versions of the Linux RPM Patching (v 359) and
+   Patches for CentOS 5 (v 32) has been addressed this issue.
+   However, CentOS 6 patching is having the same issue and
+   currently development team has been notified.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed now as of v363 of Linux RPM Patching. As for when this
+   occurs again, it should be fixed during the next propagation of
+   the CentOS
+   content.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV21914
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV EP MGR AGEN
+   
+   
+ * REPORTED COMPONENT ID
+   5725C43AG
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-30
+   
+   
+ * CLOSED DATE
+   2012-07-17
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV EP MGR PTCH
+   
+   
+ * FIXED COMPONENT ID
+   5725C43PM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSY
+   UP

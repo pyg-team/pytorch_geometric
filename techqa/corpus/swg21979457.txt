@@ -1,0 +1,30 @@
+Title: IBM In Atlas 6032iFix5, HR Loader generates false person change alerts - United States
+
+Text:
+Atlas ; Atlas Extensions; HR Loader TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ HR Loader in the Atlas Extensions application generates false person change alerts where there is no change to the person profile. The particular Atlas version affected is Atlas 6032iFix5 .
+The false alert occurs intermittently and not always reproducible. 
+
+SYMPTOM
+Legal users receives person change alert email however when they check the person profile, they do not see any change to the profile.
+
+
+CAUSE
+This false alert is occurring due to a defect and it will be fixed in a future version of atlas
+
+ENVIRONMENT
+Atlas 6032IFix5
+
+RESOLVING THE PROBLEM
+Please comment the property MULTI_THREADED_PERSON in the <atlas home>/Atlas/Properties/integration.properties file as below.
+
+
+
+
+#MULTI_THREADED_PERSON= 
+
+ 
+
+and restart the Atlas Extensions application.

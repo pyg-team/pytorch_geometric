@@ -1,0 +1,213 @@
+Title: IBM How to diagnose 'TOO MANY OPEN FILES' issues? - United States
+
+Text:
+too many open files ulimit db2 process TECHNOTE (FAQ)
+
+QUESTION
+ How to diagnose 'TOO MANY OPEN FILES' issues? 
+
+ANSWER
+Applications or servers can sometimes fail with an error indicating that 
+there are too many open files for the current process. Most of the time 
+the problem is due to a configuration too small for the current needs.
+Sometimes as well it might be that the process is 'leaking' file descriptors.
+In other words, the process is opening files but does not close them leading
+to exhaustion of the available file descriptors.
+
+If you face the 'too many open files' error here are a few things you can 
+try to identify the source of the problem.
+
+- 1 - Check the current limits.
+- 2 - Check the limits of a running process.
+- 3 - Tracking a possible file descriptors leak.
+- 4 - Tracking open files in real time.
+- 5 - Specific to DB2.
+- 6 - Extra notes.
+
+
+- 1 - Check the current limits.
+
+The 'ulimit -a' command will print the list of current limitations for 
+the current session. The interesting one here will be 'nofile(s)'. Any process
+started by your current shell will by default inherit the limits. So before 
+starting a program, check with 'ulimit -a', for example:
+
+AIX:
+
+# ulimit -a
+file(blocks) unlimited
+data(kbytes) unlimited
+stack(kbytes) 32768
+memory(kbytes) 32768
+coredump(blocks) 2097151
+nofiles(descriptors) 2000
+threads(per process) unlimited
+processes(per user) unlimited
+
+SOLARIS:
+
+# ulimit -a
+time(seconds) unlimited
+file(blocks) unlimited
+data(kbytes) unlimited
+stack(kbytes) 8192
+coredump(blocks) unlimited
+nofiles(descriptors) 256
+vmemory(kbytes) unlimited
+
+LINUX:
+
+# ulimit -a
+address space limit (kbytes) (-M) unlimited
+core file size (blocks) (-c) 0
+cpu time (seconds) (-t) unlimited
+data size (kbytes) (-d) unlimited
+file size (blocks) (-f) unlimited
+locks (-x) unlimited
+locked address space (kbytes) (-l) 32
+message queue size (kbytes) (-q) 800
+nice (-e) 0
+nofile (-n) 65536
+nproc (-u) 192837
+pipe buffer size (bytes) (-p) 4096
+max memory size (kbytes) (-m) unlimited
+rtprio (-r) 0
+socket buffer size (bytes) (-b) 4096
+sigpend (-i) 192837
+stack size (kbytes) (-s) 8192
+swap size (kbytes) (-w) not supported
+threads (-T) not supported
+process size (kbytes) (-v) unlimited
+
+If the limit is too small, you might want to increase it.
+
+AIX: 
+
+# ulimit -n 8192
+
+SOLARIS:
+
+# ulimit -n 8192
+
+LINUX:
+
+# ulimit -n 8192
+
+
+- 2 - Check the limits of a running process.
+
+There are some system calls that allow you to change the current limits of a
+process while it is running. Therefore the values might be different from the
+default ones inherited from the shell. To check the current settings for a 
+running process you can use the '/proc' API that is now available on most
+Unix flavors. For example:
+
+AIX:
+
+# procfiles <pid>
+
+Limit of file descriptors will show as 'Current rlimit'
+
+SOLARIS:
+
+# plimit <pid>
+
+Limit of file descriptors will show as 'nofiles(descriptors)'
+
+LINUX:
+
+# cat /proc/<pid>/limits
+
+Limit of file descriptors will show as 'Max open files'
+
+
+- 3 - Tracking a possible file descriptors leak.
+
+By checking regularly you would see the number growing on and on in case of 
+a leak. Keep in mind that the number of files descriptors growing does not ALWAYS
+indicate a leak. It might simply be that the process needs to open a lot of files.
+
+You have multiple ways to do this. The first one, the easiest one, is to simply
+use as well the '/proc' API to check how many files are opened by the process.
+The following examples will show the file descriptors currently in use.
+
+AIX:
+
+# ls /proc/<pid>/fd
+or
+# procfiles <pid>
+
+SOLARIS:
+
+# ls /proc/<pid>/fd
+or
+# pfiles <pid>
+
+LINUX:
+
+# ls /proc/<pid>/fd
+
+The methods provided above are fast but they do not tell you which files are
+actually opened. It might be convenient sometimes to have the names of the files.
+Finding the list of open files with their names for a running process can be
+done using the following commands:
+
+AIX:
+
+# procfiles -n <pid>
+
+SOLARIS:
+
+# pfiles <pid>
+
+LINUX:
+
+# lsof -p <pid>
+
+Note that this might take longer to execute as extra work has to be done to 
+access the name of the files starting from the process file descriptor.
+
+
+- 4 - Tracking open files in real time.
+
+This is a bit more advanced than the previous solutions but will provide 
+most likely the most interesting results. Tracking in real time the usage
+of file descriptors means that you have to monitor both the open() and close()
+system calls. To be more accurate you can use the same method to also track 
+system calls like 'dup()' and others like 'socket()' that would create a new 
+file descriptor.
+
+To track in real time the usage of file descriptors you can use a debugger 
+like dbx (AIX. SOLARIS) or gdb (LINUX). You can as well use system tools 
+like probevue (AIX), dtrace (SOLARIS) or systemtap (LINUX). Finally you can
+use system traces if available. The preferred choice would be system tools
+as the ones mentioned above are actually executing within the Kernel avoiding 
+the long delays caused by debuggers.
+
+
+- 5 - Specific to DB2.
+
+Any of the methods described above will work for db2. Additionally DB2 
+provides you already with a few extra things. For example, you can check the
+file descriptors limit for DB2 by looking at the db2diag.log file. You will find
+something like this:
+
+Cur core size (bytes) = 0x000000003FFFFE00
+Cur memory size (bytes) = 0x7FFFFFFFFFFFFFFF
+nofiles (descriptors) = 0x7FFFFFFFFFFFFFFF
+
+As well DB2 has it's own set of traces that will allow you to catch the files
+opened and closed by the DB2 internal API. Note that this might not be as complete
+as tracing the regular 'open()' and 'close()' system calls at the process level.
+For example you can do the following:
+
+# db2trc on -f trc.raw -Madd sqloopenp -Madd sqloclose
+
+
+- 6 - Extra notes.
+
+Some other restrictions might also apply when dealing with files like for 
+examples quotas being defined for the current user or file system. It can 
+be quotas for size, number of inodes etc... Usually when a system call is
+failing it provides an error number (errno) that you can use to check
+the reason for the failure in the man page for that system call.

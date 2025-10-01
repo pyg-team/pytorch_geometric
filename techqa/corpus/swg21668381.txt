@@ -1,0 +1,55 @@
+Title: IBM Deployment of a snapshot fails for IBM Business Process Manager (BPM) Advanced due to empty advanced contributions - United States
+
+Text:
+CWLLG2164E CWWMH0197E CWSAM0001W library already started BLA unknown status TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you install a snapshot to the process server, you notice a CWLLG2164E error even though you were not aware that you have any advanced integration services (AIS) or SCA content associated with your process application.
+
+
+
+SYMPTOM
+You might see the following error message: 
+
+CWLLG2164E: Install did not complete successfully because of an unexpected exception. Error: /tmp/tmp_8509242345/import.zip7171900072405698481
+com.ibm.bpm.pal.PALException: Failed to execute advanced transition, Error: Process app was not started. 
+
+ 
+
+When you have no SCA module content and only library items for the advanced content, the business level application (BLA) gets installed. However, the BLA frequently fails the startup status check, which causes the installation to fail. This failure results in the snapshot being installed, but the associated BLA is not deployed and a failed install status is shown. 
+
+ * In Process Center, you might see an exception that is similar to the following text:
+   CWLLG2164E: Install did not complete successfully because of an unexpected exception.
+   com.ibm.bpm.fds.common.FDSException: Failed to process contribution dependency, <dependancy info>
+   at com.ibm.bpm.pal.action.BaseActionsImpl.executeAction(BaseActionsImpl.java:363)
+   at com.ibm.bpm.pal.action.ProcessServerActionsImpl.snapshotDeployed(ProcessServerActionsImpl.java:59)
+   at com.ibm.bpm.flm.impl.WLEInstallSnapshotHelper.performDeployment(WLEInstallSnapshotHelper.java:235)
+   at com.ibm.bpm.flm.impl.WLEInstallSnapshotHelper.deploySnapshot(WLEInstallSnapshotHelper.java:157 
+ * On the target Process Server deployment manager, you might see the following exception:
+   CWWMH0197E: Problems were encountered while attempting to start business-level application "WebSphere:blaname=MYPA-S1". It is possible that the business-level application is not running or is only partially running. Please refer to FFDC log entries for details on any failures which were encountered. 
+ * On the target Process Server application cluster, you might see an error that is similar to the following text:
+   CWLLG2164E: Install did not complete successfully because of an unexpected exception. Error: /tmp/tmp_856858345/import.zip123545775698481
+   com.ibm.bpm.pal.PALException: Failed to execute advanced transition, Error: Process app was not started. 
+ * On the target Process Server application cluster, FFDC files might show various exceptions that get the status for the BLA or one of its components. For example:
+   RedundantStateChangeException: Composition Unit WebSphere:cuname=HSAV1-T1-Hiring_Sample_Advanced_v801_Library_0001.jar,cuedition=BASE already started 
+ * Depending on the version, you might notice warning messages during the installation process that are similar to the following text when the uninstall phase occurs:
+   CWSAM0001W: Package does not contain SCA artifacts.
+   
+
+
+CAUSE
+You have associated advanced content modules with your snapshot although they do not contain any AIS services or SCA components. This situation frequently occurs when a process application or dependent toolkit is opened in IBM Integration Designer without creating SCA components. When a process application or toolkit is open in IBM Integration Designer and AIS services do not exist, then an empty SCA module and mirrored library are generated to allow you to add any component to the process application. If you do not want to add components, then the modules need to be disassociated from the process application before closing IBM Integration Designer. Otherwise, they leave an empty SCA module. 
+When you have empty SCA modules, the deployed BLA will only have a library item associated with it and no functional applications. This situation causes issues with the startup status, which results in the installation failure.
+
+
+RESOLVING THE PROBLEM
+Because this problem occurs for process applications and toolkits that do not have valid SCA content, the SCA content should be disassociated. If you are using SCA modules with AIS services or SCA components, then you will not have the issue outlined in this document. However, some of the symptoms that are described in this document are generic to the BLA phase of deployment. You need to check for other errors during the BLA installation or startup steps. 
+
+You need to iteratively check the toolkits and process applications for empty advanced content, disassociate the content, and create a new snapshot to use in the deployment. 
+
+For more detailed removal instructions see, Removing empty or unwanted advanced content from a process application [http://www.ibm.com/support/docview.wss?uid=swg21683795].
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ BPM

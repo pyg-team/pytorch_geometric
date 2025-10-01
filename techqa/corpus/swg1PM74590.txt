@@ -1,0 +1,126 @@
+Title: IBM PM74590: [wi 232359] ETL: ETL fails when run using J2EE datasource and DB2 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Env: WAS + DB2 running 3012
+   ETL fails when run using J2EE datasource and DB2
+   
+   The failing ETLs:
+   WorkItem
+   SCM
+   Star
+   Build also fails but due to unrelated Authentication error in my
+   tests.
+   
+   Error:
+   [jcc][t4][10120][10898][3.57.82] Invalid operation: result set
+   is closed. ERRORCODE=-4470, SQLSTATE=null
+   com.ibm.db2.jcc.am.SqlException:
+   [jcc][t4][10120][10898][3.57.82] Invalid operation: result set
+   is closed. ERRORCODE=-4470, SQLSTATE=null
+   
+   For more details, please refer to the following Jazz.net
+   Workitem:
+   https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo]
+   rkItem/232359
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ETL: ETL fails when run using J2EE datasource and DB2
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM74590
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * REPORTED COMPONENT ID
+   5724V0400
+   
+   
+ * REPORTED RELEASE
+   301
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-08
+   
+   
+ * CLOSED DATE
+   2013-08-07
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * FIXED COMPONENT ID
+   5724V0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R402 PSY
+   UP

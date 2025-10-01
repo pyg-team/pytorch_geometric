@@ -1,0 +1,39 @@
+Title: IBM Why am I getting "Current browser does not support native SVG" even running IBM TRIRIGA Platform 3.4.2 or later? - United States
+
+Text:
+TRIAPPDEVTOOLS; TRIBROWSER; TRIWINDOWS; TRICONFIG; TRIUI; Enterprise; mode; IE; compatibility; SVG; support TECHNOTE (FAQ)
+
+QUESTION
+ Why am I getting "Current browser does not support native SVG" even running IBM TRIRIGA Platform 3.4.2 or later? 
+
+CAUSE
+After upgrading to IBM TRIRIGA 3.4.2 or later, I see this behavior when when using MS IE 11:
+
+1. Associations tab from records. The following error message is issued: Current browser does not support native SVG
+
+2. State Transitions. The following error message is issued: Current browser does not support native SVG
+
+Why does this happen?
+
+ANSWER
+If you are running with IBM TRIRIGA 3.4.2.x code on, this means: 
+
+- Builder tool multi-browser support including native SVG rendering for everything without Adobe or Batik
+
+
+- Workflow Expression editor applet is replaced with an HTML5 widget
+
+
+- Microsoft Internet Explorer's applet dependency to access the Document Manager is replaced with an HTML5 widget
+
+See more details on New features in IBM TRIRIGA Application Platform version 3.4.2 [http://www.ibm.com/support/knowledgecenter/SSHEB3_3.4.2/com.ibm.tap.doc/overview/c_new_features.html] .
+
+Your Microsoft IE 11 browser needs to be working fine with HTML5 so that inbuilt SVG rendering can work properly.
+
+IE 11 will support inbuilt SVG calls (HTML support for the SVG "pointer-events" property), as it is on Microsoft page: Compatibility changes in IE11 [https://msdn.microsoft.com/library/bg182625(v=vs.85).aspx]
+
+The issue may happen on the following scenarios:
+
+SC01) You are running MS IE 11 with Compatibility Mode on. Kindly deactivate it, restart MS IE 11 and try again;
+
+SC02) You are running with MS IE 11 and its Enterprise Mode active. This will make IBM TRIRIGA Workflow Builder to fail when rendering some screens. Please, deactivate the MS IE 11 Enterprise Mode, restart MS IE 11 and try again. For more information on Microsoft MS IE Enterprise Mode, see this Microsoft Technet page: What is Enterprise Mode? [https://technet.microsoft.com/en-us/itpro/internet-explorer/ie11-deploy-guide/what-is-enterprise-mode]

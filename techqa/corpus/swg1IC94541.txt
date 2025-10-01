@@ -1,0 +1,245 @@
+Title: IBM IC94541: LOAD TERMINATE MIGHT CORRUPT LOB PAGE - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A LOAD TERMINATE operation on a table with LOBs may
+   not properly clean up some of the LOB pages.  This can
+   cause problems with subsequent LOAD operations on the
+   table, resulting in SQLDXE_BADPAGE "Bad LOB page"
+   errors.  You will see errors similar to the following in the
+   db2diag.log:
+   
+   2013-07-30-12.08.33.873527-240 I2296202A2082 LEVEL:Severe
+   (Origin)
+   PID : 34734296 TID : 138701 PROC :db2sysc 0
+   INSTANCE: dbinst NODE : 000 DB : SAMPLE
+   APPHDL : 0-156 APPID: *N0.xxxxxx.xxxxxxxxxxxx
+   AUTHID : DB2ID
+   EDUID : 138701 EDUNAME: db2lfrm0 0
+   FUNCTION: DB2 UDB, lob manager, sqldxAllocBsegForThisPage,
+   probe:846
+   MESSAGE : ZRC=0x87480001=-2025324543=SQLDXE_BADPAGE "Bad LOB
+   Page"
+   DIA8500C A data file error has occurred, record id is
+   "".
+   CALLSTCK:
+   [0] 0x090000001B655FC0
+   sqldx_dumpBadPage__FP9SQLDX_LWAP17SQLDX_CACHE_ENTRYUiiT4CUle +
+   0x1D4
+   [1] 0x090000001B99325C
+   sqldxAllocBsegForThisPage__FP9SQLDX_LWAP17SQLDX_CACHE_ENTRYUiT3i
+   UsP9SQLP_LSN8 + 0x150
+   [2] 0x090000001B999A88
+   sqldxAllocBseg__FP9SQLDX_LWAUiiP17SQLDX_CACHE_ENTRYT4 + 0x188
+   [3] 0x090000001B647FD8 sqldxGetBseg__FP9SQLDX_LWAiPUi + 0x7A8
+   [4] 0x090000001B642E4C
+   sqldx_ld_alloc_bsegs__FP9SQLDX_LWAP8SQLDX_LDiUi + 0xFC
+   [5] 0x090000001B642964
+   sqldx_ld_extend__FP9SQLDX_LWAP8SQLDX_LDiUi + 0x2A8
+   [6] 0x090000001BEC5844
+   sqldxBuildDescriptor__FP9SQLDX_LWAP8SQLDX_LDiT3b + 0xA8
+   [7] 0x090000001C2F25B8
+   sqldxCreateLob__FP9SQLDX_LWAUcUsiT4PcT4P8SQLDX_LD + 0x10
+   [8] 0x090000001BEB9A74
+   sqlulmadx__FP8sqeAgentP8SQLD_TCBUcUsP9sqllf_csoiT6P8SQLD_LFDPUl
+   + 0x68
+   [9] 0x090000001BEB8308
+   @155@sqldFormatLobLongCol__FP8sqeAgentP13SQLD_TDATARECT2P8SQLD_T
+   CBiT5PUlPiT5T8P10sqlz_value + 0x5C4
+   [10] 0x090000001BEB5D64
+   sqluLoadFormatFixedVar__FP8sqeAgentP13SQLD_TDATARECT2PP10SQLD_VA
+   LUEiP8SQLD_TCBPiPUcP15SQLD_XOR_UPDATEP8SQLD_CCB + 0x146C
+   [11] 0x090000001BEB3F8C
+   sqluFormatDMRec__FP13SQLUCACB_TYPEP17SQLU_FORMATTER_CBUiPP10SQLD
+   _VALUEP14sqlrg_mdc_infoP12SQLU_RP_INFOT3i + 0x6F8
+   [12] 0x090000001D6DFA84
+   @155@sqluGetAndFormatRecords__FP8sqlulacbP13SQLUCACB_TYPEP17SQLU
+   _FORMATTER_CBUiPPUciP10sqlz_valuePUcPP10SQLD_VALUET9Pi + 0x3B44
+   [13] 0x090000001BF71EB0 sqluldat__FPUcUi + 0x608
+   [14] 0x090000001A634B30 sqloEDUEntry + 0x3F0
+   [15] 0x0900000000710C90 _pthread_body + 0xF0
+   [16] 0xFFFFFFFFFFFFFFFC ?unknown + 0xFFFFFFFF
+   
+   The following conditions are necessary to hit this problem.
+   
+   - Recoverable database
+   - Table with LOB/LF column
+   - Failed LOAD command (INSERT/REPLACE)
+   - Successful LOAD TERMINATE
+   
+   Please note that table is fully accessible after TERMINATE.
+   However, there may be corrupted LOBA pages, which can
+   cause a subsequent LOAD to fail.
+   
+   You can identify that LOAD TERMINATE was run following a failed
+   LOAD by looking for db2diag.log messages similar to the
+   following:
+   
+   (Failed LOAD):
+   
+   2011-07-12-12.03.47.037585+540 I64449596A539 LEVEL: Error
+   PID : 29032720 TID : 118291 PROC : db2sysc 0
+   INSTANCE: db2inst1 NODE : 000 DB : SAMPLE
+   APPHDL : 0-31282 APPID:
+   *LOCAL.db2inst1.110803015837
+   AUTHID : DB2INST1
+   EDUID : 118291 EDUNAME: db2agent (SAMPLE) 0
+   FUNCTION: DB2 UDB, database utilities, DIAG_ERROR, probe:0
+   DATA #1 : String, 113 bytes
+   LOADID: 118291.2011-07-12-11.40.31.681591.0 (10;100)
+   sqluv_rollback , 0, 93, Detected in file:sqluvutl.C, Line:937
+   
+   2011-07-12-12.03.47.037731+540 I64450136A462 LEVEL: Severe
+   PID : 29032720 TID : 118291 PROC : db2sysc 0
+   INSTANCE: db2inst1 NODE : 000 DB : SAMPLE
+   APPHDL : 0-31282 APPID:
+   *LOCAL.db2inst1.110803015837
+   AUTHID : DB2INST1
+   EDUID : 118291 EDUNAME: db2agent (SAMPLE) 0
+   FUNCTION: DB2 UDB, database utilities, sqlu_register_table_load,
+   probe:1132
+   MESSAGE : Load Error: Error loading partition.
+   
+   
+   (LOAD TERMINATE):
+   
+   2011-07-12-13.27.26.417998+540 I64672391A619 LEVEL: Warning
+   PID : 29032720 TID : 113667 PROC : db2sysc 0
+   INSTANCE: db2inst1 NODE : 000 DB : SAMPLE
+   APPHDL : 0-5149 APPID:
+   *LOCAL.db2inst1.110803123533
+   AUTHID : DB2INST1
+   EDUID : 113667 EDUNAME: db2agent (SAMPLE) 0
+   FUNCTION: DB2 UDB, database utilities,
+   sqluCreateLoadListElement, probe:20
+   DATA #1 : LOADID, PD_TYPE_LOADID, 51 bytes
+   LOADID: 113667.2011-07-12-13.26.26.186104.0 (10;100)
+   MESSAGE : The Load synchronization element is now being reused.
+   No user intervention is required.
+   
+   2011-07-12-13.27.53.818982+540 I64673011A470 LEVEL: Warning
+   PID : 29032720 TID : 113667 PROC : db2sysc 0
+   INSTANCE: db2inst1 NODE : 000 DB : SAMPLE
+   APPHDL : 0-5149 APPID:
+   *LOCAL.db2inst1.110803123533
+   AUTHID : DB2INST1
+   EDUID : 113667 EDUNAME: db2agent (SAMPLE) 0
+   FUNCTION: DB2 UDB, database utilities, sqluvtld_route_in,
+   probe:839
+   DATA #1 : <preformatted>
+   Starting LOAD operation (S) (1) (T).
+   
+   The (S) in the above message indicates a LOAD TERMINATE.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Run REORG with LONGLOBDATA against the table, which will clean
+   up the corrupted pages.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of LOB data and LOAD TERMINATE.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to v10.1 or higher versions                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC94541
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   980
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-31
+   
+   
+ * CLOSED DATE
+   2013-08-01
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC94717 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC94717]
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY
+   UP
+   
+   
+ * RA50 PSY
+   UP

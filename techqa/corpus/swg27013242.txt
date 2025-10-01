@@ -1,0 +1,61 @@
+Title: IBM Detailed system requirements - Domino Web Access 8.0.2 - United States
+
+Text:
+iNotes Web Access; IWA; DWA; systemrequirementsdocument; sysreqs; system requirements; hardware requirements; software requirements; minimum; maximum; workstation; systemrequirementsdocument; supports; supported with; DSRdoc; ND8; 8.0.2; Domino Off-Line Service; Domino Off Line Service; Domino Offline Service; DOLS PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains the detailed system requirements for IBM® Lotus® Domino® Web Access 8.0.2. 
+
+CONTENT
+ 
+
+Client Hardware Requirements 
+
+Recommended for better performance: 
+
+ * Windows® -- Pentium IV 1.5 GHz with 512 MB of memory 
+ * Linux -- Pentium IV 1.5 GHz with 512 MB of memory 
+ * Macintosh -- G4 1.5 GHz with 512 MB of memory
+
+
+Minimum requirements:  * Windows -- Pentium III 800 MHz with 256 MB of memory 
+ * Linux -- Pentium III 800 MHz with 256 MB of memory 
+ * Macintosh -- G4 1 GHz 256 MB of memory
+
+
+Client Operating Systems and Supported Browsers 
+Domino Web Access runs on the following client operating systems: Windows XP and Vista using the following browsers: 
+
+ * Internet Explorer 6, 7, 8 
+ * Mozilla Firefox 2.0.0.13 or later, 3.0.x and 3.5 
+
+
+Novell Linux Desktop (NLD) 10 using the following browsers:  * Mozilla Firefox 2.0.0.13 or later, 3.0.x and 3.5
+
+
+RedHat Enterprise Linux Desktop 5.0 using the following browsers:  * Mozilla Firefox 2.0.0.13 or later, 3.0.x and 3.5
+
+
+Macintosh OS 10.4.x and 10.5 using the following browsers:  * Mozilla Firefox 2.0.0.13 or later, 3.0.x and 3.5 -- Note: Does not support Domino Off-Line Services (DOLS), local archiving, and Lotus Sametime awareness
+
+
+Citrix Presentation Server 4.5 on Windows 2003  * Clients using the Citrix Presentation Server 4.5 on Windows 2003 server, using ICA. Citrix ICA stands for Citrix® Independent Computing Architecture. It is the "thin" protocol that enables Citrix to separate screen updates and user input processing from the rest of the application’s logic. When using a Citrix ICA client, all application logic executes on the server and only screen updates, mouse movements and keystrokes are transmitted via the Citrix ICA session. Note: Does not support Domino Off-Line Services (DOLS). 
+
+
+Browser Support Notes  * Mozilla Firefox is supported by the DWA7 and MAIL8 mail templates only, it is not supported by iNotes6 templates. 
+ * Attempting to access Domino Web Access through unsupported browsers results in the display of an unsupported browser notice. Netscape 4.x users may see hangs and/or crashes when encountering the Domino Web Access unsupported browser page. If you are a Netscape 4.x user and you encounter these problems, you should open your mail file using the WebMail UI directly through the &ui=webmail switch. This is documented in the topic "Switching to WebMail" in the Domino Web Access help. 
+ * Domino Web Access will not work if JavaScript is disabled or if session cookies are disabled. 
+
+
+Server Requirements 
+See the IBM Lotus Notes and Domino 8.0.2 Release Notes for a complete list of server operating systems and requirements. 
+
+Certified Proxy Servers  * SunONE Portal Server 6.2 
+ * IBM WebSphere® Edge Server 2.0.2 efix 49 
+ * Tivoli® Access Manager 6.0
+
+
+Adobe Acrobat 
+Adobe Acrobat Reader, Version 4.0 or higher to print calendars. 
+RELATED INFORMATION
+ IBM Lotus Domino Web Access product page [http://www.ibm.com/software/lotus/products/domino-web-access/]

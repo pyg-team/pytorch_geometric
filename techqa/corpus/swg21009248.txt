@@ -1,0 +1,17 @@
+Title: IBM Why does an IODM DISP transaction fail when sent to the workstation with a CICS listener and a TCP/IP connection to IWPM? - United States
+
+Text:
+Install-Configuration-Maintenance; TCP/IP; SMPE TECHNOTE (FAQ)
+
+QUESTION
+ I have a working CICS® listener and a working TCP/IP connection to IWPM/NT. But when I start an IODM DISP transaction, why do I get error message: "EKC0305A Unable to initialize workstation WRKSTTST"? 
+
+ANSWER
+This can happen when the definitions for the workstation are not correct in the IDWKCFTB table. It can be caused by the Port number being wrong, the IPADDR being wrong, it can even be wrong if the AMODATE is wrong as well. It has also been known to fail if the RTOUTor STOUT values are to small. 
+If running with dynamic TCP/IP (protocol set to 3), it can happen if you are not using DDNS or DHCP. 
+
+It can also fail if the IP address of the workstation has changed since the last time IODM had connected to the workstation and IODM has not be refreshed. The use of the OINT command or OSET command can resolve this problem.
+
+Please refer to the IODM Systems Programmers Guide Appendix F. It covers installing and setting up TCP/IP support for IODM. Also, make sure your values in the IDWKCFTB are correct.
+
+Last do an OSET command with the DNSCLEAR option against the workstation followed by an OINT. This will ensure we have the correct IP address for the workstation. If none of this works, you will need to do a TSO PING of the host name of the workstation from a TSO session on the MVS® system running IODM's CICS region. If this fails, then the problem is the host name server does not have the definitions for the workstation defined. Please fix that to resolve the problem.

@@ -1,0 +1,164 @@
+Title: IBM PM67815: UNABLE TO GROW CHAID TREE IN IBM SPSS MODELER 14.2 OR 15.0, BUT IT IS POSSIBLE IN SPSS STATISTICS 20.0 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Modeler 14.2FP2, 14.2FP3 and 15.0GA cannot grow the CHAID tree
+   model. When trying to grow from Node 0, end-user is presented
+   with: "Stopping rules prevent any tree growth"
+   
+   Stopping rules used are:
+   Use absolute value:
+   Min in parent = 50
+   Min in child = 25
+   
+   Have reduced this to:
+   Min in parent = 5
+   Min in child = 2
+   
+   but error still occurs.
+   
+   Compared this procedure to the one available in SPSS Statistics
+   (Analysis > Classify > Tree) and was able to generate 6 child
+   nodes from Node 0. Each child node has met the stopping rules
+   condition (greater than 50 records in parent and 25 in child
+   nodes).
+   
+   Predictor used only contain 59 categories, ruling out a known
+   limitation (127 categories) as a possible cause.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This has been reported to IBM SPSS Modeler development team for
+   investigation. At this stage, the only available workaround is
+   to use the SPSS Statistics Output node to execute your syntax to
+   generate this tree. This is only available if you have a valid
+   license of SPSS Statistics on the same workstation that houses
+   SPSS Modeler.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * This issue affects all users of IBM SPSS Modeler 15.0 and is *
+   * platform independent.                                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * UNABLE TO GROW CHAID TREE IN IBM SPSS MODELER 14.2 OR 15.0,  *
+   * BUT                                                          *
+   * IT IS POSSIBLE IN SPSS STATISTICS 20.0                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM SPSS Modeler 15.0 Fix Pack 1 from the  *
+   * IBM Support Fix Central website:                             *
+   * http://www.ibm.com/support/fixcentral                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been addressed in IBM SPSS Modeler 15.0 Fix Pack
+   1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM67815
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS MODELER SV
+   
+   
+ * REPORTED COMPONENT ID
+   5725A65MS
+   
+   
+ * REPORTED RELEASE
+   E20
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-27
+   
+   
+ * CLOSED DATE
+   2012-12-11
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS MODELER SV
+   
+   
+ * FIXED COMPONENT ID
+   5725A65MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RF00 PSN
+   UP
+   
+   
+ * RF00 PSY
+   UP

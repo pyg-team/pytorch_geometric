@@ -1,0 +1,31 @@
+Title: IBM Lotus Notes 8.5.1 installation requires Microsoft Windows Installer 3.1 V2 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+Why does my Lotus Notes 8.5.1 client installation on Windows fail with messages "Notes 8.5.1 installation failed." and "Contact your system administrator."?
+
+CAUSE
+The Lotus Notes 8.5.1 client installation requires Microsoft Windows Installer 3.1 V2.
+
+ANSWER
+There may be a number of reasons why this could occur. One reason is that the Lotus Notes 8.5.1 client installation requires Microsoft Windows Installer 3.1 V2. 
+
+To test whether this is the issue, do the following: 
+
+ 1.  Open a Windows file share to the target user's home directory. 
+ 2.  If prompted for authentication enter either the user's or an administrative user's credentials. 
+ 3.  Navigate to Lotus Foundations\NOTES851_INSTALL 
+ 4.  Right-click the NOTES851_SETUP.BAT file and from the contextual menu, select the Edit option. 
+ 5.  The installation script will open in your preferred text editor, in most cases this is notepad.exe. 
+ 6.  Using the program's replace function search for "/qb-" and replace all instances with "/qb+". 
+ 7.  Save the installation script file. 
+ 8.  Double-click the modified batch file to rerun the installation program. If the alert shown below is displayed, you need to upgrade your Installer.
+     [/support/docview.wss?uid=swg21432577&amp;aid=1] 
+ 9.  Click the OK button to end the installation process. 
+ 10. In your text editor use the replace function to change the file back to it's original state. 
+ 11. Save and close the installation file.
+
+
+To resolve this problem, download and install the Windows Installer patch from Microsoft at http://go.microsoft.com/fwlink/?LinkId=42467 [http://go.microsoft.com/fwlink/?LinkId=42467]. Once you have upgraded your Windows Installer run the installation script again.

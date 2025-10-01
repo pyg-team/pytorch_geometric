@@ -1,0 +1,121 @@
+Title: IBM HE12323: DOCUMENTATION NEEDS TO BE UPDATED TO DESCRIBE ANYWHERE LABEL IN THE MATTERS ADVANCED SEARCH PAGE - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.0.3.2-ATLAS-IF005-README [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3.2-ATLAS-IF005-README&source=SAR]
+6.0.3.2-ATLAS-IF005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3.2-ATLAS-IF005&source=SAR]
+6.0.3.2-ATLAS-IF005.pdf [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3.2-ATLAS-IF005.pdf&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Documentation needs to be updated to describe Anywhere label in
+   the matters advanced search page so that it reflects correct
+   functionality
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Documentation needs to be updated to describe Anywhere label in
+   the matters advanced search page to reflect the correct
+   functionality. The Screen has options to select Matters,
+   Interviews, Collections, Requests and Anywhere. When you select
+   Anywhere, search is executed across only the four options
+   specified - Matter, Interviews, Collections and Requests.
+   Whereas you may expect the search to be executed across all the
+   four options above as well as other aspects like hold notices
+   and notice titles. The documentation does not clearly identify
+   the limited scope of the Anywhere option.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A Technical document describing the corrections is published and
+   can be accessed here
+   http://www.ibm.com/support/docview.wss?uid=swg27044359 [http://www.ibm.com/support/docview.wss?uid=swg27044359]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12323
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-05-15
+   
+   
+ * CLOSED DATE
+   2015-09-24
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

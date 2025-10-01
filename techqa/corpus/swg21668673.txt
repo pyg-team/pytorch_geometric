@@ -1,0 +1,32 @@
+Title: IBM FAQ on certificate import and expired certificate update with Cast Iron - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ GlobalSign root certificate expires. 
+
+ * Key Store with self signed certificate "factory supplied identity". 
+ * Trust Store that is populated with the CA certificates in the cacerts file under the packaged JRE in the appliance. The trusted certificates by default are present in the jre (java). Cast Iron uses these certificates from there.
+
+
+It is user's responsibility to manage the contents of the Key Store and Trust Store. Upgrading Cast Iron Operating System does not change the contents of the Key Store or Trust Store. When Cast Iron acts as a client, the CA certificates in the Trust Store are used to validate the authenticity of the external servers. So, depending on the user's requirement, they should add new CA certificates or delete existing CA certificates based on their business policy. Initial population of CA certificates into Cast Iron Trust Store is provided only as a matter of convenience. If the certificate in Trust Store is an older version and is about to expire, then users have to manually add the updated certificate to the Trust Store if they want to make it work immediately. 
+
+From time to time, the JRE packaged in Cast Iron Operating System gets refreshed to the latest versions and the cacerts in the prepackaged JRE might contain renewed CA certificates. Even in this case, an upgrade of Cast Iron Operating System will not refresh the already existing Trust Store with renewed CA certificates. 
+
+Cast Iron will not provide any kind of notifications with respect to certificate expiry or just before expiry. There is currently no plan to add this notification feature in a future Cast Iron release at this time. ANSWER
+A quick solution for this issue is to import the new certificate from the [/support/docview.wss?uid=swg21668673&amp;aid=1]GlobalSign site [https://support.globalsign.com]. 
+
+The new certificate expiry date has extended to 2028.
+
+Following are commonly asked questions and corresponding answers: 
+
+
+
+
+Questions Answers 1) Can the expired certificate be swapped out from the chain with the new certificate, and add the certificate chain back to CastIron appliance WMC? Yes. You can create a new chain by swapping the expired root certificate with new root certificate and then importing the new chain of certificates into Key Store. This step works because the expired root certificate and new root certificate are using the same key-pair. 2) Is it possible the intermediate certificate lives longer than (expires after) the root certificate which signs it at the beginning? Since, if the intermediate can't live longer than the root certificate, it means when Cast Iron runtime sends his own certificate signed by the expired root certificate, it's the same case that the intermediate certificate is also expired and Cast Iron runtime certificate is then rejected. Yes, it is possible that the intermediate certificate expiry is longer than the root certificate. Since the user has originally imported the full chain of certificates that has a root certificate expired, user will need to re-import a new chain of certificates without any expired certificates in it. 3) In the case that the Cast Iron runtime certificate being used (client SSL, server SSL) is signed by the expired root certificate mentioned above, what's the best practice to renew the Cast Iron certificate that has least impact to user? There is no need for the user to request a new certificate because of expired root certificate as the expired root certificate and new root certificate are using the same key-pair. Whether a new certificate for client SSL, server SSL is needed is something that the Certificate Authority should answer. 
+
+Best practice: 
+While importing a certificate into Trust Store, the "Bypass Chain-of-trust checks" option should be checked only if it's required. When this option is checked during certificate import, the imported certificate fingerprint value must match the source from which the root certificate is obtained (for example, the certificate authority website) to prevent impersonation security issues. 
+
+Once this is done, all certificates signed by the above root/intermediate certificates can be imported into Key Store without checking the "Bypass Chain-of-trust checks" option irrespective of whether the chain of certificates is from IBM or another entity.

@@ -1,0 +1,84 @@
+Title: IBM Security Network Protection Firmware Version 5.3.1.3 Release Notes - United States
+
+Text:
+Fixpack; IPS; 5.3.1.3 FIX README
+
+ABSTRACT
+ IBM Security Network Protection Firmware Version 5.3.1.3 is a firmware update for the XGS NGIPS network protection platform. This release provides the following updates to IBM Security Network Protection Firmware Version 5.3.1 
+
+CONTENT
+Note: It is recommended that you install the August 2015 X-Press Update, which includes additional fixes for Outbound SSL inspection. 
+Fixes for the following Outbound SSL inspection issues:
+
+
+ * 72271: Facebook loads slowly or video does not play when Outbound SSL inspection is enabled. 
+ * 71317: Video streaming on Youtube does not work when Outbound SSL inspection is enabled. 
+ * 71131: duckduckgo.com loads slowly or does not open when Outbound SSL inspection is enabled. 
+ * 71125: Yahoo is unstable when Outbound SSL inspection is enabled.
+
+
+Note: The Outbound SSL inspection feature does not support the SPDY protocol. See Technote 1903522 [http://www.ibm.com/support/docview.wss?uid=swg21903522] for more detail. 
+
+Fixes not related to Outbound SSL inspection: 
+
+Note: This fixpack includes fixes for some CVEs. Check the security bulletins for IBM Security Network Protection on the IBM PSIRT web site [https://www.ibm.com/blogs/psirt/].  * 74369: HTTP GET requests that span more than one packet are not handled correctly, which results in incorrect Network Access policy matching. 
+ * 73592: MitM implementation does not use burst transmission to send rewritten SSL records. This change improves outbound SSL performance. 
+ * 62017: NAP rules intended to block unknown URLs do not work. If a network user accesses a URL that is listed in the Unknown URL web filter category, the Network Access Policy does not trigger the rule. 
+ * 74228: Dropped packet counters in packetif don't include dropped unanalyzed packets, which causes a network statistic error. 
+ * 74092: Possible crash with signal 49 timer expiration on TLS heartbeats when Inbound SSL inspection is enabled. 
+ * 73861: Simulation mode does not disable outbound SSL inspection. In Simulation mode, no frames are modified, dropped, or held. This change prevents unnecessary inspection in Simulation mode. 
+ * 73783: Many signal 49 watchdog timer expirations are reported in the log when the appliance is busy. When the main inspection thread is busy, it can delay sending a reset timer command to other inspection threads. The watchdog timer can send and log a false positive signal 49 expiration. 
+ * 73690: Simulation mode setting in the Protection Interfaces policy is not honored when Connection Table is full, which results in unanalyzed traffic being dropped. 
+ * 73598: The XGS 3100 hard drive might become locked if wipe operation is interrupted. The original wipe operation sets a temporary password, wipes the hard disk, then removes the temporary password. The wipe operation was changed on the XGS 3100 model to prevent the hard disk from locking. 
+ * 73450: The Chinese string of LMI performance level setting translation string is truncated. 
+ * 73392: On the XGS 5100 model, when Flexible Performance Licensing is set to 4 (MAX), and captive portal is enabled, the captive portal response is slow. 
+ * 73391: In the User Authentication Portal, Firefox save Password window tries to save password for "X," rather than username that is logged in. 
+ * 73295: The appliance crashes when no protection interfaces are enabled. 
+ * 73231: Improve suspicious program weakness based on source scan result. 
+ * 73149: Unnecessary event GLGSY0008W generated when creating snapshot in firmware versions 5.3.1.1 and 5.3.1.2. 
+ * 72987: Probable crash when processing anonymous ciphers due to use of uninitialized value. 
+ * 72795: Can only access captive portal from one side of the appliance for some protection interface pairs. 
+ * 72741: The Edit window in the OpenSignature policy indicates conflicting settings between multiple OpenSignature rules with the same settings. 
+ * 72740: The available list of response objects are empty when add or edit OpenSignature rules 
+ * 72293: The validation chain (the root CA and the intermediate CA must be uploaded in separate files) for the appliance certificate does not work, which results in the appliance certificate status being incomplete. 
+ * 72490: Migrated GX filter and service object names should reflect the object's contents to easily differentiate each object in the collection. 
+ * 66870: Add a tuning parameter spad.event.queue.size to change the event queue size to handle an event burst. This tuning parameter allows you to increase the event queue size, so that uncommitted events are not lost if SiteProtector is offline for a significant period of time. 
+ * 66376: Non-sequitur IPS events are not reported to matched IPS policy of the original connection, which results in incorrect Network Access Policy matching.
+
+
+
+Compatibility 
+
+The following web browsers are currently supported by the IBM Security Network Protection 5.3.1.3 local management interface: 
+ * Internet Explorer 10 or 11 
+ * Firefox 28 or later 
+ * Google Chrome 34 or later
+
+To manage IBM Security Network Protection 5.3.1.3 appliances using the SiteProtector System, you must apply the following database service packs :  * SiteProtector System 3.0 - Install all DBSPs up to and including SP3.0 DBSP 3.0.0.37 
+ * SiteProtector System 3.1.1 - Install all DBSPs up to and including SP3.1.1 DBSP 3.1.1.19
+
+
+
+Installation and Configuration 
+
+For step-by-step installation instructions, see the Installing Updates topic in the IBM Knowledge Center: 
+ * http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/tasks/alps_installing_updates.htm [http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/tasks/alps_installing_updates.htm]
+
+For other configuration instructions, see the following topics in the IBM Knowledge Center:  * http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/concepts/alps_intro_page.htm [http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/concepts/alps_intro_page.htm] 
+ * http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/concepts/alps_getting_started_container.htm [http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/concepts/alps_getting_started_container.htm] 
+ * http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/tasks/alps_configuring_settings_lmi.htm [http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/tasks/alps_configuring_settings_lmi.htm]
+
+
+
+Known issues 
+
+Firmware update 5.3.1.3 contains the following known issues: 
+ * Large file downloads may stall and eventually fail when downloading over HTTPS and using Outbound SSL Inspection. 
+ * Websites using the SPDY protocol fail to load over HTTPS when using Outbound SSL Inspection. See Technote 1903522 [http://www.ibm.com/support/docview.wss?uid=swg21903522] for more details. 
+ * The statistic Fps Dropped is not displayed correctly in the LMI when unanalyzed policy is set to Drop. 
+ * If you created an URL category object to block Unknown URL while running firmware versions 5.3.1.0, 5.3.1.1, or 5.3.1.2, then applied the 5.3.1.3 DBSP or firmware update, the Unknown URL category checkbox is deselected (defect 62017). After applying the firmware update or DBSP, you must select the Unknown URL category checkbox again, and then deploy the policy. 
+
+
+
+
+[/support/docview.wss?uid=swg21964460&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21964460&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21964460&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21964460&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21964460&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21964460&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21964460&aid=7] [http://ibm.biz/ContactSecSupport]

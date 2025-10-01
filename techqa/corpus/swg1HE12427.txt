@@ -1,0 +1,147 @@
+Title: IBM HE12427: Error occurs when User goes to Matter > Holds > <Hold_Notice>>Rules>Recipients page. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.0.3.3-ATLAS-IF001-README.pdf [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3.3-ATLAS-IF001-README&source=SAR]
+6.0.3.3-ATLAS-IF001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3.3-ATLAS-IF001&source=SAR]
+Download IBM Atlas Policy Suite V6.0.3.3 Interim Fix 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042026]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a user goes to the Matter > Holds > <hold_notice> > Rules >
+   Recipients page, an error "ICWPA1001E An unexpected error
+   occurred. Contact your system administrator" appears.
+   
+   The logs show the following stack trace:
+   2015-10-05 10:01:38,796!ERROR http-/9.30.55.24:8080-8       ?!
+   doFilter(): Rethrowing Exception = JasperException:
+   java.lang.NumberFormatException: For input string: "null"
+   .
+   .
+   CAUSED BY: NumberFormatException: For input string: "null"
+     at
+   java.lang.NumberFormatException.forInputString(NumberFormatExcep
+   tion.java:77)
+     at java.lang.Long.parseLong(Long.java:453)
+     at java.lang.Long.valueOf(Long.java:552)
+     at
+   com.secretseal.policyatlas.helper.PersonHelper.getNoticeStatus(P
+   ersonHelper.java:180)
+     at
+   org.apache.jsp.pages.matter.matterNoticeRecipientList_jsp._jspSe
+   rvice(matterNoticeRecipientList_jsp.java:210)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Click the Back Button in the Matter > Holds > <hold_notice>
+   > Rules > Recipients page.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When a User goes to the Matter > Holds > <hold_notice> > Rules >
+    Recipients page, an error is shown.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is available in Fix Central in 6033 iFix1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12427
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   603
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-11-06
+   
+   
+ * CLOSED DATE
+   2016-04-18
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R603 PSY
+   UP

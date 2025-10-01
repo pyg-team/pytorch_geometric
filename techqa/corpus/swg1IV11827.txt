@@ -1,0 +1,177 @@
+Title: IBM IV11827: NCP_G_EVENT DOES NOT RESYNC THE SERIALS WHEN CONNECTING TO FAILOVER OBJECTSERVER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Network Manager IP 3.9.0 Fix Pack 3, 3.9.0-TIV-ITNMIP-FP0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24033501]
+IBM Tivoli Network Manager IP 3.9.0 Fix Pack 4, 3.9.0-TIV-ITNMIP-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24034724]
+IBM Tivoli Network Manager IP Edition 3.9.0 Fix Pack 5, 3.9.0-TIV-ITNMIP-FP0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24037809]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  v3.9.0.32 - All platforms (Only applicable if ObjectServer is
+   configured in failover pair)
+   
+   When ObjectServers are configured in failover mode, and ITNM is
+   configured to talk to the virtual ObjectServer pair, if primary
+   object server is failed, the EventGateway connects to the
+   failover ObjectServer as expected. Upon making connection to
+   Backup ObjectServer, the EventGateway is not resynced to get
+   correct Serials.
+   
+   As a result, the RCA functions incorrectly, thats because RCA
+   Plug-in is still updating the Serials of cached information
+   which does not match with Backup ObjectServer data.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  kill -HUP <pid of ncp_g_event>
+   The -HUP command will force EventGateway to resync with
+   ObjectServer events.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All ITNM 3.9 users with the Object Server configured in a    *
+   * failover pair.                                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * RCA associates events using the Serial number from the       *
+   * Object Server alerts.status table. When a backup Object      *
+   * Server is defined, the event Serial numbers in the backup do *
+   * not match those on the primary.                              *
+   *                                                              *
+   * When the primary object server fails, and the backup takes   *
+   * over, RCA is incorrect as it continues to use the Serial     *
+   * numbers from the primary Object Server.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This problem was introduced in 3.9 GA and is resolved in 3.9 *
+   * FP1.                                                         *
+   * | fix pack | 3.9.0-ITNMIP-FP0001                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The event gateway now resynchronizes events when the Object
+   Server fails over from primary to backup or backup to primary.
+   
+   Resynchronisation is triggered at startup, upon ITNM
+   failover/failback, when ncp_g_event receives a HUP signal, and
+   when reconnecting to an Object Server - such as the switch from
+   primayr to backup or backup to primary. In all cases, the
+   message "Finished resynchronising events with the Object Server"
+   will appear in the ncp_g_event.<domain>.log file when
+   resynchronisation completes.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Manually sending a HUP signal to the event gateway will force a
+   resynchronisation.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV11827
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PRECISIONIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724O52RC
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-07
+   
+   
+ * CLOSED DATE
+   2012-01-13
+   
+   
+ * LAST MODIFIED DATE
+   2012-01-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/PRECISIONIP
+   
+   
+ * FIXED COMPONENT ID
+   5724O52RC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R390 PSN
+   UP
+   
+   
+ * R390 PSY
+   UP

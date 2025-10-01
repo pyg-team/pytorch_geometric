@@ -1,0 +1,57 @@
+Title: IBM TPF Toolkit views and perspectives - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I determine what perspective I am in and what views are available in that perspective? 
+
+ANSWER
+Perspectives 
+
+The title bar in IBM TPF Toolkit for WebSphere Studio indicates which perspective is currently open. In the following example, the TPF Toolkit perspective is open; this is the default perspective: 
+
+
+[/support/docview.wss?uid=swg21379043&aid=1] [/support/docview.wss?uid=swg21379043&aid=1]
+
+In the next example, the Remote System Explorer perspective is open:
+
+[/support/docview.wss?uid=swg21379043&aid=2] [/support/docview.wss?uid=swg21379043&aid=2]
+
+
+Views
+
+Each perspective contains a set of views that are available when you have that perspective open. For example, when the TPF Toolkit perspective is open, the following views are available:
+
+
+ * TPF Project Navigator 
+ * TPF Error List 
+ * TPF Toolkit Console 
+ * TPF Toolkit Job Log
+
+
+Views provide alternative presentations of resources or ways of navigating through the information in TPF Toolkit. For example, the TPF Project Navigator view displays projects and other resources that you are working with in a tree hierarchy. A view might appear by itself, or stacked with other views in a tabbed notebook arrangement. 
+
+You can determine what view you are working with by looking at the view title bar. In the following example, the TPF Project Navigator view contains two TPF projects (MyProject1 and MyProject2): 
+
+[/support/docview.wss?uid=swg21379043&aid=3] [/support/docview.wss?uid=swg21379043&aid=3] 
+
+
+
+Troubleshooting 
+
+If you are not working in the correct perspective or view for the task you are trying to complete, you might encounter problems such as: 
+ * You cannot see any remote files within filters; you only see filter.xml and .project files in your filters. 
+ * Custom actions do not appear on pop-up menus. 
+ * You cannot find a view that you are looking for. For example, you cannot locate the TPF Project Navigator view.
+
+
+You can resolve these issues by ensuring that the TPF Toolkit perspective is currently open. To verify that this perspective is open: 
+
+1. Look at the title bar in IBM TPF Toolkit for WebSphere Studio to determine which perspective is currently open. 
+2. If the title bar does not indicate that TPF Toolkit is the current perspective, select Window > Open perspective > TPF Toolkit to switch to the TPF Toolkit perspective. 
+
+You can also reset your current perspective to restore all of the views that should be displayed within that perspective. To reset a perspective: 
+
+1. Select Window > Reset Perspective. 
+2. From the Reset Perspective dialog box, click OK to reset the current perspective to its defaults.

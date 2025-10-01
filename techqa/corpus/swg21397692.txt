@@ -1,0 +1,29 @@
+Title: IBM ITCAM4Tx: Application Management Console (t3) agent history files keep growing - United States
+
+Text:
+71AMCON-CONF history files cleaning maintenance TECHNOTE (FAQ)
+
+QUESTION
+ Files like T3SNAPPL, T3SNTRANS, etc keep growing continuously. Can you explain why? 
+
+CAUSE
+Possible cause is that TDW and warehousing is not in place yet. But History Collection is turned on for Application Management Console product attribute groups.
+
+ANSWER
+All history T3SN* files, located under, for example : 
+
+ITM/aix523/t3/hist/
+or under
+ITM/TMAITM6/logs/
+will continue to grow continuously until :
+a) you stopped the History Collection for each attribute groups of Application Management Console product (accessible from the TEP GUI -> History Collection Configuration)
+or
+b) you setup TDW and warehousing database, and turn on "warehouse proxy" agent and "warehouse summarization and pruning" agent, so the history files are collected from the TEMA agent, stored in the 'WAREHOUS' database, and purged automatically from the agent, so they don't grow continuously anymore.
+
+You can also refer to this technote giving an overview of Historical Data Collection usage with ITCAM for Transactions product :
+http://www-01.ibm.com/support/docview.wss?uid=swg21394426 [http://www-01.ibm.com/support/docview.wss?uid=swg21394426] 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ itcamfort itcam4t itcamfortransactions itcam4transactions

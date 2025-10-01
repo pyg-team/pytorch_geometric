@@ -1,0 +1,285 @@
+Title: IBM IV91549: INCREASING THREAD COUNT IN IMPACT - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-LINUX-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0009&source=SAR]
+7.1.0-TIV-NCI-ZLINUX-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0009&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0009&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0009&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0009&source=SAR]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 9(7.1.0-TIV-NCI-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24043378]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 10(7.1.0-TIV-NCI-FP0010) [http://www-01.ibm.com/support/docview.wss?uid=swg24043588]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 11(7.1.0-TIV-NCI-FP0011) [http://www-01.ibm.com/support/docview.wss?uid=swg24043858]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 12 (7.1.0-TIV-NCI-FP0012) [http://www-01.ibm.com/support/docview.wss?uid=swg24044312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Our impact has the settings as mentioned in the sizing guide.
+   
+   
+   We have upgraded the impact at our end to version 7.1 FP6 We had
+   received
+   a response from IBM that the high thread issues of impact 5.1
+   would be
+   resolved once it is upgraded.
+   
+   But however, we are still seeing a high count of impact thread
+   causing
+   performance issues.  This is becoming more day by day. Please
+   let us
+   know what might be causing this issue?
+   
+   We can see the below error frequently in the impact
+   self-monitoring
+   logs:
+   
+   08 Dec 2016 18:12:44,676:  Sending the status event:
+   (Manager=Impact
+   SelfMonitoring@NCICLUSTER, Type=1, Summary=Invalidating all
+   Connections
+   to the null Server for the DataSource: DS_ORA_HEA on Host: [Host
+   Could
+   not be determined] Port: -1
+   Examine the server log for further details, Class=10500,
+   Agent=Impact
+   SelfMonitoring, AlertGroup=DataSourceStatus,
+   NodeAlias=10.48.84.144,
+   FirstOccurrence=1481181164, Identifier=Impact:DataSource Status
+   for
+   NCI01:NCICLUSTER:DS_ORA_HEA:1:1,
+   AlertKey=NCI01:NCICLUSTER:DS_ORA_HEA,
+   Node=svass0000014pr.nbndc.local,
+   Severity=4, LastOccurrence=1481181164)
+   
+   08 Dec 2016 18:12:44,773:  Sending the status event:
+   (Manager=Impact
+   SelfMonitoring@NCICLUSTER, Type=2, Summary=Connection
+   established to the
+   Host: [Host Could not be determined] and Port: -1 for the
+   DataSource:
+   DS_ORA_HEA, Class=10500,
+   Agent=Impact SelfMonitoring, AlertGroup=DataSourceStatus,
+   NodeAlias=10.48.84.144, FirstOccurrence=1481181164,
+   Identifier=Impact:DataSource Status for
+   NCI01:NCICLUSTER:DS_ORA_HEA:2:0,
+   AlertKey=NCI01:NCICLUSTER:DS_ORA_HEA,
+   Node=svass0000014pr.nbndc.local, Severity=1,
+   LastOccurrence=1481181164)
+   
+   But we tested the connection for DS_ORA_HEA and it looks fine.
+   Moreover,
+   we can data updates also in this Oracle DB.
+   
+   Can this issue be causing the thread to increase in the impact.
+   
+   
+   We are seeing considerable increase to impact thread size after
+   it has
+   been upgraded to version 7.1
+   
+   We could also observe  the below exceptions  in impactserver
+   logs:
+   
+   com.micromuse.response.common.RespException:
+   java.sql.SQLSyntaxErrorException: ORA-00904: "SourceServerName":
+   invalid
+   identifier
+   
+   java.sql.SQLSyntaxErrorException: ORA-00904: "SourceServerName":
+   invalid
+   identifier
+   
+   com.micromuse.response.common.RespException:
+   java.sql.SQLSyntaxErrorException: ORA-00904: "SourceServerName":
+   invalid
+   identifier
+   
+   java.sql.SQLSyntaxErrorException: ORA-00904: "SourceServerName":
+   invalid
+   identifier
+   
+   com.micromuse.response.common.RespException:
+   java.sql.SQLSyntaxErrorException: ORA-00904: "Severity": invalid
+   identifier
+   
+   java.sql.SQLSyntaxErrorException: ORA-00904: "Severity": invalid
+   identifier
+   
+   com.micromuse.response.common.RespException:
+   java.sql.SQLSyntaxErrorException: ORA-00904: "TTNum": invalid
+   identifier
+   
+   java.sql.SQLSyntaxErrorException: ORA-00904: "TTNum": invalid
+   identifier
+   
+   com.micromuse.response.common.RespException:
+   java.sql.SQLSyntaxErrorException: ORA-00904: "NELastOccurrence":
+   invalid
+   identifier
+   
+   java.sql.SQLSyntaxErrorException: ORA-00904: "NELastOccurrence":
+   invalid
+   identifier
+   
+   We could see a function in the policy to update the OBB details
+   back to
+   OBB DB : CommitTransaction(); which is using double quotes (like
+    &#224;&#194; SourceServerName &#224;&#202; ) to update the corresponding fields
+   back to OBB
+   DB.  The new rows are getting inserted withou
+   t any issues, however the updates are failing. We could see that
+   issue
+   with update of fields using double quotes was  fixed in Fix Pack
+   |
+   5.1.1-TIV-BSM-FP0003, but this issue is also present in impact
+   7.1
+   version. Please refer to the link : http:
+   //www-01.ibm.com/support/docview.wss?uid=swg1IV38045
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround is modify their policy to match the case.
+   For example in Function UpdateOBBDbEntry()
+   replace all column name of  OBBDbEvent from camel case to
+   uppercase.
+      OBBDbEvent.SEVERITY = EventContainer.Severity;
+      OBBDbEvent.SUMMARY = EventContainer.Summary;
+      ...
+      OBBDbEvent.SOURCESERVERNAME =
+   EventContainer.SourceServerName;
+      OBBDbEvent.SYNCPROCESSEDTIME_DATE = LocalTime(getdate(),
+   "MM/dd/yy
+   HH:mm:ss");
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Update SQL statement make up by field name from event        *
+   * container other than fetch it from corresponding user        *
+   * parameter in data type.                                      *
+   * Run into exception: java.sql.SQLSyntaxErrorException:        *
+   * ORA-00904: "###": invalid identifier                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  make up SQL statement  by user parameter in data type
+   
+   The fix for this APAR is contained in the following
+   maintenance packages:
+   | Fix Pack | 7.1.0-TIV-NCI-FP0009
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV91549
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-12-15
+   
+   
+ * CLOSED DATE
+   2017-02-07
+   
+   
+ * LAST MODIFIED DATE
+   2017-02-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UNKNOWN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

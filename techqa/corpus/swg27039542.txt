@@ -1,0 +1,37 @@
+Title: IBM Known Issue: On Windows, additional configuration is required for IBM Case Manager in a WebSphere Application Server Network Deployment or WebLogic server cluster deployment - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ After you install and configure the IBM Case Manager system in a Windows cluster environment, you must perform additional steps to update the "Dicm.shared.folder" JVM parameter. 
+
+CONTENT
+In a clustered IBM Case Manager deployment, the shared directory that you specify must be available to all nodes in the cluster. After you set the shared directory during configuration, the JVM parameter "Dicm.shared.folder" on the additional nodes has an incorrect formatting. You must manually update the parameter on each of the nodes to match the format of the first node. 
+
+For example, if during configuration you set the shared directory to Z:\IBM\CaseManagement\configure\properties, the value for the JVM property on the first node is:
+
+-Dicm.shared.folder=Z:\IBM\CaseManagement\configure\properties
+
+However, on the second and subsequent nodes, the value of the JVM property is:
+
+-Dicm.shared.folder=Z:\\IBM\\CaseManagement\\configure\\properties
+
+
+To update the JVM property on WebSphere Application Server:
+
+
+ 1. Log in the DMGR console as the WebSphere Application Server administrative user. 
+ 2. Click Servers > Clusters > WebSphere application server clusters > <ICM_cluster_name> > Cluster members. 
+ 3. Open the JVM properties by clicking Node 2 > Process definition > Java Virtual Machine. 
+ 4. Update the "Dicm.shared.folder"of the Generic JVM arguments to correct the format. Remove the extra back slash characters, as in the following example: "-Dicm.shared.folder=Z:\IBM\CaseManagement\configure\properties". 
+ 5. Repeat the update steps for all other nodes of the cluster and restart the JVM instance.
+
+
+
+To update the JVM property on WebLogic Server: 
+ 1. Log in to the machine that is running the 2nd node, and navigate to the folder <Application Server Domain Directory>/bin. For example, navigate to "C:\oracle\Middleware\user_projects\domains\vertical_domain\bin". 
+ 2. Open the setDomainEnv.cmd file for editing. 
+ 3. Update the "-Dicm.shared.folder" of the 'JAVA_OPTION' Variable to correct format. Remove the extra back slash characters, as seen in the following example: "-Dicm.shared.folder=Z:\IBM\CaseManagement\configure\properties". 
+ 4. Restart the JVM instance. 
+ 5. Repeat the update steps for all other machines in the cluster.

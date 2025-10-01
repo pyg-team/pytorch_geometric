@@ -1,0 +1,30 @@
+Title: IBM Copying and pasting a table from Excel 2007 to a New Memo in Lotus Notes results in an image - United States
+
+Text:
+Copy; paste; excel; picture; image; table; cells; 2007; new memo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When a user copies a table or cells from Excel, into a New Memo in Lotus Notes, a picture is pasted, and not an editable table or text.
+
+SYMPTOM
+After pasting table into Notes, a picture or image is pasted.
+
+
+CAUSE
+This problem does not occur when copying from Excel or Office 2003, and only occurs with Excel Office 2007 (or later Office releases).
+
+ENVIRONMENT
+Lotus Notes 7.x, 8.x 
+
+Windows XP, Vista, 7 
+
+Office 2007
+
+
+RESOLVING THE PROBLEM
+This problem has been reported to Quality Engineering in SPR TMDS8DRW3K and is fixed in IBM Notes 9.0. 
+
+ 
+
+Additional Information:
+Based on recent testing under Notes versions 8.5.3 and 8.5.3FP1, the same issue was seen when using Excel 2003 (from Microsoft Office 2003).

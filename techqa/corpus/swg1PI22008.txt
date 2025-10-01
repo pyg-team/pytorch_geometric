@@ -1,0 +1,180 @@
+Title: IBM PI22008: RDZ V8036 INTERNAL DEFECTS AND ENHANCEMENTS - OPENRSE - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  RDZ V8036 INTERNAL DEFECTS AND ENHANCEMENTS - OPENRSE
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: 01.RDz 8* users                              *
+   *                 02.RDz server administrators who have DNS    *
+   *                    issues on their servers and RDz users     *
+   *                    who are concerned with too many           *
+   *                    unnecessary log files.                    *
+   *                 03.RDz Users who use USS symbolic links      *
+   *                 04.z/OS system administrator                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 01.During a disconnect, it's possible   *
+   *                         for a deadlock to occur.             *
+   *                      02.When DNS settings are messed up, an  *
+   *                         NPE can occur with the server        *
+   *                         without a useful error message and   *
+   *                         .dstoreHashmap log entries can take  *
+   *                         up a lot of space.                   *
+   *                      03.Deleting a symbolic link for a       *
+   *                         folder from RSE deletes the folder   *
+   *                         contents.                            *
+   *                      04.RDz enhancement to allow TLS v1.2    *
+   *                         usage                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   01.When an RDz user disconnects from the server, it is possible
+      (although rare) for the timing to be such that a deadlock
+      can occur. In such scenarios, this can also result in locked
+      datasets.
+   02.If a z/OS machine hasn't properly configured their DNS
+      settings, an NPE can occur with the server. While there is
+      already a workaround for this scenario, there is no message
+      indicating to the administrator what might have gone wrong.
+      The second issue is that .dstoreHashmap files can get
+      frequently created in some scenarios and these files aren't
+      very useful to users.
+   03.Deleting a symbolic link for a folder from RSE deletes the
+      folder contents.
+   04.Rational Developer for System z enhancement to allow TLS
+      v1.2 usage. To use TLS v1.2, define
+      _RSE_JAVAOPTS="$_RSE_JAVAOPTS
+      -DDSTORE_SSL_ALGORITHM=TLSv1.2" in rsed.envvars (host), and
+      -DDSTORE_SSL_ALGORITHM=TLSv1.2 in eclipse.ini (client).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  01.In order to avoid the deadlock, a synchronized block in the
+      server code was removed. This is a change that had already
+      gone into the RDz 9* versions.
+   02.The RSE server will attempt to fall back to reading the
+      hostname via a shell command. If that fails then, a error
+      message will indicate a problem and suggest the workaround.
+      For .dstoreHashmap log entries will not get created by
+      default and older ones will be deleted after a two days.
+   03.When a user deletes a symbolic link for a folder, the
+      contents are not deleted.
+   04.Rational Developer for System z enhancement to allow TLS
+      v1.2 usage. To use TLS v1.2, define
+      _RSE_JAVAOPTS="$_RSE_JAVAOPTS
+      -DDSTORE_SSL_ALGORITHM=TLSv1.2" in rsed.envvars (host), and
+      -DDSTORE_SSL_ALGORITHM=TLSv1.2 in eclipse.ini (client).
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI22008
+   
+   
+ * REPORTED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0723
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-16
+   
+   
+ * CLOSED DATE
+   2015-04-21
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  FEKFDST0 FEKFDST2
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * FIXED COMPONENT ID
+   5724T0723
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY UI26951 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI26951]
+   UP15/04/30 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

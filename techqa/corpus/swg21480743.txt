@@ -1,0 +1,24 @@
+Title: IBM How to track distinct module usage in the Sentinel License Manager and WlmAdmin tool - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I'm using IBM SPSS Statistics with a network license. Everything's installed, authorized, and seems to running properly, but I've got a question about the WlmAdmin Sentinel License Manager display and logging. I know that our organization has licensed Statistics Base and several other modules, and we received a single license authorization code that I assume had all the various module authorizations bundled together -- and the users do get access to all the modules we're supposed to have. The problem is that only a single 'product' is shown in the License Manager display ('0' or '1200') and I can't track individual usage of the various other modules any more finely than that.
+
+For instance, we've got 10 users license for Base and Trends, but I've got a feeling that given our current usage levels only a maximum of 5 people are actually using the Trends module functionality at any given time. If I could confirm that by checking usage reports, then I could reduce the number of licenses we pay for.
+
+Is there some way I could track distinct module usage? 
+
+ANSWER
+The only way the WlmAdmin tool can track and log module use separately is by using one authorization code or license per module. You can ask IBM Customer Care for assistance in generating separate codes instead of bundling them all together.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 51516

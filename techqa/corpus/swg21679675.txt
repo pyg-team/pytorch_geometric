@@ -1,0 +1,32 @@
+Title: IBM IlrBRLError when checking project consistency in ODM Decision Center - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In Decision Center, when I click on "Check Project Consistency" under the Analyze tab, I see the following eror:
+ilog.rules.teamserver.brm.builder.IlrBuildException: 
+ilog.rules.brl.util.IlrBRLError: file not found: language/extendedBAL.xsd 
+at ilog.rules.teamserver.brm.builder.IlrBuilder.doConvert(IlrBuilder.java:700) 
+at ilog.rules.teamserver.brm.builder.IlrBuilder.getBuildResult(IlrBuilder.java:446) 
+at ilog.rules.teamserver.ejb.ruleset.IlrRulesetArchiveGenerator.doAddRuleArtifactToArchiveBuilder1(IlrRulesetArchiveGenerator.java:882) 
+
+The logs file show the following error: 
+SEVERE: Fail to create BRL parser: Unable to found class 
+'ilog.rules.studio.samples.custombrl.ExtendedBAL'
+
+
+DIAGNOSING THE PROBLEM
+This indicates that you are using a custom Business Rule Language (BRL), but have not packaged all of the required classes into the Decision Center ear.
+
+RESOLVING THE PROBLEM
+Package the custom BRL implementation classes into Decision Center ear. Refer to the documentation at 
+
+Operational Decision Manager V8.5.1 > Decision Center > Customizing Decision Center > Integrating business rule authoring extensions > Integrating rule authoring extensions into Decision Center > Integrating a custom business rule language into Decision Center [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/index.jsp?topic=%2Fcom.ibm.odm.dcenter.custom%2Ftopics%2Ftsk_authoring_dc_custombrl.html]
+
+Make sure that no required classes are missing, and that the classes have been compiled with a JDK level which is the same as the Java level used by the application server on which Decision Center is deployed. 
+
+RELATED INFORMATION
+#Creating a custom business rule language [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/index.jsp?topic=%2Fcom.ibm.odm.dserver.rules.designer.author%2Fconfig_auth_topics%2Ftpc_rd_bom_creating_custom_brl.html]
+Integrating a custom business rule language into Decisi [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/index.jsp?topic=%2Fcom.ibm.odm.dcenter.custom%2Ftopics%2Ftsk_authoring_dc_custombrl.html]
+Sample: Custom business rule language [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/index.jsp?topic=%2Fcom.ibm.odm.dcenter.samples%2Ftopics%2Fsmp_tsauth_custbrl.html]

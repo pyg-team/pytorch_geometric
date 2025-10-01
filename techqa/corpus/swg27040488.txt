@@ -1,0 +1,20 @@
+Title: IBM Support for Desktop Publishing Applications in Cognos Disclosure Management Version 10.2.2 Interim Fix 1 - United States
+
+Text:
+Cognos Disclosure Management; CDM; cognos disclosure management; cdm PRODUCT DOCUMENTATION
+
+ABSTRACT
+ In IBM® Cognos® Disclosure Management, you can identify the content that you want to format in a certain way in a desktop publishing application such as Adobe InDesign.
+
+
+CONTENT
+The attached document provides instructions on how to configure the desktop publishing feature 
+
+in IBM Cognos Disclosure Management Version 10.2.2 Interim Fix 1.
+
+cdm_deskpub.pdf [/support/docview.wss?uid=swg27040488&aid=2]cdm_deskpub.pdf [/support/docview.wss?uid=swg27040488&aid=1]
+
+
+RELATED INFORMATION
+ Cognos Disclosure Management information center [http://pic.dhe.ibm.com/infocenter/cdm/v10r2m2/index.jsp]
+Cognos Disclosure Management PDF documentation [http://www.ibm.com/support/docview.wss?uid=swg27039518]

@@ -1,0 +1,194 @@
+Title: IBM IZ96370: THE TNPM 1.3A SAM PACK DOESN'T SUPPORT PRE SAM 7 VERSIONS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The TNPM 1.3A (2.8.0.0) - Alcatel-Lucent 5620 SAM Tech Pack,
+   officially
+   according to the user documentation (page 5) supports
+   communication /
+   collection from
+   Alcatel-Lucent 5620 SAM Server Release 6
+   Alcatel-Lucent 5620 SAM Server Release 6.1
+   Alcatel-Lucent 5620 SAM Server Release 7
+   
+   This pack is basically designed to support SAM v8 and the
+   customer discovered that this Teck Pack tries to query for
+   classes that do not exist on a SAM Releases 6 or 6.1.So, this
+   means that this pack does not support pre SAM 7 release. But
+   the customer is requesting to a have pack that supports all SAM
+   versions as defined in the documentation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The following suggestions provided by L3:
+   
+   
+   The issue is that we added features that use classes from the
+   SAM that are not in 6.1 and earlier.  This can cause an
+   inventory issue (i.e. it will not complete) when run against an
+   earlier version.  4.3-X (what the customer is currently running)
+   was
+   certified against 7.0 and also therefore 6.1, but then the 4.3-Y
+   pack, where this functionality was introduced, was certified
+   against 8.0 and also backwards compatibility-tested at
+   certification against the previous version, which was 7.0.
+   
+   There are a couple routes we could take here:
+   
+   1) There is a good chance that the 4.3-X SAM pack works against
+   8.0.  We could do a relatively quick test and see, and they
+   could keep using that as they are now.
+   
+   2) It would be relatively straightforward, though a little bit
+   of work, to add conditionals to the pack so that the offending
+   items could be skipped based on configuration.  This could maybe
+   be done with the existing config items, or the addition of an
+   items where the SAM server version is configured.  It might also
+   be possible to detect the SAM version automatically when we
+   connect to it, but that might require some DC work.  The
+   infrastructure that woudl help out with this may have been added
+   later than 2.8.0.0, maybe in the 2.9.0.0 version, but I would
+   have to check.
+   
+   For #2 another issue is that the customer is currently testing
+   to go to
+   2.8.0.0 (1.3A), and that means we would have to make a fix for
+   that version as well as 2.9.0.0, which is a pain.
+   
+   
+   
+   For the doc issue, that is reasonable, but not necessarily a big
+   deal.  When we update the doc, we could have it say the pack is
+   only compatible with 7.0 and 8.0, thus eliminating the other
+   issue discussed here.  If I used smileys, I would put one here.
+   
+   
+   
+   As to this:
+   
+    Can you please investigate / escalate this issue, as the
+   customer - in-line with the documentation and advise sort from
+   IBM will be supporting collection from  multiple SAMs
+   concurrently, those that will be running Release 6,   6.1,   7
+   and 8 at the same time.
+   
+   
+   
+   We really do not support running against multiple SAM versions
+   on one Proviso setup.  In this case, we "figured out" how to
+   make it work, but when we ahd the call at the time Craig was
+   very clear that it was not supported and we were just doing it
+   to help them.  Not sure if this affects the situation or not
+   
+   
+   *** COULD NOT PROVIDE THE CORRECT COMPONENT AND SYSTEM RELEASES
+   AS THE CURRENT CCWIN DOES NOT SUPPORT ***
+   
+   The correct component release:
+   
+   TNPM 1.3A Alcatel 5620 SAM Technology Pack
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In the Alcatel-Lucent 5620 SAM Technology Pack, the updates for
+   SAM Server v8 broke support for versions of SAM Server pre v7.
+   Because it queries for classes that do not exist in v6 and v6.1
+   This issue is resolved in the latest release of this Tech Pack
+   version 2.9.1.0
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  Alcatel-Lucent 5620 SAM Technology Pack v2.9.1.0
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ96370
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PROV ALC 562
+   
+   
+ * REPORTED COMPONENT ID
+   5724P68SM
+   
+   
+ * REPORTED RELEASE
+   43Y
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-08
+   
+   
+ * CLOSED DATE
+   2011-04-19
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R290 PSY
+   UP

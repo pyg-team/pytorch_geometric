@@ -1,0 +1,150 @@
+Title: IBM PI20969: (WI 322205) WINDOWS 7 RTC SHELL CLIENT TASK TRAY ICON IS UNRESPONSIVE AND DISAPPEARS AFTER A FEW MINUTES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Microsoft Windows 7 IBM Rational Team Concert (RTC) Shell client
+   task tray icon is unresponsive and disappears after a few
+   minutes.
+   
+   What steps will reproduce the problem?
+   1. Install RTC Shell client 4.0.6
+   2. Dismiss the startup dialog box.
+   3. Right click on the RTC Shell client icon in the task tray.
+   
+   What is the expected output?
+   The startup dialog box closes. A context menu appears above the
+   RTC Shell icon.The icon is responsive and does not disappear.
+   
+   What do you see instead?
+   The startup dialog does not close. No context menu appears. The
+   icon is unresponsive and disappears after few minutes.
+   
+   Operations like setting a sandbox, switching from basic to
+   advanced mode or vice-versa from the RTC Shell Control Panel
+   page do not complete.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There is no workaround available.
+   
+   For more details visit jazz defect:
+   https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo]
+   rkItem/322205
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * RTC Shell                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * RTC Shell task tray icon is unresponsive and disappears      *
+   * after a few minutes                                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in RTC version 4.0.7
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI20969
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * REPORTED COMPONENT ID
+   5724V0400
+   
+   
+ * REPORTED RELEASE
+   406
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-27
+   
+   
+ * CLOSED DATE
+   2014-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * FIXED COMPONENT ID
+   5724V0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R406 PSY
+   UP

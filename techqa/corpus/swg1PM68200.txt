@@ -1,0 +1,145 @@
+Title: IBM PM68200: changing module edit modes consumes too much memory - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational DOORS and DOORS Web Access 9.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033257]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you open a module in exclusive edit mode, a given amount of
+   memory is consumed.
+   
+   However, if you open a module in read-only mode, then switch to
+   read-only more, vastly more memory can be consumed.
+   
+   Testing with a module containing 5000 objects and 100 text
+   attributes, each containing a small line of text, opening
+   directly in exclusive edit mode consumed approximately 800MB.
+   When first going via read-only mode, this figure increases by
+   approximately 200MB.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If you open a module in exclusive edit mode, a given amount
+   of memory is consumed.
+   
+   However, if you open a module in read-only mode, then switch
+   to read-only more, vastly more memory can be consumed.
+   
+   Testing with a module containing 5000 objects and 100 text
+   attributes, each containing a small line of text, opening
+   directly in exclusive edit mode consumed approximately
+   800MB. When first going via read-only mode, this figure
+   increases by approximately 200MB.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The underlying design for this functionality cannot be
+   easily changed.  Improvements have been made in memory
+   handling to help reduce the occurrence of this.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM68200
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * REPORTED COMPONENT ID
+   5724V61DR
+   
+   
+ * REPORTED RELEASE
+   930
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-05
+   
+   
+ * CLOSED DATE
+   2012-12-04
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * FIXED COMPONENT ID
+   5724V61DR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R930 PSN
+   UP

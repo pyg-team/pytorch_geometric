@@ -1,0 +1,106 @@
+Title: IBM Information on how to set concurrency in C&DS - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Information on how to set concurrency in C&DS. 
+
+For C&DS concurrency, that is set in JMS in the respective application server into which C&DS is deployed. See below.
+
+
+
+RESOLVING THE PROBLEM
+Increasing JMS concurrency limits 
+
+ When IBM SPSS Collaboration and Deployment Services performance must be optimized due to high workload, for example, a lot of jobs running concurrently, it may be necessary to modify the respective application server JMS settings to increase concurrency limits. 
+
+The following are general steps for WebSphere, JBoss, and WebLogic. For more detailed information, consult the respective application server documentation.
+
+WebSphere 8.5:
+Using WebSphere Admin Console, select Resources | JMS | Activation Specifications then select CDSProcessEventActivationSpec. Scroll down to the 'Additional' selection to find the 'Maximum concurrent MDB invocations per endpoint' setting. The default setting is 5.
+
+Note, WebSphere will need to be restarted after changes are made. 
+
+
+JBoss
+jboss.xml is the file we want you to update. jboss.xml is located:
+within the process-ejb.jar that is within process-ejb.ear that is within <jboss>\server\default\deploy directory
+
+you will see the entries below. We want to update the <MaximumSize>15</MaximumSize> to the value of jobs you want becoming active.
+</container-interceptors>
+<instance-pool>org.jboss.ejb.plugins.MessageDrivenInstancePool</instance-pool> 
+- <container-pool-conf>
+<MinimumSize>1</MinimumSize> 
+<MaximumSize>15</MaximumSize> 
+<strictMaximumSize>true</strictMaximumSize> 
+</container-pool-conf>
+
+Note that the value you specified will not be effective until the server is restarted. 
+
+Please Note: JBoss has a global setting that also needs to be changed if you wish to set concurrency greater than 15.
+The thought is that the JBoss application server is attempting to protect 
+itself from hundreds of ejb requests and crashing itself. So, the 
+global setting appears to be within the standardjboss.xml file within 
+the C:\jboss-4.2.0.GA\server\default\conf directory. Here is the 
+section that contains the MaximumSize value that needs to be changed: 
+. 
+<invoker-proxy-binding> <name>message-driven-bean</name> 
+. 
+<invoker-mbean>default</invoker-mbean> 
+. 
+<proxy-factory>org.jboss.ejb.plugins.jms.JMSContainerInvoker</proxy-fact 
+ory> 
+. 
+- <proxy-factory-config> 
+<JMSProviderAdapterJNDI>DefaultJMSProvider</JMSProviderAdapterJNDI> 
+. 
+<ServerSessionPoolFactoryJNDI>StdJMSPool</ServerSessionPoolFactoryJNDI> 
+. 
+<CreateJBossMQDestination>true</CreateJBossMQDestination> 
+. 
+- <!-- WARN: Don't set this to zero until a bug in the pooled 
+executor is fixed --> 
+<MinimumSize>1</MinimumSize> 
+. 
+<MaximumSize>25</MaximumSize> 
+. 
+<KeepAliveMillis>30000</KeepAliveMillis> 
+. 
+<MaxMessages>1</MaxMessages> 
+. 
+- <MDBConfig> 
+.
+The server will need to be started for the setting to take affect. 
+
+WebLogic
+Use a WebLogic work manager to control the number of active threads. Create a new work manager and target it to the WebLogic server used to run IBM SPSS Collaboration and Deployment Services. Update the deployment descriptor to reference the new work manager.
+
+Modify weblogic-ejb-jar.xml in process-ejb.jar, which can be found in <repository installation directory>/platform/deployables/process-ejb.ear. Append the following:
+<dispatch-policy>PASWWorkManager</dispatch-policy>
+<weblogic-enterprise-bean>
+<ejb-name>ProcessEventMDB</ejb-name>
+<message-driven-descriptor>
+<pool>
+<max-beans-in-free-pool>20</max-beans-in-free-pool>
+<initial-beans-in-free-pool>1</initial-beans-in-free-pool>
+</pool>
+<destination-jndi-name>queue/SPSSProcess</destination-jndi-name>
+<connection-factory-jndi-name>
+
+ProcessConnectionFactory
+</connection-factory-jndi-name>
+</message-driven-descriptor>
+<dispatch-policy>PASWWorkManager</dispatch-policy>
+</weblogic-enterprise-bean>
+
+Update process-ejb.ear on the application server and adjust its settings in the administration console. 
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]
+
+
+
+
+HISTORICAL NUMBER
+ 90981

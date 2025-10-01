@@ -1,0 +1,37 @@
+Title: IBM INVALID_PARAM_ERROR when connecting to AEL - United States
+
+Text:
+new datasource; new data source; replace OMNIbus TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After adding a new datasource to WebGUI, and assigning all filters and views to it, the Active Event List is still connecting to the old datasource. All references to the old datasource have also been removed from ../omnibus_webgui/etc/
+
+
+SYMPTOM
+INVALID_PARAM_ERROR message generated, and the toolbar at the bottom of the page shows it is trying to retrieve events from the old datasource.
+
+ncw.x.log entry is similar to:
+
+com.micromuse.ncw.tools.menu.ServerMenuManager.processRequest SEVERE:
+HEMBT0008E=Unable to extract the data sources from request
+com.micromuse.ncoweb.nova.Nova@c0f42afb
++-menuRequest(username=xxx, user_type=XXX_XXX, locale=xxx,
+datasource=OLD_OBJSERV, )
+
+
+
+CAUSE
+The AEL portlet preferences need to be changed.
+
+DIAGNOSING THE PROBLEM
+The other Event Tools - Event Dashboard and Event Viewer - work correctly
+
+RESOLVING THE PROBLEM
+1) Open the AEL 
+2) Go to Edit Page 
+3) Along the top line, select Edit in the pulldown for Widget 
+4) Change the Data Source option there. 
+
+*Hint*
+
+If the Widget option remains greyed out, click just under the blue outline around the AEL image and retry the Widget pulldown selection.

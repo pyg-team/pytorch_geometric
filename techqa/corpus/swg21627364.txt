@@ -1,0 +1,32 @@
+Title: IBM Robotics ContentCapture does not work on ITM 6.3 Linux TEPS - United States
+
+Text:
+RPT; RFT; Robotic; screen; capture; screendump; screenshot; screen shot; screen dump; image; error; violation; 71RRT-RPTCONF; 71RRT-RPTPLAY; 71RRT-RPTRPTG; 71RRT-RPTWV; 71RRT-RPTTS; 71RRT-RFTCONF; 71RRT-RFTPLAY; 71RRT-RFTRPTG; 71RRT-RFTWV; 71RRT-RFTTS; 71RRT-CONF; 71RRT-PLAY; 71RRT-RPTG; 71RRT-WV; 71RRT-TS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ITM 6.3 ships a new TEPS 64-bit architecture and incompatible 32-bit libraries on Linux. This prevents the ContentCapture viewing functionality from working. 
+
+SYMPTOM
+Robotics ContentCapture is not viewable on the TEPS. 
+
+On 32-bit Linux TEPS you see a missing symbol error in the TEPS logs. Enable debug logging first by setting /opt/IBM/ITM/config/cq.ini with 
+KBB_RAS1=ERROR (UNIT:CTFileXfer ALL) (UNIT:CTServer ALL) 
+
+ 
+
+On 64-bit Linux TEPS the lx8266 architecture does not support the content capture libraries.
+
+
+ENVIRONMENT
+ITM 6.3 TEPS (cq) is hosted on Linux
+
+
+RESOLVING THE PROBLEM
+Upgrade TEPS support to version 7.4 which does not suffer from this issue. 
+
+As a workaround, consider placing the TEPS on a different platform or do not upgrade to ITM 6.3.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ itcam4t

@@ -1,0 +1,20 @@
+Title: IBM  What is the maximum recommended limit to the size of edihist and any DISAM file? - Sterling Gentran:Server for UNIX - United States
+
+Text:
+Performance; STERLINGFAQ TECHNOTE (FAQ)
+
+QUESTION
+ What is the maximum recommended limit to the size of edihist and any DISAM file? 
+
+ANSWER
+
+
+The combined limit of the Current DISAM file is 1.03 Gig absolute. 
+Errors can include UNIX return code of 27
+NOTE: When files START to approach the maximum it is wise to make a business decision to change the length of time the files are stored when working with the edihist files. If currently saving records for 6 months, a choice may be needed to save them for a shorter period of time. 
+
+
+ 
+
+HISTORICAL NUMBER
+ FAQ1994

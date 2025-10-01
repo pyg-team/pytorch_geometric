@@ -1,0 +1,177 @@
+Title: IBM PI18726: MISSING SHORTCUTS ON RUSSIAN INTERFACE ON FILE MENU IN DATA EDITOR AND ON RUN MENU IN SYNTAX EDITOR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You work with IBM SPSS Statistics 22 with Fixpack 1 installed on
+   Windows or Macintosh operating systems.
+   You work on Russian user interface language.
+   You noticed that some shortcuts are missing on Russian graphical
+   user interface language (GUI):
+   
+   - On Windows OS: Statistics 22 FP 1 GUI language Russian
+   Syntax Editor Window: No shortcut for Run -> Selection on Syntax
+   Editor
+   For the Run Symbol you only see Ctrl+Unknown key code 0x41e
+   
+   For comparison on English GUI language the shortcut on menu Run
+   -> Selection on Syntax Editor is Ctrl+R
+   
+   - On Macintosh Mavericks OS: Statistics 22 FP1 GUI language
+   Russian
+   No Shortcut for Run -> Selection on Syntax Editor as well
+   
+   For comparison on English GUI language the shortcut on menu Run
+   -> Selection on Syntax Editor
+   is CommandR for Statistics 22 FP1 on Macintosh
+   
+   2. Missing shortcuts on Data Editor for Russian GUI language
+   
+   - On Windows OS:  Statistics 22 FP 1 GUI language Russian
+   On Data Editor -> File menu no shortcuts for File -> Save
+   (instead you see Control + Unknown key code 0x421)
+   and File -> Print (instead you see Ctrl + Unknown key code
+   0x424)
+   
+   For comparison on English GUI for File -> Save the shortcut is
+   Ctrl+S and for File -> Print the shortcut is Ctrl+P
+   
+   - On Macintosh 10.9.3 Mavericks OS
+   Statistics 22 FP1 GUI language Russian
+   On Data Editor -> File menu
+   No shortcuts for
+   File - Close,
+   File - Save and
+   File - Print (instead you see not any shortcuts for Close, Save
+   and Print)
+   
+   Finally, it has been observed that accessing the Run menu via
+   keyboard shortcuts will fail if your language UI is set to:
+   English, Traditional Chinese, Simplified Chinese, Italian and
+   Japanese.
+   
+   All other language settings work as expected.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This was reported to IBM SPSS Development and will be addressed
+   in the next Fix Pack. Please refer
+   to the Fix Pack schedule at
+   http://www-01.ibm.com/support/docview.wss?uid=swg21599157 for
+   information on upcoming Fix Packs.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * see APAR text                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * This issue has been addressed in IBM SPSS Statistics 23      *
+   * Release. Please upgrade to the new release.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been addressed in IBM SPSS Statistics 23      *
+   * Release. Please upgrade to the new release.                  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This issue has been addressed in IBM SPSS Statistics 23 Release.
+   Please upgrade to the new release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI18726
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   M00
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-27
+   
+   
+ * CLOSED DATE
+   2015-03-05
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RN00 PSN
+   UP
+   
+   
+ * RN00 PSY
+   UP

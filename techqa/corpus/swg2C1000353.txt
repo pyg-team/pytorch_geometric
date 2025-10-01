@@ -1,0 +1,65 @@
+Title: IBM Security Bulletin: A security vulnerability has been identified in WebSphere Application Server shipped with IBM Cloud Orchestrator and Cloud Orchestrator Enterprise (CVE-2017-1381 ) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM WebSphere Application Server and Tivoli System Automation Application Manager are shipped with IBM Cloud Orchestrator and Cloud Orchestrator Enterprise. 
+
+Information about a potential security vulnerability affecting IBM WebSphere Application Server and Tivoli System Automation Application are published in a security bulletin. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2017-1381 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-1381]
+DESCRIPTION: IBM WebSphere Application Server Proxy Server or On-demand-router (ODR) could allow a local attacker to obtain sensitive information, caused by stale data being cached and then served.
+CVSS Base Score: 2.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/127152 [https://exchange.xforce.ibmcloud.com/vulnerabilities/127152] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Principal Product and Version(s) Affected Supporting Product and Version IBM Cloud Orchestrator and Cloud Orchestrator Enterprise V2.5, V2.5.0.1, V2.5.0.2, V2.5.0.3, V2.5.0.4  * WebSphere Application Server V8.5.5 through V8.5.5.7 
+ * Tivoli System Automation Application Manager V4.1.0
+
+IBM Cloud Orchestrator V2.4, V2.4.0.1, V2.4.0.2, V2.4.0.3, V2.4.0.4  * WebSphere Application Server V8.5.0.1 through V8.5.5.7 
+ * Tivoli System Automation Application Manager V4.1.0
+
+REMEDIATION/FIXES
+Refer to the following security bulletins for vulnerability details and information about fixes addressed by WebSphere Application Server and IBM Tivoli System Automation Application Manager, which are shipped with IBM Cloud Orchestrator and Cloud Orchestrator Enterprise. 
+
+Principal Product and Version(s) Affected Supporting Product and Version Affected Supporting Product Security Bulletin IBM Cloud Orchestrator and Cloud Orchestrator Enterprise V2.5, V2.5.0.1, V2.5.0.2, V2.5.0.3 and V2.5.0.4  * WebSphere Application Server V8.5.5 through V8.5.5.11 
+
+ * Security Bulletin: Information disclosure in WebSphere Application Server (CVE-2017-1381)
+
+ * IBM Tivoli System Automation Application Manager 4.1
+
+ * Security Bulletin: A security vulnerability has been identified in WebSphere Application Server shipped with IBM Tivoli System Automation Application Manager (CVE-2017-1381)
+
+IBM Cloud Orchestrator and Cloud Orchestrator Enterprise V2.4.0.3 and V2.4.0.4  * WebSphere Application Server V8.5.0.1 through V8.5.5.12 
+
+Security Bulletin: Information disclosure in WebSphere Application Server (CVE-2017-1381) [http://www-01.ibm.com/support/docview.wss?uid=swg22004792]  * IBM Tivoli System Automation Application Manager 4.1 
+
+ * Security Bulletin: A security vulnerability has been identified in WebSphere Application Server shipped with IBM Tivoli System Automation Application Manager (CVE-2017-1381)
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 17 Oct 2017: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,55 @@
+Title: IBM SDK Why does a multithreaded application fail with errors? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ A multithreaded SDK application receives errors such as the following:
+
+RSV-SRV-0026 The request was cancelled
+...
+at com.cognos.developer.schemas.bibus._3.ReportServiceStub.wait or at com.cognos.developer.schemas.bibus._3.ReportServiceStub.run
+
+RQP-DEF-0114 The user cancelled the request
+...
+at com.cognos.developer.schemas.bibus._3.ReportServiceStub.wait
+
+RSV-SRV-0040 An application error has occurred
+...
+at com.cognos.developer.schemas.bibus._3.ReportServiceStub.run
+
+RSV-BBP-0036 The request 'asynchWait_Request' failed because a previous request that returned a fault cancelled the conversation
+...
+at com.cognos.developer.schemas.bibus._3.ReportServiceStub.wait
+
+RSV-BBP-0021 The operation 'getOutput' is not allowed at this time
+...
+at com.cognos.developer.schemas.bibus._3.ReportServiceStub.getOutput
+
+RSA-ERR-0007 Query cancelled
+...
+at com.cognos.developer.schemas.bibus._3.ReportServiceStub.wait
+
+DPR-ERR-2072 The request failed. It was directed to a server that is not reachable.
+...
+at com.cognos.developer.schemas.bibus._3.ReportServiceStub.wait or at com.cognos.developer.schemas.bibus._3.ReportServiceStub.getOutput 
+
+ANSWER
+When implementing one connection per thread, do not use static for the ContentManagerService_Port or the ReportService_Port.
+If static is used, all threads modify the same variables.
+
+Without static, each thread has a local copy of the variables.
+
+
+/* public static ContentManagerService_Port _binding = null;
+
+public static ReportService_Port reportService = null;*/
+
+public ContentManagerService_Port _binding = null;
+
+public ReportService_Port reportService = null;
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Business Intelligence Software Development Kit Windows 8.4.1

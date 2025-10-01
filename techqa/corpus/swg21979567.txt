@@ -1,0 +1,11 @@
+Title: IBM Flowchart save fails with Error ORA-01795 in IBM Campaign - United States
+
+Text:
+What is this document:
+This document has the abstract of a technical article that is available to authorized users after you have logged on. Please use the link to actual document below to access the full document. You will be asked to log on if you are not already logged in. After log in, if you do not have the right authorization for this document, there will be instructions on what to do next.
+
+abstract text
+Flowchart save fail with Error ORA-01795. In flowchart log you can see entries like below : UA_SYSTEM_TABLES: DELETE FROM campaign.UA_AnnotationInfo WHERE (FLOWCHARTID = XXXXXX) AND (ANCHORID in (XX,XXX...... [TABLE ACC] CODE 11528: Database Error Database error (5): [SERVERERROR] Error from Server: ORA-01795: maximum number of expressions in a list is 1000 DB vendor code: 1795 DB vendor message: unica [sdbsrc:275]
+
+link to actual document
+http://www.ibm.com/support/docview.wss?uid=swg21979567 [http://www.ibm.com/support/docview.wss?uid=swg21979567]

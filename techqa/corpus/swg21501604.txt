@@ -1,0 +1,64 @@
+Title: IBM MTTrapd [SNMP] probe reports : Dropping trap! - United States
+
+Text:
+nco_p_mttrapd; snmp; mttrapd; probe; dropping trap; Dropping trap; dropped; drop; trap; gethostbyname; trapqueue; trap queue; queue TECHNOTE (FAQ)
+
+QUESTION
+ MTTrapd probe : Warning : Dropping trap : Why does this happen? 
+
+ANSWER
+The MTTrapd probe will report that the probe is dropping traps once the trap queue is full. 
+
+e.g.
+Warning: W-UNK-000-000: Dropping Trap!
+
+With the LogStatisticsInterval property set;
+LogStatisticsInterval : 30
+
+The probe will also provide details on the probes trap queue processing;
+Error: E-UNK-000-000: Trap queue size is 50000
+Error: E-UNK-000-000: Number of traps read in the last N seconds: I
+Error: E-UNK-000-000: Number of traps processed in the last N seconds: J
+
+Where N is the number of seconds passed, 'I' is the number of traps handled, and 'J' the number traps processed by the probe.
+
+The reason why the probe drops traps is because the trap queue is full.
+The trap queue is set using the TrapQueueMax property;
+e.g.
+TrapQueueMax : 50000
+
+However, the reason why the trap queue is full depends on number of traps the probe is required to handle per second. For instance if the values of 'I' and 'J' are very different, the probe is experiencing a performance issue. This may be due to a lack of CPU, memory or an issue with DNS, if NoNameResolution property is set to '0'.
+
+If the NoNameResolution is set to '0', try setting it to '1' to see if this improves the performance;
+e.g.
+NoNameResolution : 1
+
+If it does, and the probe was working previously, without any issue, then there is a problem with the systems name resolution. For UNIX this is generally handled through nsswitch.conf.
+e.g.
+file : /etc/nsswitch.conf 
+hosts: files dns 
+Check that the DNS servers are configured correctly and with your DNS administrator with regards to performance. It may be that DNS caching needs to be installed on the probe server.
+
+For memory and CPU issues, use 'vmstat 5', 'top', and 'ps' to monitor resources.
+
+For a more in depth analysis of the probes behaviour, over an extended period, increase the log file size, and set the messagelevel to debug;
+MessageLevel : 'debug'
+MaxLogFileSize : 104857600
+
+Review the resulting log file after it has rolled (mttrapd.log_old), evaluating the behaviour of the trap queue, trap sources, and events per second.
+
+Resize the trap queue to the maximum flood of traps expected;
+e.g.
+TrapQueueMax : 150000
+
+If possible add the traps sources to the local /etc/hosts file, or else ask the systems administrator to create a hosts file from DNS periodically to reduce the affect of DNS performance issues. If the number of hosts being resolved is large [>1000] then consider using the gethostbyname solution in the FAQ given in the related information section.
+
+Note: For Windows NoNameResolution is called NoNetbiosLookups, and tasklist or the Task Manager can be used to monitor processes.
+
+In addition to the probe experiencing performances issues, the object server should be checked for performance problems, and if not set already NetworkTimeout and PollServer should be set in the probes property file:
+e.g.
+NetworkTimeout : 30
+PollServer : 60
+
+RELATED INFORMATION
+ Using gethostname to define @Node [http://www-01.ibm.com/support/docview.wss?uid=swg21516829]

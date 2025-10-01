@@ -1,0 +1,205 @@
+Title: IBM IT05758: HIGH CPU USAGE CAUSED BY BTPOOL0-3 - ACCEPTOR0 SELECTCHANNELCONNECTOR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  High CPU usage caused by btpool0-3 - Acceptor0
+   SelectChannelConnector
+   
+   Using the 'top' command the client determined that IBM Sterling
+   B2B Integrator had the highest cpu usage:
+   
+          8275 gisadmin  18   0 10.0g 4.3g  11m S 973.6  6.9
+   1247:39 /local/apps/SI52/p
+   
+   Then using command 'top -H' on this pid it was determined that
+   thread btpool0-3 had the highest usage:
+   
+        8489 gisadmin  16   0 10.0g 4.3g  11m S 53.3  6.9
+   118:24.73 btpool0-3 - Acc
+   
+   Thread dumps were taken at the time and here is thread for
+   btpool0-3
+   
+   3XMTHREADINFO      "btpool0-3 - Acceptor0
+   SelectChannelConnector@1xxx.xxx.xxx.xxx:20000"
+   J9VMThread:0x000000000C534900, j9thread_t:0x00002B91D1F35670,
+   java/lang/Thread:0x000000060180CCE8, state:CW, prio=5
+   3XMJAVALTHREAD            (java/lang/Thread getId:0x3F,
+   isDaemon:false)
+   3XMTHREADINFO1            (native thread ID:0x2129, native
+   priority:0x5, native policy:UNKNOWN)
+   3XMTHREADINFO2            (native stack address range
+   from:0x00002B91DCBC6000, to:0x00002B91DCC07000, size:0x41000)
+   3XMCPUTIME               CPU usage total: 7333.344085464 secs
+   3XMHEAPALLOC             Heap bytes allocated since last GC
+   cycle=65536 (0x10000)
+   3XMTHREADINFO3           Java callstack:
+   4XESTACKTRACE                at
+   org/mortbay/io/nio/SelectorManager$SelectSet.doSelect(SelectorMa
+   nager.java:768(Compiled Code))
+   4XESTACKTRACE                at
+   org/mortbay/io/nio/SelectorManager.doSelect(SelectorManager.java
+   :192(Compiled Code))
+   4XESTACKTRACE                at
+   org/mortbay/jetty/nio/SelectChannelConnector.accept(SelectChanne
+   lConnector.java:124(Compiled Code))
+   4XESTACKTRACE                at
+   org/mortbay/jetty/AbstractConnector$Acceptor.run(AbstractConnect
+   or.java:708(Compiled Code))
+   4XESTACKTRACE                at
+   org/mortbay/thread/BoundedThreadPool$PoolThread.run(BoundedThrea
+   dPool.java:451)
+   
+                             Note: xxx.xxx.xxx.xxx:20000 is the IP
+   and base port of this node.
+   
+   The high CPU issue has caused outages on Production system
+   requiring system restart.
+   
+    java.lang.StackOverflowError error in the ui.log
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  STRRTC: 448351
+   CR/CR
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   All
+   
+   Problem Description:
+   High CPU usage caused by btpool0-3 - Acceptor0
+   SelectChannelConnector
+   
+   Platforms Affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Resolution Summary:
+   This fix is off by default. If you require this fix do the
+   following steps.
+   Add a property called usingNIOConnector=false in
+   noapp.properties or add noapp.usingNIOConnector=false to
+   customer_overrides.properties. Restart the instance. Verify in
+   noapp.log.xxx that "Using
+   org.mortbay.jetty.bio.SocketConnector!" is present in the file.
+   By default, usingNIOConnector is set to true if the property
+   does not exist.
+   
+   
+   
+   
+   Delivered In:
+   5104_6
+   5020402_5
+   5020500_1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Published On: 12/16/14
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT05758
+   
+   
+ * REPORTED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * REPORTED COMPONENT ID
+   5725D0600
+   
+   
+ * REPORTED RELEASE
+   524
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-24
+   
+   
+ * CLOSED DATE
+   2014-12-11
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * FIXED COMPONENT ID
+   5725D0600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP

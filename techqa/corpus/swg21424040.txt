@@ -1,0 +1,51 @@
+Title: IBM Recovering a table that is hitting SQL1477N in DB2 9.* - United States
+
+Text:
+NLI not logged initially inaccessible 1477 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Not Logged Initially (NLI) was activated for a table, but the transaction needed to be rolled back due to an error. The table was consequently marked inaccessible.The table needs to be dropped and recreated; the only solution for this problem is to drop and recreate this table or restore from backup, but the previous backups and/or previous exports are either not available or out of date. Even if a recent backup or export is available for restore/import/load, there may be data lost. The table needs to be made accessible again OR the current data in the table needs to be retrieved to rebuild table. 
+
+SYMPTOM
+Attempts to access this table would result in SQL1477N, and an entry similar to the following might be seen in the db2diag.log:
+
+2010-03-03-15.23.45.785187-360 E212767611A755 LEVEL: Warning 
+PID : 761972 TID : 9559 PROC : db2sysc 0 
+INSTANCE: db2inst1 NODE : 000 DB : SAMPLE 
+APPHDL : 0-32600 APPID: xxx.xx.xx.xxx.xxxx.xxxxxx 
+AUTHID : AUTHID 
+EDUID : 9559 EDUNAME: db2agent (SAMPLE) 0 
+FUNCTION: DB2 UDB, data management, sqldMarkObjInErr, probe:1 
+MESSAGE : ADM5571W DB2 is marking the "DATA" object with id "<tableid>" in 
+tablespace "<tablespaceid>" for table "<schema>.<tablename>" 
+
+unavailable. Either the table will have to be dropped, or if the 
+
+object is part of a partitioned table the partition in error can 
+
+be detached or the index in error can be dropped. 
+
+
+
+CAUSE
+The table was marked inaccessible because any modifications against the table data earlier in the transaction would not be rolled back in NLI setting, so the table's data integrity could have been compromised. This is expected behaviour (see the NLI technote in the reference section).
+
+
+RESOLVING THE PROBLEM
+The following command can be issued to dump out the current data in the table to an ASCII DEL file: 
+
+db2dart <dbname> /ddel 
+
+It will prompt for table ID, tablespace ID, first page to dump, and number of pages to dump. For example, to dump all data for table id 274 in tablespace 6, the following should be entered:
+
+274,6,0,999999999 
+
+Upon completion, the command will provide the name of the DEL file it generates. The table can then be dropped and recreated (assuming the DDL is available), and the DEL file data can be imported/loaded into the rebuilt table. 
+
+Note that this is a workaround for a user error, not defect, so it will be the user's responsibility to ensure/restore data integrity and referential integrity for this table.
+
+This command will not be useful if the table contains LOBs. 
+
+RELATED INFORMATION
+ SQL1477N reference [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/topic/com.ibm.db2.luw.messages.sql.doc/doc/msql01477n.html]
+Things to watch out for with Not Logged Initially (NLI) [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21239372]

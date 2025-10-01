@@ -1,0 +1,31 @@
+Title: IBM Taskmaster Web reporting a Capability error during scanning in IBM Datacap Taskmaster Capture - United States
+
+Text:
+Taskmaster Web TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempting real scan in Taskmaster Web results in a "capability 6" or similar error 
+
+SYMPTOM
+While scanning in Taskmaster Web, a "capability 6 is not supported" message is reported. Pages fail to scan.
+
+
+RESOLVING THE PROBLEM
+Capability errors reported during scanning in Taskmaster Web usually indicate a scanner problem with the Windows operating system's connectivity or device detection. If you receive a Capabilty error, perform the following steps: 
+
+1. Ensure that the scanner can scan offline using the same exact TWAIN source. A test program such as Twacker from twain.org can be used to test the TWAIN driver. Note: scanning with ISIS or Kofax is invalid since Taskmaster Web supports only TWAIN. If scanning offline fails, try restarting the scanner and/or machine. Please note that certain scanners may require that the scanner be turned on prior to starting up the PC. 
+
+ 
+
+2. If step one completes successfully, ensure that all scanner settings specified in it are identical to those used in Taskmaster Web. You can enable the "alter scan settings" check box prior to clicking Scan in Taskmaster Web to review basic and advanced scanner settings. 
+
+ 
+
+3. If scanning offline using TWAIN succeeds, using the identical scanner source and scanner settings, but the problem persists in Taskmaster Web, then ensure that all browser settings for Taskmaster Web are valid. Use the "IE Test Page" linked from the login to validate settings; let the test page completely load before clicking the Test! button. 
+
+ 
+
+4. Should the problem persist, ensure that the Windows user logged into the machine has full permissions to the local scan folder, assuming the workflow has an upload task. This folder is typically C:\Datacap\scan. Alternatively, use a local administrator account for testing.
+
+
+If you continue to have problems, contact IBM Support for additional assistance

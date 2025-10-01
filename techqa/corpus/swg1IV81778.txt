@@ -1,0 +1,149 @@
+Title: IBM IV81778: THE RESPONDED NUMBER OF NODES DOES NOT MATCH THE NUMBER OF NODES IN THE COLLECTION WHEN THERE ARE NEW NODES ADDED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The responded number of nodes does not match the number of nodes
+   in the
+   collection when there is/are new nodes added into the
+   collection. There
+   is no condition been set on the collection.
+   
+   Symptoms:
+   
+   1. Open the 2 Event Viewers. One with "Un-acknowledged" filter
+   and the
+   other one "Acknowledged" filter.
+   2. Acknowledge a node in "Un-acknowledged" Event Viewer. This
+   will
+   acknowledged the node and the node suppose to be added into
+   "Acknowledged" Event Viewer on next refresh.
+   3. On next refresh on "Acknowledged" Event Viewer, the total
+   number of
+   rows remain same, however the Severity summary did updated
+   correctly.
+   Ref: all_acknowledged.png
+   
+   
+   
+   Investigation:
+   
+   1. The issue only start to occur after applied DASH Version:
+   3.1.2.1
+   Build Number: cf011242.02, 201508201935 (201511301851) Build
+   Date:
+   10/17/12, 8/20/15.
+   2. The behavior is working good on DASH Version: 3.1.2.1 Build
+   Number:
+   cf011242.02, 201508201935 Build Date: 10/17/12, 8/20/15
+   3. The "filteredRows" and "numRows" was returned as 10 while
+   "totalRows" was correct at 11. This is puzzling since we does
+   not
+   impose any condition filtering on the collection. Full request
+   and
+   response below.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  DASH development working on a test fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The CURI code was using a too aggressive caching approach and
+   was not accounting for cases where the dataset was being updated
+   in terms of origin (root) nodes in the dataset.  The fix will be
+   included in the next release but will also be included in
+   Cumulative Patch 5 for DASH 3.1.2.1, when available, at
+   https://www.ibm.com/developerworks/community/wikis/home?lang=en# [https://www.ibm.com/developerworks/community/wikis/home?lang=en#]
+   !/wiki/W8b1151be2b42_4819_998e_f7de7db7bfa2/page/Download%20Cumu
+   lative%20Patches%20-%20UI%20Services%20%28DASH%29
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV81778
+   
+   
+ * REPORTED COMPONENT NAME
+   JAZZ SM TIP DAS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04JD
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-23
+   
+   
+ * CLOSED DATE
+   2016-03-22
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSY
+   UP

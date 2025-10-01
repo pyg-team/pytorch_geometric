@@ -1,0 +1,37 @@
+Title: IBM Interoperability of Agent Builder agents and IBM Tivoli Monitoring  infrastructure - United States
+
+Text:
+coexist; requirements; TEMS; TEPS; custom agent TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ What version of the IBM Tivoli Monitoring infrastructure is required for Agent Builder agents based on the version of the builder with which they were created?
+
+
+ANSWER
+IBM Tivoli Monitoring version 6.2 is the minimum level of the infrastructure that is required for an Agent Builder agent. To take advantage of some of the new features, such as 64-bit numeric attribute support and support for different default configuration values for Windows and for UNIX requires IBM Tivoli Monitoring version 6.2.1. See the "Minimum ITM version" (Step 12 of "Naming your agent [http://www-01.ibm.com/support/knowledgecenter/SSTFXA_6.3.0/com.ibm.itm.doc_6.3/builder/ab_naming.htm]”). 
+
+However, the version of IBM Tivoli Monitoring that is required to run an agent is not dependent on the version of the builder. Agent Builder agents are backwardly compatible to IBM Tivoli Monitoring, version 6.2 and also upwardly compatible. For example, agents generated with Agent Builder version 6.3.1 can run on IBM Tivoli Monitoring, version 6.2.3 and agents generated with Agent Builder version 6.2.3.1 can run on IBM Tivoli Monitoring, version 6.3. 
+
+
+Restriction: If your agent was built with an Agent Builder version before 6.3 and it has a script data provider that uses SSH, the provider fails when run with IBM Tivoli Monitoring version 6.3 or later. The restriction is because IBM Tivoli Monitoring version 6.3 uses a newer version of the Global Secure ToolKit (GSKit) API. You must rebuild the agent with Agent Builder 6.3 or later to run it with IBM Tivoli Monitoring version 6.3 or later. If you build the agent with Agent Builder 6.3, it can also run with earlier versions of IBM Tivoli Monitoring.
+For more information about the failure, see the problem titled "Script data providers that use SSH are failing" [http://www-01.ibm.com/support/knowledgecenter/SSTFXA_6.3.0/com.ibm.itm.doc_6.3/builder/ab_ts_problem_classify.htm?lang=en-us#ab_ts_problem_classify__gskit] in “Troubleshooting: Agents”.
+
+
+Notes: 
+
+ 1.  The version of the agent does not reflect the version of the builder nor the version of the infrastructure that is required. 
+ 2.  It is recommended that the latest available builder is always used to generate agents.
+
+RELATED INFORMATION
+ User's Guide v6.3.1 [https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=0587adbc-8477-431f-8c68-9226adea11ed#fullpageWidgetId=W42ce7c6afdb9_42c2_a9ea_e1ba310bea8c&file=f24729d6-ac88-48b3-bfc7-20f4f2589426]
+User's Guide v6.3.0 [http://publib.boulder.ibm.com/infocenter/tivihelp/v61r1/topic/com.ibm.itm.doc_6.3/builder/agentbuilder_user.htm]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ agent factory
+ABLDR

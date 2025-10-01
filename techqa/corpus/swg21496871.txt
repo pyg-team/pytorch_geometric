@@ -1,0 +1,38 @@
+Title: IBM Will the vwtool cbe command run for a long time when the Case Foundation Process Engine database has a lot of work items? - United States
+
+Text:
+time; slow; performance runtime count TECHNOTE (FAQ)
+
+QUESTION
+ Upgrading Case Analyzer requires that we run the vwtool cbe command on the Process Engine. Our Process Engine database has a very large number of work items. Should we be concerned that the cbe command will run for a very long time? 
+
+ANSWER
+The execution time of the vwtool cbe command does not depend on the number of work items in the Process Engine database. The number of workclass versions in the Process Engine determines how long the vwtool cbe command will run, because that command updates the workclass records. 
+To check the number of workclass versions, you can check the ID of the current workspace, because a new workspace is created with each new workclass transfer. New workclass versions are created by workclass transfers.
+
+To check the current workspace ID, you can run a vwtool>dump command. For example:
+
+<vwtool:1>dump
+Dump:
+s - Work space
+c - Class
+i - Instruction sheet
+w - Work object
+f - File (CDL or XML)
+o - Oid
+b - Blob
+Choice? ('s', 'c', 'i', 'w', 'f', 'o', or 'b'): s
+Work space id (CR = latest):
+Authored or runtime form (a or CR=r): r
+Summary, Raw, siZe or CDL format? (s, r, z or CR=c): s
+
+Work space 546: <--------- THIS IS THE NUMBER TO LOOK AT for the cbe command execution time as this work space id has a collection of work classes.
+
+Notes:
+
+
+ * Production systems should typically have less workclass versions than development systems. On production systems, new workclasses are only created when a new applications or application version is rolled out. On development systems, the development activity may go through several iterations of the same workclass before it is deployed in production.
+
+ * If the cbe command still does not finish running by the time business activity starts on the Process Engine, it is safe to stop the vwtool prompt where cbe runs. You have to kill the vwtool process and restart Process Engine. However, the next time the cbe command will start processing from scratch. So you will have to give it a long window somehow to allow it to do its job all at once, because it does not do incremental processing. 
+
+ * In P8 4.5.x, Case Analyzer requires the vwtool cbe command completion. In P8 5.0, it is optional. Case Analyzer 4.5.1 will have errors if the cbe command does not finish. So if you run into a scenario where you have to delay the running of the cbe command, then do not start up CA 4.5.1 after the upgrade until the cbe command completes successfully. See tech note 1451410 [http://www-01.ibm.com/support/docview.wss?uid=swg21451410] for an error that Case Analyzer will generate if the vwtool cbe command is not run.

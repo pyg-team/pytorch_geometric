@@ -1,0 +1,70 @@
+Title: IBM Generating Java diagnostic dumps for IBM Integration Bus - United States
+
+Text:
+mqiinfo; java dumps; java core; core; force TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Use the procedures below to collect java diagnostics dumps from IBM Integration Bus (IIB).
+
+Java diagnostic dumps contain:
+- all Java threads running in a process (Java core or javacore files)
+- objects populating the heap space (Heap dump or heapdump files)
+- tracepoint information (Snap trace or snaptrace files)
+- internal system information (System dump)
+
+These files can be used to diagnose problems such as lock conditions, loops, or memory allocation in Java code. 
+
+Gathering this information before calling IBM Support will help familiarize you with the troubleshooting process and save you time. 
+
+RESOLVING THE PROBLEM
+
+
+JAVACORE DUMP INSTRUCTIONS
+
+New javacore dump commands have been made available from IIB v10.0.0.9, onwards. 
+- The new procedure uses the mqsichangeproperties command. 
+- The old procedure uses a custom message flow, and is only applicable for operating systems that use the IBM JRE. 
+
+Note: 
+Collection of Java core dumps is an invasive activity and will impact the performance of the Integration Server process. 
+
+JAVA DUMP COMMAND FOR IIB V10.0.0.9+
+Use this command to generate a Java dump on IIB v10.0.0.9+:
+mqsichangeproperties <Int.Node> -e <Int.Server> -o ComIbmInternalSupportManager/Java/JVM -n dump -v <dump_type>
+
+The following dump types are supported:
+
+All Platforms 
+
+-v heap Produces a Java Heap dump 
+
+IBM JRE Platforms (All platforms except HP and Solaris) -v core Produces a javacore -v system Produces a system dump -v all Produces a heapdump, javacore, and system dump 
+Dump files are output to $MQSI_WORKPATH/common/errors 
+
+JAVA DUMP PROCEDURE FOR IIB PRIOR TO V10.0.0.9
+Use this procedure to create an IIB message flow that will trigger a Java dump for an Integration Server:
+
+1. Create a new message flow containing an Input node and a JavaCompute node.
+2. In the JavaCompute node, call the method 'com.ibm.jvm.Dump.JavaDump()'.
+3. Deploy your message flow to the target Integration Server.
+4. Recreate the conditions that necessitate the Java dump.
+5. Invoke your message flow by sending a message to the Input node.
+6. The dump files should be output to $MQSI_WORKPATH/common/errors.
+
+Note:
+This procedure requires the use of the IBM JRE.
+Therefore, it is not suitable on Solaris or HP platforms which do not use the IBM JRE.
+
+
+
+
+
+RELATED INFORMATION
+ Triggering a java dump [http://www.ibm.com/support/knowledgecenter/SSYKE2_7.0.0/com.ibm.java.win.70.doc/diag/tools/javadump_trigger.html]
+Enabling a java dump [http://www.ibm.com/support/knowledgecenter/SSYKE2_7.0.0/com.ibm.java.lnx.70.doc/diag/tools/javadump_enable.html]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker MQ Integrator WBIMB WBI-MB MQSI WMQI IIB

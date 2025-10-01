@@ -1,0 +1,141 @@
+Title: IBM HB83432: IN THE FUNCTION MFG_VIEW THERE IS A WRONG FEATURE POSITIONING IN FILL UP ITEM AFTER A MAPPING OF FEATURE - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ABSTARCT:
+   In the function MFG_VIEW, there is a wrong positioning in
+   FILL UP item after a mapping of feature
+   .
+   When selecting MAP... or MAP ALL buttons, the current axis is
+   modified and so, every feature created eftre mapping is badly
+   positionned.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Description of the incidents closed by these corrections :
+   --> in case of multiple inner domains, in some particular cases,
+       some inner domains are not recognized in the automatic from
+       recognition process.
+   --> After mapping features in Map... or Map All... buttons in
+       FEATURE item, every created feature is badly positioned due
+       to a reference axis change.
+   .
+   In order to this correction works correctly, the HB83437 [http://www-01.ibm.com/support/docview.wss?uid=swg1HB83437] must be
+   installed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED IN CATIA V4 REL.1
+   MODIFICATION LEVEL 7
+   .
+   The correction consists in enhancements in feature recognition
+   module.
+   In order to this correction works correctly, the HB83437 [http://www-01.ibm.com/support/docview.wss?uid=swg1HB83437] must be
+   installed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HB83432
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA FOR SGI
+   
+   
+ * REPORTED COMPONENT ID
+   562630000
+   
+   
+ * REPORTED RELEASE
+   6TE
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   1996-04-12
+   
+   
+ * CLOSED DATE
+   1996-05-10
+   
+   
+ * LAST MODIFIED DATE
+   1996-05-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    HB83423
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UB30967
+   
+   
+
+MODULES/MACROS
+ *     TE0FORT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA FOR SGI
+   
+   
+ * FIXED COMPONENT ID
+   562630000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R6TE PSY UB30967
+   UP96/05/16 I 1000

@@ -1,0 +1,53 @@
+Title: IBM How to manage multiple IBM HTTP Server instances - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you manage multiple IBM HTTP Server instances from WAS Administrative Console? 
+
+CAUSE
+IBM HTTP Server Knowledge Center has the following section:
+Running multiple instances of IBM HTTP Server from a single install
+http://www-01.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.ihs.doc/info/ihs/ihs/tihs_multipleihs.html?cp=SSAW57_7.0.0%2F12-2-0-0-0 [http://www-01.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.ihs.doc/info/ihs/ihs/tihs_multipleihs.html?cp=SSAW57_7.0.0%2F12-2-0-0-0]
+It describes how to configure, start, and stop multiple instances of IBM HTTP Server. However, this section does not show how to manage these instances from WAS Administrative Console.
+
+
+ANSWER
+Before configuring multiple IBM HTTP Server instances, note the following statements from the product documentation: 
+
+ * 
+ * It is seldom necessary to run multiple instances, as features like virtual hosts allow a single instance to efficiently serve many sites.
+ * The advantage of a single instance is that it uses less resources to serve the same requests as multiple instances.
+
+
+If you do need multiple IBM HTTP Server instances, this technote will help you set up the Web servers so that you can manage them from WAS Administrative Console. The technote assumes you will define the multiple IBM HTTP Server instances on an unmanaged node. The Administrative Console will manage the IBM HTTP Server instances using the IBM HTTP Server Admin Server instead of a nodeagent.  
+
+ 
+
+ 
+
+Approach 1: One plug-in installation for each IBM HTTP Server instance 
+If you want to run configureWeb_server_name script to define Web servers at WAS side, you need to install plug-in multiple times: Do one plug-in installation for each IHS instance. Each plug-in installation points to a unique IHS configuration file for the IHS instance and define a new Web server. Normally, plug-in installation is done as part of IBM HTTP Server installation. In the scenario of running multiple instances of IBM HTTP Server from a single install, you can only install plug-in for one IBM HTTP Server instance. For other instances, you need to install plug-in separately. You can either run “launchpad” command and select to install plug-in; or you can go to plugin subdirectory to run “install” command to install plug-in. 
+
+During plug-in installation, the install wizard will ask you to select the type of Web server. Select “IBM HTTP Server”. Since Web servers are unmanaged, select “Web server machine (remote)”. Select a unique location for this plug-in installation. Next, the install wizard will ask you the configuration file. Browse to select the configuration file for the IBM HTTP Server instance that will be associated with this plug-in installation. Make sure the port matches the Listen directive in the configuration file you selected. 
+
+The rest of plug-in installation steps are the same as you install plug-in when it’s part of IBM HTTP Server installation. Refer to the Knowledge Center page below about plug-in installation:
+http://www-01.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.nd.doc/info/ae/ae/tins_webplugins_remotesa.html [http://www-01.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.nd.doc/info/ae/ae/tins_webplugins_remotesa.html] 
+
+After plug-in installation is done, run configureWeb_server_name script at WAS side to define the Web server. All instances of IBM HTTP Server can be managed by a single IBM HTTP Server Admin Server and one unmanaged node. That means you only need one admin.conf file for the IBM HTTP Server installation. No need to create multiple admin.conf files like you need to do for httpd.conf file. 
+
+With this approach, you need to apply plug-in upgrade multiple times (one for each plug-in install) when it is time to apply maintenance. Since IBM HTTP Server was installed only once, a single upgrade will upgrade all instances. 
+
+ 
+
+ 
+
+
+
+
+Approach 2: Single plug-in installation for all IBM HTTP Server instances You can manage multiple IBM HTTP Server instances with just one plug-in installation. Manual steps are required to configure each instance. First, there is no configureWeb_server_name script to create Web servers on WAS side. You need to manually define Web servers:
+http://www-01.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.nd.doc/info/ae/ae/tihs_remotesetup.html [http://www-01.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.nd.doc/info/ae/ae/tihs_remotesetup.html] 
+
+Next, plug-in installation will configure httpd.conf for one instance of IBM HTTP Server. You need to manually configure plug-in for the httpd.conf file of all other IBM HTTP Server instances:
+http://www-01.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.nd.doc/info/ae/ae/tins_manualWebIHS70.html [http://www-01.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.nd.doc/info/ae/ae/tins_manualWebIHS70.html]

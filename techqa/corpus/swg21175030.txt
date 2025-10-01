@@ -1,0 +1,17 @@
+Title: IBM What is the 'Lotus End of Support Products' option on the IBM Support site? - United States
+
+Text:
+Lotus legacy products; archived; unsupported; smartsuite; 9.6; 9.5; 5.0; 9.1; 9.0; R5; R4; ami pro; amipro; organizer 2.0; organizer 2.1 TECHNOTE (FAQ)
+
+QUESTION
+There is a choice for "Lotus End of Support Products [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_End_of_Support_Products]" in the Lotus product list on the IBM Lotus support site [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_brand_support_(general)]. What is this option and what products are covered on this page?
+
+ANSWER
+The Lotus End of Support Products support site [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_End_of_Support_Products] contains self help support content and resources for legacy releases of Lotus products [http://www.ibm.com/support/docview.wss?uid=swg21453907] that are no longer developed or supported by software engineers, either by phone or electronic support. The content on this site, which is no longer maintained or updated, is provided "as-is" for those customers using legacy releases of Lotus software.
+New versions of Lotus software offer both updated features and defect fixes. Many are updated for use on newer operating systems. Customers with Passport Advantage Software Customers with Passport Advantage Software Subscription and Support can download available product upgrades from Passport Advantage [http://www.ibm.com/software/passportadvantage/]. New purchases of current software versions are available from the IBM Software on-line catalog [http://www.ibm.com/software/info/app/ecatalog/].
+
+The IBM Software Support Lifecycle [http://www.ibm.com/software/support/lifecycle/] web site covers the entire lifecycle of a product, from when the product is available for purchase to the time the last version of the product is no longer supported. You can use this information to plan your software investment and avoid breaks in support.
+
+RELATED INFORMATION
+ Content for unsupported releases of Lotus software [http://www.ibm.com/support/docview.wss?uid=swg21453907]
+IBM Software Support Lifecycle [http://www.ibm.com/software/support/lifecycle/]

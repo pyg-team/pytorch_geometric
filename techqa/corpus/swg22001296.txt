@@ -1,0 +1,112 @@
+Title: IBM Workflows in IBM StoredIQ for Legal: Part 1 - Your first workflow - United States
+
+Text:
+workflow; design TECHNOTE (FAQ)
+
+QUESTION
+ How do I design a workflow for StoredIQ for Legal? 
+
+ANSWER
+
+
+PART 1: REVIEW TASK
+OVERVIEW
+This recipe is the first part of a series explaining how workflows are designed for IBM StoredIQ for Legal. It deals with setting up your development environment and explains how you create a first review workflow for matter closures.
+
+INGREDIENTS
+ 
+
+ * Eclipse [https://eclipse.org/downloads/]
+ * StoredIQ for Legal
+
+INTRODUCTION
+This document focuses on workflows in the context of StoredIQ for Legal. For details about workflows in general and Activiti [https://www.activiti.org/], the workflow engine used by StoredIQ for Legal, refer to the Activiti User Guide [http://www.activiti.org/userguide/index.html].
+
+Workflows in StoredIQ for Legal can be triggered by actions (for example, closing a matter) or used as part of data request templates. For more information about how workflows can be used, refer to the product documentation [https://www.ibm.com/support/knowledgecenter/SSZL2P_2.0.3/com.ibm.biq.install.doc/biqpl002.htm].
+
+This document describes how a simple review workflow is created for StoredIQ for Legal. As a first example, we will configure the environment such that this workflow is triggered by a matter-close action. The workflow will consist of one user task review, a start event, and an end event. When a user tries to close a matter after the workflow was deployed, a task appears in the reviewer's task queue. The matter will only be closed after the reviewer completes this task.
+
+The recipe continues with the following steps:
+
+ 1. Configuring the development environment
+ 2. Configuring the review task
+ 3. Deploying the workflow definition
+ 4. Testing the workflow
+
+If you don't want to generate the workflow definition yourself and simply want to see how the review task looks in StoredIQ for Legal, you can download the sample workflow definition attached to this document. With that .bpmn file, you can skip the configuration steps and start directly with the deployment of the workflow definition.
+
+STEP-BY-STEP
+ 1. Configure the development environmentTo create workflow definitions that can be consumed to by StoredIQ for Legal, you need to install the Activiti Designer, which is a plug-in for Eclipse.
+    
+    To install the Activiti Designer, open Eclipse and click Help > Install New Software in the menu bar. Then, click Add to add a new repository and enter the following information:
+    
+     * Name: Activiti BPMN 2.0 designer
+     * Location: http://activiti.org/designer/update/ [http://activiti.org/designer/update/]
+    
+    Switch to the Activiti perspective by clicking Window > Open Perspective > Other.... > Activiti Perspective. To create a new workflow definition, click File > New > Other... and select the Activiti Diagram wizard.
+    
+    
+    [/support/docview.wss?uid=swg22001296&aid=1] [/support/docview.wss?uid=swg22001296&aid=1]
+    
+    Complete the wizard to create the diagram and ensure it is opened in the Activiti Diagram Editor view. This diagram is the visual representation of the workflow definition file where you can design your workflow.
+    
+    
+ 2. Configure the workflowTo configure the workflow process, click anywhere in the white canvas and select Process in the Properties view. Here you can specify the ID and the name of the process.
+    
+     * The ID is used to uniquely identify a workflow process. For this example, set Id to review. After you upload this workflow process to StoredIQ for Legal, a new workflow definition is added that can be used in the application. When you upload a second workflow with the same ID, a new version of the workflow definition is deployed.
+     * The name is used as display name for the workflow definition. Set Name to Review Process.
+    
+    [/support/docview.wss?uid=swg22001296&aid=2] [/support/docview.wss?uid=swg22001296&aid=2] 
+    
+    From the Start event drawer in the palette, drag a StartEvent element to the canvas. This event marks the beginning of the workflow. It is triggered when the workflow starts. Similarly, create a UserTask and an EndEvent element. From the Connections drawer, add a SequenceFlow element to create a flow from the start event to the user task and a second flow from the user task to the end event. The resulting workflow definition should look similar to the following image.
+    [/support/docview.wss?uid=swg22001296&amp;aid=3] 
+    
+    
+ 3. Configure the taskTo configure the user task, select the task and open the Properties view. On the General tab, configure the Id and Name properties of the task.
+    
+     * The ID is used to uniquely identify a task in this workflow definition. You can see this ID in the audit log. Here, we set Id to attorney-review.
+     * The name is used as a display name in the task queue of the users. Set Name to Matter Close Review.
+    
+    [/support/docview.wss?uid=swg22001296&aid=4] [/support/docview.wss?uid=swg22001296&aid=4]
+    
+    On the Main config tab, configure the users or roles who can view and complete the task. For this example, we want any user with the Attorney role in StoredIQ for Legal to be able to complete the task. To achieve this, we have to set candidate group to Attorney.
+    
+    While we are reusing the Attorney role in this example, you might want to create a task that can be worked on by a group of people who are not linked by any privilege. If that is the case, it is best practice to create a new role in StoredIQ for Legal that does not have any privileges and use this role in your workflows.
+    
+    In addition to the candidates, you can configure a due date in ISO 8601 [https://en.wikipedia.org/wiki/ISO_8601#Durations] duration notation. The due date is optional, you can leave this field empty if no due date is required. For this recipe, however, set the due date to P1W, which is a week from the time the task is created.
+    
+    The last configuration step on the Main config tab is to set the priority. The priority is an integer value in the range 0 - 100. These numbers are mapped as follows:
+    
+     * 0 - 29 is low priority
+     * 30 - 69 is medium priority
+     * 70 - 100 is high priority
+    
+    If no priority is chosen, a default priority of 50 is used. In this recipe, we set the priority to 25, a low priority. [/support/docview.wss?uid=swg22001296&aid=5] [/support/docview.wss?uid=swg22001296&aid=5]
+    
+    On the Documentation tab, configure the text that the attorney sees when opening the task. Enter the following text: Please review the following action: Matter Close. 
+    
+    [/support/docview.wss?uid=swg22001296&aid=6] [/support/docview.wss?uid=swg22001296&aid=6]
+    
+    
+ 4. Deploy the process definitionAfter completing the previous steps, we can now deploy the workflow definition to test it. To do this, sign in to your StoredIQ for Legal application as a user with Manage Workflow Definition privileges. Go to Admin > Workflow Definitions, click Add Workflow Definition, and select the BPMN file you created in the previous steps. Click Add to deploy the workflow definition. When a new workflow definition is deployed, it is initially suspended. To activate it, click Activate.
+    
+    To use this workflow, map a starting action to the workflow definition. Starting actions are the trigger that starts the workflow. Select Matter - Close as starting action for the workflow definition created in the previous steps.
+    
+    
+ 5. Test the workflowTo test the workflow, try to close a matter. This triggers the workflow, the matter is only closed after the workflow finishes. Now, sign in as a user with the Attorney role and go to Tasks > Unassigned Tasks. You will find the user task that we designed earlier. All attorneys can see and work with this task now.
+    
+    
+    [/support/docview.wss?uid=swg22001296&aid=7] [/support/docview.wss?uid=swg22001296&aid=7]
+    
+    Click the user task and then click Assign to Me. As soon as the task is assigned to an attorney, other attorneys in the candidate group can no longer see the task in the list of unassigned tasks.
+    
+    After you assign the task to yourself, click Complete to finish it. After the task finishes, the workflow ends and the starting action is executed. The matter is now closed.
+    
+    
+
+CONCLUSION AND NEXT STEPS
+In this recipe, we created a basic understanding of how workflows are designed for StoredIQ for Legal. The recipe introduced different properties of a workflow process and of individual tasks. We created a workflow containing a review task that can be completed by attorneys.
+
+In the second recipe [http://www.ibm.com/support/docview.wss?uid=swg22001297], we will refine this workflow into an approval process.
+
+StoredIQ_for_Legal_Review_Process.bpmn [/support/docview.wss?uid=swg22001296&aid=9]StoredIQ_for_Legal_Review_Process.bpmn [/support/docview.wss?uid=swg22001296&aid=8]

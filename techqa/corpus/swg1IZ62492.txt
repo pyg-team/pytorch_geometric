@@ -1,0 +1,141 @@
+Title: IBM IZ62492: DB2FMCD COMMAND DOES NOT WORK IF BLANK LINES ARE APPENDED AFTER FMC ENTRY IN  /ETC/INITTAB FILE. - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+DB2 Version 9.5 Fix Pack 6a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027747]
+DB2 Version 9.5 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028731]
+DB2 Version 9.5 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24030302]
+DB2 Version 9.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032087]
+DB2 Version 9.5 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033308]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Fault monitor entry will be inserted into /etc/inittab when we
+   run ./db2fmcu command,
+   Fault monitor entry should be deleted when we execute ./db2fmcd
+   command.
+   
+   The problem is when we have a blank line immediately after fmc
+   entry in /etc/inittab file, we were not able to delete the fmc
+   entry (blank lines were not taken care).
+   
+   This caused problems during uninstall of TSM products.  This fix
+   will take care of the blank lines in the /etc/inittab file.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * DB2FMCD COMMAND DOES NOT WORK IF BLANK LINES ARE APPENDED    *
+   * AFTER                                                        *
+   * FMC ENTRY IN  /ETC/INITTAB FILE.                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 version 9.5 FP6 or Later.                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in DB2 version 9.5 FP6
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ62492
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4100
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-02
+   
+   
+ * CLOSED DATE
+   2010-08-19
+   
+   
+ * LAST MODIFIED DATE
+   2010-08-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ39234 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ39234]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC66406
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * FIXED COMPONENT ID
+   5765F4100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSY
+   UP

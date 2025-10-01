@@ -1,0 +1,14 @@
+Title: IBM Unable to locate the "Save" button in Administration Console for Content Platform Engine. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why do some pages in Administration Console for Content Platform Engine (ACCE) only have a "Reset" and "Close" button? The "Save" button is missing. 
+
+ANSWER
+Dependent objects in Content Platform Engine (CPE) have the "Save" button located in it's parent object's page/tab. 
+
+An example of a dependent object would be a Directory Configuration. Its parent object would be the p8 domain. To save changes to a Directory Configuration, navigate back to the p8 domain page/tab and click the "Save" button. 
+
+Another example of a dependent object is a Property Definition. The Document Class is the parent object for a Property Definition. To save changes to a Property Definition navigate back to the Document Class page/tab and click the "Save" button.

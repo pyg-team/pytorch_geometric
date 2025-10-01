@@ -1,0 +1,59 @@
+Title: IBM JMS Concurrency for Process MDB on Jboss EAP 6.x - United States
+
+Text:
+Jboss EAP JMS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We installed IBM SPSS Collaboration and Deployment Services (C&DS) using Red Hat Jboss EAP 6.x as application server.
+To fine tune our configuration we were looking into the C&DS 6.0 Administration Guide.
+Chapter 14 describes JMS configuration for process managment.
+The information for Jboss appears to be unrelevant for the Jboss EAP version we are using.
+
+
+RESOLVING THE PROBLEM
+
+Hide details for JMS Concurrency for Process MDB on JBoss EAP 6.x [/support/docview.wss?uid=swg21685267&amp;aid=1]JMS Concurrency for Process MDB on JBoss EAP 6.x
+1. Modify the cds_server.xml file and increase the default MDB thread pool size (e.g. <strict-max-pool name="mdb-strict-max-pool" max-pool-size="50" ...)
+2. Modify "process-ejb.jar" and add "META-INF/jboss-ejb3.xml" file with desired "maxSession" value.
+
+Steps 
+
+ 1.  Stop your JBoss server. 
+ 2.  Locate the 'cds60.ear' file in the JBoss installation directory under '...\standalone\deployments\cds60.ear' and copy it to a temp directory. 
+ 3.  In the temp directory extract the 'process-ejb.jar' file from the 'cds60.ear' file. 
+ 4.  You need to add a new file ( 'jboss-ejb3.xml' ) to the 'META-INF' directory of the 'process-ejb.jar' (create the file based on the lines listed below) 
+ 5.  In the temp directory make a new 'META-INF' directory. 
+ 6.  Put the newly created 'jboss-ejb3.xml' file in the new 'META-INF' directory 
+ 7.  Add the new 'META-INF/jboss-ejb3.xml' file into the 'process-ejb.jar' 
+ 8.  Add the updated 'process-ejb.jar' file back into the the 'cds60.ear' file. 
+ 9.  Copy the updated 'cds60.ear' file back into the JBoss installation directory ( '...\standalone\deployments\cds60.ear' ) 
+ 10. If you wanted everything set to '20' you are done. If you wanted something higher then: 
+ 11. You need to update the JBoss server configuration file ( '...\standalone\configuration\cds_server.xml') and set <strict-max-pool name="mdb-strict-max-pool" max-pool-size="??" (your desired max value) 
+ 12. You needed to update the maxSession value inside 'jboss-ejb3.xml' before you added it to the 'process-ejb.jar' in step #4 above 
+ 13. Restart your server.
+
+
+process-ejb.jar/META-INF/jboss-ejb3.xml - (use this example to create the jboss-ejb3.xml file) 
+<?xml version="1.1" encoding="UTF-8"?> 
+<jboss:ejb-jar xmlns:jboss=" http://www.jboss.com/xml/ns/javaee [http://www.jboss.com/xml/ns/javaee]" 
+xmlns=" http://java.sun.com/xml/ns/javaee [http://java.sun.com/xml/ns/javaee]" 
+xmlns:xsi=" http://www.w3.org/2001/XMLSchema-instance [http://www.w3.org/2001/XMLSchema-instance]" 
+xmlns:c="urn:clustering:1.0" 
+xsi:schemaLocation=" http://www.jboss.com/xml/ns/javaee [http://www.jboss.com/xml/ns/javaee] http://www.jboss.org/j2ee/schema/jboss-ejb3-2_0.xsd [http://www.jboss.org/j2ee/schema/jboss-ejb3-2_0.xsd] http://java.sun.com/xml/ns/javaee [http://java.sun.com/xml/ns/javaee] http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd [http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd]" 
+version="3.1" 
+impl-version="2.0"> 
+<enterprise-beans> 
+<message-driven> 
+<ejb-name>ProcessEventMDB</ejb-name> 
+<activation-config> 
+<activation-config-property> 
+<activation-config-property-name> maxSession</activation-config-property-name> 
+<activation-config-property-value> 25</activation-config-property-value> 
+</activation-config-property> 
+</activation-config> 
+</message-driven> 
+</enterprise-beans> 
+</jboss:ejb-jar> 
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]

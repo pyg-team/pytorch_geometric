@@ -1,0 +1,93 @@
+Title: IBM Tuning and debugging maximum connections accepted by MessageSight V2.0 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document shows how to check and tune CentOS 7/RHEL 7 to make sure the operating system isn't unnecessarily dropping connections 
+
+SYMPTOM
+Incoming connections are dropped after a certain number of clients are connected.
+
+
+CAUSE
+System parameters governing the number of open file (or file descriptors) have not been adjusted from defaults on CentOS 7 or RHEL 7 
+
+DIAGNOSING THE PROBLEM
+Errors similar to the following in the server logs: 
+
+Transport tcpconnect CWLNA1119 E: Closing TCP connection because there are too many active connections. Endpoint="<endpoint_name>" From=<client_ipaddress>.
+
+
+RESOLVING THE PROBLEM
+Without any tuning of kernel parameters, CentOS 7 and RHEL 7 may prevent MessageSight from handling as many connections as it's designed to handle. For a large MessageSight production server, the following parameters will need to be checked and possibly increased from their default values to something larger before MessageSight will accept the number of connections it can handle. 
+
+
+
+
+Parameter Description Default ulimit -Sn (nofile) Soft limit for number of open files 1024 ulimit -Hn (nofile) Hard limit for number of open files 4096 fs.nr_open Max number of file handles a process can allocate. 1048576 (on some big systems too low) fs.file-max Total number of open file handles allowed for entire system Calculated dynamically based on system (and usually quite large) 
+In MessageSight V2.0, we auto-tune a number of internal server values that determine how much workload the server will accept. One of the most important values we calculate determines how many concurrent open connections MessageSight will accept before it stops rejecting connections. We calculate the maximum number of simultaneous connections the server can support based on the amount of physical memory configured on the server (or container). 
+
+At server startup time, and before accepting connections, we generate this value and print it to the server trace file (imatrace.log): 
+
+MessageSight autotuned configuration: mem= 128000MB, cpu=16(0xffff) hot=10(0x03ff) hotrsrv=12(0x0fff) iop=8 ap=3 sec=6 hatx=3 maxconn=1000000 
+
+We can see in the example output above, maxconn is set to 1000000 for a server with 128 GB of RAM. 
+
+In the next step of the startup process, the server attempts to set this value as the hard ulimit -n (nofile) for our process; that is, we try and set the equivalent of 'ulimit -Hn 1000000'. 
+
+However, with the default system limit values for CentOS/RHEL (and when the server has 128 GBs of RAM or more), MessageSight fails to set ulimit -Hn value to the value of maxconn. This is because the default value for fs.nr_open on Linux does not allow setting ulimit -Hn as large as 1000000. When our server fails to set ulimit -Hn, the only remaining alternative is to use the system hard limit for ulimit -n (which by default is 4096), take a percentage of that number -- we can't starve the kernel itself of file handles -- and set that as our value for ulimit -Hn. As a result, with 128 GBs of RAM, and no tuning of the parameters above, MessageSight will only allow 1750 connections. For a MessageSight server that accepts direct connections from devices (as opposed to only application connections), this can result in many rejected device connections. 
+
+To prevent this, fs.nr_open needs to be adjusted from its default. The value set on the V1.2 physical appliances (with 128 GB of RAM) was 8000000. Whatever value is tuned here, it needs to be at least three times the highest number of device connections the server might handle (fs.nr_open is the number of file descriptors a process can allocate, but each client connection takes at least three file descriptors). For a server with 128 GB of RAM, the value needs to be at least 3000000. See your system documentation for how to set these values persistently (via the /etc/sysctl.conf file). 
+
+Because MessageSight may revert to the system value for ulimit -Hn, one should also set this value for MessageSight. Historically, ulimit settings were set in the /etc/security/limits.conf file, however, for an rpm install of MessageSight, our server runs as a systemd service. By default systemd no longer reads limits from the /etc/security/limits.conf file. There are several ways to set security limits for specific daemons in systemd, but perhaps the easiest method is to add a line like the following to the MessageSight systemd service file (/etc/systemd/system/IBMIoTMessageSightServer.service) in the [service] stanza that looks like this: 
+
+LimitNOFILE=<value> 
+
+and then reload systemd (and restart MessageSight, if necessary): 
+
+systemctl daemon-reload 
+systemctl restart IBMIoTMessageSightServer 
+
+For a containerized version of MessageSight, a docker container inherits the values of the system it's running on. With recent versions of docker, you can pass in ulimit values via the docker run command [https://docs.docker.com/engine/reference/commandline/run/], eg: docker run --ulimit <type>=<soft>:<hard>. See the docker documentation [https://docs.docker.com/engine/reference/commandline/run/] for more details. 
+
+To see what value the server starts with, you can grep the imatrace.log file (as long as it contains a start of the server) with: 
+
+grep -E "Set maximum TCP connections|file limit|autotuned" imatrace.log 
+
+In the following example log output, you can see a case when the server ended up with only 1750 connections: 
+
+grep -E "Set maximum TCP connections|file limit|autotuned" 
+
+For example: 
+
+# grep -E "Set maximum TCP connections|file limit|autotuned" imatrace.log | awk '{ $1=$2=$3=""; print $0 }' 
+
+MessageSight autotuned configuration: mem=128000MB , cpu=16(0xffff) hot=10(0x03ff) hotrsrv=12(0x0fff) iop=8 ap=3 sec=6 hatx=3 maxconn=1000000 
+Set file limit=4096 
+Set maximum TCP connections: 1750 
+
+In the example above, the " Set file limit" line shows the value we got when we queried the system ulimit -Hn value. The " Set maximum TCP connections" line showed what we set for ulimit -Hn for our process (which is what limits us on how many connections we can accept). 
+
+When setting these parameters, one should use the following general rules: 
+
+1) fs.file-max and fs.nr_open should not be equal. fs.file-max is the total limits of all open file descriptors on the entire system. fs.nr_open is the number of file descriptors for a process. When setting fs.nr_open, you should make sure that fs.file-max is significantly bigger than fs.nr_open 
+
+2) fs.nr_open acts as an upper limit for ulimit -Hn. ulimit -Hn determines the number of files any process on the system can have open. Since an open file (or a network connection) requires three file descriptors, fs.nr_open should be at least three times as large as the value set for ulimit -Hn 
+
+3) MessageSight will dynamically set a specific value for ulimit -Hn at server startup time that is larger than the system ulimit -Hn value, as long as fs.nr_open is large enough. If one wishes to prevent that, then set fs.nr_open to a smaller value and set the system ulimit -Hn to the value to which you wish to limit MessageSight. 
+
+4) As noted above, systemd does not read the /etc/security/limits.conf file; see your system documentation for how to set ulimits for systemd daemons. 
+
+5) To check how many file descriptors are currently being used on the system, check the /proc/sys/fs/file-nr pseudo-file: 
+
+cat /proc/sys/fs/file-nr 
+12672 0 2097152 
+
+The first column shows the number of file descriptors being used. 
+
+6) To see how many files are currently open on your system, you can use: lsof | wc -l 
+
+See the following kernel documentation to get more information about the kernel parameters discussed above: 
+
+https://www.kernel.org/doc/Documentation/sysctl/fs.txt [https://www.kernel.org/doc/Documentation/sysctl/fs.txt]

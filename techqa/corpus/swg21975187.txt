@@ -1,0 +1,79 @@
+Title: IBM How to interpret codes within sel stat and sel stat file if they are different? - United States
+
+Text:
+"sel stat"; statistics TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ sel stat output at HP Non Stop end is different to sel stat file output at z/OS end. How to interpret the codes visible in both?
+
+
+
+SYMPTOM
+On the z/OS end take care to have not enough space for the destination file. 
+
+Run a process with only a copy step for transfer from IBM Sterling Connect:Direct for HP NonStop to IBM Sterling Connect:Direct z/OS. 
+
+sel stat pnum=nnnn shows: 
+
+**SVSJ013I: (RC=8, FDBK="0")
+An abend occurred doing BSAM I/O.
+
+
+sel stat pnum file pnum=nnnn shows:
+SVTM052I #### COMPLETED 80B37000/SVSJ013I 
+
+
+CAUSE
+The SEL STAT output returns a formatted display of the statistics STEPEND record (Copy termination record).
+The displayed messages are created from the CB.ERR structures at the end of the statistics record.
+
+The SEL STAT FILE output returns a dump of every field in the statistics record, including the CBs (control block structures).
+
+The stat record contains the CB.STEPEND structure, which is all the information recorded during step execution and the copy termination exchange.
+
+It also contains the 'Error CBs' - error control blocks, one for each error encountered in the COPY execution.
+
+In structure CB.ERR, the field 'T' contains the value '2'. That says that CB.E2 is the "Top" or "major" error and is the one displayed in the statistics: **SVSJ013I: (RC=8, FDBK="0")
+
+To make the displayed RC value consistent with the way other errors are displayed (and to alleviate side effects from having a huge negative number stored and displayed in that field) the RC value stored in the STEP END structure was normalized to RC=8 while processing the CB.ERR structures when the statistics record was being created. 
+
+
+DIAGNOSING THE PROBLEM
+On HP NonStop do a 
+
+sel stat lastp step (MSG and STEPEND only shown) 
+
+Within output look for:
+Omsgid => SVSJ013I which is the message id
+
+and:
+Ortncd => x'80b37000 which is the hex value
+
+then search for:
+**SVSJ013I: (RC=8, FDBK="0") showing the RC=8 
+An abend occurred doing BSAM I/O. 
+
+Now do a 
+
+sel stat lastp file (MSG and STEPEND only shown)
+
+Check the output for part showing the hex value and the message id:
+FDBK!0!RC!x'80b37000'!MSGID!SVSJ013I 
+
+Look through further to find: 
+OMSGID!SVSJ013I!ORC!x'80b37000'! 
+
+Then read through ERR structures; part of the STEPEND statistics record
+
+CB!ERR!N!3!T!2!CBEND!ERR! Error 2 is the 'Top' error
+CB!E1!FDBK!0!RC!8!MSGID!SCOP014I!CBEND!E1!
+CB!E2!FDBK!0!RC!8!MSGID!SVSJ013I!CBEND!E2! Error reported in the SEL STAT 
+CB!E3!FDBK!0!RC!8!MSGID!SCOP001I!CBEND!E3!
+
+
+
+RESOLVING THE PROBLEM
+If you look at the context of the two different output streams (SEL STAT, SEL STAT FILE), and understand that the SEL STAT output displays the errors found in the contents of the CB.ERR structures, there really is not a discrepancy. 
+
+
+It only seems to be when you compare the "summarized" output in the SEL STAT data, with the raw contents of the STEPEND control block output by SEL STAT FILE.

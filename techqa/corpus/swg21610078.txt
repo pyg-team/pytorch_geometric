@@ -1,0 +1,34 @@
+Title: IBM How DataPower MQ Queue Manager Group provides fail-over when one of the device's network interfaces (NIC) goes down. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How DataPower MQ Queue Manager Group recovers from network failures when one of the configured network interfaces fails to operate in the appliance. 
+
+ANSWER
+DataPower has multiple network interfaces (NIC) and can route traffic randomly when configured with default route for these interfaces. When MQ Queue Manager group is configured to provide high availability (HA), it is suggested that the Primary MQ Queue Manager object be assigned with the IP address of the first NIC and the Backup MQ Queue Manager object be assigned with the IP address of the second NIC respectively as the Local Address of these objects. This configuration binds the MQ Queue Manager object with a dedicated IP of the NIC as such the fail-over for MQ traffic happens in a consistent and predictable manner. 
+
+Using this approach, when the Primary MQ Queue Manager object goes down due to NIC failue, Backup MQ Queue Manager provides recovery without interruption of the traffic flow. However, the delay in the recovery is based on the following configuration parameters:
+
+One would expect MQ reason code 2009 (connection broken) due to NIC failure of the Primary MQ Queue Manager object. 
+
+The longest period to receive “MQ reason code 2009” depends on the following factors:
+
+(1) DataPower MQ Queue Manager cache-timeout value
+(2) DataPower MQ Queue Manager retry parameters
+(3) DataPower MQ Front Side Handler polling Interval 
+(4) MQ Server Platform and its "keepAlive" parameters
+(5) Network Topology of the environment (How many hops DataPower takes to reach MQ Server)
+(6) MQ Server state (How busy MQ Server becomes in handling client traffic) 
+
+How many times “MQ reason code 2009” can happen?
+
+Given that the above approach is being used in the configuration, How many times "MQ reason code 2009" can happen depends on the following factors:
+
+(1) The number of MQ Front Side Handler concurrent connections 
+(2) The number of MQ Front Side Handlers using Primary MQ Queue Manager Object
+
+It is expected that the MQ reason code of 2009 will be visible only once for each of the MQ Front Side Handler (FSH) objects. If number of concurrent connections for the MQ FSH is greater than 1, it will generate more than one MQ reason code 2009 as each concurrent connection instance is considered as one MQ FSH.
+
+This approach is recommended when more than one NIC is configured with default route and MQ Queue Manager Group is used as the fail-over mechanism for MQ traffic in the DataPower appliance. This approach provides consistent and predictable behavior of MQ traffic recovery when Primary MQ Queue Manager is gone down due to its NIC failure and the Backup MQ Queue Manager takes over to process MQ traffic without loss of message when units-of-work option is used.

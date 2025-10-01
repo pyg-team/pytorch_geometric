@@ -1,0 +1,59 @@
+Title: IBM "CertPathBuilderException: unable to find valid certification path to requested target" when connecting to Rule Team Server/Decision Center or Rule Execution Server over HTTPS - United States
+
+Text:
+Modules:Execution Server (BRES / RES); Modules:Rule Studio (Eclipse); Modules:Rule Team Server (RTS); ValidatorException; certificate; connection; error; http; https; secure; SSL; RES; BRES; RTS TECHNOTE (FAQ)
+
+QUESTION
+ How do I resolve the "[java.security.cert.CertPathBuilderException or sun.security.provider.certpath.SunCertPathBuilderException]: unable to find valid certification path to requested target" error I get when connecting to Rule Team Server (RTS)/Decision Center(DC) or Rule Execution Server over HTTPS/SSL? 
+
+CAUSE
+If your application server is using a non-trusted certificate and because by default only trusted certificates are supported for HTTPS/SSL, you will get this type of error when trying to connect to RTS/DC or Rule Execution Server: 
+ilog.rules.res.util.http.IlrConnectionException: IO error when contacting "/res/repositoryService" [or "https://<hostname>:<port>/teamserver"]
+...
+Caused by: javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.util.g: PKIX path building failed: java.security.cert.CertPathBuilderException: unable to find valid certification path to requested target
+... 
+Caused by: com.ibm.jsse2.util.g: PKIX path building failed: java.security.cert.CertPathBuilderException: unable to find valid certification path to requested target
+... 
+Caused by: java.security.cert.CertPathBuilderException: unable to find valid certification path to requested target
+... 
+
+
+This is the case, for example, for WebSphere Application Server (WAS) until version 6.1. 
+
+Starting in 7.0, WAS default certificate is signed by a default server root certificate, the error and solution are then different. Refer to technote CertPathValidatorException when connection to Rule Team Server /Decision Center or Rule Execution Server over HTTPS [http://www-01.ibm.com/support/docview.wss?uid=swg21427447] in such case. 
+
+
+Notes : 
+
+ * With a Sun JVM the root error would be:
+   sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target 
+ * When connecting from within Rule Studio/Designer, Eclipse may not show the root error in its logs, in which case you will need to refer to technote Connection with Rule Team Server/Decision Center has failed [http://www.ibm.com/support/docview.wss?uid=swg21634188] to see a stack trace like the above.
+
+ANSWER
+In order to resolve this problem, set the following Java system property on the client side to allow HTTPS/SSL connections with non-trusted certificates: 
+
+ 
+
+ * to connect to Rule Execution Server: 
+   -Dilog.rules.res.allowSelfSignedCertificate=true 
+ * to connect to Rule Team Server/Decision Center: 
+   -Dilog.rules.teamserver.allowSelfSignedCertificate=true 
+   
+
+
+Whether you connect to RTS/DC or Rule Execution Server:  * If your client is Rule Studio/Designer, set the property in the build.xml starting the associated Eclipse instance. See section WebSphere ILOG JRules BRMS V7.1 > Rule Studio > Synchronizing and storing rules > Understanding synchronization > Synchronization and the communication protocol [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global645.html] of the 7.1 documentation for details for the connection with RTS and section WebSphere ILOG JRules BRMS V7.1 > Rule Execution Server > Deploying rulesets > Deploying and exporting RuleApps > Deploying a RuleApp to one or more Rule Execution Servers [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global989.html] for the connection with Rule Execution Server. 
+ * If you are performing a remote DVS test from Rule Studio/Designer, the property as indicated above is not propagated to the DVS client which runs on a new JVM instance. A solution in that case is to set this -Dilog.rules.res.allowSelfSignedCertificate=true in the IBM_JAVA_OPTIONS environment variable. 
+ * If you are using ANT tasks, you will add the property in your build.xml as a property in the corresponding ANT target , or at the project level to cover all tasks (see the JRules 7.1 documentation at WebSphere ILOG JRules BRMS V7.1 > Customizing > Customizing Rule Team Server > Customizing the Rule Team Server behavior > Ant task communication protocol [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1625.html]for RTS and WebSphere ILOG JRules BRMS V7.1 > Reference > Ant tasks for RuleApp management > Communication protocol [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1930.html]for Rule Execution Server). 
+ * If your client is RTS (to connect to Rule Execution Server), set the property in the start script of your application server (see section WebSphere ILOG JRules BRMS V7.1 > Installing > Installation overview > Communication protocol [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global202.html] of the JRules 7.1 documentation). Refer to the vendor's documentation for more details on setting system properties for its application server.
+
+RELATED INFORMATION
+ Deploying a RuleApp over HTTPS to RES on WAS7 [http://www.ibm.com/support/docview.wss?uid=swg21427447]
+WODM V7.5 doc on Communication protocols [http://pic.dhe.ibm.com/infocenter/dmanager/v7r5/topic/com.ibm.decisions.installing/Content/Business_Rules/_pubskel/Infocenter_Primary/ps_Decisions_Installing24.html]
+WODM V8.0 doc on Communication protocols [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0/topic/com.ibm.wodm.family.overview/understandinstall_topics/tpc_odm_protocols.html]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.0, 7.5 
+HISTORICAL NUMBER
+ jrules/FAQ/372

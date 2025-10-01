@@ -1,0 +1,102 @@
+Title: IBM Spectrum Protect™ Snapshot - All Requirements Documents - United States
+
+Text:
+DSRdoc TDPRequirements TSM FCM Tivoli Storage FlashCopy Manager PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ This document has links to the hardware and software requirements documents associated with IBM Spectrum Protect™ Snapshot. 
+
+CONTENT
+
+Tip: The product now known as IBM Spectrum Protect™ was named IBM Tivoli®Storage Manager in releases earlier than Version 7.1.3. To learn more about the rebranding transition, see http://www.ibm.com/support/docview.wss?uid=swg21963634 [http://www.ibm.com/support/docview.wss?uid=swg21963634].
+
+Version 8.1.4 [http://www.ibm.com/support/docview.wss?uid=swg22010170]
+
+Version 8.1.4 was delivered on December 15, 2017 Information regarding how and where to download 8.1.4 is available here: http://www-01.ibm.com/support/docview.wss?uid=swg24044221 [http://www-01.ibm.com/support/docview.wss?uid=swg24044221]
+
+Version 8.1.2 [http://www.ibm.com/support/docview.wss?uid=swg22004422]
+
+Version 8.1.2 was delivered on August 11, 2017 Information regarding how and where to download 8.1.2 is available here: http://www-01.ibm.com/support/docview.wss?uid=swg24043705 [http://www-01.ibm.com/support/docview.wss?uid=swg24043705]
+
+
+Version 8.1.0 [http://www.ibm.com/support/docview.wss?uid=swg21991823]
+
+Version 8.1.0 was delivered on December 9, 2016 Information regarding how and where to download 8.1.0 is available here: http://www.ibm.com/support/docview.wss?uid=swg24042724 [http://www.ibm.com/support/docview.wss?uid=swg24042724]
+
+[http://www.ibm.com/support/docview.wss?uid=swg21982825]
+Version 4.1.6 [http://www.ibm.com/support/docview.wss?uid=swg21982825]
+
+Version 4.1.6 was delivered on June 13, 2016 Information regarding how and where to download 4.1.6 is available here: http://www.ibm.com/support/docview.wss?uid=swg24042168 [http://www.ibm.com/support/docview.wss?uid=swg24042168]
+
+
+Version 4.1.4 [http://www.ibm.com/support/docview.wss?uid=swg21971752]
+
+Version 4.1.4 was delivered on December 11, 2015 Information regarding how and where to download 4.1.4 is available here: http://www.ibm.com/support/docview.wss?uid=swg24041139 [http://www.ibm.com/support/docview.wss?uid=swg24041139]
+
+----------------------------------------------------------------
+
+Version 4.1.3 [http://www.ibm.com/support/docview.wss?uid=swg21965088]
+
+Version 4.1.3 was announced on September 1, 2015 and will be available for download on September 11, 2015. Information regarding how and where to download 4.1.3 will be available here:
+http://www.ibm.com/support/docview.wss?uid=swg24040398 [http://www.ibm.com/support/docview.wss?uid=swg24040398] on the download availability date.
+
+----------------------------------------------------------------
+
+Version 4.1.2 [http://www.ibm.com/support/docview.wss?uid=swg21829854]
+
+Version 4.1.2 was announced on April 14, 2015 and will be available for download on April 17, 2015. Information regarding how and where to download 4.1.2 will be available here:
+http://www.ibm.com/support/docview.wss?uid=swg24039478 [http://www.ibm.com/support/docview.wss?uid=swg24039478] on the download availability date.
+
+----------------------------------------------------------------
+
+Version 4.1.1 [http://www.ibm.com/support/docview.wss?uid=swg21682902]
+
+The version 4.1.1 Fix Pack was announced on September 2, 2014 and will be available for download on September 12, 2014. Information regarding how and where to download 4.1.1 will be available here: http://www.ibm.com/support/docview.wss?uid=swg24038212 [http://www.ibm.com/support/docview.wss?uid=swg24038212] on the download availability date.
+
+----------------------------------------------------------------
+
+Version 4.1 [http://www.ibm.com/support/docview.wss?uid=swg21654207] 
+
+Version 4.1 was announced on October 29, 2013 and will be available electronically on December 13, 2013. 
+
+ 
+
+=================================================
+Version 3.2.1
+Tivoli Storage FlashCopy Manager 3.2.1 reached end of life on September 30, 2017. Refer to the following tech note for additional information: http://www-01.ibm.com/support/docview.wss?uid=swg21998572 [http://www-01.ibm.com/support/docview.wss?uid=swg21998572] 
+
+ 
+
+=================================================
+Version 3.2
+Tivoli Storage FlashCopy Manager 3.2 reached end of life on September 30, 2017. Refer to the following tech note for additional information: http://www-01.ibm.com/support/docview.wss?uid=swg21998572 [http://www-01.ibm.com/support/docview.wss?uid=swg21998572] 
+
+ 
+
+=================================================
+Version 3.1.1
+Tivoli Storage FlashCopy Manager 3.1 reached end of life on April 30, 2017. Refer to the following tech note for additional information: http://www-01.ibm.com/support/docview.wss?uid=swg21982265 [http://www-01.ibm.com/support/docview.wss?uid=swg21982265] 
+
+=================================================
+Version 3.1
+Tivoli Storage FlashCopy Manager 3.1 reached end of life on April 30, 2017. Refer to the following tech note for additional information: http://www-01.ibm.com/support/docview.wss?uid=swg21982265 [http://www-01.ibm.com/support/docview.wss?uid=swg21982265] 
+
+=================================================
+Version 2.2.1
+
+Tivoli Storage FlashCopy Manager 2.2 reached end of life on September 30, 2015. Refer to the following tech note for additional information: http://www-01.ibm.com/support/docview.wss?uid=swg21964803 [http://www-01.ibm.com/support/docview.wss?uid=swg21964803] 
+
+=================================================
+Version 2.2
+
+Tivoli Storage FlashCopy Manager 2.2 reached end of life on September 30, 2015. Refer to the following tech note for additional information: http://www-01.ibm.com/support/docview.wss?uid=swg21964803 [http://www-01.ibm.com/support/docview.wss?uid=swg21964803] 
+
+================================================= 
+
+Version 2.1 
+
+
+Tivoli Storage FlashCopy Manager 2.1 reached end of life on April 30, 2015. Refer to the following tech note for additional information: http://www.ibm.com/support/docview.wss?uid=swg21883496 [http://www.ibm.com/support/docview.wss?uid=swg21883496]
+
+
+=================================================

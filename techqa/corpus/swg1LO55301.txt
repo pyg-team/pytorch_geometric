@@ -1,0 +1,139 @@
+Title: IBM LO55301: ONLY ONE SECONDARY DIRECTORY CAN HAVE GROUP AUTHORIZATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Create a directory assistance database
+   Add 2 entries, each:
+       type: Notes
+      Group Authorization: Yes
+   
+   You get the error message:
+       The document with the Domain Name "whatever" already has
+   Group
+   Authorization enabled, only one such document is allowed in this
+   database.
+   
+   Customers can use the Extended Directory Catalog in here to work
+   around the
+   issue. Since the workaround creates searches a list the size of
+   the 2 address
+   books added together, then there is little benefit in
+   restricting this.
+   
+   It seems to make better sense to change the "Error" changed to a
+   warning or a
+   "tooltip"  for the "Group Authorization" field if the concern is
+   only
+   performance-related.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Extended directory catalog to aggregate these into 1 EDC.nsf
+   which goes into DA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A programming error was found but will not be corrected. It
+    will be a permanent restriction.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A programming error was found but will not be corrected. It
+    will be a permanent restriction.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# AJAN73FMSX.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO55301
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-04
+   
+   
+ * CLOSED DATE
+   2010-11-09
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

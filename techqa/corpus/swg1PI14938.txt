@@ -1,0 +1,177 @@
+Title: IBM PI14938: IN A DATE DBE, THE BEHAVIOUR OF THE DATE VALUE RETRIEVED WILL DEPEND ON WHETHER THE DAY OF THE MONTH IS MORE OR LESS THAN 1 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using a Date DBE, if the time component is included (i.e.
+   in the initial value),  the behaviour of date value retrieved
+   from it will vary depending on whether the date selected is
+   greater than 12 or not.
+   
+   Specifically, when the day is less than the 12th the value will
+   be correct if printed directly ('oDate' below) but incorrect if
+   converted to either a string ('sDate' and 'sDate2' below) or a
+   time-less date ('oDate2'). However, when the day is greater than
+   the 12th, the directly printed value is incorrect, but the
+   converted values are correct.
+   
+   When a value is incorrect, its day and month values are
+   switched.
+   
+   To recreate run code such as the following, select different
+   dates in the DBE and click ?Go? to convert and/or print them:
+   
+   '
+   DB TestCaseHistoryDB = create('TestCaseHistory ', styleCentered)
+   Date init = dateAndTime(today)
+   //Date init = today
+   DBE oDateDBE1 = date(TestCaseHistoryDB, 30,init, true)
+   
+   void makeTestCaseHistory(DB winDB) {
+   
+       Date oDate = get(oDateDBE1)
+       Date oDate2 = dateOnly oDate
+   
+       string sDate = stringOf(oDate)
+       string sDate2 = stringOf(oDate,userLocale,'d MMMM yyyy')
+   
+       print oDate  '\t'
+       print oDate2 '\t'
+       print sDate  '\t'
+       print sDate2 '\n'
+   }
+   
+   apply(TestCaseHistoryDB, 'Go', makeTestCaseHistory)
+   realize(TestCaseHistoryDB)
+   show(TestCaseHistoryDB)
+   '
+   
+   Workaround :
+   
+    - use a Date DBE without the time component (e.g. by using the
+   'Date init = today' line above) and then specify the time in a
+   different DBE
+   
+   or
+   
+    - intellegently detect whether the day value in the converted
+   date is greater than 12, if so, use that value, if not, use the
+   unconverted value (the suitability of this will depend on your
+   ultimate use for the value)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This is a scripting error - to get the Date from a datepicker;
+   use the getDate() perm;  not get() (which just returns a string
+   and does not respect locales etc).
+   
+   So the correct thing to do is:
+   
+   DB TestCaseHistoryDB = create("TestCaseHistory ", styleCentered)
+   Date init = dateAndTime(today)
+   //Date init = today
+   DBE oDateDBE1 = date(TestCaseHistoryDB, 30,init, true)
+   
+   void makeTestCaseHistory(DB winDB) {
+   
+   Date oDate = getDate(oDateDBE1)
+   Date oDate2 = dateOnly oDate
+   
+   string sDate = stringOf(oDate)
+   string sDate2 = stringOf(oDate,userLocale,"d MMMM yyyy")
+   
+   print oDate "\t"
+   print oDate2 "\t"
+   print sDate "\t"
+   print sDate2 "\n"
+   }
+   
+   apply(TestCaseHistoryDB, "Go", makeTestCaseHistory)
+   realize(TestCaseHistoryDB)
+   show(TestCaseHistoryDB)
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI14938
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * REPORTED COMPONENT ID
+   5724V61DR
+   
+   
+ * REPORTED RELEASE
+   940
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-01
+   
+   
+ * CLOSED DATE
+   2014-05-23
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

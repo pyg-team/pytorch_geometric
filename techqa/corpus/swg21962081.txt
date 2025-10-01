@@ -1,0 +1,27 @@
+Title: IBM MQ listener cannot be started with reason code: 2035 return - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere MQ call failed with compcode '2' ('MQCC_FAILED') reason '2035' ('MQRC_NOT_AUTHORIZED')
+
+
+SYMPTOM
+- MQ v8.0 installed on Windows with a QMGR "FTM,QMANAGER" created with all default settings, listener at port 1414, system.def.svrconn etc.
+- In MQ explorer, disabled CHLAUTH
+- When starting the Transaction Server "txstart.bat", getting the following error message in the DOS window:
+TransactionServer
+-Input Listener failed to start after 1 attempts. Listener has been stopped. Message - Could not create connection - JMSCMQ0001: WebSphere MQ call failed with compcode '2' ('MQCC_FAILED') reason '2035' ('MQRC_NOT_AUTHORIZED')
+
+
+RESOLVING THE PROBLEM
+Disable channel authentication 
+
+ You will need to disable connection authentication, at least temporarily. There are known issues in FTM for Check with regard to using MQ connection authorization. These problems are actively being addressed and fixes will appear in a future fix pack. The target is fixpack 3.0.0.8. 
+
+Steps to disable connection authentication:
+Open MQ command console and type runmqsc <queue_manager_name>
+ALTER AUTHINFO(SYSTEM.DEFAULT.AUTHINFO.IDPWOS) AUTHTYPE(IDPWOS) CHCKCLNT(NONE) CHCKLOCL(NONE)
+Restart the queue manager for this change to take effect.
+Restart FTM for Check applications.

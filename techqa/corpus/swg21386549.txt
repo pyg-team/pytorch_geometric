@@ -1,0 +1,39 @@
+Title: IBM Enabling DB2 JDBC (JCC) tracing with the ITIM Application Server - United States
+
+Text:
+JDBC Tracing TECHNOTE (FAQ)
+
+QUESTION
+ How do you enable JDBC (JCC) tracing within ITIM so that you can see the SQL statements being executed? 
+
+ANSWER
+If WebSphere Application Server (or applications using the WebSphere Application Server stack) is involved and Java Universal Driver (JCC) traces are required, it is easier to turn on tracing within WebSphere than to hard code the JCC trace, unless only a specific module within the application needs to be traced.
+Here are the steps for taking a combined WebSphere and JCC (Java Universal Driver) combined trace:
+
+1) Set the trace properties for JDBC in the WebSphere Console:
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+2) Turn on the trace 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * *=info:WAS.j2c=all:RRA=all:WAS.database=all:Transaction=all 
+   
+   
+
+3) Restart the Application Server 
+
+PRODUCT ALIAS/SYNONYM
+ ITIM TIM ISIM SIM

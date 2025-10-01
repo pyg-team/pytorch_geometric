@@ -1,0 +1,70 @@
+Title: IBM Watson Content Analytics - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We are using Watson Content Analytics, Level: 1741, Release: 3.5.0.2.
+
+I'm trying to establish connection to MSSQL server using following parameters :
+
+driver: com.microsoft.sqlserver.jdbc.SQLServerDriver
+driver jar: sqljdbc4.jar
+Connection string :
+jdbc:sqlserver://212.13.64.27:1433;DatabaseName=XXX
+
+Error FFQD2300E "SSLv3 SSLContext not available" is seen.
+
+Note that this worked before I upgraded to content analytics FP2. 
+
+SYMPTOM
+The following error is seen: 
+
+FFQD2300E An SQL error occurred while accessing the database. Error
+code: 0. Error message: The driver could not establish a secure
+connection to SQL Server by using Secure Sockets Layer (SSL) encryption.
+Error: "SSLv3 SSLContext not available"
+
+
+CAUSE
+There are many references to this error online - specifically MSSQL Server and the SSL Context. Some, like this one, reference WebSphere, and a vulnerability with SSLv3 
+
+http://stackoverflow.com/questions/28576577/websphere-sslv3-sslcontext-not-available [http://stackoverflow.com/questions/28576577/websphere-sslv3-sslcontext-not-available]
+
+It all relates to WebSphere or some other IBM SDK, and the POODLE vulnerability. IBM definitely changed much of their software in recent fixpacks because of the SSLv3 vulnerability. 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21688165#issues [http://www-01.ibm.com/support/docview.wss?uid=swg21688165#issues]
+
+1) It is a known issue, created by a security breach in SSLv3, 
+https://isc.sans.edu/forums/diary/SSLv3+POODLE+Vulnerability+Official+Release/18827/ [https://isc.sans.edu/forums/diary/SSLv3+POODLE+Vulnerability+Official+Release/18827/]
+
+and addressed in all Java Virtual Machines, including the WebSphere servers we use in our product.
+
+Consider the following scenario: 
+
+ * You have a client application that uses Java and Microsoft JDBC Driver for SQL Server to connect to SQL Server. 
+ * You upgrade Oracle Java Runtime Environment (JRE) to version 6 Update 29 or a later version. 
+ * After you upgrade JRE, you can no longer connect to SQL Server.
+
+
+You may experience this issue if you use third-party implementations of Secure Sockets Layer (SSL)/Transport Layer Security (TLS) that contain the same behavioral change as JRE version 6 Update 29 and later versions. This change in behavior fixes a specific security issue known as "BEAST." 
+
+2) Microsoft has acknowledged this issue: 
+https://support.microsoft.com/en-us/kb/2653857 [https://support.microsoft.com/en-us/kb/2653857] 
+
+3) There are new MSSQL drivers specifically designed to get around this issue, found here: 
+https://www.microsoft.com/en-us/download/details.aspx?id=11774 [https://www.microsoft.com/en-us/download/details.aspx?id=11774] 
+DIAGNOSING THE PROBLEM
+The issue can be reproduced as follows: 
+
+
+-Disable SSL v3 of Windows server 2008
+- Enable SSL communication for MS SQL Server 2012
+- Use sqljdcb4.jar of Microsoft SQL Server JDBC Driver 2.0 (https://www.microsoft.com/en-US/download/confirmation.aspx?id=2505 [https://www.microsoft.com/en-US/download/confirmation.aspx?id=2505])
+
+This driver is not going to work. See below for the solution.
+
+
+RESOLVING THE PROBLEM
+Using sqljdcb4.jar of Microsoft SQL Server JDBC Driver 4.0 (https://www.microsoft.com/en-US/download/details.aspx?id=11774 [https://www.microsoft.com/en-US/download/details.aspx?id=11774]),
+the exception is not thrown.

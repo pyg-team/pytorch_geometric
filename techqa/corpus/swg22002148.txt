@@ -1,0 +1,32 @@
+Title: IBM Hierarchical stage doesn't support usage of special xml characters in parameter values - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ If the parameter value of a Infosphere Datastage job having Hierarchical stage, contains any bare XML literals, the job fails with the following error:
+
+"Fatal Error: [Output link 0] ErrorDuringDocumentCreation cause = 'java.util.InvalidPropertiesFormatException:
+org.xml.sax.SAXParseException: The reference to entity "amp" must end with the ';' delimiter.' "
+
+Example : '72&2kcx9#' , '7&ampks' 
+
+CAUSE
+Hierarchical Stage doesn’t support the usage of xml special characters like $, #, <,>, &, "," and white space in job parameter values due to framework limitations.
+
+ANSWER
+If any of the above characters are used in the job parameter values, they need to be escaped and used. 
+
+Example: If the parameter value is #value, it should be used as \#value.
+
+NOTE: 
+
+Adding the Hierarchical Stage to a job requires that ALL PARAMETER VALUES have such escaping, even if the Hierarchical Stage does not actually use those parameters.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Information Server

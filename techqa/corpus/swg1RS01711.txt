@@ -1,0 +1,146 @@
+Title: IBM RS01711: Cannot generate RuleApp from migrated repository in Decision Center database - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Operational Decision Manager V8.5.1.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24039235]
+Operational Decision Manager V8.6.0.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24039275]
+Operational Decison Manager z/OS 8.7.1.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24042643]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When trying to generate a RuleApp from a migrated repository
+   (to 8.5 and later versions), the following error is seen:
+   "Cannot generate RuleApp".
+   This is because the Ruleset table in the Decision Center
+   database is not correctly updated after migration from previous
+   releases. Starting with the 8.5 release, the main branch is
+   stored in the database using value '%current_key'.
+   The migration script should update columns that contain the
+   main branch name to use this new value.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Run the following SQL query in migrated database to update
+   baseline name in ruleset table :
+   update Ruleset set baseline = '%current_key' where baseline =
+   'current' ;
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The issue is due to an incomplete migration to 8.5. the main
+   branch used by default was named current and is now named
+   %current_key and it needs to be updated in the database
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The migration code is updated. Apply the script in workaround
+   for repository already migrated.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS01711
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6900
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-11
+   
+   
+ * CLOSED DATE
+   2014-08-28
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * FIXED COMPONENT ID
+   5725B6900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R851 PSY
+   UP

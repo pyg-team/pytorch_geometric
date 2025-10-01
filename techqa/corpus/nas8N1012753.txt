@@ -1,0 +1,105 @@
+Title: IBM Technology for Java 32 Bit Memory Address Space Layout - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides information regarding the 32-bit memory address space for the J9 VM. 
+
+RESOLVING THE PROBLEM
+The IBM Technology for Java (J9) VM is available on IBM i OS starting with V5R4. At V5R4, only the 32-bit JVM is offered. At IBM i 6.1 and later, both the 32- and 64-bit VM environments are available. 
+
+To use the J9 JVM, you must set the following environment variables.
+Refer to How to determine what Java Development Kits (JDKs) are installed and use them in your environment? [http://www.ibm.com/support/docview.wss?uid=nas8N1019917] for more information.
+
+o IBM Technology for Java 32 bit
+ADDENVVAR JAVA_HOME '/QOpenSys/QIBM/ProdData/JavaVM/jdkXX/32bit' 
+
+o IBM Technology for Java 64 bit
+ADDENVVAR JAVA_HOME '/QOpenSys/QIBM/ProdData/JavaVM/jdkXX/64bit' 
+
+Updates for the J9 VM are shipped as Service Releases. To determine what Service Release is applied to your system, you can set up your JDK environment to the specific JDK and then run the command java -version from a Qshell (QSH) or QP2TERM session and look for the srxx in the output as shown below:
+
+
+
+> export JAVA_HOME=/QOpenSys/QIBM/ProdData/JavaVM/jdk50/64bit
+$
+> java -version java version "1.5.0"
+Java(TM) 2 Runtime Environment, Standard Edition (build jclap64dev-20090709
+IBM J9 VM (build 2.3, J2RE 1.5.0 IBM J9 2.3 OS/400 ppc64-64 j9vmap6423sr10-20090707 (JIT enabled)
+J9VM - 20090706_38445_BHdSMr 
+JIT - 20090623_1334_r8
+GC - 200906_09)
+JCL - 20090709
+$ 
+New Service Releases are shipped in the Java Group PTFs, so it is very important and recommended that users stay current with their Java Group PTF levels as they move to and run with the J9 VM. 
+
+As clients consider moving to the 32-bit JVM, the key question is: "Will our application fit in the 32-bit environment?" To answer this question, you need to have a good understanding of the 32-bit address space and consider how memory is used by the JVM. Java heap is probably a familiar term and refers to space available for Java objects that is managed by Garbage Collection. Break Memory is a new interest with the 32-bit environment and will be the focus for the rest of this document. 
+
+What is Break Memory (also called Private Memory or Internal Memory)? 
+
+Break memory is allocated in the JVM using malloc. It has several uses, which include the following: 
+
+1. Thread Stacks 
+2. JIT 
+3. GC 
+4. JVM C/C++ code 
+5. Native Methods including customer written PASE native methods 
+
+To better understand how the memory fits together, consider the following diagram of the 32-bit address space: 
+
+This picture shows the 16 memory segments available. [/support/docview.wss?uid=nas8N1012753&amp;aid=1] 
+ 1. There are 16 segments of 256 MB each for a hard limit of 4 GB . 
+ 2. Several segments have a predefined purpose and are not available for Java heap or Break memory. 
+ 3. Once any part of a segment is used for a particular purpose, the entire segment is reserved for that purpose. 
+ 4. You reserve space for the Java heap with the max heap setting (-Xmx) at JVM startup. 2 GB is the default setting for max heap. 
+ 5. The more memory you take for Java heap (mmap), the less memory you have for Break memory (malloc). 
+
+
+Default Scenario: 
+o Max Heap is set at 2 GB. 
+- We have a total of 8 segments used for Java heap (2048 / 256 = 8) 
+o We typically have 6 segments reserved for miscellaneous items to run the JVM. 
+- Kernel, Application program text, Stack data, Shared Library text, and so on. 
+o This leaves 2 segments (512 MB) available for break memory. 
+- (16 total) - (8 java heap) - (6 reserved) = 2 
+
+Lower Max heap to 1500 Scenario: 
+o Max Heap is set to 1500 MB 
+- We have a total of 6 segments used for Java heap. (1500 / 256 = 5.8) 
+o 6 segments reserved for miscellaneous items (same as above) 
+o Leaves 4 segments (1024 MB) available for break memory 
+
+Note: Changing the Max heap to 1500 MB leaves a little room in the last segment. The IBM WebSphere Application Server software application will often mmap a couple MB of space for files. If you leave a little room in that last segment, it will use that space. If you set the max heap right on a segment boundary, the IBM WAS software application will mmap from the next segment, which takes that entire segment away from being available for break memory. 
+
+How much break memory does your application need? 
+
+It is impossible for anyone to tell you what the break memory requirements for any particular environment will be, as it depends on many things. However, we do have estimates regarding the "best case scenario" of how many threads you can safely run, depending on the maximum heap size: Heap size (MB) Max number of threads (APPROXIMATE) 100 > 5,000 1,024 > 5,000 2,048 (default maximum) 1560 3,072 576 
+How to monitor the amount of Break Memory being used by your JVM 
+
+IBM i V5R4Mx ONLY 
+At 5.4, to watch the size of internal memory, you have to go through Advanced Analysis and use the JVMINFO -memory <taskid> option. From the display, page down to find the section on internal memory: 
+
+Refer to IBM Technology for Java (J9) Serviceability - JVMINFO and How to Gather System, Java, Heap, and GcCycle Dumps in IBM i 5.4 and Later [http://www.ibm.com/support/docview.wss?uid=nas8N1014098] for more information. 
+
+This picture shows where the internal memory size is located within the JVMINFO output. [/support/docview.wss?uid=nas8N1012753&aid=2] [/support/docview.wss?uid=nas8N1012753&aid=2] 
+
+IBM i 6.1 and later 
+At 6.1, you can execute the WRKJVMJOB CL Command and then enter option 9 next to the JVM to Display Garbage Collection Information and locate the "Internal memory size" value. This displays the current amount of internal (break) memory in use. 
+
+This picture shows how WRKJVMJOB displays internal memory size. [/support/docview.wss?uid=nas8N1012753&aid=3] [/support/docview.wss?uid=nas8N1012753&aid=3] 
+
+S ymptoms of running out of Break Memory 
+
+Break memory exhaustion issues can be surfaced in many forms. Sometimes the issue can be corruption, sometimes an immediate segmentation fault, sometimes something completely unpredictable. At 5.4 we fought with this issue typically surfacing as a crash of the JVM. At 6.1, a change was made where we attempt to understand if the allocation of Break memory is successful and, if not, return and OutOfMemory exception. 
+
+At 6.1, there are two common indicators as to why you are running out of native memory: 
+
+1. 0200 (function check) vlog, downstream from a call to "<SYSCALL64>:AS_SETH" 
+2. java/lang/OutOfMemoryError instances with the text, "unable to fork native thread"  
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 Operating System IBM i 7.2 
+HISTORICAL NUMBER
+ 535123575

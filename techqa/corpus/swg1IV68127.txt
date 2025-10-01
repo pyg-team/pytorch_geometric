@@ -1,0 +1,153 @@
+Title: IBM IV68127: TDWC 8.6-FP03 HANGING - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TDWC 8.6-FP03 on Linux
+   
+   TDWC hanging:
+   11/14/14 19:47:13:326 PST] 00000031 TimeoutManage I   WTRN0124I:
+   When
+   the timeout occurred the thread with which the transaction is,
+   or was
+   most recently, associated was Thread[WebContainer : 166,5,main].
+   The
+   stack trace of this thread when the timeout occurred was:
+    com.ibm.tws.pam.security.registry.PamUnixRegistryImplNative.pam
+   _getUser
+   s(Native Method)
+    com.ibm.tws.pam.security.registry.PamUnixRegistryImplNative.get
+   Users(Pa
+   mUnixRegistryImplNative.java:399)
+    com.ibm.tws.pam.security.registry.PamUnixRegistryImplNative.get
+   Users(Pa
+   mUnixRegistryImplNative.java:375)
+    com.ibm.tws.pam.security.registry.PamUnixRegistryImpl.getUsers(
+   PamUnixR
+   egistryImpl.java:135)
+    com.ibm.ws.wim.adapter.urbridge.URBridge.search(URBridge.java:6
+   07)
+    com.ibm.ws.wim.ProfileManager.searchRepository(ProfileManager.j
+   ava:5050
+   )
+    com.ibm.ws.wim.ProfileManager.searchImpl(ProfileManager.java:11
+   55)
+    com.ibm.ws.wim.ProfileManager.genericProfileManagerMethod(Profi
+   leManage
+   r.java:321)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Cycle eWAS on both the TDWC and TWS.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  see apar description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  this apar will be fixed   8.6.0-TIV-TDWC-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV68127
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV DYN WKLD CN
+   
+   
+ * REPORTED COMPONENT ID
+   TIVOWEBUI
+   
+   
+ * REPORTED RELEASE
+   860
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-23
+   
+   
+ * CLOSED DATE
+   2015-02-09
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV DYN WKLD CN
+   
+   
+ * FIXED COMPONENT ID
+   TIVOWEBUI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R860 PSY
+   UP

@@ -1,0 +1,142 @@
+Title: IBM JR55939: INFORMATION ANALYZER APPEARS TO BE LEAVING LOCKS ON XMETA - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Download Governance Rollup 3 for Information Server Version 11.5.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042423]
+Download Governance Rollup 4 for Information Server Version 11.5.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042628]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  We are periodically having issues with Information Analyzer
+   locking xmeta tables and holding those locks for 8-10 hours and
+   eventually bringing all work on the metadata environment to a
+   halt.  I am providing an email from our DBA with the SQL
+   holding the lock as well as Oracle DB information pertaining to
+   the session.  I am also providing Version.xmls for the Engine,
+   Services, and Client tiers - there are two Client versions - 1
+   for our standard client used for MIBSvcs and the other for
+   customer clients where we haven't been able to roll some of the
+   11.5 rollup patches out.  This system was upgraded in place
+   from 11.3.  I am also providing SystemOut and Err logs from the
+   time period when the lock started and from the time when the
+   system was basically unusable.  I am making this a Sev 1
+   because when this occurs the system becomes unusable and is
+   down.  Once we clear the lock it becomes available again
+   however this is impacting our IA users and then other users
+   every night.  Please see related PMR 18471 which is related to
+   issues saving certain rules and system slowness that seems to
+   again occur on a nightly basis.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Clear  blocked sessions as DB owner or restart WAS .
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Information Analyzer appears to be leaving locks on database,
+   when a data rule definition is updated and saved.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  11.5 ru3 has the fixe
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR55939
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS INFORM ANAL
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36IA
+   
+   
+ * REPORTED RELEASE
+   B50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-16
+   
+   
+ * CLOSED DATE
+   2016-09-07
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WIS INFORM ANAL
+   
+   
+ * FIXED COMPONENT ID
+   5724Q36IA
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB30 PSY
+   UP

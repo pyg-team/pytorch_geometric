@@ -1,0 +1,63 @@
+Title: IBM Unable to retrieve the certificate from the system.  Please contact your system administrator - United States
+
+Text:
+Unable to retrieve the certificate from the system; Unable to check out system certificate; Unable to edit system certificate TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to check out System certificate that was just checked in as a PKCS12 certificate (.pfx file) or a Key file or when imported from a resource file using Resource Manager's Import utility. 
+
+SYMPTOM
+During the certificate check in or import process, the admin user has checked any of the boxes below:
+
+Auth Chain
+CRL Cache (Not available in IBM Sterling B2B Integrator 5.2.5 builds, and available in 5.2.6+ builds)
+
+
+CAUSE
+When any of the Auth Chain, or CRL Cache options are checked during the certificate check in or import process, it would prevent users from further editing the System certificate or checking out the public certificate.
+
+RESOLVING THE PROBLEM
+During certificate check in or import process, do not check the Auth Chain or CRL Cache boxes.
+
+
+However, if you did one of the following, please see the work around that follows: 
+
+Issue 1: Only the Auth Chain box is checked: 
+
+Work around: Check in both the Root and Intermediate certificates into the CA Certificate store [http://www.ibm.com/support/knowledgecenter/SS3JSW_5.2.0/com.ibm.help.ebics_client_user_525.doc/EBICS_Client_checkin_CA.html] to resolve the issue per IBM Technote 558859 [http://www-01.ibm.com/support/docview.wss?uid=swg21558859] reference. 
+
+ 
+
+Issue 2: If multiple or all of the options are checked 
+
+Work around: Export the certificate using the Resource Manager's Export utility [http://www.ibm.com/support/knowledgecenter/SS3JSW_5.2.0/com.ibm.help.resource_mgmt.doc/SI_ExportResources.html]. 
+
+Edit the file with a text editor and remove the following tag: 
+
+i.e.: 
+
+
+<VERIFY_ON_USE>XXXXX</VERIFY_ON_USE> or
+
+<VERIFY_ON_USE>XXXXX,XXXXX</VERIFY_ON_USE> or
+
+<VERIFY_ON_USE>XXXXX,XXXXX,XXXXX</VERIFY_ON_USE>
+
+Note: the above tag <VERIFY_ON_USE>.....</VERIFY_ON_USE> is generated with its values whenever the Validity, or Auth Chain, or CRL Cache boxes are checked.
+
+Save the file and use the Resource Manager's Import utility to import the certificate and update the system.
+
+Afterwards, the admin user should be able to edit or check out the system certificate.
+
+RELATED INFORMATION
+ Unable to check out system certificate after import [http://www-01.ibm.com/support/docview.wss?uid=swg21558859]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Sterling B2B Integrator 
+SI
+SB2BI
+GIS
+B2BI

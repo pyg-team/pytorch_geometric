@@ -1,0 +1,43 @@
+Title: IBM QRadar Network Security (XGS) Tuning Parameters for Certificate Authority (CA) health check - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you enable or disable outbound SSL and/or management CAs health check with tuning parameters on the IBM QRadar Network Security (XGS) appliance? 
+
+ANSWER
+The health checks for various components, including the Certificate Authority (CA) public key, are performed everyday on the XGS appliances. When a public key is expiring in 60 days, the health check will generate several events in System Events, while the agent health status is displayed as Unhealthy in SiteProtector.
+
+The XGS appliance checks two CA sets, Management Certificate Authorities and Trusted Certificate Authorities (used by Outbound SSL Inspection):
+
+
+ * To locate Management Certificate Authorities, from the Local Management Interface (LMI), click Manage System Settings > Network Settings > Management Certificate Authorities. 
+ * To locate Trusted Certificate Authorities, from LMI, click Manage System Settings > Network Settings > Outbound SSL Inspection Settings.
+
+
+To enable or disable the health check of either outbound SSL or management CA on the XGS appliance, 
+ 1. From the LMI, click Manage System Settings: Advance Tuning Parameters. 
+ 2. Set up the following values, as needed:
+     * Outbound SSL CA:
+       certs.check.expiry.cabundle=true or false
+       
+     * Management CA:
+       certs.check.expiry.mca=true or false
+    
+    
+
+
+Notes:  * true (default) for enabling the feature, while false for disabling. 
+ * When a CA expires, the health status of the XGS appliance will not change.
+
+
+
+
+
+
+[/support/docview.wss?uid=swg22008978&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg22008978&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg22008978&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg22008978&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg22008978&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg22008978&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg22008978&aid=7] [http://ibm.biz/ContactSecSupport] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Network Protection

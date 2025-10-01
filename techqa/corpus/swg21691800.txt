@@ -1,0 +1,119 @@
+Title: IBM TDWC v9.x WebSphere service not created during install on Windows - United States
+
+Text:
+DWC; TDWC; TWS; Windows Service. Windows TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ By default, a Windows service is not created for the JazzSM (DWC) profile during the installation of Tivoli Dynamic Workload Console (TDWC) v9.x. 
+
+SYMPTOM
+The Tivoli Dynamic Workload Console (TDWC) is not available after logging off a Windows system or after a reboot. 
+
+
+CAUSE
+This is the default behavior. The Windows service is not created during the installation. 
+
+ENVIRONMENT
+This happens only on Windows systems. 
+
+RESOLVING THE PROBLEM
+You can use a built-in WebSphere utility to create the service. 
+
+From a command line, cd into <WebSphere_install_dir>\AppServer\bin and run the wasservicehelper.bat script. 
+
+This will open an interactive command shell. Follow the prompts to create the service. 
+
+The following is provided only as an example: 
+
+
+
+
+
+C:\Program Files\ibm\WebSphere\AppServer\bin>wasservicehelper.bat
+
+-------------------
+Menu Options :
+-------------------
+
+1 Add new or update existing WebSphere service (minimum parameters required)
+2 Add new or update existing WebSphere service (all parameters)
+3 Remove WebSphere service
+4 Status of WebSphere service
+5 Tracing WASServices
+
+Select number next to the options
+(default 1)[q to Quit]: 1
+
+-------------------
+Profile :
+-------------------
+
+1 JazzSMProfile
+2 TWSProfile
+
+Select number next to the profile [q to Quit]: 1 (Select the JazzSMProfile)
+
+File C:\Program Files\IBM\JazzSM\profile\bin\setupcmdLine.bat IS found
+Cell in setupCmdline: JazzSMNode01Cell
+
+Node in setupCmdline: JazzSMNode01
+-------------------
+Servers :
+-------------------
+
+1 server1
+
+Hint: If the application server is running in an ND environment then only the nodeagent and deployment manager servers should be started as a Windows service.
+
+Warning: In an ND environment, starting the application server as a service may fail under certain conditions where its nodeagent is running.
+Select number next to server [q to Quit]: 1
+
+server1
+-------------------
+Service Name :
+-------------------
+Type in a Service Name (e.g hostnameNode01)
+[q to Quit]:<service name> (I used JazzSM
+
+-------------------
+Restart Policy :
+-------------------
+
+1 Automatic: Restarts this service if it fails
+2 Manual: Restart manually if service fails
+
+Select number next to restart policy
+(default 1)[q to Quit]:2
+
+-------------------
+Start Type :
+-------------------
+
+1 Automatic: Starts this service when the operating system starts or when the service is called for the first time.
+2 Manual: Requires the service to be started manually using Windows services panel.
+
+Select number next to start type
+(Default 1)[q to Quit]:1
+
+-------------------
+*** WebSphere Security ***
+-------------------
+Hint: Userid needs to be a member of an administrative role with authority to stop a server such as Admin or Operator roles
+NOTE: When WebSphere Security is enabled a userid and password is required in order to be able to stop the service
+
+Is WebSphere SECURITY enabled?
+(default N)[Y/N][q to Quit]: y
+Username : jazzsm
+
+Password: ********
+Please re-enter password for verification: ********
+
+Execute :
+
+wasservice.exe -add "JazzSM" -serverName "server1" -profilePath "C:\Program Files\IBM\JazzSM\profile" -encodeParams -stopArgs "-username jazzsm -password ******
+**" -startType automatic -restart false
+
+Execute command now?
+(default=Yes) [Y/N][q to Quit]:y 
+
+Once these steps are complete you should have a new service for created for the JazzSM profile.

@@ -1,0 +1,34 @@
+Title: IBM TIP fix pack installation failure on "java.util.zip.ZipException" - United States
+
+Text:
+TIPL2; TIPL2INST; tivoli Integrated portal; ZipException; tipCoreMigration TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installation of Tivoli Integrated Portal fix packs fail with the following error in the de_trace log:
+
+"Caused by: java.util.zip.ZipException: invalid entry compressed size (expected 1332 but got 1306 bytes)" on the tipCoreMigration.jar file 
+
+CAUSE
+A hot fix provided by TIP support was compressed with an incorrect archive utility
+
+DIAGNOSING THE PROBLEM
+Check the de_trace.log for the errors:
+
+###
+Caused by: java.util.zip.ZipException: invalid entry compressed size
+(expected 1332 but got 1306 bytes)
+###
+
+RESOLVING THE PROBLEM
+Copy the attached fixJar.sh (Unix) or fixJar.bat) file to the TIP server and execute it as follows:
+
+Unix:
+./fixJar.sh <TIP HOME> <"tipadmin" password>
+
+Windows:
+fixJar.bat <TIP HOME> <"tipadmin" password>
+
+If there are no errors, retry the fix pack installation.
+
+
+fixJar.bat [/support/docview.wss?uid=swg21615916&aid=2]fixJar.bat [/support/docview.wss?uid=swg21615916&aid=1]fixJar.sh [/support/docview.wss?uid=swg21615916&aid=4]fixJar.sh [/support/docview.wss?uid=swg21615916&aid=3]

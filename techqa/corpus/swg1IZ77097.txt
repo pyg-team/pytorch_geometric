@@ -1,0 +1,164 @@
+Title: IBM IZ77097: MARSHALEXCEPTION WHEN READING AN ENUM TYPE AFTER APPLYING APAR IZ59603 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: org.omg.CORBA.MARSHAL: Unable to read value from
+   underlying bridge : java.util.Locale.readResolve  vmcid: IBM
+   minor code: 89A.
+   .
+   Stack Trace: java.rmi.MarshalException: CORBA MARSHAL 0x4942f89a
+   No; nested exception is:
+           org.omg.CORBA.MARSHAL:
+           >> SERVER (id=5d4b53ea, host=9.122.30.171) TRACE START:
+           >>    org.omg.CORBA.MARSHAL: Unable to read value from
+   underlying bridge : java.ut
+   il.Locale.readResolve  vmcid: IBM  minor code: 89A  completed:
+   No
+           >>       at
+   com.ibm.rmi.iiop.CDRInputStream.read_value(CDRInputStream.java:2
+   204)
+           >>       at
+   _WeatherImpl_Tie.getObjectList(_WeatherImpl_Tie.java:83)
+           >>       at
+   _WeatherImpl_Tie._invoke(_WeatherImpl_Tie.java:72)
+           >>       at
+   com.ibm.CORBA.iiop.ServerDelegate.dispatchInvokeHandler(ServerDe
+   legate
+   .java:627)
+           >>       at
+   com.ibm.CORBA.iiop.ServerDelegate.dispatch(ServerDelegate.java:4
+   80)
+           >>       at com.ibm.rmi.iiop.ORB.process(ORB.java:512)
+           >>       at
+   com.ibm.CORBA.iiop.ORB.process(ORB.java:1571)
+           >>       at
+   com.ibm.rmi.iiop.Connection.respondTo(Connection.java:2719)
+           >>       at
+   com.ibm.rmi.iiop.Connection.doWork(Connection.java:2584)
+           >>       at
+   com.ibm.rmi.iiop.WorkUnitImpl.doWork(WorkUnitImpl.java:62)
+           >>       at
+   com.ibm.rmi.iiop.WorkerThread.run(ThreadPoolImpl.java:202)
+           >>       at java.lang.Thread.run(Thread.java:811)
+   .
+   The exception is thrown at the client end but the problem lies
+   at the server side.
+   Also, the readResolve MARSHAL Exception can be reported on any
+   class with a readResolve method, not necessarily the
+   java.util.Locale.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The problem is caused by the wrong objectstreamclass being used
+   for umarshalling of enum types.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   5.0.0 SR12
+   6.0.0 SR9
+   .
+   The enum unmarshalling code has been fixed to use the correct
+   objectstreamclass.
+   .
+   To obtain the fix:
+   Install build 20100731 or later
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ77097
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA 5 ORB
+   
+   
+ * REPORTED COMPONENT ID
+   620500123
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-09
+   
+   
+ * CLOSED DATE
+   2010-11-22
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IX90053 [http://www-01.ibm.com/support/docview.wss?uid=swg1IX90053]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA 5 ORB
+   
+   
+ * FIXED COMPONENT ID
+   620500123
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSN
+   UP

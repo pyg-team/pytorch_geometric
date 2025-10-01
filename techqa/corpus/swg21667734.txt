@@ -1,0 +1,69 @@
+Title: IBM How to install IBM Rational Developer for i trial from the web - United States
+
+Text:
+web install; rdi; 90 TECHNOTE (FAQ)
+
+QUESTION
+ How do I install a trial of IBM Rational Developer for i without downloading the large zip files? 
+
+CAUSE
+The Rational Developer for i trial page which provides the option of downloading zip files is at http://www.ibm.com/developerworks/downloads/r/rdi/ [http://www.ibm.com/developerworks/downloads/r/rdi/]but does not show the Web Install option or the Web Install option does not work properly or the Web Install option directs users to this technote.
+
+ANSWER
+You can do a Web install of the trial of Rational Developer for i. Only the content for the features you select will be downloaded from IBM. The product will be automatically installed at the latest fixpack level. 
+
+If you are installing on Windows, the Automated procedure is easiest. Otherwise, please follow the Manual Procedure below. 
+
+ 
+
+ 
+
+Automated Procedure (Windows only): 
+
+Download and run IBM Installation Manager that is pre-configured for the Rational Developer for i trial on Windows. 
+
+ 1. Download RationalDeveloperForiV9.6TrialWebInstall-Windows.zip from Fix Central [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7ERational&product=ibm/Rational/Rational+Developer+for+i&release=All&platform=All&function=fixId&fixids=9.6.0.0-Rational-RDI-TRIAL-WEBINSTALL&includeRequisites=1&includeSupersedes=0&downloadMethod=http&source=fc ]. 
+ 2. Unzip the file to a local folder with no spaces in the name. 
+ 3. Run AdminInstall.bat if you are an administrator and want to install it for all users on the machine. Run UserInstall.bat if you want to install just for the current user.
+
+ * Note: 
+ * 
+ * developerWorks
+ * 
+ * 
+
+
+Manual Procedure (Windows, Linux, Mac OS X): 
+
+The steps are to (1) install or update IBM Installation Manager (if it is not already installed or at correct level), (2) configure Installation Manager to use the RDi repository, and then (3) start the install. 
+
+ 1. Install or update IBM Installation Manager (1.8.7 is minimum for 9.6, 1.8.3 is minimum for 9.5 but 1.8.6 or higher is recommended).  * If you have IBM Installation Manager installed already:  1. Click File -> Preferences 
+        2. Go to the Updates preference page 
+        3. Ensure that Search for Installation Manager updates is checked. 
+       
+       
+     * If you do not have Installation Manager or Installation Manager does not update automatically, you can download Installation Manager for free. Choose the one that corresponds to your platform.  * IBM Installation Manager for Windows x86_64 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7ERational&product=ibm/Rational/IBM+Installation+Manager&release=1.8.7.0&platform=Windows&function=fixId&fixids=1.8.7.0-IBMIM-WIN64-20170706_2137&useReleaseAsTarget=true&includeRequisites=1&includeSupersedes=0&downloadMethod=http&source=fc] 
+        * IBM Installation Manager for Linux x86_64 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7ERational&product=ibm/Rational/IBM+Installation+Manager&release=1.8.7.0&platform=Linux&function=fixId&fixids=1.8.7.1-IBMIM-LINUX-X86_64-20170920_1141&includeRequisites=1&includeSupersedes=0&downloadMethod=http&source=fc] 
+        * IBM Installation Manager for Mac OS X x86_64 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7ERational&product=ibm/Rational/IBM+Installation+Manager&release=1.8.7.0&platform=Mac+OSX&function=fixId&fixids=1.8.7.0-IBMIM-MACOSX-X86_64-20170706_2137&useReleaseAsTarget=true&includeRequisites=1&includeSupersedes=0&downloadMethod=http&source=fc]  *  Note: If 'Application is damaged and can't be opened. You should move it to the Trash.' message appears, this is due to the OS X Gatekeeper feature. Seehttp://www-01.ibm.com/support/docview.wss?uid=swg21657260 [http://www-01.ibm.com/support/docview.wss?uid=swg21657260]for more information. 
+          
+          
+        * Run the Install executable if you are an administrator and want to install it for all users on the machine. Run UserInst executable if you want to install just for the current user. Review the document Installation Manager [http://www-01.ibm.com/support/docview.wss?uid=swg24043138] for more details on how to download and install Installation Manager. 
+        * If you have the 32-bit version of Installation Manager installed already (check Help>About for the Architecture) and it does not update automatically for some reason: IBM Installation Manager for Windows x86 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7ERational&product=ibm/Rational/IBM+Installation+Manager&release=1.8.7.0&platform=Windows&function=fixId&fixids=1.8.7.0-IBMIM-WIN32-20170706_2137&useReleaseAsTarget=true&includeRequisites=1&includeSupersedes=0&downloadMethod=http&source=fc] or IBM Installation Manager for Linux x86 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7ERational&product=ibm/Rational/IBM+Installation+Manager&release=1.8.7.0&platform=Linux&function=fixId&fixids=1.8.7.1-IBMIM-LINUX-X86-20170920_1141&includeRequisites=1&includeSupersedes=0&downloadMethod=http&source=fc]. 
+       
+       
+    
+    
+ 2. Specify the repository for Rational Developer for i in IBM Installation Manager.  1. In IBM Installation Manager, click File -> Preferences 
+     2. Go to the Repositories preference page 
+     3. Add a repository (note: the URLs are specifically used in IBM Installation Manager, not a web browser).  *  For Rational Developer for i 9.6: https://www.ibm.com/software/repositorymanager/com.ibm.rational.developer.ibmi.v96 For Rational Developer for i 9.5: https://www.ibm.com/software/repositorymanager/com.ibm.rational.developer.ibmi.v95 
+        
+        
+    
+    
+ 3. Click Install in IBM Installation Manager. 
+    
+    Note: You will be prompted for a user id and password. This is your IBM ID. It is required to be able to install the trial. If you do not have one, you can register for one (they are free) at developerWorks [http://www.ibm.com/developerworks/#].
+    
+
+
+Follow the prompts in Installation Manager to complete the install of Rational Developer for i. Only the content for the features you select will be downloaded from IBM.

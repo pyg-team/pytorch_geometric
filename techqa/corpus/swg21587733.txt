@@ -1,0 +1,41 @@
+Title: IBM MSSQL Server agent - Collector Status inactive - United States
+
+Text:
+collector restarting; crash; SQL Server does not exist or access denied; odbc; hart1 ; itm ; 5724B96MOTR TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Collector process keeps restarting and no data is returned on TEP workspaces for the SQL Server agent 6.2.3 
+
+SYMPTOM
+Trying to monitor a SQL Server 2008 R2 (64bit) in a Windows 2008 R2 machine using the 64bit
+version of the ITM SQL Server Agent 6.2.3 results in the agent collector process to keep restarting and no data being showed in TEP Workspaces.
+The Servers Detail workspace view says "Active", "Collection Status" is "Inactive" and all the rest is "Not Collected".
+The collector log (<hostname>_OQ_<INSTANCE>_col.out file) shows error messages for HART1 cursor: 
+
+----------------
+YPP0200T (115019) (4736)Doing prep_l_fetch for cursor HART1
+FXR5505I (115019) (4736)Calling Fetch Exit (fetchx2) for cursor HART1 at time 03/12/12 11:50:19 
+FXR4024T (115019) (4736)Call Exit koqsql, Parms -logon <logon> -password <password> -rdbms <instance> 3 master "select convert(char,len(@@version),2),'1'" .
+MSU0500I (115035) (4736)SQLSTATE: 08001, Native error: 17, Message: [Microsoft][ODBC SQL Server Driver][DBNETLIB]SQL Server does not exist or access denied.
+MSU0500I (115035) (4736)SQLSTATE: 01000, Native error: 53, Message: [Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()). 
+
+----------------
+After awhile the collector process gets closed and restarted. You can see that from the modification date of *col.out and *col.ou1 files: the date changes continuously, so indicating a file switching that should not occur if the collector were not restarted or the file maxsize were not reached.
+
+
+CAUSE
+If you are sure that the userid/password configured to connect to the SQL Server are correct and you are also able to connect to the SQL Server using the same credentials with tools like osql, then
+the problem is likely related to the protocol used by the agent to talk with the SQL Server.
+This problem can occur if the TCP/IP and the named pipes protocols are disabled in the SQL Server Network Configuration.
+
+
+RESOLVING THE PROBLEM
+Open the "SQL server Network Configuration" tool and enable the TCP/IP and the named pipes protocols for the instance and for the SQL native client configuration.
+You must do it for the 64bit or the 32bit item listed in the tool, depending if you use the 32bit or the 64bit version of the ITM SQL Server Agent.
+After enabling the protocols, recycle the SQL Server and then the ITM Agent.
+Now the agent should be able to connect successfully by using the userid you configured, provided that the credentials have at least the public role granted for each of the monitored databases.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Tivoli Monitoring SQL Server Agent V6.2.3

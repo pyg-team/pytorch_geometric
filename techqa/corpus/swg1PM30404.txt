@@ -1,0 +1,142 @@
+Title: IBM PM30404: Portal 7.0 on IBM i cannot accomadate multiple binaries as 6.1 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When customer ran:
+   ===> SBMJOB CMD(QSH CMD
+   ('/QIBM/UserData/WebSphere/AppServer/V7/ND/profiles/wcmt
+   stdev/update/updatePortal.sh -installDir
+   "/QIBM/UserData/WebSphere/AppServer/V7/
+   ND/profiles/wcmtstdev/PortalServer" -fix -fixDir
+   "/QIBM/UserData/WebSphere/AppSe
+   rver/V7/ND/profiles/wcmtstdev/update/fixes" -install -fixJars
+   PM21780 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM21780]_7.
+   0.0.0.ja
+   r')) JOB(UPDPRTL)
+   he receieved the message "Nothing to install".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Run install.sh with the parameter "-W
+   defaults.portalRootDirName=". Below is an example of performing
+   this with the Portal install media all within the directory
+   /PORTAL_ENABLED_7/I-Setup/.
+   
+   STRQSH
+   CD /PORTAL_ENABLED_7/I-Setup
+   install.sh -W
+   defaults.portalRootDirName=/QIBM/ProdData/WebSphere/PortalServer
+   /Content1
+   
+   This will result in a new profile that uses the Portal Binary
+   install /QIBM/ProdData/WebSphere/PortalServer/Content1. This
+   value can be whatever you want, but we strongly recommend it
+   keep the same directory path only a numeric change to the Portal
+   offering directory. For example, the Portal install will create
+   the default profile wp_profile that will use
+   /QIBM/ProdData/WebSphere/PortalServer/Content. When install.sh
+   is ran again, it will create the profile wp_profile1 and we
+   would suggest naming the Portal Binary directory the same
+   (/QIBM/ProdData/WebSphere/PortalServer/Content1). The profile
+   name is customizable via a response file as well, but this is
+   just an example. wp_porfile will use
+   /QIBM/ProdData/WebSphere/PortalServer/Content and wp_profile1
+   will use /QIBM/ProdData/WebSphere/PortalServer/Content1.
+   Installing fixes or upgrading one of these profiles will not
+   affect the other.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fixed in future 7.x stream
+   conform to the 7.0 multi-platform method for multiple profiles
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM30404
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-01-12
+   
+   
+ * CLOSED DATE
+   2011-11-30
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

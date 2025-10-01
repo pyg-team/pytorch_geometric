@@ -1,0 +1,195 @@
+Title: IBM PI83797: DFHUS0002 A SEVERE ERROR (CODE X'030B') HAS OCCURRED IN MODULE DFHUSAD AFTER EXEC CICS VERIFY PASSWORD. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CICS TS 5.3
+   EXEC CICS VERIFY PASSWORD with blank userid or blank password
+   cause message DFHUS0002 with code 030B and 0309 to be issued
+   and system dumps to be taken.
+   
+   
+   There are two different exception codes :
+   DUMP4
+   US 0309 USAD  *EXC* Exception-unknown FUNCTION(VERIFY_PASSWORD)
+   This US0002 is taken by using CECI to XCTL to user SIGNON
+   program with a COMMAREA supplying USERID but no PASSWORD
+   Trace shows :
+   AP E160 EXEC  ENTRY VERIFY                AT X'AD60D2B2','USERID
+   SM 0301 SMGF  ENTRY GETMAIN               2A7314E8 , 0000001E,10
+   SM 0302 SMGF  EXIT  GETMAIN/OK            00071000
+   US 0301 USAD  ENTRY VERIFY_PASSWORD       6,USERID,00000000 , 00
+   DD 0301 DDLO  ENTRY LOCATE                2A800FB0,2B2CE760,USD1
+   DD 0302 DDLO  EXIT  LOCATE/EXCEPTION      NOT_FOUND,40F1F07A ,
+   US 0301 USAD  ENTRY ADD_USER_WITH_PASSWORD NON_TERMINAL_SIGN_ON,
+   XS 0601 XSPW  ENTRY INQUIRE_PASSWORD_DATA 6,USERID,00000000 ,
+   XS FE01 XSSB  ENTRY INQUIRE_PASSWORD_DATA 6,USERID,00000000 ,
+   XS FE04 XSSB  *EXC* INQUIRE_PASSWORD_DATA/INVALID_PASSWORD,8
+   XS 0602 XSPW  EXIT  INQUIRE_PASSWORD_DATA/PASSWORD_REQUIRED,
+   US 0302 USAD  EXIT  ADD_USER_WITH_PASSWORD/PASSWORD_REQUIRED
+   US 0309 USAD  *EXC* Exception-unknown VERIFY_PASSWORD,6,USERID,
+   .
+   .
+   DUMP5 :
+   US 030B USAD  *EXC* Invalid-parameters ADD_USER_WITH_PASSWORD
+   This dump is generated with CECI as above COMMAREA has no
+   USERID no PW.
+   DFHUS0002 should not be issued when a program issues
+   EXEC CICS VERIFY PASSWORD with a zero length USERID or PASSWORD.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All.                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An EXEC CICS VERIFY PASSWORD or an      *
+   *                      EXEC CICS VERIFY PHRASE with either a   *
+   *                      blank userid or with a blank password   *
+   *                      causes message DFHUS0002 with code      *
+   *                      x'030B' or x'0309' to be issued and a   *
+   *                      system dump code US0002.                *
+   ****************************************************************
+   * RECOMMENDATION: .                                            *
+   ****************************************************************
+   In a CICS region started with SIT parameter SECVFYFREQ=USRDELAY
+   an EXEC CICS VERIFY PASSWORD or an EXEC CICS VERIFY PHRASE with
+   either a blank userid or with a blank password causes message
+   DFHUS0002 with code x'030B' or x'0309' to be issued and a system
+   dump code US0002.
+   
+   Additional Keywords: MSGDFHUS0002
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The VERIFY_PASSWORD procedure is changed to check for a
+   PASSWORD_REQUIRED condition which indicates a blank password
+   and instead treats it as an INVALID_PASSWORD condition.
+   The ADD_USER_PROCESSING procedure is changed to check for a
+   blank userid which it disallows.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI83797
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-06-29
+   
+   
+ * CLOSED DATE
+   2017-11-03
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI51672 UI51673 UI51674 UI51675
+   
+   
+
+MODULES/MACROS
+ *  DFHUSAD
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI51675 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI51675]
+   UP17/11/17 P F711
+   
+   
+ * R100 PSY UI51674 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI51674]
+   UP17/12/02 P F711
+   
+   
+ * R800 PSY UI51672 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI51672]
+   UP17/11/17 P F711
+   
+   
+ * R900 PSY UI51673 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI51673]
+   UP17/11/17 P F711
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

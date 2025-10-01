@@ -1,0 +1,28 @@
+Title: IBM Searches in IBM Content Collector and IBM eDiscovery Manager might not return correct results for Japanese documents - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ IBM Content Collector searches and IBM eDiscovery Manager compliance searches on IBM FileNet P8 with IBM Content Search Services might not return correct results for documents that contain a certain combination of Japanese characters. 
+
+CONTENT
+When using the search function in IBM Content Collector or IBM eDiscovery Manager to find documents that were archived in IBM FileNet P8 and indexed with IBM Content Search Services, some relevant documents might not be found. No error is reported.
+The problem affects users of all versions of IBM Content Collector for Email, IBM Content Collector for IBM Connections, and IBM Content Collector for Microsoft SharePoint that use IBM FileNet P8 with IBM Content Search Services 5.1 or 5.2. Users of IBM Content Collector for File Systems are not affected. Users of IBM eDiscovery Manager that search content created by IBM Content Collector are also affected.
+
+The problem is triggered by documents that contain two or more Japanese middle dot characters (Katakana Middle Dot U+30FB or Halfwidth Katakana Middle Dot U+FF65) that are surrounded by white space characters (for example blanks or tabs) on both sides. These character combinations cause the IBM Content Search Services indexer to index the documents incorrectly, which leads to incorrect results when searching the archive with a FileNet P8 Content Engine search client or API. Documents that are indexed with IBM Content Collector P8 Content Search Services Support might be affected, because this component uses the Content Search Services indexer. Documents that do not contain these Japanese special characters surrounded by white space are not affected. 
+
+Not all queries for these documents are affected, because the problem depends both on the exact XML structure that Content Search Services Support generates and on the exact query. Depending on where in the document a matching term occurs, the problem might not occur. There is no accurate way to identify the queries that would or would not work.
+
+To fix the problem:
+
+
+ 1. Apply an IBM Content Search Services Interim Fix to ensure that the problem does not occur for new documents and that all documents that are indexed after the fix is applied can be searched correctly. For IBM FileNet P8 version 5.1 the interim fix is 5.1.0.0-P8CSS-IF005. For IBM FileNet P8 version 5.2 the interim fix is 5.2.0.0-P8CSS-IF002. 
+ 2. After installing the fix, reindex existing documents so that they can be searched correctly. IBM Content Collector provides a special reindexing tool for this purpose. For detailed information, see the instructions for using the tool. To get access to this tool, contact IBM support.
+
+
+Only affected documents must be reindexed. However, there is no accurate way to identify exactly which documents are affected and limit the reindexing tool to reindex only this subset. Therefore, you should balance risk and effort for reindexing. 
+
+The reindexing tool supports reindexing all of the content, which is the only way to ensure that all errors are corrected. You should use this mode if your content is mostly in Japanese. However, as reindexing takes a long time, the tool also supports a heuristic approach. In this mode, the tool searches for common Japanese words and characters to identify documents that contain some Japanese content. This mode might not detect all affected documents, but if your content is only partly in Japanese, you might want to use this mode as it provides a good balance between risk and effort. RELATED INFORMATION
+ 5.1.0.0-P8CSS-IF005 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=FileNet+Product+Family&product=ibm/Information+Management/FileNet+Content+Search+Services&release=All&platform=All&function=fixId&fixids=5.1.0.0-P8CSS-IF005]
+5.2.0.0-P8CSS-IF002 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=FileNet+Product+Family&product=ibm/Information+Management/FileNet+Content+Search+Services&release=5.2.0.0&platform=Windows&function=fixId&fixids=5.2.0.0-P8CSS-IF002]

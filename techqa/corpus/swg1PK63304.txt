@@ -1,0 +1,128 @@
+Title: IBM PK63304: In Design Mode tabbed panel clips content based on size - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Design Mode the Tabbed panel will truncate its content based
+   on the width specified for the tabbed panel. This makes it hard
+   to work on a dataTable whose width is wider than size (in design
+    mode anyway)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Visualizer for tabbed panels was using a SPAN element with
+   size set according to width and height attributes and
+   overflow style set to auto. While this worked fine in
+   Preview, Design mode does not support "overflow" styles and
+   hence the content of the tab was clipped.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Visalizer was fixed not to limit SPAN's size in Design mode.
+   
+   Now, In Design mode, the tab expands to accommodate the
+   entire content, while maintaining the miminum size specified
+   by width and height attributes.
+   
+   Preview mode acts as before, showing a horizontal scrollbar
+   when content doesn't fit into specified size.
+   
+   Delivered in Rational Application Developer V7007 update.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK63304
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL BUS DEV EX
+   
+   
+ * REPORTED COMPONENT ID
+   5724S5000
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-26
+   
+   
+ * CLOSED DATE
+   2008-06-27
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL BUS DEV EX
+   
+   
+ * FIXED COMPONENT ID
+   5724S5000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSN
+   UP

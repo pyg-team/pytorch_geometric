@@ -1,0 +1,55 @@
+Title: IBM Leading spaces are removed from message that is sent and received by DWA users - United States
+
+Text:
+leading spaces; lead; leading; spaces; removed; plain text; e-mail; email; message; dwa; inotes; html; cd to mime conversion; convert; html; APAR LO00928; APAR LO22075; APAR LO05732 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Leading spaces are removed from a plain text message that is sent and received by Lotus Domino Web Access (DWA) users.
+
+
+Example:
+
+1. Open the DWA mail database and the mail file's preferences from the web browser.
+
+2. Change the default editor to "Plain text" and select "Plain text" in "Send message in this format."
+
+3. Save the preferences.
+
+4. Create a new mail message in the DWA mail database.
+
+5. Input the following text in the Body field.
+
+
+ * one space
+ * 
+ * two spaces
+ * 
+ * three spaces
+ * 
+ * four spaces
+
+
+6. Send the message to another DWA user. 
+
+When the recipient opens the message, the leading spaces have been removed and the format appears differently than it did in the original message. When opened in Lotus Notes, the content looks correct. 
+
+CAUSE
+This problem is caused by the conversion between MIME to CD, then CD to HTML. When DWA sends the message, it converts a plain text MIME to CD during routing. During the conversion, the spaces are converted to the left margin in CD format. The web server must then convert the rich text to HTML for display. Since the web server's handling of rich text margins is only approximate, there is an undesirable rendering.
+
+
+
+RESOLVING THE PROBLEM
+This issue was reported to Quality Engineering as SPR# KKOO5UYDNJ and was fixed in Notes and Domino 8.5.1. 
+
+If you haven't yet upgraded, you can work around this issue by using the server configuration variable setting, MIME_KEEP_TEXT_PLAIN_FORMAT=1, in the notes.ini file. This will prevent the MIME to CD translation from converting the leading spaces into margin specifications. 
+
+
+NOTE: This notes.ini parameter is only available in Notes/Lotus Domino 6.0.5/6.5.4 and later releases. 
+
+Refer to the Upgrade Central [http://www.ibm.com/software/lotus/support/upgradecentral/index.html] site for details on upgrading Notes/Domino. 
+
+
+
+
+ * 
+ *

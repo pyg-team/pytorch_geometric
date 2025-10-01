@@ -1,0 +1,22 @@
+Title: IBM How to set Query Studio to output reports as PDF or Excel by default - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to run a report directly in Excel or PDF from Query Studio instead of running it in HTML first then selecting Excel or PDF output method. 
+
+RESOLVING THE PROBLEM
+This is not possible due to its interactive nature but the default output method can be set when the report is saved and run from within Cognos Connection.
+
+Steps:  1. Go to where the report is saved in Cognos Connection and click on the "Set Properties" button (or click "More..." and then click Set Properties). 
+ 2. Click on the "Query" tab. 
+ 3. Change the "Default Action" to "Run the report"
+ 4. Check the "Override the default values" button. This will offer the option to specify the default format. 
+ 5. Select the desired output format and click OK
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Report Studio 
+HISTORICAL NUMBER
+ 1024453

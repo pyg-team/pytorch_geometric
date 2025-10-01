@@ -1,0 +1,184 @@
+Title: IBM PK81569: Documentation: WebSphere Portal 6.1 and 6.1.0.1 Context Root Change Instructions Incomplete - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Affected URLs:
+   
+   com.ibm.wp.ent.doc_v6101/config/cfg_intr.html
+   com.ibm.wp.ent.doc/config/cfg_intr.html
+   
+   DESCRIPTION OF ISSUE:
+   
+   A default WebSphere Portal installation will contain a context
+   root of /wps/.  Installations may customize the context root to
+   another value (e.g. /myrcontextroot/). When customizing the
+   context root, if an IBM HTTP Server (IHS) is configured, the
+   plugin for the web server must be regenerated.  This is
+   documented correctly.  However, a step is missing after running
+   the Configuration Task "modify-servlet-path" and before
+   regenerating the IHS plugin.  As a result, not all applications
+   will be accessible via the IHS server after regenerating the
+   plugin.
+   
+   TEXT READS (IF APPLICABLE):
+   
+   Perform the following steps if you are using an external Web
+   server, such as an HTTP Server:
+   
+      1. Enter the following commands to configure the WebSphere
+   Portal URI:
+   * UNIX: ./ConfigEngine.sh modify-servlet-path
+   -DPortalAdminPwd=password -DWasPassword=password
+   * Windows: ConfigEngine.bat modify-servlet-path
+   -DPortalAdminPwd=password -DWasPassword=password
+   * i5/OS: ConfigEngine.sh modify-servlet-path
+   -DPortalAdminPwd=password -DWasPassword=password
+   Note: Check the output for any error messages before proceeding
+   with the next task. If any of the configuration tasks fail,
+   verify the values in the wkplc.properties and
+   wkplc_comp.properties files.
+      2. Regenerate the HTTP plug-in in WebSphere Application
+   Server. If you are using a remote Web server, copy the generated
+   plugin-cfg.xml file to the remote server.
+   
+   TEXT SHOULD READ:
+   
+   Perform the following steps if you are using an external Web
+   server, such as an HTTP Server:
+   
+      1. Enter the following commands to configure the WebSphere
+   Portal URI:
+   * UNIX: ./ConfigEngine.sh modify-servlet-path
+   -DPortalAdminPwd=password -DWasPassword=password
+   * Windows: ConfigEngine.bat modify-servlet-path
+   -DPortalAdminPwd=password -DWasPassword=password
+   * i5/OS: ConfigEngine.sh modify-servlet-path
+   -DPortalAdminPwd=password -DWasPassword=password
+   Note: Check the output for any error messages before proceeding
+   with the next task. If any of the configuration tasks fail,
+   verify the values in the wkplc.properties and
+   wkplc_comp.properties files.
+   
+   
+   ==> 2.  On the HTTP Server, navigate to <plugin_root>/bin and
+   find the configurewebservername(.bat|.sh) script where
+   webservername is the web server definition name you defined
+   previously when configuring the HTTP Server for WebSphere Portal
+   (e.g. configurewebserver1.bat).
+   a.  If utilizing Portal in a standalone configuration, execute
+   the configurewebserver(.bat|.sh) script on the IBM HTTP Server.
+   b.  If utilizing Portal in a clustered configuration, copy the
+   configurewebserver(.bat|.sh) script from the <plugin root>/bin
+   directory to the <dmgr_profile>/bin directory on your Deployment
+   Manager server.
+   Execute the configurewebserver(.bat|.sh) file on the Deployment
+   Manager server.
+   
+   
+      3. Regenerate the HTTP plug-in in WebSphere Application
+   Server. If you are using a remote Web server, copy the generated
+   plugin-cfg.xml file to the remote server.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  See above corrections.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Documentation corrections will be made in the next refresh of
+   the information center.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  See above.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK81569
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-27
+   
+   
+ * CLOSED DATE
+   2009-03-03
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,401 @@
+Title: IBM HD28790: UPGRADE_511CUSTO SH CHECKIIVALIDITY KO ON 103000  IIS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Upgrade_511custo sh CheckIIValidity KO on
+   103000  IIs
+   .
+   DESCRIPTION:
+   ----------
+   When migrating a R10 production database
+   containing more than 103000
+   ItemInstances
+   within the same PRC the process CheckIIValidity
+   fails after an
+   excessive time of 32 hours 27 minutes.
+   .
+   SCENARIO :
+   ---------
+   1) Migrate from R10 to R11 a Customized database
+   with more than 103000
+   Item Instances
+   using AIX operating system to run the migration
+   script.
+   2) In the step SECU CheckIIValidity, the programs
+   fails. and
+   Update_511custo.sh is interupted.
+   .
+   RESULT :
+   -------
+   Program fails with return code 110.
+   .
+   EXPECTED RESULT :
+   ---------------
+   The CheckIIValidity program should complete
+   migration without error and
+   should run
+   faster. It should be possible to select only the Item
+   Instances without
+   corresponding Assembly
+   relation instead of verifying the existence of ARs
+   for all IIs. This
+   can be acheived and is
+   possible using SQL only.
+   .
+   INVESTIGATION BOARD :
+   ------------------
+   .
+   Is it possible that program fails since it has possibly
+   exceeded 1GB Memory space allowed
+   by the operrationg system.
+   .
+   ERROR MESSAGE(S) :
+   -----------------
+   .
+   *CDM/STEP* Error on verify, call
+   UnConfirm
+   +================================
+   =============+
+   ! An unhandled exception occurred in CATIA V5 !
+   +================================
+   =============+
+   .
+   The error is : Assertion
+   failed:AssertionFailed:RC==S_OK in
+   File/u/lego/CXR11rel
+   /BSF/./VPMTpImplSDM/TPUpgradeServices.m/src/C
+   ATVpmTPUpgradeServices.cpp
+   at line
+   820
+   .
+   -> Error logged
+   in /home/mb082637/CATTemp/error.log
+   .
+   -> Abend file
+   is /home/mb082637/CATTemp/AbendTrace_mb082
+   637_d260_h02m33_0.txt
+   .
+   SEVERITY JUSTIFICATION :
+   --------------------
+   Required to migrate BA production database from
+   V5R10 to V5R13.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Upgrade_511custo sh CheckIIValidity KO on 103000  IIs
+   Upgrade_511custo sh CheckIIValidity KO on
+   103000  IIs
+   .
+   DESCRIPTION:
+   ----------
+   When migrating a R10 production database
+   containing more than 103000
+   ItemInstances
+   within the same PRC the process CheckIIValidity
+   fails after an
+   excessive time of 32 hours 27 minutes.
+   .
+   SCENARIO :
+   ---------
+   1) Migrate from R10 to R11 a Customized database
+   with more than 103000
+   Item Instances
+   using AIX operating system to run the migration
+   script.
+   2) In the step SECU CheckIIValidity, the programs
+   fails. and
+   Update_511custo.sh is interupted.
+   .
+   RESULT :
+   -------
+   Program fails with return code 110.
+   .
+   EXPECTED RESULT :
+   ---------------
+   The CheckIIValidity program should complete
+   migration without error and
+   should run
+   faster. It should be possible to select only the Item
+   Instances without
+   corresponding Assembly
+   relation instead of verifying the existence of ARs
+   for all IIs. This
+   can be acheived and is
+   possible using SQL only.
+   .
+   INVESTIGATION BOARD :
+   ------------------
+   .
+   Is it possible that program fails since it has possibly
+   exceeded 1GB Memory space allowed
+   by the operrationg system.
+   .
+   ERROR MESSAGE(S) :
+   -----------------
+   .
+   *CDM/STEP* Error on verify, call
+   UnConfirm
+   +================================
+   =============+
+   ! An unhandled exception occurred in CATIA V5 !
+   +================================
+   =============+
+   .
+   The error is : Assertion
+   failed:AssertionFailed:RC==S_OK in
+   File/u/lego/CXR11rel
+   /BSF/./VPMTpImplSDM/TPUpgradeServices.m/src/C
+   ATVpmTPUpgradeServices.cpp
+   at line
+   820
+   .
+   -> Error logged
+   in /home/mb082637/CATTemp/error.log
+   .
+   -> Abend file
+   is /home/mb082637/CATTemp/AbendTrace_mb082
+   637_d260_h02m33_0.txt
+   .
+   SEVERITY JUSTIFICATION :
+   --------------------
+   Required to migrate BA production database from
+   V5R10 to V5R13.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON ENOVIA
+   VERSION 5 RELEASE 15 GA level.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED
+   ON V5R14SP03.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED
+   ON V5R13SP08.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED
+   ON V5R12SP09.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED
+   ON V5R11SP12.
+   .
+   Incident Diagnosis
+   CheckIIValidity Tool enhancement to have the list
+   of all the PRC
+   .
+   Correction Explanation
+   N/A
+   .
+   Answer and By-Pass
+   N/A
+   .
+   Documentation Reference
+   Program Directory R11SP12
+   lca_intall_licensing.htm
+   Automated Customized Migration from ENOVIA LCA
+   V5R10 to ENOVI
+   .
+   MODIFICATION:
+   The following document was updated located in the
+   R11SP12 Program Directory to comply with this RI
+   Automated Customized Migration from ENOVIA LCA
+   V5R10 to ENOVIA LCA V5R11
+   (Upgrade511_custo.sh)
+   .
+   Document Update:
+   Certain conditions in the data may require a
+   preliminary clean-up step before PSExpandString
+   can run successfully. If the SECU step fails with
+   errors indicating that PSExpandString has failed,
+   follow these steps:
+   a. restore the database back to R10
+   .
+   b. create a file in your  TMP directory (where the
+   internal log is being written) with the name
+   CHECKVALIDITY. This file will serve as a flag to
+   signal the migration process that the preliminary
+   clean-up step needs to be executed. It is normally
+   omitted to save time.
+   .
+   c. Re-run the migration with the  Step ALL
+   parameter
+   .
+   Under some conditions with databases having large
+   volumes of data, the CHECKVALIDITY step
+   executed as described above in Step 7 may fail
+   with an error indicating  out of memory.  If that
+   happens, it can be run manually outside of the
+   migration utility on smaller units of data, using the
+   following instructions:
+   (1) cd to the install path  /code/command
+   directory
+   .
+   (2) change the user and password" in the lines
+   below to be the EV5 Admin user and password and
+   the ${TMP_DIR} to be the path to the  TMP
+   directory (where your migration internal log is
+   located), use the same value for  env as you used
+   for EnvName in the Migration, then run the
+   following commands:
+   .
+   export ENOINTRO=1
+   .
+   export ENONGS=1
+   .
+   ./catstart -run -env ENOVIA_LCA.V5R11.B11 -
+   direnv ${TMP_DIR}/CUSTODIC11 -
+   s "CheckIIValidity -user ENOADM -pwd password -
+   printPRC -marker MIGR1011" > /tmp/PRC.list
+   .
+   (3) from the  /code/command directory, run the
+   script below , after making the same changes as in
+   (2) above, run the following commands in a Unix
+   script (be sure to preserve all the quotation marks
+   in the command lines exactly as they are written
+   below):
+   .
+   export ENOINTRO=1
+   .
+   export ENONGS=1
+   .
+   grep MIGR1011 /tmp/PRC.list|sed 's/MIGR1011/"/g'
+   > /tmp/PRC.list2
+   .
+   exec 4< /tmp/PRC.list2
+   .
+   while read -u4 PRC
+   .
+   do
+   .
+   ./catstart -run -env ENOVIA_LCA.V5R11.B11 -
+   direnv ${TMP_DIR} /CUSTODIC11 -
+   s "CheckIIValidity -user ENOADM -pwd password -
+   delete_instance -prc "${PRC}" "
+   .
+   done
+   .
+   (4) After #3 completes, run Upgrade511_custo.sh
+   with the option "-Step SECU" (instead of -Step ALL)
+   .
+   (5) run the rest of the migration one step at a time,
+   using the command line with the -Step option for
+   each step (instead of -Step ALL):
+   .
+   -Step SYMB
+   .
+   -Step ACTION
+   .
+   -Step PSM
+   .
+   -Step GRAPH
+   .
+   -Step CATPCE
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD28790
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA LCA AIX
+   
+   
+ * REPORTED COMPONENT ID
+   569101700
+   
+   
+ * REPORTED RELEASE
+   511
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-10-05
+   
+   
+ * CLOSED DATE
+   2004-11-15
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ENOVIA LCA AIX
+   
+   
+ * FIXED COMPONENT ID
+   569101700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R511 PSN
+   UP
+   
+   
+ * R512 PSN
+   UP
+   
+   
+ * R513 PSN SP51308
+   UP04/12/29 N 1000
+   
+   
+ * R514 PSN SP51403
+   UP04/12/02 I 1000

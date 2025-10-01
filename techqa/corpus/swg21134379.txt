@@ -1,0 +1,62 @@
+Title: IBM How to generate a forward declaration using the Rational Rose ANSI C++ Add-in - United States
+
+Text:
+forward declaration ; association ; dependency ; reference; 1134379 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to generate a forward declaration using the Rational Rose ANSI C++ Add-in 
+
+RESOLVING THE PROBLEM
+QUESTION: 
+
+How to generate a forward declaration using the ANSI C++ Add-in?
+
+
+ANSWER:
+
+The following example describes how to generate a forward declaration for a class (eg. a pointer ), either in the header for or within the implementation. 
+
+eg. a forward reference to class B inside the method body of class A
+
+//A.h 
+
+class A { void op(); }; 
+
+//A.ccp 
+
+class B; // this is the forward reference
+
+A::op() { 
+B* myB_ptr; 
+}; 
+
+This are the steps using the ANSI C++ Add-In to get the code above:
+
+1. Create class A and class B. Create an operation inside class A where the local variable of type B* is needed. In the A.cpp file the forward reference to class B will be needed;
+
+2. Create a component for class A and one for class B and assign each class to their respective components.
+
+3. Right click on the A component and open the standard specification dialog. From the ANSI C++ tab choose InitialBodyIncludes and add "class B;" to it.
+
+Please note that this will be taken into account only during the first code generation, if the file A.cpp did not yet exist.
+
+The following code will be generated in the A.cpp file:
+
+
+class B; 
+
+#include "A.h" 
+
+//##ModelId=3C1A9B2B00B3 
+void A::op() 
+{
+} 
+
+Notes :
+I.If such a statement is added to the code, subsequent forward engineering will leave it in place.
+II.For a declaration in the header file, the InitialHeaderIncludes property should be used.
+
+ 
+
+HISTORICAL NUMBER
+ 24578

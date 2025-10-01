@@ -1,0 +1,49 @@
+Title: IBM Edit Result Set portlet : "An unknown error has occurred" - United States
+
+Text:
+TPAESTARTCENTER maximo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides info about the "An unknown error has occurred message" that you may get when you are editing Result Set portlets in Maximo 
+
+SYMPTOM
+You may face a scenario where you have a signature setup to determine whether the Available Queries, Column Display tabs are visible in the on the Result Set tab for a particular Security Group record. However, if you log into Maximo as an user from that particular Security Group and try to edit a Result Set portlet, to add some query (tab which will not be available) and click on either Cancel or Save, you will get an error message as below :
+
+BMXAA4214E - An unknown error has occurred.
+
+
+CAUSE
+You have a signature setup to determine whether the Available Queries, Column Display tabs are visible in the on the Result Set Setup app, but actually you will not need to do that in the Security Groups app because the RELATTROFF condition is needed for the Sigoption called "Disable Related Attribute Configuration".
+
+RESOLVING THE PROBLEM
+What you need to do is to grant access to the security group for the "Disable Related Attribute Configuration", against Result Set Setup app in Security Groups , and then create a conditional property in the Application Designer canvas for the Result Set Setup app (RSCONFIG)
+
+This will prevent the error message that you were getting:
+BMXAA4214E - An unknown error has occurred.
+
+In order to solve that, here is a solution :
+
+1- Define conditional expression, as below :
+
+Open Administration - Conditional Expression Manager application. 
+Create the following conditional expression.
+Condition: TESTCOND
+Description: TEST condition
+Type: EXPRESSION
+Expression: 1=1
+Always Evaluate: true
+
+2- Configure RSCONFIG application
+Open System configuration - Platform Configuration - Applications Designer application and edit the RSCONFIG application. 
+Select the "Available Queries" or "Column Displays" tab and open the properties window. 
+Click on Configure Conditional Properties button (it is in the Advanced tab) and configure it as follows.
+
+Signature Option: RELATTROFF 
+Security Group: BG1 (BG1 is my security group used for this test)
+Condition for Security Group BG1 : TESTCOND
+Property values when condition PRAPPR is true: Property=display - Value=false
+
+3- Save the RSCONFIG application and open Maximo logged as an user from that security group.
+
+
+When you try to edit the portlet this time, the "Available Queries" and "Column Displays" tab will be hidden, and no error will pop up when you click on Save or Cancel button.

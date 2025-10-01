@@ -1,0 +1,47 @@
+Title: IBM Xmeta Repository on Oracle ORA-01012 errors seen in SystemOut.log - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DataStage client may hang, jobs cannot be edited/saved/compiled. 
+
+SYMPTOM
+Users experience sporadic hangs in the DataStage Designer client, a WebSphere Application Server restart is required to resolve the issue.
+
+
+CAUSE
+ORA-01012 errors are seen the WebSphere Application Server SystemOut.log. A known cause of this error is that the connections from the WebSphere Application Server to the xmeta repository are pooled. The default minimum connections is 1. When the domain and xmeta repository are on different servers and there is a firewall between them the firewall can periodically kill any existing idle connections. This results in there being a connection at the WebSphere Application Server end which is actually terminated at the xmeta repository end. When the next request comes from the client, this connection is used and the failure results.
+
+ENVIRONMENT
+Oracle hosted xmeta repository remote from the domain server.
+
+DIAGNOSING THE PROBLEM
+Check the WebSphere Application Server SystemOut.log for errors such as 
+
+
+
+
+[5/14/13 12:20:29:452 EST] 0000002d MCWrapper E J2CA0081E: Method destroy failed while trying to execute method destroy on ManagedConnection WSRdbManagedConnectionImpl@1187d10 from resource No longer available. Caught exception: com.ibm.ws.exception.WsException: DSRA0080E: An exception was received by the Data Store Adapter. See original exception message: [IBM][Oracle JDBC Driver][Oracle]ORA-01012: not logged on
+. with SQL State : HY000 SQL Code : 1012
+at com.ibm.isf.jdbc.oraclebase.dda4.b(Unknown Source)
+at com.ibm.isf.jdbc.oraclebase.dda4.a(Unknown Source)
+at com.ibm.isf.jdbc.oraclebase.dda3.b(Unknown Source)
+at com.ibm.isf.jdbc.oraclebase.dda3.a(Unknown 
+
+
+
+
+
+
+
+RESOLVING THE PROBLEM
+Restarting WAS initially will resolve the problem but will not permanently resolve this. What is required to do this is set the minimum pooled connections from the WebSphere Application server to the xmeta repository to 0 ensuring that no connections can be terminated by the firewall, when the next request is issued by the client a new connection is established. 
+
+ 
+
+In order to set this, in the WebSphere Administration Console navigate to Resources->JDBC->Data sources->ASB JDBC DataSource->Connection pool properties and change Minimum connections from 1 to 0. 
+
+ 
+
+Save the changes and then restart the WebShere Application Server

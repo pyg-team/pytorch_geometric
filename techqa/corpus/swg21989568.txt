@@ -1,0 +1,27 @@
+Title: IBM WTX/ITX map gives different results if the XML is formatted (pretty-printed) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using an IBM WebSphere Transformation Extender (WTX) / IBM Transformation Extender (ITX) map to transform XML, the results may differ is the XML has been formatted using the Eclipse XML formatting function.
+
+
+
+The Eclipse XML formatting function (Ctrl+Shift+F) will sometimes introduce TAB characters into data areas of the XML (between the XML tags). This can radically alter the behaviour of a map (using text comparison functions for example). 
+
+SYMPTOM
+Output of the map may be different when the input XML is formatted using Eclipse with the Ctrl+Shift+F shortcut
+
+
+CAUSE
+This is a problem in the Eclipse XML formatter
+
+ENVIRONMENT
+WTX/ITX Design Studio on the Windows Platform
+
+DIAGNOSING THE PROBLEM
+A review of the XML before and after formatting will show Data discrepancies
+
+RESOLVING THE PROBLEM
+Use an alternative solution for formatting the XML if required.

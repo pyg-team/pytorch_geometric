@@ -1,0 +1,30 @@
+Title: IBM Case Analyzer event processing stops with exception: "java.sql.SQLException: ORA-12899: value too large for column" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ With Case Analyzer store created on Oracle database, event processing stops with the below exception when there are multi-byte characters in the string UDF values.
+
+Exception: 
+Publisher b2bc5c0a [Error] Unexpected exception occurred while processing task CAPublisher for store <CA_store_name>.; Exception: java.sql.SQLException: ORA-12899: value too large for column <CA_schema_name>."D_DMDATAFIELD_COMMEN148"."COMMENTS" (actual: 66, maximum: 64) 
+
+CAUSE
+Case Analyzer dimension tables are created with VARCHAR2(64 BYTE) which expects one byte per character. This can be seen in the DDL of dimension table. 
+
+Example:
+CREATE TABLE <CA_schema_name>.D_DMDATAFIELD_COMMEN148
+(
+COMMENTS_KEY NUMBER(19),
+COMMENTS VARCHAR2(64 BYTE)
+)
+
+Here D_DMDATAFIELD_COMMEN148 is the UDF dimension table and “COMMENTS” is the UDF column.
+
+
+RESOLVING THE PROBLEM
+Alter the UDF table with the statement similar to below according to CA environment, to change the datatype to VARCHAR2(64 CHAR) which will accommodate multi-byte characters. 
+
+
+Example:
+ALTER TABLE D_DMDATAFIELD_COMMEN148 MODIFY (COMMENTS VARCHAR2(64 CHAR));

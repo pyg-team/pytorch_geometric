@@ -1,0 +1,73 @@
+Title: IBM Failed to lookup WCDataSource at startup - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The following error occurs at server startup: 
+
+SYMPTOM
+[3/12/15 14:51:27:467 EDT] 00000015 SystemOut O ConfiguratorBean: initialize data source information
+[3/12/15 14:51:27:468 EDT] 00000015 SystemOut O ConfiguratorBean: java:comp/env/WCDBType =DB2
+[3/12/15 14:51:27:472 EDT] 00000015 E Failed to lookup up the data source java:comp/env/jdbc/WCDataSource
+[3/12/15 14:51:27:600 EDT] 00000015 SystemOut O WC.SERVER: Enterprise 7.0.0.6 / 
+...
+...
+[3/12/15 14:51:31:873 EDT] 00000015 RemoteExcepti E CNTR0020E: EJB threw an unexpected (non-declared) exception during invocation of method "findAllKeys" on bean "BeanId(WC_demo#Enablement-BaseComponentsData.jar#ServerJDBCHelper, null)". Exception data: java.lang.NullPointerException
+at com.ibm.commerce.base.helpers.BaseJDBCHelper.makeConnection(BaseJDBCHelper.java:644)
+at com.ibm.commerce.base.objects.ServerJDBCHelperBean.findAllKeys(ServerJDBCHelperBean.java:708)
+at com.ibm.commerce.base.objects.EJSRemoteStatelessServerJDBCHelper_1e86a748.findAllKeys(EJSRemoteStatelessServerJDBCHelper_1e86a748.java:1101)
+at com.ibm.commerce.base.objects._ServerJDBCHelper_Stub.findAllKeys(_ServerJDBCHelper_Stub.java:615)
+at com.ibm.commerce.base.objects.ServerJDBCHelperAccessBean.findAllKeys(ServerJDBCHelperAccessBean.java:210)
+at com.ibm.commerce.key.ECKeyManager.initializeKeys(ECKeyManager.java:130)
+at com.ibm.commerce.key.ECKeyManager.<init>(ECKeyManager.java:35)
+at com.ibm.commerce.key.ECKeyManager.singleton(ECKeyManager.java:172)
+at com.ibm.commerce.base.objects.ConfiguratorBean.initialize(ConfiguratorBean.java:167)
+at com.ibm.commerce.base.objects.EJSRemoteStatelessConfigurator_078f72ac.initialize(EJSRemoteStatelessConfigurator_078f72ac.java:64)
+at com.ibm.commerce.base.objects._Configurator_Stub.initialize(_Configurator_Stub.java:283)
+at com.ibm.commerce.base.objects.ConfiguratorAccessBean.initialize(ConfiguratorAccessBean.java:112)
+...
+...
+
+
+
+In particular, note that the tracing above is not reporting the Commerce version registered in the database, because it was not able to make a connection. Ideally, the trace should read similar to:
+
+[3/12/15 16:02:51:577 EDT] 00000014 SystemOut O WC.SERVER: Enterprise 7.0.0.6 / Database: ENT 7.0.0.6
+
+
+RESOLVING THE PROBLEM
+This problem can arise if you have not properly configured the JNDI references for the WebSphere Commerce EJBs at deployment. To check the JNDI references currently being used by this JAR, open the following file:
+<WAS_profiledir>/config/cells/WC_demo_cell/applications/WC_demo.ear/deployments/WC_demo/Enablement-BaseComponentsData.jar/META-INF/ibm-ejb-jar-bnd.xmi
+
+
+The JNDI name for the ConfigureHome bean is defined here:
+
+<ejbBindings xmi:id="Configurator_Binding" jndiName="ejb/com/ibm/commerce/base/objects/ConfiguratorHome">
+<enterpriseBean xmi:type="org.eclipse.jst.j2ee.ejb:Session" href="META-INF/ejb-jar.xml#Configurator"/>
+<resRefBindings xmi:id="ResourceRefBinding_1398288424675" jndiName="jdbc/WebSphere Commerce DB2 DataSource demo">
+<bindingResourceRef href="META-INF/ejb-jar.xml#ResourceRef_1040246866482"/>
+</resRefBindings>
+</ejbBindings>
+
+
+Most likely, the JNDI name here does not correctly reflect the datasource you have configured on the server.
+
+Important: Do not manually edit this file nor other deployment descriptors within EJBs. These references are generated dynamically when the application is deployed.
+
+To rectify the problem, either:
+
+
+ 1. Create the proper datasource with a matching JNDI name (if it doesn't already exist) in the WebSphere Application Server Administration Console
+    
+    Resources > JDBC > Data sources
+    
+    - or -
+    
+    
+ 2. Re-deploy the WebSphere Commerce application and specify the correct JNDI mappings at deploy time. For instance, if you are deploying the entire application all at once using an exported EAR file in the Administration Console, the deployment wizard will prompt you for the correct JNDI mappings. If you are deploying using the WCBD utility, ensure the correct datasource is set in the datasource.jndi.name property in your wcbd-deploy.properties file.
+    
+    Server deployment configuration properties [http://www.ibm.com/support/knowledgecenter/SSZLC2_7.0.0/com.ibm.commerce.developer.doc/refs/rdewcbdsvrdeployprop.htm?lang=en]
+
+RELATED INFORMATION
+ WebSphere Commerce Build and Deployment tool [http://www-01.ibm.com/support/knowledgecenter/SSZLC2_7.0.0/com.ibm.commerce.developer.doc/concepts/cdewcbdoverview.htm?lang=en]

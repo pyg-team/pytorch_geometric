@@ -1,0 +1,20 @@
+Title: IBM Increasing Java heap size in IBM Websphere for Altas Application - United States
+
+Text:
+Atlas Timer task My Atlas alert TECHNOTE (FAQ)
+
+QUESTION
+ How do you increase Java heap size in IBM Websphere for Atlas application? 
+
+CAUSE
+The Notice Sender timer task stopped working because of insufficient heap size
+
+ANSWER
+ 
+
+ 1. Review Atlas Knowledge Center link and identify the current heap size (https://www.ibm.com/support/knowledgecenter/SSXPJK_6.0.3/com.ibm.aps.install.doc/apsin25.htm [https://www.ibm.com/support/knowledgecenter/SSXPJK_6.0.3/com.ibm.aps.install.doc/apsin25.htm]) 
+ 2. Confirm that you have enough memory on the server hosting Websphere application server 
+ 3. Change Initial and Maximum Heap Size to 2048 
+ 4. Increase the PermSize to 256m and MaxPermSize to 512m 
+ 5. Save changes 
+ 6. Restart Websphere application server

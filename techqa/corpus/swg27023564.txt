@@ -1,0 +1,84 @@
+Title: IBM System requirements for IBM Atlas Suite V6.0.1.x - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ To deploy IBM Atlas Suite, you need, at a minimum, a database server and client, an application server, and a Web browser. This document lists the technical specifications for these platforms, as well as additional, optional, components
+
+IBM Atlas Suite comprises:
+- Atlas eDiscovery Process Management
+- Disposal and Governance Management for IT
+- Global Retention Policy and Schedule Management 
+
+CONTENT
+To deploy IBM Atlas Suite, you need, at a minimum, a database server and client, an application server, and a web browser. Technical specifications for these platforms, as well as optional components, are given in the following sections. IBM Atlas Suite has been validated on systems with the characteristics listed in these sections. These system requirements assume a 25-user environment. 
+
+
+
+
+The specifications listed here are guidelines; actual memory and disk space requirements depend on a number of factors. Consult your IBM ECM Client Technical Professional to determine the appropriate hardware configuration for your environment. 
+
+The database and application server software are not provided with the IBM Atlas Suite distribution. 
+
+
+Database Server Platform
+
+
+
+[/support/docview.wss?uid=swg27023564&amp;aid=1] Windows UNIX Operating System Any Windows OS supported by Oracle Database 11g Enterprise Edition Any UNIX OS supported by Oracle Database 11g Enterprise Edition Software Oracle Database 11g Enterprise Edition (11.1.0.6 or 11.2) Oracle Text CPU 2 CPU (dual core), Xeon 3GHz 2 CPU (dual core), SPARC 1.5 GHz RAM 4 GB Disk Space 80 GB 
+Database Client Machine
+To access and modify the Oracle database during installation, you will need a machine that has the following software: 
+
+Operating System Windows Vista, Windows 2008 server, Windows 7 Software Oracle Database 11g Enterprise Edition Client with JRE 1.6.0 
+Application Server Platform 
+
+[/support/docview.wss?uid=swg27023564&amp;aid=1] Windows UNIX Operating System Windows 2008 Server Sun Solaris 9 or 10 with patches for JDK 6
+or
+Red Hat Enterprise Linux 5 or 6 Software Oracle WebLogic Server 11g (10.3.0, 10.3.1, 10.3.2, or 10.3.3) with JRE 1.6.0
+or
+IBM WebSphere Application Server - Base 6.1.0.17 with JRE 1.5.0 or
+IBM WebSphere Application Server - Base 7.0 with JRE 1.6.0 or 
+IBM WebSphere Application Server - Base 8.0* with JRE 1.6.0 or
+IBM WebSphere Application Server - Base 8.5** with JRE 1.6.0
+or
+JBoss 5.1 or 6.0 with Sun JRE 1.6.0 (you must use the Sun JRE for JBoss)
+
+* Available in IBM Atlas Suite V6.0.1.3 and later.
+** Available in IBM Atlas Suite V6.0.1.5 and later. CPU 1 CPU (dual core), Xeon 3GHz 1 CPU (dual core), SPARC 1.5 GHz RAM 4 GB Disk Space 40 GB 
+Web Browser 
+To access the Atlas and Atlas Extensions web-based UI, you need a machine that has the following software: 
+
+Software Internet Explorer 7, 8, or 9
+or
+Firefox 3.6, 10.0.5*, or 17 ESR** (Windows and Macintosh only)
+
+* Available in IBM Atlas Suite V6.0.1.3 and later.
+** Available in IBM Atlas Suite V6.0.1.5 and later. 
+PST Extractor Platform
+Atlas PST Extractor is an optional application that extracts and indexes Outlook PST and MSG files that are included as part of a collection. If your collections do not include these files, you do not need to install PST Extractor. 
+
+PST Extractor runs on a Windows machine with the following characteristics: 
+
+Operating System Windows 2008 Server, Windows 7 Software .NET framework version 2.0 (included with Windows 2008 Server) Microsoft Outlook 2007 or 2010 with a default profile
+or
+Microsoft Exchange Storage A file system with a shared directory that is accessible to the Atlas application server and the PST Extractor host. 
+Policy Federation and Policy Distribution Connectors
+IBM Atlas eDiscovery Process Management and IBM Global Retention Policy and Schedule Management provide frameworks that let you use connect Atlas to external eDiscovery and Records Management systems through Policy Federation (eDiscovery) and Policy Distribution (Records Management) Connectors. The Connectors are separate applications that let you automate the preservation and collection of evidence, and the application of retention policies to a Records Management system. 
+
+Policy Federation Connectors (eDiscovery) 
+
+Connector Target IBM eDiscovery Manager 2.2 [https://www.ibm.com/support/docview.wss?rs=897&uid=swg27018107] and later fix packs IBM InfoSphere Optim 8.1 [http://www-01.ibm.com/support/docview.wss?uid=swg27021803] and later fix packs
+
+Connector Application Server The same requirements as the main Atlas application, above. Policy Distribution Connectors (Records Management) 
+
+Connector Target IBM Enterprise Records 4.5.1 and later fix packs IBM Enterprise Records 5.1 [http://www-01.ibm.com/support/docview.wss?rs=3278&uid=swg27013654] and later fix packs
+IBM Enterprise Records 5.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg27036498] and later fix packs** IBM InfoSphere Optim 8.1 [http://www-01.ibm.com/support/docview.wss?uid=swg27021803] and later fix packs 
+
+** Available in IBM Atlas Suite V6.0.1.5 and later.
+
+Connector Application Server The same requirements as the main Atlas application, above. 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Atlas eDiscovery Process Management 6.0.1 Enterprise Content Management Disposal and Governance Management for IT 6.0.1 Enterprise Content Management Global Retention Policy and Schedule Management 6.0.1

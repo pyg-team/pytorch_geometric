@@ -1,0 +1,18 @@
+Title: IBM bhosts -s and lsload -s do not synchronize with elim - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The value of resources which reported by bhosts -s and lsload -s does not synchronize with elim. Why? 
+
+ANSWER
+If you use elim to collect license information from license server, lmstat usually is added to elim script to display all license information. You might find license usage from lmstat is different from bhosts -s and lsload -s at the same time.
+There are several intervals between elim, lsload -s and bhosts -s. So the resource number is not synchronized in real time between lmstat, bhosts -s and lsload -s.
+
+Following is the list about these intervals: 
+
+1. Each elim collect the license information or other shared resource number periodically. The interval depends on the elim script.
+For example, "sleep 10" is written in an elim by Admin for a loop. Per 10s, elim collects license information from license server.
+2. Each lim sends updated load information to the master LIM every 15 seconds. Then "lsload -s" shows updated license number.
+3. Master lim sends the load information to mbatchd in each FRESH_PERIOD. "bhosts -s" updates the license TOTAL number at that time. FRESH_PERIOD is defined in lsb.params. Default value is 15s. You could change its value as needed.

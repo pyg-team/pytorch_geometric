@@ -1,0 +1,181 @@
+Title: IBM PJ32546: RDA UNABLE TO REVERSE ENGINEER IN DESIGN STUDIO IF COMMENT OF   TABLE COLUMN CONTAINS GERMAN SPECIAL CHARACTERS LIKE „, &#1 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Defect: wsdbu00156279
+   
+   Problem:
+   
+   The creation of a database model failed with reverse
+   engineering. The Design Studio created only the
+   templates without content.
+   
+   
+   Customer's example:
+   
+   CREATE TABLE "LST     "."AFR"  (
+       "ID_LST" INTEGER NOT NULL ,
+       "ID_BNZ" INTEGER ,
+       "ID_BNK" INTEGER ,
+       "T" TIMESTAMP ,
+       "I" TIMESTAMP ,
+       "U" TIMESTAMP ,
+       "S" VARCHAR(1) ,
+       "DATUM" TIMESTAMP ,
+       "SID" INTEGER ,
+       "STATUS" VARCHAR(128) ,
+       "NR" VARCHAR(20) ,
+       "ART" VARCHAR(128) ,
+       "ART_ID" INTEGER ,
+       "GRUND" VARCHAR(40) ,
+       "GRUND_ID" INTEGER ,
+       "GRUND2" VARCHAR(254) ,
+       "GRUND2_ID" INTEGER ,
+       "SEND" VARCHAR(40) ,
+       "SEND_ID" INTEGER ,
+       "ART_ADR" VARCHAR(128) ,
+       "ART_ADR_ID" INTEGER ,
+       "AKT_ORT" VARCHAR(50) ,
+       "AKT_ORT_ID" INTEGER ,
+       "WERT_AFR" DOUBLE ,
+       "DATUM_AFR" TIMESTAMP ,
+       "DATUM_EGR" TIMESTAMP ,
+       "DATUM_EGL" TIMESTAMP ,
+       "DATUM_VSA" TIMESTAMP ,
+       "DATUM_GMA" TIMESTAMP ,
+       "DATUM_WEG" TIMESTAMP ,
+       "BESITZ" VARCHAR(40) ,
+       "BESITZ_ID" INTEGER ,
+       "NAME" VARCHAR(40) ,
+       "BRIEFTYP" VARCHAR(50) ,
+       "BRIEFTYP_ID" INTEGER ,
+       "NAME_BNZ" VARCHAR(102) ,
+       "INFO" CLOB(1073741824) LOGGED NOT COMPACT ,
+       "DATA" CLOB(1073741824) LOGGED NOT COMPACT ,
+       "ABBRUCHGRUND" VARCHAR(254) ,
+       "FEHLER" VARCHAR(128) ,
+       "FID" INTEGER )
+      IN "AFB" ;
+   
+   COMMENT ON COLUMN "LST     "."AFR"."ABBRUCHGRUND" IS
+   'Abbruchgrund der
+   Anfrage';
+   
+   COMMENT ON COLUMN "LST     "."AFR"."AKT_ORT" IS
+   'Projektspezifisch
+   aktivierbares Feld. F&#65409;r das Projekt derzeit nicht aktiviert und
+   damit
+   nicht in ODS enthalten.';
+   
+   
+   The comments containing special german characters like &#65412;, &#65428;
+   and others. These special characters in the comments are not
+   transferred correctly. Looks like RDA has an issue reading
+   these comments during reverse engineering.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Remove German special characters like &#65412;, &#65428; from comment.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  RDA is unable to reverse engineer within Design Studio if the
+   comment of the table column contains German special characters
+   like &#132;, &#148;.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  This is fixed with InfoSphere Warehouse v9.5.2.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ32546
+   
+   
+ * REPORTED COMPONENT NAME
+   DWE SQL WHSE TO
+   
+   
+ * REPORTED COMPONENT ID
+   5724DWESQ
+   
+   
+ * REPORTED RELEASE
+   912
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-12-21
+   
+   
+ * CLOSED DATE
+   2010-03-17
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R952 PSY
+   UP

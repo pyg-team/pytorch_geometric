@@ -1,0 +1,127 @@
+Title: IBM Encryption algorithms supported by IBM Personal Communications 6.0 - United States
+
+Text:
+PComm; Cryptographic ; API; MSCAPI ; Global Security Kit; GSKIT; Cipher; SSLv2 ; SSLv3 (; FIPS; Implementation Guidance for FIPS PUB 140-2 and the Cryptographic Module Validation Program; Work item 5315; 5315 TECHNOTE (FAQ)
+
+QUESTION
+ What are the encryption algorithms that IBM Personal Communications version 6.0 supports? 
+
+CAUSE
+This is to document the encryption algorithms that Personal Communications supports. 
+
+ANSWER
+IBM Personal Communications version 6 uses two security providers: 
+
+ * Microsoft Cryptographic API (MSCAPI) 
+ * IBM Global Security Kit (GSKIT).
+
+
+The cipher suites used in MSCAPI are described in Cipher Suites in Schannel [http://msdn.microsoft.com/en-us/library/aa374757%28VS.85%29.aspx]. 
+
+However, it depends on the underlying Windows operating system. Also there is a way to Restrict the Use of Certain Cryptographic Algorithms and Protocols in Schannel. [http://support.microsoft.com/kb/245030] 
+
+The GSKIT Cipher Specs can be either TLS1.0 or TLS1.1 or TLS1.2 and FIPS mode is enabled by default. (Refer Note #3). 
+
+Here is the list of available cipher specs: 
+
+SSLv3 (In May 2008 an update of FIPS 140-2 Guidance from NIST [(http://csrc.nist.gov/groups/STM/cmvp/documents/fips140-2/FIPS1402IG.pdf] shows that SSL V3 has been specifically excluded from being allowed in FIPS 140-2 Approved Mode. Therefore products should disable SSLV3 when entering FIPS 140-2 mode.) 
+
+Allowed TLSV10 CipherSpecs: 
+TLS_RSA_WITH_NULL_NULL 
+TLS_RSA_WITH_NULL_MD5 
+TLS_RSA_WITH_NULL_SHA 
+TLS_RSA_EXPORT_WITH_RC4_40_MD5 
+TLS_RSA_WITH_RC4_128_MD5 
+TLS_RSA_WITH_RC4_128_SHA 
+TLS_RSA_EXPORT_WITH_RC2_CBC_40_MD5 
+TLS_RSA_WITH_DES_CBC_SHA 
+TLS_RSA_WITH_3DES_EDE_CBC_SHA 
+TLS_RSA_EXPORT1024_WITH_DES_CBC_SHA (Deprecated) 
+TLS_RSA_EXPORT1024_WITH_RC4_56_SHA (Deprecated) 
+TLS_RSA_WITH_AES_128_CBC_SHA 
+TLS_RSA_WITH_AES_256_CBC_SHA 
+
+FIPS Allowed TLSV10 CipherSpecs: 
+TLS_RSA_WITH_AES_128_CBC_SHA 
+TLS_RSA_WITH_AES_256_CBC_SHA 
+TLS_RSA_WITH_3DES_EDE_CBC_SHA 
+
+Allowed TLSV11 CipherSpecs: 
+TLS_RSA_WITH_NULL_NULL 
+TLS_RSA_WITH_NULL_MD5 
+TLS_RSA_WITH_NULL_SHA 
+TLS_RSA_WITH_RC4_128_MD5 
+TLS_RSA_WITH_RC4_128_SHA 
+TLS_RSA_WITH_DES_CBC_SHA 
+TLS_RSA_WITH_3DES_EDE_CBC_SHA 
+TLS_RSA_WITH_AES_128_CBC_SHA 
+TLS_RSA_WITH_AES_256_CBC_SHA 
+
+FIPS Allowed TLSV11 CipherSpecs: 
+TLS_RSA_WITH_AES_128_CBC_SHA 
+TLS_RSA_WITH_AES_256_CBC_SHA 
+TLS_RSA_WITH_3DES_EDE_CBC_SHA 
+
+Default TLSV12 CipherSpecs: 
+TLS_RSA_WITH_AES_128_GCM_SHA256 
+TLS_RSA_WITH_AES_256_GCM_SHA384 
+TLS_RSA_WITH_AES_128_CBC_SHA256 
+TLS_RSA_WITH_AES_256_CBC_SHA256 
+TLS_RSA_WITH_AES_128_CBC_SHA 
+TLS_RSA_WITH_AES_256_CBC_SHA 
+TLS_RSA_WITH_3DES_EDE_CBC_SHA 
+TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA 
+TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA 
+TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256 
+TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384 
+TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256 
+TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384 
+TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 
+TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 
+TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 
+TLS_RSA_WITH_NULL_SHA256 
+TLS_RSA_WITH_NULL_SHA 
+TLS_ECDHE_RSA_WITH_NULL_SHA 
+TLS_ECDHE_ECDSA_WITH_NULL_SHA 
+
+FIPS Allowed TLSV12 CipherSpecs: 
+TLS_RSA_WITH_AES_128_CBC_SHA 
+TLS_RSA_WITH_AES_256_CBC_SHA 
+TLS_RSA_WITH_3DES_EDE_CBC_SHA 
+TLS_RSA_WITH_AES_128_GCM_SHA256 
+TLS_RSA_WITH_AES_256_GCM_SHA384 
+TLS_RSA_WITH_AES_128_CBC_SHA256 
+TLS_RSA_WITH_AES_256_CBC_SHA256 
+TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA 
+TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA 
+TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA 
+TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256 
+TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384 
+TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256 
+TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384 
+TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA 
+TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA 
+TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 
+TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 
+TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 
+TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA 
+
+Note: 
+
+1. IBM Personal Communications 6.0.12 does not support SSLv3 security protocol anymore. This is due to the security vulnerability in SSLv3 that has been referred to as Padding Oracle On Downgraded Legacy Encryption (POODLE) attack. 
+For more information, please refer to the Security Bulletin at: 
+
+http://www.ibm.com/support/docview.wss?uid=swg21687560 [http://www.ibm.com/support/docview.wss?uid=swg21687560] 
+
+The Security Protocol drop-down box on the Security Setup tab no longer lists SSL only as the security protocol. The lowest level of security protocol, Personal Communications can drop down to, during the negotiation is TLS1.0. 
+
+2. IBM Personal communication 6.0.14 upgraded version of GSKit addresses a security vulnerability called "FREAK: Factoring Attack on RSA-EXPORT keys" TLS/SSL client and server vulnerability. For more information, please refer to the Security Bulletin at: 
+
+http://www.ibm.com/support/docview.wss?uid=swg21699015 [http://www.ibm.com/support/docview.wss?uid=swg21699015] 
+
+3. IBM Personal communications 6.0.15 enables FIPS processing mode by default. Option to control FIPS processing mode has been disabled. This change has been made to protect against security vulnerability in RC4 stream cipher, also commonly referred to as "Bar Mitzvah Attack". For more information, please refer to the Security Bulletin at: 
+
+http://www.ibm.com/support/docview.wss?uid=swg21702170 [http://www.ibm.com/support/docview.wss?uid=swg21702170] RELATED INFORMATION
+ Personal Communications Information Center [http://publib.boulder.ibm.com/infocenter/pcomhelp/v6r0/index.jsp]

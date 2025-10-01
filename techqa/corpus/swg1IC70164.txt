@@ -1,0 +1,220 @@
+Title: IBM IC70164: WEBSPHERE APPLICATION SERVER V7 CONNECTION TO WEBSPHERE MQ V6   FAILS WITH MQJMS2005 WHEN USER NAME/PASSWORD ARE USED. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24029055]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24029788]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere Application Server (WSAS) was migrated from V6 to V7
+   and is using the Resource Adapter shipped with WSAS. A WebSphere
+   MQ (WMQ) Listener in WSAS fails to establish a session with WMQ
+   V6 since the upgrade.
+   
+   This problem would not be seen when connecting to a V7 queue
+   manager. It is also only seen when security credentials (user
+   name/password) are supplied when creating the JMS connection.
+   
+   Symptoms include:
+   
+   BBOJ0094E: MDB <name>
+   REGISTRATION FAILED - CAUSE: javax.jms.JMSException: MQJMS2005:
+   failed to create MQQueueManager for <queuemanager>
+   at
+   com.ibm.msg.client.wmq.v6.jms.internal.ConfigEnvironment.
+   newException(ConfigEnvironment.java:402)
+   at
+   com.ibm.msg.client.wmq.v6.jms.internal.MQConnection.
+   createQM(MQConnection.java:1475)
+   ...
+   Caused by: com.ibm.mq.MQException: MQJE001: Completion Code '2',
+   Reason '2102'.
+   at
+   com.ibm.msg.client.wmq.v6.base.internal.MQManagedConnectionJ11.a
+   uthenticate(MQManagedConnectionJ11.java:335)
+   at
+   com.ibm.msg.client.wmq.v6.base.internal.MQBindingsManagedConnect
+   ionFactoryJ11._createManagedConnection(MQBindingsManagedConnecti
+   onFactoryJ11.java:201)
+   
+   
+   WSAS trace shows the error was caused by:
+   
+   java.lang.NullPointerException
+   at
+   com.ibm.mq.jmqi.local.LocalHconn.syncExec(LocalHconn.java:413)
+   at
+   com.ibm.mq.jmqi.local.LocalMQ.authenticate_native(LocalMQ.java:1
+   0430)
+   at
+   com.ibm.mq.jmqi.local.internal.adapters.WASAdapter.authenticate(
+   WASAdapter.java:114)
+   at
+   com.ibm.mq.jmqi.local.LocalMQ.authenticate(LocalMQ.java:10302)
+   at
+   com.ibm.msg.client.wmq.v6.base.internal.MQSESSION.authenticate(M
+   QSESSION.java:623)
+   at
+   com.ibm.msg.client.wmq.v6.base.internal.MQManagedConnectionJ11.a
+   uthenticate(MQManagedConnectionJ11.java:285)
+   ...
+   .
+   The ProbeID in the FDC is JM415001.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the WebSphere MQ resource adapter in
+   WebSphere Aplication Server, creating a bindings mode connection
+   to a V6 queue manager on z/OS.  The PROVIDERVERSION property is
+   set to 'unspecified' and a user name and password are set on the
+   connection factory.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   This problem was caused by caching the object used to create a
+   bindings mode connection to a queue manager.
+   
+   When the PROVIDERVERSION on the connection factory is set to
+   'unspecified', the client first attempts to connect in V7 mode,
+   causing the cache to be initialised.  When the V7 mode
+   connection fails, the client tries connecting in V6 mode.  The
+   cached object is reused but is not suitable for this type of
+   connection, resulting in a NullPointerException.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Caching of the version-specific bindings mode connection object
+   has been removed, which avoids trying to use a V7 mode object
+   when connecting to a V6 queue manager.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.5
+   --------           --------------------
+   Windows            U200324
+   AIX                U839183
+   HP-UX (PA-RISC)    U839621
+   HP-UX (Itanium)    U839626
+   Solaris (SPARC)    U839622
+   Solaris (x86-64)   U839628
+   iSeries            tbc_p700_0_1_5
+   Linux (x86)        U839623
+   Linux (x86-64)     U839627
+   Linux (zSeries)    U839624
+   Linux (Power)      U839625
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC70164
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-23
+   
+   
+ * CLOSED DATE
+   2010-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM19728
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

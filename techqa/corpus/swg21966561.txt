@@ -1,0 +1,64 @@
+Title: IBM SAS application receives SIGFPE exception with DB2 Connect on Solaris - United States
+
+Text:
+SAS; connect; SIGFPE; ifor_uuid_gen; license FLASH (ALERT)
+
+ABSTRACT
+ A SAS application running on Solaris (SPARC or Intel) may abort with a SIGFPE (floating point exception) failure when using DB2 Connect. 
+
+CONTENT
+During a connection request, DB2 Connect will call a function from its license library (libdb2licm.so.1) that can produce a SIGFPE exception if an application (such as SAS) is compiled to trap when such an exception is raised. 
+
+The stack trace back from the exception will appear to look like this: 
+
+
+/lib/sparcv9/libc.so.1:_thr_slot_offset+0x5b4
+/lib/sparcv9/libc.so.1:sema_post+0x628
+/lib/sparcv9/libc.so.1:sema_post+0x834
+/opt/IBM/db2/V9.7/lib64/libdb2licm.so.1:ifor_uuid_gen+0xbc
+/opt/IBM/db2/V9.7/lib64/libdb2licm.so.1:netls_create_job_id+0x94
+/opt/IBM/db2/V9.7/lib64/libdb2licm.so.1:__1cPLicGetAccessKey6FIpCpIplbpi_i_+0x6ec
+/opt/IBM/db2/V9.7/lib64/libdb2licm.so.1:__1cPsqllcGetRegData6FipI_i_+0x4c4
+/opt/IBM/db2/V9.7/lib64/libdb2licm.so.1:__1cNsqllcInitData6F_v_+0xdd4
+/opt/IBM/db2/V9.7/lib64/libdb2licm.so.1:__1cNsqllcInitData6F_v_+0x3b0
+/opt/IBM/db2/V9.7/lib64/libdb2licm.so.1:__1cNsqllcInitData6F_v_+0x298
+/opt/IBM/db2/V9.7/lib64/libdb2licm.so.1:sqllcConnectUser+0x38
+/opt/IBM/db2/V9.7/lib64/libdb2.so.1:sqloSqlcConnectUser+0x164
+/opt/IBM/db2/V9.7/lib64/libdb2.so.1:__1cTsqljrLicenceConnect6Fpc0pnOdb2UCinterface__i_+0x2f8
+/opt/IBM/db2/V9.7/lib64/libdb2.so.1:__1cQsqljrPostConnect6FpnOdb2UCinterface_pnNsqljrDrdaArCb_b_i_+0xf3c
+/opt/IBM/db2/V9.7/lib64/libdb2.so.1:__1cSsqljrDrdaArConnect6FpnOdb2UCinterface__i_+0xec
+/opt/IBM/db2/V9.7/lib64/libdb2.so.1:__1cQsqleUCdrdaARinit6FpnOdb2UCconHandle__i_+0x144
+/opt/IBM/db2/V9.7/lib64/libdb2.so.1:sqleUCappConnect+0xa1c
+/opt/IBM/db2/V9.7/lib64/libdb2.so.1:__1cOCLI_sqlConnect6FpnPCLI_CONNECTINFO_pnFsqlca_pnTCLI_ERRORHEADERINFO__h_+0x1a20
+/opt/IBM/db2/V9.7/lib64/libdb2.so.1:__1cLSQdDLConnect26FpnPCLI_CONNECTINFO_pCh2h2h2hC_h_+0x13b4
+/opt/IBM/db2/V9.7/lib64/libdb2.so.1:__1cRSQdDLDriverConnect26FpnPCLI_CONNECTINFO_pvpCh3hphHCCpnTCLI_ERRORHEADERINFO__h_+0xba78
+/opt/IBM/db2/V9.7/lib64/libdb2.so.1:SQLConnect+0xccc
+
+
+ 
+
+This problem affects DB2 v9.7, v10.1 and v10.5 releases but for only the Solaris platform (both Solaris SPARC and Solaris Intel/AMD64). 
+
+Contact DB2 Support if you require a build which is not in the chart below:
+
+
+
+Release First Fixed in fix pack APAR Special Build (SPARC) Special Build (Intel/AMD64) V9.7 v9.7 FP12 (ETA Q2 2017*) IT11195 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT11195] Client Fixpack built on v9.7 FP6 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/IBM+Data+Server+Client+Packages&release=All&platform=All&function=fixId&fixids=special_35325_DSClients-sun64-client-9.7.0.6-FP006%3A311872750099941888&includeSupersedes=0] [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/DB2&release=All&platform=All&function=fixId&fixids=special_35325_DB2-sun64-universal_fixpack-9.7.0.6-FP006%3A292393128635556800&includeSupersedes=0]
+[http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/DB2&release=All&platform=All&function=fixId&fixids=special_35325_DB2-sun64-universal_fixpack-9.7.0.6-FP006%3A292393128635556800&includeSupersedes=0]
+Universal Fixpack built on v9.7 FP6 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/DB2&release=All&platform=All&function=fixId&fixids=special_35325_DB2-sun64-universal_fixpack-9.7.0.6-FP006%3A292393128635556800&includeSupersedes=0]
+
+Server Fixpack built on v9.7 FP11 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/DB2&release=All&platform=All&function=fixId&fixids=special_35253_DB2-sun64-server-9.7.0.11-FP011%3A936273052640817408&includeSupersedes=0]
+
+Universal Fixpack built on v9.7 FP11 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/DB2&release=All&platform=All&function=fixId&fixids=special_35253_DB2-sun64-universal_fixpack-9.7.0.11-FP011%3A659851052593560192&includeSupersedes=0] V10.1 v10.1 FP6 (ETA Q1 2017*) IT11192 [http://www.ibm.com/support/docview.wss?uid=swg1IT11192] Client Fixpack built on v10.1 FP4 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/IBM+Data+Server+Client+Packages&release=All&platform=All&function=fixId&fixids=special_35089_DSClients-sun64-client-10.1.0.4-FP004%3A598365448369299584&includeSupersedes=0]
+
+Universal Fixpack built on v10.1 FP4 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/DB2&release=All&platform=All&function=fixId&fixids=special_35089_DB2-sun64-universal_fixpack-10.1.0.4-FP004%3A252090947312607840&includeSupersedes=0] [http://www-01.ibm.com/support/docview.wss?uid=swg1IT11192] V10.5 v10.5 FP8 (ETA Q3 2016*) IT11180 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT11180] Client Fixpack built on v10.5 FP7 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/IBM+Data+Server+Client+Packages&release=All&platform=All&function=fixId&fixids=special_35600_DSClients-sun64-client-10.5.0.7-FP007%3A539852736664610624&includeSupersedes=0]
+
+Server Fixpack built on v10.5 FP7 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/DB2&release=All&platform=All&function=fixId&fixids=special_35058_DB2-sunamd64-server_t-10.5.0.6-FP006%3A764378088916465792&includeSupersedes=0] Universal Fixpack built on v10.5 FP6 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/DB2&release=All&platform=All&function=fixId&fixids=special_35058_DB2-sunamd64-universal_fixpack-10.5.0.6-FP006%3A766615598772436352&includeSupersedes=0]
+
+Server Fixpack built on v10.5 FP6 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/DB2&release=All&platform=All&function=fixId&fixids=special_35058_DB2-sunamd64-server_t-10.5.0.6-FP006%3A764378088916465792&includeSupersedes=0] *Fix pack release dates are unofficial and subject to change. Notes: 
+
+ * Some customers may have been using temporary fix from Sept/Oct 2015. These temporary fixes will expire in early Sept 2016. The permanent fix in above chart should be applied. 
+ * v9.7 and v10.1 have End of Support in Sept 30, 2017. See Related URL for doc.
+
+RELATED INFORMATION
+ End Of Support Dates [http://www.ibm.com/support/docview.wss?uid=swg21168270]

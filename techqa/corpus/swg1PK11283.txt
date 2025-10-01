@@ -1,0 +1,174 @@
+Title: IBM PK11283: Z9-109 PROCESSOR SUPPORT D/T2094 - United States
+
+Text:
+AIX z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  New function: Z9-109 Processor support
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All TDS for z/OS users who want to display   *
+   *                 or collect z/OS 1.7 data and in particular   *
+   *                 the new z9-109 processor data.               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: This Apar adds z/OS 1.7 support, and    *
+   *                      in particular the support for the new   *
+   *                      z9-109 processor (2094 model), to       *
+   *                      TDS for z/OS 1.7.0.                     *
+   ****************************************************************
+   * RECOMMENDATION: APPLY THE PTF FIXING THIS APAR               *
+   ****************************************************************
+   The main changes in z/OS 1.7 that are integrated in the Tivoli
+   Decision Support for z/OS 1.7.0 are:
+   - z990, z890 and previous processors manage ICF, IFL and zAAP
+     (IFA) processors as a single pool of resources (the ICF
+     processor pool). Thus, the possible values for CPU types were
+     only two: General Purpose (CP) and Special Purpose
+     (ICF/IFL/IFA) processors. With z9-109 processors, the ICF
+     processor pool is separated and CPU times for ICF, IFL and
+     IFA processors are reported by RMF independently. The field
+     SMF70CIX, for this processors, can now contain 5 different
+     values: 1 (CP); 2 (reserved for compatibility); 3 (IFA);
+     4 (IFL); 5 (ICF).
+     Record changed: SMF(70).
+   - RMF enhances the Crypto Hardware Activity Report by
+     supporting the new Crypto Express2 Coprocessor crypto card.
+     Also this report now distinguishes between the used hash
+     algorithms and provides metrics for hashing activity with
+     SHA-1 functions and with SHA-256 functions (SHA =
+     Secure Hash Algorithm).
+     Record changed: SMF(70).
+   
+   The MVS Performance Management component and the MVS
+   System component have been checked, modified, and updated
+   in order to be compliant to the mentioned z/OS changes.
+   
+   KEYWORDS: z/OS z9-109 2094 SHA-256
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK11283
+   
+   
+ * REPORTED COMPONENT NAME
+   TDS FOR Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   569510100
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2005-09-02
+   
+   
+ * CLOSED DATE
+   2005-09-19
+   
+   
+ * LAST MODIFIED DATE
+   2005-11-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK07337 UK07338 UK07339 UK07344
+   
+   
+
+MODULES/MACROS
+ *  DRLDOC49 DRLFMP1I DRLFMP1M DRLIMP   DRLJMPL2
+   DRLJMVL2 DRLOMPB  DRLOMP4  DRLQMP1I DRLQMP1M DRLRS070 DRLTMPCC
+   DRLTMPLC DRLTMPLP DRLTMVLP DRL2S070
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TDS FOR Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   569510100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R7A0 PSY UK07338 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK07338]
+   UP05/09/22 P F509
+   
+   
+ * R7C1 PSY UK07339 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK07339]
+   UP05/09/22 P F509
+   
+   
+ * R7C2 PSY UK07344 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK07344]
+   UP05/09/22 P F509
+   
+   
+ * R701 PSY UK07337 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK07337]
+   UP05/09/22 P F509
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

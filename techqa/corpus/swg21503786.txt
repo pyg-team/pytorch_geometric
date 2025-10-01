@@ -1,0 +1,46 @@
+Title: IBM Make a report to always use a specific day of a week X number of weeks past from the current date - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Is there a way with the available date related functions in Report 
+Studio to filter a report to always use a start date of the Monday date
+26 weeks in the past? 
+
+SYMPTOM
+Without this, the user would always have to select the date.
+
+
+RESOLVING THE PROBLEM
+The attached report spec is a working example of the solution using the Cognos Samples GO Sales (query) at Public Folders > Samples > Models > GO Sales (query) in Cognos Connection. 
+
+Make use of 4 data items to simplify the expression a bit:
+
+The vale of X is 26 as an example. i.e. we want to always choose the Monday for the week 26 weeks past. 
+
+Data item 1 Expression: ( 7 * 26 weeks = 182 days)
+This expression will get the date for 26 weeks back (-ve sign). 
+
+(_add_days(current_date,-182)) 
+
+Data item 2 Expression:
+This expression calculates if Dataitem1 is Monday/Tuesday/Wednesday.../Friday 
+
+value 1 for Monday, 2 for Tuesday etc. 
+
+( _day_of_week ([Data Item1],1)) 
+
+Data item 3 Expression: (result Date) 
+
+if ( (_day_of_week ( [Data Item1] , 1) ) <> 1 ) then ( [Data Item4] )
+else ( [Data Item1] ) 
+
+Data item 4 Expression:
+This expression will go back if the 26 weeks back'th date wasn't a Monday. (e.g. if it was a Thursday, Dataitem 2 would have value 4, we go back 3 days (4-1) to get the Monday date. 
+
+(_add_days([Data Item1], - ( [Data Item2]-1) )) 
+
+The Dataitem 3 will return your resulting date (Monday for 26 weeks back).
+
+Date back Report Spec.txt [/support/docview.wss?uid=swg21503786&aid=2]Date back Report Spec.txt [/support/docview.wss?uid=swg21503786&aid=1]

@@ -1,0 +1,94 @@
+Title: IBM Migration from SSL Proxy Profile - United States
+
+Text:
+720change; SNI; SSL; TLS; SSL server profile; SSL host name mapping; SSL SNI server profile; SSL client profile; SSL proxy profile TECHNOTE (FAQ)
+
+QUESTION
+ How to migrate from an SSL Proxy Profile to the appropriate SSL client and SSL server profiles. 
+
+ANSWER
+What is Server Name Indication (SNI)?
+Server Name Indication (SNI) is an extension to the TLS networking protocol that provides a means for a TLS server to support secure connections as multiple websites or other services, with distinct credentials, over a single TCP host and port. The extension defines how the TLS client can specify the required host, and the TLS server can match this exactly, or with wildcards, to the appropriate security credentials. For more information see, Server Name Indication [http://en.wikipedia.org/wiki/Server_Name_Indication].
+
+SNI support was added on the DataPower appliance for cases where the appliance acts as an TLS client or as an TLS SNI server. In the latter case, a new host name mapping provides the way to associate the host name in the TLS extension to an SSL server profile during the SSL/TLS handshake.
+
+What changes were made? 
+
+To support SNI, the following new configurations are available. For the CLI, they are available in crypto mode. 
+
+ * SSL server profile (ssl-server command) 
+ * SSL host name mapping (ssl-sni-mapping command) 
+ * SSL SNI server profile (ssl-sni-server command) 
+ * SSL client profile (ssl-client command) 
+
+An SSL server profile defines an SSL server with associated identification credentials that the appliance uses to establish a connection with an SSL client. Identification credentials are in a Crypto Identification Credential configuration. This profile also specifies, among others:  * Client validation options. 
+ * SSL and TLS protocol versions to support. 
+ * Ciphers to support. 
+ * Whether to request client authentication. 
+ * Session caching options. 
+ * Advanced options that include elliptic curve support, maximum SSL session duration, and maximum number of client initiated renegotiation to allow.
+
+
+An SSL host name mapping contains a set of one or more maps between host names and associated SSL server profiles. Maps support wildcards for host names. 
+
+An SSL SNI server profile defines an SSL SNI server that allows the server to present the certificate that matches the client SNI request. This profile specifies:  * SSL and TLS protocol versions to support. 
+ * The SSL host name to map between the requested SNI host name and the associated SSL server profiles. 
+ * A default SSL server profile to use when no SNI host name is in the client request. 
+ * Advanced options for maximum SSL session duration and maximum number of client initiated renegotiation to allow. These settings override individual SSL server profile settings.
+
+The section on common errors below describes cases where no matching SSL server profile can be determined. 
+
+An SSL client profile defines an SSL client with associated identification credentials to support an SSL client connection from the appliance. Identification credentials are in a Crypto Identification Credential configuration. This profile also specifies:  * Server validation options. 
+ * SSL and TLS protocol versions to support. 
+ * Ciphers to support. 
+ * Whether to use the SNI extension when connecting. 
+ * Whether to permit connections to insecure SSL servers. 
+ * Whether to require server authentication, and, if so, the credentials to use. 
+ * Session caching options. 
+ * Advanced options for elliptic curve support.
+
+
+Note: When the configurations of the SSL SNI server profile and the mapped SSL server do not match, the SSL SNI server profile configuration is used. For example, when an SSL SNI server profile does not permit client session renegotiation but its mapped SSL server profile does, the setting from the SSL SNI server profile take precedence. Therefore, client session renegotiation is not permitted. 
+
+The following extension functions now support the specification of an SSL client profile or SSL proxy profile.  * ldap-authen() 
+ * ldap-search() 
+ * ldap-simple-query() 
+ * ocsp-validate-certificate() 
+ * set-target 
+ * soap-call() 
+ * url-open (generic) 
+ * xset-target
+
+For backward compatibility, an unadorned name indicates an SSL proxy profile. The name prefixed by 'client:' indicates an SSL client profile, as in 'client:ssl-client-profile-name'. 
+
+Cipher specification SSL proxy profiles use free-form strings to denote supported ciphers; the default in version 7.2.0 is HIGH:MEDIUM:!aNULL:!eNULL:!RC4:@STRENGTH. On the other hand, SSL client and SSL server profiles provide an explicit enumeration of ciphers to support. This explicit enumeration shows exactly which ciphers are allowable and their order when cipher-negotiation takes place.
+
+Migration 
+
+Because the SSL proxy profile is deprecated, these SSL configurations are intended to replace SSL proxy profile configurations depending on the role of the DataPower appliance. 
+
+ * The SSL client profile replaces the forward SSL proxy profile 
+ * The SSL server and SSL SNI server profiles replace the reverse SSL proxy profile.
+
+Any configuration or extension that supported an SSL proxy profile retains the SSL proxy profile as the default option for backwards compatibility but also provides the option to select an appropriate new SSL profile. 
+
+Existing configurations that use an SSL proxy profile are not automatically updated nor do they need to be. However, create new SSL profiles and replace SSL proxy profiles over time. For new configurations, although the default SSL Profile type is an SSL proxy profile, select and use the appropriate profile type. 
+
+After you test the replacement SSL profile, you can remove the reference to the SSL proxy profile in the configuration and delete the configuration for the SSL proxy profile if it is not in use by other configurations.  * From the CLI, access the configuration and use the no form of command to dereference the SSL proxy profile. 
+ * From the GUI, access the configuration and perform the following steps.  1. Set the SSL profile type to SSL Proxy Profile. 
+    2. Change the value of the SSL Proxy Profile to (none). 
+    3. Set the SSL profile type back to the appropriate replacement SSL profile type.
+   
+   
+
+
+Common errors It is possible for an SSL SNI Server Profile configuration to not match an SSL client request. Here are two cases: 
+
+ * No host mapping match for SSL client SNI request 
+ * No default SSL Server Profile, and no SSL client SNI specification
+
+
+In both cases, the client SSL handshake fails, and the default log contains the the following messages. In this case, for an XML Firewall. 
+[0x8120002f][ssl][error] ssl-sni-server( SSL_SNI_Server_Profile_name ): tid(15953): SSL library error: error:1412E0E2:SSL routines:ssl_parse_clienthello_tlsext:clienthello tlsext 
+[0x8120002f][ssl][error] ssl-sni-server( SSL_SNI_Server_Profile_name ): tid(15953): SSL library error: error:1408A0E3:SSL routines:ssl3_get_client_hello:parse tlsext 
+[0x80e00130][http][error] xmlfirewall( XML_Firewall_name ): tid(15953): could not establish SSL for incoming connection

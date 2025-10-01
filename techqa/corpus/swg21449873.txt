@@ -1,0 +1,122 @@
+Title: IBM Collecting Data: Model SPI issues for WebSphere Portal 7.0 - United States
+
+Text:
+Collecting Data; Collecting Data; Collecting Data; MustGather; MustGather; MustGather; MustGatherDocument; Model SPI; API; model; SPI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Collecting troubleshooting data for Model SPI with IBM WebSphere Portal 7.0 expedites time to resolution by enabling IBM Support to provide informed problem analysis.
+
+RESOLVING THE PROBLEM
+ 
+
+Troubleshooting 
+Collecting troubleshooting data for Model SPI with WebSphere Portal 7.0 expedites time to resolution by enabling IBM Support to provide informed problem analysis. If you have already contacted IBM Support and must collect data to determine the nature of a problem in WebSphere Portal, review the information below for the available methods of data collection. Otherwise, review Collecting Data: Read first for WebSphere Portal 7.0 [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21444911]. 
+
+
+Automated collection of troubleshooting data 
+Automated log collection is available for this information and is the recommended method for improving accuracy of the data collection. 
+
+IBM Support Assistant Lite (ISA Lite) for WebSphere Portal 
+Download Tool [http://www.ibm.com/support/docview.wss?rs=688&ca=portall2&uid=swg24008662] | View Demo of Trace Collection [http://www.lotus.com/ldd/portalwiki.nsf/dx/isalite-fundamentals-version-1.3.3-for-ibm-websphere-portal] 
+
+
+After downloading IBM Support Assistant Lite, perform the following steps to collect the data and send to IBM Support: 1. Extract the contents of the downloaded file to the <wp_profile_root>\PortalServer directory, which will create the subdirectory "ISALite" (e.g. C:\WebSphere\wp_profile\PortalServer\ISALite). 
+
+2. Run the runISALite.bat file (Windows) or runISALite.sh (UNIX or Linux) from the ISALite directory (e.g. c:\WebSphere\wp_profile\PortalServer\ISALite\runISALite.bat). 
+
+3. Once the tools starts, select the following Problem Type: WebSphere Portal->General -> Portal General Problem. 
+
+4. When prompted for a trace string provide the appropriate one in the below section "Trace String". 
+
+5. Provide the output path and a file name of "<PMR #>.isalite.zip" (e.g. 22222,111,000.isalite.zip). 
+
+6. Click Collect Data and follow the series of dialog boxes to set the tracing and reproduce the issue. If you choose not to FTP the files to IBM via ISA Lite, then follow the instructions in Exchanging information with IBM Technical Support for problem determination [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571]. />
+
+
+
+
+Manual collection of troubleshooting data (optional) 
+If you are unable to use IBM Support Assistant Lite (ISA Lite) for WebSphere Portal for automatic log collection, use the following instructions for manually collecting the necessary information. 
+
+I. Enabling trace logging Enable tracing during problem recreation in order to investigate the specific behavior of the component(s). Choose to enable either static or dynamic tracing and proceed with the steps accordingly. For further information regarding logging and tracing in the portal, refer to the System event logging [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/System_event_logging_wp7] [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?topic=/com.ibm.wp.ent.doc/trouble/pd_intr_logs.html] topic in the WebSphere Portal 7.0 Information Center. 
+
+Option A: Enabling static (extended) tracing
+Static tracing is the recommended method of capturing data, as it collects data from server startup until problem recreation. 
+
+1. Log into the Integrated Solutions Console as the WebSphere Application Server administrator. 
+
+2. Click Troubleshooting->Logs and Trace->WebSphere_Portal->Diagnostic Trace. 
+
+3. On the Configuration tab, ensure Enable Log is selected. On this same tab, ensure you increase the Maximum File Size and and Maximum Number of Historical Files as needed to ensure that the tracing of the problem recreation is not overwritten due to the amount of traffic on the system and output of the tracing itself. 
+
+4. Click Change Log Level Details and enter the appropriate trace string from the section "Trace String". 
+
+5. Click OK and save the changes.
+6. Restart the WebSphere_Portal application server.
+
+Option B: Enabling dynamic tracing
+Dynamic tracing can be used for situations that do not permit a server restart. 
+
+1. Log in as the Portal administrator. 
+
+2. Click Administration->Portal Analysis->Enable Tracing. The Enable Tracing portlet appears. 
+
+3. Type the appropriate trace string into the field from the section "Trace String": 
+
+4. Click the Add icon. Enable Tracing updates the field Current trace settings.
+
+Note: Restarting WebSphere Portal will remove traces that were set by using the Enable Tracing Administration portlet.
+
+II. Collecting and submitting logs and configuration data 
+
+1. Reproduce the problem. Collect screenshots, userId, and timestamp information as appropriate. 
+
+2. Run the following script from <wp_profile>/PortalServer/bin to collect the data in Step I: 
+
+ * Windows: wpcollector.bat 
+ * Linux/Unix/i: wpcollector.sh
+
+
+Note: If you wish to use wpcollector to FTP the files to IBM Support, include the -Dpmr=<pmr_number> parameter to indicate the relevant PMR #. For example: wpcollector.bat -Dpmr=11111,222,333 
+
+If you did not FTP your files via wpcollector, locate the "wp.mustgather.zip" file or the "<pmr #>-wp.mustgather-timestamp.zip" file in <wp_profile_root> [https://idoc2.swg.usma.ibm.com/portal/topic/com.ibm.wp.ent.doc_v70/reference/wpsdirstr.html#wpsdirstr__wp_profile_root]/filesForAutoPD/. Send these files to IBM Support by using the instructions outlined in Exchanging information with IBM Technical Support for problem determination [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571].  
+
+Trace String: 
+ContentModelController: 
+com.ibm.wps.model.content.controller.*=all 
+com.ibm.wps.model.controller.*=all 
+
+SkinList: 
+com.ibm.wps.model.admin.skin.*=all 
+com.ibm.wps.model.listmodel.*=all 
+com.ibm.wps.resolver.webdav.admin.*=all 
+com.ibm.wps.model.ModelUtil=all 
+
+SkinListController: 
+com.ibm.wps.model.skin.controller.*=all 
+com.ibm.wps.model.controller.impl.*=all 
+
+ThemeList: 
+com.ibm.wps.model.admin.theme.*=all 
+com.ibm.wps.model.listmodel.*=all 
+com.ibm.wps.resolver.webdav.admin.*=all 
+com.ibm.wps.model.ModelUtil=all 
+
+ThemeListController: 
+com.ibm.wps.model.theme.controller.*=all 
+com.ibm.wps.model.controller.impl.*=all 
+
+LayoutModel: 
+com.ibm.wps.composition.*=all 
+
+LaoutModelController: 
+com.ibm.wps.model.content.controller.*=all 
+com.ibm.wps.model.controller.*=all 
+
+PortletModelController: 
+com.ibm.wps.model.portlet.controller.*=all 
+com.ibm.wps.model.controller.impl.*=all 
+
+Related information  * IBM Support Portal: WebSphere Portal Troubleshooting [http://www.ibm.com/support/entry/portal/Troubleshooting/Software/WebSphere/WebSphere_Portal] [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571] 
+ * WebSphere Portal Family wiki: Troubleshooting [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Troubleshooting_wp7] 
+ * Collecting Data: Read first for WebSphere Portal [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21444911]

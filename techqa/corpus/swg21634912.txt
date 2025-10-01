@@ -1,0 +1,16 @@
+Title: IBM Mapping of directories and objects between ACCE and FEM - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Administration Console for Content Platform Engine (ACCE) is the new standard interface for managing Content Engine (CE) server; however, FileNet Enterprise Manager (FEM) has been used in CE 3.5.x, 4.x, 5.0, and 5.1. The ACCE interface arranges objects differently than FEM, and users may have trouble finding some objects/directories in ACCE. 
+
+ANSWER
+Here is a table of common directories and objects within FEM, and it's new locations in ACCE. 
+
+=== Domain Level === 
+
+FEM ACCE AddOns Global Configuration -> Data Design -> Add-ons Database Connections Global Configuration -> Administration -> Database Connections External Repositories Global Configuration -> Administration -> External Repositories Fixed Content Devices Global Configuration -> Administration -> Fixed Content Devices Marking Sets Global Configuration -> Data Design -> Marking Sets Object Stores Global Configuration -> Object Stores PE Connection Points Global Configuration -> Object Stores-> <OS> -> Administration -> Workflow System -> Connection Points PE Region Ids Global Configuration -> Object Stores-> <OS> -> Administration -> Workflow System -> Connection Points Replication Groups Global Configuration -> Administration -> Replication Groups Sites Global Configuration -> Administration -> Sites <Domain> -> Properties -> IBM Search Server Global Configuration -> Administration -> Text Search Servers <Domain> -> Properties -> Content Cache Global Configuration -> Administration -> Content Cache Areas === Object Stores Level === 
+
+FEM ACCE Change Preprocessor Actions Events, Actions, Processes -> Change Preprocessor Actions Choice Lists Data Design -> Choice Lists Document Class Data Design -> Classes Document Classification Action Events, Actions, Processes -> Document Classification Action Document Lifecycles -> Document Lifecycle Action Events, Actions, Processes -> Document Lifecycle Action Document Lifecycles -> Document Lifecycle Policies Events, Actions, Processes -> Document Lifecycle Policies Events -> Event Action Events, Actions, Processes -> Event Action Events -> Subscriptions Events, Actions, Processes -> Subscriptions Export Manifest N/A Index Areas Administrative -> Index Areas Other Classes Data Design -> Classes -> Other Classes Property Templates Data Design -> Property Templates Publishing Queue Administrative -> Publishing Queue Replication Queue Administrative -> Replication Queue Root Folder Browse -> Root Folder Saved Searches Search Search Results Search Security Policies Administrative -> Security Policies Storage Areas Administrative -> Storage Areas Storage Policies Administrative -> Storage Policies Unfiled Documents Browse -> Unfiled Documents Workflow Definitions Events, Actions, Processes -> Workflow Definitions Index Job Management (Right-click ObjectStore -> All Tasks -> Index Job Management) Administrative -> Index Job Manager

@@ -1,0 +1,179 @@
+Title: IBM JR33383: DS 7.5.1A ON WINDOWS CANNOT CONNECT TO DATABASE FROM ONE PROJECT ON SERVER BUT IS ABLE TO CONNECT FROM ANOTHER - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DS 7.5.1A on Windows cannot connect to database from one project
+   on server but is able to connect from another
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   DS 7.5.1A, Windows 2003, MS OLEDB Stage
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Customer states:
+   
+   DataStage Server = H78APWA03, this hosts all DataStage projects
+   
+   
+   
+   SQL Servers:
+   
+   
+   
+   H78SQLW02 = this is the production sql server (MS SQL 2005) and
+   
+   production jobs work against this from the PROD project (thank
+   goodness
+   or we would be completely dead)
+   
+   
+   
+   H78QAWA01 = this is the QA SQL server MS SQL 2005. Our
+   DataStage
+   project QA is supposed to use this server. I can connect to it
+   from
+   command line on H78APWA03 fine only when in DataStage can I no
+   longer
+   connect
+   
+   
+   
+   I set up a test project QA2 which is where I ran the traced jobs
+   trying
+   to connect to H78QAWA01, no good. Yet, if I want to import a
+   table
+   structure from the QA SQL server I can, no problem using the
+   same
+   connection!
+   
+   
+   
+   In all cases I am using the same authentication.
+   
+   
+   It seems to me that there is a problem with the SQL Server on
+   their H78QAWA01 SQL Server machine. Had them check the MDAC
+   version and on both the good and bad sql server its Windows 2003
+   MDAC 2.8.
+   
+   I imported and ran the customers job fine on our support servers
+   running SQL Server 2005. I have uploaded all the customers info
+   to the CRM server.
+   
+   You'll note that both the jobs PRODDSXEXport.dsx.zip and
+   QA2DSXEXport.dsx.zip are the same, the prod job runs fine (see
+   log), the QA job get a vague error that I could not find any
+   info on in our support db's or google.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  It was stated that: there are no columns definition picked up
+   by DSCGetFirstColumn(). Take patch and readme files from patches
+   location. This issue is resolved with the latest maintenance
+   patch.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR33383
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36DS
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-17
+   
+   
+ * CLOSED DATE
+   2011-12-21
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * FIXED COMPONENT ID
+   5724Q36DS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

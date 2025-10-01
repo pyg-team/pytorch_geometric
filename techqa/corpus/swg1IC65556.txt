@@ -1,0 +1,141 @@
+Title: IBM IC65556: DATA GRAPHING REPORT GENERATED FOR 1 DAY DEFAULTING TO 3 DAYS - United States
+
+Text:
+AIX  A FIX IS AVAILABLE
+4.2.1 Interim Fix 1 (November 2011) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24031346]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After generating history charting data for a single day,
+   graphing data defaults to three days, causing more data
+   generated into the report. the default for absolute time is 3
+   days, but if user wants to generate report for only 1 day, then
+   the report should be for 1 day, instead of 3 days
+   
+   Recreation steps:
+   one example is to generate Storage Subsystem Performance by
+   Volume report, specify 'Display history performance data using
+   absolute time' to 1 day. Result will be 3 days of data report
+   
+   ________________________________________________________________
+   ______
+   DB2 Version used for Server: n/a
+   The defect is against component: 5608TC300
+   Server/Manager build/release: 3.3.x, 4.1.x
+   Agent build/release (TPC-R): n/a
+   Server/Manager (OS): n/a
+   Agent (OS):  n/a
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Problem:
+   Default time range too large in performance graphs
+   
+   This is a suggestion to change the design of how performance
+   graphs are displayed.  Today, we always display a default of 3
+   days worth of historical data in the graph, regardless of the
+   time ranges that had been entered by the user on the tabular
+   report that was used to invoke the graph.  Depending on the
+   device, 3 days worth of data can still be a lot, causing the
+   report display to be delayed while the DB is queried.  The
+   unwanted data clutters the view and forces the user to
+   re-enter the same time range parameters a second time.
+   
+   Feedback on this topic is being reviewed for possible
+   inclusion in a later release.  There is no commitment to change.
+   
+   Update:
+   A fix has been provided in TPC 4.2.0 and 4.2.1.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC65556
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC FOR DATA
+   
+   
+ * REPORTED COMPONENT ID
+   5608TC300
+   
+   
+ * REPORTED RELEASE
+   33A
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-14
+   
+   
+ * CLOSED DATE
+   2010-01-15
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

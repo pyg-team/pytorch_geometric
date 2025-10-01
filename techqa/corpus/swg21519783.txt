@@ -1,0 +1,15 @@
+Title: IBM Usage of the Maxdelay value parameter on Connect:Direct for OS400 or i5/OS on the iSeries - United States
+
+Text:
+STERLINGFAQ TECHNOTE (FAQ)
+
+QUESTION
+ Is the Maxdelay value parameter able to be used on Connect:Direct for OS400 or i5/OS on the iSeries? 
+
+ANSWER
+The Maxdelay parameter is not valid for the OS400 or i5/OS on the iSeries systems.
+
+ 
+
+HISTORICAL NUMBER
+ FAQ1821

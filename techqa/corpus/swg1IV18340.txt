@@ -1,0 +1,189 @@
+Title: IBM IV18340: EVENTFLYOVER ENGLISH TEXT GARBLED TRADITIONAL CHINESE LOCALE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 2 (6.2.3-TIV-ITM-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24032429]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 4 (6.2.3-TIV-ITM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24034252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  EventFlyover English text garbled with Traditional Chinese
+   locale
+   1-Install and configure a TEP machine for Traditional Chinese
+   2-Ensure some events have fired
+   3-Observe the EventFlyover text for the events is unreadable
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do not use zh_TW Chinese (Traditional) locale
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  English text in event flyover popups is unreadable when using
+   Tivoli Enterprise Portal with the Traditional Chinese locale.
+   
+   On workstations configured to use the Traditional Chinese
+   (zh_TW) locale, English and other western text in event flyover
+   popups is unreadable.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The underlying cause of this problem is that the Monospaced size
+   14 font the portal uses to display event text does not work
+   correctly for the Traditional Chinese locale. The problem can be
+   corrected by changing the font family and/or size. Our
+   experimentation suggests the DialogInput size 14 font provides
+   optimal results for both western and Chinese text.
+   
+   To provide maximum flexibility, the portal logic was changed to
+   allow the event flyover font to be externally specified via a
+   runtime argument. The argument value is a comma-separated 3 part
+   string of the form: name,style,size where:
+   name is the logical or physical font name,
+   style is the font style - "PLAIN", "BOLD", "ITALIC",
+   "BOLDITALIC" (case-insensitive),
+   size is the font point size
+   
+   The Manage Tivoli Enterprise Monitoring Services application can
+   be used to configure the setting. To set the suggested value:
+   
+   For desktop clients: Select Advanced | Edit Variables... from
+   the context menu, double-click the "tep.event.flyover.font"
+   symbol and enter "DialogInput,PLAIN,14" in the input field and
+   select the "In use" checkbox.
+   
+   For browser clients: Perform the same steps as for the desktop
+   clients or select Advanced | Edit ENV File... and insert the
+   following line:
+     document.writeln( '<PARAM NAME="tep.event.flyover.font"
+     VALUE="DialogInput,PLAIN,14">' );
+   before the following line:
+     <!--END OF PARAMS-->
+   
+   For Java webstart clients: On the portal server, edit the
+   $CANDLEHOME\Config\tep.jnlpt file and insert the following line:
+     <property name="tep.event.flyover.font"
+     value="DialogInput,PLAIN,14"/>
+   before the following line:
+     <!--$COOKIES$-->
+   and recconfigure the Tivoli Enterprise Portal Server. To avoid
+   the reconfigure step, the same change can be applied to both the
+   $CANDLEHOME\CNB\tep.jnlp and $CANDLEHOME\Config\tep.jnlpt files.
+   Adjust the file locations as needed for Linux or UNIX portal
+   servers. In either case, use the Internet Explorer "Internet
+   Options" dialog to delete the browser temporary files to ensure
+   the modified tep.jnlp file is reloaded.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.2.3-TIV-ITM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Do not use the Traditional Chinese (zh_TW) locale.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV18340
+   
+   
+ * REPORTED COMPONENT NAME
+   TEP
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04EP
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-28
+   
+   
+ * CLOSED DATE
+   2012-05-30
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEP
+   
+   
+ * FIXED COMPONENT ID
+   5724C04EP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP

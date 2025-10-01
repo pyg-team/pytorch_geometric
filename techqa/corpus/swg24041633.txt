@@ -1,0 +1,44 @@
+Title: IBM Tivoli Monitoring 6.3.0 Fix Pack 7 (6.3.0-TIV-ITM-FP0007) - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This is a cumulative fix pack for IBM Tivoli Monitoring version 6.3.0. 
+
+DOWNLOAD DESCRIPTION
+This is a cumulative fix pack for IBM Tivoli Monitoring version 6.3.0. This fix pack is available as both an upgrade and fresh install.
+
+
+
+The upgrade install for this Fix pack consists of the following files:
+
+
+
+Fix pack file name Description 6.3.0-TIV-ITM_TMV-Linuxx-FP0007.tar.gz Contains the IBM Tivoli Monitoring base product components, Performance Analyzer, the Warehouse Proxy and Summarization and Pruning agents for Linux x86, as well as application support for the base agents and a selected set of IBM Tivoli Monitoring 6.x based distributed monitoring agents. 6.3.0-TIV-ITM_TMV-Linuxx64-FP0007.tar.gz Contains the IBM Tivoli Monitoring base product components, Performance Analyzer, the Warehouse Proxy and Summarization and Pruning agents for Linux x86_64, as well as application support for the base agents and a selected set of IBM Tivoli Monitoring 6.x based distributed monitoring agents. 6.3.0-TIV-ITM_TMV-Linuxz-FP0007.tar.gz Contains the IBM Tivoli Monitoring base product components, Performance Analyzer, the Warehouse Proxy and Summarization and Pruning agents for Linux on System z, as well as application support for the base agents and a selected set of IBM Tivoli Monitoring 6.x based distributed monitoring agents. 6.3.0-TIV-ITM_TMV-Unix-FP0007.tar.gz Contains the IBM Tivoli Monitoring base product components, Performance Analyzer, the Warehouse Proxy and Summarization and Pruning agents for Unix, as well as application support for the base agents and a selected set of IBM Tivoli Monitoring 6.x based distributed monitoring agents. 6.3.0-TIV-ITM_TMV-Windows-FP0007.zip Contains the IBM Tivoli Monitoring base product components, Performance Analyzer, the Warehouse Proxy and Summarization and Pruning agents for 32-bit Windows, as well as application support for the base agents and a selected set of IBM Tivoli Monitoring 6.x based distributed monitoring agents. 6.3.0-TIV-ITM_TMV-Windows64-FP0007.zip Contains the IBM Tivoli Monitoring base product components, Performance Analyzer, the Warehouse Proxy and Summarization and Pruning agents for 64-bit Windows, as well as application support for the base agents and a selected set of IBM Tivoli Monitoring 6.x based distributed monitoring agents. 6.3.0-TIV-ITM_TMV-Agents-FP0007.tar.gz Contains the IBM Tivoli Monitoring base agents. This includes the following: Agentless Monitor (multiplatforms), i5/OS agent, Windows OS agent, Linux OS agent, UNIX OS agent, UNIX Logs agent, IBM Tivoli Universal Agent. 6.3.0-TIV-ITM_TMV-Tools-FP0007.tar.gz Contains the IBM Tivoli Monitoring 5.1.2 Migration Toolkit, the Distributed Monitoring Upgrade Toolkit and the Tivoli Event Integration event synchronization component. 6.3.0-TIV-ITM_TMV-Agent-Reports-FP0007.tar.gz Contains the IBM Tivoli Monitoring OS Agents Reports. 6.3.0-TIV-ITM_TMV-ITPA-Common-FP0007 .tar.gz IBM Tivoli Performance Analyzer Reports and Domain Definitions Multiplatform, Multilingual. 6.3.0-TIV-ITM_TMV-LP-FP0006.tar.gz Contains the IBM Tivoli Monitoring Language Pack for all platforms. 
+The pristine install images can be downloaded from the IBM Passport Advantage® Online Website: 
+
+
+Number of eAssembly to download Number of part to download Title on Passport Advantage Contents CJ1ECML CNH58EN IBM Tivoli Monitoring V6.3.0.7 Base, Windows (32 Bit env.), English Tivoli Enterprise Monitoring Server, Tivoli Enterprise Portal Server, Tivoli Enterprise Portal Client, Tivoli Data Warehouse agents, and application support in English for base agents for 32-bit Windows operating systems CJ1ECML CNH59EN IBM Tivoli Monitoring V6.3.0.7 Base, Windows (64 Bit env.), English Tivoli Enterprise Monitoring Server, Tivoli Enterprise Portal Server, Tivoli Enterprise Portal Client, Tivoli Data Warehouse agents, and application support for base agents in English for 64-bit Windows operating systems CJ1ECML CNH5AEN IBM Tivoli Monitoring V6.3.0.7 Base, Unix, English Tivoli Enterprise Monitoring Server, Tivoli Enterprise Portal Server, Tivoli Enterprise Portal Client, Tivoli Data Warehouse agents, and application support for base agents in English for UNIX operating systems CJ1ECML CNH5BEN IBM Tivoli Monitoring V6.3.0.7 Base, Linux (32 Bit Env.), English Tivoli Enterprise Monitoring Server, Tivoli Enterprise Portal Server, Tivoli Enterprise Portal Client, Tivoli Data Warehouse agents, and application support for base agents in English for 32-bit Env. Linux operating systems CJ1ECML CNH5CEN IBM Tivoli Monitoring V6.3.0.7 Base, Linux (64 Bit Env.), English Tivoli Enterprise Monitoring Server, Tivoli Enterprise Portal Server, Tivoli Enterprise Portal Client, Tivoli Data Warehouse agents, and application support for base agents in English for 64-bit Env. Linux operating systems CJ1ECML CNH5DEN IBM Tivoli Monitoring V6.3.0.7 Base, Linux on System z®, English Tivoli Enterprise Monitoring Server, Tivoli Enterprise Portal Server, Tivoli Enterprise Portal Client, Tivoli Data Warehouse agents, and application support for base agents in English for Linux on System z operating systems CJ1ECML CNH5EEN IBM Tivoli Monitoring V6.3.0.7 Tools, Multiplatform, English Tivoli Monitoring event synchronization component, Tivoli Enterprise Console® Event Definition Generator (TEDGEN) utility, and audit record DTDs CJ1ECML CNH5FML IBM Tivoli Performance Analyzer V6.3.0.7: Reports and Domain Definitions Multiplatform, Multilingual Performance Analyzer domains and BIRT reports CJ1EDML CNH5GML IBM Tivoli Monitoring V6.3.0.7 Agents, Multiplatform, Multilingual Operating system agents (IBM i, Linux, UNIX, Windows) and Agentless OS agents (AIX, HP-UX, Linux, Solaris, Windows) CJ1EDML CNH5HML IBM Tivoli Monitoring V6.3.0.7 Agent Reports Operating system agent reports and reports installer 
+The following levelset PTFs represent the equivalent maintenance level for the corresponding z/OS components which can be ordered via ShopzSeries [https://www14.software.ibm.com/webapp/ShopzSeries/ShopzSeries.jsp]: 
+
+UA91244 -- MGMT SERVER DS (Code) 
+UA91245 -- MGMT SERVER DS (Data) 
+UA91247 -- ITMS/ENGINE 1 of 2 
+UA91248 -- ITMS/ENGINE 2 of 2 
+
+
+Created/Revised by Date of Creation/Update Summary of Changes MBK 2016/03/30 Document created DMH 2017/01/06 Fix Pack Published DMH2017/03/24Updated with z/OS PTF 
+
+URL LANGUAGE SIZE(Bytes) Installation and Setup Guide [http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2//com.ibm.itm.doc_6.3fp2/install/install_itm.htm] English 999999999 
+DOWNLOAD PACKAGE
+
+
+Fix Central
+
+ Fix Central provides fixes and updates for your system's software, hardware, and operating system. An IBM registered ID is required to obtain the fixes, which allows us to update you on any critical issues with the fix. Privacy is always maintained. 
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 6.3.0-TIV-ITM-FP0007 6 Jan 2017 English 999999999 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7ETivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&release=All&platform=All&function=fixId&fixids=6.3.0-TIV-ITM-FP0007&source=fc] [ ] 
+ [/support/docview.wss?uid=swg24041633&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24041633&aid=2]Problems (APARS) fixed
+IV53175 IV67096 IV67432 IV67483 IV68775 IV69861 IV70874 IV70885 IV71275 IV71397 IV73175 IV73844 IV73966 IV74074 IV74123 IV74282 IV74388 IV74490 IV74705 IV74708 IV75662 IV76877 IV77112 IV77124 IV77557 IV77559 IV77564 IV77742 IV77992 IV78033 IV78188 IV78192 IV78199 IV78315 IV78398 IV78498 IV78528 IV78556 IV78703 IV78822 IV79257 IV79424 IV79797 IV79807 IV79900 IV80032 IV80194 IV80202 IV80542 IV80564 IV80618 IV80745 IV80811 IV80830 IV80998 IV81149 IV81199 IV81209 IV81217 IV81349 IV81519 IV81845 IV82136 IV82177 IV82178 IV82236 IV82451 IV82531 IV82690 IV82700 IV82704 IV82891 IV82922 IV82980 IV83118 IV83251 IV83285 IV83352 IV83437 IV83613 IV83672 IV83694 IV83775 IV83880 IV83886 IV84770 IV84786 IV85142 IV85156 IV85805 IV86800 IV87174 IV87359 IV87524 IV87940 IV88750 IV89128 IV89461 IV90059 IV90312 IV90475 IV90871

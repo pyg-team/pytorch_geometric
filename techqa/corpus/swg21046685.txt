@@ -1,0 +1,17 @@
+Title: IBM Editing FRNOLINT.TBL - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I edit the FRNOLINT.TBL file? 
+
+ANSWER
+Use the Notepad to edit the FRNOLINT.TBL file. 
+
+ 1. Open a command prompt. 
+ 2. Change directory to the directory where you installed the Content Manager for AS/400 client (FRNROOT by default). 
+ 3. Enter: NOTEPAD FRNOLINT.TBL 
+ 4. When editing the file:  * Do not press the Enter key. 
+     * You can type over the incorrect or changed information, such as the TCP/IP address. 
+     * You can copy an existing table entry by using the copy and paste functions. This way, you can add a second server, such as a test Content Manager for AS/400® server. Make sure that there is a blank line between server entries. Reminder: If you copy the example server entries, make sure that you remove the comment markers at the beginning /* and the end */ of the line.

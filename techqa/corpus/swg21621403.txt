@@ -1,0 +1,41 @@
+Title: IBM Connecting to a EMC Centera storage fails with java.lang.UnsatisfiedLinkError in IBM FileNet Content Platform Engine 5.2 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After a Fixed Content Device for EMC Centera® storage is configured, IBM® FileNet® Content Platform Engine is not able to connect to the Centera storage with java.lang.UnsatisfiedLinkError. 
+
+CAUSE
+The Content Platform Engine is unable to locate or load the EMC Centera SDK library.
+
+DIAGNOSING THE PROBLEM
+Connecting to the Centera stage fail with the following exception in p8_server_error.log 
+
+The [initialize] operation on the fixed content provider [com.filenet.engine.content.fcprovider.centera.CenteraFCP(0)] failed. Message was: no FPLibrary in java.library.path
+com.filenet.api.exception.EngineRuntimeException: FNRCC0110E: CONTENT_FCP_OPERATION_FAILED: The [initialize] operation on the fixed content provider [com.filenet.engine.content.fcprovider.centera.CenteraFCP(0)] failed. Message was: no FPLibrary in java.library.path failedBatchItem=0 errorStack={
+at com.filenet.engine.content.fcprovider.centera.CenteraFCP.initialize(CenteraFCP.java:211)
+at com.filenet.engine.content.fcprovider.centera.CenteraFCP.initialize(CenteraFCP.java:85)
+at com.filenet.engine.content.fcprovider.BaseFixedContentProvider.adminConnect(BaseFixedContentProvider.java:73)
+:
+:
+Caused by: java.lang.UnsatisfiedLinkError: no FPLibrary in java.library.path failedBatchItem=0
+at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1738)
+at java.lang.Runtime.loadLibrary0(Runtime.java:823)
+at java.lang.System.loadLibrary(System.java:1029)
+at com.filepool.natives.FPLibraryNative.LoadFPLibrary(Unknown Source)
+at com.filepool.fplibrary.FPPool.LoadFPLibrary(Unknown Source)
+at com.filenet.engine.content.fcprovider.centera.CenteraFCP.initialize(CenteraFCP.java:98)
+at com.filenet.engine.content.fcprovider.centera.CenteraFCP.initialize(CenteraFCP.java:86)
+... 19 more
+}
+
+
+RESOLVING THE PROBLEM
+On the system where FileNet Content Platform Engine is deployed: 
+
+ 1. Follow the instruction on Information Center: Installing or updating EMC Centera SDK library files to install EMC Centera SDK library files and Configure environment variables. 
+ 2. The Content Platform Engine only supports 64-bit application servers. Use the 64-bit EMC Centera SDK library to run with the 64-bit JVM. 
+ 3. If Content Platform Engine is running on a Microsoft® Windows Server® system, EMC Centera SDK version 3.3 requires Microsoft Visual C++ 2005 Service Pack 1 Redistributable Package MFC Security Update. Download and install the package from from http://www.microsoft.com/en-us/download/details.aspx?id=26347 [http://www.microsoft.com/en-us/download/details.aspx?id=26347]
+    
+    NOTE Uninstall any other Microsoft Visual C++ 2008 Redistributable Package if one was previously installed.

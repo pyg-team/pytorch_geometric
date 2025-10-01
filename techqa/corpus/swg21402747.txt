@@ -1,0 +1,19 @@
+Title: IBM How to query for all attachments in the database - United States
+
+Text:
+attachment TECHNOTE (FAQ)
+
+QUESTION
+ How do you query for all attachments in the database of size greater than a value 'X' KBytes in IBM Rational Synergy 7.1? 
+
+ANSWER
+The following command will return a list of all the attachments of the associated Change Request in a given database exceeding a size of 'X' KB. 
+
+ccm query "attachment_size>'<numeric value>'" 
+
+
+For example:
+
+ccm query "attachment_size>'1024'"
+
+This command will return all the attachments with size greater than 1MB or 1024 KB.

@@ -1,0 +1,34 @@
+Title: IBM Is ImagePlus for z/OS able to store Microsoft Word files? - United States
+
+Text:
+IWP Related; Usage and Test TECHNOTE (FAQ)
+
+QUESTION
+ Can Content Manager ImagePlus for z/OS (previously known as ImagePlus for MVS) store Microsoft Word files? Can I launch Microsoft Word from an ImagePlus workstation through the workstation program and open the file? 
+
+ANSWER
+ImagePlus® Object Distribution Manager (IODM) communicates with ImagePlus Workstation Program (IWPM) to scan and display image objects. To store or display a Microsoft® Word document with ImagePlus using IWPM as a client workstation, you can set up IWPM to launch an application that will render Microsoft Word documents; in this problem report, we used the Microsoft Word Viewer. 
+
+Use the IWPM Configuration Program to make the following changes to IWPM: 
+
+1. Click the Exits tab to open the Specify any Display user exits page. To specify what program IWPM should use to render Microsoft Word documents, type the following entries: 
+
+Content Class: 151 Description: MS Word Doc Program Name: C:\Program Files\WordView\WORDVIEW.EXE 1. Click Add to create this definition. 
+
+2. Click the Working set tab to open the Specify any Working Set user exits page. To tell IWPM not to render the document itself, type the following entries: 
+
+Content Class: 151 Description: Disable MS Word View DLL Name: <leave this blank> 1. Click Add to create this definition. 
+
+2. If you are using ImagePlus Object Distribution Manager (IODM) Version 3.1, no host changes are needed. If you want to replicate this in an IODM Version 2.2 environment, add object class x'012F' to the IODM Object Characteristics table (IDOBJCTB). Object class x'012F' corresponds to Content Class 151; see the IWPM for OS/2® Version 2 Release 1 Installation and User Guide (GC34-3092-01) for more details on this relationship. 
+
+3. Ask IODM to send a Microsoft Word document to IWPM for display. The document shows up as an icon in the IWPM working set; double-click the icon to launch the Microsoft Word Viewer, which then displays the document. 
+
+Be aware that anything that passes through the IWPM working set is automatically converted into Mixed Object: Document Content Architecture (MO:DCA) or tag image file format (TIFF), depending on how IWPM is configured, so you cannot use IWPM to store the document in Microsoft Word format in IODM. For our test, we used an internal test tool, written in restructured extended executor language (REXX), to store the object directly in IODM using a TCP/IP connection. Basically, the tool simulates IWPM functions, and allows you to store objects in their "native" format -- in this case Microsoft Word -- using the correct object class, such as x'012F'.
+
+To store these documents out of the test environment, you have two options: 
+
+For ImagePlus 2.2 or 3.1, use the enhanced "Copy TempID" program. This utility uses some of the IWPM APIs, and enables you to store documents in their native format. At the time of writing this document, only an OS/2 version is available. For ImagePlus 3.1, use any of the batch facilities, such as IODM Coded Data Storage Process or IPFAF Folder Workflow Application (FWA) Batch Store, to store the Microsoft Word documents in their native format. However, you will need to have some sort of process for getting your documents into the record format that these batch facilities require. 
+
+If you can do some programming, use the new IPFAF remote API to store the documents from a Windows NT® or an OS/2 workstation. For a solution that is specific to IODM, that is if you don't use IPFAF, you could program directly to the IODM IWPM advanced program-to-program communication (APPC) or TCP/IP interface.
+
+In theory, once the Content Class overrides are defined in IWPM (as documented above), you should be able to open the Microsoft Word document in IWPM and store it in its native format. In practice, however, this doesn't work: IWPM reports that it is unable to store the document to the host.

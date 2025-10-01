@@ -1,0 +1,58 @@
+Title: IBM Tablespace summary view is not populated with data - United States
+
+Text:
+5724B96DoTR; SQL1611W GetDatabaseSnapshot tablespace summary Table Space Returned error and error code is 1611 db2 agent kudtbagt TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In the Tablespace workspace, all the views are empty.
+Anyway, this unexpected behavior is not consistent.
+Tablespace metrics are sometimes correctly gathered and sometimes they are not. 
+
+SYMPTOM
+While the problem is occurring, the DB2 agent log shows the following messages: 
+
+kudtbagt.cpp,608,"TakeSampleConstructor") Exit 
+(4D48277F.0088-9:cssmain.cpp,1432,"GetDatabaseSnapshot") Error - GetDatabaseSnapshot=>db2GetSnapshot Returned error and error code is 1611
+
+
+CAUSE
+The agent collects some metrics issuing a DB2 snapshot command, and this is the case for the Tablespace attribute group. It basically executes the command:
+
+db2 get snapshot for tablespaces on <dbname>
+
+If there are no active connections to the database, we get the error:
+
+SQL1611W No data was returned by Database System Monitor.
+
+that actually matches the return code showed in the DB2 agent log.
+
+This is the explanation of the message from a DB2 perspective:
+
+Explanation: 
+None of the monitoring information requested by the users was available at the time the Database System Monitor API call was issued. This can occur when a requested database or application is inactive, or when a monitoring group such as the Table group is turned OFF, and Table information is requested. 
+
+User response: 
+The command completed successfully, but no data is returned to the user. The user should make sure that the databases or applications for which monitoring is desired are active at the time the Database System Monitor API is called, or that the desired monitoring groups are active.
+
+
+DIAGNOSING THE PROBLEM
+Make sure there is an active database connection for the monitored DB2 instance. 
+
+The Return code 1611 indicates that there is no active database connection at the time the agent calls the SNAPSHOT.
+To verify if you are in the aforementioned condition,when the problem occurs on a specific DB2 instance, you can run the following commands on it and verify the output:
+
+a) db2 list active databases
+b) db2 get snapshot for database on <database name>
+
+If the a) command does not show your database among the active databases, then command b) will surely return the SQL1611W message and this is why you get empty views for the Tablespace attribute group.
+
+
+RESOLVING THE PROBLEM
+If there are no active connections for the monitored databases, some metrics will not be gathered as, for example, the Tablespace metrics. 
+
+Open a connection to the monitored database and then the Tablespace workspace will be properly populated.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Tivoli Monitoring DB2 Agent V6.x

@@ -1,0 +1,26 @@
+Title: IBM Question about executing a command upon 'bkill' - United States
+
+Text:
+executing a command upon 'bkill' TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Question about executing a command upon 'bkill' 
+
+RESOLVING THE PROBLEM
+I got the following request from a vendor:
+
+"configure an LSF queue so that it will be calling the
+'$VMANAGER_HOME/bin/vm_lsf_post_exec.sh' script
+upon bkill command execution."
+
+So would I want to create a queue with the following attribute?
+
+JOB_CONTROLS=TERMINATE[$VMANAGER_HOME/bin/vm_lsf_post_exec.sh]
+(I'll substitute the real path for $VMANAGER_HOME) If you want not to kill the job then use the definition you mentioned:
+JOB_CONTROLS=TERMINATE[$VMANAGER_HOME/bin/vm_lsf_post_exec.sh]
+
+Note that this means everytime you do bkill on a job in this queue, it will only run this script and not actually try to kill the job itself.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

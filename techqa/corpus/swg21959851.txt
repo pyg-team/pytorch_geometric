@@ -1,0 +1,76 @@
+Title: IBM ANR3338E is issued when option SSLDISABLELEGACYTLS enabled - United States
+
+Text:
+TSM ANR3338E SSL TLS12 SSLDISABLELEGACYTLS TECHNOTE (FAQ)
+
+QUESTION
+ Why is message ANR3338E issued in the activity log, despite the SSLDISABLELEGACYTLS option is enabled (value yes) in Tivoli Storage Manager Server? 
+
+CAUSE
+When SSLDISABLELEGACYTLS option is enabled in Tivoli Storage Manager Server, many Client sessions set with a SSL/TLS protocol lower than TLS1.2 report the error message:
+
+ANR3338E Session with node or system at address <IP> failed due to use of TLS at level SSLV3 instead of TLS 1.2 or higher. (SESSION: 16)
+
+
+ANSWER
+It is commonly thought that enabling the 'SSLDISABLELEGACYTLS' option in Tivoli Storage Manager Server will result in the complete failure of the initial negotiation between Client and Server. 
+
+Tivoli Storage Manager is designed to allow at least the certificate negotiation to happen.
+SSLDISABLELEGACYTLS is used to ensure that a TLS connection level of 1.2 or higher is enforced, and that it is up to the Server to enforce it. 
+There is a variety of ways to connect to a Tivoli Storage Manager Server and this method allows the Server to put a message into the activity log. 
+
+A way to confirm that the certificate negotiation is occurring as designed is to use the external tool openssl (see URL below for details and usage) and force a communication to the Tivoli Storage Manager Server through the port specified in SSLTCPPORT option with a protocol lower than TLS12
+
+In below example, the openssl is trying to connect with the Server (same machine) with a SSL3 protocol while the Server has enabled option SSLDISABLELEGACYTLS:
+
+[root@rh64tsm71 bin]# openssl s_client -ssl3 -connect localhost:1500
+CONNECTED(00000003)
+depth=0 C = US, O = TSM, OU = TSM Network, CN = TSM Self-Signed Certificate
+verify error:num=18:self signed certificate
+verify return:1
+depth=0 C = US, O = TSM, OU = TSM Network, CN = TSM Self-Signed Certificate
+verify return:1
+---
+Certificate chain
+0 s:/C=US/O=TSM/OU=TSM Network/CN=TSM Self-Signed Certificate
+i:/C=US/O=TSM/OU=TSM Network/CN=TSM Self-Signed Certificate
+---
+Server certificate
+-----BEGIN CERTIFICATE-----
+CUT
+-----END CERTIFICATE-----
+subject=/C=US/O=TSM/OU=TSM Network/CN=TSM Self-Signed Certificate
+issuer=/C=US/O=TSM/OU=TSM Network/CN=TSM Self-Signed Certificate
+---
+No client certificate CA names sent
+---
+SSL handshake has read 993 bytes and written 480 bytes
+---
+New, TLSv1/SSLv3, Cipher is AES256-SHA
+Server public key is 2048 bit
+Secure Renegotiation IS supported
+Compression: NONE
+Expansion: NONE
+SSL-Session:
+Protocol : SSLv3
+Cipher : AES256-SHA
+Session-ID: E407000073FD9E43FB34569F7868B5049E3DF86B5858585803A07A550000001C
+Session-ID-ctx: 
+Master-Key: E064C5BE96943F61040039229B4BEBDC96449B2E0EE93106D095559DB086B7A9AAF42731B4A9385F003137FE87A9E5C0
+Key-Arg : None
+Krb5 Principal: None
+PSK identity: None
+PSK identity hint: None
+Start Time: 1434099715
+Timeout : 7200 (sec)
+Verify return code: 18 (self signed certificate)
+---
+read:errno=0
+[root@rh64tsm71 bin]# 
+
+After the certificate negotiation, the session is refused and in the activity log (correctly as per design) the following message is reported:
+
+ANR3338E Session with node or system at address 127.0.0.1 failed due to use of TLS at level SSLV3 instead of TLS 1.2 or higher. (SESSION: 29)
+
+RELATED INFORMATION
+ OpenSSL installation and usage [https://www.openssl.org]

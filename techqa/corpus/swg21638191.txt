@@ -1,0 +1,163 @@
+Title: IBM How to upgrade IBM Rational Directory Server 5.2.1 (Tivoli variant) on 64-bit Linux - United States
+
+Text:
+synergy; rds; 5.2.1; patch; tivoli; 6.3; linux; 64; bit; db2; gskit; 9.7.0.7; 8.0.15.4; 6.3.0.17; fix; pack TECHNOTE (FAQ)
+
+QUESTION
+ How do you upgrade the individual components required by IBM Rational Directory Server 5.2.1 on 64-bit Linux? 
+
+CAUSE
+Upgrading an earlier version of Rational Directory Server (Tivoli variant) to version 5.2.1 requires upgrading each of the following components in order first: 
+
+ 1. IBM DB2 Server Fix Pack 9.7.0.7 
+ 2. IBM GSKIT version 8.0.15.4 
+ 3. IBM Tivoli Directory Server 6.3 fix pack 6.3.0.17
+
+
+After these components have been upgraded successfully, then you can upgrade Rational Directory Server to version 5.2.1. 
+
+The installation instructions for each of these components can be difficult to locate and navigate, so this document has been created to provide all of the installation steps in a single location. 
+ANSWER
+These instructions are relevant for 64-bit Linux only. 
+
+ 
+
+There are 3 parts to the patch process: 
+
+ *  IBM DB2 IBM Global Security Kit (GSKit) IBM Tivoli Directory Server 
+
+These must be applied in order. 
+
+
+
+
+
+
+ 1. Patching DB2 to IBM DB2 Server Fix Pack 9.7.0.7
+    
+     1. Download IBM DB2 Server Fix Pack 9.7.0.7 [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/DB2&release=9.7.*&platform=Linux+64-bit,x86_64&function=fixId&fixids=*server*FP007&includeSupersedes=0] from IBM Fix Central.
+        
+        The downloaded file is called 
+        v9.7fp7_linuxx64_server.tar.gz (750.99 MB)
+        
+        
+     2. Login as root
+        
+        
+     3. Unzip and untar the patch file to a writable location
+        
+        Example:
+        cd <path_where_downloaded_DB2_file_is_saved>
+        gunzip -c v9.7fp7_linuxx64_server.tar.gz | tar -xf -
+        
+        Note: The above command creates a folder called v9.7fp7_linuxx64_server and extracts all the files into that folder.
+        
+        
+     4. Change directory (cd) to the server directory in the expanded patch directory
+        
+        Example:
+        cd v9.7fp7_linuxx64_server
+        cd server
+        
+        
+     5. Run the following (replacing DB2DIR with the location of the DB2 install directory on your machine).
+        
+        ./installFixPack -b DB2DIR
+        
+        For example, if DB2 is installed in the path /opt/ibm/tdsV6.3db2:
+        
+        ./installFixPack -b /opt/ibm/tdsV6.3db2
+        
+        
+        This completes the IBM DB2 part of the procedure.
+        
+        
+        
+    
+    
+ 2. Patching GSKIT to IBM GSKIT version 8.0.15.4
+    
+     1. Download IBM GSKIT version 8.0.15.4 [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Global+Security+Kit&release=8.0.15.4&platform=All&function=all] from IBM FixCentral.
+        
+        The downloaded file is called 
+        8.0.15.4-TIV-GSKIT-LinuxX64-FP004.tar.gz (17.12 MB)
+        
+        
+     2. Login as root
+        
+        
+     3. Unzip and untar the patch file to a writable location
+        
+        Example:
+        cd <path_where_downloaded_gskit_tar.gz_file_is_kept>
+        gunzip -c 8.0.15.4-TIV-GSKIT-LinuxX64-FP004.tar.gz | tar -xf -
+        
+        Note: The above command creates a folder called 8.0.15.4-TIV-GSKIT-LinuxX64-FP004 and extracts all the files into that folder.
+        
+        
+     4. Stop Tivoli Directory Server related processes (ibmdiradm and ibmslapd) and any other processes (such as TAM) which use gskit.
+        
+        
+     5. Install the rpm files:
+        
+        Example:
+        cd 8.0.15.4-TIV-GSKIT-LinuxX64-FP004
+        cd 64
+        rpm -Uhv gskcrypt64-8.0.15.4.linux.x86_64.rpm
+        rpm -Uhv gskssl64-8.0.15.4.linux.x86_64.rpm
+        
+        
+     6. Verify the installed rpm levels
+        
+        Example:
+        rpm -qa | egrep ""gskcrypt64|gskssl64""
+        
+        
+     7. Start Tivoli Directory Server related processes (ibmdiradm and ibmslapd) and any other processes (such as TAM) which use gskit.
+        
+        This completes the IBM GSKit part of the procedure.
+        
+        
+        
+    
+    
+ 3. Patching Tivoli Directory Server to IBM Tivoli Directory Server 6.3 fix pack 6.3.0.17
+    
+     1. Download IBM Tivoli Directory Server 6.3 fix pack 6.3.0.17 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/Tivoli+Directory+Server&release=6.3.0.17&platform=All&function=fixId&fixids=6.3.0.17-ISS-ITDS-LinuxX64-FP0017] [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/Tivoli+Directory+Server&release=6.3.0.17&platform=All&function=fixId&fixids=6.3.0.17-ISS-ITDS-LinuxX64-FP0017]from IBM Fix Central.
+        
+        The following files implement this fix:
+        6.3.0.17-ISS-ITDS-FP0017.README (553.99 KB)
+        6.3.0.17-ISS-ITDS-LANGPK.README (175.74 KB)
+        6.3.0.17-ISS-ITDS-LinuxX64-FP0017.tar.gz (269.78 MB)
+        6.3.0.17-ISS-ITDS-LinuxX64-LANGPK.tar.gz (3.5 MB)
+        
+        
+     2. Login as root
+        
+        
+     3. Unzip and untar the patch file to a writable location
+        
+        Example:
+        cd <path_where_downloaded_tivoli_d_s_file_is_kept>
+        gunzip -c 6.3.0.17-ISS-ITDS-LinuxX64-FP0017.tar.gz | tar -xf -
+        
+        Note: The above command creates a folder called 6.3.0.17-ISS-ITDS-LinuxX64-FP0017 and extracts all the files into that folder.
+        
+        
+     4. Install the patch
+        
+        Example:
+        cd 6.3.0.17-ISS-ITDS-LinuxX64-FP0017
+        idsinstall -u -f
+        
+        Note: If you have not already done so, you will be prompted to first accept the TDS license terms before installation will continue.
+        
+        
+        This completes the Tivoli Directory Server part of the procedure.
+        
+        
+    
+    
+
+You may now upgrade Rational Directory Server to version 5.2.1. RELATED INFORMATION
+ Upgrade RDS 5.2.1 (Tivoli) on 32-bit Linux [http://www.ibm.com/support/docview.wss?uid=swg21638209]

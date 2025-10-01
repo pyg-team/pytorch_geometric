@@ -1,0 +1,115 @@
+Title: IBM IV79232: CHECK POINT LOG SOURCES USING LEA PROTOCOL STOP WORKING AND REPORT FAIL TO CONNECT MESSAGES WHEN USING SHA-256 CERTIFICATES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS VENDOR SOLUTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Due to changes that have been made by Check Point in regards to
+   the default and recommendeded implementation of SHA-256 based
+   certificates and the lact of support in the OPSEC SDK for
+   SHA-256, Log Sources using the LEA Protocol will report failures
+   and data will not be collected when using a SHA-256 certificate.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Changing the OPSEC authentication on the Check Point appliance
+   to clear instead of sslca and making the same change on the log
+   source configuration will allow connectivity, but the data will
+   no longer be encrypted.
+   
+   Another option is to send the data via syslog as described in
+   the QRadar documentation.
+   
+   Please contact Check Point support initially and subseqently
+   IBM support if you require further information on this issue.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  CLOSED
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV79232
+   
+   
+ * REPORTED COMPONENT NAME
+   QRADAR SOFTWARE
+   
+   
+ * REPORTED COMPONENT ID
+   5725QRDSW
+   
+   
+ * REPORTED RELEASE
+   725
+   
+   
+ * STATUS
+   CLOSED ISV
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-11-26
+   
+   
+ * CLOSED DATE
+   2015-11-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,37 @@
+Title: IBM Datacap Taskmaster Capture throws an Invalid Date Format error - United States
+
+Text:
+hr_locale; out-of-range value; datetime TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When adding a fingerprint, it fails. The RRS log shows an invalid date format error when a new fingerprint is being inserted. 
+
+SYMPTOM
+The RRS log shows the following: 
+
+======================= 
+
+16:22:42.115 (0) t:118 p:C31818 <Insert Fingerprint> exec SQL failed: INSERT INTO TEMPLATE (TP_CCOPATH, TP_IMAGEPATH, TP_HOSTID, TP_STATUS,TP_DATEADDED, TP_LASTHIT, TP_HITCOUNT, TP_PAGETYPE)VALUES ('C:\APT\batches\20140513.000018\tm000001.
+cco','C:\APT\batches\20140513.000018\tm000001.tif',14, 'New','13/05/2014','13/05/2014',0,2)
+16:22:42.115 (0) t:118 p:C31818 The conversion of a varchar data type to a datetime data type resulted in an out-of-range value.
+16:22:42.115 (0) t:118 p:C31818 Failed to add fingerprint to DB 
+
+======================= 
+
+NOTE: The dates are in DD-MM-YYYY format.
+
+
+CAUSE
+The server that hosts the Fingerprint database has the US locale (MM-DD-YYY), but the Datacap application uses Canadian locale (DD-MM-YYYY).
+
+
+RESOLVING THE PROBLEM
+Make sure the same locales are used between the Datacap Taskmaster and database servers. If the application requires a different locale, then the locale must be set to match the database server's locale before any database related action (e.g. CreateFingerprint()). For example: 
+
+==============
+rrset(en-US,@P.hr_locale) 
+FindFingerprint(TRUE) 
+==============
+
+RELATED INFORMATION
+ Datacap locale [http://pic.dhe.ibm.com/infocenter/datacap/v8r1m0/topic/com.ibm.dc.develop.doc/dcadg725.htm]

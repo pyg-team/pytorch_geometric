@@ -1,0 +1,31 @@
+Title: IBM Users regularly prompted to change password even after changing password in inotes - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Internet password had been expired for customer, changed to new password so as to login into his mail File. But same was not getting accepted and throwing the same password change page 
+
+RESOLVING THE PROBLEM
+Problem :: In the case of user's intranet password expired hitting home mail server & non-home Mail server url, he is able to change password . However after password change screen its not getting redirected to his mail file and continuously showing the password change screen. 
+To resolve the issue please make sure we have the below settings,
+1> Server doc -> Internet protocol -> Domino web engine ->Memory caches-> Cached user expiration interval. Please make sure this is not set to 0
+
+2> By default, 64 user credentials are kept in the user cache - "Server doc ->Internet Protocols -> Domino Web engine -> Memory Cache -> Maximum cached users" field.
+
+When the cache is full ie., 64 users are already authenticated with the server and their session is still within the expiration interval, a 65th user needs a Password change, 65 th user would see this issue as he's not in the user cache.
+
+To resolve the issue, set the Max cached user count to a higher value -say maximum number of web users on this server + ~50 (some overhead) -
+Please also be aware of the cache expiration interval. Be sure to ensure the settings are consistent among all the participating servers in the SSO.
+The user whose password needs changed has to be in the user cache for the reasons below :
+
+Since the the ?Change Password is an AdminP request, in a large domain it'd take a while for the adminP to get around to process it and have
+the person doc changes replicated across all the address books in the domain. Whilst this is occurring the user's old session cookie has to
+be still valid/active otherwise the user would lose access to the server.
+
+This is the reason why you see the issue when either 1) user cache is disabled or 2) user isn't in the cache.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Messaging Applications IBM iNotes

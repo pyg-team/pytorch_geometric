@@ -1,0 +1,108 @@
+Title: IBM Improving Capture Performance across a WAN network - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ How to improve performance when processing Capture documents across a WAN network? 
+
+CAUSE
+WAN network latency causes performance slow down
+
+ANSWER
+Introduction 
+
+IBM FileNet Capture Professional relies on network latency to transfer data across the network. Therefore, implementing Capture processes such as scanning, indexing or committing documents across a the WAN network can impact performance. This document describes some example system configurations that can be implemented to help minimize the performance impact. 
+
+Application requirements 
+
+The application requirements apply to the configurations described in this document. 
+
+· Capture workstation: 
+
+ Capture 5.2.1 or Capture 5.2.0 with latest patch 
+
+· Content Engine Server: 
+
+ IBM FileNet P8 CE 4.0 or CE 4.5 with latest patch on both client and server 
+
+· Repository Server: 
+
+ Oracle or MS SQL database for shared CE repository 
+
+ MS Access database for non-shared CE repository 
+
+Applicable configurations
+
+
+Configuration 1: Directly connect Capture to Content Engine 
+
+This configuration consists of a non-shared CE (Access database) on the Capture workstation connecting to the Content Engine Server across the WAN network. 
+
+Configuration implemented when processing high volume batches or when using a high speed scanner.
+
+
+ Implementation 
+
+Ø Configure all Capture components and tasks to process high volume batches with a high end scanner, from the indexing phase and to stop at the committal phase. 
+
+Ø Schedule committal on the bulk of the batches to take place at the end of the day or during off peak hours, when traffic is slow. 
+
+Ø On a weekly or monthly basis, download the latest doc class information directly from the CE server. This will prevent any disparity in the doc class metadata during committal phase. 
+
+Ø Avoid database corruption or fragmentation, by scheduling a regular maintenance of the Access database. 
+
+Ø Verify that both the Capture client workstation and the CE servers are on the latest CE patches (note: the Capture Client Stations will have installed the CE Client Connectivity software). 
+
+
+
+
+Configuration 2: Connect Capture to a database on a LAN and to a Content Engine server across a WAN 
+
+In this configuration, an administrator connects more than one Capture workstation to either a shared CE Oracle database, or a shared CE SQL database, that resides in a LAN environment. This shared CE DB will later connect to a Content Engine server that resides on a server across the WAN.
+
+
+ Implementation 
+
+Ø Balance the workload across several Capture workstations by distributing the Capture processes. For example, separate high volume tasks such as scanning or indexing from tasks such as image processing or assembly. 
+
+Ø Prevent ADR components from loading twice, by separating ADR-dedicated services from Capture workstations running Capture Paths. 
+
+Ø Set up unique polling criteria on each Capture workstation so that only a specified list of batches is processed on each of the workstations. 
+
+Ø Create folders containing no more than 10 batches, instead of creating batches directly into the root repository folder. 
+
+Ø On a weekly or monthly basis, download the latest doc class information directly from the CE server. This will prevent any disparity in the doc class metadata during the committal phase. 
+
+Ø Schedule the bulk of the committal at the end of the day, or during off peak hours, when traffic is slow. 
+
+Ø Avoid database corruption or fragmentation by scheduling regular maintenance of the shared database. 
+
+Ø Verify that both the Capture workstation and the CE servers are on the latest CE patches. (note: the Capture Client Stations will have installed the CE Client Connectivity software)
+
+
+Configuration 3: Connect Capture to a database and to a Content Engine server on the WAN 
+
+In this configuration, multiple Capture workstations connect to a shared CE Oracle database, or a shared CE SQL database residing on a server across the WAN. Batches from the shared CE database are then committed to a Content Engine server that also resides on the WAN network.
+
+
+ Implementation 
+
+Ø Balance the workload across several Capture workstations by distributing the Capture processes. For example, separate high volume tasks such as scanning or indexing from tasks such as image processing or assembly. 
+
+Ø Prevent ADR components from loading twice by separating ADR-dedicated services from Capture workstations running Capture Paths. 
+
+Ø Set up unique polling criteria on each Capture station to process only a specified list of batches, on each of the stations. 
+
+Ø Create folders containing no more than 10 batches, instead of creating batches directly into the root repository folder 
+
+Ø Schedule the committing of batches at the end of the day, or during off peak hours. 
+
+Ø On a weekly or monthly basis, download the latest doc class information directly from the CE server. This will prevent any disparity in the doc class metadata during the committal phase. 
+
+Ø Avoid database corruption or fragmentation by scheduling regular maintenance of the shared database. 
+
+Ø Verify that both the Capture workstation and the CE servers are on the latest CE patches. (note: the Capture Client Stations will have installed the CE Client Connectivity software)

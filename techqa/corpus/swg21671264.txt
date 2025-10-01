@@ -1,0 +1,36 @@
+Title: IBM InfoSphere Balanced Warehouse E7000, E7050 and E7100 do not ship OpenSSL 1.0.1 but action may be required due to the OpenSSL Heartbleed vulnerability (CVE-2014-0160) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ The IBM InfoSphere Balanced Warehouse E7000, E7050, and E7100 do not ship OpenSSL 1.0.1 but action might be required due to the OpenSSL Heartbleed vulnerability (CVE-2014-0160). 
+
+CONTENT
+
+The IBM InfoSphere Balanced Warehouse E7000, E7050, and E7100 ship with OpenSSL 0.9.8 as listed on the validated stack page and are not affected by the OpenSSL Heartbleed vulnerability. If you have manually updated to OpenSSL 1.0.1, your system is affected.
+
+
+
+
+
+Affected Component Recommended Fix Download Link Installation instructions Additional Information IBM AIX OpenSSL 1.0.1e Update to openssl-1.0.1.502 AIX Web Download Pack Programs: OpenSSL 1.0.1.x [https://www14.software.ibm.com/webapp/iwm/web/reg/pick.do?source=aixbp&lang=en_US] Updating OpenSSL [http://www.ibm.com/support/docview.wss?uid=swg21634929] If your system has OpenSSL version 0.9.8 installed as listed on the validated stack page, your system is not affected. The OpenSSL Heartbleed vulnerability affects only IBM InfoSphere Balanced Warehouse E7000, E7050, and E7100 environments that have been manually updated to OpenSSL version 1.0.1e. For more information, see: Updated Summary for AIX OpenSSL CVE-2014-0160 & CVE-2014-0076 [http://www14.software.ibm.com/webapp/set2/subscriptions/onvdq?mode=7&heading=AIX61&path=/201404/SECURITY/20140415/datafile170808&label=Updated%20Summary%20for%20AIX%20OpenSSL%20CVE-2014-0160%20&%20CVE-2014-0076] 
+
+
+
+After applying the fix, additional instructions are needed for CVE-2014-0160 
+
+1. Replace your SSL Certificates. 
+You need to revoke existing SSL certificates and reissue new certificates. You need to be sure not to generate the new certificates using the old private key and create a new private key (ie using "openssl genrsa") and use that new private key to create the new certificate signing request (CSR). 
+
+2. Reset User Credentials 
+Users of network facing applications protected by a vulnerable version of OpenSSL should be forced to reset their passwords and should revoke any authentication or session related cookies set prior to the time OpenSSL was upgraded and force the user to re-authenticate. 
+
+Warning: Your environment may require additional fixes for other products, including non-IBM products. Please replace the SSL certificates and reset the user credentials after applying the necessary fixes to your environment. 
+
+
+
+Change History: April 23, 2014: Original version published. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Balanced Warehouse Balanced Warehouse E Class - E7050 AIX 9.5, 9.7 Information Management InfoSphere Balanced Warehouse Balanced Warehouse E Class - E7100 AIX 9.5, 9.7

@@ -1,0 +1,122 @@
+Title: IBM IZ72056: BPC EXPLORER ON A SUPPORT CLUSTER CANNOT ACCESS REST API WHEN SSL IS DEFINED. - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 3 (6.2.0.3) [http://www-01.ibm.com/support/docview.wss?uid=swg24027123]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  BPC Explorer on a support cluster cannot access REST API when
+   SSL is defined.
+   .
+   When configuring REST API in a cluster to be accessed via Proxy
+   on an SSL port, the REST API cannot be accessed any more by a
+   remote BPC Explorer. BPC Explorer is unabled to show the process
+   structure or process state panel.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Problem fixed
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is planned for V6203
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ72056
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * REPORTED COMPONENT ID
+   5655FLW11
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-03
+   
+   
+ * CLOSED DATE
+   2010-05-10
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * FIXED COMPONENT ID
+   5655FLW11
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

@@ -1,0 +1,105 @@
+Title: IBM Creating a custom Login Portlet for WebSphere Portal 6.1, also includes setting to credential vault. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+You may want to create a custom login portlet to IBM WebSphere Portal if the base portlet is not in the format you want, or if you want to add additional checking to the login. This technote will tell you how to accomplish this and how to add user credentials to the credential vault upon login.
+
+ANSWER
+In WebSphere Portal 6.1 and later versions, there is a new portlet service that allows you to log into Portal. This service still takes advantage of the LoginUserAuth in the login process. You can also write your own Login portlet and handle any validation or processing before or after the login process.
+To use this service with Rational Application Developer (RAD), you must be sure to add the following to your build path: 
+
+ * 
+ * 
+ * 
+
+
+You can find these two .jar files in the <portalserver>\base\wp.auth.base\shared\app and <portalserver>\base\wp.auth.cmd\shared\app directories in your WebSphere Portal 6.1 install. 
+
+The first portlet service is the following:  * 
+
+
+To access this service, add code similar to the following (best done in the "init" method of the portlet): 
+ * 
+ * 
+ * 
+ * new
+ * 
+ * 
+ * 
+ * JNDI_NAME
+ * 
+ * 
+ * 
+ * class
+ * 
+ * 
+
+Then, in your processAction, you can log the user in using code such as: 
+ * 
+ * 
+ * 
+ * FORM_ID
+ * 
+ * 
+ * 
+ * FORM_PASSWORD
+ * 
+ * 
+ * 
+ * new
+ * 
+ * 
+ * 
+ * DO_RESUME_SESSION_KEY
+ * 
+ * new
+ * 
+ * false
+ * 
+ * 
+ * try
+ * 
+ * loginService.login(userId, password.toCharArray(), contextMap, null); 
+ * 
+ * catch
+ * 
+ * System.err.println("this login failed with = " + ex.getMessage()); 
+   ex.printStackTrace(); 
+ * 
+ * 
+
+You must also add a login form to the JSP page which has already been done and is in the first portlet provided. 
+
+At this point, you would be logged in or not, depending on the response from the LoginService. Remember that once you call the login service method, the control will not return to your portlet code if the user is logged in because Portal will do a redirect to the proper Portal page (unless there is an authentication error or a Finally block). 
+
+NOTE: In 6.1, the JSP folder cannot match the portlet name and therefore has a "_" in front of the JSP folder name. If you try to use the custom 6.0 portlet on 6.1, it will not work. 
+
+NOTE: To use the next piece you have to install PK96192 or be on 6.1.0.3 or later for this to work, otherwise this code will throw errors and not save anything to the vault slot. 
+
+Next ,we want to add the credential vault handling. Therefore, in the init method we use this code: 
+javax.naming.Context ctx = new javax.naming.InitialContext(); 
+PortletServiceHome cvsHome = (PortletServiceHome)ctx.lookup( "portletservice/com.ibm.portal.portlet.service.credentialvault.CredentialVaultService" ); 
+vaultService = (CredentialVaultService)cvsHome.getPortletService (CredentialVaultService. class ); 
+
+Then you need to add a finally block because a user cannot access the credential vault before authentication. After the user is in the loginservice, the service only returns to the portlet code if a failure condition occurs or if you have a finally block. Otherwise, the code does a redirect and sends you to the correct portal page. 
+
+Now the processAction method looks like this: 
+LoginService loginService = (LoginService) loginHome .getLoginService(request, response); 
+String userId = request.getParameter( FORM_ID ); 
+String password = request.getParameter( FORM_PASSWORD ); 
+Map contextMap = new HashMap(); 
+contextMap.put(LoginService. DO_RESUME_SESSION_KEY , new Boolean( false )); 
+try { 
+loginService.login(userId, password.toCharArray(), contextMap, null ); 
+} catch (Exception ex) { 
+System. out .println( "this login failed with = " + ex.getMessage()); 
+ex.printStackTrace(); 
+} finally { 
+setCredential(request,userId,password); 
+} 
+
+The setCredential method takes care of actually accessing the credential vault and setting this value. In this example, we are using a Shared User slot, so that this slot is shared across all portlets this user has access to, and there is one secret per user. The full code for this is in the included sample attached below. 
+
+Note: For more options to customize the portal login please see the portal infocenter section regarding custom authentication filters. You could use a filter to change the page the user is directed to after a successful or failed login. CustomLoginPortlet.LoginOnly.war [/support/docview.wss?uid=swg21358508&aid=2] [/support/docview.wss?uid=swg21358508&aid=1]61LoginPortletWithCV.war [/support/docview.wss?uid=swg21358508&aid=4]61LoginPortletWithCV.war [/support/docview.wss?uid=swg21358508&aid=3]

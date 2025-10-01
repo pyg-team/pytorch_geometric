@@ -1,0 +1,167 @@
+Title: IBM HE11598: Content Collector might create empty XIT objects when running the FileNet P8 Connector maintenance task on multiple systems - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Content Collector V3.0 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24033902]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the maintenance task of the IBM Content Collector FileNet P8
+   Connector runs on several primary nodes and accesses the same
+   object store, numerous empty XIT objects might be created in the
+   object store.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To prevent this problem, ensure that only one primary node has
+   the maintenance task enabled. If there are other primary nodes
+   in the system that are archiving email with the IBM Content
+   Collector FileNet P8 email data model, but to different object
+   stores, configure these additional object stores on the primary
+   node that is running the maintenance task. This extra
+   configuration is required only if each primary node uses a
+   separate configuration database. However, also in a cluster
+   environment aimed at high availability, it is a good practice to
+   ensure that all required FileNet P8 object stores are configured
+   on the primary node that runs the maintenance task.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The problem might occur if the following three criteria are met:
+   - Multiple IBM Content Collector primary nodes are running,
+   either in a clustered environment or as separate instances.
+   - The maintenance task is enabled on more than one primary node.
+   - Multiple primary nodes reference the same FileNet P8 object
+   store.
+   
+   All primary nodes that have the IBM Content Collector FileNet P8
+   Connector maintenance task enabled periodically query the
+   configured FileNet P8 object stores to check if instances of the
+   ICCMailSearchUpdateAnnotation class exist. If the class exists,
+   duplicate email has been collected, and the maintenance task
+   tries to consolidate the duplicate email data into the
+   ICCMailSearch class.
+   
+   If multiple maintenance tasks are querying the same object
+   store, the ICCMailSearch class might be detected by some of the
+   maintenance tasks as modified by an external source. In this
+   case, the maintenance task skips the current annotation instance
+   and continues with the next instance. As a result, empty XIT
+   objects are created. Depending on the system resources and the
+   task schedule, the problem occurs for some, many, or all
+   ICCMailSearch documents.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with IBM Content Collector 2.2.0.3 LA011 and
+   IBM Content Collector 3.0.0 Fix Pack 2, the maintenance
+   task has been updated to search for the latest ICCMailSearch
+   version that contains a content element and add the duplicate
+   email data to this version. In addition, when the updated
+   content has been successfully added, all superseded
+   versions are deleted.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE11598
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-28
+   
+   
+ * CLOSED DATE
+   2013-02-01
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R220 PSY
+   UP
+   
+   
+ * R300 PSY
+   UP

@@ -1,0 +1,34 @@
+Title: IBM Is DB2 Purescale supported by Content Manager OnDemand? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is DB2 Purescale supported by Content Manager OnDemand Multiplatform? 
+
+CAUSE
+PureScale is a cluster feature from DB2 and you may want to use it with Content Manager OnDemand
+
+ANSWER
+PureScale is transparent for Content Manager OnDemand Multiplatform. 
+
+ 
+OnDemand V8.5 and V9 were tested with DB2 PureScale a while back and both worked. But, OnDemand V8.5 is not able to take advantage of the Automatic Tablespaces. OnDemand V9 does support Automatic Tablespaces. 
+The 8.5.0.9 fixpack has been currency tested with DB2 V10.5. 
+The CMOD MP 9.0.0.5 fixpack will be currency tested with DB2 V10.5. No issues were found testing V8.5 and our expectation is that none will be found when testing OnDemand V9.
+
+There are some things to note about OnDemand V8.5 and V9 with DB2 10.1 or above:
+
+PM85365: ARSDB -I <INSTANCE> -MV CAUSES AN SQLCODE = -2218 WHEN USING ONDEMAND WITH DB2 V10.1
+http://www-01.ibm.com/support/docview.wss?uid=swg1PM85365 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM85365]
+
+PM93010: ARSDB -M CREATES HUGE AMOUNT OF DB2 LOGS
+http://www-01.ibm.com/support/docview.wss?uid=swg1PM93010 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM93010]
+
+The arsdb -cv command fails to create the IBM Content Manager OnDemand database with DB2 Version 10
+http://www-01.ibm.com/support/docview.wss?uid=swg21620763 [http://www-01.ibm.com/support/docview.wss?uid=swg21620763]
+
+IBM Content Manager OnDemand for Multiplatforms fails to create new tables after upgrading to DB2 V10
+http://www-01.ibm.com/support/docview.wss?uid=swg21623537 [http://www-01.ibm.com/support/docview.wss?uid=swg21623537]
+
+To answer the main question, yes, OnDemand 9.0 is supported with DB2 10.5 in a PureScale environment.

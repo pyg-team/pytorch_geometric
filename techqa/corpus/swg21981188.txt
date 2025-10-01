@@ -1,0 +1,46 @@
+Title: IBM logon to DWC 9.x does not appear. - United States
+
+Text:
+WSVR0002I; TDWC; TWS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When we access to DWC with browser, error message appeared instead of login screen for DWC or a graphical view opens a blank page. 
+
+SYMPTOM
+The following messages are logged in /opt/IBM/JazzSM/profile/logs/server1/SystemOut.log: 
+
+"java.io.FileNotFoundException: /opt/IBM/JazzSM/profile/installedApps/JazzSMNode01Cell/isc.ear/TWSWebUI.war/WEB-INF/lib/*.jar (Too many open files)"
+
+
+CAUSE
+This problem can happen if number of opened file reaches to limit.
+
+
+DIAGNOSING THE PROBLEM
+A list of opened files and sockets can be created with the following command: 
+
+lsof -p <process id>
+
+Check current limit of open files for the user starts the WAS.
+The limit can be check with the following command:
+ulimit -n
+
+Default value on Linux is 1024. The value might not be enough.
+
+
+RESOLVING THE PROBLEM
+Increase the limited value for the user starts the WAS. 
+
+The value can be changed with the following command: 
+
+ulimit -n <increased value> 
+
+ 
+
+It is recommended to set the limit to 8000. 
+
+ 
+
+The following WAS technote contains detailed information about this error message:
+- Too Many Open Files error message
+http://www-01.ibm.com/support/docview.wss?&uid=swg21067352 [http://www-01.ibm.com/support/docview.wss?&uid=swg21067352]

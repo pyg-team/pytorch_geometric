@@ -1,0 +1,214 @@
+Title: IBM PK96304: UNABLE TO CONFIGURE DATASERVER ON CEI - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.0.0.9: WebSphere Application Server V7.0 Fix Pack 9 for IBM i [http://www-01.ibm.com/support/docview.wss?uid=swg24025885]
+7.0.0.9: WebSphere Application Server V7.0 Fix Pack 9 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24025888]
+7.0.0.9: WebSphere Application Server V7.0 Fix Pack 9 for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24025883]
+7.0.0.9: WebSphere Application Server V7.0 Fix Pack 9 for HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24025884]
+7.0.0.9: Java SDK 1.6 SR7 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025889]
+7.0.0.9: WebSphere Application Server V7.0 Fix Pack 9 for Solaris [http://www-01.ibm.com/support/docview.wss?uid=swg24025887]
+7.0.0.9: WebSphere Application Server V7.0 Fix Pack 9 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24025886]
+7.0.0.11: WebSphere Application Server V7.0 Fix Pack 11 for IBM i [http://www-01.ibm.com/support/docview.wss?uid=swg24026854]
+7.0.0.11: WebSphere Application Server V7.0 Fix Pack 11 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24026857]
+7.0.0.11: WebSphere Application Server V7.0 Fix Pack 11 for HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24026853]
+7.0.0.11: WebSphere Application Server V7.0 Fix Pack 11 for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24026852]
+7.0.0.11: Java SDK 1.6 SR7 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026858]
+7.0.0.11: WebSphere Application Server V7.0 Fix Pack 11 for Solaris [http://www-01.ibm.com/support/docview.wss?uid=swg24026856]
+7.0.0.11: WebSphere Application Server V7.0 Fix Pack 11 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24026855]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24027977]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24027999]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for IBM i [http://www-01.ibm.com/support/docview.wss?uid=swg24028000]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24028001]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for Solaris [http://www-01.ibm.com/support/docview.wss?uid=swg24028002]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028003]
+7.0.0.13: Java SDK 1.6 SR8FP1 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24028004]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24028875]
+7.0.0.15: Java SDK 1.6 SR9 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24028881]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24029071]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for IBM i [http://www-01.ibm.com/support/docview.wss?uid=swg24029072]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24029073]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for Solaris [http://www-01.ibm.com/support/docview.wss?uid=swg24029074]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24029075]
+7.0.0.17: WebSphere Application Server V7.0 Fix Pack 17 [http://www-01.ibm.com/support/docview.wss?uid=swg24029634]
+7.0.0.17: Java SDK 1.6 SR9 FP1 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24029894]
+7.0.0.19: WebSphere Application Server V7.0 Fix Pack 19 [http://www-01.ibm.com/support/docview.wss?uid=swg24030660]
+7.0.0.21: WebSphere Application Server V7.0 Fix Pack 21 [http://www-01.ibm.com/support/docview.wss?uid=swg24031366]
+7.0.0.23: WebSphere Application Server V7.0 Fix Pack 23 [http://www-01.ibm.com/support/docview.wss?uid=swg24032493]
+7.0.0.25: WebSphere Application Server V7.0 Fix Pack 25 [http://www-01.ibm.com/support/docview.wss?uid=swg24033267]
+7.0.0.27: WebSphere Application Server V7.0 Fix Pack 27 [http://www-01.ibm.com/support/docview.wss?uid=swg24033882]
+7.0.0.29: WebSphere Application Server V7.0 Fix Pack 29 [http://www-01.ibm.com/support/docview.wss?uid=swg24034966]
+7.0.0.31: WebSphere Application Server V7.0 Fix Pack 31 [http://www-01.ibm.com/support/docview.wss?uid=swg24036768]
+7.0.0.27: Java SDK 1.6 SR13 FP2 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035324]
+7.0.0.33: WebSphere Application Server V7.0 Fix Pack 33 [http://www-01.ibm.com/support/docview.wss?uid=swg24037573]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Common Event Infrastructure (CEI) configuration
+   administrative task does not support automatically
+   configuring the DB2 DataServer driver based DataSource.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM WebSphere Application Server V7.0 users *
+   *                  who configure Common Event                  *
+   *                  Infrastructure(CEI) with a DB2 database.    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Configuring the Common Event            *
+   *                      Infrastructure with a DB2 database      *
+   *                      does not support data source based on   *
+   *                      the IBM Data Server Driver for JDBC.    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The configuration process of Common Event Infrastructure with
+   DB2 database creates the WebSphere Application Server data
+   source based on the DB2 Universal JDBC Driver Provider (XA)
+   driver version (considered as the default). Common Event
+   Infrastructure configuration supports the data source to be
+   configured with a JDBC Provider using IBM Data Server Driver
+   as well. If you need to base your data source on the IBM Data
+   Server Driver for JDBC, you will be able to do so by using a
+   manual procedure via the Administrative Console. The
+   automatic configuration process for Common event
+   Infrastructure should support this case as well.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The configuration process with DB2 database has been changed
+   by adding to the configEventServiceDB2DB configuration
+   Admin Task a new optional parameter -jdbcDriverVersion that
+   will accept the following possible/acceptable values 3.0 /
+   4.0. The usage of 3.0 values does configure the JDBC provider
+   based on the DB2 Universal JDBC Driver Provider (XA) driver
+   version whereas using the 4.0 value will produce the JDBC
+   provider based on the IBM Data Server Driver for JDBC version.
+   The introduced behavior is:
+   a. -jdbcDriverVersion not specified in the AdminTask - The
+   configuration will be performed using 'DB2 Universal JDBC
+   Driver Provider (XA)', therefore 3.0 driver version.
+   b. -jdbcDriverVersion specified but no value supplied - Will
+   raise an exception as -jdbcDriverVersion needs a parameter,
+   then if the user go so far as to use the parameter but does
+   NOT supply a value, we give an error stating like in the
+   following example "CEIIN0739E No value was specified for the
+   jdbcDriverVersion parameter. &#175;   &#189;
+   c. -jdbcDriverVersion specified with the '3.0' value supplied
+   - The configuration will be performed using ' DB2 Universal
+   JDBC Driver Provider (XA)', therefore 3.0 driver version.
+   d. -jdbcDriverVersion specified with the '4.0' value supplied
+   - The configuration will be performed using 'DB2 Using IBM JCC
+   Driver (XA)', therefore based on the provider that supports
+   JDBC 4.0 specification using the IBM Data Server Driver for
+   JDBC and SQLJ 4.0 driver version.
+   e. -jdbcDriverVersion specified with a value OTHER than 3.0 or
+   4.0 - Will raise an exception like in the following example:
+   "CEIIN0701E The parameter jdbcDriverVersion contains the value
+   <wrong_value>, which is not valid. Valid values are: 3.0, 4.0."
+   
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 7.0.0.9.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK96304
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-16
+   
+   
+ * CLOSED DATE
+   2009-11-04
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,208 @@
+Title: IBM IV79086: LACK OF DETAILED DESCRIPTION OF FEDERATING LDAP - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-ZLINUX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0006&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0006&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0006&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0006&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0006&source=SAR]
+7.1.0-TIV-NCI-ZLINUX-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0005&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0005&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0005&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0005&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0005&source=SAR]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 5(7.1.0-TIV-NCI-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24041270]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 6(7.1.0-TIV-NCI-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24042426]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 7(7.1.0-TIV-NCI-FP0007) [http://www-01.ibm.com/support/docview.wss?uid=swg24042688]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 8(7.1.0-TIV-NCI-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24042885]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 9(7.1.0-TIV-NCI-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24043378]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 10(7.1.0-TIV-NCI-FP0010) [http://www-01.ibm.com/support/docview.wss?uid=swg24043588]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 11(7.1.0-TIV-NCI-FP0011) [http://www-01.ibm.com/support/docview.wss?uid=swg24043858]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 12 (7.1.0-TIV-NCI-FP0012) [http://www-01.ibm.com/support/docview.wss?uid=swg24044312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Impact 7.1 admin guide:
+   "Multiple LDAP servers can be federated if the
+   LDAPRepositoryName property value and the LDAPBaseEntry
+   property value are unique in the impactdap.properties
+   configuration file."
+   
+   When customer want to config multiple LDAP, there is lack of
+   detailed description.
+   
+   There is technotes with description of "Liberty, unlike TIP,
+   does not currently support federated repositories"
+   
+   http://www-01.ibm.com/support/docview.wss?uid=swg2 1 6 8 1 232,
+   
+   However Tivoli Netcool/Impact cannot use multiple repositories
+   of more than one type simultaneously.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Steps:
+   To configure Impact with a federated LDAP repository:
+   
+   1. Configure the impactdap.properties with ldap #1 (with
+   impact admin account)
+   2. Run the config ldap script -> The ldapRepository for ldap #1
+   appears in the ldap xml file
+   3. Configure the impactdap.properties with ldap #2
+   4. Run the config ldap script -> You now have two
+   ldapRepository sections (ldap #1/#2) in the ldap xml file)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Not enough detail on federated LDAP respositories.           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following will be added to the next documentation update:
+   
+   1. Installation Guide
+   
+   http://www-01.ibm.com/support/knowledgecenter/SSSHYH_7.1.0.4/com [http://www-01.ibm.com/support/knowledgecenter/SSSHYH_7.1.0.4/com]
+   .ibm.netcoolimpact.doc/admin/imag_installer_user_registry.html?l
+   ang=en
+   Tivoli Netcool/Impact 7.1.0.4>Installing
+   Netcool/Impact>Installing Netcool/Impact in GUI and console
+   mode>Configuring the user registry
+   
+   Add a note to explain what federated repositories are supported,
+   i.e.:
+   Tivoli Netcool/Impact cannot use multiple repositories of more
+   than one type simultaneously. i.e. a combination of a Filed
+   Based and LDAP based repositories is not supported. Tivoli
+   Netcool/Impact  does support multiple repositories of the same
+   type (ex: multiple LDAP repositories).
+   
+   
+   2.
+   
+   http://www-01.ibm.com/support/knowledgecenter/SSSHYH_7.1.0.4/com
+   .ibm.netcoolimpact.doc/admin/imag_ldap_federation_c.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSSHYH_7.1.0.4/com.ibm.netcoolimpact.doc/admin/imag_ldap_federation_c.html?lang=en]
+   Tivoli Netcool/Impact 7.1.0.4>Configuring
+   servers>LDAP>Federating LDAP
+   SC27-4918-03
+   Administration Guide
+   
+   Add the following text:
+   
+   Note: There is only one impact admin account setup within
+   Impact. This user/password is configured in vmm properties in
+   the Impact Server. The LDAP with this user must be functional.
+   You do not need the same impact admin account created in both
+   ldaps  But you can have multiple users with the impactAdmin
+   security role.
+   
+   Steps to configure Impact with a two server, federated LDAP
+   repository:
+   
+   1. Configure the impactdap.properties with ldap #1 (which
+   contains the impact admin account).
+   2. Run the confAuth4LDAP script. The script will update the ldap
+   xml file.
+   3. Configure the impactdap.properties with ldap #2
+   4. Run the confAuth4LDAP script again. Now  the ldap xml file
+   will have two ldapRepository sections (ldap #1/#2).
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV79086
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-11-18
+   
+   
+ * CLOSED DATE
+   2016-01-26
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC27491803 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

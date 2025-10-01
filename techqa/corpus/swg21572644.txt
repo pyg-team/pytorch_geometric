@@ -1,0 +1,57 @@
+Title: IBM Accessing Multiple Databases using MSSQL Linked Servers and NPS - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There has been concern that setting up an SQL Server to a Netezza linked server requires the entry of a specific catalog/database name. This would limit linked servers to a single linked server per database which can be cumbersome to maintain in a busy production environment. 
+
+ENVIRONMENT
+ 
+
+MS SQL Server 2005
+NPS Release 4.6.5
+Netezza Driver: oledb 32-bit 4.6.5
+
+
+DIAGNOSING THE PROBLEM
+This document describes how to link the SQL Server to the Netezza server with no default catalog specified, and then reference catalogs/databases specifically through the single linked server. 
+
+
+1. Install the oledb driver on the system.
+2. In MS SQL Server, created a linked server by filling in the following fields:
+
+Linked server: HELIOS2
+Provider: Netezza OLE DB Data Provider
+Product name: NZ
+Data source: helios (or helios.netezza.com or ip address)
+
+You can leave the following fields blank: Provider string, Location, and Catalog 
+[/support/docview.wss?uid=swg21572644&aid=1] [/support/docview.wss?uid=swg21572644&aid=1]
+
+3. Select theSecuritypage (in the upper left pane).
+4. SelectBe made using this security context.
+5. Specify the remote login account. In this example, it is the admin account.
+
+Note: The user account that you associate with the linked server must have the appropriate permissions for the databases/catalogs the account will access.
+
+
+6. Specify the password for the remote login account and clickOK. 
+
+[/support/docview.wss?uid=swg21572644&aid=2] [/support/docview.wss?uid=swg21572644&aid=2]
+
+7. SelectNew Query. Use the openquery function in SQL server and construct the query with thecatalog.schema.object_namesyntax.
+
+[/support/docview.wss?uid=swg21572644&aid=3] [/support/docview.wss?uid=swg21572644&aid=3]
+
+This query is accessing the 'adam_test' database and the 'employees' table under the admin schema (which is the user account that was used for the connection).
+
+You can now construct similar queries against other databases without changing the linked server setup. The only requirement is that the user account associated with the linked server must have the appropriate permissions for the databases/catalogs that the account will access. 
+
+
+ 
+
+
+
+HISTORICAL NUMBER
+ NZ822625

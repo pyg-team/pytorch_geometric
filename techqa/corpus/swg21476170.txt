@@ -1,0 +1,34 @@
+Title: IBM Date and Time values and SELECT IF - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have a date variable in my data set in the format of dd-mmm-yyyy, and I want to select cases for a given date. I tried using the syntax:
+
+SELECT IF (date_var = DATE.DMY(30,6,97)).
+EXECUTE.
+
+but none of my cases are selected. I can see in my data that there are cases with this date, and I can't seem to figure out why they are not being selected. Furthermore, if I change the "=" sign in the argument to ">", "<", or anything other than "=", the correct cases are selected. Why are they not being selected when I use the "=" ? 
+
+CAUSE
+Date and time values in SPSS are recorded in terms of the number of seconds from a given starting point in time. In terms of dates, this start time is October 14, 1582, the start of the Gregorian calendar. Therefore, the exact value for June 30, 1997, for example, would be 13,087,008,000 (or, in rounded scientific notation, 1.31E+10). In essence, the exact date and time value for this number of seconds can be displayed as 30-JUN-1997 00:00:00.00. 
+
+In doing the SELECT IF statement the way you tried earlier, SPSS is taking into account not only month, day, and year, but hours, minutes, and seconds. It would be very difficult to get a "match" in this case. All we need to is to match on the month, day, and year not including the hours, minutes, and seconds. 
+
+
+RESOLVING THE PROBLEM
+To correct the sytanx, modify your SELECT IF statement to extract the month, day and year information using the XDATE function. Then use the DATE.DMY function to combine the month, day, and year values into a single value. Following is the command created to do just that, and assumes that "date_var" is the date variable in question:
+
+SELECT IF (DATE.DMY(XDATE.MDAY(date_var),XDATE.MONTH(date_var),
+XDATE.YEAR(date_var)) = DATE.DMY(30,6,1997)).
+EXECUTE
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 17488

@@ -1,0 +1,38 @@
+Title: IBM Null pointer exceptions occur when checking in a workflow definition from the Process Designer tool registered with the Content Platform Engine Applets Plug-in for use with IBM Content Navigator - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ Process Designer tool running from an IBM Content Navigator desktop can produce null pointer exceptions when performing a 'FileNet Checkin' or 'FileNet Add New' action. This may occur if any of the object stores in the domain do not have the Publishing Extensions add-on installed to the object stores in addition to the add-ons required by IBM Content Navigator to integrate with a Case Foundation workflow system. 
+
+CONTENT
+The Process Designer tool opened from a IBM Content Navigator desktop (by using the Content Platform Engine Applets Plug-in), when using the 'FileNet Checkin' or 'FileNet Add New' to add a new file to the object store, can produce a null pointer exception. 
+
+For example, if you use the “FileNet Add New” menu operation from within the Process Designer tool, the following errors are logged onto the Java console:
+
+log4j:WARN No log4j configuration information found.
+log4j:WARN Changed non-configured level from DEBUG to ERROR.
+Logged on as: ceadmin
+Using connection point: DEV2CP1 for myServer/myDomain:1
+java.lang.Exception: Error Saving New File
+at filenet.vw.apps.designer.VWDesignerDocumentHelper.performFileNetAddItemAction(VWDesignerDocumentHelper.java:740)
+at filenet.vw.apps.designer.VWDesignerCore.actionPerformed(VWDesignerCore.java:437)
+at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:2006)
+at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2329)
+at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:398)
+at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:253)
+at javax.swing.AbstractButton.doClick(AbstractButton.java:368)
+at javax.swing.plaf.basic.BasicMenuItemUI.doClick(BasicMenuItemUI.java:820)
+at javax.swing.plaf.basic.BasicMenuItemUI$Handler.mouseRelease
+
+To avoid this issue, use the Process Designer menu action File > Save As or Action > Save Workflow to Local to save the workflow definition as a local file, and then use the Checkin or Add Document action in IBM Content Navigator to commit the file to the object store. 
+
+Alternatively, the issue will not occur if each object store in the domain has these add-ons installed:
+Base Application Extensions
+Base Content Engine Extensions
+Process Engine Extensions
+Publishing Extensions
+Stored Search Extensions
+Workplace Base Extensions
+Workplace XT Extensions

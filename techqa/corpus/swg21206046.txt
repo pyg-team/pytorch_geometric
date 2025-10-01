@@ -1,0 +1,29 @@
+Title: IBM Robot Session API recording fails in Microsoft Internet Explorer browser - United States
+
+Text:
+"Buffer Overflow Protection"; API; "On-Access Scanner"; McAfee VirusScan; IE crashes; VU; recording; fatal application error; 1206046; fatal; mcafee; fatal error; crash; Buffer; Overflow TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Rational Robot can cause a fatal application error in Microsoft Internet Explorer during recording if McAfee software is running. This technote provides a resolution. 
+
+SYMPTOM
+Rational Robot crashes Microsoft Internet Explorer with a fatal application error during recording: 
+
+ * 
+ * The application 'C:\PROGRAM FILES\INTERNET EXPLORER\IEXPLORE.EXE' has experienced a fatal error.
+
+
+CAUSE
+The installed McAfee VirusScan Enterprise virus scanner has not been sufficiently disabled.
+
+
+
+RESOLVING THE PROBLEM
+The Buffer Overflow Protection on McAfee Virus program is known to cause this type of API recording failure. We recommend disable the anti-virus software as follows: 
+
+ 1. The first area to examine is the browser settings itself. In Microsoft Internet Explorer go to Tools -> Internet options -> Advanced tab. 
+ 2. From the Advanced tab disable the "Script debugging" option. 
+ 3. Disable "On-Access Scanner" and "Buffer Overflow Protection" in McAfee.
+
+
+The Buffer Overflow Protection must be disabled from the Virus Scan Console while doing API recording. The protection only needs to be disabled during the API recording session (it's not an issue for playback).

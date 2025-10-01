@@ -1,0 +1,187 @@
+Title: IBM IV06863: SYSTEM MONITOR AGENT (SMA) INSTALL FAILS ON 32-BIT LINUX - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Installation of the 6.22.02.00 version of the
+   System Monitor Agent (SMA) for LZ micro agent on 32-bit
+   Linux fails with following messages:
+   In ibm_tivoli_system_monitor_agent_install.log
+   Product/Component Size=31411 KB
+   Dir Size=981144 KB
+   Listed component:: axmicroli6243
+   getProductArch for Product code: axmicroli6243
+   AX arch ax_arch=li6243
+   ###############################################
+   installComponent axmicroli6243
+   ###############################################
+   Running
+   /monitoring/ITM/FP2SystemsMonitorAgent/./unix/axmicroli6243.
+   IBM Tivoli Monitoring axli6243-06220200 Installer
+   Copyright (c) IBM Corporation 2010, All rights reserved.
+   Logging installation to: <install_dir>/logs/axmicroli6243.log
+   Checking dependencies...
+   All required components are present.
+   Installing...
+     axli6242           [revision 6220200, was 0, now 6220200]
+   Execution failed (-1).
+   Execution failed (-1).
+   instdate2ver warning: Verfile
+   <install_dir>/registry/axli6242.ver does
+   not exist., continuing ...
+   instdate2ver warning: Verfile
+   <install_dir>/registry/uili6242.ver does
+   not exist., continuing ...
+   Installation failed.
+   
+   Messages logged in the axmicroli6243.log:
+   [C] SYNC
+   [D] Executing PostInstall scripts.
+   [D] Executing script
+      tmaitm6/li6242/bin/post_install.ax /opt/IBM/ITM in
+      directory /opt/IBM/ITM.
+   [C] MESSAGE 'Execution failed (-1).'
+   [D] Executing script
+      tmaitm6/li6242/bin/kglcrycfg in directory /opt/IBM/ITM.
+   [C] MESSAGE 'Execution failed (-1).'
+   [D] Executing script bin/instdate2ver
+      /opt/IBM/ITM/registry/axli6242.ver in directory
+      /opt/IBM/ITM.
+   [D] grep:
+      /opt/IBM/ITM/registry/ax*.ver:
+      No such file or directory
+   [C] MESSAGE "instdate2ver warning:
+      Verfile /opt/IBM/ITM/registry/axli6242.ver does not exist,
+      continuing..."
+   [D] Executing script bin/instdate2ver
+       /opt/IBM/ITM/registry/uili6242.ver in directory
+       /opt/IBM/ITM.
+   [D] grep:
+       /opt/IBM/ITM/registry/ui*.ver:
+       No such file or directory
+   [C] MESSAGE "instdate2ver warning:
+       Verfile /opt/IBM/ITM/registry/uili6242.ver does not exist,
+       continuing..."
+   [D] Executing script
+       bin/runningProcessInst.sh /opt/IBM/ITM all start in
+       directory /opt/IBM/ITM.
+   [C] GETVAR DEBUG
+   [R] DEBUG=OFF
+   [D] DEBUG_ON=OFF
+   [C] SYNC
+   [C] MESSAGE 'Installation failed.'
+   
+   RECREATE INSTRUCTIONS:
+   Attempt to install the 6.22.02.00 version of the system
+   monitoring agent on 32-bit Linux.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Install the 6.22.03.00 or later version of the system
+   monitoring agent.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The symptoms described reflect a packaging problem that was
+   introduced in the 6.22.02.00 fix pack. It was subsequently
+   solved in the 6.22.03.00 fix pack, We also verified that it is
+   still correct in the current 6.22.06.00 fix pack that is in
+   development.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV06863
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-24
+   
+   
+ * CLOSED DATE
+   2011-08-24
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

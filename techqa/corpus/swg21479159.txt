@@ -1,0 +1,23 @@
+Title: IBM Can I use the SPSS distribution functions to obtain power values? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I know that the SPSS package does not have a procedure or module for a priori power analysis, but I was wondering whether it has the functions needed to do the fundamental computations for power analyses, since it has some noncentral distribution functions. For example, can I get a power value for an F test if I can specify the noncentrality parameter? 
+
+RESOLVING THE PROBLEM
+If you are able to specify the noncentrality parameter associated with the alternative hypothesis, the degrees of freedom and the alpha level, SPSS can indeed produce the power value. For the F test, for example, a simple COMPUTE can be used:
+
+COMPUTE power=1-NCDF.F(IDF.F(1-alpha,dfh,dfe),dfh,dfe,nc).
+
+Note that alpha (Type I error level), dfh (hypothesis degrees of freedom), dfe (error degrees of freedom) and nc (noncentrality parameter) can be either replaced by numeric values or by other variable names or you can name variables to match these and compute power values for an arbitrary number of combinations at once. If you are not going to use a procedure to show the results, you'll need an EXECUTE following the COMPUTE
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 67801

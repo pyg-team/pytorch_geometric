@@ -1,0 +1,46 @@
+Title: IBM Tivoli Monitoring for TivolI Storage Manager installation fails - United States
+
+Text:
+Tivoli Storage Monitoring Scanner prerequisites CRIMA1217E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Tivoli Monitoring for Tivoli Storage Manager installation fails on precheck analysis. 
+
+SYMPTOM
+When installing Tivoli Monitoring for Tivoli Storage Manager Server 7.1 it is possible that the installation fails with different error messages. 
+
+For example one of the most common errors are:
+
+CRIMA1217E: A problem occurred during the execution of the F: \Program Files\ibm\JazzSM\install\tip\tipWrapperInstall.xml file.
+
+Explanation: A package has an issue that cannot be resolved by Installation Manager. 
+
+but other error messages could be seen as well.
+
+
+CAUSE
+Despite the error messages being different the cause could be common and can reside on the version of the Prerequisite Scanner that it is delivered with the base package of the product.
+
+
+RESOLVING THE PROBLEM
+Since Software and Hardware on new machines are always up to date at the latest level, the Prerequisite Scanner may not be able to verify that all the requirements are met (despite the overall result is ok for doing the installation). 
+
+ 
+
+The recommendation is to upgrade the Prerequisite Scanner to the latest version available before proceeding to install the product. 
+
+ 
+
+For upgrading the Prerequisite Scanner follow these instructions: 
+
+
+A. Download the latest Prerequisite Scanner from Fix Central on the JazzSM server:
+http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~ivoli&product=ibm/Tivoli/Prerequisite+Scanner&release=All&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~ivoli&product=ibm/Tivoli/Prerequisite+Scanner&release=All&platform=All&function=all] 
+
+B. Navigate to JazzSM installation package on the server: i.e. C:\Temp\JAZZ 
+
+C. Rename PrereqScanner directory (i.e. PrereqScanner.old) 
+
+D. Create a new directory PrereqScanner 
+
+E. Extract the downloaded Prerequisite Scanner into the newly created directory

@@ -1,0 +1,26 @@
+Title: IBM Abend U4038 message occuring when debugging online IMS environment - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why am I getting a U4038 message when debugging in an IMS Message Processing Region? 
+
+ANSWER
+For debugging in online IMS environments (when debugging live transactions in IMS Message Processing Regions), setting the following option is suggested: 
+
+EQAXOPT NODISPLAY,QUITDEBUG
+
+Profiles are created to trigger the debugger in an IMS region, and then the profile is not deleted or disabled when debugging is completed. In an IMS Message Processing Region (MPR), this can cause problems. 
+
+A problematic situation can occur when the profile is left active and the TIM terminal is shut down. The next time the transaction runs, Debug Tool for z/OS cannot find the TIM terminal and Debug Tool abends with a U4038 abend. Because IMS is very sensitive to transaction abends, IMS then disables the application program and transaction. Then the IMS region does not function properly because programs and transactions are disabled, and an operator must issue commands to enable programs and transactions again. 
+
+The U4038 message that results indicates that Debug Tool for z/OS could NOT find a terminal to launch the debugging session. In this case, the transaction will run with no Debug Tool intervention. To debug this transaction again, you must DELETE any previous profiles that you set up, so that Debug Tool can start using a new profile. Delete any profiles before you shut down your terminal or leave the session. 
+
+By specifying EQAXOPT NODISPLAY,QUITDEBUG, abends are avoided. 
+
+NOTE: Until the debugging profile is deleted, the NODISPLAY,QUITDEBUG setting causes the transaction to run normally without the debug capability. No abend message is displayed. To completely resolve this issue, always delete debugging profiles for IMS MPR when you have completed the debugging or when you are signing off the system. 
+
+See the Debug Tool for z/OS Customization Guide at http://publibfp.dhe.ibm.com/epubs/pdf/eqaecg03.pdf [http://publibfp.dhe.ibm.com/epubs/pdf/eqaecg03.pdf] 
+and the Debug Tool for z/OS User's Guide at http://publibfp.dhe.ibm.com/epubs/pdf/eqaeus03.pdf [http://publibfp.dhe.ibm.com/epubs/pdf/eqaeus03.pdf].
+for the specifics on coding the EQAXOPT macro for Debug Tool for z/OS for this option.

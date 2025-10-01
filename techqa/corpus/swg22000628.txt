@@ -1,0 +1,36 @@
+Title: IBM Using CIT deployed by LMT/BFI 9 by other IBM products - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM License metric Tool (ILMT) and BigFix Inventory (BFI) deploys Common Inventory Technology (CIT) scanner in so called 'single user mode' which may cause issues for other CIT exploiters. The technote provides workaround for this problem. 
+
+SYMPTOM
+CIT scans fail when run by other IBM products than ILMT or BFI in scenario when on one machine the scanner was installed or upgraded by using 'Install or Upgrade Scanner' fixlet from ILMT or BFI.
+
+
+CAUSE
+To increase security, LMT/BFI installs CIT scanner in so called 'single user mode'. In this mode permissions of CIT files and folders are more strict and CIT can be used only by the user who installed it. On Unixes this is root, on Windows SYSTEM user. If other IBM products run CIT scans as another user (even from administrators' group), the permissions may not be satisfactory for the scan to finish successfully.
+
+ENVIRONMENT
+Machine where CIT is used by both ILMT/BFI and other IBM product (for example TWS).
+
+DIAGNOSING THE PROBLEM
+When CIT scan is run by other product than IBM/BFI (typically hardware scan - wscanhw) - it fails. After such failure no standard CIT logs are generated. 
+
+RESOLVING THE PROBLEM
+To change the CIT model of installation from 'single user' to standard one with wider permissions, run the following fixlet on Windows machines: Reinstall_scanner_without_single_user_mode_enabled.bes [/support/docview.wss?uid=swg22000628&aid=2]Reinstall_scanner_without_single_user_mode_enabled.bes [/support/docview.wss?uid=swg22000628&aid=1]
+
+
+
+
+
+The fixlet works only on Windows. It performs the following operations: 
+
+ *  Backups the list of all registered CIT exploiters on the machine Removes CIT fully Installs the latest version of CIT used by LMT/BFI (gathered from BigFix FTP) in standard way (without 'single user mode' setting) Registers back all the exploiters 
+
+Please note that the fixlet is provided 'as is' and it is not an official part of ILMT nor BFI product.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM BigFix Inventory

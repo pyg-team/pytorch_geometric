@@ -1,0 +1,196 @@
+Title: IBM PK19853: USING JAVA LOGGING CONSOLE HANDLER IN WAS CAUSES INFINITE LOOP - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using Java Logging console handler in WAS causes infinite loop
+   and
+   server crash.
+   
+   It should be described in the section that talks about using
+   Java
+   Logging and it should be a WARNING message there.
+   
+   Let's start with following text and then we can review it with
+   other
+   people on our team to see if it is good enough.
+   
+   By adding a console handler, the customer has created a loop
+   between WAS
+   handler and their handler, causing the stack overflow and the
+   crash.
+   
+   In WAS the system streams (system out and error) are redirected
+   into the
+   logging infrastructure, in order to have messages written to
+   them show
+   up in the WAS log files(SystemOut.log and SystemErr.log).
+   By plugging in a console handler, all the records that reach
+   this
+   handler will now be written into the system stream(s). Because
+   the
+   system streams in WAS are redirected into the logging, attaching
+   a
+   console handler to the root logger creates a infinite loop.
+   
+   The WAS redirects the system streams at the server startup and
+   there is no way to allow application to output their logging to
+   the
+   console because the original system streams (the stream
+   representing the
+   actual console while the server is running) can not be obtained
+   by the
+   application.
+   
+   If customer's intention is to use console to monitor the
+   application,
+   they can either monitor the SystemOut.log file or use another
+   file
+   handler instead of the console handler and monitor the file it
+   creates.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NO. This is DOC apar.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users who are attempting to use Java         *
+   *                 logging with any console handler that is     *
+   *                 attached to the root logger in WebSphere     *
+   *                 Application Server Version 6.0.              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The "Log and trace with Java logging"   *
+   *                      topic in the WebSphere Application      *
+   *                      Server Information Center for Version   *
+   *                      6 does not explain why a stack          *
+   *                      overflow occurs and the server might    *
+   *                      crash when you use attempt to use Java  *
+   *                      logging.                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If you attempt to use Java logging along with a handler that
+   is attached to the root logger, an infinite loop is created
+   and both a stack overflow and a server crash occurs. This
+   error is not documented in the "Log and trace with Java
+   logging" topic within the Information Center.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following information has been added to the "Log and trace
+   with Java logging" topic within the Version 6.0.x Information
+   Center:
+   During server startup, the standard output and error streams
+   are replaced with special streams that write to the logging
+   infrastructure so that the output of the system streams is
+   included in the log files. Because of this process,
+   applications can not use the java.util.logging.ConsoleHandler
+   handler or any handler that writes to System.err or System.out
+   streams that are attached to the root logger. If you attach
+   the handler to the root logger, an infinite loop is created
+   within the logging infrastructure, which leads to a stack
+   overflow and a server crash.
+   
+   If it is necessary to use a handler that writes to system
+   streams, you can attach the handler to a non-root logger so
+   that it does not publish log records to parent handlers. The
+   data that is written to the system streams is formatted and
+   written to the corresponding system stream log file. To monitor
+   what is being written to the system streams, you can monitor
+   the configured log files. By default, these configured log
+   files are called SystemOut.log and SystemErr.log.
+   
+   The updated information will be available during the next
+   refresh of the information center on or before March 31, 2006.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK19853
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-02-14
+   
+   
+ * CLOSED DATE
+   2006-03-02
+   
+   
+ * LAST MODIFIED DATE
+   2006-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

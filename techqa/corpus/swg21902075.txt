@@ -1,0 +1,104 @@
+Title: IBM DASH connections fail after opening second Firefox Browser instance. - United States
+
+Text:
+DASHL2; ltpatoken2; connection error; COOKIE; FQDN; APMU TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Content of the default token ltpaToken2 is being overwritten when another Firefox is started when using FQDN as default when opening new browser or another tab in an existing Browser.
+You may see below error in DASH:
+An error has occured communicating with the server. 
+
+SYMPTOM
+When opening a second instance of Firefox, or a second tab in an existing instance of Firefox, connections to data sources from DASH will fail. 
+
+
+CAUSE
+The Content value of the default token LtpaToken2 is being overwritten ( see Diagnosing the problem section below ) when the company's home page is used in the DASH login URL: 
+
+https://homepageURL:16311/ibm/console/login.jsp
+
+This is not an issue of enabling multiple logins to DASH.
+
+This appears to only affect data providers that use WebSphere Liberty, which in this case is APMU.
+
+
+ENVIRONMENT
+DASH connected to APMU with SSO enabled and the initial default URL is a pre-defined FQDN.
+
+
+
+DIAGNOSING THE PROBLEM
+This error will appear in the DASH UI when the second browser is opened ( second browser doesn't have to be logged into DASH): 
+
+
+[/support/docview.wss?uid=swg21902075&aid=1] [/support/docview.wss?uid=swg21902075&aid=1]
+
+Next check: 
+
+Open a Firefox browser and connect to DASH, open another instance of Firefox. Tools -> Options -> Privacy -> remove individual cookies, find the hostname used in the URL, if the Content value for hostname ltpatoken2 value changes when you open 2 instances of the Browser with the same hostname, 
+
+To check the value of LtpaToken2 in Firefox:
+
+Tools -> Options -> Privacy -> "remove individual cookies"
+
+You will see a long list of "Site" and "Cookie Name"
+
+The record you want to check is the one with the Site name of the Hostname you are using in the 
+DASH URL:
+
+In this example, the hostname is "ibm976-r914pex" in the DASH URL is https://ibm976-r914pex:16311/ibm/console/logon.jsp
+
+
+[/support/docview.wss?uid=swg21902075&amp;aid=2]
+
+When you open a second Firefox instance, and the "Content" value has changed for the LtpaToken2 cookie this is a problem which can be fixed by changing the default cookie name from LtpaToken2.
+
+
+
+RESOLVING THE PROBLEM
+To fix this, you can use the IP address in the DASH login URL, or if this is not allowed for security reasons, you will need to change the LTPA Token cookie name, the default value is 
+
+In WebSphere Admin Console: LtpaToken2 
+
+Changing the default LTPA Token on both the APMU and DASH servers: 
+Step one:
+
+These steps only need to be done if you are connected to an APMU server from DASH.
+
+First make these changes to server.xml configuration file in Liberty WebSphere on the APMU: 
+
+Make a backup copy of the server.xml file in
+
+<WAS_HOME>/profile/config/cells/<CELLNAME>/nodes/<NODENAME>/servers/server1/server.xml 
+Edit the server.xml file and add ssoCookieName=?DASHSSOtpa? to the webAppSecurity line. 
+i.e: 
+
+<webAppSecurity singleSignonEnabled="true" ssoDomainNames=".corp.fin" 
+ssoCookieName=?DASHSSOtpa? /> 
+
+Note: The value "corp.fin" will differ between DASH installations.
+
+Restart APMU. 
+
+At this point test to confirm you can connect directly to the APMU with the admin user and password.
+
+****************************************************** 
+
+Step two: 
+
+Next we made the following changes on the DASH side: 
+
+In WebSphere Admin Console: 
+
+Security -> Global Security -> Web and SIP security -> Single sign-on 
+(SSO) 
+
+
+[/support/docview.wss?uid=swg21902075&amp;aid=3] 
+
+Add your new LTPA Cookie name in "LTPA V2 cookie name" 
+
+Apply -> Save 
+
+[/support/docview.wss?uid=swg21902075&aid=4] [/support/docview.wss?uid=swg21902075&aid=4] 
+Restart DASH

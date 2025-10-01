@@ -1,0 +1,44 @@
+Title: IBM Intelligent Operations Center version 1.6.0.3 multiple security fixes (August 2015) - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This interim fix addresses multiple security vulnerabilities in IBM Intelligent Operations Center version 1.6.0.3. 
+
+DOWNLOAD DESCRIPTION
+IBM Intelligent Operations Center version 1.6.0.3 interim fix PO05111 addresses multiple security vulnerabilities. This interim fix supports both the standard and high availability IBM Intelligent Operations Center environments. The following product updates are included in this interim fix: 
+
+
+ * IBM SDK for WAS, Java Technology Edition, Version 6R1 Service Refresh 8 Fix Pack 7 (PI45308) 
+ * IBM SDK for WAS, Java Technology Edition, Version 6 Service Refresh 16 Fix Pack 7 (PI45309) 
+ * IBM Java v7r1 SR3.10 (Java 7 R1 SR3 FP10 ) 
+ * IBM Security Directory Server (TDS) 6.3 Interim Fix 38 
+ * IBM GSKit 8.0.50.44 
+ * IBM Security Directory Integrator LA0027 
+ * IBM WebSphere MQ 7.5.0.5 
+ * IBM SPSS (JRE update) Fix Pack 3 interim Fix 13 (applies to Modeler Server and Modeler Batch components) 
+ * IBM Cognos Business Intelligence 10.2.1 Fix Pack 8 
+ * IBM DB2 10.1.0.5 
+ * IBM WebSphere 8.0 Fix Pack 11 
+ * IBM WebSphere 7.0 PI31622 
+ * IBM WebSphere 7.0 PI36211 
+ * IBM WebSphere 7.0 PI37396 
+ * IBM WebSphere 7.0 PI39768 
+ * IBM WebSphere 7.0 PI45309
+
+PREREQUISITES
+Interim Fix PO05018
+
+URL LANGUAGE SIZE(Bytes) Interim Fix PO05018 [http://www-01.ibm.com/support/docview.wss?uid=swg24040324] Language Independent 23200000 
+INSTALLATION INSTRUCTIONS
+See the readme file that is associated with interim fix PO05011.
+
+DOWNLOAD PACKAGE
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] PO05011 21 Aug 2015 Language Independent 23100000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFix?product=ibm%2FOther+software%2FIntelligent+Operations+Center&fixids=1.6.0.3-Other-IBMIOC-Linux-PO05011&source=SAR&function=fixId&parent=Smarter%20Cities] [ ] 
+ [/support/docview.wss?uid=swg24040526&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24040526&aid=2]Problems (APARS) fixed
+PO05111

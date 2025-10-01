@@ -1,0 +1,64 @@
+Title: IBM Access Client Solutions gives MSGSSL004 and/or MSGSSL007 during connection with SSL enabled - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ User receives MSGSSL004 and or MSGSSL007 when trying to connect to the iSeries with SSL enabled. 
+
+SYMPTOM
+MSGSSL004 - An error was encountered during the handshake phase of establishing a secure connection.(Received fatal alert: handshake_failure) 
+
+MSGSSL007 - An error occurred with an SSL certificate. (Certificates does not conform to algorithm constraints) 
+
+
+CAUSE
+The current SSL configuration does not meet requirements. The new version of Oracles JRE implemented new security policies that prohibit the use of a certificate using MD5 or lower and RSA cipher specs. This was done because these ciphers are considered not safe and can be cracked, exposing your data.
+
+
+ENVIRONMENT
+Access Client Solutions 
+
+Java 8
+
+
+DIAGNOSING THE PROBLEM
+Determine which part of the SSL configuration is not meeting requirements. 
+
+
+
+RESOLVING THE PROBLEM
+The current Local Certificate Authority or Server Certificate assigned to the IBM i Host Servers and Telnet Server may be using a cipher spec that is no longer supported by Java. 
+
+
+To confirm the exact cause, use the following documentation to gather a TRCCNN of a recreate. IBM i Support can use this trace to locate the exact cause. 
+1. Instructions for gathering TRCCNN: http://www-01.ibm.com/support/docview.wss?uid=nas8N1016231 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1016231]
+2. Along with the TRCCNN, generate and package the ACS service logs with the following steps: 
+- After the error prompts, select the option to Generate Service logs. Click OK through the Prompts. 
+- Navigate to the Access Client Solutions main interface, select Package Service Logs from the Tools menu. This may take a minute.
+- Wait for the MSGGEN002- Function completed successfully and take the option to "Open Target Directory"
+- Submit the resulting .zip folder along with the TRCCNN QSYSPRT.txt file. 
+
+To correctly resolve this issue, the Local Certificate Authority or the Server Certificate will need to be renewed using a higher cipher spec within Digital Certificate Manager. This process is intrusive and may require reboot of the Telnet and Host servers. If the certificate cannot be renewed in a timely manor you can modify the pc's java.security file to temporarily allow for low level ciphers. 
+
+The circumvention is to modify the JRE's java.security file and comment out two lines. Doing this affects anything that uses the JRE on the PC and exposes you to sites that use the older ciphers where data could be compromised.
+
+The java.security file will be located in the path of your JRE installation. The path will be under the base directory structure Oracle creates; however, when the JRE is installed, the user could specify a different location. 
+
+64-bit PCs:
+Typically, the path is c:\Program Files\Java\<JRE version>\Lib\security
+
+If you are using a JDK with the JRE, the path is slightly different:
+c:\Program Files\Java\<JDK version>\JRE\Lib\security
+
+The above would be for 64-bit versions of Java; 32-bit versions of Java would be in the Program Files (x86) directory. 
+
+Note: 32-bit PCs have only the Program Files directory.
+
+The file to edit for a circumvention is the java.security file. At the time of this writing, the following two lines were modified to remove the MD5 and MD5withRSA:
+
+o jdk.certpath.disabledAlgorithms=MD2, MD5, RSA keySize <1024
+o jdk.tls.disabledAlgorithms=SSLv3, RC4, MD5withRSA, DHkeySize < 768

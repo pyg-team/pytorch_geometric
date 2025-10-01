@@ -1,0 +1,211 @@
+Title: IBM PI56129: SYNTAX ERRORS ARE NOT DETECTED BY COBOL PRECOMPILER WHEN DATA ITEMS FOLLOW AN SQL END-EXEC - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Data items which follow an SQL END-EXEC several times with no
+   reference are not treated as invalid syntax by COBOL
+   precompiler.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All DB2 10 and 11 for z/OS users of          *
+   *                 the DB2 precompiler with COBOL               *
+   *                 applications.                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: DB2 precompiler with a COBOL            *
+   *                      application does not get any syntax     *
+   *                      error when an SQL END-EXEC is followed  *
+   *                      by invalid data items without a period  *
+   *                      specified after END-EXEC.               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   No syntax error may be issued when invalid data items appear
+   after an END-EXEC statement:
+   
+   Example:
+   WORKING-STORAGE SECTION.
+   .
+   .
+   01 IS-THIS-AN-ERROR PIC X.
+   01 MYVAR2 PIC X(26).
+   
+   PROCEDURE DIVISION.
+   
+   PERFORM SQL-SELECT.
+   GOBACK.
+   
+   SQL-SELECT SECTION.
+   
+   EXEC SQL
+   SELECT CURRENT TIMESTAMP AS DUMMY INTO :MYVAR2
+   FROM SYSIBM.SYSDUMMY1
+   END-EXEC         <<-- Invalid data items follow
+   IS-THIS-AN-ERROR      END-EXEC and there is no
+   IS-THIS-AN-ERROR      period after END-EXEC
+   IS-THIS-AN-ERROR
+   IS-THIS-AN-ERROR
+   display MYVAR2
+   .
+   SQL-SELECT-EXIT.
+   EXIT.
+   
+   The above COBOL precompiler generated listing code will look
+   like below but no syntax error message is displayed.
+        PERFORM SQL-INITIAL UNTIL SQL-INIT-DONE
+        CALL 'DSNHLI' USING SQL-PLIST1
+           IS-THIS-AN-ERROR
+           IS-THIS-AN-ERROR
+           IS-THIS-AN-ERROR
+           display MYVAR2
+           .
+   
+   After the fix, the DB2 precompiler generates listing
+   code with the END-CALL phrase, the DSNHPC precompiler
+   return code will be changing from 04 to 00, and the
+   IGYCRCTL COBOL compiler will issue error message
+   IGYPS2072-S for the invalid data items.
+        PERFORM SQL-INITIAL UNTIL SQL-INIT-DONE
+        CALL 'DSNHLI' USING SQL-PLIST1
+        END-CALL             <-- END-CALL phrase generated to
+           IS-THIS-AN-ERROR      separate SQL-PLIST and invalid
+           IS-THIS-AN-ERROR      data items.
+           IS-THIS-AN-ERROR
+   
+           display MYVAR2
+           .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DB2 precompiler code has been enhanced to generate the
+   END-CALL phrase for DSNHLI, DSNHLI2, and DSNHLIR.
+   DB2 does not need to be restarted after applying this fix.
+   
+   Additional keywords: COBOL DSNHLI DSNHLI2 DSNHLIR
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI56129
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-29
+   
+   
+ * CLOSED DATE
+   2016-03-16
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI36264 UI36265
+   
+   
+
+MODULES/MACROS
+ *  DSNHSTMC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY UI36264 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI36264]
+   UP16/03/31 P F603
+   
+   
+ * RB10 PSY UI36265 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI36265]
+   UP16/03/31 P F603
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

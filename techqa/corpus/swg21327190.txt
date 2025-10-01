@@ -1,0 +1,89 @@
+Title: IBM Mustgather: For FileNet Process Analyzer 4.5 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What information should be collected when I experience a problem with Process Analyzer 4.5? 
+
+ANSWER
+Must Gather for BPM 4.5 - Process Analyzer 
+
+For every problem, collecting data can aid in problem determination and save time resolving Problem Management Records (PMRs). Gathering this data before calling IBM support will help you understand the problem and save time analyzing the data. 
+
+Collecting MustGather data early, before opening the PMR, helps IBM® Support quickly determine if: 
+
+ * Symptoms match known problems (rediscovery). 
+ * There is a non-defect problem that can be identified and resolved. 
+ * There is a defect that identifies a workaround to reduce severity.
+
+
+Locating the root cause of a problem can speed development of a code fix. 
+
+Gathering General Information For IBM® Filenet® BPM products, gather the operating system versions and settings for the pertinent server(s) and/or client machines. 
+
+Then, gather the information specific to a Process Analyzer problem or issue. 
+
+This information is needed: 
+
+ * How often does this problem occur? 
+ * Can the problem be reproduced? 
+ * How many users are affected by this problem? 
+ * What is the business impact of this problem? 
+ * Is there a workaround? 
+
+
+Gathering Operating System Versions and Settings 
+
+These commands collect:  * OS Version 
+ * OS Environment Variables 
+ * OS Kernel parameters
+
+
+Run the following commands on the PA Server and collect the output: 
+
+Windows users Command Collects 
+systeminfo winmsd 
+(and do a file -> “export” menu choice to create a text file)
+
+OS Version, Patches and Maintenance level set OS Environment Variable cscript C:\windows\system32\eventquery.vbs /L application /R 1000 /V 
+
+cscript C:\windows\system32\eventquery.vbs /L system /R 1000 /V 
+
+cscript C:\windows\system32\eventquery.vbs /L security /R 1000 /V OS Event Log Error Reporting Gathering Process Analyzer Specific Information 
+
+Process Analyzer Server Version information 
+
+Open pa.jar in the PA installation’s jpa directory and the version information is in the file called pa-ver.properties 
+
+PA Database information Database 
+
+Version: SQL Server 2000 or 2005 JDBC Driver Version for PA db connection. 
+
+PE Database information 
+
+Database Version: Oracle/SQL/DB2 JDBC Driver name and version for PE db connection. 
+
+PA Server 
+
+Always gather analyzer.properties file in PA’s installation jpa directory and submit it. 
+
+PA Server Cannot Connect to PE Database 
+
+If the problem is reproducible, it can be invaluable to enable the appropriate PA traces and re-created the problem. For example, you might do this: Open Process Task Manager, click on Advanced tab, change Logging Level to Detailed Information. Include the palog.txt output file. 
+
+PA Quarantine Events or PA Server Fault 
+
+Enable the appropriate java trace options in the fnlog4j.properties file. Put that fnlog4j.properties file in the appropriate PA’s Java JRE LIB folder. Create your own fnlog4j.properties by copying one from PE’s \fnsw_loc\sd\fnlog4j.properties.sample file for a starting point. Replicate the problem. Submit the java trace file. 
+
+PA Performance, Throughput, and Response Time issue 
+
+Gathering information about these kinds of problems can be difficult. You need to get the right traces. But enabling traces can affect the performance. So it can be a balancing act to get appropriate traces while still showing the problem you’re trying to resolve. 
+
+Performance issues may be due to many things: Database tuning or database performance issue or Networking. 
+
+The first thing to do is to use PA Process Task Manager. Click on System Monitor node and then click on Generate Diagnostic File. Submit that file. 
+
+What to do next 
+
+Once you have collected the preceding information, you can begin analyzing the data or simply submit the diagnostic information to IBM support.

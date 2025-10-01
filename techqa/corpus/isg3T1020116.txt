@@ -1,0 +1,92 @@
+Title: IBM Reduce the size of IBM Platform RTM database - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+Sometimes improperly configured IBM Platform RTM database can be running out the free space of the hard disk, here provides the procedure to reduce the size of RTM database.
+
+
+SYMPTOM
+ 
+
+RTM database is running out the free space of the hard disk.
+
+
+CAUSE
+ 
+
+Improper configuration of retention period of RTM database
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+Reduce the size of RTM database by the following procedures. 
+
+ 
+
+0 Find out the space usage and the size of each table in database cacti 
+
+df -h 
+du -h --max-depth=1 /opt/cacti/ 
+du -h --max-depth=1 /var/lib/mysql/cacti/ 
+ls -lS /var/lib/mysql/cacti/ |more 
+
+1 Use the RTM data purge script
+1.1 Make some free space first. If necessary move some files to another disk to make more free space 
+rm -rf /tmp/* 
+1.2 
+From https://<rtm url>/cacti/plugins/grid/grid_settings_system.php?tab=grid_maint 
+decrease the following parameters accordingly, 
+"Detail Job Data Retention Period" 
+"Summary Job Data Retention Period" 
+"Daily Statistics Retention Period" 
+"Save" 
+1.3
+From https://<rtm url>/cacti/plugins/grid/grid_settings_system.php?tab=grid_maint 
+set "Optimization Schedule" to "Daily" 
+"Save" 
+1.4 
+From https://<rtm url>/cacti/plugins/grid/grid_settings_system.php?tab=grid_maint 
+modify "Database Maintenance Time" to the nearest convenient time to start the RTM data purge process. "Save" 
+1.5 
+If step 1.4 failed to work, manually start the RTM data purge process by the following commands, 
+cd cacti/plugins/grid/ 
+php -e poller_grid.php -fm 
+
+2 If procedure 1 failed to reduce the size of RTM database, manually purge the cacti tables one by one in the order of the size of each cacti table.
+2.1 Make some free space first. If necessary move some files to another disk to make more free space 
+rm -rf /tmp/* 
+2.2 Take down the original size of cacti table files 
+ls -l /var/lib/mysql/cacti/<table name>.* 
+2.3 Run the following statements on MySQL database
+select min(<column of attribute timestamp>), max(<column of attribute timestamp>) from <table name>; 
+delete from <table name> where <column of attribute timestamp> < timestamp '<date>'; -- you decide the date accordingly
+commit; 
+optimize table <table name>; 
+commit; 
+2.4 Check if the size of cacti table files reduces 
+ls -l /var/lib/mysql/cacti/<table name>.* 
+
+For example,
+2.1 Make some free space first. If necessary move some files to another disk to make more free space 
+rm -rf /tmp/* 
+2.2 Take down the original size of cacti table files
+ls -l /var/lib/mysql/cacti/grid_job_daily_stats.* 
+2.3 Run the following statement on MySQL database
+select min(date_recorded), max(date_recorded) from grid_job_daily_stats; 
+delete from grid_job_daily_stats where date_recorded < timestamp '<date>'; -- you decide the date, say '2013-8-12'; 
+commit; 
+optimize table grid_job_daily_stats; 
+commit; 
+2.4 Check if the size of cacti table files reduces 
+ls -l /var/lib/mysql/cacti/grid_job_daily_stats.* 
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF RTM Server

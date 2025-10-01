@@ -1,0 +1,97 @@
+Title: IBM Technology for Java - jextract - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document shows an example of how to run the jextract utility on the operating system. 
+
+RESOLVING THE PROBLEM
+The IBM Technology for Java Virtual Machine can produce system dumps in response to specific events. A system dump is a raw binary dump of the process memory when the dump agent is triggered by a failure or by an event for which a dump is requested. System dumps are produced in a platform-specific binary format, typically as a raw memory image of the process that was running when the dump was initiated. If the Rochester Support Center requests a system dump be sent, the jextract tool must be used to properly gather the data on the system. 
+
+Jextract on the operating system is found in the JDK directory path below:
+
+/QOpenSys/QIBM/ProdData/JavaVM/jdk50/32bit/jre/bin - JDK 5.0 32bit
+/QOpenSys/QIBM/ProdData/JavaVM/jdk50/64bit/jre/bin - JDK 5.0 64bit
+/QOpenSys/QIBM/ProdData/JavaVM/jdk60/32bit/jre/bin - JDK 6.0 32bit
+/QOpenSys/QIBM/ProdData/JavaVM/jdk60/64bit/jre/bin - JDK 6.0 64bit
+/QOpenSys/QIBM/ProdData/JavaVM/jdk626/32bit/jre/bin - JDK 626 32bit
+/QOpenSys/QIBM/ProdData/JavaVM/jdk626/64bit/jre/bin - JDK 626 64bit
+/QOpenSys/QIBM/ProdData/JavaVM/jdk70/32bit/jre/bin - JDK 7.0 32bit
+/QOpenSys/QIBM/ProdData/JavaVM/jdk70/64bit/jre/bin - JDK 7.0 64bit
+/QOpenSys/QIBM/ProdData/JavaVM/jdk71/32bit/jre/bin - JDK 7.1 32bit
+/QOpenSys/QIBM/ProdData/JavaVM/jdk71/64bit/jre/bin - JDK 7.1 64bit
+/QOpenSys/QIBM/ProdData/JavaVM/jdk80/32bit/jre/bin - JDK 8.0 32bit
+/QOpenSys/QIBM/ProdData/JavaVM/jdk80/64bit/jre/bin - JDK 8.0 64bit
+
+You must first determine the JDK being used by the JVM. This is shown in the joblog:
+
+Message ID . . . . . . : JVAB302 
+Message type . . . . . : Diagnostic 
+Message . . . . : Java Virtual Machine is IBM Technology for Java.
+PID(166985) 
+Cause . . . . . : JAVA_HOME environment variable is 
+/QOpenSys/QIBM/ProdData/JavaVM/jdk80/64bit 
+
+
+This tells us we are using JDK 8.0 64bit. In order to gather the jextract properly, we need to use the jextract command from the /QOpenSys/QIBM/ProdData/JavaVM/jdk80/64bit directory.
+
+Determine where the system dump file was written before running jextract against it. The joblog of the JVM contains the dump file location. The following example is from a WebSphere Application Server JVM:
+
+JVAB56D Diagnostic 00 03/05/14 08:14:07.950787 QXJ9UTLJVM QJVM5064 *STMT QXJ9VM QJVM5064 *STMT 
+From module . . . . . . . . : QXJ9UTLJVM 
+From procedure . . . . . . : JvaSendMsg 
+Statement . . . . . . . . . : 16 
+To procedure . . . . . . . : xj9SendDiagMsgToJobLog 
+Statement . . . . . . . . . : 22 
+Thread . . . . : 00000344 
+Message . . . . : JVMDUMP010I System dump written to 
+/QIBM/UserData/WebSphere/AppServer/V85/ND/profiles/amh/core.20140305.081405.166985.0001.dmp 
+
+Here is an example of running jextract. Notice that it runs from within Qshell:
+
+A. STRQSH
+
+B. /QOpenSys/QIBM/ProdData/JavaVM/jdk80/64bit/jre/bin/jextract /QIBM/UserData/WebSphere/AppServer/V85/ND/profiles/amh/core.20140305.081405.166985.001.dmp 
+
+Loading dump file... 
+Read memory image from /QIBM/UserData/WebSphere/AppServer/V85/ND/profiles/amh/core.20140305.081405.166985.0001.dmp 
+VM set to 0000000180104568 
+Dumping JExtract file to /QIBM/UserData/WebSphere/AppServer/V85/ND/profiles/amh/core.20140305.081405.166985.0001.dmp.xml 
+<!-- extracting gpf state --> 
+<!-- 11ms --> 
+<!-- extracting classes --> 
+...............................................................................................................<!-- 20361ms -->
+<!-- extracting classloaders --> 
+..................<!-- 20456ms --> 
+<!-- extracting monitors --> 
+<!-- 20687ms --> 
+<!-- extracting threads --> 
+.<!-- 21208ms --> 
+<!-- extracting trace buffers --> 
+<!-- 21210ms --> 
+<!-- extracting roots --> 
+................................................................................<!-- 21957ms --> 
+<!-- extracting objects --> 
+--> 
+Finished writing JExtract file in 57059ms 
+Creating archive file: /QIBM/UserData/WebSphere/AppServer/V85/ND/profiles/amh/core.20140305.081405.166985.0001.dmp.zip 
+Adding "/QIBM/UserData/WebSphere/AppServer/V85/ND/profiles/amh/core.20140305.081405.166985.0001.dmp" 
+Adding "/QIBM/UserData/WebSphere/AppServer/V85/ND/profiles/amh/core.20140305.081405.166985.0001.dmp.xml" 
+.
+..
+Adding "/QOpenSys/QIBM/ProdData/JavaVM/jdk80/64bit/jre/lib/TraceFormat.dat" 
+Adding "/QOpenSys/QIBM/ProdData/JavaVM/jdk80/64bit/jre/lib/J9TraceFormat.dat" 
+jextract complete. 
+$ 
+
+By default, output is written to a file called <dumpfile>.zip in the current directory. This file is a compressed file that contains: 
+
+o The dump o XML produced from the dump, containing details of useful internal JVM information o Other files that can help in diagnosing the dump (such as trace entry definition files) Contact the Rochester Support Center for instructions on how to send the data in for analysis. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 Operating System IBM i 7.2 
+HISTORICAL NUMBER
+ 494566468

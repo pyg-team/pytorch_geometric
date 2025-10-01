@@ -1,0 +1,120 @@
+Title: IBM How to Manually Stop/Start IBM InfoSphere Information Server services on Unix/Linux - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I manually Stop/Start services on Unix/Linux in IBM InfoSphere Information Server (IIS)? 
+
+ANSWER
+Here are the instructions for restarting the Services, ASBAgent and DataStage engine in IIS v8 (see instructions below for each step). Please be advised that if any other packs are active (SAP R/3 Pack, SAP BW Pack, etc.) you will need to consult the documentation specific to those items for instructions. 
+
+The order in which to stop all services is:
+
+
+ 1. Stop DataStage Engine 
+ 2. Stop the ASB Agent 
+ 3. Stop the WebSphere Application Server (WAS)
+
+
+Here are the step-by-step instructions for each of the above. 
+ 1. Stop DataStage Engine  * Log into your UNIX machine as root 
+     * Make sure that no one is using DataStage. 
+     * Check if there are any processes left
+       ps -ef | grep -i phantom
+       ps -ef | grep dsapi
+       ps -ef | grep dscs
+       
+       These commands should not return any results. If they return results, it means that there are still some processes running. You can wait for the users to stop their processes or kill the processes (using kill -9 PID).
+       
+     * Check if dsrpc is running
+       
+       netstat -a | grep dsrpc
+       
+       If dsrpc is running, then you should get a line with the status LISTEN. If you get more lines it means that there are still some connections and you need to wait. If you see that dsrpc or other connections are in status WAIT then you also need to wait until this it disappears (you can also reboot the machine).
+       
+     * Stop DataStage Services using (use the dsengine credential for your system, default/typical is dsadm you have to run this from $DSHOME)
+       
+       . ./dsenv
+       bin/uv -admin -stop
+       
+     * Then see if there is any memory segment left:
+       
+       ipcs -mop | grep ade
+       
+       For 64-bit Linux, use: ipcs -qms -a 
+       
+       If you get a result, take note of the PID and remove it (you will need root access)
+       
+       ipcrm -m PID
+       
+     * Then, check the port again using
+       
+       netstat -a | grep dsrpc
+       
+       You should not get any result. If you get any results and the dsrpc is in WAIT state, then you need to wait until it disappears (you can also reboot the machine).
+       
+    
+    
+ 2. Stop the ASB Agent (you need to be root user)  * Go to <path to>/IBM/InformationServer/ASBNode/bin 
+     * Run  * 
+        * 
+        * 
+        * 
+        * 
+        * 
+        * 
+       
+       
+     * Check the agent has stopped:
+       
+       ps -ef | grep -i agent
+       
+     * On Solaris it may be necessary to run this command if errors similar to this are returned when trying to start the agent.
+       "com.ascential.acs.logging.agent.LoggingAgentSocketImpl.main(LoggingAgentSocketImpl.java:115) Caused by: java.net.BindException: Address already in use"
+       
+       /usr/ucb/ps -auxww | grep java
+       
+    
+    
+
+3. Stop the WebSphere Application Server (you need to be root user)  *  Go to <path to>/IBM/InformationServer/ASBServer/bin Run 
+   ./MetadataServer.sh stop Be sure the java processes go away Now check there are no java processes left behind:
+   
+   > ps -ef | grep java
+   
+   remove them if any exists with: > kill PID (NO -9)
+   
+
+The order in which to start all services is: 
+ 1. Start WebSphere Application Server (as root) 
+ 2. Start ASB Agent (as root) 
+ 3. Start DataStage Engine (use the dsengine credential for your system, default/typical is dsadm )
+
+
+Here are the step-by-step instructions. 
+ 1. Start WebSphere Application Server (you need to be root user)  * Note: for AIX platform, do the following:
+       unset LDR_CNTRL
+       create a file in ASBServer/bin named MetadataServer_env.sh and add the following line:
+       ulimit -n 10240 
+     * Go to <path to>/IBM/InformationServer/ASBServer/bin 
+     * Run 
+       ./MetadataServer.sh run
+       
+    
+    
+ 2. Start ASB Agent (you need to be root user)  * Go to <path to>/IBM/InformationServer/ASBNode/bin 
+     * Run 
+       ./NodeAgents.sh start
+       
+    
+    
+ 3. Start DataStage Engine (use the dsengine credential for your system, default/typical is dsadm)  * Go to $DSHOME 
+     * . ./dsenv 
+     * Run 
+       bin/uv -admin -start
+    
+    
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21624707]

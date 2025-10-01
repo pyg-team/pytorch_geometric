@@ -1,0 +1,48 @@
+Title: IBM Composite Platform Installation Tool (CPIT) does not support IBM Tivoli Directory Server (ITDS) 6.3 on Red Hat Enterprise Linux (RHEL) 6.1. - United States
+
+Text:
+CPIT; Linux; idsldif2db TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When use the CPIT to install the FileNet P8 platform, the installation is not successful and the error occurs at ITDS installation, refer to the detailed error in cpit_install_stderr.txt:
+
+OUTPUT>========================================== 
+OUTPUT>Setting Directories... 
+OUTPUT>Mon Aug 11 08:20:00 SGT 2014 
+OUTPUT>/opt/IBM/cpit/decompressed/TDS/tdsV6.3/tds 
+ERROR>./install_tds.bin: line 1956: warning: here-document at line 1956 delimited by end-of-file (wanted `/dev/null') 
+OUTPUT>ERROR: /opt/IBM/ldap/V6.3/sbin/idsldif2db not found. TDS installation failed. 
+Process completed with exit code: 1 
+ERROR in InvokeScripts-function - Terminate the remaining scripts. ***Aborting InvokeScripts-Install function. 
+
+DIAGNOSING THE PROBLEM
+From the error, it seems like a file is missing from the package (see"/opt/IBM/ldap/V6.3/sbin/idsldif2db not found. TDS installation failed."). 
+If review the installTDS63.sh shell script, the script uses the following method to install ITDS: 
+
+====================================================
+cd "$DirToDecompressTo/$TDSDirName/tdsV6.3/tds" 
+pwd 
+InstallerName=install_tds.bin 
+if [ -e $InstallerName ] ;then 
+./$InstallerName -is:silent -options installTDS63.txt -is:log 
+$ScriptsDir/log/installtds63.txt
+====================================================
+
+It is a ITDS 6.3 silent install and encounter the problem.
+
+
+RESOLVING THE PROBLEM
+The issue is caused by ITDS 6.3 doesn't support ISMP/GUI install on RHEL 6. 
+
+
+1. ITDS does not support ISMP/GUI install on RHEL 6 - since RHEL 6 is released after ITDS 6.3. Refer to the link below:
+
+Installing IBM Tivoli Directory Server Version 6.3 on RHEL 6 operating system [http://www-01.ibm.com/support/docview.wss?uid=swg21599258]
+
+2. ITDS does not support silent install using install_tds.bin (ISMP/GUI installer). Refer to the link below:
+
+Installing and uninstalling silently on Windows systems [http://www-01.ibm.com/support/knowledgecenter/SSVJJU_6.3.0/com.ibm.IBMDS.doc/install95.htm%23silent]
+
+To silently install and uninstall on AIX®, Linux, Solaris, and HP-UX (Itanium) systems, use the operating system utilities. 
+
+To fix this issue, please use RHEL 5 since ITDS 6.3 supports ISMP/GUI install on RHEL 5.

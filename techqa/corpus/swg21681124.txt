@@ -1,0 +1,83 @@
+Title: IBM Launching Rational Publishing Engine Studio fails with "An error has occurred" - United States
+
+Text:
+org.eclipse.swt.SWTException: Failed to execute runnable; cannot start RPE; RPE won't start; RPE will not start; can't start RPE; Document Studio fails to start; RPE fails to start; Launcher fails to start TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to launch IBM Rational Publishing Engine (RPE) Studio fails with this error:
+An error has occurred. See the log file ... 
+
+SYMPTOM
+When you try to start IBM Rational Publishing Engine (RPE) as a non-Administrator user, you get an error like this one and RPE does not start: 
+
+[/support/docview.wss?uid=swg21681124&aid=1] [/support/docview.wss?uid=swg21681124&aid=1]
+
+Error text:
+An error has occurred. See the log file
+C:\Users\113006584\Application Data\IBM\Rational\RPE_20141006_1559\Studio\workspace\.metadata\.log 
+
+When you open the .log file you may see something similar to the following for each attempt to start RPE Studio: 
+
+!MESSAGE Application error
+!STACK 1
+org.eclipse.swt.SWTException: Failed to execute runnable (java.lang.NullPointerException)
+at org.eclipse.swt.SWT.error(SWT.java:4361)
+at org.eclipse.swt.SWT.error(SWT.java:4276)
+at org.eclipse.swt.widgets.Synchronizer.runAsyncMessages(Synchronizer.java:138)
+at org.eclipse.swt.widgets.Display.runAsyncMessages(Display.java:4144)
+at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3761)
+at org.eclipse.swt.widgets.Display.release(Display.java:3814)
+at org.eclipse.swt.graphics.Device.dispose(Device.java:295)
+at com.ibm.rational.rpe.studio.Application.start(Application.java:76)
+at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:353)
+at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:180)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:94)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:55)
+at java.lang.reflect.Method.invoke(Method.java:619)
+at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:629)
+at org.eclipse.equinox.launcher.Main.basicRun(Main.java:584)
+at org.eclipse.equinox.launcher.Main.run(Main.java:1438)
+Caused by: java.lang.NullPointerException
+at org.eclipse.ui.internal.Workbench.createWorkbenchWindow(Workbench.java:1232)
+at org.eclipse.ui.internal.Workbench.getActiveWorkbenchWindow(Workbench.java:1225)
+at com.ibm.rational.rpe.studio.handlers.file.TemplateSelectorHandler.execute(TemplateSelectorHandler.java:126)
+at com.ibm.rational.rpe.studio.ApplicationWorkbenchAdvisor$1.run(ApplicationWorkbenchAdvisor.java:88)
+at org.eclipse.swt.widgets.RunnableLock.run(RunnableLock.java:35)
+at org.eclipse.swt.widgets.Synchronizer.runAsyncMessages(Synchronizer.java:135)
+... 17 more 
+
+However, RPE will start on the same workstation if you right-click the application and choose "Run as administrator" or if another user is logs into the workstation and starts the application.
+
+
+CAUSE
+The directory IBM Rational Publishing Engine (RPE) created in your Microsoft Windows user profile has become corrupt. This can prevent RPE from starting while logged into Windows as that user. RPE will still start when logged into that workstation as a different user or if the problem user runs RPE by right-clicking it and choosing "Run as administrator".
+
+
+ENVIRONMENT
+This was seen on a Microsoft Windows 7 32-bit workstation running IBM Rational Publishing Engine (RPE) 1.2.1. It has also been seen with RPE 1.3.
+
+
+
+DIAGNOSING THE PROBLEM
+When you cannot start IBM Rational Publishing Engine (RPE) as yourself, try right-clicking the application shortcut and starting it with "Run as administrator". Alternatively, try logging into your workstation as a different user and running it that way. If RPE starts successfully on your workstation as other users but not as yourself, you might be having this problem.
+
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, you can: 
+
+ 1. Remove or rename the IBM Rational Publishing Engine (RPE) folder in your Windows user profile's Rational directory. Depending on your version of Windows, the Rational directory will be in C:\Users\<user>\Application Data\IBM\Rational or C:\Users\<user>\AppData\Roaming\IBM\Rational. In this example, the path is:
+    C:\Users\113006584\Application Data\IBM\Rational\RPE_20141006_1559
+    
+    NOTE
+    In newer versions of Windows, the path in the error will not be correct. Therefore, please check both C:\Users\<user>\Application Data\IBM\Rational and C:\Users\<user>\AppData\Roaming\IBM\Rational if the path in your error does not exist on your system.
+    
+    
+ 2. Restart RPE Studio. This will re-create the folder and contents.
+    
+    NOTE
+    This process will remove any settings you have configured for the RPE Studio and RPE Launcher.

@@ -1,0 +1,185 @@
+Title: IBM IV52915: CAN NOT ADD MENUBAR ON SINGLE PAGE APPLICATION IN APPLICATION DESIGNER. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following is the reproduction steps with 100% frequency.
+   
+   1.  Login to SCCD.
+   2.  Open "System Configuration"-"Platform Configuration"-
+       "Application Designer" application.
+   3.  Click on "New Application" icon.
+   4.  Create a new application with the following values.
+   
+   Application  : TEST_AP_1
+   Description  : PMR 66859,999,760
+   Main Object  : TICKET
+   Key Attribute: TICKETID
+   Module Name  : SD
+   
+   5.  Click on "Single Page App".
+   6.  Select "Toggle Show All Controlls" from "Select Action"
+   menu.
+   7.  Click control pallet icon.
+   8.  Drag & drop "Menubar" on to the tab.
+   9.  Save this application.
+   10. Re-open this application.
+   ==> Menu bar is not displayed.
+   
+   I executed this test scenario in the following environments,
+   and found that this issue could be seen in TPAE 7.5.0.4.
+   
+   SCCD 7.5.1.0 (TPAE 7.5.0.4) --> NG (issue is reproduced)
+   MAM                7.5.0.4  --> NG (issue is reproduced)
+   SCCD 7.5.0.1 (TPAE 7.5.0.3) --> OK (not reproduced)
+   SCCD 7.5.0.0 (TPAE 7.5.0.2) --> OK (not reproduced)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Maximo Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Can not add menubar on single page application in            *
+   * application designer.                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to latest release                                    *
+   ****************************************************************
+   The following is the reproduction steps with 100% frequency.
+   1.  Login to SCCD.
+   2.  Open "System Configuration"-"Platform
+   Configuration"-"Application Designer" application.
+   3.  Click on "New Application" icon.
+   4.  Create a new application with the following values.
+   
+   Application  : TEST_AP_1
+   Description  : PMR 66859,999,760
+   Main Object  : TICKET
+   Key Attribute: TICKETID
+   Module Name  : SD
+   
+   5.  Click on "Single Page App".
+   6.  Select "Toggle Show All Controlls" from "Select Action"
+   menu.
+   7.  Click control pallet icon.
+   8.  Drag & drop "Menubar" on to the tab.
+   9.  Save this application.
+   10. Re-open this application.
+   ==> Menu bar is not displayed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Application designer displays a warning message if user attempts
+   to add a menubar when it is not allowed on the application.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+     | release\fix pack | Fix Pack Release 7.5.0.6 TPAE
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV52915
+   
+   
+ * REPORTED COMPONENT NAME
+   ADMINISTRATION
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46A1
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-06
+   
+   
+ * CLOSED DATE
+   2014-03-03
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ADMINISTRATION
+   
+   
+ * FIXED COMPONENT ID
+   5724R46A1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

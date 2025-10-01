@@ -1,0 +1,79 @@
+Title: IBM DB2 UDB Version 8, v10.5 compliance with FIPS 140-2 standard - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is DB2 v8, v10.5 compliant to FIPS 140-2 ?. 
+
+ANSWER
+
+Is DB2 v10.5 compliant with FIPS 140-2?
+
+Q: Is DB2 vulnerable to the problem described below?
+
+V-58165 DBMS main in the middle attack [https://www.stigviewer.com/stig/database_security_requirements_guide/2015-06-23/finding/V-58165]
+
+"One class of man-in-the-middle, or session hijacking, attack involves the adversary guessing at valid session identifiers based on patterns in identifiers already known. The preferred technique for thwarting guesses at Session IDs is the generation of unique session identifiers using a FIPS 140-2 approved random number generator. However, it is recognized that available DBMS products do not all implement the preferred technique yet may have other protections against session hijacking. Therefore, other techniques are acceptable, provided they are demonstrated to be effective. "
+
+A: No because DB2 does not use session ids for authentication and thus not vulnerable to the attack described above. DB2 uses encryption modules which are FIPS 140-2 certified.
+
+DB2 v8.x compliancy to FIPS 140-2
+
+DB2 v8.x went out of support in April 2009.
+
+What is ICC?
+
+ICC (IBM Crypto for C) is a set of libraries from Tivoli® for performing encryption. As of DB2® Universal Database™ (DB2 UDB) Version 8 fixpak 7 (equivalent to DB2 UDB Version 8.2), DB2 is using ICC on most platforms.
+
+Customers who need to operate in an environment that is compliant with FIPS 140-2 federal standard should take into account the releases of ICC that are shipped by DB2 on different platforms and the compliance status of those releases with FIPS 140.2.
+
+Following is a list of platforms on which DB2 is using ICC for encryption of data flowing between clients and servers:
+
+DB2 V8 Fixpak 7 through DB2 Fixpak 11: 
+ICC Version 1.2.2 on platforms:
+AIX 32 bit
+HP-UX PA-RISC 32 bit
+ICC Version 1.2.1 on platforms: 
+AIX 64 bit
+HP-UX PA-RISC 64 bit
+HP-UX IA64
+Linux x86, Linux x86-64, Linux IA64
+Linux for zSeries
+Linux for POWER
+Windows x86 and IA64
+Solaris SPARC 64 bit
+ICC Version 1.3.9 on platforms:
+Solaris x86-64 (DB2 V8.2 GA)
+
+DB2 V8 Fixpak 12 and later: 
+ICC Version 1.4.1 on platforms 
+AIX
+HP-UX PA-RISC
+Linux x86 and x86-64
+Linux for zSeries
+Linux for POWER
+Windows x86 and x86-64
+Solaris SPARC
+ICC Version 1.3.9 on platforms 
+HP-UX IA64
+Linux IA64
+Windows IA64
+
+Summary of known problems encountered in ICC 1.2.1/1.2.2:
+There are a number of issues with DB2 and the ICC encryption libraries at levels prior to 1.3.9. The known problems are: 
+
+
+ 1. Severe performance problems where processes seem to hang, or take several minutes to run. 
+ 2. A bug in ICC code causes it to communicate with the OpenSSL EGD (Entropy Gathering Daemon) which under certain circumstances could hang 
+ 3. ICC symbols have not been namespaced and DB2 can end up with symbol collisions with OpenSSL code. This can also happen when multiple versions of ICC are used within the same process.
+
+
+DB2 Version 8 Fixpak 12 and later incorporates IBM Crypto for C (ICC) version 1.3.9 or 1.4.1 cryptographic module which fixes these problems. 
+
+ 
+
+Note: The latest status of ICC conformance with FIPS 140-2 standard can be obtained by referring to http://www.ibm.com/security/standards/st_evaluations.shtml [http://www.ibm.com/security/standards/st_evaluations.shtml]
+
+RELATED INFORMATION
+ FIPS PUB 140-2 [http://csrc.nist.gov/publications/fips/fips140-2/fips1402.pdf]

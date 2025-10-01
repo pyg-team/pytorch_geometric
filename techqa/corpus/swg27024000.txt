@@ -1,0 +1,20 @@
+Title: IBM Enhanced Retention Management Guide - United States
+
+Text:
+CMOD; ERM; OD for z/OS; OD for i: OD for MP MANUAL
+
+ABSTRACT
+ Provides information on how enhanced retention management works, how to plan your implementation of enhanced retention management, and how to configure your software to implement enhanced retention management. 
+
+CONTENT
+The attached document applies to the following products:
+
+
+ * Content Manager OnDemand for z/OS, Version 8.5 
+ * Content Manager OnDemand for Multiplatforms, Version 8.5 
+ * Content Manager OnDemand for i, Version 7.1
+
+EnhancedRetentionManagement_pdf.pdf [/support/docview.wss?uid=swg27024000&aid=2]EnhancedRetentionManagement_pdf.pdf [/support/docview.wss?uid=swg27024000&aid=1]
+
+PUBLICATION NUMBER
+ SC19-3376-00

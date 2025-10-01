@@ -1,0 +1,23 @@
+Title: IBM Using function_libs may produce empty result - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using Transformation Extender function libs functions like XMLLIB->XPATH may produce an empty result. 
+
+SYMPTOM
+Map completed successfully but output result is empty.
+
+
+CAUSE
+Function_libs dependencies are not found on the system.
+
+ENVIRONMENT
+libstdc++.so.5 => /usr/lib64/libstdc++.so.5 must be present when running ldd command on function_libs libraries.
+
+DIAGNOSING THE PROBLEM
+Run ldd command on library and check for missing library dependencies. 
+
+RESOLVING THE PROBLEM
+Install or correct missing the library dependencies.

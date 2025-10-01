@@ -1,0 +1,91 @@
+Title: IBM DB2 Purescale db2start member x command fails with SQL6031N Reason Code 23 - United States
+
+Text:
+db2start SQL6031N db2nodes.cfg db2iupdt TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ db2start command on a member in Purescale cluster can fail as follows: 
+
+$db2start member 0
+
+SQL6031N Error in the db2nodes.cfg file at line number "". Reason code "23".
+
+This document provides steps to identify the cause and resolve the error.
+
+
+SYMPTOM
+db2start command will fail as follows: 
+$db2start member 0
+SQL6031N Error in the db2nodes.cfg file at line number "". Reason code "23".
+
+$db2instance -list will show
+
+ID TYPE STATE HOME_HOST CURRENT_HOST ALERT PARTITION_NUMBER LOGICAL_PORT NETNAME
+-- ---- ----- ---------
+------------ ----- ---------------- ----------- -------
+0 MEMBER STOPPED aip51c3 aip51c3 NO 0 0 aip51c3-ib0
+1 MEMBER STARTED aip51c4 aip51c4 NO 0 aip51c4-ib0
+128 CF PRIMARY aip51c1 aip51c1 NO - 0 aip51c1-ib0 
+
+129 CF PEER aip51c2 aip51c2 NO - aip51c2-ib0
+
+HOSTNAME STATE INSTANCE_STOPPED ALERT
+-------- ----- --------------- -----
+aip51c2 ACTIVE NO NO 
+
+aip51c1 ACTIVE NO NO
+aip51c4 ACTIVE NO NO
+aip51c3 ACTIVE YES NO
+
+db2cluster -cm -list -alert will show a message something like this.
+1.
+Alert: DB2 member '0' failed to start on its home host 'xxxxxx'. The
+cluster manager will attempt to restart the DB2 member in restart light
+mode on another host. Check the db2diag.log for messages concerning
+failures on host 'xxxxxx' for member '0'.
+
+
+
+CAUSE
+File permissions for the db2nodes.cfg file was altered manually from the original permissions.
+
+
+DIAGNOSING THE PROBLEM
+Review of the db2diag.log file will show errors related to db2nodes.cfg file. A sample entry would be as follows:
+2015-01-22-22.29.19.546334-300 I2954A477 LEVEL: Warning 
+PID : 9765232 TID : 1 PROC : 
+db2rocm_DB2NAME 
+INSTANCE: xxxxxxx NODE : 000 
+HOSTNAME: aip51c3 
+EDUID : 1 EDUNAME: db2rocm_DB2NAME 
+FUNCTION: DB2 UDB, high avail services, rocmInit, probe:200 
+MESSAGE : ZRC=0x870F0091=-2029059951=SQLO_ERR_DB2NODES_CFG 
+"db2nodes.cfg has error" 
+DATA #1 : String, 37 bytes 
+Failed to read the db2nodes.cfg file. 
+. 
+2015-01-22-22.29.28.310329-300 I11972A380 LEVEL: Error 
+PID : 17236330 TID : 1 PROC : db2instance 
+INSTANCE: up21 NODE : 000 
+HOSTNAME: aip51c3 
+EDUID : 1 
+FUNCTION: DB2 UDB, high avail services, sqlhaInitEngineEnvironment, 
+probe:650 
+RETCODE : ZRC=0x870F0091=-2029059951=SQLO_ERR_DB2NODES_CFG 
+"db2nodes.cfg has error" 
+
+
+
+
+RESOLVING THE PROBLEM
+Run db2iupdt command against that member to refresh the file permissions to the original value.
+You can follow these steps.
+step 1: as the instance owner verify that which ever member you are
+doing the update on is stopped.
+step 2: as root, run the following command:
+$INSTALL_DIR/instance/db2iupdt -update -m
+<hostname> -mnet <netname> <instance_name> -u <fenceid> <instance name>
+
+
+RELATED INFORMATION
+ db2iupdt - Update instances command [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_10.1.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0002060.html?cp=SSEPGG_10.1.0%2F3-6-2-6-72]

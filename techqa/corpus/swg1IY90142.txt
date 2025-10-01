@@ -1,0 +1,239 @@
+Title: IBM IY90142: IMPLEMENT TWO NEW SCALAR BUILT-IN FUNCTIONS, VARCHAR_FORMAT_BIT AND VARCHAR_BIT_FORMAT - United States
+
+Text:
+AIX SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The use cases listed below were created to illustrate
+   applications of the built-in functions described in section 1.
+   -- Use UDT for readability CREATE DISTINCT TYPE uuid AS CHAR(16)
+   FOR BIT DATA WITH COMPARISONS; -- Sourced functions again for
+   readability only CREATE FUNCTION compress_uuid(arg VARCHAR(36))
+   RETURNS UUID CONTAINS SQL NO EXTERNAL ACTION DETERMINISTIC
+   RETURN UUID(VARCHAR_BIT_FORMAT(arg,
+   'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX')); CREATE FUNCTION
+   uncompress_uuid(arg UUID) RETURNS VARCHAR(36) CONTAINS SQL NO
+   EXTERNAL ACTION DETERMINISTIC RETURN
+   VARCHAR_FORMAT_BIT(CHAR(arg),
+   'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'); CREATE TABLE
+   customer_base (customer_id UUID NOT NULL PRIMARY KEY, name
+   VARCHAR(20)); CREATE TABLE policy_base (policy_id UUID NOT NULL
+   PRIMARY KEY, customer_id UUID NOT NULL REFERENCES customer_base,
+   policyno INTEGER); CREATE INDEX policy_cust_idx ON
+   policy_base(customer_id); CREATE VIEW customer(customer_id,
+   name) AS SELECT UNCOMPRESS_UUID(customer_id), name FROM
+   customer_base; CREATE VIEW policy(policy_id, customer_id,
+   policyno) AS SELECT UNCOMPRESS_UUID(policy_id),
+   UNCOMPRESS_UUID(customer_id), policyno FROM policy_base; --
+   Triggers implement reverse operations for SELECT CREATE TRIGGER
+   customer_insert INSTEAD OF INSERT ON customer REFERENCING NEW AS
+   n FOR EACH ROW INSERT INTO customer_base
+   VALUES(COMPRESS_UUID(customer_id), name); CREATE TRIGGER
+   customer_update INSTEAD OF UPDATE ON customer REFERENCING NEW AS
+   n OLD AS o FOR EACH ROW UPDATE customer_base SET customer_id =
+   COMPRESS_UUID(N.customer_id), name = N.name WHERE customer_id =
+   COMPRESS_UUID(O.customer_id); CREATE TRIGGER policy_insert
+   INSTEAD OF INSERT ON policy REFERENCING NEW AS n FOR EACH ROW
+   INSERT INTO policy_base VALUES(COMPRESS_UUID(policy_id),
+   COMPRESS_UUID(customer_id), policyno); CREATE TRIGGER
+   policy_update INSTEAD OF UPDATE ON policy REFERENCING NEW AS n
+   OLD AS o FOR EACH ROW UPDATE policy_base SET policy_id =
+   COMPRESS_UUID(N.policy_id), customer_id =
+   COMPRESS_UUID(N.customer_id), policyno = N.policyno WHERE
+   policy_id = COMPRESS_UUID(O.policy_id); Usage: INSERT INTO
+   customer(customer_id, name)
+   VALUES('d83d6360-1818-11db-9804-b622a1ef5492', 'Meyer'); INSERT
+   INTO policy(policy_id, customer_id, policyno)
+   VALUES('d83ff360-1218-12df-9854-b62201e854B0',
+   'd83d6360-1818-11db-9804-b622a1ef5492', 175243); -- Expose
+   uncompressed value: -- 'd83d6360-1818-11db-9804-b622a1ef5492'
+   SELECT customer_id FROM policy WHERE policyno = 175243; --
+   Exploit primary key index SELECT policyno FROM policy WHERE
+   policy_id = 'D83FF360-1218-12DF-9854-B62201E854B0'; -- Exploit
+   index(es) for join SELECT policyno FROM policy P JOIN customer C
+   ON P.customer_id = C.customer_id WHERE name = 'Meyer'; --
+   Exploit index(es) for join SELECT P.* FROM policy P WHERE
+   P.customer_id IN (SELECT C.customer_id FROM customer C WHERE
+   C.name = 'Meyer');
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  DB2 implements two new built-in scalar functions as specified
+   below. VARCHAR_FORMAT_BIT scalar function >>-
+   VARCHAR_FORMAT_BIT--(- bit-data-expression -, format-string
+   -)--<< The VARCHAR_FORMAT_BIT function returns a character
+   representation of a bit string that has been formatted using a
+   character template. bit-data-expression An expression that
+   results in a character string for bit data. format-string A
+   character constant that contains a template for how the result
+   is to be formatted. The length of the format string must not be
+   greater than 254 (SQLSTATE 42815). Valid format strings consist
+   of: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' or
+   'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX' If the input
+   bit-data-expression does not declared as ?for bit data?, a
+   SQL0171N (SQLSTATE 42815) error is given. If the format-string
+   is not the format DB2 supports, a SQL0171N (SQLSTATE 42815)
+   error is given. If the input bit-data-expression is NULL of a
+   character string for bit data, the result is NULL. Examples:
+   Represent a Universal Unique Identifier in its formatted form:
+   VARCHAR_FORMAT_BIT(cast(x'd83d6360181811db9804b622a1ef5492' as
+   varchar(16) for bit data),
+   'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx') ?
+   'd83d6360-1818-11db-9804-b622a1ef5492' Represent a Universal
+   Unique Identifier in its formatted form:
+   VARCHAR_FORMAT_BIT(cast(x'd83d6360181811db9804b622a1ef5492' as
+   char(16) for bit data), 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX')
+   ? 'D83D6360-1818-11DB-9804-B622A1EF5492' Produce an error due to
+   invalid input data
+   VARCHAR_FORMAT_BIT(x'd83d6360181811db9804b622a1ef5492',
+   'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX') ? Error SQL0171N The
+   data type, length or value of argument 1 of routine
+   VARCHAR_FORMAT_BIT is incorrect. Produce an error due to invalid
+   format string VARCHAR_FORMAT_BIT(C1, 'XXXXXXXX-XXXX?) ? Error
+   SQL0171N The data type, length or value of argument 2 of routine
+   VARCHAR_FORMAT_BIT is incorrect.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  IMPLEMENT TWO NEW SCALAR BUILT-IN FUNCTIONS, VARCHAR_FORMAT_BIT
+   AND VARCHAR_BIT_FORMAT
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DB2 implements two new built-in scalar functions as specified
+   below. VARCHAR_FORMAT_BIT scalar function >>-
+   VARCHAR_FORMAT_BIT--(- bit-data-expression -, format-string
+   -)--<< The VARCHAR_FORMAT_BIT function returns a character
+   representation of a bit string that has been formatted using a
+   character template. bit-data-expression An expression that
+   results in a character string for bit data. format-string A
+   character constant that contains a template for how the result
+   is to be formatted. The length of the format string must not be
+   greater than 254 (SQLSTATE 42815). Valid format strings consist
+   of: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' or
+   'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX' If the input
+   bit-data-expression does not declared as ?for bit data?, a
+   SQL0171N (SQLSTATE 42815) error is given. If the format-string
+   is not the format DB2 supports, a SQL0171N (SQLSTATE 42815)
+   error is given. If the input bit-data-expression is NULL of a
+   character string for bit data, the result is NULL. Examples:
+   Represent a Universal Unique Identifier in its formatted form:
+   VARCHAR_FORMAT_BIT(cast(x'd83d6360181811db9804b622a1ef5492' as
+   varchar(16) for bit data),
+   'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx') ?
+   'd83d6360-1818-11db-9804-b622a1ef5492' Represent a Universal
+   Unique Identifier in its formatted form:
+   VARCHAR_FORMAT_BIT(cast(x'd83d6360181811db9804b622a1ef5492' as
+   char(16) for bit data), 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX')
+   ? 'D83D6360-1818-11DB-9804-B622A1EF5492' Produce an error due to
+   invalid input data
+   VARCHAR_FORMAT_BIT(x'd83d6360181811db9804b622a1ef5492',
+   'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX') ? Error SQL0171N The
+   data type, length or value of argument 1 of routine
+   VARCHAR_FORMAT_BIT is incorrect. Produce an error due to invalid
+   format string VARCHAR_FORMAT_BIT(C1, 'XXXXXXXX-XXXX?) ? Error
+   SQL0171N The data type, length or value of argument 2 of routine
+   VARCHAR_FORMAT_BIT is incorrect.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY90142
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4100
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-10-02
+   
+   
+ * CLOSED DATE
+   2009-05-28
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * FIXED COMPONENT ID
+   5765F4100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY
+   UP

@@ -1,0 +1,36 @@
+Title: IBM WebSphere Message Broker hangs when connecting to WebSphere Service Registry and Repository - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your WebSphere Message Broker (WMB) message flow hangs. The flow is using the built-in WebSphere Service Registry and Repository (WSRR) nodes, and you find that the flow hangs during registry lookup. WSRR, however, does not show any sign of recent activity. 
+
+SYMPTOM
+No errors are thrown, nor can any be seen in a service level trace of the execution group. A service trace will show that the node has started: 
+
+BIP3904I: Invoking the evaluate() method of node (class='SRRetrieveEntityNode', name='<node_name>'). 
+
+BIP3685I: The following details will be used to query WebSphere Service Registry and Repository (WSRR) from node 'RegistryLookup':
+
+CAUSE
+On Solaris and HP platforms, WMB uses the vendor base JDK rather than an IBM supplied JDK.
+
+
+
+RESOLVING THE PROBLEM
+You need to alter the JVM to use a different, poll-based selector provider. This can be done via the mqsichangeproperties command: 
+
+mqsichangeproperties <broker_name> -e <eg_name> -o ComIbmJVMManager -n jvmSystemProperty -v "-Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.PollSelectorProvider"
+
+
+A broker restart is required to pick up these changes. This should allow WMB to properly connect to WSRR.
+
+
+
+
+HISTORICAL NUMBER
+ 47153 442 000 
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB Message Broker MQ Integrator WBIMB WBI-MB MQSI WMQI WSRR

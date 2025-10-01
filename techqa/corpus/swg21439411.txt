@@ -1,0 +1,15 @@
+Title: IBM The popup alert message, in Arabic language, appears left-to-right in the Sametime Proxy Web Client using Microsoft Internet Explorer.  In FireFox, the orientation of the message appears correct, right-to-left. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ Arabic 
+
+QUESTION
+The popup alert message, in Arabic language, appears left-to-right in the Sametime Proxy Web Client using Microsoft Internet Explorer. In FireFox, the orientation of the message appears correct, right-to-left.
+
+
+
+ANSWER
+The popup alert message, in Arabic language, appears left-to-right in the Sametime Proxy Web Client using Microsoft Internet Explorer. In FireFox, the orientation of the message appears correct, right-to-left.

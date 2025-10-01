@@ -1,0 +1,60 @@
+Title: IBM User Defined Function not receiving provided variable - United States
+
+Text:
+netcool/impact; nci; netcool; impact; user; defined; user defined function; UDF; UserDefinedFunction; UserDefined; custom function; CustomFunction; function; sql; null; variable; value; call; error; exception; functioncall TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A variable provided in a User Defined Function call is not received within the function action. 
+
+SYMPTOM
+The User Defined Function call is of the style: 
+
+ * 
+ * 
+
+
+and MyResultSet was acquired in a previous GetBy - for example: 
+
+ * 
+
+
+and this was proven to have received a result: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Any attempt to use that value in the User Defined Function will report a NULL style error if it is not able to handle a null value or just simply fail to produce the expected results. 
+
+RESOLVING THE PROBLEM
+Assigning the variable prior to the function call will ensure that the value is passed to the User Defined Function. Using the above example we can rewrite this as: 
+
+
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+This is similar to the behaviour and work-around recorded in the TechNote "Unsolicited SQL updates from User Defined Function" [ link below], which was recorded as IZ67227: "UNSOLICITED SQL UPDATE STATEMENT PRODUCED BY FUNCTION CALL WHEN LOOPING THROUGH GETBY* RESULT SET" [ link below]. 
+RELATED INFORMATION
+ Unsolicited SQL updates from User Defined Function [http://www-01.ibm.com/support/docview.wss?uid=swg21421783]
+IZ67227 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ67227]

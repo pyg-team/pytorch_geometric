@@ -1,0 +1,155 @@
+Title: IBM PJ43391: ACCE DISPLAYS "ERROR LOADING JSON OBJECTSTORE..." AFTER DELETING AND SAVING ONE VERSION OF A DOCUMENT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In ACCE, when you delete one version in document content tab,
+   then try to save the change, you will get an error.
+   
+   Steps to Reproduce:
+   1. create a string property template (pt), create a doc class,
+   add the pt
+   2. create folder1 and folder2 (copy folder2 reference)
+   3. in folder1, create a doc with content, add 'abc' as the pt
+   value, open the doc, go to filed in folder tab
+   4. file the doc to folder2, unfile from folder1, close both
+   folders if you have them opened
+   5. go back to the doc--> actions --> checkout --> checkin, so
+   now you have 2 versions
+   6. go to versions tab, select the version1, click delete, click
+   ok to confirm the delete
+   7. click save
+   
+   
+   Actual Results: get error as follows:
+   error loading json objectstore/d.json error=RequestError: Unable
+   to load
+   ./plugin/AccePlugin/getResource/acce/config/objectstore/d.json
+   status 500
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Administrative Console for Content Engine (ACCE) on          *
+   * 5.2.0.3-P8CPE and prior versions.                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Administration Console for Content Platform Engine (ACCE)    *
+   * displays an error "Loading JSON" when a user deletes a       *
+   * version of the document instance and saves the changes.      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.2.0.4-P8CPE-FP004 and higher.                   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.2.0.4-P8CPE-FP004 and higher. This error occurs when
+   ACCE tries to open current Version of the Document instance
+   using JSON file of the Document sub-class. There is no separate
+   JSON for user-defined Document sub-classes. A code fix has been
+   put in to use Document class JSON. Now ACCE opens the Version
+   without displaying any error.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ43391
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-06-30
+   
+   
+ * CLOSED DATE
+   2015-09-01
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY
+   UP

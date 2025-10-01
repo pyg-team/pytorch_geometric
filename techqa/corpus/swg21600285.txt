@@ -1,0 +1,34 @@
+Title: IBM Collecting diagnostics for SMC Switch issues - United States
+
+Text:
+BCU ISAS Switch log Balanced Warehouse; CollectingDataDocument; CollectingDataDoc; CollectingData; MustgatherDoc; MustgatherDocument TECHNOTE (FAQ)
+
+QUESTION
+ How to collect diagnostics for SMC Switch problems in a Balanced Warehouse System or IBM Smart Analytics System 
+
+CAUSE
+Problems with the switch 
+
+ANSWER
+To analyze problems with SMC Switches in a Balanced Warehouse System also known as BCU or IBM Smart Analytics System the following diagnostics are necessary: 
+
+ 1. Connect to the switch via a telnet session. 
+    The IP address for the switch is most likely 172.16.10.1 and 172.16.10.2 
+    The default userid and password is admin/admin if this has not been changed.
+    If you want to log the output of your telnet session you can do the following:
+    telnet -f switchlog1.txt 172.16.10.1
+    telnet -f switchlog2.txt 172.16.10.2
+    
+    
+ 2. Collect port configuration:
+    show running-config
+    
+    
+ 3. Collect version info:
+    show version
+    show system 
+    
+    
+ 4. Collect the logs:
+    show log flash
+    show log ram

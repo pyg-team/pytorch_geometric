@@ -1,0 +1,142 @@
+Title: IBM PK47437: THE PLUGGABLE APPLICATION CLIENT USING SUN JDK IS NOT DOCUMENTED CORRECTLY IN THE INFORMATION CENTER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Information Center for WebSphere Application Server does not
+   sufficiently describe how the pluggable application client
+   uses the Sun Java Development Kit (JDK).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: This APAR affects users who are using the    *
+   *                 pluggable application client for WebSphere   *
+   *                 Application Server Version 6.1.              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: In the product documentation for        *
+   *                      WebSphere Application Server V6.1,      *
+   *                      the "Application Client for WebSphere   *
+   *                      Application Server" topic states that   *
+   *                      the pluggable application client uses   *
+   *                      the Sun Java Development Kit. The       *
+   *                      statement needs additional details      *
+   *                      for clarification.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The topic states that the pluggable application client works
+   with the Sun Java Runtime Environment (JRE). However, it does
+   not mention that the Sun JRE must be the same version as the
+   IBM version of the Sun JRE.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The "Application Client for WebSphere Application Server"
+   topic has been updated to state that the pluggable application
+   client supports the Sun JRE that is directly downloaded from
+   Sun Microsystems Web site. However, the Sun JRE must be the
+   same version as the IBM version of the Sun JRE. The
+   Application Client for WebSphere Application Server for
+   Windows installs the ORB.properties file to configure the Sun
+   JRE to use the IBM ORB implementation that is installed as
+   part of the pluggable application client.
+   
+   Date that information will be available to customers:
+   The modified documentation will be available in the next
+   update to the information center, which is scheduled to occur
+   on or before September 30, 2007.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK47437
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   61W
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-06-20
+   
+   
+ * CLOSED DATE
+   2007-07-11
+   
+   
+ * LAST MODIFIED DATE
+   2007-09-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

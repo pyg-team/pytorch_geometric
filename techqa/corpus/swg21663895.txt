@@ -1,0 +1,39 @@
+Title: IBM How to identify the users that are currently active in IBM Content Manager 8.4 - United States
+
+Text:
+active user logon Content Manager TECHNOTE (FAQ)
+
+QUESTION
+ How do I identify the users that are currently active within IBM Content Manager (CM) 8.4, if the list of users in the "List Users" view does not reflect the users that are currently active? 
+
+CAUSE
+The active state of a user is tracked in the CM Library Server (LS) ICMSTUsers table. The user's logoff request sets the value from Logged On to Logged Off. However, there are circumstances in which the logoff request is not sent. This can occur in the following instances:
+- When using a CM web client like CM eClient, the user may close the browser without logging off. 
+- The CM Client for Windows may crash, resulting in the Logout call not being sent to the CM server.
+
+In these cases, when the system administrator opens the "List Users" view, he will find users that are listed, but are not currently active. Restarting Content Manager does not reset the list. 
+
+
+ANSWER
+The following can be performed to get a list of users currently logged onto the system: 
+
+
+- In the CM System Administration Client open the Library Server parameters.
+- Right click "Library Server Configuration" and edit the Properties.
+- Use the tab "Log and Trace" and enable the System Administrator Event Logging. A restart of library server is not required.
+
+Consequently, various system administration events are listed in the library server table "ICMSTSYSADMEVENTS", including event code 201 for logon and 202 for logoff. All events have a time stamp. 
+
+This can be used to gather information based on the user's logon and logoff time. If the system administrator is interested in the users that logged on after 6 AM GMT for a certain date (for example the 3rd of February 2014), the following SQL statement will provide an output for analysis:
+
+select userid from ICMSTSYSADMEVENTS where eventcode = 201 and created > 2014-02-03-06.00.00.000000
+
+RELATED INFORMATION
+ Enabling event logging in Content Manager [http://pic.dhe.ibm.com/infocenter/cmgmt/v8r4m0/topic/com.ibm.administeringcm.doc/msr10033.htm]
+Removing entries from the events table [http://pic.dhe.ibm.com/infocenter/cmgmt/v8r4m0/topic/com.ibm.administeringcm.doc/msr10077.htm]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager Enterprise Edition

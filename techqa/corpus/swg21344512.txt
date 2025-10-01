@@ -1,0 +1,22 @@
+Title: IBM Unable to open a node on the web: Ownership unknown - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to edit a node. 
+
+SYMPTOM
+Do you want to take ownership from unknown?
+
+
+RESOLVING THE PROBLEM
+Turn on Allow Bouncing and have the user take ownership of the unknown node. For more information see -
+
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Planning Contributor 8.1 
+HISTORICAL NUMBER
+ 1011776

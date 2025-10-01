@@ -1,0 +1,187 @@
+Title: IBM PI49066: USE OF OPENID TAI MAY CAUSE CLASSCASTEXCEPTION ERROR IN CLUSTER ENVIRONMENT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Configuring a cluster to use the default OpenID TAI
+   implementation for WebSphere Application Server.  When we set
+   up the distributed replication service, the request data
+   cannot be replicated due to a ClassCastException.
+   
+   [9/17/15 12:18:42:401 EDT] 0000004e CacheEntry    E
+   DYNA0052E: The
+   cached object can not be replicated or saved to disk.
+   CacheID=9d5c3feda3f07672b9a4ae21778f1dd26bbe7011
+   ClassName=com.ibm.ws.
+   security.openid20.client.RequestData   Type=cache-value
+   Exception=java.lang.ClassCastException:
+   com.ibm.ws.security.openid20.
+   client.RequestData incompatible with java.io.Serializable
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM WebSphere Application Server            *
+   *                  administrators using OpenID                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: OpenID RequestData object is not        *
+   *                      Serializable and causes DynaCache       *
+   *                      errors                                  *
+   ****************************************************************
+   * RECOMMENDATION:  Install a fix pack that contains this       *
+   *                  APAR.                                       *
+   ****************************************************************
+   When OpenID requests is used in a cluster enviornment, the
+   following error may occur:
+   [9/17/15 12:18:42:401 EDT] 0000004e CacheEntry    E
+   DYNA0052E: The
+   cached object can not be replicated or saved to disk.
+   CacheID=9d5c3feda3f07672b9a4ae21778f1dd26bbe7011
+   ClassName=com.ibm.ws.
+   security.openid20.client.RequestData   Type=cache-value
+   Exception=java.lang.ClassCastException:
+   com.ibm.ws.security.openid20.
+   client.RequestData incompatible with java.io.Serializable
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When an application server processes an OpenID authentication
+   request, information from the request is placed into a
+   RequestData object that is put into a cache managed by
+   DynaCache. RequestData does not implement java.io.Serializable.
+   
+   When running in a cluster, DynaCache requires that objects that
+   are in distributed caches implement java.io.Serializable.
+   Since RequestData does not implement java.io.Serializable, an
+   error occurs when DynaCache attempts to replicate the cache
+   containing the RequestData object.
+   
+   The RequestData object is updated to implement
+   java.io.Serializable.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 8.0.0.12 and 8.5.5.9.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   IBMWL3WSS, OPENID20
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI49066
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * REPORTED COMPONENT ID
+   5725L2900
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-09-18
+   
+   
+ * CLOSED DATE
+   2015-10-22
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

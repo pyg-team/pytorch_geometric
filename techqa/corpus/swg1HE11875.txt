@@ -1,0 +1,125 @@
+Title: IBM HE11875: ATLAS MATTER METRICS INCONSISTENT; VALUES FOR # CUSTODIANS IN COLLECTION/ALL DOESN'T MATCH TOTAL PERSONS ON PEOPLE MASTER LIST - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Atlas, it's possible that numbers reported for "# Custodians
+   in Collection/All" are different than "Total Persons" on
+   the People Master List.
+   
+   This will typically occur on matters that have had a user
+   added then removed to facilitate a change in email address.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The Matter collections view shows a different number of total
+   custodians from the number of persons in the Master list view.
+   The error occurs when persons change their email addresses which
+    IBM Atlas Suite interprets as different persons in the system.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is now available to download from Fix Central in fix
+   pack 6.0.1.6
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE11875
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-24
+   
+   
+ * CLOSED DATE
+   2014-03-20
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY
+   UP
+   
+   
+ * R603 PSY
+   UP

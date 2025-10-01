@@ -1,0 +1,58 @@
+Title: IBM How do I disable the pop-up blocker on my Web browser? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I disable the pop-up blocker on my Web browser? 
+
+CAUSE
+Your Web browser must allow pop-up windows if you want to be able to see a full-screen preview of a document or if you want Domino Web Access to be able to display documents. Be sure to disable the pop-up blocker on your Web browser.
+
+ANSWER
+Microsoft Internet Explorer Version 7 
+
+ * 
+ * 
+ * 
+ *  Click Tools -> Pop-up Blocker -> Turn Off Pop-up Blocker.
+   
+   (If Tools -> Pop-up Blocker -> Turn On Pop-up Blocker is the option that you are presented with, it indicates that the pop-up blocker is already disabled.) 
+ * 
+ * 
+ * 
+ *  Click Tools -> Pop-up Blocker -> Turn On Pop-up Blocker.
+   Click Tools -> Pop-up Blocker -> Pop-up Blocker Settings.
+   Enter the URL of the eDiscovery Manager Web client and click Add.
+   
+   The syntax of the eDiscovery Manager Web client URL is:
+   
+   http://server_IP_address:port/EDMClient/ 
+
+
+
+Microsoft Internet Explorer Version 6 
+ * 
+ * 
+ *  Click Tools -> Internet Options.
+   On the Privacy page, define the custom privacy settings for the eDiscovery Manager Web client. 
+
+
+
+Mozilla Firefox Version 2 and Version 3 
+ * 
+ * 
+ *  Click Tools -> Options.
+   Click the Content tab.
+   Clear the Block pop-up windows option.
+   
+ * 
+ * 
+ *  Click Tools -> Options.
+   Click the Content tab.
+   Select the Block pop-up windows option and click Exceptions.
+   Enter the URL of the eDiscovery Manager Web client and click Allow.
+   
+   The syntax of the eDiscovery Manager Web client URL is:
+   
+   http://server_IP_address:port/EDMClient/

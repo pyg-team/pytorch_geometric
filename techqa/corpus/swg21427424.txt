@@ -1,0 +1,33 @@
+Title: IBM WebSphere DataPower - Best practice for specifying port values - United States
+
+Text:
+doc TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A DataPower best practice when configuring services or protocol handlers is to specify a port with a value of less than 10000, or to consider use of the Ephemeral Port Starting Point setting available in DataPower version 5 firmware. 
+
+SYMPTOM
+A port conflict occurs when a service, protocol handler, domain, or the appliance is restarted or disabled and then enabled. If a port conflict occurs, you will see an error message in the logs such as: 
+
+[my_domain][mgmt][error] xxxx(handler_name): trans(ttt): Operation state transition to up failed
+[my_domain][mgmt][error] xxxx(handler_name): trans(ttt): Failed to install on port
+[my_domain][mgmt][error] xxxx(handler_name): trans(ttt): Protocol Handler failed to go active
+
+
+CAUSE
+The DataPower appliance uses ports with values of 10000 and greater as ephemeral ports. The appliance does not check to see whether a service or protocol handler is using one of these ports as its listening port. When both the appliance ephemeral port and service or protocol handler listener port are the same, a port conflict occurs. As a result of the port conflict, the service or protocol cannot correctly initialize and service traffic.
+
+DIAGNOSING THE PROBLEM
+Error messages for port conflict can be captured in a dedicated log target. For this implementation, define a log target with an Event Subscription where the Event Category is mgmt and the Minimum Event Priority is error; however, to avoid exposure and eliminate the need to diagnose the issue, configure services and protocol handles with listening ports that are less than 10000.
+
+RESOLVING THE PROBLEM
+The DataPower appliance does not reserve port numbers by default. Listening ports are enabled and selected when the appliance is first configured. That is, you choose which port to enable as a configuration option. For example, when you configure the WebGUI management port, you choose the port to use. Based on your environment, there might be conventions for ports, especially ports under 1024. Consult with your network team for the best practices to use within your environment.
+
+
+
+
+In DataPower version 5 firmware, a new setting has been added to the network settings configuration panel for specifying the starting point for the ephemeral port range. The default starting point is 10,000. The configured starting point can not exceed 32768. The end point is 61,000 and may not be modified. 
+
+
+RELATED INFORMATION
+#DataPower version 5 Servicability enhancements [http://publib.boulder.ibm.com/infocenter/ieduasst/v1r1m0/topic/com.ibm.iea.wdatapower/wdatapower/1.0/xi50/DataPower_50_RAS.pdf]

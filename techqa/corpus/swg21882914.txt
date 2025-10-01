@@ -1,0 +1,22 @@
+Title: IBM JazzSM prereq checker logs "FAIL" for os.isUnixServiceRunning.sshd property - United States
+
+Text:
+jazzsm install fail sshd isUnixServiceRunning TECHNOTE (FAQ)
+
+QUESTION
+ Why does the JazzSM prerequisite checker log failures on a server that meets the TPC documented hardware requirements? 
+
+CAUSE
+JazzSM components selected in the installer that are not required nor supported for installation on a TPC/JazzSM/Cognos installation
+
+ANSWER
+TPC server installer launches the JazzSM Launchpad installer. JazzSM launchpad installer runs it's prerequisite check and shows a status of "error" with a red "x" icon. Clicking on the "view details" button next to this will reveal a line that shows: 
+
+os.isUnixServiceRunning.sshd with a result of "FAIL". 
+
+This prerequisite is only required when users select components outside of what is required/supported for a JazzSM/Cognos reporting. 
+
+When performing the optional installation of JazzSM/TCR/Cognos make sure to only select the components shown here: 
+
+
+http://www-01.ibm.com/support/knowledgecenter/SSNE44_5.2.5/com.ibm.tpc_V525.doc/fqz0_t_install_jazzsm_tcr_launchpad_aix.html [http://www-01.ibm.com/support/knowledgecenter/SSNE44_5.2.5/com.ibm.tpc_V525.doc/fqz0_t_install_jazzsm_tcr_launchpad_aix.html]

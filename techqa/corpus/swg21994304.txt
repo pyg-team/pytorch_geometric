@@ -1,0 +1,39 @@
+Title: IBM API Connect V5.0.5.0 is available - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ IBM API Connect V5.0.5.0 is available, which addresses several APARs, and includes product enhancements. 
+
+CONTENT
+
+
+IBM API Connect V5.0.5.0 is now available, which provides important development and APAR fixes, and includes product enhancements as well as a more consistent user experience. 
+
+For information on new features that have been included in V5.0.5.0, see What's new for this release [https://www.ibm.com/support/knowledgecenter/SSMNED_5.0.0/com.ibm.apic.overview.doc/overview_whatsnew.html]. 
+
+We advise all users of IBM API Connect V5.0 to install this update to take advantage of the fixes. 
+
+
+APAR FIXES
+
+THE FOLLOWING APAR WERE ADDRESSED BY IBM API CONNECT V5.0.5.0, ALONG WITH OTHER INTERNALLY RAISED QUALITY FIXES:
+APAR Summary LI79339 UNRELEASED MEMORY GROWTH IN INTERNAL PROCESS MAY CAUSE INSTABILITY OVER TIME LI79334 DEVELOPER PORTAL STILL ACCESSES EXTERNAL SITES WHEN OPENING WEBPAGES LI79332 Upgrade from v4 to v5040 GA (and below) fails due to encrypted API properties LI79328 MIGRATION ERROR AFTER UPGRADING TO V5040 LI79326 API CONNECT: SCHEMA VALIDATE FAILS IF AN AUTHORIZATION HEADER IS PASSED BY THE CLIENT LI79320 API CONNECT: GETTING GATEWAY SCRIPT ERROR USING APIM.CUSTOM.JS FROM A GATEWAY EXTENSION SCRIPT LI79315 HTTP://ODR-DYN IS FOLDED TO LOWER CASE WHICH CAUSES ODR FAILURE LI79311 API CONNECT: ORG/CATALOG ARE INSERTED TWICE IN ORIGINAL URL WHEN USING IBM DATAPOWER GATEWAY REDIRECT LI79308 GATEWAY SERVER ADDED TO THE DATAPOWER SERVICE BECOMES INACTIVE LI79306 API CONNECT: MISSING PARAMETER IN THE MAPPING OUTPUT WITH A NUMERIC VALUE OF 0 LI79307 MANAGEMENT CLUSTER FAILS TO START AFTER UPGRADE, KEEPS STARTING INDEFINITELY LI79305 UNABLE TO ADD THE THIRD PLAN IN A PRODUCT IF USING WEB BROWSER WITH LANGUAGE SET TO JAPANESE LI79304 AFTER UPGRADE FROM APIM TO APIC USERS MIGHT OBSERVE SOME PLAN SUBSCRIBERS NUMBERS BECOME 0 LI79300 THE INVOKE POLICY MISSES THE CONTENT TYPE IF THE BACKEND IS RETURNING LOWER CASE 'CONTENT-TYPE'. LI79257 APICONNECT: UPDATE OF AN EXISTING REST API VIA THE ONLINE USER INTERFACE DOES NOT WORK LI79289 USER CAN NO LONGER WSDL FILES WHICH WORKED FINE IN 5.0.1.0 TO CREATE API. LI79286 Analytics 'Manage saved objects' view doesn't refresh automatically after a new visualization file is imported. LI79282 ADVANCED DEV PORTAL: THE BROWSER TAB DISPLAYS THE INCORRECT ORG NAME WHEN A USER CAN ACCESS MULTIPLE ORGS LI79351 Content confidential LI79262 NOT ABLE TO DELETE ANALYTICS' VISUALIZATION IN 'MANAGE SAVED OBJECTS' VIEW LI79247 API CONNECT: MAPPING AN OUTPUT WITH A XML ATTRIBUTE THAT IS A CHILD PROPERTY OF AN ARRAY WILL NOT MAP THE XML ATTRIBUTE. LI79237 PERMISSIONS ERROR ON FIX PACK INSTALL LI79215 GATEWAY SENDS MANY CONCURRENT QUERIES TO MANAGEMENT SERVER WHEN DOING A CACHE REFRESH LI79209 STATUS COMMAND DOESN'T CORRECTLY SHOW IF QUEUE IS NOT RUNNING LI79111 THE COMMAND 'RESTORE_DEVPORTAL' OVERRIDES OF THE IP AND HOSTNAME INFORMATION PREVIOUS CONFIGURED LI79372 DEVELOPER PORTAL WELCOME BANNER DISPLAYS NO CONTENT LI79689 UNABLE TO ADD NEW USERS WITH CATALOG MEMBER MANAGE PERMISSION LI79371 DEVELOPER PORTAL LDAP PASSWORD TEXT BOX SHOULD BE READ ONLY UPGRADE PATHS FOR API CONNECT:
+For more information of details on IBM API Connect upgrade paths, see Supported Upgrade Paths. [http://www-01.ibm.com/support/docview.wss?uid=swg21984408] 
+
+There are specific validated upgrade paths between IBM® API Management Version 4.0 or later and IBM API Connect Version 5.0 or later. For more information, see Validated upgrade paths for API Connect [http://www.ibm.com/support/knowledgecenter/SSMNED_5.0.0/com.ibm.apic.overview.doc/overview_apic_upgrade_path.html] 
+
+In addition to the specific validated upgrade paths for the API Management appliance, you must upgrade your IBM DataPower Gateway appliance. For more information, see Upgrading DataPower for Gateway servers [http://www.ibm.com/support/knowledgecenter/SSMNED_5.0.0/com.ibm.apic.overview.doc/apply_main_gateway.html?lang=en-us]. 
+
+Upgrading the gateway to firmware level 7.5.0.1 is strongly recommended for the best experience. 
+
+DOWNLOADS:
+ 
+Full installation and upgrade files for IBM API Connect Version 5.0.5.0 (Enterprise, Professional & Essentials) can be downloaded from Fix Central: IBM API Connect Version 5.0.5.0 [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+API+Connect&release=5.0.5.0&platform=All&function=all] 
+
+Ensure that you have read and understood the above Important installation instructions before downloading and using the installation or upgrade files.
+
+
+
+What is Fix Central (FC)? [http://www.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html]

@@ -1,0 +1,298 @@
+Title: IBM LO44398: RRDB - "UPDATE BLOCKER DOCUMENT" AGENT DOESN'T UPDATE "STARTDATE" IN RESERVATION BLOCKER DOCUMENTS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS RETURNED (APAR CANNOT BE RESOLVED WITHOUT ADDITIONAL INFO FROM IBM OR CUSTOMER.)
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Update Blocker Documents agent in the resource database is
+   not
+   updating the StartDate in the reservation blocker documents when
+   run on schedule.
+   
+   This has manager attention.  They would like to know why this
+   agent does not run at 3am.
+   It fails on only one server.  It will run between 7am and 11pm
+   ok.
+   
+   
+   <ENVIRONMENT>
+   
+   
+   
+   Domino server 702fp3, Windows (Microsoft) 2003 (300)
+   
+   RRDB Rooms and Resource database template : 702
+   
+   Replicated? NO
+   
+   cluster? NO
+   
+   
+   
+   <STEPS>
+   
+   
+   
+   1. Create new RRDB, new site, new room
+   
+      Verify all agents are enabled, and signer has access to run
+   agents on the server
+   2. Change Room setting to prevent booking more than 30 days in
+   
+      the future
+   
+   3. Check the blocker document in the $reservationblocker view
+   
+      it should have a StartDate of today + 30days
+   
+      it should have an EndDate of 12/31/999
+   
+   4. Let agent run over night
+   
+      the StartDate should be moved ahead one day
+   
+   
+   
+   <THEORIES>
+   
+   
+   
+   -  Something is preventing the agent from running correctly
+   between 11pm and 3am?
+   
+   
+   
+   <TROUBLESHOOTING>
+   
+   
+   
+   - I could not recreate the issue with the customer's resource
+   database
+     on my test domino 702fp3 server
+   
+   
+   
+   - Related issue?  When a new reservation document is created it
+   has
+     has RQstatus = "T", after 7 minutes it is changed to "R" not
+   "A".
+     There are no existing reservations for this room to cause
+   
+     this reservation to be Rejected.
+   
+   
+   
+   - The agent will run correctly if you change the time of the
+   schedule
+     from 3am (default ) to anything between 7am to 11pm
+   
+   
+   
+   - The agent will run correctly if you run it manually
+   
+   
+   
+   - The customer logs did not show an Amgr error at 3am
+   
+   
+   
+   - The agent fails on only one server.
+   
+     The customer has several RRDBs and the agents runs correctly
+   on them.
+   
+   
+   - If you move another working RRDB from another server to this
+   server it
+     fails.
+   
+   
+   
+   - It fails if you create new clean RRDB on this server
+   
+   - No other agents fail on this server
+   
+   - The agent is signed by the same user id on all servers
+   
+   - All servers give this user the same access to run agents on
+   the server
+   - The agent is enabled
+   
+   - The agent has not been modified
+   
+   
+   
+   - Attempted to debug customer's Blocker agent by adding print
+   statements
+     no errors found
+   
+   
+   
+   - I have reviewed issue with our TL - there are no other tests
+   or
+     debugging tools we have available
+   
+   - What is running on the server during the time the agent will
+   not run - 11pm and 4am?
+   
+   
+   
+   No there are no extra tasks.
+   
+   
+   
+   - Are there other Domino tasks running at that time?   Any
+   Program
+   documents that start just before 3am?
+   
+   
+   
+   No, Updall runs at 1 AM and compact starts on  mail file only at
+   3 AM.
+   
+   
+   - Any third party software?  backup software?
+   
+   
+   
+   Yes backup software runs in night, We have also stopped the
+   backup
+   software but it did not help.
+   
+   
+   
+   -  Run Microsoft utility filemon one night
+   
+     - does anything access this file over night?
+   
+     - I reviewed the filemon logs
+   
+   
+   
+     - nreplica runs on resource.nsf
+   
+     - an agent runs at 12:14am
+   
+   
+   
+   1176805 12:15:16 AM namgr.exe:5660 READ
+   
+   F:\Lotus\Domino\Data\ph\resource\resource.nsf SUC
+   
+   CESS Offset: 8753152 Length: 4096
+   
+   
+   Attached files to SPR : customer's resource database, and
+   Microsoft Filemon logs
+   
+   
+   Reference Technote : What does the Update Blocker Documents
+   agent do?
+   
+   Title: In 7.x, administrators can limit how far in advance
+   resource reservations can be created
+   Doc #: 1217144
+   URL: http://www.ibm.com/support/docview.wss?rs=899&uid=swg212171 [http://www.ibm.com/support/docview.wss?rs=899&uid=swg212171]
+   44
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  - The agent will run correctly if you change the time of the
+   schedule
+     from 3am (default ) to anything between 7am to 11pm
+   
+   
+   
+   - The agent will run correctly if you run it manually
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# RNOG7VYLQ3.
+   The problem will be fixed in the next release of the product.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO44398
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED RET
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-17
+   
+   
+ * CLOSED DATE
+   2010-12-08
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,41 @@
+Title: IBM Disable the Creation of Files Within /tmp/.com_ibm_tools_attach - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Some Java applications can create thousands of files within the /tmp/.com_ibm_tools_attach directory. 
+
+CAUSE
+These directories are created for each JVM job to support attach handlers.
+
+RESOLVING THE PROBLEM
+You should do the following:
+
+
+1. Edit or create the following file: 
+
+/QIBM/UserData/Java400/SystemDefault.properties: 
+
+2. Add the following entries:
+
+#AllowOptions
+com.ibm.tools.attach.enable=no 
+com.ibm.tools.attach.logging=no
+
+Example
+
+....+....1....+....2....+....3....+....4....+..
+************Beginning of data**************
+#AllowOptions
+com.ibm.tools.attach.enable=no
+com.ibm.tools.attach.logging=no
+
+3. Ensure there are no additional spaces behind the value 'no'.
+
+Note: All JVMs must be restarted for this to take effect. This will affect only new JVMs.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 6.1

@@ -1,0 +1,88 @@
+Title: IBM Security Bulletin: Multiple Vulnerabilities in IBM Notes, iNotes and Domino (CVE-2014-8917, CVE-2015-1902, CVE-2015-1903) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM Domino contains two image parsing buffer overflow vulnerabilities. A remote attacker could exploit these vulnerabilities to execute code or crash the Domino SMTP server. In addition, IBM Notes, iNotes and Domino are vulnerable to a cross-site scripting vulnerability in the IBM Dojo Tookit. Refer to the links below for fix downloads. 
+
+VULNERABILITY DETAILS
+
+CVEID: CVE-2014-8917 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-8917]
+DESCRIPTION: IBM Dojo Toolkit in Notes, iNotes and Domino is vulnerable to cross-site scripting, caused by improper validation of user-supplied input. A remote attacker could exploit this vulnerability using a specially-crafted URL to execute script in a victim's Web browser within the security context of the hosting Web site, once the URL is clicked. An attacker could use this vulnerability to steal the victim's cookie-based authentication credentials.
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/99303 [https://exchange.xforce.ibmcloud.com/vulnerabilities/99303] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N) 
+
+
+CVEID: CVE-2015-1902 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1902]
+DESCRIPTION: IBM Domino is vulnerable to a stack-based buffer overflow, caused by improper bounds checking when parsing BMP images. By sending a specially-crafted bitmap image, a remote attacker could overflow a buffer and execute arbitrary code on the system or cause the application to crash.
+
+CVSS Base Score: 10
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/101726 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101726] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:C/I:C/A:C) 
+
+
+CVEID: CVE-2015-1903 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1903]
+DESCRIPTION: IBM Domino is vulnerable to a stack-based buffer overflow, caused by improper bounds checking when parsing BMP images. By sending a specially-crafted bitmap image, a remote attacker could overflow a buffer and execute arbitrary code on the system or cause the application to crash.
+
+CVSS Base Score: 10
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/101727 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101727] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:C/I:C/A:C) 
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Notes and Domino 9.0.1 Fix Pack 3 (plus Interim Fixes) and earlier 
+
+IBM Notes and Domino 8.5.3 Fix Pack 6 (plus Interim Fixes) and earlier
+All 9.0 and 8.5.x releases of IBM Domino prior to those listed above.
+
+REMEDIATION/FIXES
+The Domino image parsing vulnerabilities are tracked as SPR KLYH9TSMLA and KLYH9TSN3Y and a fix is introduced in the following releases: 
+
+ * Domino 9.0.1 Fix Pack 3 Interim Fix 3 
+ * Domino 8.5.3 Fix Pack 6 Interim Fix 7
+
+
+The Domino Dojo vulnerability is tracked as SPR KLYH9RVNQ4; the Notes Dojo vulnerability is tracked as SPR LHEY9SGEK5; the iNotes Dojo vulnerability is tracked as SPR EPOR9TEQMD. Fixes are introduced in the following releases:  * Domino 9.0.1 Fix Pack 3 Interim Fix 3 
+ * Domino 8.5.3 Fix Pack 6 Interim Fix 7 
+ * Notes 9.0.1 Fix Pack 3 Interim Fix 4 
+ * Notes 8.5.3 Fix Pack 6 Interim Fix 6. 
+
+For Fix download links, refer to the following technotes:  * Notes & Domino 9.0.1 Fix Pack 3 Interim Fixes - http://www.ibm.com/support/docview.wss?uid=swg21657963 [http://www-01.ibm.com/support/docview.wss?uid=swg21657963]
+
+ * Notes & Domino 8.5.3 Fix Pack 6 Interim Fixes - http://www.ibm.com/support/docview.wss?uid=swg21687167 [http://www-01.ibm.com/support/docview.wss?uid=swg21687167]
+
+WORKAROUNDS AND MITIGATIONS
+ Notes, iNotes, and Domino Dojo vulnerability (CVE-2014-8917 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-8917])
+The dojox/form/resources/upload.swf, dojox/form/resources/fileupload.swf, dojox/av/resources/audio.swf and dojox/av/resources/video.swf are subject to XSS vulnerability.
+Any IBM Web application using IBM Dojo Toolkit in Domino and providing those files might be subject to XSS.
+
+Note that IBM Notes, iNotes and Domino do not use these files so workaround this vulnerability by removing the files listed above. The solution for applications will be to either stop using the incriminated files and delete them or to upgrade to one of the fixed releases listed above or to any subsequent releases as they will also include the fixes. 
+
+Those files are typically used when the application is either: 
+
+ * using directly or indirectly the dojox/form/Uploader.js module or the dojox/form/FileUploader module in "flash" uploadType. 
+ * or using directly or indirectly the dojox/av/FLAudio.js module or dojox/av/FLVideo.js module
+
+If the application is not using one of those, the .swf files can just be deleted to avoid the issue without having to upgrade to the fixed Dojo version. GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+The IBM Domino BMP vulnerabilities were discovered by bilou working with HP's Zero Day Initiative 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

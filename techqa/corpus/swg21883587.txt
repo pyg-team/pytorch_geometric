@@ -1,0 +1,20 @@
+Title: IBM Continued Support through 2015 for IBM Tivoli Storage Manager (TSM) Client v 6.2 running on IBM PureData System for Analytics Netezza Platform Software - United States
+
+Text:
+TSM PRODUCT LIFECYCLE
+
+ABSTRACT
+ This document contains information regarding continued support through 2015 for TSM 6.2 client running on IBM PureData System for Analytics Netezza Platform Software and steps required to obtain support. 
+
+CONTENT
+Resolution:
+Current releases of IBM PureData System for Analytics Netezza Platform Software (NPS) backup utilities only integrate with version 6.2 of IBM Tivoli Storage Manger (TSM) which ends support April 30, 2015 http://www-01.ibm.com/software/support/lifecycleapp/PLCDetail.wss?synkey=V649976C05962P29-A467229X10458K03-R074377E07657R45 [http://www-01.ibm.com/software/support/lifecycleapp/PLCDetail.wss?synkey=V649976C05962P29-A467229X10458K03-R074377E07657R45]. Tivoli Support will continue to provide assistance for customers using TSM v6.2 Client with their Netezza Platform Software (NPS) through the end of 2015, providing they upgrade their TSM Server to a supported version (6.3 or 7.1) or have an existing support extension for TSM 6.2. 
+
+A new Netezza version which integrates TSM 7.1.x client interface will be announced/become available for Netezza customers to upgrade in their environments by end of 2015 for continued support.
+
+If you encounter an issue with your TSM Client and require assistance from Tivoli Support, open the PMR under your supported TSM Server version and indicate that you are a Netezza customer using TSM Client v6.2.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management PureData System for Analytics Information Management IBM Netezza Analytics

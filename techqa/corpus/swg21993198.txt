@@ -1,0 +1,49 @@
+Title: IBM Debugging java OutOfMemory issues with Streams Applications - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I debug a java OutOfMemory problem with my Streams Application and the IBM JVM 
+
+CAUSE
+Streams application runs out of heap memory
+
+ANSWER
+ 
+
+Collecting the javacore and heapdump 
+
+ 
+
+When a java primitive operator or Streams java native function runs out of heap memory, messages similar to the one below will print in the pec.pe.<#>.stdouterr file for the failing pe. 
+
+
+
+JVMDUMP032I JVM requested Java dump using '/opt/ibm/streamsadmin/.streams/var/Streams.sab_DLZ-mydomain-myinstance/6f3aa3e4-aa87-4ffb-9dc6-5658472a6688/currentWorkingDir/37/javacore.20161011.040350.15759.0003.txt' in response to an event
+
+
+JVMDUMP032I JVM requested Heap dump using '/opt/ibm/streamsadmin/.streams/var/Streams.sab_DLZ-mydomain-myInstance/6f3aa3e4-aa87-4ffb-9dc6-5658472a6688/currentWorkingDir/37/heapdump.20161011.040350.15759.0002.phd' in response to an event
+
+
+This message shows the current working directory of the pe where the heapdump and javacore reside. Copy these files out to a persistent location before cancelling the job for analysis as they will be deleted with canceljob.
+
+As an alternative, you can set the following streams application environment variables prior to the launch of the job to make sure these files go to a persistent location that does not get deleted with canceljob. The location should be a network location that is available to all resources. Set these with streamtool setproperty --application-ev for example.
+
+
+mkdir -p /some/known/network/location/mydomain/myinstance
+
+streamtool setproperty -d mydomain -i myinstance --application-ev IBM_JAVACOREDIR=/some/known/network/location/mydomain/myinstance
+
+streamtool setproperty -d mydomain -i myinstance --application-ev IBM_HEAPDUMPDIR=/some/known/network/location/mydomain/myinstance
+
+streamtool setproperty -d mydomain -i myinstance --application-ev IBM_COREDIR=/some/known/network/location/mydomain/myinstance
+
+How to Analyze the javacore and heapdump
+
+First look at the "Thread Details" section of the javacore to see what call caused the OutOfMemory state. This is not necessarily the problem area, but can be a good indicator.
+
+Next use the IBM Heap Analyzer to identify specific leak suspects and adjust the application accordingly
+https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=4544bafe-c7a2-455f-9d43-eb866ea60091 [https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=4544bafe-c7a2-455f-9d43-eb866ea60091]
+
+If you determine that there is not a leak but more memory is needed by the application, you can adjust the heap with the -Xmx<size> option by specifying vmArgs in the application or setting IBM_JAVA_OPTIONS in with streamtool setproperty --application-ev.

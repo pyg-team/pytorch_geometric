@@ -1,0 +1,194 @@
+Title: IBM PM54591: Evaluating absolute XPath expression against top-down constructed SDO may trigger ClassCastException - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The problem occurs when attempting to evaluate an absolute XPath
+   expression against a programmatically constructed Service Data
+   Object which contains many-valued properties.
+   
+   ****************
+   
+   12/15/11 8:05:32:984 EST] 0000005b ProcessEngine I   CWWBE0069E:
+   An
+   error occurred during the selection of object
+   'arrayOfStrings[1]'.
+   com.ibm.bpe.plugins.DataXPathEvaluationFailedException:
+   CWWBS0072E: The XPath expression evaluation failed:
+   arrayOfStrings[1]  java.lang.ClassCastException:
+   com.ibm.xml.sdo.model. TracingFastAccessCursor incompatible with
+   com.ibm.xml.xci.dp.cache.dom.DOMCachedNode
+   ****************************
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All IBM WebSphere Application Server        *
+   *                  Feature                                     *
+   *                  Pack for Service Component Architecture     *
+   *                  (SCA) users                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Evaluating an absolute XPath            *
+   *                      expression against a top-down           *
+   *                      constructed Service Data Object may     *
+   *                      trigger ClassCastException              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The problem occurs when attempting to evaluate an absolute
+   XPath expression against a programmatically constructed
+   Service Data Object which contains many-valued properties.
+   An error such as the following may be seen:
+   CWWBE0069E: An error occurred during the selection of object
+   '<absolute XPath expression>'.
+   com.ibm.bpe.plugins.DataXPathEvaluationFailedException:
+   CWWBS0072E: The XPath expression evaluation failed:
+   <absolute XPath Expression>  java.lang.ClassCastException:
+   com.ibm.xml.sdo.model.FastAccessCursor incompatible with
+   com.ibm.xml.xci.dp.cache.dom.DOMCachedNode
+   With tracing enabled, it can be observed that the exception
+   occurs in the CacheManager class as shown in the following
+   stack trace:
+   java.lang.ClassCastException:
+   com.ibm.xml.sdo.model.TracingFastAccessCursor incompatible
+   with com.ibm.xml.xci.dp.cache.dom.DOMCachedNode
+   at
+   com.ibm.xml.xci.dp.cache.dom.CacheManager.treatAsRoot(CacheManag
+   er.java:1922)
+   at
+   com.ibm.bpe.xpathservice.impl.xci.XPathServiceImpl.evaluate(XPat
+   hServiceImpl.java:489)
+   at
+   com.ibm.bpe.xpatheval.BasicXPathEvaluator.evaluate(BasicXPathEva
+   luator.java:143)
+   at
+   com.ibm.bpe.engine.BpelActivityKindAssign.copyFromSpecVariablePa
+   rtQuery(BpelActivityKindAssign.java:749)
+   at
+   com.ibm.bpe.engine.BpelActivityKindAssign.copyFromSpecVariablePa
+   rtQuery(BpelActivityKindAssign.java:589)
+   at
+   com.ibm.bpe.engine.BpelActivityKindAssign.doActivate(BpelActivit
+   yKindAssign.java:139)
+   at
+   com.ibm.bpe.engine.BpelActivityStateInactive.activateOrSkip(Bpel
+   ActivityStateInactive.java:280)
+   at
+   com.ibm.bpe.engine.BpelEngineCore.continueControlLink(BpelEngine
+   Core.java:290)
+   at
+   com.ibm.bpe.engine.BpelContinueLinkMessage3.execute(BpelContinue
+   LinkMessage3.java:88)
+   at
+   com.ibm.bpe.engine.ProcessEngine.onMessage(ProcessEngine.java:15
+   27)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem has been corrected such that the
+   ClassCastException will no longer occur.
+   
+   This fix for this APAR is currently targeted for inclusion in
+   Service Level (Fix Pack) 1.0.1.15 of WebSphere Application
+   Server v7 Feature Pack for Service Component Architecture
+   (SCA) Refresh Pack. Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM54591
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-16
+   
+   
+ * CLOSED DATE
+   2012-01-04
+   
+   
+ * LAST MODIFIED DATE
+   2012-01-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM55234 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM55234]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS SCA FEATURE
+   
+   
+ * FIXED COMPONENT ID
+   5724J0854
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

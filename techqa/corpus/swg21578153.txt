@@ -1,0 +1,32 @@
+Title: IBM What versions of Lotus Notes support Citrix XenApp 6.5? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+What versions of IBM Lotus Notes support Citrix XenApp 6.5?
+
+ANSWER
+IBM will support Citrix XenApp 6.5 with Notes 8.5.3 Fix Pack 1 Basic and Standard clients, per the standard recommended Citrix XenApp installation guidelines provided, for the usual length of product life cycle/End of Service and/or terms of customer Support & Service agreement. Support will not request that customers reproduce issues in previous versions of XenApp (4.5, 5.0 or 6.0) that are supported with 8.5.3. 
+
+If issues specific to Citrix XenApp 6.5 are found during test or deployment, IBM will make best efforts to provide a fix based upon 8.5.3 Fix Pack 1. If issues are found that cannot be fixed based upon a customer's client version, upgrade to a later Fix Pack or Maintenance Release may be required. 
+
+In addition to the above support statement, also note the following items: 
+
+ * IBM's support for XenApp 6.5 for Notes 8.5.3 is at the XenApp 6.0 feature level. If Notes product issues are encountered due to new XenApp 6.5 features, IBM will make best efforts to provide a workaround for the issue. If no workaround can be found, customers may be asked to disable these specific features in XenApp 6.5 or upgrade to 9.0x. 
+
+
+ * Specifically, no testing has been completed with any XenApp 6.5 new features, including "Instant App Access" and the "Enhanced Desktop Experience" and customers with support issues for Notes 8.5.3 and XenApp 6.5 should confirm that the issues can be reproduced without these features enabled.
+
+
+ * IBM will continue to test Notes 9.0x with XenApp 6.5, including the new features like "Instant App Access" and "Enhanced Desktop Experience." If we encounter issues through the Notes 9.0 validation with XenApp 6.5, we will share the results via the 9.0 Release Notes.
+
+
+ * Activities and Sametime sidebars have not been tested with Citrix XenApp 6.5, nor are they certified as supported with Citrix XenApp 6.0. See the 8.5.3 system requirements for more details - http://www.ibm.com/support/docview.wss?uid=swg27023119 [http://www.ibm.com/support/docview.wss?uid=swg27023119]
+
+
+ * Symphony Embedded in Lotus Notes has not been tested with Citrix XenApp 6.5, and is not included in this support statement. We are working with the team to evaluate support and will update this technote if this changes.
+
+RELATED INFORMATION
+#Lotus Notes and iNotes support policy for hosted virtua [http://www.ibm.com/support/docview.wss?uid=swg21516087]
+SmartCloud Notes: Is Notes on Citrix XenApp 6.5 support [http://www.ibm.com/support/docview.wss?uid=swg21594840]

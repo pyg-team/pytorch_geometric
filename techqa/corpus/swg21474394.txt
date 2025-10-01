@@ -1,0 +1,72 @@
+Title: IBM WebSphere Process Server Cluster Starting Up - DuplicateKeyException - United States
+
+Text:
+WebSphereProcessServer; Cluster; DuplicateKeyException; w_version; v70rnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A DuplicateKeyException occurs when the cluster starts up. 
+
+SYMPTOM
+An error message or messages similar to the following are present in the SystemOut.log file: 
+
+LifeCycleComp E com.ibm.ws.lifecycle.runtime.component.LifeCycleComponentImpl start RepositoryServiceError
+org.springframework.dao.DataIntegrityViolationException: PreparedStatementCallback; SQL [INSERT INTO w_version(id,username,change_time,cl_gid,cl_lid,schema_rev,schema_ns_id,partition_id) VALUES (?,?,?,?,?,?,?,?)]; DB2 SQL Error: SQLCODE=-803, SQLSTATE=23505, SQLERRMC=1;WEBSPHE.W_VERSION, DRIVER=3.57.82; nested exception is com.ibm.websphere.ce.cm.DuplicateKeyException: DB2 SQL Error: SQLCODE=-803, SQLSTATE=23505, SQLERRMC=1;WEBSPHE.W_VERSION, DRIVER=3.57.82
+at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.translate(SQLStateSQLExceptionTranslator.java:114)
+at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.translate(SQLErrorCodeSQLExceptionTranslator.java:322)
+at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:607)
+at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:792)
+at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:815)
+at org.springframework.jdbc.object.SqlUpdate.update(SqlUpdate.java:168)
+at com.ibm.tyto.jdbc.database.AbstractDatabaseAdapter.insert(AbstractDatabaseAdapter.java:177)
+at com.ibm.tyto.jdbc.util.ObjectPersistenceStore.insertObject(ObjectPersistenceStore.java:48)
+at com.ibm.tyto.jdbc.dao.VersionDao.writeVersionRecord(VersionDao.java:57)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:48)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+at java.lang.reflect.Method.invoke(Method.java:600)
+at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:310)
+......
+
+Caused by: com.ibm.websphere.ce.cm.DuplicateKeyException: DB2 SQL Error: SQLCODE=-803, SQLSTATE=23505, SQLERRMC=1;WEBSPHE.W_VERSION, DRIVER=3.57.82
+at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:44)
+at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+at java.lang.reflect.Constructor.newInstance(Constructor.java:516)
+at com.ibm.websphere.rsadapter.GenericDataStoreHelper.mapExceptionHelper(GenericDataStoreHelper.java:605)
+at com.ibm.websphere.rsadapter.GenericDataStoreHelper.mapException(GenericDataStoreHelper.java:667)
+at com.ibm.ws.rsadapter.AdapterUtil.mapException(AdapterUtil.java:2111)
+at com.ibm.ws.rsadapter.jdbc.WSJdbcUtil.mapException(WSJdbcUtil.java:1034)
+at com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.executeUpdate(WSJdbcPreparedStatement.java:826)
+at org.springframework.jdbc.core.JdbcTemplate$2.doInPreparedStatement(JdbcTemplate.java:798)
+at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:591)
+... 95 more
+---- Begin backtrace for Nested Throwables
+com.ibm.db2.jcc.am.fo: DB2 SQL Error: SQLCODE=-803, SQLSTATE=23505, SQLERRMC=1;WEBSPHE.W_VERSION, DRIVER=3.57.82
+at com.ibm.db2.jcc.am.bd.a(bd.java:672)
+at com.ibm.db2.jcc.am.bd.a(bd.java:60)
+at com.ibm.db2.jcc.am.bd.a(bd.java:127)
+at com.ibm.db2.jcc.am.km.b(km.java:2164)
+at com.ibm.db2.jcc.am.km.c(km.java:2147)
+at com.ibm.db2.jcc.t4.db.k(db.java:354)
+at com.ibm.db2.jcc.t4.db.a(db.java:60)
+at com.ibm.db2.jcc.t4.t.a(t.java:50)
+at com.ibm.db2.jcc.t4.tb.b(tb.java:218)
+at com.ibm.db2.jcc.am.lm.ec(lm.java:2692)
+at com.ibm.db2.jcc.am.lm.b(lm.java:3552)
+at com.ibm.db2.jcc.am.lm.Wb(lm.java:690)
+at com.ibm.db2.jcc.am.lm.executeUpdate(lm.java:673)
+
+
+CAUSE
+The root cause of this exception is that multiple cluster members attempted to access the database at the same time during start up.
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, complete the following steps in the administrative console: 
+
+ 1. Navigate to Servers > Clusters > WebSphere Application Server clusters. 
+ 2. Stop the cluster. 
+ 3. Select the cluster and click the Ripplestart option.
+
+
+For more information about the Ripplestart option, refer to the Starting a cluster [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/index.jsp?topic=/com.ibm.websphere.wps.doc/doc/tadm_start_cluster.html] topic in the information center.

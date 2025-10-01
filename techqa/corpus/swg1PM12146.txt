@@ -1,0 +1,150 @@
+Title: IBM PM12146: CSV002I - REQUEST FOR MODULE FXXZCBLH EXCEEDS MAXIMUM USE COUNT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer using cobol api during batch processing and calling
+   FXXZCBL. The number of input transactions is 648011 records with
+   around 160000 segments. Translation fails with error:
+   CSV002I - Requests for module FXXZCBLH exceed maximum use count
+   Problem has been recreated,test files on RALVSK:
+   KIRKWOO.PMR67942.JOBLOG.MY     -my joblog showing error
+   KIRKWOO.PMR67942.SOURCE.MY     -my source COBOL api
+   KIRKWOO.PMR67942.UTIL.MY            -my JCL to run the api
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Request for module FXXZCBLH exceeds maximum USE count.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Assembler program FXXZCBL fetches 'C' program FXXZCBLH.
+   Each fetch is like a LOAD and will load a copy of FXZZCBLH
+   into memory. For an API program that calls FXXZCBL many
+   times, the maximum USE count on FXXZCBLH can be exceeded.
+   FXXZCBL will be changed to only fetch FXXZCBLH one time
+   during Service Director initialization. And will release
+   FXXZCBLH during Service Director termination. FXXZCBLH's
+   address will be kept in a name/token for all FXXZCBL calls
+   after initialization.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This change affects host batch only.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM12146
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS DI ZOS
+   
+   
+ * REPORTED COMPONENT ID
+   5655I4003
+   
+   
+ * REPORTED RELEASE
+   330
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-13
+   
+   
+ * CLOSED DATE
+   2010-04-22
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK56342
+   
+   
+
+MODULES/MACROS
+ *  ASSEMBLE FXXZCBL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS DI ZOS
+   
+   
+ * FIXED COMPONENT ID
+   5655I4003
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R330 PSY UK56342 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK56342]
+   UP10/06/02 P F006
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

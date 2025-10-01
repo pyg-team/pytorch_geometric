@@ -1,0 +1,197 @@
+Title: IBM PK08363: NULLPOINTEREXCEPTION RUNNING SYNCNODE FROM ODR WITH SEC - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I have 1 dmgr, 1 ODR, and 2 backend nodes.  I created my DC's,
+   my ODR, and installed an app.
+   I then turned on global security using LDAP.  I shut down all
+   processes and
+   restarted them.  I tried to do a syncnode from the ODR machine
+   using:
+   syncNode dmgrNode -username user100 -password user100.
+   I then received the following NullPointerException:
+   
+   
+   C:\WAS60\bin>syncnode xpbul06 -username user100 -password
+   user100
+   ADMU0116I: Tool information is being logged in file
+              c:\WAS60\profiles\node\logs\syncNode.log
+   ADMU0128I: Starting tool with the node profile
+   ADMU0401I: Begin syncNode operation for node xpbul01 with
+   Deployment Manager
+              xpbul06: 8879
+   ADMU0016I: Synchronizing configuration between node and cell.
+   java.lang.NullPointerException
+           at com.ibm.ws.management.
+   application.sync.AppDataMgr.updateDeplData(AppD
+   ataMgr.java:321)
+   
+   The problem is that only the deltas and deployments
+   child contexts of the application binary context
+   get filtered out when replicating out to a node
+   that doesn't host servers of which the application
+   is deployed to.  XD adds a third child to the application
+   binary context, workclasses.  This context gets pushed out
+   to all nodes.
+   Addnl Symptoms:
+   - Dmgr systemOut.log may contain message:
+     <timestamp> <thread> AppBinaryProc E Exception from run:
+     java.lang.NullPointerException
+   - ffdc logs for ODR or App Server nodeagents may contain many
+     of the NullPointerExceptions, with similar stack as in
+     original submitter
+   - a syncnode isn't required to see this; it appear that
+     normal node synchronization causes these FFDC and message
+     log entries
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Application Server users of        *
+   *                 version 6.0.2.                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: java.lang.NullPointerException          *
+   *                      when running syncNode with security     *
+   *                      enabled on deployment manager           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Only the deltas and deployments child contexts of the
+   application binary context get filtered out when replicating
+   out to a node that doesn't host servers to which the
+   application is deployed.  XD (Extended deployment) release
+   adds a third child to the application binary context,
+   workclasses.  This context gets pushed out to all nodes.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Logic was modified to handle repository context of type
+   workclasses.
+   
+   The fix for this APAR was included in fixpack 6.0.2.1.
+   Please refer to the recommended updates page for the latest
+   fixpack information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK08363
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-07-05
+   
+   
+ * CLOSED DATE
+   2006-01-05
+   
+   
+ * LAST MODIFIED DATE
+   2006-01-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  ADMIN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP

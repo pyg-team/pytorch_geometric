@@ -1,0 +1,224 @@
+Title: IBM PM07663: WS-SECURITY JAX-WS GENERAL CUSTOM PROPERTY HIERARCHY DOES NOT   ALWAYS WORK AS EXPECTED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+PM16014; 7.0.0.9: Potential security exposure with JAX-WS WS-Security runtime [http://www-01.ibm.com/support/docview.wss?uid=swg24027709]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24027977]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24027999]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for IBM i [http://www-01.ibm.com/support/docview.wss?uid=swg24028000]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24028001]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for Solaris [http://www-01.ibm.com/support/docview.wss?uid=swg24028002]
+7.0.0.13: WebSphere Application Server V7.0 Fix Pack 13 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028003]
+7.0.0.13: Java SDK 1.6 SR8FP1 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24028004]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24028875]
+7.0.0.15: Java SDK 1.6 SR9 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24028881]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24029071]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for IBM i [http://www-01.ibm.com/support/docview.wss?uid=swg24029072]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24029073]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for Solaris [http://www-01.ibm.com/support/docview.wss?uid=swg24029074]
+7.0.0.15: WebSphere Application Server V7.0 Fix Pack 15 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24029075]
+7.0.0.17: WebSphere Application Server V7.0 Fix Pack 17 [http://www-01.ibm.com/support/docview.wss?uid=swg24029634]
+7.0.0.17: Java SDK 1.6 SR9 FP1 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24029894]
+7.0.0.19: WebSphere Application Server V7.0 Fix Pack 19 [http://www-01.ibm.com/support/docview.wss?uid=swg24030660]
+7.0.0.21: WebSphere Application Server V7.0 Fix Pack 21 [http://www-01.ibm.com/support/docview.wss?uid=swg24031366]
+7.0.0.23: WebSphere Application Server V7.0 Fix Pack 23 [http://www-01.ibm.com/support/docview.wss?uid=swg24032493]
+7.0.0.25: WebSphere Application Server V7.0 Fix Pack 25 [http://www-01.ibm.com/support/docview.wss?uid=swg24033267]
+7.0.0.27: WebSphere Application Server V7.0 Fix Pack 27 [http://www-01.ibm.com/support/docview.wss?uid=swg24033882]
+7.0.0.29: WebSphere Application Server V7.0 Fix Pack 29 [http://www-01.ibm.com/support/docview.wss?uid=swg24034966]
+7.0.0.31: WebSphere Application Server V7.0 Fix Pack 31 [http://www-01.ibm.com/support/docview.wss?uid=swg24036768]
+7.0.0.27: Java SDK 1.6 SR13 FP2 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035324]
+7.0.0.33: WebSphere Application Server V7.0 Fix Pack 33 [http://www-01.ibm.com/support/docview.wss?uid=swg24037573]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a general custom property is specified in a WS-Security
+   binding, the WS-Security JAX-WS runtime may not behave as
+   expected with regards to that custom property.
+   
+   For example, consider the following custom property specified
+   as a general Outbound Custom property in a general binding:
+   
+   com.ibm.wsspi.wssecurity.config.request.setMustUnderstand
+   
+   When an application uses the general binding, the WS-Security
+   runtime uses the default setting instead of the user's
+   specified value.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM WebSphere Application Server V7.0 users *
+   *                  of WS-Security enabled JAX-WS web services  *
+   *                  applications                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: WS-Security JAX-WS general custom       *
+   *                      properties may not behave as expected   *
+   ****************************************************************
+   * RECOMMENDATION:  Install a fixpack that contains this APAR   *
+   ****************************************************************
+   When a general custom property is specified in a WS-Security
+   JAX-WS custom binding, the WS-Security runtime may not behave
+   as expected with regards to that custom property.
+   
+   There is more than one manifestation of this problem:
+   
+   * If the property is specified in a general binding, it will
+   not be effective at all.
+   * If the property is specified in a general binding, it will
+   only be effective if the general binding itself is attached to
+   the application.  When using an application specific binding,
+   the setting of a custom property in the default general
+   binding is not detected.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WS-Security JAX-WS runtime is not merging the properties
+   from the default general binding with the ones from the
+   application specific binding.  Also, the custom property
+   setting has to be inspected in three places: initialization of
+   the application specific binding, initialization of the
+   default general binding, and merging of the two at runtime,
+   which causes too much room for error when adding new custom
+   properties.
+   
+   The runtime is updated to first set up the general custom
+   property hierarchy properly in the following priority order:
+   
+   1) Inbound/Outbound (Application specific binding)
+   2) Inbound and Outbound (Application specific binding)
+   3) Inbound/Outbound (General binding)
+   4) Inbound and Outbound (General binding)
+   
+   This behavior is prescribed in the information center:
+   
+   http://publib.boulder.ibm.com/infocenter/wasinfo/fep/topic/com.i [http://publib.boulder.ibm.com/infocenter/wasinfo/fep/topic/com.i]
+   bm.websphere.nd.multiplatform.doc/info/ae/ae/uwbs_wsscustomprop.
+   html
+   
+   The runtime is also updated to require only a single
+   inspection for a custom property in the merged custom property
+   list to prevent similar errors in the future.
+   
+   Properties that are affected include:
+   
+   com.ibm.wsspi.wssecurity.config.disableWSSIfApplicationSecurityD
+   isabled
+   com.ibm.wsspi.wssecurity.config.response.forceMustUnderstandEqua
+   lsOne
+   com.ibm.wsspi.wssecurity.config.request.setMustUnderstand
+   com.ibm.wsspi.wssecurity.consumer.checkOperationLevelPolicies
+   
+   The WS-Security general custom properties are accessed as
+   follows:
+   
+   (bindingName)->WS-Security->Custom properties
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 7.0.0.13.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM07663
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-16
+   
+   
+ * CLOSED DATE
+   2010-04-26
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM07733 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM07733]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

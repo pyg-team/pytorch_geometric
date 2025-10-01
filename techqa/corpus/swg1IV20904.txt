@@ -1,0 +1,140 @@
+Title: IBM IV20904: ITM6.2.3 FP1 HUB SDA RACE CONDITION - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 2 (6.2.3-TIV-ITM-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24032429]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 4 (6.2.3-TIV-ITM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24034252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An SDA Agent connected to either a HUB TEMS or a Remote TEMS
+   (i.e. IP
+   xx.xx.xx.03) that is a higher version than the
+   agent currently SDA installing (i.e. IP xx.xx.xx.00) at either
+   the HUB
+   or this local Remote TEMS, can be mistakenly rejected
+   as not being needed for SDA install.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Self Describing Agent (SDA) installation rejected.
+   
+   
+   If a Self Describing Agent (SDA) connected to a monitoring
+   server is a higher version (i.e. IP xx.xx.xx.03) than another
+   Self Describing Agent (i.e. IP xx.xx.xx.00) currently being
+   installed on the monitoring server, then Self Describing Agent
+   currently being installed can be mistakenly rejected as not
+   being needed because it is backlevel. Multiple versions of a
+   Self Describing Agent are allowed to be installed on the same
+   system.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been changed to properly install all unique
+   versions.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.2.3-TIV-ITM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV20904
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-10
+   
+   
+ * CLOSED DATE
+   2012-07-26
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    OA40445 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA40445]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEMS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

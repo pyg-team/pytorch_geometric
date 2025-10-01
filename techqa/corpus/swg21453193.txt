@@ -1,0 +1,20 @@
+Title: IBM Calling a third party utility (.exe program) within Cast Iron orchestration to perform Encryption/Decryption of data - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Can I call a third party utility (.exe program) within Cast Iron orchestration to perform Encryption/Decryption of data ? 
+
+ANSWER
+Cast Iron does not provide a facility to call any utility (.exe program) directly. Another options is to use web-service. If you have web-service which allows you to call .exe program, then you can invoke such web-service from Cast Iron.
+
+ 
+
+HISTORICAL NUMBER
+ 00000501 
+
+PRODUCT ALIAS/SYNONYM
+ Cast Iron Solution
+Cast Iron Operating System
+Cast Iron Studio

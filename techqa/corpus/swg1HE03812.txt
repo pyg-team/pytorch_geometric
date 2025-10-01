@@ -1,0 +1,201 @@
+Title: IBM HE03812: FT&A ??? GEOMETRICAL TOLERANCE - FEATURE CONTROL IS NOT WORKING AS EXPECTED ON WIN VISTA OS WHEN COMPARED WITH UNIX - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SCENARIO:
+   Tests in UNIX:
+   1. Create a part in FTA work bench.
+   2. Create a Geometrical Tolerance.
+   3. Create a text document, with Multiple lines.
+   4. Copy / Paste this in the Text field of the Geometrical
+   Tolerance
+   5. Results: Multiple Lines are pasted in Unix for Geometrical
+   tolerance.
+   Tests in Windows:
+   1. Create a part in FTA work bench.
+   2. Create a Geometrical Tolerance.
+   3. Create a text document, with Multiple lines.
+   4. Copy / Paste this in the Text field of the Geometrical
+   Tolerance.
+   RESULTS:
+   Multiple Lines pasting is possible for UNIX,  but it is not
+   possible to do that in Windows.
+   EXPECTED RESULTS:
+   The Behavior should be consistent for CATIA in both Windows
+   and UNIX OS.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  empty
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  SCENARIO:
+   Tests in UNIX:
+   1. Create a part in FTA work bench.
+   2. Create a Geometrical Tolerance.
+   3. Create a text document, with Multiple lines.
+   4. Copy / Paste this in the Text field of the Geometrical
+   Tolerance
+   5. Results: Multiple Lines are pasted in Unix for Geometrical
+   tolerance.
+   Tests in Windows:
+   1. Create a part in FTA work bench.
+   2. Create a Geometrical Tolerance.
+   3. Create a text document, with Multiple lines.
+   4. Copy / Paste this in the Text field of the Geometrical
+   Tolerance.
+   RESULTS:
+   Multiple Lines pasting is possible for UNIX,  but it is not
+   possible to do that in Windows.
+   EXPECTED RESULTS:
+   The Behavior should be consistent for CATIA in both Windows
+   and UNIX OS.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON CATIA V5R21 GA level.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED ON CATIA V5R20 SP6.
+   Additional Closure Information:
+   INCIDENT DIAGNOSIS:
+   Feature control is not working as expected on WIN VISTA OS
+   when compared with UNIX
+   .
+   TECHNICAL EXPLANATION OF THE DEFECT:
+   The Geometrical Tolerance (GT) User Interface (UI) uses a
+   mono-line text editor to insure that only a single line of
+   text can be added to the GT.
+   However, a defect specific to Unix UI implementation allowed
+   adding several lines of text in this mono-line text editor,
+   through copy/paste operation.
+   By this mean, several lines of text could be added to the GT.
+   .
+   TECHNICAL EXPLANATION OF THE CORRECTION:
+   The ability to add several lines of text haven't been made
+   official up to now for the following reasons:
+   - GT model support several lines of text;
+   - But GT model does not allow specifying some text properties
+   like Line Spacing, Justification, Wrapping, etc. Supporting
+   these text properties on GT is an enhancement which is not
+   planned as of today.
+   However, taking into consideration the fact that customers
+   may already have some GT with several lines of texts in
+   production drawings, the capability to create such GT with
+   several lines of text has been provided on Windows as well as
+   on UNIX.
+   Customer can thus decide to use multi-line texts for GT or
+   not, knowing that line spacing cannot be tuned.
+   .
+   POSSIBLE BY-PASS AND/OR CORRECTION LIMITATION:
+   On V5R20 level, it's mandatory to set the environment
+   variable "CAT_MLG_LA" so as to activate this new function
+   (i.e. multi-line text definition for GT). This is to insure
+   there is no UI modification on V5R20 SP. From V5R21 and
+   V6R2012 levels, the function is activated by default; the
+   environment variable is
+   not needed anymore.
+   Please note that GT containing multiple lines of text can be
+   edited even if the variable was not set (in that case, all
+   text lines will appear on a single line of the text editor,
+   with a special character figuring carriage return).
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE03812
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 WIN 64
+   
+   
+ * REPORTED COMPONENT ID
+   569165000
+   
+   
+ * REPORTED RELEASE
+   519
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-01-28
+   
+   
+ * CLOSED DATE
+   2011-03-15
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5 WIN 64
+   
+   
+ * FIXED COMPONENT ID
+   569165000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSN
+   UP

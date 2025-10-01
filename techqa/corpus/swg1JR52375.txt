@@ -1,0 +1,156 @@
+Title: IBM JR52375: BPMCONFIG UPGRADE RETURNS CWMCB0046E ERROR IF BUS NOT FOUND - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In an IBM Business Process Manager (BPM) deployment
+   environment that has non-default bus names (BPM.<deName>.Bus),
+   you see the following error in the SystemOut.log file when you
+   run the BPMConfig -upgrade command after installing an interim
+   fix that requires that the profile be upgraded:
+   
+   2015-01-07 10:52.56.255 com.ibm.bpm.config.BPMConfig.main():
+   CWMCB0046E: The 'listSIBDestinations' command
+   failed:CWSJA0001E: Bus "BPM.BPM855_PS.Bus" not found
+   com.ibm.bpm.config.util.ConfigException: CWMCB0046E:
+   The'listSIBDestinations' command failed: CWSJA0001E: Bus
+   "BPM.BPM855_LAB.Bus" not found.at
+   com.ibm.bpm.config.util.ConfigHelper.invokeAdminCommand
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM BPM Advanced                            *
+   *                  IBM BPM Standard                            *
+   *                  IBM BPM Express                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: In an IBM Business Process Manager      *
+   *                      (BPM) deployment environment that has   *
+   *                      non-default bus names                   *
+   *                      (BPM.<deName>.Bus), you see the         *
+   *                      following error in the SystemOut.log    *
+   *                      file when you run the BPMConfig         *
+   *                      -upgrade command after installing an    *
+   *                      interim fix that requires that the      *
+   *                      profile be upgraded:                    *
+   *                      2015-01-07 10:52.56.255                 *
+   *                      com.ibm.bpm.config.BPMConfig.main():    *
+   *                      CWMCB0046E: The 'listSIBDestinations'   *
+   *                      command failed:CWSJA0001E: Bus          *
+   *                      "BPM.BPM855_PS.Bus" not found           *
+   *                      com.ibm.bpm.config.util.ConfigException *
+   *                      : CWMCB0046E:                           *
+   *                      The'listSIBDestinations' command        *
+   *                      failed: CWSJA0001E: Bus                 *
+   *                      "BPM.BPM855_LAB.Bus" not found.at       *
+   *                      com.ibm.bpm.config.util.ConfigHelper.in *
+   *                      vokeAdminCommand                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The IBM BPM deployment environment configuration allows you to
+   specify customized names for the service integration (SI)
+   buses, but the profile upgrade code assumes a default bus name
+   (BPM,<deName>.Bus or the legacy bus names like
+   PROCSVR.<cellName>.Bus) has been used.
+   The IBM BPM configuration code will be enhanced in a later
+   release to include validation of the bus names to avoid this
+   error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR52375
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-21
+   
+   
+ * CLOSED DATE
+   2015-03-01
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

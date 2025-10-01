@@ -1,0 +1,29 @@
+Title: IBM fatal: liblang.so: open failed: No such file or directory - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to run rsserver 7.1 from the command line on a Solaris machine, the following error message is displayed: 
+
+> ld.so.1: /cognos/cer3/bin/rsserver: fatal: liblang.so: open failed: No such file or directory Killed 
+
+
+
+
+RESOLVING THE PROBLEM
+This error message will appear if the environment where rsserver is being executed is not configured properly.
+
+Please verify that the COGNOS_HOME and LD_LIBRARY_PATH environment variables are pointing to the correct directories and that they are not pointing to the cer2 rendition. For example:
+
+COGNOS_HOME=/opt/cognos/cer3/bin
+
+LD_LIBRARY_PATH=/opt/cognos/cer3/bin:$LD_LIBRARY_PATH
+
+To verify what the environment variables are currently set to, run the command: env
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Transformer Business Analytics Cognos Series 7 PowerPlay Enterprise Server Business Analytics Cognos Series 7 Transformer 
+HISTORICAL NUMBER
+ 1003781

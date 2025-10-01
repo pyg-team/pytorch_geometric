@@ -1,0 +1,24 @@
+Title: IBM What is CMS and how it applies to ClearQuest 7.0 and SSL - United States
+
+Text:
+CQ; open ssl; ldap; gskit; openssl; verisign; key; key file; keyfile; gs; kit; 7; 1257392 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains what is CMS and how does it relate to SSL implementation in IBM® Rational® ClearQuest®. CMS is an SSL file format that is supported by iKeyMan utility in the IBM GSKit that is used for SSL support on the ClearQuest 7.0 Web server.. 
+
+CAUSE
+Page 119 of the ClearQuest 7.0 Installation and Upgrade Guide states: 
+
+ * 
+ * 
+
+RESOLVING THE PROBLEM
+CMS is one of the types of KeyFile formats that we support. The others are JKS & PKCS12. 
+
+When you create/open a keyfile in the GSKit iKeyMan utility, you must specify the type. KeyFiles are databases that store, among other things, your certificates. So when you import an SSL Certificate, you need to open the KeyFile. CMS is a type of KeyFile. The certificate themselves have their own types of format. 
+
+ 
+
+Note: ClearQuest did not use iKeyMan in versions of ClearQuest prior to v7, and instead used OpenSSL, which is a free key management tool that comes with Apache. In ClearQuest v7, your OpenSSL certificates will need to be converted to a format, such as CMS, that is supported by iKeyMan, prior to it's use with ClearQuest 7.0. 
+
+For more information on SSL and GSKit, refer to the ClearQuest 7.0 information center. [http://publib.boulder.ibm.com/infocenter/cqhelp/v7r0m0/index.jsp]

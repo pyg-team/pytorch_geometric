@@ -1,0 +1,26 @@
+Title: IBM What are the analyzer.db.updateMode parameter values for Case Foundation Case Analyzer? - United States
+
+Text:
+performance TECHNOTE (FAQ)
+
+QUESTION
+ What are the analyzer.db.updateMode parameter values for Case Foundation Case Analyzer? 
+
+ANSWER
+The analyzer.db.updateMode parameter controls the JDBC update method used by Case Analyzer when updating tables in the Case Analyzer store SQL database. 
+
+The default value is CUSTOM_BATCH. That means that the JDBC driver will use the CUSTOM_BATCH update method for Case Analyzer queries. 
+
+Another possible value is BATCH. That means that the JDBC driver will use the BATCH update method for Case Analyzer queries. 
+
+You can set the BATCH value for the analyzer.db.updateMode parameter with the following query in the Case Analyzer store database: 
+
+ 
+
+ * UPDATE X_CAProperties SET PropValue='BATCH' 
+   WHERE PropName ='analyzer.db.updateMode' 
+
+
+When to set the analyzer.db.updateMode = BATCH setting 
+ * IBM support may ask customer to set this setting to circumvent various performance-related symptoms and unexpected behavior. 
+ * In general, our experience is that the Microsoft JDBC drivers work better and are more stable with the analyzer.db.updateMode = BATCH setting.

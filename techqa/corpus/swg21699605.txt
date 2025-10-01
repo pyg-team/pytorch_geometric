@@ -1,0 +1,125 @@
+Title: IBM Failed TWS or TDWC Prerequisite scan - United States
+
+Text:
+prereq; scan; failed; install; upgrade; dwc; installation; manager; IM; FAIL; unavailable; precheck.log; result.txt TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Prerequisite Scanner Overall Result: FAIL (TWA 09020000: FAIL) error received during installation of Tivoli Dynamic Workload Console (TDWC). 
+
+SYMPTOM
+Found in /tmp/TWA/tws92/checkPrereq/result.txt file: 
+
+Property Result Found Expected
+======== ====== ===== =========
+os.package.atk FAIL Unavailable atk-1.12.3-2
+os.package.cairo FAIL Unavailable cairo-1.8.8-1
+os.package.expat FAIL Unavailable expat-2.0.1-1
+os.package.fontconfig FAIL Unavailable fontconfig-2.4.2-1
+os.package.freetype2 FAIL Unavailable freetype2-2.3.9-1
+os.package.gettext FAIL Unavailable gettext-0.10.40-6
+os.package.glib2 FAIL Unavailable glib2-2.12.4-2
+os.package.libjpeg FAIL Unavailable libjpeg-6b-6
+os.package.libpng FAIL Unavailable libpng-1.2.32-2
+os.package.libtiff FAIL Unavailable libtiff-3.8.2-1
+os.package.pango FAIL Unavailable pango-1.14.5-4
+os.package.pixman FAIL Unavailable pixman-0.12.0-3
+os.package.xcursor FAIL Unavailable xcursor-1.1.7-3
+os.package.xft FAIL Unavailable xft-2.1.6-5
+os.package.xrender FAIL Unavailable xrender-0.9.1-3
+os.package.zlib FAIL Unavailable zlib-1.2.3-3
+os.package.gtk2 FAIL Unavailable gtk2-2.10.6-4
+os.RAMSize PASS 4.0GB 1GB+
+Temp PASS 2041.85MB 200MB
+
+**************************************
+**************************************
+
+Found in /tmp/TWA/tws92/checkPrereq/precheck.log file:
+
+[2015-03-17 15:56:32 ] INFO : Comparing values cairo-1.10.0-1 and cairo-1.8.8-1
+[2015-03-17 15:56:33 ] INFO : os.package compare function exiting with FAIL
+
+[2015-03-17 15:56:35 ] INFO : Comparing values expat-2.0.1-2 and expat-2.0.1-1
+[2015-03-17 15:56:36 ] INFO : os.package compare function exiting with FAIL
+
+[2015-03-17 15:56:45 ] INFO : Comparing values gettext-0.10.40-8 and gettext-0.10.40-6
+[2015-03-17 15:56:45 ] INFO : os.package compare function exiting with FAIL
+
+[2015-03-17 15:56:48 ] INFO : Comparing values glib2-2.14.6-2 and glib2-2.12.4-2
+[2015-03-17 15:56:48 ] INFO : os.package compare function exiting with FAIL
+
+[2015-03-17 15:57:03 ] INFO : Comparing values pixman-0.20.0-1 and pixman-0.12.0-3
+[2015-03-17 15:57:04 ] INFO : os.package compare function exiting with FAIL
+
+[2015-03-17 15:57:15 ] INFO : Comparing values zlib-1.2.7-1 and zlib-1.2.3-3
+[2015-03-17 15:57:16 ] INFO : os.package compare function exiting with FAIL
+
+[2015-03-17 15:57:19 ] INFO : Comparing values gtk2-2.10.6-5 and gtk2-2.10.6-4
+[2015-03-17 15:57:19 ] INFO : os.package compare function exiting with FAIL
+
+
+CAUSE
+1. Required GTK libraries for Installation Manager are missing on the AIX operating system.
+2. An incorrect library bundle has been installed. The required bundle is: gtk2_bundle_v2.tar.
+
+
+ENVIRONMENT
+AIX v7.1
+
+
+
+DIAGNOSING THE PROBLEM
+Look for the errors shown above (in the "Symptom" field) in the following log files: 
+
+ 
+
+ * /tmp/TWA/tws92/checkPrereq/precheck.log 
+ * /tmp/TWA/tws92/checkPrereq/result.txt 
+
+You will see the following information in the precheck.log file if you have installed the gtk2_bundle_v3.tar libraries instead of the required gtk2_bundle_v2.tar libraries: 
+
+[2015-03-17 15:56:14 ] INFO : Getting os.package info for package : gtk2 
+[2015-03-17 15:56:19 ] INFO : Found package : gtk2-2.10.6-5 
+RESOLVING THE PROBLEM
+Install the required GTK libraries for Installation Manager on AIX per the following Installation Manager Technote # 1631478:
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21631478 [http://www-01.ibm.com/support/docview.wss?uid=swg21631478] 
+
+ 
+
+IMPORTANT NOTE: As per the above Technote, you must install gtk2_bundle_v2.tar (dated 1/27/2015). Do not install the earlier or later versions: 
+
+"If you download and install RPMs individually, we have found that the following libraries are incompatible: glib2-2.14.6-2 and gtk2-2.10.6-5" 
+
+ 
+
+Direct link to the FTP site to download the required gtk2_bundle_v2.tar [ftp://ftp.software.ibm.com/aix/freeSoftware/aixtoolbox/ezinstall/ppc/] file.
+
+Directions to download and install the required gtk2_bundle_v2.tar file:
+
+1. Download the gtk2_bundle_v2.tar package (version 'v2') containing all the RPMs and the install script to a new directory.
+
+2. Decompress the tar file.
+Use the command: tar -xvf gtk2_bundle_v2.tar to decompress the file.
+
+3. Open the decompressed directory gtk2_bundle_v2 and run the install.sh script.
+
+The script will check if the required RPMs are installed at the compatible level. If they are not, the script will prompt to install the compatible versions.
+
+4. Verify the environment variable LIBPATH contains a path to the installed libraries. Example:
+
+LIBPATH=/opt/freeware/lib/
+
+*****************************
+
+After you have installed the required gtk libraries, the TDWC prerequisite check will complete successfully.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Maestro
+TDWC
+TWS
+TWA
+DWC
+IM

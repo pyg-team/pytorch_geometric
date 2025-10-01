@@ -1,0 +1,41 @@
+Title: IBM Impact on existing Oracle database when changing NLS_LANG in IBM InfoSphere DataStage - United States
+
+Text:
+nls_lang oracle database utf8 WE8ISO8859P1 TECHNOTE (FAQ)
+
+QUESTION
+ The NLS_LANG environment variable setting in the dsenv file is currently AMERICAN_AMERICA.WE8ISO8859P1. 
+
+What is the impact on the existing Oracle database if NLS_LANG is changed to AMERICAN_AMERICA.UTF8? 
+
+ANSWER
+The server Engine internally works in what Oracle would call UTF8, which is a subset of the characters supported by AL32UTF8 and AL16UTF16. Specifically, it cannot deal with surrogate pairs; these are the Unicode code points that require more than two bytes in an AL16UTF16 encoding. 
+
+ 
+When transferring data from the client to the Oracle Server, we can tell Oracle which Character Set we require or are going to provide, via the NLS_LANG environment variable. If this differs from the 
+NLS_DATABASE_CHARACTERSET in the Oracle database, then Oracle will perform the mapping for us. If the two are the same, no mapping is done by Oracle. However, the catch is, the data is not checked that it is in this character set, which could be a problem when writing. 
+
+The most performant method for DataStage server to transfer data to Oracle, where no mapping is done by Oracle or DataStage is as follows: 
+
+a) Oracle NLS_DATABASE_CHARACTERSET is AL32UTF8 
+b) Set the NLS_LANG environment variable in dsenv to <lang>_<territory>.AL32UTF8 (or just <lang>_territory>.UTF8 as this is what DataStage supports) 
+c) Set NLS mapping to NONE or UTF8 in the Oracle Stage 
+
+Considerations: 
+
+AL32UTF8 in Oracle itself is not as efficient as AL16UTF16, because one is a variable length encoding and the other fixed; and string manipulation requires the logic to scan the variable length encoding rather than treating it in 16 bit units. 
+
+UTF8 in Server will not deal with all the possible, but unlikely, characters that it could be presented with, and you could write garbage to Oracle, This, however, is a workable solution. 
+
+To handle AL16UTF16 
+
+a) Oracle NLS_DATABASE_CHARACTERSET is AL16UTF16 
+b) Set NLS_LANG environment variable in dsenv to <lang>_<territory>.AL32UTF8 (or just <lang>_<territory>.UTF8) (oracle does the mappings, this is a quick algorithmic mapping)
+c) Set NLS map to NONE or UTF8 in the Oracle Stage 
+
+
+According to the above information, the NLS_LANG setting suggested for dsenv (i.e., AMERICAN_AMERICA.UTF8) will work when accessing Oracle 10g and Oracle 9i databases based on their NLS_DATABASE_CHARACTERSET settings. 
+
+To get the NLS_DATABASE_CHARACTERSET, issue the following query against the Oracle database:
+
+> select * from nls_database_parameters;

@@ -1,0 +1,204 @@
+Title: IBM PI15518: NOTIFICATIONS NOT SENT TO SERVICE INTEGRATION BUS CLIENTS WHEN A MESSAGING ENGINE INSTANCE IS STOPPED FORCEFULLY. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+PI15518;8.5.5: notifications not sent to service integration bus clients when a messaging engine instance is stopped forcefully [http://www-01.ibm.com/support/docview.wss?uid=swg24037779]
+8.5.5.3: WebSphere Application Server V8.5.5 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038133]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Notifications not sent to Service Integration Bus clients when
+   a messaging engine instance is stopped forcefully.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of the default messaging provider     *
+   *                  for                                         *
+   *                  IBM WebSphere Application Server V8.5       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When messaging engine receives          *
+   *                      FORCE_STOP request, clients which       *
+   *                      are connected to the messaging engine   *
+   *                      are not notified about the stop event.  *
+   *                      As a result, the client will not be     *
+   *                      able to connect to messaging engine     *
+   *                      after messaging engine fails over to    *
+   *                      another member in cluster. Since the    *
+   *                      clients are not notified about the      *
+   *                      stop event, they would still use the    *
+   *                      existing connection that has been       *
+   *                      established previously and              *
+   *                      SIConnectionUnavailableException and    *
+   *                      SIMPConnectionUnavailableException      *
+   *                      will be thrown in the logs              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In a WebSphere Application Server Service Integration Bus,
+   when a messaging engine loses a connection to datastore it
+   will try to re-establish a connection to the datastore for 15
+   minutes. If unsuccessful then the messaging engine receives a
+   FORCE_STOP request and goes to disabled state but connected
+   clients will not be notified about the messaging engine stop
+   event. Since the clients are not notified about the stop
+   event, they would still use the existing connection that has
+   been established previously, leading to
+   SIConnectionUnavailableException and
+   SIMPConnectionUnavailableException in the logs.
+   com.ibm.wsspi.sib.core.exception.SIConnectionUnavailableExceptio
+   n: CWSIC8007E:  An exception was caught from the remote server
+   with ID 3-008-0001 Exception: CWSIK0022E: The connection is
+   closed to messaging engine CL_BPWH01.000-BPM.De1.Bus and
+   cannot be used....
+   at
+   com.ibm.ws.sib.comms.common.CommsByteBuffer.parseSingleException
+   (CommsByteBuffer.java:1810)
+   at
+   com.ibm.ws.sib.comms.common.CommsByteBuffer.getException(CommsBy
+   teBuffer.java:1263)
+   at
+   com.ibm.ws.sib.comms.common.JFAPCommunicator.checkFor_SIConnecti
+   onUnavailableException(JFAPCommunicator.java:1300)
+   at
+   com.ibm.ws.sib.comms.client.ConnectionProxy._createConsumerSessi
+   on(ConnectionProxy.java:1269)
+   at
+   com.ibm.ws.sib.comms.client.ConnectionProxy.createConsumerSessio
+   n(ConnectionProxy.java:943)
+   at
+   com.ibm.ws.sib.api.jms.impl.JmsMsgConsumerImpl.createCoreConsume
+   r(JmsMsgConsumerImpl.java:1048)
+   ........
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  We will now send stop event notifications to messaging
+   engine clients when the messaging engine receives a FORCE_STOP
+   request.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 7.0.0.35, 8.0.0.10 and 8.5.5.3.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI15518
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS SIB & SIBWS
+   
+   
+ * REPORTED COMPONENT ID
+   620800101
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-09
+   
+   
+ * CLOSED DATE
+   2014-05-30
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS SIB & SIBWS
+   
+   
+ * FIXED COMPONENT ID
+   620800101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

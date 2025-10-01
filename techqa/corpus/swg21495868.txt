@@ -1,0 +1,35 @@
+Title: IBM AUEP when activating CICS IA collector for transactions with DTIMOUT - United States
+
+Text:
+purg; dhnqxpi ciuxcco1; glue; enq; enqueue dtimeout; deadlock timeout; DFHAC2251 DFHD2EX1 ASPQ abendASPQ DFHDU0203I AUEP abendAUEP DFHAC2236l MSGDFHAC2251 MSGDFHD2EX1 MSGDFHAC2236l ; CICSIA 3.1 ; 5655Y2200 R510 R51E 5655-Y22 5655Y22 FMID H274510 J27451E J27451K 5655U8600 5655U8601 R310 R31E R31K 5655-U86 5655U86 FMID H274310 J27431E J27431K TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your user transactions defined with a DTIMOUT value begin failing with message DFHDU0203I AUEP abends (abendAUEP). This occurs when you activate the CICS Interdependency Analyzer for z/OS (CICS IA) collectors for all commands for both affinities and interdependencies during periods of peak workload. You also receive message DFHAC2251 with abend ASPQ (abendASPQ). 
+
+SYMPTOM
+DFHAC2251 [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.messages.doc/DFHAC/DFHAC2251.html] date time applid Transaction transid running program DFHD2EX1 term ???? has failed with abend ASPQ [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.messages.doc/ASxx_abend_codes/ASPQ.html]. Syncpoint commit processing has failed while communicating with a remote system. 
+
+DFHDU0203I [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.messages.doc/DFHDU/DFHDU0203I.html] date time applid A transaction dump was taken for dumpcode: AUEP [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.messages.doc/AUxx_abend_codes/AUEP.html], Dumpid: 1/000n. 
+
+DFHAC2236 [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.messages.doc/DFHAC/DFHAC2236.html] date time applid Transaction transid abend AUEP in program progname term ????. Updates to local recoverable resources will be backed out.
+
+CAUSE
+Running all CICS IA collectors with all options active in a heavily loaded CICS region where user transactions are also defined with a DTIMOUT [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.resourcedefinition.doc/resources/transaction/dfha4_attributes.html] value in their transaction definition. If the DTIMOUT value is exceeded while user tasks are in an ENQ suspend for the CICS IA ENQ string ">CIUCING" [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.doc/dfht2/topics/dfht23j.html] from a CICS IA GLUE, the task will abend with an AUEP.
+
+
+
+DIAGNOSING THE PROBLEM
+The AUEP abend can occur if CICS IA sets UERCPURG upon return from a CICS exit programming interface (XPI) call. Most CICS IA GLUEs that get an XPI error branch to label RETPURGE and set the user exit return code. If a taskid is suspended for the <CIUCING CICS IA ENQUEUE and has been defined with DTIMOUT of 10 seconds, it will receive a purged exception if it is still waiting at the 10 second mark. The CICS NQ domain will return to the CICS IA GLUE XEIOUT CIUXCCO1 with the purged response resulting in a branch to label RETPURGE and the subsequent AUEP abend.
+
+
+
+RESOLVING THE PROBLEM
+If you are unable to increase the DTIMOUT [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.resourcedefinition.doc/resources/transaction/dfha4_attributes.html] value in your transaction definitions, do one or both of the following to reduce some of the enqueue contention between tasks: 
+
+ * Turn off some of the collectors 
+ * Add some exclude table entries to collect less
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS IA CICSIA

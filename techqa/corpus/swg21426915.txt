@@ -1,0 +1,83 @@
+Title: IBM SDK - Product information, FixPacks and Upgrading Software Development Kit (SDK) designed Applications - United States
+
+Text:
+SDK TECHNOTE (FAQ)
+
+QUESTION
+ Common Questions for the SDK which this document is covering : 
+- What is the SDK Product and what does it contain ?
+- Do I need to install the SDK to use its functionality ?
+- What version do I need to install ?
+- Are there FixPacks for the SDK Product, and how to install these ?
+- Can the Jar libraries of the SDK be included with my software ? 
+- Does a new product version of the SDK needs to be installed when the IBM Server is upgraded ?
+- Does the Software Application need to be upgraded by using the new existing Libarry JARs?
+- Can I use the Jar libraries that are included in ../webapps/p2pd/WEB-INF/lib for the SDK development ?
+- Can the SDK libraries be taken or moved from elsewhere ? 
+
+CAUSE
+Common Problems encountered in Software Development with SDK product :
+
+Problem :
+An upgrade was done on the IBM Cognos Server to a newer version. 
+There is a SDK designed Application that was copied and moved into this higher version of IBM Cognos.
+After this action , the SDK application has problems and gives major Errors in the logfiles with Software failures when it is being run. 
+>> Resolution : SDK Upgrade of code and Recompile is required. 
+
+Problem :
+An application was made in a particular version of IBM Cognos software, and an attempt is made to run this application against two different versions of IBM Cognos, one lower and one of a higher version. This fails with errors and problems in either or both cases.
+>> Resolution : SDK Recompile the Application in the same Version of SDK and Cognos BI Server. SDK Source Code is not Backwards compatible, and no longer Forwards Compatible unless the SDK Product has a delivered Compatibility set of libraries for such use. 
+
+Problem :
+A Development environment (IDE) was created that has all the SDK Jars packaged in a Customer centric Library that is used for Application Development. This application is tested in version X from IBM Cognos, and this same Development environment is subsequently also used to make applications for version Y and Z of IBM Cognos BI. Running the Applications gives intermittend or solid failures.
+>> Resolution : Only include the right version of the SDK Libraries in such a file or Directory structure, and no other or older libraries.
+
+Problem :
+The libraries located in ../webapps/p2pd/WEB-INF/lib folder were used to compile a Java SDK Application. No problems in compile and generation of the class file, but the application does fail with errors.
+>> Resolution : The SDK Libraries need to be used to compile and run the Application.
+Libraries in the ../webapps/p2pd/WEB-INF/lib path are not intended for Software Development with SDK, and can not replace the SDK delivered libraries.
+
+Problem :
+A Cognos Server installation had FP2 (FixPack2) applied before the SDK was installed.
+Problems in coding and missing methods and functionality was experienced with the SDK development.
+>> Resolution : Reapply the FixPack 2 again over the complete installation including the SDK, often there are updates that need to be applied to the SDK Product components delivered with a Cognos Server installation as well, apart from any SDK centric FixPacks and Updates.
+
+
+ANSWER
+The SDK product is a Software Development Kit that is the Application Programming Interface - API to a IBM Cognos Server and its Internal Components. 
+
+The SDK Product contains Documentation, samples in Java and Csharp, SDK API Libraries, URL API , and the Cognos Mashup API and its samples in Java, Csharp.
+It also includes samples for the Web/Browser based CMS Mashup Javascript and the Custom Report Functions CRX Samples located in Webcontent/samples/sdk 
+
+This statement, currently in the SDK Developer Guide is one that expertly covers off the question of compatibility, either forward or backwards for Software Applications made with the SDK Software Development Kit :
+
+"Applications must be compiled on the same version of the IBM Cognos Software Development Kit as that used by the IBM Cognos Business Intelligence environment that you intend to deploy your applications in."
+
+Further helpful Answers :
+
+1. The SDK Software should be installed in a location where you are doing your development work, or where you are executing your SDK designed Applications.
+The designed software deployment does need to contain either the Java Class files needed for the application, and if references are made to Jar Library files , these need to be present.
+
+2. The same versions of the SDK Product must match the IBM Cognos BI Product that you intend to make an Application for. 
+Example : Use 10.2.1 SDK with 10.2.1 Cognos BI.
+
+3. There are FixPacks occasionally for the SDK Development Kit. As of 10.2.x any SDK Fixes and Updates are within the FixPacks of the IBM Cognos BA SERVER.
+For any development to be successful, you need to use the correct version of the SDK installed, and any available FixPacks for it. You should be on the highest released SDK product in your Version of Software. To have an Installation of IBM Products and FixPacks done in the correct order should not be considered trivial. A re-application of the FixPacks , Updates and Interim Fixes should be done when for instance the SDK Product is added to the Installation with already certain fixes, updates and FixPacks installed. Consult with the Anayst or the SDK Team in a PMR / Case if in doubt.
+
+4. A new version installation of a IBM Cognos BI software, requires the same version installed of the SDK Product to be compatible. There is no forwards or backwards compatibility in IBM Cognos SDK Software other than what we clearly have specified.
+There can be special libraries released for the SDK which allow an Application made with the SDK to run on the higher version of the Software. For instance, using Cognos 8 SDK source code to compile and run on a Cognos 10 server, there is an sdk-compat library directory. 
+See the Technote references at the bottom of this document for further details.
+
+5. It is required when the IBM BI Server software is upgraded, to upgrade the SDK Application by re-evaluating of the source code, recompile and re-test of the application, ensuring the right version of Jar files from the ../sdk/java/lib directory are used.
+See the Technote references at the bottom of this document for information regarding the SDK Jar files that are included.
+
+6. Although we mentioned predominantly the Java SDK Product Jar Libraries in this document, all the question and answers equally apply also to the ® Microsoft ® dotNet ® IBM Cognos SDK Libraries and the Software Application Development done with these.
+Same solutions apply for SDK .NET applications - the code needs to be recompiled with the newer dlls that can be found in <cognos_install>\sdk folder.
+Be aware that the Microsoft ® Visual Studios make a copy the SDK API dll's in their folder structure. 
+To update this SDK API properly, these files need to be deleted and the Reference to the Libraries re-inserted in the Visual Studio solution.
+
+There are Additional modifications to the source code that also may be required, at any time during the life cycle of the SDK Products. Please, check the SDK Developer Guide , the Release Notes and the Appendices in this manual for specific changes that will apply.
+
+RELATED INFORMATION
+#TN 1441931 How to use SDK Libraries including Axis Jars [http://www-01.ibm.com/support/docview.wss?uid=swg21441931]
+SDK - Is it possible to use a different version of Axis [http://www-01.ibm.com/support/docview.wss?uid=swg21339832]

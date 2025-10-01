@@ -1,0 +1,187 @@
+Title: IBM PI49554: INVALID TRIGGERS CAN CAUSE EXPORT MIGRATION TO FAIL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description:
+   Replacing the ?out-of-the-box? empty_trigger_config_.xml file
+   with a particular trigger definition can cause Export Migration
+   to fail.
+   Replacing the trigger definition with another will allow the
+   same Export Migration operation to succeed.
+   The ?out-of-the-box? openpages-ext.jar does not contain the
+   trigger classes in either case, so they will fail to load during
+   startup.
+   
+   
+   Workaround:
+   Disable triggers via Administration Setting before performing
+   Export Migration.
+   OpenPages > Applications > GRCM > Disable Triggers (set to true)
+   
+   
+   Prerequisites:
+   OpenPages 7.0.0.4
+   Perform Export Migration on a field group
+   1.	Log in to OpenPages as OpenPagesAdministrator
+   2.	Go to Administration > Export Configuration
+   3.	Select Export local configuration and click the Submit button
+   
+   4.	Under the ?Choose Type? drop down box,  select Field Groups
+   and select any field group
+   5.	Click on the Save migration button
+   6.	Click the Refresh button periodically until the operation
+   completes.
+   7.	Confirm that Export Migration completes successfully.
+   Steps to Reproduce:
+   1.	Using a supported IE browser, log in to OPX URL
+   (http://serverhost:7009/opx) as OpenPagesAdministrator
+   2.	Click on Browse Files under Files and click on
+   _trigger_config_.xml
+   3.	Click on the Check Out File button
+   4.	Copy the attached  ?bad trigger.xml? to _trigger_config_.xml
+   and save it to c:\temp
+   5.	Click on Check in File button , select Yes to upload a new
+   version of the File
+   6.	Click the Browse button and select
+   c:\temp\_trigger_config_.xml and click Finish button
+   7.	Restart OP Services on the APP Server box.
+   (StopAllServers.cmd, StartAllServers.cmd)
+   8.	Perform the same steps in the PreReq section and confirm that
+   the export migration operation fails.
+   9.	Repeat Steps 1-3 in this section.
+   10.	Copy the attached ?good trigger.xml?  to
+   _trigger_config_.xml and save it to c:\temp
+   11.	Repeat Steps 5-7 in this section.
+   12.	Perform the same steps in the PreReq section and confirm
+   that the export migration operation now succeeds.
+   
+   
+   ID 101  fails with the ?bad trigger? in screenshot below
+   ID 103 succeeds with the ?good trigger? in screen shot below
+   
+   
+   
+   Expected Results:
+   Export Migration should succeed despite any Trigger issues.
+   
+   
+   Actual Results:
+   Export Migration errors out with particular trigger definitions.
+   
+   
+   Error Message:
+   
+   Clicking on the export migration detail log indicates a
+   successful ObjectManager Export in both cases.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * OpenPages Users                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * INVALID TRIGGERS CAN CAUSE EXPORT MIGRATION TO FAIL          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customers should download OpenPages 7.3 FP1 from Passport    *
+   * Advantage. See the following document for details on         *
+   * obtaining OpenPages 7.3 FP1:                                 *
+   * http://www.ibm.com/support/docview.wss?uid=swg24043595       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  We updated our documentation to say this is expected since there
+   are valid reasons why a trigger is invalid.   If you have
+   invalid triggers, your export will fail, so best practice is to
+   disable triggers prior to doing export configuration.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI49554
+   
+   
+ * REPORTED COMPONENT NAME
+   OPENPAGES GRC
+   
+   
+ * REPORTED COMPONENT ID
+   5725D5100
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-09-29
+   
+   
+ * CLOSED DATE
+   2017-05-09
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

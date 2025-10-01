@@ -1,0 +1,54 @@
+Title: IBM How to correctly use the Process Engine case-insensitive "PEV" views with Business Process Framework - United States
+
+Text:
+Process Analyzer; Process Engine; PEV view; VWV view; Business Process Framework TECHNOTE (FAQ)
+
+QUESTION
+ What is the best way to generate and configure Process Engine case-insensitive views for Business Process Framework? 
+
+CAUSE
+The Configuring Process Engine case-insensitive view support [http://publib.boulder.ibm.com/infocenter/p8docs/v4r5m1/topic/com.ibm.p8.installingbpf.doc/bpfpi069.htm] topic in the IBM FileNet Business Process Framework Installation Guide does not adequately document how to generate Process Engine (PE) case-insensitive views and configure Business Process Framework (BPF) to use them. If you are using a DB2 or Oracle database server, do not follow the documentation recommendation to manually edit the PE case-sensitive "VWV" views to make them case-insensitive for Business Process Framework (BPF). Manual editing of the "VWV" views on your system to render them case-insensitive can cause malfunctions in the Process Analyzer (PA). 
+
+ANSWER
+If your BPF system uses a DB2 or Oracle database server and runs with the PA product, perform the following steps: 
+
+ 1. Verify that you have upgraded to the following fix-pack levels: 
+     * BPF-4.1.0-003 or later 
+     * PE 4.0.3 or later 
+     * PA 4.0.3 or later
+       
+    
+    
+ 2. Implement PE case-insensitive "PEV" views for any and all PE queues that are mapped to BPF inbaskets in BPF Explorer. For more information, see the createDBviewsCl [http://publib.boulder.ibm.com/infocenter/p8docs/v4r5m1/topic/com.ibm.p8.doc/pe_help/vwtool/createDBviewsCI.htm] topic. 
+ 3.  
+ 4. Use BPF Explorer to configure BPF to operate with the case-insensitive "PEV" views. For more information, see the Updating queue names for case-insensitive views [http://publib.boulder.ibm.com/infocenter/p8docs/v4r5m1/topic/com.ibm.p8.installingbpf.doc/bpfin054.htm] topic.
+
+
+
+Recommendation 
+It is recommended that in the PE queues that are mapped to BPF inbaskets you create the following views:  * PE case-sensitive "VWV" views for PA 
+ * PE case-insensitive "PEV" views for BPF
+
+
+
+Example 
+In the following example, a customer is configuring PEV views with BPF by following the procedure above: 
+ * A BPF user with an existing case-sensitive view, "VWVQ123_CaseManagement", in PE creates a new case-insensitive view, "PEVQ123_CaseManagement", in the database to match the existing case-sensitive view by using the vwtool with the createDBviewsCI command. 
+   
+   See the createDBviewsCI [http://publib.boulder.ibm.com/infocenter/p8docs/v4r5m1/topic/com.ibm.p8.doc/pe_help/vwtool/createDBviewsCI.htm] topic for more information.
+   
+ * Then in BPF Explorer, the user navigates to the BPF internal definition of the view under Workflow Configuration > Queues > [QueueName]to edit the Object name field. 
+   
+   Note: In the screen shot below, the queue name is CaseManagement. 
+   
+   [/support/docview.wss?uid=swg21568463&aid=1] [/support/docview.wss?uid=swg21568463&aid=1]
+
+ * Then, the user changes the Object name from "f_sw.VWVQ123_CaseManagement" to "f_sw.PEVQ123_CaseManagement". The user clicks Apply to save the change, exits BPF Explorer, and restarts the application server. After the server is restarted, BPF uses the new PE case-insensitive "PEV" view to access the queue.
+
+
+
+Important 
+If your system does not use PA or if your system uses PA with a PE database on Microsoft SQL, you do not need to generate and use PE case-insensitive "PEV" views. For these systems, you can implement the traditional BPF workaround of manually modifying the VWV DDL definitions in the PE database so as to remove "" (double quotation marks) from the column aliases in order to make the "VWV" views case-insensitive. For more information, see the Updating Process Engine database views [http://publib.boulder.ibm.com/infocenter/p8docs/v4r5m1/topic/com.ibm.p8.installingbpf.doc/bpfin019.htm] topic. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management FileNet Business Process Framework

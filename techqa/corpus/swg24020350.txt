@@ -1,0 +1,75 @@
+Title: IBM PK69294; 6.1.0.19: cwxrs0013w: plug-in null ignored message during websphere por - United States
+
+Text:
+PK69294; PK69294; PK69294 DOWNLOADABLE FILES
+
+ABSTRACT
+ A warning message appears stating "Plug-in XXX ignored due to invalid ID" 
+
+DOWNLOAD DESCRIPTION
+PK69294 resolves the following problem:
+
+ERROR DESCRIPTION:? 
+CWX messages displayed in SystemOut.log during WebSphere® Portal 6.1 startup: 
+
+CWXRS0004E: Failed to resolve plug-in 
+CWXRS0013W: Plug-in null ignored 
+"org.eclipse.core.resources.resourceMappingAdapters" due to 
+invalid ID 
+
+Portal startup is not affected. Portal functionality is not affected. Messages do not indicate any real error and should be suppressed. 
+
+LOCAL FIX:? 
+Local Fix/Work Around is to ignore the messages. No real problem has occurred; the messages should be suppressed. 
+
+PROBLEM SUMMARY:?
+
+USERS AFFECTED:
+All users of IBM® WebSphere Application Server V6.1
+
+PROBLEM DESCRIPTION:
+A warning message appears stating "Plug-in XXX ignored due to invalid ID"
+
+RECOMMENDATION:
+None
+
+The extension app registry looks for plugin.xml files in multiple locations to load at server startup. Not all
+plugins.xml files are intended for consumption by the extension application registry and sometimes aren't in a format that the extension app registry can handle. In such cases, a warning message is displayed even though it's unlikely that you can do anything to avoid the message.
+
+PROBLEM CONCLUSION:? 
+The warning message will now only appear when tracing is enabled for the extension application registry. 
+
+The fix for this APAR is currently targeted for inclusion in fix pack 6.1.0.21. 
+
+
+
+
+Please refer to the Recommended Updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+Please download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK69294/readme.txt] US English 7685 
+DOWNLOAD PACKAGE
+
+
+Download package
+What is Fix Central (FC)? [http://www.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html]
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html]
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 6.1.0.19-WS-WAS-IFPK69294 08-29-2008 US English 18899 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=6.1.0.19-WS-WAS-IFPK69294&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK69294/6.1.0.9-WS-WAS-IFPK69294.pak] DD 
+
+
+
+
+
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www-306.ibm.com/software/support/probsub.html [http://www-306.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server Support Web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV(U.S. only). 
+
+ [/support/docview.wss?uid=swg24020350&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24020350&aid=2]Problems (APARS) fixed
+PK69294

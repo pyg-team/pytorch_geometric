@@ -1,0 +1,44 @@
+Title: IBM Transaction log space monitoring auto growth enabled - United States
+
+Text:
+5724B96MOTR; koq TECHNOTE (FAQ)
+
+QUESTION
+ How do you monitor transaction log space monitoring based on its auto growth setting, with ITCAM agent for MSSQL Server? 
+
+CAUSE
+You want to monitor transaction log space availability for logs that are not auto growth enabled. MS SQL Database Detail attribute group has Transaction Log Space usage related attributes such as Log Size, Log Freespace etc, but it does not contain an attribute to check the auto growth setting of transaction log.
+
+ANSWER
+1) The reason why the 'autogrowth' setting is not available for the transaction log in Database Detail attribute group is as follows: 
+
+The auto growth setting is per database file or log file. Therefore, if you want to set auto growth, you must set the option on individual file. 
+Database Detail attribute group shows information about the whole database, such as its status, aggregate database free space, log free space etc. The log free space (Log Freespace) is aggregation of free space in all the log files for that database. Similarly, for datafiles free space (Data Files Freespace) is aggregation of free space in all data files for that database. Auto growth setting of each file cannot be shown in Database Detail attribute group, because there can be multiple log files, and each file can have a different auto growth settings. 
+
+2) The Device Detail attribute group shows the autogrowth, size, free space, free space percent etc. details for all database files and log files corresponding to each database. Note that here 'device' does not mean actual disk, here 'device' means individual file present in each database. 
+
+Therefore, to monitor the transaction log space with restricted growth files, create situations based on the Device Detail attribute group. 
+
+3) Creating the situation: 
+
+Device Detail workspace is available on the "Database" navigator node. 
+It contains the following attributes which can be used in a situation: 
+
+Autogrowth Indicates whether the autogrowth feature is enabled for a device. If the autogrowth feature is enabled, the maximum file size is displayed as restricted or unrestricted. The following values are valid: 
+
+External value Description 
+Not Collected The value could not be collected. 
+Disabled The autogrowth feature is disabled. 
+Restricted The growth is restricted. 
+Unrestricted The growth is unrestricted. 
+
+Device Free Space Percent The percentage of free space on the device. 
+The value format is a percentage with two decimal places allowed; for example, 15.00. Adequate space is required to support database and system administration activities. Set alerts for abnormal conditions. 
+
+For example, create a situation to monitor the condition when autogrowth is restricted and device free space percent is less than 20. 
+
+Formula : 
+( Autogrowth == Restricted AND Device Free Space Percent < 20 ) 
+
+
+[/support/docview.wss?uid=swg21697642&aid=1] [/support/docview.wss?uid=swg21697642&aid=1]

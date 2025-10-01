@@ -1,0 +1,152 @@
+Title: IBM PK72557: ALL ITEM SYNDICATION DOES NOT SYNDICATE DRAFTS IF THERE IS A PUBLISHED VERSION OF THE CONTENT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.1 Download: WebSphere Portal and Web Content Management V6.1, fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24020387]
+6.1.0.2 Download: WebSphere Portal and Web Content Management V6.1, fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022898]
+6.1.0.3 Download: WebSphere Portal and WCM V6.1 fix pack 3, 6.1.5 feature pack [http://www-01.ibm.com/support/docview.wss?uid=swg24025054]
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During All item syndication, draft items are failing to
+   syndicate correctly (changes to draft not reflected on
+   subscriber, draft not being removed on subscriber after
+   publish on syndicator, ect.)
+   ..
+   Affected USERS: All
+   ..
+   The WCM code has been updated to check the last modified date of
+   the draft if no draft exists it will then use the published
+   content's date.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Syndication does not syndicate draft updates if there is a
+   published version of the content.
+   ..
+   AFFECTED USERS:  ALL
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Updates to draft content that have a published version do not
+   get syndicated even when 'all items' syndication is used.
+   Create and Delete of the draft get syndicated but updates to the
+   same draft content do not get syndicated.
+   .
+   The code is using the published contents last modified date
+   rather than the draft contents last modified date.  When package
+   generator builds the package it first checks for a create date
+   on a non-draft then a draft.  It should check the draft first
+   because if a draft exists an update would have to be performed
+   on the draft and not the live content.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK72557
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   60H
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-22
+   
+   
+ * CLOSED DATE
+   2008-09-23
+   
+   
+ * LAST MODIFIED DATE
+   2008-09-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  WCM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60H PSY
+   UP
+   
+   
+ * R610 PSY
+   UP

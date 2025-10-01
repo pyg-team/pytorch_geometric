@@ -1,0 +1,259 @@
+Title: IBM IV41639: ACCESSCONTROLEXCEPTION LEADS TO NOCLASSDEFFOUNDERROR DUE TO SYNT HETICREPOSITORY CLASS INITIALIZATION FAILURE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: com.ibm.ws.webcontainer.servlet.ServletWrapper
+   service SRVE0068E: Uncaught exception created in one of the
+   service methods of the servlet test in application
+   testClassNotFoundOK. Exception created :
+   java.lang.NoClassDefFoundError:
+   com.ibm.xtq.bcel.util.SyntheticRepository (initialization
+   failure)
+   .
+   Stack Trace: com.ibm.ws.webcontainer.servlet.ServletWrapper
+   service SRVE0068E: Uncaught exception created in one of the
+   service methods of the servlet test in application
+   testClassNotFoundOK. Exception created :
+   java.lang.NoClassDefFoundError:
+   com.ibm.xtq.bcel.util.SyntheticRepository (initialization
+   failure)
+    at java.lang.J9VMInternals.initialize(J9VMInternals.java:140)
+    at com.test.doGet(test.java:39)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:718)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:831)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWr
+   apper.java:1658)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(Ser
+   vletWrapper.java:940)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(Ser
+   vletWrapper.java:503)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.handleRequest
+   (ServletWrapperImpl.java:181)
+    at
+   com.ibm.ws.webcontainer.webapp.WebApp.handleRequest(WebApp.java:
+   3954)
+    at
+   com.ibm.ws.webcontainer.webapp.WebGroup.handleRequest(WebGroup.j
+   ava:276)
+    at
+   com.ibm.ws.webcontainer.WebContainer.handleRequest(WebContainer.
+   java:942)
+    at
+   com.ibm.ws.webcontainer.WSWebContainer.handleRequest(WSWebContai
+   ner.java:1592)
+    at
+   com.ibm.ws.webcontainer.channel.WCChannelLink.ready(WCChannelLin
+   k.java:186)
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleDiscr
+   imination(HttpInboundLink.java:453)
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleNewRe
+   quest(HttpInboundLink.java:515)
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.processRequ
+   est(HttpInboundLink.java:306)
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.ready(HttpI
+   nboundLink.java:277)
+    at
+   com.ibm.ws.tcp.channel.impl.NewConnectionInitialReadCallback.sen
+   dToDiscriminators(NewConnectionInitialReadCallback.java:214)
+    at
+   com.ibm.ws.tcp.channel.impl.NewConnectionInitialReadCallback.com
+   plete(NewConnectionInitialReadCallback.java:113)
+    at
+   com.ibm.ws.tcp.channel.impl.AioReadCompletionListener.futureComp
+   leted(AioReadCompletionListener.java:165)
+    at
+   com.ibm.io.async.AbstractAsyncFuture.invokeCallback(AbstractAsyn
+   cFuture.java:217)
+    at
+   com.ibm.io.async.AsyncChannelFuture.fireCompletionActions(AsyncC
+   hannelFuture.java:161)
+    at com.ibm.io.async.AsyncFuture.completed(AsyncFuture.java:138)
+    at
+   com.ibm.io.async.ResultHandler.complete(ResultHandler.java:204)
+    at
+   com.ibm.io.async.ResultHandler.runEventProcessingLoop(ResultHand
+   ler.java:775)
+    at com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:905)
+    at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1646)
+   Caused by: java.lang.ExceptionInInitializerError
+    at java.lang.J9VMInternals.initialize(J9VMInternals.java:222)
+    at
+   com.ibm.xtq.bcel.util.SyntheticRepository.<clinit>(SyntheticRepo
+   sitory.java:86)
+    at java.lang.J9VMInternals.initializeImpl(Native Method)
+    at java.lang.J9VMInternals.initialize(J9VMInternals.java:200)
+    ... 26 more
+   Caused by: java.security.AccessControlException: Access denied
+   (java.io.FilePermission
+   /opt/IBM/WebSphere/AppServer/profiles/profile1/properties read)
+    at
+   java.security.AccessController.checkPermission(AccessController.
+   java:132)
+    at
+   java.lang.SecurityManager.checkPermission(SecurityManager.java:5
+   44)
+    at
+   com.ibm.ws.security.core.SecurityManager.checkPermission(Securit
+   yManager.java:206)
+    at
+   java.lang.SecurityManager.checkRead(SecurityManager.java:883)
+    at java.io.File.exists(File.java:742)
+    at
+   com.ibm.xtq.bcel.util.ClassPath.getPathComponents(ClassPath.java
+   :142)
+    at
+   com.ibm.xtq.bcel.util.ClassPath.getClassPath(ClassPath.java:160)
+    at com.ibm.xtq.bcel.util.ClassPath.<init>(ClassPath.java:113)
+    at com.ibm.xtq.bcel.util.ClassPath.<clinit>(ClassPath.java:69)
+    at java.lang.J9VMInternals.initializeImpl(Native Method)
+    at java.lang.J9VMInternals.initialize(J9VMInternals.java:200)
+    at
+   com.ibm.xtq.bcel.util.SyntheticRepository.<clinit>(SyntheticRepo
+   sitory.java:86)
+    at java.lang.J9VMInternals.initializeImpl(Native Method)
+    at java.lang.J9VMInternals.initialize(J9VMInternals.java:200)
+    at com.test.doGet(test.java:39)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:718)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:831)
+    ... 23 more
+   .
+   NA
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Access is denied when trying to read some files. Due to this
+   AccessControlException, SyntheticRepository class fails to be
+   initialized. Later, when trying to access this class,
+   NoClassDefFoundError occurs.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   6.0.0 SR14
+   6.0.1 SR6
+   7.0.0 SR5
+   .
+   The fix resolved the AccessControlException. SyntheticRepository
+   class can be initialized properly, hence NoClassDefFoundError
+   does not occur.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV41639
+   
+   
+ * REPORTED COMPONENT NAME
+   XML/XSL
+   
+   
+ * REPORTED COMPONENT ID
+   620700126
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-05
+   
+   
+ * CLOSED DATE
+   2013-06-20
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   XML/XSL
+   
+   
+ * FIXED COMPONENT ID
+   620700126
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

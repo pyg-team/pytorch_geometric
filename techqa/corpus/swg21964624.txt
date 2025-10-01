@@ -1,0 +1,21 @@
+Title: IBM Websphere startup hung threads - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Restarting the WebSphere node and it has been 30 minutes and it is still not Running. 
+
+SYMPTOM
+Within the SystemOut log file there the following errors 00000003 ThreadMonitor W WSVR0605W: Thread "WebContainer : 5" (00000019) has been active for 624670 milliseconds and may be hung. There is/are 1 thread(s) in total in the server that may be hung 
+
+Within the SystemErr.log file there were a bunch of errors related to java out of memory...Exception in thread "LT=1:P=633918:O=0:port=9403" java.lang.OutOfMemoryErrorException in thread "Shared TCPChannel NonBlocking Accept Thread" Exception in thread "WebContainer : 4" java.lang.Error: java.lang.OutOfMemoryError: Java heap space: 
+
+
+CAUSE
+This was caused by the minimum heap size and maximum heap size settings not being set
+[/support/docview.wss?uid=swg21964624&aid=1] [/support/docview.wss?uid=swg21964624&aid=1]
+
+
+RESOLVING THE PROBLEM
+If the Initial heap size and Maximum heap size settings are blank it defaults to a minimum of 50MB and a maximum of 250MB. Changed the settings so the minimum was 2048MB and the maximum was 4096MB Websphere restarted the Websphere server and the sever came back up and was running without any problems. ****Note these settings are not always going to be the same depending on things such as context pool settings these number may need to be different. In this particular case the customer had a context pool setting of 100.

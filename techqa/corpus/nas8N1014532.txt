@@ -1,0 +1,45 @@
+Title: IBM What causes SNMP to generate TCP4016 Trap Messages? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Occasionally TCP4016 "SNMP &1 trap generated" messages will be issued. What causes this? 
+
+DIAGNOSING THE PROBLEM
+MSGTCP4016 may be seen in QHST indicating that a SNMP trap has been generated 
+
+e.g. TCP4016 SNMP linkup trap generated
+
+Reviewing CHGSNMPA showed that no trap manager had been defined, and so there was a question as to why SNMP traps were being generated
+
+
+RESOLVING THE PROBLEM
+When SNMP is started on a system, it will generate SNMP traps for certain events on the system regardless of whether the system has been configured with defined trap managers or not. A defined SNMP trap manager will allow SNMP to send that trap message to an external trap manager as well as report it locally. 
+
+
+SNMP can generate the following kinds of trap messages on the IBM i:
+
+coldStart- SNMP agent is reinitializing and configuration may have been altered
+
+warmStart- SNMP agent is reinitializing but configuration has not been altered
+
+linkDown- an interface has been deactivated
+
+linkUp- an interface has been activated
+
+authenticationFailure- a SNMP user has attempted to access the agent without the correct credentials
+
+enterpriseSpecific- a placeholder that allows SNMP agent or subagent implementations to create enterprise-specific traps
+
+If the system is not using SNMP, and you do not wish to receive the messages, then CHGSNMPA AUTOSTART(*NO) to prevent SNMP from being autostarted with TCP.
+
+If you want to configure a Trap Manager to receive the traps, or just want more information on SNMP traps, see Chapter 11 of Redbook SG24-4504 [https://www.redbooks.ibm.com/redbooks/SG244504.html]An Introduction to AS/400 SNMP Support
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 441157565

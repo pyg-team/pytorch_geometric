@@ -1,0 +1,137 @@
+Title: IBM IV44481: WINDOWS OS AGENT AND MICRO FOCUS COUNTERS INCOMPATIBILITY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment: The Monitoring Agent for Windows OS 6.2.2
+   
+   
+   Problem Description: The Windows OS agent fails to start on
+   Windows servers where Micro Focus products are also installed.
+   This issue was reported in several cases and it is caused by a
+   corruption in one of the DLLs that supports Micro Focus
+   performance counters.  The exact symptom can be highlighted by
+   starting the agent at a command prompt:
+   C:\IBM\ITM\tmaitm6\kntcma TEST
+   
+   and checking that it soon crashes with the following message:
+   
+   Object Code error : file 'cas0perf'
+   error code: 153, pc=0, call=1, seg=0
+   153     Subscript out of range
+   
+   
+   Solution is given by disabling Micro Focus counters using
+   Microsoft tools like exctrlst:
+   http://technet.microsoft.com/en-us/library/cc737958.aspx [http://technet.microsoft.com/en-us/library/cc737958.aspx]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Problem Description: WINDOWS OS AGENT AND MICRO FOCUS COUNTERS
+   INCOMPATIBILITY
+   
+   Problem/Problem Summary: The Windows OS agent fails to start on
+   Windows servers where Micro Focus products are also installed.
+   This issue was reported in several cases and it is caused by a
+   corruption in one of the DLLs that supports Micro Focus
+   performance counters.  The exact symptom can be highlighted by
+   starting the agent at a command prompt:
+   C:\IBM\ITM\tmaitm6\kntcma TEST
+   and checking that it soon crashes with the following message:
+    Object Code error : file 'cas0perf'
+    error code: 153, pc=0, call=1, seg=0
+    153     Subscript out of range
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Solution is given by disabling Micro Focus
+   counters using Microsoft tools like exctrlst:
+   http://technet.microsoft.com/en-us/library/cc737958.aspx [http://technet.microsoft.com/en-us/library/cc737958.aspx]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV44481
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040W
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-19
+   
+   
+ * CLOSED DATE
+   2013-06-27
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

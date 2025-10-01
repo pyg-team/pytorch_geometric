@@ -1,0 +1,154 @@
+Title: IBM How do I import a Microsoft IIS (IIS) certificates into an IBM HTTP Server key database? - United States
+
+Text:
+p12; PKCS12; convert; pfx; export; import; certificates; cms key database; key.kdb; key.p12 TECHNOTE (FAQ)
+
+QUESTION
+ The export of an IIS certificate produces a .pfx formatted file. Getting the content of this file into an IBM® HTTP Server keystore requires specific steps to extract parts of the .pfx file. These parts then can be incorporated into a key store. 
+
+ANSWER
+This process involves multiple steps and assumes that you have extracted the .pfx file from IIS. If you have not created the .pfx file from IIS, or you are unsure how to create this file, consult with Microsoft Support for those instructions.
+
+
+
+
+
+[/support/docview.wss?uid=swg21269079&amp;aid=1] [/support/docview.wss?uid=swg21269079&amp;aid=2] Open the .PFX file [/support/docview.wss?uid=swg21269079&amp;aid=3] Personal extraction [/support/docview.wss?uid=swg21269079&amp;aid=4] Signer extraction [/support/docview.wss?uid=swg21269079&amp;aid=5] Signer preparation [/support/docview.wss?uid=swg21269079&amp;aid=6] New key file [/support/docview.wss?uid=swg21269079&amp;aid=7] Adding the signer [/support/docview.wss?uid=swg21269079&amp;aid=8] Importing the personal 
+
+
+
+
+Open the .PFX file 
+ 1. Start the iKeyman tool. 
+    
+    
+ 2. Select Open from the Key Database File menu.
+    
+    
+ 3. Select PKCS12 for the Key Database Type within the open dialog box.
+    
+    
+ 4. Locate the .pfx file that was generated from the IIS export process. You will be prompted for a password.
+
+
+At this point, iKeyman will display both the Personal Certificate and the associated Signer. 
+
+
+Personal extraction 
+ 1. From the Personal Certificate area, click the Export/Import button to bring up the Export/Import Key dialog box.
+    
+    
+ 2. Select the Export radio button.
+    
+    
+ 3. Choose PKCS12 from the Key File Type list box.
+    
+    
+ 4. Provide a name for the file leaving the ".p12" extension, and alter the path to the file, if necessary.
+    
+    
+ 5. Click OK. This will bring up a Password Prompt dialog box.
+    
+    
+ 6. Enter a password and confirm it. At this point you have extracted a copy of the Personal Certificate into a .p12 format.
+
+
+Signer extraction 
+The results of this next section may not be needed. It all depends on whether the default Signer certificates provided within a new key database file are all that are necessary to bring in the personal certificate generated from the section above. Execute these steps in case the Signer is required. 
+ 1. Select Signer from the object list box.
+    
+    
+ 2. Select the Signer certificate and click Extract. This will bring up the Extract Certificate to a File dialog box. 
+    
+    
+ 3. You can leave the default file type.
+    
+    
+ 4. Provide a name for the file leaving the extension, and alter the path to the file, if necessary.
+    
+    
+ 5. Click OK to complete the extraction.
+
+
+Signer preparation 
+When this Signer file was created, it still had the personal certificate attached to it. This next set of instructions is necessary to separate the 2 certificates. 
+ 1. Search for and locate the file created in the "Signer extraction" section just above.
+    
+    
+ 2. Make a copy of it and rename the new file with a ".cer" extension.
+    
+    
+ 3. Double click the new file to bring up the Microsoft Windows® "Certificate" panel. Within this panel, you can view the content of the certificate and its certification path.
+    
+    
+ 4. Select the Certification Path tab at the top of the panel. This window provides a visual view of the authentication chain. Usually, the last one listed is the personal certificate and those above represent the Signing authority.
+    
+    
+ 5. Select the Signing authority listed above the personal certificate.
+    
+    
+ 6. Below the viewing window, click View Certificate. This will bring up a new Microsoft Windows "Certificate" panel.
+    
+    
+ 7. Looking at this new panel, select the Details tab at the top. This tab provides all of the details associated the certificate you are viewing.
+    
+    
+ 8. Below the viewing window, click Copy to File. This will bring up the Certificate Export Wizard.
+    
+    
+ 9. Follow the prompts through the wizard choosing the defaults on each panel. When prompted, provide a name for the new file. This new file will be created in a binary format with the extension of ".cer".
+
+
+New key file 
+Using the iKeyman tool, create a new key database file providing the necessary name and password information when you are prompted for it. Do not forget to check the box to Stash the password into a file?. 
+
+
+Adding the signer 
+ 1. With the new key file open within iKeyman, select the "Signer" from the object list box.
+    
+    
+ 2. Click Add to bring up the Add CA's Certificate to a file dialog box. This will launch an Open dialog panel.
+    
+    
+ 3. Change the Data Type to Binary DER data.
+    
+    
+ 4. Click the Browse and locate the signer certificate created within the "Signer preparation" section.
+    
+    
+ 5. Click OK to add the signer. This will bring up a new panel asking for a label.
+    
+    
+ 6. Enter a label for the new signer and click OK. After this, your new signer should have been added.
+
+
+Importing the personal 
+ 1. Select Personal Certificates from the object list box.
+    
+    
+ 2. Click Import button. This will bring up the Import Key panel.
+    
+    
+ 3. Change the Key File Type to PKCS12.
+    
+    
+ 4. Click Browse to locate the personal certificate created from the section labeled "Personal extraction". 
+    
+    
+ 5. Enter the password to this file when prompted and click OK. This will bring up the Change Labels panel which gives you the opportunity to change the label displayed within Ikeyman. This is not mandatory, but gives you the chance to put a meaningful text against your certificate rather than keeping the cryptic-like label displayed. This is especially useful if you plan to use the SSLServerCert directive within IBM HTTP Server to specifically point authentication to one of many certificates available within a single key database file.
+    
+    
+ 6. Select the certificate listed and type in a new label. Click Apply to set the new label.
+    
+    
+ 7. Click OK to complete the Import process.
+
+
+At this point, you should have a working key database file that can be used with IBM HTTP Server. RELATED INFORMATION
+ Convert a certificate stored in the PKCS12 or PFX to CM [http://www-01.ibm.com/support/docview.wss?uid=swg21666654]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server IBM HTTP Server AIX, HP-UX, Linux, Solaris, Windows 6.1, 6.0

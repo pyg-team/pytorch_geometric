@@ -1,0 +1,18 @@
+Title: IBM Security AppScan Source, IBM Security AppScan Standard and IBM Security AppScan Enterprise are not affected by Apache Struts 2 command execution vulnerability (CVE-2017-5638) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ IBM Security AppScan Source, IBM Security AppScan Standard and IBM Security AppScan Enterprise are not affected by Apache Struts 2 command execution vulnerability. 
+
+CONTENT
+IBM Security AppScan Source, IBM Security AppScan Standard and IBM Security AppScan Enterprise in all editions and all platforms are NOT vulnerable to Apache Struts 2 command execution vulnerability (CVE-2017-5638).
+IBM recommends that you review your entire environment and take appropriate mitigation and remediation action.
+
+Change History: March 14, 2017: Original version published.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security AppScan Enterprise Security IBM Security AppScan Standard Security IBM Security AppScan Source

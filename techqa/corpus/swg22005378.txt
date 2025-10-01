@@ -1,0 +1,191 @@
+Title: IBM Cognos Analytics 11: Connecting Hive/Impala with Kerberos Authentication on Linux Environments - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I enable Kerberos authentication for Hive/Impala data sources if my Cognos Analytics 11 is installed on linux? 
+
+ANSWER
+Note: Currently we only support Hortonworks Hive JDBC 4 drivers or Apache Hive JDBC 4 drivers. Cloudera Hive drivers or other commercial hive drivers are not supported. Cloudera Impala JDBC 4 drivers are supported.
+WARNING: Whenever using Kerberos authentication on a linux based environment, a Kerberos client install is required on the linux machine where Cognos is installed (Application tier servers only in case your Cognos install is distributed). For more details, please refer to the MIT Kerberos documentation (http://web.mit.edu/kerberos/krb5-devel/doc/index.html [http://web.mit.edu/kerberos/krb5-devel/doc/index.html]) or your Linux OS documentation.
+
+
+BEFORE YOU START: Make sure that Java Unrestricted policy is placed under JAVA_HOME/lib/security as per our documentation (https://www.ibm.com/support/knowledgecenter/SSEP7J_11.0.0/com.ibm.swg.ba.cognos.inst_cr_winux.doc/c_adv_config_change_jre_version.html [https://www.ibm.com/support/knowledgecenter/SSEP7J_11.0.0/com.ibm.swg.ba.cognos.inst_cr_winux.doc/c_adv_config_change_jre_version.html]). 
+
+Link to download Oracle Java 8 unrestricted policy: http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html [http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html] 
+
+ 
+
+We need to perform different steps when using Impala x Hive drivers: 
+
+Cloudera Impala
+
+
+ *  Create a file name jaaslogin.conf(to be placed in the cognos install path /cognos/analytics/configuration/). The file contents needs to be as follows:
+   
+   If you are using ORACLE JRE:
+   
+   Client {
+   com.sun.security.auth.module.Krb5LoginModule required
+   useKeyTab=true
+   keyTab=”<PathToTheKeyTab>/ibmcognosba.keytab”
+   principal=”username@KRBREALM.COM”
+   doNotPrompt=true;
+   };
+   
+   Notes:
+   - Principal name should the name of the database user that wants authentication.
+   - The keytab file should be created [https://www.ibm.com/support/knowledgecenter/en/SSEP7J_11.0.0/com.ibm.swg.ba.cognos.inst_cr_winux.doc/t_creatingakeytabfile.html] for the user who wants authentication.
+   - The keytab is like a signon for Cognos, it has credentials. 
+   - Name the keytab file ibmcognosba.keytab
+   - Principal should look like username@KRBREALM.COM.
+   
+   If you are using IBM JRE:
+   
+   com.cognos.biserver.security.xqe.jdbc
+   {
+   com.ibm.security.auth.module.Krb5LoginModule required useDefaultCcache=false debug=true;
+   };
+   
+   com.cognos.biserver.security.xqe
+   {
+   com.ibm.security.auth.module.Krb5LoginModule required debug=true
+   principal=“username@KRBREALM.COM"
+   useKeytab=“<PathToTheKeyTab>/ibmcognosba.keytab"
+   credsType=acceptor;
+   };
+   
+   other
+   {
+   com.ibm.security.auth.module.Krb5LoginModule required debug=true
+   principal=“username@KRBREALM.COM"
+   useKeytab=“<PathToTheKeyTab>/ibmcognosba.keytab"
+   credsType=acceptor;
+   };
+   
+   Remove any changes previously done to java.security, ie, any entries pointing to previous jaas*.conf files. (Skip this step if it is the first time you are attempting this configuration)
+   Example:
+   login.config.url.1=file:${java.home}/lib/security/jaas-oracle.conf
+   In all servers where you have Application Tier Components installed, copy the krb5.conf [https://www.ibm.com/support/knowledgecenter/en/SSEP7J_11.0.0/com.ibm.swg.ba.cognos.inst_cr_winux.doc/t_creatingakerberosinitializationfile.html] file to the JAVA_HOME/lib/security directory.
+   In IBM Cognos Administration, under System, expand your server, select Query Service > Set Properties > Settings, and enter the value in Additional JVM arguments for the query service:
+   
+   -Djava.security.auth.login.config=/cognos/analytics/configuration/jaaslogin.conf 
+   -Djavax.security.auth.useSubjectCredsOnly=false
+   Adjust the <cognos_install>/bin64/bootstrap_wlp_*.xml file adding the -Djava.security.auth.login.config as below:
+   
+   <param>-Djava.security.auth.login.config=/cognos/analytics/configuration/jaaslogin.conf</param>
+   <param>-Djavax.security.auth.useSubjectCredsOnly=false</param>
+   Create datasource with jdbc url and kerberos parameters as follows
+   
+   Type: Cloudera Impala
+   JDBC URL:
+   jdbc:impala://servername.com:21050/default;AuthMech=1;KrbRealm=REALM.COM;KrbHostFQDN=servername.com;KrbServiceName=impala;
+   Connection properties: <leave blank>
+   Driver class name: <leave the default option>
+   Signon: No Authentication 
+
+
+Hive 
+ * Note
+ * 
+ * ticket needs to be pre-cached
+ * 
+ * 
+ * 
+ * https://cwiki.apache.org/confluence/display/Hive/HiveServer2+Clients#HiveServer2Clients-JDBCClientSetupforaSecureCluster
+ * 
+ * 
+ * 
+ *  Create a file name jaaslogin.conf(to be placed in the cognos install path /cognos/analytics/configuration/). The file contents needs to be as follows:
+   
+   If you are using ORACLE JRE:
+   
+   Client {
+   com.sun.security.auth.module.Krb5LoginModule required
+   useKeyTab=false
+   keyTab=""
+   principal=""
+   doNotPrompt=true;
+   };
+   
+   Notes:
+   - Principal name should the name of the database user that wants authentication.
+   - The keytab file should be created [https://www.ibm.com/support/knowledgecenter/en/SSEP7J_11.0.0/com.ibm.swg.ba.cognos.inst_cr_winux.doc/t_creatingakeytabfile.html] for the user who wants authentication.
+   - The keytab is like a signon for Cognos, it has credentials. 
+   - Name the keytab file ibmcognosba.keytab
+   - Principal should look like username@KRBREALM.COM.
+   
+   If you are using IBM JRE:
+   
+   com.cognos.biserver.security.xqe.jdbc
+   {
+   com.ibm.security.auth.module.Krb5LoginModule required useDefaultCcache=false debug=true;
+   };
+   
+   com.cognos.biserver.security.xqe
+   {
+   com.ibm.security.auth.module.Krb5LoginModule required debug=true
+   principal=“username@KRBREALM.COM"
+   useKeytab=“<PathToTheKeyTab>/ibmcognosba.keytab"
+   credsType=acceptor;
+   };
+   
+   other
+   {
+   com.ibm.security.auth.module.Krb5LoginModule required debug=true
+   principal=“username@KRBREALM.COM"
+   useKeytab=“<PathToTheKeyTab>/ibmcognosba.keytab"
+   credsType=acceptor;
+   };
+   
+   Remove any changes previously done to java.security, ie, any entries pointing to previous jaas*.conf files. (Skip this step if it is the first time you are attempting this configuration)
+   Example:
+   login.config.url.1=file:${java.home}/lib/security/jaas-oracle.conf
+   In all servers where you have Application Tier Components installed, copy the krb5.conf [https://www.ibm.com/support/knowledgecenter/en/SSEP7J_11.0.0/com.ibm.swg.ba.cognos.inst_cr_winux.doc/t_creatingakerberosinitializationfile.html] file to the JAVA_HOME/lib/security directory.
+   In IBM Cognos Administration, under System, expand your server, select Query Service > Set Properties > Settings, and enter the value in Additional JVM arguments for the query service:
+   
+   -Djava.security.auth.login.config=/cognos/analytics/configuration/jaaslogin.conf
+   -Djavax.security.auth.useSubjectCredsOnly=false
+   Adjust the <cognos_install>/bin64/bootstrap_wlp_*.xml file adding the parameters as below:
+   
+   <param>-Djava.security.auth.login.config=/cognos/analytics/configuration/jaaslogin.conf</param>
+   <param>-Djavax.security.auth.useSubjectCredsOnly=false</param>
+   Create datasource with jdbc url and kerberos parameters
+   
+   Type: Hive
+   JDBC URL:
+   jdbc:hive2://servername.com:10000/default;principal=hive/<host>@KDCREALM.COM;auth=kerberos;kerberosAuthType=fromSubject;
+   Connection properties: <leave blank>
+   Driver class name: <leave the default option>
+   Signon: Select Password and Create a signon
+   User ID: <user>
+   Password: <password> 
+
+Troubleshooting tips: 
+
+ 1. We can test the configuration via a utility tool that is now part of CA11: http://www.ibm.com/support/knowledgecenter/en/SSEP7J_11.0.0/com.ibm.swg.ba.cognos.inst_cr_winux.doc/t_ig_verifyjdbccaps.html [http://www.ibm.com/support/knowledgecenter/en/SSEP7J_11.0.0/com.ibm.swg.ba.cognos.inst_cr_winux.doc/t_ig_verifyjdbccaps.html] 
+    
+ 2. For testing Kerberos connection outside Cognos, use the jdbc info tool:
+    JDBC info tool documentation - http://www-01.ibm.com/support/docview.wss?uid=swg27044512 [http://www-01.ibm.com/support/docview.wss?uid=swg27044512] 
+    
+    Steps for testing with jdbc info tool:
+    1. Copy the jdbcinfo.jar file from "..\webapps\p2pd\WEB-INF\lib" to "JAVA_HOME\jre\x.0\bin"
+    2. Execute from the java path (JAVA_HOME\jre\x.0\bin):
+    
+    >>> For Impala
+    java -cp "/cognos/analytics/drivers/*":jdbcinfo.jar com.ibm.cognos.jdbcinfo.App KerberosConnection com.cloudera.impala.jdbc4.Driver "jdbc:impala://localhost:21050/default;AuthMech=1;KrbRealm=<EXAMPLE.COM>;KrbHostFQDN=<impala.example.com>;KrbServiceName=impala;" <principal_user@KERBEROSREALM.COM> <password>
+    
+    >>> For Hive
+    java -cp "/cognos/analytics/drivers/*":jdbcinfo.jar com.ibm.cognos.jdbcinfo.App KerberosConnection org.apache.hive.jdbc.HiveDriver "jdbc:hive2://servername.com:10000/default;principal=hive/<host>@KDCREALM.COM;auth=kerberos;kerberosAuthType=fromSubject;" <principal_user@KERBEROSREALM.COM> <password>
+    
+ 3. Checking the keytab file – sample commands:
+    
+    - To find out the principal being used in the keytab type klist –k ibmcognosba.keytab 
+    
+    - To get a ticket using the keytab file type 
+    kinit <user@KRBREALM.COM> -k -t ibmcognosba.keytab
+    
+    - To display the cashed ticket type klist
+    
+    - To delete the cashed ticket type kdestroy

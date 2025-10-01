@@ -1,0 +1,173 @@
+Title: IBM HE11616: IBM Content Collector cannot extract the body text of some MIME email for indexing or processing with the SMTP Connector - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Content Collector V3.0 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24033902]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The IBM Content Collector SMTP Connector, IBM Content Collector
+   Text Search Support for Content Manager, and IBM Content
+   Collector P8 Content Search Services Support cannot extract the
+   body text of some MIME email. For these documents, all three
+   processes fail with a java.lang.ClassCastException when
+   extracting the body text. As a result, the document is not
+   processed.
+   
+   The trace files contain one of the following errors:
+   
+   java.lang.ClassCastException:
+   com.sun.mail.util.BASE64DecoderStream incompatible with
+   java.lang.String
+           at
+   com.ibm.icm.edc.emailconv.mime.BodyTextCollector.visit(BodyTextC
+   ollector.java:70)
+           ...
+   
+   java.lang.ClassCastException: com.sun.mail.util.QPDecoderStream
+   incompatible with java.lang.String
+         at
+   com.ibm.icm.edc.emailconv.mime.BodyTextCollector.visit(BodyTextC
+   ollector.java:70)
+         ...
+   
+   java.lang.ClassCastException:
+   javax.mail.util.SharedByteArrayInputStream incompatible with
+   java.lang.String
+         at
+   com.ibm.icm.edc.emailconv.mime.BodyTextCollector.visit(BodyTextC
+   ollector.java:70)
+         ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The JavaMail API method that is used to access the content of a
+   text MIME part returns the content as Java object. In most
+   cases, the returned object is of type String.
+   
+   However, there are cases where other object types are returned,
+   like com.sun.mail.util.BASE64DecoderStream,
+   com.sun.mail.util.QPDecoderStream, or
+   javax.mail.util.SharedByteArrayInputStream. In these cases, the
+   resulting object cannot be casted to type String, and a
+   ClassCastException occurs.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with IBM Content Collector 3.0.0 Fix Pack 2, the IBM
+   Content Collector SMTP Connector, Text Search Support for
+   Content Manager, and P8 Content Search Services Support handle
+   the object types mentioned above correctly. The body text of
+   such MIME email can therefore be extracted correctly.
+   MIME email for which the JavaMail API method returns other
+   object types might still return errors when IBM Content
+   Collector attempts to extract the body text.
+   
+   Component:
+   Server (SMTP Connector), Text Search (Content Manager, Content
+   Search Services)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE11616
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-27
+   
+   
+ * CLOSED DATE
+   2012-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R300 PSY
+   UP

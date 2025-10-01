@@ -1,0 +1,14 @@
+Title: IBM FAQ for IBM SPSS Statistics Subscription - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ FAQ for IBM SPSS Statistics Subscription 
+
+ANSWER
+Q. How to I cancel the auto-renewal of my IBM SPSS Statistics Subscription? 
+A. Auto-renewal will be available a few days after your subscription starts. Please check back after a few days to change your subscription level. Changes to auto-renewal will take affect at the end of the month long subscription period. 
+
+Q. I have installed the Subscription and when I attempt to login all I get is a big white screen. How do I get my subscription started?
+A. The most likely cause of this issue is installation of the 32bit IBM SPSS Statistics Subscription software on a 64bit machine. To fix the issue, please uninstall the 32bit and download and install the 64bit application from your Products & Services window on IBM.com. If you find that this does not resolve your issue, you have a new issue. Please open a Service Request using the Client Support Portal: http://ibm.biz/IBMClientSuccessPortal [http://ibm.biz/IBMClientSuccessPortal].

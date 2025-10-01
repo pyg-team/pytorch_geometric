@@ -1,0 +1,160 @@
+Title: IBM PM39581: PORTAL ADMINISTRATOR GETS ERROR WHILE CREATING VIRTUAL PORTAL. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Portal 7.0.x, if the Portal admin is not the same as the
+   WAS admin, attempting to create a virtual portal from the
+   Virtual Portal Manager portlet results in exception:
+   
+   EJPAH2012E: Can not find xmlaccess script
+   WebSphere:assetname=VirtualPortal.zip:InitVirtualPortal.xml.
+   
+     The virtual portal is created. However, when users access this
+   virtual portal, the page just displays:
+   
+   Loading ...
+   This page does not support content.
+   
+    If the Portal administrator attempts to re-initialize the
+   virtual portal from the Virtual Portal Manager portlet, the same
+   exception (EJPAH2012E) is thrown.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Log in to the IBM&#65449; WebSphere&#65449; ICS admin console as the WAS
+   administrative user and give the Portal admin user "Monitor"
+   role, which is the minimum requirement.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  PM39581 is part of Cumulative Fix CF006 for Portal 7.0.0.1, but
+   unfortunately the WAR is not redeployed in CF06, CF07, or CF08.
+   The WAR is properly redeployed in CF09.
+   
+   Therefore, in CF06, CF07, or CF08 to take advantage of this fix,
+   customers should manually redeploy the WAR by copying
+   PortalServer/ap/wp.ap.virtualportal/installableApps/ManageVirtua
+   lPortals.war to
+   PortalServer/installableApps/ManageVirtualPortals.war and then
+   running the ConfigEngine.sh/bat
+   deploy-portlet-upgrade-wp.ap.virtualportal
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  PM39581 is part of Cumulative Fix CF006 for Portal 7.0.0.1, but
+   unfortunately the WAR is not redeployed in CF06, CF07, or CF08.
+   The WAR is properly redeployed in CF09.
+   
+   Therefore, in CF06, CF07, or CF08 to take advantage of this fix,
+   customers should manually redeploy the WAR by copying
+   PortalServer/ap/wp.ap.virtualportal/installableApps/ManageVirtua
+   lPortals.war to
+   PortalServer/installableApps/ManageVirtualPortals.war and then
+   running the ConfigEngine.sh/bat
+   deploy-portlet-upgrade-wp.ap.virtualportal
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM39581
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-19
+   
+   
+ * CLOSED DATE
+   2011-11-16
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

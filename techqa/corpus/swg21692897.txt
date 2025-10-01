@@ -1,0 +1,23 @@
+Title: IBM Why Does the DCO Display Old Application Name in IBM Datcap Taskmaster Capture? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ After performing AppWizard to copy an existing application to a new application, the DCO still displays the old Application name. Why? 
+
+CAUSE
+That was the batch name from the previous application, and most application give the batch name the application name.
+
+ANSWER
+The Batch Type, like Document Type, Field Type, etc is just a name for the definition of what a valid batch contains. It corresponds with the dco_<batchtype> folder in the application folder. 
+
+ * Application Wizard creates applications with a single Batch Type named the same as the application name. This is just a convention not a requirement. Example: c:\datacap\TravelDocs\dco_TravelDocs\traveldocs.xml: <B type="TravelDocs"> 
+ * Some applications, e.g. the Medical Claims (mclaims) foundation application, contain more than one Batch Type: e.g. Professional and Institutional, to represent different types of batches that the application can process. In the MClaims example, there is no batch type matching the application name. 
+   Example: c:\datacap\MClaims\dco_Professional\Professional.xml: <B type="Professional"> 
+ * When changing the name of the application you may or may not want to change the batch type name, there is no technical reason it needs to be changed.
+   * Warning: the below work around may cause problems if the batch name is referenced else where.
+   Edit C:\Datacap\COPYISSUE\dco_COPYISSUE\COPYISSUE.xml
+   Change <B type="APT"> to <B type="COPYISSUE">
+   Save 
+ * In Datacap 9.0 there is a new method for attaching / binding rules to DCO types by the Batch/Doc/Page/Field name. This method is used by FastDoc and the new packaged Rulesets (with GUI), and can optionally be created in DStudio. When copying or renaming an application, if you change the DCO type name it will disconnect any rules attached to that name, unless you also change the rule binding at the same time.

@@ -1,0 +1,154 @@
+Title: IBM IV57247: DOCUMENTATION ERROR - PASSPHRASE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Despite the documentation here:
+   
+   http://pic.dhe.ibm.com/infocenter/tivihelp/v26r1/topic/com.ibm.t
+   em.doc_9.1/Remote_Control/RC_Admin_Guide/rcadminboundconnect.htm [http://pic.dhe.ibm.com/infocenter/tivihelp/v26r1/topic/com.ibm.tem.doc_9.1/Remote_Control/RC_Admin_Guide/rcadminboundconnect.htm]
+   l
+   and here
+   http://pic.dhe.ibm.com/infocenter/tivihelp/v26r1/topic/com.ibm.t
+   em.doc_9.1/Remote_Control/RC_Admin_Guide/rcadmgatewayconnect.htm [http://pic.dhe.ibm.com/infocenter/tivihelp/v26r1/topic/com.ibm.tem.doc_9.1/Remote_Control/RC_Admin_Guide/rcadmgatewayconnect.htm]
+   l
+   
+   the property  PassPhrase  is incorrect and will not be parsed by
+   the application, hence why the log files show
+    Gateway.Gateway1.Passphrase = .
+   The property Passphrase
+   is case sensitive and incorrectly defined in the
+   documentation and sample files.
+   Documentation wrongly report PassPhrase
+   The parameters as are case sensitive and Passphrase is the
+   correct name
+   for the parameter. Please change doc accordingly
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  In certain sections of the documentation the property PassPhrase
+   is incorrect. The correct name of the property is Passphrase.
+   The property name is case sensitive therefore if PassPhrase is
+   used in the gateway configuration file, it is not parsed by the
+   application. The result is that any defined pass phrase
+   properties are shown with a blank value in the gateway log. For
+   example, Gateway.Gateway1.Passphrase =
+   
+   The default TLS certificate pass phrase property is also
+   incorrect in the broker configuration section of the
+   documentation. It is written incorrectly as
+   DefaultTLSPassPhrase. The correct value for the property is
+   DefaultTLSCertificatePassphrase.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Changes have been made to the IBM Endpoint Manager for Remote
+   Control version 9.1.0 and version 9.0.x documentation.
+   
+   The following changes were made to the IBM Endpoint Manager for
+   Remote Control Administrators Guide.
+   
+   Accessing targets on different networks > Configuring the
+   gateway support > Configuring inbound connections.
+   
+   Changed: PassPhrase to Passphrase.
+   
+   
+   Accessing targets on different networks > Configuring the
+   gateway support > Configuring gateway connections.
+   
+   Changed: PassPhrase to Passphrase
+   
+   
+   Broker configuration > Default configuration parameters
+   
+   Changed: In table 12. changed DefaultTLSPassPhrase to
+   DefaultTLSCertificatePassphrase
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV57247
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV EP MGR REM
+   
+   
+ * REPORTED COMPONENT ID
+   5725C43RC
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-21
+   
+   
+ * CLOSED DATE
+   2014-03-25
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,150 @@
+Title: IBM Tracking nz user logins - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you know who logged in as user nz in IBM PureData for Analytics? 
+
+ANSWER
+This is a Linux-based document based on the default NPS Red Hat installation.
+The NPS host system is meant to be run from the nz account. It is not possible in a default configuration to tell who logged in as the nz user. However, you can use the sudo and su programs on the host machine to get basic information as to which user logged in to use the nz account and when.
+
+When multiple people are using the NPS system, it is difficult to tell which user has logged in and is using the nz account. One solution would be to only allow access to nz by logging in as themselves and changing the shell to nz. 
+
+The su (substitute user) command is used to assume the login shell of another user without logging out. su is a powerful command and, from a security perspective, care must be taken to limit its use. The preferred option is to limit who can access su and what they can do. This can be done by using another Linux program sudo (su do). 
+
+You can configure sudo to lock down a system and explicitly give permissions to users in a variety of ways. To force users to log in with their own accounts before switching to the nz user (allowing you to track them), do the following:
+
+1. Log into the system as the root user.
+2. Create user accounts as needed (for example, use useradd then passwd). For this example, users asmith, bjones, cchan, mpike, and jjohnson were created.
+3. Enter visudo From a terminal to open the /etc/sudoers file in protected mode using the vi editor (the default). 
+4. Edit the file to look like the following sample:
+
+# sudoers file.
+# 
+# This file MUST be edited with the 'visudo' command as root.
+#
+# See the sudoers man page for the details on how to write a sudoers file.
+#
+
+##
+# Host alias specification
+##
+
+##
+# User aliases
+##
+
+# List your users that you want to be a part of NZ_USERS
+User_Alias NZ_USERS = asmith, bjones, cchan, mpike, jjohnson
+
+# Change these users to your own admin users or comment it out
+User_Alias ADMINS = nz, adminuser, otheradmin
+
+##
+# Command alias specification
+##
+
+##
+# Defaults specification
+##
+Defaults lecture, logfile=/var/log/sudo.log
+
+##
+# User privilege specification
+##
+
+# root user can run anything on any machine as any user
+root ALL=(ALL) ALL
+
+# NZ users can su only to nz and no access to other shells
+NZ_USERS ALL= NOPASSWD: /bin/su - nz
+NZ_USERS ALL= !/bin/sh, !/bin/csh, !/bin/tcsh, !/bin/ksh, !/bin/zsh
+
+# Admin users can su to root
+ADMINS ALL=(ALL) /bin/su -
+
+# Permissions can be added using linux groups as well...
+# Uncomment to allow members of the admin group to gain root privileges
+# %admin ALL=(ALL) ALL
+
+# Uncomment to allow people in group wheel to run all commands
+# %wheel ALL=(ALL) ALL
+
+# Same thing without a password
+# %wheel ALL=(ALL) NOPASSWD: ALL
+
+##
+# NPS setup - allow access for nz user -- do not edit below this line --
+##
+nz ALL = NOPASSWD: /usr/local/sbin/nzinitarp, /nzlocal/scripts/rpc/spapwr.sh
+
+5. Disable su access except through sudo (so it can be logged).
+
+In order for su to work for non-root users (that is, allow non-root users to become root or any other user), /bin/su must have the setuid bit enabled, so it can run as root. If you remove the setuid bit from /bin/su, then even if a user knows the root password, they cannot su to root or any other user. Stripping setuid from /bin/su and restricting root logins from the console and via SSH is a very effective means of locking down unauthorized root access on your system. Here we will use it to allow only su to the nz user. To do this, simply give yourself sudo access to run su (as in the sample above), and strip the setuid bit from /bin/su by executing (as root):
+
+[root@hostname]# chmod u-s /bin/su
+
+This will change the permissions from:
+
+[root@hostname]# ls -l /bin/su
+-rwsr-xr-x 1 root root 18172 Aug 27 09:13 /bin/su*
+
+to:
+
+[root@hostname]# ls -l /bin/su
+-rwxr-xr-x 1 root root 18172 Aug 27 09:16 /bin/su*
+
+Now if you try to run the command su - as a non-root user, even if you type in the right password, you will not change to root. In order for someone to use su, they must exist in the sudoers file with the appropriate permissions (see Admin Users above), and must run su through sudo like this:
+
+[user@hostname]$ sudo su -
+[root@hostname]#
+
+At this point you can confirm that the sudoers file and su are set up correctly. Log in as one
+of the NZ_USERS (for example, asmith).
+
+From the terminal type: sudo -l
+
+This should show something like: 
+
+ * 
+ * (root) NOPASSWD: /bin/su - nz
+ * 
+ * (root) !/bin/sh
+ * 
+ * (root) !/bin/csh
+ * 
+ * (root) !/bin/tcsh
+ * 
+ * (root) !/bin/ksh
+ * 
+ * (root) !/bin/zsh
+
+
+This output means the user is allowed to run su - nz to change to the nz user and not 
+allowed to access the other shells on the system. 
+
+Now that you have everything set up, you can check some logs to determine what actions are 
+being taken. First, look at the /var/log/messages file. 
+
+Use grep to look for open / closed messages, in this example from 11:00 to 11:59 today: 
+
+# grep 'session [oc][pl][eo][ns]ed for user nz' /var/log/messages |grep '11:[0-5][0-9]' 
+
+This will return something like: 
+
+Aug 27 11:31:08 localhost su(pam_unix)[14953]: session opened for user nz by asmith(uid=0) 
+Aug 27 11:41:19 localhost su(pam_unix)[14953]: session closed for user nz 
+
+You can tell from this output that user asmith opened a session as the nz user and also that the session [14953] was subsequently closed 10 minutes later. Modify search parameters to suit your own needs. 
+
+Based on the configuration above, there is now a sudo log available called /var/log/sudo.log. This log keeps track of which sudo commands were run and by whom. Users should be only issuing sudo su - nz commands there, but if someone is trying to use it to do something else, you can look at this log to see what they are trying to do. 
+
+Read the comments of the sample sudoers file above for more insight into how it can be configured. If this is being used for security, there are additional options to conisder for configuring the sudoers file, such as limiting access to programs that allow shell access, like. vi. Instead, for example, you could deny vim access and allow rvim access instead. There is much written on Unix/Linux security and the function of sudo. Use this guide as a starting point to learning this valuable tool. 
+
+HISTORICAL NUMBER
+ NZ492188 
+
+PRODUCT ALIAS/SYNONYM
+ Netezza PDA

@@ -1,0 +1,157 @@
+Title: IBM PM28202: FOR THE SHORT TEXT ELEMENT FIELD IN WCM AUTHORING UI, THE NUMBER OF CHARACETRS ARE NOT VALIDATED FOR NON-ENGLISH DATA - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the short text element filed, WCM Authoring UI does not
+   validate the length of the text enter if the number of
+   characters are beyond 250 chars for non-english or mixed
+   language. Does not return a valid error or warning when attempt
+   to save.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Problem Summary:
+    PM28202 FOR THE SHORT TEXT ELEMENT FIELD IN WCM AUTHORING UI,
+   THE NUMBER OF CHARACTERS ARE NOT VALIDATED FOR NON-ENGLISH
+   
+   Detailed Problem Description:
+   When a user enters non-english text for example text with French
+   Accent characters saving the item can fail with the following
+   error:
+   
+   Error while calling a function createItems of PLS data manager.
+   The user is unaware why the save failed.
+   
+   Problem Analysis:
+   French accent characters are more than 1 byte the short text
+   field is limited to 250 bytes.  The input field is limited to
+   250 characters but when WCM attempts to store the item it fails
+   because the field although 250 characters or less is still
+   larger than 250 bytes.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem Solution:
+   Code has been added to validate the short text field vale and if
+   greater than 250 bytes truncate the text before save and display
+   a warning message.
+   
+   Affected Users:
+   All users .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM28202
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   615
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-12-06
+   
+   
+ * CLOSED DATE
+   2010-12-14
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61B PSY
+   UP
+   
+   
+ * R61C PSY
+   UP
+   
+   
+ * R610 PSY
+   UP
+   
+   
+ * R615 PSY
+   UP

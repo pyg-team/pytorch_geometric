@@ -1,0 +1,89 @@
+Title: IBM How to store the 2426 machine type in the firmware for easy reference - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I identify my 2426 appliance in the firmware? 
+
+ANSWER
+The new WebSphere DataPower appliances that are purchased from the Pass Port Advantage (PPA) site are Machine Type (M/T) 2426. 
+
+The 2426 M/T covers all DataPower appliances purchased from PPA including the 7199 (2U), 7198 (1U) and 4195(Blade) appliances. 
+
+The physical label on the front of the appliance lists the 2426 M/T but the firmware output will display the the sub M/T such as 7199. 
+
+Example of the "show system" output: 
+
+Note the "product id" shows the M/T and model in this case 7199 M/T 42X model (XI52) 
+
+
+xi52# show system
+
+description: DataPower XI52
+serial number: 6800000
+entitlement id: 6800000
+product id: 719942X [Rev 0001]
+OID: 1.3.6.1.4.1.14685.1.3
+uptime: 21 days 03:17:11
+contact: (unknown)
+name: 
+location: 
+services: 72
+backup mode: secure
+product mode: normal
+login-message:
+custom-ui-file:
+audit-reserve: 40 kBytes
+detect intrusion: disable
+locale: en
+
+
+NOTE: If the 7199 M/T is used to try to open a PMR for a 2426 M/T appliance the entitlement will fail. 
+
+ 
+
+To aid in identifying the 2426 M/T you may use the "entitlement id" field to note the M/T. 
+
+The "entitlement id" field can be modified from the WebGUI or CLI interfaces: 
+
+
+WebGUI:
+Select: Administration -> Device -> System Settings
+The appliance serial number should be in the field by default and add "-2426"
+
+[/support/docview.wss?uid=swg21666811&aid=1] [/support/docview.wss?uid=swg21666811&aid=1] 
+
+Once the "-2426" is entered select: Apply -> Save Config 
+
+
+CLI:
+config
+system
+entitlement <serial>-2426
+exit
+write mem
+y
+
+Once this is complete the "entitlement id" will be displayed on the System Settings page in the WebGUI, the "show system" CLI command output as well as in the error reports.
+
+Example:
+xi52# show system
+
+description: DataPower XI52
+serial number: 6800000
+entitlement id: 6800000-2426
+product id: 719942X [Rev 0001]
+OID: 1.3.6.1.4.1.14685.1.3
+uptime: 21 days 03:17:11
+contact: (unknown)
+name: 
+location:
+services: 72
+backup mode: secure
+product mode: normal
+login-message:
+custom-ui-file:
+audit-reserve: 40 kBytes
+detect intrusion: disable
+locale: en

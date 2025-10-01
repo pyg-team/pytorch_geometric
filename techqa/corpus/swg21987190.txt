@@ -1,0 +1,63 @@
+Title: IBM PureData System for Analytics Complete Preventive HealthCheck - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ Steps to follow to carry out preventive healthcheck as often as planned (montly, quarterly, annually) 
+
+CONTENT
+Collect Health check report:
+How to properly collect a PureData Systems for Analytics Health Check Report using nzhealthcheck? [http://www.ibm.com/support/docview.wss?uid=swg21903167]
+su - nz
+mkdir -p /nzscratch/monthlyHealthcheck/<date>
+cd /nzscratch/monthlyHealthcheck/<date>
+/nz/kit/bin/adm/nzhealthcheck 2>&1 | tee healthcheck.out
+
+Copy report to/nzscratch/monthlyHealthcheck/<date>:
+cp /nz/kit.<nspVersion>/log/nzhealthcheck/Netezza_System_Health_Check_Report_<date>_<time>.txt . 
+
+Collect System Stats
+Continue as nz from /nzscratch/monthlyHealthcheck/<date>, collect below stats, save them to check.out:
+
+nzstats 2>&1 | tee check.out 
+nzhw -issues 2>&1 | tee -a check.out
+nzds -issues 2>&1 | tee -a check.out
+nzstate 2>&1 | tee -a check.out
+nzrev 2>&1 | tee -a check.out 
+/nz/support/contrib/bin/nz_stats 2>&1 | tee -a check.out 
+
+Exit nz session and continue as root to collect rest of stats and save them to check.out:
+exit
+cd /nzscratch/monthlyHealthcheck/<date>
+
+crm_mon -1 2>&1 | tee -a check.out 
+service drbd status 2>&1 | tee -a check.out 
+Get same stats from standby host. In this example, ha1 is our active host and ha2 is our standby, modify accordingly if necessary:
+ssh ha2 !! 
+
+df -k 2>&1 | tee -a check.out 
+ssh ha2 !! 
+
+Substitute totalSpa accordingly below (information available via nzstats):
+for ((spa=1; spa<=<totalSpa> & spa<10; spa++)); do ssh mm00$spa health -l all -f -t; /nz/kit/share/nzhealthcheck/devmgrs/bin/adm/blade_sol_expect mm00$spa; done 2>&1 | tee -a check.out 
+
+for ((spa=10; spa<=<totalSpa>; spa++)); do ssh mm0$spa health -l all -f -t; /nz/kit/share/nzhealthcheck/devmgrs/bin/adm/blade_sol_expect mm0$spa;done 2>&1 | tee -a check.out 
+
+cat /nz/kit/log/sysmgr/sysmgr.log|grep "error\|PHY" 2>&1 | tee -a check.out 
+cat /var/log/messages|grep error 2>&1 | tee -a check.out 
+ifconfig|grep "error\|drop"|grep -v "errors:0\|dropped:0" 2>&1 | tee -a check.out 
+
+Collect System FDT Revision Checks:
+Assuming current directory is /nzscratch/monthlyHealthcheck/<date>
+
+/opt/nz/fdt/sys_rev_check 2>&1 | tee -a check.out 
+cp /opt/nz/fdt/log/sys_rev_check_<MMDDYYYY-HHMMSS>.log .
+
+Collect DSA logs from both hosts
+Collecting IBM Dynamic System Analysis (DSA) report from server node [http://www-01.ibm.com/support/docview.wss?uid=swg21680059]
+
+chmod +x /opt/nz-hwsupport/install_files/IBM/ibm_utl_dsa_dsytb31-9.30_portable_rhel6_x86-64.bin 
+/opt/nz-hwsupport/install_files/IBM/ibm_utl_dsa_dsytb31-9.30_portable_rhel6_x86-64.bin -d /nzscratch/monthlyHealthcheck/<date>
+
+If -d option is not used dsa log is placed in /opt/nz-hwsupport/install_files/IBM to this directory.

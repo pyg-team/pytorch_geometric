@@ -1,0 +1,28 @@
+Title: IBM JMS Target fails to process a document from the queue - United States
+
+Text:
+MQJMS2013 MQJE001 Reason 2035 JMS Target TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ JMS Target fails to process a document from the queue. The wbic_receiver.log shows the following messages:
+
+ERROR [jmsReceiverWorker] [Thread-39] - Got exception while Polling: MQJMS2013: invalid security authentication supplied for MQQueueManager
+...
+DEBUG [JmsReceiverWorker] [Thread-41] - caught MQJMS2008: failed to open MQ queuein run() InboundJMSQReceiver
+javax.jms.JMSSecurityException: MQJMS2008: failed to open MQ queue 
+at com.ibm.mq.jms.MQQueueSession.getQueueOpenException(MQQueueSession.java:936)
+at com.ibm.mq.jms.MQQueueSession.createReceiver(MQQueueSession.java:332)
+at com.ibm.mq.jms.MQQueueSession.createReceiver(MQQueueSession.java:230)
+at com.ibm.bcg.server.receiver.JmsReceiverWorker.poll(JmsReceiverWorker.java:417)
+at com.ibm.bcg.server.receiver.JmsReceiverWorker.run(JmsReceiverWorker.java:1836)
+ERROR [JmsReceiverWorker] [Thread-41] - MQ Exception: com.ibm.mq.MQException: MQJE001: Completion Code 2, Reason 2035 
+
+RESOLVING THE PROBLEM
+The problem is with MQ authorization:
+1 - To address MQJMS2013: On MQ, change the svrconn channel 'java.client' definition MCAUSER parameter from "nobody" to the Receiver userid "bcgrecv", i.e.:
+runmqsc <qmgr_name>
+alter channel('java.client') chltype(svrconn) mcauser('bcgrecv') 
+
+2 - To address MQJE001: Completion Code 2, Reason 2035: Set up the MQ queue authority for the group "bcggroup" using the setmqaut command, i.e.: 
+setmqaut -m <qmgr_name> -t queue -n <queue_name> -g <group_name> +allmqi 
+where "allmqi" allows the members of the bcggroup to set all mq interface commands (put, get, browse...) on that queue.

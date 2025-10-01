@@ -1,0 +1,293 @@
+Title: IBM PM86627: DEADLOCK OCCURS WHEN STOPPING A COMPOSITION UNIT CONTAINING BLUEPRINT SHORTLY AFTER STARTING IT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.1: WebSphere Application Server V8.5.5 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035935]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+8.5.5.2: WebSphere Application Server V8.5.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037250]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.5.5.3: WebSphere Application Server V8.5.5 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038133]
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A deadlock can occur when stopping a compoistion unit that
+   contains Blueprint shortly after the composition unit is
+   started.  The following stacks show the locks involved:
+   
+   Blocked on: java/lang/Object@0x00000000B00078C0 Owned by:
+   "Blueprint Extender: 2" (J9VMThread:0x00000000323F6100,
+   java/lang/Thread:0x00000000424BE900)
+   Java callstack:
+   at
+   org/apache/aries/blueprint/container/ReferenceRecipe.untrack(Ref
+   erenceRecipe.java:151(Compiled Code))
+   at
+   org/apache/aries/blueprint/container/AbstractServiceReferenceRec
+   ipe.serviceRemoved(AbstractServiceReferenceRecipe.java:286(Compi
+   led Code))
+   at
+   org/apache/aries/blueprint/container/AbstractServiceReferenceRec
+   ipe.serviceChanged(AbstractServiceReferenceRecipe.java:258(Compi
+   led Code))
+   at
+   org/eclipse/osgi/internal/serviceregistry/FilteredServiceListene
+   r.serviceChanged(FilteredServiceListener.java:104)
+   at
+   org/eclipse/osgi/framework/internal/core/BundleContextImpl.dispa
+   tchEvent(BundleContextImpl.java:933)
+   at
+   org/eclipse/osgi/framework/eventmgr/EventManager.dispatchEvent(E
+   ventManager.java:227)
+   at
+   org/eclipse/osgi/framework/eventmgr/ListenerQueue.dispatchEventS
+   ynchronous(ListenerQueue.java:149)
+   at
+   org/eclipse/osgi/internal/serviceregistry/ServiceRegistry.publis
+   hServiceEventPrivileged(ServiceRegistry.java:756)
+   at
+   org/eclipse/osgi/internal/serviceregistry/ServiceRegistry.publis
+   hServiceEvent(ServiceRegistry.java:711)
+   at
+   org/eclipse/osgi/internal/serviceregistry/ServiceRegistrationImp
+   l.unregister(ServiceRegistrationImpl.java:225)
+   at
+   org/apache/aries/util/AriesFrameworkUtil.safeUnregisterService(A
+   riesFrameworkUtil.java:114(Compiled Code))
+   at
+   org/apache/aries/blueprint/container/ServiceRecipe.unregister(Se
+   rviceRecipe.java:207(Compiled Code))
+   at
+   org/apache/aries/blueprint/container/BlueprintContainerImpl.noti
+   fySatisfaction(BlueprintContainerImpl.java:623(Compiled Code))
+   (entered lock:
+   org/apache/aries/blueprint/container/ServiceRecipe@0x00000000AC3
+   C94B8, entry count: 1)
+   at
+   org/apache/aries/blueprint/container/AbstractServiceReferenceRec
+   ipe.setSatisfied(AbstractServiceReferenceRecipe.java:323(Compile
+   d Code))
+   at
+   org/apache/aries/blueprint/container/AbstractServiceReferenceRec
+   ipe.serviceRemoved(AbstractServiceReferenceRecipe.java:288(Compi
+   led Code))
+   at
+   org/apache/aries/blueprint/container/AbstractServiceReferenceRec
+   ipe.serviceChanged(AbstractServiceReferenceRecipe.java:258(Compi
+   led Code))
+   at
+   org/eclipse/osgi/internal/serviceregistry/FilteredServiceListene
+   r.serviceChanged(FilteredServiceListener.java:104)
+   ...
+   at
+   com/ibm/ws/runtime/component/CompositionUnitMgrImpl$ControlOpHan
+   dler.invokeControlOperationHandler(CompositionUnitMgrImpl.java:1
+   072)
+   at
+   com/ibm/ws/runtime/component/CompositionUnitMgrImpl$ControlOpHan
+   dler.stop(CompositionUnitMgrImpl.java:1038)
+   at
+   com/ibm/ws/runtime/component/CompositionUnitMgrImpl.stop(Composi
+   tionUnitMgrImpl.java:502)
+   at
+   com/ibm/ws/runtime/component/CompositionUnitImpl.stop(Compositio
+   nUnitImpl.java:141)
+   at
+   com/ibm/ws/runtime/component/CompositionUnitMgrImpl$2.run(Compos
+   itionUnitMgrImpl.java:805)
+   at
+   com/ibm/ws/security/auth/ContextManagerImpl.runAs(ContextManager
+   Impl.java:5453(Compiled Code))
+   ...
+   
+   and
+   
+   Blocked on:
+   org/apache/aries/blueprint/container/ServiceRecipe@0x00000000AC3
+   C94B8 Owned by: "Default : 4" (J9VMThread:0x000000003349B700,
+   java/lang/Thread:0x00000000500D1318)
+   Java callstack:
+   at
+   org/apache/aries/blueprint/container/ServiceRecipe.decrementActi
+   veCalls(ServiceRecipe.java:468(Compiled Code))
+   at
+   org/apache/aries/blueprint/container/QuiesceInterceptor.postCall
+   WithReturn(QuiesceInterceptor.java:44(Compiled Code))
+   at
+   org/apache/aries/blueprint/proxy/Collaborator.postInvoke(Collabo
+   rator.java:105(Compiled Code))
+   ...
+   at
+   org/apache/aries/blueprint/utils/ReflectionUtils.invoke(Reflecti
+   onUtils.java:238(Compiled Code))
+   at
+   org/apache/aries/blueprint/container/AbstractServiceReferenceRec
+   ipe$Listener.invokeMethods(AbstractServiceReferenceRecipe.java:4
+   66(Compiled Code))
+   at
+   org/apache/aries/blueprint/container/AbstractServiceReferenceRec
+   ipe$Listener.bind(AbstractServiceReferenceRecipe.java:448(Compil
+   ed Code))
+   at
+   org/apache/aries/blueprint/container/AbstractServiceReferenceRec
+   ipe.bind(AbstractServiceReferenceRecipe.java:345(Compiled Code))
+   at
+   org/apache/aries/blueprint/container/ReferenceRecipe.bind(Refere
+   nceRecipe.java:165(Compiled Code))
+   (entered lock: java/lang/Object@0x00000000B00078C0, entry
+   count: 1)
+   at
+   org/apache/aries/blueprint/container/ReferenceRecipe.retrack(Ref
+   erenceRecipe.java:132(Compiled Code))
+   ...
+   
+   The composition unit never stops.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Composition Unit cannot be stopped      *
+   *                      due to deadlock.                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The same lock object was used for different purposes and
+   resulted in a deadlock.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR avoids the deadlock by introducing a new lock to
+   create a more granular locking module.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.0.0.8 and 8.5.5.1.  Please refer to the Recommended
+   Updates page for delivery information:
+   
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM86627
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-09
+   
+   
+ * CLOSED DATE
+   2013-07-16
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM94022 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM94022]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

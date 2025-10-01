@@ -1,0 +1,162 @@
+Title: IBM JR54682: MULTIPLE VULNERABILITIES IN IBM JAVA SDK AFFECT IBM PROCESS DESIGNER - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There are multiple vulnerabilities in IBM (R) SDK Java (TM)
+   Technology Edition, which IBM WebSphere Application Server uses
+   under IBM Business Process Manager (BPM) and IBM WebSphere
+   Lombardi Edition.  These issues were disclosed as part of the
+   Multiple vulnerabilities in current releases of the IBM&#65449; SDK,
+   Java? Technology Edition in July and November 2015. For more
+   information, see "Security Bulletin: Multiple vulnerabilities in
+   IBM SDK Java (TM) Technology Edition affect IBM Business Process
+   Manager and WebSphere Lombardi Edition October 2015 CPU"
+   (http://www.ibm.com/support/docview.wss?uid=swg21972165).
+   
+   PRODUCTS AFFECTED
+   IBM BPM Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   WebSphere Lombardi Editon
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for the latest fix pack of all supported
+   releases of IBM BPM and WebSphere Lombardi Edition.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR54682:
+   
+       1. Select IBM Business Process Manager with your edition or
+   IBM WebSphere Lombardi Edition from the product selector, the
+   installed version to the fix pack level, and your platform, and
+   then click Continue.
+       2. Select APAR or SPR, enter JR54682, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR54682
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-11-10
+   
+   
+ * CLOSED DATE
+   2015-12-11
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP
+   
+   
+ * R801 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP
+   
+   
+ * R855 PSY
+   UP
+   
+   
+ * R856 PSY
+   UP

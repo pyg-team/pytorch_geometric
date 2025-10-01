@@ -1,0 +1,44 @@
+Title: IBM Invalid R version error when installing the Essentials for R plug-in on Modeler Server 18.0 - United States
+
+Text:
+r version 3.2 3.2.2 plugin installation essentials essential modeler TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installation of the Essentials for R 18.0 plug-in on a Modeler Server host is failing with the error
+
+"Invalid R version. The installed version of R is not supported". 
+
+
+SYMPTOM
+After the error "Invalid R version. The installed version of R is not supported" is displayed, the installer ends without making any changes to the Modeler Server installation.
+
+Essentials for R installation logs capture the following:
+Custom Action: com.ibm.spss.ia.MakeFailure_IA
+Status: FATAL ERROR
+Additional Notes: FATAL ERROR - class com.
+ibm.spss.ia.MakeFailure_IA FatalInstallException: Error: Failed to
+install R plugin
+
+
+
+CAUSE
+This issue was caused by an incorrect or invalid installation of R.
+
+ENVIRONMENT
+IBM SPSS Modeler Server 18.0
+Linux RedHat
+R 3.2
+
+DIAGNOSING THE PROBLEM
+Confirm that the correct version of R was installed by running the following command inside a R prompt:
+$R.home/bin/R --version 2>&1 | grep "3.2.2"
+
+The expected result would be:
+R version 3.2.2 (2015-08-14) -- "Fire Safety"
+
+If the expected version is returned, the issue could still be caused by an incorrect install of R.
+
+RESOLVING THE PROBLEM
+Remove the current installation of R.
+Build the R core components as per our IBM SPSS Modeler - Essentials for R: Installation Instructions documentation.
+Once R is built, re-run the Essentials for R plug-in installer.

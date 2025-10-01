@@ -1,0 +1,34 @@
+Title: IBM GIS DNS cache never updates an IP after a DNS name IP changes - United States
+
+Text:
+STERLINGHTG TECHNOTE (FAQ)
+
+QUESTION
+ GIS DNS cache never updates an IP after a DNS name IP changes 
+
+ANSWER
+
+
+By Default Java uses an infinite time storage for the DNS cache. To change this you need to edit the <gis install directory>/jdk/jre/lib/security/java.security file and update the following parameter after uncommenting it. GIS will need to be restarted for this setting to take effect.
+
+networkaddress.cache.ttl=-1
+
+#
+# The Java-level namelookup cache policy for successful lookups:
+#
+# any negative value: caching forever
+# any positive value: the number of seconds to cache an address for
+# zero: do not cache
+#
+# default value is forever (FOREVER). For security reasons, this
+# caching is made forever when a security manager is set.
+#
+# NOTE: setting this to anything other than the default value can have
+# serious security implications. Do not set it unless 
+# you are sure you are not exposed to DNS spoofing attack.
+#
+
+ 
+
+HISTORICAL NUMBER
+ HTG1356

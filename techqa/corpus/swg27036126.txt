@@ -1,0 +1,90 @@
+Title: IBM Installing Rational Performance Tester Agent 8.3 or later on an AIX 6.1 or later - United States
+
+Text:
+SRX; RN8.3; RPT Agent; install; AIX PRODUCT DOCUMENTATION
+
+ABSTRACT
+ IBM Rational Performance Tester Agent 8.3 includes the Load Generation agent, the Agent Controller, and the data collection infrastructure. Rational Agent Controller is used to gather data for the Response Time Breakdown feature and in support of the startup and control of web services stubs in the SOA protocol. The Load Generation Agent is used to generate load for the application under test by using the virtual users. 
+
+CONTENT
+By starting the installation process from the launchpad program, IBM Installation Manager is automatically installed if it is not already on your computer. Furthermore, Installation Manager starts preconfigured with the location of the repository that contains the product package. If you install and start IBM Installation Manager directly, then you must set repository preferences manually. 
+
+To learn how to install the product from a command prompt in silent mode, see the Installing Silently section of the IBM Installation Manager Information Center at
+http://pic.dhe.ibm.com/infocenter/install/v1r6/topic/com.ibm.cic.commandline.doc/topics/c_imcl_container.html [http://pic.dhe.ibm.com/infocenter/install/v1r6/topic/com.ibm.cic.commandline.doc/topics/c_imcl_container.html] 
+
+Note: Review the installation considerations in the Rational Performance Tester Information Center, if you have not done so.
+
+Installing from the launchpad
+
+
+ 1.  Log in as the root user before you begin installing the product.
+     
+     
+ 2.  If you are installing from compressed files, such as .zip or ISO files, extract the files into a common directory. Extract the disk images to directories named /disk1, /disk2, and so on. Extract the Setup disk image to a directory named RPT_SETUP. The Setup disk contains the launchpad program.
+     
+     
+ 3.  Run the launchpad.sh file, which is located in the root directory of the Setup disk installation image.
+     
+     
+ 4.  Select a language in which to run the launchpad and Installation Manager, and click OK.
+     
+     
+ 5.  Select the product to install from the launchpad menu. The Install Packages window opens.
+     
+     
+ 6.  Click a product package to highlight it. The description of the package is displayed in the Details pane at the bottom of the screen.
+     
+     
+ 7.  Optional: To search for updates to the product packages, click Check for Other Versions and Extensions. If updates for a product package are found, then they are displayed in the Installation Packages list on the Install Packages page below their corresponding products. Only recommended updates are displayed by default.
+     
+     
+ 8.  Optional: To view all updates that are found for the available packages, click Show all versions.
+     
+     
+ 9.  Optional: To display a package description, under Details, click the package name. If additional information about the package is available, such as a readme file or release notes, a More information link is included at the end of the description text. Click the link to display the additional information in a browser. To fully understand the package you are installing, review all information beforehand.
+     
+     
+ 10. Click Next to continue
+     
+     Note: If you install multiple packages at the same time, then all the packages are installed into the same package group.
+     
+     
+ 11. On the Licenses page, read the license agreement for the selected package. If you select more than one package to install, there might be a license agreement for each package. On the left side of the License page, click each package version to display its license agreement. The package versions that you select to install (for example, the base package and an update) are listed under the package name.
+     
+     
+ 12. If you agree to the terms of all the license agreements, click I accept the terms of the license agreements; then click Next to continue.
+     
+     
+ 13. On the Location page, type the path for the shared resources directory in Shared Resources Directory, or accept the default path. The shared resources directory contains resources that can be shared by one or more package groups. The default path is /opt/IBM/IBMIMShared. 
+     
+     
+ 14. Click Next to continue.
+     
+     Important: You can specify the shared resources directory only the first time that you install a package. Use your largest disk for this operation to help ensure adequate space for the shared resources of future packages. You cannot change the directory location unless you uninstall all packages.
+     
+     
+ 15. On the Location page, create a package group to install the product package into, or, if this is an update, use the current package group. A package group represents a directory in which packages share resources with other packages in the same group. The default path is /opt/IBM/SDP.
+     
+     
+ 16. To create a package group, click Create a new package group, and then type the path for the installation directory for the package group. The name for the package group is created automatically.
+     
+     
+ 17. Click Next to continue.
+     
+     
+ 18. On the Features page under Translations, select the languages for the package group. The corresponding translations for the user interface and documentation for the product package will be installed.
+     
+     
+ 19. On the next Features page, select the package features to install and click Next.
+     
+     
+ 20. On the next Features page, configure the agent:
+      1. For Load Generation Agent, type the workbench host name. If you do not want to use 7080 as the port number, change the port number. You can also change the port number after you install Rational Performance Tester Agent. 
+         
+         
+      2. For Rational Agent Controller, select either a Typical installation or a Custom installation. If you select Custom installation, you can define an access list and enable security.
+         
+         
+     
+     
+ 21. On the Summary page, review your choices and click Install.

@@ -1,0 +1,21 @@
+Title: IBM I am getting LTPA errors in IBM WebSphere SystemOut.log - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After changing password for one user the following error is seen on the FileNet Content Engine WAS server in the SystemOut.log:
+
+
+
+[1/25/16 11:10:26:731 EST] 00000195 LTPAServerObj E SECJ0369E: Authentication failed when using LTPA. The exception is com.ibm.websphere.wim.exception.PasswordCheckFailedException: CWWIM4529E The password verification for the '<Username>' principal name failed. Root cause: 'javax.naming.AuthenticationException: [LDAP: error code 49 -80090308: LdapErr: DSID-0C0903AA, comment: AcceptSecurityContext error, data 52e, v1772^@]; resolved object com.sun.jndi.ldap.LdapCtx@d6d03e66'..
+
+
+SYMPTOM
+Error received repeatedly in SystemOut.log:
+
+[1/25/16 11:10:26:731 EST] 00000195 LTPAServerObj E SECJ0369E: Authentication failed when using LTPA. The exception is com.ibm.websphere.wim.exception.PasswordCheckFailedException: CWWIM4529E The password verification for the '<Username>' principal name failed. Root cause: 'javax.naming.AuthenticationException: [LDAP: error code 49 -80090308: LdapErr: DSID-0C0903AA, comment: AcceptSecurityContext error, data 52e, v1772^@]; resolved object com.sun.jndi.ldap.LdapCtx@d6d03e66'..
+
+
+RESOLVING THE PROBLEM
+Clear the WAS Temp cache.

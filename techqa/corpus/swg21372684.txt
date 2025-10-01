@@ -1,0 +1,86 @@
+Title: IBM How to use SQL Profiler to create a SQL trace, for example to help troubleshoot Controller problems - United States
+
+Text:
+SQL trace file audit monitor TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Analyst/consultant would like to analyse what the Controller system is attempting to do, for example in order to troubleshoot an error message or performance problem. 
+
+How can they create a log of what the SQL server is doing, during a specific time period? 
+
+SYMPTOM
+Customer has an issue in Controller (for example slow performance when performing action X) and the support analyst would like to see if there is any useful information that can be found by analysing what actions the Microsoft SQL server is performing during this time.
+
+
+ENVIRONMENT
+Microsoft SQL 2005/2008
+
+RESOLVING THE PROBLEM
+Use the Microsoft built-in SQL Profiler tool, which allows the creation of SQL traces. 
+
+ 
+Steps:
+
+The steps vary slightly depending on what version of SQL you are using:
+
+
+ * SQL 2008:
+
+
+1. Logon to the SQL 2008 server as an administrator 
+2. From the Start Menu, click 'Programs - Microsoft SQL Server 2008 R2 - Performance Tools - SQL Server Profiler'. 
+3. Click " File - New Trace" 
+4. In the 'Connect to Server' window, select relevant SQL server name from the ' Server name' drop down list and click the 'Connect' button. 
+5. In the 'Trace Properties' dialog box, change " Use the Template" to be " Blank" 
+6. Tick the box " Save to file" and choose an appropriate location to save the file 
+7. Tick " Enable file rollover" and set the maximum file size to 5 (Mb).  * This will mean that when the trace file reaches 5Mb, a new trace file will be created (and so on) 
+ * Smaller file sizes will make it easier to transfer the results to others.
+
+[/support/docview.wss?uid=swg21372684&aid=1] [/support/docview.wss?uid=swg21372684&aid=1] 
+
+8. Click on the tab " Events Selection" 
+9. Locate the section " Errors and Warnings" 
+[/support/docview.wss?uid=swg21372684&aid=2] [/support/docview.wss?uid=swg21372684&aid=2] 
+
+10. Tick all of the following options:  *  Blocked process report Error log Eventlog Sort warnings 
+
+
+11. Locate the section " Locks" 
+12. Tick the option " Deadlock Graph": 
+[/support/docview.wss?uid=swg21372684&amp;aid=3] 
+
+13. Locate the section " OLEDB" 
+14. Tick the option " OLEDB errors": 
+[/support/docview.wss?uid=swg21372684&aid=4] [/support/docview.wss?uid=swg21372684&aid=4] 
+
+15. Locate the section " Performance" 
+16. Tick the option " Showplan all": 
+[/support/docview.wss?uid=swg21372684&aid=5] [/support/docview.wss?uid=swg21372684&aid=5] 
+
+17. Locate the section " TSQL" 
+18. Tick the option " SQL:StmtCompleted": 
+[/support/docview.wss?uid=swg21372684&aid=6] [/support/docview.wss?uid=swg21372684&aid=6] 
+
+19. Click " Run" when ready. 
+ * SQL 2005:
+
+
+1. Logon to the SQL 2005 server as an administrator 
+2. From the Start Menu, click 'Programs > SQL Server 2005 > Performance Tools > SQL Server Profiler'. 
+3. Click the File menu > New Trace. 
+4. In the 'Connect to Server' window, select server name from the 'Server name' drop down list and click the 'Connect' button. 
+5. In the 'Trace Properties' dialog box, specify the properties for the trace. 
+6. The trace will be displayed in the SQL Server Profiler window. 
+7. In the SQL Server Profiler window, click the 'File menu > Save As'. The options for saving the trace will be displayed. Select the option as needed. 
+8. In the 'Save As' dialog box, specify a name and location for the trace and click the 'Save' button. 
+9. The trace will be saved at the specified location. 
+
+TIP: See attached document 'KB 1041324 - How to create a SQL trace in SQL 2005.pdf' for full instructions, including printscreens. RELATED INFORMATION
+ THIRD-PARTY - How to create a trace? [http://www.ucertify.com/article/How-to-create-a-trace.html]
+1366359 - INTERNAL - How to setup a Trace on a table in [http://www.ibm.com/support/docview.wss?uid=swg21366359]
+
+
+KB 1041324 - How to create a SQL trace in SQL 2005 .pdf [/support/docview.wss?uid=swg21372684&aid=8]KB 1041324 - How to create a SQL trace in SQL 2005 .pdf [/support/docview.wss?uid=swg21372684&aid=7]
+
+HISTORICAL NUMBER
+ 1041324

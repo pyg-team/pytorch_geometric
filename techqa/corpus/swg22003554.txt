@@ -1,0 +1,89 @@
+Title: IBM Content Platform Engine Configuration Manager crashes on RHEL v7.x - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Configuration Manager tool that is installed as part of FileNet Content Platform Engine crashes on RHEL v7.x when a hint message pops up. 
+
+SYMPTOM
+When you use the Configuration Manager tool and you hover the mouse to see a hint message, the Configuration Manager crashes with the following Java error: 
+
+ 
+Unhandled exception
+Type=Segmentation error vmState=0x00040000
+J9Generic_Signal_Number=00000004 Signal_Number=0000000b Error_Value=00000000 Sig nal_Code=00000080
+Handler1=F721EF2A Handler2=F71DA00A InaccessibleAddress=00000000
+EDI=098D0800 ESI=09684740 EAX=09684588 EBX=D4E99000
+ECX=00000002 EDX=098CFBA0
+EIP=D4C5D3D5 ES=002B DS=002B ESP=FFABF2F4
+EFlags=00010202 CS=0023 SS=002B EBP=08B6FB08
+Module=/lib/libgtk-x11-2.0.so.0
+Module_base_address=D49E8000
+Target=2_60_20170111_332921 (Linux 3.10.0-327.18.2.el7.x86_64)
+CPU=x86 (2 logical CPUs) (0xecc02000 RAM)
+----------- Stack Backtrace -----------
+(0xF71CA110 [libj9prt26.so+0x10110])
+(0xF71DAB15 [libj9prt26.so+0x20b15])
+(0xF71C9E01 [libj9prt26.so+0xfe01])
+(0xF71C9EF5 [libj9prt26.so+0xfef5])
+(0xF71C9A04 [libj9prt26.so+0xfa04])
+(0xF71DAB15 [libj9prt26.so+0x20b15])
+(0xF71C9973 [libj9prt26.so+0xf973])
+(0xF721E355 [libj9vm26.so+0x16355])
+(0xF71DAB15 [libj9prt26.so+0x20b15])
+(0xF721E65E [libj9vm26.so+0x1665e])
+(0xF721EF78 [libj9vm26.so+0x16f78])
+(0xF71DA1DE [libj9prt26.so+0x201de])
+__kernel_rt_sigreturn+0x0 (0xF7723410)
+---------------------------------------
+JVMDUMP039I Processing dump event "gpf", detail "" at 2017/05/03 05:50:36 - plea se wait.
+JVMDUMP032I JVM requested System dump using '/opt/FileNet/ContentEngine/tools/co nfigure/core.20170503.055036.6785.0001.dmp' in response to an event
+JVMPORT030W /proc/sys/kernel/core_pattern setting "|/usr/libexec/abrt-hook-ccpp %s %c %p %u %g %t e %P %I" specifies that the core dump is to be piped to an ext ernal program. Attempting to rename either core or core.6819.
+
+JVMDUMP010I System dump written to /opt/FileNet/ContentEngine/tools/configure/co re.20170503.055036.6785.0001.dmp
+JVMDUMP032I JVM requested Java dump using '/opt/FileNet/ContentEngine/tools/conf igure/javacore.20170503.055036.6785.0002.txt' in response to an event
+JVMDUMP010I Java dump written to /opt/FileNet/ContentEngine/tools/configure/java core.20170503.055036.6785.0002.txt
+JVMDUMP032I JVM requested Snap dump using '/opt/FileNet/ContentEngine/tools/conf igure/Snap.20170503.055036.6785.0003.trc' in response to an event
+JVMDUMP010I Snap dump written to /opt/FileNet/ContentEngine/tools/configure/Snap .20170503.055036.6785.0003.trc
+JVMDUMP013I Processed dump event "gpf", detail "".
+
+
+CAUSE
+The IBM Eclipse SDK (IES) v3.7.2 that is used for Configuration Manager is not supported on RHEL v7.2 and later. The IES version supported on RHEL v7.x is 4.5.2 or later for which there is no supported IBM JRE. This incompatibility causes the Configuration Manager crash.
+
+
+RESOLVING THE PROBLEM
+Run the Configuration Manager in command-line mode. 
+
+
+Refer to the following information to create a new Configuration Manager profile in command-line mode:
+https://www.ibm.com/support/knowledgecenter/en/SSNW2F_5.2.1/com.ibm.p8.install.doc/p8pia034.htm [https://www.ibm.com/support/knowledgecenter/en/SSNW2F_5.2.1/com.ibm.p8.install.doc/p8pia034.htm]
+
+Refer to the following link to upgrade an existing Configuration Manager profile in command-line mode:
+https://www.ibm.com/support/knowledgecenter/en/SSNW2F_5.2.1/com.ibm.p8.install.doc/p8pup026.htm [https://www.ibm.com/support/knowledgecenter/en/SSNW2F_5.2.1/com.ibm.p8.install.doc/p8pup026.htm]
+
+If you need a graphical user interface for the Configuration Manager, perform the following steps:
+
+1. Verify the instructions in technical notice "Linux libraries required for FileNet Content Manager and IBM Content Foundation installations" (http://www.ibm.com/support/docview.wss?uid=swg27048088 [http://www-01.ibm.com/support/docview.wss?uid=swg27048088]) have been completed. If they were not, you must complete the instructions in that technical notice prior to launching the graphical user interface for the Configuration Manager.
+
+2. Install an IBM or Oracle 32-bit 1.8 JRE on to the Linux server. 
+
+IBM download site: 
+https://developer.ibm.com/javasdk/downloads/sdk8/ [https://developer.ibm.com/javasdk/downloads/sdk8/]
+
+Oracle JRE download site
+https://java.com/en/download/manual.jsp [https://java.com/en/download/manual.jsp]
+
+3. Download and extract/install the 32 bit 1.8 JRE to a directory on your server.
+
+Example path: /root/java/jre18.
+
+4. Backup the existing configmgr.ini file in /opt/IBM/FileNet/ContentEngine/tools/configure. Save the configmgr.ini file to a different location or file name. 
+
+5. Edit the -vm setting in the configmgr.ini file to point to the jre bin path.
+
+IBM JRE Example: -vm /root/java/jre18/ibm-java-i386-80/jre/bin
+Oracle JRE Example: -vm /root/java/jre18/jre1.8.0_161/bin
+
+6. Using the newly configured configmgr.ini file, launch the Configuration Manager.

@@ -1,0 +1,34 @@
+Title: IBM Business Process Manager (BPM) installation fails to start on AIX 6.1 with POWER 8 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Business Process Manager installation on AIX 6.1 with POWER 8 might fail to start if certain GUI libraries are not present. 
+
+SYMPTOM
+IBM Business Process Manager Installation fails to start on AIX 6.1 with POWER 8, with the following error:
+
+JVMDUMP006I Processing dump event "gpf", detail "" - please wait.
+JVMDUMP032I JVM requested System dump using '/opt/hanminw/IM/core.20140424.011426.5308606.0001.dmp' in response to an event
+Note: "Enable full CORE dump" in smit is set to FALSE and as a result there will be limited threading information in core file.
+JVMDUMP010I System dump written to /opt/hanminw/IM/core.20140424.011426.5308606.0001.dmp
+JVMDUMP032I JVM requested Java dump using '/opt/hanminw/IM/javacore.20140424.011426.5308606.0002.txt' in response to an event
+JVMDUMP010I Java dump written to /opt/hanminw/IM/javacore.20140424.011426.5308606.0002.txt
+JVMDUMP032I JVM requested Snap dump using '/opt/hanminw/IM/Snap.20140424.011426.5308606.0003.trc' in response to an event
+JVMDUMP010I Snap dump written to /opt/hanminw/IM/Snap.20140424.011426.5308606.0003.trc
+JVMDUMP013I Processed dump event "gpf", detail "".
+Segmentation fault(coredump)
+
+
+CAUSE
+IBM Installation Manager requires GTK libraries to support the graphical user interface. If the environment does not have required library, or the library version is higher or lower than the requirement, Installation Manager fails when it is starting. 
+
+RESOLVING THE PROBLEM
+Install the required GTK libraries according to the Required gtk libraries for Installation Manager on AIX [http://www.ibm.com/support/docview.wss?uid=swg21631478] document.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Installation / Configuration AIX 8.5.6, 8.5.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

@@ -1,0 +1,218 @@
+Title: IBM PM86738: ABEND ON RESTART OF WMQ - ABN 5C6-00E20004,C=R3600.710. DMC-CSQIUOWA,M=CSQGFRCV,LOC=CSQSLD1.CSQSVBK +00000C4E - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  BEND on restart of WMQ - ABN 5C6-00E20004,C=R3600.710.
+   DMC-CSQIUOWA,M=CSQGFRCV,LOC=CSQSLD1.CSQSVBK +00000C4E
+   .
+   Symptom          Description
+   -------          -----------
+   PIDS/5655R3600   Program id: 5655R3600
+   RIDS/CSQSLD1#L   Load module name: CSQSLD1
+   RIDS/CSQSVBK     Csect name: CSQSVBK
+   AB/S05C6         System abend code: 05C6
+   PRCS/00E20004    Abend reason code: 00E20004
+   REGS/0E662       Register/PSW difference for R0E: 662
+   REGS/09B4A       Register/PSW difference for R09: B4A
+   RIDS/CSQGFRCV#R  Recovery routine csect name: CSQGFRCV
+   .
+   OTHER SERVICEABILITY INFORMATION
+   .
+   Date Assembled:          20111013
+   Module Level:            13.03GA
+   Subfunction:             DMC  CSQIUOWACSQIUOWA
+   .
+   The total space used by SP-229 Key-7 was 1367896064.
+   There were 141000 Buffers alloc'd in 2820 x'00032000'
+   .
+   The dump shows that the queue manager is failing to
+   restart due to running out of storage during the
+   current status rebuild phase of restart processing
+   (note this is occurring prior to the buffer pools
+   being created, which is why BMC=1 shows no buffers
+   allocated).
+   .
+   During restart processing the log is read forward
+   from the last checkpoint, and for each shared queue
+   unit of work, an IUWD, IUWE and 4K block of storage is
+   obtained so that the current state of the uow can be
+   determined and reconciled with the CF.
+   .
+   The out of storage condition is occurring because there
+   are so many of these blocks of storage required to
+   rebuild the current status that the maximum size of
+   the pool they are allocated from (1G) has been reached
+   (this is because there are so many log records since
+   the last checkpoint).
+   .
+   Unfortunately this prevents the queue manager restarting
+   correctly, and the only way to resolve it will be to
+   cold start the queue manager.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 1 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Checkpoint processing stops after a     *
+   *                      CF application structure failure        *
+   *                      occurred.                               *
+   *                      The CF structure that failed becomes    *
+   *                      unusable on the given queue manager.    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   During checkpoint processing, the queue managers goes through
+   shared queues that are open in the CF manager. When the queue is
+   determined to be dormant, the TCB on which checkpoint processing
+   runs obtains the IVSA latch, and schedules a synchronous close
+   request to the CF manager.
+   At the same time the CF manager receives a structure failure
+   event for the CF structure and starts processing to handle it.
+   This includes scanning through the chain of open queues and
+   closing them, which also requires the IVSA latch.
+   As the close request is scheduled on the same task where
+   structure failure processing is running in an SRB, a dead-lock
+   occurs and both checkpoint processing and structure failure
+   processing are hanging, rendering the structure unusable and
+   preventing the checkpoint from completing and any further
+   checkpoints from taking place.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was changed so that checkpoint processing schedules
+   asynchronous requests to close queues, allowing both checkpoint
+   and structure failure processing to complete successfully.
+   100Y
+   CSQECLOS
+   CSQEOCRQ
+   CSQEROUT
+   CSQESTFA
+   CSQE197N
+   CSQMCSQ1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM86738
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-10
+   
+   
+ * CLOSED DATE
+   2013-08-13
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK96751
+   
+   
+
+MODULES/MACROS
+ *  CSQECLOS CSQEOCRQ CSQEROUT CSQESTFA CSQE197N
+   CSQMCSQ1
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY UK96751 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK96751]
+   UP13/10/19 P F310
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

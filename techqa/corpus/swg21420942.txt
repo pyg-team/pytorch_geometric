@@ -1,0 +1,25 @@
+Title: IBM Auto-populated groups are not populated by the Update task - United States
+
+Text:
+autopop ; auto-populated ; groups ; auto groups ; auto-populated groups ; update task ; update groups ; update auto groups TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+You have configured an Auto-populated group but notice that no members are listed when Update processes it. Why does this occur?
+
+SYMPTOM
+Blank membership for an Auto-populated group is most often caused by incomplete design in one or more address books configured on the server. The feature relies on design present in the 8.5.x and up pubnames.ntf. In particular, the Server\Mail Users view must be present in all directories. The easiest way to verify this requirement is to have all address books on the server inherit from the stock 8.5.x and up template. 
+
+In some cases, address books in your environment may be required to have design other than what is shipped by default with 8.5.x. In these cases, it has been observed that adding the Server\Mail Users view will allow the Auto-populated groups to populate successfully. If this does not work, then the design should be converted to use the standard template. 
+
+In addition to having the Server\Mail Users view, person documents must have the MailServer field populated correctly, and LDAP must be loaded on the server. If all of these requirements are satisfied but membership is still not created successfully, you can obtain additional diagnostic information using DEBUG_AUTOPOP=2. This parameter requires a restart of the Update task.
+
+
+RESOLVING THE PROBLEM
+
+
+
+
+
+
+ * 
+ *

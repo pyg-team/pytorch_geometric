@@ -1,0 +1,17 @@
+Title: IBM Documentation for the Update Installer - United States
+
+Text:
+J2EE; TTAPI; update; update installer TECHNOTE (FAQ)
+
+QUESTION
+ How do I run the Update Installer to install TTAPI support for ITCAM for J2EE Data Collector? 
+
+ANSWER
+TTAPI support for ITCAM for J2EE Data Collector 6.1 (also used in the 6.2 and 7.1 versions, but not in 7.1.1 and subsequent versions) is available in Fix Paks, starting from Fix Pack 5. The Fix Packs are available from the following URL:
+ftp://public.dhe.ibm.com/software/tivoli_support/patches/patches_6.1.0/ [ftp://public.dhe.ibm.com/software/tivoli_support/patches/patches_6.1.0/]
+
+Look for the 6.1.0-TIV-ITCAMfJ2EE_MP-FP* subdirectories and install the latest fix pack.
+
+The package includes documentation files, ITCAM_V61_UpdateInstaller.pdf andITCAM_V61_UpdateInstaller.htm. These files correctly explain how to run the Update Installer.
+
+The documentation files erroneously refer to ITCAM for WebSphere only. They apply to the Update Installer, which can be used for both ITCAM for WebSphere and ITCAM for J2EE updates. This particular update is for ITCAM for J2EE only.

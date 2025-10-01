@@ -1,0 +1,125 @@
+Title: IBM Collecting Data for TCR (Tivoli Common Reporting) 3.1 - United States
+
+Text:
+MustGatherDocument TCR tivoli common reporting 5724T6900 Reporting Services Jazz JazzSM 3.1 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ For every problem, collecting data can aid in problem determination and save time resolving Problem Management Records (PMRs).
+
+Gathering this data before calling IBM® support will help you understand the problem and save time analyzing the data. 
+
+RESOLVING THE PROBLEM
+Collecting data early, even before opening the PMR, helps IBM® Support quickly determine whether:
+--Symptoms match known problems (rediscovery).
+--There is a non-defect problem that can be identified and resolved.
+--There is a defect that identifies a workaround to reduce severity.
+--Locating root cause can speed development of a code fix.
+
+Collecting Data: Readme first table of contents:
+[http://www.ibm.com/i/v14/rules/dotted_blue_rule_443.gif] 
+
+[/support/docview.wss?uid=swg21635200&amp;aid=1] Gathering general information [/support/docview.wss?uid=swg21635200&amp;aid=2] Gathering product specific information [/support/docview.wss?uid=swg21635200&amp;aid=3] Additional information to collect [/support/docview.wss?uid=swg21635200&amp;aid=4] Submitting information to IBM Support [/support/docview.wss?uid=swg21635200&amp;aid=5] Related Information [http://www.ibm.com/i/v14/rules/dotted_blue_rule_443.gif] 
+
+Gathering general information 
+For Tivoli Common Reporting, you can manually collect general information from the environment. Entering general information into an electronically-opened PMR (ESR) [http://www-947.ibm.com/support/entry/portal/open_service_request/software/software_support_%28general%29] eliminates waiting on the phone to provide general information to Level 1 support. 
+
+
+Gathering product specific information 
+For investigating TCR problems, there are two classes of problems, TCR installation problems and TCR runtime problems. 
+
+TCR 3.1 is only available via Jazz for Service Management 1.1 and uses a different directory structure than previous TCR versions. The <REPORTING_HOME> construct refers to the TCR-related logs files within Jazz for Service Management and for Windows defaults to C:\Program Files\IBM\JazzSM\reporting and for Linux/UNIX to /opt/IBM/JazzSM/reporting. The <JazzSM_WAS_Profile> construct refers to application server profile used for Jazz for Service Management and for Windows defaults to C:\Program Files\IBM\JazzSM\profile and for Linux/UNIX to /opt/IBM/JazzSM/profile. 
+
+tcrpdcollect: 
+In addition to the details for each problem class below, there is also a utility, tcrpdcollect, which has been created to gather all of the relevant logs for TCR 3.1. The tcrpdcollect utility is available at the following URL: 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21589755 [http://www-01.ibm.com/support/docview.wss?uid=swg21589755] 
+
+TCR Administration Services task bundle: 
+The Administration Services component of JazzSM contains a task bundle for TCR which can be helpful in verifying configuration tasks. The TCR task bundle is described here: 
+
+http://pic.dhe.ibm.com/infocenter/tivihelp/v3r1/topic/com.ibm.psc.doc_1.1.0/admin/as_c_admin_task_bundles_tcr.html [http://pic.dhe.ibm.com/infocenter/tivihelp/v3r1/topic/com.ibm.psc.doc_1.1.0/admin/as_c_admin_task_bundles_tcr.html] 
+
+You can view the "Verifying installation of the Administration Services task bundles" section related to the IBM Tivoli Common Reporting managed system in the following URL: 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21627861 [http://www-01.ibm.com/support/docview.wss?uid=swg21627861] 
+
+TCR Installation information: 
+The output from the Prerequisite Scanner (PRS) can be helpful in determining missing TCR prerequisites before installing TCR and/or after a failed TCR installation It is recommended to run the tool and provide the output along with the documentation listed below. You can access the PRS tool for various platforms at the URL below: 
+
+http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Prerequisite+Scanner&release=All&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Prerequisite+Scanner&release=All&platform=All&function=all] 
+
+In case of a failure in installation, all logs are zipped and placed in <REPORTING_HOME>/logs.zip. The following are also files of interest: 
+
+Windows:  * %UserProfile%\TCR31InstallMessage00.log 
+ * %UserProfile%\TCR31InstallTrace00.log 
+ * %UserProfile%\TCRInstaller-00.log
+
+
+Linux/UNIX:  * $HOME/TCR31InstallMessage00.log 
+ * $HOME/TCR31InstallTrace00.log 
+ * $HOME/TCRInstaller-00.log
+
+
+Deployment Engine log files:  * C:\Program Files\IBM\Common\acsi\logs\User_Name (Windows) 
+ * /usr/ibm/common/acsi/logs (Linux/UNIX) 
+
+Uninstallation logs:  * <user_home_dir>/TCR31UninstallMessage00.log 
+ * <user_home_dir>/TCR31UninstallTrace00.log 
+ * <user_home_dir>/TCRUninstaller-00.log 
+
+TCR Runtime information: 
+TCR 3.1 contains both the BIRT and Cognos report engines. 
+
+For any problems encountered post-install when running TCR, the following items would be required: 
+
+BIRT: 
+
+- <REPORTING_HOME>/logs 
+
+Steps for setting detailed tracing: 
+1. In Dashboard Application Services Hub, click Console Settings->WebSphere Administrative Console. 
+2. Click the Launch WebSphere Administrative Console button and select Troubleshooting-> Logs and trace in the newly open window. 
+3. In the Logging and Tracing console module, click serverName->Change Log Detail Levels. The default server name is server1. 
+4. Click either the Configuration or Runtime tab: 
+- Click the Configuration tab if you want to make persistent changes to the log and trace levels. These changes will take effect after the next server restart. 
+- Click the Runtime tab if you want to make changes to the log and trace levels for the current session. These changes take effect immediately and do not require a server restart. 
+If you use the Runtime tab, you can select the Save runtime changes to configuration as well check box to make the changes persistent as well as applying to the current session. 
+5. Expand the list of installed packages and click com.ibm.tivoli*->com.ibm.tivoli.reporting*. 
+6. From an expandable list, select Message and Trace Level->finest and confirm your choice. 
+7. If you are making persistent configuration changes, click Save when prompted to save the changes to the master configuration. 
+8. If you changed any settings in the Configuration tab, stop and restart the JazzSM app server [http://pic.dhe.ibm.com/infocenter/tivihelp/v3r1/topic/com.ibm.psc.doc_1.1.0/admin/psc_ctr_admin_restart_jazzsm_servers.html]. 
+
+Cognos: 
+
+- <REPORTING_HOME>/cognos/logs 
+
+Enabling additional Cognos tracing:  * Open the PogoLogkitConfig.FullDebug.xml file from the following location: 
+ * For the distributed environment - the machine with the Cognos-based TCR engine installed:<cognos_install_dir>webapps\p2pd\WEB-INF 
+ * For the single-computer installation – 
+
+<JazzSM_WAS_Profile>/installedApps/JazzSMNode01Cell/IBM Cognos.ear/p2pd.war/WEB-INF  * Change the name of the file to PogoLogkitConfig.xml, and save it. 
+ * Restart TCR/Cognos to apply the changes.
+
+Additional information for TCR 
+TCR Server configuration:  * Operating system and version 
+ * Data source configuration used for generating reports 
+ * Database name and version 
+
+TCR Client configuration:  * Operating system and version 
+ * Web browser and version
+
+Submitting information to IBM Support 
+See this URL Exchanging information with IBM Technical Support [http://www-306.ibm.com/software/support/exchangeinfo.html] for methods to submit 
+the information, including FTP, using SR, and ISA. 
+
+Related information 
+Collecting Data: Read First for Jazz for Service Management [http://www.ibm.com/support/docview.wss?uid=swg21627800] 
+
+Jazz for Service Management Information Center [http://pic.dhe.ibm.com/infocenter/tivihelp/v3r1/topic/com.ibm.psc.doc_1.1.0/psc_ic-homepage.html] 
+Troubleshooting Tivoli Common Reporting [http://pic.dhe.ibm.com/infocenter/tivihelp/v3r1/topic/com.ibm.psc.doc_1.1.0/tshoot/tcr_c_tshoot.html] 
+[https://www.ibm.com/developerworks/mydeveloperworks/groups/service/html/communityview?communityUuid=9caf63c9-15a1-4a03-96b3-8fc700f3a364] 
+TCR developerWorks site [https://www.ibm.com/developerworks/mydeveloperworks/groups/service/html/communityview?communityUuid=9caf63c9-15a1-4a03-96b3-8fc700f3a364] 
+
+Change History 
+23 April 2013 : Initial creation 
+05 September 2013: Changed document title

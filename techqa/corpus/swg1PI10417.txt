@@ -1,0 +1,155 @@
+Title: IBM PI10417: PROPERTY EXTENSION DATABASE CANNOT BE CREATED ON DB2 FOR Z/OS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Configuration target "wp-configure-la-complete" stops reporting
+   the following error:
+   
+   [wplc-create-la-tables] Result:[com.ibm.websphere.wim.exception
+   .WIMSystemException: CWWIM4521E  The'DB2 SQL Error:
+   SQLCODE=-204, SQLSTATE=42704,
+   SQLERRMC=@DBNAME@,DRIVER=4.12.72' SQL Exception occurred during
+   processing.]
+   Result: [com.ibm.websphere.wim.exception.WIMSystemException:
+   CWWIM4521E The 'DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704,
+   SQLERRMC=@DBNAME@,DRIVER=4.12.72' SQL Exception occurred during
+   processing.]
+   [wplc-create-la-tables] com.ibm.websphere.wim.exception
+   .WIMSystemException: CWWIM4521E  The'DB2 SQL Error:
+   SQLCODE=-204, SQLSTATE=42704,
+   SQLERRMC=@DBNAME@,DRIVER=4.12.72' SQL Exception occurred during
+   processing.
+   [wplc-create-la-tables] at com.ibm.ws.wim.dao.schema
+   .JDBCSqlImport.importFile(JDBCSqlImport.java:222)
+   [wplc-create-la-tables] at com.ibm.ws.wim.dbsetup.DBSetup
+   .readSQLFiles(DBSetup.java:935)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set environment variable "DBNAME" to "db2zos", e.g. on Linux
+   using this command:
+   "export DBNAME=db2zos"
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Refer to the link below.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 10 (PI08371 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI08371]) for Portal
+   8.0.0.1 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI08371
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI10417
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-01-27
+   
+   
+ * CLOSED DATE
+   2014-02-25
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

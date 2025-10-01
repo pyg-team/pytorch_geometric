@@ -1,0 +1,65 @@
+Title: IBM Support for Dynamically Added IMS Connect Ports - United States
+
+Text:
+PM76242 TECHNOTE (FAQ)
+
+QUESTION
+ Does IMS™ Connect Extensions support dynamically added ports? 
+
+ANSWER
+IMS V13 introduces a Type-2 command that allows you to dynamically add OTMA and DRDA ports without having to restart the IMS Connect instance. The general format of the Type-2 command is: 
+
+CREATE IMSCON TYPE(PORT) keywords 
+
+
+
+IMS Connect Extensions detects when a new port has been added and automatically adds it to the in-memory list of ports known to IMS Connect Extensions. This then allows you to view session statistics for any activity on the added ports.
+
+
+New messages 
+
+CEX5583I Attempting to dynamically add Port=port 
+
+Explanation: IMS Connect Extensions detected that the port number shown in the message has been dynamically added to IMS Connect. IMS Connect Extensions will try to dynamically add the port definition to the list of active ports in the IMS region. 
+
+System action: Processing continues. 
+
+User response: Look for a corresponding completion message. CEX5584I is issued if the port was added successfully. Message CEX5585W is issued if the add failed or was only partially successful. 
+
+ 
+
+CEX5584I Dynamic addition for port=port was successful 
+
+Explanation: The port number shown in the message was successfully added to the list of active ports that are available for use with IMS Connect Extensions. 
+
+System action: Processing continues. 
+
+User response: Consider updating the IMS Connect Configuration member to make this port permanently available. 
+
+ 
+
+CEX5585W port=port condition reason. 
+
+Explanation: IMS Connect Extensions tried to add the port number shown in the message to the list of active ports but the action failed or was only partially successful. The following conditions can be reported: 
+
+ *  port=port was not added because the port already exists. 
+ *  port=port was not added because the port table is full. 
+ *  port=port was not added because of an internal error. 
+ *  port=port was partially added because statistics could not be activated.
+
+
+System action: Processing continues. User response: If the port already exists and is correctly defined no action is required. 
+
+If the port table is full, define all dynamically added ports to the IMS Connect configuration member using the PORT statement or PORTID statement, then restart IMS Connect. This will make room for additional dynamic ports. 
+
+If an internal error occurred, contact IBM support. 
+
+If statistics could not be activated, check for message CEX5584I to confirm that the port was added.
+
+
+
+
+
+Requirements: 
+
+ *  To use these options with IMS Connect Extensions V2R3 you must apply the fix for APAR PM76242.

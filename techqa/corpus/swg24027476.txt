@@ -1,0 +1,75 @@
+Title: IBM Required WebSphere Interim Fixes for WebSphere Portal V6.1.0.5 and 6.1.5.2 - United States
+
+Text:
+6105NFR; WPv6105GA; 6105eGA 6152eGA DOWNLOADABLE FILES
+
+ABSTRACT
+ This document lists the fix packs and interim fixes required for the operation of IBM WebSphere Portal version 6.1.0.5 and 6.1.5.2 deployed on these levels of supporting software. 
+
+DOWNLOAD DESCRIPTION
+
+
+
+TAB NAVIGATION
+ * Fix pack Download [http://www.ibm.com/support/docview.wss?uid=swg24027475]
+ * Required WebSphere Fixes [http://www.ibm.com/support/docview.wss?uid=swg24027476]
+ * Fix List [http://www.ibm.com/support/docview.wss?uid=swg27014411]
+
+List of minimum levels of required fix packs and interim fixes for WebSphere Application Server and Process Server deployed with WebSphere Portal version 6.1.0.5 or 6.1.5.2.
+
+
+
+
+The required fix pack level and additionally recommended maintenance for WebSphere Portal V6.1.0.5 or 6.1.5.2 to function properly when deployed with WebSphere Application Server or Process Server is listed in this document. The minimum fix pack levels required are: 
+
+
+ * WebSphere Application Server: V6.1.0.31 or 7.0.0.11 (distributed platforms) 
+ * [optional:] WebSphere Process Server (client code version tested): V6.2.0.2, 6.1.2.3 or 6.1.0.4 
+ * [optional:] WebSphere Virtual Enterprise (formerly "Extended Deployment") V6.1.0.5 or 6.1.1.1
+
+
+Download links for these fix packs (choose the appropriate platform from the page):  * WebSphere Application Server version 6.1.0.31 for distributed platforms: 
+
+http://www.ibm.com/support/docview.wss?uid=swg27009661 [http://www.ibm.com/support/docview.wss?uid=swg27009661]  * WebSphere Application Server version 7.0.0.11 for distributed platforms: 
+
+http://www.ibm.com/support/docview.wss?uid=swg24026852 [http://www.ibm.com/support/docview.wss?uid=swg24026852]  * WebSphere Process Server fix packs can be retrieved from http://www.ibm.com/software/integration/wps/support/download.html [http://www.ibm.com/software/integration/wps/support/download.html] 
+ * WebSphere Virtual Enterprise (formerly "Extended Deployment") Server fix packs can be retrieved from http://www.ibm.com/software/webservers/appserv/extend/support/download.html [http://www.ibm.com/software/webservers/appserv/extend/support/download.html]
+
+
+
+Installation and support for these fixes and fix packs is provided by the appropriate WebSphere product support teams, not WebSphere Portal support. When installing non-Portal interim fixes, you must use the appropriate Update Installer [http://www.ibm.com/support/docview.wss?uid=swg24012718] which is not provided with the downloads, and NOT the WebSphere Portal Update Installer. 
+
+Service releases later than the levels listed above might also be used and in most cases are considered to be untested but supported as described in the WebSphere Portal Support Statement [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/topic/com.ibm.wp.ent.doc_v6101/overview/inst_req_supt.html]. 
+
+Customers choosing to install a later service level of WebSphere Application Server or Process Server must ensure on their own that the level they are using includes some or all of the co-requisite Application Server or Process Server interim fixes listed in the Information Center and Release Notes, and then install any additional individual interim fixes not included.
+
+Depending on the version of WebSphere Application Server used, the fixes listed below are needed to address the specific problems documented in the associated APARs, in addition to the minimum fix pack level listed above:
+
+
+
+WebSphere Application Server for distributed platforms Version 6.1.0.31 [http://www-01.ibm.com/support/docview.wss?uid=swg27009661] APAR (linked to the fix) Abstract PK99787 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?fixes=6.1.0.31-WS-WAS-IFPK99787&productid=WebSphere%20Application%20Server&brandid=5] DYNACACHE CLEAR CAUSES DEAD LOCK PM21689 [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Application+Server&release=6.1.0.31&platform=All&function=aparId&apars=PM21689&source=fc] WMM TO VMM MIGRATION DOES NOT MIGRATE REALM STANZA  * 6.1.0.31 fix group package - download all of the above at once from Fix Central! [http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?productid=WebSphere%20Portal&brandid=5&fixes=6.1.0.5-WP-Required-AppServer-V6.1.0.31-Fixes] (does not include the fix pack)
+
+Version 7.0.0.11 [http://www-01.ibm.com/support/docview.wss?uid=swg24026852] APAR (linked to the fix) Abstract PM13511 [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Application+Server&release=7.0.0.11&platform=All&function=aparId&apars=PM13511&source=fc] LDAP SEARCHES ARE NOT REALM SENSITIVE PM16164 [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Application+Server&release=7.0.0.11&platform=All&function=aparId&apars=PM16164&source=fc] JSPEXCEPTION: NO GETTER METHOD FOR PROPERTY SERVERLEVEL OF BEAN WHEN CREATING A NEW SERVLET CACHE INSTANCE PM14231 [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Application+Server&release=All&platform=All&function=aparId&apars=PM14231&source=fc] MEMBERS OF GROUPS NOT LISTED CORRECT PM10424 [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Application+Server&release=All&platform=All&function=aparId&apars=PM10424&source=fc] SLOW MEMORY BUILD UP IN COM/IBM/WS/SECURITY/UTIL/LRUCACHE PM20025 [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Application+Server&release=All&platform=All&function=aparId&apars=PM20025&source=fc] PERFORMANCE ISSUE WITH APPLICATIONS WHICH USE EXPRESSIONS (UNIFIED EL) IN WEBSPHERE V7.0. PM16589 [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Application+Server&release=All&platform=All&function=aparId&apars=PM16589&source=fc] PERFORMANCE IMPROVEMENT FOR LTPA2 TOKEN SIGN()  * 7.0.0.11 fix group package - download all of the above at once from Fix Central [http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?productid=WebSphere%20Portal&brandid=5&fixes=6.1.0.5-WP-Required-AppServer-V7.0.0.11-Fixes] (does not include the fix pack). You must also download the following fix for PM18042 separately for your specific platform:
+
+PM18042 [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Application+Server&release=All&platform=All&function=aparId&apars=PM18042&source=fc] SHIP JDK APARS IZ69890,IZ70326,IZ67523,IZ75061 AS WSAS IFIX INSTALLATION INSTRUCTIONS
+For more information, refer to the instructions found in the WebSphere Application Server Information Center topic on Installing the Update Installer for WebSphere Software [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=pix&product=was-nd-dist&topic=tins_updi_install].
+
+DOWNLOAD PACKAGE
+
+
+
+CHANGE HISTORY
+11 October 2010: Initial release 
+
+12 October 2010: updated hyperlinks
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] WebSphere Application Server fixes 10/11/2010 English 61031 FC [ http://www.ibm.com/software/webservers/appserv/was/support/] [ ] 
+TECHNICAL SUPPORT
+ Contact IBM Support using ESR: http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]
+WebSphere Portal Product support: http://www.ibm.com/software/genservers/portal/support/ [http://www.ibm.com/software/genservers/portal/support/]
+WebSphere Application Server Product support: http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]
+WebSphere Process Server Product support: http://www.ibm.com/software/integration/wps/support/ [http://www.ibm.com/software/integration/wps/support/] 
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management IBM Web Content Manager Portal Integration AIX, HP-UX, i5/OS, Linux, Solaris, Windows 6.1.0.5, 6.1.5.2 Java edition

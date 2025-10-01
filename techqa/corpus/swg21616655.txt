@@ -1,0 +1,23 @@
+Title: IBM Gatekeeper may not install or run on a 64-bit Linux Distribution without the correct libraries - United States
+
+Text:
+32-bit libraries; Gatekeeper Install; 64-bit Linux TECHNOTE (FAQ)
+
+QUESTION
+Gatekeeper may not install or run on a 64-bit Linux Distribution without the correct libraries
+
+CAUSE
+If the correct 32-bit libraries are not installed on a 64-bit Linux distribution the Gatekeeper may fail to install or run afterward. 
+
+ANSWER
+The 32bit libraries (.i686) which we have found are required are: 
+
+libstdc++ This is a pre-requisite for the java with GateKeeper to install
+libXrender
+libXft
+libXmu
+libXtst
+
+Also insure that xinetd service is installed and enabled.
+
+If the GateKeeper fails to launch, check in ~/.wgcfg for StdErr.txt which should show what compatibility libraries you still need to install.

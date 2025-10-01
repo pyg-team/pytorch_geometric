@@ -1,0 +1,159 @@
+Title: IBM PM31540: MEMBER LIST NOT DISPLAYING ON PUBLIC PLACES - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Portal creates a user called "All Authenticated Portal Users".
+   This user must not have a displayName attribute associated
+   with it, and  this is causing an exception. The problem
+   is located in the Portal REST feeds component.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Portal creates a user called "All Authenticated Portal Users".
+   This user must not have a displayName attribute associated with
+   it, and  this is causing an exception.
+   The problem is located in the Portal REST feeds component.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Prevent the NullPointerException from occurring.
+   
+   Manual Steps:
+      None
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   Version Information:
+   
+   PM31540 is part of Cumulative Fix 12 - available on Fix Central.
+   
+   Portal 6.1.0.3 / 6.1.5.0:
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PM31590&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PM31590&productid=WebSphere%20Portal&brandid=5]
+   
+   Portal 6.1.0.4 / 6.1.5.1:
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PM31591&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PM31591&productid=WebSphere%20Portal&brandid=5]
+   
+   Portal 6.1.0.5 / 6.1.5.2:
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PM31611&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PM31611&productid=WebSphere%20Portal&brandid=5]
+   
+   You may need to type or paste the complete address into your Web
+   browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM31540
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   60G
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-01-31
+   
+   
+ * CLOSED DATE
+   2011-03-02
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP
+   
+   
+ * R615 PSY
+   UP

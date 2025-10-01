@@ -1,0 +1,231 @@
+Title: IBM IZ03680: CRASH WHEN RUNNING STATIC SQL (EG. STORED PROCEDURE) ACCESSING  NICKNAME AFTER CHANGE FEDERATED FROM YES TO NO. - United States
+
+Text:
+AIX  A FIX IS AVAILABLE
+DB2 UDB Version 8.1 FixPak 16 (also known as Version 8.2 FixPak 9 ) [http://www-01.ibm.com/support/docview.wss?uid=swg24018266]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The db2 V8 and V9 users could encounter this problem.
+   When dbm cfg "FEDERATED" is "NO", running static SQL (eg. bound
+   stored procedure) which has any federation operations will bring
+   down the instance due to not initialized SQLCA structure used by
+   the db2 process.
+   You can see stack trace in trap file like this:
+   <StackTrace>
+   -------Frame------ ------Function + Offset------
+   0xD6C673D4 sqloinca + 0x28
+   0xD73DA320 sqlqgrerdc__FPCciT2P10sqlr_token + 0x10C
+   0xD73DA4B0 sqlqgError__FPciT2e + 0x9C
+   0xD74364AC
+   sqlqgFindServer__FPUc12Sqlqg_OpTypePP14UnfencedServerUi + 0xBC
+   0xD742024C sqlqgOpen__FP12sqlri_rquery + 0x434
+   0xD7D11844 sqlri_djx_rta__FP8sqlrr_cb + 0x464
+   0xD6B615D4 sqlriSectInvoke__FP8sqlrr_cbP12sqlri_opparm + 0xC4
+   0xD6A6216C sqlrr_execute__FP7UCintfcP9UCstpInfo + 0x9D0
+   0xD6A61A68 sqlrr_execute__FP7UCintfcP9UCstpInfo + 0x2CC
+   0xD2402074 sqlacall + 0x1894
+   Stack traceback unavailable.
+   </StackTrace>
+   
+   or like this:
+   <StackTrace>
+   -------Frame------ ------Function + Offset------
+   0x0900000001435A60 sqlqgrerdc__FPCciT2P10sqlr_token + 0x184
+   0x0900000001435844 sqlqgError__FPciT2e + 0xC0
+   0x09000000013AE654
+   sqlqgFindServer__FPUc12Sqlqg_OpTypePP14UnfencedServerUi + 0xE4
+   0x090000000297EC00 sqlqgOpen__FP12sqlri_rquery + 0x918
+   0x090000000297DCB8 sqlri_djx_rta__FP8sqlrr_cb + 0x6D8
+   0x0900000001C4EEFC sqlriSectInvoke__FP8sqlrr_cbP12sqlri_opparm +
+   0xDC
+   0x0900000001C4EB84 sqlrr_process_execute_request__FP8sqlrr_cbi +
+   0x4C0
+   0x09000000019E2E20 sqlrr_execute__FP7UCintfcP9UCstpInfo + 0x100
+   0x09000000005DE1AC sqlacall - 0x11C
+   0x0900000005C8CC10 executeSection__10pvmPackageCFP5sqlcaUi +
+   0x520
+   0x0900000005C8F418 executeQuery__3PVMFUi + 0x7C
+   0x0900000005C8E1AC run__3PVMFP5sqlcaiPPc + 0xCFC
+   0x0900000005C8B314 pvm_entry + 0xD4
+   0x0900000001A22578 sqloInvokeFnArgs + 0x370C
+   0x0900000001A2DBF4
+   sqlriInvokerTrusted__FP10sqlri_ufobP21sqlriRoutineErrorIntf -
+   0x174
+   0x0900000001A27528 sqlriInvokeInvoker__FP10sqlri_ufob + 0x104
+   0x0900000001A277A8 sqlricall__FP8sqlrr_cb + 0xD4
+   0x0900000001C4EEFC sqlriSectInvoke__FP8sqlrr_cbP12sqlri_opparm +
+   0xDC
+   0x0900000001C4EB84 sqlrr_process_execute_request__FP8sqlrr_cbi +
+   0x4C0
+   0x09000000019E2E20 sqlrr_execute__FP7UCintfcP9UCstpInfo + 0x100
+   0x09000000019E29C0
+   sqljs_ddm_excsqlstt__FP7UCintfcP14sqljsDDMObject + 0x53C
+   0x09000000019E1B50
+   sqljsParseRdbAccessed__FP13sqljsDrdaAsCbP14sqljsDDMObjectP7UCint
+   fc + 0x6C
+   0x09000000019E199C sqljsParse__FP13sqljsDrdaAsCbP7UCintfc +
+   0x218
+   0x0900000001E5C900 @37@sqljsSqlam__FP7UCintfcP13sqle_agent_cbb +
+   0x148
+   0x0900000001E5CE20
+   @37@sqljsDriveRequests__FP13sqle_agent_cbP11UCconHandle + 0xA0
+   0x0900000001E5CFB0
+   @37@sqljsDrdaAsInnerDriver__FP17sqlcc_init_structb + 0xD4
+   0x0900000001E5D164 sqljsDrdaAsDriver__FP17sqlcc_init_struct +
+   0xA8
+   0x0900000001DC27D4 sqleRunAgent__FPcUi + 0x288
+   0x0900000001A638B0
+   sqloCreateEDU__FPFPcUi_vPcUlP13SQLO_EDU_INFOPi + 0x318
+   0x0900000001A62F8C @38@sqloRunGDS__Fv + 0x14
+   0x0900000001A62E88 sqloInitEDUServices + 0x13C
+   0x0900000001A645B4 sqloRunInstance + 0x418
+   0x0000000100002A60 DB2main + 0x8BC
+   0x0000000100003880 main + 0x10
+   </StackTrace>
+   
+   or some other similar stack traces.
+   
+   The errors in db2diag.log is not significant. The db2 process
+   begin to handle the SIGSEGV ( function sqleagnt_sigsegvh )
+   directly without any previous useful error message.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Setting dbm cfg "FEDERATED" to "YES".
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users affected:
+   V8, V91 and V95 on all platforms.
+   
+   Problem Description:
+   The scenario was specific: Enable "Federated" during compiling
+   time and disable "Federated" in runtime.
+   When dbm cfg "FEDERATED" is "NO", running static SQL (eg. bound
+   stored procedure) which has any federation operations will bring
+   down the instance due to not initialized SQLCA structure used by
+   the db2 process.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in DB2 UDB Version 8, FixPak 16.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Setting dbm cfg "FEDERATED" to "YES".
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ03680
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4100
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-08-23
+   
+   
+ * CLOSED DATE
+   2008-02-13
+   
+   
+ * LAST MODIFIED DATE
+   2008-02-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IZ07479
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * FIXED COMPONENT ID
+   5765F4100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY
+   UP
+   
+   
+ * R820 PSY
+   UP
+   
+   
+ * R910 PSY
+   UP
+   
+   
+ * R950 PSY
+   UP

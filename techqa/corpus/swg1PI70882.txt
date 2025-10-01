@@ -1,0 +1,166 @@
+Title: IBM PI70882: SCRIPT PORTLET NOT UPDATED TO SCRIPT APPLICATION - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DuplicateKeyException on xmlaccess renaming portlet
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The APAR only applies to an environment that has undergone the
+   following scenarios:
+   CF09 upgrade to CF11
+   CF09 upgrade to CF12
+   - OR -
+   CF10 upgrade to CF11
+   CF10 upgrade to CF12
+   The upgrade itself will not fail. However, subsequent scripts
+   that call into the script application portlet may fail, such as
+   changing the context root.
+   Applying CF13 or later will include this APAR and automatically
+   correct the issue. If you cannot apply CF13 or later, use the
+   following steps as a local fix:
+   1. Locate the following file (take a backup of the file before
+   editing):
+   PortalServer/scriptingportlet/wp.scriptportlet.config/content/
+   xmlaccess/install/portlets/CreatePortlet.xml
+   2. Modify CreatePortlet.xml to insert the following lines near
+   the top of the file as the first children of the tag:
+   <portal action="locate">
+   insert the following lines:
+   <web-app action="delete" domain="rel"
+   uid="com.bowstreet.portlet.WebAppRunner2_wp.scriptportlet
+   .importexport.webmod">
+   </web-app>
+   <web-app action="delete" domain="rel"
+   uid="wp.scriptportlet.editor.portlets.webmod">
+   </web-app>
+   3. Save and close the file.
+   4. Import the CreatePortlet.xml file to the base portal only
+   using the Import XML portlet in the Portal administration
+   console.
+   Administration > Import XML
+   5. Next locate the following 2 files:
+   editor_config.xml
+   import_config.xml
+   from:
+   PortalServer/scriptingportlet/wp.scriptportlet.config/content/
+   xmlaccess/install/pages
+   and import them using the Import XML portlet in the Portal
+   administration console for the base portal and each virtual
+   portal.
+   Administration > Import XML
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  DuplicateKeyException on xmlaccess renaming portlet
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  updated XML access scripts to first delete the original WAR with
+   the Script Portlet name and then install the updated WAR with
+   the Script Application name.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI70882
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-18
+   
+   
+ * CLOSED DATE
+   2016-12-06
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

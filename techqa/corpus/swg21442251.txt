@@ -1,0 +1,82 @@
+Title: IBM Configuring SFTP Front-side Handler Public Key authentication on the IBM WebSphere DataPower SOA Appliance - United States
+
+Text:
+sftp; pubkey authentication; public key; aaa; pubkey; pub-key; public-key; datapower; 9235; 9004; 9003 TECHNOTE (FAQ)
+
+QUESTION
+ I want to configure the SFTP Front-side handler to authenticate the SSH client using their public key. What configuration is required to accomplish this setup? 
+
+ANSWER
+For this configuration, a AAA policy will have to be attached to the SFTP Server Front Side Handler to handle the SSH client authentication. In the AAA policy, you will have to configure a custom Authentication step to perform the Public Key authentication for the SSH client. In the custom authentication step, you can use a stylesheet to compare the Public key provided in the client's SSH connection to some known value or the client's public key uploaded and stored on the device. The public key presented in the client's SSH connection may be accessed through this variable 'var://context/INPUT/ssh/publickey'.
+The steps required can be summarized into the following:
+1. Obtain the SSH client user name and key values, using dp:variable('var://context/INPUT/ftp/username') and dp:variable('var://context/INPUT/ssh/publickey')
+2. Compare the user name and key to some known value(s). The obtained user name and key may be sent to some remote server to perform the authentication or can be compared to some value(s) stored in an XML document (hosted on the device in the local directory).
+3. If the authentication succeeds, the stylesheet outputs a valid XML, which will be passed to the next step of AAA. If authentication fails, the stylesheet outputs nothing.
+
+Sample configuration details:
+1. Create a SSH client username and public key map (XML document) and upload it to the local directory (local:///ssh_client_pubkey_map.xml). Sample below:
+
+<sshclients>
+<client>
+<username>some_username</username>
+<!-- SSH client public key -->
+<pubkey>AAAAB3NzaC1yc2EAAAABJQAAAIBvG4cFb5GLoDf3AlW68ngfP0PpoXQEaDJtEuXXbXEBdr2uGjZ3FjCPaKlYOXaqCQKhq8Nn30ex0C1PtHtfwfw9p6yf/+xi5KYF7Fnm/+0tu36G3s1hfLhtH6ibKiRVErW5j2XixaQcpH0WQ+T6wDY5d1uG/38QpDCjPhWH7HlKKw==</pubkey>
+</client>
+</sshclients>
+
+
+The contents of the SSH client public key was as follows:
+---- BEGIN SSH2 PUBLIC KEY ----
+Comment: "rsa-key-20100727" AAAAB3NzaC1yc2EAAAABJQAAAIBvG4cFb5GLoDf3AlW68ngfP0PpoXQEaDJtEuXXbXEBdr2uGjZ3FjCPaKlYOXaqCQKhq8Nn30ex0C1PtHtfwfw9p6yf/+xi5KYF7Fnm/+0tu36G3s1hfLhtH6ibKiRVErW5j2XixaQcpH0WQ+T6wDY5d1uG/38QpDCjPhWH7HlKKw==
+---- END SSH2 PUBLIC KEY ----
+
+
+The pubkey value used in the XML document was based on the format noticed in the output of the 'var://context/INPUT/ssh/publickey' variable:
+ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAIBvG4cFb5GLoDf3AlW68ngfP0PpoXQEaDJtEuXXbXEBdr2uGjZ3FjCPaKlYOXaqCQKhq8Nn30ex0C1PtHtfwfw9p6yf/+xi5KYF7Fnm/+0tu36G3s1hfLhtH6ibKiRVErW5j2XixaQcpH0WQ+T6wDY5d1uG/38QpDCjPhWH7HlKKw==
+
+In the sample stylesheet attached, you will notice the 'ssh-rsa' part of the 'var://context/INPUT/ssh/publickey' output gets removed and the remaining public key content is space normalized to match the Public Key information or data in the XML file. Note that this step may not be needed if the PubKey data in the XML file already matches the output of the 'var://context/INPUT/ssh/publickey' variable.
+
+To see the contents of the 'var://context/INPUT/ssh/publickey' variable, you can use the 'xsl:message' element to write the contents of the variable to the system logs. The syntax for the 'xsl:message' element is:
+<xsl:message terminate="yes|no" dp:type="category" dp:priority="alert|critic|error|warn|notice|info|debug">
+<!-- Content: Message text -->
+</xsl:message>
+
+Sample use of the 'xsl:message' element:
+<xsl:message dp:priority="debug">
+<xsl:value-of select="concat(' ** The value of var://context/INPUT/ssh/publickey : ', dp:variable('var://context/INPUT/ssh/publickey'))"/>
+</xsl:message> 
+
+2. For the SFTP Front-side handler configuration:
+a. Enable 'Public Key' for the 'User Authentication' option
+b. Create a new AAA Policy.
+
+3. On the AAA policy Identity tab:
+a. Check/Select 'Processing Metadata'.
+b. Select 'ssh-password-metadata' from the 'Processing Metadata Items' drop-down option.
+
+4. On the AAA policy Authenticate tab:
+a. Select 'Custom Template' from the 'Method' drop-down list.
+b. Specify the location of the custom stylesheet to use in the 'Custom URL' field. A sample custom stylesheet (sftp_aaa_pub_key_auth.xsl) has been attached to this technote.
+
+5. On the AAA policy Resource tab:
+a. Select the 'Resource Information'. For this sample, select 'Processing Metadata' and then select 'ssh-password-metadata' from the 'Processing Metadata Items' drop-down option
+
+Note that the sample configuration details noted above are for educational purposes only and intended to demonstrate how the SFTP public key authentication can be accomplished using a custom stylesheet in the AAA authentication step. To that end, make the appropriate changes to best suit your environment.
+
+
+
+ssh_client_pubkey_map.xml [/support/docview.wss?uid=swg21442251&aid=2] ssh_client_pubkey_map.xml [/support/docview.wss?uid=swg21442251&aid=1] sftp_aaa_pub_key_auth.xsl [/support/docview.wss?uid=swg21442251&aid=4] sftp_aaa_pub_key_auth.xsl [/support/docview.wss?uid=swg21442251&aid=3]
+
+=========================
+DISCLAIMER: 
+=========================
+These sample files are licensed under the International License Agreement for non-warranted IBM Software and is provided "as-is" with no formal support. 
+
+IBM COPYRIGHT INFORMATION: 
+==========================
+International Business Machines Corporation 1997, 2007 Licensed program - Property of IBM . All rights reserved. IBM and WebSphere are trademarks of International Business Machines Corporation in the United States and/or other countries. Java is a trademark of Sun Microsystems, Incorporated. U.S. Government Users Restricted Rights - Use, duplication, or disclosure restricted by GSA ADP. Schedule Contract with IBM Corp. 
+
+LIMIT OF LIABILITY: 
+==========================
+License to the contained sample application is conditioned upon the recipient holding a license to the prerequisite product. The license terms and conditions of the sample/examples are the same as those for the prerequisite product. Please see the product license for specifics. 
+==================================

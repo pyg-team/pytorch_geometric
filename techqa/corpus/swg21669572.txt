@@ -1,0 +1,30 @@
+Title: IBM How to specify a special font for a particular application when using AFP2PDF - United States
+
+Text:
+AFP2PDF options ini special fonts TECHNOTE (FAQ)
+
+QUESTION
+ How to specify a special font for a particular application when viewing AFP2PDF 
+
+ANSWER
+odwek uses afp2pdf.ini, and afp2pdf.ini references options files that contain the afp2pdf parms. Suppose you have an options file with the name options.dft for all applications except 'supplemental', you can create an options file with the name options.supp for this particular application. Then you code the following lines in the file afp2pdf.myini and store it in /odadmin/config 
+[Payroll-Supplemental] 
+OptionsFile=/odadmin/config/options.supp ----> for documents in the AG payroll and app Supplemental 
+[default] 
+OptionsFile=/odadmin/config/option.dft --- > for other documents 
+
+Then in your Java application, you code: 
+Properties props = new Properties(); 
+props.setProperty(ODConfig.AFP2PDF_CONFIG_FILE,"/odadmin/config/afp2pdf.myini"); 
+.... 
+ODConfig cfg = new ODConfig(ODConstant.PLUGIN, //AfpViewer 
+ODConstant.APPLET, //LineViewer 
+null, //MetaViewer 
+500, //MaxHits 
+"c:\\applets", //AppletDir 
+"ENU", //Language 
+"c:\\temp", //TempDir 
+"c:\\temp\\trace", //TraceDir 
+1, //TraceLevel 
+props); //properties 
+AFP2PDF configuration is documented at: http://pic.dhe.ibm.com/infocenter/cmod/v8r5m0/topic/com.ibm.ondemand.afp2pdf.doc/afp2pdf_ips18.htm#wq12 [http://pic.dhe.ibm.com/infocenter/cmod/v8r5m0/topic/com.ibm.ondemand.afp2pdf.doc/afp2pdf_ips18.htm#wq12]

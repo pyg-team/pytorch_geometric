@@ -1,0 +1,235 @@
+Title: IBM PI68641: INSTALLATION OF 24 FIXPACK 1 FINISHES WITH ERROR MESSAGE ON MAC ON LAST SCREEN OF THE FIXPACK INSTALLER DIALOG - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You have installed IBM SPSS Statistics 24 on a Macintosh OSX
+   operating system some time ago.
+   For example on Mac OSX 10.11.x El Capitan or on Mac OSX 10.10.x
+   Yosemite.
+   You download Fix pack: 24.0-IM-S24STATC-Mac-FP001
+   IBM SPSS Statistics Client 24.0 Mac Fix Pack 1 from IBM
+   FixCentral
+   You copy the fixpack file on the MacOSX desktop
+   24.0-IM-S24STATC-Mac-FP001.dmg
+   Then, double click on the file unpack the installer and start
+   installation
+   You entered your sudo password when the installer prompted for
+   the password.
+   Statistics 24 is installed on default path
+   Applications/IBM/SPSS/Statistics/24
+   
+   
+   
+   After entering the sudo password the installer proceed fine
+   until to the last screen.
+   
+   You encounter the following behavior:
+   
+   On last dialog of the installer "Install complete" you see below
+   message:
+   
+   *******************
+   The installation of IBM SPSS Statistics 24 Patch is finished,
+   but some errors occurred during the install. Please see the
+   installation log for details.
+   *******************
+   
+   When you press "Done" the installer is finished and when you
+   launch the program SPSS 24 on this Mac it runs fine and it shows
+   as installed version 24.0.0.1
+   
+   On the temporary folder of this Mac there is no install log but
+   when you open the Console
+   
+    - > Applications/Utilities/Console
+   
+   you can click on "All Messages" below System Log Queries,
+   Then on Search section  type "SPSS"
+   to filter for SPSS messages
+   You may see similar messages on your Console log:
+   
+   ***********Messages on Console regarding SPSS*************
+   
+   05/09/16 10:32:45,212 SPSS_Statistics_Installer_Patch[56176]:
+   Could not find image named 'lock'.
+   05/09/16 10:32:45,462 SPSS_Statistics_Installer_Patch[56176]:
+   Exe:
+   /Volumes/SPSSStatistics/SPSS_Statistics_Installer_Patch.app/Cont
+   ents/Resources/SPSS_Statistics_Installer_Patch.app
+   05/09/16 10:32:55,313 authorizationhost[56189]: Failed to
+   authenticate user <SPSS> (error: 9).
+   05/09/16 10:33:10,848 authorizationhost[56189]: Failed to
+   authenticate user <SPSS> (error: 9).
+   05/09/16 10:33:37,437 SPSS_Statistics_Installer_Patch[56193]:
+   unable to get primary account status; Error
+   Domain=NSCocoaErrorDomain Code=4099 "Couldn't communicate with a
+   helper application." (The connection to service named
+   com.apple.bird was invalidated.) UserInfo=0x7fb499600040
+   {NSDebugDescription=The connection to service named
+   com.apple.bird was invalidated.}
+   05/09/16 10:33:37,897 SPSS_Statistics_Installer_Patch[56193]:
+   assertion failed: 14F1713: libxpc.dylib + 62447
+   [5C829202-962E-3744-8B50-00D38CC88E84]: 0x87
+   ******************
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This was reported to IBM SPSS Development. The issue was
+   reviewed and the error messages displayed on console and last
+   screen of the FixPack installer are not relevant, The FixPack is
+   installed successful despite of the message and release
+   24.0.0.1 will work normally on Macintosh.
+   However, the FixPack 24 FP1 for Macintosh has been refreshed on
+   8. September 2016 and if you download it now you will no longer
+   see the error on installer dialog.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * see APAR text                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * This was reported to IBM SPSS Development. The issue was     *
+   * reviewed and the error messages displayed on console and     *
+   * last                                                         *
+   * screen of the FixPack installer are not relevant, The        *
+   * FixPack is                                                   *
+   * installed successful despite of the message and release      *
+   * 24.0.0.1 will work normally on Macintosh.                    *
+   * However, the FixPack 24 FP1 for Macintosh has been refreshed *
+   * on 8. September 2016 and if you download it now you will no  *
+   * longer see the error on installer dialog.                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This was reported to IBM SPSS Development. The issue was     *
+   * reviewed and the error messages displayed on console and     *
+   * last                                                         *
+   * screen of the FixPack installer are not relevant, The        *
+   * FixPack is                                                   *
+   * installed successful despite of the message and release      *
+   * 24.0.0.1 will work normally on Macintosh.                    *
+   * However, the FixPack 24 FP1 for Macintosh has been refreshed *
+   * on 8. September 2016 and if you download it now you will no  *
+   * longer see the error on installer dialog.                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This was reported to IBM SPSS Development. The issue was
+   reviewed and the error messages displayed on console and last
+   screen of the FixPack installer are not relevant, The FixPack is
+   installed successful despite of the message and release
+   24.0.0.1 will work normally on Macintosh.
+   However, the FixPack 24 FP1 for Macintosh has been refreshed on
+   8. September 2016 and if you download it now you will no longer
+   see the error on installer dialog.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI68641
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   O00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-05
+   
+   
+ * CLOSED DATE
+   2016-09-12
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RO00 PSN
+   UP
+   
+   
+ * RO00 PSY
+   UP

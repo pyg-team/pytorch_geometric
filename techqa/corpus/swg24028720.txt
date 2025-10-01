@@ -1,0 +1,84 @@
+Title: IBM Rational Functional Tester Version 8.2.0.1 - United States
+
+Text:
+Rational Functional Tester 8.2.0.1; Rational Functional Tester; RFT; RN8.2.0.1 DOWNLOADABLE FILES
+
+ABSTRACT
+ This document desribes how to download and install IBM Rational Functional Tester Version 8.2.0.1. 
+
+DOWNLOAD DESCRIPTION
+IBM Rational Functional Tester 8.2.0.1 includes defect fixes to previous versions of Rational Functional Tester and the following enhancements:
+
+
+ * Integration with IBM Rational Team Concert version 3.0: Rational Functional Tester version 8.2.0.1 supports integration with Rational Team Concert 3.0. The Jazz Eclipse Client for Rational Team Concert is included with Rational Functional Tester version 8.2.0.1 as an optional feature. 
+ * Internet Explorer 64-bit support: Rational Functional Tester version 8.2.0.1 supports the 64-bit version of Internet Explorer 6.0, 7.0 and 8.0. 
+ * Ubuntu 10.04 support: Rational Functional Tester version 8.2.0.1 supports Ubuntu 10.04 LTS Desktop and Server Editions. 
+ * Integration with Rational TestManager: Support for integration with Rational TestManager is reinstated.
+
+
+Information Center for Rational Functional Tester version 8.2.0.1. [http://publib.boulder.ibm.com/infocenter/rfthelp/v8r2/index.jsp] 
+
+Supported Domains 
+For details on the list of domains supported for functional testing, integration of Rational Functional Tester with other Rational products and compatible shell sharing products, see technote 7019698: List of domains supported for functional testing [http://www.ibm.com/support/docview.wss?rs=953&uid=swg27019698]. PREREQUISITES
+ 
+
+ * Before you update Rational Functional Tester, close the Eclipse and Microsoft Visual Studio IDEs, as well as any open Web browsers, and all other applications that are enabled by Functional Tester. 
+ * This fix pack requires IBM Installation Manager, version 1.4.1. 
+ * If you are installing or upgrading Rational Functional Tester on Microsoft Windows, to use the .NET Scripting feature, you must copy msvcp71.dll into the System32 directory (C:\Windows\System32), if it is not already available. You can copy the msvcp71.dll file from any other Windows operating system such as Windows XP or download it from Internet. 
+
+
+Note: For details on the list of supported platforms on which IBM Rational Functional Tester can be installed, see List of supported platforms [http://www.ibm.com/support/docview.wss?uid=swg27019699]. INSTALLATION INSTRUCTIONS
+Installing Rational Functional Tester, Version 8.2.0.1 
+
+
+You can install Rational Functional Tester, Version 8.2.0.1 in two ways: 
+
+ * Using IBM Installation Manager
+
+If IBM Rational Functional Tester, Version 8.2 is already installed on your computer, you can install this update using the Update Packages wizard in IBM Installation Manager.  * Local upgrade of an existing installation
+   1. Download the Rational Functional Tester 8.2.0.1 fix pack from the location specified at the bottom of this page.
+   2. Extract the files to a temporary directory. For example, extract the file to C:\temp 
+   3. In the IBM Installation Manager click File > Preferences and add the temporary directory to the list of repositories, for example, C:\temp\rft8201.update.disk1\disk1\.
+   4. Use the Update Packages wizard of the Installation Manager to proceed with the update.
+
+
+Support available for the help installation: 
+Rational Functional Tester help system is configured to use remote help. An internet connection is required to access help or to download and install help locally. For more information about configuring and accessing help, see Configuring help content [http://publib.boulder.ibm.com/infocenter/rfthelp/v8r2/topic/com.ibm.help.common.rational.remote.doc/topics/t_configuring_help.html] in the Rational Functional Tester information center. 
+
+For more information, see the following technotes:  *  Installing from update site [http://www.ibm.com/support/docview.wss?uid=swg21377830] 
+ *  Browser security technote [http://www.ibm.com/support/docview.wss?uid=swg21378357]
+   
+
+
+Known problems 
+Known problems are documented in the form of individual technotes in the Support knowledge base at 
+http://www.ibm.com/software/awdtools/tester/functional/support/ [http://www-306.ibm.com/software/awdtools/tester/functional/support/] 
+
+As problems are discovered and resolved, the knowledge base is updated and maintained with new information. By searching the knowledge base, you can quickly find workarounds or solutions to problems. 
+The following links run customized queries of the live Support knowledge base:  * View all known problems for Rational Functional Tester version 8.2.0.1. [http://www.ibm.com/support/search.wss?rs=953&tc=SSJMXE&q=RN8.2.0.1&rankprofile=8] 
+ * View all known problems for Rational Functional Tester [http://www.ibm.com/support/search.wss?rs=953&tc=SSJMXE&rankprofile=8]
+
+URL LANGUAGE SIZE(Bytes) Rational Functional Tester release notes 8.2.0.1 [http://publib.boulder.ibm.com/infocenter/rfthelp/v8r2/topic/com.ibm.rational.test.ft.readme.doc/topics/readme.html] English 21644 
+DOWNLOAD PACKAGE
+
+
+
+
+PROBLEMS SOLVED
+This release contains fixes for the following APARs: 
+
+ 
+
+APARs Description PM26803 Rational Functional Tester 8.1.1.3: There is a false click on a Flex data grid during playback. PM22270 Rational Functional Tester is unable to detect a selected item in a drop-down list. PM20736 Script Arguments are unable to pass arguments correctly for .NET script execution. PM25322 Rational Functional Tester 8.2: An exception is thrown when the default script name contains a space. PM21386 Upgrading from Rational Functional Tester 8.1 to 8.1.1.2 causes a Java Script to disappear during playback. PM23673 Snippet code disappears on starting playback. PM24606 Embedded IE in Swing Application controls are not recognized in Rational Functional Tester version 8.1.1.3. PK94064 Nothing happens on clicking the "Open" option on any cell (when the "Open" option is enabled) of the failed VP against the HTML table. PM25155 During playback, Rational Functional Tester is unable to click a button that requires to be scrolled into view in order to be clicked. PM26367 Rational Functional Tester displays the error "ObjectNotFoundException: Could not find link with name" in Internet Explorer 8. PM26802 Rational Functional Tester TreeView Control: Occasionally, the recording is not correct when the scroll bar is involved. PM24865 On upgrading Rational Functional Tester 7.0.1.2 iFix04 to 8.1.1.2, there are issues with disappearance of Test Objects. PM24867 Rational Functional Tester: Java scripts recorded in Mozilla Firefox 2.x fail in Firefox 3.x. PM24966 Rational Functional Tester 8.1.1.2: The getTestDataTypes method yields a different output in 8.1.1.2. PM22857 Mozilla Firefox3.6 fails with Rational Functional Tester 8.1.1.2 when using a Test Object Inspector. PM25044 There is no documentation for the getMap().getAttribute(String name) API. PM27026 Rational Functional Tester: Internet Explorer unexpectedly closes with error "fatal error has been detected by the Java Runtime Environment". PM22824 Rational Functional Tester fails to recognize a valid Firefox 3.5.11 folder on SLES 10.2. PM27906 Rational Functional Tester 8.2 : Creating a RFT Project in the JA environment creates an extra space. PM27032 In a RHEL environment, Rational Functional Tester 8.1.1.3 does not start either the RQM Adapter or a RFT perspective. PM22897 Rational Functional Tester 8.1.1.3 : The Insert Recording function does not work as expected when adding steps into a copied script. PM28536 Rational Functional Tester fails to click a radio button and throws an UnabletoPerformActionException. 
+For details on the list of resolved APARs for the 8.x series, see, APAR list of Rational Functional Tester Version 8 releases [http://www.ibm.com/support/docview.wss?uid=swg27017662]. 
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Rational Functional Tester 8.2.0.1 12/23/2010 English 540000000 FC [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Rational&product=ibm/Rational/Rational+Functional+Tester&release=8.2.0.1&platform=All&function=all&source=fc] [ ] 
+TECHNICAL SUPPORT
+ 
+http://www.ibm.com/software/awdtools/tester/functional/support/
+
+The Passport Advantage Online Help Instructional Videos [http://www.ibm.com/software/sw-lotus/services/cwepassport.nsf/wdocs/pao_instructional_videos] will guide Passport Advantage customers through the download and CD ordering processes. 
+
+ [/support/docview.wss?uid=swg24028720&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24028720&aid=2]Problems (APARS) fixed
+PM22270, PM20736, PM25322, PM21386, PM23673, PM24606, PK94064, PM25155, PM26367, PM26802, PM24865, PM24867, PM24966, PM22857, PM25044, PM27026, PM22824, PM27906, PM27032, PM22897, PM28536

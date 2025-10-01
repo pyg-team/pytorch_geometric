@@ -1,0 +1,249 @@
+Title: IBM PI86847: SYNTAX CHECKER NOT RECOGNIZING TRCLEV PARM - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Receiving a message saying parm TRCLEV in the
+   DIAGNOSTIC_STATISTIC SECTION is UNKNOWN.
+   
+   The syntax checker incorrectly flag parm TRCLEV in the
+   DIAGNOSTIC_STATISTIC section as 'unknown' as it should accept
+   this parm.
+   In the keyword definition module DFSWDRDF, the parms chain does
+   not include the TRCLEV parm where it should.
+   
+   Encountering a 'loop' occurs when I look in 'HELP > ABOUT', with
+   message:
+   	ISPP100  Panel "DFSWHAB " error.  Panel not found.
+   ISPP100  Panel "DFSWHAB " error.  Panel not found.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All V15 IMS users of Syntax Checker.                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Syntax checker does not recognize the following parameters:  *
+   *                                                              *
+   * - The parameter TRCLEV in the DIAGNOSTIC_STATISTIC section   *
+   * of the general PROCLIB member DFSDFxxx.                      *
+   * - The parameter IDLETO in the TCPIP statement of the IMS     *
+   * Connect configuration PROCLIB member HWSCFGxx.               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * INSTALL CORRECTIVE SERVICE FOR APAR/PTF                      *
+   ****************************************************************
+   Syntax checker is enhanced to support the following parameters:
+   
+   - in the DIAGNOSTIC_STATISTIC section of the general PROCLIB
+   member DFSDFxxx:
+        - the parameters TRCLEV, NAME, LEVEL, PAGES.
+   
+   - in the IMS Connect configuration member HWSCFGxx:
+         - in the HWS statement: the parameters CASCADE, MULTIRTP,
+   TMRACFST, WTORCMD.
+         - in the ODACCESS statement: the parameter ODRACFST.
+         - in the TCPIP statement: the parameter IDLETO and  the
+   sub-parameter  IDLETO of the parameter PORT.
+   
+   The Help About panel of the Help action bar menu is also created
+   for the current release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  $CPYRGHT  DTM - Copyright for panels
+   Updated second year.
+   
+   $ZS$W$H2 DTM - Help text list of the HWS statement?s parameters
+   Added new HWS statement?s keyword names and help text names
+   
+   $ZS$W$D4 DTM - Help text list of the Diagnostics and Statistics
+   section of the DFSDFxxx member.
+   Added the help text names of the new subkeys (NAME, LEVEL,
+   PAGES) of the current TRCLEV key.
+   
+   $ZS$W$H5 DTM - - Help text list of the ODACCESS statement?s
+   parameters
+   Added new ODACCESS statement?s keyword name and help text name
+   
+   $ZS$W$H8 DTM - - Help text list of the TCPIP statement?s
+   parameters
+   Added new TCPIP statement?s keyword names and help text names
+   
+   DFSWHAB DTL (new) - Help About panel for syntax checker
+   Created the Help About panel for current release
+   
+   
+   DFSWHD40 DTL - Help text the Diagnostics and Statistics section
+   of the DFSDFxxx member.
+   Added subkeys NAME, LEVEL, PAGES of the TRCLEV keyword
+   
+   DFSWHD47 DTL - Help text for subkeys (NAME, LEVEL, PAGES)
+   Added the help text for subkeys (NAME, LEVEL, PAGES)
+   
+   DFSWHH11 DTL - Help text for HWS statement of the IMS Connect
+   configuration member.
+   Added new keyword names to the supported keyword list
+   
+   DFSWHH1G DTL (new) - Help text for keyword CASCADE
+   Created help text for keyword CASCADE
+   
+   DFSWHH1H DTL (new) - Help text for keyword MULTIRTP
+   Created help text for keyword MULTIRTP
+   
+   DFSWHH1I DTL (new) - Help text for keyword TMRACFST
+   Created help text for keyword TMRACFST
+   
+   DFSWHH1J DTL (new) - Help text for keyword WTORCMD
+   Created help text for keyword WTORCMD
+   
+   DFSWHH28 DTL - Help text for ODACCESS statement of the IMS
+   Connect configuration member.
+   Added new keyword names to the supported keyword list
+   
+   DFSWHH31 - Help text for ODBMTMOT
+   Added help text for ODRACFST
+   
+   DFSWHH3F DTL - Help text for TCPIP statement of the IMS Connect
+   configuration member.
+   Added new keyword names to the supported keyword list
+   
+   DFSWHH4G DTL (new) - Help text for keyword IDLETO
+   Created help text for keyword IDLETO
+   
+   DFSWHH4H DTL (new) - Help text for sub-keyword IDLETO of keyword
+   PORT
+   Created help text for sub-keyword IDLETO of keyword PORT
+   
+   DFSWBPVP PLX - Value validation routines
+   Updated the value routine of the LEVEL parameter and added the
+   value routine of the NAME parameter.
+   
+   DFSWCCDF PLX - HWSCFGxx Member Keywords Definition
+   Added new definition for keyword: CASCADE, MULTIRTP, TMRACFST ,
+   WTORCMD, ODRACFST, IDLETOs.
+   
+   DFSWDRDF PLX - DFSDFxxx Member Keywords Definition
+   Changed to not include keyword IASNDEP in the definition since
+   it is not supported.
+   Removed sub-keyword TYPE and OUT in the definition since it is
+   not supported.
+   Added sub-keyword NAME and updated sub-keyword LEVEL, PAGES.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI86847
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V15
+   
+   
+ * REPORTED COMPONENT ID
+   5635A0600
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-05
+   
+   
+ * CLOSED DATE
+   2018-04-05
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI87524 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI87524] UI55026
+   
+   
+
+MODULES/MACROS
+ *  DFSWDRDF DFSWBPVP DFSWCCDF DFSWHH4G DFSWHH28 DFSWHH4H DFSWHH3F
+   DFSWHD40 DFSWHH11 DFSWHD47 DFSWHH1I DFSWHH1J DFSWHH1G DFSWHH1H
+   DFSWHAB  DFSWHH31
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V15
+   
+   
+ * FIXED COMPONENT ID
+   5635A0600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY UI55026 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI55026]
+   UP18/04/07 P F804
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

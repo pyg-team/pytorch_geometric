@@ -1,0 +1,192 @@
+Title: IBM PI58355: IEC141I 013-20,IGG0191A AFTER PRESSING PF3 TO CLOSE DMHINSTL OPTION 0. - United States
+
+Text:
+z/os  DIRECT LINKS TO FIXES
+readme.htm [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FIBM+Rational+Asset+Analyzer&fixids=RAA-6.1.0.10-readme&source=SAR]
+RAAzInstallRepository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FIBM+Rational+Asset+Analyzer&fixids=RAAz-6.1.0.10-Install-IMRepository&source=SAR]
+RAAzInstall [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FIBM+Rational+Asset+Analyzer&fixids=RAAz-6.1.0.10-Install&source=SAR]
+Rational Asset Analyzer for System z Fix Pack 10 (6.1.0.10) for 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042016]
+Rational Asset Analyzer for System z Fix Pack 11 (6.1.0.11) for 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042669]
+Rational Asset Analyzer for System z Fix Pack 12 (6.1.0.12) for 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043097]
+Rational Asset Analyzer for System z Fix Pack 13 (6.1.0.13) for 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043363]
+Rational Asset Analyzer for System z Fix Pack 14 (6.1.0.14) for 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043719]
+Rational Asset Analyzer for System z Fix Pack 15 (6.1.0.15) for 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24044106]
+Rational Asset Analyzer for System z Fix Pack 16 (6.1.0.16) for 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24044583]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IEC141I 013-20,IGG0191A message is displayed, similar to:
+   
+   IEC141I 013-20,IGG0191A,USER1,PROACCNT,SYSPRINT,1203,M1WS13,
+   SYS16061.T120239.RA000.USER1.R0642150
+   CEE3250C The system or user abend S013  R=00000020 was issued.
+             From compile unit CXPHPRTX at entry point CXPHPRTX at
+   compile unit of
+   set +00004DCC at entry offset +00004DCC
+              at address 25AF4E84.
+   <> LEAID ENTERED (LEVEL 10/15/2014 AT 08.09)
+   AB400A      ===== ABEND-AID =====
+      REPORT WRITTEN TO: DEHMNN.DDIO.REPORTS
+      REPORT NUMBER: 0252373
+      JOB-PMSBMN   STEP-SSBACCNT
+      LE COND CODE=CEE3250C / EXPECTED COMP CODE=S013
+        ACCESS YOUR ABEND-AID REPORTS BY EXECUTING SYSTEM COMMA
+        ND "AB" FROM ANYWHERE IN ISPF.
+   <> LEAID PROCESSING COMPLETE. RC=0
+   IEA995I SYMPTOM DUMP OUTPUT
+   SYSTEM COMPLETION CODE=013  REASON CODE=00000020
+     TIME=12.02.40  SEQ=00348  CPU=0000  ASID=02C3
+     PSW AT TIME OF ERROR  078D1F00   8010143E  ILC 2  INTC 0D
+       ACTIVE LOAD MODULE           ADDRESS=000FDC38
+   OFFSET=00003806
+       NAME=CEEBINIT
+       DATA AT PSW  00101438 - 00181610  0A0D18C7  18D418E8
+       AR/GR 0: 00000000/04000000   1: 00000000/04013000
+   ***
+            2: 00000000/0000EE30   3: 00000000/00000001
+            4: 00000000/0009A190   5: 00000000/0000000B
+            6: 00000000/04013000   7: 00000000/00000020
+            8: 00000000/A5A91510   9: 00000000/00000003
+            A: 00000000/80105B68   B: 00000000/80100E50
+            C: 00000000/00118C30   D: 00000000/25A92010
+            E: 00000000/80101326   F: 00000001/00000020
+   END OF SYMPTOM DUMP
+     2513 *-*        "CALL" "'"loadLib"(IGYCRCTL)'"
+          +++ RC(-19) +++
+   ***
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Edit <hlq>.SDMHREXX(DMHI100) and change 80 to 133 in
+   both places on the line:
+   
+   "ALLOC F(SYSPRINT) NEW DELETE LRECL(80) RECFM(F B) BLKSIZE(80)
+   
+   SPACE(1 1) REUSE"
+   
+   I.e., that line in DMHI100 should be updated to read:
+   
+   "ALLOC F(SYSPRINT) NEW DELETE LRECL(133) RECFM(F B)
+   BLKSIZE(133) SPACE(1 1) REUSE"
+   
+   Then save the DMHI100 file, rerun DMHINSTL option 0, and press
+   F3 to save.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When pressing PF3 in DMHINSTL option 0, an IEC141I 013-20
+   message stops the user from saving  configuration changes.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  RAA code was changed to create the COBOL compiler SYSPRINT DD
+   using LRECL=133.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI58355
+   
+   
+ * REPORTED COMPONENT NAME
+   RAA FOR SSTEM Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655W5700
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-01
+   
+   
+ * CLOSED DATE
+   2016-03-08
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  dmhinstl
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RAA FOR SSTEM Z
+   
+   
+ * FIXED COMPONENT ID
+   5655W5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

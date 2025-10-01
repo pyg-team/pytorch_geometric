@@ -1,0 +1,27 @@
+Title: IBM Changing Directory Server password for IBM FileNet Content Engine using ACCE - United States
+
+Text:
+ACCE Directory Server Password FEM TECHNOTE (FAQ)
+
+QUESTION
+ Using ACCE, how do I change the Directory Server Configuration? Specifically, the Directory Server Password is a protected field and doesn't allow updates. 
+
+CAUSE
+With the release of IBM FileNet Content Platform Engine version 5.2.1, FileNet Enterprise Manager is deprecated and is replaced with ACCE.
+
+ANSWER
+ 
+
+ 1. Via ACCE, select the Domain, followed by the Directory Configuration tab and then the Name of the Directory Server.[/support/docview.wss?uid=swg21697482&aid=1] [/support/docview.wss?uid=swg21697482&aid=1]
+    
+    
+ 2. Scroll downward to the Directory Server Password field. Select the drop down in the adjacent field and select Change Password.
+    [/support/docview.wss?uid=swg21697482&aid=2] [/support/docview.wss?uid=swg21697482&aid=2]
+    
+    
+ 3. After changing the password, select OK. 
+    [/support/docview.wss?uid=swg21697482&aid=3] [/support/docview.wss?uid=swg21697482&aid=3]
+    
+    
+ 4. There is no Save button on this screen. Switch back to the calling tab that displays an asterisk (*) and press Save. 
+    [/support/docview.wss?uid=swg21697482&aid=4] [/support/docview.wss?uid=swg21697482&aid=4]

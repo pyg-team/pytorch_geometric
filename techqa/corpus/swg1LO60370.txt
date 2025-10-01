@@ -1,0 +1,323 @@
+Title: IBM LO60370: NOTES IS UNUSABLE AFTER CREATING DOCUMENTS WITH LOTUSSCRIPT USIN G SYMPHONYAPPLICATIONS OBJECT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Note - this issue is similar in error to JTHN8E7S8K  but this
+   happens in an
+   established client and I have reproduced in the 4/3 build of
+   8.5.3 CD4.
+   
+   IBM/Lotus internal AVP application creates Symphony documents
+   Documents and
+   Spreadsheets. After it runs during a session in Notes and Notes
+   is shutdown,
+   Notes will not restart again. This application also creates MS
+   Docs using the
+   MS related objects and the Notes application will start without
+   issues.
+   
+   When the issue occurs, Notes restarts and the Splash screen is
+   displayed you
+   will be prompted for your password and then the Loading progress
+   bar will start
+   again when it gets to 100%.
+   
+   The only way to recover and start Notes is to remove the
+   workspace folder from
+   data and lose your preferences.
+   
+   
+   RCPMON.log entry:
+   18/04/2011  05:55:00:750 : 7364 :: New session started.
+   18/04/2011  07:32:02:000 : 7364 :: Normal preshutdown of
+   workbench id
+   org.eclipse.ui.internal.Workbench@e230e23
+   18/04/2011  07:32:09:671 : 7364 :: Finished postshutdown of
+   workbench id
+   org.eclipse.ui.internal.Workbench@e230e23
+   18/04/2011  07:32:33:359 : 7364 :: Java shutdown hook
+   received.
+   18/04/2011  07:32:38:375 : 7364 :: exit_logger called from
+   jre.
+   18/04/2011  07:32:38:859 : 7364 :: DllMain :: process exit.
+   
+   
+   Error Trace entry:
+   
+   
+   
+   Trace Viewer
+   
+   Viewer Preferences
+   
+   Time Thr Id Severity Source Class.Method Message Subsystem
+   07:50:44.140 0 CONFIG com.ibm.rcp.core.internal.logger.framework
+   hook
+   writeSession eclipse.buildId=20110411-0530
+   java.fullversion=JRE 1.6.0 IBM J9 2.4 Windows XP x86-32
+   jvmwi3260sr9-20101015_66506 (JIT enabled, AOT enabled)
+   J9VM - 20101015_066506
+   JIT  - r9_20101007_17269
+   GC   - 20100922_AA
+   BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en
+   Framework arguments:
+   com.ibm.productivity.tools.standalone.personality
+   -product
+   com.ibm.rcp.personality.framework.RCPProduct\:com.ibm.notes.bran
+   ding.notes
+   -com.ibm.symphony.notes.branding#process_args_command
+   /authenticate
+   -com.ibm.symphony.lotusscript.branding#start_soffice
+   -plugincustomization
+   C:/Program
+   Files/IBM/Lotus/Notes/framework/rcp/plugin_customization.ini
+   Command-line arguments:  -os win32 -ws win32 -arch x86
+   com.ibm.productivity.tools.standalone.personality -product
+   com.ibm.rcp.personality.framework.RCPProduct\:com.ibm.notes.bran
+   ding.notes
+   -com.ibm.symphony.notes.branding#process_args_command
+   /authenticate
+   -com.ibm.symphony.lotusscript.branding#start_soffice -data
+   C:/Program
+   Files/IBM/Lotus/Notes/Data/workspace -plugincustomization
+   C:/Program
+   Files/IBM/Lotus/Notes/framework/rcp/plugin_customization.ini com
+   .ibm.rcp.core.internal.logger.frameworkhook
+   07:50:44.312 0 WARNING com.ibm.notes.roaming.provider.operations
+   .NotesRoamingVeto
+   shouldRoam CLFRU0029W: Your data is not currently roaming
+   because you started the session
+   with a different application than the Notes client (for example,
+   Symphony or
+   Designer). com.ibm.notes.roaming.provider.notesadapter
+   07:50:44.750 1 SEVERE &#65440; Application error
+       java.lang.RuntimeException: No application id has been
+   found.
+   
+      at
+   org.eclipse.equinox.internal.app.EclipseAppContainer.startDefaul
+   tApp(Unknown
+   Source)
+   
+      at
+   org.eclipse.equinox.internal.app.MainApplicationLauncher.run(Unk
+   nown
+   Source)
+   
+      at
+   org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.run
+   Application(Unkn
+   own Source)
+   
+      at
+   org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.sta
+   rt(Unknown
+   Source)
+   
+      at
+   org.eclipse.core.runtime.adaptor.EclipseStarter.run(Unknown
+   Source)
+   
+      at
+   org.eclipse.core.runtime.adaptor.EclipseStarter.run(Unknown
+   Source)
+   
+      at sun.reflect.NativeMethodAccessorImpl.invoke0(Native
+   Method)
+   
+      at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown
+   Source)
+   
+      at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown
+   Source)
+   
+      at java.lang.reflect.Method.invoke(Unknown Source)
+   
+      at org.eclipse.equinox.launcher.Main.invokeFramework(Unknown
+   Source)
+   
+      at org.eclipse.equinox.launcher.Main.basicRun(Unknown
+   Source)
+   
+      at org.eclipse.equinox.launcher.Main.run(Unknown Source)
+   
+      at
+   com.ibm.rcp.core.internal.launcher.Main.startLaunch(Unknown
+   Source)
+   
+      at com.ibm.rcp.core.internal.launcher.Main.main(Unknown
+   Source)
+   
+      at com.ibm.rcp.core.internal.launcher.Main.run(Unknown
+   Source)
+   
+    org.eclipse.osgi
+   
+   error Log Entry:
+   
+   
+   
+   Log Viewer
+   
+   Viewer Preferences
+   
+   Time Severity Message Subsystem
+   2011-04-18T07:51:02.046-05:00 WARNING CLFRU0029W: Your data is
+   not currently
+   roaming because you started the session with a different
+   application than the
+   Notes client (for example, Symphony or Designer).
+   com.ibm.notes.roaming.provider.notesadapter
+   2011-04-18T07:51:02.484-05:00 SEVERE Application
+   error org.eclipse.osgi
+   
+   
+   
+   
+   Theory -  When the Symphony application object is created the
+   path information
+   is somehow changed or lost and the restart is unable to load the
+   Symphony
+   information.
+   
+   
+   **** Steps to Reproduce:
+   
+   Use the test database included
+   
+   1. Open the db
+   2. run the Agent "LargeSymphonyDoc"
+   3. No need to save the Symphony Document when you exit, it is
+   optional.
+   4. Exit Notes normally
+   5, Restart Notes. (at this point Notes may restart normally, if
+   it does, repeat
+   the action. I have only been able to restart twice before
+   reproducing)
+   
+   6. Notes Splash screen appears and you are prompted for you
+   password, then the
+   Progress bar moves slowly and starts again when at 100 %
+   
+   Attachment is SymDoc.nsf
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Delete the workspace folder
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# CSMH8G2QMK.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO60370
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   852
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-25
+   
+   
+ * CLOSED DATE
+   2011-08-03
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5724E6255
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R852 PSN
+   UP

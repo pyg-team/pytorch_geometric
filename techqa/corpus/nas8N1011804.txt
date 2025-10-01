@@ -1,0 +1,51 @@
+Title: IBM PowerHA:  Using DLTUSRPRF Within Cluster Administrative Domain Environment - United States
+
+Text:
+ADMIN; admin; Clustering TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document explains how Admin Domain handles DLTUSRPRF. 
+
+RESOLVING THE PROBLEM
+When using Admin Domain to handle MRE's (Monitored Resource Entries), it can be confusing to understand the relationship between CRTUSRPRF, DLTUSRPRF and having a user profile as a MRE. 
+
+First, the user must completely understand that creating and deleting a user profile is a separate action from adding the profile as an MRE. There is also a difference between adding a profile as an MRE that does not exist on other nodes in the cluster versus deleting a profile that does exist across all nodes in the cluster. Below, there is a Best Practice description followed by some examples.
+
+
+
+ *  - [http://www.ibm.com/i/c.gif] Best Practice For Adding New Profile as MRE  
+   
+   1. Validate that all nodes in the cluster are Active. 2. Validate that the Admin Domain CRG is Active. 3. Check to see if user profile exists on all nodes. If profile does exist on all nodes, it is best to make sure the password is the same across all nodes before adding as MRE for the first time. 4. Select node that is to be "role model" and add the profile as an MRE (R540 using GUI or ADDMRE using API in QUSRTOOL, R610 and above using ADDCADMRE). 5. Validate that the profile has Global Consistency on all monitored attributes for each node. 
+   Note: When using the CRTUSRPRF command, by default Admin Domain does not automatically add the new user profile as an MRE. There is an exit point for the CRTUSRPRF that can be utilized to make that happen. You should refer to QIBM_QSY_CRT_PROFILE. 
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] Best Practice For Removing a Profile as MRE  
+   
+   1. Validate that all nodes in the cluster are Active. 2. Validate that the Admin Domain CRG is Active. 3. Check to see if user profile exists on all nodes and that it has Global Consistency. 4. Select a node to remove the MRE (R540 using GUI or RMVMRE using API in QUSRTOOL, R610 and above using
+   RMVCADMRE). 5. Validate that the profile is no longer an MRE on each node. Note: Removing an MRE does not automatically delete a user profile from any node. 
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] Consideration for Creating a New Profile to be Added as MRE 
+   
+   When creating a user profile that is going to be added as an MRE and the profile currently does not exist on any node in the cluster, it is not necessary to first issue the CRTUSRPRF command on each node and get them synchronized up before adding as MRE. In the case where a new profile is going to be added, you should do the following: 
+   
+   1. Validate that all nodes in the cluster are Active. 2. Validate that the Admin Domain CRG is Active. 3. Select the node that is to be the role model and CRTUSRPRF, then add the profile as an MRE (R540 using GUI or ADDMRE using API in QUSRTOOL, R610 and above using ADDCADMRE). 4. Validate that the profile has Global Consistency on all monitored attributes for each node. 
+   Note: When a user profile does not exist on any other node in the cluster and it is added as a MRE on the "role model" node, Admin Domain will automatically create the user profile on the other nodes in the cluster admin domain. 
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] Considerations for Deleting a User Profile That is Currently an MRE 
+   
+   When deleting a user profile that is currently a MRE, it can have an impact on the Global Consistency status for the other nodes in the cluster admin domain. Therefore, the following process is the recommended path to take: 
+   
+   1. Validate that all nodes in the cluster are Active. 2. Validate that the Admin Domain CRG is Active. 3. Check to see if user profile exists on all nodes and that it has Global Consistency. 4. Select the node that is intended to have the profile deleted, and remove the MRE (R540 using GUI or RMVMRE using API in QUSRTOOL, R610 and above using RMVCADMRE). 5. Validate that the profile is no longer an MRE on each node. 6. Delete the user profile from the node in Step 4. Notes: 1. If the profile was just deleted without first removing as MRE, the profile would have been deleted from the local node only and still would have remained as MRE and would have caused the global consistency status to go FAILED. There is an exit point that can be utilized which will automatically remove the profile as an MRE before actually allowing the DLTUSRPRF to finish. You should refer to exit point QIBM_QSY_DLT_PROFILE and format DLTP0200. If using the QIBM_QSY_DLT_PROFILE with format DLTP0200, when the DLTUSRPRF command is issued from the command line of the local node, the exit point will be looked at first to see what to do (run a program to remove MRE) and, when that is completed, it will delete the user profile from the local node only. Alternatively, one could give deeper thought into the logic of the delete exit programs and also make use of format DLTP0100. Since not all environments are created equally, it is the user's responsibility to figure out their own program logic and if they want the programs to run before or after the deletion of the user profile, it is also possible to utilize both exit points. 2. If utilizing either exit point to programatically perform a removal of the admin domain MRE (RMVMRE/RMVCADMRE) please ensure that the user profile being used to issue the the removal commands at least has *IOSYSCFG special authority. In summary, you should ensure everything is running smoothly before doing any creating or deleting of user profiles, as well as adding or removing user profiles as MREs. When adding a profile as a MRE, the profile will be created automatically on nodes in which the profile does not already exist. When deleting a user profile from a node, it does not automatically get removed as an MRE and it does not automatically delete the profile from the other nodes in the cluster. 
+   
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 585648196

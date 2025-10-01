@@ -1,0 +1,49 @@
+Title: IBM How to create IBM Content Collector (ICC) task route to store files with multiple versions to the same P8 version series? - United States
+
+Text:
+icc; version series; task route TECHNOTE (FAQ)
+
+QUESTION
+ IBM Content Collector (ICC) has a P8 Create Version Series task. How do I configure that task to store files with multiple versions into the same P8 version series? 
+
+CAUSE
+ICC does not provide a task route template for archiving file system documents with multiple versions to the same P8 version series.
+
+ANSWER
+Use the following example as a reference. The following 3 files are to be stored into P8 in one version series with 3 different versions: 
+
+ *  A1001001A001_V1.txt A1001001A001_V2.txt A1001001A001_V3.txt 
+
+
+Create a csv metadata file similar to the following: 
+ * DocID|VersionID|FileName
+ * 
+ * A1001001A001|version 1|c:\temp\A1001001A001_V1.txt
+ * 
+ * A1001001A001|version 2|c:\temp\A1001001A001_V2.txt
+ * 
+ * A1001001A001|version 3|c:\temp\A1001001A001_V3.txt
+
+
+Use the following task route template as a starting point:  * FS to P8 Archiving (Associate Metadata)
+
+
+In the FSC Collector task, Filters tab, under Filter file extensions, select "Include files" and ".csv". 
+
+Configure the following in the FSC Associate Metadata task:  * Under Monitor options, select "Metadata file" for Input file type. 
+ * Select the user-defined metadata (you must have configured this already) to store the properties from the metadata file. 
+ * In the DocumentName tab, select the options how to identify your documents. In the above example, "FileName" should be selected as it contains the full path to the actual document. 
+ * You must select the checkbox Group documents by metadata file. 
+ * In the MetadataMapping, configure it the same way for any other task routes. 
+
+
+Replace the P8 Create Document task from the task route template with P8 Create Version Series task and configure the following in the P8 Create Version Series task:  * Under Content capture options, select the option Transfer content (default). 
+ * Do not select the checkbox Add multiple content elements as this option does not apply to file system documents. 
+
+
+The rest of the task route configuration should be similar to any other task routes for file archiving. 
+
+The end result is that there is one P8 object created for the same version series. 
+If you view the document properties, there are 3 versions created. The first two versions are superseded and the last version is released. 
+
+ICC can only create the same version series if the various versions of the file are grouped in one single metadata file. That is, if you have multiple sets of documents for multiple version series, you need to provide several metadata files one for each version series.

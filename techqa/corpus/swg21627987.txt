@@ -1,0 +1,33 @@
+Title: IBM Customizing the login URL in the Tivoli Integrated Portal - United States
+
+Text:
+TIPL2FAQ; TIPL2CUST; URL; customize TECHNOTE (FAQ)
+
+QUESTION
+ Can the login URL in TIP be customized or changed ? 
+
+CAUSE
+Customer would like to rebrand ( change "ibm" to "company name" ) 
+" https://<IP address>:<port number>/ibm/console/logon.jsp
+
+ANSWER
+For TIP 1.x and 2.1: 
+
+The URL cannot be customized, as the term ibm is currently hard coded within the compiled code. 
+
+
+For TIP 2.2: 
+"The following procedure can be used to change the context root value to a preferred value (like your company name). However, not all IBM products deployed in TIP support a non-default context root value. Open a support request for each product you have deployed in TIP to verify changing the context root for that product is supported, or thoroughly test the change in a lab environment before making the change in a production environment."
+
+Edit the IAGLOBAL_CONSOLE_CONTEXT_ROOT variable in the sample_response.txt file:
+
+#---- TIP console context root. 
+#---- If no value is set for the property, the default context root /ibm/console will be used.
+#---- Valid inputs:
+#---- Should not include special characters, such as % & ^ ` * ( ) - + = @ ! ~ #
+#---- Should not have double slashes such as //ibm/console
+#---- Should not have space such as / ibm/console
+IAGLOBAL_CONSOLE_CONTEXT_ROOT=/ibm/console
+
+Please Note: 
+The above procedure is only valid during the initial installation. To change the context root after the installation , during runtime, there are many files that would need to be manually updated.

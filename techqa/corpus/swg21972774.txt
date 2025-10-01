@@ -1,0 +1,22 @@
+Title: IBM Potential data corruption in OpenPages GRC Platform 7.1.0.1 when using encrypted long string data types with Oracle 12c - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ An issue is currently under investigation that could lead to corruption of encrypted long string data types when stored in Oracle 12c. 
+
+CONTENT
+Use case: A customer chooses to enable encryption on a long string data type (field) in OpenPages GRC Platform while using Oracle 12c 
+
+Symptom: When decrypted for display or editing, the long string value has been altered by repeating the few last few characters of the string. For example, the string: 
+
+This is a test. 
+
+Might be displayed as: 
+
+This is a test.t. 
+
+It is not clear if these repeating characters are added during encryption or decryption. As a result, it is not yet know if data is incorrectly saved, or incorrectly read. 
+
+Recommendation: There is an ongoing investigation to determine the root cause of this issue. Until a resolution is found, OpenPages recommends that customers not enable encryption on long string data types if they are using Oracle 12c. This issue has been tested on Oracle 11g and found to be working properly. Customers using encryption on long string data types in Oracle 11g should not upgrade to Oracle 12c until this problem is resolved.

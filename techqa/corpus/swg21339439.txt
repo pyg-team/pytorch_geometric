@@ -1,0 +1,28 @@
+Title: IBM What are the available property names for RefProps in IQueryOptions interface? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are the names of the ref properties available in the IQueyOption interface which are available by calling the getRefProps() method? 
+
+
+ANSWER
+ The properties that appear are defined in the CUSTOM AUTHENTICATION PROVIDER 
+
+DEVELOPER GUIDE . 
+
+For example, for a user, this method returns the user name, account, and email. 
+
+Note that from a custom provider perspective, not all the properties of an object are supported and you need to ignore unsupported properties. For example, for the account object the property format does not apply to the Authentication and will be ignored. 
+
+Also see: Software Development Kit Developer's guide - Custom Authentication Provider - account, group, role objects and \sdk\java\AuthenticationProvider\javadoc 
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Business Intelligence & Financial Performance Management Cognos 8 Business Intelligence Software Development Kit 
+HISTORICAL NUMBER
+ 1018512

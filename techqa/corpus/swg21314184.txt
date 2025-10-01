@@ -1,0 +1,22 @@
+Title: IBM Run osgiCfgInit.sh to update osgi plugins - United States
+
+Text:
+CAMADALL CAMADWASZDC OSGI osgiCfgInit.sh Plugin DC install "Data Collector" TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ Data Collector is installed but is not running. 
+
+CAUSE
+The Data Collector configuration is incomplete. Plugins have not been refreshed.
+
+RESOLVING THE PROBLEM
+The osgicfginit.sh script should be run under the covers when setupwas.sh is run. It only needs to be run one time, during configuration. The osgiCfgInit.sh script is a WebSphere-supplied script that is used to update the osgi plugins. When applying maintenance to an ITCAM Data Collector on a WAS 6.1 server, you should always run the setupwas.sh script with the -plugins option. This will NOT reconfigure the DC but simply copy any updated jar files to the WAS plugins directory and run the WAS osgiCfgInit.sh script. 
+
+Example : 
+cd /usr/lpp/itcam/WebSphere/DC/bin 
+./setupwas.sh -plugins
+
+Alternately, you can run the osgiCfgInit.sh script after setupwas.sh completes.

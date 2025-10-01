@@ -1,0 +1,150 @@
+Title: IBM IZ06655: JAVA BUG CAUSES SCHEDULED REPORTS TO FAIL. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The bug is documented here:
+   
+   http://forum.java.sun.com/thread.jspa?threadID=571326&messageID=
+   2829023 [http://forum.java.sun.com/thread.jspa?threadID=571326&messageID=2829023]
+   
+   Reports of < 78Mb hang when scheduled.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Keep reports to a small size.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users expecting to schedule Report jobs with *
+   *                 result sets greater then 78Mb in size        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When scheduling Report jobs greater     *
+   *                      then 78Mb's in result set size cause    *
+   *                      the scheduled process process to hang   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   If a report is scheduled which will need to process a result
+   set from the database of a size greater then 78Mb, the JVM
+   hangs as a result of not being able to manage the memory.  This
+   is a documented Java issue and further information can be
+   located at
+   http://forum.java.sun.com/thread.jspa?threadID=571326&messageID
+   =2829023 [http://forum.java.sun.com/thread.jspa?threadID=571326&messageID=2829023]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Java process which processes the Report dataset is to be
+   re-coded to divide up the memory moves into smaller chunked
+   sizes.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ06655
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/REPORTER
+   
+   
+ * REPORTED COMPONENT ID
+   5724P9600
+   
+   
+ * REPORTED RELEASE
+   210
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-18
+   
+   
+ * CLOSED DATE
+   2007-11-19
+   
+   
+ * LAST MODIFIED DATE
+   2007-11-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/REPORTER
+   
+   
+ * FIXED COMPONENT ID
+   5724P9600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R210 PSY
+   UP

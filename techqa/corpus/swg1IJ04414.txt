@@ -1,0 +1,135 @@
+Title: IBM IJ04414: FIXLETS, TASKS AND BASELINES WITH 'RELEVANCE GROUP' EXPORTED VIA REST API CANNOT BE RE-IMPORTED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Fixlets, Tasks and Baselines having a 'Relevance Group' and
+   exported using REST API cannot be re-imported.
+   
+   The 'Relevance Group' can be created for example from the
+   console using the "Computers which match the condition below"
+   section in the 'Relevance' tab  of Fixlets, Tasks and
+    Baselines.
+   
+   Fixlets, Tasks and Baselines without the 'Relevance are not
+   affected by this issue.
+   
+   The impacted BigFix version are 9.5.7 and higher.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Export Fixlets, Tasks and Baselines with a 'Relevance Group'
+   section using the console
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fixed in IBM BigFix 9.5 (fixpack 9)
+   General availability Q2 2018 (release schedule subject to
+   change).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is resolved in:
+   IBM BigFix 9.5 (fixpack 9)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ04414
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV EP MGR SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5725C43SV
+   
+   
+ * REPORTED RELEASE
+   95W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-02-26
+   
+   
+ * CLOSED DATE
+   2018-02-28
+   
+   
+ * LAST MODIFIED DATE
+   2018-02-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV EP MGR SERV
+   
+   
+ * FIXED COMPONENT ID
+   5725C43SV
+   
+   
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,130 @@
+Title: IBM In an IBM PureData for Operational Analytics (PDOA) miauth fails to change a System Console component user's password - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Changing IBM Systems Director user's password fails to change or the account gets locked 
+
+SYMPTOM
+You ran the "miauth" command to change the password for System Console component user and it fails 
+
+Example:
+
+
+ * $ miauth -pw -p os -u dirinst1
+ * 
+ * 
+ * The password change was successful for the user 'dirinst1' on resource 'server25'.
+ * 
+ * Changing the password for user 'dirinst1' on resource 'server7'.
+ * 
+ * The password change was successful for the user 'dirinst1' on resource 'server7'.
+ * 
+ * Changing the password for user 'dirinst1' on resource 'server5'.
+ * 
+ * The password change was successful for the user 'dirinst1' on resource 'server5'.
+ * 
+ * Updating the password in the database for user dirinst1.
+ * 
+ * The password was successfully updated in the database.
+ * 
+ * Notifying Systems Director of a password change for user dirinst1.
+ * 
+ * Unable to start the director server
+ * 
+ * Password change notification to Systems Director failed for nodes 172.23.1.1.
+ * 
+ * The script was executed with following status:
+ * 
+ * ----------------------------------------------------------
+ * 
+ * SCHEMA::CHPW::LOGICAL_NAME::STATUS(PASS/FAIL)::DESCRIPTION
+ * 
+ * CHPW::server13::FAIL::notify_director_server Password change failed for resource(s) server13.
+ * 
+ * ----------------------------------------------------------
+ * 
+ * Cannot change the password for the user .
+
+
+CAUSE
+Possible cause: 
+
+ 
+
+ * Director may not be started 
+ * Password security or encryption not permitting the change
+
+
+RESOLVING THE PROBLEM
+ 
+
+1) Login to the Management node primary 
+
+2) Verify IBM Director is "Active" 
+
+ * 
+ * # smstatus 
+ * 
+   This command should return "Active" indicating that Director is active (running), a message such as "Inactive" or any other message will not permit a successful password change
+
+
+2.1 If Director is not active, start it issuing command "smstart"  * 
+ * 
+ * 
+
+
+Changing the password of the System Component user  * 
+ * 
+ * 
+ * /etc/security/login.cfg
+ * 
+ * pwd_algorithm
+ * 
+ * 
+ * 2) Change the user's password 
+ *  
+ *  
+   # miauth -pw -p os -u <username>  
+   
+   Note: The above command will change the user's password on all the nodes/servers
+   
+   
+   
+ * 
+ * 
+ * /etc/security/login.cfg
+ * 
+ * pwd_algorithm
+ * 
+ *  
+ * 4) Verify the password is sync across all nodes 
+ *  
+ *  
+   # validate_passwords -a -l 
+ * 
+ * The above command should should a report as the following 
+ *  
+ *  $ validate_passwords -a -l 
+   NAME IP ADDRESS PASSWORD_STATUS DESCRIPTION 
+   hmc0 172.23.1.245 IN_SYNC Password is correct 
+   hmc1 172.23.1.246 IN_SYNC Password is correct 
+   server6 172.23.1.1 IN_SYNC Password is correct 
+   server3 172.23.1.2 IN_SYNC Password is correct 
+   server5 172.23.1.7 IN_SYNC Password is correct 
+   server2 172.23.1.5 IN_SYNC Password is correct 
+   server1 172.23.1.3 IN_SYNC Password is correct 
+   server0 172.23.1.6 IN_SYNC Password is correct 
+   server4 172.23.1.4 IN_SYNC Password is correct 
+   net3 172.23.1.251 IN_SYNC Password is correct 
+   net1 172.23.1.253 IN_SYNC Password is correct 
+   net0 172.23.1.254 IN_SYNC Password is correct 
+   net2 172.23.1.252 IN_SYNC Password is correct 
+   san0 172.23.1.161 IN_SYNC Password is correct 
+   san2 172.23.1.163 IN_SYNC Password is correct 
+   san3 172.23.1.164 IN_SYNC Password is correct 
+   san1 172.23.1.162 IN_SYNC Password is correct 
+ * 
+ * Notice all passwords are in sync "IN_SYNC" and correct "Password is correct". 
+ *

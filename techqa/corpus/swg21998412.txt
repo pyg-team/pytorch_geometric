@@ -1,0 +1,24 @@
+Title: IBM Uploading and applying a new firmare update with the REST API - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I upload and apply a new firmware update using the REST API? 
+
+ANSWER
+The following curl commands illustrate how to upload and then apply a firmware update: 
+
+ * Upload the firmware update.  * curl -v -k --request "POST" --user admin:admin --form uploadedfile=@test.pkg https://10.251.140.41/updates/available
+   
+   
+
+ * Trigger a discovery of available updates on the appliance. This will allow the appliance to recognize the update that was uploaded in the previous step.  * curl -v -k --user admin:admin -H "Accept:application/json" https://10.251.140.41/updates/available/discover_local 
+   
+   
+
+ * List the available updates and ensure the update that has been uploaded to the appliance has been recognized and accepted.  *  curl -v -k --user admin:admin -H "Accept:application/json" https://10.251.140.41/updates/available.json 
+   
+   
+
+ * Apply the firmware update. You need to use the output of the available.json request to correctly set the JSON fields used in this request.  * curl -v -k --request "POST" -H "Accept:application/json" -H "Content-Type:application/json" --user admin:admin --data-binary '{"updates": [{"type": "firmware", "version":"9.0.1.0", "release_date":"2016-06-10", "name":"Firmware"}]}' https://10.251.140.41/updates/available/install

@@ -1,0 +1,186 @@
+Title: IBM Analyzing IBM MQ Logger Disk Write Performance with mqlogperf.sh - United States
+
+Text:
+Logger Performance; Logger Write; Log Write; Disk I/O; Disk IO; I/O; IO; persist; mqlogperf.sh; mqlogperf TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The performance of an IBM MQ queue manager depends very much on the rate at which the MQ logger can write persistent data to disk. This document describes how to collect performance data from the MQ logger and provides the mqlogperf.sh script to analyze the data. 
+
+CAUSE
+IBM MQ circular logging queue managers log to disk the details of all transactions affecting persistent data, while linear logging queue managers also log a copy of all the persistent data on the queue manager. Both circular and linear queue manager logs can be located on network filesystems. When I/O rates to these filesystems drop, the MQ logger performance drops and the performance of the queue manager suffers. If the MQ logger I/O rate drops too far, MQ might not be able to process messages at an acceptable rate and they may stack up to great depths on the queue manager.
+
+ENVIRONMENT
+The mqlogperf.sh script can analyze MQ logger traces from MQ V7.0 and later versions running on AIX, HP-UX, Linux, Solaris and Windows systems. The mqlogperf.sh script must be run on AIX, HP-UX, Linux x86, Linux x86-64, or Linux POWER systems because it relies on a binary program called "timeit" to analyze performance data. To use mqlogperf.sh, download the attached mqlogperf.tar.Z file to a directory, unpack the file, and make sure the contents are executable. For example:
+
+
+
+ 1. Unpacking the mqlogperf.sh utility
+ 2. 
+ 3.  sh> uncompress mqlogperf.tar.Z 
+    sh> tar -xvf mqlogperf.tar 
+    sh> chmod a+rx mqlogperf.sh timeit_* 
+
+
+
+
+DIAGNOSING THE PROBLEM
+If you already have a set of MQ traces the mqlogperf.sh script can examine them as-is; otherwise, you must trace the MQ logger process (amqzmuc0) for your queue manager to observe its performance. For example:
+
+
+
+ 1. Tracing the logger process for queue manager QMA on Windows
+ 2. 
+ 3.  Start the trace: 
+    
+    C:\> strmqtrc -m QMA -p amqzmuc0.exe 
+    Run your messaging test and observe the performance 
+    Stop the trace: 
+    
+    C:\> endmqtrc -m QMA -p amqzmuc0.exe 
+    On Windows there is no need to format the traces.
+    
+    
+ 4. 
+ 5. Tracing the logger process for queue manager QMA on UNIX and Linux
+ 6. 
+ 7.  Start the trace: 
+    
+    sh> strmqtrc -m QMA -p amqzmuc0 
+    Run your messaging test and observe the performance 
+    Stop the trace: 
+    
+    sh> endmqtrc -m QMA -p amqzmuc0 
+    Format the trace:
+    
+    sh> cd /var/mqm/trace
+    sh> dspmqtrc AMQ* AMQ.SSL.TRC 
+
+
+
+Selecting a single MQ process drastically reduces the trace overhead. However, if you wish to reduce the trace overhead even further, you can trace just the "LoggerIO" thread in the amqzmuc0 process. First determine the process ID (pid) of the queue manager's amqzmuc0 process using 'ps' on Linux and UNIX, or the Windows Task Manager, then run the amqxdbg program to generate debug FFST entries from that pid. For example:
+
+
+
+ 1. Generating debug FFSTs from process ID 12345
+ 2. 
+ 3. > 
+ 4. amqxdbg -i 12345
+ 5. 
+ 6. Debug entry defined.
+
+
+
+
+Then review the FDC file for the pid in the top-level MQ errors directory, to determine which thread shows the function "zmuLogIOTask" in its function stack. This example is simplified to show only the relevant fields from the FFST header: 
+
+ 1. Sample FDC file entry for the amqzmuc0 LoggerIO thread
+ 2. 
+ 3.  WebSphere MQ First Failure Symptom Report
+    =========================================
+    
+    Product Long Name :- WebSphere MQ for Windows
+    Probe Id          :- XC577255
+    Component         :- xtrHandleDebug
+    Process Name      :- C:\MQ75\bin\amqzmuc0.exe
+    Process           :- 00012345
+    Thread            :- 00000003
+    
+    MQM Function Stack
+    zmuThreadMain
+    zmuLogIOTask
+    mqlpgasn
+    hosWaitWaitPostArea
+    xcsWaitEventSem
+    xlsWaitEvent
+    xcsFFST
+    
+    
+ 4. 
+
+
+
+Once you have both process and thread ID (pid and tid) of the amqzmuc0 LoggerIO thread, you can run MQ trace against that specific thread. For example: 
+
+ 1. Tracing only the LoggerIO thread
+ 2. 
+ 3.  Start the trace: 
+    
+    strmqtrc -i 12345.3 
+    Run your messaging test and observe the performance 
+    Stop the trace: 
+    
+    endmqtrc -i 12345.3 
+    On Linux and UNIX systems, format the trace:
+    
+    sh> cd /var/mqm/trace
+    sh> dspmqtrc AMQ* AMQ.SSL.TRC 
+
+
+
+
+In order to analyze the MQ logger performance, copy the trace files to the system where you have unpacked the mqlogperf.sh script. Then run mqlogperf.sh against the MQ traces and it will identify the logger traces and analyze them automatically. For example: 
+
+ 1. Using the mqlogperf.sh utility
+ 2. 
+ 3.  sh> mqlogperf.sh AMQ* 
+    mqlogperf.sh: Analyzing MQ logger trace AMQ12345.0.FMT (2272542480 bytes) 
+    mqlogperf.sh: Saving logger I/O data to AMQ12345.0.mqlogperf.txt...DONE! 
+    mqlogperf.sh: Analyzing MQ logger trace AMQ47825.0.FMT (6396534394 bytes) 
+    mqlogperf.sh: Saving logger I/O data to AMQ47825.0.mqlogperf.txt...DONE! 
+
+
+
+
+
+The text files generated by mqlogperf.sh show the timestamp for every write call issued by the MQ logger, as well as the number of bytes written and the time in microseconds that the logger had to wait. The fourth column of the output calculates the rate of I/O to disk in binary megabytes per second (MiB/s). 
+
+ 1. Sample mqlogperf.sh output
+ 2. 
+ 3.  ## IBM mqlogperf.sh V1.3 - Disk I/O throughput
+    ## Timestamp        Bytes       uSec  IO:MiB/s
+    17:43:17.956         4096        570     6.853
+    17:43:17.957         8192        500    15.625
+    17:43:17.958         8192        523    14.938
+    17:43:17.959        12288        528    22.195
+    17:43:17.960         4096        414     9.435
+    17:43:17.965        40960       6293     6.207
+    17:43:17.966        12288        573    20.452
+    17:43:17.967        36864       6821     5.154
+    17:43:17.968        40960       6309     6.192
+    17:43:17.969        40960       6284     6.216
+    17:43:17.970         8192        563    13.877
+    17:43:17.970        36864       6215     5.657
+    17:43:17.972         4096        557     7.013
+    17:43:17.972         8192        442    17.675
+    17:43:17.975         4096        635     6.152
+    17:43:17.979         4096        488     8.005
+    17:43:17.979         8192        570    13.706
+    17:43:17.980         4096        649     6.019
+    17:43:17.981         8192        452    17.284
+    17:43:17.987         4096       1664     2.348
+    17:43:17.991        12288       1095    10.702
+    17:43:17.992         4096        454     8.604
+    17:43:18.002         8192       7223     1.082
+    
+    ... 
+
+
+
+
+RESOLVING THE PROBLEM
+Examine the data from mqlogperf.sh to determine whether your disk I/O rates are at the level you expect from your disk hardware and network. Lots of small writes (e.g. 4096, 8192, 12288 bytes and the like) indicate the logger is not very busy. With writes of this size, the elapsed time is dominated by disk latency rather than disk throughput, so the I/O throughput rate might be well less than your disks can handle. Evaluate your disk performance by ensuring the disk latency (uSec) is not too high for small writes and the throughput (IO:MiB/s) is not too low for larger writes. Graphing the mqlogperf.sh data can show patterns which might otherwise be difficult to visualize.
+
+If you are examining an intermittent MQ performance issue, check to see whether your disk latency increases or the I/O rate drops off during the problem timeframe. Sometimes MQ logger performance might drop because an unrelated job on a different system (for example, a data warehouse backup) is consuming most of the I/O bandwidth of you disk systems.
+
+If your disk performance is unaccountably low, or if it drops off for a period of time, share the mqlogperf.sh performance data with your SAN, NFS, and networking teams and with your disk vendor.
+
+
+
+
+ 1. 
+ 2. mqlogperf.tar.Z [/support/docview.wss?uid=swg21678834&amp;aid=2]mqlogperf.tar.Z
+
+
+
+DISCLAIMER: All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

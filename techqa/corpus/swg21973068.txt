@@ -1,0 +1,28 @@
+Title: IBM Known Issue: Process Designer window is not resizable if opened through Case Manager Builder with Internet Explorer - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Known Issue: Process Designer window is not resizable if opened through Case Manager Builder with Internet Explorer 
+
+SYMPTOM
+You cannot resize the Process Designer window when you are working with IBM Case Manager solution task workflows. 
+
+This problem occurs under the following conditions: 
+
+1) Case Manager Builder is configured to open Process Designer from Workplace XT. 
+
+2) Process Designer is opened from Case Manager Builder. 
+
+3) The browser used is Microsoft Internet Explorer (IE9, IE10, IE11).
+
+
+RESOLVING THE PROBLEM
+There are 3 ways to resolve or work around this problem: 
+
+1) Configure Case Manager Builder with P8 Content Platform Engine Applet Plugin for IBM Content Navigator to open Process Designer. 
+
+2) Open Process Designer from Workplace XT, then open the solution workflow by clicking File > Solution > Edit 
+
+3) Use Mozilla Firefox as an alternate browser.

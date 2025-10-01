@@ -1,0 +1,52 @@
+Title: IBM Securely configuring a Domino server to work with the WebSphere plugin - United States
+
+Text:
+ RECOMMENDED RESOURCES
+
+ABSTRACT
+ A WebSphere plugin may be used on some web servers to allow it to as a proxy in front of a Domino server. Using this plugin requires adding HTTPEnableConnectorHeaders=1 to notes.ini. When HTTPEnableConnectorHeaders is enabled on Domino, it is very important to take additional steps to configure Domino in order to assure server security. If HTTPEnableConnectorHeaders is enabled, the Domino HTTP server should be set to only accept connections from the IP address(es) of the server(s) running the plugin. 
+
+CONTENT
+
+First, you can help prevent attacks by configuring the Domino HTTP server to accept connections from only a single IP address, specifically that of the proxy server, by adding the following restrictions:
+
+
+ *   *  IP address allow/deny priority: Allow
+      IP address allow list: 123.45.6.78; 123.45.6.79
+      IP address deny list: * 
+   
+   
+
+
+Note: When running the IBM HTTP Server as proxy, the Domino Web server accepts only connections from the same box/localhost so the server is not exposed. Similarly, the Domino plug-in code explicitly strips out any of these headers that may be presented to the IHS server and will replace them so they are not passed along to the Domino Server in back of it. For more information, refer to the following Help Topic: Restricting access by IP address on the Web server [http://www-01.ibm.com/support/knowledgecenter/SSKTMJ_8.5.3/com.ibm.help.domino.admin85.doc/H_RESTRICTING_ACCESS_BY_IP_ADDRESS_ON_THE_WEB_SERVER_3127_STEPS.html]. 
+
+Second, the proxy server itself must be locked down. Specifically, no other HTTP clients capable of connecting to the Domino HTTP server (including browsers) should be allowed to run on the WAS enabled proxy servers since the Domino server is accepting connections from the proxy server. 
+
+Third, the proxy server itself must remove the connector headers from all HTTP clients of the proxy server and any headers received from a proxy client must be removed from the header stream. 
+
+
+
+
+
+Q&A 
+
+Q1: Is it always necessary to use HTTPEnabledConnectorHeaders? 
+If you are not using the WAS Proxy plug-ins in front of the Domino server and are using other general purpose reverse proxies, there is no need to set HTTPEnabledConnectorHeader to 1. See the following question for more details. 
+
+Q2. When should HTTPEnabledConnectorHeaders be set? 
+HTTPEnableConnectorHeaders=1 should be set only on systems that are using the WebSphere plug-in to enable another Web server (IIS or IHS) to act as a front-end to the Domino Web server. This is the only time this setting should be enabled. 
+
+Q3. Is HTTPEnabledConnectorHeaders needed with reverse proxy implementations? 
+No. 
+
+Q4. Does the IHS server that is bundled with Domino 9.0 require HTTPEnabledConnectorHeaders? 
+No, the IHS server bundled with Domino 9.0 does not use the WebSphere plug-in, and thus does not require this setting. 
+
+Q5. What servers should be given access to the Domino Web server when HTTPEnableConnectorHeaders is enabled? 
+When HTTPEnableConnectorHeaders is enabled, only the front-end Web server should be given access to the Domino Web server. This restricted access can be configured using the example for "Allow access only from two trusted proxy servers" in the Help Topic: Restricting access by IP address on the Web server [http://www-01.ibm.com/support/knowledgecenter/SSKTMJ_8.5.3/com.ibm.help.domino.admin85.doc/H_RESTRICTING_ACCESS_BY_IP_ADDRESS_ON_THE_WEB_SERVER_3127_STEPS.html]. 
+
+Q6. Is HTTPEnableConnectorHeaders enabled by default? 
+No. 
+
+RELATED INFORMATION
+ Setting up Domino to work with other Web servers [http://www-01.ibm.com/support/knowledgecenter/SSKTMJ_9.0.1/admin/conf_settingupdominotoworkwithotherwebservers_c.dita?lang=en]

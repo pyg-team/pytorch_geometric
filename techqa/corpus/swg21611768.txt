@@ -1,0 +1,40 @@
+Title: IBM Windows security pop-up during document download - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Windows security pop-up during document download using FileNet Application Engine Workplace 
+
+SYMPTOM
+When downloading Word/Excel files from FileNet Workplace, Windows security window pops up prompting for the user name and password. The user name/password do not need to be entered, when OK or Cancel are clicked to close the pop up window, the document will be opened. 
+
+
+CAUSE
+Content_redir.properties file needs additional entries
+
+ENVIRONMENT
+Micorosoft Windows 7 and Windows XP
+Microsoft Office 2010
+
+RESOLVING THE PROBLEM
+If Download action does not involve additional Authentication credential dialog, the following changes in the content_redir.properties file should be made. 
+
+
+
+
+ * Located in AE install path (usually in C:\Program Files\FileNet\Config\AE folder). config dir that's updated can be in a shared location and not stored in the local path. This can validate by checking the value of the configurationDirectory param in..\FileNet\WebClient\WorkplaceXT\WEB-INF\web.xml or for AE ..\FileNet\AE\Workplace\WEB-INF\web.xml" ; 
+   
+   Add the following lines to the content_redir.properties file:
+   
+   application/msword=/getContent?{QUERY_STRING}&mode=download 
+   application/vnd.ms-excel=/getContent?{QUERY_STRING}&mode=download
+   application/vnd.ms-powerpoint=/getContent?{QUERY_STRING}&mode=download
+   application/vnd.openxmlformats-officedocument.wordprocessingml.document=/getContent?{QUERY_STRING}&mode=download
+   application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=/getContent?{QUERY_STRING}&mode=download
+   application/vnd.openxmlformats-officedocument.presentationml.presentation=/getContent?{QUERY_STRING}&mode=download 
+   
+   
+ * Workplace application should be re-started on AE machine after modifying
+   the file. 
+ * Note, that for Workplace XT, you may need to use {JSP_QUERY_STRING} instead of {QUERY_STRING} if using path based URLs

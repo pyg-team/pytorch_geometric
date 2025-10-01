@@ -1,0 +1,37 @@
+Title: IBM Latest S&S Renewal Licenses are not shown in our Rational License Key Center account - United States
+
+Text:
+DOORS; Rhapsody; Synergy; Change; Publishing Engine; Statemate; Tau; Systems Tester; Logiscope; SDL; TTCN Suite; account; s&s; renewal; license; licence; renewal license; renewal licence; key TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Our latest S&S Renewal Licenses (date based licenses) are not showing up in our Rational License Key Center account. 
+
+CAUSE
+There is a change in license key generation process for most of the products that use date based license keys.
+
+RESOLVING THE PROBLEM
+As of May 2, 2016 IBM no longer uses date based licensing for the following products; 
+
+ * DOORS, 
+ * Rhapsody, 
+ * Synergy, 
+ * Change, 
+ * Publishing Engine, 
+ * Statemate, 
+ * Tau, 
+ * Systems Tester, 
+ * Logiscope, SDL and 
+ * TTCN Suite. 
+
+
+This means support renewal orders will no longer flow to the License Key Center as they had in the past. There is no longer a need to log into the License Key Center to upgrade your license key when you renew support in order to be able to use the latest product release. 
+
+This applies as long as you have a (new) key generated with the latest version available showing in the License Key Center. If you have an older date based key you will need to return both the date based key(s) and the base product license key (via Return Keys link) and then generate a new base product license key (via Get Keys link) in order for this to take affect. 
+The latest version available will automatically be populated in the Version drop down field after you select Generate Keys, This version is backward compatible and therefore it will also work with earlier product versions. 
+
+Note that for Rational System Architect the process is unchanged and you will still need to generate S&S renewal keys for 2018 for this product. 
+
+See also FAQ's > Generating License Keys > Date Based Licensing in the IBM Rational License Key Center [https://licensing.subscribenet.com/control/ibmr/login]. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Change Software Development Rational DOORS Software Development Rational DOORS Analyst Add On Software Development Rational DOORS HP Quality Center Integration Software Development Rational DOORS Net Software Development Rational DOORS Next Generation Software Development Rational DOORS TraceLine Software Development Rational DOORS Web Access Software Development Rational DOORS Web Access Reviewer Software Development Rational Logiscope Software Development Rational Publishing Engine Software Development Rational Rhapsody Software Development Rational Rhapsody Architect for Software Software Development Rational Rhapsody Architect for Systems Engineers Software Development Rational Rhapsody Design Manager Software Development Rational Rhapsody Designer for Systems Engineers Software Development Rational Rhapsody Developer Software Development Rational SDL Suite Software Development Rational Statemate Software Development Rational Synergy Software Development Rational Synergy and Change Suite Software Development Rational Systems Tester Software Development Rational Tau Software Development Rational TTCN Suite

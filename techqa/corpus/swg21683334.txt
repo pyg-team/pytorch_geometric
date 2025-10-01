@@ -1,0 +1,74 @@
+Title: IBM Security Bulletin: :  IBM InfoSphere Guardium Database Activity Monitor is affected by CVE-2014-0075, CVE-2014-0095, CVE-2014-0096, CVE-2014-0099, CVE-2014-0119 - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ (1) Apache Tomcat chunk denial of service (CVE-2014-0075); (2) Apache Tomcat AJP denial of service (CVE-2014-0095); (3) Apache Tomcat XXE information disclosure (CVE-2014-0096); (4) Apache Tomcat content length header information disclosure (CVE-2014-0099); (5) Apache Tomcat XML parser information disclosure (CVE-2014-0119) 
+
+VULNERABILITY DETAILS
+CVE-2014-0075 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0075]
+Description: Apache Tomcat is vulnerable to a denial of service, caused by the improper handling of a malformed chunk size as part of a chucked request. A remote attacker could exploit this vulnerability to cause a denial of service.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/93365 [https://exchange.xforce.ibmcloud.com/vulnerabilities/93365] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+
+CVE-2014-0095 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0095]
+Description: Apache Tomcat is vulnerable to a denial of service, caused by the improper handling of an AJP request. A remote attacker could exploit this vulnerability to consume a request processing thread and cause a denial of service.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/93366 [https://exchange.xforce.ibmcloud.com/vulnerabilities/93366] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:N/A:P)
+
+CVE-2014-0096 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0096]
+Description: Apache Tomcat could allow a remote attacker to obtain sensitive information, caused by an XML External Entity Injection (XXE) error when processing XML data by the default server. By sending specially-crafted XML data, an attacker could exploit this vulnerability to obtain sensitive information.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/93367 [https://exchange.xforce.ibmcloud.com/vulnerabilities/93367] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+
+CVE-2014-0099 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0099]
+Description: Apache Tomcat could allow a remote attacker to obtain sensitive information, caused by the failure to check for overflows when parsing content length headers. By sending specially-crafted request, an attacker could exploit this vulnerability to obtain sensitive information.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/93369 [https://exchange.xforce.ibmcloud.com/vulnerabilities/93369] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+CVE-2014-0119 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0119]
+Description: Apache Tomcat could allow a remote attacker to obtain sensitive information, caused by the replacement of the XML parsers used to process XSLTs for the default servlet. An attacker could exploit this vulnerability using a specially-crafted application to obtain sensitive information.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/93368 [https://exchange.xforce.ibmcloud.com/vulnerabilities/93368] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+Guardium Database Activity Monitor 9.0, 9.1
+
+REMEDIATION/FIXES
+ 
+
+<Product VRMF APAR Remediation/First Fix Guardium Database Activity Monitor 9.0 [/support/docview.wss?uid=swg21683334&amp;aid=1] http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/Information+Management/InfoSphere+Guardium&release=All&platform=All&function=fixId&fixids=SqlGuard-9.0p1036_Security_Update&includeSupersedes=0&source=fc [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/Information+Management/InfoSphere+Guardium&release=All&platform=All&function=fixId&fixids=SqlGuard-9.0p1036_Security_Update&includeSupersedes=0&source=fc] [/support/docview.wss?uid=swg21683334&amp;aid=1] [/support/docview.wss?uid=swg21683334&amp;aid=1] Guardium Database Activity Monitor 8.2 [/support/docview.wss?uid=swg21683334&amp;aid=1] http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/Information+Management/InfoSphere+Guardium&release=All&platform=All&function=fixId&fixids=SqlGuard-8.2p239_Security_Update&includeSupersedes=0&source=fc [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/Information+Management/InfoSphere+Guardium&release=All&platform=All&function=fixId&fixids=SqlGuard-8.2p239_Security_Update&includeSupersedes=0&source=fc] WORKAROUNDS AND MITIGATIONS
+None known
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ Original 9.2.2014 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

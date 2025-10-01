@@ -1,0 +1,32 @@
+Title: IBM DPL with channel on MRO connection uses CICS region userid in target region - United States
+
+Text:
+incorrect userid ; ATTACHSEC IDENTIFY CA ACF2 Computer Associates CONTAINER CHANNEL ; user identification ; 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have an MRO connection between CICS regions running on z/OS. Your connection definition contains ATTACHSEC=IDENTIFY. On a DPL request, the mirror transaction in the target region runs under the region userid instead of userid running the task in routing region. This problem occurs only if you use a channel and containers. You are running CA ACF2 as the security manager. 
+
+SYMPTOM
+ACF2 is running as the security manager on the z/OS
+
+
+CAUSE
+MRO option on ACF parameter is coded incorrectly.
+
+CA Technologies explanation:
+We recently determined that if containers are being used for function shipping or DPL, the MRO link must be defined to ACF2 as "FORMAT=BOTH" at the AOR end. "Format=BOTH" tells ACF2/CICS to use inheritance data if it is present, but if not to allow a signon using the logonid passed in the CICS header.
+
+DIAGNOSING THE PROBLEM
+Auxiliary trace in terminal owning region (TOR) and application owning region (AOR) with EI, IS, TC and XS set 1-2 and other domains set to 1 was requested. 
+
+Trace from the target region:
+AP DD16 CRNP EVENT - IRC INBOUND RU - the FMH5 contains the right userid (userid running the task in routing region)
+US 0301 USAD ENTRY - FUNCTION(ADD_USER_WITHOUT_PASSWORD) - made with target region userid instead of userid received in FMH5.
+
+RESOLVING THE PROBLEM
+If you are using containers for function shipping or DPL, define the MRO link to ACF2 as "FORMAT=BOTH" for the AOR.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

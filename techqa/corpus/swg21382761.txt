@@ -1,0 +1,26 @@
+Title: IBM How do I minimize round trips to the Content Engine server when retrieving large files using CEWS with Inline SOAP? - United States
+
+Text:
+Inline Content Retrieval limit; CEWS; SOAP; inline chunk TECHNOTE (FAQ)
+
+QUESTION
+ How do I minimize round trips to the IBM FileNet Content Engine (CE) server when retrieving large files using IBM FileNet Content Engine Web Services (CEWS) with Inline SOAP? 
+
+ANSWER
+Increase the value for Inline Content Retrieval Limit by doing the following: 
+
+ -Expand Sites in IBM FileNet Enterprise Manger (FEM). 
+
+- Expand Virtual Servers, expand the node. 
+
+- Right click the server and select Properties. 
+
+- Select the Content tab. 
+
+- Select the Override Inherited Settings option, if necessary 
+
+ 
+
+By default this value is set at 1MB, the maximum value is 10MB. The current documentation is incorrect by stating that the maximum value is 1MB. A documentation defect has been filed. 
+
+Note: Increasing this value will have an impact on the JVM of the Content Engine, as more memory is consumed when a large document is being retrieved through the inline SOAP protocol. Please refer to the Performance and Tuning guide for more information on tuning JVM.

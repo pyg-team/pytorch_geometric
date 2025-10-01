@@ -1,0 +1,170 @@
+Title: IBM IZ46713: 911 LOCK TIMEOUT ERRORS, CAUSING PERFORMANCE PROBLEMS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  911 Lock Timeout errors, causing performance problems
+   
+   
+   Observed many wait lock situation in their DB2 database around
+   accessing  WOCHANGE/WOACTIVITY and WORKORDER
+   
+   This causes slowness in the Change application
+   
+   
+   It seems that lock held during long running sqls when selecting
+   from the view created on top of workorder keeps the updates to
+   workorder table statements waiting.
+   
+   Solution
+   
+   A special "for read only" instruction when issuing sql select
+   statements to the views can be used to alleviate this problem
+   since maximo doesn't directly update views
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Solution
+   
+   A special "for read only" instruction when issuing sql select
+   statements to the views can be used to alleviate this problem
+   since maximo doesn't directly update views
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: DB2 users who have customized their          *
+   *                 woactivity and wochange apps that cause long *
+   *                 running sqls                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: same as above                           *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   Long running sqls to wochange and woactivity views can keep the
+   update to workorder waiting on db2, which causes 911 errors.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  "for readonly with UR" is used when selecting from views
+   
+   
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | REL 7.1.1.5 - BS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ46713
+   
+   
+ * REPORTED COMPONENT NAME
+   UPGRADE PROGRAM
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46UP
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-03-16
+   
+   
+ * CLOSED DATE
+   2009-03-18
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UPGRADE PROGRAM
+   
+   
+ * FIXED COMPONENT ID
+   5724R46UP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

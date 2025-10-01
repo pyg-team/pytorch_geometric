@@ -1,0 +1,31 @@
+Title: IBM Supported Application servers - United States
+
+Text:
+ITCAM; appservers; prerequisites; CAMJ2ALL; CAMJ2ENV TECHNOTE (FAQ)
+
+QUESTION
+ What application servers are supported by ITCAM for J2EE agent v7.1.1? What has changed if compared to the previous version of this product? 
+
+ANSWER
+These application servers and J2SE applications are supported:
+- Apache Tomcat 4.x, 5.x, 6.x, 7.x 
+- JBoss 3.x, 4.x, and 5.x
+- Oracle WebLogic Server 9.x, 10.x, and 12.x; Oracle WebLogic Portal Server 9.x and 10.x
+- SAP NetWeaver 7.0 (2004s), 7.1, 7.3, and 7.4
+- J2SE applications
+
+JBoss EAP versions 6.1.0, 6.2.0, 6.3.0, and 6.4.0 support has been introduced starting from 7.1.1.0-TIV-ITCAM_J2EE-IF0003
+
+Support for versions highlighted in boldface is new in release 7.1.1
+
+Support for versions highlighted in italics had already been introduced starting from 6.1 FP6 and later interim-fixes (typically 6.1.0.6-TIV-ITCAMfJ2EE_MP-IF000x, see their readmes for details).
+In fact J2EE v6.x has gone out of support at this point, so you will have to upgrade to v7.1.1.0.x to use a supported version.
+
+Java 7 support has been officially introduced in version 7.1.1.
+Java 8 support has been introduced starting from 7.1.1.0-TIV-ITCAM_J2EE-IF0003
+
+The following application servers are not supported anymore in the J2EE agent 7.1.1:
+
+- Oracle/BEA Application Server
+- Sun JSAS
+- WebSphere Application Server Community Edition

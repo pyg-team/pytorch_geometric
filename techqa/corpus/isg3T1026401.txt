@@ -1,0 +1,19 @@
+Title: IBM Logon GUI failed by using SSLv3.0 - United States
+
+Text:
+GUI; logon; SSLv3; TLSv1.0 TECHNOTE (FAQ)
+
+QUESTION
+ Logging on to GUI failed. What does the following error message in gui log mean?
+
+11/22/17 14:44:05:896 UTC] 000081c4 com.ibm.ws.channel.ssl.internal.SSLHandshakeErrorTracker E CWWKO0801E: Unable to initialize SSL connection. Unauthorized access was denied or security settings have expired. Exception is javax.net.ssl.SSLHandshakeException: Client requested protocol SSLv3 not enabled 
+
+CAUSE
+WebSphere doesn't support SSLv3 because Security Bulletin: Vulnerability in SSLv3 affects IBM WebSphere Application Server (CVE-2014-3566) 
+For more details:
+https://www.ibm.com/developerworks/community/blogs/aimsupport/entry/websphere_and_the_disablement_of_sslv3?lang=en [https://www.ibm.com/developerworks/community/blogs/aimsupport/entry/websphere_and_the_disablement_of_sslv3?lang=en] 
+
+
+ANSWER
+The solution is to upgrade and configure your browser to make sure SSLv3 is disabled. For example, in Internet Exploer, SSL 3.0 is unchecked as shown below:
+[/support/docview.wss?uid=isg3T1026401&amp;aid=1]

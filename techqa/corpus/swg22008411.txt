@@ -1,0 +1,116 @@
+Title: IBM "IBM Cognos Controller has fired an exception" when updating layout, caused by Microsoft Excel 2016 defect - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User launches Excel, and clicks "Controller - Logon". User chooses database, and logs on.
+
+Inside the 'Controller' add-in menu, user clicks the "Update Layout" then “Save Layout”.
+- This works OK (no error).
+
+Then user clicks “Update Layout” again.
+- This time, an error appears. 
+
+SYMPTOM
+The error varies depending on the form. 
+
+ 
+Example #1:
+[/support/docview.wss?uid=swg22008411&aid=1] [/support/docview.wss?uid=swg22008411&aid=1]
+IBM Cognos Controller
+'IBM Cognos Controller' has fired an exception. Click the 'Details' button to see the detailed information about the error.
+Detailed technical information follows: 
+---
+(Inner Exception)
+Date and Time: 9/13/2017 1:24:08 PM
+Machine Name: VMCONT102
+IP Address: fe80::61b6:bd92:2dd4:1a09%16
+Current User: CORP\controller_system
+
+Application Domain: C:\Program Files\IBM\IBM Cognos Controller Local Client\
+Assembly Codebase: file:///C:/Windows/Microsoft.NET/Framework/v4.0.30319/mscorlib.dll [file:///C:/Windows/Microsoft.NET/Framework/v4.0.30319/mscorlib.dll]
+Assembly Full Name: mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+Assembly Version: 4.0.0.0
+
+Exception Source: mscorlib
+Exception Type: System.AccessViolationException
+Exception Message: Attempted to read or write protected memory. This is often an indication that other memory is corrupt.
+Exception Target Site: InvokeDispMethod
+
+---- Stack Trace ----
+System.RuntimeType.InvokeDispMethod(name As String, invokeAttr As BindingFlags, target As Object, args As Object[], byrefModifiers As Boolean[], culture As Int32, namedParameters As String[])
+mscorlib.dll: N 00000 (0x0) JIT 
+System.RuntimeType.InvokeMember(name As String, bindingFlags As BindingFlags, binder As Binder, target As Object, providedArgs As Object[], modifiers As ParameterModifier[], culture As CultureInfo, namedParams As String[])
+mscorlib.dll: N 0491 (0x1EB) IL 
+System.RuntimeType.ForwardCallToInvokeMember(memberName As String, flags As BindingFlags, target As Object, aWrapperTypes As Int32[], msgData As MessageData&)
+mscorlib.dll: N 0182 (0xB6) IL 
+Microsoft.Office.Interop.Excel.Range.set_Formula( As Object)
+mscorlib.dll: N 00000 (0x0) JIT 
+Cognos.Controller.ControllerForms12.clsForms.SetExcelFormula(oRange As Range&, sFormula As String)
+mscorlib.dll: N 0043 (0x2B) IL 
+Cognos.Controller.ControllerForms12.clsForms.SetLayoutAxis_Cells(oSheet As Worksheet&, dr As DataRow&, iX As Int32, sField1 As String, sField2 As String, iStart As Int32, bSecondMemberIsDim As Boolean, sDimTyp1 As String, sDimTyp2 As String, sAxisType As String, bVirtual As Boolean, bUpdateLayout As Boolean, dimKeyInfo As DimensionKeyInfo, hashCurrent As Hashtable&)
+mscorlib.dll: N 4422 (0x1146) IL 
+Cognos.Controller.ControllerForms12.clsForms.UpdateLayoutAxis(oSheet As Worksheet&, bLines As Boolean, hashPrevious As Hashtable&, hashCurrent As Hashtable&, axisDimKeyInfo As DimensionKeyInfo&)
+mscorlib.dll: N 2667 (0xA6B) IL 
+Cognos.Controller.ControllerForms12.clsForms.UpdateLayout()
+mscorlib.dll: N 0642 (0x282) IL 
+Cognos.Controller.XL.ControllerXL.xllController.UpdateLayout()
+mscorlib.dll: N 0000 (0x0) IL 
+Controller.ExcelLink.AddinModule.btnUpdateLayout_OnClick(sender As Object, control As IRibbonControl, pressed As Boolean)
+mscorlib.dll: N 0029 (0x1D) IL 
+AddinExpress.MSO.ADXRibbonButton.DoInternalAction(e As ADXRibbonOnActionEventArgs)
+mscorlib.dll: N 0035 (0x23) IL 
+
+Example #2:
+[/support/docview.wss?uid=swg22008411&aid=2] [/support/docview.wss?uid=swg22008411&aid=2]
+Microsoft Excel has stopped working
+
+Problem signature:
+Problem Event Name: APPCRASH
+Application Name: EXCEL.EXE
+Application Version: 16.0.8326.2096
+Application Timestamp: 59a4b55d
+Fault Module Name: KERNELBASE.dll
+Fault Module Version: 6.3.9600.18264
+Fault Module Timestamp: 56e1b34d
+Exception Code: e0434352
+Exception Offset: 00015b68
+OS Version: 6.3.9600.2.0.0.272.7
+Locale ID: 2057
+
+
+CAUSE
+Microsoft defect in early versions of Excel 2016.
+
+
+ENVIRONMENT
+Problem has been seen when using Office 365 1707 build 8326.2096 - Excel 2016 MSO (16.0.8326.2096) 32bit: 
+
+[/support/docview.wss?uid=swg22008411&amp;aid=3]
+
+[/support/docview.wss?uid=swg22008411&amp;aid=4]
+
+
+RESOLVING THE PROBLEM
+Fix: 
+
+Patch Microsoft Office 2016 to the latest version. 
+
+ 
+
+Example: 
+
+In one real-life example, after patching to 16.0.8431.2046 it worked OK:
+[/support/docview.wss?uid=swg22008411&amp;aid=5] 
+
+ [/support/docview.wss?uid=swg22008411&amp;aid=6] 
+
+ 
+
+Workaround: 
+
+Downgrade client device to Office 2013 (Excel 2013).
+
+RELATED INFORMATION
+ APAR PI88137 - UPDATE LAYOUT TRIGGERS AN ERROR: "IBM CO [http://www-01.ibm.com/support/docview.wss?uid=swg1PI88137]

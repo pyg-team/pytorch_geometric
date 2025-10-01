@@ -1,0 +1,167 @@
+Title: IBM PM17615: WRONG JNDI NAME IS DISPLAYED IN SAD AFTER CONFIGURING WEBLOGIC DC V6.1.0.4 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Steps to reproduce
+   Step 1: install and configure WebLogic DC v6.1 FP4 DC
+   successfully
+   
+          Step 2: start server
+          Step 3: run request like DataSource Stateful EJB from
+   testware
+   url: http://h1.cn.xyz.com:50000/itcamdemo/testware/page/ind [http://h1.cn.xyz.com:50000/itcamdemo/testware/page/ind]
+   ex
+          Step 4: navigate to MS->Problem Determination->SERVER
+   ACTIVITY DISPLAY, click the request and navigate to
+   Method/Component Trace. The following entries are found.
+   
+   
+         JNDI Entry Provider URL:iiop://JC00_tivs12:-1/
+         Lookup Name:jdbc/ItcamDemoDataSource
+         JNDI Exit Provider URL:iiop://JC00_tivs12:-1/
+         Lookup Name:jdbc/ItcamDemoDataSource
+   
+   The JNDI url is not correct
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   ***********************
+   * USERS AFFECTED: Customers using ITCAM for J2EE v6.1.0.4
+   ****************************************************************
+   ***********************
+   ERROR DESCRIPTION:
+   Steps to reproduce
+          Step 1: install and configure WebLogic DC v6.1 FP4 DC
+   successfully
+   
+          Step 2: start server
+          Step 3: run request like DataSource Stateful EJB from
+   testware
+   url: http://h1.cn.xyz.com:50000/itcamdemo/testware/page/ind [http://h1.cn.xyz.com:50000/itcamdemo/testware/page/ind]
+   ex
+          Step 4: navigate to MS->Problem Determination->SERVER
+   ACTIVITY DISPLAY, click the request and navigate to
+   Method/Component Trace. The following entries are found.
+   
+   
+         JNDI Entry Provider URL:iiop://JC00_tivs12:-1/
+         Lookup Name:jdbc/ItcamDemoDataSource
+         JNDI Exit Provider URL:iiop://JC00_tivs12:-1/
+         Lookup Name:jdbc/ItcamDemoDataSource
+   
+   The JNDI url is not correct
+   
+   ****************************************************************
+   ***********************
+   * RECOMMENDATION: apply ITCAM for J2EE v6.1 fix pack 5 when
+   * available
+   ****************************************************************
+   ***********************
+   The defect of WebLogic DC causes wrong JNDI URLs to be displayed
+   on the Method/Component Trace page of VE.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   | fix pack | 6.1.0-TIV-ITCAMfJ2EE_MP-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM17615
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * REPORTED COMPONENT ID
+   5724L6200
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-30
+   
+   
+ * CLOSED DATE
+   2010-07-13
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * FIXED COMPONENT ID
+   5724L6200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

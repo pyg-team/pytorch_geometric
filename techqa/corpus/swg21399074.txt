@@ -1,0 +1,35 @@
+Title: IBM Why does my configuration for DB2 Content Manager for Multiplatform V8.4 fail with a message that the database instance is not started  when indeed it is ? - United States
+
+Text:
+config_CM database instance not started TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The config_CM configuration wizard errors out with the following message in the cmconfig.log:
+
+2009-08-31 09:03:07.442 DEBUG:: CheckDBConnUtil00002 exception 
+(com.ibm.db2.jcc. b.gm: [jcc][t4][2043][11550][3.50.152] Exception 
+java.net.ConnectException: Error opening socket to server colces01.xcelenergy.com/170.152.4.140 on port 50,000 with message: Connection refused. ERRORCODE=-4499, SQLSTATE=08001) 
+
+The dbm cfg shows 
+TCP/IP Service name (SVCENAME) = db2c_db2inst2
+
+and in /etc/services 
+db2c_db2inst2 50000/tcp 
+
+SYMPTOM
+Configuration of the DB2 Content Manager library fails.
+
+
+CAUSE
+Configuration of the DB2 instance did not properly define the communication protocol that is needed by the configuration wizard to communicate to DB2..
+
+DIAGNOSING THE PROBLEM
+Review the error messages in the cmconfig.log as a result of running the configuration wizard.
+
+RESOLVING THE PROBLEM
+Update the DB2 instance profile.env file to include the following:
+
+
+
+
+DB2COMM='tcpip'

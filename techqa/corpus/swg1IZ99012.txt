@@ -1,0 +1,186 @@
+Title: IBM IZ99012: NCP_CTRL UNABLE TO LAUNCH REMOTE SLAVE PROCESSES - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Network Manager IP 3.9.0 Fix Pack 3, 3.9.0-TIV-ITNMIP-FP0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24033501]
+IBM Tivoli Network Manager IP 3.9.0 Fix Pack 4, 3.9.0-TIV-ITNMIP-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24034724]
+IBM Tivoli Network Manager IP Edition 3.9.0 Fix Pack 5, 3.9.0-TIV-ITNMIP-FP0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24037809]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  v3.9.0.32 - platform indenpendent.
+   
+   When using distribued ITNM, ncp_ctrl is not able launch any ncp
+   processes on remote servers. The remote server ncp_ctrl log will
+   show following message (below example is of ncp_model):
+   
+   Warning: Syntax error - parse failure found in file
+   CRivOQLParser.cc at line 143 - Syntax error at line 1 of:
+   insert into services.inTray ( serviceId, serviceName,
+   binaryName, servicePath, domainName, serviceKey, hostName,
+   argList, shadowHost, dependsOn, retryCount, logFile, logLevel,
+   traceLevel, endSignal)  values ( 13, 'ncp_model', 'ncp_model',
+   '/opt/IBM/tivoli/netcool/precision/platform/linux2x86/bin',
+   'DISTRIBUTED', 'ncp_model_DISTRIBUTED', 'sles10', [ '-domain',
+   '$PRECISION_DOMAIN', '-latency', '100000', '-debug', '0',
+   '-messagelevel', 'warn' ], NULL, [ 'ncp_config', 'ncp_store',
+   'ncp_class' ], 5, NULL, 'warn', 0NULL, );
+   
+   The problem is - the new attributes i.e. traceLevel & endSingal
+   does not exist in CtrlServices.cfg and are hard-coded
+   incorrectly. Indeed, the comma is at wrong place, which is why
+   it is showing syntax error.
+   
+   The correct entry should look like below:
+   
+   insert into services.inTray ( serviceId, serviceName,
+   binaryName, servicePath, domainName, serviceKey, hostName,
+   argList, shadowHost, dependsOn, retryCount, logFile, logLevel,
+   traceLevel, endSignal)  values ( 13, 'ncp_model', 'ncp_model',
+   '/opt/IBM/tivoli/netcool/precision/platform/linux2x86/bin',
+   'DISTRIBUTED', 'ncp_model_DISTRIBUTED', 'sles10', [ '-domain',
+   '$PRECISION_DOMAIN', '-latency', '100000', '-debug', '0',
+   '-messagelevel', 'warn' ], NULL, [ 'ncp_config', 'ncp_store',
+   'ncp_class' ], 5, NULL, 'warn', 0, NULL );
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ITNM 3.9 release.                                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When using distribued ITNM, ncp_ctrl is not able launch any  *
+   * ncp                                                          *
+   * processes on remote servers. The remote server ncp_ctrl log  *
+   * will                                                         *
+   * show following message (below example is of ncp_model):      *
+   * Warning: Syntax error - parse failure found in file          *
+   * CRivOQLParser.cc at line 143 - Syntax error at line 1 of:    *
+   * insert into services.inTray ( serviceId, serviceName,        *
+   * binaryName, servicePath, domainName, serviceKey, hostName,   *
+   * argList, shadowHost, dependsOn, retryCount, logFile,         *
+   * logLevel,                                                    *
+   * traceLevel, endSignal)  values ( 13, 'ncp_model',            *
+   * 'ncp_model',                                                 *
+   * '/opt/IBM/tivoli/netcool/precision/platform/linux2x86/bin',  *
+   * 'DISTRIBUTED', 'ncp_model_DISTRIBUTED', 'sles10', [          *
+   * '-domain',                                                   *
+   * '$PRECISION_DOMAIN', '-latency', '100000', '-debug', '0',    *
+   * '-messagelevel', 'warn' ], NULL, [ 'ncp_config',             *
+   * 'ncp_store',                                                 *
+   * 'ncp_class' ], 5, NULL, 'warn', 0NULL, );                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * | fix pack | 3.9.0-ITNMIP-FP0001                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem is - the new attributes i.e. traceLevel & endSingal
+   does not exist in CtrlServices.cfg and are hard-coded
+   incorrectly. Indeed, the comma is at wrong place, which is why
+   it is showing syntax error.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ99012
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PREC DISCOVY
+   
+   
+ * REPORTED COMPONENT ID
+   5724O52DS
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-18
+   
+   
+ * CLOSED DATE
+   2011-09-01
+   
+   
+ * LAST MODIFIED DATE
+   2011-09-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/PREC DISCOVY
+   
+   
+ * FIXED COMPONENT ID
+   5724O52DS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R390 PSN
+   UP
+   
+   
+ * R390 PSY
+   UP

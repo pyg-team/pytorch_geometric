@@ -1,0 +1,24 @@
+Title: IBM How to change the Content-Type header in an error rule on the IBM WebSphere DataPower SOA Appliance - United States
+
+Text:
+content type; error rule; error; action; rule; content; type; content-type TECHNOTE (FAQ)
+
+QUESTION
+ How can I change the Content-Type header in an error rule? 
+
+CAUSE
+An error rule may be triggered on a request or a response, depending on the point of failure; and the way to change the Content-Type header depends on the point when the error rule is called. 
+
+ANSWER
+ If you create an error rule on a Web Service Proxy (WSP) or a Multi-Protocol Gateway (MPGW) and try to set the Content-Type header using the dp:set-response-header extension element in XSLT, it might not work as you would expect because the failure may have occurred on the request.
+
+In this case, the extension function dp:responding() may be helpful, so you can create a conditional based on this value to set the header correctly. Based on whether the error rule is triggered by a request or a response, the Content-Type header can be set using either the dp:set-request-header or dp-set-response-header extension elements.
+
+The DataPower Information Center contains documentation on the extension function dp:responding() [http://pic.dhe.ibm.com/infocenter/wsdatap/v5r0m0/index.jsp?topic=%2Fcom.ibm.dp.xb.doc%2Fextensionfunctions78.htm&resultof%3D%2522%2564%2570%253a%2572%2565%2573%2570%256f%256e%2564%2569%256e%2567%2522%2520]. It also contains documentation on the extension elements dp:set-request-header and dp-set-response-header [http://pic.dhe.ibm.com/infocenter/wsdatap/v5r0m0/index.jsp?topic=%2Fcom.ibm.dp.xb.doc%2Fextensionfunctions08.htm&path%3D5_3_1_2] in the extension elements section.
+
+If you know that the content-type header should only be set on a backend error, another option (besides using the dp:set-response-header extension element in XSLT) is using a set variable action in an error rule. Place the set variable action after the Results action on the error rule, to set:
+var://service/set-response-header/Content-Type
+
+
+
+Please note that, in cases when an error rule is triggered by an on-error action or call-action in a processing policy, changes made to the Content-Type header in the error rule will not be persisted.

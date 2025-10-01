@@ -1,0 +1,107 @@
+Title: IBM TSearchICM Java tool program for query problem determination - United States
+
+Text:
+slow search parametric textsearch api utility SQL hung timeout timed out icmsearch execute evaluate executewithcallback executecount TECHNOTE (FAQ)
+
+QUESTION
+ Is there a Java™ sample or tool program that I can run when I think there is a performance problem during my DB2® Content Manager queries and searches? 
+
+CAUSE
+When your DB2 Content Manager queries perform more slowly than you expect, the first thing to do is to identify which component is causing the performance degradation. It could be the application program, the DB2 Content Manager query engine, the document retrieval, the database SQL execution, or the network communication. 
+
+This technical note provides a Java tool program, TSearchICM.java, that you can run to find out the execution timings of your queries. This resource complements the use of the DB2 Content Manager logs to analyze the problem. 
+
+Important: This tool requires the installation of the DB2 Content Manager Java samples, also referred to as the DB2 Information Integrator for Content connector toolkit samples. 
+
+The tool accepts many common query options to allow you to simulate the options used by your application, such as the query method, the maximum number of results, document retrieval options, and so on.
+
+Disclaimer: This tool is not officially part of the product. It is a sample that is provided as a convenience to the DB2 Content Manager application developer. This version of TSearchICM was developed for DB2 Content Manager V8.3 specifically. The options can change at any time. Future versions might include new DB2 Content Manager query features.
+TSearchICM:
+
+
+ * -d/database <DB2 Content Manager database name> 
+   default = <SConnectDisconnectICM.DEFAULT_DATABASE> 
+ * -u/user <DB2 Content Manager user ID> 
+   default = <SConnectDisconnectICM.DEFAULT_USERNAME> 
+ * -p/password <DB2 Content Manager user's password> 
+   default = <SConnectDisconnectICM.DEFAULT_PASSWORD> 
+ * -co/connectOptions <Connection options> 
+   default = "" 
+ * -i/iterations <Number of times to run the query> 
+   default = 1 
+ * -max/maxResults <Maximum number of results to return>
+   default = <DB2 Content Manager default> 
+ * -prefetch/prefetchSize <Prefetch block size>
+   default = <DB2 Content Manager default> 
+ * -prepare/prepareQuery 
+   Prepares the query without executing
+   default = false (prepares and executes the query)
+   Means prepare only If specified. 
+ * -print/printResults 
+   Prints the results details
+   default = false (prints number of results only)
+   Means to print the details if specified. 
+ * -qm/qmethod <Query method> 
+   default = execute
+   Valid methods: execute evaluate executeCount executeWithCallback 
+ * -qs/qstring <XQPE query string in quotes> 
+   default = "/NOINDEX" 
+ * -qt/qtimeout <Query timeout in milliseconds> 
+   default = 0 (no timeout specified)
+   Important: qtimeout requires DB2 Content Manager V8.3 Fix Pack 5 
+ * -ro/retrieveOptions <Retrieve options> 
+   default = 2
+   Common retrieve options (See DKConstant for details)  *  Attributes only: 2 
+    *  ID only: 4 
+    *  Children: 16 
+    *  Item tree: 128 
+    *  Latest Version: 256
+   
+   
+ * -h/?/help 
+   Displays input parameters and defaults
+
+ANSWER
+Steps: 
+
+ 1. Download the TSearchICM.java file to your DB2 Content Manager Java samples directory: 
+    Windows®: %IBMCMROOT%\samples\java\icm
+    UNIX®: $IBMCMROOT/samples/java/icm 
+ 2. Windows: Open a Windows command prompt window, and change to the samples\java\icm directory.
+    UNIX: Change to the samples/java/icm directory 
+ 3. If you have not run any of the Java sample programs in this directory, you should set up your environment at this time. Read "README_SAMPLES_JAVA_ICM.txt" for detailed instructions. 
+ 4. Set up the path and classpath environment variables by running the following command:
+    Windows: "%IBMCMROOT%\bin\cmbenv81.bat" (and use the quotes)
+    UNIX: ". $IBMCMROOT/bin/cmbenv81.sh" 
+ 5. Compile the Java program and its dependencies:
+    javac TSearchICM.java SConnectDisconnectICM.java SItemRetrievalICM.java 
+ 6. Run the Java program with the help parameter first to see the syntax: 
+    java TSearchICM -help 
+ 7. Run the Java program with your XPATH query string, and any other parameters to overwrite the defaults. See the "Hints" section below for suggested parameter values, and other important debugging hints. 
+ 8. The Java program will run the query, then display the results and the execution timings to the console. 
+ 9. You may wish to review the logs and the tool program output with IBM® Software Support.
+
+
+
+Hints:  1. Turn on the connectors DEBUG logging level in %IBMCMROOT%\cmgmt\connectors\cmblogconfig.properties (Windows) and in /home/ibmcmadm/cmgmt/connectors/cmblogconfig.properties (default location for UNIX). Check the DB2 Content Manager Information Center on activating connector logging. With the potential for a lot of logging, you should consider increasing your log file size settings. Instead of the default size of 5 MB, increase to 20 MB, for example. 
+ 2. Turn on the library server tracing (at a tracelevel of -15) to see the library server and database processing. 
+ 3. When you are running Client for Windows, eClient, or another custom application, you might not know the XPATH query string that is generated. Look in the DEBUG level of your connectors dklog.log, and search for "Query String". 
+ 4. To separate the query time from the document (item) retrieval time, specify the ID-only retrieval option, "-retrieveOptions 4". 
+ 5. To get an average query time, specify at least 10 iterations by adding "-iterations 10". 
+ 6. When you specify a retrieve option other than ID-only, you can print out the retrieved information of the item by adding "-printResults". 
+ 7. You can redirect the console output of the Java program to a file by appending " > TSearchICM.log".
+
+
+Examples:  * java TSearchICM -qstring "/Journal" -iterations 10 -retrieveOptions 4 > TSearchICM.log 
+ * java TSearchICM -qstring "/Journal" -retrieveOptions 2 -printResults > TSearchICM.log 
+ * java TSearchICM -qstring "/Journal" -iterations 1 -qtimeout 60000 > TSearchICM.log
+
+RELATED INFORMATION
+ Tech doc: How to turn on API logging [http://www.ibm.com/support/docview.wss?uid=swg21064468]
+Tech doc: How to increase API log size [http://www.ibm.com/support/docview.wss?uid=swg21064475]
+Tech doc: How to turn on Library Server logging [http://www.ibm.com/support/docview.wss?uid=swg21064470]
+
+
+TSearchICM.java [/support/docview.wss?uid=swg21245279&aid=2] [/support/docview.wss?uid=swg21245279&aid=1]
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager DB2 Information Integrator for Content AIX, Solaris, Windows 8.3

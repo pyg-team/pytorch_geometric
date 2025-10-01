@@ -1,0 +1,30 @@
+Title: IBM TM1 10.1 FP1 - Changes to Data Reservation behavior - United States
+
+Text:
+data reservation; scheduled chores; sandbox job queue; allowed mode; UAEVAL PRODUCT DOCUMENTATION
+
+ABSTRACT
+ As of IBM® Cognos® TM1® Version 10.1 Fix Pack 1 (FP1), TM1 Admin users are no longer restricted by the cell write restrictions of the Data Reservation feature. Admin users can now override Data Reservations held by other users and write to reserved cells. 
+
+CONTENT
+Prior to TM1 10.1 FP1, the Data Reservations (DR) feature applied equally to all TM1 user groups including Admin users. If a user had a DR on a set of cells in a cube, no other user could write to those cells until the reservation was released. As a result, scheduled chores, which run as the Admin user, would be blocked if a DR was encountered that belonged to another user. 
+
+As of TM1 10.1 FP1, all three modes of Data Reservation have been be modified to allow Admin users to write to reserved cells. This change also affects all cell writes and cell status checks made through the TM1 API and TurboIntegrator processes. Admin users are still allowed to acquire and release reservations. Data Reservations held by Admin users still affect non-Admin users.
+
+New behavior with Allowed mode
+This new behavior mainly affects the running of scheduled chores and the processing of the TM1 sandbox Job Queue when Data Reservation is configured in Allowed mode.
+
+Allowed mode and scheduled chores: With respect to Data Reservation, a scheduled chore runs as the Admin user. 
+
+ * Previously, if a reservation conflict was encountered, the chore would rollback and wait for the reservation to be released before continuing. 
+ * As of TM1 10.1 FP1, the previous behavior does not exist so the scheduled chore can continue to run because the Admin user is no longer restricted from writing to reserved cells if there is a DR conflict with another user.
+
+
+Allowed mode and sandbox Job Queue: The TM1 sandbox Job Queue has the same rollback and wait behavior as the scheduled chore. However, unlike a scheduled chore, the sandbox Job Queue runs in the context of a specific user. 
+In TM1 10.1 FP1, the sandbox Job Queue has the following behavior:  * If the user is not an Admin user, the behavior is the same as previous TM1 versions; the Job Queue will rollback and wait for the conflicting reservation to be released. 
+ * If the user is an Admin user, the Job Queue will continue and not rollback even if another user has a DR on the same cells.
+
+
+For more details about Data Reservations, see the topic, "Using Data Reservations", in the IBM® Cognos® TM1 Developer Guide. 
+RELATED INFORMATION
+ Using Data Reservations [http://publib.boulder.ibm.com/infocenter/ctm1/v10r1m0/topic/com.ibm.swg.ba.cognos.tm1_dg_dvlpr.10.1.0.doc/c_tm1_dev_dr_usingdatares_n92847.html]

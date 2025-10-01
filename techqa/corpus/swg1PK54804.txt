@@ -1,0 +1,137 @@
+Title: IBM PK54804: RMC: Installation Guide alludes to use of floating licenses whi ch is not supported in RMC 7.2 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Installation Guide of Rational Method Composer 7.2 alludes t
+   o the use of floating licenses although floating licenses are no
+   t supported in RMC 7.2.  See excerpts below:
+   If you are installing a Rational software product for the first
+   time or want to extend a license to continue using the product,
+   you have options on how to enable licensing for your product. Li
+   censes for Rational Software Development Platform offerings are
+   enabled in two ways:
+   *Importing a product activation kit
+   *Enabling Rational Common Licensing to obtain access to floating
+    license keys
+   Floating license enforcement
+   Optionally, you can obtain floating license keys, install IBM Ra
+   tional License Server, and enable Floating license enforcement f
+   or your product. Floating license enforcement provides the follo
+   wing benefits:
+   *License compliance enforcement across the organization
+   *Fewer license purchases
+   *Serve license keys for IBM Rational Team Unifying and Software
+   Development Platform desktop products from the same license serv
+   er
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Floating licences are not supported for Rational Method
+   Composer. The installation guide for 7.2 erroneously
+   includes some text referring to floating licenses.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The documentation sources have been fixed to remove the
+   incorrect information. There  is also a release note in 7.2
+   ifix2 release notes stating that floating licenses are not
+   supported for Rational Method Composer.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK54804
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL METHOD CMP
+   
+   
+ * REPORTED COMPONENT ID
+   5724G5201
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-16
+   
+   
+ * CLOSED DATE
+   2008-02-05
+   
+   
+ * LAST MODIFIED DATE
+   2008-02-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL METHOD CMP
+   
+   
+ * FIXED COMPONENT ID
+   5724G5201
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSN
+   UP

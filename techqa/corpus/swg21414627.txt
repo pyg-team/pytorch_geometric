@@ -1,0 +1,40 @@
+Title: IBM Flexlm error: -42,7016 with Rational Software Delivery Platform (SDP) products - United States
+
+Text:
+Rational Licensing; SDP; IBM Rational Software Modeler TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Flexlm error: -42,7016 with Rational Software Delivery Platform (SDP) products 
+
+SYMPTOM
+ 
+
+While launching products like Rational Software Modeler it will give flexlm error -42,7016 and it gives licensing information as "Software Product Plugin is enabled for Licensing but no license key is available".  * 
+ * [/support/docview.wss?uid=swg21414627&amp;aid=1]
+
+
+
+CAUSE
+ 
+
+When floating license support has been enabled for an IBM Rational Software Modeler, importing a permanent product activation kit does not automatically disable floating license usage. 
+
+RESOLVING THE PROBLEM
+To resolve this: 
+
+ 1.  Launch IBM Installation Manager. 
+ 2.  Click the Manage Licenses button. 
+ 3.  Highlight the product for which you are importing the activation kit. 
+ 4.  Click the Import product activation kit radio button. 
+ 5.  Click Next. 
+ 6.  Browse to the .jar file and click Next. 
+ 7.  After reading and accepting the license agreement click Finish. 
+ 8.  You should receive a message stating that the license import was successful. 
+ 9.  Click Finish. 
+ 10. You will now be back on the main page of the Installation Manager. 
+ 11. Click the Manage Licenses button. 
+ 12. Highlight the product for which you just imported the activation kit. 
+ 13. Click the Configure floating license support radio button. 
+ 14. Click Next. 
+ 15. Click the Disable floating license enforcement radio button. 
+ 16. Click Finish.

@@ -1,0 +1,39 @@
+Title: IBM Setting up a pathmap for the Rational Rose - Requisite Pro integration - United States
+
+Text:
+requisite; Reqpro; requirement; rose; pathmap; iucm; integration; 1124204; rp; int; rose/reqpro; rose/rp TECHNOTE (FAQ)
+
+QUESTION
+ How can you set up a Rational Rose pathmap for use with the integration with Rational Requisite Pro? 
+
+ANSWER
+Perform the following steps to setup a virtual pathmap in Rational Rose for the integration with Rational RequisitePro: 
+
+ 1.  Open Rose and select File -> Edit PathMap. 
+ 2.   For Symbol type in: PROJECT (or the name of your choice) 
+ 3.  For an actual path type in: \\machineName\nameOfDirectory
+     (be sure you are specifying the full path to the name of the directory that contains the reqpro.rqs file)
+     
+     Note: In order to use a UNC Path you must manually type \\machineName\nameOfDirectory. The Browse button will not work. 
+ 4.  Click the button to add the pathmap. 
+ 5.  Next select to exit the PathMap dialog box. 
+ 6.   Next open the model that you are integrating with RequisitePro. 
+ 7.   Select File -> Save. 
+ 8.   Select Tool -> Requisite Pro -> Associate Model to Project. 
+ 9.  Select the full UNC path to the ReqPro Project (the .rqs file) that you would like to integrate with your Rose model. For example: \\machineName\nameOfDirectory\ReqProProject.rqs 
+ 10. Select the default Requirement type and default document type. 
+ 11.  Select the PathMap pulldown menu and choose the $PROJECT PathMap that you created in step 1. 
+ 12. For each package in the model (This includes the Use Case View package) , right-click the package and select Tools -> ReqPro -> Associate Package To Project. 
+ 13. Select the default Requirement type and default document type 
+ 14. Select the PathMap pull-down menu and choose the $PROJECT PathMap that you previously created. 
+ 15.  Select File -> Save once again to save the model.
+
+
+Your Rational Rose model will now be associated with your Requisite Pro project using a virtual path map. The advantage of this is that if your ReqPro project ever moves location, you will only need to update the Path Map Actual Path entry for the integration to remain intact.
+
+
+
+ 
+
+HISTORICAL NUMBER
+ 15793

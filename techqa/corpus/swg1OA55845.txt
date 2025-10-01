@@ -1,0 +1,144 @@
+Title: IBM OA55845: 7.5.0-TIV-OMFORMSG-FP0002 - United States
+
+Text:
+z/os  DIRECT LINKS TO FIXES
+7.5.0-TIV-OMforMsg-FP0002_README.txt [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+OMEGAMON+XE+for+Messaging+for+zOS&fixids=7.5.0-TIV-OMforMsg-FP0002_README.txt&source=SAR]
+7.5.0-TIV-OMforMsg-FP0002.zip [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+OMEGAMON+XE+for+Messaging+for+zOS&fixids=7.5.0-TIV-OMforMsg-FP0002.zip&source=SAR]
+7.5.0-TIV-OMforMsg-FP0002.tar.gz [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+OMEGAMON+XE+for+Messaging+for+zOS&fixids=7.5.0-TIV-OMforMsg-FP0002.tar.gz&source=SAR]
+7.5.0-TIV-OMforMsg-FP0002 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+OMEGAMON+XE+for+Messaging+for+zOS&fixids=7.5.0-TIV-OMforMsg-FP0002&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Application Support version mismatch reported when v7.5.0 Fix
+   Pack 1 is installed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All OMEGAMON for Messaging on z/OS: IBM Integration Bus      *
+   * Monitoring 7.5.0 users.                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Application Support version mismatch reported when v7.5.0    *
+   * Fix Pack 1 is installed.                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply this  PTF.                                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Corrected the version and rebult.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA55845
+   
+   
+ * REPORTED COMPONENT NAME
+   OMXE MSG BROKER
+   
+   
+ * REPORTED COMPONENT ID
+   5698A87MB
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-07-11
+   
+   
+ * CLOSED DATE
+   2018-07-11
+   
+   
+ * LAST MODIFIED DATE
+   2018-08-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA96825
+   
+   
+
+MODULES/MACROS
+ *  KQIJSTMS KQIJSTPS KQIJSTPW KQIMSMAN KQIVRTMS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMXE MSG BROKER
+   
+   
+ * FIXED COMPONENT ID
+   5698A87MB
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY UA96825 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA96825]
+   UP18/08/14 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

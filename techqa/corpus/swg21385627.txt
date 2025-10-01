@@ -1,0 +1,36 @@
+Title: IBM JCR LoginException occurs after configuring WebSphere Portal security with federated repositories - United States
+
+Text:
+LoginException; jcr; DB2; Content; Manger; RepositoryFactory; rdn TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In a standalone or clustered Portal 6.1, or 7.0 system, after security is configured, standalone LDAP or Federated Repositories, JCR/ICM related errors/exceptions may be found in the SystemOut.log for the primary and secondary nodes, even after the ConfigEngine task, "wp-change-portal-admin-user", was successfully run. Also the main Portal components work fine. 
+
+SYMPTOM
+Error messages observed in SystemOut.log: 
+
+[datetime] 00000024 ServletWrappe E Deregister the mbean because of uncaught init() exception thrown by servlet InitServlet: javax.servlet.ServletException: Unable to initialize RepositoryFactory due to exception of type: javax.jcr.LoginException with message: Unable to establish session with DB2 Content Manger Runtime Edition for User: com.ibm.icm.jcr.service.member.WPSUserImpl@5280528[null, cn=wpsadmin,cn=users,ou=example,o=acme.com 
+
+...
+Caused by: javax.jcr.LoginException: Unable to establish session with DB2 Content Manger Runtime Edition for User: com.ibm.icm.jcr.service.member.WPSUserImpl@5280528[null, cn=wpsadmin,cn=users,ou=example,o=acme.com
+
+Despite the error message, the system doesn't contain any components from the "DB2 Content Manager".
+
+
+CAUSE
+Mismatched RDN in VMM and Portal PUMA configuration
+
+
+RESOLVING THE PROBLEM
+When the security is configured, the property "store.puma_default.user.fbadefault.filter" is not explicitly set in "WP PumaStoreService". When this property is not set, the default value would be uid. For some LDAP types, such as Microsoft Active Directory, the RDN of the users is "cn". This mismatch had caused the exceptions in the log files. 
+
+
+To resolve this issue, it was suggested to add "store.puma_default.user.fbadefault.filter" to "WP PumaStoreService" through WebSphere Integrated Solutions Console (aka the admin console) and set the value to RDN "cn". After that, the exceptions disappeared.
+
+Technical note:
+If there are multiple repositories are set, each of which has its own RDN, then you need to set "store.puma_default.user.fbadefault.filter" to the user RDN of the main LDAP to which you are going to create users. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products AIX, HP-UX, IBM i, Linux, Solaris, Windows, z/OS 7.0, 6.1

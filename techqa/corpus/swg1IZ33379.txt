@@ -1,0 +1,138 @@
+Title: IBM IZ33379: Clarifications are needed in the manuals for the sequence of    security exit calls in a channel instance sharing conversations. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Clarifications are needed in the manuals for the sequence of
+   security exit calls in a channel instance sharing conversations.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users with security exits defined in client channels that will
+   use sharing conversations.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When a client channel instance is shared by more than one
+   conversation, the pattern of calls to the security exit is
+   restricted on the second and subsequent conversations.
+   
+   These restrictions should be documented in the WebSphere MQ
+   product manuals.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following description will be added to the
+   Intercommunication manual on the page that describes Channel
+   security exit programs.
+   
+   When a client channel instance is shared by more than one
+   conversation, the pattern of calls to the security exit is
+   restricted on the second and subsequent conversations.
+   
+   For the first conversation, the pattern is the same as if the
+   channel were not sharing conversations.  For the second and
+   subsequent conversations, the security exit is never called with
+   MQXR_INIT, MQXR_INIT_SEC, or MQXR_SEC_MSG.  It is called with
+   MQXR_SEC_PARMS.
+   
+   In a channel that is sharing conversations, MQXR_TERM is called
+   only for the last conversation running.
+   
+   Each conversation has the opportunity in the MQXR_SEC_PARMS
+   invocation of the exit to alter the MQCD; on the
+   server-connection end of the channel this can be useful to vary,
+   for example, the MCAUserIdentifier or LongMCAUserIdPtr values
+   before the connection is made to the queue manager.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ33379
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7221
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-25
+   
+   
+ * CLOSED DATE
+   2008-10-31
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

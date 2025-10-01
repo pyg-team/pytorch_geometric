@@ -1,0 +1,92 @@
+Title: IBM Download IBM Content Navigator Version 3.0.3 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and install the IBM Content Navigator Version 3.0.3 components by using Passport Advantage Online or Fix Central 
+
+DOWNLOAD DESCRIPTION
+ 
+
+IBM Content Navigator is a web client that provides users with a web interface for working with content from multiple content servers. It helps companies provide managed access to large volumes of electronic data. IBM Content Navigator enables users to search for and work with documents that are stored in content servers that are located around the world from a web browser. IBM Content Navigator works with the following desktop clients:
+
+
+ * IBM Content Navigator for Microsoft Office - an optional component of IBM Content Navigator that enables users to access content from within Microsoft Office applications. 
+ * IBM Content Navigator Sync Client - an optional component of IBM Content Navigator that enables users to sync content between their workstation and the web client (Available only on FileNet P8 systems). 
+ * IBM Content Navigator Edit Service - an optional component of IBM Content Navigator that enables users to easily add files or edit files in the native applications installed on their computers (Available only on FileNet P8 systems).
+
+
+In addition, IBM Content Navigator Version 3.0.3 also distributes Microsoft SharePoint Web Parts for the Browse, Search, and Work features. The Web Parts enable users to access documents stored in an IBM FileNet P8 repository from Microsoft SharePoint. 
+
+The IBM Content Navigator software package also includes the following applications: 
+ * IBM CMIS for Content Manager 
+ * IBM CMIS for Content Manager OnDemand 
+ * IBM CMIS for FileNet Content Manager 
+ * IBM FileNet Collaboration Services
+
+
+SPACE REQUIREMENTS
+On the application server, IBM Content Navigator will require a minimum of:
+
+
+ * Disk space: 
+ * For a standalone configuration: 4 GB on the drive on which you plan to install IBM Content Navigator. 
+ * For a cluster configuration: 6 GB on the drive on which you plan to install IBM Content Navigator. 
+ * Temp space: The self-extractor checks for free disk space that is three times the size of the installer where the temp directory is located. For instance if the installer is 1.3GB, and the temp directory is set to C:\temp, the installers will look for 4GB of free space on the C: drive. 
+ * On Windows, If enough free space is not available, the installer will prompt the user for an alternate location for extraction. 
+ * On Unix, the installer does not prompt to pick another location; however the IATEMPDIR environment variable may be manually set to a location with sufficient temp space. To set the variable enter one of the following commands at the UNIX command line prompt before running this installer again:
+   - for Bourne shell (sh), ksh, bash and zsh:
+   $ IATEMPDIR=/your/free/space/directory
+   $ export IATEMPDIR
+   - for C shell (csh) and tcsh:
+   $ setenv IATEMPDIR /your/free/space/directory 
+ * JVM Memory: 1 GB
+
+
+DOWNLOADING THE PRODUCT FROM PASSPORT ADVANTAGE
+To download IBM Content Navigator or its components from Passport Advantage: 
+
+ 1. From a browser, navigate to the Find Downloads and Media [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] page on the IBM Passport Advantage Online Web site. You must log on to continue. For more information about downloading software from the Passport Advantage Online Web site, see http://www.ibm.com/support/docview.wss?uid=swg21622147 [http://www.ibm.com/support/docview.wss?uid=swg21622147]. 
+ 2. Select the Find by part number search option under Download finder options. 
+ 3. Search for the part number of the image that you want to download. See the list of part numbers for more information. 
+ 4. Unpack the part into a single, temporary directory on your system. 
+ 5. Follow the instructions in Planning, Installing, and Configuring IBM Content Navigator [http://www.ibm.com/support/knowledgecenter/SSEUEX_3.0.3/com.ibm.installingeuc.doc/eucao000.htm] to install the product. 
+    
+
+
+Download the appropriate driver for your environment. 
+
+IBM Content Navigator:  * AIX: CNP1WML 
+ * Linux: CNP1XML 
+ * Linux for System z: CNP1YML 
+ * Windows: CNP1ZML
+
+
+Optional components:  * IBM Content Navigator for Microsoft Office (Windows only): CNP20ML 
+ * IBM Content Navigator for Microsoft SharePoint (Windows only): CNP21ML 
+ * IBM Content Navigator Sync (Windows): CNP22ML 
+ * IBM Content Navigator Sync (Mac OS X):CNP23ML 
+ * IBM Content Navigator Edit Service (Windows): CNP24ML 
+ * IBM Content Navigator Edit Service (Mac OS X): CNP25ML 
+ * IBM ECM CMIS and FileNet Collaboration Services (AIX): CNP2JML 
+ * IBM ECM CMIS and FileNet Collaboration Services (Linux): CNP2KML 
+ * IBM ECM CMIS and FileNet Collaboration Services (zLinux): CNP2LML 
+ * IBM ECM CMIS and FileNet Collaboration Services (Windows): CNP2MML
+
+
+IBM Content Navigator includes a limited license for : 
+
+
+IBM Connections Docs V2.0 Multiplatform Multilingual Quickstart Guide CN7ZKML IBM Connections Docs V2.0 for Windows and Linux Multilingual CN7ZLML IBM Watson Explorer Advanced Edition Foundational Components V11.0.2 Windows English CNH51EN IBM Watson Explorer Advanced Edition Foundational Components V11.0.2 Linux English CNH52EN IBM Watson Explorer Advanced Edition Analytical Components V11.0.2 Windows Multilingual CNFF1ML IBM Watson Explorer Advanced Edition Analytical Components V11.0.2 Linux Multilingual CNFF2ML IBM Watson Explorer Advanced Edition Analytical Components V11.0.2 AIX Multilingual CNFF3ML IBM Watson Explorer Advanced Edition Analytical Components V11.0.2 Linux on Sys z Multilingual CNFF4ML IBM Watson Explorer Advanced Edition Analytical Components V11.0.2 Linux on Power Multilingual CNFF5ML IBM Watson Explorer Content Analytics Agent for Windows File Systems V11.0.2 Multilingual CNFF6ML IBM Watson Explorer Content Analytics Studio V11.0.2 Windows English CNFF7EN IBM Aspera Connect Server, Enterprise Server, Point-to-Point, and Client V3.7.3 Release Notes English CNK3HEN IBM Aspera Enterprise Server V3.7.3 Multiplatform Multilingual CNK3IML IBM Aspera Connect Server V3.7.3 Multiplatform Multilingual CNK3JML IBM Aspera faspex server V4.1 Multiplatform English CNL1HEN IBM Aspera faspex Server V4.1 Common Components Multiplatform English CNL1JEN IBM Aspera faspex server V4.1 Release Notes English CNL1IEN IBM Aspera faspex server License Key for IBM Content Navigator V3 Multiplatform Multilingual CNMR4ML IBM Aspera Connect Server License Key for IBM Content Navigator V3 Multiplatform Multilingual CNMR5ML 
+
+DOWNLOADING THE PRODUCT FROM FIX CENTRAL
+To download IBM Content Navigator or its components from Fix Central:
+1. From a browser, log in to Fix Central [https://www-945.ibm.com/support/fixcentral/].
+2. In the Product Group list, select Enterprise Content Management.
+3. In the Select from Enterprise Content Management list, select Content Navigator. 
+4. In the Installed Version list, select 3.0.2. 
+5. Select your product platform.
+6. Click Continue.
+
+Before downloading, Fix Central will prompt you to accept IBM Content Navigator 3.0.3 license.

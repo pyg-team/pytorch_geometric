@@ -1,0 +1,59 @@
+Title: IBM DFHAP0001 AKEA in DFHAPDM during CICS startup - United States
+
+Text:
+CAENF CA-ENF CA Common Services; ABEND 0C1 ABEND S0C1 ABEND0C1 ABENDS0C1 ABEND 0C4 ABEND S0C4 ABEND0C4 FFFF ABENDS0C4; wild branch; 5697E9300 R300 300 R630 630 HCI6300 5697-E93 5697E93 5655M1500 R640 640 R400 400 HCI6400 5655-M15 5655M15 kixdcfcic630 kixdcfcic640 KIXINFO retention31 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are installing CICS Transaction Server for z/OS (CICS TS) V3.1. During startup, you receive message DFHAP0001 reporting an abendAKEA in DFHAPDM. 
+
+SYMPTOM
+DFHAP0001 Abend AKEA reported in DFHAPDM
+
+
+CAUSE
+Running with CA Technologies ENF active and missing a fix.
+
+DIAGNOSING THE PROBLEM
+You receive the following message: 
+
+DFHAP0001 [http://publib.boulder.ibm.com/infocenter/cicsts31/index.jsp?I=dfhg4ap] An abend (code ---/AKEA) has occurred at offset x'FFFFFFFF' in module DFHAPDM.
+
+The ---/AKEA indicates this is a percolate and the original abend happened somewhere prior to this.
+
+From reviewing the dump, you see the running task has program checked twice. The first 0C1 is occurring in DFHPASY (base) around offset x'8E', in the middle of the copyright eyecatcher for this module. 
+
+The second program check is an 0C4 abend occurring in DFHPASY (base) + x'4438'. The PSW is pointing to a MVI instruction: 9202 101B and abends because Reg1 is EBCDIC. Reg1 was loaded from Reg3+160 and Reg3 points to the DFHLDLD modhead. However, according to LD=3, the load point for DFHLDLD is 16A1DBE0. In browse you see the following where Reg3 points:
+
+Storage at 16BEA300:
+01406ED4 D6C4C8C5 C1C403D7 80F6F3F0 |. >MODHEAD.P.630|
+C4C6C8D3 C4D3C440 F1F161F1 F361F0F3 |DFHLDLD 11/13/03|
+7CF2F34B F0F70001 96A1DF18 C8C3C9F6 |@23.07..o~..HCI6|
+F3F0F040 1F3001C8 00000002 00001F60 |300 ...H.......-|
+00000300 00000000 90ECD00C BFFFF054 |..........}...0.|
+07FF0000 00C8CB58 96A1DBE0 00000000 |.....H..o~.\....|
+16BEA360 -16BEA3AF. LENGTH(X'50')--All bytes contain X'00' 
+00000000 00000000 01406ED4 D6C4C8C5 |......... >MODHE|
+C1C403C1 80F6F3F0 C4C6C8D7 C1E2E840 |AD.A.630DFHPASY |
+F1F161F1 F461F0F3 7CF0F24B F5F30001 |11/14/03@02.53..|
+00000000 C8C3C9F6 F3F0F040 FFFFFFFF |....HCI6300 ....|
+00000001 00005C48 00008080 00000008 |......*.........|
+C3C9C3E2 40F5F6F9 F760C5F9 F3404DC3 |CICS 5697-E93 (C|
+5D40C3D6 D7E8D9C9 C7C8E340 C9C2D440 |) COPYRIGHT IBM |
+C3D6D9D7 D6D9C1E3 C9D6D56B 40F1F9F7 |CORPORATION, 197|
+F46B40F2 F0F0F36B 40C1D3D3 40D9C9C7 |4, 2003, ALL RIG|
+
+In the trace you see that CICS has just returned from a DELETE_GATE request issued out of DFHAPSIP (base) at offset x'1914' when DFHLDLD is called to load the base registers. CA-ENF has a hook in this module so they are getting control (instead of the CICS DFHLDLD module) and program checks for some reason. 
+
+Whether you request it or not, CA gets hooks in unless you disable this feature by issuing an ENF command. ENF is brought up with MODE(CICS,ON). In order to disable it, issue the operator command: F ENF,MODE(CICS,NONE). Once CA-ENF has been successfully disabled, CICS will come up. Note, this command affects all CICS regions in the LPAR.
+
+
+RESOLVING THE PROBLEM
+Apply APAR QO49462 for ENF/CICS from [/support/docview.wss?uid=swg21169266&amp;aid=1]CA Technologies [http://www.ca.com/]. This fix is early in the ENF code prior to checking the CICS release. This fix will work for both CICS TS 2.3 and 3.1. 
+
+As a workaround, you can deactivate CA90 (ENF) by issuing 'F ENF,MODE(CICS,NONE)' to eliminate ENF from the CICS regions in the LPAR. The CICS TS region should then come up. Note, this command will affect all CICS regions in the LPAR, so ENF will be removed from all regions, which might not be what you want.
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS TS CICS/TS CICS Transaction Server

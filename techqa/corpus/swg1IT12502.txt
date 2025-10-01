@@ -1,0 +1,148 @@
+Title: IBM IT12502: WSRR AUTOMATIC SYNCHRONIZATION MAY CAUSE APPLIANCE TO RESTART - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix packs for DataPower Service Gateway version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037486]
+Fix packs for DataPower B2B Appliance version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037487]
+Fix packs for DataPower Integration Appliance version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037488]
+Fix packs for DataPower Gateway version 7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038524]
+Fix packs for DataPower Gateway version 7.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039783]
+Fix packs for DataPower Gateway version 7.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041543]
+Fix packs for DataPower Gateway version 7.5.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042194]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WSRR automatic synchronization method may cause the appliance
+   to restart unexpectedly.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use manual synchronization method.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Affected is use of WSRR.
+   
+   Refreshing WSRR subscription by regularly scheduled WSRR queries
+    may result in appliance restart while changing WSRR
+   subscription configurations.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is available in 7.0.0.13, 7.1.0.10, 7.2.0.6 and 7.5.0.2
+   
+   For a list of the latest fix packs available, please see:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21237631 [http://www-01.ibm.com/support/docview.wss?uid=swg21237631]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT12502
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-12-01
+   
+   
+ * CLOSED DATE
+   2016-03-11
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R710 PSY
+   UP
+   
+   
+ * R720 PSY
+   UP
+   
+   
+ * R750 PSY
+   UP

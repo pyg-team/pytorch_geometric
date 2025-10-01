@@ -1,0 +1,152 @@
+Title: IBM PI23006: WCM TAG CONTENTCOMPONENT CANNOT LOAD COMPONENT FROM DATABASE BEC AUSE THE REPOSITORY IS NOT LOGGED IN - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In a jsp if the following is done and the content is not loaded
+   it cannot be retrieved from the repository.
+   
+   <wcm:initworkspace username="wpsadmin" password="wpsadmin">could
+   not init workspace
+   </wcm:initworkspace>
+   <br>
+   <wcm:setExplicitContext path="testlib/Articles">Could not
+   set the explicit path</wcm:setExplicitContext>
+   
+   Testing content section Body:
+   <br>
+   <wcm:contentComponent type="content" key="Body" />
+   
+   The following is seen in the log file
+   WCM_ContentCo W   Exception caught processing request. Cause:
+   Repository is not logged in.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Performing a non-edit save on the content item seems to
+   resolve the issue until the next syndication
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In a jsp if the following is done and the content is not loaded
+   it cannot be retrieved from the repository.
+   
+   &lt;wcm:initworkspace username="wpsadmin"
+   password="wpsadmin"&gt;could not init workspace
+   &lt;/wcm:initworkspace&gt;
+   &lt;br&gt;
+   &lt;wcm:setExplicitContext path="testlib/Articles"&gt;Could not
+   set the explicit path&lt;/wcm:setExplicitContext&gt;
+   
+   Testing content section Body:
+   &lt;br&gt;
+   &lt;wcm:contentComponent type="content" key="Body" /&gt;
+   
+   The following is seen in the log file
+   WCM_ContentCo W   Exception caught processing request. Cause:
+   Repository is not logged in.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WCM API tag code needed a change in the way that the
+   workspace login was handled.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI23006
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-30
+   
+   
+ * CLOSED DATE
+   2014-09-30
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

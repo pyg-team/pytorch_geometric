@@ -1,0 +1,136 @@
+Title: IBM HC55534: PROBLEM IN CALCULATION OF TOTAL WEIGHT OF A WELD ELEMENT - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Calculating the total weight of a weldment.
+   Symptoms and Step-by-Step:
+   1. Create a multi-bodied CATPart and apply a steel material to
+   it. ( Two cubes of different sizes will work fine )
+   2. By using the contextual menu query the properties panel of
+   the part and view the weight of the part.
+   3. Now assemble the two bodies together and query the properties
+   panel and view the weight.
+   4. Note the increase of the weight due to the 2 bodies being
+   assembled.
+   5. This means we must assemble all the bodies in a CATPart to
+   acquire the total weight.
+   6. You cannot reorder the bodies so it is impossible to get the
+   weight of the other bodies.
+   7. The work around of assembling all the bodies of a 20 or more
+   bodied part is very time consuming,if the system lets you
+   assemble them.
+   8. We would also like to see the ability to apply a different
+   material to separate part bodies in a single CATPart.
+   9. This would eliminate the need for so many separate files
+   and links thus keeping things easier.
+   10.It will take many more files, sub-assemblies, sub-assemblies
+   inside of sub-assemblies to create the same result assembly
+   just because of material types.
+   11.The work around today, is today we have to create very
+   complex assembly structures when they could be very simple.
+   Thus making the code look hard to use.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  THIS APAR IS CONSIDERED AS A SUGGESTION FOR IMPROVEMENT FOR
+   CATIA.
+   PLEASE CONTACT YOUR SUPPORT DEPARTMENT IN ORDER TO OPEN A
+   REQUIREMENT FORM.
+   
+   As discussed in Paris with Jacques Leveille (18th november
+   meeting),
+   we are going to go in this direction on V5R5 :
+   1) give access to weight computation on individual bodies
+   (will be done by "measure" team)
+   2) give the capability to put a material to a particular body
+   in order to be able to build "mulkti-material parts" :
+   not yet planned
+   but maybe integrated in development plan after customer/DS
+   discussion.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HC55534
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA VERSION 5
+   
+   
+ * REPORTED COMPONENT ID
+   569101000
+   
+   
+ * REPORTED RELEASE
+   502
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   1999-11-16
+   
+   
+ * CLOSED DATE
+   1999-11-19
+   
+   
+ * LAST MODIFIED DATE
+   2006-06-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

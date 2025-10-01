@@ -1,0 +1,150 @@
+Title: IBM Troubleshooting DataSource connectivity in Web Experience Factory - United States
+
+Text:
+datasource; Fetch datasource; SQL; database connectivity; database connection TECHNOTE (FAQ)
+
+QUESTION
+This document describes a generic end-to-end procedure for troubleshooting DataSource connectivity issues in IBM Web Experience Factory. Dependent upon the database type, some values below may be different, but the sequence should be the same, unless otherwise noted. 
+
+ANSWER
+Before you begin:
+These instructions assume the following:
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+Take these initial steps:  * 
+ * 
+ * 
+ * 
+
+
+DataSource Troubleshooting Procedure 
+
+Confirm WebSphere Application Server connectivity to database 
+This section describes how to confirm that WebSphere Application Server can successfully connect to the DataSource/database. After this section is executed, depending on how the project is configured or whether it is a Web application or portlet, it may not be necessary to have server1 running, as it consumes additional system resources (for example, server1 does not need to be running if you are deploying the development WAR file to the WebSphere Portal Server). 
+ * 
+ * server1
+ * 
+ * <WAS install root>\WebSphere\Appserver\bin
+ * 
+ *  serverstatus -all -username <yourAdminID> -password <yourAdminPW> 
+ * 
+ * server1 
+ * 
+ * startserver server1
+ * 
+ * 
+ * 
+ * 
+ * 
+ * a) Select Resources -> JDBC Providers. 
+   b) Click on the JDBC Provider for the database you need to access. 
+   c) In Additional Properties in the bottom panel, click Data Sources. 
+   d) Select (check) the box for the appropriate DataSource, and then click the Test Connection button (this proves connection to the database exists and is healthy. Note however, it does not indicate the schema/data is healthy). At the top of the page, you should see the result: 
+   Test Connection for DataSource <your DataSource> on server <your server> at node <your node> was successful. 
+   
+   NOTE: The value in the column "JNDI Name" for the row your DataSource is in should be what is used in your "SQL DataSource" builder, and should be a syntax similar to "jdbc/V5/myDataSource"). 
+   
+   If you see an error message, then there is something wrong with the DataSource configuration; review the WebSphere Application Server error logs and adjust the DataSource configuration to correct any problems before proceeding. 
+   
+ * 
+
+
+Confirm WebSphere Application Server and/or WebSphere Portal can talk to database 
+In this section, the URLs are dependant on which server instance the development WAR is deployed to. If the development WAR is on server1, there is no need to deal with the WebSphere Portal instance, so you can safely ignore this section. 
+
+NOTE: In the scenario where the development WAR is deployed on server1 and the portlet WAR on the WebSphere Portal, the DataSource test cannot be tested from WebSphere Portal since there is no directly referenceable URL for the JSP. In such scenarios, the DataSource test must be performed from server1. In most production cases, there will just be a portlet deployed to WebSphere Portal and no development WAR file anywhere. In these cases, it is not possible to use the datasourcetest.jsp. 
+ * 
+ * serverstatus -all -username <yourAdminID> -password <yourAdminPW>
+ * 
+ * 
+ * 
+ * 
+ *  
+ * 
+ * 
+ * 
+ * NOTE: 
+ * 
+ * 
+ * 
+ * a) From a browser, go to URL localhost:9081/(your WPF Project Name)/factory/util/datasourcetest.jsp . 
+   b) In the page that displays, enter the JNDI name of your DataSource and an appropriate SQL query for the database (do not enter a user ID or password), then click the "Lookup" button. 
+   c) At this point, if the SQL query is properly constructed and appropriate data exists in the database, a result set should be displayed, unless the exception reflects an ID and password is required for access to the database. If this is the case, supply the appropriate values and repeat "Lookup" (and ensure the ID and password is provided in your model for your WebApp/portlet). 
+   
+ * 
+ * 
+
+Common issues 
+
+Limited JNDI paths are searched 
+In the SQL DataSource and SQL Call Builders, the "Fetch DataSource Names" button is used to automatically discover DataSources defined by the application server targeted by your WebSphere Portlet Factory project. Clicking the button causes the builder to search various paths in the server’s JNDI tree looking for DataSource objects. By default, only a few well-defined JNDI paths are searched. Those paths are:  * java:comp/env/jdbc 
+ * jdbc/v4 
+ * jdbc/v5 
+ * java: 
+ * java:jdbc 
+ * the top-level of the JNDI tree 
+
+
+If you place your DataSources on a different path, then the Fetch DataSource Names button will not find them. However, in the SQL DataSource and SQL Call Builders you can always enter DataSource names manually so there is no restriction upon where you can place DataSources in the JNDI tree. 
+
+Database Metadata Generation Problem 
+During the configuration of an SQL Call Builder, should you receive the following error: 
+
+"Database metadata generation on the server failed. Did not receive an XML schema from the server; check the server's log for schema generation error messages." 
+Take the following steps to determine the cause: 
+
+a) Open the SQL Call Builder. 
+b) Locate the section titled Events, Statistics and Logging 
+c) Select the boxes for Log SQL Statement and Log SQL Warnings 
+d) Save the changes to the Builder call. 
+e) Edit the main action to ensure that the invoke method is being called for the SQL Call Builder. 
+f) Save the model. 
+g) Run the model. 
+
+Examine the event.log file located in WEB-INF/logs. The SQL statements and warnings will be logged here. These errors could possibly come from clicking the "Fetch DataSource Names" or "Fetch Entity Names" under the "Database Explorer" section. 
+
+This error is typically the first sign that the DataSource or project is misconfigured. Troubleshooting from here generally involves the steps outlined in the above "Confirm WebSphere Application Server and/or WebSphere Portal Can Talk to Database" section. 
+
+User ID and password required for model 
+If the user name and password are not configured for the data source, it will still appear in the list of data sources after you click the "Fetch DataSource Names" button. However, when you click the "Fetch Entity Names" button, the following error is written to the general.txt or event.log: 
+
+*-- TIME: [datetime] --* 
+Category: bowstreet.system.server.logging.event.criterion.abnormal
+Priority: ERROR
+Thread: Event Thread
+Msg: *-- TIME: [datetime] --*
+Severity: ERROR
+Component: MODEL
+MSG: "SQL to XML Schema builder "getSchema_XmlSchema" encountered an exception while generating a schema; the exception message was "null userid not supportedDSRA0010E: SQL State = null, Error Code = -99,999DSRA0010E: SQL State = null, Error Code = -99,999"" 
+
+NOTE: If you must supply user credentials and the DataSource is configured not to use them (use of the DataSource requires user information), then you can supply the user credentials within a SQL DataSource Builder call. 
+
+General considerations 
+If you change any values in your JDBC Provider or DataSource definitions, then they may require a restart of the WebSphere Application Server and WebSphere Portal Server. 
+
+There have been cases where a DataSource issue exists on a system, all of the above instructions have been followed, and data still cannot be accessed. The WebSphere Application Server and/or WebSphere Portal Server were restarted and data could then be accessed. Please note, this should be considered a last resort. 
+
+If another DataSource is working correctly, you might try comparing all parameter values in the working DataSource with those in the DataSource that does not work. 
+
+Databases generally require a user ID and password to create connections. Use the WebSphere Application Server Administration Console to check the values for the "user" and "password" properties of your DataSource. Note: Most DataSources use the J2C Authentication Aliases to supply user credentials. 
+
+In your WebSphere Application Server Administration Console, make sure you have the correct JDBC drivers and libraries for the type and version of DataSources you need and database being accessed. 
+
+Most values in your DataSource configuration are case dependent, so take care when typing in values, or when creating or modifying DataSources. 
+
+If the above techniques succeed and you still have problems, please open a PMR with IBM support.

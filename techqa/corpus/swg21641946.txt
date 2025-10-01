@@ -1,0 +1,71 @@
+Title: IBM How do I purge off some old audit results from my Guardium Appliance. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ My database is full and I want to purge off some old audit results from my Guardium Appliance. 
+
+CAUSE
+Normal purging of data will not occur if to-do lists have not been actioned /signed off.
+As an example, if there is a to-do list from say 6 months ago then, no data since 6 months ago will be purged. The data that is not purged may include not only the data shown in the audit reports but all data that could go into making the audit report itself (ie the normal expanse of data on the system). 
+
+
+ANSWER
+It is important that users action their to-do lists in a timely fashion - so as to allow purging to work and keep the DB from filling up. 
+
+
+From v8 and up, adding a Receiver is not mandatory while creating a new Audit Process. An Audit Process (AP) without a receiver can be used when results of the AP are sent to the third party application and there is no need to view/sign the AP results.
+
+If you still want to add a receiver and not require to view/sign the AP results, the To-Do List Check box can be unchecked but in this case the Email Notification field should be set to Full Results (PDF or CSV). In this case the status gets set to VIEWED and the receiver will not have to actually view the results in order to make them eligible for purge.
+
+In the case where the To-Do List Check box is unchecked but the Email Notification field is set to None or Link, the To-Do entry will be created for the receiver as these types of notifications do not set the status to VIEWED and there is no way to purge the results.
+
+The Internal Guardium table REPORT_RESULT_DATA_ROW table is common for getting large if the audit jobs /to-do lists are not actioned or signed off.
+
+In order to purge under this scenario there are a couple of CLI commands (depending on version ) that can be used. The following is the detail. Also see the Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSMPHH/SSMPHH_welcome.html] online for further information on the commands below 
+
+
+Version 9.x and higher manual purge command 
+
+
+ * support clean 
+ * DAM_data audit_results
+ * 
+ * 
+ * support clean DAM_data audit_results
+ * 
+ * 
+ *  
+   This command is a way to manually purge audit results and is available in later versions v9 onwards 
+   
+   This command should be used only when absolutely necessary to deal with audit tasks that produce a high number of records and take up too much disk space. It is strongly advised to consult with Technical Support before running this command. A Warning message is presented and a confirmation step is needed when running this command. 
+
+
+Older Version 8.x manual purge command 
+ * support clean audit_task
+ * 
+ * 
+ *  
+   This command is available in older versions - eg v8.2 and is a way to manually purge audit results, This command should be used only when absolutely necessary to deal with audit tasks that produce a high number of records and take up too much disk space. It is strongly advised to consult with Technical Support before running this command. A Warning message is presented and a confirmation step is needed when running this command. This command will list the audit processes and tasks information. 
+   
+   It will present the number of rows, ordered from the largest result set to the smallest. The number of report results is greater or equal to the input value. 
+   
+   Next, after the report is presented, the user can select a line number to purge the results of the audit process corresponding to that line number. Selection of this line number will delete the audit data for the selected process name. 
+   
+   
+   Syntax  * support clean audit_task <rows>
+   
+    * 
+    * rows - an integer, number of rows to show. Default 10 
+      
+    * Note
+    * 
+   
+   
+   If the command does not return any rows after some time please contact Technical Support where an engineer may be able to dial in as user root run an alternate set of commands using the RESULT_ID as a key to purge off some of the older audit data 
+
+
+
+Further information on To-do lists and Compliance Workflow can be found in the manuals - for example v9.1 Guardium Product Manual pages 225 onwards and here [http://pic.dhe.ibm.com/infocenter/igsec/v1/topic/com.ibm.guardium91.doc/comply/topics/building_audit_processes.html?resultof=%22%43%6f%6d%70%6c%69%61%6e%63%65%22%20%22%63%6f%6d%70%6c%69%61%6e%63%22%20%22%57%6f%72%6b%66%6c%6f%77%22%20%22%77%6f%72%6b%66%6c%6f%77%22%20%22%41%75%74%6f%6d%61%74%69%6f%6e%22%20%22%61%75%74%6f%6d%22%20]in the infocenter RELATED INFORMATION
+#

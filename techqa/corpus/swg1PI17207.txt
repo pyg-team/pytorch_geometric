@@ -1,0 +1,145 @@
+Title: IBM PI17207: IBM NETEZZA OPTIMIZATION IMPROVING THE PERFORMANCE OF A DELETE OR UPDATE QUERY THAT INCLUDES A JOIN AS PART OF THE RESTRICTION. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Normally IBM Netezza Platform Software (NPS) generates a query
+   plan for an UPDATE or DELETE statement such that it does an
+   'in-place update' or 'in-place delete'. That is, as it is
+   scanning the data it is marking the rows for delete and update
+   and then updating those rows.
+   
+   If the DELETE or UPDATE statement has a join as part of the
+   restriction, then it is possible that the target table cannot be
+   the outer/scan table (the join table is larger) or requires
+   redistribution (the join key is not the distribution key and the
+   join table is large where it cannot be broadcast). In those
+   cases, NPS cannot do an 'in-place delete'.
+   
+   For these cases, the NPS system generates the join plan and
+   instead of adding the delete or update node to the plan, the
+   join plan generates the list of ROWIDs affected by the
+   transaction. The plan then saves those ROWIDs into a transient
+   table and adds another snippet that rescans the target table
+   joining to the ROWID table as the inner table.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No workaround available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * N/A                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The optimization improves query performance by applying any  *
+   * local restricts during the rescan to eliminate pages (zone   *
+   * maps)                                                        *
+   * or rows before the join to the ROWID table.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * N/A                                                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix has been released to address this issue in the following
+   NPS releases:
+   
+   7.0.2.12 and later
+   7.0.4.4 and later
+   7.1.0.1-P1 and later
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI17207
+   
+   
+ * REPORTED COMPONENT NAME
+   TWINFIN GENERIC
+   
+   
+ * REPORTED COMPONENT ID
+   TF1001GEN
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-03
+   
+   
+ * CLOSED DATE
+   2014-06-17
+   
+   
+ * LAST MODIFIED DATE
+   2014-06-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

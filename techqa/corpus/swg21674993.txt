@@ -1,0 +1,62 @@
+Title: IBM Wrong labels for Unix Agent on TEP - United States
+
+Text:
+tep wrong labels navigator tree java webstart web start itm application support TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TEP workspace does not show the expected names for both navigator trees and workspaces for UNIX
+agent.
+I shows instead names like:
+Kux:KUX3609
+Kux:KUX3623
+
+Problem occurs with TEP client launched using Java Web Start 
+
+DIAGNOSING THE PROBLEM
+Most of the time this problem is caused by missing application support on TEPS machine, but it can happen also if the application support process is incomplete and the expected JNLP files are missing or if the local copy of the Java application is missing the needed JNLP file. 
+
+This scenario is usually resolved by reconfiguring TEPS to force the execution of installpresentation script or clearing the Java cache on the machine where TEP client is executed, as described by the following technote: 
+
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21587434 [http://www-01.ibm.com/support/docview.wss?uid=swg21587434]
+
+
+Anyway, sometimes despite the suggested steps are carefully executed, the expected labels are still missing. 
+
+ 
+
+Indeed, there is another scenario where you can observe this behavior. 
+
+If the JNLP file related to the agent application support is missing the execution bit, this one will not be included in the list of JNLP files that are sent to the target TEP client. 
+
+
+For example, if we consider Unix Agent, it uses jnlp file called 
+
+kux_resources.jar.jnlp under /opt/IBM/ITM/<arch>/cw
+
+It is expected to have the following permission bits:
+
+-rwxr-xr-x 1 root root 743 May 10 17:41 kux_resources.jar.jnlp
+
+If you see something different, for example:
+
+-rw-rw-rw- 1 root root 743 May 10 17:41 kux_resources.jar.jnlp
+
+then you could experience this problem.
+The same is valid for any other JNLP file under /opt/IBM/ITM/<arch>/cw 
+
+
+
+RESOLVING THE PROBLEM
+1) Change the permission bits of the JNLP file to 755 
+
+2) run a TEPS configuration and clear Java cache on TEP client
+machine to force a new download of the TEP Java application
+Additional details about how to do those steps can be found on this technote:
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21587434 [http://www-01.ibm.com/support/docview.wss?uid=swg21587434]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Tivoli Monitoring V6.x Unix Agent

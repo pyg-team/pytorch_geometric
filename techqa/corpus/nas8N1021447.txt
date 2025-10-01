@@ -1,0 +1,85 @@
+Title: IBM How to install HMC updates using scp - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The HMC GUI update task allows users to install fixes from various repositories. Depending on the release of HMC these include: Removable media types of dvd drive and USB flash drive; Network servers using FTP/SFTP and NFS protocols.
+
+This document describes an additional method that allows the use of ssh secure copy (scp), inbound or outbound, to load the update file onto the HMC. This method is useful when there is no access to physical media, no accessable network servers but there is a PC or workstation with remote access to the HMC. 
+
+ENVIRONMENT
+This applies to both the virtual HMC (vHMC) and HMC hardware appliance. It can used for all versions and releases under fix support including V7 and V8 of the HMC.
+
+RESOLVING THE PROBLEM
+The HMC updhmc command allows an additional type of update from the HMC hard drive. The local hard drive option allows the use of an update file transferred to the HMC using ssh secure copy. 
+
+
+Remote command execution (ssh) must be enabled on the HMC. For information on enabling remote command line access see Configuring the HMC to Accept SSH Connections and Remote Commands at http://www.ibm.com/support/docview.wss?uid=nas8N1012875 [http://www.ibm.com/support/docview.wss?uid=nas8N1012875] 
+
+Please note that this process is only for applying HMC service packs and fixes to the current release. It cannot be used to "upgrade" the HMC to a new version or release.
+
+
+
+[/support/docview.wss?uid=nas8N1021447&amp;aid=1]
+1. [/support/docview.wss?uid=nas8N1021447&aid=1] [/support/docview.wss?uid=nas8N1021447&aid=1]
+Obtain the fix or update
+HMC service packs and fixes can be obtained from IBM fix central [https://www-945.ibm.com/support/fixcentral/] or direct from the HMC FTP site [ftp://public.dhe.ibm.com/software/server/hmc/] 
+The files are in iso file format. Download the file to a PC/workstation. The PC workstation must have network connectivity to the HMC and a ssh secure copy utility. 
+Tip: Microsoft Windows users can use a scp utility such as WinSCP or PuTTY's pscp. [/support/docview.wss?uid=nas8N1021447&amp;aid=1]
+2. [/support/docview.wss?uid=nas8N1021447&aid=1] [/support/docview.wss?uid=nas8N1021447&aid=1]
+Use scp to transfer the file to the hmc
+Transfer the file to a HMC user home directory.
+
+Example using scp to transfer to hscroot home directory:
+scp MH01640.iso hscroot@<myhmc>:~
+where <myhmc> is the HMC ip address or host name. 
+
+Example using PuTTY pscp:
+"C:\Program Files (x86)\PuTTY\pscp" -scp MH01640.iso hscroot@<myhmc>:~
+Where <myhmc> is the HMC ip address or host name.
+
+The tilde ("~") in the examples above represents the user home directory; in this example it is the equivalent of specifying "/home/hscroot". 
+
+HMC updates can be quite large. To check that there is a available disk space you use the command monhmc -r disk prior to copying the file. Use ctl+c to exit the command.
+
+The size is in kb. This example shows /home has over 9Gig of disk free.
+Filesystem 1K-blocks Used Available Use% Mounted on
+/dev/sda2 16121184 7117004 8185268 47% /
+/dev/sda3 6040320 286140 5447340 5% /var
+/dev/mapper/HMCDataVG-HomeLV 10321208 230028 95668923% /home [/support/docview.wss?uid=nas8N1021447&amp;aid=1]
+3. [/support/docview.wss?uid=nas8N1021447&aid=1] [/support/docview.wss?uid=nas8N1021447&aid=1]
+Apply the update
+
+Log into the HMC using ssh and at the HMC command line run:
+updhmc -t disk -f /home/hscroot/ MH01640.iso -r –c
+where "/home/hscroot" is the user home directory of the HMC user that scp'd the file and "MH01640.iso" is the case sensitive file name of the update. The command will apply the update, delete the iso image file (-c) and reboot the HMC (-r). 
+
+Older versions of the HMC use the syntax "-t l" in place of "-t disk": updhmc -t l -f /home/hscroot/ MH01640.iso -r –c [/support/docview.wss?uid=nas8N1021447&amp;aid=1]
+4. [/support/docview.wss?uid=nas8N1021447&aid=1] [/support/docview.wss?uid=nas8N1021447&aid=1]
+Verify the update
+After the reboot completes log back into the hmc.
+
+a. Verify the update applied successfully.
+Run the command:
+lshmc -V
+
+Verify the output shows the PTF or service pack as applied. For example:
+version= Version: 8
+Release: 8.5.0
+Service Pack: 0
+HMC Build level 20160615.1
+MH01617: Required fix for HMC V8R8.5.0 (05-20-2016)
+MH01640: Fix for HMC V8R8.5.0 (06-15-2016)
+","base_version=V8R8.5.0 
+
+b. Verify the file was deleted
+Update files are very large and should be deleted after the update is applied to avoid filling the /home file system. 
+
+Use the ls -l command to verify the iso file was deleted.
+ls -l /home/hscroot
+where hscroot is the user that scp'd the file.
+
+If the -c switch was not used in step 3 and the file remains, you can delete the file using the rm command:
+rm MH01640.iso
+Note that only the file owner, i.e. the HMC user that scp'd the file, has the permission to delete the file. Log off and back on with the correct id if needed.

@@ -1,0 +1,143 @@
+Title: IBM IV06267: ITCAM FOR SOA SDMS WORKSPACES FAIL TO DISPLAY WITH ITM 6.2.3 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The new eWAS distribution on ITM 6.2.3 are incompatible with
+   the SDMS components on SOA 7.1.1
+   
+   SDMS configuration is referencing eWAS 6 specific jars that have
+   been renamed in eWAS 7 (which is shipped with 623).
+   
+   The jars in question are:
+   
+   org.eclipse.emf.common_2.2.1.v200609210005.jar
+   org.eclipse.emf.commonj.sdo_2.1.0.v200609210005.jar
+   org.eclipse.emf.ecore_2.2.1.v200609210005.jar
+   org.eclipse.emf.ecore.sdo_2.2.0.v200609210005.jar
+   org.eclipse.emf.ecore.ami_2.2.1.v200609210005.jar
+   
+   In eWAS 7, these jars are now named:
+   
+   org.eclipse.emf.common.jar
+   org.eclipse.emf.commonj.sdo.jar
+   org.eclipse.emf.ecore.jar
+   org.eclipse.emf.ecore.sdo.jar
+   org.eclipse.emf.ecore.ami.jar
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The official fix for this APAR is planned for next release:
+   ITCAM for SOA 7.2
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  Technote reference (troubleshooting)  # 1567013
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV06267
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * REPORTED COMPONENT ID
+   5724SOA00
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-15
+   
+   
+ * CLOSED DATE
+   2012-02-28
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP
+   
+   
+ * R600 PSN
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R710 PSN
+   UP

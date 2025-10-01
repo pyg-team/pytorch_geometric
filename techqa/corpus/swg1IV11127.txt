@@ -1,0 +1,200 @@
+Title: IBM IV11127: DEFAULT SET TO LOW [IMPACT.CLUSTER.READLIMIT=<SIZE LIMIT>] - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.1.0-TIV-BSM-FP0004-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-zlinux&source=SAR]
+6.1.0-TIV-BSM-FP0004-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-windows&source=SAR]
+6.1.0-TIV-BSM-FP0004-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-solaris&source=SAR]
+6.1.0-TIV-BSM-FP0004-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-linux&source=SAR]
+6.1.0-TIV-BSM-FP0004-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-aix&source=SAR]
+6.1.0-TIV-NCI-FP0004-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-zlinux&source=SAR]
+6.1.0-TIV-NCI-FP0004-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-windows&source=SAR]
+6.1.0-TIV-NCI-FP0004-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-solaris&source=SAR]
+6.1.0-TIV-NCI-FP0004-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-aix&source=SAR]
+6.1.0-TIV-NCI-FP0004-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-linux&source=SAR]
+6.1.0-TIV-NCI-FP0003-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-zlinux&source=SAR]
+6.1.0-TIV-NCI-FP0003-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-windows&source=SAR]
+6.1.0-TIV-NCI-FP0003-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-solaris&source=SAR]
+6.1.0-TIV-NCI-FP0003-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-linux&source=SAR]
+6.1.0-TIV-NCI-FP0003-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-aix&source=SAR]
+6.1.0-TIV-BSM-FP0003-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-solaris&source=SAR]
+6.1.0-TIV-BSM-FP0003-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-aix&source=SAR]
+6.1.0-TIV-BSM-FP0003-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-zlinux&source=SAR]
+6.1.0-TIV-BSM-FP0003-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-windows&source=SAR]
+6.1.0-TIV-BSM-FP0003-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-linux&source=SAR]
+IBM Tivoli Netcool/Impact V6.1.0 Fix Pack 1(6.1.0-TIV-NCI-FP0001) [http://www-01.ibm.com/support/docview.wss?uid=swg24031658]
+IBM Tivoli Business Service Manager V6.1.0 Fix Pack 2(6.1.0-TIV-BSM-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24032540]
+IBM Tivoli Netcool/Impact V6.1.0 Fix Pack 2(6.1.0-TIV-NCI-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24032739]
+IBM Tivoli Netcool/Impact V6.1.0 Fix Pack 4(6.1.0-TIV-NCI-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24042500]
+IBM Tivoli Business Service Manager V6.1.0 Fix Pack 4(6.1.0-TIV-BSM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24042501]
+IBM Tivoli Netcool/Impact V6.1.0 Fix Pack 4(6.1.0-TIV-NCI-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24042516]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PRODUCT/RELEASE  IMPACT 6.1
+   
+   PROBLEM:
+     tbsm 6.1 Failover system fails to restart.
+     symptom = corruption in configuratrion files in
+      /opt/IBM/tivol/tbsm/etc
+   
+    Cause seems to be a property that transfers properties files
+    between the Primary & Backup and they get corrupted in Backup.
+   
+   
+   
+   There is also a technote to address this.
+   http://www-01.ibm.com/support/docview.wss?uid=swg21452129 [http://www-01.ibm.com/support/docview.wss?uid=swg21452129]
+   
+   impact.cluster.readlimit=<size limit>
+   
+   Add the property to $NCHOME/impact/etc/<SERVERNAME>_server.props
+   file where size limit can be 8192, 16384, 32768, etc..
+    The default is 16384.
+   
+   
+   found  ObjectServer.SQL.USERPARAMETERS in
+   TBSM_ObjectServer.type is
+   about 20.9K which is the longest in all config files having
+   USERPARAMETERS.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Work- around ...
+   
+   set impact.cluster.readlimit to 32768 at least.
+   
+   Update <SERVERNAME>_server.props files both
+   on Primary and Backup and
+   restart the server.
+   You might have to delete the corrupt property files
+   
+   for the Backup to grab the new ones from the Primary.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  TBSM 6.1 Failover system fails to restart.
+   configuratrion files were corrupted in
+    /opt/IBM/tivol/tbsm/etc
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  USERPARAMETERS in configuratrion files are bigger than 16K, this
+   fix set default value of impact.cluster.readlimit to 32768.
+   
+   
+   The fix for this APAR is contained in the following
+   maintenance packages:
+   |Fix Pack | 6.1.0-TIV-BSM-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  set impact.cluster.readlimit to 32768 at least.
+   
+   Update <SERVERNAME>_server.props files both
+   on Primary and Backup and restart the server.
+   You might have to delete the corrupt property files
+   for the Backup to grab the new ones from the Primary.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV11127
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2011-11-22
+   
+   
+ * CLOSED DATE
+   2011-12-08
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

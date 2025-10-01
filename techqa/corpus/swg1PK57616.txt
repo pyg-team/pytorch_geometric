@@ -1,0 +1,187 @@
+Title: IBM PK57616: RFT: Find operation fails with ChannelSendFailureException - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Rational Functional Tester Version 8.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022553]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Playback hangs on find operation.  ivdebug shows the following e
+   rror:
+   06:13:17.517 PM    6816    7448  Wrn  Channel  ChannelSendFailur
+   eException
+      at Rational.Test.Ft.Util.DebugTrace.FormatStackTrace(Exceptio
+   n throwable)
+      at Rational.Test.Ft.Util.DebugTrace.StackTrace(String facilit
+   y, MessageLevel level, String message, Exception throwable)
+      at Rational.Test.Ft.Util.FtDebug.StackTrace(String message, E
+   xception throwable, MessageLevel traceLevel)
+      at Rational.Test.Ft.Domain.ThreadChannel.ThrowChannelSendFail
+   ure(String msg)
+      at Rational.Test.Ft.Domain.ThreadChannel.Send(ChannelRunnable
+    request)
+      at Rational.Test.Ft.Domain.Net.NetTestDomainImplementation.Ge
+   tTopLevelObjects()
+      at Rational.Test.Ft.Domain.DomainProxy.GetTopObjects()
+      at Rational.Test.Ft.Object.Manager.TestObjectFinderAgent.GetT
+   opObjectsRunnable.Send()
+      at Rational.Test.Ft.Domain.ChannelRunnable.Run()
+      at Rational.Test.Ft.Domain.BaseChannel.Send(ChannelRunnable r
+   unnable)
+      at Rational.Test.Ft.Object.Manager.TestObjectFinderAgent.Find
+   WithUnanchoredProperty(ProxyTestObject start, Property property,
+    Boolean mappableOnly)
+      at Rational.Test.Ft.Object.Manager.TestObjectFinderAgent.Find
+   ChildrenWithProperties(ProxyTestObject start, FindPropertySet fp
+   s, Boolean mappableOnly)
+      at Rational.Test.Ft.Object.Manager.TestObjectFinderAgent.Find
+   ChildrenWithProperties(ProxyTestObject start, FindPropertySet fp
+   s, Boolean mappableOnly)
+      at Rational.Test.Ft.Domain.ProxyTestObject.FindChildrenWithPr
+   operties(FindPropertySet fps, Boolean mappableOnly)
+      at System.RuntimeMethodHandle._InvokeMethodFast(Object target
+   , Object[] arguments, SignatureStruct? sig, MethodAttributes met
+   hodAttributes, RuntimeTypeHandle typeOwner)
+      at System.RuntimeMethodHandle.InvokeMethodFast(Object target,
+    Object[] arguments, Signature sig, MethodAttributes methodAttri
+   butes, RuntimeTypeHandle typeOwner)
+      at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, Bin
+   dingFlags invokeAttr, Binder binder, Object[] parameters, Cultur
+   eInfo culture, Boolean skipVisibilityChecks)
+      at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, Bin
+   dingFlags invokeAttr, Binder binder, Object[] parameters, Cultur
+   eInfo culture)
+      at Rational.Test.Ft.Sys.FtReflection.InvokeMethod2Ext(MethodI
+   nfo method, Object theObject, Type theClass, Object[] args)
+      at Rational.Test.Ft.Sys.FtReflection.InvokeMethod(String meth
+   odName, Object theObject, Type theClass, Object[] args, Type[] c
+   lss)
+      at Rational.Test.Ft.Sys.FtReflection.InvokeMethod(String theM
+   ethod, Object theObject, Object[] args, Type[] clss)
+      at Rational.Test.Ft.Domain.ChannelObjectMethodInvoker.Invoker
+   .Send()
+      at Rational.Test.Ft.Domain.ChannelRunnable.Run()
+      at Rational.Test.Ft.Domain.BaseChannel.Send(ChannelRunnable r
+   unnable)
+      at Rational.Test.Ft.Domain.ChannelObjectMethodInvoker.InvokeM
+   ethod(IChannel channel, Object obj, String method, Type[] signat
+   ure, Object[] args)
+      at Rational.Test.Ft.Sys.TestContext.SendMessageCallback(SpyMe
+   mory message)
+      at Rational.Test.Ft.Sys.Mailslot.DrainSendQueue()
+      at Rational.Test.Ft.Sys.Mailslot.WaitForMessage()
+      at Rational.Test.Ft.Sys.TestContext.Run()
+      at System.Threading.ThreadHelper.ThreadStart_Context(Object s
+   tate)
+      at System.Threading.ExecutionContext.Run(ExecutionContext exe
+   cutionContext, ContextCallback callback, Object state)
+      at System.Threading.ThreadHelper.ThreadStart()
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Playback hangs when we try to find .NET object embedded
+   inside a windows application.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added support for Nested Domain where .NET object resides
+   inside Win32 application.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK57616
+   
+   
+ * REPORTED COMPONENT NAME
+   RAT FUNC TESTER
+   
+   
+ * REPORTED COMPONENT ID
+   5724G2503
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-12-04
+   
+   
+ * CLOSED DATE
+   2009-04-14
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RAT FUNC TESTER
+   
+   
+ * FIXED COMPONENT ID
+   5724G2503
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSN
+   UP

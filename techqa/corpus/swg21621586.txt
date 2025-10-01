@@ -1,0 +1,23 @@
+Title: IBM Exceptions after WebSphere Application Server security upgrade to Intelligent Operations Center - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A successful upgrade to IBM WebSphere Application Server V7.0.0.25 in order to resolve a potential security exposure resulted in IBM WebSphere Portal exceptions within IBM Intelligent Operations Center. 
+
+SYMPTOM
+[12/14/12 7:30:47:601 GMT] 0000001d Servlet E com.ibm.wps.engine.Servlet init 
+EJPFD0016E: Initialization of service failed. java.lang.ClassCastException: 
+com.ibm.ws.tx.jta.UserTransactionImpl incompatible with javax.transaction.UserTransaction at com.ibm.wps.services.datastore.DataStoreServiceImpl.in (DataStoreServiceImpl.java:90) 
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Run the <wp_profile>/bin/osgiCfgInit.sh script 
+ 2. Restart the WebSphere Portal Server 
+ 3. Clear the tranlog folder <wp_profile>/tranlog/
+
+RELATED INFORMATION
+ Intelligent Operations Center security exposure [http://www.ibm.com/support/docview.wss?uid=swg21609572]

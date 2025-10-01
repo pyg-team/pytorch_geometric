@@ -1,0 +1,159 @@
+Title: IBM PN67882: IVU SAMPLE IMAGE DOES NOT APPEAR, AFTER 9412 GDDM/VM BASE MAINTENANCE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After applying 9412 ESO GDDM/VM maintenance (from 9410), the
+   sample IVU image is not displayed.
+   ADM4025 I IMAGE LOADED, is displayed after the Input Selection
+   step, but the job application form does NOT appear on the top
+   half of the screen.
+   Also, SAS users will report that the right-hand border
+   of their charts no longer displays or prints.
+   SDSF View option displays blank images in the CDPU.
+   GDDM CDPU
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All.                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Images or border lines missing.         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An image may not display on a terminal, or may be partly
+   displayed. Also lines that are drawn at the edge of the viewport
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  There was an inconsistency between window to device units
+   transformations, and the processing required to handle a GSQCEL
+   call. This has now been corrected.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PN67882
+   
+   
+ * REPORTED COMPONENT NAME
+   GDDM/MVS V3
+   
+   
+ * REPORTED COMPONENT ID
+   569516701
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   1995-02-10
+   
+   
+ * CLOSED DATE
+   1995-02-16
+   
+   
+ * LAST MODIFIED DATE
+   1995-08-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PN67572 [http://www-01.ibm.com/support/docview.wss?uid=swg1PN67572]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UN73469 UN73470
+   
+   
+
+MODULES/MACROS
+ *  ADMDGSQ  ADMDGWI
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   GDDM/MVS V3
+   
+   
+ * FIXED COMPONENT ID
+   569516701
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY UN73469 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UN73469]
+   UP95/02/20 P F502 Ž
+   
+   
+ * R110 PSY UN73470 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UN73470]
+   UP95/02/20 P F502 Ž
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

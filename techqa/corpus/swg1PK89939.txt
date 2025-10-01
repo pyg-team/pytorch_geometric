@@ -1,0 +1,193 @@
+Title: IBM PK89939: CSQ2025E SENSE CODE 00250000 AFTER IMS COLD START. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MQ was still ACTIVE and running when IMS was COLD started.
+   MQ reconnected to IMS with the following message.
+      CSQ2010I MQsystemID CSQ2MEM0 CONNECTED TO PARTNER,
+      XCFGNAME=xxxxxx XCFMNAME=xxxxxx.
+   When MQ attempted to resynch with IMS, TPIPEs that have
+   recoverable work done (CM0 work) received the following:
+      CSQ2025E cpf.ssid CSQ2QCP0 PARTNER, XCFGNAME=xxxxxx
+      XCFMNAME=xxxxxx, CANNOT RESYNCHRONIZE TPIPE CSQ0xxxx,' SENSE
+      CODE=00250000.
+   The same message is issued for each Tpipe with CM0 work when
+   OTMA is stopped and then restated.
+   A GET(DISABLED) and then GET(ENABLED)of the IMS Bridge queue
+   did not resolve the problem.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Recycle MQ to bypass the problem.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 0 Modification 0                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Queue Manager issues message        *
+   *                      CSQ2025E with SENSE CODE=00250000.      *
+   *                      The tpipe becomes unusable as IMS and   *
+   *                      the queue manager are unable to         *
+   *                      resynchronize. This occurs when the     *
+   *                      Queue Manager is restarted following a  *
+   *                      previous abnormal termination, which    *
+   *                      itself was preceded by an IMS cold      *
+   *                      start.                                  *
+   ****************************************************************
+   * RECOMMENDATION: apply corrective service                     *
+   ****************************************************************
+   Messages are sent to IMS from the Queue Manager, using a number
+   of queues and thus a number of tpipes. IMS is then cold started
+   and resynchronizes with the queue manager. At this point the
+   queue manager issues message CSQ2024E for the tpipes that were
+   previously used but which the IMS partner no longer knows about
+   since the cold start. At this point, due to the cold start,
+   the tte associated with the tpipes/queues are logged as having
+   been reset.
+   A subset of these previously used queues and tpipes are
+   then used when more messages are sent from MQ to IMS.
+   The queue manager then abends and is restarted.
+   At this restart, IMS knows about tpipes, so the queue manager
+   knows that IMS has not been cold started since it abended, and
+   for those tpipes that IMS knows about it instigates a server
+   resynch. However, for the other ttes / tpipes, their state is
+   set from the log records, these being that the tpipe has been
+   reset. This combination causes the queue manager to instigate
+   resynchronization and sends IMS a message to this effect. As
+   IMS does not know about this tpipe it rejects the message and
+   sends a NAK back to IMS indicating a breach of resynchronization
+   protocol. The queue manager externalizes this as the CSQ2025E
+   message with sense 00250000 and shuts down that queue / tpipe.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  At the queue manager restart, by only flagging those tpipes
+   that IMS knows about as having been warm started, leaving
+   those it does not know about as cold started tpipes, then
+   the queue manager instigated resynchronization is prevented
+   from occurring at this point. The resynchronization protocol
+   is thus not broken. The queue and tte are left in a similar
+   state to that which they would have been following the IMS
+   cold start.
+   000Y
+   CSQ2RS04
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK89939
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-26
+   
+   
+ * CLOSED DATE
+   2009-07-06
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK87159 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK87159]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK48078
+   
+   
+
+MODULES/MACROS
+ *  CSQ2RS04
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK48078 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK48078]
+   UP09/07/24 P F907
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

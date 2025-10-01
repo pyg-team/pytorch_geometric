@@ -1,0 +1,55 @@
+Title: IBM Download: Optim Data Growth and Application Retirement solutions for JD Edwards v11.3 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download the JD Edwards data growth and application retirement portion of the IBM® InfoSphere® Optim™ Solution for Oracle Applications 11.3. 
+
+DOWNLOAD DESCRIPTION
+You can download the JD Edwards portion of the 11.3 Optim Solution for Oracle Applications using the Passport Advantage website.
+
+
+The IBM InfoSphere Optim Data Growth Solution for JD Edwards EnterpriseOne supports the removal of older, infrequently accessed, data from your EnterpriseOne database and storing it where business analysts can retrieve it when necessary. If desired, the expunged data can be accessed in real time using the EnterpriseOne interface. Using this native application access, JD Edwards users can view current and archived data seamlessly, while you reduce the size of your production database, resulting in better performance for your daily processing. 
+
+The Application Retirement solution is used to archive JD Edwards data prior to retiring or decommissioning the JD Edwards application.
+
+PREREQUISITES
+You must install the IBM InfoSphere Optim Solution v11.3 before you install the Optim solution for JD Edwards.
+
+For information about hardware and software requirements for the Optim solution for JD Edwards, see the Detailed System Requirements at http://www.ibm.com/support/docview.wss?&uid=swg27041747 [http://www.ibm.com/support/docview.wss?&uid=swg27041747].
+
+INSTALLATION INSTRUCTIONS
+
+
+For general installation instructions, see the Quick Start Guide. For detailed instructions, see the Optim Data Growth Solution for JD Edwards EnterpriseOne Installation and Configuration Guide. Both documents are included in the download package.
+
+DOWNLOAD PACKAGE
+
+
+IBM InfoSphere Optim supports processing across a combination of platforms and database management systems, but requires a 32-bit DBMS client to connect to a data source.
+
+After proof of entitlement, you are allowed to download any or all of the images listed here. To obtain the download images:
+
+ 1. Navigate to the Find Downloads and Media [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?P0=DOWNLOAD_FIND_BY_PART_AND_DESCRIPTION] Web page on the IBM Passport Advantage Web site.
+ 2. Under Download finder options, select the Find by part number search option.
+ 3. Search for each downloadable image by download name.
+ 4. Download all required parts.
+ 5. Use a file extracting utility that supports large file extractions to extract each of the parts into a single, temporary directory on your system.
+ 6. Follow the instructions in the Quick Start Guide to install the product.
+
+[http://www.ibm.com/i/c.gif] Downloads for the Optim solutions for JD Edwards EnterpriseOne
+
+Download the Data Growth or Application Retirement solution for JD Edwards, as follows. 
+
+Download Description CN020EN.zip 
+
+Download for Optim Data Growth Solution for JD Edwards EnterpriseOne v11.3 
+
+CN0QHEN.zip 
+
+Download for Optim Application Retirement Solution for JD Edwards EnterpriseOne v11.3 
+
+
+TECHNICAL SUPPORT
+ http://www.ibm.com/software/data/data-management/optim/support/ [http://www.ibm.com/software/data/data-management/optim/support/]

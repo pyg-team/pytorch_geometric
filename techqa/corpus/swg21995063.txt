@@ -1,0 +1,20 @@
+Title: IBM QRadar: Impact of a 'leap second' on QRadar - United States
+
+Text:
+Leap year; leap year reports; Leap year searches; leap year offenses. TECHNOTE (FAQ)
+
+QUESTION
+ How does QRadar account for leap year seconds? 
+
+ANSWER
+The next leap year second is scheduled for June 30, 2020 at 23 hours 59 minutes 60 seconds UTC. Leap Seconds are added to account for the difference in UTC and International Atomic Time. A leap second causes an extra second to be injected into the day. QRadar accounts for this by changing the clock at 23:59:59 to 23:59:60 instead of 00:00:00. The time then runs as expected.
+
+Leap year seconds do not affect UNIX time, so they do not affect QRadar. As an administrator, you can see this occurrence happen if you are doing a search, investigating an offense, or generating a report. This is a normal occurrence.
+
+
+Where do you find more information? 
+
+
+
+
+[/support/docview.wss?uid=swg21995063&aid=1] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21995063&aid=2] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21995063&aid=3] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21995063&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21995063&aid=5] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21995063&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21995063&aid=7] [http://ibm.biz/SuptRegQuikStart]

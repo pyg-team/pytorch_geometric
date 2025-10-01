@@ -1,0 +1,243 @@
+Title: IBM IV48149: ITNM-ITNCM INTEGRATION ON A SINGLE SERVER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITNM-ITNCM Integration documentation issues:
+   
+   1. "Applying the integration tarball (Network Manager 3.9 only)"
+   ----------------------------------------------------------------
+   
+   Documentation states:
+   
+   "
+   
+   Before you begin...
+   - Ensure that all ncp processes are stopped.
+   ...
+   
+   itnm_status: Use this command to check if all processes are
+   running. If they are, this indicates that the tarball was
+   installed successfully and connectivity has been established.
+   
+   "
+   
+   But after completing those steps, itnm_status reports ncp down
+   because we were instructed to take it down earlier.
+   
+   
+   2. "Installing the Tivoli Integrated Portal components"
+   -------------------------------------------------------
+   
+   Documentation states:
+   
+   "
+   Log on to the Network Manager Tivoli Integrated Portal server
+   as the same user who installed Network Manager, for example
+   icosuser.
+   
+   "
+   
+   It is extremely unlikely ITNM/TIP was installed as icosuser as
+   their documentation reccomends root, and when non-root
+   installation are made it is usually with a netcool user.
+   
+   I also suspect that documentation should have the ITNM/TIP user
+   perform ". /opt/IBM/tivoli/netcool/env.sh" so that the installer
+   can provide default values for NCHOME and TIPHOME environment
+   variable.
+   
+   
+   3. "Installing the Tivoli Integrated Portal components"
+   -------------------------------------------------------
+   
+   Documentation states:
+   
+   "
+   
+   Enter a complete path for the installation folder location, or
+   accept the default.
+   Note: The default directory path is /opt/IBM/tivoli/netcool/ncm
+   
+   "
+   Above will not work on a single-server installation where a
+   non-root user was used to install ITNM. The non-root user will
+   not have permissions to write into the
+   /opt/IBM/tivoli/netcool/ncm directory.
+   
+   For this I expect the documentation needs to state a suitable
+   directory for single-server installation.
+   
+   
+   4. "Installing the customized rules for Netcool Configuration
+   Manager"
+   --------------------------------------------------------------
+   
+   Documentation states:
+   
+   "
+   4
+   
+   a. Uncomment and edit the following statement:
+   
+   # include"<$NCHOME>/etc/rules/include-snmptrap/<vendor>/
+   <vendor>.master.include
+   
+   for example
+   
+   include "$NC_RULES_HOME/include-snmptrap/ibm/
+   ibm.master.include.lookup"
+   
+   "
+   
+   In the above it is not clear whether or not we need to uncomment
+   for all <vendor>, or just the ibm vendor.
+   
+   Also in the first line the file to uncomment ends with
+   "master.include" but the example ends with
+   "master.inculde.lookup. The same discrepancy exists in 4b and
+   4c.
+   
+   
+   5. "Installing the customized rules for Netcool Configuration
+   Manager"
+   -------------------------------------------------------------
+   
+   " Run the probe. If the probe was already running, force the
+   probe to re-read the rules file so that the changes can take
+   effect. "
+   
+   No details specificed on how to run probe or force it to re-read
+   rules file
+   
+   
+   6. "Preparing for device synchronization"
+   -----------------------------------------
+   
+   Documentation states:
+   
+   "
+   Check that the directory on the Netcool Configuration Manager
+   server is correct for these three files:
+   
+       $INSTALL_DIR/config/properties/ssl.client.props
+       $INSTALL_DIR/config/properties/sas.client.props
+       $INSTALL_DIR/config/properties/wsjaas_client.conf
+   "
+   
+   How would one "check that the directory is correct"? Should the
+   documentation really be asking to check the files exist?
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users using ITNCM 6.3.x and ITNCM 6.4.x                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Integration Documentation is unclear and may lead to         *
+   * incorrect configuration                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * View the updated Integration Documentation on the Info       *
+   * Center from early December 2013                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Integration Documentation has been updated to provide clearer
+   steps
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV48149
+   
+   
+ * REPORTED COMPONENT NAME
+   N/C CONFIG MGR(
+   
+   
+ * REPORTED COMPONENT ID
+   5724Z3100
+   
+   
+ * REPORTED RELEASE
+   640
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-12
+   
+   
+ * CLOSED DATE
+   2013-11-20
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

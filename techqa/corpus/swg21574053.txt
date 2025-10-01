@@ -1,0 +1,87 @@
+Title: IBM Using the MQ Read Ahead functionality from a JMS application that subscribes to a topic and receives messages synchronously. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I make use of the WebSphere MQ Read Ahead functionality from an application that uses the WebSphere MQ classes for JMS to create a subscription on a topic, and then synchronously receives messages that are published on that topic? 
+
+ANSWER
+WebSphere MQ V7 introduced a new feature called "Read Ahead [http://www.ibm.com/support/knowledgecenter/en/SSFKSJ_8.0.0/com.ibm.mq.dev.doc/q026310_.htm]". This performance optimization allows WebSphere MQ queue managers to stream non-persistent messages to client applications connecting via TCP/IP before the application has requested them. The client stores these messages in a Read Ahead Buffer. When an application requests a message, the client removes the message from the buffer and gives it to the application for processing.
+JMS applications running in one of the following environments:
+
+
+ * The WebSphere MQ classes for JMS. 
+ * The WebSphere MQ Resource Adapter. 
+ * The WebSphere MQ OSGi bundles.
+
+
+that connect to a WebSphere MQ queue manager using the CLIENT transport in WebSphere MQ messaging provider normal mode, [http://www.ibm.com/support/knowledgecenter/en/SSFKSJ_8.0.0/com.ibm.mq.connect.doc/intro_jms_msgprov.htm] and receive messages synchronously, can make use of the new functionality. 
+
+This technote will look at how applications that subscribe to a topic need to be written in order to take advantage of the Read Ahead functionality, as well as discussing what JMS Destination and WebSphere MQ properties need to be set to turn on Read Ahead. 
+
+Applications running within an WebSphere Application Server environment can also make use of this functionality. Details of how to do this will be covered in a future technote. 
+
+
+Writing a JMS application to use Read Ahead to receive messages synchronously 
+The Read Ahead feature will only stream non-persistent messages to client applications that are getting messages outside of a transaction. 
+
+In JMS terms, this means that the application must be using a non-transacted JMS session that has an acknowledgement mode of either AUTO_ACKNOWLEDGE or DUPS_OK_ACKNOWLEDGE in order to be eligible to make use of Read Ahead. 
+
+Here is an example which shows an application creating a non-transacted, AUTO_ACKNOWLEDGE JMS Session: 
+ * 
+
+
+The non-transacted JMS Session can then be used to create a MessageConsumer object for the JMS Destination that maps to the WebSphere MQ topic which the non-persistent messages will be published on. 
+
+Once the MessageConsumer has been created, applications that get non-persistent messages by calling one of the following methods: 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+will be eligible to make use of Read Ahead, if the JMS Destination and the WebSphere MQ topic that the Destination maps to allows this functionality. 
+
+
+Configuring the JMS Destination and WebSphere MQ to allow Read Ahead 
+When an application uses the WebSphere MQ classes for JMS to subscribe to a WebSphere MQ topic, a managed subscription will be created. This managed subscription will either be durable or non-durable, depending upon how the application created the subscription. 
+
+With managed subscriptions, the WebSphere MQ Publish/Subscribe Engine will create a managed queue for the application. Every time a message is published on the WebSphere MQ topic that the application has subscribed to, the WebSphere MQ Publish/Subscribe Engine will take a copy of that message and put it onto the managed queue. When the JMS application requests a message, the WebSphere MQ Publish/Subscribe Engine will remove a message from the managed queue and returns it to the application for processing. 
+
+By default, the managed queue that the WebSphere MQ Publish/Subscribe Engine will create for applications that take out a subscription will be based on one of the following model queues: 
+ * SYSTEM.DURABLE.MODEL.QUEUE 
+ * SYSTEM.NDURABLE.MODEL.QUEUE
+
+
+The model queues used to create the managed subscriptions can be changed by modifying the WebSphere MQ Topic properties MDURMDL and MNDURMDL [http://www.ibm.com/support/knowledgecenter/en/SSFKSJ_8.0.0/com.ibm.mq.explorer.doc/e_properties_topics.htm]. 
+
+
+Whether Read Ahead will be enabled when the MessageConsumer gets the non-persistent messages that are published on the topic the MessageConsumer is subscribed to depends upon the following two properties: 
+ * The JMS Destination Property READAHEADALLOWED (RAALD) [http://www.ibm.com/support/knowledgecenter/en/SSFKSJ_8.0.0/com.ibm.mq.ref.dev.doc/q112370_.htm] 
+ * The WebSphere MQ queue property DEFREADA of the model queue used to create the managed queue used by the managed subscription created for the application. [http://www.ibm.com/support/knowledgecenter/en/SSFKSJ_8.0.0/com.ibm.mq.dev.doc/q032570_.htm]
+
+
+The WebSphere MQ queue property DEFREADA specifies whether applications that get messages from this queue can use Read Ahead if they are getting non-persistent messages outside of a transaction. 
+
+The JMS Destination property READAHEADALLOWED controls whether JMS applications using a non-transacted Session that has an acknowledgement mode of either AUTO_ACKNOWLEDGE or DUPS_OK_ACKNOWLEDGE will use Read Ahead when getting non-persistent messages from a queue. 
+
+It is a combination of these two properties that determines if Read Ahead will be used. 
+
+The following table shows the possible values for the READAHEADALLOWED and DEFREADA properties, and what they need to be set to for the Read Ahead functionality to be enabled: 
+
+[/support/docview.wss?uid=swg21574053&amp;aid=1] RAALD = NO RAALD = YES RAALD = AS_DEST 
+or 
+AS_TOPIC_DEF DEFREADA=NO Read Ahead 
+disabled Read Ahead enabled Read Ahead 
+disabled DEFREADA=YES Read Ahead 
+disabled Read Ahead enabled Read Ahead enabled DEFREADA=DISABLED Read Ahead 
+disabled Read Ahead 
+disabled Read Ahead 
+disabled 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM MQ 
+PRODUCT ALIAS/SYNONYM
+ WMQ WebSphere MQ MQSeries

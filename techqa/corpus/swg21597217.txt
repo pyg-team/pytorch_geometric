@@ -1,0 +1,26 @@
+Title: IBM User unable to run batches from the Taskmaster Client Job Monitor in IBM Datacap Taskmaster Capture - United States
+
+Text:
+Taskmaster Client; tmclient.exe; Run Task dialog; Job Monitor; privilege TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An operator cannot run batches through Taskmaster Client's Job Monitor window. 
+
+SYMPTOM
+When logged into Taskmaster Client, the operator can only run batches using an Operations shortcut. Running a batch through the general Job Monitor does not work by double-clicking the QID or Job Monitor record number, and the Record | Execute menu option is disabled.
+
+
+CAUSE
+The user or group is missing the Run Task dialog privilege.
+
+RESOLVING THE PROBLEM
+Grant the user or group the 'Run Task dialog' privilege.
+
+
+ 1. Run Taskmaster Client and login as admin or a user with full rights. 
+ 2. From the Settings menu select Users (or Groups). 
+ 3. Highlight the user (or group) to grant the privilege to and check the Run Task dialog box. 
+ 4. Click Apply, then Done to close the window.
+
+
+Note that the 'Run Task dialog' privilege allows users to run any batch listed in the Job Monitor regardless of his or her user/group and station permissions. Granting this privilege to specific users or groups will depend upon exact business requirements.

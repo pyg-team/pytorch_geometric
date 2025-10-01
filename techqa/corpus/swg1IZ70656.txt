@@ -1,0 +1,156 @@
+Title: IBM IZ70656: SOLARIS ZONE CREATION WAITS FOR 20 MINUTES - United States
+
+Text:
+  A FIX IS AVAILABLE
+Tivoli Provisioning Manager, Interim Fix 7.1.1.0-TIV-TPM-IF00006 [http://www-01.ibm.com/support/docview.wss?uid=swg24029399]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Native 711 implementation handles remote SSH login on Zone using
+   VST
+   parameter root.ssh_remote_login. If set to  yes , it configures
+   remote
+   SSH and creates SSH SAP for TPM s direct communication with
+   zone. In
+   our environment, we don t require this configuration so we set
+   the
+   parameter value to  no  as documented.
+   However, workflow SolarisZone_Device_PowerOn checks whether zone
+   is
+   accessible or not by trying to execute a command on zone. If
+   remote SSH
+   is not configured, this will never work as there is no
+   communication
+   protocol configured for zone. This workflow unnecessarily waits
+   for
+   gracetime 20 minutes to check if zone is accessible.
+   Suggestion:
+   Instead of executing a command everytime, workflow should run
+   the
+   device execute command only if a default SAP is assigned to
+   executecommand action. Essentially, it should not spend
+   gracetime if
+   remote SSH configuration is disabled.
+   ..................................
+   
+   Looks like we need to modify SolarisZone_Device_PowerOn workflow
+   to
+   first check if a default SAP is assigned to executecommand
+   action. And
+   only then try to run the device execute command. I am going to
+   send this
+   PMR to L3 support and ask if we can make this change, or if
+   there is
+   some other solution. I will provide you an update.
+   
+   
+   L3 created CQ94624 defect for this issue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This is resolved in 7.1.1-TIV-TPM-IF00003 release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem Description: Solaris zone creation was waiting for 20
+   minutes without customer requirement.
+   Fix Provided: An if is added to wait on need basis.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ70656
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV PROVISIONIN
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPM00
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-18
+   
+   
+ * CLOSED DATE
+   2010-03-18
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV PROVISIONIN
+   
+   
+ * FIXED COMPONENT ID
+   5608TPM00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

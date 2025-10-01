@@ -1,0 +1,80 @@
+Title: IBM AIX ClearCase server is not responsive during DNS outage - United States
+
+Text:
+aix; nsswitch.conf; resolv.conf; hosts; dns; hostname; resolution; nscd; netcd; netsvc.conf; Host not found; unknown host TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Rational ClearCase services on an AIX server, even on the host system alone, are not responsive or report errors such as, cleartool: Error: unknown host '<hostname>': Host not found", when DNS is not functional. 
+
+SYMPTOM
+ 
+
+Cleartool or multitool commands hang or time out with an error: 
+
+cleartool: Error: unknown host '<hostname>': Host not found" 
+
+multitool: Error: unknown host '<hostname>': Host not found" 
+
+
+The server is effectively down for all users. All client and administrative ClearCase functions hang or fail on AIX. Solaris or Linux servers may appear to be unaffected.
+
+
+
+CAUSE
+ 
+
+ClearCase is a network-aware application and depends highly on a robust and dependable network environment. Hostname resolution remains a key element in successful network communication over TCP/IP. When Domain Name System (DNS) services go down, hostname lookups will fail unless an alternate resolution path exists on the host system. ClearCase utilizes hostname lookups for a variety of critical functions including registry lookups, licensing, and VOB and view services. If hostnames cannot be resolved, ClearCase will cease to function properly, even on a standalone server.
+
+
+RESOLVING THE PROBLEM
+ 
+
+The impact from DNS outages can be mitigated by implementing alternate paths for hostname resolution, including local configuration files and name service caching. On AIX, the configuration file that prioritizes hostname lookup is/etc/netsvc.conf (or /etc/nsswitch.conf on Linux and Solaris). To ensure that hostnames are looked up locally first in the/etc/hosts file before going to an IPv4 DNS service, use the following hosts line on AIX: 
+
+hosts=local,bind4 
+
+
+Make sure that all ClearCase servers with static IP addresses are listed in the /etc/hosts, file for example: 
+
+
+10.0.0.101 vob_server1 
+
+10.0.0.102 vob_server2 
+
+10.0.0.103 registry_server 
+
+10.0.0.104 license_server 
+
+
+You can also add a couple options to the /etc/resolv.conf file to control DNS timeouts. For example, the following options will reduce the DNS timeout to 1 second and will limit contact attempts to one for AIX: 
+
+
+nameserver 1.1.1.1 
+
+nameserver 2.2.2.2 
+
+domain ibm.com 
+
+options attempts:1 
+
+options timeout:1 
+
+
+More information about these configuration files and options can be found in the IBM AIX Information Center:
+
+Name resolution tuning:
+http://publib.boulder.ibm.com/infocenter/aix/v6r1/index.jsp?topic=%2Fcom.ibm.aix.prftungd%2Fdoc%2Fprftungd%2Fname_resol_tuning.htm [http://publib.boulder.ibm.com/infocenter/aix/v6r1/index.jsp?topic=%2Fcom.ibm.aix.prftungd%2Fdoc%2Fprftungd%2Fname_resol_tuning.htm]
+
+netsvc.conf File:
+http://publib.boulder.ibm.com/infocenter/aix/v6r1/index.jsp?topic=%2Fcom.ibm.aix.files%2Fdoc%2Faixfiles%2Fnetsvc.conf.htm [http://publib.boulder.ibm.com/infocenter/aix/v6r1/index.jsp?topic=%2Fcom.ibm.aix.files%2Fdoc%2Faixfiles%2Fnetsvc.conf.htm]
+
+hosts File Format for TCP/IP:
+http://publib.boulder.ibm.com/infocenter/aix/v6r1/index.jsp?topic=%2Fcom.ibm.aix.files%2Fdoc%2Faixfiles%2Fhosts.htm [http://publib.boulder.ibm.com/infocenter/aix/v6r1/index.jsp?topic=%2Fcom.ibm.aix.files%2Fdoc%2Faixfiles%2Fhosts.htm]
+
+resolv.conf File Format for TCP/IP:
+http://publib.boulder.ibm.com/infocenter/aix/v6r1/index.jsp?topic=%2Fcom.ibm.aix.files%2Fdoc%2Faixfiles%2Fresolv.conf.htm [http://publib.boulder.ibm.com/infocenter/aix/v6r1/index.jsp?topic=%2Fcom.ibm.aix.files%2Fdoc%2Faixfiles%2Fresolv.conf.htm] 
+
+The same problem might seem not to affect Solaris and Linux hosts where the name service cache daemon (nscd) is running. This daemon provides a cache for hostname lookups so servers where it is running might not begin to see lookup failures until the cache data has expired, depending on the local configuration. Prior to the introduction of netcd in AIX 6.1, such a service was not available on AIX. See the following reference for further guidance on enabling and configuring netcd:
+
+How to configure network caching daemon (netcd) to cache DNS answers:
+https://www-304.ibm.com/support/docview.wss?uid=isg3T1010925 [https://www-304.ibm.com/support/docview.wss?uid=isg3T1010925]

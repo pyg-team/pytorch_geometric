@@ -1,0 +1,35 @@
+Title: IBM No Websphere Application Server runtime available in New Server wizard - United States
+
+Text:
+RAD; WAS; runtime; new server; new server wizard missing; install; websphere application server; development tools TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to define a new IBM Websphere Application Server (WAS) runtime using IBM Rational Application Developer (RAD) fail because no server type is available in the "New Server" wizard. 
+
+SYMPTOM
+When you create a new server in the RAD Server view, you notice that your WAS type is missing:
+
+
+[/support/docview.wss?uid=swg21658051&aid=1] [/support/docview.wss?uid=swg21658051&aid=1]
+
+
+CAUSE
+The Server Tools option was not selected when installing the product via Installation Manager, as shown in the following screenshot:
+[/support/docview.wss?uid=swg21658051&amp;aid=2]
+
+
+RESOLVING THE PROBLEM
+SOLUTION 
+
+Install the relevant Server Tools runtime version for the product, optionally including the stub, with Installation Manager. This will then appear in the New Server wizard for selection, as in the following screenshot: 
+
+[/support/docview.wss?uid=swg21658051&amp;aid=3] 
+
+ 
+
+Alternatively, you may install a stand-alone version of WAS which can be targeted from the New Server wizard to serve as a test environment or runtime. When creating a new server you will then be prompted for the installation location of your stand-alone WAS.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect for WebSphere Software Server Tooling AIX, Linux, OS X, Windows 7.5, 8.0, 9.0

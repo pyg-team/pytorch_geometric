@@ -1,0 +1,42 @@
+Title: IBM The SSHD Can Use the UNIX Syslog Facilities for Logging - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides instructions for configuring and starting the syslog daemon on the operating system. 
+
+RESOLVING THE PROBLEM
+The SSH daemon can use the UNIX syslog facilities for logging. 
+
+In this example, Qshell was used to start the SSH and syslog daemons. To verify that Qshell is installed on your system, run the DSPSFWRSC command. Qshell is Option 30 of the base operating system 5722SS1. Do the following: 
+
+o Create the /QOpenSys/etc/syslog.conf file with this line in it:
+
+auth.info /some/directory/path/somefilename.ext
+
+Note: The syslog configuration file must have UNIX-style line ends (LF) at the ends of lines rather than (CR/LF) like on Microsoft Windows-based machines. o Ensure the /some/directory/path/somefilename.ext exists: 
+
+QSH CMD('/QOpenSys/usr/bin/touch /some/directory/path/somefilename.ext') o Transfer the syslog configuration file using FTP into the Integrated File System. The file transfer should be performed in binary mode. o Start the syslog daemon:
+
+QSH CMD('/usr/sbin/syslogd')
+
+Note: The syslog daemon listens on UDP port 514. o Start the ssh daemon:
+
+STRTCPSVR *SSHD
+
+Note: On machines running v5r4 & earlier of the operating system, the SSH daemon can be started with the CL command below:
+
+QSH CMD('/usr/sbin/sshd') The /some/directory/path/somefilename.ext file will contain entries similar to the following: 
+
+Dec 22 16:38:51 SSHSERVER auth|security:info sshd[35618]: Server listening on 0.0.0.0 port 22. 
+Dec 22 16:39:10 SSHSERVER auth|security:info sshd[35619]: Failed password for someuser from 1.1.1.1 port 1372 ssh2 
+Dec 22 16:39:40 SSHSERVER auth|security:info sshd[35619]: Accepted password for someuser from 1.1.1.1 port 1372 ssh2 
+Dec 22 18:09:49 SSHSERVER auth|security:info sshd[36108]: Accepted publickey for someuser from 1.1.1.2 port 51590 ssh2 
+
+If syslogd is not configured and running, these syslog messages get redirected to the joblog of the unique SSHD process that is forked off when a user tries to connect. Therefore, you would have to look through a bunch of joblogs to get all of the logged messages. The LogLevel keyword in the SSH daemon configuration file ('/QOpenSys/QIBM/UserData/SC1/OpenSSH/openssh-3.5p1/etc/sshd_config) determines the verbosity level that is used when logging messages from SSHD. The default log level is INFO, and it should be sufficient for most cases. There is some ongoing debate in the OpenSSH development community about providing logging of specific files being transferred using SFTP or SCP; however, the OpenSSH maintainers have resisted doing so by stating that some user could merely sign in after a transfer using SSH and rename a file from there. Their thought is that, rather than logging, you must ensure correct authorities of users connecting using SSH (to ensure they can only read/write appropriate directories and files).  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 454064141

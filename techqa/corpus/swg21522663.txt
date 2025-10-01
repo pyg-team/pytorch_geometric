@@ -1,0 +1,52 @@
+Title: IBM Not able to send data via the HTTP Gateway when a client certificate is required during an SSL session. (SCI35263) - Sterling Gentran:Server for Microsoft Windows - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Not able to send data via the HTTP Gateway when a client certificate is required during an SSL session. (SCI35263) 
+
+SYMPTOM
+Not able to send data via the HTTP Gateway when a client certificate is required during an SSL session. 
+Receiving Error: 16-2-5 HTTP POST to <URL> of message # failed. HTTP status code = 0
+
+
+CAUSE
+The SCHttpPostData.dll is used by the HTTP Gateway to POST messages to trading 
+partners. This DLL does not support Client Certificates in an SSL session.
+
+RESOLVING THE PROBLEM
+This DLL is used by the HTTP Gateway to POST messages to trading partners. This DLL is also used by the HTTP Message Forwarder to forward incoming HTTP POST requests.
+
+The SCHttpPost.dll now supports using a client certificate during an SSL session.
+Please contact Product support to obtain the most recent update.
+
+
+1. The user will need to logon to the system where the Gentran Server Mailbox service is running AND where the HTTP Gateway is installed.
+
+2. The user will then need to install a client certificate. There are multiple ways to do this. Internet Explorer supports this by selecting Tools from its menu bar and then, selecting Internet Options. On the Content tab click on the "Certificates?a?|" button 
+
+Note: Client Certificates can be Imported, Exported and Removed using this dialog. When importing a certificate, it MUST contain the private key. Otherwise, the certificate cannot be used as a client certificate and this will be indicated by the dialog above (an imported public key certificate will not show up in the list above).
+
+3. When the HTTP Gateway establishes an SSL connection and determines that a client certificate is required, it will use the first certificate it finds in the Personal certificate store associated with the Gentran Server Mailbox logon ID and password.
+
+4. If the HTTP Gateway is unable to get a client certificate, the following message will show up in the Gentran Server audit log: HTTP POST to <url> of message # failed. HTTP status code = 12044. The 12044-status code is an error code returned from the WinInet API used to send the HTTP POST request and indicates that a client certificate is required to complete the request. If you are receiving this error, please contact your Web/Network Administrator.
+
+ 
+
+HISTORICAL NUMBER
+ PRI4148 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Gentran:Server for Windows
+Release 4.0 
+Gentran:Server RosettaNet Server 
+
+HTTP Gateway 
+SCI35263 
+HTTP Message Forwarder

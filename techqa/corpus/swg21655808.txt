@@ -1,0 +1,12 @@
+Title: IBM Specifying an alternative to "/tmp" for Tivoli Integrated Portal installs - United States
+
+Text:
+TIPL2; TIPL2INST; tmp; temp directory; folder; Tivoli Integrated Portal; installation; fix pack TECHNOTE (FAQ)
+
+QUESTION
+ Is there a way to configure the TIP installer to use an alternate directory if the installation user ID has insufficient access rights to "/tmp"? 
+
+ANSWER
+TIP L3 has examined the TIP installer and found that /tmp is hard coded in both the TIP and Websphere installers. There is no option available to override /tmp. To pursue a change to the TIP installer to accommodate an alternate tmp location, please submit an enhancement request via the RFE site here:
+
+http://www.ibm.com/developerworks/rfe/?BRAND_ID=90 [http://www.ibm.com/developerworks/rfe/?BRAND_ID=90]

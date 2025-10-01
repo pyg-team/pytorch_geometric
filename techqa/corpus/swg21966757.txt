@@ -1,0 +1,30 @@
+Title: IBM LDAP users without assigned roles can login to DASH - United States
+
+Text:
+DASHL2AUTH; DASHL2; security; roles; LDAP; log in without roles; TIPL2LDAP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Any user who has an account in the user repository can login to DASH whether they have been given user roles or not. 
+
+RESOLVING THE PROBLEM
+It is possible to control user access for those accounts which don't have an assigned role by changing the "AUTHENTICATIONONLY" value to "false" in the consoleProperties.xml file. 
+
+1) Stop the server 
+
+2) Edit the file: 
+
+<PROFILE>/config/cells/<CELLNAME>/applications/isc.ear/deployments/isc/isclite.war/WEB-INF/consoleProperties.xml 
+
+<consoleproperties:console-property id="AUTHENTICATIONONLY" value="true" />
+
+to
+
+<consoleproperties:console-property id="AUTHENTICATIONONLY" value="false" />
+
+Note: It is highly recommended a backup of the file be made and kept in a safe location.
+
+3) Start the server 
+
+DASH login page now gives this message for all user not having a role: 
+
+"The specified user ID does not have any roles providing access. Please contact the administrator."

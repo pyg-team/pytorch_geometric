@@ -1,0 +1,62 @@
+Title: IBM CWSIS1524E: Data  source, jdbc/<datasource name> not found - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While starting the Messaging Engine in a standalone server or during the failover of the Messaging Engine in a WebSphere Application Server (WAS) cluster you see this generic error: CWSIS1524E 
+
+SYMPTOM
+In the SystemOut.log you see this error message: 
+
+SibMessage E CWSIS0002E: The messaging engine encountered an exception while starting. Exception: com.ibm.ws.sib.msgstore.MessageStoreRuntimeException: CWSIS1524E: Data 
+source, <data source> not found. 
+
+
+CAUSE
+All WebSphere Application Server Service Integration Bus (WAS SIB) Message Store error messages start with CWSIS. These error messages indicate a problem with a data store, data source, database or file store. This error message: CWSIS1524E indicates that the message store can not find the data source name that it has been provided within the JNDI name space.
+
+
+DIAGNOSING THE PROBLEM
+This is a very generic exception.
+
+1) First of all make sure the Data Source is defined and configured properly.
+
+In the WAS Admin Console navigate to:
+
+Resources > JDBC > Data sources > YOUR_DATA_SOURCE
+
+Inside the data source configuration you will see a "Name", which is just the administrative name for this object, and the "JNDI name", which is the name it is stored under in JNDI. Make a note of the JNDI name.
+
+Now go to the message store configuration for the messaging engine:
+
+Service Integration > Buses > YOUR_BUS > Messaging Engines > YOUR_MESSAGING_ENGINE > Message Store
+
+Here you should see the "JNDI data source name". This should match the "JNDI name" in the data source configuration you looked at above. If it does not then this would explain the error you are getting. Make sure the JNDI names match and make sure you are using the correct data source.
+
+2) You might have defined and configured the data source correctly but still the ME complained that it is not found. In the case of clusters, the most common cause for this problem is that the data source for the message store is not defined at a scope visible to the JVM where messaging engine is running.
+
+For example, if the messaging engine is in cellX/nodeY/server1, the data source might be defined in either server1 or nodeY or cellX to be visible for use by the data store. 
+
+Within a highly available environment, there are additional factors to consider when you create data sources, as you might have a messaging engine that can run on more than one server. For example, if you have a single messaging engine which can fail over between two servers: cellX/nodeY/server1 and cellX/nodeY/server2, you need to define the data source at a scope visible to both servers. In this case, a suitable scope could be either node2 or cellX. A common mistake is to create the data source with a scope of server1. Initially, the configuration will appear to work, when the messaging engine starts on server1. However, when the messaging engine fails-over to server2, server2 will not be able to locate the appropriate data source.
+
+
+
+RESOLVING THE PROBLEM
+Make sure that you defined and configured the data source properly. In addition to this ensure that the definition of the data source is in a scope that is visible to the messaging engine (or engines) that are configured to use it.
+
+In the case of a clustering environment, ensure that the data source and JDBC provider are defined at the Cluster or Cell scope so that each member of the cluster has access to that Data source. 
+
+ 
+
+If you would like to know more about Service Integration Bus and how to configure please refer to the links below. 
+
+ * Choosing a messaging system: WebSphere MQ vs. the WebSphere Application Server Service Integration Bus [http://www.ibm.com/developerworks/websphere/library/techarticles/1109_wallis/1109_wallis.html?ca=drs-] 
+ * How to configure a Service Integration Bus in a network deployment environment [http://www.ibm.com/developerworks/webservices/library/ws-sibus/] 
+ * More information about Service Integration Bus [https://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/welc6tech_si.html]
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere MQ Service Integration Technologies /SIB Business Integration WebSphere Process Server Business Integration WebSphere Service Registry and Repository Business Integration IBM Business Process Manager Standard Business Integration WebSphere Enterprise Service Bus Business Integration WebSphere Partner Gateway Advanced Edition 
+PRODUCT ALIAS/SYNONYM
+ WebSphere Application Server WAS SIB SIBUS SI BUS

@@ -1,0 +1,25 @@
+Title: IBM "The host appears to be running but port "-1" does not respond. " error when testing connection to Rule Execution Server from Decision Center - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In the Decision Center Configure tab, under Manage Servers, when I test the connection to the server instance of the Rule Execution Server, I see the error:
+Test failed for server foo. The host appears to be running but port "-1" does not respond. 
+
+RESOLVING THE PROBLEM
+Make sure that the server connection details are correctly specified ( hostname, portnumber, username/password) in the Decision Center Configure tab, under Manage Servers.
+
+
+ * Ensure that you set the URL of the Rule Execution Server to be http://<host>:<port>/res, not http://<host>:<port>/testing 
+ * Check that the port is not being used by another process [http://www.ibm.com/support/docview.wss?uid=swg21443946]. If it is, stop the other process. 
+ * Make sure that the user belongs to a Decision Center group that has privileges [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/index.jsp?topic=%2Fcom.ibm.odm.dcenter.bu.econsole%2Ftopics%2Ftsk_config_deploy_servers.html] to access a RES server 
+ * Make sure that the SSP application (jrules-ssp-<appserver>.ear) has been installed correctly on the application server, and has been started. 
+ * Test the availability of Decision Validation Services by typing the URL in your browser: http://<host>:<port>/testing 
+ * Make sure there is no firewall blocking the HTTP/HTTPS connection from Decision Center to Rule Execution Server
+
+RELATED INFORMATION
+#Decision Center: Configuring deployment > Managing Serv [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/index.jsp?topic=%2Fcom.ibm.odm.dcenter.bu.econsole%2Ftopics%2Ftsk_config_deploy_servers.html]
+Repackaging the SSP [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/index.jsp?topic=%2Fcom.ibm.odm.dserver.rules.designer.test%2Ftopics%2Ftsk_repackssp.html]
+Error when executing DVS test [http://www-01.ibm.com/support/docview.wss?uid=swg21443946]
+Cannot access Decision Center or Rule Execution Server [http://www.ibm.com/support/docview.wss?uid=swg21678244]

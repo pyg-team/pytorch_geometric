@@ -1,0 +1,172 @@
+Title: IBM IT20124: INTEGRATION NODE ABENDS ON SHUTDOWN AFTER QMGR OUTAGE IF INTEGRATION NODE LISTENER NOT STARTED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a multi-instance integration node has been configured to run
+   without starting the integration node HTTP Listener, it abends
+   on a failover shutdown with the following abend stack:
+   
+   Windows:
+   CommonServices!?lock@ImbMutex
+   AdministrativeAgent!?stopHABrokerInstance@ImbBrokerDirector
+   AdministrativeAgent!?runBrokerDirectorCleanup@ImbBrokerDirector
+   AdministrativeAgent!?run@ImbBrokerDirector
+   AdministrativeAgent!?start@ImbBrokerMain
+   
+   Unix:
+   ImbBrokerDirector.ImbMutex::lock
+   ImbBrokerDirector::stopHABrokerInstance()
+   ImbBrokerDirector::runBrokerDirectorCleanup()
+   ImbBrokerDirector::run()
+   ImbBrokerMain::start
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of IBM Integration Bus V9.0 and V10.0 who have the
+   integration node HTTP listener disabled.
+   
+   
+   Platforms affected:
+   z/OS, MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   If the integration node HTTP listener has been disabled such
+   that it does not run, an abend may occur if the integration node
+   shuts down due to the associated MQ queue manager becoming
+   unavailable.
+   With IBM Integration Bus (IIB) V9.0 this will only occur if the
+   integration node has been configured as a multi-instance or high
+   availability (HA) node.
+   With IIB V10.0 this may occur for HA and non-HA integration
+   nodes if an associated MQ queue manager has been defined for the
+   integration node.
+   The abend occurs because the shutdown logic attempts to shutdown
+   the integration node HTTP listener process without first
+   checking that it is running.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product now checks whether the HTTP Listener parameters have
+   been set, denoting that it is running, before attempting to shut
+   the process down.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v10.0      10.0.0.10
+   v9.0       9.0.0.9
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available,information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT20124
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION BUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0530
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-04-07
+   
+   
+ * CLOSED DATE
+   2017-08-31
+   
+   
+ * LAST MODIFIED DATE
+   2017-08-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION BUS
+   
+   
+ * FIXED COMPONENT ID
+   5724J0530
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

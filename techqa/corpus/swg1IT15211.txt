@@ -1,0 +1,157 @@
+Title: IBM IT15211: XAER_PROTO. ERRORCODE=-4203 AND SQL0998N REASON CODE = 5 WHEN EXECUTING COMMIT IN DISTRIBUTED TRANSACTION - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This error might happen when application flows XA_END and
+   certain XA transaction was rolled back due to timeout, replying
+   with XA_RBTIMEOUT. When XA_COMMIT is called application is
+   receiving XAER_RMFAIL followed by XAER_PROTO.
+   
+   The following error can be observed in application logs:
+   com.ibm.db2.jcc.am.SqlException:
+   [jcc][t4][2041][11392][4.19.49] Error executing
+   XAResource.start(). Server returned XAER_PROTO.
+   ERRORCODE=-4203, SQLSTATE=null
+   at com.ibm.db2.jcc.am.kd.a(Unknown Source)
+   at com.ibm.db2.jcc.am.kd.a(Unknown Source)
+   at com.ibm.db2.jcc.am.kd.a(Unknown Source)
+   at com.ibm.db2.jcc.t4.dc.a(Unknown Source)
+   at
+   com.ibm.db2.jcc.t4.T4XAConnection.readTransactionStart(Unknown
+   Source)
+   
+   and in db2diag on server side:
+   2016-03-25-16.30.36.735066-000        LEVEL: Error
+   PID     : 12345     TID : 13969483470000 PROC : db2sysc 0
+   INSTANCE: db2inst1  NODE : 000            DB   : TESTDB01
+   APPHDL  : 0-312     APPID: 10.1.1.109.48864.160322190999
+   AUTHID  : TESTDB01  HOSTNAME: test-db2
+   EDUID   : 242       EDUNAME: db2agent (TESTDB01) 0
+   FUNCTION: DB2 UDB, relation data serv, sqlrxreg, probe:10
+   MESSAGE : ZRC=0x80100027=-2146435033=SQLP_PROTO
+             "Transaction manager function called in wrong
+   context."
+             DIA8039C XA error with request type of "". XA
+   protocol error.
+   DATA #1 : SQLCA, PD_DB2_TYPE_SQLCA, 136 bytes
+   sqlcaid : SQLCA     sqlcabc: 136   sqlcode: -998   sqlerrml: 3
+   sqlerrmc: 5 5
+   
+   Steps to recreate:
+   1. UPDATE DB CFG LOCKTIMEOUT 2
+   2. Create SQL or external stored procedure, accessing a table A.
+   3. Lock table A in a session
+   4. From another session, call the procedure from XA connection.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  First fixed in JDBC driver 3.69.61 /4.19.60 or higher (included
+   in DB2 v10.5 FP8)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Upgrade to JDBC driver 3.69.61 /4.19.60 or higher (included
+   in DB2 v10.5 FP8)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT15211
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 JDBC SQLJ D
+   
+   
+ * REPORTED COMPONENT ID
+   DB2DSDRVR
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-10
+   
+   
+ * CLOSED DATE
+   2017-05-25
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 JDBC SQLJ D
+   
+   
+ * FIXED COMPONENT ID
+   DB2DSDRVR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA50 PSY
+   UP

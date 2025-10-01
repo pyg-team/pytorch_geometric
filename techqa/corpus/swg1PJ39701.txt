@@ -1,0 +1,145 @@
+Title: IBM PJ39701: FOR IMAGE SERVICES FEDERATED DOCUMENTS, MOVECONTENT TO SNAPLOCK FEDERATED CONTENT DEVICE DOES NOT DISPERSE ACROSS FOLDERS WELL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Content Engine does not report any errors while adding documents
+   to the Fixed Content Device (FCD).
+   By analyzing the sub folders for the FCD, will see that almost
+   all of the documents are being stored in only a few of the
+   subfolders.  Will also notice that most of the other subfolders
+   are not created.  This causes issues (slow performance, etc) on
+   document retrieval.
+   
+   This occurs because four fifths of the Image Services (IS)
+   document id is the
+   same for all documents.  Using the causes the Content Engine's
+   hashing algorithm to generate very poor randomization of sub
+   folders used to hold the documents in the FCD.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * CFS-IS customers moving content from Image Services to a     *
+   * NetApp SnapLock device                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * CFS-IS federated documents are assigned a Content Engine     *
+   * (CE) object id based on the Image Services (IS) document     *
+   * number.  Since IS document numbers are sequential integers,  *
+   * the resulting CE object ids are very similar.  When CE       *
+   * stores content in NetApp SnapLock, it locates the file in a  *
+   * directory based on a hash of the CE object id.  With the CE  *
+   * object ids being so similar, this results in many of the     *
+   * files being located in the same NetApp SnapLock directory.   *
+   * When too many files build up in a single directory,          *
+   * retrievals and additions to that directory exhibit poor      *
+   * performance.                                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.1.0.1-P8CE-FP001 or higher.                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  5.1.0.1-P8CE-FP001 and higher will resolve this move content
+   from Image Services to NetApp SnapLock problem.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ39701
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-18
+   
+   
+ * CLOSED DATE
+   2012-09-26
+   
+   
+ * LAST MODIFIED DATE
+   2012-09-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PJ39695 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ39695]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP

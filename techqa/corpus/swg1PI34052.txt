@@ -1,0 +1,149 @@
+Title: IBM PI34052: When running an upgraded request the application can not run a JNDI lookup. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When processing an upgraded request the application can not
+   run a JNDI lookup
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of servlet-3.1 and the request        *
+   *                  upgrade feature on IBM WebSphere            *
+   *                  Application Server Liberty Profile          *
+   *                  V8.5.5.4                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When processing an upgraded request the *
+   *                      application can not run a Java Naming   *
+   *                      and Directory Interface(JNDI) lookup    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   While running an upgraded request a user could perform a JNDI
+   lookup, or another action which requires the servlet context to
+   be in the class loader. An example of an exception that might
+   occur is:
+   
+   javax.naming.NameNotFoundException:
+   javax.naming.NameNotFoundException: java:comp/UserTransaction
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebContainer code was modified to allow things such as JNDI
+   lookups to be done from within an upgraded request
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 8.5.5.5.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI34052
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * REPORTED COMPONENT ID
+   5725L2900
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-02-03
+   
+   
+ * CLOSED DATE
+   2015-02-23
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * FIXED COMPONENT ID
+   5725L2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

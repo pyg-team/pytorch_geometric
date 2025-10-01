@@ -1,0 +1,278 @@
+Title: IBM IY97803: LDAP RMI ADAPTER LDAP CONNECTION LEAK - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITIM Format Insert
+   =================================================
+   
+   Title: LDAP RMI ADAPTER LDAP CONNECTION LEAK
+   
+   Problem description:
+   
+   After upgrading ldap rmi adapter from 4.6.3 to 4.6.5 to address
+   ldap
+   
+   connection leaking, customer observes improvement but still sees
+   a
+   problem:
+   
+   I tried Modify operation on one attribute of 50K accounts.
+   Number of
+   connections used varies and breaches the Max. Connection limit
+   set in
+   itim_listener.log. It grows upto 35 (value is set as 5) and then
+   squeezes after certain time.
+   Number of connectors to the LDAP resource = 2.
+   
+   Requirement: Maximum connections dispatcher/assembly line makes
+   MUST be
+   within the MaximumConnectorsPerResource (in production it will
+   be 10).
+   
+   We are able to reproduce this issue. Rick: Could you please open
+   an APAR
+   for this?
+   
+   Notes from Amita Gaonkar:
+   
+   When the dispatcher component was enhanced - Connector pooling
+   thru the
+   dispatcher was disabled and AL pooling was implemented - the
+   ConnectorPoolManager class in the dispatcher component was
+   commented
+   out. See the following code from RMIDispatcherImpl.java-
+   
+   //connectorPoolMgr = ConnectorPoolMgr.getInstance();
+   //connectorPoolMgr.start();
+   
+   This class used the MaximumConnectorsPerResource property
+   specified in
+   itim_listner.properties to limit the number of connections to
+   the
+   resource. This property has no meaning now since the class is
+   not used
+   anymore.
+   
+   There are some more properties which were being used by this
+   class and
+   they have also been rendered obsolete as the class is no more
+   used. I am
+   still investigating this to come up with the list of properties
+   which
+   cannot be used anymore.
+   
+   We can discuss this next week to discuss further steps on this
+   issue.
+   
+   
+   Customer Recreate:
+   
+   Yes.
+   
+   
+   Desired behavior:
+   
+   Requirement: Maximum connections dispatcher/assembly line makes
+   MUST be
+   within the MaximumConnectorsPerResource
+   
+   =================================================ITIM Format
+   Insert
+   =================================================
+   
+   Title: LDAP RMI ADAPTER LDAP CONNECTION LEAK
+   
+   Problem description:
+   
+   After upgrading ldap rmi adapter from 4.6.3 to 4.6.5 to address
+   ldap
+   
+   connection leaking, customer observes improvement but still sees
+   a
+   problem:
+   
+   I tried Modify operation on one attribute of 50K accounts.
+   Number of
+   connections used varies and breaches the Max. Connection limit
+   set in
+   itim_listener.log. It grows upto 35 (value is set as 5) and then
+   squeezes after certain time.
+   Number of connectors to the LDAP resource = 2.
+   
+   Requirement: Maximum connections dispatcher/assembly line makes
+   MUST be
+   within the MaximumConnectorsPerResource (in production it will
+   be 10).
+   
+   We are able to reproduce this issue. Rick: Could you please open
+   an APAR
+   for this?
+   
+   Notes from Amita Gaonkar:
+   
+   When the dispatcher component was enhanced - Connector pooling
+   thru the
+   dispatcher was disabled and AL pooling was implemented - the
+   ConnectorPoolManager class in the dispatcher component was
+   commented
+   out. See the following code from RMIDispatcherImpl.java-
+   
+   //connectorPoolMgr = ConnectorPoolMgr.getInstance();
+   //connectorPoolMgr.start();
+   
+   This class used the MaximumConnectorsPerResource property
+   specified in
+   itim_listner.properties to limit the number of connections to
+   the
+   resource. This property has no meaning now since the class is
+   not used
+   anymore.
+   
+   There are some more properties which were being used by this
+   class and
+   they have also been rendered obsolete as the class is no more
+   used. I am
+   still investigating this to come up with the list of properties
+   which
+   cannot be used anymore.
+   
+   We can discuss this next week to discuss further steps on this
+   issue.
+   
+   
+   Customer Recreate:
+   
+   Yes.
+   
+   
+   Desired behavior:
+   
+   Requirement: Maximum connections dispatcher/assembly line makes
+   MUST be
+   within the MaximumConnectorsPerResource
+   
+   =================================================
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   Installation Guide refers to nonexistent proper
+   ty "MaximumConnectorsPerResource" (table 3). There is no hard li
+   mit to the number of connections that will opened by the adapter
+   . If you wish to limit connections, do so by lowering the workfl
+   ow threads on the ITIM server so that concurrent transactions is
+    reduced.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   Release Notes updated in LDAP adapter v4.6.6
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *   Doc issue.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY97803
+   
+   
+ * REPORTED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C34AG
+   
+   
+ * REPORTED RELEASE
+   460
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-04-24
+   
+   
+ * CLOSED DATE
+   2007-05-18
+   
+   
+ * LAST MODIFIED DATE
+   2007-05-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * FIXED COMPONENT ID
+   5724C34AG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R460 PSY
+   UP

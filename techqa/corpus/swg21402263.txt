@@ -1,0 +1,123 @@
+Title: IBM 'OutOfMemoryException' error when exporting large number of items (for example multiple reports) when Exporting Structures - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User clicks 'Transfer - Export Structures'. User selects many/most/all of the options (for example 'Accounts/Forms, Form Sets, Submissions...' and so on). User clicks on the 'Run' icon.
+
+After several minutes, an error message appears. 
+
+SYMPTOM
+Screen: 
+
+ Information
+Standard Error
+Number: 5
+Source: FrangoDirect.ExportStructuresD.SelectExpServer#ControllerProxyClient
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.OutOfMemoryException: Out of memory
+at FrStructuresB.ExportStructuresClass.SelectExpServer(String sGuid, String sUser, Object rsSelections, Object rsSelections2, String sXmlDoc)
+at Cognos.Controller.Proxy.CCRWS.ExportStructures_SelectExpServer(String sGuid, String sUser, DataSet[] rsSelection, DataSet[] rsSelection2, String sXmlDoc)
+--- End of inner exception stack trace ---
+at Microsoft.VisualBasic.ErrObject.Raise(Int32 Number, Object Source, Object Description, Object HelpFile, Object HelpContext)
+at Cognos.Controller.Common.RaiseErrCli.RaiseError(Int32 lErrNo, String sErrSource, String sErrDesc, String sErrHelpFile, Int32 lErrHelpContext)
+at Cognos.Controller.Direct.ExportStructuresD.SelectExpServer(DataSet[] rsSelections, DataSet[] rsSelections2, String sXmlDoc)
+at Cognos.Controller.Forms.Form.frmExportStruc.DoExportServer()
+[OK] 
+
+Event Log:
+Event Type: Warning
+Event Source: Cognos Controller
+Event Category: None
+Event ID: 0
+Date: 07/12/2009
+Time: 09:38:35
+User: N/A
+Computer: SERVERNAME
+Description:
+Standard Error
+Number: 5
+Source: FrangoDirect.ExportStructuresD.SelectExpServer#ControllerProxyClient
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.OutOfMemoryException: Out of memory
+at FrStructuresB.ExportStructuresClass.SelectExpServer(String sGuid, String sUser, Object rsSelections, Object rsSelections2, String sXmlDoc)
+at Cognos.Controller.Proxy.CCRWS.ExportStructures_SelectExpServer(String sGuid, String sUser, DataSet[] rsSelection, DataSet[] rsSelection2, String sXmlDoc)
+--- End of inner exception stack trace ---
+at Microsoft.VisualBasic.ErrObject.Raise(Int32 Number, Object Source, Object Description, Object HelpFile, Object HelpContext)
+at Cognos.Controller.Common.RaiseErrCli.RaiseError(Int32 lErrNo, String sErrSource, String sErrDesc, String sErrHelpFile, Int32 lErrHelpContext)
+at Cognos.Controller.Direct.ExportStructuresD.SelectExpServer(DataSet[] rsSelections, DataSet[] rsSelections2, String sXmlDoc)
+at Cognos.Controller.Forms.Form.frmExportStruc.DoExportServer()
+
+Event Type: Warning
+Event Source: Cognos Controller
+Event Category: None
+Event ID: 0
+Date: 07/12/2009
+Time: 09:38:34
+User: N/A
+Computer: SERVERNAME
+Description:
+Error occured at 07/12/2009 09:38:33 in IBM Cognos 8 Controller, Error No=5, Source=FrangoDirect.ExportStructuresD.SelectExpServer#ControllerProxyClient, Description=System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.OutOfMemoryException: Out of memory
+at FrStructuresB.ExportStructuresClass.SelectExpServer(String sGuid, String sUser, Object rsSelections, Object rsSelections2, String sXmlDoc)
+at Cognos.Controller.Proxy.CCRWS.ExportStructures_SelectExpServer(String sGuid, String sUser, DataSet[] rsSelection, DataSet[] rsSelection2, String sXmlDoc)
+--- End of inner exception stack trace ---, HelpFile= HelpContext=0
+
+Event Type: Warning
+Event Source: VBRuntime
+Event Category: None
+Event ID: 1
+Date: 07/12/2009
+Time: 09:38:27
+User: N/A
+Computer: SERVERNAME
+Description:
+The VB Application identified by the event source logged this Application FrStructuresB: Thread ID: 5060 ,Logged: Error occured at 07/12/2009 09:38:27 in FrStructuresB, Error No=7, Source=FrStructuresB.ExportStructures.SelectExp, Description=Out of memory, HelpFile= HelpContext=0
+
+
+CAUSE
+There are several possible causes for this/similar symptoms. 
+
+ * TIP: See separate IBM Technote #1403820 for more examples.
+
+
+This Technote specifically relates to the scenario where the cause is a limitation in Controller 10.1.1 and earlier versions.  * This causes the Controller client (CCR.EXE) to run out of available memory on the client device. 
+ * Specifically, the root cause is that the CCR.EXE executable is not LAA-aware, so it cannot access all the available RAM.
+
+ENVIRONMENT
+Controller 10.1.1 or earlier.
+
+
+
+RESOLVING THE PROBLEM
+Fix: 
+
+Upgrade to Controller 10.2 or later. 
+
+ 
+
+Workaround 
+
+There are several workarounds: 
+
+ 
+
+ * 
+ * Method #1
+ *  
+ * 
+ * In other words, select fewer options (for example only half the choices of 'Accounts/Forms, Form Sets, Submissions...' and so on) before exporting the structures. After this has finished, then export the rest (for example other half) of the required structures into a separate file/folder. 
+ *  In one customer's system, it was found that the problem occurred when:  * only the 'Reports' selection was ticked 
+    * but all 150 of those reports were selected
+   
+   Therefore, for this customer's specific scenario, the workaround was to export their reports in 3 separate sections. In other words, use the '...' button to select the reports in 3 separate sections (for example select 50 reports in each section). 
+ * 
+ * Method #2 - Convert CCR.EXE to utilise LAA 
+ * In other words: 
+ * 1. Ensure that end user's client device is running 64-bit version of Windows which has sufficient (e.g. 4Gb) RAM installed. 
+ * 2. Perform the steps in separate Technote #1579579.
+
+RELATED INFORMATION
+ 1347485 - Error 'System.OutOfMemoryException: Exception [http://www.ibm.com/support/docview.wss?uid=swg21347485]
+1403820 - Standard Error 5 'Not enough storage space is [http://www.ibm.com/support/docview.wss?uid=swg21403820]
+1403820 - ** Troubleshooting ** Standard Error 5 'Not e [http://www.ibm.com/support/docview.wss?uid=swg21403820]
+1579579 - How to convert Controller client application [http://www.ibm.com/support/docview.wss?uid=swg21579579]
+APAR PM22347 - OUT OF MEMORY EXCEPTION EXPORTING FULL S [http://www-01.ibm.com/support/docview.wss?uid=swg1PM22347]

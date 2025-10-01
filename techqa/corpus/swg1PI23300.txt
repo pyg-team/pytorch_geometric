@@ -1,0 +1,167 @@
+Title: IBM PI23300: RQM TEST SUITE EXECUTION FAILS WITH AN ERROR "DEFERRED OPERATION FAILEDƒ - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Quality Manager 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24038339]
+Collaborative Lifecycle Management Interim Fix 8 for 5.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24041610]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Execution of an IBM Rational Quality Manager (RQM) Test Suite
+   fails with an error  "Deferred Operation failed&#65411;    when it has
+   multiple  Execution Variables.
+   
+   Steps to Reproduce:
+   1. Create a Test Suite with two Test Cases with  Test Scripts.
+   2.  Create two or more  'Execution Variables" on the Test Suite.
+   3.  Run the Test suite and check the option "Create Result
+   without Execution".
+   4.  Click finish.
+   An error  is reported in the web  "Deferred operation failed".
+   
+   Firebug shows that  following POST  request  gets  500 Internal
+   Server  error :
+   https://<HOST:PORT>/qm/service/com.ibm.rqm.execution.common.serv [https://<HOST:PORT>/qm/service/com.ibm.rqm.execution.common.serv]
+   ice.rest.ITestSuiteExecutionRecordRestService/execute  (Error
+   500 status code)
+   
+   The response contains an error "The statement was aborted
+   because it would have caused a duplicate key value in a unique
+   or primary key constraint or unique index identified by
+   'VARIABLE_NAM_NM_DX' defined on 'VARIABLE_NAME'."
+   
+   Review the following work item on Jazz.net for  more details:
+   https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manage
+   r#action=com.ibm.team.workitem.viewWorkItem&id=120338 [https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manager#action=com.ibm.team.workitem.viewWorkItem&id=120338]
+   
+   Workaround:
+   There is no known workaround at this time.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * QM Test Suite Execution : &#131;  Error: Deferred Operation       *
+   * failed&#131;                                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Steps to reproduce                                           *
+   * 1. Create a Test Suite consisting of two Test cases; each    *
+   * Test Case should have at least on Manual test Script         *
+   * associated to it                                             *
+   * 2. Create two 'Execution variables" on the Test Suite.       *
+   * 3.  Run the Test suite and check the option "Create Result   *
+   * without Execution".                                          *
+   * 4.  Click finish.                                            *
+   *                                                              *
+   * Error in the UI                                              *
+   * &#131;  Error: Deferred Operation failed&#131;                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in code on version 5.0.1
+   See Jazz workitem for additional information
+   https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manage
+   r#action=com.ibm.team.workitem.viewWorkItem&id=120338 [https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manager#action=com.ibm.team.workitem.viewWorkItem&id=120338]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI23300
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL QUALITY MG
+   
+   
+ * REPORTED COMPONENT ID
+   5724V1000
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-05
+   
+   
+ * CLOSED DATE
+   2014-09-12
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL QUALITY MG
+   
+   
+ * FIXED COMPONENT ID
+   5724V1000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

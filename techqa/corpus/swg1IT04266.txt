@@ -1,0 +1,172 @@
+Title: IBM IT04266: "MERGEFILESPACES=YES" OPTION FOR "EXPORT NODE" COMMAND MAY NOT FOR INCREMENTAL GROUP DATA. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When exporting a node which contains only the last incremental
+   backup including group data (like VM, systemstate, ...) with
+   MERGEFILESPACES=YES option, some of the grouping information
+   is lost.
+   
+   Customer/L2 Diagnostics:
+   Example for VM backups (full and incremental):
+   
+   - A full VM backup was done to the source server.
+   - After the first export node of this full backup, a restored VM
+     from the target server was able to start.
+   - An incremental backup was done to the source server.
+   - After the second export with mergefilespaces=yes including
+     only this incremental backup,  VM restored from the target
+     server will not start.
+     A VM restored from the target server will not start."
+   
+     Error message: missing operating system
+   
+   Tivoli Storage Manager Versions Affected:
+   Tivoli Storage Manager Server 6.2, 6.3 and 7.1 for all supported
+   platforms
+   
+   Initial Impact:
+   low
+   
+   Additional Keywords:
+   zz62 zz63 zz71 vm filedata merge export import
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  - Do not incrementally export a filespace containing VM data.
+   - Export all the data in the filespace in one operation.
+   - If there is a need to export additional VM data to a target
+     server that already contains data for this filespace, delete
+     the filespace on the target server first and re-export the
+     entire filespace
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Tivoli Storage Manager server users of Import with       *
+   * MERGEFILESPACES=YES                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See error description.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Update documentation show restrictions on import/export of   *
+   * incremental backups for specific types of client data.       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The EXPORT NODE and IMPORT NODE topics will be updated with
+   following restrictions:
+   
+   "Incrementally exporting/importing the following types of client
+   data to another Tivoli Storage Manager server is not supported:
+   *  VMWare backups where full plus incremental backups need to be
+   periodically, incrementally transferred to another server.
+   *  Backups groups where full plus differential backups need to
+   be periodically, incrementally transferred to another server.
+   *  Windows System State data that is periodically, incrementally
+   transferred to another server.
+   
+   Full export/import of this data to a new file system on the
+   target is supported by exporting the entire filespace that
+   contains the data. In other words, the export must not use the
+   FILEDATA=ALLACTIVE, FROMDATE, TODATE, or MERGEFILESPACES
+   options.
+   
+   The best practice for incrementally transferring this type of
+   data between two servers is to use Node Replication."
+   
+   Affected platforms:  AIX, HP-UX, Solaris, Linux, and  Windows.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT04266
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   71L
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-10
+   
+   
+ * CLOSED DATE
+   2015-04-16
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

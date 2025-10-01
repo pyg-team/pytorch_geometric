@@ -1,0 +1,68 @@
+Title: IBM Connect R to NPS in SLES10.SP1 x86_64 Version - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I connect R to NPS in SLES10.SP1 x86_64 Version? 
+
+ANSWER
+Software Environment
+
+unixODBC-2.2.14.tar.gz (version 2.2.13 or later)
+R-2.9.2.tar.gz (latest version)
+RODBC_1.3-0.tar.gz (latest version)
+Linux64cli.packages.z
+
+
+Recommended Procedure
+To connect R to NPS in SLES10.SP1 x86_64 version:
+1. Install the unixODBC driver manager
+Make sure that you have version 2.2.13 (or later) of the unixODBC driver manager. Earlier versions had problems in a 64-bit environment. If you are not sure, check the SQLFetchScroll() function in sql.h (usually /usr/local/sql.h).
+
+New: SQLRETURN SQL_API SQLFetchScroll(SQLHSTMT StatementHandle,SQLSMALLINT FetchOrientation,SQLLEN FetchOffset);
+
+Old: SQLRETURN SQL_API SQLFetchScroll(SQLHSTMT StatementHandle,SQLSMALLINT FetchOrientation,SQLROWOFFSET FetchOffset);
+
+The type of the last argument should be SQLLEN. If you install from an RPM package, you also need to install the unixODBC-devel package. Because RPM for unixODBC is usually equal to or earlier than version 2.2.12, you have to install from source files.
+
+2. Install R
+The version of R has to be 2.9.0 or later to be compatible with the RODBC package. If the version is 2.9.0 or later, you can use an RPM package.
+
+3. Set two environment variables
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/nz/lib64:\
+/usr/local/lib
+export PATH=$PATH:/usr/local/include
+
+4. Install RODBC package
+$ su
+$ R CMD INSTALL RODBC_1.3-0.tar.gz
+To install this package, you need sql.h and sqlext.h and they will be reachable if you set the PATH variable as described in the previous step.
+
+5. Install the NPS client package for a 64-bit Linux system
+Download and install linux64cli.package.tar. In a SuSE environment, you must also perform the following steps:
+$ cd /usr/lib
+$ ln -s libssl.so.0.9.8 libssl.so.4
+$ ln -s libcrypto.so.0.9.8 libcrypto.so.4
+
+6. Edit odbc.ini odbcinst.ini
+There are two sample files that contain NZSQL entry that you should copy to the respective .ini files.
+The driver location should be /usr/local/nz/lib64/libnzodbc.so The location of odbc.ini / odbcinst.ini files can be ~/.odbc.ini and ~/.odbcinst.ini
+
+7. Test ODBC connectivity
+/usr/local/nz/lib64/nzodbcsql NZSQL
+NZSQL can be any other DSN. In order to connect to NPS, you have to put username and password in the odbc.ini file. LD_LIBRARY_PATH should be set correctly.
+nzodbc > SELECT * FROM _V_USER;
+_V_USER can be any table for which you have read privileges. If you see the correct result, the .ini files are correctly set.
+
+8. Test RODBC
+$ R
+> library(RODBC)
+> conn <- odbcConnect(dsn="NZSQL")
+> sqlQuery(conn, "SELECT * FROM _V_USER")
+If you see the same result of nzodbcsql command, R has connected to NPS correctly. If the output contains "character(0)", RODBC is not working correctly. In that case, you should check for the existence of the correct ODBC header files (sql.h, sqlext.h, and so on). Sometimes multiple ODBC header files are located in the /usr/include directory; make sure that the PATH variable is pointing to the correct header files.
+
+ 
+
+HISTORICAL NUMBER
+ NZ733730

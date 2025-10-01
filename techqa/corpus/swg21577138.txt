@@ -1,0 +1,130 @@
+Title: IBM MQ 7.1 and later: How to remove a channel authentication record (CHLAUTH) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You have added a channel authentication record into a WebSphere MQ 7.1 or later queue manager:
+
+SET CHLAUTH(*) TYPE(USERMAP) CLNTUSER(testuser) USERSRC(CHANNEL) ACTION(ADD)
+AMQ8877: WebSphere MQ channel authentication record set.
+
+Then you display it:
+
+DISPLAY CHLAUTH(*) TYPE(USERMAP)
+1 : DISPLAY CHLAUTH(*) TYPE(USERMAP)
+AMQ8878: Display channel authentication record details.
+CHLAUTH(*) TYPE(USERMAP)
+CLNTUSER(testuser) USERSRC(CHANNEL)
+
+Now you want to remove it and you try executing the following runmqsc command which you constructed using copy and paste from the above output:
+
+DELETE CHLAUTH(*) TYPE(USERMAP) CLNTUSER(testuser) USERSRC(CHANNEL)
+3 : DELETE CHLAUTH(*) TYPE(USERMAP) CLNTUSER(testuser) USERSRC(CHANNEL)
+
+You get the following error:
+
+AMQ8405: Syntax error detected at or near end of command segment below:-
+DELETE CHLAUTH
+
+The DELETE CHLAUTH does not exist and after consulting the MQ 7.1 Information Center you read that you have to use the SET CHLAUTH command with the argument ACTION(REMOVE). You try now:
+
+SET CHLAUTH(*) TYPE(USERMAP) CLNTUSER(testuser) ACTION(REMOVE)
+19 : SET CHLAUTH(*) TYPE(USERMAP) CLNTUSER(testuser) ACTION(REMOVE)
+
+But you get the following error:
+
+AMQ8884: Channel authentication record not found.
+
+You specified the attribute CLNTUSER(testuser) as it was shown in the output of the DISPLAY CHLAUTH(*), thus, you think the record should be found. You want to know what is the problem?
+
+
+CAUSE
+See the following section of the MQ 7.1 documentation:
+WebSphere MQ > Administering > Administering local WebSphere MQ objects > Performing local administration tasks using MQSC commands
+WebSphere MQ object names [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm.mq.doc/fa11060_.htm]
++ Case-sensitivity in MQSC commands
+MQSC commands, including their attributes, can be written in upper-case or lower-case. Object names in MQSC commands are folded to upper-case (that is, QUEUE and queue are not differentiated), unless the names are enclosed within single quotation marks. If quotation marks are not used, the object is processed with a name in upper-case. 
+
+When specifying the SET command with the following value CLNTUSER(testuser) the string 'testuser' will be folded to upper-case resulting in the following value being actually used by runmqsc:
+CLNTUSER(TESTUSER)
+And in this case, there is no record for the user TESTUSER (the record is for 'testuser').
+
+
+ANSWER
+NOTICE that the userid mentioned in the CLNTUSER field of the output of the DISPLAY CHLAUTH command is NOT surrounded by single quotes. 
+
+However, you MUST include the single quotes when specifying the value during an ACTION(REMOVE):
+
+SET CHLAUTH(*) TYPE(USERMAP) CLNTUSER('testuser') ACTION(REMOVE)
+1 : set CHLAUTH(*) TYPE(USERMAP) CLNTUSER('testuser') ACTION(REMOVE)
+AMQ8877: WebSphere MQ channel authentication record set.
+
+
+++ Example of record with more attributes
+
+Let's examine the case when a record has more attributes, such as:
+
+SET CHLAUTH(MY.CHANNEL) TYPE(USERMAP) CLNTUSER('client_1') USERSRC(MAP) MCAUSER('user_1') ADDRESS('*') ACTION(ADD)
+AMQ8877: WebSphere MQ channel authentication record set.
+
+display CHLAUTH(MY.CHANNEL)
+9 : display CHLAUTH(MY.CHANNEL)
+AMQ8878: Display channel authentication record details.
+CHLAUTH(MY.CHANNEL) TYPE(USERMAP)
+DESCR( ) CUSTOM( )
+ADDRESS(*) CLNTUSER(client_1)
+MCAUSER(user_1) USERSRC(MAP)
+
+You want to delete the record and you try the following command which is based on the command that worked well for a simpler case. But this time, it fails:
+
+SET CHLAUTH(MY.CHANNEL) TYPE(USERMAP) CLNTUSER('client_1') ACTION(REMOVE)
+AMQ8884: Channel authentication record not found.
+
+You try the original command that created the record, but changing the action to REMOVE:
+SET CHLAUTH(MY.CHANNEL) TYPE(USERMAP) CLNTUSER('client_1') USERSRC(MAP) MCAUSER('user_1') ADDRESS('*') ACTION(REMOVE)
+AMQ8885: Parameter not allowed for this action on a channel authentication record.
+
+The attribute USERSRC is not a valid parameter for the REMOVE action (see table below).
+Therefore, by removing this attribute, then the following command worked successfully to remove the record:
+SET CHLAUTH(MY.CHANNEL) TYPE(USERMAP) CLNTUSER('mengano') ADDRESS('*') ACTION(REMOVE) 
+AMQ8877: WebSphere MQ channel authentication record set.
+
+See:
+WebSphere MQ 8.0.0 > IBM MQ > Reference > Administration reference > MQSC reference > The MQSC commands > 
+SET CHLAUTH [http://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.ref.adm.doc/q086630_.htm]
+.
++ begin excerpt
+.
+Usage notes
+The following table shows which parameters are valid for each value of ACTION:
+.
+Action 
+Parameter ADD or REMOVE REMOVEALL
+REPLACE
+CHLAUTH X X X 
+TYPE X X X 
+CMDSCOPE X X X 
+ACTION X X X 
+ADDRESS X X
+ADDRLIST X X 
+CHCKCLNT X 
+CLNTUSER X X 
+MCAUSER X 
+QMNAME X X 
+SSLCERTI X X 
+SSLPEER X X 
+USERLIST X X 
+USERSRC X 
+WARN X 
+DESCR X 
+.
++ end excerpt
+
+
+Additional Search Words: uppercase lowercase upper lower case
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ MQSeries

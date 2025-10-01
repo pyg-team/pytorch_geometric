@@ -1,0 +1,100 @@
+Title: IBM Communication problem with the server prompting reload. - United States
+
+Text:
+async; communication problem; TPAEUI; TPAEPERFORMANCE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running Maximo 7.5.0.1, 7.5.0.2, 7.5.0.3 and 7.5.0.4, there may be issues or errors presented due to the introduction of asynchronous communication processes and changes in the Maximo Framework and exception handling.
+The issue can manifest in many different ways, and the underlying cause may need further troubleshooting in order to determine the exact problem. Below you will find a list of causes, possible fixes or configuration changes that will reduce the amount of interruption seen by users. 
+
+SYMPTOM
+Why the reload button? 
+
+When this message is displayed, the client (browser) has changes that the server does not. To ensure the state of the client and the server are the same, the framework forces the user to reload. After reload, the user should still be in the same application state as at the time of the error. 
+
+
+CAUSE
+This has been identified as a product defect under APAR IV31642 and APAR IV31643. However corrections for these defects do not fix the issues completely, but can provide some alleviation and better messaging to users when this problem occurs.
+The APARs have been released and are currently available in the 7.5.0.1 IFIX 004, 7.5.0.2 IFIX 004, 7.5.0.3 IFIX 002 and the 7.5.0.4 Fixpack.
+
+What can cause this error?
+
+The problem with the "Communication error" message is, it can be displayed for multiple reasons which can be perceived as one reoccurring problem.
+
+Here is a list of known reasons why this message is displayed: 
+
+The user cannot connect to the server. 
+User lost internet/network connection
+The server is down 
+A network problem
+Server refuses connection
+
+An unexpected exception occurred on the server. 
+Basically the client request made it to the Application server but some error prevented it from being handled properly by the Tpae application. Typically these are runtime errors that cannot be anticipated by the application. An example of this is the following exception in the server logs:
+
+com.ibm.ws.webcontainer.srt.SRTServletRequest parseParameters SRVE0133E: An error occurred while parsing parameters
+
+A User has multiple instances open sharing the same state.
+Tpae has a ui session object that maintains the current state of the user; what app they are in, what page they are, what record(s) they are viewing, any changes they made, etc. The framework keeps track of that state object the client is using by the uisessionid parameter that is sent along with each request Tpae makes. Since all browser windows and tabs share the same server session, each instance of Tpae opened in a browser window/tab needs a different ui session so the state of each window can be maintained independently. Unfortunately there are a few ways users can open new instances of Tpae that share the same ui session and they are:
+The user has a bookmarked Tpae link with the uisessionid parameter
+Here is an example of such a url:
+<server> /maximo/ui/ ?event=loadapp&value=meter&uisessionid=3333
+So if a user opens multiple instances of Tpae with this bookmark, the instances will share the same state. 
+The user opened multiple instances of Tpae with File > New Window or File > Duplicate Tab in IE or copies the url from an existing browser tab’s address bar (with the uisessionid parameter) and pastes that in a another window or tab. 
+One thing to understand is you can use Tpae in multiple browser windows and/or tabs, it’s how you open up those other instances that matter.
+
+Tpae Application has timed out waiting for a client request
+This is the original purpose for the communication error message. To ensure that the requests are handled by the Tpae in the same order they are sent from the browser, each request has a sequence number that the framework uses to maintain proper order in handling requests. That’s where the communication error comes in. The framework can’t wait forever for earlier sequenced events and will eventually timeout and send the communication error. When this happens, the changes made to the different fields will be lost.
+
+Http Server resending a long running request
+If the application server takes too long to handle a request, the Http Server will resend the request to the application server. The problem is Tpae does not like that, and rejects the "duplicate" request (because it already handled it) and it's the error response of the second request that is returned to the browser. Here is an example: A user is in the Service Request application updates a few fields and saves the record. For some reason that save takes 100 seconds to complete. After waiting 60 seconds for the application server to respond, the Http Server times out and resends the save request to the application server, Tpae errors (because it already handled that request) and the comm error is displayed to the user.
+
+
+DIAGNOSING THE PROBLEM
+Unfortunately there isn’t an easy way in existing releases to determine 100% the cause but there are few logged messages that can help. If you see the following message in the logs (SystemErr specifically):
+
+Ignoring out of order request. UISession 23 reqPageSeqNum: 7 OutOfOrderPageSeqNum: -1 Ignoring out of order request. UISession 23 reqPageSeqNum: 7 OutOfOrderPageSeqNum: -1 
+
+
+The important number in that message is OutOfOrderPageSeqNum: -1. It most likely was caused by the user having multiple tabs open sharing the same state. 
+
+Another message to look for is:
+Passed the wait time for handling the request. UISession: 23 nextRequestSeqNum: 7 seqnum:6
+
+You’ll notice that the nextRequestSeqNum (the sequence number the server is expecting) is greater than the seqnum (the sequence number sent on the request). In this case what most likely happened was the request was sent again by the Http Server. Now if you see that same message but the seqnum is greater than the nextRequestSeqNum:
+
+Passed the wait time for handling the request. UISession: 23 nextRequestSeqNum: 3 seqnum:4
+
+This means a request sent from the browser never made it to the Tpae application on the server. And this can occur for the number of reasons specified above
+
+As mentioned above one of the causes of the communication problem is the unexpected exception:
+com.ibm.ws.webcontainer.srt.SRTServletRequest parseParameters SRVE0133E: An error occurred while parsing parameters. {0}
+java.net.SocketTimeoutException: Async operation timed out
+
+It is believed this specific exception occurs as a result of an Internet Explorer bug when it tries to resend a request after an error occurs. This behavior is not seen when using FireFox. Here is a link to the suspected IE bug: http://support.microsoft.com/kb/895954 [http://support.microsoft.com/kb/895954]
+
+
+RESOLVING THE PROBLEM
+APAR IV31642 
+
+The description for this APAR states:
+Tpae/maximo 7.5 communication error occurring when having multiple instances open.
+The “fix” for this APAR does more than just address that issue; it gives the user a better understanding of why they are getting the Communication Problem message by showing a different message for each cause.
+
+APAR IV31643
+Was opened for Tpae to handle the resending of the request more gracefully and the fix does that. So now when the repeated request is sent to Tpae, the framework will recognize it and once the handling of the original request is completed, its response will be sent back in the repeated request (since that’s what the Http Server will send back to the browser).
+
+In the scenario where a user has a bookmarked URL with the uisession id parameter:
+The new property mxe.webclient.allowURLDefinedUISessionID was added in APAR IV31642 to prevent that. If disabled (set to 0) this property will ignore the uisessionid parameter when creating a new session state object. By default this property is enabled (even if the property doesn’t exist, it’s considered enabled). Typically disabling this property should not have any negative impact except in the case where you have some automated process that connects to Tpae.
+
+When the SRTServletRequest parseParameters SRVE0133E exception is seen:
+The first solution is to use FireFox instead of IE. So far there has not been any evidence that this error occurs with FireFox. The second involves a configuration change to the Http Server.
+The server can tell the browser to keep connections open for reuse. This is done by the Connection keep-alive response header value. This can be disabled by setting the KeepAlive directive to off in the HttpServer’s httpd.conf file. For more information on the KeepAlive directive here are a couple links:
+http://www-01.ibm.com/software/webservers/httpservers/doc/v2047/manual/ibm/en_US/9atperf.htm#keepa [http://www-01.ibm.com/software/webservers/httpservers/doc/v2047/manual/ibm/en_US/9atperf.htm]
+http://www-01.ibm.com/software/webservers/httpservers/doc/v2047/manual/mod/core.html#keepalive [http://www-01.ibm.com/software/webservers/httpservers/doc/v2047/manual/mod/core.html]
+IMPORTANT: It is not recommended that every client disable the KeepAlive directive. This can impact performance for clients with high latency. If you see the SRVE0133E exception on a rare occasion, it may not be worth the potential performance impact to prevent the error.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Control Desk

@@ -1,0 +1,22 @@
+Title: IBM How to resolve host name to IP address on Perimeter Server with FTP Client Adapter with Perimeter Server when DNS lookups not allowed in secured network - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to resolve host name to IP address on Perimeter Server with FTP Client Adapter with Perimeter Server when DNS lookups not allowed in secured network 
+
+SYMPTOM
+How to resolve host name to IP address on Perimeter Server with FTP Client Adapter with Perimeter Server when DNS lookups not allowed in secured network
+
+
+RESOLVING THE PROBLEM
+For GIS 4.3 and higher, a new parameter was introduced in the perimeter.properties file called *.forceRemoteDNS that allows the DNS lookup to occur at the remote perimeter server. This is a flag indicating whether to force DNS resolution at a remote perimeter server or the main server. 
+
+For more information, see Gentran Integration Suite, Property Files, Version 4.3 [http://public.dhe.ibm.com/software/commerce/doc/sb2bi/gis43/GIS43_PropertyFiles.pdf]
+
+ 
+
+HISTORICAL NUMBER
+ PRI12901
+SCI88955

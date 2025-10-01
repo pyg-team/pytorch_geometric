@@ -1,0 +1,34 @@
+Title: IBM Atlas Suite V6.0 User Guides: eDiscovery Objects and Features - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The guides in this section explain how to create and use the IBM Atlas Suite objects and features that are involved in eDiscovery.
+
+
+CONTENT
+
+
+
+ * Hold Notices. One of the most important aspects of a legal matter is that information that’s pertinent to the case must be identified and preserved. In IBM Atlas Suite, you can communicate the responsibility to preserve this information to custodians by creating a Hold Notice. The Notice describes the type of information that need to be preserved, and explains, to the custodian, how to confirm that the preservation has been established. 
+ * Interviews. During the course of a legal matter, attorneys and paralegals often have to conduct interviews in order to gather information that will help define the nature and scope of the matter. Atlas helps you define and distribute interview requests in a controllable and consistent fashion, and lets you track the responses from the interviewees. 
+ * Legal Notice Placeholders. In the construction of a legal Notice, you can use a set of placeholders that represent dynamic data such as the Notice recipient’s name, the name of the Attorney for the matter, a link to the recipient’s My Holds page, and so on. When the system sends the Notice to the recipients, it replaces the placeholders with actual values. 
+ * Legal Notice Approval. Before you send a Legal Notice to a set of recipients, you may need or want to have the Notice’s contents reviewed by your legal team. 
+ * Exporting Legal Documents. At some point during the life of a legal matter, you may need to retrieve, from Atlas, the documents that were collected for that matter. 
+ * Document Disposition. At some point, the documents that you've collected as part of a legal matter will need to be deleted from the Atlas database—because the matter has ended, or the files have exceeded their retention periods, as examples. 
+
+RELATED INFORMATION
+ IBM Atlas Suite V6 Product Documentation Library [http://www.ibm.com/support/docview.wss?uid=swg27021990]
+
+
+IBMAtlasSuite_UsersGuide_HoldNotices.pdf [/support/docview.wss?uid=swg27024085&aid=2] IBMAtlasSuite_UsersGuide_HoldNotices.pdf [/support/docview.wss?uid=swg27024085&aid=1] 
+
+IBMAtlasSuite_UsersGuide_Interviews.pdf [/support/docview.wss?uid=swg27024085&aid=4] IBMAtlasSuite_UsersGuide_Interviews.pdf [/support/docview.wss?uid=swg27024085&aid=3]
+IBMAtlasSuite_UsersGuide_LegalNoticePlaceholders.pdf [/support/docview.wss?uid=swg27024085&aid=6] IBMAtlasSuite_UsersGuide_LegalNoticePlaceholders.pdf [/support/docview.wss?uid=swg27024085&aid=5]
+IBMAtlasSuite_UsersGuide_LegalNoticeApproval.pdf [/support/docview.wss?uid=swg27024085&aid=8] IBMAtlasSuite_UsersGuide_LegalNoticeApproval.pdf [/support/docview.wss?uid=swg27024085&aid=7]
+IBMAtlasSuite_UsersGuide_ExportingLegalDocuments.pdf [/support/docview.wss?uid=swg27024085&aid=10] IBMAtlasSuite_UsersGuide_ExportingLegalDocuments.pdf [/support/docview.wss?uid=swg27024085&aid=9]
+IBMAtlasSuite_UsersGuide_DocumentDisposition.pdf [/support/docview.wss?uid=swg27024085&aid=12] IBMAtlasSuite_UsersGuide_DocumentDisposition.pdf [/support/docview.wss?uid=swg27024085&aid=11]
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Atlas eDiscovery Process Management

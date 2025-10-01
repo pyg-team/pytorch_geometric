@@ -1,0 +1,25 @@
+Title: IBM Security Bulletin: A security vulnerability has been identified in IBM Websphere shipped with IBM Security Access Manager for Enterprise Single Sign-On (CVE-2014-4263, CVE-2014-4244) - United States
+
+Text:
+PSIRT SECURITY BULLETIN
+
+SUMMARY
+ IBM Websphere is shipped as a component of IBM Security Access Manager for Enterprise Single Sign-On (ISAM ESSO). Information about two security vulnerabilities affecting IBM Websphere has been published in a security bulletin. 
+
+VULNERABILITY DETAILS
+Two security vulnerabilities have been identified in IBM WebSphere shipped with IBM Security Access Manager for Enterprise Single Sign-On (CVE-2014-4263 , CVE-2014-4244). Please consult the security bulletin "Security Bulletin: Multiple vulnerabilities in current IBM SDK for Java for WebSphere Application Server July 2014 CPU" [http://www-01.ibm.com/support/docview.wss?uid=swg21680418] for vulnerability details and information regarding fixes.
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Principal Product and Version(s) Affected Supporting Product and Version ISAM ESSO 8.0, 8.1,8.2 IBM Websphere 7.0 ISAM ESSO 8.2.1 IBM Websphere 8.0.0.5 GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,33 @@
+Title: IBM User details for notes created in web call center not displayed in application console - United States
+
+Text:
+ContactUser; Notes; user details; override TECHNOTE (FAQ)
+
+QUESTION
+ How do you display user details for notes created in Web Call Center (WCC) in Application Console in Sterling Order Management 9.3? 
+
+CAUSE
+User details of the notes entered in WCC are not displayed in Application console.
+
+
+ANSWER
+In WCC , user detail is retrieved from the path Notes/Note/User/UserName where as in Application Console, this value us retrieved fromNotes/Note/ContactUser.
+Use the workbench to edit the mashup and override the attribute name ContactUser with the value xml:CurrentUser:/User/@Username.
+
+Steps to workaround: 
+
+ 1. Login to WCC ( dev mode) and start customization on Add Note button.
+    
+    
+ 2. Go to data tab - Mashup calls - Behavior Mashups
+    
+    
+ 3. Select Mashup Reference ID saveNote and click on edit.
+    
+    
+ 4. In the Input XML , override ContactUser attribute with the value xml:CurrentUser:/User/@Username.
+    
+    
+ 5. Save the customization and exit.
+    
+    This will ensure the user details are now visible in Application console for notes added in Web call center.

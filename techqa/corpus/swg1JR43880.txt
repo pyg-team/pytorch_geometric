@@ -1,0 +1,265 @@
+Title: IBM JR43880: NULLPOINTEREXCEPTION OCCURS CAUSING APPLICATION INSTANCE TO FAIL - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.0.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035701]
+Version 8.5.0 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035702]
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+Version 7.5.1 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24033036]
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a variable in a business process diagram (BPD) is exposed as
+   "Available in search" (in Process Designer), then when an
+   instance of the BPD is executed, the first modification of that
+   variable succeeds, but any subsequent modification to any
+   variable other than the original causes the process instance to
+   fail with no visible error message.  In SystemOut.log (on the
+   server or cluster where the process application is deployed), a
+   NullPointerException with a stack trace similar to the following
+   is written:
+   
+   wle_ucaexcept E  CWLLG0181E:An exception occurred during
+   execution of task 1,239.  Error: java.lang.NullPointerException
+   
+   com.lombardisoftware.core.TeamWorksException:
+   java.lang.NullPointerException
+   at
+   com.lombardisoftware.core.TeamWorksEx
+   ception.asTeamWorksException(TeamWorksException.java:130)
+   at
+   com.lombardisoftware.bpd.runtime.engine
+   .quartz.AbstractBpdTask.execute(AbstractBpdTask.java:129)
+   ...
+   Caused by:
+   java.lang.NullPointerException
+   at
+   om.lombardisoftware.bpd.runtime.engine.
+   BPDInstanceDAO.processSearchableField(BPDInstanceDAO.java:1166)
+   at
+   com.lombardisoftware.bpd.runtime.engine
+   .BPDInstanceDAO.getSearchableValues(BPDInstanceDAO.java:1067)
+   at
+   com.lombardisoftware.bpd.runtime.engine
+   .BPDInstanceDAO.saveSearchableValues(BPDInstanceDAO.java:593)
+   at
+   com.lombardisoftware.bpd.runtime.engine
+   .BPDInstanceDAO.save(BPDInstanceDAO.java:251)
+   ...
+   at
+   com.lombardisoftware.server.core.TXComm
+   and.execute(TXCommand.java:69)
+   at
+   com.lombardisoftware.bpd.runtime.engine
+   .quartz.AbstractBpdTask.execute(AbstractBpdTask.java:100)
+   ... 14 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  from L3:
+   I made a null pointer check code change in BPDInstanceDAO class
+   and was able to complete the task without an issue except the
+   (PFS-0065) errors which is pdw related.
+   
+   Code change snippet
+   
+   else if (lastModificationTime == null || (modificationTime !=
+   null && (modificationTime.compareTo(lastModificationTime) >
+   0))) {
+                   updateValue = true;
+               }
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of BPM Express, BPM Standard and BPM  *
+   *                  Advanced.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If a variable in a business process     *
+   *                      diagram (BPD) is exposed as             *
+   *                      "Available in search" (in Process       *
+   *                      Designer), then when an                 *
+   *                      instance of the BPD is executed, the    *
+   *                      first modification of that variable     *
+   *                      succeeds, but any subsequent            *
+   *                      modification to any variable other      *
+   *                      than the original causes the process    *
+   *                      instance to fail with no visible error  *
+   *                      message.  In SystemOut.log (on the      *
+   *                      server or cluster where the process     *
+   *                      application is deployed), a             *
+   *                      NullPointerException with a stack       *
+   *                      trace similar to the following is       *
+   *                      written:                                *
+   *                      wle_ucaexcept E  CWLLG0181E:            *
+   *                      An exception occurred during            *
+   *                      execution of task 1,239.  Error:        *
+   *                      java.lang.NullPointerException          *
+   *                      com.lombardisoftware.core.TeamWorksExce *
+   *                      ption:                                  *
+   *                      java.lang.NullPointerException          *
+   *                      at                                      *
+   *                      com.lombardisoftware.core.TeamWorksEx   *
+   *                      ception.asTeamWorksException(TeamWorksE *
+   *                      xception.java:130)                      *
+   *                      at                                      *
+   *                      com.lombardisoftware.bpd.runtime.engine *
+   *                      .quartz.AbstractBpdTask.execute(Abstrac *
+   *                      tBpdTask.java:129)                      *
+   *                      ...                                     *
+   *                      Caused by:                              *
+   *                      java.lang.NullPointerException          *
+   *                      at                                      *
+   *                      om.lombardisoftware.bpd.runtime.engine. *
+   *                      BPDInstanceDAO.processSearchableField(B *
+   *                      PDInstanceDAO.java:1166)                *
+   *                      at                                      *
+   *                      com.lombardisoftware.bpd.runtime.engine *
+   *                      .BPDInstanceDAO.getSearchableValues(BPD *
+   *                      InstanceDAO.java:1067)                  *
+   *                      at                                      *
+   *                      com.lombardisoftware.bpd.runtime.engine *
+   *                      .BPDInstanceDAO.saveSearchableValues(BP *
+   *                      DInstanceDAO.java:593)                  *
+   *                      at                                      *
+   *                      com.lombardisoftware.bpd.runtime.engine *
+   *                      .BPDInstanceDAO.save(BPDInstanceDAO.jav *
+   *                      a:251)                                  *
+   *                      ...                                     *
+   *                      at                                      *
+   *                      com.lombardisoftware.server.core.TXComm *
+   *                      and.execute(TXCommand.java:69)          *
+   *                      at                                      *
+   *                      com.lombardisoftware.bpd.runtime.engine *
+   *                      .quartz.AbstractBpdTask.execute(Abstrac *
+   *                      tBpdTask.java:100)                      *
+   *                      ... 14 more                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Code that is tracking modifications to searchable variables
+   (for the Performance Data Warehouse) was not checking for a
+   null modification time in a comparison with the previous
+   modification time (to determine if a searchable variable was
+   updated); it was assuming the variable was modified,
+   resulting in the NullPointerException.  (Prior to and
+   including the first modification of a searchable variable, a
+   check for a null previous modification time was short
+   circuiting the check for current modificaton time and
+   therefore the issue did not occur in those cases.)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Adding a check for null modification time to the code
+   mentioned in the Problem Summary resolved the issue.
+   
+   An interim fix for Business Process Manager Version 7.5.1.0 has
+   been published to Fix Central.  Please refer to the separate
+   file that is automatically downloaded with the interim fix
+   for prerequisite information and installation/uninstallation
+   instructions.
+   
+   Additionally, Business Process Manager Version 7.5.1 Fix Pack
+   1 (7.5.1.1) contains the fix for this issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR43880
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-23
+   
+   
+ * CLOSED DATE
+   2012-11-06
+   
+   
+ * LAST MODIFIED DATE
+   2012-11-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

@@ -1,0 +1,23 @@
+Title: IBM Error 'DTXPlugin cannot be located' is encountered. - United States
+
+Text:
+WTX TX IIB DTXplugin cannot be located TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error 'DTXPlugin cannot be located' is encountered. 
+
+SYMPTOM
+Error 'DTXPlugin cannot be located' is shown if you "move over" the ITX Plugin-Node after installing IBM Transformation Extender (ITX) with IBM Integration Bus (IIB) Toolkit.
+
+
+CAUSE
+Two installations of IBM Transformation Extender (ITX) installed on the same system with IBM Integration Bus (IIB) Toolkit.
+
+ENVIRONMENT
+Using ITX V9.0.0.x with IIB10.0.0.x and two versions of ITX are installed on the same system.
+
+DIAGNOSING THE PROBLEM
+The TX Map node plugin displays an error in a new installation when you "move over" the ITX Plugin-Node.
+
+RESOLVING THE PROBLEM
+Use a new Work Space.

@@ -1,0 +1,164 @@
+Title: IBM PM41834: WAS SERVANT JOBLOG GETS PERMISSION ERRORS TRYING TO MAKE A DIRECTORY IN ROOT/ETC. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.2-TIV-ITCAMAD-IF0006: ITCAM for Application Diagnostics V7.1 FP2 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24031010]
+7.1.0.2-TIV-ITCAMAD-IF0007: ITCAM for Application Diagnostics V7.1 FP2 IF7 [http://www-01.ibm.com/support/docview.wss?uid=swg24031710]
+7.1.0.2-TIV-ITCAMAD-IF0010: ITCAM for Application Diagnostics V7.1 FP2 IF10 [http://www-01.ibm.com/support/docview.wss?uid=swg24032110]
+7.1.0-TIV-ITCAMAD-FP0003: ITCAM for Application Diagnostics V7.1 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032604]
+7.1.0.3-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP3 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032985]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After installing ITCAM ITCAM AD the following messages show up
+   in the z/OS joblog:
+   ICH408I USER(xxxxxxxx) GROUP(xxxxxx) NAME(WAS SERVANT REGION  )
+   562
+   /root/etc/ibm CL(DIRACC  ) FID(00000001000000010000000000000000)
+   INSUFFICIENT AUTHORITY TO MKDIR
+   ACCESS INTENT(-W-)  ACCESS ALLOWED(OTHER      R-X)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There needs to be a setting when the servant first starts up to
+   avoid trying to create files in <SYSTEM>/etc.
+   
+   Check the servant genericJvmArguments in server.xml or
+   via the
+   WAS Admin Console and make sure that the following settings are
+   included:
+   
+   -Djlog.propertyFileDir.CYN=/ctl/tcw/I1_V71/I11/runtime/was70.I11
+   .AppServerName
+   -Djlog.common.dir.CYN=/ctl/tcw/I1_V71/I11/runtime/was70.I11.AppS
+   erverName
+   -Dibm.common.log.dir=/ctl/tcw/I1_V71/I11/runtime/was70.I11.AppSe
+   rverName/logs
+   
+   If these are not already there, as a workaround, please add them
+   to the genericJvjArugments and recycle the servant.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  On startup ITCAM for AD 7.1 DC JFLT logging attempts to create a
+   directory for default jlog properties in the system /etc
+   directory (/etc/ibm/tivoli/common/cfg). If the servant user ID
+   does not have write access to the /etc directory a permission
+   error is issued (e.g. RACF ICH408I message).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ITCAM AD conmfiguration and maintenance upgrade now defines a
+   property jlog.common.dir.CYN  in java.dc.properties so that
+   JLog will not create a default jlog.properties file in /etc
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | interim fix | 7.1.0.2-TIV-ITCAMAD-IF0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM41834
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * REPORTED COMPONENT ID
+   5698B48DC
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-16
+   
+   
+ * CLOSED DATE
+   2011-08-08
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * FIXED COMPONENT ID
+   5698B48DC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

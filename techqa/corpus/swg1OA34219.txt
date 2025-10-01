@@ -1,0 +1,151 @@
+Title: IBM OA34219: TOLERATION SUPPORT FOR Z/OS V1.12 ON OMEGAMON XE FOR IMS V410 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  OMEGAMON Classic for IMS V420 requires some changes to
+   function in 31bit storage when the ASVT is above line.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All OMEGAMON II for IMS V5.6.0 on z/OS.      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Currency support on z/OS V1.12 for      *
+   *                      OMEGANON II.                            *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   OMEGAMON Classic for IMS V420 requires some changes to function
+   in 31bit storage when the ASVT is above line.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  KEYWORDS: ZOS112T/K ZOS113T/K ZOS0201T/K ZOS0202T/K
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Corrections to OMEGAMON Classic have been made to allow
+   execution below and above the line.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA34219
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG II FOR IMS
+   
+   
+ * REPORTED COMPONENT ID
+   5608A0300
+   
+   
+ * REPORTED RELEASE
+   560
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-09
+   
+   
+ * CLOSED DATE
+   2010-09-16
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA56833
+   
+   
+
+MODULES/MACROS
+ *     KOIMS0I0 KOIMS0J0 KOIMS0K0 KOIMS0L0
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG II FOR IMS
+   
+   
+ * FIXED COMPONENT ID
+   5608A0300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R560 PSY UA56833 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA56833]
+   UP10/09/22 P F009
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

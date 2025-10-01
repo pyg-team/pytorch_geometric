@@ -1,0 +1,33 @@
+Title: IBM C&DS fails to install to DB2 Express-C - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I decided to try to use DB2 Express-C (free) edition for the C&DS install on my IBM laptop. It nearly installed fine but failed at the creation of the reporting views.
+
+I'm aware that Express-C is not a supported platform - but MS SQL Server Express works so I thought I'd give it a try.
+
+The error was:
+
+Nov 08 2009 18:14:16 INFO : PEV Reporting View Installer: start step: Create PEV reporting views post install
+Nov 08 2009 18:14:16 ERROR: No match for database product name: 'null' in any of the following Regular Expressions:
+MySQL
+.*DB2/.*
+DB2 UDB for AS/400
+Oracle
+Microsoft SQL Server
+
+It looks like Express-C isn't correctly returning a database product name. I suspect that if this minor issue could be fixed then it would probably install fine. 
+
+RESOLVING THE PROBLEM
+A request to support the Express-C database has been submitted to C&DS Development.
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 86876

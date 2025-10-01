@@ -1,0 +1,37 @@
+Title: IBM ALERT:  Google Play Store Announcement of Blocking Apps Using Vulnerable Cordova Versions - United States
+
+Text:
+googleplay; google; google play; cordova FLASH (ALERT)
+
+ABSTRACT
+ The Google Play Store is notifying app developers that “Beginning May 9, 2016, Google Play will block publishing of any new apps or updates that use pre-4.1.1 versions of Apache Cordova. ” due to Apache Cordova pre-4.1.1 containing security vulnerabilities. 
+
+CONTENT
+IBM has assurance from Google that the Google Play Store will not block MobileFirst Platform Foundation apps that have the IBM patched distribution of Cordova for these CVEs. 
+Review, share and comment on this topic from the MobileFirst Platform BLOG IBM MobileFirst Platform Foundation Responds to Google Play Store Announcement of Blocking Apps Using Vulnerable Cordova Versions [https://developer.ibm.com/mobilefirstplatform/2016/02/16/ibm-mobilefirst-platform-foundation-responds-to-google-play-store-announcement-of-blocking-apps-using-vulnerable-cordova-versions/].
+
+
+
+
+
+
+OVERVIEW: 
+
+Google is suggesting that you should upgrade to Apache Cordova 4.1.1 or higher. While it is correct that open source Apache Cordova prior to version 4.1.1 contains these vulnerabilities, this is not the case for IBM MobileFirst Platform Foundation users who have applied the IBM iFixes for the vulnerabilities. 
+
+The iFixes are available from Fix Central with builds dating July 7, 2015 and later. 
+
+Note: The Cordova version embedded in IBM MobileFirst Platform Foundation / IBM Worklight cannot be upgraded to a higher version. You must apply the fixes from Fix Central to update Cordova. 
+ * IBM MobileFirst Platform Foundation iFixes [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+MobileFirst+Platform+Foundation&release=All&platform=All&function=all&source=fc] 
+ * IBM Worklight Consumer Edition iFixes [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Worklight+Consumer+Edition&release=All&platform=All&function=all&source=fc] 
+ * IBM Worklight Enterprise Edition iFixes [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Worklight+Enterprise+Edition&release=All&platform=All&function=all&source=fc]
+
+
+RELATED INFORMATION
+ Stackoverflow question about Apache Cordova [http://stackoverflow.com/questions/35288392/mobilefirst-vulnerable-version-of-apache-cordova/35288705#35288705]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Mobile- Speech and Enterprise Access IBM Worklight Application Development Apple iOS 6.2, 6.1, 6.0 Consumer, Enterprise

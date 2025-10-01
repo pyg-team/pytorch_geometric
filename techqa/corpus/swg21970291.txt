@@ -1,0 +1,13 @@
+Title: IBM Problem with MySQL datasource after migration to Netcool Impact 7.1 - United States
+
+Text:
+Netcool; impact; MySQL TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ Error on the impactserver-errors.log: JDBC Connection Pool could not connect to datasource as: username. 
+
+RESOLVING THE PROBLEM
+The username needs to have the permissions to read, write and update to the MySQL db.

@@ -1,0 +1,59 @@
+Title: IBM System requirements for IBM TXSeries for Multiplatforms V8.1 for Linux on x86 - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ The following tables provide you with a listing of supported IBM and vendor-acquired software for use with IBM TXSeries for Multiplatforms V8.1 for Linux on x86. 
+
+CONTENT
+
+This document provides information on IBM and vendor-acquired software that is compatible with TXSeries for Multiplatforms V8.1. The minimum maintenance levels are listed. TXSeries is not tested with every maintenance level of every product. In general, you can install and run with updates to supported product levels, if those updates are forward compatible. If you use later maintenance levels and experience problems, test with the levels specified in this document before contacting your IBM support representative. 
+
+For the supported software that is listed, refer to the respective product website for their system requirements and specifications. 
+
+Note: 
+
+ * TXSeries is a 32-bit product. All libraries linked with TXSeries must be 32-bit libraries. Most vendors offering 64-bit versions of their products also provide 32-bit client libraries. On 64-bit operating systems, TXSeries runs in 32-bit compatibility mode. 
+ * IBM recommends that you maintain your TXSeries system environments at the latest fix pack level. See TXSeries for Multiplatforms support policy statement [http://www.ibm.com/support/docview.wss?uid=swg21663762] for more details.
+
+Operating System 
+
+ 
+
+Software Version Notes Red Hat Enterprise Linux (RHEL) 5.8 
+6.3 1  * Supported on 32 bit operating system and on 64 bit operating system through 32 bit compatibility mode. 
+ * Korn Shell (ksh) is mandatory for TXSeries.
+
+
+1For RHEL 6.3, the following package is required:
+glibc-devel-2.12-1.80.el6.i686.rpm SUSE Linux Enterprise Server (SLES) 11 SP2 Compilers
+
+
+
+Software Version Notes GCC 4.1.2 for RHEL 5.8 
+4.4.6 for RHEL 6.3 
+4.3.4 for SLES 11 SP2 Supported with the version bundled with the operating system. MicroFocus Server Express COBOL 5.1 WP7 On SLES, Server Express 5.1 WP9 Hot Fix 2 is required to use External File Handler (EXTFH) functionality. IBM J2SE SDK 7.0 SR 5 [/support/docview.wss?uid=swg21656675&amp;aid=1] 
+Databases 
+
+Software Client Version Notes IBM DB2 UDB 9.7 FP 5 
+10.1 
+10.5 [/support/docview.wss?uid=swg21656675&amp;aid=1] Oracle 11.2.0.3 [/support/docview.wss?uid=swg21656675&amp;aid=1] Informix Client SDK 3.7 Supported with Informix Dynamic Server Version 11.70 FC 7. Sybase ASE 15.7 Only single phase XA is supported. Two phase XA is not supported. 
+Note: All the databases listed above are tested and supported with the 32-bit client versions. 
+Communication software
+
+
+
+Software Version Notes IBM Communication Server 7.0.0.1 [/support/docview.wss?uid=swg21656675&amp;aid=1] 
+Monitoring tools 
+
+Software Version Notes IBM Tivoli Monitoring 6.2.1 [/support/docview.wss?uid=swg21656675&amp;aid=1] 
+Integration Middleware 
+
+Software Version Notes IBM WebSphere MQ (WMQ) Any supported version of WMQ 
+(Only 64 bit edition of WMQ is supported) TXSeries V8.1 InterimServiceFix1 [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Other%2Bsoftware&product=ibm/WebSphere/TXSeries+for+Multiplatforms&release=All&platform=All&function=fixId&fixids=8.1.0.0-TXSeries-Linux-IF01&includeSupersedes=0] is required. Refer to WMQ System requirements [http://www.ibm.com/support/docview.wss?uid=swg27006467] page for more details. 
+Clients
+
+
+
+Software Version Notes IBM CICS Transaction Gateway Any supported version of IBM CICS Transaction Gateway. Refer to CICS Transaction Gateway System Requirements [http://www-01.ibm.com/software/htp/cics/ctg/reqs/] [http://www.ibm.com/software/htp/cics/connectors/]page for more details.

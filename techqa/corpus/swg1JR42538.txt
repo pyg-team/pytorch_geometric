@@ -1,0 +1,206 @@
+Title: IBM JR42538: CLASSCASTEXCEPTION IF SAP RA IS INSTALLED AT NODE SCOPE VS. EMBEDDED IN SERVICEDEPLOY EAR AND JR41511 IFIX IS INSTALLED. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The data binding files of WebSphere SAP
+   Adapter 7.0.0.4 are not generated during the application
+   installation of a 'serviceDeploy' EAR.  This missing files are
+   supposed to be generated in the path
+   
+   com/ibm/xmlns/prod/websphere/j2ca/sap
+   com/ibm/xmlns/prod/websphere/j2ca/sapout
+   
+      JR41511 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR41511] was installed to address one issue with this
+   application configuration.
+   But even with that APAR iFix installed, there is another
+   issue that needs to be addressed, which is what this APAR fixes.
+   
+      In order for the service deploy ear to load the SAP adapter
+   classes (CWYAP_SAPAdapter.jar), either a WebSphere shared
+   library is needed or the WPS binding code has to be able to
+   load the classes from the
+   WPS_HOME/lib/ext or WPS_HOME/plugins directory.
+      In a DMgr configuration, you can deploy the adapter at
+   "node scope"; in this case the Adapter jars
+   are not embedded in the module.
+      However, the module is not able to load the classes from
+   there.  But without this APAR fix, it cannot load the jar
+   from a Shared library or from the lib/ext or plugins directory.
+   
+   Therefore, JR41511 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR41511] is enhanced to load the XSD URI schema from
+   context class loader, where the JAR files containing the *.xsd
+   files, located in <WPS_HOME>/lib/ext, will be loaded by the
+   context class loader.
+   .--------------------------------------------
+      The following exceptions may be observed when this problem
+   is encountered.
+   
+   Exception:commonj.connector.metadata.MetadataException
+   
+   SourceId:com.ibm.ws.sca.binding.j2c.deploy.J2CGenerateDataBindin
+   gTask
+   ProbeId:1482
+   commonj.connector.metadata.MetadataException: Could not load the
+   databinding generator, invalid generator specified on the
+   dataBindingType:
+   com.ibm.j2ca.sap.emd.runtime.SAPIDocDataBindingGenerator
+   
+   .--------------------------------------------
+   [3/27/12 20:08:27:102 EDT] 00000051 EIS           Z
+   
+   com.ibm.ws.sca.binding.j2c.deploy.J2CGenerateDataBindingTask
+   com.ibm.ws.sca.binding.j2c.deploy.J2CGenerateDataBindingTask#148
+   2
+   Exception:
+     java.lang.ClassCastException:
+   org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl incompatible with
+   org.eclipse.xsd.util.XSDResourceImpl
+    at com.ibm.ws.sca.binding.j2c.deploy.J2CGenerateDataBindingTask
+   .findTypeInSchemaList(J2CGenerateDataBindingTask.java:1330)
+    at com.ibm.ws.sca.binding.j2c.deploy.J2CGenerateDataBindingTask
+   .generateDataBinding(J2CGenerateDataBindingTask.java:492)
+    at com.ibm.ws.sca.binding.j2c.deploy.J2CGenerateDataBindingTask
+   .caseImport(J2CGenerateDataBindingTask.java:1830)
+    at com.ibm.ws.sca.binding.j2c.deploy.J2CDeployTask.
+   generateDataBinding(J2CDeployTask.java:132)
+    at com.ibm.ws.sca.binding.j2c.deploy.J2CDeployTask.execute
+   (J2CDeployTask.java:87)
+    at com.ibm.ws.bpm.cmdfrmwrk.task.WBILazyInstantiationTask.
+   invokeTask(WBILazyInstantiationTask.java:322)
+    at com.ibm.ws.bpm.cmdfrmwrk.task.WBILazyInstantiationTask.
+   execute(WBILazyInstantiationTask.java:255)
+    at com.ibm.ws.bpm.cmdfrmwrk.task.WBIInstallFrameworkTask.
+   executeTasks(WBIInstallFrameworkTask.java:92)
+    at com.ibm.ws.bpm.cmdfrmwrk.task.WBIInstallFrameworkTask.
+   performTask(WBIInstallFrameworkTask.java:55)
+    at com.ibm.ws.bpm.deploy.delegator.DelegatingTaskProvider.
+   delegatePerformTask(DelegatingTaskProvider.java:458)
+    at com.ibm.ws.bpm.deploy.delegator.DelegatingTaskProvider.
+   performTask(DelegatingTaskProvider.java:424)
+    at com.ibm.ws.bpm.deploy.BPMTaskProvider.performTask
+   (BPMTaskProvider.java:100)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If possible include the generated databinding files in the
+   .ear, then this issue does not occur.  But there are some
+   cases where this is not possible.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  WebSphere Process Server V7 and later       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: EIS binding file not generated          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The data binding files of WebSphere SAP
+   Adapter 7.0.0.4 are not generated during the application
+   installation of a 'serviceDeploy' EAR.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The ifix was used to fix the SAP adapter binding file not
+   generated
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR42538
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-04-13
+   
+   
+ * CLOSED DATE
+   2012-06-09
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

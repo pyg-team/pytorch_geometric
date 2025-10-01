@@ -1,0 +1,179 @@
+Title: IBM IT18753: GETALLHIERARCHIESBYENTITYID TRANSACTION IS FAILING DUE TO ORA-01795 WITH 1000+ NODES - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you invoke getAllHierarchiesByEntityId Transaction, it is
+   failing due to  ORA-01795: maximum number of expressions in a
+   list is 1000  error. That's because you have all the Party Ids
+   belongs to hierarchy having more than 1000 nodes
+   
+   Error in the log:
+   com.dwl.base.util.DWLExceptionUtils -
+   com.ibm.pdq.runtime.exception.DataRuntimeException:
+   [pdq][10101][3.200.75] An error prevented the SQL query from
+   completing successfully.; Caused by:
+   java.sql.SQLSyntaxErrorException: ORA-01795: maximum number of
+   expressions in a list is 1000 at
+   com.ibm.pdq.runtime.internal.db.JdbcData.queryResultsInternal_(J
+   dbcData.java:162) at
+   com.ibm.pdq.runtime.internal.db.JdbcData.queryResultsWrapped_(Jd
+   bcData.java:171) at
+   com.ibm.pdq.runtime.internal.db.DataImpl.queryResults(DataImpl.j
+   ava:514) at
+   com.dwl.base.db.QueryConnection.queryResults(QueryConnection.jav
+   a:238) at
+   com.dwl.base.hierarchy.component.DWLHierarchyComponent.populateP
+   arentAndChildNodeCounts(DWLHierarchyComponent.java:5874) at
+   com.dwl.base.hierarchy.component.DWLHierarchyComponent.getAllHie
+   rarchyNodesByHierarchyId(DWLHierarchyComponent.java:997) at
+   com.dwl.base.hierarchy.component.DWLHierarchyComponent.getAllHie
+   rarchiesByEntityId(DWLHierarchyComponent.java:438) at
+   com.dwl.base.hierarchy.controller.DWLHierarchyFinder.getAllHiera
+   rchiesByEntityId(DWLHierarchyFinder.java:379) at
+   Proxyb4e34b8a_ba9f_46fc_9993_71ec2c541a03.getAllHierarchiesByEnt
+   ityId(Unknown Source) at
+   Proxyb4e34b8a_ba9f_46fc_9993_71ec2c541a03.getAllHierarchiesByEnt
+   ityId(Unknown Source) at
+   sun.reflect.GeneratedMethodAccessor521.invoke(Unknown Source)
+   ... ...
+   Caused by: java.sql.SQLSyntaxErrorException: ORA-01795: maximum
+   number of expressions in a list is 1000 at
+   oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:450)
+   at
+   oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:399)
+   at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:1059)
+   at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:522) at
+   oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:257)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  TBD
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Master Data Management Server implementations are        *
+   * affected by this issue                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * GETALLHIERARCHIESBYENTITYID TRANSACTION IS FAILING DUE TO    *
+   * ORA-01795 WITH 1000+ NODES                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customers facing this issue reported by this APAR should     *
+   * apply IBM InfoSphere Master Data Management Standard and     *
+   * Advanced Editions v11.5.0 Fix Pack 5  to gain resolution to  *
+   * this problem                                                 *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for this problem has been included in IBM InfoSphere
+   Master Data Management Standard and Advanced Editions v11.5.0
+   Fix Pack 5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT18753
+   
+   
+ * REPORTED COMPONENT NAME
+   MASTR DATA MGT
+   
+   
+ * REPORTED COMPONENT ID
+   5724S7800
+   
+   
+ * REPORTED RELEASE
+   B50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-11
+   
+   
+ * CLOSED DATE
+   2017-07-05
+   
+   
+ * LAST MODIFIED DATE
+   2017-07-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MASTR DATA MGT
+   
+   
+ * FIXED COMPONENT ID
+   5724S7800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB50 PSY
+   UP

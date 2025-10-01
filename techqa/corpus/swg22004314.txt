@@ -1,0 +1,28 @@
+Title: IBM Not getting carriage return at end of XML transactions - United States
+
+Text:
+no end of record character; multiple XML transactions in one file; incorrect XML file generated; Application to XML map TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Generating XML data, Application to XML map. At the end of the transaction it has the prolog of the next transaction on the same line. Also, at the end of the file there is no carriage return or line feed. CR/LF 
+
+SYMPTOM
+There are no errors generated. The output contains multiple documents, so technically invalid XML data.
+Example: </Invoice><?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+
+CAUSE
+While a single XML output file should not contain more than one Root Tag, the translator is not putting an end of record character at the end of the file.
+
+ENVIRONMENT
+XML Output (Application to XML map)
+Attempting to generate multiple transactions in one XML output file
+
+
+DIAGNOSING THE PROBLEM
+Application input file contains multiple documents - output is fine until it reaches the end of the first document (XML transaction) and the beginning of the next.
+Tried setting environment variable XML_OUTPUT_ENVELOPE to 1 on the UNIX server so it would split them prior to translation, but this removed the XML end tag of first transaction, the prolog of the next transaction and the Root tag of the second transaction.
+
+RESOLVING THE PROBLEM
+Put below extended rule on map in Post-Session AND On End of the Output (XML Root tag)
+writeblock("^0A");

@@ -1,0 +1,217 @@
+Title: IBM LO82439: USERS UNABLE ACCESS A DATABASE WHEN THEIR NAME STORED IN LTPATOK EN DIFFERES FROM THE NOTESDN MAPPING OF DIRECTORY ASSISTANCE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With directory assistance configured with NotesDN name mapping
+   to use CN
+   attribute of an LDAP user,  Domino ignores this and creates an
+   LTPAToken with a
+   fully hierarchical username rather than just the CN attribute of
+   the user.
+   in 8.5.1 domino worked fine and obeyed the directory assistance
+   record creating
+   the LTPAToken with the NotesDN (ie just the common name) :
+   10/15/2014￡03:55:44.32￡PM￡SSO￡API>￡Dumping￡memory￡of￡constructed
+   LTPAToken2￡before￡encryption￡step￡[254￡bytes].
+   00000000:￡7865￡6970￡6572￡313A￡3134￡3333￡3939￡3433￡￡￡'expire:1413
+   39934'
+   00000010:￡3634￡3636￡7524￡753A￡6573￡5C72￡643A￡6665￡￡￡'4666$u:user
+   \:def'
+   00000020:￡7561￡746C￡4957￡464D￡6C69￡4265￡7361￡6465￡￡￡'aultWIMFile
+   Based'
+   00000030:￡6552￡6C61￡2F6D￡4E43￡543D￡7365￡2074￡7355￡￡￡'Realm/CN=Te
+   st￡Us'
+   00000040:￡7265￡2531￡3431￡3331￡3933￡3339￡3434￡3636￡￡￡'er1%1413399
+   34466'
+   00000050:￡2536￡3663￡6371￡3567￡4F36￡554A￡7356￡5439￡￡￡'6%c6qcg56OJ
+   UVs9T'
+   00000060:￡5357￡2F54￡634B￡3867￡5139￡3631￡3747￡4255￡￡￡'WST/Kcg89Q1
+   6G7UB'
+   00000070:￡7976￡4878￡304F￡5A4A￡7333￡6D4D￡3144￡316F￡￡￡'vyxHO0JZ3sM
+   mD1o1'
+   00000080:￡536B￡6F30￡3061￡6143￡7136￡7452￡3774￡5552￡￡￡'kS0oa0Ca6qR
+   tt7RU'
+   but in 8.5.3FP6 domino creates the user name in the hierarchical
+   form :
+   10/15/2014￡03:14:13.00￡PM￡SSO￡API>￡Dumping￡memory￡of￡constructed
+   LTPAToken2￡before￡encryption￡step￡[270￡bytes].
+   00000010:￡3632￡3636￡7524￡753A￡6573￡5C72￡643A￡6665￡￡￡'2666$u:user
+   \:def'
+   00000020:￡7561￡746C￡4957￡464D￡6C69￡4265￡7361￡6465￡￡￡'aultWIMFile
+   Based'
+   00000030:￡6552￡6C61￡2F6D￡6E63￡543D￡7365￡2074￡7355￡￡￡'Realm/cn=Te
+   st￡Us'
+   00000040:￡7265￡2C31￡3D6F￡414D￡4B52￡4554￡5453￡632C￡￡￡'er1,o=MARKT
+   EST,c'
+   00000050:￡473D￡2542￡3431￡3331￡3234￡3635￡3235￡3636￡￡￡'=GB%1413425
+   65266'
+   00000060:￡2536￡3557￡416B￡5277￡3368￡2F45￡327A￡4E47￡￡￡'6%W5kAwRh3E
+   /z2GN'
+   00000070:￡5855￡5469￡497A￡6633￡5651￡4B51￡5053￡7568￡￡￡'UXiTzI3fQVQ
+   KSPhu'
+   00000080:￡386A￡3943￡6959￡734B￡6D77￡526D￡5962￡3654￡￡￡'j8C9YiKswmm
+   RbYT6'
+   00000090:￡7645￡6368￡332F￡386B￡6564￡5579￡582F￡7046￡￡￡'Evhc/3k8dey
+   U/XFp'
+   000000A0:￡6465￡576C￡3076￡4E2F￡5442￡7567￡6D74￡4463￡￡￡'edlWv0/NBTg
+   utmcD'
+   000000B0:￡4333￡7371￡5077￡4D74￡3031￡6851￡4E53￡6A4B￡￡￡'3CqswPtM10Q
+   hSNKj'
+   000000C0:￡4663￡2F6D￡6150￡6435￡556C￡5536￡6679￡6E49￡￡￡'cFm/Pa5dlU6
+   UyfIn'
+   000000D0:￡6F50￡6379￡6142￡4538￡346D￡3949￡5A68￡536D￡￡￡'PoycBa8Em4I
+   9hZmS'
+   000000E0:￡6945￡4879￡6769￡486D￡594C￡4A6B￡7A45￡5164￡￡￡'EiyHigmHLYk
+   JEzdQ'
+   000000F0:￡4E38￡3461￡6C70￡536D￡4957￡4B42￡4A52￡736C￡￡￡'8Na4plmSWIB
+   KRJls'
+   00000100:￡524B￡724F￡3349￡7A31￡7276￡4230￡3D77￡￡￡￡￡￡￡￡'KROrI31zvr0
+   Bw='
+   This causes problems because if an application has an ACL where
+   access is
+   granted via an LDAP group,  and that LDAP group has a list of
+   members defined
+   using only the Common Name then only a session with a common
+   name will allow
+   the user access.
+   If a user has an LTPAToken in there browser and they land on a
+   domino server
+   for the first time,  the Domino server will create them a
+   session based on the
+   LTPAToken Data for a hierarchical username.   Since that session
+   and
+   hierarchical username is NOT in the Members list of the LDAP
+   group in the ACL
+   they get asked to login again by being redirected to the domino
+   login screen.
+   After logging in they do get access but this is because now
+   there are actually
+   2 sessions on the domino server :
+   TELL HTTP SHOW USERS :
+   10/17/2014￡12:56:58￡PM￡￡There￡are￡2￡current￡HTTP￡user￡sessions
+   Test User1 is the session that was just created when the user
+   logged in via the
+   login screen
+   Test User1/XXXX/GB is the session created by what was stored
+   in the
+   presented LTPAToken.
+   Part of the problem here is also that this has changed since 851
+   which is where
+   the customer upgraded from.   In 8.5.1 LTPATokens stored just
+   the CN= name of the user ($NotesDN) as per the info in the DA
+   record however in
+   8.5.3 it doesnt,  its stores the user name per their LDAP DN
+   which is different.
+   Not clear to me if the problem is to do with the way LTPAToken
+   stores the
+   username in 8.53FP6 or if the problem is in the way the Map
+   Names in LTPA Token
+   overrules what the DA record says should be the $NotesDN.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Add user name in both common name and hierarchical format to the
+   LDAP group so
+   that both resolve
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The change team could not reproduce the problem or determined
+    that the problem has already been corrected.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# MCOA9Q4CPE.
+   The change team could not reproduce the problem or determined
+    that the problem has already been corrected.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO82439
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   853
+   
+   
+ * STATUS
+   CLOSED UR5
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-21
+   
+   
+ * CLOSED DATE
+   2015-12-03
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

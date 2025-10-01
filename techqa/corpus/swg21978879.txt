@@ -1,0 +1,28 @@
+Title: IBM Security Bulletin: Multiple security vulnerabilities have been identified in IBM WebSphere Application Server shipped with IBM Integrated Information Core - Oracle CPU January 2016 - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Oracle released the January 2016 critical patch updates which contain multiple fixes for security vulnerabilities in the IBM Java Development Kit that is included with the IBM WebSphere Application Server. 
+
+VULNERABILITY DETAILS
+New IBM WebSphere Application Server updates are available that include an updated IBM Java Virtual Machine to solve several security vulnerabilities. IBM Java Virtual Machine has been updated to incorporate those updates. 
+For information about how to download and install the IBM WebSphere Application Server January 2016 critical patch updates, see the IBM WebSphere Application Server Security Bulletin at the following link:
+Security Bulletin: Multiple vulnerabilities in IBM® Java SDK affect WebSphere Application Server January 2016 CPU (CVE-2016-0475, CVE-2016-0466, CVE-2015-7575, CVE-2016-0448) [http://www.ibm.com/support/docview.wss?uid=swg21975424]
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Principal Product and Version(s) Affected Supporting Product and Version IBM Integrated Information Core V1.5, V1.5.0.1 and V1.5.0.2 IBM WebSphere Application Server V7.0 GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

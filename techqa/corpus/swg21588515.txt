@@ -1,0 +1,90 @@
+Title: IBM Launchpad hangs at 41% during a typical installation for the IBM Business Process Server (BPM) products - United States
+
+Text:
+bpm751; typical install; launchpad; hang; 41% TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Launchpad hangs at 41% when you install an IBM Business Process Manager product using the typical installation method in some Microsoft Windows environments. 
+
+SYMPTOM
+The following screen capture shows the Launchpad has stopped at 41% complete: 
+
+
+
+[/support/docview.wss?uid=swg21588515&aid=1] [/support/docview.wss?uid=swg21588515&aid=1]
+
+
+
+In the Launchpad log files, you find the following lines as the last entry:
+
+1322802963546 I: Running install step 4 of 7 1322802963562 I: Running imcl install 1322802963625 I: id: 7.5.1.0-WS-ATLAS-IFJR41201 7.5.1.0-WS-ATLAS-IFJR41203 7.5.1.0-WS-BPM-IFJR41195 7.5.1.0-WS-BPMPC-IFJR41200 7.0.0.19-WS-WAS-IFPM37925 7.0.0.19-WS-WAS-IFPM43353 7.0.0.19-WS-WAS-IFPM43364 7.0.0.19-WS-WAS-IFPM43561 7.0.0.19-WS-WAS-IFPM45697 7.0.0.19-WS-WAS-IFPM47956 7.0.0.19-WS-WAS-IFPM48489 7.0.0.19-WS-WAS-IFPM49205 7.0.0.19-WS-WAS-IFPM49452 7.0.0.19-WS-WAS-IFPM50399 7.0.0.19-WS-WAS-IFPM51383 7.0.0.19-WS-WAS-IFPM51899 7.0.0.19-WS-WAS-IFPM52125 7.0.0.19-WS-WASND-IFPM50455 1.0.0.9-WS-WASXML-IFPM51341 1322802963625 I: location: C:\IBM\BPM\v7.5 1322802963625 I: repository: http://public.dhe.ibm.com/software/websphere/bpm/repositories/server/bspace/751/updates/fixes/atlas/./atlas.7.5.1.0.fixes/./7.5.1.0-WS-ATLAS-IFJR41201,http://public.dhe.ibm.com/software/websphere/bpm/repositories/server/bspace/751/updates/fixes/atlas/./atlas.7.5.1.0.fixes/./7.5.1.0-WS-ATLAS-IFJR41203,http://public.dhe.ibm.com/software/websphere/bpm/repositories/server/bpmadv/751/updates/fixes/bpm/./bpm.7.5.1.0.fixes/./7.5.1.0-WS-BPM-IFJR41195,http://public.dhe.ibm.com/software/websphere/bpm/reposito...
+
+
+
+Note: The Launchpad log file path is specific to your environment. For example: <WindowsTEMP_DIR>/Temp/1/IBM_LaunchPad_BPM_1322801669906/typical_install.log 
+
+
+CAUSE
+A typical installation using LaunchPad completes the following tasks:. 
+
+ *  Installs the product 
+ *  Installs the recommended interim fixes from the external product repository. 
+ *  Creates a profile 
+
+
+After completing the product installation, Lauchpad invokes Installation Manager to download the recommended interim fixes from the external product repository. In some Windows environments, the Installation Manger never gets invoked and the Launchpad keeps waiting for the Installation Manager to complete the operation. 
+
+This issue has been identified as a product defect under APAR JR42324
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, see the following sections: 
+
+Resolving the problem if you see it hang 
+
+Avoiding the problem in a new Windows environment 
+
+ 
+
+Resolving the problem if you see it hang 
+
+To resolve the problem you stop the Launchpad, complete the interim fix installation, and create a profile manually using the following steps. 
+
+ 1. Check the version information using the <BPMinstall>/bin/versioninfo command and make sure the product installation has been completed. You should see that the following packages are installed based on the versioninfo output:  * WebSphere Application Server Version 7.0.0 Fix Pack 19 
+     * WebSphere Application Server Feature Pack for XML 
+     * WebSphere Application Server Feature Pack for SCA (for IBM Business Process Manager Advanced only) 
+     * IBM Business Process Manager Version 7.5.1 product pack 
+       
+       
+    
+    
+ 2. Click Cancel on the Launchpad panel. If the Launchpad does not respond after few minutes, kill the process using Windows Task Manager.
+    
+    
+ 3. Start the Installation Manger and install all the recommended interim fixes [http://www.ibm.com/support/docview.wss?uid=swg27023411].
+    
+    
+ 4. Use the Profile Management tool (PMT) or the manageprofiles command to create the desired profile [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=/com.ibm.wbpm.imuc.sbpm.doc/topics/ccnfg_profiles_create_aug.html] 
+
+
+Avoiding the problem in new Windows environment 
+
+ 
+
+This problem is seen only for certain windows environments with external access to the Internet. You can use a custom installation [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=/com.ibm.wbpm.imuc.sbpm.doc/topics/tins_custom_standard.html] where the product is installed using the Installation Manger interface and you will not encounter this problem. 
+
+ 
+
+You can avoid the problem by installing the patch for the launchpad defect JR42324. Use the instructions documented for the defect JR42324: Launchpad hangs at 41%. [http://www.ibm.com/support/docview.wss?uid=swg24032300]
+
+RELATED INFORMATION
+#Recommended fixes: IBM Business Process Manager 7.5.1 [http://www.ibm.com/support/docview.wss?uid=swg27023411]
+Custom installation: IBM Business Process Manager 7.5.1 [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=/com.ibm.wbpm.imuc.sbpm.doc/topics/tins_custom_standard.html]
+Creating and augmenting profiles [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=/com.ibm.wbpm.imuc.sbpm.doc/topics/ccnfg_profiles_create_aug.html]
+Lauchpad patch JR42324 for 41% hang defect [http://www.ibm.com/support/docview.wss?uid=swg24032300]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Installation / Configuration 7.5.1 Business Integration IBM Business Process Manager Express Installation / Configuration Windows 7.5.1

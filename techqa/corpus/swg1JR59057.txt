@@ -1,0 +1,161 @@
+Title: IBM JR59057: SECURITY APAR - CVE-2017-3737 CVE-2017-3738 - OPENSSL VULNERAB ILITIES IN NODE.JS MIGHT AFFECT THE IBM BPM CONFIGURATION EDITOR - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+8.6.0.0-WS-BPM-IFJR59057 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Express&fixids=8.6.0.0-WS-BPM-IFJR59057&source=SAR]
+8.6.0.201712-WS-BPM-IFJR59057 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Express&fixids=8.6.0.201712-WS-BPM-IFJR59057&source=SAR]
+8.5.7.201706-WS-BPM-IFJR59057 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.7.201706-WS-BPM-IFJR59057&source=SAR]
+8.5.6.2-WS-BPM-IFJR59057 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.6.2-WS-BPM-IFJR59057&source=SAR]
+8.5.5.0-WS-BPM-IFJR59057 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPM-IFJR59057&source=SAR]
+bpm.8600.cf2018.03.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8600.cf2018.03.delta.repository&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following vulnerabilities affect only IBM Business Process
+   Manager (BPM) users who use the Configuration editor.
+   
+   CVEID: CVE-2017-3738
+   DESCRIPTION: OpenSSL could allow a remote attacker to obtain
+   sensitive information, caused by an overflow bug in the AVX2
+   Montgomery multiplication procedure used in exponentiation with
+   1024-bit moduli. An attacker could exploit this vulnerability to
+   obtain information about the private key. Note: In order to
+   exploit this vulnerability, the server would have to share the
+   DH1024 private key among multiple clients, which is no longer an
+   option since CVE-2016-0701.
+   CVSS Base Score: 3.1
+   CVSS Temporal Score: See
+   https://exchange.xforce.ibmcloud.com/vulnerabilities/136078 for
+   the current score
+   CVSS Environmental Score*: Undefined
+   CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:L/UI:N/S:U/C:L/I:N/A:N)
+   
+   CVEID: CVE-2017-3737
+   DESCRIPTION: An unspecified vulnerability in multiple Oracle
+   products could allow an unauthenticated attacker to cause low
+   confidentiality impact, low integrity impact, and high
+   availability impact.
+   CVSS Base Score: 5.3
+   CVSS Temporal Score: See
+   https://exchange.xforce.ibmcloud.com/vulnerabilities/136077 for
+   the current score
+   CVSS Environmental Score*: Undefined
+   CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use a text editor to modify the BPMConfig properties files.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix that update the version of Node.js embedded in the
+   Configuration editor is available for IBM BPM V8.5.5.0, V8.5.6.0
+    CF02, V8.5.7 CF2017.06, V8.6.0.0 CF2017.09, and V8.6.0.0
+   2017.12, and will be included in future releases.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR59057
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-01-29
+   
+   
+ * CLOSED DATE
+   2018-03-23
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS

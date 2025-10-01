@@ -1,0 +1,147 @@
+Title: IBM PI56584: UNABLE TO SELECT SSL PROTOCOL TLSV1.0, TLSv1.1, or TLS1.2 FOR THE WEB SERVER PLUGIN - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IHS server fails to connect  to WebSphere for z/OS using SSL
+   Protocol TLSv 1.0, TLS 1.1, or TLS 1.2
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V8.0 and V8.5                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: WebSphere's HTTP Plugin on z/OS can     *
+   *                      not  use TLS 1.0, 1.1, 1.2              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   WebSphere's HTTP Plugin on z/OS can't use TLS 1.0, 1.1, 1.2
+   when using secure sockets to WebSphere.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The HTTP Plugin has been updated to use TLS 1.0, 1.1, 1.2 on
+   z/OS.  Note:  This capability is already available on the
+   other Distributed systems.
+   
+   APAR PI56584 is currently targeted for inclusion in Fix Packs
+   8.0.0.13 & 8.5.5.10 of WebSphere Application Server V8.0 and
+   V8.5.
+   
+   Please refer to the Recommended Updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   In addition, please refer to URL:
+   http://www.ibm.com/support/docview.wss?rs=404&uid=swg27006970 [http://www.ibm.com/support/docview.wss?rs=404&uid=swg27006970]
+   for Fix Pack PTF information.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI56584
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-03
+   
+   
+ * CLOSED DATE
+   2016-02-26
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

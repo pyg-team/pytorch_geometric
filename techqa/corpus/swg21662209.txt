@@ -1,0 +1,85 @@
+Title: IBM Configuring the Message Bus integration for HTTP - United States
+
+Text:
+nco_p_xml; nco_g_xml; http; http; httpTransport.properties; transformers.xml TECHNOTE (FAQ)
+
+QUESTION
+ XML : How is the XML probe and gateway configured for HTTP? 
+
+ANSWER
+
+For HTTP and HTTPS the Message bus integration works as follows:
+* The XML probe listens on a given port for the XML data.
+* The XML gateway sends XML data from the object server to a given host/port.
+
+You can therefore use both integrations to test and confirm the other is configured and working as expected.
+
+For example:
+
+In this configuration:
+
+* port 5555 is available for use and was checked using netstat:
+netstat -na | grep 5555
+
+* The Object Server's XML_SRC and XML_TGT are running.
+nco_ping XML_SRC 
+nco_ping XML_TGT 
+
+* G_XML added to the omni.dat file, and nco_igen run so it is ready for use.
+
+The probe and gateway were then configured as shown:
+
+XML Gateway
+
+Gateway property file : G_XML.props
+Gate.XMLGateway.TransportType : 'HTTP'
+Gate.Reader.Server : 'XML_SRC'
+Name : 'G_XML'
+MessageLog : '$OMNIHOME/log/G_XML.log'
+PropsFile : '$OMNIHOME/gates/G_XML/G_XML.props'
+Gate.MapFile : '$OMNIHOME/gates/G_XML/xml.map'
+Gate.StartupCmdFile : '$OMNIHOME/gates/G_XML/xml.startup.cmd'
+Gate.Reader.TblReplicateDefFile : '$OMNIHOME/gates/G_XML/xml.reader.tblrep.def'
+Gate.XMLGateway.TransformerFile : '$OMNIHOME/gates/G_XML/transformers.xml'
+Gate.XMLGateway.TransportFile : '$OMNIHOME/gates/G_XML/httpTransport.properties'
+Gate.XMLGateway.MessageID : 'netcoolEvents'
+#EOF
+
+Transport property file : httpTransport.properties
+clientURL=[http]://localhost:5555
+
+Transformer configuration file: transformers.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:transformers
+xmlns:tns="[http]://item.tivoli.ibm.com/omnibus/netcool/transformer"
+xmlns:xsd="[http]://www.w3.org/2001/XMLSchema">
+<!-- Northbound (gateway) transformer definitions -->
+<tns:transformer name="netcoolEvents" type="northbound" endpoint="[http]://localhost:5555" className="com.ibm.tivoli.netcool.integrations.transformer.EmptyTransformer">
+</tns:transformer>
+</tns:transformers>
+
+
+XML Probe
+
+Probe property file : xml.props
+Server : 'XML_TGT'
+TransportType : 'HTTP'
+TransformerFile : '/opt/IBM/tivoli/netcool/omnibus/probes/ nco_p_xml/transformers.xml'
+TransportFile : '/opt/IBM/tivoli/netcool/omnibus/probes/ nco_p_xml/httpTransport.properties'
+#EOF
+
+Transport property file : httpTransport.properties 
+serverPort=http:5555 [http:5555]
+B.2.3 transformers.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:transformers
+xmlns:tns="[http]://localhost"
+xmlns:xsd="[http]://www.w3.org/2001/XMLSchema">
+<!-- Southbound (probe) transformer defintions -->
+<tns:transformer name="netcool2nvpairs" type="southbound" endpoint="http:5555 [http:5555]" className="com.ibm.tivoli.netcool.integrations.transformer.XSLTTransformer">
+<tns:property name="xsltFilename" type="java.lang.String" value="${OMNIHOME}/java/conf/netcool2nvpairs.xsl" description="XSLT file for converting Netcool events to name/value pairs"/>
+</tns:transformer>
+</tns:transformers>
+
+
+*( '[ ]' should be omitted from your URL values)

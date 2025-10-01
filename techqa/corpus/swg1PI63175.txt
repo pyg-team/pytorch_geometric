@@ -1,0 +1,160 @@
+Title: IBM PI63175: UPGRADE TO V8.5.5.9 GENERATES A WSDL CLASSCASTEXCEPTION - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Upgrading to WAS v8.5.5.9 generates this exception:
+   
+   java.lang.ClassCastException:
+   com.ibm.wsdl.extensions.schema.SchemaImpl incompatible with
+   javax.wsdl.extensions.UnknownExtensibilityElement
+   
+   The WebServices application initially runs successfully and
+   eventually generates the exception when the web service is
+   invoked or the WSDL is retrieved.
+   
+   This is caused by a regression in the web services component
+   introduced in APAR PI53589 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI53589].
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All JAX-WS users of IBM WebSphere           *
+   *                  Application Server                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: JAX-WS application fails with a         *
+   *                      java.lang.ClassCastException in the     *
+   *                      log after upgrading to 8.5.5.9          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   JAX-WS application fails with java.lang.ClassCastException:
+   com.ibm.wsdl.extensions.schema.SchemaImpl incompatible with
+   javax.wsdl.extensions.UnknownExtensibilityElement in the log
+   after upgrading to 8.5.5.9
+   The WebServices application initially runs successfully and
+   eventually generates the exception when the web service is
+   invoked or the WSDL is retrieved.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Updated JAXB RI and Web service code that reads WSDL files,
+   back to the old behavior in 8.5.5.8.
+   
+   
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.10.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI63175
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-26
+   
+   
+ * CLOSED DATE
+   2016-08-15
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

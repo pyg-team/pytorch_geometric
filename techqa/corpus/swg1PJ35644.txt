@@ -1,0 +1,183 @@
+Title: IBM PJ35644: PASSWORD UPDATE WINDOW FAILS TO OPEN WHEN LOGGING IN FROM IMAGE REQUEST PAGE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ***PLEASE PROVIDE THE FOLLOWING INFORMATION
+   THIS FIELD IS REQUIRED.***
+   Description of Problem (full details)
+   During the login process, when the warning window pops up
+   informing a user that a password is about to expire, they
+   should be able to click on OK and have a window pop up to
+   change their password. This works correctly when triggered by
+   home.asp.  However, when the login process is triggered by a
+   direct call to docview.asp, the password change window fails
+   to open after clicking OK.
+   How long has the problem been occurring (recent changes)? :
+   Since creation of IS 4.0 SP5
+   Does this occur on more than one station / server? :
+   All workstations
+   Is there a workaround? :
+   Update password from home page
+   What is the impact to the customer/system? :
+   Customer normally opens images directly, not by navigating
+   from home page.  Causes problems when password is due to
+   expire.
+   Can the problem be replicated on an internal system?  Y or N  Y
+   By Who (L3, Support, etc..)
+   L2 Support
+   Steps to Reproduce:
+   1  Configure user so password is due to expire within 30 days.
+   2  Call image directly in browser (ex:
+   http://hacssfn007/idmws/DocView.asp?Library=DefaultIMS:HACIMAGE
+   0:FileNet&ID=76260836 [http://hacssfn007/idmws/DocView.asp?Library=DefaultIMS:HACIMAGE0:FileNet&ID=76260836]
+   3  Login window pops up.  Enter login and password.
+   4  Password expiration warning window pops up. Click on ok.
+   Actual Results:
+   Warning window closes, but password change window does not
+   open.  Web Services proceeds as it normally would after a
+   successful login, so user can not change password.
+   Expected Results:
+   Password change window should appear, allowing the user to
+   change their password.
+   Are there any similar or related Defects? If Y provide ECMDB #s
+   No
+   What logs were collected and where are they located?
+   NA
+   Configuration/Environment :
+   Server OS : Windows 2003 Server
+   Client OS : Windows XP
+   Database : SQL 2000
+   Network:
+   App Server :
+   Browser : IE6
+   Note if non US Language:
+   Other Product Component Versions:
+   Customer has WS 3.3 Patch 29, Support used WS 4.0.2 Patch 4
+   Non Web Environment  Y or N  N
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Server OS : Windows 2003 Server                              *
+   * Client OS : Windows XP                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * During the login process, when the warning window pops up    *
+   * informing a user that a password is about to expire, they    *
+   * should be able to click on OK and have a window pop up to    *
+   * change their password. This works correctly when triggered   *
+   * by home.asp. However, when the login process is triggered by *
+   * a direct call to docview.asp, the password change window     *
+   * fails to open after clicking OK.                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IDMWS 4.0.2 FP 5.                                 *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Users sometimes open images directly, not by navigating from
+   home page but E-mailed URL link. After applying IDMWS 4.0.2
+   FP5, when password is due to expire, the password change
+   window is opened after clicking OK and password is changed
+   properly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ35644
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB SERVICES
+   
+   
+ * REPORTED COMPONENT ID
+   5724S0300
+   
+   
+ * REPORTED RELEASE
+   330
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-02
+   
+   
+ * CLOSED DATE
+   2009-06-01
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB SERVICES
+   
+   
+ * FIXED COMPONENT ID
+   5724S0300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R402 PSY
+   UP

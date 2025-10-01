@@ -1,0 +1,135 @@
+Title: IBM HD85208: ADD MORE DB2 SETUP RECOMMODATIONS IN FETCHCONTENTSETUP FOR      COMMONSTORE FAST INDEXER - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The FetchContentSetup for CommonStore Fast Indexer
+   shows different recomodations how to change DB2 Configuration
+   in order to have better performance and not to run into known
+   problems.
+   
+   Four more options are added to this suggested set of options:
+   NUM_IOCLEANERS, NUM_IOSERVERS, SORTHEAP and buffer pool
+   ICMLSFREQBP4 size
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The FetchContentSetup for CommonStore Fast Indexer shows
+   differentrecommendations on DB2 Configuration in order to
+   have better performance and not to run into known problems.
+   
+   Four more options are added to this suggested set of options:
+   NUM_IOCLEANERS, NUM_IOSERVERS, SORTHEAP and buffer pool
+   ICMLSFREQBP4 size
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem has been solved with 8_4_0-CS-UDFEXIT-IF0040
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD85208
+   
+   
+ * REPORTED COMPONENT NAME
+   CM CS FOR EXCH
+   
+   
+ * REPORTED COMPONENT ID
+   5724B8500
+   
+   
+ * REPORTED RELEASE
+   840
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-09
+   
+   
+ * CLOSED DATE
+   2009-09-17
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CM CS FOR EXCH
+   
+   
+ * FIXED COMPONENT ID
+   5724B8500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R840 PSY
+   UP

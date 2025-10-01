@@ -1,0 +1,172 @@
+Title: IBM PM32727: THE HEAP SIZE % FREE MUST BE CALCULATED BASED ON -XMX AND NOT ALLOCATED HEAP - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.2-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP2 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24030518]
+7.1.0.2-TIV-ITCAMAD-IF0006: ITCAM for Application Diagnostics V7.1 FP2 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24031010]
+7.1.0.2-TIV-ITCAMAD-IF0007: ITCAM for Application Diagnostics V7.1 FP2 IF7 [http://www-01.ibm.com/support/docview.wss?uid=swg24031710]
+7.1.0.2-TIV-ITCAMAD-IF0010: ITCAM for Application Diagnostics V7.1 FP2 IF10 [http://www-01.ibm.com/support/docview.wss?uid=swg24032110]
+7.1.0-TIV-ITCAMAD-FP0003: ITCAM for Application Diagnostics V7.1 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032604]
+7.1.0.3-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP3 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032985]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description:
+   The heap size % free is being calculated based on the current
+   allocated heap rather than the maximum heap size available.
+   The heap size % free must be calculated based on -Xmx
+   and not the current allocated heap size.
+   
+   Users affected:
+   All customers using the TEP interface
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   *
+   * ITCAM for WebSphere 6.1 and AD 7.1 users who want to monitor
+   * available heap space through the TEP.
+   *
+   ****************************************************************
+   *
+   * PROBLEM DESCRIPTION:
+   *
+   * The "Heap Used (%)" column in the Garbage Collection Analysis
+   * workspace displays the percentage value based on the currently
+   * allocated heap size.  This is not meaningful in most cases
+   * and a better data point to monitor would be to base it on the
+   * maximum heap size specified for the JVM (for example, through
+   * the -Xmx parameter).  This way, a situation can be set up to
+   * alert the user when the used heap size reaches a certain
+   * percentage compared to the maximum heap size.
+   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A new attribute called "Kbytes Max Heap" has been added to the
+   "Garbage Collection Analysis" attribute group that contains the
+   maximum heap size for the JVM. Additionally, the "Heap Used (%)"
+   is now calculated baesd on this value (used heap / max heap).
+   
+   However, to display the "Kbytes Max Heap" in the workspace
+   itself, a new query needs to be created from the "Garbage
+   Collection Analysis" attribute group and assigned to the
+   workspace table & graphs.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.1.0-TIV-ITCAM_TEMA_WAS-FP0006
+     | interim fix | 7.1.0.2-TIV-ITCAMAD-IF0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM32727
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS DIS T
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62TM
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-15
+   
+   
+ * CLOSED DATE
+   2011-06-17
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS DIS T
+   
+   
+ * FIXED COMPONENT ID
+   5724L62TM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

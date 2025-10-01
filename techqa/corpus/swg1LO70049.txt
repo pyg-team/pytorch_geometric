@@ -1,0 +1,187 @@
+Title: IBM LO70049: DOMINO SERVER IS HANGING WITH "WAITING FOR WRITE LOCK ON RWSEM 0X082A SERVER BLOCK SEMAPHORE" - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Description&#65496;
+   I found in the semdebug the following semaphores for
+   different task and threads.
+   
+   WAITING FOR WRITE LOCK ON RWSEM 0x082A Server block semaphore
+   
+   
+   In checking the NSD, I found lockspin for different task.
+   
+   nserver
+   nHTTP
+   nAMgr
+   
+   
+   I found the following stacks for this issue in the NSD
+   
+   06/04/2012 11:48:15 AM CDT sq="0052864F" THREAD [0A0C:11EA-17A8]
+   WAITING FOR WRITE LOCK ON RWSEM 0x082A Server block semaphore
+   (@140B8FA0) (R=1,W=2,WRITER=1750:0950,OWNER=1750:0950) FOR
+   30000 ms
+   
+   ############################################################
+   ### thread 1/3: [nSMDreal: 1750: 0950]
+   ### FP=0x0012f878, PC=0x76f3135a, SP=0x0012f878
+   ### stkbase=0x00130000, total stksize=81920, used stksize=1928
+   ############################################################
+    [ 1] 0x76f3135a ntdll.ZwWaitForSingleObject+10
+   (4d50758,9908,8000,4d50748)
+    [ 2] 0x7FEFD3F10DC KERNELBASE.WaitForSingleObjectEx+156
+   (23d,40604b4,0,18)
+   @[ 3] 0x1005d5ae nnotes.WaitOnNativeSemaphore+374
+   (3d5b4c0,3b540a0,d,8000)
+   @[ 4] 0x1005e0f6 nnotes.OSLockSem+242 (0,1,2,0)
+   @[ 5] 0x10fa27d8 nnotes.ClientTerm+44
+   (6fde5ea8,12f859,F66206C00000000,1582070c)
+   @[ 6] 0x10023a0c nnotes.OSTerm+988 (14005D528,0,140000000,1)
+   @[ 7] 0x101325c5 nnotes.NotesTerm+9 (14005D4F8,46,12ff18,0)
+    [ 8] 0x1400010B6 nSMDreal+4278 (0,0,6,1db1)
+    [ 9] 0x1400176F5 nSMDreal+95989 (0,0,0,0)
+    [10] 0x7696652d kernel32.BaseThreadInitThunk+13 (0,0,0,0)
+    [11] 0x76f0c521 ntdll.RtlUserThreadStart+33 (0,0,0,0)
+   
+   Which is waiting for:
+   06/04/2012 11:49:26 AM CDT sq="005287DE" THREAD [1750:0002-0950]
+   WAITING FOR SEM 0x0814 Client initialization semaphore
+   (@0F7E061C)
+   (OWNER=1138:0D48) FOR 30000 ms
+   
+   ############################################################
+   ### thread 1/3: [ nUpdate: 1138: 0d48]
+   ### FP=0x0012f6e8, PC=0x76f3135a, SP=0x0012f6e8
+   ### stkbase=0x00130000, total stksize=126976, used stksize=2328
+   ############################################################
+    [ 1] 0x76f3135a ntdll.ZwWaitForSingleObject+10
+   (1,f01028ef,4b73558,1003a7e6)
+    [ 2] 0x7FEFD3F10DC KERNELBASE.WaitForSingleObjectEx+156
+   (731,0,0,1914)
+   @[ 3] 0x1005d5ae nnotes.WaitOnNativeSemaphore+374
+   (4b740a0,1003a7e6,0,1003a7e6)
+   @[ 4] 0x1005e0f6 nnotes.OSLockSem+242 (0,1005ec8d,690,0)
+   @[ 5] 0x1005ebd0 nnotes.OSLockWriteSem+68 (0,8dc00001,0,0)
+   @[ 6] 0x10fa2872 nnotes.ClientTerm+198
+   (6fd83928,12f709,0,13300000003)
+   @[ 7] 0x10023a0c nnotes.OSTerm+988 (0,0,0,0)
+   @[ 8] 0x101325c5 nnotes.NotesTerm+9 (0,0,2179c0,1c0000)
+   @[ 9] 0x00416847 nUpdate.main+287 (0,0,0,0)
+   @[10] 0x00417331 nUpdate.mainCRTStartup+369 (0,0,0,0)
+    [11] 0x7696652d kernel32.BaseThreadInitThunk+13 (0,0,0,0)
+    [12] 0x76f0c521 ntdll.RtlUserThreadStart+33 (0,0,0,0)
+   
+   
+   The above stack is waiting on four other threads which are all
+   "Server
+   block semaphore"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix&#65496;
+   No workarond at this time.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# RMUY8VFRMY.
+   This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO70049
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   852
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-18
+   
+   
+ * CLOSED DATE
+   2013-01-14
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R852 PSN
+   UP

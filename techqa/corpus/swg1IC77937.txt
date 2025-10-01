@@ -1,0 +1,179 @@
+Title: IBM IC77937: DSMICFGX DSMUPGDX FAILS IF SSH CONNECTIONS FROM LOCALHOST ARE NOT ALLOWED - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When configuring or upgrading a Tivoli Storage Manager server
+   using the dsmicfgx or dsmupgdx, ssh connections are used to
+   perform actions. It is documented that the default ssh port (22)
+   has to be enabled but the documentation does not state that sshd
+   must also be allowed connections via localhost. The following
+   error can been seen if localhost connections are not allowed:
+   
+   Unable to establish a connection
+   All attempts to establish a connection as the instance user ID
+   have failed. This could be due to an invalid user ID or
+   password, or an inability to connect to the local machine
+   through the SSH, RSH, REXEC, or Windows SMB protocols.
+   Ensure that you have specified a valid user ID and password and
+   that either SSH, RSH, REXEC, or Windows SMB is enabled.
+   
+   The /etc/sshd/sshd_config file should be reviewed to make sure
+   there is no 'ListenAddress' specified, as that could prevent
+   localhost connections from being established on the ssh port.
+   The manuals should be updated to include this information.
+   
+   Initial Impact: Low
+   Tivoli Storage Manager Versions Affected: V6 Servers
+   Additional Keywords: sshd_config sshd loopback ListenAddress
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Ensure no 'ListenAddress' is specified in /etc/sshd/sshd_config
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Tivoli Storage Manager server users      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See error description.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   *
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  /**************************************/
+   Proposed Closing Text
+   
+   Users Affected:
+   All Tivoli Storage Manager server users.
+   
+   Problem Description:
+   See error description.
+   
+   Problem Summary:
+   *
+   
+   Problem Conclusion:
+   
+   In the Tivoli Storage Manager Upgrade and Migration Guide
+   for V5 Servers, in sections  "Starting the upgrade wizard"
+   and "Upgrading the server by using the upgrade wizard,"
+   the requirements for starting the upgrade wizard were updated.
+   
+   The original text said that, if the Secure shell (SSH)
+   protocol is used, the port must be set to the default value,
+   22. The following requirement was added:
+   "Also ensure that the SSH daemon service has access rights
+   for connecting to the system by using localhost."
+   
+   In the Tivoli Storage Manager installation guides,
+   in sections "Configuring Tivoli Storage Manager using
+   the configuration wizard," "Configuring Tivoli Storage
+   Manager using the Administration Center," and
+   "Upgrading from Tivoli Storage Manager Version 6.1,"
+   the requirements for using the upgrade and
+   configuration wizards were updated.
+   
+   The original text said that, if the Secure shell (SSH)
+   protocol is used, the port must be set to the default value,
+   22. The following requirement was added:
+   "Also ensure that the SSH daemon service has access rights
+   for connecting to the system by using localhost."
+   
+   Affected platforms:  AIX, HP-UX, Solaris, Linux, and Windows.
+   
+   End Proposed Closing Text
+   /**************************************/
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC77937
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   62A
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-04
+   
+   
+ * CLOSED DATE
+   2011-08-16
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced GC23978202 GC23978302 GC23978402 GC23978502 SC23955402 GC23978102 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

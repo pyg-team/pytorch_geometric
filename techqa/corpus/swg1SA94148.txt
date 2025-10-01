@@ -1,0 +1,145 @@
+Title: IBM SA94148: MQM400 CHANNEL SHUTDOWN WITHOUT AMQ6993 EXCEPTION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Too many 'channel end' conditions log exception AMQ6993 as a
+   way of forcing an FFST report. When a network crashes with
+   lots of client connections, this can severely impact moving
+   these channels to an inactive state.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Too many 'channel end' conditions log exception AMQ6993 as a
+   way of forcing an FFST report. When a network crashes with
+   lots of client connections, this can severely impact moving
+   these channels to an inactive state.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When a channel job ends, the following list of return codes will
+   NOT cause an AMQ6993 'Program  ended abnormally' escape message
+   to be logged :-
+   *  rrcI_NORMAL_CHANNEL_END      (AMQ9001)
+   *  rrcE_CONNECTION_CLOSED       (AMQ9209)
+   *  rrcI_LISTENER_STOP_REQUEST   (AMQ9234)
+   *  rrcE_STATUS_TABLE_FULL       (AMQ9513)
+   *  rrcE_REMOTE_QM_TERMINATING   (AMQ9525)
+   *  rrcI_QM_TERMINATING          (AMQ9542)
+   *  rrcI_DISCINTERVAL_EXPIRED    (AMQ9545)
+   *  rrcE_MAX_ACTIVE_CHANNELS     (AMQ9573)
+   *  rrcI_NO_LISTENERS_FOUND      (AMQ9597)
+   *  rrcI_LISTENERS_TERMINATING   (AMQ9598)
+   Additional fixes included for the defects listed below :-
+   ---------------------------------------------------------
+   55508    RESOLVE CHANNEL updates chl status from sync record
+   57326    ScratchPad in use '4004' error when deleting a channel
+   58872    SF62652 AMQCRC6A works but shows errors
+   IC29815  CHANNEL_STOPPED EVENTS (2283) WHEN MULTIPLE CHANNEL
+            STARTS ISSUED TOGETHER
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SA94148
+   
+   
+ * REPORTED COMPONENT NAME
+   MQSERIES FOR AS
+   
+   
+ * REPORTED COMPONENT ID
+   5733A3800
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2001-09-12
+   
+   
+ * CLOSED DATE
+   2001-09-12
+   
+   
+ * LAST MODIFIED DATE
+   2004-11-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  LMQMR    LMQMRR   AMQRRMFA AMQCRS6A AMQCRC6A
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MQSERIES FOR AS
+   
+   
+ * FIXED COMPONENT ID
+   5733A3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY SF66304
+   UP02/09/23 P 2260

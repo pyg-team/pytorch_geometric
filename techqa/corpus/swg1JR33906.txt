@@ -1,0 +1,191 @@
+Title: IBM JR33906: CLASSCASTEXCEPTION WHEN RESOLVING PORT BECAUSE OF NOT FOUND URI WITHIN EMF - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A ClassCastException occurs when SCA component "ComponentA"
+   calls SCA component "ComponentB" in SCA module "TestModule".
+   
+   In SCA runtime, it should resolve target port
+   "com.ibm.wsspi.sca.scdl.impl.PortImpl" to
+   "com.ibm.ws.sca.internal.scdl.impl.ManagedInterfaceSetImpl".
+   During the resolve, the object of
+   com.ibm.wsspi.sca.scdl.impl.PortImpl
+   is a proxy with URI "sca://bus.component#bus/TestModule
+   /component/ComponentB?port/default".
+   SCA will get the resource in EMF (Eclipse Modeling Framework)
+   registry with the URI. When SCA resolves the first part
+   "sca://bus.component" of the URI, it can not find the resource
+   for "sca://bus.component". So SCA will still use target
+   port "com.ibm.wsspi.sca.scdl.impl.PortImpl". That causes the
+   ClassCastException.
+   The resource of "sca://bus.component" is independent of SCA
+   applications. It is root resource of all SCA applications. If
+   other applications work fine, it is supposed that the resource
+   of "sca://bus.component" is in EMF registries.
+   The EMF registry is not able to resolve the proxy.
+   
+   Exception:
+   Core          E CWSCA2001E:
+   The SCA message-driven bean returned the following exception:
+   "com.ibm.websphere.sca.ServiceRuntimeException:
+   java.lang.ClassCastException:
+   com.ibm.wsspi.sca.scdl.impl.PortImpl
+   incompatible with com.ibm.wsspi.sca.scdl.InterfaceSet: caused
+   by:
+   java.lang.ClassCastException:
+   com.ibm.wsspi.sca.scdl.impl.PortImpl
+   incompatible with com.ibm.wsspi.sca.scdl.InterfaceSet".
+   
+   
+   The problem occurs very rarely and usually after a server
+   restart.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Process Server version 6.1.x users *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A ClassCastException occurs in event    *
+   *                      sequencing handler code when a SCA      *
+   *                      component invokes another SCA component *
+   *                                                              *
+   *                      in the module.                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In SCA runtime, while resolving the target port of a component
+    the EMF registry is unable to resolve proxy causing
+   java.lang.ClassCastException:
+   com.ibm.wsspi.sca.scdl.impl.PortImpl
+   incompatible with com.ibm.wsspi.sca.scdl.InterfaceSet".
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A checker has been added in the event sequencing handler code
+   for the type of target port and resolve it when it is a proxy
+   object.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR33906
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   612
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-05
+   
+   
+ * CLOSED DATE
+   2009-09-28
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP
+   
+   
+ * R601 PSN
+   UP
+   
+   
+ * R602 PSN
+   UP
+   
+   
+ * R610 PSY
+   UP
+   
+   
+ * R612 PSY
+   UP
+   
+   
+ * R620 PSN
+   UP

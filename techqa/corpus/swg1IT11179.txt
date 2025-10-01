@@ -1,0 +1,141 @@
+Title: IBM IT11179: RECEIVED A MESSAGE THE CERTIFICATE HAS EXPIRED OR IS ABOUT TO EXPIRE IN TIVOLI STORAGE PRODUCTIVITY CENTER ( DEVICE SERVER ). - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  E.g. IBM internal scan identified, that the device server
+   certificate is
+   expired.
+   Identified certificate:
+    Following SSL Certificate will be expire soon. Initiate
+   necessary
+   actions for renewal "CN=localhost, OU=deviceServer, O=ibm, C=us"
+   certificate from "CN=localhost, OU=deviceServer, O=ibm, C=us"
+   issuer
+   expires on "2015-08-20 09:49:13.0" at "xxxxxxx" host. Process:
+   "D:
+   \tpc\Program Files\IBM\TPC/jre\bin\java" on port "9551"
+   
+   Please open a ticked for the  IBM support .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * TPC 5.2.x users                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See ERROR DESCRIPTION.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Refer to updated Knowledge Center available with 5.2.9 and   *
+   * later.                                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Renewing security certificates
+   When you receive notifications that your Tivoli Storage
+   Productivity Center/IBM Spectrum Control security certificates
+   are expiring or have expired, you can renew them using the
+   procedure described in this IBM Knowledge Center topic:
+   
+   Renewing security certificates
+   http://www-01.ibm.com/support/knowledgecenter/SS5R93_5.2.9/com.i
+   bm.spectrum.sc.doc/fqz0_r_tbs_renewing_security_certificates.htm [http://www-01.ibm.com/support/knowledgecenter/SS5R93_5.2.9/com.ibm.spectrum.sc.doc/fqz0_r_tbs_renewing_security_certificates.htm]
+   l
+   
+   The link above will not be available until Spectrum Control
+   5.2.9 has been made available (target February 2016).
+   
+   The target dates for future refresh packs do not represent a
+   formal commitment by IBM. The dates are subject to change
+   without notice.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT11179
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPC00
+   
+   
+ * REPORTED RELEASE
+   523
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-09-21
+   
+   
+ * CLOSED DATE
+   2016-02-03
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

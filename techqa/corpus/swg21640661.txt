@@ -1,0 +1,65 @@
+Title: IBM Use the JDBC driver of your database product instead of the JDBC delivered with IBM Business Process Manager (BPM) - United States
+
+Text:
+ibpma85relnotes; ibpms85relnotes; ibpme85relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The JDBC driver delivered with your database product fits best to the version and level of your database product. IBM Business Process Manager ships the latest versions of JDBC drivers at the time of the IBM Business Process Manager release, but in the meantime the database product might have been updated. 
+
+SYMPTOM
+The following message is an example of what you might see if you are not using the latest JDBC driver for your database product: 
+
+[4/7/13 14:30:39:179 CST] 000000da XATransaction E J2CA0027E: An exception occurred while invoking rollback on an XA Resource Adapter from DataSource jdbc/TeamWorksDB, within transaction ID {XidImpl: formatId(57415344), gtrid_length(36), bqual_length(54),
+data(0000013de330654d000000010be2128051d11daf213f0bcee7b7e844ac777c1f3a0014a40000013de330654d000000010be2128051d11daf213f0bcee7b7e844ac777c1f3a0014a4000000010000000000000000000000000001)} : com.ibm.db2.jcc.am.XaException: [jcc][t4][2041][12326][4.11.69] Error executing XAResource.rollback(). Server returned XAER_NOTA. ERRORCODE=-4203, SQLSTATE=null
+at com.ibm.db2.jcc.am.gd.c(gd.java:453)
+at com.ibm.db2.jcc.t4.zb.b(zb.java:2759)
+at com.ibm.db2.jcc.t4.ac.b(ac.java:1546)
+at com.ibm.db2.jcc.t4.ac.a(ac.java:1326)
+at com.ibm.db2.jcc.t4.ac.a(ac.java:1321)
+at com.ibm.db2.jcc.t4.ac.rollback(ac.java:1310)
+at com.ibm.ws.rsadapter.spi.WSRdbXaResourceImpl.rollback(WSRdbXaResourceImpl.java:1347)
+at com.ibm.ejs.j2c.XATransactionWrapper.rollback(XATransactionWrapper.java:1318)
+at com.ibm.tx.jta.impl.JTAXAResourceImpl.rollback(JTAXAResourceImpl.java:365)
+at com.ibm.tx.jta.impl.RegisteredResources.deliverOutcome(RegisteredResources.java:1664)
+at com.ibm.tx.jta.impl.RegisteredResources.distributeOutcome(RegisteredResources.java:1950)
+at com.ibm.tx.jta.impl.RegisteredResources.distributeRollback(RegisteredResources.java:2603)
+at com.ibm.tx.jta.impl.TransactionImpl.internalRollback(TransactionImpl.java:1981)
+at com.ibm.tx.jta.impl.TransactionImpl.internalRollback(TransactionImpl.java:1944)
+at com.ibm.tx.jta.impl.TransactionImpl.rollback(TransactionImpl.java:1346)
+at com.ibm.ws.tx.jta.TransactionImpl.rollback(TransactionImpl.java:3569)
+at com.ibm.ws.tx.jta.TranManagerImpl.rollback(TranManagerImpl.java:479)
+at com.ibm.tx.jta.impl.TranManagerSet.rollback(TranManagerSet.java:208)
+at com.ibm.ws.uow.UOWManagerImpl.uowRollback(UOWManagerImpl.java:834)
+at com.ibm.ws.uow.embeddable.EmbeddableUOWManagerImpl.uowEnd(EmbeddableUOWManagerImpl.java:857)
+at com.ibm.ws.uow.UOWManagerImpl.uowEnd(UOWManagerImpl.java:782)
+at com.ibm.ws.uow.embeddable.EmbeddableUOWManagerImpl.runUnderNewUOW(EmbeddableUOWManagerImpl.java:818)
+at com.ibm.ws.uow.embeddable.EmbeddableUOWManagerImpl.runUnderUOW(EmbeddableUOWManagerImpl.java:370)
+at org.springframework.transaction.jta.WebSphereUowTransactionManager.execute(WebSphereUowTransactionManager.java:252)
+at com.lombardisoftware.utility.spring.ProgrammaticTransactionSupport.executeInNewTransaction(ProgrammaticTransactionSupport.java:395)
+at com.lombardisoftware.utility.spring.ProgrammaticTransactionSupport.execute(ProgrammaticTransactionSupport.java:264)
+at com.lombardisoftware.server.core.TXCommand.executeInDeadlockRetryLoop(TXCommand.java:91)
+
+
+CAUSE
+The JDBC driver used by IBM Business Process Manager might not be the latest JDBC driver level supplied by the database vendor.
+
+
+DIAGNOSING THE PROBLEM
+Compare the latest version of the JDBC driver that is available from the database vendor with the JDBC driver that is delivered with IBM Business Process Manager. If a later version is available, update to that driver.
+
+
+
+RESOLVING THE PROBLEM
+If the driver delivered with IBM Business Process Manager is older than the latest available from the database vendor, update the JDBC driver to the latest driver. 
+
+
+To determine what the current JDBC driver version is from the logs, look for something similar to the following example from IBM BPM 8.5.5.0 on DB2 10.5 FP3:
+
+Database product name : DB2/NT64 DSRA8204I: Database product version : SQL10053 DSRA8205I: JDBC driver name : IBM Data Server Driver for JDBC and SQLJ DSRA8206I: JDBC driver version : 4.11.69 DSRA8218I: JDBC driver specification level : 4.0 DSRA8212I: DataStoreHelper name is: com.ibm.websphere.rsadapter.DB2UniversalDataStoreHelper@67c85533. DSRA8208I: JDBC driver type : 4
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Databases AIX, Linux, Linux zSeries, Solaris, Windows 8.5.5, 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Express Databases Linux, Windows 8.5.5, 8.5, 8.0.1, 8.0, 7.5.1, 7.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

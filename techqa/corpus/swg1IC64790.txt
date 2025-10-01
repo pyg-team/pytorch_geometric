@@ -1,0 +1,177 @@
+Title: IBM IC64790: DATAPOWER CHANGE TO PREVENT SSL TLS MAN-IN-THE-MIDDLE ATTACK. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DataPower change to prevent SSL TLS Man-in-the-Middle attack.
+   The SSLM MitM attack is also known as CVE-2009-3555.
+   This change is to prevent SSL renegotiations from occurring.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use mutual or client authentication until the new firmware can
+   be installed.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  *******************************************************
+   * USERS AFFECTED: All IBM WebSphere DataPower SOA Appliance
+   *                 Users.
+   ******************************************************
+   * PROBLEM DESCRIPTION:
+   *****************************************************
+   * RECOMMENDATION: Apply fixpacks 3.7.1.12, 3.7.2.8, 3.7.3.7,
+   *                 3.8.0.1 or superceding fix packs.
+   ******************************************************
+   A recently discovered vulnerability in the renegotiation feature
+   of the SSL and TLS protocols allows an attacker to inject an
+   arbitrary string into the SSL session. This vulnerability is
+   commonly referred to as the SSL Man-in-the-Middle (MITM) attack
+   or CVE-2009-3555.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The DataPower SSL server implementation is not vulnerable to
+   either form of  attack when using SSL client authentication,
+   because the implementation requires immediate client
+   authentication in the first SSL handshake (unlike vulnerable SSL
+   server implementations that only require client authentication
+   in a renegotiation handshake after seeing the request URL).
+   
+   However, the DataPower  SSL server implementation is vulnerable
+   to the weaker form of attack when client authentication is not
+   used. This weaker form of attack is limited, because it can only
+   steal HTTP headers from the initial HTTP request of the attacked
+   client. Most HTTP clients do not send authentication credentials
+   in the initial HTTP request headers. Most HTTP clients wait
+   until seeing certain HTTP status codes from the HTTP server
+   before sending authentication credentials, and HTTP clients like
+   these would not be vulnerable to this weaker form of attack.
+   
+   To confirm if your appliance uses SSL client authentication,
+   look at the reverse/server Crypto Profile of the SSL Proxy
+   Profile in question. If it contain a Validation Credentials,
+   client authentication is in use.
+   
+   See this technote:
+   http://www.ibm.com/support/docview.wss?uid=swg21410851 for more
+   information.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Use mutual or client authentication until new firmware is
+   installed.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC64790
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   373
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-24
+   
+   
+ * CLOSED DATE
+   2009-12-18
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R371 PSY
+   UP
+   
+   
+ * R372 PSY
+   UP
+   
+   
+ * R373 PSY
+   UP
+   
+   
+ * R380 PSY
+   UP

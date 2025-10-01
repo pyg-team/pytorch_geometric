@@ -1,0 +1,33 @@
+Title: IBM A database schema in Microsoft SQL Server is not visible in Studio unless
+at least one table or view is defined in the schema - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In WebSphere Cast Iron Studio, you can browse for stored procedures on your database in the 'Stored Procedure' configure pane of the Call Procedure Activity. If you click Browse, the 'Browse Stored Procedures' dialog appears. Click the 'Filter by User Schema' dropdown to see a list of the schemas on the remote database.
+
+However, if your database endpoint is configured to use the 'Microsoft SQL Server' database type, then the 'Filter by User Schema' dropdown will only list schemas which have at least one table or view defined. If the stored procedure you wish to use is in a schema without any tables or views defined, you will not be able to use the dropdown to help filter your stored procedure. 
+
+RESOLVING THE PROBLEM
+ 
+
+Choose one of the following workarounds:
+
+
+ * Within Microsoft SQL Server, create at least one table or view in the schema which
+   contains your stored procedure. This may not be practical for a large number of schemas.
+
+ * Do not filter by user schema. Click Clear to clear the list of schemas and you
+   will see all of your stored procedures on the database. Select the one you want.
+
+ * Reconfigure your database endpoint to use the database type called 'Generic JDBC Driver'.
+   You will also need to install Microsoft's driver jar for connecting to Microsoft SQL
+   Server. (Go to Tools > Install Module Providers and add the jar under Database
+   Connector. Restart Studio.) After you have done this, the 'Filter by User Schema'
+   dropdown will list all the schemas in the database, including those without any tables or
+   views.
+   
+   This Technote also applies to schemas listed in the 'Filter by User Schema'
+   dropdown which appears in various dialogs used by other database activities (for example,
+   in the Browse Database Tables dialog of the Get Updated Rows activity).

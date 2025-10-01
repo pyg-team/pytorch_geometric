@@ -1,0 +1,58 @@
+Title: IBM How to alert on the Guardium internal database filling up - United States
+
+Text:
+Guardium; deployment guide; alert; disk space; database; full TECHNOTE (FAQ)
+
+QUESTION
+ How can I tell when my Guardium internal database is getting full?
+What alert should I use to notify me when there is a problem? 
+
+CAUSE
+The Guardium internal database can fill up for many reasons. For information on causes and solutions to that problem see:
+What can I do if I see my Guardium Appliance getting full? [https://www-304.ibm.com/support/docview.wss?uid=swg21511904]
+It is the responsibility of the Guardium administrator to ensure the appliance internal database is maintained at a stable level at all times.
+
+
+ANSWER
+To see the percentage used of the Guardium internal database use the command in CLI: 
+
+ * 
+ * support show db-status used %
+
+
+It is recommended to keep your appliance database usage under 50% in normal operations. In order to react proactively if the usage is increasing you can define a correlation alert. The Guardium Deployment Guide [http://www.redbooks.ibm.com/abstracts/sg248129.html?Open] section 3.9.8 details self monitoring alerts that should be installed on appliances. The "Disk Space Alert" should be used for this case. The alert notifies receivers every 24 hours if the database space is 60% or higher. 
+
+For the alert to work, the buffer usage monitor on the appliance must be active. Use this link to ensure that it is: Guardium STAP is collecting data but request rate and buffer usage reports are empty [http://www-01.ibm.com/support/docview.wss?uid=swg21695696]. 
+
+Pre made alert definitions 
+
+Definitions are available to import into your v9 and v10 appliances. There will be a compatibility warning when importing into v10 but it will succeed. The definitions may not import for versions before 9.1. The required alert is different for collectors and aggregators. 
+
+ 
+
+Alert to Download Unit Type Alert will run on Alert Name / Notes Query Name Alert is based on Alert will fire Potential delay in receiving alerts? MyCollectorMysqlDisk_alert.sql [/support/docview.wss?uid=swg21696915&aid=2]MyCollectorMysqlDisk_alert.sql [/support/docview.wss?uid=swg21696915&aid=1] Collector -My Collector Mysql Disk Usage Collector Mysql Disk Usage When unit Mysql disk usage is >=60% Dependant on the unit alert definition and polling interval. MyAggregatorDisk_alert.sql [/support/docview.wss?uid=swg21696915&aid=4]MyAggregatorDisk_alert.sql [/support/docview.wss?uid=swg21696915&aid=3] Aggregator -My Aggregator Disk Usage Aggregator var disk usage When unit var disk usage is >=60% Dependant on the unit alert definition and polling interval. MyCMMysqlDiskUsage_alert.sql [/support/docview.wss?uid=swg21696915&aid=6]MyCMMysqlDiskUsage_alert.sql [/support/docview.wss?uid=swg21696915&aid=5] Central Manager -MyCM Mysql Disk Usage
+
+Needs CM Buffer Usage Monitor scheduled for upload regularly :-
+
+v9 Tools ->Report Building - Custom Table Builder-> upload data. v10 Comply -> Custom Reporting -> Custom Table Builder -> upload data. Simply set the schedule - eg restart every hour, do not repeat
+
+*NB schedule at 5 minutes past the hour so as to include the full previous hour data. 
+-My CM Buffer Usage Mysql Disk Space When any managed unit has Mysql disk usage >=60% Dependant on CM Buffer Usage upload schedule - if as per the NB* - a maximum of 1.5 hour delay before notification MyEnterpriseMysqlDiskUsage_alert.sql [/support/docview.wss?uid=swg21696915&aid=8]MyEnterpriseMysqlDiskUsage_alert.sql [/support/docview.wss?uid=swg21696915&aid=7] Central Manager -MyEnterprise Mysql Disk Usage
+
+Make sure Unit Utilisation is enabled [https://www.ibm.com/developerworks/community/blogs/432a9382-b250-4e55-98d7-8e9ee6cbf90e/entry/how_to_enable_guardium_v9_features?lang=en] - 
+
+Then schedule on the Central Manager ( v9 System View-> Unit Utilization. v10 Manage -> Unit Utilization ) eg restart every hour, do not repeat 
+
+
+*NB schedule at 10 minutes past the hour so as to include the full previous hour period of data obtained from the above -My Enterprise Mysql Disk Space When any managed unit has Mysql disk usage >=60% based on the units utilization report. Dependant on the Units Utilization schedule - if as per the NB* - a maximum of 1 hour 40 min delay before notification  1. Import the .sql files above from the GUI v9 Administration Console->Guardium Definitions->Import. v10 Manage -> Data Management -> Definitions Import This must be done on the central manager if one exists in the environment. 
+ 2. Activate the appropriate alert for the unit type from v9 Administration Console->Anomaly detection. v10 Setup -> Tools and Views -> Anomaly Detection 
+
+
+Note: The alert definitions above do not contain any receivers. You must add these yourself in the alert builder as appropriate. In case pre made definitions do not import 
+
+Follow the step by step instructions on how to create the alerts in the Deployment Guide section 3.9.3 under "Disk Space Alert".
+
+RELATED INFORMATION
+ Deployment Guide for Infosphere Guardium [http://www.redbooks.ibm.com/abstracts/sg248129.html?Open]
+What if my Guardium appliance is getting full? [http://www.ibm.com/support/docview.wss?uid=swg21511904]
+Restarting the Buffer Usage Monitor [http://www.ibm.com/support/docview.wss?uid=swg21695696]

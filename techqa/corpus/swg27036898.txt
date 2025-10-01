@@ -1,0 +1,38 @@
+Title: IBM Some Content Platform Engine administration tasks are performed by using IBM Content Navigator - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ Most administration tasks that were previously performed by using the Enterprise Manager tool can now be performed in Administration Console for Content Platform Engine. Some tasks must be performed in client applications such as IBM Content Navigator. 
+
+CONTENT
+Administration Console for Content Platform Engine is the primary administration tool for the Content Platform Engine. Although Administration Console for Content Platform Engine has all the features that are required to administer Content Platform Engine, it does not have some of the functionality that is present in Enterprise Manager, for example, adding documents with content or saving searches and search results. You can perform these tasks through client applications such as IBM Content Navigator. 
+
+Batch operations
+The Administration Console for Content Platform Engine query builder is used for creating and running simple searches and SQL queries. Use IBM Content Navigator for the following query-related purposes: 
+
+ * Finding objects by using property values as search criteria. 
+ * Creating and saving search templates. 
+ * Creating and saving SQL queries. 
+ * Performing advanced searches. 
+ * Searching by using search templates that are provided with the Content Platform Engine installation. 
+ * Currently there is no batch operation available to update security on a batch of objects. Use IBM Content Navigator to update security on selected objects. 
+
+
+Document and folder actions 
+
+Use IBM Content Navigator to perform the following document and folder actions. 
+
+Document actions:  * Checkout with content 
+ * Checkin with content 
+ * Copy URL 
+ * View Document 
+ * Save Content to File 
+ * Add Annotation 
+ * View Annotation
+
+
+Folder actions:  * Copy URL 
+ * Add Annotation 
+ * View Annotation

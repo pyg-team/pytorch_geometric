@@ -1,0 +1,61 @@
+Title: IBM Rule Execution Server diagnostic MBean execution fails on WebSphere - United States
+
+Text:
+security; websphere; mapping; map; roles; group; user TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Explain how to resolve a Rule Execution Server diagnostic failure of the MBean execution on WebSphere Application Server. 
+
+SYMPTOM
+A Rule Execution Server diagnostic fails on the execution of an MBean (as shown in the attached screen capture).
+
+
+CAUSE
+To access the MBeans of the Rule Execution Server model, an application must have sufficient security credentials, restricted to theMonitor role in the WebSphere authentication system.
+
+DIAGNOSING THE PROBLEM
+Refer to the server log file, which shows the following error: 
+
+javax.management.JMRuntimeException: ADMN0022E: Access is denied for the notifyRulesetArchiveChanged operation on IlrXUManagement MBean because of insufficient or empty credentials.
+at com.ibm.ws.management.AdminServiceImpl.preInvoke(AdminServiceImpl.java:2074)
+at com.ibm.ws.management.AdminServiceImpl$1.run(AdminServiceImpl.java:1116)
+at com.ibm.ws.security.util.AccessController.doPrivileged(AccessController.java:118)
+at com.ibm.ws.management.AdminServiceImpl.invoke(AdminServiceImpl.java:1032)
+at ilog.rules.res.mbean.util.IlrMBeanManagerImpl_websphere.invokeDispatcher(IlrMBeanManagerImpl_websphere.java:124)
+at ilog.rules.res.mbean.util.IlrMBeanManagerImpl_websphere$3.run(IlrMBeanManagerImpl_websphere.java:104)
+at ilog.rules.res.mbean.util.IlrMBeanManagerImpl_websphere$3.run(IlrMBeanManagerImpl_websphere.java:80)
+at java.security.AccessController.doPrivileged(AccessController.java:192)
+at ilog.rules.res.mbean.util.IlrMBeanManagerImpl_websphere.invoke(IlrMBeanManagerImpl_websphere.java:79)
+at ilog.rules.res.mbean.util.IlrMBeanManagerImpl.invoke(IlrMBeanManagerImpl.java:135)
+at ilog.rules.res.model.mbean.IlrXUMBeanUtil.notifyRulesetArchiveChanged(IlrXUMBeanUtil.java:106)
+at ilog.rules.res.model.mbean.IlrJMXMutableRulesetArchiveInformationImpl.notifyRulesetRemoved(IlrJMXMutableRulesetArchiveInformationImpl.java:106)
+at ilog.rules.res.model.mbean.IlrJMXMutableRulesetArchiveInformationImpl.linked(IlrJMXMutableRulesetArchiveInformationImpl.java:177)
+at ilog.rules.res.model.impl.IlrMutableRuleAppInformationImpl.linked(IlrMutableRuleAppInformationImpl.java:201)
+at ilog.rules.res.model.mbean.IlrJMXMutableRuleAppInformationImpl.linked(IlrJMXMutableRuleAppInformationImpl.java:96)
+at ilog.rules.res.model.impl.IlrMutableRuleAppInformationImpl.setRepository(IlrMutableRuleAppInformationImpl.java:193)
+at ilog.rules.res.model.impl.IlrMutableRepositoryImpl.removeRuleApp(IlrMutableRepositoryImpl.java:89)
+at ilog.rules.res.console.diagnostic.IlrConsoleDiagnostic.testRemoveRuleApp(IlrConsoleDiagnostic.java:408)
+at ilog.rules.res.console.diagnostic.IlrConsoleDiagnostic.execute(IlrConsoleDiagnostic.java:128)
+at ilog.rules.res.console.jsf.bean.DiagnosticBean.execute(DiagnosticBean.java:56)
+...
+
+
+RESOLVING THE PROBLEM
+Map your administrator group (resAdministrators by default) to theMonitor role in the WebSphere Application Server administration console. 
+
+
+See our documentation for the detailed steps : for example section WebSphere ILOG JRules BRMS V7.1: Java EE add-ons > Installing on WebSphere Application Server > Installing Rule Execution Server > Installing Rule Execution Server on WebSphere Application Server V7.0 > Activating security on WebSphere V7.0 > Mapping the resAdministrators group to the Monitor role [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.install.doc/Content/Business_Rules/Documentation/_pubskel/JRules_Application_Servers/ps_Installing_JRules_IC52.html] for JRules V7.1 on WAS V7.
+
+RELATED INFORMATION
+#ODM 8.5 documentation section [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/topic/com.ibm.odm.distrib.config.was/config_ds_res_was8/tsk_was_map_admin_group.html]
+WODM V7.5 documentation section [http://publib.boulder.ibm.com/infocenter/dmanager/v7r5/topic/com.ibm.dserver.configuring/Content/Business_Rules/_pubskel/Infocenter_Primary/ps_DS_Configuring124.html]
+JRules V7.0 documentation section [http://publib.boulder.ibm.com/infocenter/brjrules/v7r0m3/topic/com.ibm.websphere.ilog.jrules.install.doc/Content/Business_Rules/Documentation/_pubskel/JRules_Application_Servers/ps_Installing_JRules_IC115.html]
+Rule Execution Server diagnostic failure [http://www.ibm.com/support/docview.wss?uid=swg21584856]
+RES diagnostic MBean execution fails on WebLogic [http://www.ibm.com/support/docview.wss?uid=swg21589169]
+Configure security for JRules modules on WAS [http://www.ibm.com/support/docview.wss?uid=swg21439999]
+
+
+resAdminNotMappedToMonitorRole.JPG [/support/docview.wss?uid=swg21461650&aid=2] [/support/docview.wss?uid=swg21461650&aid=1]
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0, 7.5

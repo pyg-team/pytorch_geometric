@@ -1,0 +1,156 @@
+Title: IBM ITNMExportNetworkViews.pl fails to login with SQL-HY000 - United States
+
+Text:
+ITNMExportNetworkViews.pl nmImport Informix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Database Connection Error:[Informix]INFORMIXSERVER does not match either DBSERVERNAME or DBSERVERALIASES. (SQL-HY000) 
+
+SYMPTOM
+bash-3.00$ ncp_perl ./ITNMExportNetworkViews.pl -server informix -dbname grtsol12ITNM.'ITNM.itnm' -ncimSchema ncim -ncpguiSchema ncpgui -host 9.48.195.222 -export -username ncim -password 'netcool' 
+
+Level: INFO Message: ITNM Network View and Filter Import/Export Utility
+Level: INFO Message: Platform: solaris
+Level: INFO Message: Time:- Fri Jul 1 18:04:14 2011
+Level: RDBMS Message: Attempting to connect to informix database ...
+Level: info Msg: Attempting to connect to database (DBI:ODBC:driver=IBM INFORMIX ODBC DRIVER;host=9.48.195.222;server=grtsol12ITNM.ITNM;database=itnm;service=9088;protocol=onsoctcp;DELIMIDENT=Y)...
+Level: critical Msg: Database Connection Error: [Informix][Informix ODBC Driver]
+[Informix]INFORMIXSERVER does not match either DBSERVERNAME or DBSERVERALIASES. (SQL-HY000)
+critical: Database Connection Error: [Informix][Informix ODBC Driver][Informix]I
+NFORMIXSERVER does not match either DBSERVERNAME or DBSERVERALIASES. (SQL-HY000) at ./ITNMExportNetworkViews.pl line 729
+
+-bash-3.00$ hostname
+grtsol12ITNM
+
+
+
+
+CAUSE
+Usage:- ./ITNMExportNetworkViews.pl arguments [options] ... 
+
+ -export Exports views from Precision/IP v3.x for subsequent import
+-import Imports views previously exported into ITNM IP Edition v3.9 or later
+-server Type of database (one of: mysql, oracle, db2, informix)
+-dbname The name of the database (or Oracle SID) (or Informix servername.dbname)
+-host Database server host name
+-username Username for the database
+-password Password for the database user
+
+Note that the -help usage does not provide an example of the invoking of the script for Informix, only for DB2, MySql, and Oracle.
+
+
+DIAGNOSING THE PROBLEM
+The usage statement for the perl script shows that with Informix, the -dbname option must 
+
+be <servername>.<dbname>. However, this is not referring to the server's hostname 
+
+as <servername>. Check the DbLogins.<domain>.cfg file to find the 
+
+actual value of m_DbName. For informix, it will be something like "ITNM.itnm". Use this 
+
+value instead.
+
+
+RESOLVING THE PROBLEM
+So, invoke the perl script as follows: 
+
+cd / 
+
+. ./opt/IBM/tivoli/netcool/env.sh 
+
+cd $PRECISION_HOME/scripts/upgrade 
+
+ncp_perl ./ITNMExportNetworkViews.pl -server informix -dbname ITNM.itnm -ncimSchema ncim -ncpguiSchema ncpgui -host <my_ipaddress_or_hostname> -export -username <user> -password <pass> 
+
+Here is what the results should be: 
+
+Look for a file called itnm_db_export.zip in $NCHOME/var/precision/export
+-rw-r--r-- 1 ncoadmin ncoadmin 21477 Jul 1 18:38 itnm_db_export.zip
+-rw-r--r-- 1 ncoadmin ncoadmin 209194 Jul 1 18:38 itnmExportedEntityNameCache.dat
+-rw-r--r-- 1 ncoadmin ncoadmin 64584 Jul 1 18:38 itnmExportedViewsFilters.dat 
+
+On the screen, you should see the following (unless you pipe the output to a file called 
+
+ ITNMExportNetworkViews.log under $NCHOME/log/precision (default for nmImport script.) 
+
+
+-bash-3.00$ . ./opt/IBM/tivoli/netcool/env.sh
+-bash-3.00$ cd $PRECISION_HOME/scripts/upgrade
+-bash-3.00$ ncp_perl ./ITNMExportNetworkViews.pl -server informix -dbname ITNM.
+itnm -ncimSchema ncim -ncpguiSchema ncpgui -host 9.48.195.222 -export -username ncim -password 'netcool'
+Level: INFO Message: ITNM Network View and Filter Import/Export Utility
+Level: INFO Message: Platform: solaris
+Level: INFO Message: Time:- Fri Jul 1 18:37:59 2011
+Level: RDBMS Message: Attempting to connect to informix database ...
+Level: info Msg: Attempting to connect to database (DBI:ODBC:driver=IBM INFORMIX
+ODBC DRIVER;host=9.48.195.222;server=ITNM;database=itnm;service=9088;protocol=onsoctcp;DELIMIDENT=Y)...
+Level: RDBMS Message: Succesfully Connected
+Level: INFO Message: NCIM Schema = ncim, NCPGUI Schema = ncpgui
+Level: INFO Message: Preparing SQL queries for export process...
+Level: INFO Message: Exporting IBM Tivoli Network Manager EntityNameCache data..
+.
+Level: INFO Message: Setting current schema to ncim...
+Level: INFO Message: Executing query...
+Level: INFO Message: Writing records from entityNameCache to '/opt/IBM/tivoli/netcool/var/precision/export/itnmExportedEntityNameCache.dat' ...
+Level: INFO Message: Adding /opt/IBM/tivoli/netcool/var/precision/export/itnmExportedEntityNameCache.dat with 2226 entityName's to archive file...
+Level: INFO Message: Exporting IBM Tivoli Network Manager network view and filters data...
+GRT_LAB (1) <------------ * EXPORT CUSTOM *
+Unassigned View (2) <------------ * EXPORT CUSTOM *
+Custom View (3) <------------ * EXPORT CUSTOM *
+Manually Added Devices (6) <------------ * EXPORT CUSTOM *
+All Routers (7) <------------ * EXPORT CUSTOM *
+All Switches (8) <------------ * EXPORT CUSTOM *
+Device Classes (49) <------------ * EXPORT DEFAULT *
+Cisco36xx (707) <------------ * EXPORT DEFAULT *
+Cisco7xxx (708) <------------ * EXPORT DEFAULT *
+Sun (710) <------------ * EXPORT DEFAULT *
+Windows (711) <------------ * EXPORT DEFAULT *
+PIM Network (55) <------------ * EXPORT CUSTOM *
+PIM Network (715) <------------ * EXPORT CUSTOM *
+OSPF Routing Domains (73) <------------ * EXPORT DEFAULT *
+OSPF_Routing_Domain[1] (751) <------------ * EXPORT DEFAULT *
+VTP Domains (75) <------------ * EXPORT DEFAULT *
+Unknown (963) <------------ * EXPORT DEFAULT *
+IGMP Groups (166) <------------ * EXPORT CUSTOM *
+IGMP Group 224.0.1.111 (722) <------------ * EXPORT CUSTOM *
+IGMP Group 224.0.1.40 (723) <------------ * EXPORT CUSTOM *
+Multicast Routing MDTs (192) <------------ * EXPORT CUSTOM *
+MDT (0.0.0.0, 224.0.1.111) (712) <------------ * EXPORT CUSTOM *
+MDT (0.0.0.0, 224.0.1.40) (713) <------------ * EXPORT CUSTOM *
+MDT (0.0.0.0, 239.255.2.2) (1039) <------------ * EXPORT CUSTOM *
+HSRP Groups (965) <------------ * EXPORT DEFAULT *
+VIRTUAL_IP_10.10.1.1 (966) <------------ * EXPORT DEFAULT *
+GRT_LAB (25) <------------ * EXPORT CUSTOM *
+Unassigned View (26) <------------ * EXPORT CUSTOM *
+Custom View (27) <------------ * EXPORT CUSTOM *
+Manually Added Devices (30) <------------ * EXPORT CUSTOM *
+All Routers (31) <------------ * EXPORT CUSTOM *
+All Switches (32) <------------ * EXPORT CUSTOM *
+Device Classes (59) <------------ * EXPORT DEFAULT *
+Cisco36xx (716) <------------ * EXPORT DEFAULT *
+Cisco7xxx (717) <------------ * EXPORT DEFAULT *
+Sun (719) <------------ * EXPORT DEFAULT *
+Windows (720) <------------ * EXPORT DEFAULT *
+PIM Network (65) <------------ * EXPORT CUSTOM *
+PIM Network (721) <------------ * EXPORT CUSTOM *
+OSPF Routing Domains (79) <------------ * EXPORT DEFAULT *
+OSPF_Routing_Domain[1] (752) <------------ * EXPORT DEFAULT *
+VTP Domains (81) <------------ * EXPORT DEFAULT *
+Unknown (964) <------------ * EXPORT DEFAULT *
+IGMP Groups (170) <------------ * EXPORT CUSTOM *
+IGMP Group 224.0.1.111 (727) <------------ * EXPORT CUSTOM *
+IGMP Group 224.0.1.40 (728) <------------ * EXPORT CUSTOM *
+Multicast Routing MDTs (197) <------------ * EXPORT CUSTOM *
+MDT (0.0.0.0, 224.0.1.111) (724) <------------ * EXPORT CUSTOM *
+MDT (0.0.0.0, 224.0.1.40) (725) <------------ * EXPORT CUSTOM *
+MDT (0.0.0.0, 239.255.2.2) (1040) <------------ * EXPORT CUSTOM *
+HSRP Groups (969) <------------ * EXPORT DEFAULT *
+VIRTUAL_IP_10.10.1.1 (970) <------------ * EXPORT DEFAULT *
+All Devices (346) <------------ * EXPORT CUSTOM *
+Level: INFO Message: Exporting 31 Network View(s) ...
+Level: INFO Message: Writing view and filter data to '/opt/IBM/tivoli/netcool/var/precision/export/itnmExportedViewsFilters.dat' ...
+Level: INFO Message: Adding /opt/IBM/tivoli/netcool/var/precision/export/itnmExportedViewsFilters.dat with 31 views to archive file...
+Level: INFO Message: Creating archive file '/opt/IBM/tivoli/netcool/var/precision/export/itnm_db_export.zip'...
+Level: INFO Message: Signalling finished with export handles...
+Level: RDBMS Message: Succesfully Disconnected
+-bash-3.00$

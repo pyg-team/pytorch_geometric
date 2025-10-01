@@ -1,0 +1,217 @@
+Title: IBM PK72065: AB0C4 RC4 DSNXECW WHEN RUNNING STORED PROC THAT CALLS EXTERNAL  LANGUAGE PROGRAM -- THIS IS FORWARD FIT OF V8 PK46062 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This is a forward-fit to DB2 V9 of the V8 PK46062 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK46062]:
+   .
+   The abends occur in general for stored procedures that are
+   repeatedly invoked during the life of one DB2 connection /thread
+   and the stored procedure invokes different language application
+   programs (via  language calls) with each stored procedure
+   invocation and there are COMMITs / ROLLBACKs executed between or
+   during the stored procedure execution.  The problem is most
+   likely to occur on DB2 systems with very heavy workloads.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: DB2 for z/OS V8 Users of DB2 Stored          *
+   *                 Procedures that return Result Sets           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: While repeatedly running a stored       *
+   *                      procedure that invoks  different        *
+   *                      application programs on each run,       *
+   *                      one of the following abends occurred:   *
+   *                                                              *
+   *                       ABEND 0C4 RC00000011 DSNXERT2 +19CC    *
+   *                       ABEND 0C4 RC00000038 DSNXECL  +1186    *
+   *                                                              *
+   *                      Other abends are possible.              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   User repeatedly called same stored procedure during one DB2
+   connection.  The stored procedure invoked different external
+   application programs via language calls during each stored
+   procedure run, sometimes returning result sets and sometimes
+   not, and the calling application sometimes issues COMMIT and
+   sometimes not as in the following example:
+      Calling Application:
+        CALL Stored ProcedureA
+           Stored ProcedureA: (NO AUTO COMMIT ON RETURN)
+             Issue language call to external ApplicationA
+               (ApplicationA issues 1st SQL of stored proc run, and
+                does NOT return result sets)
+             Return to Calling Application
+        (No COMMIT between these CALLs)
+        CALL Stored ProcedureA (2nd time)
+           Stored ProcedureA:
+             ApplicationA is not called this time, instead
+             Issue language call to ApplicationB
+               (ApplicationB issues 1st SQL of stored proc run, and
+                ApplicationB RETURNS WITH HOLD result set for
+                Stored ProcedureA)
+             Return to Calling Application
+   
+      Calling Application:
+        Fetch the WITH HOLD returned result set from ProcedureA,
+        COMMIT issued from Calling Application
+        Issue CLOSE for the WITH HOLD result set returned
+        CALL Stored ProcedureA (3rd time)
+        >>> ABEND DSNXERT2 +19CC possible here
+           Stored ProcedureA:
+             ApplicationA is not called, instead
+              Issue language call to ApplicationB
+               (ApplicationB issues 1st SQL of stored proc run, and
+                does NOT return result sets this time)
+             Return to Calling Application
+      Calling Application:
+        COMMIT later issued from Calling Application
+        >>> other ABENDs possible during COMMIT:
+   
+   Aside from AB0C4 RC00000011 DSNXERT2 +19CC on the 3rd CALL,
+   a one-byte overlay of hex 'FF' is possible in the final
+   COMMIT statement outlined above.  In this case, DB2 used
+   a residual pointer that referred to ApplicationA storage
+   that was freed.
+   
+   ****************************************************************
+   The overlay can only occur with the complicated mix of repeated
+   stored procedure calls with and without a HOLD result set from
+   different invocations of external language applications and
+   COMMIT issued from the calling application after 2nd CALL to
+   stored proc as previously described.  If any one of the elements
+   or order of events described above in the scenario diagram is
+   not present or does not occur, then the overlay will not occur.
+   
+   Moreover, even when overlay 'FF'x happens, the abends only occur
+   if that storage is re-assigned or reused for other purposes by
+   DB2 and MVS.  This typically only happens in DB2 systems with
+   a very high transaction load.
+   ****************************************************************
+   
+   Other abends or unexpected results are possible following
+   the overlay of FFx.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DB2 code was changed to properly reset the residual pointer to
+   prevent incorrect reuse of the ptr and overlay with 'FF'x.
+   
+   Additional search keywords: SQLSP SQLSTOREDPROC
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK72065
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-12
+   
+   
+ * CLOSED DATE
+   2008-12-12
+   
+   
+ * LAST MODIFIED DATE
+   2009-01-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK42455
+   
+   
+
+MODULES/MACROS
+ *  DSNDERSL DSNXERT  DSNXERT2 DSNXESTS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY UK42455 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK42455]
+   UP08/12/30 P F812
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,37 @@
+Title: IBM "Incorrect command line parameters" when installing SPSS - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am attempting to install SPSS for Windows, but as soon as the Windows installer launches, I receive this error in a pop up window:
+
+Incorrect command line parameters
+
+What is wrong? 
+
+RESOLVING THE PROBLEM
+The first thing you should try is to install SPSS from .msi file located in the SPSS directory on the CD ROM. If this does not resolve your problem, please continue with the suggestion below. 
+
+SPSS for Windows uses the Windows Installer, which is a program that is distributed with all modern Windows operating systems. One of the ways that this program can fail is if your system's defined temporary directory is invalid. The system's temporary directory is set by the TEMP and TMP environment variables, which are defined in the System Control Panel. If the directory that is defined does not exist, or if the user does not have write permission to that directory, the above error will occur.
+
+To install SPSS for Windows, please follow these instructions:
+
+NOTE: Because there are several versions of Microsoft Windows, the following steps may be different on your computer. If they are, see your product documentation to complete these steps.
+
+1. Click Start, point to Programs, point to Accessories, and then click Command Prompt. 
+2. At the command prompt, type cd\, and then press ENTER. 
+3. Type md NewTemp, and then press ENTER. This creates a folder named NewTemp. 
+4. Type set tmp=c:\NewTemp, and then press ENTER. Type set temp=c:\NewTemp, and then press ENTER. 
+5. Type CD-ROM drive letter:\spss\setup, and then press ENTER. 
+
+The installation should then start
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 33575

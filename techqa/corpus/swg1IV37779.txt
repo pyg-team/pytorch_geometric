@@ -1,0 +1,166 @@
+Title: IBM IV37779: MINOR CODE FIXES FOR ITNM_PATHTOOL.PL - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Network Manager IP 3.9.0 Fix Pack 4, 3.9.0-TIV-ITNMIP-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24034724]
+IBM Tivoli Network Manager IP Edition 3.9.0 Fix Pack 5, 3.9.0-TIV-ITNMIP-FP0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24037809]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  this should address 3 issues
+   main::getIPForwardingRoutesToAddress() called too early to check
+   prototype at
+   /opt/netcool/itnm/netcool/precision/scripts/webtools/bin/itnm_pa
+   thTool.p
+   l line 3154.
+   Use of uninitialized value in pattern match (m//) at
+   /opt/netcool/itnm/netcool/precision/scripts/webtools/bin/itnm_pa
+   thTool.p
+   l line 622.
+   Use of uninitialized value in concatenation (.) or string at
+   /opt/netcool/itnm/netcool/precision/scripts/webtools/bin/itnm_pa
+   thTool.p
+   l line 943.
+   
+   
+   1. function called before it's definition - added function
+   prototype
+   2+3 added checks for null values
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ITNM 3.9 Users Prior to FP4                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * one of these 3 errors:                                       *
+   * main::getIPForwardingRoutesToAddress() called too early to   *
+   * check prototype at                                           *
+   * /opt/netcool/itnm/netcool/precision/scripts/webtools/bin/itn *
+   * m_pathTool.pl line 3154.                                     *
+   * or                                                           *
+   * Use of uninitialized value in pattern match (m//) at         *
+   * /opt/netcool/itnm/netcool/precision/scripts/webtools/bin/itn *
+   * m_pathTool.pl line 622.                                      *
+   * or                                                           *
+   * Use of uninitialized value in concatenation (.) or string at *
+   * /opt/netcool/itnm/netcool/precision/scripts/webtools/bin/itn *
+   * m_pathTool.pl line 943.                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * | fix pack | 3.9.0-ITNMIP-FP0004                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Script has been fixed to address the issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV37779
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PREC TPL SV
+   
+   
+ * REPORTED COMPONENT ID
+   5724O6000
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-11
+   
+   
+ * CLOSED DATE
+   2013-05-14
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/PREC TPL SV
+   
+   
+ * FIXED COMPONENT ID
+   5724O6000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R390 PSN
+   UP
+   
+   
+ * R390 PSY
+   UP

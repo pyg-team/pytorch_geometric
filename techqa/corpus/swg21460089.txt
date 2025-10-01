@@ -1,0 +1,94 @@
+Title: IBM Creating a Web service project for RuleApps for WebSphere Application Server V7 - United States
+
+Text:
+Web service; websphere; wodm; mtds; decision; jrules TECHNOTE (FAQ)
+
+QUESTION
+ JRules comes with an out of the box Web service project generator for Tomcat, Websphere CE and JBOSS. JRules creates Monitored Transparent Decision Services (MTDS) which are integrated into the Rule Execution Server (RES). Since WebSphere Application Server V7 supports JAX-WS 2.1 is it possible to have the generator working for this application server ? 
+
+ANSWER
+JRules along with the out of the box feature [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global949.html] provides an extensive API [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global953.html]in order to create your own Client for ruleApps project generator. This API involves eclipse UI, in order to create your own wizard and code generation API using Velocity. 
+
+To illustrate this API you can use the following sample to generate a Web Service project for WebSphere Application Server V7. 
+
+Upon invoking the New Client Project for RuleApps wizard you will then be offered the possibility to select Web Service for WebSphere AS V7: 
+
+
+[/support/docview.wss?uid=swg21460089&amp;aid=1] 
+
+ 
+
+The generated java project comes with an ant build.xml script that provides a target deploy-ruleapp to deploy the ruleapp to the specified WebSphere RES Configuration and a target create-ear to generate the webservice application ready to install in WAS 7. 
+
+Deploy the EAR file generated in the folderwar so that you have a fully working application. 
+
+ 
+
+If you elect to generate the web service as a Monitored Transparent Decision Service (MTDS) you will be able to use the RES console to monitor the execution : 
+
+
+[/support/docview.wss?uid=swg21460089&aid=2] [/support/docview.wss?uid=swg21460089&aid=2] 
+
+ 
+
+ 
+
+New For WebSphere Operational Decision Management 
+
+Because you can deploy the java XOM as a resource along with the ruleapp all your rulesets can know be used as a Hosted Transparent Decision Service (HTDS). This is recommended. 
+
+If you want to deliver a web service for your application WODM now provides an HTDS implementation for WebSphere Application Server, using a XU J2SE implementation. 
+
+The attached sample can be used to create a MTDS using the XU Connection Factory installed in WebSphere Application Server. 
+
+ 
+
+Installation 
+
+ 
+
+With JRules 7.1 
+
+unzip the following file in the folder <jrule-install>/eclipse/dropins : 
+
+[/support/docview.wss?uid=swg21460089&aid=4]WAS7_webservice_1.1.1.zip [/support/docview.wss?uid=swg21460089&aid=3] 
+
+ 
+
+With WODM 7.5 
+
+ * Open Eclipse Help > Install New Software ... 
+ * Click Add 
+ * In the Add Repository window  * click Archive and select the path to the zip file WAS7ClientforRuleapps.zip below. 
+    * enter a name "WAS7 MTDS" 
+    * Click Ok
+   
+   
+ * Back in the Install window 
+ * In Work with select "WAS7 MTDS" 
+ * Uncheck group Items by category 
+ * In the table select WAS7_Client_for_Ruleapps 
+ * Click Next 
+ * Click Finish
+
+
+WAS7ClientforRuleapps.zip [/support/docview.wss?uid=swg21460089&aid=6]WAS7ClientforRuleapps.zip [/support/docview.wss?uid=swg21460089&aid=5]
+
+
+Note: 
+
+The source code is included for review and customization as needed. 
+
+We welcome your feedback in our forums [https://developer.ibm.com/answers/topics/ibmodm/]. 
+
+ 
+
+Changes: 
+
+ * Release 1.1.0 improves the build.xml to include only classes from the projects and avoid duplicate files in the war. 
+ * Release 1.1.1 resolves a problem with the build.xml when the XOM contains references to XSD files. 
+ * Release 2.0.0 for WODM 7.5
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise

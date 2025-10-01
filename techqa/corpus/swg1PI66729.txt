@@ -1,0 +1,209 @@
+Title: IBM PI66729: IMS INTERNAL PERFORMANCE TRACE STATISTICS VALUES FOR DFSBCB AND DFSPOOL STORAGE USAGE ARE INFLATED AFTER TABLE WRAP - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IMS maintains an in-core trace table in 64-bit storage
+   containing key system performance statistic values.  An
+   entry is created in this table once every 2 minutes.
+   Statistics for the DFSBCB and DFSPOOL storage usage
+   values are accumulated into each trace entry when it is
+   created from all of the various block types and pools.
+   This works correctly for the first pass through the trace
+   table, because the trace entry storage starts out as
+   all zeros when it is obtained.  However, on the second
+   and subsequent passes, the entries contain residual data.
+   The current DFSBCB and DFSPOOL storage usage is added
+   to the old data, resulting in values that are too large
+   and are inaccurate.  This can make diagnosing storage
+   problems difficult for IMS systems that have been
+   running for a long period of time.  The trace entry
+   storage should be cleared prior to creating each trace
+   entry.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of IMS 13.1                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Incorrect storage usage statistics for  *
+   *                      DFSBCB and DFSPOOL storage managers in  *
+   *                      the internal IMS statistics trace table *
+   *                      when table wraps.                       *
+   ****************************************************************
+   * RECOMMENDATION: INSTALL CORRECTIVE SERVICE FOR APAR/PTF      *
+   ****************************************************************
+   IMS captures various performance statistics periodically in an
+   in-memory table in 64-bit storage.  Included in these statistics
+   are the number of bytes currently allocated by DFSBCB and
+   DFSPOOL storage managers.  These particular storage statistics
+   are obtained by running through the control information for all
+   of the blocks (DFSBCB) and pools (DFSPOOL), and adding each
+   block/pool's usage to the statistic field in the trace entry
+   being created.
+   
+   For the first pass through the table after initialization, this
+   works fine, because the table storage is zero when it is
+   allocated.  However, when the table wraps, the previous entries
+   are reused.  Thus, on the second and subsequent times through,
+   the current storage usage is added to the old storage usage,
+   and the resulting values are too large.  This can make storage
+   problems difficult to analyze.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  GEN:
+   KEYWORDS:
+    IMSSERV
+   
+   *** END IMS KEYWORDS ***
+   Module DFSISTR0 is changed to clear the entire statistics
+   trace entry prior to filling it in.
+   
+   Several minor EDA and RM dump formatter changes developed at
+   the IMS lab recently are included with this APAR, to improve
+   serviceability.
+   
+   EDA Dump Formatter:
+   
+   DFSEF070:  GRMB formatting is updated to format the IMS version
+   number in the header of IMS-managed SSCTs, to help differentiate
+   IMS's in a mixed-version LPAR.
+   
+   DFSEF160:  STATS formatting is updated to print the total amount
+   of real storage available on the LPAR, and also the processor
+   hardware serial number.  Tests for out of support z/OS levels
+   to control optional formatting output are removed.
+   
+   RM Dump formatter:
+   
+   A new option -- RPST -- is added to both the high and low RM
+   dump formatter panels:
+   
+     - RPST selected on the high-level panel (CSLRABH0) formats
+       the global repository statistics block (RPST) for any
+       repository RM is connected to.
+   
+     - RPST selected on the low-level panel (CSLRABL0) formats a
+       specific RPST block whose address is provided on the panel.
+   
+   CSLRFMT0 is updated to support the new RPST option.
+   
+   CSLRFM30 was a reserved RM dump formatter module; it is now the
+   module used to process the RM RPST dump formatting option.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI66729
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V13
+   
+   
+ * REPORTED COMPONENT ID
+   5635A0400
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / Serviceability / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-29
+   
+   
+ * CLOSED DATE
+   2016-09-23
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI66747 [http://www-01.ibm.com/support/docview.wss?uid=isg1PI66747] UI41053
+   
+   
+
+MODULES/MACROS
+ *  CSLRABH0 CSLRABL0 CSLRFMT0 CSLRFM30 DFSEF070
+   DFSEF160 DFSISTR0
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V13
+   
+   
+ * FIXED COMPONENT ID
+   5635A0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R300 PSY UI41053 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI41053]
+   UP16/09/28 P F609
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

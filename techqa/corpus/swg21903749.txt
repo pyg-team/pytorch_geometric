@@ -1,0 +1,39 @@
+Title: IBM 5.3.0.6-ISS-XGS-All-Models-IF0001 - United States
+
+Text:
+IBM Security Network Protection; XGS; IF; IF0001; 5.3.0.6; All Models FIX README
+
+ABSTRACT
+ What fixes does 5.3.0.6-ISS-XGS-All-Models-IF0001.fixpack include and what are the affected modules? 
+
+CONTENT
+This document discusses the fixes included in the fixpack 5.3.0.6-ISS-XGS-All-Models-IF0001 and the modules it affects.
+Following are the fixes that are included:
+
+APAR IV73743 - Fixes the condition where event emails would not always be sent when more than 3 recipients were specified. Also corrects for the same recipient list being duplicated upon policy reload which created an erroneously high recipient count that would also causes this high recipient count failure.
+
+APAR IV73393 - Fixes the issue where syslog_sshd crashes with sig6.
+
+APAR IV73399 - Fixes an issue where XGS cannot add management address and shows it as invalid value.
+
+APAR IV73264 - Fixes the issue where static routing table entry is removed from the active table after reboot.
+
+APAR IV73274 - Fixes automatic reboot on XGS where captive portal is being used.
+
+Also fixes an issue where alpsd crash with signal 49 - watchdog may erroneously cause a timeout and make alpds crash with signal 49 due to an inconsistency in the way the timeout time delta was calculated. 
+
+Modules Affected:
+
+alpsd
+dpdk
+mesa_config
+mesa_eventsd
+mesa_syslogd
+XGS_53.war
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21903749&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21903749&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21903749&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21903749&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21903749&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21903749&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21903749&aid=7] [http://ibm.biz/ContactSecSupport]

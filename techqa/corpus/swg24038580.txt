@@ -1,0 +1,35 @@
+Title: IBM Download Production Imaging Edition Version 5.2.1 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and assemble IBM Production Imaging Edition Version 5.2.1 by using the Passport Advantage Online website. 
+
+DOWNLOAD DESCRIPTION
+
+
+[http://www.ibm.com/i/c.gif] 
+
+Downloading the product  1. From a browser, navigate to the Find Downloads and Media [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] page on the IBM Passport Advantage Online website. You must log on to continue.  
+    
+    
+ 2. Select the Find by part number search option under Download finder options. 
+    
+    
+ 3. Search for the following part numbers and download the images.
+    
+    
+    IBM Production Imaging Edition, IBM Datacap, and IBM Daeja 
+    
+    Component Description eSD Part Number IBM Production Imaging Edition V5.2.1 eAssembly CRMJ1ML IBM Datacap V9.0.0 for PIE 5.2.1 Multiplatform Multilingual eAssembly CRU74ML IBM Daeja ViewONE Professional 4.1.0 for PIE 5.2.1 Multiplatform Multilingual eAssembly CRU78ML 
+    
+    IBM FileNet Content Manager 5.2.1 part numbers for Production Imaging Edition 5.2.1
+    
+    Component Description eSD Part Number IBM FileNet Content Manager V5.2.1 for PIE 5.2.1 Multiplatform Multilingual eAssembly CRU77ML FileNet Content Platform Engine V5.2.1 for PIE 5.2.1 Multiplatform Multilingual eAssembly CRU79ML IBM FileNet Content Federation Services V5.2 for PIE 5.2.1 Multiplatform Multilingual eAssembly CRU7AML IBM System Dashboard for ECM 5.2 Multiplatform Multilingual eAssembly CRP0TML IBM FileNet Content Search Services V5.2.1 for PIE 5.2.1 Multiplatform Multilingual eAssembly CRU7BML Composite Platform Installation Tool V5.2.1 for PIE 5.2.1 Multiplatform English eAssembly CRU7DEN IBM FileNet P8 Platform Installable Information Center V5.2.1 for PIE 5.2.1 Multiplatform Multilingual eAssembly CRU7CML IBM DB2 Enterprise Server Edition V10.5 for ECM Multiplatform Multilingual eAssembly CRTQ4ML FileNet Application Engine 4.0.2 for PIE 5.2.1 Multiplatform Multilingual eAssembly CRMK2ML IBM Content Integrator V8.6 for ECM eAssembly CRF8NML FileNet Connector for Microsoft SharePoint Web Parts 2.2.2 for PIE 5.2 Multiplatform Multilingual eAssembly CRMK4ML IBM FileNet Integration for Microsoft Office V1.1.5 for PIE 5.2 Multiplatform Multilingual eAssembly CRMK5ML IBM Tivoli Directory Server V6.3 for PIE 5.2.1 Multiplatform Multilingual eAssembly CRTU7ML IBM Content Navigator 2.0.3 for ECM Multiplatform Multilingual eAssembly CSK4XML IBM WebSphere Application Server V8.5.5 for ECM Multiplatform Multilingual eAssembly CRH2UML 
+    
+    IBM FileNet Case Foundation 5.2.1 part numbers for Production Imaging Edition 5.2.1 
+    
+    Component Description eSD Part Number IBM FileNet Case Foundation V5.2.1 for PIE 5.2.1 Multiplatform Multilingual eAssembly CRU75ML IBM Forms V8.1 for Case Foundation for PIE V5.2.1 Multiplatform Multilingual eAssembly CRU76ML IBM FileNet Connector for Microsoft Visio 4.0.1 for PIE 5.2.1 eAssembly CRMJ6ML 
+
+[http://www.ibm.com/i/c.gif]

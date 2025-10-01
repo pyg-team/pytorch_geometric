@@ -1,0 +1,136 @@
+Title: IBM IV93764: WHERE NETWORK HEALTH DASHBOARD NOT INSTALLED, SHOW PERFORMANCE RIGHT CLICK TOOL BROKEN. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Bring up any device Right Click on it and there is a Menu
+   Option to "Show Performace"  however when customer clicks on
+   this option the form that appears is blank.  No performance
+   data is shown.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of Network Views where the Network Health          *
+   * Dashboard is NOT installed.                                  *
+   * All levels of ITNM 4.2 from GA to FP2 are affected           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The right click tool "Show Performance" is available for     *
+   * devices but opens an empty screen with no data displayed.    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to ITNM 4.2 FP3.                                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  IBM Tivoli Network Manager IP Edition 4.2.0 Fix Pack 3
+   4.2.0-TIV-ITNMIP-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV93764
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S4500
+   
+   
+ * REPORTED RELEASE
+   420
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-02-27
+   
+   
+ * CLOSED DATE
+   2017-03-16
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * FIXED COMPONENT ID
+   5724S4500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R420 PSN
+   UP
+   
+   
+ * R420 PSY
+   UP

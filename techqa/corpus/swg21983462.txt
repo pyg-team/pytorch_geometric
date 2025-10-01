@@ -1,0 +1,99 @@
+Title: IBM Errors purging operational meta data - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using istool workbench purgeOMD option to purge operational meta data can fail, even when -beginDate and -endDate are set to a low number of days 
+
+SYMPTOM
+The following errors are seen 
+
+ 
+ERROR: Failed to execute import command:
+com.ibm.iis.xmeta.client.exception.data.InsufficientDatabaseStorageExcep
+tion: There is insufficient space in the database to complete the
+operation.; nested exception is:
+
+com.ibm.is.gov.xmeta.RepositoryAccess$RepositoryRuntimeException:
+com.ibm.iis.xmeta.client.exception.data.InsufficientDatabaseStorageException: There is insufficient space in the database to complete the operation.
+
+or
+
+ERROR: Failed to execute import command.
+
+ERROR: Failed to execute import command: Read timed out; nested
+exception is:
+
+java.net.SocketTimeoutException: Read timed out
+
+
+CAUSE
+Due to the amount of data to be purged 
+
+
+There is insufficient space in the database to complete the operation. is caused by the db2 transaction log becoming full. 
+
+or
+
+The Information Server istoool timeout has expired.
+
+
+DIAGNOSING THE PROBLEM
+Inspection of the db2diag.log file will show an entry with the following message 
+
+
+"Log File has reached its saturation point" DIA8309C Log file was full 
+
+or the message
+
+java.net.SocketTimeoutException: Read timed out
+
+is returned by istool workbench purgeOMD command 
+
+
+
+
+RESOLVING THE PROBLEM
+The saturation of the DB2 server transaction log is due to the fact that the log size is insufficient because of its default setting. To prevent it from becoming saturated in the future, change the DB2 configuration setting to at least the following value for the xmeta database: 
+
+
+Log file size (4KB) (LOGFILSIZ) = 10000
+
+
+1. Determine the current log file size setting by issuing the command:
+
+su - <db2instance>
+
+db2 connect to <databaseName>
+db2 get db config for <databaseName> | grep -i logfilsiz 
+
+Example: 
+
+su - db2inst1
+db2 connect to xmeta
+db2 get db config for xmeta | grep -i logfilsiz
+
+2. Increase the size of the log file size setting by issuing the command:
+
+db2 UPDATE db cfg for <databaseName> using LOGFILSIZ <new_value>
+
+Example: 
+
+db2 UPDATE db cfg for xmeta using LOGFILSIZ 10000
+
+3. Stop WebSphere Application Server, ASB Agents and the DataStage Engine
+
+4. Issue the commands: 
+
+db2 force applications all
+db2stop force
+db2start
+
+5. Restart WebSphere Application Server, ASB Agents and the DataStage Engine
+
+The istool timeout value can be increased using the related link below.
+
+RELATED INFORMATION
+ workbench purgeOMD command [http://www.ibm.com/support/knowledgecenter/SSZJPZ_11.3.0/com.ibm.swg.im.iis.bg.cli.doc/topics/cli_purge_OMD.html]
+Increase istool timeout value [http://www.ibm.com/support/docview.wss?uid=swg21964918]

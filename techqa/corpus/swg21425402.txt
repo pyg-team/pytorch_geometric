@@ -1,0 +1,67 @@
+Title: IBM VOLATILE flag on Business Process Choreographer tables on DB2 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Can the database tables of Business Process Chorographer be altered to be VOLATILE or not VOLATILE? 
+
+CAUSE
+The scripts for the Business Process Choreographer database creation use the VOLATILE keyword for tables in most versions. Depending on the scenario where Business Process Choreographer is used, non-VOLATILE might be preferred over VOLATILE, or vice versa.
+The VOLATILE setting is only available on DB2 LUW and DB2 for z/OS.
+
+
+ANSWER
+Notice for the remainder of this documentation, that: 
+
+- "DB2" refers to both DB2 LUW and DB2 for z/OS
+- "DB2 LUW" refers to DB2 LUW only
+- "DB2 for z/OS" refers to DB2 for z/OS only
+
+Introduction - the VOLATILE flag: The VOLATILE flag specifies how DB2 is to choose access to tables, for example when running queries. If tables are marked VOLATILE, DB2 is to use index access to the table whenever possible for SQL operations.
+
+WebSphere Process Server Business Process Choreographer database (BPEDB): The initial state of a newly created WebSphere Process Server Business Process Choreographer database (BPEDB) should take into consideration with the assumptions used by the DB2 optimizer in establishing SQL access paths. In most environments, this is a transient state whose duration will depend on the data growth and usage of the system. This is an important aspect of DB2 performance.
+
+After the creation of the BPEDB tables, but before they are populated and RUNSTATS has been run, pay attention to table data growth to insure proper SQL performance as data is accumulated. The Database Management System (DBMS) uses statistics to determine the appropriate access paths to use for efficient SQL statements execution. For a new installation and before the accumulation of data and the execution of RUNSTATS, default statistics are used for SQL optimization. The default statistics are adequate for SQL optimization until persistent data accumulates and invalidates the default values. Then, performance may degrade. When this occurs, RUNSTATS needs to be executed to gather factual statistics based on the resident data in the tables. Proactive monitoring of data growth and running RUNSTATS when appropriate can avoid degradation in performance due to invalid statistics. 
+
+RUNSTATS and empty tables: Complexity is introduced when tables are empty and RUNSTATS is run. In this case, RUNSTATS sets the statistics to zero. Zero statistics can result in sub-optimal SQL performance if large volumes of data actually exist. If, during execution, tables become populated with transient data, performance problems and deadlocks may occur. These types of tables can be considered volatile: the amount of data they contain ranges from few to many in a non-predictable way for the database administrator. Therefore, executing RUNSTATS will not provide useful statistics.
+
+Problem statement: Running RUNSTATS - that is, providing table and index statistics to the optimizer for good SQL performance, especially good performance for complex queries such as task and process list queries - is helpful and necessary in most scenarios. However, if RUNSTATS is run on a regular basis - as suggested in most situations - empty tables may prevent the RUNSTATS command to fetch appropriate statistics. This can lead to performance problems and deadlocks.
+
+Problem mitigation with the VOLATILE flag: On DB2 LUW and DB2 for z/OS, specifying the VOLATILE flag on tables can help to avoid performance degradation and deadlocks if table and index statistics are not accurate.
+
+Specifying the VOLATILE flag - side effects: If the VOLATILE flag is specified, performance of complex queries can degrade. The reason for this is, that DB2 cannot use all query optimization techniques that are available, for example list prefetch.
+
+Finding out the VOLATILE setting on the BPEDB tables: Run the following SQL to find out if the VOLATILE flag is set on the BPEDB tables:
+SELECT VOLATILE, TYPE, TABNAME FROM SYSCAT.TABLES WHERE TABSCHEMA = '<@SCHEMA@>' AND TYPE = 'T' AND TABNAME LIKE '%+_T' ESCAPE '+' 
+
+In the output, look at the first column:
+VOLATILE TYPE TABNAME
+-------- ---- ---------------------
+C T URI_TEMPLATE_B_T
+C T ASSIGN_TEMPLATE_B_T
+C T PROCESS_CELL_MAP_T
+
+If the value in the first column is C, the table is marked VOLATILE. Depending on your version, you may find that most tables in the BPEDB are marked VOLATILE, or most tables are not marked VOLATILE.
+
+Changing the VOLATILE flag on tables of the BPEDB schema: Make sure that you understand the possible impact of changing the VOLATILE flag on the tables of the BPEDB schema. For this, reading the links provided in section "Related information" is mandatory. To change the VOLATILE flag:
+- edit the SQL script : replace the @SCHEMA@ qualifier with your schema name. Select the tables for which you want to change the VOLATILE flag.
+- run the SQL script setVolatile_db2.sql to set the VOLATILE flag on the tables of the BPEDB
+- run the SQL script unsetVolatile_db2.sql to remove the VOLATILE flag on the tables of the BPEDB
+Hint: the most important reason for changing tables of the BPEDB schema from non VOLATILE to VOLATILE is deadlocks occurring due to invalid statistics, which may result in table scans. In complex query scenarios such as task list and process list queries, you should not note significant changes in performance.
+
+Option on DB2 for z/OS: DB2 for z/OS provides two solutions for the problem described in section "Problem statement". One solution is to set the VOLATILE flag, one solution is a DBMS wide approach based on a DBMS configuration setting, NPGTHRSH, in the DSNZPARM configuration module. Setting this keyword value to 502 will provide some relief. Setting this value to 502 will indicate to the optimizer to use index access when accessing the table if the number of pages in the table space as established by RUNSTATS is less than 502 or if the default number of pages 501 is used. Index access is normally the preferred access method for volatile tables. This solution works well because RUNSTATS can remove the dominate index bias if more then 502 pages result from data accumulation but still allow index access if the number of pages is less then 502.
+
+Note
+This document also applies to IBM Business Process Manager Advanced versions 7.5, 8.5.
+
+RELATED INFORMATION
+ DB2 9.7 LUW - Automatic statistics collection [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.admin.perf.doc/doc/c0011762.html]
+DB2 9.7 LUW - Relational index performance tips [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.admin.perf.doc/doc/c0005055.html?resultof=%22%56%4f%4c%41%54%49%4c%45%22%20%22%76%6f%6c%61%74%69%6c%22%20]
+DB2 V11.0 for z/OS - Performance - Favoring index acces [https://www.ibm.com/support/knowledgecenter/SSEPEK_11.0.0/perf/src/tpc/db2z_favorindexaccess.html]
+
+
+unsetVolatile_db2.sql [/support/docview.wss?uid=swg21425402&aid=2] [/support/docview.wss?uid=swg21425402&aid=1]setVolatile_db2.sql [/support/docview.wss?uid=swg21425402&aid=4] [/support/docview.wss?uid=swg21425402&aid=3] 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Business Process Execution Language (BPEL) AIX, Linux, Linux zSeries, Solaris, Windows, z/OS 8.0, 7.5

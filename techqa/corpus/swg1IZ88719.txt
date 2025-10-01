@@ -1,0 +1,158 @@
+Title: IBM IZ88719: UA:UTCTOLOCALTIME FUNCTION NOT WORKING ON UNIX/LINUX PLATFORMS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   
+     Include components involved, platforms with versions/patches
+   for each.
+     Do you think the latest patch applied is involved?
+   Problem Description:
+     Expand on the APAR abstract since abstract length is limited.
+     Indicate expected results and actual observed results.
+     Provide as much detail as needed rather than referencing the
+   PMR.
+     Explain what activity was taken that caused the observed
+   action
+     (ie: change in a variable, entry in log or trace files,
+   pop-up, etc.)
+   Detailed Recreation Procedure:
+     Provide a detailed step-by-step recreation procedure.
+   Related Files and Output:
+     Indicate log location, trace levels used, command output,
+     configuration files, coredumps, etc.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Universal Agent UTCTOLOCALTIME function does not work on UNIX
+   and Linux platforms.
+   
+   Universal Agent UTCTOLOCALTIME function does not work on UNIX
+   and Linux platforms.  On UNIX and Linux platforms, when defining
+   an attribute to be derived per UTCTOLOCALTIME function, the
+   resulting value appearing in the Tivoli Enterprise Portal is
+   incorrect; it displays as a '^' character rather than as a
+   mm/dd/yy hh:mm:ss formatted value.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Universal Agent was changed to assign correct size for internal
+   data item used in the processing of a UTC value to LocalTime
+   value.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.2.2-TIV-ITM-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ88719
+   
+   
+ * REPORTED COMPONENT NAME
+   UNIVERSAL AGENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724K1000
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-09
+   
+   
+ * CLOSED DATE
+   2011-01-06
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UNIVERSAL AGENT
+   
+   
+ * FIXED COMPONENT ID
+   5724K1000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

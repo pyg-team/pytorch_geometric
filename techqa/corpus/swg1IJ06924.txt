@@ -1,0 +1,122 @@
+Title: IBM IJ06924: APM DATA POWER AGENT THRESHOLD IS NOT DISTRIBUTED TO THE AGENT - United States
+
+Text:
+  A README IS AVAILABLE
+8.1.4.0-IBM-APM-SERVER-IF0006 [http://www-01.ibm.com/support/docview.wss?uid=isg400004027]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  APM Data Power agent threshold is not distributed to the agent
+   Environment: APM server
+   APM version: 8.1.4.0 IF04
+   
+   Problem Description:
+   APM Data Power agent threshold is not distributed to the agent,
+   after the agent is renamed and subnode is connected to new
+   agent.
+   
+   Detailed Recreation Procedure:
+   APM Data Power agent threshold is not distributed to the agent,
+   after the agent is renamed and subnode is connected to new
+   agent.
+   
+   Related Files and Output:
+   
+   Messages found in logs etc : in server1 log file,  from agent
+   lifecycle topic message and SCR query agent list, the new
+   thruNode and its subndoe relationship is updated, but in CCSDB,
+   the new relationship is not updated, resulting updating
+   situation file failed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  FIN
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ06924
+   
+   
+ * REPORTED COMPONENT NAME
+   CENTRAL CONFIG
+   
+   
+ * REPORTED COMPONENT ID
+   5725U05CS
+   
+   
+ * REPORTED RELEASE
+   814
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-06-11
+   
+   
+ * CLOSED DATE
+   2018-08-13
+   
+   
+ * LAST MODIFIED DATE
+   2018-08-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R814 PSY
+   UP

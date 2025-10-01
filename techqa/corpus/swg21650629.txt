@@ -1,0 +1,14 @@
+Title: IBM Outgoing Emails Do Not Display Correctly. - United States
+
+Text:
+outgoing emails; communication templates TECHNOTE (FAQ)
+
+QUESTION
+ Are there properties in Maximo that may affect how outgoing emails are displayed? 
+
+ANSWER
+If you experience unusual problems with the way emails are displaying after being sent from Maximo then you should check the value of the mxe.email.content.type property in your system properties.
+For example some users find that emails sent from Communications and Communication Templates are removing carriage returns. 
+
+The mxe.email.content.type property is the only property which is applicable to outgoing emails. If you have the property set to text/html and you experience problems try setting this property to text/plain.
+Note this property is system wide. All emails sent will have this content type. It cannot be text/html for some emails and text/plain for others; it's one setting or the other.

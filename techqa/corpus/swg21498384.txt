@@ -1,0 +1,30 @@
+Title: IBM HADR database shown as Stuck Online after takeover - United States
+
+Text:
+tsa; tsamp; HADR; stuck online; stuck; binding=sacrificed; sacrificed; sacrifised; CLUSTER_MGR TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Manual DB2 takeover results in HADR resource shown as "Stuck online" on the node which becomes the new primary HADR database. 
+
+SYMPTOM
+lssam shows that the HADR resource and VIP go offline on the node which was hosting the primary HADR database, as expected. But the state of those two resources on new primary node changes to Pending offline instead of Pending online, and Binding=Sacrificed is set. 
+
+Meanwhile the db2 takeover command completes on the standby node and db2pd shows that the HADR database is now primary on this node, the new primary node.
+
+Eventually the Pending offline states changed to Stuck online. 
+
+
+CAUSE
+The reason is quite simple. The CLUSTER_MGR parameter within the DB2 dbm cfg for each instance isn't set to TSA. So effectively there is no integration between DB2 and TSAMP. TSAMP attempts to counter the actions of the "db2 takeover ...', hence the Pending offline situation.
+
+
+
+DIAGNOSING THE PROBLEM
+RecRM trace_summary shows a change in state (to Online) of the HADR database on the standby without any evidence of a move request. A move request would be expected when a controlled DB2 takeover is performed in a correctly configured environment. 
+
+Check if CLUSTER_MGR is set by running the following as instance owner on both primary and standby:
+db2 get dbm cfg | grep -i cluster
+
+
+RESOLVING THE PROBLEM
+The solution is to set CLUSTER_MGR to TSA for each instance. Running 'db2haicu' as the instance owner, on each node, will do this.

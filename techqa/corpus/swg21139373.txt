@@ -1,0 +1,70 @@
+Title: IBM IMAP Sessions Not Released After the Idle Timeout Value Has Been Reached - United States
+
+Text:
+time-out TECHNOTE (FAQ)
+
+QUESTION
+After upgrading to Domino 6.x, you find that the IMAP task is holding multiple sessions open for the same user. When a "show tasks" command is executed on the server, the output indicates the IMAP server is providing service for the same user repeatedly, as seen below: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+ANSWER
+This issue was reported to Quality Engineering and has been addressed in Domino 6.0.4 and 6.5.2.
+
+Excerpt from the Lotus Notes and Domino Release 6.0.4 / 6.5.2 MR fix list (available at http://www.ibm.com/developerworks/lotus [http://www.ibm.com/developerworks/lotus]):
+
+SSL 
+
+ * SPR# DPOS5MZPYQ - Fixed a problem with IMAP, SSL and IOCP session timeouts. In this particular instance, the IMAP Session Timeout setting did not work over the SSL port. The session remained open.
+
+
+Currently the only workaround is to cycle the IMAP task on a regular basis, to release the extra sessions as they build up. You can do this on a scheduled basis through a Program document, using these steps: 
+
+1. Open the Administrative client, then make the server that you would like to schedule the restart on your current server. 
+
+2. Select the Configuration tab and expand the Server twistie. Select the Programs view. 
+
+3. Select "Add Program". In the Program name field, enter "nserver" (without the quotes.) In the Command line field, enter the following: 
+ * 
+
+
+Ensure that the "Server to run on" field matches up with the desired server. 
+
+4. Adjust the interval and frequency of this Program document in the Schedule section. 
+
+Supporting Information: 
+This issue will occur when IMAP clients are connecting to Domino using SSL. After the session is established, the IMAP client stays connected, in an idle state, and the connection is still active on the Domino server. If a show tasks is performed, the IMAP task shows that it is providing service for that user: 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+After the default idle time out for IMAP (30 minutes) is reached on the Domino server, the client disconnects, but the Domino server still shows that the IMAP task is providing service for the client. The standard disconnected message is not displayed, and if the user connects again, a new session is spawned: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Executing a "show stat IMAP" command also reveals that a connection is active. After subsequent connections by the same user, the sessions will build up, which is evident through a show tasks, a show stat IMAP, and an NSD. The only way to release these superfluous connections is to cycle the IMAP task, at which time it will display disconnection messages for each session: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *

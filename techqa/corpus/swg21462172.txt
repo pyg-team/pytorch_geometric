@@ -1,0 +1,24 @@
+Title: IBM You do not have authorization for the start center - United States
+
+Text:
+start center; authorization TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to login as admin user as there are no privileges to access the start center 
+
+SYMPTOM
+The login validates however on screen you receive the message "You do not have authorization for the start center"
+
+
+CAUSE
+This is caused by improper privileges in the applicationauth table or the admin user not being part of the EVERYONE group.
+
+DIAGNOSING THE PROBLEM
+To determine what groups your admin user is part of please run the following statement and ensure MAXADMIN is part of the everyone group that contains the privileges to read and update the template
+
+
+select * from applicationauth where groupname in (select groupname from groupuser where userid = 'MAXADMIN') and app = 'STARTCNTR'
+
+
+RESOLVING THE PROBLEM
+To resolve the issue you will need to run the statement above and then ensure your user exists in a group EVERYONE and has the authorization for the start center. If you can get in with another user you can fix this through the security groups application. If not please contact Maximo support for further assistance.

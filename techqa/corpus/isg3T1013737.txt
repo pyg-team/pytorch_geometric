@@ -1,0 +1,33 @@
+Title: IBM How do I account for cached memory on Tru64 in LIM? - United States
+
+Text:
+Tru64 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do I account for cached memory on Tru64 in LIM? 
+
+RESOLVING THE PROBLEM
+How do I account for cached memory on Tru64 in LIM?Tru64 uses so-called Unified Buffer Cache (UBC) to store recently accessedfile system user data. UBC competes for the virtual memory with processes.
+
+Currently LIM calculates free memory as (free_count + inactive_count), wherefree_count - number of clean pages that are available for use, inactive_count - number of pages that are allocated but are most likely to be used for paging.
+
+In order to acound for UBC pages free memory should be calculated as: (free_count + inactive_count + ubc_count), ubc_count - number of pages used by UBC.
+
+On V5.x ubc_count is available either via table() system call or from `vmstat -P`. Both solutions can be implemented via elim
+
+1. Here is the solution using table() function:
+
+
+
+/* Calculates amount of free VM taking into account "free", "inactive" * and "UBC" pages. * Will work on V5.x only * /#include 
+     
+      #include 
+      
+       int main() {        struct tbl_vmstats vmtbl;        long cc;        long mem;        long rc = 0;        setbuf(stdout, 0);        cc = table(TBL_VMSTATS,0,(void *)&vmtbl,1,sizeof(vmtbl));        if (cc <0) {                rc = errno;                mem = 0;        }        else {                mem = vmtbl.free_count + vmtbl.inactive_count + vmtbl.ubc_pages;                mem = mem * (vmtbl.pagesize/1024) / 1024;        }        printf("%d",mem);        exit(rc);}
+      
+     
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

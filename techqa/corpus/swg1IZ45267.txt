@@ -1,0 +1,158 @@
+Title: IBM IZ45267: LOG PARSING TEST BUTTON DOES NOT WORK ON AIX 64-BIT TEMA SYSTEMS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment: Agent Builder 6.2.1 IF0001 and prior, running AIX
+   systems with only a 64-bit TEMA
+   
+   
+   Problem Description:
+   - - - - - - - - - -
+   Agent Builder log parsing does not return any data in the test
+   dialog, on AIX systems with only a 64-bit TEMA install or no
+   TEMA at all. The problem does not occur on Linux or Windows.
+   
+   It also works if the 32-bit TEMA libraries exist in
+   /opt/IBM/ITM/tmaitm6/links/aix52/lib.
+   
+   There are 5 libraries (lib*32.a), which will not load from the
+   temporary directory.  When it works,  these libs get loaded from
+   /opt/IBM/ITM/tmaitm6/links/aix52/lib which is a link to a 32-bit
+   TEMA, if you have one installed.
+   
+   
+   Detailed Recreation Procedure:
+   - - - - - - - - - - - - - - -
+   1. Create a Log File monitor agent.
+   2. On the Data Sources tab, select the log file being monitored.
+   3. Select the 'Test Log File Settings' button.
+   4. In the Parse Log window,  select the Log file name Browse
+   button for the log file to monitor.
+   
+   No data appears in the Parse Log Results portion of the
+   window.
+   
+   
+   Related Files and Output:
+   - - - - - - - - - - - -
+   An Unsatisfied link error will be seen in the log file
+   <workspace_dir>/.metadata/tivoli/KQZ/logs/traceKQZ.log.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1. Copy the 5 libraries (lib*32.a) from the
+   <Builder_Install>/plugins/com.ibm.tivoli.montitoring.AgentGenera
+   tor_6.2.1/lib/aix526
+   directory to the  /opt/IBM/ITM/tmaitm6/links/aix52/lib
+   
+   2. Rename the lib*32.a libraries to lib*.a. (Removing the '32'
+   notation.)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem/Problem Summary:
+   Agent Builder log parsing does not return any data in the test
+   dialog, on AIX systems with only a 64-bit TEMA install or no
+   TEMA at all. The problem does not occur on Linux or Windows.
+   
+   It also works if the 32-bit TEMA libraries exist in
+   /opt/IBM/ITM/tmaitm6/links/aix52/lib.
+   
+   There are 5 libraries (lib*32.a), which will not load from the
+   temporary directory.  When it works,  these libs get loaded from
+   /opt/IBM/ITM/tmaitm6/links/aix52/lib which is a link to a 32-bit
+   TEMA, if you have one installed.
+   
+   Environment: Agent Builder 6.2.1 IF0001 and prior, running AIX
+   systems with only a 64-bit TEMA or no TEMA.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ45267
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT BUILD
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04BR
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-03-05
+   
+   
+ * CLOSED DATE
+   2009-03-13
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R621 PSY
+   UP

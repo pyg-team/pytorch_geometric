@@ -1,0 +1,150 @@
+Title: IBM PK67142: PUBLISHED CONTENT WON'T UPDATE ON SUBCRIBER IF IT HAS A DRAFT COPY - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.1 Download: WebSphere Portal and Web Content Management V6.1, fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24020387]
+6.1.0.2 Download: WebSphere Portal and Web Content Management V6.1, fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022898]
+6.1.0.3 Download: WebSphere Portal and WCM V6.1 fix pack 3, 6.1.5 feature pack [http://www-01.ibm.com/support/docview.wss?uid=swg24025054]
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  1. create content "ContentTest", publish it, and create a draft
+   copy of
+   it(click create draft button).
+   
+   2. Do a syndication, so both syndicator and subscriber have
+   those draft
+   and published content.
+   
+   3. Update the draft one(change the name) on syndicator, then
+   published
+   it. (So on syndicator, draft gone, published content get
+   updated).
+   
+   4. Do a syndication, on subscriber, the draft one gone, but
+   somehow the
+   published one didn't get updated(still the previous name, and
+   the lock
+   mark didn't get removed).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The last modify date will be updated once the cancel the draft
+   action done on the subsciber, which will prevent the publish
+   content get updated because the last modify date is newer than
+   the one on syndicator.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Reset the last modify date to the one before cancel draft in
+   order to match the date of publish content on the syndicator.
+   
+   
+   An interim Fix is available for this APAR from Fix Central at:
+   
+   For release 6.0.1.3:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?brandid=2&productid=Workplace%20Web%20Content%20Management&fix [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?brandid=2&productid=Workplace%20Web%20Content%20Management&fix]
+   es=6.0.1.3-WCM-PK67142
+   
+   You will need to cut/paste the entire URL into a browser to
+   resolve the address.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK67142
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   60G
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-06-05
+   
+   
+ * CLOSED DATE
+   2008-06-17
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60G PSY
+   UP

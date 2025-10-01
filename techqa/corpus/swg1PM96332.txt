@@ -1,0 +1,243 @@
+Title: IBM PM96332: ENF NOTIFICATION AND TRANSACTION AUTHORITY 13/12/30 PTF PECHANGE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Authority is removed from the user to run a transaction.
+   
+   The flow is as follows:
+   Enter transaction TRANA. The transaction is routed over to AOR
+   and executed successfully.
+   Enter security command to remove the profile (revoke transaction
+   permission) from the user.   ENF 71 is signal sent by security
+   manager at this time.
+   Enter transaction TRANA. The transaction is routed over to AOR
+   and immediately failed due to user no longer having security for
+   transaction.
+   
+   After application of the fixes for PM79281 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM79281] and PM88282 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM88282],  the
+   flow is as follows:
+   Enter transaction TRANA. The transaction is routed over to AOR
+   and executed successfully.
+   Enter RACF command to remove the profile (revoke transaction
+   permission) from the user. ENF 71 signal is sent by security
+   manager at this time.
+   Enter transaction TRANA. The transaction is routed over to AOR
+   and STILL executed successfully.
+   
+   The ENF notification is received in the AOR and the USUDB is
+   correctly flagged.  However, after PM79281 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM79281], only non-terminal
+   signons removed the notified user from the user domain
+   directories.  When transaction routing is used the signon in
+   the AOR is a terminal signon.  The first transaction runs after
+   the user is revoked therefore finds the user in the user domain
+   directory and uses it so is allowed to run.
+   At the end of the transaction a deferred signoff is done.  This
+   would  put the user onto the timeout queue.  The notification
+   bit is on in the USUDB so the user gets deleted instead.  When
+   the second transaction runs the user is not found in the
+   directory so a full signon is done at which point we find that
+   the user is revoked.
+   Additional Symptom(s) Search Keyword(s): KIXREVEPH
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS Users with UK94164 applied.         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CICS ignores RACF ENF notification      *
+   *                      in the AOR when a transaction           *
+   *                      is being routed.                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A terminal user is signed on in a TOR (terminal owning region).
+   They run a transaction that gets routed to the AOR (application
+   owning region). As transaction routing is being used a
+   surrogate terminal is created and a terminal signon is done
+   for the user. At the end of that transaction a deferred signoff
+   is done in the AOR and the user gets placed on the user
+   timeout queue.
+   The userid is then revoked in the ESM.  This causes an
+   ENF71 notification be sent to the TOR and the AOR.
+   CICS processes the notification and turns the
+   usud_notify_received flag on in the USUDB for this userid in
+   the TOR and the AOR.
+   The user then runs another transaction. This gets routed to
+   the AOR causing DFHSNUS to call DFHUSAD for
+   ADD_USER_WITHOUT_PASSWORD specifying a signon type of
+   ATTACH_SIGN_ON.
+   The routine in DFHUSAD only processes the ENF notification
+   for non_terminal users and so this user is not processed
+   because this is a terminal signon.  The user is found
+   on the timeout queue so gets removed from that queue
+   and the transaction is allowed to run.
+   At the end of the transaction a deferred signoff is done.
+   This would normally put the user on the timeout queue but
+   as the usud_notify_received flag is on the user is deleted
+   instead.
+   The terminal user runs a third transaction which is routed
+   to the AOR.  A terminal signon is done and the user is not
+   found so a full signon gets performed.  This finds that the
+   user is revoked and the transaction is not allowed to run.
+   DFHUSAD should include surrogate terminals when deciding
+   whether to delete a userid following a RACF ENF notification.
+   
+   Additional keywords: msgDFHSN0002 DFHSN0002 SECVFYFREQ
+                        USRDELAY DFHSNAS CODE X'2056' 2056
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  UK94164
+   DFHUSAD has been changed so that all userids will be considered
+   for deletion when either a RACF ENF notification is received
+   or the SECVFYFREQ time expires.
+   If the userid is not on the USRDELAY timeout queue then
+   only non_terminal_signon userids will be deleted.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM96332
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-03
+   
+   
+ * CLOSED DATE
+   2014-01-03
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI08773 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI08773] UI14134
+   
+   
+
+MODULES/MACROS
+ *  DFHAMCSD DFHAMPFI DFHAMPIL DFHAMRDI DFHAMST  DFHAPEX  DFHAPLI1
+   DFHAPLJ1 DFHAPLX1 DFHAPRT  DFHAPRX  DFHBAA10 DFHBAA11 DFHBAA12
+   DFHBAAC0 DFHBAAC1 DFHBAAC2 DFHBAAC3 DFHBAAC4 DFHBAAC5 DFHBAAC6
+   DFHBAAC  DFHBAAR1 DFHBAAR2 DFHBABR  DFHBACM  DFHBACR  DFHBADM
+   DFHBAPR0 DFHBAPR  DFHBASP  DFHBAUE  DFHBAXM  DFHBRAT  DFHBRFM
+   DFHBRMP  DFHBRMR  DFHBRXM  DFHBSS   DFHBSTS  DFHBSTZO DFHCQSY
+   DFHD2EX1 DFHD2TM  DFHDLIDP DFHDPIN  DFHDPLU  DFHDPWD  DFHDPWE
+   DFHDPWJ  DFHDPWL  DFHDPXM  DFHECEAS DFHECEC  DFHECSC  DFHEIAD
+   DFHEIIC  DFHEIQAS DFHEIQSA DFHEIQSQ DFHEIQST DFHEPEV  DFHESN
+   DFHFCQI  DFHFCRP  DFHICP   DFHICUS  DFHICXM  DFHIEXM  DFHISAL
+   DFHISCO  DFHISIC  DFHISIS  DFHISXM  DFHLDDM  DFHMEIN  DFHMNXM
+   DFHMPAC  DFHMQQCN DFHMQTM  DFHMQTRU DFHPGAI  DFHPGDD  DFHPGRP
+   DFHPIPL  DFHPIPM2 DFHPISC  DFHPITC  DFHPIWR  DFHPIXM  DFHRLBR
+   DFHRLDM  DFHRLDUF DFHRLPK1 DFHRLPM  DFHRLRG1 DFHRLRO  DFHRLRS1
+   DFHRLST  DFHRMLK4 DFHRMLN  DFHRMLSO DFHRMLSS DFHRMLSU DFHRMOT
+   DFHRMRS  DFHRMU1D DFHRMUC  DFHRMUO  DFHRMUW1 DFHRMUWP DFHRMUWQ
+   DFHRMUWW DFHRMUW  DFHRZDM  DFHRZIX  DFHRZLN  DFHRZNR2 DFHRZRG2
+   DFHRZRM  DFHRZRS1 DFHRZSO1 DFHRZSO  DFHRZTA  DFHRZTCX DFHRZTR1
+   DFHRZTRI DFHRZXM  DFHSHDM  DFHSHPR  DFHSHRE1 DFHSHRM  DFHSHRQ1
+   DFHSHRQ  DFHSHRR  DFHSHTI  DFHSHXM  DFHSII1  DFHSJJS  DFHSJXM
+   DFHSNAS  DFHSNPU  DFHSNSU  DFHSNTU  DFHSNUS  DFHSNXR  DFHSODM
+   DFHSOXM  DFHTCRP  DFHTDA   DFHTDTM  DFHUSADT DFHUSAD  DFHUSDM
+   DFHUSDUF DFHUSES  DFHUSFL  DFHUSIS  DFHUSST  DFHUSTI  DFHUSTRI
+   DFHUSXM  DFHW2AT  DFHW2DM  DFHWBA   DFHWBBLI DFHWBBMS DFHWBDM
+   DFHWBSR  DFHWBTL  DFHWBTTA DFHWBXM  DFHWBXN  DFHWSATR DFHXFP
+   DFHXFQ   DFHXFX   DFHXMIQ  DFHXMRM  DFHXMRU  DFHXMXD  DFHXMXM
+   DFHXSRC  DFHXTP   DFHZATA2 DFHZGAI  DFHZSGN  DFHZTSP
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY UI14134 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI14134]
+   UP14/01/20 P F401
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

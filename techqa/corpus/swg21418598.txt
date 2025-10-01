@@ -1,0 +1,54 @@
+Title: IBM ORA-600 [15160]  during workspace preview - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During the workspace preview, you may see the ORA-600 [15160] error. 
+
+SYMPTOM
+[1/14/10 15:25:03:973 EST] 00000126 CommerceSrvr E DataBeanManager activate(DataBean,ViewCommandContext,HttpServletRequest,HttpServletResponse) CMN0420E: The following command exception has occurred during processing: "java.sql.SQLException: ORA-00600: internal error code, arguments: [15160], [], [], [], [], [], [], [], [], [], [], [] 
+
+".java.sql.SQLException: ORA-00600: internal error code, arguments: [15160], [], [], [], [], [], [], [], [], [], [], []
+
+at oracle.jdbc.driver.SQLStateMapping.newSQLException(SQLStateMapping.java:70)
+at oracle.jdbc.driver.DatabaseError.newSQLException(DatabaseError.java:133)
+at oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError.java:206)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:455)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:413)
+at oracle.jdbc.driver.T4C8Oall.receive(T4C8Oall.java:1034)
+at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java:194)
+at oracle.jdbc.driver.T4CPreparedStatement.executeForDescribe(T4CPreparedStatement.java:791)
+at oracle.jdbc.driver.T4CPreparedStatement.executeMaybeDescribe(T4CPreparedStatement.java:866)
+at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1186)
+at oracle.jdbc.driver.OraclePreparedStatement.executeInternal(OraclePreparedStatement.java:3387)
+at oracle.jdbc.driver.OraclePreparedStatement.executeQuery(OraclePreparedStatement.java:3431)
+at oracle.jdbc.driver.OraclePreparedStatementWrapper.executeQuery
+(OraclePreparedStatementWrapper.java:1491)
+at com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.pmiExecuteQuery
+(WSJdbcPreparedStatement.java:1086)
+at com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.executeQuery
+(WSJdbcPreparedStatement.java:707)
+at com.ibm.commerce.base.helpers.BaseJDBCHelper.executeQuery(BaseJDBCHelper.java:381)
+
+
+CAUSE
+This is a known Oracle limitation (Bug 8295719). Please contact Oracle support for details
+
+
+ENVIRONMENT
+Oracle 11g on all platforms
+
+
+
+RESOLVING THE PROBLEM
+There are two options to fix this problem: 
+
+1. Workaround 
+
+set _optimizer_push_pred_cost_based to false:
+alter system set _optimizer_push_pred_cost_based = false scope=both 
+
+ 
+
+2. Contact Oracle for software patch.

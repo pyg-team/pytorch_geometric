@@ -1,0 +1,109 @@
+Title: IBM DEBUG [ServletBase] verifySession: €š   UI is not available, try again (SCI87539) - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DEBUG [ServletBase] verifySession: €š UI is not available, try again (SCI87539) 
+
+SYMPTOM
+DEBUG [ServletBase] verifySession:? UI is not available, try again 
+SystemUnavailable='The system is not available at this time; One of the servers or Database could be down. 
+Please try again.'
+Label.ServiceConfigurationError='Service Configuration Error' 
+GIS reporting database down,? but database did not go down.? 
+GIS would not reconnect until restart. 
+ERROR [JDBCService] got a bad connection, trying again. 
+ERROR SQL State: null
+com.sterlingcommerce.woodstock.util.frame.jdbc.JDBCConnectionException: java.sql.SQLException: ORA-02396: exceeded maximum idle time, please connect again 
+ERROR SQL State: null
+java.sql.SQLException: DB Connection Thread Timeout 
+ALL [DBResourceMonitor] checkRawConnection
+DEBUG [DBResourceMonitor] testDBConnection(): threadTimeOut = 25000
+DEBUG [DBResourceMonitor] testDBConnection(): DBConnectionThread TIMEOUT
+ERROR [DBResourceMonitor] testDBConnection(): caught DB error while testing DB connection
+ERROR SQL Error Code: 0
+ERROR SQL State: null
+java.sql.SQLException: DB Connection Thread Timeout
+? at com.sterlingcommerce.woodstock.util.frame.monitor.DBResourceMonitor.testDBConnec tion(DBResourceMonitor.java:795)
+? at com.sterlingcommerce.woodstock.util.frame.monitor.DBResourceMonitor.testConnecti on(DBResourceMonitor.java:814)
+? at com.sterlingcommerce.woodstock.util.frame.monitor.DBResourceMonitor.checkRawConn ection(DBResourceMonitor.java:305)
+? at com.sterlingcommerce.woodstock.util.frame.monitor.DBResourceMonitor.execute(DBRe sourceMonitor.java:206)
+? at com.sterlingcommerce.woodstock.util.frame.monitor.ResourceMonitorTaskWorker.run( ResourceMonitorTaskWorker.java:40)
+? at java.lang.Thread.run(Thread.java:513)
+? DEBUG [DBResourceMonitor] testDBConnection(): result = -1
+DEBUG DBResourceMonitor.testConnection(): testDBConnection() took 25126 ms
+DEBUG [DBResourceMonitor] sleeping 30000
+DEBUG [DBResourceMonitor] testDBConnection(): threadTimeOut = 25000
+DEBUG [DBResourceMonitor] already initialized.
+DEBUG [DBResourceMonitor] already executing.? Returning... 
+
+
+
+DEBUG action: java:com.sterlingcommerce.woodstock.util.frame.monitor.ResourceMonitorEmailEvent RunnableDEBUG type=java; command=com.sterlingcommerce.woodstock.util.frame.monitor.ResourceMonitorEmailEv entRunnable
+
+
+DEBUG Launching java class
+
+DEBUG Processing EventRunnable
+
+DEBUG Transforming event using classpath:DBResourceEmailTransform.xslt
+
+DEBUG Getting transform for: classpath:DBResourceEmailTransform.xslt
+
+DEBUG Loading transform resource: DBResourceEmailTransform.xslt
+
+
+
+
+DEBUG 
+Database Unreachable 
+
+
+The database was unreachable at 2006.02.06 11:41:31 EST.
+
+
+E-mails will be sent at increasing intervals of 
+1, 5, 15, 30, 45, and 60 minutes until GIS is shut 
+down or the database can be reached.? ? ? ? ? ? ? ? ? 
+
+
+[2006-04-14 03:28:29.362] ERROR SQL State: null 
+java.sql.SQLException: DB Connection Thread Timeout 
+? at com.sterlingcommerce.woodstock.util.frame.monitor.DBResourceMonitor.testDBConnec tion(DBResourceMonitor.java(Compiled Code)) 
+
+RESOLVING THE PROBLEM
+For GIS Release 4.0, apply Service Pack 3 patch 16 or later to resolve issues with the Database Resource Monitor. Information from the release notes for this patch:
+
+
+Enhanced the DBResourceMonitor to not block when testing the connection to a database. DBResourceMonitor now pauses the workflow queues when a pooled connection fails and will unpause when a raw connection succeeds.
+
+
+
+ 
+
+HISTORICAL NUMBER
+ PRI5819 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Change
+
+
+Patch upgrade to GIS
+Release 4.0.3-10
+
+
+Fact
+
+
+Gentran Integration Suite
+Release 4.0 
+Gentran Integration Suite
+Release 
+4.0.03 
+Oracle 9.2.0.6.0 
+DBA verified GIS's Local Oracle database is 
+OK 
+SCI87539

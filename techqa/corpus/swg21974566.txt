@@ -1,0 +1,74 @@
+Title: IBM Configuring access for HTTP and HTTPS in Jazz for Service Management - United States
+
+Text:
+jazzsm11relnotes; jazzsm1101relnotes; jazzsm1102; jazzsm1103relnotes; relnotes; jazzsm1110relnotes; jazzsm1120relnotes; jazzsm1121relnotes; HTTP; HTTPS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ By default, the Jazz™ for Service Management application server requires HTTPS access. You can set up the environment for both HTTP and HTTPS, however HTTP access is not supported. 
+
+CAUSE
+For security reasons, HTTP access is disabled by default and is not supported. 
+
+RESOLVING THE PROBLEM
+Before you begin
+
+
+After installing Dashboard Application Services Hub and before beginning this procedure, log in to the console to ensure that it has connectivity and can start successfully. 
+
+About this task 
+
+Configuring for HTTP and HTTPS console access involves editing theweb.xmlfile of Web components. Use this procedure to identify and edit the appropriate Web XML files. 
+
+Important: These steps are provided for information purposes only, as setting up the environment for HTTP access is not supported. 
+
+Procedure 
+
+1. Change to the following directory:JazzSM_WAS_Profile/config/cells/JazzSMNode01Cell/applications. 
+
+2. From this location, locate theweb.xmlfiles in the following directories: 
+
+ * For the Integrated Solutions Console web application archive:isc.ear/deployments/isc/isclite.war/WEB-INF 
+ * For the Charts web application archive:isc.ear/deployments/isc/TIPChartPortlet.war/WEB-INF 
+ * For the Dashboard Application Services Hub Change Password web application archive:isc.ear/deployments/isc/TIPChangePasswd.war/WEB-INF
+
+
+3. Open one of the web.xmlfiles using a text editor. 4. Find the<transport-guarantee>element. The initial value of all<transport-guarantee>elements isCONFIDENTIAL, meaning that secure access is always required. 
+
+5. Change the setting toNONEto enable both HTTP and HTTPS requests. The element now reads:<transport-guarantee>NONE</transport-guarantee>. 
+
+6. Save the file, and then repeat these steps for the otherweb.xmldeployment files. 
+
+7. Stop and restart the server. [http://www.ibm.com/support/knowledgecenter/SSEKCU_1.1.2.1/com.ibm.psc.doc/admin/psc_ctr_admin_restart_jazzsm_servers.html] 
+
+Example 
+
+The following example is a section of theweb.xmlfile forTIPChangePasswdwhere the transport-guarantee parameter is set toNONE:
+<security-constraint>
+<display-name>
+ChangePasswdControllerServletConstraint</display-name>
+<web-resource-collection>
+<web-resource-name>ChangePasswdControllerServlet</web-resource-name>
+<url-pattern>/*</url-pattern>
+</web-resource-collection>
+<auth-constraint>
+<description>Roles</description>
+<role-name>administrator</role-name>
+<role-name>operator</role-name>
+<role-name>configurator</role-name>
+<role-name>monitor</role-name>
+<role-name>iscadmins</role-name>
+</auth-constraint>
+<user-data-constraint>
+<transport-guarantee>NONE</transport-guarantee>
+</user-data-constraint>
+</security-constraint> 
+
+What to do next 
+
+Users must now specify a different port, depending on the mode of access. The default port numbers are as follows:
+http://<host_name>:16310/ibm/console
+Use the HTTP port for logging in to the Dashboard Application Services Hub on the HTTP port .
+https://<host_name>:16311/ibm/console
+Use the HTTPS secure port for logging in to the Dashboard Application Services Hub. 
+
+Note:If you want to use single sign-on (SSO) then you must use the fully qualified domain name of the Dashboard Application Services Hub host.

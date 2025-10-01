@@ -1,0 +1,23 @@
+Title: IBM Can AIX Premium Agent LPAR Physical Busy Pct be greater than 100%? - United States
+
+Text:
+Phys_Busy_Pct; Avg_Physical_Busy_PCT; Max_Physical_Busy_PCT TECHNOTE (FAQ)
+
+QUESTION
+ Can AIX LPAR Physical Busy Pct be greater than 100% when using IBM Tivoli Monitoring Version 6 AIX Premium agent? 
+
+ANSWER
+Yes, it is possible for Logical Partition Physical Busy Pct(pbusy) to be more than 100% for a shared uncapped LPAR which can get more than one physical CPUs if a shared partition consume more than one physical core. 
+If 10 physical CPUs available, a shared partition can show LPAR/Phys Busy Pct up to 1000% (number of physical CPUs multiplied by 100 )
+
+"Phys Busy Pct is actually represented in terms of processor core (physical processor) busy percentage. One physical core busy means 100%. LPAR/pbusy is percentage relative to one processing Core. Hence if one core is busy, LPAR/pbusy will be 100%, if 2 cores are busy then LPAR/pbusy will be 200%. 
+
+LPAR/Max_CPU_Cap_Used_Pct provides an average CPU consumption of an LPAR considering all the CPUs it is entitled. Max_CPU_Cap_Used_Pct is always below 100% irrespective of the number of the CPUs it is entitled and consumed. 
+Max_CPU_Cap_Used_Pct is derived from LPAR/Phys Busy Pct as follows: 
+If LPAR is dedicated or uncapped, then (Phys Busy Pct / Number of Virtual CPUs); 
+otherwise, (Phys Busy Pct / Entitlement). 
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITM Tivoli Premium PX System P 5724C04AP

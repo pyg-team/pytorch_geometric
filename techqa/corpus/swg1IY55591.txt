@@ -1,0 +1,215 @@
+Title: IBM IY55591: s12798 - 4.3-4.5 Cluster weblogic upgrade does not upgrade the a gent service profiles - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description:
+   
+   * 4.3 to 4.5 cluster (weblogic) upgrade does not upgrade the
+   agent
+   service profiles -> doc known limitation for 4.5.1 and
+   workaround in
+   4.5.2 (4.5 FP2) documentation
+   
+   * 4.3 to 4.5 upgrade w2k service installation failed due to
+   windows
+   command length exceeding 2047 limit -> doc known limitation for
+   4.5.1
+   and workaround in 4.5.2 (4.5 FP2) documentation
+   
+   * 4.5.0 to 4.5.1 WebLogic upgrade (cluster only) does not define
+   the
+   workflow abort JMS queue -> doc known limitation for 4.5.1 and
+   workaround in 4.5.2 (4.5 FP2) documentation and also fix it in
+   4.5.2
+   (FP2 installer)
+   
+   4.5 WebLogic: select different domain names for admin server and
+   managed
+   servers when they are installed on the same machine
+   -> doc change (more details) in 4.5.2 (FP2) documentation
+   
+   Desired Behavior:  Customer and Weber would like this
+   documented.
+   
+   Steps to Reproduce:  Upgrade a clustered 4.3.x to 4.5.0
+   
+   Recreatable:  Yes
+   
+   Environment:
+   
+   ITIM 4.3.4 with Clustering/Weblogic/Windows
+   SQL Server
+   Oracle 8.1.7
+   ****************************************************************
+   ********
+   ****************************************************************
+   ********
+   
+   Weber and Vic concluded that this is a doc issue that needs to
+   be
+   addressed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  s12798
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   This is a documentation update and has been
+   explained and shipped in Interim fix 4.5.1-TIM-IF13.
+   1.When doing a 4.3 to 4.5 cluster (weblogic) upgrade does not
+   upgrade the agent service profiles.
+      To get around this problem:
+      a. Copy all service profile directories in
+      <ITIM_HOME>/data/remote_resources directory,
+      e.g. w2kprofile, from managed server 1 (managed1) to the
+      admin server's <ITIM_HOME>/data/remote_resources directory.
+      b. For each service profile, edit the "resource.def" file by
+      * replace "com.access360.enrole" with "com.ibm.itim", and
+      then * replace "com.access360" with "com.ibm"
+      c. cd <ITIM_HOME>/bin directory and issue command:
+      configure_remote_services w2kprofile -noreplace
+      (-noreplace avoids the account and service forms being
+      replaced by the default ones).
+      d. repeat step (b) and (c) for each agent service profile.
+      NOTE: If you are at ITIM 4.5.1 level already (you have
+      installed ITIM 4.5 Fix Pack 1 on top of ITIM 4.5), you can
+      do step (b) for all service profiles and then issue the
+      following command to update all service profiles:
+      configure_remote_services w2kprofile -update (Note that the
+      -update option is only available in 4.5.1. It ignore the
+      profilename specified here and updates all service profiles).
+      Note that all service profile info is "pushed" into the
+      directory server. You only need to do it one time, from the
+      admin server. The profile directories in managed 1 and 2 are
+      no longer needed, but you can keep them over there.
+   2. 4.3 to 4.5 upgrade w2k service installation failed due to
+      windows command length exceeding 2047 limit
+      To get around this problem:
+      a. Put the value of CLASSPATH into a text file called
+      "myClasspath.txt" and store in <ITIM_HOME>/bin directory.
+      If you start the server from the console by running
+      "itim.cmd", the CLASSPATH is displayed on the console. You
+      can capture the CLASSPATH value there, but remember to remove
+      line returns to make it one line.
+      b. Edit <ITIM_HOME>/bin/installItimService.cmd:
+      1b. locate "set CMDLINE=..."
+      2b. replace -classpath \"%CLASSPATH%\" with
+      -classpath @<ITIM_HOME>/bin/myClasspath.txt
+      3b. run "uninstallItimService.cmd" to remove the W2K service
+      4b. run "installItimService.cmd" to re-install the W2K servic
+   3. WebLogic 4.5.0 to 4.5.1 upgrade (cluster only) does not
+      define the workflow abort JMS queue.
+      To get around this problem:
+      Shutdown all the servers including admin server & all the
+      managed servers. On the admin server side, open config.xml
+      in the ITIM domain folder, say c:\bea\user_projects\itim
+      Search for JMSServer . Each managed server has a JMSServer
+      element defined.
+      Add the following element for each managed server:
+            <JMSQueue
+              DeliveryModeOverride="Persistent"
+              JNDIName="workflowAbortQueue.%SERVER_NAME%"
+              Name="workflowAbortQueue.%SERVER_NAME%"
+              StoreEnabled="true"/>
+      where %SERVER_NAME% should be replaced with the managed
+      server name. nnnn
+   4. If you are using 4.5 WebLogic Cluster then you must select
+      different domain names for admin server and managed servers
+      if they are installed on the same machine.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   This is a documentation update and has shipp
+   ed in Interim fix 4.5.1-TIM-IF13.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY55591
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM TIV IDENT M
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3402
+   
+   
+ * REPORTED RELEASE
+   450
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-04-07
+   
+   
+ * CLOSED DATE
+   2004-05-10
+   
+   
+ * LAST MODIFIED DATE
+   2004-05-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC32139501 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

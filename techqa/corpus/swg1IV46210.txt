@@ -1,0 +1,183 @@
+Title: IBM IV46210: IBM HTTP SERVER INSTALL FAILS ON UPGRADE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  APAR Type:            Field
+   Approver Initials:    AS
+   Severity:             2
+   Reported Release:     630
+   Compid:               5608A41CI Distributed Installer
+   ABSTRACT:             IBM HTTP server install fails on upgrade
+   ITM 6.22 to 6.30
+   
+   PROBLEM DESCRIPTION:
+   On a Linux x86_64 bit platform, installing as a non-root user
+   and running secureMain -g group lock, when upgrading the portal
+   server from a 6.22 family release to a 6.30 family release the
+   IBM HTTP server installation fails.
+   
+   You will see messages like the following on the console or in
+   the logs/itm_install_output_*.log file:P
+   
+   Install Plugin Processing
+   ======================================================
+   
+   One or more ITM sub-components have some information for you to
+   review concerning their install. Depending on this info, you may
+   or may not not wish to continue the install.
+   
+   
+   Tivoli Enterprise Portal Java Server
+   
+   INST_COMP_PLUGIN_RETURN_CODE:000
+   
+   IBM HTTP Server installation failed. Check log file
+   /opt/IBM/ITM/logs/install_plugin_ihs_64911282573 97497438.log
+   for more
+   details. For information about how to recover, see Portal server
+   troubleshooting in the IBM Tivoli Monitoring Troubleshooting
+   Guide.
+   IBM HTTP Server installation failed. Check log file
+   /opt/IBM/ITM/logs/install_plugin_ihs_64911282573 97497438.log
+   for more
+   details. For information about how to recover, see Portal server
+   troubleshooting in the IBM Tivoli Monitoring Troubleshooting
+   Guide.
+   
+   ================================================================
+   ========
+   ========
+   
+   RECREATE INSTRUCTIONS:
+   As itmuser or any non-root user ID,
+   On a Linux x86_64 system,
+   Install the portal server from Tivoli Monitoring 6.22 FP2 media.
+   Configure the portal server using the root ID.
+   Run "secureMain -g group lock", where group is a common group
+   whose
+   members are all IDs used to configure, start and stop, Tivoli
+   Monitoring
+   components.
+   Start the portal server and verify that you can connect to it.
+   
+   Upgrade the portal server from Tivoli Monitoring 6.22 FP6 media
+   using the original install ID.  Start the portal server and
+   verify that you can connect to it.
+   
+   Upgrade the portal server from Tivoli Monitoring 6.30 FP1 media
+   using the original install ID.  NOTICE that the IBM HTTP server
+   installation fails with messages like those shown above.  Start
+   the portal server and verify that you can NOT connect to it.
+   
+   
+   LOCAL FIX:
+   None.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The reported problem is not reproducible with 6.30.02.00. In
+   that fix pack, the design of how IIM is integrated with/used by
+   ITM is very different. In 6.30.02.00, IIM becomes a local
+   component under ITM. This approach seems to solve much of the
+   class of problems as reported by IV46210.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Applu 6.30.02.00.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV46210
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED UR5
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-29
+   
+   
+ * CLOSED DATE
+   2013-10-01
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

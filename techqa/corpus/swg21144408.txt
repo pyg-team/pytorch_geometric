@@ -1,0 +1,203 @@
+Title: IBM Correcting EQQPT52E error so that E2E communication works - United States
+
+Text:
+E2E EQQQPT52E EQQPCS05 RACF EQQDNTOP; TWSZ; TWSZOS; 5697WSZ01; OPC TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CP EXTEND, CP REPLAN, SYMPHONY RENEW jobs fail with message EQQPT52E. 
+
+CAUSE
+
+
+RESOLVING THE PROBLEM
+The key to resolving the EQQPT52E error (and thereby getting E2E communication and
+symphony file creation) is to ensure that the following userids all belong to a
+RACF group:
+
+(a) userid of the controller task
+(b) userid of the server task
+(c) userid under which the EQQPCS05 job executes
+(d) userid under which the CP EXTEND/REPLAN/SYMPHONY RENEW jobs run. This may be a userid coded on the jobcard, the userid of the submitting TWSz started task, or the userid of a TSO ISPF dialog user who submits these jobs either via the TWSz dialogs, or directly from TSO. 
+
+Debugging/Troubleshooting:
+
+To resolve the EQQPT52E error message, the first thing to confirm is that the server task,
+and the id that the EQQDNTOP runs under belong are connected to the RACF group.
+
+This can be done with an LU command, for example (in this example, the RACF group is named OPC, and the server task is OP8S)
+
+Issue the following RACF command:
+
+lu op8s omvs 
+
+(system response)
+USER=OP8S NAME=UNKNOWN OWNER=IBMUSER CREATED=01.283 
+DEFAULT-GROUP=OPC PASSDATE=00.000 PASS-INTERVAL= 30 
+ATTRIBUTES=NONE 
+REVOKE DATE=NONE RESUME DATE=NONE 
+LAST-ACCESS=03.117/19:20:43 
+CLASS AUTHORIZATIONS=NONE 
+NO-INSTALLATION-DATA 
+NO-MODEL-NAME 
+LOGON ALLOWED (DAYS) (TIME) 
+--------------------------------------------- 
+ANYDAY ANYTIME 
+GROUP=OPC AUTH=USE CONNECT-OWNER=IBMUSER CONNECT-DATE=01.28
+CONNECTS= 574 UACC=NONE LAST-CONNECT=03.117/19:20:43 
+CONNECT ATTRIBUTES=NONE 
+REVOKE DATE=NONE RESUME DATE=NONE 
+SECURITY-LEVEL=NONE SPECIFIED 
+CATEGORY-AUTHORIZATION 
+NONE SPECIFIED 
+SECURITY-LABEL=NONE SPECIFIED 
+
+OMVS INFORMATION 
+---------------- 
+UID= 0000000142 
+HOME= /u/op8s 
+PROGRAM= /bin/sh 
+CPUTIMEMAX= NONE 
+
+This shows that the OP8S id is connected to the OPC group, and its UID is
+0000000142.
+
+If the OP8S id in this example did NOT have an OMVS segment defined, the following
+command would create it:
+
+ALTUSER (OP8S) - 
+OMVS(UID(142) HOME('/u/op8s') PROGRAM('/bin/sh')) 
+
+If the OP8S id were not connected to the OPC group, the following command
+would correct this:
+
+connect (OP8S) group(opc) uacc(update) 
+
+
+Next, verify the OMVS GID of the RACF group (OPC in this case) with an LG (listgroup)
+command:
+
+lg opc omvs 
+
+(system response)
+INFORMATION FOR GROUP OPC 
+SUPERIOR GROUP=OMVS OWNER=IBMUSER 
+NO INSTALLATION DATA 
+NO MODEL DATA SET 
+TERMUACC 
+NO SUBGROUPS 
+USER(S)= ACCESS= ACCESS COUNT= UNIVERSAL ACCESS= 
+
+OP8C USE 007039 NONE 
+CONNECT ATTRIBUTES=NONE 
+REVOKE DATE=NONE RESUME DATE=NONE 
+OP8T USE 000403 NONE 
+CONNECT ATTRIBUTES=NONE 
+REVOKE DATE=NONE RESUME DATE=NONE 
+OP8S USE 000574 NONE 
+CONNECT ATTRIBUTES=NONE 
+REVOKE DATE=NONE RESUME DATE=NONE 
+OP8D USE 000250 NONE 
+CONNECT ATTRIBUTES=NONE 
+REVOKE DATE=NONE RESUME DATE=NONE 
+ATKNSN3 USE 000005 NONE 
+
+
+OMVS INFORMATION 
+---------------- 
+GID= 0001000009 
+*** 
+
+
+
+This shows that the GID value 0001000009
+
+If there was no GID value, the following procedure could
+be used to create one:
+
+From the OMVS shell (TSO option: ISPF Shell OpenMVS ISPF Shell )
+
+Cursor select "SETUP" then enter option 7 (enable superuser mode)
+
+Cursor select "SETUP" again, then enter option 4 (all groups)
+
+
+A popup windows is displayed: 
+
+Set Up All Groups 
+
+To assign a unique GID to all groups 
+that currently do not have a GID 
+already assigned, press Enter. 
+
+Press enter, and GIDs will be assigned to all groups that don't already have one;
+then use the LG command to see what the GID is.
+.
+
+At this point, with UID and GID verified, the EQQPCS05 job must be run with
+the appropriate values. For example:
+
+EQQPCS05:
+
+//ALLOHFS EXEC PGM=BPXBATCH,REGION=4M 
+//STDOUT DD PATH='/tmp/eqqpcs05out', 
+// PATHOPTS=(OCREAT,OTRUNC,OWRONLY),PATHMODE=SIRWXU 
+//STDIN DD PATH='/usr/lpp/TWS/TWS810/bin/config', 
+// PATHOPTS=(ORDONLY) 
+//STDENV DD * 
+eqqBINDIR=/usr/lpp/TWS/TWS810 
+eqqWRKDIR=/var/TWS/inst 
+eqqGID=0001000009 
+eqqUID=142 
+
+At this point, assuming the BATCHOPT member pointed to in the EQQDNTOP 
+job has a valid TPLGYPRM parameter that points to a parmlib member with
+the TOPOLOGY information, and the SERVOPTS parms belonging to the server
+task also point to the same member in the TPLGYPRM parameter, the CP
+EXTEND job should handle the symphony file change correctly. 
+
+
+If still getting EQQPT52E at this point, here are some additional things to try:
+
+(1) Change the EQQMLOG in the server task to DD SYSOUT=* instead of 
+having a disk dataset specified. The disk file may be causing 
+a problem due to a code problem. 
+
+(2) The PTFs for PQ69392 (UQ73587) and PQ65556 (UQ70707,UQ70720, 
+UQ70721) should be applied. 
+
+(3) To get more detailed information for troubleshooting, add the following 
+DIAGNOSE statements in EQQPARM: 
+
+(1) CONTROLLER: DIAGNOSE NMMFLAGS('00003000') 
+(2) BATCH (CP EXTEND): DIAGNOSE PLANMGRFLAGS('00040000') 
+(3) SERVER : DIAGNOSE TPLGYFLAGS(X'181F0000') 
+
+(4) Take a tar backup of the WRKDIR ( tar -cvzf tarfile /WRKDIR): 
+
+(5) Do the following: 
+
+A. refresh the CP (dialog option 9.5) 
+B. stop controller and server 
+C. Delete the WRKDIR ( rm -r /WRKDIR)
+D. Run EQQPCS05 job to create a new WRKDIR 
+E. reallocate the following sequential datasets: CKPT, JTARC, 
+JTx (where x=1...5), EV, TWSIN and TWSOU (RENAME the old files. 
+Do not delete them in case they may be needed in step #6, below). 
+
+(See also DOC APAR PM02690) 
+
+(6) If the EQQPT52E problem persists, save the following documentation for
+level 2 support:
+
+(A) controller and server EQQMLOGs
+(B) output of the CP EXTEND (EQQDNTOP) job
+(C) TWSIN and TWSOU files
+(D) stdlist for TRANSLATOR
+
+
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TWSZ TWSzOS TWSZ/OS OPC E2E

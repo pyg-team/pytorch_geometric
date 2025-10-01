@@ -1,0 +1,44 @@
+Title: IBM GX4 series appliances with large numbers of OpenSignature rules crash at firmware 4.4 - United States
+
+Text:
+firmware; 4.4; 4.5; PAM; Open; Signature; SNORT; engine TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Some users with large amounts of configured OpenSignature rules might experience crash behavior on their GX4 series appliances after moving to firmware 4.4. 
+
+SYMPTOM
+The appliance stops generating events and the following error messages are displayed: 
+
+[WARNING]Network Security is disabled. -Engine was terminated unexpectedly due to internal error
+
+
+CAUSE
+Memory allocations have changed with the release of firmware 4.4. On GX4 appliances, this can result in Protocol Analysis Module (PAM) crashes when using a large number of OpenSignature rules.
+
+Firmware 4.4 adds SNORT rule capabilities to the GX family of appliances. SNORT rule processing is handled separately from the PAM detection systems and requires its own memory allocation. To provide the SNORT engine with the needed memory resources, the firmware 4.4 upgrade reduces the memory allocation for PAM from 65% to 45% immediately upon the installation.
+
+GX4 series appliances have 1 GB of RAM installed. OpenSignature rules are handled by PAM. Due to the limited memory on the appliance and the reduced PAM resource allocation, firmware 4.4 does not provide enough memory to load a large number of OpenSignature rules.
+
+Note: This issue only applies to the GX4 series appliances. GX5, GX6, and GX7 series appliances are not impacted since they have sufficient memory to handle both PAM and SNORT with their current default memory allocations. GX3 series appliances have not changed their memory allocations but are not recommended for handling a large number of OpenSignature or SNORT rules due to performance limits.
+
+
+RESOLVING THE PROBLEM
+Users who are impacted by this issue can add tuning parameters to the appliance to modify the memory allocation at firmware 4.4 or higher. Both of the following parameters are required and should be added to the Tuning Parameters policy for the appliance. 
+
+Name: sensor.memusagepercent
+Value: 65
+
+Name: sensor.maxmemusagepercent
+Value: 75
+
+If the OpenSignature rules are later converted to SNORT rules and made part of the SNORT policy, the old OpenSignature Events policy should be undeployed and the memory allocation parameters should be set to 45/55 to provide SNORT with sufficient memory. Simply removing the parameters will NOT return the sensor to the default values.
+
+Firmware 4.5 returns the GX4 memory allocation for PAM to 65% until you enable SNORT execution. Only then is the memory for PAM reduced to 45%. For users who want to implement OpenSignature rules on GX4 appliances, it is recommended to either use the tuning parameters in firmware 4.4 or upgrade to firmware 4.5 or higher. With either firmware version, be aware of the memory limitations and, if possible, only use either OpenSignature rules or SNORT rules, but not both.
+
+Note: If the sensor is running firmware 4.4 and PAM has crashed, you can still add the parameters and deploy them. The sensor will return to normal operation several minutes after its next heartbeat loads the new policy without requiring a reboot. 
+
+
+
+
+
+[/support/docview.wss?uid=swg21597700&aid=1] [http://ibm.biz/KC-SNIPS] [/support/docview.wss?uid=swg21597700&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21597700&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21597700&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21597700&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21597700&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21597700&aid=7] [http://ibm.biz/ContactSecSupport]

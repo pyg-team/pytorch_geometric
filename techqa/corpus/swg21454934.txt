@@ -1,0 +1,35 @@
+Title: IBM Possible connection to Rational Team Concert interrupted errors when using FireFox 3.5 browser - United States
+
+Text:
+1454934; RTC; rtc; firefox; 3.5; connection; interrupted TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+When IBM Websphere Application Server is used to host Jazz-based applications such as IBM Rational Team Concert, and is configured to only allow the TLS encryption protocol (For example: FIPS compliance), the Firefox 3.5.X browser may get into a state where it insists on using the SSL encryption protocol, and therefore fails to connect to the server.
+
+SYMPTOM
+After successfully connecting to and navigating a Jazz-based application deployed in Websphere Application Server, Firefox 3.5.X suddenly starts reporting "connection interrupted" errors, and can no longer connect to the application.
+
+DIAGNOSING THE PROBLEM
+ 
+
+ * Using Firefox 3.5.X 
+ * Jazz-based application deployed is deployed on a Websphere Application Server Server 
+ * Websphere Application Server Server configured to only allow TLS encryption, not SSL 
+ * Errors like these appear in the Websphere Application Server SystemOut.log file:
+   
+   [11/4/10 10:28:53:903 EDT] 000000b9 SSLHandshakeE E SSLC0008E: Unable to initialize SSL connection. Unauthorized access was denied or security settings have expired. Exception is javax.net.ssl.SSLHandshakeException: Client requested protocol SSLv3 not enabled or not supported
+
+
+RESOLVING THE PROBLEM
+To resolve this problem, try either of the following options: 
+
+ * Restart your browser 
+ * Upgrade to Firefox 3.6.X appears to eliminate the problem.
+   
+   
+
+
+Leverage the Jazz Community Jazz and Rational Team Concert have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://ibm.com/support/docview.wss?uid=swg21319600] for details and links. 
+RELATED INFORMATION
+#jazz.net work item 138259 [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.WorkItem/138259]

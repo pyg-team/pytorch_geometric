@@ -1,0 +1,37 @@
+Title: IBM Security Bulletin:  Multiple security vulnerabilities affect IBM WebSphere Applciation Server bundled with IBM WebSphere Application Server Patterns and IBM WebSphere Application Server for Cloud - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There is a potential information disclosure vulnerability in Admin Center for IBM WebSphere Application Server Liberty. There is a potential for weaker than expected security when using the WebSphere Application Server Liberty profile API Discovery feature and Swagger documents. There is an XML External Entity Injection (XXE) vulnerability in the Apache Standard Taglibs that affects IBM WebSphere Application Server. 
+
+VULNERABILITY DETAILS
+Please consult the security bulletins for vulnerability details and information about fixes. 
+
+ * Security Bulletin: Information disclosure vulnerability in IBM WebSphere Application Server Liberty (CVE-2016-0389) [http://www-01.ibm.com/support/docview.wss?uid=swg21982012] 
+ * Security Bulletin: WebSphere Application Server Liberty API Discovery feature has potential vulnerability (CVE-2016-2945) [http://www-01.ibm.com/support/docview.wss?uid=swg21984502] 
+ * Security Bulletin: Vulnerability in Apache Standard Taglibs affects IBM WebSphere Application Server (CVE-2015-0254) [http://www-01.ibm.com/support/docview.wss?uid=swg21978495]
+
+AFFECTED PRODUCTS AND VERSIONS
+This vulnerability affects the following versions and releases of IBM WebSphere Application Server that IBM WebSphere Application Server Patterns supports 
+
+ * Version 8.5.5 Full Profile and Liberty 
+
+REMEDIATION/FIXES
+To patch an existing PureApplication Virtual System Instance, apply the patch using the PureApplication Maintainence ifix process. 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] CHANGE HISTORY
+ 28 June 2016: original document published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

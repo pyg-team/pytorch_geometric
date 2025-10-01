@@ -1,0 +1,56 @@
+Title: IBM How to upgrade the IBM Daeja ViewONE 4.1.1 version in IBM FileNet WorkplaceXT? - United States
+
+Text:
+Upgrade; Daeja ViewONE; Viewer; 4.1.1 pro; WorkplaceXT TECHNOTE (FAQ)
+
+QUESTION
+ How to upgrade IBM Daeja ViewONE, V4.1.1 or later, in an IBM FileNet WorkplaceXT installation? 
+
+CAUSE
+You have IBM Daeja ViewONE entitlement and want to manually upgrade the version of the product that is integrated in your IBM FileNet WorkplaceXT and deploy to a new version.
+
+ANSWER
+Prerequisites 
+
+To upgrade the version of IBM Daeja ViewONE, you must access to the IBM FileNet WorkplaceXT installation location and be able to deploy the application as for IBM FileNet WorkplaceXT. 
+
+The instructions in this document use the following conventions: 
+<FileNet WorkplaceXT> refers to the installation location of IBM FileNet WorkplaceXT By default, the installation location is C:\Program Files (x86)\IBM\FileNet\WebClient\WorkplaceXT on Windows systems and /opt/IBM/FileNet/WebClient/WorkplaceXT on Linux systems. 
+
+<viewone> refers to the installation location of IBM Daeja ViewONE. By default, the installation is C:\Program Files\IBM\Daeja ViewONE on Windows and /opt/IBM/Daeja ViewONE on Linux systems. 
+
+Instructions 
+
+To upgrade to a new version of IBM Daeja ViewONE: 
+
+1. Run the IBM Daeja ViewONE installer and select the modules required that match your licensed entitlement and take note of the installation location. 
+
+2. Undeploy the application, shut down the app server, delete any temp or working files related to the application from the app server. 
+
+3. Back up the installed viewer files from the application's install directory 
+
+4. Copy all files in <viewone>\client\v1files folder to the 
+<Path>\WebClient\WorkplaceXT\FnJavaV1Files\ folder
+5. Copy the annot.xsl file in <viewone>\client to 
+<Path>\WebClient\WorkplaceXT\WEB-INF\xsl\ folder. 
+
+6. Copy all files in the <viewone>\client\utils folder to the
+<Path>\WebClient\WorkplaceXT\utils\ folder. 
+
+7. Copy all files in the <viewone>\license folder to the
+<Path>\WebClient\WorkplaceXT\license\ folder 
+
+8. Update the version information in WcmJavaViewer.jsp typically in the following location:<Path>\WebClient\WorkplaceXT\UI-INF\jsp\ui\ 
+
+ * Edit WcmJavaViewer.jsp and change the first "cacheVersion" number to the version number indicated in the release.
+
+For example:var cacheVersion="4.1.1.0, 1.1.5.2, 1.1.5.2"; (Note: 1.1.5.x should match the installed Workplace XT version.)  * Save it and exit.
+
+
+9. Change to the customer deployment directory 
+<Path>\WebClient\deploy\ and Delete the existing web_client.war and web_client.ear. 
+Run the shell script to create a new war file "./create_web_client_war.sh" 
+Run the shell script to create a new ear file "./create_web_client_ear.sh" 10. Redeploy IBM FileNet WorkplaceXT to your web application server and restart the application. 
+The client browser cache and Java cache from the Java console before run it. 
+
+Note: In most cases, the changes you make will be removed if you install a new product fix pack. After installing a fix pack, re-run these instructions.

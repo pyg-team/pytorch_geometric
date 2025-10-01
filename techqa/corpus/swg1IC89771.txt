@@ -1,0 +1,209 @@
+Title: IBM IC89771: JMSWMQ0018 ERROR WHEN A JMS APPLICATION CONFIGURED TO USE A CCDT CREATES A JMS SESSION - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.11 [http://www-01.ibm.com/support/docview.wss?uid=swg24035750]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  AN application that uses the WebSphere MQ classes for JMS has
+   been configured to use a Client Channel Definition Table
+   (CCDT) to connect to a queue manager. The application is able
+   to successfully create a JMS Connection, and gets the
+   following exception when creating a JMS Session even though
+   the queue manager is running:
+   
+   JMSWMQ0018: Failed to connect to queue manager '<queue manager
+   name' with connection mode '1' and host name '<hostname>'.
+   Check the queue manager is started and if running in client
+   mode, check there is a listener running. Please see the linked
+   exception for more information.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of:
+   
+   - The WebSphere MQ V7.0.1 classes for JMS.
+   - The WebSphere MQ V7.0.1 Resource Adapter.
+   - The WebSphere Application Server V7 WebSphere MQ messaging
+   provider.
+   - The WebSphere Application Server V8 WebSphere MQ messaging
+   provider.
+   - The WebSphere Application Server V6.1 WebSphere MQ messaging
+   provider who have configured the WebSphere variable
+   MQ_INSTALL_ROOT to point to a WebSphere MQ V7.0.1
+   installation.
+   
+   who have applications that create JMS Connections from a
+   Connection Factory which have been configured to use a Client
+   Channel Definition Table (CCDT).
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java +Java zOS
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When an application created a JMS Connection from a Connection
+   Factory that has been configured to use a Client Channel
+   Definition Table (CCDT), the WebSphere MQ classes for JMS (used
+   internally by the WebSphere MQ Resource Adapter and the
+   WebSphere Application Server WebSphere MQ messaging provider)
+   parsed the Client Channel Definition Table to find a suitable
+   entry, and then used the information in that entry to create a
+   connection to a WebSphere MQ queue manager.
+   
+   If the application then created a JMS Session from the JMS
+   Connection, the WebSphere MQ classes for JMS would parse the
+   Client Channel Definition Table again, select an entry in the
+   Table and then use it to create another connection to WebSphere
+   MQ.
+   
+   This meant that it was possible to have:
+   
+   - A JMS Connection created from one entry in the Client Channel
+   Definition Table.
+   - A JMS Session, associated with the JMS Connection, which was
+   created using a different entry in the Client Channel
+   Definition Table.
+   
+   This could result in JMSExceptions containing a JMSWMQ0018
+   message being thrown when an application tried to create a JMS
+   Session, depending upon the entry in the Table that was
+   selected.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ V7.0.1 classes for JMS have been updated so
+   that, if a JMS Connection is created using an entry in a Client
+   Channel Definition Table, all of the JMS Sessions created from
+   that JMS Connection will use the same entry in the Table that
+   was used to create the JMS Connection.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.11
+   --------           --------------------
+   Windows            7.0.1.11
+   AIX                7.0.1.11
+   HP-UX (PA-RISC)    7.0.1.11
+   HP-UX (Itanium)    7.0.1.11
+   Solaris (SPARC)    7.0.1.11
+   Solaris (x86-64)   7.0.1.11
+   iSeries            7.0.1.11
+   Linux (x86)        7.0.1.11
+   Linux (x86-64)     7.0.1.11
+   Linux (zSeries)    7.0.1.11
+   Linux (Power)      7.0.1.11
+   zOS                7.0.1.11
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC89771
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-23
+   
+   
+ * CLOSED DATE
+   2013-02-14
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

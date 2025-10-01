@@ -1,0 +1,146 @@
+Title: IBM IC52886: ABSOLUTE PATH NAME OF THE QUEUE MANAGERS DIRECTORY SHOULD SPECIFY ALLSYMLINKS - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere MQ for HP NonStop Server v5.3.1, Fix Pack 5.3.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24017102]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Specifying NO ALLSYMLINKS as suggested in the WebSphere MQ
+   for HP NonStop Server V5.3 System Administration Guide results
+   in the symbolic links not being copied. Removing this option
+   results in the symbolic links being copied and the G volume
+   remaining untouched.
+     Unfortunately our implementation of MQ changed after the
+   documentation was produced.
+     You do need to set the ALLSYMLINKS option so that the
+   var/mqm/G link is created.
+     It is important to review the log for errors to make sure
+   that the link is created correctly on the backup site and that
+   it points to the correct location.  This should occur because
+   MQ requires the same disk and OSS fileset configuration on both
+   Primary and backup sites.
+     The specific section in our documentation which is incorrect
+   is as follows:
+   Manual:  WebSphere MQ for HP NonStop Server V5.3 System
+            Administration Guide (SC34-6625-00)
+   Chapter: 15 Recovery and Restart.
+   Section: Disaster recover.
+   Topic:   Configuring WebSphere MQ, NonStop RDF, and AutoSYNC
+            to support disaster recovery.
+            -------------------------------------------------
+           "The entire queue manager OSS directory structure
+            var_installation_path/var/mqm/qmgrs/qmname.
+            You must specify the absolute path name of the queue
+            managers directory. Specify the NO ALLSYMLINKS
+            option for this fileset to prevent AutoSYNC from
+            attempting to synchronize the symbolic link
+            (G directory) in the queue manager's directory
+            to the NonStop OS queue manager's subvolume."
+            ------------------------------------------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set ALLSYMLINKS option so that the var/mqm/G link is created
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   Documentation error for RDF configuration
+   regarding the use of ALLSYMLINKS for the MQInstall/var/mqm/G
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   Update the documentation to the correct
+   procedure.
+   Documentation update made in V5.3.1.1 readme.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC52886
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ NSS MIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724A3901
+   
+   
+ * REPORTED RELEASE
+   531
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-06-05
+   
+   
+ * CLOSED DATE
+   2007-07-09
+   
+   
+ * LAST MODIFIED DATE
+   2007-10-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC34662500 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

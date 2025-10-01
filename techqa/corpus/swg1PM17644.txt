@@ -1,0 +1,143 @@
+Title: IBM PM17644: Stop button not working during Build with Dependencies - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Rhapsody Fix Pack 1 (8.0.1) for 8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24033836]
+Rational Rhapsody 8.0.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24037021]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The stop button is in between the Run and Build buttons.
+   Sometimes I can't even click on the button at all because
+   Rhapsody just freezes up while it's building (notice the 'Not
+   Responding' in title bar and the menu bar whited out... then
+   once the build process is done all the output comes out, instead
+   of showing me line by line what it's compiling.
+   
+   I think it may have something to do with building with
+   dependencies. Right now as I'm developing some tests and
+   rebuilding quite often, I'm realizing I *can* press the Stop
+   button. But in this case I'm only building the active component
+   without building its dependencies (since they've already been
+   built and I have not changed them). I wonder if in 7.5.2 the
+   specific case of building with dependencies is also 'fixed' such
+   that I am able to interrupt C.G.
+   
+   
+   Another thing I would like for you to try is to stop the build
+   while errors are being output. This is another case (that I just
+   ran into) where I am unable to press the stop button.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Stop button does not work during Build with Dependencies.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in version 8.0.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM17644
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   740
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-30
+   
+   
+ * CLOSED DATE
+   2012-11-27
+   
+   
+ * LAST MODIFIED DATE
+   2012-11-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R740 PSN
+   UP

@@ -1,0 +1,64 @@
+Title: IBM Production Imaging Edition Viewer Pro help resources - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains available help resources for IBM Production Imaging Edition Viewer Pro, provided by Daeja Image Systems as a component of IBM Production Imaging Edition Version 5.0. 
+
+CONTENT
+You can find help documentation for many of the features provided by IBM Production Imaging Edition Viewer Pro.
+
+
+The available features, documentation and installation procedures differ between IBM Production Imaging Edition and Workplace XT versions. This list will help you decide which resources you need. 
+
+ 
+
+For Workplace XT 1.1.4 
+
+If I am a Workplace XT 1.1.4 customer using Image Viewer, where do I start? 
+
+View the Image Viewer help for IBM FileNet Workplace XT 1.1.4 [http://publib.boulder.ibm.com/infocenter/p8docs/v5r0m0/index.jsp?topic=/com.ibm.p8.xt.user.doc/ae_help/workplace/WcmJavaViewer.htm]. 
+
+Go to FileNet P8 Java Viewer Customization Manuals [https://www-304.ibm.com/support/docview.wss?rs=3278&uid=swg27010422#xt] and download the .zip file in the v 1.1.4 column. 
+
+ 
+
+If I am a Workplace XT 1.1.4 customer using IBM Production Imaging Edition, where do I start? 
+
+Go to the Production Imaging Edition Version 5.0 publication library [https://www-304.ibm.com/support/docview.wss?uid=swg27020014]. 
+
+View the Production Imaging Edition Viewer Pro help [http://publib.boulder.ibm.com/infocenter/p8docs/v5r1m0/index.jsp?topic=/com.ibm.p8.xt.user.doc/ae_help/workplace/proviewer.htm]. 
+
+Go to Production Imaging Edition Manuals [https://www-304.ibm.com/support/docview.wss?rs=3278&uid=swg27010422#xt] and download the .zip file in the v 1.1.4 column.
+
+
+
+For Workplace XT 1.1.5 
+
+If I am a Workplace XT 1.1.5 customer using Image Viewer, where do I start? 
+
+View the Work with Image Viewer help for IBM FileNet Workplace XT 1.1.5 [https://www-304.ibm.com/support/docview.wss?uid=swg27022361]. 
+
+Go to FileNet P8 Java Viewer Customization Manuals [https://www-304.ibm.com/support/docview.wss?rs=3278&uid=swg27010422#xt] and download the .zip file in the v 1.1.5 column. 
+
+ 
+
+If I am a Workplace XT 1.1.5 customer using IBM Production Imaging Edition Viewer Pro, where do I start? 
+
+Go to the Production Imaging Edition Version 5.0 publication library [https://www-304.ibm.com/support/docview.wss?uid=swg27020014]. 
+
+View the Production Imaging Edition Viewer Pro help [http://publib.boulder.ibm.com/infocenter/p8docs/v5r1m0/index.jsp?topic=/com.ibm.p8.xt.user.doc/ae_help/workplace/proviewer.htm]. 
+
+Go to FileNet P8 Java Viewer Customization Manuals [https://www-304.ibm.com/support/docview.wss?rs=3278&uid=swg27010422#xt] and download the .zip file in the v 1.1.5 column. These are the user guides for the standard Production Imaging Edition viewer. 
+
+Go to Production Imaging Edition Manuals [https://www-304.ibm.com/support/docview.wss?rs=3278&uid=swg27010422#xt] and download the .zip file in the v 1.1.5 column. These are the user guides for the Production Imaging Edition Viewer Pro features.
+
+
+
+
+
+
+RELATED INFORMATION
+ Publication library for IBM Production Imaging Edition [http://www.ibm.com/support/docview.wss?uid=swg27020014]
+Known problems for IBM Production Imaging Edition [http://www.ibm.com/support/docview.wss?uid=swg27020168]

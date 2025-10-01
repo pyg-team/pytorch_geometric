@@ -1,0 +1,33 @@
+Title: IBM JDBC 4.2 MSSQL driver receiving SSL error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ For Watson Explorer Analytical Components, how do I setup a JDBC crawler to connect to Microsoft SQL Server 2014 using SSL and the 4.2 MSSQL JDBC driver (sqljdbc42.jar)? 
+
+SYMPTOM
+During setup, I receive the following error:
+
+"An SQL error occurred while accessing the database. Error code: 0. Error message: The driver could not establish a secure connection to SQL Server by using Secure Sockets Layer (SSL) encryption."
+
+
+CAUSE
+The data source requires TLS 1.2.
+
+ENVIRONMENT
+WEX AC 11.0.1 on Linux. MSSQL Server 2014 with requirement to connect via SSL.
+
+RESOLVING THE PROBLEM
+It is necessary to set the com.ibm.jsse2.overrideDefaultTLS JVM option as follows:
+
+1. Stop WEX by "esadmin system stopall"
+2. Back up $ES_INSTALL_ROOT/configurations/interfaces/crawler_JDBC_interface.ini
+3. Add this line to crawler_JDBC_interface.ini
+JVMOptions=-Dcom.ibm.jsse2.overrideDefaultTLS=true
+4. Repeat Steps 2 & 3 for the files "discovery__interface.ini" and "customcommunication__interface.ini" in same directory
+5. Start WEX by "esadmin system startall"
+
+RELATED INFORMATION
+ Matching the behavior of SSLContext.getInstance("TLS") [http://www.ibm.com/support/knowledgecenter/SSYKE2_8.0.0/com.ibm.java.security.component.80.doc/security-component/jsse2Docs/matchsslcontext_tls.html]
+Overriding the SSL protocol defined by the default SSL [http://www.ibm.com/support/knowledgecenter/SSYKE2_8.0.0/com.ibm.java.security.component.80.doc/security-component/jsse2Docs/overrideSSLprotocol.html]

@@ -1,0 +1,205 @@
+Title: IBM PI13252: AFTER MIGRATION TO V10 NFM QUERY3 AND/OR QUERY17 IN DSNTESQ RETURNS SOME ROWS FOR TABLESPACES DROPPED DURING ENFM PROCESS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After migration to ENFM, query 3 and/or query17 in DSNTESQ
+   returns some rows for tablespaces that should have been dropped
+   during the ENFM processing. During the processing of the
+   tablespaces links are being replaced by the RIs. For some
+   tables the RIs are not successfully created which causes the
+   incosistency during the drop of redundant tablespaces.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All customers who are migrating to DB2 10    *
+   *                 for z/OS or DB2 11 for z/OS are affected by  *
+   *                 this change.                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: After migrating to DB2 10 for z/OS      *
+   *                      sample job DSNTESQ queries QUERY3       *
+   *                      and/or QUERY17 return rows.             *
+   ****************************************************************
+   * RECOMMENDATION: Apply corrective PTF when available.         *
+   ****************************************************************
+   During the V8 migration process several catalog tables are
+   dropped. One of these tables was SYSIBM.SYSLINKS. When the
+   SYSLINKS table is dropped we also eliminate the link information
+   from the SYSIBM.SYSRELS catalog table. The link rows eliminated
+   have a RELOBID1 = 0 and a pound sign ('#') in the RELNAME
+   column.
+   
+   If there is a failure during the V8 ENFM process that drops and
+   deletes this link information it will not be attempted again.
+   Having this link information in the DB2 catalog will not impact
+   anything in V8 or V9. However, if this link information is still
+   in the SYSRELS catalog table during the V10 ENFM process then it
+   will most likely cause problems.
+   
+   If the SYSRELS catalog table contains link information in it
+   during V10 ENFM processing then the ENFM process may have
+   problems creating referential integrity between various catalog
+   tables. If there is missing referential integrity between
+   catalog tables then this can lead to orphan rows in the catalog
+   that might impact future SQL.
+   
+   In one of the reported cases, DB2 was not able to create
+   referential integrity between the SYSTABLESPACE and
+   SYSTABLEPART catalog tables. Then when a table space was dropped
+   the SYSTABLESPACE row was dropped but the SYSTABLEPART rows
+   remained. This made them orphans.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following premigration jobs in the noted releases have been
+   updated with new queries that look for link rows in the SYSRELS
+   catalog table that should have been eliminated:
+   
+   DB2 9 for Z/OS:
+   
+     DSNTIJPA (premigration checkout for DB2 10) - new query 39
+   
+   DB2 10 for Z/OS:
+   
+     DSNTIJPB (premigration checkout for DB2 11) - new query 27
+     DSNTIJPM (premigration checkout for DB2 10) - new query 39
+   
+   DB2 11 for Z/OS:
+   
+     DSNTIJPM (premigration checkout for DB2 11) - new query 27
+   
+   In the reported problem cases the remaining link information
+   in SYSRELS was different and the missing referential integrity
+   between catalog tables was also different. Because of this,
+   customers should contact IBM service if any of these queries
+   return rows.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI13252
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-07
+   
+   
+ * CLOSED DATE
+   2014-06-05
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI18611 UI18612 UI18613
+   
+   
+
+MODULES/MACROS
+ *  DSNTIJPA DSNTIJPB DSNTIJPM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY UI18611 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI18611]
+   UP14/06/21 P F406
+   
+   
+ * RB10 PSY UI18612 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI18612]
+   UP14/06/21 P F406
+   
+   
+ * R910 PSY UI18613 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI18613]
+   UP14/06/21 P F406
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

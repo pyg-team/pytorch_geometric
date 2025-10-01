@@ -1,0 +1,150 @@
+Title: IBM IV50786: NCP_POLLER STOPS WORKING AFTER NCIM RESTARTS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Network Manager IP 3.9.0 Fix Pack 4, 3.9.0-TIV-ITNMIP-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24034724]
+IBM Tivoli Network Manager IP Edition 3.9.0 Fix Pack 5, 3.9.0-TIV-ITNMIP-FP0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24037809]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITNM 3.9 FP3 on AIX with NCIM on mysql 5.1
+   ncp_poller memory consumption is increasing indefinately until
+   it stops working.
+   This can be seen in the ncp_poller debug logs from the memory
+   usage messages:
+   
+   Debug: D-MOM-001-051: [1t] Generating heartbeat: memory usage:
+   110731264 bytes
+   Debug: D-MOM-001-051: [1t] Generating heartbeat: memory usage:
+   110735360 bytes
+   Debug: D-MOM-001-051: [1t] Generating heartbeat: memory usage:
+   110739456 bytes
+   Debug: D-MOM-001-051: [1t] Generating heartbeat: memory usage:
+   110743552 bytes
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ITNM users that perform heavy polling                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When database was disconnected the Poller would not always   *
+   * reconnect                                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * | fix pack | 3.9.0-ITNMIP-FP0004                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  poller was changed to reconnect upon database outage
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV50786
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S4500
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-16
+   
+   
+ * CLOSED DATE
+   2013-11-21
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * FIXED COMPONENT ID
+   5724S4500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R390 PSN
+   UP
+   
+   
+ * R390 PSY
+   UP

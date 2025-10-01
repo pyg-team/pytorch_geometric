@@ -1,0 +1,155 @@
+Title: IBM PI79192: UNABLE TO START WAS INSTANCE ON WIN32 PLATFORM AFTER DC 7.2 IF14 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After configuring a WAS instance (eg. WAS7) on any Windows 32
+   bit platform (eg. Windows 2003 or Windows 2008@32bit), by using
+   the Data Collector 7.2 IF14 provided with YN Agent 7.2 IF007,
+   the following error is thrown in native_stderr.log:
+   JVMJ9TI001E Agent library am_ibm_16 could not be opened (The
+   specified procedure could not be found. )
+   JVMJ9VM015W Initialization error for library j9jvmti24(-3):
+   JVMJ9VM009E J9VMDllMain failed </verbosegc> Could not create
+   the Java virtual machine.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   *
+   * ITCAM Agent for WebSphere Applications v7.2
+   * Interim Fix 14 (7.2.0.0-TIV-ITCAM_DC-IF0014)
+   * users running WebSphere on Windows 32-bit JVM.
+   *
+   ****************************************************************
+   *
+   * PROBLEM DESCRIPTION:
+   *
+   * After configuring ITCAM Data Collector on a 32-bit Windows
+   * JVM, the WebSphere application server will not start with
+   * the following error:
+   *
+   * JVMJ9TI001E Agent library am_ibm_16 could not be opened (The
+   * specified procedure could not be found. )
+   * JVMJ9VM015W Initialization error for library j9jvmti24(-3):
+   * JVMJ9VM009E J9VMDllMain failed
+   *
+   ****************************************************************
+   *
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The toolkit/lib/win32 libraries were incorrect and have been
+   refreshed in Interim Fix 15.
+   
+   The fix for this APAR is available in the following maintenance
+   release:
+   
+     | interim fix | 7.2.0.0-TIV-ITCAM_DC-IF0015
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI79192
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92DC
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-31
+   
+   
+ * CLOSED DATE
+   2018-04-24
+   
+   
+ * LAST MODIFIED DATE
+   2018-04-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92DC
+   
+   
+
+APPLICABLE COMPONENT LEVELS

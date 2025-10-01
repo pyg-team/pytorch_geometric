@@ -1,0 +1,157 @@
+Title: IBM IV26270: CAN'T DEPLOY A PROJECT IF ALREADY EXISTS IN TARGET IMPACT 6.1 SERVER - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When trying to deploy a project, if the project already exists
+   in target Impact sever, then it will fail with following message
+   error:
+   
+   Failed to trigger policy " deploy1 ". Please refer to server log
+   for more information about the error.
+   com.micromuse.response.common.PolicyProcessingException:
+   Unhandled Exception: Failed to deploy Project: Elena_1. Reason:
+   Failed to checkin file etc/NCI_Elena_1.proj for user tipadmin.
+   Reason: File is not locked. in policy: deploy1 at line: 14. in
+   deploy1
+   
+   Where deploy1 is the policy name used to deploy and Elena_1 is
+   the project name
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Create just the project without elements then use the deploy
+   function to deploy all the elements ( policies, datatypes, etc).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact User                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * User can not deploy a project if it is already exists in the *
+   * target Impact server                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Remove existing project in target server and redeploy        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  If the project exists in the target server, svn throws an
+   exception and does not continue. The fix for this APAR is
+   contained in the following maintenance package |Fix Pack|
+   6.1.0-TIV-NCI-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV26270
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-15
+   
+   
+ * CLOSED DATE
+   2012-08-30
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UNKNOWN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

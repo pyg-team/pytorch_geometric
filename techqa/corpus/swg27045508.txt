@@ -1,0 +1,48 @@
+Title: IBM Open Mic Webcast: Policy Migration from GX to XGS - Tuesday, 28 April 2015 [includes link to recorded event; presentation slides are attached] - United States
+
+Text:
+infrasec-open-mic; ISS_OPEN_MIC; STEwebcastDocument WEBCAST
+
+ABSTRACT
+ This webcast is appropriate for IBM Infrastructure Security clients who have either recently moved from GX to XGS or are considering the move. Considerations such as which policy contents will port over to XGS and which will not port were examined along with other support tips. 
+
+CONTENT
+IBM wants your product deployment to go smoothly. In this Open Mic, callers heard how to make that happen. Our goal in Open Mics is to provide insight on how IBM Security products work and to teach on-going sessions that help users and administrators understand, maintain, troubleshoot, and resolve issues with their XGS appliance. This Open Mic session was the sixth webcast provided by IBM Infrastructure Security Technical Support. 
+
+ * Topic: Policy migration from GX to XGS 
+ * New Date: Tuesday, April 28, 2015 
+ * Time: 11:00 AM ET (15:00 UTC/GMT, UTC-4 hours) for 60 minutes
+
+
+Presentation OpenMic_XGS-Migration_2015-04-28.pdf [/support/docview.wss?uid=swg27045508&aid=2]OpenMic_XGS-Migration_2015-04-28.pdf [/support/docview.wss?uid=swg27045508&aid=1] 
+
+
+
+Audio Replay Here is a link to the recorded session on the IBM Security Support You Tube channel [https://www.youtube.com/IBMSecuritySupport]: 
+https://www.youtube.com/watch?v=0r1LsV031bc [https://www.youtube.com/watch?v=0r1LsV031bc] 
+
+
+
+Where to ask follow up questions on the topic We created a post in IBM dW Answers forum for you to ask questions about this "GX/XGS" topic. 
+Refer to 
+Can you advise on how to migrate a GX policy to an XGS? 
+URL: https://developer.ibm.com/answers/questions/167379/can-you-please-advise-on-how-to-migrate-a-gx-polic/ [https://developer.ibm.com/answers/questions/167379/can-you-please-advise-on-how-to-migrate-a-gx-polic/] 
+
+
+About Open Mic Webcasts IBM Security Systems Support wants to help you take full advantage of your products. Join us for our Open Mic Webcast series as technical experts share their knowledge and answer your questions. These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient online webcast format. 
+
+Visit the Support technical exchanges for Security Systems [https://www-947.ibm.com/support/entry/myportal/scheduled_tech_exchanges/security_systems/security_systems_support_%28general%29?productContext=-1089885148] page to see lists of all scheduled and past Open Mic events 
+[https://www-947.ibm.com/support/entry/myportal/scheduled_tech_exchanges/security_systems/security_systems_support_%28general%29?productContext=-1089885148] 
+To be notified about Security Support's Open Mic webcasts, follow us on Twitter [http://bit.ly/1jZ80d3] @AskIBMSecurity [http://bit.ly/1jZ80d3]. 
+
+
+
+
+
+[/support/docview.wss?uid=swg27045508&aid=3] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg27045508&aid=4] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg27045508&aid=5] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg27045508&aid=6] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg27045508&aid=7] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg27045508&aid=8] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg27045508&aid=9] [http://ibm.biz/ContactSecSupport] 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Network Protection Security IBM Security Network Intrusion Prevention System

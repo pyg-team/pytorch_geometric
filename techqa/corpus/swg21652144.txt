@@ -1,0 +1,21 @@
+Title: IBM Why are the IBM Datacap Rulerunner services generating multiple batches in pending mode? - United States
+
+Text:
+Received a stop command. Rule Runner Services TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Taskmaster Datacap Rulerunner is generating multiple batches and is placing the batches in pending mode with no images within the batch. 
+
+CAUSE
+The Rulerunner service is unable to read the retry interval setting within the Windows registry. 
+
+ENVIRONMENT
+Datacap TaskMaster 8.1 
+Window 2008 Server
+
+DIAGNOSING THE PROBLEM
+The Rulerunner log contains the message "Received a stop command" 
+Rule Runner is able to start the service, however it lacks the credentials to read the registry entries to restart at 14400 seconds. The Rulerunner service retries every 3 seconds, causing batches to be created in a pending stage.
+
+RESOLVING THE PROBLEM
+Adding the Rulerunner Services account to the local administrator account resolved registry accessing issue.

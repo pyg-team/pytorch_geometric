@@ -1,0 +1,216 @@
+Title: IBM RS02810: JAVA.LANG.CLASSNOTFOUNDEXCEPTION: ILOG.RULES.XML.TYPES.ILRDATE ON WEBLOGIC 12 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Operational Decision Manager V8.9.1 Download Document [http://www-01.ibm.com/support/docview.wss?uid=swg24044122]
+Operational Decision Manager V8.9.1 Mod Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24044253]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer deployed a simple decision service to Rule Execution
+   server on WebLogic 12. This service had no BOM
+   but instead a ruleset parameter of type
+   ilog.rules.xml.types.IlrDate. When retrieving the ruleapp WSDL
+   from the RES management console, get:
+   java.lang.ClassNotFoundException: ilog.rules.xml.
+   types.IlrDate.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Either :
+   - Build a BOM with dynamic XOM and field of type date (mapped
+   to ilog.rules.xml.types.IlrDate).
+   - Add the property
+   <enable-global-access-to-classes>true</enable-global-access-to-
+   classes>
+   to the jrules-res-xu-WL12.rar/META-INF/weblogic-ra.xml
+   as below:
+   <weblogic-connector xmlns="http://www.bea.com/ns/weblogic/90"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.bea.com/ns/weblogic/90 http: [http:]
+   //www.bea.com/ns/weblogic/90/weblogic-ra.xsd">
+       <jndi-name>eis/XUResourceAdapter</jndi-name>
+       <enable-global-access-to-classes>true</enable-global-access-
+   to-classes>
+       <security>
+           <manage-as-principal-name>
+               <principal-name>resMonitor</principal-name>
+           </manage-as-principal-name>
+       </security>
+       <outbound-resource-adapter>
+           <default-connection-properties>
+               <logging>
+                   <log-filename>jrules_xu.log</log-filename>
+                   <logging-enabled>true</logging-enabled>
+               </logging>
+           </default-connection-properties>
+           <connection-definition-group>
+               <connection-factory-interface>javax.resource.cci.
+   ConnectionFactory</connection-factory-interface>
+               <connection-instance>
+                   <jndi-name>eis/XUConnectionFactory</jndi-name>
+               </connection-instance>
+           </connection-definition-group>
+       </outbound-resource-adapter>
+   </weblogic-connector>
+   - Use other application server than WebLogic 12
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The Rule Execution server did not have global access to classes.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Either :
+   - Build a BOM with dynamic XOM and field of type date (mapped
+   to ilog.rules.xml.types.IlrDate).
+   - Add the property
+   <enable-global-access-to-classes>true</enable-global-access-to-
+   classes>
+   to the jrules-res-xu-WL12.rar/META-INF/weblogic-ra.xml
+   as below:
+   <weblogic-connector
+   xmlns="http://www.bea.com/ns/weblogic/90"xmlns:xsi="http://www.w
+   3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.bea.com/ns/weblogic/90 http: [http:]
+   //www.bea.com/ns/weblogic/90/weblogic-ra.xsd">
+       <jndi-name>eis/XUResourceAdapter</jndi-name>
+       <enable-global-access-to-classes>true</enable-global-access-
+   to-classes>
+       <security>
+           <manage-as-principal-name>
+               <principal-name>resMonitor</principal-name>
+           </manage-as-principal-name>
+       </security>
+       <outbound-resource-adapter>
+           <default-connection-properties>
+               <logging>
+                   <log-filename>jrules_xu.log</log-filename>
+                   <logging-enabled>true</logging-enabled>
+               </logging>
+           </default-connection-properties>
+           <connection-definition-group>
+               <connection-factory-interface>javax.resource.cci.
+   ConnectionFactory</connection-factory-interface>
+               <connection-instance>
+                   <jndi-name>eis/XUConnectionFactory</jndi-name>
+               </connection-instance>
+           </connection-definition-group>
+       </outbound-resource-adapter>
+   </weblogic-connector>
+   - Use other application server than WebLogic 12
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02810
+   
+   
+ * REPORTED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6903
+   
+   
+ * REPORTED RELEASE
+   881
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-06-28
+   
+   
+ * CLOSED DATE
+   2017-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * FIXED COMPONENT ID
+   5725B6903
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R881 PSY
+   UP

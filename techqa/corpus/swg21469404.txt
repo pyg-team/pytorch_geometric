@@ -1,0 +1,66 @@
+Title: IBM What IBM DataPower timeouts are used in specific configuration methods. - United States
+
+Text:
+timeout; timeouts; Back Side Timeout; Back Persistent Timeout TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ What timeout values are used in specific configuration examples for WebSphere DataPower SOA Appliances?
+
+
+ANSWER
+Specific connection methods may use different timeout values: 
+
+HTTP 
+
+
+
+
+
+
+
+The HTTP protocol through services such as Web Service Proxy, Multi-Protocol Gateway, etc. The url-open() and the Results Action have the same timeout behavior: 
+
+Timeout Behavior Response The User Agent timeout takes precedence even with a lower Back Side Timeout, when waiting on a response from the back side server. Persistent The persistent connection timeout is controlled by a 15-second timer that is not user accessible. Even with a lower Back Persistent Timeout, the 15-second timeout will take precedence. 
+ * Note: 
+ * 
+ *  The var://service/routing-url and Static Backend have the same timeout behavior. 
+
+
+Timeout Behavior Response Uses the Back Side Timeout Persistent Uses the Back Persistent Timeout. 
+
+
+SQL 
+
+
+
+
+
+For the SQL Data Source, the User Agent timeout will fail the transaction only and a log event will be thrown. This has no direct control or change in the TCP connections between the DataPower device and database server. The actual connections from the device to the database server have no user-configurable timeouts.  
+
+MQ 
+
+
+
+
+
+
+ 
+
+The MQ protocol will use the following options for response timeout. 
+
+ * 
+ * Note:
+ *  The url-open() and Results Action have the same timeout behavior. The var://service/routing-url and Static Backend URL have the same timeout behavior.
+   
+
+Timeout Behavior Response When the Timeout option is set on the url string, it will take precedence over the User Agent Timeout even if the User Agent is set to a lower Timeout value. The User Agent Timeout will be used if no Timeout option is set. Persistent Also known as the connection reuse timeout. This timeout is determined by the Cache Timeout value in the MQ Queue Manager. 
+Log Target 
+
+
+
+
+
+Log target connections have no timeout options for the TCP-based methods such as SOAP and Syslog-ng. To limit total connections from the log target, the Rate Limit setting must be tuned.

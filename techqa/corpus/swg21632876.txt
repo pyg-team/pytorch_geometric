@@ -1,0 +1,129 @@
+Title: IBM Mustgather: For IBM FileNet Capture Professional 5.2.1 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What relevant data is needed to troubleshoot a problem in Capture 5.2.1? 
+
+CAUSE
+1. Capture components intermittently fail to process batches.
+2. Vendor reported errors pop up during component execution time. 
+3. Capture reports a FnCaptureApplication.exe crash or hang.
+
+
+ANSWER
+MustGather for IBM FileNet Capture Professional 5.2.1
+
+
+When troubleshooting a problem it is very helpful to gather pertinent data that will help narrow down the cause of the problem. This data can then be used by IBM support to identify if the current versions of software are installed and also if the data is sufficient to help the support desk identify the root cause. 
+
+A) Initial Triage
+
+1) What is the error/problem being reported?
+2) When did the problem start occurring? 
+3) Are there any recent changes to the Capture system that might have introduced this issue?
+4) What is the specific Time/date of occurrence?
+5) Did this ever work? Or is this a new function being introduced in the Capture process?
+6) Are there any patterns observed (i.e. certain users, time of day, workstation can only reproduce the issue)?
+7) Any screenshots of the problem that will help describe the issue?
+
+B) Gathering Environment Information 
+
+For IBM® Filenet® Capture Software issues the following general information is very pertinent:
+
+1) What version of Capture is being used? Is the out-of-the-box/native Capture Professional application being used or a custom Capture application?
+
+2) What type of repository is the Capture Client connecting to?
+(i.e. Offline Image Services, Shared offline Image Services, Images services, Shared Content Services, Content Services, Shared Content Engine or Content Engine)
+
+3) What version of the repository is being used? What Service Pack, Fix pack, or Intermediate Fix are installed?
+(i.e. Image Services 4.2 fp6 Content Engine 5.1 fp2, or Content Services 5.5)
+
+4) If a Shared Repository is being used (i.e. a Shared CE Repository), what's the database type and version? 
+(i.e. MS SQL 2000 SP 4, MS SQL 2005, Microsoft SQL 2005 Express Edition, Microsoft SQL 2008, Oracle 9i.2 OUI patch 2878462, Oracle 10g, Release 2 for Windows XP, 10.2.0.3 patch set for Vista, Oracle 11g.)
+
+5) If connecting to an IS Server, what version of IDM and ISTK is installed on the system?
+
+6) If connecting to a CE Server, what CE Client version is installed? What version of Microsoft's WSE or WCF is installed?
+
+
+C) Scan-related issues
+
+1. Is the reported problem reproducible at the lowest scanner layer outside of Capture software. (Either Scanner level or Scanner Driver level.)
+
+Scenario Example with a Kodak i840 Scanner:
+i) test first using Kodak’s scanner validation tool application using the Twain driver (note: we highly recommend to use either ISIS drivers instead) OR
+ii) test using Mview App using ISIS driver OR
+iii) test using VcDemo App using Kofax driver. 
+
+The Mview Application is in the Capture Station's Pixtran directory.
+The VcDemo Application is found in the Capture Station's Start / Programs / Kofax Image Controls folder.
+
+
+
+2. Is problem reproducible with any in-house scanner using either ISIS or Kofax interface as chances are that it may not be specific to a particular scanner? 
+
+3. What was the sequence of order in installing both scanner software and Capture application?
+
+4. Was the problem reproducible against several repository backends including the local repository or only with a specific back end?
+
+5. Is the scanner, the scanner driver, and the operating system compatible with each other in accordance to the vendor’s support policy posted on their website?
+
+D) Connection related issues (i.e. documents failing to commit)
+
+1.) For IS connectivity issues:
+i) Turn on Capture logging from the Capture Manager (set logging to verbose)
+ii) Please send a copy of the ISTK/WAL logs found at the Capture workstation (\filenet\fnsw\client\logs)
+iii) Send any pertinent IS elogs that matches the time of the connectivity issue (\fnsw_loc\logs\elogs)
+iv) Turn on IS eladisp (from the IS server)
+======= 
+# How to start eladisp 
+At the command prompt, type the following: 
+
+eladisp
+eladisp> show channel 
+
+NOTE:
+If no channel exist, then type: eladisp> assign trace 128
+If channel 0 exist, continue below: 
+
+eladisp> assign bind 0 * 
+eladisp> assign chfilter 0 [##.##.##.##] # is the IP address of the Capture workstation
+eladisp> set trace_byte_dump on
+eladisp> set trace_sym on 
+
+NOTE:
+If you see the message, "Error parsing RPC source file /fnsw/lib/perf/ela/filenet.cor.1872", please ignore this. Eladisp will continue to run properly.
+
+eladisp> en trace 0
+eladisp> show trace 0 > eladisp.out 
+
+# How to stop eladisp 
+Control-C
+eladisp> set specialcmd on
+eladisp> remove channel 0 
+======
+
+2.) For CE connectivity issues:
+i) Please review CE MustGather:
+http://www-01.ibm.com/support/docview.wss?uid=swg21308231 [http://www-01.ibm.com/support/docview.wss?uid=swg21308231]
+
+E) A list of Capture-related logs
+
+1) Capture logging: Enable Capture logging from Capture Manager. This will enable logging of all Capture component errors. The log file contains important Capture diagnostic information. To make most of the logging information it is recommended to set the logging to verbose and direct logging to an output file that can be passed on to support for further troubleshooting of the problem. 
+
+2) All CE Client install logs are found in the Capture station (\Program Files\FileNet\Content Engine directory. example, ce_install_log_4_5_0.txt)
+
+3) ISTK/WAL Client logs can be found in the Capture station (\filenet\fnsw\client\logs)
+
+4) WinMSD output showing operating system info. (http://support.microsoft.com/kb/232848) [http://support.microsoft.com/kb/232848]
+
+5) Network trace output in the case of a reporting performance across the WAN network.
+
+6) A clean set of sample images with no Capture components processing it. 
+
+7) A copy of the Local Repository (Local Ril.mdb) with a copy of settings, templates and capture path and above sample images. 
+
+8) Batch Export Output in a zip file using the Batch Export component. 
+(select the batch, run batch exporter on it and export its contents to a destination folder.)

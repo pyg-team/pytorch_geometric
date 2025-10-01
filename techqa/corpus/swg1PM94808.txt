@@ -1,0 +1,138 @@
+Title: IBM PM94808: WCM LIBRARY IMPORT TASK (IMPORT-WCM-DATA) RUNS EXCESSIVELY LONG WHEN THERE ARE MANY LARGE LIBRARIES - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The WCM import library task (import-wcm-data) needs to
+   re-schedule any scheduled actions after a library import.
+   However, the task runs the re-schedule for all libraries, not
+   just those imported.
+   This can cause the task to run excessively long if there are
+   many large libraries.
+   Opened for release 8001
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If there are no scheduled actions in the library, the refresh
+   can be skipped all together by specifying the parameter
+   -DskipScheduleActions=true when invoking the
+   task. e.g. ./ConfigEngine.{sh|bat} -Dimport.directory={MY
+   IMPORT
+   DIR} -DskipScheduleActions=true
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The WCM import library task (import-wcm-data) needs to
+   re-schedule any scheduled actions after a library import.
+   However, the task runs the re-schedule for all libraries, not
+   just those imported.
+   This can cause the task to run excessively long if there are
+   many large libraries.
+   Opened for release 8001
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Changed wp.wcm.sr_cfg.xml to invoke the import-wcm-data task
+   with this parameter:
+   
+   &lt;param name="skipScheduleActions" value="true" /&gt;
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM94808
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-08
+   
+   
+ * CLOSED DATE
+   2013-10-09
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

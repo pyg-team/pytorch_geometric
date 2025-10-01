@@ -1,0 +1,136 @@
+Title: IBM Establishing a SSL connection from ISBI on non IBM JDK to IBM WebSphere MQ fails with AMQ9641/AMQ9631 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to establish a SSL secured connection between IBM Sterling B2B Integrator (ISBI) and IBM WebSphere MQ using (internally) a TLS cipher having MQ client libraries for example version 7.0.1.6 or 7.5.0.4 (or analogous) on a non IBM Java results in AMQ9641 errors in ISBI system.log or WebSphereMQSuite.log as well as AMQ9631 in IBM MQ AMQERR*.LOG. 
+
+SYMPTOM
+AMQ9641 error pattern in system.log or WebSphereMQSuite.log
+[2015-11-05 13:24:43.873] ERROR <WSMQSession-MQCHL:7af8ff80:150d75e9075:-7d74-721992914> MQException during MQCONN: CC=2 RC=2397 
+[2015-11-05 13:24:43.873] ERROR [1446722683873] MQJE001: Completion Code '2', Reason '2397'.
+[2015-11-05 13:24:43.873] ERRORDTL [1446722683873]com.ibm.mq.MQException: MQJE001: Completion Code '2', Reason '2397'.
+at com.ibm.mq.MQManagedConnectionJ11.<init>(MQManagedConnectionJ11.java:247)
+at com.ibm.mq.MQClientManagedConnectionFactoryJ11._createManagedConnection(MQClientManagedConnectionFactoryJ11.java:588)
+at com.ibm.mq.MQClientManagedConnectionFactoryJ11.createManagedConnection(MQClientManagedConnectionFactoryJ11.java:630)
+at com.ibm.mq.StoredManagedConnection.<init>(StoredManagedConnection.java:107)
+at com.ibm.mq.MQSimpleConnectionManager.allocateConnection(MQSimpleConnectionManager.java:205)
+at com.ibm.mq.MQQueueManagerFactory.obtainBaseMQQueueManager(MQQueueManagerFactory.java:911)
+at com.ibm.mq.MQQueueManagerFactory.procure(MQQueueManagerFactory.java:799)
+at com.ibm.mq.MQQueueManagerFactory.constructQueueManager(MQQueueManagerFactory.java:750)
+at com.ibm.mq.MQQueueManagerFactory.createQueueManager(MQQueueManagerFactory.java:157)
+at com.ibm.mq.MQQueueManager.<init>(MQQueueManager.java:681)
+at com.sterlingcommerce.woodstock.services.wsmqSuite.WSMQSession.openConnection(WSMQSession.java:296)
+at com.sterlingcommerce.woodstock.services.wsmqSuite.WSMQSession.openSession(WSMQSession.java:274)
+at com.sterlingcommerce.woodstock.services.wsmqSuite.WSMQImpl.openSession(WSMQImpl.java:121)
+at com.sterlingcommerce.woodstock.services.wsmqSuite.WSMQImpl.processData(WSMQImpl.java:63)
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.invokeService(ActivityEngineHelper.java:1821)
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.nextMainLogic(ActivityEngineHelper.java:635)
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.next(ActivityEngineHelper.java:362)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.doWork(WorkFlowQueueListener.java:440)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.run(WorkFlowQueueListener.java:236)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.onMessage(WorkFlowQueueListener.java:197)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.onMessage(WorkFlowQueueListener.java:184)
+at com.sterlingcommerce.woodstock.workflow.queue.wfTransporter.run(wfTransporter.java:444)
+at com.sterlingcommerce.woodstock.workflow.queue.BasicExecutor$Worker.run(BasicExecutor.java:508)
+at java.lang.Thread.run(Thread.java:662)
+Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2397;AMQ9204: Connection to host '192.168.0.1(1414)' rejected. [1=com.ibm.mq.jmqi.JmqiException[CC=2;RC=2397;AMQ9641: Remote CipherSpec error for channel 'MQCHL' to host ''. [3=MQCHL]],3=192.168.0.1(1414),5=RemoteConnection.analyseErrorSegment]
+at com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:2062)
+at com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:1226)
+at com.ibm.mq.ese.jmqi.InterceptedJmqiImpl.jmqiConnect(InterceptedJmqiImpl.java:311)
+at com.ibm.mq.ese.jmqi.ESEJMQI.jmqiConnect(ESEJMQI.java:337)
+at com.ibm.mq.MQSESSION.MQCONNX_j(MQSESSION.java:924)
+at com.ibm.mq.MQManagedConnectionJ11.<init>(MQManagedConnectionJ11.java:236)
+... 23 more
+Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2397;AMQ9641: Remote CipherSpec error for channel 'MQCHL' to host ''. [3=MQCHL]
+at com.ibm.mq.jmqi.remote.impl.RemoteConnection.analyseErrorSegment(RemoteConnection.java:3846)
+at com.ibm.mq.jmqi.remote.impl.RemoteConnection.receiveTSH(RemoteConnection.java:2746)
+at com.ibm.mq.jmqi.remote.impl.RemoteConnection.initSess(RemoteConnection.java:1034)
+at com.ibm.mq.jmqi.remote.impl.RemoteConnection.connect(RemoteConnection.java:727)
+at com.ibm.mq.jmqi.remote.impl.RemoteConnectionSpecification.getSessionFromNewConnection(RemoteConnectionSpecification.java:400)
+at com.ibm.mq.jmqi.remote.impl.RemoteConnectionSpecification.getSession(RemoteConnectionSpecification.java:299)
+at com.ibm.mq.jmqi.remote.impl.RemoteConnectionPool.getSession(RemoteConnectionPool.java:164)
+at com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:1599)
+... 28 more
+
+AMQ9631 Error pattern in AMQERR*.LOG.
+10/28/2015 09:59:53 AM - Process(4665.10199066) User(mqm) Program(amqrmppa)
+Host(lcoalhost)
+AMQ9631: The CipherSpec negotiated during the SSL handshake does not match the
+required CipherSpec for channel 'MQCHL'.
+
+EXPLANATION:
+There is a mismatch between the CipherSpecs on the local and remote ends of
+channel 'MQCHL'. The channel will not run until this mismatch is
+resolved. The CipherSpec required in the local channel definition is
+'TLS_RSA_WITH_3DES_EDE_CBC_SHA'. The name of the CipherSpec negotiated during
+the SSL handshake is 'TLS_RSA_WITH_3DES_EDE_CBC_SHA'. A code is displayed if
+the name of the negotiated CipherSpec cannot be determined.
+ACTION:
+Change the channel definitions for 'MQCHL' so the two ends have matching
+CipherSpecs and restart the channel. If the certificate in use by one end of
+the channel is a Global Server Certificate, then the negotiated CipherSpec may
+not match that specified on either end of the channel. This is because the SSL
+protocol allows a Global Server Certificate to automatically negotiate a higher
+level of encryption. In these cases specify a CipherSpec which meets the
+requirements of the Global Server Certificate.
+----- amqccisa.c : 889 --------------------------------------------------------
+
+
+CAUSE
+IBM WebSphere MQ version 7.0.1.6 and 7.5.0.4 (and analogous) do not support TLS with non IBM JDK
+(see APAR IV66840 http://www-01.ibm.com/support/docview.wss?uid=swg1IV66840 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV66840]).
+
+ENVIRONMENT
+ISBI 5.2.x (pre 5.2.5)
+
+
+ * Sun JDK 1.6 
+ * MQ client jar libs v7.0 (pre 7.0.1.13), v7.1 (pre 7.1.0.7), v7.5 (pre 7.5.0.5) or v8.0 (pre 8.0.0.2) 
+ * WMQ Adapter or WMQ Suite Open Session Service 
+ * SSL connection with CipherSpec SSL_RSA_WITH_3DES_EDE_CBC_SHA or SSL_RSA_WITH_DES_CBC_SHA that is mapped to a TLS cipher for MQ
+   (see http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.mq.dev.doc/q032470_.htm [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.mq.dev.doc/q032470_.htm]) 
+ * FIPSMode=true (default)
+
+DIAGNOSING THE PROBLEM
+When using WMQ Adapter check <isbi>/logs/system.log* for error pattern described in Symptom section above.
+When using WMQ Suite Open Session Service check <isbi>/logs/WebSphereMQSuite.log* for error pattern described in Symptom section above.
+Check on IBM WebSphere MQ Server the Queue Manager's error logs ( <mq>/qmgrs/<qmgr>/errors/AMQERR*.LOG) for error pattern described in Symptom section above.
+
+
+
+RESOLVING THE PROBLEM
+On Windows: please use IBM JDK or follow these steps: 
+
+ 1. Uninstall existing MQ client libs from ISBI (see http://www.ibm.com/support/docview.wss?uid=swg21690573 [http://www.ibm.com/support/docview.wss?uid=swg21690573]) 
+ 2. Install recent MQ client libs (at least version 7.0.1.13, 7.1.0.7, 7.5.0.5 or 8.0.0.2) in ISBI (see http://www.ibm.com/support/docview.wss?uid=swg21670087 [http://www.ibm.com/support/docview.wss?uid=swg21670087]) 
+ 3. Just adding "JVM_ARGS_PREFIX=-Dcom.ibm.mq.cfg.useIBMCipherMappings=false" to <isbi>\properties\tuning.properties would not work because of APAR IT08432 (http://www.ibm.com/support/docview.wss?uid=swg1IT08432 [http://www.ibm.com/support/docview.wss?uid=swg1IT08432]).
+    Thus it is required to follow these additional steps:  * open <isbi>\properties\installNoappsWindowsService.cmd.in 
+     * find the line "echo &JVM_ARGS_PREFIX; >> %PARAM_FILE%" 
+     * add a new line containing "echo -Dcom.ibm.mq.cfg.useIBMCipherMappings=false >> %PARAM_FILE%" after this line 
+     * save and close <isbi>\properties\installNoappsWindowsService.cmd.in
+    
+    
+ 4. Open a command prompt from <isbi>\bin and:  * call setupfiles.cmd 
+     * call uninstallWindowsService.cmd 
+     * call installWindowsService.cmd
+    
+    
+ 5. Restart ISBI
+
+
+On non Windows: please use IBM JDK or follow these steps: 
+
+ 1. Uninstall existing MQ client libs from ISBI (see http://www.ibm.com/support/docview.wss?uid=swg21690573 [http://www.ibm.com/support/docview.wss?uid=swg21690573]) 
+ 2. Install recent MQ client libs (at least version 7.0.1.13, 7.1.0.7, 7.5.0.5 or 8.0.0.2) in ISBI (see http://www.ibm.com/support/docview.wss?uid=swg21670087 [http://www.ibm.com/support/docview.wss?uid=swg21670087]) 
+ 3. Add "JVM_ARGS_PREFIX=-Dcom.ibm.mq.cfg.useIBMCipherMappings=false" to <isbi>\properties\tuning.properties 
+ 4. Open a command prompt from <isbi>\bin and call setupfiles.sh 
+ 5. Restart ISBI
+
+RELATED INFORMATION
+ TechDoc: APAR IV66840 [http://www.ibm.com/support/docview.wss?uid=swg1IV66840]
+MQ Docu: SSL CipherSpecs and CipherSuites in JMS [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.mq.dev.doc/q032470_.htm]
+TechNote: How to uninstall WebSphere MQ Client jars [http://www.ibm.com/support/docview.wss?uid=swg21690573]
+TechNote: How to get and install new MQ Client jars [http://www.ibm.com/support/docview.wss?uid=swg21670087]
+APAR IT08432: JVM ARGUMENTS PREFIX/SUFFIX OPTION ON WIn [http://www.ibm.com/support/docview.wss?uid=swg1IT08432]

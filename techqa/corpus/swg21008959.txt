@@ -1,0 +1,25 @@
+Title: IBM Where can I obtain the DB2 Configuration Assistant (CA) that I can use to provide a GUI interface for connecting to my DB2 remote servers? - United States
+
+Text:
+graphical user interface; distributed db2 connect; DB2 Client Configuration Assistant ; CCA; GUI interface; connecting to remote servers TECHNOTE (FAQ)
+
+QUESTION
+ Where can I obtain the DB2 Configuration Assistant (CA)? I want to provide a GUI interface for connecting to my DB2 remote servers? 
+
+ANSWER
+The DB2® Configuration Assistant (CA), formerly known as the Client Configuration Assistant (CCA), is part of the DB2 Administration Client. In DB2 V7 the DB2 CCA was included with the DB2 Run-Time Client, however with DB2 V8 it is now included with the DB2 Administration Client. With DB2 V9.1, V9.5 and V9.7 it is now included with the IBM DB2 Data Server Client.
+The DB2 Administration Client and the IBM DB2 Data Server Client are included with all DB2 Server products like DB2 Enterprise Server Edition on Linux, UNIX, and Windows.
+
+The DB2 Configuration Assistant can be opened by issuing the command db2ca from the DB2 Command Window. 
+
+The db2ca utility can be found in the C:\Program Files\IBM\SQLLIB\bin directory, where C:\Program Files\IBM\SQLLIB is the path where DB2 was installed.
+
+RELATED INFORMATION
+ Downloadable fixes and clients for DB2 [http://www.ibm.com/support/docview.wss?rs=71&uid=swg27007053]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management DB2 for Linux- UNIX and Windows OTHER - Uncategorised

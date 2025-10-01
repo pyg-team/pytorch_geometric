@@ -1,0 +1,63 @@
+Title: IBM The error "SQL0554N  An authorization ID cannot grant a privilege or authority to itself.  SQLSTATE=42502" is thrown during the installation of IBM Integration Designer V8.5 and IBM Business Process Manager V8.5 - United States
+
+Text:
+iid; ibm integration designer; install; installation; error; install error; sql0554n; 42502 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM Integration Designer V8.5 and IBM Business Process Manager V8.5 installation completes with errors. 
+
+SYMPTOM
+The IBM Integration Designer V8.5 installation results shows errors similar to the following messages: 
+
+
+Read the log file at C:\Users\db2admin\AppData\Local\Temp\IBM_LaunchPad_BPM_1380046409346\BPMConfig.sysout for further information. 
+Read the log file at C:\Users\db2admin\AppData\Local\Temp\IBM_LaunchPad_BPM_1380046409346\BPMConfig.syserr for further information. 
+Read the log file at C:\IBM\IID\PS\v8.5\logs\config\BPMConfig_20130924-152705.log for further information. "
+
+Note that:
+a) The directory structure might be different for your installation.
+b) For BPMConfig.sysout and BPMConfig.syserr the last sub-directory (IBM_LaunchPad_BPM_1380046409346 in this case) will be different from your installation
+c) The log file name BPMConfig_20130924-152705.log is based on the pattern BPMConfig_<YYYYMMDD-random number>.log. So the name for this file will be different from your installation. 
+
+ 
+
+This is a screen print of the Installation results: 
+
+[/support/docview.wss?uid=swg21660058&aid=1] [/support/docview.wss?uid=swg21660058&aid=1]
+
+
+BPMConfig.sysout shows an error similar to 
+
+ "DB20000I The CREATE DATABASE command completed successfully. Database Connection Information Database server = DB2/NT64 10.1.1 SQL authorization ID = DB2ADMIN Local database alias = QPDWDB 
+
+DB21034E The command was processed as an SQL statement because it was not a valid Command Line Processor command. During SQL processing it returned: SQL0554N An authorization ID cannot grant a privilege or authority to itself. SQLSTATE=42502 BPMConfig failed, check the log file for information." 
+
+
+A similar issue has also been reported on the IBM Business Process Manager V8.5 installer on Microsoft Windows 2008 Server SP2, and may occur with other Microsoft Windows Operating Systems.
+
+
+CAUSE
+During the IBM Integration Designer installation, the Installation manager uses the userid of the logged in user, which is db2admin in this case to change the DB2 privileges of the "SQL authorization ID", which is also db2admin in this case. When both the logged in user and the "SQL authorization ID" are db2admin, it results in "db2admin" trying to change the DB2 privileges for itself, which DB2 does not allow. This results in the error message and an incomplete IBM Integration Designer installation.
+
+
+
+ENVIRONMENT
+The issue can be observed in both the 32-bit and the 64-bit of the Microsoft Windows 7 operating system, and may occur with other versions of Microsoft Windows.
+
+
+
+RESOLVING THE PROBLEM
+Do not use the same administrator userid for the IBM Integration Designer V8.5 installation and the "Embedded DB2 Database Server". Use different administrator userids for the IBM Integration Designer V8.5 installation and the "Embedded DB2 Database Server". 
+
+ 
+
+Use the following steps, for example: 
+
+
+1. There is an existing Microsoft Windows 7 administrator id "admin", or create a new Microsoft Windows 7 Administrator id "admin".
+2. Log in as "admin".
+3. Start the IBM Integration Designer V8.5 installation using the "run as Administrator" option.
+4. Assign "db2admin" as the userid for the "Embedded DB2 Database Server". The IBM Integration Designer V8.5 installation process will create a new administrator userid "db2admin", and configure it appropriately for use by IBM Integration Designer V8.5. 
+
+
+This solution is offered as-is without any statement of support from IBM. This solution was tested successfully with IBM Integration Designer V8.5 running on the Microsoft Windows 7 operating system.

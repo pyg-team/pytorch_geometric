@@ -1,0 +1,23 @@
+Title: IBM CICS VR server address space is automatically started when z/OS is IPLed - United States
+
+Text:
+5655P3000 5655-P30 5655P30 5655P3000 R410 R420 R42E R42K R430 R43E R43K FMID HCCV410 HCCV420 JCCV42E JCCV42K HCCV430 JCCV43E JCCV43K TECHNOTE (FAQ)
+
+QUESTION
+ How does your CICS VSAM Recovery for z/OS (CICS VR) server address space automatically start when your z/OS system is IPLed? 
+
+ANSWER
+During the initialization of a z/OS system that has CICS VR installed, the value specified in the CICSVR_INIT [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/index.jsp?topic=/com.ibm.cics.cvr.doc/dwwig/dwwig00057.html](YES | NO) parameter in the active IGDSMSxx member of SYS1.PARMLIB is examined. If YES is specified, the system attempts to automatically start the CICS VR server address space.
+
+The start command is passed to DFSMS and CICS VR through the z/OS Subsystem Interface. CICS VR code in the SSI runs the start command to start a new address space (IEESYSAS) and runs program DWW1SJST to start the CICS VR server address space. This process requires that program DWW1SJST is in the LPA or a LNKLST dataset.
+
+If the CICS VR server address space is not automatically started during system initialization, it can be started at a later time by running the VARY SMS,CICSVR,ACTIVE operator command on the system. However, the CICS VR server address space cannot be started either automatically or manually when the value for the CICSVR_INIT parameter is NO.
+
+RELATED INFORMATION
+#CICS VSAM Recovery Library [http://www.ibm.com/software/sw-library/en_US/products/A679298Y02696V31/]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICSVR CICS VR CICS/VR

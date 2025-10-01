@@ -1,0 +1,57 @@
+Title: IBM TIP FP 13 and 15 installation failure on the WASFP step with an CTGWA0075E error - United States
+
+Text:
+TIPL2; TIPL2INST; CTGWA0075E; WASFP; runtime fix; Tivoli Integrated Portal; installation; fix pack TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Tivoli Integrated Portal fix pack 13 or 15 installation fails at the WASFP step with an error:
+
+"CTGWA0075E Failure occurs when applying WebSphere Application Server runtime fix" 
+
+SYMPTOM
+There were previous attempts to install the fix pack that failed for other reasons. Once the initial failure cause was addressed, the subsequent attempts fail with the "CTGWA0075E" error
+
+
+CAUSE
+The previous install attempt failed after the WASFP step was successfully executed. The WASFP step was not rolled back by the failed fix pack install. Prior to TIP FP13, the TIP FP installer would simply skip the WASFP step if it detected the WAS FP was already installed. As of TIP FP13, the TIP FP installer will fail if it detects the WAS FP is already installed. The behavior is described in the Readme for the TIP fix pack.
+
+DIAGNOSING THE PROBLEM
+The installation log will include the following failure message:
+###
+2015-01-02 07:50:49.093-05:00 : INFO : [echo] output of
+fix.WAS_FP_PAK.install.out =
+[echo] Executing command:
+/opt/IBM/tivoli/tipv2/WebSphereUpdateInstallerV7/java/jre/bin/java -cp
+/opt/IBM/tivoli/tipv2/WebSphereUpdateInstallerV7/update.jar -Xms48m
+-Xmx384m run -silent -options
+/opt/IBM/tivoli/tipv2/temp/install_WASPAK.txt (from AntRuntime.execute)
+2015-01-02 07:50:49.147-05:00 : FINE : PlanStepEventOccurred(Failed
+target 'step_00003_WASFP') (from
+com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.eventOccurred)
+###
+
+The <TIP HOME>/_uninst/TIPInstall2201[35]/plan/install/MachinePlan_l
+ocalhost/logs/machineplan_localhost.log includes:
+
+###
+Caused by:
+/opt/IBM/tivoli/tipv2/_uninst/TIPInstall22015/plan/install/MachinePlan_l
+ocalhost/00003_WASFP/WASFP.xml:264: CTGWA0075E Failure occurs when
+applying WebSphere Application Server runtime fix.
+###
+
+The WAS fix pack logs under <TIP HOME>/logs/update show the WAS fix packs were successfully installed. The install times will correspond to a previous TIP fix pack install attempt.
+
+
+RESOLVING THE PROBLEM
+The following two lines should be added to the response file (Usually: <TIP FP media unpack location>/cdimage.fixpack/sample_response.txt) for the TIP fix pack:
+
+IAGLOBAL_WS.FP00000<XX>.status=installed
+IAGLOBAL_SDK.FP00000<XX>.status=installed
+
+Change "<XX>" to the WAS fix pack number. For example, TIP fix pack 15 will install eWAS fix pack 7.0.0.35. So the correct entry in the response file would be:
+
+IAGLOBAL_WS.FP0000035.status=installed
+IAGLOBAL_SDK.FP0000035.status=installed 
+
+Retry the TIP fix pack install.

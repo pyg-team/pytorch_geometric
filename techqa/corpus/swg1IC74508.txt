@@ -1,0 +1,244 @@
+Title: IBM IC74508: HISTORY AGGREGATOR FREEZES - ERROR STS0146E - United States
+
+Text:
+AIX  A FIX IS AVAILABLE
+4.2.1 Interim Fix 1 (November 2011) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24031346]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The error occurs when the capacity is too big,
+   Here it has 14 digits and the database can accept numbers
+   that have at most 13 digits. So the BigDecimal conversion fails.
+   
+   xx/xx/xx 4:29:09 AM STS0146E: Last prepared INSERT SQL
+   statement:
+   insert into t_stat_disk_hist (disk_id, statistic_time,
+   statistic_type, primary_defects, grown_defects,
+   recovrd_wrt_errs, unrecovrd_wrt_errs, bytes_written,
+   recovrd_rd_errs, unrecovrd_rd_errs, bytes_read,
+   recovrd_vfy_errs, unrecovrd_vfy_errs, non_medium_errs,
+   temperature, free_space, capacity) values
+   (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+   com.ibm.db2.jcc.b.SqlException: [jcc][t4][1037][11190][3.50.152]
+   Exception occurred during BigDecimal conversion.  See attached
+   Throwable for details. ERRORCODE=-4220, SQLSTATE=null
+   .
+   .
+   .
+   Caused by: com.ibm.db2.jcc.a.a:
+   [jcc][converters][608][10994]Overflow occurred during numeric
+   data type conversion of "nnnnnnnnnnnnnn".
+    at com.ibm.db2.jcc.a.e.a(e.java:61)
+    at com.ibm.db2.jcc.t4.gb.a(gb.java:1796)
+    ... 17 more
+   11/23/10 4:29:09 AM SRV0081E: SQL error. Unable to access table
+   t_stat_disk_hist
+                            Stmt Type: INSERT, Stmt Phase: EXECUTE
+                            SQLSTATE: , Vendor error code: -4220
+                            [jcc][t4][1037][11190][3.50.152]
+   Exception occurred during BigDecimal conversion.  See attached
+   Throwable for details. ERRORCODE=-4220, SQLSTATE=null
+   11/23/10 4:29:09 AM STS0125E: Aggregator completed with errors.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  patch provided by development
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: TPC 4.1.1, 4.2.0 and 4.2.1 users running     *
+   *                 history aggregator                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When running the history aggregator     *
+   *                      there may be an error when updating     *
+   *                      the storage capacity in the database.   *
+   *                                                              *
+   *                      The error is similar to this:           *
+   *                                                              *
+   *                      STS0146E: Last prepared INSERT SQL      *
+   *                      statement:                              *
+   *                      insert into t_stat_disk_hist            *
+   *                      (disk_id, statistic_time,               *
+   *                      statistic_type, primary_defects,        *
+   *                      grown_defects,                          *
+   *                      recovrd_wrt_errs, unrecovrd_wrt_errs,   *
+   *                      bytes_written,                          *
+   *                      recovrd_rd_errs, unrecovrd_rd_errs,     *
+   *                      bytes_read,                             *
+   *                      recovrd_vfy_errs, unrecovrd_vfy_errs,   *
+   *                      non_medium_errs,                        *
+   *                      temperature, free_space, capacity)      *
+   *                      values                                  *
+   *                      (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)     *
+   *                      com.ibm.db2.jcc.b.SqlException:         *
+   *                      [jcc][t4][1037][11190][3.50.152]        *
+   *                      Exception occurred during BigDecimal    *
+   *                      conversion.  See attached               *
+   *                      Throwable for details.                  *
+   *                      ERRORCODE=-4220, SQLSTATE=null          *
+   *                      .                                       *
+   *                      .                                       *
+   *                      .                                       *
+   *                      Caused by: com.ibm.db2.jcc.a.a:         *
+   *                      [jcc][converters][608][10994]Overflow   *
+   *                      occurred during numeric                 *
+   *                      data type conversion of                 *
+   *                      "nnnnnnnnnnnnnn".                       *
+   *                      at com.ibm.db2.jcc.a.e.a(e.java:61)     *
+   *                      at                                      *
+   *                      com.ibm.db2.jcc.t4.gb.a(gb.java:1796)   *
+   *                      ... 17 more                             *
+   *                                                              *
+   *                                                              *
+   *                      SRV0081E: SQL error. Unable to access   *
+   *                      table t_stat_disk_hist                  *
+   *                      Stmt Type: INSERT, Stmt Phase: EXECUTE  *
+   *                      SQLSTATE: , Vendor error code: -4220    *
+   *                      [jcc][t4][1037][11190][3.50.152]        *
+   *                      Exception occurred during BigDecimal    *
+   *                      conversion.  See attached               *
+   *                      Throwable for details.                  *
+   *                      ERRORCODE=-4220, SQLSTATE=null          *
+   *                                                              *
+   *                      STS0125E: Aggregator completed with     *
+   *                      errors.                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   -
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code change was made to resolve the issue.  The fix for this
+   APAR is targeted for the following maintenance packages:
+   
+   | fix pack | 4.1.1-TIV-TPC-FP0006 - target April 2011
+   | fix pack | 4.2.1-TIV-TPC-FP0003 - target June 2011
+   
+   http://www-01.ibm.com/support/docview.wss?&uid=swg21320822 [http://www-01.ibm.com/support/docview.wss?&uid=swg21320822]
+   
+   The target dates for future fix packs do not represent a formal
+   commitment by IBM. The dates are subject to change without
+   notice.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC74508
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC FOR FABRIC
+   
+   
+ * REPORTED COMPONENT ID
+   5608TC100
+   
+   
+ * REPORTED RELEASE
+   41A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-17
+   
+   
+ * CLOSED DATE
+   2011-03-04
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC FOR FABRIC
+   
+   
+ * FIXED COMPONENT ID
+   5608TC100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R41A PSY
+   UP
+   
+   
+ * R41L PSY
+   UP
+   
+   
+ * R41W PSY
+   UP
+   
+   
+ * R42A PSY
+   UP
+   
+   
+ * R42L PSY
+   UP
+   
+   
+ * R42W PSY
+   UP

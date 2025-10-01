@@ -1,0 +1,49 @@
+Title: IBM ClassCastException after upgrading WebSphere Application Server - United States
+
+Text:
+"com.ibm.ws.tx.jta.UserTransactionImpl incompatible with javax.transaction.UserTransaction" TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading WebSphere Application Server, one or more exceptions might occur.
+WebSphere Commerce fails to start with a "com.ibm.ws.tx.jta.UserTransactionImpl incompatible with javax.transaction.UserTransaction" ClassCastException. 
+
+SYMPTOM
+One or more of the following exceptions might occur after upgrading WebSphere Application Server:
+
+[1/27/11 17:34:02:850 CST] 00000000 JMSRegistrati E WMSG1603E: An internal error occurred. It was not possible to register the WebSphere MQ JMS client with the application server due to exception org.osgi.framework.BundleException: An error occurred trying to read the bundle
+at org.eclipse.osgi.internal.baseadaptor.BundleInstall.begin(BundleInstall.java:94)
+at org.eclipse.osgi.framework.internal.core.Framework.installWorkerPrivileged(Framework.java:823)
+at org.eclipse.osgi.framework.internal.core.Framework$2.run(Framework.java:739)
+at java.security.AccessController.doPrivileged(AccessController.java:251)
+...
+Caused by: java.io.IOException: The directory "/opt/IBM/WebSphere/AppServer/profiles/demo/configuration/org.eclipse.osgi/bundles/134/1" could not be created
+at org.eclipse.osgi.internal.baseadaptor.BundleInstall.begin(BundleInstall.java:68)
+... 41 more
+
+[1/27/11 17:35:00:734 CST] 0000000f CommerceSrvr E TransactionManager begin(int) CMN0409E: The following error occurred during processing: "com.ibm.ws.tx.jta.UserTransactionImpl incompatible with javax.transaction.UserTransaction".java.lang.ClassCastException: com.ibm.ws.tx.jta.UserTransactionImpl incompatible with javax.transaction.UserTransaction
+at com.ibm.commerce.server.TransactionManager.getTransaction(TransactionManager.java:199)
+at com.ibm.commerce.server.TransactionManager.begin(TransactionManager.java:86)
+at com.ibm.commerce.accesscontrol.policymanager.AccessControlRegistryImpl.initialize(AccessControlRegistryImpl.java:81)
+at com.ibm.commerce.accesscontrol.policymanager.PolicyManagerImpl.initialize(PolicyManagerImpl.java:1062)
+at com.ibm.commerce.accesscontrol.policymanager.PolicyManagerImpl.<init>(PolicyManagerImpl.java:101)
+at com.ibm.commerce.accesscontrol.policymanager.PolicyManagerImpl.createInstance(PolicyManagerImpl.java:353)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+...
+
+[1/27/11 17:35:01:341 CST] 0000000f CommerceSrvr E TransactionManager begin(int) CMN0409E: The following error occurred during processing: "com.ibm.ws.tx.jta.UserTransactionImpl incompatible with javax.transaction.UserTransaction".java.lang.ClassCastException: com.ibm.ws.tx.jta.UserTransactionImpl incompatible with javax.transaction.UserTransaction
+at com.ibm.commerce.server.TransactionManager.getTransaction(TransactionManager.java:199)
+at com.ibm.commerce.server.TransactionManager.begin(TransactionManager.java:86)
+at com.ibm.commerce.server.WcsApp.registryInit(WcsApp.java:602)
+at com.ibm.commerce.server.WcsApp.initialize(WcsApp.java:451)
+at com.ibm.commerce.server.WebApp.init(WebApp.java:386)
+...
+
+
+RESOLVING THE PROBLEM
+To resolve this problem, run the WAS_installdir/profiles/profile_name/bin/osgiCfgInit.sh script. 
+
+Then, ensure that the ownership for the folder WAS_installdir//profiles/profile_name/configuration/org.eclipse.osgi , subdirectories, and files contained within are set to the WebSphere Application Server non-root user. 
+
+Then, restart the WebSphere Commerce Server.
+
+Note: The osgiCfgInit command resets the class cache used by the OSGi runtime environment.

@@ -1,0 +1,16 @@
+Title: IBM How do we approach multi-membered files to use for ODBC mapping from an iSeries database? - Sterling Gentran:Server for iSeries - United States
+
+Text:
+Data Integrity - Translation; File Format; STERLINGHTG TECHNOTE (FAQ)
+
+QUESTION
+ How do we approach multi-membered files to use for ODBC mapping from an iSeries database? 
+
+ANSWER
+For the ODBC mapping you would just plug in the library/file name. It will default to the first member, because it doesn't know about multi-membered files. This is fine, because you just need to get the file structure defined. When you need to access it, it will use JDBC to access the file, see below regarding JDBC and multi-membered files: How can I use JDBC to access physical file members other than the default? Although the i5/OS database supports physical files with multiple members, SQL (and consequently JDBC) is designed to access only the first member (which is usually the member with the same name as the file/table). If you are using Toolbox JDBC to access files and members created outside of SQL, you may need to trick SQL into using members other than the first. You can do this by creating an SQL Alias. Suppose that you have a physical file MYLIB/SALES with twelve members (one member for each month of the year). To access JANUARY, you must first create an alias with the following SQL command: CREATE ALIAS MYLIB/SALES_JANUARY FOR MYLIB/SALES(JANUARY) Now, you can access the individual member JANUARY by using a select command such as SELECT * FROM SALES_JANUARY. However, if you rename a member of MYLIB/SALES, the alias will no longer point to it. You can either create a new alias for the member you renamed or create a new member with the old member name. Here is the exact CREATE ALIAS command string. String aliasCommand = "CREATE ALIAS MYLIB/SALES_JANUARY " + "FOR MYLIB/SALES(JANUARY) "; Create a Statement and issue the CREATE ALIAS SQL command. Statement statement = connection.createStatement(); statement.executeUpdate(aliasCommand);
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling B2B Integrator Mapping and Translation 
+HISTORICAL NUMBER
+ HTG1680

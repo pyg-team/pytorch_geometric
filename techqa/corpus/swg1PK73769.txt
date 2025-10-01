@@ -1,0 +1,261 @@
+Title: IBM PK73769: TELNET SSL CONNECTION FAILS WITH RC=100B - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A client connects to a Telnet server secure port. During the SSL
+   handshake, a timeout occurs while the server is waiting on the
+   client to send an SSL handshake header. This causes an error:
+   
+   RC=600E RC_SSL_HANDSHAKE_TIMEOUT
+   The time required for the client to respond to the handshake
+   request exceeded the value coded on the SSLTIMEOUT statement or
+   the default. This might be expected if CONNTYPE SECURE is
+   specified for the connection and the client uses the negotiated
+   security protocol. Otherwise, increase the time to wait or
+   determine why the client is not responding quickly enough.
+   
+   Afterwards, the Telnet Server attempts to send a
+   Do_StartTLS_Message to the client to in an attempt to perform
+   negotiated security. However, the client responds by sending
+   more of the SSL Handshake which fails at the server with
+   
+   RC=100B RC_SSLHANDSHK_ONBASIC
+   Unexpected SSL handshake encountered.
+   An SSL handshake header was encountered on a basic port or the
+   client immediately entered an SSL handshake for a CONNTYPE other
+   than SECURE or ANY. Verify that the client and port settings are
+   compatible.
+   
+   The x'100B' return code is somewhat misleading. The port was
+   defined as secure, but the Telnet Server turned 'off' this
+   level to send the Do_StartTLS_Message. This APAR is being
+   taken to change the RCode only.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Increase SSLTIMEOUT value for the PORT. Then issue an OBEYFILE
+   command to update the Telnet server with the modified profile.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Communications Server for       *
+   *                 z/OS Version 1 Release 8,                    *
+   *                 z/OS Version 1 Release 9, and                *
+   *                 z/OS Version 1 Release 10 IP Telnet          *
+   *                 facilities using SSL connections.            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Misleading Telnet debug return code     *
+   *                      issued following SSL handshake timeout. *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The problem may be summarized as follows:
+   
+   1. The Telnet server was started with a secure port
+      definition.  The SSLTIMEOUT value was defaulted to
+      5 seconds.
+   
+   2. A client connection was attempted over the secure port.
+      Due to network delays, the SSL handshake timed out
+      just before the client sent the SSL handshake header
+      to the Telnet server.
+   
+   3. The client connection was dropped and message EZZ6034I
+      was issued with return code 100B: RC_SSLHANDSHK_ONBASIC.
+      The return code indicated that an unexpected SSL handshake
+      header was encountered for a basic port.  This return
+      code is misleading as the port was correctly defined as
+      a secure port.
+   
+   4. The problem was remedied by increasing the value of the
+      SSLTIMEOUT parameter.
+   +-------------------------------------------------------------+
+   + Please check our Communications Server for OS/390 homepages +
+   + for common networking tips and fixes.  The URL for these    +
+   + homepages can be found in Informational APAR II11334 [http://www-01.ibm.com/support/docview.wss?uid=isg1II11334].       +
+   +-------------------------------------------------------------+
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR adds a new debug return code which is generated when
+   an SSL handshake header is received from a client after the SSL
+   handshake has timed out.  The connection is dropped by the
+   Telnet server.
+   
+   Debug return codes are presented in message EZZ6035I.
+   The new debug return code is 6019.  An example follows
+   below:
+   
+   EZZ6035I TELNET TCPCS1   DEBUG CONN   DETAIL
+     IP..PORT: x.xx.xxx.xx..yyyy
+     CONN: 0000006C  LU:          MOD: EZBTTRCV
+     RCODE: 6019-00  SSL handshake after SSL handshake expired
+     PARM1: 00000000 PARM2: 00000000 PARM3: 00000000
+   EZZ6034I TELNET CONN 0000006C LU **N/A**  CONN DROP  ERR 6019
+     IP..PORT: x.xx.xxx.xx..yyyy
+   
+   The following documentation changes have been made:
+   
+   z/OS Communications Server: V1R8.0, V1R9.0 and V1R10.0
+   Documentation Number SC31-8786-07, SC31-8786-09, and
+   SC31-8786-10
+   IP Messages Volume 4 (EZZ-SNM)
+   Chapter: EZZ6xxxx messages
+   Heading: EZZ6035I
+   
+   Under message EZZ6035I TELNET DEBUG add a new rcode as
+   follows:
+   
+   6019 An SSL handshake header was encountered
+        after the SSL handshake had expired.
+        Increase the setting for the SSLTIMEOUT
+        parameter or determine why the client is
+        not responding quickly enough.
+   
+   The following modules/macros have been changed:
+   
+   1. Module EZBTTRCV has been changed to issue the new
+      debug return code when an SSL header is received after
+      the SSL handshake has timed out.
+   
+   2. Macro EZBZTDBG has been updated to add a new 6019 debug
+      return code.
+   
+   3. Module EZBTZDBG has been recompiled to incorporate changes
+      to the EZBZTDBG macro.
+   
+   4. For releases r180 and r190, macro EZAZMTNS and module
+      EZBTZDB2 have been changed to provide description text
+      for the new 6019 return code.
+   
+   5. Module EZBTZMSG has been recompiled with the macro changes.
+   
+   * Cross Reference between External and Internal Names
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK73769
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   180
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-14
+   
+   
+ * CLOSED DATE
+   2008-11-04
+   
+   
+ * LAST MODIFIED DATE
+   2009-02-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK41317 UK41318 UK41319
+   
+   
+
+MODULES/MACROS
+ *  EZAZMTNS EZBTTRCV EZBTZDBG EZBTZDB2 EZBTZMSG
+   EZBZTDBG
+   
+   
+    
+   
+   
+
+Publications Referenced SC31878610 SC31878609 SC31878607 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * FIXED COMPONENT ID
+   5655HAL00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R1A0 PSY UK41317 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK41317]
+   UP09/01/17 P F901
+   
+   
+ * R180 PSY UK41318 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK41318]
+   UP09/01/17 P F901
+   
+   
+ * R190 PSY UK41319 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK41319]
+   UP09/01/17 P F901
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

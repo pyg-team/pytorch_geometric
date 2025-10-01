@@ -1,0 +1,40 @@
+Title: IBM Environment variable DTX_CHDIR not working as expected using ITX V9.0.0. - United States
+
+Text:
+WTX ITX DTX_CHDIR TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Environment variable DTX_CHDIR not working as expected using ITX V9.0.0. 
+
+SYMPTOM
+Environment variable DTX_CHDIR not working as expected using ITX V9.0.0.
+
+
+CAUSE
+This has been identified as a product defect under APAR PI62284.
+
+ENVIRONMENT
+Running a IBM Transformation Extender Map using the ITX Launcher and the map uses the EXIT function.
+
+DIAGNOSING THE PROBLEM
+In releases prior to ITX V9.0.0, WebSphere Transformation Extender (WTX) changed from the directory of the currently running process to the map directory before it ran a map.
+
+
+
+
+ITX V9.0.0 does not change to the map directory before it runs a map. ITX V9.0.0 resolves relative paths by appending the relative path to the directory of the currently running process. 
+
+It is documented that environment variable DTX_CHDIR can be set to restore the pre ITX V9.0.0 behaviour so that affected relative paths resolve relative to the map directory. 
+
+However, using the environment variable DTX_CHDIR, the Launcher still does not change the current directory to the map directory as expected before it executes maps. 
+
+
+RESOLVING THE PROBLEM
+It is recommended not to use the DTX_CHDIR environment variable. 
+
+
+Instead please use the ITX GETDIRECTORY() function as part of your rule in your ITX map to always reference a full path.
+
+or
+
+Obtain patch for APAR PI62284.

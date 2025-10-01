@@ -1,0 +1,25 @@
+Title: IBM Error: "HTTP Server: SSL Handshake Failure..." with Error Code 4165 - United States
+
+Text:
+web server; http; log; logging; ssl; ssl handshake failure; "HTTP Server: SSL handshake failure; IP address [10.0.0.1]; Keyring [selfcert.kyr]; [SSL Error: Network IO error]; code [4165]"; thread logging; http request log TECHNOTE (FAQ)
+
+QUESTION
+You set up SSL on a Lotus® Domino® 6.0 server. After that, you notice many SSL handshake error messages filling your Notes log. These error messages have a result code of 4165. The full error is as follows: 
+
+"HTTP Server: SSL handshake failure, IP address [10.0.0.1], Keyring [selfcert.kyr], [SSL Error: Network IO error], code [4165]"
+
+
+ANSWER
+This issue was reported to Quality Engineering and has been addressed in Domino 6.0.3 and Domino 6.5. Refer to the Upgrade Central [http://www.ibm.com/software/lotus/support/upgradecentral/index.html] site for details on upgrading Notes/Domino. 
+
+Excerpt from the Lotus Notes and Domino Release 6.0.3 MR fix list (available at http://www.lotus.com/ldd [http://www.lotus.com/ldd]):
+
+SSL 
+
+ * SPR# WRAY5HVRUM - Only display messages about SSL handshake failures if session or thread logging is enabled.
+
+
+For releases prior to 6.0.3 and 6.5, the error message appears in the log when a Microsoft Internet Explorer 5.x or 6 browser connects using SSL; if you use a Netscape browser, the error does not occur. Domino reports this error due to a variation in the SSLv3 specification by certain Internet clients like Microsoft Internet Explorer. These clients send a FIN message in the middle of the SSL handshake. The Domino server reports this FIN message as a handshake error because the client does not follow the SSLv3 specification. 
+
+For Domino 6.0.3, 6.5, and later releases, including 7.0, these messages now only occur when HTTP thread logging is enabled. If you do not want to see the messages, then disable thread logging, which should generally be used as a short term troubleshooting tool only. RELATED INFORMATION
+#

@@ -1,0 +1,12 @@
+Title: IBM An intermittent SSL Handshake error can occur when you connect to the application server with IBM FileNet Configuration Manager or the Case Management Administration and Configuration tool. - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+An intermittent SSL Handshake error can occur when you connect to WebSphere Application Server with the FileNet Configuration Manager or Case Management Administration and Configuration (CMAC) tool.
+
+CONTENT
+When you connect to different application servers within the same Configuration Manager or CMAC session, an SSL Handshake error can occur. Usually, once you are connected to a server, you can always connect, even after failing on a different server. 
+
+The workaround is to restart Configuration Manager or CMAC.

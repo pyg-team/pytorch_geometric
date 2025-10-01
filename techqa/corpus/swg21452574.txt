@@ -1,0 +1,173 @@
+Title: IBM Access Manager Java Runtime Application SSL Certificates - United States
+
+Text:
+SvrSslCfg TAM ISAM TECHNOTE (FAQ)
+
+QUESTION
+ How is the expiration date of an application's certificate controlled? 
+
+ANSWER
+Here is an explanation of how the expiration time is controlled for the certificate generated via the SvrSslCfg command for a custom TAM/ISAM Java API application.
+
+This info can be used as a guide to develop a certificate management process.
+
+The setting that controls the life of the SSL certificate is located in the TAM Policy Server configuration file. When a Java Application is configured via the com.tivoli.pd.jcfg.SvrSslCfg class this value from the Policy Server configuration file is used. There is not a parameter available to the SvrSslCfg class to override this setting.
+
+The Policy Server configuration file is located at,
+
+Windows
+C:\Program Files\Tivoli\Policy Director\etc\ivmgrd.conf
+
+UNIX
+/opt/PolicyDirector/etc/ivmgrd.conf
+
+WGA
+LMI at Secure Web Settings -> Runtime Component -> Manage -> Configuration Files -> ivmgrd.conf
+
+The attribute is in the [ssl] stanza,
+
+# SSL certificate lifetime in days.
+# This parameter is set by the mgrsslcfg utility.
+ssl-cert-life = 365
+
+and is set when the Policy Server is configured. In TAM 5.1, the default is 365 days. In TAM 6.0.0/6.1.0/6.1.1 and ISAM 7/8/9, the default is 1460 (4 years). It may be manually changed but requires a restart of the Policy Server. After that, applications configured via the SvrSslCfg class will use the new value.
+
+A Java application by default will attempt to renew its certificate once it reaches half-life. This attempt is only made during application startup. This behavior can be modified via the,
+
+-certrefresh {true|false}
+
+option to SvrSslCfg. This option can be specified during the initial creation of the server or after the fact with,
+
+java com.tivoli.pd.jcfg.SvrSslCfg -action setcertref \
+-certrefresh {true|false} \
+-cfg_file <configuration_file>
+
+It should be noted that if the certificate has already expired the auto-refresh will fail during restart because the application is no longer able to establish SSL communications with the Policy Server. The application does not have to be fully reconfigured. A new cert can be generated using,
+
+java com.tivoli.pd.jcfg.SvrSslCfg -action replcert \
+-admin_id sec_master \
+-admin_pwd password \
+-cfg_file <configuration_file>
+
+
+******************************************************************************************************************
+W A R N I N G ! ! ! ! 
+******************************************************************************************************************
+Do not use a copy of another application's .properties and .ks file. Each application definition has a unique identity created in the User Registry. This identity has among its attributes the certificate's SubjectDN and serial number. For example, the values in the User Registry are,
+
+principalName=TAMApp/earth,cn=Users,secAuthority=Default
+secCertDN=CN=TAMApp/earth,OU=Default,O=Policy Director,C=US
+secCertSerialNumber=10001001
+
+and the corresponding values in the .ks file are,
+
+Certificate[1]:
+Owner: CN=TAMApp/earth, OU=Default, O=Policy Director, C=US
+Serial number: 10001001
+
+There are four reasons for not using another application's identity,
+
+
+ 1. The server definition may have been added to custom groups in the User Registry based on the functional requirements of the application. Running with this identity can allow unauthorized access to secured data. 
+ 2. The server definition may not have the correct group memberships needed by the application using the copied files. In this case, the application will not function correctly. Operations or access which is expected will be denied. 
+ 3. If one of the applications renews the certificate, either automatically or manually, the corresponding attributes in LDAP are updated. Now one of the .ks file's serial number is out of sync with the value updated in the User Registry. The application using the out of date .ks file will not start. 
+ 4. If the copied application is deleted, the application using the copied files will not start because there is no corresponding identity in the User Registry.
+
+
+The Best Practice is to generate unique server definitions for each application using the SvrSslCfg command. Based on experience, Support has seen that using copies will ultimately lead to an outage. 
+****************************************************************************************************************** 
+
+If auto-refresh is disabled, then a process must be put in place to monitor the expiration date of the certificate. 
+
+To check the current validity of a .ks file, use the keytool command. The keytool command is located in the JRE bin directory. When prompted for the password, just hit the <Return> key without entering a value. For example, 
+
+/usr/java5/jre/bin/keytool -list -v -keystore /var/PolicyDirector/keytab/app1.ks -storetype JCEKS 
+Enter keystore password: 
+
+***************** WARNING WARNING WARNING ***************** 
+* The integrity of the information stored in your keystore * 
+* has NOT been verified! In order to verify its integrity, * 
+* you must provide your keystore password. * 
+***************** WARNING WARNING WARNING ***************** 
+
+Keystore type: JCEKS 
+Keystore provider: IBMJCE 
+
+Your keystore contains 1 entry 
+
+Alias name: defaultid 
+Creation date: Aug 28, 2007 
+Entry type: keyEntry 
+Certificate chain length: 2 
+Certificate[1]: 
+Owner: CN=app1/sumo, OU=Default, O=Policy Director, C=US 
+Issuer: CN=pdca, O=Policy Director, C=US 
+Serial number: 10001005 
+Valid from: 8/27/07 1:10 PM until: 8/27/08 1:10 PM 
+Certificate fingerprints: 
+MD5: 8D:C0:E5:6E:72:53:8F:BC:8A:F4:BB:83:E6:41:C4:4B 
+SHA1: 78:D0:3E:31:88:78:42:39:A6:E3:F0:DD:F0:63:8D:A4:35:25:3B:3E 
+Certificate[2]: 
+Owner: CN=pdca, O=Policy Director, C=US 
+Issuer: CN=pdca, O=Policy Director, C=US 
+Serial number: 413f5993 
+Valid from: 9/7/04 2:12 PM until: 9/3/24 2:12 PM 
+Certificate fingerprints: 
+MD5: A8:B8:8A:13:AE:71:06:DB:17:96:66:AB:CF:29:39:87 
+SHA1: 68:05:FB:F4:D3:84:C7:A4:7C:9D:5B:8C:59:F8:DB:7F:E7:D6:16:6D 
+
+
+******************************************* 
+******************************************* 
+
+Note that Certificate[1] is from the app1 application and is valid from 8/27/07 to 8/27/08. 
+
+In order to reset, the following command can be used. In this case, I have updated ssl-cert-life = 7300 (20 years) and restarted the TAM Policy Server. 
+
+java com.tivoli.pd.jcfg.SvrSslCfg -action replcert \ 
+-admin_id sec_master \ 
+-admin_pwd password \ 
+-cfg_file /opt/PolicyDirector/etc/app1.properties 
+
+
+Running the keytool command now shows the following, 
+
+Certificate[1]: 
+Owner: CN=app1/sumo, OU=Default, O=Policy Director, C=US 
+Issuer: CN=pdca, O=Policy Director, C=US 
+Serial number: 10001006 
+Valid from: 8/27/07 3:05 PM until: 9/1/24 3:05 PM 
+Certificate fingerprints: 
+MD5: DE:89:D3:0C:02:EB:78:94:73:EF:B1:75:F7:24:37:19 
+SHA1: C7:5E:4D:8C:53:F5:FC:71:A3:84:03:5A:2D:D3:F8:8B:A7:E9:1D:4F 
+Certificate[2]: 
+Owner: CN=pdca, O=Policy Director, C=US 
+Issuer: CN=pdca, O=Policy Director, C=US 
+Serial number: 413f5993 
+Valid from: 9/7/04 2:12 PM until: 9/3/24 2:12 PM 
+Certificate fingerprints: 
+MD5: A8:B8:8A:13:AE:71:06:DB:17:96:66:AB:CF:29:39:87 
+SHA1: 68:05:FB:F4:D3:84:C7:A4:7C:9D:5B:8C:59:F8:DB:7F:E7:D6:16:6D 
+
+
+Note that the app1 certificate (Certificate[1]) is only good until 9/1/24 instead of 8/27/27 because the Policy Server signer certificate (Certificate[2]) was created 9/7/04. It cannot sign a certificate with a life past its own. 
+
+For reference, the following command was used to configure the app1 application, 
+
+java com.tivoli.pd.jcfg.SvrSslCfg -action config \ 
+-admin_id sec_master \ 
+-admin_pwd password \ 
+-appsvr_id app1 \ 
+-appsvr_pwd password \ 
+-port 33333 \ 
+-mode remote \ 
+-host sumo \ 
+-policysvr pdmgrd_host:7135:1 \ 
+-authzsvr pdacld_host:7136:2 \ 
+-cfg_file /opt/PolicyDirector/etc/app1.properties \ 
+-domain Default \ 
+-key_file /var/PolicyDirector/keytab/app1.ks \ 
+-cfg_action create  
+
+PRODUCT ALIAS/SYNONYM
+ TAM TAMeB AMJRTE ISAM

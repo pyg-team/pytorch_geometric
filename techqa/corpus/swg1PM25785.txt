@@ -1,0 +1,227 @@
+Title: IBM PM25785: JAVAX.NAMING.SIZELIMITEXCEEDEDEXCEPTION OCCURS WHEN DISABLING THE SEARCH CACHE IN WIMCONFIG - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+7.0.0.17: Java SDK 1.6 SR9 FP1 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24029894]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+7.0.0.27: Java SDK 1.6 SR13 FP2 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035324]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The javax.Naming.SizeLimitExceededException occurs as a side
+   effect of disabling the search cache
+   
+   in wimconfig.xml.
+   -------------------------------------
+           <config:searchResultsCache cacheSize="2000"
+   cacheTimeOut="600"
+   enabled="false"
+               searchResultSizeLimit="1000"/>
+   
+   ---------------------------------------------
+   
+   
+   When the search cache is enabled, VMM handles
+   javax.Naming.SizeLimitExceededException, thus, truncating the
+   search results.  It doesn't handle it when cache is disabled,
+   and therefore,the exception is showed as follows
+   
+   --------------------------------------
+   
+    com.ibm.ws.wim.adapter.ldap.LdapConnection searchEntities
+   CWWIM4520E The 'javax.naming.SizeLimitExceededException: [LDAP:
+   error code 4 - Search operation hit size limit. Found 11 Entries
+   (0 Aliases), 52 Attributes, 96 Values.]; remaining name '/';
+   resolved object com.sun.jndi.ldap.LdapCtx@50ff1005' naming
+   exception occurred during processing.
+   [10/12/10 19:48:47:502 CEST] 00000050 exception     E
+   com.ibm.ws.wim.adapter.ldap.LdapConnection searchEntities
+   
+   com.ibm.websphere.wim.exception.WIMSystemException: CWWIM4520E
+   The 'javax.naming.SizeLimitExceededException: [LDAP: error code
+   4 - Search operation hit size limit. Found 11 Entries (0
+   Aliases), 52 Attributes, 96 Values.]; remaining name '/';
+   resolved object com.sun.jndi.ldap.LdapCtx@50ff1005' naming
+   exception occurred during processing.
+    at
+   com.ibm.ws.wim.adapter.ldap.LdapConnection.searchEntities(LdapCo
+   nnection.java:2932)
+    at
+   com.ibm.ws.wim.adapter.ldap.LdapAdapter.search(LdapAdapter.java:
+   2799)
+   
+   -------------------------------------------------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  enable search cache
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V6.1 and V7.0                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Virtual member manager (VMM) throws a   *
+   *                      SizeLimitExceededException on calling   *
+   *                      the search API when the search cache    *
+   *                      is disabled for LDAP repository.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When the number of entries in search results returned from an
+   LDAP repository exceeds the count limit mention in the VMM
+   search API call, a javax.naming.SizeLimitExceededException is
+   thrown. When search cache is enabled VMM catches this
+   exception and return the search result having number of
+   entries equal to the search count.
+   
+   However, when search cache is disabled, VMM does not catch the
+   exception and search operation fails.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix involved catching
+   javax.naming.SizeLimitExceededException when the search cache
+   is disabled so that search operation returns number of entries
+   equal to the count limit.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 6.1.0.37 and 7.0.0.17.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM25785
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   61S
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-03
+   
+   
+ * CLOSED DATE
+   2010-12-27
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

@@ -1,0 +1,184 @@
+Title: IBM LO69395: INOTES NUMBERED LIST CAUSING FORMATTING ISSUE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Description&#65496;
+   Customer reported the following issue which I was able to
+   reproduce.
+   
+   If spell check and auto-signature are enabled in iNotes,
+   creating an email using the numbered list would cause formating
+   issue upon clicking Send.
+   
+   I was able to reproduce this on 853 using the Firefox 10.0.3
+   and Firef12 browser.  This problem was not present in the IE9
+   and Chrome 18.
+   
+   Steps to reproduce:
+   
+   Log into iNotes and enable auto Spell Check and Signature.
+   Signature can be Plain text, Rich text or Notes.
+   
+   - Create new mail message from iNotes 8.5.3
+   
+   - Added list of names in memo
+   Hilda
+   Loc
+   Brandon
+   Joshua
+   Powell
+   
+   - Highlight the list and select number format
+   
+   - Click on spell check icon and the format of numbered list is
+   modified.
+   
+   
+   If spell check and auto-signature are enabled in iNotes,
+   creating an email using the numbered list would cause formatting
+   issue upon clicking Send.
+   
+   Reproduces in iNotes 853 using the Firefox 10.0.3
+   and Firefox12 browser.  This problem was not present in the IE9
+   and Chrome 18.
+   
+   Steps to reproduce:
+   
+   Log into iNotes and enable auto Spell Check and Signature.
+   Signature can be Plain text, Rich text or Notes.
+   
+   - Create new mail message from iNotes 8.5.3
+   
+   - created a list in the message body
+   
+   - Highlight the list and select number format
+   
+   - Click on spell check icon and the format of numbered list is
+   modified.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix&#65496;
+   The temporary work around is to use the IE or Chrome browser.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# LNGN8UBKL9.
+   n/a
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO69395
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   853
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-15
+   
+   
+ * CLOSED DATE
+   2012-07-12
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724E6200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R853 PSN
+   UP

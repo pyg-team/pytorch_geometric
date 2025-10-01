@@ -1,0 +1,31 @@
+Title: IBM Bi-Directional language support for Arabic in IBM Datacap Taskmaster Capture v. 8.1.0 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I enable support for the Arabic language when completing scanning tasks and recognition (OCR) tasks in IBM Datacap Taskmaster Capture v. 8.1.0? 
+
+ANSWER
+Bi-Directional language support for Arabic requires the installation of IBM Datacap Taskmaster v. 8.1.0 Fix Pack 2.. In addition, support for Arabic in IBM Datacap Taskmaster requires the installation of NovoDynamics NovoVerus v4.1 (32-bit). 
+
+To enable support for Arabic: 
+
+ 1. Install IBM Datacap Taskmaster v. 8.1.0 Fix Pack 2. (See the Fix Pack 2 download document [http://www-01.ibm.com/support/docview.wss?&uid=swg24036356].) 
+ 2. Install NovoDynamics NovoVerus v.4.1 on the machine that processes recognition rules. 
+ 3. Copy the files from Datacap\dcshared\OCRN to the bin folder of the NovoVerus installation directory.
+    
+    Tip: The default location of the bin folder is C:\Program Files (x86)\NovoDynamics\NovoVerus\bin.
+    
+ 4. Register Datacap.Libraries.NovoDynamics.dll from the C:\Datacap\dcshared\OCRN folder by using regasm with the /codebase flag.  1. On a 64-bit operating system, use regasm (.NET v2.0) from an Administrator command prompt as follows (on a single line):
+        C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\regasm C:\Datacap\dcshared\OCRN\Datacap.Libraries.NovoDynamics.dll /codebase
+        
+    
+    
+ 5. Use the rrruner RRSet action in Datacap Studio to configure the recognition settings and variables to the desired value. For the settings to take effect, you must set them prior to making the calls to zonal or full page OCR.
+    
+    Details about the available settings for the recognition engine, including action implementation, syntax, examples, and parameter usage, is available in the action library help in Datacap Studio. You can also use Notepad to open the ocr_n.rrx file, which is located in the Datacap\RRS folder.
+    
+    For your convenience, the same information is included in the attachment at the end of this tech note.
+
+NovoDynamicsActionHelp.pdf [/support/docview.wss?uid=swg21667404&aid=2]NovoDynamicsActionHelp.pdf [/support/docview.wss?uid=swg21667404&aid=1]

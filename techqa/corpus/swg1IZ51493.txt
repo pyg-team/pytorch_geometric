@@ -1,0 +1,224 @@
+Title: IBM IZ51493: USING THE MOVE/MODIFY ACTION, A CHANGE OF AN ATTRIBUTE DOES NOT MODIFY THE ASSET DESCRIPTION. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Maximo 7.1.1.4 SQL server 2005 Web Sphere on windows 2003
+   Maximo Transportation
+   Development
+   
+   When using the Move/Modify option from the select menu of the
+   asset
+   application, I tried to change the attributes of one asset and
+   then
+   multiple asset.
+   By doing so I expected the asset description to change according
+   to the
+   changes made to its attributes. However the asset description
+   did not
+   change.
+   
+   
+   
+   
+   Being reported against the core applications and NOT any
+   Transportation
+   applications.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Changing the attribute directly from the Specification tab of
+   the asset
+   does change the description but not when using the move/modify
+   window.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Maximo users                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Maximo 7.1.1.4 SQL server 2005 Web      *
+   *                      Sphere on windows 2003                  *
+   *                                                              *
+   *                      Maximo Transportation                   *
+   *                                                              *
+   *                      Development                             *
+   *                                                              *
+   *                      When using the Move/Modify option from  *
+   *                      the select menu of the                  *
+   *                                                              *
+   *                      asset                                   *
+   *                                                              *
+   *                      application, I tried to change the      *
+   *                      attributes of one asset and             *
+   *                                                              *
+   *                      then                                    *
+   *                                                              *
+   *                      multiple asset.                         *
+   *                                                              *
+   *                      By doing so I expected the asset        *
+   *                      description to change according         *
+   *                                                              *
+   *                      to the                                  *
+   *                                                              *
+   *                      changes made to its attributes. However *
+   *                      the asset description                   *
+   *                                                              *
+   *                      did not                                 *
+   *                                                              *
+   *                      change.                                 *
+   *                                                              *
+   *                      Being reported against the core         *
+   *                      applications and NOT any                *
+   *                                                              *
+   *                      Transportation                          *
+   *                                                              *
+   *                      applications.                           *
+   *                                                              *
+   *                      LOCAL FIX:                              *
+   *                                                              *
+   *                      Changing the attribute directly from    *
+   *                      the Specification tab of                *
+   *                                                              *
+   *                      the asset                               *
+   *                                                              *
+   *                      does change the description but not     *
+   *                      when using the move/modify              *
+   *                                                              *
+   *                      window.                                 *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   USING THE MOVE/MODIFY ACTION, A CHANGE OF AN ATTRIBUTE DOES NOT
+   MODIFY THE ASSET DESCRIPTION.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  <Why the description was not changed was because the AssetSet
+   was marked NOSAVE when there was no move involved.  If you had
+   moved the Asset to a new location and changed one of the
+   attribute values, it would have updated the description of the
+   Asset.  However, we cannot assume that attribute and custodian
+   changes depended on the Asset move changes. Fixed the
+   probloem.>
+   
+   
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | REL 7.1.1.6 - BS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ51493
+   
+   
+ * REPORTED COMPONENT NAME
+   ASSETS
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46AS
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-19
+   
+   
+ * CLOSED DATE
+   2009-08-02
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ASSETS
+   
+   
+ * FIXED COMPONENT ID
+   5724R46AS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

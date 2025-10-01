@@ -1,0 +1,17 @@
+Title: IBM The graphical view of the decision tree models might not be shown in IBM SPSS Modeler - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you do database modeling by using IBM® SPSS® Modeler, the graphical view of decision tree models might not work. 
+
+SYMPTOM
+To get detailed information after a Decision Tree model is built, you open the Properties dialog of the model nugget on the stream canvas. Usually, the second tab of this dialog shows a graphical view of the decision tree in the model. The information that is required to show the graphical elements is extracted from the model. However, if the required information is missing in the model, the graphical view cannot be shown.
+
+
+CAUSE
+This problem might occur if you set the Statistics option in the decision tree node to NONE when you start the modeling process. The decision tree modeling procedure, then, does not calculate the statistical information about the decision tree and store it in the model. Consequently, the graphical view cannot find the information that is required to show the tree nodes.
+
+RESOLVING THE PROBLEM
+In the DecTree node, set the Statistics option to ALL. This setting builds the DecTree models with all the statistical information that is required to visualize the decision tree in the resulting model.

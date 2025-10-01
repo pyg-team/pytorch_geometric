@@ -1,0 +1,16 @@
+Title: IBM Statistics Purge Agent has low throughput. How does one increase the throughput and improve the performance of that agent? - United States
+
+Text:
+Database Performance; Performance; Performance Tuning; Purge; house keeping; STERLINGFAQ TECHNOTE (FAQ)
+
+QUESTION
+ Statistics Purge Agent has low throughput. How does one increase the throughput and improve the performance of that agent? 
+
+ANSWER
+
+
+getJobs of Statistics Purge agent fires the following query to fetch the qualifying jobs, for example: SELECT /*YANTRA*/ YFS_STATISTICS_DETAIL.* FROM YFS_STATISTICS_DETAIL WHERE MODIFYTS < '20081106000000' </span></div> <div> </div> <div> More often this agent has a low throughput (depending on the customer environment as well). To make the agent run faster, one can choose to do the following: 1) Set BatchDelete=Y in the Criteria Parameters of this agent to delete the qualifying records in batches. 2) Add an index on MODIFYTS column of YFS_STATISTICS_DETAIL table. 
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling Selling and Fulfillment Suite Data management - house keeping 
+HISTORICAL NUMBER
+ FAQ3972

@@ -1,0 +1,20 @@
+Title: IBM Cryptography Questions - IBM Sterling B2B Integrator 5.2.6.2 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ 1) Are you planning to support popular and latest methods like ecdh-sha2-nistp256, ecdh-sha2-nistp384, ecdh-sha2-nistp521 and curve25519-sha256@libssh.org in future versions of the B2B Integrator ? 
+
+2) Why are the 3 SHA-1 methods: diffie-hellman-group-exchange-sha1, diffie-hellman-group14-sha1 and diffie-hellman-group1-sha1 still active with NIST=strict ? 
+According to the following configuration line in security.properties - 
+strict.disabledAlgorithms=RSA keySize < 2048, DSA keySize < 2048, EC keySize < 224, SHA1, SHA-1, MD2, MD4, MD5, RC2, RC4, DES - the 3 SHA-1 methods should be disabled.
+
+3) Why is the HMAC hmac-sha1 still supported with NIST=strict ? 
+
+ANSWER
+1) So far there is no plan to support the mentioned methods. In this case, a customer needs to raise an Enhancement Request.
+
+2) The NIST specification does not explicitly mention which key exchange algorithms are permitted or prohibited. The key exchange algorithms mandate certain keys and algorithms in use, which are actually qualified or unqualified from NIST specifications. All 3 mentioned Difffie-Hellman key-exchange methods use NIST compliant techniques. 
+
+3) The hmac-sha1 is a NIST compliant algorithm under strict mode and therefore it is supported.

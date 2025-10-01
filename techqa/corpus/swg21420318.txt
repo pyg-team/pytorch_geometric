@@ -1,0 +1,125 @@
+Title: IBM ANR2971E Database backup/restore/rollforward terminated - DB2 sqlcode -2048 error - United States
+
+Text:
+ANR2971E 2048 TSM DB BACKUP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TSM server database backup failed and the following message logged in the server's activity log:
+ANR2971E Database backup/restore/rollforward terminated - DB2 sqlcode -2048 error 
+
+SYMPTOM
+ 
+
+A backup of the the Tivoli Storage Manager (TSM) server database can't be performed
+
+
+
+CAUSE
+Corrupted volume history file
+
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+In the TSM server Activity Log, the following event is logged:
+
+ANR2971E Database backup/restore/rollforward terminated - DB2 sqlcode -2048 error. (SESSION: 23, PROCESS: 2)
+
+In the DB2 db2diag.log, the following events are logged:
+
+2010-02-03-09.06.01.203000-300 E38260402H953 LEVEL: Error
+PID : 3252 TID : 3556 PROC : db2syscs.exe
+INSTANCE: SERVER1 NODE : 000 DB : TSMDB1
+APPHDL : 0-111 APPID: *LOCAL.SERVER1.100203140729
+AUTHID : SYSTEM 
+EDUID : 3556 EDUNAME: db2agent (TSMDB1)
+FUNCTION: DB2 UDB, database utilities, sqluhReadEntry, probe:802
+MESSAGE : SQL2161N A damaged recovery history file could not be fixed. The 
+specified action failed.
+DATA #1 : String, 60 bytes
+Error parsing history entry: invalid number of fields found.
+DATA #2 : String, 23 bytes
+Number of fields read: 
+DATA #3 : signed integer, 4 bytes
+-1
+DATA #4 : String, 32 bytes
+Expected number of fields read: 
+DATA #5 : signed integer, 4 bytes
+24
+DATA #6 : Dumped object of size 514 bytes at offset 0, 76 bytes
+C:\DOCUME~1\ALLUSE~1\APPLIC~1\IBM\DB2\DB2TSM1\SERVER1\3252.3556.000.dump.bin
+.
+.
+2010-02-03-10.27.52.594000-300 E38388701H965 LEVEL: Severe
+PID : 3252 TID : 368 PROC : db2syscs.exe
+INSTANCE: SERVER1 NODE : 000 DB : TSMDB1
+APPHDL : 0-864 APPID: *LOCAL.SERVER1.100203152738
+AUTHID : SYSTEM 
+EDUID : 368 EDUNAME: db2bm.3712.0 (TSMDB1)
+FUNCTION: DB2 UDB, database utilities, sqlubProcessHistoryFile, probe:484
+MESSAGE : SQL2048N An error occurred while accessing object "". Reason code: 
+"".
+DATA #1 : SQLCA, PD_DB2_TYPE_SQLCA, 136 bytes
+sqlcaid : SQLCA sqlcabc: 136 sqlcode: -2048 sqlerrml: 14
+sqlerrmc: db2rhist.asc 4
+sqlerrp : sqlubPro
+sqlerrd : (1) 0x00000000 (2) 0x00000000 (3) 0x00000000
+(4) 0x00000000 (5) 0x00000000 (6) 0x00000000
+sqlwarn : (1) (2) (3) (4) (5) (6) 
+(7) (8) (9) (10) (11) 
+sqlstate: 
+.
+.
+2010-02-03-10.28.38.326000-300 E38390227H437 LEVEL: Severe
+PID : 3252 TID : 3712 PROC : db2syscs.exe
+INSTANCE: SERVER1 NODE : 000 DB : TSMDB1
+APPHDL : 0-864 APPID: *LOCAL.SERVER1.100203152738
+AUTHID : SYSTEM 
+EDUID : 3712 EDUNAME: db2agent (TSMDB1)
+FUNCTION: DB2 UDB, database utilities, sqlubcka, probe:848
+MESSAGE : Backup terminated.
+.
+.
+2010-02-03-10.29.05.387000-300 E38392872H468 LEVEL: Warning
+PID : 3252 TID : 3480 PROC : db2syscs.exe
+INSTANCE: SERVER1 NODE : 000
+EDUID : 3480 EDUNAME: db2logmgr (TSMDB1)
+FUNCTION: DB2 UDB, database utilities, sqluhReadEntry, probe:1167
+MESSAGE : ADM8500W DB2 has failed to read from the history file because of a 
+possible data corruption. Ensure that the file exists and is intact. 
+
+. 
+
+.
+2010-02-03-10.29.05.434000-300 I38393966H419 LEVEL: Error
+PID : 3252 TID : 3480 PROC : db2syscs.exe
+INSTANCE: SERVER1 NODE : 000
+EDUID : 3480 EDUNAME: db2logmgr (TSMDB1)
+FUNCTION: DB2 UDB, database utilities, sqluhFindEntry, probe:142
+MESSAGE : SQL2161N A damaged recovery history file could not be fixed. The 
+specified action failed.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+1. Stop the TSM Server ("halt"), which will also stop the DB2 database manager
+
+2. Verify the TSM DB2 instance is down by opening a DB2 Command Line (db2cmd) and enter the following commands: (note: the db2cmd is found under the C:\Program Files\Tivoli\TSM\db2\bin directory on Windows, and under /opt/tivoli/tsm/db2/bin on Unix):
+
+set DB2INSTANCE=SERVER1
+db2stop
+
+If the DB2 Database Manager is not running, the following message will display:
+SQL1032N No start database manager command was issued. SQLSTATE=57019 
+3. Search for the following files under the directory: <instance directory>\NODE0000\SQL00001 Then rename the files or move them to a different location:
+db2rhist.asc 
+db2rhist.bak 
+
+4. Start the TSM which will automatically start the DB2 Database Manager
+
+5. Check if the files db2rhist.asc & db2rhist.bak got recreated
+
+6. Run a TSM DB full backup

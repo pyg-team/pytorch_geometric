@@ -1,0 +1,26 @@
+Title: IBM Categorical Principal Components within Optimal Scaling Error# 11844 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am having problems with PASW/IBM SPSS while running a Categorical Principal Components analysis within Optimal Scaling. I am able to define the analysis options including the scale and weights, but I run into trouble when I attempt to use the Save option. When I select Save and choose Save to the active dataset option under Transformed Variables then click Continue, I see one or more of the following errors: 
+
+- spssengine has encountered a problem and needs to close. We are sorry for the inconvenience. 
+- The exception unknown software exception (0x400000015) occurred in the application at location 0x00463e3b. Click on OK to terminate the program. 
+- An unknown error has terminated communication with the processor. The PASW Statistics Processor is unavailable. 
+- An unhandled win32 exception occurred in spssengine.exe [11844]. Just-In-Time debugging this exception failed with the following error: No installed debugger has Just-In-Time debugging enabled. In Visual Studio, Just-In-Time debugging can be enabled from Tools/Options/Debugging/Just-In-Time. Check the documentation index for 'Just-in-time debugging, errors' for more information. 
+
+After this, the application is unavailable - states: PASW Statistics Processor is unavailable. 
+
+RESOLVING THE PROBLEM
+This problem has been reported to SPSS Development - No Workaround Available
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 90485

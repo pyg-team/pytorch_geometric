@@ -1,0 +1,312 @@
+Title: IBM IZ80237: FAILURE WHEN THE MWC ATTEMPTS TO CREATE LDAP INSTANCE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Failure when the MWC attempts to create LDAP instance
+   
+   Environment:
+   
+   ITIM 5.1 MWC FOR THE LDAP DIRECTORY  with IZ60322 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ60322]
+   
+   Problem:  The Directory Server Administrator ID / instance name
+   (userid/password) is created immediately after selecting Next.
+   If the admin/installer select the Back push button at any point,
+   and
+   changes the password, then password is changed in the
+   db2ldap.rps file,
+   BUT is not changed in the Windows System user registry.
+   
+   Thus, resulting in a failure when the MWC attempts the creation
+   of the
+   LDAP instance.
+   
+   Expected behavior:  Standard behavior is to NOT perform any
+   action until
+   the "Next to begin installation is selected".   The id should
+   not be
+   created after the first screen.
+   
+   Recreate steps:
+   
+   Invoke MWC
+   Enter data in the first Panel:
+   
+   
+   A screen capture of the user registry is shown prior to hitting
+   next,
+   note the uid does not exist.
+   
+   Select the next push-button.
+   
+   Notice that right after next the id test1 is created in the WIN
+   registry
+   
+   The db2ldap.rsp is also created
+    C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\2>type db2ldap.rsp
+   #IBM Tivoli Identity Manager Middleware Configuration Utility
+   Response
+   File
+   #Fri Jul 02 11:14:17 CDT 2010
+   ids_createdb2instanceowner="YES"
+   ids_instancepassword="password"
+   configureDB2="no"
+   ids_encryptionSeed="thisissostupid"
+   ids_instancehomedir="C\:"
+   ids_instanceowner="test1"
+   configureLDAP="yes"
+   ids_dbname="test1"
+   
+   I enter the data requested on screen 2, Next to  the summary
+   screen
+   
+   
+   
+   
+    At this point, i need to change the password for test1, so I
+   hit
+   back.....
+    and change the  to be Pa$word
+    but before i do that, i run the cmd window with test1/password
+   
+   
+   
+   
+   and the window pops up as expected. Then i go back and change
+   the pwd
+   via the mwc gui
+   at this point my db2ldap.rsp has
+   
+   C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\2>type db2ldap.rsp
+   #IBM Tivoli Identity Manager Middleware Configuration Utility
+   Response
+   File
+   #Fri Jul 02 11:16:24 CDT 2010
+   configureDB2="no"
+   ids_suffix="dc\=com"
+   ids_instancehomedir="C\:"
+   ids_host="olive"
+   ids_instancepassword="password"
+   ids_createdb2instanceowner="YES"
+   ids_adminDN="cn\=root"
+   ids_encryptionSeed="thisissostupid"
+   configureLDAP="yes"
+   ids_adminDNPwd="password"
+   ids_dbname="test1"
+   ids_instanceowner="test1"
+   ids_nonSSLPort="390"
+   
+   
+    After i click next, the password in the rsp files changes to
+   the new
+   password BUT it does not change the password on the id it just
+   created.
+   
+   C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\2>type db2ldap.rsp
+   #IBM Tivoli Identity Manager Middleware Configuration Utility
+   Response
+   File
+   #Fri Jul 02 11:21:02 CDT 2010
+   configureDB2="no"
+   ids_suffix="dc\=com"
+   ids_instancehomedir="C\:"
+   ids_host="olive"
+   ids_instancepassword="Pa$word"
+   ids_createdb2instanceowner="YES"
+   ids_adminDN="cn\=root"
+   ids_encryptionSeed="thisissostupid"
+   configureLDAP="yes"
+   ids_dbname="test1"
+   ids_adminDNPwd="password"
+   ids_instanceowner="test1"
+   ids_nonSSLPort="390"
+   
+    when I run as with test1/Pa$word it fails
+   
+   
+   - the instance create fails.
+   
+   tail -f cfg_itim_mw.err
+   
+   CTGIMP524E The configuration program cannot create DB2 database
+   "test1".
+    - (Jul 2, 2010 11:26:01 AM), Setup.product.install,
+   com.ibm.itim.cfg.ITIM_ConfigureLDAPServer, dbg,
+   -=-=-=-=-=-=-Entering syncLogs()-=-=-=-=-=-=-
+   GLPCDB018E The DB2 administrator ID or password you specified is
+   not
+   valid.
+   GLPCDB026W The program did not complete successfully. View
+   earlier error
+   messages for information about the exact error.
+   
+   
+   and the reason is this cmd that is attempted is using Pa$word
+   but the
+   id/pwd that mwc created never went back to update the pwd after
+   i
+   changed it on the next panel.
+   - GLPWRP123I The program
+   'C:\PROGRA~1\IBM\LDAP\V6.2\sbin\32\idsdnpw.exe'
+   is used with the following arguments '-n -I test1 -u cn=root -p
+   *****'.
+   You have chosen to perform the following actions:
+   
+   
+   
+    - GLPWRP123I The program
+   'C:\PROGRA~1\IBM\LDAP\V6.2\sbin\32\idsicrt.exe' is used with the
+   following arguments 'idsicrt -n -I test1 -e ***** -p 390 -l C:
+   -r ITIM
+   IDS Instance -t test1'.
+   You have chosen to perform the following actions:
+   - this is the cmd ... idscfgdb.cmd -n -I test1 -a test1 -w
+   ******* -t
+   test1 -l C:
+   - C:\Program Files\IBM\LDAP\V6.2\sbin>idscfgdb.cmd -n -I test1
+   -a test1
+   -w Pa$word -t test1 -l c:
+   GLPCDB018E The DB2 administrator ID or password you specified is
+   not
+   valid.
+   GLPCDB026W The program did not complete successfully. View
+   earlier error
+   messages for information about the exact error.
+   
+    - I verified by running the same cmd via the cmd line.
+    C:\Program Files\IBM\LDAP\V6.2\sbin>idscfgdb.cmd -n -I test1 -a
+   test1
+   -w password -t test1 -l c:
+   GLPWRP123I The program 'C:\Program
+   Files\IBM\LDAP\V6.2\sbin\32\idscfgdb.exe' is used with the
+   following
+   arguments '-n -I test
+   test1 -w ***** -t test1 -l c:'.
+   You have chosen to perform the following actions:
+   
+   GLPCDB023I Database 'test1' will be configured.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users affected:
+   Customers using the ITIM Middleware Configuration Utility and
+   needing to change the ITDS password after they have already
+   entered it.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix for this APAR is contained in the
+   following maintenance packages:
+   | Interim Fix | 5.1.0.3-TIV-TIM-IF0016
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ80237
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM TIV IDENT M
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3405
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-15
+   
+   
+ * CLOSED DATE
+   2010-09-14
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MWC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM TIV IDENT M
+   
+   
+ * FIXED COMPONENT ID
+   5724C3405
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP

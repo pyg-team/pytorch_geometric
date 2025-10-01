@@ -1,0 +1,58 @@
+Title: IBM Installing Rational Asset Analyzer Plug-in on Rational Developer for z/OS results in error CRIMA1071E - United States
+
+Text:
+RAA; RAAi; Rdz; CRIMA1071E; 41580 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to install IBM Rational Asset Analyzer (RAA) Plug-in (RAAi) for IBM Rational Developer for System z (RDz) results in the error CRIMA1071E. 
+
+SYMPTOM
+You may receive a message similar to the following when installing RAAi in a RDz V9.0 environment: 
+
+IBM Rational® Asset Analyzer Plug-in for IBM Rational Developer for System z® 6.1.0.0 cannot be installed into any package group.
+
+CRIMA1071E: The installation package 'IBM Rational® Asset Analyzer Plug-in for IBM Rational Developer for System z®' requires components supplied by other packages.
+The required components might be supplied by the following installation packages:
+Package: Rational® Developer for System z 7.6
+
+
+CAUSE
+The RAAi installation program does not yet support RDz 9.0.
+
+
+RESOLVING THE PROBLEM
+Install RAAi 6.1 into RDz 9.0 by manually copying the plug-in jar files to the Eclipsedropinsfolder. 
+
+
+Follow the steps below to install RAAi:
+
+
+ 1. Find the jar files by opening the RAAiInstallRepository.zip file and looking in thepluginsfolder for these two files:  * com.ibm.dmh.raai_*.jar 
+     * com.ibm.raa.integrate.doc_*.jar
+       
+       
+    
+    
+ 2. Find thedropinssubdirectory.  1. Right click on the properties to find the shortcut used to start RDz. 
+     2. Look at theTargetproperty to see where eclipse.exe resides
+        For example: C:\Program Files\IBM\SDP
+        
+        
+    
+    
+ 3. Create a dropinssubdirectory if one does not exist. 
+    
+    
+ 4. Copy the two jar files above to thedropinssubdirectory. 
+    
+    
+ 5. Restart RDz (Run as administrator)
+    
+    
+ 6. Verify you have an Asset Analyzerentry in the left pane after RDz restarts by clicking on Window > Preferencesfrom the menu.
+
+
+If you later wish to delete this copy of RAAi 6.1, simply remove the two plug-in jar files that you previously copied into the dropins subdirectory.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Asset Analyzer for System z

@@ -1,0 +1,248 @@
+Title: IBM Configure auditing to use PowerSC Trusted Logging - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The auditing subsystem in AIX can be configured to save the output log on a PowerVM (VIO) server. This creates a secure way to store this information away from the source server, preventing tampering with the audit trail. 
+
+CAUSE
+Overview
+PowerSC Trusted logging uses the capabilities of the virtual SCSI interface to send log data to a virtual device on the AIX client, where it is stored in a file on the VIO server. These files use the existing virtual SCSI adapter technology to perform a transfer of the data from client to server.
+
+
+Using PowerSC Trusted Logging to Store Audit Trail Logs
+The output from the audit subsystem in AIX is a good thing to use Trusted Logging for. If you wish to track user or system activity, storing it on a remote server is a secure way to keep the data. When a file is stored via PowerSC Trusted Logging, the data is sent one-way only. It can be written from the client, but cannot be read from it nor can it be deleted. Access to the file contents can only be from the VIO server itself.
+
+
+Prerequisites
+VIO server 2.2.1.0 minimum
+AIX 6100-07 or 7100-01 or higher on the client LPAR
+
+
+Software Installation
+On the client system we need to install the PowerSC Virtual Log software and the PowerSC license, both from the PowerSC Standard Edition packages:
+powerscStd.vlog.rte
+powerscStd.license
+
+
+Configuring the Virtual Log Repository
+By default the VIO Server will be set up with a directory /var/vio/vlogs and is configured to store the logs there. This can be changed to suit the user by use of the chvlrepo command, if you have another directory or filesystem you wish to store them in. 
+
+$ lsvlrepo
+Storage Pool State Path
+enabled /var/vio/vlogs
+
+In this document we will stay with the default path. In this example we also will not be storing the logs in Shared Storage Pools, but that is possible if your environment uses them. There is a link in the reference section at the end of this document for more detail on using Trusted Logging with Shared Storage Pools.
+
+
+Using a Virtual Log Filesystem
+Considering log files from clients can take up a large amount of space, it's good practice to create a filesystem separate from the traditional rootvg filesystems to store them in. To create the filesystem you will need to escape out of the padmin environment, as there is no command in padmin to make a filesystem.
+
+$ oem_setup_env
+
+Use this with care, as use of commands in this environment can have detrimental effects on your PowerVM server.
+
+The virtual logs are stored in subdirectories under the path /var/vio/vlogs, so that is a good place to connect our new filesystem. We'll start out with 2 GB of space.
+
+First make sure there is no existing data under /var/vio/vlogs. There is typically an empty directory /var/vio/vlogs/config but we'll move it away temporarily, then put it back into our new filesystem.
+
+# find /var/vio/vlogs
+/var/vio/vlogs
+/var/vio/vlogs/config
+
+# mv /var/vio/vlogs/config /tmp
+
+# mklv -y vloglv -t jfs2 -Ay rootvg 2G
+vloglv
+
+# crfs -d /dev/vloglv -v jfs2 -A y -p rw -m /var/vio/vlogs
+File system created successfully.
+2096884 kilobytes total disk space.
+New File System size is 4194304
+
+# mount /var/vio/vlogs
+# mv /tmp/config /var/vio/vlogs
+
+Check it again:
+# find /var/vio/vlogs
+/var/vio/vlogs
+/var/vio/vlogs/config
+/var/vio/vlogs/lost+found
+
+Change the permissions of the filesystem mount point to be the same as the original directory:
+# chmod 775 /var/vio/vlogs
+
+And exit back to the padmin prompt:
+# exit
+
+
+Setting Up the Virtual Log on the VIO Server
+We will use the mkvlog command to create the virtual log on the VIO server. Since we are attaching the log to a virtual SCSI adapter, we need to find the correct adapter to use, that is connected to our VIO client machine. For this example we'll use vhost18, which has mapped an existing logical volume to the client to use as a virtual SCSI disk:
+
+$ lsmap -vadapter vhost18
+SVSA Physloc Client Partition ID
+--------------- -------------------------------------------- ------------------
+vhost18 U9117.MMD.067A967-V1-C38 0x00000016
+
+VTD lpar19_rtvg1
+Status Available
+LUN 0x8100000000000000
+Backing device lpar19_lv1
+Physloc
+Mirrored N/A
+
+The easiest way to create the virtual log is to do it in one step using 3 pieces of information:
+* The LPAR name
+* The log name
+* The virtual SCSI adapter name
+
+$ mkvlog -name LOGNAME -client CLIENTNAME -vadapter ADAPTERNAME
+
+So if I would like to create a log file called "audit" for LPAR named lpar19 using the above vhost adapter I'd run the command:
+
+$ mkvlog -name audit -client lpar19 -vadapter vhost18
+Virtual log 000000000000000063d9c32987b64131 created
+vtlog0 Available
+
+If the LPAR is running you can skip the client name, mkvlog will find it for you, but I am specifying all three here.
+
+Now check our virtual SCSI adapter to see if the log is attached:
+
+$ lsmap -vadapter vhost18
+SVSA Physloc Client Partition ID
+--------------- -------------------------------------------- ------------------
+vhost18 U9117.MMD.067A967-V1-C38 0x00000016
+
+VTD lpar19_rtvg1
+Status Available
+LUN 0x8100000000000000
+Backing device lpar19_lv1
+Physloc
+Mirrored N/A
+
+VTD vtlog0
+Status Available
+LUN 0x8200000000000000
+Backing device vlog:000000000000000063d9c32987b64131
+Physloc
+Mirrored N/A
+
+We can also list the vlogs that exist for this host:
+
+$ lsvlog -client lpar19
+Client Name Log Name UUID VTD
+lpar19 audit 000000000000000063d9c32987b64131 vhost18/vtlog0
+
+If we want more information about the log add the '-detail' option:
+
+$ lsvlog -client lpar19 -detail
+Client Name: lpar19
+
+Log Name: audit
+UUID: 000000000000000063d9c32987b64131
+Virtual Target Device: vtlog0
+Parent Adapter: vhost18
+Vlog State: enabled
+Device Status: available
+Logical Unit Address: 8200000000000000
+Storage Pool:
+Log Directory: /var/vio/vlogs/lpar19/audit/
+Maximum Log Files: 2
+Maximum Log File Size: 1048576
+Maximum State Files: 2
+Maximum State File Size: 1048576
+
+
+Configure the Virtual Log on the Client
+Over on the client LPAR, since the log is just another device attached to the virtual SCSI adapter, we can use cfgmgr to probe for it and create the device:
+
+# cfgmgr
+# lsdev -t vlog
+vlog0 Available Virtual Log
+
+We can also list the attributes of the log:
+
+# lsattr -El vlog0
+PCM Path Control Module False
+UUID 000000000000000063d9c32987b64131 Unique id for virtual log device False
+client_name lpar19 Client Name False
+device_name vlaudit0 Device Name False
+log_name audit Log Name False
+max_log_size 2097152 Maximum Size of Log Data File False
+max_state_size 2097152 Maximum Size of Log State File False
+pvid none Physical Volume Identifier False
+
+Notice there are two device names for the log: vlog0 and one using the log name back on the VIO server: vlaudit0
+
+crw------- 1 root system 37, 0 Jul 29 09:58 /dev/vlaudit0
+crw------- 1 root system 37, 0 Jul 29 09:58 /dev/vlog0
+
+We can use either one for our output.
+
+
+Configure Auditing to Use the Log
+In our case we are using bin auditing, since that will store the audit records in binary form with a great amount of detail. We can use commands like auditpr or auditselect on them if we need to search for information and print it.
+
+In the /etc/security/audit/config file, make sure bin auditing is set to run and use the special "virtual_log" device:
+
+start:
+binmode = on
+streammode = off
+
+bin:
+trail = /audit/trail
+bin1 = /audit/bin1
+bin2 = /audit/bin2
+binsize = 10240
+cmds = /etc/security/audit/bincmds
+freespace = 65536
+backuppath = /audit
+backupsize = 0
+bincompact = off
+virtual_log = /dev/vlaudit0
+
+Now start auditing:
+# audit shutdown
+# audit start
+
+
+Verifying the Log Data
+We can go over to the VIO server and verify that the log contains good audit data.
+
+$ oem_setup_env
+# cd /var/vio/vlogs/lpar19/audit
+
+# ls -l
+total 16
+-rw-r----- 1 root staff 2163 Jul 28 19:09 lpar19_audit.000
+-rw-r----- 1 root staff 650 Jul 28 19:09 lpar19_audit.state.000
+
+Now print some events from the log:
+
+# auditpr -v -i lpar19_audit.000
+event login status time command wpar name
+--------------- -------- ----------- ------------------------ ------------------------------- -------------------------
+FS_Mkdir root FAIL Fri Jul 29 02:09:10 2016 java Global
+mode: 711 dir: /var/opt/tivoli/ep/runtime/agent/config.tmp/156357c41b5-43f5/change
+...
+
+So it is logging properly.
+
+
+Resources
+Getting started with PowerSC Trusted Logging:
+http://www.ibm.com/support/knowledgecenter/POWER7/p7hb1/iphb1_getting_started_trusted_logging.htm [http://www.ibm.com/support/knowledgecenter/POWER7/p7hb1/iphb1_getting_started_trusted_logging.htm]
+
+Configuring the virtual log repository
+http://www.ibm.com/support/knowledgecenter/POWER7/p7hb1/iphb1_configure_vir_log.htm [http://www.ibm.com/support/knowledgecenter/POWER7/p7hb1/iphb1_configure_vir_log.htm]
+
+Creating a virtual log
+http://www.ibm.com/support/knowledgecenter/POWER7/p7hb1/iphb1_create_vir_log.htm [http://www.ibm.com/support/knowledgecenter/POWER7/p7hb1/iphb1_create_vir_log.htm]
+
+Virtual log devices with shared storage pools
+http://www.ibm.com/support/knowledgecenter/POWER7/p7hb1/iphb1_vir_log_dev_ssp.htm [http://www.ibm.com/support/knowledgecenter/POWER7/p7hb1/iphb1_vir_log_dev_ssp.htm]
+
+
+
+ANSWER

@@ -1,0 +1,54 @@
+Title: IBM LMT agent install on AIX complains of missing fileset - United States
+
+Text:
+.toc inutoc installp missing filesets LMT TECHNOTE (FAQ)
+
+QUESTION
+ installp -acgXd /tmp ILMT-TAD4D-agent fails with Missing Filesets 
+
+CAUSE
+ 
+
+user@host:/tmp# installp -acgXd /tmp ILMT-TAD4D-agent 
++-----------------------------------------------------------------------------+ 
+Pre-installation Verification... 
++-----------------------------------------------------------------------------+ 
+Verifying selections...done 
+Verifying requisites...done 
+Results... 
+FAILURES 
+-------- 
+Filesets listed in this section failed pre-installation verification
+and will not be installed. 
+Missing Filesets 
+---------------- 
+The following filesets could not be found on the installation media.
+If you feel these filesets really are on the media, check for typographical 
+errors in the name specified or, if installing from directory, check for 
+discrepancies between the Table of Contents file (.toc) and the 
+images that reside in the directory. 
+ILMT-TAD4D-agent 
+<< End of Failure Section >> 
+
+There was already an existing /tmp/.toc file which was left over from a previous install. 
+
+When running the installp for the LMT install, the installp found this .toc file and tried to use it but it contained references to another products install files, not LMT. 
+
+
+ANSWER
+Delete the .toc file (in this case it was in /tmp/.toc where the install image files resided). 
+
+Then run 
+
+inutoc /tmp 
+
+to rebuild the .toc file with references to the LMT install images in /tmp. 
+
+
+
+
+
+HISTORICAL NUMBER
+ pmr 03910
+077
+649

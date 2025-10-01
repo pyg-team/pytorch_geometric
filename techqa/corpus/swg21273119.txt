@@ -1,0 +1,71 @@
+Title: IBM How to load shared libraries as an alternative to linking the DB2 libraries in AIX - United States
+
+Text:
+library; shared libraries; dlerror; libdb2ar.so TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Some CLI applications load the DB2 shared libraries instead of the DB2 libraries. Why? What's the benefit? Loading shared libraries on AIX® is different than on other operating systems. 
+
+SYMPTOM
+ When an application tries to load shared libraries on AIX the following errors might occur:
+
+1) When you try to load the shared object libdb2ar.so on AIX, the dlerror subroutine reports: "No such file or directory" even though it is in the directory. 
+
+2) The loadquery subroutine and execerror command might encounter the following errors: 
+
+hInstance = dlopen("libdb2.a(shr.o)", RTLD_LAZY | RTLD_GLOBAL) 
+
+
+exec(): 0509-036 Cannot load program libdb2ar.so because of the 
+following errors: 
+0509-022 Cannot load module 
+/u01/db2/product/8.1/sqllib/lib/libdb2ar.so. 
+0509-150 Dependent module librexx.a could not be loaded. 
+0509-022 Cannot load module librexx.a. 
+0509-026 System error: A file or directory in the path name does 
+not exist. 
+0509-022 Cannot load module . 
+0509-150 Dependent module could not be loaded. 
+
+
+
+CAUSE
+On AIX, you must use a different library depending on whether it is a 32- or 64-bit operating system. You must also specify the RTLD_MEMBER flag when you call dlopen. dlopen is an operating system subroutine used to dynamically load a module into the calling process. The RTLD_MEMBER flag allows the path name to have the form "/lib/foo.a(member.o)". This subroutine is part of Base Operating System (BOS) Runtime. 
+
+
+
+ENVIRONMENT
+AIX
+
+
+
+DIAGNOSING THE PROBLEM
+<<How can you determine whether you're using the shared libraries as opposed to the other?>>
+
+
+
+RESOLVING THE PROBLEM
+The DB2 shared libraries that you can load on various operating systems are as follows: 
+
+ * AIX (32-bit): libdb2.a(shr.o) 
+ * AIX (64-bit): libdb2.a(shr_64.o) 
+ * HP-UX: libdb2.s1 
+ * Linux®: libdb2.so 
+ * Solaris: libdb2.so 
+ * Windows®:db2cli.dll 
+   
+
+
+These can be loaded in your C or C++ program by issuing a command like this:  * For AIX (32-bit): 
+   hInstance = dlopen("libdb2.a(shr.o)", RTLD_MEMBER | RTLD_LAZY | RTLD_GLOBAL)
+   
+ * For AIX (64-bit):
+   hInstance = dlopen("libdb2.a(shr_64.o)",RTLD_MEMBER | RTLD_LAZY | RTLD_GLOBAL)
+   
+   
+ * For the other operating systems listed above:
+   hInstance = dlopen("libdb2.so", RTLD_LAZY | RTLD_GLOBAL) 
+   
+
+
+Note that you must use the RTLD_MEMBER flag on AIX.

@@ -1,0 +1,42 @@
+Title: IBM Connections Survey's Fails to load while Creating a New Survey - United States
+
+Text:
+surveys; com.ibm.CORBA.iiop.ServerDelegate.dispatch; SSLHandshake TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Connections Survey's fails to load while creating a new Survey, spinning icon displays instead of loading the add questions page.
+
+CAUSE
+If the Connections server is configured to force traffic to use SSL, then the Survey properties files should contain a secure url to the servers instead of using http.
+
+ENVIRONMENT
+Connections 5.5 with Surveys installed
+
+DIAGNOSING THE PROBLEM
+
+com.ibm.CORBA.iiop.ServerDelegate.dispatch:526 ORB FFDC
+00000206 SSLHandshakeE E SSLC0008E:
+Unable to initialize SSL connection. Unauthorized access was denied or
+security settings have expired. Exception is
+javax.net.ssl.SSLException: Unrecognized SSL message, plaintext
+connection?
+at com.ibm.jsse2.d.a(d.java:46)
+
+RESOLVING THE PROBLEM
+Changing the url in the Connections_config.properties to use SSL helped to resolve the issue.
+
+
+
+
+
+Open the properties files located in example (linux): /opt/ibm/Forms/extensions, 
+
+change the url to the Communities server from:
+ibm.nitro.integrations.connections.Config.communityRoot=http://server
+to:
+ibm.nitro.integrations.connections.Config.communityRoot=https://server
+
+
+Also change the url in the Builder_config.properties, if enabled to: 
+
+ ibm.nitro.NitroConfig.serverURI = https://server

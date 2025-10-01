@@ -1,0 +1,75 @@
+Title: IBM 5.1.1.0-ISS-XGS-All-Models-Hotfix-FP0007 - United States
+
+Text:
+5.1.1.0-ISS-XGS-All-Models-Hotfix-FP0007; XGS; 5.1.1; All-Models; Hotfix; FP0007; fix pack7; Security Network Protection FIX README
+
+ABSTRACT
+ Fixes covered by 5.1.1.0-ISS-XGS-All-Models-Hotfix-FP0007 
+
+CONTENT
+NOTE: A reboot is required for the changes made by the fix pack to apply. 
+Also, you should clear the browser cache on any browsers used to manage the appliance.
+
+* Corrects nss, nspr, openssh, and openssl security issues: 
+
+openssl/openssh: CVE-2014-3505 CVE-2014-3506 CVE-2014-3507 CVE-2014-3508 CVE-2014-3509 CVE-2014-3510 CVE-2014-3511 CVE-2012-4929
+
+nss/nspr: CVE-2013-1740 CVE-2014-1490 CVE-2014-1491 CVE-2014-1492 CVE-2014-1544 CVE-2014-1545
+
+Previous fixes:
+
+* Fix for web server vulnerability regarding CVE-2014-0963
+* PAM XPU 34.070 (July 2014) breaks Domain Certificate Object matching in Network Access and SSL Inspection rules.
+* Update to hardware bypass to allow for continued operation of the bypass modules if an internal error occurs.
+Fixes the following OpenSSL vulnerabilities: CVE-2014-0224, CVE-2014-0198, 
+CVE-2010-5298, and CVE-2014-3470. 
+Fixes the Java vulnerability CVE-2014-2414. 
+Fixes a vulnerability to CVE-2014-0963 that is caused by rapidly increasing
+CPU utilization due to the handling of certain SSL messages. 
+Authentication security improvement.
+Disabling protection ports prior to port pair for SSL inspection prevents 
+any SSL inspection from occurring.
+mesa_eventsd did not get restarted after crashing.
+XGS appliance does not report up to SiteProtector when the firmware level is 
+out of date.
+Fix Outbound SSL vulnerabilities to CVE-2014-0160 and CVE-2014-0076.
+Fix Ruby vulnerabilities regarding CVE-2013-4164 and CVE-2013-4492.
+Fix a possible LMI lockup when trying to display the Top Ten Events graph.
+Update the appliance statistics collection process to prevent a crash when 
+generating a support file.
+Update the appliance SiteProtector communication process to properly inform 
+SiteProtector of the health status of the space available on the root partition.
+Update the appliance remote syslog event generator to prevent a crash when generating 
+QRadar formatted events that have large name-value pairs.
+Fix for enabling promiscuous mode for monitoring and HA mirror protection interfaces 
+after an appliance reboot.
+Address an issue where security events are lost on the way to SiteProtector 
+and local event database.
+When filtering an IPS Policy using multiple boolean filters, the filters 
+can behave unexpectedly and fail to work as intended by the user. It is necessary 
+to clear your browser cache after this fix is applied.
+Fix a crash in the inspection process due to memory corruption. A reboot 
+is necessary for this fix to apply after installing the fix pack.
+Fix the matching of events generated over SSL MITM so that IPS objects 
+other than the default IPS Object will match. A reboot is necessary for 
+this fix to apply after installing the fixpack.
+Fix LMI pages so that they will render correctly in Google Chrome v30.
+Fix an issue that results in a Reset instead of Block page with SSL 
+decryption and Web Apps.
+Fix an issue that resulted in dropped TCP connections that had been 
+established before packet processing was started.
+Fix an issue where the XGS doesn't block exploit code contained in PDF 
+documents transferred via HTTPS.
+Fix a random resource leak in the analysis engine.
+Fix a issue with the default IPS Policy not properly enabling the default 
+IPS objects.
+Fix a rare network packet buffer leak.
+Fix an issue where the unanalyzed policy setting is not taken into account 
+when flushing the packet queue.
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21685300&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21685300&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21685300&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21685300&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21685300&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21685300&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21685300&aid=7] [http://ibm.biz/ContactSecSupport]

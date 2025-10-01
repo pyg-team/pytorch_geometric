@@ -1,0 +1,195 @@
+Title: IBM IJ00620: DERBY DEADLOCK CAUSED BY POLICY: PG_PROCESSPATTERNS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-ZLINUX-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0012&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0012&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0012&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0012&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0012&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Event Processor Log shows:
+   An exception occurred while executing Policy
+   PG_PROCESSPATTERNS. Please examine server.log for more details
+   or check the Policy. The exception was: A lock could not be
+   obtained due to a deadlock, cycle of locks and waiters is:
+   Lock : ROW, PG_PATTERNS_1, (3,21)
+     Waiting XID : {67841063, U} , IMPACT, SELECT * FROM
+   RELATEDEVENTS.PG_PATTERNS_1 WHERE ACTION !='NEW' and ACTION !=
+   'ARCHIVED'
+     Granted XID : {67841054, U}
+   Lock : ROW, PG_PATTERNS_1, (2,62)
+     Waiting XID : {67841054, U} , IMPACT, SELECT * FROM
+   RELATEDEVENTS.PG_PATTERNS_1 WHERE ACTION !='NEW' and ACTION !=
+   'ARCHIVED'
+     Granted XID : {67841057, U}
+   Lock : ROW, PG_PATTERNS_1, (3,17)
+     Waiting XID : {67841057, U} , IMPACT, SELECT * FROM
+   RELATEDEVENTS.PG_PATTERNS_1 WHERE ACTION !='NEW' and ACTION !=
+   'ARCHIVED'
+   Lock : ROW, PG_PATTERNS_1, (3,17)
+     Waiting XID : {67841064, U} , IMPACT, SELECT * FROM
+   RELATEDEVENTS.PG_PATTERNS_1 WHERE ACTION !='NEW' and ACTION !=
+   'ARCHIVED'
+     Granted XID : {67841063, U}
+   . The selected victim is XID : 67841063.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Fix to be included in next Fix Pack.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All NOI Users                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The problem is the getAllPatterns function in policy         *
+   * PG_PROCESSPATTERNS is causing a deadlock in Derby.           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An exception occurred while executing Policy PG_PROCESSPATTERNS.
+   Please examine server.log for more details or check the Policy.
+   The exception was: A lock could not be obtained due to a
+   deadlock, cycle of locks and waiters is:
+   Lock : ROW, PG_PATTERNS_1, (3,21)
+     Waiting XID : {67841063, U} , IMPACT, SELECT * FROM
+   RELATEDEVENTS.PG_PATTERNS_1 WHERE ACTION !='NEW' and ACTION !=
+   'ARCHIVED'
+     Granted XID : {67841054, U}
+   Lock : ROW, PG_PATTERNS_1, (2,62)
+     Waiting XID : {67841054, U} , IMPACT, SELECT * FROM
+   RELATEDEVENTS.PG_PATTERNS_1 WHERE ACTION !='NEW' and ACTION !=
+   'ARCHIVED'
+     Granted XID : {67841057, U}
+   Lock : ROW, PG_PATTERNS_1, (3,17)
+     Waiting XID : {67841057, U} , IMPACT, SELECT * FROM
+   RELATEDEVENTS.PG_PATTERNS_1 WHERE ACTION !='NEW' and ACTION !=
+   'ARCHIVED'
+   Lock : ROW, PG_PATTERNS_1, (3,17)
+     Waiting XID : {67841064, U} , IMPACT, SELECT * FROM
+   RELATEDEVENTS.PG_PATTERNS_1 WHERE ACTION !='NEW' and ACTION !=
+   'ARCHIVED'
+     Granted XID : {67841063, U}
+   . The selected victim is XID : 67841063.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following
+   maintenance packages:
+   |Fix Pack | 7.1.0-TIV-NCI-FP0012
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ00620
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-10
+   
+   
+ * CLOSED DATE
+   2017-11-23
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UNKNOWN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS

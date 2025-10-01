@@ -1,0 +1,93 @@
+Title: IBM WebSphere ILOG JRules Business Rule Management System Version 7.0, hardware and software requirements - Linux on x86-64 - United States
+
+Text:
+DSRdoc PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document lists the hardware and software requirements for WebSphere ILOG JRules BRMS V7.0 on the Linux operating system on x86-64 platforms. 
+
+CONTENT
+This page describes the minimum product levels that must be installed before opening a problem report with the WebSphere ILOG JRules support team. Because other products frequently ship fixes, updates, and new releases, testing every configuration is not possible. In general, you can install and run with minor updates to supported products if those updates are forward compatible. 
+
+Supporting software (for example Databases) can run, but does not need to run, on the same computer or operating system where the product runs. For additional information: 
+
+ * Check supporting software requirements to determine whether the supporting software runs locally or is connected remotely to the product. 
+ * Refer to the document corresponding to the operating system on which you want to run the supporting software, see List of supported operating systems for WebSphere ILOG JRules Version 7.0. [http://www.ibm.com/support/docview.wss?rs=4043&uid=swg27015807]
+
+
+This document identifies supporting software that runs on the Linux operating system on x86-64 platforms. This table applies to WebSphere ILOG Decision Validation Services, JRules (including both the Rule Execution Server and Rule Studio modules) and Rule Team Server. 
+
+Operating Systems [/support/docview.wss?uid=swg27016357&amp;aid=1]  * Red Hat Enterprise Linux (RHEL) 4 AS, 4 ES 
+ * Red Hat Enterprise Linux (RHEL) 5, 5 Advanced Platform
+   Red Hat Enterprise Linux product site [http://www.redhat.com/software/rhel] 
+ * SUSE Linux Enterprise Server (SLES) 9, 10, 11
+   SUSE Linux product site [http://www.novell.com/products/linuxenterpriseserver] [http://www.ibm.com/servers/aix/index.html]
+   
+
+Hardware Requirements
+
+[/support/docview.wss?uid=swg27016357&amp;aid=1]  * AMD Opteron or Intel EM64T (64 kernel support) 
+ * Minimum 1 GB physical memory; 2 GB recommended 
+ * DVD/CD-ROM drive
+
+Application Server [/support/docview.wss?uid=swg27016357&amp;aid=1]  * IBM WebSphere Application Server 6.1.0.21 or later patch release, 7.0 or later patch release
+   IBM WebSphere Application Server product site [http://www.ibm.com/software/webservers/appserv/was/index.html] 
+ * IBM WebSphere Extended Deployment 6.1
+   IBM WebSphere Extended Deployment Server product site [http://www.ibm.com/software/webservers/appserv/extend/] 
+ * Apache Tomcat 6.0 
+ * JBoss 4.2.3, 5.0.1 or later patch release, JBoss Enterprise Application Platform 4.3 
+ * Oracle Application Server 10.1.3.1 or later patch release 
+ * Sun Java System Application Server 8.2 
+ * WebLogic Server 9.2.3 or later patch release, WebLogic Server 10.0.1 or later patch release, WebLogic Server 10.3 or later patch release
+   
+
+Java™ [/support/docview.wss?uid=swg27016357&amp;aid=1]  * IBM 64-bit SDK for Linux 5.0, 6.0 
+ * Oracle JRockit for Linux x86-64 5.0, 6.0 
+ * Sun JDK for Linux x64 5.0, 6.0
+   
+
+Databases [/support/docview.wss?uid=swg27016357&amp;aid=1]  * Apache Derby 10.4 [http://www.ibm.com/software/data/db2/support/db2zos/] 
+ * IBM DB2 for z/OS 8.2, 9.1 IBM DB2 product site [http://www.ibm.com/software/data/db2/support/db2zos/] 
+ * IBM DB2 for LUW 8.2, 9.1, 9.5, 9.7 IBM DB2 product site [http://www.ibm.com/software/data/db2/] [http://www.ibm.com/systems/i/software/db2/index.html] 
+ * IBM DB2 for i 5.4, 6.1 IBM DB2 product site [http://www.ibm.com/systems/i/software/db2/index.html] 
+ * MySQL V5.0 
+ * Oracle 10g, 11g Oracle product site [http://www.oracle.com/database/index.html] 
+ * Pointbase (Embedded version supported by WebLogic Server) 
+ * PostgreSQL V8.3 
+ * SQL Server 2005, 2008 
+ * Sybase 12.5, 15
+
+Java Database Connectivity (JDBC) Drivers [/support/docview.wss?uid=swg27016357&amp;aid=1]  * Derby JDBC Provider (XA) 10.4 
+ * IBM DB2 Universal JDBC Provider (XA) from DB2 for z/OS 
+ * IBM DB2 Universal JDBC Provider (XA) 2.8 (type 4) 
+ * IBM Toolbox (XA) for Java/JTOpen JDBC Driver (type 4) IBM Toolbox for Java product site [http://www.ibm.com/servers/eserver/iseries/toolbox/overview.html] [http://www.ibm.com/systems/i/software/db2/index.html] [http://www.ibm.com/servers/eserver/iseries/toolbox/overview.html] 
+ * jTDS, jconnect Driver 
+ * JDBC3 Postgresql Driver 
+ * Microsoft SQL Server JDBC Driver 1.2 
+ * MySQL Connector/J 5.0 
+ * Oracle JDBC (XA) Driver 10g, 11g Oracle JDBC product site [http://www.oracle.com/technology/software/tech/java/sqlj_jdbc/index.html] 
+ * Pointbase driver (embedded with WebLogic Server) 
+ * WebLogic Type 4 JDBC Driver for DB2 
+ * WebLogic Type 4 JDBC Driver for SQL Server
+   
+
+Process Server [/support/docview.wss?uid=swg27016357&amp;aid=1]  * WebSphere Process Server 6.1, 6.2 or later patch release
+
+Tools & Utilities [/support/docview.wss?uid=swg27016357&amp;aid=1] For JRules 7.0, 7.0.1 release  * Eclipse 3.3 (Supported for Rule Studio) 
+ * GEF 3.3, EMF 2.3, BIRT 2.2, DTP 1.5 (Supported for Rule Studio) 
+ * WebLogic Workshop 10.3 (Supported for Rule Studio)
+
+
+For JRules 7.0.2 release  * Eclipse 3.4 (Supported for Rule Studio) 
+ * GEF 3.4, EMF 2.4, BIRT 2.4, DTP 1.6 (Supported for Rule Studio)
+   
+
+Web Browsers [/support/docview.wss?uid=swg27016357&amp;aid=1]  * Firefox 3.0 
+ * Internet Explorer 6.0, 7.0
+
+
+
+WebSphere ILOG JRules Related information 
+WebSphere ILOG JRules Support Page [http://www.ibm.com/software/integration/business-rule-management/jrules/support/] 
+WebSphere ILOG JRules Documentation [http://publib.boulder.ibm.com/infocenter/brjrules/v7r0/index.jsp] 
+WebSphere ILOG JRules Trial [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=swg-iwilogjt70&S_TACT=105AGX10&S_CMP=LP]

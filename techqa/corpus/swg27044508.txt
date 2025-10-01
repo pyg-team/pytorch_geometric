@@ -1,0 +1,110 @@
+Title: IBM Release of WinCollect Agent 7.2.2-1 - United States
+
+Text:
+WinCollect 7.2.2-1; agent version 7.2.2-1; 32-bit; 64-bit; Windows events; IV66858; IV67440; IV66862 RELEASE NOTES
+
+ABSTRACT
+ A list of the installation instructions and fixes for IBM Security WinCollect Agent 7.2.2-1. 
+
+CONTENT
+A new SFS file has been posted to IBM Fix Central for WinCollect Agent version 7.2.2-1. This update resolves several issues reported in the WinCollect 7.2.2 release and adds an option in the log source configuration to tune the EPS rate for each individual log source managed by WinCollect. 
+
+
+
+
+WINCOLLECT AGENT UPGRADE PROGRESSION
+ 
+
+Required QRadar Version Current WinCollect Agent Version Step 1 Step 2 QRadar 7.1 MR2 Patch 1 or above
+(7.1.1.581477) *WinCollect 7.1.2 or above **WinCollect Agent (v7.2.2-1) bundle (.sfs)
+
+Install one of the following based on your Console version:
+
+QRadar 7.1: WinCollect 7.2.2-1 (SFS for QRadar 7.1) [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=Security%2BSystems&product=ibm/Other+software/IBM+Security+QRadar+SIEM&release=7.1.0&platform=Linux&function=fixId&fixids=7.1.0-QRADAR-710_QRadar_wincollectupdate-7.1.0.106.sfs&includeSupersedes=0&source=fc]
+
+QRadar 7.2: WinCollect Agent 7.2.2-1 (SFS) [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=Security%2BSystems&product=ibm/Other+software/IBM+Security+QRadar+SIEM&release=7.2.0&platform=Linux&function=fixId&fixids=7.2.0-QRADAR-720_QRadar_wincollectupdate-7.2.0.181.sfs&includeSupersedes=0&source=fc] Not required * Port 443 must be open between the Console and the Windows host before upgrading to the WinCollect Agent. 
+** Port 8413 must be open between the Console and the Windows host before upgrading to WinCollect 7.2.0 or above. 
+
+
+
+
+WINCOLLECT AGENT 7.2.2-1 FRESH INSTALLATIONS
+Administrators with WinCollect Agent version 7.1.1 must ensure that port 8413 is open, then reinstall the WinCollect Agent on their Windows systems. The WinCollect Agent 7.2.2-1 (sfs) file must be installed on the QRadar Console before installing the EXE file on the Windows host. Any WinCollect Agents that have Enable Automatic Updates column set to True will receive the WinCollect Agent 7.2.2-1 software update from the Console. 
+
+ 
+
+Minimum Required QRadar Version Step 1 Step 2 QRadar 7.1 MR2 Patch 1 or above
+(7.1.1.581477) Install **WinCollect Agent (v7.2.2-1 ) bundle (.sfs)
+
+Install one of the following based on your Console version:
+
+QRadar 7.1: WinCollect 7.2.2-1 (SFS for QRadra 7.1) [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=Security%2BSystems&product=ibm/Other+software/IBM+Security+QRadar+SIEM&release=7.1.0&platform=Linux&function=fixId&fixids=7.1.0-QRADAR-710_QRadar_wincollectupdate-7.1.0.106.sfs&includeSupersedes=0&source=fc]
+
+QRadar 7.2: WinCollect Agent 7.2.2-1 (SFS) [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=Security%2BSystems&product=ibm/Other+software/IBM+Security+QRadar+SIEM&release=7.2.0&platform=Linux&function=fixId&fixids=7.2.0-QRADAR-720_QRadar_wincollectupdate-7.2.0.181.sfs&includeSupersedes=0&source=fc]
+
+
+Install **WinCollect 7.2.2 (.exe)
+
+Note: For fresh agent installations the 32-bit or 64-bit exe file must be installed after the SFS file. This prevents encryption key issues from occurring.
+
+Install one of the following based on your Windows version:
+
+WinCollect Agent 64-bit installer for Windows [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=Security%2BSystems&product=ibm/Other+software/IBM+Security+QRadar+SIEM&release=7.2.0&platform=Linux&function=fixId&fixids=7.2.0-QRADAR-AGENT_x64_WinCollect-7.2.2.1005917-setup.exe&includeSupersedes=0&source=fc]
+
+WinCollect Agent 32-bit installer for Windows [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=Security%2BSystems&product=ibm/Other+software/IBM+Security+QRadar+SIEM&release=7.2.0&platform=Linux&function=fixId&fixids=7.2.0-QRADAR-AGENT_i386_WinCollect-7.2.2.1005913-setup.exe&includeSupersedes=0&source=fc] * Port 443 must be open between the Console and the Windows host before upgrading to the WinCollect Agent. 
+** Port 8413 must be open between the Console and the Windows host before upgrading to WinCollect 7.2.0 or above.  
+
+
+
+BEFORE YOU BEGIN
+ * To avoid access errors in your log file, close all open QRadar sessions. 
+ * Verify that all changes are deployed on your appliances. 
+ * Installing the SFS file forces a Tomcat restart on the Console, which will log out QRadar users and stop any reports running in the background. Administrators should be aware of this service restart to schedule maintenance time appropriately. 
+ * Installing the SFS file forces a restart of the WinCollect service on the remote Windows host. When the WinCollect Service restarts, there is no loss in event data from your Windows systems and no operating system impact. 
+ * It is possible for the administrator to prevent a software update to a critical business asset or server from the WinCollect agent list on the Admin tab. The Enable Automatic Updates field must be set to false before you install a RPM or SFS file to the Console to prevent a system from being updated. For more information, see http://www.ibm.com/support/docview.wss?uid=swg21685330 [http://www.ibm.com/support/docview.wss?uid=swg21685330]. 
+ * The WinCollect Agent SFS file can only be installed on the QRadar Console appliance. Installing the WinCollect Agent update SFS on a managed hosts will display an error message to the administrator.
+
+
+
+
+ABOUT THIS TASK
+
+Procedure 
+
+ *  Download a WinCollect Agent (v7.2.2-1) bundle from the IBM Fix Central website for your QRadar version: 
+    * QRadar 7.1: WinCollect Agent 7.2.2-1 (SFS for QRadar 7.1.x) [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=Security%2BSystems&product=ibm/Other+software/IBM+Security+QRadar+SIEM&release=7.1.0&platform=Linux&function=fixId&fixids=7.1.0-QRADAR-710_QRadar_wincollectupdate-7.1.0.106.sfs&includeSupersedes=0&source=fc] 
+    * QRadar 7.2: WinCollect Agent 7.2.2-1 (SFS for QRadar 7.2.x) [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=Security%2BSystems&product=ibm/Other+software/IBM+Security+QRadar+SIEM&release=7.2.0&platform=Linux&function=fixId&fixids=7.2.0-QRADAR-720_QRadar_wincollectupdate-7.2.0.181.sfs&includeSupersedes=0&source=fc]
+      
+      **IMPORTANT: New deployments must have the SFS file installed on the Console before the WinCollect 7.2.2-1 Agent EXE is install on the Windows host. Installing the SFS first prevents an encryption key issue that can occur.
+      
+   
+   Using SSH, log in to your Console as the root user. Copy the fix pack to the /tmp directory on the QRadar Console. 
+   Note: If space in the /tmp directory is limited, copy the fix pack to another location that has sufficient space. To create the /media/updates directory, type the following command: mkdir -p /media/updates Change to the directory where you copied the patch file. For example, cd /tmp To mount the patch file to the /media/updates directory, type the following command:
+   mount -o loop -t squashfs 7x0_QRadar_wincollectupdate-7.<version>.sfs /media/updates To run the patch installer, type the following command:
+   /media/updates/installer To proceed with the WinCollect Agent update, type Y to continue.
+   
+   If your Secure Shell (SSH) session is disconnected while the upgrade is in progress, the upgrade continues. When you reopen your SSH session and rerun the installer, the patch installation resumes.
+   Log in to QRadar and review the agent list to verify that agents with updates enabled display 7.2.2-1 in the Version column. 
+   
+   Note: By default, agents request configuration updates every 10 minutes if the WinCollect agent has Enable Automatic Updates set to true.
+   
+ * 
+
+
+Results A summary of the installation advises you of any issues that occurred during the install. 
+
+
+
+
+
+
+Issues resolved in WinCollect Agent 7.2.2-1 
+Number Description IV66858 [http://www.ibm.com/support/docview.wss?uid=swg1IV66858] WINCOLLECT CANNOT PROPERLY HANDLE PASSWORDS THAT ARE GREATER THAN 88 CHARACTERS IN LENGTH. IV66862 [http://www.ibm.com/support/docview.wss?uid=swg1IV66862] WINCOLLECT STAND-ALONE MODE CANNOT SET PASSWORDS CONTAINING QUOTES AND OR SPACES. IV67440 [http://www.ibm.com/support/docview.wss?uid=swg1IV67440] RESOLVES AN ISSUE WHERE AN INVALID KEY COULD CAUSE A SESSION ISSUE PREVENTING EVENTS FROM BEING SENT PROPERLY. PROTOCOL ENHANCED THE WINCOLLECT AGENT TO ADD EVENT RATE TUNING PROFILE PARAMETERS TO THE LOG SOURCE CONFIGURATION USER INTERFACE. THIS UPDATE ALLOWS ADMINISTRATORS TO TUNE SPECIFIC LOG SOURCES FOR EPS RATES ON 'ENDPOINTS (DEFAULT)', 'TYPICAL SERVERS', AND 'HIGH EVENT RATE SERVERS'.' SERVICE RESOLVES AN ISSUE WHERE DEBUG MODE COULD RETURN AN EMPTY BINARY FILE AND STOP THE WINCOLLECT SERVICE. XPATH RESOLVES AN ISSUE WHERE XPATH QUERIES FOR GREATER THAN (>) OR LESS THAN (<) CHARACTERS WERE NOT ENCODED PROPERLY AND COULD CREATE ISSUES WHEN A LOG SOURCE CONFIGURATION WITH XPATH WAS EDITED. 
+
+
+Where do I find more information? 
+If you have additional questions or some of this content is not clear, you can see the QRadar forum or contact customer support: 
+ * Online QRadar Customer Forums [https://ibm.biz/BdR2kC] 
+ * Submit and manage your support tickets online 24x7 using IBM Service Request [http://www.ibm.com/software/support/servicerequest/quick_start.html] 
+ * QRadar Downloads - IBM Fix Central [http://www.ibm.com/support/fixcentral/options?selection=Security+Systems;ibm/Other+software/IBM+Security+QRadar+SIEM] 
+ * IBM Security Support Youtube channel: http://www.youtube.com/user/IBMSecuritySupport [http://www.youtube.com/user/IBMSecuritySupport]

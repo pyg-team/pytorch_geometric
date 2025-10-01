@@ -1,0 +1,168 @@
+Title: IBM PureData System for Analytics: rackX.ethswY.pwrZ Inactive Down - United States
+
+Text:
+pda; netezza TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer requesting replacement power supplies for fabric switches. 
+
+SYMPTOM
+[nz@nps123 ~]$ nzhw -issues
+Description HW ID Location Role State
+----------- ----- ----------------- -------- -----
+PowerSupply 1178 rack7.ethsw1.pwr2 Inactive Down
+PowerSupply 1186 rack7.ethsw2.pwr2 Inactive Down 
+
+
+
+CAUSE
+SPAs were power-cycled 8 days ago, the error began after power cycle was complete.
+
+ENVIRONMENT
+Twinfin, Striper, RPC
+
+DIAGNOSING THE PROBLEM
+Obtain the fabric switch locations by running 'nzhw | more'.
+This appliance has 2 fabric switches in racks 2, 6, and 7. 
+Run sys_rev_check to get the names of the fabric switches.
+-----------------------------RACK SWITCH FAB CHECK-----------------------------
+netswfab01a [PASS]
+netswfab01b [PASS]
+netswfab02a [PASS]
+netswfab02b [PASS]
+netswfab03a [PASS]
+netswfab03b [PASS] 
+
+
+RESOLVING THE PROBLEM
+Telnet to the fabric switches to confirm the issue.
+TELNET/SSH From host 10.0.128.1
+Hardware ASIC Info: Family FM4000, Model FM4224, Version FM4224_A3
+
+Temperature Sensors Information
+Threshold: Warning at 85C and Failure at 100C
+Temperature Sensor 1: 39.0 C
+Temperature Sensor 2: 28.5 C
+Temperature Sensor 3: 28.50 C
+
+Fans Information
+Fan Air Flow: Forward
+Speed of Fan #1: 16666 RPM at 255 PWM
+Speed of Fan #2: 16615 RPM at 255 PWM
+Speed of Fan #3: 16666 RPM at 255 PWM
+Speed of Fan #4: 17197 RPM at 255 PWM
+Speed of Fan #5: 17197 RPM at 255 PWM
+Speed of Fan #6: 16927 RPM at 255 PWM
+
+State of Power Supply 1: On
+State of Power Supply 2: Off
+
+Temperature Sensors Information
+Threshold: Warning at 85C and Failure at 100C
+Temperature Sensor 1: 38.0 C
+Temperature Sensor 2: 26.5 C
+Temperature Sensor 3: 26.75 C
+
+Fans Information
+Fan Air Flow: Forward
+Speed of Fan #1: 16513 RPM at 255 PWM
+Speed of Fan #2: 16513 RPM at 255 PWM
+Speed of Fan #3: 16718 RPM at 255 PWM
+Speed of Fan #4: 16463 RPM at 255 PWM
+Speed of Fan #5: 16363 RPM at 255 PWM
+Speed of Fan #6: 16770 RPM at 255 PWM
+
+State of Power Supply 1: On
+State of Power Supply 2: Off
+
+Logged in to rpc7ll
+
+Switched Rack PDU: Communication Established
+------- Control Console -------------------------------------------------------
+
+1- Device Manager
+2- Network
+3- System
+4- Logout
+
+<ESC>- Main Menu, <ENTER>- Refresh, <CTRL-L>- Event Log
+> 1
+
+------- Device Manager --------------------------------------------------------
+
+1- Phase Management
+2- Outlet Management
+3- Power Supply Status
+
+<ESC>- Back, <ENTER>- Refresh, <CTRL-L>- Event Log
+> 2
+
+------- Outlet Management -----------------------------------------------------
+
+1- Outlet Control/Configuration
+2- Outlet Restriction
+
+<ESC>- Back, <ENTER>- Refresh, <CTRL-L>- Event Log
+> 1
+
+------- Outlet Control/Configuration ------------------------------------------
+
+1- SPA14 SPA-DE03 left ps ON
+2- SPA14 SPA-DE04 left ps ON
+3- NETSWFAB03A left ps OFF
+4- NETSWFAB03B left ps OFF
+5- unused5 ON
+6- unused6 ON
+7- unused7 ON
+8- unused8 ON
+9- Master Control/Configuration
+
+<ESC>- Back, <ENTER>- Refresh, <CTRL-L>- Event Log
+> 3
+
+------- NZ80684-H1 ------------------------------------------------------------
+
+Name : NETSWFAB03A left ps
+Outlet : 3
+State : OFF
+
+1- Control Outlet
+2- Configure Outlet
+
+?- Help, <ESC>- Back, <ENTER>- Refresh, <CTRL-L>- Event Log
+> 1
+
+------- Control Outlet --------------------------------------------------------
+
+Name : NETSWFAB03A left ps
+Outlet : 3
+State : OFF
+
+1- Immediate On
+2- Immediate Off
+3- Immediate Reboot
+4- Delayed On
+5- Delayed Off
+6- Delayed Reboot
+7- Cancel
+
+?- Help, <ESC>- Back, <ENTER>- Refresh, <CTRL-L>- Event Log
+> 1
+
+Turned both outlet 3 and 4 on.
+
+------- Outlet Control/Configuration ------------------------------------------
+
+1- SPA14 SPA-DE03 left ps ON
+2- SPA14 SPA-DE04 left ps ON
+3- NETSWFAB03A left ps ON
+4- NETSWFAB03B left ps ON
+5- unused5 ON
+6- unused6 ON
+7- unused7 ON
+8- unused8 ON
+9- Master Control/Configuration
+
+<ESC>- Back, <ENTER>- Refresh, <CTRL-L>- Event Log 
+
+Confirm settings. 'nzhw -issues' should no longer report fabric switch power supply failure.

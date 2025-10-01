@@ -1,0 +1,112 @@
+Title: IBM Db2 Columnar Tables with Sparse Extents are larger than expected and may cause issues with Extent Reclaim - United States
+
+Text:
+Columnar Tables; Sparse Extents; Extent Reclaim TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Db2 BLU column organized tables may be much larger than expected due to sparsely filled extents. This can cause issues with reorg extent reclaim which is run by automatic table maintenance and can also degrade query performance. The issues related to reorg reclaim extents may include the possibility of running out of log space during synopsis cleanup as well as significantly slower table scans during the reclaim under extreme cases. 
+
+CAUSE
+Db2 columnar tables cannot reclaim sparsely filled extents which are a result of random updates and deletes run against the table over time.
+
+RESOLVING THE PROBLEM
+We have developed a detection script, attached, to find worst offender sparse columnar tables. The script makes use of the fact that a columnar table should not exceed the size of an equivalent non- compressed row organized table by any significant margin and should in fact be smaller. Any affected table should be rebuilt using a method such as ADMIN_MOVE_TABLE or LOAD. 
+
+The detection script computes the row width in bytes and multiplies by the number of rows, called the MAX_SIZE, then compares that with the current COL_OBJECT_P_SIZE. Due to how this calculation works, tables that are detected could be attributed to other issues such as a very bad compression dictionary or tables loaded with mostly unique values so this should be considered. Furthermore, variable length columns that are mostly underutilized will affect detection performance. To help filter out such tables, a sensitivity-factor can be set as described below in the usage instructions. This detection script is not effective at finding tables that are both well compression and sparse unless they reach extreme levels of sparsity. 
+
+ 
+
+Usage of the Script 
+
+This script will detect your Db2 version and adjust its functionality based on which version it detects. Unfortunately on v105 we have a limited ability to dermine the real estimated width of a column so the results will vary. On v111 the script use SYSIBMADM.ADMINTABINFO Administrative view by default since SYSPROC.ADMIN_GET_TAB_INFO is deprecated. The latter may be overridden with the sysproc option. 
+
+The script takes two parameters Database Name and Schema Name. A table may optionally be specified to scan just the one table. Several extra options are available to control the output and adjust the sensitivity of the script. The following is the basic usage. Usage Details are below. 
+
+./detectSparseBluTables.sh DB_NAME SCHEMA_NAME [TABLE_NAME] <Extra Options> 
+
+Example with tee: 
+
+./detectSparseBluTables.sh DB_NAME SCHEMA_NAME | tee detect.out 
+
+ 
+
+It is highly recommended that the stdout is redirected or tee’d into a file for analysis and record keeping. 
+
+ 
+
+Output 
+
+The script will output a table that looks like the following: 
+
+ NAME| COUNT| LENGTH| MAX_SIZE| ACTUAL_SIZE| RECLAIMABLE| DELTA|FACTOR 
+
+------------------------------------------------------------------------------------------------------- 
+
+ SPARSECOMP| 100629557| 18| 1847558666| 4961408000| 0| 3113663334.40| 2.68 
+
+ 
+
+The output we are most interested in is the FACTOR column and the RECLAIMABLE column. If the FACTOR column has a positive number number over 1 and RECLAIMABLE is 0 then it is likely to be a highly sparse table. If RECLAIMABLE is not 0 run reorg reclaim on the table and then rerun the detection script against just that table to see if it is sparse. The FACTOR can be below 1 which means the table is not detected as sparse. To view all tables use the alltables option. 
+
+For some tables if runstats has not been run their LENGTH cannot be computed and will be some negative number. All such tables are filtered by default. If auto runstats has been turned off the runstats option can be passed into the script to run runstats on all the tables it will scan. This can take some time and will not output anything unless the -verbose option is specified. 
+
+ 
+
+To analyze the output saved to a file try a command like: 
+
+column -t detected.out | sort -k7 -g -r | less 
+
+That will normalize the column widths and sort on the delta column from largest to smallest. Therefore, the worst tables will appear at the top. These tables should be rebuilt if they have no reclaimable space. Please note that if a warning occurs during one of the table scans it can misalign the columns for that table. All tables with warning should be individually looked at. 
+
+ 
+
+Another option is to do the scan and analysis in one command both displaying the results and saving them to file after the scan. That can be done via a command like the following: 
+
+./detectSparseBluTables.sh DB SCHMEA | tail +10 | column -t | sort -k7 -g -r | tee detected.out | less 
+
+ 
+
+The above two command invocations are just suggestions and not meant to be the only methods of analysis and may not work on all systems depending on what software is installed. 
+
+ 
+
+Extra Options 
+
+The extra options for detectSparseColumnarTables.sh are as follows: 
+
+-sensitivity # Sensitivity factor, explained below -alltables Display results for all tables not just sparse tables -runstats Runstats on tables before detecting for sparsity -verbose Display results of extra queries such as runstats -sysproc Use sysproc.ADMIN_GET_TAB_INFO instead of sysibmadm.ADMINTABINFO for table stats Please note these options are case sensitive and all small. 
+
+The sensitivity factor allows tuning of the script to detect sparse tables that have reached some factor larger than an equivalent uncompressed row organized table. Its default value is 1. To make the script stricter in what it considers sparse increase this value. To avoid all tables with bad compression set it greater than or equal to 4. It is possible to set this option to some value below 1 such as 0.5 but then normal tables with average compression rates can be detected as well. Do not set this value to anything at or below 0. 
+
+Example: 
+
+./detectSparseColumnarTables.sh DB INST1 -sensitivity 4 
+
+ 
+
+The alltables option simply forces output for all tables not just tables with a positive delta. 
+
+ 
+
+The runstats option will perform runstats on all tables being scanned (columnar tables within the specified schema) to make sure the most up to date stats are used. This is not necessary if auto runstats is enabled as it should be reasonably up to date. 
+
+ 
+
+The verbose option will have the script print out the results of extra queries such as runstats queries. 
+
+ 
+
+Suggestions for Rebuilding tables 
+
+For the best compression, if the data for the table can be exported to disk, the LOAD utility can reload the data while also generating an optimal compression dictionary. If that is not an option then AMT or LOAD from cursor can be used to rebuild the table. AMT allows for a partially online rebuild since it supports read only access to the source table. Below are links to AMT and LOAD documentation. For AMT it is important to set the ALLOW_READ_ACCESS option for it to work on a columnar table. 
+
+For more information on how to use LOAD: https://www.ibm.com/support/knowledgecenter/SSEPGG_11.1.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0008305.html [https://www.ibm.com/support/knowledgecenter/SSEPGG_11.1.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0008305.html] 
+
+ 
+
+For more information on how to use AMT: https://www.ibm.com/support/knowledgecenter/en/SSEPGG_11.1.0/com.ibm.db2.luw.sql.rtn.doc/doc/r0055069.html [https://www.ibm.com/support/knowledgecenter/en/SSEPGG_11.1.0/com.ibm.db2.luw.sql.rtn.doc/doc/r0055069.html]
+
+detectSparseBluTables.sh [/support/docview.wss?uid=swg22014019&aid=2]detectSparseBluTables.sh [/support/docview.wss?uid=swg22014019&aid=1]

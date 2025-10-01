@@ -1,0 +1,49 @@
+Title: IBM How do I reset an IBM Case Management solution to the original spaces/pages? - United States
+
+Text:
+default solution pages; default solution spaces; reset spaces; reset pages TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have created a new IBM Case Management (ICM) solution in ICM Case Builder, then modified the spaces/pages in ICM Case Client. How do I return the solution to the original, default solution pages/spaces? 
+
+CAUSE
+After making modifications to a solution's spaces/pages, there is no clear method for returning to the original, default spaces/pages. Removing the solution and running the Reset Test Environment function results in losing the entire solution. All that is needed is to return the spaces/pages to the originally deployed, out-of-the-box versions without losing everything else.
+
+DIAGNOSING THE PROBLEM
+ When you first create an ICM solution, the solution's folder in the CMDOS (Case Manager Design Object Store) has no Pages folder. The deployment API knows to generate default pages by checking to see if the Pages folder exists in the solution folder. If it does not, then the Pages folder is created and the default pages are created. 
+
+Subsequently, the ICM solution's objects in the Pages folder in the CMDOS are exported pages; the actual content is in Business Space.
+
+
+RESOLVING THE PROBLEM
+To return to the default, out-of-the-box pages 
+
+You can force the regeneration of the default, out-of-the-box pages with these steps: 
+
+ 1. Delete the solution's Pages folder in the CMDOS Object Store under Root Folder\IBM Case Manager\Solutions using FileNet Enterprise Manager (FEM). 
+ 2. Modify the project area's connection definition by deleting all lines that have the solution's prefix in the dev_env_connection_definition, for example, under the CMDOS\IBM Case Manager\Connection Defintions 
+    
+    For example, here are the contents of a connection definition:
+    
+    ConnectionPoint=ConnPt4
+    WebAppID=9
+    HomeSpaceTemplateID=M092708FA5651F46404FA2ABD255C20000001
+    page.SOL_CmAcmCASE_DEFAULT_PAGE=M092708C27CB8AF8BC2086441F9F2EE00003B
+    page.SOL_CmAcmSTEP_DEFAULT_PAGE=M092708C27CB8AF8BC2086441F9F2EE000094
+    page.SOL_CmAcmCASE_NEW_DEFAULT_PAGE=M092708C27CB8AF8BC2086441F9F2EE00002F
+    page.SOL_CmAcmSTEP_LAUNCH_DEFAULT_PAGE=M092708C27CB8AF8BC2086441F9F2EE000083
+    page.SOL_CmAcmDEFAULT_CASE_PAGES_SPACE=M092708C27CB8AF8BC2086441F9F2EE00002C
+    page.SOL_CmAcmCASE_SPLIT_DEFAULT_PAGE=M092708C27CB8AF8BC2086441F9F2EE00004D
+    page.SOL_CmAcmDEFAULT_STEP_PAGES_SPACE=M092708C27CB8AF8BC2086441F9F2EE000080
+    page.SOL_CmAcmDEFAULT_SOLUTION_SPACE=M092708C27CB8AF8BC2086441F9F2EE000000\:M092708C27CB8AF8BC2086441F9F2EE000003
+    ExternalDataURI.SOL=http\://localhost\:9081/sampservice/ICMEDREST
+    space_deployment_date.SOL=2012-03-09T00\:27\:50Z
+    
+    
+    In the example, the bolded entries have the solution prefix "SOL". Delete those entries (leave ExternalDataURI.SOL if you are using an external data service with the solution, unless you want to re-register the external data service in the Content Management Administrative Console)
+    
+ 3. Delete the old pages in Business Space  * Use the following Technote for instructions on deleting the pages: 
+       http://www-01.ibm.com/support/docview.wss?uid=swg21607924 [http://www-01.ibm.com/support/docview.wss?uid=swg21607924]
+    
+    
+ 4. Redeploy the solution.

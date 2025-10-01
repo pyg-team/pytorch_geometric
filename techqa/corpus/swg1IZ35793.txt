@@ -1,0 +1,257 @@
+Title: IBM IZ35793: AGENTS ARE BEING MARKED OFFLINE WHEN THEY ARE ACTUALLY ONLINE AT THE RTEMS. - TRACK FOR D65789/D85348 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Severity: 2
+   Approver: RB
+   Compid:  5724C04MS Tivoli Enterprise Management Server
+   Environment:  ITM 6.2
+   
+   Problem Description:
+   Agents are being marked offline when they are actually online at
+   the RTEMS.  There are multiple symptoms:
+   
+   In one scenario, agents appear to be offline when they are
+   actually online.  The offline status from a secondary RTEMS is
+   replacing the online status of the primary TEMS after an agent
+   switches back to the primary RTEMS from the primary RTEMS.  Here
+   is what is happening in this specific case:
+   
+   1. An online status record arrives from the primary RTEMS
+   indicating the agent has switched back to it.
+   2. Processing begins on the online status record.
+   3. An offline status record is received from the secondary
+   RTEMS.
+   4. The validation of the offline status record begins.
+   5. The current status timestamp of the offline status record is
+   compared to the status timestamp that exists in the node list
+   index.  The global time stamp in the offline record follows the
+   timestamp in the record read from the index - the offline status
+   record is considered "in order" and can be processed. (i.e. if
+   the global time stamp of the offline record was before the
+   existing node status record then the offline status record would
+   have been ignored).
+   6. The offline status record waits for completion of prior node
+   status updates before it can complete its processing.
+   7. The original online node status record finishes its
+   processing marking the agent online and updating the time stamp.
+   8. The offline status record now can perform its node status
+   update processing marking the agent as offline.  It overwrites
+   the correct online status of the agent.
+   
+   In a second symptom, subnodes will appear to be offline when
+   they are actually online.  The subnode manager appears online,
+   but has briefly toggled offline.  In this case, a heartbeat is
+   delayed for some reason, so a time-out is identified.  While
+   handling the time-out, the delayed heartbeat arrives before the
+   time-out has updated the node status record.  The node status
+   record is read by the heartbeat thread and then processing of
+   the heartbeat waits for processing of the time-out to complete.
+   One processing of the time-out completes, the heartbeat
+   processing continues.  Because the heartbeat processing is using
+   data acquired before the time-out completed processing, the
+   heartbeat processing fails to ask for subnode status to be
+   retransmitted.  This results in subnodes appearing to be
+   offline.
+    Thread 1 retrieves a node's in-core status record:
+   ...kfaprpst.c,2239,"UpdateNodeStatus") Node:
+   'XEHLTH:LPAR400J.SYS:zOS ', thrunode: 'NW9:CMS ', flags:
+   '0x00000060', curOnline: 'Y', newOnline: 'Y', expiryInterval:
+   '10'
+   (x60 means - update failed and timer-set).
+    .... and then tries to acquire the lock and is blocked:
+   ...kfaprpst.c,2281,"UpdateNodeStatus") About to get event lock
+   on workA <17A2EB24>
+    A TEMS time-out has occurred and the status record is marked as
+   timed-out:
+   ...kfaprpst.c,1540,"PropagateStatus") Propagating status for
+   'XEHLTH:LPAR400J.SYS:zOS ', propStatus='N' flags='0x00000050'
+   isSubNode='0'
+   (x50 means - update failed and timed-out).
+    The time-out thread finishes and the heartbeat thread is
+   allowed to continue:
+   ...kfaprpst.c,2288,"UpdateNodeStatus") event lock taken on workA
+   <17A2EB24>
+    The time-out thread has already cancelled the timer so ...
+   ...kfastdte.c,79,"KFA_DeleteTimerElem") Unable to cancel
+   heartbeat timer. status = 2
+    The status still reflects the record read outside the
+   protection of the lock, i.e. on-line:
+   ...kfaprpst.c,753,"KFA_UpdateNodestatusAtHub") Transmission of
+   status failed for node <XEHLTH:LPAR400J.SYS:zOS > thrunode
+   <NW9:CMS > o4online <Y>
+    ... and, most significantly, the heartbeat exits with an RC of
+   zero instead of <1542>.
+   ...kfaprpst.c,3100,"UpdateNodeStatus") Exit: 0x0
+   A value of <1542> is required to tell the agent to retransmit
+   the status of its subnodes (which were also timed-out).  When a
+   value of zero is returned, the subnode status is not
+   retransmitted.
+   Detailed Recreation Procedure:
+   Recreating either scenario above is difficult as it involves a
+   small timing window.  In the first scenario, an agent needs to
+   switch back to its primary RTEMS.  This issue more likely to be
+   seen when a very large number of agents are making the switch
+   from the secondary RTEMS back to the primary RTEMS.  The HUB and
+   the secondary RTEMS must be up and running during this scenario.
+   The agents should switch back to the primary RTEMS after the
+   connection to is restored.  Use the TEP to determine if all
+   switched agents remain online after the switch.
+   
+   The second scenario may be even more difficult to reproduce.  In
+   this case, the heartbeat of an IRA manager must be delayed
+   exactly three minutes and the TEMS must begin processing the
+   missed heartbeat.  Use the TEP to determine if the subnodes
+   associated with the IRA manager are returned to an online state.
+   
+   Related Files and Output:
+   Log files can be found on GSA at
+   projects\i\itm_defects\defects\85000-85999\85348
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  no workaround available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  There are two symptoms:
+   
+   In one scenario, agents appear to be offline when they are
+   actually online.
+   
+   In a second scenario, subnodes will appear to be offline when
+   they are actually online.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In the first scenario, where agents appear to be offline when
+   they are actually online, the offline status from a secondary
+   RTEMS is replacing the online status of the primary TEMS after
+   an agent switches back to the primary RTEMS from the primary
+   RTEMS.
+   
+   In the second symptom, where the subnodes will appear to be
+   offline when they are actually online, the subnode manager
+   appears online, but has briefly toggled offline.  In this case,
+   a heartbeat is delayed for some reason, so a time-out is
+   identified.  While handling the time-out, the delayed heartbeat
+   arrives before the time-out has updated the node status record.
+   The node status record is read by the heartbeat thread and then
+   processing of the heartbeat waits for processing of the time-out
+   to complete.  Once processing of the time-out completes, the
+   heartbeat processing continues.  Because the heartbeat
+   processing is using data acquired before the time-out completed
+   processing, the heartbeat processing fails to ask for subnode
+   status to be retransmitted.  This results in subnodes appearing
+   to be offline.
+   
+   The code has been updated to prevent a node status record from
+   being read when it is currently being processed.
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+      | interim fix | 6.2.0.2-TIV-ITM-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ35793
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-27
+   
+   
+ * CLOSED DATE
+   2009-02-17
+   
+   
+ * LAST MODIFIED DATE
+   2009-02-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    OA27958 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA27958]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEMS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

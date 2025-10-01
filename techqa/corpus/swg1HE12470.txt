@@ -1,0 +1,150 @@
+Title: IBM HE12470: Indexing Microsoft Exchange message return receipts with IBM Content Collector P8 Content Search Services Support might fail - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Content Collector V4.0.1 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24041245]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Indexing Microsoft Exchange message return receipts with IBM
+   Content Collector P8 Content Search Services Support fails with
+   failure code 1024 indicating that the parsing of the XML failed
+   because the XML is not well formed. Error messages like the
+   following ones are written to the IBM Content Search Services
+   log:
+   
+      IQQI0005E The document with ID {<docid>} cannot be indexed.
+   Causes of the problem:
+      IQQP0028E The XML document {<docid>} cannot be parsed because
+   its format is invalid. Error details:
+      Character reference "&amp;#27" is an invalid XML character.
+      IQQG0020E org.xml.sax.SAXParseException: Character reference
+   "&amp;#27" is an invalid XML character.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Usually, IBM Content Collector P8 Content Search Services
+   Support ensures that the XML document being generated for the
+   email document does not contain any invalid XML characters. With
+    message return receipts, however, a message file contains other
+    embedded message files. For these message files, no filtering
+   for such XML characters was applied. Thus, invalid characters
+   were added to the XML document causing indexing to fail.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with this fix, IBM Content Collector P8 Content
+   Search Services Support also filters embedded message files for
+   invalid characters, so that such characters are not added to the
+    generated XML file.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Fixed in 4.0.1.2-IBM-ICC-FP002
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12470
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-12-17
+   
+   
+ * CLOSED DATE
+   2015-12-18
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    HE12348
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

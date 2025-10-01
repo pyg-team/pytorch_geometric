@@ -1,0 +1,137 @@
+Title: IBM IT24941: A LOG TARGET STATUS MEMORY VALUE IS NOT CORRECT, ALWAYS BEING TOO LOW - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The user observed slowly increasing memory usage but struggled
+   to pinpoint which part of configuration or traffic caused this.
+   It turned out that having log target Identical Event Detection
+   enabled, especially in combination with log target type
+   syslog-tcp, did hold memory for a long time, as in this
+   specific scenario many unique log records got created and where
+   hold even beyond the Identical Event Detection timeout.
+   It turned out this part of hold memory is not captured in the
+   log target status provider, so customer could not pinpoint this
+   specific log target to be the driver.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Either shortly disable/enable the log target object to reclaim
+   hold memory,
+   or do not use Identical Event Detection (a preferred practice
+   anyway to safe resources on DataPower),
+   or more specifically don't use Identical Event Detection if the
+   log target type is syslog-tcp.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The logging target status might not reflect actual memory used.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is available in 7.5.0.16, 7.5.1.15, 7.5.2.15, 7.6.0.8 and
+   7.7.1.1
+   For a list of the latest fix packs available, please see:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21237631 [http://www-01.ibm.com/support/docview.wss?uid=swg21237631]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT24941
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-05-03
+   
+   
+ * CLOSED DATE
+   2018-07-17
+   
+   
+ * LAST MODIFIED DATE
+   2018-07-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS

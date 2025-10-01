@@ -1,0 +1,18 @@
+Title: IBM RDz allows only one Integrated Debugger Debug Manager per LPAR - United States
+
+Text:
+RDz; Integrated Debugger; DBGMGR TECHNOTE (FAQ)
+
+QUESTION
+ Does IBM Rational Developer for system z (RDz) allow you to have more than one Debug manager per LPAR? 
+
+ANSWER
+ The Integrated Debugger in RDz utilizes the server component known as the Debug Manager. This server runs in a separate address space, and is by default a started task named DBGMGR. Only one Debug manager is allowed per LPAR.
+
+
+Even though, you can start the Debug Manager multiple times using different task names, only the first server started will actually complete startup. All others will abort the startup process and issue these messages:
+
+AQECM140E Cannot obtain the Debug Manager lock 
+AQECM141I Another copy of the Debug Manager is running 
+
+This is a design limitation that cannot be bypassed. If you have multiple releases of RDz host, please make sure the Debug Manager started task is referring to the load libraries of the latest RDz release.

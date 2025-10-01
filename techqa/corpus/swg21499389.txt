@@ -1,0 +1,46 @@
+Title: IBM XU log on WebSphere Application Server - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why are the XU events not logged in the SystemOut log on WebSphere Application Server? 
+
+CAUSE
+By default, XU uses JCA logging. WAS6 and WAS7 will only provide the XU with a PrintWriter if WAS diagnostic trace is enabled and the trace level of the managed connection factory is set to debug (which is achieved with finest or all levels). 
+
+ANSWER
+To see the XU log on WebSphere Application Server (WAS), follow the steps below: 
+
+1. Enable diagnostic trace in WAS console. Have at least the following trace enabled: 
+
+*=info: ilog.rules.res.xu.spi.IlrManagedXUConnectionFactory=finest 
+
+This will trigger the WAS to provide the XU with a PrintWriter that outputs the messages to a log. 
+
+2. Set the value of the XU configuration parameter traceAutoFlush to true to make sure the log stream is flushed each time a message is written. 
+
+For XUConnectionFactory, set the following values:
+traceLevel=ALL, traceAutoFlush=true, systemOutLoggingEnabled=false, jdkLoggingEnabled=false 
+
+This can be done in WAS console, Resource Adapters > J2C connection factories > xu_cf > Custom properties. 
+
+3. Restart the server after these updates. 
+
+ 
+
+In the case where diagnostic trace cannot be enabled, an alternative is: 
+
+1. From the WAS console, go to Resource Adapters > J2C connection factories > xu_cf > Custom properties, set the property systemOutLoggingEnabled to true and set traceAutoFlush to true. 
+
+2. Restart the server after these updates. 
+
+When systemOutLoggingEnabled is turned on, standard output log, such as SystemOut.log in WAS, will contain the normal XU log and respect the XU traceLevel. 
+
+This is NOT a recommended practice as it bypasses the WAS logging configuration. 
+
+ 
+
+NOTE: When the WAS diagnostic trace is enabled, the warnings and errors will be written to trace.log, regardless of the value of the systemOutLoggingEnable property. 
+
+systemOutLoggingEnable property is only effective when the diagnotic trace is disabled by setting the trace log detail level to *=info only.

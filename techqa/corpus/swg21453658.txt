@@ -1,0 +1,46 @@
+Title: IBM ITCAM4Tx BIRT report, Transaction performance trends, "Last Month", error ORA00942 - United States
+
+Text:
+Tivoli Common Reporting BIRT Response Time TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using Tivoli Integrated Portal (TIP) GUI console, accessing the Tivoli ITCAM for Tx BIRT "Transaction Performance Trends" report, for 'Last Month' period, it fails with error: "SQL error #1: ORA-00942: table or view does not exist" 
+
+SYMPTOM
+Using ITCAM for Transactions and its integration Tivoli Common Reporting BIRT reports installed on the TCR server, when accessing the TIP console -> Reporting -> Common Reporting -> Report sets -> Tivoli products -> ITCAM for Transactions -> Response Time, then select one of the ITCAM for Tx available reports (like "transaction performance trends") and then select report period = last month, the report generation then fails with error : 
+
+"the following items have errors : 
+reportDesign (id=1) 
++ cannot get the result set metadata 
+SQL statement does not return a ResultSet object 
+SQL error #1: ORA-00942: table or view does not exist"
+
+
+CAUSE
+Possible cause is that the needed tables to produce such report are not populated and don't exist yet.
+
+
+DIAGNOSING THE PROBLEM
+Check your current settings in ITM TEP GUI portal for "History Collection Configuration". 
+
+The ITCAM for Tx TCR BIRT reports are using "Application_Status" and "Transaction_Status" tables in WAREHOUS database for ALL their reports.
+For example, report period value is named "LM" for Last Month, as documented in ITCAM for Tx TCR guide (IBM Tivoli Composite Application Manager for Transactions, Response Time Reports for Tivoli Common Reporting readme) , which states : 
+if (report_period == "LM") return "_W"; 
+That means that this 'Last month' report relies on the content of "RRT_Application_Status_W" and "RRT_Transaction_Status_W" tables in the 'WAREHOUS' database to produce reports. 
+
+
+
+RESOLVING THE PROBLEM
+Using the ITM TEP GUI -> History Collection Configuration -> Robotic Response Time, enable for the "RRT Application Status" and "RRT Transaction Status" groups ALL the collection data available for the summarization and pruning agent (hourly, daily, weekly, monthly, etc). 
+
+Retest later the TCR ITCAMforTx reports after "RRT_Application_Status_W" and "RRT_Transaction_Status_W" tables are populated with data corresponding to last month.
+
+
+
+HISTORICAL NUMBER
+ 56868
+211
+788 
+
+PRODUCT ALIAS/SYNONYM
+ itcam itcam4transactions itcam4transactions itcamtx

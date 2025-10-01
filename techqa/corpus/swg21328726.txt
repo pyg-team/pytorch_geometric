@@ -1,0 +1,47 @@
+Title: IBM FAQ about software and firmware upgrades for the IBM PureData System for Operational Analytics, IBM Smart Analytics System and the InfoSphere Balanced Warehouse Solutions - United States
+
+Text:
+IBM Smart Analytics System; InfoSphere Balanced Warehouse; ISAS; IBW; BW; IBM Smart Analytics System Control Console; control console TECHNOTE (FAQ)
+
+QUESTION
+ May I apply a software or firmware update to my certified IBM PureData System for Operational Analytics, IBM Smart Analytics System or InfoSphere Balanced Warehouse environment? 
+
+ANSWER
+Yes, you may apply updates to any of the software or firmware versions included in the IBM PureData System for Operational Analytics, IBM Smart Analytics System or in the InfoSphere Balanced Warehouse solution. However, when you purchase a certified IBM PureData System for Operational Analytics, IBM Smart Analytics System or InfoSphere Balanced Warehouse, you are purchasing a solution stack (software and firmware) that has been extensively tested. The philosophy is that the stability of the system is the most important aspect of an IBM PureData System for Operational Analytics, IBM Smart Analytics System or InfoSphere Balanced Warehouse environment. If you apply different software or firmware versions to any of the component products in the validated software stack, you introduce change into your configuration, which may lead to instability in the system. You need to consider your entire configuration, software, and firmware stack when you apply an upgrade. If you choose to apply an upgrade, IBM recommends thorough testing in your test and quality assurance (QA) environments to ensure you do not introduce any new issues. 
+
+Some further details:
+
+1. If you have the IBM Smart Analytics System Control Console in your environment, apply software and firmware upgrades using the control console. If you do not have the control console, or if the validated stack page recommends specific upgrades that are not included in an IBM Smart Analytics System fixpack, you can manually apply software and firmware upgrades.
+
+2. In general, IBM does not recommend changing software or firmware levels from the validated stack, unless there is a strong reason for doing so, such as a significant problem that is resolved in a later version of the software or firmware. If you encounter a significant issue impacting your business and you are not able to work around the issue, IBM suggests you work with the IBM support teams to determine your options to resolve the issue.
+
+3. You can apply fix packs or other service updates to any software component in the IBM PureData System for Operational Analytics, IBM Smart Analytics System or InfoSphere Balanced Warehouse environment, provided that the newer level is supported by all other software installed on the server. If it is necessary to apply a fixpack to one of the component software products in the IBM PureData System for Operational Analytics, IBM Smart Analytics System or InfoSphere Balanced Warehouse environment, you should plan on moving to the next certified stack refresh when it becomes available.
+
+4. Firmware is a part of the recommended base solution stack for the IBM PureData System for Operational Analytics and IBM Smart Analytics System. It is also part of the InfoSphere Balanced Warehouse D5100 and E7100 environments. Firmware updates should only be considered to address known issues. If you choose to apply firmware changes, you need to ensure all pre-requisite and co-requisite changes are applied and all inter-dependencies are addressed. It is also important that you do not have mixed levels of firmware in the entire configuration. Firmware levels must be consistent across the entire cluster and changes applied to one node must be applied to all nodes. Consult all README files and IBM support teams if needed when applying firmware updates.
+
+5. Security requirements vary by each application, user base, and data content. All updates applied for security concerns will continue to be supported by the IBM PureData System for Operational Analytics, IBM Smart Analytics System and InfoSphere Balanced Warehouse support teams. Refer to the IBM PureData System for Operational Analytics validated stack page [http://www-01.ibm.com/support/docview.wss?uid=swg21610644] or IBM Smart Analytics System or InfoSphere Balanced Warehouse validated stack page [http://www-01.ibm.com/support/docview.wss?uid=swg21429594] for a list of components and instructions how-to subscribe to security updates.
+
+6. IBM Software Services for Information Management are available to assist with key updates to your system or periodic health checks of the IBM PureData System for Operational Analytics, IBM Smart Analytics System or InfoSphere Balanced Warehouse environment. More information can be found at this link:
+http://www.ibm.com/software/data/services/database.html [http://www.ibm.com/software/data/services/database.html]
+
+In conclusion, there are many benefits to remaining on the validated software and firmware stack for the IBM PureData System for Operational Analytics, IBM Smart Analytics System or InfoSphere Balanced Warehouse environment. The software and firmware levels have been extensively tested together by IBM, which helps to ensure that the entire stack is a stable working environment. Having many customers on the same set of software and firmware levels also simplifies problem resolution because the support team is familiar with this configuration and environment, and can therefore help resolve issues more efficiently. 
+
+
+Get Notified about Future Security Bulletins 
+
+Subscribe to My Notifications [http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts
+
+RELATED INFORMATION
+ IBM Smart Analytics System stack [http://www-01.ibm.com/support/docview.wss?uid=swg21429594]
+IBM PureData System for Operational Analytics stack [http://www-01.ibm.com/support/docview.wss?uid=swg21610644]
+Information Management software services [http://www.ibm.com/software/data/services/database.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Data Warehouse and Industry Data Models IBM Smart Analytics System Not Applicable 
+PRODUCT ALIAS/SYNONYM
+ IBM Smart Analytics System
+InfoSphere Balanced Warehouse
+Balanced Warehouse

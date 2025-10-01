@@ -1,0 +1,100 @@
+Title: IBM How to Associate an IBM HTTP Server with an IBM WebSphere Application Server Profile on the IBM i OS - United States
+
+Text:
+HTTP; WAS; ADMIN; ASSOCIATE TECHNOTE (FAQ)
+
+QUESTION
+ This document will address the question of how to associate an IBM HTTP Server with an IBM WebSphere Application Server (WAS) profile on the IBM i OS. 
+
+ANSWER
+
+
+PRE-REQUISITES
+
+1) A currently supported version of the IBM WebSphere Application Server software product must already be installed and updated to a recent Fix Pack version. Refer to the following hyperlinks for the list of currently supported IBM WebSphere Application Server products at specific IBM i OS VRMs and how to install WAS v8.0 and later on the IBM i OS. 
+
+ * 
+ * Official Support Statement for the IBM WebSphere Application Server Product on the IBM i OS
+ * 
+ * 
+ * How To Install the IBM WebSphere Application Server (WAS) v8.0 and Later Product Using the IBM Web Administration for i Console 
+
+
+2) An IBM HTTP Server instance and IBM WebSphere Application Server Profile MUST already exist on your IBM i server. You will need to create one or both of them before proceeding with this document.  * 
+ * 
+ * 
+ * How To Create An IBM WebSphere Application Server (WAS) Profile Using the IBM Web Administration for i Console
+ * 
+ * 
+ * 
+ * http://<server>:2001/HTTPAdmin
+ * 
+ * Setup -> Create a New HTTP Server
+ * 
+
+
+
+Steps To Associate an IBM HTTP Server with an IBM WAS Profile on the IBM i OS 
+
+1) Open a web browser and go to the URL, http://<server>:2001/HTTPAdmin, to display the IBM Web Administration for i console web application.
+
+If you are not prompted for a userID and password or receive an error in the browser, ensure the ADMIN jobs are started in the QHTTPSVR subsystem using the WRKACTJOB SBS(QHTTPSVR) CL command. If the ADMIN jobs are not started, execute the following CL command to start the ADMIN server: 
+
+STRTCPSVR *HTTP HTTPSVR(*ADMIN) 
+
+If you continue to experience issues accessing the IBM Web Administration for i console, please open a Service Request (PMR) with IBM here [http://www-01.ibm.com/software/support/servicerequest/quick_start.html] or call 1-800-IBM-SERV. 2) Click on the "Manage -> HTTP Servers" tabs in the top,left-hand corner of the IBM Web Administration for i GUI.
+
+[/support/docview.wss?uid=nas8N1021306&amp;aid=1] 3) Select the IBM HTTP Server instance you wish to associate with your WAS Profile from the drop-down box next to "Server."
+
+[/support/docview.wss?uid=nas8N1021306&amp;aid=2] 4) Click on the "WebSphere Application Server" link on the left-hand, vertical toolbar just above the "Tools" section.
+
+[/support/docview.wss?uid=nas8N1021306&amp;aid=3] 5) You will then be presented with a screen to select the IBM WebSphere Application Server installation version and edition you would like to associate your IBM HTTP Server with. Select the radio button next to the WAS version and edition your WAS Profile was created under. 
+
+[/support/docview.wss?uid=nas8N1021306&aid=4] [/support/docview.wss?uid=nas8N1021306&aid=4] 6) After selecting the radio button next to the WAS installation, you will be presented with an additional field to select the WAS Profile you wish to associate your IBM HTTP Server with. Select your WAS Profile from the drop-down list.
+
+[/support/docview.wss?uid=nas8N1021306&amp;aid=5] 7) After selecting your WebSphere profile, additional options will be presented asking the following:
+
+- Indicate which installed applications should be mapped to the selected Web server: 
+IBM Recommends this option be set to "All Applications".
+
+- Start all WebSphere application server(s) for the associated WAS instance when this HTTP server is started : 
+IBM Recommends this option be set to "Yes". If this option is set to "Yes", you will be presented with a third option.
+
+- Stop all WebSphere application server(s) for the associated WAS instance when this HTTP server is stopped : 
+IBM Recommends this option be set to "No" so your WebSphere application servers are not automatically stopped when you stop your HTTP Server.
+
+[/support/docview.wss?uid=nas8N1021306&aid=6] [/support/docview.wss?uid=nas8N1021306&aid=6] 8) After setting the additional options to the values you desire, click on the "OK" button at the bottom of the screen to begin the HTTP Server -> WAS Profile association process. The screen will refresh back to the main "Manage Apache server" screen when the association process has completed. 9) After the association process completes, you might need to change your WAS Profile's virtual host entries. To do this, click on Manage -> Application Servers and then select your WebSphere application server from the list.
+
+[/support/docview.wss?uid=nas8N1021306&aid=7] [/support/docview.wss?uid=nas8N1021306&aid=7] 10) Click on the "Manage Virtual Hosts" link under "Resource Configuration" on the left-hand, vertical menu.
+
+[/support/docview.wss?uid=nas8N1021306&amp;aid=8] 11) Select the radio button next to the virtual host used by your application(s) and then click on the "Properties" button. By default, the "default_host" virtual host is used by deployed web applications.
+
+[/support/docview.wss?uid=nas8N1021306&amp;aid=9] 12) Select the radio button next to the HTTP Server Port at the bottom of the list. Edit the "IP address or hostname" field and change the value to "*" (star character). Then, click the "Continue" button and then "OK" button to save your changes.
+
+BEFORE:
+[/support/docview.wss?uid=nas8N1021306&aid=10] [/support/docview.wss?uid=nas8N1021306&aid=10]
+
+AFTER:
+[/support/docview.wss?uid=nas8N1021306&aid=11] [/support/docview.wss?uid=nas8N1021306&aid=11] 13) Restart your IBM HTTP Server and WebSphere application server for the changes to take affect.
+
+If your IBM HTTP Server and WebSphere Application Server are currently started....
+Ensure your WebSphere application server is selected under Manage -> Application Servers. Then, click on the red, [/support/docview.wss?uid=nas8N1021306&amp;aid=12] , button to stop both your HTTP Server and WebSphere Application server instances. Then, click on the "Stop" button at the bottom of the page to confirm the stop request. Finally, wait for the status of the servers to change to "Stopped".
+
+[/support/docview.wss?uid=nas8N1021306&aid=13] [/support/docview.wss?uid=nas8N1021306&aid=13]
+
+[/support/docview.wss?uid=nas8N1021306&aid=14] [/support/docview.wss?uid=nas8N1021306&aid=14]
+
+To restart your IBM HTTP and WebSphere Application Servers....
+Ensure your WebSphere application server is selected under Manage -> Application Servers. Then, click on the green, [/support/docview.wss?uid=nas8N1021306&amp;aid=15], button to start both your HTTP Server and WebSphere Application server instances. Then, click on the "Start" button at the bottom of the page to confirm the start request. Finally, wait for the status of the servers to change to "Started".
+
+[/support/docview.wss?uid=nas8N1021306&aid=16] [/support/docview.wss?uid=nas8N1021306&aid=16]
+
+[/support/docview.wss?uid=nas8N1021306&aid=17] [/support/docview.wss?uid=nas8N1021306&aid=17] 14) Once you have confirmed your IBM HTTP Server and WebSphere Application Server (WAS) are started, you are now ready to access your WAS web application(s) using your IBM HTTP Server port(s).
+
+non-SSL: http://<server>:<httpPort>/<applicationURL>
+SSL: https://<server>:<httpsPort>/<applicationURL>
+
+If you experience issues accessing your WAS web application(s) using your IBM HTTP Server port(s), please open a Service Request (PMR) with IBM here [http://www-01.ibm.com/software/support/servicerequest/quick_start.html] or call 1-800-IBM-SERV. 15) Congratulations! You have successfully associated an IBM HTTP Server with an IBM WebSphere Application Server Profile using the IBM Web Administration for i Console.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.3 Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1

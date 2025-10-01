@@ -1,0 +1,111 @@
+Title: IBM Operation "rgy_add_entry" failed: Permission denied - United States
+
+Text:
+Operation "rgy_add_entry" failed: Permission denied; rgy_add_entry; rgy add entry; rgyaddentry; 1125879 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote describes errors related to creating IBM® Rational® ClearCase® VOBs or views on Microsoft® Windows®, why these errors occur and how to resolve them. 
+
+CAUSE
+ 
+
+VOB CREATION 
+
+The following error results during VOB creation using the VOB Creation Wizard:
+
+VOB Creation Wizard
+Error creating VOB: 
+VOB creation wizard: Error: Operation "rgy_add_entry" failed:
+Permission Denied.
+VOB creation wizard: Error: Operation "rgy_add_entry" failed:
+Permission Denied.
+VOB creation wizard: Error: could not add VOB to object registry.
+VOB creation wizard: Error: Unable to create versioned object base "<path to .vbs>" 
+
+Note: A similar error results when a VOB is created from the command line.
+
+
+
+REPLICA CREATION 
+
+The following error may also be seen during replica creation using MultiSite (which creates a VOB as part of its steps): 
+
+
+C:\shipping\ms_ship\incoming>multitool mkreplica -import -vob \\host01\ccstg_d\VOBs\Test.vbs -workdir c:\temp2 -tag \Test -npreserve original_03-Dec-01.14.31.28_2428_1
+The packet can only be used to create replica "Test_rep"
+- VOB family is 601122cf.21e343d5.a3c7.ca:3f:11:28:ca:69
+- replica OID is 7045e1bb.a8d140d3.879c.cd:c5:7b:47:72:eb
+Should I create this replica? [no] y
+Comments for "Test_rep":
+.
+Processing packet .\original_03-Dec-01.14.31.28_2428_1...
+multitool: Error: Operation "rgy_add_entry" failed: Permission denied.
+multitool: Error: Operation "rgy_add_entry" failed: Permission denied.
+multitool: Error: Could not add VOB to object registry.
+multitool: Error: Unable to create VOB replica: Permission denied.
+
+
+
+VIEW CREATION 
+
+The following error results during View creation using the View Creation Wizard:
+
+View Creation Wizard
+Error creating View: 
+View creation wizard: Error: Operation "rgy_add_entry" failed:
+Permission Denied.
+View creation wizard: Error: Operation "rgy_add_entry" failed:
+Permission Denied.
+View creation wizard: Error: could not add View to object registry.
+View creation wizard: Error: Unable to create vview "<path to .vws>" 
+
+Note: A similar error results when a VOB is created from the command line. 
+
+ 
+
+
+ALBD ERROR LOG 
+
+The following entry corresponding to the above errors can be seen in the albd log:
+
+Albd(2468): Error: Unable to open file "C:\Program
+Files\Rational\ClearCase\var\rgy\vob_object.new": Permission denied. 
+
+ 
+
+Albd(2134): Error: Unable to open file "C:\Program
+Files\Rational\ClearCase\var\rgy\view_object.new": Permission denied.
+
+
+The permissions on the ClearCase install directory are too restrictive. 
+
+ClearCase is unable to write to the ClearCase Registry object file to store the location of the VOB or view object.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 
+
+Provide the ClearCase server process group or account [http://www-1.ibm.com/support/docview.wss?&rs=984&uid=swg21143292] the required access control to the installation directory.
+
+
+ 1. Check the permissions on the Rational directory (example C:\Program Files\Rational)  1. Give the ClearCase server process group (clearcase by default) or the ClearCase server process account (clearcase_albd by default) FULL CONTROL of ALL files and directories (recursively) under the Rational directory 
+     2. Give Everyone READ and Execute on C drive and Program Files
+        
+        
+    
+    
+ 2. Restart the host
+    
+    
+ 3. Create the VOB or view
+
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase Replica Creation Software Development Rational ClearCase VOB Software Development Rational ClearCase View: Dynamic Software Development Rational ClearCase View: Snapshot Software Development Rational ClearCase View: Snapshot

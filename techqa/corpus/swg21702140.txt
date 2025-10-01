@@ -1,0 +1,68 @@
+Title: IBM Security Bulletin: Vulnerability in RC4 stream cipher affects Tivoli Endpoint Manager for Remote Control (CVE-2015-2808) - United States
+
+Text:
+CVE-2015-2808; RC4; FREAK SECURITY BULLETIN
+
+SUMMARY
+ The RC4 “Bar Mitzvah” Attack for SSL/TLS affects Tivoli Endpoint Manager for Remote Control. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-2808 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2808]
+DESCRIPTION: The RC4 algorithm, as used in the TLS protocol and SSL protocol, could allow a remote attacker to obtain sensitive information. An attacker could exploit this vulnerability to remotely expose account credentials without requiring an active man-in-the-middle session. Successful exploitation could allow an attacker to retrieve credit card data or other sensitive information. This vulnerability is commonly referred to as "Bar Mitzvah Attack".
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/101851 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101851] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+Tivoli Endpoint Manager for Remote Control version 8.2.1.
+
+REMEDIATION/FIXES
+To specifically resolve this issue, upgrade your server, broker and controller components. The fix pack can be downloaded from Fix Central. 
+
+Product VRMF APAR Remediation/First Fix Tivoli Endpoint Manager for Remote Control 8.2.1 IV73326 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV73326] Tivoli Endpoint Manager for Remote Control Interim Fix pack 8.2.1-TIV-TEMRC821-IF0012. 
+For more information about 8.2.1-TIV-TEMRC821-IF0012, see http://www-01.ibm.com/support/docview.wss?uid=swg24040017 [http://www-01.ibm.com/support/docview.wss?uid=swg24040017]
+
+Fix pack 8.2.1-TIV-TEMRC821-IF0012 will be released 4th June 2015. WORKAROUNDS AND MITIGATIONS
+Alternatively you can apply the following workaround on fix packs prior to IF0012. 
+
+You should verify applying this configuration change does not cause any compatibility issues. Not disabling the RC4 stream cipher will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the RC4 stream cipher and take appropriate mitigation and remediation actions. 
+
+To check if RC4 is enabled in your server configuration, follow these steps:
+
+1. If Tivoli Endpoint Manager for Remote Control is configured for compliance with FIPS 140-2, then RC4 can not be re-enabled.
+
+2. If there are Tivoli Endpoint Manager for Remote Control brokers in the environment, open the broker configuration file, trc_broker.properties, and check DefaultTLSCipherList, as well as any TLSCipherList properties defined as part of a connection. The cipher list should always have !RC4 which disables all cipher suites that use RC4.
+
+For example,
+DefaultTLSCipherList = TLSv1+HIGH\:\!SSLv2\:\!aNULL\:\!eNULL\:\!3DES\:\!DES\:\!RC4\:@STRENGTH
+
+Inbound.1.TLSCipherList = TLSv1+HIGH\:\!SSLv2\:\!aNULL\:\!eNULL\:\!3DES\:\!DES\:\!RC4\:@STRENGTH
+
+It is also recommended to disable RC4 in the Java Run-time Environment used with the Tivoli Endpoint Manager for Remote Control Controller. This can be done by adding RC4 to the jdk.tls.disabledAlgorithms property in the java.security file on the controller system. 
+
+Windows operating system
+[JAVA_HOME]\lib\security\java.security 
+
+Linux operating system
+[JAVA_HOME]/lib/security/java.security 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 4th June 2015: Fix pack details added to Remediation/Fixes section.
+10th April 2015: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

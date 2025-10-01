@@ -1,0 +1,21 @@
+Title: IBM Content Navigator known problem: The IBM Content Manager SSL configuration option is not set correctly - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you enable SSL communication between IBM Content Navigator and an IBM Content Manager system that is running on an Oracle database, the SSL configuration option is not set correctly in the cmbicmsrvs.ini file. 
+
+SYMPTOM
+The SSL setting in the cmbicmsrvs.ini file on the IBM Content Navigator server does not match the SSL setting in the cmbicmsrvs.ini file on the IBM Content Manager server.
+
+
+ENVIRONMENT
+IBM Content Manager running on an Oracle database.
+
+RESOLVING THE PROBLEM
+After you run the Configure the IBM Content Manager connector task in the IBM Content Navigator Configuration and Deployment Tool, copy the SSL setting from the cmbicmsrvs.ini file on the IBM Content Manager server to the cmbicmsrvs.ini file on the IBM Content Navigator server. 
+
+By default, the cmbicmsrvs.ini file is in the \configure\explodedformat\navigator\WEB-INF\classes\connectors subdirectory of the IBM Content Navigator installation directory. 
+
+You must complete this task before you build and deploy the IBM Content Navigator web application. If you do not, the changes to the cmbicmsrvs.ini file will not be picked up by the deployed web application.

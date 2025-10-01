@@ -1,0 +1,27 @@
+Title: IBM AMQ6047 JMS application data conversion problem - United States
+
+Text:
+AMQ6047 AMQ6047 Conversion not supported. ; MQMINFO; MQIINFO; MQWINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your JMS application sending messages to a WebSphere MQ server results in the following message:
+
+AMQ6047: Conversion not supported. 
+EXPLANATION: WebSphere MQ is unable to convert string data tagged in CCSID 1208 to data in CCSID 37.
+ACTION: Check the WebSphere MQ Application Programming Reference Appendix and the appropriate National Language Support publications to see if the CCSIDs are supported by your system. 
+
+
+RESOLVING THE PROBLEM
+- Verify that "/usr/lib/nls/loc/iconv/Universal_UCS_Conv" exists. 
+
+- Verify that "/usr/lib/nls/loc/iconv/UTF-8_IBM-037" exists. If it is missing, install the fileset: bos.iconv.ucs.ebcdic 
+
+ 
+
++++ Related technotes
+Can WebSphere MQ convert Unicode data on AIX [http://www.ibm.com/support/docview.wss?uid=swg21173813]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ MQSeries

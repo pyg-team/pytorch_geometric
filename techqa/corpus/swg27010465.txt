@@ -1,0 +1,44 @@
+Title: IBM Recommended fixes for WebSphere Service Registry and Repository - United States
+
+Text:
+recommended updates latest maintenance download RecommendedFixesDocument RecommendedFixesDocument PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This page provides links to the recommended maintenance packages available for IBM WebSphere Service Registry and Repository. 
+
+CONTENT
+
+
+ Software maintenance updates for WebSphere Service Registry and Repository are supplied in the form of cumulative fix bundled packages, called Fix Packs or Refresh Packs. These are summarized in the tables below, organized by release.
+
+The packages are cumulative, so that each new package has all the fixes contained within the previous package, in addition to the new fixes. Therefore, always install the latest package to bring your installation up to the specified version.
+
+Note that WebSphere Service Registry and Repository Studio Version 8.5 has now replaced all previous Studio versions. If you are using WebSphere Service Registry and Repository Version 8.0 or 8.5 use WebSphere Service Registry and Repository Studio Version 8.5.
+
+
+
+ * WebSphere Service Registry and Repository Version 8.5
+ * WebSphere Service Registry and Repository Studio Version 8.5
+ * WebSphere Service Registry and Repository Version 8.0
+
+
+
+
+
+WebSphere Service Registry and Repository Version 8.5 Version Package Type Install Status Date Released V8.5.6.1 [http://www.ibm.com/support/docview.wss?uid=swg24043121] Fix Pack Recommended 2nd December 2016 V8.5.6.0 [http://www.ibm.com/support/docview.wss?uid=swg24041151] Refresh Pack Superseded 30th October 2015 V8.5.5.0 [http://www.ibm.com/support/docview.wss?uid=swg24039620] Refresh Pack Superseded 18th March 2015 V8.5.0.1 [http://www.ibm.com/support/docview.wss?uid=swg24038279] Fix Pack Superseded 1st September 2014 V8.5.0.0 [http://www.ibm.com/support/docview.wss?uid=swg24036917] Initial Release - 11th April 2014 Back to top
+
+WebSphere Service Registry and Repository Studio Version 8.5 Version Package Type Install Status Date Released Studio V8.5.6.1 [http://www.ibm.com/support/docview.wss?uid=swg24043122] Fix Pack Recommended 2nd December 2016 Studio V8.5.6.0 [http://www.ibm.com/support/docview.wss?uid=swg24041153] Refresh Pack Superseded 30th October 2015 Studio V8.5.5.0 [http://www.ibm.com/support/docview.wss?uid=swg24039621] Refresh Pack Superseded 18th March 2015 Studio V8.5.0.1 [http://www.ibm.com/support/docview.wss?uid=swg24038286] Fix Pack Superseded 1st September 2014 Studio V8.5.0.0 [http://www.ibm.com/support/docview.wss?uid=swg24036917] Initial Release - 11th April 2014 Back to top
+
+WebSphere Service Registry and Repository Version 8.0 Version Package Type Install Status Date Released V8.0.0.3 [http://www.ibm.com/support/docview.wss?uid=swg24038378] Fix Pack Recommended 17th September 2014 Back to top
+
+Related Information Recommended Fix sites for related products  * WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+Back to top
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2007/8/21 
+
+PRODUCT ALIAS/SYNONYM
+ WSRR

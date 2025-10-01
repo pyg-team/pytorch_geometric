@@ -1,0 +1,249 @@
+Title: IBM HE07243: USING SWI COMMAND 'OPEN FROM SMARTEAM' DEFAULTS THE DESTINATION DIRECTORY TO PREVIOUS USER DIRECTORY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Duplicated of BR10000105521
+   Customer has found a major issue which is impacting
+   production.
+   When using the SWI option ?Open from SmarTeam? which we were
+   told is the only supported ST/SW Integration option, the
+   ?Destination directory? defaults to
+   previous user?s destination location, and not obeying the
+   Default Work Directory defined in STFE.
+   The issue is not reproducible if we use the function ?Find
+   Object? which we were told by DS is not a supported use for
+   SWI. See below:
+   If we continue using the ?Open from SmarTeam? option, users
+   have to always remember to manually change the location of
+   the file(s) which will be Checked-Out or the file(s) will be
+   Checked-Out to a location that does not exist.
+   If the file is checked to a non-existing location, the file
+   is not accessible as the location gets created as phantom and
+   the user does not have access to the location.
+   I found BR10000105521 on DS? KB which appears to be the same
+   issue as we are seeing.
+   We cannot use the ?Find object? since DS told us that any
+   option used under the SmarTeam menu in SW other than the
+   ?Open from SmarTeam? is unsupported part of the integration.
+   And using the ?Find Object? option produces the ?Read Only?
+   error with files marked at Checked-Out.
+   The only workaround we can use for now, is for each user to
+   manually set the directory with every checkout.
+   I would like to have this issue elevated and have DS/Artizone
+   immediately provide us with the proper course of action from
+   here, as we have no options to move forward in a ?Supported?
+   fashion.
+   Customer's Environment
+   SmarTeam R20 SP 5 (HF 76)
+   SolidWorks 2011 SP3.0
+   Windows 7 x64
+   Description of BE reproduction of BR10000105521 (for which
+   this SR/BR is Duplicated) :
+   Windows 7 x64 - V5R20 SP5 - SWI x64 - SW2011 SP2 x64 - PLMDB
+   from V5R20 SP5
+   No any default setting changed.
+   Default setting included set in SMARTEAM System Configuration
+   Editor for Default used
+   I have reproduced the reported problem using next scenario:
+   1. Launch SWI with admin
+   2. Default SmarTeam Work directory is My
+   Documents\SmarTeam\Work
+   3. Create DifferentFolder in My Documents
+   4. Create SW Part, Save it by SolidWorks Save As under
+   DifferentFolder
+   5. Do SmarTeam Save and Check In - succeeded
+   6. Open from SmarTeam
+   7. Search for the Part
+   8. Check (mark) Edit check box in SmarTeam Open Dialog -
+   Check Out window appears
+   9. Check the destination directory
+   Expected result: SmarTeam Work directory as My
+   Documents\SmarTeam\Work should appear and the file should be
+   copied into it
+   Current result: the defect - My Documents\DifferentFolder
+   appears (that was folder were the Part was saved previously
+   in SW and in ST)
+   Besides, if we are not using SmarTeam Open dialog (Open from
+   SmarTeam, but any Search and doing Open for Edit/Check Out
+   from Search SmarTeam Editor, there is the right destination
+   folder appear
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  empty
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Duplicated of BR10000105521
+   Customer has found a major issue which is impacting
+   production.
+   When using the SWI option ?Open from SmarTeam? which we were
+   told is the only supported ST/SW Integration option, the
+   ?Destination directory? defaults to
+   previous user?s destination location, and not obeying the
+   Default Work Directory defined in STFE.
+   The issue is not reproducible if we use the function ?Find
+   Object? which we were told by DS is not a supported use for
+   SWI. See below:
+   If we continue using the ?Open from SmarTeam? option, users
+   have to always remember to manually change the location of
+   the file(s) which will be Checked-Out or the file(s) will be
+   Checked-Out to a location that does not exist.
+   If the file is checked to a non-existing location, the file
+   is not accessible as the location gets created as phantom and
+   the user does not have access to the location.
+   I found BR10000105521 on DS? KB which appears to be the same
+   issue as we are seeing.
+   We cannot use the ?Find object? since DS told us that any
+   option used under the SmarTeam menu in SW other than the
+   ?Open from SmarTeam? is unsupported part of the integration.
+   And using the ind Object? option produces the ?Read Only?
+   error with files marked at Checked-Out.
+   The only workaround we can use for now, is for each user to
+   manually set the directory with every checkout.
+   I would like to have this issue elevated and have DS/Artizone
+   immediately provide us with the proper course of action from
+   here, as we have no options to move forward in a ?Supported?
+   fashion.
+   Customer's Environment
+   SmarTeam R20 SP 5 (HF 76)
+   SolidWorks 2011 SP3.0
+   Windows 7 x64
+   Description of BE reproduction of BR10000105521 (for which
+   this SR/BR is Duplicated) :
+   Windows 7 x64 - V5R20 SP5 - SWI x64 - SW2011 SP2 x64 - PLMDB
+   from V5R20 SP5
+   No any default setting changed.
+   Default setting included set in SMARTEAM System Configuration
+   Editor for Default used
+   I have reproduced the reported problem using next scenario:
+   1. Launch SWI with admin
+   2. Default SmarTeam Work directory is My
+   Documents\SmarTeam\Work
+   3. Create DifferentFolder in My Documents
+   4. Create SW Part, Save it by SolidWorks Save As under
+   DifferentFolder
+   5. Do SmarTeam Save and Check In - succeeded
+   6. Open from SmarTeam
+   7. Search for the Part
+   8. Check (mark) Edit check box in SmarTeam Open Dialog -
+   Check Out window appears
+   9. Check the destination directory
+   Expected result: SmarTeam Work directory as My
+   Documents\SmarTeam\Work should appear and the file should be
+   copied into it
+   Current result: the defect - My Documents\DifferentFolder
+   appears (that was folder were the Part was saved previously
+   in SW and in ST)
+   Besides, if we are not using SmarTeam Open dialog (Open from
+   SmarTeam, but any Search and doing Open for Edit/Check Out
+   from Search SmarTeam Editor, there is the right destination
+   folder appear
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  NOTE THAT THIS PROBLEM WILL ALSO BE FIXED ON V5R20 SP7.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED ON V5R21 SP1.
+   Additional Closure Information:
+   -
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE07243
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-24
+   
+   
+ * CLOSED DATE
+   2011-06-17
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569199970
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSN
+   UP

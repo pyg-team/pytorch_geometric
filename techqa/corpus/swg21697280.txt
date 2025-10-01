@@ -1,0 +1,75 @@
+Title: IBM Unable to upgrade JazzSM 1.1.0 on Windows 2008 - United States
+
+Text:
+DASHL2; DASHL2INST; upgrade failure; stopWAS; ADMU3027E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer was unable to successfully upgrade Jazz for SM 1.1.0 on Win 2008 server to Jazz 1.1.1. 
+In this case the Admin Services was failing. DASH was upgraded but the other components fail to upgrade. 
+
+CAUSE
+Reviewing the system logs showed that though the stopWAS command was being issued during the 
+upgrade, the WAS service on the server was not actually being stopped.
+
+
+ENVIRONMENT
+Windows 2008
+
+
+
+DIAGNOSING THE PROBLEM
+From the server1\stopServer.log: 
+
+[05/02/15 11:54:49:806 CET] 00000001 AdminTool A ADMU3201I: Server 
+stop request issued. Waiting for stop status. 
+[05/02/15 11:55:06:374 CET] 00000001 AdminTool A ADMU4000I: Server 
+server1 stop completed. 
+[05/02/15 11:55:06:405 CET] 00000024 WindowsServic 3 inputRec == 
+Successfully stopped service. 
+[05/02/15 11:55:06:421 CET] 00000001 WindowsServic 1 retCode from 
+childProcess.waitFor() is 0 
+[05/02/15 11:55:06:421 CET] 00000001 WindowsServic 3 -- interrupt the 
+thread that is collecting stdout 
+[05/02/15 11:55:07:435 CET] 00000026 WindowsServic 3 
+readAndDisplayServiceLogFile(), caught InterruptedException 
+[05/02/15 11:55:07:435 CET] 00000001 WindowsServic 3 exitCode = 0 
+[05/02/15 11:55:07:435 CET] 00000001 WindowsServic < doWASServiceAction 
+Exit 
+[05/02/15 11:55:07:435 CET] 00000001 WsServerStop < execWithWinService 
+Exit 
+
+Above the stopServer.log says 'Server server1 stop completed.' 
+
+However in the server1\startServer.log: 
+
+[05/02/15 11:55:29:213 CET] 00000001 WindowsServic 1 In 
+executeCommand, args are: E:\IBM\WebSphere\AppServer\bin\WASService.exe 
+-status JazzSM 
+[05/02/15 11:55:29:213 CET] 00000001 WindowsServic 1 Runtime.exec() 
+returned process java.lang.ProcessImpl@f9826290 
+[05/02/15 11:55:29:384 CET] 0000001e WindowsServic 3 inputRec == The 
+service stop is pending. 
+[05/02/15 11:55:29:384 CET] 00000001 WindowsServic 1 retCode from 
+childProcess.waitFor() is 2 
+[05/02/15 11:55:29:384 CET] 00000001 WindowsServic 3 exitCode = 2 
+[05/02/15 11:55:29:384 CET] 00000001 WindowsServic < getServiceStatus 
+Exit 
+[05/02/15 11:55:29:384 CET] 00000001 AdminTool A ADMU3027E: An 
+instance of the server may already be running: server1 
+[05/02/15 11:55:29:384 CET] 00000001 WsServerLaunc E ADMU3027E: An 
+instance of the server may already be running: server1 
+
+The Above startServer.log says 'The service stop is pending. retCode from 
+childProcess.waitFor() is 2 ' 
+
+WAS is not stopped successfully although in logs it says stopped and returning the control to JazzSM. 
+
+
+
+RESOLVING THE PROBLEM
+Stop the JazzSM Windows WAS service. 
+
+ 1. Open the Windows Services control panel. 
+ 2. Right click on the Windows service for JazzSM/DASH and chose "Properties". 
+ 3. Change the "Startup type" value to "disabled", and click "OK". 
+ 4. Start the upgrade again.

@@ -1,0 +1,51 @@
+Title: IBM Agent library am_ibm_16 errors when starting the configured WAS server. - United States
+
+Text:
+CAMADALL CAMADINST agent library am_ibm_16 error JVMJ9TI001E JVMJ9VM015W TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Agent library am_ibm_16 errors when starting the configured WAS server. 
+
+SYMPTOM
+ 
+
+The server will not start and you will see the following error in the WAS server logs.
+[/support/docview.wss?uid=swg21958862&aid=1] [/support/docview.wss?uid=swg21958862&aid=1]
+
+
+CAUSE
+The ITCAMDCHOME variable is incorrectly set in the variables.xml file.
+
+
+ENVIRONMENT
+Distributed
+
+
+
+DIAGNOSING THE PROBLEM
+Look at the native_stderr.log logfile in the WAS server logs directory. You will find the error in here.
+
+
+
+RESOLVING THE PROBLEM
+
+You will see the following error in the WAS server native_stderr.log logfile. The server does not start. 
+
+
+[/support/docview.wss?uid=swg21958862&aid=2] [/support/docview.wss?uid=swg21958862&aid=2]
+
+To resolve this problem, check the following things: 
+
+ * LD_LIBRARY_PATH or LIBPATH or PATH (Windows) in the server.xml file. 
+ * Check the ITCAMDCHOME variable in the variables.xml file. It must be defined correctly and the files referenced in the path must have the right permission and exist. 
+ * Check the userid being used to start WebSphere and the user id being used to start the DC. The id being used to start the DC should have permissions to read/write into the 'runtime' directory. 
+ * Finally, use a supported Java on your system.
+
+The easiest thing to do is to compare to any working server and see if the server.xml and variables.xml files match up. 
+ITCAMDCHOME in this context is where you have ITCAM installed, typically in C:\IBM\ITM\dchome (Win) or /opt/IBM/ITM/dchome (Linux/Unix).  
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfAD ITCAM4AD ITCAM for App Diagnostics

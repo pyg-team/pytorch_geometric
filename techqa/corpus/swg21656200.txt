@@ -1,0 +1,39 @@
+Title: IBM Finding Information for ITCAM for Transactions Web Response Time - United States
+
+Text:
+71WRT-PLAN; 71WRT-INS; 71WRT-CONF; 71WRT-TS; CSILandingPage; SupportLandingPage NEWS
+
+ABSTRACT
+ You need help finding information for the WRT agent, what kind of information do you need? 
+
+CONTENT
+Web Response Time provides real end-user monitoring of client web requests to server components. It can be installed locally on the server system, or on a separate system. Web Response Time uses server-side monitoring to capture HTTP and HTTPS transaction data such as response time and status codes. You can use it to capture the performance and availability data of actual users for Service Level Agreement (SLA) reporting. Web Response Time also detects protocols and applications by monitoring TCP/IP network flows. 
+
+Several sources of information are available 
+
+ * System Requirements and Prerequisites [https://www.ibm.com/developerworks/community/blogs/0587adbc-8477-431f-8c68-9226adea11ed/entry/itcam_for_transactions_blog_on?lang=en] 
+ * Download Information [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/com.ibm.itcamt.doc_7.4.0.0/ITCAMTRANS_download.htm] 
+ * Installation and Configuration Guide, Configuring WRT [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcamt.doc_7.4.0.0%2Frt%2FInstall_Guide%2Fwrt_config.html] 
+ * User's Guide WRT Workspaces [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcamt.doc_7.4.0.0%2Frt%2FWorkspaces%2FT5_WRT%2FWRT_workspaces.html] 
+ * User's Guide [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcamt.doc_7.4.0.0%2Fic%2Fug.html] 
+ * Customizing the WRT agent [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/com.ibm.itcamt.doc_7.3.0.1/rt/User_Guide/Web1/wrtcustomizingweb.html] 
+ * Agentless Transaction Tracking Guide [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/com.ibm.itcamt.doc_7.3.0.1/ic/agtless.html] 
+ * Troubleshooting Guide [http://www.ibm.com/support/knowledgecenter/SS5MD2_7.4.0/com.ibm.itcamt.doc_7.4.0.0/ic/tsg.html] 
+ * Best Practices [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli+Composite+Application+Manager/page/Best+Practices+for+ITCAM+for+Transactions] 
+ * Documentation Previous Versions [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcamt.doc_7.4.0.0%2Fic%2FprevVersions.html]
+
+
+What other information is available?  *  [http://www.ibm.com/support/docview.wss?uid=swg21624484]Collecting Data for Web Response Time [http://www.ibm.com/support/docview.wss?uid=swg21569084] 
+ * Developerworks articles [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Composite%20Application%20Manager/page/ITCAM%20for%20Transactions] 
+ * Media Gallery [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Composite%20Application%20Manager/page/Media%20Gallery%20for%20ITCAM%20for%20Transactions] 
+ * ITCAM Technotes Index [http://www.ibm.com/support/docview.wss?uid=swg21396291#WRT] 
+ * FixCentral ITCAM for Transactions 7.3 [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Tivoli+Composite+Application+Manager&product=ibm/Tivoli/Tivoli+Composite+Application+Manager+for+Transactions&release=7.3.0.0&platform=All&function=all] 
+ * FixCentral ITCAM for Transactions 7.4 [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=Tivoli+Composite+Application+Manager&product=ibm/Tivoli/Tivoli+Composite+Application+Manager+for+Transactions&release=7.4.0.0&platform=All&function=all]
+
+RELATED INFORMATION
+ ITCAM Transaction Technote Index [http://www.ibm.com/support/docview.wss?uid=swg21396291]
+ITCAM for Transactions Support Portal [https://www-947.ibm.com/support/entry/myportal/product/tivoli/tivoli_composite_application_manager_family?productContext=-1552367471]
+ITCAM for Transactions Support Lifecycle [http://www.ibm.com/software/support/lifecycleapp/PLCDetail.wss?synkey=Y126067R51028J24&from=spf]
+Finding Information for ITCAM for Transactions [http://www.ibm.com/support/docview.wss?uid=swg21655543]
+IBM Support Assistant Data Collector [http://www.ibm.com/support/docview.wss?uid=swg21624484]
+IBM Support Portal [http://www.ibm.com/support/electronicsupport/]

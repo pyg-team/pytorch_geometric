@@ -1,0 +1,69 @@
+Title: IBM After editing the LDAP configuration using the System Console, logins and access to LDAP fails - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After editing an LDAP server's configuration using the ISC or SSC under Global Security -> Federated Repositories, access to LDAP is broken and logins are failing. This is due to an invalid setting being saved.
+
+SYMPTOM
+Logins and access to servers and applications may fail, this includes back to the system console itself. 
+
+A review of the systemout logs will show prints similar to: 
+
+
+com.ibm.ws.wim.adapter.ldap.change.ChangeHandlerFactory getChangeHandler CWWIM4551E Change handler was not defined for repository type
+
+
+CAUSE
+The VMM Configuration (wimconfig.xml) contains an invalid setting, specifically (if reviewing the UI)... 
+
+
+
+[$18E23A8E06BFB344.jpg] [/support/docview.wss?uid=swg21675811&amp;aid=1] 
+
+..."Support for repository change tracking" has been set to "native" and the specified LDAP repository does not support that control. 
+
+NOTE: Native is the default setting in the UI, so when editing repositories, be sure to check that it is set correctly. 
+
+RESOLVING THE PROBLEM
+To resolve this problem there are two options: 
+
+ 
+
+If you can access the System Console UI
+
+
+ * 
+
+If you cannot access the System Console UI 
+
+ 
+
+You can manually edit the wimconfig.xml file to make the change. 
+
+ 1. Stop all servers: DMGR, nodeagent(s) and Application Servers. 
+
+ 2. On the Deployment Manager, run a backupConfig for safety. 
+
+ 3. Navigate to the DMGR profile config tree; on a Sametime System Console, the default path would be: 
+
+ * ../Websphere/Appserver/profiles/STSCDmgrProfile/config/cells/<cellname>/wim/config 
+
+4. Open the wimconfig.xml with a text editor.  5. Find the line for your repository config, it will look like:
+
+
+ * 
+
+ * 
+
+ * supportChangeLog="native" 
+
+ * 
+ * 
+ * supportChangeLog="none" 
+
+
+6. Save the changes and start the deployment manager and confirm you again have access to LDAP by logging into the System Console and checking the "Users and Groups" area for lookups. 
+
+7. Restart the nodeagent(s) and application servers and verify access.

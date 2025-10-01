@@ -1,0 +1,78 @@
+Title: IBM MustGather: Out of Memory errors with WebSphere Commerce Server on AIX, Linux, or Windows - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ MustGather: Out of Memory errors with WebSphere Commerce Server on AIX, Linux, or Windows 
+
+RESOLVING THE PROBLEM
+
+
+Collecting data for Out of Memory errors with IBM WebSphere Commerce Server. Gathering this MustGather information before calling IBM Support will help familiarize you with the troubleshooting process and save you time.
+
+This document extends the WebSphere Application Server Out of Memory MustGather [http://www.ibm.com/support/docview.wss?uid=swg21138587] with WebSphere Commerce specific information.
+
+
+ CONFIGURATION 
+Verbose Garbage Collection is required to troubleshoot most OutOfMemoryError situations:
+
+ * Enabling verboseGC in WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg21138587] 
+   Log rotation [http://www.ibm.com/connections/blogs/wcs/entry/boring_but_necessary_rotate_the_gc_log] needs to be implemented for the native_stderr.log after enabling verbose garbage collection.
+   
+   
+
+Optionally, configure the server for native core generation on OutOfMemoryError events:
+
+ * Generating System Cores on OutOfMemory Errors [http://www.ibm.com/support/docview.wss?uid=swg21626849]
+ * Being ready for OutOfMemory errors [http://www.ibm.com/connections/blogs/wcs/entry/being_ready_for_outofmemory_errors]
+
+
+
+
+ COLLECTING DATA 
+
+ 1. Recreate the Out of Memory condition or wait for the condition to reoccur.
+    
+    
+ 2. Collect the following from the profile base directory:
+     * core*.dmp
+     * heapdump*.phd
+     * javacore*.txt
+     * Snap*.trc
+       
+       
+    
+    
+ 3. Collect all server logs, including the native_stderr.log, ie the garbage collection log:  * profile_root/logs/server_name
+       
+    
+    
+
+
+
+Certain MustGather files such as heapdumps and native cores are large in size, and multiples can be created during each event. Use the following document to understand what files are required to minimize the transfer time.
+
+ * Out Of Memory, Out Of Time [http://www.ibm.com/connections/blogs/wcs/entry/outofmemory_outoftime]
+
+
+
+
+ DATA ANALYSIS 
+The following links show how to use the data collected to uncover the root cause of the memory errors. Using these documents will help you speed up resolution.
+
+ * Site Outage: Diagnosing an OOM [https://www.ibm.com/connections/blogs/wcs/entry/site_outage:_diagnosing_an_oom]
+ * Learning Roadmap: OutOfMemoryError [https://www.ibm.com/connections/blogs/wcs/entry/learning_roadmap_outofmemoryerror]
+
+
+
+
+ SUBMITTING DATA TO IBM SUPPORT 
+If assistance from IBM support is required to analyze the MustGather files, submit the data using one of following methods:
+
+ * IBM Support Assistant (ISA)
+ * Service Request (SR)
+ * E-Mail
+ * FTP to the Enhanced Customer Data Repository (ECuRep)
+
+Exchanging information with IBM Technical Support for problem determination [http://www.ibm.com/software/support/exchangeinfo.html]

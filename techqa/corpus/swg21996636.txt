@@ -1,0 +1,17 @@
+Title: IBM Preventing global filter editing by non-administrative users - United States
+
+Text:
+WebGUI; non-administrative; users; launch; filter editor; edit; global filter ; prevent TECHNOTE (FAQ)
+
+QUESTION
+ How can I prevent non-administrative users from being able to launch filter editor and edit global filters in WebGUI 8.1 ? 
+
+CAUSE
+Preventing non-administrative users from being able to launch the filter editor and edit global filters. 
+
+ANSWER
+Please see the following Knowledge article: 
+
+https://www.ibm.com/support/knowledgecenter/SSSHTQ_8.1.0/com.ibm.netcool_OMNIbus.doc_8.1.0/webtop/wip/task/web_adm_modifyingwebtopuserpreferences.html [https://www.ibm.com/support/knowledgecenter/SSSHTQ_8.1.0/com.ibm.netcool_OMNIbus.doc_8.1.0/webtop/wip/task/web_adm_modifyingwebtopuserpreferences.html] 
+
+Alternatively, you can assign your non-administrative users only the ncw_user role and not the ncw_admin role.

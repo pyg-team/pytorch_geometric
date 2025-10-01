@@ -1,0 +1,56 @@
+Title: IBM ReporterPLUS feature does not launch after upgrade - United States
+
+Text:
+Rhapsody; license; date-based; date; feature; version; ReporterPLUS; reporter TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After you have updated the release of IBM Rational Rhapsody, it is working correctly, but ReporterPLUS does not launch. 
+
+SYMPTOM
+Attempts to launch ReporterPLUS from within IBM Rational Rhapsody (Rhapsody)results in the following error:
+
+Rhapsody Reporter Pro license could not be obtained.
+
+Reason:
+
+The FEATURE name ReporterPro with version 2009.0531 cannot be found
+License server system does not support this version of this feature.
+Feature: ReporterPro
+License path: <license path>
+FLEXnet Licensing error:-25,147
+
+
+CAUSE
+Rhapsody uses date based licenses. 
+
+When you try to run a feature in Rhapsody, it will check the date it was released against the date in your license.
+
+So your license does not expire with an update. But you can not use features that were released after their concerning dates in the license.
+
+It is possible, that some of the features in your license have older dates.
+
+Thus you may be able to run parts of a newer version of Rhapsody, but not all of the features you could run in an older version.
+
+
+DIAGNOSING THE PROBLEM
+When you examine this message you see that Rhapsody is looking for a ReporterPro feature in your license with a date of 2009.0531. 
+
+
+If you compare that to your license, you can see the features, but they have a date of either 2007.1231 or 2009.0228:
+
+...
+FEATURE Reporter telelogic 2007.1231 permanent 3 \
+...
+INCREMENT Reporter telelogic 2009.0228 permanent 3 \
+...
+
+The license for ReporterPLUS is valid in this case, when the installed version of ReporterPLUS was released before February 28, 2009.
+
+So, the version of features of Rhapsody that are supported by this license and the installed features are out of sync.
+
+
+RESOLVING THE PROBLEM
+Use either an older version of ReporterPLUS, which is supported by your license. 
+
+
+Update your license otherwise, to support the current feature version(s) of Rhapsody that you wish to use.

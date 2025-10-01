@@ -1,0 +1,170 @@
+Title: IBM IZ61295: INVALID OPTION ERRORS FOR AMWPMCFG - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Env:  TAM 6.0 FP15 on Linux
+   
+   [root@leehp14 sbin]# pdversion
+   IBM Tivoli Access Manager Runtime                       6.0.0.15
+   IBM Tivoli Access Manager Policy Server                 6.0.0.15
+   IBM Tivoli Access Manager Web Portal Manager            6.0.0.15
+   IBM Tivoli Access Manager Application Developer Kit     Not
+   Installed
+   IBM Tivoli Access Manager Authorization Server          Not
+   Installed
+   IBM Tivoli Access Manager Runtime for Java              6.0.0.15
+   IBM Tivoli Access Manager Policy Proxy Server           Not
+   Installed
+   
+   [root@leehp14 sbin]# java -version
+   java version "1.4.2"
+   Java(TM) 2 Runtime Environment, Standard Edition (build 1.4.2)
+   Classic VM (build 1.4.2, J2RE 1.4.2 IBM build cxia32142-20050609
+   (JIT enabled: jitc))
+   
+   Installed Product
+   ----------------------------------------------------------------
+   Name                     IBM WebSphere Application Server
+   Version                  6.0.2.0
+   ID                       BASE
+   Build Level              o0526.07
+   Build Date               6/29/05
+   
+   [root@leehp14 bin]# uname -a
+   Linux leehp14.uscmail.dcn 2.6.9-67.ELsmp #1 SMP Wed Nov 7
+   13:58:04 EST 2007 i686 i686 i386 GNU/Linux
+   
+   
+   
+   Prob Desc: TAM 6.0 utility amwpmcfg giving error of
+   Invalid option and displays usage of TAM 5.1 amwpmcfg as below
+   
+   PWD is /opt/PolicyDirector/sbin
+   
+   [root@leehp14 sbin]# ./amwpmcfg -action config -policysvr
+   leehp14 -policysvr_port 7135 -waspath
+   /opt/IBM/WebSphere/AppServer -was_host leehp14
+   Invalid option name -waspath.
+   
+   Usage:
+   amwpmcfg -action {config | unconfig | status | name} -admin_id
+   <admin_id> -admin_pwd <admin_password> -host policy_server_host
+   [-port <policy_server_port>] [-domain <domain>] -interactive
+   -waspath <websphere-installation_path>
+   amwpmcfg [-help] [-operations] [-?] [-usage] [-rspfile]
+   
+   And,
+   
+   [root@leehp14 sbin]# ./amwpmcfg -action config -host leehp14
+   -port 7135 -domain default -waspath /opt/IBM/WebSphere/AppServer
+   Invalid option name -host.
+   
+   Usage:
+   amwpmcfg -action {config | unconfig | status | name} -admin_id
+   <admin_id> -admin_pwd <admin_password> -host policy_server_host
+   [-port <policy_server_port>] [-domain <domain>] -interactive
+   -waspath <websphere-installation_path>
+   amwpmcfg [-help] [-operations] [-?] [-usage] [-rspfile]
+   
+   Checked installed package and it is pdwpm for 6.0
+   
+   [root@leehp14 tmp]# rpm -qa | grep -i pdwpm
+   PDWPM-PD-6.0.0-15
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This issue has not been recreatable in the L3 l
+   ab environment.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ61295
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0811
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED UR5
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-22
+   
+   
+ * CLOSED DATE
+   2009-11-17
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

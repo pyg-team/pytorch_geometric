@@ -1,0 +1,19 @@
+Title: IBM WebSphere Transformation Extender source map updates are not included when WebSphere Message Broker Toolkit rebuilds a BAR file - United States
+
+Text:
+PMR 01321999000; BAR; broker archive file; MAR; map archive file; WTX map node; WTX for IS; WTX for MB; WTX for IIB; IBM Integration Bus; Message Broker; message flow; Build archive file TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Updates to a WebSphere® Transformation Extender source map (.mms) file are not included when you build a broker archive (BAR) file in Message Broker Toolkit V8.0 and later. 
+
+CAUSE
+When a WTX map node specifies Use map in project, Message Broker Toolkit can add an existing map archive (MAR) file to the BAR file before the updated map finishes compiling.
+
+RESOLVING THE PROBLEM
+
+
+
+Do one of the following to ensure that Message Broker Toolkit includes the updated MAR file in the BAR file: 
+
+ * Delete an existing MAR file from the project before you build a bar file. 
+ * Build the BAR file twice, so that the "existing" MAR file is compiled during the first build.

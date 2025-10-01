@@ -1,0 +1,132 @@
+Title: IBM FAQs - General - United States
+
+Text:
+ 
+ 
+
+IBM Support Portal [http://www.ibm.com/support] Machine Code License and Licensed Internal Code [http://www.ibm.com/support/docview.wss?uid=isg3T1025362] Machine warranties and license information [http://www.ibm.com/support/docview.wss?uid=isg3T1025361] International Warranty Service [http://www.ibm.com/support/docview.wss?uid=isg3T1025366] Advanced Part Exchange Warranty Service [http://www.ibm.com/support/docview.wss?uid=isg3T1025367] Authorized Use Table [http://www.ibm.com/support/docview.wss?uid=isg3T1025368] Environmental notices [http://www.ibm.com/support/docview.wss?uid=isg3T1025370] Install Policy [http://www.ibm.com/support/docview.wss?uid=isg3T1025365] Terms by product [http://www.ibm.com/support/docview.wss?uid=isg3T1025369] FAQs [http://www.ibm.com/support/docview.wss?uid=isg3T1025364] Glossary [http://www.ibm.com/support/docview.wss?uid=isg3T1025363] [data:image/gif;base64,R0lGODlhEAABAPAAAAAAAP///yH5BAEAAAEALAAAAAAQAAEAQAIEjI8ZBQA7] [data:image/gif;base64,R0lGODlhEAABAPAAAAAAAP///yH5BAEAAAEALAAAAAAQAAEAQAIEjI8ZBQA7] 
+
+
+
+
+
+
+The following are general frequently asked questions (FAQs)¹ concerning Machine warranties.
+
+The answers provided in this document are based on IBM's standard terms and apply for most countries. Please see the "Country Required Terms" in Part 2 of the IBM Statement of Limited Warranty for any country variances.
+
+Please see this page for FAQ's concerning upgrades and software for Machine warranties. [http://www.ibm.com/support/docview.wss?uid=isg3T1025372]
+
+
+
+
+ * What is the purpose of the IBM Machine warranty?
+ * Does the IBM Machine warranty include software?
+ * When does the IBM Machine warranty begin?
+ * What is the warranty on items (parts) replaced under the IBM Machine warranty?
+ * What is not covered in the Machine warranty?
+ * Where can I find warranty documentation?
+ * Can I transfer Machine Code to another party?
+ * Does purchasing extended warranty change my product warranty coverage?
+ * Can I purchase extended warranty for every IBM product?
+
+
+
+
+GENERAL FAQS
+ Q: What is the purpose of the IBM Machine warranty?
+
+A: The IBM Machine [http://www.ibm.com/support/docview.wss?uid=isg3T1025363#M] warranty is intended to protect you from defects in materials and workmanship of the Machine for a specified, fixed period commencing on its Date of Installation.
+
+Back to top
+
+
+
+
+ Q: Does the IBM Machine warranty include software?
+
+A: No. The term "Machine" does not include any software programs, whether pre-loaded with the Machine, installed subsequently or otherwise. “Machine” does include Machine Code licensed to and executing on the Machine. 
+
+Back to top
+
+
+
+
+ Q: When does the IBM Machine warranty start?
+
+A: The warranty period starts: 
+
+(a) for a Machine specified as Customer Set Up (CSU), on the second business day after the standard transit allowance period;
+(b) for a Machine not specified as CSU, on the earlier of (i) the business day after IBM completes its standard installation procedure and (ii) 45 days following shipment from IBM.
+
+Back to top
+
+
+
+
+ Q: What is the warranty on items (parts) replaced under the IBM Machine warranty?
+
+A: Parts (items) replaced during the Machine Warranty Period [http://www.ibm.com/support/docview.wss?uid=isg3T1025363#W] are not warranted separately, the replacement assumes the warranty service status of the replaced part (item). The replacement may not be new, but will be in good working order and at least functionally equivalent to the item replaced. 
+
+Back to top
+
+
+
+
+ Q: What is not covered in the Machine warranty?
+
+A: The warranty does not cover the repair or exchange of a Machine resulting from misuse, accident, modification, unsuitable physical or operating environment, improper maintenance by you, or failure caused by a product for which IBM is not responsible. The warranty also does not cover non-IBM Products, including those provided with, or installed on, an IBM Machine at your request, accessories, supply items or consumables, service of Machine alterations and service of a Machine on which you are using capacity or capability, other than that authorized by IBM in writing. The warranty is voided by removal or alteration of Machine or parts identification labels. 
+
+Back to top
+
+
+
+
+ Q: Where can I find warranty documentation?
+
+A: Warranty documentation and the IBM Statement of Limited Warranty is packaged with each Machine. The warranty and service information contains information on your warranty coverage, warranty service type, service level and length. IBM's obligations regarding Machine warranty are governed by the IBM Statement of Limited Warranty. 
+
+Back to top
+
+
+
+
+ Q: Can I transfer Machine Code to another party?
+
+A: For IBM Machines shipped starting April 2, 2012, the Machine Code license is not transferable with the Machine. Each subsequent user or possessor of a Machine must obtain their own license for use of the Machine Code prior to making any use of the Machine (which includes powering on the Machine). For Machines specified as an “Acceptance-by-Use Machine,” IBM grants the subsequent possessor of the Machine a license for use of Machine Code, in accordance with the license terms for use of the Machine Code, upon the possessor’s initial use of the Machine; for all other Machines, IBM only grants the subsequent possessor of the Machine a license for use of the Machine Code following the possessor’s signed acceptance of the terms of the license agreement.
+
+To determine the license terms for a particular type of IBM Machine, or to determine if a particular type of IBM Machine is an “Acceptance-by-Use Machine,” refer to IBM Machine terms [http://www.ibm.com/support/docview.wss?uid=isg3T1025369].
+
+Back to top
+
+
+
+
+ Q: Does purchasing extended warranty change my product warranty coverage?
+
+A: The extended warranty option you select provides you service coverage beyond the product's standard warranty period, however this does not change the terms and conditions of the standard product warranty. It simply provides incremental service beyond the standard limited product warranty. 
+
+Back to top
+
+
+
+
+ Q: Can I purchase extended warranty for every IBM product?
+
+A: For your convenience, IBM may offer extended warranty services on selected products identified in the product's announcement letter. You can also obtain information regarding products available for extended warranty from your IBM Sales Representative or your IBM reseller. Please consult with your advisors about the appropriate financial treatment for these offerings. 
+
+Back to top
+
+
+
+
+ADDITIONAL RESOURCES
+ * Warranty lookup [http://www.ibm.com/support/entry/portal/wlup]
+ * Locate machine type, model, and serial number [http://www.ibm.com/support/docview.wss?uid=isg3T1025467]
+ * Open a service request [http://www.ibm.com/support/servicerequest/Home.action]
+ * Warranty service upgrades and maintenance options [http://www.ibm.com/support/docview.wss?uid=isg3T1025378]
+
+
+
+
+ ¹ IBM provides answers to frequently asked questions for informational purposes only. IBM’s warranty and licenses are specified by the terms of their respective agreements; the information in these FAQs does not alter or modify the terms of such agreements or of any other agreement in effect with IBM.

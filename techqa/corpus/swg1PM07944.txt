@@ -1,0 +1,273 @@
+Title: IBM PM07944: REMOVE EDITPROC RESTRICTIONS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Remove EditProc restrictions (DK1308).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: DB2 9 for z/OS users of EDITPROCs            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Due to the restrictions associated      *
+   *                      with the current type of edit           *
+   *                      procedures (EDITPROCs), DB2 9 for z/OS  *
+   *                      will support a new type of EDITPROC     *
+   *                      with fewer restrictions.                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Some of the restrictions associated with current EDITPROCs
+   make using newer data types and adding columns not currently
+   possible. This enhancement to EDITPROCs allows the newer data
+   types as well as the ability to ALTER TABLE ADD COLUMN for
+   tables already using EDITPROCs.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  New syntax will be provided on the CREATE TABLE EDITPROC clause:
+   
+   If a user specifies EDITPROC <program-name> WITH ROW ATTRIBUTES,
+   then the behavior remains the same. This means the table may
+   not contain any identity, LOB, XML, ROWID, or SECURITY LABEL
+   columns. This is the default.
+   
+   If a user specifies EDITPROC <program-name> WITHOUT ROW
+   ATTRIBUTES, the users may create tables containing identity,
+   XML, ROWID, or SECURITY LABEL columns.
+   
+   You must not specify any edit procedure for a table with a LOB
+   column. For more information on writing an EDITPROC, see DB2
+   Administration Guide. If you omit EDITPROC, the table has no
+   edit procedure.
+   
+   
+   For the ALTER TABLE ADD COLUMN case, if a table has been defined
+   with an EDITPROC WITHOUT ROW ATTRIBUTES, then users may alter
+   add identity, XML, ROWID, or SECURITY LABEL columns.
+   
+   This enhancement does not allow users to alter EDITPROCs between
+   WITH or WITHOUT ROW ATTRIBUTES.
+   
+   ++HOLD COMMENT FOR RELEASE 910, TYPE DOC:
+   PM07944 introduces the following changes to externals:
+   
+   Changed messages or codes:
+   For SQLCODE -350, the following is added to the explanation:
+     - An XML column cannot be defined in a table that has an edit
+       procedure that is defined with row attribute sensitivity
+     - A LOB column cannot be defined in a table that has an edit
+       procedure
+   
+   For SQLCODE -668, the message text has been modified to:
+     THE COLUMN CANNOT BE ADDED TO THE TABLE BECAUSE THE TABLE
+     HAS AN EDIT PROCEDURE DEFINED WITH ROW ATTRIBUTE SENSITIVITY
+   
+   For SQLCODE -750, the following has been modified in the
+   explanation:
+     The table has a valid procedure or an edit procedure that is
+     defined with row attribute sensitivity.
+   
+   For SQLCODE -771, the following is added to the explanation:
+     - A ROWID column cannot be a column in a table with an edit
+       procedure that is defined with row attribute sensitivity
+   
+   For SQLCODE -846, the following is modified for REASON CODE 5:
+     An edit procedure that is defined with row attribute
+     sensitivity was specified for the identity column.
+   
+   For SQLCODE -876, the following is modified in the explanation:
+     The table being created or altered has an edit procedure that
+     is defined with row attribute sensitivity, FIELDPROC, or
+     VALIDPROC, in which case the column name in EBCDIC cannot
+     exceed 18 EBCDIC bytes in length, or the conversion of a
+     column name from UNICODE to EBCDIC failed.
+   
+   For SQLCODE -20240, the following is modified for REASON CODE 2:
+     An edit procedure that is defined with row attribute
+     sensitivity was specified for the table with a security label
+     column.
+   
+   For message DSNH350I, the following is modified in the
+   explanation:
+     - A XML column cannot be defined in a table that has an edit
+       procedure that is defined with row attribute sensitivity
+   
+   
+   Changed option for SQL statement CREATE TABLE, EDITPROC:
+   WITH ROW ATTRIBUTES
+     Specifies that the edit procedure parameter list contains an
+     address for the description of a row. WITH ROW ATTRIBUTES
+     must not be specified for a table with an identity, LOB, XML,
+     ROWID, or SECURITY LABEL column. WITH ROW ATTRIBUTES is the
+     default. When WITH ROW ATTRIBUTES is used, the column names
+     in the table must not be longer than 18 EBCDIC SBCS characters
+     in length.
+   
+   WITHOUT ROW ATTRIBUTES
+     Specified that the description of the row is not provided to
+     the edit procedure. On entry to the edit procedure, the
+     address for the row description in the parameter list contains
+     a value of zero.
+   
+   
+   In catalog table SYSIBM.SYSTABLES, CHECKRID column description
+   is updated to the following:
+     A value of 'FFFFFF00' in this column indicates that the edit
+     procedure on this table is defined without row attribute
+     sensitivity. Any other value indicates that the edit procedure
+     is defined with row attribute sensitivity.
+   
+   
+   Information about this enhancement will be included in the
+   Information Management Software for z/OS Solutions Information
+   Center (http://publib.boulder.ibm.com/infocenter/imzic) at a
+   later date.
+   
+   ++HOLD COMMENT FOR RELEASE 910, TYPE MTS:
+   PM07944 is a pre-conditioning APAR that includes changes to
+   support a new function that will be enabled via another APAR at
+   a later date. At this time, all of the changes are transparent
+   to the user. In a data sharing group, this pre-conditioning APAR
+   should be applied to all members before the later enabling APAR
+   is applied.
+   
+   Additional Keywords:
+   SQLCREATE
+   SQLALTER
+   SQLCODE350
+   SQLCODE668
+   SQLCODE750
+   SQLCODE771
+   SQLCODE846
+   SQLCODE876
+   SQLCODE20240
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM07944
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-18
+   
+   
+ * CLOSED DATE
+   2011-08-30
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK71403
+   
+   
+
+MODULES/MACROS
+ *  DSNDHNOD DSNDOBD  DSNDURLD DSNGDART DSNGDBRT
+   DSNGDVAR DSNGDVRT DSNIADR  DSNIENSR DSNILEDR DSNILREP DSNIMDLR
+   DSNIMOFR DSNIMSMC DSNIONX2 DSNIOST2 DSNIREDR DSNIRFNX DSNIRNXT
+   DSNIRSET DSNISFX2 DSNISRTI DSNITEDI DSNUEXDB DSNUGCKP DSNURWBF
+   DSNXIAB3 DSNXIATB DSNXICB1 DSNXICB3 DSNXICB8 DSNXICOM DSNXICTB
+   DSNXIRCO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY UK71403 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK71403]
+   UP11/09/15 P F109
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

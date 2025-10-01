@@ -1,0 +1,32 @@
+Title: IBM CICS VR 5.1, 4.3 and 4.2 compatibility with CICS TS for z/OS 4.1 - United States
+
+Text:
+CICSVR ; CICS VSAM Recovery 4.3 4.2 4.1 ; Version 4 Release 3 ; Version 4 Release 2 ; supports CICS Transaction server for z/os 4.1 ; CICSTS ; CCICS TS ; Version 4 Release 1 ; V4R1 ; supports requirements required ptfs 5655Y2400 R510 R51C R51E R51K 5655-Y24 5655Y24 FMID HCCV510 JCCV51E JCCV51K 5655P3000 5655H9101 R410 R420 R430 R320 R330 5655-P30 5655-H91 5655P30 5655H91 FMID HCCV430 HCCV420 HCCV410 HCCV320 HCCV330 ; 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97; KIXDCFCVR41 KIXDCFCVR42 KIXDCFCVR43 kixdcfcic660 retention41 PRODUCT LIFECYCLE
+
+ABSTRACT
+ You would like to know if CICS VSAM Recovery for z/OS (CICS VR) V5.1, V4.3 and V4.2 fully support CICS Transaction Server for z/OS (CICS TS) V4.1. You would also like to know if any additional PTFs are required. 
+
+CONTENT
+CICS VR V5.1, V4.3 and V4.2 fully support CICS TS V4.1. 
+
+For CICS VR V5.1, refer to the CICS VR 5.1 Detailed System Requirements [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1266668088954&osPlatform=z/OS#] 'Prerequisites' tab.
+
+If you plan on deploying the CICS VR support for automated recovery [http://pic.dhe.ibm.com/infocenter/cicsts/v4r2/index.jsp?topic=%2Fcom.ibm.cics.cvr.doc%2Fdwwig%2Fwhatisthecicsvrautomatedrecoveryforcicsts.html] within CICS TS V4.1, you will need to apply the PTF for CICS VR APAR PK82210 [http://www.ibm.com/support/docview.wss?uid=swg1PK82210] to add this support to CICS VR V4.3 and V4.2.
+
+If you do not plan on deploying CICS VR support for automated recovery or forward recovering extended ESDS [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.applicationprogramming.doc/topics/dfhp3_esds_upgrade.html] files within CICS TS V4.1, you can continue to use CICS VR V4.1 (although it is no longer in service).
+
+As of 31 July 2013, CICS VR V5.1, V4.3, and V4.2 are the supported versions of CICS VR. Refer to the CICS VSAM Recovery for z/OS website [http://www.ibm.com/software/htp/cics/vr/] and the Announcement letters for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21227090] for information on the latest releases of CICS VR.
+
+Both CICS VR V3.2 and V3.3 are no longer supported, nor is CICS VR V4.1. Refer to the Support Lifecycle page [http://www.ibm.com/software/support/lifecycle/index_c.html] for more details.
+
+RELATED INFORMATION
+#CICS VSAM Recovery Support [http://www.ibm.com/software/htp/cics/vr/support/]
+CICS VR support for CICS TS 4.2 [http://www.ibm.com/support/docview.wss?uid=swg21504624]
+CICS VR V5.1 Operating Environment [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.cvr.doc/dwwig/dwwig00006.html]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Transaction Server Migration z/OS 4.2, 4.1, 3.2, 3.1 
+PRODUCT ALIAS/SYNONYM
+ CICSVR CICS VR CICS/VR

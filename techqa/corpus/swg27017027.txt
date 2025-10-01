@@ -1,0 +1,60 @@
+Title: IBM IMS TM Resource Adapter: Supported development environments and runtime environments - United States
+
+Text:
+ PRODUCT README
+
+ABSTRACT
+ The IMS™ TM resource adapter is included in several IBM® Rational® and WebSphere® integrated development environments (IDEs). This document provides a list of these IDEs and the supported versions of the IMS TM resource adapter. This document also provides a list of these IDEs and the supported versions of the target IMS and the integrated IMS Connect function based on the version of the IMS TM resource adapter. 
+
+CONTENT
+The IMS TM resource adapter uses IMS Connect, which is provided as an integrated function of IMS.
+
+
+
+
+
+The following table shows the supported development environments and runtime environments.
+
+Table 1. Application development environments and runtime environments 
+
+IDE IMS TM Resource Adapter Version Target Version of IMS with integrated IMS Connect 1 Target Application Server Remarks Rational Application Developer (RAD) V8.5 or later  * V14 
+ * V13 
+ * V12
+
+V14, V13, V12  * WebSphere Application Server V8, V7, V6.1.0.19 or later2 
+ * WebSphere Liberty V8.5 or later2 
+ * Other generic Java EE 1.4 or later certified application servers
+
+Use the message-driven bean programming model (recommended) or the J2C Java™ bean programming mode WebSphere Message Broker (WMB) Toolkit V8, V7, V6.1.0.3 or later, or IBM Integration Bus (IIB) V10  * V14 
+ * V13 
+ * V12.1 (in WMB V8)
+
+V14, V13, V12, WMB V8, V7, V6.1.0.3 or later
+
+IIB V10 Use the WMB programming model IBM IntegrationDesigner V7.53 Included in Integration Designer:  * V11.3 
+
+V14, V13, V12 WebSphere Process Server V7.5 Use the SCA/SDO programming model  1. The integrated IMS Connect function can coexist with earlier or newer versions of IMS. See the Release Planning Guide for the version of IMS that you are using for IMS Connect coexistence considerations and coexistence APARs.
+    
+ 2. IMS TM resource adapter can run in a managed Java EE 1.4 or later certified application server environment, including WebSphere Application Server Liberty Profile, with a subset of functions.  * Two-phase commit (2PC), MFS functions, and conversational and global transactions (XA) are not supported. 
+     * For non-IBM Java EE 1.4 or later certified application servers, to receive IBM service support, the following requirements must be met:  1. The IMS TM resource adapter IVP must run successfully. 
+        2. For specific functions, IBM support is provided if:  * The problem can be recreated in the supported versions of WebSphere Application Server or WebSphere Application Server Liberty Profile, or 
+            * The problem is confirmed to be caused by the IMS TM resource adapter. Provide the diagnostic traces information when you open a problem report (PMR) to assist problem determination.
+           
+           
+       
+       
+    
+    
+ 3. To build composite business applications by reusing IMS conversational transactions, IBM Integration Developer Version 7.5 or later is required. The WebSphere Integration Developer includes an older version of IMS TM Resource Adapter. You can import the RAR file for the latest version of V14, V13, or V12 of the IMS TM resource adapter into your project manually. Creating exports in IBM Integration Developer to consume IMS callout messages is not supported. 
+
+
+Additional notes:  * Applications developed with IBM Integration Developer run on only WebSphere Process Server. The target application server versions for applications developed using RAD in WID are the same as those listed for RAD. 
+ * Rational Developer for System z® also includes the J2C wizard in RAD. Starting Version 7.5, Rational Developer for System z offers different packages. You need the package with Java, which includes the J2C wizard. 
+ * The target application server versions for RAD apply to both distributed and z/OS® platforms. 
+ * Applications developed with a given level of IBM Integration Designer, or RAD, are supported for deployment on the target application server version and later versions.
+   
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2009/10/30

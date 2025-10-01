@@ -1,0 +1,217 @@
+Title: IBM PI73138: TRANSACTION RECOVERY MAY FAIL WHEN A RESOURCE ADAPTER IS EMBEDDED IN AN INSTALLED APPLICATION - United States
+
+Text:
+  FIXES ARE AVAILABLE
+9.0.0.6: WebSphere Application Server traditional V9.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24044242]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+9.0.0.7: WebSphere Application Server traditional V9.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24044620]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a resource adapter is embedded in an application, when
+   the transaction manager tries to recover a transaction
+   involving the resource, recovery fails with a classloader
+   issue. If the resource adapter is defined at cell/node scope,
+   then recovery completes without any issue.
+   
+   Below is an example callstack generated when attempting to
+   recover a WebSphere Adapter for Email embedded in an
+   application:
+   
+   java.lang.NoSuchMethodException:
+   com.sun.mail.imap.IMAPStore.<init>(javax.mail.Session,
+   javax.mail.URLName)
+   at java.lang.Class.throwNoSuchMethodException(Class.java:420)
+   at java.lang.Class.getConstructor(Class.java:473)
+   at javax.mail.Session.getService(Session.java:782)
+   at javax.mail.Session.getStore(Session.java:574)
+   at javax.mail.Session.getStore(Session.java:536)
+   at javax.mail.Session.getStore(Session.java:515)
+   at
+   com.ibm.j2ca.email.util.EmailManager.<init>(EmailManager.java:17
+   6)
+   at
+   com.ibm.j2ca.email.EmailEventStore.<init>(EmailEventStore.java:1
+   17)
+   at
+   com.ibm.j2ca.email.EmailResourceAdapter.createEventStore(EmailRe
+   sourceAdapter.java:175)
+   at
+   com.ibm.j2ca.extension.eventmanagement.internal.EventStoreBacked
+   XAResource.createEventStoreForRecovery(EventStoreBackedXAResourc
+   e.java:112)
+   at
+   com.ibm.j2ca.extension.eventmanagement.internal.EventStoreBacked
+   XAResource.recover(EventStoreBackedXAResource.java:436)
+   at
+   com.ibm.ws.Transaction.JTA.XARminst.recover(XARminst.java:141)
+   at
+   com.ibm.ws.Transaction.JTA.XARecoveryData.recover(XARecoveryData
+   .java:719)
+   at
+   com.ibm.tx.jta.impl.PartnerLogTable.recover(PartnerLogTable.java
+   :432)
+   at
+   com.ibm.tx.jta.impl.RecoveryManager.resync(RecoveryManager.java:
+   1543)
+   at
+   com.ibm.tx.jta.impl.RecoveryManager.performResync(RecoveryManage
+   r.java:2276)
+   at
+   com.ibm.ws.tx.jta.RecoveryManager.performResync(RecoveryManager.
+   java:119)
+   at
+   com.ibm.tx.jta.impl.RecoveryManager.run(RecoveryManager.java:222
+   9)
+   at java.lang.Thread.run(Thread.java:790)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Define the resource at cell/node scope.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  WebSphere Application Server users of       *
+   *                  embedded resource adapters                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Transaction recovery fails with         *
+   *                      classloading issues when attempting     *
+   *                      to recover a resource adapter embedded  *
+   *                      in an application.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If an embedded resource adapter loads classes using the
+   thread's context class loader, and the classes it loads exist
+   both in the application server's runtime and the application
+   or resource adapter then the classloader set as the recovery
+   thread's context class loader may lead to class loading issues
+   causing recovery of the resource to fail.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Typically this can be resolved by selecting the option to
+   isolate the resource adapter.
+   
+   If isolating the resource adapter is not an option when
+   recovering a non-isolated, embedded J2C resource adapter then
+   the application server's recovery component can be configured
+   to set the thread's context class loader to the classloader of
+   the resource adapter's XAResource.
+   
+   To enable the use of the alternate classloader the JVM system
+   property below can be specified with a value of true
+   
+   com.ibm.ws.Transaction.JTA.XARecoveryData.useEmbeddedRAClassLoad
+   er
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 8.5.5.13 and 9.0.0.6.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI73138
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-12-02
+   
+   
+ * CLOSED DATE
+   2017-09-19
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP
+   
+   
+ * R900 PSY
+   UP

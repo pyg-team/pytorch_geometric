@@ -1,0 +1,43 @@
+Title: IBM Dependency scan works only if  lsof 4.80 diagnostic tool is installed - United States
+
+Text:
+ILMT; agent; LMT; scan TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ Why dependency scan is not working in ILMT? 
+
+CAUSE
+lsof 4.80 diagnostic tool is not installed on the system
+
+ANSWER
+For AIX® and Solaris®, the dependency scan works only if the lsof 4.80 diagnostic tool is installed. The default lsof installation path is /usr/sbin/lsof. If you choose an installation path other than the default, you must issue the wscancfg -s lsof.bin PATH_TO_LSOF_BINARY command. 
+
+For example, for Common Inventory Technology installed in a default location:
+
+
+/opt/tivoli/cit/bin/wscancfg -s lsof.bin /opt/sbin/lsof
+will instruct Common Inventory Technology to use lsof located in /opt/sbin/.
+
+To download lsof 4.80 visit:
+AIX:
+http://ibm.co/XvDNX8 [http://ibm.co/XvDNX8]
+
+Solaris:
+http://ibm.co/15AUMLd [http://ibm.co/15AUMLd]
+
+Tip: 
+Dependency scans work if the following commands can be executed with the lsof you installed:
+1. lsof -i4 -i6 -P -n (for AIX, Solaris 8 and Solaris 9)
+2. lsof -z -i4 -i6 -P -n (for Solaris 10 and Solaris 11)
+
+Solaris 10 requires the following versions of lsof : 
+
+ * Solaris 10 05/08 or higher requires lsof 05/08 4.80 
+ * Solaris 10 11/06 with a patch applied to the kernel requires lsof 05/08 4.80 
+ * Solaris 10 11/06 or lower requires lsof 11/06 4.80
+
+RELATED INFORMATION
+#Other software requirements for the agents [http://pic.dhe.ibm.com/infocenter/tivihelp/v53r1/index.jsp?topic=%2Fcom.ibm.lmt75.doc%2Fcom.ibm.license.mgmt.upgrading.doc%2Fr_other_software_reqs_agents_upg.html]

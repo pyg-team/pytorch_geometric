@@ -1,0 +1,117 @@
+Title: IBM PureData Systems for Analytics Disabling Secure Sockets Layer (SSL) Version 2 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I disable Secure Sockets Layer (SSL) Version 2? 
+
+ANSWER
+SSL version 2 protocol is known to have cryptographic weaknesses as well as other exploitable vulnerabilities that have been identified in security scans.
+
+The following instructions need to be performed as root on the NPS host. If you have an HA system, perform the steps on both hosts.
+
+1. Confirm that ssl v3 is running:
+openssl s_client -connect localhost:443 -ssl3
+
+The resulting output should be similar to the following:
+
+[nz@cs-spubox3 ~]$ openssl s_client -connect localhost:443 -ssl3
+CONNECTED(00000003)
+depth=0 /C=US/ST=Massachusetts/L=Framingham/O=Netezza Corporation/OU=Support/CN=cs-spubox3/emailAddress=support@netezza.com
+verify error:num=18:self signed certificate
+verify return:1
+depth=0 /C=US/ST=Massachusetts/L=Framingham/O=Netezza Corporation/OU=Support/CN=cs-spubox3/emailAddress=support@netezza.com
+verify return:1
+---
+Certificate chain
+0 s:/C=US/ST=Massachusetts/L=Framingham/O=Netezza Corporation/OU=Support/CN=cs-spubox3/emailAddress=support@netezza.com
+i:/C=US/ST=Massachusetts/L=Framingham/O=Netezza Corporation/OU=Support/CN=cs-spubox3/emailAddress=support@netezza.com
+---
+Server certificate
+-----BEGIN CERTIFICATE-----
+MIIDxDCCAy2gAwIBAgIBADANBgkqhkiG9w0BAQQFADCBozELMAkGA1UEBhMCVVMx
+FjAUBgNVBAgTDU1hc3NhY2h1c2V0dHMxEzARBgNVBAcTCkZyYW1pbmdoYW0xHDAa
+BgNVBAoTE05ldGV6emEgQ29ycG9yYXRpb24xEDAOBgNVBAsTB1N1cHBvcnQxEzAR
+BgNVBAMTCmNzLXNwdWJveDMxIjAgBgkqhkiG9w0BCQEWE3N1cHBvcnRAbmV0ZXp6
+YS5jb20wHhcNMDgxMjA1MTUxMTMyWhcNMDkxMjA1MTUxMTMyWjCBozELMAkGA1UE
+BhMCVVMxFjAUBgNVBAgTDU1hc3NhY2h1c2V0dHMxEzARBgNVBAcTCkZyYW1pbmdo
+YW0xHDAaBgNVBAoTE05ldGV6emEgQ29ycG9yYXRpb24xEDAOBgNVBAsTB1N1cHBv
+cnQxEzARBgNVBAMTCmNzLXNwdWJveDMxIjAgBgkqhkiG9w0BCQEWE3N1cHBvcnRA
+bmV0ZXp6YS5jb20wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAKbrwQqIb+1X
+j6nZ+Kqx/kSoyhcgKrhctoJC7ltfjTXx3OM63uqwW6IoGDZP5kuarIeInc9M6o/e
+t+Zt8+iAPCIZeSnU7rQlGSyCMZDJimqL51CjGRNCEzq0IZKnwo11OBsVa5tfL6bT
+Obuw+l9iZE5QoVzmIEUwBfQrOq7zfzqvAgMBAAGjggEEMIIBADAdBgNVHQ4EFgQU
+CIvsnL4177v3LqaA73J2BP+lUp8wgdAGA1UdIwSByDCBxYAUCIvsnL4177v3LqaA
+73J2BP+lUp+hgamkgaYwgaMxCzAJBgNVBAYTAlVTMRYwFAYDVQQIEw1NYXNzYWNo
+dXNldHRzMRMwEQYDVQQHEwpGcmFtaW5naGFtMRwwGgYDVQQKExNOZXRlenphIENv
+cnBvcmF0aW9uMRAwDgYDVQQLEwdTdXBwb3J0MRMwEQYDVQQDEwpjcy1zcHVib3gz
+MSIwIAYJKoZIhvcNAQkBFhNzdXBwb3J0QG5ldGV6emEuY29tggEAMAwGA1UdEwQF
+MAMBAf8wDQYJKoZIhvcNAQEEBQADgYEAXZDbwdwdhcLEM12OOxvL4/pBwbdCRkXV
+Z96QfgyIzqOVmnCD/McuPhga8V8FG5AyhWpWDLfNGNCyldfBjd9YEaYAzxd274hL
+9AszGBeL7iDsnLyl2IJgvci6qi+1PeQzv/L+SHcTfp/ZQ4t0VEnuLAn87WE4cjYW
+qcsL6SA1hz4=
+-----END CERTIFICATE-----
+subject=/C=US/ST=Massachusetts/L=Framingham/O=Netezza Corporation/OU=Support/CN=cs-spubox3/emailAddress=support@netezza.com
+issuer=/C=US/ST=Massachusetts/L=Framingham/O=Netezza Corporation/OU=Support/CN=cs-spubox3/emailAddress=support@netezza.com
+---
+No client certificate CA names sent
+---
+SSL handshake has read 1548 bytes and written 314 bytes
+---
+New, TLSv1/SSLv3, Cipher is DHE-RSA-AES256-SHA
+Server public key is 1024 bit
+SSL-Session:
+Protocol : SSLv3
+Cipher : DHE-RSA-AES256-SHA
+Session-ID: A45B154B6FF76EC204DFD02BBA656B348DFCAA3D04B1CFA04CAA8E5D6528581C
+Session-ID-ctx:
+Master-Key: C2088ECDB47143FC3777933B935EE5B8B02BE59D44F6B6A8D34E4F5D49EC67C2B3ED87075710331D3F2BB83B365F5DF7
+Key-Arg : None
+Krb5 Principal: None
+Start Time: 1238187620
+Timeout : 7200 (sec)
+Verify return code: 18 (self signed certificate)
+---
+
+2. Enter q to get back to the operating system prompt.
+
+3. Confirm that ssl v2 is also running:
+openssl s_client -connect localhost:443 -ssl2
+
+This should produce output similar to Step 1.
+
+4. Make a backup copy of the /etc/httpd/conf.d/ssl.conf file.
+
+5. Open the /etc/httpd/conf.d/ssl.conf file and change +SSLv2 to !SSLv2 on the SSLCipherSuite parameter:
+
+OLD parameter: SSLCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP
+NEW parameter: SSLCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:!SSLv2:+EXP
+
+5. Save your changes and exit the editor.
+
+6. Make a backup copy of the /etc/httpd/conf/httpd.conf file.
+
+7. Open the /etc/httpd/conf/httpd.conf file and add the following line at the bottom of the file:
+
+SSLProtocol ALL -SSLv2
+
+8. Save your changes and exit the editor.
+
+9. Restart the httpd service with the following command:
+/etc/init.d/httpd restart
+
+10. Repeat step 1 to confirm that ssl v3 still works.
+
+11. Confirm that ssl v2 is now disabled by repeating step 3. You can expect output similar to the following:
+
+[nz@cs-spubox3 conf]$ openssl s_client -connect localhost:443 -ssl2
+CONNECTED(00000003)
+2791:error:1407F0E5:SSL routines:SSL2_WRITE:ssl handshake failure:s2_pkt.c:429:
+
+If needed, the backout procedure is to restore the two original files and restart the httpd service.
+
+
+
+HISTORICAL NUMBER
+ NZ693066

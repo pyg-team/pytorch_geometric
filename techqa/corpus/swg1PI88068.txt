@@ -1,0 +1,138 @@
+Title: IBM PI88068: WCM BREADCRUMB DOESN'T MATCH ITEM LOCATION AFTER MOVING ITEM INSIDE CUSTOM WORKFLOW ACTION - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.5.0.0 and V9.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WCM breadcrumb doesn't match item location after moving item in
+   custom workflow action (note: moving an item inside a custom
+   action is not recommended and should be avoided where possible).
+   Additionally, the libraryUuid property on the item node will be
+   incorrect if the item is moved to a different library which
+   causes the breadcrumb to display the the previous library
+   location instead (even though the item itself is located within
+   another library).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  WCM breadcrumb doesn't match item location after moving item in
+   custom workflow action (note: moving an item inside a custom
+   action is not recommended and should be avoided where possible).
+   Additionally, the libraryUuid property on the item node will be
+   incorrect if the item is moved to a different library which
+   causes the breadcrumb to display the the previous library
+   location instead (even though the item itself is located within
+   another library).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 15 (PI83476) for Portal 8.5
+   and 9.0 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI83476
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI88068
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-28
+   
+   
+ * CLOSED DATE
+   2017-12-11
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

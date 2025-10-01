@@ -1,0 +1,163 @@
+Title: IBM IC75298: WebSphere MQ 5.3.1 FOR HPNSS (HP NSK) IN A COMPLEX CLUSTER CONFIGURATION SOMETIMES REPORTS LARGE NUMBERS OF PROBEID RM5270 - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.8 [http://www-01.ibm.com/support/docview.wss?uid=swg24030009]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The command amqrrmit -m MQQMGR returns
+   **Warning: Unable to identify the Master Repman CPU **
+   Following the warning  a large number of FDC's are being
+   generated with the  Probe Id RM527001.
+   
+   
+   Probe ID - RM527001
+   Component - rrmHPNSSGetMetaPacket
+   Major Error Code - OK
+   Probe Description - AMQ6125: An internal WebSphere MQ error has
+   occurred.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *   Increased the lock limit .
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   In some complex cluster configuations with
+   large numbers of cluster members, large numbers
+   of objects, or frequent changes to cluster
+   objects, the repository managers in a queue
+   manager are unable to distribute a complete set
+   of object metadata information,  resulting in
+   repeated FDCs from rrmHPNSSGetMetaPacket, with
+   probe RM527001, and cluster objects not being
+   visible in some CPUs in the queue manager
+   reporting the problems.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   The buffer used to distribute metadata
+   between the repository managers  running in
+   a queue manager has a fixed upper limit.
+   Once this limit is reached, the repository
+   information on that queue manager can become
+   inconsistent between the CPUs running
+   repository managers.  The repository
+   implementation was changed to allocate a
+   larger buffer initially, and to make the
+   maximum size configurable.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *   In some configurations, terminating the slave
+   repository manager processes individually will
+   cause the cluster information to be loaded
+   directly from the repository queue and restore
+   the consistency, however, subsequent object
+   changes or expiring object subcriptions will
+   cause the slave repository managers to begin
+   generating the FDCs again.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC75298
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ NSS ITA
+   
+   
+ * REPORTED COMPONENT ID
+   5724A3902
+   
+   
+ * REPORTED RELEASE
+   531
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-28
+   
+   
+ * CLOSED DATE
+   2011-03-29
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ NSS ITA
+   
+   
+ * FIXED COMPONENT ID
+   5724A3902
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R531 PSN
+   UP

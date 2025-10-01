@@ -1,0 +1,197 @@
+Title: IBM PM93389: TIGHT LOOP IN DFHMRXM AFTER ABEND IN DFHSMGF - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CICS joblog(s) shows abends occurred as follows:
+   
+   DFHSM0001 AN ABEND (CODE 0C4/AKEA) HAS OCCURRED AT OFFSET
+             X'09F0' IN MODULE DFHSMGF.
+   DFHAP0002 A SEVERE ERROR (CODE X'0595') HAS OCCURRED IN MODULE
+             DFHAPXM.
+   DFHAP0001 AN ABEND (CODE 0C4/AKEA) HAS OCCURRED AT OFFSET
+             X'01C0' IN MODULE DFHMRXM
+   DFHAP0001 AN ABEND (CODE 0C4/AKEA) HAS OCCURRED AT OFFSET
+             X'029A' IN MODULE DFHMRXM.
+   .
+   The last DFHAP0001 is repeated until the region is terminated.
+   .
+   A user transid is being attached. The SM0001 and AP0002 are
+   related to a getmain for the task's TCA. The program check 0C4
+   in DFHSMGF causes the getmain to fail so we do NOT have a TCA
+   for this task. The KE stack shows an abend in DFHDSKE, the stack
+   is corrupt. A Segentry forward pointer has been overlayed (the
+   cause is unknown). DFHMRXM is entered to perform recovery.
+   When entering DFHMRXM it assumes that the TASENTRY has a valid
+   TCA at offset 0028. However, this isn't the case, because of the
+   abend in DFHSMGF, there is no TCA. RegC is loaded from the
+   TASENTRY with 00000000. causing an abend 0C4 at offset x'1C0'.
+   .
+   The recovery routine in DFHMRXM (RECOVERY_ROUTINE), issues the
+   message but then returns to the mainline code at MRXM_RETURN
+   where it uses RegC, again, assuming it contains the TCA.
+   It now abends at offset X'029A'.
+   We drive the recovery routine in DFHMRXM (RECOVERY_ROUTINE)
+   and a tight loop occurs around the abend and its recovery.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Prevent abend SM0001
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All.                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Recursive abend in DFHMRXM causes CICS  *
+   *                      to crash.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                            . *
+   ****************************************************************
+   In the reported problem, 2 CICS systems ( SYSA and SYSB ) were
+   connected via IRC.  The transaction routing program ( DFHRTE )
+   was activated by CRTE on SYSA so a transaction entered on SYSA
+   was routed to SYSB.  When SYSB received the request, DFHAPXM
+   was driven for transaction attach and in doing so, attempted
+   to GETMAIN a TCA.  The GETMAIN failed but a codepath exists
+   whereby processing continued and DFHMRXM was driven to notify
+   the primary client that the transaction would wait forever.
+   DFHMRXM abended ( because of no TCA ) and its recovery routine
+   was driven. Control returned to DFHMRXM mainline logic where
+   the abend sequence was repeated. SYSB was in a recursive abend
+   situation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHXMTA has been modified to not call DFHMRXM in the
+   aforementioned scenario.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *              *********
+               * HIPER *
+               *********
+   FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM93389
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-19
+   
+   
+ * CLOSED DATE
+   2013-09-09
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM86992 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM86992]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM93391 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM93391] UK97501 UK97502
+   
+   
+
+MODULES/MACROS
+ *     DFHXMTA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY UK97501 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK97501]
+   UP13/09/21 P F309
+   
+   
+ * R700 PSY UK97502 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK97502]
+   UP13/09/21 P F309
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

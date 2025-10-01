@@ -1,0 +1,57 @@
+Title: IBM How to obtain the lock-code on a Macintosh computer?  Where can I find the lservrc file? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I need to obtain the lock-code of my machine, how do I do this on a Macintosh operating system? Afterwards I will have to alter the license file: lservrc, where is this file located ? 
+
+ANSWER
+The lock-code can be obtained by executing the following steps :
+
+1. Start the Finder application.
+2. In the Finder menu, click on -> Utilities.
+3. Open Terminal.app
+4. You need to navigate to the installation folder of the software 
+
+For example, if you have Statistics version 23, type the following command: 
+cd /Applications/IBM/SPSS/Statistics/23/SPSSStatistics.app/Contents/bin/
+
+and press Enter 
+
+
+5. type:
+./echoid -d 
+
+
+and press Enter
+------------------------------------------------ 
+
+To locate the lservrc file, you must 
+
+
+1. Start the Finder application
+2. In the Finder menu, click on -> Applications
+3. Look for the IBM folder in the applications list and click on it
+4. In the IBM folder click on SPSS -> Statistics -> 23 
+5. Ctrl+click on SPSSStatistics.app (or right mouse click) 
+
+A pop-up menu will appear, click on "Show Package Contents" 
+
+[/support/docview.wss?uid=swg21481887&aid=1] [/support/docview.wss?uid=swg21481887&aid=1] 
+
+
+6. Click on Contents -> Bin folder
+7. The lservrc file is located in this folder. 
+
+
+[/support/docview.wss?uid=swg21481887&aid=2] [/support/docview.wss?uid=swg21481887&aid=2]
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 78840

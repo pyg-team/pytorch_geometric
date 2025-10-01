@@ -1,0 +1,82 @@
+Title: IBM Unable to view PDF or Tiff images with FileNet Workplace XT IBM Production Imaging Edition Viewer Pro on WebSphere 8.x - United States
+
+Text:
+PIE; WorkplaceXT; PDF; Tiff; Pro Image Viewer TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to view PDF or Tiff images with Workplace XT IBM Production Imaging Edition Viewer Pro (PIE Viewer) on WebSphere 8.x.
+
+Getting error message in the PIE Viewer:
+
+Error:ji.net.jiServerException: 
+Server did not respond with OK 
+Error: Server not available. Please contact your system administrator.
+
+
+SYMPTOM
+ 
+
+ * The streamer page returns fine with the correct version of the IBM Production Imaging Edition Viewer Pro: http://<XTserver:port>/WorkplaceXT/iviewpro/streamer
+
+ *  Images viewed fine if you disable the streamer for PDF and Tiff image. 
+   
+   To disable the streamer for certain images type, update the content_redir.properties file in the <Workplace XT install folder>/config/WebClient as followed by setting streamer= false then restart the application server.
+   
+   application/pdf=/iviewpro/WcmJavaViewer.jsp?id={OBJECT_ID}&streamer=false&{JSP_QUERY_STRING}
+   image/tiff=/iviewpro/WcmJavaViewer.jsp?id={OBJECT_ID}&streamer=false&{JSP_QUERY_STRING} 
+   
+ * enable streamer trace shows the below errors in the Streamer.log:
+   
+   WebContainer : 1 Mar 12, YYYY 5:40:59 PM (000001389/000000000): iviewpro.streamer> 10.10.0.221:kaudHfkz-tEWjZ8rij2w8GX. We have been redirected via response 302 to 
+   http://<XTservername>:9080/WorkplaceXT/ContainerLogin.jsp 
+   WebContainer : 1 Mar 12, YYYY 5:40:59 PM (000001389/000000000): iviewpro.streamer> 10.10.0.221:kaudHfkz-tEWjZ8rij2w8GX. Cannot find URL configured for "signInResource" 
+   WebContainer : 1 Mar 12, 2014 5:40:59 PM (000001389/000000000): iviewpro.streamer> Server response: 302 Found 
+   WebContainer : 1 Mar 12, YYYY 5:40:59 PM (000001389/000000000): iviewpro.streamer> 10.10.0.221:kaudHfkz-tEWjZ8rij2w8GX Unable to retrieve document from repository: Cannot process redirect. 
+   WebContainer : 1 Mar 12, YYYY 5:40:59 PM (000001389/000000000): ji.streamer.splitter.e: Unable to generate page due to repository access error 
+
+
+To enable streamer logging: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Unless defaults were changed, the streamer configuration file should be found in: <install-directory>./FileNet/config/ImageViewerPro\iviewpro.streamer.properties. 
+
+Unless defaults were changed, the log should be written here: 
+<install-directory>/IBM/FileNet/config/ImageViewerPro/streamer.log 
+ENVIRONMENT
+WebSphere 8.x
+
+
+RESOLVING THE PROBLEM
+Steps to resolve the issue:
+
+
+
+ 1.  Implement the technote:
+    
+    Running P8 Client Applications with WebSphere Application Server 8.0.0.x
+    
+    http://www-304.ibm.com/support/docview.wss?uid=swg27023814 [http://www-304.ibm.com/support/docview.wss?uid=swg27023814] 
+    
+    
+ 2. Clear all the cache for the WebSphere temp and wstemp directory, Java and browser cache and Local user cache. For instructions on clearing the application server cache, please see the below IBM Knowledge Center for FileNet P8 Platform link on the step 'Back up, undeploy and remove the Workplace XT Web application from the J2EE application server': 
+    
+    http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.1.0/com.ibm.p8.installingxt.doc/wxtut003.htm [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.1.0/com.ibm.p8.installingxt.doc/wxtut003.htm]
+    
+    
+ 3. Restart the application server. 
+    
+
+RELATED INFORMATION
+ Technote 7023814 [http://www-304.ibm.com/support/docview.wss?uid=swg27023814]
+Upgrading Workplace XT [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.1.0/com.ibm.p8.installingxt.doc/wxtut003.htm]

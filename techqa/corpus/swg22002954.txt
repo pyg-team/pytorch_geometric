@@ -1,0 +1,43 @@
+Title: IBM ICN rows do not scroll as expected when using the mouse wheel - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Content Navigator (ICN) rows in Search and Browse views do not scroll as expected when using the mouse wheel. 
+
+SYMPTOM
+This issue occurs when working in an ICN desktop, in the 'Search' or 'Browse' views.
+After scrolling down to the bottom of the list of documents and then starting to scroll up using a mouse wheel or equivalent, the scroll bar on the right moves up as expected, however the rows do not move up and instead appear to 'twitch' while the selected document remains the same. 
+
+See attached demo for example: 
+
+Scroll Jumping.wmv [/support/docview.wss?uid=swg22002954&aid=2]Scroll Jumping.wmv [/support/docview.wss?uid=swg22002954&aid=1]
+
+
+CAUSE
+This is caused by a new switch introduced by Google Chrome v56:
+chrome://flags/#enable-scroll-anchoring [crholme://flags/#enable-scroll-anchoring]
+
+
+ENVIRONMENT
+ICN v 2.0.3.8 and ICN v3.0
+Client OS: Windows 7/8/10
+Google Chrome version 57.0.2987.110 (32 bit)
+
+
+
+DIAGNOSING THE PROBLEM
+This issue occurs only on Chrome browser (v56 or later).
+The issue is not reproducible with Internet Explorer or Firefox.
+
+
+
+RESOLVING THE PROBLEM
+Once the mouse wheel is released, or the view is scrolled to the top the issue resolves itself. 
+
+To resolve the issue permanently for each user, the Chrome flag
+chrome://flags/#enable-scroll-anchoring [crholme://flags/#enable-scroll-anchoring]
+can be set to disabled.
+
+Note that Chrome flags cannot be set programmatically, so this will need to be performed manually by the user.

@@ -1,0 +1,21 @@
+Title: IBM OMNIbusEventReader required fields - United States
+
+Text:
+netcool; impact; netcool/impact.nci; event; reader; eventreader; omnibus; omnibuseventreader; object; server; objectserver; field; fields; restrict; minimum; required; default TECHNOTE (FAQ)
+
+QUESTION
+ What are the minimum fields required to allow an ObjectServer EventReader or OMNIbusEventReader to operate? 
+
+ANSWER
+The default ObjectServer EventReader or OMNIbusEventReader required fields are: 
+
+ * 
+ * 
+
+
+ServerName, ServerSerial and Tally being required by the Deviant Fields checking mechanism, as covered in the TechNote "Default Deviant Fields in OMNIbusEventReader" [link below] and Tally being required for use in conjunction with the "Get updated events" radio button. 
+
+These fields would be required in conjunction with the fields used in the Filters applied in the EventReader and those fields subsequently used in the Policies launched by the EventReader and limiting the fields captured by the EventReader is covered in the TechNote "OMNIbusEventReader Restrict Fields usage" [link below]. 
+RELATED INFORMATION
+ OMNIbusEventReader Restrict Fields usage [http://www-01.ibm.com/support/docview.wss?uid=swg21592311]
+Default Deviant Fields in OMNIbusEventReader [http://www-01.ibm.com/support/docview.wss?uid=swg21592307]

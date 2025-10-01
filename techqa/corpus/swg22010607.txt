@@ -1,0 +1,52 @@
+Title: IBM You cannot launch Rational Application Developer or Rational Software Architect on Mac OS 10.11 and later - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You cannot launch Rational Application Developer (RAD) or Rational Software Architect (RSA) on Mac OS 10.11 and later. 
+
+SYMPTOM
+When you launch RAD/RSA on Mac OS 10.11 and later, an alert message displays requesting the installation of Java SE 6 runtime, even if there is already a recent version of Oracle JDK installed.
+
+
+CAUSE
+Starting with Mac OS 10.11, El Capitan, Apple announced that they would no longer provide a JRE. At that time, Oracle JRE was intended to be a web browser plugin for running Applets. Oracle JRE does not declare capabilities that are required by Java applications to the OS. This causes RAD and RSA to fail at startup. The capabilities are present and only need to be declared.
+
+RESOLVING THE PROBLEM
+Enable the required capabilities by editing the info.plist file located in $JAVA_HOME/../Contents/. 
+
+1. Identify your Java home, by executing the following:
+
+/usr/libexec/java_home
+
+You will get a path. For example:
+
+/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home
+
+2. Change the directory to /Contents/ where there is a file named Info.plist.
+
+3. Open the file for editing and locate the following section:
+
+<dict>
+<key>JVMCapabilities</key>
+<array>
+<string>CommandLine</string>
+</array>
+
+4. Add the following <string> elements:
+
+<dict>
+<key>JVMCapabilities</key>
+<array>
+<string>CommandLine</string>
+<string>JNI</string>
+<string>BundledApp</string>
+</array>
+
+5. Save the Info.plist file and launch RAD/RSA.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect

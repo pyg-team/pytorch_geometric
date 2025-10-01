@@ -1,0 +1,184 @@
+Title: IBM System Requirements for WebSphere MQ V7.5 Telemetry - United States
+
+Text:
+SOE WebSphere MQ Telemetry V7.5 V7.5 requirements requirement requirements requirement requirements requirement requirements requirement requirements requirement ; SystemRequirementsDocument PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains system requirements for the WebSphere MQ V7.5 Telemetry feature 
+
+CONTENT
+ 
+
+WEBSPHERE MQ TELEMETRY 7.5
+TAB NAVIGATION
+ *  AIX - selected tab, 
+ *  Linux 
+ *  Windows 
+
+TAB NAVIGATION
+ *  AIX 
+
+
+
+
+OUTLINE
+ *  Hardware Requirements  *  Components 
+    *  Java Client 
+   
+   
+ *  Software Requirements  *  Operating System 
+    *  Base Product 
+   
+   
+
+
+
+
+Hardware Requirements Group Applicable Component Notes Components All Applicable Components  WebSphere MQ Telemetry contains the following components: 
+
+ *  Server 
+ *  Daemon 
+ *  Java Client 
+ *  C Client 
+
+Java Client Java Client  The Java client is not restricted to running on the reference platforms; it can also run on any platform where a suitable Java runtime is available. The IBM service team may request that a problem be reproduced on a reference platform. The client can be run on the following Java runtimes: 
+
+ *   JSE 1.5 or above that is "Java Compatible". 
+   
+   
+ *   In addition to running in a basic JRE the client is packaged as an OSGi bundle and can be run in an OSGi runtime compliant with the OSGi R4 core framework specification 
+   
+   
+
+ Back to top 
+
+Operating Systems Operating System Applicable Component AIX Platform listing of supported OS AIX 6.1 POWER System and future OS fix packs All Applicable Components AIX 7.1 POWER System and future OS fix packs All Applicable Components  Back to top 
+
+Software Requirements Group Product Base Product WebSphere MQ 7.5 and future releases, mod levels and fix packs (overview) [http://www.ibm.com/software/integration/wmq/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_MQ]  Back to top 
+
+
+
+
+TAB NAVIGATION
+ *  Red Hat Enterprise Linux (RHEL) 
+ *  Red Hat Enterprise Linux (RHEL) Server 
+ *  SUSE Linux Enterprise Server (SLES) 
+
+
+
+
+OUTLINE
+ *  Hardware Requirements  *  Components 
+    *  Java Client 
+    *  Processor 
+   
+   
+ *  Software Requirements  *  Operating System 
+    *  Base Product 
+   
+   
+
+
+
+
+Hardware Requirements Group Applicable Component Notes Components All Applicable Components  WebSphere MQ Telemetry contains the following components: 
+
+ *  Server 
+ *  Daemon 
+ *  Java Client 
+ *  C Client 
+
+ The Daemon and C client are not restricted to running on the reference platforms; they can also run on any platform where a suitable Linux kernel and libraries are available. The IBM service team may request that a problem be reproduced on a reference platform. 
+
+Java Client Java Client  The Java client is not restricted to running on the reference platforms; it can also run on any platform where a suitable Java runtime is available. The IBM service team may request that a problem be reproduced on a reference platform. The client can be run on the following Java runtimes: 
+
+ *   JSE 1.5 or above that is "Java Compatible". 
+   
+   
+ *   In addition to running in a basic JRE the client is packaged as an OSGi bundle and can be run in an OSGi runtime compliant with the OSGi R4 core framework specification 
+   
+   
+
+Processor All Applicable Components  AMD64, EM64T, and compatible processors: any hardware that is explicitly compatible and fully capable of running the specified operating system, all the corresponding supporting software, and any associated applications unmodified. 
+
+Daemon and C Client  Linux for ARM processor architecture, with uclibc 
+
+ Hardware: ARM v5 architecture processor 
+
+ Software: Linux kernel 2.6.31, uclibc version 0.9.30.1 
+
+Daemon and C Client  Linux for ARM processor architecture, with glibc 
+
+ Hardware: Marvell XScale processor, tested on Eurotech Viper 
+
+ Software: Linux kernel 2.4.21, glicbc 2.3.3 
+
+ Back to top 
+
+Operating Systems Operating System Applicable Component Linux Platform listing of supported OS Red Hat Enterprise Linux (RHEL) 5 Advanced Platform System z and future OS fix packs All Applicable Components Red Hat Enterprise Linux (RHEL) 5 Advanced Platform x86-64 and future OS fix packs All Applicable Components Red Hat Enterprise Linux (RHEL) Server 6 System z and future OS fix packs All Applicable Components Red Hat Enterprise Linux (RHEL) Server 6 x86-64 and future OS fix packs All Applicable Components SUSE Linux Enterprise Server (SLES) 10 SP1 System z and future OS fix packs All Applicable Components SUSE Linux Enterprise Server (SLES) 10 SP1 x86-64 and future OS fix packs All Applicable Components SUSE Linux Enterprise Server (SLES) 11 System z and future OS fix packs All Applicable Components SUSE Linux Enterprise Server (SLES) 11 x86-64 and future OS fix packs All Applicable Components Red Hat Enterprise Linux (RHEL) 5 Advanced Platform x86-32 and future OS fix packs Daemon, C Client and Java Client Red Hat Enterprise Linux (RHEL) Server 6 x86-32 and future OS fix packs Daemon, C Client and Java Client SUSE Linux Enterprise Server (SLES) 10 SP1 x86-32 and future OS fix packs Daemon, C Client and Java Client SUSE Linux Enterprise Server (SLES) 11 x86-32 and future OS fix packs Daemon, C Client and Java Client  Back to top 
+
+Software Requirements Group Product Base Product WebSphere MQ 7.5 and future releases, mod levels and fix packs (overview) [http://www.ibm.com/software/integration/wmq/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_MQ]  Back to top 
+
+
+
+
+TAB NAVIGATION
+ *  Windows 
+ *  Windows Server 
+
+
+
+
+OUTLINE
+ *  Hardware Requirements  *  Components 
+    *  Java Client 
+    *  Processor 
+   
+   
+ *  Software Requirements  *  Operating System 
+    *  Base Product 
+   
+   
+
+
+
+
+Hardware Requirements Group Applicable Component Notes Components All Applicable Components  WebSphere MQ Telemetry contains the following components: 
+
+ *  Server 
+ *  Daemon 
+ *  Java Client 
+ *  C Client 
+
+Java Client Java Client  The Java client is not restricted to running on the reference platforms; it can also run on any platform where a suitable Java runtime is available. The IBM service team may request that a problem be reproduced on a reference platform. The client can be run on the following Java runtimes: 
+
+ *   JSE 1.5 or above that is "Java Compatible". 
+   
+   
+ *   In addition to running in a basic JRE the client is packaged as an OSGi bundle and can be run in an OSGi runtime compliant with the OSGi R4 core framework specification 
+   
+   
+
+Processor All Applicable Components  X86 and x86-64 (also known as x64) technology-compatible PC hardware, capable of running the required level of a compatible operating system with enough storage to meet the combined requirements of the programming prerequisites, WebSphere MQ, the access methods, and the application programs. Note that Itanium 64-bit is not supported. 
+
+All Applicable Components  Applications 
+
+ Where used in a 64-bit Windows environment, applications will run in 32-bit mode only. 
+
+ Back to top 
+
+Operating Systems Operating System Applicable Component Windows Platform listing of supported OS Windows 7 Professional x86-32 and future OS fix packs All Applicable Components Windows 7 Professional x86-64 and future OS fix packs All Applicable Components Windows 7 Ultimate x86-32 and future OS fix packs All Applicable Components Windows 7 Ultimate x86-64 and future OS fix packs All Applicable Components Windows 8 Enterprise x86-32 and future OS fix packs All Applicable Components, WebSphere MQ 7.5.0.1 Install features required to support Windows 8 Windows 8 Enterprise x86-64 and future OS fix packs All Applicable Components, WebSphere MQ 7.5.0.1 Install features required to support Windows 8 Windows 8 Professional x86-32 and future OS fix packs All Applicable Components, WebSphere MQ 7.5.0.1 Install features required to support Windows 8 Windows 8 Professional x86-64 and future OS fix packs All Applicable Components, WebSphere MQ 7.5.0.1 Install features required to support Windows 8 Windows Server 2008 Enterprise Edition x86-32 All Applicable Components Windows Server 2008 Enterprise Edition x86-64 All Applicable Components Windows Server 2008 R2 Enterprise Edition x86-64 All Applicable Components Windows Server 2008 R2 Standard Edition x86-64 All Applicable Components Windows Server 2008 Standard Edition x86-32 All Applicable Components Windows Server 2008 Standard Edition x86-64 All Applicable Components Windows Server 2012 Standard Edition x86-64 and future OS fix packs All Applicable Components, WebSphere MQ 7.5.0.1 Install features required to support Windows 8 Windows Server 2012 Datacenter Edition x86-64 and future OS fix packs All Applicable Components, WebSphere MQ 7.5.0.1 Install features required to support Windows 8 Windows XP SP2 Professional x86-32 and future OS fix packs All Applicable Components  Back to top 
+
+Software Requirements Group Product Base Product WebSphere MQ 7.5 and future releases, mod levels and fix packs (overview) [http://www.ibm.com/software/integration/wmq/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_MQ]  Back to top 
+
+
+
+
+
+
+NOTES
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

@@ -1,0 +1,106 @@
+Title: IBM Resolving issues installing Open Source RPM Packages on AIX - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I'm having problems either installing rpm packages or configuring said package in AIX and I need help. Where can I get support for this? 
+
+ANSWER
+For any questions to the IBM Development team about packages in the AIX Toolbox for Linux Applications, an "AIX Open Source Software Forum" is available on IBM developerWorks:
+https://www.ibm.com/developerworks/community/forums/html/forum?id=2eb0f36d-9534-471b-8b27-c21e6c5b9b2b [https://www.ibm.com/developerworks/community/forums/html/forum?id=2eb0f36d-9534-471b-8b27-c21e6c5b9b2b] 
+
+
+This forum can assist with: 
+
+ * Possible defects found in a Toolbox RPM Package 
+ * Understanding error messages from attempts to install or configure a Toolbox RPM Package. 
+ * Security Vulnerabilities found in the Toolbox RPM Package. 
+ * Dependancy issues with an rpm package off the AIX Toolbox for Linux Applications.
+
+
+For example: 
+# rpm -i pango-1.40.1-2waixX11.aix6.1.ppc.rpm
+error: Failed dependencies:
+glib2 >= 2.33.12 is needed by pango-1.40.1-2waixX11.ppc
+libXrender is needed by pango-1.40.1-2waixX11.ppc 
+
+*Please note: If the rpm packages you need help with come from non IBM Toobox sources, you will need to contact those sources for support.  
+
+Who should engage the AIX Open Source Team?
+
+IBM product teams (e.g. DB2, Websphere, etc) and other 3rd Party product teams should engage the AIX Open Source Team directly using the forum link above to help fix any dependancy problems. These products may have certain RPM dependencies, so collaboration between software product teams and the AIX Open Source Team is essential to keeping the dependencies current.
+
+Users who are downloading and installing Toolbox RPMS for other use beyond specific supported products should search the forum and/or open a discussion with the AIX Open Source Team if they cannot find the answer in existing threads. 
+
+
+Getting Support:
+
+A) For questions or issues with Toolbox packages, the support is handled by the AIX Open Source Team.
+
+The AIX Open Source Team only provides support through the forum. They will answer what they reasonably can, but they don't own the packages or formally support them. For true expertise in usage of each package, users should consult the community for each respective package. If you have opened up a ticket with IBM Support to get Toolbox assistance, the ticket will be closed so you can work directly with the AIX Open Source Team in the forum. 
+
+ 
+
+B) If there is a problem with installing rpm.rte, or the rpm executable, please open an AIX Case https://www.ibm.com/mysupport [https://www.ibm.com/mysupport] and we will assist you. 
+
+
+Examples of problems with rpm.rte are:
+
+- Errors updating or migrating the rpm.rte fileset
+- Commands from the rpm.rte fileset will not run or coredump 
+
+For Example: 
+
+
+
+# rpm -qa
+
+exec(): 0509-036 Cannot load program /usr/opt/freeware/bin/rpm because
+of the following errors:
+
+0509-150 Dependent module libnss3.so could not be loaded.
+0509-022 Cannot load module libnss3.so.
+0509-026 System error: A file or directory in the path name does not exist. 
+
+This would be handled through an IBM AIX Support case, and the support team would help resolve the missing modules. 
+
+To learn what is provided and supported by the rpm.rte fileset: 
+# lslpp -f rpm.rte 
+
+
+
+
+REFERENCES: 
+
+AIX Toolbox for Linux Applications licensing and installation instructions: 
+http://www-03.ibm.com/systems/power/software/aix/linux/toolbox/altlic.html: [http://www-03.ibm.com/systems/power/software/aix/linux/toolbox/altlic.html:] 
+
+AIX Toolbox for Linux Applications ReadMe: 
+ftp://public.dhe.ibm.com/aix/freeSoftware/aixtoolbox/README.txt [ftp://public.dhe.ibm.com/aix/freeSoftware/aixtoolbox/README.txt] 
+CATEGORY:
+
+WWINST
+
+SUPPORT:
+
+If additional assistance is required after completing all of the instructions provided in this document, please follow the step-by-step instructions below to contact IBM to open a service request (PMR) for software under warranty or with an active and valid support contract. The technical support specialist assigned to your support call will confirm that you have completed these steps.
+a. Document and/or take screen shots of all symptoms, errors, and/or messages that might have occurred
+b. Capture any logs or data relevant to the situation
+c. Contact IBM to open a support call (PMR):
+For electronic support, please visit the web page: 
+https://www-947.ibm.com/support/servicerequest/newServiceRequest.action [https://www-947.ibm.com/support/servicerequest/newServiceRequest.action]
+For telephone support, please visit the web page: 
+http://www.ibm.com/planetwide [http://www.ibm.com/planetwide]
+Please visit the IBM Support Portal web page for additional resources: 
+https://www-947.ibm.com/support/entry/myportal/support [https://www-947.ibm.com/support/entry/myportal/support]
+d. Provide a good description of your issue and reference this technote
+e. Upload all of the details and data to your support call (PMR):
+Please visit this web page for instructions: https://www.secure.ecurep.ibm.com/app/upload [https://www.secure.ecurep.ibm.com/app/upload]
+
+FEEDBACK:
+Quality documentation is important to IBM and its customers. If you have feedback specific to this article, please send an detailed message to the email address:
+aix_feedback@wwpdl.vnet.ibm.com 
+- This email address is monitored for feedback purposes only.
+- No support for any IBM products or services will be provided through this email.
+- To receive support, please follow the step-by-step instructions in the above "SUPPORT" section.

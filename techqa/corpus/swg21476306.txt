@@ -1,0 +1,34 @@
+Title: IBM Shutdown of 2 out of 3 redundant License Manager's will fail to issue licence from 3rd LM - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In a 3-server Redundant Sentinel License Manager system, if the Primary and Secondary Sentinel License Manager's are shut down for any reason, the Tertiary LM will fail to issue licence to client machines. The symptoms are different depending on the product you are using.
+
+If using IBM SPSS Statistics 19.0:
+* No error message appears.
+* The 'IBM SPSS Statistics' splash screen is not displayed.
+* The 'stats.exe' process starts and ends straight after 1-2 mins.
+
+If using IBM SPSS Modeler 14.1:
+An error message is displayed after 1-2 minutes - 
+"Licence Error: Licence server is unavailable
+Error sub-code: 5" 
+
+RESOLVING THE PROBLEM
+This problem has been reported to IBM SPSS Development and is deemed to be functioning as designed.
+
+According to Safenet (developers of the Sentinel License Manager system) there is a term called 'Majority Rule' with regards to Redundant Licence Manager setups. According to the majority rule, if half or more than half of the redundant license servers go down, the remaining redundant license servers do not service requests for the license that was configured to use majority rule (although non-redundant license codes can continue to be serviced by its running license server).
+
+IBM SPSS would like to apologise for any confusion caused
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 93186

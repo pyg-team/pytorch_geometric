@@ -1,0 +1,147 @@
+Title: IBM IZ35488: db2look should generate AUTORESIZE clause only for automatic sto rage tablespaces - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+DB2 Version 9.5 Fix Pack 3b for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24022591]
+DB2 Version 9.5 Fix Pack 4 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24023213]
+DB2 Version 9.5 Fix Pack 3a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24021838]
+DB2 Version 9.5 Fix Pack 3 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24021563]
+DB2 Version 9.5 Fix Pack 4a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24024215]
+DB2 Version 9.5 Fix Pack 5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24025421]
+DB2 Version 9.5 Fix Pack 6a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027747]
+DB2 Version 9.5 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028731]
+DB2 Version 9.5 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24030302]
+DB2 Version 9.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032087]
+DB2 Version 9.5 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033308]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The AUTORESIZE clause are not valid for
+   system managed space (SMS) table spaces or for database managed
+   space
+   (DMS) table spaces that are defined to use raw device
+   containers. However db2look was generating AUTORESIZE clause
+   for SMS tablespaces, hence this has to be corrected.
+   n/a
+   n/a
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Users Affected: All
+   Problem Description:
+   The AUTORESIZE clause are not valid for
+   system managed space (SMS) table spaces or for database managed
+   space
+   (DMS) table spaces that are defined to use raw device
+   containers. However db2look was generating AUTORESIZE clause
+   for SMS tablespaces, hence this has to be corrected.
+   Problem Summary:
+   The AUTORESIZE clause are not valid for
+   system managed space (SMS) table spaces or for database managed
+   space
+   (DMS) table spaces that are defined to use raw device
+   containers. However db2look was generating AUTORESIZE clause
+   for SMS tablespaces, hence this has to be corrected.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  "Problem was first fixed in Version 9.5 Fix Pack 3"
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ35488
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4100
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-22
+   
+   
+ * CLOSED DATE
+   2009-04-20
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * FIXED COMPONENT ID
+   5765F4100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSY
+   UP

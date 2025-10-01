@@ -1,0 +1,58 @@
+Title: IBM A NullPointerException error occurs when accessing Workplace Site Preferences in FileNet Application Engine - United States
+
+Text:
+AE; app_engine.war TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When accessing the Site Preferences in Workplace, a NullPointerException error occurs. Reverting to earlier versions of the Site Preferences for Workplace does not have any effect and the preferences.xml for the Site Preferences is well formed. 
+
+CAUSE
+The default SitePreferences.xml located in the<deployed location>\Workplace\WEB-INF\xml directory for Workplace, has been renamed from the default SitePreferences.xml to a different file name.
+
+DIAGNOSING THE PROBLEM
+Workplace stack trace:
+
+Error Message:
+null
+
+Exception Class:
+java.lang.NullPointerException
+
+Stack Trace:
+java.lang.NullPointerException
+at com.filenet.wcm.apps.server.util.prefs.WcmBasePrefs. 
+useClientTimeZone (WcmBasePrefs.java:253) 
+at com.filenet.wcm.apps.server.ui.info.prefs. 
+PrefSiteGeneralInfoPage.render (PrefSiteGeneralInfoPage.java:377) 
+at com.filenet.wcm.toolkit.server.base.WcmUiModule.renderJSP
+(WcmUiModule.java:667)
+at com.filenet.wcm.toolkit.server.util.ui.WcmLayout.
+renderRegionItem (WcmLayout.java:87)
+at com.filenet.wcm.toolkit.server.util.ui.WcmLayout.renderRegion
+(WcmLayout.java:68) 
+at com.filenet.wcm.apps.server.presentation.util.WorkplaceLayout. 
+render (WorkplaceLayout.java:209) 
+at com.filenet.wcm.apps.server.ui.WcmInfoModule.render
+(WcmInfoModule.java:393)
+at com.filenet.wcm.toolkit.server.base.WcmUiModule.renderJSP
+(WcmUiModule.java:667)
+at com.filenet.wcm.toolkit.server.util.WcmUi.render (WcmUi.java:91
+at com.filenet.wcm.toolkit.server.util.WcmUi.render (WcmUi.java:83
+at com.ibm._jsp._WcmSitePreferences._jspService 
+(_WcmSitePreferences.java:96) 
+at com.ibm.ws.jsp.runtime.HttpJspBase.service (HttpJspBase.java:87
+at javax.servlet.http.HttpServlet.service (HttpServlet.java:856)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.service 
+... will
+
+RESOLVING THE PROBLEM
+
+
+
+ 1. Check theSitePreferences.xml file in the <deployed location>\Workplace\WEB-INF\xml directory to see if it has the correct file name
+    
+    
+ 2. Verify the file is a well formed xml file by opening the file with an xml editor
+    
+    
+ 3. If the SitePreferences.xml file name was corrected, restart the FileNet Application Engine JVM

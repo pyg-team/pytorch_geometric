@@ -1,0 +1,41 @@
+Title: IBM Tivoli Integrated Portal setting session time-out. - United States
+
+Text:
+Tivoli; Integrated; Portal; TIP setting; session; time-out; TIPL2FAQ TECHNOTE (FAQ)
+
+QUESTION
+ How can I set the session time-out for TIP/TBSM 4.2.1 to never expire? 
+
+CAUSE
+Because users do not log out of TIP, the connection eventually times out causing ports to not get reused which can cause the application to crash.
+
+ANSWER
+You can set the session time-out to force it to never expire as below, in each case both xml files have to be updated. 
+
+security.xml:
+<TIP HOME>/profiles/TIPProfile/config/cells/TIPCell/security.xml – timeout value 
+(this is in minutes - max value is 2147483647) 
+
+deployment.xml:
+
+TIP 1.x:
+<TIP HOME>/profiles/TIPProfile/config/cells/TIPCell/applications/isclite.ear/deployments/isclite/deployment.xml – invalidationTimeout value
+(this is also in minutes, if value is set to -1 it means no time-out) 
+TIP 2.x:
+<TIP HOME>/profiles/TIPProfile/config/cells/TIPCell/applications/isc.ear/deployments/isc/deployment.xml – invalidationTimeout value
+(this is also in minutes, if value is set to -1 it means no time-out) 
+
+Note: To determine the TIP version, run the <DE HOME>/bin/listIU.(cmd|sh) command and look for the highest value for the TIPCore component.
+see: http://www-01.ibm.com/support/docview.wss?uid=swg21615989 [http://www-01.ibm.com/support/docview.wss?uid=swg21615989]
+
+Note: Please create backup copy of the deployment.xml and security.xml files before editing the original. Also, TIP must be restarted after the change.
+
+Examples:
+deployment.xml
+<tuningParams xmi:id="TuningParams_1308167671176" usingMultiRowSchema="false" maxInMemorySessionCount="1000" allowOverflow="true" scheduleInvalidation="false" writeFrequency="TIME_BASED_WRITE" writeInterval="10" writeContents="ONLY_
+UPDATED_ATTRIBUTES" invalidationTimeout="30">
+security.xml
+<authMechanisms xmi:type="security:LTPA" xmi:id="LTPA_1" OID="oid:1.3.18.0.2.3
+0.2" authContextImplClass="com.ibm.ISecurityLocalObjectTokenBaseImpl.WSSecurityC
+ontextLTPAImpl" authConfig="system.LTPA" simpleAuthConfig="system.LTPA" authVali
+dationConfig="system.LTPA" timeout="1440" keySetGroup="KeySetGroup_TIPNode_1">

@@ -1,0 +1,45 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities affecting the IBM SDK for Node.js used by the Cordova platform packaged with Rational Application Developer affecting Rational Developer for i and Rational Developer for AIX and Linux - United States
+
+Text:
+node.js; nodejs; vulnerable; vulnerability; cordova SECURITY BULLETIN
+
+SUMMARY
+ Portions of IBM Rational Application Developer for WebSphere Software are shipped as a component of Rational Developer for i (RPG and COBOL + Modernization Tools, Java and EGL editions), and Rational Developer for AIX and Linux. Information about a security vulnerability affecting Rational Application Developer has been published in a security bulletin. 
+
+VULNERABILITY DETAILS
+ 
+
+Subscribe to My Notifications to be notified of important product support alerts like this.  * Follow this link [https://www.ibm.com/systems/support/myview/subscription/css.wss/subscriptions?methodName=startSearchToSubscribe&uctug_rational_dcfsbblurb_2013-11-05_myn_adoption_promo] for more information (requires login with your IBM ID)
+
+
+Review Security Bulletin: Multiple vulnerabilities affecting the IBM SDK for Node.js used by the Cordova platform packaged with Rational Application Developer (CVE-2014-3508 CVE-2014-5139 CVE-2014-3509 CVE-2014-3505 CVE-2014-3506 CVE-2014-3507 CVE-2014-3510 CVE-2014-3511 CVE-2014-3512 CVE-2014-5256) [http://www.ibm.com/support/docview.wss?uid=swg21685467] for vulnerability details. AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Affected Product and Version(s) Product and Version shipped as a component IBM Rational Developer for i v9.1, RPG and COBOL + Modernization Tools, Java Edition Rational Application Developer 9.1 IBM Rational Developer for i v9.1, RPG and COBOL + Modernization Tools, EGL Edition Rational Application Developer 9.1 IBM Rational Developer for AIX and Linux v9.1, AIX COBOL Edition Rational Application Developer 9.1 IBM Rational Developer for AIX and Linux v9.1, C/C++ Edition Rational Application Developer 9.1 REMEDIATION/FIXES
+Review the Remediation/Fixes section of Security Bulletin: Multiple vulnerabilities affecting the IBM SDK for Node.js used by the Cordova platform packaged with Rational Application Developer (CVE-2014-3508 CVE-2014-5139 CVE-2014-3509 CVE-2014-3505 CVE-2014-3506 CVE-2014-3507 CVE-2014-3510 CVE-2014-3511 CVE-2014-3512 CVE-2014-5256) [http://www.ibm.com/support/docview.wss?uid=swg21685467] for instructions on obtaining the fix for this issue.
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] OpenSSL Project vulnerability website [http://www.openssl.org/news/vulnerabilities.html] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ * 21 October 2014: Original copy published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Developer for AIX and Linux

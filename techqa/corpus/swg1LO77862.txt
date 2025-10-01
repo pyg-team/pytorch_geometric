@@ -1,0 +1,192 @@
+Title: IBM LO77862: DOMINO 9.0 / 9.0.1 APPLETS REPORT "APPLICATION: UNKNOWN" IN JAVA 7 UPDATE 45 - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+DominoServer_853FP6IF14_IBMi [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF14_IBMi&source=SAR]
+DominoServer_853FP6IF14_IBMi_5.4 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF14_IBMi_5.4&source=SAR]
+DominoServer_853FP6IF14_Sol [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF14_Sol&source=SAR]
+DominoServer_853FP6IF14_AIX32 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF14_AIX32&source=SAR]
+DominoServer_853FP6IF14_W32 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF14_W32&source=SAR]
+DominoServer_853FP6IF14_W64 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF14_W64&source=SAR]
+DominoServer_853FP6IF14_AIX64 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF14_AIX64&source=SAR]
+DominoServer_853FP6IF14_Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF14_Linux&source=SAR]
+DominoServer_853FP6IF14_zSeries [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF14_zSeries&source=SAR]
+DominoServer_853FP6IF10_IBMi_6.1_7.1 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF10_IBMi_6.1_7.1&source=SAR]
+DominoServer_853FP6IF10_IBMi_5.4 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF10_IBMi_5.4&source=SAR]
+DominoServer_853FP6IF10_W64 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF10_W64&source=SAR]
+DominoServer_853FP6IF10_W32 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF10_W32&source=SAR]
+DominoServer_853FP6IF10_AIX64 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF10_AIX64&source=SAR]
+DominoServer_853FP6IF10_AIX32 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF10_AIX32&source=SAR]
+DominoServer_853FP6IF10_Sol [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF10_Sol&source=SAR]
+DominoServer_853FP6IF10_Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF10_Linux&source=SAR]
+DominoServer_853FP6IF10_zSeries [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF10_zSeries&source=SAR]
+DominoServer_853FP6IF9_IBMi_6.1_7.1 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF9_IBMi_6.1_7.1&source=SAR]
+DominoServer_853FP6IF9_IBMi_5.4 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF9_IBMi_5.4&source=SAR]
+DominoServer_853FP6IF9_W32 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF9_W32&source=SAR]
+DominoServer_853FP6IF9_Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF9_Linux&source=SAR]
+DominoServer_853FP6IF9_zSeries [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF9_zSeries&source=SAR]
+DominoServer_853FP6IF9_AIX64 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF9_AIX64&source=SAR]
+DominoServer_853FP6IF9_W64 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF9_W64&source=SAR]
+DominoServer_853FP6IF9_Sol [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF9_Sol&source=SAR]
+DominoServer_853FP6IF9_AIX32 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF9_AIX32&source=SAR]
+DominoServer_853FP6IF8_Sol [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF8_Sol&source=SAR]
+DominoServer_853FP6IF8_Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF8_Linux&source=SAR]
+DominoServer_853FP6IF8_IBMi_6.1_7.1 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF8_IBMi_6.1_7.1&source=SAR]
+DominoServer_853FP6IF8_IBMi_5.4 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF8_IBMi_5.4&source=SAR]
+DominoServer_853FP6IF8_W32 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF8_W32&source=SAR]
+DominoServer_853FP6IF8_W64 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF8_W64&source=SAR]
+DominoServer_853FP6IF8_AIX64 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF8_AIX64&source=SAR]
+DominoServer_853FP6IF8_AIX32 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF8_AIX32&source=SAR]
+DominoServer_853FP6IF8_zSeries [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF8_zSeries&source=SAR]
+DominoServer_853FP6IF6_zSeries [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF6_zSeries&source=SAR]
+DominoServer_853FP6IF6_IBMi_6.1_7.1 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF6_IBMi_6.1_7.1&source=SAR]
+DominoServer_853FP6IF6_IBMi_5.4 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF6_IBMi_5.4&source=SAR]
+DominoServer_853FP6IF6_AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF6_AIX&source=SAR]
+DominoServer_853FP6IF6_Sol [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF6_Sol&source=SAR]
+DominoServer_853FP6IF6_AIX64 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF6_AIX64&source=SAR]
+DominoServer_853FP6IF6_W64 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF6_W64&source=SAR]
+DominoServer_853FP6IF6_W32 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF6_W32&source=SAR]
+DominoServer_853FP6IF6_Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF6_Linux&source=SAR]
+DominoServer_853FP6IF5_W32 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF5_W32&source=SAR]
+DominoServer_853FP6IF5_W64 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_853FP6IF5_W64&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using any of the standard Java Applets in legacy design
+   elements with Java 7 Update 45, will fail with errors like the
+   following:
+   Missing Application-Name: manifest attribute for: [url]
+   Missing Permissions manifest attribute for: [url]
+   This is due to required updates in the Manifest in order to
+   work, as detailed here:
+   http://docs.oracle.com/javase/tutorial/deployment/jar/secman.htm [http://docs.oracle.com/javase/tutorial/deployment/jar/secman.htm]
+   l
+   To the end user they see a Java warning with "Application:
+   UNKNOWN" which can be misinterpreted as an untrusted applet.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use an earlier version of Java that does not make this check,
+   or user education on the "Application: UNKNOWN" message.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Added information to the manifest files provided with the
+    Domino applets to name the applets as well as set their
+    privilege level.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added information to the manifest files provided with the
+    Domino applets to name the applets as well as set their
+    privilege level.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# SODY9DDBD5.
+   Added information to the manifest files provided with the
+    Domino applets to name the applets as well as set their
+    privilege level.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO77862
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-11-12
+   
+   
+ * CLOSED DATE
+   2014-01-28
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724E6200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSN
+   UP

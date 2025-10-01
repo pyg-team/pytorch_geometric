@@ -1,0 +1,85 @@
+Title: IBM Web server plug-in setupGSKitLibPath script contains invalid command syntax - United States
+
+Text:
+libgsk7kjni.so libgsk7kjni_64.so libgsk7kjni.dll libgsk7kjni_64.dll TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The web server plug-in includes a script in the Plugins/bin directory called setupGSKitLibPath.sh on UNIX and setupGSKitLibPath.bat on Windows. The purpose of this script is to setup the appropriate environment variable so that the web server plug-in can load the GSKit libraries at runtime. Unfortunately the syntax of the command inside this script is incorrect and must be manually changed by the administrator before running the script. 
+
+SYMPTOM
+If the environment variable is not set correctly, the plug-in will fail to load the GSKit library, and will log the following error message: 
+
+version 7.0:
+loadSecurityLibrary: Failed to load gsk library from ...
+
+version 8.x:
+loadSecurityLibrary: Failed to load key management library from ...
+
+
+ENVIRONMENT
+This issue does not apply to the IBM HTTP Server (IHS) web server. But it does apply to all other supported web servers using the web server Plug-in version 7.0 or 8.x.
+
+
+
+RESOLVING THE PROBLEM
+Here are the steps to resolve the problem: 
+
+ 1. Determine which is the correct environment variable for your specific web server and operating system. Here are some examples:
+    
+    OSENV VAR
+    AIX: LIBPATH
+    Solaris: LD_LIBRARY_PATH or LD_LIBRARY_PATH_64
+    Linux: LD_LIBRARY_PATH
+    HP-UX: SHLIB_PATH
+    Windows: PATH
+    
+    
+ 2. Find the exact directory of the GSKit library files. This will depend on where the web server plug-in was installed. It might also depend on if the 32-bit image or 64-bit image was used to install.
+    
+    For example, on a Windows system installed using the 32-bit Plug-in v7.0 image, look here:
+    
+    C:\Program Files\IBM\WebSphere\Plugins\gsk7\lib\
+    
+    On an AIX system installed using the 64-bit Plug-in v7.0 image, look here:
+    
+    /usr/IBM/WebSphere/Plugins/gsk7/gsk7_32/lib/
+    /usr/IBM/WebSphere/Plugins/gsk7/gsk7_64/lib64/
+    
+    On an Linux system installed using the 64-bit Plug-in v8.x image, look here:
+    
+    /opt/IBM/WebSphere/Plugins/gsk8/gsk8_32/lib/
+    /opt/IBM/WebSphere/Plugins/gsk8/gsk8_64/lib64/
+    
+    
+ 3. Change the setupGSKitLibPath script to set the correct environment variable to the correct directory using the correct syntax.
+    
+    For example, for the 32-bit Plug-in v7.0 on Windows case, it would look like this:
+    
+    set PATH=%PATH%:"C:\Program Files\IBM\WebSphere\Plugins\gsk7\lib\"
+    
+    For AIX (plug-in v7.0 installed using 64-bit image), where the web server is actually 32-bit, it would look like this:
+    
+    export LIBPATH=$LIBPATH:/usr/IBM/WebSphere/Plugins/gsk7/gsk7_32/lib/
+    
+    For AIX (plug-in v7.0 installed using 64-bit image), where the web server is actually 64-bit, it would look like this:
+    
+    export LIBPATH=$LIBPATH:/usr/IBM/WebSphere/Plugins/gsk7/gsk7_64/lib64/
+    
+    For Linux (plug-in v8.x installed using 64-bit image), where the web server is actually 64-bit, it would look like this:
+    
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/IBM/WebSphere/Plugins/gsk8/gsk8_64/lib64/
+    
+    Note: If you are running a 32-bit web server on a 64-bit architecture, you would point to the lib subdirectory not lib64. The architecture of GSKit must match the architecture of the web server software.
+    
+    As you can see the actual command to use will depend on the OS, the architecture, and the location of the library files. So, you will need to customize the command according to your specific environment.
+    
+    
+ 4. Run the script or set the environment variable within the same shell where your web server will be started.  * On Windows platforms, go into your System Variables (My Computer > Properties > Advanced > Environment Variables) and change the PATH to include the GSKit lib path from step 2 above.
+       
+       
+     * On UNIX platforms, if you use a script to start your web server, edit the script and add the export command from step 3 above so that it will set the environment variable before starting the web server.
+    
+    
+
+ * 
+ *

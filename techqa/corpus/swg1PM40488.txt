@@ -1,0 +1,144 @@
+Title: IBM PM40488: WTX CRASH OR OUT OF MEMORY ERROR OCCURS DURING XML XERCES VALIDATION OF INVALID DATA WHEN USING COMPONENT RULES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A WTX crash or out of memory error occurs during XML Xerces
+   validation of invalid data when using component rules.
+   
+   On Windows the map ends with a 'Not enough memory' error.
+   
+   On Unix the map ends with a Bus Error(coredump).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTXCQ - WTX00037708
+   GK / PB
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   WebSphere Transformation Extender customers using Xerces
+   validation
+   
+   Problem Description:
+   After XML validation fails, code executes a component rule for
+   an element that is not built causing read from non-initialized
+   memory address. Application may crash or fail with out of
+   memory error.
+   
+   Platforms Affected:
+   ALL
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  If XML validation fails, validation component rules should not
+   be executed.
+   
+   Delivered in:
+   8.2.0.6, 8.3.0.5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM40488
+   
+   
+ * REPORTED COMPONENT NAME
+   WSTX
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4000
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2011-06-01
+   
+   
+ * CLOSED DATE
+   2011-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WSTX
+   
+   
+ * FIXED COMPONENT ID
+   5724M4000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSY
+   UP
+   
+   
+ * R830 PSY
+   UP

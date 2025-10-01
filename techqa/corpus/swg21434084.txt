@@ -1,0 +1,14 @@
+Title: IBM WebSphere Adapter for Flat Files does not support staging directory with the generateUniqueFile option - United States
+
+Text:
+waffv7.0.0.3rnote; v70rnotes; staging directory; generateuniquefile; generate unique file; stagingdirectory TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere Adapter for Flat Files generate a file with 0Kb in the output directory when generateUniqueFile option is chosen and a value for staging directory is provided. 
+
+SYMPTOM
+If the staging directory value is specified and the generateUniqueFile option is selected, a file with 0Kb is create in the output directory. 
+
+
+RESOLVING THE PROBLEM
+The combination of generateUniqueFile and staging directory is not a supported combination. Ensure that staging directory is not specified, if you have selected the generateUniqueFile option.

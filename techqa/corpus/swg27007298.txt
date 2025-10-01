@@ -1,0 +1,65 @@
+Title: IBM Application Client for WebSphere Application Server V6.0 detailed system requirements - United States
+
+Text:
+SystemRequirementsDocument; prereq; coreq; installation prerequisites; DSRdoc PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The list below identifies Supported Software options for Application Client for WebSphere® Application Server V6.0. 
+
+CONTENT
+ 
+
+[/support/docview.wss?uid=swg27007298&amp;aid=1] Back to all V6.0 detailed system requirements [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27007293] 
+WebSphere Application Server - Supported Prerequisites Updated 11/30/2004
+
+
+This page describes the minimum product levels you should have installed before opening a problem report with the WebSphere Application Server support team. Because other products frequently ship fixes, updates, and new releases, we cannot test every possible configuration. In general, you can install and run with updates to supported products if those updates are forward compatible. For additional information on available support for configurations that are not included in the following list, refer to support article WebSphere Application Server has grown and so have your requirements. [http://www-1.ibm.com/support/docview.wss?rs=180&context=SSEQTP&uid=swg27004311]  
+
+Application Client for WebSphere Application Server Version 6.0 
+
+ * J2EE Application client 
+ * Applet client 
+ * ActiveX to EJB Bridge client 
+ * Pluggable Application client 
+
+
+
+J2EE Application client + Product is included with this client 
+
+ 
+
+Operating Systems (Required) WebSphere Application Server client platform: Notes AIX® HP Linux® AMD/Intel® Linux iSeries pSeries® OS/400® Sun Windows® AIX 5L 5.1 with Recommended Maintenance package 5100-05 X AIX 5L 5.2 with Recommended Maintenance package 5200-02 or 5200-03 X AIX 5L 5.3 X HP-UX 11iv1 with Quality Pack of June 2004 plus required HP-UX patches for Java™ X OS/400 5.2 or 5.3 X Red Hat Desktop 3.0 Update 3 X Red Hat Enterprise Linux ES/WS 3.0 Update 2 or 3 X Red Hat Enterprise Linux AS 3.0 Update 2 or 3 X X Solaris 8 with the latest Recommended Patch Cluster X Solaris 9 with the latest Recommended Patch Cluster X SUSE Linux Enterprise Server 8.0 SP3 X X SUSE Linux Enterprise Server 9.0 X X Windows 2000 Advanced Server SP4 X Windows 2000 Server SP4 X Windows 2000 Professional SP4 X Windows XP Professional SP1a X Java
+The WebSphere-supplied Java 2 SDK is required for both the run time and any remote Java clients WebSphere Application Server client platform: Notes AIX HP Linux AMD/Intel Linux iSeries pSeries OS/400 Sun Windows + IBM® 32-bit SDK, Java 2 Technology Edition, v1.4.2 SR1w X X X X + HP SDK for J2SE HP-UX 11i platform, adapted by IBM for IBM Software, Version 1.4.2 SR1w X + IBM 32-bit SDK for Solaris, Java 2 Technology Edition, Version 1.4.2 SR1w X IBM 32-bit SDK, Java 2 Technology Edition, v1.4.2 for iSeries X Back to top 
+
+Applet client 
+
++ Product is included with this client 
+
+ 
+
+Operating Systems (Required) WebSphere Application Server client platform: Notes Windows Windows 2000 Advanced Server SP4 X Windows 2000 Server SP4 X Windows 2000 Professional SP4 X Windows XP Professional SP1a X Java
+The WebSphere-supplied Java 2 SDK is required for both the run time and any remote Java clients WebSphere Application Server client platform: Notes Windows + IBM 32-bit SDK, Java 2 Technology Edition, v1.4.2 SR1w X Web Browsers WebSphere Application Server client platform: Notes Windows Internet Explorer 6.0 SP1(on W2K, or XP) X Mozilla 1.4 or 1.7 X [/support/docview.wss?uid=swg27007298&amp;aid=2] Back to top 
+
+
+ActiveX to EJB Bridge client 
+
++ Product is included with this client 
+
+ 
+
+Operating Systems (Required) WebSphere Application Server client platform: Notes Windows Windows 2000 Advanced Server SP4 X Windows 2000 Server SP4 X Windows 2000 Professional SP4 X Windows XP Professional SP1a X Java
+The WebSphere-supplied Java 2 SDK is required for both the run time and any remote Java clients WebSphere Application Server client platform: Notes Windows + IBM 32-bit SDK, Java 2 Technology Edition, v1.4.2 SR1w X Web browsers WebSphere Application Server client platform: Notes Windows Internet Explorer 6.0 SP1 (on W2K, or XP) X Mozilla 1.4 or 17 X [/support/docview.wss?uid=swg27007298&amp;aid=2] Other Software Requirements WebSphere Application Server client platform: Notes Windows Microsoft® Visual Basic 6.0 SP5 or SP6 X Microsoft Windows Script 5.1 X Microsoft Internet Information Server 5.0 X Back to top 
+
+
+Pluggable Application client 
+
+ 
+
+Operating Systems (Required) WebSphere Application Server client platform: Notes Windows Windows 2000 Advanced Server SP4 X Windows 2000 Server SP4 X Windows 2000 Professional SP4 X Windows XP Professional SP1a X Java WebSphere Application Server client platform: Notes Windows Sun 32-bit Java 2 SDK, v 1.4.2_05 X Back to top
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

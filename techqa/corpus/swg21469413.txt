@@ -1,0 +1,212 @@
+Title: IBM Guidelines for setting ulimits (WebSphere Application Server) - United States
+
+Text:
+ulimits; linux; unix; aix; openfiles; opensockets; sockets; socket; files; ulimit-n; limits.conf; configuration; security; etc; root; init; crontask; cron; nodeagent; dmgr; appserver; server; applicationserver; application; nofile; unlimited; 8000; 8192 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes various ways to set ulimit values on UNIX and Linux operating systems as well as information that pertains to WebSphere Application Server 
+
+SYMPTOM
+Tuning ulimits correctly can overcome these errors: 
+
+ * Too Many Open Files 
+ * Could not lock User prefs. Unix Error Code 24. 
+ * Truncated Core Dumps / Heap Dumps
+
+
+RESOLVING THE PROBLEM
+ 
+
+Is it possible to display the current ulimit settings? The command ulimit -Xa will display all current settings that are set for the current login session, where X represents the hard (H) or soft (S) limits to be displayed. By default, if no value is supplied for X, soft limits will be displayed. However if a process is already running, it may have a different ulimit configurations than the current shell that you run the ulimit -a command in.
+
+
+
+
+How are ulimts set? Soft vs. Hard limits Soft limits are the current setting for a particular limit. They can be increased only to the current hard limit setting. 
+
+Hard limits are the maximum limit that can be configured. Any changes to these require root access. 
+
+ 
+
+Temporary Settings (for current session) 
+
+ * 
+ * ulimit -[H|S]limit_name limit_value
+
+
+Temporary settings are set via the command line using the ulimit command. The limit_name must be present in the command (see the chart below). These settings are only temporary for the current session and will be lost once the session is over or the terminal window is closed. 
+
+This syntax can be used within shell scripts. Any processes spawned from these shell scripts will also have the temporary settings for the lifetime they are running. 
+
+By default, the soft limit will be changed (as changing the hard limit needs root access). Use -H (for hard limits) or -S (for soft limits) to change specific hard or soft limits. 
+
+NOTES: 
+
+On HP-UX, if you receive an error when setting a particular limit, and you have altered that particular hard limit, you may need to check and see if it had exceeded the kernel parameters. You can use kctune to check (and alter) these if necessary; check your HP-UX documentation for more information. 
+
+For Solaris, settings in the "/etc/system" configuration file also allow configuring of some kernel-wide limits. 
+
+ 
+
+Global Settings 
+
+[/support/docview.wss?uid=swg21469413&amp;aid=1] Any changes to these global configuration limits files should be performed by your system administrator. Instructions on how to edit the files can be found on the manpage or in the commented section of the configuration file, as they can vary between versions of UNIX or Linux. 
+
+ 
+
+The format of the file, which differs slightly on versions of AIX and Linux, allows individual limits per users or groups, as well as set hard and soft limits. The limits defined in this configuration file are set globally. 
+
+ 
+
+Changes made to any limits file take effect after launching a new login shell (such as bash -l), or if the user logs out and logs back in to the system. 
+
+ 
+
+NOTES: 
+
+On Solaris and HP-UX, changes made to your shell's profile configuration (.profile or .login) should also take effect on the next login shell launched, or when your user logs back in using the specific shell. 
+
+For kernel-wide settings, which usually require a restart of the operating system to take effect, HP-UX has the kctune command, while Solaris has the /etc/system configuration file. 
+
+ 
+
+Specifics for each Operating System:
+The most up-to-date information on the limits can be found in the man page for "ulimit".
+
+
+
+AIX 
+Global settings are generally set in the file /etc/security/limits, although there may be different limit files for LPARs and WPARs. 
+
+ 
+
+Please note that this table may not represent all ulimit items as they can vary between operating system versions. Consult the ulimit man page or the limits file for further information.
+
+
+
+Command Line limit_name * /etc/security/limits Description ulimit -c [value] core
+core_hard Core file size in 512 byte blocks. ulimit -d [value]
+(K bytes) data
+data_hard Data segment size of processes in kilobytes. ulimit -f [value] fsize
+fsize_hard File size limit in 512 byes blocks. ulimit -n [value] nofiles
+nofiles_hard Max number of open files and/or sockets per process. ulimit -m [value]
+(K bytes) rss
+rss_hard The memory size of the process in kilobytes. ulimit -r [value] threads
+threads_hard Max number of threads per process. ulimit -s [value]
+(K bytes) stack
+stack_hard The stack segment size in kilobytes. ulimit -t [value]
+(seconds) cpu
+cpu_hard Max per process CPU time (in seconds). ulimit -u [value] nproc
+nproc_hard Specifies the limit of the number of processes per user. * Values are in 512 byte blocks unless otherwise specified, check your man page for further information 
+
+
+HP-UX 
+
+There is no global settings file on HP-UX. Instead, you would need to issue the specific ulimit command in your shell's (or user's) profile configuration (like .profile or .login). 
+
+There are similar kernel settings you can also set with kctune, such as "maxfiles_lim", but these kernel parameters do not normally need to be changed. Please refer to its man page for further information. 
+Please note that this table may not represent all ulimit items as they can vary between operating system versions. Consult the ulimit man page or your OS documentation for further information.
+
+
+
+Command "ulimit" limit_name* Description ulimit -c [value] Core file size in 512 byte blocks. ulimit -d [value] Data segment size of processes in 512 byte blocks. ulimit -f [value] File size limit in 512 byes blocks. ulimit -n [value] Max number of open files and/or sockets per process. ulimit -m [value] The memory size of the process in 512 byte blocks. ulimit -s [value] The stack segment size in 512 byte blocks. ulimit -t [value]
+(seconds) Max per process CPU time (in seconds). * Values are in 512 byte blocks unless otherwise specified, check your man page for further information. 
+
+
+Linux 
+Global settings are set in the file /etc/security/limits.conf. 
+
+The format for setting each limit is as follows:
+<domain> <type> <item> <value> 
+
+<domain> controls which users or groups will have these limits 
+
+<type> is either the string "soft" or "hard" limits.
+The hyphen "-" can also be used which represents both soft and hard limits 
+
+<item> and <value> are shown in the table below. Most values can also use the string unlimited. 
+
+ 
+
+Please note that this table may not represent all ulimit items as they can vary between Linux variants. Consult the ulimit man page or the limits.conf file for further information.
+
+
+
+Command Line limit_name /etc/security/limits.conf <item> Description ulimit -c [value] core Max core dump file size (KB) ulimit -d [value] data Max data size (KB) ulimit -f [value] fsize Max file size (KB) ulimit -l [value] memlock Max size of address space that can be locked into memory (KB) ulimit -n [value] nofile Max number of open files/sockets per process** ulimit -u [value] nproc Max number of processes for a single user ulimit -m [value] rss Max resident set size (KB) ulimit -s [value] stack The maximum stack size (KB) ulimit -t [value] cpu Max CPU time (minutes or seconds) ** There is a restriction that occurs on Red Hat Enterprise Linux that this value cannot be set to unlimited 
+
+
+
+
+
+
+
+Solaris 
+
+There is no global settings file specifically for ulimits on Solaris (however you can set kernel-wide settings in the /etc/system file). Instead, you would need to issue the specific ulimit command in your shell's (or user's) profile configuration (like .profile or .login). 
+
+Also depending on the shell used, the ulimit command is slightly different. See the man page for further information. 
+
+You can also set kernel wide settings for many of these ulimits in the /etc/system file. 
+For example, "set lim_fd_max = [value]" and "set rlim_fd_cur = [value]" are respectively the global hard and soft file descriptor limits. See the system OS's documentation for information on the /etc/system file. 
+Please note that this table may not represent all ulimit items as they can vary between operating system versions. Consult the ulimit man page or your OS documentation for further information.
+
+
+
+Command Line limit_name * 
+(sh, ksh, bash) Command Line 
+(csh) Description ulimit -c [value] ulimit coredumpsize [value]
+(K bytes) Core file size in 512 byte blocks. ulimit -d [value]
+(K bytes) ulimit datasize [value]
+(K bytes) Data segment size of processes in kilobytes. ulimit -f [value] ulimit filesize [value]
+(K bytes) File size limit in 512 byes blocks. ulimit -n [value] ulimit descriptors [value] Max number of open files and/or sockets per process (plus 1) ulimit -s [value]
+(K bytes) ulimit stacksize [value]
+(K bytes) The stack segment size in kilobytes. ulimit -t [value]
+(seconds) ulimit cputime [value]
+(seconds) Max per process CPU time (in seconds). ulimit -v [value]
+(K bytes) ulimit memorysize [value]
+(K bytes) Maximum size of virtual memory (in kilobytes) * Values are in 512 byte blocks unless otherwise specified, check your man page for further information. 
+
+
+
+
+If I am experiencing Too Many Open Files (Unix Error Code 24), can I increase the number of file descriptors? 
+Yes you can through the ulimit -n [value] command. However these settings won't take effect until you restart your application server (and nodeagent), making sure you restart on the same command line where you executed "ulimit -n". 
+
+However, if you increase the value high enough and still run into these errors, you may want to check for a file descriptor leak (meaning a leak of opened files and/or sockets in your application code). The command lsof, offered on a variety of operating systems, can provide information on the quantity and types of file descriptors in use. 
+
+Further information can be found at this link: Too Many Open Files error message [http://www.ibm.com/support/docview.wss?uid=swg21067352] 
+
+
+On Linux, can I set the ulimit for the number of open files to unlimited? Certain versions of Red Hat Enterprise Linux do not allow this value to be set to unlimited due to a known issue in Red Hat Enterprise Linux 5 [https://bugzilla.redhat.com/show_bug.cgi?id=507159]. The limit must be set to an integer value no larger than 1048576. Other versions of Linux may not have this restriction. In the Information Center for WebSphere Application Server, there is a recommendation [http://www.ibm.com/support/knowledgecenter/en/SSAW57_8.0.0/com.ibm.websphere.nd.doc/info/ae/ae/tprf_tunelinux.html] of 8000. 
+
+If an attempt is made to set this ulimit to unlimited via the command line, an error will be displayed, and the old value will remain in place:
+[root] # ulimit -n unlimited
+bash: ulimit: open files: cannot modify limit: Operation not permitted
+
+
+ 
+
+[/support/docview.wss?uid=swg21469413&amp;aid=2] If you try to edit the /etc/security/limits.conf file to force unlimited for the number of open files, this will still be considered invalid and it will be reset to 0. This will prevent any new processes from spawning by that user or group. If this is the root user, the system will slowly die as new processes will be unable to generate. A recovery disc will be needed to reset the value. 
+
+
+
+
+On Red Hat Enterprise Linux 6, why are my settings for nproc (ulimit -u) not being honored. Red Hat Enterprise Linux 6 has introduced a configuration file, addressed in a bug report [https://bugzilla.redhat.com/show_bug.cgi?id=919793], ( /etc/security/limits.d/90-nproc.conf ) that overrides the nproc setting in the limits.conf. This file contains a line for nproc configured with a soft limit of 1024. 
+
+* soft nproc 1024 
+
+The rationale for this was to prevent fork bombs from occurring, To keep using the limits.conf for your nproc ulimit settings, you would need to comment this line out by making the first character on the line a hash/pound symbol. 
+
+#* soft nproc 1024 
+ 
+
+I am using an /etc/init.d script (or inittab) to start my application server and setting the global ulimit settings had no effect? The global settings for ulimit will not take effect if the init process starts the application server or nodeagent because it has yet to load the global settings. The global settings take effect once a login terminal session is started, or when a user logs in to the system, not when the init process spawns new processes based on init.d scripts. At startup, the operating system hasn't begun to load specific profiles up, even the root user. When you see individual services and processes starting, these are all child processes of the init process 
+
+This was previously documented for AIX 6.1 in the following Knowledge Center article entitled "telinit or init Command", under the Environments section. Here's the quoted section: 
+
+"A command that is executed by init from the /etc/inittab file uses init's ulimit values and not the default values as given in /etc/security/limits. The result is that a command that is successfully executed from the command line may not execute correctly when invoked by init. Any command that has specific ulimit requirements should include specific actions to set the ulimit values as required."
+
+RELATED INFORMATION
+ Domino for Linux (see step 2) [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21377724]
+AIX - IBM SDK 7.0 User Guide - Ulimits [http://publib.boulder.ibm.com/infocenter/java7sdk/v7r0/index.jsp?topic=%2Fcom.ibm.java.aix.70.doc%2Fuser%2Fulimits.html]
+Linux - IBM SDK 7.0 User Guide - Ulimits [http://publib.boulder.ibm.com/infocenter/java7sdk/v7r0/index.jsp?topic=%2Fcom.ibm.java.lnx.70.doc%2Fuser%2Fulimits.html]

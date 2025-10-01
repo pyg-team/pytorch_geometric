@@ -1,0 +1,175 @@
+Title: IBM IZ05176: WEBSPHERE MQ RESOURCE ADAPTER IVT EAR FILE NOT SHIPPED ON UNIX - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V6.0 for iSeries Fix Pack 6.0.2.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24018193]
+WebSphere MQ V6.0 Fix Pack 6.0.2.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24017980]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere MQ 6.0.2.1 and later ships a JCA Resource Adapter
+   on all platforms except z/OS for use with J2EE 1.4 application
+   servers.  This resource adapter is documented in Appendix F of
+   the WebSphere MQ "Using Java" manual.  This manual describes
+   how to install the resource adapter and how to test it using a
+   Installation Verification Test (IVT) program shipped with MQ
+   called wmq.jmsra.ivt.ear.  Unfortunately, the wmq.jmsra.ivt.ear
+   file was only included in the fix pack for Windows.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *    This APAR will ensure the wmq.jmsra.ivt.ear file is shipped on
+   all platforms except z/OS in future WebSphere MQ maintenance.
+   Until then, the file can be copied from a Windows system and it
+   should also be available for download through this APAR.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This problem affects customers who want to use the JCA Resource
+   Adapter shipped with WMQ Version 6.0.2.1 and later on platforms
+   other than Windows.
+   
+   Platforms affected:
+   iSeries,All Unix
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The scripts used to package up the files needed for WMQ Version
+   6.0.2.1 for Unix platforms and iSeries did not pick up the JCA
+   IVT program.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The packaging scripts have been changed to include the WMQ JCA
+   IVT program wmq.jmsra.ivt.ear.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.3
+   --------           --------------------
+   AIX                U811346
+   HP-UX (PA-RISC)    U811630
+   HP-UX (Itanium)    U811631
+   Solaris (SPARC)    U811632
+   Solaris (x86-64)   U811633
+   iSeries            SI27288
+   Linux (x86)        U811634
+   Linux (x86-64)     U811635
+   Linux (zSeries)    U811636
+   Linux (Power)      U811637
+   Linux (s390x)      U811638
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ05176
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7201
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-09-21
+   
+   
+ * CLOSED DATE
+   2007-09-25
+   
+   
+ * LAST MODIFIED DATE
+   2007-09-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V6
+   
+   
+ * FIXED COMPONENT ID
+   5724H7201
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

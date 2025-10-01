@@ -1,0 +1,193 @@
+Title: IBM IT09893: THE PORTAL INTEGRATION SCRIPT FAILS ON A PORTAL CLUSTERED ENVIRONMENT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Portal integration script (installPortlet.sh/bat) fails on
+   a Portal clustered environment with the following error:
+   
+   [wsadmin]
+   com.ibm.websphere.management.exception.AdminException:
+   ADMA5033E: The target server WebSphere_Portal specified for
+   commonui.war+WEB-INF/web.xml is a part of cluster
+   PortalCluster, but cluster PortalCluster is not specified in
+   the list of targets.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manual steps to install the portlet package into a Portal
+   Cluster environment:
+   
+   These instructions are written under the following conditions -
+   Replace values with proper ones from your environments.
+   
+   WAS Dmgr node hostname: dmgrhost
+   -> WAS administrative console URL:
+   http://dmgrhost:9060/ibm/console [http://dmgrhost:9060/ibm/console]
+   WAS Cluster name: PortalCluster
+   
+   WPS primary node: wps1host
+   -> WPS portal URL: http://wps1host:10039/wps/portal [http://wps1host:10039/wps/portal]
+   WPS secondary node: wps2host
+   
+   Abstract steps:
+   1. Install commonui.ear into PortalCluster instance with WAS
+   admin console
+   2. Install commonporlet.war from the WPS administrative console
+   3. Restart the PortalCluster instance to synchronize
+   4. Set the portlet properties to point to the WCA REST services
+   5. Activate the portlet war module
+   6. Create a portlet page, and place "portlet35"
+   
+   Detailed steps:
+   0. If you failed to install with "installPortlet.bat/sh" script
+   previously, first uninstall the installed portlet with
+   "uninstallPortlet.sh/bat"
+   1. Prepare the "PortletInstall.zip" package of WCA35FP2, unzip
+   it on some directory.
+   2. Log in to WAS the administrative console of dmgrhost, click
+   "New Application" link under the "Applications" section.
+   3. Click on "New Enterprise Application" and specify
+   "commonui.ear" in the PortletInstall package.
+   4. Proceed installation steps with default values. Don't forget
+   to map the module to "PortalCluster" instance. If you want to
+   use IHS, also map it to webserver1.
+   5. After you save changes, go to the WPS administrative console
+   of wps1host.
+   6. Go to "Web Modules" page under "Portlet Management" section.
+   Press "Install" button and specify "commonportlet.war" module
+   in the PortletInstall package.
+   7. Click "Next" to proceed steps.
+   8. Go to the WAS administrative console of dmgrhost, go to
+   "WebSphere application server clusters" under "Clusters" under
+   "Servers" section.
+   9. Stop PortalCluster, and after it stopped, then restart
+   PortalCluster.
+   10. Then go back to WPS administrative console, access
+   "Portlets" page. Search "portlet35" portlet. Click wrench icon
+   to configure properties of it.
+   11. Enter correct values to "adminRestHostName",
+   "searchRestHostName" in order to point WCA server.
+   12. After save changes, go to "Web Modules" page. Search
+   "commonportlet.war". If it is in stoppped state, click
+   "Activate" button for the module.
+   13. Go to "Manage Pages" under "Portal User Interface" section.
+   14. Create a page in order to deploy WCA portlet. For example,
+   I created "Test1" page under "Content Root".
+   15. Edit layout of the created page. Put "portlet35" portlet in
+   it.
+   
+   Then you will see the WCA portlet works well if the
+   installation is successfully done.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Code changed to fix problem.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem resolved with version 3.5 fixpack 3.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT09893
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ANA SER
+   
+   
+ * REPORTED COMPONENT ID
+   5724Z21SV
+   
+   
+ * REPORTED RELEASE
+   350
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-07-07
+   
+   
+ * CLOSED DATE
+   2017-06-12
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ANA SER
+   
+   
+ * FIXED COMPONENT ID
+   5724Z21SV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R350 PSY
+   UP

@@ -1,0 +1,132 @@
+Title: IBM TWA/TDWC 8.6 fresh install failure on AIX - United States
+
+Text:
+TDWC: TWS; Installation failure TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TWA 8.6 install fresh of TWS or TDWC 8.6 can fails with following error:
+CWWIM4537E No principal is found from the 'maestro' principal name.
+
+
+SYMPTOM
+CWWIM4537E No principal is found from the 'maestro' principal name is logged into TWA Installation logs file.
+
+
+CAUSE
+The cause is due to the fact that inside etc/passwd file customer had some entries like these ones (see BLUE Arrow) ..... 
+
+db2inst2:!:104:104::/home/db2inst2:/usr/bin/ksh
+bkmuhg:!:226:1::/home/bkmuhg:/usr/bin/ksh
+::::: <-----------------------------
+prova:*:227:1::/home/prova:/usr/bin/ksh
+twsgio:!:228:1::/home/twsgio:/usr/bin/ksh
+
+If the User with which you are installing TWS is located after these lines the error could happens.
+
+TDWC 8.6 uses the security mechanism "WAS Federated Repository mechanism."
+WAS Federated Repository used by TDWC is composed by two registries: LocalOS and WIM 
+WIM means that the authentication is made against a file saved on the OS and owned by WebSphere.
+TDWC by default uses a LocalOS user for his authentication.
+The change is to let WebSphere search the primary administrative user no more in the localOS but in the WebSphere owned file.
+
+
+RESOLVING THE PROBLEM
+There are two solutions to workaround the issue for UNIX platform for TDWC is the following: 
+
+
+
+The first one is to delete the entries with only dot (see Blue arrows) 
+and re-start the installation from the beginning
+
+OR perform the following steps:
+
+Notice: User should use "webadmin" in the steps where it is listed this id.Don't replace this id.
+
+The "maestro" listed into message "CWWIM4537E" should be replaced with the name that is prompt in the user installation,
+The 
+
+1. Run the TDWC 8.6 installation until its failure (step number 6: "Install Tivoli Integrated Portal")
+2. Edit the file <INSTALL_DIR>/eWAS/profiles/TIPProfile/config/cells/TIPCell/security.xml (before create a backup of it)
+3. In the tag <security:Security (usually the first line of the file) set the value of enabled from true to false (this will allow the application server to start without security 
+and will allow to perform some change we need below
+4. change to the directory <INSTALL_DIR>/eWAS/bin
+5. start the websphere application server running:
+./startServer.sh server1
+6. Run the command:
+./wsadmin.sh
+This will open the wsadmin> prompt
+7. Enter the following two commands in this shell:
+$AdminTask addFileRegistryAccount {-userId webadmin -password XXXX} 
+$AdminConfig save 
+8. Login to the WebSphere Administration console, at the link:
+https://<hostname>:29043/ibm/console
+9. click on Security => Global Security
+10 Near to "federated Repository" click on "configure"
+11. Change the "primary Admin user name" to webadmin
+12 Change the Server Identity username and password to webadmin and to its password
+13. In the Security => Global Security activate the "Administrative security" checkbox. Remember to deselect the "Java 2 security" checkbox
+14. save the configuration
+15. stop and restart the application server. Check that it started successfully.
+16. Create a backup of this working configuration. and stop the application server
+17. restart the TDWC installation in resume mode, running
+./setup.bin -resume
+18. double click on the step 0, and click the 'Properties tab'.
+19. change all the user names from the original values to 'webadmin', and the password to the webadmin password
+20. Set the failed step 6 "Install Tivoli Integrated Portal" to ready
+21 Edit the file /tmp/TWA/tdwc86/TIP/TIPInstall.properties and change the username and password from the original one
+to webadmin and its new passsword
+22. complete the TDWC installation, clicking on "Run All"
+
+
+The solution for Windows is to install TWS/TDWC Refreshed GA code published on 15th June (ibmtechnote 1598104 )and download the GA refreshed code from Passport Advantage.
+
+There are two solution to workaround the issue for UNIX platform for TWS is the following:
+
+The first one is to delete the entries with only dot that were belogining to deleted users and re-start the installation from the beginning
+
+OR perform the following steps
+
+Notice: User should use "webadmin" in the steps where it is listed this id.Don't replace this id.
+
+The "maestro" listed into message "CWWIM4537E" should be replaced with the name that is prompt in the user installation,
+
+Hide details for Detailed Procedure [/support/docview.wss?uid=swg21592038&amp;aid=1]Detailed Procedure
+1. Run the TWS 8.6 installation until its failure (step number 17 or 18, depending on the kind of installation done: "Propagate the security policies of the application to the JAAC ......")
+2. Edit the file <INSTALL_DIR>/eWAS/profiles/TIPProfile/config/cells/TIPCell/security.xml (before create a backup of it)
+3. In the tag <security:Security (usually the first line of the file) set the value of enabled from true to false (this will allow the application server to start without security 
+and will allow to perform some change we need below
+4. change to the directory <INSTALL_DIR>/eWAS/bin
+5. start the websphere application server running:
+./startServer.sh server1
+6. Run the command:
+./wsadmin.sh
+This will open the wsadmin> prompt
+7. Enter the following two commands in this shell:
+$AdminTask addFileRegistryAccount {-userId webadmin -password XXXX} 
+$AdminConfig save 
+8. Login to the WebSphere Administration console, at the link:
+https://<hostname>:31124/ibm/console (it exist also for TWS, but at different port)
+9. click on Security => Global Security
+10 Near to "federated Repository" click on "configure"
+11. Change the "primary Admin user name" to webadmin
+12 Change the Server Identity username and password to webadmin and to its password
+13. In the Security => Global Security activate the "Administrative security" checkbox. Remember to deselect the "Java 2 security" checkbox
+14. save the configuration
+15. stop and restart the application server. Check that it started successfully.
+16. Create a backup of this working configuration. and stop the application server
+16b.In a shell, cd to the fodler <INST_DIR>/TWS, set the environment running:
+. ./tws_env.sh
+and run:
+dumpsec >mysec.txt
+Edit the file mysec.txt, and add the user webadmin in the MAESTRO stanza
+Run the command:
+makesec mysec.txt
+17. restart the TWS installation in resume mode, running
+./SETUP.bin -resume
+18. Set the username and password of the failed step "Propagate the security policies of the application to the JAAC ......" to 'webadmin' and to its password.
+19. Edit the step "Commit the Tivoli Workload Scheduler Instance" step and set the value of WebSphere username and WebSphere password
+to 'webadmin' and to its password. Note: the step contains also the TWS username and its password (that have the same value), they must not be changed.
+20. Set the failed step 17 or 18, depending on the kind of installation "Propagate the security policies of the application to the JAAC ......" to ready
+21. complete the TWS installation, clicking on "Run All"
+22. Run the wastool:
+./updateWas.sh -user webadmin -password XXXX

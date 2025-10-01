@@ -1,0 +1,185 @@
+Title: IBM Sametime System Console responds slowly - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Log into the WebSphere Integrated System Console (ISC), Access the Sametime System Console (SSC), by clicking on Sametime Servers. Click on any of the Sametime servers. The page for the Sametime server configuration does display for several minutes. 
+
+[/support/docview.wss?uid=swg22002876&amp;aid=1]
+
+
+SYMPTOM
+The Sametime System Console does not display the chosen Sametime server for several minutes.
+
+
+CAUSE
+Several causes can lead to the issue: 
+
+1. Obsolete physical nodes listed in DB2 through which Sametime System Console sorts to find active ones. 
+
+2. Large temp folders in the IBM\WebSphere\AppServer profiles. 
+
+3. Corrupt indexes for DB2 databases, or DB2 databases in need of reorganization 
+
+4. Mis-configuration of the environment 
+
+In one case blocking DMZ traffic bound for internal LDAP servers on port 389 resulted in long wait times while LDAP searches timed out. 
+
+
+DIAGNOSING THE PROBLEM
+The first step you take focuses on the commands which take up all the time. User a browser log such as Fiddler to track the HTTP header requests and the time statistics. 
+
+Follow the steps starting with 5 for "Setup and enable Fiddler" in the link below to download, install and begin using Fiddler for better tracking of statistics. 
+
+https://www-10.lotus.com/ldd/dominowiki.nsf/dx/Logging_browser_traffic_using_Fiddler2_for_Domino_HTTP_troubleshooting [https://www-10.lotus.com/ldd/dominowiki.nsf/dx/Logging_browser_traffic_using_Fiddler2_for_Domino_HTTP_troubleshooting]
+
+2. When Fiddler2 is started, access your browser and reproduce the slow response of the SSC. 
+3. Save the Fiddler2 logs, all sessions, as a .saz file. 
+
+[/support/docview.wss?uid=swg22002876&amp;aid=2]
+
+4. Click on Statistics and click successive URI's on the left until you find the one which has the greatest elapsed time. That will be the focus of the requested service to be investigated. 
+
+
+[/support/docview.wss?uid=swg22002876&aid=3] [/support/docview.wss?uid=swg22002876&aid=3] 
+
+ 
+
+ 
+
+Below you will find some performance issues which may be addressed. 
+
+ 
+
+A. Use Data Studio to open DB2 to ensure that the physicalNodes and Deployment plans are correct. Contact IBM support for assistance if there are obsolete nodes or plans to clean up. 
+
+
+1. Open DataStudio and let it choose the default workspace. 
+[/support/docview.wss?uid=swg22002876&aid=4] [/support/docview.wss?uid=swg22002876&aid=4]
+
+2. Open the database, you will need to know the name of the DB2 database, often for SSC it is STSC
+
+[/support/docview.wss?uid=swg22002876&amp;aid=5]
+
+3. Follow the open database dialog, click next, no modifications or entries needed, until all you have active is Finish.
+
+[/support/docview.wss?uid=swg22002876&aid=6] [/support/docview.wss?uid=swg22002876&aid=6]
+
+
+4. Select the Table view, right click on PHYSICALNODES, Data, and Browse Data
+
+[/support/docview.wss?uid=swg22002876&aid=7] [/support/docview.wss?uid=swg22002876&aid=7]
+
+
+
+5. Review the list of physical nodes for which the SSC must gather data. Are they all current and correct? If not then engage with support to clean up the list for obsolete and unused nodes.
+
+
+[/support/docview.wss?uid=swg22002876&aid=8] [/support/docview.wss?uid=swg22002876&aid=8]
+
+6. Do the same for the table item DeploymentPlan, browse data, and check against your current deployment plans. 
+
+[/support/docview.wss?uid=swg22002876&aid=9] [/support/docview.wss?uid=swg22002876&aid=9]
+
+
+[/support/docview.wss?uid=swg22002876&aid=10] [/support/docview.wss?uid=swg22002876&aid=10]
+
+
+
+
+B. Is it possible that the DB2 database used by the SSC needs to be reorganized for efficiency. 
+
+
+reorg is a DB2 maintenance process that can sometimes improve performance when accessing data, it rearranges how the data is distributed so that it can be accessed more efficiently.
+
+https://www.ibm.com/support/knowledgecenter/en/SSEPGG_11.1.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0001966.html [https://www.ibm.com/support/knowledgecenter/en/SSEPGG_11.1.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0001966.html] 
+
+DB2 REORG INDEX index-name 
+
+To reorg a specific index. or the command to reorg all indexes on a specific table would be 
+
+DB2 REORG INDEXES ALL FOR TABLE table-name 
+
+ 
+
+ 
+
+C. Give the SSC greater efficiency by deleting the contents of temp folders which can slow SSC during its scan for needed data. Purge the contents of the directories, not the directory itself. Server services for the DMgr, NodeAgent, SSC, and other services dependent on the DMgr need to be down.
+
+From the AppServer profile directory:
+\IBM\WebSphere\AppServer\profiles\STSCAppProfile\temp
+\IBM\WebSphere\AppServer\profiles\STSCAppProfile\wstemp
+\IBM\WebSphere\AppServer\profiles\STSCAppProfile\config\temp
+
+From the DMgr profile directory:
+C:\IBM\WebSphere\AppServer\profiles\STSCDMgrProfile\config\temp
+C:\IBM\WebSphere\AppServer\profiles\STSCDMgrProfile\temp
+C:\IBM\WebSphere\AppServer\profiles\STSCDMgrProfile\wstemp
+
+
+D. Reset the JVM memory use. 
+
+https://www.ibm.com/support/knowledgecenter/SSKTXQ_9.0.1/admin/install/inst_config_ssc_incr_heap.html [https://www.ibm.com/support/knowledgecenter/SSKTXQ_9.0.1/admin/install/inst_config_ssc_incr_heap.html]
+
+1024MB for DMgr min and max
+
+2048MB for SSC min and max
+
+After resetting the initial and max heap size then stop the NodeAgent and SSC and start the NodeAgent and SSC.
+
+E. In an environment which runs many Virtual Machines, VMs, balance the VMs on each physical machine such that they each require RAM and CPU in equally shared proportions. This keeps each VM from undue delays in performance by unnecessarily waiting for resources. While there is much more to consider for VMs, this is starting point. 
+
+
+
+RESOLVING THE PROBLEM
+The instance of the issue under consideration required further troubleshooting on the SSC and Deployment manager and found to be reproducible when accessing some WAS servers in the ISC interface, also. 
+
+
+SSC trace logs showed: 
+
+0000008c LdapConnectio I com.ibm.ws.wim.adapter.ldap.LdapConnection DirContext reCreateDirContext(String errorMessage) CWWIM4564I The user registry is now connected to 'ldap://lb.corp.servers.com:389' LDAP Server. Or, the user registry is able to ping the LDAP server successfully.
+
+This typically means that the LDAP Connection was "restored". This indicates an LDAP issue but more troubleshooting was needed. 
+
+Further troubleshooting implementing =info:com.ibm.sametime.*=all in the SSC revealed a large time gap between the start of what should have been a search and the returns to the SSC. A Fiddler trace showed a request which the admin started at 15:14 but which showed no activity in the SSC trace log until 15:18. This indicated an issue deeper than SSC since the SSC shows no activity at the time of the Fiddler trace. 
+
+Fiddler trace shows a request for: /ibm/console/navigation.do?csrfid=-74814942&pageID=msframeworkbridge.fa5ea9daf1&moduleRef=com.ibm.sametime.meetings.admin&ISC.TASKTYPE=2 
+
+
+The Fiddler statistics showed the request to open a Sametime server interface in the SSC starting at 15:14 but the SSC did not get that request until 15:18 and a response was given to the admin nearly within a second after the SSC received a request. The SSC itself was not at issue. 
+
+[/support/docview.wss?uid=swg22002876&amp;aid=11] 
+
+ 
+
+SSC trace log shows no activity between 15:12 and 15:18, but when the request arrives it is processed promptly.
+
+[9/27/16 15:12:31:945 EDT] 0000008a ManagerAdmin I TRAS0018I: The trace state has changed. The new trace state is *=info:com.ibm.sametime.*=all.
+[9/27/16 15:18:33:383 EDT] 0000143f DeploymentMBe > com.ibm.sametime.console.deployment.mbean.impl.DeploymentMBeanImpl listProductDeploymentsByInstallType ENTRY
+[9/27/16 15:18:33:399 EDT] 0000143f DeploymentMBe I DeploymentMBeanImpl listProductDeploymentsByInstallType AIDSC1124I: Listing Products by Install type
+[9/27/16 15:18:33:399 EDT] 0000143f app > com.ibm.sametime.console.deployment.app.ProductCore listProductDeploymentsByInstallType ENTRY
+[9/27/16 15:18:33:399 EDT] 0000143f DeploymentImp > DeploymentImpl getDeploymentList ENTRY
+[9/27/16 15:18:33:415 EDT] 0000143f DeploymentImp I DeploymentImpl getDeploymentList AIDSC1502I: Data added to the list.
+[9/27/16 15:18:33:415 EDT] 0000143f DeploymentImp < DeploymentImpl getDeploymentList RETURN
+
+
+After further review and collaboration with the WAS Administration team, the following was implemented to narrow the issue further.
+
+
+
+
+1. enable this trace string on the DMGR
+*=info:com.ibm.ws.management.*=all:com.ibm.websphere.management.*=all
+
+Maintain in the STConsole troubleshoot trace level *=info:com.ibm.sametime.*=all
+
+2. Increase the number of history trace files to 10.
+
+3. Recreate the problem and pinpoint the exact time of the test, and send in the logs from the DMGR and STConsoleServer, and the Fiddler log which allow the exact time and request to track in these logs. Further analysis and testing narrowed the issue to servers which were external to the network. When the Admin clicked the SSC link to access these servers the lag time was four minutes. Further specialized WAS troubleshooting for queries to servers in the DMZ found delays. 
+
+Ultimately the analysis revealed issues with lookup queries to the internal LDAP servers. The LDAP servers internal to the environment could not be reached by WAS servers inside the DMZ because port 389 was blocked. 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration IBM Sametime

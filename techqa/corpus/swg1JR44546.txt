@@ -1,0 +1,172 @@
+Title: IBM JR44546: SRVC: LACK SELF-ASSISTED ERROR TO HELP USER IDENTIFY ACTION TO RECTIFY DEPLOYMENT FAILURE DUE TO USER AUTHENTICATION ISSUE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PMR 34054,000,781 is a good example that illustrates the problem
+   with lacking a self-assisted error in the system out and in the
+   error dialog which user can easily understand and be
+   informed of the corrective action for an issue that has
+   occurred.
+   
+   In the case of PMR 34054,000,781, the issue is that the
+   Application Security is disabled for some reason by user
+   without the knowledge that Application Security must be enabled
+   for deployment to work in BPM.  The deployment failed with an
+   SQL exception as the user is returned as UNAUTHENTICATED and
+   hence the insert statement cannot be constructed.
+   
+   e.g.
+   
+   Caused by:
+   org.springframework.dao.DataIntegrityViolationException:
+   PreparedStatementCallback; SQL [insert into LSW_PROJECT
+   (PROJECT_ID,CREATED_ON,LAST_MODIFIED,ARCHIVED_ON,NAME,DESCRIPTIO
+   N,SHORT_
+   NAME,CREATED_BY_USER_ID,LAST_MODIFIED_BY_USER_ID,RELEASE_PROCESS
+   _ID,RELE
+   ASE_PROCESS_BRANCH_ID,IS_ARCHIVED,IS_TOOLKIT,IS_BRANCHING_ENABLE
+   D,IS_HID
+   DEN,IS_SYSTEM,IS_IMMUTABLE) values
+   (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)];
+   Error for batch element #1: DB2 SQL Error: SQLCODE=-407,
+   SQLSTATE=23502,
+   SQLERRMC=TBSPACEID=2, TABLEID=147, COLNO=1, DRIVER=3.61.65;
+   nested
+   exception is
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException:
+   Error for
+   batch element #1: DB2 SQL Error: SQLCODE=-407, SQLSTATE=23502,
+   SQLERRMC=TBSPACEID=2, TABLEID=147, COLNO=1, DRIVER=3.61.65
+   
+   The logged SQL exception is misleading in terms of determing the
+   root cause. Although from the trace, one can see the user was
+   returned as UNAUTHENTICATED but it does not mention any
+   consequence it may cause as a result and what needs to be done
+   to correct it.
+   
+   After spending much time, the support team had to go through
+   both BPM dev and then WAS support to nail down the root cause
+   which is Application Security is disabled. When that
+   happens, authentication is skipped and hence UNAUTHENTICATED
+   for the user will be returned.  But since BPM does not support
+   disabling Application Security by design, it resulted in
+   deployment failure and the PMR was opened as a Sev 1 system down
+   as customer could not deploy an application.
+   
+   The PMR could have been avoided if a better error message is
+   thrown in the systemout or a pop-up dialog indicating the
+   possible cause and the corrective action.
+   
+   I see this "problem determination" issue in the product in
+   general because the error is not as helpful as it could be.
+   
+   The Advanced Transition error that the user gets in a pop-up
+   dialog when encountering deployment failure is another
+   good example.  The "Advanced Transition" error does not provide
+   any meaningful information why the failure happened nor what
+   action can be taken.  It only indicates to user that the
+   deployment failed.  The user must go read the logs and sometimes
+   the log does not have the underlying error either and trace is
+   needed to be turned on to determine the cause which means the
+   customer must rely on support to provide the trace string and
+   analyze the issue for them.  If the error can be more
+   indicative, it will help with PMR reduction for sure.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The problem has been fixed in future release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR44546
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-25
+   
+   
+ * CLOSED DATE
+   2014-12-11
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

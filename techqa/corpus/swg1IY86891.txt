@@ -1,0 +1,121 @@
+Title: IBM IY86891: CALENDAR SCHEDULER WIDGET LOOKS LIKE IT IS SCHEDULING FUTURE DATE BUT INSTEAD SCHEDULES IT FOR TODAY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Trying to use the discovery schedules in 4.1,
+   If you use the Calendar widget to choose a date and time for
+   the schedule entry, it shows in the dialog correctly but
+   ignores it when you save the entry and starts a discovery for
+   the current date in  2 minutes time.  In other words, if I
+   wanted to create an event for Thursday, March 16th at 15:00 and
+   I use the calendar tool to enter it, it will appear correctly
+   but it is put into the schedule list with todays date and time.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Fix was made in interim fix pack 2 and can be obtained from
+   level 2 support.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix was made in interim fix pack 2 and can be obtained from
+   level 2 support.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY86891
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-07-13
+   
+   
+ * CLOSED DATE
+   2006-08-15
+   
+   
+ * LAST MODIFIED DATE
+   2006-08-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * FIXED COMPONENT ID
+   5724N5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R410 PSY
+   UP

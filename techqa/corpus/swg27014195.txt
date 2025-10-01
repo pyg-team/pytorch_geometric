@@ -1,0 +1,112 @@
+Title: IBM WebSphere Partner Gateway, Version 6.2, detailed system requirements - Linux on x86 - United States
+
+Text:
+websphere partner gateway system requirements requirement Linux V6.2 6.2 PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document lists the hardware and software requirements for WebSphere® Partner Gateway, Version 6.2, on the Linux on x86 operating system. 
+
+CONTENT
+
+
+
+
+
+[/support/docview.wss?uid=swg27014195&amp;aid=1] Back to all V6.2 detailed system requirements [http://www.ibm.com/support/docview.wss?uid=swg27013981] [/support/docview.wss?uid=swg27014195&amp;aid=2] WebSphere Partner Gateway V6.2 Information Center [http://publib.boulder.ibm.com/infocenter/dmndhelp/v6r2mx/index.jsp?topic=/com.ibm.wpg.entadv.doc/welcome_wpg.htm] 
+This document describes the minimum product levels that need to be installed before opening a problem report with the WebSphere Partner Gateway Support team. Because other products frequently ship fixes, updates, and new releases, testing every configuration is not possible. In general, you can install and run with updates to supported products if those updates are forward compatible. 
+
+The following list identifies the products that are supported when WebSphere Partner Gateway runs on the Linux on x86 operating system. 
+
+
+Supported Operating Systems [/support/docview.wss?uid=swg27014195&amp;aid=3]  * Red Hat Enterprise Linux Server 5.0 (32-bit and 64-bit) (Red Hat Enterprise Linux product website [http://www.redhat.com/software/rhel/]) 
+ * Red Hat Enterprise Linux Server 5.5 (32-bit and 64-bit) (Red Hat Enterprise Linux product website [http://www.redhat.com/software/rhel/]) 
+ * Red Hat Enterprise Linux AS 4.0 with Update 2 (32-bit) (Red Hat Enterprise Linux product website [http://www.redhat.com/software/rhel/]) 
+ * Red Hat Enterprise Linux ES 4.0 with Update 2 (32-bit) 
+ * Novell SUSE Linux Enterprise Server (SLES) 9.0 with SP2 or SP3 (32-bit) (SuSE Linux product website [http://www.novell.com/products/linuxenterpriseserver/]) 
+ * Novell SUSE Linux Enterprise Server (SLES) 10.0 (32-bit and 64-bit)
+
+Hardware requirements [/support/docview.wss?uid=swg27014195&amp;aid=3]  * Intel® Pentium® (or equivalent) processor at 2 GHz or faster (32-bit kernel support only) 
+ * Intel® EM64T (or equivalent) processor at 3GHz or faster (64-bit operating system support only) 
+ * Minimum 2 GB physical memory 
+ * Minimum 1.3 GB (1350 MB) available disk space for installation. The installer also requires approximately 600 MB of space in the /tmp directory during installation. 
+ * Additional disk space for document storage, 30 GB recommended 
+ * CD-ROM drive
+
+Base application server requirement [/support/docview.wss?uid=swg27014195&amp;aid=3] One of the following:  * IBM WebSphere® Application Server v6.1 with Fix Pack 19 (WebSphere Partner Gateway simple deployment only) 
+ * IBM WebSphere Application Server Network Deployment 6.1 with Fix Pack 19 [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg24020063] [http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg24017307], Fix Pack 21 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg24020708], Fix Pack 25 [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg24023311], Fix Pack 27 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg24024195], Fix Pack 29 [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg24025185], Fix Pack 31 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg24026350] Note: While using IBM WebSphere Application Server Network Deployment 6.1 with FixPack 25, it is mandatory to install PK86552 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?fixes=6.1.0.23-WS-WAS-IFPK86552&productid=WebSphere%20Application%20Server&brandid=5] before installing WebSphere Partner Gateway v6.2Fp1.
+   
+   
+
+WebSphere Partner Gateway is compatible with the following WebSphere Application server options: 
+
+ * 32-bit application on 32-bit kernel on 64-bit hardware 
+ * 64-bit application on 64-bit kernel on 64-bit hardware 
+   For more information, see the WebSphere Application Server [http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg27007651] 6.1 detailed system requirements.
+   
+   
+
+Supported databases [/support/docview.wss?uid=swg27014195&amp;aid=3]  * IBM DB2® Universal Database Enterprise Server Edition 8.2 with Fix Pack 9 (DB2 Universal Database product website [http://www.ibm.com/support/docview.wss?rs=71&uid=swg27007053]) 
+ * IBM DB2 Universal Database Enterprise Server Edition 9.1 with Fix Pack 5, Fix Pack 7, Fix Pack 9 (DB2 Universal Database product website [http://www.ibm.com/support/docview.wss?rs=71&uid=swg27007053]) 
+ * IBM DB2 Universal Database Enterprise Server Edition 9.5 with Fix Pack 2, Fix Pack 4, Fix Pack 4a, Fix Pack 5 (DB2 Universal Database product website [http://www.ibm.com/support/docview.wss?rs=71&uid=swg27007053]) 
+ * IBM DB2 Workgroup Server Edition 9.1 with Fix Pack 5, Fix Pack 7 (DB2 Universal Database product website [http://www.ibm.com/support/docview.wss?rs=71&uid=swg27007053]) 
+ * IBM DB2 Workgroup Server Edition 9.5 with Fix Pack 2, Fix Pack 4, Fix Pack 4a, Fix Pack 5 (DB2 Universal Database product website [http://www.ibm.com/support/docview.wss?rs=71&uid=swg27007053]) 
+ * Oracle 9i Enterprise Edition Release 2 - 9.2.0.8 (Oracle Database product website [http://www.oracle.com/database/index.html]) Supported JDBC drivers: 
+   
+    *  Thin 10g R1 Type 4
+   
+   
+ * Oracle 10g Enterprise Edition Release 1 - 10.1.0.5 (Oracle Database product website [http://www.oracle.com/database/index.html]) Supported JDBC drivers: 
+   
+    *  Thin 10g R1 Type 4
+   
+   
+
+ * Oracle 10g Enterprise Edition Release 2 - 10.2.0.4 (Oracle Database product website [http://www.oracle.com/database/index.html]) Supported JDBC drivers: 
+   
+    *  Thin 10g R2 Type 4
+   
+   
+ * Oracle 10g Enterprise Edition Release 2 - 10.2.0.5 (Oracle Database product website [http://www.oracle.com/database/index.html]) Supported JDBC drivers: 
+   
+    *  Thin 10g R2 Type 4
+      
+   
+   
+ * Oracle 11g Enterprise Edition Release 1 - 11.1.0.6 (Oracle Database product website [http://www.oracle.com/database/index.html])
+
+ * 
+ *  Thin 11g R1 Type 4 
+ * Oracle 11g Enterprise Edition Release 1 -11.1.0.7 (Oracle Database product website [http://www.oracle.com/database/index.html]) Supported JDBC drivers: 
+   
+    *  Thin 11g R1 Type 4
+   
+   
+   Note: This is supported for 6.2 FixPack 1 and not for 6.2.
+
+
+Note: Support for Oracle databases does not include support for the Oracle Exadata platform. Supported Web servers [/support/docview.wss?uid=swg27014195&amp;aid=3] See WebSphere Application Server 6.1 detailed system requirements [http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg27007651]for a list of supported Web Servers. Supported Web browsers [/support/docview.wss?uid=swg27014195&amp;aid=3] See WebSphere Application Server 6.1 detailed system requirements [http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg27007651]for a list of supported Web Browsers. 
+Note: 
+
+ * 
+
+Java [/support/docview.wss?uid=swg27014195&amp;aid=3]  * IBM 32-bit SDK for Linux on x86, Java 2 Technology Edition, V5.0 SR8 
+ * IBM 64-bit SDK for Linux on x86, Java 2 Technology Edition, V5.0 SR8 
+
+
+Note: 
+Installation of SR8 [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg24020073] is mandatory before installing WebSphere Partner Gateway.
+
+Supported LDAP servers (required only to support optional functions) [/support/docview.wss?uid=swg27014195&amp;aid=3] See WebSphere Application Server 6.1 detailed system requirements [http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg27007651]for a list of supported LDAP Servers. JMS Provider (required only to support optional functions) [/support/docview.wss?uid=swg27014195&amp;aid=3]  * IBM WebSphere MQ 6.0.2.5 (IBM WebSphere MQ 6.0 product website [http://www.ibm.com/software/integration/wmq/v60/]) 
+ * IBM WebSphere MQ 6.0.2.9 (IBM WebSphere MQ 6.0 product website [http://www.ibm.com/software/integration/wmq/v60/]) from IBM WebSphere Partner Gateway 6.2 FixPack 3 (6.2.0.3) onwards 
+   
+   
+
+Note:  * 
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Partner Gateway Enterprise Edition Linux 6.2.0 Advanced, Enterprise PRODUCT ALIAS/SYNONYM
+ WPG

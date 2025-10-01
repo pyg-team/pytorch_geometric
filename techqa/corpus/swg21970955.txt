@@ -1,0 +1,179 @@
+Title: IBM SQLCODE=-302, SQLSTATE=22001 exception during contract deployment - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Contract deployment might fail due to the following exception:
+
+com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error:
+
+SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=4.12.55 
+
+SYMPTOM
+While deploying a contract, it might fail due to an exception that resembles the following error: 
+
+
+[10/14/15 9:23:23:774 CEST] 0000193b RemoteExcepti E CNTR0019E: EJB
+threw an unexpected (non-declared) exception during invocation of
+method "create". Exception data: com.ibm.websphere.cpi.CPIException: ;
+nested exception is:
+com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error:
+SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=4.12.55
+at
+com.ibm.ejs.container.ContainerManagedBeanO.afterPostCreate(ContainerMan
+agedBeanO.java:587)
+at
+com.ibm.ejs.container.EJSHome.afterPostCreate(EJSHome.java:2873)
+at
+com.ibm.commerce.catalog.objects.EJSCMPProductSetHomeBean_0e5a1e63.after
+PostCreateWrapper(EJSCMPProductSetHomeBean_0e5a1e63.java:25)
+at
+com.ibm.commerce.catalog.objects.EJSCMPProductSetHomeBean_0e5a1e63.creat
+e(EJSCMPProductSetHomeBean_0e5a1e63.java:94)
+at
+com.ibm.commerce.catalog.objects.EJSRemoteCMPProductSetHome_0e5a1e63.cre
+ate(EJSRemoteCMPProductSetHome_0e5a1e63.java:64)
+at
+com.ibm.commerce.catalog.objects._ProductSetHome_Stub.create(_ProductSet
+Home_Stub.java:723)
+at
+com.ibm.commerce.catalog.objects.ProductSetAccessBean.<init>(ProductSetA
+ccessBean.java:382)
+at
+sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+at
+sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorA
+ccessorImpl.java:56)
+at
+sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingCons
+tructorAccessorImpl.java:39)
+at
+java.lang.reflect.Constructor.newInstance(Constructor.java:527)
+at
+com.ibm.commerce.context.content.resources.AbstractEntityBeanResourceMan
+agerImpl.createResource(AbstractEntityBeanResourceManagerImpl.java:113)
+at
+com.ibm.commerce.context.content.resources.AbstractResourceManagerImpl.c
+reateManagedResource(AbstractResourceManagerImpl.java:875)
+at
+com.ibm.commerce.productset.commands.ProductSetAddCmdImpl.performExecute
+(ProductSetAddCmdImpl.java:499)
+at
+com.ibm.commerce.command.ECCommandTarget.executeCommand(ECCommandTarget.
+java:157)
+at
+com.ibm.ws.cache.command.CommandCache.executeCommand(CommandCache.java:3
+32)
+at
+com.ibm.websphere.command.CacheableCommandImpl.execute(CacheableCommandI
+mpl.java:166)
+at
+com.ibm.commerce.command.AbstractECTargetableCommand.execute(AbstractECT
+argetableCommand.java:217)
+at
+com.ibm.commerce.productset.commands.DeployProductSetFilterTCCmdImpl.cre
+ateProductSet(DeployProductSetFilterTCCmdImpl.java:1781)
+at
+com.ibm.commerce.productset.commands.DeployProductSetFilterTCCmdImpl.han
+dleProductExclusionFilter(DeployProductSetFilterTCCmdImpl.java:1079)
+at
+com.ibm.commerce.productset.commands.DeployProductSetFilterTCCmdImpl.per
+formExecute(DeployProductSetFilterTCCmdImpl.java:348)
+at
+com.ibm.commerce.command.ECCommandTarget.executeCommand(ECCommandTarget.
+java:157)
+at
+com.ibm.ws.cache.command.CommandCache.executeCommand(CommandCache.java:3
+32)
+at
+com.ibm.websphere.command.CacheableCommandImpl.execute(CacheableCommandI
+mpl.java:166)
+at
+com.ibm.commerce.command.AbstractECTargetableCommand.execute(AbstractECT
+argetableCommand.java:217)
+at
+com.ibm.commerce.contract.commands.DeployContractCmdImpl.deployTC(Deploy
+ContractCmdImpl.java:601)
+at
+com.ibm.commerce.contract.commands.DeployContractCmdImpl.performExecute(
+DeployContractCmdImpl.java:976)
+at
+com.avery.cri.wcs.om.preorder.quote.controllercmds.XDeployContractCmdImp
+l.performExecute(XDeployContractCmdImpl.java:185)
+at
+com.ibm.commerce.command.ECCommandTarget.executeCommand(ECCommandTarget.
+java:157)
+at
+com.ibm.ws.cache.command.CommandCache.executeCommand(CommandCache.java:3
+32)
+at
+com.ibm.websphere.command.CacheableCommandImpl.execute(CacheableCommandI
+mpl.java:166)
+at
+com.ibm.commerce.command.AbstractECTargetableCommand.execute(AbstractECT
+argetableCommand.java:217)
+at
+com.ibm.commerce.contract.commands.DeployContractProcess.doTCDeploy(Depl
+oyContractProcess.java:212)
+at
+com.ibm.commerce.contract.commands.DeployContractProcess.run(DeployContr
+actProcess.java:242)
+at
+com.ibm.commerce.scheduler.SchedulerJobAsync.process(SchedulerJobAsync.j
+ava:93)
+at
+com.ibm.commerce.scheduler.SchedulerSecurityPriviledgedAction.run(Schedu
+lerSecurityPriviledgedAction.java:59)
+at
+com.ibm.commerce.scheduler.SchedulerJobAsync.run(SchedulerJobAsync.java:
+115)
+at
+com.ibm.commerce.threadmanagement.internal.BaseWork.run(BaseWork.java:13
+9)
+at com.ibm.ws.asynchbeans.J2EEContext.run(J2EEContext.java:1151)
+at
+com.ibm.ws.asynchbeans.WorkWithExecutionContextImpl.go(WorkWithExecution
+ContextImpl.java:199)
+at
+com.ibm.ws.asynchbeans.CJWorkItemImpl.run(CJWorkItemImpl.java:188)
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1660)
+Caused by: com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error:
+SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=4.12.55
+at com.ibm.db2.jcc.am.hd.a(hd.java:668)
+at com.ibm.db2.jcc.am.hd.a(hd.java:60)
+at com.ibm.db2.jcc.am.hd.a(hd.java:127)
+at com.ibm.db2.jcc.am.mn.b(mn.java:2290)
+at com.ibm.db2.jcc.am.mn.c(mn.java:2273)
+at com.ibm.db2.jcc.t4.cb.k(cb.java:370)
+at com.ibm.db2.jcc.t4.cb.a(cb.java:62)
+at com.ibm.db2.jcc.t4.q.a(q.java:50)
+at com.ibm.db2.jcc.t4.sb.b(sb.java:220)
+at com.ibm.db2.jcc.am.nn.nc(nn.java:3083)
+at com.ibm.db2.jcc.am.nn.b(nn.java:4037)
+at com.ibm.db2.jcc.am.nn.fc(nn.java:769)
+at com.ibm.db2.jcc.am.nn.executeUpdate(nn.java:748)
+at
+com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.pmiExecuteUpdate(WSJdb
+cPreparedStatement.java:1156)
+at
+com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.executeUpdate(WSJdbcPr
+eparedStatement.java:797)
+at
+com.ibm.commerce.catalog.objects.EJSJDBCPersisterCMPProductSetBean_0e5a1
+e63._create(EJSJDBCPersisterCMPProductSetBean_0e5a1e63.java:85)
+at
+com.ibm.ejs.persistence.EJSJDBCPersister.create(EJSJDBCPersister.java:57
+5)
+at
+com.ibm.ejs.container.ContainerManagedBeanO.afterPostCreate(ContainerMan
+agedBeanO.java:563)
+... 41 more
+
+
+CAUSE
+This problem is typically caused by the XMLDEFINITION column, which holds the XML definition of the product set according to the B2BProdPRODUCTSET table, which is not long enough to save the conuctSet.dtd.
+
+
+RESOLVING THE PROBLEM
+To resolve this problem, either decrease the contract content or increase the length of CLOB for the XMLDEFINITION column.

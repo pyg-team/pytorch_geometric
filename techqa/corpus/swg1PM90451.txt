@@ -1,0 +1,146 @@
+Title: IBM PM90451: THE SQL STATEMENT GENERATE BY DATABASE WIZARD IS INCORRENT WHEN USE C&DS EV DRIVER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You work with IBM SPSS Statistics 21.0.0.1 and a Collaboration
+   and Deployment Services environment. You also installed a C&DS
+   Enterprise View driver (C&DS EV) to import a database into
+   Statistics.
+   The connection to the database and the driver works fine but
+   when you paste syntax for the import you see wrong syntax
+   generated on SQL subcommand and the FROM clause. For example you
+   see
+   FROM .SPSS_PEV.[employ] instead of
+   FROM SPSS_PEV.employ as table name.
+   
+   So the issue is that there is an additional dot before
+   SPSS_PEV.[employ].
+   The second issue is that the EV driver can not parse this
+   statement, because there are brackets for table name "employ"
+   pasted.
+   This was reported to IBM SPSS Development. As a workaround
+   remove the brackets for employ and the extra dot before the
+   table name. Then the  SQL can be parsed and you can import the
+   database table into Statistics.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * see APAR text                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * see APAR text                                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been addressed in IBM SPSS Statistics 22 Fix  *
+   * Pack 1                                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been addressed in IBM SPSS Statistics 22 Fix Pack
+   1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM90451
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   L00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-05
+   
+   
+ * CLOSED DATE
+   2014-03-20
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RM00 PSN
+   UP
+   
+   
+ * RM00 PSY
+   UP

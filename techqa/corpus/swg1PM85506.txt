@@ -1,0 +1,191 @@
+Title: IBM PM85506: CICS SHUTDOWN HANGS AFTER RESTRICTED JAVA SYSTEM.EXIT() COMMAND - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CICS region hangs after a Java application program mistakenly
+   issued a restricted System.exit() command. The region could not
+   be cancelled and had to be forced down.  CICS documents that
+   if you use the System.exit() method in your Java application,
+   the application abnormally ends. The JVM server and CICS also
+   shut down.
+   .
+   Following the System.exit() request, CICS started an immediate
+   shutdown of CICS. The joblogs show immediate shutdown message:
+   .
+   DFHTM1703 CICS is being terminated by userid uuuuuuuu in
+              transaction tttt.
+   .
+   In addition, there are messages indicating that CPSM and MQ are
+   also shutting down. The shutdown is initiated under the
+   application task which is evident because there is a kernel
+   stack for shutdown module DFHSTP in the task's stacks. DFHSTP
+   calls DFHSTST to begin collecting EOD shutdown statistics for
+   the various domains. DFHSJST is called for COLLECT_STATISTICS,
+   a new T8 TCB is created, but the new TC8 gets put into a wait
+   out of LE module CELCQLIB (program CEEOPCW). Since the T8 TCB
+   is in a Wait, the statistics collection doesn't complete, and
+   control never returns to DFHSTP to continue shutting down.
+   .
+   Additional Symptom(s) Search Keyword(s):
+   KIXREVSVR  DFHAPLJ1 DFHAPLJP
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CICS shutdown hangs when a Java         *
+   *                      application with System.exit() call     *
+   *                      is running in a JVM server.             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   CICS no longer supports the use of the System.Exit() method.
+   When a Java application invokes this method, the JVM server
+   and CICS will shut down. During the shutdown process, CICS
+   will collect end of day statistics. SJ domain then hangs trying
+   to get the statistics from the JVM server. The statistics
+   collection does not complete and this prevents CICS from
+   shutting down.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  CICS has been changed to not collect statistics from a JVM
+   server which is terminating.
+   
+   The CICS Transaction Server V4.2 Trace Entries (SC34-7187-01)
+   has been updated to add a new trace entry to the table of
+   JVM domain trace points:
+   
+   Point ID     Module    Lvl     Type                   Data
+   SJ 024A     DFHSJIN    Exc    JVMSERVER is exiting    No data
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM85506
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED UR3
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-25
+   
+   
+ * CLOSED DATE
+   2013-05-20
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK94547
+   
+   
+
+MODULES/MACROS
+ *     DFHAPLJP DFHAPLJ1 DFHKEDS  DFHKETCB DFHLEPT@
+   DFHSJBD  DFHSJCC  DFHSJCL  DFHSJCS  DFHSJDM  DFHSJDS  DFHSJDUF
+   DFHSJGC  DFHSJIN  DFHSJINT DFHSJIS  DFHSJJI  DFHSJJS  DFHSJPI
+   DFHSJPJP DFHSJPTI DFHSJRL  DFHSJSA  DFHSJSC  DFHSJSM  DFHSJST
+   DFHSJTH  DFHSJTHT DFHSJTRI
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY UK94546 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK94546]
+   UP13/06/04 P F306
+   
+   
+ * R703 PSY UK94547 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK94547]
+   UP13/06/04 P F306
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

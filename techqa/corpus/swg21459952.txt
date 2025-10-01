@@ -1,0 +1,48 @@
+Title: IBM WebSphere Portal startup fails with EJCBC0002E: The service [<serviceName>] could not be located. - United States
+
+Text:
+EJCBC0002E; EJPFD0016E; extensionregistry; CORFriendlySelectionServiceHome TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When starting the WebSphere_Portal server, startup throws an exception: EJCBC0002E: The service could not be located. 
+
+SYMPTOM
+In the SystemOut.log, the following exception can be seen at the time the wps.ear application is started:
+===========================
+[1/13/11 11:00:56:875 EST] 00000015 Servlet E com.ibm.wps.engine.Servlet init EJPFD0016E: Initialization of service failed.
+com.ibm.portal.resolver.exceptions.LocalizedIOException: EJCBC0002E: The service [com.ibm.wps.resolver.friendly.CORFriendlySelectionServiceHome] could not be located.
+at com.ibm.portal.resolver.helper.eclipse.Platform.createInstance(Platform.java:201)
+at com.ibm.portal.resolver.helper.eclipse.Platform.createInstance(Platform.java:128)
+at com.ibm.wps.resolver.friendly.service.PortalFriendlySelectionBootstrapService.init(PortalFriendlySelectionBootstrapService.java:197)
+at com.ibm.wps.services.Service.init(Service.java:107)
+at com.ibm.wps.services.Service.init(Service.java:83)
+at com.ibm.wps.services.ServiceManager.createService(ServiceManager.java:363)
+===========================
+
+The service name in this case is "com.ibm.wps.resolver.friendly.CORFriendlySelectionServiceHome", but the name could vary. 
+
+You may also see warnings for various applications like this:
+
+===========================
+[1/13/11 11:00:54:250 EST] 00000015 RegistryResol W CWXRS0023W: Extension Point (com.ibm.portal.model.skinlistprovider) not available for Extension: com.ibm.wps.engine.standardSkinListProvider
+[1/13/11 11:00:54:252 EST] 00000015 RegistryResol W CWXRS0023W: Extension Point (com.ibm.portal.model.themelistprovider) not available for Extension: com.ibm.wps.engine.standardThemeListProvider
+[1/13/11 11:00:54:269 EST] 00000015 RegistryResol W CWXRS0023W: Extension Point (com.ibm.portal.resolver.model.ContentNodeLinkGenerator) not available for Extension: com.ibm.wps.ai.rest.AIContentNodeLinkGenerator
+[1/13/11 11:00:54:278 EST] 00000015 RegistryResol W CWXRS0023W: Extension Point (com.ibm.portal.resolver.model.NavigationNodeLinkGenerator) not available for Extension: com.ibm.wps.ai.rest.AINavigationNodeLinkGenerator
+===========================
+
+
+CAUSE
+These messages indicate that the the temporary directory for extension points has become corrupted. This can happen after a server is upgraded.
+
+
+RESOLVING THE PROBLEM
+To resolve this problem, you can do the following: 
+
+
+1. Stop the WebSphere_Portal server
+
+2. Delete the contents of the following directory:
+
+<wp_profile root>/temp/<node name>/WebSphere_Portal/_extensionregistry 
+
+3. Start the WebSphere_Portal server.

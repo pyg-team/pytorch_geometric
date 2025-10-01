@@ -1,0 +1,42 @@
+Title: IBM Error "Could not find the main class" dialog box appears on the remotely profiled computer - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The following problem can occur If you are profiling on a remote computer and are using the External Java Application launch type:
+If the main class or the classpath that you specified on the Main tab is incomplete or incorrect, then a failure dialog-box is displayed on the remote computer. 
+
+SYMPTOM
+If you do not have access to the GUI of the remote computer, then the dialog that pops-up on the remote machine might go unnoticed for an extended period of time. However, you can find a message similar to the following example in the Console view of the computer that is running the workbench: 
+
+ * 
+ * Exception in thread "main" java.lang.NoClassDefFoundError: Foo
+ * 
+ * Caused by: java.lang.ClassNotFoundException: Foo
+ * 
+ *  at java.net.URLClassLoader.findClass(URLClassLoader.java:423)
+ * 
+ *  at java.lang.ClassLoader.loadClass(ClassLoader.java:653)
+ * 
+ *  at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:346)
+ * 
+ *  at java.lang.ClassLoader.loadClass(ClassLoader.java:619)
+
+
+The profiling monitor will continue to display the program as running. On the remote computer, a pop-up dialog box stating "Could not find the main class" is displayed that is similar to the following example: 
+
+ 
+
+ * 
+
+
+CAUSE
+The problem occurs because the main class or classpath in the "External Java Application" launch configuration is incorrect and causing the JVM not to find and load the main class or one of its dependencies.
+
+
+
+RESOLVING THE PROBLEM
+Close the dialog-box on the remote computer. The profiling monitor on the computer that is running the workbench will then show the application has terminated. Alternatively, you can stop the process in the "Profiling Monitor" view by selecting the process and then clicking the red stop button. 
+
+ 1. Correct the values in the launch configuration.

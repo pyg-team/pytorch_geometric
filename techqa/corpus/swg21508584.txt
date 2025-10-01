@@ -1,0 +1,55 @@
+Title: IBM Maximo 7.5 (64-bit) application won’t start after automated installation. - United States
+
+Text:
+heap; install; 7.5; 64-bit; won't start; TPAEINSTALL TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ The Maximo application server isn't starting after installation on a 64-bit server. 
+
+SYMPTOM
+Error in Native_stderr.log: 
+
+JVMJ9VM015W Initialization error for library j9gc24(5): Failed to allocate default memory space
+Could not create the Java virtual machine.
+
+
+CAUSE
+The configured JVM heap settings are greater than the memory resources available. 
+
+
+RESOLVING THE PROBLEM
+The Maximo 7.5 installation (64-bit) sets the WebSphere 7.0 JVM heap size (Xms/Xmx) to 4096m/4096m (4GB) during the installation. The current requirement for an application server is 6GB of ram for a production application server. In the case of building a test or development system and that system doesn’t have 6GB of ram installed – as an example a system only have 4GB of ram, with a few modifications that system will start, but not run as fast. 
+
+
+In the case of, after the installation the application server won’t start because the configured JVM heap settings is greater than the memory resources available. 
+
+1. Adjust the test/dev system Xmx/Xms to 3072m/2048m (based off of 4GB of installed RAM memory)
+
+WebSphere 7.0 Administrative console -> Servers -> Server Types > WebSphere Application servers -> click on application server (usually MXServer) -> 
+Java and Process Management-> Process Definition -> Java Virtual Machine:
+Maximum Heap size (Xmx): 3072
+Initial Heap size (Xms): 2048
+
+2. Restart application server.
+
+3. If the application server still won’t start and there was another error in the log relating to Xmn:
+
+Error in Native_stderr.log:
+JVMJ9VM015W Initialization error for library j9gc24(2): Failed to initialize
+Could not create the Java virtual machine.
+JVMJ9GC019E -Xmn too large for –Xms
+
+Note: -Xmn - this setting controls how much space the young generation is allowed to consume on the heap. Properly tuning this parameter can reduce the overhead of garbage collection, improving server response time and throughput. This setting should be below half of the overall (Xmx) heap size.
+
+Under “Generic JVM Arguments” should be:
+Consumed Heap size (Xmn): 1024m
+
+4. Restart application server.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Control Desk

@@ -1,0 +1,135 @@
+Title: IBM PI54812: STOUTL AND OTHER MINOR ISSUES FOUND WITH THE NEW TLS V1.2 SUPPORT FIX. - United States
+
+Text:
+z/os SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  STOUTL report headers need updated to reflect TLS v1.1 and TLS
+   v1.2 and other minor changes related to the new TLS support.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Miscellaneous issues found after FI51383 (TLS V1.1 V1.2 support)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  STOUTL report headers are updated to reflect new STATUS flags.
+   $LIST CERT quit working if SSL v3 was diabled.
+   Update DIR_FILTER and LS_FILTER to accept new settings.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI54812
+   
+   
+ * REPORTED COMPONENT NAME
+   STR CON ENT Z/O
+   
+   
+ * REPORTED COMPONENT ID
+   5655X0500
+   
+   
+ * REPORTED RELEASE
+   150
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-05
+   
+   
+ * CLOSED DATE
+   2016-01-12
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  STCC02   STCPPO07 STCPPU15 STCPPU18 STFTPC05
+   STFTPC80 STFTPS31 STMC30   STRPPE00 STRPPT31 STUTCADD STUTCDE1
+   STUTCER1 STUTCLST STUTCMO1 STUTCST1 STUTCVRR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR CON ENT Z/O
+   
+   
+ * FIXED COMPONENT ID
+   5655X0500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R150 PSY
+   UP

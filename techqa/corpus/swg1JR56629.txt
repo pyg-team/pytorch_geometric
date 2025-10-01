@@ -1,0 +1,192 @@
+Title: IBM JR56629: AFTER YOU MIGRATE FROM IBM BPM V7.5.X OR EARLIER RELEASES, YOU MIGHT RECEIVE EXCEPTIONS - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2016.12.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.12.delta.repository&source=SAR]
+8.5.7.201606-WS-BPM-IFJR56629 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.7.201606-WS-BPM-IFJR56629&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2016.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043062]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After you migrate from IBM Business Process Manager (BPM) V7.5.x
+   or earlier releases to IBM BPM V8.0.1.x and later releases, you
+    might see the following exceptions:
+   
+   com.lombardisoftware.core.TeamWorksException:Type mismatch.
+   Value TWObject[(Active: Y), (Type: 1), (TWClassID:TWClass.<ID>),
+   (Property names:
+   <Name>, <NameDescription>), (MetaData:objectID=<ID>,
+   dirty=true,invalid=false, shared=false, key=null,
+   version=null,rootVersionContextID=<ID>,className=<TWObject_Name>
+   )] must be of type <TWObject_Name>'
+   
+   java.lang.NumberFormatException for input string: ""
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The Teamworks exception occurs because there are business object
+    definitions with same namespace and name. During an upgrade,
+   the web service integration updated its engine and algorithms.
+   As a result, that different business object, instead of the one
+   you assigned in output mapping, is selected and the error
+   occurs.
+   
+   The number format exception occurs because the new engine in IBM
+   BPM V8.0.1 and later releases follows the web service
+   specifications. If the web service returns an empty number
+   field, you receive the exception because there is nothing to
+   convert into a valid number value. In the old engine, an empty
+   number field was considered unset.
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.7 cumulative fix 2016.06
+   that adds the backward-compatible functions on web service
+   integration.
+   
+   If you don't already have IBM BPM V8.5.7.0 cumulative fix
+   2016.06 installed, go to
+   http://www.ibm.com/support/docview.wss?uid=swg24042266. [http://www.ibm.com/support/docview.wss?uid=swg24042266.]
+   
+   After IBM BPM V8.5.7.0 cumulative fix 2016.06 is installed,
+   search for JR56629 on Fix Central
+   (http://www.ibm.com/support/fixcentral:
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select APAR or SPR, enter JR56629, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   This interim fix introduces the following configuration
+   properties:
+   
+   allow-empty-response-for-numeric-format - Use this
+   configuration property to control the behavior on parsing
+   numeric responses.
+   
+   and
+   
+   use-advanced-response-type-mapping - Use this configuration
+   property to control how the TWObject type response is found.
+   
+   
+   You can set these configuration properties in the 100Custom.xml,
+   for example
+   
+   <common merge="mergeChildren">
+       <webservices merge="mergeChildren">
+           <allow-empty-response-for-numeric-format
+   merge="replace">true</allow-empty-response-for-numeric-format>
+           <use-advanced-response-type-mapping
+   merge="replace">true</use-advanced-response-type-mapping>
+       </webservices>
+   </common>
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56629
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-08
+   
+   
+ * CLOSED DATE
+   2016-10-13
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

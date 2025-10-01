@@ -1,0 +1,110 @@
+Title: IBM Dynamic group with invalid search filter inhibits login - United States
+
+Text:
+dynamic; group; vmm; InvalidSearchFilterException; filter TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Dynamic group with invalid search filter inhibits login.
+
+SYMPTOM
+Users cannot log in to WebSphere Portal. In their browsers, users may see:
+Error 400: EJCBD0006E: The resolution of a URI failed. Refer to the stack trace for more detailed information.
+
+Administrators may not be able to log in to the WebSphere Application Server (WAS) Integrated Solutions Console (ISC). Also, administrators' authentication may fail when attempting to run stopServer.(sh/bat).
+
+SystemOut.log contains:
+
+CWWIM4520E The 'javax.naming.directory.InvalidSearchFilterException:...
+
+SystemOut.log may also contain:
+
+SECJ0369E: Authentication failed when using LTPA.
+
+
+
+DIAGNOSING THE PROBLEM
+InvalidSearchFilterException messages most commonly occur because of invalid search filters in the Virtual Member Manager (VMM) entity type configurations. Refer to Technote 1370150, linked below. You can exclude this as a possible root cause if: 
+
+ * No search filters exist in VMM's entity type configurations. 
+ * Such search filters exist, but have proven valid (VMM has been running with this configuration for some time). 
+ * Such search filters exist, but were recently added and the WebSphere Portal JVM has not been restarted since (changes to wimconfig.xml are read only at server startup).
+
+
+Determine if VMM is configured for dynamic groups. Check: 
+
+<profile>/config/cells/<cell name>/wim/config/wimconfig.xml 
+
+for:
+<config:repositories ... id="repository1" ...>
+<config:groupConfiguration> ...
+<config:dynamicMemberAttributes .../>...
+</config:groupConfiguration> ...
+</config:repositories> 
+
+If the config:dynamicMemberAttributes line exists, then VMM is configured to evaluate dynamic groups for that repository, and an invalid dynamic group in that LDAP may have caused the failure.
+
+
+RESOLVING THE PROBLEM
+The InvalidSearchFilterException may not identify the problematic dynamic group. Evaluate and implement the solution and/or work-around appropriate for your application and business requirements: 
+
+ 
+
+Option 1: Correct the problematic dynamic group in LDAP 
+
+Work with your LDAP administrator to identify any dynamic groups which were added or edited around the time that WebSphere Portal logins started failing. Evaluate the search filters that define these dynamic groups. Correct any invalid search filters. Consider this a long-term solution that maintains dynamic group functionality. 
+
+If your LDAP administrator cannot independently identify the problematic dynamic group, then you may need to collect data for troubleshooting login problems. If you cannot log in to WAS ISC to set the extended traces, then you can manually enable tracing by backing-up and editing: 
+
+<profile>\config\cells\<cellname>\nodes\<nodename>\servers\WebSphere_Portal\server.xml 
+
+and setting: 
+
+startupTraceSpecification 
+
+Inspect the "WIM_API", "WIM_SPI", and "JNDI_CALL" messages immediately surrounding the CWWIM4520E error to identify the problematic dynamic group. Contact IBM Support if you need assistance analyzing the trace. 
+
+ 
+
+Option 2: Work around the problem by disabling dynamic groups. 
+
+Evaluate whether dynamic groups are integral to your application. Evaluate whether disabling dynamic groups would enable full or partial recovery in the short term. Evaluate whether disabling dynamic groups temporarily would allow you to enable extended tracing to isolate the problematic dynamic group. If disabling dynamic groups is a viable work-around, you may do so by: 
+
+ 1. Back up and edit wimconfig.xml (under wp_profile, if standalone; under DMGR profile, if clustered). 
+ 2. Remove any lines with "<config:dynamicMemberAttributes .../>". 
+ 3. Save wimconfig.xml. 
+ 4. Manually distribute wimconfig.xml, if clustered. 
+ 5. Restart the WebSphere Portal server. (Restart DMGR and node agents, if clustered). If the administrator cannot authenticate to run stopServer, then you may need to kill these processes (Java Virtual Machines, JVM) through the operating system. For example in UNIX, search for the process with:
+
+ * ps -ef | grep java
+
+
+Then stop it with:  * kill -9 <PID>
+
+
+where <PID> is the process ID from the ps output. startServer.(sh/bat) does not require authentication.  
+
+If you implement this work-around and the problem persists, then the problem is not with dynamic groups. You should collect data for troubleshooting login problems and open a PMR with IBM Support. 
+
+ 
+
+ 
+
+Option 3: Configure a membership attribute that resolves dynamic groups on the LDAP server. 
+
+Determine whether your LDAP offers a membership attribute that resolves dynamic groups. If so, then configure VMM to leverage that membership attribute and set its scope to all. A scope of "all" means that the membership attribute resolves direct, nested, and dynamic groups, so you may choose to adjust other group configuration parameters accordingly (for example, disable nested groups in WebSphere Portal). Refer to the InfoCenter section appropriate for your operating system and standalone/cluster configuration. 
+
+ 
+
+Test Option 3 prior to implementing in a production system, to ensure that WebSphere Portal and VMM resolve group membership to meet the requirements of your application.
+
+
+RELATED INFORMATION
+#Technote 1370150: entity type search filters [http://www.ibm.com/support/docview.wss?uid=swg21370150]
+Group membership (AIX/standalone) [http://www.lotus.com/ldd/portalwiki.nsf/dx/Updating_the_group_membership_configuration_on_AIX_wp8]
+Data for Troubleshooting Login [http://www.ibm.com/support/docview.wss?uid=swg21591590]
+
+
+
+
+ * 
+ *

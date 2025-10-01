@@ -1,0 +1,37 @@
+Title: IBM Security Bulletin: Multiple security vulnerabilities have been identified in bundled products shipped with WebSphere Dynamic Process Edition (April 2015) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ WebSphere Business Modeler, WebSphere Integration Developer, WebSphere Business Services Fabric, WebSphere Process Server and WebSphere Business Monitor are shipped as components of WebSphere Dynamic Process Edition. Information about security vulnerabilities affecting these products have been published in security bulletins. Please note that WebSphere Application Server is the base for all server side products in the WebSphere Dynamic Process Edition bundle. 
+
+VULNERABILITY DETAILS
+Please consult the security bulletins 
+
+ * Security Bulletin: Multiple vulnerabilities in IBM Java SDK (CVE-2015-0478, CVE-2015-0488, and CVE-2015-1916) and with Diffie-Hellman ciphers (CVE-2015-4000) may affect IBM Integration Designer (IID) and WebSphere Integration Developer (WID) [http://www.ibm.com/support/docview.wss?uid=swg21961812] 
+ * Security Bulletin: Multiple vulnerabilities in the IBM SDK for Java™ Technology Edition April 2015 CPU affect WebSphere Process Server [http://www.ibm.com/support/docview.wss?uid=swg21957995] 
+ * Security Bulletin: Multiple vulnerabilities in IBM® Java SDK affect WebSphere Application Server April 2015 CPU [http://www.ibm.com/support/docview.wss?uid=swg21902260] 
+
+for vulnerability details and information about fixes. AFFECTED PRODUCTS AND VERSIONS
+WebSphere Dynamic Process Edition 6.1, 6.2, 7.0 
+
+If you are using an unsupported version, IBM strongly recommends to upgrade.
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 2015-07-29 - inital version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

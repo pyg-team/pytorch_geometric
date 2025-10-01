@@ -1,0 +1,60 @@
+Title: IBM Cognos Open Mic Webcast : IBM Cognos TM1 Operations Console - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ IBM hosted an Open Mic webcast with Cognos Developers and Support Engineers from India on 20th March 2013. The topic was "IBM Cognos TM1 Operations Console".
+
+2 related videos are available at the links at bottom of this page. 
+
+ANSWER
+Content 
+
+Presentation IBM Cognos Open Mic - TM1 Operations Console.pdf [/support/docview.wss?uid=swg21636388&aid=2]IBM Cognos Open Mic - TM1 Operations Console.pdf [/support/docview.wss?uid=swg21636388&aid=1] 
+
+Q & A 
+Q. Where do I get this utility? and will this work with 9.5 ? 
+A. The Cognos TM1 Operation Console is selected by default during installation. You can instead choose to install it on a computer separate from the computer used for the Cognos TM1 server by deselecting it during the standard installation, then running the installation on the separate computer and selecting only the Cognos TM1 Operations Console. 
+
+Q. So how do I get Cognos TM1 Operations console on IBM Cognos TM1 9.5 and IBM Cognos Express environment ? 
+A. Cognos TM1 Operations Console is not available on IBM Cognos TM1 9.5 and IBM Cognos Express. However, You can monitor their corresponding TM1 servers. 
+Refer : http://www-304.ibm.com/support/docview.wss?uid=swg21584658 [http://www-304.ibm.com/support/docview.wss?uid=swg21584658] 
+
+Q. Is this utility currently available for IBM Cognos TM1 9.5.1 
+A. No. This utility does not come with versions prior to IBM CognosTM1 10.1 
+
+Q. So does that mean if a customer already has IBM Cognos TM1 9.5 or IBM Cognos Express 10.1 then we cannot install it now. Only for installations of TM1 10.1 this utility becomes available ? 
+A. Yes. You do not have this utility installable available with TM1 versions prior to IBM Cognos TM1 10.1, but you can configure the IBM Cognos TM1 9.5 servers to monitor their statistics. 
+
+Q. We have installed IBM Cognos TM1 10.1, but do not see the operational console 
+A. You need to configure the Cognos TM1 Operations Console and add TM1 servers you want to monitor in Cognos TM1 Operations Console console. 
+
+Q. Can Cognos TM1 Operations Console kill rule update jobs that are hanging the server? In TM1 TOP, rule update jobs cannot be killed. Can this now be done in Cognos TM1 Operations Console. 
+A. Cognos TM1 Operations Console is a tool built on the existing TM1 top. So the functionality stays the same, that is if a job cannot be killed in Top , it will not be possible to kill it in Operations Console as well. 
+
+Q. How can we configure the TM1 9.5.1 server to monitor the statistics? 
+A. Refer the attached pdf and reference link below. 
+
+Q. How many maximum TM1 servers can be monitored by TM1 operation console? 
+A. No limit as long as you add the TM1 servers in TM1 Ops Console ,you can monitor their statistics. 
+
+Q. What is the location of log file generated from Cognos TM1 Operations Console ? 
+A. The log file will be created at the default location, that is where Operations Console has been deployed. 
+
+Q. Can we customize the default location for Cognos TM1 Operations Console log file? Is it allowed / recommended ? 
+A. It can be modified by modifying the following parameter in web.xml. 
+<context-param>  * 
+ * 
+ * 
+
+
+Yes , it is recommended that we modify this location. 
+
+Q. If we customize the default log file location, which other TM1 log files it will impact ? 
+A. The logs location is specific only to Cognos TM1 Operations Console. In other words, changing the log location will not impact any other TM1 Log files. 
+
+Q. Does running Operations console, impact performance of TM1 server ? 
+A. Impact on performance would be similar to that seen while using TM1 Top. Cognos TM1 Operations Console is designed to be a light weight access thread to the TM1 Server. RELATED INFORMATION
+ Video: Installing the IBM Cognos TM1 Operations Console [https://www.youtube.com/watch?v=u4aaDJWo--o]
+Video: Using the IBM Cognos TM1 Operations Console [https://www.youtube.com/watch?v=CUjFteYjf0k]

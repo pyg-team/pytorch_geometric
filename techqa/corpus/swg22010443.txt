@@ -1,0 +1,20 @@
+Title: IBM Changes in how IBM Traveler processes documents with TextList "format" - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+Why am I receiving this message on my IBM Traveler mailbox when viewing certain documents? : 
+"This document contains a body format that is not supported by IBM
+Traveler, and requires the use of IBM Notes, iNotes or the Verse Web
+client to view the content. "
+
+CAUSE
+The body of the email or document in question is in a format that is not supported by IBM Traveler, such as "TextList" or "Text". Traveler only processes "MIME" and "Rich Text" documents.
+
+ANSWER
+IBM Traveler made a change starting in IBM Traveler 9.0.1.19 to only process MIME/HTML or Rich Text formatted documents. The reason is because the HTML API that Traveler uses to convert message bodies to HTML does not support body formats that are not strictly Rich Text or MIME. This is a limitation with the HTML API, and Traveler will no longer process these kinds of documents in order to prevent crashes and other unexpected behavior. 
+
+Although there may be cases where this worked in the past without causing crashes or unexpected display errors, IBM Traveler cannot guarantee this behavior in all cases.
+
+There is already an enhancement request to add IBM Traveler support for these types of documents. Since this problem is most often associated with automatically-generated mails in the Domino domain, as a workaround please ensure that all such mails are generated in "Rich Text" or "MIME" format.

@@ -1,0 +1,70 @@
+Title: IBM Identify the application that has a WMQ queue opened - United States
+
+Text:
+Identify application program connected queue TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your WebSphere MQ queue manager will not stop if there are applications that still have a queue opened. Your goal is to allow a graceful stop of the queue manager, also called controlled (or quiesced) shutdown. 
+
+For example, the following runmqsc command for the queue Q1 shows that there is an application currently that has opened a queue, but it does not provide application name, or process id number (PID). The value for OPPROCS indicates 1 application has opened the queue for output (for doing a PUT).
+
+display qstatus(Q1)
+1 : display qstatus(Q1)
+AMQ8450: Display queue status details.
+QUEUE(Q1) TYPE(QUEUE)
+CURDEPTH(0) IPPROCS(0)
+LGETDATE( ) LGETTIME( )
+LPUTDATE( ) LPUTTIME( )
+MEDIALOG( ) MONQ(OFF)
+MSGAGE( ) OPPROCS(1)
+QTIME( , ) UNCOM(NO)
+
+You want to determine the name of the application that currently has a queue open, 
+
+RESOLVING THE PROBLEM
+Use the runmqsc display connection command to find the process id (PID) and application name. 
+
+Using the above example of the queue Q1, this is the complete command to invoke under runmqsc: 
+
+
+display conn(*) where(objname eq Q1) all
+
+Example output:
+
+AMQ8276: Display Connection details.
+CONN(ACBDC64820001B01)
+EXTCONN(414D5143514D5F414E47454C494C4C4F)
+TYPE(CONN)
+PID(7364)TID(1)
+APPLTAG(WebSphere MQ\bin\amqsput.exe)APPLTYPE(USER)
+ASTATE(NONE) CHANNEL( )
+CONNAME( ) CONNOPTS(MQCNO_SHARED_BINDING)
+USERID(x) UOWLOG( )
+UOWSTDA( ) UOWSTTI( )
+UOWLOGDA( ) UOWLOGTI( )
+URTYPE(QMGR)
+EXTURID(XA_FORMATID[00000000] XA_GTRID[] XA_BQUAL[])
+QMURID(0.0) UOWSTATE(NONE)
+
+The following fields are of interest:
+PID(7364) => Process id
+APPLTAG(WebSphere MQ\bin\amqsput.exe) => name of the application
+USERID(x) => Userid that has invoked the application
+
+
+For UNIX users:
+
+One of the main purposes for the above technique is to eventually kill the process that is connected to the queue manager. 
+
+a) One option is to use the STOP CONN command under runmqsc. Using the above example, the corresponding command would be:
+STOP CONN(ACBDC64820001B01)
+
+b) The following SupportPac can be used to identify the applications and kill them if desired:
+
+MS6B: WebSphere MQ Connection Management Utility [http://www.ibm.com/support/docview.wss?&uid=swg24017810]
+This SupportPac is Category 4 (which means that the IBM MQ Support team does not support it)
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

@@ -1,0 +1,50 @@
+Title: IBM Problem with "Edit Shared Setting" of Web Content Viewer portlet in virtual portal. - United States
+
+Text:
+hidden; wcm; web content management; base; full; virtual portal; vp; InitAdminVirtualPortal.xml; InitVirtualContentPortal.xm; Edit Shared Setting; Web Content Viewer; jsr 286; Edit; loop; library; content; VirtualPortal.zip TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+In Portal 7.0.0.1, when configuring the content that a page should show (via Web Content Viewer portlet), after clicking on "Edit" the pop-up window that appears is the same "Edit Shared Setting" of the Web Content Viewer portlet, instead of the correct "Select Content Item" window that allows user to select library content .
+
+SYMPTOM
+ The "Edit Shared Setting" appears to go into a loop.
+[/support/docview.wss?uid=swg21495688&aid=1] [/support/docview.wss?uid=swg21495688&aid=1]
+
+
+CAUSE
+The hidden page "Web Content Management" is missing in the virtual portal. 
+
+ This issue only occurs in a "Base" installation. It does not occur in a "Full" installation. 
+
+ The hidden page "Web Content Management" only exists in the "InitVirtualContentPortal.xml" initialization script, which in turn only exists in the VirtualPortal.zip of a "Full" installation. 
+
+ (The default initialization script in a "Base" installation is "InitAdminVirtualPortal.xml".)
+
+
+ENVIRONMENT
+IBM WebSphere Portal 7.0.0.1 - "Base" installation
+
+
+
+DIAGNOSING THE PROBLEM
+From the Portal UI of the base Portal, go to "Manage Pages", under "Content Root", click on the "Hidden Pages" link, you should be able to find the hidden page "Web Content Management" (its default unique name is "com.ibm.wps.hiddenpage.wcm.Authoring_Portlet"). 
+
+
+[/support/docview.wss?uid=swg21495688&aid=2] [/support/docview.wss?uid=swg21495688&aid=2]
+
+In the problematic virtual portal, this hidden page is missing.
+
+
+RESOLVING THE PROBLEM
+Export the hidden page "Web Content Management" from the base Portal and and import it into the problematic virtual portal. 
+
+
+1) From the Portal UI - Manage Pages, navigate to the hidden page "Web Content Management".
+
+2) Click on the icon on the right hand side to do a page export. 
+
+3) Select to export the page hierarchy and save the file to a temp directory. 
+
+4) Log in to the problematic virtual portal. Go to Portal Settings >> Import XML and import the page created in step 3 to this virtual portal.
+
+(No restart is required.)

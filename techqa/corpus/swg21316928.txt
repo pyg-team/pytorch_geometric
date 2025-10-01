@@ -1,0 +1,88 @@
+Title: IBM TDWC AWSUI0778E authentication failure - United States
+
+Text:
+AWSWUI0778E; AWSUI0778E; AWSJCO028E; invalid; credentials; Security TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The AWSUI0778E error occurs when the user specified does not have logon access to the master CPU and is attempting to connect to a Tivoli Workload Scheduler (TWS) engine defined in the Tivoli Dynamic Workload Console (TDWC)/ISC Console. 
+
+SYMPTOM
+Login to TDWC / ISC is successful, but login to the TWS engine from TDWC / ISC results in the above error. Also, look in the TWS WebSphere log: 
+
+
+TWS v8.3 and v8.4:
+<TWSHome>/appserver/profiles/twsprofile/logs/server1/SystemOut.log
+
+TWS v8.5 and v8.5.1:
+<TWAHome>/eWAS/profiles/twaprofile/logs/twaserver<#>/SystemOut.log
+
+TWS v8.6: 
+
+<InstallHome>/eWAS/profiles/TIPProfile/logs/server1/SystemOut.log
+
+....for entries such as:
+
+"AWSJCO028E The object cannot be accessed because the user "f842" is not defined in the Security file. f842 staff,staff"
+
+
+CAUSE
+TDWC / ISC to TWS Security requirements
+
+
+RESOLVING THE PROBLEM
+Adding the master's CPU name to the stanzas for all users that need to login to TWS through the TDWC / ISC interface will resolve this issue. 
+
+Perform the following steps:
+
+1. Use the dumpsec command on the TWS MDM to create a text version of the TWS Security file. 
+
+ dumpsec > twsSec.orig 
+
+ cp twsSec.orig twsSec.new 
+
+ 
+
+2. Modify the twsSec.new file so that a user stanza such as this has the master's CPU included. The CPU name can be specified or the wildcard character can be used. 
+
+ USER MAESTRO2
+CPU=F842+LOGON=f842
+BEGIN
+.....
+
+3. Where F842 is a Fault Tolerant Agent (FTA) workstation name and f842 is a valid user on the MDM host and the master's workstation name is MDM83 change the stanza from above to look like this:
+
+USER MAESTRO2
+CPU=MDM83,F842+LOGON=f842
+BEGIN
+...
+
+- or -
+
+USER MAESTRO2
+CPU=MDM@,F842+LOGON=f842
+BEGIN
+...
+
+- or -
+
+USER MAESTRO2
+CPU=@+LOGON=f842
+BEGIN
+...
+
+NOTE: The point is to allow LOGON for the user in question on the Master.
+
+4. Save the changes in the file twsSec.new and load the changes using makesec:
+
+makesec twsSec.new
+
+5. Perform a test connection from TDWC / ISC to the TWS engine specifying the user credentials in question.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Maestro
+TWS
+TWA
+TDWC
+DWC

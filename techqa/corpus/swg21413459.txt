@@ -1,0 +1,34 @@
+Title: IBM DataStage Designer screen hangs when Help button is used - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DataStage Designer screen hangs when Help button is used or when you use Infocenter URL or F1 (anyway of invoking the Information Center) 
+
+CAUSE
+Using the Help button from a DataStage client will open 6000 files in 8.1. So if the ulimit is set 
+too low for nfiles, it will hang the client. The default for nfiles is generally set to 1024 as a default on Unix/Linux platforms. 
+
+
+RESOLVING THE PROBLEM
+1. Make sure you don't have any ulimit overrides set in dsenv in $DSHOME - if you do remove them. 
+
+ 2. Make the change immediately to resolve this issue and then follow step #3 for permanent solution.
+a. Stop DataStage and Websphere as root 
+b. Issue the command - ulimit -n 10240 
+c, Verified nofiles in ulimit is set to 10240 
+d. Start Websphere and then DataStage 
+For Linux platforms, please follow Steps #4 and #5 otherwise, follow step #3.
+3. Please have your system administrator change the the .bash_profile for 
+root to include ulimit -n 10240. 
+As long as you stop/restart WAS as root (not sudo, but the actual root user), this will propogate the 
+ulimit setting to the process you are starting (WAS). If you do use sudo or a similiar command, then you will need to work with your system administrator to determine how the non-root user starting WAS can get the correct ulimit settings (i.e. you may need to also adjust that user's profile). 
+4. Permanent change to ulimit -n for DataStage and Websphere
+This solution is to implement the ulimit -n setting limitation on Linux. 
+This solution will be used upon reboot: 
+create a file <IS_HOME>/ASBServer/bin/MetadataServer_env.sh with content: 
+ulimit -n 10240 
+Or if such a file exists, add the above line in it. This file is source by the MetadataServer.sh script, if it exists, before starting WAS. 
+
+You will not need to stop/start WAS to put this solution in place. It will take affect the next time that you reboot.

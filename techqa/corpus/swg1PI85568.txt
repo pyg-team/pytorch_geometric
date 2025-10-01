@@ -1,0 +1,202 @@
+Title: IBM PI85568: CSV IMPORT ERROR WHEN AN ATTRIBUTE HAS BEEN DELETED FROM THE PROJECT (WI 116817) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  â ˜In IBM Doors Next Generation (DNG), importing a CSV to update
+   existing artifacts may result in an error if an attribute has
+   been deleted from the project's properties.
+   
+   CRRRW7571E  You might not have permission to import an artifact
+   type that is in the file, a row or resource might be locked by
+   someone else, or the file might not meet the requirements to be
+   imported. For example, one or more rows might contain a type
+   that is not in the type system. Update the file, the type
+   system, your user permissions, or all of these items. To learn
+   more about the CSV format or spreadsheets and importing CSV
+   files or spreadsheets, see the product documentation.
+   Errors were received while importing the CSV file or
+   spreadsheet:
+   
+   Validation Errors:
+   Row Number: 1
+   Error Message: Propagated exception; original message
+   [ForbiddenException: CRRRS8663E This attribute definition is
+   unknown:
+   https://<server>:<port>/rm/types/_cr2tIXlPEeeWo4OrO9sNoA [https://<server>:<port>/rm/types/_cr2tIXlPEeeWo4OrO9sNoA]
+   
+   
+   To Reproduce the behavior:
+   
+   Start with a project where an enumerated list attribute exists
+   (for example: "CustomAttr1") and is associated with artifact
+   type: "ArtifactType1" , and there are artifacts of
+   ("ArtifactType1") that have values for this attribute.
+   
+   1. In Manage Project Properties, remove the enumerated list
+   attribute "CustomAttr1" from the artifact type (ArtifactType1)
+   and Save.
+   
+   2. In Manage Project Properties, delete the attribute
+   ("CustomAttr1") from the Attributes tab.
+   
+   3. In Manage Project Properties, create a new enumberated list
+   attribute "CustomAttr2" and add it to the same artifact type
+   "ArtifactType1" and Save.
+   
+   4. Create a view in DNG that shows artifacts of artifact type:
+   "ArtifactType1"
+   
+   5. In the view, include to display the column for the new
+   attribute: "CustomAttr2"
+   Note: No artifact should have a value for the new attribute:
+   "CustomAttr2"
+   
+   6. Export the view to CSV
+   
+   7. In the csv file, update the column for the attribute:
+   "CustomAttr2" for the artifacts and save
+   
+   8. Import the csv file into the DNG project, selecting to Update
+   Existing Artifacts
+   
+   
+   
+   Expected Results:
+   - The CSV import completes successfully and the artifacts are
+   updated with a value for the new attribute.
+   
+   Actual Results:
+   - After updating the CSV file with new values for the
+   Attributes, the import process is failing due to Artifacts RDF
+   still contains information about deleted Attributes previously
+   configured.
+   
+   The error message references the URL of the deleted attribute.
+   
+   
+   For more details refer to:
+   https://jazz.net/jazz03/web/projects/Requirements%20Management#a
+   ction=com.ibm.team.workitem.viewWorkItem&id=116817 [https://jazz.net/jazz03/web/projects/Requirements%20Management#action=com.ibm.team.workitem.viewWorkItem&id=116817]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually update the artifacts in the GUI - for the new attribute
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users/environments are affected                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * CSV import feature is failing when trying to update existing *
+   * Artifacts with a previously deleted Attribute.               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is fixed in the DOORS Next Generation 6.0.2 iFix013
+   release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI85568
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DOORS NG
+   
+   
+ * REPORTED COMPONENT ID
+   5724W87NG
+   
+   
+ * REPORTED RELEASE
+   603
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-07
+   
+   
+ * CLOSED DATE
+   2017-09-07
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DOORS NG
+   
+   
+ * FIXED COMPONENT ID
+   5724W87NG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R603 PSN
+   UP

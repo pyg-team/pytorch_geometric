@@ -1,0 +1,97 @@
+Title: IBM Update Installer for WebSphere Application Server V6.1 and V7.0 shows CWUPI0033E error and will claim that there is zero free disk space on the system (0 MB) and will fail to install the maintenance pack - United States
+
+Text:
+updateinstaller; updateinstaller; updateinstall TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Under some circumstances, the IBM® WebSphere® Application Server V6.1 and V7.0 Update Installer will display error code CWUPI0033E and claim that there is zero free disk space on the system (0 MB) and will not install the maintenance pack(s), even though there is sufficient disk space available. 
+
+SYMPTOM
+The Update Installer wizard will display error code CWUPI0033E. In addition, the Update Installer error log will show messages similar to the example below: 
+
+
+Install, com.ibm.ws.install.ismp.actions.PrereqCheckingAction, msg1, Prerequisite checking has failed. Failure messages are:
+
+There is insufficient free disk space on the system: 
+
+/opt/IBM/WebSphere/AppServer:
+Required: 850 MB
+Available: 0 MB
+
+/tmp:
+Required: 850 MB
+Available: 0 MB
+
+/opt/.ibm/.nif:
+Required: 1 MB
+Available: 0 MB
+
+Please ensure that there is enough free disk space on all required filesystems and restart the installation.
+
+If /tmp , /opt/IBM/WebSphere/AppServer and /opt/.ibm/.nif are on the same partition, then the amount of space required is the sum of the space required on /tmp , /opt/WebSphere.prod/61ejb3and /opt/.ibm/.nif.
+
+This error appears in the Update Installer wizard, and also appears in the Update Installer updatelog.txt file. The updatelog.txt file is written to a subdirectory of the Update Installer's logs directory. The subdirectories are incrementally-numbered "tmp" directories. For example, the most recent log might be written to a directory such as the following:
+
+
+/opt/UpdateInstaller/logs/tmp5 
+
+Note: This error appears even if the targeted filesystems do have more than zero filesystem space free.
+
+Resolving similar problems with the WebSphere Application Server V6.1 and V7.0 installer and Feature Pack installers for V6.1
+This technote is focused on resolving the disk space issue with the Update Installer utility. A similar problem can occur with the WebSphere Application Server V6.1 and V7.0 product installer, as well as installers for the Feature Packs for V6.1. A separate technote discusses how to resolve the problem for those installers, here: Technote 1259888 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21259888].
+
+
+CAUSE
+The filesystem space checker in the Update Installer is capable of interacting with many common filesystem types and configurations in order to check disk space. However, there are some specialized filesystem types and configurations (such as high-availability filesystem types or SAN filesystem drivers) which report available space in a manner that the Update Installer does not expect. As a failsafe, the Update Installer reports "zero" space under such circumstances.
+
+
+RESOLVING THE PROBLEM
+Check the "noexec" property first 
+
+Sometimes, this error is related to the "noexec" file system property. One other potential cause is related to the name of the file system (such as if the name of the filesystem is specified with quotation marks). Please refer to the following technote to verify and resolve those issues:
+WebSphere Application Server V6.0 and V6.1 installer claims that zero filesystem space (0 MB) is free and will not install product [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21259888]
+
+Note: That technote is targeted towards resolving issues with the WebSphere Application Server V6.1 product installer. Even though the technote discusses the product installer, you can use the same solution discussed in that technote to resolve problems with the Update Installer as well.
+
+Bypass the disk space checker
+If the technote above does not resolve the problem, then it is possible to bypass disk space checking for the Update Installer using the commands listed further below. Be sure to use Update Installer 6.1.0.13 or later in order to invoke this solution.
+
+Note: When the Update Installer shows an error stating that it requires more disk space, it will list the amount of space necessary for each filesystem. Please manually verify that sufficient disk space is free in each of the listed filesystems before proceeding with this workaround!
+
+
+When installing the Update Installer
+Prior to using the Update Installer, it must be installed. If the installer for the Update Installer has a disk space checking problem, then start the installer using the parameters shown below. Note that these parameters will not work for using the Update Installer to install maintenance packs. Please proceed to the next section for details about how to handle that.
+
+For AIX®, HP-UX, Linux®, and Solaris systems, invoke the installer for the Update Installer using this command: 
+
+
+
+./install-WcalculatediskspaceInstallWizardBean.active=false
+-Wcheckprereqs.active=false
+-WprereqsfailedpanelInstallWizardBean.active=false
+
+
+For Windows systems, invoke the Update Installer using this command:
+
+
+install.exe-WcalculatediskspaceInstallWizardBean.active=false
+-Wcheckprereqs.active=false
+-WprereqsfailedpanelInstallWizardBean.active=false
+
+
+Note: These parameters are all part of the same command. They have been split over multiple lines for readability. Also, if you are normally starting the installer with other parameters (such as parameters to use the installer in silent mode with a response file), put those parameters after the ones listed above. 
+
+When using the Update Installer to apply maintenance packs 
+If the Update Installer shows a disk space checking problem while attempting to install a maintenance pack, then start the Update Installer using the parameters shown below. 
+
+For AIX®, HP-UX, Linux®, and Solaris systems, invoke the Update Installer using this command: 
+./update.sh -DdisableDiskSpaceCheck=True 
+
+Note: If you are normally starting the installer with other parameters (such as parameters to use the installer in silent mode with a response file), put those parameters after the ones listed above. 
+
+For Windows systems, invoke the Update Installer using this command: 
+
+
+update.bat -D disableDiskSpaceCheck True 
+
+Note: If you are normally starting the installer with other parameters (such as parameters to use the installer in silent mode with a response file), put those parameters after the ones listed above.

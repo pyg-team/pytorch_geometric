@@ -1,0 +1,178 @@
+Title: IBM JR56448: DYNAMIC GROUPS FROM TIP CAN FAIL THE SNAPSHOT CLEANUP - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.5.5.0-WS-BPM-IFJR56448 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPM-IFJR56448&source=SAR]
+bpm.8570.cf2016.09.delta.repository.2of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.2of2&source=SAR]
+bpm.8570.cf2016.09.delta.repository.1of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.1of2&source=SAR]
+8.0.1.3-WS-BPM-IFJR56448 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.3-WS-BPM-IFJR56448&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2016.09 [http://www-01.ibm.com/support/docview.wss?uid=swg24042580]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you try to run the BPMSnapshotCleanup command on an IBM
+   Process Center to clean up snapshots, the operation fails with a
+   foreign key constraint violation. In the SystemOut.log file of
+   the server, you find an exception like this
+   
+   [04/08/16 12:52:46:775 BRT] 00000068 PALAdminComma I
+   BPMSnapshotCleanup failed due to: PreparedStatementCallback; SQL
+   [DELETE FROM LSW_USR_GRP_XREF WHERE GROUP_ID = ?]; Error for
+   batch element #1: DB2 SQL Error: SQLCODE=-532, SQLSTATE=23504,
+   SQLERRMC=WFCUSR.LSW_PARTICIPANT_GROUP.LSWC_PART_GRP_FK,
+   DRIVER=4.14.122; nested exception is
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException:
+   Error for batch element #1: DB2 SQL Error: SQLCODE=-532,
+   SQLSTATE=23504,
+   SQLERRMC=WFCUSR.LSW_PARTICIPANT_GROUP.LSWC_PART_GRP_FK,
+   DRIVER=4.14.122
+                                    java.lang.Exception:
+   PreparedStatementCallback; SQL [DELETE FROM LSW_USR_GRP_XREF
+   WHERE GROUP_ID = ?]; Error for batch element #1: DB2 SQL Error:
+   SQLCODE=-532, SQLSTATE=23504,
+   SQLERRMC=WFCUSR.LSW_PARTICIPANT_GROUP.LSWC_PART_GRP_FK,
+   DRIVER=4.14.122; nested exception is
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException:
+   Error for batch element #1: DB2 SQL Error: SQLCODE=-532,
+   SQLSTATE=23504,
+   SQLERRMC=WFCUSR.LSW_PARTICIPANT_GROUP.LSWC_PART_GRP_FK,
+   DRIVER=4.14.122
+    at com.lombardisoftware.client.delegate.
+     BusinessDelegateException.asBusinessDelegateException
+     (BusinessDelegateException.java:41)
+    at com.lombardisoftware.client.delegate.
+     RepositoryServicesDelegateDefault.snapshotCleanupWithinTX
+     (RepositoryServicesDelegateDefault.java:1401)
+    at com.lombardisoftware.server.ejb.repositoryservices.
+     SnapshotDeleteSupport.snapshotCleanup
+     (SnapshotDeleteSupport.java:239)
+    at com.lombardisoftware.server.ejb.repositoryservices.
+     RepositoryServicesCore.snapshotCleanup
+     (RepositoryServicesCore.java:504)
+   ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  During snapshot cleanup, the runtime information for participant
+   groups or teams is also removed. The relevant data is retrieved
+   by using a database query. The BPMSnapshotCleanup command tried
+   to delete more data, which caused the foreign key violation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.0.1.3 that ensures the
+   BPMSnapshotCleanup command no longer retrieves and deletes
+   information it should not.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR56448:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR56448, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56448
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-05
+   
+   
+ * CLOSED DATE
+   2016-09-27
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

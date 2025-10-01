@@ -1,0 +1,37 @@
+Title: IBM Infosphere DataStage job with the Netezza Enterprise stage on the Parallel canvas aborts with : 'Unexpected protocol character/message.' - United States
+
+Text:
+DataStage; Netezza; ExecDirect; protocol; upgrade TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A job with a Netezza Enterprise stage as the source database on the IBM InfoSphere DataStage Parallel canvas fails intermittently with the fatal error message: 
+
+ERROR from ExecDirect: [SQLCODE=08S02][Native=15] Unexpected protocol character/message. 
+
+CAUSE
+This is due to an IBM Netezza Platform Software defect referenced under RTC Defect 85953: "Unload with remote source odbc/jdbc/replsrv hangs on versioned tables."
+
+ENVIRONMENT
+IBM InfoSphere Information Server 9.1.0.0-9.1.2.0
+IBM Netezza Platform Software (NPS) Version 7.0.4.5-P1
+
+
+DIAGNOSING THE PROBLEM
+Enable ODBC Debug Logging 
+
+The ODBC log file will contain the following message :
+
+Connection Error: Function = 'SQLGetConnectAttrInternal', Line = 116, State = 'HYC00', number = 67, Msg = 'Optional feature not implemented'
+
+
+RESOLVING THE PROBLEM
+To resolve the problem you need to apply the fix included in the NPS Version: 
+
+
+7.0.4.5-P2
+7.1.0.2-P2
+7.0.4.6
+7.1.0.3
+7.2.0.0
+7.2.0.1
+8.0

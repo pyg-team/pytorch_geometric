@@ -1,0 +1,135 @@
+Title: IBM PI18857: The cicsprnt 3270 terminal emulator shows unpredictable behaviou r when it receives a SIGHUP signal - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The cicsprnt terminal emulator shows unpredictable behaviour
+   when it receives a SIGHUP, SIGTSTP or SIGCONT signal. For
+   example: when starting multiple instances of cicsprnt from a
+   shell script and sending a single cicsprnt instance a signal,
+   the shell will send a SIGHUP to all cicsprnt instances,
+   resulting in termination.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  As a workaround, start cicsprnt with nohup to prevent SIGHUP
+   signal from being sent to the cicsprnt application when the
+   session leader terminates.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of the cicsprnt application on UNIX and Linux
+   platforms
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The cicsprnt terminal emulator shows unpredictable behaviour
+   when it receives a SIGHUP, SIGTSTP or SIGCONT signal.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The cicsprnt terminal emulator is working as designed. The
+   SIGTSTP and SIGCONT signals should not be used to control the
+   emulator. To run cicsprnt as a background task, the nohup
+   utility should be used. The CICS TG Knowledge Center will be
+   updated to include the following information in the section
+   &quot;cicsprnt restrictions&quot;:<br/>- cicsprnt on UNIX and
+   Linux platforms does not support being interrupted using the
+   SIGHUP signal or being controlled using the SIGTSTP and SIGCONT
+   signals; use of these signals might result in unpredictable
+   behaviour. To start cicsprnt as a background task, cicsprnt
+   must be started using the nohup utility. For example:<br/>
+   nohup cicsprnt -s=&lt;servername&gt; - m=&lt;model&gt; -j -z
+   &gt; /var/cicscli/cicsprnt.nohup.out<br/> <br/>
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI18857
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TRNS GATE
+   
+   
+ * REPORTED COMPONENT ID
+   5724I8103
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-28
+   
+   
+ * CLOSED DATE
+   2014-10-23
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

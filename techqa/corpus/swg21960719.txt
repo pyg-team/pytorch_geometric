@@ -1,0 +1,41 @@
+Title: IBM Hiding ICON's in DASH Welcome page. - United States
+
+Text:
+DASH; ICONS; COMMUNITY; VIDEOS; Welcome; remove; JazzSM; DASHL2FAQ TECHNOTE (FAQ)
+
+QUESTION
+ How can I remove the "COMMUNITY" and "VIDEOS" icons from the DASH welcome page 
+
+CAUSE
+No cause, customer's personal preference.
+
+ANSWER
+Removing these Icon's from the DASH welcome page: 
+
+[/support/docview.wss?uid=swg21960719&aid=1] [/support/docview.wss?uid=swg21960719&aid=1] 
+
+ 
+
+Go to "Console Settings" -> "Pages" -> "Help" -> "Dashboard Community"
+
+Use this page to manage all pages and folders available 
+
+
+[/support/docview.wss?uid=swg21960719&amp;aid=2]
+
+
+
+Then remove the roles for the dashboard community select the "Roles with Access to this URL:2" pull down menu, select the 2 roles, the default values are "all authenticated portal users" and "iscadmins" and remove them and save. Restart DASH and the "Community" and "Videos" will not be visible any longer. You can do the opposite to restart those icon's to the startup page;. 
+
+ 
+
+[/support/docview.wss?uid=swg21960719&aid=3] [/support/docview.wss?uid=swg21960719&aid=3]
+
+
+To restore the removed Icon's, just do the same procedure show above, except add the two Roles "all authenticed portal users" and "iscadmins" 
+
+and save.
+
+IMPORTANT NOTE; After you do this, the "Dashboard Community" link will not be visible in the Help drop down menu.
+
+[/support/docview.wss?uid=swg21960719&amp;aid=4]

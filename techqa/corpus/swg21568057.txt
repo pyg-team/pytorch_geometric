@@ -1,0 +1,39 @@
+Title: IBM Cannot log into Workplace XT or Workplace - United States
+
+Text:
+site preferences; workplacext; workplace xt; login; log in TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After entering the user credentials, user receives a : Receives error org.xml.sax.SAXParseException: Premature end of file error and is unable to log into Workplace XT or Workplace 
+
+SYMPTOM
+The below stack trace is logged in the Application Server log. 
+
+javax.servlet.ServletException: Premature end of file.
+at org.apache.jasper.runtime.PageContextImpl.doHandlePageException(PageContextImpl.java:843)
+at org.apache.jasper.runtime.PageContextImpl.handlePageException(PageContextImpl.java:776)
+at org.apache.jsp.WcmDefault_jsp._jspService(WcmDefault_jsp.java:79)
+at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:97)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:810)
+
+Root Cause: 
+org.xml.sax.SAXParseException: Premature end of file.
+at org.apache.xerces.parsers.DOMParser.parse(Unknown Source)
+at org.apache.xerces.jaxp.DocumentBuilderImpl.parse(Unknown Source)
+at javax.xml.parsers.DocumentBuilder.parse(Unknown Source)
+at com.filenet.wcm.toolkit.server.util.xml.WcmXMLUtil.getDocumentFromInputStream(WcmXMLUtil.java:89)
+at com.filenet.wcm.toolkit.server.util.prefs.WcmPrefsObject.loadPreferences(WcmPrefsObject.java:989)
+)
+
+
+CAUSE
+User Preference and/or Site Preference file was corrupt; the file size was 0-bytes. 
+
+
+DIAGNOSING THE PROBLEM
+Using Enterprise Manager, verify that the current version of the Site Preferences or the User Preference file is valid, has a valid file size and can be viewed.
+
+
+
+RESOLVING THE PROBLEM
+Delete the current version of the User Preference or Site Preference so that it reverts to a previous valid version

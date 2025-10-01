@@ -1,0 +1,23 @@
+Title: IBM Unable to start Cognos services, Cognos Configuration is hanging - United States
+
+Text:
+unable to save or start cognos after restart database processes checking upgrade status; upgdevaluated TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Cognos configuration is hanging at "Checking Upgrade Status' and user is unable to save configuration or start services. 
+Testing the Oracle content store database also causes the application to hang. 
+
+CAUSE
+Hung processes on the Oracle database.
+
+ENVIRONMENT
+HPUX Itanium 11.23
+Oracle 10g Content Store
+
+RESOLVING THE PROBLEM
+Request the DBA to verify if there are any hung processes on the database, and if so, have them clear these processes out.
+
+Steps:After the database processes have been cleared away, relaunch Cognos Configuration and save/start Cognos services as normal.  
+
+HISTORICAL NUMBER
+ 1039163

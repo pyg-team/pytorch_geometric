@@ -1,0 +1,127 @@
+Title: IBM LO63602: BLACKBERRY CANNOT DISPLAY XPAGES EDITABLE RICH TEXT FIELD (CKEDITOR) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When blackberry displays an XPage with an editable rich text
+   field using the default inputRichText control, CKEditor, the
+   screen shows only a small box, holding about one character, in
+   contrast to the rich text control displayed by normal browser,
+   or by Blackberry on Domino 8.5, which uses old Dojo editor.
+   
+   To verify that the Blackberry cannot work with CKEditor, had
+   customer load CKEditor demo from Blackberry, at
+   http://ckeditor.com/demo [http://ckeditor.com/demo]
+   This reported: "Your browser is not compatible with CKEditor.
+   CKEditor is compatible with Safari 3.0 or higher, it is also
+   compatible with Internet Explorer 6.0+, Opera 9.5+ and Firefox
+   2.0+."
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Only idea for a workaround is to use the old RichText control.
+   However, this is not acceptable because the tool bar is too
+   large, and we don't provide the user a way to shrink or hide it.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# JDAE8LFUJZ.
+   This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO63602
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   852
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-06
+   
+   
+ * CLOSED DATE
+   2012-05-16
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R852 PSN
+   UP

@@ -1,0 +1,265 @@
+Title: IBM How to read irregular CSV with Rational Integration Tester - United States
+
+Text:
+RIT; CSV TECHNOTE (FAQ)
+
+QUESTION
+ How can you read irregular CSV with IBM Rational Integration Tester (RIT)? This document details one method that can be used. 
+
+ANSWER
+Introduction 
+
+IBM Rational Integration Tester is a Service Orientated Architecture (SOA) testing tool. It has strong support for reading SOA message types and files in standard formats. 
+
+ 
+
+Sometimes it is necessary to read in data which is not in a standard format and for which no schema exists. This can normally be done by using the File Schema and Record Layout features of the RIT product. To do this the software must be able to determine the Record Layout to apply to the next record to read in as it processes through the file. 
+
+ 
+
+The next record type can normally be determined by sequence, however for optional records and repeating records some additional data is needed ahead of time. There are two standard approaches to this: 
+
+ 
+
+ * Include the optional / repeating record count ahead of time (as with copybook). 
+ * Include self describing meta-data so the type of the data is unambiguous (as with XML).
+
+
+Occasionally data will need to be read in where the record type to be read in at any given point cannot be determined by either of these methods. Under these circumstances, for the data to be read as structured data some form of custom code will be required. 
+
+ 
+
+ 
+
+A custom code approach 
+
+ 
+
+Here we will present an example custom function capable of being configured with rules for decoding a given input. This will give us a clean separation of the processing engine (in the Java custom function) and the rules definition (supplied in ECMAScript from within RIT). It will also mean that small changes can be made within RIT without returning to the custom function code. 
+
+ 
+
+Although the example custom function reads CSV files it could easily be modified to read another file type (see CsvReader.java) into RIT as text or bytes, and could be extended to support additional rules (see RuleImp.java) if necessary. 
+
+ 
+
+The custom function engine will convert the data to XML. Since XML is self describing the problem with reading in data which is of an unknown record type is eliminated. This is possible because the rules given have permitted the type of the record to be determined. 
+
+ 
+
+ 
+
+Usage 
+
+ 
+
+The custom function FileToXml() returns an engine. A series of calls to methods on this engine (from ECMAScript) permit the engine to be configured. Finally a call to the convert() method will do the data conversion. Once configured an engine can be used repeatedly to convert a number of files. 
+
+ 
+
+The converter has these configuration methods:
+
+
+ * setSeparatorAndKeyField( separator, keyFieldIndex ) allows the field separator (typically a comma) and the key field index to be set. The key field index is the index of the element in each CSV row which provides the key for the grouping of rows. This is commonly 1.
+   
+ * newRowType( name , group , hasKey ) creates a new row type to match to a row type in the source file. Thename for the XML element to represent the row should be given, along with a name for the XML element for thegroup of rows with the matching key. ThehasKey argument should be true unless the group XML element should not have a key attribute in the output.
+   
+ * convert( csvData ) runs a conversion and returns a result object (see below).
+
+
+
+The row type object has these methods: 
+ * setFields( listOfFields ) supplies a list of XML element names for the fields from the CSV row.
+   
+ * addRule( precedence, rule ) adds a rule for identifying the row type. The precedence determines the order in which the rules are to be considered, with lower numbers being considered first. The rules are constructed with the converter factory methods (see below).
+
+
+
+The converter has these basic factory methods for rules: 
+ * newRulePosition( pos ) returns a rule which returns true when the row was the position pos in the source file. Negative numbers are counted from the last entry in the file. The fist and last entries in the file are 1 and -1 respectively.
+   
+ * newRuleGroupPosition( pos ) returns a rule which returns true when the row was the position pos in the source group. Negative numbers are counted from the last entry in the group. The fist and last entries in the group are 1 and -1 respectively.
+   
+ * newRuleConstant( value ) returns a rule which returns the givenvalue which should be true or false. A rule defined as newRuleConstant(true) would typically only be used with a rule of the highest precedence.
+   
+ * newFieldCountIs( count ) returns a rule which returns true when the given row has exactly count fields.
+
+
+And the converter has these basic factory methods for combining rules: 
+ * ruleNot( rule ) returns a rule which returns the inverse of the result of the inner rule.
+   
+ * ruleAnd( rule1 , rule2 ) returns a rule which returns true only when both inner rules return true.
+   
+ * ruleOr( rule1 , rule2 ) returns a rule which returns true when either (or both) inner rules return true.
+   
+ * ruleXor( rule1 , rule2 ) returns a rule which returns true when exactly one inner rule returns true.
+
+The result object returned from convert() has these methods: 
+
+ * getSuccess() returns true if it was possible to convert the data to XML. 
+ * getError() returns explanatory error text and a stack trace (for unsuccessful conversions). 
+ * getXml() returns the XML (for successful conversions).
+
+
+The incoming CSV should be read into a tag by RIT actions and the XML should be written out (for example to a file) by RIT actions. RIT already has these capabilities so there would seem no advantage to duplicating this functionality. 
+
+ 
+
+Example 1 
+
+ 
+
+Here we will transform a simple CSV file. This example is given only as an example. This scenario could easily be accommodated by File Schema and Record Layout within RIT. 
+
+ 
+
+Consider this sample data: 
+
+ * 
+   child,gift
+   Ben,Ball
+   Ben,Hoop
+   Ben,Bike
+   Mike,Book
+   Mike,Chess Set
+   Mike,Magnifying Glass
+   
+
+
+We create tags text and eng and set-up the engine to decode this data like this: 
+
+ * 
+ * tags["eng"] = FileToXml();
+   eng.setSeparatorAndKeyField( ',' , 1 );
+   
+   var h = eng.newRowType( "column-heading" , "column-headings" , false );
+   h.setFields("col-1","col-2");
+   h.addRule(1, eng.newRulePosition(1));
+   
+   var d = eng.newRowType( "data-row" , "data-set" , true );
+   d.setFields("name","present");
+   d.addRule(2, eng.newRuleConstant(true));
+
+
+And check for the result as follows: 
+
+ * 
+ * var result = tags["eng"].convert( tags["text"] );
+   if ( ! result.getSuccess() ) {  * 
+   
+   } else {  * 
+   
+   }
+
+
+Which yields the XML:
+
+
+ * 
+ * 
+
+
+Example 2  
+
+Consider this sample data: 
+
+ * 
+ * River Valley Infants,Mr Smith
+   01 Sept 2000
+   1,Mrs Butcher
+   1,Jane,Smith,5
+   1,May,Smith,5
+   1,April,Miller,5
+   1,First Year Infants
+   2,Mrs Jones
+   2,Mike,Smith,6
+   2,Bill,King,6
+   2,Dave,Miller,6
+   2,Sarah,Miller,6
+   2,Middle Infants
+   3,Mr Khan
+   3,Sue,Green,7
+   3,Pete,Green,7
+   3,Dave,Smith,7
+   3,Alf,Jones,7
+   3,Top Infants
+   END OF DATA
+
+
+We can set-up the engine to decode this data like this: 
+
+ * 
+ * tags["eng"] = FileToXml();
+   eng.setSeparatorAndKeyField( ',' , 1 );
+   
+   var h = eng.newRowType( "info" , "school" , false );
+   h.setFields("school-name","head-teacher");
+   h.addRule(1, eng.newRulePosition(1));
+   
+   var i = eng.newRowType( "run" , "report" , false );
+   i.setFields("date");
+   i.addRule(2, eng.newRulePosition(2));
+   
+   var s = eng.newRowType( "tail" , "sign-off" , false );
+   s.setFields("t1");
+   s.addRule(3, eng.newRulePosition(-1));
+   
+   var t = eng.newRowType( "teacher" , "class" , true );
+   t.setFields("class","first-name","last-name","age");
+   t.addRule(5, eng.newRuleGroupPosition(1));
+   
+   var f = eng.newRowType( "form" , "class" , true );
+   f.setFields("class","class-name");
+   f.addRule(6, eng.newRuleGroupPosition(-1));
+   
+   var c = eng.newRowType( "child" , "class" , true );
+   c.setFields("class","first-name","last-name","age");
+   c.addRule(9, eng.newRuleConstant(true));
+
+
+Which will yields the XML 
+
+ * 
+ * 
+ * 
+
+
+ 
+
+How to compile the custom function 
+
+ 
+
+To compile the custom function from the command line you will need to: 
+
+ * Install Apache Ant [http://ant.apache.org/] 
+ * Set the environment variable RIT_GHTESTER_JAR to point to an available GHTester JAR file (see Building a custom function from within RIT [http://www-01.ibm.com/support/docview.wss?uid=swg21696246] for more details)
+
+
+Then from the command line run: 
+
+ * ant -f buildCustomFunction.xml
+
+
+The resultant JAR will then be found in Functions/plugins 
+
+ 
+
+Alternatively these files may be pasted into an Eclipse project created as detailed in the RIT Custom Function Instructions [http://www-01.ibm.com/support/docview.wss?uid=swg21654482]. In this case the Ant built may be run by right clicking it and selecting run as Ant Build. 
+
+ 
+
+ 
+
+Resources 
+
+
+
+DISCLAIMER: 
+All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. Here is the source code to the example custom function: 
+
+com.ibm.rational.greenhat.support.filetoxml_1.0.0.jar.src.zip [/support/docview.wss?uid=swg21965165&aid=4]com.ibm.rational.greenhat.support.filetoxml_1.0.0.jar.src.zip [/support/docview.wss?uid=swg21965165&aid=3] 
+
+ 
+
+Please note that this code is not maintained by IBM and by using this code you are taking responsibility for its future maintenance for use within your RIT project.

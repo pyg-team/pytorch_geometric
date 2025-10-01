@@ -1,0 +1,337 @@
+Title: IBM Locating ITM Workspace Application Support Files for z/OS Agents - United States
+
+Text:
+AppSupport OMEGAMON application support 350 360 410 420 610 601 700 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote addresses the commonly asked question of where can workspace application support files be found for z/OS Agents. 
+
+RESOLVING THE PROBLEM
+Before you can view data collected by monitoring agents, you must install application support for the agents on the Tivoli Enterprise Portal Server and on the hub Tivoli Enterprise Monitoring Server. When you install application support on the Tivoli Enterprise Portal Server, you are installing the files required for presenting workspaces and online help for each monitoring agent. When you install application support on the hub monitoring server, you are installing the files required for product-provided situations, situation distributions, and other product-specific data. Installing application support on the hub monitoring server is also known as "seeding" the hub.
+Most z/OS-based agents provide application support files on CDs or DVDs, which are separate from the mainframe installation media. Distributed agents include their application support files in the distributed installation process. Each CD /DVD that contains application support files is listed below, with information about which products use the CD /DVD and where the CD / DVD can be found. The latest level in fulfillment is the CD /DVD on this list. Where possible, IBM provides both .zip and .tar formats, as well as .iso format, so that a physical CD / DVD can be created.
+
+Please note that the IBM Tivoli Monitoring (ITM) media is separate from the workspace application support files which are included with products that run in the ITM environment. ITM can be obtained by ordering either 5724-C04 IBM Tivoli Monitoring through Passport Advantage or the no charge 5698-A79 IBM Tivoli Management Services on z/OS through Shop zSeries. Your IBM rep can ask Techline to configure and submit the order as well. 5698-A79 includes the server, engine, and configurator on z/OS. Workspace application support files may have their own fixpacks which are separate and distinct from any ITM fixpacks. Fixpacks can be found on the product support urls at: 
+http://www-306.ibm.com/software/support/index_A_Z.html [http://www-306.ibm.com/software/support/index_A_Z.html].
+
+The ITM Configuration Guide describes the application support installation process. It can be found online in the ITM information center at: https://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0/com.ibm.itm.doc_6.3/install/agent_support.htm [https://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0/com.ibm.itm.doc_6.3/install/agent_support.htm]. A useful reference for this activity is a technote that lists all of the ITM product code. It can be found at:
+http://www.ibm.com/support/docview.wss?uid=swg21265222 [http://www-01.ibm.com/support/docview.wss?uid=swg21265222]. 
+
+ 
+
+The LCD7-5139-11 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-5139-11.zip] IBM Tivoli OMEGAMON Application Support Files for z/OS is the latest level available of the application support DVD for the OMEGAMON V5.5.0 products to be installed with IBM Tivoli Monitoring V6.3.0 Fix Pack 2 or higher. This DVD contains application support files for the following products: 
+
+ *  IBM OMEGAMON XE on z/OS, version 5.5.0 
+ *  IBM OMEGAMON XE for CICS on z/OS, version 5.5.0 
+ *  IBM OMEGAMON XE for Networks, version 5.5.0 
+ *  IBM OMEGAMON XE for IMS on z/OS, version 5.5.0 
+ *  IBM OMEGAMON Dashboard Edition on z/OS, version 5.5.0 
+ *  IBM OMEGAMON XE for Storage on z/OS, version 5.4.0 
+ *  IBM OMEGAMON for JVM on z/OS, version 5.4.0 
+ *  IBM Tivoli OMEGAMON XE for DB2® Performance Expert on z/OS, version 5.4.0 
+ *  IBM Tivoli OMEGAMON XE for DB2® Performance Monitor on z/OS, version 5.4.0 
+ *  IBM DB2 Query Monitor, version 3.2.0 
+
+The DVD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. 
+The publications for the above products can be found at: [http://publib.boulder.ibm.com/infocenter/tivihelp/v15r1/index.jsp]http://www.ibm.com/support/knowledgecenter/SSAUBV/welcome [http://www-01.ibm.com/support/knowledgecenter/SSAUBV/welcome]
+
+The language support DVD can be found at the following url: 
+ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/langsupt/LCD7-5138-10.zip [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/langsupt/LCD7-5138-10.zip]
+
+
+The LCD7-2600-02 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-2600-02.zip] IBM Tivoli OMEGAMON Data Files for z/OS is the latest level available of the application support DVD for the OMEGAMON XE for DB2 V5.4.0 product. This DVD contains application support files for the following products: 
+
+ *  IBM Tivoli OMEGAMON XE for DB2® Performance Expert on z/OS, version 5.4.0 
+ *  IBM Tivoli OMEGAMON XE for DB2 Performance Monitor on z/OS, version 5.4.0 
+
+The DVD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. 
+
+The language support DVD for OMEGAMON XE for DB2® V5.4.0 can be found at the following url: 
+ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/langsupt/LCD8-2746-00.tar [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/langsupt/LCD8-2746-00.tar]  
+
+The LCD7-2600-00 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-2600-00.tar] IBM Tivoli OMEGAMON Data Files for z/OS is the latest level available of the application support DVD for the OMEGAMON XE for DB2 V5.1.0 product. This DVD contains application support files for the following products: 
+
+ *  IBM Tivoli OMEGAMON XE for DB2® Performance Expert on z/OS, version 5.1.0 
+ *  IBM Tivoli OMEGAMON XE for DB2 Performance Monitor on z/OS, version 5.1.0 
+
+The DVD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. 
+
+The language support DVD for OMEGAMON XE for DB2® V5.1.0 can be found at the following url: 
+ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/langsupt/LCD7-2597-00.tar [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/langsupt/LCD7-2597-00.tar] 
+
+The LCD7-3580-09 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3580-09.tar] IBM Tivoli OMEGAMON Data Files for z/OS is the latest level available of the application support DVD for the OMEGAMON XE V4.2 products. This DVD contains application support files for the following products: 
+
+ *  IBM Tivoli OMEGAMON XE for IMS ™ on z/OS, version 4.2 
+ *  IBM Tivoli OMEGAMON XE for Storage on z/OS, version 4.2 
+ *  IBM Tivoli OMEGAMON XE for CICS® on z/OS, version 4.2 
+ *  IBM Tivoli OMEGAMON XE on z/OS, version 4.2 
+ *  IBM Tivoli OMEGAMON XE for Mainframe Networks, version 4.2 
+ *  IBM Tivoli OMEGAMON for z/OS Management Suite, version 4.2 
+ *  IBM Tivoli OMEGAMON XE for DB2® Performance Expert on z/OS, version 4.2 
+ *  IBM Tivoli OMEGAMON XE for DB2 Performance Monitor on z/OS, version 4.2 
+ *  IBM Tivoli OMEGAMON DE on z/OS, versions 3.1 and 4.2 (OMEGAVIEW II for the Enterprise component HKWO310), you will need to install the 4.2 support as 3.1 will not be displayed, the 3.1 support can be found on LCD7-0817-03 
+
+The DVD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. 
+
+The language pack DVD can be found at the following url: 
+ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/langsupt/LCD7-3583-05.tar [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/langsupt/LCD7-3583-04.tar] 
+
+
+The LCD7-3513-09 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3513-09.zip] IBM Tivoli OMEGAMON XE for Messaging V7.5.0 Data Files for z/OS DVD is the latest level available for application support. This DVD contains application support files for the following product:  *  IBM Tivoli OMEGAMON XE for Messaging, version 7.5.0 
+
+The CD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. Publications for Tivoli OMEGAMON XE for Messaging V7.5.0 can be found at:
+http://www.ibm.com/support/knowledgecenter/SSRLD6_7.5.0/welcome_omxe_msg750.html?lang=en [http://www.ibm.com/support/knowledgecenter/SSRLD6_7.3.0/welcome_omxe_msg730.html?lang=en]
+
+The language support DVD for Messaging V7.5.0 can be found at the following url: 
+ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/langsupt/LCD7-3514-05.tar [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/langsupt/LCD7-3514-05.tar]
+
+The LCD7-3513-08 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3513-08.zip] IBM Tivoli OMEGAMON XE for Messaging V7.3.0 Data Files for z/OS DVD is the latest level available for application support. This DVD contains application support files for the following product: 
+
+ *  IBM Tivoli OMEGAMON XE for Messaging, version 7.3.0 
+
+The CD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. Publications for Tivoli OMEGAMON XE for Messaging V7.3.0 can be found at:
+http://www.ibm.com/support/knowledgecenter/SSRLD6_7.3.0/welcome_omxe_msg730.html?lang=en [http://www.ibm.com/support/knowledgecenter/SSRLD6_7.3.0/welcome_omxe_msg730.html?lang=en]
+
+The language support DVD for Messaging V7.1.0 can be found at the following url: 
+ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/langsupt/LCD7-3514-05.tar [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/langsupt/LCD7-3514-05.tar]
+
+The LCD7-3513-07 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3513-07.zip] IBM Tivoli OMEGAMON XE for Messaging V7.1.0 Data Files for z/OS DVD is the latest level available for application support. This DVD contains application support files for the following product: 
+
+ *  IBM Tivoli OMEGAMON XE for Messaging, version 7.1.0 
+
+The CD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. Publications for Tivoli OMEGAMON XE for Messaging V7.1.0 can be found at:
+http://www.ibm.com/support/knowledgecenter/SSRLD6_7.1.0/welcome_omxe_msg710.html?lang=en [https://www.ibm.com/support/knowledgecenter/en/SSRLD6_7.1.0/com.ibm.omegamon.mes_doc_7.1/welcome.htm]
+
+The language support DVD for Messaging V7.1.0 can be found at the following url: 
+ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/langsupt/LCD7-3514-05.tar [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/langsupt/LCD7-3514-05.tar]
+
+[ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3957-00.zip]IBM Tivoli System Automation uses several different CD numbers for application support. Version 3.5.0 is the latest level available of the application support CD. All of the application support file CDs are listed below by version / release: 
+
+ *  IBM Tivoli System Automation for z/OS V3.5.0 uses CD LCD7-5153-04 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-5153-04.zip] 
+ *  IBM Tivoli System Automation for z/OS V3.4.0 uses CD LCD7-5153-01 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-5153-01.zip] 
+ *  IBM Tivoli System Automation for z/OS V3.3.0 uses CD LCD7-3957-00 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3957-00.zip] 
+ *  IBM Tivoli System Automation for z/OS V3.2.0 uses CD LCD7-1451-01 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-1451-01.zip] 
+ *  IBM Tivoli System Automation for z/OS V3.1.0 uses CD LCD7-1451-01 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-1451-01.zip] 
+
+The CD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. 
+The language support CD can be found at: 
+ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/langsupt/LCD7-5154-01.zip [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/langsupt/LCD7-5154-01.zip] 
+The publications for Tivoli System Automation for z/OS can be found at: 
+http://www.ibm.com/developerworks/wikis/display/tivolidoccentral/Tivoli+System+Automation+for+zOS [http://www.ibm.com/developerworks/wikis/display/tivolidoccentral/Tivoli+System+Automation+for+zOS]. 
+
+
+The LCD7-1390-01 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-1390-01.tar] IBM Tivoli NetView for z/OS Enterprise Management Agent Application Support DVD is the latest DVD available for application support for NetView for z/OS V5.4. This CD contains application support files for the following product:  *  IBM Tivoli NetView for z/OS V5.4.0 
+
+The DVDs can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. 
+The publications for Tivoli NetView for z/OS can be found at: 
+http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?toc=/com.ibm.itnetviewforzos.doc/toc.xml [http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?toc=/com.ibm.itnetviewforzos.doc/toc.xml]. 
+
+
+The [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-4912-00.tar] LCD7-4912-03 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-4912-03.zip] IBM Tivoli NetView for z/OS Enterprise Management Agent Application Support DVD is the latest DVD available for application support for NetView for z/OS V6.2. This CD contains application support files for the following product:  *  IBM Tivoli NetView for z/OS V6.2.0 
+
+The DVDs can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. 
+The publications for Tivoli NetView for z/OS can be found at: 
+http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?topic=/com.ibm.itnetviewforzos.doc/ic-homepage.html [http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?topic=/com.ibm.itnetviewforzos.doc/ic-homepage.html]. 
+The agent for IBM Tivoli OMEGAMON XE on z/VM and Linux 4.1.2 does not install onto z/VM but onto Linux on zSeries, so it is a non-z/OS agent and uses a different approach by providing application support files as part of the Linux on zSeries installation. The CD that provides the application support files is: 
+
+ *  LCD7-0982-10 IBM Tivoli OMEGAMON XE on z/VM and Linux Tivoli Enterprise Portal Agent 
+
+Because the application support files are included with the agent installation media, they cannot be put on a general access URL. If you do not find this CD in your product package, contact IBM Software Support or your IBM sales representative to get replacement media. Publications for Tivoli OMEGAMON XE on z/VM and Linux can be found at:
+http://www.ibm.com/support/knowledgecenter [http://www.ibm.com/support/knowledgecenter].
+
+
+The LCD7-0980-00 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-0980-00.tar] IBM Tivoli Web Access for Information Management Workspace Enablement is the latest level available of the application support CD. This CD contains application support files for the following product: 
+
+ *  IBM Tivoli Web Access for Information Management, version 1.3 
+
+The CD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. The publications for Tivoli Web Access for Information Management can be found at:
+http://publib.boulder.ibm.com/tividd/td/IBMTivoliWebAccessforInformationManagement1.3.html [http://publib.boulder.ibm.com/tividd/td/IBMTivoliWebAccessforInformationManagement1.3.html]. 
+
+
+The LCD7-1937-01 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-1937-01.zip] IBM Tivoli Decision Support for z/OS Application Support is the latest level available of the application support CD. This CD contains application support files for the following product: 
+
+ *  IBM Tivoli Decision Support for z/OS, version 1.8.1 
+
+The CD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. The publications for Tivoli Decision Support for z/OS can be found at:
+http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?toc=/com.ibm.tivoli.dszos.doc/toc.xml [http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?toc=/com.ibm.tivoli.dszos.doc/toc.xml]. 
+
+
+The LCD7-3735-06 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3735-06.zip] IBM Tivoli Advanced Catalog Management for z/OS Application Support is the latest level available of the application support CD and pertains to V2.6 of the product. LCD7-1920-00 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-1920-00.tar] IBM Tivoli Advanced Catalog Management for z/OS Application Support is the level to use for V2.1 of the product. These application support file CDs are available as follows: 
+
+ *  IBM Tivoli Advanced Catalog Management for z/OS, version 2.6 uses CD LCD7-3735-06 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3735-06.zip] 
+ *  IBM Tivoli Advanced Catalog Management for z/OS, version 2.5 uses CD LCD7-3735-04-02 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3735-04-02.zip] 
+ *  IBM Tivoli Advanced Catalog Management for z/OS, version 2.4 uses CD LCD7-3735-02 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3735-02.zip] 
+ *  IBM Tivoli Advanced Catalog Management for z/OS, version 2.3 uses CD LCD7-3735-01 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3735-01.zip] 
+ *  IBM Tivoli Advanced Catalog Management for z/OS, version 2.2 uses CD LCD7-3735-00 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3735-00.zip] 
+ *  IBM Tivoli Advanced Catalog Management for z/OS, version 2.1 uses CD LCD7-1920-00 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-1920-00.zip] 
+
+The CD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. The publications for Tivoli Advanced Catalog Management for z/OS can be found at:
+http://www.ibm.com/developerworks/wikis/display/tivolidoccentral/Tivoli+Advanced+Catalog+Management+for+zOS [http://www.ibm.com/developerworks/wikis/display/tivolidoccentral/Tivoli+Advanced+Catalog+Management+for+zOS]. 
+
+
+The LCD7-3578-06 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3578-06.zip] IBM Tivoli Advanced Audit for DFSMShsm Application Support is the latest level available of the application support CD. This CD contains application support files for the following product: 
+
+ *  IBM Tivoli Advanced Audit for DFSMShsm, version 2.6 uses CD LCD7-3578-06 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3578-06.zip] 
+ *  IBM Tivoli Advanced Audit for DFSMShsm, version 2.5 uses CD LCD7-3578-05-01 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3578-05-01.zip] 
+ *  IBM Tivoli Advanced Audit for DFSMShsm, version 2.4 uses CD LCD7-3578-02 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3578-02.zip] 
+ *  IBM Tivoli Advanced Audit for DFSMShsm, version 2.3 uses CD LCD7-3578-01 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3578-01.zip] 
+ *  IBM Tivoli Advanced Audit for DFSMShsm, version 2.2 uses CD LCD7-3578-00 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3578-00.zip] 
+ *  IBM Tivoli Advanced Audit for DFSMShsm, version 2.1 uses CD LCD7-1921-00 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-1921-00.zip] 
+
+The CD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. The publications for Tivoli Advanced Audit for DFSMShsm can be found at:
+http://www.ibm.com/developerworks/wikis/display/tivolidoccentral/Tivoli+Advanced+Audit+for+DFSMShsm [http://www.ibm.com/developerworks/wikis/display/tivolidoccentral/Tivoli+Advanced+Audit+for+DFSMShsm]. 
+
+
+The LCD7-3736-05 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3736-05.zip] IBM Tivoli Advanced Allocation Management for z/OS Application Support is the latest level available of the application support CD. This CD contains application support files for the following product: 
+
+ *  IBM Tivoli Advanced Allocation Management for z/OS, version 3.3 uses CD LCD7-3736-05 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3736-05.zip] 
+ *  IBM Tivoli Advanced Allocation Management for z/OS, version 3.2 uses CD LCD7-3736-01 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3736-01.zip] 
+ *  IBM Tivoli Advanced Allocation Management for z/OS, version 3.1 uses CD LCD7-3736-00 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3736-00.zip] 
+
+The CD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. The publications for Tivoli Advanced Allocation Management for z/OS can be found at:
+http://www.ibm.com/developerworks/wikis/display/tivolidoccentral/Tivoli+Advanced+Allocation+Manager+for+zOS [http://publib.boulder.ibm.com/tividd/td/IBMTivoliAdvancedAllocationManagerforzOS3.1.html]
+
+The LCD7-1922-00 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-1922-00.tar] IBM Tivoli Allocation Optimizer for z/OS Application Support is the latest level available of the application support CD. This CD contains application support files for the following product: 
+
+ *  IBM Tivoli Allocation Optimizer for z/OS, version 2.1 
+
+The CD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. The publications for Tivoli Allocation Optimizer for z/OS can be found at:
+http://publib.boulder.ibm.com/tividd/td/IBMTivoliAllocationOptimizerforzOS2.1.html [http://publib.boulder.ibm.com/tividd/td/IBMTivoliAllocationOptimizerforzOS2.1.html]. 
+
+
+The LCD7-3579-06 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3579-06.zip] IBM Tivoli Advanced Reporting and Management for DFSMShsm Application Support is the latest level available of the application support CD. This CD contains application support files for the following product: 
+
+ *  IBM Tivoli Advanced Reporting for DFSMShsm, version 2.6 uses CD LCD7-3579-06 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3579-06.zip] 
+ *  IBM Tivoli Advanced Reporting for DFSMShsm, version 2.5 uses CD LCD7-3579-05-01 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3579-05-01.zip] 
+ *  IBM Tivoli Advanced Reporting for DFSMShsm, version 2.4 uses CD LCD7-3579-02 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3579-02.zip] 
+ *  IBM Tivoli Advanced Reporting for DFSMShsm, version 2.3 uses CD LCD7-3579-01 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3579-01.zip] 
+ *  IBM Tivoli Advanced Reporting for DFSMShsm, version 2.2 uses CD LCD7-3579-00 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3579-00.zip] 
+ *  IBM Tivoli Advanced Reporting for DFSMShsm, version 2.1 uses CD LCD7-1955-00 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-1955-00.zip] 
+
+The CD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. The publications for Tivoli Advanced Reporting for DFSMShsm can be found at:
+http://www.ibm.com/developerworks/wikis/display/tivolidoccentral/Tivoli+Advanced+Reporting+for+DFSMShsm [http://www.ibm.com/developerworks/wikis/display/tivolidoccentral/Tivoli+Advanced+Reporting+for+DFSMShsm].
+
+
+The LCD7-3504-01 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3504-01.zip] IBM Tivoli Tape Optimizer on z/OS Application Support is the latest level available of the application support CD. This CD contains application support files for the following product: 
+
+ *  IBM Tivoli Tape Optimizer on z/OS, version 2.2 
+
+The CD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. 
+
+
+The LCD7-3503-05 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3503-05.zip] IBM Tivoli Advanced Backup and Recovery for z/OS Application Support is the latest level available of the application support CD. This CD contains application support files for the following product:  *  IBM Tivoli Advanced Backup and Recovery, version 2.4 uses CD LCD7-3503-05 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3503-05.zip] 
+ *  IBM Tivoli Advanced Backup and Recovery, version 2.3 uses CD LCD7-3503-02 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3503-02.zip] 
+ *  IBM Tivoli Advanced Backup and Recovery, version 2.2 uses CD LCD7-3503-01 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3503-01.zip] 
+ *  IBM Tivoli Advanced Backup and Recovery, version 2.1 uses CD LCD7-3503-00 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3503-00.zip] 
+
+The CD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. The publications for Tivoli Advanced Backup and Recovery for z/OS can be found at:
+http://www.ibm.com/developerworks/wikis/display/tivolidoccentral/Tivoli+Advanced+Backup+and+Recovery+for+zOS [http://www.ibm.com/developerworks/wikis/display/tivolidoccentral/Tivoli+Advanced+Backup+and+Recovery+for+zOS].
+
+
+The LCD7-3505-04 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3505-04.tar] IBM Tivoli Automated Tape Allocation Manager Application Support is the latest level available of the application support CD. This CD contains application support files for the following product: 
+
+ *  IBM Tivoli Automated Tape Allocation Manager, version 3.3 uses CD [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3503-00.zip] LCD7-3505-04 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3505-04.tar] 
+ *  IBM Tivoli Automated Tape Allocation Manager, version 3.2 uses CD [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3503-00.zip] LCD7-3505-01 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3505-01.tar] 
+ *  IBM Tivoli Automated Tape Allocation Manager, version 3.1 uses CD [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3503-00.zip] LCD7-3505-00 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3505-00.tar] 
+
+The CD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. The publications for Tivoli Automated Tape Allocation Manager can be found at:
+http://www.ibm.com/developerworks/wikis/display/tivolidoccentral/Tivoli+Automated+Tape+Allocation+Manager+for+zOS [http://www.ibm.com/developerworks/wikis/display/tivolidoccentral/Tivoli+Automated+Tape+Allocation+Manager+for+zOS].
+
+
+
+The LCD7-0817-03 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-0817-03.tar] IBM Tivoli Monitoring Services on z/OS v6.1 350/360 Workspace Migration is the latest level available of the application support CD. This CD contains application support files for products that were originally developed on OMEGAMON Platform V350 or V360, rather than on the ITM level of the common components (Tivoli Enterprise Monitoring Server and Tivoli Enterprise Portal Server and client). These application support files enable the following products to run with the ITM level of the common components. Note: if you are running one of the V3.1.0 OMEGAMONs with the V360 level of platform and not the ITM level, you will need to use CD number LCD7-0764-02 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-0764-02.zip]. If you are running the V350 level of platform, which was packaged with the legacy level of products, the CDs contain both platform and product so are not available on a general access url. The current CD levels are LCD7-0617-02 for Windows and LCD7-0618-02 for Unix. If you do not find these CDs in your product package, contact IBM Software Support or your IBM sales representative to get replacement media. 
+
+
+ *  IBM Tivoli OMEGAMON DE on z/OS V4.2.0 (OMEGAVIEW II for the Enterprise component) 
+ *  IBM Tivoli OMEGAMON XE on z/OS, version 3.1 
+   and previous versions of IBM Tivoli OMEGAMON XE on z/OS components 
+ *  IBM Tivoli OMEGAMON XE on z/OS, version 2.2.1 (same FMIDs as Sysplex, version 2.2.0) 
+ *  IBM Tivoli OMEGAMON XE for Sysplex, version 2.2.0 
+ *  IBM Tivoli OMEGAMON XE for Cryptographic Coprocessors, version 1.0.0 
+ *  IBM Tivoli OMEGAMON XE for OS/390 Unix System Services, version 2.2.0 
+ *  IBM Tivoli OMEGAMON XE for CICS on z/OS, version 3.1 
+   and previous versions of IBM Tivoli OMEGAMON XE for CICS 
+ *  IBM Tivoli OMEGAMON XE for CICS on z/OS, version 2.2.1 (same FMIDs as CICSPlex, version 2.2.0) 
+ *  IBM Tivoli OMEGAMON XE for CICSPlex, version 2.2.0 
+ *  IBM Tivoli OMEGAMON XE for CICS, version 1.0.0 
+ *  IBM Tivoli OMEGAMON XE for DB2 Performance Monitor on z/OS, version 3.1 
+ *  IBM Tivoli OMEGAMON XE for DB2 Performance Expert on z/OS, version 3.1 
+ *  IBM Tivoli OMEGAMON XE for DB2 on z/OS, version 4.0.0 (same FMIDs as DB2 on z/OS, version 3.0.0) 
+ *  IBM Tivoli OMEGAMON XE for DB2 on z/OS, version 3.0.0 
+ *  IBM Tivoli OMEGAMON XE for IMS on z/OS, version 3.1 
+   and previous versions of IBM Tivoli OMEGAMON XE for IMS 
+ *  IBM Tivoli OMEGAMON XE for IMS on z/OS, version 2.2.1 (same FMIDs as IMSPlex, version 2.2.0) 
+ *  IBM Tivoli OMEGAMON XE for IMSPlex, version 2.2.0 
+ *  IBM Tivoli OMEGAMON XE for IMS, version 1.0.0 
+ *  IBM Tivoli OMEGAMON XE for Mainframe Networks, version 3.1 
+   and previous versions of IBM Tivoli OMEGAMON XE for Mainframe Networks 
+ *  IBM Tivoli OMEGAMON XE for Mainframe Networks, version 2.1.0 (same FMIDs as Mainframe Networks, version 1.0.0) 
+ *  IBM Tivoli OMEGAMON XE for Mainframe Networks, version 1.0.0 
+ *  IBM Tivoli OMEGAMON XE for Storage on z/OS, version 3.1 
+   and previous versions of IBM Tivoli OMEGAMON XE for Storage 
+ *  IBM Tivoli OMEGAMON XE for Storage on z/OS, version 2.1.0 (same FMIDs as Storage, version 1.0.0) 
+ *  IBM Tivoli OMEGAMON XE for Storage on z/OS, version 1.0.0 
+ *  IBM Tivoli OMEGAMON XE for WebSphere Application Server on z/OS, version 1.3.1 (same FMIDs as WebSphere Application Server, version 1.3.0) 
+ *  IBM Tivoli OMEGAMON XE for WebSphere Application Server on z/OS, version 1.3.0 
+ *  IBM Tivoli OMEGAMON XE for Websphere Business Integration, version 1.1.0 
+ *  IBM Tivoli Alert Adapter for OMEGACENTER Gateway, version 1.5.0 which is part of both: 
+ *  IBM Tivoli AF/OPERATOR on z/OS, version 3.4.1 and 
+ *  IBM Tivoli OMEGACENTER Gateway on z/OS, version 3.4.1 
+ *  IBM Tivoli Alert Adapter for AF/Remote, version 1.0.1 which is part of the IBM Tivoli AF/Remote product 
+
+The CD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. 
+
+Individual files for each of the products above as well as workspace application support files for some of distributed products can be found at: 
+https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=tmdl [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=tmdl]. The publications for the above products can be found at:
+http://publib.boulder.ibm.com/tividd/td/tdprodlist.html [http://publib.boulder.ibm.com/tividd/td/tdprodlist.html]. 
+
+
+The LCD7-3959-00 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3959-00.tar] IBM Tivoli Composite Application Manager for Application Diagnostics is the latest level available of the application support CD for V7.1.0. This is the follow on product to IBM Tivoli Composite Application Manager for WebSphere version 6. This CD contains application support files for the following product: 
+
+ *  IBM Tivoli Composite Application Manager for Application Diagnostics, version 7.1 
+
+The CD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. The publications for Tivoli Automated Tape Allocation Manager can be found at:
+http://publib.boulder.ibm.com/tividd/td/IBMTivoliAutomatedTapeAllocationManagerforzOS3.1.html [http://publib.boulder.ibm.com/tividd/td/IBMTivoliAutomatedTapeAllocationManagerforzOS3.1.html]. 
+
+ 
+
+
+IBM Tivoli Composite Application Manager for WebSphere version 6.0.1 or 6.1.0, uses a different approach for providing application support files. Catalog and attribute (.cat and .atr) files are provided with the z/OS agent FMID, and SQL files are provided on the distributed agent media. The CDs that provide the SQL files for version 6.0.1 are: 
+
+ *  LCD7-0872-00 IBM Tivoli Enterprise Management Agent Version 6.0: Linux 
+ *  LCD7-0815-00 IBM Tivoli Enterprise Management Agent Version 6.0: Windows 
+ *  LCD7-0871-00 IBM Tivoli Enterprise Management Agent Version 6.0: Unix 
+
+The CD's that provide the SQL files for version 6.1.0 are:  *  LCD7-0872-01 IBM Tivoli Enterprise Management Agent Version 6.0: Linux 
+ *  LCD7-0815-01 IBM Tivoli Enterprise Management Agent Version 6.0: Windows 
+ *  LCD7-0871-01 IBM Tivoli Enterprise Management Agent Version 6.0: Unix 
+
+Because the SQL files are on distributed agent media these cannot be put on a general access url. If you do not find them in your product package please contact IBM support or your IBM sales representative to get replacement media. 
+The publications for Tivoli Composite Application Manager for WebSphere can be found at:
+http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?toc=/com.ibm.itcamwas.doc/toc.xml [http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?toc=/com.ibm.itcamwas.doc/toc.xml]. 
+
+
+The LCD7-2956-00 [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-2956-00.tar] IBM Tivoli Composite Application Manager for SOA Application Support is the latest level available of the application support DVD for IBM Tivoli Composite Application Manager for SOA version 7.1.0. This DVD contains application support files for the following product: 
+
+ *  IBM Tivoli Composite Application Manager for SOA, version 7.1 
+
+The CD can be found at the following url: ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/ [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/]. 
+
+IBM Tivoli Composite Application Manager for SOA version 6.0.0 or 6.0.1, uses a different approach for providing workspace application support files. Catalog and attribute (.cat and .atr) files and SQL files are all provided on the distributed agent media. The CDs that provide the application support files for version 6.0.0 are:  *  LCD7-0850-00 IBM Tivoli Composite Application Manager for SOA V6.0: Windows 
+ *  LCD7-0952-00 IBM Tivoli Composite Application Manager for SOA V6.0: Linux 
+ *  LCD7-0953-00 IBM Tivoli Composite Application Manager for SOA V6.0: IBM Monitoring - Application Support 
+
+The CD's that provide the application support files for version 6.1.0 are:  *  LCD7-0850-02 IBM Tivoli Composite Application Manager for SOA - Windows 
+ *  LCD7-0952-02 IBM Tivoli Composite Application Manager for SOA - Linux on Intel and AMD 64 
+ *  LCD7-1367-01 IBM Tivoli Composite Application Manager for SOA - Linux on zSeries, Linux on pSeries, Linux on iSeries 
+ *  LCD7-1368-01 IBM Tivoli Composite Application Manager for SOA - UNIX (Solaris and AIX) 
+
+Because the workspace application support files are on distributed agent media these cannot be put on a general access url. If you do not find them in your product package please contact IBM support or your IBM sales representative to get replacement media. 
+The publications for Tivoli Composite Application Manager for SOA can be found at:
+http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?toc=/com.ibm.itcamsoa.doc/toc.xml [http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?toc=/com.ibm.itcamsoa.doc/toc.xml]. 
+
+If you have any questions or to request physical media you can send an e-mail to tivzos@us.ibm.com.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli OMEGAMON XE for CICS on z/OS All Versions Systems and Asset Management Tivoli OMEGAMON XE for IMS on z/OS 4.2.0, 4.1.0, 5.1.0 Systems and Asset Management Tivoli OMEGAMON XE for CICS Transaction Gateway on z/OS 4.2.0, 5.1.0, 5.3.0 Systems and Asset Management Tivoli OMEGAMON XE for Mainframe Networks 4.2.0, 5.1.0 Storage Management Tivoli OMEGAMON XE for Storage on z/OS 4.2.0, 5.1.0, 5.3.0 Systems and Asset Management Tivoli OMEGAMON XE for DB2 Performance Expert on z/OS 4.2.0, 5.1.0, 5.2.0 Systems and Asset Management Tivoli OMEGAMON XE for DB2 Performance Monitor on z/OS 5.1.0, 4.2.0, 5.2.0 Systems and Asset Management IBM OMEGAMON for CICS on z/OS z/OS 5.5.0 Systems and Asset Management IBM OMEGAMON for IMS on z/OS z/OS 5.5.0 Systems and Asset Management IBM OMEGAMON for JVM on z/OS z/OS 5.4.0 Systems and Asset Management IBM OMEGAMON for Messaging for z/OS z/OS 7.5.0 Systems and Asset Management IBM OMEGAMON for Networks on z/OS z/OS 5.5.0 Systems and Asset Management IBM OMEGAMON for z/OS z/OS 5.5.0 Systems and Asset Management IBM OMEGAMON Performance Management Suite for z/OS z/OS 5.5.0

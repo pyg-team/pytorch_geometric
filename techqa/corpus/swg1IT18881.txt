@@ -1,0 +1,140 @@
+Title: IBM IT18881: PUREAPPLICATION SYSTEM: CANNOT EDIT OR DEPLOY VIRTUAL SYSTEM PATTERNS WHEN THE EXTERNAL IIM REPOSITORY IS UNAVAILABLE - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.2.3.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24043076]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Users could not edit or deploy virtual system patterns when
+   the external IBM Installation Manager (IIM) repository was
+   unavailable.
+   
+   It was found after investigation that the line:
+   "repository.internal.url=../"
+   
+   is missing from the following internal system configuration
+   file:
+   "/drouter/ramdisk2/mnt/raid-volume/raid0/imrepo/IMRepository
+       /Compo/repository.config".
+   
+   As a result, only the external IIM repository is visible from
+   the IBM Pattern Builder and deployment system.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Contact IBM Support to verify the problem and modify the
+   configuration file.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Code has been added to regenerate the internal IBM
+   Installation Manager configuration entry in the
+   configuration file if it is missing.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix is being provided in the Foundation Pattern
+   Type version 2.1.9.0 provided with PureApplication System
+   and BlueMix Local System version 2.2.3.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT18881
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   211
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-18
+   
+   
+ * CLOSED DATE
+   2017-03-27
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R223 PSY
+   UP

@@ -1,0 +1,212 @@
+Title: IBM PM60400: Validation error (EJB reference not found) prevents publishing to a WebSphere Application Server - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Application Developer for WebSphere Software 8.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24032855]
+Rational Software Architect Interim Fix 1 for 8.0.4.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24036852]
+Rational Software Architect for WebSphere Software Interim Fix 1 for 8.0.4.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24036853]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract:
+   
+   Attempts to validate a project result in error: 'EJB reference
+   or EJB local reference with name 'EJB/mybean' not found'
+   
+   Problem:
+   
+   Using IBM Rational Application Developer v8.0.4 and IBM
+   WebSphere Application server v7.0.0.19:
+   
+   1. Create an EJB 3.0 project called MyEJB with client project
+   MyEJBClient, associated with the EAR 5 project called MyEJBEAR
+   2. Add a Stateless session EJB with code similar to the
+   following:
+   
+   package com;
+   import javax.ejb.Stateless;
+   @Stateless(name='EJB/mybean')
+   public class Bean implements BeanRemote {
+       public Bean() {
+       }
+   }
+   and the required remote interface com.BeanRemote.
+   
+   3. Create a Dynamic Web project 2.5 called MyWeb, associated
+   with a separate EAR 5 project called MyWebEAR
+   4. Add the project MyEJBClient as a Utility Module to MyWebEAR
+   5. Configure MyEJBClient in the Deployment Assembly page of
+   MyWeb
+   6. Add a Servlet Filter to MyWeb. The source file of the Servlet
+   Filter should be placed in MyEJBClient, and the code should
+   reference the EJB by dependency injection as follows:
+   
+   package com;
+   import java.io.IOException;
+   import javax.ejb.EJB;
+   import javax.servlet.*
+   public class Test1 implements Filter{
+   @EJB(name='EJB/mybean') BeanRemote myRemote;
+   @Override
+   public void destroy() {}
+   @Override
+   public void doFilter(ServletRequest arg0, ServletResponse
+   arg1,FilterChain arg2) throws IOException, ServletException {}
+   @Override
+   public void init(FilterConfig arg0) throws ServletException
+   {System.out.println('Servlet Filter
+   init:'+myRemote.toString());}}
+   7. Right click on project MyWeb,and select:
+   Java EE?Generate WebSphere Bindings Deployment Descriptor
+   8. In the file ibm-web-bnd.xml add the line that specifies the
+   binding to the Remote EJB located in a separate EAR:
+   ?ejb-ref name='EJB/mybean'
+   binding-name='ejb/MyEJBEAR/MyEJB.jar/EJB/mybean#com.BeanRemote'
+   /?
+   
+   The resulting web bindings validator will report the following
+   error:
+   
+   EJB reference or EJB local reference with name 'EJB/mybean' not
+   found on the file: /MyWeb/WebContent/WEB-INF/ibm-web-bnd.xml
+   
+   The application cannot be published to WebSphere Application
+   Server because of this validation error.
+   
+   Local fix:
+   
+   1. Navigate to Windows ? Preferences ? Validator
+   2. Disable the WebSphere Web bindings Validator
+   
+   The validation error will disappear and the application will
+   publish correctly.
+   
+   Note that when the target of the reference is in a separate
+   Enterprise Archive then the binding is required. If the binding
+   is missing you will get the following error from the server:
+   
+   [3/14/12 15:32:50:533 CET] 00000019 annotation    E
+   com.ibm.ws.webcontainer.annotation.WASAnnotationHelper inject
+   exception while injecting resource --? [InjectionTargetField=
+   com.BeanRemote com.Test1.myRemote]
+   
+   com.ibm.wsspi.injectionengine.InjectionException: The
+   com.ibm.ws.ejbcontainer.injection.factory.EJBLinkObjectFactory
+   factory encountered a problem getting the object instance for
+   the Reference:com.BeanRemote binding object.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Validation error (EJB reference not found) prevents
+   publishing to a WebSphere Application Server
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR is fixed in Rational Application Developer
+   v8.0.4.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM60400
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   804
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-14
+   
+   
+ * CLOSED DATE
+   2012-05-15
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R804 PSN
+   UP

@@ -1,0 +1,116 @@
+Title: IBM How many concurrently running statements allowed for a DB2 Java application and how to increase it? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When a DB2 java application is executing a lot of concurrent SQL statements, it may hit the limit reporting "Out of Package Error Occurred" with the SQLCODE -805. If you encounter this error, You may ask what the limit is for the number of concurrent statements for a DB2 Java application and how to increase it. 
+
+ANSWER
+When a DB2 Java application is running a dynamic SQL statement, it uses a dynamic section from DB2 CLI packages at DB2 server side to prepare/execute the statement. Please note that these DB2 CLI packages are exactly the same packages used by a CLI application.
+By default, there are 3 large CLI packages (containing 385 sections) and 3 small CLI packages (containing 65 sections) bound at a DB2 database server. There are two sections from each package (both large and small) which are reserved for positioned update/delete statements and execute immediate statements. Therefore the total number of available sections for all other statements by default is (3 * 63) + (3 * 383) = 1338, which means by default a DB2 Java application can only run 1338 dynamic statements at one time.
+
+When this limit is hit, the application will receive an error of "Out of Package Error Occurred" with SQLCODE -805, which means the DB2 server was running out of dynamic sections available from the CLI packages.
+
+For example, running below Java application would hit the limit and report the error as below:
+
+
+PreparedStatement pStmt = null;
+for (int i=1; i<=1339; i++) {
+pStmt = db.con.prepareStatement("insert into myt values (1, 'name1')");
+pStmt.execute();
+}
+
+
+***** Out of Package Error Occurred (2014-05-14 22:20:32.431) *****
+
+Exception stack trace:
+com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: SQLCODE=-805, SQLSTATE=51002, SQLERRMC=NULLID.SYSLH204 0X5359534C564C3031, DRIVER=3.64.106
+com.ibm.db2.jcc.am.bd.a(bd.java:682)
+com.ibm.db2.jcc.am.bd.a(bd.java:60)
+com.ibm.db2.jcc.am.bd.a(bd.java:127)
+com.ibm.db2.jcc.am.io.c(io.java:2706)
+com.ibm.db2.jcc.t4.ab.p(ab.java:872)
+com.ibm.db2.jcc.t4.ab.h(ab.java:144)
+com.ibm.db2.jcc.t4.ab.b(ab.java:41)
+com.ibm.db2.jcc.t4.p.a(p.java:32)
+com.ibm.db2.jcc.t4.qb.i(qb.java:135)
+com.ibm.db2.jcc.am.io.gb(io.java:2112)
+com.ibm.db2.jcc.am.jo.rc(jo.java:3526)
+com.ibm.db2.jcc.am.jo.b(jo.java:3976)
+com.ibm.db2.jcc.am.jo.hc(jo.java:2732)
+com.ibm.db2.jcc.am.jo.execute(jo.java:2715)
+DbConn2.main(DbConn2.java:74)
+
+Concurrently open statements:
+1. SQL string: INSERT INTO MYT VALUES (1, 'NAME1')
+Number of statements: 1339
+********************
+
+DB2 SQL Error: SQLCODE=-805, SQLSTATE=51002, SQLERRMC=NULLID.SYSLH204 0X5359534C564C3031, DRIVER=3.64.106
+
+
+Then what to do if you encounter above errors?
+
+1) firstly you need to check if you can modify the application to avoid running so many dynamic SQL statements at the same time. 
+
+2) If you can't avoid it, you will need to increase the number of available sections by increasing the number of DB2 CLI packages. 
+
+Please note that only the number of DB2 CLI large packages can be increased, not for small packages, and the maximum number of large packages you can increase to is 30, which also basically means the maximum available sections would be (3 * 63) + (30 * 383) = 11679.
+
+3) To increase the number of large CLI packages, you can run DB2 bind command with CLIPKG option via the instance owner as following example:
+
+cd ~/sqllib/bnd
+db2 connect to SAMPLE
+
+--CLPKG 10, means it will increase the number of large CLI packages to 10.
+db2 "bind @db2cli.lst CLIPKG 10 grant public blocking all"
+
+db2 terminate
+
+4) You can then check the number of CLI large packages per isolation and cursor holdability.
+
+For example, after step 3, you will see the number of large packages per isolation level and cursor holdability would be increased from 3 to 10 now:
+
+$ db2 "list packages for all"|grep -i NULLID|grep -i SYSLH2
+
+Package Schema Version Bound by Total sections Valid Format Isolation level Blocking
+----------- --------- ----------- --------- ------------- ------- -------- --------- --------
+SYSLH200 NULLID SYSIBM 385 Y 3 CS B
+SYSLH201 NULLID SYSIBM 385 Y 3 CS B
+SYSLH202 NULLID SYSIBM 385 Y 3 CS B
+SYSLH203 NULLID DB2INST1 385 Y 3 CS B
+SYSLH204 NULLID DB2INST1 385 Y 3 CS B
+SYSLH205 NULLID DB2INST1 385 Y 3 CS B
+SYSLH206 NULLID DB2INST1 385 Y 3 CS B
+SYSLH207 NULLID DB2INST1 385 Y 3 CS B
+SYSLH208 NULLID DB2INST1 385 Y 3 CS B
+SYSLH209 NULLID DB2INST1 385 Y 3 CS B
+
+In above list, 7 of the packages (SYSLH203 to SYSLH209) that were bounded by DB2INST1 are all the newly created large packages for Isolation level CS (2) and with Hold cursor (H).
+
+or you can run below SQL statement to find out the package information:
+
+$ db2 "select PKGSCHEMA, PKGNAME, OWNER,TOTAL_SECT,VALID,FORMAT,ISOLATION,BLOCKING from syscat.packages where pkgschema='NULLID' and pkgname like 'SYSLH2%'"
+
+PKGSCHEMA PKGNAME OWNER TOTAL_SECT VALID FORMAT ISOLATION BLOCKING
+-------------------------------------------------------------------------------------------------------------------------------- -------------------------------------------------------------------------------------------------------------------------------- -------------------------------------------------------------------------------------------------------------------------------- ---------- ----- ------ --------- --------
+NULLID SYSLH200 SYSIBM 385 Y 3 CS B
+NULLID SYSLH201 SYSIBM 385 Y 3 CS B
+NULLID SYSLH202 SYSIBM 385 Y 3 CS B
+NULLID SYSLH203 DB2INST9 385 Y 3 CS B
+NULLID SYSLH204 DB2INST9 385 Y 3 CS B
+NULLID SYSLH205 DB2INST9 385 Y 3 CS B
+NULLID SYSLH206 DB2INST9 385 Y 3 CS B
+NULLID SYSLH207 DB2INST9 385 Y 3 CS B
+NULLID SYSLH208 DB2INST9 385 Y 3 CS B
+NULLID SYSLH209 DB2INST9 385 Y 3 CS B
+
+10 record(s) selected.
+
+db2 terminate
+
+
+RELATED INFORMATION
+ DB2 packages: Concepts examples and common problems [https://www.ibm.com/developerworks/data/library/techarticle/dm-0606chun]
+DB2 CLI bind files and package names [http://pic.dhe.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.apdv.cli.doc/doc/r0007866.html]

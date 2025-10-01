@@ -1,0 +1,20 @@
+Title: IBM What is the meaning of the 'total activity' in the MC monitor? - United States
+
+Text:
+activity; monitor TECHNOTE (FAQ)
+
+QUESTION
+ What is the meaning of the 'total activity' in the MC monitor? 
+
+ANSWER
+The Total Activity in the MC monitor for source and target is calculated as follows: 
+
+The Source activity is the sum of the following three stats: 
+- SOURCE_DATABASE_BYTES (log reader) 
+- SOURCE_ENGINE_BYTES 
+- SOURCE_COMM_BYTES 
+
+The Target activity is the sum of the following stats: 
+- TARGET_COMM_BYTES 
+- TARGET_ENGINE_BYTES 
+- TARGET_DATABASE_BYTES

@@ -1,0 +1,22 @@
+Title: IBM Cannot see Search More Fields under the Advanced Search option - United States
+
+Text:
+Search More Fields; Security Groups; TPAESECURITY TECHNOTE (FAQ)
+
+QUESTION
+ Why can I not find the Search More Fields option under Advanced Search 
+
+ANSWER
+There is a separate security option for Search More Fields. 
+
+Using the People application as an example: 
+
+From the Go To menu of Maximo select the Security application. 
+
+Select the security group for the user you want to be able to access Search More Fields 
+
+Select the People application. 
+
+Select the Search More Fields option and place a check in the Checkbox to grant rights to the option. 
+
+Save and Sign Out of Maximo.

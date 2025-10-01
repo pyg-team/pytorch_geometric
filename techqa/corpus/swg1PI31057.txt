@@ -1,0 +1,122 @@
+Title: IBM PI31057: VERY BAD ERROR MESSAGE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I was trying to run a repro of a bug that involves TM1Web and
+   some underlying Excel sheets.  I got the error message (after
+   things ran a bit)??"Failed to open the target workbook as the
+   file does not exist"??This messages tells me nothing even though
+   I know that the code had the specifics available right when the
+   error was posted.  I make a joke about how the worst error
+   message in the world is "File not found" without every telling
+   the user WHAT file was not found.  I thought the world was past
+   that point, but apparent we are not.??(I am dead-in-the-water
+   with the repro case because I have no idea what is being looked
+   for.)???How about:?"Failed to open workbook "xxxxyyyy.xlsm"
+   because file "\sdfsdf\dfgdfg\dfgdfg\asdasdas\xxxxyyyy.xlsm" was
+   not found"??Note: workbook name with file type?         file
+   name with full path?
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See error description.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This APAR is addressed in the current Planning Analytics     *
+   * Cloud release.  It is also targeted for the next major on    *
+   * premise release.                                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI31057
+   
+   
+ * REPORTED COMPONENT NAME
+   TM1 WEB
+   
+   
+ * REPORTED COMPONENT ID
+   5724W49WB
+   
+   
+ * REPORTED RELEASE
+   A22
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-12-05
+   
+   
+ * CLOSED DATE
+   2016-02-25
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RA22 PSY
+   UP

@@ -1,0 +1,164 @@
+Title: IBM PK30229: NEW FUNCTION FOR FILTERS, LEAP SECOND OFFSETS, AND LARGE FILES - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  - New function for Filters called levels. Levels facilitate
+   logical AND conditions at the log code level.
+   - New function to support leap second offset. New time options
+   have been introduced to adjust timestamps by a leap second
+   offset. Leap second offset can be applied either by using the
+   CVTLSO system settings or extrapolated from records in the IMS
+   log.
+   - New function to support large files (LFS)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of IMS Problem Investigator V2.1.  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: New function for Filters, leap second   *
+   *                      offsets and large files.                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   1. New function for Filters called levels. Levels facilitate
+      logical AND conditions at the log code level.
+   2. New function to support leap second offset. New time options
+      have been introduced to adjust timestamps by a leap second
+      offset. Leap second offset can be applied either by using the
+      CVTLSO system settings or extrapolated from records in the
+      IMS log.
+   3. New function to support large files (LFS).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  1.  IMS/PI V2.1 now supports logical AND conditions at the log
+       code level.
+   2.  IMS/PI V2.1 now supports leap second offset.
+   3.  IMS/PI V2.1 now supports LFS.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK30229
+   
+   
+ * REPORTED COMPONENT NAME
+   PRBLEM INVESTIG
+   
+   
+ * REPORTED COMPONENT ID
+   5655K5000
+   
+   
+ * REPORTED RELEASE
+   210
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / New Function
+   
+   
+ * SUBMITTED DATE
+   2006-08-21
+   
+   
+ * CLOSED DATE
+   2006-09-20
+   
+   
+ * LAST MODIFIED DATE
+   2006-10-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK18192
+   
+   
+
+MODULES/MACROS
+ *     ALZ##CEX ALZ##DBR ALZ##GLB ALZ##IDF ALZ##PRO
+   ALZ##REG ALZ##TRK ALZ##VAL ALZ#ABOP ALZ#ABUT ALZ#BRTM ALZ#CMDC
+   ALZ#CMDP ALZ#DTTM ALZ#EXTD ALZ#FLCN ALZ#FLCP ALZ#FLED ALZ#FLEX
+   ALZ#FLFM ALZ#FLLV ALZ#FLOP ALZ#FLRX ALZ#FPMD ALZ#GINF ALZ#MODF
+   ALZ#NV21 ALZ#SFRC ALZ#SFRS ALZ#SP11 ALZ#SP18 ALZ#TIME ALZ#TRAK
+   ALZAPPLC ALZA0A19 ALZA0A39 ALZA0A59 ALZA03E9 ALZA0419 ALZA0429
+   ALZA0589 ALZBATCH ALZBRAPI ALZBRFLP ALZBRFMT ALZBRMIO ALZBRTMP
+   ALZBRXCM ALZB00   ALZB03   ALZB04   ALZCDOLI ALZCDRDB ALZCDRDE
+   ALZCDRDI ALZCDRM  ALZDBASE ALZDBRC  ALZEXEC  ALZEXINT ALZFLDRV
+   ALZFLED0 ALZFMDRV ALZIMSPA ALZLCAT  ALZLFMER ALZLRFIL ALZL02
+   ALZ45FF7 ALZ45FF8 ALZ45FF9 ALZ67FA7 ALZ67FA8 ALZ67FA9 H28T210J
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PRBLEM INVESTIG
+   
+   
+ * FIXED COMPONENT ID
+   5655K5000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R210 PSY UK18192 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK18192]
+   UP06/09/23 P F609
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

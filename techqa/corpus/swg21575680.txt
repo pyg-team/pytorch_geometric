@@ -1,0 +1,17 @@
+Title: IBM IDMS DB347018 Not enough space question - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why is the message "IDMS DB347018 Not enough space question" being received? 
+
+CAUSE
+The IDMS rununit terminates in IDMS
+
+ANSWER
+Classic does all access to IDMS through the CV by default as long as the customer has the correct SYSCTL file included in the Classic Federation server JCL. 
+
+If there is a problem communicating to IDMS (like when a run unit is cancelled in this case) the IDMS client layer will try to look up error messages from the local DDLDCMSG file. It will actually start a local run unit within the batch application region to read the message text. 
+
+The memory errors from IDMSDBIO are most likely related to that processing. It is still suggested that the Classic Federation region be increased to hopefully satisfy the memory requirement for the IDMS Client side environment for this error processing.

@@ -1,0 +1,92 @@
+Title: IBM Database Connections In V11 Hybrid - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I tell how many database connections I will have when using v11 hybrid? 
+
+ANSWER
+The MDM v.11 physical side has three JDBC data sources configured for runtime server
+in Websphere: DWLConfig, DWLCustomer, and MDM.
+
+The total number of connection is the count of live connection from the
+three pools plus the number of virtual MDM context (ODBC connection).
+
+On the Connection pool properties page for each data source , there are
+several properties that can be configured to control what you see.
+
+They are below:
+
+Data Source Connection pool properties:
+You can configure connection pool related properties from the
+Connection pool screen in WAS.
+
+- Connection Timeout: Specify the interval, in seconds, after
+which a connection request times out and a
+ConnectionWaitTimeoutException is thrown. This can occur when the pool
+is at its maximum (Max Connections) and all of the connections are in
+use by other applications for the duration of the wait. For example, if
+Connection Timeout is set to 300 and the maximum number of connections
+is reached, the Pool Manager waits for 300 seconds for an available
+physical connection. If a physical connection is not available within
+this time, the Pool Manager throws a ConnectionWaitTimeoutException.
+
+- Max Connections: Specify the maximum number of physical
+connections that can be created in this pool. These are the physical
+connections to the back-end database. Once this number is reached, no
+new physical connections are created and the requester waits until a
+physical connection that is currently in use is returned to the pool,
+or a ConnectionWaitTimeoutException is thrown. For example, if Max
+Connections is set to 5, and there are five physical connections in
+use, the Pool Manager waits for the amount of time specified in
+Connection Timeout for a physical connection to become free. If, after
+that time, there are still no free connections, the Pool Manager throws
+a ConnectionWaitTimeoutException to the application.
+
+- Min Connections: Specify the minimum number of physical connections
+to be maintained. Until this number is reached, the pool maintenance
+thread does not discard any physical connections. However, no attempt
+is made to bring the number of connections up to this number. For
+example, if Min Connections is set to 3, and one physical connection is
+created, that connection is not discarded by the Unused Timeout thread.
+By the same token, the thread does not automatically create two
+additional physical connections to reach the Min Connections setting.
+
+- Reap Time: Specify the interval, in seconds, between runs of the
+pool maintenance thread. For example, if Reap Time is set to 60, the
+pool maintenance thread runs every 60 seconds. The Reap Time interval
+affects the accuracy of the Unused Timeout and Aged Timeout settings.
+The smaller the interval you set, the greater the accuracy. When the
+pool maintenance thread runs, it discards any connections that have
+been unused for longer than the time value specified in Unused Timeout,
+until it reaches the number of connections specified in Min
+Connections. The pool maintenance thread also discards any connections
+that remain active longer than the time value specified in Aged Timeout.
+
+- Unused Timeout: Specify the interval in seconds after which an
+unused or idle connection is discarded. For example, if the unused
+timeout value is set to 120, and the pool maintenance thread is enabled
+(Reap Time is not 0), any physical connection that remains unused for
+two minutes is discarded. Note that accuracy of this timeout, as well
+as performance, is affected by the Reap Time value. See the Reap Time
+bullet for more information.
+
+- Aged Timeout: Specify the interval in seconds before a physical
+connection is discarded, regardless of recent usage activity. Setting
+Aged Timeout to 0 allows active physical connections to remain in the
+pool indefinitely. For example, if the Aged Timeout value is set to
+1200, and the Reap Time value is not 0, any physical connection that
+remains in existence for 1200 seconds (20 minutes) is discarded from
+the pool. Note that accuracy of this timeout, as well as performance,
+is affected by the Reap Time value. See Reap Time for more information.
+
+- Purge Policy: Specify how to purge connections when a stale
+connection or fatal connection error is detected. Valid values are
+EntirePool and FailingConnectionOnly. If you choose EntirePool, all
+physical connections in the pool are destroyed when a stale connection
+is detected. If you choose FailingConnectionOnly, the pool attempts to
+destroy only the stale connection. The other connections remain in the
+pool. Final destruction of connections that are in use at the time of
+the error might be delayed. However, those connections are never
+returned to the pool.

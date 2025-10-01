@@ -1,0 +1,166 @@
+Title: IBM PM17737: J2 FP4: NEGATIVE VALUE FOR WORST APPLICATION TIER DELAYS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment Details:
+   TEMA
+                OS Information: win2k3
+   
+   Steps to reproduce:
+    Step 1: Install and configure ITCAM for J2EE DC v6.1 FP4
+    Step 2: Install and configure tema
+    Step 3: add workload
+    Step 4: Login TEP and navigate to Enterprise -> Windows Systems
+   -> DEVAPP-WIN-S25 -> WebSphsere Agent - Primary
+   -> WebSphsere App Server -> AppSrv01_ser -> Application Health->
+   testware->Selectiom Application-Application Tier Analysis,
+   
+   Result:
+    int the Worst Application Tier Delays chart, some times there
+   are negative value .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   ***********************
+   * USERS AFFECTED: Customers using ITCAM for J2EE v6.1.0.4
+   ****************************************************************
+   **********************
+   ERROR DESCRIPTION:
+   Environment Details:
+   TEMA
+                OS Information: win2k3
+   
+   Steps to reproduce:
+    Step 1: Install and configure ITCAM for J2EE DC v6.1 FP4
+    Step 2: Install and configure tema
+    Step 3: add workload
+    Step 4: Login TEP and navigate to Enterprise -> Windows Systems
+   -> DEVAPP-WIN-S25 -> WebSphsere Agent - Primary
+   -> WebSphsere App Server -> AppSrv01_ser -> Application Health->
+   testware->Selectiom Application-Application Tier Analysis,
+   
+   Result:
+    in the Worst Application Tier Delays chart, some times there
+   are negative value .
+   
+   ****************************************************************
+   ***********************
+   * RECOMMENDATION: apply ITCAM for J2EE V6.2, TEMA Fix Pack 5
+   when
+   * available
+   ****************************************************************
+   ***********************
+   
+   When using ITCAM for J2EE v6.1.0.4 J2SE DC/TEMA to monitor a
+   J2EE server, negative values are found  in the Worst Application
+   Tier Delays chart, in Application Health workspace.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   | fix pack | 6.2.0-TIV-ITCAM_J2EE_TEMA-FP005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM17737
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS DIS T
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62TM
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-01
+   
+   
+ * CLOSED DATE
+   2010-07-15
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS DIS T
+   
+   
+ * FIXED COMPONENT ID
+   5724L62TM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP
+   
+   
+ * R620 PSY
+   UP

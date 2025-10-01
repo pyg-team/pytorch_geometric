@@ -1,0 +1,16 @@
+Title: IBM Upgrading  IBM Content Navigator from Version 2.0.3.5 to 2.0.3.8 - United States
+
+Text:
+Upgrading IBM Content Navigator TECHNOTE (FAQ)
+
+QUESTION
+ When upgrading ICN from v2.0.3 FP5 to FP8, do we need to re-create the
+
+ECMClientDS datasource, create a new DB2_ONE_SCRIPT.sql script and run that script on
+
+the Content Navigator database? What changes in the DB2_ONE_SCRIPT.sql? 
+
+ANSWER
+ DB2_ONE_SCRIPT does not need to be run when upgrading IBM Content Navigator(ICN) from 2.0.3.5 to 2.0.3.8. We need to run the ConfigureJDBCECM task (data source and database
+task) and deselect the checkbox option for "Run the script on your database",
+so that the ONE script will not be run.

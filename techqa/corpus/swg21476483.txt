@@ -1,0 +1,31 @@
+Title: IBM Error 7004. All available licenses for SPSS for Windows are already in use. Specific symptom number: 206 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am launching SPSS for Windows using a network license and encountering the following error:
+
+The current license does not permit this job to continue.
+
+followed by...
+
+Error # 7004
+All available licenses for SPSS for Windows are already in use.
+This command not executed.
+
+Specific symptom number: 206
+
+What is the problem? 
+
+RESOLVING THE PROBLEM
+This error indicates that all network licenses are in use. Please log on to the SPSS Sentinel License Manager machine and use the Sentinel LM Server Administration utility (Start->Programs->SPSS Sentinel License Manager) to check the license usage statistics. If more concurrent licenses are needed, please contact SPSS Sales at (800) 543-2185
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 71564

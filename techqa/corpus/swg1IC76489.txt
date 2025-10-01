@@ -1,0 +1,187 @@
+Title: IBM IC76489: DB2TOP DUMPS CORE WHEN ENTERING AN INVALID SQL HASH STRING - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.7 Fix Pack 5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24031181]
+DB2 Version 9.7 Fix Pack 6 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032754]
+DB2 Version 9.7 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033685]
+DB2 Version 9.7 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24034634]
+DB2 Version 9.7 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036646]
+DB2 Version 9.7 Fix Pack 9a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037559]
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  db2top can dump core when an ivalid SQL HASH STRING was entered.
+   
+   Reproduction steps:
+   
+   1) db2top -d sample
+   
+   2) D
+   
+   3) L
+   
+   4) ENTER SQL HASH STRING:
+   SELECT AAAAAAAAAAAAAAAAA from xxxxxxx.XX_XXXX_XXXX WHERE TAG =
+   '10000003-0000-9000-3030-303630303137' AND
+   BBBBBBBBBBBBBBBBBBBBBBB LIKE 'MIGRA%' AND CCCCCCCCCCCC =
+   'EXTERNAL' AND LABEL <= ? AND LABEL > ??
+   
+   In this case something like:
+   
+   4) ENTER SQL HASH STRING: 00000000070889701463804304
+   
+   is expected. Anyways there should not be a core.
+   
+   The failing stack is:
+   
+   Segmentation fault in pthread_kill at 0x9000000007a57d0 ($t1)
+   0x9000000007a57d0 (pthread_kill+0xb0) e8410028          ld
+   r2,0x28(r1)
+   (dbx) where
+   pthread_kill(??, ??) at 0x9000000007a57d0
+   _p_raise(??) at 0x9000000007a5048
+   finish() at 0x100002270
+   interrupt(??, ??, ??) at 0x100055cc0
+   wborder_set(??, ??, ??, ??, ??, ??, ??, ??) at 0x90000003c6dae44
+   box32(??, ??, ??) at 0x90000003c6dd8bc
+   mybox() at 0x100022f24
+   putMsg() at 0x1000225ac
+   do_sqltext() at 0x100037cc4
+   select_sqltext() at 0x1000375a0
+   do_detail() at 0x10002c5fc
+   do_foreground() at 0x1000011f4
+   main() at 0x1000009fc
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * see ERROR DESCRIPTION                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 Version 9.7 Fix Pack 5.                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in DB2 Version 9.7 Fix Pack 5.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC76489
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-19
+   
+   
+ * CLOSED DATE
+   2011-12-08
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC79927 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC79927]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSN
+   UP
+   
+   
+ * R910 PSN
+   UP
+   
+   
+ * R950 PSN
+   UP
+   
+   
+ * R970 PSN
+   UP
+   
+   
+ * R980 PSN
+   UP

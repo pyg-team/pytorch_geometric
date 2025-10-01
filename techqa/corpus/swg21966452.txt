@@ -1,0 +1,37 @@
+Title: IBM Security Bulletin:A security vulnerability has been identified in Tivoli Network Manager IP Edition and IBM WebSphere Application Server shipped with Tivoli Network Manager IP Edition. (CVE-2015-2808) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Vulnerability in RC4 stream cipher affects GSKit shipped with IBM Tivoli Network Manager IP Edition
+and IBM WebSphere Application Server shipped as a component of Tivoli Network Manager IP Edition. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-2808 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2808]
+DESCRIPTION: The RC4 algorithm, as used in the TLS protocol and SSL protocol, could allow a remote attacker to obtain sensitive information. An attacker could exploit this vulnerability to remotely expose account credentials without requiring an active man-in-the-middle session. Successful exploitation could allow an attacker to retrieve credit card data or other sensitive information. This vulnerability is commonly referred to as "Bar Mitzvah Attack".
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/101851 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101851] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+
+Tivoli Network Manager IP Edition Interim Fixes for GSKit:
+Note:The SSL connection between Tivoli Network Manager IP Edition and Tivoli Netcool/OMNIbus is affected. Single server SSL users should upgrade to an appropriate OMNIbus fixpack to obtain the GSKit fix. Remote OMNIbus SSL connection users should install the Interim Fix below on Tivoli Network Manager IP Edition.
+
+
+Affected Product VRMF APAR Remediation/First Fix Tivoli Network Manager IP Edition 3.8.0.7 IV71123 & IV76121 http://www.ibm.com/support/docview.wss?uid=swg24040692 [http://www.ibm.com/support/docview.wss?uid=swg24040692] Tivoli Network Manager IP Edition 3.9.0.4 IV71123 & IV76121 [http://www-01.ibm.com/support/docview.wss?uid=swg24036687] [http://www-01.ibm.com/support/docview.wss?uid=swg24039199]http://www.ibm.com/support/docview.wss?uid=swg24040692 [http://www.ibm.com/support/docview.wss?uid=swg24040692] Tivoli Network Manager IP Edition 4.1.0 IV71123 & IV76121 http://www.ibm.com/support/docview.wss?uid=swg24040692 [http://www.ibm.com/support/docview.wss?uid=swg24040692] Tivoli Network Manager IP Edition 4.1.1.1 IV71123 & IV76121 [http://www-01.ibm.com/support/docview.wss?uid=swg24036690] [http://www-01.ibm.com/support/docview.wss?uid=swg24039199]http://www.ibm.com/support/docview.wss?uid=swg24040692 [http://www.ibm.com/support/docview.wss?uid=swg24040692] 
+IBM WebSphere Application Server fixes: 
+Security Bulletin: Vulnerability in RC4 stream cipher affects WebSphere Application Server (CVE-2015-2808) [http://www-01.ibm.com/support/docview.wss?uid=swg21701503] 
+Note: If TIP has been upgraded, please follow the TIP security bulletin to upgrade the appropriate IBM WebSphere version. Affected Product and Version(s) Product and Version shipped as a component Tivoli Network Manager IP Edition 3.8 Bundled the TIP version 1.1.1.x, IBM WebSphere version 6.1.0.x and the JRE from IBM SDK Java 2 Technology Edition Version 5. Tivoli Network Manager IP Edition 3.9 Bundled the TIP version 2.1.0.x, IBM WebSphere version 7.0.0.x and the JRE from IBM SDK Java 2 Technology Edition Version 6. Tivoli Network Manager IP Edition 4.1 Bundled the TIP version 2.2.0.x, IBM WebSphere version 7.0.0.x and the JRE from IBM SDK Java 2 Technology Edition Version 6. Tivoli Network Manager IP Edition 4.1.1 Bundled the TIP version 2.2.0.x, IBM WebSphere version 7.0.0.x and the JRE from IBM SDK Java 2 Technology Edition Version 6. GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

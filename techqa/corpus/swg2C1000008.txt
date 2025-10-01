@@ -1,0 +1,64 @@
+Title: IBM How to configure options such as virtual host for step Install application towards WAS - United States
+
+Text:
+was; install; plugin; plug-in; plug in TECHNOTE (FAQ)
+
+QUESTION
+ How do you configure options such as virtual host for step Install application towards IBM WebSphere Application Server (WAS) using IBM UrbanCode Deploy? 
+
+ANSWER
+Use the UrbanCode Deploy plugin WebSphere Application Server - Deployment [https://developer.ibm.com/urbancode/plugin/ibm-websphere-application-deployment/] to deploy application binaries to and perform administrative tasks for WebSphere Application Server.
+This plugin provides the step Install Application step [https://developer.ibm.com/urbancode/plugindoc/ibmucd/application-deployment-websphere-plug/72-508186/steps-roles/#install_application].
+
+WebSphere Application Server provides extensive options when installing applications using both the Administrative Console and the wsadmin scripting interface.
+
+The UrbanCode Deploy plugin allows you to specify options which are passed on to the wsadmin command AdminApp.install used in the plug-in step. 
+
+
+ * Review the Installing enterprise applications using wsadmin scripting [http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/txml_callappinstall.html] topic in the IBM Knowledge Center for more details. 
+ * Review the Options for the AdminApp object install, installInteractive, edit, editInteractive, update, and updateInteractive commands using wsadmin scripting [http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/rxml_taskoptions.html] to find the relevant options for WebSphere Application Server.
+
+
+
+How else can you find the options? 
+ * You want to configure Web services client bindings?
+   
+   Review the Configuring a web service client deployed WSDL file name using wsadmin scripting [http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/txml_clientbindingswsadmin.html] topic in the IBM Knowledge Center for details.
+   
+   See the options:
+   WebServicesClientBindDeployedWSDL
+   WebServicesClientBindPortInfo
+   WebServicesClientBindPreferredPort
+   WebServicesServerBindPort
+   WebServicesClientCustomProperty
+   WebServicesServerCustomProperty
+   
+   
+ * You want to configure Virtual host setting?
+   
+   See options defaultbinding.virtual.host.
+   The defaultbinding.virtual.host option specifies the default name for a virtual host.
+   
+   
+ * You can also use Rational Application Developer or WebSphere Developer Tools for Eclipse as described in the devWorks article Command assistance simplifies administrative scripting in WebSphere Application Server [http://www.ibm.com/developerworks/websphere/library/techarticles/0812_rhodes/0812_rhodes.html] to find the options for AdminApp.install by connecting to the WAS server and performing the changes using the Admin Console. 
+   
+   Later you can extract the options and use it in the Options field of the Installation Application step.
+   
+   EXAMPLE:
+   
+   Using a Virtual host named myvirt_host and using the option -JSPReloadForWebMod.
+   
+   In the Admin Console view you end up with the following command. 
+   
+   Note: Be aware of the line breaks and that path names, cell, node names, application and web module names will be different in your environment.
+   
+   AdminApp.update(\
+   'WebJSPEAR', \
+   'app', \
+   '[ -operation update -contents C:/fakepath/WebJSPEARv2.ear -nopreCompileJSPs -installed.ear.destination $(APP_INSTALL_ROOT)/MyCell -distributeApp -nouseMetaDataFromBinary -nodeployejb -createMBeansForResources -noreloadEnabled -nodeployws -validateinstall warn -noprocessEmbeddedConfig -filepermission .*\.dll=755#.*\.so=755#.*\.a=755#.*\.sl=755 -noallowDispatchRemoteInclude -noallowServiceRemoteInclude -asyncRequestDispatchType DISABLED -nouseAutoLink -noenableClientModule -clientMode isolated -novalidateSchema -MapModulesToServers [[ WebJSP_WebJSP.war,WEB-INF/web.xml WebSphere:cell=MyCell,node=MyNode,server=server1 ]] -JSPReloadForWebMod [[ WebJSP _WebJSP.war,WEB-INF/web.xml
+   AppDeploymentOption.No 10 ]] -MapWebModToVH [[ WebJSP_WebJSP.war,WEB-INF/web.xml myvirt_host ]]]' )
+   
+   
+   When using the step WAS - Deploy Install Application, you would enter for the parameter Options string field:
+   
+   -usedefaultbindings -deployejb -WebServicesClientBindPortInfo [${p:WSClientBind}] -MapWebModToVH [${p:VirtualHost}]

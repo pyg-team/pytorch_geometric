@@ -1,0 +1,116 @@
+Title: IBM HE12332: PERFORMANCE SLOW ADDING DOCUMNENTS TO P8 WHEN FIELD VALUES ARE EMPTY. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer gets on average 3 docs added to P8 per second.
+   Performance directly related to the number of P8 Properties
+   with no value.
+   When all properties have values, performance increases to 10
+   docs per second.
+   
+   Assistance requested to determine how to increase P8 injestion
+   rates when many values are empty.
+   
+   ICC 3.0
+   FileNet P8 5.1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No workaround available wthout a fix pack.
+   
+   However, some code changesmade in debug module
+   (P84.x_Connector.exe) does appear to have addressed issue.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Starting with 4.0.1.2-IBM-ICC-FP002 release (Ref. HE12468 [http://www-01.ibm.com/support/docview.wss?uid=swg1HE12468]), this
+    issue has been fixed.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12332
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR FILES
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5701
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-06-03
+   
+   
+ * CLOSED DATE
+   2017-05-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    HE12468 [http://www-01.ibm.com/support/docview.wss?uid=swg1HE12468]
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

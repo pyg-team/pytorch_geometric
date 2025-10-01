@@ -1,0 +1,121 @@
+Title: IBM IJ02597: IT TAKES TOO LONG TO CONFIGURE A IIB AGENT INSTANCE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:     APMv8  IIB agent
+   APM version:     APM 8.1.4.0
+   
+   IIB configuration includes the checking result for all egs and
+   all msg flows in monitored brokers, so it will, take a long time
+   to output the checking result.
+   
+   Detailed Recreation Procedure:
+   ./iib-agent.sh config <instance_name>
+   
+   Related Files and Output:
+   iib-agent.sh and iib-agent.bat script file.
+   
+   Messages found in logs etc
+   No
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround:
+   You can interrupt the configuration process when it says
+   "Checking the data enablement settings for all monitored
+   integration nodes. Please wait... "
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fixed in 8.1.4.1.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ02597
+   
+   
+ * REPORTED COMPONENT NAME
+   MON AGENT IIB
+   
+   
+ * REPORTED COMPONENT ID
+   5725U05IB
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-12-12
+   
+   
+ * CLOSED DATE
+   2018-07-16
+   
+   
+ * LAST MODIFIED DATE
+   2018-07-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R814 PSY
+   UP

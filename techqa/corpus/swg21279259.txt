@@ -1,0 +1,60 @@
+Title: IBM 'tacmd configureSystem' command and use of 'INSTANCE=' parameter - United States
+
+Text:
+tacmd configureSystem INSTANCE Oracle Sybase MSSQL DB2 TECHNOTE (FAQ)
+
+QUESTION
+ Does the ITM 6.1 'tacmd configureSystem' command for the database agent require the 'INSTANCE=' parameter for Oracle Sybase, MSSQL and DB2 agents? 
+
+CAUSE
+The ITM 6.1.0 Administrator Guide. ( Revised December 2006 ) Page 121 Appendix A is incorrect: 
+
+CLI example 
+The following command reconfigures the universal agent on stone with the file_unix.mdl MDL file: 
+
+ * 
+
+
+The following command reconfigures the errorlog parameter of the Sybase Server agent:  * 
+
+
+The following command reconfigures the run as entry for a DB2(R) agent: 
+ * 
+
+
+ANSWER
+ 
+
+The ITM 6.1 'tacmd configureSystem' command does not require 'INSTANCE=' parameter for Oracle, Sybase, MSSQL, and DB2 agents.
+
+For Example, the following command reconfigures 'db_login' parameter of oracle agent: 
+
+ * 
+
+
+Please note a special exception and current product limitation: 
+
+If 'CTIRA_SUBSYSTEM_ID' is defined to change the managed system name of target agent, the 'tacmd configureSystem' command will not work. 
+
+Error message will be:  * # ./tacmd configureSystem -m SUBTEST:system:ORA -p DBSETTINGS.db_login=test
+ * 
+ * 
+ * KUICCR014I: Configuring agent SUBTEST:system:ORA.
+ * 
+ * KUICCR020E: The configureSystem command did not complete because an error occurred. Refer to the following error returned from the server:
+ * 
+ * The monitoring server encountered an error while configuring the managed system.
+ * 
+ * The kuiras1.log file may provide more information about this error. If you require further assistance resolving the error, contact IBM Software Support.
+ * 
+ * The command /opt/TEST/bin/CandleAgent -h /opt/TEST -c -o SUBTEST stop or did not start or stop agent.
+ * 
+ * The command returned a return code.
+ * 
+ * Call IBM Support
+ * 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Tivoli Monitoring for Database Oracle Sybase MSSQL DB2 Agents

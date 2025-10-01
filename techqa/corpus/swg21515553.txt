@@ -1,0 +1,53 @@
+Title: IBM Workplace XT Search Designer doesn't start - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ FileNet Workplace XT Search Designer doesn't start and displays an error or blank popup window.
+
+
+SYMPTOM
+Starting the Workplace XT Search Designer yields either a blank popup window or the below error message, preventing Search Designer from starting. 
+
+Message: Expected ';' 
+
+Line: 64 
+
+Char: 1762 
+
+Code: 0 
+
+URI: http:// localhost:9080/WorkplaceXT/author/WcmSearchUI.jsp?requestedWindowId=_1.T130d17d5be1
+
+
+CAUSE
+Workplace XT provides the opportunity to create distinct Access Roles. If one of the Access Roles has an apostrophe in the name, Workplace XT Search Designer will not work
+
+
+DIAGNOSING THE PROBLEM
+When starting the Workplace XT Search Designer, if errors appear, review the names of the respective WorkplaceXT Access Roles to ensure that there aren't any apostrophe's in the Access Role Name
+
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, follow these steps within Workplace XT 
+
+ 
+
+ 1. Login to WorkplaceXT with Administrative privileges
+    
+    
+ 2. Select Tools
+    
+    
+ 3. Administration
+    
+    
+ 4. Site Preferences
+    
+    
+ 5. In the left pane, select Access Roles
+    
+    
+ 6. Review the names of the respective Access Roles and rename any that include an apostrophe

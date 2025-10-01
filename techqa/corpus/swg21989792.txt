@@ -1,0 +1,34 @@
+Title: IBM License Activation Wizard for SPSS Statistics 24 crashes on MAC OS X 10.11.6 (El Capitan) preventing users to license the product - United States
+
+Text:
+LAW license activator wizard licenseactivator Terminal sudo authorization code MAC OS X 10.11.6 el capitan TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ License Activation Wizard for IBM SPSS Statistics version 24 crashes sometimes before users can enter the Authorization code.
+
+
+ENVIRONMENT
+MAC OS X 10.11.6 (El Capitan) 
+
+RESOLVING THE PROBLEM
+As a workaround, use the LicenseActivator utility from the Terminal application with Administrator rights while connected to the internet:
+
+1.Open the Terminal.app
+2. Browse to the /bin directory of the Statistics 24 installation: 
+
+
+cd /applications/IBM/SPSS/Statistics/24/SPSSStatistics.app/contents/bin 
+
+
+3. Enter the following command: 
+
+
+sudo ./licenseactivator <your authorization code> 
+
+ 
+
+whereas <your authorization code> needs to be replaced with the 20-digit authorization code you received for licensing.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]

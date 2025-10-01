@@ -1,0 +1,60 @@
+Title: IBM How To Collect A CWBCOTRC Trace - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I gather a CWBCOTRC for IBM support? 
+
+ANSWER
+CWBCOTRC is the primary diagnostic and tracing tool for IBM i Access for Windows and the Access Client Solutions Windows Application Package. There are are two environments in which a program may run in Windows, as a service or as a desktop application. Some examples of programs that run as a service include SQL Server and Internet Information Server. Applications used by desktop users would include Microsoft Office and IBM i Access for Windows. The tracing techniques for the two different environments are different and addressed in two sections below. 
+
+APPLICATION RUNS AS A DESKTOP APPLICATION 
+
+If the program is already running, exit the program so that everything of interest is captured in the trace. 
+
+From a Windows command prompt (DOS prompt), run the following commands: 
+
+CWBCOTRC OFF 
+
+CWBCOTRC DEL 
+
+CWBCOTRC ON /WRAP:OFF 
+
+Start the program and recreate the problem being traced. 
+
+Upon recreating the problem, return the the Windows command prompt and run the commands: 
+
+CWBCOTRC OFF 
+
+CWBSVGET 
+
+CWBCOTRC DEL 
+
+The CWBSVGET program will create a zip file with configuration and setup information and the traces that were gathered. Send the resulting zip file to IBM service by email or use our web upload service at www.ecurep.ibm.com [http://www.ecurep.ibm.com/] 
+
+ 
+
+APPLICATION RUNS AS A WINDOWS SERVICE 
+
+If the program is already running, stop the service so that everything of interest is captured in the trace. 
+
+From a Windows command prompt (DOS prompt), run the following commands: 
+
+CWBCOTRC OFF /ALLUSERS 
+
+CWBCOTRC DEL /ALLUSERS 
+
+CWBCOTRC ON /ALLUSERS /WRAP:OFF 
+
+Start the service again and recreate the problem being traced. 
+
+Upon recreating the problem, return the the Windows command prompt and run the commands: 
+
+CWBCOTRC OFF /ALLUSERS 
+
+CWBSVGET 
+
+CWBCOTRC DEL /ALLUSERS 
+
+The CWBSVGET program will create a zip file with configuration and setup information and the traces that were gathered. Send the resulting zip file to IBM service by email or use our web upload service at www.ecurep.ibm.com [http://www.ecurep.ibm.com/]

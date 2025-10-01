@@ -1,0 +1,154 @@
+Title: IBM IZ47655: NO DATA SEEN IN ERRORLOG ALERT WORKSPACE. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring for Database Microsoft SQL Server 6.2.0-TIV-ITM_SQL-IF0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24023163]
+IBM Tivoli Monitoring for Database Microsoft SQL Server 6.2.0-TIV-ITM_SQL-IF0007 [http://www-01.ibm.com/support/docview.wss?uid=swg24024095]
+IBM Tivoli Monitoring for Database Microsoft SQL Server 6.2.0-TIV-ITM_SQL-IF0010 [http://www-01.ibm.com/support/docview.wss?uid=swg24027415]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem: No data seen in ErrorLog Alert workspace
+   
+   Approver: MJK
+   Compid: 5724B96MO
+   
+   Environment:  All windows versions
+   
+   Microsoft SQL Server Agent 6.2.0.
+   
+   Microsoft SQL Server 2000 Enterprise Edition SP4
+   
+   Problem Description:
+   --------------------
+   ErrorLog Alert workspace does not show data
+   on Tivoli Enterprise Portal for Microsoft SQL Server for
+   Non-English version.
+   This happens because Microsoft SQL Server  agent fails to parse
+   MSSQL Server ERRORLOG which contains Non-English messages.
+   
+   Detailed Recreation Procedure:
+   ------------------------------
+   1. Install Microsoft SQL Server 2000 SP4 Non-English Version
+   2. Go to TEP
+   3. click on ErrorLog Alert  workspace
+   4. Check Attributes values in ErrorLog Alert Detail view.
+   
+   Related Files and Output:
+   -------------------------
+   Non English Microsoft SQL Server ErrorLog file  at location:
+   
+   C:\Program Files\Microsoft SQL
+   Server\<%SQLInstanceId%>\MSSQL\LOG\ERRORLOG
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  NO DATA SEEN IN ERRORLOG ALERT WORKSPACE.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Now ErrorLog Alert workspace shows the data.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+                        | interim fix | 6.2.0-TIV-ITM_SQL-IF0005
+                        | interim fix | 6.1.2-TIV-ITM_SQL-IF0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ47655
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON MS SQL
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96MO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-03-26
+   
+   
+ * CLOSED DATE
+   2009-06-01
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON MS SQL
+   
+   
+ * FIXED COMPONENT ID
+   5724B96MO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

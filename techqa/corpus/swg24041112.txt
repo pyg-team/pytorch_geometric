@@ -1,0 +1,130 @@
+Title: IBM Netcool/OMNIbus Integrations Interim Fix - Probe for SNMP (nco-p-mttrapd-20_2) - United States
+
+Text:
+OMNIbus Integrations Interim Fix Probe for SNMP DOWNLOADABLE FILES
+
+ABSTRACT
+ A new version of the Netcool/OMNIbus Probe for SNMP will be available to download from November 13, 2015. 
+
+DOWNLOAD DESCRIPTION
+This version of the probe has been updated to incorporate fixes for the following APARs:
+
+
+
+
+ *  IV76246 - Rebuilt probe with fix in Net-SNMP library to address vulnerability on denial of service attacks as described in CVE-2015-5621 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-5621]. IV70329 - Probe now will not check availability of the connection when Heartbeat property is set to 0. 
+
+INSTALLATION INSTRUCTIONS
+ Installing interim fix probe on Netcool/OMNIbus V8.1.0 
+
+The Netcool/OMNIbus 8 Plus Probe for SNMP Multiplatform zip file contains the necessary information and files required to install this product using IBM Installation Manager. 
+
+The product can be installed in either one of two ways, both of which require the user to add a repository to the list of repositories in Installation Manager.
+
+
+
+
+ 1. Installation Manager can install a product using the zip file provided, without the need to unzip the file.
+    
+    
+    
+ 2. Add the repository.config file found in the zip file.
+
+
+
+
+
+Installing interim fix probe on Netcool/OMNIbus V7.4.0 All probes are upgraded for using the deployment engine (DE) which handles the installation process. Before the DE can install an interim fix with the same major version number of the probe, the older version of the probe must be uninstalled. For example, upgrading from GA version 1.20.0 to a interim fix version 1.20.2. 
+
+Uninstalling probe is a complicated task and should only be attempted when necessary due to some of the following complications. 
+
+ * The uninstall command will also remove any prerequisites that were installed with the probe. However, if the prerequisites were installed separately then the prerequisites must be removed separately. 
+ * If a prerequisite is used by more than one probe, it will not uninstall.
+
+
+To install an interim fix probe from a GA version on UNIX and Linux operating systems, use the following steps: 
+
+
+ 1. Ensure you are using the same user profile under which the DE is installed. The owner of the $OMNIHOME directory will also be the owner of the DE. Use the following command to display the$OMNIHOME owner: 
+    
+    cd $OMNIHOME ; ls -ltr
+    
+    
+    
+ 2. Switch to this user profile using the command: 
+    
+    su -username
+    
+    
+    
+ 3. Make a backup of any existing configuration files that you might already have for an earlier version of the probe and that you want to retain. For example; probe.props, probe.rules or probe.env. These files will usually be located in the following folder:
+    
+    $OMNIHOME/probes/arch
+    
+    
+    
+ 4. Remove the probe using the uninstall command in the$NCHOME/_uninst/ directory: 
+    
+    $NCHOME/_uninst/probe/uninstall
+    
+    Where probe is the probe you wish to uninstall.
+    
+    Note: This command does not remove configuration files which were modified when configuring the probe. These configuration files must be manually removed.
+    
+    
+    
+ 5. Remove the configuration files that you backed up in step 3.
+    
+    
+    
+ 6. Install the updated probe using the installation package.
+    
+    The installation package contains the appropriate files for all supported versions of Netcool/OMNIbus. For details about how to install the probe to run with your version of Netcool/OMNIbus, visit the following page on the IBM Tivoli Information Center:
+    Obtaining and installing probes [https://www-01.ibm.com/support/knowledgecenter/SSSHTQ/omnibus/probes/all_probes/wip/concept/install_intro_install.html]
+
+
+To install an interim fix probe from a GA version on a Windows operating systems, use the following steps: 
+
+
+ 1. Ensure you are using the same user profile under which the DE is installed. The owner of the %OMNIHOME% directory will also be the owner of the DE. 
+    
+    
+    
+ 2. Make a backup of any existing configuration files that you might already have for an earlier version of the probe and that you want to retain. For example; probe.props,probe.rules or probe.env. These files will usually be located in the following folder:
+    
+    %OMNIHOME%\probes\win32
+    
+    
+    
+ 3. Remove the probe using the uninstall command in the %NCIHOME%\_uninst\ directory. 
+    
+    %NCHOME%\_uninst\probe\uninstall
+    
+    Where probe is the probe you wish to uninstall.
+    
+    Note: This command does not remove configuration files which were modified when configuring the probe. These configuration files must be manually removed.
+    
+    
+    
+ 4. Remove the configuration files that you backed up in step 3.
+    
+    
+    
+ 5. Install the updated probe using the installation package.
+    
+    The installation package contains the appropriate files for all supported versions of Netcool/OMNIbus. For details about how to install the probe to run with your version of Netcool/OMNIbus, visit the following page on the IBM Tivoli Information Center:
+    Obtaining and installing probes [https://www-01.ibm.com/support/knowledgecenter/SSSHTQ/omnibus/probes/all_probes/wip/concept/install_intro_install.html]
+
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Netcool/OMNIbus 8+ Probe for SNMP Multiplatform 29 Oct 2015 English 3685834 FC [http://download4.boulder.ibm.com/sar/CMA/TIA/05phw/0/omnibus-probe-nco-p-mttrapd-1.20.2.0.zip] FTP [ftp://download4.boulder.ibm.com/ecc/sar/CMA/TIA/05phw/0/omnibus-probe-nco-p-mttrapd-1.20.2.0.zip] Netcool/OMNIbus Probe for SNMP for AIX 29 Oct 2015 English 1823910 FC [http://download4.boulder.ibm.com/sar/CMA/TIA/05phw/0/omnibus-aix5-probe-nco-p-mttrapd-20_2.tar.gz ] FTP [ftp://download4.boulder.ibm.com/ecc/sar/CMA/TIA/05phw/0/omnibus-aix5-probe-nco-p-mttrapd-20_2.tar.gz] Netcool/OMNIbus Probe for SNMP for HP-UX Integrity 29 Oct 2015 English 2271325 FC [http://download4.boulder.ibm.com/sar/CMA/TIA/05phw/0/omnibus-hpux11hpia-probe-nco-p-mttrapd-20_2.tar.gz] FTP [ftp://download4.boulder.ibm.com/ecc/sar/CMA/TIA/05phw/0/omnibus-hpux11hpia-probe-nco-p-mttrapd-20_2.tar.gz] Netcool/OMNIbus Probe for SNMP for zLinux 29 Oct 2015 English 1627872 FC [http://download4.boulder.ibm.com/sar/CMA/TIA/05phw/0/omnibus-linux2s390-probe-nco-p-mttrapd-20_2.tar.gz] FTP [ftp://download4.boulder.ibm.com/ecc/sar/CMA/TIA/05phw/0/omnibus-linux2s390-probe-nco-p-mttrapd-20_2.tar.gz] Netcool/OMNIbus Probe for SNMP for Linux 29 Oct 2015 English 1894016 FC [http://download4.boulder.ibm.com/sar/CMA/TIA/05phw/0/omnibus-linux2x86-probe-nco-p-mttrapd-20_2.tar.gz] FTP [ftp://download4.boulder.ibm.com/ecc/sar/CMA/TIA/05phw/0/omnibus-linux2x86-probe-nco-p-mttrapd-20_2.tar.gz] Netcool/OMNIbus Probe for SNMP for Solaris 29 Oct 2015 English 2144953 FC [http://download4.boulder.ibm.com/sar/CMA/TIA/05phw/0/omnibus-solaris2-probe-nco-p-mttrapd-20_2.tar.gz] FTP [ftp://download4.boulder.ibm.com/ecc/sar/CMA/TIA/05phw/0/omnibus-solaris2-probe-nco-p-mttrapd-20_2.tar.gz ] Netcool/OMNIbus Probe for SNMP for Windows 29 Oct 2015 English 1396304 FC [http://download4.boulder.ibm.com/sar/CMA/TIA/05phw/0/omnibus-win32-probe-nco-p-mttrapd-20_2.zip] FTP [ftp://download4.boulder.ibm.com/ecc/sar/CMA/TIA/05phw/0/omnibus-win32-probe-nco-p-mttrapd-20_2.zip] 
+PRODUCT ALIAS/SYNONYM
+ nco_p_mttrapd 
+
+ [/support/docview.wss?uid=swg24041112&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24041112&aid=2]Problems (APARS) fixed
+IV76246, IV70329

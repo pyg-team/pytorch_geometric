@@ -1,0 +1,27 @@
+Title: IBM How IBM TRIRIGA localized data will be treated by Reports? - United States
+
+Text:
+TRILOCALIZE; TRICONFIG; TRIAPPDEVTOOLS; TRIREPORTS; TRIQUERY; localizable; localized; flag; reports TECHNOTE (FAQ)
+
+QUESTION
+ How IBM TRIRIGA localized data will be treated by Reports? 
+
+CAUSE
+Need to know how IBM TRIRIGA reports will treat localized data.
+
+ANSWER
+Similar to record runtime, reporting engine is also enhanced to display localized values depending upon user’s language.
+
+Fields which are not marked as localized are queried from the main table (T_ - internal value).
+
+Localized values are supported in most standard reporting use cases, such as: Report manager, Query sections in a form, Portal sections.
+
+Localized values are not supported in some cases such as: Query Task in Workflow, Query used in Formula evaluation, Business Connect.
+
+A new flag called Localize is available for system filters to determine if the report needs to filter against the language of the user who is running the report. 
+
+[/support/docview.wss?uid=swg21966768&aid=1] [/support/docview.wss?uid=swg21966768&aid=1]
+
+Report manager Community report, new column is added to show the language in which the report was initially created.
+
+[/support/docview.wss?uid=swg21966768&aid=2] [/support/docview.wss?uid=swg21966768&aid=2]

@@ -1,0 +1,46 @@
+Title: IBM Not Able to Delete Termination Date - United States
+
+Text:
+People; Termination Date FLASH (ALERT)
+
+ABSTRACT
+ In the People application an error is displayed when trying to delete termination date. 
+
+CONTENT
+
+Steps to reproduce.
+
+1. Go to -> Administration -> Resources -> People.
+2. Create a new people record.
+3. Enter P1 to Person field and tab out.
+4. Input Data of Birth.
+5. Input Hire Date.
+6. Delete Data of Birth and tab out => error
+
+BMXAA4214E: An unknown error occurred, Please contact your system administrator for assistance
+
+7. Input Terminate Date.
+8. Input Hire Date.
+9. Delete Terminate Date and tab out => error
+
+BMXAA4214E: An unknown error occurred, Please contact your system administrator for assistance
+
+Below is the XML that was thrown when trying ?NULLing? out the termination date:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ERROR>
+<ERRORMESSAGE>The following error occurred while processing
+PERSON. The object structure number is 1.BMXAA4134E -
+TERMINATIONDATE did not validate.
+null</ERRORMESSAGE>
+<ER>
+
+
+This issue is tracked as APAR IZ61969/ Issue # 09-19202. It is fixed in Maximo 7.1.1.5. 
+There is a hot fix available for Maximo 7.1.1.4. Please contact Maximo Support to obtain the hot fix at 1-800-426-SERV.
+
+
+ 
+
+HISTORICAL NUMBER
+ 09-19202

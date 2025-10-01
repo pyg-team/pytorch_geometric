@@ -1,0 +1,26 @@
+Title: IBM RSV-AOM-0013 The xsi:type for the element 'Misunderstood' with CM-REQ-4049 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Intermittently, an automated SDK application will receive the above RSV-AOM-0013 error when attempting to execute a report. This error will correspond to a CM-REQ-4049 error on the Content Manager instance. 
+
+SYMPTOM
+On report dispatcher: 
+RSV-AOM-0013 The xsi:type for the element 'Misunderstood' could not be determined. 
+On Content Manager:
+CM-REQ-4049 An error occurred while accessing a security system.
+AAA-AUT-0024 To prevent data loss you have been logged off.
+
+
+
+
+CAUSE
+A Cognos user session is maintained for a period of time set in Cognos Configuration (Inactivity Time-out in Seconds). The default for this is 3600s. (one hour). However, in this system the network connection between Cognos and the 3rd party authentication server is being closed due to inactivity after 360 seconds. Cognos doesn't realize this, so the if the SDK application tries to reuse the session after six minutes, we see this error.
+
+ENVIRONMENT
+RedHat Linux, Cognos 10.1.1, CA LDAP authentication server.
+
+RESOLVING THE PROBLEM
+Either increase the idle time-out in the network, or decrease the Cognos "inactivity time-out in seconds" (under "Authentication" in Cognos Configuration

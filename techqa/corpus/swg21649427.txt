@@ -1,0 +1,168 @@
+Title: IBM Uninstall and Reinstall of  the IBM® Systems Director on an IBM Smart Analytics System 7700 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can you recover from a failed IBM Systems Director (ISD) version 6.3.2.1 upgrade under an IBM Smart Analytics System 7700 installation? 
+
+CAUSE
+During the upgrade of the ISD version 6.3 to version 6.3.2.1, under an IBM Smart Analytics System 7700 installation, a failure can occur that requires uninstalling ISD version 6.3 to retry the ISD 6.3.2.1 upgrade. 
+
+ANSWER
+The following instructions provide steps and links to ISD documentation that allows the uninstall of ISD version 6.3; reinstall of ISD version 6.3; and application of the ISD version 6.3.2.1 upgrade. 
+
+ * 
+ * 
+ *  
+ *   * 
+   
+   
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  http://pic.dhe.ibm.com/infocenter/director/pubs/index.jsp?topic=%2Fcom.ibm.director.install.helps.doc%2Ffqm0_t_uninstalling_ibm_director_on_aix.html [http://pic.dhe.ibm.com/infocenter/director/pubs/index.jsp?topic=%2Fcom.ibm.director.install.helps.doc%2Ffqm0_t_uninstalling_ibm_director_on_aix.html] 
+ * 
+ * a. Move up the uninstall order for the following file sets: 
+   
+    * 
+    * 
+    * 
+    * 
+    * 
+   
+   
+   
+   b. Move the following file set to a different location: 
+   
+    * 
+   
+   
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  http://pic.dhe.ibm.com/infocenter/director/pubs/index.jsp?topic=%2Fcom.ibm.director.install.helps.doc%2Ffqm0_t_preparing_managed_db2.html [http://pic.dhe.ibm.com/infocenter/director/pubs/index.jsp?topic=%2Fcom.ibm.director.install.helps.doc%2Ffqm0_t_preparing_managed_db2.html] 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  http://pic.dhe.ibm.com/infocenter/director/pubs/index.jsp?topic=%2Fcom.ibm.director.install.helps.doc%2Ffqm0_t_installing_ibm_director_server_on_aix.htm [http://pic.dhe.ibm.com/infocenter/director/pubs/index.jsp?topic=%2Fcom.ibm.director.install.helps.doc%2Ffqm0_t_installing_ibm_director_server_on_aix.html]l 
+ * 
+ * a. Install the base ISD, here. Its fix pack name is bwr3 (could be different for different releases): 
+   
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * ./dirinstall.server.forExistedDB2 -i 
+    * 
+    * 
+   
+    * 
+    * 
+    * 
+    * 
+    * 
+   
+   
+   
+   b. Do the following to configure base ISD: 
+   
+    * 
+   
+   
+   
+   c. Do the following to start up ISD: 
+   
+    * 
+   
+   
+   
+   d. Do the following to collect inventory on server: 
+   
+    * 
+   
+   
+   
+   e. Do the following to apply the ISD 6.3.2.1 update: 
+    * 
+   
+   
+   (Keep a watch on the update output on screen and /opt/ibm/director/lwi/logs/error-log-0.html for errors) 
+   
+   f. The following applies the limited availability fixes: 
+   
+    * 
+    * 
+    * 
+   
+   g. Use the following to apply the other fixes: 
+   
+    * 
+   
+   
+ * 
+ * 
+ * 
+ * 
+ * /opt/ibm/aixappl/pflayer/bin/icmds/appl_ch_hw -l server0 -c Director_handle='' 
+ * 
+ *  
+ * 
+ * 
+ * 
+ * /opt/ibm/smart/pfmgt/bin/director_cleanup_soft -agent <comma separated list of all server IAN ip, accept management server e.g. server1_ip,server2_ip> 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *   * 
+   
+   
+ * or  * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+   
+   
+ *  
+   We need to save screen o/p for each command above. In case of error, do not proceed. 
+   logs: 
+   
+    * 
+   
+   
+   
+   
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * smcli lssys -A CommunicationState,AccessState -To 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * appl_ls_hw

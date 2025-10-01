@@ -1,0 +1,163 @@
+Title: IBM HD56020: INVALID EFFECTIVITY CAN BE CREATED WITH MIN DATE GREATER THAN M AX DATE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Invalid effectivity can be created with Min date
+   greater than Max date
+   .
+   Scenario :
+   - Create a part PartA and set configurable
+   - Create a second part PartB
+   - Copy PartB and paste to PartA
+   - Select Commit Modifications and choose Commit
+   with Parameters
+   - Click on Add Rule
+   - Click on Enable Date
+   - In the Min area, select from the calendar, any
+   date in the future
+   - In the Max area, leave today's date
+   - Result in this example: August 17, 2006 / August
+   11, 2006
+   - Select Add Rule
+   - Commit
+   Problem : Effectivity on the link is invalid because
+   Min Date is greater than Max date
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Invalid effectivity can be created with Min date greater than M
+   ax date
+   Invalid effectivity can be created with Min date
+   greater than Max date
+   .
+   Scenario :
+   - Create a part PartA and set configurable
+   - Create a second part PartB
+   - Copy PartB and paste to PartA
+   - Select Commit Modifications and choose Commit
+   with Parameters
+   - Click on Add Rule
+   - Click on Enable Date
+   - In the Min area, select from the calendar, any
+   date in the future
+   - In the Max area, leave today's date
+   - Result in this example: August 17, 2006 / August
+   11, 2006
+   - Select Add Rule
+   - Commit
+   Problem : Effectivity on the link is invalid because
+   Min Date is greater than Max date
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  THE PROBLEM WAS SUBMITTED ON :
+   ENOVIA VERSION 5 RELEASE 16.
+   THIS PROBLEM IS NOT REPRODUCIBLE ON :
+   ENOVIA VERSION 5 RELEASE 18 GA level AND ON
+   V5R17SP02 AND ON V5R16SP08
+   .
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD56020
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA 3D-COM N
+   
+   
+ * REPORTED COMPONENT ID
+   569151600
+   
+   
+ * REPORTED RELEASE
+   516
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-08-17
+   
+   
+ * CLOSED DATE
+   2006-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2006-11-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ENOVIA 3D-COM N
+   
+   
+ * FIXED COMPONENT ID
+   569151600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R516 PSN SP51608
+   UP06/11/27 I 1000
+   
+   
+ * R517 PSN SP51702
+   UP06/10/24 I 1000

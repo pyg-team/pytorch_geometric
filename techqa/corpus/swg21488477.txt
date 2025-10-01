@@ -1,0 +1,67 @@
+Title: IBM What can I do about error 2070 symptom number 5 presenting on concurrent/network client product installations? - United States
+
+Text:
+error 2070 specific symptom number 5 MS kb953230 VPN subcode; The current license does not permit this job to continue; Error # 2070; The license server is down.; Specific symptom number: 5. TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When SPSS Statistics is started, the following messages present:
+
+
+
+The current license does not allow this job to continue
+
+.
+
+Error # 2070
+The license server is down. 
+Check to see that the license server is running or ask your local SPSS coordinator to check the license server.
+
+This command is not executed. 
+
+Specific symptom number: 5.
+
+
+
+CAUSE
+One of more local environmental issues are preventing effective network communication between the License Manager and the client(s) licensing from the specified server.There are a multiple causes for Error 2072 Symptom 5.
+If the problem is not affecting all clients, then the behavior is most likely due to a problem on the affected client(s).
+
+If the problem is affecting all clients, then the behavior is most likely due to a problem with the License Manager, host or network. 
+
+
+
+
+DIAGNOSING THE PROBLEM
+The following description is separated into causes involving the License Manager, host, network and client: 
+
+
+License Manager/License Manager host 
+
+ 1. The License Manager service/daemon is not running. 
+ 2. The lock code for the License Manager has changed and the licenses on the License Manager are no longer valid due to this change. 
+ 3. The IP address of the License Manager host has changed. 
+ 4. The host name of the License Manager host has changed. 
+ 5. Changes to the server firewall are preventing communication between clients and server on port 5093 UDP.
+
+
+Network  1. Changes to one or more network firewalls are preventing clients from communicating with the License Manager host. 
+ 2. DNS is not correctly rendering the hostname for the License Manager host.
+
+
+Client(s)  1. The value set for 'DaemonHost' in the spssprod.inf file does not correspond to the network identifier (hostname/IP) of the License Manager host. 
+ 2. The firewall on the client host is preventing the client from communicating with the License Manager host.
+
+RESOLVING THE PROBLEM
+Use the list of possible causes in 'Diagnosing the problem' to identify a possible cause and correct the cause. 
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Amos Business Analytics SPSS Collaboration and Deployment Services Business Analytics SPSS Modeler Business Analytics SPSS Statistics Business Analytics SPSS Text Analytics for Surveys 
+HISTORICAL NUMBER
+ 67794

@@ -1,0 +1,152 @@
+Title: IBM PM38238: GRAPH IS NOT GETTING UPDATED. 'USEQUERY' NOT AFFECTING LIST REPORT, BUT GRAPHS, CROSSTAB WORKING AS PER 'USEQUERY' SETTINGS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A Report consisting a graph,crosstab, list report contains same
+   fields.??CQECongfig.xml has been updated with usequery=0 to
+   disable the session caching.??Cognos service restarted to make
+   the changes take effect.??When the database values are changed,
+   the list report is getting updated. but the graph and crosstab
+   showing the old values.??Graph, list report, crosstab uses three
+   different queries, and 'Use Local cache' is set to blank which
+   is default.??The package was published using 'Use Local Cache'
+   Enabled.??Customer wants to know why there is difference in the
+   behavior and what should be the expected behavior.??Successfully
+   replicated the issue with Cognos samples and tested on Cognos
+   8.4.1 and Cognos 8.4.1 FP2??Report specs are attached, created
+   in Go Sales (Query) Package reflecting the same
+   behaviour.?Kindly let us know as why the list report is behaving
+   differently.??Check below link
+   .??http://publib.boulder.ibm.com/infocenter/c8bi/v8r4m0/index.js
+   p?topic=/com.ibm.swg.im.cognos.ug_cra.8.4.0.doc/ug_cra_id7477Ena
+   bleSessionCaching.html??Kindly
+   explain which settings would take higher preference if we have
+   different settings for query reuse at ?1. Server level -
+   CQEConfig.xml =0,5,10?2. FM Level - package level - Use Local
+   Cache?3. Report level - CQEConfig.xml = remove/keep?4. Query
+   level - Use Local Cache??Let us know if above behaviour is a
+   product intend or can be converted into a defect as list report
+   getting updated from DB with updated values, but not Graph or
+   Crosstab.??More to mention, Cognos temp space was
+   cleared.Browser history was too cleared for the same.??Thanks
+   and Regards,?Amit
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See error description.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Recommend reverting CQEConfig.xml to its original status.    *
+   * Customer should make use of the Local Cache governor or      *
+   * query hint to set the desired configuration.                 *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Recommend reverting CQEConfig.xml to its original status. Custom
+   er should make use of the Local Cache governor or query hint to
+   set the desired configuration.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM38238
+   
+   
+ * REPORTED COMPONENT NAME
+   COG8 BI REPORT
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12RS
+   
+   
+ * REPORTED RELEASE
+   841
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-03
+   
+   
+ * CLOSED DATE
+   2011-05-13
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   COG8 BI REPORT
+   
+   
+ * FIXED COMPONENT ID
+   5724W12RS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R840 PSN
+   UP

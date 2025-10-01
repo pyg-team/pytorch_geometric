@@ -1,0 +1,145 @@
+Title: IBM PI82120: MULTIPLE THREADS HUNG IN STACK POINTING TO FRONTING.SERVER.RRS.VIEWS.EXECUTION.TYPES.PROPERTYCLASSIFICATION (WI 115064) - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational DOORS Next Generation 6.0.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24044317]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following error may be observed in the WebSphere
+   Systemout.log:
+   
+   [5/23/17 8:21:50:930 CDT] 000000cd ThreadMonitor W   WSVR0605W:
+   Thread "WebContainer : 0" (000000d1) has been active for 628420
+   milliseconds and may be hung.  There is/are 1 thread(s) in total
+   in the server that may be hung.
+   at java.util.HashMap.put(HashMap.java:506)
+   at java.util.HashSet.add(HashSet.java:229)
+   at
+   java.util.AbstractCollection.addAll(AbstractCollection.java:354)
+   at
+   com.ibm.rdm.fronting.server.rrs.views.execution.types.PropertyCl
+   assification.<init>(PropertyClassification.java:201)
+   
+   Refer to the following defect work item for details:
+   
+   https://jazz.net/jazz03/resource/itemName/com.ibm.team.workitem. [https://jazz.net/jazz03/resource/itemName/com.ibm.team.workitem.]
+   WorkItem/115064
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users/environments are affected                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Multiple Threads hung pointing to                            *
+   * com.ibm.rdm.fronting.server.rrs.views.execution.types.Proper *
+   * tyClassification.                                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is fixed in the DOORS Next Generation 6.0.3 iFix006
+   release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI82120
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DOORS NG
+   
+   
+ * REPORTED COMPONENT ID
+   5724W87NG
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-05-24
+   
+   
+ * CLOSED DATE
+   2017-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DOORS NG
+   
+   
+ * FIXED COMPONENT ID
+   5724W87NG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSN
+   UP

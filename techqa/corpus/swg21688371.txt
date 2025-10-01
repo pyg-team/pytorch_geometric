@@ -1,0 +1,56 @@
+Title: IBM Ping Probe Retry - United States
+
+Text:
+nco_p_ping; Ping probe; Retry; Retries; unreachable; slow to respond TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have the ping probe configured to retry 3 times, however the host is reported down when it is only unavailable for one poll period. 
+
+RESOLVING THE PROBLEM
+Once a host is unreachable, the ping is retried, but it is retried Retry times within the same Poll Cycle. For example, given a Retry of 3 with a 120 second PollCycle, the "unreachable" host would be pinged 3 times within the 120 second poll period. The retry isn't done at a set interval however (it wouldn't be the 120 second poll period / 3). The probe initially pings all hosts, then it processes through the results, and then it retries the hosts that were unreachable the first time. 
+
+
+Note the retry is only if the host is unreachable the first ping of the cycle, and the retries stop as soon as the host is pingable again. 
+
+Ping cycle Overview: 
+The probe pings the hosts specified in the ping file in cycles. The minimum length 
+of each cycle is specified by the Interval property. During each ping cycle, the 
+probe pings the number of hosts specified by the MaxPingBurst property. 
+
+In each cycle, the probe: 
+
+Finds the next host that has not been deemed unreachable or responsive during the current poll time. 
+Pings currenthost. 
+Checks whether it has pinged the number of hosts specified by the MaxPingBurst property during the current cycle. If not, it goes and gets the next host 
+
+
+Once the probe has pinged the number of hosts specified by the MaxPingBurst property, it does the following: 
+Processes all the responses received so far. 
+Processes any timeouts that have occurred. 
+Reloads the ping file if the time specified by the PingFileCheck property has elapsed. 
+Sleeps for any remaining time specified by the Interval property. 
+
+
+For example of an unavailable and an available host:
+
+Example 1 
+07:41:42 start cycle probe pings all hosts 
+try(1) 07:42:22 first ping to host with no response
+probe processes through results and retries unreachable hosts immediately 
+try(2) 07:42:40 second ping to host with no response 
+probe immediately retries, retries are consecutive 
+try (3) 07:42:45 third ping to host with no response 
+
+Event is generated for host unreachable
+
+Example 2 
+07:41:42 start cycle 
+try(1) 07:42:22 first ping to host responds
+host would not be pinged again until the next Poll cycle 
+
+
+It will be difficult to avoid alerting during server recycles, a reboot could take a few minutes, and the ping probe will send an alert each Poll cycle if it determines the host is unreachable. In this case, the 
+probe should report a down event, and the next time the server is pinged and responds, report an up event. To avoid creating critical events when the host is rebooted, you may want to initially create the 
+down event at a lower severity, and increase the severity through a trigger or Netcool Impact if the down event is not cleared within 360 seconds. But this will depend on the business requirements for server down situations. 
+
+For network blips or slowness, it is possible to increase the TimeOut value. The TimeOut value could be set to longer to give the server longer to respond to ping. For example, currently TimeOut is 2500 ms, you could set it to 5000 ms. The Trip time also comes into play with network slowness. The default Trip time is 2500 ms. If the server responds to ping before the TimeOut (for example 5000ms) but after the Trip time (2500 ms), the probe would send an alert that the server is slow to respond.

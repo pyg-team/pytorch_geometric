@@ -1,0 +1,31 @@
+Title: IBM Where can I find information about installing IBM Planning Analytics for Microsoft Excel? - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Installation information for IBM Planning Analytics for Microsoft Excel is available on IBM Knowledge Center. 
+
+CONTENT
+IBM Planning Analytics for Microsoft Excel 2.0
+
+
+IBM Planning Analytics for Microsoft Excel 2.0 is a component of IBM Planning Analytics 2.0. For installation information, follow these steps: 
+
+ 1. Go to IBM Planning Analytics 2.0.0 documentation [https://www.ibm.com/support/knowledgecenter/SSD29G_2.0.0] on IBM Knowledge Center. 
+ 2. Click "Planning Analytics Installation and Configuration (Local only) (2.0.0)" 
+ 3. Scroll down to the section "IBM Planning Analytics for Microsoft Excel installation and configuration".
+
+
+IBM Cognos Analysis for Microsoft Excel 10.2.2 
+
+If you are installing Cognos Analysis for Microsoft Excel 10.2.2, see the following documents: 
+
+ * IBM Cognos Analysis for Microsoft Excel Installation Guide [http://www.ibm.com/support/knowledgecenter/SSHM9K_10.2.2/com.ibm.swg.ba.cognos.ig_cxr.10.2.2.doc/c_ig_cor_introduction.html%23ig_cor_Introduction?lang=en] 
+ * IBM Cognos Analysis for Microsoft Excel Release Notes [http://www.ibm.com/support/knowledgecenter/SSHM9K_10.2.2/com.ibm.swg.ba.cognos.rdm_cxr.10.2.2.doc/c_relnotes_cxr.html%23relnotes?lang=en]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics IBM Planning Analytics

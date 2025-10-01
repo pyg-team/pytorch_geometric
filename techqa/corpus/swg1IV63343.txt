@@ -1,0 +1,147 @@
+Title: IBM IV63343: A LOG SOURCE EXTENSION (LSX) THAT CONTAINS A MATCHER WITH NO FIELD WILL CAUSE DSM PARSING FAILURES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a log source extension (LSX) is created with a "Matcher" and
+   no associated "field" entry, then uploaded for use into the UI,
+   it will cause some DSM extensions not to load and in turn cause
+   parsing to fail for the log source(s) that are using that LSX.
+   
+   Errors generated in qradar.log may appear similar to:
+   May 19 18:09:32 192.168.2.10 [ecs] [DSM Extension Factory
+   Loader] com.q1labs.sem.dsm.extension.DSMExtensionFactory:
+   [ERROR] [NOT:0000003000][192.168.2.10/- -] [-/- -]Failed to
+   read active extensions info from the database.
+   May 19 18:09:32 192.168.2.10 [ecs] [DSM Extension Factory
+   Loader] java.lang.NullPointerException
+   May 19 18:09:32 192.168.2.10 [ecs] [DSM Extension Factory
+   Loader] at
+   com.q1labs.sem.dsm.extension.DSMExtension.initialize(DSMExtensio
+   n.java:239)
+   May 19 18:09:32 192.168.2.10 [ecs] [DSM Extension Factory
+   Loader] at
+   com.q1labs.sem.dsm.extension.DSMExtensionFactory.loadExtensions(
+   DSMExtensionFactory.java:226)
+   May 19 18:09:32192.168.2.10 [ecs] [DSM Extension Factory
+   Loader] at
+   com.q1labs.sem.dsm.extension.DSMExtensionFactory.reload(DSMExten
+   sionFactory.java:162)
+   May 19 18:09:32192.168.2.10 [ecs] [DSM Extension Factory
+   Loader] at
+   com.q1labs.sem.dsm.extension.DSMExtensionFactory$ExtensionTableL
+   istener.run(DSMExtensionFactory.java:642)
+   May 19 18:09:32 192.168.2.10 [ecs] [DSM Extension Factory
+   Loader] at java.lang.Thread.run(Thread.java:780)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Correct the LSX with proper formatting and fields entries.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This issue has been resolved in 7.2.3 Patch 3
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been resolved in 7.2.3 Patch 3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV63343
+   
+   
+ * REPORTED COMPONENT NAME
+   QRADAR SOFTWARE
+   
+   
+ * REPORTED COMPONENT ID
+   5725QRDSW
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-07
+   
+   
+ * CLOSED DATE
+   2014-09-15
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   QRADAR SOFTWARE
+   
+   
+ * FIXED COMPONENT ID
+   5725QRDSW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R723 PSY
+   UP

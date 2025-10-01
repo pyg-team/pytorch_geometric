@@ -1,0 +1,163 @@
+Title: IBM PM81317: ABENDS0C4 AT DSNGEFSP OFFSETBB6 IN THREAD DEALLOCATION AFTER CANCELLING THE THREAD. DB2 CRASH BY 00E50702 IS FOLLOWED. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Dump Title: DSNW ABEND0C4 PIC38 RC00000038 00000038
+   ,C=101.LOCN ::FFFF:10.0.59.2 LOC DSNGEDM DSNGEFSP +0BB6
+   ABENDS0C4 at DSNGEFSP(UK74063)+BB6 happened in thread
+   deallocation after canceling the thread and it caused DB2 down
+   by RC00E50702
+   This is a timing problem.
+   After the cancel thread and before the thread deallocation, a
+   package allocated by the thread was bound.
+   Then the hash record for the package was freed and reused.
+   In the thread deallocation, all packages allocated by the thread
+   was freed.
+   In that process, checking the reused hash record caused ABEND0C4
+   although the reuse was expected.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All DB2 V10 package users.                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: After the execution of a package was    *
+   *                      cancelled, customer might receive       *
+   *                      ABEND0C4 with RC00000038                *
+   *                      at DSNGEFSP+BB6 during                  *
+   *                      package deallocation.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   DB2 has a bug which could results in accessing an invalid
+   internal control block during the cleanup of the package
+   execution. It is a very rare case to have this bug triggered.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DB2 code has been changed to avoid accessing the invalid
+   control block.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM81317
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-24
+   
+   
+ * CLOSED DATE
+   2013-04-03
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK93128
+   
+   
+
+MODULES/MACROS
+ *  DSNGEFSP
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY UK93128 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK93128]
+   UP13/04/20 P F304
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,152 @@
+Title: IBM JR47683: REPORT DESIGNER WIDGET DOES NOT ALLOW SELECTION OF CUBE PACKAGE NAMES WITH SPECIAL CHARACTERS WHEN USING INTERNET EXPLORER - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Business Monitor V8.0.1 Fix Pack 2 (8.0.1.2) [http://www-01.ibm.com/support/docview.wss?uid=swg24035891]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A "Select Package" dialog displayed by the Report Designer
+   widget displays the following message which prevents the
+   creation of a report: "No measures found.  Select a package or
+   folder that contains measures."  This happens when a Cognos
+   package or folder name contains special characters such a 'c'
+   with a cedilla, an 'a' with a tilde, or an 'e' with an accent
+   and the browser is Internet Explorer.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue can be avoided by removing special characters from
+   Cognos package or folder names when creating a monitor model.
+   Using a browser other than Internet Explorer is another way to
+   avoid the issue.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of IBM Business Monitor.              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Report Designer widget cannot be    *
+   *                      used to create reports if Cognos        *
+   *                      package or folder names contain         *
+   *                      special characters and the browser is   *
+   *                      Internet Explorer.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Logic to retrieve package information from Cognos did not
+   properly encode URL parameters so that special characters in
+   the resulting URL would be handled correctly.  In addition,
+   logic in the Report Designer widget to save a report did not
+   properly encode special characters.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Report Designer widget logic to retrieve package
+   information from Cognos and to save a report has been modified
+   to properly encode special characters.
+   
+   An interim fix has been created for IBM Business Monitor
+   version 8.0.1.1.  The issue is also addressed in IBM Business
+   Monitor version 8.0.1 Fix Pack 2 (8.0.1.2).
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR47683
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB BUS MONITOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724M2400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-04
+   
+   
+ * CLOSED DATE
+   2013-11-13
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB BUS MONITOR
+   
+   
+ * FIXED COMPONENT ID
+   5724M2400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

@@ -1,0 +1,191 @@
+Title: IBM PK59523: DFHAP0001 AN ABEND (CODE 0C4/AKEX) HAS OCCURRED AT OFFSET X'FFFFFFFF' IN MODULE DFHFCN. 08/01/18 PTF PECHANGE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR has been created do to a bug with PK58301 (CICS TS 2.3
+   ) and PK58235 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK58235] (CICS TS 3.1 and 3.2). The APAR code in DFHFCNO
+   switches to FO before calling IGWARLS. It does not adjust R13
+   around the IGWARLS call however, so this still addresses the CSA
+   When IGWARLS is called, it will STM 14,12 12 bytes into R13
+   CSAOSRSA - (as per standard MVS save area convention). Now, this
+   is fine, if nothing else runs on QR before we return. However,
+   on busier systems, QR is up for grabs and will dispatch other
+   work. If this needs to invoke OS services, they will themselves
+   STM into the same area. The result is a
+   lost save area environment for the FCN task, with unpredictable
+   results.
+   .
+   ADDITIONAL SYMPTOMS:
+   DFHME0116 (Module:DFHMEME) CICS symptom string for message
+             DFHFC0001 is PIDS/5655M1500 LVLS/640 MS/DFHFC0001
+             RIDS/DFHFCFR PTFS/UK30187 AB/UAKEA ADRS/00001FEE
+   .
+   DFHSR0601 SYSNAME Program interrupt occurred with system task
+             TCP in control
+   .
+   DFHME0116 SYSNAME (Module:DFHMEME) CICS symptom string for
+             message DFHSR0601 is PIDS/5655M1500 LVLS/640 MS/DFHSR0
+   .
+   DFHSR0601 Program interrupt occurred with system task TCP
+             in control.
+   TCP's stack shows we were in DFHZOPN, but the program check
+   occurred in VTAM module ISTRACEP. Problem was with the savearea
+   we passed to VTAM out of our CSA. Some of the registers pointed
+   into file control modules - DFHFCN IAMARLS
+   .
+   ADDITIONAL KEYWORDS:
+   DFHTRP DFHTCP DFHSI1548 S0C1 0C1 DFHSR0601 TCP
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Various errors such as an abend S0C4 at *
+   *                      offset x'FFFFFFFF' into DFHFCN.         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   DFHFCN switches to the FO TCB before invoking IGWARLS, and
+   returns to the QR TCB afterwards. It should reset R13 around the
+   call, so that it is addressing a bespoke register save area, and
+   not CSAOSRSA as provided for operating system calls to save
+   their callers registers into when running under the QR TCB. If
+   other work runs under QR while the IGWARLS call is made, and has
+   need to use services that will save the registers into CSAOSRSA
+   too, then DFHFCN's environment will be lost and unpredictable
+   results will occur when DFHFCN resumes control. These can
+   include S0C1s, S0C4s, etc.
+   KEYWORDS: abends0c4 0c4 abends0c1 oc1 fcn vsam
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  UK32591  UK32584
+   DFHFCN has been changed to switch R13 to address its own
+   save area around the call to IGWARLS.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK59523
+   
+   
+ * REPORTED COMPONENT NAME
+   CICSTS V3 Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655M1500
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-17
+   
+   
+ * CLOSED DATE
+   2008-02-08
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PK59468 UK33588 UK33589
+   
+   
+
+MODULES/MACROS
+ *     DFHFCN   DFHFCNO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICSTS V3 Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5655M1500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY UK33588 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK33588]
+   UP08/02/14 P F802
+   
+   
+ * R500 PSY UK33589 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK33589]
+   UP08/02/14 P F802
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

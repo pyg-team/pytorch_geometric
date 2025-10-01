@@ -1,0 +1,126 @@
+Title: IBM COBOL Copybook introduced for RIT testers - United States
+
+Text:
+RTW; RIT; copybook; collating TECHNOTE (FAQ)
+
+QUESTION
+ What are COBOL Copybooks, how can you read COBOL copybooks, and how do COBOL Copybooks integrate into IBM Rational Integration Tester (RIT)? 
+
+ANSWER
+A brief introduction to copybook
+Copybook (also known as COBOL Copybook) is a data schema definition for data files which comes from the COBOL programming language.
+
+Every COBOL program has four divisions which occur in strict order:
+
+
+ *  IDENTIFICATION DIVISION 
+ *  ENVIRONMENT DIVISION 
+ *  DATA DIVISION 
+ *  PROCEDURE DIVISION
+
+
+
+The data division is then subdivided into four sections: 
+ *  FILE 
+ *  WORKING-STORAGE 
+ *  LINKAGE 
+ *  REPORT
+
+
+
+Copybook is effectively the COBOL program language syntax of the FILE SECTION of the DATA DIVISION. COBOL programmers typically keep the source code definition for each file type in a separate source code file, and then bring this definition into the COBOL program using the COPY verb (or instruction) of the COBOL language. In this way the same definition can be used by many programs. 
+
+Copybook in the context of RIT. 
+
+Copybooks are imported into Architecture School's Schema Library in IBM Rational Integration Tester (RIT) and are subsequently used in the same way as other schema types such as XSD, DTD, JSON, or DFDL. 
+
+As a RIT tester you would expect to receive copybook files from your developers or with your system under test. You should not need to define copybook schema (unless perhaps attempting to decode a message or file belonging to an application for which the application source code has been lost). 
+
+Historical context 
+
+COBOL was designed at a time when using extra bytes in stored data files was expensive. Consequently copybooks define files in a way that we might today consider to be a binary format. When using copybook schema in RIT either a bytes or string message root may be applied. 
+
+COBOL was also designed at a time when programs were often defined on punch cards. Because of this the exact positioning of characters within character columns in the copybook is important. 
+ * N.B. COBOL remain a living programming language. Modern implementations provide modern facilities such as object orientation and free format code layout, but fixed layout remains the standard practice within copybooks.
+ * 
+
+
+Character sets Many systems which run COBOL programs use an EBCDIC character set rather than an ASCII character set. The selection of character set is considered to be an external definition in COBOL and as such the character set is not included in the copybook. 
+
+To change the data type used in a message action which has had a copybook schema applied in RIT: right click the root copybook node (which is marked "{COBOL Copybook}") and select "Properties". The encoding may then be selected from the drop down list, or over-typed with any valid Java character encoding value. (The value CP037 [http://en.wikipedia.org/wiki/EBCDIC_037] is the EBCDIC encoding for most English speaking countries whilst CP285 [http://en.wikipedia.org/wiki/EBCDIC_285] is the EBCDIC encoding for Ireland and the UK.) 
+
+
+N.B. Whilst IBM MQ has the facility to translate data between character sets when sending messages this is not typically done for messages in copybook format. 
+
+
+Importing a copybook into RIT 
+
+Read the Rational Integration Tester and COBOL Copybook [http://www.ibm.com/support/knowledgecenter/SSBLQQ_8.5.0/com.ibm.rational.rit.cobol.doc/topics/c_ritcobol_cobol_rit.html] section of the product manual (including the sub-topics) to see how a Copybook is imported into RIT and applied to a message. 
+
+An example copybook 
+
+Listing of SIMPLE.CPY: 
+
+
+[/support/docview.wss?uid=swg21689327&amp;aid=1]
+
+Note the first characters appear in column 6. (If your copybooks start on a different column this can be configured when importing the copybook to RIT.) The definitions must appear within the code columns (which by default are 6 to 72). 
+
+The asterisk denoting that the rest of the line is a comment must be in the first column which is column 6 in our case. The group numbers at the start of the lines (seen as 01 and 03 which repeats) are indented by custom, but it is the numbers not the indentation which determines the structure. 
+
+Group numbers 66 and 88 have special meanings. 66 defines an alternate name for a field. 88 defines a series of possible values for the proceeding field (effectively restricting the valid values). 
+
+Each field has a picture clause "PIC", which determines the type and size of the data which may be stored within the field. A typical format is: PIC <type>(<size>). Here are some of the more common types: 
+
+ * A - Alphabetic characters (A-Z and a-z) and space only! 
+ * X - Any character. (These fields could be used to store binary data too.) 
+ * 9 - Any numeric character (0-9) but not letters (so not useful for hexadecimal etc). Stored as characters. 
+ * S9 - Numeric characters stored more efficiently.
+
+
+A two character alphabetic field could be defined AA or A(2). A field for a small amount of money could be defined 999.99 or 9(3).9(2). 
+
+A - in a numeric picture clause reserves a byte for the sign of the value. Without this negatives are still permitted but the minus sign takes up one character of the numeric field. 
+
+Each line (other than a blank line or comment line) must end with a full-stop and a new line. This includes the last line. A copybook which lacks a final new line is not valid and will not be accepted by many software systems, including RIT. 
+
+A publish action using the copybook schema in RIT: 
+
+
+[/support/docview.wss?uid=swg21689327&aid=2] [file:///C:/Work/TechNotesExtracted1/Article_1689327/_support_docview_wss_uid_swg21689327_aid_3.gif]
+When entering values into RIT which correspond to copybook fields any value may be entered. However if the value does not obey the copybook rules an error will be shown when the containing stub or tests is saved. An error will also occur when the test or stub is run. 
+
+An example with a repeating section 
+
+Listing of REPEATING.CPY: 
+
+
+[/support/docview.wss?uid=swg21689327&aid=3] [file:///C:/Work/TechNotesExtracted1/Article_1689327/_support_docview_wss_uid_swg21689327_aid_4.gif]
+
+In the line: 
+
+03 STAFFS OCCURS 1 TO 999999 TIMES DEPENDING ON STAFF. 
+
+The final field STAFF refers to the previous field (but may refer to any pervious field) which contains a value which determines how many repetitions will be included in any given message. In the example below the STAFF field contains 2 so the message has two instances of the STAFFS block. 
+
+A publish action using the copybook schema in RIT: 
+
+
+[/support/docview.wss?uid=swg21689327&aid=4] [file:///C:/Work/TechNotesExtracted1/Article_1689327/_support_docview_wss_uid_swg21689327_aid_5.gif]
+
+Reading onwards 
+
+To learn more it is best to look at a COBOL textbook. Here are two freely available online. 
+
+ * The Open COBOL Programmers Guide [http://opencobol.add1tocobol.com/OpenCOBOL%20Programmers%20Guide.pdf] is available in PDF format. 
+ * Beginning COBOL for Programmers [chrome://lucidor/content/viewepub.xul?uri=https%3A%2F%2Fia902306.us.archive.org%2F20%2Fitems%2FBeginningCOBOLForProgrammers%2FBeginning%2520COBOL%2520for%2520Programmers.epub#] is available EPUB format.
+   (The EPUB be opened with the Firefox web browser.)
+
+
+Here are some sections from these books relevant to understanding copybook:  * Chapter 1 of the "Open COBOL Programmers Guide" explains the layout rules for COBOL programs. (Note that the copybook must be in fixed format, not free format). 
+ * Chapter 3 of "Beginning COBOL for Programmers" explains the data declaration. 
+ * Then the second half of chapter 16 of "Beginning COBOL for Programmers" explains the COPY Verb.
+
+This article may also be of use: 
+
+ * Tech Talk's COBOL Tutorial [http://www.3480-3590-data-conversion.com/article-reading-cobol-layouts-1.html]

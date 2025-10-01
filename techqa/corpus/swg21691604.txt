@@ -1,0 +1,83 @@
+Title: IBM Security Bulletin: Vulnerability in SSLv3 affects IBM Security Access Manager  (CVE-2014-3566) - United States
+
+Text:
+PSIRT SECURITY BULLETIN
+
+SUMMARY
+ SSLv3 contains a vulnerability that has been referred to as the Padding Oracle On Downgraded Legacy Encryption (POODLE) attack. This affects numerous IBM Security Access Manager for Web and IBM Security Access Manager for Mobile components. 
+
+VULNERABILITY DETAILS
+
+The following vulnerability affects both IBM Security Access Manager for Mobile and IBM Security Access Manager for Web. 
+
+CVE-ID: CVE-2014-3566 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566]
+
+DESCRIPTION: IBM Security Access Manager could allow a remote attacker to obtain sensitive information, caused by a design error when using the SSLv3 protocol. A remote user with the ability to conduct a man-in-the-middle attack could exploit this vulnerability via a POODLE (Padding Oracle On Downgraded Legacy Encryption) attack to decrypt SSL sessions and access the plaintext of encrypted connections.
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/97013 [http://xforce.iss.net/xforce/xfdb/97013] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Security Access Manager for Web 7.0, 8.0, firmware versions 8.0.0.2, 8.0.0.3, 8.0.0.4, and 8.0.0.5 
+IBM Security Access Manager for Mobile 8.0, firmware versions 8.0.0.1 8.0.0.3, 8.0.0.4, and 8.0.0.5. 
+
+REMEDIATION/FIXES
+The table below provides links to patches for all affected versions. Follow the installation instructions in the README file included with the patch.
+
+Note: The patch for the IBM Security Access Manager 8.0 versions is accessed from Passport Advantage and is numbered 8.0.1. This is a fixpack and is applied in the same manner as all appliance firmware patches. This patch can be applied in place and will not remove your existing configuration. Instructions for applying the patch are available at the following URL:
+http://www-01.ibm.com/support/knowledgecenter/SSELE6_8.0.1/com.ibm.isam.doc_8.0.1/releaseinfo/task/tsk_upgrading.html [http://www-01.ibm.com/support/knowledgecenter/SSELE6_8.0.1/com.ibm.isam.doc_8.0.1/releaseinfo/task/tsk_upgrading.html] 
+
+IBM Security Access Manager for Web
+
+
+
+Product VRMF APAR Remediation IBM Security Access Manager for Web (Appliance- based)
+
+7.0.0.0
+7.0.0.1
+7.0.0.2
+7.0.0.3
+7.0.0.4
+7.0.0.5
+7.0.0.6
+7.0.0.7
+7.0.0.8
+7.0.0.9
+IV67357 7.0.0-ISS-WGA-FP0010 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Tivoli/Tivoli+Access+Manager+for+e-business&release=7.0.0&platform=All&function=all] IBM Security Access Manager for Web (Software-based installation)
+
+7.0.0.0
+7.0.0.1
+7.0.0.2
+7.0.0.3
+7.0.0.4
+7.0.0.5
+7.0.0.6
+7.0.0.7
+7.0.0.8
+7.0.0.9 IV67357 7.0.0-ISS-SAM-FP0010 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Tivoli/Tivoli+Access+Manager+for+e-business&release=7.0.0&platform=All&function=all] IBM Security Access Manager for Web 8.0.0.2
+8.0.0.3
+8.0.0.4
+8.0.0.5 IV67357 IBM Security Access Manager V8.0.1 Base Virtual Appliance .pkg Multiplatform Multilingual (CN34GML) [http://www-01.ibm.com/software/passportadvantage/pacustomers.html] IBM Security Access Manager for Mobile 
+
+IBM Security Access Manager for Mobile 8.0.0.1
+8.0.0.3
+8.0.0.4
+8.0.0.5 IV67357 IBM Security Access Manager V8.0.1 Base Virtual Appliance .pkg Multiplatform Multilingual (CN34GML) [http://www-01.ibm.com/software/passportadvantage/pacustomers.html] GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] Security Bulletin: Vulnerability in SSLv3 affects IBM WebSphere Application Server (CVE-2014-3566) [http://www-01.ibm.com/support/docview.wss?uid=swg21687173] 
+Security Bulletin: Vulnerability in SSLv3 affects IBM HTTP Server (CVE-2014-3566) [http://www-01.ibm.com/support/docview.wss?uid=swg21687172] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Access Manager for Mobile

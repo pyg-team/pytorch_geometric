@@ -1,0 +1,43 @@
+Title: IBM IMS Server stops working after fixing WebSphere 7 admin password - United States
+
+Text:
+IMS JAVA2 WAS console password TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After following instructions to change or fix the Websphere 7 Admin user password and restarting the environment, it was no longer possible to log into WebSphere 7 Console or the IMS server 
+
+SYMPTOM
+When examining the SystemOut.log for the server, the following error (exception) is seen whether trying to log into the WebSphere console or access the IMS Configuration Tool: 
+
+[20/10/15 17:01:24:138 BST] 00000028 webapp E com.ibm.ws.webcontainer.webapp.WebApp logServletError SRVE0293E: [Servlet Error]-[Faces Servlet]: java.security.AccessControlException: Access denied (java.lang.RuntimePermission accessDeclaredMembers)
+at java.security.AccessController.checkPermission(AccessController.java:132)
+at java.lang.SecurityManager.checkPermission(SecurityManager.java:533)
+at com.ibm.ws.security.core.SecurityManager.checkPermission(SecurityManager.java:206)
+at java.lang.SecurityManager.checkMemberAccess(SecurityManager.java:1678)
+at java.lang.Class.checkMemberAccess(Class.java:122)
+at java.lang.Class.getDeclaredMethods(Class.java:738) 
+
+......
+
+
+CAUSE
+ 
+
+When re-enabling the 'Enable administrative secuirty', via the checkbox in the WebSphere 7 console (Security -> Global Security), the console automatically enables the 'Java 2 Security' as well.
+
+[/support/docview.wss?uid=swg21969133&amp;aid=1]
+
+NB This only occurs in the WebSphere 7 console. In the WebSphere 8.5 console this does NOT happen.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+ * Log into the WebSphere console, navigate to Security -> Global Security 
+ * Un-check (disable) the Java 2 Security option, Click Apply 
+ * Restart WebSphere
+
+RELATED INFORMATION
+ Cannot log on to the WAS Admin console after upgrading [http://www-01.ibm.com/support/docview.wss?uid=swg21584580]
+How to reset the administrator's password in the file r [http://www-01.ibm.com/support/docview.wss?uid=swg21392427]

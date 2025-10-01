@@ -1,0 +1,34 @@
+Title: IBM What might happen in MQ if UseGetTimeOfDay is not set - United States
+
+Text:
+Java hpux time clock system -XX:+UseGetTimeOfDay put get puttime gettime mqminfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The System Requirements for WebSphere MQ on HP-UX in the section "For Java™ applications using the WebSphere MQ classes for Java or JMS" has a note which says "The Java Runtime Environment must be run with the following parameter set: -XX:+UseGetTimeOfDay". You want to know what kind of results may happen if this environment setting is not used. 
+
+CAUSE
+In a HotSpot JVM on a HP-UX Itanium RISC machine, if a Java application is used without the -XX:+UseGetTimeOfDay option, changes in the system time will be reflected in the application ONLY WHEN THE APPLICATION IS RESTARTED. 
+
+RESOLVING THE PROBLEM
+These are the cases where we think inconsistencies may occur: 
+
+Case 1 : Traces and FDCs 
+
+Time stamps recorded in traces and FDCs are queried from the system time. So the time stamps recorded in traces and FDCs will be different from the actual time stamps that should be recorded. 
+
+Case 2 : Dead letter queueing of Poison messages 
+
+When the backout of a poison message to a backout queue fails, the message is sent to the dead letter queue (DLQ). Before the message is sent to the DLQ the dead letter handler gets the current system time through the JVM and sets the putTime and putDate in the message. The system time is queried and recorded in the message as putDate and putTime fields. Updates to the system time would not be reflected and would result in an incorrect time being recorded in the message on the DLQ. 
+
+Case 3 : Client application time calculations 
+
+Tasks in the client application that depend on time-based calculations, might produce unintended results because of fetching an incorrect time 
+
+RELATED INFORMATION
+ System Requirements for MQ [http://www.ibm.com/support/docview.wss?uid=swg27006467]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

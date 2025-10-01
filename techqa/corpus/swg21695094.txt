@@ -1,0 +1,57 @@
+Title: IBM The affect of the auto-update feature for Oracle JDK 7 on IBM Mobile Foundation, IBM Worklight, IBM Worklight Foundation, and IBM MobileFirst Platform Foundation - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ The IBM Mobile Foundation, IBM Worklight, IBM Worklight Foundation, and IBM MobileFirst Platform Foundation products support Oracle JDK 7, but do not support Oracle JDK 8. 
+
+CONTENT
+On Windows operating systems, because the upgrade to Oracle JDK 8 is enabled by default, you might not be aware that the upgrade has occurred. This Oracle JDK 8 issue applies to the Mac OS as well.
+
+
+
+SYMPTOM
+You might see one of the following messages in the log file on Windows and Mac OS machines that originate from the WebSphere Application Server Liberty Profile: 
+
+ * TRAS0033E: Runtime injection of detailed method trace failed for class <class name> with exception <exception name> 
+ * CWWKC0044W: An exception occurred while scanning class and annotation data. 
+
+
+RESOLUTION
+As stated on the Java SE at a Glance [http://www.oracle.com/technetwork/java/javase/overview/index.html] page, Oracle is automatically migrating users with the auto-update feature enabled from Oracle JDK 7 to Oracle JDK 8. However, a number of IBM and third-party dependencies for IBM Mobile Foundation, IBM Worklight, IBM Worklight Foundation, and IBM MobileFirst Platform Foundation do not support Oracle JDK 8.
+
+
+
+
+ * Windows operating systems
+   If you have already migrated to Oracle JDK 8, you need to revert to Oracle JDK 7 using the following steps:  1. Uninstall Oracle JDK 8.
+       
+       
+    2. Download the latest version of Oracle JDK 7 from the Java SE Downloads [http://www.oracle.com/technetwork/java/javase/downloads/index.html] tab of the Oracle web site.
+       
+       
+    3. Reinstall Oracle JDK 7.
+       
+       
+   
+   To disable the JDK auto-update feature on Windows operating systems, see the Change Automatic Update Settings [http://java.com/en/download/help/java_update.xml#adv] section of the Oracle Java Auto Update documentation.
+   
+   
+ * Mac OS
+   If you have already migrated to Oracle JDK 8, you need to revert to Oracle JDK 7 using the following steps:  1. Uninstall Oracle JDK 8. For more information, see the How do I uninstall Java 7 and later versions on my Mac? [https://www.java.com/en/download/help/mac_uninstall_java.xml] information on the Oracle web site.
+       
+       
+    2. Download the latest version of Oracle JDK 7 from the Java SE Downloads [http://www.oracle.com/technetwork/java/javase/downloads/index.html] tab of the Oracle web site. For more information, see JDK 7 Installation for Mac OS X [http://docs.oracle.com/javase/7/docs/webnotes/install/mac/mac-jdk.html].
+       
+       
+    3. Reinstall Oracle JDK 7. 
+       
+       
+   
+   
+   On the Mac OS operating system, you are explicitly asked if you want to update your Java version. Do not update the Java version to Java 8. To verify your Java version, see How do I update Java for my Mac? [https://www.java.com/en/download/help/mac_java_update.xml]
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Mobile- Speech and Enterprise Access IBM Worklight Security Mac OS X, Windows 6.2, 6.1, 6.0, 5.0.6, 5.0.5 Consumer, Enterprise Mobile- Speech and Enterprise Access IBM Mobile Foundation Security Mac OS X, Windows 6.0, 5.0.6, 5.0.5 Consumer, Enterprise

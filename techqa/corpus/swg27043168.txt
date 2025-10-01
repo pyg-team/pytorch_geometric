@@ -1,0 +1,12 @@
+Title: IBM Known Limitation: Sync is not supported for IBM Case Manager documents from repositories other than the case management P8 repositories - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ You cannot use the sync feature on case documents that reside in external repositories such as IBM Content Manager or CMIS repositories. 
+
+CONTENT
+IBM Case Manager V5.2.1 re-uses the favoriting and syncing feature from IBM Content Navigator V2.0.3. This feature does not apply, however, for documents that are in external repositories. An external repository is a repository other than the FileNet P8 repositories that were originally configured for IBM Case Manager. 
+
+For example, for an IBM Content Manager repository, the IBM Content Navigator Administration Console does not show the Sync enabling feature for configuration. The feature is only available for enabling on FileNet P8 repositories. Normally, the feature is enabled on the target object store where solution is deployed.

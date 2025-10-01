@@ -1,0 +1,78 @@
+Title: IBM dimension build is taking a long time to complete - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Product Version: DecisionStream 6.5
+Build: 357
+Platform: WinNT
+
+Description:
+
+A dimension build is taking 17 hours to complete.
+
+The dimension is large, 60 items, and is bringing in about 2.3 million records.
+
+What is causing the dimension build to take this amount of time?
+
+
+Solution:
+
+The build is taking a long time because of the time required to cache data into the dimension.
+
+This appears to be caused by swapping data from memory to disk, which is never good for performance. Consider adding more memory to the computer.
+
+The entry in the log file that indicates that swapping is occurring is this one (given that the machine contains 750M of memory) - 
+
+[INTERNAL - 00:03:39] 820.95M used to cache 'Customer_CBMS_H' reference data
+
+The 820.95 figure is an amount of memory that DecisionStream is requesting from the operating system to accommodate the data cached into memory. There is overhead in making dynamic memory requests to the O/S 
+etc. that this figure does not capture, so the actual amount of memory required will be higher than this.
+
+The recommendation here is that more memory is needed to avoid the swapping, which should improve performance.
+
+The key to the amount of data that gets cached into memory is the number of records returned by the input data to the build.
+
+If the table you are selecting from contains a timestamp indicating when it was last updated, then your 'where clause' can filter out those records that have not been updated today, assuming this build is run on a daily basis.
+
+This should improve performance with incremental loads a great deal.
+
+What the dimension build is doing is determining what has changed between the input data and the existing data in the dimension. The approach that the dimension build is doing is to first read in all the incoming data and merge it. We do this because we need to determine what the impact on existing dimension records will be. Once all incoming data 
+is cached then we read through all records in the dimension that are marked as current. Typically we do this by using the 'curr_ind' setting. In the customer's example they don't have a curr_ind so we use the order of the surrogates. This approach means that we open a cursor for the input set and read it in, in one process. The read through the existing data comparing in memory the changes across the entire record making each change as we go. This vastly reduces I/O on the existing dimension data and is the faster approach because we don't have to do individual retrievals of dim records for each incoming data element which would be very expensive. You do of course use memory, but memory is faster.
+
+The other suggestion that would work but will be slower is using a fact build with breaking to process the dimension in steps. Effectively you merge the existing data with the input data, calculating a checksum to determine change, and you use breaking. This will process the records in a record by record 
+fashion.
+
+The recommendation would be to put some more memory in the box. We typically advise that a DS server doing merging and multi-million row dimension compares (not using last updated columns on the input data) think of 1 Gig as a starting point. In this case I'd go a little higher that that even. That way you will get this dimension build through very quickly because most operations will be done with minimum I/O which is the intent. 
+
+RESOLVING THE PROBLEM
+The build is taking a long time because of the time required to cache data into the dimension.
+
+This appears to be caused by swapping data from memory to disk, which is never good for performance. Consider adding more memory to the computer.
+
+The entry in the log file that indicates that swapping is occurring is this one (given that the machine contains 750M of memory) - 
+
+[INTERNAL - 00:03:39] 820.95M used to cache 'Customer_CBMS_H' reference data
+
+The 820.95 figure is an amount of memory that DecisionStream is requesting from the operating system to accommodate the data cached into memory. There is overhead in making dynamic memory requests to the O/S etc. that this figure does not capture, so the actual amount of memory required will be higher than this.
+
+The recommendation here is that more memory is needed to avoid the swapping, which should improve performance.
+
+The key to the amount of data that gets cached into memory is the number of records returned by the input data to the build.
+
+If the table you are selecting from contains a timestamp indicating when it was last updated, then your 'where clause' can filter out those records that have not been updated today, assuming this build is run on a daily basis.
+
+This should improve performance with incremental loads a great deal.
+
+What the dimension build is doing is determining what has changed between the input data and the existing data in the dimension. The approach that the dimension build is doing is to first read in all the incoming data and merge it. We do this because we need to determine what the impact on existing dimension records will be. Once all incoming data is cached then we read through all records in the dimension that are marked as current. Typically we do this by using the 'curr_ind' setting. In the customer's example they don't have a curr_ind so we use the order of the surrogates. This approach means that we open a cursor for the input set and read it in, in one process. The read through the existing data comparing in memory the changes across the entire record making each change as we go. This vastly reduces I/O on the existing dimension data and is the faster approach because we don't have to do individual retrievals of dim records for each incoming data element which would be very expensive. You do of course use memory, but memory is faster.
+
+The other suggestion that would work but will be slower is using a fact build with breaking to process the dimension in steps. Effectively you merge the existing data with the input data, calculating a checksum to determine change, and you use breaking. This will process the records in a record by record fashion.
+
+The recommendation would be to put some more memory in the box. We typically advise that a DS server doing merging and multi-million row dimension compares (not using last updated columns on the input data) think of 1 Gig as a starting point. In this case I'd go a little higher that that even. That way you will get this dimension build through very quickly because most operations will be done with minimum I/O which is the intent.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Data Manager Business Analytics Cognos Series 7 DecisionStream 
+HISTORICAL NUMBER
+ 117764

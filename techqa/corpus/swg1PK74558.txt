@@ -1,0 +1,177 @@
+Title: IBM PK74558: DUMP TITLE: ,ABN=0C4-00000010,U=SYSOPR ,C=L8200.600.SSSC-CSQ3ID80,M=CSQ3ID80,LOC=CSQ3AMGP.CSQ3ID80+1426 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Dump Title: ,ABN=0C4-00000010,U=SYSOPR
+   ,C=L8200.600.SSSC-CSQ3ID80,M=CSQ3ID80,LOC=CSQ3AMGP.CSQ3ID80+1426
+   The abend0c4 is due to the terminate thread coming from a
+   cics transaction at the same time as the stop queue manager
+   was being dealt with.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS V6        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 0C4 in CSQ3ID80 following a STOP FORCE  *
+   ****************************************************************
+   * RECOMMENDATION: APPLY FIX                                    *
+   ****************************************************************
+   A quiesce shutdown has been issued and CICS server tasks start
+   disconnecting (they issue CSQ3TERM FRBs which result in CSQ3ID80
+   performing terminate identify processing). CSQ3ID80 is invoked,
+   however has been stalled before marking EBACTL=ON.
+   
+   A STOP QMGR MODE(FORCE) is then issued which results in CSQ3AMT3
+   invoking CSQVAGCL to cancel active threads. It detects that
+   EBACTL is off, indicating that the thread is active in the
+   queue-manager, and therefore issues a CSQVCNCL to cancel the EB.
+   As the EB is not currently suspended, EBCANCEL is set.
+   
+   The quiesceing thread then continues processing and invokes
+   CSQVTRTH (CSQVTAA) which in turn invokes CSQVIALC for deallocate
+   (CSQVDLC), which issues a CSQVICEU to run CSQVDSRB. CSQVEUS1
+   invokes CSQVFEB to format a new EB for the related execution
+   unit switch (so runs under same ACE but a different EB).
+   However, CSQVFEB detects that EBCANCEL is set which results in
+   it issuing a 5C6 00E50013 abend. CSQVIALC and CSQVTFRR then
+   retry which get the same abend.
+   
+   CSQ3AMT3 then continues processing and invokes CSQ3TM00 which
+   invokes CSQVDISC and CSQVCONN to disconnect the EB from the
+   current home address space by removing the EB from the VLCA ACE
+   chain and putting it on the queue-managers VLCA chain. During
+   this processing CSQVCONN resets EBCANCEL. Deallocation
+   processing is then performed and the AGNT is unchained by
+   CSQ3UNCH and then released.
+   
+   Back on the quiescing thread the 5C6 00E50013 abend is
+   percolated to CSQ3ID80's estae which invokes ID80FINI to try and
+   unchain and free the AGNT. However, as the second word of the
+   AGNT (AGNTMTHR) now contains 'FREE' (due to the CSQSFBLK during
+   force shutdown) an 0C4 occurs when trying to address the AGNT
+   addressed by AGNTMTHR.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Changes have been made to CSQ3AMT3 (the END-STOP-WORK processing
+   module) to bypass the freeing of AGNT control blocks that are
+   being terminated by CSQ3ID80.
+   000Y
+   CSQ3AMT3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK74558
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-27
+   
+   
+ * CLOSED DATE
+   2009-03-23
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PK82696 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK82696] UK45131
+   
+   
+
+MODULES/MACROS
+ *     CSQ3AMT3
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK45131 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK45131]
+   UP09/04/08 P F904
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

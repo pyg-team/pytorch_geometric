@@ -1,0 +1,56 @@
+Title: IBM Using WebSphere Adapter for JDBC V6.0.2 and 6.1 with Sybase database stored procedures - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM WebSphere Adapter for JDBC version 6.0.2 Enterprise Service Discovery wizard (or the External Service wizard in V6.1) does not execute Sybase stored procedures successfully. 
+
+SYMPTOM
+When you create business object definitions by importing the stored procedures on Sybase database, the 'Execute with dummy values' feature of the wizard: 
+-- Reports the execution status as 'not successful.' 
+-- Is unable to discover or display the result set from the stored procedure.
+-- Sets the 'Maximum number of Result Sets' field to zero. 
+
+The JDBC enterprise service discovery wizard displays the following message when the ‘Execute with dummy values’ feature is used:
+The execution of stored procedure was not successful.
+
+The JDBC RA enterprise service discovery log contains the following error:
+com.sybase.jdbc2.jdbc.SybSQLException: Stored procedure 'dbo.test' may be run only in unchained transaction mode. The 'SET CHAINED OFF' command will cause the current session to use unchained transaction mode. 
+
+The JDBC RA run time results in the error:
+com.sybase.jdbc2.jdbc.SybSQLException: The parameter 'in_param' in the 
+procedure 'test' was not declared as an OUTPUT parameter. 
+
+
+DIAGNOSING THE PROBLEM
+Stored procedures in Sybase run by default in unchained transaction mode, where each stored procedure must include begin transaction statements paired with commit transaction or rollback transaction statements to complete the transaction.
+
+This behavior restricts the clients to have the SET CHAINED option set to On, and then include commits and rollbacks on every Sybase stored procedure.
+
+To work around this restriction, you must turn on the auto commit feature, so that each transaction is committed irrespective of any settings in the client's stored procedures. 
+
+
+RESOLVING THE PROBLEM
+To enable stored procedures to run from the Sybase database, a new property (Auto Commit) has been introduced. 
+
+
+To set this property, do the following:
+
+1. Start the Enterprise Service Discovery wizard (or for V6.1, start the External Service wizard) to generate artifacts. 
+
+2. Go to the Connection Configuration area of the Configure Settings for Discovery Agent window (shown in Figure 1 for V6.0.2) and click Show Advanced.
+
+Figure 1: Getting to the advanced properties configuration settings
+
+
+[/support/docview.wss?uid=swg21298596&amp;aid=1] 
+
+3. Select the Auto Commit check box (shown in Figure 2). 
+Figure 2. Selecting the Auto Commit option 
+[/support/docview.wss?uid=swg21298596&amp;aid=2] 
+
+4. Continue generating the artifacts and complete the process to create the data descriptions and the service descriptions. 
+
+WebSphere Adapter for JDBC V6.0.2.3 interim fix 1 is available (for the 6.0.2 versions) and resolves this issue. Contact IBM Support to obtain interim fix V6.0.2.3 or the latest limited availability fix pack for V6.1 in one of two ways:  * Electronically with the Service Request (SR) problem submission tool [http://www.ibm.com/software/support/probsub.html] 
+ * Phone [http://www.ibm.com/planetwide/]

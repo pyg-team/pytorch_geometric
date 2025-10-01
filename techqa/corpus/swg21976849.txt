@@ -1,0 +1,18 @@
+Title: IBM Adding Approvers to IBM Atlas Release Notice - United States
+
+Text:
+Atlas Release Approver TECHNOTE (FAQ)
+
+QUESTION
+ How do you add approvers to IBM Atlas Release Notice? 
+
+CAUSE
+Add an approver to a Release Notice
+
+ANSWER
+
+1. Make sure that the role of the user has read privilege to Matters.
+
+2. Add the role to Matter security group of the Matter where you are creating the release notice.
+
+3. Add the Role to Admin > components > LEGAL NOTICE APPROVER component.

@@ -1,0 +1,40 @@
+Title: IBM ITCAM4Tx: TEP WRT workspaces all empty,  blank, no data - United States
+
+Text:
+71WRT-INS; 71WRT-WV; 71WRT-TS TECHNOTE (FAQ)
+
+QUESTION
+ You installed WRT agent on a Windows 32bit OS, configured it to capture http traffic, but TEP GUI WRT agent workspaces contain no data, no application, no transaction is reported at all. Is there any possible reason why? 
+
+CAUSE
+Possible cause is that the WRT agent files are not laid down properly during installation, causing WRT agent to malfunction.
+
+ANSWER
+Although the WRT analyzer 'kfcmserver.exe' process is reported as running as seen in Windows task manager (after WRT kt5agent was started), we could not find the executable
+C:\IBM\ITM\tmaitm6\wrm\Analyzer\kfcmserver.exe on the system while looking at Windows Explorer.
+
+Actually C:\IBM\ITM\tmaitm6\wrm directory was almost empty and contained only one file, ttconfig.xml, which is a sign of incomplete or corrupted installation of WRT agent.
+
+If such behaviour is seen, the best approach is to un-install completely the WRT agent using the Windows feature : "Add/Remove programs", then delete C:/IBM/ITM home directory (if there is only this ITM / ITCAM component laid down on this machine!), then attempt installation of WRT agent again.
+
+Check the result of this new installation first, by looking at the installation log that should be written into :
+C:\IBM\ITM\InstallITM\ITCAM for Transactions - Response Time Agents <timestamp>.log file
+
+A good sign of successful installation is the message displayed at the end of the installation, that states :
+"WRM INST_COMP_PLUGIN_RETURN_CODE:000. Reboot your system"
+
+Verify that C:\IBM\ITM\tmaitm6\wrm directory is populated with several subdirectories, like C:\IBM\ITM\tmaitm6\wrm\Analyzer\
+and that C:\IBM\ITM\tmaitm6\wrm\Analyzer\kfcmserver.exe exists.
+
+Then configure your WRT agent to capture http traffic, and check results obtained in TEP WRT workspaces after traffic is generated and visible by WRT NIC adaptor.
+
+kfcmserver.exe process, while running normally, writes its own log into 
+C:IBM/ITM/tmaitm6/wrm/analyzer/<hostname>_kfcmserver_<timestamp>.log
+This is a good sign if such file exist. it can be reviewed if needed.
+
+If all is ok, then you can consider upgrading your agent to WRT v7.4 latest fixpack; check IBM Fix Central site to get it.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itcam itcam4tx web response time wrm itcamfortx itcamtrans

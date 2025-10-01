@@ -1,0 +1,26 @@
+Title: IBM Text searches in IBM Content Navigator - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The text search support in IBM Content Navigator depends on the type of repository on which you are running a search. 
+
+CONTENT
+If your repositories are configured to support text search, IBM Content Navigator supports text search on IBM Content Manager and IBM FileNet Content Manager repositories. 
+
+Text search is not supported by IBM Content Manager OnDemand repositories.
+
+Text search on IBM Content Manager repositories
+IBM Content Navigator supports only the IBM Content Manager basic text search syntax, which does not support case-sensitive searches. 
+
+IBM Content Navigator does not support advanced text search syntax, which means that IBM Content Navigator does not support features like accent insensitive search (on an NSE text engine). 
+
+Text search on IBM FileNet Content Manager repositories
+IBM Content Navigator supports the following text search engines with IBM FileNet Content Manager repositories: 
+
+ * IBM Legacy Content Search Engine 
+ * IBM Content Search Services
+
+
+The text search engine that is used depends on the version of Content Engine or Content Platform Engine that you are running and how you configured text search on the repository.

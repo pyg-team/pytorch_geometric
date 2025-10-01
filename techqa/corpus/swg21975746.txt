@@ -1,0 +1,115 @@
+Title: IBM Performance issues and CRRRW7556E after upgrading IBM Rational DOORS Next Generation (DNG) repository - United States
+
+Text:
+time-out;time out;time-out;migration;migrating;upgrade;slow;rrc;rm;rdng;dng;doors next;rational requirements composer;runstats;CRRRW7556E;db statistics;6.0;6.0.1;60;601;6.0.2;602;VVCMODEL.VERSION;create index TROUBLESHOOTING
+
+PROBLEM
+Users observe poor performance and a connection error after upgrading from IBM Rational DOORS Next Generation (DNG) version 5.0.x to 6.0.x, or on large 6.0.x deployments.
+
+SYMPTOM
+After the upgrade, loading Requirements Management (RM) projects takes a long time.
+
+The following error occurs.
+
+A connection to the server cannot be established. The following HTTP status code was received: 0
+
+ID CRRRW7556E The application cannot connect to the server. There might be a problem with your network connection or the server might not be available. Check your computer's network connection. Ask your administrator to check the status of the server. 
+
+CAUSE
+There are various possible causes.
+
+
+ * The database statistics did not run after the migration. There are many changes to the RM database tables that need updating in the database statistics.
+   
+ * When you use Microsoft SQL Server database, you also need to create indexes and make changes to the tables.
+   
+ * When you use an Oracle database server, you need to do additional procedures to optimize performance, especially Oracle 11g.
+   
+
+ * Configuration cache requires tuning due to large repository size. See technote 1995500 [http://www.ibm.com/support/docview.wss?uid=swg21995500] if you are on versions 6.0, 6.0.1 or 6.0.2 and continue to experience performance problems after reviewing the solutions below.
+
+DIAGNOSING THE PROBLEM
+Verify whether the DB statistics ran since the upgrade. For Oracle and SQL Server, see additional information in this document.
+
+RESOLVING THE PROBLEM
+Ask your database administrator to run the statistics command to update the database tables.
+
+
+Disclaimer
+All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+
+ * For information about the IBM DB2 database RUNSTATS command, see the IBM DB2 documentation [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0001980.html?cp=SSEPGG_10.5.0%2F3-5-2-4-113].
+   
+   Example to manually run the statistics for DB2:
+   
+   DB2 REORGCHK UPDATE STATISTICS ON TABLE ALL [ 
+ * For Microsoft SQL Server database update statistics, see the Microsoft SQL Server documentation [http://technet.microsoft.com/en-us/library/hh510198.aspx].
+   
+ * For Oracle database DBMS_STATS , see the Oracle documentation [http://docs.oracle.com/cd/B28359_01/appdev.111/b28419/d_stats.htm#CIHBIEII]. 
+   
+   
+
+Microsoft SQL Server 
+
+ * Update the DB statistics using sp_updatestats [https://docs.microsoft.com/en-us/sql/relational-databases/system-stored-procedures/sp-updatestats-transact-sql]
+ * If you are running 6.0.2 or below, run the following commands against the DOORS Next Generation and Design Manager databases.  * DROP INDEX VERSION_CONCEPT_DX ON VVCMODEL.VERSION
+      DROP INDEX VERSION_STORAGE_DX ON VVCMODEL.VERSION Note : The "DROP INDEX" command may fail with the following error. That just means the optimization has not yet been applied. Continue with the ALTER TABLE and CREATE INDEX commands below:
+      
+      
+      
+      "Msg 3701, Level 11, State 7, Line 1
+      Cannot drop the index 'VVCMODEL.VERSION.VERSION_CONCEPT_DX', because it does not exist or you do not have permission.
+      Msg 3701, Level 11, State 7, Line 2
+      Cannot drop the index 'VVCMODEL.VERSION.VERSION_STORAGE_DX', because it does not exist or you do not have permission."
+      
+      
+      ALTER TABLE VVCMODEL.VERSION ALTER COLUMN CONCEPT NVARCHAR(450) NOT NULL
+      ALTER TABLE VVCMODEL.VERSION ALTER COLUMN STORAGE NVARCHAR(450) NULL 
+      
+      
+      
+      CREATE INDEX VERSION_CONCEPT_DX ON VVCMODEL.VERSION (CONCEPT)
+      CREATE INDEX VERSION_STORAGE_DX ON VVCMODEL.VERSION (STORAGE) 
+    * 
+    * 
+   
+   
+ * If you are using SQL Server 2014 or higher, it may be necessary to revert to the SQL Server 2012 optimizer due to a known issue with a query. Technote 2000848 [http://www-01.ibm.com/support/docview.wss?uid=swg22000848] has more information on the query.
+   
+
+Oracle database 
+Update the DB statistics and apply the following Oracle database server patches to the database server that hosts the DOORS Next Generation database. Please note that both these patches apply to Linux and Windows database servers.
+
+APAR PI56920 [http://www.ibm.com/support/docview.wss?uid=swg1PI56920] was created for the issue where the length of our URI strings can be an issue with Oracle histograms. This is especially so with Oracle 11g where the limit is 32 characters. Oracle 12c has addressed this to reference the first 64, but installations using long URIs could still face this issue.
+
+ * Bug 9885553 - DBMS_STATS produces incorrect column NDV distinct values statistics (Oracle Doc ID 9885553.8)
+   
+ * Bug 13077335 : CARDINALITY IS NOT CORRECTLY CALCULATED FOR LONG VARCHAR COLUMNS WITH HISTOGRAMS (Oracle Doc ID 13077335.8)
+   
+   Note: Read the Oracle patch description for specific instructions to learn how to apply and enable each patch. The Oracle patch is disabled by default and must be enabled manually by following the instructions in the Oracle Document ID 13077335.8.
+   
+ * If you cannot install the Oracle patches , consider the following workaround. Note: It is still recommended that you enable the Oracle patches even after applying the workaround to prevent future performance issues related to the VVCMODEL_VERSION table. 
+
+
+The commands to execute are as follows. Adjust the commands accordingly to your environment as the example below uses "RM" as the schema owner.
+
+ 1. Delete histograms and set statistics preferences on the VVCMODEL_VERSION table to ensure the appropriate indexes are used by executing the statements below on the DOORS Next Generation database.
+    
+    exec dbms_stats.set_table_prefs('RM', 'VVCMODEL_VERSION', 'METHOD_OPT', 'FOR ALL COLUMNS SIZE AUTO, FOR COLUMNS SIZE 1 CONCEPT, FOR COLUMNS SIZE 1 STORAGE, FOR COLUMNS SIZE 1 VERSION');
+    exec dbms_stats.delete_column_stats(ownname=>'RM', tabname=>'VVCMODEL_VERSION', colname=>'CONCEPT', col_stat_type=>'HISTOGRAM');
+    exec dbms_stats.delete_column_stats(ownname=>'RM', tabname=>'VVCMODEL_VERSION', colname=>'STORAGE', col_stat_type=>'HISTOGRAM');
+    exec dbms_stats.delete_column_stats(ownname=>'RM', tabname=>'VVCMODEL_VERSION', colname=>'VERSION', col_stat_type=>'HISTOGRAM'); 
+    exec dbms_stats.gather_table_stats('RM','VVCMODEL_VERSION'); 
+    
+ 2. Restart the database.
+
+You can find other DNG 6.0.x performance considerations in these documents.
+
+ * Rational DOORS Next Generation: Organizing requirements for best performance [https://jazz.net/wiki/bin/view/Deployment/DNGPerformanceAndData#General_observations_on_DNG_perf]
+ * Sizing and tuning guide for RDNG 6.0 [https://jazz.net/wiki/bin/view/Deployment/SizingAndTuningGuideForRationalDOORSNextGenerationVersion60]
+ * Sizing and tuning guide for RDNG 6.0.2 [https://jazz.net/wiki/bin/view/Deployment/SizingAndTuningGuideForRationalDOORSNextGenerationVersion602]
+ * Sizing and tuning guide for RDNG 6.0.4 / 6.0.5 with Components [https://jazz.net/wiki/bin/view/Deployment/SizingAndTuningGuideForDOORSNextGeneration604and605WithComponents]
+
+RELATED INFORMATION
+Known issues in IBM Rational DOORS Next Generation 6.0 [https://jazz.net/library/article/1516#00111]

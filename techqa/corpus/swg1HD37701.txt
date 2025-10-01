@@ -1,0 +1,187 @@
+Title: IBM HD37701: JAPANESE CHARACTER IN EXPORTED XML FILE OF CLASH BECOMES - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Japanese character in exported XML file of clash
+   becomes     garbage
+   Scenario:
+   1. File -> Open any CATProduct
+   2. Go to Space Analysis workbench if it's necessary
+   3. Click Clash icon
+   Type: Clearance + Contact + Clash 25mm
+   Selection against all
+   sel all products
+   and click Apply
+   4. Click Export as icon on and export it as xml
+   5 Open previously saved xml file on Browser such
+   like IE
+   ===> Then Japanese characters become garbage.
+   Expected result:
+   It should not be garbage, and the Japanese
+   characters should be properly display.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Japanese character in exported XML file of clash becomes
+   garbage
+   Japanese character in exported XML file of clash
+   becomes     garbage
+   Scenario:
+   1. File -> Open any CATProduct
+   2. Go to Space Analysis workbench if it's necessary
+   3. Click Clash icon
+   Type: Clearance + Contact + Clash 25mm
+   Selection against all
+   sel all products
+   and click Apply
+   4. Click Export as icon on and export it as xml
+   5 Open previously saved xml file on Browser such
+   like IE
+   ===> Then Japanese characters become garbage.
+   Expected result:
+   It should not be garbage, and the Japanese
+   characters should be properly display.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON ENOVIA
+   V5R16GA
+   THIS PROBLEM WILL BE FIXED ON ENOVIA
+   V5R15SP02
+   THIS PROBLEM WILL BE FIXED ON ENOVIA
+   V5R14SP07
+   NOTE THAT THIS PROBLEM WAS ALREADY
+   FIXED
+   SINCE V5R15 GA level.
+   Be careful ! On Japanese environment, only
+   the "new XML" will work correctly.
+   An update has been made in the V5R15SP2
+   and
+   V5R16GA documentation with the following
+   informations :
+   Documentation Reference
+   DMU Space Analysis User's Guide
+   Basic Tasks
+   Exporting Clash Results & Geometry in XML
+   Format
+   MODIFICATION:
+   The following note has been added in
+   Warnings
+   section of Exporting Clash Results &
+   Geometry in
+   XML Format task. (FYI spaugbt0309.htm)
+   Japanese Support in XML: to display XML
+   report in
+   Japanese, make sure you checked the XML
+   Export
+   for clash process purpose check box in the
+   DMU
+   Clash - Process tab page (Tools > Options
+   > Digital
+   Mockup > DMU Space Analysis).
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD37701
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA DMU AIX
+   
+   
+ * REPORTED COMPONENT ID
+   569101800
+   
+   
+ * REPORTED RELEASE
+   512
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-04-06
+   
+   
+ * CLOSED DATE
+   2005-06-27
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ENOVIA DMU AIX
+   
+   
+ * FIXED COMPONENT ID
+   569101800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R514 PSN SP51407
+   UP05/07/05 N 1000
+   
+   
+ * R515 PSN SP51502
+   UP05/07/07 N 1000

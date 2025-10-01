@@ -1,0 +1,74 @@
+Title: IBM Spool Initialization IPL Flight Recorder Instructions - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document explains how to create an LPD flight recorder trace for developer analysis. 
+
+DIAGNOSING THE PROBLEM
+This document explains how to setup the QSPL/QSPLDTAARA data area to enable the Spool Initialization IPL flight recorder trace for developer analysis of issues involving the QSPL data base during the IPL of an IBM i system. 
+
+Note: Use of these instructions requires having either 6.1 PTF SI46162 [http://www-912.ibm.com/a_dir/as4ptf.nsf/ALLPTFS/SI46162] (C2305610) or 7.1 PTF SI47165 [http://www-912.ibm.com/a_dir/as4ptf.nsf/ALLPTFS/SI47165] (C7102279), or a superseding PTF, installed on your IBM i system.
+
+This document was last updated on 15 January 2014.
+
+
+
+Caution: When experiencing problems with spooled files, it is highly recommended to discuss the problem with a representative of the IBM i Global Support Center (iGSC) before following the instructions in this document. The problem might be a known issue that can be easily resolved through configuration changes, printer hardware settings, or Program Temporary Fixes (PTFs). In these cases, following these instructions might not be necessary. 
+Creating the QSPLDTAARA Data Area to Enable the Spool Initialization IPL Flight Recorder 
+
+To enable the Spool Initialization IPL flight recorder, use the following Create Data Area ( CRTDTAARA) command to create a data area called QSPLDTAARA in the QSPL library: 
+
+CRTDTAARA DTAARA(QSPL/QSPLDTAARA) TYPE(*CHAR) LEN(3) VALUE(NYN) AUT(*ALL) 
+
+
+
+
+
+
+
+Sending the Spool Initialization IPL Flight Data to your iGSC Representative 
+
+When requested by a representative of the IBM i Global Support Center (iGSC), use the following Dump System Object ( DMPSYSOBJ) command to collect the Spool Initialization IPL flight data: 
+
+DMPSYSOBJ OBJ(QSPFLGHTRC) CONTEXT(QSPL) 
+
+Note: The resulting QPSRVDMP spooled file can be downloaded to a PC using the instructions in the following document: 
+
+N1019300: Copying the Text from a Spooled File Using System i Navigator [Copying%20the%20Text%20from%20a%20Spooled%20File%20Using%20System%20i%20Navigator] 
+
+and then sent to your iGSC representative using the instructions in the following document: 
+
+N1019224: MustGather: Instructions for Sending Data to IBM i Support [http://www-01.ibm.com/support/docview.wss?uid=nas8N1019224] 
+
+
+
+
+
+
+
+Changing the QSPLDTAARA Data Area to Enable the Spool Initialization IPL Flight Recorder 
+
+If the QSPLDTAARA data area in the QSPL library already exists, use the following Change Data Area ( CHGDTAARA) command to change the second character to 'Y': 
+
+CHGDTAARA DTAARA(QSPL/QSPLDTAARA (2 1)) VALUE(Y) 
+
+
+
+
+
+
+
+Changing the QSPLDTAARA Data Area to Disable the Spool Initialization IPL Flight Recorder 
+
+To disable the Spool Initialization IPL flight recorder, use the following Change Data Area ( CHGDTAARA) command to change the second character to 'N': 
+
+CHGDTAARA DTAARA(QSPL/QSPLDTAARA (2 1)) VALUE(N) 
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 6.1

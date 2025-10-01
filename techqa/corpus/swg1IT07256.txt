@@ -1,0 +1,148 @@
+Title: IBM IT07256: DB2SUPPORT FAILED TO COLLECT DATA FOR SYNOPSIS TABLES IF THE TABLES INVOLVED CONTAIN '/' IN THE TABLE NAME - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+DB2 Version 10.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24044110]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you run db2support to collect optimizer data for a query,
+   and if the tables involved are column organized tables.
+   db2support collects data for the associated synopsis tables
+   as well and store them in db2support/db2supp_opt/OPTIMIZER/BLU.
+   If the table name for column organized tables contains special
+   charactor like '/' , the data collection for the synopsis table
+   would fail. and in optimizer.log, you may see errors like the
+   following:
+   **************
+   select count(*) from SYSIBM.SYN140509134229640085_/BIC/SSHIP_TO
+          SQL Code: "0"  rc "1"
+   Error invoking "select count(*) from
+   SYSIBM.SYN140509134229640085_/BIC/SSHIP_TO"
+   
+   describe select * from
+   SYSIBM.SYN140509134229640085_/BIC/SSHIP_TO
+          SQL Code: "0"  rc "1"
+   Error invoking "describe select * from
+   SYSIBM.SYN140509134229640085_/BIC/SSHIP_TO"
+   ****************
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * N/A                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to V105FP7+.                                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  V105FP7+ contains the fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT07256
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-19
+   
+   
+ * CLOSED DATE
+   2015-08-25
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA50 PSN
+   UP
+   
+   
+ * RA50 PSY
+   UP

@@ -1,0 +1,71 @@
+Title: IBM nzrestore is failing because a column's ATTDELIM flag is not being set correctly - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ nzrestore is failing because a column's ATTDELIM flag is not being set correctly 
+
+SYMPTOM
+Restore is failing with errors: 
+
+Info: Unknown attribute 'schema' for 'DATABASE'
+Info: Unknown attribute 'sdelim' for 'DATABASE'
+Info: Unknown attribute 'defschema' for 'DATABASE'
+Info: Unknown attribute 'defschemadelim' for 'DATABASE'
+Info: Unrecognized tag/object, 'SCHEMA' 
+nzrestore failing with DB error - ERROR: Attribute 'ABC' is repeated. Must have an appropriate alias
+Operation aborted
+NZ-00023: --- program 'restoresvr' (123456) exiting on host 'host'
+
+
+CAUSE
+When we create a table where the column name IS quoted:
+
+create table t1 ("the user name") as select username from _v_user;
+
+
+But we see that the catalog (the ATTDELIM flag) does NOT show this column as needing quotes.
+
+select attname, attdelim from _v_relation_column where name = 'T1';
+
+-- ATTNAME | the user name
+-- ATTDELIM | f
+
+
+
+So this will cause problems for nzbackup/nzrestore, nzdumpschema, etc ...
+Because the DDL for the created table will look like this which is invalid sql
+
+CREATE TABLE T1 ( the user name national character varying(255) ) DISTRIBUTE ON (the user name) ;
+
+
+
+ENVIRONMENT
+IBM PureData System for Analytics with any NPS version
+
+
+
+DIAGNOSING THE PROBLEM
+Review the restore log (/nz/kit/log/restoresvr) to match the errors.
+
+
+
+RESOLVING THE PROBLEM
+This issue is documented in Defect 101694 which is resolved in following NPS releases: 
+
+7.1.0.9
+7.2.0.8
+7.2.1.2
+7.2.1.2-P1
+7.2.2
+
+RELATED INFORMATION
+ nzrestore failing with DB error - ERROR: Attribute 'AB [http://www.ibm.com/support/docview.wss?uid=swg21977914]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ netezza
+pda

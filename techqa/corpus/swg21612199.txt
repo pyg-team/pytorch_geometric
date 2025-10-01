@@ -1,0 +1,84 @@
+Title: IBM Enable GC logging - United States
+
+Text:
+5724C5100; performance TECHNOTE (FAQ)
+
+QUESTION
+ How to enable Java Virtual Machine (JVM) garbage collection logging for TBSM? 
+
+ANSWER
+
+A server re-start is required for these changes to take effect.
+
+One of the easiest ways to do this is by using setJVMSettings script in the tbsm/bin directory. (Note: setJVMSettings is available in service release 4.2.1-TIV-BSM-IF0004 and 6.1.0-TIV-BSM-FP0002), and all versions of 6.1.1: 
+
+ * Data Server
+ * Unix: $TBSM_HOME/bin/setJVMSettings.sh tipadmin <password> data -addDefaultGCLogging 
+   Windows: %TBSM_HOME%\bin\setJVMSettings.bat tipadmin <password> data 
+   -addDefaultGCLogging 
+   
+ * Dashboard Server
+ * Unix: $TBSM_HOME/bin/setJVMSettings.sh tipadmin <password> dashboard -addDefaultGCLogging 
+   Windows: %TBSM_HOME%\bin\setJVMSettings.bat tipadmin <password> dashboard 
+   -addDefaultGCLogging 
+   
+   
+
+Alternatively, garbage collection (GC) can be enabled by editing the server.xml file, as follows: 
+ * 
+ * 
+ * 
+ *  Data Server  * 
+    * 
+    * 
+    * 
+   
+   Dashboard Server  * 
+    * 
+    * 
+   
+   
+   For example: 
+   Unix:  * 
+    * 
+    * verboseModeGarbageCollection="true"
+    * 
+    *  
+    * -
+    * 
+    * Xverbosegclog:${SERVER_LOG_ROOT}/verboseDataGC.%Y%m%d.%H%M%S.%pid.txt">
+   
+   Windows:  * 
+    * 
+    * verboseModeGarbageCollection="true"
+    * 
+    *  
+    * -
+    * 
+    * Xverbosegclog:${SERVER_LOG_ROOT}\verboseDataGC.%Y%m%d.%H%M%S.%pid.txt">
+    * 
+    * 
+   
+   Note 
+   that the directory for the GC logfile must exist prior to launching TBSM with the updated 
+   server.xml file. 
+   For this scenario, the server variable ${SERVER_LOG_ROOT} is used, which evaluates to <TIP_HOME>/profiles/TIPProfile/logs/server or TBSMProfile/logs/server1 directory, depending on which server is updated. Whatever directory is used, the TBSM install user must have read and write permissions for the location. The log file names should be different both to distinguish between the two, especially when both TBSM Data and Dashboard Servers reside on the same system. 
+   
+   Operating System specifics 
+   On Solaris or HP-UX Operating Systems, the following options are also required:  * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+   
+   For example:  * 
+    * 
+    * 
+    *  -
+    * 
+    * XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintHeapAtGC 
+    * 
+    * 
+    *

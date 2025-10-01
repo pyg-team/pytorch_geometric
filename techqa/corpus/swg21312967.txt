@@ -1,0 +1,127 @@
+Title: IBM MQ 7.x, MQ 8.0 and MQ 9.0 compatibility with previous versions - including usage of CCDT files, JMS .bindings, SSL/TLS - United States
+
+Text:
+compatibility; compatible TECHNOTE (FAQ)
+
+QUESTION
+ Are WebSphere MQ (WMQ) V7.0, V7.1, V7.5 and V8.0 compatible with previous versions?
+Can an MQ 8.0 client use a CCDT created with a previous version?
+Can an MQ 7.0 client use a CCDT created with a newer version?
+Can a JMS .bindings file created in 7.1 be used with 8.0?
+Can a JMS .bindings file created in 8.0 be using with 7.1?
+Can an older MQ client using an old SSL protocol still work with MQ 9.0?
+
+
+ANSWER
+
+Compatibility statement:
+
+WebSphere MQ V7.0, V7.1, V7.5, V8.0 and V9.0 queue managers and clients inter operate with queue managers and clients from any previous level of the WebSphere MQ or MQSeries products.
+
+This means that ... 
+
+ *  A 7.0, 7.1, 7.5, 8.0 and 9.0 client can connect to all queue managers, non-version 7, as well as version 7.0, 7.1, 7.5, 8.0 and 9.0 
+ *  A 7.0, 7.1, 7.5, 8.0 and 9.0 queue manager can interact with all clients, non-version 7, as well as version 7.0, 7.1, 7.5, 8.0 and 9.0
+
+
+Note: If your V7.x, V8.0 or V9.0 client connects to an MQ 6.0 or earlier queue manager, or use a server-connection channel with the attribute SHARECNV = 0 (which treats the connection as being MQ 6.0), then you cannot use V7 features, and structures in your client application. 
+
+
+MQ Client V6 and V7/V8/V9 compatibility 
+
+The new features which are available for a version 7.x, 8.0 or 9.0 client connected to a version 6.0 queue manager are: 
+- Weighted selection on CLNTCONN channels. 
+- Reconnecting via a previously used channel. 
+- Maximum message length increased on MQSERVER environment variable. 
+
+The new feature which is available for a version 6.0 client connected to a version 7.x, 8.0 or 9.0 queue manager is: 
+- Instance limits on SVRCONN channels. 
+
+
+Caveat 
+
+The compatibility statement refers to: 
+Version.Release 
+
+... such as: 
+A 7.0 client is compatible with a 7.5 queue manager. 
+
+This statement does not extend to a more granular specification: 
+Version.Release.Maintenance.FixPack (V.R.M.F) 
+
+If there are known problems at a given V.R.M.F (such as 7.0.0.0), then an upgrade to a more recent fix pack for the same Version.Release will be necessary (such as 7.0.1.11). Notice that the upgrade is within the same Version.Release (7.0) and a migration to a newer Version.Release is not forced. 
+
+
++ Compatibility of MQ clients and CCDT files 
+
+Newer versions of the MQ clients (such as 8.0) know how to handle CCDT files that were created/edited by older queue managers (such as 6.0) 
+
+Older MQ clients (such as 6.0) do NOT know how to handle CCDT files that were created/edited by newer queue managers (such as 8.0). That is, older clients do not know what are the new attributes (if any) introduced in newer MQ versions. 
+
+Based on the above, if you have a mix of versions of MQ clients that use a common CCDT file, then this CCDT file should be edited from a queue manager at the LOWEST (OLDEST) version. For example, if you are using MQ 6.0, 7.0, 7.1, 7.5, 8.0 and 9.0 clients that use a CCDT file, then the CCDT file must be maintained by the MQ queue manager at version 6.0 
+- However, the newer MQ clients (8.0) when using the CCDT created with 5.3 will NOT be able to fully exploit newer features, even when connecting to an 8.0 queue manager because the CCDT will not show the new attributes for those new features. 
+
+MQ CCDT created version Compatible MQ client versions 
+
+6.0 6.0 7.0 7.1 7.5 8.0 9.0 
+7.0 7.0 7.1 7.5 8.0 9.0 
+7.1 7.1 7.5 8.0 9.0 
+7.5 7.1 7.5 8.0 9.0 
+8.0 8.0 9.0 
+9.0 8.0 9.0 
+
+Notes: 
+- There was no change in the MQCD length between 7.1 and 7.5. Therefore the CCDT created on 7.5 can be used on 7.1. 
+- There was no change in the MQCD length between 8.0 and 9.0. Therefore the CCDT created on 9.0 can be used on 8.0. 
+- Unless documented otherwise, CCDTs created on higher level maintenance releases (for example 8.0.0.3) are compatible with lower level (for this example: 8.0.0.0) MQ clients running the same MQ version and release. 
+
+Update on July 2016: 
+There are 2 APARs that allow OLDER MQ clients to use NEWER CCDT files! 
+These APARs relax the restriction by allowing newer CCDTs to be used on older clients but with the caveat that the older client cannot make use of any of the newer channel attributes. These attributes will assume their default values when the CCDT is negotiated with the queue manager. 
+. 
+For Java/JMS client applications: 
+IT10863: WEBSPHERE MQ CLASSES FOR JAVA/JMS APPLICATIONS CAN NOT USE CCDT FILES GENERATED ON A NEWER LEVEL QUEUE MANAGER [http://www.ibm.com/support/docview.wss?uid=swg1IT10863] 
+Version Maintenance Level 
+v7.0 7.0.1.14 
+v7.1 7.1.0.8 
+v7.5 7.5.0.6 
+v8.0 8.0.0.3 
+
+For C based (and non-Java/JMS) client applications: 
+IT11547: WEBSPHERE MQ CLIENT APPLICATIONS CANNOT USE CCDT FILES GENERATED ON A NEWER LEVEL QUEUE MANAGER [http://www.ibm.com/support/docview.wss?uid=swg1IT11547]. 
+This applies to C based and non-Java/JMS applications. 
+Version Maintenance Level 
+v7.1 7.1.0.8 
+v7.5 7.5.0.7 
+v8.0 8.0.0.3 
+
+
++ Compatibility of MQ clients and JMS .bindings files 
+
+- A JMS .bindings file that was created at an older version (such as 7.1) than the MQ JMS client (such as 8.0) will be used without version related errors by the client. 
+
+- A JMS .bindings file that was created at a newer version (such as 8.0) than the MQ JMS client (such as 7.1), will be used without version related errors by the client. If there are any new attributes in the JMS administered objects that the older client cannot read, they are ignored. 
+
+
++ Compatibility of SSL/TLS cipher specifications 
+
+There have been changes in recent fix packs related to the compatibility of SSL/TLS cipher specifications. For example, if you have a MQ Client at 7.1.0.1 connecting to a MQ 8.0.0.1 queue manager using an older SSL cipher specification, after applying Fix Pack MQ 8.0.0.2 to the queue manager, the connectivity may be broken because the queue manager indicates that the older SSL cipher spec is now deprecated. 
+
+For more details on the compatibility of SSL/TLS cipher specifications, see the following blog entry: 
+
+SSL and TLS Cipher Specification Deprecations for the MQ Product [https://www.ibm.com/developerworks/community/blogs/aimsupport/entry/ssl_and_tls_cipher_specification_deprecations_for_the_mq_product?lang=en] 
+Miguel A. Rodriguez 
+May 2016 
+Due to the recent security vulnerabilities (for example, POODLE Attack), the latest MQ product Fix Packs come with stricter, default security requirements that affect the use of the compromised Secure Socket Layer (SSL) and Weak Transport Level Security (TLS) Cipher Specifications. Since these Cipher Specification deprecations are disabled in MQ Fix Packs by default, review the article for the changes separated by MQ versions and Fix Pack levels. RELATED INFORMATION
+ WebSphere MQ V7.1 Announcement Letter - PDF [http://www.ibm.com/common/ssi/rep_ca/8/897/ENUS208-068/ENUS208068.PDF]
+WebSphere MQ V7.1 Announcement Letter - Web [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS211-395]
+WMQ Doc: Coexistence compatibility interoperability [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.mq.mig.doc/q006320_.htm?lang=en]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM MQ 
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

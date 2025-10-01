@@ -1,0 +1,31 @@
+Title: IBM Large number of BIP3316W message on the IIB message log - United States
+
+Text:
+IBM Integration Bus FileOutput node IIB error message TECHNOTE (FAQ)
+
+QUESTION
+ When reviewing logs a large number of IIB's messages are found and it has been inquired about their purpose. No reported loss of functionality of the product has been noticed and have only inquired about the messages in the logs. 
+
+CAUSE
+These are the warning messages logged from IBM Integration Bus for not having the name property of file set on the FileOutput node.
+
+ANSWER
+Please note that there are multiple ways to set the name of the file being written out of File Output Node. First one is, setting it on the property panel of FileOutput node, which becomes kind of static, appropriate when we know for sure that the name of the file would not change.
+
+Second option allows us to set the name of the file being written out dynamically, based on some criteria using the Integration Broker environmental variables. This second method is being applied here to cater to different file formats (csv, json and XML). Hence we see this BIP3316W messages, warning there is no name set on the properties panel logged into syslog file, every time message flow is restarted. This can be safely ignored. 
+
+Detailed description for this BIP message below:
+
+C:\Program Files\IBM\MQSI\9.0.0.2>mqsiservice -m 3316
+BIPmsgs en_US
+Console OEM CP=437, ICU CCSID=5348
+Default codepage=ibm-5348_P100-1997, in ascii=ibm-5348_P100-1997
+JAVA console codepage name=cp437
+
+BIP3316W: File node 'insert1' in message flow 'insert2' has no valid filename specified as property 'insert3'.
+The FileOutput node file name property is either not specified or its value is not a valid file name.
+
+If it is intended that each message has this property specified by the flow then there is no user action required. 
+Otherwise ensure that the flow correctly sets the file name in the local environment prior to propagation to this FileOutput
+node, or set the node property to specify a valid filename. See the IBM Integration Bus online documentation 
+section "FileOutput node" for more information.

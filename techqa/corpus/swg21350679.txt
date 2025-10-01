@@ -1,0 +1,70 @@
+Title: IBM Processes Hung in the Impromptu Web Reports Server Administration - United States
+
+Text:
+server administration; processes hung; delete queue TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Receiving error message when running prompted reports in Upfront. 
+
+Checking the Interactive queue in IWR Server Administration, there were many processes listed as cancelling, but could not be deleted. 
+
+SYMPTOM
+GeTemplate iwr_modifyprompts.utml failed. Reason: The content request'DescribeNewsItem' has failed. The Cognos BI provider (IWR) failed with these messages: Timed out waiting for prompt request to come back...
+
+
+CAUSE
+The job database file, iwr75job.db, is corrupted.
+
+RESOLVING THE PROBLEM
+Recreate the job db file. 
+
+Steps: There are two options to replace the job db file. This first set of steps uses Configuration Manager:
+
+
+ 1.  In Windows, start Services. Click Start, Control Panel, Administrative Tools, Services. 
+ 2.  Stop the Cognos IWR Service. 
+ 3.  Stop the ObjectStore Service. 
+ 4.  Open Windows explorer, and browse to the following location: "\Program Files\Cognos\cer6\iwr\database". 
+ 5.  Copy the iwr75job.db file that you wish to replace to another location and then delete the original one from the database folder. 
+ 6.  Start the ObjectStore Service. 
+ 7.  Open Configuration Manager and open the current configuration. 
+ 8.  Browse to the following location in Configuration Manager: "IBM Cognos Impromptu Web Reports / Data Store" 
+ 9.  Click Apply on this selection. 
+ 10. Start the Cognos IWR Service.
+
+
+In case for some reason recreating the job db using Configuration Manager does not work, try using the command prompt: 
+ 1. In Windows, start Services. Click Start, Control Panel, Administrative Tools, Services. 
+ 2. Stop the Cognos IWR Service. 
+ 3. Stop the ObjectStore Service. 
+ 4. Open Windows explorer and browse to the following location: "\Program Files\Cognos\cer6\iwr\database". 
+ 5. Copy the iwr75job.db file that you wish to replace to another location and then delete the original one from the database folder. 
+ 6. Start the ObjectStore Service. 
+ 7. Open a Command Prompt window, and browse to "\Program Files\Cognos\cer6\bin" 
+ 8. Type the following command: "iwcreatedb -job" to recreate the job db. This command can be replaced with: "iwcreatedb" to recreate all the db files (don't do this if you haven't backed up all four IWR db files) 
+ 9. Start the Cognos IWR Service.
+
+
+In the case of UNIX installations you cannot use Configuration Manager or Windows services to stop and start IWR or ObjectStore: 
+ 1. In your terminal window navigate to the bin directory in the location where IWR is installed
+    (ie: /opt/IBM/cognos/cer6/bin) 
+ 2. Set up your environment variables for your session using . ./iwrsetup.sh. 
+ 3. Stop the Cognos IWR service using "stop-iwr" 
+ 4. Stop ObjectStore using the appropriate script in /etc/rc2.d on Solaris and HPUX or on AIX type $OS_ROOTDIR/bin/ossvrshtd71 <hostname> and to stop the ObjectStore cache manager, type $OS_ROOTDIR/bin/oscmshtd 71<hostname>. 
+ 5. Copy the iwr75job.db file that you wish to replace to another location and then delete the original one from the database folder. 
+ 6. Start the ObjectStore Service using the appropriate script in /etc/rc2.d on Solaris and HPUX or on AIX, start ObjectStore by typing /etc/rc.objectstoreserv71 
+ 7. Ensure you are in ./cer6/bin 
+ 8. Recreate the iwr75job.db file by typing "iwcreatedb -job" 
+ 9. Start the Cognos IWR service by typing "start-iwr"
+
+
+For further reference on starting/stopping IWR and ObjectStore refer to the following: 
+
+Stop and Start Impromptu Web Reports Server Processes [http://pic.dhe.ibm.com/infocenter/c7bi/v7r5m0/index.jsp?topic=%2Fcom.ibm.swg.im.cognos.ag_iwr.7.5.0.doc%2Fag_iwr_id3091StopandStartImpromptuWebReportsServerProce.html] 
+ObjectStore Services [http://pic.dhe.ibm.com/infocenter/c7bi/v7r5m0/index.jsp?topic=%2Fcom.ibm.swg.im.cognos.ag_iwr.7.5.0.doc%2Fag_iwr_id3091StopandStartImpromptuWebReportsServerProce.html]  
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Transformer Business Analytics Cognos Series 7 Impromptu Web Reports Business Analytics Cognos Series 7 Upfront 
+HISTORICAL NUMBER
+ 1022252

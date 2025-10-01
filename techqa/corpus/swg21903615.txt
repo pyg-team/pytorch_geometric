@@ -1,0 +1,27 @@
+Title: IBM Factors that influence the time for a Cognos BI content store upgrade - United States
+
+Text:
+content; store; upgrade TECHNOTE (FAQ)
+
+QUESTION
+ What factors influence the time for a Cognos Business Intelligence Content Store upgrade? 
+
+ANSWER
+It depends on many factors.
+1. Number of reports. Reports contain specifications, properties, security settings, and outputs.
+2. Number of report packages. Packages contain metadata, reports, and folders.
+3 Number of agents. Agents include the conditions, schedules, and tasks that are used to monitor events and deliver notifications.
+4. Server configuration. Server configuration contains directory information, the Cognos namespace and information about contacts, distribution lists, data sources, and printers.
+5. The amount of user information. Personal user information consists of My Folders and My Pages.
+6. Language information.
+
+The following external factors can affect the upgrade time as well.
+
+1. The number and speed of system processors.
+2. Storage device configuration.
+3. The type of workload that the server can handle. A workload that consists of large numbers of small files, or files with very long file names, can cause a relatively longer upgrade time.
+
+The database's scripts (dbUpgrade*) executed during the upgrade are present under, configuration\schemas\content\"database"\ folder (change" database" by Oracle or Sql server or your database type)
+
+RELATED INFORMATION
+ Export large Content store Database [http://www-01.ibm.com/support/docview.wss?uid=swg21434157]

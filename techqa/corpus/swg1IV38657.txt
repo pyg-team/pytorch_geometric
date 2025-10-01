@@ -1,0 +1,154 @@
+Title: IBM IV38657: EEZCS ... -C "NODEREQ -O STARTWAIT -T ..." DOES NOT CORRECTLY HONOR THE SPECIFIED TIMEOUT VALUE - United States
+
+Text:
+  A FIX IS AVAILABLE
+3.2.2-TIV-SAAM-FP0003, Tivoli System Automation Application Manager [http://www-01.ibm.com/support/docview.wss?uid=swg24035346]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The start of virtual server with
+   eezcs -D Domain -c "nodereq -o startwait -t <Timeout value>
+   <server name>"
+   might crash.
+   This is because the implementation queries resource status every
+   10 seconds. The query also takes some time. Because of sleep
+   time between queries it might be that at the end the timout
+   becomes effective, but just when the server completed startup.
+   This lead to exception.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   * Tivoli System Automation Application Manager (SA AM) 3.2.2
+   * users using the command shell
+   ****************************************************************
+   * The start of virtual servers with the command
+   *  eezcs -D Domain -c "nodereq -o startwait -t <timeout>"
+   * does not honor the specified timeout value correctly. The
+   * current implementation queries the status and then sleeps for
+   * 10 seconds before setting up the next query. For the timeout
+   * calculation it uses the 10 seconds, but does not consider the
+   * time it takes to run the query command. As a result, the real
+   * time, after which the timeout is reached, is higher than the
+   * specified value.
+   * If the query command takes e.g. 2-3 seconds, the difference
+   * between the specified timeout value and the timeout of the
+   * command is about 20-30%.
+   ****************************************************************
+   * RECOMMENDATION:
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The internal handling of the command 'eezcs' has been adjusted
+   to address this issue. Now the specified timeout value is
+   honored, however since the status is determined by a query, the
+   real time until the timeout might still differ by single digit
+   seconds from the specified timeout value.
+   .
+   The official fix for this problem will be included in fixpack 2
+   of Tivoli System Automation Application Manager 3.2.2.
+   | 3.2.2-TIV-SAAM-FP0002 |
+   .
+   Additional Search Keywords
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV38657
+   
+   
+ * REPORTED COMPONENT NAME
+   SYS AUTO APPLI
+   
+   
+ * REPORTED COMPONENT ID
+   5724S9200
+   
+   
+ * REPORTED RELEASE
+   322
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-27
+   
+   
+ * CLOSED DATE
+   2013-05-03
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SYS AUTO APPLI
+   
+   
+ * FIXED COMPONENT ID
+   5724S9200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R322 PSY
+   UP

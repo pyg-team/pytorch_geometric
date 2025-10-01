@@ -1,0 +1,19 @@
+Title: IBM GENLIN gives incorrect QIC and QICC values for binomial response models with last response category as reference category - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm using the GENLIN procedure in SPSS/PASW Statistics to fit a GEE model with binary responses. I'm using a binomial distribution assumption, as is common for binary response models. I've noticed that the QIC and QICC statistics for the same model are different when I use the first response category as the reference category than they are when I use the last response category as the reference category. Shouldn't these be the same regardless of which category is the reference category? 
+
+RESOLVING THE PROBLEM
+The QIC and QICC statistics should not differ with different choices for reference category in a binomial model. The problem has been reported to SPSS Development. It affects Releases 16.0 through 18.0. It has been fixed in Release 18.0.1. In affected releases, please make sure to use the first category as the response category in binomial models when comparing QIC and/or QICC values, as this is the way to obtain correct values. We apologize for any resulting inconvenience
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 86265

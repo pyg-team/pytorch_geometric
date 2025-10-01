@@ -1,0 +1,75 @@
+Title: IBM Unable to create CDC Instance for LUW DB2 - United States
+
+Text:
+Load API test failed; create instance failed TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Load API test failed and returned the following error A SQL exception has occurred. The SQL error code is '3107'. The SQL state is: . The error message is:
+SQL3107W There is at least one warning message in the message file.
+. 
+
+SYMPTOM
+Select a database schema for metadata tables: 3
+Would you like to specify a refresh loader path (y/n) [y]:
+Enter the refresh loader path: /opt/ibm/cdc/cdcloader
+
+
+Creating a new instance. Please wait...
+
+
+Load API test failed and returned the following error A SQL exception has occurred. The SQL error code is '3107'. The SQL state is: . The error message is:
+SQL3107W There is at least one warning message in the message file.
+.
+IBM InfoSphere Data Replication will not be able to serve as a target.
+
+Instance CDCWCSINTT was successfully created.
+
+
+
+ENVIRONMENT
+IIDR 10.2.1 for DB2 on AIX
+
+DIAGNOSING THE PROBLEM
+25 2015-04-16 10:10:36.921 Agent Reader{22} com.datamirror.ts.util.TsUdbEnvironment checkTargetDbEnvironment() Error! Fast Load API test failed. Check <CDC installation>/instance/<instance name>/log/LOADMSG... file for more info.
+26 2015-04-16 10:10:36.921 Agent Reader{22} com.datamirror.ts.metadata.MetadataManager dropTable() A SQL exception has occurred. The SQL error code is '-204'. The SQL state is: 42704. The error message is: |"CDCADMIN.TS_AUTH" is an undefined name.. SQLCODE=-204, SQLSTATE=42704, DRIVER=4.11.88¦java.sql.SQLSyntaxErrorException "CDCADMIN.TS_AUTH" is an undefined name.. SQLCODE=-204, SQLSTATE=42704, DRIVER=4.11.88| at com.ibm.db2.jcc.am.gd.a(gd.java:676)| at com.ibm.db2.jcc.am.gd.a(gd.java:60)| at com.ibm.db2.jcc.am.gd.a(gd.java:127)| at com.ibm.db2.jcc.am.kn.c(kn.java:2561)| at com.ibm.db2.jcc.am.kn.d(kn.java:2549)| at com.ibm.db2.jcc.am.kn.b(kn.java:1965)| at com.ibm.db2.jcc.t4.cb.h(cb.java:224)| at com.ibm.db2.jcc.t4.cb.b(cb.java:47)| at com.ibm.db2.jcc.t4.q.b(q.java:38)| at com.ibm.db2.jcc.t4.rb.h(rb.java:114)| at com.ibm.db2.jcc.am.kn.hb(kn.java:1960)| at com.ibm.db2.jcc.am.kn.a(kn.java:3066)| at com.ibm.db2.jcc.am.kn.c(kn.java:719)| at com.ibm.db2.jcc.am.kn.executeUpdate(kn.java:703)| at com.datamirror.ts.jdbc.CdcStatement.executeUpdate(CdcStatement.java:142)| at com.datamirror.ts.jdbc.db2.Db2CdcStatement.executeUpdate(Db2CdcStatement.java:218)| at com.datamirror.ts.jdbc.CdcJdbcStatement.executeUpdate(CdcJdbcStatement.java:126)| at com.datamirror.ts.metadata.MetadataManager.dropTable(MetadataManager.java:3190)| at com.datamirror.ts.metadata.MetadataManager.addDbTables(MetadataManager.java:3046)| at com.datamirror.ts.metadata.MetadataManager.setNewCustomerDatabase(MetadataManager.java:3015)| at com.datamirror.ts.metadata.MetadataManager.handleNewCustomerDatabase(MetadataManager.java:2537)| at com.datamirror.ts.metadata.MetadataManager.setNewCustomerDatabase(MetadataManager.java:2436)| at com.datamirror.ts.jdbcagent.message.custom.MsgSetConfigInfo$Handler.setNewCustomerDatabase(MsgSetConfigInfo.java:1262)| at com.datamirror.ts.jdbcagent.message.custom.MsgSetConfigInfo$Handler.handleRequest(MsgSetConfigInfo.java:650)| at com.datamirror.ts.jdbcagent.messagehandler.generated.MsgTsjavaToolsHandler.handleMessage(MsgTsjavaToolsHandler.java:80)| at com.datamirror.ts.jdbcagent.main.MessageReader.runThread(MessageReader.java:142)| at com.datamirror.ts.util.TsThread.run(TsThread.java:130)
+27 2015-04-16 10:10:36.921 Agent Reader{22} com.datamirror.ts.metadata.MetadataManager dropTable() A SQL exception has occurred. The SQL error code is '-204'. The SQL state is: 42704. The error message is: |"CDCADMIN.TS_BOOKMARK" is an undefined name.. SQLCODE=-204, SQLSTATE=42704, DRIVER=4.11.88¦java.sql.SQLSyntaxErrorException "CDCADMIN.TS_BOOKMARK" is an undefined name.. SQLCODE=-204, SQLSTATE=42704, DRIVER=4.11.88| at com.ibm.db2.jcc.am.gd.a(gd.java:676)| at com.ibm.db2.jcc.am.gd.a(gd.java:60)| at com.ibm.db2.jcc.am.gd.a(gd.java:127)| at com.ibm.db2.jcc.am.kn.c(kn.java:2561)| at com.ibm.db2.jcc.am.kn.d(kn.java:2549)| at com.ibm.db2.jcc.am.kn.b(kn.java:1965)| at com.ibm.db2.jcc.t4.cb.h(cb.java:224)| at com.ibm.db2.jcc.t4.cb.b(cb.java:47)| at com.ibm.db2.jcc.t4.q.b(q.java:38)| at com.ibm.db2.jcc.t4.rb.h(rb.java:114)| at com.ibm.db2.jcc.am.kn.hb(kn.java:1960)| at com.ibm.db2.jcc.am.kn.a(kn.java:3066)| at com.ibm.db2.jcc.am.kn.c(kn.java:719)| at com.ibm.db2.jcc.am.kn.executeUpdate(kn.java:703)| at com.datamirror.ts.jdbc.CdcStatement.executeUpdate(CdcStatement.java:142)| at com.datamirror.ts.jdbc.db2.Db2CdcStatement.executeUpdate(Db2CdcStatement.java:218)| at com.datamirror.ts.jdbc.CdcJdbcStatement.executeUpdate(CdcJdbcStatement.java:126)| at com.datamirror.ts.metadata.MetadataManager.dropTable(MetadataManager.java:3190)| at com.datamirror.ts.metadata.MetadataManager.addDbTables(MetadataManager.java:3058)| at com.datamirror.ts.metadata.MetadataManager.setNewCustomerDatabase(MetadataManager.java:3015)| at com.datamirror.ts.metadata.MetadataManager.handleNewCustomerDatabase(MetadataManager.java:2537)| at com.datamirror.ts.metadata.MetadataManager.setNewCustomerDatabase(MetadataManager.java:2436)| at com.datamirror.ts.jdbcagent.message.custom.MsgSetConfigInfo$Handler.setNewCustomerDatabase(MsgSetConfigInfo.java:1262)| at com.datamirror.ts.jdbcagent.message.custom.MsgSetConfigInfo$Handler.handleRequest(MsgSetConfigInfo.java:650)| at com.datamirror.ts.jdbcagent.messagehandler.generated.MsgTsjavaToolsHandler.handleMessage(MsgTsjavaToolsHandler.java:80)| at com.datamirror.ts.jdbcagent.main.MessageReader.runThread(MessageReader.java:142)| at com.datamirror.ts.util.TsThread.run(TsThread.java:130)
+28 2015-04-16 10:10:36.921 Agent Reader{22} com.datamirror.ts.metadata.MetadataManager dropTable() A SQL exception has occurred. The SQL error code is '-204'. The SQL state is: 42704. The error message is: |"CDCADMIN.TS_CONFAUD" is an undefined name.. SQLCODE=-204, SQLSTATE=42704, DRIVER=4.11.88¦java.sql.SQLSyntaxErrorException "CDCADMIN.TS_CONFAUD" is an undefined name.. SQLCODE=-204, SQLSTATE=42704, DRIVER=4.11.88| at com.ibm.db2.jcc.am.gd.a(gd.java:676)| at com.ibm.db2.jcc.am.gd.a(gd.java:60)| at com.ibm.db2.jcc.am.gd.a(gd.java:127)| at com.ibm.db2.jcc.am.kn.c(kn.java:2561)| at com.ibm.db2.jcc.am.kn.d(kn.java:2549)| at com.ibm.db2.jcc.am.kn.b(kn.java:1965)| at com.ibm.db2.jcc.t4.cb.h(cb.java:224)| at com.ibm.db2.jcc.t4.cb.b(cb.java:47)| at com.ibm.db2.jcc.t4.q.b(q.java:38)| at com.ibm.db2.jcc.t4.rb.h(rb.java:114)| at com.ibm.db2.jcc.am.kn.hb(kn.java:1960)| at com.ibm.db2.jcc.am.kn.a(kn.java:3066)| at com.ibm.db2.jcc.am.kn.c(kn.java:719)| at com.ibm.db2.jcc.am.kn.executeUpdate(kn.java:703)| at com.datamirror.ts.jdbc.CdcStatement.executeUpdate(CdcStatement.java:142)| at com.datamirror.ts.jdbc.db2.Db2CdcStatement.executeUpdate(Db2CdcStatement.java:218)| at com.datamirror.ts.jdbc.CdcJdbcStatement.executeUpdate(CdcJdbcStatement.java:126)| at com.datamirror.ts.metadata.MetadataManager.dropTable(MetadataManager.java:3190)| at com.datamirror.ts.metadata.MetadataManager.addDbTables(MetadataManager.java:3069)| at com.datamirror.ts.metadata.MetadataManager.setNewCustomerDatabase(MetadataManager.java:3015)| at com.datamirror.ts.metadata.MetadataManager.handleNewCustomerDatabase(MetadataManager.java:2537)| at com.datamirror.ts.metadata.MetadataManager.setNewCustomerDatabase(MetadataManager.java:2436)| at com.datamirror.ts.jdbcagent.message.custom.MsgSetConfigInfo$Handler.setNewCustomerDatabase(MsgSetConfigInfo.java:1262)| at com.datamirror.ts.jdbcagent.message.custom.MsgSetConfigInfo$Handler.handleRequest(MsgSetConfigInfo.java:650)| at com.datamirror.ts.jdbcagent.messagehandler.generated.MsgTsjavaToolsHandler.handleMessage(MsgTsjavaToolsHandler.java:80)| at com.datamirror.ts.jdbcagent.main.MessageReader.runThread(MessageReader.java:142)| at com.datamirror.ts.util.TsThread.run(TsThread.java:130)
+29 2015-04-16 10:10:38.935 Agent Reader{22} com.datamirror.ts.jdbcagent.main.AgentExecutive shutdown() Agent executive shutdown !!!
+30 2015-04-16 10:10:38.935 Agent Reader{22} com.datamirror.ts.jdbcagent.main.AgentExecutive shutdown() Agent executive socket closed 
+
+RESOLVING THE PROBLEM
+
+
+The problem is you didn't set up the fast load file correctly... Here is information: 
+
+Case 6 : dmconfigurets save warning with message 
+[/support/docview.wss?uid=swg21883016&aid=1] [/support/docview.wss?uid=swg21883016&aid=1]
+Load API test failed 
+
+IIDR requires the following to use DB2 LOAD for refresh. 
+
+· Read/write permission of IIDR OS user. 
+· Shared volume if architecture is remote apply configuration. 
+· DB user is granted to execute LOAD (It's OK if DB user have DBADM authority) 
+· Read permission of DB2 instance owner. 
+
+For example, you can verify requirement by utilizing the following commands. 
+/opt/IBM/CDC/loader is refresh loader path in this example. 
+1. Write test by IIDR user from CDC Server 
+
+[cdcuser@iidr ~]$ echo TEST > /opt/IBM/CDC/loader/test.txt 
+
+2. Read test by DB2 instance owner from DB2 Server [db2inst1@dbsvr ~]$ cat /opt/IBM/CDC/loader/test.txt 
+
+3. Delete test by IIDR user from CDC Server [cdcuser@iidr ~]$ rm /opt/IBM/CDC/loader/test.txt 
+
+
+If DB2 instance owner can’t access a file that newly created by IIDR user to refresh loader directory even has permission to read this directory, check umask of IIDR user and change to 022 or appropriate value. [cdcuser@cdc1 ~]$ umask 
+0027 
+[cdcuser@cdc1 ~]$ umask 022 
+
+Recommend to put umask command to end of .profile or .bash_profile file which is exist in home directory of user. 
+
+In addition, V10.2.1 provides the capability to disable LOAD by unset the Refresh Loader Path. If you uncheck “Specify refresh loader path”, JDBC refresh will used without LOAD test. 
+
+[/support/docview.wss?uid=swg21883016&aid=2] [/support/docview.wss?uid=swg21883016&aid=2]

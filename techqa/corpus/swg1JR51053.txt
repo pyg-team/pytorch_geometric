@@ -1,0 +1,239 @@
+Title: IBM JR51053: Decryption errors after upgrading to IBM Java 1.6 SR16 - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.0.0.9 for Developer Express [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Commerce&fixids=7.0.0-WS-WCDeveloperExpress-FP009&source=SAR]
+7.0.0.9 for Developer Professional [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Commerce&fixids=7.0.0-WS-WCDeveloperProfessional-FP009&source=SAR]
+7.0.0.9 for Developer Enterprise [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Commerce&fixids=7.0.0-WS-WCDeveloperEnterprise-FP009&source=SAR]
+7.0.0-WS-WCServer-FP009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Commerce&fixids=7.0.0-WS-WCServer-FP009&source=SAR]
+JR51053.fp 7005: Unable to decrypt data after upgrading to IBM Java SDK 1.6 SR16 [http://www-01.ibm.com/support/docview.wss?uid=swg24038285]
+JR51053.fp 7007: Unable to decrypt data after upgrading to IBM Java SDK 1.6 SR16 [http://www-01.ibm.com/support/docview.wss?uid=swg24038282]
+JR51053.fp 7006 : Unable to decrypt data after upgrading to IBM Java SDK 1.6 SR16 [http://www-01.ibm.com/support/docview.wss?uid=swg24038283]
+WebSphere Commerce Version 7.0.0.9 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24038826]
+JR53438 - Mandatory cumulative Interim Fix for WebSphere Commerce Version 7 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24040267]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrading to Java SDK 1.6 SR16 Cumulative Fix, available
+   with WebSphere Application Server V7.0 Fix Pack 33 (7.0.0.33),
+   WebSphere Commerce servers with the following configurations may
+    fail to decrypt data:
+   
+   Sites using a 3DES 32-hexadecimal character merchant key are
+   unable to decrypt database data.
+   Sites not using an AES merchant key may experience temporary
+   cookie errors as sessions created before the Java upgrade cannot
+   be decrypted.
+   
+   Decryption errors such as the following are found in
+   SystemOut.log:
+   
+        CommerceSrvr E com.ibm.commerce.util.wrapper.EnhancedCryptx
+   decrypt(text, user_key, encoding) CMN0409E: The following error
+   occurred during processing: "javax.crypto.BadPaddingException:
+   Given final block not properly padded
+   
+        CommerceSrvr  E com.ibm.commerce.util.wrapper.AES128Cryptx
+   decrypt(String text, String user_key, String encoding, boolean
+   useMac, boolean isAESDBEnabled) CMN0409E: The following error
+   occurred during processing:
+   "INTEGRITY_CHECK_FAILED_DURING_DECRYPTION".
+   
+         CommerceSrvr  E
+   com.ibm.commerce.browseradapter.WCCookieUserSession
+   decipherTokens() CMN1039E: An invalid cookie was received for
+   the user, your logonId may be in use by another user.
+   
+   Recommendation:
+   
+        Non-Solaris sites that have not yet been upgraded to Java
+   SDK 1.6 SR16
+   
+              Apply JR51053. See section below for download links.
+   Java SDK 1.6 SR16 can be safely applied after JR51053 has been
+   installed.
+   
+        Non-Solaris sites that have already been upgraded to Java
+   SDK 1.6 SR16
+   
+             Sites using a 3DES 16-hexadecimal character merchant
+   key
+   
+                  Apply JR51053. See below for download links.
+   
+                  Note: Sites using a 3DES 16-hexadecimal character
+   merchant key would have not experienced database decryption
+   errors after upgrading to Java SDK 1.6 SR16, but session data
+   could have been affected. As JR51053 updates the encryption
+   algorithm used for session data, the site may experience
+   temporary session decryption errors for sessions generated
+   before the iFix was applied.
+   
+   
+              Sites using a 3DES 32-hexadecimal character merchant
+   key
+   
+                    After applying Java SDK 1.6 SR16 to a site
+   using 3DES 32-hexadecimal character merchant key, database data
+   cannot be decrypted. If you are experiencing these errors, apply
+   JR51053 to correct the decryption errors. See below for download
+   links.
+   
+                     or
+   
+                     Sites that were setup with a 3DES
+   32-hexadecimal character merchant key after Java SDK 1.6 SR16
+   was applied are not likely experiencing database decryption
+   errors.  To avoid future compatibility issues, it is required to
+   migrate these environments to an AES merchant key before
+   applying JR51053.  To migrate to an AES merchant key, see steps
+   4 to 8 in the following link: Updating to NIST SP 800-131A
+   security standards. After migrating to an AES merchant key,
+   apply JR51053.  See below for download links.
+   
+         Sites running on the Solaris operating system
+   
+                The Solaris version of the SDK is not immediately
+   affected.  Applying JR51053 will have no impact on the system.
+   To avoid potential future compatibility issues, clients are
+   required to use an AES merchant key. To migrate to an AES
+   merchant key, see steps 4 to 8 in the following link:  Updating
+   to NIST SP 800-131A security standards.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do not apply IBM Java SDK 1.6 SR16 Cumulative Fix for WebSphere
+   Application Server, made available with WebSphere Application
+   Server V7.0 Fix Pack 33. Java SDK 1.6 SR15 Cumulative Fix for
+   WebSphere Application Server can be used instead. Java SDK 1.6
+   SR15 download is available with WebSphere Application Server
+   V7.0 Fix Pack 31.
+   
+   Using WebSphere Application Server V7.0 Fix Pack 33 with Java
+   SDK 1.6 SR15 is a supported configuration.
+   
+   If the WebSphere Commerce V7.0 environment was installed on a
+   system that had Java SDK 1.6 SR16 pre-installed (WebSphere
+   Application Server 7.0.0.33) you will not be immediately
+   affected, but may experience similar issues with future fixes.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   All Site users
+   
+   PROBLEM ABSTRACT:
+   Decryption errors after upgrading to IBM Java 1.6 SR16
+   
+   BUSINESS IMPACT:
+   Unable to access some data.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Resolves an issue which was introduced by upgrading to IBM JDK
+   1.6 SR16.
+   -------------------------------------------------------------
+   The latest available maintenance information can be obtained
+   from the Recommended Fixes for WebSphere Commerce technote:
+   http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296 [http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR51053
+   
+   
+ * REPORTED COMPONENT NAME
+   3C COM PROF ED
+   
+   
+ * REPORTED COMPONENT ID
+   5724I4000
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / Pervasive
+   
+   
+ * SUBMITTED DATE
+   2014-08-19
+   
+   
+ * CLOSED DATE
+   2014-11-25
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   3C COM PROF ED
+   
+   
+ * FIXED COMPONENT ID
+   5724I4000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,45 @@
+Title: IBM DataStage SAP R/3 pack aborts with error: ds_loadlibrary: error in dlopen - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DataStage SAP R/3 pack aborts with error: ds_loadlibrary: error in dlopen 
+
+RESOLVING THE PROBLEM
+Before the installation of DataStage SAP R/3 pack, please make sure the following are done correctly: 
+
+ On DataStage server: 
+
+ 1. Make sure all the gateway entries are specified in /etc/services file. Please see "Configuring the SAP/Dispatch/Gateway Service" documented in i46depsr.pdf file. 
+ 2. For DS SAP R/3 pack on AIX, please install RFC library version 6.4 Non-Unicode library and Unicode library. For AIX, the Non-Unicode library must be 32 bit RFCSDK library librfccm.so. For the Unicode libraries on AIX, only 64 bit libraries are available. 
+    
+    To determine the version of librfccm.o run the following: 
+    $ strings librfccm.o | grep LIBRFC
+    @(#)LIBRFC (c) SAP AG: Version: 640 Patch level: 0 Patch number: 168 thread-safe build 32 bit
+    
+    Make sure the librfccm.o file is 32 bit.
+    
+    The following Unicode libraries are 64 bit on AIX:
+    
+    libicudata##.so
+    libicui18n##.so
+    libicuuc##.so
+    librfcum.o
+    libsapu16_mt.so
+    libsapucum.so
+    
+    Those libraries can be downloaded from SAP market place. IBM is not authorized to distribute those SAP libraries. 
+ 3. Those libraries can be copied into:
+    
+    <IS install dir>/IBM/InformationServer/Server/DSComponents/lib
+    
+    By default this is /opt/IBM/InformationServer/Server/DSComponents/lib 
+ 4. Make sure users have proper permissions to those libraries. 
+ 5. Make sure can ping SAP server from DataStage Server. 
+ 6. After all the conditions are met, please install the DataStage SAP R/3 pack on the DataStage server.
+
+
+From DataStage client:  1. You can install SAP GUI on the DataStage client. This will add all the necessary gateway entries into services file. Also it will install 32 bit librfc32.dll file. 
+ 2. Make sure you can ping SAP server from DataStage client. 
+ 3. Install the DataStage SAP R/3 client on the DataStage client machine.

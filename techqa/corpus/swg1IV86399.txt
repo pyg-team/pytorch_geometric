@@ -1,0 +1,192 @@
+Title: IBM IV86399: NEW FIPS 140-2 CERTIFIED IBMJCEFIPS PROVIDER VERSION 1.8 AND ITS CO-REQUISITE IBMJSSE2 PROVIDER - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: Not Applicable
+   .
+   Stack Trace: Not Applicable
+   .
+   None
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The IBM Java Security team announces the availability of
+   IBMJCEFIPS Version 1.8 that is currently undergoing the FIPS
+   140-2 certification process. The new IBMJCEFIPS was submitted to
+   NIST for a full certification on April 1st, 2016 and approval is
+   expected in 3 to 6 months from the date of submission.
+   IBMJCEFIPS will be certified for Java 8 and vendor affirmed for
+   Java 6 and 7. The new IBMJCEFIPS will be available to Java
+   Bundlers through Java CR16-03 service streams for Java 6, 7, 8.
+   The IBMJCEFIPS provider, version 1.8, will replace the earlier
+   version 1.71.
+   The version 1.71 was last certified in May 2016 to older SP186-2
+   digital standards. It was certified on Java 6 and Vendor
+   affirmed for Java 7 and Java 8. Finally it was certified as
+   software-only without any hardware acceleration.
+   The new IBMJCEFIPS 1.8 is compliant with SP186-4 digital
+   signature requirements. It is also certified on hardware
+   platforms with crypto-capable processors(Java 8 only), in
+   addition to the software-only version. Version 1.8 is fully
+   compliant with SP800-38D requirements and contains security
+   fixes to vulnerabilities found since the last full
+   certification. The newer version also meets the new FIPS random
+   number rules and seeding requirements. It contains resolutions
+   for multiple APARS. Versions 1.8 and 1.71 cannot coexist, and
+   bundling applications must account for the incompatibilities
+   between the two versions.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The SP186-4 digital signature standards impose new limits on key
+   sizes and algorithms. Applications must change application code
+   to use FIPS-approved algorithms and key sizes. Owners of all
+   impacted applications must upgrade to the Java CR16_03 service
+   releases to obtain the updated IBMJCEFIPS Provider and IBM JSSE
+   Provider.
+   There are behavioral changes between version 1.71 and version
+   1.8. The new IBMJCEFIPS provider could enter an error state
+   under certain error conditions and a restart
+   of JVM will be needed to recover from the error state.
+   APARs resolved with the new FIPS Provider:
+   IV82939 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV82939] -- "Signature algorithm mismatch" only on hybrid JVM
+   IV82919 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV82919] -- Application fails to start on zOS when using
+   IBMJCEFIPS
+   IV83173 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV83173] - IBMSecureRandom in IBMJCEFIPS gets hang after some
+   time
+   The associated RTC PR is 114176
+   The associated Austin CMVC defect is 117404
+   JVMs affected : Java 6.0, Java 6.1, Java 7.0, java 7.1 and Java
+   8.0
+   The fix was delivered for Java 6.0 SR16 FP30, Java 6.1 SR8 FP30,
+   Java 7.0 SR9 FP50, Java 7.1 SR3 FP50 and Java 8.0 SR3 FP10
+   The affected jars are "ibmjsseprovider2.jar" and
+   "ibmjcefips.jar".
+   The build level of "ibmjsseprovider2.jar" for the affected
+   releases is "20160616"
+   The build level of "ibmjcefips.jar" for the affected releases is
+   "20160324"
+   .
+   This APAR will be fixed in the following Java Releases:
+      8    SR3 FP10  (8.0.3.10)
+      7 R1 SR3 FP50  (7.1.3.50)
+      6    SR16 FP30 (6.0.16.30)
+      7    SR9 FP50  (7.0.9.50)
+      6 R1 SR8 FP30  (6.1.8.30)
+   .
+   Contact your IBM Product's Service Team for these Service
+   Refreshes and Fix Packs.
+   For those running stand-alone, information about the available
+   Service Refreshes and Fix Packs can be found at:
+              https://www.ibm.com/developerworks/java/jdk/ [https://www.ibm.com/developerworks/java/jdk/]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV86399
+   
+   
+ * REPORTED COMPONENT NAME
+   SECURITY
+   
+   
+ * REPORTED COMPONENT ID
+   620700125
+   
+   
+ * REPORTED RELEASE
+   270
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-30
+   
+   
+ * CLOSED DATE
+   2016-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SECURITY
+   
+   
+ * FIXED COMPONENT ID
+   620700125
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R270 PSY
+   UP
+   
+   
+ * R260 PSY
+   UP
+   
+   
+ * R600 PSY
+   UP

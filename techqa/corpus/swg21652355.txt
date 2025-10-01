@@ -1,0 +1,113 @@
+Title: IBM Rational Developer for the Enterprise e-assemblies to download from Passport Advantage - United States
+
+Text:
+eAssemblies; eAssembly TECHNOTE (FAQ)
+
+QUESTION
+ Which IBM Rational Developer for the Enterprise e-assemblies should be downloaded from Passport Advantage? 
+
+ANSWER
+
+
+IBM Rational Developer for the Enterprise is a bundled offering. 
+
+This product offering includes: 
+
+ * IBM Rational Developer for System z
+ * IBM Rational Application Developer for WebSphere Software
+ * IBM Rational Developer for i RPG and COBOL Tools
+ * IBM Rational Developer for AIX and Linux (COBOL and C/C++ Edition)
+ * IBM Rational Business Developer
+
+Entitled customers can download the products included in the offering from Passport Advantage. In Passport Advantage, it is not always clear which e-assemblies are part of the Rational Developer for the Enterprise product and what should be downloaded. For instructions on downloading IBM Rational Developer for the Enterprise from Passport Advantage, select the tab below that corresponds to the version you are entitled to. 
+
+For more information on Rational Developer for the Enterprise, see the IBM Rational Developer for the Enterprise [http://www-03.ibm.com/software/products/en/subcategory/SWY30] Website. 
+
+
+
+TAB NAVIGATION
+ * v9.1- selected tab,
+ * v9.0
+
+ If you are entitled to Rational Developer for the Enterprise and you want to download your software from Passport Advantage, perform the following steps: 
+
+ 1. Logon to Passport Advantage
+ 2. Select Software Downloads and Media Access
+ 3. Select the Download Finder
+ 4. Select Find by description or part number 
+ 5. Select the Product Description and All radio buttons and enter Rational Developer in the description field. 
+ 6. Select Continue.
+ 7. Expand the eAssemblies and you'll see your entitled software
+ 8. For Rational Developer for the Enterprise v9.1, download the following (Note: Each of the e-assemblies listed below are part of the Rational Developer for the Enterprise bundle.):  * IBM Rational Developer for System z v9.1 (CRS61ML, CRS5ZML, and CRS60ML):  * Rational Developer for System z Client V9.1 eAssembly (CRS61ML)
+        * IBM Rational Developer for System z Server V9.1 Multiplatform Multilingual eAssembly (CRS5ZML)
+        * Rational License Server 8.1.4 and Enterprise Deploy V1.7.2 Multiplatform Multilingual eAssembly (CRS60ML) Note: CRS60ML is only required if you are using floating or token licenses.
+          
+          
+       
+       
+     * IBM Rational Application Developer v9.1 (CRRV0ML):  * IBM Rational Application Developer for WebSphere software V9.1 Core Multiplatform Multilingual eAssembly (CRRV0ML)
+        * 
+       
+       
+     * IBM Rational Business Developer v9.1 (CRS5WML):  * IBM Rational Business Developer V9.1 Multiplatform Multilingual eAssembly (Core) (CRS5WML)
+        * 
+       
+       
+     * IBM Rational Developer for i v9.1 (CRS66ML, CRS67ML, and CRS68ML):  * 
+        * IBM Rational Developer for i RPG & COBOL Tools V9.1 Core eAssembly (CRS66ML)
+        * 
+        * 
+        * IBM Rational Developer for i RPG and COBOL + Modernization Tools, Java Edition V9.1 Core eAssembly (CRS67ML)
+        * 
+        * 
+        * RPG and COBOL + Modernization Tools, EGL Edition V9.1 Core eAssembly (CRS68ML)
+        * 
+        * 
+       
+       
+     * IBM Rational Developer for AIX and Linux v9.1 (CRS63ML and CRS64ML):  * 
+        * IBM Rational Developer for AIX and Linux C/C++ Edition V9.1 Core eAssembly (CRS63ML)
+        * 
+        * 
+        * IBM Rational Developer for AIX and Linux AIX COBOL Edition V9.1 Core eAssembly (CRS64ML)
+        * 
+        * 
+       
+       
+    
+    
+
+ Note: Documentation for each of the bundled products is offered as part of the individual product and not part of the bundle. 
+
+ If you are entitled to Rational Developer for the Enterprise and you want to download your software from Passport Advantage, perform the following steps: 
+
+ 1. Logon to Passport Advantage
+ 2. Select Software Downloads and Media Access
+ 3. Select the Download Finder
+ 4. Select Find by description or part number 
+ 5. Select the Product Description and All radio buttons and enter Rational Developer in the description field. 
+ 6. Select Continue.
+ 7. Expand the eAssemblies and you'll see your entitled software
+ 8. For Rational Developer for the Enterprise v9.0, download the following (Note: Each of the e-assemblies listed below are part of the Rational Developer for the Enterprise bundle.):  * IBM Rational Developer for System z v9.0 (CRN3YML and CRN3WML):  * IBM Rational Developer for System z Client v9.0 Multiplatform Multilingual eAssembly (CRN3YML)
+        * IBM Rational Developer for z Server v9.0 Multiplatform Multilingual eAssembly (CRN3WML)
+       
+       
+     * IBM Rational Application Developer v9.0 (CRN7HML):  * IBM Rational Application Developer for WebSphere software v9.0.1 Multiplatform Multilingual eAssembly (CRN7HML)
+       
+       
+     * IBM Rational Business Developer v9.0 (CRN2PML and CRN2QML):  * IBM Rational Business Developer v9.0 Multiplatform Multilingual (core) eAssembly (CRN2PML)
+        * IBM Rational Business Developer v9.0 Multiplatform Multilingual (optional) eAssembly (CRN2QML)
+       
+       
+     * IBM Rational Developer for i v9.0 (CRN3SML, CRN3UML, and CRN3TML):  * IBM Rational Developer for i RPG & COBOL Tools v9.0 Multiplatform Multilingual eAssembly (CRN3SML)
+        * IBM Rational Developer for i RPG & COBOL + Modernization Tools, EGL Edition v9.0 Multiplatform Multilingual eAssembly (CRN3UML)
+        * IBM Rational Developer for i RPG & COBOL + Modernization Tools, Java Edition v9.0 Multiplatform Multilingual eAssembly (CRN3TML)
+       
+       
+     * IBM Rational Developer for AIX and Linux v9.0 (CRN3QML):  * IBM Rational Developer for AIX and Linux v9.0 Multiplatform Multilingual eAssembly (CRN3QML)
+       
+       
+    
+    
+
+ Note: Documentation for each of the bundled products is offered as part of the individual product and not part of the bundle.

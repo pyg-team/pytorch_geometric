@@ -1,0 +1,272 @@
+Title: IBM PK72189: API METHOD WORKSPACE.CONTENTSEARCH() THROWS NULLPOINTEREXCEPTIONS FOR ANONYMOUS WORKSPACE. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.2 Download: WebSphere Portal and Web Content Management V6.1, fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022898]
+6.1.0.3 Download: WebSphere Portal and WCM V6.1 fix pack 3, 6.1.5 feature pack [http://www-01.ibm.com/support/docview.wss?uid=swg24025054]
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  API method Workspace.contentSearch() throws
+   NullPointerExceptions for Anonymous workspace.
+   
+   The stacktrace shows following exceptions..
+   
+   Exception: java.lang.NullPointerException
+                                    java.lang.NullPointerException
+    at
+   com.presence.connect.wmmcomms.PrincipalInformationManager.get(Pr
+   incipalI
+   nformationManager.java:88)
+    at
+   com.ibm.workplace.wcm.services.query.CoreQueries.buildXPathMenuQ
+   uery(Cor
+   eQueries.java:4253)
+    at
+   com.ibm.workplace.wcm.services.query.CoreQueries.performContentS
+   earch(Co
+   reQueries.java:4056)
+    at
+   com.ibm.workplace.wcm.api.WCM_APICoreQueries.performContentSearc
+   h(WCM_AP
+   ICoreQueries.java:1392)
+    at
+   com.ibm.workplace.wcm.api.WCM_Workspace.contentSearch(WCM_Worksp
+   ace.java
+   :2958)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Contentsearch api function raises NullPointerException with
+   anonymous user
+   Use of the workspace.contentSearch() api method generates NPE
+   with anonymous portal user.
+   
+   
+   - - Create Site , SiteArea , Content , AT , PT and as JSP
+   component and
+   give anonymous access to all of the objects.
+   
+   - - Use following code in JSP point to above JSP component..
+   
+   <%@ page import="com.ibm.workplace.wcm.api.*"%>
+   <%
+   out.println (" <BR> Starting JSP ..<BR>");
+   
+   Workspace workspace = WCM_API.getRepository
+   ().getAnonymousWorkspace();
+   out.println (" Workspace .." + workspace);
+   
+   workspace.setCurrentDocumentLibrary
+   (workspace.getDocumentLibrary("Test_Library"));
+   
+   DocumentId documentId = null;
+   
+   AuthoringTemplate AT = null;
+   SiteArea SA = null;
+   Document DOC = null;
+   
+   DocumentIdIterator AuthIt =
+   workspace.findByName(DocumentTypes.AuthoringTemplate,"Test_AT");
+   
+   if (AuthIt.hasNext()){
+   
+   documentId = AuthIt.nextId();
+   AT = (AuthoringTemplate) workspace.getById(documentId);
+   out.println (" <BR> AuthoringTemplate ID .." + AT.getId());
+   
+   }
+   
+   DocumentIdIterator SiteAreaIt =
+   
+   workspace.findByName(DocumentTypes.SiteArea,"Test_SiteArea");
+   if (SiteAreaIt.hasNext()){
+   
+   documentId = SiteAreaIt.nextId();
+   SA = (SiteArea) workspace.getById(documentId);
+   out.println (" <BR> SiteArea ID .." + SA.getId());
+   
+   }
+   DocumentIdIterator contIt = workspace.contentSearch(AT.getId(),
+   new
+   DocumentId [] {SA.getId()}, new DocumentId [] {}, new String
+   [0], true);
+   while(contIt.hasNext())
+   
+   {
+   documentId = contIt.nextId();
+   DOC = (Document) workspace.getById(documentId);
+   out.println (" <BR> Content title.." + DOC.getName());
+   
+   
+   }
+   
+   %>
+   
+   - - Create anonymous page and LRP and configure above JSP
+   component annd
+   preview them.. It will gove list of the content and
+   contentSearch API
+   method seems to be working fine..
+   
+   
+   install following IFixes:
+   
+   
+   - - PK69894 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK69894] and the 97 pre-req iFixes.
+   PK67661 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK67661]
+   PK67115 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK67115]
+   PK70072 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK70072] and all pre-req iFixes.
+   
+   - - Try to preview the above Page again , now the JSP does not
+   work
+   correctly and throws NPE in workspace.contentSearch Method.
+   
+   
+   
+   
+   The following errors appear in SystemOut.log:
+   Exception: java.lang.NullPointerException
+   
+   java.lang.NullPointerException
+   at
+   com.presence.connect.wmmcomms.PrincipalInformationManager.get(Pr
+   incipalI
+   nformationManager.java:88)
+   at
+   com.ibm.workplace.wcm.services.query.CoreQueries.buildXPathMenuQ
+   uery(Cor
+   eQueries.java:4253)
+   at
+   com.ibm.workplace.wcm.services.query.CoreQueries.performContentS
+   earch(Co
+   reQueries.java:4056)
+   at
+   com.ibm.workplace.wcm.api.WCM_APICoreQueries.performContentSearc
+   h(WCM_AP
+   ICoreQueries.java:1392)
+   at
+   com.ibm.workplace.wcm.api.WCM_Workspace.contentSearch(WCM_Worksp
+   ace.java
+   :2958)
+   CoreQueries.buildXPathMenuQuery and
+   CoreQueries.buildXPathMenuQueryForDraft get user principal info
+   this way:
+            PrincipalInformation principalInfo =
+   PrincipalInformationManager.get(UserManagementUtils.getUser());
+   
+   but UserManagementUtils.getUser() returns null for anonymous
+   user
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Should instead get user principal info this way:
+             PrincipalInformation principalInfo =
+   UserManagementUtils.getSessionPrincipalInfo();
+   
+   which returns correct principal info for anonymous user
+   
+   A fix for this problem is available for WCM 6.0.1.3 from Fix
+   Central at:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?brandid=2&productid=Workplace%20Web%20Content%20Management&fix [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?brandid=2&productid=Workplace%20Web%20Content%20Management&fix]
+   es=6.0.1.3-WCM-PK72189
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK72189
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   60G
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-17
+   
+   
+ * CLOSED DATE
+   2008-10-17
+   
+   
+ * LAST MODIFIED DATE
+   2008-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60G PSY
+   UP

@@ -1,0 +1,58 @@
+Title: IBM What does the IS document migration timeout setting in IDM Configure do? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What does the IS document migration timeout setting in IDM Configure for Filenet IDM Desktop and Filenet IDM Web Services actually do? 
+
+CAUSE
+The IS document migration timeout option in IDM Configure is used by IDM Desktop and IDM Web Services both to determine the time to wait for a document to migrate from storage to the Image Services cache, and how many retries to make before returning a failure to the user.
+For simplicity, the answer will only refer to IDM Desktop. However, the behavior with IDM Web Services is the same. 
+
+
+ANSWER
+To get the migration status, IDM Desktop queries Image Services with the Image Services callDOC_is_migrated(). The IS Document Migration Timeout value is passed as the parameter to this DOC_is_migrated() function. However, IDM Desktop does not pass this timeout value as it is in the preferences. Instead, it splits this timeout value by 10 times and calls the DOC_is_migrated() function that many times. For example, if the timeout value is 120 seconds, IDM Desktop calls DOC_is_migrated() 12 times (120/10) with the value of timeout=10 in each call. So when the timeout is set to 30 seconds, DOC_is_migrated() would be called 3 times with timeout = 10 each time. 
+
+
+To explain it another way, when the timeout value is set to 30 seconds the task is completed in 10 seconds. So if the migration completes in the first call to DOC_is_migrated() itself, it is called only the one time with a timeout value of 10 seconds. The same task gets over in 2 seconds when the timeout value is set to 2 seconds. So even though the migration is completed within 2 seconds, the DOC_is_migrated() is not being returned until the timeout value (10 Sec) is elapsed.
+
+Full detail of the current implementation in IDM Desktop:
+
+As per the current implementation, the IDM desktop behaves differently when the timeout value is less than 10 seconds and when it is more than or equal to 10 seconds. In both of the following cases, the timeout value is being split and Image Services is queried multiple times with the smaller (split) timeout value. 
+
+Case 1 - When the timeout value is less than 10:
+
+
+ * When Timeout = 1, 2, or 3: 
+   As per the code, for these 3 values, Image Services is queried only once for migration status with the timeout of 1 each time. So even if the user sets the time to 2 or 3, it's being taken as 1.
+
+ * When Timeout = 4, or 5: 
+   As per the code, for these 2 values, Image Services is queried 2 times for migration status with the timeout of 2 each time. So even if the user sets the time to 5, it is being taken as 4 (2 queries with timeout 2).
+
+ * When Timeout = 6, or 7: 
+   As per the code, for these 2 values, Image Services is queried 2 times for migration status with the timeout of 3 each time. So even if the user sets the time to 7, it is being taken as 6 (2 queries with timeout 3).
+
+ * When Timeout = 8, or 9: 
+   As per the code, for these 2 values, Image Services is queried 2 times for migration status with the timeout of 4 each time. So even if the user sets the time to 9, it is being taken as 8 (2 queries with timeout 4).
+
+
+For odd numbers, the effective timeout will take the value of the previous even number. 
+
+
+Case 2 - When the timeout value is more than or equal to 10: 
+ * When Timeout = 10 to 19:
+   For all the values in this range (10-19), Image Services is queried once for migration status with the timeout of 10 each time.
+
+ * When Timeout = 20 to 29:
+   For all the values in this range (20-29), Image Services is queried 2 times for migration status with the timeout of 10 each time.
+
+ * When Timeout = 30 to 39:
+   For all the values in this range (30-39), Image Services is queried 3 times for migration status with the timeout of 10 each time.
+
+ * And so on...
+
+
+Timeout (Preferences) Timeout Value passed in 
+DOC_is_migrated() call Number of times 
+DOC_is_migrated() is called 1 1 0 2 1 0 3 1 0 4 2 2 5 2 2 6 3 2 7 3 2 8 4 2 9 4 2 10 to 19 10 1 20 to 29 10 2 30 to 39 10 3 120 10 12

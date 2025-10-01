@@ -1,0 +1,38 @@
+Title: IBM Diagnosing performance problems for WebSphere Lombardi Edition (WLE) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your system is running slowly and you can not tell why. This article lists tools and techniques to diagnose performance problems including heap and CPU utilization problems. 
+
+RESOLVING THE PROBLEM
+There are a number of tools you can use to get to the root cause of the problem 
+
+ * Enable Java™ GC logging [https://www.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/tprf_tuneclassicjvm.html] 
+ * GC Viewer [https://www.ibm.com/developerworks/java/jdk/tools/gcmv/] (A tool to read GC Logs) 
+ * Java thread dumps [https://www.ibm.com/developerworks/community/blogs/e8206aad-10e2-4c49-b00c-fee572815374/entry/Java_Core_Debugging_using_IBM_Thread_and_Monitor_Dump_Analyzer_for_Java?lang=en] - creating and viewing 
+ * Heap dump analysis tool [https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=4544bafe-c7a2-455f-9d43-eb866ea60091] 
+ * The Event Manager Monitor 
+ * The Process Monitor
+
+
+What should you do first? 
+
+ [http://yourhost:yourport/teamworks]A Teamworks administrator's first stop should be the Event Manager and the Process Monitor. Both are available on the web at http://yourhost:yourport/teamworks. Start with the Event Manager. Look for any long running tasks that are in an executing state. There are a number of tasks that can show up there and the type of task gives a hint to the problem. BPDNotification and DBNotification are tasks in the Business Process Definition Engine. These should generally execute in a small amount of time. SystemTask and UCATask are generally services. If these are long running then the associated services are likely "stuck." If you see items rapidly popping up and being completed, you might be in a loop that is moving between the BPD Engine and the Service Engine. For instance, you might have a System Lane task that is getting an error. If you have a catch exception on that System Lane Activity that loops back to itself, then the system task fails, you go back to the Business Process Definition (BPD) Engine in the catch, then immediately back to the Service Engine to fail again.
+
+The Process Monitor tells you if you have a service or a business process definition in a loop. If you go there, you will see a list of active services and processes. Active services and processes are jobs that are currently running and consuming CPU. You can click them to find out which service or business process definition is currently involved and then find out what step or steps you are stuck in.
+
+If you find a loop in the Process Monitor or Service Monitor, it is pretty likely that the loop is what is causing CPU and memory usage. If you do not find a loop, you need to look elsewhere.
+
+The next thing you should do is gather thread dumps. See the links previously listed for information on how to gather them. For the thread dumps, you should gather at least 5 thread dumps that are at least 1 minute apart. You do that because you will want to see what threads are moving and which are stuck. The thread dumps might provide you with what you need. For example, if most of the threads are waiting on the database, you have a hint that maybe there is a database problem. 
+
+What if you are running low on Heap?
+At a high level, when you run low of Java memory (heap space) your CPU will suddenly spike and your application will stop responding. This scenario is because Java garbage collection is expensive when you are running low on memory and it can block the other threads in the JVM and prevent them from moving. One possibility for running out of heap is a process that is running in a loop. You should have already ruled that out in the process monitor step listed previously so now we need heap dumps. You can use heap dumps to see what was in memory when you saw the problem. Analyzing heap dumps is a difficult task so you will probably need to open a ticket with your application server vendor and with IBM support to get assistance. IBM heap dumps take massive machines for analysis so you will need to contact IBM to get assistance if you are running a JVM.
+
+Garbage collection logging can also be useful. Garbage collection log files give you the ability to graph memory utilization over time. This can be helpful to spot trends. For instance, if the heap grows slowly you might have a leak. If it spikes every day at 3 PM, you might have a user running a report that is consuming too much memory. The previous links can help you enable garbage collecting logging on your JVM. The Garbage Collection Viewer is a great tool to view the data from these log files graphically.
+
+ 
+
+HISTORICAL NUMBER
+ 432

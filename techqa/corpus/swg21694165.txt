@@ -1,0 +1,37 @@
+Title: IBM Unable to change the File adapter to the MQ adapter. - United States
+
+Text:
+WTX WMB Node MQ File Adapter TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to change the File adapter to the MQ adapter using IBM WebSphere Integration Bus (IIB) Toolkit. 
+
+SYMPTOM
+Unable to change the File adapter to the MQ adapter using IBM WebSphere Integration Bus (IIB) Toolkit.. (Formerly known as IBM WebSphere Message Broker (WMB)). 
+
+
+CAUSE
+This has been identified as a product defect under APAR PI32037
+
+ENVIRONMENT
+Using IBM WebSphere Transformation Extender (WTX) with IBM WebSphere Integration Bus (IIB) to run a WTX map using the WTX Map node in the IIB Toolkit.
+
+DIAGNOSING THE PROBLEM
+The Integration Toolkit throws NullPointerException when user tries to modify the adapter type in the Map Settings dialog displayed in the canvas for WTX map node for both maps within the project and external maps.
+
+
+The following exception may be found in the Eclipse log file: 
+
+java.lang.NullPointerException 
+at 
+com.ibm.websphere.dtx.ui.me.properties.card.AdapterChoiceDescrip 
+tor$AdapterChoicePropertySource.setSelection(Unknown Source) 
+at 
+com.ibm.websphere.dtx.ui.mercdev.WTXComboBoxPropertyDescriptor.f 
+ireEvent(Unknown Source) 
+
+
+RESOLVING THE PROBLEM
+Obtain patch for APAR PI32037.
+
+As a workaround, you could use the WTX Design Studio to change the adapter settings.

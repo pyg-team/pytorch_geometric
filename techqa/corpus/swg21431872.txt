@@ -1,0 +1,62 @@
+Title: IBM PACKAGE DEPLOYMENT FAILURE CTGIN0073E during install. - United States
+
+Text:
+CTGIN0073E; -956; 956; -2216; 2216; 01H52 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Following error is received in the ConfigDB log during TSAM installation:
+SQL error "-956" occurred while reorganizing a database table or its indexes.. SQLCODE=-2216, SQLSTATE=01H52 
+
+SYMPTOM
+During TSAM install, following error is received: 
+
+CTGIN0073E: Errors were detected during the installation of the C:\TSAM7.2\CZ7XDML\TSAMDB~1\install\PMP\tsam_pmp_7.2zip package.
+
+[/support/docview.wss?uid=swg21431872&amp;aid=1]
+
+Following error is received in the ConfigDB log:
+call sysproc.admin_cmd('reorg table PMZHBSLOG') 
+; 
+SQL error "-956" occurred while reorganizing a database table or its indexes.. SQLCODE=-2216, SQLSTATE=01H52, DRIVER=3.53.70 Sat May 08 01:06:38 BST 2010 
+BMXAA6819I - ConfigDB completed with errors. Sat May 08 01:06:38 BST 2010
+
+
+RESOLVING THE PROBLEM
+Following is the explanation of the DB2 error: 
+
+
+SQL2216N SQL error "-956" occurred while reorganizing a database table or its indexes. SQLSTATE=01H52
+
+SQL2216N
+SQL error sqlcode occurred while reorganizing a database table or its indexes.
+
+Explanation:
+An error occurred during the reorganization of a database table or its indexes.
+
+The utility stops processing.
+
+User response:
+Look at the SQLCODE (message number) in the message for more information. Make changes and resubmit the command.
+
+SQL0956C
+Not enough storage is available in the database heap to process the statement.
+
+Explanation:
+All available memory for the database has been used.
+
+The statement cannot be processed.
+
+User response:
+Terminate the application on receipt of this message.
+Increase the dbheap database configuration parameter to allow a larger database heap. If the number of I/O servers is near the high limit, reducing this number might also help.
+
+To resolve the problem, you can increase the DBHEAP or set it to automatic. 
+
+Following is how you can check your current DBHEAP setting:
+[/support/docview.wss?uid=swg21431872&aid=2] [/support/docview.wss?uid=swg21431872&aid=2]
+
+Following is how you can set your DBHEAP setting to AUTOMATIC:
+[/support/docview.wss?uid=swg21431872&aid=3] [/support/docview.wss?uid=swg21431872&aid=3]
+
+Restart the install, and it should complete successfully:
+[/support/docview.wss?uid=swg21431872&amp;aid=4]

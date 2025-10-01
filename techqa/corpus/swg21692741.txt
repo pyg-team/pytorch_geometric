@@ -1,0 +1,50 @@
+Title: IBM QRadar: 'Unable to Determine Associated Log Source' System Notification - United States
+
+Text:
+Unable to Determine Associated Log Source; System Notification; log source not auto discovering; no automatic discovery TECHNOTE (FAQ)
+
+QUESTION
+ How do I determine the event that is causing the system notification message 'unable to determine associated log source'? 
+
+CAUSE
+Traffic Analysis is the tool QRadar uses to auto discover log sources based on the event data being sent to QRadar. Traffic analysis is designed to auto discover a wide number of log source types as defined in the DSM Configuration Guide, however, there are some instances where Traffic Analysis will 
+fail to auto discover a log sources from the event data. 
+
+ *  Log Sources that do not auto discover by design. These log sources must be manually added. For more information, see the appendix of the DSM Configuration Guide [http://public.dhe.ibm.com/software/security/products/qradar/documents/iTeam_addendum/b_dsm_guide.pdf].
+   Events coming from a known log sources are being truncated. When a payload is truncated, the spillover payload is created as a new event. Traffic analysis will see this as a new event type due to the strange format. 
+   
+   By default, QRadar supports TCP payloads at 4096 bytes and UDP Syslog payloads for 1024 bytes. Administrators can change the Max TCP Syslog Payload Length in the advanced field of the QRadar system settings to ensure that payloads are not truncated. 
+   Deploys or services restart. If the DSMs are not reloaded in time of Traffic Analysis starting, then Traffic Analysis may be unable to determine the type of Log Source. 
+
+ANSWER
+System notifications are all outlined as part of the QRadar System Notifications Guide. 
+
+ 
+
+ * Procedure
+ * 
+ * 
+ * 
+ *  Log into the QRadar Console. 
+   From the navigation bar, select Messages.
+   Hover over the Unable to determine associated log source for IP address system notification for the details of the event.
+   
+   [/support/docview.wss?uid=swg21692741&aid=1] [/support/docview.wss?uid=swg21692741&aid=1]
+   The underlined IP Address is the address for the event source an administrator would use in their investigation of why the log source was unable to parse. 
+   
+   [/support/docview.wss?uid=swg21692741&aid=2] [/support/docview.wss?uid=swg21692741&aid=2]
+   From the Log Activity tab, administrators can search by this address and view the event payloads to determine the root cause. 
+ * 
+ * 
+
+
+Where do you find more information? 
+
+
+[/support/docview.wss?uid=swg21692741&aid=3] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21692741&aid=4] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21692741&aid=5] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21692741&aid=6] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21692741&aid=7] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21692741&aid=8] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21692741&aid=9] [http://ibm.biz/SuptRegQuikStart] 
+
+
+RELATED INFORMATION
+ Unable to determine associated log source [http://www.ibm.com/support/knowledgecenter/SS42VS_7.2.2/com.ibm.qradar.doc_7.2.2/38750007.html]
+DSM Configuration Guide (PDF) [http://public.dhe.ibm.com/software/security/products/qradar/documents/iTeam_addendum/b_dsm_guide.pdf]
+A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg22007262]

@@ -1,0 +1,148 @@
+Title: IBM IV45775: DOCUMENTATION DOES NOT DEFINE NCO_CONFPACK ON RENAMED TOOLS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The documentation for nco_confpack does not clearly define what
+   happens when nco_confpack is used on tools that are renamed.
+   
+   If a customer have identical object servers (one in prod and one
+   in dev) and they rename a tool in the second object server and
+   use nco_confpack to export that object server. When they import
+   the confpack to the first object server, they will see two
+   copies of the tool.  One with the original name and one with the
+   new name.  This is causing the customer confusion since the
+   documentation does mention using nco_confpack to REPLICATE
+   object servers but clearly, it is not replicating but adding to
+   an existing object server.
+   
+   So the documentation should have something to let the customer
+   know what nco_confpack will do in such situation.  Maybe a
+   warning or caveat.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Customer currently needs to log back into the production object
+   server and removed the OLD tool.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of Tivoli Netcool/OMNIbus V7.2.1.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * It is unclear in the documentation that nco_confpack is not  *
+   * intended to be used for replicating or cloning               *
+   * ObjectServers. It is intended only for exporting and         *
+   * importing partial configuration data between ObjectServers.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The updated documentation will be published to the           *
+   * information center in Q4 2013.                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following note was added to the documentation:
+   Note: Do not use the nco_confpack utility for replicating or
+   cloning ObjectServers. It is intended for exporting and
+   importing partial configuration data between ObjectServers.
+   
+   The note was added to the following topics:
+   http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com]
+   .ibm.netcool_OMNIbus.doc_7.2.1/install/concept/omn_con_cnfp_impo
+   rtingexportobjserv.html
+   http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com]
+   .ibm.netcool_OMNIbus.doc_7.2.1/user/concept/omn_ovr_administrati
+   ontools.html
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV45775
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   721
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-17
+   
+   
+ * CLOSED DATE
+   2013-10-04
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

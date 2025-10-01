@@ -1,0 +1,109 @@
+Title: IBM Procedure to use the copyschemarepo and copyuserdb commands to copy databases - United States
+
+Text:
+1118690; 183303061; copyschemarepo; copyuserdb; Oracle; access; copy; locked; lock; move; unknown field name; Make sure you have typed the name correctly; and try the operation again; INSERT INTO statement; insert TECHNOTE (FAQ)
+
+QUESTION
+ How can you use the installutil commands "copyschemarepo" and "copyuserdb" to create copies of databases in IBM Rational ClearQuest? 
+
+CAUSE
+The copyschemarepo and copyuserdb commands create copies of databases from a command prompt. The copyschemarepo and copyuserdb commands are very similar to the convertschemarepo and convertuserdb commands. The convert commands will lock the databases during the command, and will keep the copied databases locked upon completion (unless later unlocked. See technote 1133810 [http://www.ibm.com/support/docview.wss?uid=swg21133810] for details on unlocking databases). The convert command will also update the new databases with the correct location information. This is similar to the database move commands that would be executed from the ClearQuest Maintenance tool. 
+
+The copyschemarepo and copyuserdb commands will also lock the databases being copied for the duration of the command. Once copied, the databases will be unlocked. Also, unlike the convert commands, the copy commands are just a duplicate and the connection information will still be reflecting the original databases that were copied. 
+
+
+ANSWER
+ 
+
+Schema status when copying databases 
+
+
+Using these installutil commands can cause the following error if the schema is checked out:
+The INSERT INTO statement contains the following unknown field name: 'field_name'. Make sure you have typed the name correctly, and try the operation again. 
+
+Before utilizing these commands, the schema(s) MUST be checked in or the process will fail. 
+
+ 
+
+Resetting connection information 
+
+The user will need to update the connection information to the new schema repository. After connecting to this schema repository in the ClearQuest Maintenance tool, the original connection information will be displayed. Select the connection to the copied databases and update them to the new location by selecting Schema Repository > Update > Selected Connection from the top menu. The user database information will then be updated for the copied databases by logging into ClearQuest Designer and selecting Database > Update User Database Properties from the top menu.
+Note: If you are unable to connect to the existing Connection, you can select Schema Repository > Update > Other, and reset the connection information. 
+
+ 
+
+CopySchemaRepo
+The copyschemarepo command is done to make a copy of a schema repository. For example:
+
+installutil copyschemarepo -dbset dbset_name cq_login cq_password 
+to_db_vendor to_server to_database to_dbo_login to_dbo_password to_rw_login to_rw_password to_ro_login to_ro_password connect_options
+
+
+Parameter Description 
+
+installutil Parameter Description copyschemarepo Command to copy schema repository. (The remainder of the parameters remain the same for all the commands referenced in this technote). -dbset Identifier for the connection name as it appears in the Maintenance tool. dbset_name The actual name of the connection. cq_login The user login to ClearQuest that has Super User privileges. cq_password Password for the super user of ClearQuest. to_db_vendor The new upgrade database vendor name. Available choices are
+MS_ACCESS, SQL_ANYWHERE, SQL_SERVER, ORACLE, DB2. to_server The new upgrade database server name. to_database The new upgrade database name. to_dbo_login The new empty database owner's login name. to_dbo_password The new empty database owner's login password. to_rw_login The new empty database owner's login name. to_rw_password The new empty database owner's login password. to_ro_login The new empty database owner's login name. to_ro_password The new empty database owner's login password. connect_options Optional parameters that vary by vendor. 
+(Refer to the latest ClearQuest Documentation Supplement [http://publibfp.boulder.ibm.com/epubs/pdf/i1159795.pdf] for details on use of the vendor connect options). 
+An example of the command in usage for Oracle would be: 
+Sample command for ClearQuest versions 2003.06.13 and later that use Oracle with the CLOB datatype: 
+installutil copyschemarepo -dbset 2003.06.00 admin "" ORACLE cq cqmastercopy cqmastercopyuser password cqmastercopyuser password cqmastercopyuser password "LOB_TYPE=CLOB"
+Sample command for ClearQuest versions 2003.x and earlier that use Oracle with the Long datatype: 
+installutil copyschemarepo -dbset 2003.06.00 admin "" ORACLE cq cqmastercopy cqmastercopyuser password cqmastercopyuser password cqmastercopyuser password "HOST=abc;SID=Oracle;SERVER_VER=8.1,CLIENT_VER=8.1;LOB_TYPE=long"
+ * 
+ * Note:
+ * 
+ * cqmastercopy
+ * 
+ * cqmastercopyuser
+ * 
+ * password
+ * 
+ * Note: The command should be run until the user sees an exit code of 0 in the command prompt. An exit code of 1 means that there was an error. 
+ * 
+
+
+An example of the command usage for Microsoft Access would be as follows, where the dbset is 2003.06.00 and the file C:\temp\copyschemarepo.mdb is an empty Access database file:  
+
+Sample command for ClearQuest with Microsoft Access: 
+installutil copyschemarepo -dbset 2003.06.00 admin "" MS_ACCESS "" C:\temp\copyschemarepo.mdb "" "" "" "" "" "" ""
+ *   Back to top 
+   
+   
+
+
+CopyUserDb 
+The copyuserdb command is done to make a copy of a user database rather than a schema repository. For example: 
+installutil copyuserdb [-dbset dbset_name] cq_login cq_password user_dbname to_user_db_vendor to_user_server to_user_database to_user_dbo_login to_user_dbo_password to_user_rw_login to_user_rw_password connect_options
+
+
+
+
+An example of the command for an Oracle database would be:
+
+
+Sample command for ClearQuest versions 2003.06.13 and later that use Oracle with the CLOB datatype: 
+installutil copyuserdb -dbset 2003.06.00 admin "" SAMPL ORACLE CQ cqusercopyuser password cqusercopyuser password cqusercopyuser password "LOB_TYPE=CLOB"
+Sample command for ClearQuest versions 2003.x and earlier that use Oracle with the Long datatype: 
+installutil copyuserdb -dbset 2003.06.00 admin "" SAMPL ORACLE CQ
+cqusercopyuser password cqusercopyuser password cqusercopyuser password 
+HOST=abc;SID=Oracle;SERVER_VER=8.1,CLIENT_VER=8.1;LOB_TYPE=long
+An example of the command for a Microsoft SQL Server database using the ClearQuest user database "SAMPL" would be:
+
+
+Sample command for ClearQuest with Microsoft SQL Server: 
+installutil copyuserdb -dbset 2003.06.00 admin "" SAMPL SQL_SERVER CQ cqusercopyuser password cqusercopyuser password cqusercopyuser password ""
+An example of the command for a Microsoft Access database using the ClearQuest user database "SAMPL" would be:
+
+
+Sample command for ClearQuest with Microsoft Access: 
+installutil copyuserdb -dbset 2003.06.00 admin "" SAMPL MS_ACCESS "" C:\temp\copySAMPL.mdb "" "" "" "" "" "" ""
+ Back to top 
+
+
+
+
+BACKING UP FILES  Always make new database back-ups of your schema repository and user databases prior to making schema changes and performing database upgrades. Failure to create back-up copies can limit your ability to recover from a an upgrade failure, design change issues or other unforeseen failures.
+
+
+RELATED INFORMATION
+#How to unlock a ClearQuest database [http://www.ibm.com/support/docview.wss?uid=swg21133810]

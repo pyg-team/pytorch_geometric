@@ -1,0 +1,23 @@
+Title: IBM Why do my statistics display with four decimal places? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I've recently created a new data set. If I use a data set from another version of SPSS and run a Compare Means procedure, then my means and standard deviations display with two decimal places. But, if I add a variable to my data set, or use the data set I just created, then my statistics display with four decimal places. The same thing happens if I run a frequency and ask for additional statistics. I don't need that level of precision. How can I change the output back to two decimal places? Better yet, can I make SPSS default back to two decimal places? 
+
+RESOLVING THE PROBLEM
+When choosing how many decimals to display, SPSS will display the number of decimals you have the variable formatted as, plus two additional decimal places. Thus, if you have a variable defined with width 8 and 2 decimals (often referred to as f8.2), then the mean will display with four decimal places. Earlier versions of SPSS also treat how they display decimals in the same way. If your original data set had variables that were formatted with zero decimal places, then your statistics would only display in two decimal places.
+
+Unfortunately, there isn't a way to change this default behavior. One solution is to change the formatting of the variable from 8.2 to 8.0. Also, once the table is created you can edit the number of decimal places that are displayed. Double click on the table, then select the data cells that you want to change to two decimal places. Then go to Format->Cell Properties. Click on the value tab, and select the '#.#' format, if not already selected. Then change the number of decimal places from four to two.
+
+If you have the Custom Tables module, then you can specify the number of decimal places that the statistics display before the table is generated. From any of the custom tables dialog boxes, click Statistics. Click on the statistic you want displayed. That will give you access to the formatting options. Change the format from Automatic to the preferred format. Then in the decimals: box specify the number of decimals you want displayed. Click on Add and Continue. If you run the same type of tables frequently, you may want to click on Paste, which will paste the command syntax into a syntax window. The syntax can then be saved and modified.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 17016

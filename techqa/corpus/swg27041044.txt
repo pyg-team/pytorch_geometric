@@ -1,0 +1,270 @@
+Title: IBM How to store information about accelerated tables in a DB2 for z/OS table - United States
+
+Text:
+accelerated tables; status; materialize EDUCATION
+
+ABSTRACT
+ IBM DB2 Analytics Accelerator for z/OS lists important information about tables in IBM Data Studio. This document explains how to retrieve this information through an SQL stored procedure that stores the status information in a DB2 for z/OS table. 
+
+CONTENT
+The status information in IBM Data Studio shows details about tables that have been added to an accelerator. It contains various information, such as the size of a table, its state and its DDL integrity. , The information is based on output of the SYSPROC.ACCEL_GET_TABLES_INFO stored procedure. IBM Data Studio does not offer a function to display or store the information outside of IBM Data Studio.
+
+
+For more information about the SYSPROC.ACCEL_GET_TABLES_INFO stored procedure, follow this link:
+[http://www-01.ibm.com/support/knowledgecenter/SS4LQ8_4.1.0/com.ibm.datatools.aqt.doc/sp_msg/SPs/sp_idaa_get_tables_info.html]http://www-01.ibm.com/support/knowledgecenter/SS4LQ8_4.1.0/com.ibm.datatools.aqt.doc/sp_msg/SPs/sp_idaa_get_tables_info.html [http://www-01.ibm.com/support/knowledgecenter/SS4LQ8_4.1.0/com.ibm.datatools.aqt.doc/sp_msg/SPs/sp_idaa_get_tables_info.html] 
+
+ 
+
+To explain how to store the information in a DB2 for z/OS table, this article uses an example. 
+
+ 
+
+Assume that three accelerators are connected to a single DB2 subsystem. The accelerators contain the following tables: 
+
+Accelerator 1 (Name = VMNPS08) :
+[/support/docview.wss?uid=swg27041044&aid=1] [/support/docview.wss?uid=swg27041044&aid=1] 
+
+ 
+
+Accelerator 2 (Name = VMNPS11) : 
+
+ [/support/docview.wss?uid=swg27041044&aid=2] [/support/docview.wss?uid=swg27041044&aid=2] 
+
+ 
+
+Accelerator 3 (Name = VMNPS16) :
+[/support/docview.wss?uid=swg27041044&aid=3] [/support/docview.wss?uid=swg27041044&aid=3] 
+
+ 
+
+To store this information in a DB2 for z/OS table, use the following SQL stored procedure and tables: 
+
+ 
+
+Note: The following SQL sample uses the at-sign (@) as a statement termination character instead of the semicolon (;) because it contains several nested statements that already end with a semicolon. 
+
+ 
+
+
+-- create table to store the accelerated tables information in
+CREATE TABLE MYID.ACCEL_TABLES_TABLE
+(
+accelerator VARCHAR(128),
+extracted_time TIMESTAMP,
+schema VARCHAR(128),
+name VARCHAR(128),
+loadStatus VARCHAR(128),
+accelerationStatus CHAR(10),
+integrityStatus CHAR(30),
+replicationStatus CHAR(10),
+archiveStatus CHAR(10),
+usedDiskSpaceInMB BIGINT,
+rowCount BIGINT,
+skew DOUBLE,
+organizedPercent DOUBLE,
+lastLoadTimestamp TIMESTAMP WITH TIMEZONE 
+)
+@ 
+
+
+-- create the procedure to externalize the table information
+CREATE PROCEDURE MYID.IDAA_TABLESINFO (
+IN ACCEL_NAME VARCHAR(8), 
+OUT RETURN_MESSAGE CLOB(64K)
+)
+VERSION VERSION1
+ISOLATION LEVEL CS
+PACKAGE OWNER MYID 
+LANGUAGE SQL
+DISABLE DEBUG MODE
+------------------------------------------------------------------------
+-- SQL Stored Procedure 
+------------------------------------------------------------------------
+P1: BEGIN
+
+-- VARIABLE DECLARATION
+DECLARE RETURN_TEXT VARCHAR(70); -- CONTAINS THE MESSAGE TEXT OF THE ERROR ENCOUNTERED RETURNED TO THE CALLER
+DECLARE ALREADY_EXIST INTEGER; -- CONTAINS THE RESULTS OF CHECK STATEMENTS
+
+DECLARE TABLESET_XML CLOB(256K) CCSID UNICODE DEFAULT ''; -- XML to limit the number of tables potentially
+
+DECLARE RESULT_XML CLOB(16M) CCSID UNICODE; -- variable to hold the table information XML
+
+-- INOUT PARAMETER PASSED TO ALL IBM DB2 ANALYTICS ACCELERATOR STORED PROCEDURES CALLED
+DECLARE MESSAGE_XML CLOB(64K) DEFAULT '';
+
+-- internal variable for table definition result set fields
+DECLARE TABLE_DEF_SEQID INTEGER;
+DECLARE TABLE_DEF_XML VARCHAR(32698);
+
+-- internal variable for table information result set fields
+DECLARE TABLE_STAT_SEQID INTEGER;
+DECLARE TABLE_STAT_XML VARCHAR(32698);
+
+-- internal variable for resultsets locators
+DECLARE TableDef_Locator RESULT_SET_LOCATOR VARYING;
+DECLARE TableStat_Locator RESULT_SET_LOCATOR VARYING;
+
+DECLARE SQLCODE INTEGER DEFAULT 0; 
+DECLARE RECEIVED_SOMETHING INTEGER DEFAULT 0;
+
+-- HANDLER DECLARATION AND MANAGEMENT FOR IBM DB2 ANALYTICS ACCELERATOR STORED PROCEDURES CALL
+-- DEFINING WARNING CONDITION THROWABLE BY IBM DB2 ANALYTICS ACCELERATOR STORED PROCEDURE
+DECLARE AQTERR VARCHAR(10) DEFAULT 'UNKNOWN'; -- EVENTUALLY CONTAINS IBM DB2 ANALYTICS ACCELERATOR STORED PROCEDURE REASON CODE ERROR
+DECLARE IDAAERRCODE VARCHAR(500);
+DECLARE IDAAWARN1 CONDITION FOR SQLSTATE VALUE '01H08';
+DECLARE IDAAWARN2 CONDITION FOR SQLSTATE VALUE '01H04';
+DECLARE IDAAOK SMALLINT DEFAULT 0; -- CONTAINS THE SUCCESSFUL/UNSUCCESSFUL EXECUTION OF IDAAPART COMPUND STATEMENTS
+
+DECLARE c1 CURSOR FOR SELECT ACCELERATORNAME FROM SYSACCEL.SYSACCELERATORS WHERE ACCELERATORNAME LIKE ACCEL_NAME FOR FETCH ONLY WITH UR;
+
+DECLARE EXIT HANDLER FOR IDAAWARN1, IDAAWARN2
+BEGIN
+GET DIAGNOSTICS CONDITION 1 IDAAERRCODE = MESSAGE_TEXT;
+SET RETURN_MESSAGE = MESSAGE_XML;
+SET ALREADY_EXIST = LOCATE('AQT',IDAAERRCODE);
+IF ALREADY_EXIST IS NULL OR ALREADY_EXIST = 0 THEN
+SET AQTERR = 'UNKNOWN';
+ELSE
+SET AQTERR = SUBSTR(IDAAERRCODE,ALREADY_EXIST,9);
+END IF;
+SET IDAAOK = -1;
+END;
+
+SET TABLESET_XML = NULL; -- return all tables
+SET RESULT_XML = '';
+SET MESSAGE_XML = NULL; 
+
+----------------------------
+-- CHECK INPUT PARAMETERS
+----------------------------
+
+-- CHECK IF THE INPUT PARAMETER ACCEL REALLY EXISTS AS ACCELERATOR
+SELECT COUNT(*) INTO ALREADY_EXIST
+FROM SYSACCEL.SYSACCELERATORS
+WHERE ACCELERATORNAME=ACCEL_NAME WITH UR;
+
+IF ALREADY_EXIST = 0 THEN
+IF ACCEL_NAME IS NOT NULL THEN
+SET RETURN_TEXT = 'ERRC 001 - ACCELERATOR "'|| ACCEL_NAME ||'" IS AN UNDEFINED NAME';
+ELSE
+SET RETURN_TEXT = 'ERRC 001 - ACCELERATOR "NULL" IS AN UNDEFINED NAME';
+END IF;
+SIGNAL SQLSTATE VALUE '7UA00' SET MESSAGE_TEXT=RETURN_TEXT;
+END IF;
+
+-------------------------------------------------
+-- Get table details for accelertor
+------------------------------------------------- 
+
+-- reset input for procedure call
+SET TABLESET_XML = NULL; -- return all tables
+SET RESULT_XML = '';
+SET MESSAGE_XML = NULL; 
+SET RECEIVED_SOMETHING = 0; 
+
+-- calling the ACCEL_GET_QUERIES procedure for one accelerator
+CALL SYSPROC.ACCEL_GET_TABLES_INFO(ACCEL_NAME, TABLESET_XML, MESSAGE_XML);
+
+IF IDAAOK = 0 THEN
+SET RETURN_MESSAGE = 'ERRC 000 - SUCCESSFUL EXECUTION';
+ELSE
+SIGNAL SQLSTATE VALUE '01UA0' SET MESSAGE_TEXT= 'ERRC 100 - ACCEL_GET_TABLES_INFO ERROR: '|| AQTERR ||'. MORE DETAILS IN OUTPUT PARAMETER';
+END IF;
+
+----------------------------------------
+-- Fetch resultset and build output XML
+-----------------------------------------
+
+ASSOCIATE RESULT SET LOCATORS ( TableDef_Locator, TableStat_Locator ) WITH PROCEDURE SYSPROC.ACCEL_GET_TABLES_INFO;
+ALLOCATE TABLEDEF_CSR CURSOR FOR RESULT SET TableDef_Locator;
+ALLOCATE TABLESTAT_CSR CURSOR FOR RESULT SET TableStat_Locator; 
+
+--OPEN DSNUTILU_RS_CSR;
+fetch_loop: 
+LOOP
+SET TABLE_STAT_XML = '';
+--FETCH TABLESTAT_CSR INTO TABLE_DEF_SEQID, TABLE_DEF_XML;
+FETCH TABLESTAT_CSR INTO TABLE_STAT_SEQID, TABLE_STAT_XML;
+IF SQLCODE != 0 THEN 
+-- do not append the content again!
+LEAVE fetch_loop;
+-- it may be necessary to check for other SQL codes 
+ELSE
+-- appened fetched content to temp variable
+SET RECEIVED_SOMETHING = 1;
+set RESULT_XML = CONCAT(RESULT_XML, TABLE_STAT_XML);
+END IF;
+
+END LOOP fetch_loop; 
+
+CLOSE TABLESTAT_CSR;
+CLOSE TABLEDEF_CSR;
+
+----------------------------------------
+-- PARSE OUTPUT XML and WRITE INTO TABLE
+-----------------------------------------
+IF RECEIVED_SOMETHING != 0 THEN
+
+-- run XML functions on the value
+INSERT INTO MYID.ACCEL_TABLES_TABLE
+select ACCEL_NAME,
+CURRENT_TIMESTAMP, 
+X.*
+from ( select xmlparse(document RESULT_XML) as tablelist_xml from sysibm.sysdummy1) P,
+XMLTABLE(
+XMLNAMESPACES('http://www.ibm.com/xmlns/prod/dwa/2011' AS "accelstat"),
+'$d/accelstat:tableInformation/table' passing p.tablelist_xml as "d"
+COLUMNS
+schema VARCHAR(128) PATH '@schema',
+name VARCHAR(128) PATH '@name',
+loadStatus VARCHAR(128) PATH 'status/@loadStatus',
+accelerationStatus CHAR(10) PATH 'status/@accelerationStatus',
+integrityStatus CHAR(30) PATH 'status/@integrityStatus',
+replicationStatus CHAR(10) PATH 'status/@replicationStatus',
+archiveStatus CHAR(10) PATH 'status/@archiveStatus',
+usedDiskSpaceInMB BIGINT PATH 'statistics/@usedDiskSpaceInMB',
+rowCount BIGINT PATH 'statistics/@rowCount',
+skew DOUBLE PATH 'statistics/@skew',
+organizedPercent DOUBLE PATH 'statistics/@organizedPercent',
+lastLoadTimestamp TIMESTAMP WITH TIMEZONE PATH 'statistics/@lastLoadTimestamp' 
+) AS X;
+commit;
+END IF; 
+
+END P1
+@ 
+
+ 
+
+To call the procedure from IBM Data Studio, adapt the accelerator name (first parameter) in the following command before you run it:
+
+call MYID.IDAA_TABLESINFO('VMNPS16', ?)
+@ 
+
+ 
+
+After a successful execution of the procedure, the MYID.ACCEL_TABLES_TABLE contains the following list: 
+
+
+[/support/docview.wss?uid=swg27041044&aid=4] [/support/docview.wss?uid=swg27041044&aid=4] 
+
+ 
+
+When called repeatedly, the stored procedure does not clean older information from the MYID.ACCEL_TABLES_TABLE. To clean the table before each new invocation of the stored procedure, add appropriate code to the program that calls it. 
+
+ 
+
+Important note for maintenance: 
+
+Updates to the SYSPROC.ACCEL_GET_TABLES_INFO stored procedure might fail as long as the MYID.IDAA_TABLESINFO stored procedure is defined. In such situations, proceed as follows: 
+
+ 1. Drop the MYID.IDAA_TABLESINFO procedure. 
+ 2. Update SYSPROC.ACCEL_GET_TABLES_INFO. 
+ 3. Re-create MYID.IDAA_TABLESINFO.
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ IDAA

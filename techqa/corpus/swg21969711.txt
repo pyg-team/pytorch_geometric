@@ -1,0 +1,39 @@
+Title: IBM Commonly used APM / IBM Monitoring V8.1.2 part numbers. - United States
+
+Text:
+APM ITCAM APM IBM Performance Monitoring Application CAMADALL TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ Commonly used APM / IBM Monitoring V8.1.2 part numbers. 
+
+ANSWER
+Here are the commonly used part numbers to search for when downloading the new IBM Monitoring / APM V8.1.2 components. The Agents package here will contain the WebSphere and other J2EE agents to be used for monitoring the WAS / J2EE servers. 
+Note these are the upgrade part numbers, so you will need to use the base code parts [http://www-01.ibm.com/support/docview.wss?uid=swg21961194] first. You can choose to download the eAssembly or the individual packages that you need.
+
+These images are en_US, and multilingual, multiplatform where applicable. If you are looking for non-US English images, please do your search on Passport Advantage for the right image to download for your specific language, if available.
+
+Not sure which package to download? Check this table [http://www-01.ibm.com/support/knowledgecenter/SSHLNR_8.1.1/com.ibm.pm.doc/install/saas_agent_capabilities.htm] to see what agent you want to monitor and then download the right package.
+
+IBM Monitoring V8.1.2 for Multiplatform Multilingual eAssembly (CRW7XML)
+
+
+
+Component Part Number (approx. size) IBM Monitoring Agents Install V8.1.2 Windows 64-bit Multilingual CN7D3ML (649 MB) IBM Monitoring Agents Install V8.1.2 Windows 32-bit Multilingual CN7D4ML (158 MB) IBM Monitoring Agents Install V8.1.2 Linux 64-bit Multilingual CN7D5ML (594 MB) IBM Monitoring Agents Install V8.1.2 AIX Multilingual CN7D6ML (422 MB) IBM Agent Builder V8.1.2 Multiplatform, Multilingual CN7D7ML (636 MB) IBM Agent Builder Language Pack V8.1.2 Multiplatform Multilingual CN7D8ML (191 MB) IBM Monitoring TCR Reports V8.1.2 Multiplatform Multilingual CN7D9ML (7 MB) IBM Monitoring Server Install V8.1.2 RHEL6 64-bit Multilingual CN7DAML (2.9 GB) IBM Hybrid Gateway V8.1.2 Multiplatform Multilingual CN7DBML (230 MB) 
+IBM Application Diagnostics V8.1.2 for Multiplatform Multilingual eAssembly (CRW71ML) 
+
+Component Part Number (approx. size) IBM Performance Management Application Diagnostics Server Install V8.1.2 Linux Multilingual CN7DIML (2.9 GB) IBM Performance Management Application Diagnostics Agents Install V8.1.2 Linux for System x86 Series Multilingual CN7DJML (230 MB) IBM Performance Management Application Diagnostics Agents Install V8.1.2 Windows 64-bit Multilingual CN7DKML (365 MB) IBM Performance Management Application Diagnostics Agents Install V8.1.2 AIX Multilingual CN7DLML (210 MB) IBM Performance Management Application Diagnostics Agents Install V8.1.2 Windows 32-bit Multilingual CN7DMML (85 MB) IBM Performance Management Application Diagnostics Reports V8.1.2 Multilingual CN7DNML (7 MB) 
+IBM Application Performance Management (APM) V8.1.2 Multiplatform Multilingual eAssembly (CRW61ML) 
+
+Component Part Number (approx. size) IBM APM Agents Install V8.1.2 Windows 64-bit Multilingual CN7F9ML (752 MB) IBM APM Agents Install V8.1.2 Windows 32-bit Multilingual CN7FAML (158 MB) IBM APM Agents Install V8.1.2 Linux x86 64-bit Multilingual CN7FBML (617 MB) IBM APM Agents Install V8.1.2 AIX Multilingual CN7FCML (457 MB) IBM APM Agent Builder V8.1.2 Multiplatform Multilingual CN7D7ML (636 MB) IBM APM Agent Builder Language Pack V8.1.2 Multiplatform Multilingual CN7D8ML (191 MB) IBM APM TCR Reports V8.1.2 Multiplatform Multilingual CN7FDML (7 MB) IBM APM Server Install V8.1.2 RHEL6 64-bit Multilingual CN7FEML (2.9 GB) 
+IBM Application Performance Management Advanced (APM) V8.1.2 Multiplatform Multilingual eAssembly (CRW73ML) 
+
+Component Part Number (approx. size) IBM APM Advanced Server Install V8.1.2 Linux for System x86 SeriesMultilingual CN7FFML (2.9 GB) IBM APM Advanced Agents Install V8.1.2 Linux for System x86 SeriesMultilingual CN7FGML (617 MB) IBM APM Advanced Agents Install V8.1.2 Windows 64-bit Multilingual CN7FHML (752 MB) IBM APM Advanced Agents Install V8.1.2 AIX Multilingual CN7FIML (457 MB) IBM APM Advanced Agent Builder V8.1.2 Windows 32-bit Multilingual CN7FJML (158 MB) IBM APM Advanced Reports V8.1.2 Linux for System x86 Series Multilingual CN7FKML (7 MB)  
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for Application Diagnostics ITCAM for APPLICATION DIAGNOSTICS Agent for WebSphere AIX, Linux, Windows 7.1 Advanced, All Editions 
+PRODUCT ALIAS/SYNONYM
+ ITCAM APM IBM Performance Monitoring

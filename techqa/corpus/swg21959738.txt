@@ -1,0 +1,23 @@
+Title: IBM Leap second - Message Broker APAR PI36602 is recommended for WBIFN 3.11 by June 30, in case you use custom message flows which create timestamps in ESQL - United States
+
+Text:
+WMB; INST FLASH (ALERT)
+
+ABSTRACT
+ To consistent handling of the leap second, the Broker APAR PI36602 is recommended to apply prior to 6/30, if a timestamp of 23:59:60 can be created by your ESQL. 
+
+CONTENT
+ 
+
+This flash is to recommend a Broker APAR to avoid problem with leap seconds, the next occurring on June 30, 2015 23:59:60 UTC.
+
+A leap second is a second which is added to Coordinated Universal Time (UTC) in order to synchronize atomic clocks with astronomical time to within 0.9 seconds. 
+
+Message Broker team raised an APAR PI36602 to avoid problems with the leap second. 
+In order to ensure consistent handling of the leap second, we recommend to apply Broker APAR PI36602 prior to 6/30, if you use custom message flows in conjunction with WBIFN, which create timestamps of 23:59:60.
+WBIFN itself does not create such timestamps, so, if you do not have custom message flows, or if the custom message flows do not create timestamps in ESQL, you are not affected and the APAR fix is not needed.
+
+The APAR affects Message Broker 7 and Message Broker 8.
+
+As the APAR is not yet included in a Message Broker fixpack, Broker 7 and Broker 8 users should request the APAR fix, based on the current Broker fixpack level, via a PMR for the Message Broker. RELATED INFORMATION
+ PI36602 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI36602 ]

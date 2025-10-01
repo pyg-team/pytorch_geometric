@@ -1,0 +1,44 @@
+Title: IBM Security Bulletin: IBM Security Access Manager Appliance is affected by a cross-site request forgery vulnerability (CVE-2017-1194) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM Security Access Manager Appliance has addressed the following cross-site request forgery vulnerability that has been identified in IBM WebSphere Application Server. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2017-1194 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-1194]
+DESCRIPTION: IBM WebSphere Application Server is vulnerable to cross-site request forgery which could allow an attacker to execute malicious and unauthorized actions transmitted from a user that the website trusts.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/123669 [https://exchange.xforce.ibmcloud.com/vulnerabilities/123669] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Affected IBM Security Access Manager Appliance Affected Versions IBM Security Access Manager 9.0 - 9.0.2.1 REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation IBM Security Access Manager 9.0 - 9.0.2.1 IJ00670 Upgrade to 9.0.3.0:
+IBM Security Access Manager V9.0.3 Multiplatform, Multilingual (CRW4EML) [http://www-01.ibm.com/software/passportadvantage/pacustomers.html] WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 2 November 2017: Original version published. 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

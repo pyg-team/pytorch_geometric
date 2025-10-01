@@ -1,0 +1,21 @@
+Title: IBM How to use a different version of Java for COBOL Copybook import in map editor. - United States
+
+Text:
+File Format; Mapping; Translation; STERLINGHTG TECHNOTE (FAQ)
+
+QUESTION
+ Can one use a different version of Java for COBOL Copybook function (cb2xml.jar) in map editor? 
+
+ANSWER
+Yes. Refer to the documentation for your release of Sterling B2B Integrator for the version of Java that COBOL copybooks need. 
+
+For example, the documentation for Sterling B2B Integrator 5.2 specifies version 1.5.0_11 of the JRE. The Map Editor requires Java 1.6 for the 5.2.4 release version. You have to have a version of Java installed on the system where the Map Editor is installed, so as long as you have the stated version of the JRE to run the Map Editor, this will be sufficient to use the cb2xml.jar. Please see the link below for the documentation page on COBOL copybooks.
+
+RELATED INFORMATION
+ SBI Documentation for 5.2 in regard to COBOL copybook [http://pic.dhe.ibm.com/infocenter/sb2bi/v5r2/index.jsp?topic=%2Fcom.ibm.help.stds800_map_editor.doc%2Fc_STDS_ME_COBOLCopybookConversionForUseWithMapEditor.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ HTG1570

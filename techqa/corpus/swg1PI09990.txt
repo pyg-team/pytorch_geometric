@@ -1,0 +1,146 @@
+Title: IBM PI09990: AST 8.7: False positive: Cacheable SSL Page Found - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  AST 8.7: False positive: Cacheable SSL Page Found
+   
+   The 'Cache-Control-no-store' needs to be added to the
+   validation.
+   
+   AppScan Standard reports issue 'Cacheable SSL Page Found' on a
+   page where the response contains header 'Cache-Control:
+   no-cache, no-store'.
+   
+   The fix recommendation explains that 'Pragma: no-cache' should
+   be also included, but 'Cache-Control-no-store' needs to be added
+   to the validation.
+   
+   There are doubts about the appropriateness of including the
+   Pragma directive, considering that RFC 2616 in section 14.32
+   states:
+   
+   '...the meaning of 'Pragma: no-cache as a response header field
+   is not actually specified...'
+   
+   More specifically, 'Pragma: no-cache' is defined as a request
+   header, not as a response header. As a result, it is believed
+   that AppScan Standard is finding is a false positive due to
+   incorrect interpretation of the RFC.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   "Cacheable SSL Page Found" false positive
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed detection function in 9.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI09990
+   
+   
+ * REPORTED COMPONENT NAME
+   SEC APPSCAN STD
+   
+   
+ * REPORTED COMPONENT ID
+   5724T5900
+   
+   
+ * REPORTED RELEASE
+   870
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-01-20
+   
+   
+ * CLOSED DATE
+   2014-04-01
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SEC APPSCAN STD
+   
+   
+ * FIXED COMPONENT ID
+   5724T5900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R870 PSN
+   UP

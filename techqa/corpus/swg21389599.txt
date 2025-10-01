@@ -1,0 +1,48 @@
+Title: IBM How to manually upgrade GSKIT - United States
+
+Text:
+Install manual GSKIT GSK manually upgrade update windows TECHNOTE (FAQ)
+
+QUESTION
+ How can I upgrade the level of GSKIT used by WebSphere MQ for Windows, without upgrading the MQ Fix Pack level? 
+
+CAUSE
+The recommended way to upgrade GSKIT is to install the latest WebSphere MQ Fix Pack. Doing so will update the MQ binaries to the latest Fix Pack level as well as updating GSKIT if a later version is shipped with the MQ Fix Pack. It is possible to upgrade only GSKIT without actually upgrading MQ by following the steps outlined here. 
+
+ANSWER
+1. Download the latest WebSphere MQ for Windows Fix Pack. 
+
+Recommended Fixes for WebSphere MQ [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+
+2. Run the installer to unpack the contents of the Fix Pack to the file system. You will have to go through the wizard and select to unpack the files to the default location (the second radio button); for example "C:\Program Files\IBM\Source\WebSphere MQ 6.0.2.6 EnUs". Then once the extract is finished, cancel out of the install.
+
+3. Go out to the unpacked Fix Pack directory. For example "C:\Program Files\IBM\Source\WebSphere MQ 6.0.2.6 EnUs". Then change directory to 
+'CSD00038' for MQv6 Fix Packs or 'CSD00016' for MQv7 Fix Packs. 
+
+4. Then use the following command to unpack the gskit package: 
+
+gsk7win.exe -f "Destination_Path"
+
+All the files will be extracted to the Destination_Path folder. Here we assume Destination_Path as "C:\Temp\gskit". For example: 
+
+gsk7win.exe -f C:\Temp\gskit
+
+5. Change directory to "C:\Temp\gskit". Then install the GSKit using the following command:
+
+setup.exe AMQWMQ60 "C:\Program Files" -logfile amqt0001.txt -SMS -f1"SETUP.ISS"
+
+Additional information
+Verify that GSKIT was upgraded by issuing the command:
+
+runmqckm -version
+
+
+
+
+HISTORICAL NUMBER
+ 92110
+487
+000 
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ MQSeries

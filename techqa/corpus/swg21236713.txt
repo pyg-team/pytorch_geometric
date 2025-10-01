@@ -1,0 +1,42 @@
+Title: IBM OutOfMemoryError in EJB code generation while installing an application from WebSphere Application Server administrative console - United States
+
+Text:
+ejbdeploy; outofmemory; admin console; jvm memory allocation; out-of-memory errors; EJB code generation errors; increasing memory allocation in jvm; ejb deploy errors; RAD; RSA; WAS; ejb code gen; ws ejbdeploy; installing applications; WAS admin console; 1236713 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you are installing an application through the WebSphere® Application Server administrative console, you get an OutOfMemoryError during the EJB code generation step.
+
+The error in the in the SystemOut.log of the server is:
+[4/26/06 16:13:33:364 EDT] 0000007e DeployEJBTask W ADMA0087W: A warning is issued from the EJBDeploy program: java.lang.OutOfMemoryError [severity -] 
+
+CAUSE
+This occurs because the JVM used by RMIC during ejbdeploy is running out of memory.
+
+RESOLVING THE PROBLEM
+To resolve this issue, you can increase the size of the JVM used. 
+
+
+Follow these steps: 
+
+ 1. Edit the following file:
+    {WAS_install_directory}/deploytool/itp/ejbdeploy.bat in a Microsoft® Windows® operating system,
+    or .sh in Linux® 
+ 2. Increase the maximum memory allocated to the JVM by changing the -Xmx256M parameter to, for example -Xmx1024M 
+ 3. After increasing the memory allocation, save the file, then run ejbdeploy again. 
+
+
+This example solution provided above is for WebSphere® Application Server (WAS) version 6.0.2+ , but the solution should work in most cases for previous versions of WAS. You can find additional information on occurrence of this error in the links under the Related information section below. 
+
+RELATED INFORMATION
+#OutOfMemoryError running ejbdeploy from command-line [http://www.ibm.com/support/docview.wss?uid=swg21236386]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server EJBDeploy (WSAD) AIX, HP-UX, Linux, Linux pSeries, Linux Red Hat - pSeries, Linux zSeries, OS/390, OS/400, Solaris, Windows, z/OS 6.0.2.9, 6.0.2.7, 6.0.2.6, 6.0.2.5, 6.0.2.4, 6.0.2.3, 6.0.2.2, 6.0.2.1, 6.0.2 Base Software Development Rational Software Architect EJB Development Windows, Linux 6.0 
+HISTORICAL NUMBER
+ 74651
+033
+000

@@ -1,0 +1,29 @@
+Title: IBM Optim and the Hadoop Hive - United States
+
+Text:
+Optim; Hadoop; Hive; Data Masking TECHNOTE (FAQ)
+
+QUESTION
+ How do I load data into the Hadoop Hive using Optim? 
+
+ANSWER
+On the Big Insights VM
+
+
+ 1.  Edit the hosts.deny and remove all the rows
+
+
+On the Optim 11.3 VM 
+ 1. Edit the \etc\hosts and ensure that the name matches exactly what is on the name node. (See Below) 
+ 2. Change the port for the Optim Server from 1024 to 11024 
+ 3. In the load request, use the fully qualified host name bivm.ibm.com
+
+
+Once you make these changes, you will be able to load the data into the Hive. 
+
+
+
+[/support/docview.wss?uid=swg21692286&aid=1] [/support/docview.wss?uid=swg21692286&aid=1] 
+
+[/support/docview.wss?uid=swg21692286&aid=2] [/support/docview.wss?uid=swg21692286&aid=2] RELATED INFORMATION
+#Where to download the Big Insights VM [http://www-01.ibm.com/software/data/infosphere/biginsights/quick-start]

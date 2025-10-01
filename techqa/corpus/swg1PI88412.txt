@@ -1,0 +1,162 @@
+Title: IBM PI88412: WCM AUTHORING PORTLET MENU BUTTONS NOT FUNCTIONAL AFTER ACCESSING THE SAME SERVER USING A DIFFERENT HOSTNAME - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.5.0.0 and V9.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The authoring portlet menu buttons are no longer functional
+   after accessing the same server under a different hostname via a
+   link that is rendered from the initial server instance.
+   
+   Depending on the button/links being used, exceptions similar to
+   the following can be seen in the browser console:
+   - TypeError: ibm.wcm.widget.menu is undefined
+   - full.js:2 Uncaught TypeError: Cannot read property
+   'MenuFactory' of undefined
+   - dojo/parser::parse() error Error: Unable to resolve
+   constructor for: 'ibm.wcm.widget.favorite.FavoriteLocation'
+   
+   Note: The issue only occurs on Firefox and Chrome.
+   
+   Example:
+   - The server hostname is named both and Test02.
+   - Create a link that points to the authoring portlet on Test02.
+   - Access the server from Test01 and render the link.
+   - Once the link is clicked, the browser will redirect to the
+   authoring portlet from Test02
+   - And even though Test02 is the same server instance, the
+   authoring portlet buttons no longer work after logging into
+   Test02
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The authoring portlet menu buttons are no longer functional
+   after accessing the same server under a different hostname via a
+   link that is rendered from the initial server instance.
+   
+   Depending on the button/links being used, exceptions similar to
+   the following can be seen in the browser console:
+   - TypeError: ibm.wcm.widget.menu is undefined
+   - full.js:2 Uncaught TypeError: Cannot read property
+   'MenuFactory' of undefined
+   - dojo/parser::parse() error Error: Unable to resolve
+   constructor for: 'ibm.wcm.widget.favorite.FavoriteLocation'
+   
+   Note: The issue only occurs on Firefox and Chrome.
+   
+   Example:
+   - The server hostname is named both and Test02.
+   - Create a link that points to the authoring portlet on Test02.
+   - Access the server from Test01 and render the link.
+   - Once the link is clicked, the browser will redirect to the
+   authoring portlet from Test02
+   - And even though Test02 is the same server instance, the
+   authoring portlet buttons no longer work after logging into
+   Test02
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 15 (PI83476) for Portal 8.5
+   and 9.0 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI83476
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI88412
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-04
+   
+   
+ * CLOSED DATE
+   2017-12-10
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

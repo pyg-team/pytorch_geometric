@@ -1,0 +1,81 @@
+Title: IBM ** Troubleshooting ** error "could not resolve the connect identifier" when using Database Conversion utility - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Administrator logs onto Controller application server, and launches "Controller Configuration". Administrator opens "Database Connections", highlights a connection, and presses green 'play' button. The 'Database Conversion Utility' appears. Administrator clicks on 'connect' button. After a few seconds, an error message appears. 
+
+SYMPTOM
+[/support/docview.wss?uid=swg21574558&aid=1] [/support/docview.wss?uid=swg21574558&aid=1] 
+
+** ERROR: java.sql.SQLException: could not resolve the connect identifier "<database name>"
+
+
+
+Alternative error (in some environments):
+** ERROR: java.sql.SQLException: Io exception: could not resolve the connect identifier "<database name>"
+
+
+CAUSE
+There are several potential causes for the same error: 
+
+ * Scenario #1 - Invalid configuration file inside the end user's Windows profile  * Specifically the 'dbconvlauncher.conf' file contains erroneous information, causing the system to look in the wrong place for the TNSNAMES.ORA file 
+    * For example, it may refer to an old version of the Oracle client.
+   
+   
+ * Scenario #2 - Invalid or corrupt entries inside TNSNAMES.ORA file  * For more details, see separate IBM Technote #1570781
+   
+   
+ * Scenario #3 - Third-party (non-IBM) bug (reference 3807408) in Oracle's client product.  * For more details, see separate IBM Technote #1595127
+   
+   
+
+DIAGNOSING THE PROBLEM
+Scenario #1 - Invalid configuration file inside the end user's Windows profile 
+
+Perform the following steps: 
+
+1. Logon to the Controller application server as the 'bad' user 
+
+2. Click "Start - Run" 
+
+3. Type the following (and press <enter>): %userprofile%\Local Settings\Application Data 
+
+4. Notice how there is a file 'dbconvlauncher.conf' inside this folder. 
+
+5. Open this file (inside NOTEPAD.EXE) and notice how it may contain incorrect information, for example: 
+
+ * 
+
+
+In one real-life example, the server had been upgraded from the Oracle 10G client to the Oracle 11G client but the file was (incorrectly) pointing to the old Oracle 10G configuration. 
+RESOLVING THE PROBLEM
+Scenario #1 
+
+ 
+Fix:
+1. Logon to Controller application server as the 'bad' Windows user
+2. Open the end user's profile (%userprofile%\Local Settings\Application Data)
+3. Open the file 'dbconvlauncher.conf' inside NOTEPAD
+4. Modify the entry for "TNS_ADMIN" to be the correct location (e.g. C:\app\Administrator\product\11.2.0\client_1\network\admin).
+
+
+
+Alternative method (suitable for some environments only): Create a new Windows "System Environment Variable" on the Controller application server, called "TNS_ADMIN". Assign it a value of the path to the directory where the tnsadmin.ora file is located. 
+
+ * For example: C:\app\Administrator\product\11.2.0\client_1\network\admin
+
+Afterwards, reboot the Controller application server to ensure that the change is registered. 
+
+
+Scenario #2 
+Check Oracle client TNSNAMES.ORA file on Controller application server.  * See separate IBM Technote #1570781
+
+
+Scenario #3 
+See separate IBM Technote #1595127. RELATED INFORMATION
+#1570781 - "Java.sql.SQLException ... Io exception: coul [http://www.ibm.com/support/docview.wss?uid=swg21570781]
+1595127 - Controller cannot connect to Oracle database [http://www.ibm.com/support/docview.wss?uid=swg21595127]
+Third Party (non-IBM) - ORA-12154 could not resolve the [http://stackoverflow.com/questions/7957955/ora-12154-could-not-resolve-the-connect-identifier-specified]
+Third Party (non-IBM) - “ORA-12154: TNS: could not reso [http://blogs.msdn.com/b/dataaccesstechnologies/archive/2010/06/30/ora-12154-tns-could-not-resolve-the-connect-identifier-specified-error-while-creating-a-linked-server-to-oracle.aspx]

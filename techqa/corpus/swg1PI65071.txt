@@ -1,0 +1,132 @@
+Title: IBM PI65071: DESCRIPTIONS IN STATES OR TRANSITIONS FAILS TO GENERATE JAVA CODE. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Rational Rhapsody 8.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24042928]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Rhapsody 8.1.5 in Java on Windows x64...observed that providing
+   a description for a state or transition results in illegal
+   generated Java code. The same does not occur for activities, nor
+   does it occur for models in C++.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Rhapsody users                                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * In Rhapsody in java, Description of statechart elements get  *
+   * generated without the comment syntax. Cause compilation      *
+   * error. Same for Requirements in case that choose to          *
+   * generated them to the code.                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in Rhapsody 8.2 - Rhapsody in java wrap with comment
+   syntax description and requirement of State, Transition,
+   Entry/Exit Actions.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI65071
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   815
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-29
+   
+   
+ * CLOSED DATE
+   2016-12-05
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R815 PSN
+   UP

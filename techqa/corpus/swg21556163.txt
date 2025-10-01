@@ -1,0 +1,35 @@
+Title: IBM FTP communication error - ERROR: CSocket::Send failed: Unknown Explanation - Sterling Gentran:Server for Microsoft Windows - United States
+
+Text:
+Communication; Protocol/Authentication TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ FTP communication error - ERROR: CSocket::Send failed: Unknown Explanation 
+
+SYMPTOM
+FTP session failure occurred after the software was loaded on a new computer as part of upgrade. 
+
+ * Logon to FTP mailslot is successful, but data upload fails. 
+ * "ERROR: CSocket : : Send failed : Unknown Explanation" appears in the Communications Log after "150 Opening data connection" during the data upload with trace on. 
+ * Using a FTP communication script with same FTP settings which worked on the old computer. 
+ * Deleting and recreating the FTP Pool does not resolve the problem. 
+ * The old computer does not have the "Passive Transfers" box checked in the Properties window. 
+ * The new computer is running on a different virus scanner, a different firewall, or different settings for one or both of those as compared to the old computer. 
+ * A Server user account created with proper permission (read, write, execute) is used during the installation.
+
+
+Error Message ERROR: CSocket : : Send failed: Unknown Explanation. 
+
+ERROR: CSocket : : Connect failed: Address in the specified family cannot be used with this socket. 
+
+
+RESOLVING THE PROBLEM
+
+1. Click on Tools > Mailbox. The "Server Manager" window will open. 
+2. Expand the Server.
+3. Expand "Mailboxes" > right click on the FTP mailbox > select "Properties".
+4. The "Mailbox Properties" window will open > click the Properties button.
+5. The "FTP Properties" window will open > check the "Passive Transfers" box > click OK.
+6. For debugging it would wise to turn on the Trace option. Activate it with the check box in the SCRIPT area
+7. Return to the "Gateway Properties" window > click Apply, then OK.
+8. Click OK in the "Mailbox Properties" window, then close the "Server Manager".

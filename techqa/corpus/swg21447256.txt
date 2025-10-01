@@ -1,0 +1,59 @@
+Title: IBM Page redirection (j_security_check) on a Maximo report with Excel - United States
+
+Text:
+Page redirect; Excel; Maximo; Report; j_security_check; V16LongStringValue; TPAECCMDB TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Opening a Maximo report in an Excel file when using page redirection (j_security_check) 
+
+CAUSE
+When using Single Sign On/LDAP form base Application Server authentication, a request comes to the server into a "restricted path". 
+If the user has not been authenticated, the application server, "suspends" the original request and the user is redirected to the login page (Maximo has nothing to do with this). 
+Once the user logs in, the server then redirects the browser to the original request. This time the user is authenticated and the request is allowed to proceed. 
+A redirect is a response back to the browser saying "I know you request this URL,however you really need to go to this URL". 
+
+When clicking on the link in Excel, the redirect to the login page is coming back to Excel and Excel is sending that URL to the browser and not the original URL. 
+Since the browser is making it's own Http Request (when showing the login page , the URL send to it by Excel), the application server knows nothing about the original request made, so once the user "logs in", the application server doesn't know where to send the user so it tries to send it to a place that it thinks is correct and it's not. 
+
+
+RESOLVING THE PROBLEM
+A solution to get around this is as follows: 
+
+ 
+a) First you need to create a new jsp file: 
+
+First open notepad (or favourite text editor) 
+
+Copy the following 10 lines and paste them into notepad: 
+
+<%@ page contentType="text/html;charset=UTF-8" \%> 
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+"http://www.w3.org/TR/html4/loose.dtd"><html> 
+
+<script language="javascript"> window.document.location="../../ui/maximo?<%=request.getQueryString()%> 
+"; 
+</script> 
+
+</html> 
+
+b) Then save the file for example say as redirect.jsp in {maximo root}\applications\maximo\maximouiweb\webmodule\webclient\login 
+
+c)Then change the logic that created the url in the excel spread sheet to have the url point to that new jsp to something like this: 
+
+http://{host}:{port}/maximo/webclient/login/redirect.jsp?event=loadapp&value=wotrack&uniqueid=10 
+
+d) So for example change the relevant xls from : 
+
+http://123.45.67.890/maximo/ui/maximo.jsp?event=loadapp&value=srtrack&uniqueid=837 
+
+to 
+
+http://123.45.67.890/maximo/webclient/login/redirect.jsp?event=loadapp&value=srtrack&uniqueid=837 
+
+e) Once you have completed the change (and created the new jsp file),please rebuild and redeploy the ear and the links in xls should work now. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Application Dependency Discovery Manager Not Applicable AIX, HP-UX, Linux, Solaris, Windows 7.2, 7.1.1 All Editions Systems and Asset Management Tivoli Asset Management for IT AIX, HP-UX, Linux, Solaris, Windows 7.1, 7.2 All Editions

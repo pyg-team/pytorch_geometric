@@ -1,0 +1,133 @@
+Title: IBM RS00127: TO VIEW REPORT IN RULE STUDIO - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In JRules Studio 7.0.2 rule reporting is different from JRules
+   Studio 6.7.4, where there was a Rule Report option in the
+   context menu.
+   As we follow the documentation for 7.0.2, upon imported the
+   custom-rule-project and opened the BIRT editor for a specific
+   template. the option "View report" is not available in JRules
+   7.0.2 File menu.
+   Where / how can we find this option?
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The documentation is provided in JRules 7.0.2 is not correct.
+   The correct steps to run a rule report are as follows:
+   1. In the Rule Explorer, under custom-rule-report, double-click
+   one of the report templates, for example
+   businessrulereport.rptdesign. The report template opens in the
+   BIRT editor.
+   2.Click Run > View Report to display the different ways of
+   viewing the report.
+   3.From the list, select the option that best suits your needs,
+   for example View Report in Web viewer. The BIRT report window
+   opens.
+   4.In the Parameter dialog, select the name of the rule project
+   you want to report on.
+   5.Click OK. The rule report is generated.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In "WebSphere ILOG JRules V7.1 > Samples > Rule Studio business
+   rule management extension samples" section, go to "Generate
+   custom report sample". Look at the point 2 of "Running the
+   Business Rules Report": it is asked to "Click File > View Report
+   to display the different ways of viewing the report".
+   
+   In the menu File > View Report is not accessible.
+   
+   This option is available when the user double click a .rptdesign
+   file (on the preview tab ).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS00127
+   
+   
+ * REPORTED COMPONENT NAME
+   WS ILOG JRULES
+   
+   
+ * REPORTED COMPONENT ID
+   5724X9800
+   
+   
+ * REPORTED RELEASE
+   702
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-25
+   
+   
+ * CLOSED DATE
+   2010-06-07
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

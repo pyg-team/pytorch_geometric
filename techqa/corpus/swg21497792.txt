@@ -1,0 +1,53 @@
+Title: IBM DBPurge may not reclaim DB Space for tables in a DMS tablespace - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to reclaim DB space for tables in DMS tablespace after running DBPurge utility 
+
+ANSWER
+The DBPurge utility provided with ITIM 4.6, 5.0, and 5.1 is used to remove transaction records from the ITIM database which completed before a specified date. Keeping the IBM® Tivoli® Identity Manager Server database a manageable size is a good maintenance practice.
+If you use DBPurge utility to delete or remove transactions, or do this task manually and are dealing with DMS tablespaces, then there are some manual maintenance tasks involved in reclaiming the free space, after DBPurge has been used. It may be necessary to take other actions to reclaim the space by lowering the High Watermark. 
+
+To determine if you are using SMS or DMS tablespaces you can use the 'db2 list tablespaces' command. 
+
+Example: 
+db2 list tablespaces
+
+Tablespaces for Current Database
+
+Tablespace ID = 0
+Name = SYSCATSPACE
+Type = Database managed space
+Contents = All permanent data. Regular table space.
+State = 0x0000
+Detailed explanation:
+Normal
+...
+
+To determine which tables exist in which tablespace, you can query the syscat.tables system catalog table for the 'tbspaceid' associated to each table.
+
+For example, to determin which tablespace the "TAB1" table is in you could run:
+
+$ db2 "select TABLEID, TBSPACEID, substr (TBSPACE,1,15), substr (TABNAME,1,15), substr (TABSCHEMA,1,15) from syscat.tables where TABNAME='TAB1'"
+
+TABLEID TBSPACEID 3 4 5
+------- --------- ------- ----- -------
+4 4 TBS8K TAB1 DB2WLM
+
+1 record(s) selected.
+
+Once this has been confirmed, you can use the db2dart tool, to help you lower the high water mark, to reclaim as much space as possible. 
+
+You can run the following command when the database is offline: 
+
+db2dart <dbname> /lhwm /tsi <tablespaceID> /np 0 /rptn <filename> 
+
+This above command will indicate that you want to lower the high water mark as much as possible, with the "/np 0" option. The /lhwm option will offer suggestions on what to do to reclaim free space. 
+
+Often, it suggests that you run REORG on the tables, but sometimes it may also ask you to simply drop and recreate some objects within the tablespace. In some cases, if the tablespace has some internal structures in the "free pages" that is effectively holding up the high water mark, the only option to remove it complete would be to drop and recreate the tables, and repopulate the data. The suggestions on how to lower the high water mark can be found in the output file, specified by <filename> in the above db2dart command.
+
+Note that you may need to do this for multiple tablespaces, depending on what is returned from the query. You should probably prioritize (i.e. do this for tablespaces that have the most free space to be reclaimed). 
+
+Most importantly, you should run these db2dart commands while the database is offline. Also note that the /lhwm suggestions may ask you to perform tasks (e.g. offline reorg) that require you to schedule outage or maintenance windows, so please plan accordingly.

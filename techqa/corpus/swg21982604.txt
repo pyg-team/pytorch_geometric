@@ -1,0 +1,14 @@
+Title: IBM Why does custodian able to respond to the same Atlas notice twice ? - United States
+
+Text:
+atlas TECHNOTE (FAQ)
+
+QUESTION
+ Recently a custodian who received a auto-reminder notice in October, 2015 was asked to respond to the notice. This custodian mentioned that they had already responded to the notice back in October, but they 
+responded a second time to be safe. Why does custodian able to respond to the same Atlas auto reminder notice twice ? 
+
+CAUSE
+Initial notice confirmation reminder and auto reminders has their own cycles even when using notice specific rules for auto reminders.
+
+ANSWER
+In this scenario , custodian might have responded to the auto reminder back in October 2015 and later he responded to the initial notice confirmation reminder as auto reminders and initial notice confirmation reminders operate 2 different cycles.

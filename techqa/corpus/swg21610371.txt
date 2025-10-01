@@ -1,0 +1,42 @@
+Title: IBM Potential security exposure after installing an interim fix for WebSphere Application Server PM44303 or a fix pack containing PM44303 - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ If you have installed an Interim Fix for PM44303 or a fix pack containing it, you have the potential for an authenticated user to bypass security restrictions, which is caused by an error when validating user credentials. 
+
+CONTENT
+This issue might allow a user to gain unauthorized administrative access to an application and potentially gain access to confidential and critical customer data. 
+
+This WebSphere Application Server issue affects the following products in the Business Process Management family of products due to the WebSphere Application Server underlying infrastructure. 
+
+ 
+
+Products Versions Note IBM Business Process Manager Standard, IBM Business Process Manager Express, and IBM Business Process Manager Advanced 8.0 These products are affected if the underlying WebSphere Application Server infrastructure is V8.0.0 Fix Pack 3 or 4. You can apply the fix using Installation Manager. IBM Business Process Manager Standard, IBM Business Process Manager Express, and IBM Business Process Manager Advanced 7.5.1 
+7.5 These products are affected if the underlying WebSphere Application Server infrastructure is V7.0.0 Fix Pack 21, 22, or 23. You can apply the fix using Installation Manager. WebSphere Enterprise Service Bus 7.5.1
+7.5
+7.0 These product versions are affected if the underlying WebSphere Application Server infrastructure is V7.0.0 Fix Pack 21, 22, or 23. You can apply the fix using Installation Manager. WebSphere Enterprise Service Bus 6.2
+6.1.2
+6.1 These product versions are affected if the underlying WebSphere Application Server infrastructure is V6.1.0 Fix Pack 43. You can apply the fix using Update Installer. WebSphere Process Server 7.0 This product version is affected if the underlying WebSphere Application Server infrastructure is V7.0.0 Fix Pack 21, 22, or 23. You can apply the fix using Installation Manager. WebSphere Process Server 6.2
+6.1.2
+6.1 These product versions are affected if the underlying WebSphere Application Server infrastructure is V6.1.0 Fix Pack 43. You can apply the fix using Update Installer. WebSphere Lombardi Edition 7.2
+7.1 These releases were originally bundled with WebSphere Application Server Version 7.0.0 Fix Pack 7. Your environment is not affected unless you specifically upgraded the underlying WebSphere Application Server infrastructure is V7.0.0 Fix Pack 21, 22, or 23. You can apply the fix using Update Installer. 
+To determine the underlying WebSphere Application Server fix pack level, use the versioninfo command with your WebSphere Application Server installation. For more information on the command, see the following WebSphere Application Server documents: 
+
+ * Version 8.0 [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/index.jsp?topic=/com.ibm.websphere.express.doc/info/exp/ae/rins_versionInfo.html] 
+ * Version 7.0 [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.express.doc/info/exp/ae/rins_versionInfo.html]
+
+
+For information on installing interim fixes using Installation Manager, see Instructions for installing an interim fix using the IBM Installation Manager [http://www.ibm.com/support/docview.wss?uid=swg21417656]. 
+
+ 
+
+For more information on this WebSphere Application Server issue, see Potential security exposure with IBM WebSphere Application Server after installing PM44303 [http://www.ibm.com/support/docview.wss?uid=swg21609067].
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Security AIX, Linux, Linux zSeries, Solaris, Windows, z/OS 8.0, 7.5.1, 7.5.0.1, 7.5 Business Integration WebSphere Process Server Security AIX, HP-UX, i5/OS, Linux, Linux zSeries, Solaris, Windows, z/OS 7.0.0.5, 7.0.0.4, 7.0.0.3, 7.0.0.2, 7.0.0.1, 7.0, 6.2.0.3, 6.2.0.2, 6.2.0.1, 6.2, 6.1.2.3, 6.1.2.2, 6.1.2.1, 6.1.2, 6.1.0.4, 6.1.0.3, 6.1.0.2, 6.1.0.1, 6.1 Business Integration IBM Business Process Manager Standard Security AIX, Linux, Linux zSeries, Solaris, Windows 8.0, 7.5.1, 7.5.0.1, 7.5 Business Integration IBM Business Process Manager Express Security Linux, Linux zSeries, Windows 8.0, 7.5.1, 7.5.0.1, 7.5 Business Integration WebSphere Lombardi Edition Security AIX, Linux, Linux zSeries, Linux/x86, Solaris, Windows 7.2, 7.1 
+PRODUCT ALIAS/SYNONYM
+ BPM WESB WPS WLE Lombardi

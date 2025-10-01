@@ -1,0 +1,20 @@
+Title: IBM Command Line configuration for J2EE Data Collector - United States
+
+Text:
+ITCAM; J2EE; CLI; configurator; CAMJ2ALL; CAMJ2INST TECHNOTE (FAQ)
+
+QUESTION
+ Command Line configuration for J2EE DC is not working as expected when trying to enable MS or TT features. 
+
+CAUSE
+Interactive CLI configuration is not supported with ITCAM J2EE 7.1.1, including last available level 7.1.1.0.4.
+
+ANSWER
+Supported methods are GUI and silent configuration. 
+
+Also, silent configuration fully works both on UNIX and Windows platforms only at level 7.1.1.0.4.
+Before this maintenance level there were issues and limitations with Managing Server and Transaction Tracking integration. 
+
+ 
+
+Support Command Line configuration for J2EE DC will possibly be added in some future patch via Request For Enhancement.

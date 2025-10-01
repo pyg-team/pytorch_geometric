@@ -1,0 +1,21 @@
+Title: IBM Changing Java versions in Rule Studio or Rule Designer causes compilation errors - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why do I see compilation errors like "[B2X] Cannot find execution class 'test.myClass' for translating business class 'test.myClass'" on BOM classes when changing the JDK version in Rule Studio or Rule Designer? 
+
+CAUSE
+The eXecution Object Model (XOM) classes are compiled in a previous JDK version and do not match the ones expected in the new version.
+The same issue occurs when executing rules in Rule Execution Server a ruleset which XOM was compiled with a JDK different from the one running the server. See technote Cannot translate class "test.myClass" [http://www.ibm.com/support/docview.wss?uid=swg21652271].
+
+
+ANSWER
+Recompile the XOM classes with the new JDK version used by Rule Studio or Rule Designer.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Modules:Rule Studio Platform Independent 8.5, 8.0, 7.5, 7.1

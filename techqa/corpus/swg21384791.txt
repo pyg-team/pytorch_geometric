@@ -1,0 +1,23 @@
+Title: IBM Memory leak in DB2 Universal JDBC driver might cause OutOfMemoryException for DB2 Content Manager client applications. - United States
+
+Text:
+OutOfMemoryException; Universal; JDBC; leak; memory TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A memory leak in DB2 Universal JDBC driver might cause an OutOfMemoryException exception for DB2 Content Manager client applications. 
+
+RESOLVING THE PROBLEM
+A memory leak in the DB2 Universal JDBC driver causes DB2 Content Manager Information Integrator for Content API applications to become unresponsive. In some cases, WebSphere Application Server applications that use the DB2 Content Manager Information Integrator for Content API report an OutOfMemoryException in the WebSphere Application Server error log files.
+This problem is caused by defects in the DB2 Universal JDBC driver that are tracked with the following APARs:
+
+APAR= JR30534
+MEMORY LEAK IN VECTOR FIELD OF COM.IBM.DB2.JCC.AM.CONFIGURATION,SUBCLASS OF COM.IBM.JCC.DB2BASEDATASOURCE.
+
+APAR= IZ36247
+JCC NOT CLEANING LOGWRITERS IN CASE OF CONNECTION FAILURE.
+
+User Response:
+DB2 Content Manager Information Integrator for Content Version 8.4 API users should download IBM Data Server Driver for JDBC and SQLJ Version 9.5 Fix Pack 4 (or later). The link to Version 9.5 Fix Pack 4 is in the Related information section. When you get to that Web page, scroll down to the row for IBM Data Server Driver for JDBC and SQLJ, download the compressed deliverable, then extract the db2jcc.jar file.
+
+RELATED INFORMATION
+ DB2 UDB Version 9.5 fix pack 4 downloads [http://www-01.ibm.com/support/docview.wss?uid=swg24023213]

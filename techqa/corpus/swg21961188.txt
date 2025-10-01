@@ -1,0 +1,87 @@
+Title: IBM InfoSphere Data Replication: How to use the %IF function in your Subscription - United States
+
+Text:
+ISCDC; IIDR; %IF; Function TECHNOTE (FAQ)
+
+QUESTION
+ When creating the table mapping, you can use some functions to convert data, transform, etc. The example below will show an example using the %IF function.
+
+The %IF function will help you to create conditional to replicate your data based on defined rules.
+
+
+ANSWER
+The example below, will help you to understand the usage of %IF conditional: 
+
+1 - Imagine you have the following table DDL: 
+
+columnA = char(10) 
+
+columnB = char(10) 
+
+ 
+
+2 - On the source side, you have the following rows: 
+
+'AAA', 'XYZ' 
+
+'BBB', 'XYZ' 
+
+'EEE','XYZ' 
+
+
+[/support/docview.wss?uid=swg21961188&amp;aid=1] 
+
+ 
+
+ 
+
+3 - You want to replicate to the target using the following rule: 
+
+When the source columnA is = 'AAA' or 'EEE' it will replicate to the target columnB the value = 'YYY'. 
+
+When the source columnA is NOT 'AAA' or 'EEE' it will replicate to the target the original value from columnB. 
+
+ 
+
+
+The %IF has the following syntax:
+%IF(<conditional>, <expression_if_true>, <expression_if_false>)
+
+In the column mapping, expand the expressions and double click the option -> New Expression.
+
+[/support/docview.wss?uid=swg21961188&amp;aid=2]
+
+
+Using the %IF function, you can create a rule like the example below: 
+
+
+%IF(columnA = 'AAA', 'YYY',
+%IF(columnA = 'EEE', 'YYY',
+columnA))
+
+Where: 
+columnA is the first rule
+columnA is the second rule (if the result from first rule is false)
+columnA is the else clause (if both the first and the second rules are false)
+
+[/support/docview.wss?uid=swg21961188&aid=3] [/support/docview.wss?uid=swg21961188&aid=3]
+
+
+You can add more rules if you need, following the example above.
+After finishing, you can click save to finish.
+You will be asked to type one name for your expression.
+
+Now, your expression will be available under the expressions:
+
+[/support/docview.wss?uid=swg21961188&aid=4] [/support/docview.wss?uid=swg21961188&aid=4]
+
+
+In the example above, the expression we saved as MYEXPRESSION.
+
+In our example, we will drag and drop the new expression to replace the columnB mapping, like the example below:
+[/support/docview.wss?uid=swg21961188&aid=5] [/support/docview.wss?uid=swg21961188&aid=5]
+
+
+The target data will be replicated as the picture below:
+
+[/support/docview.wss?uid=swg21961188&amp;aid=6]

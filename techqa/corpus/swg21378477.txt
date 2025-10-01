@@ -1,0 +1,12 @@
+Title: IBM Creating a Data Format directly from a COBOL copy book - United States
+
+Text:
+WebSphere Data Interchange Client; Data Interchange Client; client; data format; COBOL record definition; record definition; COBOL; COBOL copy book; copy book; data dictionary TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to load Data Formats directly from a COBOL record definition? 
+
+ANSWER
+Using WebSphere Data Interchange Client, you can create a Data Format directly from a COBOL copy book. The Help text associated with the Data Dictionary window explains the step-by-step process. 
+
+Note: Search for "Importing COBOL Copybooks" under WDI Client Help for details

@@ -1,0 +1,39 @@
+Title: IBM Blank Cognos Viewer in Internet Explorer when using SSL - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Running a report returns a blank (white page) or freezes on "Your report is running" page, when using Internet Explorer. Firefox displays a Cognos error message. 
+This only happens when the gateway uses SSL (HTTPS) 
+
+SYMPTOM
+IE throws the following error message in the Developer Tools console: 
+
+"SEC7111: HTTPS security is compromised by (null)"
+
+No report is displayed in IE but Firefox shows a page with a Cognos error
+
+
+CAUSE
+Cognos returning HTTP content which is being blocked by IE for not being HTTPS
+
+
+ENVIRONMENT
+Internet Explorer versions 8, 9, 10, and 11 
+
+Cognos BI (all versions)
+
+
+DIAGNOSING THE PROBLEM
+Confirm that there is a SEC7111 error thrown by IE
+
+
+
+RESOLVING THE PROBLEM
+The following resolution only applies to 10.1.1 FP1 or higher, 10.2,10.2.1 and 10.2.2 
+
+add useAlternateErrorCodeRendering=true to the file viewerconfig.properties
+or useAlternateErrorCodeRendering set to TRUE as an advanced server setting 
+
+This will make Cognos use a different way of displaying the error message successfully in IE

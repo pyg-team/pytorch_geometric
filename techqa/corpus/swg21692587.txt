@@ -1,0 +1,46 @@
+Title: IBM Unable to correctly synch BI security with TM1: The application has been updated by the administrator... - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer upgraded from TM1 10.1.1 to 10.2.2.
+
+Customer pulls in new groups from BI and does a security refresh and the users appear to be in the new groups after logging in. The user can log into any client, but after a minute or so they lose their security that was brought over through CAM. If they were admins or in any groups that were created in TM1, they will keep that security. So, admins will still have full functionality, but other end users who are only in BI groups will lose everything. 
+
+SYMPTOM
+If the user has logged into TM1 Applications they will get an error
+like this:
+The application has been updated by the administrator. Your view will now be refreshed
+
+Then their view of applications will change to only what they have
+access to through TM1 security.
+
+
+CAUSE
+The issue was related to when the customer created the new 10.2.2 environment, the Cognos Authentication provider (Series7) had a Namespace ID called "Default".
+
+The TM1 Server that they have secured with the 10.1.1 environment was secured by a Namespace ID called "default".
+
+The ID's are case sensitive, and so in the new 10.2.2 environment, the users are treated as New users in the system as a result of the different namespace IDs (Default vs default).
+
+ENVIRONMENT
+Windows 2008
+
+RESOLVING THE PROBLEM
+We correct the problem by doing the following:
+
+**NOTE - PLEASE READ CAREFULLY BEFORE TAKING ACTION!
+Before removing Cognos Namespace from Cognos Configuration we need to add the Everyone group back to System Admins from within Cognos Administration. DO NOT continue the steps below until this is done, as you will need admin access to the system. This is also only performed in this manner as the customer DOES NOT leverage BI security for any other objects or products accept TM1, so there is nothing lost in this process. If you are using other products like EP or BI that are secured against this namespace or other objects, the security will be lost for this if you continue the steps below so proceed with caution.
+
+1. Remove the Cognos Auth Provider from BI Cognos Config.
+2. Turn on Anonymous access in Cognos Config->Authentication->Cognos namespace-> Allow Anonymous = TRUE
+3. Save and restart Cognos BI Services.
+4. Navigate to the Cognos Admin portal (no login required as anonymous access is on)
+5. Navigate to the Security tab, and remove the namespace that you Deleted from Cognos Config (in this case it was called Cognos73)
+6. Go back to Cognos Config tool, and add a new Authentication Provider (in this case Series7), called Cognos73 (as it was before) and give it the ID of "default" (note the lowercase D)
+7. Turn off anonymous access in Cognos Config->Authentication->Cognos namespace-> Allow Anonymous = FALSE
+8. Save and Start.
+9. Navigate to Cognos Administration->Security tab and select Properties of System Admins and add the required users to the system admins group, and then remove the Everyone group.
+
+With adding the properly named Namespace (default) the TM1 Security will now function properly and detect all the users and group membership as a result of the corrected namespace id.

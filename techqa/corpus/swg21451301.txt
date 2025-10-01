@@ -1,0 +1,34 @@
+Title: IBM System Dashboard does not show statistics of the Storage Area Summary Counters after restarting FileNet P8 Content Engine - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ System Dashboard does not show the Storage Area Summary Counters, statistics of a given Storage Area, after restarting FileNet P8 Content Engine, while other information is shown as before. 
+
+SYMPTOM
+Before it used to have statistical information such as Free Space, as denoted in the area encompassed by a blue rectangle below (for this sample, a parent node "OBJSTR1" outside of the blue rectangle is a name of an Object Store, and its sibling "OBJSTR1" in the rectangle is a Storage Area name) 
+
+[/support/docview.wss?uid=swg21451301&amp;aid=1]
+
+After restarting CE server for some reason, it has disappeared as below: 
+
+[/support/docview.wss?uid=swg21451301&amp;aid=2]
+
+
+CAUSE
+When the CE server gets restarted, Storage Area Summary Counters, the statistical information on the Storage Area, will not be retained. If there is no activity to the storage since restart of CE server, such information may not show up until it has some nonzero counters.
+
+
+
+RESOLVING THE PROBLEM
+This behavior is as designed. So, one of below will trigger a change in counters so that the statistical information can show up in the System Dashboard. 
+
+Log on to the Workplace or FileNet Enterprise Manager, then, 
+
+ * Add a new document 
+ * Delete a document 
+ * Checkout and check-in the same document
+
+
+Note that the last item increments the minor version of the document, though it looks to give the minimum impact to the system for the purpose of only showing up the counters again.

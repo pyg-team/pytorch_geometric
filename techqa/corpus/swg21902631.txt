@@ -1,0 +1,104 @@
+Title: IBM Security Bulletin: Vulnerability in Apache Tomcat affects Rational Lifecycle Integration Adapter for HP ALM (CVE-2014-0230) - United States
+
+Text:
+security; vulnerability; psirt; CVE-2014-0230 SECURITY BULLETIN
+
+SUMMARY
+ Apache Tomcat is vulnerable to a denial of service and is supplied with specific versions of Rational Lifecycle Integration Adapter for HP ALM. 
+
+VULNERABILITY DETAILS
+CVE Information: 
+
+CVEID: CVE-2014-0230 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0230]
+DESCRIPTION: Apache Tomcat is vulnerable to a denial of service, caused by an error when uploading files. An attacker could exploit this vulnerability to consume all available memory resources.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/#/vulnerabilities/102131 [https://exchange.xforce.ibmcloud.com/#/vulnerabilities/102131] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Rational Lifecycle Integration Adapter for HP ALM 1.1.2 and 1.1.2.1
+
+REMEDIATION/FIXES
+The IBM Rational Lifecycle Integration Adapter can be updated with a corrected Tomcat by following the instructions below. This is only applicable to products deployed on Apache Tomcat. Be sure to upgrade all the components that your deployment uses.
+
+Note: Rational Lifecycle Integration Adapter 1.1.x product modification may contain updated Tomcats, however 1.1.x iFixes typically do not update Tomcat. 
+
+NOTE: Apache Tomcat is only included by IBM Rational Lifecycle Integration Adapter version 1.1.2 and 1.1.2.1 Previous versions oft he RLIA SE HP Adapter were released as WAR files only.
+
+To obtain the latest Apache Tomcat, please visit the Apache Tomcat website [https://tomcat.apache.org/download-60.cgi] and download versions 6.0.44 or higher version (in 6.0 stream). Once the Tomcat is obtained, follow the instructions below to replace the existing Tomcat:
+
+Upgrading Tomcat installation 
+
+ 1. Stop the Rational Lifecycle Integration Adapter server.
+
+Note: The applications may be running in different application server instances or using a delegated converter. 
+
+ 2. Navigate to the original install directory and rename the JRE folder
+
+<InstallDir>/server/tomcat
+
+to
+
+<InstallDir>/server/tomcat-Original
+
+This will ensure that the original Tomcat is kept as a backup in the event a restore is required.
+
+Example (Linux):
+mv <InstallDir>/server/tomcat <InstallDir>/server/tomcat-Original 
+
+ 3. Unzip the new Tomcat file provided by support to the Installation directory. 
+
+Example (Linux): unzip <newInsallZip> -d <InstallDir>/server/tomcat/ 
+
+ 4. Delete the following directories from the exploded archive:
+
+<InstallDir>/server/tomcat/webapps/docs
+<InstallDir>/server/tomcat/webapps/examples
+<InstallDir>/server/tomcat/webapps/host-manager
+<InstallDir>/server/tomcat/webapps/manager 
+
+ 5. Copy the Apache Tomcat SSL Keystore from the backup:
+
+<InstallDir>/server/tomcat-Original/ibm-team-ssl.keystore
+
+to
+
+<InstallDir>/server/tomcat/ibm-team-ssl.keystore 
+
+ 6. Copy the Apache Tomcat Server configuration from the backup:
+
+<InstallDir>/server/tomcat-Original/conf/server.xml
+
+to
+
+<InstallDir>/server/tomcat/conf/server.xml 
+
+ 7. Copy the HP Adapter WAR file from the backup:
+
+<InstallDir>/server/tomcat-Original/webapps/hpqm.war
+
+to
+
+<InstallDir>/server/tomcat/webapps/hpqm.war 
+
+ 8. Restart the Rational Lifecycle Integration Adapter server
+
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] [https://www-304.ibm.com/support/docview.wss?uid=swg21496117&wv=1] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] ACKNOWLEDGEMENT
+None 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

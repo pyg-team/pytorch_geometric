@@ -1,0 +1,149 @@
+Title: IBM IT01854: THE NAMESPACE OF 4GL SOAP FAULT MESSAGES IS NOT THE SAME SPECIFIED IN THE WSDL DESCRIPTION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Webservices created using the 4GL SOA functionality, the
+   format of the fault messages returned assign the namespace
+   
+   
+   http://www.ibm.com/informix/i4gl-soa/2010-11/*name_of_operation* [http://www.ibm.com/informix/i4gl-soa/2010-11/*name_of_operation*]
+   
+   to the inner elements of <detail> ( *name_of_operation* is the
+   name of the service operation that failed ) as in:
+   
+   (...)
+            <detail>
+               <iss:get_array_faultresponse
+   xmlns:iss="http://www.ibm.com/informix/i4gl-soa/2010-11/some_ope
+   ration">
+                  <iss:errorno>-312</iss:errorno>
+                  <iss:errormsg>This is a fault
+   message</iss:errormsg>
+               </iss:get_array_faultresponse>
+            </detail>
+   
+   while the value of targetNamespace in the wsdl description of
+   the service is currently set to
+   
+   
+   http://www.ibm.com/informix/i4gl-soa/2010-11/*name_of_service* [http://www.ibm.com/informix/i4gl-soa/2010-11/*name_of_service*]
+   
+   where *name_of_service* is the actual name of the Web Service.
+   
+   This discrepancy can lead to problems of interpretation of the
+   message with some 3rd party web services client software.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * all 4GL 7.50 and 7.51.xC1 users                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to 7.51.xC2 or patched version of the earlier *
+   * releases                                                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT01854
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM INFORMIX 4G
+   
+   
+ * REPORTED COMPONENT ID
+   5724C6680
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-05-16
+   
+   
+ * CLOSED DATE
+   2016-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSN
+   UP
+   
+   
+ * R750 PSY
+   UP
+   
+   
+ * R751 PSN
+   UP
+   
+   
+ * R751 PSY
+   UP

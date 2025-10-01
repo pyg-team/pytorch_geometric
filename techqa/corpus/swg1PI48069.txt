@@ -1,0 +1,215 @@
+Title: IBM PI48069: SITUATION OF IBM APPLICATION CENTER 6.0-7.1 FOR IOS 9 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS CHANGE TO ACCOMODATE OEM VENDOR'S CODE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM MobileFirst Application Center 6.0 - 7.1 works with iOS9
+   under the following conditions:
+   
+   * Apache Tomcat Server:
+   The server runs with IBM Java 6, IBM Java 7, IBM Java 8, Oracle
+   Java 7.
+   TLS 1.2 is enabled, among other protocols. In practice, to
+   support older devices or non-iOS devices, TLS 1 and TLS 1.1
+   should also be enabled.
+   Oracle Java 6 is not supported in combination with iOS 9 since
+   it does not support TLS 1.2.
+   Oracle Java 8 can only be supported with a modified Weak
+   DH/LogJam vulnerability fix. Details, see at the end.
+   
+   * Websphere Liberty Profile Server
+   The server runs with IBM Java 6, IBM Java 7, IBM Java 8, Oracle
+   Java 7 and Oracle Java 8.
+   TLS 1.2 is enabled, among other protocols. In practice, to
+   support older devices or non-iOS devices, TLS 1 and TLS 1.1
+   should also be enabled.
+   If no firewall or IHS is used, then Oracle Java is preferred
+   because Android 5 devices work better with Oracle Java. iOS 9
+   can communicate with both IBM Java and Oracle Java.
+   
+   * Websphere Full Profile Server
+   The server runs with IBM Java included in  Websphere.
+   TLS 1.2 is enabled, among other protocols. In practice, to
+   support older devices or non-iOS devices, TLS 1 and TLS 1.1
+   should also be enabled.
+   
+   The Application Center client needs no modification for iOS9.
+   The Application Center war files installed in the server need no
+   modification for iOS9.
+   
+   On iOS9 phones, the Application Center installers.html page may
+   open in rare cases in the browser in tablet mode which is
+   unsuitable for the phone screen dimension. This effect typically
+   occurs only when using the refresh button of the browser
+   extensively. As workaround, turn the phone in landscape
+   orientation, or use the fallback page inst.html, as mentioned in
+   the documentation.
+   
+   
+   
+   An additional note to Apache Tomcat and the Weak DH/LogJam
+   vulterability fix:
+   Oracle Java 8 is incompatible with the Weak DH/LogJam fix
+   currently published at https://weakdh.org. We recommend the
+   following modification, concerning the connector element in
+   Tomcat's server.xml. It needs to include a specific cipher list.
+   
+   <Connector ... SSLEnabled="true" scheme="https" secure="true"
+   sslEnabledProtocols="TLSv1,TLSv1.1,TLSv1.2"
+   ciphers="TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WIT
+   H_AES_128_CBC_SHA,
+   TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_256
+   _CBC_SHA,
+   TLS_ECDHE_RSA_WITH_RC4_128_SHA,TLS_RSA_WITH_AES_128_CBC_SHA256,T
+   LS_RSA_WITH_AES_128_CBC_SHA,
+   TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA,SSL
+   _RSA_WITH_RC4_128_SHA,
+   TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_1
+   28_GCM_SHA256,
+   TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_2
+   56_GCM_SHA384,TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
+   TLS_DHE_DSS_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_S
+   HA256,TLS_ECDHE_ECDSA_WITH_AES_128_SHA256,
+   TLS_ECDHE_RSA_WITH_AES_128_SHA,TLS_ECDHE_ECDSA_WITH_AES_128_SHA,
+   TLS_ECDHE_RSA_WITH_AES_256_SHA384,
+   TLS_ECDHE_ECDSA_WITH_AES_256_SHA384,TLS_ECDHE_RSA_WITH_AES_256_S
+   HA,TLS_ECDHE_ECDSA_WITH_AES_256_SHA,
+   TLS_DHE_RSA_WITH_AES_128_SHA256,TLS_DHE_RSA_WITH_AES_128_SHA,TLS
+   _DHE_DSS_WITH_AES_128_SHA256,
+   TLS_DHE_RSA_WITH_AES_256_SHA256,TLS_DHE_DSS_WITH_AES_256_SHA,TLS
+   _DHE_RSA_WITH_AES_256_SHA" />
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of IBM Application Center on iOS 9 devices             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * This document describes the situation with IBM Application   *
+   * Center for iOS 9 devices.                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * -                                                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In general, IBM Application Center works on iOS 9 devices
+   without changes, however the server must have the SSL protocol
+   TLS v1.2 enabled.
+   The use of Oracle Java 6 is discouraged in combination with TLS
+   v1.2 since it is not properly supported by Oracle Java 6.
+   After reconfiguring the web server correspondingly, no further
+   changes are needed, neither in the Application Center war files
+   nor in the Application Center client. They work as is.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI48069
+   
+   
+ * REPORTED COMPONENT NAME
+   MFPF/WORKLIGHT
+   
+   
+ * REPORTED COMPONENT ID
+   5725I4301
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED OEM
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-09-02
+   
+   
+ * CLOSED DATE
+   2015-09-02
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP
+   
+   
+ * R610 PSY
+   UP
+   
+   
+ * R620 PSY
+   UP
+   
+   
+ * R630 PSY
+   UP
+   
+   
+ * R700 PSY
+   UP
+   
+   
+ * R710 PSY
+   UP

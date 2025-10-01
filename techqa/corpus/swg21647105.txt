@@ -1,0 +1,54 @@
+Title: IBM Unable to modify WorkplaceXT Site Preferences - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempting to open to the WorkplaceXT site preferences yields the error:
+
+You cannot modify site preferences. You must be a member of the Application Engine Administrators access role to view or modify site preferences.. 
+
+CAUSE
+WorkplaceXT Access Roles are stored in the folder: Root Folder > Access Roles in the object store that Workplace XT is bootstrapped to. The bootstrapped object store contains the site and user preferences files as well as the Access Role objects used by Workplace XT.
+
+The Application Engine Administrators Access Role determines who can access Site Preferences. It is possible to remove permissions for the Application Engine Administrators Access Role. This can prevent all users, even administrative users, from accessing Site Preferences.
+
+DIAGNOSING THE PROBLEM
+When a user with full administrator access rights to the Content Engine and WorkplaceXT attempts to open the WorkplaceXT site preferences, the following error message is displayed:
+
+You cannot modify site preferences. You must be a member of the Application Engine Administrators access role to view or modify site preferences.
+
+RESOLVING THE PROBLEM
+Using FileNet Enterprise Manager (FEM) or Administrative Console for Content Engine (ACCE):
+
+
+
+
+ 1. Initiate a new search of the bootstrap object store using the P8 administrative console of choice (FEM or ACCE). 
+    
+    If using FEM, right click on the object store and select "Search". Then select "SQL View" from the View dropdown menu. 
+    
+    If using ACCE, click on "Search" the left pane of the object store tab, click the "New Object Store Search" button and select the "SQL View" tab within the Search tab.
+    
+    
+ 2. In the SQL text box enter the following:
+    
+    SELECT [This], [ApplicationName], [RoleName] FROM [AccessRole] where ApplicationName='WorkplaceXT' and RoleName='Application Engine Administrators' and SecuredRole is null
+    
+    If using FEM click 'OK' to execute the search. If using ACCE click the 'Run" button to execute the search.
+    
+    
+ 3. The search above will return the access role object that acts as a security proxy for the actual access role. The user(s) and/or group(s) that have full control on the Security tab of the object returned from the search above are members of the Application Engine Administrators access role.
+    
+    If there is already a group with full control permissions on the Security tab of the object returned from the search above, adding the desired users to that existing group will give those users access to Site Preferences. Alternately, adding new group(s) or user(s) with full control would also provide access to Site Preferences.
+
+
+It is possible that an administrative user will not have permissions to edit the security on the Access Role object. If that is the case: 
+
+If using FEM: Click the "Active Marking/Owner" button, select the Owner tab and click on the "Take ownership of this object". 
+
+If using ACCE: Click the "Change Owner" button on the Security tab of the Access Role object to take ownership. 
+
+Taking ownership of the object will allow the owner to modify security. Once the desired security principals have full control rights on the Access Role object returned from the search above, log off and log back on to Workplace XT to access Site Preferences. 
+
+Note: It is generally advisable to assign groups rather than users to Access Roles so that role membership is controlled by LDAP group membership rather than having to change the configuration of the Access Roles.

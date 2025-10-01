@@ -1,0 +1,126 @@
+Title: IBM IC81628: ABRUPTLY TERMINATING A LARGE NUMBER OF MQ CONNECTIONS BETWEEN DATAPOWER AND THE MQ SERVER MAY CAUSE A RESTART - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If DataPower does not have a stable network connection to its MQ
+   Server, DataPower may restart if a large number of MQ
+   connections are abruptly dropped.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Affected are customers who use an MQ QM object under stress test
+   if the network is not stable.
+   
+   The appliance might restart when it encounters a network error
+   after destroying MQ connections.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is available on 3.8.2.12, 4.0.1.10 and 4.0.2.6.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC81628
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   382
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-24
+   
+   
+ * CLOSED DATE
+   2012-04-18
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R382 PSY
+   UP
+   
+   
+ * R401 PSY
+   UP
+   
+   
+ * R402 PSY
+   UP

@@ -1,0 +1,126 @@
+Title: IBM Build Forge Agent test returns a "Platform not Found" error - United States
+
+Text:
+Platform not Found!; bfservertest.pl; bfservertest.exe; trace; debug; 1248387; BF_AGENT_DEBUG; BF AGENT DEBUG; unable to set user account to build: unknown account TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technotes details how to troubleshoot and resolve the error, Platform not Found!, in IBM Rational Build Forge when running the server functional test. 
+
+SYMPTOM
+ 
+
+When running the Build Forge server functional test, the test fails with an error: 
+
+"Platform not Found!" 
+
+The server is not usable when this error occurs.
+
+
+
+CAUSE
+ 
+
+The cause for this error is environment specific and will need servertest debug trace enabled to help determine why it is happening. 
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 
+
+Use the following to help troubleshoot and resolve this issue:
+
+
+ 1. Check that the Agent is running for the server that you are trying to use:  1. To test it, open a command line prompt and type the following (assuming that the Agent is configured on the default port 5555, or you must enter the correct port #):
+        
+        telnet <physical machine name> 5555
+        
+        
+     2. You should see something like the following, if the Agent is running:
+        
+        200 HELLO - BuildForge Agent v7.0.0.011
+        
+        
+     3. Otherwise, the Agent is not running on the machine or the Agent does not have access to the correct port.
+        
+        
+     4. If connection refused is returned, and the bfagent is running on a UNIX/Linux platform, verify the following:
+        
+        /etc/xinetd.d/bfagent exists, and the path listed to the bfagent executable is correct (/etc/inetd.d/bfagent on UNIX)
+        grep bfagent /etc/services returns a valid line bfagent 5555/tcp
+        /etc/nsswitch.conf is set to use local files for the services layer, like services: files nis.
+        
+        
+    
+    
+ 2. Next check that the agent is able to run commands. From the HELLO prompt type:
+    
+    cmd ping
+    username MYDOMAIN\user
+    password <password>
+    go
+    
+    This will return ping information from the agent as whoever you specified as the username.
+    
+    
+ 3. If the Agent is running, the above telnet command returns Hello, and the command ping worked, then run a debug on the server test:
+     * On Microsoft® Windows®, the debug tool is called bfservertest.exe, which is located under the root of the Build Forge install directory.
+       
+       To run the server in debug do the following:
+       
+       >SET BF_SERVERTEST_DEBUG=1
+       >bfservertest.exe <Build Forge logical server name>
+       
+       
+     * On Linux®, the debug utility is called bfservertest.pl, which is located under the root of the Build Forge install directory.
+       
+       To run the server in debug do the following:
+       
+       >export BF_SERVERTEST_DEBUG=1
+       >bfservertest <Build Forge logical server name>
+       
+       
+    
+    
+ 4. This will then give detailed information on what exactly went wrong with running the server functional test. 
+    
+    What we are looking for first is if there is an error code for the failure. So if the debug returns something like:
+    
+    "AUTH: unable to set user account to domain\user: system error (1115) (20)"
+    
+    We would need to determine the reason for those exit codes. In that case it is because the agent machine was in the shutdown process. To determine error codes in Windows go to the command prompt and type:
+    
+    > net helpmsg <error code>
+    
+    That will return details on the error.
+    
+    Linux error codes can vary depending on the distribution, but generally it can be checked with perror.
+    
+    > perror <error code>
+    
+    Note: Generally, this problem occurs on Linux machines. You should first check if the Linux is running on a 64-bit processor. At this time, the Build Forge libraries are compiled in 32-bit processors and are not supported on 64-bit machines.
+    
+    
+ 5. If the error from the servertest debug trace is something like:
+    
+    Agent: [RESULT] AUTH: unable to set user account to build: unknown account
+    
+    Then the problem is likely with the PAM configuration on the server:  1. Check that Build Forge has access permissions on the Linux machine to switch users. 
+        
+        Note: By default, Build Forge will use PAM to switch users on the Linux machine when running the commands, if the PAM command fails, then the test fails. 
+        
+        
+     2. Fix the PAM permissions, or reinstall the Build Forge agent with no PAM support.
+        
+        
+    
+    
+ 6. If the above does not help to diagnose and resolve the issue, then contact IBM Rational Client Support with the servertest debug trace.
+
+
+
+
+
+
+RELATED INFORMATION
+#Unable to set user account to bfuser: unknown account [http://www.ibm.com/support/docview.wss?uid=swg21267059]

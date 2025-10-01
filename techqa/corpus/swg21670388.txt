@@ -1,0 +1,86 @@
+Title: IBM Security Bulletin: Rational Build Forge is affected by vulnerabilities in OpenSSL (CVE-2014-0160 and CVE-2014-0076) - United States
+
+Text:
+vulnerabilities; OpenSSL; heartbleed; heart bleed; CVE-2014-0160; CVE-2014-0076 SECURITY BULLETIN
+
+SUMMARY
+ Security vulnerabilities have been discovered in OpenSSL. These vulnerabilities affect IBM Rational Build Forge 8.0 and 8.0.0.1. Fixes for the vulnerabilities have been added to the Rational Build Forge 8.0.0.1 iFix1 release.
+
+If https and SSL are not enabled, Build Forge 8.0 and 8.0.0.1 are not affected. Versions of Build Forge released prior to version 8.0 are not affected. 
+
+VULNERABILITY DETAILS
+ 
+
+Subscribe to My Notifications to be notified of important product support alerts like this.  * Follow this link [https://www.ibm.com/systems/support/myview/subscription/css.wss/subscriptions?methodName=startSearchToSubscribe&uctug_rational_dcfsbblurb_2013-11-05_myn_adoption_promo] for more information (requires login with your IBM ID)
+
+CVE-ID: CVE-2014-0160 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0160] 
+
+Description: OpenSSL could allow a remote attacker to obtain sensitive information, caused by an error in the TLS/DTLS heartbeat functionality. An attacker could exploit this vulnerability to expose 64k of private memory and retrieve secret keys. An attacker can repeatedly expose additional 64k chunks of memory. This vulnerability can be remotely exploited, authentication is not required and the exploit is not complex. It can be exploited on any system (ie. server, client, agent) receiving connections using the vulnerable OpenSSL library.
+
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/92322 [https://exchange.xforce.ibmcloud.com/vulnerabilities/92322]
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+Warning: It is strongly encouraged that you to take action as soon as possible as potential implications to your environment may be more serious than indicated by the CVSS score. 
+
+
+CVE-ID: CVE-2014-0076 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0076] 
+
+Description: OpenSSL could allow a local attacker to obtain sensitive information, caused by an implementation error in ECDSA (Elliptic Curve Digital Signature Algorithm). An attacker could exploit this vulnerability using the FLUSH+RELOAD cache side-channel attack to recover ECDSA nonces. This vulnerability can only be exploited locally, authentication is not required and the exploit is not complex. An exploit can only partially affect confidentially, but not integrity or availability. 
+
+CVSS Base Score: 2.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91990 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91990]
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:L/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+Build Forge Version 8.0 and 8.0.0.1 are affected when HTTPS and SSL are enabled. 
+
+Build Forge Versions 7.1.x and earlier are not affected.
+
+REMEDIATION/FIXES
+Rational Build Forge 8.0 or 8.0.0.1: Upgrade to Rational Build Forge 8.0.0.1 iFix1 [https://jazz.net/downloads/rational-build-forge/releases/8.0.0.1iFix1]
+
+Notes: 
+
+ *  When HTTPS and SSL are not enabled, Rational Build Forge is not affected. The 8.0.0.1 iFix resolves the issue in Apache and agent, but does not include OpenSSL fixes for the Perl Engine. Build Forge V8 has two engines, and you must use the Java Engine to avoid issues if you wish to use SSL with the engine. 
+
+After applying the fix, additional instructions are needed for CVE-2014-0160: 
+
+ 1. Replace your SSL Certificates
+     * You need to revoke existing SSL certificates and reissue new certificates for any affected SSL connections. 
+     * You need to be sure not to generate the new certificates using the old private key and create a new private key (ie using "openssl genrsa") and use that new private key to create the new certificate signing request (CSR). 
+       
+       
+    
+    
+ 2. Reset User Credentials
+    
+    If you have network facing applications protected by a vulnerable version of OpenSSL, you should force a reset of the passwords and should revoke any authentication or session related cookies set prior to the time OpenSSL was upgraded and force users to re-authenticate.
+
+
+Warning: Your environment may require additional fixes for other products, including non-IBM products. Please replace the SSL certificates and reset the user credentials after applying the necessary fixes to your environment. WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+[https://www-304.ibm.com/support/docview.wss?uid=swg21496117&wv=1] [http://www.openssl.org/news/vulnerabilities.html] OpenSSL Project vulnerability website [http://www.openssl.org/news/vulnerabilities.html]
+Heartbleed [http://heartbleed.com/]
+
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ * 17 April 2014: Original copy published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

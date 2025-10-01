@@ -1,0 +1,41 @@
+Title: IBM A way to eliminate ArcGIS mixed content messages when TRIRIGA is setup to use SSL? - United States
+
+Text:
+TRIGIS; TRICONFIG; TRISECURITY; ArcGIS; SSL; https; https:; mixed content TECHNOTE (FAQ)
+
+QUESTION
+ Our TRIRIGA server is configured to use SSL. Whenever one of my users accesses the GIS tab on a location record or refreshes their home page that has the GIS portal loaded, 
+a 
+mixed content message appears. Is there any way to make these mixed content messages stop occurring?
+We are using an External GIS Server. 
+
+
+CAUSE
+Your TRIRIGA system is https but it is trying to access the GIS servers through http. Your browser is blocking it, thus the mixed content messages. 
+
+ANSWER
+Set ArcGIS in your TRIRIGA environment up to use HTTPS instead of HTTP. 
+
+
+The easiest way to do this is to go back through the steps you took for 'Specifying External ArcGIS Servers,' [http://www-01.ibm.com/support/knowledgecenter/SSHEB3_3.4.1/com.ibm.tap.doc/con_esri/t_esri_specify_external_arcgis_servers.html?lang=en] but 
+before uploading the 'EsriJS_arcgis.js' file 
+to [HOME] => Tools => 'System Setup' => System => 'Class Loader' => EsiJS => EsriJS_arcgis.js file, 
+change the file contents to use HTTPS instead of HTTP. 
+Just do a global replace of all instances of 'http:' with 'https:' 
+
+If you do not feel comfortable in doing this, a manual approach for fixing this problem can be taken, instead: 
+
+ * To make mixed content messages when accessing the GIS tab on location records stop happening, do the following:  * 
+    * 
+    * Integration Object
+    * 
+    * change the URLs to use HTTPS
+    * 
+   
+   
+ * To make mixed content messages with the [HOME] page's GIS portal stop happening do the following:  * 
+    * 
+    * Basemaps
+    * 
+    * make each URL use HTTPS instead of HTTP
+    *

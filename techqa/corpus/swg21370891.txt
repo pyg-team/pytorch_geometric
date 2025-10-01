@@ -1,0 +1,27 @@
+Title: IBM How do I change the database server for the Contributor Web site? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Applications are not showing up when we access the web site. What do we need to do now that we have moved to the new PAD? 
+
+CAUSE
+Moving files to a new database server.
+
+RESOLVING THE PROBLEM
+Open the planning44.asp web page and change the datastore name.
+
+Steps:1. Open a web browser.
+
+2. In the address bar type in //server name/cognos/contributor/planning44.asp
+
+3. Change the datastore name to the new SQL Server name or new Oracle Instance name.
+
+4. If needed enter the username and password, and change the PAD name. Then click OK.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Planning Analyst 8.1 
+HISTORICAL NUMBER
+ 1031384

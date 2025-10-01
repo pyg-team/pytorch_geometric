@@ -1,0 +1,136 @@
+Title: IBM IV73325: 711FP1 AGENT UNRESPONSIVE AFTER SOME DAYS. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.1.1.1-TIV-ITM_SAP-IF0002 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Composite+Application+Manager+for+Applications&fixids=7.1.1.1-TIV-ITM_SAP-IF0002&source=SAR]
+7.1.1.1-TIV-ITM_SAP-IF0002.fo.xml [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Composite+Application+Manager+for+Applications&fixids=7.1.1.1-TIV-ITM_SAP-IF0002.fo.xml&source=SAR]
+ITCAM Agent for SAP Applications, 7.1.1.1-TIV-ITM_SAP-IF0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24040592]
+ITCAM Agent for SAP Applications, 7.1.1-TIV-ITM_SAP-FP0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24043404]
+ITCAM Agent for SAP Applications, 7.1.1.3-TIV-ITM_SAP-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24043820]
+ITCAM Agent for SAP Applications,7.1.1-TIV-ITM_SAP-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24044289]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment: TEPS/TEMS/TEMA: ITM630 fp2  + mySAP Agent 7.11
+   Affected SAP machines (OS): Windows
+   Problem Description: 711FP1 Agent Unresponsive after some days.
+   Detailed Recreation Procedure:
+   Configure SAP Agent in Logon group Mode for SAP system with
+   Multiple Application Instances Server.
+   1. Start SAP Agent.
+   2. In long Run TEP goes unresponsive and no data comes on TEP
+   portal for any workspace or situation.
+   3. Check agent log file with error message
+   'pthread_mutex_unlock.c,44,"pthread_mutex_unlock") errno EAGAIN
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Agent goes unresponsive after some days of activity when
+   connected to distributed SAP in logon group mode
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Now Agent will not go unresponsive
+   The fix for this APAR is contained in the following
+   maintenance
+   packages:
+      | interim fix | 7.1.1.1-TIV-ITM_SAP-IF0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV73325
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * REPORTED COMPONENT ID
+   5724B97SO
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-15
+   
+   
+ * CLOSED DATE
+   2015-09-03
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * FIXED COMPONENT ID
+   5724B97SO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

@@ -1,0 +1,70 @@
+Title: IBM FileNet Integration for Microsoft Office - Credentials Error - United States
+
+Text:
+FIMO Credentials Error add-in TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ FileNet Integration for Microsoft Office (FIMO) login to FileNet Workplace XT fails 
+
+SYMPTOM
+After FIMO was installed, the WPXT Login screen from MS Word returns the following error: 
+
+
+Credentials Error: 0x800c2efd - User Login Failed!
+
+The error is only returned for MS Word. All other MS Office Integration logins were successful.
+
+From MS Word, the IBM ECM tab for FileNet Integration was not displayed.
+
+The FIMO COM Add in could not be enabled. Selecting the add-in returned the following error:
+'C:\Program Files\IBM\FileNet Integration for Microsoft Office\P8WordAddIn.vsto' is not a valid Office Add-in.
+
+
+CAUSE
+The IBM FileNet Integration for Microsoft Office for Word option in the COM Add-ins for Word was not enabled.
+
+
+ENVIRONMENT
+CE 5.1.0.2
+XT 1.1.5
+MS Office 2007
+WebSphere 7.0
+
+
+
+DIAGNOSING THE PROBLEM
+he COM Add-Ins window displayed the following: 
+
+
+Add-Ins available:
+FileNet Application Integration
+IBM FileNet Integration for Microsoft Office for Word
+
+The "FileNet Application Integration" add-in was checked, but this was left over from a previous Application Integration installation. The old add-in was preventing the correct add-in from being enabled.
+
+
+RESOLVING THE PROBLEM
+ 
+
+To resolve the issue check if the COM Add-in for FIMO is enabled:
+
+
+
+ 1. Open MS Word and select the Office button (top left button)
+    
+    
+ 2. At the bottom of the screen, select the "Word Options" button
+    
+    
+ 3. From the Word Options screen, select "Add-Ins"
+    
+    
+ 4. In the Add-ins screen there is a Manage: "COM Add-ins" option in a pull down box. Select "Go".
+    
+    
+ 5. From the COM Add-Ins screen, verify that the "IBM FileNet Integration for Microsoft Office for Word" add-in has a check next to it. 
+
+
+
+
+The issue is resolved by unchecking the "FileNet Application Integration" add-in and checking the "IBM FileNet Integration for Microsoft Office for Word" add-in.

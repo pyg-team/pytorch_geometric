@@ -1,0 +1,18 @@
+Title: IBM The XML connector stage in DataStage Designer fails with message bundle error. - United States
+
+Text:
+xml; xml connector; java.util.InvalidPropertiesFormatException; Can't find resource for bundle com.ibm.e2.Bundle_E2_engine_msgs_en_US; key E2ILParseException.errorDuringDocumentCreation; Can't find resource for bundle TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ XML stage fails with the following message:
+Message bundle error Can't find resource for bundle com.ibm.e2.
+Bundle_E2_engine_msgs_en_US, key E2ILParseException.
+errorDuringDocumentCreation
+main_program: Fatal Error: ErrorDuringDocumentCreation cause = 'java.
+util.InvalidPropertiesFormatException' 
+
+CAUSE
+The job has a parameter set where the password contained a special character like these (eg. <, >, &, ', ").
+
+RESOLVING THE PROBLEM
+Remove any special characters from parameter set.

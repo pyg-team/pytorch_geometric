@@ -1,0 +1,128 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities in IBM Java Runtime affect Rational Directory Server (Tivoli) & Rational Directory Administrator - United States
+
+Text:
+PSIRT 111214; CVE-2018-2633; CVE-2018-2618; CVE-2018-2657; CVE-2018-2603; CVE-2018-2602; CVE-2018-2678; CVE-2018-2677; CVE-2018-2663; CVE-2018-2588; CVE-2018-2579; CVE-2018-1417; security SECURITY BULLETIN
+
+SUMMARY
+ There are multiple vulnerabilities in IBM® Runtime Environment Java™ Version 7 and Version 8 used by Rational Directory Server (Tivoli) and Rational Directory Administrator. These issues were disclosed as part of the IBM Java SDK updates in January 2018. Upgrade the JRE in order to resolve these issues. 
+
+VULNERABILITY DETAILS
+Rational Directory Server & Rational Directory Administrator are affected by the following vulnerabilities:
+CVEID: CVE-2018-2579 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2579]
+DESCRIPTION: An unspecified vulnerability related to the Java SE Libraries component could allow an unauthenticated attacker to obtain sensitive information resulting in a low confidentiality impact using unknown attack vectors.
+CVSS Base Score: 3.7
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137833 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137833] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N) 
+
+CVEID: CVE-2018-2588 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2588]
+DESCRIPTION: An unspecified vulnerability related to the Java SE LDAP component could allow an authenticated attacker to obtain sensitive information resulting in a low confidentiality impact using unknown attack vectors.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137841 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137841] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N) 
+
+CVEID: CVE-2018-2663 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2663]
+DESCRIPTION: An unspecified vulnerability related to the Java SE Libraries component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137917 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137917] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2018-2677 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2677]
+DESCRIPTION: An unspecified vulnerability related to the Java SE AWT component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137932 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137932] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2018-2678 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2678]
+DESCRIPTION: An unspecified vulnerability related to the Java SE JNDI component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137933 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137933] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2018-2602 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2602]
+DESCRIPTION: An unspecified vulnerability related to the Java SE I18n component could allow an unauthenticated attacker to cause low confidentiality impact, low integrity impact, and low availability impact.
+CVSS Base Score: 4.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137854 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137854] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:H/PR:N/UI:R/S:U/C:L/I:L/A:L) 
+
+CVEID: CVE-2018-2603 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2603]
+DESCRIPTION: An unspecified vulnerability related to the Java SE Libraries component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137855 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137855] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2018-2657 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2657]
+DESCRIPTION: An unspecified vulnerability related to the Java SE, Serialization component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137910 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137910] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2018-2618 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2618]
+DESCRIPTION: An unspecified vulnerability related to the Java SE JCE component could allow an unauthenticated attacker to obtain sensitive information resulting in a high confidentiality impact using unknown attack vectors.
+CVSS Base Score: 5.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137870 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137870] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N) 
+
+CVEID: CVE-2018-2633 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2633]
+DESCRIPTION: An unspecified vulnerability related to the Java SE JNDI component could allow an unauthenticated attacker to take control of the system.
+CVSS Base Score: 8.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/137885 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137885] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:R/S:C/C:H/I:H/A:H) 
+
+CVEID: CVE-2018-1417 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-1417]
+DESCRIPTION: Under certain circumstances, a flaw in the J9 JVM allows untrusted code running under a security manager to elevate its privileges.
+CVSS Base Score: 8.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/138823 [https://exchange.xforce.ibmcloud.com/vulnerabilities/138823] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H)
+
+AFFECTED PRODUCTS AND VERSIONS
+Rational Directory Server (Tivoli) v5.2.1 iFix 13 and earlier.
+Rational Directory Administrator v6.0.0.2 iFix 06 and earlier.
+
+REMEDIATION/FIXES
+1. Download one of the following IBM JREs supported versions that contain the fixes for these vulnerabilities: 
+
+ * IBM Java Runtime Environment, Version 7 R1 Service Refresh 4 Fix Pack 20 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FIBM+Rational+Directory+Server&fixids=5.2.1-RDS-JRE-71SR4FP20&source=SAR] 
+ * IBM Java Runtime Environment, Version 8 Service Refresh 5 Fix Pack 10 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FIBM+Rational+Directory+Server&fixids=5.2.1-RDS-JRE-8SR5FP10&source=SAR]
+
+
+2. After downloading a fixed IBM JRE version, refer the following technote for JRE upgrade instructions:  * JRE Upgrade Instructions for Rational Directory Server (Tivoli) 5.2.1 [http://www-01.ibm.com/support/docview.wss?uid=swg22015993] 
+ * JRE Upgrade Instructions for Rational Directory Administrator 6.0.0.x [http://www-01.ibm.com/support/docview.wss?uid=swg22016277]
+
+For versions of Rational Directory Server that are earlier than version 5.2.1, and Rational Directory Administrator versions earlier than 6.0.0.2, IBM recommends upgrading to a fixed, supported version/release/platform of the product. WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 18 May 2018; Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Networking Rational Directory Administrator General Information Linux, Windows 6.0.0.2

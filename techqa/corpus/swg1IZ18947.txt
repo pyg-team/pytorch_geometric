@@ -1,0 +1,167 @@
+Title: IBM IZ18947: PROBE UNABLE TO RECEIVE ALARMS AFTER NOTIFICATION SERVICE       RESTART WHEN PERSISTENTNOTIFICATION=TRUE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  OS platform: Solaris
+   Probe: Release ID: 3.0.2394 (GA)
+   Probe: Release ID: 3.0.3169 (Concession)
+   
+   Issue:
+   Customer applied the concession patch (after concession
+   patch, probe upgrade 3.0.3169) to address the issue in APAR
+   IY99350. Howver the issue was not fixed but slightly different
+   with IY99350.
+   
+   
+   When the probe initially connects to T2000 server, probe is able
+   to receive real-time alarms no matter PersistentNotification is
+   set to true or false. However after notification service is
+   restarted(after being down), probe is not able to receive alarms
+   anymore when PersistentNotification=true.
+   
+   The following debug message in log file:
+   03/13/08 01:52:00: Error: Failed to load consumer administration
+   interface : org.omg.CORBA.OBJECT_NOT_EXIST:   vmcid: 0x0  minor
+   code: 0  completed: No
+   03/13/08 01:52:00: Information: There is a possibility that the
+   Persistent Event feature has not been initiated on the ORB, or
+   is not available on this ORB implementation.
+   Please check with your ORB provider on how to do this.
+   03/13/08 01:52:00: Information: A new Consumer Administration
+   Interface and Structured Proxy Push Supplier will provided and
+   saved to disk.
+   03/13/08 01:52:00: Information: Deleting
+   file.../opt/netcool/omnibus/var/persistence.ior
+   03/13/08 01:52:00: Information: Deleted!
+   03/13/08 01:52:00: Error: Failed to connect to Notification
+   Service : org.omg.CORBA.OBJECT_NOT_EXIST:   vmcid: 0x0  minor
+   code: 0  completed: No
+   03/13/08 01:52:00: Information: Probewatch: Unable to get events
+   03/13/08 01:52:00: Error: Unable to get events:
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No Work Around Provided
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Huawei T2000 corba probe.       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The probe is now able to receive alarms *
+   *                      after notification service is           *
+   *                      restarted.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   The probe is now able to receive alarms after notification
+   service is restarted.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Date of release Q1 2009.
+   
+   Date of Release: 03/31/09 Fix Pack Name:
+   probe-nco-p-huawei-T2000-corba-3_5
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ18947
+   
+   
+ * REPORTED COMPONENT NAME
+   HUAWEI T2000 CO
+   
+   
+ * REPORTED COMPONENT ID
+   5724P16HT
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-04-01
+   
+   
+ * CLOSED DATE
+   2008-05-14
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

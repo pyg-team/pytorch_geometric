@@ -1,0 +1,77 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities in glibc affect IBM MQ Appliance - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Vulnerabilities in glibc affect the IBM MQ Appliance. IBM MQ Appliance has addressed the applicable CVEs. 
+
+VULNERABILITY DETAILS
+CVEID:CVE-2015-8778 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-8778]
+DESCRIPTION:GNU C Library (glibc) could allow a remote attacker to execute arbitrary code on the system, caused by an integer overflow in hcreate and hcreate_r. An attacker could exploit this vulnerability to trigger an out-of-bound memory access and execute arbitrary code on the system or cause the application to crash.
+CVSS Base Score: 5.6
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/111086 [https://exchange.xforce.ibmcloud.com/vulnerabilities/111086]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L) 
+
+CVEID:CVE-2015-8779 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-8779]
+DESCRIPTION:GNU C Library (glibc) is vulnerable to a stack-based buffer overflow, caused by improper bounds checking by the catopen function. By sending an overly long string, a remote attacker could overflow a buffer and execute arbitrary code on the system or cause the application to crash.
+CVSS Base Score: 5.6
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/111087 [https://exchange.xforce.ibmcloud.com/vulnerabilities/111087]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L) 
+
+CVEID:CVE-2014-9761 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-9761]
+DESCRIPTION:GNU C Library (glibc) is vulnerable to a stack-based buffer overflow, caused by improper bounds checking by the nan function. By sending an overly long string, a remote attacker could overflow a buffer and execute arbitrary code on the system or cause the application to crash.
+CVSS Base Score: 5.6
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/111085 [https://exchange.xforce.ibmcloud.com/vulnerabilities/111085]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L) 
+
+CVEID:CVE-2015-8776 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-8776]
+DESCRIPTION:GNU C Library (glibc) is vulnerable to a denial of service. By passing out-of-range time values to the strftime function, a remote attacker could exploit this vulnerability to cause a segmentation fault or obtain sensitive information.
+CVSS Base Score: 6.5
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/110675 [https://exchange.xforce.ibmcloud.com/vulnerabilities/110675]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:L)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM MQ Appliance 8.0
+Maintenance levels between 8.0.0.0 and 8.0.0.6
+
+IBM MQ Appliance 9.0.x Continuous Delivery (CD) Release
+Continuous delivery updates 9.0.1 and 9.0.2
+
+REMEDIATION/FIXES
+IBM MQ Appliance 8.0 
+
+Apply fixpack 8.0.0.7 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/IBM%20MQ%20Appliance%20M2000&release=8.0.0.6&platform=All&function=all&source=fc] 
+
+ 
+
+IBM MQ Appliance 9.0.x Continuous Delivery (CD) release 
+
+Apply continuous delivery update 9.0.3 [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+MQ+Appliance+M2000&release=9.0.2&platform=All&function=all]
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 06 June 2017 Original version published
+14 July 2017 Update to include IBM MQ Appliance 8.0 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

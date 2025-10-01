@@ -1,0 +1,226 @@
+Title: IBM IV60785: EXTRACTSCTEMPLATELABELS (PART OF UPDATEDB) FAILS IN 7.5.1 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Whenever updatedb is run on a system with 7.5.1, the process
+   extractsctemplatelabels fails with a unique index violation on
+   maxlabels table MAXLABEL_NDX1. I see that other PMRs are there
+   for
+   similar issues, but could not find an extact match. There is no
+   need to
+   install anything. Just running updatedb on a 7.5.1 system
+   without any
+   new installs produces this issue.
+   
+   The console error is pasted below. Detailed logs and system
+   information
+   are attached as files. There is a workaround, which is to drop
+   the
+   index before updatedb, and then delete the duplicates and
+   re-create it
+   following updatedb's successful completion. What we want is an
+   analysis
+   on why it happens, and if needed, an APAR.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround:
+   drop index maxlabels_ndx1;
+   
+   Then run updatedb
+   and then do
+   delete FROM MAXIMO.maxlabels m1 where exists (select 1 from
+   maxlabels
+   m2 where m1.app=m2.app
+   and m1.id=m2.id and m1.property = m2.property and
+   m1.maxlabelsid < m2.
+   maxlabelsid);
+   
+   create unique index maxlabels_ndx1 on maximo.maxlabels (app, id,
+   property) ;
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Maximo Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * EXTRACTSCTEMPLATELABELS (part of updatedb) fails with unique *
+   * index violation on MAXLABEL_NDX1 index.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to latest release                                    *
+   ****************************************************************
+   Whenever updatedb is run on a system with SCCD 7.5.1, the
+   process extractsctemplatelabels fails with a unique index
+   violation on maxlabels table MAXLABEL_NDX1.
+   
+   Error seen on screen:
+   Updatedb process ends : successful
+   Running EAuditFix to check for missing column in Audit tables.
+   EAuditFix: No fix needed.
+   Connecting to:  jdbc:db2://localhost.localdomain:51000/maximo as
+   maximo/*****
+   Reconfigsctemplatequerylinks process starts...
+   Log File: reconfiguretemplatequerylinks20140423202449.log
+   Reconfigsctemplatequerylinks process ends : successful.
+   Extractsctemplatelabels process starts...
+   Connecting to:  jdbc:db2://localhost.localdomain:51000/maximo
+   Log File: extractsctemplatelabels20140423202452.log
+   Extractsctemplatelabels process ends : ERROR.
+   Exception: One or more values in the INSERT statement, UPDATE
+   statement, or foreign key update caused by a DELETE statement
+   are not valid because the primary key, unique constraint or
+   unique index identified by "2" constrains table
+   "MAXIMO.MAXLABELS" from having duplicate values for the index
+   key.. SQLCODE=-803, SQLSTATE=23505, DRIVER=4.11.69
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException: One
+   or more values in the INSERT statement, UPDATE statement, or
+   foreign key update caused by a DELETE statement are not valid
+   because the primary key, unique constraint or unique index
+   identified by "2" constrains table "MAXIMO.MAXLABELS" from
+   having duplicate values for the index key.. SQLCODE=-803,
+   SQLSTATE=23505, DRIVER=4.11.69
+    at com.ibm.db2.jcc.am.gd.a(gd.java:672)
+    at com.ibm.db2.jcc.am.gd.a(gd.java:60)
+    at com.ibm.db2.jcc.am.gd.a(gd.java:127)
+    at com.ibm.db2.jcc.am.jn.c(jn.java:2561)
+    at com.ibm.db2.jcc.am.jn.d(jn.java:2549)
+    at com.ibm.db2.jcc.am.jn.b(jn.java:1965)
+    at com.ibm.db2.jcc.t4.cb.h(cb.java:224)
+    at com.ibm.db2.jcc.t4.cb.b(cb.java:47)
+    at com.ibm.db2.jcc.t4.q.b(q.java:38)
+    at com.ibm.db2.jcc.t4.rb.h(rb.java:114)
+    at com.ibm.db2.jcc.am.jn.hb(jn.java:1960)
+    at com.ibm.db2.jcc.am.jn.a(jn.java:3066)
+    at com.ibm.db2.jcc.am.jn.e(jn.java:1036)
+    at com.ibm.db2.jcc.am.jn.execute(jn.java:1020)
+    at psdi.tools.ExtractSCTemplateLabels.executeSql(Unknown
+   Source)
+    at psdi.tools.ExtractSCTemplateLabels.executeSql(Unknown
+   Source)
+    at psdi.tools.ExtractSCTemplateLabels.process(Unknown Source)
+    at psdi.tools.ExtractSCTemplateLabels.main(Unknown Source)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  EXTRACTSCTEMPLATELABELS executes without unique index violation
+   on MAXLABEL_NDX1 index.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+     | release\fix pack | Fix Pack Release 7.5.0.7 TPAE
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV60785
+   
+   
+ * REPORTED COMPONENT NAME
+   UPGRADE PROGRAM
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46UP
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-22
+   
+   
+ * CLOSED DATE
+   2014-08-12
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UPGRADE PROGRAM
+   
+   
+ * FIXED COMPONENT ID
+   5724R46UP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

@@ -1,0 +1,151 @@
+Title: IBM IZ05009: WEBSEAL DOESN'T PRESERVE THE HTTPONLY HEADER - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ESR: HTTPOnly value, included in the SetCookie returned by a
+   backend server, is removed by WebSEAL before returning the
+   response to the browser.
+   
+   Removing the 'HTTPOnly' attribute prevents a protection against
+   xss.
+   
+   Environment : TAM 5.1 FiXPack 30.
+   
+   Here's the proof of what customer reported:
+   PART OF THE REPLY APP->WEBSEAL
+   0x00f0   7572 653b 2048 7474 704f 6e6c 790d 0a73
+   ure;.HttpOnly..s
+   0x0100   6574 2d63 6f6f 6b69 653a 2047 534e 3d31
+   et-cookie:.GSN=1
+   0x0110   3030 3030 3034 303b 2070 6174 683d 2f70
+   0000040;.path=/p
+   0x0120   7269 7661 7465 3b20 7365 6375 7265 3b20
+   rivate;.secure;.
+   0x0130   4874 7470 4f6e 6c79 0d0a 7365 742d 636f
+   HttpOnly..set-co
+   0x0140   6f6b 6965 3a20 4542 5753 4a53 4553 5349
+   okie:.EBWSJSESSI
+   
+   PART OF THE REPLY WEBSEAL-> BROWSER
+   0x0110   3b20 5365 6375 7265 0d0a 5365 742d 436f
+   ;.Secure..Set-Co
+   0x0120   6f6b 6965 3a20 4753 4e3d 3130 3030 3030
+   okie:.GSN=100000
+   0x0130   3430 3b20 5061 7468 3d2f 3b20 5365 6375
+   40;.Path=/;.Secu
+   0x0140   7265 0d0a 5365 742d 436f 6f6b 6965 3a20
+   re..Set-Cookie:.
+   0x0150   414d 5745 424a 4354 2125 3246 6562 7464
+   AMWEBJCT!%2Febtd
+   
+   
+   We tested this on different browsers. I used 'IE 6 SP2'
+   
+   IY87135 only back-ported the support for adding the HttpOnly
+   attribute to WebSEAL's session and fail-over cookies ([server]
+   use-http-only-cookies = yes). The back-port did not include the
+   support for passing on the HttpOnly attribute from back-end
+   junction cookies
+   ([junction] pass-http-only-cookie-attr = yes) so the HttpOnly
+   attribute is stripped from junction set cookies in 5.1.
+   
+   This behaviour could be changed by means of a new option in
+   webseald.conf file.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  none at the moment
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This issue is being considered via FITS Enhancement Re
+   quest #MR0614067410.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ05009
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0811
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-09-18
+   
+   
+ * CLOSED DATE
+   2008-01-14
+   
+   
+ * LAST MODIFIED DATE
+   2008-01-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

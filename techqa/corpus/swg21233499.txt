@@ -1,0 +1,45 @@
+Title: IBM What is the maximum length of an SQL query string for the arsdoc program? - United States
+
+Text:
+arsdoc; retrieving documents; querying documents; SQL query string TECHNOTE (FAQ)
+
+QUESTION
+ What is the maximum length of an SQL query string for the arsdoc program? 
+
+CAUSE
+When using the arsdoc program to add, delete, update, query, print, or retrieve documents, an SQL query string can be provided in one of three ways. The first way is to specify the SQL string on the command line. The second and third ways are to specify the SQL string in a parameter file that is specified using the -F or -Q parameters. Depending on how the SQL query string is provided, an especially large SQL query string might not be possible.
+
+ANSWER
+There isn't a maximum length for an SQL query string that is provided in the parameter file that is specified using the -F or -Q flag. The following example of the arsdoc get command illustrates the use of a file to specify multiple SQL query strings: 
+
+arsdoc get -u oduser -p passwd -h oduser -f "CRD" -Q SQL_filename -o loaddata -a -g -c -N -v
+
+The example below shows a file that contains SQL query strings. The SQL query string can span multiple lines in the file as long as the continuation character \ is included as the last character on the line that is to be continued. Blank lines and comment lines (that is, lines starting with #) are also supported.
+
+
+
+# 1 document for account number 000-000-000
+where account = '000-000-000'
+
+# 1 document for account number 000-000-001 continued on multiple lines
+where\
+account\
+= '000-000-001'
+
+# 1 document for account number 000-000-002
+where account = '000-000-002' The following example of the arsdoc get command illustrates the use of a file to specify multiple retrieval requests that use an SQL query:
+
+arsdoc get -u oduser -p passwd -h oduser -F filename -v
+
+The example below is of a file that contains multiple retrieval requests. The retrieval request can span multiple lines in the file as long as the continuation character \ is included as the last character on the line that is to be continued. Blank lines and comment lines (that is, lines starting with #) are also supported.
+
+
+
+# Document for account number 000-000-000
+[-f CRD][-o credit1.out][-a][-c][-i "where account = '000-000-000'"]
+
+# Document for account number 000-000-001 continued on two lines
+[-f CRD][-o credit2.out][-a][-c][-i "where account = '000-000-001'\
+and balance > 100.00"] 
+
+Restriction: When the SQL query string is specified on the command line, the length of the command is restricted to the maximum line length allowed by the operating system. This means that the SQL query string is limited because it is a part of the command line.

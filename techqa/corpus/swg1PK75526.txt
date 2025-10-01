@@ -1,0 +1,176 @@
+Title: IBM PK75526: A THREAD MONITOR DATA CUSTOM PROPERTY IS MISSING FROM THE VERSION 6.1 INFORMATION CENTER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The "Configuring the hang detection policy" topic for
+   WebSphere Application Server Version 6.1 is missing the name
+   of a custom property. Under the section for name value pairs,
+   the following information exists in the topic:
+   
+   Name:
+   Value: The number of times (T) that false alarms can occur
+   before automatically increasing the threshold. It is possible
+   that a thread that is reported as hung eventually completes
+   its work,resulting in a false alarm. A large number of
+   these events indicates that the threshhold value is too small.
+   The hang detection facility can automatically respond to this
+   situation: For every T false alarms, the threshold T is
+   increased by a factor of 1.5. Set the value to zero (or less)
+   to disable the automatic adjustment.
+   Default: 100
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Need to add in the value for:
+   com.ibm.websphere.threadmonitor.false.alarm.threshold
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  This APAR affects users who are             *
+   *                  configuring the hang detection policy       *
+   *                  based on information in the Information     *
+   *                  Centers for WebSphere Application Server    *
+   *                  Versions 6.1.                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: In the "Configuring the hang            *
+   *                      detection policy" topic for WebSphere   *
+   *                      Application Server Version 6.1, one     *
+   *                      of the custom properties is missing     *
+   *                      from the documentation. The topic       *
+   *                      contains information that describes a   *
+   *                      custom property and states "The         *
+   *                      length of time (in seconds) in which    *
+   *                      a thread can be active  before it is    *
+   *                      considered hung. " However, the name    *
+   *                      of this custom property is not listed.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The com.ibm.websphere.threadmonitor.threshold custom property
+   is missing from the "Configuring the hang detection policy"
+   topic.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The "Configuring the hang detection policy" topic for
+   WebSphere Application Server Version 6.1 will be updated. The
+   com.ibm.websphere.threadmonitor.threshold custom property name
+   will be added to the topic. With the change, the following
+   information will exist for this custom property:
+   
+   Name:
+   com.ibm.websphere.threadmonitor.false.alarm.threshold
+   Value:
+   The number of times (T) that false alarms can occur before
+   automatically increasing the threshold. It is possible that a
+   thread that is reported as hung eventually completes its work,
+   resulting in a false alarm.  A large number of these events
+   indicates that the threshhold value is too small. The hang
+   detection facility can automatically respond to this
+   situation: For every T false alarms, the threshold T is
+   increased by a factor of 1.5. Set the value to zero (or less)
+   to disable the automatic adjustment.
+   Default: 100
+   
+   Note: Periodically, we update the documentation in our
+   information centers. Thus, the changes might exist in the
+   current documentation before you read this text. To access the
+   latest on-line documentation, go to the product library page
+   at http://www.ibm.com/software/webservers/appserv/library and
+   select the version and product that is appropriate for your
+   WebSphere Application Server environment.
+   
+   The modified documentation will be available in the December
+   2008 update to the Information Centers.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK75526
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   61A
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-11-12
+   
+   
+ * CLOSED DATE
+   2008-11-13
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

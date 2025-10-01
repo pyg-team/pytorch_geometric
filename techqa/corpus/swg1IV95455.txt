@@ -1,0 +1,235 @@
+Title: IBM IV95455: APACHE REDISCOVERY CAUSES ERROR: DB2 SQL ERROR: SQLCODE=-302, SQLSTATE=22001 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Apache rediscovery errors with:
+   com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error:
+   SQLCODE=-302,
+   SQLSTATE=22001, SQLERRMC=null, DRIVER=3.64.106
+   
+   ApacheServerSessionSeeds in support of rediscovery is failing
+   due to seed size exceeding DB BLOB storage column size.
+   
+   A lighter copy of seed can be stored by removing unnecessary
+   extra runtime process list information as has been done for
+   WeblogicServerSeed.
+   
+   
+   log shows:
+   2017-01-19 09:14:06,028 TopologyManager [RMI TCP
+   Connection(4608)-11.222.333.444]
+   com.collation.platform.model.discovery.profile.ObjectRediscovery
+   Info
+   DEBUG topomgr.ModelObjectPersister - isIncorrectXMLException for
+   e:
+   javax.jdo.jdodatastoreexception: insert of object
+   "com.collation.topomgr.jdo.discovery.profile.objectrediscoveryin
+   fojdo@34
+   c1e4ec" using statement "insert into taddmusr.objrdisc
+   (description_x,xa_x,seed_x,bidiformat_x,agentconfigurationguid_x
+   ,osgiplu
+   ginid_x,cmdbsource_x,adminstate_x,guid_x,deleted_x,runid_x,sourc
+   etoken_x
+   ,lastmodifiedby_x,hierarchy
+   type_x,version_x,xd_x,displayname_x,bidiflag_x,createdby_x,agent
+   configur
+   ationname_x,contextip_x,cdmsource_x,objguid_x,serverid_x,locatio
+   ntag_x,a
+   ttrprios_x,laststoredtime_x,objecttype_x,hierarchydomain_x,label
+   _x,lastm
+   odifiedtime_x,priority_x,addressscope_x,pk_x,jdolockx,jdoclassx)
+   values
+   (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
+   ,?,?,?,?
+   )" failed : db2 sql error: sqlcode=-302, sqlstate=22001,
+   sqlerrmc=null,
+   driver=3.64.106
+   failedobject:com.collation.topomgr.jdo.discovery.profile.objectr
+   ediscove
+   ryinfojdo@34c1e4ec
+   nestedthrowables:
+   com.ibm.db2.jcc.am.sqldataexception: db2 sql error:
+   sqlcode=-302,
+   sqlstate=22001, sqlerrmc=null, driver=3.64.106
+   2017-01-19 09:14:06,029 TopologyManager [RMI TCP
+   Connection(4608)-11.222.333.444]
+   com.collation.platform.model.discovery.profile.ObjectRediscovery
+   Info
+   WARN jdo.BaseJdo - Top(6F8BE6F0A85237CC9ED9767349996265-0)
+   failed, no
+   replacement found out of DB
+   javax.jdo.JDODataStoreException: Insert of object
+   "com.collation.topomgr.jdo.discovery.profile.ObjectRediscoveryIn
+   foJdo@34
+   c1e4ec" using statement "INSERT INTO TADDMUSR.OBJRDISC
+   (DESCRIPTION_X,XA_X,SEED_X,BIDIFORMAT_X,AGENTCONFIGURATIONGUID_X
+   ,OSGIPLU
+   GINID_X,CMDBSOURCE_X,ADMINSTATE_X,GUID_X,DELETED_X,RUNID_X,SOURC
+   ETOKEN_X
+   ,LASTMODIFIEDBY_X,HIERARCHYTYPE_X,VERSION_X,XD_X,DISPLAYNAME_X,B
+   IDIFLAG_
+   X,CREATEDBY_X,AGENTCONFIGURATIONNAME_X,CONTEXTIP_X,CDMSOURCE_X,O
+   BJGUID_X
+   ,SERVERID_X,LOCATIONTAG_X,ATTRPRIOS_X,LASTSTOREDTIME_X,OBJECTTYP
+   E_X,HIER
+   ARCHYDOMAIN_X,LABEL_X,LASTMODIFIEDTIME_X,PRIORITY_X,ADDRESSSCOPE
+   _X,PK_X,
+   JDOLOCKX,JDOCLASSX) VALUES
+   (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
+   ,?,?,?,?
+   )" failed : DB2 SQL Error: SQLCODE=-302, SQLSTATE=22001,
+   SQLERRMC=null,
+   DRIVER=3.64.106
+   FailedObject:com.collation.topomgr.jdo.discovery.profile.ObjectR
+   ediscove
+   ryInfoJdo@34c1e4ec
+           at
+   org.datanucleus.jdo.NucleusJDOHelper.getJDOExceptionForNucleusEx
+   ception(
+   NucleusJDOHelper.java:311)
+           at
+   org.datanucleus.jdo.JDOPersistenceManager.jdoMakePersistent(JDOP
+   ersisten
+   ceManager.java:661)
+           at
+   org.datanucleus.jdo.JDOPersistenceManager.makePersistent(JDOPers
+   istenceM
+   anager.java:681)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  disable re-discovery
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * TADDM User                                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The following error is encountered on Apache server          *
+   * re-discovery:                                                *
+   * com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error:          *
+   * SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=3.64.106 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   | Fix Pack | 7.3.0-TIV-ITADDM-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV95455
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-04-26
+   
+   
+ * CLOSED DATE
+   2017-10-09
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * FIXED COMPONENT ID
+   5724N5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R730 PSY
+   UP

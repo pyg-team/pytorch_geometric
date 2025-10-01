@@ -1,0 +1,249 @@
+Title: IBM IC77404: ( IC70324 ) SQL SERVER LOGS MAY BE TRUNCATED EVEN THOUGH THE DATA PROTECTION SQL BACKUP FAILED. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Download Information: Version 6.4 Tivoli Storage Manager for Databases [http://www-01.ibm.com/support/docview.wss?uid=swg24033228]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The problem in APAR IC70324 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC70324] was fixed in Data Protection for
+   SQL 5.5.5. However, the fix created a new problem described in
+   APAR IC74828 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC74828]. In order to resolve the new problem, the fix for
+   IC70324 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC70324] had to be removed starting with Data Protection for SQL
+   5.5.5.1.
+   .
+   This APAR is to address the reintroduction of the problem
+   described in APAR IC70324 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC70324] which was:
+   .
+   If the Data Protection for SQL client fails during the backup of
+   the transaction log, the SQL Server may truncate the logs even
+   though the data was not saved.
+   .
+   This problem will only occur when there is a failure after
+   backup data streaming has started but the data has not yet been
+   committed on Tivoli Storage Manager (TSM) Server. To date, this
+   condition has only been observed with two error cases:
+   1) The TSM Server is out of storage space - This one is easier
+   to resolve by making sure that there is always enough space
+   .on server to hold the backup.
+   2) The connection between Data Protection for / FlashCopy
+   .  Manager for Microsoft SQL Server and the TSM Server is lost
+   .  during the streaming of data to TSM
+   .
+   Initial Impact: high
+   Versions affected: V5.4, 5.5.0 - 5.5.4.x, and 5.5.5.1 and later
+   levels.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1) Immediately perform a FULL backup after any failed LOG backup
+      Starting with level 5.5.5.1, you will also see the follow-
+      ing messages when this specific problems occurs during a
+      LOG backup:
+   .
+      ACO5198W WARNING: LOG backup of <db-name> database failed but
+      possibly log file(s) were truncated.
+      Do FULL backup of the database.
+   .
+   2) Consider using the /truncate=no option with your LOG
+      backups. Please be aware that when this option is used,
+      the log  will not be truncated. The effect of this is that
+      the log could be larger than usual when compared against it
+      when not using the /truncate=no option. Therefore, you may
+      need to adjust your backup schedule so that FULL backups are
+      performed more frequently so that the information in the log
+      is committed more frequently which will free log space. Also
+      you should consider increasing the amount of space available
+      for the log to ensure that the log does not fill up inbetween
+      FULL backups.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Data Protection for SQL 5.4, 5.5, and 6.3    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See ERROR DESCRIPTION.                  *
+   ****************************************************************
+   * RECOMMENDATION: Apply fixing level when available. Due to the*
+   * nature of the changes required to resolve this issue, it will*
+   * be some time before the fix is available.                    *
+   *                                                              *
+   * In the mean time, please be aware of the following:          *
+   *                                                              *
+   * The problem / exposure is limited to Legacy Transaction Log  *
+   * backups failures when the /truncate=yes option is used with  *
+   * the backup command.                                          *
+   *     Note: /truncate=yes is the default                       *
+   *                                                              *
+   * It is recommended that you upgrade to Data Protection for    *
+   * SQL 5.5.5.1 as soon as possible because this level of code   *
+   * will produce the following warning message in the event of a *
+   * Transaction Log backup failure:                              *
+   *                                                              *
+   * ACO5198W WARNING: LOG backup of <db-name> database failed but*
+   * possibly log file(s) were truncated. Do FULL backup of the   *
+   * database.                                                    *
+   *                                                              *
+   * If you see this message, perform a FULL backup for the       *
+   * database indicated in the message. You DO NOT need to run    *
+   * FULL backups for all databases.                              *
+   *                                                              *
+   * Once the FULL backup of the affected database is completed,  *
+   * there is no longer an exposure due to this problem.          *
+   *                                                              *
+   * Note: If you use a FULL+DIFFERENTIAL+LOG backup strategy     *
+   *       instead of a FULL+LOG backup strategy, you can perform *
+   *       a DIFFERENTIAL backup immediately following a LOG      *
+   *       backup failure instead of a FULL backup.               *
+   *                                                              *
+   * If desired, you may also implement the following workaround  *
+   * to prevent the problem from occuring in the first place.     *
+   *                                                              *
+   * Use the /truncate=no option with your LOG backups. It        *
+   * should be noted that when this option is used, the log will  *
+   * not be truncated. The effect of this is that the log could be*
+   * larger than usual when comparing the log size with, and      *
+   * without, using the /truncate=no option.                      *
+   *                                                              *
+   * A log backup using /truncate=yes must be performed           *
+   * priodically so that the logs will be truncated, which will   *
+   * free log space. As stated, this issue only occurs when the   *
+   * /truncate=yes options is used. The potential to encounter    *
+   * this issue can be reduce by reducing the frequency of log    *
+   * backups using the /truncate=yes option. Log backups can      *
+   * continue more frequently using /truncate=no. In this way,    *
+   * logs will remain protected and the opportunity for this      *
+   * issue to occur will be less. For example: if a log backup    *
+   * with /truncate=no is taken once every hour, and a log backup *
+   * with /truncate=yes is taken once every 24 hours, the recovery*
+   * point objective remains one hour and the potential for this  *
+   * issue to occur will be 1/24 of what it would be when using   *
+   * /truncate=yes every hour.                                    *
+   *                                                              *
+   * Also, you should consider increasing the amount of space     *
+   * available for the log to ensure that the log does not fill   *
+   * up between log backups with the /truncate option.            *
+   ****************************************************************
+   UPDATED SEPTMERB 10, 2012. The fix for this APAR is available in
+   the DP for SQL 5.5.6 Fix Pack. It is also planned for inclusion
+   in the DP for SQL 6.3.1 Fix Pack targeted for release in
+   December 2012.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Changes to alleviate this design limitation are significant and
+   will require extensive testing. A fix will be released once the
+   solution has been developed and fully tested.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC77404
+   
+   
+ * REPORTED COMPONENT NAME
+   TDP FOR SQL WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5698DPSAP
+   
+   
+ * REPORTED RELEASE
+   55W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-07
+   
+   
+ * CLOSED DATE
+   2012-02-01
+   
+   
+ * LAST MODIFIED DATE
+   2012-09-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  TDPSQLC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TDP FOR SQL WIN
+   
+   
+ * FIXED COMPONENT ID
+   5698DPSAP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R55W PSY
+   UP
+   
+   
+ * R63W PSY
+   UP

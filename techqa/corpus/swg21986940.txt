@@ -1,0 +1,37 @@
+Title: IBM 'SystemServerConnectionFailure' error when opening a published workspace or report on a unix server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While using TM1 FP6 as a data source, Cognos Insight and Cognos Business Intelligence users opening a published workspace on a Unix server may encounter a "SystemServerConnectionFailed" error message. 
+
+CAUSE
+This issue is caused by TLS version incompatibility. TM1 FP6 uses TLS v1.2 by default. If a client application is not using TLS v1.2, the connection will fail.
+
+RESOLVING THE PROBLEM
+In order to resolve this issue, users must enable pre TLS v1.2 support on the TM1 Server and TM1 Admin Server: 
+
+
+
+TM1 ADMIN SERVER
+
+ 1. Stop all TM1 servers, including TM1 servers created by IBM Cognos Insight Publish
+    Note: Users will need to find and stop servers created by IBM Cognos Insight Publish via Task Manager > Services 
+ 2. Click Start > IBM Cognos TM1 > IBM Cognos Configuration 
+ 3. Expand Environment > TM1 Application Server 
+ 4. Click TM1 Admin Server 
+ 5. Set the Support pre-TLS v1.2 clients? property to True 
+ 6. Click File > Save 
+ 7. Click File > Exit 
+ 8. Click Yes if prompted to restart the TM1 Admin Server
+
+
+TM1 SERVER
+
+Perform the following for TM1 servers created by IBM Cognos Insight Publish or TM1 servers used as a TM1 data source by IBM Cognos Business Intelligence 10.2.2 FP5 or earlier: 
+ 1. Locate [http://www.ibm.com/support/knowledgecenter/SS9RXT_10.2.2/com.ibm.swg.ba.cognos.tm1_inst.10.2.2.doc/c_locationofthetm1s.cfgfile_n15038e.html] and open the tm1s.cfg file in an editor
+    Note: The tm1s.cfg file for TM1 servers created by IBM Cognos Insight Publish can be found in \webapps\pmpsvc\WEB-INF\desktopdata 
+ 2. Add 'SupportPreTLSv12Clients=T' 
+ 3. Save the file 
+ 4. Restart all TM1 servers

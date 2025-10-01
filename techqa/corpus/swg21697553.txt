@@ -1,0 +1,17 @@
+Title: IBM DASH Navigation bar customisation - United States
+
+Text:
+DASHL2; DASHL2CONF; Dash; navigation; customise; customize; watermark; Dashboard; sidebar TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to customise the sidebar image/background in Dashboard Application Service Hub (DASH) component of Jazz for Service Management (JazzSM) application? 
+
+CAUSE
+Customer would like to change the sidebar navigation image in DASH to watermark it with the name 
+of the environment, for example: DEV, TEST, PROD.
+
+ANSWER
+It is not possible to change the existing display of the Navigation bar in the current version of DASH. 
+
+However to be hinted about the environment and know if the particular DASH is DEV/TEST/PROD, it is possible to achieve this by customising main DASH login page. Here it is possible to change login title and company logo etc
+http://www-01.ibm.com/support/knowledgecenter/SST55W_4.1.0/liaca/liaca_dashboard_rebrand.html [http://www-01.ibm.com/support/knowledgecenter/SST55W_4.1.0/liaca/liaca_dashboard_rebrand.html]

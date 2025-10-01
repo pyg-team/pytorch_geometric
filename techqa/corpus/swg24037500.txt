@@ -1,0 +1,97 @@
+Title: IBM MQC8:  IBM MQ V8 Clients - United States
+
+Text:
+mqc8 websphere mq v8 DOWNLOADABLE FILES
+
+ABSTRACT
+ This SupportPac contains all the IBM MQ V8 client components. 
+
+DOWNLOAD DESCRIPTION
+Click here to skip straight to download table.
+
+
+A IBM MQ client is part of the product that can be installed on its own, on a separate machine from the base product and server. You can run an IBM MQ application on an IBM MQ client and it can interact, by means of a communications protocol, with one or more IBM MQ servers and connect to their queue managers. The servers to which the client connects might be part of a cluster. 
+
+IBM MQ Family Platforms provides a list of which platforms are supported as IBM MQ Clients and/or Servers. 
+
+An application that you want to run in the IBM MQ client environment must first be linked with the relevant client library. When the application issues an MQI call, the IBM MQ client code directs the request to a queue manager, where it is processed and from where a reply is sent back to the client. The link between the application and the client code is established dynamically at runtime. The MQI is available to applications running on the client platform. The queues and other IBM MQ objects are held on a queue manager that you have installed on a server machine. 
+
+Click here to skip straight to download table
+
+Possible Uses
+• Why use IBM MQ clients?
+» Using IBM MQ clients is an efficient way of implementing IBM MQ messaging and queuing. 
+» You can have an application that uses the MQI running on one machine and the queue manager running on a different machine, either physical or virtual. The benefits of doing this are: 
+- There is no need for a full IBM MQ implementation on the client machine. 
+- Hardware requirements on the client system are reduced. 
+- System administration requirements are reduced. 
+- An IBM MQ application, running on a client, can connect to multiple queue managers on different systems. 
+- Alternative channels using different transmission protocols may be used. 
+
+• What applications run on an IBM MQ client?
+» The full MQI is supported in the client environment and this enables almost any IBM MQ application to be relinked to run on an IBM MQ client. Link the application on the IBM MQ client to the MQIC library, rather than to the MQI library. The exceptions are: 
+- An application that uses global transactions; that is, it requires sync point coordination with resource managers other than the queue manager.
+- Get(signal) on z/OS.
+» Applications which are built using various programming languages including C, C++, .NET (Windows systems only), COBOL, Java and JMS.
+» Applications running within application servers that are certified as having passed the JEE 7 Compatibility Test Suite can use the IBM MQ resource adapter provided in the SupportPac. For more information see IBM MQ resource adapter v8.0 statement of support [http://www.ibm.com/support/docview.wss?uid=swg27041968]
+
+Note: An application running on an IBM MQ client can connect to more than one queue manager concurrently, or use a queue manager name with an asterisk (*) on an MQCONN or MQCONNX call. The application will have to be changed if you want to link to the queue manager libraries instead of the client libraries, because this function is not available.
+
+RELATED MESSAGE SERVICE CLIENTS
+The IBM Message Service Client offers C/C++ users an Application Programming Interface (API) that is consistent with the Java Message Service (JMS) API. Applications created using this client can be used to exchange messages between other XMS applications, JMS applications, or native IBM MQ applications. 
+
+Please click here for more information and to download the SupportPac:
+IBM Message Service Client for C/C++ (SupportPac IA94) [http://www.ibm.com/support/docview.wss?rs=0&q1=ia94&uid=swg24007092&loc=en_US&cs=utf-8&cc=us&lang=en] 
+
+Skill Level Required
+Users should be familiar with the IBM MQ product family in general and have particular skills on the platform for which this client is intended. 
+
+New in this Release
+Updated for IBM MQ V8.0.0.9.
+
+Details
+Author: IBM MQ Development, Hursley
+Category: 3
+Released: 23May14
+Last updated: 12Apr18
+Current Version: 8.0.0.9
+»Please note that the version number shown in the right-hand pane is the version of the IBM MQ product that this SupportPac applies to. The date is the last web page refresh.
+
+To view the complete portfolio of IBM MQ SupportPacs please visit the IBM MQ SupportPacs homepage. [http://www-306.ibm.com/software/integration/support/supportpacs]
+
+PREREQUISITES
+This client will interoperate with all the currently supported IBM MQ server products, provided the functions used are common to the release of server and client.
+
+Notes:
+Managed File Transfer (MFT) code is not provided in this SupportPac.
+
+IBM has withdrawn the download of the MQ Client for HP NonStop Server. As IBM has stated in a Statement of Direction ( https://ibm.biz/MQ-SoD-Nov2014 [https://ibm.biz/MQ-SoD-Nov2014]) there is an intent to deliver an updated version of IBM MQ for the HP NonStop Server platform as this should be a better solution to meet the MQ connectivity needs for most customers on the HP NonStop Server platform. In common with other IBM MQ platforms, MQ Clients that run on other platforms will continue to provide connectivity to IBM MQ Servers on the HP NonStop platform and other MQ Server supported platforms. 
+
+To gain an early look at the intended release of IBM MQ V8 for HP NonStop Server please join the beta program by contacting your IBM sales representative. 
+
+INSTALLATION INSTRUCTIONS
+To install a Unix Client:
+1. Logon as root, create an empty directory (with sufficient space to receive the download file) and make it current. 
+2. Download mqc8_platform to this directory. (Where 'platform' is replaced with a specific platform name e.g. AIX, Linux-x86)
+3. Uncompress mqc8_platform.
+4. Execute tar -xvf mqc8_platform.
+5. Execute rm mqc8_platform.
+6. Follow the instructions provided in the IBM MQ V8 Knowledge Center to complete the installation of the client.
+
+To install the client on a Windows machine download the zip file and extract the content. From the Windows subdirectory created run the setup.exe program.
+
+URL LANGUAGE SIZE(Bytes) IBM MQ 8.0: Installing and Uninstalling [http://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.ins.doc/q008250_.htm] US English 111 
+DOWNLOAD PACKAGE
+ 
+*** ATTENTION : 8.0.0.4 and earlier packages: Install image vulnerability alert - see http://www.ibm.com/support/docview.wss?uid=swg21978363 [http://www.ibm.com/support/docview.wss?uid=swg21978363] for mitigation steps. Contact IBM Support with questions. *** 
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 8.0.0.9 Client 12 Apr 2018 US English 111 FC [http://ibm.biz/mq8009clients] [ ] 8.0.0.8 Client 30 Nov 2017 US English 111 FC [http://ibm.biz/mq8008clients] [ ] 8.0.0.7 Client 10 Jul 2017 US English 111 FC [http://ibm.biz/mq8007clients] [ ] 8.0.0.6 Client 31 Jan 2017 US English 111 FC [http://ibm.biz/FixPackMQ8006 ] [ ] 8.0.0.5 Client 25 May 2016 US English 111 FC [http://ibm.biz/mq8005aclients] [ ] 8.0.0.4 Client 23 Oct 2015 US English 111 FC [https://ibm.biz/mq8004clients] [ ] 8.0.0.3 Client 18 Jun 2015 US English 111 FC [https://ibm.biz/mq8003clients] [ ] 8.0.0.2 Client 27 Feb 2015 US English 111 FC [https://ibm.biz/mq8002clients] [ ] 8.0.0.1 Client 16 Sep 2014 US English 111 FC [http://ibm.biz/mq8001clients] [ ] 8.0.0.0 Client 23 May 2014 US English 111 FC [https://ibm.biz/mq8000clients] [ ] 
+TECHNICAL SUPPORT
+ Category 3 IBM MQ SupportPacs are supplied under the standard terms and conditions provided by the International Program License Agreement (IPLA) and thus, carry program defect service for IBM MQ customers. Please read the IPLA and LI files that accompany the SupportPac, to ensure you understand the conditions under which the SupportPac is provided. 
+
+If you encounter what you believe to be a defect with the SupportPac, and you have a current license for a IBM MQ server product, you may request Program Services by reporting the problem via the same defect reporting channel you employ for the IBM MQ server product(s) on which you are using the SupportPac. No proof of entitlement is required to use this SupportPac.
+
+Service is available for the v8 version of this SupportPac for as long as the IBM MQ V8 server product is supported by service. Refer to the IBM MQ product lifecycle pages for the relevant service information. It is only supported with MQ platforms which are themselves supported.

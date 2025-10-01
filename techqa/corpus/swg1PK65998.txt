@@ -1,0 +1,189 @@
+Title: IBM PK65998: NUMBERFORMAT.FORMAT(JAVA.MATH.BIGDECIMAL) METHOD                IS MISSING IN COM.IBM.ICU_3.4.5.JAR. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24020073]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24021203]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The signature NumberFormat.format(java.math.BigDecimal) was
+   part of the icu4j library version 3.4.1 and it was not
+   deprecated. In the version 3.4.5 jar the signature has been
+   removed  causing  problems for the BPC Explorer as part of
+   WebSphere Process Server 61.
+   
+   Unfortunately, the BPC Explorer uses this signature. If a
+   WebSphere Process Server server is upgraded the Enterprise
+   Application "BPC Explorer" need not be upgraded as well. In
+   which case, the already installed BPC Explorer would use a
+   non-existing signature.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of WebSphere Application Server   *
+   *                  6.1.0.3 and later with applications that    *
+   *                  use the ICU4J 3.4.5 library.                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The exception                           *
+   *                      java.lang.NoSuchMethodError:            *
+   *                      com.ibm.icu.text.NumberFormat.format    *
+   *                      (java.math.BigDecimal) can be thrown.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The ICU4J 3.4.5 library distributed with the WebSphere
+   Application Server 6.1.0.3 and later contains the ICU4J 3.4.5
+   library from the Eclipse SDK. The
+   NumberFormat.format(java.math.BigDecimal) method does not
+   exist in that version of ICU4J. An application compiled with
+   the previous version of ICU4J distributed with the WebSphere
+   Application Server may be using this method and when run on a
+   later release of Application Server may encounter the exception
+   described above.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The missing method has been added back into the ICU4J 3.4.5
+   library included with the WebSphere Application Server.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 6.1.0.19.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK65998
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   61I
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-05-13
+   
+   
+ * CLOSED DATE
+   2008-07-24
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

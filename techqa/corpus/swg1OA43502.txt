@@ -1,0 +1,170 @@
+Title: IBM OA43502: INFOMAN WEB SERVER ISSUE ABEND S0C4 REASON CODE 11 - United States
+
+Text:
+AIX z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  InfoMan Web Server issued abend S0C4 reason code 11, also
+   noticed several of the following abends in the dump:
+   U4039
+   S80A
+   S878
+   U4088
+   SA03
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  back off UA63943
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IBM Tivoli Information Management for    *
+   *                 z/OS users and applications which use any of *
+   *                 the Infoman Application Programming          *
+   *                 interfaces.                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Abend S0C4 AB/S0C4, abend S878 AB/S878  *
+   *                      and abend S80A ABS/S80A in module       *
+   *                      BLXSSERV.BLXSCSMR occur after PTF       *
+   *                      UA63943 is applied.                     *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF and restart the BLX-SP address *
+   *                 space and all applications which access an   *
+   *                 Infoman database.                            *
+   ****************************************************************
+   After applying PTF UA63943, APAR OA38453 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA38453] which corrects a memory
+   leak issue, intermittent abend S0C4, S878 and S80A abends in
+   module BLXSSERV.BLXSCSMR occur. Dump analysis revealed that
+   module BLXSCSMR was freeing storage before it obtained a pointer
+   from that storage and that module BLXSTERM used the wrong length
+   value when attempting to free CINX blocks.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Module BLXSCSMR has been modified so that it correctly maintains
+   the list of SCQE blocks.  This modification avoids attempts to
+   access storage pages that have been freed by z/OS.
+   
+   Module BLXSTERM was modified to use the correct length when
+   freeing CINX blocks.  This modification eliminates the S878 and
+   S80A abends caused bythe accumulation of partially freed CINX
+   blocks.
+   
+   V71 CODE
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA43502
+   
+   
+ * REPORTED COMPONENT NAME
+   INFO MAN Z/OS 7
+   
+   
+ * REPORTED COMPONENT ID
+   5697SD900
+   
+   
+ * REPORTED RELEASE
+   112
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-27
+   
+   
+ * CLOSED DATE
+   2013-10-15
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA71070
+   
+   
+
+MODULES/MACROS
+ *  BLXSCSMR BLXSESMR BLXSTERM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INFO MAN Z/OS 7
+   
+   
+ * FIXED COMPONENT ID
+   5697SD900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY UA71070 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA71070]
+   UP13/10/16 P F310
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

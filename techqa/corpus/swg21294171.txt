@@ -1,0 +1,63 @@
+Title: IBM Migration configuration is corrupted if the Node Names are not unique to the cell or do not match the previous versions Node Name - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When migrating a Node, Deployment Manager (DMGR) or IBM WebSphere Application Server, the newly created Node Name must be either unique to the Cell itself or match the Node Name you are migrating from.
+Example : The V6.1 DMGR node name may be equal to its' V5.1 value, or it may be any other value that does not exist already in the list of node names (the list includes Application Server or nodeagent node names and any (optional) existing node names in the V6.1 cell) 
+
+SYMPTOM
+The newly migrated server will not start. 
+
+In this case, the Deployment Manager profile was created using the manageProfiles command. The V6.1 Deployment Manager's Node Name was the same as the V5.1 nodeagent's Node Name. The migration programs, WASPreUpgrade and WASPostUpgrade were run successfully from the command line. After the migration was completed, the DMGR was started but failed to start.
+Nothing was written to the SystemOut.log. The startManager trace log showed the following :
+
+
+
+
+[1/23/08 16:28:34:000 EST] 0000000a ConfigRootImp < getRelativePath Exit
+cells/wasadm1ConfigCell/nodes/wasadm1/servers/dmgr/variables.xml
+[1/23/08 16:28:34:001 EST] 0000000a ConfigRootImp < getAbsolutePath Exit
+/wasbase/IBM/WebSphere61/AppServer/profiles/dmgr/config/cells/wasadm1ConfigCell/nodes/wasadm1/servers/dmgr/variables.xml
+[1/23/08 16:28:34:003 EST] 0000000a ResourceLocat 3 /wasbase/IBM/WebSphere61/AppServer/profiles/dmgr/config/cells/wasadm1ConfigCell/nodes/wasadm1/servers/dmgr/variables.xml not found
+
+java.io.FileNotFoundException: /wasbase/IBM/WebSphere61/AppServer/profiles/dmgr/config/cells/wasadm1ConfigCell/nodes/wasadm1/servers/dmgr/variables.xml (No such file or directory)
+at java.io.FileInputStream.open(Native Method)
+at java.io.FileInputStream.<init>(FileInputStream.java:135)
+at org.eclipse.emf.ecore.resource.impl.URIConverterImpl.createFileInputStream(URIConverterImpl.java:469)
+at org.eclipse.emf.ecore.resource.impl.URIConverterImpl.createInputStream(URIConverterImpl.java:431) 
+The V6.1 variables.xml for the DMGR in this case does exist. When reviewing the V6.1 variables.xml we found the following. Note the bold items are directory paths to the V5.1 Deployment Manager instead of the V6.1 Deployment Manager. 
+
+
+<entries xmi:id="VariableSubstitutionEntry_1" symbolicName="WAS_INSTALL_ROOT" value="/wasnd/WebSphere/DeploymentManager" description="The filesystem path to the WebSphere product installation directory."/>
+<entries xmi:id="VariableSubstitutionEntry_2" symbolicName="USER_INSTALL_ROOT" value="${WAS_INSTALL_ROOT}" description="The filesystem path to the user installation directory."/>
+.
+.
+.
+<entries xmi:id="VariableSubstitutionEntry_9" symbolicName="JAVA_HOME" value="/wasnd/WebSphere/DeploymentManager/java" description="The filesystem path to the Java Virtual Machine installation directory."/> 
+CAUSE
+The serverindex.xml showed 2 servers instead of just the one for the DMGR. The second server was the name of the V5.1 nodeagent. 
+
+
+The dmgr nodename rename to an existing nodename should have caused WASPostUpgrade to exit with a message stating that the node name were in conflict, however this did not happen. Instead, migration brought over the nodeagent's configuration first as V5.1 data, and then migrated the DMGR information overtop of the nodeagent configuration. 
+
+The resulting mis-mash of V5.1 nodeagent and V6.1 migrated dmgr information was not a valid WebSphere configuration, and caused lots of issues when attempting to use the V6.1 migrated dmgr.
+
+
+RESOLVING THE PROBLEM
+You can resolve this issue by using one of the following 2 methods. Note in both methods below, the Cell Name used must be the same. 
+
+Method 1 : 
+
+ 1. Run the profile delete command to remove the corrupted node. 
+ 2. Create a new profile using a unique Node Name with respect to the entire cell (which includes the migrating the Application Server or nodeagent node names and any (optional) existing node names in the V6.1 cell) or use the Node Name from which you are migrating from. So if the V5.1's DMGR's Node Name is "dmgrnode" then you can call your V6.1's Node Name "dmgrnode". 
+ 3. Rerun the WASPostUpgrade. 
+ 4. After a successful migration, try to start the server.
+
+
+Method 2 : 
+
+ 1. Run the profile delete command to remove the corrupted node. 
+ 2. Use the Migration Wizard to create your profile and do the migration. The Migration Wizard will verify to make sure you do not have conflicts with respect to the Node Names used. 
+ 3. After a successful migration, try to start the server.

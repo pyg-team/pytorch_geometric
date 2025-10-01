@@ -1,0 +1,301 @@
+Title: IBM IT23726: Queue manager hangs, generates FDCs with probe ids XC130003 and/or XC130004 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The queue manager unexpectedly crashes or ceases responding
+   because of memory exceptions. The following failure data capture
+   (FDC) records
+   might be generated.
+   
+   FDC summary/details:
+   
+   2018/01/08 12:03:31.303066+7158 amqrmppa 1604378  3882 XC130003
+   rriMQIServerReceive STOP
+   2018/01/08 12:03:31.344573+7158 amqrmppa 1604378  3882 RM559101
+   rriMQIServerReceive STOP
+   2018/01/08 12:03:41.048526+7158 amqzxma0 1290765     1 ZX005022
+   zxcProcessChildren  lrcW_S_FAST_PATH_APP_DEAD
+   2018/01/08 12:13:00.615306+7158 amqzxma0 1290765     4 XC348025
+   xlsRecoverThread    xecL_W_SEM_OWNER_DIED
+   
+   Probe Id          :- XC130003
+   Component         :- xehExceptionHandler
+   Program Name      :- amqrmppa
+   Thread            :- 3882    RemoteResponder
+   Arith1            :- 11 (0xb)
+   Comment1          :- SIGSEGV: invalid address
+   permissions(0x7ffb980a7e52)
+   
+   O/S Call Stack for current thread
+   /opt/mqm/lib64/libmqmcs_r.so(xcsPrintStackForCurrentThread+0x3e)
+   [0x7ffc342c45ce]
+   /opt/mqm/lib64/libmqmcs_r.so(+0x11ff4a)[0x7ffc342e2f4a]
+   /opt/mqm/lib64/libmqmcs_r.so(PrepareDumpAreas+0xd14)[0x7ffc342de
+   114]
+   /opt/mqm/lib64/libmqmcs_r.so(xcsFFSTFn+0x18ee)[0x7ffc342e0e5e]
+   /opt/mqm/lib64/libmqmcs_r.so(xehExceptionHandler+0x965)[0x7ffc34
+   2db555]
+   /lib64/libpthread.so.0(+0xf8a0)[0x7ffc33a088a0]
+   /opt/mqm/lib64/libmqmr_r.so(rriMQIServerReceive+0x480)[0x7ffc351
+   7c8c0]
+   /opt/mqm/lib64/libmqmr_r.so(rriServerAsyncRcv+0x2e6)[0x7ffc3507b
+   be6]
+   /opt/mqm/lib64/libmqmr_r.so(cciProcessAsyncRcv+0xc1)[0x7ffc34ec4
+   361]
+   /opt/mqm/lib64/libmqmr_r.so(cciProcessUserData+0xa7)[0x7ffc34eca
+   ae7]
+   /opt/mqm/lib64/libmqmr_r.so(cciProcessOne+0x77f)[0x7ffc34ecdd4f]
+   /opt/mqm/lib64/libmqmr_r.so(ccxReceiveThreadFn+0x93)[0x7ffc34ecf
+   853]
+   /opt/mqm/lib64/libmqmr_r.so(rrxResponder+0x737)[0x7ffc35091b97]
+   /opt/mqm/lib64/libmqmr_r.so(ccxResponder+0x22b)[0x7ffc34ed933b]
+   /opt/mqm/lib64/libmqmr_r.so(cciResponderThread+0x8f)[0x7ffc34ed9
+   49f]
+   /opt/mqm/lib64/libmqmcs_r.so(+0x1771ec)[0x7ffc3433a1ec]
+   /lib64/libpthread.so.0(+0x7a23)[0x7ffc33a00a23]
+   /lib64/libc.so.6(clone+0x6d)[0x7ffc33548e7d]
+   
+   MQM Function Stack
+   ccxResponder
+   rrxResponder
+   ccxReceiveThreadFn
+   cciProcessOne
+   cciProcessUserData
+   cciProcessAsyncRcv
+   rriServerAsyncRcv
+   rriMQIServerReceive
+   xcsFFST
+   
+   2018/01/10 14:05:06.288033+7158 amqrmppa 774091 28004 XC130004
+   aqpWriteDataBuffers     STOP
+   2018/01/10 14:05:06.355498+7158 amqrmppa 774091 28004 AQ051000
+   aqsStartQOp             STOP_ALL
+   2018/01/10 14:05:06.412626+7158 amqrmppa 774091 28004 AT024000
+   atmRecoverDataMutex     xecF_E_UNEXPECTED_RC
+   2018/01/10 14:05:06.471466+7158 amqrmppa 774091 28004 AT080004
+   atxAssociationRemoveAll STOP
+   2018/01/10 14:05:07.057255+7158 amqrmppa 774091     0 XC302005
+   xlsThreadTermination    xecL_W_SEM_OWNER_DIED
+   2018/01/10 14:05:21.150378+7158 amqzxma0 303289     1 ZX005022
+   zxcProcessChildren      lrcW_S_FAST_PATH_APP_DEAD
+   
+   Probe Id          :- XC130003
+   Component         :- xehExceptionHandler
+   Program Name      :- amqrmppa
+   Thread            :- 28004    RemoteResponder
+   Arith1            :- 11 (0xb)
+   Comment1          :- SIGSEGV: invalid address permissions
+   
+   O/S Call Stack for current thread
+   /opt/mqm/lib64/libmqmcs_r.so(xcsPrintStackForCurrentThread+0x3e)
+   [0x7ffc97e555ce]
+   /opt/mqm/lib64/libmqmcs_r.so(+0x11ff4a)[0x7ffc97e73f4a]
+   /opt/mqm/lib64/libmqmcs_r.so(PrepareDumpAreas+0xd14)[0x7ffc97e6f
+   114]
+   /opt/mqm/lib64/libmqmcs_r.so(xcsFFSTFn+0x18ee)[0x7ffc97e71e5e]
+   /opt/mqm/lib64/libmqmcs_r.so(xehExceptionHandler+0x109b)[0x7ffc9
+   7e6cc8b]
+   /lib64/libpthread.so.0(+0xf8a0)[0x7ffc975998a0]
+   /lib64/libc.so.6(memcpy+0x15b)[0x7ffc970799ab]
+   /opt/mqm/lib64/libmqml_r.so(aqpWriteDataBuffers+0x7f2)[0x7ffc992
+   98482]
+   /opt/mqm/lib64/libmqml_r.so(aqqWriteMsgData+0x58a)[0x7ffc992a235
+   a]
+   /opt/mqm/lib64/libmqml_r.so(aqqWriteMsg+0x18f)[0x7ffc992a30ff]
+   /opt/mqm/lib64/libmqml_r.so(aqhPutMessage+0xdeb)[0x7ffc992571eb]
+   /opt/mqm/lib64/libmqml_r.so(aqmPutMessage+0x88c)[0x7ffc992825dc]
+   /opt/mqm/lib64/libmqml_r.so(apiPutMessage+0xde)[0x7ffc9922eb5e]
+   /opt/mqm/lib64/libmqml_r.so(kqiPutMsgSegments+0x65c)[0x7ffc9949f
+   2dc]
+   /opt/mqm/lib64/libmqml_r.so(kqiPutIt+0x5fa)[0x7ffc994ad79a]
+   /opt/mqm/lib64/libmqml_r.so(kpiMQPUT+0x160)[0x7ffc994b2d10]
+   /opt/mqm/lib64/libmqml_r.so(zsqMQPUT+0x4d6)[0x7ffc9965bb66]
+   /opt/mqm/lib64/amqzif_r(zifMQPUT+0x1cf)[0x7ffc94ae488f]
+   /opt/mqm/lib64/libmqzi_r.so(zstMQPUT+0x45a)[0x7ffc98649afa]
+   /opt/mqm/lib64/libmqds_r.so(MQPUT+0xd3)[0x7ffc983c4813]
+   /opt/mqm/lib64/libmqmr_r.so(rriMQIServerCall+0x1aaa)[0x7ffc98d06
+   7ea]
+   /opt/mqm/lib64/libmqmr_r.so(rriMQIServerReceive+0x58d)[0x7ffc98d
+   0d9cd]
+   /opt/mqm/lib64/libmqmr_r.so(rriServerAsyncRcv+0x2e6)[0x7ffc98c0c
+   be6]
+   /opt/mqm/lib64/libmqmr_r.so(cciProcessAsyncRcv+0xc1)[0x7ffc98a55
+   361]
+   /opt/mqm/lib64/libmqmr_r.so(cciProcessUserData+0xa7)[0x7ffc98a5b
+   ae7]
+   /opt/mqm/lib64/libmqmr_r.so(cciProcessOne+0x77f)[0x7ffc98a5ed4f]
+   /opt/mqm/lib64/libmqmr_r.so(ccxReceiveThreadFn+0x93)[0x7ffc98a60
+   853]
+   /opt/mqm/lib64/libmqmr_r.so(rrxResponder+0x737)[0x7ffc98c22b97]
+   /opt/mqm/lib64/libmqmr_r.so(ccxResponder+0x22b)[0x7ffc98a6a33b]
+   /opt/mqm/lib64/libmqmr_r.so(cciResponderThread+0x8f)[0x7ffc98a6a
+   49f]
+   /opt/mqm/lib64/libmqmcs_r.so(+0x1771ec)[0x7ffc97ecb1ec]
+   /lib64/libpthread.so.0(+0x7a23)[0x7ffc97591a23]
+   /lib64/libc.so.6(clone+0x6d)[0x7ffc970d9e7d]
+   
+   MQM Function Stack
+   ccxResponder
+   rrxResponder
+   ccxReceiveThreadFn
+   cciProcessOne
+   cciProcessUserData
+   cciProcessAsyncRcv
+   rriServerAsyncRcv
+   rriMQIServerReceive
+   rriMQIServerCall
+   MQPUT
+   zstMQPUT
+   zifMQPUT
+   zsqMQPUT
+   kpiMQPUT
+   kqiPutIt
+   kqiPutMsgSegments
+   apiPutMessage
+   aqmPutMessage
+   aqhPutMessage
+   aqqWriteMsg
+   aqqWriteMsgData
+   aqpWriteDataBuffers
+   xcsFFST
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users who use MQ SVRCONN channels
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   This problem occurred because the queue manager channel process
+   incorrectly freed a message buffer and this resulted in memory
+   exception followed by queue manager crash or hang.  The queue
+   manager channel process maintains the buffers to send/receive
+   messages to/from the client applications.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  MQ code has been modified to to correctly manage message buffer
+   used by the channels.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v9.0 CD    9.0.5
+   v9.0 LTS   9.0.0.4
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT23726
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ APPL M20
+   
+   
+ * REPORTED COMPONENT ID
+   5725Z0900
+   
+   
+ * REPORTED RELEASE
+   903
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-01-12
+   
+   
+ * CLOSED DATE
+   2018-02-28
+   
+   
+ * LAST MODIFIED DATE
+   2018-02-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM MQ APPL M20
+   
+   
+ * FIXED COMPONENT ID
+   5725Z0900
+   
+   
+
+APPLICABLE COMPONENT LEVELS

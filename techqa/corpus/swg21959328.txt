@@ -1,0 +1,21 @@
+Title: IBM Security Bulletin: A security vulnerability has been identified in  IBM WebSphere Application Server shipped with IBM Integrated Information Core (CVE-2015-4000) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ IBM WebSphere Application Server v7.0 is shipped as a component of IBM Integrated Information Core. Information about a security vulnerability affecting IBM WebSphere Application Server has been published in a security bulletin. 
+
+CONTENT
+Vulnerability Details
+Please consult the security bulletin Security Bulletin: Vulnerability with Diffie-Hellman ciphers may affect IBM WebSphere Application Server (CVE-2015-4000) [http://www.ibm.com/support/docview.wss?uid=swg21957980] for vulnerability details and information about fixes.
+
+Affected Products and Versions 
+
+Principal Product and Version(s) Affected Supporting Product and Version IBM Integrated Information Core V1.5, V1.5.0.1, and V1.5.0.2 IBM WebSphere Application Server v7.0 
+Related Information 
+IBM Secure Engineering Web Portal [https://www-304.ibm.com/jct03001c/security/secure-engineering/] 
+IBM Product Security Incident Response Blog [https://www.ibm.com/blogs/PSIRT] 
+
+Change History 
+5 June 2015: Original Version Published

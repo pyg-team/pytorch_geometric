@@ -1,0 +1,21 @@
+Title: IBM In IBM Content Navigator single sign-on (SSO) configurations, user sessions do not time out properly - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In IBM Content Navigator SSO configurations, user sessions do not time out properly, which can cause WebSphere to run out of memory. 
+
+ENVIRONMENT
+This information applies to IBM Content Navigator in WebSphere SSO configurations with IBM FileNet Content Manager, for the following SSO implementations only: 
+
+ *  Tivoli Access Manager (TAM) Kerberos/SPNEGO SiteMinder 
+
+
+This information does not impact IBM Content Manager or Lightweight Third-Party Authentication (LTPA) single sign-on configurations. 
+
+RESOLVING THE PROBLEM
+When you apply one of the following fixes, IBM Content Navigator will allow WebSphere to properly invalidate sessions according to the timeout value: 
+
+ * For IBM Content Navigator 2.0.1, install IBM Content Navigator, Version 2.0.1.2 Interim Fix 1 (2.0.1.2-ICN-IF001). 
+ * For IBM Content Navigator 2.0.2, install IBM Content Navigator, Version 2.0.2 Fix Pack 3 (2.0.2.3-ICN-FP003).

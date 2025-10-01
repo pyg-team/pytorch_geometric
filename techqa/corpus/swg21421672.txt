@@ -1,0 +1,41 @@
+Title: IBM XDMS errors may occur when host names contain hyphens. - United States
+
+Text:
+SI Bus; message engine; XDMSBus TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When the host name, node name or server name of the WebSphere cluster contains the hyphen (-) character, the SIBus engines may not initialize correctly when data stores are used. This will result in errors pointing to IBM WebSphere XML Document Management Server (XDMS). 
+
+SYMPTOM
+Here is one example of errors found in the logs:
+
+
+com.ibm.wsspi.uow.UOWActionException: javax.jms.JMSException: CWSIA0241E: An exception was received during the call to the method JmsManagedConnectionFactoryImpl.createConnection: com.ibm.websphere.sib.exception.SIResourceException: CWSIT0088E: There are currently no messaging engines in bus XDMSBus running. Additional failure information: CWSIT0103E: No messaging engine was found that matched the following parameters: bus=XDMSBus, targetGroup=null, targetType=BusMember, targetSignificance=Preferred, transportChain=InboundBasicMessaging, proximity=Bus.
+
+
+
+CAUSE
+By default the host name is used in the creation of the node name. XDMS uses the node name and server name as the schema name used in the creation of the SI Bus database tables. The databases do not like the use of hyphens in the schema name and the table creation fails. Because there are no tables in the database, the message engines for the SI Bus used by XDMS fail to start.
+
+
+
+ENVIRONMENT
+This affects XDMS installations using either Oracle or DB2 databases.
+
+
+
+RESOLVING THE PROBLEM
+To resolve the issue, the hyphens can be removed from the schema name. 
+
+ 1. From the WAS admin console, navigate to Service integration -> Buses. Click on the XDMSBus link. 
+ 2. From the Topology group select the Message engines link and then select the engine. 
+ 3. Under Additional Properties select the Message store link. 
+ 4. Find the Schema name and either remove the hyphens from the name or change the hyphens to underscores. 
+ 5. Click Ok and save the changes. 
+ 6. Repeat the steps for each message engine used by the XDMSBus.
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ XDMS

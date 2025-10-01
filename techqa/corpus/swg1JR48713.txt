@@ -1,0 +1,179 @@
+Title: IBM JR48713: COGNOS WIDGETS SHOW "NEED CONFIGURATION" AFTER MIGRATION FROM BUSINESS MONITOR V7 TO V8 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After using the convert tool to upgrade an exported Business
+   Space file for Business Monior V7 to the V8 version, Cognos
+   widgets might not display correctly and show the "needs
+   configuration" text, in the V8 Business Space.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM WebSphere Business Monitor V7.0.0.4 and *
+   *                  IBM Business Monitor V8.0.1.1               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: <<Please apply the bold as indicated    *
+   *                      below. Please link "Migrating widgets   *
+   *                      from Alphablox to IBM Cognos BI" to     *
+   *                      http://pic.dhe.ibm.com/infocenter/dmndh *
+   *                      elp/v8r0m1/topic/com.ibm.wbpm.mon.imuc. *
+   *                      doc/mig/mig_abx_widgets.html without    *
+   *                      the quotation marks.>>                  *
+   *                      ==>After you migrate from WebSphere     *
+   *                      Business Monitor V7.0.0.4 to Business   *
+   *                      Monitor V8.0.1.1, convert the Business  *
+   *                      Space file that contains Alphablox      *
+   *                      Dimensions widgets that are exported    *
+   *                      from WebSphere Business Monitor         *
+   *                      V7.0.0.4 (referring to Migrating        *
+   *                      widgets from Alphablox to IBM Cognos    *
+   *                      BI, and then import the converted file  *
+   *                      into Business Monitor V8.0.1.1, the     *
+   *                      Cognos Report Viewer widget does not    *
+   *                      display correctly. You receive a "Need  *
+   *                      Configuration" message.                 *
+   *                      This problem occurred because in the    *
+   *                      exported Business Space file there is a *
+   *                      URL format prefix in the href attribute *
+   *                      of the definition of Cognos Report      *
+   *                      Viewer widget, such as the following    *
+   *                      bolded text:                            *
+   *                      <A style="DISPLAY: none; VISBILITY:     *
+   *                      hidden" lang="en" class="mm_Item"       *
+   *                      href="http://hostname/mum/enabler#dateD *
+   *                      imensions">                             *
+   *                      Business Space cannot handle the widget *
+   *                      definition correctly with this prefix.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Cognos Report Viewer widgets are not displayed correctly after
+   you
+   import Business Space from WebSphere Business Monitor V7.0.0.4
+   to
+   IBM Business Monitor V8.0.1.1.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available that removes the URL format prefix from the
+   href attribute. After the URL format prefix is removed, the href
+   attribute looks like the following bolded text:
+   
+   <A style="DISPLAY: none; VISBILITY: hidden" lang="en"
+   class="mm_Item" href="#dateDimensions">
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR48713:
+   
+   1. Select the product group, product, installed version, and
+   platform, and click Continue.
+   2. Select APAR or SPR, enter JR48713, and click Continue.
+   
+   When downloading fix packages, ensure that you also download the
+   readme file for each fix. Review each readme file for additional
+   installation instructions and information about the fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR48713
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-04
+   
+   
+ * CLOSED DATE
+   2014-02-12
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

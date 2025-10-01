@@ -1,0 +1,23 @@
+Title: IBM InfoSphere MDM pattern for IBM DB2 pureScale throwing error in IVT causing it to fail - United States
+
+Text:
+[KickstartTemplateField]mdmrnv113 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ InfoSphere MDM pattern for IBM DB2 pureScale deploys successfully, however, IVT fails with the following error:
+[5/6/14 16:55:33:084 UTC] 0000007a ConnectionEve A J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adapter for resource jdbc/DWLConfig. The exception is: com.ibm.db2.jcc.am.SqlInvalidAuthorizationSpecException: [jcc][t4][2013][11249][3.66.46] Connection authorization failure occurred. Reason: User ID or Password invalid. ERRORCODE=-4214, SQLSTATE=28000 
+
+RESOLVING THE PROBLEM
+Rename the existing data sources DWLConfig and DWLCustomer to DWLConfigOLD and DWLCustomerOLD. 
+
+ 1. Change the JNDI names to jdbc/DWLConfigOLD and jdbc/DWLCustomerOLD. 
+ 2. Create new data sources with DWLConfig and DWLCustomer with JNDI names jdbc/DWLConfig and jdbc/DWLCustomer respectively. 
+ 3. Append the custom properties "user" and "password" to existing custom properties. The values should be database user name and password. 
+
+RELATED INFORMATION
+ Product documentation - Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSWSR9_11.3.0]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management Initiate Master Data Service Information Management InfoSphere Master Data Management Server Information Management InfoSphere Master Data Management Server for Product Information Management

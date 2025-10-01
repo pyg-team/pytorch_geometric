@@ -1,0 +1,59 @@
+Title: IBM JMSWMQ1068 or MQJMS1068: failed to obtain XAResource - United States
+
+Text:
+5655R3600 V701 V7.0.1 R701 R7.0.1 R010 MQJMS1068 XAResource XAException GROUPUR QSG Queue Sharing Group xa_open WAS WSAS svrconn JMSWMQ1068 MQJMS1068 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have an XA client that connects to a Queue Sharing Group (QSG) name. You have migrated to WebSphere MQ for z/OS V701 (or above) and are now receiving: 
+
+BBOO0222I: J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adapter for resource jms/MYQSG. The exception which was received is javax.jms.JMSException: MQJMS1068: failed to obtain XAResource
+
+linked exception javax.transaction.xa.XAException: xa_open failed 
+linked exception reasonCode: -5 
+
+The -5 means XAER_INVAL 
+
+
+CAUSE
+There are transactional recovery implications when connecting to a QSG from WebSphere Application Server. The application server connects to the QSG, so it is unaware of the actual queue manager it is using. If WebSphere Application Server attempts to resolve an in-doubt transaction, it connects to the QSG and there is no guarantee that connection will go back to the same queue manager that was involved in the original transaction. 
+
+As this would leave unresolved indoubt transactions and may produce inconsistent results at the transaction manager, the use of a QSG group listener to perform XA work is not supported, and the WebSphere MQ z/OS Level 3 team strongly recommend that such configurations are not used.
+
+The WebSphere MQ Resource Adapter used by WebSphere Application Server V7 now prevents XA connections being made to QSGs hosted on WebSphere MQ V6 and V700 on z/OS, to protect systems from the transactional recovery issues mentioned above. If the Resource Adapter detects that an application is trying to do this, it will return -5 from the call to xa_open().
+
+WebSphere MQ V701 and above on z/OS contains some new functionality to allow queue managers in a QSG to pass details of in-doubt XA transactions between them so that the transactions can be resolved. This GROUPUR functionality allows the use of QSG group listeners with XA clients such as WebSphere Application Server to be supported.
+
+The GROUPUR function needs to be correctly configured and explicitly enabled. If the function is not enabled, WebSphere MQ V701 or above on z/OS now detects and rejects XA connections made at the QSG level. The MSTR joblog will show if GROUPUR is Disabled:
+
+CSQM505I CSQ1 CSQMQMUP GROUPUR support disabled 
+
+
+RESOLVING THE PROBLEM
+This problem can be resolved by correctly configuring and explicitly enabling the GROUPUR [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/topic/com.ibm.mq.csqsat.doc/zc14500_.htm] function in MQ V701 or above. GROUPUR requires that OPMODE is set to NEWFUNC. Because this does not allow backwards migration, there is work around. For a work around, you can connect to a specific queue manager with a non-shared svrconn. 
+
+ 
+
+As far as maintenance goes for GROUPUR, please ensure that you have APARs PM05854 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM05854], PM25636 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM25636], PM31482, [http://www.ibm.com/support/docview.wss?rs=171&uid=swg1PM31482] and PM48707 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM48707] installed. 
+
+ 
+
+Be aware that using the QSG name for connections to a mixed QSG with some queue managers at V6 or V700 and others at V701 or above with GROUPUR enabled will result in the same exposure as running with all V6 or V700 queue managers. That is, if the connection between the transaction manager and queue manager is broken with an indoubt transaction, then at reconnect the new connection may end up at a queue manager that is not aware of the transaction state. The transaction manager may assume that the queue manager has resolved its part of the transaction, and proceed to resolve other participants. This could leave indoubt transactional work in the original queue manager, which the transaction manager believes has been resolved. 
+
+
+Additional XA related APARs: 
+MQ V701 APAR PM52902 [http://www-304.ibm.com/support/docview.wss?uid=swg1PM52902] 
+
+The equivalent APAR for MQ V7.1 is PM61760 [http://www-304.ibm.com/support/docview.wss?uid=swg1PM61760].
+
+Search support for MQ XA issues [http://www-947.ibm.com/support/entry/portal/search_results/software/websphere/websphere_mq?sn=spe&q=5655r3600%20xa%20&prod=H944813A36719U27&filter=language:en]
+
+
+RELATED INFORMATION
+#WebSphere MQ Information Center [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp]
+Enabling GROUP units of recovery [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=/com.ibm.mq.csqsat.doc/zc11795_.htm ]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

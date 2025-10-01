@@ -1,0 +1,306 @@
+Title: IBM LO89825: LOTUS NOTES 9.0.1 FP5 CLIENT WITH EMBEDDED SAMETIME CRASH AFTER PASSWORD CHANGE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is making use of 9.0.1FP5 SHF250 Revision
+   20151125.1108-T00250SHF-FP5 client with the embedded ST
+   client.
+   The customer changed his Active Directory password earlier in
+   the day, that
+   synchronises with the Enterprise Directory password which feeds
+   the LDAP
+   servers used by Sametime.
+   The Notes Client crashed and the customer needed to re-enter his
+   new password
+   into Sametime after the password change.
+   The Sametime Chat Window also displayed as below and after
+   reopening the ST
+   Chat window it display again as normal.
+   
+   The Javacore contained the following GPF:
+   
+   1XMTHDINFO     Thread Details
+   NULL           ------------------
+   NULL
+   3XMTHREADINFO      "main" J9VMThread:0x12D5E500,
+   j9thread_t:0x02414304,
+   java/lang/Thread:0x029A7980, state:B, prio=6
+   3XMJAVALTHREAD            (java/lang/Thread getId:0x1,
+   isDaemon:false)
+   3XMTHREADINFO1            (native thread ID:0x2880, native
+   priority:0x6, native
+   policy:UNKNOWN, vmstate:B, vm thread flags:0x00000200)
+   3XMTHREADINFO3           Java callstack:
+   4XESTACKTRACE                at
+   com/ibm/collaboration/realtime/status/ext/internal/FederatedStat
+   usManager.getFed
+   eratedStatusImage(Bytecode PC:248(Compiled Code))
+   4XESTACKTRACE                at
+   com/ibm/collaboration/realtime/status/ext/internal/FederatedStat
+   usProvider.getSt
+   atusImage(Bytecode PC:20(Compiled Code))
+   4XESTACKTRACE                at
+   com/ibm/collaboration/realtime/people/internal/PersonImpl.getSta
+   tusImage(Bytecod
+   e PC:21(Compiled Code))
+   4XESTACKTRACE                at
+   com/ibm/collaboration/realtime/imhub/model/PartnerNode.refreshIc
+   on(Bytecode
+   PC:6)
+   4XESTACKTRACE                at
+   com/ibm/collaboration/realtime/imhub/model/PartnerNode.refreshIc
+   on(Bytecode
+   PC:2)
+   4XESTACKTRACE                at
+   com/ibm/collaboration/realtime/imhub/model/PartnerNode.statusCha
+   nged(Bytecode
+   PC:3)
+   4XESTACKTRACE                at
+   com/ibm/collaboration/realtime/imhub/model/PartnerNode.doPropert
+   yChange(Bytecode
+    PC:37)
+   4XESTACKTRACE                at
+   com/ibm/collaboration/realtime/imhub/model/PartnerNode.propertyC
+   hange(Bytecode
+   PC:8)
+   4XESTACKTRACE                at
+   java/beans/PropertyChangeSupport.firePropertyChange(Bytecode
+   PC:83(Compiled
+   Code))
+   4XESTACKTRACE                at
+   java/beans/PropertyChangeSupport.firePropertyChange(Bytecode
+   PC:12)
+   4XESTACKTRACE                at
+   com/ibm/collaboration/realtime/people/internal/PersonImpl$1.run(
+   Bytecode PC:17)
+   4XESTACKTRACE                at
+   org/eclipse/swt/widgets/RunnableLock.run(Bytecode PC:13(Compiled
+   Code))
+   4XESTACKTRACE                at
+   org/eclipse/swt/widgets/Synchronizer.runAsyncMessages(Bytecode
+   PC:29(Compiled
+   Code))
+   4XESTACKTRACE                at
+   org/eclipse/swt/widgets/Display.runAsyncMessages(Bytecode
+   PC:5(Compiled Code))
+   4XESTACKTRACE                at
+   org/eclipse/swt/widgets/Display.readAndDispatch(Bytecode
+   PC:91(Compiled Code))
+   4XESTACKTRACE                at
+   org/eclipse/ui/internal/Workbench.runEventLoop(Bytecode PC:9)
+   4XESTACKTRACE                at
+   org/eclipse/ui/internal/Workbench.runUI(Bytecode PC:393)
+   4XESTACKTRACE                at
+   org/eclipse/ui/internal/Workbench.access$4(Bytecode PC:1)
+   4XESTACKTRACE                at
+   org/eclipse/ui/internal/Workbench$5.run(Bytecode PC:23)
+   4XESTACKTRACE                at
+   org/eclipse/core/databinding/observable/Realm.runWithDefault(Byt
+   ecode PC:14)
+   4XESTACKTRACE                at
+   org/eclipse/ui/internal/Workbench.createAndRunWorkbench(Bytecode
+   PC:18)
+   4XESTACKTRACE                at
+   org/eclipse/ui/PlatformUI.createAndRunWorkbench(Bytecode PC:2)
+   4XESTACKTRACE                at
+   com/ibm/rcp/personality/framework/internal/RCPApplication.run(By
+   tecode PC:123)
+   4XESTACKTRACE                at
+   sun/reflect/NativeMethodAccessorImpl.invoke0(Native Method)
+   4XESTACKTRACE                at
+   sun/reflect/NativeMethodAccessorImpl.invoke(Bytecode PC:83)
+   4XESTACKTRACE                at
+   sun/reflect/DelegatingMethodAccessorImpl.invoke(Bytecode
+   PC:6(Compiled Code))
+   4XESTACKTRACE                at
+   java/lang/reflect/Method.invoke(Bytecode
+   PC:163(Compiled Code))
+   4XESTACKTRACE                at
+   org/eclipse/equinox/internal/app/EclipseAppContainer.callMethodW
+   ithException(Byt
+   ecode PC:15)
+   4XESTACKTRACE                at
+   org/eclipse/equinox/internal/app/EclipseAppHandle.run(Bytecode
+   PC:196)
+   4XESTACKTRACE                at
+   org/eclipse/core/runtime/internal/adaptor/EclipseAppLauncher.run
+   Application(Byte
+   code PC:105)
+   4XESTACKTRACE                at
+   org/eclipse/core/runtime/internal/adaptor/EclipseAppLauncher.sta
+   rt(Bytecode
+   PC:29)
+   4XESTACKTRACE                at
+   org/eclipse/core/runtime/adaptor/EclipseStarter.run(Bytecode
+   PC:149)
+   4XESTACKTRACE                at
+   org/eclipse/core/runtime/adaptor/EclipseStarter.run(Bytecode
+   PC:183)
+   4XESTACKTRACE                at
+   sun/reflect/NativeMethodAccessorImpl.invoke0(Native Method)
+   4XESTACKTRACE                at
+   sun/reflect/NativeMethodAccessorImpl.invoke(Bytecode PC:83)
+   4XESTACKTRACE                at
+   sun/reflect/DelegatingMethodAccessorImpl.invoke(Bytecode PC:6)
+   4XESTACKTRACE                at
+   java/lang/reflect/Method.invoke(Bytecode
+   PC:163(Compiled Code))
+   4XESTACKTRACE                at
+   org/eclipse/equinox/launcher/Main.invokeFramework(Bytecode
+   PC:211)
+   4XESTACKTRACE                at
+   org/eclipse/equinox/launcher/Main.basicRun(Bytecode PC:126)
+   4XESTACKTRACE                at
+   org/eclipse/equinox/launcher/Main.run(Bytecode
+   PC:4)
+   4XESTACKTRACE                at
+   com/ibm/rcp/core/internal/launcher/Main.startLaunch(Bytecode
+   PC:227)
+   4XESTACKTRACE                at
+   com/ibm/rcp/core/internal/launcher/Main.main(Bytecode PC:262)
+   4XESTACKTRACE                at
+   com/ibm/rcp/core/internal/launcher/Main.run(Bytecode PC:1)
+   3XMTHREADINFO3           Native callstack:
+   4XENATIVESTACK               NtWaitForSingleObject+0x15
+   (0x77870229
+   [ntdll+0x10229])
+   4XENATIVESTACK               WaitForSingleObjectEx+0x43
+   (0x75D71194
+   [kernel32+0x11194])
+   4XENATIVESTACK               WaitForSingleObject+0x12
+   (0x75D71148
+   [kernel32+0x11148])
+   4XENATIVESTACK
+   j9thread_monitor_enter_abortable_using_threadId+0x3ba
+   (0x0029398A
+   [J9THR24+0x398a])
+   4XENATIVESTACK
+   j9thread_monitor_try_enter_using_threadId+0x12d
+   (0x00291F8D [J9THR24+0x1f8d])
+   4XENATIVESTACK               JNI_CreateJavaVM+0x171aa
+   (0x00521F9A
+   [j9vm24+0x31f9a])
+   4XENATIVESTACK               (0x002A10BA
+   [J9HOOKABLE24+0x10ba])
+   4XENATIVESTACK               JNI_CreateJavaVM+0x171c0
+   (0x00521FB0
+   [j9vm24+0x31fb0])
+   NULL
+   3XMTHREADINFO      Anonymous native thread
+   3XMTHREADINFO1            (native thread ID:0x288C, native
+   priority: 0x0,
+   native policy:UNKNOWN)
+   3XMTHREADINFO3           Native callstack:
+   4XENATIVESTACK               NtWaitForMultipleObjects+0x15
+   (0x77870AB5
+   [ntdll+0x10ab5])
+   4XENATIVESTACK               BaseThreadInitThunk+0x12
+   (0x75D7338A
+   [kernel32+0x1338a])
+   4XENATIVESTACK               RtlInitializeExceptionChain+0x63
+   (0x7788A242
+   [ntdll+0x2a242])
+   4XENATIVESTACK               RtlInitializeExceptionChain+0x36
+   (0x7788A215
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# JVEKACGG57.
+   This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO89825
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   901
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-03
+   
+   
+ * CLOSED DATE
+   2017-05-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R901 PSN
+   UP

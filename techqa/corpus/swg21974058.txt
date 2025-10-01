@@ -1,0 +1,101 @@
+Title: IBM IP address change on a Pure Data for Analytics Appliance - United States
+
+Text:
+ip change mike TECHNOTE (FAQ)
+
+QUESTION
+ How to change the IP address of a Pure Data for Analytics Appliance 
+
+CAUSE
+This procedure should be used if the IP address of the external network interfaces needs to be changed.
+
+ANSWER
+1. As a root user, log into HA1 
+
+ 2. Shut down the Netezza software by running the following command: 
+
+# crm_resource –r nps –p target_role –v stopped 
+
+# chkconfig heartbeat off 
+
+# chkconfig drbd off 
+
+3. As root user, log into HA2 
+
+# ssh ha1 
+
+3. Stop the bond2 interface by running the following command: 
+
+# ifdown bond2 
+
+4. Open the network configuration file for editing and change the GATEWAY declaration: 
+
+# vi /etc/sysconfig/network (Change the GW IP address and save the file) 
+
+5. Open the following file for editing and update it with the new IP address and netmask address: 
+
+# vi /etc/sysconfig/network-scripts/ifcfg-bond2 
+
+# ifup bond2 
+
+6. Change the wall IP address by running the following commands: 
+
+ 6. a) cd /nzlocal/scripts 
+
+ 6. b) ./heartbeat_admin.sh –-change-wall-ip –-ip <new wall ip> --mask <new netmask> --dev bond2 
+
+ 6. c) cibadmin -Q | grep <new wall ip> 
+
+7. Modify /etc/hosts to change the IP 
+
+# vi /etc/hosts (change the 3 entries for HA1, HA2 and VIP) 
+
+8. Reboot HA1. 
+
+9. When HA1 comes back up. As a root user, log onto HA1. 
+
+# ssh ha2 
+
+# chkconfig heartbeat off 
+
+# chkconfig drbd off 
+
+ 10. Stop the bond2 interface by running the following command: 
+
+# ifdown bond2 
+
+11. Open the network configuration file for editing and change the GATEWAY declaration: 
+
+# vi /etc/sysconfig/network (Change the GW IP address and save the file) 
+
+12. Open the following file for editing and update it with the new IP address and netmask address: 
+
+# vi /etc/sysconfig/network-scripts/ifconfig-bond2 
+
+# ifup bond2 
+
+13. Modify /etc/hosts to change the IP 
+
+# vi /etc/hosts (change the 3 entries for HA1, HA2 and VIP) 
+
+14. Reboot HA2, and wait for it to come back up. 
+
+15. As a root user, log into the HA1 console. 
+
+ 16. Start the Cluster services by running the following commands 
+
+# service drbd start 
+
+# ssh ha2 'service drbd start' 
+
+# service heartbeat start 
+
+# ssh ha2 'service heartbeat start' 
+
+17. Monitor cluster using the below command. 
+
+# crm_mon -5 (You can Ctrl C out) 
+
+18. Wait until the crm_mon shows the cluster is started. 
+
+19. Check connectivety to the hosts using the new IP addresses for HA1 and HA2.

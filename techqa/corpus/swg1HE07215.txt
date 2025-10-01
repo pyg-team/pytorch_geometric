@@ -1,0 +1,183 @@
+Title: IBM HE07215: MICROSOFT WORD SLOWS DOWN PERFOMANCE UNTIL CRASH - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment -
+   Windows XP
+   SmarTeam - MS Office Integration
+   PDF Complete Installed
+   with PLM DB
+   Scenario -
+   1. Launch MS Word. Do Login to SmarTeam.
+   2. Exit from Word.
+   3. Check the Normal.dot file. ("%USERPROFILE%\Application
+   Data\Microsoft\Templates")
+   Current Result - Normal.dot File size is getting increased.
+   It increased upto the level so that Word Application Crashes.
+   Expected - Normal.dot file size should not increase and Word
+   application will not crash.
+   Following are my observations ?
+   1.It is not occurring with MS Word in my environment. But it
+   can occur I read the Microsoft Support document for this. You
+   can see my MS Word related video.
+   2.It is occurring with MS Outlook at my end. I observed 2
+   things in it ?
+   a.When I start Outlook, it creates a new $Normal.dot file in
+   Templates folder.
+   b.When I exit, SmarTeam.exe doesn?t stop. So I re-start the
+   Outlook, this time it doesn?t ask me for login. While exiting
+   from Outlook my SmarTeam.exe stops. This time the file size
+   increases. You can see my Video for Outlook.
+   As per my understanding about this behavior, it is not the
+   SmarTeam bug but it is MS Office behavior with third party
+   integration.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  empty
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Environment -
+   Windows XP
+   SmarTeam - MS Office Integration
+   PDF Complete Installed
+   with PLM DB
+   Scenario -
+   1. Launch MS Word. Do Login to SmarTeam.
+   2. Exit from Word.
+   3. Check the Normal.dot file. ("%USERPROFILE%\Application
+   Data\Microsoft\Templates")
+   Current Result - Normal.dot File size is getting increased.
+   It increased upto the level so that Word Application Crashes.
+   Expected - Normal.dot file size should not increase and Word
+   application will not crash.
+   Following are my observations ???
+   1.It is not occurring with MS Word in my environment. But it
+   can occur I read the Microsoft Support document for this. You
+   can see my MS Word related video.
+   2.It is occurring with MS Outlook at my end. I observed 2
+   things in it ???
+   a.When I start Outlook, it creates a new $Normal.dot file in
+   Templates folder.
+   b.When I exit, SmarTeam.exe doesn???t stop. So I re-start the
+   Outlook, this time it doesn???t ask me for login. While exiting
+   from Outlook my SmarTeam.exe stops. This time the file size
+   increases. You can see my Video for Outlook.
+   As per my understanding about this behavior, it is not the
+   SmarTeam bug but it is MS Office behavior with third party
+   integration.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THE PROBLEM WAS SUBMITTED ON :
+       I-PLM Collaborative Innovation VERSION V5R19.
+   THIS PROBLEM IS NOT REPRODUCIBLE ON :
+   I-PLM Collaborative Innovation VERSION V5R21 SP2.
+   Additional Closure Information:
+   It is not reproducible with Word Integration.
+   Officially SmarTeam doesn't support Outlook Integration.
+   This problem occurs when SmarTeam.exe is not closed properly
+   by the user. If the SmarTeam.exe is closed properly then such
+   issue doesn't occur.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE07215
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   519
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-24
+   
+   
+ * CLOSED DATE
+   2011-09-19
+   
+   
+ * LAST MODIFIED DATE
+   2011-09-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569199970
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R521 PSN
+   UP

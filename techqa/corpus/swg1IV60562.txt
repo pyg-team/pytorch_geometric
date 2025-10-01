@@ -1,0 +1,152 @@
+Title: IBM IV60562: PROTOCOL-UDPMULTILINESYSLOG-7.2-775067 CANNOT HAVE 2 UDPMULTILINE SYSLOG USING SAME PORT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  According to QRadar Documentation it is possible to have
+   multiple UDPMultiline Syslog log sources use the same listener
+   port:
+   
+   From DSM guide for Cisco ISE:
+   "However, all Cisco ISE appliances can forward their
+   events to the same listen port on QRadar that you configure."
+   
+   However when a second log source of any type (openldap for
+   example) is added the following error is received:
+   "There is already a listener using that port"
+   is received if the PROTOCOL-UDPMultilineSyslog-7.2-775067 is
+   installed.
+   
+   This does not happen on hosts with the following protocol
+   installed:
+   PROTOCOL-UDPMultilineSyslog-7.2-570475.noarch
+   
+   No errors are logged when tailing qradar.error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  According to QRadar Documentation it is possible to have
+   multiple UDPMultiline Syslog log sources use the same listener
+   port:
+   
+   From DSM guide for Cisco ISE:
+   "However, all Cisco ISE appliances can forward their
+   events to the same listen port on QRadar that you configure."
+   
+   However when a second log source of any type (openldap for
+   example) is added the following error is received:
+   "There is already a listener using that port"
+   is received if the PROTOCOL-UDPMultilineSyslog-7.2-775067 is
+   installed.
+   
+   This does not happen on hosts with the following protocol
+   installed:
+   PROTOCOL-UDPMultilineSyslog-7.2-570475.noarch
+   
+   No errors are logged when tailing qradar.error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A protocol source RPM was released that updated the UDP
+   Multiline Protocol to allow multiple configurations to use the
+   same port.
+   PROTOCOL-UDPMultilineSyslog-7.1-839479.noarch.rpm
+   PROTOCOL-UDPMultilineSyslog-7.2-839483.noarch.rpm
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV60562
+   
+   
+ * REPORTED COMPONENT NAME
+   QRADAR SOFTWARE
+   
+   
+ * REPORTED COMPONENT ID
+   5725QRDSW
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-15
+   
+   
+ * CLOSED DATE
+   2014-06-17
+   
+   
+ * LAST MODIFIED DATE
+   2014-06-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   QRADAR SOFTWARE
+   
+   
+ * FIXED COMPONENT ID
+   5725QRDSW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

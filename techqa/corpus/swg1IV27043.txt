@@ -1,0 +1,207 @@
+Title: IBM IV27043: IN SILENT MODE, AGENT CONFIG LOST INSTANCE NAME IN .CFG FILE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment
+   
+   Platform: UNIX/LINUX
+   Agent: Monitoring Agent for WebSphere MQ File Transfer Edition
+   07.01.00.00 (CRIX1ML)
+   
+   Problem Discription:
+   When config the MQ FTE agent in silent mode, the instance name
+   specified by option -o is lost in the agent .cfg file. As a
+   result, no information is shown in MQ FTE workspace.  The issue
+   only happens on ITM 622fp4 to 622fp9.  ITM623 releases works
+   fine.
+   
+   Detailed Recreation step
+   
+   (1)install Monitoring Agent for WebSphere MQ File Transfer
+   Edition 07.01.00.00
+   (2)install ITM 622fp4 unix or linux os agent
+   (3)silent config a mq agent by issuing
+   ./itmcmd config -A -p /tmp/mqconfig.txt -o showmqinstance m6
+   (4)finsh the config and check the file <machine>_m6_instance.cfg
+   file,
+    INSTANCE= [    SECTION=COORQM
+   the instance is empty.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  upgrade OS agent to 623.
+   
+   
+   Further Information
+   Content of the  file /tmp/mqconfig.txt
+   ################################################################
+   ########
+   #####
+   #
+   # IBM Confidential
+   # OCO Source Materials
+   # 5724-C04
+   #
+   # Copyright IBM Corp. 2005
+   # The source code for this program is not published or otherwise
+   # divested of its trade secrets, irrespective of what has
+   # been deposited with the U.S. Copyright Office.
+   #
+   ################################################################
+   ########
+   #####
+   
+   # Syntax rules:
+   # - Comment lines begin with "#"
+   # - Blank lines are ignored
+   # - Parameter lines are PARAMETER=value (do not put space before
+   the
+   
+   # - Space before or after an equal sign is OK
+   # - Parameter values should NOT contain the following characters
+   $, =, or |
+   
+   
+   ################## PRIMARY TEMS CONFIGURATION ##################
+   
+   CMSCONNECT=YES
+   HOSTNAME=10.17.111.98
+   
+   FIREWALL=NO
+   
+   NETWORKPROTOCOL=ip.spipe
+   IPSPIPEPORTNUMBER=3660
+   
+   ################## SECONDARY TEMS CONFIGURATION
+   ##################
+   
+   FTO=YES
+   MIRROR=10.17.111.41
+   
+   FIREWALL2=NO
+   
+   HSNETWORKPROTOCOL=ip.spipe
+   HSIPSPIPEPORTNUMBER=3660
+   
+   ################## OPTIONAL PRIMARY NETWORK NAME CONFIGURATION
+   ##################
+   
+   # If the system is equipped with dual network host adapter cards
+   you can designate
+   # another network name.  What is the network name?
+   # This parameter is NOT required. (default is none)
+   #PRIMARYIP=none
+   
+   KM6_QMCOOR_CHANNEL=FTEUSER.QRMGRT.01
+   KM6_QMCOOR_NAME=QRMGRT
+   KM6_QMCOOR_CONNSTR=localhost(2157)
+   KM6_QMCMD_CHANNEL=FTEUSER.QRMGRT.01
+   KM6_QMCMD_NAME=QRMGRT
+   KM6_QMCMD_CONNSTR=localhost(2157)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When config the MQ FTE agent in silent mode, the instance name
+   specified by option -o is lost in the agent .cfg file. As a
+   result, no information is shown in MQ FTE workspace.  The issue
+   only happens on ITM 622fp4 to 622fp9.  ITM623 releases works
+   fine.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV27043
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED UR3
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-27
+   
+   
+ * CLOSED DATE
+   2012-09-05
+   
+   
+ * LAST MODIFIED DATE
+   2012-09-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

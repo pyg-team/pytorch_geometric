@@ -1,0 +1,21 @@
+Title: IBM How to clean files under /var/spool/abrt directory? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ /var file system is almost full now with many files under /var/spool/abrt directory. 
+
+CAUSE
+All crash report and back trace from kernel driver is written on subdirectories of /var/spool/abrt directory.
+
+ANSWER
+To permanently stop this back trace gathering, we need to stop below two processes. 
+
+# service abrtd stop 
+
+# service abrt-oops stop 
+
+And we can remove all those directories and files with following rm command: 
+
+# abrt-cli rm /var/spool/abrt/*

@@ -1,0 +1,38 @@
+Title: IBM Multiple logins using the same user ID - United States
+
+Text:
+ConcurrentModificationException; log in; login; multiple; userid; multiple login TECHNOTE (FAQ)
+
+QUESTION
+ "ConcurrentModificationException" and other errors may occur if the same user id is logged in to IBM WebSphere Portal multiple times.
+
+
+ANSWER
+WebSphere Portal has no built-in mechanism or configuration setting to limit the number of times a user id may log in. Unexpected behavior may occur if the same id is logged in more than once and this is not supported. 
+
+"ConcurrentModificationException" and other errors may be logged.
+
+Most of the related issues were resolved in WebSphere Portal 5.1. However, you may still encounter exceptions or side-effects if you access the Portal in multiple browser windows using the same user id, whether or not the authentication requests take place on separate physical hosts.
+
+It may be possible to prevent multiple logins by writing custom "tracking code." Contact IBM Services for assistance to undertake such a project. WebSphere Portal Development does not have any sample code.
+
+If you wish to write your own code, some of the issues to be aware of are (this is not an inclusive list):
+
+-- Multiple logins may take place on different nodes in a cluster. This means some cluster-wide mechanism would have to be in place to keep track of the logged-in users. Look at the WebSphere Application Server DistributedMap interface.
+
+-- There should be a fail-safe way to track user logout (explicit logout and session timeout). Using a session listener might be a possibility. 
+
+-- If a user closes the browser without logging out, that user must wait for a session timeout before logging in again. Otherwise, there should be a "force simultaneous login" option in the login user interface.
+
+For load testing, use unique user ids or virtual users.
+
+RELATED INFORMATION
+ Portal 6.1/7.0: Authentication Filters [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1/index.jsp?topic=/com.ibm.wp.ent.doc_v615/admin/adauthflt.html]
+Portal 6.1: Custom Login Portlet [https://www.ibm.com/support/docview.wss?uid=swg21358508]
+Restricting Multiple Sessions [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Restricting_Multiple_Sessions_in_WebSphere_Portal]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products General AIX, HP-UX, Linux, Solaris, Windows 7.0, 6.1.5, 6.1, 6.0, 5.1

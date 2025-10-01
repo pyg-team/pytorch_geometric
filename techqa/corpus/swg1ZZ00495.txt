@@ -1,0 +1,148 @@
+Title: IBM ZZ00495: SSHD_CONFIG CLIENTALIVEINTERVAL SETTING CAN CAUSE INSTALLATION ERROR. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During installation of Central Server 2, the install of BPM
+   reached a 30 minute SSH timeout and the installation eventually
+   failed.
+   
+   The error looks like:
+   ################################################################
+   [2015-11-20 20:06:47,154] 10.254.2.209 Recipe: bpm::bpm_install
+   [2015-11-20 20:06:47,156] 10.254.2.209   *
+   template[/opt/ibm/BPM/ico/tmp/bpm_response_file.xml] action
+   create
+   [2015-11-20 20:06:47,159] 10.254.2.209     - create new file
+   /opt/ibm/BPM/ico/tmp/bpm_response_file.xml
+   [2015-11-20 20:06:47,159] 10.254.2.209     - update content in
+   file
+   /opt/ibm/BPM/ico/tmp/bpm_response_file.xml from none to 417537
+   [2015-11-20 20:06:47,159] 10.254.2.209     - suppressed
+   sensitive resource
+   [2015-11-20 20:06:47,159] 10.254.2.209
+   [2015-11-20 20:36:47,261] ERROR: IOError: closed stream
+   [2015-11-20 20:36:48,867] Connecting to 10.254.2.167
+   ################################################################
+   
+   In this case it was noticed that the ERROR occurs at exactly 30
+   minutes after the BPM install was started.  I was only
+   happenstance that BPM install was the action taking place -
+   depending on the environment or the configuration it could be
+   another install task which fails.  By design, our installer
+   provides 4 hours timeout for all of the BPM install and profile
+   configuration steps to complete.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The workaround is to disable the 2 entries in the sshd_config,
+   and restart sshd service:
+   #ClientAliveInterval 30m
+   #ClientAliveCountMax 0
+   
+   When chef initiates remote session from deployment server to
+   central server (and region server) it uses ssh connections in
+   thread and as such these connections are limited by the sshd
+   server configuration on the machine being connected to.
+   
+   We reccommend that during ICO install, the sshd service turn
+   off the above settings and then re-enable them once install is
+   complete.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The documentation is updated to include this configurations
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The documentation is updated to include this configurations
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00495
+   
+   
+ * REPORTED COMPONENT NAME
+   SMTCLD ORCH ENT
+   
+   
+ * REPORTED COMPONENT ID
+   5725H28ET
+   
+   
+ * REPORTED RELEASE
+   240
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-11-25
+   
+   
+ * CLOSED DATE
+   2016-03-03
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

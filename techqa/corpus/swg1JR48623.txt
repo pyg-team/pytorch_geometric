@@ -1,0 +1,155 @@
+Title: IBM JR48623: ODBC CONNECTOR LOB REFERENCE JOBS WITH BIGINT AS KEY ABORT WITH INCORRECT SYNTAX ERROR - United States
+
+Text:
+  FIXES ARE AVAILABLE
+InfoSphere Information Server, Version 11.3 for Microsoft Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037518]
+InfoSphere Information Server, Version 11.3 for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24037780]
+InfoSphere Information Server, Version 11.3 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24037781]
+IBM InfoSphere Information Server Enterprise Edition V11.3 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037840]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ODBC Connector LOB jobs with BIGINT as key aborts with
+   incorrect syntax error due to invalid locator query generation.
+   
+   
+   Message seen
+   
+   ODBC_Connector_1,0: ODBC function "SQLExecDirect" reported:
+   SQLSTATE = HY000: Native Error Code = 102: Msg = [IBM
+   (DataDirect OEM)][ODBC SQL Server Wire Protocol
+   driver][Microsoft SQL Server]Incorrect syntax near '='.
+   (CC_OdbcInputStream::open, file CC_OdbcInputStream.cpp, line
+   121)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use another supported dataype for primary key column in source
+   table.
+   
+   Disable lob referenes, in which case you may need to increase
+   the value of APT_DEFAULT_TRANSPORT_BLOCK_SIZE for the job.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ODBC Connector LOB jobs with BIGINT as key abort with invalid
+   syntax error due to incorrect locator query generated.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been corrected generate the locator query properly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Pass them inline or use another type as key column.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR48623
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36DS
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-25
+   
+   
+ * CLOSED DATE
+   2013-12-04
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * FIXED COMPONENT ID
+   5724Q36DS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP
+   
+   
+ * R870 PSY
+   UP
+   
+   
+ * R912 PSY
+   UP

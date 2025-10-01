@@ -1,0 +1,38 @@
+Title: IBM Avoid backupConfig and restoreConfig for DWC v9.1 base code level - United States
+
+Text:
+widget; dwc; CWLAA6003; backup; restore; config; installedApps FLASH (ALERT)
+
+ABSTRACT
+ Using the backupConfig and restoreConfig utilities for Tivoli Dynamic Workload Console (DWC) v9.1 at the General Availability (GA) level results in a broken DWC instance. 
+
+CONTENT
+ISSUE:
+Restoring a WebSphere Application Server (WAS) configuration backup file for TDWC v9.1 GA instance results in the following error within DASH:
+
+"CWLAA6003: Could not display the widget at this time, the widget's module may be being updated"
+
+In DWC v9.1 GA, the scripts backupConfig and restoreConfig run without error and the WebSphere server process for the JazzSm profile starts without error. However, once authenticated in DWC's dashboard, the elements of the portfolio are not functional.
+
+CAUSE:
+The use of the restoreConfig utility to restore the WebSphere profile results in missing files under the following directory: <JazzSm>/profile/installedApps .
+
+The backupConfig step does not backup files under <JazzSm>/profile/installedApps, but the restoreConfig utility overwrites the contents in installedApps if the contents differ from those found under <JazzSm>/profile/config. 
+
+
+RECOVERY:
+Uninstall and reinstall DWC v9.1 
+
+
+PREVENTION:
+* Avoid the use of the backupConfig and restoreConfig utilities with a DWC v9.1 GA instance.
+
+NOTE: DWC v9.1 Fix Pack 01 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7ETivoli&product=ibm/Tivoli/Tivoli+Workload+Scheduler&release=9.1.0&platform=All&function=all] has delivered the fix for the related defect:
+85531: Modify TDWC backup/restore config to avoid WAR files removal
+
+It is recommended to apply the latest DWC Fix Pack available for each product version. All Fix Packs for DWC that are released after Fix Pack 01 will also contain the fix for the related defect mentioned above.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TDWC

@@ -1,0 +1,50 @@
+Title: IBM WebSphere Cast Iron Cloud integration 6.1.0.3 is now available - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ WebSphere Cast Iron Cloud integration 6.1.0.3 is now available to download. 
+
+CONTENT
+ 
+
+TAB NAVIGATION
+ * Overview [http://www.ibm.com/support/docview.wss?uid=swg27023623]- selected tab,
+ * Included Fixes [http://www.ibm.com/support/docview.wss?uid=swg27023624]
+ * Known Issues [http://www.ibm.com/support/docview.wss?uid=swg27023622]
+
+
+
+WebSphere Cast Iron Cloud integration 6.1.0.3 delivers a wide range of improvements to the following:
+
+
+ * WebSphere DataPower Cast Iron Appliance XH40 
+ * WebSphere Cast Iron Hypervisor Edition 
+ * WebSphere Cast Iron Studio
+
+
+Theme 
+This fix pack delivers important APAR fixes to customers as well as offering improvements across the whole product, with significant improvement in the following areas:  * WebSphere Cast Iron Studio document import (WSDL, Schema and DTD) 
+ * WebSphere Cast Iron Studio globalisation 
+ * Command Line Interface (CLI) 
+ * Siebel connector 
+ * Appliance stability and serviceability. 
+ * VMware ESXi 5.0 support (with refreshed .ova file - see Change history below)
+   
+
+How critical is this Fix Pack? 
+Recommended 
+
+Change history  * 16 Dec 2011: WebSphere Cast Iron Cloud integration 6.1.0.3 released. 
+ * 23 Dec 2011: Refresh the WebSphere Cast Iron Hypervisor Edition, VMWare image, Fresh Install (.ova file) to support VMware ESXi 5  * An incompatibility issue with VMware 4 and VMware ESXi 5 meant that the original file could not be installed on VMware ESXi 5. This refreshed image enables customers to install a new WebSphere Cast Iron Hypervisor Edition image on VMware ESXi 5. 
+    * The new file is 6.1.0.3-WS-WCI-20111220-1611_H5.ova. A link to this in Fix Central can be seen in the Download Links [http://www.ibm.com/support/docview.wss?uid=swg24031461] page.
+   
+   
+
+
+Download 
+The fix pack is delivered via Fix Central. Details of the files available can be seen in Download Links for WebSphere Cast Iron Cloud integration 6.1.0.3 [http://www.ibm.com/support/docview.wss?uid=swg24031461] 
+
+Installation Instructions 
+Installation instructions for the various form factors can be seen in Installation Instructions for WebSphere Cast Iron Cloud integration Version 6 Fix Packs [http://www.ibm.com/support/docview.wss?uid=swg27022386]

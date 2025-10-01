@@ -1,0 +1,63 @@
+Title: IBM Install of Fixpack after IHS V8.0.0.0 and v8.5.0.0 GA Install May Overwrite Certain Customized Files - United States
+
+Text:
+admin.passwd; index.html TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Use of Installation Manager (IM) to install IBM HTTP Server (IHS webserver) starts with IHS version 8.0.0.0. Prior to use of IM, the fixpacks for IHS (V7 and V6.x) did not include files expected to be customized such as default static content files like index.html and other HTML, GIF, and ICO files installed by IHS to its <IBM HTTP Server home>/htdocs directory. More importantly the admin.passwd file (that holds the user/passsword for the IHS Admin Service) is usually configured right after install when using the Plugin Configration Tool (PCT).
+
+Prior to use of IM you could not install directly to a fixpack level. You had to install the base GA code (i.e. 7.0.0.0 or 6.1.0.0) and then use the Update Installer to apply fixpacks. IM supports installation directly to a fixpack level therefore all install files included with the base GA code 8.0.0.0 are applied with the fixpack. Any files that should not be overwritten must be listed in a exception list (of non-serviceable files) that the IM installer can reference. This list of non-serviceable files was ommitted or incomplete for IHS V8.0.0.0 and 8.5.0.0 so the install of the first fixpack (regardless of fixpack level) may overwrite files such as admin.passwd and index.html.
+
+There are two APAR related to the same event: 
+. 
+PM71612: ADDITIONAL NON-SERVICEABLE FILES ADDED FOR IBM HTTP SERVER. 
+http://www-01.ibm.com/support/docview.wss?uid=swg1PM71612 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM71612]
+. 
+PM63634: IHS CONFIG ADMIN.PASSWD FILE WAS RESET AFTER INSTALLING 
+FIXPACK 3 ON WAS 8.0.0.2 or 7.0.0.25 on Windows. 
+http://www-01.ibm.com/support/docview.wss?uid=swg1PM63634 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM63634]
+
+. 
+The technote about PM63634: IHS CONFIG ADMIN.PASSWD FILE WAS RESET advises a resolution in reseting the admin.passwd file: 
+
+Installation of IBM HTTP Server 7.0.0.25, 8.0.0.1, 8.0.0.2, 8.0.0.3 will overlay admin.passwd:
+http://www-01.ibm.com/support/docview.wss?uid=swg21593118 [http://www-01.ibm.com/support/docview.wss?uid=swg21593118]
+
+The main impact is that the IHS admin.passwd file gets overwritten which means the IHS Admin User/PW must be reset with the htpasswd utility in the IHS bin directory. Some customers customize the IHS splash page (index.html) or other default pages provided by IHS install so apply of first fixpack can overwrite these files and the customer's customization.
+
+The list of these non-serviceable files where included in 8.0.0.5 and 8.5.0.1 per the APAR links above so once that fixpack level is applied then any future fixpacks will not overwrite these files. There is no way to avoid the event if GA 8.0.0.0/8.5.0.0 IHS is installed first. The first fixpack applied (of any fixpack) could replace the files.
+
+This Technote defines three recommendations to avoid the problem. 
+
+SYMPTOM
+- The admin.passwd is a zero byte file after apply of fixpack 
+
+ - Any content installed under <IBM HTTP Server home>/htdocs by IHS install (default static content files) that have been customized are replaced by their default originals after apply of fixpack
+
+
+CAUSE
+Files not marked as non-serviceable files for IM install of fixpacks for IHS per APAR PM71612 
+
+
+ENVIRONMENT
+WebSphere environments that use IHS v8.x to run the WSAS plugin for Webservers to act as proxy front to WSAS appservers. 
+
+
+
+RESOLVING THE PROBLEM
+Support suggests one of three recommendations to avoid the problem: 
+
+1. Use IM to install IHS at fixpack 8.0.0.5/8.5.0.1 or higher bypassing the install of 8.0.0.0/8.5.0.0 
+
+2. Do not use PCT, configure IHS Admin or use htpasswd (or other customization/config) until after fixpack has been applied. 
+
+3. If you have already installed 8.0.0.0 or 8.5.0.0 then before you apply your first IHS fixpack backup these files: 
+
+- admin.passwd 
+
+- all content under <IBM HTTP Server home>/htdocs
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IHS

@@ -1,0 +1,61 @@
+Title: IBM Resetting Tivoli Monitoring for Tivoli Storage Manager passwords - United States
+
+Text:
+rptupdates630 rptupdates631 rptupdates632 rptupdates625 rptupdates615 PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Tivoli® Monitoring for Tivoli Storage Manager stops collecting data when user account passwords expire. You can reset the password and update the necessary services to get the application back up and running. 
+
+CONTENT
+Depending on which operating system password expired, and is now invalid in the application, the following symptoms might be seen: 
+
+
+ * Authentication error when you try to log in to the Tivoli Enterprise Portal. 
+ * You cannot view recent historical data in the Tivoli Common Reporting reports. 
+ * The Warehouse Proxy agent and Summarization Pruning agent can no longer access the WAREHOUS database. Errors for the two agents can be seen in the Tivoli Enterprise Portal. 
+ * Tivoli Common Reporting fails with connection errors. 
+ * Data collection stops
+   
+
+When you install Tivoli Monitoring for Tivoli Storage Manager, there are several operating system account passwords that are created and configured during the installation. If you forget a password, or if a password expires, you must reset the password and reconfigure services to update the password field. Complete the following steps to reset a Tivoli Monitoring for Tivoli Storage Manager account password and update the necessary services: 
+
+AIX/Linux 
+
+ *  Use the passwd operating system command to reset any of the Tivoli Monitoring for Tivoli Storage Manager passwords. 
+ * # passwd userID 
+ * 
+ * . 
+ * 
+
+
+Windows  *  Right click Computer > Manage. Expand Local Users and Groups. Click Users. Right click the user account that needs the password reset, select Set Password and enter in the new password. Review the information in the table to determine which services must be reconfigured, based on the user account password that was reset. After a password is reset, review the table again to determine which services need to be reconfigured. 
+ * 
+ *  User ID Action Description of user ID Instructions from the Information Center sysadmin After resetting this password, no other services need to be updated. Default Tivoli Enterprise Portal user ID. [/support/docview.wss?uid=swg27036003&amp;aid=1] AIX/Linux
+   db2inst1
+   
+   Windows
+   db2admin After resetting this password, open the Manage Tivoli Enterprise Monitoring Services window and right click the following services and select Reconfigure.
+   
+   Warehouse Proxy agent
+   Tivoli Enterprise Portal server
+   
+   Windows 
+   From the Windows Start menu, go to Run and type services.msc. Find all of the DB2 services that have Log on As as db2admin. For each of the services, right click the service and select Properties. Click the Log on tab and enter in the new password. Database administrator user ID. Manually configuring the Tivoli Enterprise Portal server [http://www.ibm.com/support/knowledgecenter/SS36V9_3.1.0/com.ibm.itsm.srv.install.doc/t_rpt_manual_cnfg_teps.html]
+   
+   [http://info.storage.tucson.ibm.com:2001/help/topic/com.ibm.itsm.srv.install.doc/t_rpt_manual_cnfg_wpa.html]Manually configuring the Warehouse Proxy agent [http://www.ibm.com/support/knowledgecenter/SSGSG7_7.1.1/com.ibm.itsm.srv.install.doc/t_rpt_manual_cnfg_wpa.html] AIX/Linux 
+   itmuser
+   
+   Windows
+   ITMUser After resetting this password, open the Manage Tivoli Enterprise Monitoring Services window and right click the following services and select Reconfigure.
+   
+   Warehouse Proxy agent
+   Summarization and Pruning agent
+   Tivoli Enterprise Portal server
+   
+   Run the datasrc script to reconfigure the data source. Tivoli Data Warehouse user ID. Manually configuring the Tivoli Enterprise Portal server [http://www.ibm.com/support/knowledgecenter/SS36V9_3.1.0/com.ibm.itsm.srv.install.doc/t_rpt_manual_cnfg_teps.html]
+   
+   Manually configuring the Warehouse Proxy agent [http://www.ibm.com/support/knowledgecenter/SSGSG7_7.1.1/com.ibm.itsm.srv.install.doc/t_rpt_manual_cnfg_wpa.html]
+   
+   Manually configuring the Warehouse Summarization and Pruning agent [http://www.ibm.com/support/knowledgecenter/SSGSG7_6.4.0/com.ibm.itsm.srv.install.doc/t_rpt_manual_cnfg_spa.html]
+   
+   Configuring a data source [http://www.ibm.com/support/knowledgecenter/SSGSG7_7.1.1/com.ibm.itsm.srv.install.doc/t_rpt_inst_datasrccfg.html] TEPS If this password expires, update the password. No services need to be updated. TEPS database user ID. [/support/docview.wss?uid=swg27036003&amp;aid=1]

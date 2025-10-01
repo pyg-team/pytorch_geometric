@@ -1,0 +1,144 @@
+Title: IBM SMTP Email connections behave differently between V7.0 and V6.0 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere Application Server V7.0 and WebSphere Commerce V7.0 SMTP email send results in occasional mail failures. These errors are not seen in WebSphere Application Server V6.0 and WebSphere Commerce V6.0 though the same SMTP server may be used. 
+
+SYMPTOM
+You experience intermittent email failures and the error below (or similar) is seen: 
+
+0000003b jcaemail E 
+com.ibm.commerce.messaging.adapters.jcaemail.JCAEmailInteraction 
+Exception occurred when the messaging system sent the message: [EOF] 
+[4/25/11 9:40:53:116 CDT] 0000003b CommerceSrvr E JMSMessageBean 
+sendImmediate CMN9907E: A resource exception occurred during processing:
+"{0}". javax.resource.spi.CommException: 
+com.sun.mail.smtp.SMTPSendFailedException: [EOF] 
+at com.ibm.commerce.messaging.adapters.jcaemail.JCAEmailInteraction.execute
+(JCAEmailInteraction.java:408) 
+at com.ibm.commerce.messaging.objects.JMSMessageBean.sendImmediate(JMSMessa
+geBean.java:328) 
+at com.ibm.commerce.messaging.objects.EJSRemoteStatelessJMSMessage_d6d5624d
+.sendImmediate(EJSRemoteStatelessJMSMessage_d6d5624d.java:71) 
+at com.ibm.commerce.messaging.objects._JMSMessage_Stub.sendImmediate(_JMSMe
+ssage_Stub.java:283) 
+at com.ibm.commerce.messaging.objects.JMSMessageAccessBean.sendImmediate(JM
+SMessageAccessBean.java:137) 
+at com.ibm.commerce.messaging.outboundservice.Messaging.sendImmediate(Messa
+ging.java:4177) 
+at com.ibm.commerce.messaging.outboundservice.SendTransactedMsgCmdImpl.asse
+mbleMsg(SendTransactedMsgCmdImpl.java:489) 
+at com.ibm.commerce.messaging.outboundservice.SendTransactedMsgCmdImpl.perf
+ormExecute(SendTransactedMsgCmdImpl.java:700) 
+at com.ibm.commerce.command.ECCommandTarget.executeCommand(ECCommandTarget.
+java:157) 
+at com.ibm.ws.cache.command.CommandCache.executeCommand(CommandCache.java:3
+32) at com.ibm.websphere.command.CacheableCommandImpl.execute(CacheableCommandI
+mpl.java:166) 
+at com.ibm.commerce.command.AbstractECTargetableCommand.execute(AbstractECT
+argetableCommand.java:172) 
+at com.ibm.commerce.component.BaseComponentImpl.executeCommand(BaseComponen
+tImpl.java:190) 
+at com.ibm.commerce.component.WebAdapterComponentImpl.executeCommand(WebAda
+pterComponentImpl.java:46) 
+at com.ibm.commerce.component.objimpl.WebAdapterServiceBeanBase.executeComm
+and(WebAdapterServiceBeanBase.java:58) 
+at com.ibm.commerce.component.objects.EJSLocalStatelessWebAdapterService_ce
+749a4a.executeCommand(EJSLocalStatelessWebAdapterService_ce749a4a.java:3
+1) 
+at com.ibm.commerce.component.objects.WebAdapterServiceAccessBean.executeCo
+mmand(WebAdapterServiceAccessBean.java:160) 
+at com.ibm.commerce.scheduler.SchedulerJob.process(SchedulerJob.java:505) 
+at com.ibm.commerce.scheduler.SchedulerSecurityPriviledgedAction.run(Schedu
+lerSecurityPriviledgedAction.java:59) 
+at com.ibm.commerce.scheduler.SchedulerJob.run(SchedulerJob.java:1035) 
+at com.ibm.commerce.threadmanagement.internal.BaseWork.run(BaseWork.java:13
+9) 
+at com.ibm.ws.asynchbeans.J2EEContext$RunProxy.run(J2EEContext.java:264) 
+at java.security.AccessController.doPrivileged(AccessController.java:202) 
+at com.ibm.ws.asynchbeans.J2EEContext.run(J2EEContext.java:1137) 
+at com.ibm.ws.asynchbeans.WorkWithExecutionContextImpl.go(WorkWithExecution
+ContextImpl.java:199) 
+at com.ibm.ws.asynchbeans.CJWorkItemImpl.run(CJWorkItemImpl.java:188) 
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1563) 
+Caused by: com.sun.mail.smtp.SMTPSendFailedException: [EOF] 
+at com.sun.mail.smtp.SMTPTransport.issueSendCommand(SMTPTransport.java:1388
+) 
+at com.sun.mail.smtp.SMTPTransport.mailFrom(SMTPTransport.java:959) 
+at com.sun.mail.smtp.SMTPTransport.sendMessage(SMTPTransport.java:583) 
+at com.ibm.commerce.messaging.adapters.jcaemail.JCAEmailInteraction.execute
+(JCAEmailInteraction.java:346) 
+... 26 more 
+Caused by: javax.mail.MessagingException: Cannot send command to SMTP 
+host; 
+nested exception is: 
+java.net.SocketException: There is no process to read data written to a
+pipe. 
+at com.sun.mail.smtp.SMTPTransport.sendCommand(SMTPTransport.java:1420)
+at com.sun.mail.smtp.SMTPTransport.sendCommand(SMTPTransport.java:1408)
+at com.sun.mail.smtp.SMTPTransport.issueSendCommand(SMTPTransport.java:1371
+) 
+at com.sun.mail.smtp.SMTPTransport.mailFrom(SMTPTransport.java:959) 
+at com.sun.mail.smtp.SMTPTransport.sendMessage(SMTPTransport.java:583) 
+at com.ibm.commerce.messaging.adapters.jcaemail.JCAEmailInteraction.execute
+(JCAEmailInteraction.java:346)
+
+
+CAUSE
+Starting with Fix Pack 2 (7.0.0.2), the connection pool of WebSphere for the email adapter is fully leveraged. The connection pool in WebSphere is set to expire after 1800 seconds by default. If the SMTP server timeout is less than 1800 seconds you will experience a periodic mail failure similar to SMTPSendFailedException. 
+
+
+RESOLVING THE PROBLEM
+The general rule of thumb, is the unused timeout must be less than the default SMTP connection timeout (set by the smtp server) but larger than the Reap time. For example, if the default SMTP connection timeout is 60, you would also need to configure the WebSphere email adapter connection pool timeout to 60 or less. 
+
+ 
+
+Modify the JCA connector module's connection pools settings within the application using the following as a guideline: 
+
+ 
+
+Enterprise Applications>WC_devcommerce1>Manage Modules>E-mail Adapter 
+
+(Enablement-JCAEmailConnector.rar)>Resource Adapter>J2C connection 
+
+factories>Enablment-JCAEmailConnector.rar>Connection pool properties 
+
+ 
+
+Change value FROM -> TO 
+
+ Connection timeout: 180 -> 60 
+
+ Minimum connections: 1 -> 0 
+
+ Reap time: 180 -> 60 
+
+ Unused timeout: 1800 -> 60 
+
+ Aged timeout: 0 -> 60 
+
+ 
+
+For toolkit, these changes cannot be made from within the WebSphere administrative console. Instead, modify backup and modify this file as needed for the 'connectionPool' section below: 
+
+<WCDE_INT70>\wasprofile\config\cells\localhost\applications\WC.ear\deployments\WC\deployment.xml 
+
+... 
+
+<targetMappings xmi:id="DeploymentTargetMapping_1304456086003" target="ServerTarget_1304456085913"/> 
+
+<resourceAdapter xmi:id="J2CResourceAdapter_1304456085929" name="WC.E-mail Adapter" description="It is an E-mail resource adapter provided by WebSphere Commerce." archivePath="E:\WCDE_INT70_0419\workspace\WC/Enablement-JCAEMailConnector.rar"> 
+
+<classpath>E:\WCDE_INT70_0419\workspace\WC/Enablement-JCAEMailConnector.rar</classpath> 
+
+<factories xmi:type="resources.j2c:J2CConnectionFactory" xmi:id="J2CConnectionFactory_1304456085929" name="Enablement-JCAEMailConnector.rar" jndiName="eis/JCAEmail"> 
+
+<propertySet xmi:id="J2EEResourcePropertySet_1304456085937"/> 
+
+ <connectionPool xmi:id="ConnectionPool_1304456085929" connectionTimeout="60" maxConnections="2" minConnections="0" reapTime="60" unusedTimeout="60" agedTimeout="0" purgePolicy="EntirePool" numberOfSharedPoolPartitions="0" numberOfUnsharedPoolPartitions="0" numberOfFreePoolPartitions="0" freePoolDistributionTableSize="0" surgeThreshold="-1" surgeCreationInterval="0" testConnection="false" testConnectionInterval="0" stuckTimerTime="0" stuckTime="0" stuckThreshold="0"/> 
+
+... 
+
+The connection will be renewed automatically in the future Fix Pack.

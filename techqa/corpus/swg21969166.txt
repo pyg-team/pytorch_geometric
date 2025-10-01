@@ -1,0 +1,55 @@
+Title: IBM Unable to change current user to root after LDAP authentication has been configured - United States
+
+Text:
+ldap os authentication disable error su TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to su to root after LDAP authentication has been set can be resolved by disabling the LDAP authentication for OS user accounts on your NPS appliance. 
+
+SYMPTOM
+After running the following command:
+
+/opt/nz-hwsupport/pts/rhel_ldap_support.sh
+
+We can no longer "su " to root. After entering the root password, we are then prompted with an LDAP passwd:
+
+[nz@nzhost1]$ su -
+Password:
+LDAP Password:
+
+Please advise on how to remove the LDAP requirement for local root account
+
+
+CAUSE
+LDAP OS authentication set for all OS accounts
+
+RESOLVING THE PROBLEM
+Please follow these instructions to disable LDAP authentication of OS accounts:
+
+Disable LDAP OS authentication 
+
+Use the steps in this procedure to disable the LDAP authentication for OS user accounts on your NPS appliance. This procedure updates both hosts (HA1 and HA2) of the appliance to disable the LDAP changes. If for any reason the scripts cannot update both hosts, the scripts display error messages and "undo" the changes to retain the current LDAP authentication on the hosts. 
+1. Log in to NPS host 1 (also referred to as HA 1 or the active NPS host) as the root user. 
+
+2. Change to the /opt/nz-hwsupport/pts directory: 
+
+3. Make sure that you have the LDAP information required for your NPS appliance. In this example, the command uses the following information: 
+
+Domain Component Name: mycomp.com 
+LDAP Host Name: sqaldap.mycomp.com 
+LDAP Server IP Address: 1.2.3.4 
+Binding Name for LDAP server: mycompname 
+
+Binding password from LDAP Server Administrator: mypassword 
+4. Using the LDAP information, run the rhel_ldap_removal.sh script to disable the LDAP OS account authentication: 
+
+[root@nzhost1 ~]# sh rhel_ldap_removal.sh -withSSL no -dcName dc=mycomp,dc=com -ldapIP 1.2.3.4 -ldapHostName sqaldap.mycomp.com -bindDn mycompname -bindPasswd mypassword LDAP authentication for system logins has been disabled for host nzhost1. Login credentials will now be authenticated via the local operating system. IBM recommends that you confirm that this capability is working properly now by attempting to log in to the host from a remote system using a valid local username and password. 
+5. If you were using SSL for your OS user authentication, remove the /etc/openldap/cacerts/cacert.pem file from each NPS host. 
+
+From another system in the network, you could test using an ssh connection as follows: 
+ssh nz@nzhost1.company.com 
+nz@nzhost1.company.com's password: <enter local account password> 
+
+For further details please refer to the following document:
+
+LDAP authentication support for users to log in to IBM PureData System for Analytics appliances [https://www-304.ibm.com/support/entdocview.wss?uid=swg21681749]

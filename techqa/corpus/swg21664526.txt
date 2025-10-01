@@ -1,0 +1,27 @@
+Title: IBM Mttrapd probe unable to start up with error "socket name-has been already used" - United States
+
+Text:
+port 162; snmp probe; mttrapd; socket; name; udp; unknown host; E-UNK-000-000; snmpd TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The mttrapd probe fails to start with the following error:
+
+Error: E-UNK-000-000: SNMP Message (priority=3): UDP snmp_open: Unknown host (udp:162) (socket name-has been already used) 
+
+CAUSE
+Another application is using port 162.
+
+DIAGNOSING THE PROBLEM
+By default, snmpd is configured to use port 162. Make sure that the snmpd is not running. 
+
+
+Check the output of netstat -an command to determine whether or not port 162 is in use by another application; e.g. IBM Tivoli Storage Productivity Center.
+
+
+RESOLVING THE PROBLEM
+Disable the other application or configure mttrapd probe to use another free port.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ OMNIbus probe

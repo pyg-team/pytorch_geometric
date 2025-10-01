@@ -1,0 +1,45 @@
+Title: IBM BigFix and Microsoft Security Patches bulletins - United States
+
+Text:
+tem; bullettin; patches; googlebigfix TECHNOTE (FAQ)
+
+QUESTION
+ Why are IBM BigFix security patches not yet available even though Microsoft has already announced them? 
+
+ANSWER
+Each month Microsoft releases security bulletins, including operating system and product application patches. Various other hardware and software vendors release patches periodically. However, patches can be released any time. The Microsoft monthly patch release is known as Patch Tuesday because it typically occurs every second Tuesday of the month. 
+
+Within 24 hours of Microsoft's release, the BigFix team typically creates and releases English-language Fixlets to match specific Microsoft patch bulletins. Each Fixlet targets the specific components that are listed by the Microsoft patch. While patches are released by Microsoft, they are typically not available in the BigFix console until about 24 hours after Microsoft has released them. 
+
+Therefore you may not be seeing them in your BigFix console because 24 hours have not passed yet. 
+
+Customers can check Microsoft's site to see if the patch has been released at:
+http://www.catalog.update.microsoft.com/Home.aspx [http://www.catalog.update.microsoft.com/Home.aspx]
+-This url is the most comprehensive list of Microsoft patches and is available online.
+- Note that customers might not see a patch because it has been "superseded" or "replaced" by a
+later patch. What you can do is put in the KB into the box and then do a search for the KB in the page. Click on the patch you want to see information about -> then click on the Package Details tab.
+The tab will state if the patch has been replaced by a later patch (a later KB).
+Scroll down to the bottom to see the latest KB.
+
+
+Note that there are some patches IBM does not support. While IBM does support security updates for Microsoft Windows it does not cover older versions of Windows or of Windows software. See our most recent documentation regarding this which will explain which type of patch we do support:http://www.ibm.com/support/knowledgecenter/SS6MER_9.5.0/com.ibm.bigfix.patch.doc/Patch/Patch_Windows/c_system_requirements.html?view=embed [http://www.ibm.com/support/knowledgecenter/SS6MER_9.5.0/com.ibm.bigfix.patch.doc/Patch/Patch_Windows/c_system_requirements.html?view=embed] 
+
+You can also view this information at:
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Endpoint%20Manager/page/Supported%20OS [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Endpoint%20Manager/page/Supported%20OS]
+
+
+
+It is also possible that the user's Patches for Windows site is simply out of date. What customers can do is go to this link:
+http://sync.bigfix.com/cgi-bin/bfgather/bessecurity [http://sync.bigfix.com/cgi-bin/bfgather/bessecurity]
+This is the link for our Patches for Windows site.
+Do a search for the term MODIFIED and look at each of the modified dates. You will then be able to tell how your old site is. As we release content monthly for the Patches for Windows site, on the second Tuesday of the month, your site should not be more than a couple of weeks old. If it is, then you may have some blockage preventing your main BigFix server to go out to the internet, preventing it from getting the latest content (fixlets) for the patch you are looking at.
+On this point, you can sign up for the BigFix newsletter to tell you when we release a new site.
+Sign up details at:
+http://bigmail.bigfix.com/mailman/listinfo/ [http://bigmail.bigfix.com/mailman/listinfo/]
+
+
+
+If customers do find a patch that is not covered by our Patches for Windows solution customers can develop their own BigFix content. Technical support cannot create content for customers nor advise on custom content creation however customers can engage IBM Professional Services who can create custom content for customers for a fee. Contact your IBM sales representative if you are interested in this option.
+
+RELATED INFORMATION
+ Understanding BigFix Patches for Windows Solution [http://www.ibm.com/support/docview.wss?uid=swg21505562]

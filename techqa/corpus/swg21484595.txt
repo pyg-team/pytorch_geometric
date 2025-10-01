@@ -1,0 +1,21 @@
+Title: IBM The temporary table SPSS_TEMP is not deleted when exporting an SPSS data file as Excel file with ODBC - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am working with SPSS/Statistics 15 and above and would like to export my SPSS data file into an existing Excel 2003 file with ODBC. I use the menu File - Export to Database, select the Microsoft Excel Driver and the option "Drop an existing table and create a new table of the same name". 
+The pasted syntax runs fine also if I run this repeatedly. However, I have noticed that whenever I overwrite my existing table within the Excel file the SPSS Temp table is not deleted completely. I have thought that this table is deleted with the SQL subcommand /SQL='DROP TABLE SPSS_TEMP'? 
+
+RESOLVING THE PROBLEM
+This is working as designed. The SPSS_Temp table within an Excel 2003 file cannot be deleted by the SQL subcommand /SQL='DROP TABLE SPSS_TEMP' since Excel 2003 is not a real database system. If you work with a real database system like MS Access, MS SQL Server or Oracle the subcommand can delete the temporary table but not within an Excel workbook. 
+However, even though the Temp table cannot be deleted this has no effect on the database export itself. If you would like to overwrite an existing table within an Excel workbook ?t works without problems. The only thing is that you will have an empty table named SPSS_TEMP within your Excel file
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 86042

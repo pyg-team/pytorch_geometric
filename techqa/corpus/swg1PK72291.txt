@@ -1,0 +1,156 @@
+Title: IBM PK72291: WAR and JAR files removed from EAR exported to server - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Application Developer for WebSphere Software, Version 7.5.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022010]
+Rational Software Architect Standard Edition, Version 7.5.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24021999]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using Rational Application Developer 7.0.0.6
+   
+   Given an EAR project with already built WAR and JAR files placed
+    in the EAR project main directory, during deployment to a BEA W
+   ebLogic server, the exported EAR is stripped of WAR and JAR file
+   s.
+   
+   Steps to reproduce:
+   1. Create new EAR project:
+     Name: EAR
+     Target Runtime: Generic BEA WebLogic Server 8.1
+     Facets: EAR 1.3
+   2. Import -? J2EE -? Utility JAR file
+     EAR Project: EAR (created in step 1)
+     Select an existing EJB.jar module
+     Check 'Copy Utility JARs into an existing EAR from an external
+    location
+     Notice that EJB.jar was copied to EAR project
+   3. Edit EAR/META-INF/application.xml to contain:
+     ...
+     ?module?
+       ?ejb?EJB.jar?/ejb?
+     ?/module?
+     ...
+   4. In servers view, add project to WebLogic 8.1 and Publish
+   5. Observe C:\bea\weblogic81\samples\domains\workshop\applicatio
+   ns
+     Notice that EAR.jar contains only
+     META-INF  META-INF\application.xml
+     META-INF\MANIFEST.MF
+   
+   I'd expect that exported EAR contains also EJB.jar module but it
+   's not.
+   
+   I have noticed that if step 3 is omitted, EJB.jar is added to EA
+   R, but as it is not a Mudule in the application.xml the ear is n
+   ot usable.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Web libraries are not packaged correctly when using
+   WebLogic, Jboss, or Websphere downloadable Server Adapters.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Binary libraries were being repackaged incorrectly when the
+   project was deployed to the server.
+   Fix delivered in rational Application Developer V7.5.2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK72291
+   
+   
+ * REPORTED COMPONENT NAME
+   SW ARCHITECT WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724I7001
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-17
+   
+   
+ * CLOSED DATE
+   2009-04-02
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSN
+   UP

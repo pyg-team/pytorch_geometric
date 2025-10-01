@@ -1,0 +1,99 @@
+Title: IBM Planning for IBM CMIS for FileNet Content Manager with WebLogic Server - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ To plan the configuration of IBM CMIS for FileNet Content Manager, review the prerequisites, determine your application server architecture, select language settings, and configure parameter values. 
+
+CONTENT
+
+
+Prerequisites
+
+The IBM Content Management Interoperability Services for FileNet Content Manager (IBM CMIS) hardware and software requirements document provides detailed information about the supported versions of each prerequisite application. 
+
+A complete and up-to-date list of the hardware and software requirements for IBM CMIS for FileNet Content Manager is available on the IBM support site at http://www.ibm.com/support/docview.wss?uid=swg27037865 [http://www.ibm.com/support/docview.wss?uid=swg27019859].
+
+Planning for Oracle WebLogic Server
+
+IBM Content Management Interoperability Services for FileNet Content Manager (IBM CMIS) can be deployed to several different application server architectures. Regardless of the application server architecture that you deploy to, you should install IBM CMIS to a dedicated application server or application server cluster because of the affect on JVM arguments and scalability. When IBM CMIS is installed to an application server, the JVM arguments on the server are modified, which can affect other applications on that server. Also, when more than one application is installed in an application server, the scalability of each application decreases. 
+
+
+Recommended server architecture IBM Content Management Interoperability Services for FileNet Content Manager (IBM CMIS) is an optional component of an IBM FileNet Content Manager system. The server configuration that you use can affect the performance and scalability of your system. 
+
+A IBM FileNet P8 system generally requires a set of dedicated servers. The components of an IBM FileNet P8 system are often spread across several servers. For better performance and scalability, you should install IBM FileNet Content Engine and any client applications, such as IBM CMIS for FileNet Content Manager, on separate servers. 
+
+The following list describes the recommended server configuration for a system that is not configured for high availability: 
+
+ * Server 1: Content Search Engine, or Content Search Services, which is required for full-text search 
+ * Server 2: Application Server, Content Engine or Content Platform Engine 
+ * Server 3: Application Server, IBM CMIS for FileNet Content Manager 
+ * Server 4: Database server 
+ * Server 5: Directory server
+
+
+It is highly recommended that if you are using IBM Content Navigator, you deploy CMIS in its own application server that is separate from IBM Content Navigator in the production environment. 
+
+User authentication and security IBM Content Management Interoperability Services for FileNet Content Manager (IBM CMIS) uses the same LDAP server that is configured for the IBM FileNet Content Engine server, or Content Platform Engine server.
+
+You must enable single sign-on (SSO) between the application servers that host IBM FileNet Content Engine or Content Platform Engine and IBM CMIS for FileNet Content Manager. 
+
+In addition, you must decide how to implement support for IBM FileNet Content Manager CVL security in your IBM CMIS for FileNet Content Manager application.
+
+
+ * Configuring single sign-on
+ * If Content Engine or Content Platform Engine and IBM CMIS for FileNet Content Manager are running in different WebLogic Server domains, you must configure the trust between domains and enable application security for each instance of WebLogic Server. Additionally, each instance of WebLogic Server must use the same directory service for authentication.
+
+ *  Configuring the trust between WebLogic Server domains Establishing the trust between domains enables the principals in a Subject from one WebLogic Server domain to make calls in another domain. In previous releases of WebLogic Server, only one type of domain trust is now referred to as Global Trust. WebLogic Server now supports a type of domain trust that is referred to as Cross Domain Security. 
+   
+   To configure a Global Trust between domains, see the topic "Enabling Global Trust": http://docs.oracle.com/cd/E24329_01/web.1211/e24422/domain.htm#i1175440 [http://docs.oracle.com/cd/E24329_01/web.1211/e24422/domain.htm] 
+   
+   To configure a Cross Domain Security Trust between domains, see the topic "Enabling Cross Domain Security Between WebLogic Server Domains": 
+   http://docs.oracle.com/cd/E24329_01/web.1211/e24422/domain.htm#i1175685 [http://docs.oracle.com/cd/E24329_01/web.1211/e24422/domain.htm#i1175685]
+   
+   
+   
+ * Support for IBM FileNet Content Manager CVL security
+ * By default, IBM CMIS for IBM FileNet Content Manager caches controlled vocabulary lists (CVLs) for all users to improve performance. However, when IBM CMIS for FileNet Content Manager caches the CVLs, the security settings that are configured for the CVLs in your IBM FileNet Content Manager system are ignored. 
+ * If your IBM FileNet Content Manager CVLs are configured to prevent some users from seeing certain CVLs, you can configure IBM CMIS for FileNet Content Manager to honor the CVL security settings.
+
+
+Language support for IBM CMIS for FileNet Content Manager 
+
+IBM CMIS uses locale settings to determine the language in which to display the following information:  * Error messages in HTTP responses 
+ * IBM CMIS index page, about page, and configuration page 
+ * IBM FileNet P8 metadata, such as type definition and property definition display names and descriptions 
+
+
+If you use REST services, IBM CMIS uses the following rules of precedence to determine the locale:  *  IBM CMIS uses the language that is specified in the Accept-Language header of the HTTP request. If the Accept-Language header is not available or does not specify a supported language, IBM CMIS uses the language of the JVM on the IBM CMIS application server. 
+   Tip: By default, WebLogic Server sets the JVM to English. If the language of the JVM is not available, IBM CMIS displays content in English. 
+
+
+If you use Web Services, IBM CMIS uses the following rules of precedence to determine the locale:  *  IBM CMIS uses the language that is specified in the locale element of the i18n:international element of the WS-I18N header. If the WS-I18N header is not available or does not specify a supported language, IBM CMIS uses the language that is specified in the Accept-Language header of an HTTP request. If the Accept-Language header is not available or does not specify a supported language, IBM CMIS uses the language of the JVM on the IBM CMIS application server. 
+   Tip: By default, WebLogic Server sets the JVM to English. If the language of the JVM is not available, IBM CMIS displays content in English. 
+
+
+Important: If you use headers to specify the language in which to display content, you must understand the following restrictions and behaviors:  * If you provide a WS-I18N header and an Accept-Language header and both headers specify a supported language, the language that is specified in the WS-I18N header takes precedence. 
+ * If you provide an Accept-Language header with multiple languages, IBM CMIS displays only the preferred language (the language with the highest quality value, such as q=1). 
+
+
+If multiple languages are designated as the preferred language, IBM CMIS uses the first language from the left with the highest value quality. For example, the header includes the following code, IBM CMIS would display content in French because French is the first entry from the left with the highest quality value: 
+fr;q=1, en-US;q=1, de;q=.9 
+
+IBM CMIS for FileNet Content Manager is available in the following languages: Language code Language ar Arabic cs Czech da Danish de German el Greek en English es Spanish fi Finnish fr French he Hebrew ht Croatian hu Hungarian it Italian ja Japanese ko Korean nb Norwegian nl Dutch pl Polish pt Portuguese pt_BR Portuguese, Brazilian sv Swedish th Thai tr Turkish zh_CN Chinese, Simplified zh_TW Chinese, Traditional 
+Configuration information 
+
+Before you configure IBM CMIS for FileNet Content Manager, work with your FileNet Content Manager system administrator and your WebLogic Server system administrator to collect the information that you must provide when you configure IBM CMIS. The following worksheets provide a useful place to put these values. 
+
+IBM CMIS worksheets 
+http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.installingeuc.doc/eucpl072.htm [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.installingeuc.doc/eucpl072.htm] 
+
+Worksheet for connecting to Oracle WebLogic Server 
+http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.installingeuc.doc/eucpl026.htm [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.installingeuc.doc/eucpl026.htm] 
+
+Worksheet for building the web application 
+http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.installingeuc.doc/eucpl046.htm [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.installingeuc.doc/eucpl046.htm] 
+
+Worksheet for deploying the web application on Oracle WebLogic Server 
+http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.installingeuc.doc/eucpl052.htm [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.installingeuc.doc/eucpl052.htm]

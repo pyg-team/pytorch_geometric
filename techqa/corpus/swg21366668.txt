@@ -1,0 +1,82 @@
+Title: IBM ITM/TEMS is not sending out TEC style Events - United States
+
+Text:
+ITM Omnibus Integration TEMS Tracing diags TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ITM-Omnibus Integration in progress but events are not being received by the EIF probe. 
+
+SYMPTOM
+ITM thought to be generating TEC events, but none are being received at the Omnibus EIF probe.
+
+
+ENVIRONMENT
+ITM 6.2, thought to be similar on higher versions
+
+DIAGNOSING THE PROBLEM
+Enable ERROR(UNIT:kfaot ALL) tracing on the TEMS. To do this, 
+edit TEMS config and edit the KBB_RAS1 variable, amending it 
+appropriately. 
+
+After reproducing the problem, please capture : 
+
+%install_dir%\CMS\kdsmain.msg (on Windows) 
+%install_dir%\logs\hostname_ms_nnnnnnn.log (on Windows) 
+$install_dir/logs/hostname_ms_nnnnnnn.log (on Unix/Linux) 
+
+where : hostname is the hostname of the TEMS 
+hhhhhhhh is some hex numbers (start time in utc) 
+nn is the sequence number 
+
+What you get is a collection like this;
+ls -l
+total 106310
+-rw-rw-rw- 1 root root 190592 Jan 13 14:29 01hw191030_ms_4967263d-01.log
+-rw-rw-rw- 1 root root 8271576 Jan 13 14:40 01hw191030_ms_496c5a2c-01.log
+-rw-rw-rw- 1 root root 8261071 Jan 13 14:40 01hw191030_ms_496c5a2c-02.log
+-rw-rw-rw- 1 root root 8261366 Jan 13 14:40 01hw191030_ms_496c5a2c-03.log
+-rw-rw-rw- 1 root root 3012098 Jan 13 14:49 01hw191030_ms_496c5a2c-04.log
+-rw-rw-rw- 1 root root 8271515 Jan 13 14:52 01hw191030_ms_496c5ce1-01.log
+-rw-rw-rw- 1 root root 8260539 Jan 13 14:52 01hw191030_ms_496c5ce1-02.log
+-rw-rw-rw- 1 root root 8260705 Jan 13 14:52 01hw191030_ms_496c5ce1-03.log
+-rw-rw-rw- 1 root root 1521661 Jan 13 15:00 01hw191030_ms_496c5ce1-04.log
+-rw-rw-rw- 1 root root 10902 Jan 13 15:00 kdsmain.msg
+
+With 6x8Mb files looking line by line will take time, so move to somewhere where you can use the UNIX grep command;
+
+grep Send_Tec_Events * | pg
+01hwat1030_ms_496c5a2c-04.log:(496C5A82.39EF-874:kfaotste.c,45,"Send_Tec_Events") Comp:* Level:1.4, Nov 6 2007 18:31:12
+
+01hwat1030_ms_496c5a2c-04.log:(496C5A82.39F0-874:kfaotste.c,45,"Send_Tec_Events") Active RAS1 Classes: EVERYT EVERYE EVERYU
+
+01hwat1030_ms_496c5a2c-04.log:(496C5A82.39F1-874:kfaotste.c,45,"Send_Tec_Events") Entry
+
+01hwat1030_ms_496c5a2c-04.log:(496C5A82.39F2-874:kfaotste.c,85,"Send_Tec_Events") Sending tec event to server <101.96.10.114> :
+
+01hwat1030_ms_496c5a2c-04.log:(496C5A82.39F6-874:kfaotste.c,88,"Send_Tec_Events") tec event<ITM_Generic;source='ITM';severity='MINOR';cms_hostname='01hwat1030';cms_port='3661';hostname='01hwat1030';master_reset_flag='R';situation_name='**';situation_origin='';situation_time='01/13/2009 14:40:26.000';situation_status='N';date='01/13/2009';msg='TEMS <01hwat1030> restarted';>
+
+01hwat1030_ms_496c5a2c-04.log:(496C5A82.39F7-874:kfaotste.c,136,"Send_Tec_Events") Exit: 0x0
+
+01hwat1030_ms_496c5a2c-04.log:(496C5AC6.0416-874:kfaotste.c,45,"Send_Tec_Events") Entry
+
+01hwat1030_ms_496c5a2c-04.log:(496C5AC6.0417-874:kfaotste.c,85,"Send_Tec_Events") Sending tec event to server <101.96.10.114> :
+
+01hwat1030_ms_496c5a2c-04.log:(496C5AC6.041A-874:kfaotste.c,88,"Send_Tec_Events") tec event<ITM_NT_Process;source='ITM';sub_source='Primary:01HWAT1031:NT';cms_hostname='01hwat1030';cms_port='3661';integration_type='N';master_reset_flag='';appl_label='';situation_name='NT_Process_CPU_Critical';situation_type='S';situation_origin='Primary:01HWAT1031:NT';situation_time='01/13/2009 14:41:35.000';situation_status='Y';hostname='01HWAT1031';origin='101.96.10.115';adapter_host='01HWAT1031';severity='CRITICAL';date='01/13/2009';msg='NT_Process_CPU_Critical[(%_Processor_Time>=1 AND Priority_Base<>0 AND Process_Name<>"_Total" ) ON Primary:01HWAT1031:NT ON System (%_Processor_Time=2 Priority_Base=8 Process_Name=System )]';situation_displayitem='System';sub_origin='System';pct__privileged_time='2';pct__processor_time='2';pct__user_time='0';avg_pct__processor_time='1';binary_path=' ';elapsed_time='1218593';handle_count='3504';id_process='4';page_faults_per_sec='240';page_file_bytes='0';page_file_bytes_peak='0';page_file_kbytes='0';page_file_kbytes_peak='0';pool_nonpaged_bytes='0';pool_paged_bytes='0';priority_base='8';private_bytes='32768';private_kbytes='32';process_name='System';server_name='Primary:01HWAT1031:NT';thread_count='83';timestamp='1090113144050089';user=' ';virtual_bytes='1986560';virtual_bytes_peak='3833856';virtual_kbytes='1940';virtual_kbytes_peak='3744';working_set='245760';working_set_peak='2146304';working_set_kbytes='240';situation_eventdata='~';END
+
+That will show the port that the events are going to, for the port you can either grep for what you think is being used, or;
+
+# grep PortMonitor *
+01hwat1030_ms_496c5a2c-01.log:(496C5A7F.29F6-874:kfaotatr.c,1994,"ATTR1_Initialize") "K02_AGENTSCRIPT_BAT.PortMonitor4100"
+
+01hwat1030_ms_496c5a2c-01.log:+496C5A7F.29F6 - "PortMonitor4100" - "K02_AGENTSCRIPT_BAT"
+
+01hwat1030_ms_496c5ce1-01.log:(496C5D50.9146-D44:kfaotatr.c,1994,"ATTR1_Initialize") "K02_AGENTSCRIPT_BAT.PortMonitor4100"
+
+01hwat1030_ms_496c5ce1-01.log:+496C5D50.9146 - "PortMonitor4100" - "K02_AGENTSCRIPT_BAT"
+
+And you will see PortMonitor4100, meaning that in this case the events were being generated, going to the correct IP address, but port 4100, when the EIF probe was listening on it's default 9999, hence no events arriving.
+
+
+
+RESOLVING THE PROBLEM
+In this case, the TEMS was required to send to 9999. Once this was changed and TEMS restarted, the EIF probe started receiving events.

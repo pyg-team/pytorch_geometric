@@ -1,0 +1,37 @@
+Title: IBM Gathering Packaging Utility Information - United States
+
+Text:
+pluginState; logs; PU logs; ciclog; packaging utility; logging TECHNOTE (FAQ)
+
+QUESTION
+How does IBM support gather general Information to troubleshot IBM Packaging Utility issue? 
+
+CAUSE
+When working on problems with Packaging Utility, it is essential for IBM support to have Packaging Utility’s ciclogs and pluginState folder. Packaging Utility stores its plug-ins settings in pluginState and its runtime’s log in ciclogs. The data from these folders provides more information than a simple Packaging Utility’s error message. IBM Support can use the data to diagnose the problems and learn the history of Packaging Utility usage.
+
+ANSWER
+To obtain the ciclogs and pluginState folder, use the following instructions.
+
+Linux & UNIX
+
+Zip up “/tmp/ciclogs_[username]” and “[user home dir]/.ibm/pu/pluginState”
+
+
+
+Windows 2000, 2003, and XP
+
+Zip up “c:\Document and Settings\[username]\Local Settings\Temp\ciclogs_[username]” and “c:\Document and Settings\[username]\.ibm\pu\pluginState”
+
+
+
+Windows Vista
+
+Zip up “C:\Users\[username]\AppData\Local\Temp\ciclogs_[username]” and
+“C:\Users\[username]\.ibm\pu” 
+
+ 
+
+ 
+
+Do you need more help? For additional assistance, contact IBM Rational Client Support:
+Submit a Service Request (SR) [http://www.ibm.com/software/support/help.html?ratlid=srfooter]

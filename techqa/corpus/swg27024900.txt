@@ -1,0 +1,18 @@
+Title: IBM Detailed System Requirements: v9.1 of the IBM InfoSphere Optim Test Data Management Solution for JD Edwards EnterpriseOne and the Starter Edition for JD Edwards Applications - United States
+
+Text:
+ DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ This document summarizes the hardware, platforms, and software supported by v9.1 of the IBM® Infosphere® Optim™ Test Data Management Solution for JD Edwards EnterpriseOne, and the Test Data Management Solution Starter Edition for JD Edwards Applications. 
+
+CONTENT
+
+
+The Test Data Management solutions for JD Edwards EnterpriseOne support JD Edwards EnterpriseOne version 8.10 out-of-the-box. Support for other EnterpriseOne versions may be available through a Professional Services agreement with IBM.
+
+Version 9.1 of the Test Data Management solutions for JD Edwards are tested and distributed with the Optim Test Data Management Solution v9.1. Detailed hardware and software requirements are at: http://www.ibm.com/support/docview.wss?uid=swg27036209 [http://www.ibm.com/support/docview.wss?uid=swg27024294].
+
+Note: Hardware and software requirements for the Optim Test Data Management Solution may list database management systems and character sets that the JD Edwards application does not support. Therefore, only a subset of the Optim information applies to the solutions for JD Edwards EnterpriseOne.
+
+]

@@ -1,0 +1,49 @@
+Title: IBM CFS0115: Content freeze failed before federation, error importing from IBM Content Manager 8 repository - United States
+
+Text:
+content freeze; lockdown; cm8 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM FileNet Content Federation Services (CFS) for Content Integrator - "CFS0115: Content freeze failed before federation" error importing from IBM Content Manager 8 (CM8) repository 
+
+SYMPTOM
+"CFS0115: Content freeze failed before federation" import error may be reported in FedAdmin when IBM FileNet CFS for Content Integrator is configured to federate documents from IBM Content Manager 8 (CM8) Repository.
+
+
+CAUSE
+This behavior may occur if the source CM8 repository is not enabled for records management as described in the steps below : 
+
+ 1. Log on to CM8 by using the CM8 System Administration Client.
+    
+    
+ 2. Expand the library node (the default name is icmnlsdb) in the left pane of the CM8 System Administration Client.
+    
+    
+ 3. Expand the Library Server Parameters node in the left pane.
+    
+    
+ 4. Click the Configurations node in the left pane.
+    
+    
+ 5. Right-click on the Library Server Configuration icon in the right pane and select Properties from the menu.
+    
+    
+ 6. Select the Features tab.
+    
+    
+ 7. Select the Enable Records Management check box.
+    
+    
+ 8. Select the IBM InfoSphere Enterprise Records radio button.
+    
+    
+ 9. Click OK.
+
+
+Note: You must follow this procedure even if you are not planning on using IBM Enterprise Records with federated content. 
+
+The behavior can occur if the documents being federated have been checked out in CM8. 
+
+The documents being federated should be checked back in to CM8 first and the retry count value adjusted in FedAdmin to re-federate the documents. The retry count is reset by navigating to the Rule Management page of the FedAdmin application and clicking on the value that shows under the Import Error column for the particular rule for which the retry count will be reset. Clicking on the value causes the Error Management page to appear which will contain a list of all the import errors. The user has the option of selecting individual rules and then clicking on the 'Reset' link from the menu at the top of the page, or there is also a 'Reset All' option. 
+
+After resetting the retry count, import errors will automatically be retried. Also, if the administrator clicks on 'Retry' only those errors for which the retry count has been reset will be federated.

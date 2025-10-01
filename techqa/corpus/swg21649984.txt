@@ -1,0 +1,32 @@
+Title: IBM Issue in configuring Business Space widgets through WebSphere Portal - United States
+
+Text:
+WebSphere Portal ; Business Monitor 7.0.0.2 theme; /models; Business Space; ProxyConfig TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After configuring a widget in IBM Business Monitor, the widget cannot be edited in WebSphere Portal. The error log shows a 404 error for the URL /models, as it is not routed through the AJAX proxy. 
+
+SYMPTOM
+- Business Monitor widgets cannot be configured. 
+
+- /models URL is loaded directly from WebSphere Portal server, and results in an HTTP error code 404.
+
+
+CAUSE
+This issue is caused by the AJAX proxy configuration.
+
+
+ENVIRONMENT
+WebSphere Portal Server V7.0.0.2 CF 12 or higher and IBM Business Monitor V8.0.1.1.
+
+
+
+DIAGNOSING THE PROBLEM
+In the Java™script console, look for a 404 error for the /models or other URLs. There might be an attempt for the failing URLs to be loaded directly from WebSphere Portal, instead of being routed through the AJAX proxy. 
+
+Check if the proxy-config.xml file has entries for only https URLs. If yes, add the identical entries for http URLs as well. 
+
+
+
+RESOLVING THE PROBLEM
+The proxy-config.xml file should have entries for both 'https' and 'http'.

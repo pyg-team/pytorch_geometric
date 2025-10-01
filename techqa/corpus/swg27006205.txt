@@ -1,0 +1,69 @@
+Title: IBM WebSphere Process Server detailed system requirements - United States
+
+Text:
+WebSphere Process Server version 6; WebSphere Process Server for Multiplatforms; system requirements; hardware requirements; software requirements; Detailed system requirements; SystemRequirementsDocument; prereq; coreq; installation prerequisites; platform support; DSRdoc; DSRentry; 6.1; 6.1.2; 6.0.1; 6.0.2; 6.1.2; 6.2.0; 7.0 PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document describes the minimum product levels that must be installed before opening a problem report with the IBM WebSphere Process Server support team. 
+
+CONTENT
+ 
+
+Because other products frequently ship fixes, updates, and new releases, testing every configuration is not possible. In general, you can install and run with updates to supported products if those updates are forward compatible. 
+
+For additional information on available support for configurations that are not included in the following list, refer to support article WebSphere Process Server and WebSphere Enterprise Service Bus has grown and so have your requirements. [http://www.ibm.com/support/docview.wss?uid=swg27012688]
+
+Note: Your entitlement to support, if any, depends on your license, your maintenance agreements, or both, for WebSphere Process Server. Support is limited to your use of the relevant prerequisite with a supported WebSphere Process Server product.
+
+The following table provides direct links to the detailed system requirements information for the specified release and operating system for the WebSphere Process Server product.
+
+
+TAB NAVIGATION
+ * Version 7.0.0- selected tab,
+ * V6.2.0
+ * V6.1.2
+
+This Software Product Compatibility Report links to the Version 7.0 detailed system requirements information.  * AIX [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1330696671813&osPlatforms=AIX&duComponentIds=S001&mandatoryCapIds=30|25&optionalCapIds=18|181|12|9|1|39|8|20|42|46|27|15|26|40]
+ * HP [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1330696671813&osPlatforms=HP&duComponentIds=S001&mandatoryCapIds=30|25&optionalCapIds=18|181|12|9|1|39|8|20|42|46|27|15|26|40]
+ * Linux [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1330696671813&osPlatforms=Linux&duComponentIds=S001&mandatoryCapIds=30|25&optionalCapIds=18|181|12|9|1|39|8|20|42|46|27|15|26|40]
+ * Solaris [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1330696671813&osPlatforms=Solaris&duComponentIds=S001&mandatoryCapIds=30|25&optionalCapIds=18|181|12|9|1|39|8|20|42|46|27|15|26|40]
+ * Windows [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1330696671813&osPlatforms=Windows&duComponentIds=S001&mandatoryCapIds=30|25&optionalCapIds=18|181|12|9|1|39|8|20|42|46|27|15|26|40]
+ * z/OS [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1330696671813&osPlatforms=z/OS&duComponentIds=S001&mandatoryCapIds=30|25&optionalCapIds=18|181|12|9|1|39|8|20|42|46|27|15|26|40]
+
+This tab provides links to the Version 6.2 detailed system requirements information.
+
+ * AIX on POWER [http://www.ibm.com/support/docview.wss?uid=swg27013455]
+ * HP-UX on PA-RISC [http://www.ibm.com/support/docview.wss?uid=swg27013454]
+ * HP-UX on IA64 [http://www.ibm.com/support/docview.wss?uid=swg27013452]
+ * i5/OS [http://www.ibm.com/support/docview.wss?uid=swg27013451]
+ * Linux on x86 [http://www.ibm.com/support/docview.wss?uid=swg27013450]
+ * Linux on x86-64 [http://www.ibm.com/support/docview.wss?uid=swg27013449]
+ * Linux on POWER [http://www.ibm.com/support/docview.wss?uid=swg27013448]
+ * Linux on IBM System z [http://www.ibm.com/support/docview.wss?uid=swg27013447]
+ * Solaris on SPARC [http://www.ibm.com/support/docview.wss?uid=swg27013446]
+ * Solaris on x86-64 [http://www.ibm.com/support/docview.wss?uid=swg27013445]
+ * Windows on x86 [http://www.ibm.com/support/docview.wss?uid=swg27013444]
+ * Windows on x86-64 [http://www.ibm.com/support/docview.wss?uid=swg27013443]
+ * z/OS [http://www.ibm.com/support/docview.wss?uid=swg27013442]
+
+This tab provides links to the Version 6.1.2 detailed system requirements information.
+
+ * AIX on POWER [http://www.ibm.com/support/docview.wss?uid=swg27012537]
+ * HP-UX on PA-RISC [http://www.ibm.com/support/docview.wss?uid=swg27012538]
+ * HP-UX on IA64 [http://www.ibm.com/support/docview.wss?uid=swg27012539]
+ * Linux on x86 [http://www.ibm.com/support/docview.wss?uid=swg27012541]
+ * Linux on x86-64 [http://www.ibm.com/support/docview.wss?uid=swg27012543]
+ * Linux on POWER [http://www.ibm.com/support/docview.wss?uid=swg27012540]
+ * Linux on IBM System z [http://www.ibm.com/support/docview.wss?uid=swg27012542]
+ * Solaris on SPARC [http://www.ibm.com/support/docview.wss?uid=swg27012545]
+ * Solaris on x86-64 [http://www.ibm.com/support/docview.wss?uid=swg27012546]
+ * Windows on x86 [http://www.ibm.com/support/docview.wss?uid=swg27012536]
+ * Windows on x86-64 [http://www.ibm.com/support/docview.wss?uid=swg27012534]
+ * z/OS [http://www.ibm.com/support/docview.wss?uid=swg27012544]
+
+
+
+RELATED INFORMATION
+ WebSphere Process Server Support [http://www.ibm.com/software/integration/wps/support/]
+WebSphere Process Server Product Documentation [http://www.ibm.com/software/integration/wps/library/infocenter/]
+Recommended fixes for WebSphere Process Server [http://www.ibm.com/support/docview.wss?uid=swg27006649]

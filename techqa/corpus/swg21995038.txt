@@ -1,0 +1,56 @@
+Title: IBM Security Bulletin: Vulnerabilities in OpenSSL affect IBM Enterprise Content Management System Monitor (CVE-2016-6304, CVE-2016-2177) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ OpenSSL vulnerabilities were disclosed on September 22 and 26, 2016 by the OpenSSL Project. OpenSSL is used by IBM Enterprise Content Management System Monitor. IBM Enterprise Content Management System Monitor has addressed the applicable CVEs. 
+
+VULNERABILITY DETAILS
+
+CVEID: CVE-2016-6304 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-6304]
+DESCRIPTION: OpenSSL is vulnerable to a denial of service. By repeatedly requesting renegotiation, a remote authenticated attacker could send an overly large OCSP Status Request extension to consume all available memory resources.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/117110 [https://exchange.xforce.ibmcloud.com/vulnerabilities/117110] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H) 
+
+CVEID: CVE-2016-2177 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2177]
+DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by the incorrect use of pointer arithmetic for heap-buffer boundary checks. By leveraging unexpected malloc behavior, a remote attacker could exploit this vulnerability to trigger an integer overflow and cause the application to crash.
+CVSS Base Score: 5.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/113890 [https://exchange.xforce.ibmcloud.com/vulnerabilities/113890] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H)
+
+AFFECTED PRODUCTS AND VERSIONS
+
+IBM Enterprise Content Management System Monitor v 5.1.0
+IBM Enterprise Content Management System Monitor v 5.2.0
+
+REMEDIATION/FIXES
+ 
+
+Product VRM Remediation IBM Enterprise Content Management System Monitor 5.1.0 Use ECM SM 510-FP3-IF9 avaible at https://www-933.ibm.com/support/fixcentral/ [https://www-933.ibm.com/support/fixcentral/] IBM Enterprise Content Management System Monitor 5.2.0 Use ECM SM 5.2.0.4 avaible at https://www-933.ibm.com/support/fixcentral/ [https://www-933.ibm.com/support/fixcentral/] WORKAROUNDS AND MITIGATIONS
+NA
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ Dec 7, 2016: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

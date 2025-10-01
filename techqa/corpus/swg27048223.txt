@@ -1,0 +1,45 @@
+Title: IBM Using SSL TLS to connect two MQ queue managers in MQ 7.5 and MQ 8.0 - MQ 9.0 using self-signed certificates - United States
+
+Text:
+ WHITE PAPER
+
+ABSTRACT
+ The objective of this document is to provide the step-by-step details for connecting a WebSphere MQ V7.5 queue manager in one platform (Windows) to a V8.0 queue manager running on another platform (Linux), using SSL TLS self-signed certificates.
+
+For illustration purposes the following protocol will be used, which is valid in MQ V7.5 and V8.0:
+TLS_RSA_WITH_AES_128_CBC_SHA
+
+Note for MQ V9.0:
+The commands mentioned in this tutorial were also verified in a MQ V9.0 test queue manager. 
+
+CONTENT
++++ Summary of steps: Sender in Windows connecting to a Receiver in Linux 
+
+Step 1: Client (Windows): Create SSL client key database 
+Step 2: Client (Windows): Create certificate
+Step 3: Client (Windows): Extract the public SSL client certificate 
+Step 4: Client (Windows): Copy Windows certificate to the SSL server side in Linux
+
+Step 5: Server (Linux): Create SSL server key database
+Step 6: Server (Linux): Create certificate
+Step 7: Server (Linux): Extract the public SSL server certificate and copy it to the SSL client side 
+Step 8: Server (Linux): Copy Linux certificate to the SSL client side in Windows
+
+Step 9: Server (Linux): Add the Windows certificate to Linux key database
+Step 10: Server (Linux): Run MQSC commands for SSL server side queue manager
+
+Step 11: Client (Windows): Add the Linux certificate to the Windows key database
+Step 12: Client (Windows): Run MQSC commands for SSL client side queue manager
+Step 13: Test of sending message from Client (Windows) to Server (Linux)
+
++ Update on August-2016
+An appendix was added to include a brief description of using the IBM Key Management GUI (iKeyman) for the corresponding runmqakm commands.
+
+
+File name: Using SSL TLS to connect two MQ queue managers in MQ 7.5 and 8.0 - 9.0 using self-signed certificates.pdf 
+
+Using SSL TLS to connect two MQ queue managers in MQ 7.5 and 8.0 - 9.0 using self-signed certificates.pdf [/support/docview.wss?uid=swg27048223&aid=2]Using SSL TLS to connect two MQ queue managers in MQ 7.5 and 8.0 - 9.0 using self-signed certificates.pdf [/support/docview.wss?uid=swg27048223&aid=1]
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM MQ

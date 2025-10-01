@@ -1,0 +1,130 @@
+Title: IBM IY48600: IVACLD MAINTAINS THE DEACITIVATED STATE OF A REACTIVATED USER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment: Access Manager 4.1 FP02
+   IBM Directory Server 4.1
+   When a user is deactivated by pdacld due to failed login
+   attempts (via an application using the Java API), and the user
+   is reactivated using pdadmin user modify account-valid yes,
+   pdacld maintains the deactivated state of the account,
+   preventing the user from logging in.  The user can log in via a
+   separate WebSEAL server, confirming that the account has been
+   enabled.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  See problem description.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following was added to the 4.1-TAM-FP07.README:
+   
+   7.24 Use of pdacld as an authentication enforcement server
+        (IY48600)
+   
+   In typical configurations, the Authorization Server
+   (pdacld) is used to proxy authentication and authorization
+   requests for the Java Authorization APIs.   In addition it
+   is used to proxy authorization requests for remote mode AZN
+   applications.  In instances where pdacld is used to enforce
+   login policy during user authentication, the pdacld server
+   needs to be enhanced with additional privileges.  By
+   default, the pdacld server is unable to update user login
+   policy state information in the registry.  To correctly
+   enforce login policy, the pdacld server should be added to
+   the securitygroup using the "group modify" pdadmin
+   command, Ex:
+   
+   pdadmin> group modify securitygroup add ivacld/<machine_name>
+   
+   The server name is located in the ivacld.conf file.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY48600
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR BASE
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0801
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2003-09-17
+   
+   
+ * CLOSED DATE
+   2003-12-23
+   
+   
+ * LAST MODIFIED DATE
+   2003-12-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

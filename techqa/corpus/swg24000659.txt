@@ -1,0 +1,63 @@
+Title: IBM WA03: WebSphere MQ Workflow - API Coding Examples - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This SupportPac supplies examples that demonstrate how to use WebSphere MQ Workflow API calls. 
+
+DOWNLOAD DESCRIPTION
+This SupportPac supplies examples that demonstrate how to use API calls which can be compiled and linked and then executed. If you download and unpack these examples they will extend the Development Kit software component of WebSphere MQ Workflow. 
+
+POSSIBLE USES
+The examples can be used to look up the code sequence that is needed to develop a customized runtime client or to implement an activity. They also show how to implement specific aspects of workflow-related questions. 
+
+The examples can also be used as small daily tools complementing the WebSphere MQ Workflow product
+
+SKILL LEVEL REQUIRED
+There is no skill required to view the source code of the examples. 
+
+If you intend to modify, compile and run an example program, you need a basic understanding of the selected programming language and the programming concepts of WebSphere MQ Workflow. 
+
+DETAILS:
+Author: Workflow Solutions Development, IBM Germany
+Category: 2
+Released: 27Jul00
+Last Updated: 04Nov04
+Current Version: 3.0
+
+NEW IN THIS RELEASE:
+The following changes have been made in this release: 
+» Update of EJB sample
+» New usage sample for Activity Instance List , new with WebSphere MQ Workflow 3.5
+
+PREREQUISITES
+This SupportPac requires: 
+IBM WebSphere MQ Workflow V3.4 or higher
+Installation of the Workflow Development Kit. 
+
+INSTALLATION INSTRUCTIONS
+To install the SupportPac in a Windows environment:
+1. Download wa03.zip binary to the installation directory of IBM WebSphere MQ Workflow. 
+2. Unzip wa03.zip. Ensure you specify the option to re-create stored directories.
+3. This will create the necessary files and sub-directories.
+4. You may delete wa03.zip.
+5. Point your web browser to <MQWFDir>\smp\index.htm to get an overview about the available examples.
+
+To install the SupportPac in a Unix environment:
+1. Logon as root..
+2. Download wa03.tar.Z binary the installation directory of IBM WebSphere MQ Workflow, for example /usr/lpp/fmc.
+3. Execute uncompress -fv wa03.tar.Z.
+4. Execute tar -xvf wa03.tar.
+5. Execute rm wa03.tar.
+6. This will create the necessary files and sub-directories.
+7. Point your web browser to <MQWFDir>/smp/index.htm. to get an overview about the available examples.
+
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options wa03.tar.Z 04/11/2004 US English 311598 FTP [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/wa03.tar.Z] wa03.zip 04/11/2004 US English 309915 FTP [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/wa03.zip] 
+TECHNICAL SUPPORT
+ Category 2 SupportPacs are provided in good faith and AS-IS. There is no warranty or further service implied or committed and any supplied sample code is not supported via IBM product service channels. 
+
+Please read the LICENSE2 TXT file that accompanies the SupportPac to determine if you want to use it.

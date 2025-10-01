@@ -1,0 +1,19 @@
+Title: IBM Will the June 30, 2015 leap second impact IBM Sterling B2B Integrator (SBI)? - United States
+
+Text:
+leap second june 30 2015 TECHNOTE (FAQ)
+
+QUESTION
+ Will the June 30, 2015 leap second impact IBM Sterling B2B Integrator (SBI)? 
+
+ANSWER
+The leap second that occurs on June 30, 2015 should not have any impact to SBI.
+
+SBI gets the time from the operating system. It is recommended that you check with your operating system vendor to determine if any operating system patches are required.
+
+If any abnormalities are observed, restart SBI after the leap second has occurred.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ GIS SI SBI

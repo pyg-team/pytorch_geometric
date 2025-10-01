@@ -1,0 +1,58 @@
+Title: IBM Assertion Failed! Expression: _env && "Error: Java environment could not initialized in JVizConverter." - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I successfully installed SPSS for Windows, but when I try to start SPSS I get the following error message:
+
+Assertion failed!
+
+Program: \spsswin.exe
+File Z:\backend\chartxml\vizedit\vizconverter.cpp
+Line: 25
+
+Expression: _env && "Error: Java environment could not initialized in JVizConverter."
+
+When I browse to the place where I tried to install SPSS I see that the installer has created two separate folders regardless of what I specified and each of these folders contains a part of the SPSS application.
+
+What is happening and is there any way around this? 
+
+RESOLVING THE PROBLEM
+One or more of the following reasons may apply:
+
+1) SPSS was not properly installed. Please reinstall SPSS using the Repair option. To do this, please run setup.exe from the current SPSS for Windows CD-ROM and choose to repair the existing installation. 
+
+2) A corruption has occurred in your jvmcfg.ini file. Browse to this file in the SPSS directory, open it in a text editor and ensure the following lines exist: 
+
+; Windows
+jvm_lib_path1=.\JRE\bin\client\ .
+
+3) The default Program Files directory is set to a different partition than C. This problem has been filed with SPSS Development to be addressed in a future release. To circumvent the problem, please do the following:
+
+WARNING: Please be aware that you use the Registry Editor at your own risk. If you use the Registry Editor incorrectly, you may cause serious problems that may require you to reinstall your operating system. Please make sure you have a current system boot disk before following these steps.
+
+1. Uninstall your existing installation of SPSS for Windows.
+
+2. If you haven't already, please log in using an account that is a member of the local Administrator's group.
+
+3. Go to Start->Run and type "regedit" (no quotes)
+
+3. Navigate to HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion
+
+4. On the right-hand side of the Registry Editor, please double-click "ProgramFilesDir" and enter "C:\Program Files". [Make a note of the text currently entered here -- you may wish to change this back after reinstalling SPSS].
+
+5. Exit the registry editor and reinstall SPSS to the desired location. Once the installation is complete, you may revert to the original "ProgramFilesDir" value.
+
+4) You may have a conflicting version of Java installed. Please uninstall and re-start SPSS to determine if the problem goes away. 
+
+We apologize for any inconvenience this may have caused
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 52620

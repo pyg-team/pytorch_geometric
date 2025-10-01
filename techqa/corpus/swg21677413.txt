@@ -1,0 +1,49 @@
+Title: IBM Netview :  How to Add a Date/Time Stamp to the PIPE CZR output for CANZLOG Messages - United States
+
+Text:
+CANZLOG PIPE CZR EDIT IFRAUGMT timestamp TECHNOTE (FAQ)
+
+QUESTION
+ Client using PIPE CZR to copy Netview CANZLOG messages to a dataset. However, the output message have no date or time stamps. Client asks how to the PIPE CZR to output messages with the date and time stamp fields ? 
+
+ANSWER
+This question is related to the example shown in the NetView publications at this url: 
+
+http://publibfi.boulder.ibm.com/cgi-bin/bookmgr/BOOKS/envi1400/9.3? [http://publibfi.boulder.ibm.com/cgi-bin/bookmgr/BOOKS/envi1400/9.3?] 
+
+The timestamp of the CANZLOG messages are not shown with the PIPE CZR command, but can be added to your output, with a PIPE EDIT IFRAUGMT command. This will extract the time value and copy it at the front of the message. Add that as a stage between the CZR stage and the write stage and the desired effect can be obtained:
+
+PIPE CZR ... EDIT IFRAUGMT ... 
+
+Here is an example provided to the customer to help them add a time stamp to their CANZLOG message output :
+
+/* rexx */ 
+msgcount = 100 
+ourFilter = 'filter parms' 
+'CNMECZFS CZSET' ourFilter 
+"PIPE (NAME CNZLOG0 END % )", 
+"| AA: CZR TIME FFFFF " msgCount " -", 
+"| SEP", 
+"| STEM CANZMSG. ", 
+"| AB: EDIT IFRAUGMT OPDT 1", 
+"| SEP", 
+"| STEM CANZTIME. ", 
+"% AA: | VAR report" 
+DO I = 1 TO CANZMSG.0 
+CANmsg.I = canztime.i canzmsg.i 
+say canmsg.i 
+END 
+EXIT 
+
+The SEPARATE (SEP) stage was added to the above example to handle multiline messages. If you run into a problem with a timeout from the CANZLOG BROWSE then that can be addressed by increasing the DEFAULTS CZBRWAIT setting (default is 10 seconds; see HELP for DEFAULTS). 
+
+
+ 
+
+HISTORICAL NUMBER
+ 27767
+004
+000 
+
+PRODUCT ALIAS/SYNONYM
+ NV NETV NVz NVzOS

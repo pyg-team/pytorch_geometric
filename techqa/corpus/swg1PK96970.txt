@@ -1,0 +1,207 @@
+Title: IBM PK96970: ATTACH API .COM_IBM_TOOLS_ATTACH COM.IBM.TOOLS.ATTACH ENABLE DISABLE TMP TMPDIR - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The SDK User's Guide Attach API section needs to be updated to
+   include the following information.
+   
+   The Attach API was introduced via Java 5 SR10 to the z/OS
+   platform and it is enabled by default.
+   
+   The Attach API creates a control file root subdirectory in the
+   default temporary subdirectory. Under z/OS, the /tmp directory
+   is used as the default temporary directory. But, the location
+   of the temporary directory can be modified via the TMPDIR
+   environment variable or the java.io.tmpdir system property.
+   
+   The default name of the control file root subdirectory is
+   .com_ibm_tools_attach and it holds all control files needed for
+   the Attach API. The control files are grouped by process-id.
+   As a result, the control file root subdirectory holds other
+   subdirectories named after the process-id associated with the
+   java work.
+   
+   Attach API Properties
+   
+   The following system properties are available to control the
+   Attach API feature,
+   
+   com.ibm.tools.attach.directory=value
+      description: Used to select a different location for the
+                   process-id subdirectory that holds the control
+                   files needed to attach to the respective java
+                   process.
+      value:       An absolute or relative directory name
+      default:     The .com_ibm_tools_attach subdirectory in the
+                   default temporary subdirectory.
+   
+   com.ibm.tools.attach.enable=value
+      description: Used to enable or disable the Attach API
+                   feature.
+      value:       "yes" or "no"
+      default:     "yes"
+   
+   com.ibm.tools.attach.timeout=value
+      description: Used to modify the time in seconds required to
+                   connect to a target VM. The value of zero
+                   indicates an infinite amount of seconds.
+      value:       0 to 2147483647
+      default:     120
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The next release of the Java 5 User Guide will include
+   the following text describing the Attach API:
+   
+   ---------------------------------------------
+   Support for the Java Attach API
+   The Java? Attach API allows your application to connect to
+   another virtual machine (the "target"). Your application can
+   then load an agent application into the target virtual machine,
+   for example to perform tasks such as monitoring status.
+   
+   Code for agent applications, such as JMX agents or JVMTI agents,
+   is normally loaded during virtual machine startup by specifying
+   special startup parameters. Requiring startup parameters might
+   not be convenient for using agents on applications that are
+   already running, such as WebSphere&#169; Application Servers. Using
+   the Java Attach API, lets you load an agent at any time by
+   specifying the process ID of the target virtual machine. The
+   Attach API capability is sometimes called "late attach".
+   
+   On z/OS, the Attach API is enabled by default for Java 5 SR 10
+   and later.
+   
+   By default, the target virtual machine is identified by its
+   process ID. To use a different target, change the system
+   property com.ibm.tools.attach.id; for example:
+         -Dcom.ibm.tools.attach.id=<process_ID>
+   The target process also has a human-readable "display name". By
+   default, the display name is the process ID. To change the
+   default display name, use the com.ibm.tools.attach.displayName
+   system property. The ID and display name cannot be changed after
+   the application has started.
+   
+   The Attach API creates working files in a common directory
+   called .com_ibm_tools_attach, which is created in the system
+   temporary directory. The system property java.io.tmpdir holds
+   the value of the system temporary directory. On non-Windows&#169;
+   systems, the system temporary directory is typically /tmp. To
+   modify the working directory, use the Java system property
+   com.ibm.tools.attach.directory; for example:
+         -Dcom.ibm.tools.attach.directory=/working
+   To prevent use of the Attach API capability, set the
+   com.ibm.tools.attach.enable system property to the value no; for
+   example:
+         -Dcom.ibm.tools.attach.enable=no
+   On heavily loaded system, applications might experience timeouts
+   when attempting to connect to target applications. The default
+   timeout is 120 seconds. Use the com.ibm.tools.attach.timeout
+   system property to specify a different timeout value in seconds;
+   for example, to timeout after 60 seconds:
+         -Dcom.ibm.tools.attach.timeout=60
+   A timeout value of zero indicates an indefinite wait.
+   For JMX applications, you might need to disable authentication
+   by editing the
+   <JAVA_HOME>/jre/lib/management/management.properties file.
+   Set the following properties to disable authentication in JMX:
+        com.sun.management.jmxremote.authenticate=false
+        com.sun.management.jmxremote.ssl=false
+   An unsuccessful attempt to invoke the Attach API results in one
+   of the following exceptions:
+        com.sun.tools.attach.AgentLoadException
+        com.sun.tools.attach.AgentInitializationException
+        java.io.IOException
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  No update
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK96970
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA 5 Z/OS 31
+   
+   
+ * REPORTED COMPONENT ID
+   620500105
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-23
+   
+   
+ * CLOSED DATE
+   2009-10-09
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

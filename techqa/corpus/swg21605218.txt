@@ -1,0 +1,31 @@
+Title: IBM Accessing Tivoli Common Reporting (TCR) Portal using Firefox web browser - United States
+
+Text:
+TCR 2.1.1 IFIX 6 ; 2.1.1.0-TIV-TCR; "IBM Tivoli Common Reporting 2.1.1.0 Interim Fix 6 "; 2.1.1.0-TIV-TCR-Linux-IF0006; 2.1.1.0-TIV-TCR-WIN-IF0006; 2.1.1.0-TIV-TCR-zLinux-IF0006; 2.1.1.0-TIV-TCR-AIX-IF0006 TECHNOTE (FAQ)
+
+QUESTION
+ How-to view TCR portal in the Firefox web browser? 
+
+ANSWER
+Interim Fix 13 for Tivoli Common Reporting 2.1.1.0 contains the upgrade of Cognos BI from 8.4.1 FP3 to 8.4.1 FP5 and provides the support for the Firefox 17 Extended Support Release (ESR) browser.
+1) Stop TCR Server 
+2) Download 2.2.0-TIV-TIP-{arch}-FPxxxx.zip and 2.2.0-TIV-FITSUIT-FPxxxx.zip
+3) Extract 2.2.0-TIV-FITSUIT-FPxxxx.zip to <install_dir>/tipv2/profiles/TIPPROFILE/etc
+4) Extract 2.2.0-TIV-TIV-TIP-{arch}-FPxxxx.zip to a temporary directory.
+5) Change directory to <temporary directory>/cdimage.fixpack
+6) Create a copy sample_response.txt to response.txt
+7) Edit response.txt
+Update 
+
+ * IAGLOBAL_TIP_HOME <-Confirm PATH 
+ * IAGLOBAL_WASUserID <-Confirm userid (default= tipadmin) 
+ * IAGLOBAL_WASPassword <-Set to valid password used by tipadmin
+
+8) Install 2.2.0-TIV-TIP-{arch}-FPxxxx 
+install.{bat|sh} -i silent -f response.txt 
+NOTE: On Windows Server, security popup window will appear. 
+
+9) cd to <temporary directory>/2.1.1.0-TIV-TCR-{arch}-IF13 
+10) Confirm TCR Server is down 
+11) Launch install script for TCR 2.1.1 IFIX 13 
+install.{bat|sh} -i <install_dir>/tipv2Components/TCRComponent -username tipadmin -password {password}

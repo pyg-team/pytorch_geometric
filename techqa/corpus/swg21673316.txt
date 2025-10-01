@@ -1,0 +1,28 @@
+Title: IBM How To Display More Characters of a Description Field in the List Screen - United States
+
+Text:
+Description field; TPAECUSTOMIZATION; word wrap; truncation TECHNOTE (FAQ)
+
+QUESTION
+ I have made my description field wider using a width="500" tag added in the XML, but the text does not fill the area it just resulted in more white space. Is there a way to get more text to display? 
+
+ANSWER
+There is a wrap length property used to determine where to break (or truncate)
+the string. 
+
+
+The wraplength value is used to determine where to break (or truncate)
+the string. If it is set to 40, it will break sometime before 40 (or truncate).
+It doesn't matter how wide you make the table, it will just cause extra
+white space.
+The break/truncate will still occur even though the column seems wide
+enough to hold it all.
+
+You can set the wraplength value to be wider, so more text appears in the field before truncating.
+
+In the System Properties application select the webclient.wraplength property and set to your desired length say 100.
+Save. Select the property checkbox and select Live Refresh from the toolbar. 
+
+
+There is also a property to turn off the wrap functionality, webclient.wrapreadonlycolumns
+= false

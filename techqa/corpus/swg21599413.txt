@@ -1,0 +1,44 @@
+Title: IBM Receiving Error 1329 or 1330 while installing IBM SPSS Modeler on a Windows XP operating system - United States
+
+Text:
+Error 1330 ; Error 1329; Cabinet file is corrupted; invalid digital signature TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+Upon attempting to install IBM SPSS Modeler on a Windows XP operating system, the end-user is receiving:
+
+Error 1329 or 1330: a file that is required cannot be installed because the cabinet file is not digitally signed. This may indicate that the cabinet file is corrupt.
+
+
+SYMPTOM
+ 
+
+Unable to Install IBM SPSS Modeler on Windows XP operating system
+
+
+ENVIRONMENT
+ 
+
+This errors only occurs under Windows XP.
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+Installation of the same program on a Windows Vista or 7 operating system does not reproduce this issue. This proves that the downloaded cabinet files are not corrupt.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+This is a problem with the digital signature certificates on your Windows XP machine. You can update your certificates by installing the digital signature from the links below:
+For Windows XP: http://support.microsoft.com/kb/960554/en-us [http://support.microsoft.com/kb/960554/en-us]
+For Windows Server: http://support.microsoft.com/kb/888303/en-us [http://support.microsoft.com/kb/888303/en-us] 
+
+ 
+
+This issue has been documented in the Troubleshooting section of the IBM SPSS Modeler Installation Guides.
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]

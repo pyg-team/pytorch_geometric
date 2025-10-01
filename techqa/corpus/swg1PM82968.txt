@@ -1,0 +1,155 @@
+Title: IBM PM82968: CMPNTFRAGMENT IS NOT SERIALIZABLE ERRORS IN LOGS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using the WCM Authoring UI, in some cases you may see a
+   'com.aptrix.pluto.cmpnt.codec.CmpntFragment' is not serializable
+   exception such as:
+   
+   [1/30/13 5:10:20:038 CET] 00000087 WASSession E
+   SessionContextMBeanAdapter findAttCausingNotSerializableExceptio
+   n Miscellaneous data: Attribute "PC_Z5_CGAH47L00GLG70IAH1UJA728B
+   1020746_tm" is declared to be serializable but is found to
+   generate exception "java.io.NotSerializableException" with
+   message "com.aptrix.pluto.cmpnt.codec.CmpntFragment". Fix the
+   application so that the attribute
+   "PC_Z5_CGAH47L00GLG70IAH1UJA728B1020746_tm" is correctly
+   serializable at runtime
+   
+   This defect is to handle the making of the
+   'com.aptrix.pluto.cmpnt.codec.CmpntFragment' serializable so
+   these errors don't occur.
+   Opened for release 7002
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When using the WCM Authoring UI, in some cases you may see a
+   'com.aptrix.pluto.cmpnt.codec.CmpntFragment' is not
+   serializable
+   exception such as:
+   
+   [1/30/13 5:10:20:038 CET] 00000087 WASSession E
+   SessionContextMBeanAdapter findAttCausingNotSerializableExceptio
+   
+   n Miscellaneous data: Attribute "PC_Z5_CGAH47L00GLG70IAH1UJA728B
+   
+   1020746_tm" is declared to be serializable but is found to
+   generate exception "java.io.NotSerializableException" with
+   message "com.aptrix.pluto.cmpnt.codec.CmpntFragment". Fix the
+   application so that the attribute
+   "PC_Z5_CGAH47L00GLG70IAH1UJA728B1020746_tm" is correctly
+   serializable at runtime
+   
+   This defect is to handle the making of the
+   'com.aptrix.pluto.cmpnt.codec.CmpntFragment' serializable so
+   these errors don't occur.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Analysis: The class is question is referenced from within some
+   of the WCM Authoring UI Portlet Model classes which themselves
+   are referenced by the WCM Authoring UI 'Application-Model' which
+   is stored in the session for performance. Thus, the class in
+   question should be made serializable.
+   Solution: Top-level interface com.aptrix.pluto.cmpnt.codec
+   .Fragment was made serializable
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM82968
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-17
+   
+   
+ * CLOSED DATE
+   2013-03-11
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

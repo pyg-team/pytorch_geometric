@@ -1,0 +1,66 @@
+Title: IBM SSL RC 435 from function 'gsk_secure_socket_init' - United States
+
+Text:
+DFHSO0123 ; 435 ; gsk_secure_socket_init ; SSL ; SSL_ERROR ; GSK_ERR_UNKNOWN_CA ; SECURE_SOC_INIT ; CLIENT_ERROR ; 1B3 ; dfhsose ; dfhsock ; 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 kixinfo TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ Your CICS Transaction Server for z/OS (CICS TS) Web services SSL request fails with:
+DFHSO0123 Return code 435 received from function 'gsk_secure_socket_init' of System SSL.
+Reason: Untrusted Certificate Authority. 
+
+SYMPTOM
+DFHSO0123 Return code 435 received from function 'gsk_secure_socket_init' of System SSL.
+Reason: Untrusted Certificate Authority.
+
+CAUSE
+There can be several reasons for the error: 
+
+ * The certificate was added to the keyring after CICS TS was started 
+ * Changes were made to the certificate, like marking it trusted and CICS TS wasn't restarted 
+ * If RACF classes DIGTCERT and DIGTRING are raclisted, then a SETROPTS RACLIST(DIGTCERT DIGTRING) REFRESH was not done after adding or changing the certificates, followed by a restart of CICS TS
+
+DIAGNOSING THE PROBLEM
+Return code 435 [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/gska1a80/13.1.46] from gsk_secure_socket_init [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/gska1a80/7.21] means:
+Certification authority is unknown. 
+Explanation: The key database does not contain a certificate for the certification authority. 
+User response: Obtain the certificate for the certification authority and add it to the key database. When using a SAF key ring, the CA certificate must be TRUSTed.
+
+APAR PK35216 [http://www.ibm.com/support/docview.wss?uid=swg1PK35216] was created to have CICS correctly interpret the return code 435 as Unknown Certificate Authority instead of Untrusted Certificate Authority. This has been corrected beginning with CICS TS V3.2.
+
+You can test your basic Web SSL setup in CICS TS fom a Web browser using the CICS Web Bridge: 
+
+ * 
+ * 
+
+
+where ipaddr is your z/OS host ip address, port is the PORTNUMBER specified on your TCPIPSERVICE definition, and tran is a 3270 transaction id like CEMT. 
+
+A CICS trace for the DFHSO0123 message will show:  * 
+ * 
+ * 
+
+If you need to gather an SSL trace, see the z/OS Cryptographic Services System Secure Sockets Layer Programming [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/gska1a80/COVER] documentation for configuring the SSL started task [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/gska1a80/11.0] (GSK Server) and Obtaining Diagnostic Information [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/gska1a80/12.0]. The steps for Capturing Component Trace Data [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/gska1a80/12.3] are summarized here, but refer to the documentation for additional information:  1. S GSKSRVR 
+ 2. Restart CICS. 
+ 3. Update GSKWTR PROC to add a dataset to hold the trace. 
+ 4. TRACE CT,WTRSTART=GSKWTR 
+ 5. TRACE CT,ON,COMP=GSKSRVR 
+ 6. R n,JOBNAME=(yyy),OPTIONS=(LEVEL=255),WTR=GSKWTR,END
+    where yyy is the name of CICS. 
+ 7.  Recreate the problem. 
+ 8. TRACE CT,OFF,COMP=GSKSRVR 
+ 9. TRACE CT,WTRSTOP=GSKWTR
+
+RESOLVING THE PROBLEM
+Check the following: 
+
+ * Ensure that every Certificate Authority (CA) certificate that signed their certificate is in the keyring specified in KEYRING parameter in the System Initialization Table (SIT). 
+ * The CA certificates must be in RACF as a trusted certificate and in the CICS keyring with usage CERTAUTH. 
+ * Issue SETROPTS RACLIST(DIGTCERT DIGTRING) REFRESH and restart CICS.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

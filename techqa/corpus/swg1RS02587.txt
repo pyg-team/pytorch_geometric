@@ -1,0 +1,156 @@
+Title: IBM RS02587: CORRUPTED FILE NAME WHEN USING "DOWNLOAD THIS DECISION TABLES AS AN EXCEL FILE" IN JAPANESE [ODM ON CLOUD] - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Operational Decison Manager z/OS 8.8.1.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24043654]
+Operational Decision Manager V8.8.1.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24043530]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This is a follow up to the Defect 96609 that was fixed with
+   EOWIN for ODM on Cloud
+   In decision artifacts tab, when you edit the DT, the  "Download
+   
+   ths decision table as an Excel File" leads to corrupted file
+   name when the DT name is in Japanese and the DT is being
+   displayed.
+   To reproduce on the Business Console:
+   1) In Decision Artifacts tab, create (or rename) any DT so that
+   
+   the DT name contains some Japanese Character, for instance
+   "&#244;&#183;&#251;{&#238;&#219;DT" (you can copy-paste this name if you don't have any
+   Japanese Input Method installed on your machine).
+   2) Edit the table
+   3) Click on the " Download the Selected decision tables as an
+   Excel File" button.
+   Prior to the fix for Defect 96609, the download was failing.
+   Now it does perform the download, so this is a great
+   improvement.
+   However, the name of the file being downloaded is corrupted (
+   see attachment 37959)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Instead of editing the table you want to download, select it,
+   and use the "Download the selected decision tables as an Excel
+   file" instead.
+   This download works fine, file name is not corrupted.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In decision artifacts tab, when editing a DT, the "download
+   this decision table as Excel File" leads to corrupted file name
+   when the DT name is in Japanese.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02587
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6900
+   
+   
+ * REPORTED RELEASE
+   881
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-12-09
+   
+   
+ * CLOSED DATE
+   2017-01-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * FIXED COMPONENT ID
+   5725B6900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R881 PSY
+   UP

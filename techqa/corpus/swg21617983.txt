@@ -1,0 +1,32 @@
+Title: IBM How can I modify the configuration for ES Remote P8 Agent servlet? - United States
+
+Text:
+ICA TECHNOTE (FAQ)
+
+QUESTION
+ I use IBM Content Analytics with Enterprise Search 3.0.
+I deploy ES P8 Remote Agent servlet on the FileNet P8 server.
+According to Remote P8 Agent diagnostic page, "serviceuri" seems to be "iiop://<p8 server>:2809/FileNet/Engine" by default, however, my FileNet P8 server uses a different port number.
+Can I modify the configuration for ES Remote P8 Agent servlet? 
+
+ANSWER
+To modify the configuration for ES Remote P8 Agent servlet: 
+
+ 1. Confirm that your "iiop//<p8 server>:<port number>/FileNet/Engine" works as expected with ES Remote P8 Agent diagnostic page. 
+ 2. Go to WebSphere application server installedApplication directory of FileNet P8 server and move into ESP8RemoteService installed directory. 
+ 3. Go to WEB-INF directory, open config.properties with a text editor, then you will find following lines that are commented out.
+    ----------------------
+    # URI string used for making P8 API EJB connection
+    # By default, it's dynamically created based on local server name
+    #param.serviceuri=iiop://<p8 server>:2809/FileNet/Engine 
+    #
+    # JAAS additional stanza name. By default it's "FileNetP8"
+    #param.stanza=FileNetP8
+    ---------------------- 
+ 4. Add the following line and save changes
+    param.serviceuri=iiop://<p8 server>:<port number>/FileNet/Engine 
+ 5. Restart ESP8RemoteService application on FileNet P8 server 
+ 6. You should see "iop://<p8 server>:<port number>/FileNet/Engine" as default serviceuri at ES Remote P8 Agent diagnostic page.
+
+RELATED INFORMATION
+ Configuring SSO for FileNet P8 Documents [http://www-01.ibm.com/support/docview.wss?uid=swg27023986&aid=1]

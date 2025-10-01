@@ -1,0 +1,98 @@
+Title: IBM How to install Oracle 12C r1 client onto a Controller application server - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Customer is hosting their Controller database on an Oracle 12C server. How should they install the Oracle 12C client on their application server? 
+
+CAUSE
+If the Oracle client is installed incorrectly, or the wrong version of the client is installed, then the users will receive many different issues/errors.
+
+ANSWER
+The following is based on Controller 10.2.1 and 10.3. 
+
+ * The instructions may vary slightly for other versions of Controller.
+
+
+Steps: 
+
+1. Download the latest patchset version of the Oracle 12C release 1 64-bit client. 
+
+ 
+
+At the time of writing: 
+
+ * The latest version is 12.1.0.2.0 
+ * This is currently available from here: http://www.oracle.com/technetwork/database/enterprise-edition/downloads/database12c-win64-download-2297732.html [http://www.oracle.com/technetwork/database/enterprise-edition/downloads/database12c-win64-download-2297732.html] 
+ * Specifically, you need to download “winx64_12102_client.zip”.
+
+
+2. Extract this file (“winx64_12102_client.zip”) onto the Controller application server, and run 'setup.exe' 
+
+ * VITAL: During the client installation wizard, select a full 'Administrator' install option:
+
+[/support/docview.wss?uid=swg22005849&aid=1] [/support/docview.wss?uid=swg22005849&aid=1]  * Typically choose all the default options for the other wizard choices.
+
+
+3. After the install has finished, check that it has installed all the expected components, by looking at the size of the "C:\app" folder (or wherever you have installed it to). The total size should be approximately 1.41Gb. 
+
+ 
+
+4. Now create/edit your TNSNAMES.ORA file. 
+
+ * By default, this is located here: C:\app\client\Administrator\product\12.1.0\client_1\network\admin 
+ * Ensure that it contains entries on how to connect to your Oracle database server(s)
+
+
+5. Next you need to create a ‘System Variable’ (on your Controller application server) called ‘TNS_ADMIN’ to point to the location of your TNSNAMES.ORA file. 
+
+ * By default, the value would be: C:\app\client\Administrator\product\12.1.0\client_1\network\admin
+
+[/support/docview.wss?uid=swg22005849&amp;aid=2] 
+======================================== 
+TIP: Before continuing, due to a bug in Oracle ( https://community.oracle.com/thread/3653584 [https://community.oracle.com/thread/3653584] ) you will probably need to rename the registry key “HKLM\Software\Oracle” to “HKLM\Software\Oracle.OLD”. 
+======================================== 
+6. Next, download the latest patchset version of the Oracle 12C release 1 32-bit client. 
+
+ 
+
+At the time of writing: 
+
+ * The latest version is 12.1.0.2.0 
+ * This is currently available from here: http://www.oracle.com/technetwork/database/enterprise-edition/downloads/database12c-win64-download-2297732.html [http://www.oracle.com/technetwork/database/enterprise-edition/downloads/database12c-win64-download-2297732.html] 
+ * Specifically, you need to download “winnt_12102_client32.zip”.
+
+
+7. Extract this file (“winnt_12102_client32.zip”) onto the Controller application server, and run 'setup.exe' 
+
+ * VITAL: During the client installation wizard, select a full 'Administrator' install option:
+
+[/support/docview.wss?uid=swg22005849&aid=3] [/support/docview.wss?uid=swg22005849&aid=3]  * The author recommends that you install this software to a SEPARATE folder (from the 64-bit client)  * For example, install it into the folder: C:\app_32\Administrator
+   
+   
+
+8. After the install has finished, check that it has installed all the expected components, by looking at the size of the "C:\app_32" folder (or wherever you have installed it to). The total size should be approximately 1.41Gb. 
+
+ 
+======================================== 
+
+IMPORTANT: Finally, undo the registry key renaming that you did earlier. 
+
+· In other words, rename the registry key “HKLM\Software\Oracle.OLD” to “HKLM\Software\Oracle”.
+========================================
+
+
+9. Configure ‘ccr-system-properties.properties’ file (to specify the location of the TNSNAMES.ORA file) by performing the following: 
+
+ * Browse to this folder: C:\Program Files\IBM\cognos\ccr_64\server\integration 
+ * For Oracle 12C, by default the location of the TNSNAMES.ORA file is usually the directory:  *  C:\app\client\Administrator\product\12.1.0\client_1\network\admin 
+   
+   
+
+=> Therefore, in this default case, you need to modify the file ‘ccr-system-properties.properties’ as follows:  
+
+# Oracle Network admin directory path, the location of the TNSNAMES.ORA file oracle.net.tns_admin= oracle.net.tns_admin=C:\\app\\client\\Administrator\\product\\12.1.0\\client_1\\network\\admin 
+
+
+[/support/docview.wss?uid=swg22005849&aid=4] [/support/docview.wss?uid=swg22005849&aid=4]

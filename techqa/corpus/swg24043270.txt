@@ -1,0 +1,52 @@
+Title: IBM PI76504: Ship Java 8 SR4 FP1 for WAS Liberty Archive V855X and 16.0.0.2+ - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ Ship Java 8 SR4 FP1 for WAS Liberty Archive V855X and 16.0.0.2+ 
+
+DOWNLOAD DESCRIPTION
+ERROR DESCRIPTION: 
+
+
+Ship Java 8 SR4 FP1 for WAS Liberty Archive V855X and 16.0.0.2+
+
+LOCAL FIX: 
+None.
+
+PROBLEM SUMMARY: 
+Ship Java 8 SR4 FP1 for WAS Liberty Archive V855X and 16.0.0.2+
+
+USERS AFFECTED:
+IBM WebSphere Application Server Liberty with Java 8 archive users. 
+
+ * IBM WebSphere Liberty archive versions 8.5.5.5 - 8.5.5.9 
+ * Liberty archive versions 16.0.0.2 and later
+
+These i-fixes are a replacement for the withdrawn PI74594. 
+
+PROBLEM DESCRIPTION: 
+Ship Java 8 SR4 FP1 for WAS Liberty Archive V855X and 16.0.0.2+ 
+
+RECOMMENDATION: 
+Apply this i-fix to your SDK to upgrade your SDK 8 to SDK8 SR4 FP1. 
+
+Instructions for updating the SDK when using Liberty archive format 
+http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.wlp.nd.multiplatform.doc/ae/twlp_inst_java_zip.html [http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.wlp.nd.multiplatform.doc/ae/twlp_inst_java_zip.html] 
+
+PROBLEM CONCLUSION: 
+Applying this apar will upgrade your SDK 8 to SDK8 SR4 FP1 (Oracle 1.8.0_u121 ). 
+These i-fixes are a replacement for the withdrawn PI74594. 
+
+The fixes in this Java SDK are found here: 
+https://www.ibm.com/developerworks/java/jdk/fixes/8/#SR4FP1 [https://www.ibm.com/developerworks/java/jdk/fixes/8/#SR4] DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Linux 32-bit i/p Series Java SDK 21 Feb 2017 English 139123533 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-LinuxPPC32-IFPI76504&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Linux 64-bit i/p Series Java SDK 21 Feb 2017 English 152301568 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-LinuxPPC64-IFPI76504&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Linux 64-bit Little Endian (LE) i/p Series Java SD 21 Feb 2017 English 155138250 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-LinuxPPC64LE-IFPI76504&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Linux 32-bit x86 AMD/Intel Java SDK 21 Feb 2017 English 136020741 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-LinuxX32-IFPI76504&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Linux 64-bit x86 AMD/Intel Java SDK 21 Feb 2017 English 148024938 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-LinuxX64-IFPI76504&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Win 32-bit x86 AMD/Intel Java SDK 21 Feb 2017 English 164028123 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-WinX32-IFPI76504&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Win 64-bit x86 AMD/Intel Java SDK 21 Feb 2017 English 189224315 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.0.0.0-WS-WASJavaSDK8-WinX64-IFPI76504&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] 
+ [/support/docview.wss?uid=swg24043270&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24043270&aid=2]Problems (APARS) fixed
+PI76504, PI74594

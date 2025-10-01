@@ -1,0 +1,169 @@
+Title: IBM IV95469: NEED TO DETECT A BAD CERTIFICATE EARLY IN THE FIX PACK INSTALL PROCESS - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-ZLINUX-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0010&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0010&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0010&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0010&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0010&source=SAR]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 10(7.1.0-TIV-NCI-FP0010) [http://www-01.ibm.com/support/docview.wss?uid=swg24043588]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 11(7.1.0-TIV-NCI-FP0011) [http://www-01.ibm.com/support/docview.wss?uid=swg24043858]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 12 (7.1.0-TIV-NCI-FP0012) [http://www-01.ibm.com/support/docview.wss?uid=swg24044312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There is a need to address the detection of the bad
+   certificate, early in the Fix Pack install process, and
+   rollback (prior to Impact code changes get placed on the
+   environment).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Fix for this will be included in a future Fix Pack release
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * There are occasions when a Client might go through the       *
+   * process of renaming their Impact servers hostnames.  If they *
+   * do so, and forget to update the keystore with the            *
+   * appropriate values; the next time a command (such as         *
+   * nci_version_control or nci_trigger) is run, it will fail.    *
+   * When running the nci_version_control "uncoall" command, the  *
+   * following exception is being generated:                      *
+   *                                                              *
+   * ./opt/IBM/tivoli/impact/bin/nci_version_control NCI uncoall  *
+   * impactadmin                                                  *
+   * javax.net.ssl.SSLHandshakeException:                         *
+   * java.security.cert.CertificateException: No name matching    *
+   * <hostname>  found                                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   he nci_version_control is used during the Fix Pack upgrade
+   process, to unlock all of the locked files (such as policies)
+   within impact.
+   
+   If the nci_version_control fails to execute properly, the Fix
+   Pack installer will attempt to rollback the installation but,
+   there will be occasions where the rollback will leave the
+   environment in a unstable state; requiring manual actions to put
+   it back to the proper state.
+   
+   To address this issue, the Impact Health Check logic has been
+   intetrated into the latest Impact 7.1.0 Fix Pack.  This logic is
+   also avilable via a download (for Clients not updating to Fix
+   Pack 10 or above).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following
+   maintenance packages:
+   
+   | Fix Pack     | 7.1.0-TIV-NCI-FP0010 |
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV95469
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-04-26
+   
+   
+ * CLOSED DATE
+   2017-06-24
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

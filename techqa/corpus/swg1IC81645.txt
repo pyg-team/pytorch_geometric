@@ -1,0 +1,146 @@
+Title: IBM IC81645: OPM WHEN ATTEMPTING TO ADD A MONITORED DATABASE THE REQUEST IS FAILED WITH THE SQLCODE -803 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When attempting to display a list of monitored databases in the
+   web client panels the request was returning the -803 error.  Any
+   attempt to add a new database to be monitored would fail.  It is
+   believed that this condition was present because an earlier
+   attempt to drop a monitoer database failed with a program error.
+   datatools.log
+   1243212 [Thread-41]
+   com.ibm.datatools.perf.repository.RsApiSubTracer - TIME :
+   2012-02-18T17:29:12.845-0500 IMPACT : Info
+   ACTION : CONNECT OBJECT : DataBase OBJINFO :
+   "com.ibm.datatools.perf.repository.api.profile.exceptions.Profil
+   eBaseException :: Exception <2109111734> message: <DB2 SQL
+   Error: SQLCODE=-803, SQLSTATE=23505,
+   SQLERRMC=2;DB2PM.CONNECTION_PROFILE, DRIVER=3.59.81,
+   SQLState=<23505>, ErrorCode=<-803>. SQLCA=<One or more values in
+   the INSERT statement, UPDATE statement, or foreign key update
+   caused by a DELETE statement are not valid because the primary
+   key, unique constraint or unique index identified by "2"
+   constrains table "DB2PM.CONNECTION_PROFILE" from having
+   duplicate values for the index key.. SQLCODE=-803,
+   SQLSTATE=23505, DRIVER=3.59.81>.>."
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  With the OPM product down run this pair of SQL statements to
+   clear the data to allow the Web UI to rebuild the list.
+     1) drop everything from db2pm.connection_profile table.
+             "db2 delete from db2pm.connection_profile;".
+     2) Drop profile IDs in db2pm.datadases table.
+             "db2 update db2pm.databases set d_profile_id=null;"
+   On restart of the Web server the list of databases will be
+   rebuilt by the code
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Closing PER
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Install Optim Performance Manager Fix Pack 4.1.1.1 or InfoSphere
+   Optim Performance Manager Version 5.1 or later.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC81645
+   
+   
+ * REPORTED COMPONENT NAME
+   OPT PER MGR DB2
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y9400
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-24
+   
+   
+ * CLOSED DATE
+   2013-02-25
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OPT PER MGR DB2
+   
+   
+ * FIXED COMPONENT ID
+   5724Y9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R411 PSY
+   UP

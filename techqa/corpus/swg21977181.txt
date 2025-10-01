@@ -1,0 +1,52 @@
+Title: IBM Issues with Network View Bookmarks and Libraries in IBM Tivoli Network Manager IP Edition version 4.2. - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ This hot fix resolves some performance and functional issues in Bookmarks and Libraries for IBM Tivoli Network Manager IP Edition version 4.2. 
+
+CONTENT
+Symptoms:
+Issues such as the following may occur with Libraries and Bookmarks:
+
+Incorrect values reported for unique event count and maximum event severity in the Bookmarks tree
+Navigating between Libraries and Bookmarks can lead to incorrect unique event count and maximum severity values in the Bookmark tree component of the Network Health View, Network Views and, for Netcool Operations Insight customers, Network Health Dashboard pages.
+
+Event status is sometimes slow to update in the Libraries and Bookmarks trees
+Event status can be slow to update in the Libraries and Bookmarks tree components of the Network Health View, Network Views, Path Views, and, for Netcool Operations Insight customers, the Network Health Dashboard pages.
+
+Resolving the issue
+PLEASE NOTE: Concurrent installation of this hot fix alongside IBM Tivoli Network Manager IP Edition v4.2 is NOT SUPPORTED. Please install Network Manager v4.2 before attempting to install this fix.
+
+To resolve, install the following fix on the CORE and GUI servers: 
+1) Download IV81361.all.4.2.0.20160218_1628.zip. 
+http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-IV81361&source=SAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-IV81361&source=SAR]
+2) Unzip IV81361.all.4.2.0.20160218_1628.zip
+3) Run Installation Manager and point it at the root of the file unzipped in step (2) above
+4) In Installation Manager, press Update and follow the instructions in the wizard.
+
+Alternatively, you can start Installation Manager, ensuring that you enable the connection to Passport Advantage within the Installation Manager Preferences, then press Update and follow the instructions for remote installation of the hot fix in the wizard.
+
+Related information
+Download Bookmarks hot fix (IV81361.all.4.2.0.20160218_1628.zip) 
+
+Known issues 
+
+Issue: Removing a view from a shared bookmark can result in the view appearing to persist in the bookmark in the GUI.
+Workaround: Log out and log back in again.
+
+Issue: When you select a network view in the Network Health Dashboard, by default a second tab opens, called "Network View". This tab contains a dashboard comprised of the Network View widget, the Event Viewer, and the Structure Browser. The Network View widget displays the selected network view. 
+
+However, if you create a custom page that includes the Dashboard Network Views widget and the Network View widget, a new page containing a Network View widget still appears when you click on a network view, but it does not display the selected network view. Only the Network View widget on the same page updates.
+
+Workaround: Do not include both a Network View widget and a Dashboard Network View widget on the same custom page.
+
+Alternatively, if you want to prevent a new page from appearing when a network view is clicked from any Dashboard Network Views widget, change the default behavior by completing the following steps:
+1. Edit the following configuration file: $NMGUI_HOME/profile/etc/tnm/topoviz.properties.
+2. Find the following lines:
+# Defines whether the dashboard network view tree fires a launch event when the user clicks a view in the tree
+topoviz.networkview.dashboardTree.launchpage.enabled=true
+3. Set the property topoviz.networkview.dashboardTree.launchpage.enabled to false.
+4. Save the file.
+5. Restart the Dashboard Application Services Hub.

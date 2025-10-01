@@ -1,0 +1,55 @@
+Title: IBM Java Error "java.security.cert.CertificateException: Certificates does not conform to algorithm constraints" - United States
+
+Text:
+Websphere; Java; Certificates does not conform to algorithm constraints TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a Java program using JDK v6.0 or later connects to a remote SSL/TLS server, the following error message is thrown:
+
+java.security.cert.CertificateException: Certificates does not conform to algorithm constraints
+
+
+SYMPTOM
+The JVM"s standard out/error log displays the error "java.security.cert.CertificateException: Certificates does not conform to algorithm constraints".
+
+
+CAUSE
+The IBM i JDK at v6.0 and later now contains the following java property in the /QOpenSys/QIBM/ProdData/JavaVM/jdkXX/YYbit/jre/lib/security/java.security file to disable weak signature algorithms and key lengths for certification path building and validation. NOTE: This applies to all certificates in the certification path.
+
+
+ * 
+ * jdk.certpath.disabledAlgorithms=MD2, RSA keySize < 1024
+
+
+The above property prevents the use of SSL certificates anywhere in the SSL certificate chain created with the MD2 signature algorithm or the RSA signature algorithm when the key length is less than 1024 bits. If this constraint is hit, Java will throw the following error: 
+ * java.security.cert.CertificateException: Certificates does not conform to algorithm constraints
+
+RESOLVING THE PROBLEM
+The following can be done to resolve the issue: 
+
+ 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * jdk.certpath.disabledAlgorithms=RSA keySize < 1024 
+
+ * 
+ * 
+ * 
+ * NOTE:
+ * 
+ * java.security.properties=<custom java.security file>
+ * 
+ * "
+ * How to Customize Java Security Configuration Properties for JDKs on the IBM i OS
+ * 
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i Operating System IBM i 7.2 Operating System IBM i 7.1

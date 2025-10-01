@@ -1,0 +1,48 @@
+Title: IBM QRadar: XML special characters must be 'escaped' - United States
+
+Text:
+email template editing; Special characters in XML scripts TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There are special characters that can not be used or need to be 'escaped' in XML files. An example of this would be the alert-config.xml document. 
+
+CAUSE
+XML has five forbidden characters &, <, >, ', and "
+
+RESOLVING THE PROBLEM
+When these forbidden characters are used as part of URLs, they cause errors. In order to use these characters, you need to use XML escape mechanisms. 
+
+
+& is &amp; 
+
+< is &lt; 
+
+> is &gt; 
+
+' is &apos; 
+
+" is &quot; 
+
+
+
+
+
+This example is a URL that works:
+https://(IP)/#alerts/cb.urlver=1&b.fq.status=unresolved&cb.fq.hostname=${body.CustomProperty("Hostname")}&amp;rows=10&amp;sort=created_time%20desc&amp;start=0 
+
+The &amp; character will all translate to a literal ampersand symbol in your email. 
+
+This example is a URL that does not work:
+[https://8.8.8.8/#alerts/cb.urlver=1&b.fq.status=unresolved&cb.fq.hostname=$]https://(IP)/#alerts/cb.urlver=1&b.fq.status=unresolved&cb.fq.hostname=${body.CustomProperty("Hostname")}&rows=10&sort=created_time%20desc&start=0
+
+This causes the /opt/qradar/bin/runCustAlertValidator.sh script to fail with this error message:
+[Fatal Error] alert-config.xml:<linenumber>: The reference to entity "(Object directly after the ampersand" must end with the ';' delimiter.
+Failed XML parser validation. XML document is not well formed.
+
+
+Where do you find more information? 
+
+
+
+
+[/support/docview.wss?uid=swg22002587&aid=1] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg22002587&aid=2] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg22002587&aid=3] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg22002587&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg22002587&aid=5] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg22002587&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg22002587&aid=7] [http://ibm.biz/SuptRegQuikStart]

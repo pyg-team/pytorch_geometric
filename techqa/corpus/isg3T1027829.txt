@@ -1,0 +1,45 @@
+Title: IBM Clarification on SessionTimeout and TaskTimeout parameters - United States
+
+Text:
+sessiontimeout; tasktimeout; task execution timeout; task submission time; task run time; pending; timeout TECHNOTE (FAQ)
+
+QUESTION
+ What are SessionTimeout and TaskTimeout parameters introduced in Symphony 7.x? How can they be specified for an application? 
+
+ANSWER
+ 
+
+ * SessionTimeout and TaskTimeout parameters can be used to specify how long a session or a task can be allowed to run before it times out. 
+ * When a timeout occurs, an SNMP event is triggered and the user can suspend or end the session. Symphony does not do any operations after the SNMP event is triggered. 
+ * SessionTimeout and TaskTimeout can be specified either in the application profile, or via client API. If client API is used, the value set by the client API overwrites the value configured in the application profile. 
+ * Specified in app profile: 
+ * Only one SessionTimeout and one TaskTimeout value is allowed per each Session Type defined in the application profile. 
+ * For example:
+
+<SessionTypes> 
+<Type name="MyType" ... > 
+<Timeouts> 
+<SessionTimeout durationInSec="50" /> 
+<TaskTimeout durationInSec="1" /> 
+</Timeouts> 
+</Type> 
+</SessionTypes> 
+ * Specified via client API: 
+ * The setSessionTimeout and setTaskTimeout attributes defined under SessionCreationAttributes apply to all tasks under the created session. 
+ * For example:
+
+// Set up session creation attributes. 
+SessionCreationAttributes attributes; 
+attributes.setSessionName("mySession"); 
+attributes.setSessionType("ShortRunningTasks"); 
+attributes.setSessionFlags(Session::ReceiveSync); 
+attributes.setTaskTimeout(10); 
+attributes.setSessionTimeout(10);  * The TaskSubmissionAttributes constructor does not support the setTaskTimeout method. Hence, setting a TaskTimeout is supported only for 'all tasks of a session' but not for individual tasks under a given session.
+
+
+ * Note that currently the supported feature is to only generate an SNMP alert when a session/task times out and there are no actions configurable in response to such alerts. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum Symphony Platform Independent 7.1.2, 7.2.0, 7.2.0.1, 7.2.0.2

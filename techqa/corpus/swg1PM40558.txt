@@ -1,0 +1,252 @@
+Title: IBM PM40558: IMU IS FLAGGING NUMBERS ON DISPLAY STATEMENT WITH YERROR20 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR is for these 3 PMRs:
+   
+   ================================================================
+   PMR 58892,999,000:
+   DISPLAY fix to accept numeric literal as a valid print field
+   
+   
+   Date reported: 05/10/2011
+   
+   Severity: medium
+   
+   Users Affected:
+    All IMU users of MU V3.2
+   
+   Problem Description:
+    IMU is flagging numbers on display statement with YERROR20
+   
+   Problem Summation
+    IMU allows literal values and field names on DISPLAY. Literal
+    values must be enclosed in quotes.
+    When a numeric literal is present, IMU flags it as an undefined
+    field name.
+   
+   Problem Conclusion:
+    Logic was changed to accept numeric literal as a valid literal.
+    The value is enclosed in quotes and
+    handled as an alpha literal.
+   
+    Changed macros:
+   
+    EASYT007 - existing macros
+   
+   
+    Pre-Req:  APAR PM38384 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM38384] or UPDATE15 temporary fix.
+   ================================================================
+   
+   
+   ================================================================
+   2.  PMR 58897,999,000  - COPY statement index issue
+   
+   
+   Date reported: 05/20/2011
+   
+   Severity: high
+   
+   Users Affected:
+    All IMU users of MU V3.2
+   
+   Problem Description:
+    IMU does not properly update index defined in a file record
+    that was a COPY of another file.
+    This causes improper access to fields that use the index.
+   
+   Problem Summation
+    A bug in IMU.  When COPY is for a file record that contains
+    indexes, the new index is not queued into
+    the index queue that governs index updates in the program
+    logic.
+   
+   Problem Conclusion:
+    Logic was changed to queue the index into the index queue.
+    Subsequently, the index update logic
+    generates the appropriate index update statements when needed.
+   
+    Changed macros:
+   
+    EASYT007 - existing macros
+   
+   
+    Pre-Req:  APAR PM38384 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM38384] or UPDATE15 temporary fix.
+   ================================================================
+   
+   ================================================================
+   3. PMR 58903,999,000
+      Unequal length error on OR/AND logical operators
+   
+   
+   Date reported: 05/20/2011
+   
+   Severity: high
+   
+   Users Affected:
+    All IMU users of MU V3.2 who applied APAR PM38384 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM38384]
+   
+   Problem Description:
+    IMU is flagging AND/OR logical operation with EZT000-9E error
+   (unequal length).
+   
+   Problem Summation
+    This problem was introduced by APAR PM38384 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM38384], and PMR
+    56149,999,000 - MNOTE when IF compares alpha fields.
+   
+    The length handling of hex literal was disturbed, resulting in
+    an error.
+   
+   Problem Conclusion:
+    The erroneous length handling statement was changed to
+    calculate the proper length.
+   
+    Changed macros:
+   
+    EASYT007 - existing macros
+   
+   
+    Pre-Req:  APAR PM38384 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM38384] or UPDATE15 temporary fix.
+   ================================================================
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IMU V3.2 users.                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: IMU is flagging numbers on display      *
+   *                      statement with YERROR20.                *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   IMU allows literal values and field names on DISPLAY. Literal
+   values must be enclosed in quotes.
+   When a numeric literal is present, IMU flags it as an undefined
+   field name.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Logic was changed to accept numeric literal as a valid literal.
+   The value is enclosed in quotes and handled as an alpha literal.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM40558
+   
+   
+ * REPORTED COMPONENT NAME
+   MIGRATION UTILI
+   
+   
+ * REPORTED COMPONENT ID
+   5697N4400
+   
+   
+ * REPORTED RELEASE
+   320
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-01
+   
+   
+ * CLOSED DATE
+   2011-06-15
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     FSYET007
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MIGRATION UTILI
+   
+   
+ * FIXED COMPONENT ID
+   5697N4400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R320 PSY UK68805 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK68805]
+   UP11/06/18 P F106
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

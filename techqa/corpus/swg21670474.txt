@@ -1,0 +1,27 @@
+Title: IBM Set up SSLClientAuth Signer list - United States
+
+Text:
+ibm http server ihs key sslclientauth key.kdb; mutual authentication TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When setting up 'SSLClientAuth required' directive, it is required that the IHS key.kdb have the signer certificates for the clients personal certificate. 
+
+The list of signer certificates will be passed to the client on the Server Hello.
+
+This is required for the client to pass it's personal certificate during the SSL handshake. 
+
+Most sites do not require client authentication. To require client authentication, use the 'SSLClientAuth required' directive. 
+
+SYMPTOM
+Mutual SSL hand shake fails with the following:
+
+SSL0271I: SSL Handshake Failed, client closed connection without sending any data
+
+
+CAUSE
+Clients signer certificates are not passed on the 'Server Hello'
+
+RESOLVING THE PROBLEM
+Populate the IHS key.kdb with the signer certificates for the client's personal certificate. This can be accomplished by using the iKeyman utility provided with the IHS installation. See the following reference. 
+
+Managing keys with the IKEYMAN graphical interface [http://www-01.ibm.com/support/knowledgecenter/SSEQTJ_8.5.5/com.ibm.websphere.ihs.doc/ihs/welc_ikeymangui.html?lang=en]

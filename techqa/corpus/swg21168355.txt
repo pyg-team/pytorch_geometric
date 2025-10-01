@@ -1,0 +1,37 @@
+Title: IBM Test connection button in WebSphere Application Server fails when trying to connect to Microsoft SQL Server datasource (XA) - United States
+
+Text:
+MS SQL Server; test connection; datadirect; data direct; could not find stored procedure; stored procedure TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The test connection button fails to establish a connection to Microsoft® SQL Server with a "Could not find stored procedure 'master..xp_jdbc_open' " error when connecting from WebSphere® Application Server. 
+
+SYMPTOM
+[1/31/11 13:39:35:799 EST] 0000002d DSConfigurati W DSRA8201W: DataSource Configuration: DSRA8040I: Failed to connect to the DataSource. Encountered java.sql.SQLException: [IBM][SQLServer JDBC Driver][SQLServer]Could not find stored procedure 'master..xp_jdbc_open2'.DSRA0010E: SQL State = HY000, Error Code = 2,812.
+
+
+CAUSE
+The following exception occurs due to missing components from the Microsoft SQL Server database: 
+
+SQLState(HY000) vendor code(2812) 
+java.sql.SQLException: [IBM][SQLServer JDBC Driver][SQLServer]Could not 
+find stored procedure 'master..xp_jdbc_open'. 
+at com.ibm.websphere.jdbc.base.BaseExceptions.createException(Unknown 
+Source) 
+at com.ibm.websphere.jdbc.base.BaseExceptions.getException(Unknown 
+Source) 
+at 
+com.ibm.websphere.jdbc.sqlserver.tds.TDSRequest.processErrorToken(Unknown Source)
+
+
+RESOLVING THE PROBLEM
+ 
+
+To resolve this issue, install the Stored Procedures for JTA onto the Microsoft SQL Server installation. The installation instruction are available from DataDirect here:
+
+JTA Support: Installing Stored Procedures [http://media.datadirect.com/download/docs/jdbc/alljdbc/index.html#page/jdbcconnect/jta-support-3a-installing-stored-procedures.html]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

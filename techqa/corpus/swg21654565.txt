@@ -1,0 +1,50 @@
+Title: IBM Collecting JDBC Driver Tracing in WebSphere Application Server - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can you enable JDBC driver tracing for various databases in IBM WebSphere Application Server? 
+
+CAUSE
+Enabling JDBC driver level tracing in WebSphere Application Server will provide the JDBC driver vendor with additional information for resolving JDBC driver or database related issues.
+
+ANSWER
+DB2 JDBC Driver Tracing Configuration: 
+
+ * DB2 Universal JDBC driver:
+
+ *  The DB2 JDBC driver allows trace configuration through the following data source custom properties:  * traceLevel – Set to “-1” by default to capture all JDBC driver trace data. It can be set to another value (see table below) to collect a subset of the JDBC driver tracing if instructed by DB2 support.
+      TRACE_ALL = -1 TRACE_PARAMETER_META_DATA = 256 TRACE_NONE = 0 TRACE_DIAGNOSTICS = 512 TRACE_CONNECTION_CALLS = 1 TRACE_SQLJ = 1024 TRACE_STATEMENT_CALLS = 2 TRACE_XA_CALLS = 2048 TRACE_RESULT_SET_CALLS = 4 TRACE_META_CALLS = 8192 TRACE_DRIVER_CONFIGURATION = 16 TRACE_DATASOURCE_CALLS = 16384 TRACE_CONNECTS = 32 TRACE_LARGE_OBJECT_CALLS = 32768 TRACE_DRDA_FLOWS = 64 TRACE_SYSTEM_MONITOR = 131072 TRACE_RESULT_SET_META_DATA = 128 TRACE_TRACEPOINTS = 262144 
+    * traceFile – Can be set to a specific file or if left blank (by default), the JDBC driver trace can be written to the WebSphere Application Server trace file  * If the value is null and the WAS.database=all or com.ibm.ws.db2.logwriter=all is included in the WAS trace specification, then the trace will be integrated with the WebSphere Application Server trace  *  Append the following to a WebSphere connection pool trace: WAS.database=all OR com.ibm.ws.db2.logwriter=all The “WAS.database=all” trace property allows an integrated trace to enabled and disabled during runtime. 
+         
+         
+       * If the value is null and the WAS.database=all and com.ibm.ws.db2.logwriter=all trace specifications are not set then driver tracing will not be logged 
+       * If a value is defined such as “C:\DB2\jcctrace.log” then the driver trace will be written to the specified log file
+      
+      
+    * traceFileAppend – If the traceFile property is set to a specific file, this will cause new tracing to append to, or overwrite, that file. If the value is true, new trace data will be appended to the current file. If the value is false, the current file will be overwritten.
+   
+   
+
+
+Oracle JDBC Driver Tracing Configuration: 
+ * Reconfigure the Oracle JDBC Provider to use a debug JAR file  * Oracle ships several JAR files for each version of the JDBC drivers. The optimized JAR files do not contain any logging code and, therefore, do not generate any log output when used. To get log output, you must use the debug JAR files, which are indicated with a "_g" in the file name, such as ojdbc5_g.jar or ojdbc6_g.jar. 
+    * On the JDBC Provider classpath, remove the ojdbc5.jar or ojdbc6.jar and replace it with ojdbc5_g.jar or ojdbc6_g.jar. 
+    * If you are using more than one Oracle JDBC Provider in your Websphere Application Server environment (for example ojdbc6.jar and ojdbc6_g.jar), it is possible that the Oracle JDBC-Driver traces are still missing. In order to avoid this problem, please make sure that all Oracle JDBC Providers use the option "Isolate classloader". 
+      
+   
+   
+ * Append the following to a WebSphere connection pool trace:  * oracle.*=all for Oracle version 11 and newer 
+    * com.ibm.ws.oracle.logwriter=all or WAS.database=all for Oracle version 10 and older 
+    * Logs all the details. This is the most detailed level of logging.
+      
+   
+   
+ * Activate the Debug Library by setting the following JVM argument on the application server:  * -Doracle.jdbc.Trace=true
+      
+      
+   
+   
+
+The application server JVM must be restarted after the changes have been made to use the debug JAR file.

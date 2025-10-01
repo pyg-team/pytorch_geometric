@@ -1,0 +1,38 @@
+Title: IBM CMOD v9 fixpack installation issue - United States
+
+Text:
+installanywhere; previous version not installed; 9.0.0.2 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+When installing IBM Content Manager onDemand (CMOD) fixpack 9.0.0.2 using the odlinux.bin installation method, the installer does not recognise that CMOD V9.0 is already installed. This can occur if the server's Operating System (OS) was upgraded or if CMOD was migrated to a new OS. 
+
+SYMPTOM
+ 
+
+The following error is displayed:
+
+IBM Content Manager OnDemand for Multiplatforms requires version 9.0.0.0 or higher to be installed first.
+
+The installer will now quit.
+
+
+CAUSE
+ 
+
+This can occur when the CMOD installer can not find the VPD properties which contain the version information. The VPD properties can have different locations depending on the version of CMOD;
+
+- CMOD v8.4.1 used the InstallShield Multiplatform 11.5 installer engine which stores its VPD information in a proprietary database.
+
+- CMOD 8.5 and later use the InstallAnywhere installer engine which typically stores its VPD in a flat XML file; /var/.com.zerog.registry.xml on UNIX. 
+
+
+RESOLVING THE PROBLEM
+
+Un-installing and reinstalling CMOD 9.0.0.0 is the only supported way to restore the system. When reinstalling CMOD 9.0.0.0, the fixpacks must be applied as follows; 
+
+ * Save the files in the CMOD configuration and bin directories 
+ * Install 9.0.0.0 
+ * Apply 9.0.0.1 
+ * Restore the saved files 
+ * Apply 9.0.0.2.

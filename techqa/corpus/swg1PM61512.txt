@@ -1,0 +1,181 @@
+Title: IBM PM61512: 11.4.0.3 Merging workspaces produces duplicate GUIDs - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  11.4.0.3 Merging workspaces produces duplicate GUIDs
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   I moved two diagrams from one workspace into another
+   workspace. This morning during my weekly clean-up that
+   workspace reported 7 definitions that are duplicated.
+   Each of these seven definitions do, in fact, appear twice.
+   The data (non-audit data) in each is identical. The audit
+   data (including the GUID) is identical except for the ID.
+   
+   For one example of a System Node that appears twice where
+   the same GUID appears in both copies, both where created by
+   the same person in May 2010, both were last edited by the
+   same person in Nov 2011. Both have a different ID. When
+   looking directly into SQL Server in the table named
+   dbo_entity the record for the copy shows a date of 8 March
+   2012 (last week) in the column UpdateDate. That means no
+   changes have been
+   made to this definition since Nov 2011 so there would be no
+   reason for identifying differences that must be accounted
+   for during the merge.
+   
+   My best guess as to what happened I conducted a merge last
+   week (8 March) The seven items were already in the workspace
+   The merge brought in these seven items again and did not
+   recognize them as the same (even though all the data in the
+   definitions were identical, including the GUID) For some
+   reason the merge created a new record with a new Key (from
+   table dbo_entity, column ID) and kept all the other data the
+   same (including the GUID) When I ran my Verify and Repair
+   this morning I got the error that reported 7 definitions
+   that
+   existed twice but had the same GUID.
+   
+   Our technique for implementing our workspaces was to create
+   a Root workspace that is empty. We then created an initial,
+   single workspace (a child of the Root) that contained all
+   the diagrams, definitions and symbols from our one working
+   encyclopedia (the archive workspace).
+   
+   Next we created workspaces for the different projects where
+   the
+   architects could work and their version of the work could be
+   maintained separately. These workspaces were created as
+   children from the Root (empty) workspace and then a subset
+   of the archive workspace was merged, by diagram, into the
+   different workspaces. Each architect worked in their
+   workspace until such time that a group of these workspaces
+   had to be brought together into another workspace in order
+   to present to the Architecture Review Board. As the
+   architect needs to retrieve work from the archive workspace
+   that diagram is merged from the archive workspace into the
+   second workspace as requested. In last week's case this was
+   a second merge from the Archive workspace into that project
+   workspace, but for two different diagrams than had been
+   previously merged. This is the possible reason why there was
+   a merge where the duplicates could have been created.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem is no longer reproduced, client has said:
+   I will continue to make attempts to find cases where this
+   error
+   occurs. But please remember that while I am conducting
+   merges in the execution of work performed here I am running
+   the Compare and then executing the merge with the option to
+   never replace any collisions that might occur and then
+   manually going back to update the changed data. This means
+   that I will not accidentally find this error again.
+   
+   Can't reproduce, no further feedback from the client. This
+   case is being closed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Can't reproduce
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM61512
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC SYS ARCH
+   
+   
+ * REPORTED COMPONENT ID
+   5724V68SA
+   
+   
+ * REPORTED RELEASE
+   B40
+   
+   
+ * STATUS
+   CLOSED UR5
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-29
+   
+   
+ * CLOSED DATE
+   2012-08-17
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RB40 PSN
+   UP

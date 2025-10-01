@@ -1,0 +1,73 @@
+Title: IBM ENTSUSED and SIZEUSED for an IBM MQ application structure are greater than 0 even when there is no depth on the shared queues - United States
+
+Text:
+cf structure cfstruct cfstatus TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You observe that a CF structure used by IBM MQ for z/OS has approximately 50% entries in use, even though none of the queues that use it have a depth or have a low CURDEPTH. That 50% value then fluctuates down and back up, but has not reached 0.
+
+The number of entries in use is shown in ENTSUSED in the following command:
+
+CSQM201I +CSQ1 CSQMDMSG DISPLAY CFSTATUS DETAILS
+CFSTATUS(APPLICATION1) 
+TYPE(SUMMARY) 
+CFTYPE(APPL) 
+STATUS(ACTIVE) 
+SIZEMAX(20224) 
+SIZEUSED(31) 
+ENTSMAX(2227) 
+ENTSUSED(691) 
+FAILTIME( ) 
+FAILDATE( ) 
+
+That same value appears in the "In use" column of the CSQOREXX panel for DISPLAY CFSTATUS. 
+
+SYMPTOM
+ 
+
+Other symptoms may include 
+
+ * IXC585E STRUCTURE <structure_name> IS AT OR ABOVE STRUCTURE FULL MONITORING THRESHOLD
+   where the percentage of entries and/or elements in-use is high 
+ * MQRC_STORAGE_MEDIUM_FULL 2192 
+ * CSQE007I CSQESTE EEPLALTEREND event received for structure <structure-name>
+   if the structure has ALLOWAUTOALT(YES)
+
+
+CAUSE
+This state is normal because the batch delete mechanism has not been driven yet for messages that were put out-of-syncpoint. When an out-of-syncpoint MQGET is performed, the message will be moved to an uncommitted list header on the structure, and the message will be added to the batch delete list. When an in-syncpoint MQGET is performed, the message is moved to the uncommitted list header; then when a commit is issued, the message is deleted. A message takes up one structure entry and however many 256-byte elements are needed for the message plus a x'30'-byte header. 
+The batch delete mechanism will not take place for a particular queue manager until the number of entries to be deleted reaches a threshold of 341. This threshold is per queue manager, so you could have up to (341 * N) entries in the structure, where N=number_of_queue_managers_in_qsg, when all queues on the structure have no messages and no uncommitted activity. The entries to be deleted will be cleaned up if the structure fills.
+
+
+DISPLAY CFSTATUS(APPLICATION1) TYPE(CONNECT) will show the number of queue managers active in the Queue Sharing Group (QSG).
+
+
+DIAGNOSING THE PROBLEM
+In case there are messages on the structure that will not be cleaned up by batch delete processing, check the depth of queues on the structure and whether there are uncommitted operations. Issue the MQ command: 
+
+/cpf DIS QUEUE(*) CFSTRUCT(name) CURDEPTH UNCOM
+or
+/cpf DIS QUEUE(*) CFSTRUCT(name) CURDEPTH UNCOM WHERE(CURDEPTH,GT,0) 
+
+Note that the latter command will not show queues where MQGETs have not been committed. It is not possible with this command to tell how many gets or puts are uncommitted.
+
+
+RESOLVING THE PROBLEM
+When the number of CF list entries to be deleted reaches 341 for a given queue manager, it's batch delete process will clean up its entries to be deleted. Batch deletion will also occur if the structure fills. 
+
+ 
+
+You can use the CFSIZER [http://www-947.ibm.com/systems/support/z/cfsizer/] or Sizer [http://www-947.ibm.com/systems/support/z/cfsizer/altsize.html] tool to review the sizing of the structure. 
+
+ 
+
+You could cause more immediate clean-up of entries by getting the message with the MQGMO_SYNCPOINT option and then immediately committing. 
+
+ 
+
+Entries that need to be committed will not be cleaned up. See the item How do you tell if there are uncommitted messages on a queue? [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg21181397]
+
+
+
+PRODUCT ALIAS/SYNONYM
+ IBM MQ WebSphere MQ WMQ

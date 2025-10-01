@@ -1,0 +1,93 @@
+Title: IBM MustGather:  SSH Configuration betweeen IBM i and SVC/Storwize using QMGTOOLS - United States
+
+Text:
+SVC; Storwize; V3700; V5000; V7000; V840; Storage; IBM i; Performance; Collection Services TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes how to configure SSH between an IBMi partition and SVC / Storwize, and configure QMGTOOLS to use the configuration when running things like QMGTOOLS/SVCSNAP. 
+
+DIAGNOSING THE PROBLEM
+Checking for an existing SSH Configuration
+QMGTOOLS uses SCP to bring back data to the IBM i partition. We recommend generating the SSH keys for IBM i user QSECOFR, or another common profile that will always be used for collecting data. The SSH keys generated on the IBM i will be stored on the SVC / Storwize system and associated with a profile there. It is recommended that you create a profile on the SVC / Storwize system called QMGTOOLS. 
+
+If PowerHA is being used to manage the SVC / Storwize system mirroring environment, SSH may already be configured. If so, this existing configuration can be associated with QMGTOOLS. 
+
+You should refer to the following Redbook for more detail on setting up SSH to SVC / Storwize for PowerHA: www.redbooks.ibm.com/redpapers/pdfs/redp4923.pdf 
+
+If you are using an existing PowerHA configuration, you should skip the "Configuring SSH between IBMi and SVC / Storwize system" section, go directly to the “Configuring QMGTOOLS” section, and use directory /QIBM/UserData/HASM/hads/.ssh. 
+
+Configuring SSH between IBMi and SVC / Storwize system 
+
+1. From an IBM i command line, run the MKDIR command to create the directory “'/QMGTOOLS/SVC/.ssh”. An SSH key pair will be generated into this directory:
+
+MKDIR DIR('/QMGTOOLS/SVC/.ssh') 2. Next, run STRQSH and then generate an SSH key pair. Reference the example below:
+
+> cd /QMGTOOLS/SVC/.ssh
+$
+> ssh-keygen -t rsa -f id_rsa -N ''
+Generating public/private rsa key pair.
+Your identification has been saved in id_rsa.
+Your public key has been saved in id_rsa.pub.
+The key fingerprint is:
+3d:66:ae:8a:f6:25:7b:4d:41:80:33:fb:52:48:0f:f2
+qsecofr@MYSYSTEM.MYCOMPANY.COM
+$
+> ls -la
+total: 32 kilobytes
+drwx--Sr-x 2 QSECOFR 0 8192 Jun 04, 16:01 .
+drwx--Sr-x 3 QSYS 0 8192 Jun 04, 15:59 ..
+-rw------- 1 QSECOFR 0 1675 Jun 04, 16:01 id_rsa
+-rw-r--r-- 1 QSECOFR 0 415 Jun 04, 16:01 id_rsa.pub
+$ 3. The public key must be imported to the SVC / Storwize system and associated with a user profile. It is recommended that you create a user profile called QMGTOOLS with administrator rights. The profile does not need a password; however, it will need the public SSH key generated in the previous step. 
+
+To create the profile and import the public key, you should complete the following steps:
+
+a. Transfer the public key (id_rsa.pub) from /QMGTOOLS/SVC/.ssh to the workstation that will be used to connect to the SVC / Storwize system using the Web-based GUI. 
+
+b. Access the SVC / Storwize system through a Web browser on your workstation and log in. You do not need to log in as Superuser:
+
+Access the SVC / Storwize system through a Web browser on your workstation. [/support/docview.wss?uid=nas8N1020120&aid=1] [/support/docview.wss?uid=nas8N1020120&aid=1]
+
+c. Select Users under the User Management menu from the left pane: 
+
+Select Users under the User Management menu. [/support/docview.wss?uid=nas8N1020120&aid=2] [/support/docview.wss?uid=nas8N1020120&aid=2]
+
+d. Click Create User: 
+
+Click Create User. [/support/docview.wss?uid=nas8N1020120&amp;aid=3]
+
+e. Fill in the following: 
+
+Name: qmgtools
+Authentication mode: Local
+User Group: Administrator
+Password: Fill in password and verify password fields
+Note: Password will be used to connect once in order to update the known_hosts file. 
+
+Specify the path for the id_rsa.pub file on your workstation by clicking Browse for the Public Key in the User Properties window. Click Create to create the configuration and log off the SVC / Storwize system. 
+
+Click Create to create the configuration. [/support/docview.wss?uid=nas8N1020120&aid=4] [/support/docview.wss?uid=nas8N1020120&aid=4] 4. From an IBM i command line, issue the STRQSH command and run the following to connect to the SVC / Storwize system and update the known_hosts file on the IBM i. 
+
+> ssh qmgtools@ctchav7ka.rchland.ibm.com "svcinfo lsnode -nohdr -delim ," >> lsnode.csv 
+The authenticity of host 'mycompany.mysvc.com (9.5.167.149)' can't be established. 
+RSA key fingerprint is cb:cb:3f:97:0f:a9:48:94:a2:73:44:89:f2:a8:5c:e7. 
+Are you sure you want to continue connecting (yes/no)? > yes 
+Warning: Permanently added 'ctchav7ka.rchland.ibm.com,9.5.167.149' (RSA) to the list of known hosts. 
+@ctchav7ka.rchland.ibm.com's password: <enter password> 
+Configuring QMGTOOLS 
+
+QMGTOOLS needs to know the location of the SSH keys in the IFS and the user. If this configuration step is not completed, commands such as the QMGTOOLS/SVCSNAP command will generate the following error message: 
+
+SSH configuration not found. Ensure SSH keys from the Storwize System exist in the IFS and QMGTOOLS/SVCSSHCFG has been run. 
+
+To configure QMGTOOLS, you should do the following: 1. GO MG, Option 14 “External Storage”, Option 1 “SVC / Storwize”, Option 2 “SSH configuration” or QMGTOOLS/SVCSSHCFG and prompt with an F4. 2. Fill in the following parameters and press Enter:
+a. Hostname: Use the hostname or IP address of your SVC / Storwize system. 
+b. User ID: qmgtools (as configured in the previous section).
+c. IFS Location of ssh key: for example: /QMGTOOLS/SVC/.ssh/id_rsa or /QIBM/UserData/HASM/hads/.ssh depending on where the keys are located:
+
+[/support/docview.wss?uid=nas8N1020120&aid=5] [/support/docview.wss?uid=nas8N1020120&aid=5] 3. QMGTOOLS is now configured to connect to the specified SVC / Storwize system using other commands on the SVC / Storwize menu such as SVCSNAP. 
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1

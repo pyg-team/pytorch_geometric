@@ -1,0 +1,52 @@
+Title: IBM CipherSuite cannot be selected - United States
+
+Text:
+CipherSuite; SSL; MQ; WebSphere TECHNOTE (FAQ)
+
+QUESTION
+ How do you select an IBM WebSphere MQ CipherSuite that is not listed in IBM Rational Integration Tester (RIT)? 
+
+CAUSE
+Newer versions of IBM WebSphere MQ introduce new versions of SSL CipherSuites.
+The RIT GUI might not have been updated to include these versions. You cannot see the one you want to use in the transport CipherSuite drop-down box.
+
+
+
+
+ANSWER
+ 
+
+Check the CipherSuite you require for the CipherSpec specified. For example refer to the relevant WebSphere MQ Knowledge Center for your version such as SSL/TLS CipherSpecs and CipherSuites in WebSphere MQ classes for Java [http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.dev.doc/q113210_.htm]. 
+
+If the required CipherSuite is not present in your IBM WebSphere MQ Queue Manager transport SSL tab consider the following workaround.
+Note that version 8.7 or newer of RIT allows you to directly enter the Cipher Suite name in the transport configuration. The drop-down box allows text entry. For earlier versions this is not possible. 
+
+ 
+
+ 1. Ensure that RIT Library Manager is configured with WebSphere MQ libraries that support the CipherSuite you wish to use.
+    
+    
+ 2. Give your transport a name and save it with SSL enabled and a value for Cipher Suite.
+    
+    
+ 3. In a file explorer navigate to the Physical folder of your project. You can find the project location in RIT by clicking Project > Project Settings > Project.
+    
+    
+ 4. Make a backup copy of the transport file using RIT. If you use operating system tools to copy it make sure you save it outside of the project area. If you copy it inside the project you will not be able to open the project due to duplicate items being found.
+    A typical filename for the transport would be MySSLMQ - MQ Queue Manager @SYSTEM.DEF.SVRCONN@_1414.mqt.
+    
+    
+ 5. Open the file in a test editor and locate the SSLCipherSuite attribute.
+    Replace the value with the CipherSuite required, for example:
+    
+    SSLCipherSuite="SSL_RSA_WITH_AES_256_CBC_SHA256"
+    
+    
+ 6. Save the file and re-open the project in RIT or click Project > Refresh to re-read the files.
+    
+    
+
+
+You can now use this transport. Note that the RIT GUI cannot display the CipherSuite in the transport so it will appear as follows:
+
+[/support/docview.wss?uid=swg21696919&aid=1] [/support/docview.wss?uid=swg21696919&aid=1]

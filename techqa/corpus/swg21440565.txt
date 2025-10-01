@@ -1,0 +1,63 @@
+Title: IBM Authenticating users stored in LDAP for TDI AMC - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can LWI be configured to authenticate users stored in LDAP for IBM® Tivoli® Directory Integrator Administration and Monitoring Console? 
+
+ANSWER
+You will require the following before configuring LDAP authentication for IBM® Tivoli® Directory Integrator Administration and Monitoring Console 7.0: 
+
+ * LDAP Server Host name or IP address. 
+ * LDAP port number - Default open port =389, SSL port =636 
+ * LDAPAdminUser or the Binding distinguished name (dn) and password
+   This is the user which will be used to bind to the LDAP Server. 
+ * Search Base information i.e. in our example this would be o=servers,c=us 
+   This is the search base or root portion of the Directory hierarchy you want to search.
+
+
+If you enabled SSL you need to know the following:  * The client keystore file path - The path should be relative to the current LWI working directory 
+   For example
+   /../../security/keystore/clientKeyStore.jks
+   This must be set if com.ibm.lwi.ldap.ssl.enable=true 
+ * Keystore password - The default password for keystore is "ibmpassw0rd" (zero instead of 'o') 
+ * The client truststore file path. The path should be relative to the current LWI working directory 
+   For example
+   /../../security/keystore/clientTrustStore.jks. This must be set if 
+   This must be set if com.ibm.lwi.ldap.ssl.enable=true 
+ * Truststore password. - The default password for truststore is "ibmpassw0rd" (zero instead of 'o')
+
+
+
+
+To create an LDAP user account that has access to IBM AMC, complete the following steps: 
+NOTE: This document addresses the topic of authentication, not authorization. 
+User Authorization is handled within the AMC Console in the Settings/Console User Authority panel. Before enabling LDAP Authentication, at least 1 ID must be added to the 'Console User Authority' panel as a TDI Administrator/Administrator
+
+
+For this example we are using a IBM Tivoli Directory Server as our LDAP Server and a Windows-based IBM Tivoli Directory Integrator AMC Server, although we have include commands for the Linux equivalent for awareness.
+
+1. On the AMC server, change to the following directory: 
+
+ * 
+ * 
+ * 
+
+2. Locate the file <tdi_install directory>/lwi/conf/security.properties 
+3. Copy file security.properties to <tdi_install directory>/lwi/conf/overrides and rename it to securityLDAP.properties 
+
+Note: If there are any other security.properties files listed in the overrides directory, rename these to secuirty.properties.old or remove them from this directory to a temporary location if you want to keep them. 
+
+4. Open the securityLDAP.properties file in an editor and complete the following edits: 
+
+
+Property Description com.ibm.lwi.LDAPHost = 9.10.11.12 The host name of LDAP server com.ibm.lwi.LDAPPort = 389 The listening port defined on the LDAP server. com.ibm.lwi.LDAPBase = dc=ibm,dc=com The base (root) distinguish name defined on the LDAP server. com.ibm.lwi.LDAPAdminUser = CN=AMCAdmin,CN=Users,DC=security,DC=ibm,DC=com The administrator username defined on the LDAP server. This property is not required if the LDAP server is enabled for anonymous login. com.ibm.lwi.LDAPAdminPassword = DSADSADS <encrypted> The encrypted password of the administrator defined on the LDAP server. This property is not required if the LDAP server is enabled for anonymous login. After setting the com.ibm.lwi.LDAPAdminPassword property, you need to encode the password by running the lwiencoder.sh -filename <your_config_file>.properties -keylist com.ibm.lwi.LDAPAdminPassword command from the <TDI_Install_Directory>/lwi/bin directory. com.ibm.lwi.searchfilter = (&(uid=%v)(objectclass=inetOrgPerson)) The user search filter to use on the LDAP server. com.ibm.lwi.rolemanager.ldap.filters.usergroup = (|(objectclass=groupOfNames) (objectclass=groupOfUniqueNames)) The filter string (LDAP) used to search directory for groups objects. com.ibm.lwi.rolemanager.ldap.filters.users = (objectclass=inetOrgPerson) The filter string (LDAP) used to search directory for users objects. com.ibm.lwi.rolemanager.ldap.names.memberAttribute = member The name of the member attribute of the role object in the directory. If there is more then one property value, separate the values using commas. com.ibm.lwi.rolemanager.ldap.names.loginName = uid The name of the login name attribute of the user in the directory. com.ibm.lwi.ldap.ssl.enable = true Enable or disable LDAP SSL communication. If this property is set to true, all "com.ibm.lwi.ldap.ssl.*" properties must be set. com.ibm.lwi.ldap.ssl.keyStore The client keystore file path. The path should be relative to the current LWI working directory (<LWI_Dir>/runtime/core). For example, /../../security/keystore/clientKeyStore.jks. This property must be set if the com.ibm.lwi.ldap.ssl.enable property is set to true. com.ibm.lwi.ldap.ssl.keyStorePassword The password of the keystore. The password must be encrypted. After setting the property, use the lwiencoder command located in the <LWI_Dir>/bin directory to encode the password. This property must be set if the com.ibm.lwi.ldap.ssl.enable property is set to true. com.ibm.lwi.ldap.ssl.trustStore The client truststore file path. The path should be relative to the current LWI working directory (<LWI_Dir>/runtime/core). For example, /../../security/keystore/clientTrustStore.jks. This property must be set if the com.ibm.lwi.ldap.ssl.enable property is set to true. com.ibm.lwi.ldap.ssl.trustStorePassword The password of the truststore. After setting the property, use the lwiencoder command located in the <LWI_Dir>/bin directory to encode the password. This property must be set if the com.ibm.lwi.ldap.ssl.enable property is set to true. com.ibm.lwi.rolemanager.ldap.attributes.user.telephone Optional. The telephone attribute of the user. com.ibm.lwi.rolemanager.ldap.attributes.user.mobile Optional. The mobile phone attribute of the user. com.ibm.lwi.rolemanager.ldap.attributes.user.pager Optional. The pager attribute of the user. 
+
+6. Save and close the securityLDAP.properties file. 
+
+
+
+
+
+To Troubleshoot Authentication,

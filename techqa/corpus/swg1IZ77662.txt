@@ -1,0 +1,170 @@
+Title: IBM IZ77662: TEMA OMNIBUS TEPS SUPPORT INSTALLATION FAILS - DERBY DATABASE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS REQUIREMENT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Products: Tivoli Monitoring 6.2.2 FP1 and ITM Agent for Netcool
+   
+   OMNIbus 7.3
+   OS: Windows Server 2008 R2 Enterprise (x64)
+   
+   On trying to installing the TEPS Support for the Tivoli Netcool
+   OMNIbus Objectserver Agent it is not possible to enable the
+   Checkbox
+   for the TEPS Support. On clicking this box we get a popup with
+   the
+   message:
+   "Please install the following prerequisites: IBM DB2 Universal
+   Database 8.1 or higher, installed with local user ID with
+   administrator rights, or - Microsoft SQL Server 2000 or higher".
+   After
+   acknowledging this PopUp, the checkbox is unchecked again.
+   
+   This message doesn't make sense as we use our TEPS with the
+   Internal
+   Derby Database.
+   
+   L2 engineer replicated issue:
+   
+   Have gone through the install of OMNIbus Objectserver Agent on
+   ITM 6.22
+   F01 with a derby database.
+   When I get to the screen to choose features you want to install
+   
+   
+   when I try to select the box by the TEPS I get the pop -up
+   window
+    "Please install the following prerequisites: IBM DB2 Universal
+   Database 8.1 or higher, installed with local user ID with
+   administrator rights, or - Microsoft SQL Server 2000 or higher"
+   
+   Just as explained by the user.
+   
+   
+   Have just started going through the screens again and I notice
+   on first
+   screen of wizard installer with the welcome banner
+   
+   it states installed: IBM Tivoli Monitoring  TMV621
+               CD: Tivoli OmnibusServer Agent - TMV621
+   
+   However my machine is ITM 6.22 FP01
+   
+   It looks like it does not take into account a Derby database.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  no local fix available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This problem is larger than the OMNIbus scope, as it
+   
+   will occur for any agent with a 6.2.1 or earlier install base,
+   being
+   installed into 6.2.2 environment using Derby.  This includes
+   agents
+   shipped by ITM itself, such as the NT or Linux OS agents, if
+   they
+   are based on the 6.2.1 or earlier installer.
+   
+   
+   
+   As the installation message states, DB2 or MSSQL is a
+   prerequisite.  Note that Derby is not supported for historical
+   data.
+   
+   
+   A new PMR should be raised with ITM support to resolve the
+   underlying
+   issue of installing 6.2.1 based agents in a 6.2.2 environment
+   with
+   Derby.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ77662
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED REQ
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-18
+   
+   
+ * CLOSED DATE
+   2010-09-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

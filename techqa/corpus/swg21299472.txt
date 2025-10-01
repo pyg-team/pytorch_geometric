@@ -1,0 +1,106 @@
+Title: IBM WMB/IIB MustGather: problems with Third-party Plug-ins, SupportPacs and JCN configuration problems on Windows - United States
+
+Text:
+Third-party Plug-ins; SupportPacs & JCN; MustGather; MustGathers; Must Gather; Collect Troubleshooting Data; MustGatherDocument; Collecting; Trouble; Shooting TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are experiencing problems whilst using Third-party Plug-ins, SupportPacs or JavaCompute nodes with WebSphere Message Broker (WMB) or IBM Integration Bus (IIB) and would like to know what documentation you must collect (MustGather) so that the WebSphere Message Broker Support team can diagnose your problem.
+
+This mustgather document explains how to troubleshoot this problem by yourself, how to generate diagnostic data when the problem is happening, how to collect the available data from your system, and how to share that data with IBM support.
+
+
+
+ENVIRONMENT
+These instructions are for WebSphere Message Broker or IBM Integration Bus on Windows systems.
+Return to the WMB / IIB MustGather index [http://www-01.ibm.com/support/docview.wss?uid=swg21209857] for other systems.
+
+RESOLVING THE PROBLEM
+
+
+
+STEP 1: SELF-GUIDED TROUBLESHOOTING
+
+ 1. Consider Using the Test Client in trace and debug mode [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/af52260_.htm].
+ 2. 
+ 3. A user level trace [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321#1] is intended to assist users with understanding how their ESQL is processed.
+    It will also show a high level view of the message flow behavior.
+ 4. 
+ 5.  Troubleshooting [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/au09090_.htm]
+    Errors and exception handling [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/as01430_.htm]
+    Creating a user-defined node [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/as37482_.htm]
+    
+    
+ 6. 
+ 7. Check for known issues:
+    [http://www.ibm.com/software/htp/cics/tserver/support/]WebSphere Message Broker support site [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Message_Broker]
+    
+ 8. 
+ 9.  Learn more about this component
+    Library and Information centers [http://www.ibm.com/software/integration/wbimessagebroker/library/] [http://www-306.ibm.com/software/integration/wmq/library/] 
+    JavaCompute node [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/ac20805_.htm] [http://www-306.ibm.com/software/integration/wmq/library/] 
+    
+    
+
+
+
+STEP 2: COLLECT DATA
+
+ 1. mqsidc
+    See: mqsidc usage instructions [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/bu46012_.htm]
+     * If a broker or execution group is not used, gather generic data using the General Collector
+    
+    
+ 2. 
+ 3. Project Interchange files for the problematic flow/set/ESQL/model
+     * You can export your Message Flow and Message Set project(s) into an archive file for easy transmission to IBM Support.
+       See: Exporting files from the Workbench [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/an27100_.htm] 
+    
+    
+ 4. 
+ 5. Traces If the problem occurs during a runtime test or with the Toolkit test facility, WMB execution group traces [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321] can be used to gain a better understanding of the problem.  * A user level trace [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321#1] is intended to assist users with understanding how their ESQL is processed. It will also show a high level view of the message flow behavior.
+     * A service level trace [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321#2] is intended to be provided to IBM Support to assist in the diagnosis of your issue.
+    
+    
+ 6. 
+ 7. General Broker information  * Record the WebSphere Message Broker version, release, and maintenance level.
+       This can be captured using the command 'mqsiservice -v'..
+     * Record the operating system version, release, and maintenance level.
+     * Record the version, release, and maintenance level of any related products and components for the problematic application.
+     * Collect the local error log.
+       On Windows, the local error log is the Windows Application Event viewer [http://www.ibm.com/support/docview.wss?rs=849&uid=swg21295454].
+     * Collect the Standard Output/Error logs.
+       On Windows, WMB writes information to console.out. This file is located under the Message Broker workpath.
+       See: Standard System Logs [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/au14165_.htm]
+    
+    
+
+
+
+ATTENTION: A good problem description is one of the most important tools IBM needs to analyze your data!
+When sending data to IBM, be sure to update your PMR or send a note with the following information:
+
+ *  Tell us what errors you saw, where you saw them, and what time they happened Let us know if you made any changes to WebSphere Message Broker or the system before the problem Share any other observations which you think will help us to better understand the problem 
+
+
+
+STEP 3: SUBMIT DATA TO IBM
+
+ * Use IBM Service Request [http://www.ibm.com/support/servicerequest/] to open or view a problem record with IBM.
+ * Send your data to IBM [http://www.ibm.com/support/docview.wss?uid=swg21392217] for further analysis.
+
+
+
+
+Please see the IBM Software Support Handbook [http://www14.software.ibm.com/webapp/set2/sas/f/handbook/home.html] for more information on working with IBM support.
+
+
+
+Back to top
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Message Broker Broker Windows 8.0 All Editions 
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

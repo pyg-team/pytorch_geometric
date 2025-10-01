@@ -1,0 +1,135 @@
+Title: IBM IT14430: IBM PUREAPPLICATION SYSTEM FLAGGED EVENT CMM-77777703 AS "CUSTOMER SERVICEABLE" - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.2.1.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24042382]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following event is flagged as being a "Customer
+   Serviceable" item in PureApplication System:
+   
+   CMM-77777703:Node Node 02 message: System board, voltage
+   (SysBrd Fault) critical. management_nodes Chassis Node Critical
+   CustomerServiceable active
+   
+   This issue requires that an IBM engineer come on site and
+   replace some hardware. The event should also be updated so that
+   a call home event occurs when it happens.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Supply an updated event rule that the customer can apply to
+   their system before they upgrade to a release that has the
+   fix.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  An updated event rule in the Call Home category is being
+   provided to fix this issue.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix is being provided in PureApplication System
+   version 2.2.1.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT14430
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   210
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-23
+   
+   
+ * CLOSED DATE
+   2016-05-24
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R221 PSY
+   UP

@@ -1,0 +1,50 @@
+Title: IBM ICD running in cluster environment hung unexpectedly - United States
+
+Text:
+TPAESCCD; IMI; session; hung; performance TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ICD application goes into hung state during peak-hour. This is normally observed in cluster environment setup. 
+
+SYMPTOM
+The application is running fine most of the time and during peak-hour, it may get into hung state and all JVMs (cluster members) no longer responding. Another symptom is JVM memory is almost exhausted leading to performance issue.
+
+
+DIAGNOSING THE PROBLEM
+At time of occurrence, it is important to collect following WebSphere MustGather depending on the Operating System e.g.
+
+
+MustGather: Performance, hang, or high CPU issues with WebSphere Application Server on Windows
+https://www-01.ibm.com/support/docview.wss?uid=swg21111364 [http://hostname:port/maximo] 
+
+MustGather: Performance, hang, or high CPU issues with WebSphere Application Server on Linux
+https://www-01.ibm.com/support/docview.wss?uid=swg21115785 [http://hostname:port/maximo] 
+
+In the javacore*.txt files collected from above, check for deadlock thread e.g.
+
+Deadlock detected !!!
+Thread "Thread-662602" (0x000000000A956B00)
+com/ibm/tivoli/imi/controller/IMSessionHandler
+Thread "Thread-690996" (0x0000000007915F00)
+com/ibm/ws/session/store/memory/MemorySession
+Thread "Thread-662602" (0x000000000A956B00)
+Deadlock detected !!!
+Thread "Thread-1049378" (0x000000000A212400)
+com/ibm/tivoli/imi/controller/IMSessionHandler
+Thread "Thread-1062520" (0x0000000008211A00)
+com/ibm/ws/session/store/memory/MemorySession
+Thread "Thread-1049378" (0x000000000A212400)
+
+Also, enable Integration logger to DEBUG and check SystemOut.log file if the IMI Session Handler is getting invoked
+
+
+RESOLVING THE PROBLEM
+This issue has been identified as APAR # IV86303 and is expected to be included part of ICD 7.6.0.4 fixpack.
+
+Please contact IBM Support to request LA Fix 7.6.0.3-TIV-SCCD-LA0013
+
+LA Fix 7.6.0.3-TIV-SCCD-LA0013 is applicable for version from ICD 7.6.0.0 to ICD 7.6.0.3
+
+RELATED INFORMATION
+ Performance issues with WebSphere on Windows [http://www.ibm.com/support/docview.wss?uid=swg21111364]
+Performance issues with WebSphere on Linux [http://www.ibm.com/support/docview.wss?uid=swg21115785]

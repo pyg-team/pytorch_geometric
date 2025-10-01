@@ -1,0 +1,149 @@
+Title: IBM PK59469: Prevent continual reloading of ThemeList in cluster - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.0.1.7 Download: WebSphere Portal and Web Content Manager V6.0.1, fix pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24025748]
+6.0.1.5 Download: WebSphere Portal and Web Content Management V6.0.1 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24021241]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In a cluster environment the ThemeList is reloaded continual as
+   it invalidated other nodes through DRS calls every time one node
+   was loaded.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In a cluster environment the ThemeList is reloaded continual as
+   it invalidated other nodes through DRS calls every time one node
+   was loaded.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The loading of themes does not lead to invalidation calls
+   anymore.
+   
+   Failing Module(s):
+      Engine: Tags & Commands
+   
+   Affected Users:
+      All users
+   
+   Version Information:
+       Portal Version(s): 6.0.1.1
+        Pre-Requisite(s):
+         Co-Requisite(s): ---
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   A fix is available from Fix Central:
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PK59469&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PK59469&productid=WebSphere%20Portal&brandid=5]
+   
+   You may need to type or paste the complete address into your Web
+   browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK59469
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   60E
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-17
+   
+   
+ * CLOSED DATE
+   2008-03-03
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60E PSY
+   UP

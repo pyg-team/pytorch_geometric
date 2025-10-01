@@ -1,0 +1,70 @@
+Title: IBM Unexpected WebSphere Application Server warnings about expired LPTA tokens and asynchronous processing can exist in the SystemOut.log file for the Process Center in IBM Business Process Manager (BPM) Advanced - United States
+
+Text:
+ibpma855relnotes; LTPA; asynchronous servlet; Process Designer; SECJ0371W; SRVE8092W TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In IBM Business Process Manager (BPM) Advanced, if the Process Designer web editor is open for a long period of time, you might notice unexpected messages in the SystemOut.log file for the Process Center. For eample, you might see 0000035e, SRVE8092W, 000001b0, or SECJ0371W messages. 
+
+SYMPTOM
+The following text displays with the previously mentioned error codes: 
+
+0000035e async W com.ibm.ws.webcontainer.async.ListenerHelper _invokeAsyncErrorHandling 
+SRVE8092W: An exception occurred invoking the async error mechanism.
+000001b0 LTPAServerObj W
+SECJ0371W: Validation of the LTPA token failed because the token expired
+
+The full message text is similar to the following text:
+
+[4/15/14 10:03:03:611 CEST] 0000035e asyncW com.ibm.ws.webcontainer.async.ListenerHelper _invokeAsyncErrorHandling SRVE8092W: An exception occurred invoking the asyncerror mechanism. 
+
+com.ibm.wsspi.webcontainer.security.SecurityViolationException: Basic realm="BPMRESTAPI" 
+
+at com.ibm.ws.webcontainer.collaborator.WebAppSecurityCollaboratorImpl.convertWebSecurityException(WebAppSecurityCollaboratorImpl.java:193) 
+
+at com.ibm.ws.webcontainer.collaborator.WebAppSecurityCollaboratorImpl.preInvoke(WebAppSecurityCollaboratorImpl.java:239) 
+
+at com.ibm.wsspi.webcontainer.collaborator.CollaboratorHelper.preInvokeCollaborators(CollaboratorHelper.java:432) 
+
+at com.ibm.ws.webcontainer.async.ListenerHelper._invokeAsyncErrorHandling(ListenerHelper.java:174) 
+
+at com.ibm.ws.webcontainer.async.ListenerHelper.invokeAsyncErrorHandling(ListenerHelper.java:129) 
+
+at com.ibm.ws.webcontainer.async.AsyncTimeoutRunnable.run(AsyncTimeoutRunnable.java:28) 
+
+at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:450) 
+
+at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:314) 
+
+at java.util.concurrent.FutureTask.run(FutureTask.java:149) 
+
+at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:109) 
+
+at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:217) 
+
+at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:906) 
+
+at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:929) 
+
+at java.lang.Thread.run(Thread.java:796) 
+
+Caused by: com.ibm.ws.security.web.WebSecurityException: Basic realm="BPMRESTAPI" 
+
+at com.ibm.ws.security.web.EJSWebCollaborator.preInvoke(EJSWebCollaborator.java:441) 
+
+at com.ibm.ws.webcontainer.collaborator.WebAppSecurityCollaboratorImpl.preInvoke(WebAppSecurityCollaboratorImpl.java:230) 
+
+... 12 more 
+
+ 
+
+[4/15/14 10:03:04:625 CEST] 000001b0 LTPAServerObj W SECJ0371W: Validation of the LTPA token failed because the token expired
+
+
+RESOLVING THE PROBLEM
+These WebSphere Application Server messages are written to the SystemOut.log file for the Process Center in situations where the Process Designer web editor has been running for a long period of time. They do not affect any functionality and can be safely ignored.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ BPM

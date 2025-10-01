@@ -1,0 +1,187 @@
+Title: IBM HD83301: PARTS GENERATED WITH THE STRUCTURE DESIGN WORKBENCH ARE AUTOMAT ICALLY LOADED - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SCENARIO:
+   1. Start CV5.
+   2. Go to Tools / Options / Infrastructure / Product
+   Structure / Cache Management and activate the
+   cahce system.
+   3. Go to Tools / Options / Mechanical Design /
+   Drafting and set the View generation mode to
+   approximate in the View tab.
+   4. Start CV5 again.
+   5. Open the provided CATProduct.
+   6. Go to File / Desk.
+   >>> Note that no part is loaded (all listed in balck).
+   7. Create a new drawing.
+   8. Select the Front View command.
+   9. Go back to Main_Product.CATProduct window.
+   10. Select Shape_002 side as shown in the
+   Plane_selection.jpg image.
+   11. Click in the Drawing sheet to launch 2D
+   generation.
+   12. Go back to the desk window.
+   .
+   CONCERN:
+   Plate_001.CATPart has been loaded, or sometime it
+   loads all the SR1 data.
+   This has a huge impact in terms of memory
+   consumption when working with a big amount of
+   data and prevents the customer from generating
+   his drawing.
+   .
+   EXPECTED RESULT:
+   SR1 document should not be loaded.
+   If you replay the above scenario with normal
+   CATParts (instead of SR1 data) then behavior is OK.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Parts generated with the Structure Design workbench are automat
+   ically loaded
+   SCENARIO:
+   1. Start CV5.
+   2. Go to Tools / Options / Infrastructure / Product
+   Structure / Cache Management and activate the
+   cahce system.
+   3. Go to Tools / Options / Mechanical Design /
+   Drafting and set the View generation mode to
+   approximate in the View tab.
+   4. Start CV5 again.
+   5. Open the provided CATProduct.
+   6. Go to File / Desk.
+   >>> Note that no part is loaded (all listed in balck).
+   7. Create a new drawing.
+   8. Select the Front View command.
+   9. Go back to Main_Product.CATProduct window.
+   10. Select Shape_002 side as shown in the
+   Plane_selection.jpg image.
+   11. Click in the Drawing sheet to launch 2D
+   generation.
+   12. Go back to the desk window.
+   .
+   CONCERN:
+   Plate_001.CATPart has been loaded, or sometime it
+   loads all the SR1 data.
+   This has a huge impact in terms of memory
+   consumption when working with a big amount of
+   data and prevents the customer from generating
+   his drawing.
+   .
+   EXPECTED RESULT:
+   SR1 document should not be loaded.
+   If you replay the above scenario with normal
+   CATParts (instead of SR1 data) then behavior is OK.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON CATIA VERSION
+   5 RELEASE 19 SP05 LEVEL.
+   Correction Explanation
+   Some code in structure were triggering the Part to
+   be loaded in order to find the body to prject.
+   Exchange the body to a Rep, so, the search of this
+   Rep doesn't affect the VisuMode.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD83301
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   519
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-03-17
+   
+   
+ * CLOSED DATE
+   2009-04-22
+   
+   
+ * LAST MODIFIED DATE
+   2009-07-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569151000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R519 PSN SP51905
+   UP09/07/31 I 1000

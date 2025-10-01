@@ -1,0 +1,10 @@
+Title: IBM Hyperlinked name in Service table menu overruns right column boundary in table - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you click Manage Services > Select a Service, and then search for a service, the Services table returns a list of services. If the hyperlinked name of a service in the table is very long, the rightmost characters in the name might overrun the right column boundary in the table. 
+
+RESOLVING THE PROBLEM
+This is a browser limitation in which a long service name will fail to wrap within the column boundary.

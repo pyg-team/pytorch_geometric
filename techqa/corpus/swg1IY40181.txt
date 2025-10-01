@@ -1,0 +1,130 @@
+Title: IBM IY40181: POST REQUEST CACHE PROBLEM ( E-COMMUNITY ) - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  According to "Access Manager 3.9 webseal administrator's guide"
+   page 63, "Configuriing WebSEAL server-side request caching",
+   .
+   "The limitation of this implementation became apparent when
+   for example, a POST request was interrupted by a session timeout
+   that prompted a re-authentication process. Since WebSEAL only
+   cached the URL of the original request, the POST data (including
+   the METHOD and Message Body) were lost during the HTTP redirect.
+   The user had to rebuild the POST request.
+   .
+   WebSEAL now caches a more complete set of request data and
+   uses this cached data to rebuild the request during the HTTP
+   redirect,
+   if a re-authentication requirement interrupts the completion of
+   the
+   request processing. This solution particularly benefits POST and
+   PUT
+   request, because these requests types can include a veriety of
+   information fields."
+   .
+   The above new feature was included in WebSEAL 3.9 to handle
+   cases
+   where the initial rquest is a POST request for form
+   authentication.
+   .
+   But it seems like Access Manager does not cache the body of the
+   POST
+   request,when e-community single sign on is enabled.
+   In other words, when e-community single sign on is enabled, the
+   above
+   new feature will not work and webseal will only cache the URL of
+   the original request...
+   We just test this issue using multiple webseal instances.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *   This will be considered for inclusion in a future rele
+   ase via Enhancement request ##MR0303051332 and CMVC Feature 3910
+   8.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY40181
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0811
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2003-02-05
+   
+   
+ * CLOSED DATE
+   2005-03-03
+   
+   
+ * LAST MODIFIED DATE
+   2005-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

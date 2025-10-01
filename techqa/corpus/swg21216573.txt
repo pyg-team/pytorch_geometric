@@ -1,0 +1,29 @@
+Title: IBM Where to find server configuration files in Rational Application Developer - United States
+
+Text:
+rad; server config; server configuration files; server files; rad server files; cannot find server files; cannot find config files; can't find configuration files; wte; v6; server; RSA; 1216573 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ By default, the server configuration files in Rational® Application Developer (RAD) are kept in the workspace metadata. There might be a need to work with the server configuration files directly; this technote describes how to locate these files. 
+
+RESOLVING THE PROBLEM
+You can create a Servers project to contain server resources. There is a setting in the Rational Application Developer preferences to accomplish this. To enable this setting follow these steps: 
+
+ 1. Go to Window > Preferences > Server 
+ 2. Select the check box to enable "Create server resources in workspace"
+
+
+Note: This action does not affect existing server configurations in the workspace; however, the next time a server is created, a project called "Servers" will be created in the workspace. In the J2EE perspective's project explorer view, this server project will appear under "Other Projects". Using the default setting to have server resources stored in the workspace metadata, the configuration files can then be found in: 
+
+<WORKSPACE>\.metadata\.plugins\com.ibm.wtp.server.core
+
+In RAD v7.x, this preference has been removed. Servers with editable configurations (i.e. WebSphere Test Environment v5.x or Portal Test Environment v5.1) are automatically placed in a "Servers" project inside the workspace, whereas servers that are configured through the WebSphere Administrative Console are placed in the workspace metadata.
+
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Integrated Test Environment Linux, Windows

@@ -1,0 +1,157 @@
+Title: IBM IY81173: SUN JRE 1.5.0_06 APPEARS TO NOT WORK WITH TEPS VIA IE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description:  Sun JRE 1.5.0_06 appears to not work with TEPS via
+   IE.
+   
+   "Facts:
+   - While using Sun JRE for TEP client in IE the ITM built-in
+   browser is not working correctly.
+   - Installing IBM JRE from ITM6 CD on the system does not help
+   because IE still pick Sun JRE to run TEP client.
+   - According to IBM support ITM6.1 is not supported with Sun JRE
+   
+   Request:
+   - Either make TEP client in IE compatible with Sun JRE or make
+   TEP client detect JRE vendor/version and prompt to force install
+   and use of IBM JRE for TEP client in IE.
+   The later was implemented by new "experimental" JRE that you
+   sent me for this PMR.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  no workaround available, as L2 was unable to recreate the issue.
+   
+   Things to check:
+   
+   1.  Ensure within the IE options, under the Advanced tab, to
+   uncheeck the box which states to use Sun JRE.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Sun Java 1.5 overwrites the IBM clsid used to install IBM Java
+   JRE 1.4.2. Since IBM's Windows JRE install (1.4.2) uses the same
+   Windows CLSID as the Sun install, when the Sun JRE 1.5 is
+   installed on Windows, it assumes the 1.4.2 clsid is a Sun clsid,
+   not IBM, since they use the same one.   The Sun install then
+   updates the clsid to point to the new Sun 1.5.x binaries. So
+   when the TEP is executed, it attempts to use Sun java 1.5.x.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The IBM java 1.4.2 runtime install for Windows nows creates a
+   unique clsid in the Windows registry.  The TEP browser client
+   applet html was changed to reference this new clsid. So even if
+   the clsid that is shared by IBM and Sun is over written by the
+   Sun install, the TEP client will still execute with the IBM
+   runtime since it is now using the new unique clsid.
+   
+   The fix for this APAR will be included in the following
+   maintenance vehicle:
+   
+       Fix Pak 6.1.0-TIV-ITM_TEP-FP0002
+   
+   Note: Search the IBM Technical support web site for maintenance
+   package availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY81173
+   
+   
+ * REPORTED COMPONENT NAME
+   TEP
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04EP
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-02-01
+   
+   
+ * CLOSED DATE
+   2006-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2006-10-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEP
+   
+   
+ * FIXED COMPONENT ID
+   5724C04EP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

@@ -1,0 +1,28 @@
+Title: IBM Maximo Scheduler 7.5.2: Configure Optimization Server in Select Action menu missing - United States
+
+Text:
+TPAESCHED; TPAESCHEDULER; configure optimization server; scheduler; select action menu TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to use the "Configure Optimization Server" option in the Select Action Menu of the Maximo Scheduler application, that option does not appear in the list. 
+
+SYMPTOM
+The "Configure Optimization Server" option does not appear in the list of Select Action menu.
+
+
+CAUSE
+The use of the Configure Optimization Server for a user is not granted.
+
+ENVIRONMENT
+Maximo Asset Management 7.5 with Maximo Scheduler 7.5.2
+or
+Maximo Asset Management 7.6 with Maximo Scheduler 7.5.3
+
+RESOLVING THE PROBLEM
+1) Make sure you are logged on to Maximo as a user that has Signature security access to the Configure Optimization Server option
+2) Go to Security Groups > Group and select the group that requires access to the Configure Optimization Server option.
+3) Click on the Applications tab. Filter for Scheduler and scroll down in the Options.
+4) Check to see if "Access Granted?" checkbox is ticked for Configure Optimization Server
+5) If the "Access Granted?" checkbox is not ticked for Configure Optimization Server, please tick it to put a check mark on it and then save the record.
+
+The Configure Optimization Server option in Select Action Menu of Scheduler should now appear after following the instructions above.

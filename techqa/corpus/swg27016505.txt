@@ -1,0 +1,76 @@
+Title: IBM Using WebSphere MQ V7 as JMS Provider for WebSphere Application Server V7, V8.0 and V8.5, and MQ 9.0 for WAS V9.0 - United States
+
+Text:
+demo Demonstrate Message Driven Bean MDB WebSphere Application Server WebSphere MQ JMS provider demo Demonstrate Message Driven Bean MDB WebSphere Application Server WebSphere MQ JMS provider demo Demonstrate Message Driven Bean MDB WebSphere Application Server WebSphere MQ JMS provider WHITE PAPER
+
+ABSTRACT
+ To demonstrate the use of a simple but functional Message Driven Bean (MDB) in WebSphere Application Server V7, V8.0 and V8.5, which interacts with WebSphere MQ V7 as the Java™ Messaging Service (JMS) provider. WAS 9.0 ships with MQ RA 9.0. 
+
+CONTENT
+The MDB was created with Rational Application Developer (RAD) 7.5 and the Enterprise Archive File (EAR) file which contains the MDB can be downloaded from this techdoc.
+
+The main scenario is to show how to configure both WebSphere Application Server and WebSphere MQ V7.x, in order for an MDB to get messages from MQ, using a WebSphere Application Server Listener Port from a Queue (Point to Point).
+
+
+What is new in this update:
+
+- On Apr-2017, the procedures were tested with a queue manager running on MQ 9.0.2.0 and a WAS server 9.0.0.0 (using MQ RA 9.0.0.0), in Windows 10
+
+- On Aug-2016, the procedures were tested with a queue manager running on MQ 9.0.0.0 and a WAS server 9.0.0.0 (using MQ RA 9.0.0.0)
+
+- On May-2013, the procedures in this techdoc were successfully tested with a queue manager running on MQ 7.5.0.1 and a WAS server 8.5.0.2 (using MQ RA 7.1.0.2).
+
+- On Aug-2012, the procedures in this techdoc were successfully tested with a queue manager running on MQ 7.0.1.9 and a WAS server 8.0.0.4 (using MQ RA 7.0.1.7).
+
+- When using MQ 7.1 or 7.5 queue managers, if the MQ JMS client in WAS gets a RC 2035, one possibility is that the "channel authentication records" are enabled. For more details see the following technote:
+WMQ 7.1 / 7.5 / 8.0 / 9.0 queue manager RC 2035 MQRC_NOT_AUTHORIZED or AMQ4036 or JMSWMQ2013 when using client connection as an MQ Administrator [http://www.ibm.com/support/docview.wss?uid=swg21577137] 
+
+Additional scenarios are provided to illustrate the following: 
+
+ * How to use MQ Topics to exploit Publish/Subscribe from MQ. 
+ * How to use a WebSphere Application Server Activation Specification, instead of a Listener Port from WebSphere Application Server.
+
+
+This document shows all of the screen shots needed for beginners. 
+This document has the following chapters:  1. MQ V7 configuration: queue and topic 
+ 2. WebSphere Application Server V7 and V8 configuration: JNDI objects 
+ 3. WebSphere Application Server V7 and V8 deployment and testing of MDB 
+ 4. Additional scenarios: Topic, Activation Specification
+
+
+Related techdocs 
+The MDB used in this presentation, was created with IBM Rational Application Developer (RAD) 7.5 as part of an Enterprise Java Bean, which is provided in an EAR file. The steps for its creation and testing are documented in a related techdoc: 
+Developing and testing an MDB using RAD 7.5, WebSphere Application Server V7 and MQ V7 as JMS Provider [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27016507] 
+
+
+Using an MDB with JMS message selectors with WebSphere MQ V7 and WebSphere Application Server V7 and V8.x [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27016581] 
+Includes sample code to create a message property "color" 
+Sample MDB: SampleJMSSelectorMdbEjbEAR.ear 
+Sample Java code: SampleJMSMsgProperty.java 
+
+
+Using an MDB that always rolls back a message to test the handling of poison messages (WebSphere MQ V7, WebSphere Application Server V7 and V8.x) [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27016582] 
+Includes sample MDB: SamplePoisonMsgMdbEjbEAR.ear 
+
+Downloadable files 
+The following files are included as attachments to this techdoc:  * Using MQ V7 as JMS Provider for WAS V7 V8.pdf 
+ * EAR file with MDB: SampleMDBEJB.ear 
+ * Text file with code excerpt: onMessage.txt
+
+Using MQ V7 as JMS Provider for WAS V7 and V8.x, and MQ V9 for WAS V9.pdf [/support/docview.wss?uid=swg27016505&aid=2]Using MQ V7 as JMS Provider for WAS V7 and V8.x, and MQ V9 for WAS V9.pdf [/support/docview.wss?uid=swg27016505&aid=1] 
+
+
+File name: Using MQ V7 as JMS Provider for WAS V7 and V8.x, and MQ V9 for WAS V9.pdf
+File size: 1.1 MB
+
+SampleMDBEJB.ear [/support/docview.wss?uid=swg27016505&aid=4] [/support/docview.wss?uid=swg27016505&aid=3]
+File name: SampleMDBEJB.ear
+File size: 3.57 KB 
+
+onMessage.txt [/support/docview.wss?uid=swg27016505&aid=6] [/support/docview.wss?uid=swg27016505&aid=5]
+File name: onMessage.txt
+File size: 1 KB
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Java Message Service (JMS) AIX, HP-UX, Linux, Solaris, Windows 9.0.0.0, 8.5, 8.0, 7.0 Business Integration IBM MQ PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

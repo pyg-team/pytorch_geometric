@@ -1,0 +1,175 @@
+Title: IBM Collecting data for NNSTAT utility failures in InfoSphere Federation Server - United States
+
+Text:
+MustGatherDocument; mustgather; mustgather; mustgather TECHNOTE (FAQ)
+
+QUESTION
+ What information should be collected when I experience a problem with NNSTAT in WebSphere Federation Server? Collecting this information before calling IBM support will help you understand the problem and save time analyzing the data. 
+
+ANSWER
+If you have already contacted support, continue on to begin collecting data. The following information is required by the InfoSphere Federation Server service team to troubleshoot a product nickname statistic collection issue.
+Collecting NNSTAT specific information
+
+1. Have there been any recent changes to your environment (hardware, operating system, software version)?
+
+2. Has this problem occurred before? If yes, do you have a previous PMR number?
+
+3. How often does this problem occur?
+
+4. Is this a production, development, or test environment? 
+
+5. What is the business impact of this problem? 
+Examples:
+a. Cannot roll out a new application
+b. Cannot monitor in-store security systems
+c. Losing money due to applications not talking to each other
+
+6. What is the data source used? Provide data source client and server exact release and version. 
+
+
+ * DB2 for LUW
+ * 
+ * 
+ * 
+ * db2level
+ * 
+ * 
+ * Informix
+ * 
+ * 
+ * 
+ * 
+ * cd $INFORMIXDIR/bin
+   ./ifx_getversion clientsdk
+   ./ifx_getversion libasf.a
+   ./ifx_getversion libasf.so
+   
+ * 
+ * Oracle
+ * 
+ * 
+ * 
+ * cd $ORACLE_HOME/bin
+ * 
+ * ./sqlplus
+ * 
+ * 
+ * Microsoft SQL Server 
+ * 
+ * 
+ * 
+ * select @@version
+ * 
+ * 
+ * IBM Branded DataDirect ODBC driver
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+   
+ * Sybase
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Teradata
+ * 
+ * 
+ * 
+ * 
+
+
+
+7. Can the problem be reproduced? If yes, reproduce as outlined below: 
+(a). Call NNSTAT on every problem nickname and provide the results and logs: 
+CALL SYSPROC.NNSTAT('<servername>','<schema>','<nickname>', <columns>,<indexes>,0,'NNSTAT_LOG_FILE::DIAG',?) 
+
+(b). Run the following SQL on every problem nickname's remote table to get the statistics. Please provide the results. 
+ * For DB2 LUW data sources: 
+ * SELECT * from sysibm.columns where tabschema = <table schema> and tabname = <problem table> 
+   SELECT * from syscat.indexes where tabschema = <table schema> and tabname = <problem table> 
+   For LOW2KEY and HIGH2KEY errors on DB2 LUW:
+   select count(distinct <columnname>) as colcard, max(<columname>) as max, min(<columnname>) as min from<problem table> 
+
+ * For Oracle data sources:
+   SELECT column_name, column_id, data_type, data_length, data_precision,
+   data_scale, nullable, num_distinct, default_length, data_default, num_nulls, high_value, low_value, hidden_column, char_length, char_used 
+   FROM sys.all_tab_cols
+   WHERE owner = 'table_schema' AND table_name = 'table_name'
+   ORDER BY column_id ASC; 
+   
+   SELECT index_name, owner, leaf_blocks, blevel, uniqueness, distinct_keys, clustering_factor
+   FROM sys.all_indexes
+   WHERE table_owner = 'table_schema' AND table_name = 'table_name';
+   
+   SELECT * FROM sys.all_ind_columns
+   WHERE table_owner = 'table_schema' AND
+   table_name = 'table_name'; 
+
+ * For other data sources, run similar queries.
+
+
+(c) Run the following SQL: 
+
+CREATE NICKNAME new_nickname FOR 
+server_name. schema_name. datasource_table_name; 
+
+SELECT tabname, card, npages, fpages,overflow 
+FROM sysstat.tables 
+WHERE tabschema = ' schema_name' AND tabname = ' new_nickname'; 
+SELECT tabname, colname, colcard, high2key, low2key 
+FROM sysstat.columns 
+WHERE tabschema = ' schema_name' AND tabname = ' new_nickname'; 
+
+SELECT tabname, indname, nleaf, nlevels, clusterratio, 
+firstkeycard, fullkeycard 
+FROM sysstat.indexes 
+WHERE tabschema = ' schema_name' AND tabname = ' new_nickname'; 
+CALL SYSPROC.NNSTAT('<servername>','<schema>','<nickname>', 
+<columns>,<indexes>,0,'NNSTAT_LOG_FILE::DIAG',?) 
+
+
+8. Run db2support with following option: 
+db2support <output_path> -d <db name> -cl 0 
+
+Zip, or compress all outputs. Rename with PMR number as prefix before submitting; example 12345.678.000.files.zip . 
+
+Submitting information to IBM Support 
+
+Once you have collected your information, you can begin Problem Determination through the product Support web page, or simply submit the diagnostic information to IBM support. Use the document below for submitting information to IBM Support. 
+
+Submitting diagnostic information to IBM Technical Support for problem determination [http://www-1.ibm.com/support/docview.wss?rs=71&&uid=swg21243808] 
+
+For a listing of all technotes, downloads, and educational materials specific to the Infosphere Federation Server component, search the product support site at the following link : http://www-01.ibm.com/software/data/integration/support/federation_server/ [http://www-01.ibm.com/software/data/integration/support/federation_server/]  
+
+PRODUCT ALIAS/SYNONYM
+ Information Integrator
+Information Integration
+Federated Server

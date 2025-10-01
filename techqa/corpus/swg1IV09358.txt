@@ -1,0 +1,137 @@
+Title: IBM IV09358: ERROR MESSAGES SEEN WHEN RUNNING THE JEXTRACT UTILITY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: Error in string table offset. The core file is
+   invalid and the results may unpredictable
+   Error reading section header name. The core file is invalid and
+   the results may unpredictable
+   .
+   Stack Trace: N/A
+   .
+   After issuing the error messages, jextract completes OK. The
+   error messages are also seen when
+   loading the .zip file produced by jextract into the dump viewer
+   utility (sdk/bin/jdmpview).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The error messages do not affect the operation of jextract and
+   jdmpview, and can be ignored.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Spurious error messages seen when loading a core dump into the
+   jextract or jdmpview utilities.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   6.0.0 SR10
+   .
+   DTFJ core-readers have been improved to prevent the spurious
+   messages from being issued.
+   .
+   To obtain the fix:
+   Install build 20111022 or later
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV09358
+   
+   
+ * REPORTED COMPONENT NAME
+   J9 COMMON CODE
+   
+   
+ * REPORTED COMPONENT ID
+   620700127
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-19
+   
+   
+ * CLOSED DATE
+   2011-10-31
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   J9 COMMON CODE
+   
+   
+ * FIXED COMPONENT ID
+   620700127
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

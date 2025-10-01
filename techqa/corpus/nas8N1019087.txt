@@ -1,0 +1,41 @@
+Title: IBM Printing Reverse Image Fonts - United States
+
+Text:
+PRINT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes how to print reverse image fonts. 
+
+RESOLVING THE PROBLEM
+There are special requirements to printing fonts as reverse image text (white text on black background). 
+
+This print screen shows an example of a reverse image font with the text  [/support/docview.wss?uid=nas8N1019087&amp;aid=1]
+
+The only such font that comes with the IBM System i products operating system is in Product Option 8 (IBM AFP Compatibility Fonts). The font name is C0D0GR10 (Gothic Reverse Roman 10-PT) and can be used in conjunction with most Latin-1 code pages, such as the United States code page T1V10037. This is just a basic 240 pel font and is only available in 10 point size.
+
+A more versatile scalable reverse image font, CZB600, is available from the AFP Font Collection for IBM i product (5733-B45) and the IBM Infoprint Fonts for Multiplatforms (5648-E77); however it is not available in the old AFP Font Collection. The AFP Font Collection for IBM i product (5733B45) is the replacement for both Infoprint Fonts for Multiplatforms and the old AFP Font Collection.
+
+The printer hardware must also support uploadable fonts and the resolution of the font. Note that IPDS does not include spaces in the reverse image.
+
+A laser printer using Host Print Transform (HPT) can also use these fonts if using Raster Mode. Refer to the following Rochester Support Center knowledgebase document for setup instructions:
+
+N1010127, Raster Imaging for Host Print Transform (HPT): 
+
+Note: If the FNTCHRSET (Font Character Set) DDS keyword is used to create an *AFPDS spooled file, HPT will automatically use Raster Mode; creating a modified Workstation Customizing Object (WSCST) to perform Raster Mode will not be necessary.
+
+
+Font Support with Transform Services
+
+6.1 Transform Services (product 5761TS1) does not have the ability to embed fonts, and therefore is limited describing the characteristics of a typeface. It is therefore limited to the 14 Standard Type 1 fonts:
+
+
+
+o Times Roman o Times Bold o Times Italic o Times Bold/Italic o Helvetica o Helvetica Bold o Helvetica Oblique o Helvetica Bold/Oblique o Courier o Courier Bold o Courier Oblique o Courier BoldOblique o Symbol o ZapfDingbats 
+The Adobe Standard Type 1 fonts do not include support for reverse image, and 6.1 Transform Services can only map to the Standard Type 1 fonts, so the reverse image characteristic of font character set C0D0GR10 or font character set CZB600 is lost when using 6.1 Transform Services to create a PDF file. 
+
+7.1 Transform Services (product 5770TS1) added the ability to embed fonts, including host-resident font character sets, such as C0D0GR10 and CZB600, and coded fonts. This provides better font support, including support for reverse image fonts, but can increase the size of the resulting PDF file since each referenced font must be embedded in the PDF file itself.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 
+HISTORICAL NUMBER
+ 384223812

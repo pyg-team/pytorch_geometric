@@ -1,0 +1,203 @@
+Title: IBM PK25000: USINGKEYS DOCUMENTATION NEEDS TO BE CHANGE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  usingKeys EGL documentation needs to be corrected.
+   The usingKeys is used to override the list of key items specifie
+   d for the SQL record.  The EGL documentation needs to be updated
+    to clarify how the usingKeys clause is used and the effect of k
+   ey items on implicit SQL statements.
+   
+   
+   
+   The usingKeys documentation currently states:
+   
+   
+   
+   Identifies a list of key items that are used to build the key-va
+   lue
+   component of the WHERE clause in an implicit SQL statement.  If
+   you do
+   not specify a usingKeys clause, the key-value component of the
+   
+   implicit statement is based on the SQL record part that is refer
+   enced
+   in the open or get statement.
+   
+   
+   
+   The documentation should be changed to contain the following
+   
+   information:
+   
+   
+   
+   The usingKeys clause identifies a list of key items that overrid
+   e the
+   keyItems defined for the SQL record.  If you do not specify a
+   
+   usingKeys clause, the key items list for the implicit statement
+   is
+   based on the keyItems list specified for the SQL record that is
+   
+   referenced in the open or get statement.
+   
+   
+   
+   Effect of key items on implicit SQL statements
+   
+   
+   
+   - For the Add statement, key items have no effect on the implici
+   t SQL
+     statement.
+   
+   
+   
+   - For the Get statement,
+   
+     - the key items are used to build the key-value component of t
+   he
+       WHERE clause.
+   
+     - if the forUpdate keyword is specified, the columns associate
+   d
+       with the key items are excluded from the columns listed on t
+   he
+       FOR UPDATE OF clause.
+   
+   
+   
+   - For the OPEN statement,
+   
+     - the key items are used to build the key-value component of t
+   he
+       WHERE clause.
+   
+     - if the forUpdate keyword is specified, the columns associate
+   d with
+       the key items are excluded from the columns listed on the FO
+   R
+       UPDATE OF clause.
+   
+     - if the forUpdate keyword is NOT specified,  only the columns
+   
+       associated with the key items are included in the list of co
+   lumns
+       on ORDER BY clause.
+   
+   
+   
+   - For the replace statement, the key items are excluded from the
+    list
+     of columns updated on the SET clause.
+   
+   
+   
+   Since the effect of key items list also applies to the SQL recor
+   d's
+   keyItems property, it should be referenced from the keyItems doc
+   .
+   UsingKeys info should also be referenced from from the keyItems
+   doc to
+   let users know they can override the record's keyItems property
+   by
+   specifying usingKeys on the get and open statements.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Documentation needed correction and amplification.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Documentation has been changed for Rational Application
+   Developer V7
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK25000
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEV V6 WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-05-15
+   
+   
+ * CLOSED DATE
+   2006-12-01
+   
+   
+ * LAST MODIFIED DATE
+   2006-12-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,156 @@
+Title: IBM Managing the Time Zone Variable (POSIX) - United States
+
+Text:
+KnowledgeCollection TECHNOTE (FAQ)
+
+QUESTION
+ Can you tell me how to manage the POSIX timezone on my system? 
+
+ANSWER
+
+
+ This document discusses the Time Zone (TZ) variable and how to change to and from Daylight Saving Time (DST). This document applies to all versions of AIX. 
+
+ PLEASE NOTE: The default timezone format for AIX 6.1 and AIX 7 is Olson Time, this technote does not apply to Olson Time, but standard POSIX timezone formatting. I am including APARs that are for Olson Time below for completeness. 
+
+About DST 
+Enabling DST 
+Disabling DST 
+Changing the effective date to switch to DST 
+How switching to DST affects cron jobs 
+Manually Changing DST for 2007 
+Recommended fixes 
+
+
+ABOUT DST
+ If the Daylight Saving Time option is enabled, the default in AIX is for the system time to move forward 1 hour (to DST) at 2:00am the second Sunday in March, and move back one hour (to Standard Time) at 2:00 a.m. on the first Sunday in November (prior to The Energy Policy Act of 2005 (Public Law 109-58)2007, this switch occured on the first Sunday in April and ended the last Sunday in October). The default is hard coded and is not stored in any user accessible file. However, the date and time at which the switch to DST and ST occurs can be customized by root (global environment) or by users (user environment) by setting the $TZ environment variable. To see if DST is enabled, echo $TZ; if the time zone variable ends in DT, DST is enabled. 
+
+
+
+
+ENABLING DST
+ If your time zone uses Daylight Saving Time , you can enable it with SMIT. On AIX 5.3 and lower enter: 
+
+     smit chtz
+     Answer "1 yes" to "Use Daylight Saving Time?"
+
+
+On AIX 6.1 and 7.1 use
+
+     smit chtz_user
+
+
+
+
+
+DISABLING DST
+ If Daylight Saving Time does not apply to your location, you can turn this option off with the following SMIT menu on AIX 5.3 and lower: 
+
+     smit chtz
+     Answer "2 no" to "Use Daylight Saving Time?"
+
+
+On AIX 6.1 and 7.1 use
+
+     smit chtz_user
+
+
+
+
+
+CHANGING THE EFFECTIVE DATE TO SWITCH TO DST
+ If you wish to change the date or time at which the system switches to DST and back to Standard Time from the defaults for your zone, edit the TZ line in /etc/environment. Change the line to read something like the following: 
+
+     TZ=CST6CDT,M3.2.0/2:00:00,M11.1.0/2:00:00
+
+
+ The above example would effect a change to Daylight Saving Time at 2:00 AM on the second Sunday in March and change back at 2:00 AM on the first Sunday in November, and keep the US Central Time Zone time offset from GMT. The breakdown of the string is: 
+
+ * CST6CDT is the time zone you are in; 
+ * M3 is the third month; 
+ * .2 is the second occurrence of the day in the month; 
+ * .0 is Sunday; 
+ * /2:00:00 is the time. 
+
+ In more detail, the format is TZ = local_timezone,date/time,date/time. Here date is in the form of Mm.n.d, day d(0-6) of week n (1-5, where week 5 means "the last d day in month m" and which may occur in either the fourth or the fifth week) of month m of the year. Week 1 is the first week in which the day d occurs. Day zero is Sunday. This format is compliant with POSIX 1003.1 standards for Extensions to Time Functions. 
+
+ NOTE: This can be changed in the smit chtz panel as well. 
+
+
+
+
+HOW SWITCHING TO DST AFFECTS CRON JOBS 
+ If you have a cron job that is to be run at 2:01am and it is the time of year when the time springs forward, this job will not run. The time skips from 2:00am to 3:00am. On the other hand, when the time is being set back one hour, jobs that run between 1:00am and 2:00am will run twice. 
+
+So, for jobs set between 2:00am and 3:00am, in the spring it is necessary to either change the time for these jobs to run, run them manually, or wait until the following day to run them. The cron daemon does not need to be stopped; however, if changes are made to the TZ variable, then kill the current cron daemon so that it will automatically respawn and recognize the new TZ setting. 
+
+ NOTE: Daylight saving time is just a way in which time is displayed to the user. Time is still kept the same internally, so programs such as dce which use time as it is stored internally will not be affected by daylight saving time. 
+
+
+
+
+MANUALLY CHANGING DST FOR 2007
+If the APARs mentioned in Tech Doc titled "New Daylight Saving Time for 2007" are not installed, the TZ field may be changed manually as below. The changes necessary for each of the standard US timezones would be as follows: 
+EASTERN TIME ZONE:
+# chtz EST5EDT,M3.2.0/2:00:00,M11.1.0/2:00:00 CENTRAL TIME ZONE:
+# chtz CST6CDT,M3.2.0/2:00:00,M11.1.0/2:00:00 MOUNTAIN TIME ZONE:
+# chtz MST7MDT,M3.2.0/2:00:00,M11.1.0/2:00:00 PACIFIC TIME ZONE:
+# chtz PST8PDT,M3.2.0/2:00:00,M11.1.0/2:00:00 
+ The "M3.2.0" means to go on DST starting in month 3 (March), week 2, and Day 0 (Sunday). 
+The "M11.1.0" means to switch back 1st Sunday in November.
+
+
+ The system would have to be rebooted before March, 2007 for the changes to take place. Otherwise, all processes that were running prior to the change will continue to use the older value. 
+
+ 
+
+RECOMMENDED FIXES
+AIX 5.1
+IY75214 DAYLIGHT SAVING TIME DEFAULT CHANGING IN 2007 
+IY34203 SMITTY CHTZ APPENDING 2 COMMAS AFTER TZ 
+IY49871 SMITTY CHTZ_USER LIMITS THE EDITING OF TIMEZONE TO THREE CHARACTERS 
+IY21283 PROBLEM WITH SMITTY CHTZ_USER MENU WHEN SOME FIELD ARE LEFT BLANK 
+IY75214 DAYLIGHT SAVING TIME DEFAULT CHANGING IN 2007 
+AIX 5.2
+IY75213 DAYLIGHT SAVING TIME DEFAULT CHANGING IN 2007 
+(This APAR is included in Technology Level 5200-08 and later.) 
+IY35629 SMITTY CHTZ APPENDING 2 COMMAS AFTER TZ 
+IY49813 SMITTY CHTZ_USER LIMITS THE EDITING OF TIMEZONE TO THREE CHARACTERS 
+IY39159 DEFAULT DST TZ SETTINGS WITH AN OFFSET FAILS TO RETURN TO STD 
+IY39312 SETTING TZ FAILS WITH QUOTED TIMEZONES 
+IY43243 CRITICAL FIXES FOR AIX 5.2 AS OF APRIL 2003 
+IY44169 WLM CONFIGURATION SET DOESN'T WORK RIGHT WHEN CHANGING TZ (TIME ZONE) 
+IY37121 IN UDF FILESYSTEMS, LOSTFILES.DIR HAS OLD DATE 
+IY37445 TIMEZONE DEFAULTS FOR NEW ZEALAND INCORRECT 
+IY75213 DAYLIGHT SAVING TIME DEFAULT CHANGING IN 2007 
+AIX 5.3
+IY75211 DAYLIGHT SAVING TIME DEFAULT CHANGING IN 2007 
+(This APAR is included in Technology Level 5300-04 and later.) 
+IZ82425 5300-09-08-1036 ZDUMP REPORTS INCORRECT DST DATE FOR EASTERN AUSTRALIA REGIONS 
+IZ82692 5300-10-05-1036 ZDUMP REPORTS INCORRECT DST DATE FOR EASTERN AUSTRALIA REGIONS 
+IZ82189 5300-11-05-1036 ZDUMP REPORTS INCORRECT DST DATE FOR EASTERN AUSTRALIA REGIONS 
+IZ81579 5300-12-02-1036 ZDUMP REPORTS INCORRECT DST DATE FOR EASTERN AUSTRALIA REGIONS 
+IZ82703 5300-10-05-1036 CRON DOES NOT RUN A 3AM JOB WHEN DST OCCURS 
+IZ82201 5300-11-05-1036 CRON DOES NOT RUN A 3AM JOB WHEN DST OCCURS 
+IZ81589 5300-12-02-1036 CRON DOES NOT RUN A 3AM JOB WHEN DST OCCURS 
+IZ11729 5300-07-02-0806 Date gives wrong output for certain time zones. 
+IZ09392 5300-08 Date gives wrong output for certain time zones. 
+IZ11383 5300-09 Date gives wrong output for certain time zones. 
+AIX 6.1
+IZ79512 6100-02-09-1034 ZDUMP REPORTS INCORRECT DST DATE FOR EASTERN AUSTRALIA REGIONS 
+IZ67738 6100-03-06-1034 ZDUMP REPORTS INCORRECT DST DATE FOR EASTERN AUSTRALIA REGIONS 
+IZ78940 6100-04-06-1034 ZDUMP REPORTS INCORRECT DST DATE FOR EASTERN AUSTRALIA REGIONS 
+IZ78883 6100-05-02-1034 ZDUMP REPORTS INCORRECT DST DATE FOR EASTERN AUSTRALIA REGIONS 
+IZ78949 6100-04-06-1034 CRON DOES NOT RUN A 3AM JOB WHEN DST OCCURS 
+IZ78896 6100-05-02-1034 CRON DOES NOT RUN A 3AM JOB WHEN DST OCCURS 
+IZ74244 6100-06 CRON DOES NOT RUN A 3AM JOB WHEN DST OCCURS 
+IZ68046 6100-04-03-1009 UNEXPECTED OLSON TZ CHANGE FOR AMERICA/SAO_PAULO. 
+IZ67981 6100-05 UNEXPECTED OLSON TZ CHANGE FOR AMERICA/SAO_PAULO. 
+IZ67948 6100-06 UNEXPECTED OLSON TZ CHANGE FOR AMERICA/SAO_PAULO. 
+IZ09600 6100-00-02-0750 Date gives wrong output for certain time zones. 
+IZ12763 6100-01 Date gives wrong output for certain time zones. 
+IZ12630 6100-02 Date gives wrong output for certain time zones. 
+ 
+
+HISTORICAL NUMBER
+ isg1pTechnote0395

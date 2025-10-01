@@ -1,0 +1,156 @@
+Title: IBM IZ96607: WAIT QUEUE AND SERVICE QUEUE METRICS SHOW ZERO VALUES FOR DISKS - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring: VIOS Premium Agent 6.2.2.1-TIV-ITM_VIOS_PREM-IF0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24030976]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Storage Devices Utilization view incorrectly shows several
+   service queue and wait queue metrics as value of zero.  The
+   problem is in the aixDataProvider and can be seen by tracing the
+   data provider.
+   
+   ENVIRONMENT:
+   
+   IBM Tivoli Monitoring for System p - AIX Premium Agent 6.2.2.1
+   
+   
+   
+   RECREATE INSTRUCTIONS:
+   Start the AIX Premium agent and view the
+   Storage -> 'MPIO Storage Information' -> 'Storage Devices
+   Utilization' view. Set the window refresh to every 60 seconds.
+   Check for the service queue and wait queue metrics such as Avg
+   Request in WaitQ MS', 'Min Request in WaitQ MS', 'Max Request in
+   WaitQ MS', 'Avg WaitQ Size', 'Avg ServiceQ Size', and 'ServiceQ
+   Full per Sec' . They would all show up as zeros.
+   
+   LOCAL FIX: None.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   *****
+   * USERS AFFECTED: All users.
+   ****************************************************************
+   *****
+   * PROBLEM DESCRIPTION: The Storage Devices Utilization view of
+   * the MPIO Storage Information workspace might show
+   * value of zero for wait queue and service queue metrics
+   * such as "Avg Request in WaitQ MS", "Min Request in WaitQ
+   * MS", "Max Request in WaitQ MS", "Avg WaitQ Size", "Avg
+   * ServiceQ Size", and "ServiceQ Full per Sec".
+   ****************************************************************
+   *****
+   * RECOMMENDATION: Apply 6.2.2.1-TIV-ITM_AIX_PREM-IF0002.
+   ****************************************************************
+   *****
+   Interim Fix 6.2.2.1-TIV-ITM_AIX_PREM-IF0002 resolves the problem
+   by
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   
+      | interim fix | 6.2.2.1-TIV-ITM_AIX_PREM-IF0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ96607
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM SE SYSP AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04AP
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-14
+   
+   
+ * CLOSED DATE
+   2011-04-22
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM SE SYSP AIX
+   
+   
+ * FIXED COMPONENT ID
+   5724C04AP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

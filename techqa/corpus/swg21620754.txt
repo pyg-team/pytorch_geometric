@@ -1,0 +1,146 @@
+Title: IBM Upgrade guide for Content Manager OnDemand server V9.0.0 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ This guide contains step by step instructions and information to migrate your IBM Content Manager OnDemand server to V9.0.0. Follow the instructions for the version of Content Manager OnDemand server you currently have installed.
+
+To ensure you have the latest APAR fixes, stay current with maintenance by applying the latest OnDemand server fixpack. 
+
+ANSWER
+ 
+
+TAB NAVIGATION
+ * Planning | [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21432774]- selected tab,
+ * | V10.1.0.X | [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21446135]
+ * | V9.5.0.X | [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21686051]
+ * | V9.0.0.X |- selected tab,
+
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21620754&amp;aid=1] Prerequisites [/support/docview.wss?uid=swg21620754&amp;aid=2] Upgrading from V8.5.0.X [/support/docview.wss?uid=swg21620754&amp;aid=3] How to Uninstall OnDemand Server V9.0.0 [/support/docview.wss?uid=swg21620754&amp;aid=4] Miscellaneous 
+Prerequisites 
+
+
+
+Requirements for Content Manager OnDemand for Multiplatforms V9.0.0 [http://www.ibm.com/support/docview.wss?rs=129&uid=swg27021456] 
+This document describes the minimum system requirements for Content Manager OnDemand for Multiplatforms V9.0.0. 
+
+The installation requires: 
+ * Linux® and Unix®: 400MB of free space in /tmp and 400MB in /opt 
+ * Windows®: 800MB of free space in C:\
+   
+   
+
+Upgrading from V8.5.0.X 
+
+
+
+ 1. Perform the Pre-upgrade Tasks in the Planning tab. Ensure you have a current database backup. 
+    
+    Note: If using an ACIF user exit, it must be recompiled after upgrading to V9.0.0 to utilize the current version of ICU and new OnDemand server installation directory.
+    
+    
+ 2. Download the required target OnDemand server software.  1. Download the V9.0.0.0 full install package [http://www.ibm.com/support/docview.wss?uid=swg24033331]. 
+     2. Download your target V9.0.0.X fixpack. For example, V9.0.0.1.
+        
+        
+    
+    
+ 3. Stop your OnDemand library and object server.
+    
+    
+ 4. Upgrade the OnDemand server software on your library and object server. The fixpack is an executable installer. For example, to install the fixpack via command line on Linux and Unix, run odaix.bin -i console. On Unix and Linux, this step must be performed as root. On Windows, use the account OnDemand server runs under.  1. Run the V9.0.0.0 installer. 
+     2. Run your desired target V9.0.0.X fixpack installer. 
+        
+        
+    
+    
+ 5. Alter the OnDemand database for use with V9.0.0 and later by running the following commands on your library server. These commands must be run as the OnDemand instance owner specified in the OnDemand Configurator on Windows or the ars.ini on all other platforms.  1. Mandatory. Alter the OnDemand database for V9.0.0 and later:
+        
+        arsdb -I instance_name-uv
+        
+        
+     2. Mandatory if you have Report Distribution installed and V9.0.0.1 or later. Run this command to correct Report Distribution folder field to application group field mappings:
+        
+        arssyscr -I instance_name-r
+        
+        
+     3. Optional, but recommended. Update the System Log and System Load application groups and folders to support new style dates [http://www.ibm.com/support/docview.wss?uid=swg27036188]. 
+        
+        Important: Once this is performed, older clients (prior to V9.0.0) will not be able to query the System Log or System Load folders.
+        
+        Note: When the System Log and System Load application groups are updated, the current table will be closed and a new one will be opened once a new message or load is generated. 
+        
+         1. Update the System Log application group and folder:
+            
+            arssyscr -I instance_name-l -u
+            
+            
+         2. Update the System Load application group and folder:
+            
+            arssyscr -I instance_name-a -u
+            
+            
+        
+        
+    
+    
+ 6. Update the indexes for the OnDemand system tables. Run these arsdb commands to drop and recreate the indexes for these tables:
+     1. Drop the indexes:
+        
+        arsdb -I instance_name-efv
+        
+        
+     2. Create the new indexes:
+        
+        arsdb -I instance_name-rfv
+        
+        
+     3. Reorg and update statistics on all the OnDemand system tables:
+        
+        arsdb -I instance_name-mv
+        
+        If using Oracle®, run the following command instead:
+        
+        arsdb -I instance_name-sv
+        
+        
+    
+    
+ 7. Verify the appropriate ulimit settings are in place for the OnDemand instance owner. Since the OnDemand server is a 64-bit process, the soft and hard limits for the user running the server process should be set to unlimited for data (-d), memory (-m), and stack (-s).
+    
+    
+ 8. Start your OnDemand library and object server.
+    
+
+
+How to Uninstall OnDemand Server V9.0.0 
+
+
+
+To uninstall OnDemand server V9.0.0:  * On Linux: /opt/ibm/ondemand/V9.0/_uninst900/uninstallod -i console 
+ * On Windows: Use Add/Remove Programs in the Control Panel 
+ * All other platforms: /opt/IBM/ondemand/V9.0/_uninst900/uninstallod -i console
+
+
+To uninstall Global Security Kit Crypt V8 and Global Security Kit SSL V8, refer to the OnDemand README file. 
+
+Miscellaneous 
+
+
+
+ * To upgrade to OnDemand server V9.0.0, the full install package must be downloaded from IBM Passport Advantage [http://www.ibm.com/software/lotus/passportadvantage/]. 
+ * On Windows, instructions to migrate to 64-bit DB2 are here [http://pic.dhe.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.qb.upgrade.doc/doc/t0011000.html] [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/topic/com.ibm.db2.luw.qb.migration.doc/doc/t0011000.html]. 
+
+RELATED INFORMATION
+ Best practices: Using Full Text Search with CMOD [http://www.ibm.com/support/docview.wss?rs=129&uid=swg21606305]
+Enhancement Retention Management Guide [http://www.ibm.com/support/docview.wss?uid=swg27024000&aid=1]
+CMOD V9.0.0 Publication Library [http://www.ibm.com/support/docview.wss?uid=swg27022033]
+CMOD V9 New Date Types [http://www.ibm.com/support/docview.wss?uid=swg27036188]
+CMOD V9 Installation Considerations [http://www.ibm.com/support/docview.wss?uid=swg21608635]

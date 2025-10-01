@@ -1,0 +1,173 @@
+Title: IBM PI67167: IPCONN STUCK IN FREEING STATUS WONT GO TO RELEASED STATUS MAY SEE DFHIS1025 ERROR CODE 0619 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are running CICS 5.2 and have a CICS IPIC connection
+   stuck in Freeing state. It never goes into Released state, and
+   the region must be recycled to clear.
+   A dump at the time the connection was in freeing state, shows
+   a Tran number associated with an IPIC session, but this task is
+   no longer in the system.  It issued the following message:
+   DFHIS1025 APPLID Failed to attach mirror transaction xxxx on
+            IPCONN IPIC. Error code is X'0619'
+   This task tried to send an error response back to the client,
+   but
+   fails due to the connection being closed.
+   There is a problem in this scenario, where we do not
+   free up the session control block- ISSB. This leaves it on the
+   active chain, preventing the IPCONN from ever getting to
+   RELEASED
+   state.
+   Additional Symptom(s) Search Keyword(s): KIXREVEPH
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: IPCONN remain in FREEing state after a  *
+   *                      mirror transaction failed to attach     *
+   *                      because it was disable.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   CICS region A and region B are connected via IPIC. The IPCONN is
+   in ACQUIRE status. Region A send a DPL request to region B.
+   The mirror transaction in region B is disabled. Transaction CSAC
+   get attached instead of the mirror transaction. DFHACP attempt
+   to send an IS7 with sense code 084C0000 with message DFHIS1025
+   to region A. The send failed because the IPIC socket has been
+   closed. The CSAC transaction terminates without FREEing the
+   receive ISSB that was allocated to the task.
+   .
+   The SOCKET closed causes transaction CIST to be attached to
+   release the IPCONN. During the IPCONN termination the orphan
+   ISSB is found causing the IPCONN to remain in FREEing state.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHISZA and DFHISIS have been changed to ensure that the receive
+   ISSB used to send an IS7 response to the client region is FREE
+   when socket domain returned an exception.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI67167
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-08
+   
+   
+ * CLOSED DATE
+   2016-10-28
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI70623 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI70623] UI42195
+   
+   
+
+MODULES/MACROS
+ *  DFHISIS  DFHISSR  DFHISZA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY UI42195 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI42195]
+   UP16/11/14 P F611
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,150 @@
+Title: IBM IV67335: USER CANNOT CHANGE THE QBR DESCRIPTION/TITLE IF THEY DO NOT HAVE ACCESS TO THE ROS. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a user does not have access to an ROS.
+   
+   They will not have the ability to rename a QBR
+   Title/Description.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Ad hoc report users.                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Users can perform a "Save As" of an ad hoc report by opening *
+   * the report in Edit mode and changing the report title, then  *
+   * saving.  This leaves the original report unmodified and      *
+   * creates a new report that includes the modifications.  When  *
+   * attempting this action with a report that does not use a     *
+   * report object structure, users receive the error             *
+   * "BMXAA8093E: The report could not be created and the cause   *
+   * of the error cannot be determined."                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Install the appropriate iFix package.                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Install the appropriate iFix package.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Ask the report administrator to duplicate the report, and edit
+   the duplicated report.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV67335
+   
+   
+ * REPORTED COMPONENT NAME
+   REPORTING
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46RP
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-28
+   
+   
+ * CLOSED DATE
+   2015-01-31
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   REPORTING
+   
+   
+ * FIXED COMPONENT ID
+   5724R46RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

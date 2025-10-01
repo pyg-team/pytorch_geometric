@@ -1,0 +1,145 @@
+Title: IBM PK55531: HUNG THREADS SLOWING DOWN APPLICATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: Some threads using the ResourceBundle are hanging
+   effectively slowing down the application over the time.
+   .
+   Stack Trace: N/A
+   .
+   N/A
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N?A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: IBM WebSphere Application Server version     *
+   *                 6.0.2 users                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Hung threads slowing down application   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Threads executing ResourceBundle.java code are hung awaiting
+   notification after cleaning up the constructionList.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   1.4.2 SR10
+   .
+   All threads that are waiting for completion of cleanup of the
+   constructionList are notified once done.
+   .
+   To obtain the fix:
+   Install build 20070913 or later
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK55531
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-26
+   
+   
+ * CLOSED DATE
+   2007-10-26
+   
+   
+ * LAST MODIFIED DATE
+   2007-10-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK51918
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP

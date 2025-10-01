@@ -1,0 +1,126 @@
+Title: IBM PI40664: ERRORS WHEN RUNNING A COMPLEX REPORT AGAINST DB2: XQE-DAT-0001,SQLSYNTAXERROREXCEPTION, SQLCODE=-104, SQLSTATE=42601 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running a complex report based on a dynamic query mode
+   package against DB2, a SQL syntax exception is thrown:
+   
+   XQE-DAT-0001 Data source adapter error: com.ibm.db2.jcc.am.
+   SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-104,
+   SQLSTATE=42601,
+   SQLERRMC=DESCFOR;
+   
+   The SQLERRMC part of the error may vary slightly - the issue is
+   caused by a missing space before the last FOR FETCH ONLY clause
+   in the SQL query.  In this example, the last keyword before the
+   FOR FETCH ONLY clause was the DESC keyword from an ORDER BY
+   clause, resulting in the invalid keyword DESCFOR.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM Cognos Analytics 11.0                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  A fix for this APAR is targeted for the next major release of
+   IBM Cognos .
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI40664
+   
+   
+ * REPORTED COMPONENT NAME
+   COG REPORT STUD
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12RS
+   
+   
+ * REPORTED RELEASE
+   A21
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-05-07
+   
+   
+ * CLOSED DATE
+   2015-12-23
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI40648 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI40648]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RB00 PSN
+   UP

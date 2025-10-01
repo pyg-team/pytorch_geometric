@@ -1,0 +1,81 @@
+Title: IBM Contributor Web Grid does not open for some users: - United States
+
+Text:
+java.lang.OutOfMemoryError TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to open a node in Contributor Rich Client, a small number of users see the splash screen, but when the progress bar approaches 100%, it disappears and no error message is displayed.
+The grid doesn't open.
+
+Also " -2147220450 Unable to Bulk Load the data.~~~~BulkLoad Execution returned
+1.~~Output file" error on failed data import when hitting Copy tab in CAC. 
+
+SYMPTOM
+No PlanningErrorLog.csv is generated on the client. 
+
+However, if generated, provagent.log records:
+**** OFFLINE? - NOT CREATING NODEMODEL ANYMORE ****
+**** OFFLINE? - NOT CALLING iNodeModel.refreshDependantsFromCachedResponse() ANYMORE ****
+ATTACH
+JVMDUMP006I Processing dump event "systhrow", detail "java/lang/OutOfMemoryError" - please wait 
+
+Javacore and heapdump files will be generated and will also show: 
+
+java/lang/OutOfMemoryError
+
+Provagent log is usually located at C:\Documents and Settings\%user profile%\Application Data\CognosRCP\logs\provagent_8.4
+
+Location of Javacore and heapdump files can be found in the provagent log.
+Check also the following location for javacore and heapdump files:
+{c8_isntallation location}\crcp\CognosRCP\rcp\applications\contributor_8.4\bins\bin_8.4.2809.0
+
+CAUSE
+Exceeding the maximum allocated java heap size when the JCE tries to resolve the persisted state. 
+
+
+Rich client is using contiguous memory allocated to JVM, which is set by CLIENT_JVM_OPTIONS value in the application's database adminoption table. The default settings 64m(min) and 88m(max) have been determined to accommodate minimum hardware requirements that we have for Contributor client and as well as most typical customer models/scenarios.
+
+In some cases for relatively large slices, the JVM xmx setting needs to be bumped up a little, e.g. 128MB or 256MB. We would not recommend going above 256MB for Rich client.
+In that case, there are 2 requirements for the client's machine:
+- have enough RAM to accommodate other processes on the machine (system, anti-virus, Excel, J Calculation engine, and so on)
+- have 256MB chunk of contiguous memory for the JVM.
+Those 2 requirements are not hard to meet these days. It would be a problem only when doing large exports or opening a large slice (node) on the machines with smaller RAM (e.g. 512MB-1GB)
+
+
+DIAGNOSING THE PROBLEM
+Even if the client side persist parameter throws the error and the server side persist parameter does not, throw the error, this Jave heap size solution still applies.
+
+
+
+RESOLVING THE PROBLEM
+Increase Java heap size. 
+
+
+There are two areas where this can be changed:
+
+A. ADMINOPTION.XML file found on ALL Planning Servers
+B. ADMINOPTION table in the Application's Datastore
+
+A. This will affect newly created Applications
+1. Right-click on the "adminoption.xml" file located in ...\cognos\c8\bin\resources\RuntimeTablesDDL and select Properties
+2. Remove the check-mark from the 'Read-only' attribute
+3. Click on OK
+4. In a text editor (e.g., Notepad) open adminoption.xml
+5. Locate the CLIENT_JVM_OPTIONS parameter and change the default Xmx value of 88 to something larger (good starting point is 128m)
+-Xms64m -Xmx88m -XX:NewRatio=1 -XX:MaxPermSize=40m -agentpath:memagent.dll=350000000 -Xshareclasses:name=IBMCognosRCP,nonpersistent -Xquickstart
+6. Save the file
+7. Change the file attribute back to Read Only -- put a checkmark on the 'Read-only' attribute
+
+B. Affects existing Applications
+1. On the database server, locate the <application_name>.adminoption table
+2. Under the optionid column, look for CLIENT_JVM_OPTIONS
+3. Change the Xmx paramater value of 88, under the optionvalue column, to something bigger
+If also doing Option A, make this the same value as what was set in the XML, otherwise, a good starting point is 128m.
+-Xms64m -Xmx88m -XX:NewRatio=1 -XX:MaxPermSize=40m -agentpath:memagent.dll=350000000 -Xshareclasses:name=IBMCognosRCP,nonpersistent -Xquickstart
+4. Run a GTP on that Application
+
+
+NOTES:
+* Take a backup of the adminoption.xml file and of the Application Datastore being altered before doing any of the above steps.
+* It is recommended to go on a App-by-App basis (Option B) and change the settings only for those Applications which show this sort of behaviour.
+* Maximum recommended -Xmx setting is 256m. Do not go over this value.

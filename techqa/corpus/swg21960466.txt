@@ -1,0 +1,17 @@
+Title: IBM Is IIDR/CDC (LUW) handling Leap Second event correctly? - United States
+
+Text:
+CDC; Infosphere CDC; Infosphere Change Data Capture; Change Data Capture; ISCDC; IS-CDC; IIDR; Leap Second; leap TECHNOTE (FAQ)
+
+QUESTION
+ Is IIDR/CDC (LUW) handling Leap Second event correctly? Is there any action required? 
+
+CAUSE
+Leap Second event.
+
+ANSWER
+Leap seconds are not especially rare events. 
+
+There have been several occurrences of such since the first release of the CDC technology in the 90's. 
+IIDR/CDC handles leap seconds automatically for LUW environments. 
+No special user configuration or action is required.

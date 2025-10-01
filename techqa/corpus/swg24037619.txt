@@ -1,0 +1,142 @@
+Title: IBM Download IBM Netcool Operations Insight V1.2 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and install IBM Netcool Operations Insight V1.2 using the IBM Passport Advantage website. 
+
+DOWNLOAD DESCRIPTION
+
+
+ IBM Netcool Operations Insight integrates infrastructure and operations management into a single coherent structure across business applications, virtualized servers, network devices and protocols, internet protocols, and security and storage devices. 
+
+Downloading and assembling the solution:
+
+ 1. Go to the Find Downloads and Media [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] page on the IBM Passport Advantage Online website. You must log in with an IBM ID to continue.
+ 2. Under Download finder options, select the Find by part number search option.
+ 3. Search for each downloadable image by part number (part numbers are listed in this document).
+ 4. Download all of the parts that you need.
+ 5. Unpack each of the parts into a single temporary directory on your system.
+ 6. Open the Quick Start image and follow the instructions in the Quick Start Guide to install the base components.
+
+
+
+Solution Quick Start eImage
+
+eImage # Description CIZ6LEN
+
+IBM Netcool Operations Insight v1.2 Quick Start Guide (Multiplatform)
+
+Base component eAssemblies: The following table lists the available multiplatform eAssembly numbers for the IBM Netcool Operations Insight base components.
+
+eAssembly # Description CRSB8EN
+
+IBM Tivoli Netcool/OMNIbus v8.1 for Netcool Operations Insight v1.2
+
+CRSB9EN
+
+IBM Tivoli Netcool Impact v7.1 for Netcool Operations Insight v1.2
+
+CRS7NML
+
+IBM Tivoli Netcool/OMNIbus Probes
+
+CRS7RML
+
+IBM Tivoli Netcool/OMNIbus Data Exchange v8.1
+
+CRS7QML
+
+IBM Tivoli Netcool/OMNIbus Event Forwarding v8.1
+
+CRS7JML
+
+IBM Tivoli Monitoring for Tivoli Netcool/OMNIbus v8.1
+
+CRS7KML
+
+IBM Tivoli Monitoring Agents for Tivoli Netcool/OMNIbus
+
+Supporting product eAssemblies: The following table lists the available eAssembly numbers for the IBM Netcool Operations Insight supporting products.
+
+Note: IBM SmartCloud Analytics - Log Analysis v1.2 requires the following iFix: 1.2.0.0-CSI-SCALA-IF0004. The iFix is available from IBM Fix Central [http://www.ibm.com/support/fixcentral/].
+
+eAssembly # Description CRSC0EN
+
+IBM SmartCloud Analytics - Log Analysis v1.2
+
+CRS7LML
+
+Jazz for Service Management v1.1.0.3 for Netcool Operations Insight v1.2
+
+CRS7MML
+
+DB2 v10.5 Enterprise Server Edition for Tivoli Netcool/OMNIbus v8.1
+
+CRRS3ML
+
+IBM Tivoli Network Manager IP Edition v4.1.1
+
+CRS5IML
+
+IBM Tivoli Monitoring v6.3.0.2 for Tivoli Network Manager IP Edition v4.1.1
+
+CRRS1ML
+
+IBM DB2 v10.1 Limited Use for Tivoli Network Manager IP Edition v4.1.1 and Tivoli Network Manager v6.4.1
+
+CRNV5ML
+
+IBM Tivoli Common Reporting v2.1.1 for Tivoli Network Manager IP Edition v4.1
+
+CRSY3EN
+
+IBM Tivoli Netcool Configuration Manager v6.4.1 Base
+
+CRLX2EN
+
+IBM Tivoli Netcool Configuration Manager v6.4 Configuration Standard Device
+
+CRLX3EN
+
+IBM Tivoli Netcool Configuration Manager v6.4 Configuration Standard Basic Device
+
+CRLX4EN
+
+IBM Tivoli Netcool Configuration Manager v6.4 SmartModel Basic Device
+
+CRLX5EN
+
+IBM Tivoli Netcool Configuration Manager v6.4 SmartModel Basic Device Individual Installers
+
+CRLX6EN
+
+IBM Tivoli Netcool Configuration Manager v6.4 SmartModel Device
+
+CRLX7EN
+
+IBM Tivoli Netcool Configuration Manager v6.4 SmartModel Device Individual Installers
+
+CRLX8EN
+
+IBM Tivoli Netcool Configuration Manager v6.4 SmartModel Complex Device
+
+CRM16EN
+
+IBM Tivoli Netcool Configuration Manager v6.4 SmartModel Complex Device Individual Installers
+
+Event Search integration
+
+The Event Search integration between Tivoli Netcool/OMNIbus and SmartCloud Analytics - Log Analysis requires Tivoli Netcool/OMNIbus Insight Pack v1.1.0.1 for SmartCloud Analytics - Log Analysis. The Insight Pack eImage (CN0K8EN) is contained in the IBM SmartCloud Analytics - Log Analysis v1.2 (CRSC0EN).
+
+More information:
+
+ * IBM Netcool Operations Insight on IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSTPTP/welcome]
+ * IBM Tivoli Netcool/OMNIbus on IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSSHTQ/landingpage/NetcoolOMNIbus.html]
+ * IBM Tivoli Netcool/Impact on IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSSHYH/welcome]
+ * IBM SmartCloud Analytics - Log Analysis on IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSPFMY/welcome]
+ * Tivoli Netcool/OMNIbus Insight Pack for IBM SmartCloud Analytics - Log Analysis [http://www.ibm.com/developerworks/servicemanagement/ioa/log/downloads.html]
+ * Jazz for Service Management on IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSEKCU/welcome]
+ * Tivoli Network Manager IP Edition on IBM Knowledge Center [http://www-01.ibm.com/support/knowledgecenter/SSSHRK_4.1.1/com.ibm.networkmanagerip.doc_4.1.1/itnm/ip/wip/common/welcome.html]
+ * Tivoli Netcool Configuration Manager on IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SS7UH9/welcome]

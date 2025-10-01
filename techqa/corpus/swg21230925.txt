@@ -1,0 +1,86 @@
+Title: IBM DFHTF0001 0C4 in DFHALP at offset 2C06 or 2C26 - United States
+
+Text:
+DFHTF0001 MSGDFHTF0001Abend 0C4 Abend S0C4 ABENDS0C4 ; DFHALP 2C06 (code 0C4/AKEA) ; AKEA ABENDAKEA login 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 kixinfo kixdcfcpc310 kixdcfcpc320 kixdcfcic640 kixdcfcic650 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are in the process of upgrading from CICS Transaction Server for z/OS. Your CICS region initializes successfully. However, when you try to logon to the region, you immediately receive the following:
+
+DFHTF0001 An abend (code 0C4/AKEA) has occurred at offset X'2C06' in module DFHALP.
+
+Your offset might be different, depending on what release of CICS TS you are upgrading to. 
+
+CAUSE
+Abend is due to an old version of DFHAPINA in the DFHRPL concatenation.
+
+DIAGNOSING THE PROBLEM
+From a CICS V3.1 system dump, trace of the abend 0C4 shows the error as follows:
+
+AP D600 ALP ENTRY - FUNCTION(RESET_AID_QUEUE)
+TERMINAL_TOKEN(0AD2C4D0)
+AP D603 ALP *EXC* RECOVERY_ENTERED - FUNCTION(RESET_AID_QUEUE)
+TERMINAL_TOKEN(0AD2C4D0)
+
+The running task is CQRY. The Kernel contains the following:
+
+
+
+KE_NUM @STACK LEN TYPE ADDRESS LINK REG OFFS ERROR NAME
+0058 0A873020 0130 Bot 89801A00 89801DAC 03AC DFHKETA
+0058 0A873150 0310 Dom 89819AA0 89819CA8 0208 DFHDSKE
+0058 0A873460 0530 Dom 8983F298 898406EA 1452 DFHXMTA
+0058 0A873990 05A0 Dom 898C2890 898C5044 27B4 DFHRMUO
+0058 0A873F30 02E0 Dom 8A5ADA40 8A5ADD56 0316 DFHLTRC
+0058 0A874210 0260 Dom 8A5AEFC0 8A5AF5A8 05E8 DFHTFRF
+Int +0510 8A5AF1FE 023E
+RELEASE_FACILITY
+Int +0580 8A5AF4FE 053E
+FREE_TERMINAL
+Int +05AE 8A5AF564 05A4
+TC_FREE_DETACH
+0058 0A874470 04E0 Lifo 0A0BE220 8A0C0D26 2B06 DFHZISP
+0058 0A874950 0600 Dom 89FF2DB0 89FF92AE 64FE *YES* DFHALP
+0058 0A874F50 0FA0 Dom 89883F80 89887B0E 3B8E DFHMEME
+Int +3104 898841FA 027A SEND
+Int +1634 89887172 31F2 
+CONTINUE_SEND
+
+ERR_NUM ERR_TIME KE_NUM ERROR TYPE ERR_CODE MODULE OFFSET
+======= ======== ====== ========== ======== ====== ======
+0000001 09:24:14 0058 PROGRAM_CHECK 0C4/AKEA DFHALREL 000066
+
+PSW: 078D0000 89FF59B6 Instruction Length: 0 Interrupt Code: 04
+Regs: 00-03 099E9F30 0A874C00 0A874670 09FF7F08
+04-07 09FF5970 0A8749D0 E2E3C1E3 0A874950
+08-11 0A874F50 0A874670 0AD2C4D0 0A930000
+12-15 09CB1680 800500C0 89FF2FBE 89FF5992
+
+The failing instruction is 5860 6010 for 
+L AIDCHAN,AIDCHNF-DFHAIDDS(,AIDCHAN)
+This is the first instruction at label ALRELLP. This is a LOAD R6 with R6+x'10'. Problem is R6 contains E2E3C1E3 which is garbage character data. 
+
+It looks like R6 was loaded just after label ALRELSC1, from R11+x'8'. R11 is supposed to be pointing to the TCTSE, but instead it is pointing to the following control block: 
+
+| ..>DFHFCSTATIC | 
+| .d(@.....d+U.... |
+| .d&M.....d.{.... |
+| .d.......d.0.... |
+| .d.......d$-.... |
+| .d*....?.T...... |
+
+The value in R6 is character STAT from DFHFCSTATIC. R11 was loaded from TCTTEIST which is R10+x'9C'. R10 is supposed to be pointing to the TCTTE, and it is. The TCT name is x'F0F0F0F0' or 0000. It is a TN3270 terminal with a TNADDR = nnn.nnn.nnn.nnn:nnnn. 
+
+TCTTEIST is supposed to be the ISC INTERSYSTEM table address. 
+
+An old version of DFHAPINA was found in the DFHRPL concatenation for use by another OEM product. In this case, DFHAPINA is from CICS TS 2.2. The root of the problem is the last two bytes of the TCTTEIST are getting overlaid with x'0000'. This is because the location of TCTEEIDL has moved and is no longer at +x'9E' but at +x'9A', but your version of DFHAPINA is still doing the move to an old location, causing an overlay.
+
+
+RESOLVING THE PROBLEM
+Use the version of DFHAPINA for the release you are running.
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

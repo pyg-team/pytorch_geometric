@@ -1,0 +1,217 @@
+Title: IBM PK14896: INV_POLICY EXCEPTION AS POIMPL IN SERVERREQUESTINFOIMPL IS NULL - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using Portable Object Adapter, org.omg.CORBA.INV_POLICY
+   Exception is thrown at times when invoking a Servant.
+   14:30:20.958 com.ibm.CORBA.iiop.PortableRemoteObject narrow:385
+   WT=0 ORBRas{default}  org.omg.CORBA.INV_POLICY: pi
+   get_server_policy: there is no POA  vmcid: OMG  minor code: 2
+   completed: No
+   at
+   com.ibm.rmi.pi.ServerRequestInfoImpl.get_server_policy(ServerReq
+   uestInfoImpl.java:491)
+   at
+   org.openejb.corba.transaction.ServerTransactionInterceptor.recei
+   ve_request(ServerTransactionInterceptor.java:62)
+   at
+   com.ibm.rmi.pi.InterceptorManager.iterateReceiveRequest(Intercep
+   torManager.java:770)
+   at
+   com.ibm.rmi.pi.LocalRequest.runRequestInterceptors2(LocalRequest
+   .java:122)
+   at
+   com.ibm.CORBA.iiop.ClientDelegate.servant_preinvoke(ClientDelega
+   te.java:743)
+   at
+   com.ibm.CORBA.iiop.ClientDelegate.is_a(ClientDelegate.java:400)
+   at org.omg.CORBA.portable.ObjectImpl._is_a(ObjectImpl.java:141)
+   at
+   com.ibm.rmi.javax.rmi.PortableRemoteObject.narrow(PortableRemote
+   Object.java:360)
+   at
+   javax.rmi.PortableRemoteObject.narrow(PortableRemoteObject.java:
+   157)
+   at
+   org.openejb.corba.CorbaApplicationServer.getEJBObject(CorbaAppli
+   cationServer.java:69)
+   at
+   org.openejb.server.ServerFederation.getEJBObject(ServerFederatio
+   n.java:119)
+   at
+   org.openejb.proxy.ReplacementStrategy$1.writeReplace(Replacement
+   Strategy.java:145)
+   at
+   org.openejb.proxy.SerializationHandler.writeReplace(Serializatio
+   nHandler.java:197)
+   at
+   org.openejb.proxy.EJBObjectImpl.writeReplace(EJBObjectImpl.java:
+   115)
+   at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+   at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:85)
+   at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:58)
+   at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:60)
+   at java.lang.reflect.Method.invoke(Method.java:391)
+   at
+   java.io.ObjectStreamClass.invokeWriteReplace(ObjectStreamClass.j
+   ava:1057)
+   at
+   java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:
+   1042)
+   at
+   java.io.ObjectOutputStream.writeObject(ObjectOutputStream.java:3
+   09)
+   at
+   org.openejb.proxy.SerializationHandler.copyObj(SerializationHand
+   ler.java:221)
+   at org.openejb.corba.util.Util.writeObject(Util.java:471)
+   at
+   org.openejb.corba.StandardServant._invoke(StandardServant.java:3
+   22)
+   at
+   com.ibm.rmi.poa.GenericPOAServerSC.dispatchToServant(GenericPOAS
+   erverSC.java:470)
+   at
+   com.ibm.rmi.poa.GenericPOAServerSC.internalDispatch(GenericPOASe
+   rverSC.java:277)
+   at
+   com.ibm.rmi.poa.GenericPOAServerSC.dispatch(GenericPOAServerSC.j
+   ava:181)
+   at com.ibm.rmi.iiop.ORB.process(ORB.java:439)
+   at com.ibm.CORBA.iiop.ORB.process(ORB.java:1737)
+   at com.ibm.rmi.iiop.Connection.doWork(Connection.java:2262)
+   at com.ibm.rmi.iiop.WorkUnitImpl.doWork(WorkUnitImpl.java:65)
+   at com.ibm.rmi.iiop.WorkerThread.run(ThreadPoolImpl.java:204)
+   at java.lang.Thread.run(Thread.java:570)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When using Portable Object Adapter, some times a server
+   request object is failed to be tied with a POA. This
+   results in the INV_POLICY exception.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Server request objects are tied to the respective POA
+   during the construction. Thus, Server request object
+   will always have the assosciation with respective POA.
+   .
+   To obtain the fix:
+   Install build 20051104 or later
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK14896
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA(1.3/1.4 CO
+   
+   
+ * REPORTED COMPONENT ID
+   5648C9800
+   
+   
+ * REPORTED RELEASE
+   42A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2005-11-10
+   
+   
+ * CLOSED DATE
+   2005-11-10
+   
+   
+ * LAST MODIFIED DATE
+   2005-11-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA(1.3/1.4 CO
+   
+   
+ * FIXED COMPONENT ID
+   5648C9800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R420 PSN
+   UP
+   
+   
+ * R42A PSN
+   UP
+   
+   
+ * R42L PSN
+   UP
+   
+   
+ * R42W PSN
+   UP

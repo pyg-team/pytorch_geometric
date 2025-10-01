@@ -1,0 +1,135 @@
+Title: IBM Attempts to install Sterling B2B Integrator V5.2.x using MSSQL 2012 (with SSL enabled) fail with a "java.security.cert.CertificateException" exception if you use JDK7 SR9 FP30. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading to JDK7 SR9 FP30 from JDK7 SR9 FP20 (or earlier JDK version), attempts to install V5.2.x using MSSQL 2012 fails with a "java.security.cert.CertificateException" exception if the server is configured to use SSL encryption with digital certificates and the MD5 hashing algorithm.
+
+The DB connection test is successful but connection fails during installation with the following exception:
+
+java.ext.dirs: D:\contbld\cruisecontrol\main\bin\sandbox\install\jdk\jre\lib\ext
+com.microsoft.sqlserver.jdbc.SQLServerException: The driver could not establish a secure connection to SQL Server by using Secure Sockets Layer (SSL) encryption. Error: "java.security.cert.CertificateException: Certificates does not conform to algorithm constraints". 
+
+SYMPTOM
+Installation fails with the following exception trace in InstallService.log: 
+
+com.microsoft.sqlserver.jdbc.TDSChannel enableSSL
+
+INFO: java.security path: D:\contbld\cruisecontrol\main\bin\sandbox\install\jdk\jre\lib\security
+
+Security providers: [IBMJCE version 1.7, Certicom version 2.8, STERCOMM version 1.0, IBMJSSE2 version 1.7, IBMJGSSProvider version 7.0, IBMCertPath version 1.1, SCIKS version 1.0]
+SSLContext provider info: IBM JSSE provider2 (implements IbmX509 key/trust factories, SSLv3, TLSv1)
+SSLContext provider services:
+
+[IBMJSSE2: KeyManagerFactory.IbmX509 -> com.ibm.jsse2.cc$a_
+, IBMJSSE2: KeyManagerFactory.NewIbmX509 -> com.ibm.jsse2.cc$b_
+aliases: [PKIX]
+, IBMJSSE2: TrustManagerFactory.IbmX509 -> com.ibm.jsse2.rc$b_
+, IBMJSSE2: TrustManagerFactory.PKIX -> com.ibm.jsse2.rc$a_
+aliases: [IbmPKIX, X509, X.509]
+, IBMJSSE2: SSLContext.SSL -> com.ibm.jsse2.fc
+, IBMJSSE2: SSLContext.TLS -> com.ibm.jsse2.jc
+, IBMJSSE2: SSLContext.TLSv1 -> com.ibm.jsse2.kc
+, IBMJSSE2: SSLContext.TLSv1.1 -> com.ibm.jsse2.lc
+, IBMJSSE2: SSLContext.TLSv1.2 -> com.ibm.jsse2.mc
+, IBMJSSE2: SSLContext.SSL_TLS -> com.ibm.jsse2.gc
+, IBMJSSE2: SSLContext.SSL_TLSv2 -> com.ibm.jsse2.hc
+, IBMJSSE2: SSLContext.Default -> com.ibm.jsse2.ec
+]
+
+java.ext.dirs: D:\contbld\cruisecontrol\main\bin\sandbox\install\jdk\jre\lib\ext
+Mar 02, 2016 3:28:23 PM com.microsoft.sqlserver.jdbc.TDSChannel enableSSL
+INFO: java.security path: D:\contbld\cruisecontrol\main\bin\sandbox\install\jdk\jre\lib\security
+Security providers: [IBMJCE version 1.7, Certicom version 2.8, STERCOMM version 1.0, IBMJSSE2 version 1.7, IBMJGSSProvider version 7.0, IBMCertPath version 1.1, SCIKS version 1.0]
+SSLContext provider info: IBM JSSE provider2 (implements IbmX509 key/trust factories, SSLv3, TLSv1)
+SSLContext provider services:
+[IBMJSSE2: KeyManagerFactory.IbmX509 -> com.ibm.jsse2.cc$a_
+, IBMJSSE2: KeyManagerFactory.NewIbmX509 -> com.ibm.jsse2.cc$b_
+aliases: [PKIX]
+, IBMJSSE2: TrustManagerFactory.IbmX509 -> com.ibm.jsse2.rc$b_
+, IBMJSSE2: TrustManagerFactory.PKIX -> com.ibm.jsse2.rc$a_
+aliases: [IbmPKIX, X509, X.509]
+, IBMJSSE2: SSLContext.SSL -> com.ibm.jsse2.fc
+, IBMJSSE2: SSLContext.TLS -> com.ibm.jsse2.jc
+, IBMJSSE2: SSLContext.TLSv1 -> com.ibm.jsse2.kc
+, IBMJSSE2: SSLContext.TLSv1.1 -> com.ibm.jsse2.lc
+, IBMJSSE2: SSLContext.TLSv1.2 -> com.ibm.jsse2.mc
+, IBMJSSE2: SSLContext.SSL_TLS -> com.ibm.jsse2.gc
+, IBMJSSE2: SSLContext.SSL_TLSv2 -> com.ibm.jsse2.hc
+, IBMJSSE2: SSLContext.Default -> com.ibm.jsse2.ec
+]
+
+java.ext.dirs: D:\contbld\cruisecontrol\main\bin\sandbox\install\jdk\jre\lib\ext
+com.microsoft.sqlserver.jdbc.SQLServerException: The driver could not establish a secure connection to SQL Server by using Secure Sockets Layer (SSL) encryption. Error: "java.security.cert.CertificateException: Certificates does not conform to algorithm constraints".
+at com.microsoft.sqlserver.jdbc.SQLServerConnection.terminate(SQLServerConnection.java:1352)
+at com.microsoft.sqlserver.jdbc.TDSChannel.enableSSL(IOBuffer.java:1533)
+at com.microsoft.sqlserver.jdbc.SQLServerConnection.connectHelper(SQLServerConnection.java:1042)
+at com.microsoft.sqlserver.jdbc.SQLServerConnection.login(SQLServerConnection.java:817)
+at com.microsoft.sqlserver.jdbc.SQLServerConnection.connect(SQLServerConnection.java:700)
+at com.microsoft.sqlserver.jdbc.SQLServerDriver.connect(SQLServerDriver.java:842)
+at java.sql.DriverManager.getConnection(DriverManager.java:583)
+at java.sql.DriverManager.getConnection(DriverManager.java:227)
+at com.sterlingcommerce.db.DBUtil.getConnection(DBUtil.java:250)
+at com.sterlingcommerce.db.DBUtil.checkConnection(DBUtil.java:113)
+at com.sterlingcommerce.db.DBUtil.testConnection(DBUtil.java:129)
+at com.sterlingcommerce.woodstock.install.DBConnectionStep.doStep(DBConnectionStep.java:151)
+at com.sterlingcommerce.woodstock.install.GroupStep.processSequence(GroupStep.java:78)
+at com.sterlingcommerce.woodstock.install.GroupStep.doStep(GroupStep.java:55)
+at com.sterlingcommerce.woodstock.install.GroupStep.processSequence(GroupStep.java:78)
+at com.sterlingcommerce.woodstock.install.SequenceManager.processSequence(SequenceManager.java:60)
+at com.sterlingcommerce.woodstock.install.InstallSequence.process(InstallSequence.java:1568)
+at com.sterlingcommerce.woodstock.install.InstallSI.PerformInstall(InstallSI.java:407)
+at com.sterlingcommerce.woodstock.install.InstallSI.main(InstallSI.java:132)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:95)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:56)
+at java.lang.reflect.Method.invoke(Method.java:620)
+at com.sterlingcommerce.woodstock.install.InstallSIBootstrapper.instanciateAndRun(InstallSIBootstrapper.java:376)
+at com.sterlingcommerce.woodstock.install.InstallSIBootstrapper.instanciateAndRun(InstallSIBootstrapper.java:380)
+at com.sterlingcommerce.woodstock.install.InstallSIBootstrapper.doIt(InstallSIBootstrapper.java:192)
+at com.sterlingcommerce.woodstock.install.InstallSIBootstrapper.main(InstallSIBootstrapper.java:80)
+
+Caused by: javax.net.ssl.SSLHandshakeException: java.security.cert.CertificateException: Certificates does not conform to algorithm constraints
+at com.ibm.jsse2.j.a(j.java:7)
+at com.ibm.jsse2.qc.a(qc.java:483)
+at com.ibm.jsse2.ab.a(ab.java:167)
+at com.ibm.jsse2.ab.a(ab.java:542)
+at com.ibm.jsse2.bb.a(bb.java:234)
+at com.ibm.jsse2.bb.a(bb.java:412)
+at com.ibm.jsse2.ab.t(ab.java:338)
+at com.ibm.jsse2.ab.a(ab.java:416)
+at com.ibm.jsse2.qc.a(qc.java:435)
+at com.ibm.jsse2.qc.h(qc.java:714)
+at com.ibm.jsse2.qc.a(qc.java:831)
+at com.ibm.jsse2.qc.startHandshake(qc.java:828)
+at com.microsoft.sqlserver.jdbc.TDSChannel.enableSSL(IOBuffer.java:1483)
+... 25 more
+
+Caused by: java.security.cert.CertificateException: Certificates does not conform to algorithm constraints
+at com.ibm.jsse2.wc.a(wc.java:30)
+at com.ibm.jsse2.wc.checkServerTrusted(wc.java:76)
+at com.ibm.jsse2.bb.a(bb.java:477)
+... 33 more 
+
+
+
+
+CAUSE
+Digital certificates that support MD5 are blocked by the security updates in JDK7 SR9 FP30. 
+
+
+
+ENVIRONMENT
+MSSQL2012 Database
+
+
+
+RESOLVING THE PROBLEM
+Configure your MSSQL 2012 server with certificates that support stronger algorithms, such as SHA1 
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling File Gateway

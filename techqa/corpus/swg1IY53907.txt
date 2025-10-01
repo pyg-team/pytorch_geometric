@@ -1,0 +1,209 @@
+Title: IBM IY53907: FDC WITH PROBE KN204020 FROM KQIDOPENDINGCHANGECLQ ALONG W/ 2035 ERROR WHEN PROPOGATING A MESSAGE TO SYSTEM.CLUSTER.COMMAND.QUEUE - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 12 (CSD12) [http://www-01.ibm.com/support/docview.wss?uid=swg24011423]
+WebSphere MQ V5.3 & WebSphere MQ Express V5.3 - Fix Pack 10 (CSD10) [http://www-01.ibm.com/support/docview.wss?uid=swg24009688]
+WebSphere MQ V5.3 & WebSphere MQ Express V5.3 - Fix Pack 8 (CSD08) [http://www-01.ibm.com/support/docview.wss?uid=swg24007905]
+WebSphere MQ V5.3 for iSeries - Fix Pack 12 (CSD12) [http://www-01.ibm.com/support/docview.wss?uid=swg24011422]
+WebSphere MQ V5.3 & WebSphere MQ Express V5.3 - Fix Pack 7 (CSD07) [http://www-01.ibm.com/support/docview.wss?uid=swg24007281]
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 13 (CSD13) [http://www-01.ibm.com/support/docview.wss?uid=swg24014128]
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 14 (CSD14) [http://www-01.ibm.com/support/docview.wss?uid=swg24017668]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a MQSET is issued to one of the local cluster queue using
+   PCF, the MQSET works fine, however when the message is
+   propogated to SYSTEM.CLUSTER.COMMAND.QUEUE queue the agent
+   fails with an 2035 error and fires an FDC with probe KN204020
+   from kqiDoPendingChangeCLQ
+   .
+   A collected trace showed a zrc_CSPRC_INSUFFICIENT_AUTHORITY
+   message from zfu_as_calculateauthority.
+   .
+   When the MQSET was done by a user who had all permissions for
+   the cluster queue, but did not have 'put' permissions to the
+   SYSTEM.CLUSTER.COMMAND.QUEUE. When we to notify the repository
+   that the atributes of a cluster queue has changed, we drop in
+   a message to the SYSTEM.CLUSTER.COMMAND.QUEUE. Here the
+   context information of the user who changed the attribute will
+   be used in putting the message to the SCCQ. Hence we see the
+   kqiMQPUT1 failing with a 2035.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Fix available from L3 website under 1810.prb.
+   .
+   The fix uses a super user authority (kqiSUPERUSER) when we are
+   trying to notify the repository about any changes in the
+   attributes of the cluster queues.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   The functions affected are kqiAuthorityChecks and
+   zfu_as_checkobjectauthority.
+   When we notify the repository of any cluster queue attribute
+   changes a message is put on to the
+   SYSTEM.CLUSTER.COMMAND.QUEUE , before puting the message
+   the authority of user is checked for the object.
+   The context information of the user who has changed the
+   attribute is passed to the function kqiAuthorityChecks where we
+   check to see whether or not a user is authorised to access an
+   object.Since this user did not have authority on SCCQ
+   we get  MQRC_NOT_AUTHORIZED from zfu_as_checkobjectauthority.
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When the MQSET was done by a user who had all permissions for
+   the cluster queue, but did not have  put  permissions to the
+   SYSTEM.CLUSTER.COMMAND.QUEUE.The agent fails with an 2035 error
+   and fires an FDC with probe KN204020 from
+   KqiDoPendingChangeCLQ  .
+   When we  notify the repository  that the atributes of a cluster
+   queue has changed, we drop in a message to the
+   SYSTEM.CLUSTER.COMMAND.QUEUE. Here the
+   context information of the user who changed the attribute will
+   be used in putting the message to the SCCQ.
+   .
+   The user has insufficient authority to access object
+   SYSTEM.CLUSTER.COMMAND.QUEUE
+   The following requested permissions are unauthorized: put
+   2328.17 (17)------------------}! zfu_as_checkobjectauthority
+   (rc=MQRC_NOT_AUTHORIZED)
+   2328.17 (17)------------------{ zfp_ss_getnext_component
+   2328.17 (17)------------------}! zfp_ss_getnext_component
+   (rc=zrcF_NOT_FOUND)
+   2328.17 (17)------------------{ zfp_ss_unlock_service
+   2328.17 (17)------------------} zfp_ss_unlock_service (rc=OK)
+   2328.17 (16)-----------------}! gpiCheckObjectAuthority
+   (rc=lrcE_NOT_AUTHORIZED)
+   2328.17 (16)-----------------{ apiEnquireObject
+   2328.17 Object(SYSTEM.CLUSTER.COMMAND.QUEUE) ObjectType(1)
+   LockMode(0)
+   .
+   A collected trace showed a zrc_CSPRC_INSUFFICIENT_AUTHORITY
+   message from zfu_as_calculateauthority.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When an MQSET is done by a user who has all permissions for the
+   cluster queue,but does not have 'put' permissions to the
+   SYSTEM.CLUSTER.COMMAND.QUEUE.
+   This context information of the user who has changed the
+   attribute is passed to the function kqiAuthorityChecks, when we
+   Notify the repository that the atributes of a cluster queue
+   have changed.
+   During kqiAuthorityChecks we check to see whether or not a user
+   is authorised to access an object.
+   Since this user did not have authority on SCCQ the object
+   authority check was failing.
+   This check is not done if the user is a super user and has
+   Alternate User Authority put message options set.
+   Hence during the function kqiNotifyReposInsertCLQ when we
+   notify the repository of cluster queue atribute changes we use
+   the super user authority to route the message to the SCCQ and
+   set MQPMO_ALTERNATE_USER_AUTHORITY as kernel put message
+   options.
+   
+   The fix will be included in the following PTFs:
+   WebSphere MQ v5.3   CSD07
+   Windows             U200212
+   AIX                 U496708
+   HP-UX               U496730
+   Linux on Intel      U496732
+   Linux on zSeries    U496733
+   Sun Solaris         U496731
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY53907
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB MQ FOR AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724B4101
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-02-23
+   
+   
+ * CLOSED DATE
+   2004-02-27
+   
+   
+ * LAST MODIFIED DATE
+   2004-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY
+   UP

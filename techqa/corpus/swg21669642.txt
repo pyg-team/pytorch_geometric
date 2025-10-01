@@ -1,0 +1,29 @@
+Title: IBM Printing from Cognos Controller hangs or very slow - using Citrix - United States
+
+Text:
+Intercompany Balance report Hewlett Packard TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User attempts to print from Cognos Controller. The printer icon bottom left in the Controller client seems to be active but the one at the top toolbar is not usable.
+
+If the data range parameters are changed the upper print icon may become active.
+
+When the user proceeds to print, either nothing happens at all or it takes a very long time e.g 3-4 minutes (so the user thinks it failed altogether). 
+
+ENVIRONMENT
+Citrix thin client with a Kyocera printer - though the same issue may occur with other Citrix environments and printer types
+
+DIAGNOSING THE PROBLEM
+Try using PDF Creator and then various generic and branded printer drivers for the default printer on the Citrix server. Does this influence the printing performance?
+
+RESOLVING THE PROBLEM
+Try different printer default drivers and evaluate the performance.
+
+
+For example, a customer has reported to us that a completely generic Citrix printer driver caused the report run time to drop from 3-4 minutes to 30 seconds, but there were some formatting issues. 
+
+Then, selecting a branded printer driver solved the issue with no formatting issues and fast reporting.
+
+RELATED INFORMATION
+ Citrix & Universal Printer Drivers [http://support.citrix.com/proddocs/topic/xenapp65-admin/ps-printing-citrix-universal-configuring-all.html]
+Interco Balances report varies - Citrix/Printer driver [https://www-304.ibm.com/support/docview.wss?uid=swg21612589]

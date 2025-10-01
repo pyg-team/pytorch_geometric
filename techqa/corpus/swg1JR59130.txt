@@ -1,0 +1,155 @@
+Title: IBM JR59130: AFTER YOU UPGRADE THE JDBC DRIVER FROM VERSION 3 TO 4, A SERVICE FLOW USING THE SQLCONNECTOR FAILS WITH AN EXCEPTION - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+bpm.8600.cf2018.03.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8600.cf2018.03.delta.repository&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A working SQL Connector application that runs callable
+   statement (sql query) on DB2 11.1 started throwing the
+   following exception
+   java.lang.IndexOutOfBoundsException: Index: 20, Size: 20
+   
+   (the number 20 refers to the number of columns in the data
+   mapping)
+   
+   when the jdbc driver was upgraded AND the driver type was
+   changed type 4 and the JDBC Specification was changed from 3.0
+   to 4.0.
+   
+      The exception occurs when the SQLConnector code is trying to
+   find the column name in the set of columns read on the result
+   set.  But the root cause of the issue is in the processing of
+   the columns.    The issue is that one of the columns using the
+   JDBC 4.0 specification is not unique per the parsing rules used
+   by the JDBC 4.0 specification.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *     There are a couple of ways to workaround this problem.
+   1. use JDBC Specification 3.0
+   2. set the following data soruce custom property in the data
+   source definition.
+   useJDBC4ColumnNameAndLabelSemantics to value 2
+   
+   This tells the driver to use the label name on the column name
+   as the field name.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Version 3 of the JDBC driver returned column aliases, whereas
+   version 4 of the JDBC driver returns the actual column names.
+   Version 4 of the JDBC driver can't process queries or stored
+   procedures that use the same column names but different aliases
+   because the SQLConnector implementation requires that all column
+    names be different.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix that uses different JDBC APIs (column labels) if the JDBC
+   version is version 4 or later will be included in a future
+   release of IBM BPM .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR59130
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-02-12
+   
+   
+ * CLOSED DATE
+   2018-03-20
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS

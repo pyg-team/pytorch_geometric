@@ -1,0 +1,82 @@
+Title: IBM How to create data sources using Oracle JDBC OCI driver - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Create the Oracle OCI driver for IBM WebSphere Application Server. 
+
+RESOLVING THE PROBLEM
+From the IBM WebSphere Application Server administrative console: 
+
+ 1. Create the JDBC Provider.  1. Expand Resources, then click JDBC Providers.
+        
+        
+     2. Select the scope (Cell, Node, or Server) for the JDBC Provider, then click Apply.
+        
+        
+     3. Click New to create the JDBC Provider.
+        
+        
+    
+    
+ 2. In the Configuration tab, under General Properties,  1. Select Oracle from pull-down list under "Select the database type".
+        
+        
+     2. Oracle JDBC Driver from the pull-down list of JDBC Providers.
+        
+        
+     3. Select Connection pool data source or XA data source from the pull-down list under Select the implementation type, and then click Next.
+        
+        [/support/docview.wss?uid=swg21269703&amp;aid=1]
+        
+        
+    
+    
+ 3. Enter the database class path and native library path information as shown below:
+    
+    [/support/docview.wss?uid=swg21269703&amp;aid=2]
+    
+    Notes:  * Oracle 9i JDBC driver is supported with Oracle 9i database server. The Oracle 10g JDBC driver is supported with both Oracle 9i and 10g database servers.
+       
+       
+     * ORACLE_HOME is the directory where Oracle Network client installed.
+       
+       The WebSphere Application Server variables can be used in the Classpath and/or the Native Library Path.
+       
+       For example, if ${ORACLE_JDBC_DRIVER_PATH}/ojdbc14.jar and ${ORACLE_HOME}/lib are specified for the Classpath and Native Library Path respectively, the variables ORACLE_JDBC_DRIVER_PATH and ORACLE_HOME must be defined to WebSphere Application Server under the Environment/Manage WebSphere Variables.
+       
+       
+    
+    
+ 4. Create WebSphere Application Server Data Source. 
+    
+    In the administrative console's left panel, expand Resource and navigate to JDBC providers > Oracle JDBC Driver for OCI > Data sources > New.  1. Enter the name for the data source.
+        
+        
+     2. Enter the JNDI name for the data source.
+        
+        
+     3. Select the data store helper class name that corresponds to the type of JDBC driver that you used.
+        
+        
+     4. Select Component-managed authentication alias, and enter the database specific properties for the data source.
+        
+        
+     5. Enter the URL for the data source. For example, enter jdbc:oracle:oci:@<tnsname_alias>.
+        
+        Note: You must define <tnsname_alias> in the ${ORACLE_HOME}/network/admin/tnsnames.ora file.
+        
+        
+     6. Click OK and save the configuration.
+        
+        [/support/docview.wss?uid=swg21269703&amp;aid=3]
+        
+        [/support/docview.wss?uid=swg21269703&amp;aid=4]
+        
+        [/support/docview.wss?uid=swg21269703&amp;aid=5]
+    
+    
+
+RELATED INFORMATION
+ Data source minimum required settings for Oracle [http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/rdat_minreqoracle.html]

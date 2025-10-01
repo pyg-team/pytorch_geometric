@@ -1,0 +1,42 @@
+Title: IBM How to resolve RTC server hang issue caused by running out of threads in Tomcat application server - United States
+
+Text:
+oom; out of memory; tomcat; catalina logs; application server log; unreachable TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Rational Team Concert (RTC) server becomes unreachable with out of memory errors reported in application server log. 
+
+SYMPTOM
+ 
+
+Noticed Tomcat Catalina log was reporting out of memory errors due to maximum threads reach. RTC would just hang when OOM is thrown.
+
+
+CAUSE
+
+Maximum threads set in Tomcat is reached, therefore there is not enough memory to host additional access requests.
+
+
+RESOLVING THE PROBLEM
+ 
+
+Adjust the maximum thread size for the connector port in the Tomcat server.xml file. Refer to the Rational Team Concert 3.0 sizing guide [https://jazz.net/library/article/551/] for guidance regarding the value size to set. See sample code below: 
+
+ 
+
+<Connector port="9443" maxHttpHeaderSize="8192" 
+
+maxThreads="150" minSpareThreads="25" maxSpareThreads="75" 
+
+enableLookups="false" disableUploadTimeout="true" 
+
+acceptCount="100" scheme="https" secure="true" 
+
+clientAuth="false" sslProtocol="TLS" /> 
+
+ 
+
+ 
+
+Leverage the Jazz Community Jazz and Rational Team Concert have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://ibm.com/support/docview.wss?uid=swg21319600] for details and links.

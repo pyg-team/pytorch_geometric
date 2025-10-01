@@ -1,0 +1,42 @@
+Title: IBM CWPMI0010W: Cannot find the file messages when Wily Introscope is used with WebSphere Application Server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When starting WebSphere Application Server, there are CWPMI0010W messages logged indicating that a pmi/xml/*.xml file cannot be found. This occurs only with Computer Associates (CA) Wily Introscope installed and enabled to work with WebSphere Application Server. 
+
+SYMPTOM
+The symptom is that there are numerous CWPMI0010W messages logged. 
+
+[9/9/14 12:43:25:903 EDT] 00000015 ModuleConfigP E CWPMI0010W: Cannot 
+find the file: /com/ibm/websphere/pmi/xml/webApp.xml
+[9/9/14 12:43:25:907 EDT] 00000015 ModuleConfigP E CWPMI0010W: Cannot 
+find the file: /webApp.xml
+[9/9/14 12:43:25:942 EDT] 00000015 ModuleConfigP E CWPMI0010W: Cannot 
+find the file: /com/ibm/websphere/pmi/xml/connectionPool.xml
+[9/9/14 12:43:25:947 EDT] 00000015 ModuleConfigP E CWPMI0010W: Cannot 
+find the file: /connectionPool.xml
+[9/9/14 12:43:26:026 EDT] 00000015 ModuleConfigP E CWPMI0010W: Cannot 
+find the file: /com/ibm/websphere/pmi/xml/bean.xml
+[9/9/14 12:43:26:046 EDT] 00000015 ModuleConfigP E CWPMI0010W: Cannot 
+find the file: /bean.xml
+[9/9/14 12:43:26:063 EDT] 00000015 ModuleConfigP E CWPMI0010W: Cannot 
+find the file: /com/ibm/websphere/pmi/xml/SIB Service.xml 
+[9/9/14 12:43:26:103 EDT] 00000015 ModuleConfigP E CWPMI0010W: Cannot 
+find the file: /SIB Service.xml 
+[9/9/14 12:43:26:106 EDT] 00000015 ModuleConfigP E CWPMI0010W: Cannot 
+find the file: /com/ibm/websphere/pmi/xml/j2c.xml 
+[9/9/14 12:43:26:129 EDT] 00000015 ModuleConfigP E CWPMI0010W: Cannot 
+find the file: /j2c.xml 
+[9/9/14 12:43:26:144 EDT] 00000015 ModuleConfigP E CWPMI0010W: Cannot 
+find the file: /com/ibm/websphere/pmi/xml/servletSessions.xml 
+[9/9/14 12:43:26:180 EDT] 00000015 ModuleConfigP E CWPMI0010W: Cannot 
+find the file: /servletSessions.xml 
+
+
+CAUSE
+Wily Introscope is designed to work with many versions of WebSphere Application Server. Wily Introscope makes API calls to the Application Server to determine the names of the PMI modules that are defined for that version of WebSphere Application Server. The PMI module names are not the same in all versions of WebSphere Application Server. There is no standard for PMI module names. Some PMI module names have the word "Module" in the name, and others do not. Wily Introscope uses a dynamic approach to determine the module name at run time. The approach used is to first check the module name without the word "Module" and if this is not found, to check for the module name with the word "Module". 
+
+So, Wily Introscope is triggering these CWPMI0010W messages in their attempt to identify 
+the valid PMI component names. These messages are benign.

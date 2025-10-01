@@ -1,0 +1,32 @@
+Title: IBM How do I completely remove components of the BigFix Endpoint Manager product? - United States
+
+Text:
+54; Utilities; Client; Relay; Server; Installation; googlebigfix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ See the following document which describes using the BES Remove Tool to uninstall and remove BES components. 
+
+RESOLVING THE PROBLEM
+
+
+Because BES is divided into many different installers on many different computers, completely and manually removing all the components including the database, registry keys, files, etc. is fairly laborious process.
+
+To facilitate the removal of BES, there is a tool called the BES Remove Tool that will remove all BES components from a single computer. The BES Remove Tool is available for download here, [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Endpoint%20Manager/page/BES%20Remove%20Utility]">https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Endpoint%20Manager/page/BES%20Remove%20Utility [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Endpoint%20Manager/page/BES%20Remove%20Utility]</a> on the Bigifx Utilities download page. 
+
+ The other choice if the above web page does not work is find what version of BigFix you are using, and then look under you release version (say 9.2.7), and find the BES Remove tool for that version. [<a href=]">http://support.bigfix.com/bes/release/ [http://support.bigfix.com/bes/release/]
+
+
+
+Run the BES Remove Tool on every computer that has BES components to uninstall each of the components.
+
+Note: When you run the BES Remove Tool on the BES Server computer, the database will be deleted as well, and you will lose your action history, computer status reports, etc.
+
+Note: If you are using the MSDE 2000 included in older versions the BES Server installer then BES Remove will remove your database, but if you installed SQL Server 2000 before installing the BES Server, BES Remove will not remove the databases. In this case, you will need to manually delete the BFEnterprise and BESReporting databases using SQL Server Enterprise Manager or other tools.
+
+RELATED INFORMATION
+# 
+
+
+
+HISTORICAL NUMBER
+ 54

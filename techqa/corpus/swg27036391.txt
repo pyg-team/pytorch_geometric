@@ -1,0 +1,123 @@
+Title: IBM Detailed System Requirements for v9.1 of the IBM InfoSphere Optim solutions - United States
+
+Text:
+ DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ This document provides information about prerequisites for the IBM® InfoSphere® Optim™ solutions and their features. 
+
+CONTENT
+
+
+Supported data sources are described in the tabs on this page. Use the following links to view additional requirements for each product included in version 9.1 of IBM InfoSphere Optim solutions.
+
+ *  IBM InfoSphere Optim Archive Enterprise Edition [http://www.ibm.com/support/docview.wss?uid=swg27024848]
+ *  IBM InfoSphere Optim Archive Work Group Edition [http://www.ibm.com/support/docview.wss?uid=swg27024848]
+ * 
+ *  IBM InfoSphere Optim Application Retirement Solution [http://www.ibm.com/support/docview.wss?uid=swg27036215]
+ *  IBM InfoSphere Optim Application Retirement Starter Edition for JD Edwards EnterpriseOne [http://www.ibm.com/support/docview.wss?uid=swg27024836]
+ *  IBM InfoSphere Optim Data Growth Solution [http://www.ibm.com/support/docview.wss?uid=swg27036215]
+ *  IBM InfoSphere Optim Data Growth Starter Edition for JD Edwards EnterpriseOne [http://www.ibm.com/support/docview.wss?uid=swg27024836]
+ *  IBM InfoSphere Optim Data Privacy Enterprise Edition [http://www.ibm.com/support/docview.wss?uid=swg27024849]
+ *  IBM InfoSphere Optim Data Privacy Work Group Edition [http://www.ibm.com/support/docview.wss?uid=swg27024849]
+ * 
+ *  IBM InfoSphere Optim Oracle Application Accelerators Enterprise Edition [http://www.ibm.com/support/docview.wss?uid=swg27024852]
+ *  IBM InfoSphere Optim Oracle Application Accelerators Work Group Edition [http://www.ibm.com/support/docview.wss?uid=swg27024852]
+ *  IBM InfoSphere Optim Test Data Management Enterprise Edition [http://www.ibm.com/support/docview.wss?uid=swg27024851]
+ *  IBM InfoSphere Optim Test Data Management Work Group Edition [http://www.ibm.com/support/docview.wss?uid=swg27024851]
+ * 
+ *  IBM InfoSphere Optim Test Data Management Solution [http://www.ibm.com/support/docview.wss?uid=swg27036216]
+ *  IBM InfoSphere Optim Test Data Management Starter Edition for JD Edwards EnterpriseOne [http://www.ibm.com/support/docview.wss?uid=swg27024900]
+ *  IBM InfoSphere Optim Test Data Management Solution for SAP Applications [http://www.ibm.com/support/docview.wss?uid=swg27035807]
+
+OPTIM DIRECTORY SUPPORT
+For Optim 9.1 test data management solutions that use Optim designer and Optim manager, the Optim directory and the IBM InfoSphere Optim Connection Manager database must be Unicode and are supported on the following database management systems only. For the next major version, all Optim solutions support the Optim directory and the InfoSphere Optim Connection Manager database on these database management systems only. The Optim directory must use a different schema from the schema that is used by the InfoSphere Optim Connection Manager database.
+
+In DB2, certain directory tables require an 8K tablespace. The default size for DB2 is 4K. Ensure that the directory owner has authorization to an 8K tablespace or that a specific 8K tablespace is specified when installing or upgrading.
+
+[http://www.ibm.com/i/c.gif] DB2® for Linux, UNIX, and Windows Oracle SQL Server v9.5 (FP10 or later) 
+
+v11gR1 (11.1.0.7 or later) 
+
+2008 R1 
+
+v9.7 
+
+v11gR2 (11.2) 
+
+2008 R2 
+
+v10.1 
+
+ 
+
+2012 
+
+SUPPORTED DATA SOURCES
+The Optim solutions support data sources heterogeneously. That is, a solution can generally process a business object that consists of data from one or more data sources or extract data from one data source or DBMS and insert it in another. Select a tab for more information about supported data sources.
+
+To prevent inadvertent deletion or alteration of data from system tables for your relational database management system, your Optim solution cannot be used in INSERT, UPDATE, or DELETE processing against these tables. 
+
+TABS BY DATA SOURCE
+ * DB2 [http://www.ibm.com/support/docview.wss?&uid=swg27024294]
+ * Informix [http://www.ibm.com/support/docview.wss?&uid=swg27036491]
+ * Netezza [http://www.ibm.com/support/docview.wss?&uid=swg27036492]
+ * Oracle [http://www.ibm.com/support/docview.wss?&uid=swg27036391]- selected tab,
+ * SQL Server [http://www.ibm.com/support/docview.wss?&uid=swg27036494]
+ * Sybase [http://www.ibm.com/support/docview.wss?&uid=swg27036495]
+ * Teradata [http://www.ibm.com/support/docview.wss?&uid=swg27036497]
+
+ [http://www.ibm.com/i/c.gif] 
+
+Oracle
+
+Version Support Level Comments 8.1.7 
+
+Supported 
+
+Optim 9.1 does not support the download of sample data to Oracle 8.1.7.
+
+9.2 
+
+Supported 
+
+
+
+10.1 
+
+Supported 
+
+
+
+10.2 
+
+Supported 
+
+
+
+11gR1 
+
+Supported 
+
+Optim 9.1 does not support the DICOM Medical Image, 3D Spatial, and RFID tag data types.
+
+11gR2 
+
+Supported 
+
+Optim 9.1 does not support the DICOM Medical Image, 3D Spatial, and RFID tag data types.
+
+
+
+Support levels
+
+The support level for a version of a database is toleration or supported.
+
+If a database is provided at a toleration level, the Optim solution can connect to the data source. The Optim solution also supports data types and features supported in previous releases of the solution but does not support all features of the data source.
+
+If a data source is supported, the Optim solution also:
+
+ *  Supports processing of the most common data types for the data source
+ *  Might support or exploit other new features of the data source
+
+In addition, for relational databases, the Optim solution supports extracting object definitions for the database as well as preserving and using (with the Optim create utility) extracted objects.

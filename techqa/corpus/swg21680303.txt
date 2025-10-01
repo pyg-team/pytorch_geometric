@@ -1,0 +1,28 @@
+Title: IBM Best Practices for using MQ Frontside Handlers to provide High Availability in processing MQ traffic - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to achieve 100% high availability when using a MQ Front Side Handlers (FSH) which act as Pollers? 
+
+CAUSE
+When using an MQ Front Side Handler (FSH) which acts as a Poller, the DataPower appliance must be configured specifically to handle the condition of the network interface or link failure on the appliance.
+In this configuration, let us assume that two interfaces are configured on the appliance. Both interfaces have a static route to the MQ server queue manager (qmgr). 
+
+There are two DataPower MQ Queue Manager (mq-qm) objects configured in the device, and each is bound to a separate local interface defined in the "Local Address" attribute of the mq-qm object. 
+
+There are two MQ poller FSHs referencing each mq-qm object in its configuration. If both MQ poller FSHs are assigned to a single Multi-Protocol Gateway service, then there is the possibility of interruption of service when an interface goes down.
+
+For example, let us assume that there are two mq-qm objects namely, mq-qm-eth0 and mq-qm-eth1, and each uses IP address of eth0 and eth1 in the "Local Address" attribute respectively. The two MQ poller FSHs, namely mq-fsh-eth0 and mq-fsh-eth1, use mq-qm-eth0 and mq-qm-eth1 in its respective configuration and are assigned to a single Multi-Protocol Gateway service such as mpgw-1. 
+
+If eth0 interface fails, mq-qm-eth0 goes down, which causes mq-fsh-eth0 to go down. When this happens, the mpgw-1 service gets a notification in the change of the operational state of mq-fsh-eth0 front side handler. This causes the mpgw-1 service to go through a state change in evaluating its operational state. As such, the mpgw-1 service state briefly goes down and up again. This event can cause interruption in the operational states of all FSHs (MQ as well as non-MQ FSHs) used by the mpgw-1 service.
+
+
+ANSWER
+To avoid this interruption, isolate the two MQ FSHs by assigning each to a separate Multi-Protocol Gateway service. 
+
+
+For example, mq-fsh-eth0 poller can be assigned to mpgw-1 service and mq-fsh-eth1 poller can be used in mpgw-2 service. In this configuration, when eth0 interface goes down, it does not affect state changes in the mq-fhs-eth1 poller and its associated service and objects such as Multi-Protocol Gateway service, mq-qm, or XML manager. The mq-fsh-eth1 poller continues processing messages without interruption even when the state of mq-fsh-eth0 changes due to link failure in the appliance.
+
+Note: The two mq-qm objects and Multi-Protocol Gateway services must use its dedicated XML Manager objects to avoid the effects of state changes from one service to the other. The DataPower appliance provides a "default" XML Manager which is shared by multiple services and mq-qm objects. Avoid using the "default" XML Manager in this configuration.

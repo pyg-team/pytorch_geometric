@@ -1,0 +1,141 @@
+Title: IBM PJ44351: CPE BECOMES UNAVAILABLE AFTER CHANGING STORAGE AREA (SA) STATUS FROM OPEN TO STANDBY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Content Platform Engine (CPE) becomes unavailable after changing
+   Storage Area (SA) status from open to standby.
+   
+   CPE environments with over 100 storage areas take a while to
+   update status.
+   
+   To workaround the issue, updates to SA status should be done
+   during off hours with an increased transaction timeout.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * This issue may affect CPE users on version                   *
+   * 5.2.0.2-P8CPE-FP002 and higher (including 5.2.1 and 5.2.1 FP *
+   * up to 5.2.1.5-P8CPE-FP005), when working with large number   *
+   * of storage areas (like more than 100). the storage cache     *
+   * rebuild may take some time to finish. During this time, the  *
+   * incoming put/get content requests will be blocked and        *
+   * serialized, makes CPE not responsive, and may even cause     *
+   * AppServer crash and generate Java Core dump.                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When working with a large number of storage areas (like more *
+   * than 100), the storage cache rebuild may take some time to   *
+   * finish. During this time, the incoming put/get content       *
+   * requests will be blocked.  Subsequently, making CPE          *
+   * unresponsive.  It may even cause the application server to   *
+   * crash and generate a Java core dump.                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.2.1.6-P8CPE-FP006 or higher.                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.2.1.6-P8CPE-FP006 and higher, the storage area cache
+   rebuild will not block the incoming getContent/putContent
+   requests and the requests processing will not blocking each
+   other either.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ44351
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   521
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-18
+   
+   
+ * CLOSED DATE
+   2016-12-20
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS

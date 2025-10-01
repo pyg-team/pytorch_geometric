@@ -1,0 +1,160 @@
+Title: IBM PM69883: ERROR WHEN CREATING SUBSCRIBER - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error when creating a subscriber.
+   
+   Following is seen in traces.
+   
+   
+   [19/07/12 14:09:52:801 CEST] 00000042 exception     1
+   
+   com.ibm.ws.wim.util.UniqueNameHelper formatUniqueName(String)
+   CWWIM1011E
+   La valeur 'xxx' est incorrecte.
+   [19/07/12 14:09:52:801 CEST] 00000042 exception     1
+   com.ibm.ws.wim.util.UniqueNameHelper formatUniqueName(String)
+   
+   com.ibm.websphere.wim.exception.InvalidUniqueNameException:
+   CWWIM1011E
+   La valeur 'xxx' est incorrecte.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Customer gets error when creating a subscriber.
+   
+   Following is seen in traces.
+   
+   
+   [19/07/12 14:09:52:801 CEST] 00000042 exception     1
+   
+   com.ibm.ws.wim.util.UniqueNameHelper formatUniqueName(String)
+   CWWIM1011E
+   La valeur 'xxx' est incorrecte.
+   [19/07/12 14:09:52:801 CEST] 00000042 exception     1
+   com.ibm.ws.wim.util.UniqueNameHelper formatUniqueName(String)
+   
+   com.ibm.websphere.wim.exception.InvalidUniqueNameException:
+   CWWIM1011E
+   La valeur 'xxx' est incorrecte.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem Summary:
+   Unable to create syndicator / subscriber pair when
+   store.puma_default.user.fbadefault.filter is not set to uid
+   
+   
+   Detailed Problem Description:
+   Unable to create syndicator / subscriber pair when
+   store.puma_default.user.fbadefault.filter is not set to uid.
+   
+   Problem Analysis:
+   The code did not use the puma.lookupAttribute when creating the
+   syndicator.
+   
+   Problem Solution:
+   Code has been updated to use the puma.lookupAttribute if the
+   default lookup fails.
+   
+   Affected Users:
+   All users
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM69883
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-31
+   
+   
+ * CLOSED DATE
+   2012-09-05
+   
+   
+ * LAST MODIFIED DATE
+   2012-09-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,40 @@
+Title: IBM Effect of using "sync=true;transactional=true" in an MQ-to-MQ transaction on the IBM WebSphere DataPower SOA Appliance. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is the expected roll-back behavior when using the same or different MQ Queue Manager on both the Front and backside of an MQ-to-MQ transaction and with or without the parameter "sync=true;transactional=true" in the MQ urls? 
+
+ANSWER
+The purpose of using the same connection between MQ Frontside Handler (FSH) and dpmq backend is to support MQ single-phase COMMIT, which provides "once-and-only-once" message delivery.
+
+Here are four kinds of combination including using the same/different MQ Queue Manager and having the parameter "sync=true;transactional=true" or not, and each of them have different behaviors:
+
+1. Same MQ Queue Manager; dpmq URL has "sync=true;transactional=true":
+If MQ FSH and all dpmq url use the same MQ Queue Manager and all the dpmq url have "transactional=true" for datagram traffic (only has RequestQueue in url) and "sync=true;transactional=true" for request/reply traffic (has both RequestQueue and ReplyQueue in url), DataPower will ensure they all use the same connection and the message would be rolled back only once to the last syncpoint (might be GetQueue of MQ FSH or ReplyQueue of dpmq; depends on where the error occurred before/after dpmq backend) if an error occurs.
+
+2. Same MQ Queue Manager; dpmq URL does not have "sync=true;transactional=true":
+If MQ FSH and all dpmq url use the same MQ Queue Manager but dpmq url does not have "transactional=true" for datagram traffic or "sync=true;transactional=true" for request/reply traffic, DataPower will use different connections for MQ FSH and dpmq url, and the message would be rolled back only to GetQueue of MQ FSH (the last syncpoint) if an error occurs.
+
+3. Different MQ Queue Manager; dpmq URL has "sync=true;transactional=true":
+If MQ FSH and all dpmq url use different MQ Queue Managers and all the dpmq url have "transactional=true" for datagram traffic and "sync=true;transactional=true" for request/reply traffic, DataPower will use different connections for MQ FSH and dpmq url, and the message would be rolled back to:
+a. GetQueue of MQ FSH if the error occurred before any dpmq url, or
+b. both GetQueue of MQ FSH and ReplyQueue of dpmq if the error occurred after any dpmq url. The second might produce DUPLICATE messages so it is not recommended.
+
+4. Different MQ Queue Manager; dpmq URL does not have "sync=true;transactional=true":
+If MQ FSH and all dpmq url use different MQ Queue Managers and all the dpmq url does not have "transactional=true" for datagram traffic or "sync=true;transactional=true" for request/reply traffic, DataPower will use different connections for MQ FSH and dpmq url, and the message would be only rolled back to GetQueue of MQ FSH (the last syncpoint) if an error occurs.
+
+***
+Note: If you do not want the message to be rolled back to the last syncpoint (might be ReplyQueue of dpmq as case 1) but always to GetQueue of MQ FSH, case 2 could be considered.
+
+However, in case 2/3/4 the backend application (another mq client which receives messages from RequestQueue of DataPower's dpmq url) might process the same message MORE THAN ONCE if an error occurs in response rule or PutQueue of MQ FSH and the message was rolled back to GetQueue of MQ FSH. Thus, the design of the scenario should be carefully thought out if case 2/3/4 is considered. 
+
+To avoid duplicate message processing in case 2/3/4, one could consider implementing some business logic in a custom stylesheet. For example,
+1. The 'var://service/error-ignore' service variable can be used to control whether DataPower will roll-back the MQ message or not if any error (including backend error) occurs.
+2. The 'dp:response-header('x-dp-response-code')' extension function can be used to get the results of a backend url request. For MQ request, it would have the MQ result code (MQRC).
+
+The custom stylesheet can then combine the service variable and DataPower extension function noted above to determinate the next action based on the MQRC received (e.g. route the message to another queue and ignore the error (avoid rollback) while the specific MQRC error was happened, etc.).
+
+Additional information on the use of the 'var://service/error-ignore' service variable or 'Reading the MQRC in a style sheet' using the 'dp:response-header' extension function can be found in the DataPower Knowledge Center [http://www.ibm.com/support/knowledgecenter/SS9H2Y/welcome].
+***

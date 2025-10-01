@@ -1,0 +1,133 @@
+Title: IBM PK44912: RPT 7.0.0.2 upgrade on top of RPT 7.0 breaks DCI installation wh en root cause analyzis has previously been setup and used - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When upgrading IBM Rational Performance Tester RPT 7.0 or 7.0.0.
+   1 to 7.0.0.2 on an installation where the root cause analyzis ha
+   s been setup and used with WebSphere Application Server, the upg
+   rade breaks the Data Collection Infrastructure (DCI).
+   A workaround consists of uninstalling 7.0 or 7.0.0.1 with the IB
+   M Installation Manager then install 7.0.0.2 in one single step :
+    when RPT 7.0 is presented in the packages list, select it and m
+   ake sure to click check for newer versions and extensions so tha
+   t 7.0.0.2 be listed to you instead.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The issue occurs when there are instrumented servers and RPT
+   is upgraded. In this scenario the following configuration
+   was in place:
+   - WAS 6.0
+   - RPT 7.0
+   - RPT instrumented server (instrumented WAS)
+   When the customer upgrades to RPT 7.0.0.2, the upgrade goes
+   through but the DCI is damaged. The solution is to NOT allow
+   upgrade if there are instrumented servers, but rather during
+   the IM stop and give error/reason why and how to fix.
+   In 7.0.1 this problem is caught and the situation is
+   avoided.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is fixed in 7.0.1. The issue is that upgrading with
+   instrumentation in place is not supported. The upgrade
+   should check and stop the upgrade if this is the case.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK44912
+   
+   
+ * REPORTED COMPONENT NAME
+   PERF TESTER 6.1
+   
+   
+ * REPORTED COMPONENT ID
+   5724J9601
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-05-10
+   
+   
+ * CLOSED DATE
+   2007-08-28
+   
+   
+ * LAST MODIFIED DATE
+   2007-08-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PERF TESTER 6.1
+   
+   
+ * FIXED COMPONENT ID
+   5724J9601
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSN
+   UP

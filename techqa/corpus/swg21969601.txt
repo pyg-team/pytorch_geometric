@@ -1,0 +1,25 @@
+Title: IBM Does Content Manager Enterprise Edition V8.5 Support the Oracle 12c "Create as Container Database" Option when Creating Databases Using the DBCA Database Templates? - United States
+
+Text:
+CDB; Oracle; DBCA TECHNOTE (FAQ)
+
+QUESTION
+ When performing a fresh installation of Content Manager Enterprise Edition V8.5 (CM) with fix pack 2 or later using Oracle 12c DBCA templates, can I select the "Create as Container Database" option? 
+
+CAUSE
+ 
+
+ * CM V8.5 fix pack 2 introduced support for Oracle 12c 
+ * Oracle 12c introduced the concept of a Container Database (CDB)
+   
+
+ANSWER
+ 
+
+ * CM V8.5 does not support the use of the Oracle 12c CDB option 
+ * When using the DBCA templates provided with CM V8.5 fix pack 2 or later, be sure to deselect the option "Create as Container Database" when creating the CM databases
+
+RELATED INFORMATION
+ Creating Content Manager EE databases in Oracle [http://www-01.ibm.com/support/knowledgecenter/SSRS7Z_8.5.0/com.ibm.installingcm.doc/dcmoc115.htm?lang=en]
+Creating a CM EE LS database with DBCA template [http://www-01.ibm.com/support/knowledgecenter/SSRS7Z_8.5.0/com.ibm.installingcm.doc/dcmoc121.htm?lang=en]
+Using the Shared Oracle DBCA Template [http://www-01.ibm.com/support/knowledgecenter/SSRS7Z_8.5.0/com.ibm.installingcm.doc/dcmoc123.htm?lang=en]

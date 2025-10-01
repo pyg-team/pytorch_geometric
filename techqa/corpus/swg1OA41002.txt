@@ -1,0 +1,185 @@
+Title: IBM OA41002: MQ QSG SUBNODE IS INCORRECTLY SET OFF-LINE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MQ QSG subnode is incorrectly set off-line when it switches from
+   oneMQ agent to another (as the result of the taking over
+   processing of the QSG monitoring), and the original agent which
+   monitors the QSG temporarily loses TEMS connection.
+   RECREATE INSTRUCTIONS:
+    1) MQ QSG subnode switches from MQ agent 1 to MQ agent 2.
+    2) MQ agent 1 loses TEMS connection and reconnects.
+    3) MQ QSG subnode goes off-line and remains off-line until MQ
+   agent 2 is
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Follow the following instructions to resolve the problem without
+   the need to recycle the MQ agents.
+   1)Deactivate the QSG monitoring by issuing the following
+     command to all the MQ agents.
+     /F agentstc,KMQCMD SET QSG NAME(*) MGRNAME(*) MONITOR(NO)
+   2)Wait at least one QSG checking interval (see QSGCHKINTERVAL
+     parameter in KMQSTART) which is 5 minutes by default.
+   3)Reactivate the QSG monitoring by issuing the following
+     command to all the MQ agents.
+    /F agentstc,KMQCMD SET QSG NAME(*) MGRNAME(*) MONITOR(YES)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IBM Tivoli OMEGAMON XE for Messaging:    *
+   *                 WebSphere MQ Monitoring 7.0.1 users.         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: MQ QSG subnode is incorrectly set       *
+   *                      off-line.                               *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   QSG monitoring is coordinated among the MQ agents on all LPARs
+   where the member queue managers of the QSG are monitored. The
+   MQ QSG subnode is owned by a particular MQ agent at a time and
+   the QSG data is collected via the QSG member running in the
+   same LPAR. If the QSG member in this LPAR is stopped, an MQ
+   agent in another LPAR may take over the QSG monitoring and the
+   MQ QSG subnode is changed to be owned by the new MQ agent.
+   
+   However, if the MQ agent which previously monitors the QSG
+   temporarily loses TEMS connection and reconnects, the owner
+   of the QSG subnode owner is incorrectly changed back to be
+   this MQ agent and the MQ QSG subnode will be shown in offline
+   in TEP workspace.
+   
+   This is due to the deregister function called by the MQ agent
+   does not completely remove subnode from IRA manager and simply
+   marks it off-line. Subnode remains stored in the IRA manager.
+   When the MQ agent reconnects to the TEMS, it resends subnode
+   status for all known subnodes, which results in the wrong
+   registering and de-registering of the MQ QSG subnode.
+   
+   A new framework function is required to completely delete
+   all residual memory of switched subnode from IRA manager.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is modified to utilize the new framework API to
+   completely delete MQ QSG subnodes from IRA manager when the
+   QSG monitoring is terminated.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA41002
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG XE WEBSPHM
+   
+   
+ * REPORTED COMPONENT ID
+   5608A1100
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-12-06
+   
+   
+ * CLOSED DATE
+   2013-01-15
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    OA41395 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA41395]
+   
+   
+
+MODULES/MACROS
+ *  KMQAGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG XE WEBSPHM
+   
+   
+ * FIXED COMPONENT ID
+   5608A1100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY UA67700 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA67700]
+   UP13/01/17 P F301
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

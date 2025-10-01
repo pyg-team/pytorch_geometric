@@ -1,0 +1,26 @@
+Title: IBM Erro with SAP suite Adapter com.sap.mw.jco.JCO$Exception: (103) RFC_ERROR_LOGON_FAILURE: Password logon no longer possib - United States
+
+Text:
+Communication; Extensions; Adapters; STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Erro with SAP suite Adapter com.sap.mw.jco.JCO$Exception: (103) RFC_ERROR_LOGON_FAILURE: Password logon no longer possib 
+
+SYMPTOM
+
+
+Error with SAP suite Adaptecom.sap.mw.jco.JCO$Exception: (103) RFC_ERROR_LOGON_FAILURE: Password logon no longer possible - too many failed attempts!
+
+Error Message Error com.sap.mw.jco.JCO$Exception: (103) RFC_ERROR_LOGON_FAILURE: Password logon no longer possible - too many failed attempts!
+
+
+RESOLVING THE PROBLEM
+
+
+Error message says that you had used wrong user id / password in JCO connection definition. JCO Destination has tried for too many times with the wrong credentials ( may be more than three times, depends on back-end settings). Due to this the SAP back end user id is locked. You have to get it un-locked before you try with correct user id and password.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling B2B Integrator Adapters 
+HISTORICAL NUMBER
+ NFX10726

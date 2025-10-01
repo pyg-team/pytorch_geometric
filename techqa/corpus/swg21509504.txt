@@ -1,0 +1,31 @@
+Title: IBM Unable to configure Tomcat server with TCsite TC Configurator server installed. - United States
+
+Text:
+Tomcat6 Tomcat J2EE TEMA Tacton TCsite configuration fails TC Server tcserver CAMADALL CAMADINST TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Unable to configure Tomcat server with TCsite TC Configurator server installed. 
+
+CAUSE
+This may be caused due to another Tomcat server installed on your system.
+
+RESOLVING THE PROBLEM
+To resolve the problem, check and see if you have another Tomcat server installed. This will most likely be in the C:\Program Files\Apache Software Foundation folder on your system if using Windows. (see screenshot here.) 
+
+[/support/docview.wss?uid=swg21509504&amp;aid=1] 
+
+If you are running TCsite the Tacton TC Configurator server, then this already comes with its own bundled version of Tomcat. 
+
+You can't use both TCsite server software and its own Tomcat server and another stand-alone Tomcat server on the same system. You have to remove the stand-alone Tomcat server to get the other TCsite-bundled-Tomcat server successfully configured. 
+
+(Note; Its not enough to just stop the stand-alone Tomcat service in the Services window. You must remove the stand-alone Tomcat server completely if you want to configure the other TCsite-bundled-Tomcat server.) 
+
+So uninstall the stand-alone Tomcat server and then re-run the configuration script to configure the TCsite-bundled-Tomcat server.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM4AD ITCAMfAD ITCAM4J2EE ITCAM for J2EE

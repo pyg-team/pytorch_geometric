@@ -1,0 +1,44 @@
+Title: IBM "Cannot support SSL_DHE_RSA_WITH_AES_256_CBC_SHA" at schedule start - United States
+
+Text:
+RPT; schedule; encryption; 256 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to start an IBM Rational Performance Tester schedule result in error
+
+"Error occurred during connection to server ...". 
+
+SYMPTOM
+The full error reads as follows.
+
+
+Error occurred during connection to server <server name>. Explanation message: 'Cannot support SSL_DHE_RSA_WITH_AES_256_CBC_SHA with currently installed providers'. Since the request is the primary request for the current page all secondary requests will be skipped and the next page will be attempted. 
+
+
+You see this error in the error log and the messages in the test log. The schedule completes and issues results. The workbench can run a schedule error free through the built-in agent.
+
+
+CAUSE
+The agent does not support strong encryption. 
+
+RESOLVING THE PROBLEM
+Copy the policy JAR files, local_policy and US_export_policy.jar, into the JRE security folder. In Windows the path reads as follows.
+
+
+C:\Program Files\IBM\SDP\AgentController\jdk\jre\lib\security
+
+
+For more information, see the following technote.
+Enabling Strong encryption greater than 128 bit key lengths in Rational Performance Tester [http://www.ibm.com/support/docview.wss?uid=swg21245273] 
+
+
+ 
+
+Notes:
+
+
+
+ * The datestamp of the policy JAR files is 12 October 2012. 
+   
+   
+ * You can use the JAR files for both Windows and Linux.

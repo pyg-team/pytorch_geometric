@@ -1,0 +1,31 @@
+Title: IBM Created Intermediate certificate the Verisign Class 3 root certificate will show"This certificate has expired or is not - United States
+
+Text:
+Communication; STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Created Intermediate certificate the Verisign Class 3 root certificate will show"This certificate has expired or is not 
+
+SYMPTOM
+
+
+After creating a new SSL Intermediate certificate the Verisign Class 3 root certificate will show "This certificate has expired or is not yet valid.”
+
+Error Message  This certificate has expired or is not yet valid. when opening certificate on Certification Path
+
+
+RESOLVING THE PROBLEM
+
+
+It sounds like there is installed an older Verisign Class 3 root certificate which expired in 2004, this was used to sign the Intermediate CA certificate supplied to the requester of the certificate You should remove the old Verisgn “Class 3 Public Primary Certification Authority” CA certificate from GIS and replace it with a new one from Verisign “VerisignClass3root.crt.txt” we recommend to give it the same name as before, you can then also add the Intermediate certificate to GIS under CA Certificate if you haven’t already. When then a client connects to GIS it should no longer receive a warning that the certificate is expired or not yet valid. When opening the certificate it can still give the error as the old intermediate and the new intermediate have the same “issued by/to” name it was only the expiry date that changed  
+
+HISTORICAL NUMBER
+ NFX5698 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Severity
+
+
+Normal

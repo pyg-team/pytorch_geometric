@@ -1,0 +1,78 @@
+Title: IBM Knowledge Collection: Migration documents for IBM Business Monitor and WebSphere Business Monitor - United States
+
+Text:
+knowledgecollection; business monitor; websphere business monitor; ibm business monitor; monitor; bpm; migration EDUCATION
+
+ABSTRACT
+ This Knowledge Collection is a focused compilation of links to migration documents for IBM Business Monitor and WebSphere Business Monitor. 
+
+CONTENT
+A Knowledge Collection is a focused compilation of links to documents that share a common theme. Knowledge Collections are navigation aids that organize content to help users quickly find relevant information. Knowledge Collections are not designed to be an all-inclusive list of all documents dealing with the specific theme.
+
+The applicable version is included in each entry.
+
+
+
+
+Migration documents for IBM Business Monitor and WebSphere Business Monitor 
+Other Knowledge Collections for IBM Business Monitor and WebSphere Business Monitor 
+
+
+
+
+
+Migration documents for IBM Business Monitor and WebSphere Business Monitor 
+
+When migrating from IBM WebSphere Business Monitor 6.12 to 6.2, and when creating custom profiles, do not connect to Deployment Manager (DMGR). (1328478) [http://www.ibm.com/support/docview.wss?uid=swg21328478&acss=dakc] 
+Version: 6.2 
+After migrating the WebSphere Business Monitor deployment manager from 6.12 to 6.2, running the manageprofiles command ends with a "trusted certificate not found" error. Additionally, the system output log file contains the following error: "The system cannot create a SOAP connector to connect to host ... with SOAP connector security enabled." 
+
+Profile creation fails because the custom node cannot be federated (1329480) [http://www.ibm.com/support/docview.wss?uid=swg21329480&acss=dakc] 
+Version: 6.2 
+IBM WebSphere Business Monitor profile creation for migration fails because of a node name conflict with a node that is already registered with deployment manager. You should not attempt to connect to the deployment manager or federate the node. The profile migration process will federate the node. 
+
+New events sent after successful profile migration might not be consumed properly by the IBM WebSphere Business Monitor (1329680) [http://www.ibm.com/support/docview.wss?uid=swg21329680&acss=dakc] 
+Version: 6.2 
+After successful profile migration of IBM WebSphere Business Monitor 6.1.2 to 6.2, sending a new event to the model deployed might fail. 
+
+Monitor models do not operate properly after they are migrated (1330204) [http://www.ibm.com/support/docview.wss?uid=swg21330204&acss=dakc] 
+Version: 6.2 
+After you migrate from WebSphere Business Monitor 6.1.x to 6.2, your monitor models from WebSphere Business Monitor 6.1.x might not work properly. 
+
+Messaging engine fails to send events after you migrate to WebSphere Business Monitor 6.2 (1338488) [http://www.ibm.com/support/docview.wss?uid=swg21338488&acss=dakc] 
+Version: 6.2 
+If you are using Apache Derby for your WebSphere 6.1.x CEI data store, and if you migrate to IBM WebSphere Business Monitor 6.2 using the WebSphere Business Monitor 6.2 migration tools, you may experience a problem sending events. The messaging engine fails to start, and as a result, you cannot send events. 
+
+Federating the target node fails during migration (1351593) [http://www.ibm.com/support/docview.wss?uid=swg21351593&acss=dakc] 
+Version: 6.2 
+WebSphere Business Monitor migration requires that you create a target custom profile with the same node name as an already federated node. If you use the Profile Management Tool to create the custom node, the federation fails. The Profile Management Tool requires you to federate the custom node. You must use the manageprofiles command. 
+
+Upgrading Web-based dashboards to Business Space incorpororated old themes into Business Space (1372856) [http://www.ibm.com/support/docview.wss?uid=swg21372856&acss=dakc] 
+Versions: 6.1.2 and 6.2 
+If you installed a customized theme for the Web-based dashboards in WebSphere Business Monitor 6.1.1 and did not remove the theme before upgrading to Business Space in WebSphere Business Monitor 6.1.2 or 6.2, the customized theme will continue to appear on the login page for Business Space. The customized theme does not appear on the home page or any other page in Business Space. . 
+
+Business Space users cannot access or share after migrating from WebSphere Business Monitor V6.2 to V7 (1590192) [http://www.ibm.com/support/docview.wss?uid=swg21590192&acss=dakc] 
+Versions: 6.2, 6.2.0.1, 6.2.0.2, 6.2.0.3, 7.0, 7.0.0.3 and 7.0.0.4 
+When customers migrate from WebSphere Business Monitor V6.2.x to V7, if there are LDAP errors in LDAP search, the migration of data will not complete successfully. To identify this, check in the migration log for LDAP errors. 
+
+Business Space welcome content and help content is missing after an IBM Business Monitor profile upgrade from 8.0. to 8.0.1 (1617233) [http://www.ibm.com/support/docview.wss?uid=swg21617233&acss=dakc] 
+Version: 8.0.1 
+When you upgrade the IBM Business Monitor profile from 8.0 to 8.0.1, you might encounter the following problems in the Business Monitor test environment: the Welcome space displays a "Topic Not Found" message and the help displays the same message. The help navigation also contains a single book and no Business Monitor content. 
+
+Scheduled service in IBM Business Monitor does not start after migration (1648903) [http://www.ibm.com/support/docview.wss?uid=swg21648903&acss=dakc] 
+Versions: 8.0, 8.0.1 and 8.0.1.1 
+You have a combined IBM Business Process Manager V8 and IBM Business Monitor V8 cell that was migrated from a combined WebSphere Process Server V7 and WebSphere Business Monitor V7 cell, with full golden topology in both cases. In this combined cell both Monitor and BPM are utilizing the Support cluster running on the BPM profile, for example: profileBPMInt01. This profile is not augmented with Monitor so the Monitor scheduled Service ear fails upon startup. As a result the Monitor scheduled service does not start after the migration, with the error "Monitor isn't enabled for this profile" in the trace. 
+
+
+Back to Top 
+
+Other Knowledge Collections for IBM Business Monitor and WebSphere Business Monitor 
+ * Knowledge Collection: Troubleshooting documents for IBM Business Monitor (70338376) [http://www.ibm.com/support/docview.wss?uid=swg27038376]
+ * Knowledge Collection: Usage documents for IBM Business Monitor (7038375) [http://www.ibm.com/support/docview.wss?uid=swg27038375]
+
+
+Back to top
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Monitor Not Applicable AIX, Linux, Solaris, Windows, z/OS 8.0, 7.5

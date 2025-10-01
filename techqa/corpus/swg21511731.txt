@@ -1,0 +1,23 @@
+Title: IBM Integrating  OPTIM archive/masked  data with IBM Infosohere Federated data - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do we integrate OPTIM archive/masked data with Fedeerated data with the help of Optim Connect (Attunity) server? 
+
+CAUSE
+With the current environment of data sensitivity, there is a need to mask data not only in the traditional relational databases, but also in flat files that could be part of a testing scenario. Customers continue to need to send files to vendors, off-shore testers, and even internal testers, and the data in those files could be subject to regulations. You may have to de-identify private data in flat files by using IBM® InfoSphere™ Federation Server to create a relational table (nickname) for data in flat files and then applying data privacy algorithms using IBM Optim™ Data Privacy Solution. 
+
+You need Optim Test Data Management with Data Privacy Option at a minimum of Version 7.1. The Attunity Server needs to be at Version 5.0.1 or later, and InfoSphere Federation Server should be at Version 9.5 or later. You also need an Optim flat file license. 
+
+
+ANSWER
+ 
+
+
+Please use http://www.ibm.com/developerworks/data/library/techarticle/dm-0907optimprivacy/index.html [http://www.ibm.com/developerworks/data/library/techarticle/dm-0907optimprivacy/index.html] as reference
+
+
+RELATED INFORMATION
+#Developerworks article [http://www.ibm.com/developerworks/data/library/techarticle/dm-0907optimprivacy/index.html]

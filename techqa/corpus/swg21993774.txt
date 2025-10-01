@@ -1,0 +1,54 @@
+Title: IBM QRadar: Reaching data storage limits - United States
+
+Text:
+store; data storage; disk space; event storage; log storage; expand; increase; add storage; resize; flow storage TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Available options when the QRadar appliance is close to running out of data storage space. 
+
+CAUSE
+In some instances, customers have found they are collecting more data on one or more of their appliances then they can store on it. 
+
+RESOLVING THE PROBLEM
+There are two possible approaches possible to address concerns around data storage space usage: 
+
+Optimizing Space Usage:
+
+In many environments, data storage disk usage can be brought done through tuning QRadar. You can find that you are using your data storage space unnecessarily for your backups, which are better kept off board. You can find that not all data you are receiving is required to be processed and stored. Of the data that you must process and store, some are required to be retained for shorter periods than others. 
+
+
+ 1. Moving Backups:
+    
+    By default, QRadar stores its backups in the /store/backup directory and the backups utilize the same disk space as your data storage. Depending on your data retention policy, your backups might be using some of your storage space which can be reclaimed by moving backups to an NFS as discussed in Knowledge Center [http://www.ibm.com/support/knowledgecenter/SS42VS_7.2.8/com.ibm.qradar.doc/t_offboard_nfs_console.html].
+    
+    
+ 2. Tuning your Retention Policies:
+    
+    Under normal circumstances, the largest and the obvious consumer of data storage space is, as expected, event and flow data. In most environments, not all logs and flows are required to be saved for the same periods of time. Your security policy or compliance needs can perhaps require certain types of information to be saved for several years while other information can become irrelevant after only a few days. By tuning your Retention event and flow retention policies to reflect these requirements, you can reduce data storage needs. You can configure your Event Retention policies by clicking Admin > Data Sources > Events > Event Retention. For further information about Event Retention, see Technote 1695107: QRadar: About Retention Buckets [http://www.ibm.com/support/docview.wss?uid=swg21695107].
+    
+    
+ 3. Enabling Coalescing:
+    
+    Certain data sources are repetitive and can log the same event multiple times. If the coalescing option is enabled, QRadar can coalesce these repetitive events into a single event. Space savings are one the advantages that are provided by enabling the coalescing option. You can enable coalescing globally or on per log source basis. For further information see Technote 1622709: QRadar: How does coalescing work in QRadar? [http://www.ibm.com/support/docview.wss?uid=swg21622709].
+    
+
+Increasing Storage Space:
+
+As of QRadar version 7.2.8, there are no supported ways to resize any of the partitions (including the data storage partition /store). Often, customers that use virtual appliance installations of QRadar want to expand the virtual disks that are assigned to their virtual appliance. Unfortunately, these types of disk expansions, or additions of physical drives to existing appliances, are not supported solutions as of QRadar version 7.2.8. Attempts to expand storage space by using these methods can cause major problems, including data loss. 
+
+You can provide additional data storage to a QRadar host, virtual, or other wise, with one of the two options below: 
+
+ 1. Data Nodes:
+    
+    The recommended way of expanding data storage on a QRadar appliance is by attaching a data node [http://www.ibm.com/support/knowledgecenter/SS42VS_7.2.8/com.ibm.qradar.doc/c_data_node_overview.html]. Data Nodes are QRadar managed hosts that can be attached to existing QRadar managed hosts (physical or virtual) to provide them with more storage. They can be physical appliances or virtual hosts. They do not have collection or processing capabilities and instead are focused on expanded data storage and searching. The added storage capabilities of data nodes include data balancing, which increases the efficiency of searches against the increased data storage. For further information about adding data nodes to your deployment, contact your sales representative [http://www.ibm.com/connect/ibm/us/en/?lnk=fcw].
+    
+ 2. Offboard Storage:
+    
+    QRadar supports the use of offboard storage to store data. You can consider migrating to offboard storage, if none of the other options that are listed is viable in your particular case. However, be aware that using offboard storage can cause performance hits and is not the recommended way of providing additional storage for your managed hosts. For further information, see the Offboard Storage Guide [http://public.dhe.ibm.com/software/security/products/qradar/documents/7.2.8/en/b_offboard_storage.pdf].
+    
+
+
+Where do you find more information? 
+
+
+[/support/docview.wss?uid=swg21993774&aid=1] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21993774&aid=2] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21993774&aid=3] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21993774&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21993774&aid=5] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21993774&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21993774&aid=7] [http://ibm.biz/SuptRegQuikStart]

@@ -1,0 +1,54 @@
+Title: IBM Tivoli OMEGAMON XE for IMS on z/OS - 4.2.0-TIV-KIP-FP0009 - United States
+
+Text:
+Java Security U51 DOWNLOADABLE FILES
+
+ABSTRACT
+ 4.2.0-TIV-KIP-FP0009 This is a cumulative fix pack for Tivoli OMEGAMON XE for IMS on z/OS V420 
+
+DOWNLOAD DESCRIPTION
+Tivoli OMEGAMON XE for IMS on z/OS V420 fix pack 9 consists of the following files: 
+
+
+
+Fix pack file name Description 4.2.0-TIV-KIP-FP0009.README Contains the README for Tivoli OMEGAMON XE for IMS on z/OS V420 Fixpack 9. 4.2.0-TIV-KIP-FP0009.tar.gz Contains the Fix Pack 9 updates to Tivoli OMEGAMON XE for IMS on z/OS V420 application support for TEMS, TEPS, or TEP deployed on the AIX, Linux, HP-UX, and Solaris platforms. 4.2.0-TIV-KIP-FP0009.zip Contains the Fix Pack 9 updates to Tivoli OMEGAMON XE for IMS on z/OS V420 application support for TEMS, TEPS, or TEP deployed on Windows platforms. PREREQUISITES
+This fixpack requires IBM Tivoli Monitoring Version 6.2.1 (at a minimum level) which was a prerequisite for OMEGAMON XE for IMS V420.
+
+If 4.2.0-TIV-KIP-FP0008 was not installed, ensure z/OS PTF UA68726 has also been installed with this Fix Pack. The need for the updated language pack 4.2.0-TIV-KIP-LP0002 with FP0008 should also be verified.
+
+INSTALLATION INSTRUCTIONS
+Please consult the readme file 4.2.0-TIV-KIP-FP0009_readme.txt (download below via Fix Central) for detailed installation instructions. 
+
+[http://publib.boulder.ibm.com/infocenter/tivihelp/v42r1/index.jsp?topic=%2Fcom.ibm.itm.doc_6.2.2fp1%2Flangpack.htm] [http://www-01.ibm.com/support/docview.wss?uid=swg21290883]Refer to the "Recommended Maintenance" Technote #1290883 to locate the full list of IBM Tivoli OMEGAMON product maintenance deliverables which contain the renewed Java certificate: http://www-01.ibm.com/support/docview.wss?uid=swg21290883 [http://www-01.ibm.com/support/docview.wss?uid=swg21290883]
+
+DOWNLOAD PACKAGE
+4.2.0-TIV-KIP-FP0009.README
+4.2.0-TIV-KIP-FP0009.zip
+4.2.0-TIV-KIP-FP0009.tar.gz
+
+
+HOW CRITICAL IS THIS FIX?
+Recommended
+
+
+
+PROBLEMS SOLVED
+Supports security update U51 in Java V7 
+
+
+
+KNOWN SIDE EFFECTS
+None Known
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [http://www.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 4.2.0-TIV-KIP-FP0009 on Fix Central 6 Jun 2014 English 11905443 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Tivoli+OMEGAMON+XE+for+IMS+on+zOS&release=4.2.0&platform=All&function=all] [ ] DD 
+PRODUCT ALIAS/SYNONYM
+ I5420 I5 XE 
+
+ [/support/docview.wss?uid=swg24037685&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24037685&aid=2]Problems (APARS) fixed
+OA45300

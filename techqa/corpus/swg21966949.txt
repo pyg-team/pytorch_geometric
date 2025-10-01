@@ -1,0 +1,35 @@
+Title: IBM Verifying the environment before a TIP upgrade - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I verify the Tivoli products that are deployed in Tivoli Integrated Portal (TIP) are certified for a TIP Fix Pack? 
+
+CAUSE
+Not all releases of IBM software are certified to run with all releases of TIP. 
+
+ANSWER
+In order to apply a TIP 2.2 fix pack all products deployed in the target TIP instance must be at a release level that is certified on the TIP fix pack. Part of the TIP fix pack installation procedure is to download and unpack a "FITSuite" package in addition to the TIP fix pack package itself. The TIP fix pack installer runs a script in the "FITSuite" package to determine if the products deployed in the TIP instance are certified. If not, the installation will terminate indicating which products are not at the correct release level and what the minimum release level they should be upgraded to. 
+
+For planning purposes, it is possible to run the FITSuite manually beforehand without having to download the full TIP FP. 
+
+Go to the IBM Fix Central link below and search for the corresponding "FITSuite" zip file for the target TIP fix pack:
+
+Fix Central for TIP 2.2 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Tivoli+Integrated+Portal&release=All&platform=All&function=all] 
+
+The "FITSuite" package is updated as new product releases are certified on TIP fix packs, so it is important to download the FITSuite package as close to planned maintenance as possible. 
+
+Follow the Readme_FIT.txt instructions to unpack it into: <TIP_HOME>/profiles/TIPProfile/etc/ 
+
+Go to the <TIP_HOME>/profiles/TIPProfile/etc/fit directory and run the following: 
+
+./fit.sh -showReport 
+
+If there are uncertified products in the environment, it should return something like the following:
+
+[netcool1@yourserver fit]$ ./fit.sh -showReport
+FAIL: Installed OMNIbusWebGUI 7.4.0.2 is not certified with tip2.2.0.15. Certified versions: 7.4.0.3.
+ACTION: Install the OMNIbusWebGUI certified versions and retry. 
+
+Before proceeding with the TIP upgrade, the uncertified software would need to be addressed.

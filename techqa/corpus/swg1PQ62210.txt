@@ -1,0 +1,155 @@
+Title: IBM PQ62210: ABEND S026 REASON=0E0D0101 DURING TERMINATION. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During termination DFSRTM00 does a freemain of all previously
+   loaded modules. This includes the XCF event exit. Since DFSMRCL0
+   is the first resource mgr in IEAVTRML, this happens very early
+   in the MVS cleanup process for the region. The XCF structures
+   remain connected, and may attempt to send an event notification.
+   If there is no event exit to receive it, XCF gets system abend
+   S026 ( abendS0026 S0026 ) with REASON = 0E0D0101.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IMS R810 customers running DL/I batch    *
+   *                 applications in an NWAY data sharing         *
+   *                 environment.                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The customer was running batch DL/I     *
+   *                      applications in a data sharing          *
+   *                      environment. A batch job was            *
+   *                      terminated with an ABENDS0026 with      *
+   *                      a REASON code of 0E0D0101.              *
+   ****************************************************************
+   * RECOMMENDATION: INSTALL CORRECTIVE SERVICE FOR APAR/PTF      *
+   ****************************************************************
+   During job termination DFSRTM00 causes all modules previously
+   loaded for the application to be deleted.
+   This includes the XES event exit, module DFSDXES0.
+   The XCF structures still remain connected and XES may attempt
+   to send an event notification to the exit.
+   If the event exit does not complete properly XES will
+   terminate the connector task with an ABEND S0026 reason code
+   0E0D0101. DFSRTM00 should disconnect from the XCF structure
+   before deleting the event exit module.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *    SDB: LVLS/810 AR810 AR800
+    AIDS: RIDS/SYS RIDS/CNTRL SYS CNTRL
+     DEP: NONE
+     GEN:
+   SYSPLEXDS
+   
+   *** END IMS KEYWORDS ***
+   Module DFSRTM00 has been modified to disconnect from the XCF
+   structures before deleting the event exit module DFSDXES0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ62210
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V8
+   
+   
+ * REPORTED COMPONENT ID
+   5655C5600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2002-06-12
+   
+   
+ * CLOSED DATE
+   2002-07-16
+   
+   
+ * LAST MODIFIED DATE
+   2003-03-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PQ57884
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ68163
+   
+   
+
+MODULES/MACROS
+ *     DFSRTM00
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V8
+   
+   
+ * FIXED COMPONENT ID
+   5655C5600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY UQ68163
+   UP02/07/22 P F207

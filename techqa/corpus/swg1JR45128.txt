@@ -1,0 +1,165 @@
+Title: IBM JR45128: EDITING OF PAGE NAVIGATOR WIDGET FAILS FOR IMPORTED SPACE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Business Space powered by WebSphere: V7.5.1.0 Interim Fix 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033673]
+Business Space powered by WebSphere: V7.5.1.0 Interim Fix 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24034835]
+Version 8.0.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035701]
+Version 8.5.0 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035702]
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After importing a space that includes the Page Navigator widget,
+   the widget works as it did in the original (exported) space, but
+   upon opening the widget for editing in the imported space, the
+   settings are no longer preserved, and the Space, Page, and
+   Target event drop down menus are empty (no values can be
+   selected).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of Business Space powered by          *
+   *                  WebSphere Version 7.5 (shipped with or      *
+   *                  included in Business Process Manager        *
+   *                  Advanced Edition, IBM Business Monitor,     *
+   *                  WebSphere Service Registry and Repository,  *
+   *                  and IBM Case Manager).                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: After importing a space that includes   *
+   *                      the Page Navigator widget, the widget   *
+   *                      works as it did in the original         *
+   *                      (exported) space, but upon opening the  *
+   *                      widget for editing in the imported      *
+   *                      space, the settings are no longer       *
+   *                      preserved, and the Space, Page, and     *
+   *                      Target event drop down menus are        *
+   *                      empty (no values can be selected).      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Code responsible for retrieving and displaying the current Page
+   Navigator widget settings when the widget is opened in edit
+   mode assumes that numeric identifier attributes for the current
+   space and page settings are valid for the imported business
+   space in the current context, instead of using the
+   corresponding name attributes which should be valid even for
+   imported spaces.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified to use the name attributes for space and
+   page if the numeric identifier attributes are not valid
+   (numeric identifier is not available in the list of spaces or
+   list of pages within the selected space, respectively).
+   
+   The fix is included in Business Space V7.5.1 Interim Fix 4,
+   available at:
+   
+   http://www.ibm.com/support/docview.wss?uid=swg24033673 [http://www.ibm.com/support/docview.wss?uid=swg24033673]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR45128
+   
+   
+ * REPORTED COMPONENT NAME
+   BUSINESS SPACE
+   
+   
+ * REPORTED COMPONENT ID
+   AIMBUSSPC
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-12-14
+   
+   
+ * CLOSED DATE
+   2013-03-04
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUSINESS SPACE
+   
+   
+ * FIXED COMPONENT ID
+   AIMBUSSPC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

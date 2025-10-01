@@ -1,0 +1,101 @@
+Title: IBM Implementing archive events function for inbound service in WebSphere Adapter for JDBC - United States
+
+Text:
+JDBC; JCA; archive; WBIA; event; eventstore; event table TECHNOTE (FAQ)
+
+QUESTION
+ WebSphere Business Integration Adapter for JDBC has the ability to archive processed events from the event table. How do I implement the same function with WebSphere Adapter for JDBC (JCA)? 
+
+ANSWER
+You can use one of the following ways to implement the archive function in WebSphere Adapter for JDBC (JCA):
+
+1. Saving processed events in the original event table. 
+2. Saving processed events into another event table similar to the implementation in the WebSphere Business Integration Adapter for JDBC. 
+
+In both the approaches, you must use the User Defined("dynamic") inbound function which requires at least two event tables. 
+
+The following sections describe each approach in detail.
+
+Approach 1: Saving processed events in the original event table. 
+
+This approach uses two tables. Create the tables ' wbia_jdbc_eventstore_archive' and 'wbia_jdbc_eventstore'.
+The table "wbia_jdbc_eventstore_archive" is a user-defined event table and which stores all events (both processed events and events to be processed). An event in the table with the status "0" indicates that it is a new event and it has to be processed. After the event is processed, its status is set to "1". As all processed events still remain in the table, the table "wbia_jdbc_eventstore_archive" behaves like an archive table. 
+The table "wbia_jdbc_eventstore" is a built-in and mandatory table for WebSphere Adapter for JDBC. 
+
+Note: A trigger must insert events only into the "wbia_jdbc_eventstore_archive" table. 
+
+Thus, JDBC adapter's behavior is just like this:
+1) The trigger records events into 'wbia_jdbc_eventstore_archive' table.
+2) The user-defined query statement copies events from ' wbia_jdbc_eventstore_archive' into 'wbia_jdbc_eventstore'.
+3) The adapter polls events from 'wbia_jdbc_eventstore' and delete them when completely.
+4) The user-defined update statement just sets status of events in ' wbia_jdbc_eventstore_archive' and doesn't delete them.
+
+The following figure displays the configuration for Approach 1:
+
+[/support/docview.wss?uid=swg21399056&aid=1] [/support/docview.wss?uid=swg21399056&aid=1]
+
+<User-defined event query>
+select event_id, object_key, object_name, object_function from wbia_jdbc_eventstore_archive where event_status = 0 
+</User-defined event query>
+
+<User-defined update query> 
+update wbia_jdbc_eventstore_archive set event_status= 1 where event_id = ? 
+</User-defined update query>
+
+Finally, in log file trace.log, you will see below information:
+
+[/support/docview.wss?uid=swg21399056&aid=2] [/support/docview.wss?uid=swg21399056&aid=2]
+
+For more information about this implementation, download the following compressed file: 1.zip.
+
+Approach 2: Saving the processed events into another event table similar to the implementation in WebSphere Business Integration Adapter JDBC Adapter
+
+This approach uses three tables. Create the tables 'wbia_jdbc_eventstore_cust', 'wbia_jdbc_eventstore_archive', and 'wbia_jdbc_eventstore'. 
+The table "wbia_jdbc_eventstore_cust" stores the new incoming events.
+The table "wbia_jdbc_eventstore_archive" is an archive table which stores all processed events.
+The table "wbia_jdbc_eventstore" is a built-in and mandatory table for WebSphere adapter for JDBC. 
+
+Note: A trigger must insert events only into the "wbia_jdbc_eventstore_cust" table.
+
+Thus, JDBC adapter's behavior is just like this:
+1) The trigger records events into 'wbia_jdbc_eventstore_cust' table
+2) The user-defined query statement copies events from 'wbia_jdbc_eventstore_cust' table to both 'wbia_jdbc_eventstore_archive' and 'wbia_jdbc_eventstore'.
+3) The adapter polls events from 'wbia_jdbc_eventstore' and delete them when it is completed.
+4) The adapter just sets status of events in 'wbia_jdbc_eventstore_cust' and delete them from 'wbia_jdbc_eventstore_cust'.
+
+The following figure displays the configuration for Approach 2:
+
+[/support/docview.wss?uid=swg21399056&aid=3] [/support/docview.wss?uid=swg21399056&aid=3]
+
+<User-defined event query>
+?=call fn_query_events(?)
+</User-defined event query>
+
+<User-defined update query>
+update wbia_jdbc_eventstore_cust set event_status= 1 where event_id = ?
+</User-defined update query>
+
+<User-defined delete query>
+delete from wbia_jdbc_eventstore_cust where event_id = ?
+</User-defined delete query>
+
+Below is a stored procedure implementation on Oracle server. You can refer to the sample about how to implement the stored procedure in other database servers.
+
+--?=call fn_query_events(?): implementation in oracle server.
+create or replace FUNCTION fn_query_events (quantity in NUMBER)
+return sys_refcursor
+as
+l_cursor sys_refcursor;
+begin
+INSERT INTO wbia_jdbc_eventstore_archive SELECT * from wbia_jdbc_eventstore_cust where rownum <= quantity ;
+
+open l_cursor for select event_id, OBJECT_KEY,OBJECT_NAME,OBJECT_FUNCTION from wbia_jdbc_eventstore_cust where event_status = 0 and rownum <= quantity;
+return l_cursor;
+end fn_query_events;
+
+/
+
+For more information about this implementation, download the following compressed file:
+2.zip.
+
+1.zip [/support/docview.wss?uid=swg21399056&aid=5] [/support/docview.wss?uid=swg21399056&aid=4] 2.zip [/support/docview.wss?uid=swg21399056&aid=7] [/support/docview.wss?uid=swg21399056&aid=6]

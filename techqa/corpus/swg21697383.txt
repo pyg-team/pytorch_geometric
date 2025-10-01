@@ -1,0 +1,24 @@
+Title: IBM DASH navigation tasks not displayed after SSO configuration - United States
+
+Text:
+DASHL2; DASHL2SSO; DASH; navigation tasks; icons; missing; not loaded; SSO; Single Sign-on TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After configuring Single Sign-on in the Dashboard Application Services Hub (DASH) component of Jazz for Service Management (JazzSM), the navigation icons in DASH do not display when logging into DASH. 
+
+CAUSE
+LTPA keys generated in DASH for an existing, working SSO configuration for a Console Integration were deleted when the command to regenerate the LTPA keys was executed again. 
+
+DIAGNOSING THE PROBLEM
+Log into DASH using the DASH server IP address instead of the fully qualified domain/host name (FQDN) in the login URL. That will bypass the SSO configuration which prevents the DASH navigation tasks from appearing. Go to Settings > Console Integrations and note any existing console integration definitions. The solution in this technical note only applies if there are existing console integration definitions.
+
+RESOLVING THE PROBLEM
+Launch the Websphere Administration Console in DASH (Settings > Websphere Administration Console)
+
+
+
+
+ 1. Go to Security > Global Security, LTPA. 
+ 2. Export the LTPA keys. 
+ 3. On all other Websphere instances where SSO with DASH is required, import the LTPA keys. 
+ 4. Restart all Websphere instances.

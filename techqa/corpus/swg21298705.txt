@@ -1,0 +1,89 @@
+Title: IBM Rebuilding Oracle Text Indexes for Maximo - United States
+
+Text:
+context; domain index; TPAEDATABASE; TPAEORACLE TECHNOTE (FAQ)
+
+QUESTION
+ How can I fix invalid status errors with Oracle Text indexes? 
+
+CAUSE
+Most errors in Oracle Text caused by export and import of a schema can be fixed by rebuilding all of the indexes.
+
+ANSWER
+ 
+
+Attached is a SQLPLUS script which must be run from SQLPLUS on Windows (it builds files and a log in C:\temp) to rebuild all the text indexes.
+
+First, you need to ensure that the text index synchronization job is running via dbms_scheduler rather than dbms_job. These next two steps can be performed while the Maximo Application Server is running.
+
+
+
+Remove any occurrences of DBMS_JOB
+
+Determine how many DBMS_JOBS are running by executing this from SQLPLUS logged in as the schema owner:
+
+select job, substr(what,1,80) from user_jobs;
+
+For each result where "what" contains maximo_ts_job, execute the following commands:
+
+begin
+dbms_job.remove(####);
+commit;
+end;
+/
+
+Substituting one of the job numbers from the select for the ####. 
+
+
+
+Change to use DBMS_SCHEDULER
+
+
+Recreate the job submission procedure and run it:
+
+CREATE OR REPLACE PROCEDURE maximo_ts_job_call AS
+BEGIN 
+dbms_scheduler.create_job( 
+job_name => 'MAXIMOTSSYNC', 
+job_type => 'STORED_PROCEDURE', 
+job_action => 'maximo_ts_job', 
+start_date => SYSDATE, 
+repeat_interval => 'SYSDATE + 5/1440', 
+enabled => TRUE); 
+END;
+/
+exec maximo_ts_job_call();
+
+
+Rebuild the Oracle Text Indexes
+
+
+The Maximo Application Server should be shut down before running this script. 
+
+This is a SQLPLUS script which should be run from SQLPLUS on Windows. It generates two SQL files in C:\TEMP, then runs them with some additional commands. All the results will be logged in C:\temp\rebuildctx.log. Since this job is rebuilding every text index, it may take several hours to run on very large Maximo database (tens of gigabytes of data).
+
+Connect as the Maximo schema owner to run the attached rebuildctx.sql script.
+
+You will may see the following error because there is usually no job to stop. This is harmless.
+
+
+BEGIN dbms_scheduler.stop_job('MAXIMOTSSYNC'); END;
+
+*
+ERROR at line 1:
+ORA-27366: job "MAXTEST.MAXIMOTSSYNC" is not running 
+ORA-06512: at "SYS.DBMS_ISCHED", line 162 
+ORA-06512: at "SYS.DBMS_SCHEDULER", line 398 
+ORA-06512: at line 1 
+
+
+At the end of the log it will list all the text indexes and their statuses. If all are VALID, then everything is all set.
+
+
+rebuildctx.sql [/support/docview.wss?uid=swg21298705&aid=2] [/support/docview.wss?uid=swg21298705&aid=1] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management for IT All Systems and Asset Management Maximo Asset Management Essentials All 
+PRODUCT ALIAS/SYNONYM
+ MAXIMO

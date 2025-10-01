@@ -1,0 +1,120 @@
+Title: IBM IR54686: SORTING WORKLIST ITEMS BY ATTRIBUTES ONLY UPDATES THE FIRST PAGE, OTHER PAGES STILL SHOW THE ORDER PRIOR TO THE SORT. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In eClient, sorting worklist items by attributes only updates
+   the first page, other pages still show items by the order prior
+   to the sort.
+   For example:
+   A work list contains 6 items with one attribute called "letter".
+   The values are A, B, C, D, E, F for these 6 items.  For
+   simplicity, I am going to call these items by the attribute
+   name.  Let's say the original order they are returned is A, C,
+   E, B, D, F.  Assume the display is set to have 3 items displayed
+   per page.  So on page 1 we have A, C, E, and on page 2, we have
+   B, D, F.  If I sort them by the attribute "letter" in ascending
+   order, page 1 will display A, B, C, but page 2 will still
+   display B, D, F.  The problem appears as if only the first page
+   is geting updated, and the following pages all display the same
+   items as before.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IR54686
+   
+   
+ * REPORTED COMPONENT NAME
+   ECLIENT FOR WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724B43Z1
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-09-14
+   
+   
+ * CLOSED DATE
+   2004-12-20
+   
+   
+ * LAST MODIFIED DATE
+   2004-12-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ECLIENT FOR WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724B43Z1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSY
+   UP

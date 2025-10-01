@@ -1,0 +1,63 @@
+Title: IBM Oracle 9i Certification for DCS 6.2 SP2 - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Oracle 9i Certification for DCS 6.2 SP2 
+
+SYMPTOM
+PART: Outbound 5.0.1 SP2 DCS
+
+Oracle 9i Certification for DCS 6.2 SP2
+
+
+RESOLVING THE PROBLEM
+Updated on 11/7/2003:
+DCS 6.2 SP3 is intended to support Oracle 9.2 database server. Recently, oracle has announced extending support on oracle 8.1.7 by 1 year (i.e. until end of next year). Customers have stopped following us for 6.2 SP3 release after this announcement. We want to take this opportunity to certify SP3 on 8.1.7 database server. This means, that 6.2 SP3 release will work with both 9.2 server and 8.1.7 server. This will allow customers to upgrade to SP3 in phases (i.e. first upgrade app and then upgrade database server). And, we expect to obsolete SP2 quicker. We do not anticipate any issue in this certification because oracle supports 9.2 client with 8.1.7 server. This certification is expected to be a 1 week effort and we are targeting to announce DCS 6.2 SP3 release by end of next week (i.e. 11/14). 
+
+Updated 10/10/2003:
+1. Oracle 9i database server : Can it be on AIX 5L ? 
+We dont see any issue on going with AIX 5L for oracle 9i. You can upgrade your database server with ORacle 9i and AIX 5L. 
+2. Moving App server to AIX 5L 
+Our application is a 32 bit application. AIX 5L is a 64 bit OS. However, we had several conversations with IBM regarding running 32 bit application on AIX 5L. IBM mentioned that they did not had any known issues in running a 32 bit application. Based on this information, we already have one customer currently in production (with 8 warehouses) running AIX 5L with WMS 6.2. Hence, we dont see this as an issue. However, we recommend that you talk to your IBM support before taking this decision.
+3. Are there any plans to compile WMS 6.2 with 64 bit Oracle 9i client ?
+Our next generation WMS (WMS 7.0) will be completely compatible with Oracle 9i, server and client side. Currently, there are no plans to make WMS 6.2 IBM/HP compatible with 64 bit Oracle 9i client. We expect our 6.2 customers to run 8.1.7.4 client with 9i server.
+4. Rule based versus cost based optimization :
+Our next generation WMS (WMS 7.0) uses only cost based optimization and not rule based. There are no plans to change WMS 6.2 from rule based to cost based optimization.
+5. To apply 6.2 SP3, do we have to be on the latest HF ?
+Yes. You should upgrade to the latest HF before applying the 6.2 SP3. However, our hot fixes are cumulative and you dont have to apply all hot fixes one by one. If you apply the latest, it will automatically apply all the previous ones.
+6. When is 6.2 SP3 scheduled for release ?
+It is scheduled for release by around 1st week of November 2003. This is tentative schedule. I will communicate if there are any changes to the schedule. We dont expect any change to this schedule, unless we hit some major issue in our current testing process.
+
+Updated 10/7/2003:
+Oracle 9i certification for DCS 6.2 SP2 in mid-November of 2003.
+
+Customers will need to upgrade to 6.2 SP3 and Oracle 9i at the same time. We have not tested 6.2 SP3(Sun version) with the Oracle 8.1.7 database.
+
+However, if you want to reduce the risk, you should first apply the latest 6.2 SP2 hotfix first. The only difference between the latest 6.2 SP2 HF (the one before 6.2 SP3) and 6.2 SP3 is that the 6.2 SP3 executables are compiled with Oracle 9i client libraries. There is no change in any functionality/logic.
+
+Related info:
+Update 9/15/2003 :
+================
+Current plan is "to support the 9i server but the clients will need to be 8.1.7.4"
+Yantra to release "compatibility with 9i server and maintain all programs to connect thru' Oracle Client to be 8.1.7.4" 
+
+Reason / Explanation :
+================
+The work around is because of limitations on Oracle and not Yantra.
+Oracle does not provide 9i client libraries for 32 bit m/c on HP and IBM. Oracle provides this only for SUN.
+Hence, issue is mainly for HP and IBM customers and not for SUN customers.
+
+Oracle is not releasing oracle 9i on 32bit HP-UX and 32bit IBM-AIX platforms. 
+If our customer(s) can influence oracle to release 9i on 32bit OS then Yantra can release DCS 6.2 with 9i client.
+
+
+
+HISTORICAL NUMBER
+ PRI49190 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact

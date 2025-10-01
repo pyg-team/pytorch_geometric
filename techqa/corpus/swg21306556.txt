@@ -1,0 +1,14 @@
+Title: IBM Error installing Sametime when running the setup.msi file - United States
+
+Text:
+setup.msi; msi file; double- click; launch; The wizard was interrupted; install; installation aborted; does not complete; silent install; sametime connect client; client installer TECHNOTE (FAQ)
+
+QUESTION
+You double- click setup.msi to install Lotus® Sametime® and the following error displays during the InstallShield Wizard process:
+
+The wizard was interrupted before IBM Lotus Sametime 8.0 could be completely installed. Your system has not been modified. To complete the installation at another time, please run setup again.
+
+ANSWER
+While the provided .MSI version of the Sametime 8.0 client installer can be double-clicked to launch an interactive install, this is not the recommended method for performing an end-user interactive installation. In particular, the MSI version is not ideal for interactive non-English installations. The primary intent of the MSI version is for use in silent or automated deployments. 
+
+The provided .EXE version is recommended for end-user interactive install. The EXE version wraps the MSI in an executable which provides a language-selection dialog box.

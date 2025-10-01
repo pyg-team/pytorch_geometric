@@ -1,0 +1,23 @@
+Title: IBM WebSphere DataPower SOA Appliance: Certificate Validation using Non-unique Distinguished Names - United States
+
+Text:
+certificate validation expired TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DataPower firmware 3.8.1 and prior versions do not support certificate validation involving non-unique Distinguished Names. 
+
+SYMPTOM
+A Validation Credential object configured with multiple Certificate Authority certificates containing identical subject DNs but different key material may fail to validate incoming certificates that have been signed with one of the issuer certificates.
+
+
+CAUSE
+DataPower searches the certificate list based on subject DN and attempts to validate against the first certificate that it finds with the given DN. If the initial attempt fails, the certificate validation will fail.
+
+ENVIRONMENT
+A common scenario in which this issue arises is when a CA certificate is due to expire and the CA has issued a new certificate for the same subject.
+
+DIAGNOSING THE PROBLEM
+If certificate validation fails (especially with "certificate signature failure"), check to make sure all of the configured certificates have unique subject DNs. If there is more than one certificate with the same subject DN, this may be the issue.
+
+RESOLVING THE PROBLEM
+Use a single certificate with a given subject DN per Validation Credential object or upgrade to a firmware version above 3.8.1 when it is available.

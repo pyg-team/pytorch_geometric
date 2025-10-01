@@ -1,0 +1,171 @@
+Title: IBM Collecting Data:  from the  Alphablox Database Repository - United States
+
+Text:
+MustGatherDocument; mustgather; mustgather; mustgather TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Alphablox database repository is a collection of runtime data objects that allow Alphablox to operate. Diagnosing certain Alphablox problems require the viewing of data objects from a database repository. Data objects can be gathered, for viewing, from a database repository by copying the repository to a file base repository or by performing SQL queries against the database repository. 
+
+CAUSE
+An Alphablox problem occurs that requires diagnosing database repository objects. 
+
+ENVIRONMENT
+Any Alphablox installation using a database repository.
+
+DIAGNOSING THE PROBLEM
+Supplying information that allows Alphablox support to diagnose problems with a database repository.
+
+RESOLVING THE PROBLEM
+This technote provides two parts that discuss how to collect information from an Alphablox database repository. The first part discusses making a file based copy of the database repository for sending to Alphablox support. The second part discusses how SQL queries can be used to generate listings of database repository objects for sending to Alphablox support.
+
+
+
+
+
+ * 
+ * Part I -- Making a file based repository from an Alphablox database repository
+ * 
+ * Before making a file system (file based) copy of the database repository, you will need to ensure you have adequate disk space for copying the database repository objects to the file system. The file system copy of the repository has to be performed on a system that has a full Alphablox installation. 
+ * In order to copy your database repository to the file based repository, execute the conversion utility-- i.e. ConvertRepository.bat, for Windows systems, or ConvertRepository.sh, for Linux or UNIX systems-- that is in your <alphablox_home>/bin directory. 
+ * 
+   Below in the section "Sample Run of the ConvertRepository Utility" we illustrate how to convert an Alphablox database repository being hosted in a DB2 database named "ab_test" to a file base repository. The utility responses are in bold. Additional comments are in (bold parentheses). These additional comments do not appear when running the utility, and should not be entered. 
+   
+   Important Warning: When running the ConvertRepository utility ensures that you respond "n" when asked to Update DB2 Alphablox to use the destination repository. If you respond "y" or accept the default, it will cause Alphablox to point to the file based repository. 
+   
+   SAMPLE Run of the ConvertRepository Utility
+   
+   IBM DB2 Alphablox Repository Conversion Utility 8.4.0 Build 135 [GA] 
+   Copyright International Business Machines Corporation 2006. All rights reserved.
+   
+   US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+   
+   Using IBM DB2 type 4 driver
+   A MSSQL Driver was not found in the classpath; MSSQL connectivity disabled
+   A Sybase Driver was not found in the classpath; Sybase connectivity disabled
+   An Informix JDBC Driver was not found in the classpath; Informix connectivity disabled
+   
+   Please choose an option:
+   
+   1) Set DB2 Alphablox File Manager root [C:\alphablox84\repository\] 
+   2) Set DB2 Alphablox instance name [AlphabloxAnalytics84]
+   3) Convert one repository to another
+   4) Create an empty database repository
+   5) Verify and repair a repository
+   6) Change DB2 Alphablox to use a different repository
+   7) Conversion Utility options
+   8) Configure Web Application Server Connection pooling
+   9) Exit
+   
+   Select (1-9): 3
+   Please choose an option:
+   
+   1) Convert from file to database
+   2) Convert from database to file
+   3) Convert from file to file
+   4) Convert from database to database
+   5) Go back to main menu
+   
+   Select (1-5): 2
+   
+   
+   Convert Database To File
+   Source Database
+   
+   Please select the database type:
+   
+   1) IBM DB2
+   2) Apache Derby Server
+   3) Microsoft SQL Server
+   4) Oracle
+   5) Go back to main menu
+   Select (1-5): 1 (enter the correct database type for your database repository)
+   
+   Server: localhost (enter the correct server name for your database repository)
+   Port []: 50000 (enter the correct port number for your database repository)
+   Alias []: ab_test (this is the database name)
+   Schema (if different from user): (enter the schema only if it is different than the user you are using to connect. Needs to be in the same character case as appears in the DB2 schema for the database)
+   User: db2admin (enter the user to connect to the database)
+   Password: password (enter the password to connect to the database)
+   
+   1) Continue, 2) Re-enter, 3) Go back to main menu Select (1-3): 1
+   
+   
+   
+   Convert Database To File
+   Destination File System
+   
+   Repository root [C:\alphablox84\repository\]: c:\temp\repotest (enter a new, temporary directory as a destination for your file copy of the repository)
+   
+   1) Continue, 2) Re-enter, 3) Go back to main menu Select (1-3): 1
+   
+   The following questions can be answered by using the first character
+   in the selected option or press <ENTER> for the default.
+   
+   Enter conversion operation (COPY, MOVE) [COPY]: (hit enter to accept the default)
+   Enter repository creation operation (NEW, UPDATE, OVERWRITE) [NEW]: (hit enter to accept the default)
+   Update DB2 Alphablox to use the destination repository [Y]: n (do NOT accept the default)
+   
+   Below is a description of the options selected:
+   * Copy source repository to destination repository. Fail if the destination
+   repository already exists.
+   * Do not set Alphablox server to point to the destination repository.
+   
+   1) Continue, 2) Re-enter, 3) Go back to main menu Select (1-3): 1
+   Creating the destination repository...
+   Copying the source repository (this may take a few minutes)...
+   
+   Repository operation completed successfully
+   
+   Please choose an option:
+   
+   1) Set DB2 Alphablox File Manager root [C:\alphablox84\repository\]
+   2) Set DB2 Alphablox instance name [AlphabloxAnalytics84]
+   3) Convert one repository to another
+   4) Create an empty database repository
+   5) Verify and repair a repository
+   6) Change DB2 Alphablox to use a different repository
+   7) Conversion Utility options
+   8) Configure Web Application Server Connection pooling
+   9) Exit
+   
+   Select (1-9): 9 
+   
+   Part II -- SQL select queries for listing various Alphablox repository objects
+   
+   Part II contains a list of SQL select commands (queries) that can be used for listing various Alphablox repository objects (properties) such as clusters servers properties, Alphablox server properties and etc. The SQL command examples are for DB2. If you are using a database other than DB2, for your Alphablox database repository, in most cases the SQL can be ran against the database as-is, is some cases the SQL will have to be modified to adhere to the requirements of your database vendor's SQL.
+   
+   Note, performing SQL queries on a database repository, a SQL client is needed. In some cases the Alphablox DHTML QueryBuilder can be used as a SQL client. Using the DHTML QueryBuilder requires the creation of an Alphablox data source for the database repository.
+   
+   1. The following Server Properties SQL command provides the SQL select command for listing the servers properties while excluding the Alphablox Cube Server properties. 
+   
+   Server Properties SQL:
+   
+   select L.CONTEXT, PM.* from ABX_LOOKUP L, ABX_PROPERTY_MAP PM 
+   where (L.ID = PM.ID) and
+   PM.ID in (
+   select ID from ABX_LOOKUP 
+   where (CONTEXT like 'servers%') and 
+   (CONTEXT <> 'servers/cubemgr') and (TYPE = 1)
+   )
+   
+   
+   2. The following Cube Server Information SQL illustrates how a select command can list a cube's properties. The select command is issued in a DB2 command window. This example queries the database repository for the Alphablox Cube named "bcube" and outputs the results in the file bcube.lis. 
+   
+   Cube Server Information SQL:
+   
+   db2 select substr(b.context,1,15) "cube",substr(a.property,1,60) "property" , substr(a.value,1,255) "value"
+   from abx_property_map a, abx_lookup b where b.context='cubes/bcube' and a.id=b.id order by a.property > bcube.lis
+   
+   
+   3. The following Display Alphablox Enabled Cubes SQL select command lists all the enabled Alphablox cubes.
+   
+   Show Enabled Alphablox Cubes SQL:
+   
+   select value from abx_property_map where property='cubeenable'
+   
+   
+   4. The following Display WebSphere Administration Parameters SQL command provides the select statement for listing the connect parameters need by Alphablox to make a WebSphere SOAP connection.
+   
+   Display WebSphere Administration Parameters SQL:
+   
+   select * from schema.abx_property_map where property LIKE 'ws.%'

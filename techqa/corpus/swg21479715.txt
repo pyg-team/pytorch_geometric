@@ -1,0 +1,21 @@
+Title: IBM Applying a data dictionary using SPSS for Windows - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am using SPSS for Windows and would like to copy the data properties from my Variable View from an external file, and apply it to my active dataset. I would like to preserve the value labels and formats from one dataset, and apply it to a different dataset. Is this possible to do with SPSS, or will I have to reconstruct my variables manually from the Variable View? 
+
+RESOLVING THE PROBLEM
+This can be accomplished via the menu items by choosing "Data" -> "Copy Data Properties...", or using the Syntax command APPLY DICTIONARY. This will allow you to copy variables' Missing Values, Variable Labels, Measurement Level, Formats, Alignment, Data Editor Column Width, and either replace or merge Value Labels and Custom Attributes. One requirement is that the variables in the new dataset need to have the same name and type (and for string variables the same width) as in the first dataset before they can be applied (Formats are ignored for string variables thus the width must also be the same). Those with different names or types will be ignored (or strings variables with diferent widths). 
+
+Note: Please see "Choosing Variable Properties to Copy" in the help menu for specifics.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 31099

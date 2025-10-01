@@ -1,0 +1,180 @@
+Title: IBM PK78421: BF 7.1 : Some languages omit AM and PM in long and full date\tim e formats - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Multiple languages omit the %p symbol which prints the AM and PM
+   strings for the time format.
+   
+   For example in en_US we have in the drop down in Admin > Users:
+   
+   (short) 01/01/03 08:30PM
+     (medium) Jan 1 03 08:30:00PM
+     (long) January 1 2003 08:30:00PM GMT
+     (full) Wednesday January 1 2003 08:30:00PM GMT
+   
+   in ja_JP:
+   
+     (short) 03/01/01 08:30
+     (medium) 2003/01/01 08:30:00
+     (long) 2003<year in JP> 1<month in JP> 1<day in JP> 08:30:00
+   GMT
+     (full) 2003<year in JP> 1<month in JP> 1<day in JP> <Wednesday
+   in JP> 08<hour in JP> 30<min in JP> 00<>sec in JP> GMT
+   
+    All of the languages should have the AM\PM symbol in the time
+   format or the long and full format are incomplete.
+   
+     Corrective action #1:
+   
+     1) Open the file $BF_HOME/ui/includes/config.php
+     2) The $TIME_FORMATS array holds the information for the Admin
+   > Users drop down
+     3) Modify the language entry to include the %p in the proper
+   place:
+     For example:
+     'ja_JP' => array(
+   'date' => array(
+   'short' => '%y/%m/%d',
+   'medium' => '%Y/%m/%d',
+   'long' => '%Y %B %e',
+   'full' => '%Y %B %e %A',
+   ),
+   'time' => array(
+   'short' => '%I:%M',
+   'medium' => '%I:%M:%S',
+   'long' => '%I:%M:%S%p %Z',
+   'full' => '%I %M %S%p %Z',
+   ),
+   'datetime' => '{date} {time}'
+   ),
+   
+   Corrective action #2:
+   You can also issue an SQL query to update the desired user's
+   date\time format.
+   Short - '%y/%m/%d %I:%M'
+   Medium - '%Y/%m/%d %I:%M:%S'
+   Long - '%Y %B %e %I:%M:%S%p %Z'
+   Full - '%Y %B %e %A %I %M %S%p %Z'
+   
+   Issue the query and fill in the blanks with the desired format:
+   
+   UPDATE bf_users SET bf_datefmt='<FMT>' WHERE bf_login='<USER
+   LOGIN>;
+   COMMIT;
+   
+   For example to set the root login to short format:
+   UPDATE bf_users SET bf_datefmt='%y/%m/%d %I:%' WHERE
+   bf_login='root';
+   COMMIT;
+   
+   For a full list of the possible formats look here:
+   http://us3.php.net/manual/en/function.strftime.php [http://us3.php.net/manual/en/function.strftime.php]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Japanese date formats do not use AM/PM, but rather a 24-hour
+   clock. We previously displayed using a 12-hour clock, but
+   lacked AM/PM.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Japanese date formats now correctly use a 24-hour clock.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK78421
+   
+   
+ * REPORTED COMPONENT NAME
+   BUILD FORGE SP
+   
+   
+ * REPORTED COMPONENT ID
+   5724S2709
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-12
+   
+   
+ * CLOSED DATE
+   2009-05-20
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUILD FORGE SP
+   
+   
+ * FIXED COMPONENT ID
+   5724S2709
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSN
+   UP

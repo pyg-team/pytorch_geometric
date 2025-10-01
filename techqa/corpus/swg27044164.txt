@@ -1,0 +1,38 @@
+Title: IBM Care Management Version 6 Supported Hardware and Software - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document outlines the hardware and software required by IBM Care Management Version 6 
+
+CONTENT
+ 
+
+Always up-to-date system requirement reports can be dynamically generated using the Software Product Compatibility Reports (SPCR) tool [http://www-969.ibm.com/software/reports/compatibility/clarity/index.html]. 
+
+For your convenience, the sections below offer detailed system requirement reports for different contexts (by Operating System, by component). Note that clicking a link will always generate a new, up-to-date report.
+
+
+
+
+REQUIREMENTS
+BY PLATFORM
+ * Linux [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1412253613474&osPlatforms=Linux]
+
+ * Windows [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1412253613474&osPlatforms=Windows]
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * Server [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1412253613474&duComponentIds=Server]
+
+
+
+
+RELATED REQUIREMENTS
+Watson Explorer Version 10.0 system requirements [http://www-01.ibm.com/support/docview.wss?uid=swg27042947] 
+System requirements for IBM Integration Bus 9.0 [http://www-01.ibm.com/support/docview.wss?uid=swg27038798] 
+System Requirements for IBM Integration Bus Healthcare Pack 3.0 [http://www-01.ibm.com/support/docview.wss?uid=swg27041476]

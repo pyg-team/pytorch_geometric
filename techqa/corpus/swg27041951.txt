@@ -1,0 +1,156 @@
+Title: IBM Ask the Experts Q&A session: Managing Domino - Managing Users, Databases, and Calendars - 20 May 2014 (Audio Replay and Q&A) - United States
+
+Text:
+lste_webcast; STEwebcastDocument WEBCAST
+
+ABSTRACT
+ IBM hosted an Ask the Experts Q&A session on May 20, 2014. The topic was "Managing Domino - Managing Users, Databases, and Calendar." Russell Norberg gave a short demo and he was joined by John Paganetti and several other members of the Domino Support and Development teams for Q&A. 
+
+CONTENT
+ 
+
+Audio Replay 
+Managing Users, Databases, and Calendars - Ask the Experts - May 20 2014 (edited).mp3 [/support/docview.wss?uid=swg27041951&aid=2]Managing Users, Databases, and Calendars - Ask the Experts - May 20 2014 (edited).mp3 [/support/docview.wss?uid=swg27041951&aid=1]  * 64:28 minutes long
+
+Time marker Question/Topic discussed 16:42  * 
+
+22:25  * 
+
+29:38  * 
+
+38:32  * 
+
+47:33  * 
+
+52:24  * 
+
+55:18  * 
+
+
+Q&A from Web Chat  * ODS 
+ * DBMT 
+ * DAOS 
+ * General Administration 
+
+ODS 
+
+Q1. Is the ODS level different in 9.0.x? 
+In 9.0.1 it can be upgraded to ODS 52. The ODS52 is only available in 9.0.1 or later 
+
+Title: Update to "Domino On-Disk Structure" for Domino 9.0.1: ODS52 
+Doc #: 1655569 
+URL: http://www.ibm.com/support/docview.wss?uid=swg21655569 [http://www.ibm.com/support/docview.wss?uid=swg21655569] 
+
+Q2. What is difference between ODS51 and ODS52 
+ODS52 has some bug fixes for Medium and Strong Encrypted databases that can cause a rare Note Corruption 
+
+
+Q3. What is the easiest way on IBM i to upgrade all database to ODS 52? Also, if you upgrade to ODS 52 can the client version be 8.5.3 still?  * Easiest way is to use the new DBMT tool available with Release 9.0.x. Notes client can still be 8.5.3 accessing ODS52 databases on a release 9.0.1 server 
+ * Client can access an ODS52 db that resides on the server. A local copy of that NSF on the 8.5.3 client would have to remain at ODS51 or older. 
+ * Add CREATE_R9_DATABASES=1 and run DBMT -compactThreads 8 wiill work as well 
+ * DBMT will convert to ODS52 also
+
+
+
+Q4. Recently installed Domino 9.0.1FP1, then updated the files to ODS52. Afterwards the Admin client (9.0.1) displayed the ODS as Unknown 52....why? 
+Are you sure the Admin Client was Release 9.0.1? Need 9.0.1 or greater since that was when ODS52 was introduced. 
+
+
+
+
+DBMT 
+
+Q5. Is there a Best Practices doc for DBMT? To me for example it's unclear what to do with system databases.  * In general it is always best to run maintenance of system dbs with the server down, since they are always in use. 
+ * The best source of documentation for DBMT is from an Open Mic we had last year @ http://www-01.ibm.com/support/docview.wss?uid=swg27039379 [http://www-01.ibm.com/support/docview.wss?uid=swg27039379]
+
+
+
+Q6. Do you use DBMT through a Program document? 
+You can use it either in a Program document or as a tool with Domino down. Up to you but very flexible 
+
+
+NOTE: In Release 9.0.1, DBMT does a much better job than the Compact task does when compacting of not fragmenting the file at an OS level. 
+
+
+
+
+DAOS 
+
+Q7. Does DAOS require transaction logging? 
+Yes, DAOS requires transaction logging 
+
+Reminder: If you use transactional logging to run a backup after you upgrade to ODS52 with a Compact -c as the Compact will assign a new DBID 
+
+Q8. Compact -c changes the replica ID of the databases? 
+No, Compact does not change replica ID - it changes DBIID, which is used by backup programs. 
+
+
+Q9. But it depends on the backup program we used if it uses DBIID correct? 
+If you run Transactional log backups, ie. Fulls at the weekend and Diffs during the week then it will use DBIID 
+
+
+Q10. In a clustered setup with 3 clusters, can DAOS only be enabled on one cluster?  * Yes. Each Server is independent as far as DAOS is confirmed. 
+ * Yes! You may want to disable encryption, since the server's id will be used to encrypt the attachments.
+
+
+
+Q11. I already have a cluster created. I have replica's on the failover server. Can I still create a DAOS? and will failover still function? 
+DAOS is independent of failover. Yes, it will work. 
+
+
+Q12. I just archived this weekend and we have FTI and DAOS and ran out of disk space. I believe while the archiving was happening, the FTI ballooned on the archive 
+FTIs, but didn't shrink on the mail file FTIs 
+Sounds like certainly a possibility. Have you tried using FTBasePath= to move the FTI Indexes to different volume?  * Follow-up comment: No, but I will take a look
+
+
+
+
+
+General Administration 
+
+Q13. Has there been any revisit on making a web-based Domino Admin client? Sametime and Traveler both have Web-based Admin clients. 
+There is a Web-based Admin client but as I understand it there are no plans to extend it.  * Follow-up comment: "That web-based client has been deprecated. Just wondering if we would see a new, improved (and more secure) client. Thanks!"
+
+
+
+Q14. Will it want to delete the source database? (When moving from one clustermate to another) 
+You will be given option of notifying admin to delete or delete automatically I believe  * Follow-up comment: If it's a clustermate, then I would like to see an option to not have the deletion happen at all (since it's a cluster.)
+
+
+
+Q15. What is the recommendation on user's access to their own mail database and why? I have heard that they should only have Editor access. What capabilities does this remove from them if we make them Editors only? 
+Manager will be able to do the following: Modify the database ACL. 
+
+
+Q16. Any consideration of updating the IBM Domino MIB for SNMP to R9.x? Or creating an SNMP MIB for Sametime and/or Traveler? 
+No plans to update the MIB at this time. 
+
+
+Q17. Duplicate email if user is part of two groups when it marked. How to stop this behavior to avoid duplicate emails?  * There has been some work on this recently. See technote 1390024 [http://www-01.ibm.com/support/docview.wss?uid=swg21390024] 
+ * There was an Open Mic session on this issue in 2013. See technote 7038764 [http://www-01.ibm.com/support/docview.wss?uid=swg27038764] - "Open Mic Webcast: Troubleshooting Duplicate Mail Messages in IBM Notes - 24 July 2013" 
+
+
+
+Q18. That little "Toolbox" he opened during the presentation... where is it? 
+You can download the tool technote 1459332 - All-in-one Admin Tool for agent-based troubleshooting & problem solving [http://www.ibm.com/support/docview.wss?uid=swg21459332] 
+
+
+Q19. We have the Soft deletion enabled for mail databases but it does not purge the trash folder automatically. How we can fix it? 
+It can be done manually in the notes client. Or Updall and/or DBMT can do it once they have reached expiration - default 48 hours... 
+
+
+Q20. Show me a password change on a user who forgot their password 
+Real simple with ID Vault 
+
+
+
+About Ask the Expert Q&A sessions Ask the Expert Q&A sessions is a new program where the main focus is having technical experts answer your questions. Additional topics in the Managing Domino series include:  * Embracing the Domino Admin client and AdminP [http://www.ibm.com/support/docview.wss?uid=swg27041739] - May 6 
+ * Policies are your friend! [http://www-01.ibm.com/support/docview.wss?uid=swg27041863] - May 13 
+ * Securing your Domino Server [http://www.ibm.com/support/docview.wss?uid=swg27041956] - May 27 
+ * Upgrading and Migrating [http://www.ibm.com/support/docview.wss?uid=swg27041957] - June 3 
+ * Open Session - Ask us Anything about Domino! [http://www.ibm.com/support/docview.wss?uid=swg27041958] - June 10
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2014/4/28

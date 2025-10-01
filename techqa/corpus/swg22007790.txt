@@ -1,0 +1,24 @@
+Title: IBM Best Practices to optimize performance on the App Connect Professional Live environment - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ As you may be aware, we have experienced issues with performance on the App Connect Professional (formerly Cast Iron Live) environment, especially for those orchestrations that have real-time jobs. In order to help resolve the situation and ensure you are getting the kind of results that you expect, we are reaching out with a set of recommendations that will improve the performance. 
+
+RESOLVING THE PROBLEM
+Best Practices to optimize performance on the App Connect Professional Live environment: 
+
+ 1. Set logging level to "ErrorValue" for production jobs.
+    Orchestrations with Logging level set to "All" (which records each and every interaction onto the database) greatly reduces execution time and is unnecessary. Please check the logging level on your orchestrations and if it is set to "All" then please change it to "ErrorValue".
+    
+ 2. Turn off the "Persistence" setting where possible.
+    Persistence allows for restarting jobs in an exception scenario. Where your solution includes retry logic or where restarting the orchestration has little overall cost, the persistence setting can be safely disabled thus reducing unnecessary database access and increasing the performance of jobs. This is a simple update that requires changing the persistence setting and redeploying your orchestrations.
+    
+ 3. Shared Variables:
+    If you are using shared variables please note that the value of this variable will reset whenever the cloud runtime restarts. Therefore if your orchestration logic relies on using such variables across a restart boundary, please change it appropriately for using values that are stored rather than kept in temporary memory.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ App Connect Professional

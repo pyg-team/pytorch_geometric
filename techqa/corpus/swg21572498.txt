@@ -1,0 +1,52 @@
+Title: IBM 'ERROR: java.lang.ArrayIndexOutOfBoundsException: Array index out of range' using "Database Conversion Utility" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User logs onto Controller application server, and launches "Controller Configuration". User opens "Database Connections" and selects connection. User clicks green 'play' button to launch 'Database Conversion Utility'. User clicks 'Connect'. After a few seconds delay, an error appears. 
+
+SYMPTOM
+** ERROR: java.lang.ArrayIndexOutOfBoundsException: Array index out of range: 176 
+
+ 
+
+or sometimes simply: 
+
+ 
+** ERROR: java.lang.ArrayIndexOutOfBoundsException
+
+
+CAUSE
+Incompatible Oracle JDBC driver in use by system.
+
+More Information
+Oracle has produced several different JDBC drivers. 
+
+ * There are several different possible file names/versions (for example ojdbc5.jar). For full details, see separate IBM Technote #1988891.
+
+ENVIRONMENT
+The problem does not affect all environments - for most environments other JAR files (for example the older OJDBC14.JAR file) work OK.
+
+
+
+RESOLVING THE PROBLEM
+Reconfigure your Controller application server to use a different OJDBC files (for example OJDBC6.JAR). 
+
+ 
+Steps:
+Before continuing, you need to obtain the OJDBC6.JAR file. Either: 
+
+ * Download it from the Oracle website (link below) 
+ * Or it can be found inside the Oracle 11Grel2 client installation (default path = C:\app\<username>\product\11.2.0\client_1\jdbc\lib).
+
+ 1. Logon to the Controller application server 
+ 2. Open the C10 folder (default location = C:\Program Files\ibm\cognos\c10) 
+ 3. Delete any existing JAR file (for example Classes12.jar or ojdbc14.jar) 
+ 4. Copy the file ojdbc6.jar into this folder 
+ 5. For other (different) functionality to work correctly, repeat the above steps for the folder ...\c10\server\integration 
+ 6. For other (different) functionality to work correctly, repeat the above steps for the folder ...\c10\server\FAP\lib
+
+TIP: If necessary, you may need to get a short period of downtime (no users on the system) and then reboot the Controller application server for all the changes to take effect. RELATED INFORMATION
+ Oracle JDBC downloads page [http://www.oracle.com/technetwork/database/features/jdbc/index-091264.html]
+1988891 - What is the correct / best OJDBC JAR file to [http://www.ibm.com/support/docview.wss?uid=swg21988891]

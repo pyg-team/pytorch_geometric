@@ -1,0 +1,229 @@
+Title: IBM PK83268: RECORDER TRACE ENTRIES FOR CM1, SYNC_LEVEL=SYNCPT TRANSACTIONS ARE NOT CORRECT OR MISSING. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IC4J submits a CM1, Sync_Level=Syncpt Transaction.  Transaction
+   is sent onto IMS and a ITOCRC recorder trace entry is created
+   (Record Seq# 1).
+   No problem so far.
+   
+   Then IMS returns a reply message.  We transmit that back to IC4J
+   and cut a ITOCRC recorder trace entry (Record Seq# 2).
+   This is the first problem.  Why does the trace say ITOCRC?  It
+   should say ITOCSN.
+   Here's why this happened:
+   A review of the code shows that after HWSSDXMT has sent the
+   message back to IC4J, we go back to HWSSXMT0 after label PURG2D.
+   In HWSSXMT0 because SVT_STATUS3,SVT_SYNCWFC+SVT_SYNCLV2 is set,
+   we call XMITACK.
+   In XMITACK, we cut CODE=TRHWSW,SUBCODE=TSWBF trace entry and
+   then build an ACK and send it back to IMS.
+   Because we are sending the ACK back to IMS, HWSDXQH0  sets
+   USTAT_CALLID=RC but the USTAT contains the message that was sent
+   to IC4J.
+   And so we have record sequence# 2 which says ITOCRC but it
+   should really say ITOCSN.
+   
+   Next, IC4J sends in a ROLLBACK request, so we should see an
+   ITOCRC record with that ROLLBACK request.  But we don't.
+   What we see is a ITOCSN trace entry with a commit confirmation
+   indicator (i.e. OMCTLCCI,OMCTLCTD is set).
+   Here's how this happened:
+   HWSSDRCV reads the input (ROLLBACK request) from the client.
+   The input is placed in the USTAT buffer.  We go back to
+   HWSSREC0.
+   In HWSSREC0, we go to routine RRSICALL.
+   RRSICALL sends an AWE to RRS with AWE_FUNC = AWERBAUR (Rollback
+   request) and waits for RRS to complete.
+   When we return to the code in RRSICALL we build a reply message
+   (with a commit confirmation indicator i.e OMCTLCCI,OMCTLCTD is
+   set).
+   We then XMIT this back to IC4J and ofcourse we get another USTAT
+   and cut an ITOCSN trace entry with that commit confirmation
+   indicator.
+   So we don't cut the trace entry for the input (Rollback) request
+   from the client and we don't release the USTAT associated with
+   that input.
+   So we are missing input data in the recorder trace and we run
+   the risk of running out of storage if too many of these USTATs
+   stick around without
+   being released.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IMS V11 IMS Connect users of Two-Phase   *
+   *                 Commit Protocol.                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Incorrect Recorder trace records        *
+   *                      produced during commit mode 1,          *
+   *                      synclevel 2 two-phase commit            *
+   *                      transaction.                            *
+   *                                                              *
+   *                      Storage degradation due to accumulation *
+   *                      of unfreed Recorder Trace buffers.      *
+   *                      Possible ABENDSA78 abend.               *
+   *                                                              *
+   *                      Forward-fit of PK76163 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK76163]                  *
+   ****************************************************************
+   * RECOMMENDATION: INSTALL CORRECTIVE SERVICE FOR APAR/PTF      *
+   ****************************************************************
+   The Recorder trace is active. IMS Connect receives a commit mode
+   one (CM1) synclevel syncpoint (SL2) two-phase-commit transaction
+   request from the IMS Connector for Java (IC4J) client. The
+   transaction request is passed to the IMS datastore and a reply
+   message is returned to IC4J.  The IC4J client then sends in a
+   ROLLB (roll back) request to IMS Connect. IMS Connect passed
+   the ROLLB to RRS and responds by sending a Commit Confirmed to
+   the IC4J client.
+   
+   The Recorder trace records produced do not match the flow of
+   events.
+    1. The record produced as a result of the reply message appears
+       in an ICONRC (received from client) instead of an ICONSN
+       (send to client) record.
+    2. The record produced as a result of IMS Connect receiving
+       the ROLLB is missing.
+   
+   Analysis of the system storage shows that the recorder trace
+   record produced as a result of receiving the ROLLB request
+   exist but was never written out to the recorder dataset and
+   its storage buffer was never freed.
+   
+   Keyword(s):  ABENDA78 ROLB 2PC
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  GEN:
+   KEYWORDS:
+   
+   *** END IMS KEYWORDS ***
+   The IMS Connect recorder tracing for the synclevel syncpoint
+   two-phase-commit transaction flow has been corrected.  Logic
+   in part HWSSXMT0 was modified to insure that the reply to the
+   CM1 synclevel syncpoint transaction is written to an ICONSN
+   record.  Logic in part HWSSREC0 was modified insure that the
+   ICONRC record containing the ROLLB received from the client
+   is written to the recorder trace dataset.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK83268
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V11
+   
+   
+ * REPORTED COMPONENT ID
+   5635A0200
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2009-03-24
+   
+   
+ * CLOSED DATE
+   2009-05-05
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK76163 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK76163]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK46300
+   
+   
+
+MODULES/MACROS
+ *  HWSSREC0 HWSSXMT0
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V11
+   
+   
+ * FIXED COMPONENT ID
+   5635A0200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY UK46300 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK46300]
+   UP09/05/08 P F905
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

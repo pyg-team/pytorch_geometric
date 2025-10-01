@@ -1,0 +1,13 @@
+Title: IBM Migrating TSAMP from v2.x/v3.1 to v3.2 in an Automated HADR environment - United States
+
+Text:
+tsa; tsamp; upgrade; migration TECHNOTE (FAQ)
+
+QUESTION
+ Migrating to v3.2 from v2.x or v3.1, without the need to upgrade via any intermediate base level release. This whitepaper is written for a DB2 HADR environment, however same steps apply to any TSAMP migration from an earlier release to a newer release. 
+
+ANSWER
+This whitepaper details the migration of IBM Tivoli System Automation for Multiplatforms (TSAMP) from version 2.2 or 3.1 to version 3.2, tailored for a DB2 v9.5/9.7 high availability disaster recovery (HADR) environment. This procedure keeps database service available throughout the upgrade process, however automated failover and other automated recovery actions would not be available.
+This document assumes the initial environment is a HADR pair running DB2 v9.5 GA and TSAMP v2.2.0.5 on AIX 6.1. However, the same migration procedure will apply to any DB2 v9.5 or v9.7 deployment and any TSAMP v2.2.x.x, v2.3.x.x, v3.1.x.x initial code level.
+
+Migrating to TSAMP v3.2 in an Automated HADR Environment - March 2014.pdf [/support/docview.wss?uid=swg21645787&aid=2]Migrating to TSAMP v3.2 in an Automated HADR Environment - March 2014.pdf [/support/docview.wss?uid=swg21645787&aid=1]

@@ -1,0 +1,98 @@
+Title: IBM Webinar Q&A: Spectrum Protect server upgrade - 16 November 2017 - United States
+
+Text:
+ISP web cast server version upgrade NEWS
+
+ABSTRACT
+ IBM recently hosted a webinar with Spectrum Protect support engineers to discuss "IBM Spectrum Protect server upgrade". This document contains Q&A from that knowledge sharing session. 
+
+CONTENT
+IBM recently hosted a webinar with Spectrum Protect support engineers to discuss "Spectrum Protect server upgrade". This document contains Q&A from that knowledge sharing session and presentation audio and video download link.
+Q1: What to do if we don't have the old admin credentials?
+>> Reset the administrator password from any other admin id. If it is single admin id, start the server in the foreground and then reset the password or create another admin id.
+
+Q2: How will the upgrade work in case we have SSL configured?
+>> There is no special consideration for the server upgrade when SSL is configured. 
+
+Q3: If we want to upgrade from 8.1.0 to 8.1.3 latest, then what option do we need to choose, install or update?
+>> This would only be a 'level' upgrade, so you need to choose the ‘Update’ option.
+
+Q4: If we forget the password of the DB2 instance that is used for the IBM Spectrum Protect server, can we set or recover the password using a DB2 command or from DB2?
+>> The DB2 instance password can be reset from the operating system. In this case, it is not possible to set the password from within DB2.
+
+Q5: Is it possible to move the IBM Spectrum Protect server from one operating system to another & then upgrade?
+>> You can migrate the IBM Spectrum Protect server from one operating system to another but within the same platform. You cannot migrate from a Unix operating system server to a Windows server. Refer to the following document link:
+IBM Tivoli Storage Manager Upgrade and Migration Process - Frequently Asked Questions [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Storage%20Manager/page/IBM%20Tivoli%20Storage%20Manager%20Upgrade%20and%20Migration%20Process%20-%20Frequently%20Asked%20Questions]
+
+Q6: Is there any possibility that the gsk8 folder and GSK7_64 Folder (which are in C:\Program Files\IBM) get corrupted when an upgrade is performed?
+>> The GSKit from the latest installed package would not be corrupted after the installation. However there could be issues with faulty hardware or corruption from the operating system.
+
+Q7: After upgrading the IBM Spectrum Protect server to v8.1, we noticed that the db backup is continuously being triggered?
+>> The DB backup will trigger automatically if the archive log free space has reached the threshold. Hence, you need to monitor the log space and if required add space in either the active or archive log directory. 
+
+Q8: How can we restore the IBM Spectrum Protect database?
+>> You need to run the ‘dsmserv restore db” command to launch the IBM Spectrum Protect database restore. Refer to the following link for more details:
+DSMSERV RESTORE DB (Restore the database) [https://www.ibm.com/support/knowledgecenter/SSEQVQ_8.1.3/srv.reference/r_cmd_dsmserv_restore_db.html]
+
+Q9: Could you share the steps to upgrade to IBM Spectrum Protect server version 8.1.x from 7.1?
+>> Reference the following installation guide link:
+Installing the server and verifying the upgrade [https://www.ibm.com/support/knowledgecenter/SSEQVQ_8.1.3/srv.install/t_srv_upgrd63_71_inst.html]
+
+Q10: After the upgrading from version 6.3 to v7.1.x or v8.x, will the active log file size be increased from 512MB to 1GB?
+>> There is no change in the LOG size, it is still 512MB.
+
+Q11: Can you provide any document for performing an IBM Spectrum Protect DR activity?
+>> Refer to the following installation guide link(s):
+Server recovery scenario [https://www.ibm.com/support/knowledgecenter/en/SSGSG7_7.1.0/com.ibm.itsm.srv.doc/t_scen_srv_recover.html]
+Client recovery scenario [https://www.ibm.com/support/knowledgecenter/en/SSGSG7_7.1.0/com.ibm.itsm.srv.doc/t_scen_client_recover.html]
+
+Q12: If I don’t have the volhist and/or devconfig file is it possible to restore the data from an IBM Spectrum Protect server DB backup?
+>> It is not possible to restore the IBM Spectrum Protect server database without a volhist file. If you lose the volhist file you can rebuild the file according to the following technote steps:
+Rebuild a missing volume history file for a file database restore [http://www-01.ibm.com/support/docview.wss?uid=swg21974269]
+
+Q13: Can we upgrade to 8.1 from 7.1?
+>> Yes, you can.
+
+Q14: Do we have any documentation on how to configure a certificate for SSL communications?
+>> Reference the following link
+Configuring storage agents, servers, clients, and the Operations Center to connect to the server by using SSL [https://www.ibm.com/support/knowledgecenter/SSEQVQ_8.1.2/srv.admin/t_ssl_srvcfg.html]
+
+Q15: When is the expected EOS of V7.1.*?
+>> There is currently no date set for the EOS of version 7.1. The EOS can only happen after the product has been released for 5 years and v7.1 was released January 2014.
+
+Q16: Are there any security prerequisites before upgrading to 8.1.2?
+>>Refer to the link : 
+
+ Security concepts [https://www.ibm.com/support/knowledgecenter/SSEQVQ_8.1.2/srv.admin/c_adm_sec_ovr.html] 
+
+Then reference the links mentioned under the topic below : 
+
+ Protect your storage environment with an improved security protocol [https://www.ibm.com/support/knowledgecenter/SSEQVQ_8.1.2/srv.common/r_techchg_srv_sec_812.html] 
+
+ 
+
+Q17: What are the changes/updates made in IBM Spectrum Protect server version 7.x?
+>> Refer the following link:
+What's new [https://www.ibm.com/support/knowledgecenter/en/SSGSG7_7.1.7/srv.common/r_wn_tsmserver.html]
+[https://www.ibm.com/support/knowledgecenter/en/SSGSG7_7.1.7/srv.common/r_wn_tsmserver.html]
+______________________ [https://www.ibm.com/support/knowledgecenter/en/SSGSG7_7.1.7/srv.common/r_wn_tsmserver.html]
+[https://www.ibm.com/support/knowledgecenter/en/SSGSG7_7.1.7/srv.common/r_wn_tsmserver.html]
+Download links of presentation, audio and video recording: [https://www.ibm.com/support/knowledgecenter/en/SSGSG7_7.1.7/srv.common/r_wn_tsmserver.html]
+[https://www.ibm.com/support/knowledgecenter/en/SSGSG7_7.1.7/srv.common/r_wn_tsmserver.html]
+Presentation: [https://www.ibm.com/support/knowledgecenter/en/SSGSG7_7.1.7/srv.common/r_wn_tsmserver.html]
+https://ibm.biz/BdjTH5 [https://ibm.biz/BdjTH5]
+Audio reply:
+https://ibm.biz/BdjT4c [https://ibm.biz/BdjT4c]
+Video recording:
+https://ibm.biz/BdjT4d [https://ibm.biz/BdjT4d]
+
+RELATED INFORMATION
+ Upgrading to V7.1.8 [https://www.ibm.com/support/knowledgecenter/en/SSGSG7_7.1.8/srv.install/t_srv_upgrade.html]
+Upgrading to V8.1 [https://www.ibm.com/support/knowledgecenter/en/SSEQVQ_8.1.0/srv.install/t_srv_upgrade.html]
+Reverting from Version 8.1 to the previous V7 server [https://www.ibm.com/support/knowledgecenter/SSEQVQ_8.1.0/srv.install/t_srv_inst_revert]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ TSM

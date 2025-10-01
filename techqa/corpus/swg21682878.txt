@@ -1,0 +1,46 @@
+Title: IBM DB2 JCC Driver error: Unexpected Throwable caught: null. ERRORCODE=-4228, SQLSTATE=null - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ With ORACLE Java, using AES encyption mechanism with property securityMechanism in an application using IBM DB2 JDBC (JCC) driver, the connection fails with:
+
+com.ibm.db2.jcc.am.SqlException: [jcc][t4][10262][11223][3.64.106] Unexpected Throwable caught: null. ERRORCODE=-4228, SQLSTATE=null
+
+at com.ibm.db2.jcc.am.bd.a(bd.java:663)
+at com.ibm.db2.jcc.am.bd.a(bd.java:60)
+at com.ibm.db2.jcc.am.bd.a(bd.java:85)
+at com.ibm.db2.jcc.t4.b.b(b.java:901)
+at com.ibm.db2.jcc.t4.b.a(b.java:760)
+at com.ibm.db2.jcc.t4.b.a(b.java:421)
+at com.ibm.db2.jcc.t4.b.a(b.java:396)
+at com.ibm.db2.jcc.t4.b.<init>(b.java:334)
+at com.ibm.db2.jcc.DB2SimpleDataSource.getConnection(DB2SimpleDataSource.java:232)
+at com.ibm.db2.jcc.DB2SimpleDataSource.getConnection(DB2SimpleDataSource.java:198)
+at Jcctest.main(Jcctest.java:33)
+
+
+
+CAUSE
+When you use AES encryption with the SDK for Java from Oracle, the JCE(Java Cryptography Extension) Unlimited Strength Jurisdiction Policy File needs to be installed. This error occurs if incompatible JCE file is placed in <Java_home>/jre/lib/security
+
+DIAGNOSING THE PROBLEM
+Check the Java version:
+
+
+Example: 
+
+[jcc] Java installation directory = C:\Program Files (x86)\Java\jre7
+[jcc] Java Virtual Machine specification version = 1.7
+[jcc] Java Virtual Machine specification vendor = Oracle Corporation 
+
+
+RESOLVING THE PROBLEM
+Use the JCE file for the correct version of Java. 
+
+For example, JCE file for Java 1.7 can be downloaded from here: http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html [http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html]
+
+
+RELATED INFORMATION
+ Encrypted password under IBM Data Server Driver for JDB [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_cjvjcsen.html]

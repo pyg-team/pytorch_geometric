@@ -1,0 +1,154 @@
+Title: IBM JR44369: CMVC 224386 - THIS FIX IS TO PREVENT ORA-01795 EXCEPTION IN GETCATALOGENTRYATTRIBUTESCMDIMPL - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.0.0-WS-WCServer-FP009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Commerce&fixids=7.0.0-WS-WCServer-FP009&source=SAR]
+WebSphere Commerce Version 7.0.0.8 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24037075]
+WebSphere Commerce Version 7.0.0.9 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24038826]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When there are a large number of catentries in a product set, an
+   error similar to the following may be seen when adding an item
+   to the cart when an Oracle database is being used with WebSphere
+    Commerce:
+   
+   CWXFD2003E: Exception executing query "SELECT CATENTRY_ID_1 FROM
+   ( SELECT CATENTRY.CATENTRY_ID CATENTRY_ID_1 FROM CATENTRY WHERE
+   CATENTRY.CATENTRY_ID IN (?)  AND CATENTRY.MARKFORDELETE = 0  AND
+   ( EXISTS (SELECT 1 FROM PRODUCTSET, PRSETCEREL WHERE
+   PRODUCTSET.MARKFORDELETE=0 AND
+   PRODUCTSET.PRODUCTSET_ID=PRSETCEREL.PRODUCTSET_ID AND
+   PRODUCTSET.PRODUCTSET_ID IN
+   ...
+   Caused by: java.sql.SQLSyntaxErrorException: ORA-01795: maximum
+   number of expressions in a list is 1000
+   
+   This issue is caused by a limitation with Oracle databases.  If
+   a product set has more than 1000 catalog entries, the Oracle
+   database will throw the above exception.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   All users using Oracle database with large product sets
+   
+   PROBLEM ABSTRACT:
+   'SQLSyntaxErrorException: ORA-01795: maximum number of
+   expressions in a list is 1000' error may appear when adding an
+   item to cart
+   
+   
+   BUSINESS IMPACT:
+   Cannot complete orders
+   
+   RECOMMENDATION:
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This ifix changes the query used by creating multiple expression
+    lists with OR conditions, keeping each expression list size to
+   1000.
+   -------------------------------------------------------------
+   The latest available maintenance information can be obtained
+   from the Recommended Fixes for WebSphere Commerce technote:
+   http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296 [http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR44369
+   
+   
+ * REPORTED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * REPORTED COMPONENT ID
+   5724I3800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-12
+   
+   
+ * CLOSED DATE
+   2013-04-03
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * FIXED COMPONENT ID
+   5724I3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,184 @@
+Title: IBM PJ40929: IQQG0020E JAVA.NET.SOCKETTIMEOUTEXCEPTION CAUSES EXCESSIVE WAITS AND TIMEOUTS IN CBR INDEX DISPATCHING - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the case of transient network connection errors, Content
+   Search Services may encounter SocketTimeout/Read errors
+   as indicated below in the log stack.
+   
+   The Content Engine is waiting for acknowledgement and
+   completion of the indexing batch but after the SocketTimeout
+   CSS is not sending any other messages to CE to indicate
+   a problem occurred, therefore the batch is left to time out
+   normally.
+   Unfortunately that timeout is set to happen in 4 hours, so this
+   leads to an indexing thread being idle for an excessively long
+   time for the batches that encounter the problem.
+   
+   In the newer build of CSS, it will immediately send CE a
+   TASK_ERROR
+   message from the listener when a socket error is encountered.
+   CE already is already set to handle any TASK_ERROR by retrying
+   the batch again, so getting immediate feedback eliminates the
+   long
+   wait to timeout before the batch can be retried.
+   
+   The SocketError in the CSS log files will be similar to this
+   one:
+   <record>
+   <date>2013-01-11T16:54:25</date>
+   <millis>1357944865598</millis>
+   <sequence>722</sequence>
+   <logger>com.ibm.es.nuvo.inyo.common.InyoServer</logger>
+   <level>SEVERE</level>
+   <class>com.ibm.es.nuvo.inyo.common.InyoServer$InyoListener
+   </class>
+   <method>handleErrorOnExecute</method>
+   <thread>25</thread>
+   <message>
+   IQQG0020E java.net.SocketTimeoutException: Read timed out
+   Causes of the problem:
+   IQQG0020E java.net.SocketTimeoutException: Read timed out
+   java.net.SocketInputStream.socketRead0(Native Method)
+   java.net.SocketInputStream.read(SocketInputStream.java:140)
+   java.io.BufferedInputStream.read1(BufferedInputStream.java:267)
+   java.io.BufferedInputStream.read(BufferedInputStream.java:328)
+   java.io.DataInputStream.read(DataInputStream.java:143)
+   com.ibm.es.nuvo.inyo.util.InyoStreamUtil.getDocument
+   (InyoStreamUtil.java:342)
+   com.ibm.es.nuvo.inyo.ingest.DocIngestHandlerMulti.addDocument
+   (DocIngestHandlerMulti.java:298)
+   com.ibm.es.nuvo.inyo.ingest.DocIngestHandlerMulti.execute
+   (DocIngestHandlerMulti.java:120)
+   com.ibm.es.nuvo.inyo.common.InyoServer$InyoListener.run
+   (InyoServer.java:465)
+   java.util.concurrent.ThreadPoolExecutor$Worker.runTask
+   (ThreadPoolExecutor.java:897)
+   java.util.concurrent.ThreadPoolExecutor$Worker.run
+   (ThreadPoolExecutor.java:919)
+   java.lang.Thread.run(Thread.java:736)</message>
+   </record>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * In the case of transient network connection errors, Content  *
+   * Search Services (CSS) 5.1.0.0-P8CSS-IF004 and earlier        *
+   * encounter SocketTimeout/Read errors.                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Content Engine (CE) is left waiting for                      *
+   * acknowledgement/completion of the batch but Content Search   *
+   * Services (CSS) is not attempting to send any other messages  *
+   * to CE indicating a problem occurred.  CE won't timeout a     *
+   * batch for around 4 hours, so this leads to an indexing       *
+   * thread being idle for whatever batches encounter the         *
+   * problem.                                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.1.0.0-P8CSS-IF005 or later.                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.1.0.0-P8CSS-IF005 and later.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ40929
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT SEARCH
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8109
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-17
+   
+   
+ * CLOSED DATE
+   2013-07-30
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT SEARCH
+   
+   
+ * FIXED COMPONENT ID
+   5724R8109
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP

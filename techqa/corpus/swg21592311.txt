@@ -1,0 +1,29 @@
+Title: IBM OMNIbusEventReader Restrict Fields usage - United States
+
+Text:
+netcool; impact; netcool/impact; nci; omnibus; object; server; objectserver; event; reader; eventreader; omnibuseventreader; data; source; datasource; field; fields; restrict; restrictfields; deviant; default; required; require; requires; need; needed; needs; must; have TECHNOTE (FAQ)
+
+QUESTION
+ How best to apply Restrict Fields in an ObjectServer DataSource EventReader? 
+
+ANSWER
+
+[/support/docview.wss?uid=swg21592311&aid=1] [/support/docview.wss?uid=swg21592311&aid=1]
+
+The use Restrict Fields can be used to enhance efficiency off the configuration by reducing the "weight" of the data captured per event to the minimum required.
+
+It can also be used to avoid unwanted/dangerous fields.
+
+[/support/docview.wss?uid=swg21592311&aid=2] [/support/docview.wss?uid=swg21592311&aid=2]
+
+There is a minimum set of fields required as default by the EventReader - see the TechNote "OMNIbusEventReader required fields" [link below].
+
+Also there are the fields required by the Deviant Fields checking process - see the TechNotes "Default Deviant Fields in OMNIbusEventReader" and "Deviant Field checking in EventReaders" [links below].
+
+And one has to ensure that the EventReader also acquires all the fields used in the Policy/ies (lookups, assessments and updates) that the EventReader launches.
+
+
+RELATED INFORMATION
+ OMNIbusEventReader required fields [http://www-01.ibm.com/support/docview.wss?uid=swg21592309]
+Default Deviant Fields in OMNIbusEventReader [http://www-01.ibm.com/support/docview.wss?uid=swg21592307]
+Deviant Field checking in EventReaders [http://www-01.ibm.com/support/docview.wss?uid=swg21592308]

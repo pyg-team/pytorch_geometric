@@ -1,0 +1,87 @@
+Title: IBM WebSphere Business Process Choreographer - SQL statement for process history snapshots - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When monitoring WebSphere Process Server, the question sometimes arises: "What is the process doing right now?". In this situation, a production-level, low-intrusive tracing capability that shows what is happening at the programming model level would be very helpful. This tracing capability should show which process instances, BPEL activities, invocations, API calls, and such are being executed at this particular point in time. WebSphere Process Server does currently not provide this particular type of low-intrusive trace.
+
+This article provides a low-level surrogate for such a trace using an SQL statement, which queries the WebSphere Business Process Choreographer database (by default often referred to as the BPEDB) and returns this type of information. 
+
+RESOLVING THE PROBLEM
+Solution: a Poor Man's Flight Recorder
+Some of the tables in the WebSphere Business Process Choreographer database (by default often referred to as BPEDB) contain timestamps that make it easy to construct an SQL statement that returns information on what was recorded in the BPEDB during the last n seconds. The sample below returns the information for the last 10 seconds. 
+
+Note: This statement is applicable to the IBM DB2 database. Oracle users should use "WHERE ROWNUM < 100" instead of "fetch first 100 rows only".
+
+SELECT
+ai.last_state_change as AI_last_state_change,
+substr(atp.name,1,30) as AI_templatename,
+case ai.state
+when 0 then 'null(0)'
+when 1 then 'inactive(1)'
+when 2 then 'ready(2)'
+when 3 then 'running(3)'
+when 4 then 'skipped(4)'
+when 5 then 'finished(5)'
+when 6 then 'failed(6)'
+when 7 then 'terminated(7)'
+when 8 then 'claimed(8)'
+when 9 then 'terminating(9)'
+when 10 then 'failing(10)'
+when 11 then 'waiting(11)'
+when 12 then 'expired(12)'
+when 13 then 'stopped(13)'
+when 14 then 'processing_undo'
+end as AI_state,
+substr(pt.name,1,30) as PI_templatename,
+case pi.state
+when 0 then 'deleted(0)'
+when 1 then 'ready(1)'
+when 2 then 'running(2)'
+when 3 then 'finished(3)'
+when 4 then 'compensating(4)'
+when 5 then 'failed(5)'
+when 6 then 'terminated(6)'
+when 7 then 'compensated(7)'
+when 8 then 'terminating(8)'
+when 9 then 'failing(9)'
+when 10 then 'indoubt(10)'
+when 11 then 'suspended(11)'
+when 12 then 'compensation_fail'
+end as PI_state,
+ai.piid as Process_Instance_ID
+FROM
+activity_instance_b_t ai,
+activity_template_b_t atp,
+process_instance_b_t pi,
+process_template_b_t pt
+where
+atp.atid = ai.atid and
+ai.piid = pi.piid and
+pi.ptid = pt.ptid and
+ai.last_state_change > ((select max(last_state_change) from activity_instance_b_t) - 10 seconds)
+order by
+ai.last_state_change desc
+fetch first 100 rows only
+with ur ;
+
+
+Sample output: 
+
+AI_LAST_STATE_CHANGE AI_TEMPLATENAME AI_STATE PI_TEMPLATENAME PI_STATE PROCESS_INSTANCE_ID -------------------------- ------------------- ---------- --------------- ----------- ---------------------------------- 2009-04-03-10.22.37.545000 Receive_waitforever waiting(11) tptmain running(2) x'900301206B806201FEFFFF808BEE1841' 2009-04-03-10.22.37.540000 Receive_waitforever waiting(11) tptmain running(2) x'900301206B8061BBFEFFFF808BEE1828' 2009-04-03-10.22.37.517000 Callsub finished(5) tptmain running(2) x'900301206B8061BBFEFFFF808BEE1828' 2009-04-03-10.22.37.517000 Callsub finished(5) tptmain running(2) x'900301206B806201FEFFFF808BEE1841' 2009-04-03-10.22.37.507000 Receive_waitforever waiting(11) tptmain running(2) x'900301206B805FCCFEFFFF808BEE17E4' 2009-04-03-10.22.37.477000 Callsub finished(5) tptmain running(2) x'900301206B805FCCFEFFFF808BEE17E4' 2009-04-03-10.22.37.461000 Receive_waitforever waiting(11) tptmain running(2) x'900301206B805F5CFEFFFF808BEE17AB' 2009-04-03-10.22.37.451000 - finished(5) tptsub finished(3) x'900301206B806316FEFFFF808BEE18B7' 2009-04-03-10.22.37.451000 Reply finished(5) tptsub finished(3) x'900301206B806316FEFFFF808BEE18B7' 2009-04-03-10.22.37.441000 Snippet2 finished(5) tptsub finished(3) x'900301206B806316FEFFFF808BEE18B7' 2009-04-03-10.22.37.439000 - finished(5) tptsub finished(3) x'900301206B806318FEFFFF808BEE18B8' 2009-04-03-10.22.37.439000 Reply finished(5) tptsub finished(3) x'900301206B806318FEFFFF808BEE18B8' 2009-04-03-10.22.37.432000 Snippet2 finished(5) tptsub finished(3) x'900301206B806318FEFFFF808BEE18B8' 2009-04-03-10.22.37.400000 Callsub finished(5) tptmain running(2) x'900301206B805F5CFEFFFF808BEE17AB' ...... [/support/docview.wss?uid=swg21384848&amp;aid=1] [/support/docview.wss?uid=swg21384848&amp;aid=1] [/support/docview.wss?uid=swg21384848&amp;aid=1] [/support/docview.wss?uid=swg21384848&amp;aid=1] [/support/docview.wss?uid=swg21384848&amp;aid=1] Explanation: 
+The generated list has the following columns:  * AI_LAST_STATE_CHANGE = the time the activitiy's state was last changed. The table is sorted on this column, with the newest entry displayed at the top. 
+ * AI_TEMPLATENAME = the template name of the activity 
+ * AI_STATE = the state of the activity instance 
+ * PI_TEMPLATENAME = the name of the process template of the process instance to which this activity belongs 
+ * PI_STATE = the state of the process instance 
+ * PROCESS_INSTANCE_ID = the ID of the process instance.
+
+
+Performance considerations: 
+The possible performance impact greatly depends on the size of the related tables. Most of the operation is done on the LAST_STATE_CHANGE column in the ACTIVITY_INSTANCE_B_T table. By default, this column does not have an index. 
+
+If you experience very long execution times for the SQL statement, a table scan on the entire ACTIVITY_INSTANCE_B_T table is probably being done. In this case, you might want to define an index for this column and perform a "runstats .... with distribution and detailed indexes all" on this table. This should reduce the table scan to an index scan, which in turn should result in a noticeable reduction in the execution time of the SQL statement. 
+
+Disclaimer: 
+This SQL statement is by no means a fully-fledged flight recorder that shows all of the relevant events. However, it can provide some initial information for problem determination purposes. Because it is only one statement, it is far less intrusive (in terms of resource consumption) than a full-blown diagnostic trace of the entire WebSphere Business Process Choreographer component, which can be activated through the administrative console.

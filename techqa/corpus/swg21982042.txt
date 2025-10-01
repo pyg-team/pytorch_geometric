@@ -1,0 +1,60 @@
+Title: IBM InfoSphere Engine NodeAgents fail to authenticate after changing User Realm on a WebSphere Cluster - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In InfoSphere Information Server 11.3 and later installed into a WebSphere Network Deployment cluster, after changing the user registry to LDAP or a Federated repository the engine system and other InfoSphere system components start having problems authenticating with the WebSphere services. 
+
+SYMPTOM
+You may still be able log into the InfoSphere web clients and the DataStage clients, but you are unable to create projects, View Data or do IMAM imports. When you attempt to start the engine NodeAgents, the process is started, but the code does not transition to listening on the ASB agent port. You can check the port state by running "netstat -a | grep <port number, default 31531>" and look for the status of LISTENING. 
+
+
+CAUSE
+As of version 11.3, in a WebSphere Network Deployment cluster, the security configuration for the user registry is now configured in the IBM_Information_Server_sd security domain instead of under Global Security. 
+
+In the WebSphere administration console, when you go to 
+
+Security domains > IBM_Information_Server_sd 
+
+and expand the User Realm twisty, you have two bullet options: "Use global security settings" and "Customize for this domain". During installation, the InfoSphere installer configures the "Customize for this domain" option to use the "Standalone custom registry".
+
+If you keep "Customize for this domain" checked and select either "Federated repositories" or "Standalone LDAP registry" and configure your LDAP settings within this option, you should automatically pick up the InfoSphere customization to the "Trusted authentication realms - inbound". The InfoSphere installation adds IISSystemUsers as a Trusted realm.
+
+If instead you selected "Use global security settings" or you previously selected that option and then attempt to switch back to "Customize for this domain", the "Trusted authentication realms - inbound" setting can be lost.
+
+
+ENVIRONMENT
+InfoSphere Information Server 11.3 and later, installed into a WebSphere Network Deployment cluster.
+
+
+
+DIAGNOSING THE PROBLEM
+In the WebSphere application server SystemOut.log file, you may see errors like: 
+
+[4/25/16 20:57:00:660 EDT] 00000108 FfdcProvider W com.ibm.ws.ffdc.impl.FfdcProvider logIncident FFDC1003I: FFDC Incident emitted on /opt/IBM/WebSphere/AppServer/profiles/Custom01/logs/ffdc/server1_bfa424fe_16.04.25_20.57.00.6572922099978239038321.txt com.ibm.ws.security.web.WebAuthenticator.handleTrustAssociation 860
+
+In the WebSphere ffdc logs for the application server, you may see errors like:
+[4/25/16 20:57:00:657 EDT] FFDC Exception:com.ibm.websphere.security.auth.WSLoginFailedException SourceId:com.ibm.ws.security.web.WebAuthenticator.handleTrustAssociation ProbeId:860 Reporter:com.ibm.ws.security.web.WebAuthenticator@21bcd572
+com.ibm.websphere.security.auth.WSLoginFailedException: This realm is not the current realm, nor the admin realm, nor a trusted realm: IISSystemUsers
+
+In the ASBNode/logs/asb-agent-0.log file on the engine tier, you may see errors like:
+[04/25/16 21:00:04:588 EDT] 1 com.ibm.iis.isf.agent.impl.AgentImpl log SEVERE CDISF0810E: Error retrieving the configuration for this agent.
+javax.security.auth.login.FailedLoginException: CDIHT0401E: Login failed. Ensure the user ID and password are correct.
+
+
+RESOLVING THE PROBLEM
+In the WebSphere administration console, configure security by going to: 
+
+
+Security domains > IBM_Information_Server_sd
+
+Keep "Customize for this domain" checked, select either "Federated repositories" or "Standalone LDAP registry", click "Configure..." and configure your LDAP settings as per the WebSphere documentation.
+
+Before saving the configuration, click "Trusted authentication realms - inbound" under Related Items on the lower right of the panel.
+
+Confirm that IISSystemUsers is listed and marked as Trusted.
+
+If it is not listed, click "Add External Realm...", type in IISSystemUsers, click OK and then Apply on the "Trusted authentication realms - inbound" page and choose to save the changes. 
+
+Apply and save all your configuration changes. Ensure all nodes are synchronized and restart the cluster.

@@ -1,0 +1,67 @@
+Title: IBM Location of TCR Runtime logfiles - United States
+
+Text:
+TCR; Tivoli Common Reporting; 5724T6900; logging runtime troubleshoot common reporting TECHNOTE (FAQ)
+
+QUESTION
+ This Technote deals with the question of where the TCR runtime logs are located to assist in troubleshooting issues with the TCR environment. 
+
+ANSWER
+For TCR 1.2, the only reporting engine is BIRT-based. TCR 1.3, TCR 2.1, and TCR 2.1.1 contain both the BIRT and Cognos report engines. 
+
+For any problems encountered post-install when running TCR, the following items would be required:
+
+BIRT:
+
+TCR 1.2/1.3:
+- <TIP_HOME>/profiles/TIPProfile/logs
+
+TCR 2.1/2.1.1:
+- <TIP_HOME>/tipv2/profiles/TIPProfile/logs
+
+If the SystemOut.log and SystemErr.log files (located under <TIP_HOME>/profiles/TIPProfile/logs/server1 in TCR 1.2/1.3 and <TIP_HOME>/tipv2/profiles/TIPProfile/logs/server1 in TCR 2.1/2.1.1) do not contain enough information to lead to an immediate solution, increasing the log level may be necessary. It should also be noted that without changing the log level from the default setting, the trace.log file (located in the same directory as the SystemOut.log file) will not be created. To change the log level, perform the following steps:
+
+In the Tivoli Integrated Portal navigation pane, select Troubleshooting->Logs and Trace. Note: For TCR 2.1/2.1.1, you must first select Settings->WebSphere Administrative Console and select the "Launch WebSphere administrative console" button before being able to access the Troubleshooting portlet.
+
+In the Logging and Tracing console module, select serverName->Change Log Detail Levels. The default server name is server1.
+Click either the Configuration or Runtime tab:
+Click the Configuration tab if you want to make persistent changes to the log and trace levels. These changes will take effect after the next server restart.
+Click the Runtime tab if you want to make changes to the log and trace levels for the current session. These changes take effect immediately and do not require a server restart.
+If you use the Runtime tab, you can select the Save runtime changes to configuration as well check box to make the changes persistent as well as applying to the current session.
+Expand the list of installed packages and click com.ibm.tivoli.reporting.*. If you are running TCR 2.1/2.1.1 and you have not accessed the Reporting->Common Reporting portlet before accessing the WAS Console, com.ibm.tivoli.reporting.* will not be available as an option.
+Click Message and Trace Levels->finest.
+Click OK.
+
+If you are making persistent configuration changes, click Save when prompted to save the changes to the master configuration.
+Stop and restart the Tivoli Common Reporting server in case of persistent configuration changes.
+
+In addition to the com.ibm.tivoli.reporting.* trace option for diagnosing Reporting problems, you can also use the following trace options:
+
+- for TIP Authorization Manager (iAuthz)
+
+com.ibm.sec.iauthz.*
+
+- for TSS Scheduler
+
+com.ibm.scheduling.*
+1. 
+
+Cognos:
+
+TCR 1.3:
+- <TIP_HOME>/products/tcr/Cognos/c8/logs/
+
+TCR 2.1/2.1.1:
+- <TIP_HOME>/tipv2Components/TCRComponent/cognos/logs
+
+Enabling additional Cognos tracing:
+
+Open the PogoLogkitConfig_FullDebug.xml file from the following location:
+For the distributed environment - the machine with the Cognos-based TCR engine installed:<cognos_install_dir>webapps\p2pd\WEB-INF
+For the single-computer installation –
+TCR 1.3:
+<TIP_HOME>/profiles/TIPProfile/installedApps/TIPCell/Cognos8.ear/p2pd.war/WEB-INF
+TCR 2.1/2.1.1:
+<TIP_HOME>/tipv2/profiles/TIPProfile/installedApps/TIPCell/IBM Cognos 8.ear/p2pd.war/WEB-INF
+Change the name of the file to PogoLogkitConfig.xml, and save it.
+Restart TCR/Cognos to apply the changes.

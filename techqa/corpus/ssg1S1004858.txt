@@ -1,0 +1,93 @@
+Title: IBM Security Bulletin: The IBM FlashSystem 840 and V840 product model number AE1 nodes are affected by vulnerabilities in Apache’s Struts library - United States
+
+Text:
+Security CVE-2014-0112; CVE-2014-0094; & CVE-2014-0050 SECURITY BULLETIN
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+SUMMARY
+ Security vulnerabilities have been discovered in Apache’s Struts library 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2014-0112, CVE-2014-0094, & CVE-2014-0050 
+
+DESCRIPTION: FlashSystem 840 MTM 9840-AE1, and FlashSystem V840 MTMs 9846-AE1 and 9848-AE1 use the Apache Struts library. Struts is used only by the Service Assist GUI. 
+
+ 
+
+CVE-2014-0112 (Apache Struts ParametersInterceptor code execution) 
+
+Apache Struts could allow a remote attacker to execute arbitrary code on the system, caused by an incomplete fix related to ParametersInterceptor and the failure to restrict access to the class parameter. An attacker could exploit this vulnerability using the class parameter to manipulate the ClassLoader used by the application server to execute arbitrary code on the system. 
+
+CVSS v2 Base Score: 7.5
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/92740 [http://xforce.iss.net/xforce/xfdb/92740]
+CVSS Vector: (AV:N/AC:L/AU:N/C:P/I:P/A:P) 
+
+CVE-2014-0094 
+
+Apache Struts could allow a remote attacker to bypass security restrictions, caused by an error in ParametersInterceptor. An attacker could exploit this vulnerability using the class parameter to manipulate the ClassLoader used by the application server. 
+
+CVSS v2 Base Score: 5.0
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/92205 [http://xforce.iss.net/xforce/xfdb/92205]
+CVSS Vector: (AV:N/AC:L/AU:N/C:N/I:P/A:N) 
+
+CVE-2014-0050 
+
+Apache Commons FileUpload and Tomcat are vulnerable to a denial of service, caused by the improper handling of Content-Type HTTP header for multipart requests. By sending a specially-crafted request, an attacker could exploit this vulnerability to cause the application to enter into an infinite loop. 
+
+CVSS v2 Base Score: 4.0
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/90987 [http://xforce.iss.net/xforce/xfdb/90987]
+CVSS Vector: (AV:N/AC:H/AU:N/C:P/I:P/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+FlashSystem 840 including machine type models (all available code levels) 
+9840-AE1
+
+FlashSystem V840 including machine type models (all available code levels) 
+9846-AE1 & 9848-AE1
+
+REMEDIATION/FIXES
+ 
+
+Products VRMF APAR Remediation/First Fix 840 MTM: 
+9840-AE1
+
+V840 MTMs: 9846-AE1 &
+9848-AE1 A code fix is now available, the VRMF of this code level is 1.1.2.2 (or later) N/A No work arounds or mitigations, other than applying this code fix, are known for this Struts vulnerability WORKAROUNDS AND MITIGATIONS
+None known
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+On-line Calculator V2 [http://nvd.nist.gov/cvss.cfm?calculator&adv&version=2] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+IBM Secure Engineering Web Portal [https://www-304.ibm.com/jct03001c/security/secure-engineering/] 
+IBM Product Security Incident Response Blog [https://www.ibm.com/blogs/PSIRT] 
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 28 Aug 2014 original copy published
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin.
+
+Disclaimer
+
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Flash Storage IBM FlashSystem V840

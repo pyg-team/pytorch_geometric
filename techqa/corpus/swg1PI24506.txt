@@ -1,0 +1,153 @@
+Title: IBM PI24506: INTRODUCE SUPPORT FOR NON-ADMIN USE OF SYNDICATION PORTLETS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Syndicator and Subscriber administration portlets are
+   currently intended to only be used by Portal Administrators
+   that have access to the Administration area of the site.
+   
+   This change will allow non-administrators with user access to
+   the content root (which can be set on the Web Content
+   Libraries Administration portlet), and user access to the
+   Syndicator/Subscriber portlets. With this minimum access when
+   the portlet is placed on a page in which a non-admin can reach
+   it then they will see the syndicator/subscriber portlet with a
+   reduced set of actions available. Users can see the set of
+   syndicators, trigger an update, review pending items and show
+   errors.
+   Opened for release 8001
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The Syndicator and Subscriber administration portlets are
+   currently intended to only be used by Portal Administrators
+   that have access to the Administration area of the site.
+   
+   This change will allow non-administrators with user access to
+   the content root (which can be set on the Web Content
+   Libraries Administration portlet), and user access to the
+   Syndicator/Subscriber portlets. With this minimum access when
+   the portlet is placed on a page in which a non-admin can reach
+   it then they will see the syndicator/subscriber portlet with a
+   reduced set of actions available. Users can see the set of
+   syndicators, trigger an update, review pending items and show
+   errors.
+   Opened for release 8001
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  non-administrators with user access to
+   the content root (which can be set on the Web Content
+   Libraries Administration portlet), and user access to the
+   Syndicator/Subscriber portlets. With this minimum access when
+   the portlet is placed on a page in which a non-admin can reach
+   it then they will see the syndicator/subscriber portlet with a
+   reduced set of actions available. Users can see the set of
+   syndicators, trigger an update, review pending items and show
+   errors.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI24506
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-24
+   
+   
+ * CLOSED DATE
+   2015-02-02
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

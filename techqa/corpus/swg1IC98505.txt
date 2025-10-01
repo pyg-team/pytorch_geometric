@@ -1,0 +1,216 @@
+Title: IBM IC98505: SYSTEM STATE BACKUP FAILED IN MS CLUSTER ENVIRONMENT - United States
+
+Text:
+AIX  A FIX IS AVAILABLE
+IBM Tivoli Storage Manager (TSM) Client 7.1.1 Downloads and READMEs [http://www-01.ibm.com/support/docview.wss?uid=swg24038141]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running backup systemstate in MS cluster environment, the
+   backup failed. In dsmerror.log, there are following error;
+   
+   
+   12/09/2013 17:29:30 ANS5250E An unexpected error was
+   encountered.
+      TSM function name : AddFileToRequest
+      TSM function      : GetVolumeNameForVolumeMountPoint() for
+   drive 'd:\' returned 0
+      TSM return code   : 109
+   
+   12/09/2013 17:29:37 ANS5250E An unexpected error was
+   encountered.
+      TSM function name : objEnumAuditFileSub
+      TSM function      : GetBestVolumeMatch() for file
+   '\\machinename\d$\program files\bmc software\control-m
+   server\ctm_server\exe\ctmsrv_service.exe
+   ' failed.
+      TSM return code   : 105
+   
+   12/09/2013 17:56:37 ANS1327W The snapshot operation for
+   '\\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy4\' failed with
+   error code: 105.
+   12/09/2013 17:56:37 ANS1228E Sending of object
+   'machinename\SystemState\NULL\System State\SystemState' failed.
+   12/09/2013 17:56:37 ANS5056E The specified directory path could
+   not be found.
+   12/09/2013 18:06:54 ANS1084E No files have previously been
+   backed up for '\machinename\d$\program files\bmc
+   software\control-m server\ctm_server\exe\ctmsrv_service.exe' or
+   the specified file space is invalid for the current operating
+   system.
+   12/09/2013 18:07:05 ANS1084E No files have previously been
+   backed up for '\\machinename\d$\program files\bmc
+   software\control-m server\ctm_server\exe\ctmsrv_service.exe' or
+   the specified file space is invalid for the current operating
+   system.
+   12/09/2013 18:08:13 ANS1092W No files matching search criteria
+   were found
+   12/09/2013 18:08:54 ANS1138E The 'QUERY' command must be
+   followed by a subcommand
+   12/09/2013 18:09:00 ANS1138E The 'QUERY' command must be
+   followed by a subcommand
+   12/09/2013 18:09:05 ANS1138E The 'QUERY' command must be
+   followed by a subcommand
+   12/09/2013 18:09:14 ANS1138E The 'QUERY' command must be
+   followed by a subcommand
+   12/09/2013 18:10:39 ANS1092W No files matching search criteria
+   were found
+   12/09/2013 18:25:02 ANS1577I The Windows console event handler
+   received a 'Ctrl-C' console event.
+   12/09/2013 18:28:03 ANS4199W File 'd:\program files\bmc
+   software\control-m server\ctm_server\exe\ctmsrv_service.exe' is
+   not backed up as part of the system state because cluster disk
+   'd:' is not accessible.
+   
+   The same error is generated when running backup using Tivoli
+   Storage Manager backup-archive client 6.4.1.0, 6.4.1.1, 6.3.2.0
+   But there is no above error when using Tivoli Storage Manager
+   backup-archive client 6.3.1. The d$ is shared between two
+   cluster nodes and it belongs to other nodes.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: The following backup-archive client          *
+   *                 versions are affected on all Windows         *
+   *                 platforms: v6.3.2, v6.4.1, v7.1.0            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See ERROR DESCRIPTION.                  *
+   ****************************************************************
+   * RECOMMENDATION: Apply fixing level when available. This      *
+   *                 problem is currently projected to be fixed   *
+   *                 in level 6.4.2 and higher. Note that until   *
+   *                 the fixing level is available, this          *
+   *                 information is subject to change at the      *
+   *                 discretion of IBM                            *
+   ****************************************************************
+   *
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In MS Cluster environment System Writer can return file
+   located on witness disk that is not available at moment of the
+   system state backup (volume belongs to other node). In this
+   situation we issue a message that disk is not available and
+   continue processing.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC98505
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMCL
+   
+   
+ * REPORTED RELEASE
+   64W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-27
+   
+   
+ * CLOSED DATE
+   2014-02-25
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  DSM      DSMC     DSMCSVC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMCL
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R63W PSY
+   UP
+   
+   
+ * R64W PSY
+   UP
+   
+   
+ * R71W PSY
+   UP

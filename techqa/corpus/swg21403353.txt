@@ -1,0 +1,45 @@
+Title: IBM About the DOORS Database Integrity Checker - United States
+
+Text:
+DOORS; data; integrity checker; check integrity tool; check database integrity TECHNOTE (FAQ)
+
+QUESTION
+ What does the Database Integrity Checker do in IBM Rational DOORS? 
+
+CAUSE
+There are problems accessing DOORS data but the integrity check did not flag any problems. 
+
+ANSWER
+The database integrity checker will verify the following: 
+
+
+ * Each reference from a parent item to a child item has a corresponding reference back from the child to the parent.
+   
+   
+ * No child item is referenced as a child of two different parent items.
+   
+   
+ * Every item in the database is referenced as the child of another item.
+   
+   
+
+
+If an item is not referenced by a parent, it (and any children it has) is not displayed in the Rational DOORS Database Explorer. This type of incorrect referenced data is recovered to a Lost and Found folder. Every project in the database has an entry in the Project View list, which is the list Rational DOORS uses to generate the Project View in the database explorer. Once the database integrity check is complete, you can use the wizard to repair inconsistency in the database and move or restore 
+any recovered data.
+
+You can also run a restricted integrity check on the contents of a selected folder or project. 
+An integrity check on a project or folder cannot check for data that is not referenced by any other item. 
+
+ It can check for: 
+
+ * Missing data
+   
+   
+ * Items that are not referenced by more than one parent
+   
+   
+ * Projects that are not included in the project list
+
+
+RELATED INFORMATION
+#Integrity Check [http://www.ibm.com/support/docview.wss?uid=swg21462424]

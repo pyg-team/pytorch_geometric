@@ -1,0 +1,204 @@
+Title: IBM HD11998: PRODSTRU : IN VPM CATPRODUCT, APPLYING CUT COMMAND ON CATPARTS LEADS TO RAPID INCREASE IN COMMIT CHARGE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract: PRODSTRU : IN VPM CATPRODUCT,
+   APPLYING CUT COMMAND ON CATPARTS LEADS
+   TO RAPID
+   
+   INCREASE IN COMMIT CHARGE.
+   
+   Description:
+   OPTION SETTINGS:
+   
+   
+   Scenario:
+   
+   1. Launch 3dcom and define working Environment.
+   2. Query for Full Vehicle and create a short-Cut in
+   PSN TREE.
+   3. Expand the PSN TREE to all levels.
+   4. Launch Catia and connect to database.
+   5. In 3dcom, select CATParts (documents) and
+   using RMB select CATIA V5/Load.
+   Note that all the selected CATParts data is loaded
+   in DMU.
+   7. Open Task Manager and note the initial Commit
+   Charge. (In my case 375672 KB)
+   6. Now select 10 to 15 CATParts using Shift or
+   Control key for multiselection and using RMB
+   apply Cut command.
+   Note that DMU takes long time and Commit Charge
+   keeps increasing fast.
+   7. After waiting for 5 minutes Cut command is
+   completed but Commit Charge is very High (In my
+   case it is 1313052 KB i.e. 1.25 GB)
+   
+   Result: DMU takes long time and Commit Charge
+   keeps increasing fast.
+   
+   Expected Result : Cut command should be applied
+   in fraction of seconds.
+   
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  PRODSTRU : IN VPM CATPRODUCT, APPLYING CUT COMMAND ON CATPARTS
+   LEADS TO RAPID INCREASE IN COMMIT CHARGE
+   Abstract: PRODSTRU : IN VPM CATPRODUCT,
+   APPLYING CUT COMMAND ON CATPARTS LEADS
+   TO RAPID
+   
+   INCREASE IN COMMIT CHARGE.
+   
+   Description:
+   OPTION SETTINGS:
+   
+   1. Working with cache
+   2. "Do not Activate Default shapes on Open" is
+   checked in Product Visualization Tab.
+   
+   Scenario:
+   
+   1. Launch 3dcom and define working Environment.
+   2. Query for Full Vehicle and create a short-Cut in
+   PSN TREE.
+   3. Expand the PSN TREE to all levels.
+   4. Launch Catia and connect to database.
+   5. In 3dcom, select CATParts (documents) and
+   using RMB select CATIA V5/Load.
+   Note that all the selected CATParts data is loaded
+   in DMU.
+   7. Open Task Manager and note the initial Commit
+   Charge. (In my case 375672 KB)
+   6. Now select 10 to 15 CATParts using Shift or
+   Control key for multiselection and using RMB
+   apply Cut command.
+   Note that DMU takes long time and Commit Charge
+   keeps increasing fast.
+   7. After waiting for 5 minutes Cut command is
+   completed but Commit Charge is very High (In my
+   case it is 1313052 KB i.e. 1.25 GB)
+   
+   Result: DMU takes long time and Commit Charge
+   keeps increasing fast.
+   
+   Expected Result : Cut command should be applied
+   in fraction of seconds.
+   
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  THE PROBLEM WAS SUBMITTED ON :
+   ENOVIA VERSION 5 RELEASE 11.
+   THIS PROBLEM IS NOT REPRODUCIBLE ON :
+   ENOVIA VERSION 5 RELEASE 13 GA level AND ON
+   V5R12SP01
+   AND ON V5R12SP02
+   
+   .
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD11998
+   
+   
+ * REPORTED COMPONENT NAME
+   3D COM NT/2000/
+   
+   
+ * REPORTED COMPONENT ID
+   569151600
+   
+   
+ * REPORTED RELEASE
+   511
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2003-10-03
+   
+   
+ * CLOSED DATE
+   2003-12-01
+   
+   
+ * LAST MODIFIED DATE
+   2003-12-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   3D COM NT/2000/
+   
+   
+ * FIXED COMPONENT ID
+   569151600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R512 PSN
+   UP
+   
+   
+ * R513 PSN
+   UP

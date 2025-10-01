@@ -1,0 +1,47 @@
+Title: IBM SMU install error - United States
+
+Text:
+smu sms install error fail space memory ./install TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Trying to run the SMU ./install script fails ERROR [main] org.eclipse.equinox.log.internal. 
+
+SYMPTOM
+[root@tvt6065 im.linux.s390]# ./install 00:00.39 ERROR [main] org. 
+
+eclipse.equinox.log.internal. ExtendedLogReaderServiceFactory
+safeLogged Application error org.eclipse.swt.SWTError: No more handles
+[gtk_init_check() failed] at org.eclipse.swt.SWT.error(SWT.java:4394)
+at org.eclipse.swt.widgets.Display.createDisplay(Display.java:914) at
+org.eclipse.swt.widgets.Display.create(Display.java:900) at org.eclipse.
+swt.graphics.Device.<init>(Device.java:156) ... Install: An error has
+occurred. See the log file /products/SMU/im.linux.
+s390/configuration/1494349338410.log.
+
+
+CAUSE
+The PrereqScanner showed the clients machine did not have enough memory, disk space, and that P390 packages were missing.
+
+
+DIAGNOSING THE PROBLEM
+Ran the PrereqScanner: ./prereq_checker.sh ' "ODP,DSH" 
+
+
+
+RESOLVING THE PROBLEM
+In order to download the S390 UNIX maintenance, we used the following URL to request a user ID on the Enterprise Linux web site: https://ibm.biz/BdXt7j [https://ibm.biz/BdXt7j] 
+
+
+We used ./ibm-yum.sh search gtk2 to search for the gtk2 s390 package.
+
+Then we used ./ibm-yum.sh install package_name to install the packages.
+
+You must use a GUI to complete the SMU install. We used the following URL to install the VNC Viewer on our RHEL 6 (64-bit) with default (2.6.32-431.11.2.el6.s390x) installed VM: https://ibm.biz/BdXk4H [https://ibm.biz/BdXk4H]
+
+Note: You need to set a security option -SecurityTypes=none in order to get into the dialogs.
+
+In order to overcome space obstacles, we had to create symbolic links for /opt/IBM which points to /products/IBM and /opt/ibm to /products/ibm
+
+We used the following URL to install WinSCP in order to see the laptop and zLinux workspaces side by side. It makes copying and finding files easier if you're not that familiar with UNIX: https://ibm.biz/BdXk4s [https://ibm.biz/BdXk4s]
+
+We used the following URL to install PuTTY, in order to navigate around AIX: https://ibm.biz/BdXQAF [https://ibm.biz/BdXQAF]

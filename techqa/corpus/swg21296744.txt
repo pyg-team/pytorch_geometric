@@ -1,0 +1,77 @@
+Title: IBM Using a different ClearCase privileged user (clearcase_albd) account than the VOB server - United States
+
+Text:
+ClearCase; ALBD; 1296744 TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to use two different IBM® Rational® ClearCase® privileged user (clearcase_albd) accounts for accessing the VOB server? 
+
+CAUSE
+ 
+
+You want to use two different albd accounts for accessing your VOB server. 
+
+You want to change the albd account and during the transition phase there will be two accounts present.
+
+Review the ClearCase Administrators Guide on the topic of The Rational ClearCase server process user [http://publib.boulder.ibm.com/infocenter/cchelp/v7r0m1/index.jsp?topic=/com.ibm.rational.clearcase.cc_admin.doc/topics/c_access_usr_grp_privileged_ccspu.htm]for more information about this account.
+
+
+ANSWER
+ 
+
+
+Yes this is possible. 
+
+When using multiple ALBD user accounts, the key consideration is that the accounts need to be as close to identical as possible as described below.
+
+Key Considerations
+
+
+ * If the VOBs are on a UNIX®/Linux® server, then the Microsoft® Windows® albd accounts need to map over to the same VOB-owner account that is using Samba or TAS. If for some reason this is not possible, see Note 3 below.
+   
+   Review the ClearCase Administrators Guide on the topic of Mapping the Rational ClearCase server process user [http://publib.boulder.ibm.com/infocenter/cchelp/v7r0m1/index.jsp?topic=/com.ibm.rational.clearcase.cc_admin.doc/topics/t_pcnfssmb_smb_samba_mapccspu.htm] for more information.
+   
+   
+ * The albd accounts must be members of the same groups. Especially the "ClearCase Server Process Group," also known as the "ClearCase" or "ClearCase Administrators' group."
+   
+
+
+Two common use cases for multiple albd accounts 
+ 1. Security policies require ALL accounts to change their passwords every "n" days, including service accounts.
+    
+    In this case, the albd account is "rotated" every "n-7" days from a workstation logged in with domain administration rights. This can be done using a simple script.
+    
+    DISCLAIMER:
+    All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+    -------------------------
+    
+    for /f "delims=:" %%x in ('cleartool lsclient -host {registry server} -type all ^| findstr "Windows"') do sc \\%%x config albd obj= {new_account} password= {new_acct_password} & sc \\%%x stop albd & sc \\%%x start albd
+    
+    -------------------------
+    
+    Note 1: The spaces after "obj=" and "password=" are significant and will cause the command to error if they are excluded.
+    
+    Note 2: This script makes no allowance for machines that are not currently active. A "production-ready" script would include the ability to account for this and also keep track of which ClearCase hosts have had their albd account "rotated" in order to avoid the problem. 
+    Refer to the sc Windows on-line help for the "sc qc" command for more information on how to verify the account information for a service.
+    
+    Review the ClearCase Command Reference Guide on the topic of lsclients [http://publib.boulder.ibm.com/infocenter/cchelp/v7r0m1/index.jsp?topic=/com.ibm.rational.clearcase.cc_ref.doc/topics/ct_lsclients.htm](cleartool man lsclients) for more information.
+    
+    The old albd account would then be manually locked out until such time as the password rotation deadline approaches again.
+    
+    
+ 2. Different albd accounts for central VOB/view servers and end-user workstations. This is primarily done to prevent albd account issues (account lockouts, etc) on the albd account from impacting the VOB servers themselves.
+    
+
+
+Note 3: In an interop configuration, the ALBD account that is in use on client hosts needs to have this minimum level of access rights: 
+ * Read information from the VOBs source pools. This is sufficient for normal ClearCase operations like checkin and checkout.
+   
+ * Write to the VOBs cleartext pools, This is needed to allow cleartext construction, and file opens will fail (intermittently, with little apparent pattern) if one or more of the albd accounts does not have the necessary access rights.
+   
+ * Write to the VOBs derived object pools. This is to permit Derived Object promotion to view storage as part of the wink-in process. 
+
+
+RELATED INFORMATION
+#Methods for changing the albd password [http://www.ibm.com/support/docview.wss?uid=swg21146207]
+Verify that clearcase_albd is in the ClearCase group [http://www.ibm.com/support/docview.wss?uid=swg21150347]
+Use of a non-VOB-owner account for TAS or Samba access [http://www.ibm.com/support/docview.wss?uid=swg21150254]

@@ -1,0 +1,33 @@
+Title: IBM Connections Mail: SiteMinder or IBM Tivoli Access Manager only: Mail unresponsive or displays error messages after SSO session timeout - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Using SiteMinder or IBM Tivoli Access Manager for single sign-on (SSO), IBM Connections Mail might seem unresponsive after an SSO session timeout.
+
+For example, if a user leaves their IBM Connections Mail session idle for an extended period of time, a SiteMinder SSO session can time out and redirect the user to the login page. However, if the user interacts with IBM Connections Mail between the time SiteMinder times out and the redirect to the login page, the mail operation might not detect the SiteMinder timeout response correctly. This makes the mail application appear unresponsive. 
+
+Possible scenarios: 
+
+ * User observes timeout, page redirect, or error message, such as "Server took too long to respond." 
+ * User attempts to upload a message attachment to Files. If the user clicks the "Share All" link, or if the Files Upload window is already open, and the user renames a file, the user is prompted that the file already exists. Even entering a random filename does not succeed. 
+ * User hovers over a profile picture of a message recipient in a read message, or compose message where the user entered an address to send the message to. The user is prompted with a "Basic Authentication" window instead of the normal login form.
+
+CAUSE
+In cases where the SSO session has timed out, IBM Connections Mail is not handling the server responses from SiteMinder or IBM Tivoli Access Manager correctly. 
+
+
+ENVIRONMENT
+IBM Connections Mail in SSO environment with SiteMinder or IBM Tivoli Access Manager
+
+
+
+DIAGNOSING THE PROBLEM
+Hover over other IBM Connections areas (for example, hover over the Communities app) to check for any error messages, since this action makes a request for updated information and reports any problems. 
+
+The user or administrator could check the JavaScript console.
+
+
+RESOLVING THE PROBLEM
+Refresh your browser to return to the login page where normal service will resume.

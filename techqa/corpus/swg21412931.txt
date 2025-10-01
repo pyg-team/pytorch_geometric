@@ -1,0 +1,24 @@
+Title: IBM Using java.math.BigInteger in EJB Query Language results in "Error=WQRY0136E: An invalid parameter type is detected" - United States
+
+Text:
+java.math.BigInteger; EJB Query Language; Websphere Application Server; EJB TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to use java.math.BigInteger in an EJB query definition in an EJB 2.x application in IBM Rational Application Developer for WebSphere Software results in "An invalid parameter type java.math.BigInteger" error when trying to deploy the EAR. 
+
+SYMPTOM
+An attempt to perform Prepare for deployment task in Rational Application Developer or to deploy the EAR to WebSphere Application Server v6.1 with deploy EJB option results in the following error: 
+
+[12/16/08 13:47:57:737 HKT] 00000027 DeployEJBTask I ADMA0158I: [EJBDeploy] com.ibm.etools.ejbdeploy.plugin.UserCorrectableGenerationException: Error generating findOpenCargo(java.math.BigInteger) query for bean CargoBean (Abstract schema name=Cargo). Error=WQRY0136E: An invalid parameter type java.math.BigInteger is detected.
+
+
+
+CAUSE
+In EJB 2.1 specification, it is stated that support for java.math.BigInteger is optional. [http://download.oracle.com/javaee/1.4/tutorial/doc/EJBQL6.html] 
+
+
+In WebSphere Application Server 6.1, using java.math.BigInteger as an EJB Query Language method parameter is not supported.
+
+
+RESOLVING THE PROBLEM
+Use WebSphere Application Server 6.1 supported Java types in EJB Query Language.

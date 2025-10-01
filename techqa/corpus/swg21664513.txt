@@ -1,0 +1,34 @@
+Title: IBM Session Time out duration in CDM - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you increase the session timeout duration in Cognos Disclosure Management. 10.2.1 (and above)
+
+
+CAUSE
+When leaving the computer unattended for extended periods the CDM session will expire and error "Unknown Error has occurred" is received.
+Any unsaved work will be lost. 
+
+
+ANSWER
+CDM does not auto save and un-saved work. 
+
+All work should be saved and checked in if leaving the application unattended for extended periods. 
+
+The session timeout can be increased to alleviate the issue. The default session time out is 2 hours. 
+
+ 
+
+To change the time-out settings: 
+
+1. Edit the file C:\inetpub\wwwroot\CognosDM Server\config\CDM.config. 
+
+2. Locate the xml configuration element <SessionExpiraton>
+
+<SessionExpiration enabled="true" timeAfterLogOn="1.00:00:00" acceptedIdleTime="02:00:00">
+
+3. Increase the 'acceptedIdleTime' attribute to desired level.
+
+4. Save and Restart the Application Server

@@ -1,0 +1,58 @@
+Title: IBM Unable to access Sterling Filegateway using ldap sign on. - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to access Sterling Filegateway using ldap sign on. 
+
+SYMPTOM
+
+
+Users being authenticated via ldap do not have access to filegateway or myfilegateway. 
+
+Same users do have access to SI/GIS via the ldap sign ons.
+
+Canned SFG logons (fg_sysadmin) are not effected.
+
+ 
+
+Error Message No errors were captured. However viewing authentication.log when logging is turned on may show something.
+
+
+RESOLVING THE PROBLEM
+
+
+Add the following to the security.properties_filegateway_ext.in file:
+
+# sso forwards for filegateway and myfilegateway web apps on logout, timeout, validation/auth failures
+
+## External Page for SSO when Logout (Specify the SSO Server external page for each of the cases)
+security.SSO_FORWARD_URL.FILEGATEWAY.LOGOUT=/Signon/logout
+security.SSO_FORWARD_URL.MYFILEGATEWAY.LOGOUT=/Signon/logout
+
+## External Page for SSO when Timeout (Specify the SSO Server External page for each of the case)
+security.SSO_FORWARD_URL.FILEGATEWAY.TIMEOUT=/Signon/timeout
+security.SSO_FORWARD_URL.MYFILEGATEWAY.TIMEOUT=/Signon/timeout
+
+## External Page for SSO on Validation/Authentication failure (SSO User Validation Failed - Page Validation)
+security.SSO_FORWARD_URL.FILEGATEWAY.VALIDATION_FAILED=/Signon/validationerror<b r /> security.SSO_FORWARD_URL.MYFILEGATEWAY.VALIDATION_FAILED=/Signon/validationerror 
+
+ 
+
+HISTORICAL NUMBER
+ NFX9008 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Severity
+
+
+Normal
+
+
+Type
+
+
+NormalFix

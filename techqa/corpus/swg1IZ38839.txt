@@ -1,0 +1,132 @@
+Title: IBM IZ38839: UPDATEEVENTQUEUE() FUNCTION DOES SEARCH THE EVENTQUEUE BUT DOES NOT SEARCH THE EVENTREADER PRE-EVENTQUEUE QUEUE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In high load situations copies of an event being processed can
+   reside in a queue prior to being placed in the EventReader
+   EventQueue and this pre-queue is not searched by the
+   UpdateEventQueue() function.
+   
+   This is an issue when one is wishing to prevent unnecessary
+   multiple reprocessing of the same event, due to it being
+   captured multiple times by the EventReader prior to the first
+   copy of the event being processed, by using the UpdateEventQueue
+   () function to delete latter copies from the EventQueue.
+   
+   When a copy of the event resides in this pre-queue the function
+   is unable to find & remove it and, some time later, this copy of
+   the event is then processed.  This undesireable second
+   processing of the event is a cause of concern for our
+   customers and can result in, at best, replication of work or
+   even undoing of previously performed tasks.
+   
+   The capability of the UpdateEventQueue() function need to be
+   increased to encompass this pre-EventQueue queue to help prevent
+   such scenarios.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Additional event flag setting & checking can prevent
+   reprocessing from proceding further than a few lines into a
+   Policy, but it would better if the unnecessary processing did
+   not occur in the first place and as high a number of threads as
+   possible were working on actual, desired processes.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This APAR is fixed in 4.0.2-TIV-NCI-FP0001
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ38839
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-11-27
+   
+   
+ * CLOSED DATE
+   2009-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R402 PSY
+   UP
+   
+   
+ * R510 PSY
+   UP

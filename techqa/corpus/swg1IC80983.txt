@@ -1,0 +1,152 @@
+Title: IBM IC80983: 9235 APPLIANCE MAY RESTART DUE TO BASEBOARD MANAGEMENT CONTROLLER (BMC) COMMUNICATIONS LOSS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A DataPower 9235 appliance may be restarted by its hardware
+   watchdog due to a Baseboard Management Controller (BMC)
+   communications loss.   This also rarely causes a failure to
+   restart successfully.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If a failure to restart occurs, the appliance needs to be
+   manually power cycled by removing and then replacing the power
+   cords.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This APAR resolves the situation where the 9235 appliance may
+   lose communications to the Baseboard Management Controller
+   (BMC).   This APAR delivers BMC version .29.
+   
+   To check if your system may be susceptible to this issue check
+   the output of these commands:
+   config
+   service show component-firmware
+   
+   If the BMC version listed is below 0.29 we highly recommend
+   upgrading to install the fix
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 3.8.1.20, 3.8.2.11, 4.0.1.8, and 4.0.2.4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  When a hang condition is experienced, powering down and then
+   back up will recover from this condition.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC80983
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-25
+   
+   
+ * CLOSED DATE
+   2012-03-09
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R381 PSY
+   UP
+   
+   
+ * R382 PSY
+   UP
+   
+   
+ * R401 PSY
+   UP
+   
+   
+ * R402 PSY
+   UP

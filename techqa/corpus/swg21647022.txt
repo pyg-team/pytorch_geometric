@@ -1,0 +1,95 @@
+Title: IBM "0x800A00D ... Type Mismatch ... The precision is invalid" when importing structures which include 'Lookup Tables' - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User clicks "Maintain - User - Single Mode". Afterwards, user clicks "Transfer - Import Structures". User browses to import the structure file. User clicks 'run', but receives an error message. 
+
+SYMPTOM
+[/support/docview.wss?uid=swg21647022&aid=1] [/support/docview.wss?uid=swg21647022&aid=1] 
+
+Standard Error
+Number: 5
+Source: FrangoDirect.ImportStructuresD.UpdateImpServer#ControllerProxyClient
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.Runtime.InteropServices.COMException (0x800A000D): Type mismatch
+at FrTransferBT.ImportStructuresTClass.UpdateImpServer(String sGuid, String sUser, String sXmlDoc)
+at Cognos.Controller.Proxy.CCRWS.ImportStructuresT_UpdateImpServer(String sGuid, String sUser, String sXmlDoc)
+--- End of inner exception stack trace ---
+at Microsoft.VisualBasic.ErrObject.Raise(Int32 Number, Object Source, Object Description, Object HelpFile, Object HelpContext)
+at Cognos.Controller.Common.RaiseErrCli.RaiseError(Int32 lErrNo, String sErrSource, String sErrDesc, String sErrHelpFile, Int32 lErrHelpContext)
+at Cognos.Controller.Common.RaiseErrCli.RaiseError(Int32 lErrNo, String sErrSource, String sErrDesc)
+at Cognos.Controller.Direct.ImportStructuresD.UpdateImpServer(String sXmlDoc)
+at Cognos.Controller.Forms.Form.clsImportStruc.ImportServer(String sXmlDoc)
+at Cognos.Controller.Forms.Form.frmImportStruc.DoImportServer()
+
+Event Viewer (Application log):
+Log Name: Application
+Source: Cognos Controller
+Date: 15/08/2013 10:15:16
+Event ID: 0
+Task Category: None
+Level: Warning
+Keywords: Classic
+User: N/A
+Computer: SERVERNAME
+Description:
+Error occured at 15/08/2013 10:15:16 in IBM Cognos Controller, Error No=5, Source=FrangoDirect.ImportStructuresD.UpdateImpServer#ControllerProxyClient, Description=System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.Runtime.InteropServices.COMException (0x800A000D): Type mismatch
+at FrTransferBT.ImportStructuresTClass.UpdateImpServer(String sGuid, String sUser, String sXmlDoc)
+at Cognos.Controller.Proxy.CCRWS.ImportStructuresT_UpdateImpServer(String sGuid, String sUser, String sXmlDoc)
+
+Log Name: Application
+Source: VBRuntime
+Date: 15/08/2013 10:15:16
+Event ID: 1
+Task Category: None
+Level: Warning
+Keywords: Classic
+User: N/A
+Computer: SERVERNAME
+Description:
+The VB Application identified by the event source logged this Application FrTransferBT: Thread ID: 4280 ,Logged: Error occured at 15/08/2013 10:15:16 in FrTransferBT, Error No=-2147467259, Source=Server Sub:Db_CreateTabFromRs(..) ;FrTransferBT.ImportStructuresT.UpdateLookup, Description=The precision is invalid., HelpFile= HelpContext=0 
+
+CAUSE
+There are many possible casuses for the ""0x800A00D ... Type Mismatch " error. 
+
+ * See separate IBM Technote #1348020 for more examples.
+
+
+This IBM Technote specifically relates to the scenario where the cause is a code production problem (defect PM95857) in Controller 10.1.1 FP2. 
+
+This defect is only triggered when trying to importing lookup tables and the lookup table already exists in the target database. 
+ENVIRONMENT
+Problem only affects customers using Microsoft SQL Server as their database host.
+
+
+
+DIAGNOSING THE PROBLEM
+Search inside the Controller application server's Event Viewer Application Log for the message "The precision is invalid".
+
+
+
+RESOLVING THE PROBLEM
+Fix: 
+
+Upgrade to Controller 10.1.2659 or later.
+
+Workaround:
+There are two methods: 
+
+ * Method #1 - When importing structures, do not select (untick) the box "Lookup Tables":
+
+[/support/docview.wss?uid=swg21647022&aid=2] [/support/docview.wss?uid=swg21647022&aid=2]  * Method #2 - Delete the already existing lookup tables from the database before importing structures.
+
+
+Steps for Method #1: 
+1. As a precaution, ensure that you have a backup copy of the database 
+2. Click "Transfer - External Data - Define Lookup Tables" 
+[/support/docview.wss?uid=swg21647022&amp;aid=3] 
+3. Click the red cross, and click "Yes" to delete the lookup table 
+[/support/docview.wss?uid=swg21647022&aid=4] [/support/docview.wss?uid=swg21647022&aid=4] 
+4. Repeat so that all lookup tables (specifically the ones that are going to be imported in the future) are deleted 
+5. Import the structures. 
+RELATED INFORMATION
+#1348020 - ** Troubleshooting** error 'Server was unable [http://www.ibm.com/support/docview.wss?uid=swg21348020]
+APAR PM95857 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM95857]

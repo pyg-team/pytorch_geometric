@@ -1,0 +1,55 @@
+Title: IBM WebSphereUPDI installer failed to install in TIP FixPack - United States
+
+Text:
+TIPL2INST; WebSphereUPDI; installer failed to install in TIP FixPack TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Initial error when running the FP install of the Tivoli Integrated Portal:
+FAILURE: The overall installation fails. Check /TIPFPInstaller-00.log. Errors in the install log show the WebSphereUPDI didn't install, which was caused by a missing xlm file. 
+
+SYMPTOM
+Installation errors in the TIPFPInstaller-00.log, or TIPInstaller-00.log, depending on the TIP Fixpack. Also, the location of the WebSphereUpdateInstallerV7 will vary depending on the TIP_HOME. 
+
+2013-10-11 14:19:07.837-07:00 : INFO : remove.previous: (from AntRuntime.execute) 
+2013-10-11 14:19:07.838-07:00 : INFO : [echo] Deleting folder: /opt/IBM/TIP/WebSphereUpdateInstallerV7 (from AntRuntime.execute) 
+2013-10-11 14:19:07.839-07:00 : INFO : [delete] Deleting directory /opt/IBM/TIP/WebSphereUpdateInstallerV7 (from AntRuntime.execute) 
+2013-10-11 14:19:08.564-07:00 : INFO : installUpdateInstaller: (from AntRuntime.execute) 
+2013-10-11 14:19:08.565-07:00 : INFO : [echo] Copying of /aix/TivIntProILMT/2.2.0-TIV-TIP-AIXPPC64-FP0007/cdimage.fixpack/COI/PackageSteps/WebSphereUPDI/FILES/responsefile.updiinstaller.txt to /opt/IBM/TIP/temp (from AntRuntime.execute) 
+2013-10-11 14:19:08.566-07:00 : INFO : [delete] Deleting: /opt/IBM/TIP/temp/responsefile.updiinstaller.txt (from AntRuntime.execute) 
+2013-10-11 14:19:08.572-07:00 : INFO : [copy] Copying 1 file to /opt/IBM/TIP/temp (from AntRuntime.execute) 
+2013-10-11 14:19:08.583-07:00 : INFO : [echo] Running ISMP Install from: /aix/TivIntProILMT/2.2.0-TIV-TIP-AIXPPC64-FP0007/cdimage.fixpack/COI/PackageSteps/WebSphereUPDI/FILES/7.0.0.19-WS-UPDI-AixPPC64/UpdateInstaller/install (from AntRuntime.execute) 
+2013-10-11 14:19:19.566-07:00 : INFO : [exec] Result: 1 (from AntRuntime.execute)
+/opt/IBM/TIP/_uninst/TIPInstall2207/plan/install/MachinePlan_localhost/ 
+MachinePlan_localhost.xml:205: The following error occurred while executing this line: 
+/opt/IBM/TIP/_uninst/TIPInstall2207/plan/install/MachinePlan_localhost/ 
+MachinePlan_localhost.xml:277: Error executing step: 
+An error was encountered running step WebSphereUPDI 
+
+In the <TIP_HOME>/WebSphereUndateInstallerV7/logs/log.txt: 
+
+(Oct 11, 2013 2:19:19 PM), Install, com.ibm.ws.install.ni.ismp.actions.InstallNIFPackage, err, /aix/TivIntProILMT/2.2.0-TIV-TIP-AIXPPC64-FP0007/cdimage.fixpack/COI/PackageSteps/WebSphereUPDI/FILES/7.0.0.19-WS-UPDI-AixPPC64/UpdateInstaller/updi.primary.pak/repository/nif.componentmap.primary/properties/version/nif/componentmaps/componentmap.primary.xml (No such file or directory) 
+
+Note: This exact wording of this error will vary depending on the platform and name of the CDIMAGE, the important aspect to note is the missing file on the cdimage, copied over from the Windows environment.
+
+
+CAUSE
+Primary cause of the install failure was the missing file: componentmap.primary.xml in the cd image. Because of a problem when transferring the unzipped directory structure from the Windows to UNIX server, the xlm file was not copied over.
+The software doing the transfer issued a warning message "file name too long" .
+
+
+ENVIRONMENT
+Tivoli Integrated Portal 2.x installation on any UNIX platform
+
+
+
+DIAGNOSING THE PROBLEM
+Refer to the original zip downloaded from IBM to determine if the file listed as missing exists. 
+
+
+
+RESOLVING THE PROBLEM
+1) Remove the existing <TIP_HOME>/WebSphereUpdateInstallerV7 directory. 
+
+ 2) Unzip the cdimage on the server where you are going to install the software to confirm the file and/or directory tagged as missing, exists on the original cdimage. 
+
+ 3) Reinstall the TIP Fixpack if the missing file exists.

@@ -1,0 +1,144 @@
+Title: IBM IC69451: IN LINUX, PRESSING '.' ON WELCOME PAGE IN INTERACTIVE MODE WILL CRASH DB2TOP - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Linux, when pressing key '.' on db2top welcome page in
+   interactive mode, db2top  will crash.
+   
+   <StackTrace>
+   ---FUNC-ADDR---- ------FUNCTION + OFFSET------
+   0000002A96F6DF7F ossDumpStackTraceEx + 0x01f7
+   
+   (/view/db2_v95fp4_linuxamd64_s090429/vbs/INST/lib/libdb2osse.so.
+   1)
+   0000002A96F69ABA _ZN11OSSTrapFile6dumpExEmiP7siginfoPvm + 0x00b4
+   
+   (/view/db2_v95fp4_linuxamd64_s090429/vbs/INST/lib/libdb2osse.so.
+   1)
+   0000002A96F69B81 _ZN11OSSTrapFile4dumpEmiP7siginfoPv + 0x0009
+   
+   (/view/db2_v95fp4_linuxamd64_s090429/vbs/INST/lib/libdb2osse.so.
+   1)
+   0000002A9618733B sqlo_trce + 0x03f3
+   
+   (/view/db2_v95fp4_linuxamd64_s090429/vbs/INST/lib/libdb2.so.1)
+   000000000044E1E7 interrupt + 0x00ef
+                   (db2top)
+   0000002A97AAE380 address: 0x0000002A97AAE380 ; dladdress:
+   0x0000002A97A80000 ; offset in lib: 0x000000000002E380 ;
+                   (/lib64/tls/libc.so.6)
+   0000002A97AA840E isdigit + 0x001e
+                   (/lib64/tls/libc.so.6)
+   0000000000442BCB do_foreground + 0x03af
+                   (db2top)
+   0000000000441BED main + 0x00d9
+                   (db2top)
+   0000002A97A9CACD __libc_start_main + 0x00fd
+                   (/lib64/tls/libc.so.6)
+   00000000004173AA __gxx_personality_v0 + 0x007a
+                   (db2top)
+   </StackTrace>
+   
+   that is because in main.c - > do_foreground() -> isdigit(ch),
+   when pressing char '.', ch will be assigned to old_ch,  where
+   old_ch was declared as " int old_ch " without initialization. On
+   welcome page, old_ch hasn't be assigned to any value, yet.
+   Hence,
+   In Linux, isdigit(ch) will triger SIGSEGV, In AIX, this is fine,
+   though.
+   
+   Fix: Initialize ch and old_chr to 0 when declaring variables.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  IN LINUX, PRESSING '.' ON WELCOME PAGE IN INTERACTIVE MODE WILL
+   CRASH DB2TOP
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC69451
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-24
+   
+   
+ * CLOSED DATE
+   2010-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IC69450 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC69450]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSY
+   UP

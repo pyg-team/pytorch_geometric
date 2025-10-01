@@ -1,0 +1,174 @@
+Title: IBM IC49569: The Extended Transactional Client receives FDCs with PROBE ID ZSL33001 and subsequently with PROBE ID ZS129001. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 for i5/OS Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022812]
+WebSphere MQ V6.0 Refresh Pack 6.0.2.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24013482]
+WebSphere MQ V6.0 for iSeries Refresh Pack 6.0.2.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24013496]
+WebSphere MQ V7.0 Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022810]
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24025627]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24027266]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.10 (FP03) [http://www-01.ibm.com/support/docview.wss?uid=swg24029987]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Extended Transactional Client(trial version) receives FDCs
+   with Probe ID ZSL33001 and subsequently ZS129001, when an
+   xa_open call is issued from an Extended Transactional Client
+   to the Queue Manager on the MQ Server.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Create the qmgrs\@SYSTEM folder manually.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Any user running on the Windows platform(trial), using Extended
+   Transactional Client.
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   In the trial version of the Extended Transactional Client, the
+   license checks are made against 'license time info' file which
+   is expected to present at <install_path>/qmgrs/@SYSTEM folder.
+   As the installation of the Extended Transactional Client does
+   not create qmgrs/@SYSTEM folders, FDCs with probe Id ZSL33001
+   and ZS129001 are generated.
+   Manually creating qmgrs/@SYSTEM folders under <install_path>
+   prevents the FDCs to be generated.
+   For Example, if <install_path> is C:\MQSeries, then
+   create 'qmgrs' folder under 'MQSeries' folder and then create
+   @SYSTEM under 'qmgrs' folder.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The installation script has to be modified so that
+   qmgrs/@SYSTEM folders is created when refresh pack 6.0.2.0 or
+   later is installed.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Refresh Pack 6.0.2.0
+   --------           --------------------
+   Windows            U200253
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC49569
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ FOR WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7200
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-06-02
+   
+   
+ * CLOSED DATE
+   2006-06-28
+   
+   
+ * LAST MODIFIED DATE
+   2007-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ FOR WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724H7200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

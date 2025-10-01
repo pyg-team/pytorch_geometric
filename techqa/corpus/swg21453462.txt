@@ -1,0 +1,25 @@
+Title: IBM Is it possible to use a wildcard certificate on the appliance? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to use a wildcard certificate on the appliance? 
+
+ANSWER
+Yes, a wildcard certificate can be used on the appliance, provided the following information is present in the appliance:
+
+1. Required CA certificate
+2. RSA key (public/private key pair) and/or PKCS12 file (which would contain both the public/private key pair along with the certificate).
+
+If the above are present, then there should be no issue in loading the certificate on the appliance.
+
+
+
+HISTORICAL NUMBER
+ 00001388 
+
+PRODUCT ALIAS/SYNONYM
+ Cast Iron Solution
+Cast Iron Operating System
+Cast Iron Studio

@@ -1,0 +1,131 @@
+Title: IBM PM86570: SWITCHING HISTORIC CHARTING DATA SEVERAL TIMES WILL CAUSE DMGR CRASH AND REPORT TOO MANY OPEN FILES EXCEPTION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Switch Historic Charting data several times will cause the
+   deployment manager to crash and report too many open files
+   exception
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V8.5                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Administrative console crashes when     *
+   *                      too many historic reports are opened.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When too many reports are opened in Runtime Operations, the
+   administrative console will crash. There are accompanying
+   messages in SystemOut about too many files being opened.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was updated so that files are closed when they are no
+   longer in use.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.0.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM86570
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-08
+   
+   
+ * CLOSED DATE
+   2013-05-01
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

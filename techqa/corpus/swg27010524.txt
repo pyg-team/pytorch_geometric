@@ -1,0 +1,32 @@
+Title: IBM CICS TS Web Services for the Systems Programmer - United States
+
+Text:
+CWS ; CICS Web services ; Education ; presentation ; cics transaction server 3.2 ; cics ts 3.2 ; 4.1 ; 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 ; 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 KIXINFO retention32 EDUCATION
+
+ABSTRACT
+ This presentation will help you understand the questions you need to ask to determine the qualities of services for CICS Transaction Server for z/OS (CICS TS) Web Services implementation. Knowing the required qualities of service required will enable you to define the appropriate CICS resources and set the correct configuration options. This presentation was written for CICS TS V3.2. 
+
+CONTENT
+ 
+
+ * How to determine the required Qualities of Service  * Questions to ask
+   
+   
+ * Configuration and resource definition  * Base configuration 
+    * Transport definition 
+    * Locating the web service 
+    * Quality of service 
+   
+   
+ * Documentation 
+ * Summary
+
+
+Note: This presentation was created for CICS TS V3.2 but it is applicable to CICS TS V3.1 and V4.1. Many new options are available in the newer releases of CICS TS. 
+CICS TS V3.2 Web Services for the Systems Programmer.pdf [/support/docview.wss?uid=swg27010524&aid=2] [/support/docview.wss?uid=swg27010524&aid=1]
+
+ORIGINAL PUBLICATION DATE
+ 2007/9/14 
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

@@ -1,0 +1,144 @@
+Title: IBM OA25487: EAV SUPPORT IN OMEGAMON XE FOR STORAGE ON Z/OS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  EAV Support in OMEGAMON XE for Storage on z/OS
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Apply PTF
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of OMEGAMON XE for Storage on      *
+   *                 z/OS who are running on z/OS 1.10 or         *
+   *                 higher                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Support for Extended Address Volumes    *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF                                *
+   ****************************************************************
+   Support for Extended Address Volumes
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Support for Extended Address Volumes
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA25487
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG II FOR SMS
+   
+   
+ * REPORTED COMPONENT ID
+   5608A0500
+   
+   
+ * REPORTED RELEASE
+   550
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-06-17
+   
+   
+ * CLOSED DATE
+   2008-09-17
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA43555
+   
+   
+
+MODULES/MACROS
+ *  KDFESMCD KDFLSMCD KDFSMIG  KDFSSSCQ
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG II FOR SMS
+   
+   
+ * FIXED COMPONENT ID
+   5608A0500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R550 PSY UA43555 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA43555]
+   UP08/09/20 P F809
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

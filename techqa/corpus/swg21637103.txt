@@ -1,0 +1,56 @@
+Title: IBM NumEventsToCatchUp  is only used when the Log File agent is restarted - United States
+
+Text:
+TAILRESTART TAIL EraseRestart TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ When and how is the NumEventsToCatchUp configuration file option used with the Log File Agent? 
+
+CAUSE
+The Tivoli Log File Agent User's Guide, Chapter 3. Configuration file states:
+NumEventsToCatchUp
+Specifies the event in the log that the agent starts with. This option provides some flexibility if
+the source that is being monitored is new or the agent is stopped for an extended time. Valid
+values are as follows:
+
+Note: For text files, values 0 and -1 apply. For Windows event log, values 0, -1, and n apply.
+
+0 Start with the next event in the logs. This value is the default.
+
+-1 When set to -1, the agent saves its place in the file that is being monitored. It saves its
+place so that when the agent is stopped and later restarted, it can process any events that
+are written to the log while it was stopped. The agent otherwise ignores events that
+arrived while it was stopped and restarts from the end of the file. This setting does not
+apply to pipes, or syslog monitoring on UNIX and Linux.
+
+n Set to a positive integer. Starts with the nth event from the most current event in the logs; 
+
+Chapter 2, Requirements and agent installation and config also states:
+Setting NumEventsToCatchUp=-1 causes a position file to be maintained. The position file is updated each time the agent reads the log file. The update saves the position of the agent in the log file, in case of an agent restart. Maintaining the position file has a small performance impact, and so maintain this file only if required.
+
+
+ANSWER
+The NumEventsToCatchUp configuration option specifies the event in the log file that the agent starts with when the agent is restarted. It is only used when the agent is stopped and later restarted. This option provides some flexibility when the agent is restarted if the agent is stopped for an extended time. It is not used if the source that is being monitored is new. If it is a newly discovered file on agent start-up, the agent starts with the next new event. 
+
+
+When NumEventsToCatchUp is set to -1, the agent saves its position of the last read of the file that is being monitored. When the agent is stopped and restarted, it processes any events that have been written to the file while the agent was stopped.
+
+NumEventsToCatchUp is not used while the agent is up and running.
+Note:
+a) If a monitored file is deleted, moved, or un-mounted and later rediscovered or recreated while the Log File agent is still running, NumEventsToCatchUp is not used. If the agent receives a "FILE NOT FOUND, and then the file is later rediscovered, the file is treated as a new file and read from the beginning.
+
+b) Any file that is discovered through autodiscovery while the agent is running is read from the beginning, treating all entries in the file as newly written, regardless of NumEventsToCatchUp setting. 
+
+RELATED INFORMATION
+#Tivoli Log File Agent User's Guide v6.3 [http://pic.dhe.ibm.com/infocenter/tivihelp/v61r1/index.jsp?topic=%2Fcom.ibm.itm.doc_6.3%2Flogfile%2Flogfileagent_user.htm]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ 5724C04LF
+LFA
+KLO

@@ -1,0 +1,164 @@
+Title: IBM System Requirements for Rational DOORS for HP Quality Center - United States
+
+Text:
+DSRDocument DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ The list below identifies the supported releases of IBM Rational DOORS for HP Quality Center from which you can select system requirements in different levels and organization of detail. 
+
+CONTENT
+ 
+
+Always up-to-date system requirement reports can be dynamically generated using the Software Product Compatibility Reports (SPCR) tool [http://www-969.ibm.com/software/reports/compatibility/clarity/index.html]. 
+
+For your convenience, the tabs below identify the supported releases of Rational DOORS HP Quality Center Integration from which you can select detailed system requirement reports for different contexts (by Operating System, by component). Note that clicking a link will always generate a new, up-to-date report.
+
+TAB NAVIGATION
+ * 3.6.1.2
+ * 3.6.1.1
+ * 3.6.1
+ * 3.6
+ * 3.5.1
+ * 3.5
+
+3.6.1.2 RELEASE
+REQUIREMENTS
+BY PLATFORM
+ * Windows [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=0CCC88206B0811E6865BC3F213DB63F7&osPlatforms=Windows]
+
+
+ * Supported Hypervisors [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/vesForProduct?deliverableId=0CCC88206B0811E6865BC3F213DB63F7]
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * Desktop [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=0CCC88206B0811E6865BC3F213DB63F7&duComponentIds=Desktop]
+
+ * Server [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=0CCC88206B0811E6865BC3F213DB63F7&duComponentIds=Server]
+
+
+
+
+RELATED REQUIREMENTS
+No related requirements.
+
+3.6.1.1 RELEASE
+REQUIREMENTS
+BY PLATFORM
+ * Windows [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=0CCC88206B0811E6865BC3F213DB63F7&osPlatforms=Windows]
+
+
+ * Supported Hypervisors [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/vesForProduct?deliverableId=0CCC88206B0811E6865BC3F213DB63F7]
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * Desktop [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=0CCC88206B0811E6865BC3F213DB63F7&duComponentIds=Desktop]
+
+ * Server [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=0CCC88206B0811E6865BC3F213DB63F7&duComponentIds=Server]
+
+
+
+
+RELATED REQUIREMENTS
+No related requirements.
+
+3.6.1 RELEASE
+REQUIREMENTS
+BY PLATFORM
+ * Windows [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=0CCC88206B0811E6865BC3F213DB63F7&osPlatforms=Windows]
+
+
+ * Supported Hypervisors [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/vesForProduct?deliverableId=0CCC88206B0811E6865BC3F213DB63F7]
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * Desktop [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=0CCC88206B0811E6865BC3F213DB63F7&duComponentIds=Desktop]
+
+ * Server [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=0CCC88206B0811E6865BC3F213DB63F7&duComponentIds=Server]
+
+
+
+
+RELATED REQUIREMENTS
+No related requirements.
+
+3.6 RELEASE
+REQUIREMENTS
+BY PLATFORM
+ * Windows [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1412206666239&osPlatforms=Windows]
+
+
+ * Supported Hypervisors [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/vesForProduct?deliverableId=1412206666239]
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * Desktop [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1412206666239&duComponentIds=Desktop]
+
+ * Server [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1412206666239&duComponentIds=Server]
+
+
+
+
+RELATED REQUIREMENTS
+No related requirements.
+
+3.5.1 RELEASE
+REQUIREMENTS
+BY PLATFORM
+ * Windows [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1358195251340&osPlatforms=Windows]
+
+
+ * Supported Hypervisors [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/vesForProduct?deliverableId=1358195251340]
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * Desktop [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1358195251340&duComponentIds=Desktop]
+
+ * Server [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1358195251340&duComponentIds=Server]
+
+
+
+
+RELATED REQUIREMENTS
+No related requirements.
+
+3.5 RELEASE
+REQUIREMENTS
+BY PLATFORM
+ * Windows [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1285324437121&osPlatforms=Windows]
+
+
+ * Supported Hypervisors [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/vesForProduct?deliverableId=1285324437121]
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * Desktop [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1285324437121&duComponentIds=Desktop]
+
+ * Server [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1285324437121&duComponentIds=Server]
+
+
+
+
+RELATED REQUIREMENTS
+No related requirements.
+
+RELATED INFORMATION
+ Software Product Compatibility Reports [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity/index.jsp]
+V.R.M.F. Maintenance Stream Delivery Vehicle glossary [http://www.ibm.com/support/docview.wss?uid=swg27008656]

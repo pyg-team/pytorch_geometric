@@ -1,0 +1,106 @@
+Title: IBM Best practices for embedding IBM WEBi functionality in custom applications - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The IBM Web Interface for Content Management (IBM WEBi) client is a Dojo-based Web application. If you embed IBM WEBi functionality in a custom web application, you should follow the recommendations in this document to decrease the cross-product impact of overriding CSS definitions. 
+
+CONTENT
+To decrease the cross-product impact of overriding CSS definitions, the CSS rules for IBM WEBi are tagged with "webi". It is recommended that you tag your CSS rules in a similar manner. 
+
+See the following example for additional information.
+
+
+Dojo dijit.css rule
+The following CSS rule is defined in the Dojo toolkit.
+
+
+
+ * .dijitReset 
+ * 
+ * {
+ * 
+ *  /* Use this style to null out padding, margin, border in your 
+ * 
+ * template elements so that page specific styles don't break them.
+ * 
+ *  - Use in all TABLE, TR and TD tags. 
+ * 
+ *  */
+ * 
+ * 
+ *  margin:0;
+ * 
+ *  border:0;
+ * 
+ *  padding:0;
+ * 
+ *  line-height:normal;
+ * 
+ *  font: inherit;
+ * 
+ *  color: inherit;
+ * 
+ * }
+
+
+
+Custom CSS rule 
+You might define the following rule in your CSS file, customApplication.css, which would conflict with one of the rules that is specified in the dijit.css rule, dijitReset.  * 
+ * 
+ * .createBorder 
+ * 
+ * {
+ * 
+ *  border:1;
+ * 
+ * }
+
+
+
+Example: CSS implementation without tagging your custom CSS rule 
+Here is one way that you might implement your custom CSS rule: 
+
+ * <div class="dijitReset createBorder"> 
+ * Text that is displayed in your application
+ * </div>
+
+
+
+If the dijit.css file is loaded first and the customApplication.css file is loaded second, the createBorder rule that was specified in the customApplication.css file is used, and the DIV has a border of 1. 
+
+If you then load the IBM WEBi application in your custom application, the border of the DIV is reset to 0. This occurs because IBM WEBi also loads the dijit.css file, including the dijitReset rule. 
+
+
+Best Practice Recommendation 
+Tag your CSS rules to ensure that your CSS definitions take precedence. For example, you could tag your createBorder rule with "myCustomApplication": 
+
+ * .myCustomApplication .createBorder
+ * 
+ * {
+ * 
+ *  border:1;
+ * 
+ * }
+
+
+You can then attach the myCustomApplication class to your application in the following manner: 
+
+ * <div class="myCustomApplication">
+ * 
+ *  <input class="dijitReset createBorder"></input>
+ * 
+ * </div>
+
+
+By implementing your CSS rules as classes, you can improve the CSS compatibility between IBM WEBi and your custom application. 
+
+
+
+Portions of the sample code above are licensed by The Dojo Foundation. The following notice applies to those licensed elements: 
+
+Copyright (c) 2005-2009, The Dojo Foundation 
+All rights reserved. 
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE

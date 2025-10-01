@@ -1,0 +1,90 @@
+Title: IBM CSPA003E RC=8   SC=523 when DIGTCERT and DIGTRING classes in RACLIST - United States
+
+Text:
+STERLINGPRI; CSPA003E; CDZ: C:D; RC=8; SC=52; DIGTCERT; DIGTRING; RACLIST TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CSPA003E RC=8 SC=523 errors occur in Sterling Connect:Direct for z/OS when DIGTCERT and DIGTRING classes are in RACLIST. 
+
+SYMPTOM
+CSPA003E
+CSPA091E
+PNODE
+CSPA003E - Security Violation - SNODE authentication error
+SEC#FUNC=11 SEC#CFUN=00 SEC#MSG=CSPA003E SEC#RC=00000008 SEC#SC=00000523 
+
+Connect:Direct OS/390 trace output (x'8C0000AE' trace bits). 
+
+ * 
+ * P0023 17:51:05:35 Socket Init Error.
+   P0023 17:51:05:35 
+ * REQ=SSLSOINI RC=435
+ * RS=Error number not defined: %d 
+   P0023 17:51:05:35 ENDING TLS/SSL HANDSHAKE, RC=435
+   P0023 17:51:05:35 REQ=SSLSOINI RC=435 RS=Error number not defined: %d
+   P0023 17:51:05:35 
+ * SSLH FUNCTION ERROR: SEC#FUNC=11 SEC#CFUN=00 SEC#MSG=CSPA003E SEC#RC=00000008 SEC#SC=00000523
+ * 
+   P0023 17:51:05:35 {ERROR} - SENDING SENSE CODE 0523
+   P0023 17:51:05:35 TAMSGID1=CSPA003E
+
+
+System SSL trace output (See How to capture an IBM SYSTEM SSL Trace and analyse the output [http://www.ibm.com/support/docview.wss?uid=swg21536378])  * 
+ * Unable to get issuer certificate
+   Unable to validate certificate
+ * Thd-0 INFO gsk_initialize_v2_cache(): SSL V2 cache: Size 256, Mask 0xf
+   Thd-0 INFO gsk_initialize_v3_cache(): SSL V3 cache: Size 512, Mask 0x1f
+   Thd-0 ENTRY gsk_open_keyring(): ---> Keyring 'RING1'
+   Thd-0 INFO gsk_open_keyring(): Identifier 1 assigned to 'CERT1'
+   Thd-0 INFO gsk_open_keyring(): Identifier 2 assigned to 'CERT2'
+   Thd-0 INFO gsk_open_keyring(): Identifier 3 assigned to 'CERT3' 
+ * 
+   [NOTE: There should be an "Identifier" for all certificates in the Key Ring. In this case there was no entry for the EQUIFAX Trusted Root certificate even though a RACF display of the Key Ring showed the certificate was present.] 
+ * Thd-E INFO get_issuer_certificate(): Using AuthorityKeyIdentifier to locate issuer
+   Thd-E ENTRY gsk_name_to_dn(): --->
+   Thd-E EXIT gsk_name_to_dn(): <--- Exit status 0x00000000 (0) DN: OU=Equifax Secure Certificate Authority,O=Equi
+   Thd-E INFO get_issuer_certificate(): Using issuer OU=Equifax Secure Certificate Authority,O=Equifax,C=US
+   Thd-E ENTRY gsk_get_record_by_subject(): ---> Handle 18985550
+   Thd-E EXIT gsk_get_record_by_subject(): <--- Exit status 0x0335300e (53817358) 
+   Thd-E ERROR validate_certificate(): Unable to get issuer certificate: Error 0x03353024
+   Thd-E ERROR gsk_validate_certificate(): Unable to validate certificate: Error 0x03353024
+   Thd-E EXIT gsk_validate_certificate(): <--- Exit status 0x03353024 (53817380) 
+   Thd-E ERROR read_v3_certificate(): Unable to validate peer certificate: Error 0x03353024
+   Thd-E ERROR send_v3_alert(): Sent SSL V3 alert 42 to 111.222.333.444[1364] 
+   Thd-E INFO gsk_write_v3_record(): Calling write routine for 7 bytes 
+   Thd-E INFO gsk_write_v3_record(): 7 bytes written 
+   Thd-E ERROR gsk_secure_socket_init(): SSL V3 client handshake failed with 1111.222.333.444[1364]
+   Thd-E INFO default_setsocketoptions(): TCP_NODELAY restored for socket 2
+   Thd-E EXIT gsk_secure_socket_init(): <--- Exit status 0x000001b3 (435)
+
+
+CAUSE
+The trusted root certificate had been added to the RACF Key Ring but RACF classes DIGTCERT and DIGTRING were included in the RACLIST. This means that changes to the Key Ring are not picked up by Sterling Connect:Direct for z/OS until a RACLIST REFRESH is done and Sterling Connect:Direct for z/OS is stopped and restarted.
+
+ENVIRONMENT
+Using Secure+ Option 
+Transfering from Sterling Connect:Direct for z/OS to Sterling Connect:Direct for Windows using Secure+ SSL
+Certificates stored in RACF Key Ring 
+
+
+
+RESOLVING THE PROBLEM
+1. Add trusted root certificate to the RACF Key Ring 
+
+2. Issue RACF command: SETROPTS RACLIST(DIGTCERT DIGTRING) REFRESH 
+
+3. Stop and start Sterling Connect:Direct for z/OS
+
+Note: Use RACF command SETR LIST to see if DIGTCERT and DIGTRING are in the RACLIST. The SETR LIST CLASSES = output shows the RACF classes included in the RACLIST. 
+
+See the IBM manuals: 
+
+Security Server RACF Security Administrator's Guide [https://m.ibm.com/https/publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/DOCNUM/SA22-7683/CCONTENTS?wirelessshow=2]
+
+and Security Server RACF Command Language Reference [http://publib.boulder.ibm.com/infocenter/zos/v1r13/index.jsp?topic=%2Fcom.ibm.zos.r13.icha400%2Fichza4c0.htm] for details about the RACLIST and the RACF commands mentioned in this entry. 
+
+
+
+HISTORICAL NUMBER
+ PRI12133
+SCI98658

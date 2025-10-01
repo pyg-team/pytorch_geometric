@@ -1,0 +1,178 @@
+Title: IBM JR58837: USERS CAN'T ACCESS HERITAGE PROCESS PORTAL AND MUST LOG IN AGAIN WHEN IBM BPM IS CONFIGURED WITH THE CUSTOM CONTEXT ROOT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+bpm.8600.cf2018.03.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8600.cf2018.03.delta.repository&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If IBM Business Process Manager (BPM) is configured with the
+   custom context root, the client browser might fail with a 401
+   error to one of the following files:
+   
+   
+   /mum/mycontenthandler/mm/dav/filestore/public/themes/processPort
+   alTheme/img/openhand.cur
+   
+   or
+   
+   /mum/mycontenthandler/mm/dav/filestore/public/themes/processPort
+   alTheme/img/closedhand.cur
+   
+   As a result, users can't access Heritage Process Portal and must
+   to log in again.
+   
+   PRODUCTS AFFECTED
+   IBM BPM
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Remove the CSS rules containing the full-path references from
+   the
+   /mum/mycontenthandler/mm/dav/filestore/public/themes/processPort
+   alTheme/theme.css file, which is located in WebDav.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This issue occurs because the full-path references to
+   openhand.cur and closedhand.cur are defined without the context
+   root prefix in the
+   /mum/mycontenthandler/mm/dav/filestore/public/themes/processPort
+   alTheme/theme.css file, which is located in WebDav:
+   
+   ============
+   
+   .dj_ie .bpm-social-dashboardOrganizer li.hover
+   .dashboardItem-text,
+   .dj_ie .bpm-social-dashboardOrganizer .organizerInnerLi:hover,
+   .dj_ie .bpm-social-dashboardOrganizer .keyboardSelected
+   .organizerInnerLi,
+   .dj_ie .bpm-social-dashboardOrganizer .dojoDndItemOver,
+   .dj_ie .bpm-social-dashboardOrganizer .dojoDndItemOver {
+    cursor:
+   url(/mum/mycontenthandler/mm/dav/filestore/public/themes/process
+   PortalTheme/img/openhand.cur), move;
+   }
+   
+   .dj_ie .dojoDndMove .bpm-social-dashboardOrganizer li.hover
+   .dashboardItem-text,
+   .dj_ie .dojoDndMove .bpm-social-dashboardOrganizer
+   .organizerInnerLi:hover,
+   .dj_ie .dojoDndMove  .bpm-social-dashboardOrganizer
+   .dojoDndItemOver,
+   .dj_ie .bpm-social-dashboardOrganizer-avatar,
+   .dj_ie .dojoDndMove .bpm-social-dashboardOrganizer {
+    cursor:
+   url(/mum/mycontenthandler/mm/dav/filestore/public/themes/process
+   PortalTheme/img/closedhand.cur), move;
+   }
+   ==================
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix that removes full-path references to openhand.cur and
+   closedhand.cur will be available in a future release of IBM BPM.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR58837
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM
+   
+   
+ * REPORTED COMPONENT ID
+   5737A5700
+   
+   
+ * REPORTED RELEASE
+   860
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-12-22
+   
+   
+ * CLOSED DATE
+   2018-02-15
+   
+   
+ * LAST MODIFIED DATE
+   2018-02-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM
+   
+   
+ * FIXED COMPONENT ID
+   5737A5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,137 @@
+Title: IBM IV93570: THE UNIX OS AGENT ON AIX DOES NOT DISPLAY AGGREGATE CPU DATA. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM(R) Tivoli(R) Monitoring: UNIX(R) OS Agent 6.2.3.5-TIV-ITM_UNIX-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24043712]
+IBM Tivoli Monitoring: Unix(R) OS Agent 6.3.0.7-TIV-ITM_UNIX-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24043713]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On AIX, the Monitoring Agent for UNIX OS does not
+   display aggregate CPU data on the System...CPU% workspace when
+   there is only one CPU on the system.
+   
+   Environment:      All releases
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  UNIX OS Agent does not display aggreate CPU data on a system
+   where there is only one CPU on the system for the SMP CPU
+   attribute group.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In order for this APAR to be properly implemented in your
+   environment a new environment variable has been added,
+   KUX_AGGREGATE_CPU.   When set to TRUE, the aggregate CPU
+   information will be displayed on a single CPU system.  The
+   default is FALSE, meaning no aggretate line will be displayed.
+   The following is an example of setting the variable
+       in the $CANDLEHOME/config/ux.ini file:
+            KUX_AGGREGATE_CPU=TRUE
+   
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+   
+      | interim fix | 6.2.3.5-TIV-ITM_UNIX-IF0004 |
+      | interim fix | 6.3.0.7-TIV-ITM_UNIX-IF0001 |
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV93570
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040U
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-02-20
+   
+   
+ * CLOSED DATE
+   2017-05-24
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * FIXED COMPONENT ID
+   5724C040U
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP

@@ -1,0 +1,149 @@
+Title: IBM JR50807: PERFORMANCE SLOW FOR "COPY ITEM TO" AND "MOVE ITEM TO" OPERATIONS IN PROCESS DESIGNER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 6 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24039185]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The performance of the "Copy item to" and "Move item to"
+   operations in IBM Process Designer can be very slow. You might
+   notice three REST or EJB calls between the Process Designer and
+   IBM Process Center for each process application or toolkit
+   track. The network latency of the individual calls can add up to
+    a large delay.
+   
+   You experience this delay after you select the "Copy item to" or
+   "Move item to" options just before you are shown the additional
+   options, such as "Other Process App" or "Other Toolkit".
+   
+   PRODUCTS AFFECTED:
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  "Copy item to" and "Move item to" operations are slow in Process
+    Designer when there is high network latency, you have a large
+   number of process applications or toolkits in the environment,
+   or both situations occur.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.0.1 that optimizes the
+   algorithm of retrieving data between Process Designer and
+   Process Center server.
+   
+    On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR51292 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR51292] (it is a replacement interim fix for JR50807):
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select APAR or SPR, enter JR51292 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR51292], and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR50807
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-17
+   
+   
+ * CLOSED DATE
+   2014-09-24
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

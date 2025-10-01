@@ -1,0 +1,21 @@
+Title: IBM Incoming Mail Rejected for Policy Reasons After Enabling "Verify Connecting Hostname in DNS" - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US 
+
+QUESTION
+A customer who was having spamming problems enabled the option "Verify connecting hostname in DNS" in the Configuration document (Router/SMTP -> Restrictions and Controls -> SMTP Inbound Controls tab). However, they found that incoming mail was being rejected for policy reasons, with the following error: 
+
+ * 
+ * 
+
+ANSWER
+In this case, the customer's specified DNS was an internal LAN DNS, instead of the ISP DNS. Since the DNS was internal, the Domino server was trying to verify the connecting servers against the internal DNS server but not finding the entries. 
+
+Adding the correct ISP DNS to the TCPIP configuration resolves the problem.
+
+Supporting Information:
+If "Verify connecting hostname in DNS" is enabled, the Domino server will look up the IP address of the connecting host in DNS. If the IP address is not found or is found to be invalid, Domino will still accept the connection, but it will not allow the mail to be transferred. Domino then returns an error message to the originating server, and the mail is not received. This is also referred to as a reverse lookup to DNS, matching the connecting IP address to the hosts.

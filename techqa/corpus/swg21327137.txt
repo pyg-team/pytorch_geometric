@@ -1,0 +1,33 @@
+Title: IBM Checking the revocation status of a certificate using the IBM WebSphere DataPower SOA Appliance - United States
+
+Text:
+datapower; certificate; certificate revocation; certificate revocations; crl; Online Certificate Status Protocol; OCSP; 7993; machine type 7993 TECHNOTE (FAQ)
+
+QUESTION
+ Does the IBM WebSphere DataPower SOA Appliance have the ability to perform certificate revocation checks? 
+
+ANSWER
+DataPower currently provides two ways to check if a certificate has been revoked: 
+
+ * Using an OCSP extension function 
+ * Using a CRL configuration object
+
+
+Using an OCSP extension function 
+The following DataPower extension functions can be used together to perform online certificate status (OCSP) checks: 
+
+
+Function Details dp:ocsp-validate-certificate() Makes an OCSP request to an OCSP server, validates the server response, and returns an XML representation of the response. dp:ocsp-validate-response() Validates an OCSP server response, previously obtained by dp:ocsp-validate-certificate(), and returns an XML representation of the response. 
+
+More information about these functions can be found in the Extensions-Common Guide. 
+
+Using a CRL configuration object 
+If using an OCSP extension function is not appropriate, another alternative is to create a Certificate Revocation List (CRL) Retrieval object. 
+
+For information about the CRL Retrieval object, review the " Working with CRL Retrieval objects" section of the WebGUI documentation. 
+To access product documentation, see these instructions. [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21377654]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower B2B Appliance XB60 Not Applicable Firmware 3.7.3, 1.0.0 Edition Independent Business Integration WebSphere DataPower Integration Appliance XI50 Not Applicable Firmware 3.8, 3.7.3, 3.7.2, 3.7.1, 3.6.1, 3.6 Edition Independent Business Integration WebSphere DataPower Low Latency Appliance XM70 Not Applicable Firmware 3.7.3, 1.0.0 Edition Independent Business Integration WebSphere DataPower XML Security Gateway XS40 Not Applicable Firmware 3.7.3, 3.7.2, 3.7.1, 3.6.1, 3.6 Edition Independent

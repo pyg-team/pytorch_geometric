@@ -1,0 +1,84 @@
+Title: IBM Security Bulletin: Vulnerability in MD5 Signature and Hash Algorithm affects Watson Explorer (CVE-2015-7575) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The MD5 “SLOTH” vulnerability on TLS 1.2 affects Watson Explorer. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-7575 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7575]
+DESCRIPTION: The TLS protocol could allow weaker than expected security caused by a collision attack when using the MD5 hash function for signing a ServerKeyExchange message during a TLS handshake. An attacker could exploit this vulnerability using man-in-the-middle techniques to impersonate a TLS server and obtain credentials. 
+CVSS Base Score: 7.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/109415 [https://exchange.xforce.ibmcloud.com/vulnerabilities/109415] for the current score.
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:L/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+These vulnerabilities apply to the following products and versions: 
+
+ * Watson Explorer Foundational Components versions 11.0.0.0 - 11.0.0.1 
+ * Watson Explorer Foundational Components versions 10.0.0.0 - 10.0.0.2 
+ * Watson Explorer Foundational Components versions 9.0.0.0 - 9.0.0.6 
+ * InfoSphere Data Explorer versions 8.2 - 8.2-4
+
+REMEDIATION/FIXES
+Follow these steps to upgrade to the required version of OpenSSL. The table reflects product names at the time the specified versions were released. To use the links to Fix Central in this table, you must first log in to the IBM Support: Fix Central site at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]. 
+
+Affected Product Affected Versions Fix Watson Explorer Foundational Components 11.0.0.0 - 11.0.0.1 Upgrade to Version 11.0.0.2
+
+See Watson Explorer Version 11.0.0.2 Foundational Components [http://www.ibm.com/support/docview.wss?uid=swg24041612] for download information and instructions. Watson Explorer Foundational Components 10.0.0.0 - 10.0.0.2 Upgrade to Version 10.0.0.2 (if necessary), then apply the 10.0.0.2 interim fix.
+ 1. If not already installed, upgrade to version 10.0.0.2. See Watson Explorer 10.0.0.2 Foundational Components [http://www.ibm.com/support/docview.wss?uid=swg24039429] for download information and instructions. 
+ 2. Download the 10.0.0.2 interim fix for your edition of Watson Explorer from Fix Central [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Watson%2BGroup&product=ibm/Information+Management/InfoSphere+Data+Explorer&release=10.0.0.2&platform=All&function=all#Watson%20Explorer]. 
+ 3. Place the interim fix zip or tar file at the root of the Watson Explorer Engine installation directory. 
+    Default locations:
+    Linux: /opt/ibm/WEX/Engine 
+    Windows: \Program Files\IBM\WEX\Engine 
+ 4. Run Engine/bin/velocity-shutdown[.exe] 
+ 5. Extract all files from the archive file. 
+ 6. Linux users should change ownership on all Engine subdirectories to their Apache user and Apache user group by running chown -R apache:apache * 
+ 7. Run Engine/bin/velocity-startup[.exe] 
+
+Watson Explorer Foundational Components 9.0.0.0 - 9.0.0.6 Upgrade to Version 9.0.0.6 (if necessary), then apply the 9.0.0.6 interim fix.
+ 1. If not already installed, upgrade to version 9.0.0.6. Watson Explorer 9.0.0.6 can be downloaded from Fix Central [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Watson%2BGroup&product=ibm/Information+Management/InfoSphere+Data+Explorer&release=9.0.0.6&platform=All&function=all#Watson%20Explorer]. 
+ 2. Download the 9.0.0.6 interim fix for your edition of Watson Explorer from Fix Central [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/InfoSphere+Data+Explorer&release=9.0.0.6&platform=All&function=all#Watson%20Explorer]. 
+ 3. Place the interim fix zip or tar file at the root of the Watson Explorer Engine installation directory. 
+    Default locations:
+    Linux: /opt/ibm/IDE
+    Windows: \Program Files\IBM\IDE 
+ 4. Run Engine/bin/velocity-shutdown[.exe] 
+ 5. Extract all files from the archive file. 
+ 6. Linux users should change ownership on all Engine subdirectories to their Apache user and Apache user group by running chown -R apache:apache * 
+ 7. Run Engine/bin/velocity-startup[.exe]
+
+
+Note: After installing the interim fix, the splash screen (available from Help > About) will read "9.0.0.6", while the "Release Version" below it will read "9.0.0.7". This discrepancy is to be expected. InfoSphere Data Explorer 8.2 - 8.2-4 Upgrade to Version 8.2-4, then apply the 8.2-4 interim fix.
+ 1. If not already installed, upgrade to version 8.2-4. Watson Explorer 8.2-4 can be downloaded from Fix Central [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Watson%2BGroup&product=ibm/Information+Management/InfoSphere+Data+Explorer&release=8.2.4.0&platform=All&function=all#Watson%20Explorer]. 
+ 2. Download the 8.2-4 interim fix from Fix Central. Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FInfoSphere+Data+Explorer&fixids=8.2-4-WS-DataExplorer-Linux-IF001&source=SAR&function=fixId&parent=Watson%20Group]| Windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FInfoSphere+Data+Explorer&fixids=8.2-4-WS-DataExplorer-Windows-IF001&source=SAR&function=fixId&parent=Watson%20Group] 
+ 3. Place the interim fix zip or tar file at the root of the Watson Explorer Engine installation directory. 
+    Default locations:
+    Linux: /opt/IBM/IDE/Engine
+    Windows: \Program Files\IBM\IDE 
+ 4. Run Engine/bin/velocity-shutdown[.exe] 
+ 5. Extract all files from the archive file. 
+ 6. Linux users should change ownership on all Engine subdirectories to their Apache user and Apache user group by running chown -R apache:apache * 
+ 7. Run Engine/bin/velocity-startup[.exe]
+
+
+Note: After installing the interim fix, the splash screen (available from Help > About) will read "8.2-4", while the "Release Version" below it will read "8.2-5". This discrepancy is to be expected. WORKAROUNDS AND MITIGATIONS
+None.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 27 January 2016: original document published. 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

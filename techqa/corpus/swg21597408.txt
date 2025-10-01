@@ -1,0 +1,43 @@
+Title: IBM Community Console online help fails with "WPG WAS_INSTALL_ROOT" undefined variable error. - United States
+
+Text:
+MT# 00137; 082; 000 WAS variables WAS_INSTALL_ROOT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Community Console online help fails with "WPG WAS_INSTALL_ROOT" undefined variable error. 
+
+SYMPTOM
+Community Console online help fails with "WPG WAS_INSTALL_ROOT" undefined variable error. That variable however happens to be correctly defined in WAS Admin Console "Environment > WebSphere Variables". 
+
+The WAS_INSTALL_ROOT variable can be found in the variables.xml file at the cell, node and server level. For an application server, the hierarchy is such that server level values are used first.
+
+
+RESOLVING THE PROBLEM
+WebSphere Application Support Team advised to clear the temp spaces on all nodes, including the Dmgr, as follows: 
+
+1) Stop the DMGR. 
+
+2) Remove the <dmgr_profile>/wstemp, <dmgr_profile>/temp and <dmgr_profile>/config/temp directories. 
+
+3) Start the DMGR. 
+
+ 
+
+For each Node: 
+
+1) Stop the node agent and all JVMs on the node. 
+
+2) Remove the <node_profile>/wstemp, <node_profile>/temp and <node_profile>/config/temp directories. 
+
+3) Run a "manual sync" (syncnode) of the node. 
+
+4) Start the nodeagent and other JVMs. 
+
+ 
+
+Do a "search" or "grep" of the WAS_INSTALL_ROOT in all XML files under "<dmgr_profile>/config/cells/<cell_name>" directory and sub-directories for the Variables.xml file and verify that the "WAS_INSTALL_ROOT" is correctly set to point to the WAS installation root (ie:C:\IBM\WebSphere\Appserver).
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Partner Gateway Enterprise Edition Not Applicable AIX, HP-UX, Linux, Solaris, Windows, Linux on Power, Windows 2003 server, Linux pSeries 6.2.1, 6.2, 6.1.1, 6.1 Advanced, Enterprise

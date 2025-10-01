@@ -1,0 +1,144 @@
+Title: IBM PI47631: BAR CHARTS IN ANALYTICS DASHBOARD MAY NOT RENDER PROPERLY WHEN VIEWED IN INTERNET EXPLORER 11 AND MICROSOFT EDGE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When viewing the Analytics Dashboard using Internet Explorer 11
+   or Microsoft Edge, bar charts may not be rendered correctly
+   (missing bars in chart) when processing a very large amount of
+   data (1 million or more records)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  As a workaround, the Analytics Dashboard may be viewed using
+   another supported browser (other than Internet Explorer 11 or
+   Microsoft Edge).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of the MobileFirst Operational Analytics Console that  *
+   * use Internet Explorer or Microsoft Edge to access the user   *
+   * interface                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Internet Explorer and Microsoft Edge browsers do not fully   *
+   * comply with the latest SVG rendering standards that are used *
+   * in rendering the bar chart. When a large amount of data is   *
+   * summarized in a bar chart (for instance, millions of         *
+   * sessions per day in the 'Total Sessions' chart), the number  *
+   * of sessions becomes too high when we use a unit-less         *
+   * measurement, and the bars in the bar chart will not render   *
+   * in these browsers                                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * -                                                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The solution used is to no longer use a unit-less value for the
+   bars. Instead, we moved to calculating pixels for the size of
+   each bar. This follows an older standard for SVG images that
+   Internet Explorer and Microsoft Edge browsers can render.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI47631
+   
+   
+ * REPORTED COMPONENT NAME
+   MFPF/WORKLIGHT
+   
+   
+ * REPORTED COMPONENT ID
+   5725I4301
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-08-26
+   
+   
+ * CLOSED DATE
+   2015-09-14
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MFPF/WORKLIGHT
+   
+   
+ * FIXED COMPONENT ID
+   5725I4301
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

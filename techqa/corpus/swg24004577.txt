@@ -1,0 +1,59 @@
+Title: IBM TOOLS - Stylesheet (CNMSTYLE) Migrator - United States
+
+Text:
+CNMSTYLE; stylesheet; NetView for z/OS; NetView tools; CNMEMIG DOWNLOADABLE FILES
+
+ABSTRACT
+ Migrates configuration parameters from DSIPARM files to CNMSTYLE 
+
+DOWNLOAD DESCRIPTION
+This tool compares the DSIPARM files from the release you wish to migrate from (as far back as NetView for MVS V2R4), with your current CNMSTYLE file and shows you any differences. It will then optionally update your CNMSTYLE file with any or all of the differences. The tool consists of two compiled REXX execs (CNMEMIG and CNMEAUX), one message file (CNMNMSGS), and a JCL sample file (CNMSJMIG) that is used to invoke CNMEMIG. A documentation file is also included. The files have been packaged in TSO TRANSMIT format.
+
+Programming language: REXX and JCL
+
+Author: Bob Neill
+Date: April 10, 2003
+
+This sample is provided "as-is", and no warranty is provided by IBM. Use at your own risk!
+
+PREREQUISITES
+Tivoli NetView for z/OS V5R1 and
+the REXX Alternate Library
+
+INSTALLATION INSTRUCTIONS
+This package includes the following files:
+
+CNMEMIG (compiled REXX exec)
+CNMEAUX (compiled REXX exec)
+CNMSJMIG (JCL sample file)
+CNMNMSGS (message file)
+README (documentation file)
+
+The files are in sequential format and should be uploaded as such. For example, issuing the following command on Windows will upload the file via the Personal Communications Emulator as a binary file. Where "send" is the command, "cnmemig.xmt" is the file, "a:" is the emulator window and "CNMEMIG.UPLOAD" is the resulting data set on TSO:
+
+send cnmemig.xmt a:'CNMEMIG.UPLOAD'
+
+Note that the files must be uploaded in binary format. That means not including "ascii crlf" on an emulator upload, and using "bin" in any FTP transfer.
+
+The files must be received on TSO. To do this, issue a TSO RECEIVE command to read the files and convert them from TSO TRANSMIT format to PDS members. The syntax of the command is:
+
+receive indataset('CNMEMIG.UPLOAD')
+
+You will then be prompted with the following 2 messages. Note that the actual name of the data set that was packaged is displayed, rather than the name of the intermediate transmit file.
+
+INMR901I Dataset MIGTOOL.CLIST from USERxx on xxxx
+INMR906A Enter restore parameters or 'DELETE' or 'END' +
+
+If you simply press ENTER, the data set will be received with the name "HLQ.CLIST" where "HLQ" is the high-level qualifier that is created using the userid under which you are logged on. If you would like to rename the data set, then you must supply a data set name in response to the INMR906A message such as:
+
+da('MY.USER.DATASET')
+
+Once you have completed the receive, the 5 files listed above will be members in a PDS data set. The README file contains instructions on where to place each of the files, and how to run the tool.
+
+NOTE: Although listed separately below, the same package applies to both OS/390 and z/OS.
+
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] CNMEMIG (z/OS) 4/10/2003 English 262400 FTP [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/cnmemig.xmt] DD CNMEMIG (OS/390) 4/10/2003 English 262400 FTP [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/cnmemig.xmt] DD

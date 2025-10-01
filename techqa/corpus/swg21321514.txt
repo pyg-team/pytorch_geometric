@@ -1,0 +1,117 @@
+Title: IBM Collecting Data: ITCAM for J2EE - United States
+
+Text:
+CAMJ2ALL CAMJ2CD MustGather log ITCAMfJ2EE J2EE "ITCAM for J2EE" Gather "Log Gathering" "Collecting Data" Collect Collecting Data Agent TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ UK English 
+
+QUESTION
+ How do I collect the J2EE DC and TEMA logs? 
+
+ANSWER
+
+1. Please Collect "yj" and/or "ht" version from TEMS, TEPS, TEMA, and send the output. 
+
+Command on Windows : <ITM_HOME>\bin\kincinfo -i 
+on UNIX/Linux : <ITM_HOME>/bin/cinfo -i 
+2. Collect MS, DC, TEMA data using following instruction and send the ouptut. 
+
+
+*** Collecting J2EE 7.1.1 Data 
+Note : Since the J2EE agent is composed by two parts, Data Collector and TEMA, you can separately collect data from them by invoking the two following scripts as " root": 
+
+=====> Data Collector (DC) Location Windows: <ITM_HOME>\TMAITM6\j2eedc\7.1.1.0.0\itcamdc\bin\cyn_collector.cmd
+Unix : <ITM_HOME>/<architecture>/yj/j2eedc/7.1.1.0.0/itcamdc/bin/cyn_collector.sh
+
+* example: 
+- Windows platform :
+C:\IBM\ITM\TMAITM6\j2eedc\7.1.1.0.0\itcamdc\bin\cyn_collector.cmd
+- Linux 64 bit platform : 
+opt/IBM/ITM/lx8266/yj/j2eedc/7.1.1.0.0/itcamdc/bin/cyn_collector.sh Usage/
+Output Windows : %TEMP%\CYN\*.zip 
+Unix : <ITM_HOME>/tmp/CYN/<hostname>-CYNenv.jar
+=====> TEMA Location Windows : <ITM_HOME>\TMAITM6\kyjcollect.cmd
+Unix : <ITM_HOME>/<architecture>/yj/bin/kyjcollect.sh
+
+* example: 
+- Windows platform : C:\IBM\ITM\TMAITM6\kyjcollect.cmd
+- Linux 64 bit platform : opt/IBM/ITM/lx8266/yj/bin/kyjcollect.sh Usage/
+Output Windows : %TEMP%\kyj\*.jar
+Unix : $HOME/tmp/kyj/kyjcollect-$HOSTNAME.tar.gz 
+
+* example:
+- Linux : /root/tmp/kyj/kyjcollect-<hostname>.tar.gz
+- AIX, Solaris, HPUX : /tmp/kyj/kyjcollect-<hostname>.tar.gz 
+
+*** Collecting J2EE 6.1 FP4 or higher version using script 
+=============> Managing Server (MS) Location on Window/Unix/Linux : <MS_HOME>/bin/MS_Gather_Data.sh
+
+Note: On Windows, the user must run the script in a Korn Shell environment. Usage/
+Output on Windows/Unix/Linux :
+<MS_HOME>/bin/MS_Gather_Data.sh [pmr][was_home][appServer]
+
+Note: [was_home] = directory where the MS Visualization Engine is installed 
+=============> Data Collector (DC) Location on Windows : <DC_HOME>\itcamdc\bin\cyn_collector_j2.cmd
+on Unix/Linux : <DC_HOME>/itcamdc/bin/cyn_collector_J2.sh Output on Windows : <DC_HOME>\collect.jar
+on Unix/Linux : <DC_HOME>/collect.tar.gz =============> TEMA Location on Windows : <ITM_HOME>\TMAITM6\kyjcollect.cmd 
+on Unix/Linux : <ITM_HOME>/<arch>/yj/bin/kyjcollect.sh 
+where <arch>= location that indicates the platforms
+(ex: sol283 for Solaris, aix513 for AIX, and hp11 for HP-UX).
+Usage on Windows : <ITM_HOME>\TMAITM6\kyjcollect.cmd 
+on Unix/Linux : <ITM_HOME>/<arch>/yj/bin/kyjcollect.sh Output on Windows : %TEMP%\kyj\*.jar
+on Unix/Linux : $HOME/tmp/kyj/kyjcollect-<hostname>.tar.gz 
+
+
+Back to top 
+
+*** MANUAL J2EE 6.1 Data Collection *** 
+Managing Server (MS) Data - manual 
+* Window and Unix Location <MS_HOME>/logs/am_stderr.log
+<MS_HOME>/logs/am_stdout.log
+<TIVOLI_LOGS>/msg-<component>.log
+<TIVOLI_LOGS>/trace-<component>.log
+<TIVOLI_LOGS>/audit-ms.log 
+
+Data Collector (DC) Data - manual 
+* Windows and Unix 
+
+For the version lower than ITCAM for J2EE 6.1 FixPack 4 Here are the logs required for each application server. The logs are from the following directory: <TIVOLI_LOGS>/nodename.instancename 
+
+Application Server Logs to Collect WebLogic, WASCE, J2SE msg-dc.log, trace-dc.log, msg-dc-native.log, trace-dc-native.log NetWeaver msg-dc-sap.log, trace-dc-sap.log, msg-dc-native.log, trace-dc-native.log Tomcat msg-dc-Standard.log, trace-dc-Standard.log, msg-dc-native.log, trace-dc-native.log Oracle msg-dc.log, trace-dc.log, trace-dc-bcm.log, msg-dc-native.log, trace-dc-native.log JBoss msg-dc-Unified.log, trace-dc-Unified.log, trace-dc-bcm.log, msg-dc-native.log, trace-dc-native.log 
+
+For the version ITCAM for J2EE 6.1 FixPack 4 or higher Here are the logs required for each application server. The logs are from the following directory: <TIVOLI_LOGS>/nodename.instancename 
+
+Application Server Logs to Collect WebLogic msg-dc-ParentLast.log, trace-dc-ParentLast.log, msg-dc-native.log, trace-dc-native.log, msg-dc-bcm.log, trace-dc-bcm.log WASCE, J2SE msg-dc.log, trace-dc.log, msg-dc-native.log, trace-dc-native.log, msg-dc-bcm.log, trace-dc-bcm.log NetWeaver msg-dc-sap.log, trace-dc-sap.log, msg-dc-native.log, trace-dc-native.log ,msg-dc-bcm.log, trace-dc-bcm.log Tomcat msg-dc-tomcat.log, trace-dc-tomcat.log, msg-dc-native.log, trace-dc-native.log, msg-dc-bcm.log, trace-dc-bcm.log Oracle msg-dc.log, trace-dc.log, trace-dc-bcm.log, msg-dc-native.log, trace-dc-native.log, msg-dc-bcm.log, trace-dc-bcm.log JBoss msg-dc-jboss.log, trace-dc-jboss.log, msg-dc-native.log, trace-dc-native.log, msg-dc-bcm.log, trace-dc-bcm.log 
+
+Agent (TEMA) Data - manual 
+* Windows Location <ITM_HOME>/logs/kyj-tema-trace.log, 
+<ITM_HOME>/logs/kyj-tema-msg.log,
+<ITM_HOME>/logs/KYJ.Primary.*.*JVM.log 
+* Unix Location <ITM_HOME>/<PLATFORM>/logs/kyj-tema-trace.log, 
+<ITM_HOME>/<PLATFORM>/logs/kyj-tema-msg.log,
+<ITM_HOME>/logs/KYJ.Primary.*.*JVM.log 
+
+Back to top 
+
+*******J2EE Installation Error Logs (for all version) ******* 
+Managing Server (MS) Data - install error log 
+
+Managing Server Installation Error Logs (for all version) 
+Components Logs to Collect Managing Server specific logs * Windows : C:\Program Files\ibm\tivoli\common\CYN\logs 
+* Unix : /var/ibm/tivoli/common/CYN/logs Embedded DB2 logs * Windows : <user's My Documents directory>\DB2LOG
+* Unix : /tmp/db2setup.* Embedded WebSphere Application Server ** Windows and Unix :
+<MS_HOME>/temp
+<J2EEAPP_HOME>/logs Embedded WebSphere Application Server Refresh Pack ** Windows and Unix :
+<J2EEAPP_HOME>/logs/update 
+
+
+Data Collector (DC) Data - install error log 
+* Window and Unix Location <TIVOLI_LOGS>/trace-install.log
+<TIVOLI_LOGS>/launchContainer/
+<TIVOLI_LOGS>/platformUtils/
+If you use NetWeaver, <TIVOLI_LOGS>/config.log 
+Back to top  
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for J2EE

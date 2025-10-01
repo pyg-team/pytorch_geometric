@@ -1,0 +1,181 @@
+Title: IBM PM85294: GET ABENDASH2 CONTINUOUSLY AFTER MSDFHSH0105 AND MSDFHSH0107. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are running BTS and it appears there is a problem with the
+   repository file. This generates messages DFHSH0105 and also
+   DFHSH0107. Then you get repeated ABENDAHS2  coming out of
+   DFHSHRQ in the shrq_method_accept routine. The messages are
+   generated continuously several times per second. This will
+   eventually fill the system spool and cause other severe issues.
+   additional symptoms: KIXREVSCB
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CICS issues repeated DFHAC2236 abend    *
+   *                      ASH2 messages for transaction CSHA.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When a BTS activity is unflattened from the repository, DFHBAXM
+   bind processing detects that it had been marked active when
+   hardened to the dataset. This is invalid, so a disaster response
+   is returned and the transaction is abended ASH2. As part of
+   commit backwards processing, a new CSHA task is attached to
+   harden data back to the repository. However, this fails in bind
+   processing for the same reason, and the process is repeated.
+   DFHAC2236 messages are issued for every task that abends like
+   this, and these can start to affect spool usage.
+   KEYWORDS: CBTS BA AC2236 BAXM abendash2
+             msgDFHAC2236 msgDFHSH0105 msgDFHSH0107 SH0105 SH0107
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The BA domain has been modified to generate first failure data
+   capture if an activity is still marked as active when it is
+   about to be flattened to, or has been unflattened from, the
+   repository data set.
+     The SH domain has been modified to set the request state to
+   free in the event of a disaster being returned from baxm_bind
+   processing. This will discard the request rather than reject
+   it with the abend that results in the loop.
+     The CICS Transaction Server V4.2 Trace Entries manual
+   (SC34-7187-01) will be updated as follows:
+     New trace entry BA 0127 will be added after existing entry
+   BA 0126 on page 470:
+   "BA 0127  DFHBAXM Exc  Activity mode active on repository"
+     New trace entry BA 0176 will be added after existing entry
+   BA 0175 on page 471:
+   "BA 0176  DFHBAXM Exc  Bind disaster    1 BAXM parameter list"
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM85294
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-21
+   
+   
+ * CLOSED DATE
+   2013-06-21
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM87991 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM87991] UK95526
+   
+   
+
+MODULES/MACROS
+ *     DFHATUP  DFHBAAC  DFHBAAC0 DFHBAAC1 DFHBAAC2
+   DFHBAAC3 DFHBAAC4 DFHBAAC5 DFHBAAC6 DFHBAAR1 DFHBAAR2 DFHBAA10
+   DFHBAA11 DFHBAA12 DFHBABR  DFHBABU1 DFHBACM  DFHBACR  DFHBADM
+   DFHBADUF DFHBADU1 DFHBALR2 DFHBALR3 DFHBALR4 DFHBALR5 DFHBALR6
+   DFHBALR7 DFHBALR8 DFHBALR9 DFHBAOFI DFHBAPR  DFHBAPR0 DFHBAPT1
+   DFHBAPT2 DFHBAPT3 DFHBARUC DFHBARUD DFHBARUP DFHBASP  DFHBATRI
+   DFHBATT  DFHBAUE  DFHBAVP1 DFHBAXM  DFHSHDM  DFHSHPR  DFHSHRE1
+   DFHSHRM  DFHSHRQ  DFHSHRQ1 DFHSHRR  DFHSHTI  DFHSHXM
+   
+   
+    
+   
+   
+
+Publications Referenced SC34718701 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY UK95526 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK95526]
+   UP13/07/06 P F307
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

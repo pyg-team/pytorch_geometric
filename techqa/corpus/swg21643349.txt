@@ -1,0 +1,75 @@
+Title: IBM Issues with changing vmdk include/exclude rules on VM backups - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are the possible consequences of intermittent/inconsistent usage of the options include.vmdk and/or exclude.vmdk on incremental VM backups ? 
+
+CAUSE
+Design - intended usage of the include.vmdk and exclude.vmdk options
+
+ANSWER
+The intended usage of the include.vmdk - exclude.vmdk client options is indicated in the manual : 
+
+http://pic.dhe.ibm.com/infocenter/tsminfo/v6r4/topic/com.ibm.itsm.ve.doc/c_ve_disk_granularity_scenarios.html [http://pic.dhe.ibm.com/infocenter/tsminfo/v6r4/topic/com.ibm.itsm.ve.doc/c_ve_disk_granularity_scenarios.html]
+
+"This feature is not provided to reduce backup storage space by occasionally excluding a virtual disk during a backup operation. This feature is provided only for virtual disks that never require backup. For example, those virtual disks that contain data that does not need to be restored, or the data is preserved by another backup mechanism. A virtual disk excluded from the backup operation is considered as deleted from the VM for that backup. If the VM is restored from that backup, the excluded virtual disk is not restored. Only the disk definition is restored. "
+
+The 'golden rule' for the Tivoli Storage Manager about the usage of the VMware Changed Blocks Tracking (CBT) with regard to excluding a disk from a backup is :
+"Treat an excluded disk as being deleted from the VM for that backup"
+
+This will affect the backups if intermittent vmdk exclusion is used in the flow of VM backups.
+
+Each time you do a pre-backup VMware snapshot and CBT is enabled, all the vmdk files are affected even the ones that are excluded.
+A new CBT changeID is associated with each vmdk.
+
+Details about the CBT mechanism can be consulted on the web in the VMware documentation :
+http://pubs.vmware.com/vsphere-51/topic/com.vmware.ICbase/Welcome/welcome.html [http://pubs.vmware.com/vsphere-51/topic/com.vmware.ICbase/Welcome/welcome.html]
+
+That changeID is stored with the data for each vmdk included in the backup run on the TSM server.
+This ID is used for consistency validation on the next backup run to send only the changed data blocks for that individual vmdk when an incremental VM backup is performed.
+
+If a vmdk is skipped, the changeID for that vmdk stored in the server becomes invalid and the next attempt to do an incremental backup will trigger the following client warnings and switch to a full backup.
+
+
+
+ANS1711W Incremental backup selected for <VM guest name>, but a Full backup has not yet been performed. Performing a Full backup instead. ANS9384W Unable to get VMware Changed Block Tracking(CBT) data for virtual machine <VM guest name>. Full VM backup continues, and includes both used and unused areas of the disk. ANS9387W Incremental backup unsuccessful for virtual machine <VM guest name>. Performing Full backup instead. 
+See the following example : 
+
+The backup command would be like : 
+
+Using include.vmdk in the option file or on the command line : 
+
+dsmc backup VM "vmname:vmdk=vmdk_name" -mode=ifi 
+
+or use the exclude.vmdk option in the dsm.opt file or on the command line : 
+
+dsmc backup VM "vmname:-vmdk=vmdk_name" -mode=ifi 
+
+Let's assume the following VM backup sequence for a VM guest with two disks : 
+
+Hard Disk 1 
+Hard Disk 2 
+
+and the following backup sequence is performed : 
+
+1. Hard Disk 1 
+2. Hard Disk 2 
+3. Hard Disk 1 
+4. Hard Disk 2 
+5. Hard Disk 1 and Hard Disk 2 
+
+We will see : 
+
+Sequence changeID consequence initial [/support/docview.wss?uid=swg21643349&amp;aid=1] -- no Hard Disk 1 or Hard Disk 2 CBT info snap1 chgID0 Hard Disk 1(chgID0) -> no Hard Disk 1 CBT info from initial (so full Hard Disk 1 done) snap2 chgID1 Hard Disk 2(chgID1) -> no Hard Disk 2 CBT info from snap1 (so full Hard Disk 2 done) snap3 chgID2 Hard Disk 1(chgID2) -> no Hard Disk 1 CBT info from snap2 (so full Hard Disk 1 done) snap4 chgID3 Hard Disk 2(chgID3) -> no Hard Disk 2 CBT info from snap3 (so full Hard Disk 2 done) snap5 chgID4 Hard Disk 1(chgID4) -> no Hard Disk 1 CBT info from snap4 (so full Hard Disk 1 done) [/support/docview.wss?uid=swg21643349&amp;aid=1] [/support/docview.wss?uid=swg21643349&amp;aid=1] Hard Disk 2(chgID4) -> a Hard Disk 2 CBT exists in snap4 (so incr Hard Disk 2 done) 
+For Tivoli Storage Manager, this is the same as doing : 
+
+Sequence Actions as seen by the server initial Create Hard Disk 1 and Hard Disk 2, no backup at this step snap1 Delete Hard Disk 2, backup Hard Disk 1 snap2 Delete Hard Disk 1, create Hard Disk 2 and backup Hard Disk 2 snap3 Delete Hard Disk 2, create Hard Disk 1 and backup Hard Disk 1 snap4 Delete Hard Disk 1, create Hard Disk 2 and backup Hard Disk 2 snap5 Backup Hard Disk 1 and Hard Disk 2 
+That is why you get full backups for everything except the last backup of Hard Disk 2. 
+
+This is also why switching between including and excluding disks is not supported and even less recommended. 
+
+In most cases disk space or backup time is NOT saved by excluding a disk because, as the above example shows, mostly FULL backup will be done on that disk in the future. 
+
+The incremental forever option is a much better choice for this requirement.

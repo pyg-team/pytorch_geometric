@@ -1,0 +1,43 @@
+Title: IBM Announcement letter for IBM Operational Decision Manager for z/OS, V8.5.1 - United States
+
+Text:
+announcement letters NEWS
+
+ABSTRACT
+ IBM Operational Decision Manager (ODM) for z/OS, V8.5.1, the next generation of business rules, provides an elegant development environment, along with a dedicated business user interface, for automating and governing frequently occurring, repeatable business decisions. IBM ODM for z/OS V8.5.1 planned availability date will be on 13 December 2013. This document contains a brief overview of IBM ODM for z/OS V8.5.1 and a link to the announcement letter.
+
+
+CONTENT
+Overview:
+
+
+The offering provides end-to-end, lifecycle support for business decisions invoked from Java , COBOL, and PL/I applications. This includes capabilities for decision testing and simulation within either the Rule Execution Server (RES) in the WebSphere® Application Server for z/OS or the zRule Execution Server (zRES) for z/OS environments, as well as the ability to trace the execution of how a business decision is made in the zRule Execution Server using the Decision Warehouse feature. 
+
+IBM ODM for z/OS provides multiple, business-rule execution choices for z/OS customers who have Java , Enterprise COBOL, and PL/I applications, running as Batch, IMS™ Batch, IMS Message Processing Programs or hosted within CICS® V4.2 or CICS V5.1 regions. 
+
+IBM ODM for z/OS , V8.5.1 is designed to provide a smoother transition than the tool used in previous releases, whether it is reusing rules across applications, operating in different language environments, expanding decision management into PL/I applications, or even moving from version to version. Also new with Version 8.5.1 is the ability to keep track of how the software is being used, on a decision basis. 
+
+IBM ODM for z/OS and IBM Business Rules for z/OS , available as a separate product, help enable organizations in virtually every industry to improve the quality of transaction, batch, and process-related decisions that are made repeatedly within mainframe applications and to determine the appropriate courses of action for customers, partners, and internal interactions by: 
+
+ * Automating and governing operational decision making across business processes and applications to help improve business outcomes. 
+ * Helping detect opportunities and risks in real time 
+ * Easily and consistently implementing changes to help meet new market demands or policy requirements. 
+ * Supporting incremental modernization of existing CICS , IMS , and batch applications written in Java , COBOL, or PL/I without a complete re-write. 
+ * Facilitating consistent decision evaluation across platforms, projects, and processes by allowing the reuse of business models between rule projects in z/OS and distributed applications. 
+ * Detecting events and event patterns in real time to enable situational awareness and response of actionable situations. 
+ * Automating the response of highly variable decisions based on the specific context of a process, transaction, or interaction. 
+ * Managing and governing rules-based decision logic separately from application code in order to provide better visibility, understanding, and maintainability compared to traditional application development. 
+ * Providing visibility to business users on how business decisions are made. 
+ * Integrating with a number of other z/OS technologies to create comprehensive decision management solutions written in Java , COBOL, or PL/I, using CICS , IMS , or z/OS batch execution environments. 
+   
+
+
+For more details, see the US Announcement Letter for IBM Operational Decision Manager for z/OS V8.5.1 [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/8/897/ENUS213-408/index.html&lang=en&request_locale=en] 
+Information for other country announcement letters is located here [http://www.ibm.com/common/ssi/index.wss]. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere ILOG Decision Validation Services General AIX, HP-UX, Linux, Solaris, Windows, z/OS Enterprise Business Integration WebSphere ILOG Rule Solutions for Office General Windows All Editions Business Integration WebSphere ILOG Rule Team Server AIX, HP-UX, Linux, Solaris, Windows, z/OS Enterprise Business Integration WebSphere Business Events AIX, HP-UX, Linux, Solaris, Windows All Editions Business Integration WebSphere ILOG JRules Platform Independent Enterprise 
+PRODUCT ALIAS/SYNONYM
+ ODM

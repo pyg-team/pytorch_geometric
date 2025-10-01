@@ -1,0 +1,140 @@
+Title: IBM PJ41559: CE DOESN'T INFORM THE USER IF AN INCORRECT AUTHENTICATION TOKEN IS SUPPLIED DURING CSS SERVER CREATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During CSS server creation using FileNet Enterprise Manager
+   (FEM), if the admin user enters an incorrect CSS authentication
+   token, a generic error will be returned as "The Content Engine
+   server cannot connect to the IBM Content Search Services server
+   at located on host <hostname>".  This error doesn't help the
+   admin user to determine the root cause.  It gets confusing when
+   the admin person could ping the server and and check the CSS
+   server to be up and running.  On the CSS server, a clear error
+   message is being logged.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Administrators of IBM Content Search Services with P8        *
+   * Content Platform Engine                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * During IBM Content Search Services (CSS) server creation     *
+   * using P8 FileNet Enterprise Manager (FEM), if the admin user *
+   * enters an incorrect CSS authentication token, a generic      *
+   * error will be returned as "The Content Engine server cannot  *
+   * connect to the IBM Content Search Services server at located *
+   * on host <hostname>".  This error does not help the           *
+   * administrator to determine the root cause.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to P8 CPE 5.1.0 FP04 or later feature packs or       *
+   * P8 CPE 5.2.0 FP02 or later feature packs or versions.        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Provide an error message specifying that the authentication code
+   is incorrect.
+   Fixed in P8 CPE 5.1.0 FP04 and later feature packs.
+   Fixed in P8 CPE 5.2.0 FP02 and later feature packs and versions.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ41559
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-25
+   
+   
+ * CLOSED DATE
+   2013-12-02
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP

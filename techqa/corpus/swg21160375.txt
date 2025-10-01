@@ -1,0 +1,29 @@
+Title: IBM ICM XML: DKDDO.toXML() writes content from memory only - United States
+
+Text:
+toXML; DKDDO::toXML; DKDDO.toXML TECHNOTE (FAQ)
+
+QUESTION
+ I call DKDDO.toXML(), but some or all of the data does not appear in the XML file. Does DKDDO.toXML() retrieve any information before writing to XML? 
+
+CAUSE
+DKDDO.toXML() only writes to file what is retrieved into the DKDDO object in memory. Any information not available to the toXML() operation will not appear in the XML file.
+
+ANSWER
+Call retrieve with any desired retrieve options to adequately populate the DKDDO prior to calling DKDDO.toXML(). 
+
+Example 
+
+ * 
+ * // Given a DKDDO object in variable named 'ddo'.
+ * ddo.retrieve(DKConstant.DK_CM_CONTENT_ITEMTREE + DKConstant.DK_CM_CONTENT_YES); 
+ * ddo.toXML(new DKNVPair("FILE","C:\\temp\\myFile.xml"),"C:\\temp\\",0);
+
+
+More information  * Refer to the SItemXMLImportExportICM.java API education sample for more information on the toXML() API. 
+ * All API samples are installed in the <CMBROOT>\Samples\java\icm and <CMBROOT>\Samples\cpp\icm directory if the Samples & Toolkits for this connector are selected during installation of IBM® DB2® Information Integrator for Content with its connector to DB2 Content Manager. By default, the installation directory on Windows® is C:\CMBROOT and indicated by the CMBROOT environment variable.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager Usage AIX, Solaris, UNIX, Windows 2000, Windows NT, Windows XP 8.1, 8.2

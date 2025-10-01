@@ -1,0 +1,44 @@
+Title: IBM "shared libraries: libdl.so.2" error when installing JRules on Unix - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why am I facing a "shared libraries: libdl.so.2" error? 
+
+CAUSE
+This kind of issue can be raised in some Linux distributions, for example Red Hat 9 or Suse 9.0, when the shared libraries called by the installer are linked to a not compatible OS API version through the LD_ASSUME_KERNEL variable
+
+ANSWER
+Error messages like the following:
+awk: error while loading shared libraries: libdl.so.2: cannot open
+shared object file: No such file or directory
+dirname: error while loading shared libraries: libc.so.6: cannot open
+shared object file: No such file or directory
+/bin/ls: error while loading shared libraries: librt.so.1: cannot open
+shared object file: No such file or directory
+basename: error while loading shared libraries: libc.so.6: cannot open
+shared object file: No such file or directory
+dirname: error while loading shared libraries: libc.so.6: cannot open
+shared object file: No such file or directory
+basename: error while loading shared libraries: libc.so.6: cannot open
+shared object file: No such file or directory
+hostname: error while loading shared libraries: libc.so.6: cannot open
+shared object file: No such file or directory
+means that the option LD_ASSUME_KERNEL is not supported by the current jdk. 
+
+In order to execute the program you need to comment the LD_ASSUME_KERNEL messages. Make sure that the same number of characters is used. You can do that using the example in following scripts: 
+
+#create a backup file
+-bash-3.1$ cp JRules.bin JRules.bin.bak
+#comment the option out
+-bash-3.1$ cat JRules.bin.bak | sed "s/export LD_ASSUME_KERNEL/#xport 
+LD_ASSUME_KERNEL/" > JRules.bin
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise 
+HISTORICAL NUMBER
+ jrules/FAQ/391

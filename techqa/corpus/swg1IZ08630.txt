@@ -1,0 +1,174 @@
+Title: IBM IZ08630: POLICY FAILS WHEN DOING A COMPARISON BETWEEN RESULT OF LOCALTIME(ACTTIME, "E") TO A STRING - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Impact 3.1FP5: Comparison result of localtime to strings leads
+   to policy failure.
+   Tue Oct 30 11:29:11 CET 2007: Parser log: Class of DayOfWeek :
+   IPLDate
+   --> Policy abort
+   Tue Oct 30 11:29:11 CET 2007: MessageProcessor: Exception
+   occurred while executing policy LocaltimeTest
+   Tue Oct 30 11:29:11 CET 2007:
+   Thread&#65528;HttpProcessor&#65528;5104&#65410;&#65528;4&#65410;,5,main&#65410;:
+   Tue Oct 30 11:29:11 CET 2007: java.lang.NullPointerException
+   Tue Oct 30 11:29:11 CET 2007:   at
+   java.util.Date.compareTo(Date.java:905)
+   Tue Oct 30 11:29:11 CET 2007:   at
+   java.sql.Timestamp.compareTo(Timestamp.java:462)
+   Tue Oct 30 11:29:11 CET 2007:   at
+   com.micromuse.common.parser.IPLInterpreterVisitor.standardizeDat
+   esAndCompare(IPLInterpreterVisitor.java:3486)
+   .
+   This is an extract of the policy:
+   .
+   ActTime = getdate();
+   log("ActTime : " + ActTime);
+   log("Class of ActTime: " + ClassOf(ActTime));
+   .
+   DayOfWeek = localtime(ActTime, "E");
+   log("DayOfWeek : " + DayOfWeek);
+   log("Class of DayOfWeek : " + ClassOf(DayOfWeek));
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Casting the var to String:
+   1) DayOfWeek = String(localTime(ActTime,"E"));
+   Or
+   2) DayOfWeek= String(DayOfWeek);
+   Or
+   3) I((String(DayOfWeek) == "Sat" ) ]] (String(DayOfWeek) =
+   "Sun"))&#65413;&#65418;
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Netcool/Impact Users who are using       *
+   *                 LocalTime() Action Function                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: POLICY FAILS WHEN DOING A COMPARISON    *
+   *                      BETWEEN RESULT OF LOCALTIME(ACTTIME, E) *
+   *                      TO A STRING                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Steps to replicate 1) configure Impact Server 2) Create a poliy
+   using LocalTime() action Function
+   result=LocalTime(getDate(),E);   if(result == Fri){
+   log(today is Friday);   }
+   
+   3) Run the policy and observe a null pointer exception
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in Netcool/Impact Fix Pack
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ08630
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-11-12
+   
+   
+ * CLOSED DATE
+   2008-03-14
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY
+   UP

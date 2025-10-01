@@ -1,0 +1,178 @@
+Title: IBM PJ36607: FEM DISPLAYS INCORRECT TIME BY 1 HOUR PRIOR TO 2006 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Adding a document in FEM with date/time for midnight and it
+   shows up in FEM with 1 hour ahead.  However in Workplace, it
+   shows the date/time property correctly.
+   
+   Adding a document using API code through FEM with date/time for
+   midnight and it shows up in FEM correctly.  However in
+   Workplace, it shows the date/time property behind by 1 hr.
+   
+   Steps to Reproduce:
+   3 tests adding document from FEM for the year 2005 DateTime
+   property:
+   1.  DateTime property entered for March 15, 2005 @ midnight.
+        The DateTime stamp showed up in FEM as March 15, 2005 @
+   1am.
+   
+   2.  DateTime property entered for February 15, 2005 @ midnight.
+        The DateTime stamp showed up in FEM as February, 2005 @
+   midnight.
+   
+   3.  DateTime property entered for April 15, 2005 @ midnight.
+        The DateTime stamp showed up in FEM as April 15, 2005 @
+   midnight.
+   
+   
+   3 tests adding document from FEM for the year 2006 DateTime
+   property:
+   1.  DateTime property entered for March 15, 2006 @ midnight.
+        The DateTime stamp showed up in FEM as March 15, 2006 @
+   1am.
+   
+   2.  DateTime property entered for February 15, 2006 @ midnight.
+        The DateTime stamp showed up in FEM as February, 2006 @
+   midnight.
+   
+   3.  DateTime property entered for April 15, 2006 @ midnight.
+        The DateTime stamp showed up in FEM as April 15, 2006 @
+   midnight.
+   
+   3 tests adding document from FEM for the year 2007 DateTime
+   property:
+   All the 3 months like the above were showing up @ midnight.
+   
+   Results from Workplace:
+   For the year 2005, 2006, and 2007, all the DateTime property
+   were showing up correctly.
+   
+   However, when adding a document from Workplace, the DateTime
+   property was showing up as 1am in FEM but in Workplace it showed
+   up as midnight.
+   
+   
+   Actual Results:
+   Incorrect time.
+   
+   Expected Results:
+   Should be the same time that it was entered.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * P8 FEM users                                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Adding a document in FEM with date/time for midnight and it  *
+   *                                                              *
+   * shows up in FEM with 1 hour ahead                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade FEM and CE server to P8CE-4.0.1-011                  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is fixed in P8CE-4.0.1-011
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ36607
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-07-30
+   
+   
+ * CLOSED DATE
+   2009-10-26
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PJ36849 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ36849]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

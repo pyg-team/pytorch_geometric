@@ -1,0 +1,42 @@
+Title: IBM Unable to connect CICS IA Explorer to host - United States
+
+Text:
+CNX0104E 5697J2300 R220 5697-J23 5697J23 FMID H274220 J27422K 5655U8600 5655U8601 R310 R31E R31K 5655-U86 5655U86 FMID H274310 J27431E J27431K TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CICS Interdependency Analyzer for z/OS (CICS IA) Explorer client gets CNX0104E "Connection failed:" message on initial attempts to connect to the z/OS host. 
+
+SYMPTOM
+Connection failed: [ibm][db2][jcc][t4][2034][11148] Execution failed due to a distribution protocol error that caused deallocation of the conversation. In CICS IA V3.1, message number CNX0104E has been added to the "Connection failed" message text.
+
+A DRDA Data Stream Syntax Error was detected. Reason: 0x3.
+
+[/support/docview.wss?uid=swg21368144&aid=1] [/support/docview.wss?uid=swg21368144&aid=1]
+
+
+CAUSE
+CICS IA Explorer connection preferences specify host and port for a CICS Transaction Server for z/OS (CICS TS) region TCPIPSERVICE for CIUCPORT as defined by the sample JCL in the CIUJCLCR member in the SCIUSAMP dataset.
+
+ENVIRONMENT
+CICS TS V3.1; V3.2; V4.1; V4.2; CICS IA V2.2; V3.1; DB2 V8; V9; V10; IA Explorer PK68113 running on MS Windows XP SP2;
+
+RESOLVING THE PROBLEM
+
+
+
+
+
+ 1. From the MVS console issue a FIND command for DB2 DDF message:
+    
+    DSNL004I [http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/index.jsp?topic=/com.ibm.db2z10.doc.msgs/src/tpc/dsnl004i.htm] csect DDF START COMPLETE LOCATION locname LU netname.luname GENERICLU netname.gluname DOMAIN domain TCPPORT tcpport SECPORT secport RESPORT resport
+    
+    
+ 2. Specify the TCP/IP Port Number on the CICS IA Explorer connection preferences using the tcpport value found in the DSNL004I message.
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management DB2 for z/OS SQLJ/JDBC z/OS 7.0, 8.0, 9.1, 9.0, 10.0, 10.1 
+PRODUCT ALIAS/SYNONYM
+ CICS IA CICSIA

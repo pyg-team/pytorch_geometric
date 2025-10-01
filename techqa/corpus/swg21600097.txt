@@ -1,0 +1,81 @@
+Title: IBM ITCAM4Tx - installing application agent support files for the ISM agent fails - United States
+
+Text:
+71GEN-TS; 71ISM-INS; 71ISM-TS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Whilst trying to install the support files for the ITCAM for Tx Internet Service Monitor (ISM) agent on the TEMS server, after the JRE/GSKit screen is reached , the installer aborts before showing the license screen. 
+
+SYMPTOM
+The installation just aborts, no errors are visible on screen. 
+
+On checking the installation log file named :
+<ITM HOME>\InstallITM\IBM Tivoli Composite Application Manager for Transactions<DATE> <TIME>.log
+
+The only messages found were :
+
+CLocalJavaSwitcher::RevertSwitch method exit: The JavaHome points to different than local java location, skipping
+CLocalJavaSwitcher::TranslateOpErrCodeToMessage method entry
+CLocalJavaSwitcher::TranslateOpErrCodeToMessage Revert from local JRE switch not applicable.
+CLocalJavaSwitcher::TranslateOpErrCodeToMessage method exit
+CLocalJavaSwitcher::~CLocalJavaSwitcher() method entry
+CLocalJavaSwitcher::~CLocalJavaSwitcher() method exit
+CALLBACK_OnAbort method exit
+CITMISUtilApp::ExitInstance
+UTillDll:CALLBACK_OnAbort returned code 5
+RegistryGetKeyValue Key(HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server) Value(TSEnabled) Type(REGDB_NUMBER) ValueData(1)
+RegistryGetKeyValue Key(HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server) Value(TSAppCompat) Type(REGDB_NUMBER) ValueData(1)
+LaunchBatFile(c:\temp\1\{569892EF-9817-47E0-8177-B6CFDE6DD91E}\SetChange.bat) Parameters(/execute) Log(c:\temp\1\{569892EF-9817-47E0-8177-B6CFDE6DD91E}\change.log)
+Document File - c:\temp\1\{569892EF-9817-47E0-8177-B6CFDE6DD91E}\change.log
+c:\temp\1\{569892EF-9817-47E0-8177-B6CFDE6DD91E}>change.exe user /execute 
+Error 0 setting Install Mode
+EOF - c:\temp\1\{569892EF-9817-47E0-8177-B6CFDE6DD91E}\change.log
+RollbackClearData entry
+RollbackClearData FAILURE
+RollbackClearData exit
+ABORT: CMA Directory Count=3
+ABORT: CMA(1) value HELPSVR
+ABORT: CMA(2) value TMAITM6
+ABORT: CMA(3) value TMAITM6_x64
+LOCAL EnvSettings at ABORT ---
+ABORT: EnvKey(ICCRTE_DIR) Value()
+ABORT: EnvKey(KEYFILE_DIR) Value()
+ABORT: EnvKey(PATH) Value(C:\Perl\site\bin;C:\Perl\bin;C:\Program Files (x86)\EMC\PowerPath\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\tiv_tools;D:\IBM\ITM\bin;D:\IBM\ITM\bin\dll;D:\IBM\ITM\InstallITM;D:\IBM\ITM\TMAITM6;D:\DB295\IBM\SQLLIB\BIN;D:\DB295\IBM\SQLLIB\FUNCTION;D:\DB295\IBM\SQLLIB\SAMPLES\REPL;C:\IBM\ITM\bin;C:\IBM\ITM\TMAITM6;D:\ibm\gsk7\bin;D:\ibm\gsk7\lib;C:\IBM\ITM\InstallITM;C:\IBM\ITM\java\java50\jre;C:\IBM\ITM\java\java50\jre\bin)
+ABORT: EnvKey(LIBPATH) Value(D:\IBM\ITM\bin\dll;D:\IBM\ITM\InstallITM;D:\IBM\ITM\TMAITM6;C:\IBM\ITM\TMAITM6;C:\IBM\ITM\InstallITM)
+ABORT: EnvKey(KDEBE_KEY_LABEL) Value()
+ABORT: EnvKey(KDEBE_KEY_RING) Value()
+ABORT: EnvKey(KDEBE_KEYRING_STASH) Value()
+ABORT: EnvKey(CANDLE_HOME) Value(C:\IBM\ITM)
+ABORT: KinCrypt.dll not loaded, or could not be unloaded
+ABORT: Kglbase.dll not loaded, or could not be unloaded
+ABORT: Kbb.dll not loaded, or could not be unloaded
+Directory c:\temp\1\{569892EF-9817-47E0-8177-B6CFDE6DD91E}\license deleted
+Directory c:\temp\1\{569892EF-9817-47E0-8177-B6CFDE6DD91E}\InstallITM deleted
+Directory c:\temp\1\plugin_tmp deleted
+Directory c:\temp\1\logs deleted
+RC_INFO: The License was not agreed to, ending installation.
+
+CAUSE
+Cause is not certain but corrupted version of already installed Java is highly suspected.
+
+
+
+ENVIRONMENT
+Windows, ITCAMfTx ISM agent version 7.3
+
+
+
+DIAGNOSING THE PROBLEM
+Check the installation log for similar output to what is reported above.
+
+
+
+RESOLVING THE PROBLEM
+Uninstalling Java using Add/Remove Programs, and allowing the new installation to install its own Java worked fine and resolved this issue.
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfT ISM

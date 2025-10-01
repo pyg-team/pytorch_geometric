@@ -1,0 +1,172 @@
+Title: IBM PK52536: PAGING NAVIGATION LINKS AFFECT OTHER RENDERING PORTLETS WHEN LINKS ARE BROADCAST - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The page navigtor component does not work correctly in menu
+   component
+   When trying to click on next page link , it does not open the
+   desired
+   pag, It opens on wrong page.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix:
+   
+   None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem Summary: Paging navigation links affect other rendering
+   portlets when links are broadcast.
+   
+   Detailed Problem Description:
+   
+   Recreation Scenario:
+   1.  Create a site area with several content items (enough to
+   ensure that paging will be necessary when rendered in a menu)
+   2.  Set up a menu with a paging component configured to list the
+   content items in the site area.  Configure the paging parameters
+   to ensure there are multiple pages of menu results.  Set up the
+   menu to render links to the content items (See InfoCenter for
+   examples of menu and paging configuration and markup).
+   3.  Set up a page with two local rendering portlets
+   4.  Set the first local rendering portlet to render the menu and
+   to broadcast links to this page, receive links from none.
+   5.  Set the second rendering portlet to render a content item by
+   default and to broadcast links to none and to recieve links from
+   other portlets and this portlet.
+   
+   Clicking on a content item in the menu in the first rendering
+   portlet correctly causes the content item to be displayed in the
+   second rendering portlet.  However, clicking on a paging link
+   affects both rendering portlets when it should only affect the
+   rendering portlet showing the menu.  The second rendering
+   portlet showing the content items should not change when you
+   click on a paging link in the first rendering portlet.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem Analysis:
+   
+   The second rendering portlet was receiving the broadcast for the
+   paging component links and processing it like regular links from
+   the menu.
+   
+   Failing Module: WCM - Web Content Management (General)
+   
+   Problem Solution:
+   
+   Change the local rendering portlet to ignore links for paging
+   components that are broadcast from other portlets.
+   
+   Affected Users: All Users
+   
+   An interim fix is available for this APAR from Fix Central at:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?brandid=2&productid=Workplace%20Web%20Content%20Management&fix [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?brandid=2&productid=Workplace%20Web%20Content%20Management&fix]
+   es=6.0.1.2-WCM-PK52536
+   
+   You will need to cut/paste the entire URL into a browser to
+   resolve the address.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK52536
+   
+   
+ * REPORTED COMPONENT NAME
+   WRKPLC WEB CON
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-09-10
+   
+   
+ * CLOSED DATE
+   2007-09-25
+   
+   
+ * LAST MODIFIED DATE
+   2007-12-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WRKPLC WEB CON
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY
+   UP
+   
+   
+ * R60C PSY
+   UP

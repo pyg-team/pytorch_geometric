@@ -1,0 +1,144 @@
+Title: IBM JR44686: MAPPING NOT WORKING FOR UCAS AFTER IMPORT FROM TW 6.1 TO BPM 8.0 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Mappings are not working on BPM 8.0 for UCAs when it
+   imported from
+   team works 6.1.
+   Some of the values are missing after mapping. This ifix will
+   remove
+   unnecessary attributes in TW6.1 when import it in BPM 8.0 to
+   make it work.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Recreate the UCA and redo the mapping.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Business Process Management users           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When importing to BPm 8.0 UCAs that     *
+   *                      were exported from team works 6.1,      *
+   *                      some mapping values may be missing.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This issue is caused by the different schemas used in BPM 8.0
+   and team works 6.1. Some parts of the schema used by team works
+   6.1 is not part of the BPM 8.0, however, the the import
+   mechanism is not removing this obsolete schema parts.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix provided will ensure obsolete schema is removed when
+   importing a TWX file.
+   
+   Install/Dependency information is available in the readme.txt
+   on FixCentral. When the user goes to the download files page
+   in FixCentral, the readme will be available with the fix
+   package as a separate download.
+   
+   The iFix can be downloaded in fix central
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR44686
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-09
+   
+   
+ * CLOSED DATE
+   2013-01-16
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

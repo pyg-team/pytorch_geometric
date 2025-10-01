@@ -1,0 +1,64 @@
+Title: IBM ClearQuest Web 7.1.x client shows an empty database repository list at login - United States
+
+Text:
+1416533; CQ; CQWEB; ClearQuest Web; CQ Web; login; repository; connection; database; list; empty; com.ibm.websphere.management.exception.ConnectorException; ADMC0016E; The system cannot create a SOAP connector to connect to host localhost at port 12880 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When starting the IBM Rational ClearQuest Web 7.1 client, the login page shows an empty database repository list. No databases are available to be selected. 
+
+CAUSE
+ 
+
+There are multiple possible causes:
+
+
+ 1. No connections have been defined on ClearQuest Web server.
+    
+ 2. ClearQuest Web is not configured correctly.
+    
+ 3. There is corruption with the cookies and cache stored by the browser.
+
+DIAGNOSING THE PROBLEM
+ 
+
+ 
+
+ * Start the ClearQuest client on the ClearQuest Web server. Verify whether you can connect to the intended database.
+   
+ * Check the SystemErr.log file and see whether this error exists:
+   com.ibm.websphere.management.exception.ConnectorException: ADMC0016E: The system cannot create a SOAP connector to connect to host localhost at port 12880.
+   
+ * Clear the cookies and cache (temporary internet files) for the browser to force a re-download of the files.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ * If the connection is not working with the client on the ClearQuest Web server, use ClearQuest Maintenance Tool on Windows to define a valid connection or use cqreg command on Unix to do so.
+
+
+ * Resolving this problem on custom CM Server configurations
+   
+   If you use Change Management Server (CM Server) on an stand-alone WebSphere Application Server [https://publib.boulder.ibm.com/infocenter/cchelp/v7r1m0/topic/com.ibm.rational.clearcase.cc_admin.doc/topics/cm_server/c_cmsvr_use_w_full_was.htm] or change the default port of CM Server [https://publib.boulder.ibm.com/infocenter/cqhelp/v7r1m0/topic/com.ibm.rational.clearquest.webadmin.doc/topics/cm_server/t_change_def_cmserver_servlet_engine_ports.htm], check the parameters TEAM_SERVER_URL and TEAM_SERVER_SOAP_PORT in the CqServerConn.properties file. These values must be the same as the WC_defaulthost and SOAP_CONNECTOR_ADDRESS settings on the WebSphere Application Server.
+   
+   You can check the port numbers in WebSphere Application Server Administration Console by going to Application servers > server1 > Ports. 
+   
+   The location for the CqServerConn.properties file is:
+   
+   7.1.0.x:
+   <install directory>\RationalSDLC\common\CM\profiles\cmprofile\installedApps\<Server Name>CMProfileNode01Cell\RationalClearQuestWeb.ear\CQWebModule.war\WEB-INF\classes 
+   
+   7.1.1.x:
+   <install directory>\RationalSDLC\common\CM\profiles\cmprofile\installedApps\dfltCell\RationalClearQuestWeb.ear\CQWebModule.war\WEB-INF\classes 
+   
+   7.1.2.x:
+   <install directory>\RationalSDLC\common\CM\profiles\cmprofile\installedApps\dfltCell\TeamEAR.ear\cqweb.war\WEB-INF\classes 
+   
+   Where <install directory> is by default C:\Program Files\IBM on Windows and /opt/ibm on Unix.
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational ClearQuest CM Server

@@ -1,0 +1,170 @@
+Title: IBM IC91324: CERTIFICATE MONITOR ISSUES EXPIRATION WARNINGS FOR INTERNAL CERTIFICATES INCLUDING DEFAULT WEBGUI CERTIFICATE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Certificate Monitor issues expiration warnings for internal
+   Crypto Certificate objects that are neither user visible nor
+   user modifiable.  This is problematic because the user has no
+   way to correct these certificates.
+   
+   There are two specific internal Crypto Certificate objects that
+   are likely to trigger this problem called 'system-cert' and
+   'system-ssl-ca-cert' that are used by default in the SSL
+   configuration of the WebGUI and the XML Management Interface.
+   
+   
+   Warnings about those certificates look like this:
+   
+   01:02:03 cert-monitor warn 383 0x806000e1 cert-monitor
+   (Certificate Monitor): Certificate 'system-cert' is about to
+   expire
+   01:02:03 cert-monitor warn 383 0x806000e1 cert-monitor
+   (Certificate Monitor): Certificate 'system-ssl-ca-cert' is about
+   to expire
+   
+   Note: As long as the Objects>Crypto Configuration>Crypto
+   Certificate Monitor option for Disabled Expired Certificates is
+   turned OFF, the default setting, the certificate will continue
+   to be used.  If the "Disabled Expired Certificates" is turned
+   ON, then this APAR is required.
+   
+   Please also refer to this TechNote which contains complete
+   details on this problem:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21633306 [http://www-01.ibm.com/support/docview.wss?uid=swg21633306]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Please refer to this technote for complete information
+   on this problem:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21633306 [http://www-01.ibm.com/support/docview.wss?uid=swg21633306]
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The Certificate Monitor issues warning about internal Crypto
+   Certificate objects including the default WebGUI certificates.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is available in 4.0.1.17 and 4.0.2.13.
+   
+   
+   For a list of the latest fix packs available, please see:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21237631 [http://www-01.ibm.com/support/docview.wss?uid=swg21237631]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC91324
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER BLAD
+   
+   
+ * REPORTED COMPONENT ID
+   DPBLADE01
+   
+   
+ * REPORTED RELEASE
+   382
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-04
+   
+   
+ * CLOSED DATE
+   2013-04-24
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER BLAD
+   
+   
+ * FIXED COMPONENT ID
+   DPBLADE01
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP
+   
+   
+ * R402 PSY
+   UP
+   
+   
+ * R500 PSY
+   UP
+   
+   
+ * R600 PSY
+   UP
+   
+   
+ * R382 PSN
+   UP

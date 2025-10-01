@@ -1,0 +1,44 @@
+Title: IBM Refresh of FP7 and FP8 for Tivoli Netcool/Impact 7.1.0 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ 
+Fix Pack 7.1.0-TIV-NCI-FP0007 and 7.1.0-TIV-NCI-FP0008 have been refreshed on Fix Central and Passport Advantage.
+
+
+SYMPTOM
+ 
+
+The refreshes are required for 2 problems which were discovered in 7.1.0-TIV-NCI-FP0007. 
+
+
+1. Impact installation of Fix Pack 7 does not import latest NOI policies. This only affects Impact NOI customers. The refreshed Fix Pack 7 fixes this issue and NOI policies are updated.
+ref RTC 64130
+
+2. Impact FP7 Install Failing on Solaris 5.10. Clients attempting to install the original Impact 7.1. FP7 on Solaris 5.10 environments, will see the installer fail because of an issue with Websphere Liberty Profile (16.0.0.2) that ships with Impact 7.1 FP7
+ref: RTC 64743
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+If either of the FP7 issues above apply, then please use the refreshed FP7 (201701202207) or use FP8(201701211217). None of the issues above apply to FP8. 
+
+
+Note: If a customer has the original FP7 (201609151259) correctly installed, then they do not need to apply the FP7 refresh. The FP7 refresh only apply to NOI FP7 customers, or Solaris 10 FP7 customers. 
+
+ 
+
+Q: Why was FP8 refreshed? 
+
+A: Because the refresh of FP7 (201701202207) post-dated the original release of FP8; it was also necessary to refresh FP8 (with no changes) to ensure Installation Manager can properly identify which fixes are appropriate to install. This is because Installation Manager uses date fields to select which fixes to display for install. 
+
+
+Q: What happens if a customer has the original FP7 (or FP8) correctly installed, and they point their Installation Manager to a repository with the refreshed FP7 (or FP8), 
+A: In this case the refresh FP will be offered as an installation option. The refreshed FP should not be installed, but in the case it is accidentally selected, no failure would be generated and you would be allowed to install whatever latest version your chose. For example, if you chose to apply FP7 refresh (on either FP7 or FP8 original) the install would be successful and all of the jars would be at the FP7 re-spin build date (201701202207). You would then have the option to upgrade to FP8 re-spin; with similar effects.

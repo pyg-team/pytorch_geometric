@@ -1,0 +1,96 @@
+Title: IBM MustGather:  Agile Planning issues with Rational Team Concert - United States
+
+Text:
+mustgather; must gather; data collection; planning; log collection; agile planning TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document will assist you in collecting the data necessary to diagnose and resolve IBM Rational Team Concert (RTC) Agile Planning issues. 
+
+CAUSE
+
+This MustGather will assist you in collecting the data necessary to help you diagnose and resolve the issue. If you are unable to determine the root cause using the information collected, you should open a PMR with IBM Support [http://www.ibm.com/contact] for further investigation providing the data collected. 
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+You can use the IBM Support Assistant Lite (ISA Lite) Data Collector tool [https://jazz.net/help-dev/clm/index.jsp?re=1&topic=/com.ibm.team.concert.doc/topics/t_using_the_isal.html] to quickly collect diagnostic files, such as log files, configuration files or to run traces. This tool is bundled with RTC 4.x and above. ISA Lite collects information about your Jazz Team Server environment and stores the information in a .zip archive file. If you have a need to open a service request with IBM Support [http://www.ibm.com/contact] for further assistance, you can send the archive file with the data collection so that they can help diagnose and fix problems. 
+
+
+The information below should be gathered in addition to the normal information and log gathering done by ISA Lite. 
+
+
+
+
+General information
+
+Errors in the web UI which include 'null'2
+
+Firebug trace
+
+Import and export of plans
+
+
+
+General information 
+ * Is the issue reproducible in the web UI?
+   
+   
+ * Include a screenshot showing the error or bad behavior
+   
+   
+ * Collect the running process template as per How to Extract a Process template from an existing project area [http://www-01.ibm.com/support/docview.wss?uid=swg21505291] 
+   
+   
+ * Identify which roles or users are incurring the bad behavior
+   
+   
+ * Provide ‘Plan Details’ of the problematic plan
+   
+   
+ * Indicate if the problem occurs with all the plan views or some specific ones. Provide details about the plan view (filters, displayed columns, and more)
+
+
+
+For errors in the web UI which include 'null' 
+ * Enable ?debug=true in the browser and collect a screenshot of the full error
+   
+   Example: https://<servername>:9443/ccm/web/projects/Project?debug=true#action=com.ibm.team.workitem.viewWorkItem&id=xxx
+   
+   
+
+
+Firebug trace 
+ * If the issue is reproducible in the web UI, install Firebug [http://getfirebug.com/]in your Mozilla Firefox browser. Add ?debug=true to the URL and reproduce the issue. Include a screenshot of the ‘console’ section of Firebug for any related errors
+   
+   
+ * Install NetExport [https://getfirebug.com/wiki/index.php/Firebug_Extensions] and export of the output in the NET tab within Firebug
+   
+   
+
+For import and export of plans 
+ 1. In the log4j.properties (..server/ccm/conf), add the following line for trace:
+    
+    log4j.logger.com.ibm.team.tpt.internal.service.ImpexService=DEBUG
+    
+    
+ 2. Save the log4j.properties file.
+    
+    
+ 3. Reload the log4j.properties file by accessing the following link:
+    
+    https://<server>:9443/ccm/admin?internal=true#action=com.ibm.team.repository.admin.reloadLoggingSettings
+    
+    (This will avoid having to restart the server)
+    
+    
+ 4. Reproduce the issue and provide the ccm.log file as well as Eclipse workspace log
+
+
+ 
+
+ 
+
+Leverage the Jazz Community Jazz and Rational Team Concert have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [</font>http://ibm.com/support/docview.wss?uid=swg21319600] for details and links.

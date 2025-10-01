@@ -1,0 +1,202 @@
+Title: IBM IV66841: SET CENTRALIZED CONFIGUATION FILE PERMISSIONS - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 6 (6.3.0-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24040390]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  File permissions for retrieved files is set to 777 in all cases.
+   This is
+   not flexible in environments where user security requirements
+   may vary
+   from this setting.
+   
+   The permissions of the retrived files should match that of the
+   target
+   directory into which they are placed.  This will provide the
+   customer
+   with the desired flexibility.
+   
+   RECREATE INSTRUCTIONS:
+   1. On Linux 6.2 system (itmmtvm122.tivlab.austin.ibm.com)
+       download and install latest Apache Web Server (HTTP Daemon).
+      > yum install httpd
+   2. Create two simple script files myfile1.sh and myfile2.sh both
+      containing following text lines:
+      #!/bin/ksh Page 128 of 131
+      echo "test"
+      and place them in the /var/www/html/cc/files/ sub-directory
+      on this Linux system. If need be create the necessary
+      subdirectories if they do not already exist.
+   3. Install ITM 630 FP4 OS Agent on AIX 6.1
+      (54905lp3.tivlab.austin.ibm.com) specifying CANDLEHOME as
+      /opt/IBM/ITM
+   4. In the CANDLEHOME/localconfig/ux subdirectory, create the
+      file named
+      ux_cnfglist.xml and save the following text into this file:
+   
+      <ConfigurationArtifact>
+      <ConfigServer Name="CENTRAL-CONFIG-SERVER"
+      URL="http://itmmtvm122.tivlab.austin.ibm.com/cc/" />
+      <ConfigFile Server="CENTRAL-CONFIG-SERVER"
+      Name="bootstrap_cnfglist.xml"
+      Disp="CNFGLIST" Path="common" Activate="YES" />
+      <ConfigFile Server="CENTRAL-CONFIG-SERVER" Name="myfile1.sh"
+      Disp="CUSTOM" Path="files" LocalPath="@ITMHOME@/tmp" Page 129
+      of 131
+      LocalName="myfile1.sh" />
+      <ConfigFile Server="CENTRAL-CONFIG-SERVER" Name="myfile2.sh"
+      Disp="CUSTOM" Path="files" LocalPath="@ITMHOME@/tmp"
+      LocalName="myfile2.sh" />
+      </ConfigurationArtifact>
+   
+   5. Start the Apache Web Server if not already started by
+      executing the
+      following command at the command prompt on the Linux machine,
+      > httpd
+   
+   6. Start the Unix OS Agent
+      $CANDLEHOME/bin/CandleAgent start ux
+   
+   7. Observe that the following files that are placed in the
+      /opt/IBM/ITM/tmp directory on the Agent system and their
+      permissions,
+      -rwxrwxrwx    1 root     system           29 May 14 17:12
+      myfile2.sh Page 130 of 131
+      -rwxrwxrwx    1 root     system           30 May 14 17:12
+      myfile1.sh
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually change permissions on these files after they are
+   installed on
+   the target system.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Custom scripts, or files, that are downloaded by UNIX or Linux
+   based agents from the Centralized Configuration Server (CCS) do
+   not have adequate permissions to enable the customer management
+   of the scripts, or files.
+   
+   
+   The permission settings of scripts, or files, downloaded by UNIX
+   or Linux Agents from the Centralized Configuration Server
+   prohibits the User, Group or Other from doing anything other
+   than reading, or in the case of User reading and writing to the
+   file (-rw-r--r--) regardless of the file permissions specified
+   on the server.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Once the scripts or files are downloaded; change the file
+   permissions to enable reading, writing or executing for the
+   User, Group or Others based on the permissions of the directory
+   into which the files are locally copied.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.3.0-TIV-ITM-FP0006
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV66841
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-12
+   
+   
+ * CLOSED DATE
+   2015-08-12
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEMS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

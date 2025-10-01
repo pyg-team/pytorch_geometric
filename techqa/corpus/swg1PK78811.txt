@@ -1,0 +1,238 @@
+Title: IBM PK78811: THE SUPPRESSION OF AN A03 ABEND CAN BE ENABLED WITH A NEW ENVIRONMENT VARIABLE, BY DEFAULT THIS WILL BE OFF - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In certain cases when the WebSphere for z/OS server has a
+   non-daemon thread active during shutdown processing of the
+   server an A03 abend is seen. The solution to the problem should
+   be to ensure that all threads are daemon threads.
+   .
+   However, WebSphere for z/OS will provide a workaround to the
+   A03 abend by giving the option of enabling a variable to
+   suppress this abend. By default this variable will be off.
+   .
+   This apar will address this.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of WebSphere Application Server   *
+   *                  V6.1.0 for z/OS                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: After issuing a STOP command for a      *
+   *                      WebSphere Application Server for z/OS   *
+   *                      server, one of the address spaces       *
+   *                      terminates with an ABENDA03/ABENDSA03.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An ABENDA03/ABENDSA03 indicates that an address space is trying
+   to terminate but a child task (thread) is still running.
+   Occasionally it is possible for a WebSphere thread to hang as
+   the server is stopping, which results in this abend.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  An ABENDA03/ABENDSA03 is not issued by or handled by WebSphere
+   and so cannot be directly suppressed by WebSphere.  Instead,
+   code was added to detect hung threads during STOP processing.
+   When a hung thread is detected that would result in an
+   ABENDA03/ABENDSA03, WebSphere now abends the address space much
+   earlier with an ABENDDC3/ABENDSDC3 and a new reason code of
+   000C000B.  This avoids the long delay that would occur before
+   the ABENDA03/ABENDSA03 is issued.  In addition,
+   ABENDDC3/ABENDSDC3 is handled by WebSphere and so it is
+   possible for WebSphere to suppress the dump.
+   
+   A new property, suppress_hung_thread_dump, was introduced.
+   Setting this property to 1 causes dumps to be suppressed for
+   ABENDDC3/ABENDSDC3 with reason code 000C000B.
+   
+   APAR PK78811 requires changes to documentation.
+   
+   NOTE: Periodically, we refresh the documentation on our
+   Web site, so the changes might have been made before you
+   read this text. To access the latest on-line
+   documentation, go to the product library page at:
+   
+   http://www.ibm.com/software/webservers/appserv/library [http://www.ibm.com/software/webservers/appserv/library]
+   
+   The following changes to the WebSphere Application
+   Server Version 6.1 Information Center will be made available
+   in June, 2009.
+   
+   The topic "Application server custom properties for z/OS"
+   will be updated to include the following description of the
+   new suppress_hung_thread_dump custom property:
+   
+   suppress_hung_thread_dump
+   
+   Controls whether a dump is taken when an ABENDDC3 or an
+   ABENDSDC3 occurs because a hung thread did not terminate in
+   response to a STOP command.
+   
+   When a STOP command is issued for a server, a hung thread
+   might fail to terminate, which causes an ABENDDC3 or an
+   ABENDSDC3 to occur with reason code 000C000B. Setting this
+   property to 1 prevents a dump from being taken if this abend
+   occurs.
+   
+   Data Type          Boolean
+   Default          0
+   Used by Daemon          No
+   
+   The table in the topic "Changing the values of variables
+   referenced in BBOM0001I messages" will be updated to include
+   the suppress_hung_thread_dump custom property.
+   
+   The following information about the new 000C000B reason code
+   for a DC3 ABEND will be added to the topic "Abend reason
+   codes:"
+   
+   Explanation: A hung thread in supervisor state was detected
+   during exit processing. Normally, this would result in a
+   long delay as the address space shuts down before
+   finally resulting in an ABENDA03/ABENDSA03.  The address
+   space is being abended earlier in order to avoid this
+   delay.
+   Suggested Action:  For support, look up problem determination
+   information on WebSphere Application Server eSupport page
+   at:
+   
+   http://www.ibm.com/software/webservers/appserv/zos_os390/ [http://www.ibm.com/software/webservers/appserv/zos_os390/]
+   support/
+   
+   The following descripton of the a new C9C20040 error minor
+   code will be added to the topic "Error minor codes:"
+   
+   Explanation: A hung thread was detected during exit processing.
+   Suggested Action: IBM Internal Only
+   
+   
+   APAR PK78811 is currently targeted for inclusion in Service
+   Level (Fix Pack) 6.1.0.25 of WebSphere Application Server V6.1
+   for z/OS.
+   
+   Please refer to URL:
+   //www.ibm.com/support/docview.wss?rs=404&uid=swg27006970
+   for Fix Pack availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK78811
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-16
+   
+   
+ * CLOSED DATE
+   2009-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2009-07-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PK78812 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK78812]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY UK47214 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK47214]
+   UP09/06/22 P F906
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

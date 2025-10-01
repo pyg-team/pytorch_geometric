@@ -1,0 +1,169 @@
+Title: IBM PM18935: Requirements Change Request' submenu becomes greyed out in read-only mode - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Rational Change for DOORS Interface 5.5 iFix009 [http://www-01.ibm.com/support/docview.wss?uid=swg24028942]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DOORS 8.3.04
+   DOORS/Change 5.5-08
+   Change 4.7 with DS 5.5 pactch 6 installed
+   
+   Performing certain steps in DOORS, will cause the 'Requirements
+   Management Request' to be greyed out. I
+   have been able to reproduce this on my test installation in
+   support. Below are the steps to reproduce.
+   
+   Login to DOORS
+   Open a module that is under Change control
+   On the Select Default RCR dialog, select the 'Open for Unmanaged
+   Changes'
+   Click the 'Open for Unmanaged Changes' in the 'open module for
+   unmanaged changes' dialog.
+   The module will open in exclusive Edit Mode, right click the
+   module and the Requirement Management Request' is greyed out (to
+   be expected.)
+   Close module and re-open module in read-only mode, by right
+   clicking module and selecting Open ? Read-only
+   Right click the module and the 'Requirements Management Request'
+   is greyed out.
+   
+   The expected behavior is to have the 'Requirements Management
+   Request' enabled.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Performing certain steps in DOORS, will cause the
+   'Requirements Management Request' to be greyed out. I have
+   been able to reproduce this on my test installation in
+   support. Below are the steps to reproduce.
+   
+   Login to DOORS
+   Open a module that is under Change control
+   On the Select Default RCR dialog, select the 'Open for
+   Unmanaged Changes'
+   Click the 'Open for Unmanaged Changes' in the 'open module
+   for unmanaged changes' dialog.
+   The module will open in exclusive Edit Mode, right click the
+   module and the Requirement Management Request' is greyed out
+   (to be expected.)
+   Close module and re-open module in read-only mode, by right
+   clicking module and selecting Open ? Read-only
+   Right click the module and the 'Requirements Management
+   Request' is greyed out.
+   
+   The expected behavior is to have the 'Requirements
+   Management Request' enabled.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Modified the integration so the menu will be available at
+   the appropriate times. Fixed in Change-DOORS integration 5.5
+   iFix009 and 5.7.0.7 iFix003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM18935
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * REPORTED COMPONENT ID
+   5724V61DR
+   
+   
+ * REPORTED RELEASE
+   470
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-21
+   
+   
+ * CLOSED DATE
+   2011-01-12
+   
+   
+ * LAST MODIFIED DATE
+   2011-01-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC CHANGE
+   
+   
+ * FIXED COMPONENT ID
+   5724V87CG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R470 PSN
+   UP

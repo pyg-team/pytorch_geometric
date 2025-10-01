@@ -1,0 +1,60 @@
+Title: IBM Database errors occur when setting sort order on a Multiline string field - United States
+
+Text:
+1271938; 1222008; PK49743; CQ; RATLC01187882; The cursor was not declared; cursor; declared; ERROR! SQLExecDirect; RETCODE=-1; State=37000; 420; 3700; ORDER BY; query; reference; sort; multiline; ORA-00932; inconsistent datatypes; expected - got CLOB; Cannot execute a query that specifies a sort order or group-by operator on a multiline text field; One or more fields have this problem TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+This technote identifies an issue that can occur in IBM Rational ClearQuest. When defining a sort order on a multiline field with a query, the database returns an error.
+
+SYMPTOM
+When running a query that has a sort order based on a multiline string field, you may experience errors similar to the following: 
+
+ * SQL Server
+   
+   SQLExecDirect: RETCODE=-1, State=37000, Native Error=306 SQL statement="select T1.dbid,T1.description from defect T1,users T9 where T1.owner = T9.dbid and (T1.dbid <> 0 and ((T9.login_name = 'admin')))order by T1.description ASC" [Microsoft][ODBC SQL Server Driver][SQL Server]The text, ntext, and image data types cannot be compared or sorted, except when using IS NULL or LIKE operator. [Microsoft][ODBC SQL Server Driver][SQL Server]The cursor was not declared.
+   
+
+ * Oracle 
+   SQLExecDirect: RETCODE=-1, State=HY000, Native Error=932
+   SQL statement="select T1.dbid,T1.id,T1.headline,T1.description from Defect T1 where T1.dbid <> 0 and ((T1.headline like '%error%')) order by T1.description ASC"
+   
+   [DataDirect][ODBC Oracle Wire Protocol driver][Oracle]ORA-00932: inconsistent datatypes: expected - got CLOB
+   
+   
+   
+   
+
+You can also encounter this error when sorting by a multiline field in the ClearQuest for Eclipse client:  * Cannot execute a query that specifies a sort order or group-by operator on a multiline text field. One or more fields have this problem: <multiline field name>
+   
+
+
+
+These errors might also occur when a multiline string field is defined as the first column of a reference list, as reference list controls automatically sort on the first value of the list. 
+
+When clicking OK or Continue to resolve the above error message, a loop occurs that re-displays the error. To break the loop, you must exit the program or log out, depending on the ClearQuest interface that you are using. 
+
+CAUSE
+This behavior was investigated as a product defect, APAR PK49743 [http://ibm.com/support/docview.wss?rs=988&uid=swg1PK49743]. The defect was closed as a third-party limitation. It is not possible to sort on multiline text fields and this is not expected functionality because the underlying databases do not support it.
+
+
+
+ENVIRONMENT
+ The error has been observed in environments using these back-end databases: 
+
+ * Microsoft SQL Server 
+ * Oracle 
+ * IBM DB2
+
+
+Note: This has not been reported on Microsoft Access. 
+RESOLVING THE PROBLEM
+The error message, though stated in SQL terms, is an indication that the query must be fixed by sorting on valid fields only. If a query exist that is causing this error, then it must be modified to sort on a non-multiline string field. 
+
+Additionally, when creating reference list fields on the forms of record types, the first column of the form control should not reference a multiline string field.
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational ClearQuest Database Configuration/Connectivity - DB2 Software Development Rational ClearQuest Database Configuration/Connectivity - Oracle Software Development Rational ClearQuest Database Configuration/Connectivity - SQL Server

@@ -1,0 +1,13 @@
+Title: IBM mqrc as "2010" when using large messages with IBM WebSphere DataPower SOA appliances - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ IBM WebSphere DataPower SOA Appliances MQ manager object tries to get a larger message from MQ queue than it is configured for. As a result, the DataPower system log will show mqrc as "2010" 
+
+CAUSE
+MQ error code (mqrc) 2010
+
+ANSWER
+Increase the "Maximum Message Size" value in the DataPower MQ manager's Object (mq-qm) and its associated XML manager's "Bytes scanned" field under the XMLParser Tab. Please note that the MQ Front Side Handler will remain in "down" state until the problem is corrected by increasing the "Maximum Message Size" value in the mq-qm object..

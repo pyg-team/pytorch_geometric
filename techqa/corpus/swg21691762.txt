@@ -1,0 +1,33 @@
+Title: IBM DASH component of Jazz SM startup failure - United States
+
+Text:
+TIPL2; TIPL2CONF; CAUGHT_EXCEPTION_WHILE; CONFIGURING_SSL_SERVER_SOCKET; UNABLE_TO_CREATE_SSL_SERVER_SOCKET; ORBX0390E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Dashboard Application Service Hub(DASH) fails to start with the following error:
+
+"ADMU7704E: ...the Windows Service...JazzSMProfileService failed to start. startServer return code = -1"
+
+SystemOut: "CORBA.INTERNAL:UNABLE_TO_CREATE_SSL_SERVER_SOCKET" 
+
+CAUSE
+Port conflict. Another application is listening on one of the ports used by DASH
+
+DIAGNOSING THE PROBLEM
+Review the SystemOut log for the following exceptions corresponding to the startup attempt:
+
+###
+[12/1/14 8:40:45:230 CET] 00000001 ORBRas E 
+com.ibm.ws.orbimpl.transport.WSTransport createServerSocket 
+P=643183:O=0:CT ORBX0390E: Cannot create listener thread. Exception=[ 
+org.omg.CORBA.INTERNAL: 
+CAUGHT_EXCEPTION_WHILE_CONFIGURING_SSL_SERVER_SOCKET, 
+Exception=org.omg.CORBA.INTERNAL: UNABLE_TO_CREATE_SSL_SERVER_SOCKET 
+Exception=java.net.BindException: Address already in use: JVM_Bind 
+vmcid: 0x49421000 minor code: 76 completed: No vmcid: 0x49421000 minor 
+code: 77 completed: No - received while attempting to open server socket
+on port 16323 ]. 
+###
+
+RESOLVING THE PROBLEM
+Check to see what process is listening on port 16323 by opening the Windows Resource Monitor utility (Open Task Manager, and then on the Performance tab click the "Resource Monitor" button). If it's safe to do so, stop the process that is listening on that port. You'll want to update the corresponding application to use some other port range as DASH uses 163XX by default.

@@ -1,0 +1,196 @@
+Title: IBM HD40497: WEB EDITOR CLIENT LOGIN FAILED WITH WINDOWS AUTHENTICATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SMARTEAM V5R14SP6 Web Editor Client Login
+   failed with the Windows
+   Authentication setting.
+   Whenever starting IE for the Web Editor Site, the
+   Database Selection is
+   displayed.
+   After clicking the Connect button, the following
+   error message is
+   displayed.
+   Error No : 00904 "The service 'ObjectStore' cannot
+   be initialized. No
+   user is logged into the session."
+   .
+   Scenario:
+   1. Install SMARTEAM V5R14SP6 Web Editor
+   environment.
+   2. Perform the Windows Authentication setting as
+   described in the
+   SMARTEAM Web Editor Installation document.
+   3. Start the Login process for the Web Editor on the
+   web client machine.
+   4. The Database Selection is displayed in IE.
+   5. Click the Connect button.
+   6. The following error message is displayed.
+   Error No : 00904 "The service 'ObjectStore' cannot
+   be initialized. No
+   user is logged into the session."
+   .
+   However, the Login process is successful when
+   Login on the SMARTEAM Web
+   Editor Server.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Web Editor Client Login failed with Windows Authentication
+   SMARTEAM V5R14SP6 Web Editor Client Login
+   failed with the Windows
+   Authentication setting.
+   Whenever starting IE for the Web Editor Site, the
+   Database Selection is
+   displayed.
+   After clicking the Connect button, the following
+   error message is
+   displayed.
+   Error No : 00904 "The service 'ObjectStore' cannot
+   be initialized. No
+   user is logged into the session."
+   .
+   Scenario:
+   1. Install SMARTEAM V5R14SP6 Web Editor
+   environment.
+   2. Perform the Windows Authentication setting as
+   described in the
+   SMARTEAM Web Editor Installation document.
+   3. Start the Login process for the Web Editor on the
+   web client machine.
+   4. The Database Selection is displayed in IE.
+   5. Click the Connect button.
+   6. The following error message is displayed.
+   Error No : 00904 "The service 'ObjectStore' cannot
+   be initialized. No
+   user is logged into the session."
+   .
+   However, the Login process is successful when
+   Login on the SMARTEAM Web
+   Editor Server.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON SMARTEAM
+   VERSION 5 RELEASE 16 GA level.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED
+   ON V5R14SP08.
+   Fixed
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD40497
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   514
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-06-05
+   
+   
+ * CLOSED DATE
+   2009-04-07
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569199970
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R516 PSN
+   UP
+   
+   
+ * R514 PSN SP51408
+   UP05/12/16 N 1000
+   
+   
+ * R517 PSN
+   UP
+   
+   
+ * R515 PSN
+   UP
+   
+   
+ * R518 PSN
+   UP

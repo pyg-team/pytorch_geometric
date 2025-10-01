@@ -1,0 +1,152 @@
+Title: IBM SQL0204 returned for declared global temporary table. - United States
+
+Text:
+SQL0204; -204; DGTT; udf; stored procedure; declared; global; temporary; table TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When creating a stored procedure which calls a nested stored procedure to create a declared global temporary table (DGTT), SQL0204 (-204) may be returned for the DGTT. 
+
+SYMPTOM
+ 
+
+Creating the stored procedure DB2INST1.USE_DGTT returns SQL0204 for the DGTT SESSION.TEMP_TABLE.
+
+
+CREATE PROCEDURE DB2INST1.CREATE_DGTT()
+DYNAMIC RESULT SETS 1
+NOT DETERMINISTIC
+LANGUAGE SQL
+BEGIN
+
+-- Create DGTT
+DECLARE GLOBAL TEMPORARY TABLE session.temp_table
+(
+C1 INTEGER
+)
+ON COMMIT PRESERVE ROWS
+WITH REPLACE
+NOT LOGGED;
+END
+DB20000I The SQL command completed successfully.
+
+
+CREATE PROCEDURE DB2INST1.USE_DGTT
+(
+IN P_NUM INTEGER
+)
+DYNAMIC RESULT SETS 1
+NOT DETERMINISTIC
+LANGUAGE SQL
+BEGIN
+
+-- creates the DGTT
+CALL DB2INST1.CREATE_DGTT();
+
+INSERT INTO session.temp_table (C1) VALUES(P_NUM);
+END
+
+DB21034E The command was processed as an SQL statement because it was not a valid Command Line Processor command. During SQL processing it returned: SQL0204N "SESSION.TEMP_TABLE" is an undefined name. LINE NUMBER=13.
+SQLSTATE=42704 
+
+
+CAUSE
+The DB2 system catalogue does not have a definition of the DGTT.
+
+
+
+RESOLVING THE PROBLEM
+To resolve this issue implement one of the alternatives below. The first method is suggested since the second method may experience issues with revalidation*. 
+
+ 
+
+Example of Revalidation issue:
+Procedure A creates the DGTT.
+Procedure B calls A to perform the creation of DGTT. 
+
+Some base object is invalidated (e.g. a table used by procedure B is dropped and re-created) and causes B to become invalidated. Later, when B is called and the DGTT does not actually exist, the revalidation of B fails because the DGTT has no definition, thus the call to B fails as well. CGTTs avoid such issues.
+
+*Revalidation of objects was introduced starting with DB2 v9.7.
+
+
+Method #1: CGTT 
+
+ 
+
+Use a Global Temporary Table (GTT) instead of DGTT. It has the advantage of a persistent definition in the DB2 system catalogs, along with a private copy for each application session. The following was saved as a script called createsp.db2. 
+
+
+-- Execute script: db2 -td@ -vf createsp.db2
+-- Need to create the following to use CGTT
+--create bufferpool buff4k immediate pagesize 4k@
+--create user temporary tablespace utemp4k pagesize 4k managed by automatic storage bufferpool buff4k@
+
+connect to sample@
+
+-- Create GTT
+
+drop table session.temp_table@
+
+CREATE GLOBAL TEMPORARY TABLE SESSION.TEMP_TABLE
+(
+C1 INTEGER,
+)
+ON COMMIT PRESERVE ROWS
+-- This option does not exist with GTT
+-- WITH REPLACE
+NOT LOGGED ON ROLLBACK DELETE ROWS@
+
+
+DROP PROCEDURE USE_DGTT@
+
+CREATE PROCEDURE DB2INST1.USE_DGTT
+(
+IN P_NUM INTEGER
+)
+DYNAMIC RESULT SETS 1
+NOT DETERMINISTIC
+LANGUAGE SQL
+BEGIN
+
+-- No need to call the stored proc. below so we comment it out
+-- CALL DB2INST1.CREATE_DGTT();
+
+INSERT INTO SESSION.TEMP_TABLE (C1) VALUES(P_NUM);
+END@
+
+connect reset@
+
+
+ 
+
+Method #2: Dummy definition for DGTT 
+
+
+CREATE PROCEDURE DB2INST1.USE_DGTT
+(
+IN P_NUM INTEGER
+)
+DYNAMIC RESULT SETS 1
+NOT DETERMINISTIC
+LANGUAGE SQL
+BEGIN
+
+-- This code is never executed since 1 never equals 0.
+-- The DGTT must have the same definition as the one created 
+-- in CREATE_DGTT().
+if 1 = 0 then
+declare global temporary table session.temp_table (C1 INTEGER) with replace;
+end if;
+
+-- creates DGTT
+CALL DB2INST1.CREATE_DGTT();
+
+INSERT INTO SESSION.TEMP_TABLE (C1) VALUES(P_NUM);
+END@ 
+
+ 
+
+
+
+RELATED INFORMATION
+ Automatic Revalidation of Database Objects [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_10.1.0/com.ibm.db2.luw.admin.dbobj.doc/doc/c0055269.html?lang=en]
+Create Global Temporary Table [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_10.1.0/com.ibm.db2.luw.sql.ref.doc/doc/r0053719.html?cp=SSEPGG_10.1.0%2F2-9-7-78&lang=en]

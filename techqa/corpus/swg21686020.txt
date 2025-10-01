@@ -1,0 +1,102 @@
+Title: IBM Defining theme and concept terms in IBM Social Media Analytics - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I define theme and concept terms that will effectively generate queries that retrieve the most relevant content from the fewest documents? 
+
+ANSWER
+
+Background
+
+
+ * 
+
+
+Changes to query generation as of SMA 1.3 IF7 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+How are exclude terms selected during query generation? 
+ *  Theme-level exclude terms have priority over concept-level exclude terms. Shorter exclude terms have priority over longer exclude terms. The number of terms that are selected depends on several factors, including source query limits such as query length and maximum number of terms, the performance profile of a source, the size of terms, and whether the terms contain Chinese, Japanese, or Korean characters. The factors above create the initial set of exclude terms. Then the application generates a set of queries using performance as a last consideration. This last step might also remove exclude terms. 
+
+
+Is my data fetching impacted starting with SMA 1.3 IF7? 
+ * 
+
+
+
+Tips for defining themes and concept terms for optimal query generation  * 
+ * 
+ * 
+ * 
+ * Important:
+ * 
+ * 
+
+ * 1. Avoid the following term duplication:
+
+ * A. Duplicate terms between a concept and its parent theme. 
+   Do not use the same context or exclude term on both the theme and any child concept. 
+   
+   B. Duplicate terms related to case sensitivity 
+   SMA terms are not case-sensitive by default. For example, house matches, house, House, HOUSE, and hOUse. Do not repeat a term using different cases for some letters, as this will unnecessarily grow the number of query terms. Also, terms like [hH]ouse are unnecessary and prevent SMA from generating a query. To make a term case-sensitive for analysis, use the Case-sensitive button. 
+   
+   For more information, see " Case-sensitive search terms [http://www.ibm.com/support/knowledgecenter/SSJHE9_1.3.0/com.ibm.swg.ba.cognos.ug_ci.1.3.0.doc/c_nf_case_sensitive.html]" ( http://www.ibm.com/support/knowledgecenter/SSJHE9_1.3.0/com.ibm.swg.ba.cognos.ug_ci.1.3.0.doc/c_nf_case_sensitive.html [http://www.ibm.com/support/knowledgecenter/SSJHE9_1.3.0/com.ibm.swg.ba.cognos.ug_ci.1.3.0.doc/c_nf_case_sensitive.html]). 
+   
+   C. Duplicate terms due to normalization 
+   Do not include the normalized form of words containing special characters. For example, if you specify vagón as an include term, SMA retrieves documents that contain either vagón or vagon. You do not need to specify vagon as an additional include term. 
+   Tip: If you only have a normalized form of a word that contains special characters as a term, it will not return results for the word that contains special characters. For example, if you use vagon as a term it will not return results for vagón. 
+   
+   For more information, see " Character normalization [http://www.ibm.com/support/knowledgecenter/SSJHE9_1.3.0/com.ibm.swg.ba.cognos.ug_ci.1.3.0.doc/c_sma_char_match.html]" ( http://www.ibm.com/support/knowledgecenter/SSJHE9_1.3.0/com.ibm.swg.ba.cognos.ug_ci.1.3.0.doc/c_sma_char_match.html [http://www.ibm.com/support/knowledgecenter/SSJHE9_1.3.0/com.ibm.swg.ba.cognos.ug_ci.1.3.0.doc/c_sma_char_match.html]). 
+   
+   D. Terms that are common to multiple concepts 
+   Move context and exclude terms that are common between concepts to the theme level to avoid duplicating terms in multiple concepts. 
+   
+   Tip: If a concept in a theme has no context or exclude terms and prevents you from rolling up context and exclude terms from other concepts to the theme level, consider moving that concept to another theme. 
+
+
+ * 2. Avoid using stop words in terms
+ *  
+   BoardReader or GNIP stop words such as "and", "is" and "the" in themes having the Fetch Documents option enabled are ignored by BoardReader during document retrieval. For example, the terms house and the house added as include terms for a given concept will return the same results since the stop word "the" is ignored. If house is added as an include term and the house as an exclude term, then they will cancel each other and no documents pertaining to house will be retrieved. 
+   
+   For more information about BoardReader stop words, see " BoardReader stop words [http://www.ibm.com/support/knowledgecenter/SSJHE9_1.3.0/com.ibm.swg.ba.cognos.ug_ci.1.3.0.doc/c_boardreader_stop_words.html]" ( 
+   http://www.ibm.com/support/knowledgecenter/SSJHE9_1.3.0/com.ibm.swg.ba.cognos.ug_ci.1.3.0.doc/c_boardreader_stop_words.html [http://www.ibm.com/support/knowledgecenter/SSJHE9_1.3.0/com.ibm.swg.ba.cognos.ug_ci.1.3.0.doc/c_boardreader_stop_words.html]). 
+   
+   For more information about GNIP stop words and guidelines for using Twitter, see " Guidelines for including Twitter as a source [http://www.ibm.com/support/knowledgecenter/SSJHE9_1.3.0/com.ibm.swg.ba.cognos.ug_ci.1.3.0.doc/c_searchingtwitter.html]" ( 
+   http://www.ibm.com/support/knowledgecenter/SSJHE9_1.3.0/com.ibm.swg.ba.cognos.ug_ci.1.3.0.doc/c_searchingtwitter.html [http://www.ibm.com/support/knowledgecenter/SSJHE9_1.3.0/com.ibm.swg.ba.cognos.ug_ci.1.3.0.doc/c_searchingtwitter.html]). 
+
+
+ * 3. Bypass query generation and document retrieval for certain concepts
+ *  
+   If you want to define a concept within a theme having the Fetch Documents option enabled but do not w that concept to contribute to document retrieval, you may select the "Define a custom query (Advanced)" option for that concept and leave the custom query blank. This concept will still be applied in Analysis but will not contribute to query generation. 
+
+
+ * 4. Bypass query generation for certain terms within a concept
+ *  
+   Scenario: Your concept contains terms that should be used to fetch documents ("fetch terms"), as well as a small number terms that should not be used to fetch documents ("non-fetch terms"). 
+   
+   Approach: Turn the "non-fetch terms" into regular expressions. Terms that are regular expressions are not used by SMA to retrieve documents and do not impact the performance of query generation or document retrieval. 
+   
+   For example, you have the terms house, houses, and housewarming in the same concept, but you only want to fetch documents containing house. Change houses to [h]ouses and housewarming to [h]ousewarming. 
+   
+   The concept will still generate snippets using the words house, houses and housewarming during Content Processing, but only terms containing house will be fetched. 
+   
+   Tip: If you regularly encounter this case with a significant number of terms, consider changing your theme and concept structure to ensure that themes used for data fetching contain none or very few "non-fetch terms". 
+
+
+ * 5. Preview your concepts for better accuracy
+ *  
+   Make use of the Preview feature to ensure that the terms that you have specified at the concept and theme levels will retrieve the intended results. If you find irrelevant documents in Preview results, add context or exclude terms to your concept definition or theme definition where applicable. You may also find the need to add, remove, or alter your existing include terms if this occurs. 
+   
+   
+ * 6. Be mindful of theme and concept definition size
+
+ * The number of terms and term length has a direct impact on the performance of query generation and document retrieval. Keeping this in mind while defining theme and concept terms may be helpful in moderating the size of your model.

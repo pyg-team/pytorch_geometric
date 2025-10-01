@@ -1,0 +1,34 @@
+Title: IBM Error # 7002. There appears to be a license for SPSS for Windows, but it is invalid. Specific symptom number: 199 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have installed SPSS for Windows and licensed the application. Upon launch, I encounter the following error:
+
+The current license does not permit this job to continue.
+
+followed by...
+
+Error # 7002
+There appears to be a license for SPSS for Windows, but it is invalid.
+This command not executed.
+
+Specific symptom number: 199
+
+What is the problem? 
+
+RESOLVING THE PROBLEM
+The following reason can cause the above error:
+
+The authorization code provided to you is invalid. Please contact IBM SPSS Customer Service/Busines Analytics Client Care or your local IBM SPSS office for a new authorization code
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 60004

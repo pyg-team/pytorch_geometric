@@ -1,0 +1,58 @@
+Title: IBM TPC URL list - United States
+
+Text:
+TPC; TPCR; JazzSM; TPC-R; Jazz for service management; GUI; web-based GUI; webUI TECHNOTE (FAQ)
+
+QUESTION
+ Where can I find a list of all URLs needed for the various components of a Tivoli Storage Productivity Center 5.x server? 
+
+ANSWER
+Links of primary interest for most users: 
+
+*These examples assume the use of default ports as specified during product installation. Customized installations will differ. Focus of this document is on TPC version 5.1 and later. Version 4.x components and port numbers may differ. 
+
+ 
+
+TPC Web-based GUI: 
+
+ * http://storage.example.com:9568/srm 
+ * https://storage.example.com:9569/srm
+   Tip: If you have a non-default port, check the value of the WC_defaulthost property in TPC_installation_directory/web/conf/portdef.props file.
+
+
+TPC for Replication GUI:  * http://storage.example.com:9558/CSM 
+ * https://storage.example.com:9559/CSM 
+
+Cognos Reporting GUI: 
+*JazzSM /Cognos are optional components beginning in TPC 5.2.0  * http://storage.example.com:16310/tarf/servlet/dispatch 
+ * https://storage.example.com:16311/tarf/servlet/dispatch
+
+
+Tivoli Integrated Portal GUI: 
+*TIP exists in 4.x and 5.1.x versions but not in 5.2.x versions 
+Default ports used by TIP in TPC 5.1.x installs:  * http://storage.example.com:9568/ibm/console/logon.jsp 
+ * https://storage.example.com:9569/ibm/console/logon.jsp 
+
+Default ports used by TIP in TPC 4.x installs:  * http://storage.example.com:16310/ibm/console/logon.jsp 
+ * https://storage.example.com:16311/ibm/console/logon.jsp
+
+
+The remaining links that follow are primarily used for troubleshooting/diagnostics and advanced configuration topics, and are not typically needed. 
+
+Cognos Configuration GUI:  * Windows (choose one of the two methods listed below):  * Click Start > Tivoli Common Reporting 3.1.0.2 > Cognos Configuration. 
+    * Run the tcr_cogconfig.bat file in the JazzSM_install_directory\reporting\cognos\bin64 directory.
+   
+   
+ * AIX® or Linux  * Log on to a graphical session, and then run the tcr_cogconfig.sh script in the JazzSM_install_directory/reporting/cognos/bin64 directory
+   
+   
+
+
+Websphere intergrated solutions console for JazzSM (WAS ISC) :  * https://storage.example.com:16316/ibm/console/logon.jsp
+
+
+WebSphere Integrated Solutions Console (TPC 5.2.+ versions):  * secure http: https://storage.example.com:9569/ibm/console/logon.jsp 
+ * standard http: http://storage.example.com:9568/ibm/console/logon.jsp 
+
+WebSphere Administrative Console (TPC 5.1.x versions):  * How to access:
+   In the Tivoli Integrated Portal navigation tree, click Settings > WebSphere Administrative Console.

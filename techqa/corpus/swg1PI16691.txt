@@ -1,0 +1,141 @@
+Title: IBM PI16691: RICH TEXT INSERT LINK AND INSERT LINK TO REMOTE DOCUMENT DOES NO T WORK VIA INPLACE EDITING WITH IE9 AND IE10 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With IE9 or IE10, the 'Insert Link' button and also the 'Insert
+   Link to Remote Document' button does not work when
+   editing a rich text element using inplace editing.
+   
+   The following Javascript error will be seen:
+   SCRIPT438: Object doesn't support property or method
+   'createRange' File: RTEFieldActions.js
+   
+   The issue affects only 8001 CF09, 8001 CF10 and 8001 CF11 and is
+   specific to inplace editing only.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  - use IE8 compatibility mode
+   - use a different browser
+   - use the normal inline editing
+   - or use the standing Authoring portlet to edit the rich text
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  With IE9 or IE10, the 'Insert Link' button and also the 'Insert
+   Link to Remote Document' button does not work when editing a
+   rich text element using inplace editing.
+   
+   The following Javascript error will be seen:
+   SCRIPT438: Object doesn't support property or method
+   'createRange'
+   File: RTEFieldActions.js
+   
+   The issue affects 8001 CF09, 8001 CF10 and 8001 CF11 and is
+   specific to inplace editing only.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code was updated to resolve the Javascript error.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI16691
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-23
+   
+   
+ * CLOSED DATE
+   2014-04-30
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

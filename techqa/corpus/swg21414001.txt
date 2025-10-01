@@ -1,0 +1,31 @@
+Title: IBM Switching from a stand-alone install to a cluster install causes problems with the Search scheduler - United States
+
+Text:
+search; deployment; standalone; cluster TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After uninstalling an advanced standalone deployment of Lotus Connections and switching to a cluster install, the customer is going to experience Search scheduler errors. 
+
+The problem appears when the databases from the previous install were maintained and not recreated after the cluster install was completed.
+
+These errors appear in the systemOut.log: 
+
+[10/26/09 22:03:43:416 GMT] 00000037 AlarmListener E SCHD0063E: A task with ID 1 failed to run on Scheduler LotusConnectionsScheduler (scheduler/search) because of an exception: com.ibm.websphere.scheduler.UserCalendarInvalid: SCHD0013E: The following error occurred while accessing the UserCalendar with JNDI Name com/ibm/websphere/scheduler/calendar/DefaultUserCalendarHome and specifier CRON : SCHD0137E: Unable to create EJB instance for UserCalendar: java.rmi.NoSuchObjectException: CORBA OBJECT_NOT_EXIST 0x4942fc02 No; nested exception is: org.omg.CORBA.OBJECT_NOT_EXIST...
+
+
+SYMPTOM
+These errors appear in the systemOut.log: 
+
+ 
+[10/26/09 22:03:43:416 GMT] 00000037 AlarmListener E SCHD0063E: A task with ID 1 failed to run on Scheduler LotusConnectionsScheduler (scheduler/search) because of an exception: com.ibm.websphere.scheduler.UserCalendarInvalid: SCHD0013E: The following error occurred while accessing the UserCalendar with JNDI Name com/ibm/websphere/scheduler/calendar/DefaultUserCalendarHome and specifier CRON : SCHD0137E: Unable to create EJB instance for UserCalendar: java.rmi.NoSuchObjectException: CORBA OBJECT_NOT_EXIST 0x4942fc02 No; nested exception is: org.omg.CORBA.OBJECT_NOT_EXIST...
+
+
+RESOLVING THE PROBLEM
+1. The customer should run the db2 -tvf clearScheduler.sql script against each database. The script is in the /connections.sql/homepage/db2 directory of your install files.
+2. Refresh the schedule tasks:
+i) Open a command window and start the wsadmin command-line tool.
+ii) After the wsadmin command environment has initialized, use one of the following commands to initialize the search environment and start the search script interpreter:
+Stand-alone deployment: execfile("searchAdmin.py")
+Network deployment: execfile("<$WAS_HOME>/profiles/<DMGR>/config/bin_lc_admin/searchAdmin.py")
+When asked to select a server, you can select any server.
+iii) Use the following command: SearchService.refreshTasks()
